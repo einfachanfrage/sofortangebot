@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "mcp__Claude_in_Chrome__computer",
+      "Bash(curl -s -X POST https://api.resend.com/domains -H \"Authorization: Bearer re_JA1uDZRb_JMhshDWaj5KAkoV8NFCdoZQC\" -H \"Content-Type: application/json\" -d '{\"name\":\"sofortangebot.app\",\"region\":\"eu-west-1\"}')",
+      "mcp__Claude_in_Chrome__navigate"
     ]
   }
 }
