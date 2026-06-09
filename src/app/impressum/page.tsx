@@ -30,7 +30,7 @@ export default function ImpressumPage() {
           <section>
             <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Kontakt</h2>
             <p className="font-semibold leading-relaxed">
-              Telefon: +49 [BITTE EINTRAGEN]<br />
+              Telefon: +49 151 20791652<br />
               E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a>
             </p>
           </section>
