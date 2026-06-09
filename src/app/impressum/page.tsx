@@ -30,8 +30,8 @@ export default function ImpressumPage() {
           <section>
             <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Kontakt</h2>
             <p className="font-semibold leading-relaxed">
-              E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a><br />
-              <span className="text-[#2C2C2C]/40 text-xs">(E-Mail-Adresse wird nach Domain-Einrichtung ergänzt)</span>
+              Telefon: +49 [BITTE EINTRAGEN]<br />
+              E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a>
             </p>
           </section>
 
@@ -43,7 +43,7 @@ export default function ImpressumPage() {
           </section>
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
             <p className="font-semibold leading-relaxed">
               Sandra Holm<br />
               Wielandstr. 11<br />
@@ -101,6 +101,7 @@ export default function ImpressumPage() {
         <div className="flex gap-4 text-[#2C2C2C]/30 text-xs font-semibold">
           <Link href="/impressum" className="text-[#2C2C2C]">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
+          <Link href="/agb">AGB</Link>
         </div>
       </footer>
     </div>

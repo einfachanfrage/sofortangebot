@@ -43,17 +43,14 @@ export async function POST(req: NextRequest) {
   const sigBuffer = Buffer.from(base64, 'base64')
   const filePath = `signatures/${quote.id}.png`
 
-  let signatureUrl: string | null = null
+  let signaturePath: string | null = null
   const { error: uploadError } = await supabaseAdmin.storage
     .from('quote-signatures')
     .upload(filePath, sigBuffer, { upsert: true, contentType: 'image/png' })
 
   if (!uploadError) {
-    // Privater Bucket — Signed URL mit 10 Jahren Gültigkeit (für rechtliche Dokumentation)
-    const { data } = await supabaseAdmin.storage
-      .from('quote-signatures')
-      .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10)
-    signatureUrl = data?.signedUrl ?? null
+    // Pfad speichern — Signed URL wird on-demand über /api/quotes/[id]/signature generiert
+    signaturePath = filePath
   }
 
   // Angebot aktualisieren — mit IP für rechtlichen Nachweis
@@ -62,7 +59,7 @@ export async function POST(req: NextRequest) {
     signed_at: new Date().toISOString(),
     signed_by: signedBy,
     signer_ip: ip,
-    ...(signatureUrl && { signature_url: signatureUrl }),
+    ...(signaturePath && { signature_url: signaturePath }),
   }).eq('id', quote.id)
 
   // Handwerker + Kunde benachrichtigen (intern, mit Secret gesichert)

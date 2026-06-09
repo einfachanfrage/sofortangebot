@@ -269,6 +269,7 @@ export default function LandingPage() {
         <div className="flex gap-4 text-[#2C2C2C]/30 text-xs font-semibold">
           <Link href="/impressum">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
+          <Link href="/agb">AGB</Link>
         </div>
       </footer>
 

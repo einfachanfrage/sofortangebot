@@ -42,7 +42,7 @@ export default function DatenschutzPage() {
                 </div>
                 <div>
                   <strong className="font-black">Spracheingaben</strong>
-                  <p className="mt-1">Aufgenommene Spracheingaben werden zur Transkription an OpenAI übermittelt und unmittelbar danach gelöscht. Wir speichern keine Audiodateien. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
+                  <p className="mt-1">Aufgenommene Spracheingaben werden zur Transkription an Groq übermittelt und unmittelbar danach gelöscht. Wir speichern keine Audiodateien. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
                 </div>
                 <div>
                   <strong className="font-black">Kundendaten</strong>
@@ -65,8 +65,8 @@ export default function DatenschutzPage() {
                   <p className="mt-1">Datenbankhosting auf Servern in der EU (Frankfurt). Supabase verarbeitet alle gespeicherten Nutzerdaten. Datenschutzrichtlinie: <a href="https://supabase.com/privacy" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a></p>
                 </div>
                 <div>
-                  <strong className="font-black">OpenAI, L.L.C. (KI-Analyse &amp; Spracherkennung)</strong>
-                  <p className="mt-1">Spracheingaben und Textinhalte werden zur KI-gestützten Angebotserstellung an OpenAI übermittelt. OpenAI nutzt diese Daten nicht zum Training seiner Modelle (Enterprise-Bedingungen). Datenschutzrichtlinie: <a href="https://openai.com/privacy" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">openai.com/privacy</a></p>
+                  <strong className="font-black">Groq Inc. (KI-Analyse &amp; Spracherkennung)</strong>
+                  <p className="mt-1">Spracheingaben und Textinhalte werden zur KI-gestützten Angebotserstellung an Groq übermittelt. Groq nutzt diese Daten nicht zum Training seiner Modelle. Datenschutzrichtlinie: <a href="https://groq.com/privacy-policy" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">groq.com/privacy-policy</a></p>
                 </div>
                 <div>
                   <strong className="font-black">Resend Inc. (E-Mail-Versand)</strong>
@@ -87,7 +87,7 @@ export default function DatenschutzPage() {
             title: '4. Drittland-Übermittlungen',
             content: (
               <p>
-                OpenAI, Resend, Stripe und Vercel sind US-amerikanische Unternehmen. Die Übermittlung personenbezogener Daten in die USA erfolgt auf Basis der EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO sowie – sofern anwendbar – auf Basis des EU-US Data Privacy Framework (Art. 45 DSGVO). Alle genannten Anbieter sind im Data Privacy Framework zertifiziert oder haben entsprechende Garantien getroffen.
+                Groq, Resend, Stripe und Vercel sind US-amerikanische Unternehmen. Die Übermittlung personenbezogener Daten in die USA erfolgt auf Basis der EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO sowie – sofern anwendbar – auf Basis des EU-US Data Privacy Framework (Art. 45 DSGVO). Alle genannten Anbieter sind im Data Privacy Framework zertifiziert oder haben entsprechende Garantien getroffen.
               </p>
             ),
           },
@@ -159,6 +159,7 @@ export default function DatenschutzPage() {
         <div className="flex gap-4 text-[#2C2C2C]/30 text-xs font-semibold">
           <Link href="/impressum">Impressum</Link>
           <Link href="/datenschutz" className="text-[#2C2C2C]">Datenschutz</Link>
+          <Link href="/agb">AGB</Link>
         </div>
       </footer>
     </div>
