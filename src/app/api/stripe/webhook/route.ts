@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
 
       if (sub.status === 'active' || sub.status === 'trialing') {
         // Pro aktiv — Ablaufdatum aus current_period_end speichern
-        await upgradeToProUntil(customerId, sub.id, sub.current_period_end)
+        await upgradeToProUntil(customerId, sub.id, (sub as unknown as { current_period_end: number }).current_period_end)
       } else if (
         sub.status === 'past_due' ||
         sub.status === 'incomplete' ||
@@ -109,12 +109,13 @@ export async function POST(req: NextRequest) {
     case 'invoice.payment_succeeded': {
       const invoice = event.data.object as Stripe.Invoice
       const customerId = typeof invoice.customer === 'string' ? invoice.customer : null
-      const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : null
+      const invoiceAny = invoice as unknown as { subscription: string | null }
+      const subscriptionId = typeof invoiceAny.subscription === 'string' ? invoiceAny.subscription : null
 
       if (customerId && subscriptionId && invoice.billing_reason !== 'subscription_create') {
         // Verlängerung → Plan-Ablaufdatum aktualisieren
         const sub = await stripe.subscriptions.retrieve(subscriptionId)
-        await upgradeToProUntil(customerId, subscriptionId, sub.current_period_end)
+        await upgradeToProUntil(customerId, subscriptionId, (sub as unknown as { current_period_end: number }).current_period_end)
       }
       break
     }

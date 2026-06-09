@@ -23,7 +23,7 @@ export default function PreisePage() {
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set())
   const [importing, setImporting] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editState, setEditState] = useState<EditState>({ unit_price: '', unit: '' })
+  const [editState, setEditState] = useState<EditState>({ title: '', category: '', unit_price: '', unit: '' })
   const supabase = createClient()
 
   useEffect(() => {

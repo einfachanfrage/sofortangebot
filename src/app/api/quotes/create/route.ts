@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       notes: notes || null,
       valid_until: validUntilDate,
     })
-    .select('id, share_token')
+    .select('id, share_token, created_at')
     .single()
 
   if (quoteError || !quote) {

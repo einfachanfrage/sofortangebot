@@ -65,7 +65,8 @@ async function processCompany(
 
   // Angebote dieser Firma parallel versenden
   const emailResults = await Promise.allSettled(
-    quotes.map(quote => sendReminder(supabase, quote, company, appUrl))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    quotes.map((quote: any) => sendReminder(supabase, quote, company, appUrl))
   )
 
   return emailResults.filter(r => r.status === 'fulfilled' && r.value).length

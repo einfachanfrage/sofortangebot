@@ -102,7 +102,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   async function changeStatus(newStatus: string) {
-    setCurrentStatus(newStatus)
+    setCurrentStatus(newStatus as typeof currentStatus)
     setShowStatusPicker(false)
     await supabase.from('quotes').update({ status: newStatus }).eq('id', quote.id)
     showToast('Status aktualisiert ✓')

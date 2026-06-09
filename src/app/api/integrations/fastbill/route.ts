@@ -32,11 +32,14 @@ export async function POST(req: NextRequest) {
   const body = {
     SERVICE: 'estimate.create',
     DATA: {
-      CUSTOMER_ID: '',
       CUSTOMER_COSTCENTER_ID: '',
       CURRENCY_CODE: 'EUR',
       ITEMS: items,
-      ...(quote.customer?.fastbill_customer_id ? { CUSTOMER_ID: quote.customer.fastbill_customer_id } : quote.customer?.name ? { ORGANIZATION: quote.customer.name } : {}),
+      ...(quote.customer?.fastbill_customer_id
+        ? { CUSTOMER_ID: quote.customer.fastbill_customer_id }
+        : quote.customer?.name
+          ? { CUSTOMER_ID: '', ORGANIZATION: quote.customer.name }
+          : { CUSTOMER_ID: '' }),
     },
   }
 
