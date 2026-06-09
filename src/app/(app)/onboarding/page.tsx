@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Check, Upload, FileText, X, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
+import { Check, Upload, FileText, X, ChevronDown, ChevronUp, Loader2, Share, MoreVertical } from 'lucide-react'
 import type { AccountingSoftware } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
 import { Logo } from '@/components/Logo'
@@ -157,7 +157,8 @@ export default function OnboardingPage() {
       }
     }
 
-    router.push('/dashboard')
+    setStep(5)
+    setLoading(false)
   }
 
   const TOTAL_STEPS = 4
@@ -553,6 +554,9 @@ export default function OnboardingPage() {
         </div>
       )}
 
+      {/* ── Schritt 5: App speichern (PWA) ── */}
+      {step === 5 && <PwaOnboardingStep onDone={() => router.push('/dashboard')} />}
+
       {/* ── Schritt 4: Buchhaltung ── */}
       {step === 4 && (
         <div className="flex flex-col flex-1">
@@ -611,3 +615,94 @@ export default function OnboardingPage() {
 }
 
 const inputCls = "w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+
+function PwaOnboardingStep({ onDone }: { onDone: () => void }) {
+  const [platform, setPlatform] = useState<'ios' | 'android' | 'other' | null>(null)
+
+  useEffect(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches) { onDone(); return }
+    const ua = navigator.userAgent
+    if (/iphone|ipad|ipod/i.test(ua)) setPlatform('ios')
+    else if (/android/i.test(ua)) setPlatform('android')
+    else { onDone() }
+  }, [])
+
+  if (!platform) return null
+
+  return (
+    <div className="flex flex-col flex-1">
+      <div className="flex-1 flex flex-col justify-center">
+        <div className="text-5xl mb-5 text-center">📱</div>
+        <h1 className="text-2xl font-black text-[#2C2C2C] mb-2 text-center">
+          Fast fertig!
+        </h1>
+        <p className="text-[#2C2C2C]/50 font-semibold text-center mb-8">
+          Speicher die App auf deinem Homescreen — dann startet sie wie eine echte App, ohne Browser-Leiste.
+        </p>
+
+        <div className="bg-[#2C2C2C] rounded-2xl p-5">
+          <div className="text-[#F5C400] font-black text-sm mb-4 uppercase tracking-wide">
+            {platform === 'ios' ? 'Safari — so geht\'s' : 'Chrome — so geht\'s'}
+          </div>
+
+          {platform === 'ios' && (
+            <div className="flex flex-col gap-3">
+              <OnboardingStep n={1}>
+                Tippe unten in Safari auf das{' '}
+                <span className="inline-flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-lg">
+                  <Share size={12} color="white" />
+                  <span className="text-white font-bold text-xs">Teilen</span>
+                </span>
+                {' '}Symbol
+              </OnboardingStep>
+              <OnboardingStep n={2}>Scrolle in der Liste nach unten</OnboardingStep>
+              <OnboardingStep n={3}>Tippe auf <span className="text-white font-bold">„Zum Home-Bildschirm"</span></OnboardingStep>
+              <OnboardingStep n={4}>Oben rechts auf <span className="text-white font-bold">„Hinzufügen"</span> — fertig!</OnboardingStep>
+            </div>
+          )}
+
+          {platform === 'android' && (
+            <div className="flex flex-col gap-3">
+              <OnboardingStep n={1}>
+                Tippe in Chrome oben rechts auf{' '}
+                <span className="inline-flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-lg">
+                  <MoreVertical size={12} color="white" />
+                  <span className="text-white font-bold text-xs">Menü</span>
+                </span>
+              </OnboardingStep>
+              <OnboardingStep n={2}>Tippe auf <span className="text-white font-bold">„App installieren"</span> oder <span className="text-white font-bold">„Zum Startbildschirm"</span></OnboardingStep>
+              <OnboardingStep n={3}>Bestätige mit <span className="text-white font-bold">„Installieren"</span> — fertig!</OnboardingStep>
+            </div>
+          )}
+        </div>
+
+        <p className="text-center text-[#2C2C2C]/30 text-xs font-semibold mt-4">
+          Kannst du auch später noch machen.
+        </p>
+      </div>
+
+      <div className="pt-4 flex flex-col gap-3">
+        <button
+          onClick={onDone}
+          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-transform"
+        >
+          Los geht's →
+        </button>
+        <button onClick={onDone} className="text-center text-[#2C2C2C]/30 font-semibold text-sm py-1">
+          Überspringen
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function OnboardingStep({ n, children }: { n: number; children: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="w-6 h-6 rounded-full bg-[#F5C400] flex items-center justify-center shrink-0 font-black text-[#2C2C2C] text-xs mt-0.5">
+        {n}
+      </div>
+      <span className="text-white/70 text-sm font-semibold leading-relaxed">{children}</span>
+    </div>
+  )
+}
