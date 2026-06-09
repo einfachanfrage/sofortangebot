@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   const { data: quote } = await supabase
     .from('quotes')
-    .select('*, customer:customers(name)')
+    .select('*, customer:customers(name, email)')
     .eq('id', quoteId)
     .single()
   if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
@@ -46,6 +46,30 @@ export async function POST(req: NextRequest) {
   const totalGross = quote.total_gross.toFixed(2).replace('.', ',')
   const customerName = signedBy || quote.customer?.name || 'Kunde'
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.sofortangebot.app'
+
+  // Bestätigung an Kunden senden (wenn E-Mail vorhanden)
+  const customerEmail = quote.customer?.email
+  if (customerEmail) {
+    await resend.emails.send({
+      from: `${company.name} <angebot@sofortangebot.de>`,
+      to: [customerEmail],
+      subject: `Ihre Auftragsbestätigung – Angebot ${quoteNumber}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #2C2C2C;">
+          <div style="background: #2C2C2C; padding: 24px; border-radius: 8px 8px 0 0;">
+            <span style="background: #F5C400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">AUFTRAGSBESTÄTIGUNG</span>
+          </div>
+          <div style="background: white; padding: 32px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px;">
+            <p>Hallo ${customerName},</p>
+            <p>vielen Dank! Ihre Unterschrift wurde erfolgreich übermittelt. Wir haben Ihre Auftragsbestätigung für Angebot <strong>${quoteNumber}</strong> über <strong>${totalGross} €</strong> erhalten.</p>
+            <p>Wir melden uns bei Ihnen, um die nächsten Schritte zu besprechen.</p>
+            <br>
+            <p style="color: #666;">Mit freundlichen Grüßen,<br><strong>${company.name}</strong></p>
+          </div>
+        </div>
+      `,
+    }).catch(() => {})
+  }
 
   await resend.emails.send({
     from: `sofortangebot <info@sofortangebot.app>`,

@@ -1,0 +1,61 @@
+'use client'
+
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { useCallback } from 'react'
+import { Search } from 'lucide-react'
+
+const STATUS_TABS = [
+  { key: '', label: 'Alle' },
+  { key: 'sent', label: 'Offen' },
+  { key: 'accepted', label: 'Beauftragt' },
+  { key: 'rejected', label: 'Abgelehnt' },
+  { key: 'archived', label: 'Archiviert' },
+]
+
+export default function DashboardFilters() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const q = searchParams.get('q') ?? ''
+  const status = searchParams.get('status') ?? ''
+
+  const update = useCallback((key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (value) params.set(key, value)
+    else params.delete(key)
+    router.replace(`${pathname}?${params.toString()}`)
+  }, [router, pathname, searchParams])
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Suchfeld */}
+      <div className="relative">
+        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#2C2C2C]/30" strokeWidth={2.5} />
+        <input
+          type="search"
+          placeholder="Kunde suchen..."
+          defaultValue={q}
+          onChange={e => update('q', e.target.value)}
+          className="w-full bg-white border border-[#2C2C2C]/10 rounded-xl pl-9 pr-4 py-2.5 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400]"
+        />
+      </div>
+
+      {/* Status-Filter Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
+        {STATUS_TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => update('status', tab.key)}
+            className={`shrink-0 text-xs font-black px-3 py-1.5 rounded-full transition-colors ${
+              status === tab.key
+                ? 'bg-[#2C2C2C] text-white'
+                : 'bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}

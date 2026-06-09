@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import type { Quote } from '@/lib/types'
 import { Logo } from '@/components/Logo'
 import PwaBanner from '@/components/PwaBanner'
 import BottomNav from '@/components/BottomNav'
+import DashboardFilters from '@/components/DashboardFilters'
 import { Mic, FileText } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
@@ -29,7 +31,11 @@ function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -41,19 +47,29 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .single()
 
-  if (company && !company.name) {
-    redirect('/onboarding')
-  }
+  if (company && !company.name) redirect('/onboarding')
 
-  const { data: quotes } = await supabase
+  const { q, status } = await searchParams
+
+  let query = supabase
     .from('quotes')
     .select('*, customer:customers(name), sent_via')
     .eq('company_id', company?.id)
     .order('created_at', { ascending: false })
-    .limit(20)
 
-  const openCount = quotes?.filter(q => q.status === 'sent').length ?? 0
-  const acceptedCount = quotes?.filter(q => q.status === 'accepted').length ?? 0
+  if (status) query = query.eq('status', status)
+
+  const { data: allQuotes } = await query
+
+  // Textsuche client-seitig (Supabase ilike auf join-Felder ist umständlich)
+  const quotes = q
+    ? allQuotes?.filter(qt =>
+        (qt.customer?.name ?? '').toLowerCase().includes(q.toLowerCase())
+      )
+    : allQuotes
+
+  const openCount = allQuotes?.filter(qt => qt.status === 'sent').length ?? 0
+  const acceptedCount = allQuotes?.filter(qt => qt.status === 'accepted').length ?? 0
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
@@ -75,7 +91,7 @@ export default async function DashboardPage() {
         </div>
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-[#2C2C2C]/5">
           <div className="text-3xl font-black text-[#2C2C2C]">{acceptedCount}</div>
-          <div className="text-sm font-semibold text-[#2C2C2C]/60">Angenommen</div>
+          <div className="text-sm font-semibold text-[#2C2C2C]/60">Beauftragt</div>
         </div>
       </div>
 
@@ -90,21 +106,31 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      {/* Angebote */}
-      <div className="px-5 mt-8">
-        <h2 className="font-black text-[#2C2C2C] text-lg mb-3">Letzte Angebote</h2>
+      {/* Suche + Filter */}
+      <div className="px-5 mt-6">
+        <Suspense>
+          <DashboardFilters />
+        </Suspense>
+      </div>
 
+      {/* Angebote */}
+      <div className="px-5 mt-4">
         {!quotes?.length && (
           <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
             <FileText size={36} color="#2C2C2C" strokeWidth={1.5} className="mx-auto mb-3 opacity-20" />
-            <div className="font-bold text-[#2C2C2C]/60">Noch keine Angebote.</div>
-            <div className="text-sm text-[#2C2C2C]/40 font-semibold mt-1">Starte mit dem Mikrofon-Button oben.</div>
+            {q || status
+              ? <div className="font-bold text-[#2C2C2C]/60">Keine Treffer.</div>
+              : <>
+                  <div className="font-bold text-[#2C2C2C]/60">Noch keine Angebote.</div>
+                  <div className="text-sm text-[#2C2C2C]/40 font-semibold mt-1">Starte mit dem Mikrofon-Button oben.</div>
+                </>
+            }
           </div>
         )}
 
         <div className="flex flex-col gap-3">
           {quotes?.map((quote: Quote & { customer?: { name: string }; sent_via?: string[] }) => {
-            const status = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
+            const statusCfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
             const via = quote.sent_via ?? []
             return (
               <Link
@@ -132,8 +158,8 @@ export default async function DashboardPage() {
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <div className="font-black text-[#2C2C2C]">{formatCurrency(quote.total_gross)}</div>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${status.color}`}>
-                      {status.label}
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${statusCfg.color}`}>
+                      {statusCfg.label}
                     </span>
                   </div>
                 </div>

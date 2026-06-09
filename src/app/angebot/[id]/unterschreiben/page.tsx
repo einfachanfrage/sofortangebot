@@ -51,6 +51,12 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
         .in('status', ['sent', 'accepted'])
         .single()
       if (!q) { setLoading(false); return }
+
+      if (q.valid_until && new Date(q.valid_until) < new Date() && q.status !== 'accepted') {
+        setLoading(false)
+        setQuote({ ...q, status: 'expired' } as Quote & { status: string })
+        return
+      }
       setQuote({ ...q, items: (q.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position) })
 
       const { data: co } = await supabase.from('companies').select('name,address,vat_rate,payment_days').eq('id', q.company_id).single()
@@ -149,6 +155,16 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
         <div className="text-5xl mb-4">🔍</div>
         <div className="font-black text-[#2C2C2C] text-xl">Angebot nicht gefunden</div>
         <div className="text-[#2C2C2C]/50 font-semibold mt-2">Der Link ist ungültig oder das Angebot wurde zurückgezogen.</div>
+      </div>
+    )
+  }
+
+  if ((quote as Quote & { status: string }).status === 'expired') {
+    return (
+      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center px-5 text-center">
+        <div className="text-5xl mb-4">⏰</div>
+        <div className="font-black text-[#2C2C2C] text-xl">Angebot abgelaufen</div>
+        <div className="text-[#2C2C2C]/50 font-semibold mt-2">Die Gültigkeitsdauer dieses Angebots ist leider abgelaufen.<br />Bitte wenden Sie sich direkt an {company?.name}.</div>
       </div>
     )
   }
