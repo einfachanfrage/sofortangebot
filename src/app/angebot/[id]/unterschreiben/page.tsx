@@ -101,13 +101,25 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
     if (!hasSig || !quote) return
     setSubmitting(true)
     const canvas = canvasRef.current!
-    const sigDataUrl = canvas.toDataURL('image/png')
 
-    // Signatur als URL in Supabase Storage speichern (optional) — hier nur Status aktualisieren
+    const sigBlob: Blob = await new Promise(resolve => canvas.toBlob(b => resolve(b!), 'image/png'))
+    const filePath = `signatures/${quote.id}.png`
+
+    let signatureUrl: string | null = null
+    const { error: uploadError } = await supabase.storage
+      .from('quote-signatures')
+      .upload(filePath, sigBlob, { upsert: true, contentType: 'image/png' })
+
+    if (!uploadError) {
+      const { data } = supabase.storage.from('quote-signatures').getPublicUrl(filePath)
+      signatureUrl = data.publicUrl
+    }
+
     await supabase.from('quotes').update({
       status: 'accepted',
       signed_at: new Date().toISOString(),
       signed_by: name.trim() || quote.customer?.name || 'Kunde',
+      ...(signatureUrl && { signature_url: signatureUrl }),
     }).eq('id', quote.id)
 
     setDone(true)

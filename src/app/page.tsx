@@ -21,21 +21,17 @@ export default function LandingPage() {
 
       {/* HERO */}
       <section className="px-6 pt-10 pb-16">
-        <div className="inline-block bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-1.5 rounded-lg mb-6 tracking-wide uppercase">
-          Für Handwerker. Von einer die zugehört hat.
-        </div>
-
-        <h1 className="text-[2.8rem] font-black text-[#2C2C2C] leading-[1.0] mb-6 tracking-tight">
-          Dein Angebot<br />
-          schreibt sich<br />
+        <h1 className="text-[2.8rem] font-black text-[#2C2C2C] leading-[1.05] mb-5 tracking-tight">
+          Angebot fertig,<br />
+          bevor du<br />
           <span className="relative inline-block">
-            <span className="relative z-10">von selbst.</span>
+            <span className="relative z-10">beim Kunden weg bist.</span>
             <span className="absolute bottom-1 left-0 right-0 h-3 bg-[#F5C400] -z-0 opacity-60"></span>
           </span>
         </h1>
 
         <p className="text-[#2C2C2C]/55 font-semibold text-lg leading-relaxed mb-10 max-w-xs">
-          Beim Aufmaß kurz ins Handy reden. Fertig. Kein Laptop, kein Abendprogramm, kein Stress.
+          Aufmaß kurz einsprechen. KI macht das Angebot. Du schaust drüber und schickst es raus.
         </p>
 
         <Link
@@ -45,21 +41,21 @@ export default function LandingPage() {
           <Mic size={20} strokeWidth={2.5} />
           Jetzt kostenlos starten
         </Link>
-        <p className="text-[#2C2C2C]/30 font-semibold text-sm mt-3">Keine Kreditkarte nötig.</p>
+        <p className="text-[#2C2C2C]/30 font-semibold text-sm mt-3">Keine Kreditkarte. Kein Abo-Trick.</p>
       </section>
 
       {/* VORHER / NACHHER */}
       <section className="px-6 pb-16">
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white rounded-2xl p-5 border-2 border-[#2C2C2C]/8">
-            <div className="text-xs font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-4">Vorher</div>
+            <div className="text-xs font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-4">Früher</div>
             <div className="flex flex-col gap-3">
               {[
-                'Zettel zusammensuchen',
-                'Laptop aufmachen',
-                'Alles eintippen',
+                'Abends am Laptop',
                 'Preise nachschlagen',
-                'Fertig um 22 Uhr',
+                'Alles eintippen',
+                'Nochmal korrigieren',
+                'Um 23 Uhr fertig',
               ].map((t, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-red-100 flex items-center justify-center shrink-0">
@@ -72,14 +68,14 @@ export default function LandingPage() {
           </div>
 
           <div className="bg-[#2C2C2C] rounded-2xl p-5 border-2 border-[#2C2C2C]">
-            <div className="text-xs font-black text-[#F5C400]/70 uppercase tracking-widest mb-4">Nachher</div>
+            <div className="text-xs font-black text-[#F5C400]/70 uppercase tracking-widest mb-4">Heute</div>
             <div className="flex flex-col gap-3">
               {[
                 'Handy raus',
-                'Einmal reden',
-                'Rest passiert',
+                'Aufmaß einsprechen',
+                'KI macht den Rest',
                 'Kurz drüberschauen',
-                'Fertig um 17 Uhr',
+                'Um 17 Uhr fertig',
               ].map((t, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <CheckCircle size={14} color="#F5C400" strokeWidth={2.5} className="shrink-0" />
@@ -94,12 +90,12 @@ export default function LandingPage() {
       {/* TESTIMONIAL */}
       <section className="bg-[#F5C400] px-6 py-12">
         <div className="max-w-sm mx-auto">
-          <div className="text-[#2C2C2C]/40 font-black text-5xl leading-none mb-4">"</div>
+          <div className="text-[#2C2C2C]/30 font-black text-5xl leading-none mb-4">"</div>
           <p className="text-[#2C2C2C] font-black text-xl leading-snug mb-6">
-            Ich bin noch beim Kunden und das Angebot ist schon fertig. Das hätte ich früher nicht für möglich gehalten.
+            Ich schick das Angebot raus, während der Kunde noch in der Wohnung ist. Das ist ein anderes Niveau.
           </p>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#2C2C2C] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-[#2C2C2C] flex items-center justify-center shrink-0">
               <span className="text-[#F5C400] font-black text-sm">M</span>
             </div>
             <div>
@@ -117,23 +113,23 @@ export default function LandingPage() {
           {[
             {
               nr: '01',
-              head: 'Handy raus beim Kunden.',
-              body: 'Kein Notizbuch. Kein Laptop. Du redest einfach rein was du siehst. "Drei Zimmer, Wände und Decke, ein Zimmer Feuchtigkeitsschaden, Raufaser runter..." fertig.',
+              head: 'Handy raus, reden.',
+              body: 'Einfach loslaufen und einsprechen was du siehst. Drei Zimmer, Raufaser runter, ein Feuchtigkeitsschaden — alles so wie du es sagen würdest.',
             },
             {
               nr: '02',
-              head: 'Das Tool fragt nach was fehlt.',
-              body: 'Wie weit ist die Baustelle? Stockwerk ohne Aufzug? Lieferst du das Material? Alles was später im Angebot stehen muss wird abgehakt.',
+              head: 'KI fragt was noch fehlt.',
+              body: 'Material dabei oder Kunde? Stockwerk? Entsorgung nötig? Nur die Fragen die wirklich ins Angebot müssen. Kein Papierkram.',
             },
             {
               nr: '03',
-              head: 'Du kriegst ein fertiges Angebot.',
-              body: 'Mit allen Positionen, Mengen und deinen Preisen. Du schaust drüber, änderst was dir nicht passt, fertig.',
+              head: 'Angebot ist fertig.',
+              body: 'Alle Positionen, Mengen und Preise — mit deinen eigenen Zahlen. Du schaust kurz drüber und änderst was nicht passt.',
             },
             {
               nr: '04',
               head: 'Raus damit.',
-              body: 'PDF per Mail, Link per WhatsApp oder direkt in Lexoffice. Der Kunde kann direkt auf seinem Handy unterschreiben.',
+              body: 'PDF per Mail, Link per WhatsApp. Der Kunde unterschreibt direkt auf seinem Handy. Keine Ausdrucke, kein Hin und Her.',
             },
           ].map(s => (
             <div key={s.nr} className="flex gap-5 items-start">
@@ -150,14 +146,14 @@ export default function LandingPage() {
       {/* SETUP */}
       <section className="bg-[#2C2C2C] px-6 py-12">
         <h2 className="text-2xl font-black text-white mb-2">
-          Läuft in<br /><span className="text-[#F5C400]">3 Minuten.</span>
+          In 3 Minuten<br /><span className="text-[#F5C400]">startklar.</span>
         </h2>
-        <p className="text-white/40 font-semibold mb-8 text-sm">Kein IT. Kein Handbuch. Kein Anruf beim Support.</p>
+        <p className="text-white/40 font-semibold mb-8 text-sm">Kein IT. Kein Handbuch. Kein Support-Anruf.</p>
         <div className="flex flex-col gap-3 max-w-sm">
           {[
-            ['Gewerk auswählen', 'Maler, Elektriker, Bodenleger, alles möglich. Das Tool kennt dann deine typischen Fragen und rechnet die üblichen Aufpreise automatisch mit.'],
-            ['Deine Preise eintragen', 'Einmal hinterlegen was du pro Stunde oder pro Quadratmeter nimmst. Danach rechnet alles mit deinen Zahlen.'],
-            ['Buchhaltung verbinden', 'Lexoffice, sevDesk und andere gehen per Klick. Oder CSV runterladen wenn du DATEV nutzt.'],
+            ['Gewerk wählen', 'Maler, Elektriker, Fliesenleger — die KI kennt dann deine typischen Positionen und fragt die richtigen Rückfragen.'],
+            ['Preise hinterlegen', 'Dein Stundensatz, dein Quadratmeterpreis. Einmal eintragen, danach rechnet alles mit deinen Zahlen.'],
+            ['Buchhaltung verbinden', 'Lexoffice, sevDesk und andere per Klick. Oder CSV-Export für alles andere.'],
           ].map(([title, desc]) => (
             <div key={title} className="flex gap-3 items-start bg-white/5 rounded-2xl p-4">
               <CheckCircle size={16} color="#F5C400" strokeWidth={2.5} className="shrink-0 mt-0.5" />
@@ -172,11 +168,11 @@ export default function LandingPage() {
 
       {/* INTEGRATIONEN */}
       <section className="px-6 py-14 bg-[#F7F7F5]">
-        <h2 className="text-2xl font-black text-[#2C2C2C] mb-2">Passt zu dem was du schon nutzt.</h2>
-        <p className="text-[#2C2C2C]/45 font-semibold text-sm mb-8">Einmal verbinden und nie wieder doppelt eintippen.</p>
+        <h2 className="text-2xl font-black text-[#2C2C2C] mb-2">Passt zu deiner Software.</h2>
+        <p className="text-[#2C2C2C]/45 font-semibold text-sm mb-8">Einmal verbinden, nie wieder doppelt eintippen.</p>
 
         <div className="mb-6">
-          <div className="text-xs font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-3">Direkt verbinden</div>
+          <div className="text-xs font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-3">Direkte Anbindung</div>
           <div className="grid grid-cols-3 gap-2">
             {['Lexoffice', 'sevDesk', 'FastBill', 'Billomat', 'Papierkram', 'Easybill'].map(name => (
               <div key={name} className="bg-white rounded-xl px-3 py-3 text-center border border-[#2C2C2C]/8">
@@ -187,8 +183,8 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="mb-6">
-          <div className="text-xs font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-3">CSV Export</div>
+        <div>
+          <div className="text-xs font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-3">CSV-Export</div>
           <div className="grid grid-cols-3 gap-2">
             {['DATEV', 'Sage', 'PlanCraft'].map(name => (
               <div key={name} className="bg-white rounded-xl px-3 py-3 text-center border border-[#2C2C2C]/8">
@@ -198,13 +194,11 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-
-        <p className="text-[#2C2C2C]/35 font-semibold text-xs">Deine Software fehlt? Einfach schreiben.</p>
       </section>
 
       {/* PREISE */}
       <section className="px-6 py-14">
-        <h2 className="text-2xl font-black text-[#2C2C2C] mb-1">Was es kostet.</h2>
+        <h2 className="text-2xl font-black text-[#2C2C2C] mb-1">Klar und fair.</h2>
         <p className="text-[#2C2C2C]/40 font-semibold mb-8 text-sm">Monatlich kündbar. Keine versteckten Kosten.</p>
 
         <div className="flex flex-col gap-3 max-w-sm">
@@ -212,14 +206,21 @@ export default function LandingPage() {
             <div className="flex items-end justify-between mb-4">
               <div>
                 <div className="font-black text-[#2C2C2C] text-lg">Starter</div>
-                <div className="text-[#2C2C2C]/40 text-xs font-semibold">Erstmal ausprobieren</div>
+                <div className="text-[#2C2C2C]/40 text-xs font-semibold">Zum Reinschnuppern</div>
               </div>
               <div className="text-right">
                 <span className="text-3xl font-black text-[#2C2C2C]">9 €</span>
                 <span className="text-[#2C2C2C]/30 text-sm font-semibold"> /Monat</span>
               </div>
             </div>
-            <div className="text-[#2C2C2C]/50 font-semibold text-sm">5 Angebote im Monat · PDF · Digitale Unterschrift</div>
+            <div className="flex flex-col gap-2">
+              {['5 Angebote pro Monat', 'PDF-Download', 'Digitale Unterschrift'].map(f => (
+                <div key={f} className="flex items-center gap-2">
+                  <CheckCircle size={13} color="#2C2C2C" strokeWidth={2.5} className="opacity-30 shrink-0" />
+                  <span className="text-sm font-semibold text-[#2C2C2C]/60">{f}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="bg-[#2C2C2C] rounded-2xl p-5 relative overflow-hidden">
@@ -229,14 +230,21 @@ export default function LandingPage() {
             <div className="flex items-end justify-between mb-4">
               <div>
                 <div className="font-black text-white text-lg">Pro</div>
-                <div className="text-white/30 text-xs font-semibold">Für den täglichen Betrieb</div>
+                <div className="text-white/30 text-xs font-semibold">Für den Alltag</div>
               </div>
               <div className="text-right">
                 <span className="text-3xl font-black text-white">29 €</span>
                 <span className="text-white/30 text-sm font-semibold"> /Monat</span>
               </div>
             </div>
-            <div className="text-white/50 font-semibold text-sm">Unbegrenzte Angebote · Lexoffice · WhatsApp · alles drin</div>
+            <div className="flex flex-col gap-2">
+              {['Unbegrenzte Angebote', 'Lexoffice & sevDesk', 'WhatsApp-Versand', 'Foto-Analyse (KI)'].map(f => (
+                <div key={f} className="flex items-center gap-2">
+                  <CheckCircle size={13} color="#F5C400" strokeWidth={2.5} className="shrink-0" />
+                  <span className="text-sm font-semibold text-white/70">{f}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -244,7 +252,7 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="px-6 pb-20 text-center">
         <h2 className="text-3xl font-black text-[#2C2C2C] leading-tight mb-3">
-          Probier's beim<br />nächsten Kunden aus.
+          Beim nächsten Kunden<br />einfach ausprobieren.
         </h2>
         <p className="text-[#2C2C2C]/40 font-semibold mb-8 text-sm">Kostenlos. Keine Kreditkarte. Kein Risiko.</p>
         <Link

@@ -38,9 +38,14 @@ export default function PreisePage() {
   async function handleImportDefaults() {
     if (!companyId) return
     setImporting(true)
-    const toInsert = DEFAULT_PRICES.map(p => ({ ...p, company_id: companyId }))
-    const { data } = await supabase.from('price_items').insert(toInsert).select()
-    if (data) setItems(prev => [...prev, ...data])
+    const existingTitles = new Set(items.map(i => i.title.toLowerCase()))
+    const toInsert = DEFAULT_PRICES
+      .filter(p => !existingTitles.has(p.title.toLowerCase()))
+      .map(p => ({ ...p, company_id: companyId }))
+    if (toInsert.length > 0) {
+      const { data } = await supabase.from('price_items').insert(toInsert).select()
+      if (data) setItems(prev => [...prev, ...data])
+    }
     setImporting(false)
   }
 

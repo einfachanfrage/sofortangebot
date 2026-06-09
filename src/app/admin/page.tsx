@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { TrendingUp, Users, FileText, Euro, Crown, Zap } from 'lucide-react'
 
 interface Stats {
@@ -48,12 +49,17 @@ export default function AdminPage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const router = useRouter()
 
   useEffect(() => {
     fetch('/api/admin/stats')
-      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(r => {
+        if (r.status === 403) { router.replace('/dashboard'); return Promise.reject('forbidden') }
+        if (!r.ok) return Promise.reject(r.status)
+        return r.json()
+      })
       .then(setStats)
-      .catch(() => setError('Laden fehlgeschlagen'))
+      .catch(e => { if (e !== 'forbidden') setError('Laden fehlgeschlagen') })
       .finally(() => setLoading(false))
   }, [])
 

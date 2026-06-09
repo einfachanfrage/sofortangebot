@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     line_items: [{ price: PRICE_IDS[plan as keyof typeof PRICE_IDS], quantity: 1 }],
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?upgraded=1`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/preise`,
-    metadata: { user_id: user.id },
+    metadata: { user_id: user.id, plan },
     allow_promotion_codes: true,
     locale: 'de',
   })
