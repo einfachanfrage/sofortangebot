@@ -80,19 +80,22 @@ export async function POST(req: NextRequest) {
       model: CHAT_MODEL,
       messages: [
         { role: 'system', content: prompt },
-        { role: 'user', content: `Aufmaß:\n\n${text}\n\nAntworte NUR mit JSON, kein Markdown, keine Erklärung.` },
+        { role: 'user', content: `Aufmaß:\n\n${text}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.` },
       ],
-      response_format: { type: 'json_object' },
+      // response_format absichtlich weggelassen — macht Probleme mit Groq-Modellen
       temperature: 0.1,
-      max_tokens: 4000,
+      max_tokens: 2000,
     })
-    const raw = response.choices[0].message.content ?? '{}'
-    // JSON aus Markdown-Fences befreien falls vorhanden
-    const cleaned = raw.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim()
+    const raw = response.choices[0]?.message?.content ?? ''
+    if (!raw) return NextResponse.json({ error: 'Leere Antwort vom KI-Modell' }, { status: 500 })
+    // JSON aus Markdown-Fences befreien
+    const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim()
     const result: GeneratedQuote = JSON.parse(cleaned)
     return NextResponse.json(result)
   } catch (err) {
-    console.error('angebot-generieren error:', err)
-    return NextResponse.json({ error: 'Analyse fehlgeschlagen — bitte nochmal versuchen.' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('angebot-generieren error:', msg)
+    // Echte Fehlermeldung zurückgeben damit wir debuggen können
+    return NextResponse.json({ error: `Analyse fehlgeschlagen: ${msg}` }, { status: 500 })
   }
 }

@@ -146,7 +146,12 @@ export default function NeuesAngebotPage() {
         }
       }
     }
-    if (!r?.ok) { const d = r ? await r.json() : {}; setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
+    if (!r?.ok) {
+      const d = r ? await r.json().catch(() => ({})) : {}
+      setError(d.error ?? 'Analyse fehlgeschlagen.')
+      setStep('input')
+      return
+    }
 
     const result = await r.json()
     setItems(result.items ?? [])
