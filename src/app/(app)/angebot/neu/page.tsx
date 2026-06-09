@@ -96,7 +96,18 @@ export default function NeuesAngebotPage() {
       setLoadingMsg('Transkribiere Aufnahme...')
       const fd = new FormData()
       fd.append('audio', blob, 'aufnahme.webm')
-      const r = await fetch('/api/transkribieren', { method: 'POST', body: fd })
+      const tController = new AbortController()
+      const tTimeout = setTimeout(() => tController.abort(), 55000)
+      let r: Response
+      try {
+        r = await fetch('/api/transkribieren', { method: 'POST', body: fd, signal: tController.signal })
+      } catch {
+        clearTimeout(tTimeout)
+        setError('Transkription hat zu lange gedauert — bitte nochmal versuchen.')
+        setStep('input')
+        return
+      }
+      clearTimeout(tTimeout)
       const data = await r.json()
       if (!r.ok) { setError(data.error ?? 'Transkription fehlgeschlagen.'); setStep('input'); return }
       text = data.text
@@ -108,11 +119,23 @@ export default function NeuesAngebotPage() {
 
   async function analyseText(text: string) {
     setLoadingMsg('KI analysiert Aufmaß...')
-    const r = await fetch('/api/angebot-generieren', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-    })
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 55000)
+    let r: Response
+    try {
+      r = await fetch('/api/angebot-generieren', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+        signal: controller.signal,
+      })
+    } catch {
+      clearTimeout(timeout)
+      setError('Analyse hat zu lange gedauert — bitte nochmal versuchen.')
+      setStep('input')
+      return
+    }
+    clearTimeout(timeout)
     if (!r.ok) { const d = await r.json(); setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
 
     const result = await r.json()

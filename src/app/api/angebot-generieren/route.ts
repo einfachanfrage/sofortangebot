@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { getGewerkePromptContext } from '@/lib/gewerke'
 import { aiClient, CHAT_MODEL } from '@/lib/ai-client'
 
+// OpenAI-Analyse kann bei langen Aufmaßen >10s dauern
+export const maxDuration = 60
+
 export interface GeneratedQuestion {
   id: string
   frage: string
