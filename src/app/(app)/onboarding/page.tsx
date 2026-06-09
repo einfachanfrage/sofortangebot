@@ -150,7 +150,7 @@ export default function OnboardingPage() {
       }
     }
 
-    setStep(7)
+    setStep(6)
     setLoading(false)
   }
 
