@@ -257,7 +257,7 @@ export default function PreisePage() {
                           ) : (
                             <div className="flex items-center gap-1 shrink-0">
                               <button onClick={() => startEdit(item)} className="p-1.5">
-                                <Pencil size={15} color="#2C2C2C" strokeWidth={2} className="opacity-30" />
+                                <Pencil size={16} color="#2C2C2C" strokeWidth={2} className="opacity-60" />
                               </button>
                               <button onClick={() => handleDelete(item.id)} className="p-1.5">
                                 <Trash2 size={15} color="#ef4444" />
