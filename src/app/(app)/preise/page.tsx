@@ -3,9 +3,14 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { DEFAULT_PRICES } from '@/lib/default-prices'
-import { Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { Trash2, Plus, ChevronDown, ChevronUp, Pencil, Check, X } from 'lucide-react'
 import Link from 'next/link'
 import type { PriceItem } from '@/lib/types'
+
+interface EditState {
+  unit_price: string
+  unit: string
+}
 
 export default function PreisePage() {
   const [items, setItems] = useState<PriceItem[]>([])
@@ -15,6 +20,8 @@ export default function PreisePage() {
   const [newItem, setNewItem] = useState({ category: '', title: '', unit: 'm²', unit_price: '' })
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set())
   const [importing, setImporting] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editState, setEditState] = useState<EditState>({ unit_price: '', unit: '' })
   const supabase = createClient()
 
   useEffect(() => {
@@ -52,6 +59,23 @@ export default function PreisePage() {
   async function handleDelete(id: string) {
     await supabase.from('price_items').delete().eq('id', id)
     setItems(prev => prev.filter(i => i.id !== id))
+  }
+
+  function startEdit(item: PriceItem) {
+    setEditingId(item.id)
+    setEditState({ unit_price: String(item.unit_price), unit: item.unit })
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+  }
+
+  async function saveEdit(id: string) {
+    const unit_price = parseFloat(editState.unit_price)
+    if (isNaN(unit_price) || unit_price < 0) return
+    await supabase.from('price_items').update({ unit_price, unit: editState.unit }).eq('id', id)
+    setItems(prev => prev.map(i => i.id === id ? { ...i, unit_price, unit: editState.unit } : i))
+    setEditingId(null)
   }
 
   async function handleAdd(e: React.FormEvent) {
@@ -191,16 +215,55 @@ export default function PreisePage() {
                   {expandedCats.has(cat) && (
                     <div className="border-t border-[#2C2C2C]/5">
                       {catItems.map(item => (
-                        <div key={item.id} className="flex items-center justify-between px-4 py-3 border-b border-[#2C2C2C]/5 last:border-0">
+                        <div key={item.id} className="flex items-center gap-2 px-4 py-3 border-b border-[#2C2C2C]/5 last:border-0">
                           <div className="min-w-0 flex-1">
-                            <div className="font-semibold text-[#2C2C2C] text-sm truncate">{item.title}</div>
-                            <div className="text-xs text-[#2C2C2C]/50 font-semibold">
-                              {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit}
-                            </div>
+                            <div className="font-semibold text-[#2C2C2C] text-sm truncate mb-1">{item.title}</div>
+                            {editingId === item.id ? (
+                              <div className="flex items-center gap-2">
+                                <div className="relative">
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={editState.unit_price}
+                                    onChange={e => setEditState(s => ({ ...s, unit_price: e.target.value }))}
+                                    autoFocus
+                                    className="w-24 bg-[#F7F7F5] border-2 border-[#F5C400] rounded-lg px-2 py-1 text-[#2C2C2C] font-black text-sm focus:outline-none pr-5"
+                                  />
+                                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#2C2C2C]/40 font-bold">€</span>
+                                </div>
+                                <span className="text-xs text-[#2C2C2C]/40">/</span>
+                                <input
+                                  value={editState.unit}
+                                  onChange={e => setEditState(s => ({ ...s, unit: e.target.value }))}
+                                  className="w-14 bg-[#F7F7F5] border-2 border-[#F5C400] rounded-lg px-2 py-1 text-[#2C2C2C] font-semibold text-sm focus:outline-none"
+                                />
+                              </div>
+                            ) : (
+                              <div className="text-xs text-[#2C2C2C]/50 font-semibold">
+                                {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit}
+                              </div>
+                            )}
                           </div>
-                          <button onClick={() => handleDelete(item.id)} className="ml-3 p-2">
-                            <Trash2 size={16} color="#ef4444" />
-                          </button>
+                          {editingId === item.id ? (
+                            <div className="flex items-center gap-1 shrink-0">
+                              <button onClick={() => saveEdit(item.id)} className="p-1.5 bg-[#F5C400] rounded-lg">
+                                <Check size={14} color="#2C2C2C" strokeWidth={3} />
+                              </button>
+                              <button onClick={cancelEdit} className="p-1.5 bg-[#2C2C2C]/8 rounded-lg">
+                                <X size={14} color="#2C2C2C" strokeWidth={2.5} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1 shrink-0">
+                              <button onClick={() => startEdit(item)} className="p-1.5">
+                                <Pencil size={15} color="#2C2C2C" strokeWidth={2} className="opacity-30" />
+                              </button>
+                              <button onClick={() => handleDelete(item.id)} className="p-1.5">
+                                <Trash2 size={15} color="#ef4444" />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
