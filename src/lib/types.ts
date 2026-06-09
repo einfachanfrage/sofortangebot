@@ -28,6 +28,8 @@ export interface Company {
   accounting_software: AccountingSoftware
   gewerke: string[]
   created_at: string
+  lexoffice_api_key: string | null
+  sevdesk_api_key: string | null
 }
 
 export interface PriceItem {

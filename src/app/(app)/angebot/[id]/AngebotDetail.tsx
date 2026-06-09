@@ -48,8 +48,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [editMode, setEditMode] = useState(false)
   const [editItems, setEditItems] = useState<EditItem[]>(quote.items)
   const [saving, setSaving] = useState(false)
+  const [exportingLex, setExportingLex] = useState(false)
+  const [exportingSev, setExportingSev] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  const hasLexoffice = !!company?.lexoffice_api_key
+  const hasSevdesk = !!company?.sevdesk_api_key
 
   const status = STATUS_CONFIG[quote.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.draft
 
@@ -180,6 +185,24 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     : quote.total_net
   const totalVat = company && company.vat_rate > 0 ? totalNet * (company.vat_rate / 100) : 0
   const totalGross = totalNet + totalVat
+
+  async function handleExport(provider: 'lexoffice' | 'sevdesk') {
+    if (provider === 'lexoffice') setExportingLex(true)
+    else setExportingSev(true)
+    const r = await fetch(`/api/integrations/${provider}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quoteId: quote.id }),
+    })
+    if (provider === 'lexoffice') setExportingLex(false)
+    else setExportingSev(false)
+    if (r.ok) {
+      showToast(provider === 'lexoffice' ? 'Zu Lexoffice übertragen ✓' : 'Zu sevDesk übertragen ✓')
+    } else {
+      const err = await r.json()
+      showToast(err.error ?? 'Export fehlgeschlagen')
+    }
+  }
 
   const whatsappText = publicPdfUrl
     ? encodeURIComponent(`Hallo, anbei mein Angebot ${quoteNumber} über ${fmt(quote.total_gross)}.\n\nPDF: ${publicPdfUrl}`)
@@ -402,6 +425,39 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               <FileText size={20} strokeWidth={2.5} />
               CSV Export
             </a>
+
+            {/* Buchhaltungs-Integrationen */}
+            {(hasLexoffice || hasSevdesk) && (
+              <div className="flex flex-col gap-2">
+                <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide text-center">Buchhaltung</div>
+                {hasLexoffice && (
+                  <button
+                    onClick={() => handleExport('lexoffice')}
+                    disabled={exportingLex}
+                    className="flex items-center justify-center gap-3 w-full bg-[#0066CC]/10 border-2 border-[#0066CC]/20 text-[#0066CC] font-bold text-base rounded-2xl py-4 active:scale-95 transition-transform disabled:opacity-50"
+                  >
+                    <span className="font-black text-sm">LO</span>
+                    {exportingLex ? 'Übertrage...' : 'Zu Lexoffice exportieren'}
+                  </button>
+                )}
+                {hasSevdesk && (
+                  <button
+                    onClick={() => handleExport('sevdesk')}
+                    disabled={exportingSev}
+                    className="flex items-center justify-center gap-3 w-full bg-[#E84B3C]/10 border-2 border-[#E84B3C]/20 text-[#E84B3C] font-bold text-base rounded-2xl py-4 active:scale-95 transition-transform disabled:opacity-50"
+                  >
+                    <span className="font-black text-sm">SD</span>
+                    {exportingSev ? 'Übertrage...' : 'Zu sevDesk exportieren'}
+                  </button>
+                )}
+              </div>
+            )}
+            {!hasLexoffice && !hasSevdesk && (
+              <Link href="/einstellungen/integrationen"
+                className="flex items-center justify-center gap-2 w-full border-2 border-dashed border-[#2C2C2C]/15 text-[#2C2C2C]/40 font-bold text-sm rounded-2xl py-3">
+                + Buchhaltung verbinden
+              </Link>
+            )}
 
             {/* Unterschrift-Info wenn signiert */}
             {quote.signed_at && (

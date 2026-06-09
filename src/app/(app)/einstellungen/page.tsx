@@ -168,12 +168,22 @@ export default function EinstellungenPage() {
         </button>
       </form>
 
-      <div className="px-5 mt-4">
+      <div className="px-5 mt-4 flex flex-col gap-3">
         <Link
           href="/preise"
           className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4"
         >
           <span className="font-bold text-[#2C2C2C]">Preisdatenbank verwalten</span>
+          <span className="text-[#2C2C2C]/40">›</span>
+        </Link>
+        <Link
+          href="/einstellungen/integrationen"
+          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4"
+        >
+          <div>
+            <span className="font-bold text-[#2C2C2C]">Integrationen</span>
+            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Lexoffice, sevDesk & mehr</div>
+          </div>
           <span className="text-[#2C2C2C]/40">›</span>
         </Link>
       </div>
