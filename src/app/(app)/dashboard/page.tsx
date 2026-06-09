@@ -4,7 +4,8 @@ import Link from 'next/link'
 import type { Quote } from '@/lib/types'
 import { Logo } from '@/components/Logo'
 import PwaBanner from '@/components/PwaBanner'
-import { Mic, Home, Settings, FileText } from 'lucide-react'
+import BottomNav from '@/components/BottomNav'
+import { Mic, FileText } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   draft: { label: 'Entwurf', color: 'bg-gray-100 text-gray-600' },
@@ -125,17 +126,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/10 flex">
-        <Link href="/dashboard" className="flex-1 flex flex-col items-center py-3 text-[#F5C400]">
-          <Home size={20} strokeWidth={2.5} />
-          <span className="text-xs font-bold mt-0.5">Start</span>
-        </Link>
-        <Link href="/einstellungen" className="flex-1 flex flex-col items-center py-3 text-[#2C2C2C]/40">
-          <Settings size={20} strokeWidth={2} />
-          <span className="text-xs font-bold mt-0.5">Einstellungen</span>
-        </Link>
-      </nav>
+      <BottomNav />
     </div>
   )
 }

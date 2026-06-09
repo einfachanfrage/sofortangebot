@@ -115,12 +115,21 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
       signatureUrl = data.publicUrl
     }
 
+    const signedBy = name.trim() || quote.customer?.name || 'Kunde'
+
     await supabase.from('quotes').update({
       status: 'accepted',
       signed_at: new Date().toISOString(),
-      signed_by: name.trim() || quote.customer?.name || 'Kunde',
+      signed_by: signedBy,
       ...(signatureUrl && { signature_url: signatureUrl }),
     }).eq('id', quote.id)
+
+    // Handwerker benachrichtigen (fire & forget)
+    fetch('/api/notifications/unterschrift', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quoteId: quote.id, signedBy }),
+    }).catch(() => {})
 
     setDone(true)
     setSubmitting(false)

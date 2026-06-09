@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
-import { Check, Home, Settings } from 'lucide-react'
+import { Check } from 'lucide-react'
+import BottomNav from '@/components/BottomNav'
 
 export default function EinstellungenPage() {
   const [company, setCompany] = useState<Company | null>(null)
@@ -197,16 +198,7 @@ export default function EinstellungenPage() {
         </button>
       </div>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/10 flex">
-        <Link href="/dashboard" className="flex-1 flex flex-col items-center py-3 text-[#2C2C2C]/40">
-          <Home size={20} strokeWidth={2} />
-          <span className="text-xs font-bold mt-0.5">Start</span>
-        </Link>
-        <Link href="/einstellungen" className="flex-1 flex flex-col items-center py-3 text-[#F5C400]">
-          <Settings size={20} strokeWidth={2.5} />
-          <span className="text-xs font-bold mt-0.5">Einstellungen</span>
-        </Link>
-      </nav>
+      <BottomNav />
     </div>
   )
 }
