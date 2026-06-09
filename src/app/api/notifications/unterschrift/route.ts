@@ -45,13 +45,13 @@ export async function POST(req: NextRequest) {
   const quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
   const totalGross = quote.total_gross.toFixed(2).replace('.', ',')
   const customerName = signedBy || quote.customer?.name || 'Kunde'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.sofortangebot.app'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
 
   // Bestätigung an Kunden senden (wenn E-Mail vorhanden)
   const customerEmail = quote.customer?.email
   if (customerEmail) {
     await resend.emails.send({
-      from: `${company.name} <angebot@sofortangebot.de>`,
+      from: `${company.name} <angebot@sofortangebot.app>`,
       to: [customerEmail],
       subject: `Ihre Auftragsbestätigung – Angebot ${quoteNumber}`,
       html: `

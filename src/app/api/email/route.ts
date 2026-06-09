@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   const totalGross = quote.total_gross.toFixed(2).replace('.', ',')
 
   const { error } = await resend.emails.send({
-    from: `${company.name} <angebot@sofortangebot.de>`,
+    from: `${company.name} <angebot@sofortangebot.app>`,
     to: [to],
     subject: `Angebot ${quoteNumber} – ${totalGross} €`,
     html: `
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
           <p>anbei erhalten Sie unser Angebot über <strong>${totalGross} €</strong>.</p>
           <p>Das Angebot finden Sie im Anhang dieser E-Mail.</p>
           <p>Sie können das Angebot auch direkt online einsehen und digital unterschreiben:</p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.de'}/angebot/${quoteId}/unterschreiben"
+          <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'}/angebot/${quoteId}/unterschreiben"
              style="display:inline-block;background:#F5C400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
             Angebot online unterschreiben →
           </a>

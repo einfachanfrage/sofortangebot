@@ -44,10 +44,10 @@ export async function GET(req: NextRequest) {
       if (!customer?.email) continue
 
       const totalGross = quote.total_gross.toFixed(2).replace('.', ',')
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.de'
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
 
       const { error } = await resend.emails.send({
-        from: `${company.name} <angebot@sofortangebot.de>`,
+        from: `${company.name} <angebot@sofortangebot.app>`,
         to: [customer.email],
         subject: `Erinnerung: Ihr Angebot über ${totalGross} € wartet auf Ihre Bestätigung`,
         html: `
