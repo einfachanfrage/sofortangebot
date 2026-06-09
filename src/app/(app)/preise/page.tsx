@@ -249,16 +249,21 @@ export default function PreisePage() {
                               </div>
                             </div>
                           ) : (
-                            <div className="flex items-center justify-between px-4 py-3" onClick={() => startEdit(item)}>
+                            <div className="flex items-center justify-between px-4 py-3">
                               <div className="min-w-0 flex-1">
                                 <div className="font-semibold text-[#2C2C2C] text-sm truncate">{item.title}</div>
                                 <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">
-                                  {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit} — <span className="text-[#F5C400] font-bold">Tippen zum Bearbeiten</span>
+                                  {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit}
                                 </div>
                               </div>
-                              <button onClick={e => { e.stopPropagation(); handleDelete(item.id) }} className="ml-3 p-2 shrink-0">
-                                <Trash2 size={18} color="#ef4444" />
-                              </button>
+                              <div className="flex items-center gap-1 shrink-0 ml-2">
+                                <button onClick={() => startEdit(item)} className="p-2">
+                                  <Pencil size={17} color="#2C2C2C" strokeWidth={2} />
+                                </button>
+                                <button onClick={() => handleDelete(item.id)} className="p-2">
+                                  <Trash2 size={17} color="#ef4444" strokeWidth={2} />
+                                </button>
+                              </div>
                             </div>
                           )}
                         </div>
