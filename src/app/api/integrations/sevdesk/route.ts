@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   const { data: quote } = await supabase
     .from('quotes')
-    .select('*, items:quote_items(*), customer:customers(*)')
+    .select('*, items:quote_items(*), customer:customers(name,address,email,sevdesk_contact_id)')
     .eq('id', quoteId)
     .eq('company_id', company.id)
     .single()
@@ -35,35 +35,22 @@ export async function POST(req: NextRequest) {
   }
   const base = 'https://my.sevdesk.de/api/v1'
 
-  // Kontakt in sevDesk suchen oder anlegen
-  let contactId: string | null = null
-  if (quote.customer?.name) {
-    const search = await fetch(
-      `${base}/Contact?name=${encodeURIComponent(quote.customer.name)}&limit=1`,
-      { headers }
-    )
-    if (search.ok) {
-      const searchData = await search.json()
-      if (searchData.objects?.length > 0) {
-        contactId = searchData.objects[0].id
-      }
-    }
-
-    if (!contactId) {
-      const createContact = await fetch(`${base}/Contact`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          name: quote.customer.name,
-          customerNumber: null,
-          category: { id: '3', objectName: 'Category' },
-          objectName: 'Contact',
-        }),
-      })
-      if (createContact.ok) {
-        const cd = await createContact.json()
-        contactId = cd.objects?.id ?? null
-      }
+  // Gespeicherte Kontakt-ID nutzen oder neuen anlegen
+  let contactId: string | null = quote.customer?.sevdesk_contact_id ?? null
+  if (!contactId && quote.customer?.name) {
+    const createContact = await fetch(`${base}/Contact`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        name: quote.customer.name,
+        customerNumber: null,
+        category: { id: '3', objectName: 'Category' },
+        objectName: 'Contact',
+      }),
+    })
+    if (createContact.ok) {
+      const cd = await createContact.json()
+      contactId = cd.objects?.id ?? null
     }
   }
 

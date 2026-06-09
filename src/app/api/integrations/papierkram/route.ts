@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   const { data: quote } = await supabase
     .from('quotes')
-    .select('*, items:quote_items(*), customer:customers(*)')
+    .select('*, items:quote_items(*), customer:customers(name,papierkram_contact_id)')
     .eq('id', quoteId).eq('company_id', company.id).single()
   if (!quote) return NextResponse.json({ error: 'Angebot nicht gefunden' }, { status: 404 })
 
@@ -37,6 +37,9 @@ export async function POST(req: NextRequest) {
     title: `Angebot${quote.customer?.name ? ' für ' + quote.customer.name : ''}`,
     date: new Date().toISOString().split('T')[0],
     line_items: lineItems,
+    ...(quote.customer?.papierkram_contact_id
+      ? { contact_id: quote.customer.papierkram_contact_id }
+      : {}),
   }
 
   if (quote.valid_until) body.due_date = quote.valid_until

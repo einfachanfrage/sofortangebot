@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
   const body = await req.json()
-  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, lexofficeContactId } = body
+  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId } = body
+  const extId = externalContactId as { source: string; id: string } | null
 
   // Company + Plan laden
   const { data: company } = await supabase
@@ -64,7 +65,12 @@ export async function POST(req: NextRequest) {
         ...(customerPhone?.trim() && { phone: customerPhone.trim() }),
         ...(customerEmail?.trim() && { email: customerEmail.trim() }),
         ...(customerAddress?.trim() && { address: customerAddress.trim() }),
-        ...(lexofficeContactId && { lexoffice_contact_id: lexofficeContactId }),
+        ...(extId?.source === 'lexoffice' && { lexoffice_contact_id: extId.id }),
+        ...(extId?.source === 'sevdesk' && { sevdesk_contact_id: extId.id }),
+        ...(extId?.source === 'fastbill' && { fastbill_customer_id: extId.id }),
+        ...(extId?.source === 'billomat' && { billomat_client_id: extId.id }),
+        ...(extId?.source === 'papierkram' && { papierkram_contact_id: extId.id }),
+        ...(extId?.source === 'easybill' && { easybill_customer_id: extId.id }),
       }).eq('id', existing.id)
       customerId = existing.id
     } else {
@@ -76,7 +82,12 @@ export async function POST(req: NextRequest) {
           email: customerEmail?.trim() || null,
           phone: customerPhone?.trim() || null,
           address: customerAddress?.trim() || null,
-          lexoffice_contact_id: lexofficeContactId || null,
+          lexoffice_contact_id: extId?.source === 'lexoffice' ? extId.id : null,
+          sevdesk_contact_id: extId?.source === 'sevdesk' ? extId.id : null,
+          fastbill_customer_id: extId?.source === 'fastbill' ? extId.id : null,
+          billomat_client_id: extId?.source === 'billomat' ? extId.id : null,
+          papierkram_contact_id: extId?.source === 'papierkram' ? extId.id : null,
+          easybill_customer_id: extId?.source === 'easybill' ? extId.id : null,
         })
         .select('id')
         .single()

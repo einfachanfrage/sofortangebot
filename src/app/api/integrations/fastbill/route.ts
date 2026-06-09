@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   const { data: quote } = await supabase
     .from('quotes')
-    .select('*, items:quote_items(*), customer:customers(*)')
+    .select('*, items:quote_items(*), customer:customers(name,fastbill_customer_id)')
     .eq('id', quoteId).eq('company_id', company.id).single()
   if (!quote) return NextResponse.json({ error: 'Angebot nicht gefunden' }, { status: 404 })
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       CUSTOMER_COSTCENTER_ID: '',
       CURRENCY_CODE: 'EUR',
       ITEMS: items,
-      ...(quote.customer?.name ? { CUSTOMER_ID: '', ORGANIZATION: quote.customer.name } : {}),
+      ...(quote.customer?.fastbill_customer_id ? { CUSTOMER_ID: quote.customer.fastbill_customer_id } : quote.customer?.name ? { ORGANIZATION: quote.customer.name } : {}),
     },
   }
 
