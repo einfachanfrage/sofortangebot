@@ -215,12 +215,12 @@ export default function PreisePage() {
                   {expandedCats.has(cat) && (
                     <div className="border-t border-[#2C2C2C]/5">
                       {catItems.map(item => (
-                        <div key={item.id} className="flex items-center gap-2 px-4 py-3 border-b border-[#2C2C2C]/5 last:border-0">
-                          <div className="min-w-0 flex-1">
-                            <div className="font-semibold text-[#2C2C2C] text-sm truncate mb-1">{item.title}</div>
-                            {editingId === item.id ? (
-                              <div className="flex items-center gap-2">
-                                <div className="relative">
+                        <div key={item.id} className="border-b border-[#2C2C2C]/5 last:border-0">
+                          {editingId === item.id ? (
+                            <div className="px-4 py-3 bg-[#F5C400]/5 border-l-4 border-[#F5C400]">
+                              <div className="font-semibold text-[#2C2C2C] text-sm mb-3">{item.title}</div>
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="relative flex-1 max-w-[120px]">
                                   <input
                                     type="number"
                                     step="0.01"
@@ -228,38 +228,35 @@ export default function PreisePage() {
                                     value={editState.unit_price}
                                     onChange={e => setEditState(s => ({ ...s, unit_price: e.target.value }))}
                                     autoFocus
-                                    className="w-24 bg-[#F7F7F5] border-2 border-[#F5C400] rounded-lg px-2 py-1 text-[#2C2C2C] font-black text-sm focus:outline-none pr-5"
+                                    className="w-full bg-white border-2 border-[#F5C400] rounded-lg px-3 py-2 text-[#2C2C2C] font-black text-base focus:outline-none pr-6"
                                   />
                                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#2C2C2C]/40 font-bold">€</span>
                                 </div>
-                                <span className="text-xs text-[#2C2C2C]/40">/</span>
+                                <span className="text-sm text-[#2C2C2C]/40 font-semibold">/</span>
                                 <input
                                   value={editState.unit}
                                   onChange={e => setEditState(s => ({ ...s, unit: e.target.value }))}
-                                  className="w-14 bg-[#F7F7F5] border-2 border-[#F5C400] rounded-lg px-2 py-1 text-[#2C2C2C] font-semibold text-sm focus:outline-none"
+                                  className="w-20 bg-white border-2 border-[#F5C400] rounded-lg px-3 py-2 text-[#2C2C2C] font-semibold text-base focus:outline-none"
                                 />
                               </div>
-                            ) : (
-                              <div className="text-xs text-[#2C2C2C]/50 font-semibold">
-                                {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit}
+                              <div className="flex gap-2">
+                                <button onClick={() => saveEdit(item.id)} className="flex-1 bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl py-2.5">
+                                  Speichern
+                                </button>
+                                <button onClick={cancelEdit} className="flex-1 bg-white border-2 border-[#2C2C2C]/15 text-[#2C2C2C] font-bold text-sm rounded-xl py-2.5">
+                                  Abbrechen
+                                </button>
                               </div>
-                            )}
-                          </div>
-                          {editingId === item.id ? (
-                            <div className="flex items-center gap-1 shrink-0">
-                              <button onClick={() => saveEdit(item.id)} className="p-1.5 bg-[#F5C400] rounded-lg">
-                                <Check size={14} color="#2C2C2C" strokeWidth={3} />
-                              </button>
-                              <button onClick={cancelEdit} className="p-1.5 bg-[#2C2C2C]/8 rounded-lg">
-                                <X size={14} color="#2C2C2C" strokeWidth={2.5} />
-                              </button>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1 shrink-0">
-                              <button onClick={() => startEdit(item)} className="p-2">
-                                <Pencil size={18} color="#2C2C2C" strokeWidth={2.5} />
-                              </button>
-                              <button onClick={() => handleDelete(item.id)} className="p-2">
+                            <div className="flex items-center justify-between px-4 py-3" onClick={() => startEdit(item)}>
+                              <div className="min-w-0 flex-1">
+                                <div className="font-semibold text-[#2C2C2C] text-sm truncate">{item.title}</div>
+                                <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">
+                                  {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit} — <span className="text-[#F5C400] font-bold">Tippen zum Bearbeiten</span>
+                                </div>
+                              </div>
+                              <button onClick={e => { e.stopPropagation(); handleDelete(item.id) }} className="ml-3 p-2 shrink-0">
                                 <Trash2 size={18} color="#ef4444" />
                               </button>
                             </div>
