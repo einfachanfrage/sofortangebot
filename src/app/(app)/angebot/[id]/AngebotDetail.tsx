@@ -5,19 +5,32 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
-import { Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X, Plus } from 'lucide-react'
+import { Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X, Plus, ChevronDown } from 'lucide-react'
 
 interface Props {
-  quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string }
+  quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
   company: Company | null
   quoteNumber: string
 }
 
 const STATUS_CONFIG = {
-  draft: { label: 'Entwurf', bg: 'bg-gray-100', text: 'text-gray-600' },
-  sent: { label: 'Versendet', bg: 'bg-blue-50', text: 'text-blue-700' },
-  accepted: { label: 'Angenommen', bg: 'bg-green-50', text: 'text-green-700' },
-  rejected: { label: 'Abgelehnt', bg: 'bg-red-50', text: 'text-red-700' },
+  draft:    { label: 'Entwurf',    bg: 'bg-gray-100',  text: 'text-gray-600'  },
+  sent:     { label: 'Offen',      bg: 'bg-blue-50',   text: 'text-blue-700'  },
+  accepted: { label: 'Beauftragt', bg: 'bg-green-50',  text: 'text-green-700' },
+  rejected: { label: 'Abgelehnt', bg: 'bg-red-50',    text: 'text-red-700'   },
+  archived: { label: 'Archiviert', bg: 'bg-gray-50',   text: 'text-gray-400'  },
+}
+
+const VIA_LABELS: Record<string, string> = {
+  email: '✉️ E-Mail',
+  whatsapp: '💬 WhatsApp',
+  link: '🔗 Link',
+  lexoffice: 'Lexoffice',
+  sevdesk: 'sevDesk',
+  fastbill: 'FastBill',
+  billomat: 'Billomat',
+  papierkram: 'Papierkram',
+  easybill: 'Easybill',
 }
 
 function fmt(n: number) {
@@ -49,6 +62,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [editItems, setEditItems] = useState<EditItem[]>(quote.items)
   const [saving, setSaving] = useState(false)
   const [exporting, setExporting] = useState<string | null>(null)
+  const [showStatusPicker, setShowStatusPicker] = useState(false)
+  const [currentStatus, setCurrentStatus] = useState(quote.status)
+  const [sentVia, setSentVia] = useState<string[]>(quote.sent_via ?? [])
   const router = useRouter()
   const supabase = createClient()
 
@@ -63,7 +79,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const activeIntegrations = INTEGRATIONS.filter(i => i.active)
   const hasAnyIntegration = activeIntegrations.length > 0
 
-  const status = STATUS_CONFIG[quote.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.draft
+  const status = STATUS_CONFIG[currentStatus as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.draft
 
   // Öffentliche PDF-URL via Share-Token
   const publicPdfUrl = quote.share_token
@@ -73,6 +89,23 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   function showToast(msg: string) {
     setToast(msg)
     setTimeout(() => setToast(''), 2500)
+  }
+
+  function trackVia(via: string) {
+    if (sentVia.includes(via)) return
+    setSentVia(prev => [...prev, via])
+    fetch(`/api/quotes/${quote.id}/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ via }),
+    }).catch(() => {})
+  }
+
+  async function changeStatus(newStatus: string) {
+    setCurrentStatus(newStatus)
+    setShowStatusPicker(false)
+    await supabase.from('quotes').update({ status: newStatus }).eq('id', quote.id)
+    showToast('Status aktualisiert ✓')
   }
 
   async function handleSendEmail() {
@@ -87,6 +120,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     if (r.ok) {
       setEmailSent(true)
       setShowEmail(false)
+      setCurrentStatus('sent')
+      trackVia('email')
       await supabase.from('quotes').update({ status: 'sent' }).eq('id', quote.id)
       showToast('E-Mail versendet ✓')
     } else {
@@ -104,6 +139,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   function copyLink() {
     const link = `${window.location.origin}/angebot/${quote.id}/unterschreiben`
     navigator.clipboard.writeText(link)
+    trackVia('link')
     showToast('Link kopiert — jetzt an Kunden schicken')
   }
 
@@ -202,6 +238,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     })
     setExporting(null)
     if (r.ok) {
+      trackVia(provider)
       showToast(`Zu ${label} übertragen ✓`)
     } else {
       const err = await r.json()
@@ -231,9 +268,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="text-white/50 text-sm font-semibold mt-0.5">{fmtDate(quote.created_at)}</div>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text}`}>
+            <button
+              onClick={() => setShowStatusPicker(true)}
+              className={`flex items-center gap-1 text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text} active:scale-95 transition-transform`}
+            >
               {status.label}
-            </span>
+              <ChevronDown size={13} strokeWidth={3} />
+            </button>
             {!editMode && (
               <button
                 onClick={() => { setEditItems(quote.items); setEditMode(true) }}
@@ -246,7 +287,39 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         </div>
       </div>
 
+      {/* Status-Picker Modal */}
+      {showStatusPicker && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowStatusPicker(false)}>
+          <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
+            <div className="font-black text-[#2C2C2C] text-lg mb-4">Status ändern</div>
+            <div className="flex flex-col gap-2">
+              {(Object.entries(STATUS_CONFIG) as [string, { label: string; bg: string; text: string }][]).map(([key, cfg]) => (
+                <button
+                  key={key}
+                  onClick={() => changeStatus(key)}
+                  className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 transition-colors ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}
+                >
+                  <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
+                  {currentStatus === key && <Check size={18} color="#2C2C2C" strokeWidth={3} />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="px-5 pt-5 flex flex-col gap-4">
+        {/* Versandweg-Badges */}
+        {sentVia.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {sentVia.map(via => (
+              <span key={via} className="text-xs font-bold bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60 px-2.5 py-1 rounded-full">
+                {VIA_LABELS[via] ?? via}
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Kunde */}
         {quote.customer && (
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
@@ -389,6 +462,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
             {/* WhatsApp — mit öffentlichem Link */}
             <a href={`https://wa.me/?text=${whatsappText}`} target="_blank" rel="noopener noreferrer"
+              onClick={() => trackVia('whatsapp')}
               className="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white font-black text-lg rounded-2xl py-4 active:scale-95 transition-transform">
               <Share2 size={22} strokeWidth={3} />
               Per WhatsApp senden

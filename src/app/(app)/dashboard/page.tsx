@@ -8,10 +8,17 @@ import BottomNav from '@/components/BottomNav'
 import { Mic, FileText } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Entwurf', color: 'bg-gray-100 text-gray-600' },
-  sent: { label: 'Versendet', color: 'bg-blue-50 text-blue-700' },
-  accepted: { label: 'Angenommen', color: 'bg-green-50 text-green-700' },
-  rejected: { label: 'Abgelehnt', color: 'bg-red-50 text-red-700' },
+  draft:    { label: 'Entwurf',    color: 'bg-gray-100 text-gray-600'  },
+  sent:     { label: 'Offen',      color: 'bg-blue-50 text-blue-700'   },
+  accepted: { label: 'Beauftragt', color: 'bg-green-50 text-green-700' },
+  rejected: { label: 'Abgelehnt', color: 'bg-red-50 text-red-700'     },
+  archived: { label: 'Archiviert', color: 'bg-gray-50 text-gray-400'   },
+}
+
+const VIA_ICON: Record<string, string> = {
+  email: '✉️', whatsapp: '💬', link: '🔗',
+  lexoffice: 'LO', sevdesk: 'SD', fastbill: 'FB',
+  billomat: 'BM', papierkram: 'PK', easybill: 'EB',
 }
 
 function formatCurrency(amount: number) {
@@ -40,7 +47,7 @@ export default async function DashboardPage() {
 
   const { data: quotes } = await supabase
     .from('quotes')
-    .select('*, customer:customers(name)')
+    .select('*, customer:customers(name), sent_via')
     .eq('company_id', company?.id)
     .order('created_at', { ascending: false })
     .limit(20)
@@ -96,8 +103,9 @@ export default async function DashboardPage() {
         )}
 
         <div className="flex flex-col gap-3">
-          {quotes?.map((quote: Quote & { customer?: { name: string } }) => {
+          {quotes?.map((quote: Quote & { customer?: { name: string }; sent_via?: string[] }) => {
             const status = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
+            const via = quote.sent_via ?? []
             return (
               <Link
                 key={quote.id}
@@ -112,6 +120,15 @@ export default async function DashboardPage() {
                     <div className="text-sm text-[#2C2C2C]/50 font-semibold mt-0.5">
                       {formatDate(quote.created_at)}
                     </div>
+                    {via.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {via.map((v: string) => (
+                          <span key={v} className="text-[10px] font-black bg-[#2C2C2C]/5 text-[#2C2C2C]/50 px-1.5 py-0.5 rounded-full">
+                            {VIA_ICON[v] ?? v}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <div className="font-black text-[#2C2C2C]">{formatCurrency(quote.total_gross)}</div>
