@@ -17,6 +17,13 @@ const supabaseAdmin = createClient(
 )
 
 export async function POST(req: NextRequest) {
+  // Nur intern aufrufbar — CRON_SECRET oder interner Aufruf von /api/sign
+  const authHeader = req.headers.get('authorization')
+  const cronSecret = process.env.CRON_SECRET
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { quoteId, signedBy } = await req.json()
   if (!quoteId) return NextResponse.json({ error: 'quoteId fehlt' }, { status: 400 })
 

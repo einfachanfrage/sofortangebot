@@ -49,8 +49,11 @@ export async function POST(req: NextRequest) {
     .upload(filePath, sigBuffer, { upsert: true, contentType: 'image/png' })
 
   if (!uploadError) {
-    const { data } = supabaseAdmin.storage.from('quote-signatures').getPublicUrl(filePath)
-    signatureUrl = data.publicUrl
+    // Privater Bucket — Signed URL mit 10 Jahren Gültigkeit (für rechtliche Dokumentation)
+    const { data } = await supabaseAdmin.storage
+      .from('quote-signatures')
+      .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10)
+    signatureUrl = data?.signedUrl ?? null
   }
 
   // Angebot aktualisieren — mit IP für rechtlichen Nachweis
@@ -62,11 +65,15 @@ export async function POST(req: NextRequest) {
     ...(signatureUrl && { signature_url: signatureUrl }),
   }).eq('id', quote.id)
 
-  // Handwerker + Kunde benachrichtigen
+  // Handwerker + Kunde benachrichtigen (intern, mit Secret gesichert)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
+  const cronSecret = process.env.CRON_SECRET ?? ''
   fetch(`${appUrl}/api/notifications/unterschrift`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${cronSecret}`,
+    },
     body: JSON.stringify({ quoteId: quote.id, signedBy }),
   }).catch(() => {})
 

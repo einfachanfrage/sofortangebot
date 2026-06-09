@@ -622,15 +622,16 @@ export default function NeuesAngebotPage() {
               className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-2.5 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]" />
           </div>
 
-          {/* Summe */}
+          {/* Summe — wird nach Speichern mit MwSt. aus Einstellungen berechnet */}
           <div className="bg-[#2C2C2C] rounded-2xl p-4">
             <div className="flex justify-between text-white/50 font-semibold text-sm mb-1">
               <span>Netto</span><span>{totalNet.toFixed(2).replace('.', ',')} €</span>
             </div>
-            <div className="flex justify-between text-white font-black text-2xl">
-              <span>Gesamt</span><span>{totalNet.toFixed(2).replace('.', ',')} €</span>
+            <div className="text-white/30 text-xs font-semibold mb-2">+ MwSt. gemäß deinen Einstellungen</div>
+            <div className="flex justify-between text-white font-black text-2xl border-t border-white/10 pt-2">
+              <span>Netto gesamt</span><span>{totalNet.toFixed(2).replace('.', ',')} €</span>
             </div>
-            <div className="text-white/30 text-xs font-semibold mt-1">zzgl. MwSt. — wird im PDF ausgewiesen</div>
+            <div className="text-white/30 text-xs font-semibold mt-1">MwSt. + Brutto werden nach dem Speichern berechnet</div>
           </div>
         </div>
 

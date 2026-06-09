@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
 import { createClient } from '@/lib/supabase/server'
+import { aiClient } from '@/lib/ai-client'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -21,47 +21,43 @@ export async function POST(req: NextRequest) {
   const base64 = Buffer.from(bytes).toString('base64')
   const mimeType = image.type || 'image/jpeg'
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image_url',
-            image_url: { url: `data:${mimeType};base64,${base64}`, detail: 'high' },
-          },
-          {
-            type: 'text',
-            text: `Du bist Assistent für einen Handwerksbetrieb. Analysiere dieses Foto einer Baustelle / eines Raumes.
+  try {
+    // Vision ist nur mit OpenAI verfügbar (NEXT_PUBLIC_VISION_ENABLED steuert das im Frontend)
+    const response = await aiClient.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: { url: `data:${mimeType};base64,${base64}`, detail: 'high' },
+            },
+            {
+              type: 'text',
+              text: `Du bist Assistent für einen Handwerksbetrieb. Analysiere dieses Foto einer Baustelle / eines Raumes.
 
 Preisdatenbank:
 ${priceList || '(leer — schätze marktübliche Preise)'}
 
-Identifiziere:
-1. Was zu renovieren/reparieren ist
-2. Schätze Flächen/Mengen (grob anhand sichtbarer Proportionen)
-3. Welche Arbeiten nötig sind
+Identifiziere was zu renovieren/reparieren ist, schätze Flächen/Mengen und welche Arbeiten nötig sind.
 
 Antworte NUR mit JSON:
-{
-  "beschreibung": "Kurze Einschätzung des Fotos",
-  "items": [
-    {"title": "Bezeichnung", "description": "kurze Erläuterung", "quantity": 28, "unit": "m²", "unit_price": 8.00}
-  ]
-}`,
-          },
-        ],
-      },
-    ],
-    response_format: { type: 'json_object' },
-    max_tokens: 1000,
-  })
+{"beschreibung":"Kurze Einschätzung","items":[{"title":"Bezeichnung","description":"kurze Erläuterung","quantity":28,"unit":"m²","unit_price":8.00}]}`,
+            },
+          ],
+        },
+      ],
+      max_tokens: 1000,
+    })
 
-  try {
-    const result = JSON.parse(response.choices[0].message.content ?? '{}')
+    const raw = response.choices[0]?.message?.content ?? ''
+    const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim()
+    const result = JSON.parse(cleaned)
     return NextResponse.json(result)
-  } catch {
-    return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('foto-analyse error:', msg)
+    return NextResponse.json({ error: 'Foto-Analyse fehlgeschlagen' }, { status: 500 })
   }
 }
