@@ -119,24 +119,34 @@ export default function NeuesAngebotPage() {
 
   async function analyseText(text: string) {
     setLoadingMsg('KI analysiert Aufmaß...')
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 55000)
-    let r: Response
-    try {
-      r = await fetch('/api/angebot-generieren', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-        signal: controller.signal,
-      })
-    } catch {
-      clearTimeout(timeout)
-      setError('Analyse hat zu lange gedauert — bitte nochmal versuchen.')
-      setStep('input')
-      return
+    // Bis zu 2 Versuche (Groq Rate-Limit Recovery)
+    let r: Response | null = null
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt > 0) {
+        setLoadingMsg('Nochmal versuchen...')
+        await new Promise(res => setTimeout(res, 3000))
+      }
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 55000)
+      try {
+        r = await fetch('/api/angebot-generieren', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeout)
+        if (r.ok) break
+      } catch {
+        clearTimeout(timeout)
+        if (attempt === 1) {
+          setError('Analyse hat zu lange gedauert — bitte nochmal versuchen.')
+          setStep('input')
+          return
+        }
+      }
     }
-    clearTimeout(timeout)
-    if (!r.ok) { const d = await r.json(); setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
+    if (!r?.ok) { const d = r ? await r.json() : {}; setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
 
     const result = await r.json()
     setItems(result.items ?? [])

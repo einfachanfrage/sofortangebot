@@ -16,5 +16,6 @@ export const aiClient = isGroq
     })
 
 // Modelle je nach Provider
-export const CHAT_MODEL = isGroq ? 'llama-3.3-70b-versatile' : 'gpt-4o'
+// llama-3.1-8b-instant: 30.000 TPM (Free) vs 6.000 TPM bei 70b — besser für Prod
+export const CHAT_MODEL = isGroq ? 'llama-3.1-8b-instant' : 'gpt-4o'
 export const WHISPER_MODEL = isGroq ? 'whisper-large-v3-turbo' : 'whisper-1'
