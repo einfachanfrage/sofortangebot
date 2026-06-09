@@ -17,6 +17,7 @@ export default function EinstellungenPage() {
   const [iban, setIban] = useState('')
   const [vatRate, setVatRate] = useState<19 | 7 | 0>(19)
   const [paymentDays, setPaymentDays] = useState(14)
+  const [reminderDays, setReminderDays] = useState(3)
   const [gewerke, setGewerke] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -36,6 +37,7 @@ export default function EinstellungenPage() {
         setIban(data.iban ?? '')
         setVatRate(data.vat_rate as 19 | 7 | 0)
         setPaymentDays(data.payment_days)
+        setReminderDays(data.reminder_days ?? 3)
         setGewerke(data.gewerke ?? [])
       }
     }
@@ -51,7 +53,7 @@ export default function EinstellungenPage() {
 
     await supabase
       .from('companies')
-      .update({ name, address, tax_number: taxNumber, iban, vat_rate: vatRate, payment_days: paymentDays, gewerke })
+      .update({ name, address, tax_number: taxNumber, iban, vat_rate: vatRate, payment_days: paymentDays, reminder_days: reminderDays, gewerke })
       .eq('user_id', user.id)
 
     setSaving(false)
@@ -128,6 +130,19 @@ export default function EinstellungenPage() {
               max={90}
               className={inputClass}
             />
+          </Field>
+          <Field label="Erinnerung nach (Tage)">
+            <input
+              type="number"
+              value={reminderDays}
+              onChange={e => setReminderDays(Number(e.target.value))}
+              min={0}
+              max={30}
+              className={inputClass}
+            />
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">
+              Automatische E-Mail an Kunden, die noch nicht unterschrieben haben. 0 = deaktiviert.
+            </p>
           </Field>
         </Section>
 

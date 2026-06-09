@@ -62,7 +62,12 @@ export async function POST(req: NextRequest) {
           <p style="font-size: 16px; font-weight: 600;">Angebot ${quoteNumber}</p>
           <p>anbei erhalten Sie unser Angebot über <strong>${totalGross} €</strong>.</p>
           <p>Das Angebot finden Sie im Anhang dieser E-Mail.</p>
-          <br>
+          <p>Sie können das Angebot auch direkt online einsehen und digital unterschreiben:</p>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.de'}/angebot/${quoteId}/unterschreiben"
+             style="display:inline-block;background:#F5C400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
+            Angebot online unterschreiben →
+          </a>
+          <br><br>
           <p style="color: #666;">Mit freundlichen Grüßen,<br><strong>${company.name}</strong></p>
         </div>
       </div>

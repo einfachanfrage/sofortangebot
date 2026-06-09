@@ -3,8 +3,9 @@
 import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Mic, MicOff, Camera, Trash2, Plus, ChevronRight } from 'lucide-react'
+import { Mic, MicOff, Camera, Trash2, Plus, ChevronRight, BookOpen, X } from 'lucide-react'
 import type { GeneratedQuestion } from '@/app/api/angebot-generieren/route'
+import type { PriceItem } from '@/lib/types'
 
 interface DraftItem {
   title: string
@@ -42,6 +43,9 @@ export default function NeuesAngebotPage() {
   const [customerSuggestions, setCustomerSuggestions] = useState<{ id: string; name: string; phone: string | null; email: string | null; address?: string | null; source?: string }[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [externalContactId, setExternalContactId] = useState<{ source: string; id: string } | null>(null)
+  const [showPricePicker, setShowPricePicker] = useState(false)
+  const [priceItems, setPriceItems] = useState<PriceItem[]>([])
+  const [priceSearch, setPriceSearch] = useState('')
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -219,6 +223,24 @@ export default function NeuesAngebotPage() {
   }
   function removeItem(idx: number) { setItems(prev => prev.filter((_, i) => i !== idx)) }
   function addItem() { setItems(prev => [...prev, { title: 'Neue Position', description: '', quantity: 1, unit: 'Stk', unit_price: 0 }]) }
+
+  async function openPricePicker() {
+    if (!priceItems.length) {
+      const userId = (await supabase.auth.getUser()).data.user?.id ?? ''
+      const { data: co } = await supabase.from('companies').select('id').eq('user_id', userId).single()
+      if (co) {
+        const { data } = await supabase.from('price_items').select('*').eq('company_id', co.id).order('category').order('title')
+        setPriceItems(data ?? [])
+      }
+    }
+    setPriceSearch('')
+    setShowPricePicker(true)
+  }
+
+  function addFromPrice(p: PriceItem) {
+    setItems(prev => [...prev, { title: p.title, description: p.description ?? '', quantity: 1, unit: p.unit, unit_price: p.unit_price, kategorie: p.category }])
+    setShowPricePicker(false)
+  }
 
   // ── Speichern ──────────────────────────────────────────────────────────────
   const [limitError, setLimitError] = useState('')
@@ -479,9 +501,15 @@ export default function NeuesAngebotPage() {
           <div className="bg-white rounded-2xl border border-[#2C2C2C]/5">
             <div className="flex items-center justify-between px-4 pt-4 pb-3">
               <div className="font-black text-[#2C2C2C]">Positionen</div>
-              <button onClick={addItem} className="bg-[#F5C400] rounded-lg p-1.5">
-                <Plus size={18} color="#2C2C2C" strokeWidth={3} />
-              </button>
+              <div className="flex gap-2">
+                <button onClick={openPricePicker} className="flex items-center gap-1.5 bg-[#2C2C2C]/8 rounded-lg px-2.5 py-1.5">
+                  <BookOpen size={14} color="#2C2C2C" strokeWidth={2.5} />
+                  <span className="text-xs font-black text-[#2C2C2C]">Preisliste</span>
+                </button>
+                <button onClick={addItem} className="bg-[#F5C400] rounded-lg p-1.5">
+                  <Plus size={18} color="#2C2C2C" strokeWidth={3} />
+                </button>
+              </div>
             </div>
 
             {Object.entries(grouped).map(([cat, catItems]) => (
@@ -543,6 +571,57 @@ export default function NeuesAngebotPage() {
             <div className="text-white/30 text-xs font-semibold mt-1">zzgl. MwSt. — wird im PDF ausgewiesen</div>
           </div>
         </div>
+
+        {/* Preisdatenbank-Picker Modal */}
+        {showPricePicker && (
+          <div className="fixed inset-0 z-50 bg-black/40 flex items-end">
+            <div className="bg-white w-full rounded-t-3xl max-h-[75vh] flex flex-col">
+              <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-[#2C2C2C]/5">
+                <div className="font-black text-[#2C2C2C] text-lg">Preisliste</div>
+                <button onClick={() => setShowPricePicker(false)} className="p-1.5">
+                  <X size={20} color="#2C2C2C" />
+                </button>
+              </div>
+              <div className="px-4 py-3 border-b border-[#2C2C2C]/5">
+                <input
+                  placeholder="Suchen..."
+                  value={priceSearch}
+                  onChange={e => setPriceSearch(e.target.value)}
+                  autoFocus
+                  className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-2.5 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+                />
+              </div>
+              <div className="overflow-y-auto flex-1">
+                {priceItems.length === 0 && (
+                  <div className="px-5 py-10 text-center text-[#2C2C2C]/40 font-semibold text-sm">
+                    Noch keine Einträge in der Preisliste.<br />
+                    <a href="/preise" className="text-[#2C2C2C] font-black underline">Jetzt anlegen →</a>
+                  </div>
+                )}
+                {priceItems
+                  .filter(p => !priceSearch || p.title.toLowerCase().includes(priceSearch.toLowerCase()) || p.category.toLowerCase().includes(priceSearch.toLowerCase()))
+                  .map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => addFromPrice(p)}
+                      className="w-full text-left px-5 py-3.5 border-b border-[#2C2C2C]/5 last:border-0 active:bg-[#F5C400]/10"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="font-bold text-[#2C2C2C] text-sm">{p.title}</div>
+                          <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{p.category}</div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="font-black text-[#2C2C2C] text-sm">{p.unit_price.toFixed(2).replace('.', ',')} €</div>
+                          <div className="text-xs text-[#2C2C2C]/40 font-semibold">/ {p.unit}</div>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="fixed bottom-0 left-0 right-0 p-5 bg-[#F7F7F5] border-t border-[#2C2C2C]/10">
           {limitError && (
