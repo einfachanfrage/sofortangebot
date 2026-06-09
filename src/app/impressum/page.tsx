@@ -30,7 +30,7 @@ export default function ImpressumPage() {
           <section>
             <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Kontakt</h2>
             <p className="font-semibold leading-relaxed">
-              E-Mail: <a href="mailto:hallo@sofortangebot.de" className="text-[#F5C400] underline">hallo@sofortangebot.de</a><br />
+              E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a><br />
               <span className="text-[#2C2C2C]/40 text-xs">(E-Mail-Adresse wird nach Domain-Einrichtung ergänzt)</span>
             </p>
           </section>

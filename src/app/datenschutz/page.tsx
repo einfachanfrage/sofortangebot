@@ -24,7 +24,7 @@ export default function DatenschutzPage() {
                 Sandra Holm<br />
                 Wielandstr. 11<br />
                 12159 Berlin<br />
-                E-Mail: hallo@sofortangebot.de
+                E-Mail: hallo@sofortangebot.app
               </p>
             ),
           },
@@ -123,7 +123,7 @@ export default function DatenschutzPage() {
                   <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li>
                   <li><strong>Widerspruch</strong> gegen die Verarbeitung (Art. 21 DSGVO)</li>
                 </ul>
-                <p className="mt-3">Zur Ausübung Ihrer Rechte wenden Sie sich an: <a href="mailto:hallo@sofortangebot.de" className="text-[#F5C400] underline">hallo@sofortangebot.de</a></p>
+                <p className="mt-3">Zur Ausübung Ihrer Rechte wenden Sie sich an: <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a></p>
                 <p>Sie haben zudem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Zuständig für Berlin: <a href="https://www.datenschutz-berlin.de" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">Berliner Beauftragte für Datenschutz und Informationsfreiheit</a>.</p>
               </div>
             ),
@@ -132,7 +132,7 @@ export default function DatenschutzPage() {
             title: '8. Accountlöschung',
             content: (
               <p>
-                Sie können Ihren Account jederzeit löschen. Alle mit Ihrem Account verbundenen Daten werden dann vollständig und unwiderruflich gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Die Löschung können Sie über die Einstellungen in der App oder per E-Mail an <a href="mailto:hallo@sofortangebot.de" className="text-[#F5C400] underline">hallo@sofortangebot.de</a> beantragen.
+                Sie können Ihren Account jederzeit löschen. Alle mit Ihrem Account verbundenen Daten werden dann vollständig und unwiderruflich gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Die Löschung können Sie über die Einstellungen in der App oder per E-Mail an <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a> beantragen.
               </p>
             ),
           },
