@@ -208,20 +208,20 @@ export async function POST(req: NextRequest) {
     .replace('{PREISE}', priceList)
     .replace('{GEWERKE}', gewerkeContext || '(nicht angegeben — erkenne aus dem Aufmaß)')
 
-  const response = await aiClient.chat.completions.create({
-    model: CHAT_MODEL,
-    messages: [
-      { role: 'system', content: prompt },
-      { role: 'user', content: `Aufmaß:\n\n${text}` },
-    ],
-    response_format: { type: 'json_object' },
-    temperature: 0.1,
-  })
-
   try {
+    const response = await aiClient.chat.completions.create({
+      model: CHAT_MODEL,
+      messages: [
+        { role: 'system', content: prompt },
+        { role: 'user', content: `Aufmaß:\n\n${text}` },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.1,
+    })
     const result: GeneratedQuote = JSON.parse(response.choices[0].message.content ?? '{}')
     return NextResponse.json(result)
-  } catch {
-    return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 })
+  } catch (err) {
+    console.error('angebot-generieren error:', err)
+    return NextResponse.json({ error: 'Analyse fehlgeschlagen — bitte nochmal versuchen.' }, { status: 500 })
   }
 }

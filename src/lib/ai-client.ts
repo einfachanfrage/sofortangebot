@@ -6,9 +6,13 @@ export const aiClient = isGroq
   ? new OpenAI({
       apiKey: process.env.GROQ_API_KEY,
       baseURL: 'https://api.groq.com/openai/v1',
+      timeout: 45000,
+      maxRetries: 0,
     })
   : new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
+      timeout: 45000,
+      maxRetries: 0,
     })
 
 // Modelle je nach Provider
