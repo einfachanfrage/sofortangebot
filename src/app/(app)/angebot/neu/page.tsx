@@ -34,12 +34,14 @@ export default function NeuesAngebotPage() {
   const [customerName, setCustomerName] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
+  const [customerAddress, setCustomerAddress] = useState('')
   const [loadingMsg, setLoadingMsg] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
-  const [customerSuggestions, setCustomerSuggestions] = useState<{ id: string; name: string; phone: string | null; email: string | null }[]>([])
+  const [customerSuggestions, setCustomerSuggestions] = useState<{ id: string; name: string; phone: string | null; email: string | null; address?: string | null; source?: string }[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [lexofficeContactId, setLexofficeContactId] = useState<string | null>(null)
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -228,7 +230,7 @@ export default function NeuesAngebotPage() {
     const r = await fetch('/api/quotes/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone }),
+      body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, lexofficeContactId }),
     })
 
     const data = await r.json()
@@ -419,12 +421,19 @@ export default function NeuesAngebotPage() {
                 onChange={async e => {
                   const val = e.target.value
                   setCustomerName(val)
+                  setLexofficeContactId(null)
                   if (val.trim().length < 2) { setCustomerSuggestions([]); setShowSuggestions(false); return }
-                  const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
-                  if (!co) return
-                  const { data } = await supabase.from('customers').select('id,name,phone,email').eq('company_id', co.id).ilike('name', `${val}%`).limit(5)
-                  setCustomerSuggestions(data ?? [])
-                  setShowSuggestions((data ?? []).length > 0)
+                  const userId = (await supabase.auth.getUser()).data.user?.id ?? ''
+                  const { data: co } = await supabase.from('companies').select('id').eq('user_id', userId).single()
+                  const [ownResult, lexResult] = await Promise.all([
+                    co ? supabase.from('customers').select('id,name,phone,email,address').eq('company_id', co.id).ilike('name', `${val}%`).limit(5) : Promise.resolve({ data: [] }),
+                    fetch(`/api/integrations/lexoffice/contacts?q=${encodeURIComponent(val)}`).then(r => r.ok ? r.json() : { contacts: [] }).catch(() => ({ contacts: [] })),
+                  ])
+                  const own = (ownResult.data ?? []).map((c: { id: string; name: string; phone: string | null; email: string | null; address: string | null }) => ({ ...c, source: 'own' }))
+                  const lex = (lexResult.contacts ?? []).filter((lc: { name: string }) => !own.some((oc: { name: string }) => oc.name.toLowerCase() === lc.name.toLowerCase()))
+                  const merged = [...own, ...lex]
+                  setCustomerSuggestions(merged)
+                  setShowSuggestions(merged.length > 0)
                 }}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                 className={inputCls}
@@ -439,13 +448,21 @@ export default function NeuesAngebotPage() {
                         setCustomerName(c.name)
                         setCustomerPhone(c.phone ?? '')
                         setCustomerEmail(c.email ?? '')
+                        setCustomerAddress(c.address ?? '')
+                        if (c.source === 'lexoffice') setLexofficeContactId(c.id)
+                        else setLexofficeContactId(null)
                         setShowSuggestions(false)
                       }}
                       className="w-full text-left px-4 py-3 border-b border-[#2C2C2C]/5 last:border-0 active:bg-[#F5C400]/10"
                     >
-                      <div className="font-bold text-[#2C2C2C] text-sm">{c.name}</div>
-                      {(c.phone || c.email) && (
-                        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{c.phone || c.email}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#2C2C2C] text-sm">{c.name}</span>
+                        {c.source === 'lexoffice' && (
+                          <span className="text-[10px] font-black bg-[#0066CC]/10 text-[#0066CC] px-1.5 py-0.5 rounded">LO</span>
+                        )}
+                      </div>
+                      {(c.phone || c.email || c.address) && (
+                        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{c.address || c.phone || c.email}</div>
                       )}
                     </button>
                   ))}

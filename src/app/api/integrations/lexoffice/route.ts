@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   const { data: quote } = await supabase
     .from('quotes')
-    .select('*, items:quote_items(*), customer:customers(*)')
+    .select('*, items:quote_items(*), customer:customers(name,address,email,lexoffice_contact_id)')
     .eq('id', quoteId)
     .eq('company_id', company.id)
     .single()
@@ -52,7 +52,10 @@ export async function POST(req: NextRequest) {
     },
   }
 
-  if (quote.customer?.name) {
+  // Bestehenden Lexoffice-Kontakt verknüpfen oder Adresse übergeben
+  if (quote.customer?.lexoffice_contact_id) {
+    body.address = { contactId: quote.customer.lexoffice_contact_id }
+  } else if (quote.customer?.name) {
     body.address = {
       name: quote.customer.name,
       ...(quote.customer.address ? { street: quote.customer.address } : {}),

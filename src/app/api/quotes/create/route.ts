@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
   const body = await req.json()
-  const { items, notes, customerName, customerEmail, customerPhone } = body
+  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, lexofficeContactId } = body
 
   // Company + Plan laden
   const { data: company } = await supabase
@@ -60,13 +60,12 @@ export async function POST(req: NextRequest) {
       .maybeSingle()
 
     if (existing) {
-      // Telefon/E-Mail aktualisieren falls neu angegeben
-      if (customerPhone?.trim() || customerEmail?.trim()) {
-        await supabase.from('customers').update({
-          ...(customerPhone?.trim() && { phone: customerPhone.trim() }),
-          ...(customerEmail?.trim() && { email: customerEmail.trim() }),
-        }).eq('id', existing.id)
-      }
+      await supabase.from('customers').update({
+        ...(customerPhone?.trim() && { phone: customerPhone.trim() }),
+        ...(customerEmail?.trim() && { email: customerEmail.trim() }),
+        ...(customerAddress?.trim() && { address: customerAddress.trim() }),
+        ...(lexofficeContactId && { lexoffice_contact_id: lexofficeContactId }),
+      }).eq('id', existing.id)
       customerId = existing.id
     } else {
       const { data: newCustomer } = await supabase
@@ -76,6 +75,8 @@ export async function POST(req: NextRequest) {
           name: customerName.trim(),
           email: customerEmail?.trim() || null,
           phone: customerPhone?.trim() || null,
+          address: customerAddress?.trim() || null,
+          lexoffice_contact_id: lexofficeContactId || null,
         })
         .select('id')
         .single()
