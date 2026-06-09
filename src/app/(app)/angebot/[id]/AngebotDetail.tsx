@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
-import { Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X, Plus, ChevronDown, Copy } from 'lucide-react'
+import { Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X, Plus, ChevronDown, Copy, Mic, MicOff, Loader2 } from 'lucide-react'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -65,8 +65,95 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showStatusPicker, setShowStatusPicker] = useState(false)
   const [currentStatus, setCurrentStatus] = useState(quote.status)
   const [sentVia, setSentVia] = useState<string[]>(quote.sent_via ?? [])
+  const [voiceRecording, setVoiceRecording] = useState(false)
+  const [voiceLoading, setVoiceLoading] = useState(false)
+  const [voiceError, setVoiceError] = useState('')
+  const mediaRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
   const router = useRouter()
   const supabase = createClient()
+
+  const startVoiceRecording = useCallback(async () => {
+    setVoiceError('')
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
+        .find(m => MediaRecorder.isTypeSupported(m)) ?? ''
+      const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {})
+      chunksRef.current = []
+      mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
+      mr.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop())
+        const blob = new Blob(chunksRef.current, { type: mr.mimeType || 'audio/webm' })
+        await processVoiceAddition(blob)
+      }
+      mr.start()
+      mediaRef.current = mr
+      setVoiceRecording(true)
+    } catch {
+      setVoiceError('Mikrofon nicht verfügbar')
+    }
+  }, [editItems])
+
+  const stopVoiceRecording = useCallback(() => {
+    mediaRef.current?.stop()
+    setVoiceRecording(false)
+  }, [])
+
+  async function processVoiceAddition(blob: Blob) {
+    setVoiceLoading(true)
+    try {
+      // 1. Transkribieren
+      const fd = new FormData()
+      fd.append('audio', blob, 'aufnahme.webm')
+      const tRes = await fetch('/api/transkribieren', { method: 'POST', body: fd })
+      if (!tRes.ok) { setVoiceError('Transkription fehlgeschlagen'); setVoiceLoading(false); return }
+      const { text } = await tRes.json()
+
+      // 2. KI-Ergänzung
+      const aRes = await fetch('/api/angebot-ergänzen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          existingItems: editItems.map(i => ({ title: i.title, quantity: i.quantity, unit: i.unit, unit_price: i.unit_price })),
+          transcript: text,
+        }),
+      })
+      if (!aRes.ok) { setVoiceError('Analyse fehlgeschlagen'); setVoiceLoading(false); return }
+      const result = await aRes.json()
+
+      const newItems = (result.items ?? []) as Array<{ title: string; description?: string; quantity: number; unit: string; unit_price: number; kategorie?: string }>
+
+      setEditItems(prev => {
+        let updated = [...prev]
+        for (const ni of newItems) {
+          if (ni.title.startsWith('KORREKTUR:')) {
+            // Bestehende Position updaten
+            const cleanTitle = ni.title.replace('KORREKTUR:', '').trim()
+            const idx = updated.findIndex(e => e.title.toLowerCase() === cleanTitle.toLowerCase())
+            if (idx >= 0) {
+              updated[idx] = { ...updated[idx], quantity: ni.quantity, unit: ni.unit, unit_price: ni.unit_price, total_price: ni.quantity * ni.unit_price }
+            }
+          } else if (!updated.some(e => e.title.toLowerCase() === ni.title.toLowerCase())) {
+            // Neue Position anhängen
+            updated = [...updated, {
+              id: `new-${Date.now()}-${Math.random()}`,
+              position: (updated[updated.length - 1]?.position ?? 0) + 1,
+              title: ni.title,
+              description: ni.description ?? null,
+              quantity: ni.quantity,
+              unit: ni.unit,
+              unit_price: ni.unit_price,
+              total_price: ni.quantity * ni.unit_price,
+            }]
+          }
+        }
+        return updated
+      })
+    } finally {
+      setVoiceLoading(false)
+    }
+  }
 
   const INTEGRATIONS = [
     { id: 'lexoffice', label: 'Lexoffice', short: 'LO', color: '#0066CC', active: !!company?.lexoffice_api_key },
@@ -382,11 +469,37 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="flex items-center justify-between px-4 pt-4 pb-2">
               <div className="font-black text-[#2C2C2C]">Positionen</div>
               {editMode && (
-                <button onClick={addEditItem} className="bg-[#F5C400] rounded-lg p-1.5">
-                  <Plus size={16} color="#2C2C2C" strokeWidth={3} />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Nachsprechen-Button */}
+                  <button
+                    onPointerDown={startVoiceRecording}
+                    onPointerUp={stopVoiceRecording}
+                    onPointerLeave={stopVoiceRecording}
+                    disabled={voiceLoading}
+                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 select-none transition-colors ${
+                      voiceRecording ? 'bg-red-500 text-white' : 'bg-[#2C2C2C]/8 text-[#2C2C2C]'
+                    } disabled:opacity-40`}
+                  >
+                    {voiceLoading
+                      ? <Loader2 size={14} className="animate-spin" />
+                      : voiceRecording
+                        ? <MicOff size={14} strokeWidth={2.5} />
+                        : <Mic size={14} strokeWidth={2.5} />
+                    }
+                    <span className="text-xs font-black">
+                      {voiceLoading ? 'Analysiere...' : voiceRecording ? 'Loslassen' : 'Nachsprechen'}
+                    </span>
+                  </button>
+                  <button onClick={addEditItem} className="bg-[#F5C400] rounded-lg p-1.5">
+                    <Plus size={16} color="#2C2C2C" strokeWidth={3} />
+                  </button>
+                </div>
               )}
             </div>
+            {/* Voice-Fehler */}
+            {editMode && voiceError && (
+              <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>
+            )}
 
             {displayItems.map(item => (
               <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">

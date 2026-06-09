@@ -98,6 +98,8 @@ Antworte NUR mit JSON:
   "notizen": "Material hinzugefügt: Vinyl-Belag 88m², Trittschalldämmung, Sockelleisten. Fahrtkosten 45€."
 }`
 
+export const maxDuration = 60
+
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
