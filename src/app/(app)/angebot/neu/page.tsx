@@ -38,6 +38,8 @@ export default function NeuesAngebotPage() {
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [customerSuggestions, setCustomerSuggestions] = useState<{ id: string; name: string; phone: string | null; email: string | null }[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -410,7 +412,46 @@ export default function NeuesAngebotPage() {
           {/* Kundendaten */}
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
             <div className="font-black text-[#2C2C2C] mb-3">Kunde</div>
-            <input placeholder="Name (optional)" value={customerName} onChange={e => setCustomerName(e.target.value)} className={inputCls} />
+            <div className="relative">
+              <input
+                placeholder="Name (optional)"
+                value={customerName}
+                onChange={async e => {
+                  const val = e.target.value
+                  setCustomerName(val)
+                  if (val.trim().length < 2) { setCustomerSuggestions([]); setShowSuggestions(false); return }
+                  const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
+                  if (!co) return
+                  const { data } = await supabase.from('customers').select('id,name,phone,email').eq('company_id', co.id).ilike('name', `${val}%`).limit(5)
+                  setCustomerSuggestions(data ?? [])
+                  setShowSuggestions((data ?? []).length > 0)
+                }}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                className={inputCls}
+              />
+              {showSuggestions && (
+                <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl border-2 border-[#F5C400] shadow-lg z-50 overflow-hidden">
+                  {customerSuggestions.map(c => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onMouseDown={() => {
+                        setCustomerName(c.name)
+                        setCustomerPhone(c.phone ?? '')
+                        setCustomerEmail(c.email ?? '')
+                        setShowSuggestions(false)
+                      }}
+                      className="w-full text-left px-4 py-3 border-b border-[#2C2C2C]/5 last:border-0 active:bg-[#F5C400]/10"
+                    >
+                      <div className="font-bold text-[#2C2C2C] text-sm">{c.name}</div>
+                      {(c.phone || c.email) && (
+                        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{c.phone || c.email}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <input placeholder="Telefon (optional)" type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className={`${inputCls} mt-3`} />
             <input placeholder="E-Mail (optional)" type="email" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} className={`${inputCls} mt-3`} />
           </div>
