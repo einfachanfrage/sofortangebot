@@ -38,21 +38,30 @@ export async function POST(req: NextRequest) {
       `- ${i.title}: ${i.quantity} ${i.unit} × ${i.unit_price}€`)
     .join('\n')
 
-  const response = await aiClient.chat.completions.create({
-    model: CHAT_MODEL,
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      {
-        role: 'user',
-        content: `Bestehende Positionen im Angebot:\n${existingList}\n\nNeu eingesprochene Ergänzung:\n${transcript}\n\nWas muss ergänzt oder korrigiert werden?`,
-      },
-    ],
-    response_format: { type: 'json_object' },
-    temperature: 0.1,
-  })
+  let response
+  try {
+    response = await aiClient.chat.completions.create({
+      model: CHAT_MODEL,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        {
+          role: 'user',
+          content: `Bestehende Positionen im Angebot:\n${existingList}\n\nNeu eingesprochene Ergänzung:\n${transcript}\n\nWas muss ergänzt oder korrigiert werden? Antworte NUR mit JSON.`,
+        },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.1,
+      max_tokens: 2000,
+    })
+  } catch (err) {
+    console.error('angebot-ergänzen error:', err)
+    return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 })
+  }
 
   try {
-    const result = JSON.parse(response.choices[0].message.content ?? '{}')
+    const raw = response.choices[0].message.content ?? '{}'
+    const cleaned = raw.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim()
+    const result = JSON.parse(cleaned)
     return NextResponse.json(result)
   } catch {
     return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 })

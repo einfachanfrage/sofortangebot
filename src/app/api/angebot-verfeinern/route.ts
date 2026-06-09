@@ -111,31 +111,26 @@ export async function POST(req: NextRequest) {
     .map(([frage, antwort]) => `- ${frage}: ${antwort}`)
     .join('\n')
 
-  const response = await aiClient.chat.completions.create({
-    model: CHAT_MODEL,
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      {
-        role: 'user',
-        content: `Ursprüngliches Aufmaß: ${aufmaß}
-
-Vorläufige Positionen:
-${items.map((i: { title: string; quantity: number; unit: string; unit_price: number }) => `- ${i.title}: ${i.quantity} ${i.unit} × ${i.unit_price}€`).join('\n')}
-
-Antworten auf Rückfragen:
-${antwortText}
-
-Vervollständige das Angebot mit allen fehlenden Positionen.`,
-      },
-    ],
-    response_format: { type: 'json_object' },
-    temperature: 0.1,
-  })
-
   try {
-    const result = JSON.parse(response.choices[0].message.content ?? '{}')
+    const response = await aiClient.chat.completions.create({
+      model: CHAT_MODEL,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        {
+          role: 'user',
+          content: `Ursprüngliches Aufmaß: ${aufmaß}\n\nVorläufige Positionen:\n${items.map((i: { title: string; quantity: number; unit: string; unit_price: number }) => `- ${i.title}: ${i.quantity} ${i.unit} × ${i.unit_price}€`).join('\n')}\n\nAntworten auf Rückfragen:\n${antwortText}\n\nVervollständige das Angebot. Antworte NUR mit JSON.`,
+        },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.1,
+      max_tokens: 3000,
+    })
+    const raw = response.choices[0].message.content ?? '{}'
+    const cleaned = raw.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim()
+    const result = JSON.parse(cleaned)
     return NextResponse.json(result)
-  } catch {
+  } catch (err) {
+    console.error('angebot-verfeinern error:', err)
     return NextResponse.json({ error: 'Verfeinerung fehlgeschlagen' }, { status: 500 })
   }
 }

@@ -213,12 +213,16 @@ export async function POST(req: NextRequest) {
       model: CHAT_MODEL,
       messages: [
         { role: 'system', content: prompt },
-        { role: 'user', content: `Aufmaß:\n\n${text}` },
+        { role: 'user', content: `Aufmaß:\n\n${text}\n\nAntworte NUR mit JSON, kein Markdown, keine Erklärung.` },
       ],
       response_format: { type: 'json_object' },
       temperature: 0.1,
+      max_tokens: 4000,
     })
-    const result: GeneratedQuote = JSON.parse(response.choices[0].message.content ?? '{}')
+    const raw = response.choices[0].message.content ?? '{}'
+    // JSON aus Markdown-Fences befreien falls vorhanden
+    const cleaned = raw.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim()
+    const result: GeneratedQuote = JSON.parse(cleaned)
     return NextResponse.json(result)
   } catch (err) {
     console.error('angebot-generieren error:', err)
