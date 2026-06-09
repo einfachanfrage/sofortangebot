@@ -65,8 +65,9 @@ export async function POST(req: NextRequest) {
 
   const { data: company } = await supabase.from('companies').select('id, vat_rate, gewerke').eq('user_id', user.id).single()
   const { data: priceItems } = await supabase.from('price_items').select('*').eq('company_id', company?.id ?? '')
+  // Max 50 Einträge — Groq TPM-Limit: zu viele Preise sprengen das Token-Budget
   const priceList = priceItems?.length
-    ? priceItems.map(p => `- ${p.title} | ${p.unit} | ${p.unit_price}€ | Kategorie: ${p.category}`).join('\n')
+    ? priceItems.slice(0, 50).map(p => `- ${p.title} | ${p.unit} | ${p.unit_price}€`).join('\n')
     : '(leer — verwende marktübliche Preise)'
 
   const gewerkeContext = getGewerkePromptContext(company?.gewerke ?? [])
