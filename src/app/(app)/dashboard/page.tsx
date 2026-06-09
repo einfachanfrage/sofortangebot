@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { Quote } from '@/lib/types'
 import { Logo } from '@/components/Logo'
+import PwaBanner from '@/components/PwaBanner'
 import { Mic, Home, Settings, FileText } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
@@ -55,6 +56,8 @@ export default async function DashboardPage() {
           {company?.name || 'Mein Betrieb'}
         </div>
       </div>
+
+      <PwaBanner />
 
       {/* Stats */}
       <div className="px-5 -mt-4 grid grid-cols-2 gap-3">

@@ -30,6 +30,12 @@ export interface Company {
   created_at: string
   lexoffice_api_key: string | null
   sevdesk_api_key: string | null
+  fastbill_api_key: string | null
+  fastbill_email: string | null
+  billomat_api_key: string | null
+  billomat_subdomain: string | null
+  papierkram_api_key: string | null
+  easybill_api_key: string | null
 }
 
 export interface PriceItem {
