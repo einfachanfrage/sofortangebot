@@ -4,6 +4,9 @@ import { createElement } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { AngebotPDF } from '@/lib/pdf'
 
+// PDF-Generierung kann auf großen Angeboten >10s dauern — Vercel default wäre 10s
+export const maxDuration = 60
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const quoteId = searchParams.get('id')
@@ -29,15 +32,17 @@ export async function GET(req: NextRequest) {
 
   if (!company) return NextResponse.json({ error: 'Betrieb nicht gefunden' }, { status: 404 })
 
-  // Angebotsnummer generieren
-  const { count } = await supabase
-    .from('quotes')
-    .select('*', { count: 'exact', head: true })
-    .eq('company_id', company.id)
-    .lte('created_at', quote.created_at)
-
-  const year = new Date(quote.created_at).getFullYear()
-  const quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  // Gespeicherte Angebotsnummer bevorzugen (Punkt 3 — Race-Condition-Fix)
+  let quoteNumber = quote.quote_number as string | null
+  if (!quoteNumber) {
+    const { count } = await supabase
+      .from('quotes')
+      .select('*', { count: 'exact', head: true })
+      .eq('company_id', company.id)
+      .lte('created_at', quote.created_at)
+    const year = new Date(quote.created_at).getFullYear()
+    quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  }
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 

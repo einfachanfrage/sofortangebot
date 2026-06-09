@@ -37,7 +37,7 @@ export default function DraftQuotes({ drafts }: { drafts: DraftQuote[] }) {
   }
 
   return (
-    <div className="px-5 mt-4">
+    <div className="px-5 md:px-8 mt-4">
       <button
         onClick={() => setOpen(o => !o)}
         className="flex items-center justify-between w-full py-2"

@@ -1,56 +1,61 @@
+-- ============================================================
+-- sofortangebot.app — Vollständiges Datenbankschema
+-- Für NEUE Supabase-Projekte: dieses File komplett ausführen.
+-- Für BESTEHENDE Projekte: nur alle_migrationen.sql ausführen.
+-- ============================================================
+
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
--- Companies (Handwerker-Profile)
+-- ── Companies (Handwerker-Profile) ───────────────────────────
 create table if not exists companies (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references auth.users(id) on delete cascade not null unique,
-  name text not null default '',
-  address text not null default '',
-  tax_number text,
-  iban text,
-  logo_url text,
-  signature_url text,
-  vat_rate integer not null default 19,
-  payment_days integer not null default 14,
-  language text not null default 'de',
-  accounting_software text not null default 'none',
-  gewerke text[] not null default '{}',
-  created_at timestamptz default now()
+  id                      uuid primary key default uuid_generate_v4(),
+  user_id                 uuid references auth.users(id) on delete cascade not null unique,
+  name                    text not null default '',
+  address                 text not null default '',
+  tax_number              text,
+  ust_id                  text,                          -- USt-IdNr. (§ 14 UStG), vorrangig vor tax_number
+  iban                    text,
+  logo_url                text,
+  signature_url           text,
+  vat_rate                integer not null default 19,   -- 19 | 7 | 0 (Kleinunternehmer)
+  payment_days            integer not null default 14,
+  language                text not null default 'de',
+  accounting_software     text not null default 'none',
+  gewerke                 text[] not null default '{}',
+  agb_url                 text,                          -- Link zu AGB des Handwerkers
+  reminder_days           integer default 3,             -- 0 = deaktiviert
+  -- Buchhaltungs-API-Keys
+  lexoffice_api_key       text,
+  sevdesk_api_key         text,
+  fastbill_api_key        text,
+  fastbill_email          text,
+  billomat_api_key        text,
+  billomat_subdomain      text,
+  papierkram_api_key      text,
+  easybill_api_key        text,
+  -- Stripe / Plan
+  plan                    text not null default 'starter',
+  stripe_customer_id      text,
+  stripe_subscription_id  text,
+  plan_expires_at         timestamptz,
+  created_at              timestamptz default now()
 );
 
 alter table companies enable row level security;
 create policy "Users can manage own company" on companies
   for all using (auth.uid() = user_id);
 
--- Integrations (OAuth Tokens)
-create table if not exists integrations (
-  id uuid primary key default uuid_generate_v4(),
-  company_id uuid references companies(id) on delete cascade not null,
-  provider text not null,
-  access_token text not null,
-  refresh_token text,
-  expires_at timestamptz,
-  created_at timestamptz default now(),
-  unique(company_id, provider)
-);
-
-alter table integrations enable row level security;
-create policy "Users can manage own integrations" on integrations
-  for all using (
-    exists (select 1 from companies where id = company_id and user_id = auth.uid())
-  );
-
--- Price Items (Preisdatenbank)
+-- ── Price Items (Preisdatenbank) ──────────────────────────────
 create table if not exists price_items (
-  id uuid primary key default uuid_generate_v4(),
-  company_id uuid references companies(id) on delete cascade not null,
-  category text not null,
-  title text not null,
-  unit text not null default 'm²',
-  unit_price numeric(10,2) not null default 0,
+  id          uuid primary key default uuid_generate_v4(),
+  company_id  uuid references companies(id) on delete cascade not null,
+  category    text not null,
+  title       text not null,
+  unit        text not null default 'm²',
+  unit_price  numeric(10,2) not null default 0,
   description text,
-  created_at timestamptz default now()
+  created_at  timestamptz default now()
 );
 
 alter table price_items enable row level security;
@@ -59,15 +64,22 @@ create policy "Users can manage own price items" on price_items
     exists (select 1 from companies where id = company_id and user_id = auth.uid())
   );
 
--- Customers
+-- ── Customers ─────────────────────────────────────────────────
 create table if not exists customers (
-  id uuid primary key default uuid_generate_v4(),
-  company_id uuid references companies(id) on delete cascade not null,
-  name text not null,
-  address text,
-  email text,
-  phone text,
-  created_at timestamptz default now()
+  id                    uuid primary key default uuid_generate_v4(),
+  company_id            uuid references companies(id) on delete cascade not null,
+  name                  text not null,
+  address               text,
+  email                 text,
+  phone                 text,
+  -- Buchhaltungs-Kontakt-IDs (verhindert Duplikate beim Export)
+  lexoffice_contact_id  text,
+  sevdesk_contact_id    text,
+  fastbill_customer_id  text,
+  billomat_client_id    text,
+  papierkram_contact_id text,
+  easybill_customer_id  text,
+  created_at            timestamptz default now()
 );
 
 alter table customers enable row level security;
@@ -76,47 +88,56 @@ create policy "Users can manage own customers" on customers
     exists (select 1 from companies where id = company_id and user_id = auth.uid())
   );
 
--- Quotes (Angebote)
+-- ── Quotes (Angebote) ─────────────────────────────────────────
 create table if not exists quotes (
-  id uuid primary key default uuid_generate_v4(),
-  company_id uuid references companies(id) on delete cascade not null,
-  customer_id uuid references customers(id) on delete set null,
-  status text not null default 'draft',
-  created_at timestamptz default now(),
-  valid_until date,
-  total_net numeric(12,2) not null default 0,
-  total_vat numeric(12,2) not null default 0,
-  total_gross numeric(12,2) not null default 0,
-  notes text,
-  signed_at timestamptz,
-  signed_by text,
-  quote_number text
+  id              uuid primary key default uuid_generate_v4(),
+  company_id      uuid references companies(id) on delete cascade not null,
+  customer_id     uuid references customers(id) on delete set null,
+  status          text not null default 'draft',   -- draft | sent | accepted | rejected | archived
+  quote_number    text,                             -- z.B. "2025-0001" — beim Erstellen gesetzt
+  share_token     uuid not null default gen_random_uuid() unique,  -- für Signing-Link (nicht UUID)
+  created_at      timestamptz default now(),
+  valid_until     date,
+  total_net       numeric(12,2) not null default 0,
+  total_vat       numeric(12,2) not null default 0,
+  total_gross     numeric(12,2) not null default 0,
+  notes           text,
+  -- Unterschrift
+  signed_at       timestamptz,
+  signed_by       text,
+  signature_url   text,
+  signer_ip       text,                             -- IP-Adresse für rechtlichen Nachweis
+  -- Tracking
+  sent_via        text[] default '{}',              -- ['email','whatsapp','link',...]
+  reminder_sent_at timestamptz
 );
 
 alter table quotes enable row level security;
+
 create policy "Users can manage own quotes" on quotes
   for all using (
     exists (select 1 from companies where id = company_id and user_id = auth.uid())
   );
 
--- Public quote access for customer signing
+-- Kunden können gesendete Angebote per share_token lesen (kein auth nötig)
 create policy "Public can view sent quotes" on quotes
   for select using (status in ('sent', 'accepted', 'rejected'));
 
--- Quote Items (Positionen)
+-- ── Quote Items (Positionen) ──────────────────────────────────
 create table if not exists quote_items (
-  id uuid primary key default uuid_generate_v4(),
-  quote_id uuid references quotes(id) on delete cascade not null,
-  position integer not null,
-  title text not null,
+  id          uuid primary key default uuid_generate_v4(),
+  quote_id    uuid references quotes(id) on delete cascade not null,
+  position    integer not null,
+  title       text not null,
   description text,
-  quantity numeric(10,3) not null default 1,
-  unit text not null default 'Stk',
-  unit_price numeric(10,2) not null default 0,
+  quantity    numeric(10,3) not null default 1,
+  unit        text not null default 'Stk',
+  unit_price  numeric(10,2) not null default 0,
   total_price numeric(12,2) not null default 0
 );
 
 alter table quote_items enable row level security;
+
 create policy "Users can manage own quote items" on quote_items
   for all using (
     exists (
@@ -128,10 +149,30 @@ create policy "Users can manage own quote items" on quote_items
 
 create policy "Public can view items of sent quotes" on quote_items
   for select using (
-    exists (select 1 from quotes where id = quote_id and status in ('sent', 'accepted', 'rejected'))
+    exists (
+      select 1 from quotes where id = quote_id and status in ('sent', 'accepted', 'rejected')
+    )
   );
 
--- Function: auto-create company record after signup
+-- ── Integrations (OAuth Tokens — für zukünftige OAuth-Flows) ──
+create table if not exists integrations (
+  id            uuid primary key default uuid_generate_v4(),
+  company_id    uuid references companies(id) on delete cascade not null,
+  provider      text not null,
+  access_token  text not null,
+  refresh_token text,
+  expires_at    timestamptz,
+  created_at    timestamptz default now(),
+  unique(company_id, provider)
+);
+
+alter table integrations enable row level security;
+create policy "Users can manage own integrations" on integrations
+  for all using (
+    exists (select 1 from companies where id = company_id and user_id = auth.uid())
+  );
+
+-- ── Trigger: Company-Datensatz bei Registrierung anlegen ──────
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public
 as $$
@@ -145,3 +186,13 @@ $$;
 create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- ============================================================
+-- STORAGE BUCKETS (manuell in Supabase Dashboard anlegen)
+-- ┌─────────────────────────────────┬────────┐
+-- │ Bucket-Name                     │ Public │
+-- ├─────────────────────────────────┼────────┤
+-- │ company-logos                   │  ✓     │
+-- │ quote-signatures                │  ✓     │
+-- └─────────────────────────────────┴────────┘
+-- ============================================================

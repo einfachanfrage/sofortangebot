@@ -36,6 +36,10 @@ export interface Company {
   billomat_subdomain: string | null
   papierkram_api_key: string | null
   easybill_api_key: string | null
+  ust_id: string | null
+  agb_url: string | null
+  plan: string | null
+  reminder_days: number | null
 }
 
 export interface PriceItem {

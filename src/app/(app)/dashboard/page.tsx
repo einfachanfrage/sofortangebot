@@ -73,19 +73,34 @@ export default async function DashboardPage({
   const acceptedCount = nonDraftQuotes.filter(qt => qt.status === 'accepted').length
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-24">
-      {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+    <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-8">
+      {/* Header — mobile only (desktop hat SideNav) */}
+      <div className="md:hidden bg-[#2C2C2C] px-5 pt-12 pb-6">
         <Logo variant="dark" className="text-xl" />
         <div className="text-white font-bold mt-1 text-lg">
           {company?.name || 'Mein Betrieb'}
         </div>
       </div>
 
+      {/* Desktop Header */}
+      <div className="hidden md:flex items-center justify-between px-8 pt-8 pb-6">
+        <div>
+          <div className="text-2xl font-black text-[#2C2C2C]">{company?.name || 'Mein Betrieb'}</div>
+          <div className="text-[#2C2C2C]/40 font-semibold text-sm mt-0.5">Übersicht</div>
+        </div>
+        <Link
+          href="/angebot/neu"
+          className="flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-5 py-3 hover:bg-[#F5C400]/90 transition-colors"
+        >
+          <Mic size={16} strokeWidth={2.5} />
+          Neues Angebot
+        </Link>
+      </div>
+
       <PwaBanner />
 
       {/* Stats */}
-      <div className="px-5 -mt-4 grid grid-cols-2 gap-3">
+      <div className="px-5 md:px-8 -mt-4 md:mt-0 grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-[#2C2C2C]/5">
           <div className="text-3xl font-black text-[#2C2C2C]">{openCount}</div>
           <div className="text-sm font-semibold text-[#2C2C2C]/60">Offen</div>
@@ -94,10 +109,18 @@ export default async function DashboardPage({
           <div className="text-3xl font-black text-[#2C2C2C]">{acceptedCount}</div>
           <div className="text-sm font-semibold text-[#2C2C2C]/60">Beauftragt</div>
         </div>
+        <div className="hidden md:block bg-white rounded-2xl p-4 shadow-sm border border-[#2C2C2C]/5">
+          <div className="text-3xl font-black text-[#2C2C2C]">{nonDraftQuotes.filter(qt => qt.status === 'rejected').length}</div>
+          <div className="text-sm font-semibold text-[#2C2C2C]/60">Abgelehnt</div>
+        </div>
+        <div className="hidden md:block bg-white rounded-2xl p-4 shadow-sm border border-[#2C2C2C]/5">
+          <div className="text-3xl font-black text-[#2C2C2C]">{nonDraftQuotes.length}</div>
+          <div className="text-sm font-semibold text-[#2C2C2C]/60">Gesamt</div>
+        </div>
       </div>
 
-      {/* CTA */}
-      <div className="px-5 mt-5">
+      {/* CTA — mobile only */}
+      <div className="md:hidden px-5 mt-5">
         <Link
           href="/angebot/neu"
           className="flex items-center justify-center gap-3 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-xl rounded-2xl py-5 shadow-sm active:scale-95 transition-transform"
@@ -108,14 +131,14 @@ export default async function DashboardPage({
       </div>
 
       {/* Suche + Filter */}
-      <div className="px-5 mt-6">
+      <div className="px-5 md:px-8 mt-6">
         <Suspense>
           <DashboardFilters />
         </Suspense>
       </div>
 
       {/* Angebote */}
-      <div className="px-5 mt-4">
+      <div className="px-5 md:px-8 mt-4">
         {!quotes?.length && (
           <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
             <FileText size={36} color="#2C2C2C" strokeWidth={1.5} className="mx-auto mb-3 opacity-20" />

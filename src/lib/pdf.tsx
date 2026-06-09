@@ -128,7 +128,8 @@ interface Props {
 }
 
 export function AngebotPDF({ quote, company, quoteNumber }: Props) {
-  const vatLabel = company.vat_rate === 0 ? 'Gem. §19 UStG keine MwSt.' : `MwSt. ${company.vat_rate}%`
+  const isKleinunternehmer = company.vat_rate === 0
+  const vatLabel = isKleinunternehmer ? 'Gem. §19 UStG keine MwSt.' : `MwSt. ${company.vat_rate}%`
 
   return (
     <Document>
@@ -138,7 +139,15 @@ export function AngebotPDF({ quote, company, quoteNumber }: Props) {
           <View>
             <Text style={styles.companyName}>{company.name}</Text>
             <Text style={styles.companyAddress}>{company.address}</Text>
-            {company.tax_number && <Text style={{ ...styles.companyAddress, marginTop: 8 }}>Steuernummer: {company.tax_number}</Text>}
+            {/* Pflichtangaben § 14 UStG */}
+            {(company as Company & { ust_id?: string }).ust_id && (
+              <Text style={{ ...styles.companyAddress, marginTop: 8 }}>
+                USt-IdNr.: {(company as Company & { ust_id?: string }).ust_id}
+              </Text>
+            )}
+            {!((company as Company & { ust_id?: string }).ust_id) && company.tax_number && (
+              <Text style={{ ...styles.companyAddress, marginTop: 8 }}>Steuernummer: {company.tax_number}</Text>
+            )}
             {company.iban && <Text style={styles.companyAddress}>IBAN: {company.iban}</Text>}
           </View>
           <View>
@@ -227,6 +236,15 @@ export function AngebotPDF({ quote, company, quoteNumber }: Props) {
           </View>
         </View>
 
+        {/* Punkt 8: § 19 UStG Pflichthinweis */}
+        {isKleinunternehmer && (
+          <View style={{ marginTop: 12, padding: '8 12', backgroundColor: '#F7F7F5', borderRadius: 4 }}>
+            <Text style={{ fontSize: 8, color: '#666', lineHeight: 1.5 }}>
+              Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
+            </Text>
+          </View>
+        )}
+
         {/* Notizen */}
         {quote.notes && (
           <View style={{ marginTop: 24 }}>
@@ -249,10 +267,21 @@ export function AngebotPDF({ quote, company, quoteNumber }: Props) {
           </View>
         </View>
 
-        {/* Footer */}
+        {/* Footer — Pflichtangaben § 14 UStG */}
         <View style={styles.footer}>
-          <Text>{company.name} • {company.address?.split('\n')[0]}</Text>
-          <Text>Angebot {quoteNumber}</Text>
+          <View style={{ flex: 1 }}>
+            <Text>{company.name} • {company.address?.split('\n')[0]}</Text>
+            {(company as Company & { ust_id?: string }).ust_id && (
+              <Text style={{ marginTop: 2 }}>USt-IdNr.: {(company as Company & { ust_id?: string }).ust_id}</Text>
+            )}
+            {!(company as Company & { ust_id?: string }).ust_id && company.tax_number && (
+              <Text style={{ marginTop: 2 }}>St.-Nr.: {company.tax_number}</Text>
+            )}
+          </View>
+          <View style={{ textAlign: 'right' }}>
+            <Text>Angebot {quoteNumber}</Text>
+            {company.iban && <Text style={{ marginTop: 2 }}>IBAN: {company.iban}</Text>}
+          </View>
         </View>
       </Page>
     </Document>

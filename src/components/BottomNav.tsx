@@ -13,7 +13,7 @@ const NAV = [
 export default function BottomNav() {
   const path = usePathname()
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/10 flex z-40">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/10 flex z-40">
       {NAV.map(({ href, icon: Icon, label }) => {
         const active = path === href || (href !== '/dashboard' && path.startsWith(href))
         return (

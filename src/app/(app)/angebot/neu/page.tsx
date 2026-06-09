@@ -37,6 +37,9 @@ export default function NeuesAngebotPage() {
   const [customerEmail, setCustomerEmail] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
   const [customerAddress, setCustomerAddress] = useState('')
+  const [validUntil, setValidUntil] = useState(() => {
+    const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]
+  })
   const [loadingMsg, setLoadingMsg] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -253,7 +256,7 @@ export default function NeuesAngebotPage() {
     const r = await fetch('/api/quotes/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId }),
+      body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil }),
     })
 
     const data = await r.json()
@@ -496,6 +499,7 @@ export default function NeuesAngebotPage() {
             </div>
             <input placeholder="Telefon (optional)" type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className={`${inputCls} mt-3`} />
             <input placeholder="E-Mail (optional)" type="email" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} className={`${inputCls} mt-3`} />
+            <input placeholder="Adresse (optional)" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} className={`${inputCls} mt-3`} />
           </div>
 
           {/* Positionen — nach Kategorie */}
@@ -560,6 +564,25 @@ export default function NeuesAngebotPage() {
             rows={3}
             className="w-full bg-white border border-[#2C2C2C]/5 rounded-2xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400] resize-none"
           />
+
+          {/* Gültigkeitsdatum */}
+          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <div className="font-black text-[#2C2C2C] mb-3">Gültig bis</div>
+            <div className="flex gap-2 flex-wrap mb-3">
+              {[7, 14, 30, 60].map(days => {
+                const d = new Date(); d.setDate(d.getDate() + days)
+                const val = d.toISOString().split('T')[0]
+                return (
+                  <button key={days} onClick={() => setValidUntil(val)}
+                    className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-colors ${validUntil === val ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-[#F7F7F5] text-[#2C2C2C]/60'}`}>
+                    {days} Tage
+                  </button>
+                )
+              })}
+            </div>
+            <input type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)}
+              className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-2.5 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]" />
+          </div>
 
           {/* Summe */}
           <div className="bg-[#2C2C2C] rounded-2xl p-4">

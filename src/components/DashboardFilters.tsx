@@ -29,7 +29,7 @@ export default function DashboardFilters() {
   return (
     <div className="flex flex-col gap-3">
       {/* Suchfeld */}
-      <div className="relative">
+      <div className="relative md:max-w-sm">
         <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#2C2C2C]/30" strokeWidth={2.5} />
         <input
           type="search"

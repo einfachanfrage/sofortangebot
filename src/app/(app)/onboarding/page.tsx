@@ -29,6 +29,9 @@ export default function OnboardingPage() {
   const [address, setAddress] = useState('')
   const [selectedGewerke, setSelectedGewerke] = useState<string[]>([])
   const [accounting, setAccounting] = useState<AccountingSoftware>('none')
+  const [vatRate, setVatRate] = useState<19 | 7 | 0>(19)
+  const [paymentDays, setPaymentDays] = useState(14)
+  const [agbUrl, setAgbUrl] = useState('')
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoError, setLogoError] = useState('')
@@ -130,7 +133,7 @@ export default function OnboardingPage() {
 
     const { error: companyError } = await supabase
       .from('companies')
-      .update({ name, address, accounting_software: accounting, gewerke: selectedGewerke })
+      .update({ name, address, accounting_software: accounting, gewerke: selectedGewerke, vat_rate: vatRate, payment_days: paymentDays, agb_url: agbUrl || null })
       .eq('user_id', user.id)
 
     if (companyError) { setError('Speichern fehlgeschlagen. Bitte nochmal versuchen.'); setLoading(false); return }
@@ -215,7 +218,52 @@ export default function OnboardingPage() {
                 Wird auf dem Angebot als Absender angezeigt.
               </p>
             </div>
+            <div>
+              <label className={labelCls}>Mehrwertsteuer</label>
+              <div className="flex gap-2">
+                {([19, 7, 0] as const).map(rate => (
+                  <button key={rate} type="button" onClick={() => setVatRate(rate)}
+                    className={`flex-1 py-3 rounded-xl border-2 font-black text-sm transition-colors ${
+                      vatRate === rate ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-white text-[#2C2C2C]/60'
+                    }`}>
+                    {rate === 0 ? 'Kleinunternehmer' : `${rate} %`}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                {vatRate === 0 ? 'Keine MwSt. auf Angeboten (§ 19 UStG).' : `${vatRate} % MwSt. wird auf Angeboten ausgewiesen.`}
+              </p>
+            </div>
+            <div>
+              <label className={labelCls}>Zahlungsziel</label>
+              <div className="flex gap-2">
+                {[7, 14, 30].map(days => (
+                  <button key={days} type="button" onClick={() => setPaymentDays(days)}
+                    className={`flex-1 py-3 rounded-xl border-2 font-black text-sm transition-colors ${
+                      paymentDays === days ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-white text-[#2C2C2C]/60'
+                    }`}>
+                    {days} Tage
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                Steht als Zahlungsfrist auf jedem Angebot.
+              </p>
+            </div>
           </div>
+            <div>
+              <label className={labelCls}>Deine AGB (optional)</label>
+              <input
+                type="url"
+                placeholder="https://meinewebseite.de/agb"
+                value={agbUrl}
+                onChange={e => setAgbUrl(e.target.value)}
+                className={inputCls}
+              />
+              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                Wenn hinterlegt, müssen Kunden beim Unterschreiben deinen AGB zustimmen — rechtlich sauberer.
+              </p>
+            </div>
           <div className="mt-auto pt-8">
             <button onClick={() => setStep(2)} disabled={!name.trim()}
               className={btnPrimary}>

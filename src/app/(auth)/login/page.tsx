@@ -46,14 +46,21 @@ export default function LoginPage() {
           required
           className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
         />
-        <input
-          type="password"
-          placeholder="Passwort"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
-        />
+        <div>
+          <input
+            type="password"
+            placeholder="Passwort"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+            className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+          />
+          <div className="text-right mt-1.5">
+            <Link href="/passwort-vergessen" className="text-sm font-semibold text-[#2C2C2C]/40 hover:text-[#2C2C2C] transition-colors">
+              Passwort vergessen?
+            </Link>
+          </div>
+        </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold">

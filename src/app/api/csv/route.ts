@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+export const maxDuration = 30
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const quoteId = searchParams.get('id')
@@ -20,9 +22,12 @@ export async function GET(req: NextRequest) {
 
   const { data: company } = await supabase.from('companies').select('name').eq('id', quote.company_id).single()
 
-  const { count } = await supabase.from('quotes').select('*', { count: 'exact', head: true }).eq('company_id', quote.company_id).lte('created_at', quote.created_at)
-  const year = new Date(quote.created_at).getFullYear()
-  const quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  let quoteNumber = (quote as { quote_number?: string }).quote_number ?? ''
+  if (!quoteNumber) {
+    const { count } = await supabase.from('quotes').select('*', { count: 'exact', head: true }).eq('company_id', quote.company_id).lte('created_at', quote.created_at)
+    const year = new Date(quote.created_at).getFullYear()
+    quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  }
 
   const items = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 

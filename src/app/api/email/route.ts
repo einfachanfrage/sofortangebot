@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { renderToBuffer } from '@react-pdf/renderer'
+
+// E-Mail mit PDF-Anhang: PDF-Rendering kann >10s dauern
+export const maxDuration = 60
 import { createElement } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { AngebotPDF } from '@/lib/pdf'
@@ -17,7 +20,7 @@ export async function POST(req: NextRequest) {
 
   const { data: quote } = await supabase
     .from('quotes')
-    .select('*, items:quote_items(*), customer:customers(*)')
+    .select('*, items:quote_items(*), customer:customers(*), share_token')
     .eq('id', quoteId)
     .single()
 
@@ -29,14 +32,16 @@ export async function POST(req: NextRequest) {
 
   if (!quote || !company) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
 
-  const { count } = await supabase
-    .from('quotes')
-    .select('*', { count: 'exact', head: true })
-    .eq('company_id', company.id)
-    .lte('created_at', quote.created_at)
-
-  const year = new Date(quote.created_at).getFullYear()
-  const quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  let quoteNumber = (quote as { quote_number?: string }).quote_number ?? ''
+  if (!quoteNumber) {
+    const { count } = await supabase
+      .from('quotes')
+      .select('*', { count: 'exact', head: true })
+      .eq('company_id', company.id)
+      .lte('created_at', quote.created_at)
+    const year = new Date(quote.created_at).getFullYear()
+    quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  }
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 
@@ -63,12 +68,15 @@ export async function POST(req: NextRequest) {
           <p>anbei erhalten Sie unser Angebot über <strong>${totalGross} €</strong>.</p>
           <p>Das Angebot finden Sie im Anhang dieser E-Mail.</p>
           <p>Sie können das Angebot auch direkt online einsehen und digital unterschreiben:</p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'}/angebot/${quoteId}/unterschreiben"
+          <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'}/angebot/${quote.share_token ?? quoteId}/unterschreiben"
              style="display:inline-block;background:#F5C400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
             Angebot online unterschreiben →
           </a>
           <br><br>
           <p style="color: #666;">Mit freundlichen Grüßen,<br><strong>${company.name}</strong></p>
+        </div>
+        <div style="padding: 16px 32px; border-top: 1px solid #eee; text-align: center;">
+          <p style="color: #bbb; font-size: 11px; margin: 0;">Versendet über <a href="https://sofortangebot.app" style="color: #bbb;">sofortangebot.app</a> im Auftrag von ${company.name}</p>
         </div>
       </div>
     `,

@@ -8,6 +8,8 @@ import Link from 'next/link'
 import type { PriceItem } from '@/lib/types'
 
 interface EditState {
+  title: string
+  category: string
   unit_price: string
   unit: string
 }
@@ -63,7 +65,7 @@ export default function PreisePage() {
 
   function startEdit(item: PriceItem) {
     setEditingId(item.id)
-    setEditState({ unit_price: String(item.unit_price), unit: item.unit })
+    setEditState({ title: item.title, category: item.category, unit_price: String(item.unit_price), unit: item.unit })
   }
 
   function cancelEdit() {
@@ -73,8 +75,9 @@ export default function PreisePage() {
   async function saveEdit(id: string) {
     const unit_price = parseFloat(editState.unit_price)
     if (isNaN(unit_price) || unit_price < 0) return
-    await supabase.from('price_items').update({ unit_price, unit: editState.unit }).eq('id', id)
-    setItems(prev => prev.map(i => i.id === id ? { ...i, unit_price, unit: editState.unit } : i))
+    const { title, category, unit } = editState
+    await supabase.from('price_items').update({ title, category, unit_price, unit }).eq('id', id)
+    setItems(prev => prev.map(i => i.id === id ? { ...i, title, category, unit_price, unit } : i))
     setEditingId(null)
   }
 
@@ -218,7 +221,21 @@ export default function PreisePage() {
                         <div key={item.id} className="border-b border-[#2C2C2C]/5 last:border-0">
                           {editingId === item.id ? (
                             <div className="px-4 py-3 bg-[#F5C400]/5 border-l-4 border-[#F5C400]">
-                              <div className="font-semibold text-[#2C2C2C] text-sm mb-3">{item.title}</div>
+                              <div className="flex flex-col gap-2 mb-3">
+                                <input
+                                  value={editState.title}
+                                  onChange={e => setEditState(s => ({ ...s, title: e.target.value }))}
+                                  autoFocus
+                                  placeholder="Bezeichnung"
+                                  className="w-full bg-white border-2 border-[#F5C400] rounded-lg px-3 py-2 text-[#2C2C2C] font-bold text-sm focus:outline-none"
+                                />
+                                <input
+                                  value={editState.category}
+                                  onChange={e => setEditState(s => ({ ...s, category: e.target.value }))}
+                                  placeholder="Gewerk / Kategorie"
+                                  className="w-full bg-white border-2 border-[#2C2C2C]/15 rounded-lg px-3 py-2 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400]"
+                                />
+                              </div>
                               <div className="flex items-center gap-2 mb-3">
                                 <div className="relative flex-1 max-w-[120px]">
                                   <input
@@ -227,7 +244,6 @@ export default function PreisePage() {
                                     min="0"
                                     value={editState.unit_price}
                                     onChange={e => setEditState(s => ({ ...s, unit_price: e.target.value }))}
-                                    autoFocus
                                     className="w-full bg-white border-2 border-[#F5C400] rounded-lg px-3 py-2 text-[#2C2C2C] font-black text-base focus:outline-none pr-6"
                                   />
                                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#2C2C2C]/40 font-bold">€</span>

@@ -1,53 +1,76 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
-import { createClient } from '@/lib/supabase/server'
+import { renderToBuffer } from '@react-pdf/renderer'
+import { createElement } from 'react'
+import { createClient } from '@supabase/supabase-js'
+import { AngebotPDF } from '@/lib/pdf'
+
+// PDF-Generierung kann länger dauern
+export const maxDuration = 60
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+// Service-Role-Client: auth.admin.getUserById braucht Service Role
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
   const { quoteId, signedBy } = await req.json()
   if (!quoteId) return NextResponse.json({ error: 'quoteId fehlt' }, { status: 400 })
 
-  const { data: quote } = await supabase
+  const { data: quote } = await supabaseAdmin
     .from('quotes')
-    .select('*, customer:customers(name, email)')
+    .select('*, items:quote_items(*), customer:customers(*), share_token')
     .eq('id', quoteId)
     .single()
   if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
 
-  const { data: company } = await supabase
+  const { data: company } = await supabaseAdmin
     .from('companies')
-    .select('name')
+    .select('*')
     .eq('id', quote.company_id)
     .single()
   if (!company) return NextResponse.json({ ok: true })
 
-  // E-Mail-Adresse des Betriebsinhabers über user_id der company
-  const { data: companyWithUser } = await supabase
-    .from('companies')
-    .select('user_id')
-    .eq('id', quote.company_id)
-    .single()
-  if (!companyWithUser) return NextResponse.json({ ok: true })
-
-  const { data: { user } } = await supabase.auth.admin.getUserById(companyWithUser.user_id)
+  // E-Mail-Adresse des Betriebsinhabers
+  const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(company.user_id)
   const ownerEmail = user?.email
   if (!ownerEmail) return NextResponse.json({ ok: true })
 
-  const { count } = await supabase
-    .from('quotes')
-    .select('*', { count: 'exact', head: true })
-    .eq('company_id', quote.company_id)
-    .lte('created_at', quote.created_at)
+  // Angebotsnummer bestimmen
+  let quoteNumber = (quote as { quote_number?: string }).quote_number ?? ''
+  if (!quoteNumber) {
+    const { count } = await supabaseAdmin
+      .from('quotes')
+      .select('*', { count: 'exact', head: true })
+      .eq('company_id', quote.company_id)
+      .lte('created_at', quote.created_at)
+    const year = new Date(quote.created_at).getFullYear()
+    quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  }
 
-  const year = new Date(quote.created_at).getFullYear()
-  const quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
   const totalGross = quote.total_gross.toFixed(2).replace('.', ',')
   const customerName = signedBy || quote.customer?.name || 'Kunde'
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
+  const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 
-  // Bestätigung an Kunden senden (wenn E-Mail vorhanden)
+  // PDF generieren
+  let pdfBuffer: Buffer | null = null
+  try {
+    // @ts-expect-error react-pdf renderToBuffer typing mismatch
+    const buf = await renderToBuffer(createElement(AngebotPDF, {
+      quote: { ...quote, items: sortedItems },
+      company,
+      quoteNumber,
+    }))
+    pdfBuffer = Buffer.from(buf)
+  } catch {
+    // PDF-Fehler darf Benachrichtigung nicht blockieren
+  }
+
+  // Bestätigung an Kunden (mit PDF wenn vorhanden)
   const customerEmail = quote.customer?.email
   if (customerEmail) {
     await resend.emails.send({
@@ -60,17 +83,27 @@ export async function POST(req: NextRequest) {
             <span style="background: #F5C400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">AUFTRAGSBESTÄTIGUNG</span>
           </div>
           <div style="background: white; padding: 32px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px;">
-            <p>Hallo ${customerName},</p>
-            <p>vielen Dank! Ihre Unterschrift wurde erfolgreich übermittelt. Wir haben Ihre Auftragsbestätigung für Angebot <strong>${quoteNumber}</strong> über <strong>${totalGross} €</strong> erhalten.</p>
-            <p>Wir melden uns bei Ihnen, um die nächsten Schritte zu besprechen.</p>
-            <br>
-            <p style="color: #666;">Mit freundlichen Grüßen,<br><strong>${company.name}</strong></p>
+            <p style="font-size: 18px; font-weight: 900; margin: 0 0 12px;">Vielen Dank für Ihren Auftrag! 🤝</p>
+            <p style="color: #555; margin: 0 0 8px;">Hallo ${customerName},</p>
+            <p style="color: #555; margin: 0 0 20px;">Ihre Unterschrift für Angebot <strong>${quoteNumber}</strong> über <strong>${totalGross} €</strong> wurde erfolgreich übermittelt. ${pdfBuffer ? 'Ihr Exemplar des Angebots finden Sie im Anhang.' : ''}</p>
+            <p style="color: #555; margin: 0 0 24px;">${company.name} wird sich in Kürze mit Ihnen in Verbindung setzen, um die nächsten Schritte zu besprechen.</p>
+            <p style="color: #666; margin: 0;">Mit freundlichen Grüßen,<br><strong>${company.name}</strong></p>
+          </div>
+          <div style="padding: 16px 32px; border-top: 1px solid #eee; text-align: center;">
+            <p style="color: #bbb; font-size: 11px; margin: 0;">Versendet über <a href="https://sofortangebot.app" style="color: #bbb;">sofortangebot.app</a> im Auftrag von ${company.name}</p>
           </div>
         </div>
       `,
+      ...(pdfBuffer && {
+        attachments: [{
+          filename: `Auftragsbestaetigung-${quoteNumber}.pdf`,
+          content: pdfBuffer,
+        }],
+      }),
     }).catch(() => {})
   }
 
+  // Benachrichtigung an Handwerker
   await resend.emails.send({
     from: `sofortangebot <info@sofortangebot.app>`,
     to: [ownerEmail],

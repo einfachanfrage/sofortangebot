@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
   const body = await req.json()
-  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId } = body
+  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil } = body
   const extId = externalContactId as { source: string; id: string } | null
 
   // Company + Plan laden
@@ -100,8 +100,9 @@ export async function POST(req: NextRequest) {
     .reduce((s, i) => s + i.quantity * i.unit_price, 0)
   const totalVat = company.vat_rate > 0 ? totalNet * (company.vat_rate / 100) : 0
 
-  const validUntil = new Date()
-  validUntil.setDate(validUntil.getDate() + 30)
+  const validUntilDate = validUntil ?? (() => {
+    const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]
+  })()
 
   // Angebot erstellen
   const { data: quote, error: quoteError } = await supabase
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
       total_vat: totalVat,
       total_gross: totalNet + totalVat,
       notes: notes || null,
-      valid_until: validUntil.toISOString().split('T')[0],
+      valid_until: validUntilDate,
     })
     .select('id, share_token')
     .single()
@@ -122,6 +123,16 @@ export async function POST(req: NextRequest) {
   if (quoteError || !quote) {
     return NextResponse.json({ error: 'Angebot konnte nicht gespeichert werden' }, { status: 500 })
   }
+
+  // Punkt 3: Angebotsnummer sofort persistieren (race-condition-arm aber ausreichend für Handwerksbetrieb)
+  const { count: quoteCount } = await supabase
+    .from('quotes')
+    .select('*', { count: 'exact', head: true })
+    .eq('company_id', company.id)
+    .lte('created_at', quote.created_at)
+  const quoteYear = new Date(quote.created_at).getFullYear()
+  const quoteNumber = `${quoteYear}-${String(quoteCount ?? 1).padStart(4, '0')}`
+  await supabase.from('quotes').update({ quote_number: quoteNumber }).eq('id', quote.id)
 
   // Positionen einfügen
   await supabase.from('quote_items').insert(
