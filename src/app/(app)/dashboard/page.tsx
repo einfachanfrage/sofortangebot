@@ -7,6 +7,7 @@ import { Logo } from '@/components/Logo'
 import PwaBanner from '@/components/PwaBanner'
 import BottomNav from '@/components/BottomNav'
 import DashboardFilters from '@/components/DashboardFilters'
+import DraftQuotes from '@/components/DraftQuotes'
 import { Mic, FileText } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
@@ -61,15 +62,15 @@ export default async function DashboardPage({
 
   const { data: allQuotes } = await query
 
-  // Textsuche client-seitig (Supabase ilike auf join-Felder ist umständlich)
-  const quotes = q
-    ? allQuotes?.filter(qt =>
-        (qt.customer?.name ?? '').toLowerCase().includes(q.toLowerCase())
-      )
-    : allQuotes
+  const drafts = (allQuotes ?? []).filter(qt => qt.status === 'draft')
+  const nonDraftQuotes = (allQuotes ?? []).filter(qt => qt.status !== 'draft')
 
-  const openCount = allQuotes?.filter(qt => qt.status === 'sent').length ?? 0
-  const acceptedCount = allQuotes?.filter(qt => qt.status === 'accepted').length ?? 0
+  const quotes = (q
+    ? nonDraftQuotes.filter(qt => (qt.customer?.name ?? '').toLowerCase().includes(q.toLowerCase()))
+    : nonDraftQuotes)
+
+  const openCount = nonDraftQuotes.filter(qt => qt.status === 'sent').length
+  const acceptedCount = nonDraftQuotes.filter(qt => qt.status === 'accepted').length
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
@@ -168,6 +169,8 @@ export default async function DashboardPage({
           })}
         </div>
       </div>
+
+      <DraftQuotes drafts={drafts.map(d => ({ id: d.id, total_gross: d.total_gross, created_at: d.created_at, customer: d.customer }))} />
 
       <BottomNav />
     </div>

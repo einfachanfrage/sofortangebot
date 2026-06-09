@@ -24,6 +24,7 @@ export default function NeuesAngebotPage() {
   const [mode, setMode] = useState<Mode>('voice')
   const [step, setStep] = useState<Step>('input')
   const [recording, setRecording] = useState(false)
+  const [micBlocked, setMicBlocked] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [zusammenfassung, setZusammenfassung] = useState('')
   const [questions, setQuestions] = useState<GeneratedQuestion[]>([])
@@ -73,7 +74,7 @@ export default function NeuesAngebotPage() {
       mediaRef.current = mr
       setRecording(true)
     } catch {
-      setError('Mikrofon-Zugriff verweigert. Bitte Berechtigung erteilen.')
+      setMicBlocked(true)
     }
   }, [])
 
@@ -666,7 +667,7 @@ export default function NeuesAngebotPage() {
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-5 gap-8">
-        {mode === 'voice' && (
+        {mode === 'voice' && !micBlocked && (
           <>
             <div className="text-center">
               <div className="font-black text-[#2C2C2C] text-2xl mb-2">Aufmaß einsprechen</div>
@@ -709,6 +710,42 @@ export default function NeuesAngebotPage() {
                   Angebot generieren
                 </button>
               )}
+            </div>
+          </>
+        )}
+
+        {mode === 'voice' && micBlocked && (
+          <>
+            <div className="text-center">
+              <div className="text-4xl mb-3">⌨️</div>
+              <div className="font-black text-[#2C2C2C] text-2xl mb-2">Aufmaß eintippen</div>
+              <div className="text-[#2C2C2C]/50 font-semibold text-sm max-w-xs leading-relaxed">
+                Mikrofon nicht verfügbar — kein Problem. Beschreib einfach was gemacht werden soll.
+              </div>
+            </div>
+
+            <div className="w-full">
+              <textarea
+                placeholder="z.B.: Wohnzimmer 30m², Schlafzimmer 20m², alles streichen inkl. Decke, Farbe weiß, Untergrund verputzt..."
+                value={transcript}
+                onChange={e => setTranscript(e.target.value)}
+                rows={6}
+                autoFocus
+                className="w-full bg-white border-2 border-[#2C2C2C]/10 rounded-2xl px-4 py-4 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] resize-none"
+              />
+              <button
+                onClick={() => analyseText(transcript)}
+                disabled={!transcript.trim()}
+                className="w-full mt-3 bg-[#F5C400] text-[#2C2C2C] font-black text-xl rounded-2xl py-5 active:scale-95 transition-transform disabled:opacity-40"
+              >
+                Angebot generieren
+              </button>
+              <button
+                onClick={() => setMicBlocked(false)}
+                className="w-full mt-2 text-center text-[#2C2C2C]/30 font-semibold text-sm py-2"
+              >
+                Mikrofon nochmal versuchen
+              </button>
             </div>
           </>
         )}

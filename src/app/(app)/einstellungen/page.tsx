@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
-import { Check } from 'lucide-react'
+import { Check, Upload, X } from 'lucide-react'
 import BottomNav from '@/components/BottomNav'
 
 export default function EinstellungenPage() {
@@ -21,6 +21,10 @@ export default function EinstellungenPage() {
   const [gewerke, setGewerke] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [logoUploading, setLogoUploading] = useState(false)
+  const [logoError, setLogoError] = useState('')
+  const logoInputRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
   const router = useRouter()
 
@@ -39,6 +43,7 @@ export default function EinstellungenPage() {
         setPaymentDays(data.payment_days)
         setReminderDays(data.reminder_days ?? 3)
         setGewerke(data.gewerke ?? [])
+        setLogoUrl(data.logo_url ?? null)
       }
     }
     load()
@@ -59,6 +64,32 @@ export default function EinstellungenPage() {
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
+  }
+
+  async function handleLogoUpload(file: File) {
+    setLogoError('')
+    const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/svg+xml']
+    if (!allowed.includes(file.type)) {
+      setLogoError('Nur PNG, JPG, WebP oder SVG erlaubt — keine Word- oder PDF-Dateien.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setLogoError('Datei zu groß. Bitte unter 5 MB.')
+      return
+    }
+    setLogoUploading(true)
+    const fd = new FormData()
+    fd.append('logo', file)
+    const r = await fetch('/api/upload-logo', { method: 'POST', body: fd })
+    const data = await r.json()
+    setLogoUploading(false)
+    if (!r.ok) { setLogoError(data.error ?? 'Upload fehlgeschlagen'); return }
+    setLogoUrl(data.url + '?t=' + Date.now())
+  }
+
+  async function removeLogo() {
+    setLogoUrl(null)
+    await supabase.from('companies').update({ logo_url: null }).eq('user_id', company?.user_id ?? '')
   }
 
   async function handleLogout() {
@@ -108,6 +139,72 @@ export default function EinstellungenPage() {
             />
           </Field>
         </Section>
+
+        {/* Logo */}
+        <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+          <div className="font-black text-[#2C2C2C] mb-1">Firmenlogo</div>
+          <div className="text-xs text-[#2C2C2C]/40 font-semibold mb-4">PNG, JPG, WebP oder SVG · max. 5 MB · empfohlen 400×200 px</div>
+
+          <input
+            ref={logoInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+            className="hidden"
+            onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f) }}
+          />
+
+          {logoUrl ? (
+            <div className="relative inline-block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={logoUrl} alt="Logo" className="h-16 object-contain rounded-xl border border-[#2C2C2C]/10" />
+              <button
+                type="button"
+                onClick={removeLogo}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5"
+              >
+                <X size={12} strokeWidth={3} />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => logoInputRef.current?.click()}
+              disabled={logoUploading}
+              className="flex items-center gap-3 border-2 border-dashed border-[#2C2C2C]/20 rounded-xl px-5 py-4 active:scale-95 transition-transform disabled:opacity-50"
+            >
+              <Upload size={20} color="#2C2C2C" strokeWidth={2} className="opacity-40" />
+              <span className="font-bold text-[#2C2C2C]/60 text-sm">
+                {logoUploading ? 'Wird hochgeladen...' : 'Logo hochladen'}
+              </span>
+            </button>
+          )}
+
+          {!logoUrl && (
+            <button
+              type="button"
+              onClick={() => logoInputRef.current?.click()}
+              disabled={logoUploading}
+              className={`${logoUrl ? 'mt-3 ' : 'hidden '}text-xs font-bold text-[#2C2C2C]/40`}
+            >
+              Anderes Logo wählen
+            </button>
+          )}
+          {logoUrl && (
+            <button
+              type="button"
+              onClick={() => logoInputRef.current?.click()}
+              className="block mt-2 text-xs font-bold text-[#2C2C2C]/40"
+            >
+              Anderes Logo wählen
+            </button>
+          )}
+
+          {logoError && (
+            <div className="mt-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-3 py-2 text-xs font-semibold">
+              {logoError}
+            </div>
+          )}
+        </div>
 
         <Section title="Rechnungsstellung">
           <Field label="Mehrwertsteuer">
