@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { wrapMiddlewareWithSentry } from '@sentry/nextjs'
 
 // Health-Endpunkte vom globalen Rate-Limit ausschließen
 const EXEMPT_PATHS = ['/api/health', '/api/stripe']
 
-export async function middleware(request: NextRequest) {
+async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   // Health-Checks + Stripe-Webhooks ausschließen
@@ -58,6 +59,8 @@ export async function middleware(request: NextRequest) {
 
   return NextResponse.next()
 }
+
+export default wrapMiddlewareWithSentry(middleware)
 
 export const config = {
   matcher: '/api/:path*',
