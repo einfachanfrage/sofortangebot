@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/server'
 import { AngebotPDF } from '@/lib/pdf'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
+import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
+import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
 
@@ -16,6 +18,11 @@ export async function GET(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+
+  const { data: company0 } = await supabase.from('companies').select('plan').eq('user_id', user.id).single()
+  const plan0 = (company0 as { plan?: string } | null)?.plan ?? 'starter'
+  const rlCheck = await checkUserRateLimit(user.id, 'pdf_generierung', plan0)
+  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
 
   const { data: quote } = await supabase
     .from('quotes')
@@ -106,6 +113,7 @@ export async function GET(req: NextRequest) {
       buffer = Buffer.from(await embedZUGFeRDInPdf(new Uint8Array(buffer), xml))
     } catch (e) {
       console.error('[ZUGFeRD] Einbettung fehlgeschlagen:', e)
+      Sentry.captureException(e, { tags: { feature: 'pdf_zugferd' } })
       // PDF ohne ZUGFeRD zurückgeben — kein harter Fehler
     }
   }

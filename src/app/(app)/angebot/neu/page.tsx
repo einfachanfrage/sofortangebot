@@ -84,6 +84,7 @@ export default function NeuesAngebotPage() {
   })
   const [loadingMsg, setLoadingMsg] = useState('')
   const [error, setError] = useState('')
+  const [rateLimitMsg, setRateLimitMsg] = useState('')
   const [saving, setSaving] = useState(false)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [customerSuggestions, setCustomerSuggestions] = useState<{ id: string; name: string; phone: string | null; email: string | null; address?: string | null; source?: string }[]>([])
@@ -214,6 +215,7 @@ export default function NeuesAngebotPage() {
   // ── Aufnahme ───────────────────────────────────────────────────────────────
   const startRecording = useCallback(async () => {
     setError('')
+    setRateLimitMsg('')
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
@@ -261,7 +263,12 @@ export default function NeuesAngebotPage() {
       }
       clearTimeout(tTimeout)
       const data = await r.json()
-      if (!r.ok) { setError(data.error ?? 'Transkription fehlgeschlagen.'); setStep('input'); return }
+      if (!r.ok) {
+        if (r.status === 429) { setRateLimitMsg(data.error ?? 'Du bist heute sehr fleißig! 🔨 Kurze Pause — gleich geht\'s weiter.'); setStep('input'); return }
+        setError(data.error ?? 'Transkription fehlgeschlagen.')
+        setStep('input')
+        return
+      }
       text = data.text
       setTranscript(text)
     }
@@ -282,7 +289,7 @@ export default function NeuesAngebotPage() {
         if (r.ok) break
       } catch { clearTimeout(timeout); if (attempt === 1) { setError('Analyse fehlgeschlagen.'); setStep('input'); return } }
     }
-    if (!r?.ok) { const d = r ? await r.json().catch(() => ({})) : {}; setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
+    if (!r?.ok) { const d = r ? await r.json().catch(() => ({})) : {}; if (r?.status === 429) { setRateLimitMsg(d.error ?? 'Du bist heute sehr fleißig! 🔨 Kurze Pause — gleich geht\'s weiter.'); setStep('input'); return } setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
 
     const result = await r.json()
     const newItems = result.items ?? []
@@ -941,6 +948,7 @@ export default function NeuesAngebotPage() {
         )}
 
         {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{error}</div>}
+        {rateLimitMsg && <div className="bg-[#FFF9E6] border border-[#F5C400]/40 text-[#92400E] rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{rateLimitMsg}</div>}
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
 
 const PLAN_LIMITS = {
   starter: 5,   // 5 Angebote/Monat
@@ -26,6 +27,9 @@ export async function POST(req: NextRequest) {
   if (!company) return NextResponse.json({ error: 'Kein Betrieb gefunden' }, { status: 400 })
 
   const plan = (company.plan ?? 'starter') as keyof typeof PLAN_LIMITS
+
+  const rlCheck = await checkUserRateLimit(user.id, 'angebot_erstellen', plan)
+  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
   const limit = PLAN_LIMITS[plan] ?? PLAN_LIMITS.starter
 
   // Quotes diesen Monat zählen (nur für Starter relevant)

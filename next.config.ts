@@ -1,10 +1,17 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   env: {
-    // Dem Client mitteilen ob Vision verfügbar ist (OpenAI = ja, Groq = nein)
     NEXT_PUBLIC_VISION_ENABLED: process.env.AI_PROVIDER !== 'groq' ? 'true' : 'false',
   },
-};
+}
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  sourcemaps: { disable: false },
+  disableLogger: true,
+})

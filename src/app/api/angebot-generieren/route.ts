@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getGewerkePromptContext } from '@/lib/gewerke'
 import { aiClient, CHAT_MODEL } from '@/lib/ai-client'
+import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
+import * as Sentry from '@sentry/nextjs'
 
 // OpenAI-Analyse kann bei langen Aufmaßen >10s dauern
 export const maxDuration = 60
@@ -60,6 +62,17 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
+  const { data: companyPlan } = await supabase.from('companies').select('plan').eq('user_id', user.id).single()
+  const plan = (companyPlan as { plan?: string } | null)?.plan ?? 'starter'
+
+  const rlCheck = await checkUserRateLimit(user.id, 'ki_extraktion', plan)
+  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
+
+  const budgetCheck = await checkKIBudget(user.id)
+  if (!budgetCheck.allowed) {
+    return NextResponse.json({ error: 'KI-Tageslimit erreicht. Morgen geht\'s weiter.', isKIBudget: true }, { status: 429 })
+  }
+
   const { text } = await req.json()
   if (!text) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
 
@@ -92,11 +105,26 @@ export async function POST(req: NextRequest) {
     // JSON aus Markdown-Fences befreien
     const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim()
     const result: GeneratedQuote = JSON.parse(cleaned)
+
+    // Kosten tracken (gpt-4o-mini ~$0.15/1M tokens in, $0.60/1M tokens out)
+    const tokensIn = response.usage?.prompt_tokens ?? 0
+    const tokensOut = response.usage?.completion_tokens ?? 0
+    await trackKIUsage({
+      userId: user.id,
+      endpunkt: 'extraktion',
+      tokensIn,
+      tokensOut,
+      kostenEur: (tokensIn * 0.00015 + tokensOut * 0.0006) / 1000,
+    })
+
     return NextResponse.json(result)
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     console.error('angebot-generieren error:', msg)
-    // Echte Fehlermeldung zurückgeben damit wir debuggen können
+    Sentry.captureException(err, {
+      tags: { feature: 'ki_extraktion' },
+      extra: { transkript_laenge: text?.length ?? 0 },
+    })
     return NextResponse.json({ error: `Analyse fehlgeschlagen: ${msg}` }, { status: 500 })
   }
 }

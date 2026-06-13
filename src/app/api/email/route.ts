@@ -5,6 +5,8 @@ import { renderToBuffer } from '@react-pdf/renderer'
 export const maxDuration = 60
 import { createElement } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
+import * as Sentry from '@sentry/nextjs'
 import { AngebotPDF } from '@/lib/pdf'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
@@ -32,6 +34,10 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (!quote || !company) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
+  const plan = (company as { plan?: string } | null)?.plan ?? 'starter'
+  const rlCheck = await checkUserRateLimit(user.id, 'email_versand', plan)
+  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
 
   let quoteNumber = (quote as { quote_number?: string }).quote_number ?? ''
   if (!quoteNumber) {
@@ -103,6 +109,7 @@ export async function POST(req: NextRequest) {
       xmlAttachment = { filename: `factur-x-${quoteNumber}.xml`, content: Buffer.from(xml, 'utf-8') }
     } catch (e) {
       console.error('[ZUGFeRD] Fehler beim E-Mail-Versand:', e)
+      Sentry.captureException(e, { tags: { feature: 'email_zugferd' } })
     }
   }
 
@@ -146,6 +153,7 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     console.error('Resend error:', error)
+    Sentry.captureException(new Error(String(error)), { tags: { feature: 'email_versand' } })
     return NextResponse.json({ error: 'E-Mail konnte nicht gesendet werden' }, { status: 500 })
   }
 

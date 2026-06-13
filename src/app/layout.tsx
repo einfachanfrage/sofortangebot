@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
 import { CookieBanner } from '@/components/CookieBanner'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 export const metadata: Metadata = {
   title: 'Sofortangebot',
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-dvh">
         <ServiceWorkerRegister />
         <CookieBanner />
-        {children}
+        <ErrorBoundary feature="root">{children}</ErrorBoundary>
       </body>
     </html>
   )
