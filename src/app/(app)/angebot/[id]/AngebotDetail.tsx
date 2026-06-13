@@ -609,11 +609,32 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               )}
 
               {/* PDF Download */}
-              <a href={`/api/pdf?id=${quote.id}`} target="_blank"
-                className="flex items-center justify-center gap-3 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-base rounded-2xl py-3.5 active:scale-95 transition-transform">
-                <Download size={20} strokeWidth={3} />
-                PDF herunterladen
-              </a>
+              {(() => {
+                const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
+                const istZugferd = company?.e_rechnung_aktiv !== false && kundeIstUnternehmen
+                const hatLeitweg = !!quote.customer?.leitweg_id
+                return (
+                  <>
+                    <a href={`/api/pdf?id=${quote.id}`} target="_blank"
+                      className="flex items-center justify-center gap-3 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-base rounded-2xl py-3.5 active:scale-95 transition-transform">
+                      <Download size={20} strokeWidth={3} />
+                      {istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'}
+                    </a>
+                    {istZugferd && (
+                      <p className="text-xs text-[#2C2C2C]/40 font-semibold text-center -mt-2">
+                        Enthält eingebettete ZUGFeRD-XML · kompatibel mit DATEV, Lexoffice, sevDesk
+                      </p>
+                    )}
+                    {hatLeitweg && (
+                      <a href={`/api/pdf/xrechnung?id=${quote.id}`} target="_blank"
+                        className="flex items-center justify-center gap-2 w-full bg-white border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/60 font-bold text-sm rounded-2xl py-3 active:scale-95 transition-transform">
+                        <Download size={16} strokeWidth={2.5} />
+                        XRechnung XML herunterladen
+                      </a>
+                    )}
+                  </>
+                )
+              })()}
 
               {/* WhatsApp */}
               <a href={`https://wa.me/?text=${whatsappText}`} target="_blank" rel="noopener noreferrer"

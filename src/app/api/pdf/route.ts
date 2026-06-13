@@ -3,8 +3,9 @@ import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { AngebotPDF } from '@/lib/pdf'
+import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
+import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
 
-// PDF-Generierung kann auf großen Angeboten >10s dauern — Vercel default wäre 10s
 export const maxDuration = 60
 
 export async function GET(req: NextRequest) {
@@ -32,7 +33,6 @@ export async function GET(req: NextRequest) {
 
   if (!company) return NextResponse.json({ error: 'Betrieb nicht gefunden' }, { status: 404 })
 
-  // Gespeicherte Angebotsnummer bevorzugen (Punkt 3 — Race-Condition-Fix)
   let quoteNumber = quote.quote_number as string | null
   if (!quoteNumber) {
     const { count } = await supabase
@@ -47,16 +47,75 @@ export async function GET(req: NextRequest) {
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 
   // @ts-expect-error react-pdf renderToBuffer typing mismatch
-  const buffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
+  let buffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
     quote: { ...quote, items: sortedItems },
     company,
     quoteNumber,
   }))
 
+  // ZUGFeRD einbetten wenn: E-Rechnung aktiv + Geschäftskunde
+  const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true
+    || !!quote.customer?.ustid
+  const eRechnungAktiv = company.e_rechnung_aktiv !== false
+
+  if (eRechnungAktiv && kundeIstUnternehmen) {
+    try {
+      const datum = new Date(quote.created_at)
+      const faellig = new Date(datum)
+      faellig.setDate(faellig.getDate() + (company.payment_days ?? 14))
+
+      const xml = generateZUGFeRDXml({
+        nummer: quoteNumber,
+        datum,
+        faelligkeitsdatum: faellig,
+        verkäufer: {
+          name: company.name,
+          adresse: company.address,
+          steuernummer: company.tax_number,
+          ustId: company.ust_id,
+          iban: company.iban,
+        },
+        käufer: {
+          name: quote.customer?.name ?? 'Unbekannt',
+          adresse: quote.customer?.address,
+          ustId: quote.customer?.ustid,
+          leitwegId: quote.customer?.leitweg_id,
+        },
+        positionen: sortedItems.map((item: { position: number; title: string; description: string | null; quantity: number; unit: string; unit_price: number; total_price: number }, idx: number) => ({
+          id: idx + 1,
+          bezeichnung: item.title,
+          beschreibung: item.description,
+          menge: item.quantity,
+          einheit: item.unit,
+          einzelpreis: item.unit_price,
+          gesamtpreis: item.total_price,
+          steuersatz: company.vat_rate ?? 19,
+        })),
+        summen: {
+          netto: quote.total_net,
+          mwst: quote.total_vat,
+          brutto: quote.total_gross,
+        },
+        isKleinunternehmer: (company.vat_rate ?? 19) === 0,
+      })
+
+      buffer = Buffer.from(await embedZUGFeRDInPdf(new Uint8Array(buffer), xml))
+    } catch (e) {
+      console.error('[ZUGFeRD] Einbettung fehlgeschlagen:', e)
+      // PDF ohne ZUGFeRD zurückgeben — kein harter Fehler
+    }
+  }
+
+  const isZugferd = eRechnungAktiv && kundeIstUnternehmen
+  const filename = isZugferd
+    ? `Angebot-${quoteNumber}-ZUGFeRD.pdf`
+    : `Angebot-${quoteNumber}.pdf`
+
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="Angebot-${quoteNumber}.pdf"`,
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'X-ZUGFeRD': isZugferd ? '1' : '0',
     },
   })
 }

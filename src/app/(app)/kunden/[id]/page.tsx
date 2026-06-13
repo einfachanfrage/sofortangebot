@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import BottomNav from '@/components/BottomNav'
+import { KundeTypToggle } from './KundeTypToggle'
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -74,6 +75,14 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
             </div>
           </div>
         )}
+
+        {/* Kundentyp & E-Rechnung */}
+        <KundeTypToggle
+          kundeId={customer.id}
+          istUnternehmen={customer.ist_unternehmen ?? false}
+          ustid={customer.ustid ?? null}
+          leitwegId={customer.leitweg_id ?? null}
+        />
 
         {/* Statistik */}
         <div className="grid grid-cols-2 gap-3">

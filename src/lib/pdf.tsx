@@ -236,11 +236,20 @@ export function AngebotPDF({ quote, company, quoteNumber }: Props) {
           </View>
         </View>
 
-        {/* Punkt 8: § 19 UStG Pflichthinweis */}
+        {/* § 19 UStG Pflichthinweis */}
         {isKleinunternehmer && (
           <View style={{ marginTop: 12, padding: '8 12', backgroundColor: '#F7F7F5', borderRadius: 4 }}>
             <Text style={{ fontSize: 8, color: '#666', lineHeight: 1.5 }}>
-              Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
+              Kein Ausweis von Umsatzsteuer gemäß § 19 UStG.
+            </Text>
+          </View>
+        )}
+
+        {/* Materialpreis-Hinweis */}
+        {company.materialpreis_hinweis_aktiv && (
+          <View style={{ marginTop: 8, padding: '8 12', backgroundColor: '#FFFBEB', borderRadius: 4 }}>
+            <Text style={{ fontSize: 8, color: '#92400E', lineHeight: 1.5 }}>
+              Hinweis: Die angegebenen Preise basieren auf aktuellen Materialkosten und können bei Preisänderungen der Lieferanten angepasst werden.
             </Text>
           </View>
         )}

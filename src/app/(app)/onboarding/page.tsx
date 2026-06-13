@@ -9,6 +9,7 @@ import { GEWERKE } from '@/lib/gewerke'
 import { Logo } from '@/components/Logo'
 import { ACCOUNTING_OPTIONS, TIER_LABEL } from '@/lib/accounting-options'
 import { DEFAULT_PRICES } from '@/lib/default-prices'
+import { DEFAULT_EMPFEHLUNGEN } from '@/lib/empfehlungen-defaults'
 import { getPreisvorlagenForGewerke, type PreisVorlage } from '@/lib/preise-vorlagen'
 
 type PreisMode = 'markt' | 'manuell' | 'pdf' | null
@@ -29,7 +30,7 @@ export default function OnboardingPage() {
   const [address, setAddress] = useState('')
   const [selectedGewerke, setSelectedGewerke] = useState<string[]>([])
   const [accounting, setAccounting] = useState<AccountingSoftware>('none')
-  const [vatRate, setVatRate] = useState<19 | 7 | 0>(19)
+  const [vatRate, setVatRate] = useState<19 | 7 | 0 | null>(null)
   const [paymentDays, setPaymentDays] = useState(14)
   const [agbUrl, setAgbUrl] = useState('')
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
@@ -133,7 +134,7 @@ export default function OnboardingPage() {
 
     const { error: companyError } = await supabase
       .from('companies')
-      .update({ name, address, accounting_software: accounting, gewerke: selectedGewerke, vat_rate: vatRate, payment_days: paymentDays, agb_url: agbUrl || null })
+      .update({ name, address, accounting_software: accounting, gewerke: selectedGewerke, vat_rate: vatRate ?? 19, payment_days: paymentDays, agb_url: agbUrl || null })
       .eq('user_id', user.id)
 
     if (companyError) { setError('Speichern fehlgeschlagen. Bitte nochmal versuchen.'); setLoading(false); return }
@@ -148,6 +149,9 @@ export default function OnboardingPage() {
           .map(e => ({ company_id: company.id, category: e.category, title: e.title, unit: e.unit, unit_price: parseFloat(e.unit_price) }))
         if (toInsert.length > 0) await supabase.from('price_items').insert(toInsert)
       }
+      await supabase.from('positions_empfehlungen').insert(
+        DEFAULT_EMPFEHLUNGEN.map(e => ({ ...e, company_id: company.id }))
+      )
     }
 
     setStep(6)
@@ -219,20 +223,41 @@ export default function OnboardingPage() {
               </p>
             </div>
             <div>
-              <label className={labelCls}>Mehrwertsteuer</label>
+              <label className={labelCls}>Bist du umsatzsteuerpflichtig?</label>
+              <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-2 leading-relaxed">
+                Wenn dein Jahresumsatz unter 25.000 € liegt, bist du vermutlich Kleinunternehmer (§ 19 UStG) — dann keine MwSt. auf Angeboten.
+              </p>
               <div className="flex gap-2">
-                {([19, 7, 0] as const).map(rate => (
-                  <button key={rate} type="button" onClick={() => setVatRate(rate)}
-                    className={`flex-1 py-3 rounded-xl border-2 font-black text-sm transition-colors ${
-                      vatRate === rate ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-white text-[#2C2C2C]/60'
+                {([
+                  { value: 19 as const, label: '19 % MwSt.' },
+                  { value: 7 as const,  label: '7 % MwSt.'  },
+                  { value: 0 as const,  label: 'Kleinunternehmer' },
+                ]).map(opt => (
+                  <button key={opt.value} type="button" onClick={() => setVatRate(opt.value)}
+                    className={`flex-1 py-3 rounded-xl border-2 font-black text-xs transition-colors ${
+                      vatRate === opt.value
+                        ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]'
+                        : 'border-[#2C2C2C]/10 bg-white text-[#2C2C2C]/60'
                     }`}>
-                    {rate === 0 ? 'Kleinunternehmer' : `${rate} %`}
+                    {opt.label}
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
-                {vatRate === 0 ? 'Keine MwSt. auf Angeboten (§ 19 UStG).' : `${vatRate} % MwSt. wird auf Angeboten ausgewiesen.`}
-              </p>
+              {vatRate === 0 && (
+                <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
+                  Kein Ausweis von Umsatzsteuer gemäß § 19 UStG. Pflichthinweis erscheint automatisch auf dem Angebot.
+                </p>
+              )}
+              {vatRate !== null && vatRate > 0 && (
+                <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                  {vatRate} % MwSt. wird auf Angeboten ausgewiesen (Netto + MwSt. = Brutto).
+                </p>
+              )}
+              {vatRate === null && (
+                <p className="text-xs text-amber-600 font-semibold mt-1.5">
+                  Bitte wählen — diese Einstellung bestimmt, was auf deinen Angeboten steht.
+                </p>
+              )}
             </div>
             <div>
               <label className={labelCls}>Zahlungsziel</label>
@@ -265,7 +290,7 @@ export default function OnboardingPage() {
               </p>
             </div>
           <div className="mt-auto pt-8">
-            <button onClick={() => setStep(2)} disabled={!name.trim()}
+            <button onClick={() => setStep(2)} disabled={!name.trim() || vatRate === null}
               className={btnPrimary}>
               Weiter
             </button>

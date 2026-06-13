@@ -5,9 +5,12 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 
+const AGB_VERSION = '2026-06'
+
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [agbAkzeptiert, setAgbAkzeptiert] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -15,24 +18,33 @@ export default function RegisterPage() {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
     setError('')
 
     if (password.length < 8) {
       setError('Passwort muss mindestens 8 Zeichen lang sein.')
-      setLoading(false)
       return
     }
 
-    const { error } = await supabase.auth.signUp({
+    if (!agbAkzeptiert) {
+      setError('Bitte akzeptiere die AGB um fortzufahren.')
+      return
+    }
+
+    setLoading(true)
+
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
+        data: {
+          agb_akzeptiert_am: new Date().toISOString(),
+          agb_version: AGB_VERSION,
+        },
       },
     })
 
-    if (error) {
+    if (signUpError) {
       setError('Registrierung fehlgeschlagen. Versuche es nochmal.')
       setLoading(false)
       return
@@ -80,6 +92,41 @@ export default function RegisterPage() {
           required
           className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
         />
+
+        <label className="flex items-start gap-3 cursor-pointer select-none">
+          <div className="relative flex-shrink-0 mt-0.5">
+            <input
+              type="checkbox"
+              checked={agbAkzeptiert}
+              onChange={e => setAgbAkzeptiert(e.target.checked)}
+              className="sr-only"
+            />
+            <div
+              className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                agbAkzeptiert
+                  ? 'bg-[#F5C400] border-[#F5C400]'
+                  : 'bg-white border-[#2C2C2C]/30'
+              }`}
+            >
+              {agbAkzeptiert && (
+                <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+                  <path d="M1 4L4.5 7.5L11 1" stroke="#2C2C2C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+          </div>
+          <span className="text-sm font-semibold text-[#2C2C2C]/70 leading-snug">
+            Ich habe die{' '}
+            <Link href="/agb" target="_blank" className="text-[#2C2C2C] underline underline-offset-2">
+              AGB
+            </Link>{' '}
+            und die{' '}
+            <Link href="/datenschutz" target="_blank" className="text-[#2C2C2C] underline underline-offset-2">
+              Datenschutzerklärung
+            </Link>{' '}
+            gelesen und akzeptiere sie.
+          </span>
+        </label>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold">

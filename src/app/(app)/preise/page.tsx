@@ -5,13 +5,14 @@ import { createClient } from '@/lib/supabase/client'
 import { DEFAULT_PRICES } from '@/lib/default-prices'
 import { Trash2, Plus, ChevronDown, ChevronUp, Pencil, Check, X } from 'lucide-react'
 import Link from 'next/link'
-import type { PriceItem } from '@/lib/types'
+import type { PriceItem, MengenrabattTier } from '@/lib/types'
 
 interface EditState {
   title: string
   category: string
   unit_price: string
   unit: string
+  mengenrabatt: MengenrabattTier[]
 }
 
 export default function PreisePage() {
@@ -23,7 +24,7 @@ export default function PreisePage() {
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set())
   const [importing, setImporting] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editState, setEditState] = useState<EditState>({ title: '', category: '', unit_price: '', unit: '' })
+  const [editState, setEditState] = useState<EditState>({ title: '', category: '', unit_price: '', unit: '', mengenrabatt: [] })
   const supabase = createClient()
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function PreisePage() {
 
   function startEdit(item: PriceItem) {
     setEditingId(item.id)
-    setEditState({ title: item.title, category: item.category, unit_price: String(item.unit_price), unit: item.unit })
+    setEditState({ title: item.title, category: item.category, unit_price: String(item.unit_price), unit: item.unit, mengenrabatt: item.mengenrabatt ?? [] })
   }
 
   function cancelEdit() {
@@ -75,9 +76,10 @@ export default function PreisePage() {
   async function saveEdit(id: string) {
     const unit_price = parseFloat(editState.unit_price)
     if (isNaN(unit_price) || unit_price < 0) return
-    const { title, category, unit } = editState
-    await supabase.from('price_items').update({ title, category, unit_price, unit }).eq('id', id)
-    setItems(prev => prev.map(i => i.id === id ? { ...i, title, category, unit_price, unit } : i))
+    const { title, category, unit, mengenrabatt } = editState
+    const mengenrabattValue = mengenrabatt.length > 0 ? mengenrabatt : null
+    await supabase.from('price_items').update({ title, category, unit_price, unit, mengenrabatt: mengenrabattValue }).eq('id', id)
+    setItems(prev => prev.map(i => i.id === id ? { ...i, title, category, unit_price, unit, mengenrabatt: mengenrabattValue } : i))
     setEditingId(null)
   }
 
@@ -255,6 +257,40 @@ export default function PreisePage() {
                                   className="w-20 bg-white border-2 border-[#F5C400] rounded-lg px-3 py-2 text-[#2C2C2C] font-semibold text-base focus:outline-none"
                                 />
                               </div>
+                              {/* Mengenrabatt-Tiers */}
+                              <div className="mb-3">
+                                <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1.5">Mengenrabatt (optional)</div>
+                                {editState.mengenrabatt.map((tier, ti) => (
+                                  <div key={ti} className="flex items-center gap-2 mb-1.5">
+                                    <span className="text-xs font-semibold text-[#2C2C2C]/50 shrink-0">ab</span>
+                                    <input
+                                      type="number" min={1} step={1}
+                                      value={tier.ab}
+                                      onChange={e => setEditState(s => ({ ...s, mengenrabatt: s.mengenrabatt.map((t, i) => i === ti ? { ...t, ab: Number(e.target.value) } : t) }))}
+                                      className="w-16 bg-white border-2 border-[#2C2C2C]/15 rounded-lg px-2 py-1.5 text-sm font-bold focus:outline-none focus:border-[#F5C400] text-center"
+                                    />
+                                    <span className="text-xs font-semibold text-[#2C2C2C]/50 shrink-0">Stk →</span>
+                                    <input
+                                      type="number" min={1} max={99} step={1}
+                                      value={tier.rabatt_prozent}
+                                      onChange={e => setEditState(s => ({ ...s, mengenrabatt: s.mengenrabatt.map((t, i) => i === ti ? { ...t, rabatt_prozent: Number(e.target.value) } : t) }))}
+                                      className="w-16 bg-white border-2 border-[#2C2C2C]/15 rounded-lg px-2 py-1.5 text-sm font-bold focus:outline-none focus:border-[#F5C400] text-center"
+                                    />
+                                    <span className="text-xs font-semibold text-[#2C2C2C]/50 shrink-0">%</span>
+                                    <button type="button" onClick={() => setEditState(s => ({ ...s, mengenrabatt: s.mengenrabatt.filter((_, i) => i !== ti) }))} className="ml-auto p-1">
+                                      <X size={14} color="#ef4444" />
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  type="button"
+                                  onClick={() => setEditState(s => ({ ...s, mengenrabatt: [...s.mengenrabatt, { ab: 5, rabatt_prozent: 5 }] }))}
+                                  className="text-xs font-black text-[#2C2C2C]/40 hover:text-[#2C2C2C] transition-colors"
+                                >
+                                  + Rabattstufe hinzufügen
+                                </button>
+                              </div>
+
                               <div className="flex gap-2">
                                 <button onClick={() => saveEdit(item.id)} className="flex-1 bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl py-2.5">
                                   Speichern
@@ -270,6 +306,11 @@ export default function PreisePage() {
                                 <div className="font-semibold text-[#2C2C2C] text-sm truncate">{item.title}</div>
                                 <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">
                                   {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit}
+                                  {item.mengenrabatt && item.mengenrabatt.length > 0 && (
+                                    <span className="ml-2 text-[#2C2C2C]/30">
+                                      · Rabatt: {item.mengenrabatt.map(t => `ab ${t.ab} → ${t.rabatt_prozent}%`).join(', ')}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                               <div className="flex items-center gap-1 shrink-0 ml-2">

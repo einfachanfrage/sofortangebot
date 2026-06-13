@@ -40,6 +40,16 @@ export interface Company {
   agb_url: string | null
   plan: string | null
   reminder_days: number | null
+  regionaler_preisfaktor_prozent: number
+  angebot_gueltig_tage: number
+  materialpreis_hinweis_aktiv: boolean
+  mindestauftragswert: number
+  e_rechnung_aktiv: boolean
+}
+
+export interface MengenrabattTier {
+  ab: number
+  rabatt_prozent: number
 }
 
 export interface PriceItem {
@@ -50,6 +60,7 @@ export interface PriceItem {
   unit: string
   unit_price: number
   description: string | null
+  mengenrabatt: MengenrabattTier[] | null
 }
 
 export interface Customer {
@@ -59,6 +70,9 @@ export interface Customer {
   address: string | null
   email: string | null
   phone: string | null
+  ist_unternehmen: boolean
+  ustid: string | null
+  leitweg_id: string | null
 }
 
 export interface Quote {

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Mic, MicOff, Camera, Trash2, Plus, ChevronRight, BookOpen, X } from 'lucide-react'
 import type { GeneratedQuestion } from '@/app/api/angebot-generieren/route'
-import type { PriceItem } from '@/lib/types'
+import type { PriceItem, MengenrabattTier } from '@/lib/types'
+import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 
 interface DraftItem {
   title: string
@@ -14,6 +15,8 @@ interface DraftItem {
   unit: string
   unit_price: number
   kategorie?: string
+  base_price?: number
+  mengenrabatt_tiers?: MengenrabattTier[]
 }
 
 type Step = 'input' | 'loading' | 'rückfragen' | 'review'
@@ -50,12 +53,41 @@ export default function NeuesAngebotPage() {
   const [showPricePicker, setShowPricePicker] = useState(false)
   const [priceItems, setPriceItems] = useState<PriceItem[]>([])
   const [priceSearch, setPriceSearch] = useState('')
+  const [regionalFaktor, setRegionalFaktor] = useState(0)
+  const [mindestauftragswert, setMindestauftragswert] = useState(0)
+  const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
+  const [suggestionToast, setSuggestionToast] = useState<EmpfehlungDefault | null>(null)
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    async function loadCompanySettings() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data: co } = await supabase
+        .from('companies')
+        .select('id, regionaler_preisfaktor_prozent, angebot_gueltig_tage, mindestauftragswert')
+        .eq('user_id', user.id)
+        .single()
+      if (co) {
+        type CoType = { id: string; regionaler_preisfaktor_prozent?: number; angebot_gueltig_tage?: number; mindestauftragswert?: number }
+        const c = co as CoType
+        const days = c.angebot_gueltig_tage ?? 30
+        const d = new Date(); d.setDate(d.getDate() + days)
+        setValidUntil(d.toISOString().split('T')[0])
+        setRegionalFaktor(c.regionaler_preisfaktor_prozent ?? 0)
+        setMindestauftragswert(c.mindestauftragswert ?? 0)
+        const { data: empf } = await supabase.from('positions_empfehlungen').select('trigger_category, empfehlung_title, empfehlung_unit, empfehlung_unit_price').eq('company_id', co.id)
+        setEmpfehlungen(empf ?? [])
+      }
+    }
+    loadCompanySettings()
+  }, [])
 
   // ── Aufnahme ───────────────────────────────────────────────────────────────
   const startRecording = useCallback(async () => {
@@ -258,10 +290,22 @@ export default function NeuesAngebotPage() {
   }
 
   // ── Items editieren ────────────────────────────────────────────────────────
+  function applyMengenrabatt(basePrice: number, quantity: number, tiers?: MengenrabattTier[]): number {
+    if (!tiers || tiers.length === 0 || basePrice === 0) return basePrice
+    const applicable = tiers.filter(t => quantity >= t.ab).sort((a, b) => b.ab - a.ab)
+    if (!applicable.length) return basePrice
+    return Math.round(basePrice * (1 - applicable[0].rabatt_prozent / 100) * 100) / 100
+  }
+
   function updateItem(idx: number, field: keyof DraftItem, value: string | number) {
-    setItems(prev => prev.map((item, i) => i !== idx ? item
-      : { ...item, [field]: (field === 'quantity' || field === 'unit_price') ? Number(value) : value }
-    ))
+    setItems(prev => prev.map((item, i) => {
+      if (i !== idx) return item
+      const updated = { ...item, [field]: (field === 'quantity' || field === 'unit_price') ? Number(value) : value }
+      if (field === 'quantity' && item.base_price !== undefined && item.mengenrabatt_tiers) {
+        updated.unit_price = applyMengenrabatt(item.base_price, Number(value), item.mengenrabatt_tiers)
+      }
+      return updated
+    }))
   }
   function removeItem(idx: number) { setItems(prev => prev.filter((_, i) => i !== idx)) }
   function addItem() { setItems(prev => [...prev, { title: 'Neue Position', description: '', quantity: 1, unit: 'Stk', unit_price: 0 }]) }
@@ -269,10 +313,11 @@ export default function NeuesAngebotPage() {
   async function openPricePicker() {
     if (!priceItems.length) {
       const userId = (await supabase.auth.getUser()).data.user?.id ?? ''
-      const { data: co } = await supabase.from('companies').select('id').eq('user_id', userId).single()
+      const { data: co } = await supabase.from('companies').select('id, regionaler_preisfaktor_prozent').eq('user_id', userId).single()
       if (co) {
         const { data } = await supabase.from('price_items').select('*').eq('company_id', co.id).order('category').order('title')
         setPriceItems(data ?? [])
+        setRegionalFaktor((co as { id: string; regionaler_preisfaktor_prozent?: number }).regionaler_preisfaktor_prozent ?? 0)
       }
     }
     setPriceSearch('')
@@ -280,7 +325,32 @@ export default function NeuesAngebotPage() {
   }
 
   function addFromPrice(p: PriceItem) {
-    setItems(prev => [...prev, { title: p.title, description: p.description ?? '', quantity: 1, unit: p.unit, unit_price: p.unit_price, kategorie: p.category }])
+    const adjustedPrice = p.unit_price > 0 && regionalFaktor !== 0
+      ? Math.round(p.unit_price * (1 + regionalFaktor / 100) * 100) / 100
+      : p.unit_price
+    const tiers = p.mengenrabatt ?? undefined
+    const initialPrice = applyMengenrabatt(adjustedPrice, 1, tiers)
+    setItems(prev => {
+      const next = [...prev, {
+        title: p.title,
+        description: p.description ?? '',
+        quantity: 1,
+        unit: p.unit,
+        unit_price: initialPrice,
+        kategorie: p.category,
+        base_price: adjustedPrice,
+        mengenrabatt_tiers: tiers,
+      }]
+      // Empfehlung prüfen
+      const alreadyTitles = new Set(next.map(i => i.title))
+      const match = empfehlungen.find(e => e.trigger_category === p.category && !alreadyTitles.has(e.empfehlung_title))
+      if (match) {
+        if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+        setSuggestionToast(match)
+        toastTimerRef.current = setTimeout(() => setSuggestionToast(null), 8000)
+      }
+      return next
+    })
     setShowPricePicker(false)
   }
 
@@ -582,6 +652,11 @@ export default function NeuesAngebotPage() {
                           <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5 text-right">
                             = {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €
                           </div>
+                          {item.base_price !== undefined && item.unit_price < item.base_price && (
+                            <div className="text-xs text-green-600 font-bold mt-0.5 text-right">
+                              Mengenrabatt: {Math.round((1 - item.unit_price / item.base_price) * 100)} % (Listenpreis {item.base_price.toFixed(2).replace('.', ',')} €)
+                            </div>
+                          )}
                         </div>
                         <button onClick={() => removeItem(idx)} className="mt-0.5 p-1 shrink-0">
                           <Trash2 size={16} color="#ef4444" />
@@ -593,6 +668,31 @@ export default function NeuesAngebotPage() {
               </div>
             ))}
           </div>
+
+          {/* Mindestauftragswert-Warnung */}
+          {mindestauftragswert > 0 && totalNet < mindestauftragswert && totalNet > 0 && (
+            <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4">
+              <div className="font-black text-amber-800 text-sm mb-1">
+                Mindestauftragswert nicht erreicht
+              </div>
+              <p className="text-xs text-amber-700 font-semibold mb-3">
+                Aktuell {totalNet.toFixed(2).replace('.', ',')} € — Mindest {mindestauftragswert.toFixed(2).replace('.', ',')} €. Differenz: {(mindestauftragswert - totalNet).toFixed(2).replace('.', ',')} €.
+              </p>
+              <button
+                type="button"
+                onClick={() => setItems(prev => [...prev, {
+                  title: 'Kleinstauftragspauschale',
+                  description: 'Mindestauftragspauschale für Kleinaufträge',
+                  quantity: 1,
+                  unit: 'pauschal',
+                  unit_price: Math.round((mindestauftragswert - totalNet) * 100) / 100,
+                }])}
+                className="bg-amber-400 text-amber-900 font-black text-xs rounded-xl px-4 py-2 active:scale-95 transition-all"
+              >
+                + Kleinstauftragspauschale ({(mindestauftragswert - totalNet).toFixed(2).replace('.', ',')} €) hinzufügen
+              </button>
+            </div>
+          )}
 
           {/* Notizen */}
           <textarea
@@ -849,6 +949,47 @@ export default function NeuesAngebotPage() {
           </div>
         )}
       </div>
+
+      {/* Empfehlungs-Toast */}
+      {suggestionToast && (
+        <div className="fixed bottom-24 left-4 right-4 z-50 animate-in slide-in-from-bottom-4 duration-300">
+          <div className="bg-[#2C2C2C] rounded-2xl p-4 shadow-2xl flex items-start gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="text-[#F5C400] text-xs font-black mb-0.5 uppercase tracking-wide">Auch oft benötigt</div>
+              <div className="text-white font-black text-sm">{suggestionToast.empfehlung_title}</div>
+              <div className="text-white/40 text-xs font-semibold mt-0.5">
+                {suggestionToast.empfehlung_unit_price > 0
+                  ? `${suggestionToast.empfehlung_unit_price.toFixed(2).replace('.', ',')} € / ${suggestionToast.empfehlung_unit}`
+                  : suggestionToast.empfehlung_unit}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 shrink-0">
+              <button
+                onClick={() => {
+                  setItems(prev => [...prev, {
+                    title: suggestionToast.empfehlung_title,
+                    description: '',
+                    quantity: 1,
+                    unit: suggestionToast.empfehlung_unit,
+                    unit_price: suggestionToast.empfehlung_unit_price,
+                  }])
+                  if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+                  setSuggestionToast(null)
+                }}
+                className="bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-2 rounded-xl active:scale-95 transition-all"
+              >
+                + Hinzufügen
+              </button>
+              <button
+                onClick={() => { if (toastTimerRef.current) clearTimeout(toastTimerRef.current); setSuggestionToast(null) }}
+                className="text-white/30 font-bold text-xs text-right"
+              >
+                Später
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,11 +1,25 @@
 import SideNav from '@/components/SideNav'
+import Link from 'next/link'
+import { AgbUpdateModal } from '@/components/AgbUpdateModal'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-[#F7F7F5]">
       <SideNav />
-      <div className="md:ml-60">
-        {children}
+      <AgbUpdateModal />
+      <div className="md:ml-60 flex flex-col min-h-dvh">
+        <main className="flex-1">
+          {children}
+        </main>
+        <footer className="md:px-8 px-5 py-4 flex items-center justify-center gap-4 text-[#2C2C2C]/25 text-xs font-semibold border-t border-[#2C2C2C]/5">
+          <span>© 2026 Sofortangebot</span>
+          <span>·</span>
+          <Link href="/agb" className="hover:text-[#2C2C2C]/50 transition-colors">AGB</Link>
+          <span>·</span>
+          <Link href="/datenschutz" className="hover:text-[#2C2C2C]/50 transition-colors">Datenschutz</Link>
+          <span>·</span>
+          <Link href="/impressum" className="hover:text-[#2C2C2C]/50 transition-colors">Impressum</Link>
+        </footer>
       </div>
     </div>
   )

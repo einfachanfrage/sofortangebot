@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2 } from 'lucide-react'
 import BottomNav from '@/components/BottomNav'
 
 export default function EinstellungenPage() {
@@ -20,6 +20,12 @@ export default function EinstellungenPage() {
   const [vatRate, setVatRate] = useState<19 | 7 | 0>(19)
   const [paymentDays, setPaymentDays] = useState(14)
   const [gewerke, setGewerke] = useState<string[]>([])
+  const [regionalFaktor, setRegionalFaktor] = useState(0)
+  const [regionalManual, setRegionalManual] = useState(false)
+  const [angebotGueltigTage, setAngebotGueltigTage] = useState(30)
+  const [materialpreisHinweis, setMaterialpreisHinweis] = useState(false)
+  const [mindestauftragswert, setMindestauftragswert] = useState(0)
+  const [eRechnungAktiv, setERechnungAktiv] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
@@ -46,6 +52,14 @@ export default function EinstellungenPage() {
         setPaymentDays(data.payment_days ?? 14)
         setGewerke(data.gewerke ?? [])
         setLogoUrl(data.logo_url ?? null)
+        const faktor = data.regionaler_preisfaktor_prozent ?? 0
+        const presets = [20, 10, 0, -10, -15]
+        setRegionalFaktor(faktor)
+        setRegionalManual(!presets.includes(faktor))
+        setAngebotGueltigTage(data.angebot_gueltig_tage ?? 30)
+        setMaterialpreisHinweis(data.materialpreis_hinweis_aktiv ?? false)
+        setMindestauftragswert(data.mindestauftragswert ?? 0)
+        setERechnungAktiv(data.e_rechnung_aktiv !== false)
       }
     }
     load()
@@ -60,6 +74,11 @@ export default function EinstellungenPage() {
       name, address, tax_number: taxNumber, ust_id: ustId || null,
       iban, agb_url: agbUrl || null,
       vat_rate: vatRate, payment_days: paymentDays, gewerke,
+      regionaler_preisfaktor_prozent: regionalFaktor,
+      angebot_gueltig_tage: angebotGueltigTage,
+      materialpreis_hinweis_aktiv: materialpreisHinweis,
+      mindestauftragswert: mindestauftragswert,
+      e_rechnung_aktiv: eRechnungAktiv,
     }).eq('user_id', user.id)
     setSaving(false)
     setSaved(true)
@@ -199,7 +218,7 @@ export default function EinstellungenPage() {
         <div className="md:grid md:grid-cols-2 md:gap-6 flex flex-col gap-5">
 
           {/* Rechnungsstellung */}
-          <Card icon={<Receipt size={16} />} title="Rechnungsstellung">
+          <Card icon={<Receipt size={16} />} title="Steuer & Rechnungslegung">
             <Field label="Mehrwertsteuer">
               <div className="flex gap-2">
                 {([
@@ -217,11 +236,15 @@ export default function EinstellungenPage() {
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
-                {vatRate === 0
-                  ? 'Keine MwSt. auf Angeboten (§ 19 UStG).'
-                  : `${vatRate} % MwSt. wird auf Angeboten ausgewiesen.`}
-              </p>
+              {vatRate === 0 ? (
+                <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
+                  Kein Ausweis von Umsatzsteuer gemäß § 19 UStG. Auf Angeboten erscheint der Pflichthinweis automatisch.
+                </p>
+              ) : (
+                <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                  {vatRate} % MwSt. wird auf Angeboten ausgewiesen (Netto + MwSt. = Brutto).
+                </p>
+              )}
             </Field>
             <Field label="Zahlungsziel">
               <div className="flex gap-2">
@@ -240,6 +263,150 @@ export default function EinstellungenPage() {
                 Steht als Zahlungsfrist auf jedem Angebot.
               </p>
             </Field>
+            <Field label="Regionaler Preisfaktor">
+              <div className="flex flex-col gap-2">
+                {([
+                  { value: 20,  label: '+20 %', desc: 'München · Hamburg · Frankfurt' },
+                  { value: 10,  label: '+10 %', desc: 'Berlin · Köln · Düsseldorf' },
+                  { value: 0,   label: '± 0 %', desc: 'Mittlere Großstadt' },
+                  { value: -10, label: '−10 %', desc: 'Kleinstädte / ländlich West' },
+                  { value: -15, label: '−15 %', desc: 'Ländlich Ost' },
+                ] as { value: number; label: string; desc: string }[]).map(opt => (
+                  <button key={opt.value} type="button"
+                    onClick={() => { setRegionalFaktor(opt.value); setRegionalManual(false) }}
+                    className={`flex items-center justify-between w-full rounded-xl border-2 px-3 py-2.5 transition-colors ${
+                      !regionalManual && regionalFaktor === opt.value
+                        ? 'border-[#F5C400] bg-[#F5C400]/10'
+                        : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+                    }`}>
+                    <span className={`font-black text-sm ${!regionalManual && regionalFaktor === opt.value ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>
+                      {opt.label}
+                    </span>
+                    <span className={`text-xs font-semibold ${!regionalManual && regionalFaktor === opt.value ? 'text-[#2C2C2C]/60' : 'text-[#2C2C2C]/30'}`}>
+                      {opt.desc}
+                    </span>
+                  </button>
+                ))}
+                <button type="button"
+                  onClick={() => setRegionalManual(true)}
+                  className={`flex items-center justify-between w-full rounded-xl border-2 px-3 py-2.5 transition-colors ${
+                    regionalManual ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+                  }`}>
+                  <span className={`font-black text-sm ${regionalManual ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>Manuell</span>
+                  {regionalManual && (
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        value={regionalFaktor}
+                        onChange={e => setRegionalFaktor(Number(e.target.value))}
+                        onClick={e => e.stopPropagation()}
+                        className="w-16 text-right bg-white border-2 border-[#F5C400] rounded-lg px-2 py-1 text-sm font-black text-[#2C2C2C] focus:outline-none"
+                        min={-50}
+                        max={100}
+                        step={1}
+                      />
+                      <span className="text-sm font-bold text-[#2C2C2C]/60">%</span>
+                    </div>
+                  )}
+                </button>
+              </div>
+              {regionalFaktor !== 0 ? (
+                <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
+                  Preise basieren auf Regionalfaktor: {regionalFaktor > 0 ? '+' : ''}{regionalFaktor} %. Wird automatisch auf alle Positionen angewendet.
+                </p>
+              ) : (
+                <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                  Kein Aufschlag — Standardpreise ohne Regionalanpassung.
+                </p>
+              )}
+            </Field>
+            <Field label="Angebot Gültigkeitsdauer">
+              <div className="flex gap-2">
+                {[14, 30, 60, 90].map(days => (
+                  <button key={days} type="button" onClick={() => setAngebotGueltigTage(days)}
+                    className={`flex-1 py-2.5 rounded-xl border-2 font-black text-xs transition-colors ${
+                      angebotGueltigTage === days
+                        ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]'
+                        : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                    }`}>
+                    {days} Tage
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                Standard-Gültigkeitsdauer für neue Angebote.
+              </p>
+            </Field>
+            <Field label="Materialpreis-Hinweis">
+              <button type="button" onClick={() => setMaterialpreisHinweis(v => !v)}
+                className={`flex items-center gap-3 w-full rounded-xl border-2 px-3 py-3 transition-colors ${
+                  materialpreisHinweis ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+                }`}>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                  materialpreisHinweis ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'}`}>
+                  {materialpreisHinweis && <Check size={11} color="#2C2C2C" strokeWidth={3} />}
+                </div>
+                <span className={`font-bold text-sm ${materialpreisHinweis ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>
+                  Hinweis auf Angeboten drucken
+                </span>
+              </button>
+              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                Fügt folgenden Text ein: „Preise basieren auf aktuellen Materialkosten und können bei Lieferantenpreisänderungen angepasst werden."
+              </p>
+            </Field>
+            <Field label="Mindestauftragswert">
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={mindestauftragswert || ''}
+                  onChange={e => setMindestauftragswert(Number(e.target.value) || 0)}
+                  placeholder="0"
+                  min={0}
+                  step={10}
+                  className={inputCls}
+                />
+                <span className="font-bold text-[#2C2C2C]/50 shrink-0">€ netto</span>
+              </div>
+              {mindestauftragswert > 0 ? (
+                <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
+                  Bei Angeboten unter {mindestauftragswert} € erscheint eine Warnung mit Vorschlag zur Kleinstauftragspauschale.
+                </p>
+              ) : (
+                <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+                  0 € = deaktiviert. Kein Mindestauftragswert.
+                </p>
+              )}
+            </Field>
+          </Card>
+
+          {/* E-Rechnung */}
+          <Card icon={<FileCheck2 size={16} />} title="E-Rechnung & Compliance">
+            {!taxNumber && !ustId && (
+              <div className="flex items-start gap-2 bg-[#F5C400]/15 border border-[#F5C400]/40 rounded-xl px-3 py-3 -mt-1">
+                <span className="text-sm mt-0.5">⚠️</span>
+                <p className="text-xs font-semibold text-[#2C2C2C]/70 leading-relaxed">
+                  Für E-Rechnungen bitte <strong>Steuernummer</strong> oder <strong>USt-IdNr.</strong> im Betrieb-Bereich ergänzen.
+                </p>
+              </div>
+            )}
+            <Field label="E-Rechnungen automatisch erstellen">
+              <button type="button" onClick={() => setERechnungAktiv(v => !v)}
+                className={`relative inline-flex h-7 w-12 items-center rounded-full border-2 transition-colors ${
+                  eRechnungAktiv ? 'bg-[#F5C400] border-[#F5C400]' : 'bg-[#2C2C2C]/10 border-transparent'
+                }`}>
+                <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+                  eRechnungAktiv ? 'translate-x-6' : 'translate-x-1'
+                }`} />
+              </button>
+              <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5 leading-relaxed">
+                {vatRate === 0
+                  ? 'Als Kleinunternehmer (§ 19 UStG) bist du aktuell noch nicht verpflichtet. Ab 2027 gilt die Pflicht für alle.'
+                  : 'Bei aktivem Toggle: PDFs von Geschäftskunden enthalten automatisch eine eingebettete ZUGFeRD-XML (Factur-X EN 16931). Kompatibel mit DATEV, Lexoffice, sevDesk.'}
+              </p>
+            </Field>
+            <p className="text-xs text-[#2C2C2C]/30 font-semibold leading-relaxed border-t border-[#2C2C2C]/5 pt-3">
+              Sofortangebot unterstützt dich bei der technischen Erstellung von E-Rechnungen. Für steuerrechtliche Fragen wende dich bitte an deinen Steuerberater.
+            </p>
           </Card>
 
           {/* Gewerk */}
