@@ -3,6 +3,7 @@ import './globals.css'
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
 import { CookieBanner } from '@/components/CookieBanner'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { StagingBanner } from '@/components/StagingBanner'
 
 export const metadata: Metadata = {
   title: 'Sofortangebot',
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" className="h-full">
       <body className="min-h-dvh">
+        <StagingBanner />
         <ServiceWorkerRegister />
         <CookieBanner />
         <ErrorBoundary feature="root">{children}</ErrorBoundary>

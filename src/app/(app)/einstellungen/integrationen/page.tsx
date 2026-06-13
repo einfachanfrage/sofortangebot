@@ -126,7 +126,33 @@ export default function IntegrationenPage() {
   const [expanded, setExpanded] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [testStatus, setTestStatus] = useState<Record<string, 'idle' | 'testing' | 'ok' | 'fehler'>>({})
+  const [testMsg, setTestMsg] = useState<Record<string, string>>({})
   const supabase = createClient()
+
+  async function testVerbindung(swId: string, apiKey: string) {
+    if (!apiKey.trim()) return
+    setTestStatus(prev => ({ ...prev, [swId]: 'testing' }))
+    setTestMsg(prev => ({ ...prev, [swId]: '' }))
+    try {
+      const res = await fetch('/api/integrations/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ anbieter: swId, apiKey }),
+      })
+      const data = await res.json()
+      if (data.ok) {
+        setTestStatus(prev => ({ ...prev, [swId]: 'ok' }))
+        setTestMsg(prev => ({ ...prev, [swId]: `✓ Verbindung erfolgreich${data.version ? ` — ${data.version}` : ''}` }))
+      } else {
+        setTestStatus(prev => ({ ...prev, [swId]: 'fehler' }))
+        setTestMsg(prev => ({ ...prev, [swId]: data.fehler ?? 'Verbindung fehlgeschlagen' }))
+      }
+    } catch {
+      setTestStatus(prev => ({ ...prev, [swId]: 'fehler' }))
+      setTestMsg(prev => ({ ...prev, [swId]: 'Netzwerkfehler' }))
+    }
+  }
 
   useEffect(() => {
     async function load() {
@@ -237,6 +263,7 @@ export default function IntegrationenPage() {
                     {sw.fields.map(field => (
                       <div key={field.key}>
                         <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5 uppercase tracking-wide">{field.label}</label>
+
                         <div className="relative">
                           <input
                             type={showKey[field.key] ? 'text' : 'password'}
@@ -257,6 +284,23 @@ export default function IntegrationenPage() {
                         </div>
                       </div>
                     ))}
+                    {(sw.id === 'lexoffice' || sw.id === 'sevdesk') && isConnected(sw) && (
+                      <div className="mt-1">
+                        <button
+                          type="button"
+                          onClick={() => testVerbindung(sw.id, keys[sw.fields[0].key])}
+                          disabled={testStatus[sw.id] === 'testing'}
+                          className="text-xs font-bold text-[#2C2C2C]/50 bg-[#F7F7F5] rounded-xl px-3 py-2 disabled:opacity-50"
+                        >
+                          {testStatus[sw.id] === 'testing' ? 'Teste...' : 'Verbindung testen'}
+                        </button>
+                        {testMsg[sw.id] && (
+                          <p className={`mt-2 text-xs font-semibold ${testStatus[sw.id] === 'ok' ? 'text-green-600' : 'text-red-500'}`}>
+                            {testMsg[sw.id]}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
