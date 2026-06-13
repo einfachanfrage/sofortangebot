@@ -19,6 +19,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
+import VorschauUndVersand from '@/components/VorschauUndVersand'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -216,6 +217,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showMoreMenu, setShowMoreMenu] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [autosaveLabel, setAutosaveLabel] = useState('')
+  const [showVorschau, setShowVorschau] = useState(false)
+  const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRef = useRef<MediaRecorder | null>(null)
@@ -1134,6 +1137,54 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             )}
           </div>
         </div>
+      )}
+
+      {/* ── Footer-Bar: Position+ | Vorschau | Senden ───────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 flex gap-2">
+        {editMode && (
+          <button
+            onClick={addEditItem}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10"
+          >
+            <Plus size={15} strokeWidth={2.5} /> Position
+          </button>
+        )}
+        <button
+          onClick={() => { setVorschauInitialTab('vorschau'); setShowVorschau(true) }}
+          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10"
+        >
+          <FileText size={15} strokeWidth={2} /> Vorschau
+        </button>
+        <button
+          onClick={() => { setVorschauInitialTab('senden'); setShowVorschau(true) }}
+          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm"
+        >
+          <Share2 size={15} strokeWidth={2.5} /> Senden →
+        </button>
+      </div>
+
+      {/* ── VorschauUndVersand Bottom Sheet ────────────────────────────── */}
+      {showVorschau && company && (
+        <VorschauUndVersand
+          quote={{
+            ...quote,
+            items: displayItems as QuoteItem[],
+            discount_percent: discountPercent,
+            discount_amount: discountAmount,
+            surcharge_amount: surchargeAmount,
+            surcharge_label: surchargeLabel,
+          } as Parameters<typeof VorschauUndVersand>[0]['quote']}
+          company={company}
+          quoteNumber={quoteNumber}
+          initialTab={vorschauInitialTab}
+          onClose={() => setShowVorschau(false)}
+          onSent={(via) => {
+            setCurrentStatus('sent')
+            if (!sentVia.includes(via)) setSentVia(prev => [...prev, via])
+            showToast(`Angebot gesendet via ${via} ✓`)
+            setShowVorschau(false)
+          }}
+        />
       )}
     </div>
   )

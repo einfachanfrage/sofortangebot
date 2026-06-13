@@ -4,6 +4,22 @@ Alle wichtigen Änderungen am Sofortangebot-Projekt.
 
 ---
 
+## [Unveröffentlicht] — 2026-06-13 (Session 4)
+
+### Angebots-Vorschau + Direktversand
+
+- **Vorschau Bottom Sheet** (`VorschauUndVersand`): 80%/92vh-Sheet mit Tabs „Vorschau" / „Senden →"
+  - Angebot/Rechnung-Toggle in Vorschau, 3s-Erklärer-Banner
+  - Skalierte React-Vorschau identisch zum PDF-Layout
+- **Tab E-Mail**: Vorbefüllte, editierbare Nachricht (Anrede, Freitext), Betreff, An-Adresse; PDF-Anhang automatisch; ZUGFeRD-Anhang bei B2B-Kunden; reply-to = Handwerker-E-Mail
+- **Tab WhatsApp**: Öffentlicher PDF-Link per WhatsApp teilen
+- **Tab Link kopieren**: QR-Code (qrcode.react) + URL-Feld + Kopieren-Button
+- **PDF-Public-URL** (`/api/quotes/[id]/public-pdf`): Generiert PDF, lädt in Supabase Storage `public-pdfs` hoch (30-Tage-Cache)
+- **Send-API** (`/api/quotes/[id]/send`): E-Mail via Resend (reply_to handwerker), Status `sent` setzen, gesendet_via/am/empfaenger_email speichern
+- **Footer-Bar** in AngebotDetail: Feste Leiste unten — „+ Position" (nur Edit-Modus) | „Vorschau" | „Senden →"
+- **`supabase/add_quote_send.sql`**: `gesendet_am`, `gesendet_via`, `empfaenger_email`, `pdf_public_url`, `pdf_url_gueltig_bis`, `geoeffnet_am`, `geoeffnet_count` + `angebot_views`-Tabelle
+- Manuell anzulegen: Supabase Storage Bucket `public-pdfs` (public, PDF only)
+
 ## [Unveröffentlicht] — 2026-06-13 (Session 3)
 
 ### Angebots-Bearbeitungsansicht — komplett überarbeitet
