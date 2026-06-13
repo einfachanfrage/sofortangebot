@@ -1,11 +1,24 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
-import { Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X, Plus, ChevronDown, Copy, Mic, MicOff, Loader2 } from 'lucide-react'
+import {
+  Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
+  Plus, ChevronDown, Copy, Mic, MicOff, Loader2, Image, StickyNote,
+  Camera, AlertTriangle, GripVertical, MoreHorizontal, Percent, Tag,
+} from 'lucide-react'
+import {
+  DndContext, closestCenter, PointerSensor, useSensor, useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -13,31 +26,14 @@ interface Props {
   quoteNumber: string
 }
 
-const STATUS_CONFIG = {
-  draft:    { label: 'Entwurf',    bg: 'bg-gray-100',  text: 'text-gray-600'  },
-  sent:     { label: 'Offen',      bg: 'bg-blue-50',   text: 'text-blue-700'  },
-  accepted: { label: 'Beauftragt', bg: 'bg-green-50',  text: 'text-green-700' },
-  rejected: { label: 'Abgelehnt', bg: 'bg-red-50',    text: 'text-red-700'   },
-  archived: { label: 'Archiviert', bg: 'bg-gray-50',   text: 'text-gray-400'  },
-}
-
-const VIA_LABELS: Record<string, string> = {
-  email: '✉️ E-Mail',
-  whatsapp: '💬 WhatsApp',
-  link: '🔗 Link',
-  lexoffice: 'Lexoffice',
-  sevdesk: 'sevDesk',
-  fastbill: 'FastBill',
-  billomat: 'Billomat',
-  papierkram: 'Papierkram',
-  easybill: 'Easybill',
-}
-
-function fmt(n: number) {
-  return n.toFixed(2).replace('.', ',') + ' €'
-}
-function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+interface QuotePhoto {
+  id: string
+  quote_id: string
+  url: string
+  filename: string
+  in_pdf: boolean
+  erstellt_am: string
+  signed_url?: string
 }
 
 interface EditItem {
@@ -49,8 +45,143 @@ interface EditItem {
   unit: string
   unit_price: number
   total_price: number
+  confidence?: number
 }
 
+const STATUS_CONFIG = {
+  draft:           { label: 'Entwurf',      bg: 'bg-gray-100',  text: 'text-gray-600'  },
+  in_bearbeitung:  { label: 'In Arbeit',    bg: 'bg-yellow-50', text: 'text-yellow-700' },
+  sent:            { label: 'Offen',        bg: 'bg-blue-50',   text: 'text-blue-700'  },
+  accepted:        { label: 'Beauftragt',   bg: 'bg-green-50',  text: 'text-green-700' },
+  rejected:        { label: 'Abgelehnt',    bg: 'bg-red-50',    text: 'text-red-700'   },
+  archived:        { label: 'Archiviert',   bg: 'bg-gray-50',   text: 'text-gray-400'  },
+}
+
+const VIA_LABELS: Record<string, string> = {
+  email: '✉️ E-Mail', whatsapp: '💬 WhatsApp', link: '🔗 Link',
+  lexoffice: 'Lexoffice', sevdesk: 'sevDesk', fastbill: 'FastBill',
+  billomat: 'Billomat', papierkram: 'Papierkram', easybill: 'Easybill',
+}
+
+const UNITS = ['m²', 'lfdm', 'Stk', 'Stunde', 'pauschal', 'm³', 'kg', 'ltr', 'Rolle', 'Satz']
+
+function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
+function fmtDate(d: string) {
+  return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+// ── Sortierbare Position ──────────────────────────────────────────────────────
+function SortableItem({ item, editingId, setEditingId, updateEditItem, removeEditItem, vatRate }: {
+  item: EditItem
+  editingId: string | null
+  setEditingId: (id: string | null) => void
+  updateEditItem: (id: string, field: keyof EditItem, value: string | number) => void
+  removeEditItem: (id: string) => void
+  vatRate: number
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
+  const isEditing = editingId === item.id
+  const isUnsure = (item.confidence ?? 1) < 0.7
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`border-t border-[#2C2C2C]/5 px-4 py-3 relative ${isUnsure ? 'border-l-4 border-l-[#F5C400]' : ''}`}
+      onClick={() => !isEditing && setEditingId(item.id)}
+    >
+      {isUnsure && (
+        <div className="flex items-center gap-1 mb-1">
+          <AlertTriangle size={11} className="text-[#F5C400]" strokeWidth={3} />
+          <span className="text-[10px] font-black text-[#F5C400]">KI unsicher — bitte prüfen</span>
+        </div>
+      )}
+
+      {isEditing ? (
+        <div className="flex items-start gap-2">
+          <div className="flex-1 min-w-0">
+            <input
+              value={item.title}
+              onChange={e => updateEditItem(item.id, 'title', e.target.value)}
+              className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-[#F5C400] pb-0.5 mb-2"
+              autoFocus
+            />
+            <div className="flex gap-2 items-center flex-wrap">
+              <input
+                type="number"
+                inputMode="decimal"
+                value={item.quantity}
+                onChange={e => updateEditItem(item.id, 'quantity', e.target.value)}
+                className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none"
+                min={0} step="0.01"
+              />
+              <select
+                value={UNITS.includes(item.unit) ? item.unit : '__custom'}
+                onChange={e => e.target.value !== '__custom' && updateEditItem(item.id, 'unit', e.target.value)}
+                className="text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none"
+              >
+                {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                {!UNITS.includes(item.unit) && <option value="__custom">{item.unit}</option>}
+                <option value="__custom">Andere…</option>
+              </select>
+              {(!UNITS.includes(item.unit) || item.unit === '') && (
+                <input
+                  value={item.unit}
+                  onChange={e => updateEditItem(item.id, 'unit', e.target.value)}
+                  placeholder="Einheit"
+                  className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none"
+                />
+              )}
+              <div className="flex items-center gap-1 ml-auto">
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={item.unit_price}
+                  onChange={e => updateEditItem(item.id, 'unit_price', e.target.value)}
+                  className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 text-right focus:outline-none"
+                  min={0} step="0.01"
+                />
+                <span className="text-xs text-[#2C2C2C]/40 font-bold">€</span>
+              </div>
+            </div>
+            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 text-right">
+              = {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €
+              {vatRate > 0 && (
+                <span className="ml-2 text-[#2C2C2C]/25">
+                  (brutto {((item.quantity * item.unit_price) * (1 + vatRate / 100)).toFixed(2).replace('.', ',')} €)
+                </span>
+              )}
+            </div>
+          </div>
+          <button onClick={e => { e.stopPropagation(); removeEditItem(item.id) }} className="mt-0.5 p-1 shrink-0">
+            <X size={16} color="#ef4444" />
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-between items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="font-bold text-[#2C2C2C] text-sm">{item.title}</div>
+            {item.description && (
+              <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>
+            )}
+            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">
+              {item.quantity} {item.unit} × {fmt(item.unit_price)}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="font-black text-[#2C2C2C]">{fmt(item.quantity * item.unit_price)}</div>
+            <div className="cursor-grab touch-none text-[#2C2C2C]/20 active:cursor-grabbing" {...attributes} {...listeners} onClick={e => e.stopPropagation()}>
+              <GripVertical size={16} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Hauptkomponente ───────────────────────────────────────────────────────────
 export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [sending, setSending] = useState(false)
   const [emailInput, setEmailInput] = useState(quote.customer?.email ?? '')
@@ -60,6 +191,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [toast, setToast] = useState('')
   const [editMode, setEditMode] = useState(false)
   const [editItems, setEditItems] = useState<EditItem[]>(quote.items)
+  const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [exporting, setExporting] = useState<string | null>(null)
   const [showStatusPicker, setShowStatusPicker] = useState(false)
@@ -68,11 +200,111 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [voiceRecording, setVoiceRecording] = useState(false)
   const [voiceLoading, setVoiceLoading] = useState(false)
   const [voiceError, setVoiceError] = useState('')
+  const [activeTab, setActiveTab] = useState<'positionen' | 'notizen'>('positionen')
+  const [showExtras, setShowExtras] = useState(false)
+  const [discountPercent, setDiscountPercent] = useState(0)
+  const [discountAmount, setDiscountAmount] = useState(0)
+  const [surchargeAmount, setSurchargeAmount] = useState(0)
+  const [surchargeLabel, setSurchargeLabel] = useState('Zuschlag')
+  const [internalNotes, setInternalNotes] = useState('')
+  const [photos, setPhotos] = useState<QuotePhoto[]>([])
+  const [photosLoading, setPhotosLoading] = useState(false)
+  const [photoUploading, setPhotoUploading] = useState(false)
+  const [lightboxPhoto, setLightboxPhoto] = useState<QuotePhoto | null>(null)
+  const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
+  const [dismissedHints, setDismissedHints] = useState<Set<string>>(new Set())
+  const [showMoreMenu, setShowMoreMenu] = useState(false)
+  const [hasChanges, setHasChanges] = useState(false)
+  const [autosaveLabel, setAutosaveLabel] = useState('')
+  const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const router = useRouter()
   const supabase = createClient()
 
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
+
+  // ── On mount: Fotos + interne Notizen + Empfehlungen laden ────────────────
+  useEffect(() => {
+    loadPhotos()
+    loadQuoteExtras()
+    loadEmpfehlungen()
+  }, [])
+
+  async function loadPhotos() {
+    setPhotosLoading(true)
+    const res = await fetch(`/api/quotes/${quote.id}/photos`)
+    if (res.ok) setPhotos(await res.json())
+    setPhotosLoading(false)
+  }
+
+  async function loadQuoteExtras() {
+    const { data } = await supabase
+      .from('quotes')
+      .select('internal_notes, discount_percent, discount_amount, surcharge_amount, surcharge_label')
+      .eq('id', quote.id)
+      .single()
+    if (data) {
+      setInternalNotes(data.internal_notes ?? '')
+      setDiscountPercent(data.discount_percent ?? 0)
+      setDiscountAmount(data.discount_amount ?? 0)
+      setSurchargeAmount(data.surcharge_amount ?? 0)
+      setSurchargeLabel(data.surcharge_label ?? 'Zuschlag')
+      if ((data.discount_percent ?? 0) > 0 || (data.discount_amount ?? 0) > 0 || (data.surcharge_amount ?? 0) > 0) {
+        setShowExtras(true)
+      }
+    }
+  }
+
+  async function loadEmpfehlungen() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
+    if (!co) return
+    const { data } = await supabase
+      .from('positions_empfehlungen')
+      .select('*')
+      .eq('company_id', co.id)
+    setEmpfehlungen(data ?? [])
+  }
+
+  // ── KI-Vorschläge berechnen ───────────────────────────────────────────────
+  const currentCategories = new Set((editMode ? editItems : quote.items).map(i => {
+    const item = i as EditItem & { kategorie?: string }
+    return item.kategorie ?? ''
+  }))
+  const currentTitles = new Set((editMode ? editItems : quote.items).map(i => i.title.toLowerCase()))
+
+  const activeHints = empfehlungen
+    .filter(e => currentCategories.has(e.trigger_category) && !currentTitles.has(e.empfehlung_title.toLowerCase()) && !dismissedHints.has(e.empfehlung_title))
+    .slice(0, 2)
+
+  // ── Autosave interne Notizen ───────────────────────────────────────────────
+  function scheduleAutosaveNotes(val: string) {
+    setInternalNotes(val)
+    if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
+    autosaveTimer.current = setTimeout(async () => {
+      await supabase.from('quotes').update({ internal_notes: val }).eq('id', quote.id)
+      setAutosaveLabel('Gespeichert')
+      setTimeout(() => setAutosaveLabel(''), 2000)
+    }, 1500)
+  }
+
+  // ── Drag & Drop ────────────────────────────────────────────────────────────
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      setEditItems(items => {
+        const oldIndex = items.findIndex(i => i.id === active.id)
+        const newIndex = items.findIndex(i => i.id === over.id)
+        return arrayMove(items, oldIndex, newIndex).map((item, idx) => ({ ...item, position: idx + 1 }))
+      })
+      setHasChanges(true)
+    }
+  }
+
+  // ── Spracheingabe ──────────────────────────────────────────────────────────
   const startVoiceRecording = useCallback(async () => {
     setVoiceError('')
     try {
@@ -84,8 +316,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       mr.onstop = async () => {
         stream.getTracks().forEach(t => t.stop())
-        const blob = new Blob(chunksRef.current, { type: mr.mimeType || 'audio/webm' })
-        await processVoiceAddition(blob)
+        await processVoiceAddition(new Blob(chunksRef.current, { type: mr.mimeType || 'audio/webm' }))
       }
       mr.start()
       mediaRef.current = mr
@@ -103,14 +334,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   async function processVoiceAddition(blob: Blob) {
     setVoiceLoading(true)
     try {
-      // 1. Transkribieren
       const fd = new FormData()
       fd.append('audio', blob, 'aufnahme.webm')
       const tRes = await fetch('/api/transkribieren', { method: 'POST', body: fd })
-      if (!tRes.ok) { setVoiceError('Transkription fehlgeschlagen'); setVoiceLoading(false); return }
+      if (!tRes.ok) { setVoiceError('Transkription fehlgeschlagen'); return }
       const { text } = await tRes.json()
 
-      // 2. KI-Ergänzung
       const aRes = await fetch('/api/angebot-ergänzen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -119,42 +348,168 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           transcript: text,
         }),
       })
-      if (!aRes.ok) { setVoiceError('Analyse fehlgeschlagen'); setVoiceLoading(false); return }
+      if (!aRes.ok) { setVoiceError('Analyse fehlgeschlagen'); return }
       const result = await aRes.json()
-
-      const newItems = (result.items ?? []) as Array<{ title: string; description?: string; quantity: number; unit: string; unit_price: number; kategorie?: string }>
+      const newItems = (result.items ?? []) as Array<{ title: string; description?: string; quantity: number; unit: string; unit_price: number }>
 
       setEditItems(prev => {
         let updated = [...prev]
         for (const ni of newItems) {
           if (ni.title.startsWith('KORREKTUR:')) {
-            // Bestehende Position updaten
             const cleanTitle = ni.title.replace('KORREKTUR:', '').trim()
             const idx = updated.findIndex(e => e.title.toLowerCase() === cleanTitle.toLowerCase())
-            if (idx >= 0) {
-              updated[idx] = { ...updated[idx], quantity: ni.quantity, unit: ni.unit, unit_price: ni.unit_price, total_price: ni.quantity * ni.unit_price }
-            }
+            if (idx >= 0) updated[idx] = { ...updated[idx], quantity: ni.quantity, unit: ni.unit, unit_price: ni.unit_price, total_price: ni.quantity * ni.unit_price }
           } else if (!updated.some(e => e.title.toLowerCase() === ni.title.toLowerCase())) {
-            // Neue Position anhängen
-            updated = [...updated, {
-              id: `new-${Date.now()}-${Math.random()}`,
-              position: (updated[updated.length - 1]?.position ?? 0) + 1,
-              title: ni.title,
-              description: ni.description ?? null,
-              quantity: ni.quantity,
-              unit: ni.unit,
-              unit_price: ni.unit_price,
-              total_price: ni.quantity * ni.unit_price,
-            }]
+            updated = [...updated, { id: `new-${Date.now()}-${Math.random()}`, position: (updated[updated.length - 1]?.position ?? 0) + 1, title: ni.title, description: ni.description ?? null, quantity: ni.quantity, unit: ni.unit, unit_price: ni.unit_price, total_price: ni.quantity * ni.unit_price }]
           }
         }
         return updated
       })
+      setHasChanges(true)
     } finally {
       setVoiceLoading(false)
     }
   }
 
+  // ── Fotos ──────────────────────────────────────────────────────────────────
+  async function handlePhotoUpload(file: File) {
+    if (photos.length >= 10) { showToast('Maximal 10 Fotos'); return }
+    setPhotoUploading(true)
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch(`/api/quotes/${quote.id}/photos`, { method: 'POST', body: fd })
+    if (res.ok) {
+      const photo = await res.json()
+      setPhotos(prev => [...prev, photo])
+      showToast('Foto hinzugefügt ✓')
+    } else {
+      showToast('Upload fehlgeschlagen')
+    }
+    setPhotoUploading(false)
+  }
+
+  async function togglePhotoInPdf(photo: QuotePhoto) {
+    const newVal = !photo.in_pdf
+    setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, in_pdf: newVal } : p))
+    await fetch(`/api/quotes/${quote.id}/photos`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo_id: photo.id, in_pdf: newVal }),
+    })
+  }
+
+  async function deletePhoto(photo: QuotePhoto) {
+    setPhotos(prev => prev.filter(p => p.id !== photo.id))
+    setLightboxPhoto(null)
+    await fetch(`/api/quotes/${quote.id}/photos`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo_id: photo.id }),
+    })
+  }
+
+  // ── Edit-Modus ─────────────────────────────────────────────────────────────
+  function updateEditItem(id: string, field: keyof EditItem, value: string | number) {
+    setEditItems(prev => prev.map(item => {
+      if (item.id !== id) return item
+      const updated = { ...item, [field]: (field === 'quantity' || field === 'unit_price') ? Number(value) : value }
+      updated.total_price = updated.quantity * updated.unit_price
+      return updated
+    }))
+    setHasChanges(true)
+  }
+
+  function removeEditItem(id: string) {
+    setEditItems(prev => prev.filter(item => item.id !== id))
+    setEditingItemId(null)
+    setHasChanges(true)
+  }
+
+  function addEditItem() {
+    const newItem: EditItem = {
+      id: `new-${Date.now()}`,
+      position: (editItems[editItems.length - 1]?.position ?? 0) + 1,
+      title: '',
+      description: null,
+      quantity: 1,
+      unit: 'Stk',
+      unit_price: 0,
+      total_price: 0,
+    }
+    setEditItems(prev => [...prev, newItem])
+    setEditingItemId(newItem.id)
+    setHasChanges(true)
+  }
+
+  function addHintItem(hint: EmpfehlungDefault) {
+    const newItem: EditItem = {
+      id: `new-${Date.now()}`,
+      position: (editItems[editItems.length - 1]?.position ?? 0) + 1,
+      title: hint.empfehlung_title,
+      description: null,
+      quantity: 1,
+      unit: hint.empfehlung_unit,
+      unit_price: hint.empfehlung_unit_price,
+      total_price: hint.empfehlung_unit_price,
+    }
+    setEditItems(prev => [...prev, newItem])
+    setDismissedHints(prev => new Set([...prev, hint.empfehlung_title]))
+    if (!editMode) setEditMode(true)
+    setHasChanges(true)
+    showToast(`${hint.empfehlung_title} hinzugefügt ✓`)
+  }
+
+  async function saveEdits() {
+    setSaving(true)
+    for (const item of editItems) {
+      if (item.id.startsWith('new-')) {
+        await supabase.from('quote_items').insert({
+          quote_id: quote.id, position: item.position, title: item.title,
+          description: item.description, quantity: item.quantity, unit: item.unit,
+          unit_price: item.unit_price, total_price: item.total_price,
+        })
+      } else {
+        await supabase.from('quote_items').update({
+          title: item.title, description: item.description, quantity: item.quantity,
+          unit: item.unit, unit_price: item.unit_price, total_price: item.total_price,
+          position: item.position,
+        }).eq('id', item.id)
+      }
+    }
+    const deletedIds = quote.items.filter(orig => !editItems.some(e => e.id === orig.id)).map(i => i.id)
+    if (deletedIds.length) await supabase.from('quote_items').delete().in('id', deletedIds)
+
+    const totalNet = editItems.reduce((s, i) => s + i.total_price, 0)
+    const discountValue = discountPercent > 0 ? totalNet * (discountPercent / 100) : discountAmount
+    const netAfterDiscount = totalNet - discountValue
+    const netWithSurcharge = netAfterDiscount + surchargeAmount
+    const totalVat = company && company.vat_rate > 0 ? netWithSurcharge * (company.vat_rate / 100) : 0
+    await supabase.from('quotes').update({
+      total_net: totalNet, total_vat: totalVat, total_gross: netWithSurcharge + totalVat,
+      discount_percent: discountPercent, discount_amount: discountAmount,
+      surcharge_amount: surchargeAmount, surcharge_label: surchargeLabel,
+    }).eq('id', quote.id)
+
+    setSaving(false)
+    setEditMode(false)
+    setEditingItemId(null)
+    setHasChanges(false)
+    showToast('Angebot gespeichert ✓')
+    router.refresh()
+  }
+
+  // ── Summenberechnung ───────────────────────────────────────────────────────
+  const baseNet = editMode
+    ? editItems.reduce((s, i) => s + i.quantity * i.unit_price, 0)
+    : quote.total_net
+  const discountValue = discountPercent > 0 ? baseNet * (discountPercent / 100) : discountAmount
+  const netAfterDiscount = baseNet - discountValue
+  const netWithSurcharge = netAfterDiscount + surchargeAmount
+  const totalVat = company && company.vat_rate > 0 ? netWithSurcharge * (company.vat_rate / 100) : 0
+  const totalGross = netWithSurcharge + totalVat
+  const isKleinunternehmer = company?.vat_rate === 0
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
   const INTEGRATIONS = [
     { id: 'lexoffice', label: 'Lexoffice', short: 'LO', color: '#0066CC', active: !!company?.lexoffice_api_key },
     { id: 'sevdesk', label: 'sevDesk', short: 'SD', color: '#E84B3C', active: !!company?.sevdesk_api_key },
@@ -164,28 +519,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     { id: 'easybill', label: 'Easybill', short: 'EB', color: '#009688', active: !!company?.easybill_api_key },
   ]
   const activeIntegrations = INTEGRATIONS.filter(i => i.active)
-  const hasAnyIntegration = activeIntegrations.length > 0
 
   const status = STATUS_CONFIG[currentStatus as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.draft
 
-  // Öffentliche PDF-URL via Share-Token
-  const publicPdfUrl = quote.share_token
-    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/api/pdf/public?token=${quote.share_token}`
-    : null
-
-  function showToast(msg: string) {
-    setToast(msg)
-    setTimeout(() => setToast(''), 2500)
-  }
-
+  function showToast(msg: string) { setToast(msg); setTimeout(() => setToast(''), 2500) }
   function trackVia(via: string) {
     if (sentVia.includes(via)) return
     setSentVia(prev => [...prev, via])
-    fetch(`/api/quotes/${quote.id}/track`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ via }),
-    }).catch(() => {})
+    fetch(`/api/quotes/${quote.id}/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ via }) }).catch(() => {})
   }
 
   async function changeStatus(newStatus: string) {
@@ -198,50 +539,19 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   async function handleSendEmail() {
     if (!emailInput.trim()) return
     setSending(true)
-    const r = await fetch('/api/email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quoteId: quote.id, to: emailInput }),
-    })
+    const r = await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.id, to: emailInput }) })
     setSending(false)
     if (r.ok) {
-      setEmailSent(true)
-      setShowEmail(false)
-      setCurrentStatus('sent')
-      trackVia('email')
+      setEmailSent(true); setShowEmail(false); setCurrentStatus('sent'); trackVia('email')
       await supabase.from('quotes').update({ status: 'sent' }).eq('id', quote.id)
       showToast('E-Mail versendet ✓')
-    } else {
-      showToast('E-Mail fehlgeschlagen — Resend noch nicht eingerichtet')
-    }
+    } else { showToast('E-Mail fehlgeschlagen') }
   }
 
   async function handleDuplicate() {
-    const r = await fetch('/api/quotes/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: quote.items.map(i => ({
-          title: i.title,
-          description: i.description,
-          quantity: i.quantity,
-          unit: i.unit,
-          unit_price: i.unit_price,
-        })),
-        notes: quote.notes,
-        customerName: quote.customer?.name ?? '',
-        customerEmail: quote.customer?.email ?? '',
-        customerPhone: quote.customer?.phone ?? '',
-        customerAddress: quote.customer?.address ?? '',
-      }),
-    })
-    if (r.ok) {
-      const { id } = await r.json()
-      showToast('Angebot dupliziert ✓')
-      router.push(`/angebot/${id}`)
-    } else {
-      showToast('Duplizieren fehlgeschlagen')
-    }
+    const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: quote.items.map(i => ({ title: i.title, description: i.description, quantity: i.quantity, unit: i.unit, unit_price: i.unit_price })), notes: quote.notes, customerName: quote.customer?.name ?? '', customerEmail: quote.customer?.email ?? '', customerPhone: quote.customer?.phone ?? '', customerAddress: quote.customer?.address ?? '' }) })
+    if (r.ok) { const { id } = await r.json(); showToast('Dupliziert ✓'); router.push(`/angebot/${id}`) }
+    else showToast('Duplizieren fehlgeschlagen')
   }
 
   async function handleDelete() {
@@ -252,156 +562,116 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   function copyLink() {
-    // share_token verwenden, nicht UUID (Punkt 2)
     const token = quote.share_token ?? quote.id
-    const link = `${window.location.origin}/angebot/${token}/unterschreiben`
-    navigator.clipboard.writeText(link)
+    navigator.clipboard.writeText(`${window.location.origin}/angebot/${token}/unterschreiben`)
     trackVia('link')
-    showToast('Link kopiert — jetzt an Kunden schicken')
+    showToast('Link kopiert ✓')
   }
-
-  // ── Edit-Modus ──────────────────────────────────────────────────────────────
-  function updateEditItem(id: string, field: keyof EditItem, value: string | number) {
-    setEditItems(prev => prev.map(item => {
-      if (item.id !== id) return item
-      const updated = { ...item, [field]: typeof value === 'string' && (field === 'quantity' || field === 'unit_price') ? Number(value) : value }
-      updated.total_price = updated.quantity * updated.unit_price
-      return updated
-    }))
-  }
-
-  function removeEditItem(id: string) {
-    setEditItems(prev => prev.filter(item => item.id !== id))
-  }
-
-  function addEditItem() {
-    const newItem: EditItem = {
-      id: `new-${Date.now()}`,
-      position: (editItems[editItems.length - 1]?.position ?? 0) + 1,
-      title: 'Neue Position',
-      description: null,
-      quantity: 1,
-      unit: 'Stk',
-      unit_price: 0,
-      total_price: 0,
-    }
-    setEditItems(prev => [...prev, newItem])
-  }
-
-  async function saveEdits() {
-    setSaving(true)
-
-    // Bestehende Items updaten oder neu anlegen
-    for (const item of editItems) {
-      if (item.id.startsWith('new-')) {
-        await supabase.from('quote_items').insert({
-          quote_id: quote.id,
-          position: item.position,
-          title: item.title,
-          description: item.description,
-          quantity: item.quantity,
-          unit: item.unit,
-          unit_price: item.unit_price,
-          total_price: item.total_price,
-        })
-      } else {
-        await supabase.from('quote_items').update({
-          title: item.title,
-          description: item.description,
-          quantity: item.quantity,
-          unit: item.unit,
-          unit_price: item.unit_price,
-          total_price: item.total_price,
-        }).eq('id', item.id)
-      }
-    }
-
-    // Gelöschte Items entfernen
-    const deletedIds = quote.items
-      .filter(orig => !editItems.some(e => e.id === orig.id))
-      .map(i => i.id)
-    if (deletedIds.length) {
-      await supabase.from('quote_items').delete().in('id', deletedIds)
-    }
-
-    // Summen neu berechnen
-    const totalNet = editItems.reduce((s, i) => s + i.total_price, 0)
-    const totalVat = company && company.vat_rate > 0 ? totalNet * (company.vat_rate / 100) : 0
-    await supabase.from('quotes').update({
-      total_net: totalNet,
-      total_vat: totalVat,
-      total_gross: totalNet + totalVat,
-    }).eq('id', quote.id)
-
-    setSaving(false)
-    setEditMode(false)
-    showToast('Angebot gespeichert ✓')
-    router.refresh()
-  }
-
-  const displayItems = editMode ? editItems : quote.items
-  const totalNet = editMode
-    ? editItems.reduce((s, i) => s + i.quantity * i.unit_price, 0)
-    : quote.total_net
-  const totalVat = company && company.vat_rate > 0 ? totalNet * (company.vat_rate / 100) : 0
-  const totalGross = totalNet + totalVat
 
   async function handleExport(provider: string, label: string) {
     setExporting(provider)
-    const r = await fetch(`/api/integrations/${provider}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quoteId: quote.id }),
-    })
+    const r = await fetch(`/api/integrations/${provider}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.id }) })
     setExporting(null)
-    if (r.ok) {
-      trackVia(provider)
-      showToast(`Zu ${label} übertragen ✓`)
-    } else {
-      const err = await r.json()
-      showToast(err.error ?? 'Export fehlgeschlagen')
-    }
+    if (r.ok) { trackVia(provider); showToast(`Zu ${label} übertragen ✓`) }
+    else { const err = await r.json(); showToast(err.error ?? 'Export fehlgeschlagen') }
   }
 
+  const publicPdfUrl = quote.share_token ? `${typeof window !== 'undefined' ? window.location.origin : ''}/api/pdf/public?token=${quote.share_token}` : null
   const signingLink = `${typeof window !== 'undefined' ? window.location.origin : 'https://sofortangebot.app'}/angebot/${quote.share_token ?? quote.id}/unterschreiben`
-  const whatsappText = publicPdfUrl
-    ? encodeURIComponent(`Hallo, anbei mein Angebot ${quoteNumber} über ${fmt(quote.total_gross)}.\n\nOnline ansehen & unterschreiben: ${signingLink}\n\nPDF: ${publicPdfUrl}`)
-    : encodeURIComponent(`Hallo, anbei mein Angebot ${quoteNumber} über ${fmt(quote.total_gross)}.\n\nOnline ansehen & unterschreiben: ${signingLink}`)
+  const whatsappText = encodeURIComponent(`Hallo, anbei mein Angebot ${quoteNumber} über ${fmt(totalGross)}.\n\nOnline ansehen & unterschreiben: ${signingLink}${publicPdfUrl ? `\n\nPDF: ${publicPdfUrl}` : ''}`)
 
+  const displayItems = editMode ? editItems : quote.items
+  const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
+  const istZugferd = company?.e_rechnung_aktiv !== false && kundeIstUnternehmen
+
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-10">
+    <div className="min-h-dvh bg-[#F7F7F5] pb-10" onClick={() => { setEditingItemId(null); setShowMoreMenu(false) }}>
+
       {/* Toast */}
       {toast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-bold text-sm rounded-2xl px-5 py-3 text-center shadow-xl whitespace-nowrap">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-bold text-sm rounded-2xl px-5 py-3 shadow-xl whitespace-nowrap">
           {toast}
         </div>
       )}
 
+      {/* Lightbox */}
+      {lightboxPhoto && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center" onClick={() => setLightboxPhoto(null)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={lightboxPhoto.signed_url ?? lightboxPhoto.url} alt="" className="max-w-full max-h-[70vh] object-contain rounded-xl" />
+          <div className="flex gap-4 mt-4" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => togglePhotoInPdf(lightboxPhoto)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${lightboxPhoto.in_pdf ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/10 text-white'}`}
+            >
+              <FileText size={15} /> {lightboxPhoto.in_pdf ? 'Im PDF ✓' : 'Ins PDF'}
+            </button>
+            <button
+              onClick={() => deletePhoto(lightboxPhoto)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/20 text-red-300 font-bold text-sm"
+            >
+              <Trash2 size={15} /> Löschen
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-5">
+      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-0">
         <Link href="/dashboard" className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold">← Dashboard</Link>
-        <div className="flex items-center justify-between mt-1">
+        <div className="flex items-center justify-between mt-1 pb-4">
           <div>
-            <div className="text-white md:text-[#2C2C2C] font-black text-xl">Angebot {quoteNumber}</div>
-            <div className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">{fmtDate(quote.created_at)}</div>
+            <div className="text-white md:text-[#2C2C2C] font-black text-xl">
+              Angebot {quoteNumber}
+              {quote.customer && <span className="font-semibold opacity-50"> · {quote.customer.name}</span>}
+            </div>
+            {/* Echtzeit-Gesamtsumme */}
+            <div className="text-[#F5C400] font-black text-2xl mt-1">{fmt(totalGross)}</div>
+            <div className="text-white/40 text-xs font-semibold">
+              {isKleinunternehmer ? 'kein MwSt-Ausweis · ' : `inkl. ${company?.vat_rate ?? 0}% MwSt · `}
+              {company?.payment_days ?? 14} Tage Zahlungsziel
+            </div>
+            {autosaveLabel && <div className="text-white/30 text-xs font-semibold mt-0.5">{autosaveLabel}</div>}
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowStatusPicker(true)}
-              className={`flex items-center gap-1 text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text} active:scale-95 transition-transform`}
-            >
-              {status.label}
-              <ChevronDown size={13} strokeWidth={3} />
+            <button onClick={() => setShowStatusPicker(true)}
+              className={`flex items-center gap-1 text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text}`}>
+              {status.label}<ChevronDown size={13} strokeWidth={3} />
             </button>
-            {!editMode && (
-              <button
-                onClick={() => { setEditItems(quote.items); setEditMode(true) }}
-                className="bg-white/10 text-white rounded-xl p-2 active:scale-95 transition-transform"
-              >
+            {!editMode ? (
+              <button onClick={() => { setEditItems(quote.items); setEditMode(true) }}
+                className="bg-white/10 text-white rounded-xl p-2">
                 <Pencil size={16} strokeWidth={2.5} />
+              </button>
+            ) : (
+              <button onClick={saveEdits} disabled={saving}
+                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/10 text-white/40'} disabled:opacity-50`}>
+                {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
+                Speichern
               </button>
             )}
           </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex border-t border-white/10">
+          <button
+            onClick={() => setActiveTab('positionen')}
+            className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors ${activeTab === 'positionen' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}
+          >
+            Positionen
+          </button>
+          <button
+            onClick={() => setActiveTab('notizen')}
+            className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'notizen' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}
+          >
+            <StickyNote size={14} strokeWidth={2.5} />
+            Notizen & Fotos
+            {photos.length > 0 && (
+              <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${activeTab === 'notizen' ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/20 text-white'}`}>{photos.length}</span>
+            )}
+          </button>
         </div>
       </div>
 
@@ -412,11 +682,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="font-black text-[#2C2C2C] text-lg mb-4">Status ändern</div>
             <div className="flex flex-col gap-2">
               {(Object.entries(STATUS_CONFIG) as [string, { label: string; bg: string; text: string }][]).map(([key, cfg]) => (
-                <button
-                  key={key}
-                  onClick={() => changeStatus(key)}
-                  className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 transition-colors ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}
-                >
+                <button key={key} onClick={() => changeStatus(key)}
+                  className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}>
                   <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
                   {currentStatus === key && <Check size={18} color="#2C2C2C" strokeWidth={3} />}
                 </button>
@@ -426,300 +693,448 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         </div>
       )}
 
-      {/* Desktop: 2-Spalten-Grid. Mobile: einfache Liste */}
-      <div className="px-5 md:px-8 pt-5 md:grid md:grid-cols-[1fr_340px] md:gap-6 md:items-start flex flex-col gap-4">
-
-        {/* ── Linke Spalte: Badges, Kunde, Positionen, Notizen, Edit-Aktionen ── */}
-        <div className="flex flex-col gap-4">
-          {/* Versandweg-Badges */}
-          {sentVia.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {sentVia.map(via => (
-                <span key={via} className="text-xs font-bold bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60 px-2.5 py-1 rounded-full">
-                  {VIA_LABELS[via] ?? via}
-                </span>
-              ))}
+      {/* KI-Vorschläge Bar */}
+      {activeHints.length > 0 && activeTab === 'positionen' && (
+        <div className="px-5 pt-4 flex flex-col gap-2">
+          {activeHints.map(hint => (
+            <div key={hint.empfehlung_title} className="flex items-center gap-3 bg-[#F5C400]/15 border border-[#F5C400]/40 rounded-2xl px-4 py-3">
+              <span className="text-lg">💡</span>
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-bold text-[#2C2C2C]">{hint.empfehlung_title} fehlt</span>
+                {hint.empfehlung_unit_price > 0 && (
+                  <span className="text-xs text-[#2C2C2C]/50 font-semibold ml-2">{fmt(hint.empfehlung_unit_price)}/{hint.empfehlung_unit}</span>
+                )}
+              </div>
+              <button onClick={() => addHintItem(hint)}
+                className="bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-1.5 rounded-xl shrink-0">
+                + Hinzufügen
+              </button>
+              <button onClick={() => setDismissedHints(prev => new Set([...prev, hint.empfehlung_title]))}
+                className="text-[#2C2C2C]/30 shrink-0">
+                <X size={16} />
+              </button>
             </div>
-          )}
+          ))}
+        </div>
+      )}
 
-          {/* Kunde */}
-          {quote.customer && (
-            <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-              <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Kunde</div>
-              <div className="font-black text-[#2C2C2C]">{quote.customer.name}</div>
-              {quote.customer.address && (
-                <div className="text-sm text-[#2C2C2C]/60 font-semibold mt-0.5">{quote.customer.address}</div>
-              )}
-              <div className="flex flex-col gap-1 mt-1">
+      {/* ── TAB: POSITIONEN ─────────────────────────────────────────────── */}
+      {activeTab === 'positionen' && (
+        <div className="px-5 md:px-8 pt-4 md:grid md:grid-cols-[1fr_340px] md:gap-6 md:items-start flex flex-col gap-4">
+
+          {/* Linke Spalte */}
+          <div className="flex flex-col gap-4">
+            {/* Versandweg-Badges */}
+            {sentVia.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {sentVia.map(via => (
+                  <span key={via} className="text-xs font-bold bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60 px-2.5 py-1 rounded-full">
+                    {VIA_LABELS[via] ?? via}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Kunde */}
+            {quote.customer && (
+              <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+                <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Kunde</div>
+                <div className="font-black text-[#2C2C2C]">{quote.customer.name}</div>
+                {quote.customer.address && <div className="text-sm text-[#2C2C2C]/60 font-semibold">{quote.customer.address}</div>}
                 {quote.customer.phone && (
-                  <a href={`tel:${quote.customer.phone}`} className="flex items-center gap-2 text-sm text-[#2C2C2C] font-semibold">
-                    <Phone size={14} strokeWidth={2} className="text-[#F5C400]" />
-                    {quote.customer.phone}
+                  <a href={`tel:${quote.customer.phone}`} className="flex items-center gap-2 text-sm text-[#2C2C2C] font-semibold mt-1">
+                    <Phone size={14} className="text-[#F5C400]" />{quote.customer.phone}
                   </a>
                 )}
-                {quote.customer.email && (
-                  <div className="text-sm text-[#2C2C2C]/60 font-semibold">{quote.customer.email}</div>
-                )}
               </div>
-            </div>
-          )}
-
-          {/* Positionen */}
-          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5">
-            <div className="flex items-center justify-between px-4 pt-4 pb-2">
-              <div className="font-black text-[#2C2C2C]">Positionen</div>
-              {editMode && (
-                <div className="flex items-center gap-2">
-                  {/* Nachsprechen-Button */}
-                  <button
-                    onPointerDown={startVoiceRecording}
-                    onPointerUp={stopVoiceRecording}
-                    onPointerLeave={stopVoiceRecording}
-                    disabled={voiceLoading}
-                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 select-none transition-colors ${
-                      voiceRecording ? 'bg-red-500 text-white' : 'bg-[#2C2C2C]/8 text-[#2C2C2C]'
-                    } disabled:opacity-40`}
-                  >
-                    {voiceLoading
-                      ? <Loader2 size={14} className="animate-spin" />
-                      : voiceRecording
-                        ? <MicOff size={14} strokeWidth={2.5} />
-                        : <Mic size={14} strokeWidth={2.5} />
-                    }
-                    <span className="text-xs font-black">
-                      {voiceLoading ? 'Analysiere...' : voiceRecording ? 'Loslassen' : 'Nachsprechen'}
-                    </span>
-                  </button>
-                  <button onClick={addEditItem} className="bg-[#F5C400] rounded-lg p-1.5">
-                    <Plus size={16} color="#2C2C2C" strokeWidth={3} />
-                  </button>
-                </div>
-              )}
-            </div>
-            {/* Voice-Fehler */}
-            {editMode && voiceError && (
-              <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>
             )}
 
-            {displayItems.map(item => (
-              <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">
-                {editMode ? (
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1 min-w-0">
-                      <input value={item.title}
-                        onChange={e => updateEditItem(item.id, 'title', e.target.value)}
-                        className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-transparent focus:border-[#F5C400] pb-0.5 mb-2" />
-                      <div className="flex gap-2 items-center">
-                        <input type="number" value={item.quantity}
-                          onChange={e => updateEditItem(item.id, 'quantity', e.target.value)}
-                          className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none" min={0} step="0.01" />
-                        <input value={item.unit}
-                          onChange={e => updateEditItem(item.id, 'unit', e.target.value)}
-                          className="w-14 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none" />
-                        <div className="flex items-center gap-1 ml-auto">
-                          <input type="number" value={item.unit_price}
-                            onChange={e => updateEditItem(item.id, 'unit_price', e.target.value)}
-                            className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 text-right focus:outline-none" min={0} step="0.01" />
-                          <span className="text-xs text-[#2C2C2C]/40 font-bold">€</span>
+            {/* Positionen */}
+            <div className="bg-white rounded-2xl border border-[#2C2C2C]/5" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-4 pt-4 pb-2">
+                <div className="font-black text-[#2C2C2C]">Positionen</div>
+                {editMode && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onPointerDown={startVoiceRecording}
+                      onPointerUp={stopVoiceRecording}
+                      onPointerLeave={stopVoiceRecording}
+                      disabled={voiceLoading}
+                      className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 select-none ${voiceRecording ? 'bg-red-500 text-white' : 'bg-[#2C2C2C]/8 text-[#2C2C2C]'} disabled:opacity-40`}
+                    >
+                      {voiceLoading ? <Loader2 size={14} className="animate-spin" /> : voiceRecording ? <MicOff size={14} strokeWidth={2.5} /> : <Mic size={14} strokeWidth={2.5} />}
+                      <span className="text-xs font-black">{voiceLoading ? 'Analyse...' : voiceRecording ? 'Loslassen' : 'Nachsprechen'}</span>
+                    </button>
+                    <button onClick={addEditItem} className="bg-[#F5C400] rounded-lg p-1.5">
+                      <Plus size={16} color="#2C2C2C" strokeWidth={3} />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
+
+              {editMode ? (
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                    {editItems.map(item => (
+                      <SortableItem
+                        key={item.id}
+                        item={item}
+                        editingId={editingItemId}
+                        setEditingId={setEditingItemId}
+                        updateEditItem={updateEditItem}
+                        removeEditItem={removeEditItem}
+                        vatRate={company?.vat_rate ?? 0}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              ) : (
+                displayItems.map(item => (
+                  <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-[#2C2C2C] text-sm">{item.title}</div>
+                        {item.description && <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>}
+                        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">{item.quantity} {item.unit} × {fmt(item.unit_price)}</div>
+                      </div>
+                      <div className="font-black text-[#2C2C2C] shrink-0">{fmt(item.total_price)}</div>
+                    </div>
+                  </div>
+                ))
+              )}
+
+              {editMode && (
+                <button onClick={addEditItem}
+                  className="w-full border-t border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-2 text-[#2C2C2C]/40 font-bold text-sm hover:text-[#2C2C2C]/70 transition-colors">
+                  <Plus size={15} strokeWidth={2.5} /> Position hinzufügen
+                </button>
+              )}
+            </div>
+
+            {/* Öffentliche Notizen (erscheinen im PDF) */}
+            {!editMode && quote.notes && (
+              <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+                <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Anmerkungen</div>
+                <div className="text-sm text-[#2C2C2C]/70 font-semibold">{quote.notes}</div>
+              </div>
+            )}
+
+            {/* Edit: Rabatt & Zuschläge */}
+            {editMode && (
+              <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+                <button
+                  onClick={() => setShowExtras(v => !v)}
+                  className="flex items-center justify-between w-full"
+                >
+                  <div className="flex items-center gap-2 text-sm font-black text-[#2C2C2C]/60">
+                    <MoreHorizontal size={16} />
+                    Rabatt & Zuschläge
+                  </div>
+                  <ChevronDown size={16} className={`text-[#2C2C2C]/40 transition-transform ${showExtras ? 'rotate-180' : ''}`} />
+                </button>
+
+                {showExtras && (
+                  <div className="mt-3 flex flex-col gap-3">
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <label className="text-xs font-bold text-[#2C2C2C]/40 mb-1 block">Rabatt %</label>
+                        <div className="flex items-center gap-1 bg-[#F7F7F5] rounded-xl px-3 py-2">
+                          <Percent size={14} className="text-[#2C2C2C]/30" />
+                          <input type="number" inputMode="decimal" min={0} max={100} value={discountPercent || ''}
+                            onChange={e => { setDiscountPercent(Number(e.target.value)); setDiscountAmount(0) }}
+                            placeholder="0" className="flex-1 bg-transparent font-bold text-[#2C2C2C] text-sm focus:outline-none w-full" />
                         </div>
                       </div>
-                      <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 text-right">
-                        = {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €
+                      <div className="flex-1">
+                        <label className="text-xs font-bold text-[#2C2C2C]/40 mb-1 block">oder absolut €</label>
+                        <div className="flex items-center gap-1 bg-[#F7F7F5] rounded-xl px-3 py-2">
+                          <Tag size={14} className="text-[#2C2C2C]/30" />
+                          <input type="number" inputMode="decimal" min={0} value={discountAmount || ''}
+                            onChange={e => { setDiscountAmount(Number(e.target.value)); setDiscountPercent(0) }}
+                            placeholder="0" className="flex-1 bg-transparent font-bold text-[#2C2C2C] text-sm focus:outline-none w-full" />
+                        </div>
                       </div>
                     </div>
-                    <button onClick={() => removeEditItem(item.id)} className="mt-0.5 p-1 shrink-0">
-                      <X size={16} color="#ef4444" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex justify-between items-start gap-2">
-                    <div className="min-w-0 flex-1">
-                      <div className="font-bold text-[#2C2C2C] text-sm">{item.title}</div>
-                      {item.description && (
-                        <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>
-                      )}
-                      <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">
-                        {item.quantity} {item.unit} × {fmt(item.unit_price)}
+
+                    <div>
+                      <label className="text-xs font-bold text-[#2C2C2C]/40 mb-1 block">Zuschlag Bezeichnung</label>
+                      <input value={surchargeLabel} onChange={e => setSurchargeLabel(e.target.value)}
+                        className="w-full bg-[#F7F7F5] rounded-xl px-3 py-2 font-bold text-[#2C2C2C] text-sm focus:outline-none mb-2" />
+                      <div className="flex items-center gap-1 bg-[#F7F7F5] rounded-xl px-3 py-2">
+                        <Tag size={14} className="text-[#2C2C2C]/30" />
+                        <input type="number" inputMode="decimal" min={0} value={surchargeAmount || ''}
+                          onChange={e => setSurchargeAmount(Number(e.target.value))}
+                          placeholder="0" className="flex-1 bg-transparent font-bold text-[#2C2C2C] text-sm focus:outline-none w-full" />
+                        <span className="text-xs text-[#2C2C2C]/40 font-bold">€</span>
                       </div>
                     </div>
-                    <div className="font-black text-[#2C2C2C] shrink-0">{fmt(item.total_price)}</div>
                   </div>
                 )}
               </div>
-            ))}
-          </div>
+            )}
 
-          {/* Notizen */}
-          {!editMode && quote.notes && (
-            <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-              <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Anmerkungen</div>
-              <div className="text-sm text-[#2C2C2C]/70 font-semibold">{quote.notes}</div>
-            </div>
-          )}
-
-          {/* Edit-Aktionen */}
-          {editMode && (
-            <div className="flex gap-3">
-              <button onClick={() => setEditMode(false)}
-                className="flex-1 bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-black text-base rounded-2xl py-4 active:scale-95 transition-transform">
-                Abbrechen
-              </button>
-              <button onClick={saveEdits} disabled={saving}
-                className="flex-[2] bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 active:scale-95 transition-transform disabled:opacity-50 flex items-center justify-center gap-2">
-                {saving ? 'Speichere...' : <><Check size={18} strokeWidth={3} /> Speichern</>}
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* ── Rechte Spalte: Summen + Aktionen ── */}
-        <div className="flex flex-col gap-3">
-          {/* Summen */}
-          <div className="bg-[#2C2C2C] rounded-2xl p-4">
-            <div className="flex justify-between text-white/60 font-semibold text-sm mb-1.5">
-              <span>Netto</span><span>{fmt(totalNet)}</span>
-            </div>
-            {company && company.vat_rate > 0 && (
-              <div className="flex justify-between text-white/60 font-semibold text-sm mb-1.5">
-                <span>MwSt. {company.vat_rate}%</span><span>{fmt(totalVat)}</span>
+            {/* Edit-Aktionen */}
+            {editMode && (
+              <div className="flex gap-3">
+                <button onClick={() => { setEditMode(false); setEditItems(quote.items); setEditingItemId(null); setHasChanges(false) }}
+                  className="flex-1 bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-black text-base rounded-2xl py-4">
+                  Abbrechen
+                </button>
+                <button onClick={saveEdits} disabled={saving}
+                  className="flex-[2] bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 disabled:opacity-50 flex items-center justify-center gap-2">
+                  {saving ? 'Speichere...' : <><Check size={18} strokeWidth={3} /> Speichern</>}
+                </button>
               </div>
             )}
-            <div className="flex justify-between text-white font-black text-xl border-t border-white/20 pt-2 mt-1">
-              <span>Gesamt</span><span>{fmt(totalGross)}</span>
-            </div>
-            {quote.valid_until && (
-              <div className="text-white/30 text-xs font-semibold mt-2">Gültig bis {fmtDate(quote.valid_until)}</div>
-            )}
           </div>
 
-          {/* Aktionen */}
-          {!editMode && (
-            <>
-              {/* Unterschrift-Info wenn signiert */}
-              {quote.signed_at && (
-                <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
-                  <Check size={20} color="#16a34a" strokeWidth={2.5} />
-                  <div>
-                    <div className="font-black text-green-800 text-sm">Unterschrieben</div>
-                    <div className="text-green-700 text-xs font-semibold">
-                      {quote.signed_by} · {fmtDate(quote.signed_at)}
+          {/* Rechte Spalte: Summen + Aktionen */}
+          <div className="flex flex-col gap-3">
+            {/* Summenblock */}
+            <div className="bg-[#2C2C2C] rounded-2xl p-4">
+              <div className="flex justify-between text-white/60 font-semibold text-sm mb-1">
+                <span>Nettosumme</span><span>{fmt(baseNet)}</span>
+              </div>
+              {discountValue > 0 && (
+                <div className="flex justify-between text-[#F5C400] font-semibold text-sm mb-1">
+                  <span>Rabatt {discountPercent > 0 ? `${discountPercent}%` : ''}</span>
+                  <span>−{fmt(discountValue)}</span>
+                </div>
+              )}
+              {surchargeAmount > 0 && (
+                <div className="flex justify-between text-white/60 font-semibold text-sm mb-1">
+                  <span>{surchargeLabel}</span><span>+{fmt(surchargeAmount)}</span>
+                </div>
+              )}
+              {(discountValue > 0 || surchargeAmount > 0) && (
+                <div className="flex justify-between text-white/80 font-semibold text-sm mb-1.5 border-t border-white/10 pt-1.5">
+                  <span>Netto gesamt</span><span>{fmt(netWithSurcharge)}</span>
+                </div>
+              )}
+              {!isKleinunternehmer && company && company.vat_rate > 0 && (
+                <div className="flex justify-between text-white/60 font-semibold text-sm mb-1.5">
+                  <span>MwSt. {company.vat_rate}%</span><span>{fmt(totalVat)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-white font-black text-xl border-t border-white/20 pt-2 mt-1">
+                <span>GESAMT</span><span>{fmt(totalGross)}</span>
+              </div>
+              {isKleinunternehmer && (
+                <div className="text-white/30 text-xs font-semibold mt-2">Kein MwSt.-Ausweis gem. §19 UStG</div>
+              )}
+              {quote.valid_until && (
+                <div className="text-white/30 text-xs font-semibold mt-1">Gültig bis {fmtDate(quote.valid_until)}</div>
+              )}
+            </div>
+
+            {/* Aktionen (nur im Lese-Modus) */}
+            {!editMode && (
+              <>
+                {quote.signed_at && (
+                  <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
+                    <Check size={20} color="#16a34a" strokeWidth={2.5} />
+                    <div>
+                      <div className="font-black text-green-800 text-sm">Unterschrieben</div>
+                      <div className="text-green-700 text-xs font-semibold">{quote.signed_by} · {fmtDate(quote.signed_at)}</div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* PDF Download */}
-              {(() => {
-                const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
-                const istZugferd = company?.e_rechnung_aktiv !== false && kundeIstUnternehmen
-                const hatLeitweg = !!quote.customer?.leitweg_id
-                return (
-                  <>
-                    <a href={`/api/pdf?id=${quote.id}`} target="_blank"
-                      className="flex items-center justify-center gap-3 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-base rounded-2xl py-3.5 active:scale-95 transition-transform">
-                      <Download size={20} strokeWidth={3} />
-                      {istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'}
-                    </a>
-                    {istZugferd && (
-                      <p className="text-xs text-[#2C2C2C]/40 font-semibold text-center -mt-2">
-                        Enthält eingebettete ZUGFeRD-XML · kompatibel mit DATEV, Lexoffice, sevDesk
-                      </p>
-                    )}
-                    {hatLeitweg && (
-                      <a href={`/api/pdf/xrechnung?id=${quote.id}`} target="_blank"
-                        className="flex items-center justify-center gap-2 w-full bg-white border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/60 font-bold text-sm rounded-2xl py-3 active:scale-95 transition-transform">
-                        <Download size={16} strokeWidth={2.5} />
-                        XRechnung XML herunterladen
-                      </a>
-                    )}
-                  </>
-                )
-              })()}
+                {/* PDF Download */}
+                <a href={`/api/pdf?id=${quote.id}`} target="_blank"
+                  className="flex items-center justify-center gap-3 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-base rounded-2xl py-3.5">
+                  <Download size={20} strokeWidth={3} />
+                  {istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'}
+                </a>
+                {istZugferd && (
+                  <p className="text-xs text-[#2C2C2C]/40 font-semibold text-center -mt-2">Enthält eingebettete ZUGFeRD-XML</p>
+                )}
+                {!!quote.customer?.leitweg_id && (
+                  <a href={`/api/pdf/xrechnung?id=${quote.id}`} target="_blank"
+                    className="flex items-center justify-center gap-2 w-full bg-white border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/60 font-bold text-sm rounded-2xl py-3">
+                    <Download size={16} strokeWidth={2.5} /> XRechnung XML
+                  </a>
+                )}
 
-              {/* WhatsApp */}
-              <a href={`https://wa.me/?text=${whatsappText}`} target="_blank" rel="noopener noreferrer"
-                onClick={() => trackVia('whatsapp')}
-                className="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white font-black text-base rounded-2xl py-3.5 active:scale-95 transition-transform">
-                <Share2 size={20} strokeWidth={3} />
-                Per WhatsApp senden
-              </a>
+                {/* WhatsApp */}
+                <a href={`https://wa.me/?text=${whatsappText}`} target="_blank" rel="noopener noreferrer"
+                  onClick={() => trackVia('whatsapp')}
+                  className="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white font-black text-base rounded-2xl py-3.5">
+                  <Share2 size={20} strokeWidth={3} /> Per WhatsApp senden
+                </a>
 
-              {/* E-Mail */}
-              {!showEmail ? (
-                <button onClick={() => setShowEmail(true)}
-                  className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C] text-[#2C2C2C] font-black text-base rounded-2xl py-3.5 active:scale-95 transition-transform">
-                  <Mail size={20} strokeWidth={3} />
-                  {emailSent ? '✓ E-Mail versendet' : 'Per E-Mail senden'}
-                </button>
-              ) : (
-                <div className="bg-white border-2 border-[#2C2C2C] rounded-2xl p-4">
-                  <div className="font-black text-[#2C2C2C] mb-3">E-Mail-Adresse</div>
-                  <input type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)}
-                    placeholder="kunde@beispiel.de"
-                    className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] mb-3" />
-                  <div className="flex gap-3">
-                    <button onClick={() => setShowEmail(false)}
-                      className="flex-1 border-2 border-[#2C2C2C]/20 rounded-xl py-3 font-bold text-[#2C2C2C]">Abbrechen</button>
-                    <button onClick={handleSendEmail} disabled={sending}
-                      className="flex-[2] bg-[#F5C400] rounded-xl py-3 font-black text-[#2C2C2C] disabled:opacity-50">
-                      {sending ? 'Sende...' : 'Senden'}
-                    </button>
+                {/* E-Mail */}
+                {!showEmail ? (
+                  <button onClick={() => setShowEmail(true)}
+                    className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C] text-[#2C2C2C] font-black text-base rounded-2xl py-3.5">
+                    <Mail size={20} strokeWidth={3} />{emailSent ? '✓ E-Mail versendet' : 'Per E-Mail senden'}
+                  </button>
+                ) : (
+                  <div className="bg-white border-2 border-[#2C2C2C] rounded-2xl p-4">
+                    <div className="font-black text-[#2C2C2C] mb-3">E-Mail-Adresse</div>
+                    <input type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)} placeholder="kunde@beispiel.de"
+                      className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3 font-semibold text-base focus:outline-none focus:border-[#F5C400] mb-3" />
+                    <div className="flex gap-3">
+                      <button onClick={() => setShowEmail(false)} className="flex-1 border-2 border-[#2C2C2C]/20 rounded-xl py-3 font-bold text-[#2C2C2C]">Abbrechen</button>
+                      <button onClick={handleSendEmail} disabled={sending} className="flex-[2] bg-[#F5C400] rounded-xl py-3 font-black text-[#2C2C2C] disabled:opacity-50">
+                        {sending ? 'Sende...' : 'Senden'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Unterschreiben-Link */}
-              <button onClick={copyLink}
-                className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-bold text-sm rounded-2xl py-3 active:scale-95 transition-transform">
-                <Link2 size={18} strokeWidth={2.5} />
-                Unterschreiben-Link kopieren
-              </button>
+                <button onClick={copyLink}
+                  className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-bold text-sm rounded-2xl py-3">
+                  <Link2 size={18} strokeWidth={2.5} /> Unterschreiben-Link kopieren
+                </button>
 
-              {/* CSV Export */}
-              <a href={`/api/csv?id=${quote.id}`}
-                className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-bold text-sm rounded-2xl py-3 active:scale-95 transition-transform">
-                <FileText size={18} strokeWidth={2.5} />
-                CSV Export
-              </a>
+                <a href={`/api/csv?id=${quote.id}`}
+                  className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-bold text-sm rounded-2xl py-3">
+                  <FileText size={18} strokeWidth={2.5} /> CSV Export
+                </a>
 
-              {/* Duplizieren */}
-              <button onClick={handleDuplicate}
-                className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-bold text-sm rounded-2xl py-3 active:scale-95 transition-transform">
-                <Copy size={18} strokeWidth={2.5} />
-                Angebot duplizieren
-              </button>
+                <button onClick={handleDuplicate}
+                  className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-bold text-sm rounded-2xl py-3">
+                  <Copy size={18} strokeWidth={2.5} /> Angebot duplizieren
+                </button>
 
-              {/* Buchhaltungs-Integrationen */}
-              {hasAnyIntegration ? (
-                <div className="flex flex-col gap-2">
-                  <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide text-center">Buchhaltung</div>
-                  {activeIntegrations.map(int => (
-                    <button key={int.id} onClick={() => handleExport(int.id, int.label)}
-                      disabled={exporting === int.id}
-                      style={{ borderColor: int.color + '33', color: int.color, backgroundColor: int.color + '12' }}
-                      className="flex items-center justify-center gap-3 w-full border-2 font-bold text-sm rounded-2xl py-3 active:scale-95 transition-transform disabled:opacity-50">
-                      <span className="font-black">{int.short}</span>
-                      {exporting === int.id ? 'Übertrage...' : `Zu ${int.label} exportieren`}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <Link href="/einstellungen/integrationen"
-                  className="flex items-center justify-center gap-2 w-full border-2 border-dashed border-[#2C2C2C]/15 text-[#2C2C2C]/40 font-bold text-sm rounded-2xl py-3">
-                  + Buchhaltung verbinden
-                </Link>
-              )}
+                {activeIntegrations.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide text-center">Buchhaltung</div>
+                    {activeIntegrations.map(int => (
+                      <button key={int.id} onClick={() => handleExport(int.id, int.label)}
+                        disabled={exporting === int.id}
+                        style={{ borderColor: int.color + '33', color: int.color, backgroundColor: int.color + '12' }}
+                        className="flex items-center justify-center gap-3 w-full border-2 font-bold text-sm rounded-2xl py-3 disabled:opacity-50">
+                        <span className="font-black">{int.short}</span>
+                        {exporting === int.id ? 'Übertrage...' : `Zu ${int.label}`}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-              {/* Löschen */}
-              <button onClick={handleDelete} disabled={deleting}
-                className="flex items-center justify-center gap-2 w-full text-red-400 hover:text-red-500 font-bold text-sm py-3 transition-colors">
-                <Trash2 size={15} />
-                {deleting ? 'Wird gelöscht...' : 'Angebot löschen'}
-              </button>
-            </>
-          )}
+                <button onClick={handleDelete} disabled={deleting}
+                  className="flex items-center justify-center gap-2 w-full text-red-400 font-bold text-sm py-3">
+                  <Trash2 size={15} />{deleting ? 'Wird gelöscht...' : 'Angebot löschen'}
+                </button>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ── TAB: NOTIZEN & FOTOS ─────────────────────────────────────────── */}
+      {activeTab === 'notizen' && (
+        <div className="px-5 md:px-8 pt-5 flex flex-col gap-4 pb-10">
+
+          {/* Interne Notizen */}
+          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="font-black text-[#2C2C2C]">Interne Notizen</div>
+              <span className="text-xs font-semibold text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-2.5 py-1 rounded-full">Nicht im PDF</span>
+            </div>
+            <textarea
+              value={internalNotes}
+              onChange={e => scheduleAutosaveNotes(e.target.value)}
+              placeholder="Aufmaß-Notizen, Besonderheiten, Hinweise für später..."
+              rows={5}
+              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C400]/40 resize-none"
+            />
+            {autosaveLabel && <div className="text-xs text-[#2C2C2C]/30 font-semibold mt-1">{autosaveLabel}</div>}
+          </div>
+
+          {/* Fotos */}
+          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="font-black text-[#2C2C2C]">Fotos</div>
+                <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{photos.length}/10 · Tippen um zu vergrößern</div>
+              </div>
+              {photos.length < 10 && (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={photoUploading}
+                  className="flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-4 py-2 rounded-xl disabled:opacity-50"
+                >
+                  {photoUploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} strokeWidth={2.5} />}
+                  {photoUploading ? 'Lädt...' : 'Foto hinzufügen'}
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (file) handlePhotoUpload(file)
+                  e.target.value = ''
+                }}
+              />
+            </div>
+
+            {photosLoading && (
+              <div className="flex items-center justify-center py-8 text-[#2C2C2C]/30">
+                <Loader2 size={24} className="animate-spin" />
+              </div>
+            )}
+
+            {!photosLoading && photos.length === 0 && (
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full border-2 border-dashed border-[#2C2C2C]/15 rounded-2xl py-10 flex flex-col items-center gap-3 text-[#2C2C2C]/30 hover:border-[#F5C400]/50 transition-colors"
+              >
+                <Image size={32} strokeWidth={1.5} />
+                <span className="font-bold text-sm">Fotos vom Aufmaß hinzufügen</span>
+                <span className="text-xs">Kamera oder Galerie · max. 10 Fotos</span>
+              </button>
+            )}
+
+            {photos.length > 0 && (
+              <div className="grid grid-cols-3 gap-2">
+                {photos.map(photo => (
+                  <div
+                    key={photo.id}
+                    className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group bg-[#F7F7F5]"
+                    onClick={() => setLightboxPhoto(photo)}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={photo.signed_url ?? photo.url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                    {photo.in_pdf && (
+                      <div className="absolute bottom-1 right-1 bg-[#F5C400] rounded-md px-1.5 py-0.5">
+                        <span className="text-[9px] font-black text-[#2C2C2C]">PDF</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                  </div>
+                ))}
+                {photos.length < 10 && (
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="aspect-square rounded-xl border-2 border-dashed border-[#2C2C2C]/15 flex items-center justify-center text-[#2C2C2C]/20 hover:border-[#F5C400]/50 transition-colors"
+                  >
+                    <Plus size={24} strokeWidth={1.5} />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {photos.some(p => p.in_pdf) && (
+              <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#2C2C2C]/40 bg-[#F7F7F5] rounded-xl px-3 py-2">
+                <FileText size={13} />
+                {photos.filter(p => p.in_pdf).length} Foto{photos.filter(p => p.in_pdf).length !== 1 ? 's' : ''} werden ins PDF übernommen
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

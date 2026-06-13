@@ -4,6 +4,40 @@ Alle wichtigen Änderungen am Sofortangebot-Projekt.
 
 ---
 
+## [Unveröffentlicht] — 2026-06-13 (Session 3)
+
+### Angebots-Bearbeitungsansicht — komplett überarbeitet
+- **Tabs** „Positionen" und „Notizen & Fotos" im Header
+- **Notizen & Fotos-Tab**: Interne Notizen (nicht im PDF), Foto-Anhänge (bis 10), Grid-Ansicht, Lightbox, Toggle „ins PDF"
+- **Drag & Drop** Umsortierung der Positionen via `@dnd-kit/sortable` (Drag-Handle rechts)
+- **Inline-Bearbeitung**: Tipp auf Position öffnet Edit direkt in Card, Einheiten-Dropdown + Freitext
+- **Summenblock**: Nettosumme → Rabatt → Zuschlag → Netto gesamt → MwSt → GESAMT; Kleinunternehmer-Hinweis
+- **Rabatt & Zuschläge**: Einklappbarer Bereich im Edit-Modus, % oder absolut, Zuschlag mit eigenem Label
+- **KI-Vorschläge-Bar**: Zeigt bis zu 2 Empfehlungen wenn Trigger-Kategorie im Angebot, direkt hinzufügbar
+- **Echtzeit-Gesamtsumme** im Header mit MwSt-Hinweis
+- **Speichern-Button** nur aktiv wenn Änderungen vorhanden (`hasChanges`)
+- **Autosave interne Notizen** nach 1,5s Pause
+- **Status `in_bearbeitung`** ergänzt (für Session-Konzept)
+- **`supabase/add_quote_photos.sql`**: `quote_photos`-Tabelle, `internal_notes`, Rabatt/Zuschlag-Felder
+- **`/api/quotes/[id]/photos`**: GET/POST/PATCH/DELETE für Foto-Management via Supabase Storage
+
+### Session-basierte Spracheingabe
+- **Mehrfach-Eingabe**: Zweite Spracheingabe ergänzt bestehende Positionen statt sie zu ersetzen
+- **Eingabe-Protokoll**: Aufklappbare Liste je Eingabe (Nr., Transkript, erkannte Positionen)
+- **Button „Weiteres Aufmaß einsprechen"** im Review-Schritt
+- **`supabase/add_angebot_eingaben.sql`**: `angebot_eingaben`-Tabelle + `has_seen_voice_hint`
+- **Dashboard**: Offene `in_bearbeitung`-Sessions werden als gelbe Cards ganz oben angezeigt
+
+### Sprach-Starthilfe
+- **Erste-Mal-Karte**: Erscheint beim allerersten Öffnen von „Neues Angebot" mit Beispielsatz + „Verstanden"-Button; danach nie wieder
+- **Rotierender Hint-Text** über Mikrofon-Button, gewerk-spezifisch (Maler, Fliesen, Elektro, Sanitär, Zimmerer), wechselt alle 4s
+- **„Beispiel anhören"-Button**: Generiert TTS via OpenAI (Stimme: onyx), gecacht in Supabase Storage `tts-cache/`
+- **Nach erster Aufnahme**: Einmaliger Hinweis „Gut gemacht. Einfach weitersprechen..."
+- **Unvollständigkeits-Check**: Warnung wenn < 3 Positionen oder < 200 € beim Fertigstellen
+- **`/api/tts-demo`**: POST-Endpunkt, gewerk-spezifischer Text, Supabase-Cache
+
+---
+
 ## [Unveröffentlicht] — 2026-06-13
 
 ### Account-Löschung (DSGVO Art. 17), Cookie-Banner, Transaktions-E-Mails, AVV-Update

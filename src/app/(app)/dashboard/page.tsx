@@ -11,11 +11,12 @@ import DraftQuotes from '@/components/DraftQuotes'
 import { Mic, FileText } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  draft:    { label: 'Entwurf',    color: 'bg-gray-100 text-gray-600'  },
-  sent:     { label: 'Offen',      color: 'bg-blue-50 text-blue-700'   },
-  accepted: { label: 'Beauftragt', color: 'bg-green-50 text-green-700' },
-  rejected: { label: 'Abgelehnt', color: 'bg-red-50 text-red-700'     },
-  archived: { label: 'Archiviert', color: 'bg-gray-50 text-gray-400'   },
+  draft:          { label: 'Entwurf',    color: 'bg-gray-100 text-gray-600'    },
+  in_bearbeitung: { label: 'In Arbeit',  color: 'bg-yellow-50 text-yellow-700' },
+  sent:           { label: 'Offen',      color: 'bg-blue-50 text-blue-700'     },
+  accepted:       { label: 'Beauftragt', color: 'bg-green-50 text-green-700'   },
+  rejected:       { label: 'Abgelehnt', color: 'bg-red-50 text-red-700'       },
+  archived:       { label: 'Archiviert', color: 'bg-gray-50 text-gray-400'     },
 }
 
 const VIA_ICON: Record<string, string> = {
@@ -63,7 +64,8 @@ export default async function DashboardPage({
   const { data: allQuotes } = await query
 
   const drafts = (allQuotes ?? []).filter(qt => qt.status === 'draft')
-  const nonDraftQuotes = (allQuotes ?? []).filter(qt => qt.status !== 'draft')
+  const openSessions = (allQuotes ?? []).filter(qt => qt.status === 'in_bearbeitung')
+  const nonDraftQuotes = (allQuotes ?? []).filter(qt => qt.status !== 'draft' && qt.status !== 'in_bearbeitung')
 
   const quotes = (q
     ? nonDraftQuotes.filter(qt => (qt.customer?.name ?? '').toLowerCase().includes(q.toLowerCase()))
@@ -129,6 +131,28 @@ export default async function DashboardPage({
           Neues Angebot
         </Link>
       </div>
+
+      {/* Offene Sessions */}
+      {openSessions.length > 0 && (
+        <div className="px-5 md:px-8 mt-5">
+          <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-2">📝 Offene Angebote</div>
+          <div className="flex flex-col gap-2">
+            {openSessions.map((qt: Quote & { customer?: { name: string } }) => (
+              <Link key={qt.id} href={`/angebot/${qt.id}`}
+                className="flex items-center justify-between bg-[#F5C400]/15 border-2 border-[#F5C400]/40 rounded-2xl px-4 py-3.5 active:scale-98 transition-transform">
+                <div>
+                  <div className="font-black text-[#2C2C2C] text-sm">{qt.customer?.name || 'Ohne Kunde'}</div>
+                  <div className="text-xs font-semibold text-[#2C2C2C]/50 mt-0.5">{formatDate(qt.created_at)} · In Bearbeitung</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="font-black text-[#2C2C2C] text-sm">{formatCurrency(qt.total_gross)}</div>
+                  <span className="text-[#2C2C2C]/50 font-black text-xs">→</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Suche + Filter */}
       <div className="px-5 md:px-8 mt-6">
