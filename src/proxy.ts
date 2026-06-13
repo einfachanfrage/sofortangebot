@@ -1,10 +1,41 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 const PUBLIC_PATHS = ['/', '/login', '/register', '/auth/callback', '/angebot', '/vorschau', '/preise', '/impressum', '/datenschutz']
 const ADMIN_PATHS = ['/admin']
+const RATE_LIMIT_EXEMPT = ['/api/health', '/api/stripe']
 
 export async function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname
+
+  // Globales IP-Rate-Limit für API-Routen
+  if (path.startsWith('/api/') && !RATE_LIMIT_EXEMPT.some(p => path.startsWith(p))) {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      ?? request.headers.get('x-real-ip')
+      ?? 'unknown'
+    try {
+      const service = createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      )
+      const { data } = await service.rpc('check_rate_limit', {
+        p_identifier: `ip:${ip}`,
+        p_endpunkt: 'api_global',
+        p_limit: 200,
+        p_fenster_minuten: 10,
+      })
+      if (data && !data.allowed) {
+        return new NextResponse(
+          JSON.stringify({ error: 'Zu viele Anfragen. Bitte warte kurz.', reset_at: data.reset_at }),
+          { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': '60' } }
+        )
+      }
+    } catch {
+      // fail open
+    }
+  }
+
   const { pathname } = request.nextUrl
   const isPublic = PUBLIC_PATHS.some(p => pathname.startsWith(p))
 
