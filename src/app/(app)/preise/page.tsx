@@ -48,14 +48,66 @@ export default function PreisePage() {
   async function handleImportDefaults() {
     if (!companyId) return
     setImporting(true)
+    // Neue Standardpreise hinzufügen (Titel-basierter Abgleich)
     const existingTitles = new Set(items.map(i => i.title.toLowerCase()))
     const toInsert = DEFAULT_PRICES
       .filter(p => !existingTitles.has(p.title.toLowerCase()))
       .map(p => ({ ...p, company_id: companyId }))
     if (toInsert.length > 0) {
       const { data } = await supabase.from('price_items').insert(toInsert).select()
+      if (data) {
+        setItems(prev => {
+          const updated = [...prev, ...data]
+          const cats = [...new Set(updated.map((i: PriceItem) => i.category))]
+          setExpandedCats(new Set(cats))
+          return updated
+        })
+      }
+    }
+    setImporting(false)
+  }
+
+  async function handleUpdateDefaults() {
+    if (!companyId) return
+    setImporting(true)
+    // Alle Standardpreise einfügen (neue) + bestehende Standard-Preise aktualisieren
+    const existingByTitle = new Map(items.map(i => [i.title.toLowerCase(), i]))
+    const toInsert: typeof DEFAULT_PRICES = []
+    const toUpdate: Array<{ id: string; unit_price: number; unit: string; category: string }> = []
+
+    for (const p of DEFAULT_PRICES) {
+      const existing = existingByTitle.get(p.title.toLowerCase())
+      if (existing) {
+        // Nur updaten wenn Preis oder Einheit abweicht
+        if (existing.unit_price !== p.unit_price || existing.unit !== p.unit) {
+          toUpdate.push({ id: existing.id, unit_price: p.unit_price, unit: p.unit, category: p.category })
+        }
+      } else {
+        toInsert.push(p)
+      }
+    }
+
+    // Neue einfügen
+    if (toInsert.length > 0) {
+      const { data } = await supabase.from('price_items')
+        .insert(toInsert.map(p => ({ ...p, company_id: companyId }))).select()
       if (data) setItems(prev => [...prev, ...data])
     }
+
+    // Bestehende aktualisieren (einzeln, da kein bulk-update mit verschiedenen Werten)
+    for (const u of toUpdate) {
+      await supabase.from('price_items')
+        .update({ unit_price: u.unit_price, unit: u.unit, category: u.category })
+        .eq('id', u.id)
+      setItems(prev => prev.map(i => i.id === u.id ? { ...i, unit_price: u.unit_price, unit: u.unit, category: u.category } : i))
+    }
+
+    // Alle Kategorien aufklappen damit Nutzer alles sieht
+    setItems(prev => {
+      const cats = [...new Set(prev.map((i: PriceItem) => i.category))]
+      setExpandedCats(new Set(cats))
+      return prev
+    })
     setImporting(false)
   }
 
@@ -196,13 +248,22 @@ export default function PreisePage() {
           <>
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm font-bold text-[#2C2C2C]/50">{items.length} Positionen</div>
-              <button
-                onClick={handleImportDefaults}
-                disabled={importing}
-                className="text-sm font-bold text-[#F5C400]"
-              >
-                + Standardpreise
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleImportDefaults}
+                  disabled={importing}
+                  className="text-sm font-bold text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 transition-colors"
+                >
+                  + Neue
+                </button>
+                <button
+                  onClick={handleUpdateDefaults}
+                  disabled={importing}
+                  className="text-sm font-bold text-[#F5C400]"
+                >
+                  {importing ? '...' : '↻ Alle aktualisieren'}
+                </button>
+              </div>
             </div>
             <div className="flex flex-col gap-3">
               {Object.entries(grouped).map(([cat, catItems]) => (
