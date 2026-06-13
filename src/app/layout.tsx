@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
+import { CookieBanner } from '@/components/CookieBanner'
 
 export const metadata: Metadata = {
   title: 'Sofortangebot',
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="de" className="h-full">
       <body className="min-h-dvh">
         <ServiceWorkerRegister />
+        <CookieBanner />
         {children}
       </body>
     </html>

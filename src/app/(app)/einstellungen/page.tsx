@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2 } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download } from 'lucide-react'
+import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
 
 export default function EinstellungenPage() {
@@ -471,12 +472,26 @@ export default function EinstellungenPage() {
         </Link>
       </div>
 
-      <div className="px-5 md:px-8 mt-3">
+      <div className="px-5 md:px-8 mt-3 flex flex-col gap-1">
         <button onClick={handleLogout}
-          className="flex items-center gap-2 text-red-500 font-bold text-sm py-3 hover:text-red-600 transition-colors">
+          className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors">
           <LogOut size={16} />
           Ausloggen
         </button>
+        <button
+          type="button"
+          onClick={async () => {
+            if (confirm('Daten-Export per E-Mail senden?')) {
+              await fetch('/api/account/export', { method: 'POST' })
+              alert('Export wird vorbereitet und per E-Mail gesendet.')
+            }
+          }}
+          className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors"
+        >
+          <Download size={16} />
+          Meine Daten exportieren
+        </button>
+        <AccountDeleteModal />
       </div>
 
       <BottomNav />

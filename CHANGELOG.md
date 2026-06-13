@@ -6,6 +6,37 @@ Alle wichtigen Änderungen am Sofortangebot-Projekt.
 
 ## [Unveröffentlicht] — 2026-06-13
 
+### Account-Löschung (DSGVO Art. 17), Cookie-Banner, Transaktions-E-Mails, AVV-Update
+
+**Account-Löschung:**
+- `AccountDeleteModal`: Roter Button in Einstellungen → Modal mit LÖSCHEN-Bestätigung
+- `/api/account/delete`: Soft-Delete (`deleted_at`), Stripe-Abo canceln, Bestätigungs-E-Mail, Logout
+- `/api/account/restore`: `deleted_at` zurücksetzen
+- `RestoreBanner`: Zeigt 30-Tage-Wiederherstellungsoption beim Login wenn `deleted_at` gesetzt
+- `supabase/add_soft_delete.sql`: `companies.deleted_at` + Index + Cron-Job-Vorlage
+
+**Daten-Export:**
+- `/api/account/export`: Erzeugt `angebote.csv` + `kunden.csv` und schickt sie per E-Mail
+- "Meine Daten exportieren"-Button in Einstellungen
+
+**Cookie-Banner:**
+- `CookieBanner`: Informativer Hinweis beim ersten Besuch, localStorage (`cookie_notice_seen`), kein Cookie selbst
+- In Root-Layout eingebunden (erscheint auf allen Seiten)
+
+**Transaktions-E-Mails (`src/lib/email.ts`):**
+- `sendWelcomeEmail`: Willkommens-E-Mail nach Registrierung (auth/callback)
+- `sendQuoteSentConfirmation`: Interne Kopie an Handwerker (bereit zum Einbinden)
+- `sendPaymentFailedEmail`: Zahlung fehlgeschlagen (Stripe-Webhook)
+- `sendCancellationEmail`: Kündigung bestätigt (Stripe-Webhook `subscription.deleted`)
+- `sendAccountDeletedEmail`: Account gelöscht (account/delete)
+- `sendDataExportEmail`: Daten-Export als CSV-Anhänge
+- Alle E-Mails: Plain Text + HTML, keine Logo-Header, signiert mit „Sandra"
+
+**AVV:**
+- `/avv`: Neugeschrieben mit § 1–§ 8, vollständige Unterauftragnehmer-Liste, TOM
+
+
+
 ### ZUGFeRD / XRechnung E-Rechnung (§ 14 UStG 2025)
 - **`src/lib/zugferd/generateXML.ts`**: Vollständiger ZUGFeRD 2.3 / Factur-X EN 16931 XML-Generator — Verkäufer, Käufer, Positionen (Einheiten-Mapping UN/CEFACT), Steuern, Summen, § 19 UStG Kleinunternehmer-Unterstützung
 - **`src/lib/zugferd/embedXML.ts`**: PDF-Einbettung via pdf-lib — `factur-x.xml` als `AFRelationship.Alternative`, XMP-Metadaten mit PDF/A-3b-Marker

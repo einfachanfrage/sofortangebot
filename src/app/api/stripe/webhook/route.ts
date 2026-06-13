@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { sendPaymentFailedEmail, sendCancellationEmail } from '@/lib/email'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2026-05-27.dahlia' })
 
@@ -9,6 +10,19 @@ function getServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
+}
+
+/** E-Mail-Adresse eines Stripe-Kunden nachschlagen */
+async function getEmailForCustomer(customerId: string): Promise<string | null> {
+  const supabase = getServiceClient()
+  const { data } = await supabase
+    .from('companies')
+    .select('user_id')
+    .eq('stripe_customer_id', customerId)
+    .single()
+  if (!data?.user_id) return null
+  const { data: userData } = await supabase.auth.admin.getUserById(data.user_id)
+  return userData?.user?.email ?? null
 }
 
 /** Downgrade auf Starter — bei Kündigung, Zahlungsausfall, etc. */
@@ -87,20 +101,32 @@ export async function POST(req: NextRequest) {
       break
     }
 
-    // ── Abo gekündigt / abgelaufen → Downgrade ────────────────
+    // ── Abo gekündigt / abgelaufen → Downgrade + E-Mail ──────
     case 'customer.subscription.deleted': {
       const sub = event.data.object as Stripe.Subscription
-      await downgradeToStarter(sub.customer as string)
+      const customerId = sub.customer as string
+      await downgradeToStarter(customerId)
+      // Kündigungsbestätigung senden
+      const subAny = sub as unknown as { current_period_end?: number }
+      const ablaufdatum = subAny.current_period_end
+        ? new Date(subAny.current_period_end * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+        : '–'
+      const email = await getEmailForCustomer(customerId)
+      if (email) sendCancellationEmail(email, ablaufdatum).catch(console.error)
       break
     }
 
-    // ── Zahlung fehlgeschlagen → Downgrade ────────────────────
+    // ── Zahlung fehlgeschlagen → Downgrade + E-Mail ───────────
     case 'invoice.payment_failed': {
       const invoice = event.data.object as Stripe.Invoice
       const customerId = typeof invoice.customer === 'string' ? invoice.customer : null
-      // Nur downgraden wenn das Abo nicht mehr recoverable ist (attempt_count > 1)
       if (customerId && (invoice.attempt_count ?? 0) > 1) {
         await downgradeToStarter(customerId)
+      }
+      // E-Mail bei jedem Fehlschlag (nicht nur beim letzten)
+      if (customerId) {
+        const email = await getEmailForCustomer(customerId)
+        if (email) sendPaymentFailedEmail(email).catch(console.error)
       }
       break
     }

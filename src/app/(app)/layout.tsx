@@ -1,12 +1,14 @@
 import SideNav from '@/components/SideNav'
 import Link from 'next/link'
 import { AgbUpdateModal } from '@/components/AgbUpdateModal'
+import { RestoreBanner } from '@/components/RestoreBanner'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-[#F7F7F5]">
       <SideNav />
       <AgbUpdateModal />
+      <RestoreBanner />
       <div className="md:ml-60 flex flex-col min-h-dvh">
         <main className="flex-1">
           {children}
