@@ -10,7 +10,7 @@ export type AccountingSoftware =
   | 'sage'
   | 'plancraft'
   | 'none'
-export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
+export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected' | 'in_bearbeitung'
 export type VatRate = 19 | 7 | 0
 
 export interface Company {
@@ -88,8 +88,58 @@ export interface Quote {
   notes: string | null
   signed_at: string | null
   signed_by: string | null
+  angebotsnummer: string | null
+  briefpapier_id: string | null
   customer?: Customer
   items?: QuoteItem[]
+}
+
+export interface Nummernkreis {
+  id: string
+  betrieb_id: string
+  typ: 'angebot' | 'rechnung'
+  prefix: string
+  jahr_aktiv: number | null
+  trennzeichen: string
+  naechste_nummer: number
+  min_stellen: number
+  letztes_update: string
+}
+
+export interface VergebeneNummer {
+  id: string
+  betrieb_id: string
+  typ: 'angebot' | 'rechnung'
+  nummer: string
+  sequenz_nummer: number
+  angebot_id: string | null
+  vergeben_am: string
+  storniert: boolean
+}
+
+export interface Briefpapier {
+  id: string
+  betrieb_id: string
+  name: string
+  ist_standard: boolean
+  firmenname: string | null
+  zusatz: string | null
+  strasse: string | null
+  plz: string | null
+  ort: string | null
+  telefon: string | null
+  email: string | null
+  website: string | null
+  logo_url: string | null
+  logo_position: 'links' | 'mitte' | 'rechts'
+  logo_groesse: 'klein' | 'mittel' | 'gross'
+  akzentfarbe: string
+  fusszeile_links: string | null
+  fusszeile_mitte: string | null
+  fusszeile_rechts: string | null
+  schrift: 'inter' | 'roboto' | 'opensans'
+  erstellt_am: string
+  aktualisiert_am: string
 }
 
 export interface QuoteItem {

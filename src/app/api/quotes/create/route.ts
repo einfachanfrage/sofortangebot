@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
   const body = await req.json()
-  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil } = body
+  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id } = body
   const extId = externalContactId as { source: string; id: string } | null
 
   // Company + Plan laden
@@ -105,6 +105,18 @@ export async function POST(req: NextRequest) {
   })()
 
   // Angebot erstellen
+  // Standard-Briefpapier holen wenn keins angegeben
+  let resolvedBriefpapierId: string | null = briefpapier_id ?? null
+  if (!resolvedBriefpapierId) {
+    const { data: std } = await supabase
+      .from('briefpapiere')
+      .select('id')
+      .eq('betrieb_id', company.id)
+      .eq('ist_standard', true)
+      .maybeSingle()
+    resolvedBriefpapierId = std?.id ?? null
+  }
+
   const { data: quote, error: quoteError } = await supabase
     .from('quotes')
     .insert({
@@ -116,6 +128,7 @@ export async function POST(req: NextRequest) {
       total_gross: totalNet + totalVat,
       notes: notes || null,
       valid_until: validUntilDate,
+      briefpapier_id: resolvedBriefpapierId,
     })
     .select('id, share_token, created_at')
     .single()
@@ -124,15 +137,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Angebot konnte nicht gespeichert werden' }, { status: 500 })
   }
 
-  // Punkt 3: Angebotsnummer sofort persistieren (race-condition-arm aber ausreichend für Handwerksbetrieb)
-  const { count: quoteCount } = await supabase
-    .from('quotes')
-    .select('*', { count: 'exact', head: true })
-    .eq('company_id', company.id)
-    .lte('created_at', quote.created_at)
-  const quoteYear = new Date(quote.created_at).getFullYear()
-  const quoteNumber = `${quoteYear}-${String(quoteCount ?? 1).padStart(4, '0')}`
-  await supabase.from('quotes').update({ quote_number: quoteNumber }).eq('id', quote.id)
+  // GoBD-konforme atomare Nummernvergabe via RPC
+  // Nummernkreis anlegen falls noch nicht vorhanden
+  await supabase.rpc('init_nummernkreise', { p_betrieb_id: company.id })
+  const { data: angebotsnummer } = await supabase.rpc('vergib_naechste_nummer', {
+    p_betrieb_id: company.id,
+    p_typ: 'angebot',
+    p_angebot_id: quote.id,
+  })
 
   // Positionen einfügen
   await supabase.from('quote_items').insert(
@@ -149,5 +161,5 @@ export async function POST(req: NextRequest) {
       }))
   )
 
-  return NextResponse.json({ id: quote.id, share_token: quote.share_token })
+  return NextResponse.json({ id: quote.id, share_token: quote.share_token, angebotsnummer })
 }

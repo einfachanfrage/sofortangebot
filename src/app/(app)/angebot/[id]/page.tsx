@@ -22,14 +22,11 @@ export default async function AngebotPage({ params }: { params: Promise<{ id: st
     .eq('id', quote.company_id)
     .single()
 
-  const { count } = await supabase
-    .from('quotes')
-    .select('*', { count: 'exact', head: true })
-    .eq('company_id', quote.company_id)
-    .lte('created_at', quote.created_at)
-
-  const year = new Date(quote.created_at).getFullYear()
-  const quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  // Angebotsnummer: aus DB-Spalte (GoBD) oder Fallback
+  const quoteNumber = (quote as { angebotsnummer?: string | null }).angebotsnummer ?? (() => {
+    const year = new Date(quote.created_at).getFullYear()
+    return `${year}-${quote.id.slice(-4).toUpperCase()}`
+  })()
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 

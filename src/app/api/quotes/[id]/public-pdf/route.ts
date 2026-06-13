@@ -41,14 +41,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ url: existingUrl, gueltig_bis: existingExpiry })
   }
 
-  // Angebotsnummer berechnen
-  const { count } = await supabase
-    .from('quotes')
-    .select('*', { count: 'exact', head: true })
-    .eq('company_id', company.id)
-    .lte('created_at', quote.created_at)
-  const year = new Date(quote.created_at).getFullYear()
-  const quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  const quoteNumber = (quote as { angebotsnummer?: string | null }).angebotsnummer
+    ?? (() => { const y = new Date(quote.created_at).getFullYear(); return `${y}-${quote.id.slice(-4).toUpperCase()}` })()
+
+  // Briefpapier laden
+  let briefpapier = null
+  const bpId = (quote as { briefpapier_id?: string | null }).briefpapier_id
+  if (bpId) {
+    const { data: bp } = await supabase.from('briefpapiere').select('*').eq('id', bpId).single()
+    briefpapier = bp
+  }
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 
@@ -57,6 +59,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     quote: { ...quote, items: sortedItems },
     company,
     quoteNumber,
+    briefpapier,
   }))
 
   // Upload zu Supabase Storage (public bucket)

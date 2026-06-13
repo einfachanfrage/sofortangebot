@@ -1,5 +1,5 @@
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer'
-import type { Quote, QuoteItem, Company, Customer } from './types'
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 
 const styles = StyleSheet.create({
   page: {
@@ -125,11 +125,22 @@ interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
   company: Company
   quoteNumber: string
+  briefpapier?: Briefpapier | null
 }
 
-export function AngebotPDF({ quote, company, quoteNumber }: Props) {
+export function AngebotPDF({ quote, company, quoteNumber, briefpapier }: Props) {
   const isKleinunternehmer = company.vat_rate === 0
   const vatLabel = isKleinunternehmer ? 'Gem. §19 UStG keine MwSt.' : `MwSt. ${company.vat_rate}%`
+
+  // Briefpapier-Werte überschreiben Firmendaten falls vorhanden
+  const firmenname = briefpapier?.firmenname || company.name
+  const adresszeilen = briefpapier?.strasse
+    ? [briefpapier.strasse, [briefpapier.plz, briefpapier.ort].filter(Boolean).join(' ')].filter(Boolean).join('\n')
+    : company.address
+  const akzentfarbe = briefpapier?.akzentfarbe || '#F5C400'
+  const fusszeileLinks = briefpapier?.fusszeile_links ?? `${firmenname} · ${adresszeilen?.split('\n')[0] ?? ''}`
+  const fusszeileRechts = briefpapier?.fusszeile_rechts ?? (company.iban ? `IBAN: ${company.iban}` : '')
+  const fusszeileMitte = briefpapier?.fusszeile_mitte ?? ''
 
   return (
     <Document>
@@ -137,8 +148,9 @@ export function AngebotPDF({ quote, company, quoteNumber }: Props) {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.companyName}>{company.name}</Text>
-            <Text style={styles.companyAddress}>{company.address}</Text>
+            <Text style={styles.companyName}>{firmenname}</Text>
+            {briefpapier?.zusatz && <Text style={{ ...styles.companyAddress, fontFamily: 'Helvetica' }}>{briefpapier.zusatz}</Text>}
+            <Text style={styles.companyAddress}>{adresszeilen}</Text>
             {/* Pflichtangaben § 14 UStG */}
             {(company as Company & { ust_id?: string }).ust_id && (
               <Text style={{ ...styles.companyAddress, marginTop: 8 }}>
@@ -151,7 +163,7 @@ export function AngebotPDF({ quote, company, quoteNumber }: Props) {
             {company.iban && <Text style={styles.companyAddress}>IBAN: {company.iban}</Text>}
           </View>
           <View>
-            <View style={styles.badge}>
+            <View style={{ ...styles.badge, backgroundColor: akzentfarbe }}>
               <Text style={styles.badgeText}>ANGEBOT</Text>
             </View>
           </View>
@@ -276,20 +288,18 @@ export function AngebotPDF({ quote, company, quoteNumber }: Props) {
           </View>
         </View>
 
-        {/* Footer — Pflichtangaben § 14 UStG */}
-        <View style={styles.footer}>
+        {/* Footer */}
+        <View style={{ ...styles.footer, borderTop: `1 solid ${akzentfarbe}` }}>
           <View style={{ flex: 1 }}>
-            <Text>{company.name} • {company.address?.split('\n')[0]}</Text>
-            {(company as Company & { ust_id?: string }).ust_id && (
-              <Text style={{ marginTop: 2 }}>USt-IdNr.: {(company as Company & { ust_id?: string }).ust_id}</Text>
-            )}
+            <Text>{fusszeileLinks}</Text>
             {!(company as Company & { ust_id?: string }).ust_id && company.tax_number && (
               <Text style={{ marginTop: 2 }}>St.-Nr.: {company.tax_number}</Text>
             )}
           </View>
+          {fusszeileMitte ? <View style={{ flex: 1, textAlign: 'center' }}><Text>{fusszeileMitte}</Text></View> : null}
           <View style={{ textAlign: 'right' }}>
-            <Text>Angebot {quoteNumber}</Text>
-            {company.iban && <Text style={{ marginTop: 2 }}>IBAN: {company.iban}</Text>}
+            <Text>{fusszeileRechts || `Angebot ${quoteNumber}`}</Text>
+            {fusszeileRechts && <Text style={{ marginTop: 2 }}>Angebot {quoteNumber}</Text>}
           </View>
         </View>
       </Page>

@@ -470,6 +470,22 @@ export default function EinstellungenPage() {
           </div>
           <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
         </Link>
+        <Link href="/einstellungen/nummern"
+          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
+          <div>
+            <span className="font-bold text-[#2C2C2C]">Angebotsnummern</span>
+            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">GoBD-konform · Präfix, Format, Jahreswechsel</div>
+          </div>
+          <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
+        </Link>
+        <Link href="/einstellungen/briefpapier"
+          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
+          <div>
+            <span className="font-bold text-[#2C2C2C]">Briefpapier & Design</span>
+            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Varianten, Farben, Logo, Fußzeile</div>
+          </div>
+          <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
+        </Link>
       </div>
 
       <div className="px-5 md:px-8 mt-3 flex flex-col gap-1">

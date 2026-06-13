@@ -97,6 +97,9 @@ export default function NeuesAngebotPage() {
   const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
   const [suggestionToast, setSuggestionToast] = useState<EmpfehlungDefault | null>(null)
   const [gewerk, setGewerk] = useState('')
+  const [briefpapiere, setBriefpapiere] = useState<{ id: string; name: string; ist_standard: boolean }[]>([])
+  const [selectedBriefpapier, setSelectedBriefpapier] = useState<string | null>(null)
+  const [showBriefpapierPicker, setShowBriefpapierPicker] = useState(false)
 
   // Starthilfe
   const [showFirstTimeCard, setShowFirstTimeCard] = useState(false)
@@ -150,6 +153,18 @@ export default function NeuesAngebotPage() {
           .select('trigger_category, empfehlung_title, empfehlung_unit, empfehlung_unit_price')
           .eq('company_id', co.id)
         setEmpfehlungen(empf ?? [])
+
+        // Briefpapiere laden
+        const { data: bps } = await supabase
+          .from('briefpapiere')
+          .select('id, name, ist_standard')
+          .eq('betrieb_id', co.id)
+          .order('ist_standard', { ascending: false })
+        if (bps && bps.length > 0) {
+          setBriefpapiere(bps)
+          const std = bps.find((b: { ist_standard: boolean }) => b.ist_standard)
+          setSelectedBriefpapier(std?.id ?? bps[0].id)
+        }
       }
     }
     init()
@@ -420,7 +435,7 @@ export default function NeuesAngebotPage() {
 
   async function handleSave() {
     setSaving(true); setLimitError('')
-    const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil }) })
+    const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }) })
     const data = await r.json()
     if (!r.ok) {
       setSaving(false)
@@ -667,6 +682,30 @@ export default function NeuesAngebotPage() {
           {/* Notizen */}
           <textarea placeholder="Anmerkungen (optional)" value={notes} onChange={e => setNotes(e.target.value)} rows={3}
             className="w-full bg-white border border-[#2C2C2C]/5 rounded-2xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400] resize-none" />
+
+          {/* Briefpapier-Auswahl (nur wenn mehrere vorhanden) */}
+          {briefpapiere.length > 1 && (
+            <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+              <div className="font-black text-[#2C2C2C] mb-2 flex items-center justify-between">
+                <span>Briefpapier</span>
+                <button onClick={() => setShowBriefpapierPicker(!showBriefpapierPicker)}
+                  className="text-xs font-semibold text-[#2C2C2C]/40">ändern</button>
+              </div>
+              <div className="text-sm font-semibold text-[#2C2C2C]/60">
+                {briefpapiere.find(b => b.id === selectedBriefpapier)?.name ?? 'Standard'}
+              </div>
+              {showBriefpapierPicker && (
+                <div className="mt-2 space-y-1.5">
+                  {briefpapiere.map(bp => (
+                    <button key={bp.id} onClick={() => { setSelectedBriefpapier(bp.id); setShowBriefpapierPicker(false) }}
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold border-2 transition-colors ${selectedBriefpapier === bp.id ? 'border-[#F5C400] bg-[#FFF9E6] text-[#2C2C2C]' : 'border-[#2C2C2C]/10 text-[#2C2C2C]/60'}`}>
+                      {bp.ist_standard && '⭐ '}{bp.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Gültigkeitsdatum */}
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">

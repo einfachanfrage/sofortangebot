@@ -61,12 +61,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   // ── E-Mail Versand ───────────────────────────────────────────────────────
   if (via === 'email') {
+    // Briefpapier laden
+    let briefpapier = null
+    const bpId = (quote as { briefpapier_id?: string | null }).briefpapier_id
+    if (bpId) {
+      const { data: bp } = await supabase.from('briefpapiere').select('*').eq('id', bpId).single()
+      briefpapier = bp
+    }
+
     // PDF generieren
     // @ts-expect-error react-pdf typing
     let pdfBuffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
       quote: { ...quote, items: sortedItems },
       company,
       quoteNumber,
+      briefpapier,
     }))
 
     // ZUGFeRD für B2B-Kunden

@@ -33,15 +33,18 @@ export async function GET(req: NextRequest) {
 
   if (!company) return NextResponse.json({ error: 'Betrieb nicht gefunden' }, { status: 404 })
 
-  let quoteNumber = quote.quote_number as string | null
-  if (!quoteNumber) {
-    const { count } = await supabase
-      .from('quotes')
-      .select('*', { count: 'exact', head: true })
-      .eq('company_id', company.id)
-      .lte('created_at', quote.created_at)
-    const year = new Date(quote.created_at).getFullYear()
-    quoteNumber = `${year}-${String(count ?? 1).padStart(4, '0')}`
+  const quoteNumber = (quote as { angebotsnummer?: string | null }).angebotsnummer
+    ?? (() => {
+      const year = new Date(quote.created_at).getFullYear()
+      return `${year}-${quote.id.slice(-4).toUpperCase()}`
+    })()
+
+  // Briefpapier laden falls zugewiesen
+  let briefpapier = null
+  const bpId = (quote as { briefpapier_id?: string | null }).briefpapier_id
+  if (bpId) {
+    const { data: bp } = await supabase.from('briefpapiere').select('*').eq('id', bpId).single()
+    briefpapier = bp
   }
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
@@ -51,6 +54,7 @@ export async function GET(req: NextRequest) {
     quote: { ...quote, items: sortedItems },
     company,
     quoteNumber,
+    briefpapier,
   }))
 
   // ZUGFeRD einbetten wenn: E-Rechnung aktiv + Geschäftskunde
