@@ -254,10 +254,18 @@ export default function PreisePage() {
     const toInsert = DEFAULT_PRICES
       .filter(p => !existingTitles.has(p.title.toLowerCase()))
       .map(p => ({ ...p, company_id: companyId }))
-    if (toInsert.length > 0) {
-      const { data } = await supabase.from('price_items').insert(toInsert).select()
-      if (data) setItems(prev => [...prev, ...data])
+
+    // Supabase limits single inserts to ~1000 rows — insert in batches
+    const BATCH = 400
+    const allInserted: PriceItem[] = []
+    for (let i = 0; i < toInsert.length; i += BATCH) {
+      const { data } = await supabase
+        .from('price_items')
+        .insert(toInsert.slice(i, i + BATCH))
+        .select()
+      if (data) allInserted.push(...data)
     }
+    if (allInserted.length > 0) setItems(prev => [...prev, ...allInserted])
     setImporting(false)
   }
 

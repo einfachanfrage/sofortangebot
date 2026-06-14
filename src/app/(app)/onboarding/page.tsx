@@ -142,7 +142,11 @@ export default function OnboardingPage() {
     const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
     if (company) {
       if (preisMode === 'markt') {
-        await supabase.from('price_items').insert(DEFAULT_PRICES.map(p => ({ ...p, company_id: company.id })))
+        const allPrices = DEFAULT_PRICES.map(p => ({ ...p, company_id: company.id }))
+        const BATCH = 400
+        for (let i = 0; i < allPrices.length; i += BATCH) {
+          await supabase.from('price_items').insert(allPrices.slice(i, i + BATCH))
+        }
       } else if ((preisMode === 'manuell' || preisMode === 'pdf') && preisEntries.length > 0) {
         const toInsert = preisEntries
           .filter(e => e.title.trim() && parseFloat(e.unit_price) > 0)
