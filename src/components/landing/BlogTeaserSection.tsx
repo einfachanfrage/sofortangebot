@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { getAllPosts, KATEGORIE_META, formatDate } from '@/lib/blog'
+import { getAllPosts } from '@/lib/blog'
+import { KATEGORIE_META, formatDate } from '@/lib/blog-client'
 
 export function BlogTeaserSection() {
   const posts = getAllPosts().slice(0, 3)

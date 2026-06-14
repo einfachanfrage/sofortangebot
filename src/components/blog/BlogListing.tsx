@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { BlogPost } from '@/lib/blog'
-import { KATEGORIE_META, formatDate } from '@/lib/blog'
+import { KATEGORIE_META, formatDate } from '@/lib/blog-client'
 
 const KATEGORIEN = ['Alle', 'Angebote', 'Preise', 'Recht & Steuern', 'Gewerke', 'Tools']
 const PAGE_SIZE = 9
