@@ -121,24 +121,43 @@ export async function POST(req: NextRequest) {
     resolvedBriefpapierId = std?.id ?? null
   }
 
-  const { data: quote, error: quoteError } = await supabase
-    .from('quotes')
-    .insert({
-      company_id: company.id,
-      customer_id: customerId,
-      status: 'draft',
-      total_net: totalNet,
-      total_vat: totalVat,
-      total_gross: totalNet + totalVat,
-      notes: notes || null,
-      valid_until: validUntilDate,
-      briefpapier_id: resolvedBriefpapierId,
-    })
-    .select('id, share_token, created_at')
-    .single()
+  const baseInsert = {
+    company_id: company.id,
+    customer_id: customerId,
+    status: 'draft',
+    total_net: totalNet,
+    total_vat: totalVat,
+    total_gross: totalNet + totalVat,
+    notes: notes || null,
+    valid_until: validUntilDate,
+    ...(resolvedBriefpapierId ? { briefpapier_id: resolvedBriefpapierId } : {}),
+  }
+
+  // Versuche zuerst mit share_token, Fallback ohne falls Spalte fehlt
+  let quote: { id: string; share_token?: string; created_at: string } | null = null
+  let quoteError: { message: string } | null = null
+
+  const full = await supabase.from('quotes').insert(baseInsert).select('id, share_token, created_at').single()
+  if (full.error?.message?.includes('share_token') || full.error?.message?.includes('briefpapier_id')) {
+    // Spalte fehlt noch — ohne optionale Felder nochmal versuchen
+    const minimal = await supabase.from('quotes').insert({
+      company_id: company.id, customer_id: customerId, status: 'draft',
+      total_net: totalNet, total_vat: totalVat, total_gross: totalNet + totalVat,
+      notes: notes || null, valid_until: validUntilDate,
+    }).select('id, created_at').single()
+    quote = minimal.data
+    quoteError = minimal.error
+  } else {
+    quote = full.data
+    quoteError = full.error
+  }
 
   if (quoteError || !quote) {
-    return NextResponse.json({ error: 'Angebot konnte nicht gespeichert werden' }, { status: 500 })
+    console.error('quotes insert error:', quoteError?.message)
+    return NextResponse.json({
+      error: 'Angebot konnte nicht gespeichert werden',
+      detail: quoteError?.message,
+    }, { status: 500 })
   }
 
   // GoBD-konforme atomare Nummernvergabe via RPC
