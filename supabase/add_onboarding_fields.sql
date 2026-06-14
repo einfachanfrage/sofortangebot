@@ -1,0 +1,3 @@
+ALTER TABLE companies
+  ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS onboarding_step INT NOT NULL DEFAULT 1;

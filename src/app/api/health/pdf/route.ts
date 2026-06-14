@@ -41,6 +41,8 @@ export async function GET() {
       materialpreis_hinweis_aktiv: false,
       mindestauftragswert: 0,
       e_rechnung_aktiv: false,
+      onboarding_completed: true,
+      onboarding_step: 8,
     }
 
     const dummyItem: QuoteItem = {

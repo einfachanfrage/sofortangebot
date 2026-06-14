@@ -45,6 +45,8 @@ export interface Company {
   materialpreis_hinweis_aktiv: boolean
   mindestauftragswert: number
   e_rechnung_aktiv: boolean
+  onboarding_completed: boolean
+  onboarding_step: number
 }
 
 export interface MengenrabattTier {

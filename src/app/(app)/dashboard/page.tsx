@@ -8,6 +8,7 @@ import BottomNav from '@/components/BottomNav'
 import DashboardFilters from '@/components/DashboardFilters'
 import DraftQuotes from '@/components/DraftQuotes'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
+import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
 import { Mic, ChevronRight } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
@@ -41,7 +42,7 @@ function getGreeting(): { greeting: string; sub: string } {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string }>
+  searchParams: Promise<{ q?: string; status?: string; welcome?: string }>
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -54,7 +55,7 @@ export default async function DashboardPage({
     .single()
   if (company && !company.name) redirect('/onboarding')
 
-  const { q, status } = await searchParams
+  const { q, status, welcome } = await searchParams
 
   let query = supabase
     .from('quotes')
@@ -86,6 +87,12 @@ export default async function DashboardPage({
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-28 md:pb-12">
       <PwaBanner />
+      {welcome === 'new' && <WelcomeModalWrapper />}
+      {welcome === 'pro' && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-extrabold text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2 animate-bounce">
+          🚀 Pro Plan aktiv — viel Erfolg!
+        </div>
+      )}
 
       {/* ── MOBILE HEADER ── */}
       <div className="md:hidden bg-[#2C2C2C] px-5 pt-12 pb-7">
