@@ -447,20 +447,29 @@ export default function NeuesAngebotPage() {
   const [limitError, setLimitError] = useState('')
 
   async function handleSave() {
-    setSaving(true); setLimitError('')
-    const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }) })
-    const data = await r.json()
-    if (!r.ok) {
+    setSaving(true); setLimitError(''); setError('')
+    try {
+      const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }) })
+      const data = await r.json()
+      if (!r.ok) {
+        if (data.error === 'limit_reached') setLimitError(data.message)
+        else setError(data.error ?? 'Speichern fehlgeschlagen')
+        return
+      }
+      if (!data.id) {
+        setError('Kein Angebot zurückgegeben. Nochmal versuchen.')
+        return
+      }
+      // Eingaben-Session verknüpfen wenn vorhanden
+      if (eingaben.length > 0) {
+        await supabase.from('angebot_eingaben').update({ angebot_id: data.id }).is('angebot_id', null)
+      }
+      router.push(`/angebot/${data.id}`)
+    } catch {
+      setError('Verbindungsfehler. Bitte nochmal versuchen.')
+    } finally {
       setSaving(false)
-      if (data.error === 'limit_reached') setLimitError(data.message)
-      else setError(data.error ?? 'Speichern fehlgeschlagen')
-      return
     }
-    // Eingaben-Session verknüpfen wenn vorhanden
-    if (eingaben.length > 0 && data.id) {
-      await supabase.from('angebot_eingaben').update({ angebot_id: data.id }).is('angebot_id', null)
-    }
-    router.push(`/angebot/${data.id}`)
   }
 
   // Weiteres Einsprehen zu laufender Session
