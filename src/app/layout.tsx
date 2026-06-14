@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Syne, Inter } from 'next/font/google'
+import { Plus_Jakarta_Sans, Inter } from 'next/font/google'
 import './globals.css'
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
 import { CookieBanner } from '@/components/CookieBanner'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { StagingBanner } from '@/components/StagingBanner'
 
-const syne = Syne({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['700', '800'],
   variable: '--font-syne',
@@ -41,7 +41,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" className={`h-full ${syne.variable} ${inter.variable}`}>
+    <html lang="de" className={`h-full ${plusJakarta.variable} ${inter.variable}`}>
       <body className="min-h-dvh">
         <StagingBanner />
         <ServiceWorkerRegister />
