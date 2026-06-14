@@ -9,6 +9,7 @@ import { IntegrationenSection } from '@/components/landing/IntegrationenSection'
 import { PreiseSection } from '@/components/landing/PreiseSection'
 import { FAQSection } from '@/components/landing/FAQSection'
 import { CTASection } from '@/components/landing/CTASection'
+import { BlogTeaserSection } from '@/components/landing/BlogTeaserSection'
 import { Footer } from '@/components/landing/Footer'
 
 export default function LandingPage() {
@@ -25,6 +26,7 @@ export default function LandingPage() {
       <PreiseSection />
       <FAQSection />
       <CTASection />
+      <BlogTeaserSection />
       <Footer />
     </div>
   )
