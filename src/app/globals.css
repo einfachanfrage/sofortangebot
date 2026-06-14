@@ -23,8 +23,20 @@
 body {
   background: var(--bg);
   color: var(--anthracite);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inter, system-ui, -apple-system, sans-serif);
   min-height: 100dvh;
+}
+
+.font-syne {
+  font-family: var(--font-syne, system-ui, sans-serif);
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 input, textarea, select, button {

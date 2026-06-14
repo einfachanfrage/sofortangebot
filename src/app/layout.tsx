@@ -1,9 +1,24 @@
 import type { Metadata, Viewport } from 'next'
+import { Syne, Inter } from 'next/font/google'
 import './globals.css'
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
 import { CookieBanner } from '@/components/CookieBanner'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { StagingBanner } from '@/components/StagingBanner'
+
+const syne = Syne({
+  subsets: ['latin'],
+  weight: ['700', '800'],
+  variable: '--font-syne',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Sofortangebot',
@@ -26,7 +41,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" className="h-full">
+    <html lang="de" className={`h-full ${syne.variable} ${inter.variable}`}>
       <body className="min-h-dvh">
         <StagingBanner />
         <ServiceWorkerRegister />
