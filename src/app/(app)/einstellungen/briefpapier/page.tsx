@@ -14,6 +14,7 @@ export default function BriefpapierUebersicht() {
   const [briefpapiere, setBriefpapiere] = useState<Briefpapier[]>([])
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [dbError, setDbError] = useState(false)
 
   useEffect(() => { load() }, [])
 
@@ -24,22 +25,25 @@ export default function BriefpapierUebersicht() {
     if (!company) return
     setCompanyId(company.id)
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('briefpapiere')
       .select('*')
       .eq('betrieb_id', company.id)
       .order('ist_standard', { ascending: false })
       .order('erstellt_am', { ascending: true })
 
+    if (error) { setDbError(true); setLoading(false); return }
+
     if (!data || data.length === 0) {
       // Standard-Briefpapier aus Firmenprofil anlegen
-      const { data: neu } = await supabase.from('briefpapiere').insert({
+      const { data: neu, error: insertErr } = await supabase.from('briefpapiere').insert({
         betrieb_id: company.id,
         name: 'Standard',
         ist_standard: true,
         firmenname: company.name,
         logo_url: company.logo_url,
       }).select().single()
+      if (insertErr) { setDbError(true); setLoading(false); return }
       setBriefpapiere(neu ? [neu] : [])
     } else {
       setBriefpapiere(data)
@@ -87,11 +91,12 @@ export default function BriefpapierUebersicht() {
 
   async function neu() {
     if (!companyId || briefpapiere.length >= 5) return
-    const { data } = await supabase.from('briefpapiere').insert({
+    const { data, error } = await supabase.from('briefpapiere').insert({
       betrieb_id: companyId,
       name: 'Neue Variante',
       ist_standard: false,
     }).select().single()
+    if (error) { setDbError(true); return }
     if (data) router.push(`/einstellungen/briefpapier/${data.id}`)
   }
 
@@ -105,6 +110,22 @@ export default function BriefpapierUebersicht() {
       <div className="max-w-xl mx-auto px-4 pt-5 space-y-3">
         {loading ? (
           <div className="text-center py-12 text-[#2C2C2C]/30 text-sm">Lädt…</div>
+        ) : dbError ? (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
+            <div className="text-2xl mb-3">⚠️</div>
+            <div className="font-black text-amber-800 text-base mb-2">Tabelle nicht eingerichtet</div>
+            <p className="text-amber-700 text-sm leading-relaxed mb-4">
+              Die Briefpapier-Funktion muss einmalig in der Datenbank eingerichtet werden.
+            </p>
+            <div className="bg-amber-100 rounded-xl p-4 text-left">
+              <div className="text-[11px] font-black text-amber-800 uppercase tracking-wider mb-2">Schritt: SQL in Supabase ausführen</div>
+              <p className="text-amber-700 text-xs leading-relaxed">
+                Öffne das Supabase Dashboard → SQL Editor → führe die Datei{' '}
+                <code className="bg-amber-200 px-1 rounded">supabase/create_briefpapiere.sql</code>{' '}
+                aus dem Projektordner aus.
+              </p>
+            </div>
+          </div>
         ) : (
           <>
             {briefpapiere.map(bp => (
