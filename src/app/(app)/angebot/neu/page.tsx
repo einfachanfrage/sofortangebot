@@ -225,7 +225,9 @@ export default function NeuesAngebotPage() {
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       mr.onstop = async () => {
         stream.getTracks().forEach(t => t.stop())
-        await processAudio(new Blob(chunksRef.current, { type: mr.mimeType || 'audio/webm' }))
+        // mr.mimeType kann nach stop() leer sein (iOS-Bug) → gespeicherte mimeType nutzen
+        const blobType = mimeType || mr.mimeType || 'audio/webm'
+        await processAudio(new Blob(chunksRef.current, { type: blobType }))
       }
       mr.start()
       mediaRef.current = mr
