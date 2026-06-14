@@ -66,6 +66,7 @@ export interface PriceItem {
   ist_erschwerniszuschlag: boolean
   erschwerniszuschlag_fuer: string | null
   zuschlag_typ: 'prozent' | 'festbetrag' | 'je_einheit' | null
+  nutzungshaeufigkeit: number
 }
 
 export interface Customer {
