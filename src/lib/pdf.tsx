@@ -274,6 +274,23 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier }: Props) 
           </View>
         )}
 
+        {/* Normverweise (dedupliziert) */}
+        {(() => {
+          const vobNormen = [...new Set(quote.items.map(i => i.vob_norm).filter(Boolean))] as string[]
+          const dinNormen = [...new Set(quote.items.flatMap(i => i.din_normen ?? []))]
+          if (vobNormen.length === 0 && dinNormen.length === 0) return null
+          return (
+            <View style={{ marginTop: 16, padding: '6 10', backgroundColor: '#F7F7F5', borderRadius: 4 }}>
+              <Text style={{ fontSize: 8, color: '#888888', lineHeight: 1.5 }}>
+                {'Normgrundlagen: '}
+                {vobNormen.join(' · ')}
+                {vobNormen.length > 0 && dinNormen.length > 0 ? ' | ' : ''}
+                {dinNormen.join(', ')}
+              </Text>
+            </View>
+          )
+        })()}
+
         {/* Unterschrift */}
         <View style={{ marginTop: 40, flexDirection: 'row', gap: 60 }}>
           <View style={{ flex: 1 }}>

@@ -1,4 +1,14 @@
-export const DEFAULT_PRICES = [
+export const DEFAULT_PRICES: Array<{
+  category: string
+  title: string
+  unit: string
+  unit_price: number
+  vob_norm?: string
+  din_normen?: string[]
+  ist_erschwerniszuschlag?: boolean
+  erschwerniszuschlag_fuer?: string
+  zuschlag_typ?: 'prozent' | 'festbetrag' | 'je_einheit'
+}> = [
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MALERARBEITEN — Anfahrt & Organisation
@@ -2969,4 +2979,232 @@ export const DEFAULT_PRICES = [
   { category: 'Allgemein', title: 'Bauschutt-Container 10m³', unit: 'Stk', unit_price: 480.00 },
   { category: 'Allgemein', title: 'Aggregat / Stromerzeuger (je Tag)', unit: 'Tag', unit_price: 110.00 },
   { category: 'Allgemein', title: 'Kleintransporter (je Tag)', unit: 'Tag', unit_price: 95.00 },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Maler (VOB/C ATV DIN 18363)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Maler – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Höhe (Leitern/Gerüst über 4 m)',
+    unit: '%', unit_price: 15,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Anstrich- und Tapezierarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.1',
+    din_normen: ['DIN 18363'],
+  },
+  {
+    category: 'Maler – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag bewohnter Bereich (Schutzmaßnahmen)',
+    unit: '%', unit_price: 10,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Anstricharbeiten in bewohnten Räumen',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.3',
+    din_normen: ['DIN 18363'],
+  },
+  {
+    category: 'Maler – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Kleinflächenarbeit (unter 10 m²)',
+    unit: '%', unit_price: 20,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Kleinflächige Anstriche',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.4',
+    din_normen: ['DIN 18363'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Trockenbau (VOB/C ATV DIN 18183)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Trockenbau – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Schrägen / Dachschrägen',
+    unit: '%', unit_price: 20,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Beplankungsarbeiten an Schrägen',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18183 Abschnitt 3.2',
+    din_normen: ['DIN 18183', 'DIN 18168'],
+  },
+  {
+    category: 'Trockenbau – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Höhe (über 3,5 m Raumhöhe)',
+    unit: '€', unit_price: 4.50,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Decken- und Wandbeplankung',
+    zuschlag_typ: 'je_einheit',
+    vob_norm: 'VOB/C ATV DIN 18183 Abschnitt 3.1',
+    din_normen: ['DIN 18183'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Fliesen (VOB/C ATV DIN 18352)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Fliesen – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Diagonalverlegung',
+    unit: '%', unit_price: 15,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Fliesenverlegung',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18352 Abschnitt 3.2.1',
+    din_normen: ['DIN 18352', 'DIN EN 14411'],
+  },
+  {
+    category: 'Fliesen – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Kleinformat (Fliesen unter 10×10 cm)',
+    unit: '%', unit_price: 25,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Fliesenverlegung',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18352 Abschnitt 3.2.2',
+    din_normen: ['DIN 18352'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Estrich (VOB/C ATV DIN 18353)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Estrich – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Handeinbau (kein Maschinenzugang)',
+    unit: '%', unit_price: 20,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Estricharbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18353 Abschnitt 3.1.1',
+    din_normen: ['DIN 18353', 'DIN EN 13813'],
+  },
+  {
+    category: 'Estrich – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Schicht unter 40 mm',
+    unit: '%', unit_price: 15,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Zementestriche',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18353 Abschnitt 3.2',
+    din_normen: ['DIN 18353'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Putz (VOB/C ATV DIN 18350)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Putz – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Höhe (über 4 m)',
+    unit: '%', unit_price: 15,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Putzarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18350 Abschnitt 3.1.1',
+    din_normen: ['DIN 18350', 'DIN EN 998-1', 'DIN EN 998-2'],
+  },
+  {
+    category: 'Putz – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Untergrundvorbehandlung (Altputz)',
+    unit: '%', unit_price: 10,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Putzarbeiten auf Altputz',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18350 Abschnitt 3.2',
+    din_normen: ['DIN 18350'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Rohbau / Maurerarbeiten (VOB/C ATV DIN 18330)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Rohbau – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Winterbau (Frost- und Kälteschutz)',
+    unit: '%', unit_price: 12,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Maurerarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18330 Abschnitt 3.3',
+    din_normen: ['DIN 18330', 'DIN 1053'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Dach (VOB/C ATV DIN 18338)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Dach – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag steile Dachneigung (über 45°)',
+    unit: '%', unit_price: 20,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Dachdeckerarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18338 Abschnitt 3.1.2',
+    din_normen: ['DIN 18338', 'DIN EN 14783'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Elektro (VOB/C ATV DIN 18382)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Elektro – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Schlitze stemmen (Stahlbeton)',
+    unit: '%', unit_price: 30,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Elektroinstallationsarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18382 Abschnitt 3.1',
+    din_normen: ['DIN 18382', 'DIN VDE 0100'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — SHK (VOB/C ATV DIN 18381)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'SHK – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag beengte Verhältnisse (Schacht/Keller)',
+    unit: '%', unit_price: 15,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Sanitär- und Heizungsarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18381 Abschnitt 3.1',
+    din_normen: ['DIN 18381', 'DIN EN 806'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Abbruch (VOB/C ATV DIN 18459)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Abbruch – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Schadstoffbelastung (Asbest/KMF)',
+    unit: '%', unit_price: 40,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Abbrucharbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18459 Abschnitt 3.1',
+    din_normen: ['DIN 18459', 'TRGS 519'],
+  },
+  {
+    category: 'Abbruch – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Handabbruch (kein Maschineneinsatz möglich)',
+    unit: '%', unit_price: 25,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Abbrucharbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18459 Abschnitt 3.2',
+    din_normen: ['DIN 18459'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Zimmerei (VOB/C ATV DIN 18334)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Zimmerei – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Abbund Sonderformen (Walm, Mansard)',
+    unit: '%', unit_price: 15,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Zimmererarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18334 Abschnitt 3.1',
+    din_normen: ['DIN 18334', 'DIN EN 1995'],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ERSCHWERNISZUSCHLÄGE — Boden (VOB/C ATV DIN 18365)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    category: 'Boden – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Verlegung auf vorhandenen Belag',
+    unit: '%', unit_price: 10,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Bodenbelagsarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18365 Abschnitt 3.1',
+    din_normen: ['DIN 18365'],
+  },
+  {
+    category: 'Boden – Erschwernisse & Zuschläge',
+    title: 'Erschwerniszuschlag Muster-/Intarsienverlegung',
+    unit: '%', unit_price: 30,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Parkett- und Bodenbelagsarbeiten',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18365 Abschnitt 3.2',
+    din_normen: ['DIN 18365', 'DIN EN 13226'],
+  },
 ]

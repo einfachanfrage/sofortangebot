@@ -52,6 +52,8 @@ export async function GET() {
       quantity: 1,
       unit: 'Stk',
       unit_price: 10,
+      vob_norm: null,
+      din_normen: null,
       total_price: 10,
     }
 

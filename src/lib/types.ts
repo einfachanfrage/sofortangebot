@@ -61,6 +61,11 @@ export interface PriceItem {
   unit_price: number
   description: string | null
   mengenrabatt: MengenrabattTier[] | null
+  vob_norm: string | null
+  din_normen: string[] | null
+  ist_erschwerniszuschlag: boolean
+  erschwerniszuschlag_fuer: string | null
+  zuschlag_typ: 'prozent' | 'festbetrag' | 'je_einheit' | null
 }
 
 export interface Customer {
@@ -152,4 +157,6 @@ export interface QuoteItem {
   unit: string
   unit_price: number
   total_price: number
+  vob_norm: string | null
+  din_normen: string[] | null
 }

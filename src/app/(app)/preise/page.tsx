@@ -158,6 +158,8 @@ export default function PreisePage() {
     return acc
   }, {})
 
+  const isZuschlagKat = (cat: string) => cat.includes('Erschwernisse') || cat.includes('Zuschläge')
+
   const toggleCat = (cat: string) => {
     setExpandedCats(prev => {
       const next = new Set(prev)
@@ -272,7 +274,10 @@ export default function PreisePage() {
                     onClick={() => toggleCat(cat)}
                     className="w-full flex items-center justify-between px-4 py-4"
                   >
-                    <div className="font-black text-[#2C2C2C]">{cat}</div>
+                    <div className="flex items-center gap-2">
+                      {isZuschlagKat(cat) && <span className="text-base leading-none">⚡</span>}
+                      <div className="font-black text-[#2C2C2C]">{cat}</div>
+                    </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-[#2C2C2C]/40">{catItems.length}</span>
                       {expandedCats.has(cat) ? <ChevronUp size={16} color="#2C2C2C" /> : <ChevronDown size={16} color="#2C2C2C" />}
@@ -362,12 +367,23 @@ export default function PreisePage() {
                               </div>
                             </div>
                           ) : (
-                            <div className="flex items-center justify-between px-4 py-3">
+                            <div className={`flex items-center justify-between px-4 py-3 ${item.ist_erschwerniszuschlag ? 'bg-amber-50/50' : ''}`}>
                               <div className="min-w-0 flex-1">
-                                <div className="font-semibold text-[#2C2C2C] text-sm truncate">{item.title}</div>
+                                <div className="flex items-center gap-1.5">
+                                  {item.ist_erschwerniszuschlag && <span className="text-xs leading-none">⚡</span>}
+                                  <div className="font-semibold text-[#2C2C2C] text-sm truncate">{item.title}</div>
+                                </div>
                                 <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">
-                                  {item.unit_price.toFixed(2).replace('.', ',')} € / {item.unit}
-                                  {item.mengenrabatt && item.mengenrabatt.length > 0 && (
+                                  {item.zuschlag_typ === 'prozent'
+                                    ? `+${item.unit_price}%`
+                                    : `${item.unit_price.toFixed(2).replace('.', ',')} € / ${item.unit}`}
+                                  {item.erschwerniszuschlag_fuer && (
+                                    <span className="ml-1.5 text-[#2C2C2C]/35">auf {item.erschwerniszuschlag_fuer}</span>
+                                  )}
+                                  {item.vob_norm && (
+                                    <span className="ml-1.5 text-[#2C2C2C]/25 text-[10px]">· {item.vob_norm}</span>
+                                  )}
+                                  {!item.ist_erschwerniszuschlag && item.mengenrabatt && item.mengenrabatt.length > 0 && (
                                     <span className="ml-2 text-[#2C2C2C]/30">
                                       · Rabatt: {item.mengenrabatt.map(t => `ab ${t.ab} → ${t.rabatt_prozent}%`).join(', ')}
                                     </span>
