@@ -12,7 +12,7 @@ export function ProblemSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="font-syne font-black text-[#F5C400] leading-none mb-4" style={{ fontSize: 'clamp(80px, 15vw, 120px)' }}>
+          <div className="font-syne font-extrabold text-[#F5C400] leading-none mb-4 text-[80px] md:text-[96px] lg:text-[120px]">
             73%
           </div>
           <p className="text-[#2C2C2C] text-lg md:text-xl font-medium mb-14">

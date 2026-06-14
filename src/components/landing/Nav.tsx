@@ -20,7 +20,7 @@ export function Nav() {
       }`}>
         <div className="max-w-6xl mx-auto px-5 md:px-10 flex items-center justify-between h-16">
           {/* Logo */}
-          <span className={`font-syne font-black text-xl tracking-tight ${scrolled ? 'text-[#2C2C2C]' : 'text-white'}`}>
+          <span className={`font-syne font-extrabold text-[20px] tracking-tight ${scrolled ? 'text-[#2C2C2C]' : 'text-white'}`}>
             sofort<span className="text-[#F5C400]">angebot</span>
           </span>
 
@@ -38,7 +38,7 @@ export function Nav() {
             </Link>
             <Link
               href="/register"
-              className="bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-5 py-2 rounded-lg hover:bg-[#e6b800] transition-colors"
+              className="bg-[#F5C400] text-[#2C2C2C] font-extrabold text-sm px-5 py-2 rounded-lg hover:bg-[#e6b800] transition-colors"
             >
               Kostenlos testen
             </Link>
@@ -67,8 +67,8 @@ export function Nav() {
             ×
           </button>
           <nav className="flex flex-col gap-8">
-            <Link href="/login" onClick={() => setMenuOpen(false)} className="font-syne font-black text-white text-4xl">Login</Link>
-            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-syne font-black text-[#F5C400] text-4xl">Kostenlos testen</Link>
+            <Link href="/login" onClick={() => setMenuOpen(false)} className="font-syne font-extrabold text-white text-[36px] tracking-tight">Login</Link>
+            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-syne font-extrabold text-[#F5C400] text-[36px] tracking-tight">Kostenlos testen</Link>
           </nav>
           <div className="mt-auto text-white/20 text-sm font-semibold">
             Keine Kreditkarte · Kein Abo-Zwang

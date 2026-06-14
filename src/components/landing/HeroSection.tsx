@@ -19,7 +19,7 @@ export function HeroSection() {
               ))}
             </div>
 
-            <h1 className="font-syne font-black text-white text-[2.4rem] md:text-[3.8rem] leading-[1.05] tracking-tight mb-6">
+            <h1 className="font-syne font-extrabold text-white text-[36px] md:text-[52px] lg:text-[64px] leading-[1.05] tracking-tight mb-6 max-w-xl">
               Angebot fertig,<br />
               bevor du beim<br />
               <span className="text-[#F5C400]">Kunden weg bist.</span>

@@ -20,8 +20,8 @@ export function VorherNachherSection() {
         >
           {/* NACHHER — mobile first */}
           <motion.div variants={fadeUp} className="md:order-2 bg-[#2C2C2C] border-l-4 border-[#F5C400] p-7 md:p-8">
-            <div className="text-[#F5C400] text-sm font-black font-syne mb-1">17:03 Uhr</div>
-            <div className="font-syne font-black text-white text-xl mb-5">Mit Sofortangebot</div>
+            <div className="text-[#F5C400] text-[13px] font-extrabold font-syne mb-1 tracking-[0.05em] uppercase">17:03 Uhr</div>
+            <div className="font-syne font-extrabold text-white text-[20px] md:text-[24px] tracking-tight mb-5">Mit Sofortangebot</div>
             <div className="flex flex-col gap-3">
               {[
                 '🎙 Aufmaß beim Kunden eingesprochen',
@@ -43,8 +43,8 @@ export function VorherNachherSection() {
 
           {/* VORHER */}
           <motion.div variants={fadeUp} className="md:order-1 bg-white border-l-4 border-red-400 p-7 md:p-8">
-            <div className="text-red-400 text-sm font-black font-syne mb-1">22:47 Uhr</div>
-            <div className="font-syne font-black text-[#2C2C2C] text-xl mb-5">Ohne Sofortangebot</div>
+            <div className="text-red-400 text-[13px] font-extrabold font-syne mb-1 tracking-[0.05em] uppercase">22:47 Uhr</div>
+            <div className="font-syne font-extrabold text-[#2C2C2C] text-[20px] md:text-[24px] tracking-tight mb-5">Ohne Sofortangebot</div>
             <div className="flex flex-col gap-3">
               {[
                 'Laptop aufgeklappt, Kaffee kalt',

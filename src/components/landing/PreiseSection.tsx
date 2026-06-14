@@ -25,7 +25,7 @@ export function PreiseSection() {
           transition={{ duration: 0.4 }}
           className="mb-12"
         >
-          <h2 className="font-syne font-black text-[#2C2C2C] text-3xl md:text-4xl mb-2">Was kostet das.</h2>
+          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-2">Was kostet das.</h2>
           <p className="text-[#666] text-base">Monatlich kündbar. Keine versteckten Kosten.</p>
         </motion.div>
 
@@ -39,10 +39,10 @@ export function PreiseSection() {
             transition={{ duration: 0.5 }}
             className="border border-[#DDDDDD] p-7 md:p-8 flex flex-col"
           >
-            <div className="font-syne font-black text-[#2C2C2C] text-xl mb-1">Reinschnuppern</div>
+            <div className="font-syne font-extrabold text-[#2C2C2C] text-[20px] tracking-tight mb-1">Reinschnuppern</div>
             <div className="text-[#666] text-sm font-medium mb-6">Zum Ausprobieren</div>
             <div className="mb-6">
-              <span className="font-syne font-black text-[#2C2C2C] text-5xl">0€</span>
+              <span className="font-syne font-extrabold text-[#2C2C2C] text-[48px] tracking-tight">0€</span>
             </div>
             <ul className="flex flex-col gap-2.5 mb-8 flex-1">
               {starterFeatures.map(f => (
@@ -73,10 +73,10 @@ export function PreiseSection() {
             >
               ⭐ Beliebteste Wahl
             </div>
-            <div className="font-syne font-black text-white text-xl mb-1">Vollgas</div>
+            <div className="font-syne font-extrabold text-white text-[20px] tracking-tight mb-1">Vollgas</div>
             <div className="text-white/40 text-sm font-medium mb-6">Für den Alltag</div>
             <div className="mb-1 flex items-end gap-1">
-              <span className="font-syne font-black text-white leading-none" style={{ fontSize: 'clamp(48px, 8vw, 64px)' }}>17€</span>
+              <span className="font-syne font-extrabold text-white leading-none text-[48px] lg:text-[64px] tracking-tight">17€</span>
               <span className="text-white/40 text-sm font-medium pb-2">/Monat</span>
             </div>
             <div className="text-white/30 text-xs font-medium mb-6">bei Jahresabo · 22€ monatlich</div>

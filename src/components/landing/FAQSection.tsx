@@ -41,7 +41,7 @@ export function FAQSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="font-syne font-black text-[#2C2C2C] text-3xl md:text-4xl mb-10"
+          className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-10"
         >
           Häufige Fragen.
         </motion.h2>
@@ -60,7 +60,7 @@ export function FAQSection() {
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center justify-between py-5 text-left gap-4"
               >
-                <span className={`font-black text-base ${open === i ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/80'}`}>
+                <span className={`font-extrabold text-[16px] ${open === i ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/80'}`}>
                   {faq.q}
                 </span>
                 <span

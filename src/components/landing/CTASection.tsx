@@ -13,7 +13,7 @@ export function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="font-syne font-black text-[#2C2C2C] leading-tight mb-4" style={{ fontSize: 'clamp(32px, 6vw, 56px)' }}>
+          <h2 className="font-syne font-extrabold text-[#2C2C2C] leading-tight tracking-tight mb-4 text-[32px] md:text-[44px] lg:text-[56px]">
             Dein nächstes Angebot.<br />
             Nicht heute Abend.
           </h2>

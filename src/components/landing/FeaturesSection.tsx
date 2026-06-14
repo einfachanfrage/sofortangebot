@@ -44,7 +44,7 @@ export function FeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="font-syne font-black text-white text-3xl md:text-4xl mb-12 md:mb-16"
+          className="font-syne font-extrabold text-white text-[28px] md:text-[36px] tracking-tight mb-12 md:mb-16"
         >
           Was du bekommst.
         </motion.h2>
@@ -60,7 +60,7 @@ export function FeaturesSection() {
               className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8 py-5 border-b border-white/10 last:border-0"
             >
               <span className="font-syne font-black text-[#F5C400]/40 text-sm md:text-base w-8 shrink-0">{f.nr}</span>
-              <span className="font-syne font-black text-white text-lg md:text-xl md:w-56 shrink-0">{f.name}</span>
+              <span className="font-syne font-extrabold text-white text-[18px] md:text-[20px] md:w-56 shrink-0 tracking-tight">{f.name}</span>
               <span className="text-white/40 text-sm md:text-base leading-relaxed">{f.desc}</span>
             </motion.div>
           ))}

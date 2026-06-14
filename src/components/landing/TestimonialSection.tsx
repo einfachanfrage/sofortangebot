@@ -13,13 +13,13 @@ export function TestimonialSection() {
           transition={{ duration: 0.5 }}
         >
           <div
-            className="font-syne font-black text-[#2C2C2C] leading-none select-none mb-6"
-            style={{ fontSize: 'clamp(80px, 15vw, 120px)', opacity: 0.15, lineHeight: 1 }}
+            className="font-syne font-extrabold text-[#2C2C2C] leading-none select-none mb-6 text-[80px] md:text-[96px] lg:text-[120px]"
+            style={{ opacity: 0.15, lineHeight: 1 }}
             aria-hidden
           >
             "
           </div>
-          <blockquote className="font-syne font-black text-[#2C2C2C] leading-snug mb-8" style={{ fontSize: 'clamp(22px, 4vw, 30px)' }}>
+          <blockquote className="font-syne font-extrabold text-[#2C2C2C] leading-snug mb-8 text-[22px] md:text-[26px] lg:text-[30px] tracking-tight">
             Ich schick das Angebot raus,<br />
             während der Kunde noch<br />
             in der Wohnung ist.

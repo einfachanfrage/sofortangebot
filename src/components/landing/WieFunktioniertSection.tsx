@@ -29,7 +29,7 @@ export function WieFunktioniertSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="font-syne font-black text-[#2C2C2C] text-3xl md:text-4xl mb-14 md:mb-20"
+          className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] mb-14 md:mb-20 tracking-tight"
         >
           So funktioniert&apos;s.
         </motion.h2>
@@ -47,10 +47,10 @@ export function WieFunktioniertSection() {
               transition={{ duration: 0.5, delay: i * 0.15 }}
               className="relative pt-0 pb-12 md:pb-0 md:pr-10 last:pb-0"
             >
-              <div className="font-syne font-black text-[#F5C400] leading-none mb-3" style={{ fontSize: 'clamp(56px, 8vw, 80px)' }}>
+              <div className="font-syne font-extrabold text-[#F5C400] leading-none mb-3 text-[56px] md:text-[68px] lg:text-[80px]">
                 {s.nr}
               </div>
-              <div className="font-syne font-black text-[#2C2C2C] text-2xl mb-3">{s.title}</div>
+              <div className="font-syne font-extrabold text-[#2C2C2C] text-[22px] mb-3 tracking-tight">{s.title}</div>
               <div className="text-[#666] text-base leading-relaxed max-w-xs">{s.desc}</div>
 
               {/* Mobile connector */}
