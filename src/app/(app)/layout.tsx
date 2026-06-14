@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <SideNav />
       <AgbUpdateModal />
       <RestoreBanner />
-      <div className="md:ml-60 flex flex-col min-h-dvh">
+      <div className="md:ml-[220px] flex flex-col min-h-dvh">
         <main className="flex-1">
           {children}
         </main>
