@@ -7,13 +7,15 @@ self.addEventListener('install', e => {
 })
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))))
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ))
   self.clients.claim()
 })
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return
-  if (e.request.url.includes('/api/')) return // API-Calls nie cachen
+  if (e.request.url.includes('/api/')) return
 
   e.respondWith(
     fetch(e.request)
@@ -23,5 +25,34 @@ self.addEventListener('fetch', e => {
         return res
       })
       .catch(() => caches.match(e.request))
+  )
+})
+
+// ── Push Notifications ─────────────────────────────────────────────────────
+
+self.addEventListener('push', e => {
+  const data = e.data?.json() ?? {}
+  e.waitUntil(
+    self.registration.showNotification(data.title ?? 'Sofortangebot', {
+      body: data.body ?? '',
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-72.png',
+      data: { url: data.url ?? '/dashboard' },
+      actions: data.actions ?? [],
+      tag: data.tag ?? 'default',
+      renotify: true,
+    })
+  )
+})
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close()
+  const url = e.notification.data?.url ?? '/dashboard'
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const existing = list.find(c => c.url.includes(self.location.origin))
+      if (existing) { existing.focus(); existing.navigate(url) }
+      else clients.openWindow(url)
+    })
   )
 })

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { aiClient, WHISPER_MODEL } from '@/lib/ai-client'
+import { getAIClient, WHISPER_MODEL } from '@/lib/ai-client'
 import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
 import * as Sentry from '@sentry/nextjs'
 
@@ -31,16 +31,27 @@ export async function POST(req: NextRequest) {
   const audio = formData.get('audio') as File
   if (!audio) return NextResponse.json({ error: 'Keine Audiodatei' }, { status: 400 })
 
-  // Dateiname mit korrekter Endung für Groq/OpenAI
-  const ext = audio.type.includes('mp4') ? 'mp4'
+  // iOS Safari produziert audio/mp4 (AAC) → m4a-Endung für Whisper
+  const ext = audio.type.includes('mp4') || audio.type.includes('m4a') ? 'm4a'
     : audio.type.includes('ogg') ? 'ogg'
     : audio.type.includes('mp3') ? 'mp3'
     : 'webm'
 
-  const audioFile = new File([await audio.arrayBuffer()], `aufnahme.${ext}`, { type: audio.type || 'audio/webm' })
+  // Dateiname-Endung aus dem Original-Dateinamen ableiten (Frontend setzt bereits korrekte Endung)
+  const originalName = audio.name ?? ''
+  const resolvedExt = originalName.endsWith('.m4a') ? 'm4a'
+    : originalName.endsWith('.ogg') ? 'ogg'
+    : originalName.endsWith('.mp3') ? 'mp3'
+    : originalName.endsWith('.wav') ? 'wav'
+    : ext  // MIME-Type-basierter Fallback
+
+  const audioFile = new File([await audio.arrayBuffer()], `aufnahme.${resolvedExt}`, {
+    type: audio.type || 'audio/webm',
+  })
 
   try {
-    const transcription = await aiClient.audio.transcriptions.create({
+    const client = await getAIClient()
+    const transcription = await client.audio.transcriptions.create({
       file: audioFile,
       model: WHISPER_MODEL,
       language: 'de',

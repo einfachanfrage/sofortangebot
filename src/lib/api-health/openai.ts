@@ -1,9 +1,10 @@
-import { aiClient } from '@/lib/ai-client'
+import { getAIClient } from '@/lib/ai-client'
 import type { ApiHealthResult } from './lexoffice'
 
 export async function testOpenAIAPI(): Promise<ApiHealthResult> {
   try {
-    const res = await aiClient.chat.completions.create({
+    const client = await getAIClient()
+    const res = await client.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: 'ping' }],
       max_tokens: 1,
@@ -13,10 +14,6 @@ export async function testOpenAIAPI(): Promise<ApiHealthResult> {
     return { ok: true, version: 'v1' }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e)
-    // Groq-spezifischer Fehler: Modell nicht gefunden
-    if (msg.includes('model') || msg.includes('404')) {
-      return { ok: false, fehler: `Modell nicht verfügbar: ${msg}` }
-    }
     return { ok: false, fehler: msg }
   }
 }

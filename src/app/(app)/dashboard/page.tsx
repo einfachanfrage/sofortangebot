@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import type { Quote } from '@/lib/types'
-import PwaBanner from '@/components/PwaBanner'
+import { PwaBannerManager } from '@/components/PwaBannerManager'
 import BottomNav from '@/components/BottomNav'
 import DashboardFilters from '@/components/DashboardFilters'
 import DraftQuotes from '@/components/DraftQuotes'
@@ -86,7 +86,7 @@ export default async function DashboardPage({
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-28 md:pb-12">
-      <PwaBanner />
+      <PwaBannerManager />
       {welcome === 'new' && <WelcomeModalWrapper />}
       {welcome === 'pro' && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-extrabold text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2 animate-bounce">

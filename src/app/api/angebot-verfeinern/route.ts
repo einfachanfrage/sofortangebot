@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { aiClient, CHAT_MODEL } from '@/lib/ai-client'
+import { getAIClient, CHAT_MODEL } from '@/lib/ai-client'
 
 const SYSTEM_PROMPT = `Du bist Kalkulations-Profi mit 20 Jahren Erfahrung im deutschen Handwerk.
 
@@ -112,7 +112,8 @@ export async function POST(req: NextRequest) {
     .join('\n')
 
   try {
-    const response = await aiClient.chat.completions.create({
+    const client = await getAIClient()
+    const response = await client.chat.completions.create({
       model: CHAT_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

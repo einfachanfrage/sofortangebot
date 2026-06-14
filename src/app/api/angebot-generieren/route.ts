@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getGewerkePromptContext } from '@/lib/gewerke'
-import { aiClient, CHAT_MODEL } from '@/lib/ai-client'
+import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
 import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
 import * as Sentry from '@sentry/nextjs'
 
@@ -90,13 +90,14 @@ export async function POST(req: NextRequest) {
     .replace('{GEWERKE}', gewerkeContext || '(nicht angegeben — erkenne aus dem Aufmaß)')
 
   try {
-    const response = await aiClient.chat.completions.create({
-      model: CHAT_MODEL,
+    const client = await getAIClient()
+    const response = await client.chat.completions.create({
+      model: CHAT_MODEL_FAST,
       messages: [
         { role: 'system', content: prompt },
         { role: 'user', content: `Aufmaß:\n\n${text}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.` },
       ],
-      // response_format absichtlich weggelassen — macht Probleme mit Groq-Modellen
+      response_format: { type: 'json_object' },
       temperature: 0.1,
       max_tokens: 2000,
     })

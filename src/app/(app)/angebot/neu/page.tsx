@@ -249,7 +249,11 @@ export default function NeuesAngebotPage() {
     if (blob.type !== 'text/plain') {
       setLoadingMsg('Transkribiere Aufnahme...')
       const fd = new FormData()
-      fd.append('audio', blob, 'aufnahme.webm')
+      const audioExt = blob.type.includes('mp4') || blob.type.includes('m4a') ? 'm4a'
+        : blob.type.includes('ogg') ? 'ogg'
+        : blob.type.includes('mp3') ? 'mp3'
+        : 'webm'
+      fd.append('audio', blob, `aufnahme.${audioExt}`)
       const tController = new AbortController()
       const tTimeout = setTimeout(() => tController.abort(), 55000)
       let r: Response

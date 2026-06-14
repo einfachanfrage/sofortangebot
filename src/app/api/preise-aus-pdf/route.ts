@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { aiClient, CHAT_MODEL } from '@/lib/ai-client'
+import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
 
 const SYSTEM_PROMPT = `Du bist Experte für Handwerker-Kalkulation in Deutschland.
 Dir wird der extrahierte Text aus einem oder mehreren echten Handwerker-Angeboten übergeben.
@@ -83,8 +83,9 @@ export async function POST(req: NextRequest) {
     ? combinedText.substring(0, 8000) + '\n\n[...Text gekürzt...]'
     : combinedText
 
-  const response = await aiClient.chat.completions.create({
-    model: CHAT_MODEL,
+  const client = await getAIClient()
+  const response = await client.chat.completions.create({
+    model: CHAT_MODEL_FAST,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: `Hier sind die Angebote:\n\n${trimmedText}` },

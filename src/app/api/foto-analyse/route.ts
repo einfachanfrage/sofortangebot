@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { aiClient } from '@/lib/ai-client'
+import { getAIClient } from '@/lib/ai-client'
 
 export const maxDuration = 60
 
@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
 
   try {
     // Vision ist nur mit OpenAI verfügbar (NEXT_PUBLIC_VISION_ENABLED steuert das im Frontend)
-    const response = await aiClient.chat.completions.create({
+    const client = await getAIClient()
+    const response = await client.chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {

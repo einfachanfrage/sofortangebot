@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { aiClient, CHAT_MODEL } from '@/lib/ai-client'
+import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
 
 export const maxDuration = 60
 
@@ -40,8 +40,9 @@ export async function POST(req: NextRequest) {
 
   let response
   try {
-    response = await aiClient.chat.completions.create({
-      model: CHAT_MODEL,
+    const client = await getAIClient()
+    response = await client.chat.completions.create({
+      model: CHAT_MODEL_FAST,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         {

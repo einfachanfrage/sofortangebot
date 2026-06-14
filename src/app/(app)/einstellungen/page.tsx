@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
+import { PwaBottomSheet } from '@/components/PwaBottomSheet'
+import { PushBanner } from '@/components/PushBanner'
 
 export default function EinstellungenPage() {
   const [company, setCompany] = useState<Company | null>(null)
@@ -33,6 +35,11 @@ export default function EinstellungenPage() {
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoError, setLogoError] = useState('')
   const logoInputRef = useRef<HTMLInputElement>(null)
+  const [showPwaSheet, setShowPwaSheet] = useState(false)
+  const [showPushBanner, setShowPushBanner] = useState(false)
+  const [pushPermission, setPushPermission] = useState<NotificationPermission | 'unsupported'>('default')
+  const [isStandalone, setIsStandalone] = useState(false)
+
   const supabase = createClient()
   const router = useRouter()
 
@@ -64,6 +71,16 @@ export default function EinstellungenPage() {
       }
     }
     load()
+    // Push & PWA status
+    if ('Notification' in window) {
+      setPushPermission(Notification.permission)
+    } else {
+      setPushPermission('unsupported')
+    }
+    setIsStandalone(
+      window.matchMedia('(display-mode: standalone)').matches ||
+      ('standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone === true)
+    )
   }, [])
 
   async function handleSave(e: React.FormEvent) {
@@ -451,6 +468,66 @@ export default function EinstellungenPage() {
           }
         </button>
       </form>
+
+      {/* App & Benachrichtigungen */}
+      <div className="px-5 md:px-8 mt-5">
+        <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-3">App &amp; Benachrichtigungen</div>
+        <div className="flex flex-col gap-2">
+          {/* PWA installieren */}
+          <button
+            type="button"
+            onClick={() => setShowPwaSheet(true)}
+            className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group text-left"
+          >
+            <div className="flex items-center gap-3">
+              <Smartphone size={18} className="text-[#2C2C2C]/40" />
+              <div>
+                <span className="font-bold text-[#2C2C2C] text-sm block">App auf Homescreen</span>
+                <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">
+                  {isStandalone ? '✅ Bereits installiert' : 'Schneller starten ohne Browser'}
+                </div>
+              </div>
+            </div>
+            {!isStandalone && <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60 shrink-0" />}
+          </button>
+
+          {/* Push Notifications */}
+          {pushPermission !== 'unsupported' && (
+            <button
+              type="button"
+              onClick={() => {
+                if (pushPermission === 'granted') return
+                setShowPushBanner(true)
+              }}
+              className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group text-left"
+            >
+              <div className="flex items-center gap-3">
+                <Bell size={18} className="text-[#2C2C2C]/40" />
+                <div>
+                  <span className="font-bold text-[#2C2C2C] text-sm block">Benachrichtigungen</span>
+                  <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">
+                    {pushPermission === 'granted'
+                      ? '✅ Aktiviert'
+                      : pushPermission === 'denied'
+                        ? '🚫 Blockiert (Browser-Einstellungen)'
+                        : 'Bei Unterschrift & Ablauf benachrichtigt werden'}
+                  </div>
+                </div>
+              </div>
+              {pushPermission === 'default' && <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60 shrink-0" />}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* PWA / Push overlays */}
+      {showPwaSheet && <PwaBottomSheet onClose={() => setShowPwaSheet(false)} />}
+      {showPushBanner && (
+        <PushBanner
+          onClose={() => setShowPushBanner(false)}
+          onGranted={() => setPushPermission('granted')}
+        />
+      )}
 
       {/* Links */}
       <div className="px-5 md:px-8 mt-5 md:grid md:grid-cols-2 md:gap-4 flex flex-col gap-3">
