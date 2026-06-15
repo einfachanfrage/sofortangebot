@@ -1,22 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { callEdgeFunction } from '@/lib/edge-function-client'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ ok: false })
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+
+  const body = await req.json()
 
   try {
-    const { angebot_id } = await req.json() as { angebot_id: string }
-    if (!angebot_id) return NextResponse.json({ ok: false })
-
-    await supabase
-      .from('quotes')
-      .update({ entwurf_gespeichert_am: new Date().toISOString() })
-      .eq('id', angebot_id)
-
-    return NextResponse.json({ ok: true })
-  } catch {
-    return NextResponse.json({ ok: false })
+    const result = await callEdgeFunction('angebot-autosave', body, session.access_token)
+    return NextResponse.json(result)
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unbekannt'
+    console.error('Autosave Proxy Fehler:', msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

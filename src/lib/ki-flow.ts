@@ -3,6 +3,32 @@ import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { MatchResult } from '@/app/api/ki/matchen/route'
 import { buildSituation, buildRaumdetails } from '@/lib/ki-flow-helpers'
 
+async function callMitRetry(
+  url: string,
+  init: RequestInit,
+  maxVersuche = 3
+): Promise<Response> {
+  let letzterFehler: Error = new Error('Unbekannt')
+  for (let versuch = 0; versuch < maxVersuche; versuch++) {
+    try {
+      const res = await fetch(url, init)
+      if (res.status === 429 || res.status === 504) {
+        const warteMs = Math.min(1000 * 2 ** versuch, 8000)
+        await new Promise(r => setTimeout(r, warteMs))
+        letzterFehler = new Error(`HTTP ${res.status}`)
+        continue
+      }
+      return res
+    } catch (err) {
+      letzterFehler = err instanceof Error ? err : new Error(String(err))
+      if (versuch < maxVersuche - 1) {
+        await new Promise(r => setTimeout(r, 500 * (versuch + 1)))
+      }
+    }
+  }
+  throw letzterFehler
+}
+
 export interface GematchtePosition extends BerechnetePosition {
   position_id: string | null
   bezeichnung_db: string | null
@@ -24,7 +50,7 @@ export async function matchePositionen(
   const raumdetails = buildRaumdetails(extraktion)
 
   try {
-    const res = await fetch('/api/ki/matchen', {
+    const res = await callMitRetry('/api/ki/matchen', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
