@@ -48,13 +48,8 @@ REGELN:
 - Kleinmaterial-Pauschale IMMER: min. 25€ oder 4% der Lohnkosten
 - Marktübliche deutsche Handwerkerpreise
 
-RÜCKFRAGEN (max. 3, nur die wichtigsten logistischen Fragen):
-1. Material: lieferst du oder Kunde?
-2. Fahrtweg in km
-3. Stockwerk/Aufzug (bei Wohnräumen)
-
 Antworte NUR mit JSON:
-{"zusammenfassung":"...","items":[{"title":"...","description":"...","quantity":1,"unit":"m²","unit_price":0,"kategorie":"..."}],"rückfragen":[{"id":"material","frage":"...","typ":"ja_nein","wichtig":true}],"notizen":"..."}`
+{"zusammenfassung":"...","items":[{"title":"...","description":"...","quantity":1,"unit":"m²","unit_price":0,"kategorie":"..."}],"rückfragen":[],"notizen":"..."}`
 
 const SYSTEM_PROMPT_OHNE_MENGEN = `Du bist Kalkulations-Profi im deutschen Handwerk. Erstelle aus dem Aufmaß ein vollständiges Angebot.
 
@@ -71,15 +66,8 @@ REGELN:
 - Mengen-Logik: Teilflächen dürfen Gesamtfläche nicht überschreiten
 - Marktübliche deutsche Handwerkerpreise
 
-RÜCKFRAGEN (max. 5, nur die wichtigsten):
-1. Material: lieferst du oder Kunde? (fast immer)
-2. Fahrtweg in km (immer)
-3. Stockwerk/Aufzug (bei Wohnräumen)
-4. Entsorgung nötig? (bei Abriss)
-5. Bewohnte Wohnung? (bei Wohnräumen)
-
 Antworte NUR mit JSON:
-{"zusammenfassung":"...","items":[{"title":"...","description":"...","quantity":1,"unit":"m²","unit_price":0,"kategorie":"..."}],"rückfragen":[{"id":"material","frage":"...","typ":"ja_nein","wichtig":true}],"notizen":"..."}`
+{"zusammenfassung":"...","items":[{"title":"...","description":"...","quantity":1,"unit":"m²","unit_price":0,"kategorie":"..."}],"rückfragen":[],"notizen":"..."}`
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -100,7 +88,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json() as { text?: string; berechnete_positionen?: Array<{ beschreibung: string; menge: number; einheit: string; annahmen: string[] }>; originaltext?: string }
   const text = body.text ?? body.originaltext ?? ''
   if (!text) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
-  const berechnetePositionen = body.berechnete_positionen ?? null
+  const berechnetePositionen = (body.berechnete_positionen?.length ?? 0) > 0 ? body.berechnete_positionen : null
 
   const { data: company } = await supabase.from('companies').select('id, vat_rate, gewerke').eq('user_id', user.id).single()
   const { data: priceItems } = await supabase.from('price_items').select('*').eq('company_id', company?.id ?? '')
