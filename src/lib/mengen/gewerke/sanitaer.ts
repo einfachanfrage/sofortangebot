@@ -2,7 +2,6 @@ import type { MengenErgebnis, BerechnetePosition } from '../types'
 
 export function sanitaerEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
-  const rueckfragen: string[] = []
   const warnungen: string[] = []
 
   const istAustausch = daten.austausch || daten.erneuerung
@@ -63,9 +62,7 @@ export function sanitaerEngine(daten: any): MengenErgebnis {
       annahmen: [],
     })
   } else if (daten.leitungen_erneuern) {
-    rueckfragen.push(
-      'Sollen die Leitungen komplett erneuert werden? Wenn ja: Wie weit liegen die Anschlusspunkte entfernt oder wie viele Meter Rohre ungefähr?'
-    )
+    // Keine Meterangabe: Rückfrage kommt aus kontext-analyzer (rohre_erneuern)
     positionen.push({
       beschreibung: 'Rohrleitungen erneuern (Pauschale)',
       menge: 1,
@@ -93,8 +90,8 @@ export function sanitaerEngine(daten: any): MengenErgebnis {
     quelleText: daten.transkript ?? '',
     objekte: [],
     positionen,
-    rueckfragen,
+    rueckfragen: [],
     warnungen,
-    plausibel: rueckfragen.length === 0,
+    plausibel: true,
   }
 }

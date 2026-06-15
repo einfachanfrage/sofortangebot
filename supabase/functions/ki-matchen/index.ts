@@ -70,6 +70,14 @@ Deno.serve(async (req: Request) => {
       })
     }
 
+    // Bug 3: Gewerk-Guard — niemals Positionen aus falschem Gewerk zurückgeben
+    if (!gewerk || typeof gewerk !== 'string') {
+      return new Response(
+        JSON.stringify({ error: `Gewerk nicht erkannt: "${gewerk}". Bitte nochmal einsprechen.`, matches: [] }),
+        { status: 400, headers: corsHeaders }
+      )
+    }
+
     // Service-Role-Client für DB-Abfragen (alle Positionen sehen)
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,

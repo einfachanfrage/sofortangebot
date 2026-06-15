@@ -86,7 +86,7 @@ export async function matchePositionen(
         ...pos,
         position_id: match.position_id,
         bezeichnung_db: match.bezeichnung_gefunden,
-        unit_price_db: match.unit_price,
+        unit_price_db: match.unit_price ?? null,
         match_methode: 'kontextuell',
         confidence: match.confidence,
         kontext_genutzt: match.kontext_genutzt,

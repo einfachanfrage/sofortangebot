@@ -52,6 +52,13 @@ export async function POST(req: NextRequest) {
     verarbeitetText += formatKorrekturenFuerKi(korrekturen)
   }
 
+  // Bug 2: Logging — Whisper-Text VOR GPT sichtbar machen
+  console.log('=== WHISPER TRANSKRIPT RAW ===')
+  console.log(text)
+  console.log('=== VERARBEITET FÜR GPT ===')
+  console.log(verarbeitetText)
+  console.log('==============================')
+
   try {
     // KI-Extraktion via Edge Function
     const edgeResult = await callEdgeFunction(
@@ -62,6 +69,11 @@ export async function POST(req: NextRequest) {
 
     let extraktion = edgeResult.result
     extraktion.transkript = verarbeitetText
+
+    // Bug 2: GPT-Extraktion loggen
+    console.log('=== GPT-4o EXTRAKTION ===')
+    console.log(JSON.stringify({ gewerk: extraktion.gewerk, confidence: extraktion.confidence_gewerk, raeume: extraktion.raeume?.length }, null, 2))
+    console.log('=========================')
 
     // Implizit-Wissen lokal anwenden (kein extra Edge-Function-Call nötig)
     const implizitResultat = wendeImplizitRegelnAn(text, extraktion.gewerk, extraktion)

@@ -6,7 +6,6 @@ function round2(n: number): number {
 
 export function trockenBauEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
-  const rueckfragen: string[] = []
   const warnungen: string[] = []
 
   for (const wand of (daten.waende ?? [])) {
@@ -46,7 +45,6 @@ export function trockenBauEngine(daten: any): MengenErgebnis {
         })
       }
 
-      // CW-Profil alle 625 mm → laufende Meter
       const anzahlStaender = Math.ceil(laenge / 0.625)
       positionen.push({
         beschreibung: 'Ständerwerk CW-Profil',
@@ -56,9 +54,8 @@ export function trockenBauEngine(daten: any): MengenErgebnis {
         berechnungsweg: `${anzahlStaender} Ständer × ${hoehe} m Höhe`,
         annahmen: ['Achsmaß 62,5 cm Standard angesetzt'],
       })
-    } else {
-      rueckfragen.push('Wie lang und wie hoch soll die Ständerwand sein? (Länge in m × Höhe in m)')
     }
+    // Keine Maße: Rückfrage kommt aus kontext-analyzer (decke_masse)
   }
 
   for (const decke of (daten.decken ?? [])) {
@@ -76,21 +73,14 @@ export function trockenBauEngine(daten: any): MengenErgebnis {
           : `Angabe: ${deckFlaeche} m²`,
         annahmen: !laenge || !breite ? ['Nur Fläche angegeben, keine Raummaße'] : [],
       })
-    } else {
-      rueckfragen.push('Wie groß ist die abzuhängende Deckenfläche? (Länge × Breite oder m²)')
     }
+    // Keine Maße: Rückfrage kommt aus kontext-analyzer (decke_masse)
   }
 
-  // Raumangaben mit Trockenbau-Arbeiten
   for (const raum of (daten.raeume ?? [])) {
     const { name = 'Raum', laenge, breite, hoehe, arbeiten = [] } = raum
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
 
-    if (arbeitenStr.includes('trennwand') || arbeitenStr.includes('ständerwand')) {
-      if (!laenge || !hoehe) {
-        rueckfragen.push(`Wie lang und hoch soll die Trennwand in "${name}" sein?`)
-      }
-    }
     if ((arbeitenStr.includes('unterdecke') || arbeitenStr.includes('abgehängt')) && laenge && breite) {
       const flaeche = round2(laenge * breite)
       positionen.push({
@@ -104,7 +94,7 @@ export function trockenBauEngine(daten: any): MengenErgebnis {
     }
   }
 
-  if (positionen.length === 0 && rueckfragen.length === 0) {
+  if (positionen.length === 0) {
     warnungen.push('Keine Trockenbau-Maße erkannt. Bitte Wandmaße oder Deckenfläche angeben.')
   }
 
@@ -113,8 +103,8 @@ export function trockenBauEngine(daten: any): MengenErgebnis {
     quelleText: daten.transkript ?? '',
     objekte: [],
     positionen,
-    rueckfragen,
+    rueckfragen: [],
     warnungen,
-    plausibel: rueckfragen.length === 0,
+    plausibel: true,
   }
 }

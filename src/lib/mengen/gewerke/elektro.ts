@@ -2,7 +2,6 @@ import type { MengenErgebnis, BerechnetePosition } from '../types'
 
 export function elektroEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
-  const rueckfragen: string[] = []
   const warnungen: string[] = []
 
   const geraete: Array<{ key: string; label: string }> = [
@@ -58,16 +57,14 @@ export function elektroEngine(daten: any): MengenErgebnis {
       annahmen: [],
     })
   } else if (daten.neu_verkabeln) {
-    rueckfragen.push(
-      'Wie viele Meter Leitungen sollen verlegt werden? Oder soll ich eine Pauschale für die Wohnung ansetzen? (Bitte Wohnungsgröße oder Raumanzahl angeben)'
-    )
+    // Keine Meterangabe: Rückfrage kommt aus kontext-analyzer (kabel_meter)
     positionen.push({
       beschreibung: 'Leitungen verlegen (Pauschale)',
       menge: 1,
       einheit: 'Pauschale',
       konfidenz: 'low',
       berechnungsweg: 'Keine Meterangabe — Pauschale angesetzt',
-      annahmen: ['Leitungsmeter nicht angegeben', 'Bitte Menge manuell anpassen'],
+      annahmen: ['Leitungsmeter nicht angegeben — bitte Menge manuell anpassen'],
     })
   }
 
@@ -80,7 +77,7 @@ export function elektroEngine(daten: any): MengenErgebnis {
     quelleText: daten.transkript ?? '',
     objekte: [],
     positionen,
-    rueckfragen,
+    rueckfragen: [],
     warnungen,
     plausibel: warnungen.length === 0,
   }

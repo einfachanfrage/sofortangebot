@@ -387,6 +387,18 @@ export default function NeuesAngebotPage() {
     setLoadingMsg('Positionen analysiert...')
     if (!afterFirstHint) setAfterFirstHint(true)
 
+    // Bug 1: Expliziter State-Reset — kein alter Kontext darf übernommen werden
+    setExtraktionCache(null)
+    setVageRueckfragen([])
+    setBerechnetePositionen([])
+    setMengenWarnungen([])
+    setImplizitPositionen([])
+    setImplizitFlags({})
+    setKorrekturenAnzahl(0)
+    setKiAnnahmen([])
+    setValidierung(null)
+    setGewerk('')
+
     // ── Schritt 1: Extraktion + lokale Mengenberechnung ──────────────────────
     let extRes: ExtraktionResponse | null = null
     try {
@@ -409,11 +421,10 @@ export default function NeuesAngebotPage() {
     } catch { /* Fallback auf alten Flow */ }
 
     if (extRes) {
-      // Kontext-Analyse: Auto-Anreicherung (Abkleben ergänzen, Nassbereich etc.)
-      const { extraktion_angereichert, hinweise } = analysiereKontext(extRes.extraktion)
-      if (hinweise.length > 0) {
-        extRes = { ...extRes, extraktion: extraktion_angereichert }
-      }
+      // Kontext-Analyse: Auto-Anreicherung + kontextbezogene Rückfragen ergänzen
+      // Immer anwenden — nicht nur wenn hinweise.length > 0 (Rückfragen kämen sonst nie an)
+      const { extraktion_angereichert } = analysiereKontext(extRes.extraktion)
+      extRes = { ...extRes, extraktion: extraktion_angereichert }
 
       setExtraktionCache(extRes)
       if (extRes.bewertung) setKalkulationsBewertung(extRes.bewertung)
@@ -483,15 +494,6 @@ export default function NeuesAngebotPage() {
         vageAntworten
       )
       mengen = berechneMengen(angereichert.gewerk, angereichert)
-    }
-
-    if (mengen.rueckfragen.length > 0) {
-      setMengenRueckfragen(mengen.rueckfragen)
-      setMengenAntworten({})
-      setBerechnetePositionen(mengen.positionen)
-      setMengenWarnungen(mengen.warnungen)
-      setStep('mengen_rueckfragen')
-      return
     }
 
     await generiereAngebot(text, mengen.positionen)
@@ -617,9 +619,7 @@ export default function NeuesAngebotPage() {
       if (t.includes('wahl') || t.includes('select') || t.includes('choice')) return 'auswahl'
       return 'ja_nein'
     }
-    const normalized = (result.rückfragen ?? []).map((q: GeneratedQuestion) => ({ ...q, typ: normalizeTyp(q.typ) }))
-    if (normalized.length > 0) { setQuestions(normalized); setCurrentQ(0); setCurrentAnswer(''); setStep('rückfragen') }
-    else setStep('review')
+    setStep('review')
   }
 
   async function analyseTextFallback(text: string) {
@@ -659,9 +659,7 @@ export default function NeuesAngebotPage() {
       if (t.includes('wahl') || t.includes('select') || t.includes('choice')) return 'auswahl'
       return 'ja_nein'
     }
-    const normalized = (result.rückfragen ?? []).map((q: GeneratedQuestion) => ({ ...q, typ: normalizeTyp(q.typ) }))
-    if (normalized.length > 0) { setQuestions(normalized); setCurrentQ(0); setCurrentAnswer(''); setStep('rückfragen') }
-    else setStep('review')
+    setStep('review')
   }
 
   // ── Rückfragen ─────────────────────────────────────────────────────────────
@@ -868,151 +866,6 @@ export default function NeuesAngebotPage() {
         onFertig={handleVageRueckfragenFertig}
         onUeberspringen={handleVageUeberspringen}
       />
-    )
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // MENGEN-RÜCKFRAGEN (Engine-Rückfragen zu fehlenden Maßen)
-  // ─────────────────────────────────────────────────────────────────────────
-  if (step === 'mengen_rueckfragen') {
-    const alleBeantwortet = mengenRueckfragen.every((_, i) => mengenAntworten[i] !== undefined)
-    const SCHNELL_HOEHEN = ['2,40 m', '2,60 m', '2,80 m', '3,00 m']
-    const SCHNELL_FLAECHEN = ['5 m²', '10 m²', '15 m²', '20 m²', '30 m²', '40 m²']
-
-    return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
-        <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
-          <div className="text-white/50 text-xs font-extrabold uppercase tracking-widest mb-2">Kurze Rückfrage 🤔</div>
-          <h1 className="font-syne font-extrabold text-white text-[22px] leading-tight">
-            Noch ein paar Maße
-          </h1>
-          <p className="text-white/40 text-sm font-semibold mt-1">
-            Damit die Mengen exakt berechnet werden.
-          </p>
-        </div>
-
-        <div className="flex-1 px-5 py-5 flex flex-col gap-4 overflow-y-auto">
-          {mengenRueckfragen.map((frage, i) => {
-            const antwort = mengenAntworten[i]
-            const istHoehe = frage.toLowerCase().includes('hoch') || frage.toLowerCase().includes('höhe')
-            const chips = istHoehe ? SCHNELL_HOEHEN : SCHNELL_FLAECHEN
-
-            return (
-              <div key={i} className={`bg-white rounded-2xl p-4 border-2 transition-colors ${antwort ? 'border-[#F5C400]' : 'border-[#2C2C2C]/8'}`}>
-                <div className="flex items-start gap-3 mb-3">
-                  <span className="text-[18px] mt-0.5">❓</span>
-                  <p className="font-extrabold text-[#2C2C2C] text-[14px] leading-snug">{frage}</p>
-                </div>
-
-                {/* Schnell-Chips */}
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {chips.map(chip => (
-                    <button
-                      key={chip}
-                      onClick={() => setMengenAntworten(prev => ({ ...prev, [i]: chip }))}
-                      className={`text-[13px] font-extrabold px-3 py-1.5 rounded-full border-2 transition-colors ${
-                        antwort === chip
-                          ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]'
-                          : 'bg-white border-[#2C2C2C]/15 text-[#2C2C2C]/60'
-                      }`}
-                    >
-                      {chip}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Freitext */}
-                <input
-                  type="text"
-                  placeholder="Oder manuell eingeben..."
-                  value={typeof antwort === 'string' && !chips.includes(antwort) ? antwort : ''}
-                  onChange={e => setMengenAntworten(prev => ({ ...prev, [i]: e.target.value }))}
-                  className="w-full bg-[#F7F7F5] rounded-xl px-3 py-2.5 text-[#2C2C2C] font-semibold text-[14px] focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
-                />
-              </div>
-            )
-          })}
-
-          {mengenWarnungen.length > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-              {mengenWarnungen.map((w, i) => (
-                <p key={i} className="text-amber-700 text-[13px] font-semibold">⚠ {w}</p>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="px-5 pb-8 pt-3 flex flex-col gap-2 bg-white border-t border-[#2C2C2C]/8">
-          <button
-            onClick={async () => {
-              // Antworten in Extraktion einarbeiten und Angebot generieren
-              // Für jetzt: einfach mit bestehenden berechneten Positionen weiter
-              await generiereAngebot(transcript, berechnetePositionen)
-            }}
-            disabled={!alleBeantwortet}
-            className="w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[16px] rounded-2xl py-4 disabled:opacity-40 active:scale-95 transition-transform"
-          >
-            Weiter → ({mengenRueckfragen.filter((_, i) => mengenAntworten[i]).length}/{mengenRueckfragen.length} beantwortet)
-          </button>
-          <button
-            onClick={async () => await generiereAngebot(transcript, berechnetePositionen)}
-            className="text-[#2C2C2C]/40 font-semibold text-[13px] text-center py-2"
-          >
-            Überspringen — Mengen manuell eingeben
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  // RÜCKFRAGEN
-  // ─────────────────────────────────────────────────────────────────────────
-  if (step === 'rückfragen' && q) {
-    const progress = (currentQ / questions.length) * 100
-    return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
-        <div className="bg-[#2C2C2C] px-5 pt-12 pb-5">
-          <div className="text-white/50 text-xs font-semibold mb-3">Frage {currentQ + 1} von {questions.length}</div>
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-[#F5C400] rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
-          </div>
-          {zusammenfassung && <div className="mt-3 text-white/40 text-xs font-semibold line-clamp-2">{zusammenfassung}</div>}
-        </div>
-        <div className="flex-1 flex flex-col px-5 pt-8">
-          <div className="font-black text-[#2C2C2C] text-2xl leading-tight mb-8">{q.frage}</div>
-          {(q.typ === 'ja_nein' || !['zahl', 'auswahl', 'text'].includes(q.typ)) && (
-            <div className="flex flex-col gap-3">
-              <button onClick={() => handleAnswer('Ja')} className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-xl rounded-2xl py-5">Ja</button>
-              <button onClick={() => handleAnswer('Nein')} className="w-full bg-white border-2 border-[#2C2C2C] text-[#2C2C2C] font-black text-xl rounded-2xl py-5">Nein</button>
-            </div>
-          )}
-          {q.typ === 'auswahl' && q.optionen && (
-            <div className="flex flex-col gap-3">
-              {q.optionen.map(opt => (
-                <button key={opt} onClick={() => handleAnswer(opt)} className="w-full bg-white border-2 border-[#2C2C2C]/15 text-[#2C2C2C] font-bold text-lg rounded-2xl py-4 text-left px-5 flex items-center justify-between">
-                  {opt}<ChevronRight size={18} color="#2C2C2C" className="opacity-30" />
-                </button>
-              ))}
-            </div>
-          )}
-          {q.typ === 'zahl' && (
-            <div>
-              <div className="flex items-center gap-3 bg-white border-2 border-[#2C2C2C] rounded-2xl px-5 py-4 mb-4">
-                <input type="number" inputMode="decimal" placeholder={String(q.standard ?? '0')} value={currentAnswer} onChange={e => setCurrentAnswer(e.target.value)} autoFocus className="flex-1 text-3xl font-black text-[#2C2C2C] bg-transparent focus:outline-none w-full" />
-                {q.einheit && <span className="text-[#2C2C2C]/40 font-bold text-lg shrink-0">{q.einheit}</span>}
-              </div>
-              <button onClick={() => handleAnswer(currentAnswer || String(q.standard ?? '0'))} disabled={!currentAnswer && q.standard === undefined} className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-xl rounded-2xl py-5 disabled:opacity-40">Weiter</button>
-            </div>
-          )}
-          {q.typ === 'text' && (
-            <div>
-              <textarea placeholder="Deine Antwort..." value={currentAnswer} onChange={e => setCurrentAnswer(e.target.value)} rows={3} autoFocus className="w-full bg-white border-2 border-[#2C2C2C] rounded-2xl px-5 py-4 text-[#2C2C2C] font-semibold text-lg focus:outline-none resize-none mb-4" />
-              <button onClick={() => handleAnswer(currentAnswer)} disabled={!currentAnswer.trim()} className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-xl rounded-2xl py-5 disabled:opacity-40">Weiter</button>
-            </div>
-          )}
-          <button onClick={skipQuestion} className="mt-5 text-center text-[#2C2C2C]/30 font-semibold text-sm w-full">Überspringen</button>
-        </div>
-      </div>
     )
   }
 

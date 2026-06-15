@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { callEdgeFunction } from '@/lib/edge-function-client'
 
+export interface MatchResult {
+  index: number
+  position_id: string | null
+  bezeichnung_gefunden: string | null
+  confidence: number
+  begruendung: string
+  alternative_ids: string[]
+  kontext_genutzt: boolean
+  unit_price: number | null
+}
+
 export const maxDuration = 60
 
 export async function POST(req: NextRequest) {

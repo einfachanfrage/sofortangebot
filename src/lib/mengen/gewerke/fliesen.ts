@@ -6,7 +6,6 @@ function round2(n: number): number {
 
 export function fliesenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
-  const rueckfragen: string[] = []
   const warnungen: string[] = []
 
   for (const bereich of (daten.bereiche ?? [])) {
@@ -49,9 +48,8 @@ export function fliesenEngine(daten: any): MengenErgebnis {
         berechnungsweg: `${flaeche_angegeben} m² + 10% Verschnitt`,
         annahmen: ['10% Verschnitt angesetzt', 'Nur Bodenfläche angegeben — keine Raummaße vorhanden'],
       })
-    } else {
-      rueckfragen.push(`Für "${name}": Bitte Länge × Breite oder Fläche in m² angeben.`)
     }
+    // Keine Maße: Rückfrage kommt aus kontext-analyzer / rueckfragen-generator
 
     if (flieshoehe && umfang) {
       const wandflaeche = round2(umfang * flieshoehe)
@@ -73,11 +71,8 @@ export function fliesenEngine(daten: any): MengenErgebnis {
           annahmen: [],
         })
       }
-    } else if (!flieshoehe && umfang) {
-      rueckfragen.push(
-        `Bis wohin sollen die Wandfliesen gehen in "${name}"? (z.B. bis 1,50 m Höhe oder bis zur Decke?)`
-      )
     }
+    // Wandhöhe fehlt: Rückfrage kommt aus kontext-analyzer (flieshoehe_*)
 
     if (umfang) {
       positionen.push({
@@ -109,8 +104,8 @@ export function fliesenEngine(daten: any): MengenErgebnis {
     quelleText: daten.transkript ?? '',
     objekte: [],
     positionen,
-    rueckfragen,
+    rueckfragen: [],
     warnungen,
-    plausibel: rueckfragen.length === 0,
+    plausibel: true,
   }
 }

@@ -6,7 +6,6 @@ function round2(n: number): number {
 
 export function bodenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
-  const rueckfragen: string[] = []
   const warnungen: string[] = []
 
   for (const raum of (daten.raeume ?? [])) {
@@ -32,7 +31,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
     }
 
     if (!flaeche) {
-      rueckfragen.push(`Für "${name}": Bitte Fläche oder Länge × Breite angeben.`)
+      // Keine Maße: Rückfrage kommt aus kontext-analyzer (masse_boden_*)
       continue
     }
 
@@ -61,21 +60,15 @@ export function bodenEngine(daten: any): MengenErgebnis {
       })
     }
 
-    if (sockelleisten) {
-      if (umfang) {
-        positionen.push({
-          beschreibung: `Sockelleisten montieren — ${name}`,
-          menge: umfang,
-          einheit: 'lfdm',
-          konfidenz: 'high',
-          berechnungsweg: `Umfang: ${umfang} lfm`,
-          annahmen: [],
-        })
-      } else {
-        rueckfragen.push(
-          `Für Sockelleisten in "${name}": Bitte Raummaße (Länge × Breite) angeben damit der Umfang berechnet werden kann.`
-        )
-      }
+    if (sockelleisten && umfang) {
+      positionen.push({
+        beschreibung: `Sockelleisten montieren — ${name}`,
+        menge: umfang,
+        einheit: 'lfdm',
+        konfidenz: 'high',
+        berechnungsweg: `Umfang: ${umfang} lfm`,
+        annahmen: [],
+      })
     }
 
     if (ausgleich) {
@@ -90,7 +83,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
     }
   }
 
-  if (positionen.length === 0 && rueckfragen.length === 0) {
+  if (positionen.length === 0) {
     warnungen.push('Keine Bodenbelag-Flächen erkannt. Bitte Raummaße angeben.')
   }
 
@@ -99,8 +92,8 @@ export function bodenEngine(daten: any): MengenErgebnis {
     quelleText: daten.transkript ?? '',
     objekte: [],
     positionen,
-    rueckfragen,
+    rueckfragen: [],
     warnungen,
-    plausibel: rueckfragen.length === 0 && warnungen.length === 0,
+    plausibel: warnungen.length === 0,
   }
 }

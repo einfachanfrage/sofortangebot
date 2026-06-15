@@ -6,7 +6,6 @@ function round2(n: number): number {
 
 export function malerEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
-  const rueckfragen: string[] = []
   const warnungen: string[] = []
 
   for (const raum of (daten.raeume ?? [])) {
@@ -39,21 +38,13 @@ export function malerEngine(daten: any): MengenErgebnis {
         )
         wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
         deckenflaecheM2 = bodenflaecheM2
-      } else {
-        rueckfragen.push(
-          `Wie hoch ist der Raum "${name}"? (Für Wandfläche wird die Raumhöhe benötigt)`
-        )
       }
+      // Keine Höhe: kein Fehler, nur Decke + Boden wird berechnet
     } else if (flaeche_angegeben) {
       bodenflaecheM2 = flaeche_angegeben
-      rueckfragen.push(
-        `Für "${name}" (${flaeche_angegeben} m²): Wie sind Länge, Breite und Höhe? (Nur dann kann die Wandfläche berechnet werden)`
-      )
-    } else {
-      rueckfragen.push(
-        `Für "${name}": Bitte Länge × Breite × Höhe angeben oder Raumfläche in m².`
-      )
+      // Wandfläche kann ohne Raummaße nicht berechnet werden — Annahme statt Rückfrage
     }
+    // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const anWaenden = arbeitenStr.includes('wand') || arbeitenStr.includes('streichen') || arbeitenStr.includes('tapez') || arbeiten.length === 0
@@ -111,7 +102,6 @@ export function malerEngine(daten: any): MengenErgebnis {
     }
   }
 
-  // Plausibilitätsprüfung
   for (const pos of positionen) {
     const wand = positionen.find(p => p.beschreibung.includes('Wandfläche'))
     const boden = positionen.find(p => p.beschreibung.includes('Boden'))
@@ -131,7 +121,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     quelleText: daten.transkript ?? '',
     objekte: [],
     positionen,
-    rueckfragen,
+    rueckfragen: [],
     warnungen,
     plausibel: warnungen.length === 0,
   }
