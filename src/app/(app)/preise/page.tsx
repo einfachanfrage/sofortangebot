@@ -7,35 +7,20 @@ import { Trash2, Plus, Check, X, Search, ArrowLeft, ChevronRight, Pencil } from 
 import Link from 'next/link'
 import type { PriceItem } from '@/lib/types'
 
-// ─── GEWERK METADATA ────────────────────────────────────────────────────────
+// ─── GEWERK METADATA — nur aktive Gewerke ────────────────────────────────────
 
 const GEWERK_META: Record<string, { label: string; emoji: string }> = {
-  'Maler':          { label: 'Maler',            emoji: '🖌️' },
-  'Trockenbau':     { label: 'Trockenbau',        emoji: '🧱' },
-  'Fliesen':        { label: 'Fliesen',           emoji: '🪟' },
-  'Elektro':        { label: 'Elektro',           emoji: '⚡' },
-  'SHK':            { label: 'Sanitär & Heizung', emoji: '🚿' },
-  'Schreiner':      { label: 'Schreiner',         emoji: '🪚' },
-  'Boden':          { label: 'Bodenbeläge',       emoji: '🏠' },
-  'Dach':           { label: 'Dachdecker',        emoji: '🏗️' },
-  'Putz':           { label: 'Putz',              emoji: '🪣' },
-  'Stuck':          { label: 'Stuck',             emoji: '🪣' },
-  'Fenster':        { label: 'Fenster',           emoji: '🪟' },
-  'Türen':          { label: 'Türen',             emoji: '🚪' },
-  'Estrich':        { label: 'Estrich',           emoji: '📐' },
-  'Garten':         { label: 'GaLaBau',           emoji: '🌿' },
-  'Rohbau':         { label: 'Rohbau',            emoji: '🧱' },
-  'Fassade':        { label: 'Fassade',           emoji: '🏢' },
-  'Abbruch':        { label: 'Abbruch',           emoji: '🔨' },
-  'Reinigung':      { label: 'Reinigung',         emoji: '🧹' },
-  'Umzug':          { label: 'Umzug',             emoji: '🚛' },
-  'Entrümpelung':   { label: 'Entrümpelung',      emoji: '📦' },
-  'Zimmerei':       { label: 'Zimmerei',          emoji: '🔨' },
-  'Brandschutz':    { label: 'Brandschutz',       emoji: '🔥' },
-  'Luftdichtigkeit':{ label: 'Luftdichtigkeit',   emoji: '💨' },
-  'Aufzugstechnik': { label: 'Aufzugstechnik',    emoji: '🛗' },
-  'Allgemein':      { label: 'Allgemein',         emoji: '📦' },
+  'Maler':          { label: 'Maler & Lackierer',  emoji: '🖌️' },
+  'Trockenbau':     { label: 'Trockenbau',          emoji: '🧱' },
+  'Fliesen':        { label: 'Fliesen & Naturstein', emoji: '🪟' },
+  'Elektro':        { label: 'Elektro',             emoji: '⚡' },
+  'SHK':            { label: 'Sanitär & Heizung',   emoji: '🚿' },
+  'Boden':          { label: 'Bodenbeläge & Parkett', emoji: '🏠' },
+  'Allgemein':      { label: 'Allgemein',           emoji: '📦' },
 }
+
+// Nur Kategorien dieser Schlüssel im UI anzeigen
+const AKTIVE_GEWERK_KEYS = new Set(['Maler', 'Trockenbau', 'Fliesen', 'Elektro', 'SHK', 'Boden', 'Allgemein'])
 
 // ─── BEREICH DERIVATION ─────────────────────────────────────────────────────
 
@@ -161,6 +146,7 @@ export default function PreisePage() {
     const map = new Map<string, number>()
     for (const item of items) {
       const key = getGewerkKey(item.category)
+      if (!AKTIVE_GEWERK_KEYS.has(key)) continue
       map.set(key, (map.get(key) ?? 0) + 1)
     }
     return Array.from(map.entries())

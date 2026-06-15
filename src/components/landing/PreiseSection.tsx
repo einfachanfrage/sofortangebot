@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 const starterFeatures = ['3 Angebote pro Monat', 'PDF mit Sofortangebot-Logo', '1 Gewerk']
 const proFeatures = [
   'Unbegrenzte Angebote',
-  'Alle 18 Gewerke',
+  'Alle 6 Gewerke (mehr kommen)',
   'PDF mit deinem Logo',
   'Digitale Unterschrift',
   'Lexoffice & sevDesk Export',

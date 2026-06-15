@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { GEWERKE } from '@/lib/gewerke'
+import { AKTIVE_GEWERKE } from '@/lib/gewerke-config'
 import { ACCOUNTING_OPTIONS, TIER_LABEL } from '@/lib/accounting-options'
 import { DEFAULT_PRICES } from '@/lib/default-prices'
 import { DEFAULT_EMPFEHLUNGEN } from '@/lib/empfehlungen-defaults'
@@ -402,41 +403,39 @@ export default function OnboardingStep() {
           </p>
 
           <div className="flex flex-col gap-2 overflow-y-auto flex-1">
-            {GEWERKE.filter(g => g.id === 'allrounder')
-              .concat(GEWERKE.filter(g => g.id !== 'allrounder'))
-              .map(g => {
-                const active = state.gewerke.includes(g.id)
-                return (
-                  <button
-                    key={g.id}
-                    onClick={() => {
-                      setGewerkError(false)
-                      const next = active
-                        ? state.gewerke.filter(x => x !== g.id)
-                        : [...state.gewerke, g.id]
-                      update({ gewerke: next })
-                    }}
-                    className={`flex items-center gap-4 w-full rounded-2xl px-4 py-[14px] text-left transition-colors border-2 ${
-                      active ? 'border-[#F5C400] bg-[#F5C400]/5' : 'border-[#2C2C2C]/10 bg-white'
-                    }`}
-                  >
-                    <span className="text-2xl">{g.emoji}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-extrabold text-[#2C2C2C]">{g.label}</div>
-                      <div className="text-xs text-[#2C2C2C]/50 font-semibold">{g.beschreibung}</div>
-                    </div>
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                      active ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'
-                    }`}>
-                      {active && <Check size={14} color="#2C2C2C" strokeWidth={3} />}
-                    </div>
-                  </button>
-                )
-              })}
+            {AKTIVE_GEWERKE.map(g => {
+              const active = state.gewerke.includes(g.id)
+              return (
+                <button
+                  key={g.id}
+                  onClick={() => {
+                    setGewerkError(false)
+                    const next = active
+                      ? state.gewerke.filter(x => x !== g.id)
+                      : [...state.gewerke, g.id]
+                    update({ gewerke: next })
+                  }}
+                  className={`flex items-center gap-4 w-full rounded-2xl px-4 py-[14px] text-left transition-colors border-2 ${
+                    active ? 'border-[#F5C400] bg-[#F5C400]/5' : 'border-[#2C2C2C]/10 bg-white'
+                  }`}
+                >
+                  <span className="text-2xl">{g.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-extrabold text-[#2C2C2C]">{g.name}</div>
+                    <div className="text-xs text-[#2C2C2C]/50 font-semibold">{g.beschreibung}</div>
+                  </div>
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                    active ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'
+                  }`}>
+                    {active && <Check size={14} color="#2C2C2C" strokeWidth={3} />}
+                  </div>
+                </button>
+              )
+            })}
           </div>
 
           <p className="text-[13px] text-[#2C2C2C]/25 font-semibold text-center mt-3">
-            Kann jederzeit in den Einstellungen angepasst werden.
+            Mehr Gewerke kommen bald — Dachdecker, Schreiner, GaLaBau & mehr.
           </p>
           {gewerkError && <p className="text-[12px] text-red-500 font-semibold text-center mt-1">Bitte mindestens ein Gewerk wählen.</p>}
 

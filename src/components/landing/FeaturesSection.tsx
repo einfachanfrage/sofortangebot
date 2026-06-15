@@ -11,7 +11,7 @@ const features = [
   {
     nr: '02',
     name: '2.000+ Positionen',
-    desc: 'Alle Gewerke, alle Preise. Nichts aufbauen — alles da.',
+    desc: 'Für Maler, Fliesen, Trockenbau, Boden, Sanitär & Elektro. Mehr kommen laufend.',
   },
   {
     nr: '03',
