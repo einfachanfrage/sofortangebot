@@ -71,17 +71,35 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
-CREATE POLICY IF NOT EXISTS "Eigene Audio-Dateien lesen"
-  ON storage.objects FOR SELECT
-  USING (bucket_id = 'entwurf-audio' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Eigene Audio-Dateien lesen'
+  ) THEN
+    CREATE POLICY "Eigene Audio-Dateien lesen"
+      ON storage.objects FOR SELECT
+      USING (bucket_id = 'entwurf-audio' AND auth.uid()::text = (storage.foldername(name))[1]);
+  END IF;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Eigene Audio-Dateien hochladen"
-  ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'entwurf-audio' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Eigene Audio-Dateien hochladen'
+  ) THEN
+    CREATE POLICY "Eigene Audio-Dateien hochladen"
+      ON storage.objects FOR INSERT
+      WITH CHECK (bucket_id = 'entwurf-audio' AND auth.uid()::text = (storage.foldername(name))[1]);
+  END IF;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Eigene Audio-Dateien löschen"
-  ON storage.objects FOR DELETE
-  USING (bucket_id = 'entwurf-audio' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Eigene Audio-Dateien löschen'
+  ) THEN
+    CREATE POLICY "Eigene Audio-Dateien löschen"
+      ON storage.objects FOR DELETE
+      USING (bucket_id = 'entwurf-audio' AND auth.uid()::text = (storage.foldername(name))[1]);
+  END IF;
+END $$;
 
 -- 4. Storage Bucket für Fotos ───────────────────────────────────────────────
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -94,14 +112,32 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
-CREATE POLICY IF NOT EXISTS "Eigene Foto-Dateien lesen"
-  ON storage.objects FOR SELECT
-  USING (bucket_id = 'entwurf-fotos' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Eigene Foto-Dateien lesen'
+  ) THEN
+    CREATE POLICY "Eigene Foto-Dateien lesen"
+      ON storage.objects FOR SELECT
+      USING (bucket_id = 'entwurf-fotos' AND auth.uid()::text = (storage.foldername(name))[1]);
+  END IF;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Eigene Foto-Dateien hochladen"
-  ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'entwurf-fotos' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Eigene Foto-Dateien hochladen'
+  ) THEN
+    CREATE POLICY "Eigene Foto-Dateien hochladen"
+      ON storage.objects FOR INSERT
+      WITH CHECK (bucket_id = 'entwurf-fotos' AND auth.uid()::text = (storage.foldername(name))[1]);
+  END IF;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Eigene Foto-Dateien löschen"
-  ON storage.objects FOR DELETE
-  USING (bucket_id = 'entwurf-fotos' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Eigene Foto-Dateien löschen'
+  ) THEN
+    CREATE POLICY "Eigene Foto-Dateien löschen"
+      ON storage.objects FOR DELETE
+      USING (bucket_id = 'entwurf-fotos' AND auth.uid()::text = (storage.foldername(name))[1]);
+  END IF;
+END $$;
