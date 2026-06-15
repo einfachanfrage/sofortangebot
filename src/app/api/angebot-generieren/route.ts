@@ -41,11 +41,35 @@ GEWERK-KONTEXT:
 {GEWERKE}
 
 REGELN:
+- Mengen wurden bereits durch eine Berechnungsengine ermittelt — ÜBERNIMM die Mengen exakt aus den berechneten Positionen
+- NIEMALS eigene Mengen erfinden oder berechnen wenn berechnete Positionen vorliegen
+- Weise jeder berechneten Position einen passenden Preis aus der Preisdatenbank zu
+- Arbeitsleistung als eigene Positionen (Demontage, Vorbereitung, Hauptarbeit)
+- Kleinmaterial-Pauschale IMMER: min. 25€ oder 4% der Lohnkosten
+- Marktübliche deutsche Handwerkerpreise
+
+RÜCKFRAGEN (max. 3, nur die wichtigsten logistischen Fragen):
+1. Material: lieferst du oder Kunde?
+2. Fahrtweg in km
+3. Stockwerk/Aufzug (bei Wohnräumen)
+
+Antworte NUR mit JSON:
+{"zusammenfassung":"...","items":[{"title":"...","description":"...","quantity":1,"unit":"m²","unit_price":0,"kategorie":"..."}],"rückfragen":[{"id":"material","frage":"...","typ":"ja_nein","wichtig":true}],"notizen":"..."}`
+
+const SYSTEM_PROMPT_OHNE_MENGEN = `Du bist Kalkulations-Profi im deutschen Handwerk. Erstelle aus dem Aufmaß ein vollständiges Angebot.
+
+PREISDATENBANK:
+{PREISE}
+
+GEWERK-KONTEXT:
+{GEWERKE}
+
+REGELN:
 - Arbeitsleistung immer als eigene Positionen (Demontage, Vorbereitung, Hauptarbeit)
 - Verschnitt bei Belägen/Fliesen: +10% auf Menge, im Titel erwähnen
 - Kleinmaterial-Pauschale IMMER: min. 25€ oder 4% der Lohnkosten
 - Mengen-Logik: Teilflächen dürfen Gesamtfläche nicht überschreiten
-- Marktübliche deutsche Handwerkerpreise (inkl. MwSt.)
+- Marktübliche deutsche Handwerkerpreise
 
 RÜCKFRAGEN (max. 5, nur die wichtigsten):
 1. Material: lieferst du oder Kunde? (fast immer)
@@ -73,8 +97,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'KI-Tageslimit erreicht. Morgen geht\'s weiter.', isKIBudget: true }, { status: 429 })
   }
 
-  const { text } = await req.json()
+  const body = await req.json() as { text?: string; berechnete_positionen?: Array<{ beschreibung: string; menge: number; einheit: string; annahmen: string[] }>; originaltext?: string }
+  const text = body.text ?? body.originaltext ?? ''
   if (!text) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
+  const berechnetePositionen = body.berechnete_positionen ?? null
 
   const { data: company } = await supabase.from('companies').select('id, vat_rate, gewerke').eq('user_id', user.id).single()
   const { data: priceItems } = await supabase.from('price_items').select('*').eq('company_id', company?.id ?? '')
@@ -85,17 +111,22 @@ export async function POST(req: NextRequest) {
 
   const gewerkeContext = getGewerkePromptContext(company?.gewerke ?? [])
 
-  const prompt = SYSTEM_PROMPT
-    .replace('{PREISE}', priceList)
-    .replace('{GEWERKE}', gewerkeContext || '(nicht angegeben — erkenne aus dem Aufmaß)')
+  // Wenn berechnete Positionen vorliegen → nehme Mengen daraus, GPT nur noch für Preise
+  const systemPrompt = berechnetePositionen
+    ? SYSTEM_PROMPT.replace('{PREISE}', priceList).replace('{GEWERKE}', gewerkeContext || '(nicht angegeben)')
+    : SYSTEM_PROMPT_OHNE_MENGEN.replace('{PREISE}', priceList).replace('{GEWERKE}', gewerkeContext || '(nicht angegeben — erkenne aus dem Aufmaß)')
+
+  const userContent = berechnetePositionen
+    ? `Aufmaß:\n${text}\n\nBERECHNETE POSITIONEN (Mengen sind verbindlich — nur Preise ergänzen):\n${berechnetePositionen.map(p => `- ${p.beschreibung}: ${p.menge} ${p.einheit}${p.annahmen.length ? ` [Annahmen: ${p.annahmen.join(', ')}]` : ''}`).join('\n')}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
+    : `Aufmaß:\n\n${text}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
 
   try {
     const client = await getAIClient()
     const response = await client.chat.completions.create({
       model: CHAT_MODEL_FAST,
       messages: [
-        { role: 'system', content: prompt },
-        { role: 'user', content: `Aufmaß:\n\n${text}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.` },
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userContent },
       ],
       response_format: { type: 'json_object' },
       temperature: 0.1,

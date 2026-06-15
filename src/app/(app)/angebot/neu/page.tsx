@@ -7,6 +7,8 @@ import { Mic, MicOff, Camera, Trash2, Plus, ChevronRight, BookOpen, X, Loader2, 
 import type { GeneratedQuestion } from '@/app/api/angebot-generieren/route'
 import type { PriceItem, MengenrabattTier } from '@/lib/types'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
+import type { ExtraktionResponse } from '@/app/api/angebot-extrahieren/route'
+import type { BerechnetePosition, Konfidenz } from '@/lib/mengen/types'
 
 interface DraftItem {
   title: string
@@ -17,9 +19,12 @@ interface DraftItem {
   kategorie?: string
   base_price?: number
   mengenrabatt_tiers?: MengenrabattTier[]
+  konfidenz?: Konfidenz
+  berechnungsweg?: string
+  annahmen?: string[]
 }
 
-type Step = 'input' | 'loading' | 'rückfragen' | 'review'
+type Step = 'input' | 'loading' | 'mengen_rueckfragen' | 'rückfragen' | 'review'
 type Mode = 'voice' | 'photo'
 
 // Gewerk-spezifische Beispielhints
@@ -98,6 +103,12 @@ export default function NeuesAngebotPage() {
   const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
   const [suggestionToast, setSuggestionToast] = useState<EmpfehlungDefault | null>(null)
   const [gewerk, setGewerk] = useState('')
+  // Mengen-Engine State
+  const [mengenRueckfragen, setMengenRueckfragen] = useState<string[]>([])
+  const [mengenAntworten, setMengenAntworten] = useState<Record<number, string>>({})
+  const [berechnetePositionen, setBerechnetePositionen] = useState<BerechnetePosition[]>([])
+  const [mengenWarnungen, setMengenWarnungen] = useState<string[]>([])
+  const [extraktionCache, setExtraktionCache] = useState<ExtraktionResponse | null>(null)
   const [briefpapiere, setBriefpapiere] = useState<{ id: string; name: string; ist_standard: boolean }[]>([])
   const [selectedBriefpapier, setSelectedBriefpapier] = useState<string | null>(null)
   const [showBriefpapierPicker, setShowBriefpapierPicker] = useState(false)
@@ -283,6 +294,129 @@ export default function NeuesAngebotPage() {
   }
 
   async function analyseText(text: string) {
+    setLoadingMsg('Aufmaß wird analysiert...')
+    if (!afterFirstHint) setAfterFirstHint(true)
+
+    // ── Schritt 1: Extraktion + lokale Mengenberechnung ──────────────────────
+    let extRes: ExtraktionResponse | null = null
+    try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 55000)
+      const r = await fetch('/api/angebot-extrahieren', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+        signal: controller.signal,
+      })
+      clearTimeout(timeout)
+      if (r.ok) {
+        extRes = await r.json() as ExtraktionResponse
+      } else {
+        const d = await r.json().catch(() => ({})) as { error?: string }
+        if (r.status === 429) { setRateLimitMsg(d.error ?? 'Kurze Pause — gleich geht\'s weiter.'); setStep('input'); return }
+        // Extraktion fehlgeschlagen → Fallback auf alten Flow
+      }
+    } catch { /* Fallback auf alten Flow */ }
+
+    if (extRes) {
+      setExtraktionCache(extRes)
+      const mengen = extRes.mengen
+
+      // Mengen-Rückfragen zeigen wenn Engine sie hat
+      if (mengen.rueckfragen.length > 0) {
+        setMengenRueckfragen(mengen.rueckfragen)
+        setMengenAntworten({})
+        setBerechnetePositionen(mengen.positionen)
+        setMengenWarnungen(mengen.warnungen)
+        setStep('mengen_rueckfragen')
+        return
+      }
+
+      // Keine Rückfragen → direkt zu Preisfindung
+      await generiereAngebot(text, mengen.positionen)
+      return
+    }
+
+    // ── Fallback: alter Flow ohne Mengen-Engine ───────────────────────────────
+    await analyseTextFallback(text)
+  }
+
+  async function generiereAngebot(text: string, positionen: BerechnetePosition[]) {
+    setLoadingMsg('Preise werden zugeordnet...')
+
+    // Session-Modus: Items ergänzen statt ersetzen
+    if (sessionId && items.length > 0) {
+      const newItems = positionen.map(p => ({
+        title: p.beschreibung,
+        description: p.annahmen.join(', '),
+        quantity: p.menge,
+        unit: p.einheit,
+        unit_price: 0,
+        konfidenz: p.konfidenz,
+        berechnungsweg: p.berechnungsweg,
+        annahmen: p.annahmen,
+      }))
+      const toAdd = newItems.filter(ni => !items.some(ex => ex.title.toLowerCase() === ni.title.toLowerCase()))
+      setItems(prev => [...prev, ...toAdd])
+      setEingaben(prev => [...prev, { nr: prev.length + 1, transkript: text, anzahl: toAdd.length }])
+      setStep('review')
+      return
+    }
+
+    let r: Response | null = null
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt > 0) { setLoadingMsg('Nochmal versuchen...'); await new Promise(res => setTimeout(res, 3000)) }
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 55000)
+      try {
+        r = await fetch('/api/angebot-generieren', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, berechnete_positionen: positionen }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeout)
+        if (r.ok) break
+      } catch { clearTimeout(timeout); if (attempt === 1) { setError('Analyse fehlgeschlagen.'); setStep('input'); return } }
+    }
+    if (!r?.ok) {
+      const d = r ? await r.json().catch(() => ({})) as { error?: string } : {}
+      if (r?.status === 429) { setRateLimitMsg(d.error ?? 'Kurze Pause — gleich geht\'s weiter.'); setStep('input'); return }
+      setError(d.error ?? 'Analyse fehlgeschlagen.')
+      setStep('input')
+      return
+    }
+
+    const result = await r.json()
+
+    // Konfidenz aus Engine in Items mergen
+    const engineByTitle = new Map(positionen.map(p => [p.beschreibung.toLowerCase(), p]))
+    const enrichedItems: DraftItem[] = (result.items ?? []).map((item: DraftItem) => {
+      const eng = engineByTitle.get(item.title.toLowerCase())
+      return eng
+        ? { ...item, konfidenz: eng.konfidenz, berechnungsweg: eng.berechnungsweg, annahmen: eng.annahmen }
+        : item
+    })
+
+    setItems(enrichedItems)
+    setNotes(result.notizen ?? '')
+    setZusammenfassung(result.zusammenfassung ?? '')
+    setBerechnetePositionen(positionen)
+    setMengenWarnungen(extraktionCache?.mengen.warnungen ?? [])
+
+    const normalizeTyp = (typ: string): GeneratedQuestion['typ'] => {
+      const t = (typ ?? '').toLowerCase()
+      if (t.includes('ja') || t.includes('bool') || t.includes('yes')) return 'ja_nein'
+      if (t.includes('zahl') || t.includes('numb') || t.includes('int') || t.includes('float')) return 'zahl'
+      if (t.includes('wahl') || t.includes('select') || t.includes('choice')) return 'auswahl'
+      return 'ja_nein'
+    }
+    const normalized = (result.rückfragen ?? []).map((q: GeneratedQuestion) => ({ ...q, typ: normalizeTyp(q.typ) }))
+    if (normalized.length > 0) { setQuestions(normalized); setCurrentQ(0); setCurrentAnswer(''); setStep('rückfragen') }
+    else setStep('review')
+  }
+
+  async function analyseTextFallback(text: string) {
     setLoadingMsg('KI analysiert Aufmaß...')
     let r: Response | null = null
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -295,46 +429,22 @@ export default function NeuesAngebotPage() {
         if (r.ok) break
       } catch { clearTimeout(timeout); if (attempt === 1) { setError('Analyse fehlgeschlagen.'); setStep('input'); return } }
     }
-    if (!r?.ok) { const d = r ? await r.json().catch(() => ({})) : {}; if (r?.status === 429) { setRateLimitMsg(d.error ?? 'Du bist heute sehr fleißig! 🔨 Kurze Pause — gleich geht\'s weiter.'); setStep('input'); return } setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
+    if (!r?.ok) { const d = r ? await r.json().catch(() => ({})) as { error?: string } : {}; if (r?.status === 429) { setRateLimitMsg(d.error ?? 'Kurze Pause — gleich geht\'s weiter.'); setStep('input'); return } setError(d.error ?? 'Analyse fehlgeschlagen.'); setStep('input'); return }
 
     const result = await r.json()
-    const newItems = result.items ?? []
+    const newItems: DraftItem[] = result.items ?? []
 
-    // Session: bei mehrfacher Eingabe Items ergänzen statt ersetzen
     if (sessionId && items.length > 0) {
-      const toAdd = newItems.filter((ni: DraftItem) => !items.some((ex: DraftItem) => ex.title.toLowerCase() === ni.title.toLowerCase()))
+      const toAdd = newItems.filter(ni => !items.some(ex => ex.title.toLowerCase() === ni.title.toLowerCase()))
       setItems(prev => [...prev, ...toAdd])
       setEingaben(prev => [...prev, { nr: prev.length + 1, transkript: text, anzahl: toAdd.length }])
       setStep('review')
-
-      // Eingabe in DB speichern
-      if (sessionId) {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
-          if (co) {
-            await supabase.from('angebot_eingaben').insert({
-              angebot_id: sessionId,
-              company_id: co.id,
-              eingabe_nummer: eingaben.length + 1,
-              transkript: text,
-              erkannte_positionen: toAdd,
-              geraet: 'web',
-            })
-          }
-        }
-      }
       return
     }
 
     setItems(newItems)
     setNotes(result.notizen ?? '')
     setZusammenfassung(result.zusammenfassung ?? '')
-
-    // Erste Eingabe nach Starthilfe
-    if (!afterFirstHint) {
-      setAfterFirstHint(true)
-    }
 
     const normalizeTyp = (typ: string): GeneratedQuestion['typ'] => {
       const t = (typ ?? '').toLowerCase()
@@ -497,6 +607,99 @@ export default function NeuesAngebotPage() {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
+  // MENGEN-RÜCKFRAGEN (Engine-Rückfragen zu fehlenden Maßen)
+  // ─────────────────────────────────────────────────────────────────────────
+  if (step === 'mengen_rueckfragen') {
+    const alleBeantwortet = mengenRueckfragen.every((_, i) => mengenAntworten[i] !== undefined)
+    const SCHNELL_HOEHEN = ['2,40 m', '2,60 m', '2,80 m', '3,00 m']
+    const SCHNELL_FLAECHEN = ['5 m²', '10 m²', '15 m²', '20 m²', '30 m²', '40 m²']
+
+    return (
+      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
+        <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+          <div className="text-white/50 text-xs font-extrabold uppercase tracking-widest mb-2">Kurze Rückfrage 🤔</div>
+          <h1 className="font-syne font-extrabold text-white text-[22px] leading-tight">
+            Noch ein paar Maße
+          </h1>
+          <p className="text-white/40 text-sm font-semibold mt-1">
+            Damit die Mengen exakt berechnet werden.
+          </p>
+        </div>
+
+        <div className="flex-1 px-5 py-5 flex flex-col gap-4 overflow-y-auto">
+          {mengenRueckfragen.map((frage, i) => {
+            const antwort = mengenAntworten[i]
+            const istHoehe = frage.toLowerCase().includes('hoch') || frage.toLowerCase().includes('höhe')
+            const chips = istHoehe ? SCHNELL_HOEHEN : SCHNELL_FLAECHEN
+
+            return (
+              <div key={i} className={`bg-white rounded-2xl p-4 border-2 transition-colors ${antwort ? 'border-[#F5C400]' : 'border-[#2C2C2C]/8'}`}>
+                <div className="flex items-start gap-3 mb-3">
+                  <span className="text-[18px] mt-0.5">❓</span>
+                  <p className="font-extrabold text-[#2C2C2C] text-[14px] leading-snug">{frage}</p>
+                </div>
+
+                {/* Schnell-Chips */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {chips.map(chip => (
+                    <button
+                      key={chip}
+                      onClick={() => setMengenAntworten(prev => ({ ...prev, [i]: chip }))}
+                      className={`text-[13px] font-extrabold px-3 py-1.5 rounded-full border-2 transition-colors ${
+                        antwort === chip
+                          ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]'
+                          : 'bg-white border-[#2C2C2C]/15 text-[#2C2C2C]/60'
+                      }`}
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Freitext */}
+                <input
+                  type="text"
+                  placeholder="Oder manuell eingeben..."
+                  value={typeof antwort === 'string' && !chips.includes(antwort) ? antwort : ''}
+                  onChange={e => setMengenAntworten(prev => ({ ...prev, [i]: e.target.value }))}
+                  className="w-full bg-[#F7F7F5] rounded-xl px-3 py-2.5 text-[#2C2C2C] font-semibold text-[14px] focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
+                />
+              </div>
+            )
+          })}
+
+          {mengenWarnungen.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+              {mengenWarnungen.map((w, i) => (
+                <p key={i} className="text-amber-700 text-[13px] font-semibold">⚠ {w}</p>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="px-5 pb-8 pt-3 flex flex-col gap-2 bg-white border-t border-[#2C2C2C]/8">
+          <button
+            onClick={async () => {
+              // Antworten in Extraktion einarbeiten und Angebot generieren
+              // Für jetzt: einfach mit bestehenden berechneten Positionen weiter
+              await generiereAngebot(transcript, berechnetePositionen)
+            }}
+            disabled={!alleBeantwortet}
+            className="w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[16px] rounded-2xl py-4 disabled:opacity-40 active:scale-95 transition-transform"
+          >
+            Weiter → ({mengenRueckfragen.filter((_, i) => mengenAntworten[i]).length}/{mengenRueckfragen.length} beantwortet)
+          </button>
+          <button
+            onClick={async () => await generiereAngebot(transcript, berechnetePositionen)}
+            className="text-[#2C2C2C]/40 font-semibold text-[13px] text-center py-2"
+          >
+            Überspringen — Mengen manuell eingeben
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   // RÜCKFRAGEN
   // ─────────────────────────────────────────────────────────────────────────
   if (step === 'rückfragen' && q) {
@@ -661,12 +864,18 @@ export default function NeuesAngebotPage() {
                 {catItems.map(item => {
                   const idx = items.indexOf(item)
                   return (
-                    <div key={idx} className="border-t border-[#2C2C2C]/5 px-4 py-3">
+                    <div
+                      key={idx}
+                      className={`border-t border-[#2C2C2C]/5 px-4 py-3 ${
+                        item.konfidenz === 'low' ? 'border-l-2 border-l-orange-400' :
+                        item.konfidenz === 'medium' ? 'border-l-2 border-l-amber-400' : ''
+                      }`}
+                    >
                       <div className="flex items-start gap-2">
                         <div className="flex-1 min-w-0">
                           <input value={item.title} onChange={e => updateItem(idx, 'title', e.target.value)} className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-transparent focus:border-[#F5C400] pb-0.5" />
                           <div className="flex gap-2 mt-2 items-center">
-                            <input type="number" inputMode="decimal" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none" min={0} step="0.01" />
+                            <input type="number" inputMode="decimal" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} className={`w-16 text-sm font-semibold text-[#2C2C2C] rounded-lg px-2 py-1 focus:outline-none ${item.konfidenz === 'low' ? 'bg-orange-50 ring-1 ring-orange-300' : 'bg-[#F7F7F5]'}`} min={0} step="0.01" autoFocus={item.konfidenz === 'low'} />
                             <input value={item.unit} onChange={e => updateItem(idx, 'unit', e.target.value)} className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none" />
                             <div className="flex items-center gap-1 ml-auto">
                               <input type="number" inputMode="decimal" value={item.unit_price} onChange={e => updateItem(idx, 'unit_price', e.target.value)} className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 text-right focus:outline-none" min={0} step="0.01" />
@@ -676,6 +885,19 @@ export default function NeuesAngebotPage() {
                           <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5 text-right">= {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €</div>
                           {item.base_price !== undefined && item.unit_price < item.base_price && (
                             <div className="text-xs text-green-600 font-bold mt-0.5 text-right">Mengenrabatt: {Math.round((1 - item.unit_price / item.base_price) * 100)} %</div>
+                          )}
+                          {/* Konfidenz-Hinweis */}
+                          {item.konfidenz === 'low' && (
+                            <div className="text-[11px] text-orange-600 font-semibold mt-1">⚠ Bitte Menge prüfen</div>
+                          )}
+                          {item.konfidenz === 'medium' && item.annahmen && item.annahmen.length > 0 && (
+                            <div className="text-[11px] text-amber-600 font-semibold mt-1">Annahme: {item.annahmen.join(', ')} — anpassen?</div>
+                          )}
+                          {item.berechnungsweg && item.konfidenz !== 'low' && (
+                            <details className="mt-1">
+                              <summary className="text-[11px] text-[#2C2C2C]/30 font-semibold cursor-pointer">ⓘ Berechnung</summary>
+                              <div className="text-[11px] text-[#2C2C2C]/50 font-semibold mt-0.5 pl-3">{item.berechnungsweg}</div>
+                            </details>
                           )}
                         </div>
                         <button onClick={() => removeItem(idx)} className="mt-0.5 p-1 shrink-0">

@@ -1,0 +1,138 @@
+export type Konfidenz = 'high' | 'medium' | 'low'
+
+export type ObjektArt =
+  | 'raum'
+  | 'wand'
+  | 'decke'
+  | 'boden'
+  | 'tuer'
+  | 'fenster'
+  | 'leitung'
+  | 'rohr'
+  | 'kabel'
+  | 'geraet'
+  | 'anschluss'
+  | 'stueckzahl'
+  | 'laufmeter'
+  | 'flaeche'
+  | 'volumen'
+  | 'pauschale'
+  | 'erschwerniss'
+
+export interface MengenObjekt {
+  id: string
+  objektart: ObjektArt
+  beschreibung: string
+  masse: {
+    laenge?: number
+    breite?: number
+    hoehe?: number
+    flaeche?: number
+    umfang?: number
+    volumen?: number
+    stueckzahl?: number
+    laufmeter?: number
+  }
+  einheit: string
+  menge: number | null
+  berechnungsweg: string
+  quelle: string
+  konfidenz: Konfidenz
+  annahmen: string[]
+  fehlende_angaben: string[]
+  rueckfragen: string[]
+}
+
+export interface BerechnetePosition {
+  beschreibung: string
+  menge: number
+  einheit: string
+  konfidenz: Konfidenz
+  berechnungsweg: string
+  annahmen: string[]
+  position_id_vorschlag?: string
+}
+
+export interface MengenErgebnis {
+  gewerk: string
+  quelleText: string
+  objekte: MengenObjekt[]
+  positionen: BerechnetePosition[]
+  rueckfragen: string[]
+  warnungen: string[]
+  plausibel: boolean
+}
+
+// Strukturierte Extraktion aus GPT-4o
+export interface ExtrahierteDaten {
+  gewerk: string
+  confidence_gewerk: number
+  kunde: {
+    name: string | null
+    adresse: string | null
+    ort: string | null
+  }
+  raeume: Array<{
+    name: string
+    laenge: number | null
+    breite: number | null
+    hoehe: number | null
+    flaeche: number | null
+    fenster: Array<{ breite?: number; hoehe?: number }>
+    tueren: Array<{ breite?: number; hoehe?: number }>
+    arbeiten: string[]
+    altbelag_entfernen: boolean
+    sockelleisten: boolean
+    nassbereich: boolean
+  }>
+  waende: Array<{
+    laenge: number | null
+    hoehe: number | null
+    beplankung: number
+    daemmung: boolean
+  }>
+  decken: Array<{
+    laenge: number | null
+    breite: number | null
+    flaeche: number | null
+  }>
+  bereiche: Array<{
+    name: string
+    typ: string
+    laenge: number | null
+    breite: number | null
+    hoehe: number | null
+    flieshoehe: number | null
+    flaeche: number | null
+    nassbereich: boolean
+    arbeiten: string[]
+  }>
+  steckdosen: number | null
+  schalter: number | null
+  spots: number | null
+  aussenlampen: number | null
+  wandlampen: number | null
+  herdanschluss: boolean
+  wallbox: boolean | number
+  unterverteilung: boolean
+  hauptverteilung: boolean
+  kabelmeter: number | null
+  neu_verkabeln: boolean
+  wc: number | null
+  waschtisch: number | null
+  dusche: number | null
+  wanne: number | null
+  urinal: number | null
+  bidet: number | null
+  armaturen: number | null
+  rohrmeter: number | null
+  leitungen_erneuern: boolean
+  heizkoerper: number | null
+  austausch: boolean
+  erneuerung: boolean
+  altbelag: Array<{ bereich: string; flaeche: number | null }>
+  erschwernisse: string[]
+  anmerkungen: string | null
+  fehlende_angaben: string[]
+  transkript: string
+}
