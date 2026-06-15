@@ -39,6 +39,8 @@ export default function EinstellungenPage() {
   const [showPushBanner, setShowPushBanner] = useState(false)
   const [pushPermission, setPushPermission] = useState<NotificationPermission | 'unsupported'>('default')
   const [isStandalone, setIsStandalone] = useState(false)
+  const [woerterbuch, setWoerterbuch] = useState<{ id: string; begriff: string; position_id: string; gewerk_id: string | null; match_count: number; bestaetigt_count: number; status: string }[]>([])
+  const [woerterbuchStats, setWoerterbuchStats] = useState<{ total: number; bestaetigt: number; lernend: number } | null>(null)
 
   const supabase = createClient()
   const router = useRouter()
@@ -81,6 +83,11 @@ export default function EinstellungenPage() {
       window.matchMedia('(display-mode: standalone)').matches ||
       ('standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone === true)
     )
+    // Wörterbuch laden
+    fetch('/api/ki/woerterbuch').then(r => r.json()).then(d => {
+      if (d.eintraege) setWoerterbuch(d.eintraege)
+      if (d.statistik) setWoerterbuchStats(d.statistik)
+    }).catch(() => {})
   }, [])
 
   async function handleSave(e: React.FormEvent) {
@@ -564,6 +571,55 @@ export default function EinstellungenPage() {
           <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
         </Link>
       </div>
+
+      {/* Mein Wörterbuch */}
+      {woerterbuchStats && (woerterbuchStats.total > 0) && (
+        <div className="px-5 md:px-8 mt-6">
+          <div className="bg-white rounded-2xl p-5 border border-[#2C2C2C]/5">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-7 h-7 bg-[#F5C400]/20 rounded-lg flex items-center justify-center text-sm">⚡</div>
+              <div className="font-black text-[#2C2C2C]">Mein Wörterbuch</div>
+              <div className="ml-auto flex gap-2 text-xs font-bold text-[#2C2C2C]/40">
+                <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full">{woerterbuchStats.bestaetigt} bestätigt</span>
+                <span className="bg-[#F5C400]/10 text-[#2C2C2C]/60 px-2 py-0.5 rounded-full">{woerterbuchStats.lernend} lernend</span>
+              </div>
+            </div>
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-4">
+              Die KI hat diese Begriffe aus deinen Angeboten gelernt. Bestätigte Begriffe werden sofort erkannt — ohne KI-Call.
+            </p>
+            <div className="flex flex-col gap-2">
+              {woerterbuch.map(e => (
+                <div key={e.id} className="flex items-center gap-3 py-2 border-b border-[#2C2C2C]/5 last:border-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-[#2C2C2C] text-sm truncate">{e.begriff}</div>
+                    <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">
+                      {e.match_count}× verwendet · {e.gewerk_id ?? 'Alle Gewerke'}
+                    </div>
+                  </div>
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0 ${
+                    e.status === 'bestaetigt'
+                      ? 'bg-green-50 text-green-700'
+                      : 'bg-[#F5C400]/10 text-[#2C2C2C]/50'
+                  }`}>
+                    {e.status === 'bestaetigt' ? '✓ Bestätigt' : '… Lernend'}
+                  </span>
+                  <button
+                    onClick={async () => {
+                      await fetch('/api/ki/woerterbuch', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: e.id }) })
+                      setWoerterbuch(prev => prev.filter(x => x.id !== e.id))
+                      setWoerterbuchStats(prev => prev ? { ...prev, total: prev.total - 1, [e.status === 'bestaetigt' ? 'bestaetigt' : 'lernend']: prev[e.status === 'bestaetigt' ? 'bestaetigt' : 'lernend'] - 1 } : null)
+                    }}
+                    className="text-[#2C2C2C]/20 hover:text-red-400 transition-colors flex-shrink-0 p-1"
+                    title="Aus Wörterbuch entfernen"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="px-5 md:px-8 mt-3 flex flex-col gap-1">
         <button onClick={handleLogout}

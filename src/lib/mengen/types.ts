@@ -63,6 +63,27 @@ export interface MengenErgebnis {
   plausibel: boolean
 }
 
+export type Vertrauensstufe = 'hoch' | 'mittel' | 'gering'
+
+export interface KalkulationsBewertung {
+  vertrauensstufe: Vertrauensstufe
+  erkannte_angaben: string[]
+  fehlende_angaben: string[]
+  annahmen: string[]
+  bewertungstext: string
+  empfehlung: string[]
+}
+
+// Rückfrage aus KI-Extraktion (PROMPT_EXTRAKTION_V4)
+export interface KIRueckfrage {
+  id: string
+  frage: string
+  typ: 'hoehe' | 'anzahl' | 'masse_einzel' | 'ja_nein' | 'meter'
+  betrifft: string
+  prioritaet: number
+  schnell_antworten: Array<{ label: string; wert: number | boolean | null }>
+}
+
 // Strukturierte Extraktion aus GPT-4o
 export interface ExtrahierteDaten {
   gewerk: string
@@ -72,18 +93,26 @@ export interface ExtrahierteDaten {
     adresse: string | null
     ort: string | null
   }
+  situation?: string
+  annahmen?: string[]
+  rueckfragen?: KIRueckfrage[]
   raeume: Array<{
     name: string
     laenge: number | null
     breite: number | null
     hoehe: number | null
     flaeche: number | null
-    fenster: Array<{ breite?: number; hoehe?: number }>
-    tueren: Array<{ breite?: number; hoehe?: number }>
+    umfang?: number | null
+    fenster: Array<{ breite?: number; hoehe?: number; annahme?: boolean }>
+    tueren: Array<{ breite?: number; hoehe?: number; annahme?: boolean }>
     arbeiten: string[]
+    altbelag_vorhanden?: boolean
     altbelag_entfernen: boolean
     sockelleisten: boolean
     nassbereich: boolean
+    vage?: boolean
+    vage_typ?: string | null
+    vage_beschreibung?: string | null
   }>
   waende: Array<{
     laenge: number | null

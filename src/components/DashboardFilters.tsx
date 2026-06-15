@@ -6,13 +6,17 @@ import { Search } from 'lucide-react'
 
 const STATUS_TABS = [
   { key: '', label: 'Alle' },
+  { key: 'in_bearbeitung', label: 'In Bearbeitung' },
   { key: 'sent', label: 'Offen' },
   { key: 'accepted', label: 'Beauftragt' },
   { key: 'rejected', label: 'Abgelehnt' },
-  { key: 'archived', label: 'Archiviert' },
 ]
 
-export default function DashboardFilters() {
+interface DashboardFiltersProps {
+  inBearbeitungCount?: number
+}
+
+export default function DashboardFilters({ inBearbeitungCount = 0 }: DashboardFiltersProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -42,19 +46,30 @@ export default function DashboardFilters() {
 
       {/* Status-Filter Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
-        {STATUS_TABS.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => update('status', tab.key)}
-            className={`shrink-0 text-xs font-black px-3 py-1.5 rounded-full transition-colors ${
-              status === tab.key
-                ? 'bg-[#2C2C2C] text-white'
-                : 'bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+        {STATUS_TABS.map(tab => {
+          const isActive = status === tab.key
+          const showBadge = tab.key === 'in_bearbeitung' && inBearbeitungCount > 0
+          return (
+            <button
+              key={tab.key}
+              onClick={() => update('status', tab.key)}
+              className={`shrink-0 text-xs font-black px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5 ${
+                isActive
+                  ? 'bg-[#2C2C2C] text-white'
+                  : 'bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60'
+              }`}
+            >
+              {tab.label}
+              {showBadge && (
+                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none ${
+                  isActive ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-[#F5C400]/20 text-[#8B7000]'
+                }`}>
+                  {inBearbeitungCount}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
     </div>
   )

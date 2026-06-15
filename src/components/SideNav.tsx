@@ -2,13 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, Mic, Tag } from 'lucide-react'
+import { Home, Users, Settings, Mic } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 
 const NAV = [
   { href: '/dashboard', icon: Home, label: 'Dashboard' },
   { href: '/kunden', icon: Users, label: 'Kunden' },
-  { href: '/preise', icon: Tag, label: 'Preisdatenbank' },
   { href: '/einstellungen', icon: Settings, label: 'Einstellungen' },
 ]
 

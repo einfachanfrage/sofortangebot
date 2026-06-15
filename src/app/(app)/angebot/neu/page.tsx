@@ -9,6 +9,21 @@ import type { PriceItem, MengenrabattTier } from '@/lib/types'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import type { ExtraktionResponse } from '@/app/api/angebot-extrahieren/route'
 import type { BerechnetePosition, Konfidenz } from '@/lib/mengen/types'
+import KalkulationsBewertungCard from '@/components/KalkulationsBewertungCard'
+import AufnahmeHinweisSheet, { getHinweisCount, incrementHinweisCount } from '@/components/AufnahmeHinweisSheet'
+import { matchePositionen } from '@/lib/ki-flow'
+import RueckfragenScreen from '@/components/aufnahme/RueckfragenScreen'
+import { generiereRueckfragen } from '@/lib/mengen/rueckfragen-generator'
+import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
+import { verarbeiteAntworten } from '@/lib/mengen/antworten-verarbeiter'
+import { berechneMengen } from '@/lib/mengen/engine'
+import { analysiereKontext } from '@/lib/kontext-analyzer'
+import { starteStilleErkennung } from '@/lib/stille-erkennung'
+import type { StilleErkennung } from '@/lib/stille-erkennung'
+import type { KIRueckfrageRaw } from '@/lib/kontext-analyzer'
+import { validiereAngebot } from '@/lib/angebot-validierung'
+import type { ValidationResult } from '@/lib/angebot-validierung'
+import type { KIRueckfrage } from '@/lib/mengen/types'
 
 interface DraftItem {
   title: string
@@ -22,9 +37,14 @@ interface DraftItem {
   konfidenz?: Konfidenz
   berechnungsweg?: string
   annahmen?: string[]
+  kontext_genutzt?: boolean
+  aus_woerterbuch?: boolean
+  position_id?: string | null
+  manuell_geaendert?: boolean
+  implizit_erkannt?: boolean
 }
 
-type Step = 'input' | 'loading' | 'mengen_rueckfragen' | 'rückfragen' | 'review'
+type Step = 'input' | 'loading' | 'vage_rueckfragen' | 'mengen_rueckfragen' | 'rückfragen' | 'review'
 type Mode = 'voice' | 'photo'
 
 // Gewerk-spezifische Beispielhints
@@ -73,6 +93,8 @@ export default function NeuesAngebotPage() {
   const [recording, setRecording] = useState(false)
   const [micBlocked, setMicBlocked] = useState(false)
   const [transcript, setTranscript] = useState('')
+  const [transcriptOriginal, setTranscriptOriginal] = useState('')
+  const [hatNormalisierung, setHatNormalisierung] = useState(false)
   const [zusammenfassung, setZusammenfassung] = useState('')
   const [questions, setQuestions] = useState<GeneratedQuestion[]>([])
   const [currentQ, setCurrentQ] = useState(0)
@@ -103,23 +125,38 @@ export default function NeuesAngebotPage() {
   const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
   const [suggestionToast, setSuggestionToast] = useState<EmpfehlungDefault | null>(null)
   const [gewerk, setGewerk] = useState('')
+  // Vage-Rückfragen (neues Dialog-System)
+  const [vageRueckfragen, setVageRueckfragen] = useState<RueckfrageItem[]>([])
+
   // Mengen-Engine State
   const [mengenRueckfragen, setMengenRueckfragen] = useState<string[]>([])
   const [mengenAntworten, setMengenAntworten] = useState<Record<number, string>>({})
   const [berechnetePositionen, setBerechnetePositionen] = useState<BerechnetePosition[]>([])
   const [mengenWarnungen, setMengenWarnungen] = useState<string[]>([])
   const [extraktionCache, setExtraktionCache] = useState<ExtraktionResponse | null>(null)
+  const [kalkulationsBewertung, setKalkulationsBewertung] = useState<import('@/lib/mengen/types').KalkulationsBewertung | null>(null)
+  const [validierung, setValidierung] = useState<ValidationResult | null>(null)
+  const [kiAnnahmen, setKiAnnahmen] = useState<string[]>([])
+  const [implizitPositionen, setImplizitPositionen] = useState<string[]>([])
+  const [implizitFlags, setImplizitFlags] = useState<Record<string, unknown>>({})
+  const [korrekturnAnzahl, setKorrekturenAnzahl] = useState(0)
+  const [annahmenOffen, setAnnahmenOffen] = useState(false)
   const [briefpapiere, setBriefpapiere] = useState<{ id: string; name: string; ist_standard: boolean }[]>([])
   const [selectedBriefpapier, setSelectedBriefpapier] = useState<string | null>(null)
   const [showBriefpapierPicker, setShowBriefpapierPicker] = useState(false)
 
-  // Starthilfe
+  // Starthilfe (alt)
   const [showFirstTimeCard, setShowFirstTimeCard] = useState(false)
   const [hintIdx, setHintIdx] = useState(0)
   const [ttsLoading, setTtsLoading] = useState(false)
   const [afterFirstHint, setAfterFirstHint] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const hintIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Aufnahme-Hinweis Bottom Sheet
+  const [hinweisOffen, setHinweisOffen] = useState(false)
+  const [hinweisSchliessbar, setHinweisSchliessbar] = useState(false)
+  const [tooltipSichtbar, setTooltipSichtbar] = useState(false)
 
   // Session / Mehrfach-Eingabe
   const [sessionId, setSessionId] = useState<string | null>(null)
@@ -129,6 +166,7 @@ export default function NeuesAngebotPage() {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
+  const stilleRef = useRef<StilleErkennung | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const supabase = createClient()
@@ -155,9 +193,34 @@ export default function NeuesAngebotPage() {
         setMindestauftragswert(c.mindestauftragswert ?? 0)
         if (c.gewerke?.[0]) setGewerk(c.gewerke[0].toLowerCase())
 
-        // Starthilfe nur beim allerersten Mal
+        // Starthilfe nur beim allerersten Mal (altes System)
         if (!c.has_seen_voice_hint) {
           setShowFirstTimeCard(true)
+        }
+
+        // Neues Aufnahme-Hinweis-System (localStorage-basiert)
+        const count = getHinweisCount()
+        if (count < 3) {
+          setHinweisOffen(true)
+          incrementHinweisCount()
+          if (count === 0) {
+            // Erste 2 Sekunden nicht schließbar
+            setTimeout(() => setHinweisSchliessbar(true), 2000)
+          } else {
+            // 2. und 3. Mal: sofort schließbar, nach 1 Sek. automatisch schließen
+            setHinweisSchliessbar(true)
+            setTimeout(() => setHinweisOffen(false), 1000)
+          }
+        }
+
+        // ⓘ Tooltip einmalig anzeigen (wenn Nutzer es noch nie gesehen)
+        const tooltipSeen = localStorage.getItem('aufnahme_tooltip_seen')
+        if (!tooltipSeen) {
+          setTooltipSichtbar(true)
+          setTimeout(() => {
+            setTooltipSichtbar(false)
+            localStorage.setItem('aufnahme_tooltip_seen', '1')
+          }, 3000)
         }
 
         const { data: empf } = await supabase
@@ -228,10 +291,24 @@ export default function NeuesAngebotPage() {
     setError('')
     setRateLimitMsg('')
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
-        .find(m => MediaRecorder.isTypeSupported(m)) ?? ''
-      const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {})
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          sampleRate: 16000,       // ideal für Whisper
+          channelCount: 1,         // Mono spart Daten
+          echoCancellation: true,  // Halleffekte in leeren Räumen
+          noiseSuppression: true,  // Baustellenlärm reduzieren
+          autoGainControl: true,   // variierender Mikrofonabstand
+        }
+      })
+      // Priorität: opus (bestes Sprach-Format) → mp4 (iOS) → Fallback
+      const mimeType = [
+        'audio/webm;codecs=opus',
+        'audio/mp4;codecs=mp4a',
+        'audio/webm',
+        'audio/ogg;codecs=opus',
+        'audio/mp4',
+      ].find(m => MediaRecorder.isTypeSupported(m)) ?? ''
+      const mr = new MediaRecorder(stream, mimeType ? { mimeType, audioBitsPerSecond: 128000 } : {})
       chunksRef.current = []
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       mr.onstop = async () => {
@@ -243,12 +320,21 @@ export default function NeuesAngebotPage() {
       mr.start()
       mediaRef.current = mr
       setRecording(true)
+      // Stille-Erkennung: nach 2s Stille automatisch stoppen
+      stilleRef.current = starteStilleErkennung(stream, () => {
+        if (mediaRef.current?.state === 'recording') {
+          mediaRef.current.stop()
+          setRecording(false)
+        }
+      })
     } catch {
       setMicBlocked(true)
     }
   }, [])
 
   const stopRecording = useCallback(() => {
+    stilleRef.current?.stop()
+    stilleRef.current = null
     mediaRef.current?.stop()
     setRecording(false)
   }, [])
@@ -288,13 +374,17 @@ export default function NeuesAngebotPage() {
       }
       text = data.text
       setTranscript(text)
+      if (data.text_original && data.text_original !== data.text) {
+        setTranscriptOriginal(data.text_original)
+        setHatNormalisierung(true)
+      }
     }
 
     await analyseText(text)
   }
 
   async function analyseText(text: string) {
-    setLoadingMsg('Aufmaß wird analysiert...')
+    setLoadingMsg('Positionen analysiert...')
     if (!afterFirstHint) setAfterFirstHint(true)
 
     // ── Schritt 1: Extraktion + lokale Mengenberechnung ──────────────────────
@@ -319,21 +409,57 @@ export default function NeuesAngebotPage() {
     } catch { /* Fallback auf alten Flow */ }
 
     if (extRes) {
-      setExtraktionCache(extRes)
-      const mengen = extRes.mengen
+      // Kontext-Analyse: Auto-Anreicherung (Abkleben ergänzen, Nassbereich etc.)
+      const { extraktion_angereichert, hinweise } = analysiereKontext(extRes.extraktion)
+      if (hinweise.length > 0) {
+        extRes = { ...extRes, extraktion: extraktion_angereichert }
+      }
 
-      // Mengen-Rückfragen zeigen wenn Engine sie hat
-      if (mengen.rueckfragen.length > 0) {
-        setMengenRueckfragen(mengen.rueckfragen)
-        setMengenAntworten({})
-        setBerechnetePositionen(mengen.positionen)
-        setMengenWarnungen(mengen.warnungen)
-        setStep('mengen_rueckfragen')
+      setExtraktionCache(extRes)
+      if (extRes.bewertung) setKalkulationsBewertung(extRes.bewertung)
+
+      // Annahmen aus KI-Extraktion speichern
+      const kiAnnahmenListe = (extRes.extraktion.annahmen ?? []).filter(a => !a.startsWith('Automatisch erkannt:'))
+      if (kiAnnahmenListe.length > 0) setKiAnnahmen(kiAnnahmenListe)
+
+      // Implizit-Ergebnisse speichern
+      if (extRes.implizit_positionen?.length > 0) setImplizitPositionen(extRes.implizit_positionen)
+      if (extRes.implizit_flags && Object.keys(extRes.implizit_flags).length > 0) setImplizitFlags(extRes.implizit_flags)
+      if (extRes.korrekturen_erkannt > 0) setKorrekturenAnzahl(extRes.korrekturen_erkannt)
+
+      // Rückfragen zusammenführen: KI (mit Priorität) + lokale Vage-Erkennung
+      // Max 3, sortiert nach Priorität
+      const kiRueckfragen = (extRes.extraktion.rueckfragen ?? []) as KIRueckfrage[]
+      const lokal = generiereRueckfragen(extRes.extraktion)
+
+      // KI-Rückfragen in lokales Format konvertieren
+      const kiAlsLokal: Array<RueckfrageItem & { _prioritaet: number }> = kiRueckfragen.map(r => ({
+        id: r.id,
+        frage: r.frage,
+        kontext: r.betrifft,
+        typ: (r.typ === 'ja_nein' || r.typ === 'meter' ? 'anzahl' : r.typ) as RueckfrageItem['typ'],
+        schnell_antworten: r.schnell_antworten
+          .filter(a => a.wert !== null && typeof a.wert === 'number')
+          .map(a => ({ label: a.label, wert: a.wert as number, einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : 'Stk' })),
+        einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : undefined,
+        _prioritaet: r.prioritaet,
+      }))
+
+      // Alle zusammenführen, deduplizieren nach id, nach Priorität sortieren, max 3
+      const alleRueckfragen = [
+        ...kiAlsLokal,
+        ...lokal.filter(l => !kiAlsLokal.some(k => k.id === l.id)),
+      ]
+        .sort((a, b) => ((a as RueckfrageItem & { _prioritaet?: number })._prioritaet ?? 99) - ((b as RueckfrageItem & { _prioritaet?: number })._prioritaet ?? 99))
+        .slice(0, 3)
+
+      if (alleRueckfragen.length > 0) {
+        setVageRueckfragen(alleRueckfragen)
+        setStep('vage_rueckfragen')
         return
       }
 
-      // Keine Rückfragen → direkt zu Preisfindung
-      await generiereAngebot(text, mengen.positionen)
+      await weiterMitMengen(text, extRes)
       return
     }
 
@@ -341,8 +467,62 @@ export default function NeuesAngebotPage() {
     await analyseTextFallback(text)
   }
 
+  // Mengen-Berechnung nach Extraktion (mit optionalen Vage-Antworten)
+  async function weiterMitMengen(
+    text: string,
+    extRes: ExtraktionResponse,
+    vageAntworten?: Record<string, { wert: number | number[]; einheit: string }>
+  ) {
+    let mengen = extRes.mengen
+
+    if (vageAntworten && Object.keys(vageAntworten).length > 0) {
+      // Extraktion mit Nutzer-Antworten anreichern und Mengen neu berechnen
+      setLoadingMsg('Mengen werden berechnet...')
+      const angereichert = verarbeiteAntworten(
+        extRes.extraktion as Parameters<typeof verarbeiteAntworten>[0],
+        vageAntworten
+      )
+      mengen = berechneMengen(angereichert.gewerk, angereichert)
+    }
+
+    if (mengen.rueckfragen.length > 0) {
+      setMengenRueckfragen(mengen.rueckfragen)
+      setMengenAntworten({})
+      setBerechnetePositionen(mengen.positionen)
+      setMengenWarnungen(mengen.warnungen)
+      setStep('mengen_rueckfragen')
+      return
+    }
+
+    await generiereAngebot(text, mengen.positionen)
+  }
+
+  // Handler: Vage-Rückfragen beantwortet
+  async function handleVageRueckfragenFertig(
+    antworten: Record<string, { wert: number | number[]; einheit: string }>
+  ) {
+    setStep('loading')
+    setLoadingMsg('Mengen werden berechnet...')
+    if (extraktionCache) {
+      await weiterMitMengen(transcript, extraktionCache, antworten)
+    } else {
+      await analyseTextFallback(transcript)
+    }
+  }
+
+  // Handler: Vage-Rückfragen übersprungen
+  async function handleVageUeberspringen() {
+    setStep('loading')
+    setLoadingMsg('Positionen analysiert...')
+    if (extraktionCache) {
+      await weiterMitMengen(transcript, extraktionCache)
+    } else {
+      await analyseTextFallback(transcript)
+    }
+  }
+
   async function generiereAngebot(text: string, positionen: BerechnetePosition[]) {
-    setLoadingMsg('Preise werden zugeordnet...')
+    setLoadingMsg('Preise zuordnen...')
 
     // Session-Modus: Items ergänzen statt ersetzen
     if (sessionId && items.length > 0) {
@@ -362,6 +542,12 @@ export default function NeuesAngebotPage() {
       setStep('review')
       return
     }
+
+    // Kontextuelles Matching parallel zur GPT-Generierung starten
+    const extraktion = extraktionCache?.extraktion
+    const matchingPromise = extraktion && positionen.length > 0
+      ? matchePositionen(positionen, extraktion).catch(() => null)
+      : Promise.resolve(null)
 
     let r: Response | null = null
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -387,16 +573,36 @@ export default function NeuesAngebotPage() {
       return
     }
 
-    const result = await r.json()
+    const [result, matchingErgebnis] = await Promise.all([r.json(), matchingPromise])
 
-    // Konfidenz aus Engine in Items mergen
+    // Konfidenz + Matching aus Engine in Items mergen
     const engineByTitle = new Map(positionen.map(p => [p.beschreibung.toLowerCase(), p]))
+    const matchByTitle = matchingErgebnis
+      ? new Map(matchingErgebnis.map((m, i) => [positionen[i]?.beschreibung?.toLowerCase() ?? '', m]))
+      : new Map()
+
     const enrichedItems: DraftItem[] = (result.items ?? []).map((item: DraftItem) => {
       const eng = engineByTitle.get(item.title.toLowerCase())
-      return eng
+      const match = matchByTitle.get(item.title.toLowerCase())
+      const base = eng
         ? { ...item, konfidenz: eng.konfidenz, berechnungsweg: eng.berechnungsweg, annahmen: eng.annahmen }
         : item
+      if (match && match.position_id && match.confidence >= 0.65 && match.unit_price_db) {
+        return {
+          ...base,
+          unit_price: match.unit_price_db,
+          position_id: match.position_id,
+          kontext_genutzt: match.kontext_genutzt,
+          aus_woerterbuch: match.aus_woerterbuch ?? false,
+        }
+      }
+      return base
     })
+
+    // Validierung: Wandfläche < Bodenfläche, Menge 0, etc.
+    setLoadingMsg('Angebot prüfen...')
+    const val = validiereAngebot(enrichedItems)
+    setValidierung(val)
 
     setItems(enrichedItems)
     setNotes(result.notizen ?? '')
@@ -516,6 +722,10 @@ export default function NeuesAngebotPage() {
       if (field === 'quantity' && item.base_price !== undefined && item.mengenrabatt_tiers) {
         updated.unit_price = applyMengenrabatt(item.base_price, Number(value), item.mengenrabatt_tiers)
       }
+      // Preisänderung an gematchter Position → Learning-Bestätigung ausschließen
+      if (field === 'unit_price' && item.position_id && Number(value) !== item.unit_price) {
+        updated.manuell_geaendert = true
+      }
       return updated
     }))
   }
@@ -574,6 +784,14 @@ export default function NeuesAngebotPage() {
       if (eingaben.length > 0) {
         await supabase.from('angebot_eingaben').update({ angebot_id: data.id }).is('angebot_id', null)
       }
+      // Lernmatch für alle gematchten Positionen bestätigen (fire-and-forget)
+      const gewerk = extraktionCache?.extraktion?.gewerk ?? ''
+      const lernEintraege = items
+        .filter(it => it.position_id && !it.manuell_geaendert)
+        .map(it => ({ beschreibung_original: it.title, position_id: it.position_id!, gewerk_id: gewerk }))
+      if (lernEintraege.length > 0) {
+        fetch('/api/ki/lernend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eintraege: lernEintraege }) }).catch(() => {})
+      }
       router.push(`/angebot/${data.id}`)
     } catch {
       setError('Verbindungsfehler. Bitte nochmal versuchen.')
@@ -597,12 +815,59 @@ export default function NeuesAngebotPage() {
   // LOADING
   // ─────────────────────────────────────────────────────────────────────────
   if (step === 'loading') {
+    const SCHRITT_EMOJI: Record<string, string> = {
+      'Aufnahme': '🎙',
+      'Transkri': '🎙',
+      'Positionen': '🔍',
+      'analysiert': '🔍',
+      'Rückfrage': '❓',
+      'Mengen': '📐',
+      'Preise': '💰',
+      'zugeordnet': '💰',
+      'Angebot prüfen': '✅',
+      'Nochmal': '🔄',
+    }
+    const emoji = Object.entries(SCHRITT_EMOJI).find(([k]) => loadingMsg.includes(k))?.[1] ?? '🔨'
+
+    const SCHRITTE = [
+      { schluessel: ['Aufnahme', 'Transkri'], label: 'Aufnahme verarbeiten' },
+      { schluessel: ['Positionen', 'analysiert', 'Aufmaß'], label: 'Positionen erkennen' },
+      { schluessel: ['Mengen'], label: 'Mengen berechnen' },
+      { schluessel: ['Preise', 'zugeordnet'], label: 'Preise zuordnen' },
+      { schluessel: ['Angebot prüfen'], label: 'Angebot prüfen' },
+    ]
+    const aktuellerSchritt = SCHRITTE.findIndex(s => s.schluessel.some(k => loadingMsg.includes(k)))
+
     return (
       <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center gap-5 px-5">
-        <div className="text-6xl animate-bounce">🔨</div>
+        <div className="text-6xl animate-bounce">{emoji}</div>
         <div className="font-black text-[#2C2C2C] text-xl text-center">{loadingMsg}</div>
+        {aktuellerSchritt >= 0 && (
+          <div className="flex gap-1.5 mt-1">
+            {SCHRITTE.map((_, i) => (
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${
+                i < aktuellerSchritt ? 'w-6 bg-[#F5C400]' :
+                i === aktuellerSchritt ? 'w-8 bg-[#2C2C2C]' :
+                'w-4 bg-[#2C2C2C]/15'
+              }`} />
+            ))}
+          </div>
+        )}
         <div className="text-[#2C2C2C]/40 font-semibold text-sm">Einen Moment...</div>
       </div>
+    )
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // VAGE-RÜCKFRAGEN (neues Dialog-System für unklare Mengenangaben)
+  // ─────────────────────────────────────────────────────────────────────────
+  if (step === 'vage_rueckfragen' && vageRueckfragen.length > 0) {
+    return (
+      <RueckfragenScreen
+        fragen={vageRueckfragen}
+        onFertig={handleVageRueckfragenFertig}
+        onUeberspringen={handleVageUeberspringen}
+      />
     )
   }
 
@@ -771,6 +1036,24 @@ export default function NeuesAngebotPage() {
           <div className="text-white font-black text-xl mt-1">Angebot prüfen</div>
           {zusammenfassung && <div className="mt-2 text-white/50 text-xs font-semibold line-clamp-2">{zusammenfassung}</div>}
 
+          {/* Annahmen-Übersicht */}
+          {kiAnnahmen.length > 0 && (
+            <button
+              onClick={() => setAnnahmenOffen(v => !v)}
+              className="mt-3 text-white/50 text-xs font-semibold flex items-center gap-1 hover:text-white/70 transition-colors"
+            >
+              ⓘ {kiAnnahmen.length} Annahme{kiAnnahmen.length > 1 ? 'n' : ''} getroffen
+              <ChevronRight size={12} className={`transition-transform ${annahmenOffen ? 'rotate-90' : ''}`} />
+            </button>
+          )}
+          {annahmenOffen && kiAnnahmen.length > 0 && (
+            <div className="mt-2 bg-white/10 rounded-xl px-3 py-2 flex flex-col gap-1">
+              {kiAnnahmen.map((a, i) => (
+                <div key={i} className="text-white/60 text-xs font-semibold">· {a}</div>
+              ))}
+            </div>
+          )}
+
           {/* Eingabe-Protokoll */}
           {eingaben.length > 0 && (
             <button onClick={() => setShowEingaben(v => !v)} className="mt-3 text-[#F5C400] text-xs font-black flex items-center gap-1">
@@ -793,6 +1076,75 @@ export default function NeuesAngebotPage() {
                 <p className="text-xs text-[#2C2C2C]/60 font-semibold line-clamp-2">{e.transkript}</p>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Validierungsfehler */}
+        {validierung && validierung.fehler.length > 0 && (
+          <div className="mx-5 mt-4 bg-red-50 border border-red-200 rounded-2xl px-4 py-3 flex flex-col gap-1">
+            <div className="font-black text-red-700 text-sm flex items-center gap-1.5">⚠️ Bitte prüfen</div>
+            {validierung.fehler.map((f, i) => (
+              <div key={i} className="text-red-600 text-xs font-semibold">{f.nachricht}</div>
+            ))}
+          </div>
+        )}
+        {validierung && validierung.fehler.length === 0 && validierung.warnungen.length > 0 && (
+          <div className="mx-5 mt-4 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex flex-col gap-1">
+            <div className="font-black text-amber-700 text-sm flex items-center gap-1.5">💡 Hinweise</div>
+            {validierung.warnungen.map((w, i) => (
+              <div key={i} className="text-amber-600 text-xs font-semibold">{w}</div>
+            ))}
+          </div>
+        )}
+
+        {/* Korrektur-Banner */}
+        {korrekturnAnzahl > 0 && (
+          <div className="mx-5 mt-3 bg-blue-50 border border-blue-200 rounded-2xl px-4 py-3">
+            <div className="font-black text-blue-700 text-sm">
+              ⓘ {korrekturnAnzahl} Korrektur{korrekturnAnzahl > 1 ? 'en' : ''} erkannt und angewendet
+            </div>
+            <div className="text-blue-600 text-xs font-semibold mt-0.5">
+              Nur der zuletzt genannte Wert wird verwendet.
+            </div>
+          </div>
+        )}
+
+        {/* Implizit-Flags Badges */}
+        {Object.keys(implizitFlags).length > 0 && (
+          <div className="mx-5 mt-3 flex flex-wrap gap-2">
+            {!!implizitFlags.nassbereich && (
+              <span className="text-[11px] font-black bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full border border-blue-200">🚿 Nassbereich</span>
+            )}
+            {!!implizitFlags.altbau && (
+              <span className="text-[11px] font-black bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full border border-amber-200">🏚 Altbau</span>
+            )}
+            {!!implizitFlags.bewohnt && (
+              <span className="text-[11px] font-black bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full border border-orange-200">👥 Bewohnt</span>
+            )}
+            {!!implizitFlags.denkmalschutz && (
+              <span className="text-[11px] font-black bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full border border-purple-200">🏛 Denkmalschutz</span>
+            )}
+            {!!implizitFlags.fussbodenheizung && (
+              <span className="text-[11px] font-black bg-red-50 text-red-700 px-2.5 py-1 rounded-full border border-red-200">🔥 Fußbodenheizung</span>
+            )}
+            {!!implizitFlags.brandschutz && (
+              <span className="text-[11px] font-black bg-red-50 text-red-700 px-2.5 py-1 rounded-full border border-red-200">🛡 Brandschutz</span>
+            )}
+            {!!implizitFlags.smart_home && (
+              <span className="text-[11px] font-black bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-200">🏠 Smart Home</span>
+            )}
+          </div>
+        )}
+
+        {/* Implizit ergänzte Positionen Banner */}
+        {implizitPositionen.length > 0 && (
+          <div className="mx-5 mt-3 bg-[#F5C400]/10 border border-[#F5C400]/30 rounded-2xl px-4 py-3">
+            <div className="font-black text-[#8B7000] text-sm flex items-center gap-1.5">✨ Automatisch erkannt</div>
+            <div className="flex flex-col gap-1 mt-1.5">
+              {implizitPositionen.map((p, i) => (
+                <div key={i} className="text-[#8B7000] text-xs font-semibold">· {p}</div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -899,6 +1251,30 @@ export default function NeuesAngebotPage() {
                               <div className="text-[11px] text-[#2C2C2C]/50 font-semibold mt-0.5 pl-3">{item.berechnungsweg}</div>
                             </details>
                           )}
+                          {item.kontext_genutzt && (
+                            <span
+                              className="inline-block mt-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded"
+                              title="Diese Position wurde durch den Gesamtkontext des Auftrags erkannt"
+                            >
+                              🔗 Kontext
+                            </span>
+                          )}
+                          {item.aus_woerterbuch && (
+                            <span
+                              className="inline-block mt-1 ml-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded"
+                              title="Aus deinem persönlichen Wörterbuch — kein KI-Call nötig"
+                            >
+                              ⚡ Gelernt
+                            </span>
+                          )}
+                          {item.implizit_erkannt && (
+                            <span
+                              className="inline-block mt-1 ml-1 text-[10px] font-black text-[#F5C400] bg-[#F5C400]/15 px-1.5 py-0.5 rounded"
+                              title="Automatisch ergänzt — aus dem Kontext erkannt"
+                            >
+                              ✨ Automatisch
+                            </span>
+                          )}
                         </div>
                         <button onClick={() => removeItem(idx)} className="mt-0.5 p-1 shrink-0">
                           <Trash2 size={16} color="#ef4444" />
@@ -921,6 +1297,11 @@ export default function NeuesAngebotPage() {
                 + Pauschale hinzufügen
               </button>
             </div>
+          )}
+
+          {/* KI-Kalkulationsbewertung */}
+          {kalkulationsBewertung && (
+            <KalkulationsBewertungCard bewertung={kalkulationsBewertung} />
           )}
 
           {/* Notizen */}
@@ -1064,7 +1445,27 @@ export default function NeuesAngebotPage() {
   return (
     <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
       <div className="bg-[#2C2C2C] px-5 pt-12 pb-0">
-        <button onClick={() => router.push('/dashboard')} className="text-white/50 text-sm font-semibold">← Dashboard</button>
+        <div className="flex items-center justify-between">
+          <button onClick={() => router.push('/dashboard')} className="text-white/50 text-sm font-semibold">← Dashboard</button>
+          {/* ⓘ Button — immer sichtbar */}
+          <div className="relative">
+            <button
+              onClick={() => { setHinweisOffen(true); setHinweisSchliessbar(true) }}
+              className="p-1.5 text-white/40 hover:text-white/70 transition-colors"
+              aria-label="Beispiele anzeigen"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+            </button>
+            {tooltipSichtbar && (
+              <div className="absolute right-0 top-full mt-1.5 bg-[#F5C400] text-[#2C2C2C] text-xs font-black px-3 py-1.5 rounded-lg whitespace-nowrap shadow-lg">
+                Beispiele anzeigen
+                <div className="absolute -top-1.5 right-3 w-3 h-3 bg-[#F5C400] rotate-45" />
+              </div>
+            )}
+          </div>
+        </div>
         <div className="text-white font-black text-xl mt-1 mb-4">Neues Angebot</div>
         <div className="flex">
           <button onClick={() => setMode('voice')} className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors ${mode === 'voice' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}>🎙 Sprache</button>
@@ -1187,6 +1588,14 @@ export default function NeuesAngebotPage() {
         {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{error}</div>}
         {rateLimitMsg && <div className="bg-[#FFF9E6] border border-[#F5C400]/40 text-[#92400E] rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{rateLimitMsg}</div>}
       </div>
+
+      {/* Aufnahme-Hinweis Bottom Sheet */}
+      <AufnahmeHinweisSheet
+        open={hinweisOffen}
+        onClose={() => setHinweisOffen(false)}
+        schliessbar={hinweisSchliessbar}
+        gewerk={gewerk || undefined}
+      />
     </div>
   )
 }

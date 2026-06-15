@@ -2,17 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAIClient, WHISPER_MODEL } from '@/lib/ai-client'
 import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
+import { normalisierenTranskript } from '@/lib/transkript-normalisierer'
 import * as Sentry from '@sentry/nextjs'
 
-// Whisper-Transkription kann >10s dauern
 export const maxDuration = 60
+
+const WHISPER_PROMPT = `Handwerker spricht Aufmaß für Angebotskalkulation ein. Fachbegriffe: Malerarbeiten: Anstrich, Voranstrich, Schlussanstrich, Dispersionsfarbe, Silikonharzfarbe, Raufaser, Vliestapete, Spachtelmasse, Tiefengrund, Grundierung, Abdecken, Abkleben, Sockelleisten. Trockenbau: Rigips, Gipskarton, GK, Ständerwand, CW-Profil, UW-Profil, Unterdecke, Abhängung, Mineralwolle, Rockwool, Knauf, Q2, Q3, Spachtelqualität. Fliesen: Feinsteinzeug, Naturstein, Bodenfliesen, Wandfliesen, Verfugung, Fugenmasse, Fliesenkleber, Verbundabdichtung, Dichtschlämme, Silikon, bodengleich, Ablauf, Rinne, Mosaik, Verschnitt, Format, Rektifiziert. Bodenbeläge: Parkett, Laminat, Vinyl, Designboden, Kork, Linoleum, Teppich, Sockelleisten, Übergangsschiene, Trittschalldämmung, Dampfsperre, Estrich, Ausgleichsmasse, Schleifen, Versiegeln, Ölen, Wachsen. Elektro: Unterputz, Aufputz, Steckdose, Schuko, Lichtschalter, Dimmer, Unterverteilung, Sicherungskasten, Herdanschluss, CEE, Wallbox, Ladestation, Einbaustrahler, Spots, Downlights, Leerrohre, NYM-Leitung, Kabelkanal. Sanitär: Waschtisch, Waschbecken, WC, Toilette, Dusche, Duschtasse, bodengleich, Badewanne, Urinal, Armatur, Einhebelmischer, Thermostat, Heizkörper, Ventil, Thermostatventil, Heizungsrohr, Kupfer, Verbundrohr, Silikon, Dichtung, Rosette. Maße: Quadratmeter, qm, m2, Laufmeter, lfdm, lfm, Kubikmeter, cbm, m3, Stück, Stk, Pauschale, mal, auf, breit, lang, hoch, tief. Zahlen werden als Ziffern geschrieben. Dezimaltrennzeichen ist Komma.`
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  // Rate Limit prüfen
   const { data: company } = await supabase.from('companies').select('plan').eq('user_id', user.id).single()
   const plan = (company as { plan?: string } | null)?.plan ?? 'starter'
 
@@ -37,13 +38,12 @@ export async function POST(req: NextRequest) {
     : audio.type.includes('mp3') ? 'mp3'
     : 'webm'
 
-  // Dateiname-Endung aus dem Original-Dateinamen ableiten (Frontend setzt bereits korrekte Endung)
   const originalName = audio.name ?? ''
   const resolvedExt = originalName.endsWith('.m4a') ? 'm4a'
     : originalName.endsWith('.ogg') ? 'ogg'
     : originalName.endsWith('.mp3') ? 'mp3'
     : originalName.endsWith('.wav') ? 'wav'
-    : ext  // MIME-Type-basierter Fallback
+    : ext
 
   const audioFile = new File([await audio.arrayBuffer()], `aufnahme.${resolvedExt}`, {
     type: audio.type || 'audio/webm',
@@ -55,16 +55,40 @@ export async function POST(req: NextRequest) {
       file: audioFile,
       model: WHISPER_MODEL,
       language: 'de',
+      temperature: 0,
+      response_format: 'verbose_json',
+      prompt: WHISPER_PROMPT,
     })
 
-    if (!transcription.text?.trim()) {
+    const rohText = transcription.text?.trim() ?? ''
+    if (!rohText) {
       return NextResponse.json({ error: 'Keine Sprache erkannt. Bitte nochmal versuchen.' }, { status: 400 })
     }
 
-    // Kosten tracken (~$0.006/min, Schätzung)
+    // Konfidenz aus Segmenten auslesen
+    interface Segment { avg_logprob?: number }
+    const segs = (transcription as unknown as { segments?: Segment[] }).segments ?? []
+    const konfidenzGesamt = segs.length > 0
+      ? segs.reduce((sum, seg) => sum + (seg.avg_logprob ?? 0), 0) / segs.length
+      : 0
+
+    if (konfidenzGesamt < -1.0 && segs.length > 0) {
+      console.warn('Niedrige Transkriptions-Konfidenz:', konfidenzGesamt, '— Aufnahme-Qualität möglicherweise schlecht')
+    }
+
+    // Dialekt-Normalisierung + Fachbegriff-Standardisierung
+    const normalisierung = normalisierenTranskript(rohText)
+
     await trackKIUsage({ userId: user.id, endpunkt: 'transkription', kostenEur: 0.006 })
 
-    return NextResponse.json({ text: transcription.text })
+    return NextResponse.json({
+      text: normalisierung.normalisiert,
+      text_original: rohText,
+      hat_korrektur: normalisierung.hat_korrektur,
+      hat_raumwechsel: normalisierung.hat_raumwechsel,
+      normalisierungs_aenderungen: normalisierung.aenderungen,
+      konfidenz: konfidenzGesamt,
+    })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unbekannter Fehler'
     console.error('Transkription Fehler:', msg)
