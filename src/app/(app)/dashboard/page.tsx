@@ -9,7 +9,8 @@ import DashboardFilters from '@/components/DashboardFilters'
 import DraftQuotes from '@/components/DraftQuotes'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
-import { Mic, ChevronRight } from 'lucide-react'
+import { Mic, ChevronRight, MapPin } from 'lucide-react'
+import { NeuerEntwurfButton } from '@/components/NeuerEntwurfButton'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   draft:          { label: 'Entwurf',    color: 'bg-[#F7F7F5] text-[#2C2C2C]/50'  },
@@ -59,14 +60,16 @@ export default async function DashboardPage({
 
   let query = supabase
     .from('quotes')
-    .select('*, customer:customers(name), sent_via')
+    .select('*, customer:customers(name), sent_via, entwurf_gespeichert_am')
     .eq('company_id', company?.id)
     .order('created_at', { ascending: false })
   if (status) query = query.eq('status', status)
 
   const { data: allQuotes } = await query
 
-  const drafts = (allQuotes ?? []).filter(qt => qt.status === 'draft')
+  const allDrafts = (allQuotes ?? []).filter(qt => qt.status === 'draft')
+  const entwuerfe = allDrafts.filter(qt => qt.entwurf_gespeichert_am)
+  const drafts = allDrafts.filter(qt => !qt.entwurf_gespeichert_am)
   const openSessions = (allQuotes ?? []).filter(qt => qt.status === 'in_bearbeitung')
   const nonDraftQuotes = (allQuotes ?? []).filter(qt => qt.status !== 'draft' && qt.status !== 'in_bearbeitung')
 
@@ -114,6 +117,60 @@ export default async function DashboardPage({
           Neues Angebot
         </Link>
       </div>
+
+      {/* ── ENTWÜRFE (Baustelle) ── */}
+      {(entwuerfe.length > 0 || true) && (
+        <div className="px-5 md:px-8 mt-5">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-1.5">
+              <MapPin size={13} className="text-[#2C2C2C]/40" />
+              <span className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest">
+                Auf der Baustelle
+              </span>
+            </div>
+            <NeuerEntwurfButton />
+          </div>
+
+          {entwuerfe.length > 0 && (
+            <div className="flex flex-col gap-2 mb-1">
+              {entwuerfe.map((qt: Quote & { customer?: { name: string } | null; entwurf_gespeichert_am?: string | null }) => (
+                <a key={qt.id} href={`/angebot/${qt.id}/entwurf`}
+                  className="flex items-center justify-between bg-white border border-[#F5C400]/40 rounded-2xl px-4 py-3.5 hover:bg-[#FFFBEA] transition-colors group shadow-sm">
+                  <div>
+                    <div className="font-extrabold text-[#2C2C2C] text-[14px]">
+                      {qt.customer?.name ?? 'Entwurf'}
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-[11px] font-extrabold text-[#F5C400] bg-[#F5C400]/15 px-2 py-0.5 rounded-full">
+                        Auf Baustelle
+                      </span>
+                      {qt.entwurf_gespeichert_am && (
+                        <span className="text-[11px] font-semibold text-[#2C2C2C]/30">
+                          {new Date(qt.entwurf_gespeichert_am).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-[#2C2C2C]/60 text-[13px] tabular-nums">
+                      {qt.total_gross > 0 ? new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(qt.total_gross) : '—'}
+                    </span>
+                    <ChevronRight size={14} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60 transition-colors" />
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {entwuerfe.length === 0 && (
+            <div className="bg-white/60 border border-dashed border-[#2C2C2C]/10 rounded-2xl px-5 py-5 text-center">
+              <div className="text-[#2C2C2C]/30 font-semibold text-[13px]">
+                Keine offenen Entwürfe. Fang auf der Baustelle an.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── MOBILE STATS (horizontal scroll pills) ── */}
       <div className="md:hidden flex gap-3 px-5 pt-4 pb-2 overflow-x-auto scrollbar-hide">

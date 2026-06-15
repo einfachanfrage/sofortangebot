@@ -10,7 +10,40 @@ export type AccountingSoftware =
   | 'sage'
   | 'plancraft'
   | 'none'
-export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected' | 'in_bearbeitung'
+export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected' | 'in_bearbeitung' | 'archived'
+
+export type EntwurfVerarbeitungStatus = 'ausstehend' | 'verarbeitung' | 'fertig' | 'fehler'
+export type EntwurfAufnahmeTyp = 'sprache' | 'notiz' | 'foto'
+
+export interface EntwurfAufnahme {
+  id: string
+  angebot_id: string
+  typ: EntwurfAufnahmeTyp
+  audio_url: string | null
+  audio_dauer_sekunden: number | null
+  transkript: string | null
+  erkannte_positionen: ErkanntPosition[]
+  verarbeitung_status: EntwurfVerarbeitungStatus
+  notiz_text: string | null
+  foto_url: string | null
+  foto_beschreibung: string | null
+  in_pdf: boolean
+  erstellt_am: string
+  geraet: string | null
+  sortierung: number
+  // für Signed URLs
+  audio_signed_url?: string
+  foto_signed_url?: string
+}
+
+export interface ErkanntPosition {
+  titel: string
+  menge: number
+  einheit: string
+  einzelpreis: number
+  gesamtpreis: number
+  erkannt: boolean
+}
 export type VatRate = 19 | 7 | 0
 
 export interface Company {
