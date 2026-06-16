@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
     : SYSTEM_PROMPT_OHNE_MENGEN.replace('{PREISE}', priceList).replace('{GEWERKE}', gewerkeContext || '(nicht angegeben — erkenne aus dem Aufmaß)')
 
   const userContent = berechnetePositionen
-    ? `Aufmaß:\n${text}\n\nBERECHNETE POSITIONEN (Mengen sind verbindlich — nur Preise ergänzen):\n${berechnetePositionen.map(p => `- ${p.beschreibung}: ${p.menge} ${p.einheit}${p.annahmen.length ? ` [Annahmen: ${p.annahmen.join(', ')}]` : ''}`).join('\n')}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
+    ? `Aufmaß:\n${text}\n\nBERECHNETE POSITIONEN (Mengen sind verbindlich — übernimm quantity EXAKT so wie angegeben, erfinde keine eigenen Werte):\n${berechnetePositionen.map(p => `- ${p.beschreibung}: ${p.menge} ${p.einheit}${(p.annahmen ?? []).length ? ` [Annahmen: ${(p.annahmen ?? []).join(', ')}]` : ''}`).join('\n')}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
     : `Aufmaß:\n\n${text}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
 
   try {
