@@ -444,17 +444,47 @@ export default function NeuesAngebotPage() {
       const lokal = generiereRueckfragen(extRes.extraktion)
 
       // KI-Rückfragen in lokales Format konvertieren
-      const kiAlsLokal: Array<RueckfrageItem & { _prioritaet: number }> = kiRueckfragen.map(r => ({
-        id: r.id,
-        frage: r.frage,
-        kontext: r.betrifft,
-        typ: (r.typ === 'ja_nein' || r.typ === 'meter' ? 'anzahl' : r.typ) as RueckfrageItem['typ'],
-        schnell_antworten: (r.schnell_antworten ?? [])
+      const SCHNELL_FENSTER: import('@/lib/mengen/rueckfragen-generator').SchnellAntwort[] = [
+        { label: 'Standard 1,20×1,00 m', wert: [1.2, 1.0], einheit: 'm' },
+        { label: '0,60×0,80 m', wert: [0.6, 0.8], einheit: 'm' },
+        { label: '1,00×1,00 m', wert: [1.0, 1.0], einheit: 'm' },
+        { label: '1,50×1,20 m', wert: [1.5, 1.2], einheit: 'm' },
+      ]
+      const SCHNELL_TUER: import('@/lib/mengen/rueckfragen-generator').SchnellAntwort[] = [
+        { label: 'Standard 0,90×2,10 m', wert: [0.9, 2.1], einheit: 'm' },
+        { label: '0,80×2,00 m', wert: [0.8, 2.0], einheit: 'm' },
+        { label: '1,00×2,10 m', wert: [1.0, 2.1], einheit: 'm' },
+      ]
+
+      const kiAlsLokal: Array<RueckfrageItem & { _prioritaet: number }> = kiRueckfragen.map(r => {
+        const frageText = r.frage.toLowerCase()
+        const istFenster = frageText.includes('fenster')
+        const istTuer = frageText.includes('tür') || frageText.includes('tuer')
+        const istMasse = istFenster || istTuer || r.typ === 'masse_einzel'
+
+        const typ: RueckfrageItem['typ'] = istMasse ? 'masse_einzel'
+          : (r.typ === 'ja_nein' || r.typ === 'meter') ? 'anzahl'
+          : r.typ as RueckfrageItem['typ']
+
+        const basisSchnell = (r.schnell_antworten ?? [])
           .filter(a => a.wert !== null && typeof a.wert === 'number')
-          .map(a => ({ label: a.label, wert: a.wert as number, einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : 'Stk' })),
-        einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : undefined,
-        _prioritaet: r.prioritaet,
-      }))
+          .map(a => ({ label: a.label, wert: a.wert as number, einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : 'Stk' }))
+
+        const schnell_antworten = basisSchnell.length > 0 ? basisSchnell
+          : istFenster ? SCHNELL_FENSTER
+          : istTuer ? SCHNELL_TUER
+          : []
+
+        return {
+          id: r.id,
+          frage: r.frage,
+          kontext: r.betrifft,
+          typ,
+          schnell_antworten,
+          einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : undefined,
+          _prioritaet: r.prioritaet,
+        }
+      })
 
       // Alle zusammenführen, deduplizieren nach id, nach Priorität sortieren, max 3
       const alleRueckfragen = [

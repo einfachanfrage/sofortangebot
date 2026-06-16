@@ -26,56 +26,81 @@ function MasseEinzelInput({
   onChange: (a: Antwort) => void
 }) {
   const current = Array.isArray(antwort?.wert) ? antwort!.wert as number[] : [0, 0]
-  const [laenge, setLaenge] = useState(current[0] > 0 ? String(current[0]).replace('.', ',') : '')
-  const [breite, setBreite] = useState(current[1] > 0 ? String(current[1]).replace('.', ',') : '')
+  const [feld1, setFeld1] = useState(current[0] > 0 ? String(current[0]).replace('.', ',') : '')
+  const [feld2, setFeld2] = useState(current[1] > 0 ? String(current[1]).replace('.', ',') : '')
 
-  const l = parseFloat(laenge.replace(',', '.')) || 0
-  const b = parseFloat(breite.replace(',', '.')) || 0
-  const flaeche = l > 0 && b > 0 ? Math.round(l * b * 100) / 100 : null
-  const umfang = l > 0 && b > 0 ? Math.round((2 * l + 2 * b) * 100) / 100 : null
+  const frageText = frage.frage.toLowerCase()
+  const istFenster = frageText.includes('fenster')
+  const istTuer = frageText.includes('tür') || frageText.includes('tuer')
+  const istOeffnung = istFenster || istTuer
+  const label1 = istOeffnung ? 'Breite' : 'Länge'
+  const label2 = istOeffnung ? 'Höhe' : 'Breite'
+  const placeholder1 = istFenster ? '1,20' : istTuer ? '0,90' : '5,20'
+  const placeholder2 = istFenster ? '1,00' : istTuer ? '2,10' : '4,80'
+
+  const v1 = parseFloat(feld1.replace(',', '.')) || 0
+  const v2 = parseFloat(feld2.replace(',', '.')) || 0
+  const flaeche = v1 > 0 && v2 > 0 ? Math.round(v1 * v2 * 100) / 100 : null
+  const umfang = !istOeffnung && v1 > 0 && v2 > 0 ? Math.round((2 * v1 + 2 * v2) * 100) / 100 : null
 
   useEffect(() => {
-    if (l > 0 && b > 0) onChange({ wert: [l, b], einheit: 'm' })
-  }, [l, b]) // eslint-disable-line react-hooks/exhaustive-deps
+    if (v1 > 0 && v2 > 0) onChange({ wert: [v1, v2], einheit: 'm' })
+  }, [v1, v2]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function applySchnell(s: SchnellAntwort) {
     if (Array.isArray(s.wert) && s.wert.length === 2) {
-      setLaenge(String(s.wert[0]).replace('.', ','))
-      setBreite(String(s.wert[1]).replace('.', ','))
+      setFeld1(String(s.wert[0]).replace('.', ','))
+      setFeld2(String(s.wert[1]).replace('.', ','))
     }
   }
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Schnell-Chips */}
-      <div className="flex flex-wrap gap-2">
-        {frage.schnell_antworten.map(s => {
-          const aktiv = Array.isArray(antwort?.wert) &&
-            (antwort!.wert as number[])[0] === (Array.isArray(s.wert) ? s.wert[0] : 0) &&
-            (antwort!.wert as number[])[1] === (Array.isArray(s.wert) ? s.wert[1] : 0)
-          return (
-            <button
-              key={s.label}
-              onClick={() => applySchnell(s)}
-              className={`text-[13px] font-extrabold px-3 py-1.5 rounded-full border-2 transition-colors ${aktiv ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]' : 'bg-white border-[#2C2C2C]/15 text-[#2C2C2C]/60'}`}
-            >
-              {s.label}
-            </button>
-          )
-        })}
-      </div>
+      {/* Hint für Öffnungen */}
+      {istOeffnung && (
+        <div className="bg-[#2C2C2C]/5 rounded-xl px-4 py-3 text-[13px] text-[#2C2C2C]/60 font-semibold">
+          Wenn du's nicht genau weißt — einfach &ldquo;Standard&rdquo; wählen, das passt für die meisten {istFenster ? 'Fenster' : 'Türen'}.
+        </div>
+      )}
 
-      {/* Felder Länge × Breite */}
+      {/* Schnell-Chips */}
+      {frage.schnell_antworten.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {frage.schnell_antworten.map(s => {
+            const aktiv = Array.isArray(antwort?.wert) &&
+              (antwort!.wert as number[])[0] === (Array.isArray(s.wert) ? s.wert[0] : 0) &&
+              (antwort!.wert as number[])[1] === (Array.isArray(s.wert) ? s.wert[1] : 0)
+            const istStandard = s.label.toLowerCase().startsWith('standard')
+            return (
+              <button
+                key={s.label}
+                onClick={() => applySchnell(s)}
+                className={`text-[13px] font-extrabold px-3 py-1.5 rounded-full border-2 transition-colors ${
+                  aktiv
+                    ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]'
+                    : istStandard
+                    ? 'bg-[#2C2C2C] border-[#2C2C2C] text-white'
+                    : 'bg-white border-[#2C2C2C]/15 text-[#2C2C2C]/60'
+                }`}
+              >
+                {s.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Felder */}
       <div className="flex items-center gap-3">
         <div className="flex-1">
-          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">Länge</div>
+          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">{label1}</div>
           <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
             <input
               type="number"
               inputMode="decimal"
-              placeholder="5,20"
-              value={laenge}
-              onChange={e => setLaenge(e.target.value)}
+              placeholder={placeholder1}
+              value={feld1}
+              onChange={e => setFeld1(e.target.value)}
               className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none w-0"
             />
             <span className="text-[#2C2C2C]/40 font-semibold text-sm shrink-0">m</span>
@@ -83,14 +108,14 @@ function MasseEinzelInput({
         </div>
         <div className="text-[#2C2C2C]/30 font-black text-xl mt-4">×</div>
         <div className="flex-1">
-          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">Breite</div>
+          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">{label2}</div>
           <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
             <input
               type="number"
               inputMode="decimal"
-              placeholder="4,80"
-              value={breite}
-              onChange={e => setBreite(e.target.value)}
+              placeholder={placeholder2}
+              value={feld2}
+              onChange={e => setFeld2(e.target.value)}
               className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none w-0"
             />
             <span className="text-[#2C2C2C]/40 font-semibold text-sm shrink-0">m</span>
@@ -102,7 +127,9 @@ function MasseEinzelInput({
       {flaeche !== null && (
         <div className="bg-[#F5C400]/15 border border-[#F5C400]/40 rounded-xl px-4 py-3">
           <div className="font-black text-[#2C2C2C] text-sm">✓ Fläche: {String(flaeche).replace('.', ',')} m²</div>
-          <div className="text-[#2C2C2C]/60 font-semibold text-xs mt-0.5">Umfang: {String(umfang).replace('.', ',')} lfm</div>
+          {umfang !== null && (
+            <div className="text-[#2C2C2C]/60 font-semibold text-xs mt-0.5">Umfang: {String(umfang).replace('.', ',')} lfm</div>
+          )}
         </div>
       )}
     </div>
@@ -245,6 +272,31 @@ function AnzahlInput({
   antwort: Antwort | null
   onChange: (a: Antwort) => void
 }) {
+  const [freitext, setFreitext] = useState('')
+
+  if (frage.schnell_antworten.length === 0) {
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-4 py-3 focus-within:border-[#F5C400]">
+          <input
+            type="number"
+            inputMode="decimal"
+            placeholder="Wert eingeben"
+            autoFocus
+            value={freitext}
+            onChange={e => {
+              setFreitext(e.target.value)
+              const v = parseFloat(e.target.value.replace(',', '.'))
+              if (v > 0) onChange({ wert: v, einheit: frage.einheit ?? 'Stück' })
+            }}
+            className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none"
+          />
+          {frage.einheit && <span className="text-[#2C2C2C]/40 font-semibold shrink-0">{frage.einheit}</span>}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="grid grid-cols-5 gap-2">
       {frage.schnell_antworten.map(s => {
