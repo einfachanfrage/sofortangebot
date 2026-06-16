@@ -39,7 +39,7 @@ function situationIncludes(ext: ExtMitExtra, ...begriffe: string[]): boolean {
 function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: KontextAnalyse['automatische_ergaenzungen']) {
   for (const raum of ext.raeume) {
     // Generisches "streichen" → Wände + Decke
-    if (raum.arbeiten.some(a => a === 'streichen' || a === 'anstreichen') &&
+    if ((raum.arbeiten ?? []).some(a => a === 'streichen' || a === 'anstreichen') &&
         !raum.arbeiten.includes('waende_streichen') &&
         !raum.arbeiten.includes('decke_streichen')) {
       raum.arbeiten = raum.arbeiten.filter(a => a !== 'streichen' && a !== 'anstreichen')
@@ -75,14 +75,14 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
     }
 
     // Voranstrich bei Neuputz / frischem Putz
-    if (raum.arbeiten.some(a => a.includes('spachtel') || a.includes('neuputz') || a.includes('glätten')) &&
+    if ((raum.arbeiten ?? []).some(a => a.includes('spachtel') || a.includes('neuputz') || a.includes('glätten')) &&
         !raum.arbeiten.includes('voranstrich')) {
       raum.arbeiten.push('voranstrich')
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Tiefengrund/Voranstrich', grund: 'Auf Spachtel/Neuputz immer nötig' })
     }
 
     // Fensterrahmen lackieren ohne Schutz der Scheiben
-    if (raum.arbeiten.some(a => a.includes('fenster') || a.includes('lackieren')) &&
+    if ((raum.arbeiten ?? []).some(a => a.includes('fenster') || a.includes('lackieren')) &&
         !raum.arbeiten.includes('abkleben')) {
       raum.arbeiten.push('abkleben')
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Abkleben Scheiben/Rahmen', grund: 'Vor Lackierarbeiten an Fenstern' })
@@ -116,7 +116,7 @@ function anreichernFliesen(ext: ExtMitExtra, hinweise: string[], ergaenzungen: K
 
     // "Bad" ohne Spezifikation → Boden + Wände komplett
     if ((name.includes('bad') || name.includes('wc') || name.includes('dusche')) &&
-        bereich.arbeiten.some(a => a.includes('fliesen') || a.includes('verlegen') || a.includes('neu')) &&
+        (bereich.arbeiten ?? []).some(a => a.includes('fliesen') || a.includes('verlegen') || a.includes('neu')) &&
         !bereich.arbeiten.includes('boden_fliesen') &&
         !bereich.arbeiten.includes('wand_fliesen')) {
       bereich.arbeiten.push('boden_fliesen', 'wand_fliesen')
@@ -139,7 +139,7 @@ function anreichernFliesen(ext: ExtMitExtra, hinweise: string[], ergaenzungen: K
     }
 
     // "Komplett" / "erneuern" / "neu" → Altfliesen entfernen als Rückfrage
-    if (bereich.arbeiten.some(a => a.includes('komplett') || a.includes('erneuern') || a.includes('neu'))) {
+    if ((bereich.arbeiten ?? []).some(a => a.includes('komplett') || a.includes('erneuern') || a.includes('neu'))) {
       addRueckfrage(ext, {
         id: `altfliesen_${bereich.name.toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Müssen die alten Fliesen in "${bereich.name}" entfernt werden?`,
@@ -167,7 +167,7 @@ function anreichernFliesen(ext: ExtMitExtra, hinweise: string[], ergaenzungen: K
     }
 
     // Diagonal-Verlegung → Verschnitt 15% statt 10%
-    if (bereich.arbeiten.some(a => a.includes('diagonal'))) {
+    if ((bereich.arbeiten ?? []).some(a => a.includes('diagonal'))) {
       hinweise.push(`${bereich.name}: Diagonalverlegung → 15% Verschnitt`)
     }
 
@@ -249,14 +249,14 @@ function anreichernTrockenbau(ext: ExtMitExtra, hinweise: string[], ergaenzungen
 function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzungen: KontextAnalyse['automatische_ergaenzungen']) {
   for (const raum of ext.raeume) {
     // "Boden" ohne Spezifikation → Verlegen + Sockelleisten
-    if (raum.arbeiten.some(a => a.includes('boden') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl')) &&
+    if ((raum.arbeiten ?? []).some(a => a.includes('boden') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl')) &&
         !raum.arbeiten.includes('sockelleisten')) {
       raum.arbeiten.push('sockelleisten')
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Sockelleisten', grund: 'Bei Bodenbelag immer mit erfassen' })
     }
 
     // Altbelag-Frage wenn nicht explizit
-    if (!raum.altbelag_entfernen && raum.arbeiten.some(a =>
+    if (!raum.altbelag_entfernen && (raum.arbeiten ?? []).some(a =>
         a.includes('verlegen') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl') || a.includes('boden'))) {
       addRueckfrage(ext, {
         id: `altbelag_${raum.name.toLowerCase().replace(/\s+/g, '_')}`,
@@ -269,7 +269,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
     }
 
     // Untergrundvorbereitung bei Fliesen→Parkett: immer nötig
-    if (raum.arbeiten.some(a => a.includes('parkett') || a.includes('laminat')) &&
+    if ((raum.arbeiten ?? []).some(a => a.includes('parkett') || a.includes('laminat')) &&
         !raum.arbeiten.includes('untergrund')) {
       raum.arbeiten.push('untergrund')
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Untergrundvorbereitung', grund: 'Vor Parkett/Laminat immer prüfen' })
@@ -300,7 +300,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
 
   // Parkett schleifen + versiegeln: Versiegelung ergänzen
   for (const raum of ext.raeume) {
-    if (raum.arbeiten.some(a => a.includes('schleifen')) &&
+    if ((raum.arbeiten ?? []).some(a => a.includes('schleifen')) &&
         !raum.arbeiten.includes('versiegeln') &&
         !raum.arbeiten.includes('oelen')) {
       addRueckfrage(ext, {
