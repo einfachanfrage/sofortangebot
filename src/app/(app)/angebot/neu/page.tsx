@@ -1371,15 +1371,13 @@ export default function NeuesAngebotPage() {
             </div>
 
             <button
-              onPointerDown={startRecording}
-              onPointerUp={stopRecording}
-              onPointerLeave={stopRecording}
+              onClick={recording ? stopRecording : startRecording}
               className={`w-36 h-36 rounded-full flex items-center justify-center shadow-2xl transition-all select-none ${recording ? 'bg-red-500 scale-110 shadow-red-200' : 'bg-[#F5C400] active:scale-95'}`}
             >
               {recording ? <MicOff size={52} color="white" strokeWidth={2} /> : <Mic size={52} color="#2C2C2C" strokeWidth={2} />}
             </button>
             <div className="font-bold text-sm text-[#2C2C2C]/50">
-              {recording ? '🔴 Läuft — loslassen zum Stoppen' : 'Gedrückt halten und sprechen'}
+              {recording ? '🔴 Läuft — nochmal tippen zum Stoppen' : 'Tippen zum Starten'}
             </div>
 
             {/* Nach erster Aufnahme: Hinweis */}
