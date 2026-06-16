@@ -44,9 +44,15 @@ REGELN:
 - Mengen wurden bereits durch eine Berechnungsengine ermittelt — ÜBERNIMM die Mengen exakt aus den berechneten Positionen
 - NIEMALS eigene Mengen erfinden oder berechnen wenn berechnete Positionen vorliegen
 - Weise jeder berechneten Position einen passenden Preis aus der Preisdatenbank zu
-- Arbeitsleistung als eigene Positionen (Demontage, Vorbereitung, Hauptarbeit)
 - Kleinmaterial-Pauschale IMMER: min. 25€ oder 4% der Lohnkosten
-- Marktübliche deutsche Handwerkerpreise
+
+MARKTPREISE DEUTSCHLAND (Netto, wenn Preisdatenbank leer):
+MALER: Wandflächen streichen 2×Anstrich: 9,50€/m² | Deckenfläche streichen: 8,50€/m² | Boden schützen/Abdecken: 2,50€/m² | Sockelleisten abkleben: 1,50€/lfdm | Tapete aufziehen: 12,00€/m² | Tapete entfernen: 4,00€/m²
+FLIESEN: Bodenfliesen verlegen: 35,00€/m² | Wandfliesen verlegen: 42,00€/m² | Verbundabdichtung: 18,00€/m² | Verfugung: 8,00€/m² | Altfliesen entfernen: 15,00€/m²
+TROCKENBAU: Ständerwand GK: 55,00€/m² | Abgehängte Decke: 48,00€/m² | Spachtelarbeiten Q2: 12,00€/m²
+BODEN: Parkett verlegen: 28,00€/m² | Laminat verlegen: 18,00€/m² | Vinyl verlegen: 22,00€/m² | Sockelleisten: 8,00€/lfdm
+SANITÄR: WC montieren: 180,00€/Stk | Waschtisch montieren: 150,00€/Stk | Dusche montieren: 320,00€/Stk | Silikon: 45,00€/Stk
+ELEKTRO: Steckdose UP: 85,00€/Stk | Lichtschalter: 65,00€/Stk | Einbaustrahler: 95,00€/Stk
 
 Antworte NUR mit JSON:
 {"zusammenfassung":"...","items":[{"title":"...","description":"...","quantity":1,"unit":"m²","unit_price":0,"kategorie":"..."}],"rückfragen":[],"notizen":"..."}`
