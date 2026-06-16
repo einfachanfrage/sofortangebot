@@ -9,6 +9,7 @@ import { wendeImplizitRegelnAn } from '@/lib/implizit-wissen'
 import { berechneMengen } from '@/lib/mengen/engine'
 import { berechneBewertung } from '@/lib/mengen/bewertung'
 import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfrage } from '@/lib/mengen/types'
+import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
 
 export const maxDuration = 60
 
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
       session.access_token
     ) as { result: ExtrahierteDaten }
 
-    let extraktion = edgeResult.result
+    let extraktion = normalisiereExtraktion(edgeResult.result as unknown as Record<string, unknown>)
     extraktion.transkript = verarbeitetText
 
     // Bug 2: GPT-Extraktion loggen
