@@ -19,11 +19,11 @@ export interface KIRueckfrageRaw {
 type ExtMitExtra = ExtrahierteDaten & { situation?: string; rueckfragen?: KIRueckfrageRaw[] }
 
 function getRueckfragen(ext: ExtMitExtra): KIRueckfrageRaw[] {
-  return ext.rueckfragen ?? []
+  return Array.isArray(ext.rueckfragen) ? ext.rueckfragen : []
 }
 
 function addRueckfrage(ext: ExtMitExtra, rq: KIRueckfrageRaw) {
-  if (!ext.rueckfragen) ext.rueckfragen = []
+  if (!Array.isArray(ext.rueckfragen)) ext.rueckfragen = []
   if (!ext.rueckfragen.some(r => r.id === rq.id)) {
     ext.rueckfragen.push(rq)
   }
