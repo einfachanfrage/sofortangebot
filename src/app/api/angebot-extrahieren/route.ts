@@ -10,6 +10,7 @@ import { berechneMengen } from '@/lib/mengen/engine'
 import { berechneBewertung } from '@/lib/mengen/bewertung'
 import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfrage } from '@/lib/mengen/types'
 import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
+import { pruefeUndErgaenzeVollstaendigkeit } from '@/lib/mengen/vollstaendigkeits-check'
 
 export const maxDuration = 60
 
@@ -102,7 +103,21 @@ export async function POST(req: NextRequest) {
       extraktion.rueckfragen = [...(extraktion.rueckfragen ?? []), ...neueRueckfragen]
     }
 
-    const mengen = berechneMengen(extraktion.gewerk, extraktion)
+    const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
+
+    // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
+    const { fehlende, positionen: positionenKomplett } = pruefeUndErgaenzeVollstaendigkeit(
+      extraktion.gewerk,
+      mengenRoh.positionen,
+      text
+    )
+    if (fehlende.length > 0) {
+      console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)
+    }
+    console.log('=== ENGINE POSITIONEN ===', mengenRoh.positionen.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`))
+    console.log('=== NACH CHECK ===', positionenKomplett.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`))
+
+    const mengen = { ...mengenRoh, positionen: positionenKomplett }
     const bewertung = berechneBewertung(extraktion, mengen)
 
     return NextResponse.json({

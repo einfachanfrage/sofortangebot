@@ -57,6 +57,16 @@ BODENBELÄGE: Bodenfläche = Länge × Breite + Verschnitt. Sockelleisten = Umfa
 ELEKTRO: Steckdosen/Schalter/Spots als Stück. Kabelmeter NICHT erfinden. Herdanschluss teure Sonderleistung.
 SANITÄR: Objekte als Stück. Rohrmeter NICHT erfinden — Rückfrage stellen. Demontage + Montage trennen.
 
+PFLICHT-ARBEITEN (trage diese IMMER in arbeiten[] ein):
+MALER "streichen"/"Anstrich" → arbeiten: ["wände streichen", "decke streichen", "boden abdecken", "sockelleisten abkleben"]
+MALER "tapezieren" → arbeiten: ["tapete entfernen", "untergrund vorbereiten", "tapete aufziehen", "abdecken"]
+FLIESEN Nassbereich → arbeiten: ["abdichtung boden", "abdichtung wand", "bodenfliesen", "wandfliesen", "verfugung"]
+FLIESEN "bodengleich" → arbeiten ergänzen: "bodengleiche dusche"
+SANITÄR "tauschen"/"wechseln"/"erneuern" → arbeiten: ["demontage alt", "montage neu", "silikon"]
+SANITÄR "komplett" → arbeiten: ["wc demontieren", "wc montieren", "waschtisch demontieren", "waschtisch montieren", "silikon"]
+TROCKENBAU "wand"/"ständer" → arbeiten: ["ständerwerk", "beplankung", "spachtelarbeiten q2", "dämmung"]
+ALLGEMEIN "komplett"/"alles" → alle typischen Positionen des Gewerks vollständig eintragen
+
 AUSGABE — EXAKTES FORMAT:
 Antworte NUR mit diesem JSON. Kein Text davor, kein Text danach.
 Das Feld "gewerk" muss GENAU EINEN der folgenden Werte enthalten: maler, fliesen, trockenbau, boden_parkett, sanitaer_heizung, elektro

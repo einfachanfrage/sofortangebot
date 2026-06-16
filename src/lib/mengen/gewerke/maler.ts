@@ -50,11 +50,16 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
-    const istKomplett = arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
-    const anWaenden = istKomplett || arbeitenStr.includes('wand') || arbeitenStr.includes('streichen') || arbeitenStr.includes('tapez') || arbeiten.length === 0
-    const anDecke = istKomplett || arbeitenStr.includes('decke')
-    const bodenSchutz = istKomplett || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
-    const hatSockel = istKomplett || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben')
+    // Streichen/Anstrich impliziert IMMER alle 4 Positionen (Wand, Decke, Schutz, Sockel)
+    // Ausnahme: explizit "nur Wände" oder "nur Decke"
+    const hatStreichen = arbeitenStr.includes('streichen') || arbeitenStr.includes('anstrich') || arbeitenStr.includes('anstreichen')
+    const nurWaende = arbeitenStr.includes('nur wand') || arbeitenStr.includes('nur die wand')
+    const nurDecke = arbeitenStr.includes('nur decke') || arbeitenStr.includes('nur die decke')
+    const istKomplett = hatStreichen || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
+    const anWaenden = istKomplett || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez') || arbeiten.length === 0
+    const anDecke = (hatStreichen && !nurWaende) || arbeitenStr.includes('decke')
+    const bodenSchutz = (hatStreichen && !nurDecke) || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
+    const hatSockel = hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben')
 
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
     const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []
