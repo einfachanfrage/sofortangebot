@@ -59,8 +59,9 @@ SANITÄR: Objekte als Stück. Rohrmeter NICHT erfinden — Rückfrage stellen. D
 
 AUSGABE — EXAKTES FORMAT:
 Antworte NUR mit diesem JSON. Kein Text davor, kein Text danach.
+Das Feld "gewerk" muss GENAU EINEN der folgenden Werte enthalten: maler, fliesen, trockenbau, boden_parkett, sanitaer_heizung, elektro
 
-{"gewerk":"maler|fliesen|trockenbau|boden_parkett|sanitaer_heizung|elektro","confidence_gewerk":0.95,"kunde":{"name":null,"adresse":null,"ort":null},"situation":"Kurze Beschreibung","raeume":[],"waende":[],"decken":[],"bereiche":[],"steckdosen":null,"schalter":null,"spots":null,"aussenlampen":null,"wandlampen":null,"herdanschluss":false,"wallbox":false,"unterverteilung":false,"hauptverteilung":false,"kabelmeter":null,"neu_verkabeln":false,"wc":null,"waschtisch":null,"dusche":null,"wanne":null,"urinal":null,"bidet":null,"armaturen":null,"rohrmeter":null,"leitungen_erneuern":false,"heizkoerper":null,"austausch":false,"erneuerung":false,"altbelag":[],"erschwernisse":[],"anmerkungen":null,"annahmen":[],"rueckfragen":[],"fehlende_angaben":[],"transkript":""}`
+{"gewerk":"EINES_VON: maler / fliesen / trockenbau / boden_parkett / sanitaer_heizung / elektro","confidence_gewerk":0.95,"kunde":{"name":null,"adresse":null,"ort":null},"situation":"Kurze Beschreibung","raeume":[],"waende":[],"decken":[],"bereiche":[],"steckdosen":null,"schalter":null,"spots":null,"aussenlampen":null,"wandlampen":null,"herdanschluss":false,"wallbox":false,"unterverteilung":false,"hauptverteilung":false,"kabelmeter":null,"neu_verkabeln":false,"wc":null,"waschtisch":null,"dusche":null,"wanne":null,"urinal":null,"bidet":null,"armaturen":null,"rohrmeter":null,"leitungen_erneuern":false,"heizkoerper":null,"austausch":false,"erneuerung":false,"altbelag":[],"erschwernisse":[],"anmerkungen":null,"annahmen":[],"rueckfragen":[],"fehlende_angaben":[],"transkript":""}`
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
