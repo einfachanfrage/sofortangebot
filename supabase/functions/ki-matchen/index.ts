@@ -78,17 +78,18 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Service-Role-Client für DB-Abfragen (alle Positionen sehen)
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    )
+    // Company-ID des eingeloggten Nutzers ermitteln
+    const { data: company } = await supabase
+      .from('companies')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
 
-    const { data: dbPositionen } = await supabaseAdmin
-      .from('positionen')
-      .select('id, bezeichnung, einheit, preis_netto')
-      .eq('gewerk_id', gewerk)
-      .order('nutzungshaeufigkeit', { ascending: false })
+    // price_items der Firma laden (das ist die echte Preistabelle)
+    const { data: dbPositionen } = await supabase
+      .from('price_items')
+      .select('id, title, unit, unit_price')
+      .eq('company_id', company?.id ?? '')
       .limit(60)
 
     // deno-lint-ignore no-explicit-any
@@ -98,7 +99,7 @@ Deno.serve(async (req: Request) => {
 
     // deno-lint-ignore no-explicit-any
     const dbListe = (dbPositionen || []).map((p: any) =>
-      `${p.id} | ${p.bezeichnung} | ${p.einheit} | ${p.preis_netto} €`
+      `${p.id} | ${p.title} | ${p.unit} | ${p.unit_price} €`
     ).join('\n')
 
     const prompt = PROMPT_KONTEXTUELLES_MATCHING
@@ -146,18 +147,16 @@ Deno.serve(async (req: Request) => {
       'Matching dauerte zu lange.'
     )
 
-    // Nutzungshäufigkeit updaten (fire & forget)
-    const gematchteIds = (result.matches || [])
-      // deno-lint-ignore no-explicit-any
-      .filter((m: any) => m.position_id && m.confidence >= 0.6)
-      // deno-lint-ignore no-explicit-any
-      .map((m: any) => m.position_id)
+    // Preise direkt aus dbPositionen entnehmen
+    // deno-lint-ignore no-explicit-any
+    const priceMap = new Map((dbPositionen || []).map((p: any) => [p.id, p.unit_price]))
+    // deno-lint-ignore no-explicit-any
+    const enrichedMatches = (result.matches || []).map((m: any) => ({
+      ...m,
+      unit_price: m.position_id ? (priceMap.get(m.position_id) ?? null) : null,
+    }))
 
-    for (const id of gematchteIds) {
-      supabaseAdmin.rpc('increment_nutzung', { p_position_id: id }).then(() => {})
-    }
-
-    return new Response(JSON.stringify({ matches: result.matches || [] }), {
+    return new Response(JSON.stringify({ matches: enrichedMatches }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })

@@ -30,10 +30,13 @@ export function malerEngine(daten: any): MengenErgebnis {
 
       if (hoehe) {
         const wandBrutto = round2(umfangM * hoehe)
-        const fensterFlaeche = fenster.reduce(
-          (sum: number, f: any) => sum + (f.breite ?? 1.5) * (f.hoehe ?? 1.2), 0
+        // Wenn GPT keine Fenster/Türen zurückgibt: je 1 Standardöffnung annehmen
+        const effFenster = fenster.length > 0 ? fenster : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
+        const effTueren = tueren.length > 0 ? tueren : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
+        const fensterFlaeche = effFenster.reduce(
+          (sum: number, f: any) => sum + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
         )
-        const tuerFlaeche = tueren.reduce(
+        const tuerFlaeche = effTueren.reduce(
           (sum: number, t: any) => sum + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
         )
         wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
@@ -47,10 +50,11 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
-    const anWaenden = arbeitenStr.includes('wand') || arbeitenStr.includes('streichen') || arbeitenStr.includes('tapez') || arbeiten.length === 0
-    const anDecke = arbeitenStr.includes('decke')
-    const bodenSchutz = arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
-    const hatSockel = sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben')
+    const istKomplett = arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
+    const anWaenden = istKomplett || arbeitenStr.includes('wand') || arbeitenStr.includes('streichen') || arbeitenStr.includes('tapez') || arbeiten.length === 0
+    const anDecke = istKomplett || arbeitenStr.includes('decke')
+    const bodenSchutz = istKomplett || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
+    const hatSockel = istKomplett || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben')
 
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
     const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []
