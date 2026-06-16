@@ -449,7 +449,7 @@ export default function NeuesAngebotPage() {
         frage: r.frage,
         kontext: r.betrifft,
         typ: (r.typ === 'ja_nein' || r.typ === 'meter' ? 'anzahl' : r.typ) as RueckfrageItem['typ'],
-        schnell_antworten: r.schnell_antworten
+        schnell_antworten: (r.schnell_antworten ?? [])
           .filter(a => a.wert !== null && typeof a.wert === 'number')
           .map(a => ({ label: a.label, wert: a.wert as number, einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : 'Stk' })),
         einheit: r.typ === 'hoehe' || r.typ === 'meter' ? 'm' : undefined,
@@ -530,7 +530,7 @@ export default function NeuesAngebotPage() {
     if (sessionId && items.length > 0) {
       const newItems = positionen.map(p => ({
         title: p.beschreibung,
-        description: p.annahmen.join(', '),
+        description: (p.annahmen ?? []).join(', '),
         quantity: p.menge,
         unit: p.einheit,
         unit_price: 0,
