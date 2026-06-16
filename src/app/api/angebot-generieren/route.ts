@@ -32,7 +32,7 @@ export interface GeneratedQuote {
   notizen?: string
 }
 
-const SYSTEM_PROMPT = `Du bist Kalkulations-Profi im deutschen Handwerk. Erstelle aus dem Aufmaß ein vollständiges Angebot.
+const SYSTEM_PROMPT = `Du bist Kalkulations-Profi im deutschen Handwerk. Weise den vorgegebenen Positionen Preise zu.
 
 PREISDATENBANK:
 {PREISE}
@@ -40,11 +40,16 @@ PREISDATENBANK:
 GEWERK-KONTEXT:
 {GEWERKE}
 
-REGELN:
-- Mengen wurden bereits durch eine Berechnungsengine ermittelt — ÜBERNIMM die Mengen exakt aus den berechneten Positionen
-- NIEMALS eigene Mengen erfinden oder berechnen wenn berechnete Positionen vorliegen
-- Weise jeder berechneten Position einen passenden Preis aus der Preisdatenbank zu
-- Kleinmaterial-Pauschale IMMER: min. 25€ oder 4% der Lohnkosten
+DEINE AUFGABE — NUR PREISE ZUWEISEN:
+Die Positionen und Mengen sind bereits durch eine Berechnungsengine festgelegt und UNVERÄNDERLICH.
+Du musst NUR für jede Position einen passenden Netto-Einzelpreis (unit_price) zuweisen.
+Gib die Positionen in EXAKT DERSELBEN REIHENFOLGE zurück wie du sie erhalten hast.
+Füge am Ende eine Kleinmaterial-Pauschale hinzu: min. 25€ oder 4% der Lohnkosten.
+
+WAS DU NICHT TUN DARFST:
+- Mengen (quantity) verändern — quantity wird IGNORIERT, die Engine überschreibt es
+- Positionen weglassen oder umbenennen
+- Neue Positionen erfinden (außer Kleinmaterial-Pauschale)
 
 MARKTPREISE DEUTSCHLAND (Netto, wenn Preisdatenbank leer):
 MALER: Wandflächen streichen 2×Anstrich: 9,50€/m² | Deckenfläche streichen: 8,50€/m² | Boden schützen/Abdecken: 2,50€/m² | Sockelleisten abkleben: 1,50€/lfdm | Tapete aufziehen: 12,00€/m² | Tapete entfernen: 4,00€/m²
@@ -55,7 +60,7 @@ SANITÄR: WC montieren: 180,00€/Stk | Waschtisch montieren: 150,00€/Stk | Du
 ELEKTRO: Steckdose UP: 85,00€/Stk | Lichtschalter: 65,00€/Stk | Einbaustrahler: 95,00€/Stk
 
 Antworte NUR mit JSON:
-{"zusammenfassung":"...","items":[{"title":"...","description":"...","quantity":1,"unit":"m²","unit_price":0,"kategorie":"..."}],"rückfragen":[],"notizen":"..."}`
+{"zusammenfassung":"...","items":[{"title":"...","description":"...","unit_price":9.50,"kategorie":"..."}],"rückfragen":[],"notizen":"..."}`
 
 const SYSTEM_PROMPT_OHNE_MENGEN = `Du bist Kalkulations-Profi im deutschen Handwerk. Erstelle aus dem Aufmaß ein vollständiges Angebot.
 
@@ -111,7 +116,7 @@ export async function POST(req: NextRequest) {
     : SYSTEM_PROMPT_OHNE_MENGEN.replace('{PREISE}', priceList).replace('{GEWERKE}', gewerkeContext || '(nicht angegeben — erkenne aus dem Aufmaß)')
 
   const userContent = berechnetePositionen
-    ? `Aufmaß:\n${text}\n\nBERECHNETE POSITIONEN (Mengen sind verbindlich — übernimm quantity EXAKT so wie angegeben, erfinde keine eigenen Werte):\n${berechnetePositionen.map(p => `- ${p.beschreibung}: ${p.menge} ${p.einheit}${(p.annahmen ?? []).length ? ` [Annahmen: ${(p.annahmen ?? []).join(', ')}]` : ''}`).join('\n')}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
+    ? `Aufmaß (nur zur Orientierung):\n${text}\n\nPOSITIONEN (weise nur Preise zu — gleiche Reihenfolge behalten):\n${berechnetePositionen.map((p, i) => `${i + 1}. ${p.beschreibung} | ${p.menge} ${p.einheit}`).join('\n')}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
     : `Aufmaß:\n\n${text}\n\nAntworte NUR mit validem JSON-Objekt, kein Markdown, keine Erklärung.`
 
   try {
@@ -128,9 +133,17 @@ export async function POST(req: NextRequest) {
     })
     const raw = response.choices[0]?.message?.content ?? ''
     if (!raw) return NextResponse.json({ error: 'Leere Antwort vom KI-Modell' }, { status: 500 })
-    // JSON aus Markdown-Fences befreien
     const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim()
     const result: GeneratedQuote = JSON.parse(cleaned)
+
+    // Engine-Mengen überschreiben GPT-Mengen — immer, ohne Ausnahme
+    if (berechnetePositionen && result.items) {
+      result.items = result.items.map((item, i) => {
+        const eng = berechnetePositionen[i]
+        if (!eng) return item
+        return { ...item, quantity: eng.menge, unit: eng.einheit }
+      })
+    }
 
     // Kosten tracken (gpt-4o-mini ~$0.15/1M tokens in, $0.60/1M tokens out)
     const tokensIn = response.usage?.prompt_tokens ?? 0
