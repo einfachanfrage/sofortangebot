@@ -24,15 +24,18 @@ export function malerEngine(daten: any): MengenErgebnis {
     let deckenflaecheM2: number | null = null
     let umfangM: number | null = null
 
+    // Wenn GPT keine Fenster/Türen zurückgibt: 1 Standardöffnung annehmen
+    const effFenster = fenster.length > 0 ? fenster : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
+    const effTueren = tueren.length > 0 ? tueren : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
+
     if (laenge && breite) {
       bodenflaecheM2 = round2(laenge * breite)
       umfangM = round2(2 * laenge + 2 * breite)
+      // Deckenfläche = Bodenfläche — immer, unabhängig von Höhe
+      deckenflaecheM2 = bodenflaecheM2
 
       if (hoehe) {
         const wandBrutto = round2(umfangM * hoehe)
-        // Wenn GPT keine Fenster/Türen zurückgibt: je 1 Standardöffnung annehmen
-        const effFenster = fenster.length > 0 ? fenster : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
-        const effTueren = tueren.length > 0 ? tueren : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
         const fensterFlaeche = effFenster.reduce(
           (sum: number, f: any) => sum + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
         )
@@ -40,9 +43,7 @@ export function malerEngine(daten: any): MengenErgebnis {
           (sum: number, t: any) => sum + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
         )
         wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
-        deckenflaecheM2 = bodenflaecheM2
       }
-      // Keine Höhe: kein Fehler, nur Decke + Boden wird berechnet
     } else if (flaeche_angegeben) {
       bodenflaecheM2 = flaeche_angegeben
       // Wandfläche kann ohne Raummaße nicht berechnet werden — Annahme statt Rückfrage
@@ -50,13 +51,12 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
-    // Streichen/Anstrich impliziert IMMER alle 4 Positionen (Wand, Decke, Schutz, Sockel)
-    // Ausnahme: explizit "nur Wände" oder "nur Decke"
-    const hatStreichen = arbeitenStr.includes('streichen') || arbeitenStr.includes('anstrich') || arbeitenStr.includes('anstreichen')
+    // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
+    const leerOderKomplett = arbeiten.length === 0 || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
+    const hatStreichen = leerOderKomplett || arbeitenStr.includes('streichen') || arbeitenStr.includes('anstrich') || arbeitenStr.includes('anstreichen')
     const nurWaende = arbeitenStr.includes('nur wand') || arbeitenStr.includes('nur die wand')
     const nurDecke = arbeitenStr.includes('nur decke') || arbeitenStr.includes('nur die decke')
-    const istKomplett = hatStreichen || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
-    const anWaenden = istKomplett || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez') || arbeiten.length === 0
+    const anWaenden = hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez')
     const anDecke = (hatStreichen && !nurWaende) || arbeitenStr.includes('decke')
     const bodenSchutz = (hatStreichen && !nurDecke) || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
     const hatSockel = hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben')
@@ -98,7 +98,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     }
 
     if (hatSockel && umfangM !== null) {
-      const tuerBreiten = tueren.reduce((sum: number, t: any) => sum + (t.breite ?? 0.9), 0)
+      const tuerBreiten = effTueren.reduce((sum: number, t: any) => sum + (t.breite ?? 0.9), 0)
       const sockelM = round2(umfangM - tuerBreiten)
       positionen.push({
         beschreibung: `Sockelleisten abkleben — ${name}`,
