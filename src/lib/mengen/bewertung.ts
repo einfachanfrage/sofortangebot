@@ -118,7 +118,7 @@ export function berechneBewertung(
   let vertrauensstufe: Vertrauensstufe
   if (total === 0 || !irgendeineMengeVorhanden) {
     vertrauensstufe = 'gering'
-  } else if (highCount === total && !hatRueckfragen && fehlende_angaben.length === 0) {
+  } else if (highCount === total && !hatRueckfragen && (fehlende_angaben.length === 0 || (highCount > 0 && fehlende_angaben.every(f => f.includes('Keine Maße') || f.includes('Maße angegeben'))))) {
     vertrauensstufe = 'hoch'
   } else {
     vertrauensstufe = 'mittel'
