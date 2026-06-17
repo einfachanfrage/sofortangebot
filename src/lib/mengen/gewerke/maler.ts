@@ -10,7 +10,7 @@ export function malerEngine(daten: any): MengenErgebnis {
 
   for (const raum of (daten.raeume ?? [])) {
     const {
-      name = 'Raum',
+      name: nameRaw = 'Raum',
       laenge, breite, hoehe,
       flaeche: flaeche_angegeben,
       fenster = [],
@@ -26,6 +26,14 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
+
+    // GPT gibt manchmal "Raum" als generischen Namen zurück — Raumtyp aus Transkript holen
+    const raumTypen = ['kinderzimmer', 'wohnzimmer', 'schlafzimmer', 'badezimmer', 'bad', 'küche', 'flur', 'diele', 'keller', 'kellerraum', 'büro', 'arbeitszimmer', 'esszimmer', 'gästezimmer', 'garage', 'treppenhaus', 'dachgeschoss', 'dachzimmer', 'hobbyraum', 'spielzimmer', 'abstellraum', 'hauswirtschaftsraum', 'werkstatt']
+    const nameAusTranskript = nameRaw === 'Raum'
+      ? (raumTypen.find(t => transkriptLower.includes(t)) ?? nameRaw)
+      : nameRaw
+    // Ersten Buchstaben großschreiben
+    const name = nameAusTranskript.charAt(0).toUpperCase() + nameAusTranskript.slice(1)
 
     // Garagen: kein Standard-Fenster, kein Standard-Tür — Tor wird via route.ts in tueren[] injiziert
     const istGarageRaum = name.toLowerCase().includes('garage') || name.toLowerCase().includes('carport')
