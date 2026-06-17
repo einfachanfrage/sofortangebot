@@ -84,6 +84,14 @@ export function pruefeUndErgaenzeVollstaendigkeit(
         const m2Match = transkript.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
         if (m2Match) tfm = parseFloat(m2Match[1].replace(',', '.'))
       }
+      // Etagen-Multiplikation: "4 Etagen, je 18 qm" → tfm = 4 × 18
+      if (tfm !== null) {
+        const etMatch = transkript.match(/(\d+)\s*(?:etagen?|stockwerke?|etag\b)/i)
+        if (etMatch) {
+          const etagen = parseInt(etMatch[1])
+          if (etagen > 1) tfm = tfm * etagen
+        }
+      }
       if (tfm !== null && tfm > 0) {
         // Engine-Position "Wandflächen streichen" ersetzen durch tapezier-spezifische Positionen
         const ohneWand = ergaenzt.filter(p => !p.beschreibung.toLowerCase().includes('wandflächen streichen'))
