@@ -111,18 +111,24 @@ export function berechneBewertung(
   const total = mengen.positionen.length
   const highCount = mengen.positionen.filter(p => p.konfidenz === 'high').length
   const hatRueckfragen = mengen.rueckfragen.length > 0
-  const hatWarnungen = mengen.warnungen.length > 0
+  const irgendeineMengeVorhanden = total > 0 && mengen.positionen.some(p => p.menge > 0)
 
+  // Primäres Signal: haben wir berechnete Mengen?
+  // Fehlende-Angaben-Zählung ist nur Sekundärsignal — nie allein ausschlaggebend
   let vertrauensstufe: Vertrauensstufe
-  if (total === 0 || lowCount > total * 0.5 || fehlende_angaben.length > erkannte_angaben.length) {
+  if (total === 0 || !irgendeineMengeVorhanden) {
     vertrauensstufe = 'gering'
-  } else if (lowCount > 0 || hatRueckfragen || hatWarnungen || annahmen.length > 2) {
-    vertrauensstufe = 'mittel'
-  } else if (highCount === total && !hatRueckfragen) {
+  } else if (highCount === total && !hatRueckfragen && fehlende_angaben.length === 0) {
     vertrauensstufe = 'hoch'
   } else {
     vertrauensstufe = 'mittel'
   }
+
+  // "Keine Maße" aus fehlende_angaben entfernen wenn Mengen vorhanden
+  // (verhindert den Widerspruch "18,4 m² berechnet" + "Keine Maße angegeben")
+  const fehlende_angaben_gefiltert = irgendeineMengeVorhanden
+    ? fehlende_angaben.filter(f => !f.includes('Keine Maße') && !f.includes('keine Maße'))
+    : fehlende_angaben
 
   // Bewertungstext
   const bewertungstextMap: Record<Vertrauensstufe, string> = {
@@ -152,7 +158,7 @@ export function berechneBewertung(
   return {
     vertrauensstufe,
     erkannte_angaben,
-    fehlende_angaben,
+    fehlende_angaben: fehlende_angaben_gefiltert,
     annahmen,
     bewertungstext: bewertungstextMap[vertrauensstufe],
     empfehlung,

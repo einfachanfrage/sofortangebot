@@ -17,6 +17,36 @@ export interface ImpliziteRegel {
 }
 
 export const IMPLIZIT_REGELN: ImpliziteRegel[] = [
+  // ── FASSADE / AUSSENARBEITEN ────────────────────
+  {
+    trigger: [/fassade/i, /außenwand/i, /außen\s+streichen/i, /garage\s+außen/i, /garagenfassade/i, /außenputz/i, /außenfarbe/i],
+    gewerk: ['maler'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Fassade reinigen / Untergrundvorbereitung' },
+    konfidenz: 'sicher',
+    erklaerung: 'Außenarbeiten erfordern immer Untergrundvorbereitung',
+  },
+  {
+    trigger: [/fassade/i, /außenwand/i, /außen\s+streichen/i, /garage\s+außen/i, /garagenfassade/i, /außenputz/i, /außenfarbe/i],
+    gewerk: ['maler'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Grundierung / Tiefengrund Fassade' },
+    konfidenz: 'sicher',
+    erklaerung: 'Fassade benötigt immer Grundierung vor Anstrich',
+  },
+  {
+    trigger: [/fassade/i, /außenwand/i, /außen\s+streichen/i, /garage\s+außen/i, /garagenfassade/i, /außenputz/i, /außenfarbe/i],
+    gewerk: ['maler'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Fassadenfarbe 2× Anstrich' },
+    konfidenz: 'sicher',
+    erklaerung: 'Fassade = 2 Anstriche Standard',
+  },
+  {
+    trigger: [/risse/i, /rissig/i, /schäden/i, /abgeplatzt/i, /moos/i, /algen/i, /schimmel/i, /alter\s+putz/i, /untergrundvorbereitung/i],
+    gewerk: ['maler'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Rissverschluss / Spachtelarbeiten Außen' },
+    konfidenz: 'sicher',
+    erklaerung: 'Beschädigter Untergrund erfordert Rissverschluss vor Anstrich',
+  },
+
   // ── MALER ──────────────────────────────────────
   {
     trigger: ['streichen', 'anstrich', 'lackieren'],
