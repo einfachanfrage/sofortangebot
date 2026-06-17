@@ -75,11 +75,36 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       if (!nurDecke && !hat(ergaenzt, 'boden schütz', 'abdeck', 'abdecken')) add('Boden schützen / Abdecken')
       if (!nurDecke && !nurBoden && !hat(ergaenzt, 'sockel', 'abkleben')) add('Sockelleisten abkleben')
     }
-    const hatTapez = lower.includes('tapez')
+    const hatTapez = lower.includes('tapez') || lower.includes('raufaser') || lower.includes('tapete')
     if (hatTapez) {
-      if (!hat(ergaenzt, 'tapete entfern', 'tapete abnehm')) add('Tapete entfernen')
-      if (!hat(ergaenzt, 'untergrund', 'vorbereiten', 'glätten')) add('Untergrund vorbereiten')
-      if (!hat(ergaenzt, 'tapete aufzieh', 'tapezieren')) add('Tapete aufziehen')
+      // Wandfläche aus Engine oder direkt aus Text
+      const wandPosTapez = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wand'))
+      let tfm = wandPosTapez?.menge ?? null
+      if (tfm === null) {
+        const m2Match = transkript.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+        if (m2Match) tfm = parseFloat(m2Match[1].replace(',', '.'))
+      }
+      if (tfm !== null && tfm > 0) {
+        // Engine-Position "Wandflächen streichen" ersetzen durch tapezier-spezifische Positionen
+        const ohneWand = ergaenzt.filter(p => !p.beschreibung.toLowerCase().includes('wandflächen streichen'))
+        ergaenzt.length = 0
+        ohneWand.forEach(p => ergaenzt.push(p))
+
+        const hatEntfernen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('tapete entf') || p.beschreibung.toLowerCase().includes('tapete abneh'))
+        const hatGlaetten = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('glätten') || p.beschreibung.toLowerCase().includes('untergrund'))
+        const hatAufziehen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('aufzieh') || p.beschreibung.toLowerCase().includes('tapezier'))
+        const hatStreichen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('raufaser streich') || p.beschreibung.toLowerCase().includes('tapete streich'))
+
+        if (!hatEntfernen) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+        if (!hatGlaetten) ergaenzt.push({ beschreibung: 'Untergrund glätten / Spachteln', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+        if (!hatAufziehen) ergaenzt.push({ beschreibung: 'Raufaser aufziehen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+        if (!hatStreichen) ergaenzt.push({ beschreibung: 'Raufaser streichen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+      } else {
+        if (!hat(ergaenzt, 'tapete entfern', 'tapete abnehm')) add('Tapete entfernen')
+        if (!hat(ergaenzt, 'untergrund', 'glätten')) add('Untergrund glätten / Spachteln')
+        if (!hat(ergaenzt, 'aufzieh', 'tapezieren')) add('Raufaser aufziehen')
+        if (!hat(ergaenzt, 'raufaser streich')) add('Raufaser streichen')
+      }
     }
 
     // Fassade: Folgepositionen mit gleicher Fläche ergänzen

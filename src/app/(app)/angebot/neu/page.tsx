@@ -463,7 +463,7 @@ export default function NeuesAngebotPage() {
         const istMasse = istFenster || istTuer || r.typ === 'masse_einzel'
 
         const typ: RueckfrageItem['typ'] = istMasse ? 'masse_einzel'
-          : (r.typ === 'ja_nein' || r.typ === 'meter') ? 'anzahl'
+          : r.typ === 'meter' ? 'anzahl'
           : r.typ as RueckfrageItem['typ']
 
         const basisSchnell = (r.schnell_antworten ?? [])
