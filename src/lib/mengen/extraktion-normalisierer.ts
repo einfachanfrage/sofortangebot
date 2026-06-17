@@ -12,6 +12,22 @@ function bool(val: unknown, fallback = false): boolean {
   return typeof val === 'boolean' ? val : fallback
 }
 
+// GPT verwendet manchmal Varianten wie "fassadenarbeiten", "malerarbeiten" etc.
+function normalisiereGewerk(raw: string): string {
+  const g = raw.toLowerCase().trim()
+  if (g === 'maler' || g === 'malerarbeiten' || g === 'malerarbeit'
+      || g === 'fassade' || g === 'fassadenarbeiten' || g === 'fassadenarbeit'
+      || g === 'lackierer' || g === 'maler_lackierer') return 'maler'
+  if (g === 'fliesen' || g === 'fliesenarbeiten' || g === 'fliesenleger') return 'fliesen'
+  if (g === 'trockenbau' || g === 'trockenausbau' || g === 'gipskarton' || g === 'rigips') return 'trockenbau'
+  if (g === 'boden' || g === 'boden_parkett' || g === 'parkett' || g === 'bodenbelag'
+      || g === 'bodenarbeiten' || g === 'laminat' || g === 'vinyl') return 'boden_parkett'
+  if (g === 'sanitaer' || g === 'sanitaer_heizung' || g === 'sanitär' || g === 'sanitär_heizung'
+      || g === 'heizung' || g === 'heizungsarbeiten' || g === 'klempner') return 'sanitaer_heizung'
+  if (g === 'elektro' || g === 'elektroarbeiten' || g === 'elektriker' || g === 'elektroinstallation') return 'elektro'
+  return raw // unbekanntes Gewerk unverändert lassen
+}
+
 /**
  * Normalisiert die rohe GPT-Extraktion: alle Array-Felder werden zu echten Arrays,
  * alle Zahlen/Booleans auf korrekte Typen gebracht.
@@ -71,7 +87,7 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
   }))
 
   return {
-    gewerk: (raw.gewerk as string) || '',
+    gewerk: normalisiereGewerk((raw.gewerk as string) || ''),
     confidence_gewerk: typeof raw.confidence_gewerk === 'number' ? raw.confidence_gewerk : 0,
     kunde: {
       name: (raw.kunde as Record<string, unknown> | null)?.name as string | null ?? null,
