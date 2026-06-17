@@ -55,6 +55,13 @@ NIEMALS Maße berechnen oder in flaeche umrechnen — immer als laenge+breite ei
 - "4×3,50" → laenge: 4.0, breite: 3.5
 - flaeche NUR setzen wenn User explizit m² nennt ohne Länge×Breite: "ca. 25 m²" → flaeche: 25
 
+FASSADE / AUßENWAND — KRITISCHE REGEL:
+Wenn "Fassade", "Außenwand", "Garagenfassade", "Fassadenarbeiten" → Einzelfläche, KEIN Raum mit Umfang!
+- "8×2,80m" bei Fassade → laenge: 8, hoehe: 2.8, breite: null  (erste Zahl = Breite, zweite = Höhe)
+- "Fassade 8m breit, 3m hoch" → laenge: 8, hoehe: 3, breite: null
+- NIEMALS breite setzen bei Fassade/Außenwand — nur laenge und hoehe
+- Tor/Fenster/Tür an Fassade → normal in tueren[]/fenster[] eintragen (wird automatisch abgezogen)
+
 MULTI-RAUM PARSING:
 [RAUM] = neuer Raum, eigener Eintrag in raeume[]. [ERGAENZUNG] = Zusatz zum letzten Raum. [KORREKTUR] = vorherige Angabe verwerfen.
 
