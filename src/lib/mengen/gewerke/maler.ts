@@ -93,7 +93,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         menge: wandflaecheNettoM2,
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Umfang ${umfangM} lfm × ${hoehe} m = ${round2(umfangM * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
+        berechnungsweg: `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${round2((umfangM ?? 0) * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
         annahmen: annahmenFenster,
       })
     }
