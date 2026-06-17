@@ -86,6 +86,12 @@ FASSADE IN RAEUME:
 - Beispiel: "Fassade 8m breit, 6m hoch" → raeume: [{name: "Fassade", laenge: 8, hoehe: 6, breite: null, flaeche: null}]
 - Altanstrich entfernen / abschleifen in arbeiten[] eintragen, NICHT als eigene Position
 
+MEHRERE ETAGEN / STOCKWERKE:
+- "4 Etagen, je 18 qm" → flaeche: 72 (4 × 18 = Gesamtfläche)
+- "3 Stockwerke à 20 m²" → flaeche: 60
+- "Treppenhaus, 4 Etagen, je ca. 18 qm Wandfläche" → raeume: [{name: "Treppenhaus", flaeche: 72}]
+- Multipliziere IMMER Etagen/Stockwerke mit der Einzelfläche → flaeche ist IMMER die Gesamtfläche
+
 MASSANGABEN — KRITISCHE REGEL:
 Das × / "mal" / "auf" Zeichen trennt IMMER zwei separate Maße.
 Das Komma INNERHALB einer Zahl ist IMMER Dezimaltrenner.

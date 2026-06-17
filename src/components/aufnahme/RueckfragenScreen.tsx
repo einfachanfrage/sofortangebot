@@ -410,6 +410,21 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen }:
         {(frage.typ === 'anzahl' || frage.typ === 'laenge' || frage.typ === 'flaeche_einzel') && (
           <AnzahlInput frage={frage} antwort={antwort} onChange={setAntwort} />
         )}
+        {/* Fallback: unbekannter Typ → Ja/Nein */}
+        {frage.typ !== 'masse_einzel' && frage.typ !== 'masse_mehrere' && frage.typ !== 'hoehe' &&
+         frage.typ !== 'ja_nein' && frage.typ !== 'anzahl' && frage.typ !== 'laenge' && frage.typ !== 'flaeche_einzel' && (
+          <div className="flex flex-col gap-3">
+            {[{ label: 'Ja', wert: 1 }, { label: 'Nein', wert: 0 }].map(opt => {
+              const aktiv = !Array.isArray(antwort?.wert) && antwort?.wert === opt.wert
+              return (
+                <button key={opt.label} onClick={() => setAntwort({ wert: opt.wert, einheit: 'bool' })}
+                  className={`rounded-2xl py-5 font-black text-xl transition-colors border-2 ${aktiv ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]' : 'bg-white border-[#2C2C2C]/8 text-[#2C2C2C]'}`}>
+                  {opt.label}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Footer */}
