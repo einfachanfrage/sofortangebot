@@ -73,7 +73,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       || transkriptLower.includes('nur decke') || transkriptLower.includes('nur die decke')
     const anWaenden = !nurDecke && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
     const anDecke = (hatStreichen && !nurWaende) || arbeitenStr.includes('decke')
-    const bodenSchutz = (hatStreichen && !nurDecke) || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
+    const bodenSchutz = hatStreichen || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
     // Sockelleisten nur wenn Wände tatsächlich gestrichen werden
     const hatSockel = anWaenden && wandflaecheNettoM2 !== null
       && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
