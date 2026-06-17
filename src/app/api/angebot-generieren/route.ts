@@ -137,12 +137,15 @@ export async function POST(req: NextRequest) {
     const result: GeneratedQuote = JSON.parse(cleaned)
 
     // Engine-Mengen überschreiben GPT-Mengen — immer, ohne Ausnahme
+    // GPT darf keine eigenen Positionen hinzufügen wenn berechnetePositionen vorgegeben
     if (berechnetePositionen && result.items) {
-      result.items = result.items.map((item, i) => {
-        const eng = berechnetePositionen[i]
-        if (!eng) return item
-        return { ...item, quantity: eng.menge, unit: eng.einheit }
-      })
+      result.items = result.items
+        .slice(0, berechnetePositionen.length) // GPT-Extras abschneiden
+        .map((item, i) => {
+          const eng = berechnetePositionen[i]
+          if (!eng) return item
+          return { ...item, quantity: eng.menge, unit: eng.einheit }
+        })
     }
 
     // Kosten tracken (gpt-4o-mini ~$0.15/1M tokens in, $0.60/1M tokens out)

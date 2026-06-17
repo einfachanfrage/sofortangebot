@@ -184,11 +184,43 @@ export interface MassErgebnis {
 export function normalisiereMasse(text: string): MassErgebnis[] {
   const ergebnisse: MassErgebnis[] = []
 
-  // Dimensionen: "5.20 × 4.80" / "5 mal 4 Meter"
-  const dimPattern = /(\d+\.?\d*)\s*(?:mal|×|x|auf|zu|bei)\s*(\d+\.?\d*)\s*(?:meter|m\b)?/gi
+  // Dimensionen — Reihenfolge ist wichtig: mit Dezimalstellen zuerst matchen
+  // "5,20 mal 4,80" → 5.20 × 4.80  (Komma = Dezimaltrenner, nicht Tausender oder Malzeichen)
+  // "4×3,50" → 4.0 × 3.5
+  // "4 mal 3" → 4.0 × 3.0
+  const dimPatterns: RegExp[] = [
+    // Beide Zahlen mit Dezimalstelle: "5,20 mal 4,80" / "5.20×4.80"
+    /(\d+)[.,](\d+)\s*(?:mal|×|x|auf|zu|bei)\s*(\d+)[.,](\d+)\s*(?:meter|m\b)?/gi,
+    // Erste ganz, zweite mit Dezimalstelle: "4 mal 3,50" / "4×3,50"
+    /(\d+)\s*(?:mal|×|x|auf|zu|bei)\s*(\d+)[.,](\d+)\s*(?:meter|m\b)?/gi,
+    // Beide ganzzahlig: "5 mal 4"
+    /(\d+)\s*(?:mal|×|x|auf|zu|bei)\s*(\d+)\s*(?:meter|m\b)?/gi,
+  ]
   let m: RegExpExecArray | null
-  while ((m = dimPattern.exec(text)) !== null) {
-    ergebnisse.push({ typ: 'dimension', wert1: parseFloat(m[1]), wert2: parseFloat(m[2]), einheit: 'm', original: m[0] })
+  const dimGematched = new Set<number>() // vermeide Doppel-Matches
+  for (const pat of dimPatterns) {
+    pat.lastIndex = 0
+    while ((m = pat.exec(text)) !== null) {
+      if (dimGematched.has(m.index)) continue
+      dimGematched.add(m.index)
+      let wert1: number, wert2: number
+      if (m.length === 5) {
+        // Beide mit Dezimal: gruppen 1,2 = erste Zahl; 3,4 = zweite Zahl
+        wert1 = parseFloat(`${m[1]}.${m[2]}`)
+        wert2 = parseFloat(`${m[3]}.${m[4]}`)
+      } else if (m.length === 4) {
+        // Erste ganz, zweite mit Dezimal: gruppen 1 = erste; 2,3 = zweite
+        wert1 = parseFloat(m[1])
+        wert2 = parseFloat(`${m[2]}.${m[3]}`)
+      } else {
+        wert1 = parseFloat(m[1])
+        wert2 = parseFloat(m[2])
+      }
+      // Plausibilitätsprüfung: Raummaße typisch 1.5m–50m
+      if (wert1 >= 0.5 && wert1 <= 50 && wert2 >= 0.5 && wert2 <= 50) {
+        ergebnisse.push({ typ: 'dimension', wert1, wert2, einheit: 'm', original: m[0] })
+      }
+    }
   }
 
   // Länge × Breite textlich: "Länge 5 Breite 4"

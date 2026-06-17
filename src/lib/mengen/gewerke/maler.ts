@@ -44,22 +44,39 @@ export function malerEngine(daten: any): MengenErgebnis {
         )
         wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
       }
+    } else if (laenge && hoehe && !breite) {
+      // Fassade / einzelne Wand: Breite × Höhe — kein Raum, nur Wandfläche
+      const wandBrutto = round2(laenge * hoehe)
+      const fensterFlaeche = effFenster.reduce(
+        (sum: number, f: any) => sum + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
+      )
+      const tuerFlaeche = effTueren.reduce(
+        (sum: number, t: any) => sum + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
+      )
+      wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
+      // Keine Decke, kein Boden, kein Umfang für Fassaden
     } else if (flaeche_angegeben) {
-      bodenflaecheM2 = flaeche_angegeben
-      // Wandfläche kann ohne Raummaße nicht berechnet werden — Annahme statt Rückfrage
+      // Nettofläche direkt angegeben (z.B. nach Tor-Abzug)
+      wandflaecheNettoM2 = flaeche_angegeben
     }
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
+    const transkriptLower = (daten.transkript ?? '').toLowerCase()
     // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
     const leerOderKomplett = arbeiten.length === 0 || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
     const hatStreichen = leerOderKomplett || arbeitenStr.includes('streichen') || arbeitenStr.includes('anstrich') || arbeitenStr.includes('anstreichen')
+    // nurDecke/nurWaende: GPT schreibt selten "nur X" in arbeiten[] — Transkript als Primärquelle
     const nurWaende = arbeitenStr.includes('nur wand') || arbeitenStr.includes('nur die wand')
+      || transkriptLower.includes('nur wand') || transkriptLower.includes('nur die wand') || transkriptLower.includes('nur wände')
     const nurDecke = arbeitenStr.includes('nur decke') || arbeitenStr.includes('nur die decke')
-    const anWaenden = hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez')
+      || transkriptLower.includes('nur decke') || transkriptLower.includes('nur die decke')
+    const anWaenden = !nurDecke && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
     const anDecke = (hatStreichen && !nurWaende) || arbeitenStr.includes('decke')
     const bodenSchutz = (hatStreichen && !nurDecke) || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
-    const hatSockel = hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben')
+    // Sockelleisten nur wenn Wände tatsächlich gestrichen werden
+    const hatSockel = anWaenden && wandflaecheNettoM2 !== null
+      && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
     const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []

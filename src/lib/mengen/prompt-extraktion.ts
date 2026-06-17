@@ -75,6 +75,28 @@ REGELN:
 - Bei Trockenbau: waende und decken-Array befüllen
 - Antworte NUR mit validem JSON
 
+MASSANGABEN — KRITISCHE REGEL:
+Das × / "mal" / "auf" Zeichen trennt IMMER zwei separate Maße.
+Das Komma INNERHALB einer Zahl ist IMMER Dezimaltrenner.
+
+Beispiele (PFLICHT korrekt):
+- "4×3,50" → laenge: 4.0, breite: 3.5  (NICHT laenge: 4.3, breite: 3.5)
+- "5,20 mal 4,80" → laenge: 5.2, breite: 4.8
+- "vier mal drei Komma fünfzig" → laenge: 4.0, breite: 3.5
+- "Schlafzimmer 4×3,50m" → laenge: 4.0, breite: 3.5
+
+Wenn du unsicher bist ob Transkript "4,3" die Zahl 4.3 oder "4 × 3" bedeutet:
+→ Prüfe ob direkt danach ein Malzeichen/Trennzeichen kommt
+→ "4,3×3,5": Das Komma vor dem × ist Dezimaltrenner → laenge: 4.3, breite: 3.5
+→ "4×3,5": Das × kommt nach der ganzen Zahl → laenge: 4.0, breite: 3.5
+
+PLAUSIBILITÄTS-REGELN für Raummaße:
+- Typischer Bereich: 1.5m – 12m
+- Wenn laenge oder breite < 1.5 → setze null (Rückfrage nötig)
+- Wenn laenge oder breite > 20m → setze null (wahrscheinlich Fehler)
+- Wenn hoehe > 4m → setze null
+- Wenn flaeche > 200 → setze null
+
 VAGE-ERKENNUNG:
 Erkenne vage Mengenangaben und markiere sie mit vage: true und passendem vage_typ.
 

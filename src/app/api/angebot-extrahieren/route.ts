@@ -103,6 +103,8 @@ export async function POST(req: NextRequest) {
       extraktion.rueckfragen = [...(extraktion.rueckfragen ?? []), ...neueRueckfragen]
     }
 
+    // Raw-Text überschreibt GPT-Transkript — GPT normalisiert und verliert "nur X"-Angaben
+    extraktion.transkript = text
     const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
 
     // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen

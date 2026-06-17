@@ -607,7 +607,6 @@ export default function NeuesAngebotPage() {
 
     const [result, matchingErgebnis] = await Promise.all([r.json(), matchingPromise])
 
-    console.log('API Response items:', JSON.stringify(result.items, null, 2))
 
     // Konfidenz + Matching aus Engine in Items mergen
     const engineByTitle = new Map(positionen.map(p => [p.beschreibung.toLowerCase(), p]))
