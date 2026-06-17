@@ -26,13 +26,18 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     }
   }
 
+  // Explizite Einschränkungen erkennen — nie automatisch ergänzen wenn Nutzer "nur X" sagt
+  const nurDecke = lower.includes('nur decke') || lower.includes('nur die decke')
+  const nurWaende = lower.includes('nur wand') || lower.includes('nur die wand') || lower.includes('nur wände')
+  const nurBoden = lower.includes('nur boden') || lower.includes('nur den boden')
+
   if (gewerk === 'maler') {
     const hatStreichen = lower.includes('streichen') || lower.includes('anstrich') || lower.includes('anstreichen')
     if (hatStreichen) {
-      if (!hat(ergaenzt, 'wand', 'wandfläche')) add('Wandflächen streichen')
-      if (!hat(ergaenzt, 'decke', 'deckenfläche')) add('Deckenfläche streichen')
-      if (!hat(ergaenzt, 'boden schütz', 'abdeck', 'abdecken')) add('Boden schützen / Abdecken')
-      if (!hat(ergaenzt, 'sockel', 'abkleben')) add('Sockelleisten abkleben')
+      if (!nurDecke && !nurBoden && !hat(ergaenzt, 'wand', 'wandfläche')) add('Wandflächen streichen')
+      if (!nurWaende && !nurBoden && !hat(ergaenzt, 'decke', 'deckenfläche')) add('Deckenfläche streichen')
+      if (!nurDecke && !hat(ergaenzt, 'boden schütz', 'abdeck', 'abdecken')) add('Boden schützen / Abdecken')
+      if (!nurDecke && !nurBoden && !hat(ergaenzt, 'sockel', 'abkleben')) add('Sockelleisten abkleben')
     }
     const hatTapez = lower.includes('tapez')
     if (hatTapez) {
@@ -43,10 +48,15 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   }
 
   if (gewerk === 'fliesen') {
+    const nurBodenFliesen = lower.includes('nur boden') || lower.includes('nur bodenfliesen')
+    const nurWandFliesen = lower.includes('nur wand') || lower.includes('nur wandfliesen')
     const hatNass = lower.includes('bad') || lower.includes('dusche') || lower.includes('nassbereich') || lower.includes('wc')
     if (hatNass) {
       if (!hat(ergaenzt, 'abdicht')) add('Verbundabdichtung')
-      if (!hat(ergaenzt, 'verfug')) add('Verfugung')
+    }
+    if (!hat(ergaenzt, 'verfug')) {
+      if (!nurWandFliesen && hat(ergaenzt, 'bodenfliesen')) add('Verfugung Boden')
+      if (!nurBodenFliesen && hat(ergaenzt, 'wandfliesen')) add('Verfugung Wand')
     }
     if (lower.includes('bodengleich')) {
       if (!hat(ergaenzt, 'bodengleich')) add('Bodengleiche Dusche einbauen')
@@ -54,12 +64,16 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   }
 
   if (gewerk === 'sanitaer_heizung') {
+    const nurWC = lower.includes('nur wc') || lower.includes('nur die toilette')
+    const nurWaschtisch = lower.includes('nur waschtisch') || lower.includes('nur waschbecken')
     const hatTausch = lower.includes('tausch') || lower.includes('wechsel') || lower.includes('erneuern')
     if (hatTausch && !hat(ergaenzt, 'demon', 'ausbauen', 'entfernen')) {
       add('Demontage Altanlage')
     }
-    const hatObjekte = lower.includes('wc') || lower.includes('waschtisch') || lower.includes('dusche') || lower.includes('wanne')
-    if (hatObjekte && !hat(ergaenzt, 'silikon')) {
+    const hatWC = !nurWaschtisch && lower.includes('wc')
+    const hatWaschtisch = !nurWC && (lower.includes('waschtisch') || lower.includes('waschbecken'))
+    const hatDusche = lower.includes('dusche') || lower.includes('wanne')
+    if ((hatWC || hatWaschtisch || hatDusche) && !hat(ergaenzt, 'silikon')) {
       add('Silikon Anschlussfugen')
     }
   }

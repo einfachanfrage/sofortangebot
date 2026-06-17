@@ -19,27 +19,30 @@ export function fliesenEngine(daten: any): MengenErgebnis {
 
     const umfang = laenge && breite ? round2(2 * laenge + 2 * breite) : null
 
+    let bodenNetto: number | null = null
+
     if (laenge && breite) {
-      const boden = round2(laenge * breite)
+      bodenNetto = round2(laenge * breite)
       positionen.push({
         beschreibung: `Bodenfliesen verlegen — ${name}`,
-        menge: round2(boden * 1.1),
+        menge: round2(bodenNetto * 1.1),
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `${laenge} × ${breite} = ${boden} m² + 10% Verschnitt`,
+        berechnungsweg: `${laenge} × ${breite} = ${bodenNetto} m² + 10% Verschnitt`,
         annahmen: ['10% Verschnitt angesetzt'],
       })
       if (nassbereich) {
         positionen.push({
           beschreibung: `Verbundabdichtung Boden — ${name}`,
-          menge: boden,
+          menge: bodenNetto,
           einheit: 'm²',
           konfidenz: 'high',
-          berechnungsweg: `Bodenfläche ${boden} m²`,
+          berechnungsweg: `Bodenfläche ${bodenNetto} m²`,
           annahmen: [],
         })
       }
     } else if (flaeche_angegeben) {
+      bodenNetto = flaeche_angegeben
       positionen.push({
         beschreibung: `Bodenfliesen verlegen — ${name}`,
         menge: round2(flaeche_angegeben * 1.1),
@@ -49,25 +52,45 @@ export function fliesenEngine(daten: any): MengenErgebnis {
         annahmen: ['10% Verschnitt angesetzt', 'Nur Bodenfläche angegeben — keine Raummaße vorhanden'],
       })
     }
+    // Verfugung Boden — immer wenn Bodenfliesen
+    if (bodenNetto !== null) {
+      positionen.push({
+        beschreibung: `Verfugung Boden — ${name}`,
+        menge: bodenNetto,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Gleiche Fläche wie Bodenfliesen (Nettofläche)`,
+        annahmen: [],
+      })
+    }
     // Keine Maße: Rückfrage kommt aus kontext-analyzer / rueckfragen-generator
 
     if (flieshoehe && umfang) {
-      const wandflaeche = round2(umfang * flieshoehe)
+      const wandNetto = round2(umfang * flieshoehe)
       positionen.push({
         beschreibung: `Wandfliesen verlegen — ${name}`,
-        menge: round2(wandflaeche * 1.05),
+        menge: round2(wandNetto * 1.05),
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Umfang ${umfang} lfm × Fliesenhöhe ${flieshoehe} m = ${wandflaeche} m² + 5% Verschnitt`,
+        berechnungsweg: `Umfang ${umfang} lfm × Fliesenhöhe ${flieshoehe} m = ${wandNetto} m² + 5% Verschnitt`,
         annahmen: ['5% Verschnitt für Wandfliesen'],
+      })
+      // Verfugung Wand — immer wenn Wandfliesen
+      positionen.push({
+        beschreibung: `Verfugung Wand — ${name}`,
+        menge: wandNetto,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Gleiche Fläche wie Wandfliesen (Nettofläche)`,
+        annahmen: [],
       })
       if (nassbereich) {
         positionen.push({
           beschreibung: `Verbundabdichtung Wand — ${name}`,
-          menge: wandflaeche,
+          menge: wandNetto,
           einheit: 'm²',
           konfidenz: 'high',
-          berechnungsweg: `Wandfläche ${wandflaeche} m²`,
+          berechnungsweg: `Wandfläche ${wandNetto} m²`,
           annahmen: [],
         })
       }
@@ -94,6 +117,14 @@ export function fliesenEngine(daten: any): MengenErgebnis {
         einheit: 'm²',
         konfidenz: 'high',
         berechnungsweg: `Angabe: ${ab.flaeche} m²`,
+        annahmen: [],
+      })
+      positionen.push({
+        beschreibung: `Entsorgung Fliesenmaterial — ${ab.bereich ?? 'Bereich'}`,
+        menge: ab.flaeche,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Gleiche Fläche wie Demontage`,
         annahmen: [],
       })
     }

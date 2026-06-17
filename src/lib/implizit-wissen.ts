@@ -190,6 +190,36 @@ export const IMPLIZIT_REGELN: ImpliziteRegel[] = [
     erklaerung: 'FBH = nur geeignete Beläge, Aufheizprotokoll',
   },
 
+  // ── ENTSORGUNG ─────────────────────────────────────
+  {
+    trigger: [/fliesen?\s+(entfernen|raus|runter|rausrei[sß]en|abschlagen|wegreißen)/i, /alte?\s+fliesen?\s+(raus|weg|runter)/i],
+    gewerk: ['fliesen'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Entsorgung Fliesenmaterial' },
+    konfidenz: 'sicher',
+    erklaerung: 'Fliesendemontage erzeugt Bauschutt',
+  },
+  {
+    trigger: [/tapete?\s+(ab|runter|entfernen|abziehen)/i, /tapete?\s+weg/i],
+    gewerk: ['maler'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Entsorgung Tapetenmaterial' },
+    konfidenz: 'sicher',
+    erklaerung: 'Tapetenentfernung → Entsorgung Pauschale',
+  },
+  {
+    trigger: [/(wand|decke|rigips|gk)\s+(raus|runter|entfernen|abbauen|wegreißen)/i],
+    gewerk: ['trockenbau'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Entsorgung Bauschutt Pauschale' },
+    konfidenz: 'sicher',
+    erklaerung: 'Trockenbaudemontage → Bauschutt-Entsorgung',
+  },
+  {
+    trigger: [/(wc|toilette|waschtisch|waschbecken|wanne|dusche)\s+(raus|runter|entfernen|austauschen|tauschen|wechseln)/i],
+    gewerk: ['sanitaer_heizung'],
+    schlussfolgerung: { typ: 'position_hinzufuegen', position_beschreibung: 'Entsorgung Sanitärobjekte' },
+    konfidenz: 'sicher',
+    erklaerung: 'Sanitärtausch → Entsorgung Altgeräte',
+  },
+
   // ── ALLGEMEIN ──────────────────────────────────
   {
     trigger: [/altbau/i, /gründerzeit/i, /historisch/i],

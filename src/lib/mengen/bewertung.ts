@@ -15,11 +15,12 @@ export function berechneBewertung(
     if (raum.laenge && raum.breite && raum.hoehe) {
       erkannte_angaben.push(`✓ ${raum.name}: ${raum.laenge} × ${raum.breite} × ${raum.hoehe} m`)
     } else if (raum.laenge && raum.breite) {
-      erkannte_angaben.push(`✓ ${raum.name}: ${raum.laenge} × ${raum.breite} m (Grundfläche)`)
-      fehlende_angaben.push(`⚠ ${raum.name}: Raumhöhe nicht angegeben`)
+      erkannte_angaben.push(`✓ ${raum.name}: ${raum.laenge} × ${raum.breite} m`)
+      // Raumhöhe fehlt — ist Annahme, nicht fehlende Angabe (Decke/Boden/Sockel sind trotzdem berechenbar)
+      annahmen.push(`${raum.name}: Raumhöhe nicht angegeben — Wandfläche nicht berechnet`)
     } else if (raum.flaeche) {
       erkannte_angaben.push(`✓ ${raum.name}: ${raum.flaeche} m² (Fläche)`)
-      fehlende_angaben.push(`⚠ ${raum.name}: Länge × Breite fehlen (Wandfläche nicht berechenbar)`)
+      annahmen.push(`${raum.name}: Nur Gesamtfläche angegeben — Länge × Breite wären präziser`)
     } else {
       fehlende_angaben.push(`⚠ ${raum.name}: Keine Maße angegeben`)
     }
