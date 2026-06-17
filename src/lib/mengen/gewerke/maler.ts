@@ -77,6 +77,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Sockelleisten nur wenn Wände tatsächlich gestrichen werden — nie in Garagen
     const nameLower = name.toLowerCase()
     const istGarage = nameLower.includes('garage') || nameLower.includes('carport') || nameLower.includes('halle')
+      || transkriptLower.includes('garage') || transkriptLower.includes('carport')
     const hatSockel = !istGarage && anWaenden && wandflaecheNettoM2 !== null
       && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
