@@ -75,6 +75,17 @@ REGELN:
 - Bei Trockenbau: waende und decken-Array befüllen
 - Antworte NUR mit validem JSON
 
+GEWERK-ZUWEISUNG:
+- Fassade / Außenwand / Fassadenstreichen / Außenputz → gewerk: "maler"
+- Fassadenarbeiten / Malerarbeiten / Lackierarbeiten → gewerk: "maler"
+- NUR diese exakten Werte sind erlaubt: "maler", "fliesen", "trockenbau", "boden_parkett", "sanitaer_heizung", "elektro"
+
+FASSADE IN RAEUME:
+- Fassade / Außenwand immer als raeume-Eintrag mit flaeche (wenn m² genannt) oder laenge+hoehe
+- Beispiel: "Fassade streichen, 120 m²" → raeume: [{name: "Fassade", flaeche: 120, laenge: null, breite: null, hoehe: null, arbeiten: ["streichen"]}]
+- Beispiel: "Fassade 8m breit, 6m hoch" → raeume: [{name: "Fassade", laenge: 8, hoehe: 6, breite: null, flaeche: null}]
+- Altanstrich entfernen / abschleifen in arbeiten[] eintragen, NICHT als eigene Position
+
 MASSANGABEN — KRITISCHE REGEL:
 Das × / "mal" / "auf" Zeichen trennt IMMER zwei separate Maße.
 Das Komma INNERHALB einer Zahl ist IMMER Dezimaltrenner.
