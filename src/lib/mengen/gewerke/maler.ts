@@ -86,12 +86,14 @@ export function malerEngine(daten: any): MengenErgebnis {
     const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []
 
     if (anWaenden && wandflaecheNettoM2 !== null) {
+      const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
+      const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
       positionen.push({
         beschreibung: `Wandflächen streichen — ${name}`,
         menge: wandflaecheNettoM2,
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Umfang (${umfangM} lfm) × Höhe (${hoehe} m) = Brutto, abzgl. Fenster + Türen`,
+        berechnungsweg: `Umfang ${umfangM} lfm × ${hoehe} m = ${round2(umfangM * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
         annahmen: annahmenFenster,
       })
     }
