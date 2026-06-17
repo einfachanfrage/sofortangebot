@@ -24,9 +24,20 @@ export function malerEngine(daten: any): MengenErgebnis {
     let deckenflaecheM2: number | null = null
     let umfangM: number | null = null
 
-    // Wenn GPT keine Fenster/Türen zurückgibt: 1 Standardöffnung annehmen
-    const effFenster = fenster.length > 0 ? fenster : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
-    const effTueren = tueren.length > 0 ? tueren : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
+    const arbeitenStr = arbeiten.join(' ').toLowerCase()
+    const transkriptLower = (daten.transkript ?? '').toLowerCase()
+
+    // Tor aus Transkript direkt parsen — GPT erkennt "Tor" oft nicht als Tür
+    const torMatch = transkriptLower.match(/(?:tor|garagentor|einfahrtstor)\s+(\d+(?:[.,]\d+)?)\s*[x×*]\s*(\d+(?:[.,]\d+)?)/i)
+      ?? transkriptLower.match(/(\d+(?:[.,]\d+)?)\s*[x×*]\s*(\d+(?:[.,]\d+)?)\s*m?\s*(?:gro(?:ß|ss)es?\s*)?(?:tor|garagentor)/i)
+    const torAusTrans = torMatch ? [{ breite: parseFloat(torMatch[1].replace(',', '.')), hoehe: parseFloat(torMatch[2].replace(',', '.')) }] : []
+
+    // Garagen: kein Standard-Fenster, kein Standard-Tür
+    const istGarageRaum = name.toLowerCase().includes('garage') || name.toLowerCase().includes('carport')
+      || transkriptLower.includes('garage') || transkriptLower.includes('carport')
+    const effFenster = fenster.length > 0 ? fenster : istGarageRaum ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
+    const torOderTuer = torAusTrans.length > 0 ? torAusTrans : tueren
+    const effTueren = torOderTuer.length > 0 ? torOderTuer : istGarageRaum ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
 
     if (laenge && breite) {
       bodenflaecheM2 = round2(laenge * breite)
@@ -60,9 +71,6 @@ export function malerEngine(daten: any): MengenErgebnis {
       wandflaecheNettoM2 = flaeche_angegeben
     }
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
-
-    const arbeitenStr = arbeiten.join(' ').toLowerCase()
-    const transkriptLower = (daten.transkript ?? '').toLowerCase()
     // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
     const leerOderKomplett = arbeiten.length === 0 || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
     const hatStreichen = leerOderKomplett || arbeitenStr.includes('streichen') || arbeitenStr.includes('anstrich') || arbeitenStr.includes('anstreichen')
@@ -76,8 +84,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     const bodenSchutz = hatStreichen || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
     // Sockelleisten nur wenn Wände tatsächlich gestrichen werden — nie in Garagen
     const nameLower = name.toLowerCase()
-    const istGarage = nameLower.includes('garage') || nameLower.includes('carport') || nameLower.includes('halle')
-      || transkriptLower.includes('garage') || transkriptLower.includes('carport')
+    const istGarage = istGarageRaum || nameLower.includes('halle')
     const hatSockel = !istGarage && anWaenden && wandflaecheNettoM2 !== null
       && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
