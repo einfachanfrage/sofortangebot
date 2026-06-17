@@ -17,6 +17,7 @@ import { generiereRueckfragen } from '@/lib/mengen/rueckfragen-generator'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import { verarbeiteAntworten } from '@/lib/mengen/antworten-verarbeiter'
 import { berechneMengen } from '@/lib/mengen/engine'
+import { pruefeUndErgaenzeVollstaendigkeit } from '@/lib/mengen/vollstaendigkeits-check'
 import { analysiereKontext } from '@/lib/kontext-analyzer'
 import { starteStilleErkennung } from '@/lib/stille-erkennung'
 import type { StilleErkennung } from '@/lib/stille-erkennung'
@@ -523,7 +524,9 @@ export default function NeuesAngebotPage() {
         extRes.extraktion as Parameters<typeof verarbeiteAntworten>[0],
         vageAntworten
       )
-      mengen = berechneMengen(angereichert.gewerk, angereichert)
+      const mengenRoh = berechneMengen(angereichert.gewerk, angereichert)
+      const { positionen } = pruefeUndErgaenzeVollstaendigkeit(angereichert.gewerk, mengenRoh.positionen, text)
+      mengen = { ...mengenRoh, positionen }
     }
 
     await generiereAngebot(text, mengen.positionen)
