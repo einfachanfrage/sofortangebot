@@ -27,16 +27,11 @@ export function malerEngine(daten: any): MengenErgebnis {
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
 
-    // Tor aus Transkript direkt parsen — GPT erkennt "Tor" oft nicht als Tür
-    const torMatch = transkriptLower.match(/\b(?:tor|garagentor|einfahrtstor)\b[^\d]*(\d+(?:[.,]\d+)?)[^\d]+(\d+(?:[.,]\d+)?)/i)
-    const torAusTrans = torMatch ? [{ breite: parseFloat(torMatch[1].replace(',', '.')), hoehe: parseFloat(torMatch[2].replace(',', '.')) }] : []
-
-    // Garagen: kein Standard-Fenster, kein Standard-Tür
+    // Garagen: kein Standard-Fenster, kein Standard-Tür — Tor wird via route.ts in tueren[] injiziert
     const istGarageRaum = name.toLowerCase().includes('garage') || name.toLowerCase().includes('carport')
       || transkriptLower.includes('garage') || transkriptLower.includes('carport')
     const effFenster = fenster.length > 0 ? fenster : istGarageRaum ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
-    const torOderTuer = torAusTrans.length > 0 ? torAusTrans : tueren
-    const effTueren = torOderTuer.length > 0 ? torOderTuer : istGarageRaum ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
+    const effTueren = tueren.length > 0 ? tueren : istGarageRaum ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
 
     if (laenge && breite) {
       bodenflaecheM2 = round2(laenge * breite)
