@@ -30,7 +30,10 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Garagen: kein Standard-Fenster, kein Standard-Tür — Tor wird via route.ts in tueren[] injiziert
     const istGarageRaum = name.toLowerCase().includes('garage') || name.toLowerCase().includes('carport')
       || transkriptLower.includes('garage') || transkriptLower.includes('carport')
-    const effFenster = fenster.length > 0 ? fenster : istGarageRaum ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
+    // "kein Fenster" / "ohne Fenster" → Standard-Fenster-Fallback unterdrücken
+    const keinFenster = transkriptLower.includes('kein fenster') || transkriptLower.includes('keine fenster')
+      || transkriptLower.includes('ohne fenster') || transkriptLower.includes('fensterlos')
+    const effFenster = fenster.length > 0 ? fenster : (istGarageRaum || keinFenster) ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
     const effTueren = tueren.length > 0 ? tueren : istGarageRaum ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
 
     if (laenge && breite) {
@@ -73,13 +76,16 @@ export function malerEngine(daten: any): MengenErgebnis {
       || transkriptLower.includes('nur wand') || transkriptLower.includes('nur die wand') || transkriptLower.includes('nur wände')
     const nurDecke = arbeitenStr.includes('nur decke') || arbeitenStr.includes('nur die decke')
       || transkriptLower.includes('nur decke') || transkriptLower.includes('nur die decke')
+    // Akzentwand: "nur eine Wand tapezieren, Rest streichen" — eine Wand = min(laenge,breite) × hoehe
+    const hatAkzentwand = (transkriptLower.includes('eine wand') || transkriptLower.includes('akzentwand') || transkriptLower.includes('1 wand'))
+      && (transkriptLower.includes('tapez') || transkriptLower.includes('vliestapete') || transkriptLower.includes('tapete'))
+      && (transkriptLower.includes('rest') || transkriptLower.includes('übrige') || transkriptLower.includes('weiß'))
     const anWaenden = !nurDecke && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
     const anDecke = !nurWaende && ((hatStreichen) || arbeitenStr.includes('decke'))
     const bodenSchutz = hatStreichen || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
-    // Sockelleisten nur wenn Wände tatsächlich gestrichen werden — nie in Garagen
+    // Sockelleisten wenn Wände gestrichen werden (inkl. Garage — Garagen haben oft Sockelleisten)
     const nameLower = name.toLowerCase()
-    const istGarage = istGarageRaum || nameLower.includes('halle')
-    const hatSockel = !istGarage && anWaenden && wandflaecheNettoM2 !== null
+    const hatSockel = anWaenden && wandflaecheNettoM2 !== null
       && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
@@ -88,14 +94,40 @@ export function malerEngine(daten: any): MengenErgebnis {
     if (anWaenden && wandflaecheNettoM2 !== null) {
       const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
       const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
-      positionen.push({
-        beschreibung: `Wandflächen streichen — ${name}`,
-        menge: wandflaecheNettoM2,
-        einheit: 'm²',
-        konfidenz: 'high',
-        berechnungsweg: `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${round2((umfangM ?? 0) * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
-        annahmen: annahmenFenster,
-      })
+
+      if (hatAkzentwand && laenge && breite && hoehe) {
+        // Akzentwand = längere Seite × Höhe (Sichtwand = Hauptwand = länger ist typischer Akzent)
+        const akzentWandBreite = Math.max(laenge, breite)
+        const akzentWandFlaeche = round2(akzentWandBreite * hoehe)
+        const restwandFlaeche = round2(wandflaecheNettoM2 - akzentWandFlaeche)
+        positionen.push({
+          beschreibung: `Akzentwand Vliestapete — ${name}`,
+          menge: akzentWandFlaeche,
+          einheit: 'm²',
+          konfidenz: 'high',
+          berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`,
+          annahmen: ['Kürzere Raumseite als Akzentwand angenommen'],
+        })
+        if (restwandFlaeche > 0) {
+          positionen.push({
+            beschreibung: `Restwände streichen — ${name}`,
+            menge: restwandFlaeche,
+            einheit: 'm²',
+            konfidenz: 'high',
+            berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`,
+            annahmen: annahmenFenster,
+          })
+        }
+      } else {
+        positionen.push({
+          beschreibung: `Wandflächen streichen — ${name}`,
+          menge: wandflaecheNettoM2,
+          einheit: 'm²',
+          konfidenz: 'high',
+          berechnungsweg: `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${round2((umfangM ?? 0) * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
+          annahmen: annahmenFenster,
+        })
+      }
     }
 
     if (anDecke && deckenflaecheM2 !== null) {
