@@ -47,6 +47,14 @@ ALLGEMEIN: Altbau → altbau: true. Bewohnt → bewohnt: true. Denkmalschutz →
 
 WICHTIG: Ergänze Positionen nur wenn sie NICHT schon im Angebot sind. Doppelungen verhindern.
 
+MASSANGABEN — KRITISCHE REGEL:
+Das × / "mal" / "auf" Zeichen trennt IMMER zwei separate Maße. Komma in Zahlen ist Dezimaltrenner.
+NIEMALS Maße berechnen oder in flaeche umrechnen — immer als laenge+breite eintragen, flaeche: null!
+- "2×2,50m" → laenge: 2.0, breite: 2.5, flaeche: null
+- "Bad 2×2,50m, 2,60 hoch" → laenge: 2.0, breite: 2.5, hoehe: 2.6, flaeche: null
+- "4×3,50" → laenge: 4.0, breite: 3.5
+- flaeche NUR setzen wenn User explizit m² nennt ohne Länge×Breite: "ca. 25 m²" → flaeche: 25
+
 MULTI-RAUM PARSING:
 [RAUM] = neuer Raum, eigener Eintrag in raeume[]. [ERGAENZUNG] = Zusatz zum letzten Raum. [KORREKTUR] = vorherige Angabe verwerfen.
 
