@@ -490,7 +490,12 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       }
     }
 
-    const hatTapez = lower.includes('tapez') || lower.includes('raufaser') || lower.includes('tapete')
+    // Akzentwand-Position bereits vorhanden → hatTapez NICHT triggern (Tapete-Erwähnung gehört zur Akzentwand)
+    const hatAkzentwandPos = ergaenzt.some(p => {
+      const d = p.beschreibung.toLowerCase()
+      return d.includes('akzentwand') || d.includes('motivtapete') || d.includes('vliestapete')
+    })
+    const hatTapez = !hatAkzentwandPos && !hatTapeteWegDannStreich && (lower.includes('tapez') || lower.includes('raufaser') || lower.includes('tapete'))
     if (hatTapez) {
       // Wandfläche aus Engine oder direkt aus Text
       const wandPosTapez = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wand'))
