@@ -71,11 +71,23 @@ export function pruefeUndErgaenzeVollstaendigkeit(
 
   if (gewerk === 'maler') {
     const hatStreichen = lower.includes('streichen') || lower.includes('anstrich') || lower.includes('anstreichen')
+    const hatGrundierung = lower.includes('grundier') || lower.includes('voranstrich') || lower.includes('tiefengrund')
     if (hatStreichen) {
       if (!nurDecke && !nurBoden && !hat(ergaenzt, 'wand', 'wandfläche')) add('Wandflächen streichen')
       if (!nurWaende && !nurBoden && !hat(ergaenzt, 'decke', 'deckenfläche')) add('Deckenfläche streichen')
       if (!nurDecke && !hat(ergaenzt, 'boden schütz', 'abdeck', 'abdecken')) add('Boden schützen / Abdecken')
       if (!nurDecke && !nurBoden && !hat(ergaenzt, 'sockel', 'abkleben')) add('Sockelleisten abkleben')
+    }
+    if (hatGrundierung) {
+      // Grundierung mit gleicher Fläche wie Wandflächen-Position ergänzen
+      if (!hat(ergaenzt, 'grundier', 'voranstrich', 'tiefengrund')) {
+        const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
+        if (wandPos) {
+          ergaenzt.unshift({ beschreibung: 'Voranstrich / Grundierung', menge: wandPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Wandflächen (${wandPos.menge} m²)`, annahmen: [] })
+        } else {
+          add('Voranstrich / Grundierung')
+        }
+      }
     }
     const hatTapez = lower.includes('tapez') || lower.includes('raufaser') || lower.includes('tapete')
     if (hatTapez) {
