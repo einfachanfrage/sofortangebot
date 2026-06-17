@@ -28,8 +28,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
 
     // Tor aus Transkript direkt parsen — GPT erkennt "Tor" oft nicht als Tür
-    const torMatch = transkriptLower.match(/(?:tor|garagentor|einfahrtstor)\s+(\d+(?:[.,]\d+)?)\s*[x×*]\s*(\d+(?:[.,]\d+)?)/i)
-      ?? transkriptLower.match(/(\d+(?:[.,]\d+)?)\s*[x×*]\s*(\d+(?:[.,]\d+)?)\s*m?\s*(?:gro(?:ß|ss)es?\s*)?(?:tor|garagentor)/i)
+    const torMatch = transkriptLower.match(/\b(?:tor|garagentor|einfahrtstor)\b[^\d]*(\d+(?:[.,]\d+)?)[^\d]+(\d+(?:[.,]\d+)?)/i)
     const torAusTrans = torMatch ? [{ breite: parseFloat(torMatch[1].replace(',', '.')), hoehe: parseFloat(torMatch[2].replace(',', '.')) }] : []
 
     // Garagen: kein Standard-Fenster, kein Standard-Tür
