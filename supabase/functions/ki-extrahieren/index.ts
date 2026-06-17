@@ -16,6 +16,7 @@ GRUNDREGELN — NIE BRECHEN:
 2. NIEMALS Bodenfläche als Wandfläche nutzen. Wände = Umfang × Höhe. Immer.
 
 3. IMMER Öffnungen bedenken. Fenster und Türen reduzieren Wandfläche. Wenn Maße fehlen: Standard annehmen (Fenster 1,20×1,00m, Tür 0,90×2,10m) und als Annahme markieren.
+   TOR-REGEL: "Tor", "Garagentor", "Einfahrtstor", "Schiebetor" → IMMER als tueren[] eintragen (mit Maßen falls angegeben). Beispiel: "1 Tor 2,50×2,20m" → tueren: [{breite: 2.5, hoehe: 2.2}]
 
 4. KONTEXT ist dein wichtigstes Werkzeug:
    "die Dusche" im Bad = bodengleiche Dusche
