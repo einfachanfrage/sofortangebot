@@ -5,6 +5,7 @@ export type RueckfrageTyp =
   | 'anzahl'
   | 'laenge'
   | 'hoehe'
+  | 'ja_nein'
 
 export interface SchnellAntwort {
   label: string
