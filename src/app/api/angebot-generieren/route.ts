@@ -138,15 +138,33 @@ export async function POST(req: NextRequest) {
     const result: GeneratedQuote = JSON.parse(cleaned)
 
     // Engine-Mengen überschreiben GPT-Mengen — immer, ohne Ausnahme
-    // GPT darf keine eigenen Positionen hinzufügen wenn berechnetePositionen vorgegeben
     if (berechnetePositionen && result.items) {
-      result.items = result.items
-        .slice(0, berechnetePositionen.length) // GPT-Extras abschneiden
-        .map((item, i) => {
-          const eng = berechnetePositionen[i]
-          if (!eng) return item
-          return { ...item, quantity: eng.menge, unit: eng.einheit }
-        })
+      const gptItemsOrig = [...result.items]
+      // Preis-Lookup: title (normalisiert) → unit_price
+      const gptPreise = new Map<string, number>()
+      for (const item of gptItemsOrig) {
+        const key = (item.title ?? '').toLowerCase().replace(/[^a-zäöüß0-9]/g, '')
+        if (item.unit_price > 0) gptPreise.set(key, item.unit_price)
+      }
+      // Jede berechnetePosition bekommt einen eigenen Item
+      result.items = berechnetePositionen.map((eng, i) => {
+        const engKey = eng.beschreibung.toLowerCase().replace(/[^a-zäöüß0-9]/g, '')
+        const gptItem = gptItemsOrig[i]
+        const price = gptPreise.get(engKey) ?? gptItem?.unit_price ?? 0
+        return {
+          title: eng.beschreibung,
+          description: gptItem?.description ?? eng.beschreibung,
+          unit_price: price,
+          quantity: eng.menge,
+          unit: eng.einheit,
+          kategorie: gptItem?.kategorie ?? '',
+        }
+      })
+      // Kleinmaterial-Pauschale aus Original-GPT-Antwort anhängen
+      const gptKlein = gptItemsOrig.find((it: { title?: string }) =>
+        (it.title ?? '').toLowerCase().includes('kleinmaterial')
+      )
+      if (gptKlein) result.items.push(gptKlein)
     }
 
     // Kosten tracken (gpt-4o-mini ~$0.15/1M tokens in, $0.60/1M tokens out)
