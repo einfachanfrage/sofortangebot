@@ -48,11 +48,13 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     ergaenzt.length = 0
     ohneWandUndSockel.forEach(p => ergaenzt.push(p))
   }
-  // "nur Wände" → kein Boden schützen, keine Decke
+  // "nur Wände" → keine Decke, aber Boden schützen BLEIBT (beim Wandstreichen immer nötig)
   if (nurWaende) {
     const ohneDeckeUndBoden = ergaenzt.filter(p => {
       const d = p.beschreibung.toLowerCase()
-      return !d.includes('decke') && !d.includes('boden')
+      // Boden schützen/abkleben bleibt — nur "Boden streichen" oder "Bodenfläche" entfernen
+      const istBodenSchutz = d.includes('boden schütz') || d.includes('boden abkl') || d.includes('abdeck')
+      return !d.includes('decke') && (!d.includes('boden') || istBodenSchutz)
     })
     ergaenzt.length = 0
     ohneDeckeUndBoden.forEach(p => ergaenzt.push(p))
