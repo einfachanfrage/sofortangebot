@@ -97,12 +97,15 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       )
       const fm = wandPos?.menge ?? null
       if (fm !== null && fm > 0) {
-        addMitMenge('Fassade reinigen / Untergrundvorbereitung', fm, 'm²', `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`)
-        addMitMenge('Grundierung / Tiefengrund Fassade', fm, 'm²', `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`)
-        addMitMenge('Fassadenfarbe 2× Anstrich', fm, 'm²', `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`)
-        if (hatRisse) {
-          addMitMenge('Rissverschluss / Spachtelarbeiten Außen', 1, 'Pauschale', 'Pauschale bei Rissen/Schäden')
-        }
+        // Direkte Prüfung statt addMitMenge — hat() matcht 'fassade' zu früh gegen Wandposition
+        const hatReinigen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('reinigen'))
+        const hatGrundierung = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('grundierung'))
+        const hatFarbe = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('fassadenfarbe'))
+        const hatRissfix = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('rissverschluss'))
+        if (!hatReinigen) ergaenzt.push({ beschreibung: 'Fassade reinigen / Untergrundvorbereitung', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
+        if (!hatGrundierung) ergaenzt.push({ beschreibung: 'Grundierung / Tiefengrund Fassade', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
+        if (!hatFarbe) ergaenzt.push({ beschreibung: 'Fassadenfarbe 2× Anstrich', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
+        if (hatRisse && !hatRissfix) ergaenzt.push({ beschreibung: 'Rissverschluss / Spachtelarbeiten Außen', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Pauschale bei Rissen/Schäden', annahmen: [] })
       }
     }
   }

@@ -48,8 +48,9 @@ Füge am Ende eine Kleinmaterial-Pauschale hinzu: min. 25€ oder 4% der Lohnkos
 
 WAS DU NICHT TUN DARFST:
 - Mengen (quantity) verändern — quantity wird IGNORIERT, die Engine überschreibt es
-- Positionen weglassen oder umbenennen
+- Positionen weglassen, umbenennen oder zusammenfassen
 - Neue Positionen erfinden (außer Kleinmaterial-Pauschale)
+- Mehrere Positionen zu einer kombinieren — JEDE Position bekommt einen eigenen Eintrag
 
 MARKTPREISE DEUTSCHLAND (Netto, wenn Preisdatenbank leer):
 MALER: Wandflächen streichen 2×Anstrich: 9,50€/m² | Deckenfläche streichen: 8,50€/m² | Boden schützen/Abdecken: 2,50€/m² | Sockelleisten abkleben: 1,50€/lfdm | Tapete aufziehen: 12,00€/m² | Tapete entfernen: 4,00€/m²
