@@ -105,6 +105,27 @@ export async function POST(req: NextRequest) {
 
     // Raw-Text überschreibt GPT-Transkript — GPT normalisiert und verliert "nur X"-Angaben
     extraktion.transkript = text
+
+    // Tor/Garagentor direkt aus Rohtext in tueren[] injizieren — GPT erkennt "Tor" oft nicht
+    if (extraktion.gewerk === 'maler') {
+      const tl = text.toLowerCase()
+      // Matcht "tor 2,50×2,20" / "tor 2.5x2.2" / "1 tor 2,50 x 2,20" — egal welches × Zeichen
+      const tm = tl.match(/(?:tor|garagentor|einfahrtstor)\s+(\d+(?:[.,]\d+)?)\s*[x×xX×✕\*]\s*(\d+(?:[.,]\d+)?)/i)
+      if (tm) {
+        const torBreite = parseFloat(tm[1].replace(',', '.'))
+        const torHoehe = parseFloat(tm[2].replace(',', '.'))
+        if (torBreite > 0 && torHoehe > 0) {
+          for (const raum of extraktion.raeume ?? []) {
+            // Nur injizieren wenn noch keine passende Tür/kein Tor vorhanden
+            const hatBigTuer = (raum.tueren ?? []).some((t: {breite?: number}) => (t.breite ?? 0) >= 1.5)
+            if (!hatBigTuer) {
+              raum.tueren = [{ breite: torBreite, hoehe: torHoehe }]
+            }
+          }
+        }
+      }
+    }
+
     const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
 
     // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
