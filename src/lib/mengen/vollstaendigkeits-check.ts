@@ -89,13 +89,18 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     if (istFassade) {
       const hatRisse = lower.includes('riss') || lower.includes('schäden') || lower.includes('abgeplatzt')
         || lower.includes('moos') || lower.includes('algen')
-      // Referenzfläche: erste Wandposition aus der Engine
+      // Referenzfläche: Engine-Position oder direkt aus Raw-Text extrahieren
       const wandPos = ergaenzt.find(p =>
         p.beschreibung.toLowerCase().includes('wand') ||
         p.beschreibung.toLowerCase().includes('fassade') ||
         p.beschreibung.toLowerCase().includes('streichen')
       )
-      const fm = wandPos?.menge ?? null
+      // Fallback: m²-Angabe aus Transkript lesen wenn Engine nichts liefert
+      let fm = wandPos?.menge ?? null
+      if (fm === null) {
+        const m2Match = transkript.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+        if (m2Match) fm = parseFloat(m2Match[1].replace(',', '.'))
+      }
       if (fm !== null && fm > 0) {
         // Direkte Prüfung statt addMitMenge — hat() matcht 'fassade' zu früh gegen Wandposition
         const hatReinigen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('reinigen'))
