@@ -74,8 +74,10 @@ export function malerEngine(daten: any): MengenErgebnis {
     const anWaenden = !nurDecke && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
     const anDecke = !nurWaende && ((hatStreichen) || arbeitenStr.includes('decke'))
     const bodenSchutz = hatStreichen || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
-    // Sockelleisten nur wenn Wände tatsächlich gestrichen werden
-    const hatSockel = anWaenden && wandflaecheNettoM2 !== null
+    // Sockelleisten nur wenn Wände tatsächlich gestrichen werden — nie in Garagen
+    const nameLower = name.toLowerCase()
+    const istGarage = nameLower.includes('garage') || nameLower.includes('carport') || nameLower.includes('halle')
+    const hatSockel = !istGarage && anWaenden && wandflaecheNettoM2 !== null
       && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)

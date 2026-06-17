@@ -71,6 +71,8 @@ REGELN:
 - "zwölf Quadratmeter" → flaeche: 12
 - "5 mal 4 Meter" → laenge: 5, breite: 4
 - "zwei Fenster" ohne Maße → fenster: [{}, {}]
+- "Tor", "Garagentor", "Einfahrtstor" → immer als tueren[] eintragen (mit Maßen wenn angegeben)
+- "1 Tor 2,50×2,20m" → tueren: [{ breite: 2.5, hoehe: 2.2 }]
 - Bei Fliesen: bereiche statt raeume verwenden
 - Bei Trockenbau: waende und decken-Array befüllen
 - Antworte NUR mit validem JSON
