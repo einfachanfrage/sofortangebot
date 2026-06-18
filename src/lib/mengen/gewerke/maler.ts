@@ -13,6 +13,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       name: nameRaw = 'Raum',
       laenge, breite, hoehe,
       flaeche: flaeche_angegeben,
+      umfang: umfang_direkt,
       fenster = [],
       tueren = [],
       arbeiten = [],
@@ -77,6 +78,17 @@ export function malerEngine(daten: any): MengenErgebnis {
       )
       wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
       // Keine Decke, kein Boden, kein Umfang für Fassaden
+    } else if (umfang_direkt && hoehe) {
+      // Umfang direkt angegeben (Halle, Lagerhalle) — ohne L×B
+      umfangM = round2(umfang_direkt)
+      const fensterFlU = effFenster.reduce(
+        (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
+      )
+      const tuerFlU = effTueren.reduce(
+        (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
+      )
+      wandflaecheNettoM2 = round2(umfangM * hoehe - fensterFlU - tuerFlU)
+      // Boden-/Deckenfläche unbekannt ohne L×B → Rückfrage kommt
     } else if (flaeche_angegeben) {
       // flaeche = immer Bodenfläche (GPT-Konvention). Nur bei Dachschräge/Fassade = Wandfläche.
       if (istDachschraege) {

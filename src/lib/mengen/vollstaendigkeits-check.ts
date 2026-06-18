@@ -178,11 +178,20 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     const hatHeizkLackieren = (lower.includes('heizkörper') || lower.includes('heizkoerper') || lower.includes('heizung')) &&
       (lower.includes('lackier') || lower.includes('lack') || lower.includes('neu streich'))
     if (hatHeizkLackieren && !hat(ergaenzt, 'heizkörper abschleifen', 'heizkoerper abschleifen')) {
-      // Anzahl: erst explizit vor "heizkörper", dann Zimmer-Anzahl als Proxy, dann 1
-      const anzHzkExplizit = anzahlAus('heizkörper', anzahlAus('heizkoerper', 0))
+      // "je N Heizkörper pro Zimmer" → N × Zimmeranzahl
+      const jeHzkMatch = lower.match(/je\s+(\d+)\s*(?:stück\s*)?(?:heizkörper|heizkoerper)/i)
+      const anzHzkExplizit = !jeHzkMatch ? anzahlAus('heizkörper', anzahlAus('heizkoerper', 0)) : 0
       const anzZimmer = anzahlAus('zimmer', anzahlAus('raum', anzahlAus('räume', 0)))
-      const anzHzk = anzHzkExplizit > 0 ? anzHzkExplizit : anzZimmer > 0 ? anzZimmer : 1
-      const hzkAnnahme = anzHzkExplizit === 0 && anzZimmer > 0 ? [`${anzZimmer} Zimmer → je 1 Heizkörper angenommen`] : []
+      // Zimmeranzahl aus Engine-Positionen wenn Zahlwort ("vier Zimmer") nicht geparst wird
+      const anzRaeumeAusPos = ergaenzt.filter(p => p.beschreibung.toLowerCase().includes('wandflächen streichen')).length
+      const anzZimmerEff = anzZimmer > 0 ? anzZimmer : anzRaeumeAusPos > 0 ? anzRaeumeAusPos : 0
+      let anzHzk: number
+      if (jeHzkMatch) {
+        anzHzk = parseInt(jeHzkMatch[1]) * Math.max(anzZimmerEff, 1)
+      } else {
+        anzHzk = anzHzkExplizit > 0 ? anzHzkExplizit : anzZimmerEff > 0 ? anzZimmerEff : 1
+      }
+      const hzkAnnahme = !jeHzkMatch && anzHzkExplizit === 0 && anzZimmerEff > 0 ? [`${anzZimmerEff} Zimmer → je 1 Heizkörper angenommen`] : []
       ergaenzt.push({ beschreibung: 'Heizkörper abschleifen', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper aus Transkript`, annahmen: hzkAnnahme })
       ergaenzt.push({ beschreibung: 'Heizkörper grundieren', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
       ergaenzt.push({ beschreibung: 'Heizkörper lackieren — 1. Anstrich', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
@@ -541,6 +550,23 @@ export function pruefeUndErgaenzeVollstaendigkeit(
         if (p.beschreibung.toLowerCase().includes('wandfläch') && p.beschreibung.toLowerCase().includes('streichen') && !p.beschreibung.toLowerCase().includes('feuchtraum')) {
           p.beschreibung = p.beschreibung.replace(/streichen(\s*—\s*.+)?$/i, 'streichen (Feuchtraumfarbe)')
         }
+      }
+    }
+
+    // Kalkputz → eigene teurere Positionen statt normales Wandstreichen
+    const hatKalkputz = lower.includes('kalkputz') || lower.includes('kalk putz') || lower.includes('kalkfarbe')
+    if (hatKalkputz && !hat(ergaenzt, 'kalkputz', 'kalk auftragen')) {
+      const wandPosKalk = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
+      if (wandPosKalk) {
+        const km2 = wandPosKalk.menge
+        const ohneWandKalk = ergaenzt.filter(p => !p.beschreibung.toLowerCase().includes('wandfläch'))
+        ergaenzt.length = 0
+        ohneWandKalk.forEach(p => ergaenzt.push(p))
+        ergaenzt.push({ beschreibung: 'Untergrundvorbereitung für Kalkputz', menge: km2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${km2} m²`, annahmen: [] })
+        ergaenzt.push({ beschreibung: 'Kalkputz auftragen', menge: km2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${km2} m²`, annahmen: [] })
+      } else {
+        add('Untergrundvorbereitung für Kalkputz')
+        add('Kalkputz auftragen')
       }
     }
 

@@ -69,6 +69,7 @@ Wenn "Fassade", "Außenwand", "Garagenfassade", "Fassadenarbeiten" → Einzelfl�
 
 MULTI-RAUM PARSING:
 [RAUM] = neuer Raum, eigener Eintrag in raeume[]. [ERGAENZUNG] = Zusatz zum letzten Raum. [KORREKTUR] = vorherige Angabe verwerfen.
+KORREKTUREN: Wenn der Nutzer sich verbessert ("ach nein", "doch nicht", "warte", "eigentlich nur", "stimmt nicht", "vergiss die", "lieber nicht"), gilt die LETZTE Aussage. Entferne die ursprüngliche Angabe aus arbeiten[], fenster[], tueren[] oder passe Maße an. Beispiel: "Decke auch... ach nein, die Decke doch nicht" → arbeiten[] enthält KEINE Decke. "warte, nicht 6 sondern 5 Meter" → laenge: 5, nicht 6.
 
 GEWERK-SPEZIFISCHES WISSEN:
 MALER: "Zimmer streichen" = Wände + Decke. Wandfläche = Umfang × Höhe − Öffnungen. Abdecken/Abkleben immer wenn Streichen.
