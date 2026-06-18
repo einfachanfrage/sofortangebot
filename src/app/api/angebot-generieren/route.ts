@@ -51,6 +51,7 @@ WAS DU NICHT TUN DARFST:
 - Positionen weglassen, umbenennen oder zusammenfassen
 - Neue Positionen erfinden (außer Kleinmaterial-Pauschale)
 - Mehrere Positionen zu einer kombinieren — JEDE Position bekommt einen eigenen Eintrag
+- Bei MALER + Tapezieren/Raufaser: NIEMALS "Untergrund glätten", "Spachteln" oder Trockenbau-Positionen ergänzen — Raufaser verbirgt Unebenheiten
 
 MARKTPREISE DEUTSCHLAND (Netto, wenn Preisdatenbank leer):
 MALER: Wandflächen streichen 2×Anstrich: 9,50€/m² | Deckenfläche streichen: 8,50€/m² | Boden schützen/Abdecken: 2,50€/m² | Sockelleisten abkleben: 1,50€/lfdm | Tapete aufziehen: 12,00€/m² | Tapete entfernen: 4,00€/m²
@@ -165,6 +166,17 @@ export async function POST(req: NextRequest) {
         (it.title ?? '').toLowerCase().includes('kleinmaterial')
       )
       if (gptKlein) result.items.push(gptKlein)
+
+      // Trockenbau-Positionen bei Maler-Jobs entfernen (GPT-Halluzination)
+      const textLower = text.toLowerCase()
+      const istTapezierJob = textLower.includes('tapez') || textLower.includes('raufaser') || textLower.includes('vliestapete')
+      if (istTapezierJob) {
+        result.items = result.items.filter((it: { title?: string; kategorie?: string }) => {
+          const t = (it.title ?? '').toLowerCase()
+          const k = (it.kategorie ?? '').toLowerCase()
+          return !k.includes('trockenbau') && !t.includes('spachtel') && !t.includes('glätten') && !t.includes('untergrund gl')
+        })
+      }
     }
 
     // Kosten tracken (gpt-4o-mini ~$0.15/1M tokens in, $0.60/1M tokens out)
