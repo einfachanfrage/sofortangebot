@@ -6,6 +6,16 @@ import { Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
+const BORDER_COLOR: Record<string, string> = {
+  draft:          'bg-[#F5C400]',
+  in_bearbeitung: 'bg-[#F5C400]',
+  sent:           'bg-blue-500',
+  viewed:         'bg-purple-500',
+  accepted:       'bg-green-500',
+  rejected:       'bg-red-500',
+  archived:       'bg-gray-300',
+}
+
 interface Props {
   quote: {
     id: string
@@ -60,6 +70,8 @@ export function MobileQuoteCard({ quote, statusLabel, statusColor, formattedDate
     router.refresh()
   }
 
+  const borderClass = BORDER_COLOR[quote.status] ?? 'bg-gray-300'
+
   return (
     <div className="relative overflow-hidden rounded-2xl">
       {/* Delete backdrop */}
@@ -86,22 +98,32 @@ export function MobileQuoteCard({ quote, statusLabel, statusColor, formattedDate
       >
         <Link
           href={`/angebot/${quote.id}`}
-          className="block bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 active:scale-[0.99] transition-transform"
+          className="block active:scale-[0.99] transition-transform"
           onClick={e => { if (offset < -10) e.preventDefault() }}
         >
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${statusColor}`}>
-                  {statusLabel}
-                </span>
-                <div className="font-black text-[#2C2C2C] truncate text-sm">
-                  {quote.customer?.name || 'Kunde unbekannt'}
+          <div className="relative overflow-hidden rounded-2xl bg-white border border-[#2C2C2C]/5">
+            {/* Linker Status-Rand */}
+            <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderClass}`} />
+
+            {/* Content */}
+            <div className="pl-4 pr-4 py-3.5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="font-black text-[#2C2C2C] text-sm truncate">
+                    {quote.customer?.name || 'Kunde unbekannt'}
+                  </div>
+                  <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">
+                    Erstellt {formattedDate}
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-black text-[#2C2C2C] text-sm">{formattedAmount}</div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block ${statusColor}`}>
+                    {statusLabel}
+                  </span>
                 </div>
               </div>
-              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">{formattedDate}</div>
             </div>
-            <div className="font-black text-[#2C2C2C] text-sm shrink-0">{formattedAmount}</div>
           </div>
         </Link>
       </div>

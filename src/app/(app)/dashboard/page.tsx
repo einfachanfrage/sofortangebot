@@ -8,17 +8,45 @@ import BottomNav from '@/components/BottomNav'
 import DashboardFilters from '@/components/DashboardFilters'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
-import { Mic, Clock, X, FileText, ChevronRight } from 'lucide-react'
+import { Mic } from 'lucide-react'
 
-// Status-Konfiguration — "Entwurf" und "Auf Baustelle" sind beide "In Bearbeitung"
+// Status-Filter-Mapping
+const STATUS_FILTER_MAP: Record<string, string[]> = {
+  entwurf:    ['draft', 'in_bearbeitung'],
+  offen:      ['sent', 'viewed'],
+  beauftragt: ['accepted'],
+  abgelehnt:  ['rejected'],
+  archived:   ['archived'],
+}
+
+// Status-Konfiguration
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  draft:          { label: 'Entwurf',        color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
-  in_bearbeitung: { label: 'Entwurf',        color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
+  draft:          { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
+  in_bearbeitung: { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
   sent:           { label: 'Offen',          color: 'bg-blue-50 text-blue-700'          },
   viewed:         { label: 'Geöffnet',       color: 'bg-purple-50 text-purple-700'      },
   accepted:       { label: 'Beauftragt',     color: 'bg-[#EDFAF0] text-[#1A7A38]'     },
   rejected:       { label: 'Abgelehnt',      color: 'bg-red-50 text-red-600'            },
   archived:       { label: 'Archiviert',     color: 'bg-[#F7F7F5] text-[#2C2C2C]/30'  },
+}
+
+// Gewerk-Emoji-Mapping
+const GEWERK_BADGE: Record<string, string> = {
+  maler:            '🖌 Maler',
+  fliesen:          '🔷 Fliesen',
+  trockenbau:       '🏗 Trockenbau',
+  boden_parkett:    '🪵 Boden',
+  sanitaer_heizung: '🔧 Sanitär',
+  elektro:          '⚡ Elektro',
+}
+
+// Empty-State-Texte
+const EMPTY_STATE_TEXT: Record<string, { title: string; sub: string }> = {
+  entwurf:    { title: 'Keine Entwürfe.',          sub: 'Neue Aufnahme starten.' },
+  offen:      { title: 'Keine offenen Angebote.',  sub: 'Alle Angebote haben eine Antwort.' },
+  beauftragt: { title: 'Noch kein Auftrag.',       sub: 'Offen lassen, Angebote überzeugen.' },
+  abgelehnt:  { title: 'Kein Angebot abgelehnt.',  sub: 'Gut so.' },
+  '':         { title: 'Noch kein Angebot.',       sub: 'Fang auf der Baustelle an.' },
 }
 
 function formatCurrency(amount: number) {
@@ -29,48 +57,41 @@ function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
 }
 
-function getGreeting(stats: {
-  totalCount: number
-  openCount: number
-  heuteErstellt: boolean
-}): { greeting: string; sub: string } {
-  const now = new Date()
-  const hour = (now.getUTCHours() + 1) % 24
-  const dayOfWeek = now.getDay() // 0=So, 1=Mo
-
-  let greeting = 'Hallo.'
-  if (hour < 5)  greeting = 'Noch wach?'
-  else if (hour < 10) greeting = 'Guten Morgen.'
-  else if (hour < 12) greeting = 'Moin.'
-  else if (hour < 14) greeting = 'Guten Mittag.'
-  else if (hour < 17) greeting = 'Guten Nachmittag.'
-  else if (hour < 20) greeting = 'Guten Abend.'
-  else greeting = 'Spät dran?'
-
-  let sub: string
-  if (dayOfWeek === 1 && hour >= 7 && hour < 11) {
-    sub = 'Gute Woche. Was steht heute an?'
-  } else if (stats.heuteErstellt) {
-    sub = 'Gut gemacht. Noch mehr geht immer.'
-  } else if (stats.totalCount === 0) {
-    sub = 'Fang auf der Baustelle an — 2 Minuten, fertig.'
-  } else if (stats.openCount > 0) {
-    sub = `${stats.openCount} ${stats.openCount === 1 ? 'Angebot wartet' : 'Angebote warten'} auf Antwort.`
-  } else {
-    sub = 'Alle Angebote auf dem neuesten Stand.'
-  }
-
-  return { greeting, sub }
+function getGreeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Guten Morgen.'
+  if (h < 17) return 'Guten Tag.'
+  if (h < 21) return 'Guten Abend.'
+  return 'Noch am Arbeiten?'
 }
 
-// Gewerk-Emoji-Mapping
-const GEWERK_BADGE: Record<string, string> = {
-  maler: '🖌 Maler',
-  fliesen: '🔷 Fliesen',
-  trockenbau: '🏗 Trockenbau',
-  boden_parkett: '🪵 Boden',
-  sanitaer_heizung: '🔧 Sanitär',
-  elektro: '⚡ Elektro',
+function getSubText(stats: { totalCount: number; openCount: number; heuteErstellt: boolean }): string {
+  if (stats.totalCount === 0) return 'Fang auf der Baustelle an — 2 Minuten, fertig.'
+  if (stats.heuteErstellt) return 'Gut gemacht. Noch mehr geht immer.'
+  if (stats.openCount > 0) return `${stats.openCount} ${stats.openCount === 1 ? 'Angebot wartet' : 'Angebote warten'} auf Antwort.`
+  return 'Alle Angebote auf dem neuesten Stand.'
+}
+
+interface StatItemProps {
+  label: string
+  value: number
+  sub?: string | null
+  filterKey: string
+  currentFilter: string
+}
+
+function StatItem({ label, value, sub, filterKey, currentFilter }: StatItemProps) {
+  const isActive = currentFilter === filterKey
+  return (
+    <Link
+      href={`/dashboard${filterKey ? `?status=${filterKey}` : ''}`}
+      className={`flex flex-col gap-0.5 hover:opacity-70 transition-opacity ${isActive ? 'opacity-100' : 'opacity-60'}`}
+    >
+      <div className="font-syne font-black text-[#2C2C2C] text-2xl leading-none">{value}</div>
+      <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">{label}</div>
+      {sub && <div className="text-xs text-[#2C2C2C]/30 font-semibold">{sub}</div>}
+    </Link>
+  )
 }
 
 export default async function DashboardPage({
@@ -91,28 +112,22 @@ export default async function DashboardPage({
 
   const { q, status, welcome } = await searchParams
 
-  // Alle Angebote laden (ohne Archivierte im Standard)
+  // Angebote laden (mit Status-Filter)
   let query = supabase
     .from('quotes')
     .select('*, customer:customers(name), gewerk, sent_via')
     .eq('company_id', company?.id)
     .order('created_at', { ascending: false })
 
-  if (status) {
-    if (status === 'in_bearbeitung') {
-      // "In Bearbeitung" = draft + in_bearbeitung
-      query = query.in('status', ['draft', 'in_bearbeitung'])
-    } else {
-      query = query.eq('status', status)
-    }
-  } else {
-    // Standard: keine archivierten
+  if (status && STATUS_FILTER_MAP[status]) {
+    query = query.in('status', STATUS_FILTER_MAP[status])
+  } else if (!status) {
     query = query.not('status', 'eq', 'archived')
   }
 
   const { data: allQuotes } = await query
 
-  // Monatsbezogene Stats (immer unabhängig vom Filter)
+  // Monatsbezogene Stats (unabhängig vom Filter)
   const now = new Date()
   const monatStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
@@ -137,20 +152,24 @@ export default async function DashboardPage({
   heute.setHours(0, 0, 0, 0)
   const heuteErstellt = monatDaten.some(q => new Date(q.created_at) >= heute)
 
-  // In-Bearbeitung-Zähler (für Tab-Badge)
-  const { data: inBearbeitungData } = await supabase
+  // In-Bearbeitung-Zähler
+  const { data: entwurfData } = await supabase
     .from('quotes')
     .select('id')
     .eq('company_id', company?.id)
     .in('status', ['draft', 'in_bearbeitung'])
-  const inBearbeitungCount = (inBearbeitungData ?? []).length
+  const entwurfCount = (entwurfData ?? []).length
 
   const quotes = allQuotes ?? []
   const filteredQuotes = q
     ? quotes.filter(qt => (qt.customer?.name ?? '').toLowerCase().includes(q.toLowerCase()))
     : quotes
 
-  const { greeting, sub } = getGreeting({ totalCount, openCount, heuteErstellt })
+  const greeting = getGreeting()
+  const sub = getSubText({ totalCount, openCount, heuteErstellt })
+
+  const currentStatus = status ?? ''
+  const emptyText = EMPTY_STATE_TEXT[currentStatus] ?? EMPTY_STATE_TEXT['']
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-28 md:pb-12">
@@ -163,15 +182,23 @@ export default async function DashboardPage({
       )}
 
       {/* ── MOBILE HEADER ── */}
-      <div className="md:hidden bg-[#2C2C2C] px-5 pt-12 pb-7">
-        <div className="font-syne font-black text-white text-2xl leading-tight">{greeting}</div>
-        <div className="text-white/40 text-sm font-semibold mt-1">{sub}</div>
+      <div className="md:hidden sticky top-0 z-20 bg-[#F7F7F5] px-5 pt-safe-top pt-4 pb-3 flex items-center justify-between">
+        <span className="font-syne font-black text-[#2C2C2C] text-lg">sofortangebot</span>
+        <div className="w-8 h-8 rounded-full bg-[#2C2C2C] flex items-center justify-center">
+          <span className="text-white font-black text-xs">{company?.name?.[0]?.toUpperCase() ?? 'A'}</span>
+        </div>
+      </div>
+
+      {/* ── MOBILE BEGRÜSSUNG ── */}
+      <div className="md:hidden px-5 pt-2 pb-4">
+        <div className="font-syne font-black text-[#2C2C2C] text-2xl">{greeting}</div>
+        <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">{sub}</div>
       </div>
 
       {/* ── DESKTOP HEADER ── */}
-      <div className="hidden md:flex items-center justify-between px-8 pt-8 pb-0">
+      <div className="hidden md:flex items-center justify-between px-8 pt-8 pb-6">
         <div>
-          <div className="font-syne font-black text-[#2C2C2C] text-2xl leading-tight">{greeting}</div>
+          <div className="font-syne font-black text-[#2C2C2C] text-2xl">{greeting}</div>
           <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">{sub}</div>
         </div>
         <Link
@@ -183,121 +210,55 @@ export default async function DashboardPage({
         </Link>
       </div>
 
-      {/* ── MOBILE STATS (horizontal scroll) ── */}
-      <div className="md:hidden flex gap-3 px-5 pt-4 pb-2 overflow-x-auto scrollbar-hide">
-        <div className="shrink-0 bg-[#2C2C2C] rounded-2xl px-5 py-4 flex flex-col gap-1 min-w-[130px]">
-          <div className="text-[#F5C400]/60 text-[10px] font-black uppercase tracking-widest">Beauftragt</div>
-          <div className="font-syne font-black text-[#F5C400] leading-none" style={{ fontSize: 40 }}>{acceptedCount}</div>
-          <div className="text-white/25 text-xs font-semibold">diesen Monat</div>
-        </div>
-        <div className="shrink-0 bg-white rounded-2xl px-4 py-4 flex flex-col gap-1 min-w-[95px] border border-[#2C2C2C]/5">
-          <div className="text-[#2C2C2C]/30 text-[10px] font-black uppercase tracking-widest">Offen</div>
-          <div className="font-syne font-black text-[#2C2C2C] text-3xl leading-none">{openCount}</div>
-          <div className="text-[#2C2C2C]/30 text-xs font-semibold">Antwort</div>
-        </div>
-        <div className="shrink-0 bg-white rounded-2xl px-4 py-4 flex flex-col gap-1 min-w-[95px] border border-[#2C2C2C]/5">
-          <div className="text-[#2C2C2C]/30 text-[10px] font-black uppercase tracking-widest">Gesamt</div>
-          <div className="font-syne font-black text-[#2C2C2C] text-3xl leading-none">{totalCount}</div>
-          <div className="text-[#2C2C2C]/30 text-xs font-semibold">Monat</div>
-        </div>
-        {totalAcceptedValue > 0 && (
-          <div className="shrink-0 bg-white rounded-2xl px-4 py-4 flex flex-col gap-1 min-w-[150px] border border-[#2C2C2C]/5">
-            <div className="text-[#2C2C2C]/30 text-[10px] font-black uppercase tracking-widest">Volumen</div>
-            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-tight">{formatCurrency(totalAcceptedValue)}</div>
-            <div className="text-[#2C2C2C]/30 text-xs font-semibold">Auftragsvolumen</div>
-          </div>
-        )}
-      </div>
-
       {/* ── DESKTOP STATS ── */}
-      <div className="hidden md:block px-8 pt-6">
-        <div className="grid gap-4" style={{ gridTemplateColumns: '55% 1fr 1fr 1fr' }}>
-          {/* Große Beauftragt-Card */}
-          <div className="bg-[#2C2C2C] rounded-2xl p-6 flex flex-col justify-between" style={{ minHeight: 156 }}>
-            <div className="text-[#F5C400] text-[11px] font-black uppercase tracking-widest">Beauftragt</div>
-            <div>
-              <div className="font-syne font-black text-[#F5C400] leading-none" style={{ fontSize: 72 }}>{acceptedCount}</div>
-              <div className="text-white/30 text-xs font-semibold mt-1">diesen Monat</div>
-              {totalAcceptedValue > 0 && (
-                <div className="text-white/20 text-xs font-semibold mt-0.5">{formatCurrency(totalAcceptedValue)} Auftragsvolumen</div>
-              )}
-            </div>
-          </div>
-
-          {/* Offen */}
-          <div className="bg-white rounded-2xl p-5 flex flex-col justify-between border border-[#2C2C2C]/5">
-            <div className="flex items-center gap-1.5">
-              <Clock size={13} className="text-[#2C2C2C]/25" />
-              <div className="text-[#2C2C2C]/30 text-[10px] font-black uppercase tracking-widest">Offen</div>
-            </div>
-            <div>
-              <div className="font-syne font-black text-[#2C2C2C] text-4xl leading-none">{openCount}</div>
-              <div className="text-[#2C2C2C]/25 text-xs font-semibold mt-1">warten auf Antwort</div>
-            </div>
-          </div>
-
-          {/* Abgelehnt */}
-          <div className="bg-white rounded-2xl p-5 flex flex-col justify-between border border-[#2C2C2C]/5">
-            <div className="flex items-center gap-1.5">
-              <X size={13} className="text-[#2C2C2C]/25" />
-              <div className="text-[#2C2C2C]/30 text-[10px] font-black uppercase tracking-widest">Abgelehnt</div>
-            </div>
-            <div className="font-syne font-black text-[#2C2C2C] text-4xl leading-none">{rejectedCount}</div>
-          </div>
-
-          {/* Gesamt */}
-          <div className="bg-white rounded-2xl p-5 flex flex-col justify-between border border-[#2C2C2C]/5">
-            <div className="flex items-center gap-1.5">
-              <FileText size={13} className="text-[#2C2C2C]/25" />
-              <div className="text-[#2C2C2C]/30 text-[10px] font-black uppercase tracking-widest">Gesamt</div>
-            </div>
-            <div>
-              <div className="font-syne font-black text-[#2C2C2C] text-4xl leading-none">{totalCount}</div>
-              <div className="text-[#2C2C2C]/25 text-xs font-semibold mt-1">diesen Monat</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Gesamtübersicht-Link */}
-        <div className="mt-2.5 text-right">
-          <Link href="/dashboard?alle=1" className="text-[#2C2C2C]/30 text-xs font-semibold hover:text-[#2C2C2C]/60 transition-colors">
-            Gesamtübersicht anzeigen →
-          </Link>
+      <div className="hidden md:block px-8 mb-6">
+        <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 px-6 py-4 flex items-center gap-8">
+          <StatItem label="Beauftragt" value={acceptedCount} sub={totalAcceptedValue > 0 ? formatCurrency(totalAcceptedValue) : null} filterKey="beauftragt" currentFilter={currentStatus} />
+          <div className="w-px h-8 bg-[#2C2C2C]/8" />
+          <StatItem label="Offen" value={openCount} filterKey="offen" currentFilter={currentStatus} />
+          <div className="w-px h-8 bg-[#2C2C2C]/8" />
+          <StatItem label="In Bearbeitung" value={entwurfCount} filterKey="entwurf" currentFilter={currentStatus} />
+          <div className="w-px h-8 bg-[#2C2C2C]/8" />
+          <StatItem label="Gesamt" value={totalCount} filterKey="" currentFilter={currentStatus} />
         </div>
       </div>
 
       {/* ── FILTERS + TABS ── */}
-      <div className="px-5 md:px-8 mt-6">
+      <div className="px-5 md:px-8 mt-2 md:mt-0">
         <Suspense>
-          <DashboardFilters inBearbeitungCount={inBearbeitungCount} />
+          <DashboardFilters
+            entwurfCount={entwurfCount}
+            openCount={openCount}
+            acceptedCount={acceptedCount}
+            rejectedCount={rejectedCount}
+          />
         </Suspense>
       </div>
 
       {/* ── EMPTY STATE ── */}
-      {!filteredQuotes.length && (
+      {filteredQuotes.length === 0 && !q && (
         <div className="px-5 md:px-8 mt-4">
-          {q || status ? (
-            <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
-              <div className="font-black text-[#2C2C2C]/40">Keine Treffer.</div>
-              <div className="text-sm text-[#2C2C2C]/25 font-semibold mt-1">Filter anpassen oder Suche löschen.</div>
-            </div>
-          ) : (
-            <div className="bg-white border border-dashed border-[#DDDDDD] rounded-xl px-6 py-12 flex flex-col items-center text-center">
-              <div style={{ fontSize: 56 }} className="leading-none mb-5">🎙</div>
-              <div className="font-syne font-extrabold text-[#2C2C2C] mb-2" style={{ fontSize: 22 }}>
-                Dein erstes Angebot wartet.
-              </div>
-              <div className="text-[#888888] mb-7 leading-relaxed" style={{ fontSize: 15 }}>
-                Sag einfach laut, was du gemacht hast.<br />Das Angebot erstellt sich selbst.
-              </div>
+          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 p-10 text-center">
+            <div className="font-black text-[#2C2C2C] text-lg">{emptyText.title}</div>
+            <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-1">{emptyText.sub}</div>
+            {(!status || status === 'entwurf') && (
               <Link
                 href="/angebot/neu"
-                className="inline-flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-6 py-3 rounded-xl hover:bg-[#e6b800] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-5 py-2.5 rounded-xl mt-4 hover:bg-[#e6b800] transition-colors"
               >
-                🎙 Jetzt starten
+                <Mic size={14} /> Jetzt starten
               </Link>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+      )}
+
+      {filteredQuotes.length === 0 && q && (
+        <div className="px-5 md:px-8 mt-4">
+          <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
+            <div className="font-black text-[#2C2C2C]/40">Keine Treffer.</div>
+            <div className="text-sm text-[#2C2C2C]/25 font-semibold mt-1">Filter anpassen oder Suche löschen.</div>
+          </div>
         </div>
       )}
 

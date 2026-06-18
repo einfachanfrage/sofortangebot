@@ -4,19 +4,27 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useCallback } from 'react'
 import { Search } from 'lucide-react'
 
-const STATUS_TABS = [
-  { key: '', label: 'Alle' },
-  { key: 'in_bearbeitung', label: 'Entwürfe' },
-  { key: 'sent', label: 'Offen' },
-  { key: 'accepted', label: 'Beauftragt' },
-  { key: 'rejected', label: 'Abgelehnt' },
-]
-
 interface DashboardFiltersProps {
-  inBearbeitungCount?: number
+  entwurfCount: number
+  openCount: number
+  acceptedCount: number
+  rejectedCount: number
 }
 
-export default function DashboardFilters({ inBearbeitungCount = 0 }: DashboardFiltersProps) {
+const PILLS = [
+  { key: '',           label: 'Alle',           hasCount: false },
+  { key: 'entwurf',    label: 'In Bearbeitung', hasCount: true  },
+  { key: 'offen',      label: 'Offen',          hasCount: true  },
+  { key: 'beauftragt', label: 'Beauftragt',     hasCount: true  },
+  { key: 'abgelehnt',  label: 'Abgelehnt',      hasCount: true  },
+]
+
+export default function DashboardFilters({
+  entwurfCount,
+  openCount,
+  acceptedCount,
+  rejectedCount,
+}: DashboardFiltersProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -29,6 +37,14 @@ export default function DashboardFilters({ inBearbeitungCount = 0 }: DashboardFi
     else params.delete(key)
     router.replace(`${pathname}?${params.toString()}`)
   }, [router, pathname, searchParams])
+
+  const getCount = (key: string): number | null => {
+    if (key === 'entwurf')    return entwurfCount
+    if (key === 'offen')      return openCount
+    if (key === 'beauftragt') return acceptedCount
+    if (key === 'abgelehnt')  return rejectedCount
+    return null
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -44,27 +60,27 @@ export default function DashboardFilters({ inBearbeitungCount = 0 }: DashboardFi
         />
       </div>
 
-      {/* Status-Filter Tabs */}
+      {/* Status-Pills */}
       <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
-        {STATUS_TABS.map(tab => {
-          const isActive = status === tab.key
-          const showBadge = tab.key === 'in_bearbeitung' && inBearbeitungCount > 0
+        {PILLS.map(pill => {
+          const isActive = status === pill.key
+          const count = getCount(pill.key)
           return (
             <button
-              key={tab.key}
-              onClick={() => update('status', tab.key)}
+              key={pill.key}
+              onClick={() => update('status', pill.key)}
               className={`shrink-0 text-xs font-black px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5 ${
                 isActive
                   ? 'bg-[#2C2C2C] text-white'
                   : 'bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60'
               }`}
             >
-              {tab.label}
-              {showBadge && (
+              {pill.label}
+              {pill.hasCount && count !== null && count > 0 && (
                 <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none ${
                   isActive ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-[#F5C400]/20 text-[#8B7000]'
                 }`}>
-                  {inBearbeitungCount}
+                  {count}
                 </span>
               )}
             </button>
