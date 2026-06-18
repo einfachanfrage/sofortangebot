@@ -55,10 +55,10 @@ export function malerEngine(daten: any): MengenErgebnis {
       if (hoehe) {
         const wandBrutto = round2(umfangM * hoehe)
         const fensterFlaeche = effFenster.reduce(
-          (sum: number, f: any) => sum + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
+          (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
         )
         const tuerFlaeche = effTueren.reduce(
-          (sum: number, t: any) => sum + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
+          (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
         )
         wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
       }
@@ -66,10 +66,10 @@ export function malerEngine(daten: any): MengenErgebnis {
       // Fassade / einzelne Wand: Breite × Höhe — kein Raum, nur Wandfläche
       const wandBrutto = round2(laenge * hoehe)
       const fensterFlaeche = effFenster.reduce(
-        (sum: number, f: any) => sum + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
+        (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
       )
       const tuerFlaeche = effTueren.reduce(
-        (sum: number, t: any) => sum + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
+        (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
       )
       wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
       // Keine Decke, kein Boden, kein Umfang für Fassaden
@@ -102,8 +102,8 @@ export function malerEngine(daten: any): MengenErgebnis {
     const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []
 
     if (anWaenden && wandflaecheNettoM2 !== null) {
-      const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
-      const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
+      const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
+      const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
 
       if (hatAkzentwand && laenge && breite && hoehe) {
         // Akzentwand = längere Seite × Höhe (Sichtwand = Hauptwand = länger ist typischer Akzent)

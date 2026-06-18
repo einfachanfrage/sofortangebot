@@ -103,8 +103,8 @@ export interface ExtrahierteDaten {
     hoehe: number | null
     flaeche: number | null
     umfang?: number | null
-    fenster: Array<{ breite?: number; hoehe?: number; annahme?: boolean }>
-    tueren: Array<{ breite?: number; hoehe?: number; annahme?: boolean }>
+    fenster: Array<{ anzahl?: number; breite?: number; hoehe?: number; annahme?: boolean }>
+    tueren: Array<{ anzahl?: number; breite?: number; hoehe?: number; annahme?: boolean }>
     arbeiten: string[]
     altbelag_vorhanden?: boolean
     altbelag_entfernen: boolean

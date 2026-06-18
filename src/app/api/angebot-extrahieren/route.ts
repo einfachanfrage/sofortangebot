@@ -129,13 +129,15 @@ export async function POST(req: NextRequest) {
     const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
 
     // Fenster/Tür-Anzahl aus GPT-Extraktion in Transkript einbetten damit anzahlAus() sie findet
+    // GPT gibt anzahl-Feld pro Objekt zurück (z.B. {anzahl:8, breite:1.2, hoehe:1.0})
     let transkriptFuerCheck = textMitZahlen
     if (extraktion.gewerk === 'maler') {
-      const totalFenster = (extraktion.raeume ?? []).reduce((sum: number, r: { fenster?: unknown[] }) => sum + (r.fenster?.length ?? 0), 0)
-      const totalTueren = (extraktion.raeume ?? []).reduce((sum: number, r: { tueren?: unknown[] }) => sum + (r.tueren?.length ?? 0), 0)
+      const totalFenster = (extraktion.raeume ?? []).reduce((sum: number, r: { fenster?: { anzahl?: number }[] }) =>
+        sum + (r.fenster ?? []).reduce((s, f) => s + (f?.anzahl ?? 1), 0), 0)
+      const totalTueren = (extraktion.raeume ?? []).reduce((sum: number, r: { tueren?: { anzahl?: number }[] }) =>
+        sum + (r.tueren ?? []).reduce((s, t) => s + (t?.anzahl ?? 1), 0), 0)
       if (totalFenster > 0) transkriptFuerCheck += ` ${totalFenster} fenster`
       if (totalTueren > 0) transkriptFuerCheck += ` ${totalTueren} tür`
-      console.log('=== GPT FENSTER/TÜREN ===', totalFenster, 'Fenster,', totalTueren, 'Türen')
     }
 
     // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
