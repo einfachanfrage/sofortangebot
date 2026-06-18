@@ -137,8 +137,9 @@ export async function POST(req: NextRequest) {
     if (fehlende.length > 0) {
       console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)
     }
-    console.log('=== ENGINE POSITIONEN ===', mengenRoh.positionen.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`))
-    console.log('=== NACH CHECK ===', positionenKomplett.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`))
+    console.log('=== ENGINE POSITIONEN ===', JSON.stringify(mengenRoh.positionen.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`)))
+    console.log('=== NACH CHECK ===', JSON.stringify(positionenKomplett.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`)))
+    console.log('=== TEXT_MIT_ZAHLEN ===', textMitZahlen)
 
     const mengen = { ...mengenRoh, positionen: positionenKomplett }
     const bewertung = berechneBewertung(extraktion, mengen)
