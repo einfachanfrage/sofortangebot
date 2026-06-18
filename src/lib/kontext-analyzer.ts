@@ -65,7 +65,7 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
     if ((raum.altbelag_vorhanden || raum.arbeiten.includes('tapezieren')) &&
         !raum.altbelag_entfernen) {
       addRueckfrage(ext, {
-        id: `tapete_entfernen_${raum.name.toLowerCase().replace(/\s+/g, '_')}`,
+        id: `tapete_entfernen_${( raum.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Muss die alte Tapete in "${raum.name}" vorher runter?`,
         typ: 'ja_nein',
         betrifft: raum.name,
@@ -141,7 +141,7 @@ function anreichernFliesen(ext: ExtMitExtra, hinweise: string[], ergaenzungen: K
     // "Komplett" / "erneuern" / "neu" → Altfliesen entfernen als Rückfrage
     if ((bereich.arbeiten ?? []).some(a => a.includes('komplett') || a.includes('erneuern') || a.includes('neu'))) {
       addRueckfrage(ext, {
-        id: `altfliesen_${bereich.name.toLowerCase().replace(/\s+/g, '_')}`,
+        id: `altfliesen_${(bereich.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Müssen die alten Fliesen in "${bereich.name}" entfernt werden?`,
         typ: 'ja_nein',
         betrifft: bereich.name,
@@ -153,7 +153,7 @@ function anreichernFliesen(ext: ExtMitExtra, hinweise: string[], ergaenzungen: K
     // Wand_fliesen ohne Höhenangabe → Rückfrage
     if (bereich.arbeiten.includes('wand_fliesen') && !bereich.hoehe) {
       addRueckfrage(ext, {
-        id: `flieshoehe_${bereich.name.toLowerCase().replace(/\s+/g, '_')}`,
+        id: `flieshoehe_${(bereich.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Wie hoch sollen die Wandfliesen in "${bereich.name}" gehen?`,
         typ: 'hoehe',
         betrifft: bereich.name,
@@ -259,7 +259,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
     if (!raum.altbelag_entfernen && (raum.arbeiten ?? []).some(a =>
         a.includes('verlegen') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl') || a.includes('boden'))) {
       addRueckfrage(ext, {
-        id: `altbelag_${raum.name.toLowerCase().replace(/\s+/g, '_')}`,
+        id: `altbelag_${( raum.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Muss der alte Bodenbelag in "${raum.name}" entfernt werden?`,
         typ: 'ja_nein',
         betrifft: raum.name,
@@ -284,7 +284,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
     // Maße fehlen komplett → kritische Rückfrage
     if (!raum.flaeche && (!raum.laenge || !raum.breite)) {
       addRueckfrage(ext, {
-        id: `masse_boden_${raum.name.toLowerCase().replace(/\s+/g, '_')}`,
+        id: `masse_boden_${( raum.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Wie groß ist "${raum.name}"?`,
         typ: 'masse_einzel',
         betrifft: raum.name,
@@ -304,7 +304,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
         !raum.arbeiten.includes('versiegeln') &&
         !raum.arbeiten.includes('oelen')) {
       addRueckfrage(ext, {
-        id: `versiegelung_${raum.name.toLowerCase().replace(/\s+/g, '_')}`,
+        id: `versiegelung_${( raum.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Soll der Parkettboden in "${raum.name}" nach dem Schleifen geölt oder versiegelt werden?`,
         typ: 'ja_nein',
         betrifft: raum.name,

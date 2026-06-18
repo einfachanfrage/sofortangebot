@@ -314,8 +314,8 @@ export function wendeImplizitRegelnAn(
 
     switch (schlussfolgerung.typ) {
       case 'position_hinzufuegen': {
-        const schluessel = schlussfolgerung.position_beschreibung!.toLowerCase().split(' ')[0]
-        const schon_da = neue_positionen.some(p => p.toLowerCase().includes(schluessel))
+        const schluessel = (schlussfolgerung.position_beschreibung ?? '').toLowerCase().split(' ')[0]
+        const schon_da = neue_positionen.some(p => (p ?? '').toLowerCase().includes(schluessel))
         if (!schon_da) {
           neue_positionen.push(schlussfolgerung.position_beschreibung!)
           angewendet.push({ regel, angewendet: true, aenderung: `Position ergänzt: ${schlussfolgerung.position_beschreibung}` })
