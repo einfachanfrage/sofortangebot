@@ -612,14 +612,14 @@ export default function NeuesAngebotPage() {
 
 
     // Konfidenz + Matching aus Engine in Items mergen
-    const engineByTitle = new Map(positionen.map(p => [p.beschreibung.toLowerCase(), p]))
+    const engineByTitle = new Map(positionen.filter(p => p.beschreibung != null).map(p => [p.beschreibung.toLowerCase(), p]))
     const matchByTitle = matchingErgebnis
       ? new Map(matchingErgebnis.map((m, i) => [positionen[i]?.beschreibung?.toLowerCase() ?? '', m]))
       : new Map()
 
     const enrichedItems: DraftItem[] = (result.items ?? []).map((item: DraftItem) => {
-      const eng = engineByTitle.get(item.title.toLowerCase())
-      const match = matchByTitle.get(item.title.toLowerCase())
+      const eng = engineByTitle.get(item.title?.toLowerCase() ?? '')
+      const match = matchByTitle.get(item.title?.toLowerCase() ?? '')
       const base = eng
         ? { ...item, konfidenz: eng.konfidenz, berechnungsweg: eng.berechnungsweg, annahmen: eng.annahmen }
         : item

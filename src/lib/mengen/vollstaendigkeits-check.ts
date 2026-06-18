@@ -6,7 +6,7 @@ interface CheckErgebnis {
 }
 
 function hat(positionen: BerechnetePosition[], ...begriffe: string[]): boolean {
-  return positionen.some(p => begriffe.some(b => p.beschreibung.toLowerCase().includes(b)))
+  return positionen.some(p => p.beschreibung != null && begriffe.some(b => p.beschreibung.toLowerCase().includes(b)))
 }
 
 export function pruefeUndErgaenzeVollstaendigkeit(
