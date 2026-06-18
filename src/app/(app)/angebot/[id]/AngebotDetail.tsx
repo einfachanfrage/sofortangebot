@@ -219,6 +219,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [autosaveLabel, setAutosaveLabel] = useState('')
   const [showVorschau, setShowVorschau] = useState(false)
   const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
+  const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRef = useRef<MediaRecorder | null>(null)
@@ -501,6 +502,53 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     router.refresh()
   }
 
+  // ── Einheit schnell ändern (ohne Bearbeiten-Modus) ────────────────────────
+  async function quickUnitChange(itemId: string, newUnit: string) {
+    setEditItems(prev => prev.map(i => i.id === itemId ? { ...i, unit: newUnit } : i))
+    setUnitPickerItemId(null)
+    if (!itemId.startsWith('new-')) {
+      await supabase.from('quote_items').update({ unit: newUnit }).eq('id', itemId)
+    }
+  }
+
+  // ── Positionen gruppieren (Ansichtsmodus, ab 8 Positionen) ────────────────
+  function gruppierePositionen(items: EditItem[]) {
+    if (items.length <= 7) return null
+    const DASH = /\s+[-–—]\s+/
+    const raumMap = new Map<string, EditItem[]>()
+    let hatRaeume = 0
+    for (const item of items) {
+      const m = item.title.match(DASH)
+      if (m) {
+        const raum = item.title.slice(m.index! + m[0].length).trim()
+        if (!raumMap.has(raum)) raumMap.set(raum, [])
+        raumMap.get(raum)!.push(item)
+        hatRaeume++
+      }
+    }
+    if (hatRaeume >= Math.ceil(items.length * 0.5)) {
+      const ohneRaum = items.filter(i => !i.title.match(DASH))
+      if (ohneRaum.length) raumMap.set('Sonstiges', ohneRaum)
+      return raumMap
+    }
+    // Fallback: nach Arbeitstyp gruppieren
+    const typMap = new Map<string, EditItem[]>()
+    for (const item of items) {
+      const t = item.title.toLowerCase()
+      const typ =
+        t.includes('decke') ? 'Decke' :
+        t.includes('boden') || t.includes('parkett') || t.includes('laminat') ? 'Boden' :
+        t.includes('tür') || t.includes('fenster') || t.includes('leibung') ? 'Türen & Fenster' :
+        t.includes('spachtel') || t.includes('grundier') ? 'Vorbereitung' :
+        t.includes('tapete') ? 'Tapezierarbeiten' :
+        t.includes('lackier') || t.includes('lack') ? 'Lackierarbeiten' :
+        'Malerarbeiten'
+      if (!typMap.has(typ)) typMap.set(typ, [])
+      typMap.get(typ)!.push(item)
+    }
+    return typMap
+  }
+
   // ── Summenberechnung ───────────────────────────────────────────────────────
   const baseNet = editMode
     ? editItems.reduce((s, i) => s + i.quantity * i.unit_price, 0)
@@ -583,7 +631,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const signingLink = `${typeof window !== 'undefined' ? window.location.origin : 'https://sofortangebot.app'}/angebot/${quote.share_token ?? quote.id}/unterschreiben`
   const whatsappText = encodeURIComponent(`Hallo, anbei mein Angebot ${quoteNumber} über ${fmt(totalGross)}.\n\nOnline ansehen & unterschreiben: ${signingLink}${publicPdfUrl ? `\n\nPDF: ${publicPdfUrl}` : ''}`)
 
-  const displayItems = editMode ? editItems : quote.items
+  const displayItems = editItems
   const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
   const istZugferd = company?.e_rechnung_aktiv !== false && kundeIstUnternehmen
 
@@ -677,6 +725,27 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           </button>
         </div>
       </div>
+
+      {/* Einheit-Picker Modal */}
+      {unitPickerItemId && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setUnitPickerItemId(null)}>
+          <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
+            <div className="font-black text-[#2C2C2C] text-lg mb-4">Einheit ändern</div>
+            <div className="grid grid-cols-3 gap-2">
+              {UNITS.map(u => (
+                <button key={u} onClick={() => quickUnitChange(unitPickerItemId, u)}
+                  className={`py-3 rounded-2xl border-2 font-black text-sm transition-colors ${
+                    displayItems.find(i => i.id === unitPickerItemId)?.unit === u
+                      ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]'
+                      : 'border-[#2C2C2C]/8 text-[#2C2C2C]/60'
+                  }`}>
+                  {u}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Status-Picker Modal */}
       {showStatusPicker && (
@@ -793,20 +862,39 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     ))}
                   </SortableContext>
                 </DndContext>
-              ) : (
-                displayItems.map(item => (
+              ) : (() => {
+                const gruppen = gruppierePositionen(displayItems)
+                const renderItem = (item: EditItem) => (
                   <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0 flex-1">
                         <div className="font-bold text-[#2C2C2C] text-sm">{item.title}</div>
                         {item.description && <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>}
-                        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">{item.quantity} {item.unit} × {fmt(item.unit_price)}</div>
+                        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 flex items-center gap-1 flex-wrap">
+                          <span>{item.quantity}</span>
+                          <button
+                            onClick={() => setUnitPickerItemId(item.id)}
+                            className="bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 text-[#2C2C2C]/60 font-black text-[10px] px-1.5 py-0.5 rounded-md transition-colors"
+                          >
+                            {item.unit}
+                          </button>
+                          <span>× {fmt(item.unit_price)}</span>
+                        </div>
                       </div>
                       <div className="font-black text-[#2C2C2C] shrink-0">{fmt(item.total_price)}</div>
                     </div>
                   </div>
+                )
+                if (!gruppen) return displayItems.map(renderItem)
+                return Array.from(gruppen.entries()).map(([gruppe, items]) => (
+                  <div key={gruppe}>
+                    <div className="border-t border-[#2C2C2C]/5 px-4 py-2 bg-[#F7F7F5]">
+                      <span className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">{gruppe}</span>
+                    </div>
+                    {items.map(renderItem)}
+                  </div>
                 ))
-              )}
+              })()}
 
               {editMode && (
                 <button onClick={addEditItem}

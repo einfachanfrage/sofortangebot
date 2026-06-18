@@ -224,7 +224,7 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     // Lampen / Leuchten / Spots abkleben — Stückzahl aus Transkript
     const hatLampenAbkleben = lower.includes('lamp') || lower.includes('leuchte') || lower.includes('deckenleuchte')
       || lower.includes('pendelleuchte') || lower.includes('einbauspot') || lower.includes('spot')
-    if (hatLampenAbkleben && (hatStreichen || anDecke) && !hat(ergaenzt, 'lampen abkl', 'leuchten abkl', 'spots abkl', 'pendelleuchte')) {
+    if (hatLampenAbkleben && hatStreichen && !hat(ergaenzt, 'lampen abkl', 'leuchten abkl', 'spots abkl', 'pendelleuchte')) {
       const anzPendel = anzahlAus('pendelleuchte', 0)
       const anzSpots = anzahlAus('einbauspot', anzahlAus('spot', 0))
       const anzLampen = anzahlAus('lamp', anzahlAus('leuchte', 0))
@@ -234,7 +234,8 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     }
 
     // Erschwerniszuschlag Raumhöhe > 3m (Gerüst/Stehleiter nötig)
-    const raumHoehe = (daten.raeume ?? []).reduce((max: number, r: any) => Math.max(max, r.hoehe ?? 0), 0)
+    const hoeheMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*m(?:\s+(?:hoch|decke|raumhöhe))/i)
+    const raumHoehe = hoeheMatch ? parseFloat(hoeheMatch[1].replace(',', '.')) : 0
     const hatHohesRaum = raumHoehe > 3.0 || lower.includes('4m hoch') || lower.includes('4,5') || lower.includes('4.5') || lower.includes('5m hoch') || lower.includes('6m hoch') || lower.includes('hohe decke') || lower.includes('hohen decken')
     if (hatHohesRaum && !hat(ergaenzt, 'erschwerniszuschlag höhe', 'höhe zuschlag', 'gerüst')) {
       ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Raumhöhe > 3m', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: `Raumhöhe ${raumHoehe > 0 ? raumHoehe + 'm' : 'erkannt'} > 3m`, annahmen: [] })
@@ -615,9 +616,9 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     }
 
     // Spachtelarbeiten Q2 + Schleifen → für alle Wand-/Deckenflächen
-    const hatSpachteln = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3')
+    const hatSpachteln2 = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3')
     const hatSchleifenArb = lower.includes('schleifen') && !lower.includes('abschleifen')
-    if ((hatSpachteln || hatSchleifenArb) && !hat(ergaenzt, 'spachtelarbeiten', 'q2')) {
+    if ((hatSpachteln2 || hatSchleifenArb) && !hat(ergaenzt, 'spachtelarbeiten', 'q2')) {
       // Alle Wand+Decken-Positionen als Basis
       const basisPositionen = ergaenzt.filter(p => {
         const d = p.beschreibung.toLowerCase()
@@ -628,11 +629,11 @@ export function pruefeUndErgaenzeVollstaendigkeit(
           // Raumname extrahieren (nach " — ")
           const raumMatch = basisPos.beschreibung.match(/ — (.+)$/)
           const raumSuffix = raumMatch ? ` — ${raumMatch[1]}` : ''
-          if (hatSpachteln) ergaenzt.push({ beschreibung: `Spachtelarbeiten Q2${raumSuffix}`, menge: basisPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`, annahmen: [] })
+          if (hatSpachteln2) ergaenzt.push({ beschreibung: `Spachtelarbeiten Q2${raumSuffix}`, menge: basisPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`, annahmen: [] })
           if (hatSchleifenArb) ergaenzt.push({ beschreibung: `Schleifen${raumSuffix}`, menge: basisPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`, annahmen: [] })
         }
       } else {
-        if (hatSpachteln) add('Spachtelarbeiten Q2')
+        if (hatSpachteln2) add('Spachtelarbeiten Q2')
         if (hatSchleifenArb) add('Schleifen')
       }
     }

@@ -13,6 +13,7 @@ import { PwaBottomSheet } from '@/components/PwaBottomSheet'
 import { PushBanner } from '@/components/PushBanner'
 
 export default function EinstellungenPage() {
+  const [activeTab, setActiveTab] = useState<'betrieb' | 'preise' | 'app'>('betrieb')
   const [company, setCompany] = useState<Company | null>(null)
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
@@ -145,11 +146,32 @@ export default function EinstellungenPage() {
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
       {/* Header */}
-      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6">
+      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-4">
         <div className="text-[#F5C400] md:text-[#2C2C2C] text-2xl font-black">Einstellungen</div>
-        <div className="text-white/40 md:text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">Betrieb, Rechnungsstellung, Gewerk</div>
       </div>
 
+      {/* Tabs */}
+      <div className="px-5 md:px-8 pb-4 bg-[#2C2C2C] md:bg-transparent">
+        <div className="flex gap-1 bg-white/10 md:bg-[#2C2C2C]/8 rounded-2xl p-1">
+          {([
+            { id: 'betrieb', label: 'Betrieb' },
+            { id: 'preise', label: 'Preise' },
+            { id: 'app', label: 'App' },
+          ] as { id: typeof activeTab; label: string }[]).map(tab => (
+            <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 py-2 rounded-xl font-black text-sm transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-[#F5C400] text-[#2C2C2C]'
+                  : 'text-white/60 md:text-[#2C2C2C]/40 hover:text-white/80 md:hover:text-[#2C2C2C]/60'
+              }`}>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── TAB: BETRIEB ─────────────────────────────────────────────────────── */}
+      {activeTab === 'betrieb' && (
       <form onSubmit={handleSave} className="px-5 md:px-8 flex flex-col gap-5 md:gap-6">
 
         {/* Desktop: 2-Spalten Grid für Betrieb + Logo */}
@@ -288,63 +310,6 @@ export default function EinstellungenPage() {
                 Steht als Zahlungsfrist auf jedem Angebot.
               </p>
             </Field>
-            <Field label="Regionaler Preisfaktor">
-              <div className="flex flex-col gap-2">
-                {([
-                  { value: 20,  label: '+20 %', desc: 'München · Hamburg · Frankfurt' },
-                  { value: 10,  label: '+10 %', desc: 'Berlin · Köln · Düsseldorf' },
-                  { value: 0,   label: '± 0 %', desc: 'Mittlere Großstadt' },
-                  { value: -10, label: '−10 %', desc: 'Kleinstädte / ländlich West' },
-                  { value: -15, label: '−15 %', desc: 'Ländlich Ost' },
-                ] as { value: number; label: string; desc: string }[]).map(opt => (
-                  <button key={opt.value} type="button"
-                    onClick={() => { setRegionalFaktor(opt.value); setRegionalManual(false) }}
-                    className={`flex items-center justify-between w-full rounded-xl border-2 px-3 py-2.5 transition-colors ${
-                      !regionalManual && regionalFaktor === opt.value
-                        ? 'border-[#F5C400] bg-[#F5C400]/10'
-                        : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
-                    }`}>
-                    <span className={`font-black text-sm ${!regionalManual && regionalFaktor === opt.value ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>
-                      {opt.label}
-                    </span>
-                    <span className={`text-xs font-semibold ${!regionalManual && regionalFaktor === opt.value ? 'text-[#2C2C2C]/60' : 'text-[#2C2C2C]/30'}`}>
-                      {opt.desc}
-                    </span>
-                  </button>
-                ))}
-                <button type="button"
-                  onClick={() => setRegionalManual(true)}
-                  className={`flex items-center justify-between w-full rounded-xl border-2 px-3 py-2.5 transition-colors ${
-                    regionalManual ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
-                  }`}>
-                  <span className={`font-black text-sm ${regionalManual ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>Manuell</span>
-                  {regionalManual && (
-                    <div className="flex items-center gap-1">
-                      <input
-                        type="number"
-                        value={regionalFaktor}
-                        onChange={e => setRegionalFaktor(Number(e.target.value))}
-                        onClick={e => e.stopPropagation()}
-                        className="w-16 text-right bg-white border-2 border-[#F5C400] rounded-lg px-2 py-1 text-sm font-black text-[#2C2C2C] focus:outline-none"
-                        min={-50}
-                        max={100}
-                        step={1}
-                      />
-                      <span className="text-sm font-bold text-[#2C2C2C]/60">%</span>
-                    </div>
-                  )}
-                </button>
-              </div>
-              {regionalFaktor !== 0 ? (
-                <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
-                  Preise basieren auf Regionalfaktor: {regionalFaktor > 0 ? '+' : ''}{regionalFaktor} %. Wird automatisch auf alle Positionen angewendet.
-                </p>
-              ) : (
-                <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
-                  Kein Aufschlag — Standardpreise ohne Regionalanpassung.
-                </p>
-              )}
-            </Field>
             <Field label="Angebot Gültigkeitsdauer">
               <div className="flex gap-2">
                 {[14, 30, 60, 90].map(days => (
@@ -471,10 +436,120 @@ export default function EinstellungenPage() {
           }
         </button>
       </form>
+      )}
 
-      {/* App & Benachrichtigungen */}
-      <div className="px-5 md:px-8 mt-5">
-        <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-3">App &amp; Benachrichtigungen</div>
+      {/* ── TAB: PREISE ──────────────────────────────────────────────────────── */}
+      {activeTab === 'preise' && (
+      <form onSubmit={handleSave} className="px-5 md:px-8 flex flex-col gap-5 md:gap-6">
+        <Card icon={<Receipt size={16} />} title="Regionaler Preisfaktor">
+          <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
+            Aufschlag oder Abschlag auf alle berechneten Preise — je nach Region.
+          </p>
+          <div className="flex flex-col gap-2">
+            {([
+              { value: 20,  label: '+20 %', desc: 'München · Hamburg · Frankfurt' },
+              { value: 10,  label: '+10 %', desc: 'Berlin · Köln · Düsseldorf' },
+              { value: 0,   label: '± 0 %', desc: 'Mittlere Großstadt' },
+              { value: -10, label: '−10 %', desc: 'Kleinstädte / ländlich West' },
+              { value: -15, label: '−15 %', desc: 'Ländlich Ost' },
+            ] as { value: number; label: string; desc: string }[]).map(opt => (
+              <button key={opt.value} type="button"
+                onClick={() => { setRegionalFaktor(opt.value); setRegionalManual(false) }}
+                className={`flex items-center justify-between w-full rounded-xl border-2 px-3 py-2.5 transition-colors ${
+                  !regionalManual && regionalFaktor === opt.value
+                    ? 'border-[#F5C400] bg-[#F5C400]/10'
+                    : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+                }`}>
+                <span className={`font-black text-sm ${!regionalManual && regionalFaktor === opt.value ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>
+                  {opt.label}
+                </span>
+                <span className={`text-xs font-semibold ${!regionalManual && regionalFaktor === opt.value ? 'text-[#2C2C2C]/60' : 'text-[#2C2C2C]/30'}`}>
+                  {opt.desc}
+                </span>
+              </button>
+            ))}
+            <button type="button"
+              onClick={() => setRegionalManual(true)}
+              className={`flex items-center justify-between w-full rounded-xl border-2 px-3 py-2.5 transition-colors ${
+                regionalManual ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+              }`}>
+              <span className={`font-black text-sm ${regionalManual ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>Manuell</span>
+              {regionalManual && (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    value={regionalFaktor}
+                    onChange={e => setRegionalFaktor(Number(e.target.value))}
+                    onClick={e => e.stopPropagation()}
+                    className="w-16 text-right bg-white border-2 border-[#F5C400] rounded-lg px-2 py-1 text-sm font-black text-[#2C2C2C] focus:outline-none"
+                    min={-50}
+                    max={100}
+                    step={1}
+                  />
+                  <span className="text-sm font-bold text-[#2C2C2C]/60">%</span>
+                </div>
+              )}
+            </button>
+          </div>
+          {regionalFaktor !== 0 ? (
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
+              Preise basieren auf Regionalfaktor: {regionalFaktor > 0 ? '+' : ''}{regionalFaktor} %. Wird automatisch auf alle Positionen angewendet.
+            </p>
+          ) : (
+            <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
+              Kein Aufschlag — Standardpreise ohne Regionalanpassung.
+            </p>
+          )}
+        </Card>
+
+        <div className="flex flex-col gap-3">
+          <Link href="/preise"
+            className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
+            <div>
+              <span className="font-bold text-[#2C2C2C]">Preisdatenbank</span>
+              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Stunden- und Einheitspreise verwalten</div>
+            </div>
+            <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
+          </Link>
+          <Link href="/einstellungen/nummern"
+            className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
+            <div>
+              <span className="font-bold text-[#2C2C2C]">Angebotsnummern</span>
+              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">GoBD-konform · Präfix, Format, Jahreswechsel</div>
+            </div>
+            <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
+          </Link>
+          <Link href="/einstellungen/briefpapier"
+            className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
+            <div>
+              <span className="font-bold text-[#2C2C2C]">Briefpapier & Design</span>
+              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Varianten, Farben, Logo, Fußzeile</div>
+            </div>
+            <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
+          </Link>
+          <Link href="/einstellungen/integrationen"
+            className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
+            <div>
+              <span className="font-bold text-[#2C2C2C]">Integrationen</span>
+              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Lexoffice, sevDesk & mehr</div>
+            </div>
+            <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
+          </Link>
+        </div>
+
+        <button type="submit" disabled={saving}
+          className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          {saved
+            ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
+            : saving ? 'Speichere...' : 'Speichern'
+          }
+        </button>
+      </form>
+      )}
+
+      {/* ── TAB: APP ─────────────────────────────────────────────────────────── */}
+      {activeTab === 'app' && (
+      <div className="px-5 md:px-8 flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           {/* PWA installieren */}
           <button
@@ -521,56 +596,9 @@ export default function EinstellungenPage() {
             </button>
           )}
         </div>
-      </div>
 
-      {/* PWA / Push overlays */}
-      {showPwaSheet && <PwaBottomSheet onClose={() => setShowPwaSheet(false)} />}
-      {showPushBanner && (
-        <PushBanner
-          onClose={() => setShowPushBanner(false)}
-          onGranted={() => setPushPermission('granted')}
-        />
-      )}
-
-      {/* Links */}
-      <div className="px-5 md:px-8 mt-5 md:grid md:grid-cols-2 md:gap-4 flex flex-col gap-3">
-        <Link href="/preise"
-          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
-          <div>
-            <span className="font-bold text-[#2C2C2C]">Preisdatenbank</span>
-            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Stunden- und Einheitspreise verwalten</div>
-          </div>
-          <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
-        </Link>
-        <Link href="/einstellungen/integrationen"
-          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
-          <div>
-            <span className="font-bold text-[#2C2C2C]">Integrationen</span>
-            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Lexoffice, sevDesk & mehr</div>
-          </div>
-          <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
-        </Link>
-        <Link href="/einstellungen/nummern"
-          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
-          <div>
-            <span className="font-bold text-[#2C2C2C]">Angebotsnummern</span>
-            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">GoBD-konform · Präfix, Format, Jahreswechsel</div>
-          </div>
-          <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
-        </Link>
-        <Link href="/einstellungen/briefpapier"
-          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
-          <div>
-            <span className="font-bold text-[#2C2C2C]">Briefpapier & Design</span>
-            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Varianten, Farben, Logo, Fußzeile</div>
-          </div>
-          <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
-        </Link>
-      </div>
-
-      {/* Mein Wörterbuch */}
-      {woerterbuchStats && (woerterbuchStats.total > 0) && (
-        <div className="px-5 md:px-8 mt-6">
+        {/* Mein Wörterbuch */}
+        {woerterbuchStats && (woerterbuchStats.total > 0) && (
           <div className="bg-white rounded-2xl p-5 border border-[#2C2C2C]/5">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-7 h-7 bg-[#F5C400]/20 rounded-lg flex items-center justify-center text-sm">⚡</div>
@@ -614,30 +642,40 @@ export default function EinstellungenPage() {
               ))}
             </div>
           </div>
+        )}
+
+        <div className="flex flex-col gap-1 mt-2">
+          <button onClick={handleLogout}
+            className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors">
+            <LogOut size={16} />
+            Ausloggen
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              if (confirm('Daten-Export per E-Mail senden?')) {
+                await fetch('/api/account/export', { method: 'POST' })
+                alert('Export wird vorbereitet und per E-Mail gesendet.')
+              }
+            }}
+            className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors"
+          >
+            <Download size={16} />
+            Meine Daten exportieren
+          </button>
+          <AccountDeleteModal />
         </div>
+      </div>
       )}
 
-      <div className="px-5 md:px-8 mt-3 flex flex-col gap-1">
-        <button onClick={handleLogout}
-          className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors">
-          <LogOut size={16} />
-          Ausloggen
-        </button>
-        <button
-          type="button"
-          onClick={async () => {
-            if (confirm('Daten-Export per E-Mail senden?')) {
-              await fetch('/api/account/export', { method: 'POST' })
-              alert('Export wird vorbereitet und per E-Mail gesendet.')
-            }
-          }}
-          className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors"
-        >
-          <Download size={16} />
-          Meine Daten exportieren
-        </button>
-        <AccountDeleteModal />
-      </div>
+      {/* PWA / Push overlays — always mounted */}
+      {showPwaSheet && <PwaBottomSheet onClose={() => setShowPwaSheet(false)} />}
+      {showPushBanner && (
+        <PushBanner
+          onClose={() => setShowPushBanner(false)}
+          onGranted={() => setPushPermission('granted')}
+        />
+      )}
 
       <BottomNav />
     </div>
