@@ -120,6 +120,24 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       ergaenzt.push({ beschreibung: 'Türen lackieren — 1. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
       ergaenzt.push({ beschreibung: 'Türen lackieren — 2. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
       ergaenzt.push({ beschreibung: 'Türzargen lackieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: tuerAnnahme })
+      // Sockelleisten abkleben beim Türen lackieren (Standard)
+      if (!hat(ergaenzt, 'sockelleisten abkl', 'sockel abkl')) {
+        ergaenzt.push({ beschreibung: 'Sockelleisten abkleben', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) → je 1 Sockelleistenbereich`, annahmen: tuerAnnahme })
+      }
+    }
+
+    // Böden abdecken / Boden schützen explizit erwähnt → Position ergänzen wenn nicht schon vorhanden
+    const hatBodenAbdecken = lower.includes('boden abdecken') || lower.includes('böden abdecken')
+      || lower.includes('abdecken') || lower.includes('abdeckfolie') || lower.includes('boden schütz')
+    if (hatBodenAbdecken && !hat(ergaenzt, 'boden schütz', 'boden abdecken', 'abdeckfolie')) {
+      const anzZimmerBoden = anzahlAus('zimmer', anzahlAus('raum', anzahlAus('räume', 1)))
+      // Fläche aus Positionen ableiten wenn vorhanden, sonst Zimmer-Pauschale
+      const vorhandeneFlaeche = ergaenzt.find(p => p.einheit === 'm²' && p.menge > 0)?.menge ?? null
+      if (vorhandeneFlaeche !== null) {
+        ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: vorhandeneFlaeche, einheit: 'm²', konfidenz: 'medium', berechnungsweg: `${vorhandeneFlaeche} m² (aus berechneter Fläche)`, annahmen: [] })
+      } else {
+        ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: anzZimmerBoden, einheit: 'Pauschale', konfidenz: 'medium', berechnungsweg: `${anzZimmerBoden} Zimmer`, annahmen: ['Bodenfläche nicht berechnet — Pauschale pro Zimmer'] })
+      }
     }
 
     // Fenster lackieren/streichen → Schleifen, Grundieren, 2× Anstrich
