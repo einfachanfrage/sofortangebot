@@ -105,6 +105,8 @@ export async function POST(req: NextRequest) {
 
     // Rückfragen filtern: "Wie viele Fenster/Türen?" supprimieren wenn Raummaße bekannt (Standard-Annahmen)
     const hatRaumMasse = (extraktion.raeume ?? []).some(r => r.laenge && (r.breite || r.hoehe))
+      || (extraktion.raeume ?? []).some(r => r.flaeche)
+      || textMitZahlen.toLowerCase().includes('dachschräge') || textMitZahlen.toLowerCase().includes('schräge')
     const textLower = textMitZahlen.toLowerCase()
     const istFensterAuftrag = textLower.includes('fenster') &&
       (textLower.includes('lackier') || textLower.includes('streich') || textLower.includes('holzfenster') || textLower.includes('anstrich'))

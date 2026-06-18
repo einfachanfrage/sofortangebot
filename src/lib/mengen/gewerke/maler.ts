@@ -74,9 +74,13 @@ export function malerEngine(daten: any): MengenErgebnis {
       wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
       // Keine Decke, kein Boden, kein Umfang für Fassaden
     } else if (flaeche_angegeben) {
-      // Nettofläche direkt angegeben (z.B. nach Tor-Abzug)
+      // Nettofläche direkt angegeben (z.B. nach Tor-Abzug oder Dachschräge)
       wandflaecheNettoM2 = flaeche_angegeben
     }
+
+    // Dachschräge-Job: Position "Wandflächen streichen" durch "Dachschräge streichen" ersetzen
+    const istDachschraege = arbeitenStr.includes('dachschräge') || arbeitenStr.includes('dachschrägе') || arbeitenStr.includes('schräge')
+      || transkriptLower.includes('dachschräge') || transkriptLower.includes('schräge')
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
     // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
     const leerOderKomplett = arbeiten.length === 0 || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
@@ -129,12 +133,13 @@ export function malerEngine(daten: any): MengenErgebnis {
           })
         }
       } else {
+        const wandLabel = istDachschraege ? `Dachschräge streichen — ${name}` : `Wandflächen streichen — ${name}`
         positionen.push({
-          beschreibung: `Wandflächen streichen — ${name}`,
+          beschreibung: wandLabel,
           menge: wandflaecheNettoM2,
           einheit: 'm²',
           konfidenz: 'high',
-          berechnungsweg: `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${round2((umfangM ?? 0) * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
+          berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${round2((umfangM ?? 0) * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
           annahmen: annahmenFenster,
         })
       }
