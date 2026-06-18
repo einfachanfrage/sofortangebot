@@ -128,23 +128,26 @@ export async function POST(req: NextRequest) {
 
     const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
 
-    // Fenster/Tür-Anzahl aus GPT-Extraktion in Transkript einbetten damit anzahlAus() sie findet
-    // GPT gibt anzahl-Feld pro Objekt zurück (z.B. {anzahl:8, breite:1.2, hoehe:1.0})
-    let transkriptFuerCheck = textMitZahlen
-    if (extraktion.gewerk === 'maler') {
-      const totalFenster = (extraktion.raeume ?? []).reduce((sum: number, r: { fenster?: { anzahl?: number }[] }) =>
-        sum + (r.fenster ?? []).reduce((s, f) => s + (f?.anzahl ?? 1), 0), 0)
-      const totalTueren = (extraktion.raeume ?? []).reduce((sum: number, r: { tueren?: { anzahl?: number }[] }) =>
-        sum + (r.tueren ?? []).reduce((s, t) => s + (t?.anzahl ?? 1), 0), 0)
-      if (totalFenster > 0) transkriptFuerCheck += ` ${totalFenster} fenster`
-      if (totalTueren > 0) transkriptFuerCheck += ` ${totalTueren} tür`
-    }
+    // GPT-extrahierte Fenster/Tür-Anzahl: anzahl-Feld bevorzugen, sonst Array-Länge
+    const fensterAnzahlGPT = extraktion.gewerk === 'maler'
+      ? (extraktion.raeume ?? []).reduce((sum: number, r) => {
+          const fenster = (r.fenster ?? []) as { anzahl?: number }[]
+          return sum + fenster.reduce((s, f) => s + (f?.anzahl ?? 1), 0)
+        }, 0)
+      : 0
+    const tuerenAnzahlGPT = extraktion.gewerk === 'maler'
+      ? (extraktion.raeume ?? []).reduce((sum: number, r) => {
+          const tueren = (r.tueren ?? []) as { anzahl?: number }[]
+          return sum + tueren.reduce((s, t) => s + (t?.anzahl ?? 1), 0)
+        }, 0)
+      : 0
 
     // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
     const { fehlende, positionen: positionenKomplett } = pruefeUndErgaenzeVollstaendigkeit(
       extraktion.gewerk,
       mengenRoh.positionen,
-      transkriptFuerCheck
+      textMitZahlen,
+      { fensterAnzahl: fensterAnzahlGPT || undefined, tuerenAnzahl: tuerenAnzahlGPT || undefined }
     )
     if (fehlende.length > 0) {
       console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)

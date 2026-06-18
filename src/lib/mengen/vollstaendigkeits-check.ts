@@ -12,7 +12,8 @@ function hat(positionen: BerechnetePosition[], ...begriffe: string[]): boolean {
 export function pruefeUndErgaenzeVollstaendigkeit(
   gewerk: string,
   positionen: BerechnetePosition[],
-  transkript: string
+  transkript: string,
+  meta?: { fensterAnzahl?: number; tuerenAnzahl?: number }
 ): CheckErgebnis {
   const lower = transkript.toLowerCase()
   const fehlende: string[] = []
@@ -125,7 +126,7 @@ export function pruefeUndErgaenzeVollstaendigkeit(
        (lower.includes('außen') && lower.includes('streich') && lower.includes('fenster'))) &&
       !lower.includes('fenster ab') // nicht "Fenster abkleben" allein
     if (hatFensterLackieren && !hat(ergaenzt, 'fenster abschleifen')) {
-      const anzFenster = anzahlAus('fenster')
+      const anzFenster = meta?.fensterAnzahl ?? anzahlAus('fenster')
       const istOelfarbe = lower.includes('ölfarbe') || lower.includes('oelfarbe') || lower.includes('öl')
       const farbTyp = istOelfarbe ? 'Ölfarbe' : 'Lack'
       const istAußen = lower.includes('außen') || lower.includes('holzfenster')
