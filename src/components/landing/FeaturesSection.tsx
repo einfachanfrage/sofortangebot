@@ -11,7 +11,7 @@ const features = [
   {
     nr: '02',
     name: '2.000+ Positionen',
-    desc: 'Für Maler, Fliesen, Trockenbau, Boden, Sanitär & Elektro. Mehr kommen laufend.',
+    desc: 'Für Maler & Lackierer und Bodenbeläge & Parkett. Weitere Gewerke folgen.',
   },
   {
     nr: '03',

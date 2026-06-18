@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-const starterFeatures = ['3 Angebote pro Monat', 'PDF mit Sofortangebot-Logo', '1 Gewerk']
+const starterFeatures = ['3 Angebote pro Monat', 'PDF mit Sofortangebot-Logo', 'Maler & Bodenbeläge']
 const proFeatures = [
   'Unbegrenzte Angebote',
-  'Alle 6 Gewerke (mehr kommen)',
+  'Maler & Bodenbeläge (weitere Gewerke folgen)',
   'PDF mit deinem Logo',
   'Digitale Unterschrift',
   'Lexoffice & sevDesk Export',

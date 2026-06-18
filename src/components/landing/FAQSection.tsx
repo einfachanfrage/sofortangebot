@@ -6,11 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 const faqs = [
   {
     q: 'Was wenn die KI mich nicht versteht?',
-    a: 'Du siehst sofort was erkannt wurde und kannst es mit einem Tipp korrigieren. Mit jedem Gewerk das du angibst wird das Matching besser — die KI kennt dann deine typischen Positionen.',
+    a: 'Du siehst sofort was erkannt wurde und kannst es mit einem Tipp korrigieren. Die KI kennt alle typischen Positionen für Maler & Lackierer und Bodenbeläge.',
   },
   {
     q: 'Muss ich alle Preise selbst eingeben?',
-    a: 'Nein. Sofortangebot lädt aktuelle Marktpreise für dein Gewerk. Du kannst sie übernehmen, anpassen oder deine eigenen eintragen. Dauert drei Minuten beim ersten Mal.',
+    a: 'Nein. Sofortangebot lädt aktuelle Marktpreise für Maler- und Bodenbelagsarbeiten. Du kannst sie übernehmen, anpassen oder deine eigenen eintragen. Dauert drei Minuten beim ersten Mal.',
   },
   {
     q: 'Funktioniert das auf dem Handy?',

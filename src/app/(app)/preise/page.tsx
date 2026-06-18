@@ -10,17 +10,13 @@ import type { PriceItem } from '@/lib/types'
 // ─── GEWERK METADATA — nur aktive Gewerke ────────────────────────────────────
 
 const GEWERK_META: Record<string, { label: string; emoji: string }> = {
-  'Maler':          { label: 'Maler & Lackierer',  emoji: '🖌️' },
-  'Trockenbau':     { label: 'Trockenbau',          emoji: '🧱' },
-  'Fliesen':        { label: 'Fliesen & Naturstein', emoji: '🪟' },
-  'Elektro':        { label: 'Elektro',             emoji: '⚡' },
-  'SHK':            { label: 'Sanitär & Heizung',   emoji: '🚿' },
+  'Maler':          { label: 'Maler & Lackierer',    emoji: '🖌️' },
   'Boden':          { label: 'Bodenbeläge & Parkett', emoji: '🏠' },
-  'Allgemein':      { label: 'Allgemein',           emoji: '📦' },
+  'Allgemein':      { label: 'Allgemein',             emoji: '📦' },
 }
 
-// Nur Kategorien dieser Schlüssel im UI anzeigen
-const AKTIVE_GEWERK_KEYS = new Set(['Maler', 'Trockenbau', 'Fliesen', 'Elektro', 'SHK', 'Boden', 'Allgemein'])
+// Nur Maler, Boden und Allgemeines im UI anzeigen
+const AKTIVE_GEWERK_KEYS = new Set(['Maler', 'Boden', 'Allgemein'])
 
 // ─── BEREICH DERIVATION ─────────────────────────────────────────────────────
 

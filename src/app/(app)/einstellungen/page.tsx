@@ -437,32 +437,28 @@ export default function EinstellungenPage() {
           {/* Gewerk */}
           <Card icon={<Wrench size={16} />} title="Gewerk">
             <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
-              Die KI stellt passende Rückfragen für dein Handwerk.
+              Aktuell unterstützt für Maler & Lackierer und Bodenbeläge & Parkett.
             </p>
             <div className="flex flex-col gap-1.5">
-              {GEWERKE.map(g => {
-                const active = gewerke.includes(g.id)
-                return (
-                  <button key={g.id} type="button"
-                    onClick={() => setGewerke(prev =>
-                      prev.includes(g.id) ? prev.filter(x => x !== g.id) : [...prev, g.id]
-                    )}
-                    className={`flex items-center gap-3 w-full rounded-xl px-3 py-2.5 text-left border-2 transition-colors ${
-                      active ? 'border-[#F5C400] bg-[#F5C400]/5' : 'border-[#2C2C2C]/8 bg-[#F7F7F5]'
-                    }`}
-                  >
-                    <span className="text-lg">{g.emoji}</span>
-                    <span className={`font-bold text-sm flex-1 ${active ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>
-                      {g.label}
-                    </span>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                      active ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'}`}>
-                      {active && <Check size={11} color="#2C2C2C" strokeWidth={3} />}
-                    </div>
-                  </button>
-                )
-              })}
+              {[
+                { emoji: '🖌', label: 'Maler & Lackierer', desc: 'Streichen, Spachteln, Tapezieren, Lackieren' },
+                { emoji: '🏠', label: 'Bodenbeläge & Parkett', desc: 'Laminat, Vinyl, Parkett, Teppich' },
+              ].map(g => (
+                <div key={g.label} className="flex items-center gap-3 w-full rounded-xl px-3 py-2.5 border-2 border-[#F5C400] bg-[#F5C400]/5">
+                  <span className="text-lg">{g.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-sm text-[#2C2C2C]">{g.label}</div>
+                    <div className="text-xs text-[#2C2C2C]/40 font-semibold">{g.desc}</div>
+                  </div>
+                  <div className="w-5 h-5 rounded-full border-2 border-[#F5C400] bg-[#F5C400] flex items-center justify-center shrink-0">
+                    <Check size={11} color="#2C2C2C" strokeWidth={3} />
+                  </div>
+                </div>
+              ))}
             </div>
+            <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-3">
+              Weitere Gewerke folgen — Fliesen, Trockenbau, Elektro & mehr.
+            </p>
           </Card>
         </div>
 

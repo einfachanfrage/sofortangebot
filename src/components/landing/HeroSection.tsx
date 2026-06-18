@@ -68,7 +68,7 @@ export function HeroSection() {
                     <div className="text-white/50 text-xs font-semibold text-center mb-3">Aufnahme läuft...</div>
                     <div className="bg-white/5 rounded-xl p-3">
                       <p className="text-white/70 text-xs leading-relaxed phone-type">
-                        &ldquo;Beim Müller Bad fliesen, Boden 6qm, Wände 12qm, Altbelag muss raus...&rdquo;
+                        &ldquo;Beim Müller Wohnzimmer streichen, 4 mal 5 Meter, 2,60 hoch, Decke auch...&rdquo;
                       </p>
                     </div>
                   </div>
@@ -89,9 +89,9 @@ export function HeroSection() {
                   <div className="phone-step phone-step-3 absolute inset-0">
                     <div className="text-white/40 text-[10px] font-black uppercase tracking-wider mb-3">Erkannt:</div>
                     {[
-                      { label: 'Bodenfliesen 6 m²', price: '228,00 €', delay: '0s' },
-                      { label: 'Wandfliesen 12 m²', price: '504,00 €', delay: '0.3s' },
-                      { label: 'Altbelag entfernen', price: '108,00 €', delay: '0.6s' },
+                      { label: 'Wandflächen streichen', price: '494,00 €', delay: '0s' },
+                      { label: 'Deckenfläche streichen', price: '170,00 €', delay: '0.3s' },
+                      { label: 'Boden schützen', price: '52,00 €', delay: '0.6s' },
                     ].map((item) => (
                       <div
                         key={item.label}

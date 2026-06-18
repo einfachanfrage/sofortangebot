@@ -14,73 +14,17 @@ export const AKTIVE_GEWERKE = [
     ],
   },
   {
-    id: 'fliesen',
-    name: 'Fliesen & Naturstein',
-    emoji: '🪟',
-    beschreibung: 'Böden, Wände, Bäder, Terrassen, Naturstein',
-    farbe: '#2C2C2C',
-    positionen_count: 91,
-    typische_auftraege: [
-      'Bad neu fliesen',
-      'Küchenspiegel',
-      'Terrassenfliesen',
-      'Natursteinarbeiten',
-    ],
-  },
-  {
-    id: 'trockenbau',
-    name: 'Trockenbau',
-    emoji: '🧱',
-    beschreibung: 'Rigips, Ständerwände, Unterdecken, Verkleidungen',
-    farbe: '#2C2C2C',
-    positionen_count: 88,
-    typische_auftraege: [
-      'Trennwände einziehen',
-      'Unterdecke absenken',
-      'Dachschräge verkleiden',
-      'Vorwandinstallation',
-    ],
-  },
-  {
     id: 'boden_parkett',
     name: 'Bodenbeläge & Parkett',
     emoji: '🏠',
     beschreibung: 'Laminat, Vinyl, Parkett, Teppich, Kork, Linoleum',
-    farbe: '#2C2C2C',
+    farbe: '#F5C400',
     positionen_count: 101,
     typische_auftraege: [
       'Parkett verlegen',
       'Laminat verlegen',
       'Vinyl / Designboden',
       'Teppich verlegen',
-    ],
-  },
-  {
-    id: 'sanitaer_heizung',
-    name: 'Sanitär & Heizung',
-    emoji: '🚿',
-    beschreibung: 'Bad, WC, Heizung, Rohrleitungen, Armaturen',
-    farbe: '#2C2C2C',
-    positionen_count: 192,
-    typische_auftraege: [
-      'Bad komplett erneuern',
-      'Heizung modernisieren',
-      'Rohre erneuern',
-      'Armaturen tauschen',
-    ],
-  },
-  {
-    id: 'elektro',
-    name: 'Elektro',
-    emoji: '⚡',
-    beschreibung: 'Leitungen, Steckdosen, Verteilung, Smart Home',
-    farbe: '#2C2C2C',
-    positionen_count: 175,
-    typische_auftraege: [
-      'Wohnung neu verkabeln',
-      'Unterverteilung',
-      'Steckdosen nachrüsten',
-      'Smart Home',
     ],
   },
 ] as const
@@ -92,6 +36,10 @@ export const ALLE_GEWERKE_IDS = AKTIVE_GEWERKE.map(g => g.id)
 // Gewerke-IDs die in der Positionsdatenbank existieren,
 // aber im UI nicht angezeigt werden.
 export const INAKTIVE_GEWERKE_IDS = [
+  'fliesen',
+  'trockenbau',
+  'sanitaer_heizung',
+  'elektro',
   'putz_stuck',
   'estrich',
   'schreiner_tischler',
@@ -107,7 +55,7 @@ export const INAKTIVE_GEWERKE_IDS = [
 ] as const
 
 // Mapping von alten gewerke.ts IDs → neue Config-IDs
-// (Die Positionsdatenbank nutzt Kategorie-Präfixe wie "Maler –", "Fliesen –" etc.)
+// (Die Positionsdatenbank nutzt Kategorie-Präfixe wie "Maler –", "Boden –" etc.)
 export const GEWERK_KATEGORIE_PREFIXE: Record<string, string[]> = {
   maler:            ['Maler'],
   fliesen:          ['Fliesen'],

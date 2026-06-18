@@ -381,7 +381,11 @@ export default function OnboardingStep() {
                 const noName = !state.name.trim()
                 const noAddr = state.address.trim().length < 5
                 setNameError(noName); setAddrError(noAddr)
-                if (!noName && !noAddr) goTo(3)
+                if (!noName && !noAddr) {
+                  // Gewerk-Auswahl entfällt — Preset: Maler + Bodenbeläge
+                  update({ gewerke: ['maler', 'boden_parkett'] })
+                  goTo(4)
+                }
               }}
               className={btnPrimary}
             >
@@ -537,7 +541,7 @@ export default function OnboardingStep() {
           </p>
 
           <div className="mt-auto pt-6 flex gap-3">
-            <button onClick={() => goTo(3)} className={btnBack}>← Zurück</button>
+            <button onClick={() => goTo(2)} className={btnBack}>← Zurück</button>
             <button
               onClick={() => { if (state.vatRate === null) return; goTo(5) }}
               disabled={state.vatRate === null}
