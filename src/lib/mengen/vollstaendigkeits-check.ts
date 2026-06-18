@@ -249,9 +249,9 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     }
 
     // Stuckleisten → Montieren + Streichen (Laufmeter = voller Umfang, kein Türabzug)
-    const hatStuck = lower.includes('stuckleiste') || lower.includes('stuckelement') || lower.includes('stuckprofil')
-      || lower.includes('stuck montier') || lower.includes('stuckleis')
-    if (hatStuck && !hat(ergaenzt, 'stuckleisten montier', 'stuckelemente montier')) {
+    const hatStuckleisten = lower.includes('stuckleiste') || lower.includes('stuckleis')
+      || lower.includes('stuckprofil') || lower.includes('stuck montier')
+    if (hatStuckleisten && !hat(ergaenzt, 'stuckleisten montier', 'stuckelemente montier')) {
       // Umfang aus Bodenfläche ableiten (√flaeche ≈ quadratisch, realistischer Schätzwert)
       const flaecheMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
       const fm2 = flaecheMatch ? parseFloat(flaecheMatch[1].replace(',', '.')) : null
