@@ -151,14 +151,14 @@ export function ersetzeZahlenWorte(text: string): string {
     return _match
   })
 
-  // 4. Einfache Zahlwörter direkt vor Einheiten
+  // 4. Einfache Zahlwörter — alle standalone ersetzen (vor Einheiten UND vor anderen Wörtern)
   const zahlenAlternative = Object.keys(ALLE_ZAHLEN)
     .sort((a, b) => b.length - a.length) // längste zuerst
     .map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
     .join('|')
 
   result = result.replace(
-    new RegExp(`\\b(${zahlenAlternative})\\b(?=\\s*(?:${EINHEITEN_REGEX}))`, 'gi'),
+    new RegExp(`\\b(${zahlenAlternative})\\b`, 'gi'),
     (match) => {
       const zahl = parseZahlWort(match)
       return zahl !== null ? String(zahl) : match
