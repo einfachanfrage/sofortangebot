@@ -954,12 +954,45 @@ export default function NeuesAngebotPage() {
   // REVIEW
   // ─────────────────────────────────────────────────────────────────────────
   if (step === 'review') {
-    const grouped: Record<string, DraftItem[]> = {}
-    items.forEach(item => {
-      const cat = item.kategorie ?? 'Sonstiges'
-      if (!grouped[cat]) grouped[cat] = []
-      grouped[cat].push(item)
+    // Raum-Gruppierung
+    const DASH_RE = /\s+[-–—]\s+/
+    const RAUM_EMOJIS_MAP: Record<string, string> = {
+      wohnzimmer: '🛋', schlafzimmer: '🛏', kinderzimmer: '🧸', küche: '🍳',
+      bad: '🚿', badezimmer: '🚿', toilette: '🚽', flur: '🚪', diele: '🚪',
+      arbeitszimmer: '💼', büro: '💼', keller: '📦', treppenhaus: '📐',
+      esszimmer: '🍽', terrasse: '🌿', balkon: '🌿', fassade: '🏠', außen: '🏠',
+      garage: '🚗',
+    }
+    const getRaumEmoji = (name: string) => {
+      const l = name.toLowerCase()
+      return RAUM_EMOJIS_MAP[Object.keys(RAUM_EMOJIS_MAP).find(k => l.includes(k)) ?? ''] ?? '🏠'
+    }
+    const extractRoom = (title: string) => {
+      const m = title.match(DASH_RE)
+      return m
+        ? { display: title.slice(0, m.index).trim(), room: title.slice(m.index! + m[0].length).trim() }
+        : { display: title, room: null }
+    }
+    type GroupedEntry = { idx: number; item: DraftItem; display: string; room: string | null }
+    const raumMapReview = new Map<string | null, GroupedEntry[]>()
+    let roomHits = 0
+    items.forEach((item, idx) => {
+      const { display, room } = extractRoom(item.title)
+      if (room) roomHits++
+      const key = room
+      if (!raumMapReview.has(key)) raumMapReview.set(key, [])
+      raumMapReview.get(key)!.push({ idx, item, display, room })
     })
+    const useRoomGrouping = roomHits >= Math.ceil(items.length * 0.5)
+    // Fallback: nach Kategorie
+    const grouped: Record<string, DraftItem[]> = {}
+    if (!useRoomGrouping) {
+      items.forEach(item => {
+        const cat = item.kategorie ?? 'Sonstiges'
+        if (!grouped[cat]) grouped[cat] = []
+        grouped[cat].push(item)
+      })
+    }
 
     const isIncomplete = items.length < 3 || totalNet < 200
 
@@ -1142,83 +1175,106 @@ export default function NeuesAngebotPage() {
                 </button>
               </div>
             </div>
-            {Object.entries(grouped).map(([cat, catItems]) => (
-              <div key={cat}>
-                <div className="px-4 py-1.5 bg-[#F7F7F5] border-t border-[#2C2C2C]/5">
-                  <span className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide">{cat}</span>
-                </div>
-                {catItems.map(item => {
-                  const idx = items.indexOf(item)
-                  return (
-                    <div
-                      key={idx}
-                      className={`border-t border-[#2C2C2C]/5 px-4 py-3 ${
-                        item.konfidenz === 'low' ? 'border-l-2 border-l-orange-400' :
-                        item.konfidenz === 'medium' ? 'border-l-2 border-l-amber-400' : ''
-                      }`}
-                    >
-                      <div className="flex items-start gap-2">
-                        <div className="flex-1 min-w-0">
-                          <input value={item.title} onChange={e => updateItem(idx, 'title', e.target.value)} className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-transparent focus:border-[#F5C400] pb-0.5" />
-                          <div className="flex gap-2 mt-2 items-center">
-                            <input type="number" inputMode="decimal" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} className={`w-16 text-sm font-semibold text-[#2C2C2C] rounded-lg px-2 py-1 focus:outline-none ${item.konfidenz === 'low' ? 'bg-orange-50 ring-1 ring-orange-300' : 'bg-[#F7F7F5]'}`} min={0} step="0.01" autoFocus={item.konfidenz === 'low'} />
-                            <input value={item.unit} onChange={e => updateItem(idx, 'unit', e.target.value)} className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none" />
-                            <div className="flex items-center gap-1 ml-auto">
-                              <input type="number" inputMode="decimal" value={item.unit_price} onChange={e => updateItem(idx, 'unit_price', e.target.value)} className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 text-right focus:outline-none" min={0} step="0.01" />
-                              <span className="text-xs text-[#2C2C2C]/40 font-semibold">€</span>
-                            </div>
-                          </div>
-                          <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5 text-right">= {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €</div>
-                          {item.base_price !== undefined && item.unit_price < item.base_price && (
-                            <div className="text-xs text-green-600 font-bold mt-0.5 text-right">Mengenrabatt: {Math.round((1 - item.unit_price / item.base_price) * 100)} %</div>
-                          )}
-                          {/* Konfidenz-Hinweis */}
-                          {item.konfidenz === 'low' && (
-                            <div className="text-[11px] text-orange-600 font-semibold mt-1">⚠ Bitte Menge prüfen</div>
-                          )}
-                          {item.konfidenz === 'medium' && item.annahmen && item.annahmen.length > 0 && (
-                            <div className="text-[11px] text-amber-600 font-semibold mt-1">Annahme: {item.annahmen.join(', ')} — anpassen?</div>
-                          )}
-                          {item.berechnungsweg && item.konfidenz !== 'low' && (
-                            <details className="mt-1">
-                              <summary className="text-[11px] text-[#2C2C2C]/30 font-semibold cursor-pointer">ⓘ Berechnung</summary>
-                              <div className="text-[11px] text-[#2C2C2C]/50 font-semibold mt-0.5 pl-3">{item.berechnungsweg}</div>
-                            </details>
-                          )}
-                          {item.kontext_genutzt && (
-                            <span
-                              className="inline-block mt-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded"
-                              title="Diese Position wurde durch den Gesamtkontext des Auftrags erkannt"
-                            >
-                              🔗 Kontext
-                            </span>
-                          )}
-                          {item.aus_woerterbuch && (
-                            <span
-                              className="inline-block mt-1 ml-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded"
-                              title="Aus deinem persönlichen Wörterbuch — kein KI-Call nötig"
-                            >
-                              ⚡ Gelernt
-                            </span>
-                          )}
-                          {item.implizit_erkannt && (
-                            <span
-                              className="inline-block mt-1 ml-1 text-[10px] font-black text-[#F5C400] bg-[#F5C400]/15 px-1.5 py-0.5 rounded"
-                              title="Automatisch ergänzt — aus dem Kontext erkannt"
-                            >
-                              ✨ Automatisch
-                            </span>
-                          )}
+            {(() => {
+              const renderPositionRow = (idx: number, item: DraftItem, displayTitle: string, roomName: string | null) => (
+                <div
+                  key={idx}
+                  className={`border-t border-[#2C2C2C]/5 px-4 py-3 ${
+                    item.konfidenz === 'low' ? 'border-l-2 border-l-orange-400' :
+                    item.konfidenz === 'medium' ? 'border-l-2 border-l-amber-400' : ''
+                  }`}
+                >
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <input
+                        value={displayTitle}
+                        onChange={e => updateItem(idx, 'title', roomName ? `${e.target.value} — ${roomName}` : e.target.value)}
+                        className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-transparent focus:border-[#F5C400] pb-0.5"
+                      />
+                      <div className="flex gap-2 mt-2 items-center">
+                        <input type="number" inputMode="decimal" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} className={`w-16 text-sm font-semibold text-[#2C2C2C] rounded-lg px-2 py-1 focus:outline-none ${item.konfidenz === 'low' ? 'bg-orange-50 ring-1 ring-orange-300' : 'bg-[#F7F7F5]'}`} min={0} step="0.01" autoFocus={item.konfidenz === 'low'} />
+                        <input value={item.unit} onChange={e => updateItem(idx, 'unit', e.target.value)} className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none" />
+                        <div className="flex items-center gap-1 ml-auto">
+                          <input type="number" inputMode="decimal" value={item.unit_price} onChange={e => updateItem(idx, 'unit_price', e.target.value)} className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 text-right focus:outline-none" min={0} step="0.01" />
+                          <span className="text-xs text-[#2C2C2C]/40 font-semibold">€</span>
                         </div>
-                        <button onClick={() => removeItem(idx)} className="mt-0.5 p-1 shrink-0">
-                          <Trash2 size={16} color="#ef4444" />
-                        </button>
                       </div>
+                      <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5 text-right">= {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €</div>
+                      {item.base_price !== undefined && item.unit_price < item.base_price && (
+                        <div className="text-xs text-green-600 font-bold mt-0.5 text-right">Mengenrabatt: {Math.round((1 - item.unit_price / item.base_price) * 100)} %</div>
+                      )}
+                      {item.konfidenz === 'low' && (
+                        <div className="text-[11px] text-orange-600 font-semibold mt-1">⚠ Bitte Menge prüfen</div>
+                      )}
+                      {item.konfidenz === 'medium' && item.annahmen && item.annahmen.length > 0 && (
+                        <div className="text-[11px] text-amber-600 font-semibold mt-1">Annahme: {item.annahmen.join(', ')} — anpassen?</div>
+                      )}
+                      {item.berechnungsweg && item.konfidenz !== 'low' && (
+                        <details className="mt-1">
+                          <summary className="text-[11px] text-[#2C2C2C]/30 font-semibold cursor-pointer">ⓘ Berechnung</summary>
+                          <div className="text-[11px] text-[#2C2C2C]/50 font-semibold mt-0.5 pl-3">{item.berechnungsweg}</div>
+                        </details>
+                      )}
+                      {item.kontext_genutzt && (
+                        <span className="inline-block mt-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded" title="Diese Position wurde durch den Gesamtkontext des Auftrags erkannt">🔗 Kontext</span>
+                      )}
+                      {item.aus_woerterbuch && (
+                        <span className="inline-block mt-1 ml-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded" title="Aus deinem persönlichen Wörterbuch — kein KI-Call nötig">⚡ Gelernt</span>
+                      )}
+                      {item.implizit_erkannt && (
+                        <span className="inline-block mt-1 ml-1 text-[10px] font-black text-[#F5C400] bg-[#F5C400]/15 px-1.5 py-0.5 rounded" title="Automatisch ergänzt — aus dem Kontext erkannt">✨ Automatisch</span>
+                      )}
+                    </div>
+                    <button onClick={() => removeItem(idx)} className="mt-0.5 p-1 shrink-0">
+                      <Trash2 size={16} color="#ef4444" />
+                    </button>
+                  </div>
+                </div>
+              )
+
+              if (useRoomGrouping) {
+                const multiRoom = raumMapReview.size > 1 || (raumMapReview.size === 1 && raumMapReview.has(null) === false)
+                return Array.from(raumMapReview.entries()).map(([room, entries]) => {
+                  const raumSumme = entries.reduce((s, e) => s + e.item.quantity * e.item.unit_price, 0)
+                  return (
+                    <div key={room ?? '__allgemein'}>
+                      <div className={`border-t border-[#2C2C2C]/5 px-4 py-2 flex items-center justify-between ${multiRoom ? 'bg-[#F7F7F5]' : 'bg-[#F5C400]/8'}`}>
+                        <div className="flex items-center gap-1.5">
+                          <span>{room ? getRaumEmoji(room) : '📋'}</span>
+                          <span className={`font-black uppercase tracking-widest ${multiRoom ? 'text-[10px] text-[#2C2C2C]/50' : 'text-xs text-[#2C2C2C]'}`}>
+                            {room ?? 'Allgemein'}
+                          </span>
+                        </div>
+                        {multiRoom && (
+                          <span className="text-[11px] font-black text-[#2C2C2C]/40">
+                            {raumSumme.toFixed(2).replace('.', ',')} €
+                          </span>
+                        )}
+                      </div>
+                      {entries.map(({ idx, item, display, room: r }) => renderPositionRow(idx, item, display, r))}
+                      {multiRoom && (
+                        <div className="border-t border-dashed border-[#2C2C2C]/8 px-4 py-2 flex justify-between">
+                          <span className="text-xs text-[#2C2C2C]/40 font-semibold">Summe {room ?? 'Allgemein'}</span>
+                          <span className="text-xs font-black text-[#2C2C2C]/60">{raumSumme.toFixed(2).replace('.', ',')} €</span>
+                        </div>
+                      )}
                     </div>
                   )
-                })}
-              </div>
-            ))}
+                })
+              }
+
+              return Object.entries(grouped).map(([cat, catItems]) => (
+                <div key={cat}>
+                  <div className="px-4 py-1.5 bg-[#F7F7F5] border-t border-[#2C2C2C]/5">
+                    <span className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide">{cat}</span>
+                  </div>
+                  {catItems.map(item => {
+                    const idx = items.indexOf(item)
+                    return renderPositionRow(idx, item, item.title, null)
+                  })}
+                </div>
+              ))
+            })()}
           </div>
 
           {/* Mindestauftragswert */}
