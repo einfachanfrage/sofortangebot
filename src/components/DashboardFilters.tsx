@@ -6,7 +6,7 @@ import { Search } from 'lucide-react'
 
 const STATUS_TABS = [
   { key: '', label: 'Alle' },
-  { key: 'in_bearbeitung', label: 'In Bearbeitung' },
+  { key: 'in_bearbeitung', label: 'Entwürfe' },
   { key: 'sent', label: 'Offen' },
   { key: 'accepted', label: 'Beauftragt' },
   { key: 'rejected', label: 'Abgelehnt' },

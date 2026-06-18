@@ -89,19 +89,19 @@ export function MobileQuoteCard({ quote, statusLabel, statusColor, formattedDate
           className="block bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 active:scale-[0.99] transition-transform"
           onClick={e => { if (offset < -10) e.preventDefault() }}
         >
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <div className="font-black text-[#2C2C2C] truncate">
-                {quote.customer?.name || 'Kein Kunde'}
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${statusColor}`}>
+                  {statusLabel}
+                </span>
+                <div className="font-black text-[#2C2C2C] truncate text-sm">
+                  {quote.customer?.name || 'Kunde unbekannt'}
+                </div>
               </div>
-              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{formattedDate}</div>
+              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">{formattedDate}</div>
             </div>
-            <div className="flex flex-col items-end gap-1.5 shrink-0">
-              <div className="font-black text-[#2C2C2C] text-sm">{formattedAmount}</div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor}`}>
-                {statusLabel}
-              </span>
-            </div>
+            <div className="font-black text-[#2C2C2C] text-sm shrink-0">{formattedAmount}</div>
           </div>
         </Link>
       </div>

@@ -145,6 +145,27 @@ export default function NeuesAngebotPage() {
   const [briefpapiere, setBriefpapiere] = useState<{ id: string; name: string; ist_standard: boolean }[]>([])
   const [selectedBriefpapier, setSelectedBriefpapier] = useState<string | null>(null)
   const [showBriefpapierPicker, setShowBriefpapierPicker] = useState(false)
+  const [autoDraftId, setAutoDraftId] = useState<string | null>(null)
+
+  // Auto-save als Entwurf wenn Review-Screen erscheint
+  useEffect(() => {
+    if (step !== 'review' || items.length === 0 || autoDraftId) return
+    const save = async () => {
+      try {
+        const r = await fetch('/api/quotes/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }),
+        })
+        if (r.ok) {
+          const d = await r.json()
+          if (d.id) setAutoDraftId(d.id)
+        }
+      } catch { /* ignore */ }
+    }
+    save()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step])
 
   // Starthilfe (alt)
   const [showFirstTimeCard, setShowFirstTimeCard] = useState(false)
@@ -801,30 +822,56 @@ export default function NeuesAngebotPage() {
   async function handleSave() {
     setSaving(true); setLimitError(''); setError('')
     try {
-      const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }) })
-      const data = await r.json()
-      if (!r.ok) {
-        if (data.error === 'limit_reached') setLimitError(data.message)
-        else setError(data.error ?? 'Speichern fehlgeschlagen')
-        return
+      let quoteId: string | null = null
+
+      if (autoDraftId) {
+        // Entwurf wurde automatisch gespeichert — Items aktualisieren
+        const totalNet = items.reduce((s, i) => s + i.quantity * i.unit_price, 0)
+        const { data: co } = await supabase.from('companies').select('vat_rate').eq('id', (await supabase.auth.getUser()).data.user?.id ?? '').maybeSingle()
+        const vatRate = (co as { vat_rate?: number } | null)?.vat_rate ?? 0
+        const totalVat = vatRate > 0 ? totalNet * (vatRate / 100) : 0
+        // Alte Items löschen und neue einfügen
+        await supabase.from('quote_items').delete().eq('quote_id', autoDraftId)
+        for (let i = 0; i < items.length; i++) {
+          const it = items[i]
+          await supabase.from('quote_items').insert({
+            quote_id: autoDraftId, position: i + 1, title: it.title,
+            description: it.description || null, quantity: it.quantity,
+            unit: it.unit, unit_price: it.unit_price,
+            total_price: it.quantity * it.unit_price,
+            kategorie: it.kategorie ?? null,
+          })
+        }
+        await supabase.from('quotes').update({
+          total_net: totalNet, total_vat: totalVat, total_gross: totalNet + totalVat,
+          notes: notes || null,
+        }).eq('id', autoDraftId)
+        quoteId = autoDraftId
+      } else {
+        const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }) })
+        const data = await r.json()
+        if (!r.ok) {
+          if (data.error === 'limit_reached') setLimitError(data.message)
+          else setError(data.error ?? 'Speichern fehlgeschlagen')
+          return
+        }
+        if (!data.id) { setError('Kein Angebot zurückgegeben. Nochmal versuchen.'); return }
+        quoteId = data.id
       }
-      if (!data.id) {
-        setError('Kein Angebot zurückgegeben. Nochmal versuchen.')
-        return
-      }
+
       // Eingaben-Session verknüpfen wenn vorhanden
       if (eingaben.length > 0) {
-        await supabase.from('angebot_eingaben').update({ angebot_id: data.id }).is('angebot_id', null)
+        await supabase.from('angebot_eingaben').update({ angebot_id: quoteId }).is('angebot_id', null)
       }
-      // Lernmatch für alle gematchten Positionen bestätigen (fire-and-forget)
-      const gewerk = extraktionCache?.extraktion?.gewerk ?? ''
+      // Lernmatch bestätigen (fire-and-forget)
+      const gewerkId = extraktionCache?.extraktion?.gewerk ?? ''
       const lernEintraege = items
         .filter(it => it.position_id && !it.manuell_geaendert)
-        .map(it => ({ beschreibung_original: it.title, position_id: it.position_id!, gewerk_id: gewerk }))
+        .map(it => ({ beschreibung_original: it.title, position_id: it.position_id!, gewerk_id: gewerkId }))
       if (lernEintraege.length > 0) {
         fetch('/api/ki/lernend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eintraege: lernEintraege }) }).catch(() => {})
       }
-      router.push(`/angebot/${data.id}`)
+      router.push(`/angebot/${quoteId}`)
     } catch {
       setError('Verbindungsfehler. Bitte nochmal versuchen.')
     } finally {

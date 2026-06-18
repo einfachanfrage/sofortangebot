@@ -12,8 +12,8 @@ import { Mic, Clock, X, FileText, ChevronRight } from 'lucide-react'
 
 // Status-Konfiguration — "Entwurf" und "Auf Baustelle" sind beide "In Bearbeitung"
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  draft:          { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
-  in_bearbeitung: { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
+  draft:          { label: 'Entwurf',        color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
+  in_bearbeitung: { label: 'Entwurf',        color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
   sent:           { label: 'Offen',          color: 'bg-blue-50 text-blue-700'          },
   viewed:         { label: 'Geöffnet',       color: 'bg-purple-50 text-purple-700'      },
   accepted:       { label: 'Beauftragt',     color: 'bg-[#EDFAF0] text-[#1A7A38]'     },
@@ -339,7 +339,7 @@ export default async function DashboardPage({
                   className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3.5 border-b border-[#2C2C2C]/5 last:border-0 hover:bg-[#F7F7F5] transition-colors group"
                 >
                   <div className="font-black text-[#2C2C2C] text-sm truncate group-hover:text-[#F5C400] transition-colors self-center">
-                    {quote.customer?.name || 'Kein Kunde'}
+                    {quote.customer?.name || 'Kunde unbekannt'}
                   </div>
                   <div className="self-center">
                     {gewerkBadge ? (
