@@ -199,11 +199,23 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       }
     }
 
-    // Lampen / Leuchten abkleben — Stückzahl aus Transkript
+    // Lampen / Leuchten / Spots abkleben — Stückzahl aus Transkript
     const hatLampenAbkleben = lower.includes('lamp') || lower.includes('leuchte') || lower.includes('deckenleuchte')
-    if (hatLampenAbkleben && hatStreichen && !hat(ergaenzt, 'lampen abkl', 'leuchten abkl')) {
-      const anzLampen = anzahlAus('lamp', anzahlAus('leuchte', 1))
-      ergaenzt.push({ beschreibung: 'Lampen / Leuchten abkleben', menge: anzLampen, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzLampen} Leuchte(n) aus Transkript`, annahmen: [] })
+      || lower.includes('pendelleuchte') || lower.includes('einbauspot') || lower.includes('spot')
+    if (hatLampenAbkleben && (hatStreichen || anDecke) && !hat(ergaenzt, 'lampen abkl', 'leuchten abkl', 'spots abkl', 'pendelleuchte')) {
+      const anzPendel = anzahlAus('pendelleuchte', 0)
+      const anzSpots = anzahlAus('einbauspot', anzahlAus('spot', 0))
+      const anzLampen = anzahlAus('lamp', anzahlAus('leuchte', 0))
+      if (anzPendel > 0) ergaenzt.push({ beschreibung: 'Pendelleuchten abkleben', menge: anzPendel, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzPendel} Pendelleuchten aus Transkript`, annahmen: [] })
+      if (anzSpots > 0) ergaenzt.push({ beschreibung: 'Einbauspots abkleben', menge: anzSpots, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzSpots} Spots aus Transkript`, annahmen: [] })
+      if (anzLampen > 0 && anzPendel === 0 && anzSpots === 0) ergaenzt.push({ beschreibung: 'Lampen / Leuchten abkleben', menge: anzLampen, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzLampen} Leuchte(n) aus Transkript`, annahmen: [] })
+    }
+
+    // Erschwerniszuschlag Raumhöhe > 3m (Gerüst/Stehleiter nötig)
+    const raumHoehe = (daten.raeume ?? []).reduce((max: number, r: any) => Math.max(max, r.hoehe ?? 0), 0)
+    const hatHohesRaum = raumHoehe > 3.0 || lower.includes('4m hoch') || lower.includes('4,5') || lower.includes('4.5') || lower.includes('5m hoch') || lower.includes('6m hoch') || lower.includes('hohe decke') || lower.includes('hohen decken')
+    if (hatHohesRaum && !hat(ergaenzt, 'erschwerniszuschlag höhe', 'höhe zuschlag', 'gerüst')) {
+      ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Raumhöhe > 3m', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: `Raumhöhe ${raumHoehe > 0 ? raumHoehe + 'm' : 'erkannt'} > 3m`, annahmen: [] })
     }
 
     // Sockelleisten lackieren (eigene Arbeit, nicht nur abkleben) → Schleifen + 2× Lackieren
