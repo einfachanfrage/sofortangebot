@@ -18,6 +18,7 @@ import {
   SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
 
@@ -511,43 +512,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     }
   }
 
-  // ── Positionen gruppieren (Ansichtsmodus, ab 8 Positionen) ────────────────
-  function gruppierePositionen(items: EditItem[]) {
-    if (items.length <= 7) return null
-    const DASH = /\s+[-–—]\s+/
-    const raumMap = new Map<string, EditItem[]>()
-    let hatRaeume = 0
-    for (const item of items) {
-      const m = item.title.match(DASH)
-      if (m) {
-        const raum = item.title.slice(m.index! + m[0].length).trim()
-        if (!raumMap.has(raum)) raumMap.set(raum, [])
-        raumMap.get(raum)!.push(item)
-        hatRaeume++
-      }
-    }
-    if (hatRaeume >= Math.ceil(items.length * 0.5)) {
-      const ohneRaum = items.filter(i => !i.title.match(DASH))
-      if (ohneRaum.length) raumMap.set('Sonstiges', ohneRaum)
-      return raumMap
-    }
-    // Fallback: nach Arbeitstyp gruppieren
-    const typMap = new Map<string, EditItem[]>()
-    for (const item of items) {
-      const t = item.title.toLowerCase()
-      const typ =
-        t.includes('decke') ? 'Decke' :
-        t.includes('boden') || t.includes('parkett') || t.includes('laminat') ? 'Boden' :
-        t.includes('tür') || t.includes('fenster') || t.includes('leibung') ? 'Türen & Fenster' :
-        t.includes('spachtel') || t.includes('grundier') ? 'Vorbereitung' :
-        t.includes('tapete') ? 'Tapezierarbeiten' :
-        t.includes('lackier') || t.includes('lack') ? 'Lackierarbeiten' :
-        'Malerarbeiten'
-      if (!typMap.has(typ)) typMap.set(typ, [])
-      typMap.get(typ)!.push(item)
-    }
-    return typMap
-  }
+  // ── Positionen gruppieren (Ansichtsmodus) ────────────────────────────────
 
   // ── Summenberechnung ───────────────────────────────────────────────────────
   const baseNet = editMode
@@ -863,12 +828,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </SortableContext>
                 </DndContext>
               ) : (() => {
-                const gruppen = gruppierePositionen(displayItems)
-                const renderItem = (item: EditItem) => (
+                const gruppen = gruppiereNachRaum(displayItems)
+
+                const renderItem = (title: string, item: EditItem) => (
                   <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="font-bold text-[#2C2C2C] text-sm">{item.title}</div>
+                        <div className="font-bold text-[#2C2C2C] text-sm">{title}</div>
                         {item.description && <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>}
                         <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 flex items-center gap-1 flex-wrap">
                           <span>{item.quantity}</span>
@@ -885,15 +851,64 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     </div>
                   </div>
                 )
-                if (!gruppen) return displayItems.map(renderItem)
-                return Array.from(gruppen.entries()).map(([gruppe, items]) => (
-                  <div key={gruppe}>
-                    <div className="border-t border-[#2C2C2C]/5 px-4 py-2 bg-[#F7F7F5]">
-                      <span className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">{gruppe}</span>
-                    </div>
-                    {items.map(renderItem)}
-                  </div>
-                ))
+
+                if (!gruppen) {
+                  return displayItems.map(item => renderItem(item.title, item))
+                }
+
+                const { raeume, allgemein, hatMehrereRaeume } = gruppen
+
+                return (
+                  <>
+                    {raeume.map(raum => (
+                      <div key={raum.raumName}>
+                        {/* Raum-Header */}
+                        <div className={`border-t border-[#2C2C2C]/5 px-4 py-2.5 flex items-center justify-between ${
+                          hatMehrereRaeume ? 'bg-[#F7F7F5]' : 'bg-[#F5C400]/8'
+                        }`}>
+                          <div className="flex items-center gap-1.5">
+                            <span>{raum.emoji}</span>
+                            <span className={`font-black uppercase tracking-widest ${
+                              hatMehrereRaeume
+                                ? 'text-[10px] text-[#2C2C2C]/50'
+                                : 'text-xs text-[#2C2C2C]'
+                            }`}>{raum.raumName}</span>
+                          </div>
+                          {hatMehrereRaeume && (
+                            <span className="text-[11px] font-black text-[#2C2C2C]/40">{fmt(raum.summe)}</span>
+                          )}
+                        </div>
+
+                        {/* Positionen ohne Raumzusatz */}
+                        {raum.items.map(gi => {
+                          const orig = displayItems.find(i => i.id === gi.id)!
+                          return renderItem(gi.titleDisplay, orig)
+                        })}
+
+                        {/* Zwischensumme je Raum */}
+                        {hatMehrereRaeume && (
+                          <div className="border-t border-dashed border-[#2C2C2C]/8 px-4 py-2 flex justify-between">
+                            <span className="text-xs text-[#2C2C2C]/40 font-semibold">Summe {raum.raumName}</span>
+                            <span className="text-xs font-black text-[#2C2C2C]/60">{fmt(raum.summe)}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    {/* Allgemeine Positionen ohne Raum */}
+                    {allgemein.length > 0 && (
+                      <div>
+                        <div className="border-t border-[#2C2C2C]/5 px-4 py-2 bg-[#F7F7F5]">
+                          <span className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">📋 Allgemein</span>
+                        </div>
+                        {allgemein.map(gi => {
+                          const orig = displayItems.find(i => i.id === gi.id)!
+                          return renderItem(gi.title, orig)
+                        })}
+                      </div>
+                    )}
+                  </>
+                )
               })()}
 
               {editMode && (

@@ -1,5 +1,6 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
+import { gruppiereNachRaum } from './angebot-gruppierung'
 
 const styles = StyleSheet.create({
   page: {
@@ -211,20 +212,74 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier }: Props) 
           <Text style={{ ...styles.tableHeaderText, ...styles.colTotal }}>Gesamt</Text>
         </View>
 
-        {/* Positionen */}
-        {quote.items.map((item, idx) => (
-          <View key={item.id} style={idx % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
-            <Text style={styles.colPos}>{item.position}</Text>
-            <View style={styles.colTitle}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>{item.title}</Text>
-              {item.description && <Text style={{ color: '#666', marginTop: 2 }}>{item.description}</Text>}
+        {/* Positionen — mit Raum-Gruppierung */}
+        {(() => {
+          const gruppen = gruppiereNachRaum(quote.items)
+          if (!gruppen) {
+            return quote.items.map((item, idx) => (
+              <View key={item.id} style={idx % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
+                <Text style={styles.colPos}>{item.position}</Text>
+                <View style={styles.colTitle}>
+                  <Text style={{ fontFamily: 'Helvetica-Bold' }}>{item.title}</Text>
+                  {item.description && <Text style={{ color: '#666', marginTop: 2 }}>{item.description}</Text>}
+                </View>
+                <Text style={styles.colQty}>{item.quantity}</Text>
+                <Text style={styles.colUnit}>{item.unit}</Text>
+                <Text style={styles.colPrice}>{formatCurrency(item.unit_price)}</Text>
+                <Text style={{ ...styles.colTotal, fontFamily: 'Helvetica-Bold' }}>{formatCurrency(item.total_price)}</Text>
+              </View>
+            ))
+          }
+
+          const { raeume, allgemein, hatMehrereRaeume } = gruppen
+          const alleSektionen = [
+            ...raeume.map(r => ({ typ: 'raum' as const, raum: r })),
+            ...(allgemein.length > 0 ? [{ typ: 'allgemein' as const, raum: null }] : []),
+          ]
+
+          return alleSektionen.map(sektion => (
+            <View key={sektion.typ === 'raum' ? sektion.raum!.raumName : 'allgemein'}>
+              {/* Raum-Überschrift */}
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                backgroundColor: hatMehrereRaeume ? '#F7F7F5' : '#FFFBEB',
+                padding: '6 10',
+                marginTop: hatMehrereRaeume ? 8 : 0,
+              }}>
+                <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: hatMehrereRaeume ? 10 : 11 }}>
+                  {sektion.typ === 'raum' ? sektion.raum!.raumName.toUpperCase() : 'ALLGEMEIN'}
+                </Text>
+                {hatMehrereRaeume && sektion.typ === 'raum' && (
+                  <Text style={{ fontSize: 9, color: '#666' }}>{formatCurrency(sektion.raum!.summe)}</Text>
+                )}
+              </View>
+
+              {/* Positionen der Sektion */}
+              {(sektion.typ === 'raum' ? sektion.raum!.items : allgemein).map((gi, idx) => (
+                <View key={gi.id} style={idx % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
+                  <Text style={styles.colPos}>{gi.position}</Text>
+                  <View style={styles.colTitle}>
+                    <Text style={{ fontFamily: 'Helvetica-Bold' }}>{gi.titleDisplay}</Text>
+                    {gi.description && <Text style={{ color: '#666', marginTop: 2 }}>{gi.description}</Text>}
+                  </View>
+                  <Text style={styles.colQty}>{gi.quantity}</Text>
+                  <Text style={styles.colUnit}>{gi.unit}</Text>
+                  <Text style={styles.colPrice}>{formatCurrency(gi.unit_price)}</Text>
+                  <Text style={{ ...styles.colTotal, fontFamily: 'Helvetica-Bold' }}>{formatCurrency(gi.total_price)}</Text>
+                </View>
+              ))}
+
+              {/* Zwischensumme bei mehreren Räumen */}
+              {hatMehrereRaeume && sektion.typ === 'raum' && (
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: '4 10', borderTop: '1 dashed #E0E0DE' }}>
+                  <Text style={{ fontSize: 9, color: '#666', marginRight: 8 }}>Summe {sektion.raum!.raumName}</Text>
+                  <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold' }}>{formatCurrency(sektion.raum!.summe)}</Text>
+                </View>
+              )}
             </View>
-            <Text style={styles.colQty}>{item.quantity}</Text>
-            <Text style={styles.colUnit}>{item.unit}</Text>
-            <Text style={styles.colPrice}>{formatCurrency(item.unit_price)}</Text>
-            <Text style={{ ...styles.colTotal, fontFamily: 'Helvetica-Bold' }}>{formatCurrency(item.total_price)}</Text>
-          </View>
-        ))}
+          ))
+        })()}
 
         {/* Summen */}
         <View style={styles.totalsBox}>
