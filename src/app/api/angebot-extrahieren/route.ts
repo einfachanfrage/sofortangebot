@@ -139,26 +139,19 @@ export async function POST(req: NextRequest) {
 
     const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
 
-    // GPT-extrahierte Fenster/Tür-Anzahl: anzahl-Feld bevorzugen, sonst Array-Länge
-    const fensterAnzahlGPT = extraktion.gewerk === 'maler'
-      ? (extraktion.raeume ?? []).reduce((sum: number, r) => {
-          const fenster = (r.fenster ?? []) as { anzahl?: number }[]
-          return sum + fenster.reduce((s, f) => s + (f?.anzahl ?? 1), 0)
-        }, 0)
-      : 0
-    const tuerenAnzahlGPT = extraktion.gewerk === 'maler'
-      ? (extraktion.raeume ?? []).reduce((sum: number, r) => {
-          const tueren = (r.tueren ?? []) as { anzahl?: number }[]
-          return sum + tueren.reduce((s, t) => s + (t?.anzahl ?? 1), 0)
-        }, 0)
-      : 0
+    // Fenster/Tür-Anzahl: direkt aus Text extrahieren (zuverlässiger als GPT-Felder)
+    const tl = textMitZahlen.toLowerCase()
+    const fensterTextMatch = tl.match(/(\d+)\s*\S*fenster/i)
+    const fensterAnzahlText = fensterTextMatch ? parseInt(fensterTextMatch[1]) : 0
+    const tuerTextMatch = tl.match(/(\d+)\s*(?:stück\s*)?\S*tür(?:en)?/i)
+    const tuerenAnzahlText = tuerTextMatch ? parseInt(tuerTextMatch[1]) : 0
 
     // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
     const { fehlende, positionen: positionenKomplett } = pruefeUndErgaenzeVollstaendigkeit(
       extraktion.gewerk,
       mengenRoh.positionen,
       textMitZahlen,
-      { fensterAnzahl: fensterAnzahlGPT || undefined, tuerenAnzahl: tuerenAnzahlGPT || undefined }
+      { fensterAnzahl: fensterAnzahlText || undefined, tuerenAnzahl: tuerenAnzahlText || undefined }
     )
     if (fehlende.length > 0) {
       console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)
