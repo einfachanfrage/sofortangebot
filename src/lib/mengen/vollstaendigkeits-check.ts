@@ -130,7 +130,7 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       const farbTyp = istOelfarbe ? 'Ölfarbe' : 'Lack'
       const istAußen = lower.includes('außen') || lower.includes('holzfenster')
       // 2-seitig: Anstrich-Stückzahl verdoppeln (beide Seiten lackieren), Schleifen/Grundieren bleibt gleich
-      const istZweiSeitig = lower.includes('2-seitig') || lower.includes('2 seitig') || lower.includes('zweiseitig') || lower.includes('beidseitig')
+      const istZweiSeitig = lower.includes('2-seitig') || lower.includes('2 seitig') || lower.includes('2seitig') || lower.includes('zweiseitig') || lower.includes('beidseitig') || lower.includes('beide seiten') || lower.includes('innen und außen') || lower.includes('innen und aussen')
       const anzAnstrich = istZweiSeitig ? anzFenster * 2 : anzFenster
       const zweiSeitigHinweis = istZweiSeitig ? ' (2-seitig)' : ''
       ergaenzt.push({ beschreibung: 'Fenster abschleifen', menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster aus Transkript`, annahmen: [] })
