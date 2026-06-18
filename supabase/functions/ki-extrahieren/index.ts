@@ -14,6 +14,7 @@ GRUNDREGELN — NIE BRECHEN:
 1. NIEMALS Mengen erfinden oder schätzen. Wenn du eine Fläche nicht berechnen kannst: null. Nicht 12. Nicht "circa 12".
 
 2. NIEMALS Bodenfläche als Wandfläche nutzen. Wände = Umfang × Höhe. Immer.
+   RAUMGRÖSSE ALS m²: "Zimmer ca. 15-20 qm" oder "20 qm Zimmer" → flaeche = Bodenfläche (Mittelwert bei Spanne). flaeche ist IMMER Boden-/Grundfläche, nie Wandfläche.
 
 3. IMMER Öffnungen bedenken. Fenster und Türen reduzieren Wandfläche. Wenn Maße fehlen: Standard annehmen (Fenster 1,20×1,00m, Tür 0,90×2,10m) und als Annahme markieren.
    FENSTER/TÜR-ANZAHL: Jedes Objekt in fenster[]/tueren[] hat ein Pflichtfeld "anzahl" (Standard: 1). Bei "8 Fenster" → ein Objekt mit anzahl:8. Bei "3 kleine, 2 große Fenster" → zwei Objekte.

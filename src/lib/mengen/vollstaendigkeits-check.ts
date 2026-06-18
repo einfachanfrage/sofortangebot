@@ -110,12 +110,16 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     const hatTuerenLackieren = (lower.includes('tür') || lower.includes('türen')) &&
       (lower.includes('lackier') || lower.includes('lack') || lower.includes('neu streich'))
     if (hatTuerenLackieren && !hat(ergaenzt, 'türen abschleifen', 'tür abschleifen')) {
-      const anzTueren = anzahlAus('tür')
-      ergaenzt.push({ beschreibung: 'Türen abschleifen', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) aus Transkript`, annahmen: [] })
-      ergaenzt.push({ beschreibung: 'Türen grundieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: [] })
-      ergaenzt.push({ beschreibung: 'Türen lackieren — 1. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: [] })
-      ergaenzt.push({ beschreibung: 'Türen lackieren — 2. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: [] })
-      ergaenzt.push({ beschreibung: 'Türzargen lackieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: [] })
+      // Anzahl: erst explizit vor "tür/türen", dann Zimmer-Anzahl als Proxy (1 Tür pro Zimmer)
+      const anzTuerenExplizit = anzahlAus('tür', anzahlAus('türen', 0))
+      const anzZimmerFuerTuer = anzahlAus('zimmer', anzahlAus('raum', anzahlAus('räume', 0)))
+      const anzTueren = anzTuerenExplizit > 0 ? anzTuerenExplizit : anzZimmerFuerTuer > 0 ? anzZimmerFuerTuer : 1
+      const tuerAnnahme = anzTuerenExplizit === 0 && anzZimmerFuerTuer > 0 ? [`${anzZimmerFuerTuer} Zimmer → je 1 Tür angenommen`] : []
+      ergaenzt.push({ beschreibung: 'Türen abschleifen', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) aus Transkript`, annahmen: tuerAnnahme })
+      ergaenzt.push({ beschreibung: 'Türen grundieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+      ergaenzt.push({ beschreibung: 'Türen lackieren — 1. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+      ergaenzt.push({ beschreibung: 'Türen lackieren — 2. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+      ergaenzt.push({ beschreibung: 'Türzargen lackieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: tuerAnnahme })
     }
 
     // Fenster lackieren/streichen → Schleifen, Grundieren, 2× Anstrich
