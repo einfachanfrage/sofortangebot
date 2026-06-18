@@ -109,7 +109,8 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall) oder nurWaende
     const anDecke = !nurWaende && !hatBodenStreichen && ((hatStreichen) || arbeitenStr.includes('decke'))
     const bodenStreichen = hatBodenStreichen && bodenflaecheM2 !== null
-    const bodenSchutz = !bodenStreichen && (hatStreichen || arbeitenStr.includes('schutz'))
+    // Boden schützen: immer wenn Wände ODER Decke gestrichen wird (Farbe tropft)
+    const bodenSchutz = !bodenStreichen && (hatStreichen || arbeitenStr.includes('schutz') || anDecke || anWaenden)
     // Sockelleisten: nicht in Kellern (kein Sockelleisten-Standard im Keller)
     const nameLower = name.toLowerCase()
     const hatSockel = anWaenden && wandflaecheNettoM2 !== null && !istKellerRaum
