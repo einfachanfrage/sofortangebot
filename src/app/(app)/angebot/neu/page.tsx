@@ -457,7 +457,7 @@ export default function NeuesAngebotPage() {
         { label: '1,00×2,10 m', wert: [1.0, 2.1], einheit: 'm' },
       ]
 
-      const kiAlsLokal: Array<RueckfrageItem & { _prioritaet: number }> = kiRueckfragen.map(r => {
+      const kiAlsLokal: Array<RueckfrageItem & { _prioritaet: number }> = kiRueckfragen.filter(r => r.frage != null).map(r => {
         const frageText = r.frage.toLowerCase()
         const istFenster = frageText.includes('fenster')
         const istTuer = frageText.includes('tür') || frageText.includes('tuer')
