@@ -185,17 +185,19 @@ export function pruefeUndErgaenzeVollstaendigkeit(
 
     // Dachschräge → Spachteln, Grundierung, Streichen
     const hatDachschraege = lower.includes('dachschräge') || lower.includes('dachschraege') || lower.includes('schräge') || lower.includes('schraege')
-    if (hatDachschraege && !hat(ergaenzt, 'dachschräge', 'schräge spachtel', 'schräge grundier')) {
+    if (hatDachschraege) {
+      // Fläche aus Engine-Position holen (maler.ts fügt "Dachschräge streichen" hinzu) oder aus Transkript
+      const dachPos = ergaenzt.find(p => (p.beschreibung ?? '').toLowerCase().includes('dachschräge'))
       const m2Match = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
-      const dsm2 = m2Match ? parseFloat(m2Match[1].replace(',', '.')) : null
+      const dsm2 = dachPos?.menge ?? (m2Match ? parseFloat(m2Match[1].replace(',', '.')) : null)
       if (dsm2 !== null && dsm2 > 0) {
-        ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² aus Transkript`, annahmen: [] })
-        ergaenzt.push({ beschreibung: 'Dachschräge Grundierung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
-        ergaenzt.push({ beschreibung: 'Dachschräge streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
+        if (!hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
+        if (!hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Dachschräge Grundierung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
+        if (!hat(ergaenzt, 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschräge streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
       } else {
-        add('Dachschräge spachteln / Untergrundvorbereitung')
-        add('Dachschräge Grundierung')
-        add('Dachschräge streichen')
+        if (!hat(ergaenzt, 'spachtel')) add('Dachschräge spachteln / Untergrundvorbereitung')
+        if (!hat(ergaenzt, 'grundier')) add('Dachschräge Grundierung')
+        if (!hat(ergaenzt, 'dachschräge streich')) add('Dachschräge streichen')
       }
     }
 
