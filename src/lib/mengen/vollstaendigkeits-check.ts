@@ -125,10 +125,14 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       const istOelfarbe = lower.includes('ölfarbe') || lower.includes('oelfarbe') || lower.includes('öl')
       const farbTyp = istOelfarbe ? 'Ölfarbe' : 'Lack'
       const istAußen = lower.includes('außen') || lower.includes('holzfenster')
+      // 2-seitig: Anstrich-Stückzahl verdoppeln (beide Seiten lackieren), Schleifen/Grundieren bleibt gleich
+      const istZweiSeitig = lower.includes('2-seitig') || lower.includes('2 seitig') || lower.includes('zweiseitig') || lower.includes('beidseitig')
+      const anzAnstrich = istZweiSeitig ? anzFenster * 2 : anzFenster
+      const zweiSeitigHinweis = istZweiSeitig ? ' (2-seitig)' : ''
       ergaenzt.push({ beschreibung: 'Fenster abschleifen', menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster aus Transkript`, annahmen: [] })
       ergaenzt.push({ beschreibung: 'Fenster grundieren', menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
-      ergaenzt.push({ beschreibung: `Fenster ${farbTyp} — 1. Anstrich`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
-      ergaenzt.push({ beschreibung: `Fenster ${farbTyp} — 2. Anstrich`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
+      ergaenzt.push({ beschreibung: `Fenster ${farbTyp} — 1. Anstrich${zweiSeitigHinweis}`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
+      ergaenzt.push({ beschreibung: `Fenster ${farbTyp} — 2. Anstrich${zweiSeitigHinweis}`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
       if (istAußen && !hat(ergaenzt, 'abdecken umgebung', 'umgebung abdecken')) {
         ergaenzt.push({ beschreibung: 'Abdecken Umgebung', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Außenarbeiten — Umgebung abdecken', annahmen: [] })
       }
