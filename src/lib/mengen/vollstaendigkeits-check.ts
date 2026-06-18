@@ -132,9 +132,18 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     if (hatBodenAbdecken && !hat(ergaenzt, 'boden schütz', 'boden abdecken', 'abdeckfolie')) {
       const anzZimmerBoden = anzahlAus('zimmer', anzahlAus('raum', anzahlAus('räume', 1)))
       // Fläche aus Positionen ableiten wenn vorhanden, sonst Zimmer-Pauschale
-      const vorhandeneFlaeche = ergaenzt.find(p => p.einheit === 'm²' && p.menge > 0)?.menge ?? null
-      if (vorhandeneFlaeche !== null) {
-        ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: vorhandeneFlaeche, einheit: 'm²', konfidenz: 'medium', berechnungsweg: `${vorhandeneFlaeche} m² (aus berechneter Fläche)`, annahmen: [] })
+      // Gesamtfläche: alle Boden/Decken-m² aufsummieren (je Raum eine Position)
+      const alleFlaechen = ergaenzt.filter(p => p.einheit === 'm²' && p.menge > 0
+        && (p.beschreibung.toLowerCase().includes('boden') || p.beschreibung.toLowerCase().includes('decke') || p.beschreibung.toLowerCase().includes('wand')))
+      const gesamtFlaeche = alleFlaechen.length > 0 ? alleFlaechen.reduce((s, p) => s + p.menge, 0) / alleFlaechen.length * anzZimmerBoden : null
+      // Alternativ: m²-Spanne aus Transkript ("15-20 qm" → Mittelwert)
+      const spanneMatch = lower.match(/(\d+)\s*[-–bis]+\s*(\d+)\s*(?:m²|qm|quadratmeter)/i)
+      const einzelMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+      const flaechemittelwert = spanneMatch
+        ? (parseInt(spanneMatch[1]) + parseInt(spanneMatch[2])) / 2 * anzZimmerBoden
+        : einzelMatch ? parseFloat(einzelMatch[1].replace(',', '.')) * anzZimmerBoden : gesamtFlaeche
+      if (flaechemittelwert !== null && flaechemittelwert > 0) {
+        ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: Math.round(flaechemittelwert), einheit: 'm²', konfidenz: 'medium', berechnungsweg: spanneMatch ? `(${spanneMatch[1]}+${spanneMatch[2]})/2 × ${anzZimmerBoden} Zimmer` : `${flaechemittelwert} m²`, annahmen: [] })
       } else {
         ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: anzZimmerBoden, einheit: 'Pauschale', konfidenz: 'medium', berechnungsweg: `${anzZimmerBoden} Zimmer`, annahmen: ['Bodenfläche nicht berechnet — Pauschale pro Zimmer'] })
       }
