@@ -571,7 +571,7 @@ export default function NeuesAngebotPage() {
         berechnungsweg: p.berechnungsweg,
         annahmen: p.annahmen,
       }))
-      const toAdd = newItems.filter(ni => !items.some(ex => ex.title.toLowerCase() === ni.title.toLowerCase()))
+      const toAdd = newItems.filter(ni => !items.some(ex => (ex.title ?? '').toLowerCase() === (ni.title ?? '').toLowerCase()))
       setItems(prev => [...prev, ...toAdd])
       setEingaben(prev => [...prev, { nr: prev.length + 1, transkript: text, anzahl: toAdd.length }])
       setStep('review')
@@ -675,7 +675,7 @@ export default function NeuesAngebotPage() {
     const newItems: DraftItem[] = result.items ?? []
 
     if (sessionId && items.length > 0) {
-      const toAdd = newItems.filter(ni => !items.some(ex => ex.title.toLowerCase() === ni.title.toLowerCase()))
+      const toAdd = newItems.filter(ni => !items.some(ex => (ex.title ?? '').toLowerCase() === (ni.title ?? '').toLowerCase()))
       setItems(prev => [...prev, ...toAdd])
       setEingaben(prev => [...prev, { nr: prev.length + 1, transkript: text, anzahl: toAdd.length }])
       setStep('review')
@@ -720,7 +720,7 @@ export default function NeuesAngebotPage() {
     const r = await fetch('/api/angebot-verfeinern', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, antworten: neueAntworten, aufmaß: transcript }) })
     if (!r.ok) { setStep('review'); return }
     const result = await r.json()
-    const zusatzItems = (result.items ?? []).filter((ni: DraftItem) => !items.some(ex => ex.title.toLowerCase() === ni.title.toLowerCase()))
+    const zusatzItems = (result.items ?? []).filter((ni: DraftItem) => !items.some(ex => (ex.title ?? '').toLowerCase() === (ni.title ?? '').toLowerCase()))
     setItems(prev => [...prev, ...zusatzItems])
     if (result.notizen) setNotes(prev => prev ? `${prev}\n${result.notizen}` : result.notizen)
     setStep('review')
@@ -1262,7 +1262,7 @@ export default function NeuesAngebotPage() {
                 <input placeholder="Suchen..." value={priceSearch} onChange={e => setPriceSearch(e.target.value)} autoFocus className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-2.5 font-semibold text-base focus:outline-none focus:border-[#F5C400]" />
               </div>
               <div className="overflow-y-auto flex-1">
-                {priceItems.filter(p => !priceSearch || p.title.toLowerCase().includes(priceSearch.toLowerCase()) || p.category.toLowerCase().includes(priceSearch.toLowerCase())).map(p => (
+                {priceItems.filter(p => !priceSearch || (p.title ?? '').toLowerCase().includes(priceSearch.toLowerCase()) || (p.category ?? '').toLowerCase().includes(priceSearch.toLowerCase())).map(p => (
                   <button key={p.id} onClick={() => addFromPrice(p)} className="w-full text-left px-5 py-3.5 border-b border-[#2C2C2C]/5 last:border-0 active:bg-[#F5C400]/10">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0"><div className="font-bold text-[#2C2C2C] text-sm">{p.title}</div><div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{p.category}</div></div>
