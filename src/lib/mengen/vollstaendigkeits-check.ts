@@ -554,8 +554,9 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     }
 
     // Fassade: Folgepositionen mit gleicher Fläche ergänzen
+    // "Außenfenster streichen" / "außen streichen" ohne explizite Fassade → kein Fassade-Block
     const istFassade = lower.includes('fassade') || lower.includes('außenwand')
-      || (lower.includes('außen') && lower.includes('streichen'))
+      || (lower.includes('außen') && lower.includes('streichen') && !lower.includes('fenster') && !lower.includes('außenfen'))
       || lower.includes('garagenfassade') || lower.includes('garage außen')
     if (istFassade) {
       const hatRisse = lower.includes('riss') || lower.includes('schäden') || lower.includes('abgeplatzt')
