@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
     const { fehlende, positionen: positionenKomplett } = pruefeUndErgaenzeVollstaendigkeit(
       extraktion.gewerk,
       mengenRoh.positionen,
-      text
+      textMitZahlen  // Zahlwörter bereits in Ziffern konvertiert → anzahlAus() findet "8" statt "acht"
     )
     if (fehlende.length > 0) {
       console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)
