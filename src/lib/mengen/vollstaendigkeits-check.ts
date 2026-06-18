@@ -248,6 +248,29 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       }
     }
 
+    // Stuckleisten → Montieren + Streichen (Laufmeter = voller Umfang, kein Türabzug)
+    const hatStuck = lower.includes('stuckleiste') || lower.includes('stuckelement') || lower.includes('stuckprofil')
+      || lower.includes('stuck montier') || lower.includes('stuckleis')
+    if (hatStuck && !hat(ergaenzt, 'stuckleisten montier', 'stuckelemente montier')) {
+      // Umfang aus Bodenfläche ableiten (√flaeche ≈ quadratisch, realistischer Schätzwert)
+      const flaecheMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+      const fm2 = flaecheMatch ? parseFloat(flaecheMatch[1].replace(',', '.')) : null
+      // Umfang-Schätzung: für typische Räume Umfang ≈ 4 × √flaeche (quadratische Annahme)
+      const umfangGeschaetzt = fm2 !== null ? Math.round(4 * Math.sqrt(fm2)) : null
+      // Aus Engine-Positionen: Umfang direkt falls vorhanden
+      const umfangAusEngine = ergaenzt.find(p => p.einheit === 'lfdm' && p.beschreibung.toLowerCase().includes('sockel'))?.menge ?? null
+      const stuckM = umfangAusEngine ?? umfangGeschaetzt
+      if (stuckM !== null && stuckM > 0) {
+        ergaenzt.push({ beschreibung: 'Stuckleisten montieren', menge: stuckM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: fm2 ? `Umfang ≈ 4 × √${fm2} m² = ${stuckM} lfdm (voller Umfang, kein Türabzug)` : `${stuckM} lfdm`, annahmen: fm2 ? ['Quadratischer Raum angenommen'] : [] })
+        if (lower.includes('weiß') || lower.includes('weiss') || lower.includes('streich') || lower.includes('streichen') || lower.includes('anstrich')) {
+          ergaenzt.push({ beschreibung: 'Stuckleisten streichen / weißen', menge: stuckM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${stuckM} lfdm`, annahmen: [] })
+        }
+      } else {
+        add('Stuckleisten montieren')
+        if (lower.includes('weiß') || lower.includes('weiss') || lower.includes('streich')) add('Stuckleisten streichen / weißen')
+      }
+    }
+
     // Graffiti → Entfernen, Grundierung, Fassadenfarbe
     const hatGraffiti = lower.includes('graffiti') || lower.includes('schmiererei') || lower.includes('vandalism')
     if (hatGraffiti && !hat(ergaenzt, 'graffiti entfern')) {

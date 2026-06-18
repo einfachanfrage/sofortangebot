@@ -76,8 +76,14 @@ export function malerEngine(daten: any): MengenErgebnis {
       wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
       // Keine Decke, kein Boden, kein Umfang für Fassaden
     } else if (flaeche_angegeben) {
-      // Nettofläche direkt angegeben (z.B. nach Tor-Abzug oder Dachschräge)
-      wandflaecheNettoM2 = flaeche_angegeben
+      // flaeche = immer Bodenfläche (GPT-Konvention). Nur bei Dachschräge/Fassade = Wandfläche.
+      if (istDachschraege) {
+        wandflaecheNettoM2 = flaeche_angegeben
+      } else {
+        bodenflaecheM2 = flaeche_angegeben
+        deckenflaecheM2 = flaeche_angegeben
+        // Wandfläche kann ohne Höhe nicht berechnet werden → null (Rückfrage kommt)
+      }
     }
 
     // Dachschräge-Job: Position "Wandflächen streichen" durch "Dachschräge streichen" ersetzen
