@@ -199,6 +199,19 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       }
     }
 
+    // Fliesenspiegel abkleben (Küche) — lfdm aus Transkript
+    const hatFliesenspiegel = lower.includes('fliesenspiegel') || lower.includes('kachelspiegel')
+      || (lower.includes('fliesen') && lower.includes('abkl') && lower.includes('küche'))
+    if (hatFliesenspiegel && !hat(ergaenzt, 'fliesenspiegel')) {
+      const lfdmMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfdm|lfm|laufmeter|laufende)/i)
+      const flm = lfdmMatch ? parseFloat(lfdmMatch[1].replace(',', '.')) : null
+      if (flm !== null && flm > 0) {
+        ergaenzt.push({ beschreibung: 'Fliesenspiegel abkleben', menge: flm, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${flm} lfdm aus Transkript`, annahmen: [] })
+      } else {
+        add('Fliesenspiegel abkleben')
+      }
+    }
+
     // Lampen / Leuchten / Spots abkleben — Stückzahl aus Transkript
     const hatLampenAbkleben = lower.includes('lamp') || lower.includes('leuchte') || lower.includes('deckenleuchte')
       || lower.includes('pendelleuchte') || lower.includes('einbauspot') || lower.includes('spot')
