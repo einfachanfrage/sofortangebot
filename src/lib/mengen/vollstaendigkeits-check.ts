@@ -73,17 +73,14 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     // Hilfsfunktion: Zahl vor oder nach einem Schlüsselwort im Transkript suchen
     function anzahlAus(schluessel: string, fallback = 1): number {
       const escaped = schluessel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const vorher = new RegExp(`(\\d+)\\s*(?:[a-zäöüß]*\\s*)?${escaped}`, 'i')
-      const nachher = new RegExp(`${escaped}[^\\d]*(\\d+)`, 'i')
-      // Auch: "N stück" direkt vor oder nach dem Schlüsselwort (z.B. "8 Außenfenster")
-      const stueckNachSchluessel = new RegExp(`${escaped}\\s*(\\d+)\\s*stück`, 'i')
-      const stueckVorSchluessel = new RegExp(`(\\d+)\\s*stück[^.]*${escaped}`, 'i')
-      const m = lower.match(vorher) ?? lower.match(nachher)
-        ?? lower.match(stueckNachSchluessel) ?? lower.match(stueckVorSchluessel)
-      if (m) return parseInt(m[1])
-      // Letzter Fallback: erstes "N stück" im Text (nur wenn kein anderes Match)
-      const stueckAllgemein = lower.match(/(\d+)\s*stück/i)
-      return stueckAllgemein ? parseInt(stueckAllgemein[1]) : fallback
+      // "N [stück] außenfenster" / "N fenster" — Präfix-Wörter vor dem Schlüsselwort erlaubt
+      const vorher = new RegExp(`(\\d+)\\s*(?:stück\\s*)?(?:[a-zäöüß]+)?${escaped}`, 'i')
+      // "fenster N" — aber NUR wenn die Zahl direkt danach kommt (max 2 Wörter dazwischen)
+      const nachher = new RegExp(`${escaped}\\s*(\\d+)`, 'i')
+      // "N stück" irgendwo im Text (allgemeiner Fallback)
+      const stueckAllgemein = new RegExp(`(\\d+)\\s*stück`, 'i')
+      const m = lower.match(vorher) ?? lower.match(nachher) ?? lower.match(stueckAllgemein)
+      return m ? parseInt(m[1]) : fallback
     }
 
     const hatStreichen = lower.includes('streichen') || lower.includes('anstrich') || lower.includes('anstreichen')
