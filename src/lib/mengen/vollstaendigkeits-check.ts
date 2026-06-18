@@ -528,14 +528,17 @@ export function pruefeUndErgaenzeVollstaendigkeit(
         ohneWand.forEach(p => ergaenzt.push(p))
 
         const hatEntfernen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('tapete entf') || p.beschreibung.toLowerCase().includes('tapete abneh'))
-        const hatGlaetten = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('glätten') || p.beschreibung.toLowerCase().includes('untergrund'))
         const hatAufziehen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('aufzieh') || p.beschreibung.toLowerCase().includes('tapezier'))
-        const hatStreichen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('raufaser streich') || p.beschreibung.toLowerCase().includes('tapete streich'))
+        const hatStreichen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('raufaser streich') || p.beschreibung.toLowerCase().includes('tapete streich') || p.beschreibung.toLowerCase().includes('vliestapete streich'))
+
+        // Tapetentyp aus Transkript ableiten
+        const istRaufaser = lower.includes('raufaser')
+        const istVliestapete = lower.includes('vliestapete') || lower.includes('vlies')
+        const tapetenTyp = istRaufaser ? 'Raufaser' : istVliestapete ? 'Vliestapete' : 'Tapete'
 
         if (!hatEntfernen) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
-        if (!hatGlaetten) ergaenzt.push({ beschreibung: 'Untergrund glätten / Spachteln', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
-        if (!hatAufziehen) ergaenzt.push({ beschreibung: 'Raufaser aufziehen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
-        if (!hatStreichen) ergaenzt.push({ beschreibung: 'Raufaser streichen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+        if (!hatAufziehen) ergaenzt.push({ beschreibung: `${tapetenTyp} aufziehen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+        if (!hatStreichen) ergaenzt.push({ beschreibung: `${tapetenTyp} streichen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
         // Boden schützen beim Tapezieren — Bodenfläche aus Engine holen
         if (!hat(ergaenzt, 'boden schütz', 'abdeck')) {
           const bodenTapez = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('boden schütz') || p.beschreibung.toLowerCase().includes('boden —'))
