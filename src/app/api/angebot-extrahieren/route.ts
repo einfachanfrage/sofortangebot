@@ -128,19 +128,25 @@ export async function POST(req: NextRequest) {
 
     const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
 
+    // Fenster/Tür-Anzahl aus GPT-Extraktion in Transkript einbetten damit anzahlAus() sie findet
+    let transkriptFuerCheck = textMitZahlen
+    if (extraktion.gewerk === 'maler') {
+      const totalFenster = (extraktion.raeume ?? []).reduce((sum: number, r: { fenster?: unknown[] }) => sum + (r.fenster?.length ?? 0), 0)
+      const totalTueren = (extraktion.raeume ?? []).reduce((sum: number, r: { tueren?: unknown[] }) => sum + (r.tueren?.length ?? 0), 0)
+      if (totalFenster > 0) transkriptFuerCheck += ` ${totalFenster} fenster`
+      if (totalTueren > 0) transkriptFuerCheck += ` ${totalTueren} tür`
+      console.log('=== GPT FENSTER/TÜREN ===', totalFenster, 'Fenster,', totalTueren, 'Türen')
+    }
+
     // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
     const { fehlende, positionen: positionenKomplett } = pruefeUndErgaenzeVollstaendigkeit(
       extraktion.gewerk,
       mengenRoh.positionen,
-      textMitZahlen  // Zahlwörter bereits in Ziffern konvertiert → anzahlAus() findet "8" statt "acht"
+      transkriptFuerCheck
     )
     if (fehlende.length > 0) {
       console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)
     }
-    console.log('=== ENGINE POSITIONEN ===', JSON.stringify(mengenRoh.positionen.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`)))
-    console.log('=== NACH CHECK ===', JSON.stringify(positionenKomplett.map(p => `${p.beschreibung} ${p.menge} ${p.einheit}`)))
-    console.log('=== TEXT_MIT_ZAHLEN ===', textMitZahlen)
-
     const mengen = { ...mengenRoh, positionen: positionenKomplett }
     const bewertung = berechneBewertung(extraktion, mengen)
 
