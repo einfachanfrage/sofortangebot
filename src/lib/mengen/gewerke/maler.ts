@@ -143,7 +143,67 @@ export function malerEngine(daten: any): MengenErgebnis {
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
     const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []
 
-    if (istDachgeschoss) {
+    const wandzonen = (raum.wandzonen ?? []) as Array<{zone: string, hoehe: number, farbe?: string, aktion?: string}>
+    const effUmfangWZ = umfangM ?? (laenge && breite ? round2(2 * (laenge + breite)) : null)
+    const hatWandzonen = wandzonen.length >= 2 && effUmfangWZ !== null
+
+    if (hatWandzonen) {
+      // Wandzonen-Branch: je Zone eigene Position
+      let zoneStart = 0
+      for (const zone of wandzonen) {
+        const zoneEnd = round2(zoneStart + zone.hoehe)
+
+        if (zone.aktion === 'abkleben') {
+          positionen.push({
+            beschreibung: `Holzvertäfelung / Wandbelag abkleben — ${name}`,
+            menge: effUmfangWZ!, einheit: 'lfdm', konfidenz: 'high',
+            berechnungsweg: `Umfang ${effUmfangWZ} lfm (Oberkante Zone ${zone.zone} bei ${zoneEnd}m)`, annahmen: [],
+          })
+          zoneStart = zoneEnd
+          continue
+        }
+
+        // Fenster: nur abziehen wenn explizit dieser Zone zugeordnet (f.wandzone) ODER keine Zone gesetzt und keine andere Zone da
+        const fensterInZone = effFenster.filter((f: any) => f.wandzone ? f.wandzone === zone.zone : true)
+        // Vermeidung Doppelabzug: wenn wandzone annotiert, nur in der passenden Zone
+        const fensterMitZone = effFenster.some((f: any) => f.wandzone)
+        const fensterFl = round2(
+          (fensterMitZone ? effFenster.filter((f: any) => f.wandzone === zone.zone) : fensterInZone).reduce(
+            (s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
+          )
+        )
+
+        // Türen: Überschneidung mit Zone [zoneStart, zoneEnd]
+        const tuerFl = round2(effTueren.reduce((s: number, t: any) => {
+          const hoeT = t.hoehe ?? 2.1
+          const overlap = Math.max(0, Math.min(zoneEnd, hoeT) - zoneStart)
+          return s + (t.anzahl ?? 1) * (t.breite ?? 0.9) * overlap
+        }, 0))
+
+        const zoneFl = round2(effUmfangWZ! * zone.hoehe - fensterFl - tuerFl)
+        const zoneLabel = zone.farbe ? `${zone.farbe} streichen` : `Wandzone ${zone.zone} streichen`
+        positionen.push({
+          beschreibung: `${zoneLabel} — ${name}`,
+          menge: Math.max(0, zoneFl), einheit: 'm²', konfidenz: 'high',
+          berechnungsweg: `${effUmfangWZ}m × ${zone.hoehe}m − Fenster ${fensterFl} m² − Türen ${tuerFl} m²`,
+          annahmen: [],
+        })
+        zoneStart = zoneEnd
+      }
+      if (anDecke && deckenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Deckenfläche streichen — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${laenge} × ${breite}`, annahmen: [] })
+      }
+      if (bodenStreichen && bodenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenflaecheM2} m²`, annahmen: [] })
+      }
+      if (bodenSchutz && bodenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenflaecheM2} m²`, annahmen: [] })
+      }
+      if (hatSockel && effUmfangWZ !== null) {
+        const tuerBreiten = effTueren.reduce((s: number, t: any) => s + (t.breite ?? 0.9), 0)
+        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: round2(effUmfangWZ - tuerBreiten), einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang ${effUmfangWZ} − Türen ${round2(tuerBreiten)}`, annahmen: [] })
+      }
+    } else if (istDachgeschoss) {
       // DG-Branch: Kniestockwände + Dachschrägen + Deckenspiegel separat
       const knH = kniestockhoehe as number | null
       if (knH && laenge && breite && anWaenden) {
@@ -225,6 +285,32 @@ export function malerEngine(daten: any): MengenErgebnis {
         const sockelM = round2(umfangM - tuerBreiten)
         positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(tuerBreiten)} m)`, annahmen: [] })
       }
+    }
+  }
+
+  // Leibungen (Top-Level-Feld im GPT-Output — außerhalb der Raum-Schleife)
+  const transkriptAll = (daten.transkript ?? '').toLowerCase()
+  for (const l of ((daten.leibungen ?? []) as any[])) {
+    const anz = l.anzahl ?? 1
+    const br = l.breite ?? 1.2
+    const hoe = l.hoehe ?? 1.0
+    const tiefe = l.tiefe ?? 0.25
+    const istAnnahme = !l.tiefe
+    const leibungsUmfang = round2(2 * br + 2 * hoe)
+    const flaecheM2 = round2(anz * leibungsUmfang * tiefe)
+    const posTyp = (l.typ ?? '').includes('innen') ? 'Fenster Innenleibungen streichen'
+      : l.typ === 'tuer' ? 'Türleibungen streichen'
+      : 'Fensterleibungen streichen'
+    positionen.push({
+      beschreibung: posTyp,
+      menge: flaecheM2, einheit: 'm²', konfidenz: 'high',
+      berechnungsweg: `${anz} × (2×${br} + 2×${hoe}) × ${tiefe}m = ${anz} × ${leibungsUmfang} × ${tiefe} = ${flaecheM2} m²`,
+      annahmen: istAnnahme ? ['Leibungstiefe 25cm Standard (nicht angegeben)'] : [],
+    })
+    // Fensterbänke bei Innenleibung + Erwähnung
+    if ((l.typ ?? '').includes('innen') && transkriptAll.includes('fensterbank')) {
+      const bankFl = round2(anz * br * tiefe)
+      positionen.push({ beschreibung: 'Fensterbänke streichen', menge: bankFl, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${anz} × ${br}m × ${tiefe}m = ${bankFl} m²`, annahmen: [] })
     }
   }
 

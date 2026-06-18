@@ -60,6 +60,21 @@ NIEMALS Maße berechnen oder in flaeche umrechnen — immer als laenge+breite ei
 - "4×3,50" → laenge: 4.0, breite: 3.5
 - flaeche NUR setzen wenn User explizit m² nennt ohne Länge×Breite: "ca. 25 m²" → flaeche: 25
 
+WANDZONEN — wenn verschiedene Farben/Materialien auf unterschiedlichen Höhen:
+Setze wandzonen[] im raum-Objekt: [{zone: "unten"|"oben"|"mitte", hoehe: Zahl, farbe: "...", aktion?: "abkleben"}]
+Fenster die "nur oben" / "nur im oberen Bereich" liegen → fenster[i].wandzone: "oben" setzen.
+Türen starten immer am Boden → automatisch zonenweise abgezogen, kein wandzone-Feld nötig.
+Beispiel: "unten 2m Prallschutz, oben 5m weiß, Fenster nur oben" →
+  wandzonen: [{zone:"unten",hoehe:2,farbe:"Prallschutz"},{zone:"oben",hoehe:5,farbe:"weiß"}]
+  fenster: [{anzahl:4,breite:1.5,hoehe:1.5,wandzone:"oben"}]
+Holzvertäfelung/Lambris abkleben → zone.aktion: "abkleben" (statt farbe)
+
+LEIBUNGEN — wenn Laibungen / Leibungen / Laibungstiefe erwähnt:
+Setze leibungen[] als Top-Level-Feld (nicht in raeume[]): [{typ:"fenster"|"tuer"|"fenster_innen", anzahl, breite, hoehe, tiefe}]
+tiefe = Leibungstiefe in Metern (z.B. 0.25 für 25cm). Wenn nicht genannt: weglassen (Standard 25cm wird angenommen).
+Beispiel: "3 Fenster 1,20×1m, Leibungstiefe 25cm" → leibungen: [{typ:"fenster",anzahl:3,breite:1.2,hoehe:1.0,tiefe:0.25}]
+Innenleibungen (Altbau dicke Wände) → typ: "fenster_innen"
+
 DACHGESCHOSS / MANSARDE — KRITISCHE REGEL:
 Wenn ein Raum Kniestock, Dachschrägen oder Deckenspiegel hat → IMMER diese Felder setzen:
 - kniestockhoehe: Höhe des Kniestocks in Metern (z.B. 1.20)
