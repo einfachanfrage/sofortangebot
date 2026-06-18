@@ -35,16 +35,18 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Ersten Buchstaben großschreiben
     const name = nameAusTranskript.charAt(0).toUpperCase() + nameAusTranskript.slice(1)
 
-    // Garagen: kein Standard-Fenster, kein Standard-Tür — Tor wird via route.ts in tueren[] injiziert
+    // Garagen/Keller: kein Standard-Fenster — Tor/Tür wird separat behandelt
     const istGarageRaum = name.toLowerCase().includes('garage') || name.toLowerCase().includes('carport')
       || transkriptLower.includes('garage') || transkriptLower.includes('carport')
+    const istKellerRaum = name.toLowerCase().includes('keller') || transkriptLower.includes('keller')
+      || name.toLowerCase().includes('souterrain')
     // "kein Fenster" / "ohne Fenster" → Standard-Fenster-Fallback unterdrücken
     const keinFenster = transkriptLower.includes('kein fenster') || transkriptLower.includes('keine fenster')
       || transkriptLower.includes('ohne fenster') || transkriptLower.includes('fensterlos')
     const fensterGefiltert = (fenster as any[]).filter(Boolean)
     const tuerenGefiltert = (tueren as any[]).filter(Boolean)
-    const effFenster = fensterGefiltert.length > 0 ? fensterGefiltert : (istGarageRaum || keinFenster) ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
-    const effTueren = tuerenGefiltert.length > 0 ? tuerenGefiltert : istGarageRaum ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
+    const effFenster = fensterGefiltert.length > 0 ? fensterGefiltert : (istGarageRaum || istKellerRaum || keinFenster) ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
+    const effTueren = tuerenGefiltert.length > 0 ? tuerenGefiltert : (istGarageRaum) ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
 
     if (laenge && breite) {
       bodenflaecheM2 = round2(laenge * breite)
@@ -94,12 +96,16 @@ export function malerEngine(daten: any): MengenErgebnis {
     const hatAkzentwand = (transkriptLower.includes('eine wand') || transkriptLower.includes('akzentwand') || transkriptLower.includes('1 wand'))
       && (transkriptLower.includes('tapez') || transkriptLower.includes('vliestapete') || transkriptLower.includes('tapete'))
       && (transkriptLower.includes('rest') || transkriptLower.includes('übrige') || transkriptLower.includes('weiß'))
+    // Boden streichen (Keller/Garage): explizit "boden" in arbeiten → Boden streichen statt Decke
+    const hatBodenStreichen = arbeitenStr.includes('boden') || transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')
     const anWaenden = !nurDecke && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
-    const anDecke = !nurWaende && ((hatStreichen) || arbeitenStr.includes('decke'))
-    const bodenSchutz = hatStreichen || arbeitenStr.includes('boden') || arbeitenStr.includes('schutz')
-    // Sockelleisten wenn Wände gestrichen werden (inkl. Garage — Garagen haben oft Sockelleisten)
+    // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall) oder nurWaende
+    const anDecke = !nurWaende && !hatBodenStreichen && ((hatStreichen) || arbeitenStr.includes('decke'))
+    const bodenStreichen = hatBodenStreichen && bodenflaecheM2 !== null
+    const bodenSchutz = !bodenStreichen && (hatStreichen || arbeitenStr.includes('schutz'))
+    // Sockelleisten: nicht in Kellern (kein Sockelleisten-Standard im Keller)
     const nameLower = name.toLowerCase()
-    const hatSockel = anWaenden && wandflaecheNettoM2 !== null
+    const hatSockel = anWaenden && wandflaecheNettoM2 !== null && !istKellerRaum
       && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
@@ -152,6 +158,17 @@ export function malerEngine(daten: any): MengenErgebnis {
         einheit: 'm²',
         konfidenz: 'high',
         berechnungsweg: `Länge (${laenge}) × Breite (${breite})`,
+        annahmen: [],
+      })
+    }
+
+    if (bodenStreichen && bodenflaecheM2 !== null) {
+      positionen.push({
+        beschreibung: `Boden streichen — ${name}`,
+        menge: bodenflaecheM2,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Bodenfläche = Länge × Breite`,
         annahmen: [],
       })
     }
