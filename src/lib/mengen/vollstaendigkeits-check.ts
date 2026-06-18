@@ -147,11 +147,25 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     const hatHeizkLackieren = (lower.includes('heizkörper') || lower.includes('heizkoerper') || lower.includes('heizung')) &&
       (lower.includes('lackier') || lower.includes('lack') || lower.includes('neu streich'))
     if (hatHeizkLackieren && !hat(ergaenzt, 'heizkörper abschleifen', 'heizkoerper abschleifen')) {
-      const anzHzk = anzahlAus('heizkörper', anzahlAus('heizkoerper', 1))
-      ergaenzt.push({ beschreibung: 'Heizkörper abschleifen', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper aus Transkript`, annahmen: [] })
-      ergaenzt.push({ beschreibung: 'Heizkörper grundieren', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: [] })
-      ergaenzt.push({ beschreibung: 'Heizkörper lackieren — 1. Anstrich', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: [] })
-      ergaenzt.push({ beschreibung: 'Heizkörper lackieren — 2. Anstrich', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: [] })
+      // Anzahl: erst explizit vor "heizkörper", dann Zimmer-Anzahl als Proxy, dann 1
+      const anzHzkExplizit = anzahlAus('heizkörper', anzahlAus('heizkoerper', 0))
+      const anzZimmer = anzahlAus('zimmer', anzahlAus('raum', anzahlAus('räume', 0)))
+      const anzHzk = anzHzkExplizit > 0 ? anzHzkExplizit : anzZimmer > 0 ? anzZimmer : 1
+      const hzkAnnahme = anzHzkExplizit === 0 && anzZimmer > 0 ? [`${anzZimmer} Zimmer → je 1 Heizkörper angenommen`] : []
+      ergaenzt.push({ beschreibung: 'Heizkörper abschleifen', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper aus Transkript`, annahmen: hzkAnnahme })
+      ergaenzt.push({ beschreibung: 'Heizkörper grundieren', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
+      ergaenzt.push({ beschreibung: 'Heizkörper lackieren — 1. Anstrich', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
+      ergaenzt.push({ beschreibung: 'Heizkörper lackieren — 2. Anstrich', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
+      // Rohre lackieren wenn erwähnt
+      const hatRohre = lower.includes('rohr') || lower.includes('heizungsrohr') || lower.includes('rohre')
+      if (hatRohre && !hat(ergaenzt, 'rohr lackier', 'rohre lackier')) {
+        const rohrM = anzahlAus('rohr', anzahlAus('rohre', 0))
+        if (rohrM > 0) {
+          ergaenzt.push({ beschreibung: 'Rohre lackieren', menge: rohrM, einheit: 'lfdm', konfidenz: 'medium', berechnungsweg: `${rohrM} lfdm aus Transkript`, annahmen: [] })
+        } else {
+          ergaenzt.push({ beschreibung: 'Rohre lackieren', menge: anzHzk, einheit: 'Stück', konfidenz: 'medium', berechnungsweg: `${anzHzk} Stück (1 pro Heizkörper angenommen)`, annahmen: ['Rohrlänge nicht angegeben — pauschale Stückzahl'] })
+        }
+      }
     }
 
     // Lampen / Leuchten abkleben — Stückzahl aus Transkript

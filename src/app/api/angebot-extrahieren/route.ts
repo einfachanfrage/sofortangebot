@@ -110,7 +110,8 @@ export async function POST(req: NextRequest) {
     const textLower = textMitZahlen.toLowerCase()
     const istFensterAuftrag = textLower.includes('fenster') &&
       (textLower.includes('lackier') || textLower.includes('streich') || textLower.includes('holzfenster') || textLower.includes('anstrich'))
-    if (hatRaumMasse || istFensterAuftrag) {
+    const istHeizkörperAuftrag = textLower.includes('heizkörper') || textLower.includes('heizkoerper') || textLower.includes('heizung')
+    if (hatRaumMasse || istFensterAuftrag || istHeizkörperAuftrag) {
       extraktion.rueckfragen = (extraktion.rueckfragen ?? []).filter(r => {
         const frage = (r.frage ?? '').toLowerCase()
         return !(frage.includes('fenster') || frage.includes('türen') || frage.includes('türmaß') || frage.includes('fenstermaß') || frage.includes('fenstergrö'))
