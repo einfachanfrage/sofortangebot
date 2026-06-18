@@ -103,6 +103,17 @@ export async function POST(req: NextRequest) {
       extraktion.rueckfragen = [...(extraktion.rueckfragen ?? []), ...neueRueckfragen]
     }
 
+    // Rückfragen filtern: "Wie viele Fenster/Türen?" ist unnötig wenn Fenster-Anzahl im Text steht
+    const textLower = textMitZahlen.toLowerCase()
+    const istFensterAuftrag = textLower.includes('fenster') &&
+      (textLower.includes('lackier') || textLower.includes('streich') || textLower.includes('holzfenster') || textLower.includes('anstrich'))
+    if (istFensterAuftrag) {
+      extraktion.rueckfragen = (extraktion.rueckfragen ?? []).filter(r => {
+        const frage = (r.frage ?? '').toLowerCase()
+        return !(frage.includes('fenster') || frage.includes('türen') || frage.includes('türmaß') || frage.includes('fenstermaß') || frage.includes('fenstergrö'))
+      })
+    }
+
     // Raw-Text überschreibt GPT-Transkript — GPT normalisiert und verliert "nur X"-Angaben
     extraktion.transkript = text
 
