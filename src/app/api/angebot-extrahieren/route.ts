@@ -143,6 +143,7 @@ export async function POST(req: NextRequest) {
     const tl = textMitZahlen.toLowerCase()
     const fensterTextMatch = tl.match(/(\d+)\s*\S*fenster/i)
     const fensterAnzahlText = fensterTextMatch ? parseInt(fensterTextMatch[1]) : 0
+    console.log('=== FENSTER DEBUG ===', { tl, fensterTextMatch: fensterTextMatch?.[0], fensterAnzahlText })
     const tuerTextMatch = tl.match(/(\d+)\s*(?:stück\s*)?\S*tür(?:en)?/i)
     const tuerenAnzahlText = tuerTextMatch ? parseInt(tuerTextMatch[1]) : 0
 
