@@ -293,6 +293,23 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Altbau', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Altbau im Transkript erkannt', annahmen: [] })
     }
 
+    // Spachteln Q2/Q3/Q4 → Spachteln + Schleifen (gleiche m² wie Wandfläche)
+    const hatSpachteln = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3') || lower.includes('q4')
+    const istNurSpachteln = hatSpachteln && !hatStreichen
+      && (lower.includes('spachtel') || lower.includes(' q2 ') || lower.includes(' q3 ') || lower.includes(' q4 '))
+    if (istNurSpachteln && !hat(ergaenzt, 'spachteln', 'spachtelarbeit')) {
+      const qLevel = lower.includes('q4') ? 'Q4' : lower.includes('q3') ? 'Q3' : 'Q2'
+      const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wand') && p.einheit === 'm²')
+      const spachtelM2 = wandPos?.menge ?? null
+      if (spachtelM2 !== null && spachtelM2 > 0) {
+        ergaenzt.push({ beschreibung: `Wände spachteln ${qLevel}`, menge: spachtelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${spachtelM2} m² Wandfläche`, annahmen: [] })
+        ergaenzt.push({ beschreibung: `Wände schleifen nach ${qLevel}`, menge: spachtelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${spachtelM2} m²`, annahmen: [] })
+      } else {
+        add(`Wände spachteln ${qLevel}`)
+        add(`Wände schleifen nach ${qLevel}`)
+      }
+    }
+
     // Denkmalschutz → Erschwerniszuschlag Denkmal Pauschale
     const hatDenkmal = lower.includes('denkmal') || lower.includes('denkmalschutz') || lower.includes('denkmalgeschütz')
     if (hatDenkmal && !hat(ergaenzt, 'erschwerniszuschlag denkmal', 'denkmal pauschale')) {

@@ -43,10 +43,12 @@ export function malerEngine(daten: any): MengenErgebnis {
     // "kein Fenster" / "ohne Fenster" → Standard-Fenster-Fallback unterdrücken
     const keinFenster = transkriptLower.includes('kein fenster') || transkriptLower.includes('keine fenster')
       || transkriptLower.includes('ohne fenster') || transkriptLower.includes('fensterlos')
+    const keineTuer = transkriptLower.includes('keine tür') || transkriptLower.includes('ohne tür')
+      || transkriptLower.includes('kein eingang') || transkriptLower.includes('keine türen')
     const fensterGefiltert = (fenster as any[]).filter(Boolean)
     const tuerenGefiltert = (tueren as any[]).filter(Boolean)
     const effFenster = fensterGefiltert.length > 0 ? fensterGefiltert : (istGarageRaum || istKellerRaum || keinFenster) ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
-    const effTueren = tuerenGefiltert.length > 0 ? tuerenGefiltert : (istGarageRaum) ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
+    const effTueren = tuerenGefiltert.length > 0 ? tuerenGefiltert : (istGarageRaum || keineTuer) ? [] : [{ breite: 0.9, hoehe: 2.1, annahme: true }]
 
     if (laenge && breite) {
       bodenflaecheM2 = round2(laenge * breite)
