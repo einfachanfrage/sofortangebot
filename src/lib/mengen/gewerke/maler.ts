@@ -14,6 +14,12 @@ export function malerEngine(daten: any): MengenErgebnis {
       laenge, breite, hoehe,
       flaeche: flaeche_angegeben,
       umfang: umfang_direkt,
+      kniestockhoehe = null,
+      dachschraege_links_m2: dgLinks = null,
+      dachschraege_rechts_m2: dgRechts = null,
+      dachschraege_je_seite_m2: dgJeSeite = null,
+      deckenspiegel_m2: dgDeckenspiegel = null,
+      dachfenster: dgFensterRoh = [],
       fenster = [],
       tueren = [],
       arbeiten = [],
@@ -27,6 +33,13 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
+    // Früh deklarieren — wird in flaeche_angegeben-Branch benötigt
+    const istDachschraege = arbeitenStr.includes('dachschräge') || arbeitenStr.includes('schräge')
+      || transkriptLower.includes('dachschräge') || transkriptLower.includes('schräge')
+    const dgLinksM2: number | null = (dgLinks as number | null) ?? (dgJeSeite as number | null)
+    const dgRechtsM2: number | null = (dgRechts as number | null) ?? (dgJeSeite as number | null)
+    const dgFenster = dgFensterRoh as any[]
+    const istDachgeschoss = (kniestockhoehe as number | null) !== null || dgLinksM2 !== null || (dgDeckenspiegel as number | null) !== null
 
     // GPT gibt manchmal "Raum" als generischen Namen zurück — Raumtyp aus Transkript holen
     const raumTypen = ['kinderzimmer', 'wohnzimmer', 'schlafzimmer', 'badezimmer', 'bad', 'küche', 'flur', 'diele', 'keller', 'kellerraum', 'büro', 'arbeitszimmer', 'esszimmer', 'gästezimmer', 'garage', 'treppenhaus', 'dachgeschoss', 'dachzimmer', 'hobbyraum', 'spielzimmer', 'abstellraum', 'hauswirtschaftsraum', 'werkstatt']
@@ -100,9 +113,6 @@ export function malerEngine(daten: any): MengenErgebnis {
       }
     }
 
-    // Dachschräge-Job: Position "Wandflächen streichen" durch "Dachschräge streichen" ersetzen
-    const istDachschraege = arbeitenStr.includes('dachschräge') || arbeitenStr.includes('dachschrägе') || arbeitenStr.includes('schräge')
-      || transkriptLower.includes('dachschräge') || transkriptLower.includes('schräge')
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
     // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
     const leerOderKomplett = arbeiten.length === 0 || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
@@ -133,90 +143,88 @@ export function malerEngine(daten: any): MengenErgebnis {
     const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
     const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []
 
-    if (anWaenden && wandflaecheNettoM2 !== null) {
-      const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
-      const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
-
-      if (hatAkzentwand && laenge && breite && hoehe) {
-        // Akzentwand = längere Seite × Höhe (Sichtwand = Hauptwand = länger ist typischer Akzent)
-        const akzentWandBreite = Math.max(laenge, breite)
-        const akzentWandFlaeche = round2(akzentWandBreite * hoehe)
-        const restwandFlaeche = round2(wandflaecheNettoM2 - akzentWandFlaeche)
+    if (istDachgeschoss) {
+      // DG-Branch: Kniestockwände + Dachschrägen + Deckenspiegel separat
+      const knH = kniestockhoehe as number | null
+      if (knH && laenge && breite && anWaenden) {
+        const kniestockM2 = round2(2 * (laenge + breite) * knH)
         positionen.push({
-          beschreibung: `Akzentwand Vliestapete — ${name}`,
-          menge: akzentWandFlaeche,
-          einheit: 'm²',
-          konfidenz: 'high',
-          berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`,
-          annahmen: ['Kürzere Raumseite als Akzentwand angenommen'],
+          beschreibung: `Kniestockwände streichen — ${name}`,
+          menge: kniestockM2, einheit: 'm²', konfidenz: 'high',
+          berechnungsweg: `Umfang ${round2(2*(laenge+breite))} lfm × ${knH} m = ${kniestockM2} m²`,
+          annahmen: [],
         })
-        if (restwandFlaeche > 0) {
+      }
+      if (dgLinksM2 !== null || dgRechtsM2 !== null) {
+        const brutto = round2((dgLinksM2 ?? 0) + (dgRechtsM2 ?? 0))
+        const dgFensterFl = round2(dgFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 0.78) * (f.hoehe ?? 1.18), 0))
+        const netto = round2(brutto - dgFensterFl)
+        positionen.push({
+          beschreibung: `Dachschrägen streichen — ${name}`,
+          menge: Math.max(0, netto), einheit: 'm²', konfidenz: 'high',
+          berechnungsweg: dgFensterFl > 0
+            ? `Links ${dgLinksM2 ?? 0} m² + Rechts ${dgRechtsM2 ?? 0} m² = ${brutto} m² − Dachfenster ${dgFensterFl} m²`
+            : `Links ${dgLinksM2 ?? 0} m² + Rechts ${dgRechtsM2 ?? 0} m² = ${brutto} m²`,
+          annahmen: [],
+        })
+      }
+      if ((dgDeckenspiegel as number | null) !== null && anDecke) {
+        positionen.push({
+          beschreibung: `Deckenspiegel streichen — ${name}`,
+          menge: dgDeckenspiegel as number, einheit: 'm²', konfidenz: 'high',
+          berechnungsweg: `Deckenspiegel ${dgDeckenspiegel} m²`, annahmen: [],
+        })
+      }
+      if (bodenStreichen && bodenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenflaecheM2} m²`, annahmen: [] })
+      }
+      if (bodenSchutz && bodenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenflaecheM2} m²`, annahmen: [] })
+      }
+      // Sockelleisten am Kniestockumfang
+      if (knH && laenge && breite && hatSockel) {
+        const knUmfang = round2(2 * (laenge + breite))
+        const tuerBr = effTueren.reduce((s: number, t: any) => s + (t.breite ?? 0.9), 0)
+        positionen.push({
+          beschreibung: `Sockelleisten abkleben — ${name}`,
+          menge: round2(knUmfang - tuerBr), einheit: 'lfdm', konfidenz: 'high',
+          berechnungsweg: `Kniestockumfang ${knUmfang} lfm − Türen ${round2(tuerBr)} m`, annahmen: [],
+        })
+      }
+    } else {
+      // Normal-Branch: Wände + Decke + Boden
+      if (anWaenden && wandflaecheNettoM2 !== null) {
+        const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
+        const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
+        if (hatAkzentwand && laenge && breite && hoehe) {
+          const akzentWandBreite = Math.max(laenge, breite)
+          const akzentWandFlaeche = round2(akzentWandBreite * hoehe)
+          const restwandFlaeche = round2(wandflaecheNettoM2 - akzentWandFlaeche)
+          positionen.push({ beschreibung: `Akzentwand Vliestapete — ${name}`, menge: akzentWandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`, annahmen: ['Kürzere Raumseite als Akzentwand angenommen'] })
+          if (restwandFlaeche > 0) positionen.push({ beschreibung: `Restwände streichen — ${name}`, menge: restwandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`, annahmen: annahmenFenster })
+        } else {
+          const wandLabel = istDachschraege ? `Dachschräge streichen — ${name}` : `Wandflächen streichen — ${name}`
           positionen.push({
-            beschreibung: `Restwände streichen — ${name}`,
-            menge: restwandFlaeche,
-            einheit: 'm²',
-            konfidenz: 'high',
-            berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`,
+            beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: 'high',
+            berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${round2((umfangM ?? 0) * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
             annahmen: annahmenFenster,
           })
         }
-      } else {
-        const wandLabel = istDachschraege ? `Dachschräge streichen — ${name}` : `Wandflächen streichen — ${name}`
-        positionen.push({
-          beschreibung: wandLabel,
-          menge: wandflaecheNettoM2,
-          einheit: 'm²',
-          konfidenz: 'high',
-          berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${round2((umfangM ?? 0) * (hoehe ?? 0))} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
-          annahmen: annahmenFenster,
-        })
       }
-    }
-
-    if (anDecke && deckenflaecheM2 !== null) {
-      positionen.push({
-        beschreibung: `Deckenfläche streichen — ${name}`,
-        menge: deckenflaecheM2,
-        einheit: 'm²',
-        konfidenz: 'high',
-        berechnungsweg: `Länge (${laenge}) × Breite (${breite})`,
-        annahmen: [],
-      })
-    }
-
-    if (bodenStreichen && bodenflaecheM2 !== null) {
-      positionen.push({
-        beschreibung: `Boden streichen — ${name}`,
-        menge: bodenflaecheM2,
-        einheit: 'm²',
-        konfidenz: 'high',
-        berechnungsweg: `Bodenfläche = Länge × Breite`,
-        annahmen: [],
-      })
-    }
-
-    if (bodenSchutz && bodenflaecheM2 !== null) {
-      positionen.push({
-        beschreibung: `Boden schützen — ${name}`,
-        menge: bodenflaecheM2,
-        einheit: 'm²',
-        konfidenz: 'high',
-        berechnungsweg: `Bodenfläche = Länge × Breite`,
-        annahmen: [],
-      })
-    }
-
-    if (hatSockel && umfangM !== null) {
-      const tuerBreiten = effTueren.reduce((sum: number, t: any) => sum + (t.breite ?? 0.9), 0)
-      const sockelM = round2(umfangM - tuerBreiten)
-      positionen.push({
-        beschreibung: `Sockelleisten abkleben — ${name}`,
-        menge: sockelM,
-        einheit: 'lfdm',
-        konfidenz: 'high',
-        berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(tuerBreiten)} m)`,
-        annahmen: [],
-      })
+      if (anDecke && deckenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Deckenfläche streichen — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Länge (${laenge}) × Breite (${breite})`, annahmen: [] })
+      }
+      if (bodenStreichen && bodenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })
+      }
+      if (bodenSchutz && bodenflaecheM2 !== null) {
+        positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })
+      }
+      if (hatSockel && umfangM !== null) {
+        const tuerBreiten = effTueren.reduce((sum: number, t: any) => sum + (t.breite ?? 0.9), 0)
+        const sockelM = round2(umfangM - tuerBreiten)
+        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(tuerBreiten)} m)`, annahmen: [] })
+      }
     }
   }
 

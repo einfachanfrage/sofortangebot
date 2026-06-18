@@ -262,22 +262,28 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       }
     }
 
-    // Dachschräge → Spachteln, Grundierung, Streichen
+    // Dachschräge → Spachteln + Grundierung ergänzen (Streichen kommt aus Engine — kein Duplikat)
     const hatDachschraege = lower.includes('dachschräge') || lower.includes('dachschraege') || lower.includes('schräge') || lower.includes('schraege')
+      || lower.includes('kniestock') || lower.includes('deckenspiegel')
     if (hatDachschraege) {
-      // Fläche aus Engine-Position holen (maler.ts fügt "Dachschräge streichen" hinzu) oder aus Transkript
-      const dachPos = ergaenzt.find(p => (p.beschreibung ?? '').toLowerCase().includes('dachschräge'))
-      const m2Match = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
-      const dsm2 = dachPos?.menge ?? (m2Match ? parseFloat(m2Match[1].replace(',', '.')) : null)
+      // Basisposition: "Dachschrägen streichen" oder "Dachschräge streichen" aus Engine holen
+      const dachPos = ergaenzt.find(p => {
+        const d = (p.beschreibung ?? '').toLowerCase()
+        return d.includes('dachschräg') || d.includes('schräg') || d.includes('kniestock') || d.includes('deckenspiegel')
+      })
+      // m²-Referenz für Spachteln/Grundierung (Dachschrägen-Fläche)
+      const schraegenPos = ergaenzt.find(p => (p.beschreibung ?? '').toLowerCase().includes('dachschrägen streich'))
+      const dsm2 = schraegenPos?.menge ?? dachPos?.menge ?? null
       if (dsm2 !== null && dsm2 > 0) {
-        if (!hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
+        if (!hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² Dachschrägenfläche`, annahmen: [] })
         if (!hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Dachschräge Grundierung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
-        if (!hat(ergaenzt, 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschräge streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
-        if (!hat(ergaenzt, 'boden schütz', 'abdecken', 'abkleben')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: ['Bodenfläche = Dachschrägenfläche angenommen'] })
+        // Streichen: nur ergänzen wenn Engine noch nicht generiert hat
+        if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschräge streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
+        if (!hat(ergaenzt, 'boden schütz', 'abdecken')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: ['Bodenfläche geschätzt'] })
       } else {
         if (!hat(ergaenzt, 'spachtel')) add('Dachschräge spachteln / Untergrundvorbereitung')
         if (!hat(ergaenzt, 'grundier')) add('Dachschräge Grundierung')
-        if (!hat(ergaenzt, 'dachschräge streich')) add('Dachschräge streichen')
+        if (!hat(ergaenzt, 'dachschräg streich', 'schräge streich')) add('Dachschräge streichen')
         if (!hat(ergaenzt, 'boden schütz')) add('Boden schützen / Abdeckfolie')
       }
     }
@@ -550,6 +556,44 @@ export function pruefeUndErgaenzeVollstaendigkeit(
         if (p.beschreibung.toLowerCase().includes('wandfläch') && p.beschreibung.toLowerCase().includes('streichen') && !p.beschreibung.toLowerCase().includes('feuchtraum')) {
           p.beschreibung = p.beschreibung.replace(/streichen(\s*—\s*.+)?$/i, 'streichen (Feuchtraumfarbe)')
         }
+      }
+    }
+
+    // Abwaschbare Farbe → Wandposition umbenennen
+    const hatAbwaschbar = lower.includes('abwaschbar') || lower.includes('abwischbar')
+    if (hatAbwaschbar) {
+      for (const p of ergaenzt) {
+        if (p.beschreibung.toLowerCase().includes('wandfläch') && p.beschreibung.toLowerCase().includes('streichen') && !p.beschreibung.toLowerCase().includes('abwaschbar')) {
+          p.beschreibung = p.beschreibung.replace(/streichen/, 'streichen (abwaschbare Farbe)')
+        }
+      }
+    }
+
+    // Chlorbeständige Spezialfarbe → alle Streich-Positionen umbenennen + Aufpreis
+    const hatChlor = lower.includes('chlorbeständig') || lower.includes('schwimmbad') || lower.includes('chlor')
+    if (hatChlor && !hat(ergaenzt, 'aufpreis spezialfarbe', 'chlorbeständig')) {
+      for (const p of ergaenzt) {
+        if ((p.beschreibung.toLowerCase().includes('streichen') || p.beschreibung.toLowerCase().includes('anstrich'))
+          && !p.beschreibung.toLowerCase().includes('chlor')) {
+          p.beschreibung += ' (chlorbeständige Spezialfarbe)'
+        }
+      }
+      ergaenzt.push({ beschreibung: 'Aufpreis Spezialfarbe chlorbeständig', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Chlorbeständige Spezialfarbe erkannt', annahmen: [] })
+    }
+
+    // Brandschutzfarbe Stahl → Rostschutz + Brandschutz
+    const hatBrandschutzfarbe = lower.includes('brandschutzfarbe') || lower.includes('brandschutz f') || lower.includes('brandschutz stahl')
+    if (hatBrandschutzfarbe && !hat(ergaenzt, 'brandschutzfarbe', 'rostschutz')) {
+      const lfdmMatch = lower.match(/(\d+)\s*(?:stück|träger)[^.!?]*?(\d+)\s*m/i) // "6 Träger je 8m"
+      const anzTraeger = lfdmMatch ? parseInt(lfdmMatch[1]) : anzahlAus('träger', 1)
+      const laengeTraeger = lfdmMatch ? parseFloat(lfdmMatch[2]) : anzahlAus('meter', anzahlAus('m lang', 0))
+      const lfdmTraeger = anzTraeger * (laengeTraeger > 0 ? laengeTraeger : 1)
+      if (lfdmTraeger > 1) {
+        ergaenzt.push({ beschreibung: 'Rostschutzgrund Träger', menge: lfdmTraeger, einheit: 'lfdm', konfidenz: 'medium', berechnungsweg: `${anzTraeger} Träger × ${laengeTraeger} m`, annahmen: ['Alle Seiten mit Standardbreite'] })
+        ergaenzt.push({ beschreibung: 'Brandschutzfarbe F30/F60', menge: lfdmTraeger, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmTraeger} lfdm`, annahmen: [] })
+      } else {
+        add('Rostschutzgrund Träger')
+        add('Brandschutzfarbe F30/F60')
       }
     }
 

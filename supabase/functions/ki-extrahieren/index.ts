@@ -60,6 +60,18 @@ NIEMALS Maße berechnen oder in flaeche umrechnen — immer als laenge+breite ei
 - "4×3,50" → laenge: 4.0, breite: 3.5
 - flaeche NUR setzen wenn User explizit m² nennt ohne Länge×Breite: "ca. 25 m²" → flaeche: 25
 
+DACHGESCHOSS / MANSARDE — KRITISCHE REGEL:
+Wenn ein Raum Kniestock, Dachschrägen oder Deckenspiegel hat → IMMER diese Felder setzen:
+- kniestockhoehe: Höhe des Kniestocks in Metern (z.B. 1.20)
+- dachschraege_links_m2: Schräge linke Seite in m²
+- dachschraege_rechts_m2: Schräge rechte Seite in m²
+- dachschraege_je_seite_m2: wenn beide Seiten gleich (Alternative zu links/rechts)
+- deckenspiegel_m2: Fläche der ebenen Decke zwischen den Schrägen in m²
+- dachfenster: [{anzahl:1, breite:0.78, hoehe:1.18}] — werden von Schrägen-m² abgezogen
+Diese Felder ZUSÄTZLICH zu laenge, breite setzen (laenge/breite = Grundfläche des Raums).
+Beispiel: "Dachzimmer 5×4m, Kniestock 1m, Schräge je 8 qm, Deckenspiegel 20 qm" →
+  laenge:5, breite:4, kniestockhoehe:1.0, dachschraege_je_seite_m2:8, deckenspiegel_m2:20
+
 FASSADE / AUßENWAND — KRITISCHE REGEL:
 Wenn "Fassade", "Außenwand", "Garagenfassade", "Fassadenarbeiten" → Einzelfläche, KEIN Raum mit Umfang!
 - "8×2,80m" bei Fassade → laenge: 8, hoehe: 2.8, breite: null  (erste Zahl = Breite, zweite = Höhe)
