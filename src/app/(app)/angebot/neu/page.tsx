@@ -146,11 +146,15 @@ export default function NeuesAngebotPage() {
   const [selectedBriefpapier, setSelectedBriefpapier] = useState<string | null>(null)
   const [showBriefpapierPicker, setShowBriefpapierPicker] = useState(false)
   const [autoDraftId, setAutoDraftId] = useState<string | null>(null)
+  const [autosaveStatus, setAutosaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('unsaved')
+  const [uebersichtOffen, setUebersichtOffen] = useState(false)
+  const autosaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Auto-save als Entwurf wenn Review-Screen erscheint
   useEffect(() => {
     if (step !== 'review' || items.length === 0 || autoDraftId) return
     const save = async () => {
+      setAutosaveStatus('saving')
       try {
         const r = await fetch('/api/quotes/create', {
           method: 'POST',
@@ -159,13 +163,42 @@ export default function NeuesAngebotPage() {
         })
         if (r.ok) {
           const d = await r.json()
-          if (d.id) setAutoDraftId(d.id)
-        }
-      } catch { /* ignore */ }
+          if (d.id) { setAutoDraftId(d.id); setAutosaveStatus('saved') }
+        } else { setAutosaveStatus('unsaved') }
+      } catch { setAutosaveStatus('unsaved') }
     }
     save()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
+
+  // Periodischer Autosave alle 10 Sekunden im Review-Modus
+  useEffect(() => {
+    if (step !== 'review') {
+      if (autosaveIntervalRef.current) clearInterval(autosaveIntervalRef.current)
+      return
+    }
+    autosaveIntervalRef.current = setInterval(async () => {
+      if (!autoDraftId) return
+      setAutosaveStatus('saving')
+      try {
+        await supabase.from('quote_items').delete().eq('quote_id', autoDraftId)
+        for (let i = 0; i < items.length; i++) {
+          const it = items[i]
+          await supabase.from('quote_items').insert({
+            quote_id: autoDraftId, position: i + 1, title: it.title,
+            description: it.description || null, quantity: it.quantity,
+            unit: it.unit, unit_price: it.unit_price,
+            total_price: it.quantity * it.unit_price,
+          })
+        }
+        const totalNetAuto = items.reduce((s, i) => s + i.quantity * i.unit_price, 0)
+        await supabase.from('quotes').update({ total_net: totalNetAuto, notes: notes || null }).eq('id', autoDraftId)
+        setAutosaveStatus('saved')
+      } catch { setAutosaveStatus('unsaved') }
+    }, 10000)
+    return () => { if (autosaveIntervalRef.current) clearInterval(autosaveIntervalRef.current) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, autoDraftId])
 
   // Starthilfe (alt)
   const [showFirstTimeCard, setShowFirstTimeCard] = useState(false)
@@ -879,6 +912,10 @@ export default function NeuesAngebotPage() {
     }
   }
 
+  async function handleBackFromReview() {
+    router.push('/dashboard?status=entwurf')
+  }
+
   // Weiteres Einsprehen zu laufender Session
   async function addSessionInput() {
     setStep('input')
@@ -996,51 +1033,128 @@ export default function NeuesAngebotPage() {
 
     const isIncomplete = items.length < 3 || totalNet < 200
 
+    // ── Zusammenfassungs-Daten für Header + Sheet ──
+    const GEWERK_EMOJI_MAP: Record<string, string> = { maler: '🖌', fliesen: '🔷', trockenbau: '🏗', boden_parkett: '🪵', sanitaer_heizung: '🔧', elektro: '⚡' }
+    const gewerkEmoji = GEWERK_EMOJI_MAP[gewerk] ?? '🖌'
+    const raeumeListe = Array.from(new Set(items.map(i => extractRoom(i.title).room).filter(Boolean))) as string[]
+    const raumInfo = raeumeListe.length === 0 ? '' : raeumeListe.length === 1 ? raeumeListe[0] : `${raeumeListe.length} Räume`
+    const fmtEuro = (v: number) => v.toFixed(2).replace('.', ',') + ' €'
+
     return (
       <div className="min-h-dvh bg-[#F7F7F5] pb-32">
-        <div className="bg-[#2C2C2C] px-5 pt-12 pb-5">
-          <button onClick={() => setStep('input')} className="text-white/50 text-xs font-semibold">← Neu aufnehmen</button>
-          <div className="text-white font-black text-xl mt-1">Angebot prüfen</div>
-          {zusammenfassung && <div className="mt-2 text-white/50 text-xs font-semibold line-clamp-2">{zusammenfassung}</div>}
 
-          {/* Annahmen-Übersicht */}
-          {kiAnnahmen.length > 0 && (
-            <button
-              onClick={() => setAnnahmenOffen(v => !v)}
-              className="mt-3 text-white/50 text-xs font-semibold flex items-center gap-1 hover:text-white/70 transition-colors"
-            >
-              ⓘ {kiAnnahmen.length} Annahme{kiAnnahmen.length > 1 ? 'n' : ''} getroffen
-              <ChevronRight size={12} className={`transition-transform ${annahmenOffen ? 'rotate-90' : ''}`} />
-            </button>
-          )}
-          {annahmenOffen && kiAnnahmen.length > 0 && (
-            <div className="mt-2 bg-white/10 rounded-xl px-3 py-2 flex flex-col gap-1">
-              {kiAnnahmen.map((a, i) => (
-                <div key={i} className="text-white/60 text-xs font-semibold">· {a}</div>
-              ))}
+        {/* ── STICKY ENTWURF-HEADER ── */}
+        <div className="sticky top-0 z-30 bg-[#2C2C2C] h-[52px] flex items-center px-4 gap-3">
+          {/* Links: Zurück */}
+          <div className="flex flex-col min-w-0 w-[80px]">
+            <button onClick={handleBackFromReview} className="text-white text-xs font-semibold text-left leading-none">← Zurück</button>
+            <span className="text-[10px] text-[#AAAAAA] mt-0.5 leading-none">
+              {autosaveStatus === 'saving' ? 'speichert...' : autosaveStatus === 'saved' ? 'gespeichert ✓' : 'wird gespeichert'}
+            </span>
+          </div>
+
+          {/* Mitte: Entwurf Badge + Kunde */}
+          <div className="flex-1 flex flex-col items-center">
+            <div className="bg-[#F5C400] text-[#2C2C2C] font-black text-[11px] uppercase tracking-widest px-2.5 py-0.5 rounded-full leading-none">Entwurf</div>
+            <div className="text-[10px] text-[#AAAAAA] mt-1 truncate max-w-[140px] leading-none">
+              {customerName || 'Kein Kunde angegeben'}
             </div>
-          )}
+          </div>
 
-          {/* Eingabe-Protokoll */}
-          {eingaben.length > 0 && (
-            <button onClick={() => setShowEingaben(v => !v)} className="mt-3 text-[#F5C400] text-xs font-black flex items-center gap-1">
-              🎙 {eingaben.length} Spracheingabe{eingaben.length > 1 ? 'n' : ''} · {items.length} Positionen
-              <ChevronRight size={13} className={`transition-transform ${showEingaben ? 'rotate-90' : ''}`} />
-            </button>
-          )}
+          {/* Rechts: Autosave-Status */}
+          <div className="w-[80px] text-right text-[11px] font-semibold leading-tight">
+            {autosaveStatus === 'saved' && <span className="text-green-400">✓ Gespeichert</span>}
+            {autosaveStatus === 'saving' && <span className="text-[#AAAAAA]">⟳ Speichert…</span>}
+            {autosaveStatus === 'unsaved' && <span className="text-orange-400">⚠ Nicht gespeichert</span>}
+          </div>
         </div>
+
+        {/* ── STICKY ZUSAMMENFASSUNGS-LEISTE ── */}
+        <div className="sticky top-[52px] z-20 bg-[#FFFBEB] border-b border-[#F5C400] h-[44px] flex items-center px-4 gap-2">
+          <div className="flex-1 text-sm font-semibold text-[#2C2C2C]/80 truncate">
+            {gewerkEmoji} {items.length} Position{items.length !== 1 ? 'en' : ''}
+            {' · '}{fmtEuro(totalNet)}
+            {raumInfo && <> · {raumInfo}</>}
+          </div>
+          <button
+            onClick={() => setUebersichtOffen(v => !v)}
+            className="shrink-0 text-[11px] font-black text-[#8B7000] flex items-center gap-1"
+          >
+            {uebersichtOffen ? '▲' : '▼'} Übersicht
+          </button>
+        </div>
+
+        {/* ── ÜBERSICHT-SHEET (Dropdown) ── */}
+        {uebersichtOffen && (
+          <div className="sticky top-[96px] z-20 mx-4 bg-white rounded-2xl shadow-xl border border-[#F5C400]/30 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#2C2C2C]/5">
+              <span className="font-black text-[#2C2C2C] text-sm">📋 Übersicht</span>
+              <button onClick={() => setUebersichtOffen(false)} className="text-[#2C2C2C]/40 font-black text-sm">✕</button>
+            </div>
+            {Array.from(raumMapReview.entries()).map(([room, entries]) => {
+              const sektSumme = entries.reduce((s, e) => s + e.item.quantity * e.item.unit_price, 0)
+              return (
+                <div key={room ?? '__allg'} className="border-b border-[#2C2C2C]/5 last:border-0">
+                  <div className="flex items-center justify-between px-4 py-2 bg-[#F7F7F5]">
+                    <span className="text-[11px] font-black text-[#2C2C2C] uppercase tracking-widest">
+                      {room ? `${getRaumEmoji(room)} ${room}` : '📋 Allgemein'}
+                    </span>
+                    <span className="text-[11px] font-black text-[#2C2C2C]/60">{fmtEuro(sektSumme)}</span>
+                  </div>
+                  {entries.map(({ item, display }) => (
+                    <div key={item.title} className="flex items-center justify-between px-4 py-1.5">
+                      <span className="text-xs text-[#2C2C2C]/70 font-semibold truncate flex-1">{display}</span>
+                      <span className="text-xs text-[#2C2C2C]/40 font-semibold ml-2 shrink-0">{item.quantity} {item.unit}</span>
+                    </div>
+                  ))}
+                </div>
+              )
+            })}
+            <div className="px-4 py-3 bg-[#2C2C2C] flex flex-col gap-1">
+              <div className="flex justify-between text-white/50 text-xs font-semibold">
+                <span>Netto gesamt</span><span>{fmtEuro(totalNet)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Kleine Info-Zeile wenn zusammenfassung vorhanden */}
+        {zusammenfassung && (
+          <div className="mx-4 mt-3 text-[#2C2C2C]/40 text-xs font-semibold line-clamp-2">{zusammenfassung}</div>
+        )}
+
+        {/* Annahmen + Eingaben — kompakt */}
+        {(kiAnnahmen.length > 0 || eingaben.length > 0) && (
+          <div className="mx-4 mt-2 flex gap-2 flex-wrap">
+            {kiAnnahmen.length > 0 && (
+              <button onClick={() => setAnnahmenOffen(v => !v)} className="text-[10px] font-black text-[#2C2C2C]/40 bg-[#2C2C2C]/5 px-2.5 py-1 rounded-full flex items-center gap-1">
+                ⓘ {kiAnnahmen.length} Annahme{kiAnnahmen.length > 1 ? 'n' : ''}
+                <ChevronRight size={10} className={`transition-transform ${annahmenOffen ? 'rotate-90' : ''}`} />
+              </button>
+            )}
+            {eingaben.length > 0 && (
+              <button onClick={() => setShowEingaben(v => !v)} className="text-[10px] font-black text-[#F5C400] bg-[#F5C400]/10 px-2.5 py-1 rounded-full flex items-center gap-1">
+                🎙 {eingaben.length} Eingabe{eingaben.length > 1 ? 'n' : ''}
+                <ChevronRight size={10} className={`transition-transform ${showEingaben ? 'rotate-90' : ''}`} />
+              </button>
+            )}
+          </div>
+        )}
+        {annahmenOffen && kiAnnahmen.length > 0 && (
+          <div className="mx-4 mt-2 bg-[#2C2C2C]/5 rounded-xl px-3 py-2 flex flex-col gap-1">
+            {kiAnnahmen.map((a, i) => <div key={i} className="text-[#2C2C2C]/60 text-xs font-semibold">· {a}</div>)}
+          </div>
+        )}
 
         {/* Eingabe-Protokoll aufgeklappt */}
         {showEingaben && eingaben.length > 0 && (
-          <div className="px-5 pt-3 flex flex-col gap-2">
+          <div className="mx-4 mt-2 flex flex-col gap-1.5">
             {eingaben.map(e => (
-              <div key={e.nr} className="bg-white rounded-2xl p-3 border border-[#2C2C2C]/5">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm">🎙</span>
-                  <span className="font-black text-[#2C2C2C] text-xs">Eingabe {e.nr}</span>
-                  <span className="text-[#2C2C2C]/40 text-xs font-semibold">· {e.anzahl} Positionen erkannt</span>
+              <div key={e.nr} className="bg-white rounded-xl px-3 py-2 border border-[#2C2C2C]/5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-[#2C2C2C]/50">🎙 Eingabe {e.nr} · {e.anzahl} Positionen</span>
                 </div>
-                <p className="text-xs text-[#2C2C2C]/60 font-semibold line-clamp-2">{e.transkript}</p>
+                <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5 line-clamp-1">{e.transkript}</p>
               </div>
             ))}
           </div>
@@ -1176,88 +1290,87 @@ export default function NeuesAngebotPage() {
               </div>
             </div>
             {(() => {
+              // KOMPAKTES FORMAT: 2 Zeilen statt 3
               const renderPositionRow = (idx: number, item: DraftItem, displayTitle: string, roomName: string | null) => (
                 <div
                   key={idx}
-                  className={`border-t border-[#2C2C2C]/5 px-4 py-3 ${
+                  className={`border-t border-[#2C2C2C]/5 px-4 py-2.5 ${
                     item.konfidenz === 'low' ? 'border-l-2 border-l-orange-400' :
                     item.konfidenz === 'medium' ? 'border-l-2 border-l-amber-400' : ''
                   }`}
                 >
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1 min-w-0">
-                      <input
-                        value={displayTitle}
-                        onChange={e => updateItem(idx, 'title', roomName ? `${e.target.value} — ${roomName}` : e.target.value)}
-                        className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-transparent focus:border-[#F5C400] pb-0.5"
-                      />
-                      <div className="flex gap-2 mt-2 items-center">
-                        <input type="number" inputMode="decimal" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} className={`w-16 text-sm font-semibold text-[#2C2C2C] rounded-lg px-2 py-1 focus:outline-none ${item.konfidenz === 'low' ? 'bg-orange-50 ring-1 ring-orange-300' : 'bg-[#F7F7F5]'}`} min={0} step="0.01" autoFocus={item.konfidenz === 'low'} />
-                        <input value={item.unit} onChange={e => updateItem(idx, 'unit', e.target.value)} className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none" />
-                        <div className="flex items-center gap-1 ml-auto">
-                          <input type="number" inputMode="decimal" value={item.unit_price} onChange={e => updateItem(idx, 'unit_price', e.target.value)} className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 text-right focus:outline-none" min={0} step="0.01" />
-                          <span className="text-xs text-[#2C2C2C]/40 font-semibold">€</span>
-                        </div>
-                      </div>
-                      <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5 text-right">= {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €</div>
-                      {item.base_price !== undefined && item.unit_price < item.base_price && (
-                        <div className="text-xs text-green-600 font-bold mt-0.5 text-right">Mengenrabatt: {Math.round((1 - item.unit_price / item.base_price) * 100)} %</div>
-                      )}
-                      {item.konfidenz === 'low' && (
-                        <div className="text-[11px] text-orange-600 font-semibold mt-1">⚠ Bitte Menge prüfen</div>
-                      )}
-                      {item.konfidenz === 'medium' && item.annahmen && item.annahmen.length > 0 && (
-                        <div className="text-[11px] text-amber-600 font-semibold mt-1">Annahme: {item.annahmen.join(', ')} — anpassen?</div>
-                      )}
-                      {item.berechnungsweg && item.konfidenz !== 'low' && (
-                        <details className="mt-1">
-                          <summary className="text-[11px] text-[#2C2C2C]/30 font-semibold cursor-pointer">ⓘ Berechnung</summary>
-                          <div className="text-[11px] text-[#2C2C2C]/50 font-semibold mt-0.5 pl-3">{item.berechnungsweg}</div>
-                        </details>
-                      )}
-                      {item.kontext_genutzt && (
-                        <span className="inline-block mt-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded" title="Diese Position wurde durch den Gesamtkontext des Auftrags erkannt">🔗 Kontext</span>
-                      )}
-                      {item.aus_woerterbuch && (
-                        <span className="inline-block mt-1 ml-1 text-[10px] font-black text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded" title="Aus deinem persönlichen Wörterbuch — kein KI-Call nötig">⚡ Gelernt</span>
-                      )}
-                      {item.implizit_erkannt && (
-                        <span className="inline-block mt-1 ml-1 text-[10px] font-black text-[#F5C400] bg-[#F5C400]/15 px-1.5 py-0.5 rounded" title="Automatisch ergänzt — aus dem Kontext erkannt">✨ Automatisch</span>
-                      )}
-                    </div>
-                    <button onClick={() => removeItem(idx)} className="mt-0.5 p-1 shrink-0">
-                      <Trash2 size={16} color="#ef4444" />
+                  {/* Zeile 1: Bezeichnung + Löschen */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      value={displayTitle}
+                      onChange={e => updateItem(idx, 'title', roomName ? `${e.target.value} — ${roomName}` : e.target.value)}
+                      className="flex-1 font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-transparent focus:border-[#F5C400] pb-0.5 min-w-0"
+                    />
+                    <button onClick={() => removeItem(idx)} className="shrink-0 p-0.5 text-red-400 hover:text-red-500">
+                      <Trash2 size={14} />
                     </button>
+                  </div>
+
+                  {/* Zeile 2: [Menge] [Einheit] · [Preis] €/Einh = [Gesamt] */}
+                  <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                    <input
+                      type="number" inputMode="decimal"
+                      value={item.quantity}
+                      onChange={e => updateItem(idx, 'quantity', e.target.value)}
+                      className={`w-[50px] text-xs font-semibold text-[#2C2C2C] rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#F5C400] text-center ${item.konfidenz === 'low' ? 'bg-orange-50 ring-1 ring-orange-300' : 'bg-[#F7F7F5]'}`}
+                      min={0} step="0.01"
+                    />
+                    <input
+                      value={item.unit}
+                      onChange={e => updateItem(idx, 'unit', e.target.value)}
+                      className="w-[46px] text-xs font-semibold text-[#2C2C2C]/60 bg-[#F7F7F5] rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#F5C400] text-center"
+                    />
+                    <span className="text-xs text-[#2C2C2C]/30">·</span>
+                    <input
+                      type="number" inputMode="decimal"
+                      value={item.unit_price}
+                      onChange={e => updateItem(idx, 'unit_price', e.target.value)}
+                      className="w-[50px] text-xs font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#F5C400] text-right"
+                      min={0} step="0.01"
+                    />
+                    <span className="text-xs text-[#2C2C2C]/30">€</span>
+                    <span className="text-xs text-[#2C2C2C]/30 ml-auto">=</span>
+                    <span className="text-xs font-black text-[#2C2C2C]">{(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €</span>
+                  </div>
+
+                  {/* Extras (nur bei Bedarf) */}
+                  {item.konfidenz === 'low' && <div className="text-[10px] text-orange-500 font-semibold mt-1">⚠ Menge prüfen</div>}
+                  {item.base_price !== undefined && item.unit_price < item.base_price && (
+                    <div className="text-[10px] text-green-600 font-semibold mt-0.5">Mengenrabatt: {Math.round((1 - item.unit_price / item.base_price) * 100)} %</div>
+                  )}
+                  {item.berechnungsweg && (
+                    <details className="mt-0.5">
+                      <summary className="text-[10px] text-[#2C2C2C]/25 font-semibold cursor-pointer select-none">▶ Berechnung</summary>
+                      <div className="text-[10px] text-[#2C2C2C]/40 font-semibold mt-0.5 pl-2">{item.berechnungsweg}</div>
+                    </details>
+                  )}
+                  <div className="flex gap-1.5 mt-0.5 flex-wrap">
+                    {item.kontext_genutzt && <span className="text-[9px] font-black text-[#2C2C2C]/25 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded">🔗 Kontext</span>}
+                    {item.aus_woerterbuch && <span className="text-[9px] font-black text-[#2C2C2C]/25 bg-[#2C2C2C]/5 px-1.5 py-0.5 rounded">⚡ Gelernt</span>}
+                    {item.implizit_erkannt && <span className="text-[9px] font-black text-[#8B7000] bg-[#F5C400]/15 px-1.5 py-0.5 rounded">✨ Auto</span>}
                   </div>
                 </div>
               )
 
               if (useRoomGrouping) {
-                const multiRoom = raumMapReview.size > 1 || (raumMapReview.size === 1 && raumMapReview.has(null) === false)
                 return Array.from(raumMapReview.entries()).map(([room, entries]) => {
                   const raumSumme = entries.reduce((s, e) => s + e.item.quantity * e.item.unit_price, 0)
                   return (
                     <div key={room ?? '__allgemein'}>
-                      <div className={`border-t border-[#2C2C2C]/5 px-4 py-2 flex items-center justify-between ${multiRoom ? 'bg-[#F7F7F5]' : 'bg-[#F5C400]/8'}`}>
-                        <div className="flex items-center gap-1.5">
-                          <span>{room ? getRaumEmoji(room) : '📋'}</span>
-                          <span className={`font-black uppercase tracking-widest ${multiRoom ? 'text-[10px] text-[#2C2C2C]/50' : 'text-xs text-[#2C2C2C]'}`}>
-                            {room ?? 'Allgemein'}
-                          </span>
-                        </div>
-                        {multiRoom && (
-                          <span className="text-[11px] font-black text-[#2C2C2C]/40">
-                            {raumSumme.toFixed(2).replace('.', ',')} €
-                          </span>
-                        )}
+                      {/* Kompakter Raum-Header */}
+                      <div className="flex items-center gap-2 px-4 pt-3 pb-1">
+                        <span className="text-[11px] font-black text-[#2C2C2C]/50 uppercase tracking-widest">
+                          {room ? `${getRaumEmoji(room)} ${room}` : '📋 Allgemein'}
+                        </span>
+                        <span className="text-[11px] font-black text-[#2C2C2C]/40">· {raumSumme.toFixed(2).replace('.', ',')} €</span>
+                        <div className="flex-1 h-px bg-[#F5C400]/50 ml-1" />
                       </div>
                       {entries.map(({ idx, item, display, room: r }) => renderPositionRow(idx, item, display, r))}
-                      {multiRoom && (
-                        <div className="border-t border-dashed border-[#2C2C2C]/8 px-4 py-2 flex justify-between">
-                          <span className="text-xs text-[#2C2C2C]/40 font-semibold">Summe {room ?? 'Allgemein'}</span>
-                          <span className="text-xs font-black text-[#2C2C2C]/60">{raumSumme.toFixed(2).replace('.', ',')} €</span>
-                        </div>
-                      )}
                     </div>
                   )
                 })
