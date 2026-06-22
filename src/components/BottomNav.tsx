@@ -2,9 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FileText, Settings, Mic } from 'lucide-react'
+import { Home, FileText, Settings, Mic } from 'lucide-react'
 
-const LEFT_NAV =  [{ href: '/angebote',      icon: FileText,  label: 'Angebote'       }]
+const LEFT_NAV  = [
+  { href: '/dashboard',    icon: Home,      label: 'Start'          },
+  { href: '/angebote',     icon: FileText,  label: 'Angebote'       },
+]
 const RIGHT_NAV = [{ href: '/einstellungen', icon: Settings,  label: 'Einstellungen'  }]
 
 export default function BottomNav() {
