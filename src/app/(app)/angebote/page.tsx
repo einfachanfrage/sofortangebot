@@ -35,13 +35,13 @@ const GEWERK_BADGE: Record<string, string> = {
   elektro:          '⚡ Elektro',
 }
 
-const EMPTY_STATE_TEXT: Record<string, { title: string; sub: string }> = {
-  entwurf:    { title: 'Keine Entwürfe.',         sub: 'Neue Aufnahme starten.'              },
-  offen:      { title: 'Nichts offen.',           sub: 'Alle Angebote haben eine Antwort.'   },
-  beauftragt: { title: 'Noch kein Auftrag.',      sub: 'Angebote verschicken, abwarten.'     },
-  abgelehnt:  { title: 'Kein Angebot abgelehnt.', sub: 'Gut so.'                            },
-  archived:   { title: 'Kein Archiv.',            sub: 'Abgelehnte Angebote landen hier.'    },
-  '':         { title: 'Noch keine Angebote.',    sub: 'FAB antippen und Aufmaß starten.'    },
+const EMPTY_STATE_TEXT: Record<string, { title: string; sub: string; showCta?: boolean }> = {
+  entwurf:    { title: 'Nichts in Bearbeitung.',     sub: 'Starte ein neues Aufmaß.',                      showCta: true  },
+  offen:      { title: 'Keine offenen Angebote.',    sub: 'Schick dein nächstes Angebot raus.',            showCta: false },
+  beauftragt: { title: 'Noch kein Auftrag.',         sub: 'Der erste kommt.',                              showCta: false },
+  abgelehnt:  { title: 'Kein Angebot abgelehnt.',   sub: 'Gut so. 💪',                                    showCta: false },
+  archived:   { title: 'Archiv ist leer.',           sub: 'Abgeschlossene Angebote landen hier.',          showCta: false },
+  '':         { title: 'Noch kein Angebot.',         sub: 'Einfach auf der Baustelle einsprechen.',        showCta: true  },
 }
 
 function fmt(n: number) {
@@ -140,28 +140,31 @@ export default async function AngebotePage({
         </Suspense>
       </div>
 
-      {/* Empty state */}
+      {/* Empty state — kein Suchbegriff */}
       {filteredQuotes.length === 0 && !q && (
         <div className="px-5 mt-4">
-          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 p-10 text-center">
-            <div className="font-black text-[#2C2C2C] text-lg">{emptyText.title}</div>
-            <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-1">{emptyText.sub}</div>
-            {(!status || status === 'entwurf') && (
+          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 px-6 py-10 text-center">
+            <div className="font-black text-[#1A1A1A] text-[16px]">{emptyText.title}</div>
+            <div className="text-[13px] font-semibold mt-1" style={{ color: '#888888' }}>{emptyText.sub}</div>
+            {emptyText.showCta && (
               <Link
                 href="/angebot/neu"
-                className="inline-flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-5 py-2.5 rounded-xl mt-4"
+                className="inline-flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-5 py-2.5 rounded-xl mt-5"
               >
-                <Mic size={14} /> Jetzt starten
+                <Mic size={14} />
+                {status === 'entwurf' ? 'Aufmaß starten' : 'Erstes Aufmaß starten'}
               </Link>
             )}
           </div>
         </div>
       )}
 
+      {/* Empty state — Suche ohne Treffer */}
       {filteredQuotes.length === 0 && q && (
         <div className="px-5 mt-4">
           <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
-            <div className="font-black text-[#2C2C2C]/40">Keine Treffer.</div>
+            <div className="font-black text-[#1A1A1A] text-[16px]">Kein Treffer.</div>
+            <div className="text-[13px] font-semibold mt-1" style={{ color: '#888888' }}>Anderen Suchbegriff versuchen.</div>
           </div>
         </div>
       )}
