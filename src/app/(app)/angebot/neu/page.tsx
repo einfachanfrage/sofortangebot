@@ -160,7 +160,7 @@ export default function NeuesAngebotPage() {
         const r = await fetch('/api/quotes/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }),
+          body: JSON.stringify({ items, notes, gewerk, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }),
         })
         if (r.ok) {
           const d = await r.json()
@@ -193,7 +193,7 @@ export default function NeuesAngebotPage() {
           })
         }
         const totalNetAuto = items.reduce((s, i) => s + i.quantity * i.unit_price, 0)
-        await supabase.from('quotes').update({ total_net: totalNetAuto, notes: notes || null }).eq('id', autoDraftId)
+        await supabase.from('quotes').update({ total_net: totalNetAuto, notes: notes || null, ...(gewerk ? { gewerk } : {}) }).eq('id', autoDraftId)
         setAutosaveStatus('saved')
       } catch { setAutosaveStatus('unsaved') }
     }, 10000)
@@ -879,10 +879,11 @@ export default function NeuesAngebotPage() {
         await supabase.from('quotes').update({
           total_net: totalNet, total_vat: totalVat, total_gross: totalNet + totalVat,
           notes: notes || null,
+          ...(gewerk ? { gewerk } : {}),
         }).eq('id', autoDraftId)
         quoteId = autoDraftId
       } else {
-        const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }) })
+        const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, notes, gewerk, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id: selectedBriefpapier }) })
         const data = await r.json()
         if (!r.ok) {
           if (data.error === 'limit_reached') setLimitError(data.message)
