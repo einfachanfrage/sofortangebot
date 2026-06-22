@@ -67,19 +67,22 @@ export default async function AngebotePage({
 
   const { q, status } = await searchParams
 
-  let query = supabase
-    .from('quotes')
-    .select('*, customer:customers(name), gewerk, sent_via')
-    .eq('company_id', company?.id)
-    .order('created_at', { ascending: false })
+  const statusValues = status && STATUS_FILTER_MAP[status] ? STATUS_FILTER_MAP[status] : null
 
-  if (status && STATUS_FILTER_MAP[status]) {
-    query = query.in('status', STATUS_FILTER_MAP[status])
-  } else if (!status) {
-    query = query.not('status', 'eq', 'archived')
-  }
+  const { data: allQuotes, error: quotesError } = statusValues
+    ? await supabase
+        .from('quotes')
+        .select('*, customer:customers(name)')
+        .eq('company_id', company?.id)
+        .in('status', statusValues)
+        .order('created_at', { ascending: false })
+    : await supabase
+        .from('quotes')
+        .select('*, customer:customers(name)')
+        .eq('company_id', company?.id)
+        .not('status', 'eq', 'archived')
+        .order('created_at', { ascending: false })
 
-  const { data: allQuotes, error: quotesError } = await query
   if (quotesError) console.error('Angebote query error:', quotesError.message)
 
   const { data: entwurfData } = await supabase
