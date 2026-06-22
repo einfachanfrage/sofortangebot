@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { generiereAngebotsTitel } from '@/lib/angebot-titel'
 
 const BORDER_COLOR: Record<string, string> = {
   draft:          'bg-[#F5C400]',
@@ -48,9 +49,10 @@ interface Props {
   statusColor?: string
   formattedDate: string
   formattedAmount: string
+  ersterItemTitel?: string | null
 }
 
-export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAmount }: Props) {
+export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAmount, ersterItemTitel }: Props) {
   const [offset, setOffset] = useState(0)
   const [deleting, setDeleting] = useState(false)
   const startX = useRef<number | null>(null)
@@ -82,12 +84,17 @@ export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAm
 
   const borderClass = BORDER_COLOR[quote.status] ?? 'bg-gray-300'
   const badgeClass = STATUS_BADGE[quote.status] ?? STATUS_BADGE.draft
-  const customerName = quote.customer?.name
-  const gewerkLabel = quote.gewerk ? GEWERK_LABEL[quote.gewerk] : null
 
-  // Haupttitel: Kundenname wenn vorhanden, sonst Gewerk, sonst leer
-  const primaryTitle = customerName || gewerkLabel || null
-  const subtitle = [gewerkLabel && customerName ? gewerkLabel : null, formattedDate]
+  const primaryTitle = generiereAngebotsTitel({
+    kunde: quote.customer,
+    gewerk: quote.gewerk,
+    ersterItemTitel,
+    created_at: quote.created_at,
+  })
+
+  const gewerkLabel = quote.gewerk ? GEWERK_LABEL[quote.gewerk] : null
+  const hasCustomer = !!quote.customer?.name
+  const subtitle = [gewerkLabel && hasCustomer ? gewerkLabel : null, formattedDate]
     .filter(Boolean).join(' · ')
 
   return (
@@ -114,11 +121,7 @@ export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAm
             <div className="pl-4 pr-4 py-3.5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  {primaryTitle ? (
-                    <div className="font-black text-[#1A1A1A] text-sm truncate">{primaryTitle}</div>
-                  ) : (
-                    <div className="font-black text-[#888888] text-sm">Aufmaß</div>
-                  )}
+                  <div className="font-black text-[#1A1A1A] text-sm truncate">{primaryTitle}</div>
                   <div className="text-xs text-[#888888] font-semibold mt-0.5">{subtitle || formattedDate}</div>
                 </div>
                 <div className="text-right shrink-0">

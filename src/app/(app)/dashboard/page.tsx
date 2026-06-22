@@ -49,10 +49,10 @@ export default async function DashboardPage({
 
   const { welcome } = await searchParams
 
-  // Letzte 5 Angebote
+  // Letzte 5 Angebote — ersten Item-Titel für Fallback-Bezeichnung
   const { data: recentQuotes } = await supabase
     .from('quotes')
-    .select('*, customer:customers(name)')
+    .select('*, customer:customers(name), quote_items(title, position)')
     .eq('company_id', company?.id)
     .not('status', 'eq', 'archived')
     .order('created_at', { ascending: false })
@@ -160,8 +160,9 @@ export default async function DashboardPage({
             Zuletzt erstellt
           </div>
           <div className="flex flex-col gap-3">
-            {(recentQuotes ?? []).map((quote: Quote & { customer?: { name: string } | null; gewerk?: string }) => {
+            {(recentQuotes ?? []).map((quote: Quote & { customer?: { name: string } | null; gewerk?: string; quote_items?: { title: string; position: number }[] }) => {
               const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
+              const items = (quote.quote_items ?? []).sort((a, b) => a.position - b.position)
               return (
                 <MobileQuoteCard
                   key={quote.id}
@@ -169,6 +170,7 @@ export default async function DashboardPage({
                   statusLabel={cfg.label}
                   formattedDate={fmtDate(quote.created_at)}
                   formattedAmount={fmt(quote.total_gross)}
+                  ersterItemTitel={items[0]?.title ?? null}
                 />
               )
             })}
