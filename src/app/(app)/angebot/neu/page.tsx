@@ -164,7 +164,7 @@ export default function NeuesAngebotPage() {
         })
         if (r.ok) {
           const d = await r.json()
-          if (d.id) { setAutoDraftId(d.id); setAutosaveStatus('saved') }
+          if (d.id) { setAutoDraftId(d.id); setAutosaveStatus('saved'); setTimeout(() => setAutosaveStatus('unsaved'), 3000) }
         } else { setAutosaveStatus('unsaved') }
       } catch { setAutosaveStatus('unsaved') }
     }
@@ -194,7 +194,7 @@ export default function NeuesAngebotPage() {
         }
         const totalNetAuto = items.reduce((s, i) => s + i.quantity * i.unit_price, 0)
         await supabase.from('quotes').update({ total_net: totalNetAuto, notes: notes || null, ...(gewerk ? { gewerk } : {}) }).eq('id', autoDraftId)
-        setAutosaveStatus('saved')
+        setAutosaveStatus('saved'); setTimeout(() => setAutosaveStatus('unsaved'), 3000)
       } catch { setAutosaveStatus('unsaved') }
     }, 10000)
     return () => { if (autosaveIntervalRef.current) clearInterval(autosaveIntervalRef.current) }
@@ -1050,9 +1050,6 @@ export default function NeuesAngebotPage() {
           {/* Links: Zurück */}
           <div className="flex flex-col min-w-0 w-[80px]">
             <button onClick={handleBackFromReview} className="text-white text-xs font-semibold text-left leading-none">← Zurück</button>
-            <span className="text-[10px] text-[#AAAAAA] mt-0.5 leading-none">
-              {autosaveStatus === 'saving' ? 'speichert...' : autosaveStatus === 'saved' ? 'gespeichert ✓' : 'wird gespeichert'}
-            </span>
           </div>
 
           {/* Mitte: Entwurf Badge + Kunde */}
@@ -1063,11 +1060,10 @@ export default function NeuesAngebotPage() {
             </div>
           </div>
 
-          {/* Rechts: Autosave-Status */}
+          {/* Rechts: Autosave-Status — nur kurz sichtbar */}
           <div className="w-[80px] text-right text-[11px] font-semibold leading-tight">
-            {autosaveStatus === 'saved' && <span className="text-green-400">✓ Gespeichert</span>}
-            {autosaveStatus === 'saving' && <span className="text-[#AAAAAA]">⟳ Speichert…</span>}
-            {autosaveStatus === 'unsaved' && <span className="text-orange-400">⚠ Nicht gespeichert</span>}
+            {autosaveStatus === 'saving' && <span className="text-[#AAAAAA]">⟳</span>}
+            {autosaveStatus === 'saved'  && <span className="text-[#AAAAAA]">✓</span>}
           </div>
         </div>
 
@@ -1120,10 +1116,6 @@ export default function NeuesAngebotPage() {
           </div>
         )}
 
-        {/* Kleine Info-Zeile wenn zusammenfassung vorhanden */}
-        {zusammenfassung && (
-          <div className="mx-4 mt-3 text-[#2C2C2C]/40 text-xs font-semibold line-clamp-2">{zusammenfassung}</div>
-        )}
 
         {/* Annahmen + Eingaben — kompakt */}
         {(kiAnnahmen.length > 0 || eingaben.length > 0) && (
@@ -1219,26 +1211,16 @@ export default function NeuesAngebotPage() {
           </div>
         )}
 
-        {/* Implizit ergänzte Positionen Banner */}
-        {implizitPositionen.length > 0 && (
-          <div className="mx-5 mt-3 bg-[#F5C400]/10 border border-[#F5C400]/30 rounded-2xl px-4 py-3">
-            <div className="font-black text-[#8B7000] text-sm flex items-center gap-1.5">✨ Automatisch erkannt</div>
-            <div className="flex flex-col gap-1 mt-1.5">
-              {implizitPositionen.map((p, i) => (
-                <div key={i} className="text-[#8B7000] text-xs font-semibold">· {p}</div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* Sticky Mic Button — immer zugänglich */}
-        <div className="sticky top-0 z-10 px-5 py-3 bg-[#F7F7F5]/95 backdrop-blur-sm border-b border-[#2C2C2C]/5">
-          <button onClick={addSessionInput}
-            className="flex items-center justify-center gap-2.5 w-full bg-[#2C2C2C] text-white font-black text-base rounded-2xl py-4 active:opacity-80 transition-opacity">
-            <Mic size={20} strokeWidth={2.5} />
-            Weiteres Aufmaß einsprechen
-          </button>
-        </div>
+        {/* Kleiner Anthrazit-FAB für weitere Eingabe */}
+        <button
+          onClick={addSessionInput}
+          className="fixed right-5 bottom-24 z-30 w-11 h-11 rounded-full bg-[#2C2C2C] flex items-center justify-center active:opacity-70 transition-opacity"
+          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
+          title="Weitere Positionen einsprechen"
+        >
+          <Mic size={20} strokeWidth={2.5} className="text-white" />
+        </button>
 
         <div className="px-5 pt-4 flex flex-col gap-4">
           {/* Kundendaten — kollabierbar */}
@@ -1296,7 +1278,6 @@ export default function NeuesAngebotPage() {
             </div>
             <input placeholder="Telefon" type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className={`${inputCls} mt-3`} />
             <input placeholder="E-Mail" type="email" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} className={`${inputCls} mt-3`} />
-            <input placeholder="Adresse" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} className={`${inputCls} mt-3`} />
               </div>
             )}
           </div>
@@ -1433,9 +1414,12 @@ export default function NeuesAngebotPage() {
             <KalkulationsBewertungCard bewertung={kalkulationsBewertung} />
           )}
 
-          {/* Notizen */}
-          <textarea placeholder="Anmerkungen" value={notes} onChange={e => setNotes(e.target.value)} rows={2}
-            className="w-full bg-white border border-[#2C2C2C]/5 rounded-2xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400] resize-none" />
+          {/* Interne Notiz */}
+          <div>
+            <div className="text-[10px] font-black text-[#888] uppercase tracking-widest mb-1.5 px-1">Interne Notiz</div>
+            <textarea placeholder="Erscheint nicht im Angebot — nur für dich sichtbar." value={notes} onChange={e => setNotes(e.target.value)} rows={2}
+              className="w-full bg-white border border-[#2C2C2C]/5 rounded-2xl px-4 py-3 text-[#2C2C2C] font-semibold text-[13px] focus:outline-none focus:border-[#F5C400] resize-none" />
+          </div>
 
           {/* Briefpapier-Auswahl (nur wenn mehrere vorhanden) */}
           {briefpapiere.length > 1 && (
