@@ -56,6 +56,13 @@ export async function GET(req: NextRequest) {
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 
+  console.log('PDF Debug — quoteId:', quoteId, '| items count:', sortedItems.length)
+  if (sortedItems.length > 0) {
+    console.log('PDF Debug — erste 3 Titel:', sortedItems.slice(0, 3).map((i: { title: string }) => i.title))
+  } else {
+    console.log('PDF Debug — quote_items ist LEER für dieses Angebot!')
+  }
+
   // @ts-expect-error react-pdf renderToBuffer typing mismatch
   let buffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
     quote: { ...quote, items: sortedItems },
