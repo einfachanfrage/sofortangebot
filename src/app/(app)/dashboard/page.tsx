@@ -1,25 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Suspense } from 'react'
 import type { Quote } from '@/lib/types'
 import { PwaBannerManager } from '@/components/PwaBannerManager'
 import BottomNav from '@/components/BottomNav'
-import DashboardFilters from '@/components/DashboardFilters'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
-import { Mic } from 'lucide-react'
+import { Mic, ArrowRight, TrendingUp, Clock, CheckCircle } from 'lucide-react'
 
-// Status-Filter-Mapping
-const STATUS_FILTER_MAP: Record<string, string[]> = {
-  entwurf:    ['draft', 'in_bearbeitung'],
-  offen:      ['sent', 'viewed'],
-  beauftragt: ['accepted'],
-  abgelehnt:  ['rejected'],
-  archived:   ['archived'],
-}
-
-// Status-Konfiguration
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   draft:          { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
   in_bearbeitung: { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
@@ -30,33 +18,12 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   archived:       { label: 'Archiviert',     color: 'bg-[#F7F7F5] text-[#2C2C2C]/30'  },
 }
 
-// Gewerk-Emoji-Mapping
-const GEWERK_BADGE: Record<string, string> = {
-  maler:            '🖌 Maler',
-  fliesen:          '🔷 Fliesen',
-  trockenbau:       '🏗 Trockenbau',
-  boden_parkett:    '🪵 Boden',
-  sanitaer_heizung: '🔧 Sanitär',
-  elektro:          '⚡ Elektro',
+function fmt(n: number) {
+  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)
 }
-
-// Empty-State-Texte
-const EMPTY_STATE_TEXT: Record<string, { title: string; sub: string }> = {
-  entwurf:    { title: 'Keine Entwürfe.',          sub: 'Neue Aufnahme starten.' },
-  offen:      { title: 'Keine offenen Angebote.',  sub: 'Alle Angebote haben eine Antwort.' },
-  beauftragt: { title: 'Noch kein Auftrag.',       sub: 'Offen lassen, Angebote überzeugen.' },
-  abgelehnt:  { title: 'Kein Angebot abgelehnt.',  sub: 'Gut so.' },
-  '':         { title: 'Noch kein Angebot.',       sub: 'Fang auf der Baustelle an.' },
+function fmtDate(d: string) {
+  return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
 }
-
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(amount)
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
-}
-
 function getGreeting(): string {
   const h = new Date().getHours()
   if (h < 12) return 'Guten Morgen.'
@@ -65,39 +32,10 @@ function getGreeting(): string {
   return 'Noch am Arbeiten?'
 }
 
-function getSubText(stats: { totalCount: number; openCount: number; heuteErstellt: boolean }): string {
-  if (stats.totalCount === 0) return 'Fang auf der Baustelle an — 2 Minuten, fertig.'
-  if (stats.heuteErstellt) return 'Gut gemacht. Noch mehr geht immer.'
-  if (stats.openCount > 0) return `${stats.openCount} ${stats.openCount === 1 ? 'Angebot wartet' : 'Angebote warten'} auf Antwort.`
-  return 'Alle Angebote auf dem neuesten Stand.'
-}
-
-interface StatItemProps {
-  label: string
-  value: number
-  sub?: string | null
-  filterKey: string
-  currentFilter: string
-}
-
-function StatItem({ label, value, sub, filterKey, currentFilter }: StatItemProps) {
-  const isActive = currentFilter === filterKey
-  return (
-    <Link
-      href={`/dashboard${filterKey ? `?status=${filterKey}` : ''}`}
-      className={`flex flex-col gap-0.5 hover:opacity-70 transition-opacity ${isActive ? 'opacity-100' : 'opacity-60'}`}
-    >
-      <div className="font-syne font-black text-[#2C2C2C] text-2xl leading-none">{value}</div>
-      <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">{label}</div>
-      {sub && <div className="text-xs text-[#2C2C2C]/30 font-semibold">{sub}</div>}
-    </Link>
-  )
-}
-
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; welcome?: string }>
+  searchParams: Promise<{ welcome?: string }>
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -110,74 +48,45 @@ export default async function DashboardPage({
     .single()
   if (company && !company.name) redirect('/onboarding')
 
-  const { q, status, welcome } = await searchParams
+  const { welcome } = await searchParams
 
-  // Angebote laden (mit Status-Filter)
-  let query = supabase
+  // Letzte 3 Angebote (nicht archiviert)
+  const { data: recentQuotes } = await supabase
     .from('quotes')
-    .select('*, customer:customers(name), gewerk, sent_via')
+    .select('*, customer:customers(name)')
     .eq('company_id', company?.id)
+    .not('status', 'eq', 'archived')
     .order('created_at', { ascending: false })
+    .limit(3)
 
-  if (status && STATUS_FILTER_MAP[status]) {
-    query = query.in('status', STATUS_FILTER_MAP[status])
-  } else if (!status) {
-    query = query.not('status', 'eq', 'archived')
-  }
-
-  const { data: allQuotes, error: quotesError } = await query
-
-  if (quotesError) {
-    console.error('Dashboard quotes error:', JSON.stringify(quotesError))
-  }
-  console.log('Dashboard debug — company_id:', company?.id, '| quotes count:', allQuotes?.length ?? 0, '| error:', quotesError?.message)
-
-  // Monatsbezogene Stats (unabhängig vom Filter)
+  // Monatsstats
   const now = new Date()
   const monatStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-
   const { data: monatQuotes } = await supabase
     .from('quotes')
-    .select('status, total_gross, created_at')
+    .select('status, total_gross')
     .eq('company_id', company?.id)
     .gte('created_at', monatStart)
     .not('status', 'in', '("draft","in_bearbeitung","archived")')
 
-  const monatDaten = monatQuotes ?? []
-  const acceptedCount = monatDaten.filter(q => q.status === 'accepted').length
-  const openCount = monatDaten.filter(q => q.status === 'sent' || q.status === 'viewed').length
-  const rejectedCount = monatDaten.filter(q => q.status === 'rejected').length
-  const totalCount = monatDaten.length
-  const totalAcceptedValue = monatDaten
-    .filter(q => q.status === 'accepted')
-    .reduce((sum, q) => sum + (q.total_gross ?? 0), 0)
+  const monat = monatQuotes ?? []
+  const monatUmsatz = monat.filter(q => q.status === 'accepted').reduce((s, q) => s + (q.total_gross ?? 0), 0)
+  const monatOffen = monat.filter(q => q.status === 'sent' || q.status === 'viewed').length
+  const monatBeauftragt = monat.filter(q => q.status === 'accepted').length
 
-  // Heute erstellte Angebote
-  const heute = new Date()
-  heute.setHours(0, 0, 0, 0)
-  const heuteErstellt = monatDaten.some(q => new Date(q.created_at) >= heute)
-
-  // In-Bearbeitung-Zähler
-  const { data: entwurfData } = await supabase
+  // Gesamtanzahl laufende Angebote
+  const { data: offeneGesamt } = await supabase
     .from('quotes')
     .select('id')
     .eq('company_id', company?.id)
-    .in('status', ['draft', 'in_bearbeitung'])
-  const entwurfCount = (entwurfData ?? []).length
+    .in('status', ['sent', 'viewed'])
+  const offeneGesamtCount = (offeneGesamt ?? []).length
 
-  const quotes = allQuotes ?? []
-  const filteredQuotes = q
-    ? quotes.filter(qt => (qt.customer?.name ?? '').toLowerCase().includes(q.toLowerCase()))
-    : quotes
-
+  const firstName = company?.name?.split(' ')[0] ?? ''
   const greeting = getGreeting()
-  const sub = getSubText({ totalCount, openCount, heuteErstellt })
-
-  const currentStatus = status ?? ''
-  const emptyText = EMPTY_STATE_TEXT[currentStatus] ?? EMPTY_STATE_TEXT['']
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-28 md:pb-12">
+    <div className="min-h-dvh bg-[#F7F7F5] pb-28">
       <PwaBannerManager />
       {welcome === 'new' && <WelcomeModalWrapper />}
       {welcome === 'pro' && (
@@ -186,154 +95,118 @@ export default async function DashboardPage({
         </div>
       )}
 
-      {/* ── MOBILE HEADER ── */}
-      <div className="md:hidden sticky top-0 z-20 bg-[#F7F7F5] px-5 pt-safe-top pt-4 pb-3 flex items-center justify-between">
-        <span className="font-syne font-black text-[#2C2C2C] text-lg">sofortangebot</span>
-        <div className="w-8 h-8 rounded-full bg-[#2C2C2C] flex items-center justify-center">
-          <span className="text-white font-black text-xs">{company?.name?.[0]?.toUpperCase() ?? 'A'}</span>
-        </div>
-      </div>
-
-      {/* ── MOBILE BEGRÜSSUNG ── */}
-      <div className="md:hidden px-5 pt-2 pb-4">
-        <div className="font-syne font-black text-[#2C2C2C] text-2xl">{greeting}</div>
-        <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">{sub}</div>
-      </div>
-
-      {/* ── DESKTOP HEADER ── */}
-      <div className="hidden md:flex items-center justify-between px-8 pt-8 pb-6">
+      {/* Header */}
+      <div className="px-5 pt-safe-top pt-6 pb-2 flex items-start justify-between">
         <div>
-          <div className="font-syne font-black text-[#2C2C2C] text-2xl">{greeting}</div>
-          <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">{sub}</div>
+          <div className="text-[#2C2C2C]/40 text-sm font-semibold">{greeting}</div>
+          <div className="font-syne font-black text-[#2C2C2C] text-2xl leading-tight mt-0.5">
+            {firstName || 'Willkommen'}
+          </div>
         </div>
+        <div className="w-10 h-10 rounded-full bg-[#2C2C2C] flex items-center justify-center mt-1">
+          <span className="text-white font-black text-sm">{company?.name?.[0]?.toUpperCase() ?? 'A'}</span>
+        </div>
+      </div>
+
+      {/* Monatsstats */}
+      <div className="px-5 mt-5">
+        <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-2">
+          Dieser Monat
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <TrendingUp size={16} className="text-[#1A7A38] mb-2" strokeWidth={2.5} />
+            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">{fmt(monatUmsatz)}</div>
+            <div className="text-[10px] font-bold text-[#2C2C2C]/40 mt-1">Umsatz</div>
+          </div>
+          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <CheckCircle size={16} className="text-[#1A7A38] mb-2" strokeWidth={2.5} />
+            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">{monatBeauftragt}</div>
+            <div className="text-[10px] font-bold text-[#2C2C2C]/40 mt-1">Aufträge</div>
+          </div>
+          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <Clock size={16} className="text-blue-500 mb-2" strokeWidth={2.5} />
+            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">{monatOffen}</div>
+            <div className="text-[10px] font-bold text-[#2C2C2C]/40 mt-1">Offen</div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="px-5 mt-5">
         <Link
           href="/angebot/neu"
-          className="flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-5 py-3 hover:bg-[#e6b800] transition-colors"
+          className="flex items-center justify-between w-full bg-[#2C2C2C] text-white rounded-2xl px-5 py-4"
         >
-          <Mic size={16} strokeWidth={2.5} />
-          Neues Angebot
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#F5C400] flex items-center justify-center">
+              <Mic size={20} className="text-[#2C2C2C]" strokeWidth={2.5} />
+            </div>
+            <div>
+              <div className="font-black text-[15px]">Aufmaß starten</div>
+              <div className="text-white/50 text-[12px] font-semibold">Einsprechen → Angebot fertig</div>
+            </div>
+          </div>
+          <ArrowRight size={18} className="text-white/40" />
         </Link>
       </div>
 
-      {/* ── DESKTOP STATS ── */}
-      <div className="hidden md:block px-8 mb-6">
-        <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 px-6 py-4 flex items-center gap-8">
-          <StatItem label="Beauftragt" value={acceptedCount} sub={totalAcceptedValue > 0 ? formatCurrency(totalAcceptedValue) : null} filterKey="beauftragt" currentFilter={currentStatus} />
-          <div className="w-px h-8 bg-[#2C2C2C]/8" />
-          <StatItem label="Offen" value={openCount} filterKey="offen" currentFilter={currentStatus} />
-          <div className="w-px h-8 bg-[#2C2C2C]/8" />
-          <StatItem label="In Bearbeitung" value={entwurfCount} filterKey="entwurf" currentFilter={currentStatus} />
-          <div className="w-px h-8 bg-[#2C2C2C]/8" />
-          <StatItem label="Gesamt" value={totalCount} filterKey="" currentFilter={currentStatus} />
-        </div>
-      </div>
-
-      {/* ── FILTERS + TABS ── */}
-      <div className="px-5 md:px-8 mt-2 md:mt-0">
-        <Suspense>
-          <DashboardFilters
-            entwurfCount={entwurfCount}
-            openCount={openCount}
-            acceptedCount={acceptedCount}
-            rejectedCount={rejectedCount}
-          />
-        </Suspense>
-      </div>
-
-      {/* ── EMPTY STATE ── */}
-      {filteredQuotes.length === 0 && !q && (
-        <div className="px-5 md:px-8 mt-4">
-          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 p-10 text-center">
-            <div className="font-black text-[#2C2C2C] text-lg">{emptyText.title}</div>
-            <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-1">{emptyText.sub}</div>
-            {(!status || status === 'entwurf') && (
-              <Link
-                href="/angebot/neu"
-                className="inline-flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-5 py-2.5 rounded-xl mt-4 hover:bg-[#e6b800] transition-colors"
-              >
-                <Mic size={14} /> Jetzt starten
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
-
-      {filteredQuotes.length === 0 && q && (
-        <div className="px-5 md:px-8 mt-4">
-          <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
-            <div className="font-black text-[#2C2C2C]/40">Keine Treffer.</div>
-            <div className="text-sm text-[#2C2C2C]/25 font-semibold mt-1">Filter anpassen oder Suche löschen.</div>
-          </div>
-        </div>
-      )}
-
-      {/* ── MOBILE QUOTE CARDS ── */}
-      {filteredQuotes.length > 0 && (
-        <div className="md:hidden px-5 mt-4 flex flex-col gap-3">
-          {filteredQuotes.map((quote: Quote & { customer?: { name: string } | null; gewerk?: string }) => {
-            const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
-            return (
-              <MobileQuoteCard
-                key={quote.id}
-                quote={quote}
-                statusLabel={cfg.label}
-                statusColor={cfg.color}
-                formattedDate={formatDate(quote.created_at)}
-                formattedAmount={formatCurrency(quote.total_gross)}
-              />
-            )
-          })}
-        </div>
-      )}
-
-      {/* ── DESKTOP QUOTE TABLE ── */}
-      {filteredQuotes.length > 0 && (
-        <div className="hidden md:block px-8 mt-4">
-          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
-            <div className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3 border-b border-[#2C2C2C]/5">
-              {['Kunde', 'Gewerk', 'Datum', 'Status', 'Betrag'].map((h, i) => (
-                <div key={h} className={`text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest ${i === 4 ? 'text-right' : ''}`}>{h}</div>
-              ))}
+      {/* Offene Angebote Hinweis */}
+      {offeneGesamtCount > 0 && (
+        <div className="px-5 mt-3">
+          <Link
+            href="/angebote?status=offen"
+            className="flex items-center justify-between w-full bg-blue-50 rounded-2xl px-5 py-3.5"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-2 h-2 rounded-full bg-blue-500" />
+              <span className="font-black text-blue-700 text-sm">
+                {offeneGesamtCount} {offeneGesamtCount === 1 ? 'Angebot wartet' : 'Angebote warten'} auf Antwort
+              </span>
             </div>
-            {filteredQuotes.map((quote: Quote & { customer?: { name: string } | null; gewerk?: string }) => {
+            <ArrowRight size={15} className="text-blue-400" />
+          </Link>
+        </div>
+      )}
+
+      {/* Letzte Angebote */}
+      {(recentQuotes ?? []).length > 0 && (
+        <div className="px-5 mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest">
+              Zuletzt erstellt
+            </div>
+            <Link href="/angebote" className="text-[#2C2C2C]/40 text-xs font-bold flex items-center gap-1">
+              Alle <ArrowRight size={12} />
+            </Link>
+          </div>
+          <div className="flex flex-col gap-3">
+            {(recentQuotes ?? []).map((quote: Quote & { customer?: { name: string } | null }) => {
               const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
-              const gewerkBadge = quote.gewerk ? GEWERK_BADGE[quote.gewerk] : null
               return (
-                <Link
+                <MobileQuoteCard
                   key={quote.id}
-                  href={`/angebot/${quote.id}`}
-                  className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3.5 border-b border-[#2C2C2C]/5 last:border-0 hover:bg-[#F7F7F5] transition-colors group"
-                >
-                  <div className="font-black text-[#2C2C2C] text-sm truncate group-hover:text-[#F5C400] transition-colors self-center">
-                    {quote.customer?.name || 'Kunde unbekannt'}
-                  </div>
-                  <div className="self-center">
-                    {gewerkBadge ? (
-                      <span className="text-[11px] font-bold text-[#2C2C2C]/50 bg-[#2C2C2C]/5 px-2 py-0.5 rounded-full">
-                        {gewerkBadge}
-                      </span>
-                    ) : (
-                      <span className="text-[#2C2C2C]/20 text-sm">—</span>
-                    )}
-                  </div>
-                  <div className="text-sm text-[#2C2C2C]/40 font-semibold self-center">{formatDate(quote.created_at)}</div>
-                  <div className="self-center">
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${cfg.color}`}>{cfg.label}</span>
-                  </div>
-                  <div className="text-right font-black text-[#2C2C2C] text-sm self-center">{formatCurrency(quote.total_gross)}</div>
-                </Link>
+                  quote={quote}
+                  statusLabel={cfg.label}
+                  statusColor={cfg.color}
+                  formattedDate={fmtDate(quote.created_at)}
+                  formattedAmount={fmt(quote.total_gross)}
+                />
               )
             })}
           </div>
         </div>
       )}
 
-      {/* Archivierte Angebote — versteckter Link */}
-      <div className="px-5 md:px-8 mt-4 text-center">
-        <Link href="/dashboard?status=archived" className="text-[#2C2C2C]/25 text-xs font-semibold hover:text-[#2C2C2C]/50 transition-colors">
-          Archivierte Angebote anzeigen
-        </Link>
-      </div>
+      {/* Empty state — noch gar keine Angebote */}
+      {(recentQuotes ?? []).length === 0 && (
+        <div className="px-5 mt-6">
+          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 p-8 text-center">
+            <div className="font-black text-[#2C2C2C] text-base">Noch kein Angebot.</div>
+            <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-1">Fang auf der Baustelle an.</div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

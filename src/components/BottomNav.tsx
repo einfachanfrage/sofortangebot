@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, Mic } from 'lucide-react'
+import { Home, FileText, Users, Settings, Mic } from 'lucide-react'
 
 const LEFT_NAV = [
   { href: '/dashboard', icon: Home, label: 'Start' },
+  { href: '/angebote', icon: FileText, label: 'Angebote' },
 ]
 const RIGHT_NAV = [
   { href: '/kunden', icon: Users, label: 'Kunden' },
