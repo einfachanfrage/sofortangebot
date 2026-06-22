@@ -125,7 +125,12 @@ export default async function DashboardPage({
     query = query.not('status', 'eq', 'archived')
   }
 
-  const { data: allQuotes } = await query
+  const { data: allQuotes, error: quotesError } = await query
+
+  if (quotesError) {
+    console.error('Dashboard quotes error:', JSON.stringify(quotesError))
+  }
+  console.log('Dashboard debug — company_id:', company?.id, '| quotes count:', allQuotes?.length ?? 0, '| error:', quotesError?.message)
 
   // Monatsbezogene Stats (unabhängig vom Filter)
   const now = new Date()

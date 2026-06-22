@@ -6,9 +6,9 @@ import { Home, Users, Settings, Mic } from 'lucide-react'
 
 const LEFT_NAV = [
   { href: '/dashboard', icon: Home, label: 'Start' },
-  { href: '/kunden', icon: Users, label: 'Kunden' },
 ]
 const RIGHT_NAV = [
+  { href: '/kunden', icon: Users, label: 'Kunden' },
   { href: '/einstellungen', icon: Settings, label: 'Einstellungen' },
 ]
 
