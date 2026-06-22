@@ -1547,41 +1547,26 @@ export default function NeuesAngebotPage() {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // INPUT (Sprache / Foto)
+  // INPUT (Sprache)
   // ─────────────────────────────────────────────────────────────────────────
+
+  const BEISPIELE = [
+    '„Wohnzimmer bei Müller, 5×4m, Wände streichen."',
+    '„Bad fliesen, 2,50×3m, alte Fliesen raus."',
+    '„Schlafzimmer streichen, ca. 15 Quadratmeter."',
+    '„Parkett verlegen, 30qm, Sockelleisten neu."',
+  ]
+
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-0">
-        <div className="flex items-center justify-between">
-          <button onClick={() => router.push('/dashboard')} className="text-white/50 text-sm font-semibold">← Dashboard</button>
-          {/* ⓘ Button — immer sichtbar */}
-          <div className="relative">
-            <button
-              onClick={() => { setHinweisOffen(true); setHinweisSchliessbar(true) }}
-              className="p-1.5 text-white/40 hover:text-white/70 transition-colors"
-              aria-label="Beispiele anzeigen"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
-              </svg>
-            </button>
-            {tooltipSichtbar && (
-              <div className="absolute right-0 top-full mt-1.5 bg-[#F5C400] text-[#2C2C2C] text-xs font-black px-3 py-1.5 rounded-lg whitespace-nowrap shadow-lg">
-                Beispiele anzeigen
-                <div className="absolute -top-1.5 right-3 w-3 h-3 bg-[#F5C400] rotate-45" />
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="text-white font-black text-xl mt-1 mb-4">Neues Angebot</div>
-        <div className="flex">
-          <button onClick={() => setMode('voice')} className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors ${mode === 'voice' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}>🎙 Sprache</button>
-          {visionEnabled && <button onClick={() => setMode('photo')} className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors ${mode === 'photo' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}>📷 Foto</button>}
-        </div>
+    <div className="min-h-dvh bg-white flex flex-col">
+      {/* Header */}
+      <div className="bg-[#2C2C2C] px-5 pt-safe-top pt-5 pb-5">
+        <button onClick={() => router.push('/dashboard')} className="text-white/50 text-sm font-semibold">← Dashboard</button>
+        <div className="text-white font-syne font-black text-xl mt-1">Neues Angebot</div>
       </div>
 
       {/* ── ERSTE-MAL KARTE ────────────────────────────────────────────────── */}
-      {showFirstTimeCard && mode === 'voice' && (
+      {showFirstTimeCard && !micBlocked && (
         <div className="mx-5 mt-5 bg-white rounded-2xl p-5 border border-[#2C2C2C]/5 shadow-sm">
           <div className="font-black text-[#2C2C2C] text-lg mb-1">🎙 So funktioniert&apos;s</div>
           <div className="text-[#2C2C2C]/60 font-semibold text-sm mb-4 leading-relaxed">
@@ -1610,88 +1595,70 @@ export default function NeuesAngebotPage() {
         </div>
       )}
 
-      <div className="flex-1 flex flex-col items-center justify-center px-5 gap-8">
-        {mode === 'voice' && !micBlocked && (
-          <>
-            <div className="text-center">
-              <div className="font-black text-[#2C2C2C] text-2xl mb-2">Aufmaß einsprechen</div>
-              {/* Rotierender Hint-Text */}
-              {!showFirstTimeCard && (
-                <div className="text-[#2C2C2C]/40 font-semibold text-xs max-w-xs leading-relaxed text-center px-2 min-h-[2.5rem] flex items-center justify-center">
-                  &ldquo;{currentHint}&rdquo;
-                </div>
-              )}
-              <div className="text-[#2C2C2C]/25 text-[10px] font-semibold mt-1">Kein perfekter Satz nötig. Einfach drauflos.</div>
-            </div>
+      <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8" style={{ gap: 0 }}>
 
+        {/* Headline */}
+        <div className="text-center mb-8 mt-2">
+          <div className="font-syne font-black text-[#1A1A1A] text-[22px] leading-tight">Einfach drauflos.</div>
+          <div className="text-[14px] font-semibold mt-1" style={{ color: '#888888' }}>Was hast du heute gemacht?</div>
+        </div>
+
+        {/* Rotierendes Beispiel */}
+        {!showFirstTimeCard && !micBlocked && (
+          <div className="text-center mb-6 min-h-[2rem] flex items-center justify-center px-4">
+            <span className="text-[13px] italic font-semibold" style={{ color: '#AAAAAA' }}>{BEISPIELE[Math.floor(Date.now() / 4000) % BEISPIELE.length]}</span>
+          </div>
+        )}
+
+        {/* Mikrofon-Button */}
+        {!micBlocked && (
+          <>
             <button
               onClick={recording ? stopRecording : startRecording}
-              className={`w-36 h-36 rounded-full flex items-center justify-center shadow-2xl transition-all select-none ${recording ? 'bg-red-500 scale-110 shadow-red-200' : 'bg-[#F5C400] active:scale-95'}`}
+              className={`w-24 h-24 rounded-full flex items-center justify-center transition-all select-none mb-4 ${
+                recording
+                  ? 'bg-red-500 scale-110 animate-pulse'
+                  : 'bg-[#F5C400] active:scale-95'
+              }`}
+              style={{ boxShadow: recording ? '0 8px 32px rgba(239,68,68,0.4)' : '0 8px 32px rgba(245,196,0,0.4)' }}
             >
-              {recording ? <MicOff size={52} color="white" strokeWidth={2} /> : <Mic size={52} color="#2C2C2C" strokeWidth={2} />}
+              {recording
+                ? <MicOff size={40} color="white" strokeWidth={2} />
+                : <Mic size={40} color="#2C2C2C" strokeWidth={2} />}
             </button>
-            <div className="font-bold text-sm text-[#2C2C2C]/50">
-              {recording ? '🔴 Läuft — nochmal tippen zum Stoppen' : 'Tippen zum Starten'}
-            </div>
-
-            {/* Nach erster Aufnahme: Hinweis */}
-            {afterFirstHint && (
-              <div className="bg-[#F5C400]/15 border border-[#F5C400]/30 rounded-2xl px-4 py-3 w-full text-center">
-                <p className="text-[#2C2C2C] font-bold text-sm">Gut gemacht. Einfach weitersprechen — nächster Raum, vergessene Position, egal wann.</p>
-              </div>
-            )}
-
-            <div className="w-full">
-              <div className="text-center text-[#2C2C2C]/25 font-bold text-xs mb-3">ODER TEXT EINGEBEN</div>
-              <textarea placeholder="Aufmaß tippen..." value={transcript} onChange={e => setTranscript(e.target.value)} rows={4}
-                className="w-full bg-white border-2 border-[#2C2C2C]/10 rounded-2xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] resize-none" />
-              {transcript.trim() && (
-                <button onClick={() => analyseText(transcript)} className="w-full mt-3 bg-[#2C2C2C] text-white font-black text-lg rounded-xl py-4">
-                  Angebot generieren
-                </button>
-              )}
+            <div className="text-[12px] font-semibold mb-8" style={{ color: recording ? '#EF4444' : '#888888' }}>
+              {recording ? '● Läuft — nochmal tippen zum Stoppen' : '● Antippen und sprechen'}
             </div>
           </>
         )}
 
-        {mode === 'voice' && micBlocked && (
-          <>
-            <div className="text-center">
-              <div className="text-4xl mb-3">⌨️</div>
-              <div className="font-black text-[#2C2C2C] text-2xl mb-2">Aufmaß eintippen</div>
-              <div className="text-[#2C2C2C]/50 font-semibold text-sm max-w-xs leading-relaxed">Mikrofon nicht verfügbar — kein Problem.</div>
-            </div>
-            <div className="w-full">
-              <textarea placeholder="z.B.: Wohnzimmer 30m², Schlafzimmer 20m², alles streichen inkl. Decke..." value={transcript} onChange={e => setTranscript(e.target.value)} rows={6} autoFocus
-                className="w-full bg-white border-2 border-[#2C2C2C]/10 rounded-2xl px-4 py-4 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] resize-none" />
-              <button onClick={() => analyseText(transcript)} disabled={!transcript.trim()}
-                className="w-full mt-3 bg-[#F5C400] text-[#2C2C2C] font-black text-xl rounded-2xl py-5 disabled:opacity-40">Angebot generieren</button>
-              <button onClick={() => setMicBlocked(false)} className="w-full mt-2 text-center text-[#2C2C2C]/30 font-semibold text-sm py-2">Mikrofon nochmal versuchen</button>
-            </div>
-          </>
+        {micBlocked && (
+          <div className="text-center mb-6">
+            <div className="text-[#2C2C2C]/40 font-semibold text-sm">Mikrofon nicht verfügbar — bitte tippen.</div>
+            <button onClick={() => setMicBlocked(false)} className="text-[#2C2C2C]/25 font-semibold text-xs mt-2">Mikrofon nochmal versuchen</button>
+          </div>
         )}
 
-        {mode === 'photo' && (
-          <>
-            <div className="text-center">
-              <div className="font-black text-[#2C2C2C] text-2xl mb-2">Baustelle fotografieren</div>
-              <div className="text-[#2C2C2C]/50 font-semibold text-sm max-w-xs">KI erkennt Räume und schlägt Positionen vor.</div>
-            </div>
-            <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden"
-              onChange={e => { const file = e.target.files?.[0]; if (!file) return; setPhotoPreview(URL.createObjectURL(file)); processPhoto(file) }} />
-            {photoPreview
-              // eslint-disable-next-line @next/next/no-img-element
-              ? <img src={photoPreview} alt="" className="w-full rounded-2xl object-cover max-h-64" />
-              : <button onClick={() => fileInputRef.current?.click()} className="w-36 h-36 rounded-full bg-[#F5C400] flex items-center justify-center shadow-2xl"><Camera size={52} color="#2C2C2C" strokeWidth={2} /></button>
-            }
-            <button onClick={() => fileInputRef.current?.click()} className="text-[#2C2C2C]/40 font-bold text-sm">
-              {photoPreview ? 'Anderes Foto wählen' : 'Foto aufnehmen oder aus Galerie'}
+        {/* Textfeld */}
+        <div className="w-full">
+          <textarea
+            placeholder="Oder hier tippen..."
+            value={transcript}
+            onChange={e => setTranscript(e.target.value)}
+            rows={micBlocked ? 6 : 3}
+            autoFocus={micBlocked}
+            className="w-full rounded-2xl px-4 py-3 text-[#2C2C2C] font-semibold text-[15px] focus:outline-none focus:border-[#F5C400] resize-none border-2"
+            style={{ background: '#F7F7F5', borderColor: transcript.trim() ? '#F5C400' : 'transparent' }}
+          />
+          {transcript.trim() && (
+            <button onClick={() => analyseText(transcript)} className="w-full mt-3 bg-[#2C2C2C] text-white font-black text-lg rounded-xl py-4">
+              Angebot generieren
             </button>
-          </>
-        )}
+          )}
+        </div>
 
-        {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{error}</div>}
-        {rateLimitMsg && <div className="bg-[#FFF9E6] border border-[#F5C400]/40 text-[#92400E] rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{rateLimitMsg}</div>}
+        {error && <div className="mt-4 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{error}</div>}
+        {rateLimitMsg && <div className="mt-4 bg-[#FFF9E6] border border-[#F5C400]/40 text-[#92400E] rounded-xl px-4 py-3 text-sm font-semibold w-full text-center">{rateLimitMsg}</div>}
       </div>
 
       {/* Aufnahme-Hinweis Bottom Sheet */}
