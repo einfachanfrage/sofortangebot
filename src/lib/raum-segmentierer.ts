@@ -55,12 +55,58 @@ function erkennTyp(text: string, vorher: string): 'raum' | 'ergaenzung' | 'korre
   return 'raum'
 }
 
+// Erkennt Inline-Multi-Raum-Pattern wie "Wohnzimmer 6×4m, Schlafzimmer 4.5×3.5m"
+// und teilt in separate Zeilen auf, die dann normal verarbeitet werden können
+function splitInlineRaeume(text: string): string[] {
+  const lower = text.toLowerCase()
+  // Positionen aller Raumnamen im Text finden
+  const treffer: Array<{ pos: number; name: string }> = []
+  for (const raumName of RAUM_NAMEN) {
+    let start = 0
+    while (true) {
+      const idx = lower.indexOf(raumName, start)
+      if (idx === -1) break
+      // Nur als eigenständiges Wort (kein Buchstabe davor/danach)
+      const vorher = idx === 0 || !/[a-zäöü]/.test(lower[idx - 1])
+      const danach = idx + raumName.length >= lower.length || !/[a-zäöü]/.test(lower[idx + raumName.length])
+      if (vorher && danach) treffer.push({ pos: idx, name: raumName })
+      start = idx + 1
+    }
+  }
+  // Deduplizieren und sortieren
+  const unique = treffer
+    .sort((a, b) => a.pos - b.pos)
+    .filter((t, i, arr) => i === 0 || t.pos !== arr[i - 1].pos)
+
+  // Nur aufteilen wenn ≥2 verschiedene Räume gefunden
+  const verschiedeneNamen = new Set(unique.map(t => t.name))
+  if (verschiedeneNamen.size < 2) return [text]
+
+  const segmente: string[] = []
+  for (let i = 0; i < unique.length; i++) {
+    const start = unique[i].pos
+    const end = i + 1 < unique.length ? unique[i + 1].pos : text.length
+    const seg = text.slice(start, end).trim().replace(/[,;]\s*$/, '')
+    if (seg) segmente.push(seg)
+  }
+  return segmente.length >= 2 ? segmente : [text]
+}
+
 // Teilt Transkript in Segmente auf Basis von Signalwörtern
 export function segmentiereRaeume(transkript: string): RaumSegment[] {
   if (!transkript.trim()) return []
 
   // Bestehende \n-Markierungen aus transkript-normalisierer nutzen
-  const zeilen = transkript.split('\n').map(z => z.trim()).filter(Boolean)
+  let zeilen = transkript.split('\n').map(z => z.trim()).filter(Boolean)
+
+  // Inline-Multi-Raum-Pattern erkennen: "Wohnzimmer 6×4m, Schlafzimmer 4.5×3.5m"
+  // Jede Zeile auf inline Raumwechsel prüfen und ggf. aufteilen
+  const expandiert: string[] = []
+  for (const zeile of zeilen) {
+    const teile = splitInlineRaeume(zeile)
+    expandiert.push(...teile)
+  }
+  zeilen = expandiert
 
   if (zeilen.length <= 1) {
     // Kein Raumwechsel erkannt — single segment

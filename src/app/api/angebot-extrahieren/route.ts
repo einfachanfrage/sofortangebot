@@ -11,6 +11,7 @@ import { berechneBewertung } from '@/lib/mengen/bewertung'
 import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfrage } from '@/lib/mengen/types'
 import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
 import { pruefeUndErgaenzeVollstaendigkeit } from '@/lib/mengen/vollstaendigkeits-check'
+import { repariereDuplikatMasse, repariereDuplikatNamen } from '@/lib/mengen/mehrraum-reparatur'
 
 export const maxDuration = 60
 
@@ -71,6 +72,20 @@ export async function POST(req: NextRequest) {
 
     let extraktion = normalisiereExtraktion(edgeResult.result as unknown as Record<string, unknown>)
     extraktion.transkript = verarbeitetText
+
+    // GPT-Bug: Bei Mehrraum-Aufträgen gibt GPT manchmal falsche Namen oder kopierte Maße zurück
+    if (extraktion.raeume.length > 1) {
+      const { repariert: mitNamen, wurdeRepariert: nRep } = repariereDuplikatNamen(extraktion.raeume, text)
+      if (nRep) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Namen korrigiert ==='); extraktion = { ...extraktion, raeume: mitNamen } }
+      const { repariert, wurdeRepariert } = repariereDuplikatMasse(extraktion.raeume, text)
+      if (wurdeRepariert) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Maße korrigiert ==='); extraktion = { ...extraktion, raeume: repariert } }
+    }
+    if (extraktion.bereiche.length > 1) {
+      const { repariert: mitNamen, wurdeRepariert: nRep } = repariereDuplikatNamen(extraktion.bereiche, text)
+      if (nRep) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Namen in bereiche[] korrigiert ==='); extraktion = { ...extraktion, bereiche: mitNamen } }
+      const { repariert, wurdeRepariert } = repariereDuplikatMasse(extraktion.bereiche, text)
+      if (wurdeRepariert) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Maße in bereiche[] korrigiert ==='); extraktion = { ...extraktion, bereiche: repariert } }
+    }
 
     // Bug 2: GPT-Extraktion loggen
     console.log('=== GPT-4o EXTRAKTION ===')
