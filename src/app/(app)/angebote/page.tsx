@@ -36,11 +36,12 @@ const GEWERK_BADGE: Record<string, string> = {
 }
 
 const EMPTY_STATE_TEXT: Record<string, { title: string; sub: string }> = {
-  entwurf:    { title: 'Keine Entwürfe.',         sub: 'Neue Aufnahme starten.' },
-  offen:      { title: 'Keine offenen Angebote.', sub: 'Alle Angebote haben eine Antwort.' },
-  beauftragt: { title: 'Noch kein Auftrag.',      sub: 'Offen lassen, Angebote überzeugen.' },
-  abgelehnt:  { title: 'Kein Angebot abgelehnt.', sub: 'Gut so.' },
-  '':         { title: 'Noch keine Angebote.',    sub: 'Erstes Aufmaß starten.' },
+  entwurf:    { title: 'Keine Entwürfe.',         sub: 'Neue Aufnahme starten.'              },
+  offen:      { title: 'Nichts offen.',           sub: 'Alle Angebote haben eine Antwort.'   },
+  beauftragt: { title: 'Noch kein Auftrag.',      sub: 'Angebote verschicken, abwarten.'     },
+  abgelehnt:  { title: 'Kein Angebot abgelehnt.', sub: 'Gut so.'                            },
+  archived:   { title: 'Kein Archiv.',            sub: 'Abgelehnte Angebote landen hier.'    },
+  '':         { title: 'Noch keine Angebote.',    sub: 'FAB antippen und Aufmaß starten.'    },
 }
 
 function fmt(n: number) {
@@ -72,15 +73,14 @@ export default async function AngebotePage({
   const { data: allQuotes, error: quotesError } = statusValues
     ? await supabase
         .from('quotes')
-        .select('*, customer:customers(name), quote_items(title, position)')
+        .select('*, customer:customers(name)')
         .eq('company_id', company?.id)
         .in('status', statusValues)
         .order('created_at', { ascending: false })
     : await supabase
         .from('quotes')
-        .select('*, customer:customers(name), quote_items(title, position)')
+        .select('*, customer:customers(name)')
         .eq('company_id', company?.id)
-        .not('status', 'eq', 'archived')
         .order('created_at', { ascending: false })
 
   if (quotesError) console.error('Angebote query error:', quotesError.message)
@@ -88,6 +88,10 @@ export default async function AngebotePage({
   const { data: entwurfData } = await supabase
     .from('quotes').select('id').eq('company_id', company?.id).in('status', ['draft', 'in_bearbeitung'])
   const entwurfCount = (entwurfData ?? []).length
+
+  const { data: archivData } = await supabase
+    .from('quotes').select('id').eq('company_id', company?.id).eq('status', 'archived')
+  const archivCount = (archivData ?? []).length
 
   const now = new Date()
   const monatStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
@@ -131,6 +135,7 @@ export default async function AngebotePage({
             openCount={openCount}
             acceptedCount={acceptedCount}
             rejectedCount={rejectedCount}
+            archivCount={archivCount}
           />
         </Suspense>
       </div>
@@ -164,9 +169,8 @@ export default async function AngebotePage({
       {/* Mobile list */}
       {filteredQuotes.length > 0 && (
         <div className="md:hidden px-5 mt-4 flex flex-col gap-3">
-          {filteredQuotes.map((quote: Quote & { customer?: { name: string } | null; gewerk?: string; quote_items?: { title: string; position: number }[] }) => {
+          {filteredQuotes.map((quote: Quote & { customer?: { name: string } | null; gewerk?: string }) => {
             const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
-            const items = (quote.quote_items ?? []).sort((a, b) => a.position - b.position)
             return (
               <MobileQuoteCard
                 key={quote.id}
@@ -175,7 +179,6 @@ export default async function AngebotePage({
                 statusColor={cfg.color}
                 formattedDate={fmtDate(quote.created_at)}
                 formattedAmount={fmt(quote.total_gross)}
-                ersterItemTitel={items[0]?.title ?? null}
               />
             )
           })}
@@ -220,11 +223,6 @@ export default async function AngebotePage({
         </div>
       )}
 
-      <div className="px-5 mt-4 text-center">
-        <Link href="/angebote?status=archived" className="text-[#2C2C2C]/25 text-xs font-semibold">
-          Archivierte Angebote anzeigen
-        </Link>
-      </div>
 
       <BottomNav />
     </div>

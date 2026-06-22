@@ -9,6 +9,7 @@ interface DashboardFiltersProps {
   openCount: number
   acceptedCount: number
   rejectedCount: number
+  archivCount?: number
 }
 
 const PILLS = [
@@ -17,6 +18,7 @@ const PILLS = [
   { key: 'offen',      label: 'Offen',          hasCount: true  },
   { key: 'beauftragt', label: 'Beauftragt',     hasCount: true  },
   { key: 'abgelehnt',  label: 'Abgelehnt',      hasCount: true  },
+  { key: 'archived',   label: 'Archiv',         hasCount: true  },
 ]
 
 export default function DashboardFilters({
@@ -24,6 +26,7 @@ export default function DashboardFilters({
   openCount,
   acceptedCount,
   rejectedCount,
+  archivCount = 0,
 }: DashboardFiltersProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -43,6 +46,7 @@ export default function DashboardFilters({
     if (key === 'offen')      return openCount
     if (key === 'beauftragt') return acceptedCount
     if (key === 'abgelehnt')  return rejectedCount
+    if (key === 'archived')   return archivCount
     return null
   }
 
