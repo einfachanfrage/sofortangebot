@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Mic, MicOff, Camera, Trash2, Plus, ChevronRight, BookOpen, X, Loader2, Play } from 'lucide-react'
+import { Mic, MicOff, Camera, Trash2, Plus, ChevronRight, ChevronDown, BookOpen, X, Loader2, Play } from 'lucide-react'
 import type { GeneratedQuestion } from '@/app/api/angebot-generieren/route'
 import type { PriceItem, MengenrabattTier } from '@/lib/types'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
@@ -148,6 +148,7 @@ export default function NeuesAngebotPage() {
   const [autoDraftId, setAutoDraftId] = useState<string | null>(null)
   const [autosaveStatus, setAutosaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('unsaved')
   const [uebersichtOffen, setUebersichtOffen] = useState(false)
+  const [kundeOffen, setKundeOffen] = useState(false)
   const autosaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Auto-save als Entwurf wenn Review-Screen erscheint
@@ -1229,12 +1230,34 @@ export default function NeuesAngebotPage() {
           </div>
         )}
 
-        <div className="px-5 pt-5 flex flex-col gap-4">
-          {/* Kundendaten */}
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="font-black text-[#2C2C2C] mb-3">Kunde</div>
+        {/* Sticky Mic Button — immer zugänglich */}
+        <div className="sticky top-0 z-10 px-5 py-3 bg-[#F7F7F5]/95 backdrop-blur-sm border-b border-[#2C2C2C]/5">
+          <button onClick={addSessionInput}
+            className="flex items-center justify-center gap-2.5 w-full bg-[#2C2C2C] text-white font-black text-base rounded-2xl py-4 active:opacity-80 transition-opacity">
+            <Mic size={20} strokeWidth={2.5} />
+            Weiteres Aufmaß einsprechen
+          </button>
+        </div>
+
+        <div className="px-5 pt-4 flex flex-col gap-4">
+          {/* Kundendaten — kollabierbar */}
+          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5">
+            <button
+              onClick={() => setKundeOffen(v => !v)}
+              className="w-full flex items-center justify-between px-4 py-3.5"
+            >
+              <div className="flex items-center gap-2">
+                <span className="font-black text-[#2C2C2C] text-sm">
+                  {customerName ? customerName : 'Kunde'}
+                </span>
+                {!customerName && <span className="text-xs font-semibold text-[#2C2C2C]/30">optional</span>}
+              </div>
+              <ChevronDown size={16} className={`text-[#2C2C2C]/40 transition-transform ${kundeOffen ? 'rotate-180' : ''}`} />
+            </button>
+            {kundeOffen && (
+              <div className="px-4 pb-4 border-t border-[#2C2C2C]/5 pt-3">
             <div className="relative">
-              <input placeholder="Name (optional)" value={customerName}
+              <input placeholder="Name" value={customerName}
                 onChange={async e => {
                   const val = e.target.value
                   setCustomerName(val)
@@ -1270,9 +1293,11 @@ export default function NeuesAngebotPage() {
                 </div>
               )}
             </div>
-            <input placeholder="Telefon (optional)" type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className={`${inputCls} mt-3`} />
-            <input placeholder="E-Mail (optional)" type="email" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} className={`${inputCls} mt-3`} />
-            <input placeholder="Adresse (optional)" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} className={`${inputCls} mt-3`} />
+            <input placeholder="Telefon" type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className={`${inputCls} mt-3`} />
+            <input placeholder="E-Mail" type="email" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} className={`${inputCls} mt-3`} />
+            <input placeholder="Adresse" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} className={`${inputCls} mt-3`} />
+              </div>
+            )}
           </div>
 
           {/* Positionen */}
@@ -1408,7 +1433,7 @@ export default function NeuesAngebotPage() {
           )}
 
           {/* Notizen */}
-          <textarea placeholder="Anmerkungen (optional)" value={notes} onChange={e => setNotes(e.target.value)} rows={3}
+          <textarea placeholder="Anmerkungen" value={notes} onChange={e => setNotes(e.target.value)} rows={2}
             className="w-full bg-white border border-[#2C2C2C]/5 rounded-2xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400] resize-none" />
 
           {/* Briefpapier-Auswahl (nur wenn mehrere vorhanden) */}
@@ -1436,15 +1461,15 @@ export default function NeuesAngebotPage() {
           )}
 
           {/* Gültigkeitsdatum */}
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="font-black text-[#2C2C2C] mb-3">Gültig bis</div>
-            <div className="flex gap-2 flex-wrap mb-3">
+          <div className="bg-white rounded-2xl px-4 py-3 border border-[#2C2C2C]/5 flex items-center gap-3">
+            <span className="text-xs font-black text-[#2C2C2C]/40 shrink-0">Gültig bis</span>
+            <div className="flex gap-1.5 flex-1 flex-wrap">
               {[7, 14, 30, 60].map(days => {
                 const d = new Date(); d.setDate(d.getDate() + days); const val = d.toISOString().split('T')[0]
-                return <button key={days} onClick={() => setValidUntil(val)} className={`px-3 py-1.5 rounded-xl text-sm font-bold ${validUntil === val ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-[#F7F7F5] text-[#2C2C2C]/60'}`}>{days} Tage</button>
+                return <button key={days} onClick={() => setValidUntil(val)} className={`px-2.5 py-1 rounded-lg text-xs font-bold ${validUntil === val ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-[#F7F7F5] text-[#2C2C2C]/50'}`}>{days}T</button>
               })}
             </div>
-            <input type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-2.5 font-semibold focus:outline-none focus:border-[#F5C400]" />
+            <input type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} className="text-xs font-semibold text-[#2C2C2C]/60 bg-transparent focus:outline-none" />
           </div>
 
           {/* Summe */}
@@ -1458,12 +1483,6 @@ export default function NeuesAngebotPage() {
             </div>
           </div>
 
-          {/* Weitere Eingabe hinzufügen (Session-Konzept) */}
-          <button onClick={addSessionInput}
-            className="flex items-center justify-center gap-3 w-full bg-white border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/70 font-bold text-sm rounded-2xl py-3.5">
-            <Mic size={18} strokeWidth={2.5} />
-            Weiteres Aufmaß einsprechen
-          </button>
         </div>
 
         {/* Preisdatenbank-Picker */}
