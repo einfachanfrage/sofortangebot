@@ -6,6 +6,7 @@ import { PwaBannerManager } from '@/components/PwaBannerManager'
 import BottomNav from '@/components/BottomNav'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
+import AvatarSheet from '@/components/AvatarSheet'
 import { Mic, ArrowRight, TrendingUp, Clock, CheckCircle } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
@@ -17,6 +18,16 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   rejected:       { label: 'Abgelehnt',      color: 'bg-red-50 text-red-600'            },
   archived:       { label: 'Archiviert',     color: 'bg-[#F7F7F5] text-[#2C2C2C]/30'  },
 }
+
+const TIPPS = [
+  'Schick Angebote direkt per WhatsApp — Kunden antworten schneller als per E-Mail.',
+  'Füge Kundennamen hinzu — macht einen professionelleren Eindruck.',
+  'Gültigkeitsdauer auf 14 Tage setzen erhöht die Abschlussrate.',
+  'Mehrere Räume? Einfach nacheinander einsprechen.',
+  'Kleinmaterial-Pauschale wird automatisch ergänzt.',
+  'Preisliste anpassen → KI übernimmt deine Marktpreise.',
+  'Angebote mit Foto überzeugen öfter. Kommt bald.',
+]
 
 function fmt(n: number) {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)
@@ -30,6 +41,12 @@ function getGreeting(): string {
   if (h < 17) return 'Guten Tag.'
   if (h < 21) return 'Guten Abend.'
   return 'Noch am Arbeiten?'
+}
+function getDynamicSubtitle(offeneCount: number, gesamtCount: number, beauftragtCount: number): string {
+  if (offeneCount > 0) return `${offeneCount} Angebot${offeneCount > 1 ? 'e warten' : ' wartet'} auf Antwort.`
+  if (gesamtCount === 0) return 'Fang auf der Baustelle an.'
+  if (beauftragtCount > 0 && beauftragtCount >= gesamtCount) return 'Stark. Alle Angebote beauftragt.'
+  return 'Alles auf dem neuesten Stand.'
 }
 
 export default async function DashboardPage({
@@ -50,7 +67,7 @@ export default async function DashboardPage({
 
   const { welcome } = await searchParams
 
-  // Letzte 3 Angebote (nicht archiviert)
+  // Letzte 3 Angebote
   const { data: recentQuotes } = await supabase
     .from('quotes')
     .select('*, customer:customers(name)')
@@ -58,6 +75,12 @@ export default async function DashboardPage({
     .not('status', 'eq', 'archived')
     .order('created_at', { ascending: false })
     .limit(3)
+
+  // Gesamtzahl aller Angebote (für Onboarding-Check)
+  const { count: allTimeCount } = await supabase
+    .from('quotes')
+    .select('id', { count: 'exact', head: true })
+    .eq('company_id', company?.id)
 
   // Monatsstats
   const now = new Date()
@@ -74,7 +97,7 @@ export default async function DashboardPage({
   const monatOffen = monat.filter(q => q.status === 'sent' || q.status === 'viewed').length
   const monatBeauftragt = monat.filter(q => q.status === 'accepted').length
 
-  // Gesamtanzahl laufende Angebote
+  // Offene Angebote gesamt (alle Monate)
   const { data: offeneGesamt } = await supabase
     .from('quotes')
     .select('id')
@@ -82,8 +105,21 @@ export default async function DashboardPage({
     .in('status', ['sent', 'viewed'])
   const offeneGesamtCount = (offeneGesamt ?? []).length
 
+  // Beauftragte gesamt (für Subtitle)
+  const { data: beauftragtGesamt } = await supabase
+    .from('quotes')
+    .select('id')
+    .eq('company_id', company?.id)
+    .eq('status', 'accepted')
+  const beauftragtGesamtCount = (beauftragtGesamt ?? []).length
+
   const firstName = company?.name?.split(' ')[0] ?? ''
+  const initial = company?.name?.[0]?.toUpperCase() ?? 'A'
+  const plan = (company as { plan?: string } | null)?.plan ?? 'starter'
   const greeting = getGreeting()
+  const subtitle = getDynamicSubtitle(offeneGesamtCount, allTimeCount ?? 0, beauftragtGesamtCount)
+  const istNeuling = (allTimeCount ?? 0) === 0
+  const tipp = TIPPS[new Date().getDay() % TIPPS.length]
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-28">
@@ -99,41 +135,56 @@ export default async function DashboardPage({
       <div className="px-5 pt-safe-top pt-6 pb-2 flex items-start justify-between">
         <div>
           <div className="text-[#2C2C2C]/40 text-sm font-semibold">{greeting}</div>
-          <div className="font-syne font-black text-[#2C2C2C] text-2xl leading-tight mt-0.5">
-            {firstName || 'Willkommen'}
-          </div>
+          <div className="font-syne font-black text-[#2C2C2C] text-2xl leading-tight mt-0.5">{firstName || 'Willkommen'}</div>
+          <div className="text-[#2C2C2C]/40 text-xs font-semibold mt-0.5">{subtitle}</div>
         </div>
-        <div className="w-10 h-10 rounded-full bg-[#2C2C2C] flex items-center justify-center mt-1">
-          <span className="text-white font-black text-sm">{company?.name?.[0]?.toUpperCase() ?? 'A'}</span>
-        </div>
+        <AvatarSheet initial={initial} name={firstName || company?.name || ''} plan={plan} />
       </div>
 
-      {/* Monatsstats */}
+      {/* Stats — kein Label, "—" wenn null */}
       <div className="px-5 mt-5">
-        <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-2">
-          Dieser Monat
-        </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
             <TrendingUp size={16} className="text-[#1A7A38] mb-2" strokeWidth={2.5} />
-            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">{fmt(monatUmsatz)}</div>
+            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">
+              {monatUmsatz > 0 ? fmt(monatUmsatz) : '—'}
+            </div>
             <div className="text-[10px] font-bold text-[#2C2C2C]/40 mt-1">Umsatz</div>
+            <div className="text-[9px] text-[#2C2C2C]/25 font-semibold">diesen Monat</div>
           </div>
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
             <CheckCircle size={16} className="text-[#1A7A38] mb-2" strokeWidth={2.5} />
-            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">{monatBeauftragt}</div>
+            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">
+              {monatBeauftragt > 0 ? monatBeauftragt : '—'}
+            </div>
             <div className="text-[10px] font-bold text-[#2C2C2C]/40 mt-1">Aufträge</div>
+            <div className="text-[9px] text-[#2C2C2C]/25 font-semibold">diesen Monat</div>
           </div>
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
             <Clock size={16} className="text-blue-500 mb-2" strokeWidth={2.5} />
-            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">{monatOffen}</div>
+            <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none">
+              {monatOffen > 0 ? monatOffen : '—'}
+            </div>
             <div className="text-[10px] font-bold text-[#2C2C2C]/40 mt-1">Offen</div>
+            <div className="text-[9px] text-[#2C2C2C]/25 font-semibold">diesen Monat</div>
           </div>
         </div>
       </div>
 
+      {/* Onboarding-Nudge — nur wenn noch gar kein Angebot */}
+      {istNeuling && (
+        <div className="px-5 mt-4">
+          <div className="bg-[#FFFBEB] border border-[#F5C400]/30 rounded-2xl px-5 py-4">
+            <div className="font-black text-[#2C2C2C] text-[15px] mb-1">🎯 Erstelle dein erstes Angebot</div>
+            <div className="text-[#2C2C2C]/60 text-[13px] font-semibold leading-relaxed">
+              Dauert 2 Minuten. Einfach auf den Button tippen und loslegen.
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* CTA */}
-      <div className="px-5 mt-5">
+      <div className="px-5 mt-4">
         <Link
           href="/angebot/neu"
           className="flex items-center justify-between w-full bg-[#2C2C2C] text-white rounded-2xl px-5 py-4"
@@ -172,16 +223,11 @@ export default async function DashboardPage({
       {/* Letzte Angebote */}
       {(recentQuotes ?? []).length > 0 && (
         <div className="px-5 mt-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest">
-              Zuletzt erstellt
-            </div>
-            <Link href="/angebote" className="text-[#2C2C2C]/40 text-xs font-bold flex items-center gap-1">
-              Alle <ArrowRight size={12} />
-            </Link>
+          <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-3">
+            Zuletzt erstellt
           </div>
           <div className="flex flex-col gap-3">
-            {(recentQuotes ?? []).map((quote: Quote & { customer?: { name: string } | null }) => {
+            {(recentQuotes ?? []).map((quote: Quote & { customer?: { name: string } | null; gewerk?: string }) => {
               const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
               return (
                 <MobileQuoteCard
@@ -198,15 +244,23 @@ export default async function DashboardPage({
         </div>
       )}
 
-      {/* Empty state — noch gar keine Angebote */}
-      {(recentQuotes ?? []).length === 0 && (
+      {/* Empty state */}
+      {(recentQuotes ?? []).length === 0 && !istNeuling && (
         <div className="px-5 mt-6">
           <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 p-8 text-center">
-            <div className="font-black text-[#2C2C2C] text-base">Noch kein Angebot.</div>
-            <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-1">Fang auf der Baustelle an.</div>
+            <div className="font-black text-[#2C2C2C] text-base">Keine aktiven Angebote.</div>
+            <div className="text-[#2C2C2C]/40 text-sm font-semibold mt-1">Neues Aufmaß starten.</div>
           </div>
         </div>
       )}
+
+      {/* Tipp-Card unten */}
+      <div className="px-5 mt-5">
+        <div className="bg-white border border-[#2C2C2C]/5 rounded-2xl px-5 py-4">
+          <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-1.5">💡 Tipp</div>
+          <div className="text-[#2C2C2C]/60 text-[13px] font-semibold leading-relaxed">{tipp}</div>
+        </div>
+      </div>
 
       <BottomNav />
     </div>
