@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Users } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
@@ -645,6 +645,11 @@ export default function EinstellungenPage() {
         )}
 
         <div className="flex flex-col gap-1 mt-2">
+          <Link href="/kunden"
+            className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors">
+            <Users size={16} />
+            Kunden verwalten
+          </Link>
           <button onClick={handleLogout}
             className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors">
             <LogOut size={16} />
