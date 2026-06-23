@@ -61,7 +61,7 @@ const STATUS_CONFIG = {
 
 const VIA_LABELS: Record<string, string> = {
   email: '✉️ E-Mail', whatsapp: '💬 WhatsApp', link: '🔗 Link',
-  lexoffice: 'Lexoffice', sevdesk: 'sevDesk', fastbill: 'FastBill',
+  lexware: 'Lexware Office', lexoffice: 'Lexoffice', sevdesk: 'sevDesk', fastbill: 'FastBill',
   billomat: 'Billomat', papierkram: 'Papierkram', easybill: 'Easybill',
 }
 
@@ -527,6 +527,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   const INTEGRATIONS = [
+    { id: 'lexware', label: 'Lexware Office', short: 'LW', color: '#003DA5', active: !!company?.lexware_api_key },
     { id: 'lexoffice', label: 'Lexoffice', short: 'LO', color: '#0066CC', active: !!company?.lexoffice_api_key },
     { id: 'sevdesk', label: 'sevDesk', short: 'SD', color: '#E84B3C', active: !!company?.sevdesk_api_key },
     { id: 'fastbill', label: 'FastBill', short: 'FB', color: '#FF6B00', active: !!company?.fastbill_api_key && !!company?.fastbill_email },
