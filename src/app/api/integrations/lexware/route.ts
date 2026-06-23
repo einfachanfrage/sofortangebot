@@ -38,12 +38,12 @@ export async function POST(req: NextRequest) {
     title: string; quantity: number; unit: string; unit_price: number
   }) => ({
     type: 'custom',
-    name: item.title,
-    quantity: item.quantity,
-    unitName: item.unit,
+    name: String(item.title).slice(0, 255),
+    quantity: parseFloat(String(item.quantity)),
+    unitName: String(item.unit).slice(0, 20),
     unitPrice: {
       currency: 'EUR',
-      netAmount: item.unit_price,
+      netAmount: parseFloat(String(item.unit_price)),
       taxRatePercentage: company.vat_rate ?? 19,
     },
     discountPercentage: 0,
