@@ -61,9 +61,16 @@ export async function POST(req: NextRequest) {
   if (quote.customer?.lexoffice_contact_id) {
     body.address = { contactId: quote.customer.lexoffice_contact_id }
   } else if (quote.customer?.name) {
+    // Adresse: erste Zeile = Straße, zweite Zeile = PLZ Ort
+    const adressZeilen = (quote.customer.address ?? '').split('\n').map((s: string) => s.trim()).filter(Boolean)
+    const strasseRaw = adressZeilen[0] ?? ''
+    const plzOrtRaw = adressZeilen[1] ?? ''
+    const plzMatch = plzOrtRaw.match(/^(\d{5})\s+(.+)$/)
     body.address = {
       name: quote.customer.name,
-      ...(quote.customer.address ? { street: quote.customer.address } : {}),
+      countryCode: 'DE',
+      ...(strasseRaw ? { street: strasseRaw } : {}),
+      ...(plzMatch ? { zip: plzMatch[1], city: plzMatch[2] } : plzOrtRaw ? { city: plzOrtRaw } : {}),
     }
   }
 
@@ -83,8 +90,10 @@ export async function POST(req: NextRequest) {
 
   if (!res.ok) {
     const err = await res.text()
-    console.error('Lexware Office error:', err)
-    return NextResponse.json({ error: 'Lexware Office Fehler: ' + res.status }, { status: 502 })
+    console.error('Lexware Office error:', res.status, err)
+    let detail = ''
+    try { detail = JSON.parse(err)?.message ?? err } catch { detail = err }
+    return NextResponse.json({ error: `Lexware Office Fehler ${res.status}: ${detail}` }, { status: 502 })
   }
 
   const result = await res.json()
