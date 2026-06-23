@@ -92,9 +92,20 @@ export async function POST(req: NextRequest) {
   if (!res.ok) {
     const err = await res.text()
     console.error('Lexware Office error:', res.status, err)
+    console.error('Lexware request body:', JSON.stringify(body))
     let detail = ''
-    try { detail = JSON.parse(err)?.message ?? err } catch { detail = err }
-    return NextResponse.json({ error: `Lexware Office Fehler ${res.status}: ${detail}` }, { status: 502 })
+    try {
+      const parsed = JSON.parse(err)
+      // Zeige alle Validation-Details wenn vorhanden
+      if (parsed.details?.length) {
+        detail = parsed.details.map((d: { field?: string; message?: string; violation?: string }) =>
+          [d.field, d.message ?? d.violation].filter(Boolean).join(': ')
+        ).join(' | ')
+      } else {
+        detail = parsed.message ?? err
+      }
+    } catch { detail = err }
+    return NextResponse.json({ error: `Lexware ${res.status}: ${detail}` }, { status: 502 })
   }
 
   const result = await res.json()
