@@ -1,6 +1,7 @@
 export type Plan = 'starter' | 'pro'
 export type AccountingSoftware =
   | 'lexoffice'
+  | 'lexware'
   | 'sevdesk'
   | 'fastbill'
   | 'billomat'
@@ -62,6 +63,7 @@ export interface Company {
   gewerke: string[]
   created_at: string
   lexoffice_api_key: string | null
+  lexware_api_key: string | null
   sevdesk_api_key: string | null
   fastbill_api_key: string | null
   fastbill_email: string | null

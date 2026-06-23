@@ -24,6 +24,7 @@ export async function GET() {
       accounting_software: 'none',
       gewerke: [],
       created_at: new Date().toISOString(),
+      lexware_api_key: null,
       lexoffice_api_key: null,
       sevdesk_api_key: null,
       fastbill_api_key: null,

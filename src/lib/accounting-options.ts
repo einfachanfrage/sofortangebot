@@ -13,11 +13,17 @@ export interface AccountingOption {
 export const ACCOUNTING_OPTIONS: AccountingOption[] = [
   // Direkte OAuth-Integrationen
   {
-    value: 'lexoffice',
-    label: 'Lexoffice',
+    value: 'lexware',
+    label: 'Lexware Office',
     desc: 'Direkte Verbindung — Angebot landet automatisch drin',
     tier: 'oauth',
     popular: true,
+  },
+  {
+    value: 'lexoffice',
+    label: 'Lexoffice (Legacy)',
+    desc: 'Direkte Verbindung — Angebot landet automatisch drin',
+    tier: 'oauth',
   },
   {
     value: 'sevdesk',

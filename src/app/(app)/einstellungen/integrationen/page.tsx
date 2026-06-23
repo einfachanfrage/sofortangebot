@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Eye, EyeOff, Check, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface Keys {
+  lexware_api_key: string
   lexoffice_api_key: string
   sevdesk_api_key: string
   fastbill_email: string
@@ -17,6 +18,7 @@ interface Keys {
 }
 
 const EMPTY: Keys = {
+  lexware_api_key: '',
   lexoffice_api_key: '',
   sevdesk_api_key: '',
   fastbill_email: '',
@@ -29,8 +31,23 @@ const EMPTY: Keys = {
 
 const SOFTWARES = [
   {
+    id: 'lexware',
+    name: 'Lexware Office',
+    color: '#003DA5',
+    short: 'LW',
+    fields: [{ key: 'lexware_api_key' as keyof Keys, label: 'API-Key', placeholder: 'Deinen Lexware Office API-Key hier einfügen' }],
+    steps: [
+      'Öffne Lexware Office im Browser: app.lexoffice.de',
+      'Klicke oben rechts auf dein Profilbild → „Einstellungen"',
+      'Im linken Menü: „Integrationen" → „API-Zugänge"',
+      'Klicke auf „Neuen Zugang erstellen"',
+      'Wähle alle benötigten Berechtigungen (mind. „Belege" + „Kontakte")',
+      'Kopiere den angezeigten API-Key und füge ihn hier ein',
+    ],
+  },
+  {
     id: 'lexoffice',
-    name: 'Lexoffice',
+    name: 'Lexoffice (Legacy)',
     color: '#0066CC',
     short: 'LO',
     fields: [{ key: 'lexoffice_api_key' as keyof Keys, label: 'API-Key', placeholder: 'Deinen Lexoffice API-Key hier einfügen' }],
@@ -159,10 +176,11 @@ export default function IntegrationenPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       const { data } = await supabase.from('companies').select(
-        'lexoffice_api_key,sevdesk_api_key,fastbill_email,fastbill_api_key,billomat_api_key,billomat_subdomain,papierkram_api_key,easybill_api_key'
+        'lexware_api_key,lexoffice_api_key,sevdesk_api_key,fastbill_email,fastbill_api_key,billomat_api_key,billomat_subdomain,papierkram_api_key,easybill_api_key'
       ).eq('user_id', user.id).single()
       if (data) {
         setKeys({
+          lexware_api_key: data.lexware_api_key ?? '',
           lexoffice_api_key: data.lexoffice_api_key ?? '',
           sevdesk_api_key: data.sevdesk_api_key ?? '',
           fastbill_email: data.fastbill_email ?? '',
@@ -186,6 +204,7 @@ export default function IntegrationenPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     await supabase.from('companies').update({
+      lexware_api_key: keys.lexware_api_key.trim() || null,
       lexoffice_api_key: keys.lexoffice_api_key.trim() || null,
       sevdesk_api_key: keys.sevdesk_api_key.trim() || null,
       fastbill_email: keys.fastbill_email.trim() || null,
@@ -284,7 +303,7 @@ export default function IntegrationenPage() {
                         </div>
                       </div>
                     ))}
-                    {(sw.id === 'lexoffice' || sw.id === 'sevdesk') && isConnected(sw) && (
+                    {(sw.id === 'lexware' || sw.id === 'lexoffice' || sw.id === 'sevdesk') && isConnected(sw) && (
                       <div className="mt-1">
                         <button
                           type="button"
