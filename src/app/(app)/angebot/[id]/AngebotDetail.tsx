@@ -221,6 +221,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showVorschau, setShowVorschau] = useState(false)
   const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
+  const [currentCustomer, setCurrentCustomer] = useState(quote.customer ?? null)
+  const [showKundenSuche, setShowKundenSuche] = useState(false)
+  const [kundenSucheQuery, setKundenSucheQuery] = useState('')
+  const [kundenListe, setKundenListe] = useState<Customer[]>([])
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRef = useRef<MediaRecorder | null>(null)
@@ -585,6 +589,24 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     showToast('Link kopiert ✓')
   }
 
+  async function handleKundenSuche(q: string) {
+    setKundenSucheQuery(q)
+    if (!q.trim()) { setKundenListe([]); return }
+    const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
+    if (!co) return
+    const { data } = await supabase.from('customers').select('*').eq('company_id', co.id).ilike('name', `%${q}%`).limit(8)
+    setKundenListe(data ?? [])
+  }
+
+  async function handleKundeZuweisen(kunde: typeof kundenListe[0] | null) {
+    await supabase.from('quotes').update({ customer_id: kunde?.id ?? null }).eq('id', quote.id)
+    setCurrentCustomer(kunde)
+    setShowKundenSuche(false)
+    setKundenSucheQuery('')
+    setKundenListe([])
+    showToast(kunde ? `Kunde: ${kunde.name} ✓` : 'Kunde entfernt')
+  }
+
   async function handleExport(provider: string, label: string) {
     setExporting(provider)
     const r = await fetch(`/api/integrations/${provider}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.id }) })
@@ -774,18 +796,55 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             )}
 
             {/* Kunde */}
-            {quote.customer && (
-              <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-                <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Kunde</div>
-                <div className="font-black text-[#2C2C2C]">{quote.customer.name}</div>
-                {quote.customer.address && <div className="text-sm text-[#2C2C2C]/60 font-semibold">{quote.customer.address}</div>}
-                {quote.customer.phone && (
-                  <a href={`tel:${quote.customer.phone}`} className="flex items-center gap-2 text-sm text-[#2C2C2C] font-semibold mt-1">
-                    <Phone size={14} className="text-[#F5C400]" />{quote.customer.phone}
-                  </a>
-                )}
+            <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide">Kunde</div>
+                <button onClick={() => setShowKundenSuche(v => !v)} className="text-xs font-bold text-[#F5C400] hover:text-[#D4A800]">
+                  {currentCustomer ? 'Ändern' : '+ Kunde'}
+                </button>
               </div>
-            )}
+              {showKundenSuche && (
+                <div className="mb-3">
+                  <input
+                    autoFocus
+                    type="text"
+                    value={kundenSucheQuery}
+                    onChange={e => handleKundenSuche(e.target.value)}
+                    placeholder="Kundenname suchen..."
+                    className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#F5C400]"
+                  />
+                  {kundenListe.length > 0 && (
+                    <div className="mt-1 border border-[#2C2C2C]/10 rounded-xl overflow-hidden">
+                      {kundenListe.map(k => (
+                        <button key={k.id} onClick={() => handleKundeZuweisen(k)}
+                          className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-[#F7F7F5] border-b border-[#2C2C2C]/5 last:border-0">
+                          <div className="font-bold text-[#2C2C2C]">{k.name}</div>
+                          {k.address && <div className="text-xs text-[#2C2C2C]/40 truncate">{k.address}</div>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {currentCustomer && (
+                    <button onClick={() => handleKundeZuweisen(null)} className="mt-2 text-xs font-bold text-red-400 hover:text-red-600">
+                      Kunde entfernen
+                    </button>
+                  )}
+                </div>
+              )}
+              {currentCustomer ? (
+                <>
+                  <div className="font-black text-[#2C2C2C]">{currentCustomer.name}</div>
+                  {currentCustomer.address && <div className="text-sm text-[#2C2C2C]/60 font-semibold">{currentCustomer.address}</div>}
+                  {currentCustomer.phone && (
+                    <a href={`tel:${currentCustomer.phone}`} className="flex items-center gap-2 text-sm text-[#2C2C2C] font-semibold mt-1">
+                      <Phone size={14} className="text-[#F5C400]" />{currentCustomer.phone}
+                    </a>
+                  )}
+                </>
+              ) : (
+                <div className="text-sm text-[#2C2C2C]/30 font-semibold">Kein Kunde zugewiesen</div>
+              )}
+            </div>
 
             {/* Positionen */}
             <div className="bg-white rounded-2xl border border-[#2C2C2C]/5" onClick={e => e.stopPropagation()}>
