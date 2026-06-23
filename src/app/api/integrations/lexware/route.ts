@@ -60,14 +60,14 @@ export async function POST(req: NextRequest) {
 
   if (quote.customer?.lexoffice_contact_id) {
     body.address = { contactId: quote.customer.lexoffice_contact_id }
-  } else if (quote.customer?.name) {
-    // Adresse: erste Zeile = Straße, zweite Zeile = PLZ Ort
-    const adressZeilen = (quote.customer.address ?? '').split('\n').map((s: string) => s.trim()).filter(Boolean)
+  } else {
+    const kundenname = quote.customer?.name ?? 'Unbekannter Kunde'
+    const adressZeilen = (quote.customer?.address ?? '').split('\n').map((s: string) => s.trim()).filter(Boolean)
     const strasseRaw = adressZeilen[0] ?? ''
     const plzOrtRaw = adressZeilen[1] ?? ''
     const plzMatch = plzOrtRaw.match(/^(\d{5})\s+(.+)$/)
     body.address = {
-      name: quote.customer.name,
+      name: kundenname,
       countryCode: 'DE',
       ...(strasseRaw ? { street: strasseRaw } : {}),
       ...(plzMatch ? { zip: plzMatch[1], city: plzMatch[2] } : plzOrtRaw ? { city: plzOrtRaw } : {}),
