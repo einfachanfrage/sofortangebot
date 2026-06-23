@@ -589,13 +589,21 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     showToast('Link kopiert ✓')
   }
 
+  const [lexwareKontakte, setLexwareKontakte] = useState<{ id: string; name: string; address: string | null; phone: string | null; email: string | null; source: string }[]>([])
+
   async function handleKundenSuche(q: string) {
     setKundenSucheQuery(q)
+    setLexwareKontakte([])
     if (!q.trim()) { setKundenListe([]); return }
     const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
     if (!co) return
-    const { data } = await supabase.from('customers').select('*').eq('company_id', co.id).ilike('name', `%${q}%`).limit(8)
+    const { data } = await supabase.from('customers').select('*').eq('company_id', co.id).ilike('name', `%${q}%`).limit(6)
     setKundenListe(data ?? [])
+    // Gleichzeitig Lexware-Kontakte suchen
+    fetch(`/api/integrations/lexware/contacts?q=${encodeURIComponent(q)}`)
+      .then(r => r.json())
+      .then(d => setLexwareKontakte(d.contacts ?? []))
+      .catch(() => {})
   }
 
   async function handleKundeZuweisen(kunde: typeof kundenListe[0] | null) {
@@ -604,7 +612,31 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     setShowKundenSuche(false)
     setKundenSucheQuery('')
     setKundenListe([])
+    setLexwareKontakte([])
     showToast(kunde ? `Kunde: ${kunde.name} ✓` : 'Kunde entfernt')
+  }
+
+  async function handleLexwareKontaktImportieren(k: typeof lexwareKontakte[0]) {
+    const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
+    if (!co) return
+    // Anlegen in lokaler DB + Lexware-Kontakt-ID verknüpfen
+    const { data: neu } = await supabase.from('customers').insert({
+      company_id: co.id,
+      name: k.name,
+      address: k.address,
+      phone: k.phone,
+      email: k.email,
+      lexoffice_contact_id: k.id,
+    }).select().single()
+    if (neu) {
+      await supabase.from('quotes').update({ customer_id: neu.id }).eq('id', quote.id)
+      setCurrentCustomer(neu as Customer)
+      setShowKundenSuche(false)
+      setKundenSucheQuery('')
+      setKundenListe([])
+      setLexwareKontakte([])
+      showToast(`${k.name} aus Lexware importiert ✓`)
+    }
   }
 
   async function handleExport(provider: string, label: string) {
@@ -813,15 +845,33 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     placeholder="Kundenname suchen..."
                     className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#F5C400]"
                   />
-                  {kundenListe.length > 0 && (
+                  {(kundenListe.length > 0 || lexwareKontakte.length > 0) && (
                     <div className="mt-1 border border-[#2C2C2C]/10 rounded-xl overflow-hidden">
-                      {kundenListe.map(k => (
-                        <button key={k.id} onClick={() => handleKundeZuweisen(k)}
-                          className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-[#F7F7F5] border-b border-[#2C2C2C]/5 last:border-0">
-                          <div className="font-bold text-[#2C2C2C]">{k.name}</div>
-                          {k.address && <div className="text-xs text-[#2C2C2C]/40 truncate">{k.address}</div>}
-                        </button>
-                      ))}
+                      {kundenListe.length > 0 && (
+                        <>
+                          <div className="px-3 py-1.5 text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-wide bg-[#F7F7F5]">Meine Kunden</div>
+                          {kundenListe.map(k => (
+                            <button key={k.id} onClick={() => handleKundeZuweisen(k)}
+                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-[#F7F7F5] border-b border-[#2C2C2C]/5 last:border-0">
+                              <div className="font-bold text-[#2C2C2C]">{k.name}</div>
+                              {k.address && <div className="text-xs text-[#2C2C2C]/40 truncate">{k.address.split('\n')[0]}</div>}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                      {lexwareKontakte.length > 0 && (
+                        <>
+                          <div className="px-3 py-1.5 text-[10px] font-black text-[#003DA5]/60 uppercase tracking-wide bg-[#003DA5]/5">Lexware Office</div>
+                          {lexwareKontakte.map(k => (
+                            <button key={k.id} onClick={() => handleLexwareKontaktImportieren(k)}
+                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-[#F7F7F5] border-b border-[#2C2C2C]/5 last:border-0">
+                              <div className="font-bold text-[#2C2C2C]">{k.name}</div>
+                              {k.address && <div className="text-xs text-[#2C2C2C]/40 truncate">{k.address.split('\n')[0]}</div>}
+                              <div className="text-[10px] text-[#003DA5]/60 font-bold mt-0.5">Importieren & zuweisen</div>
+                            </button>
+                          ))}
+                        </>
+                      )}
                     </div>
                   )}
                   {currentCustomer && (

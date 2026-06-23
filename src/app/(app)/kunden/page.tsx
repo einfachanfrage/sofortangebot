@@ -26,11 +26,17 @@ export default async function KundenPage() {
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
-      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6">
-        <div className="text-white md:text-[#2C2C2C] font-black text-2xl">Kunden</div>
-        <div className="text-white/40 md:text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">
-          {customers?.length ?? 0} Kunden gesamt
+      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
+        <div>
+          <div className="text-white md:text-[#2C2C2C] font-black text-2xl">Kunden</div>
+          <div className="text-white/40 md:text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">
+            {customers?.length ?? 0} Kunden gesamt
+          </div>
         </div>
+        <Link href="/kunden/neu"
+          className="bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-4 py-2 mt-1">
+          + Neu
+        </Link>
       </div>
 
       <div className="px-5 md:px-8 mt-5 md:grid md:grid-cols-2 md:gap-3 flex flex-col gap-3">
