@@ -75,7 +75,8 @@ export async function POST(req: NextRequest) {
   }
 
   if (quote.valid_until) {
-    body.expirationDate = quote.valid_until
+    // Lexware erwartet ISO 8601 mit Zeit, nicht nur YYYY-MM-DD
+    body.expirationDate = new Date(quote.valid_until).toISOString()
   }
 
   const res = await fetch(`${LEXWARE_API}/quotations`, {
