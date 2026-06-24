@@ -226,6 +226,12 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
         </div>
 
       </div>
+
+      {/* KI-Hinweis — nur in Web-Vorschau, nicht im PDF */}
+      <div className="mt-3 px-2 text-[10px] text-[#2C2C2C]/30 font-medium text-center">
+        Bitte Angebot vor dem Versand prüfen. Sofortangebot haftet nicht für fehlerhafte Berechnungen.
+      </div>
+
     </div>
   )
 }
