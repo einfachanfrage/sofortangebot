@@ -3,36 +3,12 @@
 import { motion } from 'framer-motion'
 
 const features = [
-  {
-    nr: '01',
-    name: 'Spracheingabe',
-    desc: 'Kein Tippen. Du redest wie auf der Baustelle, die KI versteht den Rest.',
-  },
-  {
-    nr: '02',
-    name: '2.000+ Positionen',
-    desc: 'Für Maler & Lackierer und Bodenbeläge & Parkett. Weitere Gewerke folgen.',
-  },
-  {
-    nr: '03',
-    name: 'PDF sofort',
-    desc: 'Mit deinem Logo. Professionell. Ohne Layout-Stress.',
-  },
-  {
-    nr: '04',
-    name: 'Digital unterschreiben',
-    desc: 'Link → Finger drauf → Auftrag erteilt. Kein Ausdrucken.',
-  },
-  {
-    nr: '05',
-    name: 'Lexoffice Export',
-    desc: 'Ein Tap. Fertig in deiner Software. Keine Doppelarbeit.',
-  },
-  {
-    nr: '06',
-    name: 'Session offen',
-    desc: 'Raum 1 jetzt, Raum 2 in einer Stunde. Die App wartet auf dich.',
-  },
+  { nr: '01', name: 'Spracheingabe',           desc: 'Einfach eingesprochen auf der Baustelle. Dialekt, Korrekturen, Unterbrechungen — die KI versteht das.' },
+  { nr: '02', name: 'Alles in einem Aufmaß',   desc: 'Mehrere Räume, verschiedene Gewerke, alles in einem Durchgang eingesprochen.' },
+  { nr: '03', name: 'PDF sofort',               desc: 'Mit deinem Logo. Professionell. Kein Word, kein Layout-Stress.' },
+  { nr: '04', name: 'Digital unterschreiben',  desc: 'Kunde bekommt einen Link, Finger drauf, Auftrag erteilt. Kein Ausdrucken, kein Scannen.' },
+  { nr: '05', name: 'Lexoffice & sevDesk',      desc: 'Ein Tap. Fertig in deiner Buchhaltung. Nie wieder doppelt eintippen.' },
+  { nr: '06', name: 'Session offen lassen',    desc: 'Raum 1 jetzt, Raum 2 in einer Stunde. Die App wartet auf dich.' },
 ]
 
 export function FeaturesSection() {
@@ -53,15 +29,15 @@ export function FeaturesSection() {
           {features.map((f, i) => (
             <motion.div
               key={f.nr}
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
-              className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8 py-5 border-b border-white/10 last:border-0"
+              transition={{ duration: 0.4, delay: i * 0.06 }}
+              className="grid grid-cols-[auto_1fr] md:grid-cols-[40px_220px_1fr] gap-x-5 md:gap-x-8 items-start py-5 border-b border-white/8 last:border-0"
             >
-              <span className="font-syne font-black text-[#F5C400]/40 text-sm md:text-base w-8 shrink-0">{f.nr}</span>
-              <span className="font-syne font-extrabold text-white text-[18px] md:text-[20px] md:w-56 shrink-0 tracking-tight">{f.name}</span>
-              <span className="text-white/40 text-sm md:text-base leading-relaxed">{f.desc}</span>
+              <span className="font-syne font-black text-[#F5C400] text-sm leading-[1.8] md:leading-[1.6]">{f.nr}</span>
+              <span className="font-syne font-extrabold text-white text-[17px] md:text-[19px] tracking-tight leading-snug col-start-2">{f.name}</span>
+              <span className="text-white/40 text-sm md:text-base leading-relaxed col-start-2 md:col-start-3 mt-1 md:mt-0">{f.desc}</span>
             </motion.div>
           ))}
         </div>

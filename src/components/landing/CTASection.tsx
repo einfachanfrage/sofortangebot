@@ -13,17 +13,17 @@ export function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="font-syne font-extrabold text-[#2C2C2C] leading-tight tracking-tight mb-4 text-[32px] md:text-[44px] lg:text-[56px]">
+          <h2 className="font-syne font-extrabold text-[#2C2C2C] leading-tight tracking-tight mb-5 text-[32px] md:text-[44px] lg:text-[52px]">
             Dein nächstes Angebot.<br />
             Nicht heute Abend.
           </h2>
-          <p className="text-[#2C2C2C]/60 text-lg md:text-xl font-medium mb-10 leading-relaxed">
+          <p className="text-[#2C2C2C]/55 text-lg md:text-xl font-medium mb-10 leading-relaxed">
             Direkt vom Parkplatz.<br />
             Während der Kunde noch neben dir steht.
           </p>
           <Link
             href="/register"
-            className="inline-block bg-[#2C2C2C] text-white font-black text-lg px-10 py-4 hover:bg-[#1a1a1a] transition-colors w-full md:w-auto text-center"
+            className="inline-block bg-[#2C2C2C] text-white font-black text-base md:text-lg px-10 py-4 hover:bg-[#1a1a1a] transition-colors w-full md:w-auto text-center"
           >
             Jetzt kostenlos starten →
           </Link>

@@ -22,21 +22,21 @@ const steps = [
 
 export function WieFunktioniertSection() {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="bg-[#F5F5F5] py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-5 md:px-10">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] mb-14 md:mb-20 tracking-tight"
+          className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-16 md:mb-20"
         >
           So funktioniert&apos;s.
         </motion.h2>
 
-        <div className="grid md:grid-cols-3 gap-0 md:gap-0 relative">
+        <div className="grid md:grid-cols-3 gap-0 relative">
           {/* Connector line desktop */}
-          <div className="hidden md:block absolute top-[52px] left-[33%] right-[33%] h-px bg-[#F5C400]" />
+          <div className="hidden md:block absolute top-[44px] left-[calc(33%+24px)] right-[calc(33%+24px)] h-px bg-[#F5C400]/60" />
 
           {steps.map((s, i) => (
             <motion.div
@@ -45,17 +45,20 @@ export function WieFunktioniertSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="relative pt-0 pb-12 md:pb-0 md:pr-10 last:pb-0"
+              className="relative pb-12 md:pb-0 md:pr-12 last:pr-0"
             >
-              <div className="font-syne font-extrabold text-[#F5C400] leading-none mb-3 text-[56px] md:text-[68px] lg:text-[80px]">
+              <div className="font-syne font-extrabold text-[#F5C400] leading-none mb-4 text-[64px] md:text-[72px]">
                 {s.nr}
               </div>
-              <div className="font-syne font-extrabold text-[#2C2C2C] text-[22px] mb-3 tracking-tight">{s.title}</div>
-              <div className="text-[#666] text-base leading-relaxed max-w-xs">{s.desc}</div>
+              <div className="font-syne font-extrabold text-[#2C2C2C] text-[20px] md:text-[22px] mb-3 tracking-tight">
+                {s.title}
+              </div>
+              <div className="text-[#777] text-base leading-relaxed max-w-xs">
+                {s.desc}
+              </div>
 
-              {/* Mobile connector */}
               {i < 2 && (
-                <div className="md:hidden absolute bottom-0 left-0 right-0 h-px bg-[#F5C400]/30" />
+                <div className="md:hidden absolute bottom-0 left-0 w-8 h-px bg-[#F5C400]/50" />
               )}
             </motion.div>
           ))}

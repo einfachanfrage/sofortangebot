@@ -34,14 +34,14 @@ export function FAQSection() {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section className="bg-[#F7F7F5] py-20 md:py-28">
+    <section className="bg-[#F5F5F5] py-20 md:py-28">
       <div className="max-w-3xl mx-auto px-5 md:px-10">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-10"
+          className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-12"
         >
           Häufige Fragen.
         </motion.h2>
@@ -50,21 +50,21 @@ export function FAQSection() {
           {faqs.map((faq, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: i * 0.06 }}
-              className={`border-b border-[#2C2C2C]/10 transition-colors ${open === i ? 'bg-white border-l-4 border-l-[#F5C400] -mx-4 px-4 md:-mx-6 md:px-6' : ''}`}
+              transition={{ duration: 0.3, delay: i * 0.05 }}
+              className="border-b border-[#E0E0E0]"
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between py-5 text-left gap-4"
+                className="w-full flex items-center justify-between py-5 text-left gap-6"
               >
-                <span className={`font-extrabold text-[16px] ${open === i ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/80'}`}>
+                <span className="font-syne font-extrabold text-[#2C2C2C] text-[15px] md:text-[16px] leading-snug">
                   {faq.q}
                 </span>
                 <span
-                  className="text-[#2C2C2C]/40 text-xl font-light shrink-0 transition-transform duration-200"
+                  className="text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none"
                   style={{ transform: open === i ? 'rotate(45deg)' : 'rotate(0deg)' }}
                 >
                   +
@@ -76,10 +76,10 @@ export function FAQSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: 0.22 }}
                     className="overflow-hidden"
                   >
-                    <p className="text-[#666] text-base leading-relaxed pb-5 font-medium">{faq.a}</p>
+                    <p className="text-[#777] text-base leading-relaxed pb-6">{faq.a}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
