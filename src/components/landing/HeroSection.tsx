@@ -4,8 +4,54 @@ import Link from 'next/link'
 
 export function HeroSection() {
   return (
-    <section className="bg-[#2C2C2C] min-h-screen flex flex-col justify-center pt-16">
-      <div className="max-w-6xl mx-auto px-5 md:px-10 w-full py-16 md:py-24">
+    <section className="bg-[#2C2C2C] min-h-screen flex flex-col justify-center pt-16 relative overflow-hidden">
+      {/* Background floor plan sketch */}
+      <svg
+        viewBox="0 0 900 600"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ opacity: 0.06 }}
+        aria-hidden="true"
+      >
+        {/* Outer walls */}
+        <rect x="80" y="60" width="380" height="260" stroke="white" strokeWidth="2"/>
+        <rect x="80" y="340" width="180" height="180" stroke="white" strokeWidth="2"/>
+        <rect x="280" y="340" width="180" height="120" stroke="white" strokeWidth="2"/>
+        <rect x="480" y="60" width="340" height="200" stroke="white" strokeWidth="2"/>
+        <rect x="480" y="280" width="200" height="240" stroke="white" strokeWidth="2"/>
+        <rect x="700" y="280" width="120" height="120" stroke="white" strokeWidth="2"/>
+        {/* Interior walls */}
+        <line x1="260" y1="60" x2="260" y2="320" stroke="white" strokeWidth="1.5"/>
+        <line x1="80" y1="200" x2="260" y2="200" stroke="white" strokeWidth="1.5"/>
+        {/* Door arcs */}
+        <path d="M 260 120 A 40 40 0 0 1 300 120" stroke="white" strokeWidth="1"/>
+        <path d="M 80 340 A 36 36 0 0 0 116 340" stroke="white" strokeWidth="1"/>
+        <path d="M 480 260 A 36 36 0 0 1 480 296" stroke="white" strokeWidth="1"/>
+        {/* Door lines */}
+        <line x1="260" y1="120" x2="260" y2="160" stroke="white" strokeWidth="1.5"/>
+        <line x1="300" y1="120" x2="300" y2="120" stroke="white" strokeWidth="1.5"/>
+        {/* Windows */}
+        <line x1="130" y1="60" x2="210" y2="60" stroke="white" strokeWidth="2.5"/>
+        <line x1="130" y1="56" x2="210" y2="56" stroke="white" strokeWidth="1"/>
+        <line x1="530" y1="60" x2="640" y2="60" stroke="white" strokeWidth="2.5"/>
+        <line x1="530" y1="56" x2="640" y2="56" stroke="white" strokeWidth="1"/>
+        <line x1="80" y1="380" x2="80" y2="460" stroke="white" strokeWidth="2.5"/>
+        <line x1="76" y1="380" x2="76" y2="460" stroke="white" strokeWidth="1"/>
+        {/* Measurement lines */}
+        <line x1="80" y1="30" x2="460" y2="30" stroke="white" strokeWidth="1"/>
+        <line x1="80" y1="24" x2="80" y2="36" stroke="white" strokeWidth="1"/>
+        <line x1="460" y1="24" x2="460" y2="36" stroke="white" strokeWidth="1"/>
+        <line x1="50" y1="60" x2="50" y2="320" stroke="white" strokeWidth="1"/>
+        <line x1="44" y1="60" x2="56" y2="60" stroke="white" strokeWidth="1"/>
+        <line x1="44" y1="320" x2="56" y2="320" stroke="white" strokeWidth="1"/>
+        {/* Room labels area dots */}
+        <circle cx="170" cy="130" r="2" fill="white"/>
+        <circle cx="170" cy="260" r="2" fill="white"/>
+        <circle cx="580" cy="155" r="2" fill="white"/>
+      </svg>
+
+      <div className="max-w-6xl mx-auto px-5 md:px-10 w-full py-16 md:py-24 relative">
         <div className="grid md:grid-cols-[3fr_2fr] gap-12 md:gap-16 items-center">
 
           {/* LEFT */}
