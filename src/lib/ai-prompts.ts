@@ -158,6 +158,76 @@ Antworte NUR mit diesem JSON. Kein Text davor, kein Text danach.
   "transkript": "[Originaltext hier]"
 }
 
+MULTI-RAUM PARSING — KRITISCH:
+Jeder Raum hat seine EIGENEN Maße — niemals Maße von Raum 1 auf Raum 2 übertragen.
+Beispiel: "Wohnzimmer 6×4m, Schlafzimmer 4,5×3,5m" → raeume[0].laenge=6, raeume[1].laenge=4.5
+
+LERNBEISPIELE — SO SIEHT KORREKTE EXTRAKTION AUS:
+
+[1] MALER: Wohnzimmer komplett streichen. 5 Meter lang, 4 Meter breit, 2.6 Meter hoch. 2 Fenster, 1 Tür.
+  → Räume: Wohnzimmer[5×4m,2.6m hoch,2F,1T]
+  → Positionen: 42.51 m² — Wandflächen streichen; 20 m² — Deckenfläche streichen; 20 m² — Boden schützen; 17.1 lfdm — Sockelleisten abkleben
+
+[2] MALER: Schlafzimmer komplett streichen. 4.5 Meter lang, 3.5 Meter breit, 2.6 Meter hoch. 1 Fenster, 1 Tür.
+  → Räume: Schlafzimmer[4.5×3.5m,2.6m hoch,1F,1T]
+  → Positionen: 38.51 m² — Wandflächen streichen; 15.75 m² — Deckenfläche streichen; 15.75 m² — Boden schützen; 15.1 lfdm — Sockelleisten abkleben
+
+[3] MALER: Schlafzimmer, nur die Wände streichen. 4.5 mal 3.5 Meter, 2.6 Meter hoch. 1 Fenster, 1 Tür.
+  → Räume: Schlafzimmer[4.5×3.5m,2.6m hoch,1F,1T]
+  → Positionen: 37.91 m² — Wandflächen streichen; 15.75 m² — Boden schützen; 15.1 lfdm — Sockelleisten abkleben
+
+[4] MALER: Wohnzimmer, nur die Decke streichen. 6 mal 4.5 Meter.
+  → Räume: Wohnzimmer[6×4.5m,2.6m hoch]
+  → Positionen: 27 m² — Deckenfläche streichen; 27 m² — Boden schützen
+
+[5] MALER: Kellerraum streichen. 6 mal 4 Meter, 2.4 Meter hoch. Kein Fenster. 1 Tür.
+  → Räume: Kellerraum[6×4m,2.4m hoch,0F,1T]
+  → Positionen: 46.11 m² — Wandflächen streichen; 24 m² — Deckenfläche streichen; 24 m² — Boden schützen
+
+[6] MALER: Mehrere Räume komplett streichen: Wohnzimmer 6×4m, Schlafzimmer 4.5×3.5m. Alle 2.6m hoch.
+  → Räume: Wohnzimmer[6×4m,2.6m hoch,1F,1T] + Schlafzimmer[4.5×3.5m,2.6m hoch,1F,1T]
+  → Positionen: 47.71 m² — Wandflächen streichen; 24 m² — Deckenfläche streichen; 24 m² — Boden schützen; 19.1 lfdm — Sockelleisten abkleben; 38.51 m² — Wandflächen streichen; 15.75 m² — Deckenfläche streichen; 15.75 m² — Boden schützen; 15.1 lfdm — Sockelleisten abkleben
+
+[7] FLIESEN: Bad komplett fliesen. 2.5 mal 2 Meter. Wandfliesen bis 2.2 Meter hoch. Nassbereich.
+  → Räume: Bad[2.5×2m,Wandfliesen bis 2.2m,Nassbereich]
+  → Positionen: 5.5 m² — Bodenfliesen verlegen; 5 m² — Verbundabdichtung Boden; 5 m² — Verfugung Boden; 20.79 m² — Wandfliesen verlegen; 19.8 m² — Verfugung Wand; 19.8 m² — Verbundabdichtung Wand; 9 lfdm — Fliesensockel / Abschlussleiste
+
+[8] FLIESEN: Bad fliesen 2.5×2m Wandfliesen 2.2m hoch Nassbereich. WC fliesen 1.5×1.2m Nassbereich.
+  → Räume: Bad[2.5×2m,Wandfliesen bis 2.2m,Nassbereich] + WC[1.5×1.2m,Nassbereich]
+  → Positionen: 5.5 m² — Bodenfliesen verlegen; 5 m² — Verbundabdichtung Boden; 5 m² — Verfugung Boden; 20.79 m² — Wandfliesen verlegen; 19.8 m² — Verfugung Wand; 19.8 m² — Verbundabdichtung Wand; 9 lfdm — Fliesensockel / Abschlussleiste; 1.98 m² — Bodenfliesen verlegen; 1.8 m² — Verbundabdichtung Boden; 1.8 m² — Verfugung Boden; 5.4 lfdm — Fliesensockel / Abschlussleiste
+
+[9] FLIESEN: Küche fliesen nur Boden. 4 mal 3 Meter.
+  → Räume: Küche[4×3m]
+  → Positionen: 13.2 m² — Bodenfliesen verlegen; 12 m² — Verfugung Boden; 14 lfdm — Fliesensockel / Abschlussleiste
+
+[10] FLIESEN: Bad komplett neu fliesen. 2.5 mal 2 Meter. Wandfliesen bis 2.2 Meter. Altfliesen müssen raus.
+  → Räume: Bad[2.5×2m,Wandfliesen bis 2.2m,Nassbereich] + Altfliesen Boden 5m²
+  → Positionen: 5.5 m² — Bodenfliesen verlegen; 5 m² — Verbundabdichtung Boden; 5 m² — Verfugung Boden; 20.79 m² — Wandfliesen verlegen; 19.8 m² — Verfugung Wand; 19.8 m² — Verbundabdichtung Wand; 9 lfdm — Fliesensockel / Abschlussleiste; 5 m² — Altfliesen abstemmen; 5 m² — Entsorgung Fliesenmaterial
+
+[11] FLIESEN: Terrasse fliesen mit Außenfliesen, frostsicher. 5 mal 4 Meter.
+  → Räume: Terrasse[5×4m,Außen]
+  → Positionen: 22 m² — Außenfliesen / Terrassenfliesen verlegen (frostsicher); 20 m² — Verfugung Boden; 18 lfdm — Fliesensockel / Abschlussleiste
+
+[12] BODEN_PARKETT: Wohnzimmer Parkett verlegen. 6 mal 4 Meter.
+  → Räume: Wohnzimmer[6×4m,Parkett]
+  → Positionen: 26.4 m² — Parkett verlegen
+
+[13] BODEN_PARKETT: Wohnzimmer Parkett verlegen, 6 mal 4 Meter. Altbelag muss raus.
+  → Räume: Wohnzimmer[6×4m,Parkett,Altbelag entfernen]
+  → Positionen: 26.4 m² — Parkett verlegen; 24 m² — Altbelag entfernen
+
+[14] BODEN_PARKETT: Wohnzimmer Parkett verlegen mit neuen Sockelleisten. 6 mal 4 Meter.
+  → Räume: Wohnzimmer[6×4m,Parkett,Sockelleisten]
+  → Positionen: 26.4 m² — Parkett verlegen; 20 lfdm — Sockelleisten montieren
+
+[15] BODEN_PARKETT: Flur Laminat diagonal verlegen. 5 mal 1.5 Meter.
+  → Räume: Flur[5×1.5m,Laminat,diagonal]
+  → Positionen: 8.63 m² — Laminat verlegen (+15% Verschnitt diagonal)
+
+[16] BODEN_PARKETT: Wohnzimmer: Parkett 6×4m Altbelag raus Sockelleisten. Schlafzimmer: Parkett 4.5×3.5m Altbelag raus Sockelleisten.
+  → Räume: Wohnzimmer[6×4m,Parkett,Altbelag entfernen,Sockelleisten] + Schlafzimmer[4.5×3.5m,Parkett,Altbelag entfernen,Sockelleisten]
+  → Positionen: 26.4 m² — Parkett verlegen; 24 m² — Altbelag entfernen; 20 lfdm — Sockelleisten montieren; 17.33 m² — Parkett verlegen; 15.75 m² — Altbelag entfernen; 16 lfdm — Sockelleisten montieren
+
 VAGE-ERKENNUNG (wie bisher):
 Markiere vage Raumreferenzen mit vage: true und vage_typ:
 - "raum_ohne_masse": Raum ohne Maße

@@ -88,6 +88,13 @@ FASSADE IN RAEUME:
 - Beispiel: "Fassade 8m breit, 6m hoch" → raeume: [{name: "Fassade", laenge: 8, hoehe: 6, breite: null, flaeche: null}]
 - Altanstrich entfernen / abschleifen in arbeiten[] eintragen, NICHT als eigene Position
 
+MULTI-RAUM PARSING — KRITISCH:
+Jeder genannte Raum = eigener Eintrag in raeume[] mit EIGENEN Maßen.
+NIEMALS Maße von einem Raum auf einen anderen übertragen.
+Wenn Raum 1 "6×4m" und Raum 2 "4.5×3.5m": raeume[0].laenge=6, raeume[0].breite=4 UND raeume[1].laenge=4.5, raeume[1].breite=3.5 (NICHT 6 und 4).
+Erkenne Raumwechsel an: Raumname, Doppelpunkt nach Raumname, Komma zwischen Räumen, "dann noch", "außerdem".
+WC und Bad sind IMMER separate Räume mit EIGENEN Maßen.
+
 MEHRERE ETAGEN / STOCKWERKE:
 - "4 Etagen, je 18 qm" → flaeche: 72 (4 × 18 = Gesamtfläche)
 - "3 Stockwerke à 20 m²" → flaeche: 60

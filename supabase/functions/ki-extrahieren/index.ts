@@ -94,8 +94,11 @@ Wenn "Fassade", "Außenwand", "Garagenfassade", "Fassadenarbeiten" → Einzelfl�
 - NIEMALS breite setzen bei Fassade/Außenwand — nur laenge und hoehe
 - Tor/Fenster/Tür an Fassade → normal in tueren[]/fenster[] eintragen (wird automatisch abgezogen)
 
-MULTI-RAUM PARSING:
-[RAUM] = neuer Raum, eigener Eintrag in raeume[]. [ERGAENZUNG] = Zusatz zum letzten Raum. [KORREKTUR] = vorherige Angabe verwerfen.
+MULTI-RAUM PARSING — KRITISCH:
+[RAUM] = neuer Raum, eigener Eintrag in raeume[] mit EIGENEN Maßen. [ERGAENZUNG] = Zusatz zum letzten Raum. [KORREKTUR] = vorherige Angabe verwerfen.
+NIEMALS Maße von einem Raum auf einen anderen übertragen. Jeder Raum hat seine EIGENEN laenge+breite.
+Beispiel: "Wohnzimmer 6×4m, Schlafzimmer 4.5×3.5m" → raeume[0].laenge=6, raeume[0].breite=4 UND raeume[1].laenge=4.5, raeume[1].breite=3.5
+WC und Bad sind IMMER separate Räume mit EIGENEN Maßen.
 KORREKTUREN: Wenn der Nutzer sich verbessert ("ach nein", "doch nicht", "warte", "eigentlich nur", "stimmt nicht", "vergiss die", "lieber nicht"), gilt die LETZTE Aussage. Entferne die ursprüngliche Angabe aus arbeiten[], fenster[], tueren[] oder passe Maße an. Beispiel: "Decke auch... ach nein, die Decke doch nicht" → arbeiten[] enthält KEINE Decke. "warte, nicht 6 sondern 5 Meter" → laenge: 5, nicht 6.
 
 GEWERK-SPEZIFISCHES WISSEN:
