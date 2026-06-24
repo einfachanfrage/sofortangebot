@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAIClient, CHAT_MODEL } from '@/lib/ai-client'
+import { kleinmaterialPosition } from '@/lib/gewerke-config'
 
 const SYSTEM_PROMPT = `Du bist Kalkulations-Profi mit 20 Jahren Erfahrung im deutschen Handwerk.
 
@@ -45,13 +46,6 @@ Kategorie: "Material"
 
 SANITÄR/HEIZUNG — Material pauschal: Rohre, Fittings, Dichtmittel nach Aufwand schätzen.
 ELEKTRO — Kabel NYM + Dosen + Kleinmaterial nach Aufwand schätzen.
-
-══════════════════════════════════════════════
-KLEINMATERIAL-PAUSCHALE (IMMER — wenn noch nicht vorhanden)
-══════════════════════════════════════════════
-- 4% der Lohnarbeiten (Positionen ohne Material), mindestens 25€
-- Titel: "Kleinmaterial und Verbrauchsmaterial"
-- Kategorie: "Kleinmaterial"
 
 ══════════════════════════════════════════════
 FAHRTKOSTEN
@@ -105,7 +99,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  const { items, antworten, aufmaß } = await req.json()
+  const { items, antworten, aufmaß, gewerk } = await req.json()
 
   const antwortText = Object.entries(antworten as Record<string, string>)
     .map(([frage, antwort]) => `- ${frage}: ${antwort}`)
@@ -129,6 +123,19 @@ export async function POST(req: NextRequest) {
     const raw = response.choices[0].message.content ?? '{}'
     const cleaned = raw.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim()
     const result = JSON.parse(cleaned)
+
+    // Kleinmaterial: AI-Vorschläge entfernen, programmatisch nach Schwelle ergänzen
+    if (Array.isArray(result.items)) {
+      result.items = result.items.filter((it: { title?: string }) =>
+        !(it.title ?? '').toLowerCase().includes('kleinmaterial')
+      )
+      const summeNetto = [...items, ...result.items].reduce(
+        (s: number, it: { unit_price?: number; quantity?: number }) =>
+          s + (it.unit_price ?? 0) * (it.quantity ?? 1), 0)
+      const klein = kleinmaterialPosition(gewerk ?? null, summeNetto)
+      if (klein) result.items.push(klein)
+    }
+
     return NextResponse.json(result)
   } catch (err) {
     console.error('angebot-verfeinern error:', err)

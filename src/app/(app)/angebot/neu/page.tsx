@@ -772,7 +772,7 @@ export default function NeuesAngebotPage() {
 
   async function verfeinern(neueAntworten: Record<string, string>) {
     setStep('loading'); setLoadingMsg('Berechne Gesamtkosten...')
-    const r = await fetch('/api/angebot-verfeinern', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, antworten: neueAntworten, aufmaß: transcript }) })
+    const r = await fetch('/api/angebot-verfeinern', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, antworten: neueAntworten, aufmaß: transcript, gewerk }) })
     if (!r.ok) { setStep('review'); return }
     const result = await r.json()
     const zusatzItems = (result.items ?? []).filter((ni: DraftItem) => !items.some(ex => (ex.title ?? '').toLowerCase() === (ni.title ?? '').toLowerCase()))

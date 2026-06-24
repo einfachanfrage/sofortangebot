@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getGewerkePromptContext } from '@/lib/gewerke'
 import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
 import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
+import { kleinmaterialPosition } from '@/lib/gewerke-config'
 import * as Sentry from '@sentry/nextjs'
 
 // OpenAI-Analyse kann bei langen Aufmaßen >10s dauern
@@ -44,12 +45,11 @@ DEINE AUFGABE — NUR PREISE ZUWEISEN:
 Die Positionen und Mengen sind bereits durch eine Berechnungsengine festgelegt und UNVERÄNDERLICH.
 Du musst NUR für jede Position einen passenden Netto-Einzelpreis (unit_price) zuweisen.
 Gib die Positionen in EXAKT DERSELBEN REIHENFOLGE zurück wie du sie erhalten hast.
-Füge am Ende eine Kleinmaterial-Pauschale hinzu: min. 25€ oder 4% der Lohnkosten.
 
 WAS DU NICHT TUN DARFST:
 - Mengen (quantity) verändern — quantity wird IGNORIERT, die Engine überschreibt es
 - Positionen weglassen, umbenennen oder zusammenfassen
-- Neue Positionen erfinden (außer Kleinmaterial-Pauschale)
+- Neue Positionen erfinden
 - Mehrere Positionen zu einer kombinieren — JEDE Position bekommt einen eigenen Eintrag
 - Bei MALER + Tapezieren/Raufaser: NIEMALS "Untergrund glätten", "Spachteln" oder Trockenbau-Positionen ergänzen — Raufaser verbirgt Unebenheiten
 
@@ -75,8 +75,8 @@ GEWERK-KONTEXT:
 REGELN:
 - Arbeitsleistung immer als eigene Positionen (Demontage, Vorbereitung, Hauptarbeit)
 - Verschnitt bei Belägen/Fliesen: +10% auf Menge, im Titel erwähnen
-- Kleinmaterial-Pauschale IMMER: min. 25€ oder 4% der Lohnkosten
 - Mengen-Logik: Teilflächen dürfen Gesamtfläche nicht überschreiten
+- Keine Kleinmaterial-Pauschale hinzufügen — wird automatisch ergänzt
 - Marktübliche deutsche Handwerkerpreise
 
 Antworte NUR mit JSON:
@@ -161,11 +161,15 @@ export async function POST(req: NextRequest) {
           kategorie: gptItem?.kategorie ?? '',
         }
       })
-      // Kleinmaterial-Pauschale aus Original-GPT-Antwort anhängen
-      const gptKlein = gptItemsOrig.find((it: { title?: string }) =>
-        (it.title ?? '').toLowerCase().includes('kleinmaterial')
+      // Kleinmaterial: AI-Vorschläge entfernen, programmatisch nach Schwelle ergänzen
+      result.items = result.items.filter((it: { title?: string }) =>
+        !(it.title ?? '').toLowerCase().includes('kleinmaterial')
       )
-      if (gptKlein) result.items.push(gptKlein)
+      const summeNetto = result.items.reduce((s: number, it: { unit_price?: number; quantity?: number }) =>
+        s + (it.unit_price ?? 0) * (it.quantity ?? 1), 0)
+      const gewerk = company?.gewerke?.[0] ?? null
+      const klein = kleinmaterialPosition(gewerk, summeNetto)
+      if (klein) result.items.push(klein)
 
       // Trockenbau-Positionen bei Maler-Jobs entfernen (GPT-Halluzination)
       const textLower = text.toLowerCase()
@@ -177,6 +181,15 @@ export async function POST(req: NextRequest) {
           return !k.includes('trockenbau') && !t.includes('spachtel') && !t.includes('glätten') && !t.includes('untergrund gl')
         })
       }
+    }
+
+    // Kleinmaterial aus notizen entfernen (KI schreibt es manchmal rein)
+    if (result.notizen) {
+      result.notizen = result.notizen
+        .split('\n')
+        .filter((line: string) => !line.toLowerCase().includes('kleinmaterial'))
+        .join('\n')
+        .trim()
     }
 
     // Kosten tracken (gpt-4o-mini ~$0.15/1M tokens in, $0.60/1M tokens out)
