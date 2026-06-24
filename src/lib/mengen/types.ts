@@ -43,6 +43,14 @@ export interface MengenObjekt {
   rueckfragen: string[]
 }
 
+export interface FlaechenParameter {
+  brutto_m2: number
+  fenster_anzahl: number
+  fenster_einzelflaeche: number
+  tuer_anzahl: number
+  tuer_einzelflaeche: number
+}
+
 export interface BerechnetePosition {
   beschreibung: string
   menge: number
@@ -51,6 +59,7 @@ export interface BerechnetePosition {
   berechnungsweg: string
   annahmen: string[]
   position_id_vorschlag?: string
+  flaechen_parameter?: FlaechenParameter
 }
 
 export interface MengenErgebnis {

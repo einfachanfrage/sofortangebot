@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'KI-Tageslimit erreicht. Morgen geht\'s weiter.', isKIBudget: true }, { status: 429 })
   }
 
-  const body = await req.json() as { text?: string; berechnete_positionen?: Array<{ beschreibung: string; menge: number; einheit: string; annahmen: string[] }>; originaltext?: string }
+  const body = await req.json() as { text?: string; berechnete_positionen?: Array<{ beschreibung: string; menge: number; einheit: string; annahmen: string[]; flaechen_parameter?: { brutto_m2: number; fenster_anzahl: number; fenster_einzelflaeche: number; tuer_anzahl: number; tuer_einzelflaeche: number } }>; originaltext?: string }
   const text = body.text ?? body.originaltext ?? ''
   if (!text) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
   const berechnetePositionen = (body.berechnete_positionen?.length ?? 0) > 0 ? body.berechnete_positionen : null
@@ -159,6 +159,7 @@ export async function POST(req: NextRequest) {
           quantity: eng.menge,
           unit: eng.einheit,
           kategorie: gptItem?.kategorie ?? '',
+          ...(eng.flaechen_parameter ? { flaechen_parameter: eng.flaechen_parameter } : {}),
         }
       })
       // Kleinmaterial: AI-Vorschläge entfernen, programmatisch nach Schwelle ergänzen

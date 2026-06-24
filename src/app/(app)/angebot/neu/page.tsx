@@ -26,6 +26,14 @@ import { validiereAngebot } from '@/lib/angebot-validierung'
 import type { ValidationResult } from '@/lib/angebot-validierung'
 import type { KIRueckfrage } from '@/lib/mengen/types'
 
+interface FlaechenParameter {
+  brutto_m2: number
+  fenster_anzahl: number
+  fenster_einzelflaeche: number
+  tuer_anzahl: number
+  tuer_einzelflaeche: number
+}
+
 interface DraftItem {
   title: string
   description: string
@@ -43,6 +51,7 @@ interface DraftItem {
   position_id?: string | null
   manuell_geaendert?: boolean
   implizit_erkannt?: boolean
+  flaechen_parameter?: FlaechenParameter
 }
 
 type Step = 'input' | 'loading' | 'vage_rueckfragen' | 'mengen_rueckfragen' | 'rückfragen' | 'review'
@@ -676,7 +685,7 @@ export default function NeuesAngebotPage() {
       const eng = engineByTitle.get(item.title?.toLowerCase() ?? '')
       const match = matchByTitle.get(item.title?.toLowerCase() ?? '')
       const base = eng
-        ? { ...item, konfidenz: eng.konfidenz, berechnungsweg: eng.berechnungsweg, annahmen: eng.annahmen }
+        ? { ...item, konfidenz: eng.konfidenz, berechnungsweg: eng.berechnungsweg, annahmen: eng.annahmen, ...(eng.flaechen_parameter ? { flaechen_parameter: eng.flaechen_parameter } : {}) }
         : item
       if (match && match.position_id && match.confidence >= 0.65 && match.unit_price_db) {
         return {
@@ -802,7 +811,7 @@ export default function NeuesAngebotPage() {
     return Math.round(basePrice * (1 - applicable[0].rabatt_prozent / 100) * 100) / 100
   }
 
-  function updateItem(idx: number, field: keyof DraftItem, value: string | number) {
+  function updateItem(idx: number, field: keyof DraftItem, value: string | number | FlaechenParameter) {
     setItems(prev => prev.map((item, i) => {
       if (i !== idx) return item
       const updated = { ...item, [field]: (field === 'quantity' || field === 'unit_price') ? Number(value) : value }
@@ -1349,6 +1358,36 @@ export default function NeuesAngebotPage() {
                   {item.konfidenz === 'low' && <div className="text-[10px] text-orange-500 font-semibold mt-1">⚠ Menge prüfen</div>}
                   {item.base_price !== undefined && item.unit_price < item.base_price && (
                     <div className="text-[10px] text-green-600 font-semibold mt-0.5">Mengenrabatt: {Math.round((1 - item.unit_price / item.base_price) * 100)} %</div>
+                  )}
+                  {item.flaechen_parameter && (
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <span className="text-[10px] text-[#2C2C2C]/40 font-semibold">Fenster</span>
+                      <input
+                        type="number" inputMode="numeric" min={0} step={1}
+                        value={item.flaechen_parameter.fenster_anzahl}
+                        onChange={e => {
+                          const anzahl = Math.max(0, parseInt(e.target.value) || 0)
+                          const fp = item.flaechen_parameter!
+                          const neueQuantity = Math.max(0, Math.round((fp.brutto_m2 - anzahl * fp.fenster_einzelflaeche - fp.tuer_anzahl * fp.tuer_einzelflaeche) * 100) / 100)
+                          updateItem(idx, 'flaechen_parameter', { ...fp, fenster_anzahl: anzahl })
+                          updateItem(idx, 'quantity', neueQuantity)
+                        }}
+                        className="w-[40px] text-[11px] font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-[#F5C400] text-center"
+                      />
+                      <span className="text-[10px] text-[#2C2C2C]/40 font-semibold">Türen</span>
+                      <input
+                        type="number" inputMode="numeric" min={0} step={1}
+                        value={item.flaechen_parameter.tuer_anzahl}
+                        onChange={e => {
+                          const anzahl = Math.max(0, parseInt(e.target.value) || 0)
+                          const fp = item.flaechen_parameter!
+                          const neueQuantity = Math.max(0, Math.round((fp.brutto_m2 - fp.fenster_anzahl * fp.fenster_einzelflaeche - anzahl * fp.tuer_einzelflaeche) * 100) / 100)
+                          updateItem(idx, 'flaechen_parameter', { ...fp, tuer_anzahl: anzahl })
+                          updateItem(idx, 'quantity', neueQuantity)
+                        }}
+                        className="w-[40px] text-[11px] font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-[#F5C400] text-center"
+                      />
+                    </div>
                   )}
                   {item.berechnungsweg && (
                     <details className="mt-0.5">
