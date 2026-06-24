@@ -634,6 +634,7 @@ export default function NeuesAngebotPage() {
         konfidenz: p.konfidenz,
         berechnungsweg: p.berechnungsweg,
         annahmen: p.annahmen,
+        ...(p.flaechen_parameter ? { flaechen_parameter: p.flaechen_parameter } : {}),
       }))
       const toAdd = newItems.filter(ni => !items.some(ex => (ex.title ?? '').toLowerCase() === (ni.title ?? '').toLowerCase()))
       setItems(prev => [...prev, ...toAdd])
