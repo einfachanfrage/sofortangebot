@@ -216,6 +216,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
   const [dismissedHints, setDismissedHints] = useState<Set<string>>(new Set())
   const [showMoreMenu, setShowMoreMenu] = useState(false)
+  const [showWeitereOptionen, setShowWeitereOptionen] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [autosaveLabel, setAutosaveLabel] = useState('')
   const [showVorschau, setShowVorschau] = useState(false)
@@ -1158,90 +1159,62 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </div>
                 )}
 
-                {/* ── PRIMÄRE AKTIONEN ─────────────────────────── */}
-                <div className="flex flex-col gap-2">
-                  <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest text-center">Versenden</div>
+                {/* ── PDF + LINK ───────────────────────────────── */}
+                <a href={`/api/pdf?id=${quote.id}`} target="_blank"
+                  className="flex items-center justify-center gap-3 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-base rounded-2xl py-[14px]">
+                  <Download size={19} strokeWidth={2.5} />
+                  {istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'}
+                </a>
 
-                  {/* E-Mail */}
-                  {!showEmail ? (
-                    <button onClick={() => setShowEmail(true)}
-                      className="flex items-center justify-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-black text-base rounded-2xl py-[14px] hover:border-[#2C2C2C]/20 transition-colors">
-                      <Mail size={19} strokeWidth={2.5} />{emailSent ? '✓ E-Mail versendet' : 'Per E-Mail senden'}
-                    </button>
-                  ) : (
-                    <div className="bg-white border border-[#EEEEEE] rounded-2xl p-4">
-                      <div className="font-black text-[#2C2C2C] mb-3">E-Mail-Adresse</div>
-                      <input type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)} placeholder="kunde@beispiel.de"
-                        className="w-full bg-[#F7F7F5] border border-[#2C2C2C]/10 rounded-xl px-4 py-3 font-semibold text-base focus:outline-none focus:border-[#F5C400] mb-3" />
-                      <div className="flex gap-3">
-                        <button onClick={() => setShowEmail(false)} className="flex-1 border border-[#2C2C2C]/20 rounded-xl py-3 font-bold text-[#2C2C2C]">Abbrechen</button>
-                        <button onClick={handleSendEmail} disabled={sending} className="flex-[2] bg-[#F5C400] rounded-xl py-3 font-black text-[#2C2C2C] disabled:opacity-50">
-                          {sending ? 'Sende...' : 'Senden'}
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                <button onClick={copyLink}
+                  className="flex items-center justify-center gap-2 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-2xl py-3 hover:border-[#2C2C2C]/20 transition-colors">
+                  <Link2 size={15} strokeWidth={2} /> Link zum Angebot kopieren
+                </button>
 
-                  {/* WhatsApp — kein Grün */}
-                  <a href={`https://wa.me/?text=${whatsappText}`} target="_blank" rel="noopener noreferrer"
-                    onClick={() => trackVia('whatsapp')}
-                    className="flex items-center justify-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-black text-base rounded-2xl py-[14px] hover:border-[#2C2C2C]/20 transition-colors">
-                    <Share2 size={19} strokeWidth={2.5} /> Per WhatsApp senden
-                  </a>
-
-                  {/* Link kopieren */}
-                  <button onClick={copyLink}
-                    className="flex items-center justify-center gap-2 w-full text-[#2C2C2C]/50 font-semibold text-sm py-[10px] hover:text-[#2C2C2C]/70 transition-colors">
-                    <Link2 size={15} strokeWidth={2} /> Link zum Angebot kopieren
-                  </button>
-                </div>
+                {/* ── BUCHHALTUNG (immer sichtbar wenn verbunden) ─ */}
+                {activeIntegrations.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest text-center pt-1">Buchhaltung</div>
+                    {activeIntegrations.map(int => (
+                      <button key={int.id} onClick={() => handleExport(int.id, int.label)}
+                        disabled={exporting === int.id}
+                        className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors disabled:opacity-50">
+                        <span className="font-black text-[#2C2C2C]/50 text-xs w-5 text-center shrink-0">{int.short}</span>
+                        {exporting === int.id ? 'Übertrage...' : `Zu ${int.label}`}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 {/* ── WEITERE OPTIONEN ─────────────────────────── */}
-                <div className="border-t border-[#EEEEEE] pt-3">
-                  <button onClick={() => setShowMoreMenu(v => !v)}
-                    className="flex items-center justify-center gap-1.5 w-full text-[#2C2C2C]/40 font-bold text-xs py-1 hover:text-[#2C2C2C]/60 transition-colors">
-                    <ChevronDown size={14} className={`transition-transform ${showMoreMenu ? 'rotate-180' : ''}`} />
+                <div className="border-t border-[#EEEEEE] pt-2">
+                  <button onClick={() => setShowWeitereOptionen(v => !v)}
+                    className="flex items-center justify-center gap-1.5 w-full text-[#2C2C2C]/40 font-bold text-xs py-1.5 hover:text-[#2C2C2C]/60 transition-colors">
+                    <ChevronDown size={13} className={`transition-transform ${showWeitereOptionen ? 'rotate-180' : ''}`} />
                     Weitere Optionen
                   </button>
-
-                  {showMoreMenu && (
+                  {showWeitereOptionen && (
                     <div className="mt-2 flex flex-col gap-1.5">
-                      <a href={`/api/pdf?id=${quote.id}`} target="_blank"
+                      <button onClick={handleDuplicate}
                         className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                        <Download size={16} strokeWidth={2.5} className="text-[#2C2C2C]/40" />
-                        {istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'}
-                      </a>
-                      {istZugferd && (
-                        <p className="text-[10px] text-[#2C2C2C]/30 font-semibold text-center -mt-1">Enthält eingebettete ZUGFeRD-XML</p>
-                      )}
+                        <Copy size={15} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> Angebot duplizieren
+                      </button>
                       {!!quote.customer?.leitweg_id && (
                         <a href={`/api/pdf/xrechnung?id=${quote.id}`} target="_blank"
                           className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                          <Download size={16} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> XRechnung XML
+                          <Download size={15} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> XRechnung XML
                         </a>
                       )}
-                      <button onClick={handleDuplicate}
-                        className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                        <Copy size={16} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> Angebot duplizieren
-                      </button>
-                      {activeIntegrations.map(int => (
-                        <button key={int.id} onClick={() => handleExport(int.id, int.label)}
-                          disabled={exporting === int.id}
-                          className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors disabled:opacity-50">
-                          <span className="font-black text-[#2C2C2C]/40 text-xs w-4 text-center">{int.short}</span>
-                          {exporting === int.id ? 'Übertrage...' : `Zu ${int.label}`}
-                        </button>
-                      ))}
                       <a href={`/api/csv?id=${quote.id}`}
                         className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                        <FileText size={16} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> CSV Export
+                        <FileText size={15} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> CSV Export
                       </a>
                     </div>
                   )}
                 </div>
 
                 {/* ── LÖSCHEN ──────────────────────────────────── */}
-                <div className="border-t border-[#EEEEEE] pt-3">
+                <div className="border-t border-[#EEEEEE] pt-2">
                   <button onClick={handleDelete} disabled={deleting}
                     className="flex items-center justify-center gap-2 w-full text-red-400 font-semibold text-sm py-2 hover:text-red-600 transition-colors">
                     <Trash2 size={14} />{deleting ? 'Wird gelöscht...' : 'Angebot löschen'}
