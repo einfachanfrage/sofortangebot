@@ -40,6 +40,9 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
     breite: num(r.breite),
     hoehe: num(r.hoehe),
     flaeche: num(r.flaeche),
+    wandflaeche_direkt: num((r as any).wandflaeche_direkt),
+    deckflaeche_direkt: num((r as any).deckflaeche_direkt),
+    wandflaeche_abzug_m2: num((r as any).wandflaeche_abzug_m2),
     umfang: num(r.umfang),
     fenster: arr<Record<string, unknown>>(r.fenster).map(f => ({
       breite: num(f.breite) ?? undefined,

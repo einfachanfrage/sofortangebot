@@ -72,6 +72,13 @@ Der Transkript kann mit [RAUM], [ERGAENZUNG] oder [KORREKTUR] Markierungen vorst
 Auch ohne Markierungen: erkenne Raumwechsel an Signalwörtern ("dann noch", "außerdem", "im Wohnzimmer", "jetzt der").
 Jeder genannte Raum = eigener Eintrag in raeume[]. Nicht zusammenfassen.
 
+EXPLIZITE FLÄCHENANGABEN — NEUE FELDER:
+Wenn der Nutzer Wand- und Deckfläche EXPLIZIT als Zahlenwert nennt (ohne L×B×H):
+- "Wandfläche ist 45 m²" → wandflaeche_direkt: 45
+- "Decke ist 25 m²" → deckflaeche_direkt: 25
+- "davon 3 m² Fenster abziehen" → wandflaeche_abzug_m2: 3 (der Abzug wird in der Engine berechnet)
+- "flaeche" bleibt für Bodenfläche (L×B) reserviert — NIEMALS Wandfläche in "flaeche" eintragen!
+
 GEWERK-SPEZIFISCHES WISSEN:
 
 MALER:
@@ -116,6 +123,9 @@ Antworte NUR mit diesem JSON. Kein Text davor, kein Text danach.
       "breite": 4.80,
       "hoehe": 2.60,
       "flaeche": 24.96,
+      "wandflaeche_direkt": null,
+      "deckflaeche_direkt": null,
+      "wandflaeche_abzug_m2": null,
       "umfang": null,
       "fenster": [{"breite": 1.20, "hoehe": 1.00, "annahme": true}],
       "tueren": [{"breite": 0.90, "hoehe": 2.10, "annahme": false}],

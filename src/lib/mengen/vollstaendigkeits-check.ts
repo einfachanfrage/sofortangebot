@@ -646,20 +646,26 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       ergaenzt.push({ beschreibung: 'Türrahmen streichen', menge: anzRahmen, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzRahmen} Türrahmen`, annahmen: [] })
     }
 
-    // Sockelleisten STREICHEN (nicht lackieren — z.B. "Sockelleisten streichen" ohne Lackkontext)
-    const hatSockelStreichen = lower.includes('sockelleist') && lower.includes('streich') &&
-      !lower.includes('lackier') && !lower.includes('lack ') // explizit "streichen" ohne Lack-Kontext
-    if (hatSockelStreichen && !hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) {
+    // Sockelleisten STREICHEN — nur wenn explizit "Sockelleisten streichen" ohne Lackkontext
+    // "aufnehmen" / "mit aufnehmen" → NUR montieren, KEIN schleifen
+    const hatSockelAufnehmen = lower.includes('sockelleist') &&
+      (lower.includes('aufnehm') || lower.includes('mit aufnehm') || lower.includes('montier') || lower.includes('aufbring'))
+    const hatSockelStreichenExplizit = lower.includes('sockelleist') && lower.includes('streich') &&
+      !lower.includes('lackier') && !lower.includes('lack ') && !hatSockelAufnehmen
+    if (hatSockelStreichenExplizit && !hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) {
       const lfdmMatchStr = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfm|lfdm|laufende?r?\s*meter|meter)/i)
       const lfdmStr = lfdmMatchStr ? parseFloat(lfdmMatchStr[1].replace(',', '.')) : null
       if (lfdmStr !== null && lfdmStr > 0) {
         const ohneSockelAbkl2 = ergaenzt.filter(p => !p.beschreibung.toLowerCase().includes('sockelleisten abkl'))
         ergaenzt.length = 0
         ohneSockelAbkl2.forEach(p => ergaenzt.push(p))
-        ergaenzt.push({ beschreibung: 'Sockelleisten schleifen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm aus Transkript`, annahmen: [] })
+        // "schleifen" nur ergänzen wenn explizit erwähnt
+        if (lower.includes('schleifen') || lower.includes('schleif')) {
+          ergaenzt.push({ beschreibung: 'Sockelleisten schleifen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm aus Transkript`, annahmen: [] })
+        }
         ergaenzt.push({ beschreibung: 'Sockelleisten streichen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm`, annahmen: [] })
       } else {
-        add('Sockelleisten schleifen')
+        if (lower.includes('schleifen') || lower.includes('schleif')) add('Sockelleisten schleifen')
         add('Sockelleisten streichen')
       }
     }

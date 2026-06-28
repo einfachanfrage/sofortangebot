@@ -13,8 +13,14 @@ export function malerEngine(daten: any): MengenErgebnis {
       name: nameRaw = 'Raum',
       laenge, breite, hoehe,
       flaeche: flaeche_angegeben,
+      wandflaeche_direkt: wandflaeche_direkt_raw,
+      deckflaeche_direkt: deckflaeche_direkt_raw,
+      wandflaeche_abzug_m2: wandflaeche_abzug_raw,
       umfang: umfang_direkt,
       kniestockhoehe = null,
+      wandflaeche_direkt: wandflaeche_direkt_raw = null,
+      deckflaeche_direkt: deckflaeche_direkt_raw = null,
+      wandflaeche_abzug_m2: wandflaeche_abzug_raw = null,
       dachschraege_links_m2: dgLinks = null,
       dachschraege_rechts_m2: dgRechts = null,
       dachschraege_je_seite_m2: dgJeSeite = null,
@@ -111,6 +117,17 @@ export function malerEngine(daten: any): MengenErgebnis {
         deckenflaecheM2 = flaeche_angegeben
         // Wandfläche kann ohne Höhe nicht berechnet werden → null (Rückfrage kommt)
       }
+    }
+
+    // Explizite Wandfläche/Deckfläche vom User überschreiben Engine-Berechnungen
+    if (wandflaeche_direkt_raw !== null) {
+      const abzug = (wandflaeche_abzug_raw as number | null) ?? 0
+      wandflaecheNettoM2 = round2((wandflaeche_direkt_raw as number) - abzug)
+    }
+    if (deckflaeche_direkt_raw !== null) {
+      deckenflaecheM2 = deckflaeche_direkt_raw as number
+      // Bodenfläche ≈ Deckenfläche wenn nicht anders bekannt
+      if (bodenflaecheM2 === null) bodenflaecheM2 = deckflaeche_direkt_raw as number
     }
 
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
