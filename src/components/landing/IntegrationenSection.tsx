@@ -3,35 +3,9 @@
 import { motion } from 'framer-motion'
 
 const hauptIntegrationen = [
-  {
-    name: 'Lexware',
-    icon: (
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 shrink-0">
-        <rect width="32" height="32" rx="6" fill="white" stroke="#E8E8E8" strokeWidth="1"/>
-        <path d="M10 10l6 6-6 6M22 10l-6 6 6 6" stroke="#E30613" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'sevDesk',
-    icon: (
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 shrink-0">
-        <rect width="32" height="32" rx="6" fill="#E8440A"/>
-        <rect x="8" y="18" width="4" height="8" fill="white"/>
-        <rect x="14" y="13" width="4" height="13" fill="white"/>
-        <rect x="20" y="8" width="4" height="18" fill="white"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'DATEV',
-    icon: (
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 shrink-0">
-        <rect width="32" height="32" rx="6" fill="#A8D08D"/>
-        <text x="3" y="21" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="10" fill="#2E6B2E" letterSpacing="0.3">DATEV</text>
-      </svg>
-    ),
-  },
+  { name: 'Lexware' },
+  { name: 'sevDesk' },
+  { name: 'DATEV' },
 ]
 
 const weitereIntegrationen = ['FastBill', 'Billomat', 'Papierkram', 'Easybill', 'PlanCraft', 'CSV-Export']
@@ -81,7 +55,6 @@ export function IntegrationenSection() {
               key={integration.name}
               className="flex items-center gap-4 border border-[#E8E8E8] px-7 py-6 hover:border-[#2C2C2C]/30 transition-colors"
             >
-              {integration.icon}
               <span className="font-semibold text-[#2C2C2C] text-[17px]">{integration.name}</span>
             </div>
           ))}
