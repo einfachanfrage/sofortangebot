@@ -5,24 +5,28 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const faqs = [
   {
-    q: 'Was wenn die KI mich nicht versteht?',
-    a: 'Du siehst sofort was erkannt wurde und kannst es mit einem Tipp korrigieren. Die KI kennt alle typischen Positionen für Maler & Lackierer und Bodenbeläge.',
+    q: 'Kann ich das direkt auf der Baustelle nutzen?',
+    a: 'Ja. Sofortangebot wurde speziell für das Smartphone entwickelt. Du kannst Angebote direkt beim Kunden oder auf der Baustelle erstellen – ohne Laptop.',
   },
   {
-    q: 'Muss ich alle Preise selbst eingeben?',
-    a: 'Nein. Sofortangebot lädt aktuelle Marktpreise für Maler- und Bodenbelagsarbeiten. Du kannst sie übernehmen, anpassen oder deine eigenen eintragen. Dauert drei Minuten beim ersten Mal.',
+    q: 'Und wenn ich mich verspreche oder Dialekt spreche?',
+    a: 'Du siehst sofort, was erkannt wurde. Falls etwas nicht stimmt, kannst du es direkt ändern. Auch Dialekt, Versprecher oder Korrekturen erkennt Sofortangebot in den meisten Fällen zuverlässig.',
   },
   {
-    q: 'Funktioniert das auf dem Handy?',
-    a: 'Ja. Genau dafür ist es gebaut. Parkplatz, Baustelle, Auto -wo auch immer du gerade bist.',
+    q: 'Wie lange dauert die Einrichtung?',
+    a: 'Weniger als fünf Minuten. Firmendaten eintragen, Preise prüfen und loslegen. Mehr brauchst du nicht.',
   },
   {
-    q: 'Was passiert mit meinen Kundendaten?',
-    a: 'Die liegen verschlüsselt auf Servern in Deutschland. Kein Verkauf, kein Tracking, kein Teilen mit Dritten. DSGVO-konform.',
+    q: 'Kann ich meine eigenen Preise verwenden?',
+    a: 'Ja. Du kannst die vorgeschlagenen Preise übernehmen oder jederzeit durch deine eigenen ersetzen. Deine Preisdatenbank gehört dir.',
   },
   {
-    q: 'Ich bin Kleinunternehmer nach §19 UStG -geht das?',
+    q: 'Ich bin Kleinunternehmer nach §19 UStG – geht das?',
     a: 'Ja, direkt beim Einrichten einstellbar. Auf deinen Angeboten steht dann der korrekte Hinweis, ohne MwSt-Ausweis.',
+  },
+  {
+    q: 'Sind meine Kundendaten sicher?',
+    a: 'Ja. Alles liegt verschlüsselt auf Servern in Deutschland. Kein Verkauf, kein Tracking, kein Teilen mit Dritten. DSGVO-konform.',
   },
   {
     q: 'Kann ich jederzeit kündigen?',
@@ -43,10 +47,10 @@ export function FAQSection() {
           transition={{ duration: 0.4 }}
           className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-12"
         >
-          Häufige Fragen.
+          Noch Fragen?
         </motion.h2>
 
-        <div>
+        <div className="mb-14">
           {faqs.map((faq, i) => (
             <motion.div
               key={i}
@@ -86,6 +90,25 @@ export function FAQSection() {
             </motion.div>
           ))}
         </div>
+
+        {/* Support-Abschluss */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="border-l-2 border-[#F5C400] pl-5"
+        >
+          <p className="font-syne font-extrabold text-[#2C2C2C] text-[15px] mb-1">Nicht dabei?</p>
+          <p className="text-[#888] text-sm mb-2">Schreib uns einfach. Antwort innerhalb eines Werktages.</p>
+          <a
+            href="mailto:support@sofortangebot.app"
+            className="text-[#2C2C2C] text-sm font-semibold hover:text-[#F5C400] transition-colors"
+          >
+            support@sofortangebot.app
+          </a>
+        </motion.div>
+
       </div>
     </section>
   )
