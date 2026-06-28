@@ -5,33 +5,30 @@ import { motion } from 'framer-motion'
 const hauptIntegrationen = [
   {
     name: 'Lexware',
-    logo: (
-      <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-        <rect width="32" height="32" rx="6" fill="#E30613"/>
-        <path d="M10 10l6 6-6 6M22 10l-6 6 6 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">Lexware</text>
+    icon: (
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 shrink-0">
+        <rect width="32" height="32" rx="6" fill="white" stroke="#E8E8E8" strokeWidth="1"/>
+        <path d="M10 10l6 6-6 6M22 10l-6 6 6 6" stroke="#E30613" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
   },
   {
     name: 'sevDesk',
-    logo: (
-      <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
+    icon: (
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 shrink-0">
         <rect width="32" height="32" rx="6" fill="#E8440A"/>
         <rect x="8" y="18" width="4" height="8" fill="white"/>
         <rect x="14" y="13" width="4" height="13" fill="white"/>
         <rect x="20" y="8" width="4" height="18" fill="white"/>
-        <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">sevDesk</text>
       </svg>
     ),
   },
   {
     name: 'DATEV',
-    logo: (
-      <svg viewBox="0 0 100 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-        <rect width="32" height="32" rx="6" fill="#4CAF50"/>
-        <text x="4" y="22" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="11" fill="white" letterSpacing="0.5">DATEV</text>
-        <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="800" fontSize="16" fill="#2C2C2C">DATEV</text>
+    icon: (
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 shrink-0">
+        <rect width="32" height="32" rx="6" fill="#A8D08D"/>
+        <text x="3" y="21" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="10" fill="#2E6B2E" letterSpacing="0.3">DATEV</text>
       </svg>
     ),
   },
@@ -84,7 +81,8 @@ export function IntegrationenSection() {
               key={integration.name}
               className="flex items-center gap-4 border border-[#E8E8E8] px-7 py-6 hover:border-[#2C2C2C]/30 transition-colors"
             >
-              {integration.logo}
+              {integration.icon}
+              <span className="font-semibold text-[#2C2C2C] text-[17px]">{integration.name}</span>
             </div>
           ))}
         </motion.div>
