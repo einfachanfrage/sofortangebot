@@ -4,12 +4,12 @@ import { motion } from 'framer-motion'
 
 const hauptIntegrationen = [
   {
-    name: 'Lexoffice',
+    name: 'Lexware',
     logo: (
       <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-        <rect width="32" height="32" rx="6" fill="#FF6B35"/>
-        <path d="M8 8h4v16H8zM14 8h10v4H14zM14 14h8v4h-8zM14 20h10v4H14z" fill="white"/>
-        <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">lexoffice</text>
+        <rect width="32" height="32" rx="6" fill="#E30613"/>
+        <path d="M10 10l6 6-6 6M22 10l-6 6 6 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">Lexware</text>
       </svg>
     ),
   },
@@ -17,9 +17,10 @@ const hauptIntegrationen = [
     name: 'sevDesk',
     logo: (
       <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-        <rect width="32" height="32" rx="6" fill="#1DA1F2"/>
-        <circle cx="16" cy="16" r="8" fill="white"/>
-        <circle cx="16" cy="16" r="4" fill="#1DA1F2"/>
+        <rect width="32" height="32" rx="6" fill="#E8440A"/>
+        <rect x="8" y="18" width="4" height="8" fill="white"/>
+        <rect x="14" y="13" width="4" height="13" fill="white"/>
+        <rect x="20" y="8" width="4" height="18" fill="white"/>
         <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">sevDesk</text>
       </svg>
     ),
@@ -28,19 +29,9 @@ const hauptIntegrationen = [
     name: 'DATEV',
     logo: (
       <svg viewBox="0 0 100 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-        <rect width="32" height="32" rx="6" fill="#004B87"/>
-        <path d="M8 10h6c3.3 0 6 2.7 6 6s-2.7 6-6 6H8V10z" fill="white"/>
+        <rect width="32" height="32" rx="6" fill="#4CAF50"/>
+        <text x="4" y="22" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="11" fill="white" letterSpacing="0.5">DATEV</text>
         <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="800" fontSize="16" fill="#2C2C2C">DATEV</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'Lexware',
-    logo: (
-      <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-        <rect width="32" height="32" rx="6" fill="#E30613"/>
-        <path d="M8 8h4v16H8zM12 20h12v4H12z" fill="white"/>
-        <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">Lexware</text>
       </svg>
     ),
   },
