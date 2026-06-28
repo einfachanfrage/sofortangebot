@@ -5,51 +5,47 @@ import { SketchIcon } from './SketchIcon'
 
 const steps = [
   {
-    nr: '01',
+    nr: '1',
     title: 'Einsprechen',
-    desc: 'Du stehst beim Kunden und sprichst kurz rein. Raum, Maße, was gemacht wird.',
+    desc: 'Aufmaß und Arbeiten einfach einsprechen.',
     icon: (
-      /* mic: capsule body + stand arc + base + sound waves */
-      <SketchIcon width={58} height={58} seed={11} roughness={1.6} strokeWidth={2.2} shapes={[
-        { type: 'arc', cx: 29, cy: 20, r: 10, start: Math.PI, stop: 0 },
-        { type: 'rect', x: 19, y: 11, w: 20, h: 18 },
-        { type: 'arc', cx: 29, cy: 29, r: 15, start: 0, stop: Math.PI },
-        { type: 'line', x1: 29, y1: 44, x2: 29, y2: 52 },
-        { type: 'line', x1: 19, y1: 52, x2: 39, y2: 52 },
-        { type: 'arc', cx: 42, cy: 24, r: 5, start: -0.8, stop: 0.8 },
-        { type: 'arc', cx: 47, cy: 24, r: 8, start: -0.8, stop: 0.8 },
+      <SketchIcon width={56} height={56} seed={11} roughness={0.8} strokeWidth={2} shapes={[
+        { type: 'rect', x: 19, y: 8, w: 18, h: 22 },
+        { type: 'arc', cx: 28, cy: 30, r: 14, start: 0, stop: Math.PI },
+        { type: 'line', x1: 28, y1: 44, x2: 28, y2: 51 },
+        { type: 'line', x1: 18, y1: 51, x2: 38, y2: 51 },
+        { type: 'arc', cx: 41, cy: 22, r: 5, start: -0.7, stop: 0.7 },
+        { type: 'arc', cx: 46, cy: 22, r: 9, start: -0.7, stop: 0.7 },
       ]} />
     ),
   },
   {
-    nr: '02',
-    title: 'Erkennen',
-    desc: 'Die KI versteht Handwerkersprache. Positionen, Mengen, Preise. Automatisch.',
+    nr: '2',
+    title: 'Angebot erstellen',
+    desc: 'Mengen, Positionen und Preise werden automatisch ermittelt.',
     icon: (
-      /* clipboard: board + clip + three lines + checkmark */
-      <SketchIcon width={52} height={62} seed={7} roughness={1.6} strokeWidth={2.2} shapes={[
-        { type: 'rect', x: 8, y: 10, w: 36, h: 48 },
-        { type: 'rect', x: 17, y: 5, w: 18, h: 10 },
-        { type: 'line', x1: 15, y1: 28, x2: 37, y2: 28 },
-        { type: 'line', x1: 15, y1: 36, x2: 33, y2: 36 },
-        { type: 'line', x1: 15, y1: 45, x2: 22, y2: 52 },
-        { type: 'line', x1: 22, y1: 52, x2: 36, y2: 38 },
+      <SketchIcon width={48} height={58} seed={7} roughness={0.8} strokeWidth={2} shapes={[
+        { type: 'rect', x: 6, y: 8, w: 36, h: 46 },
+        { type: 'rect', x: 15, y: 3, w: 18, h: 10 },
+        { type: 'line', x1: 13, y1: 24, x2: 35, y2: 24 },
+        { type: 'line', x1: 13, y1: 32, x2: 30, y2: 32 },
+        { type: 'line', x1: 13, y1: 42, x2: 20, y2: 50 },
+        { type: 'line', x1: 20, y1: 50, x2: 34, y2: 36 },
       ]} />
     ),
   },
   {
-    nr: '03',
-    title: 'Abschicken',
-    desc: 'PDF fertig. Per Link teilen, digital unterschreiben lassen. Fertig.',
+    nr: '3',
+    title: 'Versenden',
+    desc: 'Angebot prüfen und direkt an den Kunden senden.',
     icon: (
-      /* envelope: body + V-flap + arrow */
-      <SketchIcon width={66} height={52} seed={3} roughness={1.6} strokeWidth={2.2} shapes={[
-        { type: 'rect', x: 4, y: 10, w: 48, h: 34 },
-        { type: 'line', x1: 4, y1: 10, x2: 28, y2: 28 },
-        { type: 'line', x1: 28, y1: 28, x2: 52, y2: 10 },
-        { type: 'line', x1: 56, y1: 27, x2: 66, y2: 27 },
-        { type: 'line', x1: 62, y1: 22, x2: 66, y2: 27 },
-        { type: 'line', x1: 66, y1: 27, x2: 62, y2: 32 },
+      <SketchIcon width={58} height={46} seed={3} roughness={0.8} strokeWidth={2} shapes={[
+        { type: 'rect', x: 3, y: 6, w: 46, h: 32 },
+        { type: 'line', x1: 3, y1: 6, x2: 26, y2: 26 },
+        { type: 'line', x1: 26, y1: 26, x2: 49, y2: 6 },
+        { type: 'line', x1: 52, y1: 22, x2: 58, y2: 22 },
+        { type: 'line', x1: 55, y1: 18, x2: 58, y2: 22 },
+        { type: 'line', x1: 58, y1: 22, x2: 55, y2: 26 },
       ]} />
     ),
   },
@@ -69,8 +65,7 @@ export function WieFunktioniertSection() {
           So funktioniert&apos;s.
         </motion.h2>
 
-        <div className="grid md:grid-cols-3 gap-0 relative">
-
+        <div className="grid md:grid-cols-3 gap-0">
           {steps.map((s, i) => (
             <motion.div
               key={s.nr}
@@ -78,9 +73,9 @@ export function WieFunktioniertSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="relative pb-12 md:pb-0 md:pr-12 last:pr-0"
+              className="relative pb-12 md:pb-0 md:pr-12 last:pr-0 flex flex-col items-start md:items-start"
             >
-              <div className="mb-4">{s.icon}</div>
+              <div className="mb-5">{s.icon}</div>
               <div className="font-syne font-extrabold text-[#F5C400] leading-none mb-4 text-[64px] md:text-[72px]">
                 {s.nr}
               </div>
