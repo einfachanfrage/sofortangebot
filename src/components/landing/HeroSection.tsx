@@ -76,12 +76,12 @@ export function HeroSection() {
           {/* LEFT */}
           <div>
             <h1 className="font-syne font-extrabold text-white text-[34px] md:text-[50px] lg:text-[60px] leading-[1.06] tracking-tight mb-7 max-w-2xl">
-              Angebot fertig, noch bevor du vom{' '}
-              <span className="text-[#F5C400]">Kunden losfährst.</span>
+              Angebot fertig, bevor du wieder{' '}
+              <span className="text-[#F5C400]">im Auto sitzt.</span>
             </h1>
 
             <p className="text-white/50 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
-              Du sprichst dein Aufmaß ein — direkt auf der Baustelle. Sofortangebot erkennt die Positionen, rechnet alles durch und schickt ein sauberes PDF raus. Unter 10 Minuten. Kein Tippen. Kein Abend am Schreibtisch.
+              Du sprichst dein Aufmaß direkt auf der Baustelle ein. Sofortangebot erstellt daraus automatisch ein vollständiges Angebot — mit Positionen, Mengen und deinen Preisen. Kurz prüfen, als PDF versenden und weiter zur nächsten Baustelle.
             </p>
 
             <Link
@@ -90,7 +90,7 @@ export function HeroSection() {
             >
               Kostenlos testen →
             </Link>
-            <p className="text-white/25 text-sm font-medium">Die ersten 5 Angebote kostenlos.</p>
+            <p className="text-white/25 text-sm font-medium">Die ersten 5 Angebote kostenlos · Monatlich kündbar · Kein Abo-Stress</p>
           </div>
 
           {/* RIGHT — Phone Mockup, menschlicher */}
@@ -99,7 +99,7 @@ export function HeroSection() {
               <div className="bg-[#1a1a1a] border border-white/10 rounded-[28px] px-5 pt-5 pb-6 shadow-2xl">
 
                 {/* Statusbar */}
-                <div className="flex justify-between items-center mb-6 px-1">
+                <div className="flex justify-between items-center mb-5 px-1">
                   <span className="text-white/30 text-[10px] font-semibold tracking-wide">9:41</span>
                   <div className="flex gap-1 items-center">
                     <div className="w-3 h-1.5 bg-white/20 rounded-sm" />
@@ -107,46 +107,33 @@ export function HeroSection() {
                   </div>
                 </div>
 
-                {/* Mic button — simpel, warm */}
-                <div className="flex flex-col items-center gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-full border-2 border-[#F5C400]/60 flex items-center justify-center relative">
-                    <div className="absolute inset-0 rounded-full border border-[#F5C400]/20 scale-125" />
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5C400" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="9" y="1" width="6" height="12" rx="3"/>
-                      <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
-                      <line x1="12" y1="19" x2="12" y2="23"/>
-                      <line x1="8" y1="23" x2="16" y2="23"/>
-                    </svg>
-                  </div>
-                  <span className="text-white/35 text-[10px] font-semibold tracking-widest uppercase">läuft…</span>
+                {/* App-Header wie echt */}
+                <div className="text-center mb-5">
+                  <p className="font-syne font-extrabold text-white text-[18px] tracking-tight">Einfach drauflos.</p>
+                  <p className="text-white/35 text-[11px] mt-0.5">Was hast du heute gemacht?</p>
                 </div>
 
-                {/* Transkript — das echte, menschliche */}
-                <div className="bg-white/[0.04] rounded-xl px-4 py-3 mb-5">
-                  <p className="text-white/55 text-[12px] leading-[1.7] italic">
-                    „Wohnzimmer bei Herrn Müller — 4 mal 5, Höhe 2,60. Wände und Decke streichen, zwei Fenster, eine Tür…"
+                {/* Transkript */}
+                <div className="mb-6 px-1">
+                  <p className="text-white/40 text-[12px] leading-relaxed italic">
+                    „Parkett verlegen, 30qm, Sockelleisten neu."
                   </p>
                 </div>
 
-                {/* Erkannte Positionen */}
-                <div className="flex flex-col gap-2.5">
-                  {[
-                    { pos: 'Wandflächen',  preis: '494 €' },
-                    { pos: 'Deckenfläche', preis: '170 €' },
-                    { pos: 'Abkleben',     preis: '52 €'  },
-                  ].map((item) => (
-                    <div key={item.pos} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#F5C400] text-[10px]">✓</span>
-                        <span className="text-white/45 text-[11px]">{item.pos}</span>
-                      </div>
-                      <span className="text-white/70 text-[11px] font-bold">{item.preis}</span>
+                {/* Großer gelber Mic-Button — wie in der echten App */}
+                <div className="flex flex-col items-center gap-3 mb-5">
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-[#F5C400]/20 scale-[1.35] blur-md" />
+                    <div className="relative w-16 h-16 rounded-full bg-[#F5C400] flex items-center justify-center shadow-lg">
+                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="1" width="6" height="12" rx="3"/>
+                        <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                      </svg>
                     </div>
-                  ))}
-                  <div className="border-t border-white/8 pt-2.5 mt-0.5 flex justify-between items-baseline">
-                    <span className="text-white/25 text-[10px] uppercase tracking-wider">Gesamt</span>
-                    <span className="font-syne font-black text-white text-[18px]">716 €</span>
                   </div>
+                  <span className="text-white/30 text-[10px] font-medium">· Antippen und sprechen</span>
                 </div>
 
               </div>
