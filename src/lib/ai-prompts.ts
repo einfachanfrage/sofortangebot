@@ -72,12 +72,15 @@ Der Transkript kann mit [RAUM], [ERGAENZUNG] oder [KORREKTUR] Markierungen vorst
 Auch ohne Markierungen: erkenne Raumwechsel an Signalwörtern ("dann noch", "außerdem", "im Wohnzimmer", "jetzt der").
 Jeder genannte Raum = eigener Eintrag in raeume[]. Nicht zusammenfassen.
 
-EXPLIZITE FLÄCHENANGABEN — NEUE FELDER:
-Wenn der Nutzer Wand- und Deckfläche EXPLIZIT als Zahlenwert nennt (ohne L×B×H):
-- "Wandfläche ist 45 m²" → wandflaeche_direkt: 45
-- "Decke ist 25 m²" → deckflaeche_direkt: 25
-- "davon 3 m² Fenster abziehen" → wandflaeche_abzug_m2: 3 (der Abzug wird in der Engine berechnet)
-- "flaeche" bleibt für Bodenfläche (L×B) reserviert — NIEMALS Wandfläche in "flaeche" eintragen!
+EXPLIZITE FLÄCHENANGABEN — NEUE FELDER (KRITISCH):
+Wenn der Nutzer Wand- und/oder Deckfläche EXPLIZIT als Zahlenwert nennt (nicht als L×B×H):
+- "Wandfläche insgesamt sind 45 qm" → wandflaeche_direkt: 45
+- "X qm Wandfläche" / "die Wände haben X qm" / "Wandfläche ist X" → wandflaeche_direkt: X
+- "Decke ist 25 qm" / "Deckenfläche genau 25 qm" / "25 Quadratmeter für die Decke" → deckflaeche_direkt: 25
+- "davon 3 qm Fenster abziehen" / "minus Fenster 3 qm" → wandflaeche_abzug_m2: 3
+- REGEL: "flaeche" = immer Bodenfläche (L×B). NIEMALS Wandfläche oder Deckenfläche in "flaeche" eintragen!
+- Wenn der Nutzer explizit eine Deckenfläche nennt: flaeche = gleicher Wert (Boden ≈ Decke), deckflaeche_direkt = gleicher Wert.
+- Beispiel "Decke 25 qm, Wand 45 qm, Fenster 3 qm abziehen" → flaeche: 25, deckflaeche_direkt: 25, wandflaeche_direkt: 45, wandflaeche_abzug_m2: 3
 
 GEWERK-SPEZIFISCHES WISSEN:
 
