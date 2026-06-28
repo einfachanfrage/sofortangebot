@@ -16,10 +16,10 @@ const hauptIntegrationen = [
   {
     name: 'sevDesk',
     logo: (
-      <svg viewBox="0 0 110 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-        <rect width="32" height="32" rx="6" fill="#00A8E0"/>
-        <path d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z" fill="white"/>
-        <path d="M16 13v3l2 2" stroke="#00A8E0" strokeWidth="1.5" strokeLinecap="round"/>
+      <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
+        <rect width="32" height="32" rx="6" fill="#1DA1F2"/>
+        <circle cx="16" cy="16" r="8" fill="white"/>
+        <circle cx="16" cy="16" r="4" fill="#1DA1F2"/>
         <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">sevDesk</text>
       </svg>
     ),
@@ -31,6 +31,16 @@ const hauptIntegrationen = [
         <rect width="32" height="32" rx="6" fill="#004B87"/>
         <path d="M8 10h6c3.3 0 6 2.7 6 6s-2.7 6-6 6H8V10z" fill="white"/>
         <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="800" fontSize="16" fill="#2C2C2C">DATEV</text>
+      </svg>
+    ),
+  },
+  {
+    name: 'Lexware',
+    logo: (
+      <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
+        <rect width="32" height="32" rx="6" fill="#E30613"/>
+        <path d="M8 8h4v16H8zM12 20h12v4H12z" fill="white"/>
+        <text x="40" y="22" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="#2C2C2C">Lexware</text>
       </svg>
     ),
   },
