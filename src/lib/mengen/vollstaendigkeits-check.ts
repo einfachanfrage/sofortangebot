@@ -701,8 +701,22 @@ export function pruefeUndErgaenzeVollstaendigkeit(
       const wandPosTapez = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wand'))
       let tfm = wandPosTapez?.menge ?? null
       if (tfm === null) {
-        const m2Match = transkript.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
-        if (m2Match) tfm = parseFloat(m2Match[1].replace(',', '.'))
+        // Gezielt "Wandfläche X qm" oder "X qm Wand" suchen (nicht ersten m²-Wert im Text nehmen)
+        const wandM2Match =
+          transkript.match(/(?:wandfläche|wand(?:fläche)?|wände)[^.!?]*?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i) ??
+          transkript.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)[^.!?]*?(?:wandfläche|wand(?:fläche)?|wände)/i)
+        if (wandM2Match) {
+          const brutto = parseFloat(wandM2Match[1].replace(',', '.'))
+          // Abzüge: "X qm abziehen" / "minus X qm" / "Fenster X qm"
+          const abzugMatch = transkript.match(/(?:abzieh|minus|abzug|abzügl)[^.!?]*?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+            ?? transkript.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)[^.!?]*?(?:abzieh|abzug)/i)
+          const abzug = abzugMatch ? parseFloat(abzugMatch[1].replace(',', '.')) : 0
+          tfm = Math.max(0, brutto - abzug)
+        } else {
+          // Letzter Fallback: erster m²-Wert im Text
+          const m2Match = transkript.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+          if (m2Match) tfm = parseFloat(m2Match[1].replace(',', '.'))
+        }
       }
       // Etagen-Multiplikation: "4 Etagen, je 18 qm" → tfm = 4 × 18
       if (tfm !== null) {
