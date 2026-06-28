@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { SketchIcon } from './SketchIcon'
 
 const steps = [
   {
@@ -8,14 +9,16 @@ const steps = [
     title: 'Einsprechen',
     desc: 'Du stehst beim Kunden und sprichst kurz rein — Raum, Maße, was gemacht wird.',
     icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#F5C400" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect x="13" y="3" width="10" height="16" rx="5"/>
-        <path d="M6 17v2a12 12 0 0 0 24 0v-2"/>
-        <line x1="18" y1="31" x2="18" y2="35"/>
-        <line x1="12" y1="35" x2="24" y2="35"/>
-        <path d="M28 13c1.5 1 2 3 2 5" strokeOpacity="0.5"/>
-        <path d="M30 10c2.5 2 3.5 5 3.5 8" strokeOpacity="0.3"/>
-      </svg>
+      /* mic: capsule body + stand arc + base + sound waves */
+      <SketchIcon width={58} height={58} seed={11} roughness={1.6} strokeWidth={2.2} shapes={[
+        { type: 'arc', cx: 29, cy: 20, r: 10, start: Math.PI, stop: 0 },
+        { type: 'rect', x: 19, y: 11, w: 20, h: 18 },
+        { type: 'arc', cx: 29, cy: 29, r: 15, start: 0, stop: Math.PI },
+        { type: 'line', x1: 29, y1: 44, x2: 29, y2: 52 },
+        { type: 'line', x1: 19, y1: 52, x2: 39, y2: 52 },
+        { type: 'arc', cx: 42, cy: 24, r: 5, start: -0.8, stop: 0.8 },
+        { type: 'arc', cx: 47, cy: 24, r: 8, start: -0.8, stop: 0.8 },
+      ]} />
     ),
   },
   {
@@ -23,14 +26,15 @@ const steps = [
     title: 'Erkennen',
     desc: 'Die KI versteht Handwerkersprache. Positionen, Mengen, Preise — automatisch.',
     icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#F5C400" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect x="8" y="2" width="20" height="32" rx="2"/>
-        <line x1="8" y1="8" x2="28" y2="8"/>
-        <rect x="11" y="2" width="14" height="4" rx="1"/>
-        <line x1="13" y1="15" x2="23" y2="15"/>
-        <line x1="13" y1="20" x2="20" y2="20"/>
-        <polyline points="13,27 16,30 23,23"/>
-      </svg>
+      /* clipboard: board + clip + three lines + checkmark */
+      <SketchIcon width={52} height={62} seed={7} roughness={1.6} strokeWidth={2.2} shapes={[
+        { type: 'rect', x: 8, y: 10, w: 36, h: 48 },
+        { type: 'rect', x: 17, y: 5, w: 18, h: 10 },
+        { type: 'line', x1: 15, y1: 28, x2: 37, y2: 28 },
+        { type: 'line', x1: 15, y1: 36, x2: 33, y2: 36 },
+        { type: 'line', x1: 15, y1: 45, x2: 22, y2: 52 },
+        { type: 'line', x1: 22, y1: 52, x2: 36, y2: 38 },
+      ]} />
     ),
   },
   {
@@ -38,14 +42,15 @@ const steps = [
     title: 'Abschicken',
     desc: 'PDF fertig. Per Link teilen, digital unterschreiben lassen. Fertig.',
     icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#F5C400" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect x="4" y="6" width="28" height="24" rx="2"/>
-        <polyline points="4,6 18,20 32,6"/>
-        <line x1="4" y1="30" x2="13" y2="21"/>
-        <line x1="32" y1="30" x2="23" y2="21"/>
-        <line x1="22" y1="33" x2="32" y2="33"/>
-        <polyline points="29,30 32,33 29,36"/>
-      </svg>
+      /* envelope: body + V-flap + arrow */
+      <SketchIcon width={66} height={52} seed={3} roughness={1.6} strokeWidth={2.2} shapes={[
+        { type: 'rect', x: 4, y: 10, w: 48, h: 34 },
+        { type: 'line', x1: 4, y1: 10, x2: 28, y2: 28 },
+        { type: 'line', x1: 28, y1: 28, x2: 52, y2: 10 },
+        { type: 'line', x1: 56, y1: 27, x2: 66, y2: 27 },
+        { type: 'line', x1: 62, y1: 22, x2: 66, y2: 27 },
+        { type: 'line', x1: 66, y1: 27, x2: 62, y2: 32 },
+      ]} />
     ),
   },
 ]
@@ -66,7 +71,7 @@ export function WieFunktioniertSection() {
 
         <div className="grid md:grid-cols-3 gap-0 relative">
           {/* Connector line desktop */}
-          <div className="hidden md:block absolute top-[44px] left-[calc(33%+24px)] right-[calc(33%+24px)] h-px bg-[#F5C400]/60" />
+          <div className="hidden md:block absolute top-[54px] left-[calc(33%+24px)] right-[calc(33%+24px)] h-px bg-[#F5C400]/60" />
 
           {steps.map((s, i) => (
             <motion.div
@@ -77,7 +82,7 @@ export function WieFunktioniertSection() {
               transition={{ duration: 0.5, delay: i * 0.15 }}
               className="relative pb-12 md:pb-0 md:pr-12 last:pr-0"
             >
-              <div className="mb-4 opacity-80">{s.icon}</div>
+              <div className="mb-4">{s.icon}</div>
               <div className="font-syne font-extrabold text-[#F5C400] leading-none mb-4 text-[64px] md:text-[72px]">
                 {s.nr}
               </div>
