@@ -1,7 +1,6 @@
 import { Nav } from '@/components/landing/Nav'
 import { HeroSection } from '@/components/landing/HeroSection'
 import { VorherNachherSection } from '@/components/landing/VorherNachherSection'
-import { ProblemSection } from '@/components/landing/ProblemSection'
 import { WieFunktioniertSection } from '@/components/landing/WieFunktioniertSection'
 import { TestimonialSection } from '@/components/landing/TestimonialSection'
 import { FeaturesSection } from '@/components/landing/FeaturesSection'
@@ -18,7 +17,6 @@ export default function LandingPage() {
       <Nav />
       <HeroSection />
       <VorherNachherSection />
-      <ProblemSection />
       <WieFunktioniertSection />
       <TestimonialSection />
       <FeaturesSection />
