@@ -6,7 +6,7 @@ import { SketchIcon } from './SketchIcon'
 const features = [
   {
     name: 'Spracheingabe',
-    desc: 'Einfach eingesprochen auf der Baustelle. Dialekt, Korrekturen, Unterbrechungen — die KI versteht das.',
+    desc: 'Einfach eingesprochen auf der Baustelle. Dialekt, Korrekturen, Unterbrechungen - die KI versteht das.',
     icon: <SketchIcon width={26} height={30} seed={11} roughness={1.6} strokeWidth={2} shapes={[
       { type: 'rect', x: 8, y: 1, w: 10, h: 16 },
       { type: 'arc', cx: 13, cy: 17, r: 8, start: 0, stop: Math.PI },

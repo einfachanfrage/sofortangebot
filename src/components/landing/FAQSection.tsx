@@ -14,14 +14,14 @@ const faqs = [
   },
   {
     q: 'Funktioniert das auf dem Handy?',
-    a: 'Ja. Genau dafür ist es gebaut. Parkplatz, Baustelle, Auto — wo auch immer du gerade bist.',
+    a: 'Ja. Genau dafür ist es gebaut. Parkplatz, Baustelle, Auto -wo auch immer du gerade bist.',
   },
   {
     q: 'Was passiert mit meinen Kundendaten?',
     a: 'Die liegen verschlüsselt auf Servern in Deutschland. Kein Verkauf, kein Tracking, kein Teilen mit Dritten. DSGVO-konform.',
   },
   {
-    q: 'Ich bin Kleinunternehmer nach §19 UStG — geht das?',
+    q: 'Ich bin Kleinunternehmer nach §19 UStG -geht das?',
     a: 'Ja, direkt beim Einrichten einstellbar. Auf deinen Angeboten steht dann der korrekte Hinweis, ohne MwSt-Ausweis.',
   },
   {

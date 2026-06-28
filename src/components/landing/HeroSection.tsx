@@ -81,7 +81,7 @@ export function HeroSection() {
             </h1>
 
             <p className="text-white/50 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
-              Du sprichst dein Aufmaß direkt auf der Baustelle ein. Sofortangebot erstellt daraus automatisch ein vollständiges Angebot — mit Positionen, Mengen und deinen Preisen. Kurz prüfen, als PDF versenden und weiter zur nächsten Baustelle.
+              Du sprichst dein Aufmaß direkt auf der Baustelle ein. Sofortangebot erstellt daraus automatisch ein vollständiges Angebot - mit Positionen, Mengen und deinen Preisen. Kurz prüfen, als PDF versenden und weiter zur nächsten Baustelle.
             </p>
 
             <Link
