@@ -7,7 +7,7 @@ const steps = [
   {
     nr: '01',
     title: 'Einsprechen',
-    desc: 'Du stehst beim Kunden und sprichst kurz rein — Raum, Maße, was gemacht wird.',
+    desc: 'Du stehst beim Kunden und sprichst kurz rein. Raum, Maße, was gemacht wird.',
     icon: (
       /* mic: capsule body + stand arc + base + sound waves */
       <SketchIcon width={58} height={58} seed={11} roughness={1.6} strokeWidth={2.2} shapes={[
@@ -24,7 +24,7 @@ const steps = [
   {
     nr: '02',
     title: 'Erkennen',
-    desc: 'Die KI versteht Handwerkersprache. Positionen, Mengen, Preise — automatisch.',
+    desc: 'Die KI versteht Handwerkersprache. Positionen, Mengen, Preise. Automatisch.',
     icon: (
       /* clipboard: board + clip + three lines + checkmark */
       <SketchIcon width={52} height={62} seed={7} roughness={1.6} strokeWidth={2.2} shapes={[
@@ -70,8 +70,6 @@ export function WieFunktioniertSection() {
         </motion.h2>
 
         <div className="grid md:grid-cols-3 gap-0 relative">
-          {/* Connector line desktop */}
-          <div className="hidden md:block absolute top-[54px] left-[calc(33%+24px)] right-[calc(33%+24px)] h-px bg-[#F5C400]/60" />
 
           {steps.map((s, i) => (
             <motion.div
