@@ -17,8 +17,8 @@ export function CTASection() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="font-syne font-extrabold text-[#2C2C2C] leading-tight tracking-tight mb-6 text-[32px] md:text-[44px] lg:text-[52px]">
-              Dein nächstes Angebot.<br />
-              Nicht heute Abend.
+              Feierabend statt<br />
+              Angebot schreiben.
             </h2>
             <p className="text-[#2C2C2C]/60 text-base md:text-lg leading-relaxed mb-10 max-w-xl">
               Sprich dein Aufmaß direkt beim Kunden ein. Sofortangebot erstellt automatisch ein professionelles Angebot als PDF – bereit zum Versenden, bevor du losfährst.
