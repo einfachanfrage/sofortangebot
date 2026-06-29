@@ -136,6 +136,38 @@ export async function POST(req: NextRequest) {
     // Raw-Text überschreibt GPT-Transkript — GPT normalisiert und verliert "nur X"-Angaben
     extraktion.transkript = text
 
+    // Direkte Flächenangaben aus Transkript patchen wenn GPT sie nicht extrahiert hat
+    // Greift für Single-Raum — bei Multi-Raum zu riskant (Zuordnung unklar)
+    if ((extraktion.raeume?.length ?? 0) === 1) {
+      const r = extraktion.raeume[0]
+      const t = verarbeitetText
+
+      if (r.wandflaeche_direkt === null || r.wandflaeche_direkt === undefined) {
+        const wandM = t.match(/(?:wandfläche|wand(?:fläche)?|wände)[^.!?\n]*?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+          ?? t.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)[^.!?\n]*?(?:wandfläche|wand(?:fläche)?|wände)/i)
+        if (wandM) r.wandflaeche_direkt = parseFloat(wandM[1].replace(',', '.'))
+      }
+
+      if (r.deckflaeche_direkt === null || r.deckflaeche_direkt === undefined) {
+        const deckM = t.match(/(?:deckenfläche|die\s+decke\s+ist|decke)\s+(?:so\s+)?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+          ?? t.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)\s*(?:deckenfläche|für\s+die\s+decke)/i)
+        if (deckM) {
+          r.deckflaeche_direkt = parseFloat(deckM[1].replace(',', '.'))
+          if (!r.flaeche) r.flaeche = r.deckflaeche_direkt
+        }
+      }
+
+      if ((r.wandflaeche_abzug_m2 === null || r.wandflaeche_abzug_m2 === undefined) && r.wandflaeche_direkt) {
+        const abzugM = t.match(/(?:abzieh|minus|abzug|abzügl)[^.!?\n]*?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
+          ?? t.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)[^.!?\n]*?(?:abzieh|abzug)/i)
+        if (abzugM) r.wandflaeche_abzug_m2 = parseFloat(abzugM[1].replace(',', '.'))
+      }
+
+      if (r.wandflaeche_direkt) {
+        console.log(`=== FLÄCHEN-PATCH: wandflaeche_direkt=${r.wandflaeche_direkt} deckflaeche_direkt=${r.deckflaeche_direkt} abzug=${r.wandflaeche_abzug_m2} ===`)
+      }
+    }
+
     // Tor/Garagentor direkt aus vorverarbeitetem Text in tueren[] injizieren — GPT erkennt "Tor" oft nicht
     if (extraktion.gewerk === 'maler') {
       const tl = textMitZahlen.toLowerCase()
