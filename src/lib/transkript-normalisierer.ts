@@ -82,6 +82,66 @@ const EINHEITEN: Array<[RegExp, string]> = [
   [/\bcentimeter\b/gi, 'cm'],
 ]
 
+// ── FÜLLWÖRTER VOR ZAHLEN ────────────────────────────────────────────────────
+// Nur entfernen wenn direkt vor einer Ziffer — Zahl bleibt erhalten
+
+const FUELLWOERTER_VOR_ZAHLEN: Array<[RegExp, string]> = [
+  [/\bhalt\s+so\s+(?=\d)/gi, ''],
+  [/\bso\s+(?=\d)/gi, ''],
+  [/\bungefähr\s+(?=\d)/gi, ''],
+  [/\bcirca\s+(?=\d)/gi, ''],
+  [/\bca[.]\s*(?=\d)/gi, ''],
+  [/\betwa\s+(?=\d)/gi, ''],
+  [/\bso\s+in\s+etwa\s+(?=\d)/gi, ''],
+  [/\bich\s+würde?\s+sagen\s+/gi, ''],
+  [/\bich\s+schätz[et]?\s+(?:mal\s+)?/gi, ''],
+  [/\bich\s+tipp[et]?\s+auf\s+/gi, ''],
+  [/\bgrob\s+gesagt\s+/gi, ''],
+  [/\bso\s+ungefähr\s+(?=\d)/gi, ''],
+]
+
+// ── META-KOMMENTARE IGNORIEREN ────────────────────────────────────────────────
+// Sätze ohne Maße/Arbeiten entfernen — vereinfacht GPT-Parsing
+
+const IGNORIER_MUSTER: Array<[RegExp, string]> = [
+  [/\bich\s+steh[et]?\s+(?:hier|grade?|gerade?)[^,.!?]*/gi, ''],
+  [/\bwir\s+stehen?\s+hier[^,.!?]*/gi, ''],
+  [/\bhier\s+beim\s+kunden[^,.!?]*/gi, ''],
+  [/\bbeim\s+kunden[^,.!?]*/gi, ''],
+  [/\btypische(?:[rn])?\s+altbau(?:wohnung)?[^,.!?]*/gi, 'Altbau'],
+  [/\bmal\s+gucken[^,.!?]*/gi, ''],
+  [/\bschauen\s+wir\s+mal[^,.!?]*/gi, ''],
+  [/\bmoment\s+mal[^,.!?]*/gi, ''],
+  [/\bwie\s+gesagt[,\s]*/gi, ''],
+  [/\bkurz\s+gesagt[,\s]*/gi, ''],
+  [/\bsozusagen\b/gi, ''],
+  [/\bquasi\b/gi, ''],
+  [/\bgewissermaßen\b/gi, ''],
+  [/\birgendwie\b/gi, ''],
+  [/\bja\s+also[,\s]*/gi, ''],
+  [/\bjo\s+also[,\s]*/gi, ''],
+  [/\bäh+\s*/gi, ''],
+  [/\bähm+\s*/gi, ''],
+  [/\bhmm+\s*/gi, ''],
+]
+
+// ── ALLTAGSAUSDRÜCKE FÜR "KOMPLETT" ──────────────────────────────────────────
+// Normalisieren bevor GPT es verarbeitet
+
+const KOMPLETT_SYNONYME: Array<[RegExp, string]> = [
+  [/\bdas\s+volle\s+programm\b/gi, 'komplett'],
+  [/\balles\s+drum\s+und\s+dran\b/gi, 'komplett'],
+  [/\bvon\s+oben\s+bis\s+unten\b/gi, 'komplett'],
+  [/\bden\s+ganzen\s+raum\b/gi, 'komplett'],
+  [/\bkomplett\s+durch\b/gi, 'komplett'],
+  [/\bkomplett\s+renovier\w*\b/gi, 'komplett neu machen'],
+  [/\bfrisch\s+machen\b/gi, 'neu machen'],
+  [/\balles\s+was\s+dazugeh[öo]rt\b/gi, 'komplett'],
+  [/\balles\s+neu\b/gi, 'komplett neu'],
+  [/\brundherum\b/gi, 'komplett'],
+  [/\büberall\b(?=\s)/gi, 'komplett'],
+]
+
 // ── FACHBEGRIFFE-NORMALISIERUNG ───────────────────────────────────────────────
 
 const FACHBEGRIFFE: Array<[RegExp, string]> = [
@@ -180,10 +240,16 @@ const MASSANGABEN: Array<[RegExp, string]> = [
 // ── RAUMWECHSEL-SIGNALE ───────────────────────────────────────────────────────
 
 const RAUMWECHSEL: Array<[RegExp, string]> = [
+  [/\bund\s+dann\s+(?:haben\s+wir\s+)?noch\b/gi, '\nUnd dann noch:'],
   [/\bund\s+dann\b/gi, '\nUnd dann:'],
   [/\bdann\s+noch\b/gi, '\nDann noch:'],
+  [/\baußerdem\s+noch\b/gi, '\nAußerdem noch:'],
   [/\baußerdem\b/gi, '\nAußerdem:'],
   [/\bdazu\s+kommt\b/gi, '\nDazu kommt:'],
+  [/\bdann\s+wär[et]?\s+da\s+(?:noch\s+)?/gi, '\nDann wäre da: '],
+  [/\bnebenan\b/gi, '\nNebenan:'],
+  [/\bgleich\s+daneben\b/gi, '\nGleich daneben:'],
+  [/\bim\s+nächsten\s+(?:zimmer|raum)\b/gi, '\nNächster Raum:'],
   [/\bnoch\s+der\b(?=\s)/gi, '\nNoch der:'],
   [/\bnoch\s+die\b(?=\s)/gi, '\nNoch die:'],
   [/\bnoch\s+das\b(?=\s)/gi, '\nNoch das:'],
@@ -252,6 +318,9 @@ export function normalisierenTranskript(text: string): NormalisierungsErgebnis {
   }
 
   apply(DIALEKTE, 'Dialekt')
+  apply(IGNORIER_MUSTER, 'Füllsatz')
+  apply(FUELLWOERTER_VOR_ZAHLEN, 'Füllwort')
+  apply(KOMPLETT_SYNONYME, 'Komplett-Synonym')
   apply(MASSANGABEN, 'Maßangabe')
   ergebnis = ersetzeZahlenWorte(ergebnis)
   apply(EINHEITEN, 'Einheit')

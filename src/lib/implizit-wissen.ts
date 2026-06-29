@@ -70,11 +70,17 @@ export const IMPLIZIT_REGELN: ImpliziteRegel[] = [
     erklaerung: 'Tapezieren = oft Altbelag entfernen',
   },
   {
-    trigger: [/komplett\s+streichen/i, /alles\s+streichen/i],
+    trigger: [
+      /komplett\s+streichen/i, /alles\s+streichen/i,
+      /das\s+volle\s+programm/i, /alles\s+drum\s+und\s+dran/i,
+      /von\s+oben\s+bis\s+unten/i, /komplett\s+neu/i,
+      /alles\s+neu\b/i, /frisch\s+machen/i, /den\s+ganzen\s+raum/i,
+      /komplett\s+durch/i, /komplett\s+renovier/i, /muss\s+halt\s+alles\s+neu/i,
+    ],
     gewerk: ['maler'],
     schlussfolgerung: { typ: 'flag_setzen', feld: 'komplett_inklusive_decke', wert: true },
     konfidenz: 'sicher',
-    erklaerung: '"Komplett" = Wände + Decke + Türen/Fenster',
+    erklaerung: '"Komplett / das volle Programm" = Wände + Decke + Türen/Fenster',
   },
   {
     trigger: [/neubau/i, /rohbau/i, /erstanstrich/i],

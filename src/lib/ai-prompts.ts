@@ -140,6 +140,28 @@ Antworte NUR mit diesem JSON. Kein Text davor, kein Text danach.
       "vage": false,
       "vage_typ": null,
       "vage_beschreibung": null
+    },
+    {
+      "_kommentar_beispiel": "Wenn Nutzer direkt Flächen nennt statt L×B×H:",
+      "name": "Schlafzimmer",
+      "laenge": null,
+      "breite": null,
+      "hoehe": null,
+      "flaeche": 20,
+      "wandflaeche_direkt": 45,
+      "deckflaeche_direkt": 20,
+      "wandflaeche_abzug_m2": 3,
+      "umfang": null,
+      "fenster": [],
+      "tueren": [],
+      "nassbereich": false,
+      "arbeiten": ["tapezieren", "decke_streichen"],
+      "altbelag_vorhanden": false,
+      "altbelag_entfernen": false,
+      "sockelleisten": true,
+      "vage": false,
+      "vage_typ": null,
+      "vage_beschreibung": null
     }
   ],
   "waende": [],
