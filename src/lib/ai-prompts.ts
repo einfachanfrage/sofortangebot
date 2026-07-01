@@ -54,6 +54,7 @@ IMPLIZITES WISSEN — IMMER ANWENDEN:
 Du kennst die Handwerksregeln und wendest sie automatisch an:
 
 MALER: Streichen erwähnt → Abdecken/Abkleben ergänzen. Wände streichen → prüfen ob Decke auch gemeint. Tapezieren → nach Altbelag fragen. Neubau → Voranstrich ergänzen. "Komplett" → Wände + Decke + Rahmen.
+FENSTER/TÜREN: Anzahl IMMER im anzahl-Feld setzen. "2 Fenster" → fenster:[{anzahl:2,breite:1.2,hoehe:1.0,annahme:true}]. Nicht als separate Einträge!
 FLIESEN: Bad/Dusche/Nassbereich → nassbereich: true. Nassbereich → Abdichtung als Position. "Bodengleich" → eigene teure Position. "Komplett erneuern" → nach Altfliesen fragen. Diagonal → Verschnitt 15%.
 SANITÄR: "Bad komplett" → nach Leitungen fragen. WC/Waschtisch/Wanne → Silikon ergänzen. "Tauschen/Wechseln" → Demontage ergänzen. Heizkörper neu → Thermostatventil ergänzen.
 ELEKTRO: Küche neu → Herdanschluss prüfen. Smart Home → Flag setzen. "Unterputz/UP" → up_oder_ap: up. "Aufputz/AP" → up_oder_ap: ap.
@@ -130,7 +131,7 @@ Antworte NUR mit diesem JSON. Kein Text davor, kein Text danach.
       "deckflaeche_direkt": null,
       "wandflaeche_abzug_m2": null,
       "umfang": null,
-      "fenster": [{"breite": 1.20, "hoehe": 1.00, "annahme": true}],
+      "fenster": [{"anzahl": 2, "breite": 1.20, "hoehe": 1.00, "annahme": true}],
       "tueren": [{"breite": 0.90, "hoehe": 2.10, "annahme": false}],
       "nassbereich": false,
       "arbeiten": ["waende_streichen", "decke_streichen", "abkleben"],
