@@ -45,11 +45,13 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
     wandflaeche_abzug_m2: num((r as any).wandflaeche_abzug_m2),
     umfang: num(r.umfang),
     fenster: arr<Record<string, unknown>>(r.fenster).map(f => ({
+      anzahl: num(f.anzahl) ?? 1,
       breite: num(f.breite) ?? undefined,
       hoehe: num(f.hoehe) ?? undefined,
       annahme: bool(f.annahme),
     })),
     tueren: arr<Record<string, unknown>>(r.tueren).map(t => ({
+      anzahl: num(t.anzahl) ?? 1,
       breite: num(t.breite) ?? undefined,
       hoehe: num(t.hoehe) ?? undefined,
       annahme: bool(t.annahme),
