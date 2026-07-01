@@ -73,13 +73,14 @@ function fmtDate(d: string) {
 }
 
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, editingId, setEditingId, updateEditItem, removeEditItem, vatRate }: {
+function SortableItem({ item, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick }: {
   item: EditItem
   editingId: string | null
   setEditingId: (id: string | null) => void
   updateEditItem: (id: string, field: keyof EditItem, value: string | number) => void
   removeEditItem: (id: string) => void
   vatRate: number
+  onUnitPick: (id: string) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
@@ -118,23 +119,13 @@ function SortableItem({ item, editingId, setEditingId, updateEditItem, removeEdi
                 className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none"
                 min={0} step="0.01"
               />
-              <select
-                value={UNITS.includes(item.unit) ? item.unit : '__custom'}
-                onChange={e => e.target.value !== '__custom' && updateEditItem(item.id, 'unit', e.target.value)}
-                className="text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none"
+              <button
+                type="button"
+                onClick={e => { e.stopPropagation(); onUnitPick(item.id) }}
+                className="text-sm font-black text-[#2C2C2C] bg-[#F5C400]/20 rounded-lg px-2 py-1 focus:outline-none"
               >
-                {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-                {!UNITS.includes(item.unit) && <option value="__custom">{item.unit}</option>}
-                <option value="__custom">Andere…</option>
-              </select>
-              {(!UNITS.includes(item.unit) || item.unit === '') && (
-                <input
-                  value={item.unit}
-                  onChange={e => updateEditItem(item.id, 'unit', e.target.value)}
-                  placeholder="Einheit"
-                  className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none"
-                />
-              )}
+                {item.unit || 'Einheit'} ▾
+              </button>
               <div className="flex items-center gap-1 ml-auto">
                 <input
                   type="number"
@@ -963,20 +954,20 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="bg-white rounded-2xl border border-[#2C2C2C]/5" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between px-4 pt-4 pb-2">
                 <div className="font-black text-[#2C2C2C]">Positionen</div>
-                {editMode && (
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/angebot/${quote.id}/entwurf`}
-                      className="flex items-center gap-1.5 bg-[#F5C400]/15 text-[#2C2C2C] rounded-lg px-2.5 py-1.5"
-                    >
-                      <Mic size={14} strokeWidth={2.5} />
-                      <span className="text-xs font-black">Aufnahme</span>
-                    </Link>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/angebot/${quote.id}/entwurf`}
+                    className="flex items-center gap-1.5 bg-[#F5C400]/15 text-[#2C2C2C] rounded-lg px-2.5 py-1.5"
+                  >
+                    <Mic size={14} strokeWidth={2.5} />
+                    <span className="text-xs font-black">Aufnahme</span>
+                  </Link>
+                  {editMode && (
                     <button onClick={addEditItem} className="bg-[#F5C400] rounded-lg p-1.5">
                       <Plus size={16} color="#2C2C2C" strokeWidth={3} />
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
@@ -993,6 +984,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                         updateEditItem={updateEditItem}
                         removeEditItem={removeEditItem}
                         vatRate={company?.vat_rate ?? 0}
+                        onUnitPick={setUnitPickerItemId}
                       />
                     ))}
                   </SortableContext>
