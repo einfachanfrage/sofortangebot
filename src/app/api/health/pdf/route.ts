@@ -75,6 +75,8 @@ export async function GET() {
       signed_by: null,
       angebotsnummer: 'HEALTH-001',
       briefpapier_id: null,
+      revision: 1,
+      original_id: null,
       items: [dummyItem],
     }
 
