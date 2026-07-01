@@ -103,6 +103,7 @@ KORREKTUREN: Wenn der Nutzer sich verbessert ("ach nein", "doch nicht", "warte",
 
 GEWERK-SPEZIFISCHES WISSEN:
 MALER: "Zimmer streichen" = Wände + Decke. Wandfläche = Umfang × Höhe − Öffnungen. Abdecken/Abkleben immer wenn Streichen.
+  FENSTER/TÜREN: Wenn "2 Fenster" → fenster: [{anzahl:2, breite:1.2, hoehe:1.0, annahme:true}]. Anzahl IMMER im anzahl-Feld setzen, nicht als separate Einträge!
 FLIESEN: Nassbereich → immer Abdichtung. "Bad fliesen" = Boden + Wände. Altfliesen entfernen = eigene Position.
 TROCKENBAU: Ständerwand = immer doppelte Beplankung prüfen. Dämmung separat. Spachtel Q2 Standard.
 BODENBELÄGE: Bodenfläche = Länge × Breite + Verschnitt. Sockelleisten = Umfang − Türbreiten.
