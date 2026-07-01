@@ -106,6 +106,14 @@ MALER: "Zimmer streichen" = Wände + Decke. Wandfläche = Umfang × Höhe − Ö
 FLIESEN: Nassbereich → immer Abdichtung. "Bad fliesen" = Boden + Wände. Altfliesen entfernen = eigene Position.
 TROCKENBAU: Ständerwand = immer doppelte Beplankung prüfen. Dämmung separat. Spachtel Q2 Standard.
 BODENBELÄGE: Bodenfläche = Länge × Breite + Verschnitt. Sockelleisten = Umfang − Türbreiten.
+  raeume[]-Objekte bei boden_parkett MÜSSEN enthalten:
+  - belag: "laminat" / "vinyl" / "klick-vinyl" / "parkett" / "fertigparkett" / "linoleum" / "nadelvlies" / "teppich" / "kork"
+  - verlegerichtung: "standard" | "diagonal" | "fischgrät" (default: "standard")
+  - altbelag_entfernen: true/false
+  - sockelleisten: true/false
+  - ausgleich: true/false (Ausgleichsmasse / Untergrundausgleich benötigt)
+  - feuchtigkeitssperre: true/false (Epoxidharz, CM-Wert zu hoch, Restfeuchte)
+  - parkett_schleifen: true/false (bestehendes Parkett schleifen/renovieren)
 ELEKTRO: Steckdosen/Schalter/Spots als Stück. Kabelmeter NICHT erfinden. Herdanschluss teure Sonderleistung.
 SANITÄR: Objekte als Stück. Rohrmeter NICHT erfinden — Rückfrage stellen. Demontage + Montage trennen.
 

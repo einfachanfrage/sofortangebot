@@ -183,10 +183,11 @@ interface Props {
   quoteNumber: string
   briefpapier?: Briefpapier | null
   logoBase64?: string | null
+  revision?: number
 }
 
 // ── Hauptkomponente ────────────────────────────────────────────────────────
-export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase64 }: Props) {
+export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase64, revision }: Props) {
   const isKleinunternehmer = company.vat_rate === 0
   const vatRate = company.vat_rate
 
@@ -232,7 +233,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
           {/* Rechts: Dokumentinfos */}
           <View style={S.headerRight}>
-            <Text style={S.angebotLabel}>Angebot</Text>
+            <Text style={S.angebotLabel}>{revision && revision > 1 ? `Angebot · Revision ${revision}` : 'Angebot'}</Text>
             <View style={S.metaGrid}>
               <View style={S.metaZeile}>
                 <Text style={S.metaLabel}>Nr.</Text>
@@ -291,7 +292,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
         {(() => {
           const gruppen = gruppiereNachRaum(quote.items)
 
-          if (!gruppen || (!gruppen.hatMehrereRaeume && gruppen.allgemein.length === 0)) {
+          if (!gruppen) {
             return quote.items.map((item, idx) => (
               <View key={item.id} style={S.tableRow} wrap={false}>
                 <Text style={{ ...S.posText, ...S.cPos }}>{idx + 1}</Text>
@@ -315,13 +316,11 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
           return sektionen.map(sek => (
             <View key={sek.typ === 'raum' ? sek.raum!.raumName : 'allg'}>
-              {hatMehrereRaeume && (
-                <View style={S.raumKopf} wrap={false}>
-                  <Text style={S.raumKopfText}>
-                    {sek.typ === 'raum' ? sek.raum!.raumName : 'Allgemein'}
-                  </Text>
-                </View>
-              )}
+              <View style={S.raumKopf} wrap={false}>
+                <Text style={S.raumKopfText}>
+                  {sek.typ === 'raum' ? sek.raum!.raumName : 'Allgemein'}
+                </Text>
+              </View>
 
               {(sek.typ === 'raum' ? sek.raum!.items : allgemein).map((gi) => (
                 <View key={gi.id} style={S.tableRow} wrap={false}>

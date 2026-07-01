@@ -1,3 +1,4 @@
+import ComingSoon from '@/components/ComingSoon'
 import { Nav } from '@/components/landing/Nav'
 import { HeroSection } from '@/components/landing/HeroSection'
 import { VorherNachherSection } from '@/components/landing/VorherNachherSection'
@@ -12,6 +13,10 @@ import { BlogTeaserSection } from '@/components/landing/BlogTeaserSection'
 import { Footer } from '@/components/landing/Footer'
 
 export default function LandingPage() {
+  if (process.env.NEXT_PUBLIC_COMING_SOON === 'true') {
+    return <ComingSoon />
+  }
+
   return (
     <div className="min-h-dvh">
       <Nav />

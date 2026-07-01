@@ -63,12 +63,15 @@ export async function GET(req: NextRequest) {
     console.log('PDF Debug — quote_items ist LEER für dieses Angebot!')
   }
 
+  const revision = (quote as { revision?: number }).revision ?? 1
+
   // @ts-expect-error react-pdf renderToBuffer typing mismatch
   let buffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
     quote: { ...quote, items: sortedItems },
     company,
     quoteNumber,
     briefpapier,
+    revision,
   }))
 
   // ZUGFeRD einbetten wenn: E-Rechnung aktiv + Geschäftskunde

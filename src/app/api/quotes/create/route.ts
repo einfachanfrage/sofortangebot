@@ -179,25 +179,31 @@ export async function POST(req: NextRequest) {
     (priceItems ?? []).map(p => [p.title.toLowerCase().trim(), { vob_norm: p.vob_norm, din_normen: p.din_normen }])
   )
 
-  // Positionen einfügen
-  await supabase.from('quote_items').insert(
-    (items as Array<{ title: string; description?: string; quantity: number; unit: string; unit_price: number }>)
-      .map((item, idx) => {
-        const norm = normByTitle.get(item.title.toLowerCase().trim())
-        return {
-          quote_id: quote.id,
-          position: idx + 1,
-          title: item.title,
-          description: item.description || null,
-          quantity: item.quantity,
-          unit: item.unit,
-          unit_price: item.unit_price,
-          total_price: item.quantity * item.unit_price,
-          vob_norm: norm?.vob_norm ?? null,
-          din_normen: norm?.din_normen ?? null,
-        }
-      })
-  )
+  // Positionen einfügen — Fallback ohne vob_norm/din_normen falls Migration noch nicht ausgeführt
+  const itemRows = (items as Array<{ title: string; description?: string; quantity: number; unit: string; unit_price: number }>)
+    .map((item, idx) => {
+      const norm = normByTitle.get(item.title.toLowerCase().trim())
+      return {
+        quote_id: quote!.id,
+        position: idx + 1,
+        title: item.title,
+        description: item.description || null,
+        quantity: item.quantity,
+        unit: item.unit,
+        unit_price: item.unit_price,
+        total_price: item.quantity * item.unit_price,
+        vob_norm: norm?.vob_norm ?? null,
+        din_normen: norm?.din_normen ?? null,
+      }
+    })
+
+  const { error: itemsError } = await supabase.from('quote_items').insert(itemRows)
+  if (itemsError) {
+    // Fallback: ohne optionale Normspalten (Migration noch nicht ausgeführt)
+    await supabase.from('quote_items').insert(
+      itemRows.map(({ vob_norm: _v, din_normen: _d, ...rest }) => rest)
+    )
+  }
 
   return NextResponse.json({ id: quote.id, share_token: quote.share_token, angebotsnummer })
 }

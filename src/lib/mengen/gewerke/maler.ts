@@ -342,6 +342,59 @@ export function malerEngine(daten: any): MengenErgebnis {
     }
   }
 
+  // Sonderarbeiten — top-level fields, unabhängig von Räumen
+  for (const s of ((daten.sonder ?? []) as any[])) {
+    const m2 = s.m2 ?? null
+    const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
+    switch (s.typ) {
+      case 'schimmelbehandlung':
+        positionen.push({ beschreibung: 'Schimmelbehandlung / Grundierung', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m² aus Transkript`, ...mk })
+        break
+      case 'kalkputz':
+        positionen.push({ beschreibung: 'Kalkputz aufbringen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'silikatfarbe':
+        positionen.push({ beschreibung: 'Silikatfarbe auftragen (2×)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'nikotinsperre':
+        positionen.push({ beschreibung: 'Nikotinsperre auftragen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'geruest':
+        positionen.push({ beschreibung: 'Gerüst stellen (Pauschale)', menge: 1, einheit: 'Pauschale', berechnungsweg: 'Pauschale', ...mk })
+        break
+      case 'rissversschluss':
+        positionen.push({ beschreibung: 'Rissverschluss mit Gewebe', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'heizkoerper':
+        positionen.push({ beschreibung: 'Heizkörper schleifen und lackieren', menge: s.anzahl ?? 1, einheit: 'Stück', berechnungsweg: `${s.anzahl ?? 1} Stück`, ...mk })
+        break
+      case 'fussleisten':
+        positionen.push({ beschreibung: 'Fußleisten schleifen und lackieren', menge: s.lfdm, einheit: 'lfdm', berechnungsweg: `${s.lfdm} lfdm`, ...mk })
+        break
+      case 'bautrockner':
+        positionen.push({ beschreibung: 'Bautrockner aufstellen und betreiben', menge: s.tage, einheit: 'Tage', berechnungsweg: `${s.tage} Tage`, ...mk })
+        break
+      case 'antischimmel':
+        positionen.push({ beschreibung: 'Anti-Schimmel-Anstrich', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'kalken':
+        positionen.push({ beschreibung: 'Kalken / Weißkalkung', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'spachteltechnik':
+        positionen.push({ beschreibung: 'Spachteltechnik (Betonoptik)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'versiegelung_spachtel':
+        positionen.push({ beschreibung: 'Versiegelung / Schutzanstrich', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        break
+      case 'holzbalken': {
+        const lfdm = round2((s.anzahl ?? 1) * (s.laenge_m ?? 1))
+        positionen.push({ beschreibung: 'Holzbalken anschleifen', menge: lfdm, einheit: 'lfdm', berechnungsweg: `${s.anzahl} × ${s.laenge_m} m = ${lfdm} lfdm`, ...mk })
+        positionen.push({ beschreibung: 'Lasur auftragen (transparent)', menge: lfdm, einheit: 'lfdm', berechnungsweg: `${lfdm} lfdm`, ...mk })
+        break
+      }
+    }
+  }
+
   for (const pos of positionen) {
     const wand = positionen.find(p => p.beschreibung.includes('Wandfläche'))
     const boden = positionen.find(p => p.beschreibung.includes('Boden'))

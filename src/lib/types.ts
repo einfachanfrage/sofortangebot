@@ -133,6 +133,8 @@ export interface Quote {
   signed_by: string | null
   angebotsnummer: string | null
   briefpapier_id: string | null
+  revision: number
+  original_id: string | null
   customer?: Customer
   items?: QuoteItem[]
 }

@@ -76,6 +76,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       company,
       quoteNumber,
       briefpapier,
+      revision: (quote as { revision?: number }).revision ?? 1,
     }))
 
     // ZUGFeRD für B2B-Kunden
@@ -107,8 +108,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const handwerkerEmail = userData?.user?.email ?? ''
 
     const pdfBase64 = pdfBuffer.toString('base64')
+    const revision = (quote as { revision?: number }).revision ?? 1
+    const pdfDateiname = revision > 1 ? `Angebot-${quoteNumber}-R${revision}.pdf` : `Angebot-${quoteNumber}.pdf`
     const attachments: { filename: string; content: string }[] = [
-      { filename: `Angebot-${quoteNumber}.pdf`, content: pdfBase64 },
+      { filename: pdfDateiname, content: pdfBase64 },
     ]
     if (xmlAttachment) {
       attachments.push({ filename: xmlAttachment.filename, content: xmlAttachment.content.toString('base64') })

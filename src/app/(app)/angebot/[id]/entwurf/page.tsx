@@ -251,16 +251,39 @@ function FertigstellenSheet({
   aufnahmen,
   angebotId,
   onClose,
+  generatingPositionen,
+  positionenCount,
+  onGeneriere,
 }: {
   aufnahmen: AufnahmeWithUrl[]
   angebotId: string
   onClose: () => void
+  generatingPositionen: boolean
+  positionenCount: number | null
+  onGeneriere: () => Promise<void>
 }) {
   const router = useRouter()
-  const sprachen = aufnahmen.filter(a => a.typ === 'sprache')
+  const [navigating, setNavigating] = useState(false)
+  const sprachen = aufnahmen.filter(a => a.typ === 'sprache' && a.verarbeitung_status === 'fertig')
   const notizen = aufnahmen.filter(a => a.typ === 'notiz')
-  const positionen = aufnahmen.flatMap(a => (a.erkannte_positionen as ErkanntPosition[]) ?? [])
-  const summe = positionen.reduce((s, p) => s + (p.gesamtpreis ?? 0), 0)
+
+  async function handlePruefen() {
+    setNavigating(true)
+    // Falls noch keine Positionen generiert wurden, jetzt nachholen
+    if (positionenCount === null && !generatingPositionen) {
+      await onGeneriere()
+    } else if (generatingPositionen) {
+      // Warten bis fertig (polling)
+      await new Promise<void>(resolve => {
+        const iv = setInterval(() => {
+          if (!generatingPositionen) { clearInterval(iv); resolve() }
+        }, 500)
+      })
+    }
+    router.push(`/angebot/${angebotId}`)
+  }
+
+  const bereit = positionenCount !== null && !generatingPositionen
 
   return (
     <div className="fixed inset-0 z-40 flex items-end">
@@ -272,28 +295,52 @@ function FertigstellenSheet({
         <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[24px] mb-1">
           Angebot fertigstellen
         </h2>
-        <p className="text-[#2C2C2C]/40 font-semibold text-[14px] mb-5">
-          {sprachen.length} Aufnahme{sprachen.length !== 1 ? 'n' : ''} · {notizen.length} Notiz{notizen.length !== 1 ? 'en' : ''} · {positionen.length} Positionen
-          {summe > 0 && ` · ${fmtWaehrung(summe)} Netto`}
+        <p className="text-[#2C2C2C]/40 font-semibold text-[14px] mb-4">
+          {sprachen.length} Aufnahme{sprachen.length !== 1 ? 'n' : ''} · {notizen.length} Notiz{notizen.length !== 1 ? 'en' : ''}
+          {positionenCount !== null && ` · ${positionenCount} Positionen`}
         </p>
+
+        {/* Status */}
+        {generatingPositionen && (
+          <div className="bg-[#F5C400]/10 rounded-xl px-4 py-3 flex items-center gap-2 mb-4">
+            <Loader2 size={14} className="animate-spin text-[#8B7000]" />
+            <span className="text-[13px] font-semibold text-[#8B7000]">
+              Positionen werden berechnet…
+            </span>
+          </div>
+        )}
+        {bereit && (
+          <div className="bg-[#EDFAF0] rounded-xl px-4 py-3 flex items-center gap-2 mb-4">
+            <Check size={14} className="text-[#1A7A38]" />
+            <span className="text-[13px] font-semibold text-[#1A7A38]">
+              {positionenCount} Positionen berechnet &amp; bereit
+            </span>
+          </div>
+        )}
 
         <div className="flex flex-col gap-3">
           <button
-            onClick={() => router.push(`/angebot/${angebotId}`)}
-            className="w-full bg-[#2C2C2C] text-white rounded-2xl px-5 py-4 flex items-center justify-between"
+            onClick={handlePruefen}
+            disabled={navigating || (generatingPositionen && positionenCount === null)}
+            className="w-full bg-[#2C2C2C] text-white rounded-2xl px-5 py-4 flex items-center justify-between disabled:opacity-50"
           >
             <div className="text-left">
-              <div className="font-extrabold text-[15px]">📋 Angebot prüfen & bearbeiten</div>
+              <div className="font-extrabold text-[15px]">
+                {navigating || (generatingPositionen && positionenCount === null)
+                  ? '⏳ Wird vorbereitet…'
+                  : '📋 Angebot prüfen & bearbeiten'}
+              </div>
               <div className="text-white/50 text-[13px] font-semibold mt-0.5">
                 Positionen prüfen, Preise anpassen
               </div>
             </div>
-            <ChevronRight size={18} className="text-white/50" />
+            {navigating ? <Loader2 size={18} className="animate-spin text-white/50" /> : <ChevronRight size={18} className="text-white/50" />}
           </button>
 
           <button
             onClick={() => router.push(`/angebot/${angebotId}?aktion=senden`)}
-            className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl px-5 py-4 flex items-center justify-between"
+            disabled={generatingPositionen && positionenCount === null}
+            className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl px-5 py-4 flex items-center justify-between disabled:opacity-40"
           >
             <div className="text-left">
               <div className="font-extrabold text-[15px]">📤 Direkt versenden</div>
@@ -306,7 +353,7 @@ function FertigstellenSheet({
         </div>
 
         <p className="text-center text-[#2C2C2C]/30 font-semibold text-[12px] mt-5">
-          Du kannst das Angebot danach noch bearbeiten bevor du es abschickst.
+          Du kannst jederzeit weitere Aufnahmen hinzufügen und das Angebot neu berechnen.
         </p>
       </div>
     </div>
@@ -331,6 +378,8 @@ export default function EntwurfPage() {
   const [showNotiz, setShowNotiz] = useState(false)
   const [showFertigstellen, setShowFertigstellen] = useState(false)
   const [autosaveText, setAutosaveText] = useState('')
+  const [generatingPositionen, setGeneratingPositionen] = useState(false)
+  const [positionenCount, setPositionenCount] = useState<number | null>(null)
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -413,6 +462,24 @@ export default function EntwurfPage() {
   function showAutosave() {
     setAutosaveText('✓ Gespeichert')
     setTimeout(() => setAutosaveText(''), 2000)
+  }
+
+  async function generierePositionen() {
+    setGeneratingPositionen(true)
+    try {
+      const res = await fetch('/api/entwurf/generiere-positionen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ angebot_id: angebotId }),
+      })
+      if (res.ok) {
+        const data = await res.json() as { positionen_count?: number }
+        setPositionenCount(data.positionen_count ?? null)
+        showAutosave()
+      }
+    } catch { /* ignorieren */ } finally {
+      setGeneratingPositionen(false)
+    }
   }
 
   // ── Aufnahme ───────────────────────────────────────────────────────────────
@@ -516,6 +583,8 @@ export default function EntwurfPage() {
               }
             : a
         ))
+        // Volle Pipeline (Engine + Preise) nach jeder fertigen Aufnahme
+        generierePositionen()
       } else {
         setAufnahmen(prev => prev.map(a =>
           a.id === aufnahmeId ? { ...a, verarbeitung_status: 'fehler' } : a
@@ -635,6 +704,32 @@ export default function EntwurfPage() {
           ))}
         </div>
 
+        {/* Positions-Berechnungs-Status */}
+        {generatingPositionen && (
+          <div className="mt-3 bg-[#F5C400]/10 border border-[#F5C400]/30 rounded-2xl px-4 py-3 flex items-center gap-3">
+            <Loader2 size={14} className="animate-spin text-[#8B7000] shrink-0" />
+            <span className="text-[13px] font-semibold text-[#8B7000]">
+              Positionen werden aus allen Aufnahmen berechnet…
+            </span>
+          </div>
+        )}
+        {!generatingPositionen && positionenCount !== null && (
+          <div className="mt-3 bg-[#EDFAF0] border border-[#1A7A38]/20 rounded-2xl px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Check size={14} className="text-[#1A7A38] shrink-0" />
+              <span className="text-[13px] font-semibold text-[#1A7A38]">
+                {positionenCount} Positionen berechnet
+              </span>
+            </div>
+            <button
+              onClick={generierePositionen}
+              className="text-[12px] font-black text-[#1A7A38]/60 hover:text-[#1A7A38] transition-colors"
+            >
+              Neu berechnen
+            </button>
+          </div>
+        )}
+
         {/* Aufnahme-Indikator */}
         {(recording || uploading) && (
           <div className="mt-3 bg-white rounded-2xl border border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-3">
@@ -709,6 +804,9 @@ export default function EntwurfPage() {
           aufnahmen={aufnahmen}
           angebotId={angebotId}
           onClose={() => setShowFertigstellen(false)}
+          generatingPositionen={generatingPositionen}
+          positionenCount={positionenCount}
+          onGeneriere={generierePositionen}
         />
       )}
     </div>

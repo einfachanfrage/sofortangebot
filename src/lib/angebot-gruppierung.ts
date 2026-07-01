@@ -102,21 +102,29 @@ export function gruppiereNachRaum<T extends {
     }
   }
 
-  // Weniger als 50% haben Raum-Marker → kein Raum-Grouping
-  if (hatRaeume < Math.ceil(items.length * 0.5)) return null
+  // Kein einziges Item hat Raum-Marker → kein Grouping
+  if (hatRaeume === 0) return null
 
-  const raeume: RaumGruppe[] = Array.from(raumMap.entries()).map(([raumName, raumItems]) => ({
+  let raeume: RaumGruppe[] = Array.from(raumMap.entries()).map(([raumName, raumItems]) => ({
     raumName,
     emoji: getRaumEmoji(raumName),
     items: raumItems,
     summe: raumItems.reduce((s, i) => s + i.total_price, 0),
   }))
 
+  // Allgemein-Items (ohne Raum-Marker): bei einem einzigen Raum direkt zuordnen
+  let verbleibendAllgemein = allgemein
+  if (raeume.length === 1 && allgemein.length > 0) {
+    raeume[0].items = [...raeume[0].items, ...allgemein]
+    raeume[0].summe = raeume[0].items.reduce((s, i) => s + i.total_price, 0)
+    verbleibendAllgemein = []
+  }
+
   const gesamtsumme = items.reduce((s, i) => s + i.total_price, 0)
 
   return {
     raeume,
-    allgemein,
+    allgemein: verbleibendAllgemein,
     hatMehrereRaeume: raeume.length > 1,
     gesamtsumme,
   }

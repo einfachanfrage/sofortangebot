@@ -60,6 +60,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     company,
     quoteNumber,
     briefpapier,
+    revision: (quote as { revision?: number }).revision ?? 1,
   }))
 
   // Upload zu Supabase Storage (public bucket)

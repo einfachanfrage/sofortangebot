@@ -198,6 +198,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [exporting, setExporting] = useState<string | null>(null)
   const [showStatusPicker, setShowStatusPicker] = useState(false)
   const [currentStatus, setCurrentStatus] = useState(quote.status)
+  const [showRevisionDialog, setShowRevisionDialog] = useState(false)
+  const [creatingRevision, setCreatingRevision] = useState(false)
   const [sentVia, setSentVia] = useState<string[]>(quote.sent_via ?? [])
   const [voiceRecording, setVoiceRecording] = useState(false)
   const [voiceLoading, setVoiceLoading] = useState(false)
@@ -583,6 +585,29 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     router.push('/dashboard')
   }
 
+  async function handleRevisionErstellen() {
+    setCreatingRevision(true)
+    const r = await fetch(`/api/quotes/${quote.id}/revise`, { method: 'POST' })
+    setCreatingRevision(false)
+    setShowRevisionDialog(false)
+    if (r.ok) {
+      const { id } = await r.json()
+      router.push(`/angebot/${id}`)
+    } else {
+      showToast('Fehler beim Erstellen der Überarbeitung')
+    }
+  }
+
+  function handleEditClick() {
+    const istVersendet = ['sent', 'accepted', 'rejected'].includes(currentStatus)
+    if (istVersendet) {
+      setShowRevisionDialog(true)
+    } else {
+      setEditItems(quote.items)
+      setEditMode(true)
+    }
+  }
+
   function copyLink() {
     const token = quote.share_token ?? quote.id
     navigator.clipboard.writeText(`${window.location.origin}/angebot/${token}/unterschreiben`)
@@ -667,6 +692,38 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         </div>
       )}
 
+      {/* Revision-Dialog */}
+      {showRevisionDialog && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-5" onClick={() => setShowRevisionDialog(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="bg-amber-100 rounded-xl p-2"><AlertTriangle size={20} className="text-amber-600" /></div>
+              <div className="font-black text-[#2C2C2C] text-base">Angebot wurde versendet</div>
+            </div>
+            <p className="text-sm text-[#2C2C2C]/60 font-semibold mb-5 leading-relaxed">
+              Dieses Angebot wurde bereits an den Kunden geschickt. Eine Überarbeitung erstellt eine neue Version
+              ({quoteNumber}-R{(quote.revision ?? 1) + 1}) als Entwurf — das Original bleibt erhalten.
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleRevisionErstellen}
+                disabled={creatingRevision}
+                className="flex items-center justify-center gap-2 bg-[#2C2C2C] text-white font-black rounded-xl py-3 text-sm disabled:opacity-50"
+              >
+                {creatingRevision ? <Loader2 size={15} className="animate-spin" /> : <Copy size={15} />}
+                Überarbeitung erstellen (Rev. {(quote.revision ?? 1) + 1})
+              </button>
+              <button
+                onClick={() => { setShowRevisionDialog(false); setEditItems(quote.items); setEditMode(true) }}
+                className="text-[#2C2C2C]/50 font-bold text-sm py-2"
+              >
+                Trotzdem direkt bearbeiten
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Lightbox */}
       {lightboxPhoto && (
         <div className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center" onClick={() => setLightboxPhoto(null)}>
@@ -694,8 +751,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         <Link href="/dashboard" className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold">← Dashboard</Link>
         <div className="flex items-center justify-between mt-1 pb-4">
           <div>
-            <div className="text-white md:text-[#2C2C2C] font-black text-xl">
+            <div className="text-white md:text-[#2C2C2C] font-black text-xl flex items-center gap-2 flex-wrap">
               Angebot {quoteNumber}
+              {(quote.revision ?? 1) > 1 && (
+                <span className="text-xs font-bold bg-amber-400 text-[#2C2C2C] rounded-full px-2 py-0.5">
+                  Rev. {quote.revision}
+                </span>
+              )}
               {quote.customer && <span className="font-semibold opacity-50"> · {quote.customer.name}</span>}
             </div>
             {/* Echtzeit-Gesamtsumme */}
@@ -712,7 +774,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               {status.label}<ChevronDown size={13} strokeWidth={3} />
             </button>
             {!editMode ? (
-              <button onClick={() => { setEditItems(quote.items); setEditMode(true) }}
+              <button onClick={handleEditClick}
                 className="bg-white/10 text-white rounded-xl p-2">
                 <Pencil size={16} strokeWidth={2.5} />
               </button>
@@ -903,16 +965,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <div className="font-black text-[#2C2C2C]">Positionen</div>
                 {editMode && (
                   <div className="flex items-center gap-2">
-                    <button
-                      onPointerDown={startVoiceRecording}
-                      onPointerUp={stopVoiceRecording}
-                      onPointerLeave={stopVoiceRecording}
-                      disabled={voiceLoading}
-                      className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 select-none ${voiceRecording ? 'bg-red-500 text-white' : 'bg-[#2C2C2C]/8 text-[#2C2C2C]'} disabled:opacity-40`}
+                    <Link
+                      href={`/angebot/${quote.id}/entwurf`}
+                      className="flex items-center gap-1.5 bg-[#F5C400]/15 text-[#2C2C2C] rounded-lg px-2.5 py-1.5"
                     >
-                      {voiceLoading ? <Loader2 size={14} className="animate-spin" /> : voiceRecording ? <MicOff size={14} strokeWidth={2.5} /> : <Mic size={14} strokeWidth={2.5} />}
-                      <span className="text-xs font-black">{voiceLoading ? 'Analyse...' : voiceRecording ? 'Loslassen' : 'Nachsprechen'}</span>
-                    </button>
+                      <Mic size={14} strokeWidth={2.5} />
+                      <span className="text-xs font-black">Aufnahme</span>
+                    </Link>
                     <button onClick={addEditItem} className="bg-[#F5C400] rounded-lg p-1.5">
                       <Plus size={16} color="#2C2C2C" strokeWidth={3} />
                     </button>
