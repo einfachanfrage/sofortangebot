@@ -57,7 +57,8 @@ MARKTPREISE DEUTSCHLAND (Netto, wenn Preisdatenbank leer):
 MALER: Wandflächen streichen 2×Anstrich: 9,50€/m² | Deckenfläche streichen: 8,50€/m² | Boden schützen/Abdecken: 2,50€/m² | Sockelleisten abkleben: 1,50€/lfdm | Tapete aufziehen: 12,00€/m² | Tapete entfernen: 4,00€/m²
 FLIESEN: Bodenfliesen verlegen: 35,00€/m² | Wandfliesen verlegen: 42,00€/m² | Verbundabdichtung: 18,00€/m² | Verfugung: 8,00€/m² | Altfliesen entfernen: 15,00€/m²
 TROCKENBAU: Ständerwand GK: 55,00€/m² | Abgehängte Decke: 48,00€/m² | Spachtelarbeiten Q2: 12,00€/m²
-BODEN: Parkett verlegen: 28,00€/m² | Laminat verlegen: 18,00€/m² | Vinyl verlegen: 22,00€/m² | Sockelleisten: 8,00€/lfdm
+BODEN: Fertigparkett verlegen: 28,00€/m² | Parkett verlegen: 28,00€/m² | Laminat verlegen: 18,00€/m² | Klick-Vinyl verlegen: 24,00€/m² | Vinyl-Boden verlegen: 22,00€/m² | Vinyl verlegen: 22,00€/m² | Kork verlegen: 26,00€/m² | Linoleum verlegen: 20,00€/m² | Teppichboden verlegen: 16,00€/m² | Nadelvlies-Teppichboden verlegen: 14,00€/m² | Sockelleisten montieren: 8,00€/lfdm | Altbelag entfernen: 8,00€/m² | Untergrundvorbereitung / Ausgleich: 12,00€/m² | Epoxidharz-Feuchtigkeitssperre aufwalzen: 18,00€/m² | Parkett schleifen: 15,00€/m²
+HINWEIS: Titel wie "Fertigparkett verlegen inkl. 10% Verschnitt" → Preis für "Fertigparkett verlegen" verwenden (Verschnitt-Suffix ignorieren)
 SANITÄR: WC montieren: 180,00€/Stk | Waschtisch montieren: 150,00€/Stk | Dusche montieren: 320,00€/Stk | Silikon: 45,00€/Stk
 ELEKTRO: Steckdose UP: 85,00€/Stk | Lichtschalter: 65,00€/Stk | Einbaustrahler: 95,00€/Stk
 
