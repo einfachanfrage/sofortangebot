@@ -114,6 +114,7 @@ BODENBELÄGE: Bodenfläche = Länge × Breite + Verschnitt. Sockelleisten = Umfa
   - ausgleich: true/false (Ausgleichsmasse / Untergrundausgleich benötigt)
   - feuchtigkeitssperre: true/false (Epoxidharz, CM-Wert zu hoch, Restfeuchte)
   - parkett_schleifen: true/false (bestehendes Parkett schleifen/renovieren)
+  Beispiel boden_parkett raeume[]: {"name":"Flur","laenge":4,"breite":2,"hoehe":2.5,"flaeche":null,"umfang":null,"fenster":[],"tueren":[{"anzahl":1,"breite":0.9,"hoehe":2.0}],"arbeiten":["vinyl verlegen"],"belag":"vinyl","verlegerichtung":"standard","altbelag_entfernen":true,"sockelleisten":true,"nassbereich":false,"ausgleich":false,"feuchtigkeitssperre":false,"parkett_schleifen":false,"altbelag_vorhanden":true,"vage":false,"vage_typ":null,"vage_beschreibung":null}
 ELEKTRO: Steckdosen/Schalter/Spots als Stück. Kabelmeter NICHT erfinden. Herdanschluss teure Sonderleistung.
 SANITÄR: Objekte als Stück. Rohrmeter NICHT erfinden — Rückfrage stellen. Demontage + Montage trennen.
 
