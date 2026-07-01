@@ -122,6 +122,14 @@ export interface ExtrahierteDaten {
     vage?: boolean
     vage_typ?: string | null
     vage_beschreibung?: string | null
+    wandflaeche_direkt?: number | null
+    deckflaeche_direkt?: number | null
+    wandflaeche_abzug_m2?: number | null
+    belag?: string
+    verlegerichtung?: string
+    ausgleich?: boolean
+    feuchtigkeitssperre?: boolean
+    parkett_schleifen?: boolean
   }>
   waende: Array<{
     laenge: number | null
