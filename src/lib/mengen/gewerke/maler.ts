@@ -140,9 +140,10 @@ export function malerEngine(daten: any): MengenErgebnis {
     const hatAkzentwand = (transkriptLower.includes('eine wand') || transkriptLower.includes('akzentwand') || transkriptLower.includes('1 wand'))
       && (transkriptLower.includes('tapez') || transkriptLower.includes('vliestapete') || transkriptLower.includes('tapete'))
       && (transkriptLower.includes('rest') || transkriptLower.includes('übrige') || transkriptLower.includes('weiß'))
-    // Boden streichen (Keller/Garage): explizit "boden" in arbeiten oder Transkript → Boden streichen statt Decke
-    const hatBodenStreichen = arbeitenStr.includes('boden') || transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')
-      || ((istKellerRaum || istGarageRaum) && transkriptLower.includes('boden'))
+    // Boden streichen (Keller/Garage): NUR wenn explizit "boden streichen"/"boden anstrich" — nicht bei "boden abdecken"/"boden schützen"
+    const hatBodenStreichen = arbeitenStr.includes('boden streich') || arbeitenStr.includes('boden anstrich')
+      || transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')
+      || ((istKellerRaum || istGarageRaum) && (transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')))
     const anWaenden = !nurDecke && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
     // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall) oder nurWaende
     const anDecke = !nurWaende && !hatBodenStreichen && ((hatStreichen) || arbeitenStr.includes('decke'))
