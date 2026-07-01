@@ -20,10 +20,11 @@ export async function POST(req: NextRequest) {
   // Nur Aufnahmen dieses Users (Sicherheit: Angebot gehört zur Company des Users)
   const { data: quoteCheck } = await supabase
     .from('quotes')
-    .select('id, company:companies!inner(user_id)')
+    .select('id, companies!inner(user_id)')
     .eq('id', angebot_id)
     .single()
-  if (!quoteCheck || (quoteCheck.company as { user_id: string })?.user_id !== user.id) {
+  const company = quoteCheck?.companies as { user_id: string } | null
+  if (!quoteCheck || company?.user_id !== user.id) {
     return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
   }
 
