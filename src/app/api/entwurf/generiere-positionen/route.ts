@@ -23,8 +23,10 @@ export async function POST(req: NextRequest) {
     .select('id, companies!inner(user_id)')
     .eq('id', angebot_id)
     .single()
-  const company = quoteCheck?.companies as { user_id: string } | null
-  if (!quoteCheck || company?.user_id !== user.id) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const companyData = quoteCheck?.companies as any
+  const companyUserId = Array.isArray(companyData) ? companyData[0]?.user_id : companyData?.user_id
+  if (!quoteCheck || companyUserId !== user.id) {
     return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
   }
 
