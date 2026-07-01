@@ -51,7 +51,7 @@ export default function ComingSoon() {
           lineHeight: 1.1,
           letterSpacing: '-1px',
         }}>
-          Gleich startet's.
+          Schluss mit stundenlangen Angeboten.
         </h1>
 
         <p style={{
@@ -60,9 +60,9 @@ export default function ComingSoon() {
           margin: '0 0 32px',
           lineHeight: 1.65,
         }}>
-          Sofortangebot ist fast fertig —<br />
-          Angebote schreiben für Maler und Bodenleger,<br />
-          ohne Laptop, ohne Tippen.
+          Einfach aufs Handy sprechen — sofortangebot rechnet,<br />
+          schreibt und schickt. Für Maler, Bodenleger und alle,<br />
+          die keine Zeit verlieren wollen.
         </p>
 
         {/* Gelbe Linie */}
@@ -73,7 +73,7 @@ export default function ComingSoon() {
         }} />
 
         <p style={{ fontSize: 14, color: '#888888', margin: '0 0 16px' }}>
-          Trag dich ein — du bekommst als Erster Zugang.
+          Früher Zugang — trag dich ein:
         </p>
 
         {!done ? (
@@ -115,17 +115,17 @@ export default function ComingSoon() {
                 transition: 'opacity 0.15s',
               }}
             >
-              {loading ? '…' : 'Bescheid geben →'}
+              {loading ? '…' : 'Zugang sichern →'}
             </button>
           </div>
         ) : (
           <p style={{ color: '#F5C400', fontSize: 16, fontWeight: 700, margin: 0 }}>
-            ✓ Wir melden uns.
+            ✓ Du bist dabei.
           </p>
         )}
 
         <p style={{ fontSize: 11, color: '#444444', marginTop: 18 }}>
-          Kein Spam. Nur einmal wenn es losgeht.
+          Kein Spam. Einmalige Nachricht wenn es losgeht.
         </p>
       </div>
     </div>
