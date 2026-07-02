@@ -689,13 +689,6 @@ export default function EntwurfPage() {
             Notiz
           </button>
 
-          <label className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/60 font-extrabold text-[13px] active:bg-[#2C2C2C]/5 transition-colors cursor-pointer">
-            <Camera size={16} />
-            Foto
-            <input type="file" accept="image/*" capture="environment" className="hidden"
-              onChange={e => { const f = e.target.files?.[0]; if (f) handleFoto(f); e.target.value = '' }} />
-          </label>
-
           {kannFertigstellen && (
             <button
               onClick={fertigstellen}
