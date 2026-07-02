@@ -472,6 +472,17 @@ export default function EntwurfPage() {
     })
   }
 
+  async function deleteAufnahme(aufnahmeId: string) {
+    if (!confirm('Aufnahme löschen? Zugehörige Positionen im Angebot bleiben erhalten.')) return
+    await supabase.from('entwurf_aufnahmen').delete().eq('id', aufnahmeId)
+    setAufnahmen(prev => prev.filter(a => a.id !== aufnahmeId))
+    // Wenn das die letzte Aufnahme war, gespeichert-Zeitstempel zurücksetzen
+    const verbleibend = aufnahmen.filter(a => a.id !== aufnahmeId && a.typ === 'sprache')
+    if (verbleibend.length === 0) {
+      await supabase.from('quotes').update({ entwurf_gespeichert_am: null }).eq('id', angebotId)
+    }
+  }
+
   async function saveNotiz(text: string) {
     const res = await fetch('/api/entwurf/notiz', {
       method: 'POST',
@@ -662,7 +673,7 @@ export default function EntwurfPage() {
 
         <div className="flex flex-col gap-3">
           {aufnahmen.map(a => (
-            <AufnahmeCard key={a.id} aufnahme={a} />
+            <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => deleteAufnahme(a.id)} />
           ))}
         </div>
 
