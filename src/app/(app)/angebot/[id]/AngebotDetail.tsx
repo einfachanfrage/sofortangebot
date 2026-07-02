@@ -588,10 +588,19 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   function addRaumPosition(raumName: string) {
+    const vorhandeneRaeume = new Set(
+      editItems.map(i => { const m = i.title.match(/ — (.+)$/); return m?.[1] ?? null }).filter(Boolean)
+    )
+    let finalName = raumName
+    if (vorhandeneRaeume.has(raumName)) {
+      let n = 2
+      while (vorhandeneRaeume.has(`${raumName} ${n}`)) n++
+      finalName = `${raumName} ${n}`
+    }
     const newItem: EditItem = {
       id: `new-${Date.now()}`,
       position: (editItems[editItems.length - 1]?.position ?? 0) + 1,
-      title: ` — ${raumName}`,
+      title: ` — ${finalName}`,
       description: null,
       quantity: 1,
       unit: 'm²',
