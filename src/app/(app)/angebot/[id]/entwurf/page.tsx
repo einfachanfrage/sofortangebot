@@ -42,7 +42,6 @@ function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDel
   const [fotoGross, setFotoGross] = useState(false)
   const positionen = aufnahme.erkannte_positionen as ErkanntPosition[]
   const erkannte = positionen.filter(p => p.erkannt)
-  const nichtErkannte = positionen.filter(p => !p.erkannt)
 
   return (
     <div className="bg-white rounded-2xl border border-[#2C2C2C]/6 overflow-hidden">
@@ -82,11 +81,6 @@ function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDel
             <div className="flex flex-wrap gap-1.5 mb-3">
               {erkannte.map((p, i) => (
                 <span key={i} className="text-[12px] font-bold px-2.5 py-1 rounded-xl bg-[#EDFAF0] text-[#1A7A38]">
-                  {p.titel}
-                </span>
-              ))}
-              {nichtErkannte.map((p, i) => (
-                <span key={i} className="text-[12px] font-bold px-2.5 py-1 rounded-xl bg-[#2C2C2C]/5 text-[#2C2C2C]/30">
                   {p.titel}
                 </span>
               ))}
