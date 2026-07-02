@@ -1115,7 +1115,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
               <div className="flex items-center justify-between mb-2">
                 <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide">Kunde</div>
-                <button onClick={() => setShowKundenSuche(v => !v)} className="text-xs font-bold text-[#F5C400] hover:text-[#D4A800]">
+                <button onClick={() => setShowKundenSuche(v => !v)} className={`text-xs font-bold px-2.5 py-1 rounded-full transition-colors ${currentCustomer ? 'text-[#F5C400]' : 'bg-[#F5C400] text-[#2C2C2C] hover:bg-[#D4A800]'}`}>
                   {currentCustomer ? 'Ändern' : '+ Kunde'}
                 </button>
               </div>
