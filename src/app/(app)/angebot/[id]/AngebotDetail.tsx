@@ -150,7 +150,7 @@ function RaumDimensionenZeile({
         }`}
         title={missing ? `${label} fehlt — tippen zum Eintragen` : label}
       >
-        {missing ? '!' : `${value}${suffix ?? ''}`}
+        {missing ? '!' : `${String(value).replace('.', ',')}${suffix ?? ''}`}
       </button>
     )
   }
