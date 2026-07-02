@@ -632,7 +632,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       ...(nextStatus ? { status: nextStatus } : {}),
     }).eq('id', quote.id)
 
-    if (nextStatus) setCurrentStatus(nextStatus)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (nextStatus) setCurrentStatus(nextStatus as any)
     setSaving(false)
     setEditMode(false)
     setEditingItemId(null)
