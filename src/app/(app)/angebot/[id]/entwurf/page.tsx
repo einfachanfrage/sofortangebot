@@ -41,103 +41,103 @@ function fmtRelativ(iso: string) {
 function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDelete?: () => void }) {
   const [fotoGross, setFotoGross] = useState(false)
   const positionen = aufnahme.erkannte_positionen as ErkanntPosition[]
+  const erkannte = positionen.filter(p => p.erkannt)
+  const nichtErkannte = positionen.filter(p => !p.erkannt)
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 overflow-hidden">
-      <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-base">
-            {aufnahme.typ === 'sprache' ? '🎙' : aufnahme.typ === 'notiz' ? '📝' : '📷'}
-          </span>
-          <span className="text-[#2C2C2C]/40 font-semibold text-[13px]">
-            {fmtZeit(aufnahme.erstellt_am)} Uhr
-          </span>
-          {aufnahme.typ === 'sprache' && (
-            <StatusBadge status={aufnahme.verarbeitung_status} />
+    <div className="bg-white rounded-2xl border border-[#2C2C2C]/6 overflow-hidden">
+
+      {/* Sprach-Aufnahme */}
+      {aufnahme.typ === 'sprache' && (
+        <div className="px-4 pt-3.5 pb-4">
+          {/* Kopfzeile: Zeit + Status + Löschen */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[#2C2C2C]/30 font-semibold text-[12px]">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
+              <StatusBadge status={aufnahme.verarbeitung_status} />
+            </div>
+            {onDelete && (
+              <button onClick={onDelete} className="p-1 text-[#2C2C2C]/20 hover:text-red-400 transition-colors">
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Status: lädt / Fehler */}
+          {aufnahme.verarbeitung_status === 'verarbeitung' && (
+            <div className="flex items-center gap-2 text-[#2C2C2C]/40 text-[13px] font-semibold mb-3">
+              <Loader2 size={14} className="animate-spin" />
+              Wird ausgewertet…
+            </div>
+          )}
+          {aufnahme.verarbeitung_status === 'fehler' && (
+            <div className="flex items-center gap-2 text-red-500 text-[13px] font-semibold mb-3">
+              <AlertCircle size={14} />
+              Verarbeitung fehlgeschlagen
+            </div>
+          )}
+
+          {/* Erkannte Positionen */}
+          {erkannte.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {erkannte.map((p, i) => (
+                <span key={i} className="text-[12px] font-bold px-2.5 py-1 rounded-xl bg-[#EDFAF0] text-[#1A7A38]">
+                  {p.titel}
+                </span>
+              ))}
+              {nichtErkannte.map((p, i) => (
+                <span key={i} className="text-[12px] font-bold px-2.5 py-1 rounded-xl bg-[#2C2C2C]/5 text-[#2C2C2C]/30">
+                  {p.titel}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Audio-Player */}
+          {aufnahme.audio_signed_url && (
+            <AudioPlayer src={aufnahme.audio_signed_url} dauer={aufnahme.audio_dauer_sekunden} />
           )}
         </div>
-        {onDelete && (
-          <button onClick={onDelete} className="p-1.5 text-[#2C2C2C]/20 hover:text-red-400 transition-colors">
-            <X size={14} />
-          </button>
-        )}
-      </div>
+      )}
 
-      <div className="px-4 pb-4">
-        {aufnahme.typ === 'sprache' && (
-          <>
-            {aufnahme.transkript && (
-              <p className="text-[#2C2C2C] font-semibold text-[14px] leading-snug mb-3 italic">
-                &ldquo;{aufnahme.transkript}&rdquo;
-              </p>
+      {/* Notiz */}
+      {aufnahme.typ === 'notiz' && (
+        <div className="px-4 pt-3.5 pb-4">
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-[#2C2C2C] font-semibold text-[14px] leading-relaxed flex-1">
+              {aufnahme.notiz_text}
+            </p>
+            {onDelete && (
+              <button onClick={onDelete} className="p-1 text-[#2C2C2C]/20 hover:text-red-400 transition-colors shrink-0">
+                <X size={14} />
+              </button>
             )}
-            {aufnahme.audio_signed_url && (
-              <div className="mb-3">
-                <AudioPlayer src={aufnahme.audio_signed_url} dauer={aufnahme.audio_dauer_sekunden} />
-              </div>
-            )}
-            {aufnahme.verarbeitung_status === 'verarbeitung' && (
-              <div className="flex items-center gap-2 text-[#2C2C2C]/40 text-[13px] font-semibold">
-                <Loader2 size={14} className="animate-spin" />
-                Wird transkribiert…
-              </div>
-            )}
-            {aufnahme.verarbeitung_status === 'fehler' && (
-              <div className="flex items-center gap-2 text-red-500 text-[13px] font-semibold">
-                <AlertCircle size={14} />
-                Verarbeitung fehlgeschlagen
-              </div>
-            )}
-            {positionen.length > 0 && (
-              <div className="mt-1">
-                <div className="text-[11px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-1.5">
-                  Erkannt
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {positionen.slice(0, 4).map((p, i) => (
-                    <span key={i} className={`text-[12px] font-semibold px-2 py-0.5 rounded-full ${p.erkannt ? 'bg-[#EDFAF0] text-[#1A7A38]' : 'bg-[#2C2C2C]/5 text-[#2C2C2C]/40'}`}>
-                      {p.titel}
-                    </span>
-                  ))}
-                  {positionen.length > 4 && (
-                    <span className="text-[12px] font-semibold px-2 py-0.5 rounded-full bg-[#2C2C2C]/5 text-[#2C2C2C]/40">
-                      +{positionen.length - 4}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-          </>
-        )}
+          </div>
+        </div>
+      )}
 
-        {aufnahme.typ === 'notiz' && (
-          <p className="text-[#2C2C2C] font-semibold text-[15px] leading-relaxed">
-            {aufnahme.notiz_text}
-          </p>
-        )}
-
-        {aufnahme.typ === 'foto' && (
-          <>
-            {aufnahme.foto_signed_url && (
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={aufnahme.foto_signed_url}
-                  alt={aufnahme.foto_beschreibung ?? 'Foto'}
-                  className="w-full rounded-xl object-cover max-h-48 cursor-pointer"
-                  onClick={() => setFotoGross(true)}
-                />
-                <button onClick={() => setFotoGross(true)} className="absolute top-2 right-2 bg-black/30 rounded-lg p-1.5">
-                  <ZoomIn size={14} color="white" />
-                </button>
-              </div>
+      {/* Foto */}
+      {aufnahme.typ === 'foto' && aufnahme.foto_signed_url && (
+        <>
+          <div className="relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={aufnahme.foto_signed_url}
+              alt={aufnahme.foto_beschreibung ?? 'Foto'}
+              className="w-full object-cover max-h-48 cursor-pointer"
+              onClick={() => setFotoGross(true)}
+            />
+            {onDelete && (
+              <button onClick={onDelete} className="absolute top-2 right-2 bg-black/40 rounded-lg p-1.5">
+                <X size={14} color="white" />
+              </button>
             )}
-            {aufnahme.foto_beschreibung && (
-              <p className="text-[#2C2C2C]/60 font-semibold text-[13px] mt-2">{aufnahme.foto_beschreibung}</p>
-            )}
-          </>
-        )}
-      </div>
+          </div>
+          {aufnahme.foto_beschreibung && (
+            <p className="px-4 py-2.5 text-[#2C2C2C]/60 font-semibold text-[13px]">{aufnahme.foto_beschreibung}</p>
+          )}
+        </>
+      )}
 
       {fotoGross && aufnahme.foto_signed_url && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setFotoGross(false)}>
