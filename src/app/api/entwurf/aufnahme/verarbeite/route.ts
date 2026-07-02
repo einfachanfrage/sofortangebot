@@ -82,17 +82,23 @@ export async function POST(req: NextRequest) {
     const systemPrompt = `Du bist Kalkulations-Profi im deutschen Handwerk.
 Extrahiere aus dem Aufmaß die konkreten Positionen als JSON.
 
+WICHTIG: Jede Arbeit ist eine EIGENE Position. Wände streichen und Decke streichen sind IMMER getrennte Positionen, auch wenn im gleichen Satz genannt.
+Beispiel: "Wände und Decke streichen" → zwei Positionen: "Wände streichen" und "Decke streichen".
+
+Wenn ein Raum genannt wird, schreib ihn mit " — Raumname" ans Ende des Titels.
+Beispiel: "Wände streichen — Wohnzimmer", "Decke streichen — Küche"
+
 ${kontextNotizen ? `BISHERIGER KONTEXT:\n${kontextNotizen}\n` : ''}
 
 Antworte NUR mit JSON:
 {
   "positionen": [
     {
-      "titel": "Bodenfliesen verlegen",
-      "menge": 6,
+      "titel": "Wände streichen — Wohnzimmer",
+      "menge": 35,
       "einheit": "m²",
-      "einzelpreis": 38,
-      "gesamtpreis": 228,
+      "einzelpreis": 8,
+      "gesamtpreis": 280,
       "erkannt": true
     }
   ]

@@ -77,22 +77,33 @@ function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDel
           )}
 
           {/* Erkannte Positionen */}
-          {erkannte.length > 0 && (
-            <div className="mb-3">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-[11px] font-extrabold text-[#1A7A38] uppercase tracking-wide">✓ Erkannt</span>
-                <span className="text-[11px] font-bold text-[#2C2C2C]/30">{erkannte.length} Position{erkannte.length !== 1 ? 'en' : ''}</span>
+          {erkannte.length > 0 && (() => {
+            // Raum aus Titel extrahieren (Format: "Titel — Raum")
+            const DASH = /\s+[-–—]\s+/
+            const raumSet = new Set(erkannte.map(p => { const m = p.titel?.match(DASH); return m ? p.titel.slice(m.index! + m[0].length).trim() : null }).filter(Boolean) as string[])
+            const raum = raumSet.size === 1 ? [...raumSet][0] : null
+            return (
+              <div className="mb-3">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-[11px] font-extrabold text-[#1A7A38] uppercase tracking-wide">✓ Erkannt</span>
+                  <span className="text-[11px] font-bold text-[#2C2C2C]/30">{erkannte.length} Position{erkannte.length !== 1 ? 'en' : ''}</span>
+                  {raum && <span className="text-[11px] font-extrabold text-[#2C2C2C]/50 bg-[#2C2C2C]/6 px-2 py-0.5 rounded-full">{raum}</span>}
+                </div>
+                <div className="flex flex-col gap-1">
+                  {erkannte.map((p, i) => {
+                    const m = p.titel?.match(DASH)
+                    const titelDisplay = m ? p.titel.slice(0, m.index).trim() : p.titel
+                    return (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-[#1A7A38] shrink-0" />
+                        <span className="text-[13px] font-semibold text-[#2C2C2C]">{titelDisplay}</span>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                {erkannte.map((p, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-[#1A7A38] shrink-0" />
-                    <span className="text-[13px] font-semibold text-[#2C2C2C]">{p.titel}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* Audio-Player */}
           {aufnahme.audio_signed_url && (
