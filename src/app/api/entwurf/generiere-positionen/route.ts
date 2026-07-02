@@ -74,8 +74,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Extraktion fehlgeschlagen: ${err.error ?? extRes.status}` }, { status: 500 })
   }
 
-  const extData = await extRes.json() as { mengen?: { positionen?: unknown[] } }
+  const extData = await extRes.json() as {
+    mengen?: { positionen?: unknown[]; rueckfragen?: unknown[] }
+    hat_rueckfragen?: boolean
+  }
   const positionen = extData.mengen?.positionen ?? []
+  const rueckfragen = extData.mengen?.rueckfragen ?? []
 
   if (positionen.length === 0) {
     return NextResponse.json({ error: 'Keine Positionen erkannt' }, { status: 400 })
@@ -139,5 +143,5 @@ export async function POST(req: NextRequest) {
     }).eq('id', angebot_id)
   }
 
-  return NextResponse.json({ ok: true, positionen_count: items.length })
+  return NextResponse.json({ ok: true, positionen_count: items.length, rueckfragen })
 }

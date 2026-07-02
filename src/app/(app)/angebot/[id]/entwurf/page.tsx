@@ -6,12 +6,16 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   ArrowLeft, Mic, MicOff, StickyNote, Camera, X, Check, ChevronRight,
-  MoreHorizontal, Loader2, AlertCircle, ZoomIn,
+  Loader2, AlertCircle, ZoomIn, AlertTriangle,
 } from 'lucide-react'
 import { AudioPlayer } from '@/components/AudioPlayer'
+import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { EntwurfAufnahme, ErkanntPosition } from '@/lib/types'
+import type { KIRueckfrage } from '@/lib/mengen/types'
 
 type AufnahmeWithUrl = EntwurfAufnahme & { audio_signed_url?: string; foto_signed_url?: string }
+
+type Screen = 'timeline' | 'fertigstellen_loading' | 'rueckfragen' | 'done'
 
 function detectGeraet(): string {
   const ua = navigator.userAgent
@@ -24,10 +28,6 @@ function fmtZeit(iso: string) {
   return new Date(iso).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
 }
 
-function fmtWaehrung(n: number) {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(n)
-}
-
 function fmtRelativ(iso: string) {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
   if (diff < 60) return 'gerade eben'
@@ -36,17 +36,14 @@ function fmtRelativ(iso: string) {
   return new Date(iso).toLocaleDateString('de-DE')
 }
 
-// ── Timeline Card ────────────────────────────────────────────────────────────
+// ── Aufnahme Card ─────────────────────────────────────────────────────────────
 
-function AufnahmeCard({ aufnahme }: { aufnahme: AufnahmeWithUrl }) {
-  const [expanded, setExpanded] = useState(false)
+function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDelete?: () => void }) {
   const [fotoGross, setFotoGross] = useState(false)
-
   const positionen = aufnahme.erkannte_positionen as ErkanntPosition[]
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
         <div className="flex items-center gap-2">
           <span className="text-base">
@@ -59,16 +56,14 @@ function AufnahmeCard({ aufnahme }: { aufnahme: AufnahmeWithUrl }) {
             <StatusBadge status={aufnahme.verarbeitung_status} />
           )}
         </div>
-        <button
-          onClick={() => setExpanded(e => !e)}
-          className="p-1 text-[#2C2C2C]/30 hover:text-[#2C2C2C]/60"
-        >
-          <MoreHorizontal size={16} />
-        </button>
+        {onDelete && (
+          <button onClick={onDelete} className="p-1.5 text-[#2C2C2C]/20 hover:text-red-400 transition-colors">
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       <div className="px-4 pb-4">
-        {/* SPRACHE */}
         {aufnahme.typ === 'sprache' && (
           <>
             {aufnahme.transkript && (
@@ -84,7 +79,7 @@ function AufnahmeCard({ aufnahme }: { aufnahme: AufnahmeWithUrl }) {
             {aufnahme.verarbeitung_status === 'verarbeitung' && (
               <div className="flex items-center gap-2 text-[#2C2C2C]/40 text-[13px] font-semibold">
                 <Loader2 size={14} className="animate-spin" />
-                Wird verarbeitet...
+                Wird transkribiert…
               </div>
             )}
             {aufnahme.verarbeitung_status === 'fehler' && (
@@ -94,38 +89,33 @@ function AufnahmeCard({ aufnahme }: { aufnahme: AufnahmeWithUrl }) {
               </div>
             )}
             {positionen.length > 0 && (
-              <div className="flex flex-col gap-1.5 mt-1">
-                <div className="text-[11px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-0.5">
+              <div className="mt-1">
+                <div className="text-[11px] font-black text-[#2C2C2C]/30 uppercase tracking-widest mb-1.5">
                   Erkannt
                 </div>
-                {positionen.map((p, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[13px] ${p.erkannt ? 'text-[#1A7A38]' : 'text-[#2C2C2C]/30'}`}>
-                        {p.erkannt ? '✓' : '⚠'}
-                      </span>
-                      <span className="text-[13px] font-semibold text-[#2C2C2C]">
-                        {p.titel} {p.menge} {p.einheit}
-                      </span>
-                    </div>
-                    <span className="text-[13px] font-extrabold text-[#2C2C2C]/60 tabular-nums">
-                      {p.erkannt ? fmtWaehrung(p.gesamtpreis) : '—'}
+                <div className="flex flex-wrap gap-1.5">
+                  {positionen.slice(0, 4).map((p, i) => (
+                    <span key={i} className={`text-[12px] font-semibold px-2 py-0.5 rounded-full ${p.erkannt ? 'bg-[#EDFAF0] text-[#1A7A38]' : 'bg-[#2C2C2C]/5 text-[#2C2C2C]/40'}`}>
+                      {p.titel}
                     </span>
-                  </div>
-                ))}
+                  ))}
+                  {positionen.length > 4 && (
+                    <span className="text-[12px] font-semibold px-2 py-0.5 rounded-full bg-[#2C2C2C]/5 text-[#2C2C2C]/40">
+                      +{positionen.length - 4}
+                    </span>
+                  )}
+                </div>
               </div>
             )}
           </>
         )}
 
-        {/* NOTIZ */}
         {aufnahme.typ === 'notiz' && (
           <p className="text-[#2C2C2C] font-semibold text-[15px] leading-relaxed">
             {aufnahme.notiz_text}
           </p>
         )}
 
-        {/* FOTO */}
         {aufnahme.typ === 'foto' && (
           <>
             {aufnahme.foto_signed_url && (
@@ -137,47 +127,23 @@ function AufnahmeCard({ aufnahme }: { aufnahme: AufnahmeWithUrl }) {
                   className="w-full rounded-xl object-cover max-h-48 cursor-pointer"
                   onClick={() => setFotoGross(true)}
                 />
-                <button
-                  onClick={() => setFotoGross(true)}
-                  className="absolute top-2 right-2 bg-black/30 rounded-lg p-1.5"
-                >
+                <button onClick={() => setFotoGross(true)} className="absolute top-2 right-2 bg-black/30 rounded-lg p-1.5">
                   <ZoomIn size={14} color="white" />
                 </button>
               </div>
             )}
             {aufnahme.foto_beschreibung && (
-              <p className="text-[#2C2C2C]/60 font-semibold text-[13px] mt-2">
-                {aufnahme.foto_beschreibung}
-              </p>
+              <p className="text-[#2C2C2C]/60 font-semibold text-[13px] mt-2">{aufnahme.foto_beschreibung}</p>
             )}
           </>
         )}
       </div>
 
-      {/* Foto Vollbild */}
       {fotoGross && aufnahme.foto_signed_url && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-          onClick={() => setFotoGross(false)}
-        >
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setFotoGross(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={aufnahme.foto_signed_url}
-            alt="Foto"
-            className="max-w-full max-h-full object-contain"
-          />
-          <button className="absolute top-4 right-4 text-white p-2">
-            <X size={24} />
-          </button>
-        </div>
-      )}
-
-      {/* Expand menu */}
-      {expanded && (
-        <div className="border-t border-[#2C2C2C]/5 px-4 py-2">
-          <button className="text-red-500 font-semibold text-[13px] py-1">
-            Eintrag löschen
-          </button>
+          <img src={aufnahme.foto_signed_url} alt="Foto" className="max-w-full max-h-full object-contain" />
+          <button className="absolute top-4 right-4 text-white p-2"><X size={24} /></button>
         </div>
       )}
     </div>
@@ -186,24 +152,18 @@ function AufnahmeCard({ aufnahme }: { aufnahme: AufnahmeWithUrl }) {
 
 function StatusBadge({ status }: { status: string }) {
   if (status === 'fertig') return (
-    <span className="text-[11px] font-extrabold text-[#1A7A38] bg-[#EDFAF0] px-2 py-0.5 rounded-full">
-      ✓ Fertig
-    </span>
+    <span className="text-[11px] font-extrabold text-[#1A7A38] bg-[#EDFAF0] px-2 py-0.5 rounded-full">✓ Fertig</span>
   )
   if (status === 'verarbeitung') return (
-    <span className="text-[11px] font-extrabold text-[#8B7000] bg-[#F5C400]/15 px-2 py-0.5 rounded-full">
-      Verarbeitung...
-    </span>
+    <span className="text-[11px] font-extrabold text-[#8B7000] bg-[#F5C400]/15 px-2 py-0.5 rounded-full">Verarbeitung…</span>
   )
   if (status === 'fehler') return (
-    <span className="text-[11px] font-extrabold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">
-      Fehler
-    </span>
+    <span className="text-[11px] font-extrabold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Fehler</span>
   )
   return null
 }
 
-// ── Notiz Modal ──────────────────────────────────────────────────────────────
+// ── Notiz Modal ───────────────────────────────────────────────────────────────
 
 function NotizModal({ onSave, onClose }: { onSave: (text: string) => void; onClose: () => void }) {
   const [text, setText] = useState('')
@@ -211,32 +171,17 @@ function NotizModal({ onSave, onClose }: { onSave: (text: string) => void; onClo
     <div className="fixed inset-0 z-40 flex items-end">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-8 shadow-2xl">
-        <div className="flex justify-center mb-3">
-          <div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" />
-        </div>
-        <h3 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-3">
-          Notiz hinzufügen
-        </h3>
+        <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+        <h3 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-3">Notiz hinzufügen</h3>
         <textarea
-          autoFocus
-          value={text}
-          onChange={e => setText(e.target.value)}
-          rows={3}
-          placeholder="Schnell was festhalten..."
+          autoFocus value={text} onChange={e => setText(e.target.value)} rows={3}
+          placeholder="Schnell was festhalten…"
           className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-[15px] resize-none focus:outline-none focus:ring-2 focus:ring-[#F5C400] mb-4"
         />
         <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 border-2 border-[#2C2C2C]/15 rounded-xl py-3 font-extrabold text-[#2C2C2C] text-[15px]"
-          >
-            Abbrechen
-          </button>
-          <button
-            onClick={() => { if (text.trim()) { onSave(text.trim()); onClose() } }}
-            disabled={!text.trim()}
-            className="flex-1 bg-[#2C2C2C] text-white rounded-xl py-3 font-extrabold text-[15px] disabled:opacity-40"
-          >
+          <button onClick={onClose} className="flex-1 border-2 border-[#2C2C2C]/15 rounded-xl py-3 font-extrabold text-[#2C2C2C] text-[15px]">Abbrechen</button>
+          <button onClick={() => { if (text.trim()) { onSave(text.trim()); onClose() } }} disabled={!text.trim()}
+            className="flex-1 bg-[#2C2C2C] text-white rounded-xl py-3 font-extrabold text-[15px] disabled:opacity-40">
             Speichern ✓
           </button>
         </div>
@@ -245,122 +190,58 @@ function NotizModal({ onSave, onClose }: { onSave: (text: string) => void; onClo
   )
 }
 
-// ── Fertigstellen Sheet ──────────────────────────────────────────────────────
+// ── Rückfragen Hinweis (nach Fertigstellen) ───────────────────────────────────
 
-function FertigstellenSheet({
-  aufnahmen,
-  angebotId,
-  onClose,
-  generatingPositionen,
-  positionenCount,
-  onGeneriere,
+function RueckfragenHinweis({
+  rueckfragen,
+  onWeiter,
+  onNochEineAufnahme,
 }: {
-  aufnahmen: AufnahmeWithUrl[]
-  angebotId: string
-  onClose: () => void
-  generatingPositionen: boolean
-  positionenCount: number | null
-  onGeneriere: () => Promise<void>
+  rueckfragen: RueckfrageItem[]
+  onWeiter: () => void
+  onNochEineAufnahme: () => void
 }) {
-  const router = useRouter()
-  const [navigating, setNavigating] = useState(false)
-  const sprachen = aufnahmen.filter(a => a.typ === 'sprache' && a.verarbeitung_status === 'fertig')
-  const notizen = aufnahmen.filter(a => a.typ === 'notiz')
-
-  async function handlePruefen() {
-    setNavigating(true)
-    // Falls noch keine Positionen generiert wurden, jetzt nachholen
-    if (positionenCount === null && !generatingPositionen) {
-      await onGeneriere()
-    } else if (generatingPositionen) {
-      // Warten bis fertig (polling)
-      await new Promise<void>(resolve => {
-        const iv = setInterval(() => {
-          if (!generatingPositionen) { clearInterval(iv); resolve() }
-        }, 500)
-      })
-    }
-    router.push(`/angebot/${angebotId}`)
-  }
-
-  const bereit = positionenCount !== null && !generatingPositionen
-
   return (
     <div className="fixed inset-0 z-40 flex items-end">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl">
-        <div className="flex justify-center mb-4">
-          <div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onWeiter} />
+      <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl max-h-[85vh] overflow-y-auto">
+        <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+        <div className="flex items-center gap-2 mb-3">
+          <AlertTriangle size={18} className="text-[#F5C400] shrink-0" strokeWidth={2.5} />
+          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px]">Noch ein paar Infos fehlen</h2>
         </div>
-        <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[24px] mb-1">
-          Angebot fertigstellen
-        </h2>
-        <p className="text-[#2C2C2C]/40 font-semibold text-[14px] mb-4">
-          {sprachen.length} Aufnahme{sprachen.length !== 1 ? 'n' : ''} · {notizen.length} Notiz{notizen.length !== 1 ? 'en' : ''}
-          {positionenCount !== null && ` · ${positionenCount} Positionen`}
+        <p className="text-[#2C2C2C]/50 font-semibold text-[14px] mb-4 leading-relaxed">
+          Das Angebot wurde erstellt — aber für genauere Preise würden wir noch folgendes brauchen:
         </p>
-
-        {/* Status */}
-        {generatingPositionen && (
-          <div className="bg-[#F5C400]/10 rounded-xl px-4 py-3 flex items-center gap-2 mb-4">
-            <Loader2 size={14} className="animate-spin text-[#8B7000]" />
-            <span className="text-[13px] font-semibold text-[#8B7000]">
-              Positionen werden berechnet…
-            </span>
-          </div>
-        )}
-        {bereit && (
-          <div className="bg-[#EDFAF0] rounded-xl px-4 py-3 flex items-center gap-2 mb-4">
-            <Check size={14} className="text-[#1A7A38]" />
-            <span className="text-[13px] font-semibold text-[#1A7A38]">
-              {positionenCount} Positionen berechnet &amp; bereit
-            </span>
-          </div>
-        )}
-
+        <div className="flex flex-col gap-2 mb-6">
+          {rueckfragen.map(rq => (
+            <div key={rq.id} className="flex items-start gap-3 bg-[#F7F7F5] rounded-xl px-4 py-3">
+              <span className="text-[#F5C400] font-black text-lg shrink-0">?</span>
+              <span className="text-[#2C2C2C] font-semibold text-[14px] leading-snug">{rq.frage}</span>
+            </div>
+          ))}
+        </div>
         <div className="flex flex-col gap-3">
           <button
-            onClick={handlePruefen}
-            disabled={navigating || (generatingPositionen && positionenCount === null)}
-            className="w-full bg-[#2C2C2C] text-white rounded-2xl px-5 py-4 flex items-center justify-between disabled:opacity-50"
+            onClick={onNochEineAufnahme}
+            className="w-full bg-[#2C2C2C] text-white rounded-2xl py-4 font-extrabold text-[15px] flex items-center justify-center gap-2"
           >
-            <div className="text-left">
-              <div className="font-extrabold text-[15px]">
-                {navigating || (generatingPositionen && positionenCount === null)
-                  ? '⏳ Wird vorbereitet…'
-                  : '📋 Angebot prüfen & bearbeiten'}
-              </div>
-              <div className="text-white/50 text-[13px] font-semibold mt-0.5">
-                Positionen prüfen, Preise anpassen
-              </div>
-            </div>
-            {navigating ? <Loader2 size={18} className="animate-spin text-white/50" /> : <ChevronRight size={18} className="text-white/50" />}
+            <Mic size={18} />
+            Infos einsprechen & neu berechnen
           </button>
-
           <button
-            onClick={() => router.push(`/angebot/${angebotId}?aktion=senden`)}
-            disabled={generatingPositionen && positionenCount === null}
-            className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl px-5 py-4 flex items-center justify-between disabled:opacity-40"
+            onClick={onWeiter}
+            className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
           >
-            <div className="text-left">
-              <div className="font-extrabold text-[15px]">📤 Direkt versenden</div>
-              <div className="text-[#2C2C2C]/50 text-[13px] font-semibold mt-0.5">
-                Sofort an Kunden schicken
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-[#2C2C2C]/50" />
+            Trotzdem fertigstellen →
           </button>
         </div>
-
-        <p className="text-center text-[#2C2C2C]/30 font-semibold text-[12px] mt-5">
-          Du kannst jederzeit weitere Aufnahmen hinzufügen und das Angebot neu berechnen.
-        </p>
       </div>
     </div>
   )
 }
 
-// ── Hauptseite ───────────────────────────────────────────────────────────────
+// ── Hauptseite ────────────────────────────────────────────────────────────────
 
 export default function EntwurfPage() {
   const params = useParams()
@@ -369,44 +250,39 @@ export default function EntwurfPage() {
   const supabase = createClient()
 
   const [aufnahmen, setAufnahmen] = useState<AufnahmeWithUrl[]>([])
-  const [quoteInfo, setQuoteInfo] = useState<{ customer?: { name: string } | null; entwurf_gespeichert_am?: string } | null>(null)
+  const [quoteInfo, setQuoteInfo] = useState<{ customer?: { name: string } | null; entwurf_gespeichert_am?: string; quote_items?: { id: string }[] } | null>(null)
   const [loading, setLoading] = useState(true)
+  const [screen, setScreen] = useState<Screen>('timeline')
 
   const [recording, setRecording] = useState(false)
   const [recordingDauer, setRecordingDauer] = useState(0)
   const [uploading, setUploading] = useState(false)
   const [showNotiz, setShowNotiz] = useState(false)
-  const [showFertigstellen, setShowFertigstellen] = useState(false)
-  const [autosaveText, setAutosaveText] = useState('')
-  const [generatingPositionen, setGeneratingPositionen] = useState(false)
-  const [positionenCount, setPositionenCount] = useState<number | null>(null)
+  const [loadingMsg, setLoadingMsg] = useState('Positionen werden berechnet…')
+  const [fehler, setFehler] = useState('')
+  const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const dauerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const geraet = useRef('')
 
-  // ── Daten laden ────────────────────────────────────────────────────────────
+  // ── Daten laden ──────────────────────────────────────────────────────────
+
   useEffect(() => {
     geraet.current = detectGeraet()
     loadData()
 
-    // Realtime-Subscription
     const channel = supabase
       .channel(`entwurf-${angebotId}`)
       .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'entwurf_aufnahmen',
+        event: 'UPDATE', schema: 'public', table: 'entwurf_aufnahmen',
         filter: `angebot_id=eq.${angebotId}`,
       }, (payload) => {
-        setAufnahmen(prev => prev.map(a =>
-          a.id === payload.new.id ? { ...a, ...payload.new as AufnahmeWithUrl } : a
-        ))
+        setAufnahmen(prev => prev.map(a => a.id === payload.new.id ? { ...a, ...payload.new as AufnahmeWithUrl } : a))
       })
       .subscribe()
 
-    // Autosave bei Verlassen
     const onHide = () => {
       if (document.hidden) {
         navigator.sendBeacon?.(`/api/entwurf/autosave`, JSON.stringify({ angebot_id: angebotId }))
@@ -424,14 +300,13 @@ export default function EntwurfPage() {
   async function loadData() {
     setLoading(true)
     const [{ data: quote }, { data: rows }] = await Promise.all([
-      supabase.from('quotes').select('entwurf_gespeichert_am, customer:customers(name)').eq('id', angebotId).single(),
+      supabase.from('quotes').select('entwurf_gespeichert_am, customer:customers(name), quote_items(id)').eq('id', angebotId).single(),
       supabase.from('entwurf_aufnahmen').select('*').eq('angebot_id', angebotId).order('erstellt_am', { ascending: true }),
     ])
 
     setQuoteInfo(quote as typeof quoteInfo)
 
     if (rows?.length) {
-      // Signed URLs laden
       const paths: Array<{ bucket: string; path: string }> = []
       for (const r of rows) {
         if (r.audio_url) paths.push({ bucket: 'entwurf-audio', path: r.audio_url as string })
@@ -459,39 +334,76 @@ export default function EntwurfPage() {
     setLoading(false)
   }
 
-  function showAutosave() {
-    setAutosaveText('✓ Gespeichert')
-    setTimeout(() => setAutosaveText(''), 2000)
-  }
+  // ── Fertigstellen ────────────────────────────────────────────────────────
 
-  async function generierePositionen() {
-    setGeneratingPositionen(true)
+  async function fertigstellen() {
+    setScreen('fertigstellen_loading')
+    setFehler('')
+    setLoadingMsg('Alle Aufnahmen werden zusammengeführt…')
+
+    const nochwarten = aufnahmen.some(a => a.typ === 'sprache' && a.verarbeitung_status === 'verarbeitung')
+    if (nochwarten) {
+      setLoadingMsg('Warte auf Transkription…')
+      await new Promise(r => setTimeout(r, 3000))
+    }
+
+    setLoadingMsg('Positionen werden berechnet…')
+
     try {
       const res = await fetch('/api/entwurf/generiere-positionen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ angebot_id: angebotId }),
       })
-      if (res.ok) {
-        const data = await res.json() as { positionen_count?: number }
-        setPositionenCount(data.positionen_count ?? null)
-        showAutosave()
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({})) as { error?: string }
+        setFehler(err.error ?? 'Fehler beim Berechnen')
+        setScreen('timeline')
+        return
       }
-    } catch { /* ignorieren */ } finally {
-      setGeneratingPositionen(false)
+
+      const data = await res.json() as {
+        positionen_count?: number
+        rueckfragen?: KIRueckfrage[]
+      }
+
+      const kiRueckfragen = (data.rueckfragen ?? []) as KIRueckfrage[]
+      const konvertiert: RueckfrageItem[] = kiRueckfragen
+        .filter(r => r.frage)
+        .slice(0, 3)
+        .map(r => ({
+          id: r.id,
+          frage: r.frage,
+          kontext: r.betrifft ?? '',
+          typ: (r.typ === 'hoehe' ? 'hoehe' : r.typ === 'masse_einzel' ? 'masse_einzel' : 'ja_nein') as RueckfrageItem['typ'],
+          schnell_antworten: (r.schnell_antworten ?? [])
+            .filter(a => typeof a.wert === 'number')
+            .map(a => ({ label: a.label, wert: a.wert as number, einheit: r.typ === 'hoehe' ? 'm' : 'Stk' })),
+        }))
+
+      if (konvertiert.length > 0) {
+        setRueckfragen(konvertiert)
+        setScreen('rueckfragen')
+      } else {
+        router.push(`/angebot/${angebotId}`)
+      }
+    } catch {
+      setFehler('Netzwerkfehler. Bitte nochmal versuchen.')
+      setScreen('timeline')
     }
   }
 
-  // ── Aufnahme ───────────────────────────────────────────────────────────────
+  function zuAngebot() {
+    router.push(`/angebot/${angebotId}`)
+  }
+
+  // ── Aufnahme ─────────────────────────────────────────────────────────────
+
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          sampleRate: 16000,
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true,
-        },
+        audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true },
       })
       const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
         .find(m => MediaRecorder.isTypeSupported(m)) ?? ''
@@ -500,8 +412,7 @@ export default function EntwurfPage() {
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       mr.onstop = async () => {
         stream.getTracks().forEach(t => t.stop())
-        const blobType = mimeType || mr.mimeType || 'audio/webm'
-        await handleAudioStop(new Blob(chunksRef.current, { type: blobType }))
+        await handleAudioStop(new Blob(chunksRef.current, { type: mimeType || mr.mimeType || 'audio/webm' }))
       }
       mr.start()
       mediaRef.current = mr
@@ -521,33 +432,19 @@ export default function EntwurfPage() {
 
   async function handleAudioStop(blob: Blob) {
     setUploading(true)
-
-    // Optimistic: Platzhalter in Timeline
     const tempId = `temp-${Date.now()}`
     const tempEntry: AufnahmeWithUrl = {
-      id: tempId,
-      angebot_id: angebotId,
-      typ: 'sprache',
-      audio_url: null,
-      audio_dauer_sekunden: recordingDauer,
-      transkript: null,
-      erkannte_positionen: [],
-      verarbeitung_status: 'ausstehend',
-      notiz_text: null,
-      foto_url: null,
-      foto_beschreibung: null,
-      in_pdf: false,
-      erstellt_am: new Date().toISOString(),
-      geraet: geraet.current,
-      sortierung: 0,
+      id: tempId, angebot_id: angebotId, typ: 'sprache',
+      audio_url: null, audio_dauer_sekunden: recordingDauer,
+      transkript: null, erkannte_positionen: [], verarbeitung_status: 'ausstehend',
+      notiz_text: null, foto_url: null, foto_beschreibung: null,
+      in_pdf: false, erstellt_am: new Date().toISOString(), geraet: geraet.current, sortierung: 0,
     }
     setAufnahmen(prev => [...prev, tempEntry])
 
-    // Upload
     const fd = new FormData()
     fd.append('angebot_id', angebotId)
-    const ext = blob.type.includes('mp4') || blob.type.includes('m4a') ? 'm4a'
-      : blob.type.includes('ogg') ? 'ogg' : 'webm'
+    const ext = blob.type.includes('mp4') || blob.type.includes('m4a') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'webm'
     fd.append('audio', blob, `aufnahme.${ext}`)
     fd.append('dauer_sekunden', String(recordingDauer))
     fd.append('geraet', geraet.current)
@@ -556,16 +453,9 @@ export default function EntwurfPage() {
     if (!uploadRes.ok) { setUploading(false); return }
     const { id: aufnahmeId } = await uploadRes.json() as { id: string }
 
-    // Platzhalter ersetzen
-    setAufnahmen(prev => prev.map(a =>
-      a.id === tempId
-        ? { ...a, id: aufnahmeId, verarbeitung_status: 'verarbeitung' }
-        : a
-    ))
+    setAufnahmen(prev => prev.map(a => a.id === tempId ? { ...a, id: aufnahmeId, verarbeitung_status: 'verarbeitung' } : a))
     setUploading(false)
-    showAutosave()
 
-    // Verarbeitung im Hintergrund starten
     fetch('/api/entwurf/aufnahme/verarbeite', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -574,26 +464,14 @@ export default function EntwurfPage() {
       if (res.ok) {
         const data = await res.json() as { transkript?: string; positionen?: ErkanntPosition[] }
         setAufnahmen(prev => prev.map(a =>
-          a.id === aufnahmeId
-            ? {
-                ...a,
-                transkript: data.transkript ?? null,
-                erkannte_positionen: data.positionen ?? [],
-                verarbeitung_status: 'fertig',
-              }
-            : a
+          a.id === aufnahmeId ? { ...a, transkript: data.transkript ?? null, erkannte_positionen: data.positionen ?? [], verarbeitung_status: 'fertig' } : a
         ))
-        // Volle Pipeline (Engine + Preise) nach jeder fertigen Aufnahme
-        generierePositionen()
       } else {
-        setAufnahmen(prev => prev.map(a =>
-          a.id === aufnahmeId ? { ...a, verarbeitung_status: 'fehler' } : a
-        ))
+        setAufnahmen(prev => prev.map(a => a.id === aufnahmeId ? { ...a, verarbeitung_status: 'fehler' } : a))
       }
     })
   }
 
-  // ── Notiz speichern ────────────────────────────────────────────────────────
   async function saveNotiz(text: string) {
     const res = await fetch('/api/entwurf/notiz', {
       method: 'POST',
@@ -603,98 +481,143 @@ export default function EntwurfPage() {
     if (res.ok) {
       const data = await res.json() as AufnahmeWithUrl
       setAufnahmen(prev => [...prev, data])
-      showAutosave()
     }
   }
 
-  // ── Foto hochladen ─────────────────────────────────────────────────────────
   async function handleFoto(file: File) {
     const fd = new FormData()
     fd.append('angebot_id', angebotId)
     fd.append('foto', file)
     fd.append('geraet', geraet.current)
-
     const res = await fetch('/api/entwurf/foto', { method: 'POST', body: fd })
-    if (res.ok) {
-      await loadData() // Signed URL nachladen
-      showAutosave()
-    }
+    if (res.ok) await loadData()
   }
 
-  // ── Rendering ──────────────────────────────────────────────────────────────
-  const kundenname = (quoteInfo?.customer as { name?: string } | null)?.name
-  const gespeichertAm = quoteInfo?.entwurf_gespeichert_am
-    ? fmtRelativ(quoteInfo.entwurf_gespeichert_am)
-    : null
+  // ── Rendering ─────────────────────────────────────────────────────────────
 
-  const allePositionen = aufnahmen.flatMap(a => (a.erkannte_positionen as ErkanntPosition[]) ?? [])
-  const gesamtNetto = allePositionen.reduce((s, p) => s + (p.gesamtpreis ?? 0), 0)
+  const kundenname = (quoteInfo?.customer as { name?: string } | null)?.name
+  const hatBestehendPositionen = (quoteInfo?.quote_items?.length ?? 0) > 0
+  const sprachen = aufnahmen.filter(a => a.typ === 'sprache')
+  const alleTranskribiertOderFehler = sprachen.length > 0 && sprachen.every(a => a.verarbeitung_status === 'fertig' || a.verarbeitung_status === 'fehler')
+  const nochVerarbeitung = sprachen.some(a => a.verarbeitung_status === 'verarbeitung' || a.verarbeitung_status === 'ausstehend')
+  const kannFertigstellen = aufnahmen.length > 0 && !nochVerarbeitung && !uploading
+
+  // ── Rückfragen Screen ─────────────────────────────────────────────────────
+
+  if (screen === 'rueckfragen' && rueckfragen.length > 0) {
+    return (
+      <RueckfragenHinweis
+        rueckfragen={rueckfragen}
+        onWeiter={zuAngebot}
+        onNochEineAufnahme={() => {
+          setRueckfragen([])
+          setScreen('timeline')
+        }}
+      />
+    )
+  }
+
+  // ── Loading Screen ────────────────────────────────────────────────────────
+
+  if (screen === 'fertigstellen_loading') {
+    return (
+      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center gap-4 px-5">
+        <Loader2 size={36} color="#F5C400" className="animate-spin" />
+        <div className="text-center">
+          <p className="font-extrabold text-[#2C2C2C] text-[18px] mb-1">Angebot wird erstellt</p>
+          <p className="text-[#2C2C2C]/50 font-semibold text-[14px]">{loadingMsg}</p>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Timeline Screen ───────────────────────────────────────────────────────
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-[#2C2C2C]/8 px-4 pt-safe-top">
         <div className="flex items-center justify-between h-14">
-          <Link href="/dashboard" className="flex items-center gap-1.5 text-[#2C2C2C]/60">
+          <Link href={hatBestehendPositionen ? `/angebot/${angebotId}` : '/dashboard'} className="flex items-center gap-1.5 text-[#2C2C2C]/60">
             <ArrowLeft size={18} />
-            <span className="font-semibold text-[14px]">Dashboard</span>
+            <span className="font-semibold text-[14px]">{hatBestehendPositionen ? 'Angebot' : 'Dashboard'}</span>
           </Link>
 
           <div className="text-center">
-            <div className="flex items-center gap-1.5 justify-center">
-              <span className="w-2 h-2 rounded-full bg-[#F5C400]" />
-              <span className="font-extrabold text-[#2C2C2C] text-[14px]">Entwurf</span>
+            <div className="font-extrabold text-[#2C2C2C] text-[14px]">
+              {kundenname ?? 'Aufmaß'}
             </div>
-            {autosaveText && (
-              <span className="text-[11px] text-[#1A7A38] font-semibold">{autosaveText}</span>
+            {aufnahmen.length > 0 && (
+              <div className="text-[11px] text-[#2C2C2C]/40 font-semibold">
+                {aufnahmen.length} {aufnahmen.length === 1 ? 'Aufnahme' : 'Aufnahmen'}
+              </div>
             )}
           </div>
 
           <button
-            onClick={() => setShowFertigstellen(true)}
-            className="flex items-center gap-1 bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[13px] px-3 py-1.5 rounded-xl active:scale-95 transition-transform"
+            onClick={fertigstellen}
+            disabled={!kannFertigstellen}
+            className="bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[13px] px-3 py-1.5 rounded-xl disabled:opacity-30 active:scale-95 transition-transform"
           >
-            Fertigstellen
-            <ChevronRight size={14} />
+            Fertig →
           </button>
-        </div>
-
-        {/* Subheader */}
-        <div className="pb-3">
-          {kundenname && (
-            <div className="font-extrabold text-[#2C2C2C] text-[15px]">{kundenname}</div>
-          )}
-          <div className="flex items-center justify-between">
-            <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">
-              {gespeichertAm ? `Gespeichert ${gespeichertAm}` : 'Noch nicht gespeichert'}
-            </span>
-            {gesamtNetto > 0 && (
-              <span className="font-extrabold text-[#2C2C2C] text-[13px]">
-                {fmtWaehrung(gesamtNetto)} Netto
-              </span>
-            )}
-          </div>
         </div>
       </div>
 
-      {/* ── Timeline ── */}
-      <div className="flex-1 px-4 py-4 overflow-y-auto pb-32">
+      {/* Hinweis: bestehende Positionen */}
+      {hatBestehendPositionen && (
+        <div className="mx-4 mt-4 bg-[#2C2C2C] rounded-2xl px-4 py-3 flex items-center gap-3">
+          <Check size={16} className="text-[#F5C400] shrink-0" strokeWidth={2.5} />
+          <div>
+            <p className="text-white font-extrabold text-[13px]">
+              {quoteInfo?.quote_items?.length} Positionen bereits berechnet
+            </p>
+            <p className="text-white/50 font-semibold text-[12px] mt-0.5">
+              Neue Aufnahmen ersetzen die alten Positionen.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Intro wenn noch keine Aufnahmen */}
+      {!loading && aufnahmen.length === 0 && (
+        <div className="flex flex-col items-center justify-center pt-16 px-6 text-center">
+          <div className="text-5xl mb-4">🎙</div>
+          <div className="font-syne font-extrabold text-[#2C2C2C] text-[22px] mb-2">
+            Einfach lossprechen
+          </div>
+          <div className="text-[#2C2C2C]/40 font-semibold text-[15px] leading-relaxed max-w-xs">
+            Beschreib die Baustelle — Räume, Maße, was gemacht werden soll. Kein perfekter Satz nötig.
+          </div>
+          <div className="mt-6 flex flex-col gap-2 text-left w-full max-w-xs">
+            {[
+              '"Wohnzimmer 5×4 Meter, Wände und Decke streichen"',
+              '"Bad komplett neu fliesen, ca. 8 Quadratmeter"',
+              '"Flur Laminat verlegen, 12 qm, alte Fliesen raus"',
+            ].map((hint, i) => (
+              <div key={i} className="flex items-start gap-2 bg-white rounded-xl px-3 py-2.5 border border-[#2C2C2C]/5">
+                <span className="text-[#F5C400] font-black shrink-0">→</span>
+                <span className="text-[#2C2C2C]/60 font-semibold text-[13px] italic">{hint}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Fehler */}
+      {fehler && (
+        <div className="mx-4 mt-4 bg-red-50 border border-red-200 rounded-2xl px-4 py-3 flex items-center gap-2">
+          <AlertCircle size={16} className="text-red-500 shrink-0" />
+          <p className="text-red-700 font-semibold text-[13px]">{fehler}</p>
+          <button onClick={() => setFehler('')} className="ml-auto text-red-400"><X size={14} /></button>
+        </div>
+      )}
+
+      {/* Timeline */}
+      <div className="flex-1 px-4 py-4 pb-36">
         {loading && (
           <div className="flex justify-center pt-12">
             <Loader2 size={24} className="animate-spin text-[#2C2C2C]/30" />
-          </div>
-        )}
-
-        {!loading && aufnahmen.length === 0 && (
-          <div className="flex flex-col items-center justify-center pt-16 text-center px-6">
-            <div className="text-5xl mb-4">🎙</div>
-            <div className="font-syne font-extrabold text-[#2C2C2C] text-[22px] mb-2">
-              Fang einfach an
-            </div>
-            <div className="text-[#2C2C2C]/40 font-semibold text-[15px] leading-relaxed">
-              Drück auf Aufnehmen und beschreib die Baustelle.<br />
-              Kein perfekter Satz nötig.
-            </div>
           </div>
         )}
 
@@ -704,32 +627,6 @@ export default function EntwurfPage() {
           ))}
         </div>
 
-        {/* Positions-Berechnungs-Status */}
-        {generatingPositionen && (
-          <div className="mt-3 bg-[#F5C400]/10 border border-[#F5C400]/30 rounded-2xl px-4 py-3 flex items-center gap-3">
-            <Loader2 size={14} className="animate-spin text-[#8B7000] shrink-0" />
-            <span className="text-[13px] font-semibold text-[#8B7000]">
-              Positionen werden aus allen Aufnahmen berechnet…
-            </span>
-          </div>
-        )}
-        {!generatingPositionen && positionenCount !== null && (
-          <div className="mt-3 bg-[#EDFAF0] border border-[#1A7A38]/20 rounded-2xl px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Check size={14} className="text-[#1A7A38] shrink-0" />
-              <span className="text-[13px] font-semibold text-[#1A7A38]">
-                {positionenCount} Positionen berechnet
-              </span>
-            </div>
-            <button
-              onClick={generierePositionen}
-              className="text-[12px] font-black text-[#1A7A38]/60 hover:text-[#1A7A38] transition-colors"
-            >
-              Neu berechnen
-            </button>
-          </div>
-        )}
-
         {/* Aufnahme-Indikator */}
         {(recording || uploading) && (
           <div className="mt-3 bg-white rounded-2xl border border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-3">
@@ -737,78 +634,79 @@ export default function EntwurfPage() {
               <>
                 <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
                 <span className="font-extrabold text-[#2C2C2C] text-[14px]">
-                  Läuft — {recordingDauer}s — loslassen zum Stoppen
+                  Aufnahme läuft — {recordingDauer}s
                 </span>
+                <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Finger loslassen zum Stoppen</span>
               </>
             ) : (
               <>
                 <Loader2 size={16} className="animate-spin text-[#2C2C2C]/40" />
-                <span className="font-semibold text-[#2C2C2C]/60 text-[14px]">Wird hochgeladen...</span>
+                <span className="font-semibold text-[#2C2C2C]/60 text-[14px]">Wird hochgeladen…</span>
               </>
             )}
           </div>
         )}
+
+        {/* Status wenn alle Aufnahmen fertig */}
+        {alleTranskribiertOderFehler && aufnahmen.length > 0 && (
+          <div className="mt-3 bg-[#EDFAF0] border border-[#1A7A38]/20 rounded-2xl px-4 py-3 flex items-center gap-2">
+            <Check size={14} className="text-[#1A7A38] shrink-0" />
+            <span className="text-[13px] font-semibold text-[#1A7A38]">
+              Alle Aufnahmen transkribiert — tippe auf &ldquo;Fertig&rdquo; um das Angebot zu erstellen.
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* ── Bottom Bar ── */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/8 px-4 py-3 pb-safe-bottom flex items-center gap-3">
-        {/* Notiz */}
-        <button
-          onClick={() => setShowNotiz(true)}
-          className="flex-1 flex flex-col items-center gap-1 py-2 text-[#2C2C2C]/50 hover:text-[#2C2C2C] transition-colors"
-        >
-          <StickyNote size={22} />
-          <span className="text-[11px] font-extrabold">Notiz</span>
-        </button>
+      {/* Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/8 px-4 py-3 pb-safe-bottom">
+        <div className="flex items-center gap-3">
+          {/* Notiz */}
+          <button
+            onClick={() => setShowNotiz(true)}
+            className="flex flex-col items-center gap-1 py-2 px-3 text-[#2C2C2C]/50 hover:text-[#2C2C2C] transition-colors"
+          >
+            <StickyNote size={22} />
+            <span className="text-[11px] font-extrabold">Notiz</span>
+          </button>
 
-        {/* Aufnehmen — Haupt-Button */}
-        <button
-          onPointerDown={startRecording}
-          onPointerUp={stopRecording}
-          onPointerLeave={stopRecording}
-          disabled={uploading}
-          className={`flex-[3] flex flex-col items-center gap-1 py-3 rounded-2xl font-extrabold text-[15px] transition-all active:scale-95 select-none ${
-            recording
-              ? 'bg-red-500 text-white shadow-lg shadow-red-200'
-              : 'bg-[#2C2C2C] text-white'
-          } disabled:opacity-50`}
-        >
-          {recording
-            ? <><MicOff size={22} /><span className="text-[11px]">Loslassen</span></>
-            : <><Mic size={22} /><span className="text-[11px]">Aufnehmen</span></>
-          }
-        </button>
+          {/* Aufnehmen — Haupt-Button */}
+          <button
+            onPointerDown={startRecording}
+            onPointerUp={stopRecording}
+            onPointerLeave={stopRecording}
+            disabled={uploading}
+            className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-2xl font-extrabold text-[15px] transition-all active:scale-95 select-none ${
+              recording ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'bg-[#2C2C2C] text-white'
+            } disabled:opacity-50`}
+          >
+            {recording
+              ? <><MicOff size={22} /><span className="text-[11px]">Loslassen</span></>
+              : <><Mic size={22} /><span className="text-[11px]">{aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}</span></>
+            }
+          </button>
 
-        {/* Foto */}
-        <label className="flex-1 flex flex-col items-center gap-1 py-2 text-[#2C2C2C]/50 hover:text-[#2C2C2C] transition-colors cursor-pointer">
-          <Camera size={22} />
-          <span className="text-[11px] font-extrabold">Foto</span>
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={e => {
-              const file = e.target.files?.[0]
-              if (file) handleFoto(file)
-              e.target.value = ''
-            }}
-          />
-        </label>
+          {/* Foto */}
+          <label className="flex flex-col items-center gap-1 py-2 px-3 text-[#2C2C2C]/50 hover:text-[#2C2C2C] transition-colors cursor-pointer">
+            <Camera size={22} />
+            <span className="text-[11px] font-extrabold">Foto</span>
+            <input type="file" accept="image/*" capture="environment" className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) handleFoto(f); e.target.value = '' }} />
+          </label>
+        </div>
+
+        {/* Fertigstellen CTA wenn Aufnahmen vorhanden */}
+        {kannFertigstellen && (
+          <button
+            onClick={fertigstellen}
+            className="w-full mt-3 bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+          >
+            Angebot erstellen <ChevronRight size={18} strokeWidth={3} />
+          </button>
+        )}
       </div>
 
-      {/* Modals */}
       {showNotiz && <NotizModal onSave={saveNotiz} onClose={() => setShowNotiz(false)} />}
-      {showFertigstellen && (
-        <FertigstellenSheet
-          aufnahmen={aufnahmen}
-          angebotId={angebotId}
-          onClose={() => setShowFertigstellen(false)}
-          generatingPositionen={generatingPositionen}
-          positionenCount={positionenCount}
-          onGeneriere={generierePositionen}
-        />
-      )}
     </div>
   )
 }

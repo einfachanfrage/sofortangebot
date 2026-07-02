@@ -827,7 +827,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
             <div className="font-black text-[#2C2C2C] text-lg mb-4">Status ändern</div>
             <div className="flex flex-col gap-2">
-              {(Object.entries(STATUS_CONFIG) as [string, { label: string; bg: string; text: string }][]).map(([key, cfg]) => (
+              {(Object.entries(STATUS_CONFIG).filter(([key]) => key !== 'in_bearbeitung') as [string, { label: string; bg: string; text: string }][]).map(([key, cfg]) => (
                 <button key={key} onClick={() => changeStatus(key)}
                   className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}>
                   <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
