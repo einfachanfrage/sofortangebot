@@ -294,7 +294,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [saving, setSaving] = useState(false)
   const [exporting, setExporting] = useState<string | null>(null)
   const [showStatusPicker, setShowStatusPicker] = useState(false)
-  const [currentStatus, setCurrentStatus] = useState(quote.status)
+  const [currentStatus, setCurrentStatus] = useState<string>(quote.status)
   const [showRevisionDialog, setShowRevisionDialog] = useState(false)
   const [creatingRevision, setCreatingRevision] = useState(false)
   const [sentVia, setSentVia] = useState<string[]>(quote.sent_via ?? [])
