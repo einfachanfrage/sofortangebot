@@ -1173,22 +1173,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
             {/* Positionen */}
             <div className="bg-white rounded-2xl border border-[#2C2C2C]/5" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between px-4 pt-4 pb-2">
+              <div className="px-4 pt-4 pb-2">
                 <div className="font-black text-[#2C2C2C]">Positionen</div>
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={`/angebot/${quote.id}/entwurf`}
-                    className="flex items-center gap-1.5 bg-[#F5C400]/15 text-[#2C2C2C] rounded-lg px-2.5 py-1.5"
-                  >
-                    <Mic size={14} strokeWidth={2.5} />
-                    <span className="text-xs font-black">Aufnahme</span>
-                  </Link>
-                  {editMode && (
-                    <button onClick={addEditItem} className="bg-[#F5C400] rounded-lg p-1.5">
-                      <Plus size={16} color="#2C2C2C" strokeWidth={3} />
-                    </button>
-                  )}
-                </div>
               </div>
 
               {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
@@ -1336,14 +1322,27 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               })()}
 
               {editMode && (
-                <div className="border-t border-[#2C2C2C]/5 flex">
-                  <button onClick={addEditItem}
-                    className="flex-1 px-4 py-3 flex items-center gap-2 text-[#2C2C2C]/40 font-bold text-sm hover:text-[#2C2C2C]/70 transition-colors">
-                    <Plus size={15} strokeWidth={2.5} /> Position hinzufügen
+                <div className="border-t border-[#2C2C2C]/5 grid grid-cols-3">
+                  <Link
+                    href={`/angebot/${quote.id}/entwurf`}
+                    className="flex flex-col items-center gap-1 py-3.5 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors rounded-bl-2xl"
+                  >
+                    <Mic size={16} strokeWidth={2.5} />
+                    <span className="text-[11px] font-black">Aufnahme</span>
+                  </Link>
+                  <button
+                    onClick={addEditItem}
+                    className="flex flex-col items-center gap-1 py-3.5 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors border-x border-[#2C2C2C]/5"
+                  >
+                    <Plus size={16} strokeWidth={2.5} />
+                    <span className="text-[11px] font-black">Position</span>
                   </button>
-                  <button onClick={() => setShowRaumPicker(true)}
-                    className="border-l border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-1.5 text-[#2C2C2C]/40 font-bold text-sm hover:text-[#2C2C2C]/70 transition-colors whitespace-nowrap">
-                    <Plus size={15} strokeWidth={2.5} /> Raum
+                  <button
+                    onClick={() => setShowRaumPicker(true)}
+                    className="flex flex-col items-center gap-1 py-3.5 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors rounded-br-2xl"
+                  >
+                    <span className="text-[15px] leading-none">🏠</span>
+                    <span className="text-[11px] font-black">Raum</span>
                   </button>
                 </div>
               )}
