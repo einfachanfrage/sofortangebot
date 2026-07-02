@@ -261,15 +261,18 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0 flex-1">
             <div className="font-bold text-[#2C2C2C] text-sm">{titleOverride ?? item.title}</div>
-            {item.description && (
-              <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>
-            )}
             <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">
               {item.quantity} {item.unit} × {fmt(item.unit_price)}
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <div className="font-black text-[#2C2C2C]">{fmt(item.quantity * item.unit_price)}</div>
+            <button
+              onClick={e => { e.stopPropagation(); removeEditItem(item.id) }}
+              className="p-1.5 text-[#2C2C2C]/20 hover:text-red-400 transition-colors"
+            >
+              <Trash2 size={14} />
+            </button>
             <div className="cursor-grab touch-none text-[#2C2C2C]/20 active:cursor-grabbing" {...attributes} {...listeners} onClick={e => e.stopPropagation()}>
               <GripVertical size={16} />
             </div>
@@ -326,6 +329,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
   const [kundenListe, setKundenListe] = useState<Customer[]>([])
   const [raumDetails, setRaumDetails] = useState<Record<string, RaumDimension>>({})
+  const [showRaumPicker, setShowRaumPicker] = useState(false)
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const raumDetailsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -580,6 +584,23 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     }
     setEditItems(prev => [...prev, newItem])
     setEditingItemId(newItem.id)
+    setHasChanges(true)
+  }
+
+  function addRaumPosition(raumName: string) {
+    const newItem: EditItem = {
+      id: `new-${Date.now()}`,
+      position: (editItems[editItems.length - 1]?.position ?? 0) + 1,
+      title: ` — ${raumName}`,
+      description: null,
+      quantity: 1,
+      unit: 'm²',
+      unit_price: 0,
+      total_price: 0,
+    }
+    setEditItems(prev => [...prev, newItem])
+    setEditingItemId(newItem.id)
+    setShowRaumPicker(false)
     setHasChanges(true)
   }
 
@@ -950,6 +971,54 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       </div>
 
       {/* Einheit-Picker Modal */}
+      {showRaumPicker && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowRaumPicker(false)}>
+          <div className="bg-white w-full rounded-t-3xl px-5 pt-4 pb-10" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+            <div className="font-syne font-black text-[#2C2C2C] text-[18px] mb-4">Raum hinzufügen</div>
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {[
+                { name: 'Wohnzimmer', emoji: '🛋' },
+                { name: 'Schlafzimmer', emoji: '🛏' },
+                { name: 'Küche', emoji: '🍳' },
+                { name: 'Bad', emoji: '🚿' },
+                { name: 'Flur', emoji: '🚪' },
+                { name: 'Kinderzimmer', emoji: '🧸' },
+                { name: 'Arbeitszimmer', emoji: '💼' },
+                { name: 'Keller', emoji: '📦' },
+                { name: 'Balkon', emoji: '🌿' },
+                { name: 'Garage', emoji: '🚗' },
+                { name: 'Treppenhaus', emoji: '📐' },
+                { name: 'Esszimmer', emoji: '🍽' },
+              ].map(r => (
+                <button key={r.name} onClick={() => addRaumPosition(r.name)}
+                  className="flex items-center gap-2.5 bg-[#F7F7F5] hover:bg-[#F5C400]/15 rounded-2xl px-4 py-3 text-left transition-colors">
+                  <span className="text-xl">{r.emoji}</span>
+                  <span className="font-extrabold text-[#2C2C2C] text-[14px]">{r.name}</span>
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Anderer Raum…"
+                className="flex-1 bg-[#F7F7F5] rounded-xl px-4 py-3 font-semibold text-[14px] text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
+                onKeyDown={e => { if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) addRaumPosition((e.target as HTMLInputElement).value.trim()) }}
+              />
+              <button
+                onClick={e => {
+                  const input = (e.currentTarget.previousSibling as HTMLInputElement)
+                  if (input.value.trim()) addRaumPosition(input.value.trim())
+                }}
+                className="bg-[#2C2C2C] text-white rounded-xl px-4 font-extrabold text-[14px]"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {unitPickerItemId && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setUnitPickerItemId(null)}>
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
@@ -1267,10 +1336,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               })()}
 
               {editMode && (
-                <button onClick={addEditItem}
-                  className="w-full border-t border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-2 text-[#2C2C2C]/40 font-bold text-sm hover:text-[#2C2C2C]/70 transition-colors">
-                  <Plus size={15} strokeWidth={2.5} /> Position hinzufügen
-                </button>
+                <div className="border-t border-[#2C2C2C]/5 flex">
+                  <button onClick={addEditItem}
+                    className="flex-1 px-4 py-3 flex items-center gap-2 text-[#2C2C2C]/40 font-bold text-sm hover:text-[#2C2C2C]/70 transition-colors">
+                    <Plus size={15} strokeWidth={2.5} /> Position hinzufügen
+                  </button>
+                  <button onClick={() => setShowRaumPicker(true)}
+                    className="border-l border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-1.5 text-[#2C2C2C]/40 font-bold text-sm hover:text-[#2C2C2C]/70 transition-colors whitespace-nowrap">
+                    <Plus size={15} strokeWidth={2.5} /> Raum
+                  </button>
+                </div>
               )}
             </div>
 
