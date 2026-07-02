@@ -45,15 +45,20 @@ export async function POST(req: NextRequest) {
   }
 
   // Audio in Storage hochladen
-  const ext = audio.type.includes('mp4') || audio.type.includes('m4a') ? 'm4a'
-    : audio.type.includes('ogg') ? 'ogg'
+  const rawType = audio.type || 'audio/webm'
+  const ext = rawType.includes('mp4') || rawType.includes('m4a') ? 'm4a'
+    : rawType.includes('ogg') ? 'ogg'
     : 'webm'
+  // Normalize: strip codec params so bucket mime check passes (e.g. "audio/webm;codecs=opus" → "audio/webm")
+  const contentType = rawType.includes('ogg') ? 'audio/ogg'
+    : rawType.includes('mp4') || rawType.includes('m4a') ? 'audio/mp4'
+    : 'audio/webm'
 
   const storagePath = `${user.id}/${angebotId}/${aufnahme.id}/audio.${ext}`
   const { error: storageErr } = await supabase.storage
     .from('entwurf-audio')
     .upload(storagePath, await audio.arrayBuffer(), {
-      contentType: audio.type || 'audio/webm',
+      contentType,
       upsert: true,
     })
 
