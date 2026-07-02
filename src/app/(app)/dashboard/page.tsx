@@ -10,8 +10,9 @@ import AvatarSheet from '@/components/AvatarSheet'
 import { Mic } from 'lucide-react'
 
 const STATUS_LABEL: Record<string, { label: string }> = {
-  draft:          { label: 'In Bearbeitung' },
-  in_bearbeitung: { label: 'In Bearbeitung' },
+  draft:          { label: 'Entwurf'        },
+  in_bearbeitung: { label: 'Entwurf'        },
+  bereit:         { label: 'Fertiggestellt' },
   sent:           { label: 'Offen'          },
   viewed:         { label: 'Geöffnet'       },
   accepted:       { label: 'Beauftragt'     },
@@ -52,7 +53,7 @@ export default async function DashboardPage({
   // Letzte 5 Angebote — ersten Item-Titel für Fallback-Bezeichnung
   const { data: recentQuotes } = await supabase
     .from('quotes')
-    .select('*, customer:customers(name), quote_items(title, position)')
+    .select('*, customer:customers(name), quote_items(title, position), quote_number')
     .eq('company_id', company?.id)
     .not('status', 'eq', 'archived')
     .order('created_at', { ascending: false })

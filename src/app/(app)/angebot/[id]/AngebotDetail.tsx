@@ -51,13 +51,17 @@ interface EditItem {
 }
 
 const STATUS_CONFIG = {
-  draft:           { label: 'Entwurf',      bg: 'bg-gray-100',  text: 'text-gray-600'  },
-  in_bearbeitung:  { label: 'In Arbeit',    bg: 'bg-yellow-50', text: 'text-yellow-700' },
-  sent:            { label: 'Offen',        bg: 'bg-blue-50',   text: 'text-blue-700'  },
-  accepted:        { label: 'Beauftragt',   bg: 'bg-green-50',  text: 'text-green-700' },
-  rejected:        { label: 'Abgelehnt',    bg: 'bg-red-50',    text: 'text-red-700'   },
-  archived:        { label: 'Archiviert',   bg: 'bg-gray-50',   text: 'text-gray-400'  },
+  draft:           { label: 'Entwurf',         bg: 'bg-gray-100',   text: 'text-gray-600'   },
+  in_bearbeitung:  { label: 'Entwurf',         bg: 'bg-gray-100',   text: 'text-gray-600'   },
+  bereit:          { label: 'Fertiggestellt',  bg: 'bg-[#EDFAF0]',  text: 'text-[#1A7A38]'  },
+  sent:            { label: 'Offen',           bg: 'bg-blue-50',    text: 'text-blue-700'   },
+  accepted:        { label: 'Beauftragt',      bg: 'bg-green-50',   text: 'text-green-700'  },
+  rejected:        { label: 'Abgelehnt',       bg: 'bg-red-50',     text: 'text-red-700'    },
+  archived:        { label: 'Archiviert',      bg: 'bg-gray-50',    text: 'text-gray-400'   },
 }
+
+const DRAFT_STATUSES = ['draft', 'in_bearbeitung']
+const SENT_STATUSES = ['sent', 'accepted', 'rejected']
 
 const VIA_LABELS: Record<string, string> = {
   email: '✉️ E-Mail', whatsapp: '💬 WhatsApp', link: '🔗 Link',
@@ -284,7 +288,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [emailSent, setEmailSent] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [toast, setToast] = useState('')
-  const [editMode, setEditMode] = useState(false)
+  const [editMode, setEditMode] = useState(DRAFT_STATUSES.includes(quote.status))
   const [editItems, setEditItems] = useState<EditItem[]>(quote.items)
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -596,7 +600,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     showToast(`${hint.empfehlung_title} hinzugefügt ✓`)
   }
 
-  async function saveEdits() {
+  async function saveEdits(nextStatus?: string) {
     setSaving(true)
     for (const item of editItems) {
       if (item.id.startsWith('new-')) {
@@ -625,14 +629,20 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       total_net: totalNet, total_vat: totalVat, total_gross: netWithSurcharge + totalVat,
       discount_percent: discountPercent, discount_amount: discountAmount,
       surcharge_amount: surchargeAmount, surcharge_label: surchargeLabel,
+      ...(nextStatus ? { status: nextStatus } : {}),
     }).eq('id', quote.id)
 
+    if (nextStatus) setCurrentStatus(nextStatus)
     setSaving(false)
     setEditMode(false)
     setEditingItemId(null)
     setHasChanges(false)
-    showToast('Angebot gespeichert ✓')
+    showToast(nextStatus === 'bereit' ? 'Angebot fertiggestellt ✓' : 'Entwurf gespeichert ✓')
     router.refresh()
+  }
+
+  async function fertigstellen() {
+    await saveEdits('bereit')
   }
 
   // ── Einheit schnell ändern (ohne Bearbeiten-Modus) ────────────────────────
@@ -724,12 +734,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   function handleEditClick() {
-    const istVersendet = ['sent', 'accepted', 'rejected'].includes(currentStatus)
-    if (istVersendet) {
+    if (SENT_STATUSES.includes(currentStatus)) {
       setShowRevisionDialog(true)
     } else {
       setEditItems(quote.items)
       setEditMode(true)
+      if (currentStatus === 'bereit') {
+        setCurrentStatus('draft')
+        supabase.from('quotes').update({ status: 'draft' }).eq('id', quote.id)
+      }
     }
   }
 
@@ -961,13 +974,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
             <div className="font-black text-[#2C2C2C] text-lg mb-4">Status ändern</div>
             <div className="flex flex-col gap-2">
-              {(Object.entries(STATUS_CONFIG).filter(([key]) => key !== 'in_bearbeitung') as [string, { label: string; bg: string; text: string }][]).map(([key, cfg]) => (
-                <button key={key} onClick={() => changeStatus(key)}
-                  className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}>
-                  <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
-                  {currentStatus === key && <Check size={18} color="#2C2C2C" strokeWidth={3} />}
-                </button>
-              ))}
+              {(['bereit', 'sent', 'accepted', 'rejected', 'archived'] as const).map(key => {
+                const cfg = STATUS_CONFIG[key]
+                return (
+                  <button key={key} onClick={() => changeStatus(key)}
+                    className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}>
+                    <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
+                    {currentStatus === key && <Check size={18} color="#2C2C2C" strokeWidth={3} />}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -1529,28 +1545,59 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         </div>
       )}
 
-      {/* ── Footer-Bar: Position+ | Vorschau | Senden ───────────────────── */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 flex gap-2">
-        {editMode && (
-          <button
-            onClick={addEditItem}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10"
-          >
-            <Plus size={15} strokeWidth={2.5} /> Position
-          </button>
+      {/* ── Footer-Bar ──────────────────────────────────────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3">
+        {editMode ? (
+          /* ENTWURF-MODUS: Position+ | Zwischenspeichern | Fertigstellen */
+          <div className="flex gap-2">
+            <button
+              onClick={addEditItem}
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
+            >
+              <Plus size={15} strokeWidth={2.5} /> Position
+            </button>
+            <button
+              onClick={() => saveEdits()}
+              disabled={saving || !hasChanges}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 disabled:opacity-40"
+            >
+              {saving ? <Loader2 size={14} className="animate-spin" /> : null}
+              Speichern
+            </button>
+            <button
+              onClick={fertigstellen}
+              disabled={saving}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm disabled:opacity-50"
+            >
+              {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={15} strokeWidth={2.5} />}
+              Fertigstellen
+            </button>
+          </div>
+        ) : (
+          /* FERTIGGESTELLT / VERSENDET: Vorschau | Senden */
+          <div className="flex gap-2">
+            {DRAFT_STATUSES.includes(currentStatus) || currentStatus === 'bereit' ? (
+              <button
+                onClick={handleEditClick}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
+              >
+                <Pencil size={14} strokeWidth={2.5} /> Bearbeiten
+              </button>
+            ) : null}
+            <button
+              onClick={() => { setVorschauInitialTab('vorschau'); setShowVorschau(true) }}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10"
+            >
+              <FileText size={15} strokeWidth={2} /> Vorschau
+            </button>
+            <button
+              onClick={() => { setVorschauInitialTab('senden'); setShowVorschau(true) }}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm"
+            >
+              <Share2 size={15} strokeWidth={2.5} /> Senden →
+            </button>
+          </div>
         )}
-        <button
-          onClick={() => { setVorschauInitialTab('vorschau'); setShowVorschau(true) }}
-          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10"
-        >
-          <FileText size={15} strokeWidth={2} /> Vorschau
-        </button>
-        <button
-          onClick={() => { setVorschauInitialTab('senden'); setShowVorschau(true) }}
-          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm"
-        >
-          <Share2 size={15} strokeWidth={2.5} /> Senden →
-        </button>
       </div>
 
       {/* ── VorschauUndVersand Bottom Sheet ────────────────────────────── */}

@@ -8,8 +8,9 @@ import { useRouter } from 'next/navigation'
 import { generiereAngebotsTitel } from '@/lib/angebot-titel'
 
 const BORDER_COLOR: Record<string, string> = {
-  draft:          'bg-[#F5C400]',
-  in_bearbeitung: 'bg-[#F5C400]',
+  draft:          'bg-[#2C2C2C]/30',
+  in_bearbeitung: 'bg-[#2C2C2C]/30',
+  bereit:         'bg-[#F5C400]',
   sent:           'bg-[#3B82F6]',
   viewed:         'bg-purple-500',
   accepted:       'bg-[#22C55E]',
@@ -18,8 +19,9 @@ const BORDER_COLOR: Record<string, string> = {
 }
 
 const STATUS_BADGE: Record<string, string> = {
-  draft:          'bg-[#FEF9C3] text-[#713F12]',
-  in_bearbeitung: 'bg-[#FEF9C3] text-[#713F12]',
+  draft:          'bg-[#2C2C2C]/8 text-[#2C2C2C]/50',
+  in_bearbeitung: 'bg-[#2C2C2C]/8 text-[#2C2C2C]/50',
+  bereit:         'bg-[#FEF9C3] text-[#713F12]',
   sent:           'bg-[#DBEAFE] text-[#1E40AF]',
   viewed:         'bg-purple-50 text-purple-800',
   accepted:       'bg-[#DCFCE7] text-[#14532D]',
@@ -39,6 +41,7 @@ const GEWERK_LABEL: Record<string, string> = {
 interface Props {
   quote: {
     id: string
+    quote_number?: string | null
     customer?: { name: string } | null
     total_gross: number
     status: string
@@ -85,17 +88,13 @@ export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAm
   const borderClass = BORDER_COLOR[quote.status] ?? 'bg-gray-300'
   const badgeClass = STATUS_BADGE[quote.status] ?? STATUS_BADGE.draft
 
-  const primaryTitle = generiereAngebotsTitel({
-    kunde: quote.customer,
-    gewerk: quote.gewerk,
-    ersterItemTitel,
-    created_at: quote.created_at,
-  })
+  const kundenname = quote.customer?.name?.trim()
+  const nummer = quote.quote_number
 
-  const gewerkLabel = quote.gewerk ? GEWERK_LABEL[quote.gewerk] : null
-  const hasCustomer = !!quote.customer?.name
-  const subtitle = [gewerkLabel && hasCustomer ? gewerkLabel : null, formattedDate]
-    .filter(Boolean).join(' · ')
+  // Hauptzeile: Kundename wenn vorhanden, sonst "Kunde offen"
+  const primaryTitle = kundenname ?? 'Kunde offen'
+  // Unterzeile: Angebotsnummer + Datum
+  const subtitle = [nummer, formattedDate].filter(Boolean).join(' · ')
 
   return (
     <div className="relative overflow-hidden rounded-2xl">
@@ -121,8 +120,10 @@ export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAm
             <div className="pl-4 pr-4 py-3.5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="font-black text-[#1A1A1A] text-sm truncate">{primaryTitle}</div>
-                  <div className="text-xs text-[#888888] font-semibold mt-0.5">{subtitle || formattedDate}</div>
+                  <div className={`font-black text-sm truncate ${kundenname ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/40 italic'}`}>
+                    {primaryTitle}
+                  </div>
+                  <div className="text-xs text-[#888888] font-semibold mt-0.5">{subtitle}</div>
                 </div>
                 <div className="text-right shrink-0">
                   <div className="font-black text-[#1A1A1A] text-sm">{formattedAmount}</div>
