@@ -153,17 +153,33 @@ export async function POST(req: NextRequest) {
   const items = genData.items ?? []
 
   // ── Schritt 3: quote_items ergänzen ──────────────────────────────────────
-  // Höchste bestehende Positionsnummer ermitteln
-  const { data: bestehende } = await supabase
+  // Bestehende Positionen: höchste Nummer + vorhandene Titel (für Dedup)
+  const { data: bestehendeItems } = await supabase
     .from('quote_items')
-    .select('position')
+    .select('position, title')
     .eq('quote_id', angebot_id)
     .order('position', { ascending: false })
-    .limit(1)
-  const startPosition = (bestehende?.[0]?.position ?? 0) + 1
+  const startPosition = (bestehendeItems?.[0]?.position ?? 0) + 1
+  const bestehendeTitle = new Set((bestehendeItems ?? []).map(i => (i.title as string).toLowerCase().trim()))
 
-  if (items.length > 0) {
-    const itemRows = items.map((item, idx) => ({
+  // Nur allgemeine Positionen OHNE Raum-Suffix dürfen nur einmal vorkommen
+  const EINMALIG_MUSTER = ['kleinmaterial', 'verbrauchsmaterial', 'an- und abfahrt', 'anfahrt', 'abfahrt', 'schutzfolie', 'schutzmaßnahmen']
+  const gefilterteItems = items.filter(item => {
+    const titelLower = (item.title as string).toLowerCase().trim()
+    const hatRaumSuffix = titelLower.includes(' — ')
+    // Positionen mit Raum-Suffix immer erlauben (Wandflächen — Flur + Wandflächen — Küche)
+    if (hatRaumSuffix) return true
+    // Allgemeine Positionen: nur einmal pro Quote
+    const istEinmalig = EINMALIG_MUSTER.some(m => titelLower.includes(m))
+    if (istEinmalig) {
+      const schonDa = [...bestehendeTitle].some(t => EINMALIG_MUSTER.some(m => t.includes(m) && titelLower.includes(m)))
+      if (schonDa) return false
+    }
+    return true
+  })
+
+  if (gefilterteItems.length > 0) {
+    const itemRows = gefilterteItems.map((item, idx) => ({
       quote_id: angebot_id,
       position: startPosition + idx,
       title: item.title,
@@ -179,30 +195,30 @@ export async function POST(req: NextRequest) {
       console.error('quote_items insert Fehler:', insertErr)
       return NextResponse.json({ error: 'Positionen konnten nicht gespeichert werden' }, { status: 500 })
     }
-
-    // Totals neu berechnen (alle Positionen, nicht nur neue)
-    const { data: alleItems } = await supabase
-      .from('quote_items')
-      .select('total_price')
-      .eq('quote_id', angebot_id)
-    const total_net = (alleItems ?? []).reduce((s, i) => s + (i.total_price ?? 0), 0)
-
-    // MwSt aus Company-Profil laden
-    const { data: companyData2 } = await supabase
-      .from('companies')
-      .select('vat_rate')
-      .eq('user_id', user.id)
-      .single()
-    const vatRate = (companyData2 as { vat_rate?: number } | null)?.vat_rate ?? 19
-    const total_gross = total_net * (1 + vatRate / 100)
-
-    await supabase.from('quotes').update({
-      total_net,
-      total_gross,
-      notes: genData.notizen ?? null,
-      entwurf_gespeichert_am: new Date().toISOString(),
-    }).eq('id', angebot_id)
   }
 
-  return NextResponse.json({ ok: true, positionen_count: items.length, rueckfragen })
+  // Totals neu berechnen (alle Positionen, nicht nur neue)
+  const { data: alleItems } = await supabase
+    .from('quote_items')
+    .select('total_price')
+    .eq('quote_id', angebot_id)
+  const total_net = (alleItems ?? []).reduce((s, i) => s + (i.total_price ?? 0), 0)
+
+  // MwSt aus Company-Profil laden
+  const { data: companyData2 } = await supabase
+    .from('companies')
+    .select('vat_rate')
+    .eq('user_id', user.id)
+    .single()
+  const vatRate = (companyData2 as { vat_rate?: number } | null)?.vat_rate ?? 19
+  const total_gross = total_net * (1 + vatRate / 100)
+
+  await supabase.from('quotes').update({
+    total_net,
+    total_gross,
+    notes: genData.notizen ?? null,
+    entwurf_gespeichert_am: new Date().toISOString(),
+  }).eq('id', angebot_id)
+
+  return NextResponse.json({ ok: true, positionen_count: gefilterteItems.length, rueckfragen })
 }
