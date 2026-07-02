@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   // Nur Aufnahmen dieses Users (Sicherheit: Angebot gehört zur Company des Users)
   const { data: quoteCheck } = await supabase
     .from('quotes')
-    .select('id, companies!inner(user_id)')
+    .select('id, entwurf_gespeichert_am, companies!inner(user_id)')
     .eq('id', angebot_id)
     .single()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,12 +30,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
   }
 
-  // Alle fertig transkribierten Aufnahmen laden
-  const { data: aufnahmen } = await supabase
+  // Letzter Generierungs-Zeitstempel — nur neue Aufnahmen danach verarbeiten
+  const letzteGenerierung = (quoteCheck as { entwurf_gespeichert_am?: string | null }).entwurf_gespeichert_am
+
+  // Aufnahmen laden — bei Erstgenerierung alle, sonst nur neue
+  let query = supabase
     .from('entwurf_aufnahmen')
     .select('typ, transkript, notiz_text, verarbeitung_status, erstellt_am')
     .eq('angebot_id', angebot_id)
     .order('erstellt_am', { ascending: true })
+  if (letzteGenerierung) {
+    query = query.gt('erstellt_am', letzteGenerierung)
+  }
+  const { data: aufnahmen } = await query
 
   if (!aufnahmen?.length) {
     return NextResponse.json({ error: 'Keine Aufnahmen gefunden' }, { status: 400 })
