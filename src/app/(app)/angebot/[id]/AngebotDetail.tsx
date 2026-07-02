@@ -384,7 +384,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         const newQty = berechneQuantityFuerItem(titleDisplay, item.unit, updated[raumName])
         if (newQty == null) return item
         const qty = Math.round(newQty * 100) / 100
-        return { ...item, quantity: qty, total_price: qty * item.unit_price }
+        const newDesc = `${qty} ${item.unit}`
+        return { ...item, quantity: qty, total_price: qty * item.unit_price, description: newDesc }
       }))
       setHasChanges(true)
 
