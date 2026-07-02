@@ -61,17 +61,49 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Abdecken/Abkleben', grund: 'Bei Streicharbeiten immer nötig' })
     }
 
-    // Nur Fläche angegeben (keine L×B) → Rückfrage nach Maßen für Wandberechnung
     const hatStreichen = raum.arbeiten.some(a => a.includes('streichen') || a.includes('wand'))
-    const hatNurFlaeche = raum.flaeche !== null && !raum.laenge && !raum.breite
-    if (hatStreichen && hatNurFlaeche) {
+    const raumId = (raum.name ?? '').toLowerCase().replace(/\s+/g, '_')
+    const hatLB = raum.laenge && raum.breite
+    const hatFlaeche = raum.flaeche !== null && raum.flaeche !== undefined
+
+    // Gar keine Maße → Rückfrage
+    if (hatStreichen && !hatLB && !hatFlaeche && !(raum as any).wandflaeche_direkt) {
       addRueckfrage(ext, {
-        id: `masse_${(raum.name ?? '').toLowerCase().replace(/\s+/g, '_')}`,
-        frage: `Wie sind die Maße von "${raum.name}"? (für Wandflächenberechnung)`,
+        id: `masse_${raumId}`,
+        frage: `Wie groß ist "${raum.name}"? (Länge × Breite oder Fläche in m²)`,
         typ: 'masse_einzel',
         betrifft: raum.name,
         prioritaet: 0,
         schnell_antworten: [],
+      })
+    }
+
+    // Nur Fläche, keine L×B → Wandfläche kann nicht berechnet werden
+    const hatNurFlaeche = hatFlaeche && !hatLB && !(raum as any).wandflaeche_direkt
+    if (hatStreichen && hatNurFlaeche) {
+      addRueckfrage(ext, {
+        id: `masse_lb_${raumId}`,
+        frage: `Wie sind die Maße von "${raum.name}"? (Länge × Breite — für die Wandfläche)`,
+        typ: 'masse_einzel',
+        betrifft: raum.name,
+        prioritaet: 0,
+        schnell_antworten: [],
+      })
+    }
+
+    // Höhe fehlt (L×B bekannt, aber keine Höhe) → Wandfläche nicht berechenbar
+    if (hatStreichen && hatLB && !raum.hoehe && !(raum as any).wandflaeche_direkt) {
+      addRueckfrage(ext, {
+        id: `hoehe_${raumId}`,
+        frage: `Wie hoch sind die Wände in "${raum.name}"?`,
+        typ: 'hoehe',
+        betrifft: raum.name,
+        prioritaet: 0,
+        schnell_antworten: [
+          { label: '2,40 m', wert: 2.4 },
+          { label: '2,60 m', wert: 2.6 },
+          { label: '3,00 m', wert: 3.0 },
+        ],
       })
     }
 
@@ -267,6 +299,25 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
         !raum.arbeiten.includes('sockelleisten')) {
       raum.arbeiten.push('sockelleisten')
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Sockelleisten', grund: 'Bei Bodenbelag immer mit erfassen' })
+    }
+
+    // Belag fehlt → Rückfrage welcher Belag
+    const hatBodenArbeit = (raum.arbeiten ?? []).some(a =>
+      a.includes('verlegen') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl') || a.includes('boden'))
+    if (hatBodenArbeit && !(raum as any).belag) {
+      addRueckfrage(ext, {
+        id: `belag_${(raum.name ?? '').toLowerCase().replace(/\s+/g, '_')}`,
+        frage: `Welcher Belag soll in "${raum.name}" verlegt werden?`,
+        typ: 'ja_nein',
+        betrifft: raum.name,
+        prioritaet: 0,
+        schnell_antworten: [
+          { label: 'Laminat', wert: null },
+          { label: 'Vinyl', wert: null },
+          { label: 'Parkett', wert: null },
+          { label: 'Teppich', wert: null },
+        ],
+      })
     }
 
     // Altbelag-Frage wenn nicht explizit
