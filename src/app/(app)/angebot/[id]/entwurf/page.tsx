@@ -636,7 +636,7 @@ export default function EntwurfPage() {
                 <span className="font-extrabold text-[#2C2C2C] text-[14px]">
                   Aufnahme läuft — {recordingDauer}s
                 </span>
-                <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Finger loslassen zum Stoppen</span>
+                <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Nochmal tippen zum Stoppen</span>
               </>
             ) : (
               <>
