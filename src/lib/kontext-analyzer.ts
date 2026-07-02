@@ -301,7 +301,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Sockelleisten', grund: 'Bei Bodenbelag immer mit erfassen' })
     }
 
-    // Belag fehlt → Rückfrage welcher Belag
+    // Belag fehlt → Rückfrage welcher Belag (wert 1-4 = Laminat/Vinyl/Parkett/Teppich)
     const hatBodenArbeit = (raum.arbeiten ?? []).some(a =>
       a.includes('verlegen') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl') || a.includes('boden'))
     if (hatBodenArbeit && !(raum as any).belag) {
@@ -312,10 +312,10 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
         betrifft: raum.name,
         prioritaet: 0,
         schnell_antworten: [
-          { label: 'Laminat', wert: null },
-          { label: 'Vinyl', wert: null },
-          { label: 'Parkett', wert: null },
-          { label: 'Teppich', wert: null },
+          { label: 'Laminat', wert: 1 },
+          { label: 'Vinyl', wert: 2 },
+          { label: 'Parkett', wert: 3 },
+          { label: 'Teppich', wert: 4 },
         ],
       })
     }

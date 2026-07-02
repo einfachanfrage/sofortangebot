@@ -10,6 +10,13 @@ type RaumMit = ExtrahierteDaten['raeume'][number] & {
   vage_beschreibung?: string | null
   vage_quelle?: string
   anzahl?: number
+  belag?: string
+}
+
+const BELAG_MAP: Record<number, string> = { 1: 'Laminat', 2: 'Vinyl', 3: 'Parkett', 4: 'Teppich' }
+
+function raumById(raeume: RaumMit[], raumId: string): RaumMit | undefined {
+  return raeume.find(r => (r.name ?? '').toLowerCase().replace(/\s+/g, '_') === raumId)
 }
 
 export function verarbeiteAntworten(
@@ -21,6 +28,66 @@ export function verarbeiteAntworten(
     raeume: extraktion.raeume.map(r => ({ ...r })) as RaumMit[],
   }
 
+  // ── Kontext-Analyzer Rückfragen (IDs: hoehe_xyz, masse_xyz, belag_xyz) ──────
+  for (const [id, antwort] of Object.entries(antworten)) {
+    if (!antwort) continue
+
+    const hoeheM = id.match(/^hoehe_(.+)$/)
+    if (hoeheM && typeof antwort.wert === 'number') {
+      const raum = raumById(angereichert.raeume, hoeheM[1])
+      if (raum) raum.hoehe = antwort.wert
+      continue
+    }
+
+    const masseLbM = id.match(/^masse_lb_(.+)$/)
+    if (masseLbM) {
+      const raum = raumById(angereichert.raeume, masseLbM[1])
+      if (raum) {
+        if (Array.isArray(antwort.wert) && antwort.wert.length === 2) {
+          raum.laenge = antwort.wert[0]; raum.breite = antwort.wert[1]
+          raum.flaeche = round2(antwort.wert[0] * antwort.wert[1])
+        }
+      }
+      continue
+    }
+
+    const masseM = id.match(/^masse_(.+)$/)
+    if (masseM && !id.startsWith('masse_boden_')) {
+      const raum = raumById(angereichert.raeume, masseM[1])
+      if (raum) {
+        if (Array.isArray(antwort.wert) && antwort.wert.length === 2) {
+          raum.laenge = antwort.wert[0]; raum.breite = antwort.wert[1]
+          raum.flaeche = round2(antwort.wert[0] * antwort.wert[1])
+        } else if (typeof antwort.wert === 'number') {
+          raum.flaeche = antwort.wert
+        }
+      }
+      continue
+    }
+
+    const masseBodenM = id.match(/^masse_boden_(.+)$/)
+    if (masseBodenM) {
+      const raum = raumById(angereichert.raeume, masseBodenM[1])
+      if (raum) {
+        if (Array.isArray(antwort.wert) && antwort.wert.length === 2) {
+          raum.laenge = antwort.wert[0]; raum.breite = antwort.wert[1]
+          raum.flaeche = round2(antwort.wert[0] * antwort.wert[1])
+        } else if (typeof antwort.wert === 'number') {
+          raum.flaeche = antwort.wert
+        }
+      }
+      continue
+    }
+
+    const belagM = id.match(/^belag_(.+)$/)
+    if (belagM && typeof antwort.wert === 'number') {
+      const raum = raumById(angereichert.raeume, belagM[1])
+      if (raum) raum.belag = BELAG_MAP[antwort.wert] ?? String(antwort.wert)
+      continue
+    }
+  }
+
+  // ── Vage-Rückfragen (alte IDs: raum_${name}_hoehe/masse/...) ─────────────
   for (const raum of angereichert.raeume) {
     if (!raum.vage) continue
     const name = raum.name || 'Raum'

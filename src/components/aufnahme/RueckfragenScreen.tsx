@@ -393,7 +393,10 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen }:
         )}
         {frage.typ === 'ja_nein' && (
           <div className="flex flex-col gap-3">
-            {[{ label: 'Ja', wert: 1 }, { label: 'Nein', wert: 0 }].map(opt => {
+            {(frage.schnell_antworten.length > 0
+              ? frage.schnell_antworten.map(s => ({ label: s.label, wert: s.wert as number }))
+              : [{ label: 'Ja', wert: 1 }, { label: 'Nein', wert: 0 }]
+            ).map(opt => {
               const aktiv = !Array.isArray(antwort?.wert) && antwort?.wert === opt.wert
               return (
                 <button
