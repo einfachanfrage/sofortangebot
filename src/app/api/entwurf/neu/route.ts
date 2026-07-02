@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
       customer_id: customerId,
       status: 'draft',
       title: body.kunden_name?.trim() ? `Entwurf — ${body.kunden_name.trim()}` : 'Entwurf',
-      positions: [],
       total_net: 0,
       total_gross: 0,
     })
