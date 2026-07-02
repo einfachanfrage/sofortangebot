@@ -179,8 +179,19 @@ export async function POST(req: NextRequest) {
       .select('total_price')
       .eq('quote_id', angebot_id)
     const total_net = (alleItems ?? []).reduce((s, i) => s + (i.total_price ?? 0), 0)
+
+    // MwSt aus Company-Profil laden
+    const { data: companyData2 } = await supabase
+      .from('companies')
+      .select('vat_rate')
+      .eq('user_id', user.id)
+      .single()
+    const vatRate = (companyData2 as { vat_rate?: number } | null)?.vat_rate ?? 19
+    const total_gross = total_net * (1 + vatRate / 100)
+
     await supabase.from('quotes').update({
       total_net,
+      total_gross,
       notes: genData.notizen ?? null,
       entwurf_gespeichert_am: new Date().toISOString(),
     }).eq('id', angebot_id)
