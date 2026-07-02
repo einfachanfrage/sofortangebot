@@ -918,7 +918,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <Pencil size={16} strokeWidth={2.5} />
               </button>
             ) : (
-              <button onClick={saveEdits} disabled={saving}
+              <button onClick={() => saveEdits()} disabled={saving}
                 className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/10 text-white/40'} disabled:opacity-50`}>
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                 Speichern
@@ -1308,7 +1308,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   className="flex-1 bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-black text-base rounded-2xl py-4">
                   Abbrechen
                 </button>
-                <button onClick={saveEdits} disabled={saving}
+                <button onClick={() => saveEdits()} disabled={saving}
                   className="flex-[2] bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 disabled:opacity-50 flex items-center justify-center gap-2">
                   {saving ? 'Speichere...' : <><Check size={18} strokeWidth={3} /> Speichern</>}
                 </button>
