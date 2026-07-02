@@ -573,7 +573,7 @@ export default function EntwurfPage() {
               {quoteInfo?.quote_items?.length} Positionen bereits berechnet
             </p>
             <p className="text-white/50 font-semibold text-[12px] mt-0.5">
-              Neue Aufnahmen ersetzen die alten Positionen.
+              Neue Aufnahmen werden als weitere Positionen ergänzt.
             </p>
           </div>
         </div>

@@ -113,13 +113,20 @@ export async function POST(req: NextRequest) {
 
   const items = genData.items ?? []
 
-  // ── Schritt 3: quote_items ersetzen ──────────────────────────────────────
-  await supabase.from('quote_items').delete().eq('quote_id', angebot_id)
+  // ── Schritt 3: quote_items ergänzen ──────────────────────────────────────
+  // Höchste bestehende Positionsnummer ermitteln
+  const { data: bestehende } = await supabase
+    .from('quote_items')
+    .select('position')
+    .eq('quote_id', angebot_id)
+    .order('position', { ascending: false })
+    .limit(1)
+  const startPosition = (bestehende?.[0]?.position ?? 0) + 1
 
   if (items.length > 0) {
     const itemRows = items.map((item, idx) => ({
       quote_id: angebot_id,
-      position: idx + 1,
+      position: startPosition + idx,
       title: item.title,
       description: item.description ?? null,
       quantity: item.quantity ?? 1,
@@ -134,8 +141,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Positionen konnten nicht gespeichert werden' }, { status: 500 })
     }
 
-    // Totals aktualisieren
-    const total_net = itemRows.reduce((s, i) => s + i.total_price, 0)
+    // Totals neu berechnen (alle Positionen, nicht nur neue)
+    const { data: alleItems } = await supabase
+      .from('quote_items')
+      .select('total_price')
+      .eq('quote_id', angebot_id)
+    const total_net = (alleItems ?? []).reduce((s, i) => s + (i.total_price ?? 0), 0)
     await supabase.from('quotes').update({
       total_net,
       notes: genData.notizen ?? null,
