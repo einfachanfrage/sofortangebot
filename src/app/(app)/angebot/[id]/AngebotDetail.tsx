@@ -1186,6 +1186,33 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <div className="font-black text-[#2C2C2C]">Positionen</div>
               </div>
 
+              {/* Action-Row oben — immer sichtbar */}
+              {editMode && (
+                <div className="border-t border-b border-[#2C2C2C]/5 grid grid-cols-3">
+                  <Link
+                    href={`/angebot/${quote.id}/entwurf`}
+                    className="flex flex-col items-center gap-1 py-3 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors"
+                  >
+                    <Mic size={16} strokeWidth={2.5} />
+                    <span className="text-[11px] font-black">Aufnahme</span>
+                  </Link>
+                  <button
+                    onClick={addEditItem}
+                    className="flex flex-col items-center gap-1 py-3 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors border-x border-[#2C2C2C]/5"
+                  >
+                    <Plus size={16} strokeWidth={2.5} />
+                    <span className="text-[11px] font-black">Position</span>
+                  </button>
+                  <button
+                    onClick={() => setShowRaumPicker(true)}
+                    className="flex flex-col items-center gap-1 py-3 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors"
+                  >
+                    <span className="text-[15px] leading-none">🏠</span>
+                    <span className="text-[11px] font-black">Raum</span>
+                  </button>
+                </div>
+              )}
+
               {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
 
               {editMode ? (() => {
@@ -1330,31 +1357,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 )
               })()}
 
-              {editMode && (
-                <div className="border-t border-[#2C2C2C]/5 grid grid-cols-3">
-                  <Link
-                    href={`/angebot/${quote.id}/entwurf`}
-                    className="flex flex-col items-center gap-1 py-3.5 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors rounded-bl-2xl"
-                  >
-                    <Mic size={16} strokeWidth={2.5} />
-                    <span className="text-[11px] font-black">Aufnahme</span>
-                  </Link>
-                  <button
-                    onClick={addEditItem}
-                    className="flex flex-col items-center gap-1 py-3.5 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors border-x border-[#2C2C2C]/5"
-                  >
-                    <Plus size={16} strokeWidth={2.5} />
-                    <span className="text-[11px] font-black">Position</span>
-                  </button>
-                  <button
-                    onClick={() => setShowRaumPicker(true)}
-                    className="flex flex-col items-center gap-1 py-3.5 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors rounded-br-2xl"
-                  >
-                    <span className="text-[15px] leading-none">🏠</span>
-                    <span className="text-[11px] font-black">Raum</span>
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* Öffentliche Notizen (erscheinen im PDF) */}
