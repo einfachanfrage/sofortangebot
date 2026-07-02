@@ -18,8 +18,7 @@ export function pruefeTuerenLackieren(
 
   ergaenzt.push({ beschreibung: 'Türen abschleifen', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) aus Transkript`, annahmen: tuerAnnahme })
   ergaenzt.push({ beschreibung: 'Türen grundieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
-  ergaenzt.push({ beschreibung: 'Türen lackieren — 1. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
-  ergaenzt.push({ beschreibung: 'Türen lackieren — 2. Anstrich', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+  ergaenzt.push({ beschreibung: 'Türen lackieren (2× Anstrich)', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
   ergaenzt.push({ beschreibung: 'Türzargen lackieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: tuerAnnahme })
   if (!hat(ergaenzt, 'sockelleisten abkl', 'sockel abkl')) {
     ergaenzt.push({ beschreibung: 'Sockelleisten abkleben', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) → je 1 Sockelleistenbereich`, annahmen: tuerAnnahme })
@@ -51,8 +50,7 @@ export function pruefeFensterLackieren(
 
   ergaenzt.push({ beschreibung: 'Fenster abschleifen', menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster aus Transkript`, annahmen: [] })
   ergaenzt.push({ beschreibung: 'Fenster grundieren', menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
-  ergaenzt.push({ beschreibung: `Fenster ${farbTyp} — 1. Anstrich${zweiSeitigHinweis}`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
-  ergaenzt.push({ beschreibung: `Fenster ${farbTyp} — 2. Anstrich${zweiSeitigHinweis}`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
+  ergaenzt.push({ beschreibung: `Fenster ${farbTyp} (2× Anstrich${zweiSeitigHinweis})`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
   if (istAußen && !hat(ergaenzt, 'abdecken umgebung', 'umgebung abdecken')) {
     ergaenzt.push({ beschreibung: 'Abdecken Umgebung', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Außenarbeiten — Umgebung abdecken', annahmen: [] })
   }
@@ -82,8 +80,7 @@ export function pruefeHeizkLackieren(
 
   ergaenzt.push({ beschreibung: 'Heizkörper abschleifen', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper aus Transkript`, annahmen: hzkAnnahme })
   ergaenzt.push({ beschreibung: 'Heizkörper grundieren', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
-  ergaenzt.push({ beschreibung: 'Heizkörper lackieren — 1. Anstrich', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
-  ergaenzt.push({ beschreibung: 'Heizkörper lackieren — 2. Anstrich', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
+  ergaenzt.push({ beschreibung: 'Heizkörper lackieren (2× Anstrich)', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
 
   const hatRohre = lower.includes('rohr') || lower.includes('heizungsrohr') || lower.includes('rohre')
   if (hatRohre && !hat(ergaenzt, 'rohr lackier', 'rohre lackier')) {

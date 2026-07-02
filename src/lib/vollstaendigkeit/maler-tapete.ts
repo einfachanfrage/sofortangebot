@@ -11,12 +11,10 @@ export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], feh
   if (lfdm !== null && lfdm > 0) {
     filtereArray(ergaenzt, p => !p.beschreibung.toLowerCase().includes('sockelleisten abkl'))
     ergaenzt.push({ beschreibung: 'Sockelleisten abschleifen', menge: lfdm, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdm} lfm aus Transkript`, annahmen: [] })
-    ergaenzt.push({ beschreibung: 'Sockelleisten lackieren — 1. Anstrich', menge: lfdm, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdm} lfm`, annahmen: [] })
-    ergaenzt.push({ beschreibung: 'Sockelleisten lackieren — 2. Anstrich', menge: lfdm, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdm} lfm`, annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Sockelleisten lackieren (2× Anstrich)', menge: lfdm, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdm} lfm`, annahmen: [] })
   } else {
     add(ergaenzt, fehlende, 'Sockelleisten abschleifen')
-    add(ergaenzt, fehlende, 'Sockelleisten lackieren — 1. Anstrich')
-    add(ergaenzt, fehlende, 'Sockelleisten lackieren — 2. Anstrich')
+    add(ergaenzt, fehlende, 'Sockelleisten lackieren (2× Anstrich)')
   }
 }
 

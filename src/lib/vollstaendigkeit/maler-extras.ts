@@ -2,9 +2,12 @@ import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, anzahlAus, filtereArray } from './helpers'
 
 export function pruefeErschwerniszuschlagHoehe(ergaenzt: BerechnetePosition[], lower: string): void {
-  const hoeheMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*m(?:\s+(?:hoch|decke|raumhöhe))/i)
+  // Deckenhöhe nur aus expliziten Höhenangaben lesen, nicht aus Raummaßen
+  const hoeheMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*m?\s*(?:hoch|deckenhöhe|raumhöhe)/i)
   const raumHoehe = hoeheMatch ? parseFloat(hoeheMatch[1].replace(',', '.')) : 0
-  const hatHohesRaum = raumHoehe > 3.0 || lower.includes('4m hoch') || lower.includes('4,5') || lower.includes('4.5') || lower.includes('5m hoch') || lower.includes('6m hoch') || lower.includes('hohe decke') || lower.includes('hohen decken')
+  const hatHohesRaum = raumHoehe > 3.0
+    || /[45][.,]\d*\s*m\s*(?:hoch|deckenhöhe|raumhöhe)/i.test(lower)
+    || lower.includes('hohe decke') || lower.includes('hohen decken')
   if (hatHohesRaum && !hat(ergaenzt, 'erschwerniszuschlag höhe', 'höhe zuschlag', 'gerüst')) {
     ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Raumhöhe > 3m', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: `Raumhöhe ${raumHoehe > 0 ? raumHoehe + 'm' : 'erkannt'} > 3m`, annahmen: [] })
   }
