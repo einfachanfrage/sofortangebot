@@ -684,7 +684,7 @@ export default function EntwurfPage() {
           {recording ? (
             <>
               <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
-              Loslassen zum Stoppen
+              Tippen zum Stoppen — {recordingDauer}s
             </>
           ) : (
             <>
