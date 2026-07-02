@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
       company_id: company.id,
       customer_id: customerId,
       status: 'draft',
-      title: body.kunden_name?.trim() ? `Entwurf — ${body.kunden_name.trim()}` : 'Entwurf',
       total_net: 0,
       total_gross: 0,
     })
