@@ -179,8 +179,9 @@ function fmtDate(d: string) {
 }
 
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick }: {
+function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick }: {
   item: EditItem
+  titleOverride?: string
   editingId: string | null
   setEditingId: (id: string | null) => void
   updateEditItem: (id: string, field: keyof EditItem, value: string | number) => void
@@ -260,7 +261,7 @@ function SortableItem({ item, editingId, setEditingId, updateEditItem, removeEdi
       ) : (
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0 flex-1">
-            <div className="font-bold text-[#2C2C2C] text-sm">{item.title}</div>
+            <div className="font-bold text-[#2C2C2C] text-sm">{titleOverride ?? item.title}</div>
             {item.description && (
               <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>
             )}
@@ -1123,24 +1124,58 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
               {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
 
-              {editMode ? (
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
-                    {editItems.map(item => (
-                      <SortableItem
-                        key={item.id}
-                        item={item}
-                        editingId={editingItemId}
-                        setEditingId={setEditingItemId}
-                        updateEditItem={updateEditItem}
-                        removeEditItem={removeEditItem}
-                        vatRate={company?.vat_rate ?? 0}
-                        onUnitPick={setUnitPickerItemId}
-                      />
-                    ))}
-                  </SortableContext>
-                </DndContext>
-              ) : (() => {
+              {editMode ? (() => {
+                const gruppen = gruppiereNachRaum(editItems)
+                if (!gruppen) {
+                  return (
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                      <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                        {editItems.map(item => (
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+                  )
+                }
+                const { raeume, allgemein, hatMehrereRaeume } = gruppen
+                return (
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                      {raeume.map(raum => (
+                        <div key={raum.raumName}>
+                          <div className={`border-t border-[#2C2C2C]/5 px-4 py-2.5 flex items-center justify-between ${hatMehrereRaeume ? 'bg-[#F7F7F5]' : 'bg-[#F5C400]/8'}`}>
+                            <div className="flex items-center gap-1.5">
+                              <span>{raum.emoji}</span>
+                              <span className={`font-black uppercase tracking-widest ${hatMehrereRaeume ? 'text-[10px] text-[#2C2C2C]/50' : 'text-xs text-[#2C2C2C]'}`}>{raum.raumName}</span>
+                            </div>
+                            {hatMehrereRaeume && <span className="text-[11px] font-black text-[#2C2C2C]/40">{fmt(raum.summe)}</span>}
+                          </div>
+                          <RaumDimensionenZeile
+                            raumName={raum.raumName}
+                            dim={raumDetails[raum.raumName] ?? {}}
+                            onChange={(field, val) => handleRaumDimChange(raum.raumName, field, val)}
+                          />
+                          {raum.items.map(gi => {
+                            const orig = editItems.find(i => i.id === gi.id)!
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} />
+                          })}
+                        </div>
+                      ))}
+                      {allgemein.length > 0 && (
+                        <div>
+                          <div className="border-t border-[#2C2C2C]/5 px-4 py-2 bg-[#F7F7F5]">
+                            <span className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">📋 Allgemein</span>
+                          </div>
+                          {allgemein.map(gi => {
+                            const orig = editItems.find(i => i.id === gi.id)!
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} />
+                          })}
+                        </div>
+                      )}
+                    </SortableContext>
+                  </DndContext>
+                )
+              })() : (() => {
                 const gruppen = gruppiereNachRaum(displayItems)
 
                 const renderItem = (title: string, item: EditItem) => (
