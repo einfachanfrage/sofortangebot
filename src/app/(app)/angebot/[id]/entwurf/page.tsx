@@ -15,7 +15,7 @@ import type { KIRueckfrage } from '@/lib/mengen/types'
 
 type AufnahmeWithUrl = EntwurfAufnahme & { audio_signed_url?: string; foto_signed_url?: string }
 
-type Screen = 'timeline' | 'fertigstellen_loading' | 'rueckfragen' | 'done'
+type Screen = 'timeline' | 'fertigstellen_loading' | 'rueckfragen' | 'done' | 'zurueck_bestaetigen'
 
 function detectGeraet(): string {
   const ua = navigator.userAgent
@@ -502,6 +502,47 @@ export default function EntwurfPage() {
   const nochVerarbeitung = sprachen.some(a => a.verarbeitung_status === 'verarbeitung' || a.verarbeitung_status === 'ausstehend')
   const kannFertigstellen = aufnahmen.length > 0 && !nochVerarbeitung && !uploading
 
+  // ── Zurück-Bestätigung Screen ─────────────────────────────────────────────
+
+  function handleBackClick() {
+    // Wenn Aufnahmen vorhanden aber noch keine Positionen generiert → nachfragen
+    const hatUnverarbeiteteAufnahmen = sprachen.length > 0 && !hatBestehendPositionen
+    if (hatUnverarbeiteteAufnahmen) {
+      setScreen('zurueck_bestaetigen')
+    } else {
+      router.push(`/angebot/${angebotId}`)
+    }
+  }
+
+  if (screen === 'zurueck_bestaetigen') {
+    return (
+      <div className="fixed inset-0 z-40 flex items-end">
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setScreen('timeline')} />
+        <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl">
+          <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-2">Aufnahmen noch nicht ausgewertet</h2>
+          <p className="text-[#2C2C2C]/50 font-semibold text-[14px] mb-6 leading-relaxed">
+            Du hast {sprachen.length} {sprachen.length === 1 ? 'Aufnahme' : 'Aufnahmen'} — aber noch keine Positionen berechnet. Jetzt auswerten?
+          </p>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => { setScreen('timeline'); fertigstellen() }}
+              className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px]"
+            >
+              Positionen berechnen →
+            </button>
+            <button
+              onClick={() => router.push(`/angebot/${angebotId}`)}
+              className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+            >
+              Trotzdem zurück ohne Berechnen
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // ── Rückfragen Screen ─────────────────────────────────────────────────────
 
   if (screen === 'rueckfragen' && rueckfragen.length > 0) {
@@ -538,10 +579,10 @@ export default function EntwurfPage() {
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-[#2C2C2C]/8 px-4 pt-safe-top">
         <div className="flex items-center justify-between h-14">
-          <Link href={`/angebot/${angebotId}`} className="flex items-center gap-1.5 text-[#2C2C2C]/60">
+          <button onClick={handleBackClick} className="flex items-center gap-1.5 text-[#2C2C2C]/60">
             <ArrowLeft size={18} />
-            <span className="font-semibold text-[14px]">Entwurf</span>
-          </Link>
+            <span className="font-semibold text-[14px]">Zurück</span>
+          </button>
 
           <div className="text-center">
             <div className="font-extrabold text-[#2C2C2C] text-[14px]">
@@ -554,13 +595,7 @@ export default function EntwurfPage() {
             )}
           </div>
 
-          <button
-            onClick={fertigstellen}
-            disabled={!kannFertigstellen}
-            className="bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[13px] px-3 py-1.5 rounded-xl disabled:opacity-30 active:scale-95 transition-transform"
-          >
-            Fertig →
-          </button>
+          <div className="w-[72px]" />
         </div>
       </div>
 
@@ -652,7 +687,7 @@ export default function EntwurfPage() {
           <div className="mt-3 bg-[#EDFAF0] border border-[#1A7A38]/20 rounded-2xl px-4 py-3 flex items-center gap-2">
             <Check size={14} className="text-[#1A7A38] shrink-0" />
             <span className="text-[13px] font-semibold text-[#1A7A38]">
-              Alle Aufnahmen transkribiert — tippe auf &ldquo;Fertig&rdquo; um das Angebot zu erstellen.
+              Alle Aufnahmen transkribiert — tippe auf &ldquo;Positionen berechnen&rdquo; um fortzufahren.
             </span>
           </div>
         )}
@@ -661,13 +696,13 @@ export default function EntwurfPage() {
       {/* Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 px-5 pt-3 pb-8 flex flex-col gap-3" style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}>
 
-        {/* Fertig-Button (erscheint wenn Aufnahmen vorhanden) */}
+        {/* Positionen-berechnen-Button (erscheint wenn Aufnahmen fertig transkribiert) */}
         {kannFertigstellen && (
           <button
             onClick={fertigstellen}
             className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
           >
-            Angebot erstellen <ChevronRight size={18} strokeWidth={3} />
+            Positionen berechnen <ChevronRight size={18} strokeWidth={3} />
           </button>
         )}
 

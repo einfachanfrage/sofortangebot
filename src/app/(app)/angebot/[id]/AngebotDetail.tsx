@@ -887,7 +887,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
       {/* Header */}
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-0">
-        <Link href="/dashboard" className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold">← Dashboard</Link>
+        <Link href="/dashboard" className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold">← Zurück</Link>
         <div className="flex items-center justify-between mt-1 pb-4">
           <div>
             <div className="text-white md:text-[#2C2C2C] font-black text-xl flex items-center gap-2 flex-wrap">
