@@ -61,6 +61,20 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Abdecken/Abkleben', grund: 'Bei Streicharbeiten immer nötig' })
     }
 
+    // Nur Fläche angegeben (keine L×B) → Rückfrage nach Maßen für Wandberechnung
+    const hatStreichen = raum.arbeiten.some(a => a.includes('streichen') || a.includes('wand'))
+    const hatNurFlaeche = raum.flaeche !== null && !raum.laenge && !raum.breite
+    if (hatStreichen && hatNurFlaeche) {
+      addRueckfrage(ext, {
+        id: `masse_${(raum.name ?? '').toLowerCase().replace(/\s+/g, '_')}`,
+        frage: `Wie sind die Maße von "${raum.name}"? (für Wandflächenberechnung)`,
+        typ: 'masse_einzel',
+        betrifft: raum.name,
+        prioritaet: 0,
+        schnell_antworten: [],
+      })
+    }
+
     // Tapete vorhanden aber Entfernen nicht explizit: Rückfrage
     if ((raum.altbelag_vorhanden || raum.arbeiten.includes('tapezieren')) &&
         !raum.altbelag_entfernen) {

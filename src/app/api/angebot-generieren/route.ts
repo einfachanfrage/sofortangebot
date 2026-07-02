@@ -44,6 +44,8 @@ GEWERK-KONTEXT:
 DEINE AUFGABE — NUR PREISE ZUWEISEN:
 Die Positionen und Mengen sind bereits durch eine Berechnungsengine festgelegt und UNVERÄNDERLICH.
 Du musst NUR für jede Position einen passenden Netto-Einzelpreis (unit_price) zuweisen.
+WICHTIG: unit_price ist der PREIS PRO EINHEIT (pro m², pro Stk, pro lfdm) — NIEMALS der Gesamtpreis!
+Beispiel: "Deckenfläche streichen | 8 m²" → unit_price: 8.50 (nicht 68.00!). Gesamtpreis = quantity × unit_price, das berechnet das System automatisch.
 Gib die Positionen in EXAKT DERSELBEN REIHENFOLGE zurück wie du sie erhalten hast.
 
 WAS DU NICHT TUN DARFST:
