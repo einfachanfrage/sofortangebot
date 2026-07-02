@@ -659,51 +659,52 @@ export default function EntwurfPage() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/8 px-4 py-3 pb-safe-bottom">
-        <div className="flex items-center gap-3">
-          {/* Notiz */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/8 px-5 pt-4 pb-6" style={{ paddingBottom: 'max(24px, env(safe-area-inset-bottom))' }}>
+
+        {/* Haupt-Aufnahme-Button */}
+        <button
+          onPointerDown={startRecording}
+          onPointerUp={stopRecording}
+          onPointerLeave={stopRecording}
+          disabled={uploading}
+          className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-extrabold text-[17px] transition-all active:scale-[0.97] select-none ${
+            recording
+              ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+              : 'bg-[#2C2C2C] text-white'
+          } disabled:opacity-50`}
+        >
+          {recording
+            ? <><MicOff size={20} strokeWidth={2.5} /> Loslassen zum Stoppen</>
+            : <><Mic size={20} strokeWidth={2.5} /> {aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}</>
+          }
+        </button>
+
+        {/* Sekundäre Aktionen */}
+        <div className="flex items-center gap-3 mt-3">
           <button
             onClick={() => setShowNotiz(true)}
-            className="flex flex-col items-center gap-1 py-2 px-3 text-[#2C2C2C]/50 hover:text-[#2C2C2C] transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/60 font-extrabold text-[13px] active:bg-[#2C2C2C]/5 transition-colors"
           >
-            <StickyNote size={22} />
-            <span className="text-[11px] font-extrabold">Notiz</span>
+            <StickyNote size={16} />
+            Notiz
           </button>
 
-          {/* Aufnehmen — Haupt-Button */}
-          <button
-            onPointerDown={startRecording}
-            onPointerUp={stopRecording}
-            onPointerLeave={stopRecording}
-            disabled={uploading}
-            className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-2xl font-extrabold text-[15px] transition-all active:scale-95 select-none ${
-              recording ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'bg-[#2C2C2C] text-white'
-            } disabled:opacity-50`}
-          >
-            {recording
-              ? <><MicOff size={22} /><span className="text-[11px]">Loslassen</span></>
-              : <><Mic size={22} /><span className="text-[11px]">{aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}</span></>
-            }
-          </button>
-
-          {/* Foto */}
-          <label className="flex flex-col items-center gap-1 py-2 px-3 text-[#2C2C2C]/50 hover:text-[#2C2C2C] transition-colors cursor-pointer">
-            <Camera size={22} />
-            <span className="text-[11px] font-extrabold">Foto</span>
+          <label className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/60 font-extrabold text-[13px] active:bg-[#2C2C2C]/5 transition-colors cursor-pointer">
+            <Camera size={16} />
+            Foto
             <input type="file" accept="image/*" capture="environment" className="hidden"
               onChange={e => { const f = e.target.files?.[0]; if (f) handleFoto(f); e.target.value = '' }} />
           </label>
-        </div>
 
-        {/* Fertigstellen CTA wenn Aufnahmen vorhanden */}
-        {kannFertigstellen && (
-          <button
-            onClick={fertigstellen}
-            className="w-full mt-3 bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-          >
-            Angebot erstellen <ChevronRight size={18} strokeWidth={3} />
-          </button>
-        )}
+          {kannFertigstellen && (
+            <button
+              onClick={fertigstellen}
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[13px] active:scale-95 transition-transform"
+            >
+              Fertig <ChevronRight size={15} strokeWidth={3} />
+            </button>
+          )}
+        </div>
       </div>
 
       {showNotiz && <NotizModal onSave={saveNotiz} onClose={() => setShowNotiz(false)} />}
