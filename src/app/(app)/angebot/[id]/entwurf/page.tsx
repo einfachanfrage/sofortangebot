@@ -500,7 +500,11 @@ export default function EntwurfPage() {
   const sprachen = aufnahmen.filter(a => a.typ === 'sprache')
   const alleTranskribiertOderFehler = sprachen.length > 0 && sprachen.every(a => a.verarbeitung_status === 'fertig' || a.verarbeitung_status === 'fehler')
   const nochVerarbeitung = sprachen.some(a => a.verarbeitung_status === 'verarbeitung' || a.verarbeitung_status === 'ausstehend')
-  const kannFertigstellen = aufnahmen.length > 0 && !nochVerarbeitung && !uploading
+  const letzteGenerierung = quoteInfo?.entwurf_gespeichert_am
+  const neueAufnahmen = letzteGenerierung
+    ? sprachen.filter(a => new Date(a.erstellt_am) > new Date(letzteGenerierung))
+    : sprachen
+  const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung && !uploading
 
   // ── Zurück-Bestätigung Screen ─────────────────────────────────────────────
 
@@ -687,7 +691,10 @@ export default function EntwurfPage() {
           <div className="mt-3 bg-[#EDFAF0] border border-[#1A7A38]/20 rounded-2xl px-4 py-3 flex items-center gap-2">
             <Check size={14} className="text-[#1A7A38] shrink-0" />
             <span className="text-[13px] font-semibold text-[#1A7A38]">
-              Alle Aufnahmen transkribiert — tippe auf &ldquo;Positionen berechnen&rdquo; um fortzufahren.
+              {neueAufnahmen.length > 0
+            ? 'Alle Aufnahmen transkribiert — tippe auf "Positionen berechnen" um fortzufahren.'
+            : 'Alle Aufnahmen bereits verarbeitet — neue Aufnahme hinzufügen um mehr Positionen zu ergänzen.'
+          }
             </span>
           </div>
         )}
