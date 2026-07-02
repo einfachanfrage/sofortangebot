@@ -659,45 +659,42 @@ export default function EntwurfPage() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#2C2C2C]/8 px-5 pt-4 pb-6" style={{ paddingBottom: 'max(24px, env(safe-area-inset-bottom))' }}>
+      <div className="fixed bottom-0 left-0 right-0 px-5 pt-3 pb-8 flex flex-col gap-3" style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}>
 
-        {/* Haupt-Aufnahme-Button */}
+        {/* Fertig-Button (erscheint wenn Aufnahmen vorhanden) */}
+        {kannFertigstellen && (
+          <button
+            onClick={fertigstellen}
+            className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
+          >
+            Angebot erstellen <ChevronRight size={18} strokeWidth={3} />
+          </button>
+        )}
+
+        {/* Aufnahme-Button */}
         <button
           onPointerDown={startRecording}
           onPointerUp={stopRecording}
           onPointerLeave={stopRecording}
           disabled={uploading}
-          className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-extrabold text-[17px] transition-all active:scale-[0.97] select-none ${
+          className={`w-full flex items-center justify-center gap-3 rounded-2xl font-extrabold text-[17px] transition-all select-none shadow-xl ${
             recording
-              ? 'bg-red-500 text-white shadow-lg shadow-red-200'
-              : 'bg-[#2C2C2C] text-white'
+              ? 'bg-red-500 text-white py-5 shadow-red-300 scale-[1.02]'
+              : 'bg-[#2C2C2C] text-white py-5 shadow-black/20'
           } disabled:opacity-50`}
         >
-          {recording
-            ? <><MicOff size={20} strokeWidth={2.5} /> Loslassen zum Stoppen</>
-            : <><Mic size={20} strokeWidth={2.5} /> {aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}</>
-          }
-        </button>
-
-        {/* Sekundäre Aktionen */}
-        <div className="flex items-center gap-3 mt-3">
-          <button
-            onClick={() => setShowNotiz(true)}
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/60 font-extrabold text-[13px] active:bg-[#2C2C2C]/5 transition-colors"
-          >
-            <StickyNote size={16} />
-            Notiz
-          </button>
-
-          {kannFertigstellen && (
-            <button
-              onClick={fertigstellen}
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[13px] active:scale-95 transition-transform"
-            >
-              Fertig <ChevronRight size={15} strokeWidth={3} />
-            </button>
+          {recording ? (
+            <>
+              <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+              Loslassen zum Stoppen
+            </>
+          ) : (
+            <>
+              <Mic size={22} strokeWidth={2} />
+              {aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}
+            </>
           )}
-        </div>
+        </button>
       </div>
 
       {showNotiz && <NotizModal onSave={saveNotiz} onClose={() => setShowNotiz(false)} />}
