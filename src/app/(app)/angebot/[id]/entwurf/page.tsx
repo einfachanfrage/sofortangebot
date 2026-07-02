@@ -640,7 +640,7 @@ export default function EntwurfPage() {
             Einfach lossprechen
           </div>
           <div className="text-[#2C2C2C]/40 font-semibold text-[15px] leading-relaxed max-w-xs">
-            Beschreib die Baustelle — Räume, Maße, was gemacht werden soll. Kein perfekter Satz nötig.
+            Beschreib die Baustelle — Räume, Maße, was gemacht werden soll.
           </div>
           <div className="mt-6 flex flex-col gap-2 text-left w-full max-w-xs">
             {[
@@ -728,27 +728,28 @@ export default function EntwurfPage() {
         )}
 
         {/* Aufnahme-Button */}
-        <button
-          onClick={recording ? stopRecording : startRecording}
-          disabled={uploading}
-          className={`w-full flex items-center justify-center gap-3 rounded-2xl font-extrabold text-[17px] transition-all select-none shadow-xl ${
-            recording
-              ? 'bg-red-500 text-white py-5 shadow-red-300 scale-[1.02]'
-              : 'bg-[#2C2C2C] text-white py-5 shadow-black/20'
-          } disabled:opacity-50`}
-        >
-          {recording ? (
-            <>
-              <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
-              Tippen zum Stoppen — {recordingDauer}s
-            </>
-          ) : (
-            <>
-              <Mic size={22} strokeWidth={2} />
+        {recording ? (
+          <button
+            onClick={stopRecording}
+            className="w-full flex items-center justify-center gap-3 rounded-2xl font-extrabold text-[17px] bg-red-500 text-white py-5 shadow-xl shadow-red-300 scale-[1.02] transition-all select-none"
+          >
+            <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+            Tippen zum Stoppen — {recordingDauer}s
+          </button>
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            <button
+              onClick={startRecording}
+              disabled={uploading}
+              className="w-20 h-20 rounded-full bg-[#2C2C2C] flex items-center justify-center shadow-2xl shadow-black/30 active:scale-95 transition-all disabled:opacity-50"
+            >
+              <Mic size={32} strokeWidth={2} className="text-white" />
+            </button>
+            <span className="text-[#2C2C2C]/40 font-semibold text-[13px]">
               {aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}
-            </>
-          )}
-        </button>
+            </span>
+          </div>
+        )}
       </div>
 
       {showNotiz && <NotizModal onSave={saveNotiz} onClose={() => setShowNotiz(false)} />}
