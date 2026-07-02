@@ -72,11 +72,13 @@ export async function POST(req: NextRequest) {
       .eq('id', aufnahme.id)
   }
 
-  // Autosave-Timestamp auf quotes
-  await supabase
-    .from('quotes')
-    .update({ entwurf_gespeichert_am: new Date().toISOString(), entwurf_geraet: geraet })
-    .eq('id', angebotId)
+  // Gerät tracken (entwurf_gespeichert_am hier NICHT updaten — das gehört nur generiere-positionen)
+  if (geraet) {
+    await supabase
+      .from('quotes')
+      .update({ entwurf_geraet: geraet })
+      .eq('id', angebotId)
+  }
 
   return NextResponse.json({ id: aufnahme.id, audio_url: storageErr ? null : storagePath })
 }

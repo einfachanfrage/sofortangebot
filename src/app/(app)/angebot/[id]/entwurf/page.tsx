@@ -78,12 +78,19 @@ function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDel
 
           {/* Erkannte Positionen */}
           {erkannte.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {erkannte.map((p, i) => (
-                <span key={i} className="text-[12px] font-bold px-2.5 py-1 rounded-xl bg-[#EDFAF0] text-[#1A7A38]">
-                  {p.titel}
-                </span>
-              ))}
+            <div className="mb-3">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="text-[11px] font-extrabold text-[#1A7A38] uppercase tracking-wide">✓ Erkannt</span>
+                <span className="text-[11px] font-bold text-[#2C2C2C]/30">{erkannte.length} Position{erkannte.length !== 1 ? 'en' : ''}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                {erkannte.map((p, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-[#1A7A38] shrink-0" />
+                    <span className="text-[13px] font-semibold text-[#2C2C2C]">{p.titel}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -277,16 +284,8 @@ export default function EntwurfPage() {
       })
       .subscribe()
 
-    const onHide = () => {
-      if (document.hidden) {
-        navigator.sendBeacon?.(`/api/entwurf/autosave`, JSON.stringify({ angebot_id: angebotId }))
-      }
-    }
-    document.addEventListener('visibilitychange', onHide)
-
     return () => {
       supabase.removeChannel(channel)
-      document.removeEventListener('visibilitychange', onHide)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [angebotId])
@@ -344,10 +343,13 @@ export default function EntwurfPage() {
     setLoadingMsg('Positionen werden berechnet…')
 
     try {
+      // Explizit die IDs der neuen Aufnahmen mitschicken — kein Timestamp-Vergleich im Backend nötig
+      const neueIds = neueAufnahmen.filter(a => a.verarbeitung_status === 'fertig').map(a => a.id)
+
       const res = await fetch('/api/entwurf/generiere-positionen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ angebot_id: angebotId }),
+        body: JSON.stringify({ angebot_id: angebotId, aufnahmen_ids: neueIds }),
       })
 
       if (!res.ok) {
@@ -360,6 +362,13 @@ export default function EntwurfPage() {
       const data = await res.json() as {
         positionen_count?: number
         rueckfragen?: KIRueckfrage[]
+        keine_neuen?: boolean
+      }
+
+      // Keine neuen Aufnahmen seit letzter Generierung → direkt zur Angebots-Ansicht
+      if (data.keine_neuen) {
+        router.push(`/angebot/${angebotId}`)
+        return
       }
 
       const kiRueckfragen = (data.rueckfragen ?? []) as KIRueckfrage[]

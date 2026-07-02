@@ -55,10 +55,5 @@ export async function POST(req: NextRequest) {
       .eq('id', aufnahme.id)
   }
 
-  await supabase
-    .from('quotes')
-    .update({ entwurf_gespeichert_am: new Date().toISOString() })
-    .eq('id', angebotId)
-
   return NextResponse.json({ id: aufnahme.id, foto_url: storageErr ? null : storagePath })
 }

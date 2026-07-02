@@ -25,10 +25,5 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  await supabase
-    .from('quotes')
-    .update({ entwurf_gespeichert_am: new Date().toISOString() })
-    .eq('id', angebot_id)
-
   return NextResponse.json(data)
 }

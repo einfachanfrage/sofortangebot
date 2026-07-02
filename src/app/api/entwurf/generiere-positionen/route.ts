@@ -14,7 +14,8 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  const { angebot_id } = await req.json() as { angebot_id: string }
+  const body = await req.json() as { angebot_id: string; aufnahmen_ids?: string[] }
+  const { angebot_id, aufnahmen_ids } = body
   if (!angebot_id) return NextResponse.json({ error: 'angebot_id fehlt' }, { status: 400 })
 
   // Nur Aufnahmen dieses Users (Sicherheit: Angebot gehört zur Company des Users)
@@ -33,19 +34,27 @@ export async function POST(req: NextRequest) {
   // Letzter Generierungs-Zeitstempel — nur neue Aufnahmen danach verarbeiten
   const letzteGenerierung = (quoteCheck as { entwurf_gespeichert_am?: string | null }).entwurf_gespeichert_am
 
-  // Aufnahmen laden — bei Erstgenerierung alle, sonst nur neue
+  // Aufnahmen laden — per expliziter ID-Liste (vom Frontend) oder Timestamp-Fallback
   let query = supabase
     .from('entwurf_aufnahmen')
     .select('typ, transkript, notiz_text, verarbeitung_status, erstellt_am')
     .eq('angebot_id', angebot_id)
     .order('erstellt_am', { ascending: true })
-  if (letzteGenerierung) {
+  if (aufnahmen_ids !== undefined) {
+    if (aufnahmen_ids.length === 0) {
+      // Alle neuen Aufnahmen noch nicht fertig transkribiert
+      return NextResponse.json({ ok: true, positionen_count: 0, rueckfragen: [], keine_neuen: true })
+    }
+    // Frontend hat explizit die neuen Aufnahmen übergeben — zuverlässiger als Timestamp-Vergleich
+    query = query.in('id', aufnahmen_ids)
+  } else if (letzteGenerierung) {
     query = query.gt('erstellt_am', letzteGenerierung)
   }
   const { data: aufnahmen } = await query
 
   if (!aufnahmen?.length) {
-    return NextResponse.json({ error: 'Keine Aufnahmen gefunden' }, { status: 400 })
+    // Keine neuen Aufnahmen seit letzter Generierung — kein Fehler, einfach weiter
+    return NextResponse.json({ ok: true, positionen_count: 0, rueckfragen: [], keine_neuen: true })
   }
 
   // Texte sammeln: Sprach-Transkripte + Notizen
