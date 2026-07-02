@@ -77,9 +77,41 @@ export async function POST(req: NextRequest) {
   const extData = await extRes.json() as {
     mengen?: { positionen?: unknown[]; rueckfragen?: unknown[] }
     hat_rueckfragen?: boolean
+    extraktion?: {
+      raeume?: Array<{
+        name?: string
+        breite?: number | null
+        laenge?: number | null
+        hoehe?: number | null
+        fenster?: Array<{ anzahl?: number }>
+        tueren?: Array<{ anzahl?: number }>
+      }>
+    }
   }
   const positionen = extData.mengen?.positionen ?? []
   const rueckfragen = extData.mengen?.rueckfragen ?? []
+
+  // Raumdimensionen aus Extraktion in raum_details speichern
+  const extraktionRaeume = extData.extraktion?.raeume ?? []
+  if (extraktionRaeume.length > 0) {
+    const raumDetails: Record<string, { breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number }> = {}
+    for (const raum of extraktionRaeume) {
+      const name = raum.name?.trim()
+      if (!name) continue
+      const fensterAnzahl = raum.fenster?.reduce((s, f) => s + (f.anzahl ?? 1), 0) || undefined
+      const tuerenAnzahl = raum.tueren?.reduce((s, t) => s + (t.anzahl ?? 1), 0) || undefined
+      raumDetails[name] = {
+        ...(raum.breite != null ? { breite: raum.breite } : {}),
+        ...(raum.laenge != null ? { laenge: raum.laenge } : {}),
+        ...(raum.hoehe != null ? { hoehe: raum.hoehe } : {}),
+        ...(tuerenAnzahl ? { tueren: tuerenAnzahl } : {}),
+        ...(fensterAnzahl ? { fenster: fensterAnzahl } : {}),
+      }
+    }
+    if (Object.keys(raumDetails).length > 0) {
+      await supabase.from('quotes').update({ raum_details: raumDetails }).eq('id', angebot_id)
+    }
+  }
 
   if (positionen.length === 0) {
     return NextResponse.json({ error: 'Keine Positionen erkannt' }, { status: 400 })

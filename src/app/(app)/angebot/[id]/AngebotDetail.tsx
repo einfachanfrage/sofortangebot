@@ -139,18 +139,21 @@ function RaumDimensionenZeile({
       )
     }
 
+    const missing = value == null
     return (
       <button
         onClick={() => { setDraft(String(value ?? '')); setEditing(true) }}
-        className="text-[12px] font-extrabold text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 rounded px-1.5 py-0.5 transition-colors"
-        title={label}
+        className={`text-[12px] font-extrabold rounded px-1.5 py-0.5 transition-colors ${
+          missing
+            ? 'bg-red-50 text-red-500 hover:bg-red-100 border border-red-200'
+            : 'text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20'
+        }`}
+        title={missing ? `${label} fehlt — tippen zum Eintragen` : label}
       >
-        {value != null ? value : '?'}{suffix}
+        {missing ? '!' : `${value}${suffix ?? ''}`}
       </button>
     )
   }
-
-  const hatBreiteLaenge = dim.breite != null && dim.laenge != null
 
   return (
     <div className="px-4 pb-2 pt-0.5 flex items-center gap-1.5 flex-wrap">
@@ -158,19 +161,15 @@ function RaumDimensionenZeile({
       <span className="text-[11px] text-[#2C2C2C]/30 font-bold">×</span>
       <InlineInput field="laenge" value={dim.laenge} label="Länge" />
       <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">m</span>
-      {hatBreiteLaenge && (
-        <>
-          <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-          <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
-          <InlineInput field="hoehe" value={dim.hoehe} label="Höhe" suffix=" m" />
-          <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-          <span className="text-[12px]">🚪</span>
-          <InlineInput field="tueren" value={dim.tueren} label="Türen" />
-          <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-          <span className="text-[12px]">🪟</span>
-          <InlineInput field="fenster" value={dim.fenster} label="Fenster" />
-        </>
-      )}
+      <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+      <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
+      <InlineInput field="hoehe" value={dim.hoehe} label="Deckenhöhe" suffix=" m" />
+      <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+      <span className="text-[12px]">🚪</span>
+      <InlineInput field="tueren" value={dim.tueren} label="Türen" />
+      <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+      <span className="text-[12px]">🪟</span>
+      <InlineInput field="fenster" value={dim.fenster} label="Fenster" />
     </div>
   )
 }
