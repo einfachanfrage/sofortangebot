@@ -73,6 +73,13 @@ export default async function DashboardPage({
   const monatOffen = monat.filter(q => q.status === 'sent' || q.status === 'viewed').length
   const monatBeauftragt = monat.filter(q => q.status === 'accepted').length
 
+  // Preisliste leer?
+  const { count: preisCount } = await supabase
+    .from('price_items')
+    .select('id', { count: 'exact', head: true })
+    .eq('company_id', company?.id ?? '')
+  const preislisteIstLeer = (preisCount ?? 0) === 0
+
   // Offene gesamt (alle Monate, für Hero-Hinweis)
   const { data: offeneGesamt } = await supabase
     .from('quotes')
@@ -152,6 +159,25 @@ export default async function DashboardPage({
           ))}
         </div>
       </div>
+
+      {/* ── PREISLISTE LEER NUDGE ────────────────────────────────────── */}
+      {preislisteIstLeer && (
+        <div className="px-5 mt-4">
+          <Link
+            href="/preise"
+            className="flex items-center gap-3 bg-[#F5C400]/10 border border-[#F5C400]/40 rounded-2xl px-4 py-3.5 active:opacity-80 transition-opacity"
+          >
+            <span className="text-xl shrink-0">💰</span>
+            <div className="flex-1 min-w-0">
+              <div className="font-extrabold text-[#2C2C2C] text-[14px]">Deine Preise eintragen</div>
+              <div className="text-[#2C2C2C]/50 font-semibold text-[12px] leading-snug mt-0.5">
+                Noch keine eigenen Preise — KI nutzt Marktpreise. Trag deine echten Preise ein für genauere Angebote.
+              </div>
+            </div>
+            <span className="text-[#2C2C2C]/30 font-black text-lg shrink-0">›</span>
+          </Link>
+        </div>
+      )}
 
       {/* ── ANGEBOTSLISTE ────────────────────────────────────────────── */}
       {(recentQuotes ?? []).length > 0 && (

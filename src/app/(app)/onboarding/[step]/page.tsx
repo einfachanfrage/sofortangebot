@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import {
   Check, Upload, ChevronDown, ChevronUp,
-  Loader2, FileText, X, ArrowRight,
+  Loader2, X, ArrowRight,
 } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { GEWERKE } from '@/lib/gewerke'
@@ -20,7 +20,7 @@ import type { AccountingSoftware } from '@/lib/types'
 // ─── Storage ───────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'sofortangebot_onboarding'
 
-type PreisMode = 'markt' | 'manuell' | 'pdf' | null
+type PreisMode = 'markt' | 'manuell' | null
 
 interface PriceEntry { category: string; title: string; unit: string; unit_price: string }
 
@@ -100,11 +100,6 @@ export default function OnboardingStep() {
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoError, setLogoError] = useState('')
 
-  const pdfInputRef = useRef<HTMLInputElement>(null)
-  const [pdfFiles, setPdfFiles] = useState<File[]>([])
-  const [pdfAnalyzing, setPdfAnalyzing] = useState(false)
-  const [pdfError, setPdfError] = useState('')
-  const [pdfResult, setPdfResult] = useState<PriceEntry[] | null>(null)
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set())
 
   // Hydrate from localStorage
@@ -152,24 +147,6 @@ export default function OnboardingStep() {
     setLogoUploading(false)
     if (!r.ok) { setLogoError(data.error ?? 'Upload fehlgeschlagen'); return }
     update({ logoUrl: data.url + '?t=' + Date.now() })
-  }
-
-  // ── PDF Analyse ──────────────────────────────────────────────────────────
-  async function analyzePdfs() {
-    if (!pdfFiles.length) return
-    setPdfAnalyzing(true); setPdfError('')
-    const fd = new FormData()
-    pdfFiles.forEach(f => fd.append('pdfs', f))
-    const r = await fetch('/api/preise-aus-pdf', { method: 'POST', body: fd })
-    const data = await r.json()
-    if (!r.ok) { setPdfError(data.error ?? 'Analyse fehlgeschlagen'); setPdfAnalyzing(false); return }
-    const extracted: PriceEntry[] = (data.preise ?? []).map((p: { category: string; title: string; unit: string; unit_price: number }) => ({
-      category: p.category, title: p.title, unit: p.unit, unit_price: String(p.unit_price),
-    }))
-    setPdfResult(extracted)
-    update({ preisEntries: extracted, preisMode: 'pdf' })
-    setExpandedCats(new Set([...new Set(extracted.map(p => p.category))].slice(0, 2)))
-    setPdfAnalyzing(false)
   }
 
   function selectPreisMode(mode: PreisMode) {
@@ -253,7 +230,7 @@ export default function OnboardingStep() {
         for (let i = 0; i < all.length; i += BATCH) {
           await supabase.from('price_items').insert(all.slice(i, i + BATCH))
         }
-      } else if ((state.preisMode === 'manuell' || state.preisMode === 'pdf') && state.preisEntries.length > 0) {
+      } else if (state.preisMode === 'manuell' && state.preisEntries.length > 0) {
         const toInsert = state.preisEntries
           .filter(e => e.title.trim() && parseFloat(e.unit_price) > 0)
           .map(e => ({ company_id: company.id, category: e.category, title: e.title, unit: e.unit, unit_price: parseFloat(e.unit_price) }))
@@ -602,22 +579,6 @@ export default function OnboardingStep() {
                 </div>
               </button>
 
-              <button
-                onClick={() => selectPreisMode('pdf')}
-                className="bg-[#F7F7F5] border border-[#2C2C2C]/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-[#2C2C2C] rounded-xl flex items-center justify-center shrink-0 text-lg">🤖</div>
-                  <div>
-                    <div className="font-extrabold text-[#2C2C2C]">Alte Angebote hochladen</div>
-                    <div className="text-sm text-[#2C2C2C]/50 font-semibold mt-1 leading-relaxed">
-                      Schick 1–5 alte Angebote als PDF. Die KI liest deine Preislogik raus und übernimmt sie.
-                    </div>
-                    <div className="mt-2 text-xs font-semibold text-[#2C2C2C]/40">Smarteste Option</div>
-                  </div>
-                </div>
-              </button>
-
               <p className="text-[13px] text-[#2C2C2C]/25 font-semibold text-center">
                 Kannst du jederzeit in den Einstellungen → Preise anpassen.
               </p>
@@ -703,99 +664,6 @@ export default function OnboardingStep() {
             </div>
           )}
 
-          {/* PDF Upload */}
-          {state.preisMode === 'pdf' && !pdfResult && (
-            <div className="flex-1 flex flex-col">
-              <input ref={pdfInputRef} type="file" accept=".pdf" multiple className="hidden"
-                onChange={e => { setPdfFiles(Array.from(e.target.files ?? []).slice(0, 5)); setPdfError('') }} />
-              {!pdfAnalyzing ? (
-                <>
-                  <button onClick={() => pdfInputRef.current?.click()}
-                    className="border-2 border-dashed border-[#2C2C2C]/20 rounded-2xl p-8 text-center mb-4 active:scale-[0.98] transition-transform bg-white">
-                    <Upload size={32} color="#2C2C2C" strokeWidth={1.5} className="mx-auto mb-3 opacity-30" />
-                    <div className="font-extrabold text-[#2C2C2C]">PDFs auswählen</div>
-                    <div className="text-sm text-[#2C2C2C]/40 font-semibold mt-1">Bis zu 5 alte Angebote</div>
-                  </button>
-                  {pdfFiles.length > 0 && (
-                    <div className="flex flex-col gap-2 mb-4">
-                      {pdfFiles.map((f, i) => (
-                        <div key={i} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-[#2C2C2C]/5">
-                          <FileText size={16} className="opacity-40 shrink-0" />
-                          <span className="flex-1 text-sm font-semibold text-[#2C2C2C] truncate">{f.name}</span>
-                          <button onClick={() => setPdfFiles(prev => prev.filter((_, j) => j !== i))}><X size={14} color="#ef4444" /></button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {pdfError && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold mb-4">{pdfError}</div>}
-                  <div className="mt-auto flex gap-3">
-                    <button onClick={() => update({ preisMode: null })} className={btnBack}>Zurück</button>
-                    <button onClick={analyzePdfs} disabled={pdfFiles.length === 0}
-                      className={`${btnPrimary} flex-[2] disabled:opacity-40`}>
-                      KI analysieren lassen
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                  <Loader2 size={40} color="#F5C400" className="animate-spin" />
-                  <div className="font-extrabold text-[#2C2C2C] text-xl text-center">KI liest deine Angebote...</div>
-                  <div className="text-[#2C2C2C]/40 font-semibold text-sm text-center">
-                    Extrahiere Preise aus {pdfFiles.length} PDF{pdfFiles.length > 1 ? 's' : ''}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* PDF Ergebnis */}
-          {state.preisMode === 'pdf' && pdfResult && state.preisEntries.length > 0 && (
-            <div className="flex-1 flex flex-col min-h-0">
-              <div className="bg-[#F5C400]/10 border border-[#F5C400] rounded-xl px-4 py-3 mb-3">
-                <div className="font-extrabold text-[#2C2C2C] text-sm">✓ {state.preisEntries.length} Preise erkannt — prüfe und passe an</div>
-              </div>
-              <div className="flex-1 overflow-y-auto flex flex-col gap-3 pb-4">
-                {Object.entries(grouped).map(([cat, entries]) => (
-                  <div key={cat} className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
-                    <button onClick={() => toggleCat(cat)} className="w-full flex items-center justify-between px-4 py-3">
-                      <span className="font-extrabold text-[#2C2C2C] text-sm">{cat}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-[#2C2C2C]/40 font-bold">{entries.length}</span>
-                        {expandedCats.has(cat) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </div>
-                    </button>
-                    {expandedCats.has(cat) && (
-                      <div className="border-t border-[#2C2C2C]/5">
-                        {entries.map(({ e, idx }) => (
-                          <div key={idx} className="flex items-center gap-2 px-4 py-3 border-b border-[#2C2C2C]/5 last:border-0">
-                            <div className="flex-1 min-w-0">
-                              <div className="text-xs text-[#2C2C2C]/60 font-semibold mb-1">{e.title}</div>
-                              <div className="flex gap-2 items-center">
-                                <div className="relative max-w-[100px]">
-                                  <input type="number" step="0.01" min="0" value={e.unit_price}
-                                    onChange={ev => updateEntry(idx, 'unit_price', ev.target.value)}
-                                    className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-lg px-3 py-2 text-[#2C2C2C] font-extrabold text-sm focus:outline-none focus:border-[#F5C400] pr-6" />
-                                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#2C2C2C]/40 font-bold">€</span>
-                                </div>
-                                <span className="text-xs text-[#2C2C2C]/50 font-semibold">/ {e.unit}</span>
-                              </div>
-                            </div>
-                            <button onClick={() => removeEntry(idx)} className="p-1.5 shrink-0"><X size={14} color="#ef4444" /></button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-3 pt-3 border-t border-[#2C2C2C]/10">
-                <button onClick={() => { setPdfResult(null); update({ preisEntries: [], preisMode: 'pdf' }) }} className={btnBack}>Nochmal</button>
-                <button onClick={() => goTo(6)} className={`${btnPrimary} flex-[2]`}>
-                  Übernehmen ({state.preisEntries.filter(e => parseFloat(e.unit_price) > 0).length}) →
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
