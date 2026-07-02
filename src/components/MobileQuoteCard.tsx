@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { Trash2 } from 'lucide-react'
+import { Trash2, MoreHorizontal } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { generiereAngebotsTitel } from '@/lib/angebot-titel'
 
 const BORDER_COLOR: Record<string, string> = {
   draft:          'bg-[#2C2C2C]/30',
@@ -29,15 +28,6 @@ const STATUS_BADGE: Record<string, string> = {
   archived:       'bg-gray-100 text-gray-500',
 }
 
-const GEWERK_LABEL: Record<string, string> = {
-  maler:            'Maler',
-  fliesen:          'Fliesen',
-  trockenbau:       'Trockenbau',
-  boden_parkett:    'Boden',
-  sanitaer_heizung: 'Sanitär',
-  elektro:          'Elektro',
-}
-
 interface Props {
   quote: {
     id: string
@@ -55,32 +45,30 @@ interface Props {
   ersterItemTitel?: string | null
 }
 
-export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAmount, ersterItemTitel }: Props) {
-  const [offset, setOffset] = useState(0)
+export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAmount }: Props) {
+  const [showMenu, setShowMenu] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const startX = useRef<number | null>(null)
-  const startY = useRef<number | null>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
   const router = useRouter()
 
-  function onTouchStart(e: React.TouchEvent) {
-    startX.current = e.touches[0].clientX
-    startY.current = e.touches[0].clientY
-  }
-  function onTouchMove(e: React.TouchEvent) {
-    if (startX.current === null || startY.current === null) return
-    const dx = e.touches[0].clientX - startX.current
-    const dy = Math.abs(e.touches[0].clientY - startY.current)
-    if (Math.abs(dx) > dy && dx < 0) setOffset(Math.max(dx, -80))
-  }
-  function onTouchEnd() {
-    setOffset(offset < -40 ? -80 : 0)
-    startX.current = null
-    startY.current = null
-  }
+  // Menü schließen bei Klick außerhalb
+  useEffect(() => {
+    if (!showMenu) return
+    function handle(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [showMenu])
+
   async function handleDelete(e: React.MouseEvent) {
     e.preventDefault(); e.stopPropagation()
+    if (!confirm('Angebot wirklich löschen?')) return
     setDeleting(true)
+    setShowMenu(false)
     await supabase.from('quotes').delete().eq('id', quote.id)
     router.refresh()
   }
@@ -90,52 +78,58 @@ export function MobileQuoteCard({ quote, statusLabel, formattedDate, formattedAm
 
   const kundenname = quote.customer?.name?.trim()
   const nummer = quote.quote_number
-
-  // Hauptzeile: Kundename wenn vorhanden, sonst "Kunde offen"
   const primaryTitle = kundenname ?? 'Kunde offen'
-  // Unterzeile: Angebotsnummer + Datum
   const subtitle = [nummer, formattedDate].filter(Boolean).join(' · ')
 
   return (
-    <div className="relative overflow-hidden rounded-2xl">
-      <div className="absolute right-0 top-0 bottom-0 w-20 bg-red-500 flex items-center justify-center rounded-r-2xl">
-        <button onClick={handleDelete} disabled={deleting} className="flex flex-col items-center gap-1 text-white active:opacity-70">
-          <Trash2 size={18} />
-          <span className="text-[10px] font-bold">Löschen</span>
-        </button>
-      </div>
-      <div
-        style={{ transform: `translateX(${offset}px)`, transition: startX.current !== null ? 'none' : 'transform 0.2s ease' }}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+    <div className="relative">
+      <Link
+        href={`/angebot/${quote.id}`}
+        className="block active:scale-[0.99] transition-transform"
       >
-        <Link
-          href={`/angebot/${quote.id}`}
-          className="block active:scale-[0.99] transition-transform"
-          onClick={e => { if (offset < -10) e.preventDefault() }}
-        >
-          <div className="relative overflow-hidden rounded-2xl bg-white border border-black/5">
-            <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderClass}`} />
-            <div className="pl-4 pr-4 py-3.5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className={`font-black text-sm truncate ${kundenname ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/40 italic'}`}>
-                    {primaryTitle}
-                  </div>
-                  <div className="text-xs text-[#888888] font-semibold mt-0.5">{subtitle}</div>
+        <div className="relative overflow-hidden rounded-2xl bg-white border border-black/5">
+          <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderClass}`} />
+          <div className="pl-4 pr-3 py-3.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <div className={`font-black text-sm truncate ${kundenname ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/40 italic'}`}>
+                  {primaryTitle}
                 </div>
-                <div className="text-right shrink-0">
+                <div className="text-xs text-[#888888] font-semibold mt-0.5">{subtitle}</div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="text-right">
                   <div className="font-black text-[#1A1A1A] text-sm">{formattedAmount}</div>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block ${badgeClass}`}>
                     {statusLabel}
                   </span>
                 </div>
+                {/* 3-Punkte-Button */}
+                <button
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); setShowMenu(v => !v) }}
+                  className="p-1.5 text-[#2C2C2C]/30 hover:text-[#2C2C2C]/60 active:bg-[#2C2C2C]/5 rounded-lg transition-colors"
+                >
+                  <MoreHorizontal size={16} />
+                </button>
               </div>
             </div>
           </div>
-        </Link>
-      </div>
+        </div>
+      </Link>
+
+      {/* Dropdown-Menü */}
+      {showMenu && (
+        <div ref={menuRef} className="absolute right-0 top-full mt-1 z-50 bg-white rounded-xl shadow-xl border border-[#2C2C2C]/8 min-w-[150px] overflow-hidden">
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="flex items-center gap-2.5 w-full px-4 py-3 text-red-500 font-semibold text-sm hover:bg-red-50 transition-colors disabled:opacity-50"
+          >
+            <Trash2 size={15} />
+            {deleting ? 'Wird gelöscht…' : 'Löschen'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

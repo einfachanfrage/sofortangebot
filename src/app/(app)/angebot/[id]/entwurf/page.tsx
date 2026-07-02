@@ -538,9 +538,9 @@ export default function EntwurfPage() {
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-[#2C2C2C]/8 px-4 pt-safe-top">
         <div className="flex items-center justify-between h-14">
-          <Link href={hatBestehendPositionen ? `/angebot/${angebotId}` : '/dashboard'} className="flex items-center gap-1.5 text-[#2C2C2C]/60">
+          <Link href={`/angebot/${angebotId}`} className="flex items-center gap-1.5 text-[#2C2C2C]/60">
             <ArrowLeft size={18} />
-            <span className="font-semibold text-[14px]">{hatBestehendPositionen ? 'Angebot' : 'Dashboard'}</span>
+            <span className="font-semibold text-[14px]">Entwurf</span>
           </Link>
 
           <div className="text-center">
