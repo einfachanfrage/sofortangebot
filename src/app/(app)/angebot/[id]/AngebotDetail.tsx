@@ -68,6 +68,108 @@ const VIA_LABELS: Record<string, string> = {
 const UNITS = ['m²', 'lfdm', 'Stk', 'Stunde', 'pauschal', 'm³', 'kg', 'ltr', 'Rolle', 'Satz']
 
 function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
+
+// ── Raum-Dimensionen ──────────────────────────────────────────────────────────
+export interface RaumDimension {
+  breite?: number
+  laenge?: number
+  hoehe?: number
+  tueren?: number
+  fenster?: number
+}
+
+function berechneQuantityFuerItem(titleDisplay: string, unit: string, dim: RaumDimension): number | null {
+  if (!dim.breite || !dim.laenge) return null
+  const b = dim.breite, l = dim.laenge, h = dim.hoehe ?? 2.5
+  const t = dim.tueren ?? 0, f = dim.fenster ?? 0
+  const titelLower = titleDisplay.toLowerCase()
+
+  if (unit === 'm²') {
+    if (titelLower.includes('wand')) {
+      const bruttoWand = 2 * (b + l) * h
+      const abzug = t * 2.0 + f * 1.5
+      return Math.max(0, bruttoWand - abzug)
+    }
+    if (titelLower.includes('deck')) return b * l
+    if (titelLower.includes('boden') || titelLower.includes('fliesen') || titelLower.includes('laminat') || titelLower.includes('parkett') || titelLower.includes('vinyl')) return b * l
+  }
+  if (unit === 'lfdm') {
+    if (titelLower.includes('sockel') || titelLower.includes('leiste')) {
+      return Math.max(0, 2 * (b + l) - t * 0.9)
+    }
+  }
+  return null
+}
+
+function RaumDimensionenZeile({
+  raumName,
+  dim,
+  onChange,
+}: {
+  raumName: string
+  dim: RaumDimension
+  onChange: (field: keyof RaumDimension, val: number | undefined) => void
+}) {
+  function InlineInput({ field, value, label, suffix }: { field: keyof RaumDimension; value: number | undefined; label: string; suffix?: string }) {
+    const [editing, setEditing] = useState(false)
+    const [draft, setDraft] = useState(String(value ?? ''))
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    function commit() {
+      const n = parseFloat(draft.replace(',', '.'))
+      onChange(field, isNaN(n) || n <= 0 ? undefined : n)
+      setEditing(false)
+    }
+
+    if (editing) {
+      return (
+        <input
+          ref={inputRef}
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') setEditing(false) }}
+          autoFocus
+          className="w-10 text-center bg-[#F5C400]/20 border border-[#F5C400] rounded text-[12px] font-extrabold text-[#2C2C2C] outline-none px-1 py-0.5"
+        />
+      )
+    }
+
+    return (
+      <button
+        onClick={() => { setDraft(String(value ?? '')); setEditing(true) }}
+        className="text-[12px] font-extrabold text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 rounded px-1.5 py-0.5 transition-colors"
+        title={label}
+      >
+        {value != null ? value : '?'}{suffix}
+      </button>
+    )
+  }
+
+  const hatBreiteLaenge = dim.breite != null && dim.laenge != null
+
+  return (
+    <div className="px-4 pb-2 pt-0.5 flex items-center gap-1.5 flex-wrap">
+      <InlineInput field="breite" value={dim.breite} label="Breite" />
+      <span className="text-[11px] text-[#2C2C2C]/30 font-bold">×</span>
+      <InlineInput field="laenge" value={dim.laenge} label="Länge" />
+      <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">m</span>
+      {hatBreiteLaenge && (
+        <>
+          <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+          <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
+          <InlineInput field="hoehe" value={dim.hoehe} label="Höhe" suffix=" m" />
+          <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+          <span className="text-[12px]">🚪</span>
+          <InlineInput field="tueren" value={dim.tueren} label="Türen" />
+          <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+          <span className="text-[12px]">🪟</span>
+          <InlineInput field="fenster" value={dim.fenster} label="Fenster" />
+        </>
+      )}
+    </div>
+  )
+}
 function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
@@ -219,7 +321,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showKundenSuche, setShowKundenSuche] = useState(false)
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
   const [kundenListe, setKundenListe] = useState<Customer[]>([])
+  const [raumDetails, setRaumDetails] = useState<Record<string, RaumDimension>>({})
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const raumDetailsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -245,7 +349,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   async function loadQuoteExtras() {
     const { data } = await supabase
       .from('quotes')
-      .select('internal_notes, discount_percent, discount_amount, surcharge_amount, surcharge_label')
+      .select('internal_notes, discount_percent, discount_amount, surcharge_amount, surcharge_label, raum_details')
       .eq('id', quote.id)
       .single()
     if (data) {
@@ -257,7 +361,37 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       if ((data.discount_percent ?? 0) > 0 || (data.discount_amount ?? 0) > 0 || (data.surcharge_amount ?? 0) > 0) {
         setShowExtras(true)
       }
+      if (data.raum_details && typeof data.raum_details === 'object') {
+        setRaumDetails(data.raum_details as Record<string, RaumDimension>)
+      }
     }
+  }
+
+  function handleRaumDimChange(raumName: string, field: keyof RaumDimension, val: number | undefined) {
+    setRaumDetails(prev => {
+      const updated = { ...prev, [raumName]: { ...prev[raumName], [field]: val } }
+
+      // Live-Neuberechnung der betroffenen Items
+      setEditItems(items => items.map(item => {
+        // Nur Items dieses Raums
+        const suffix = ` — ${raumName}`
+        if (!item.title.endsWith(suffix)) return item
+        const titleDisplay = item.title.slice(0, item.title.length - suffix.length)
+        const newQty = berechneQuantityFuerItem(titleDisplay, item.unit, updated[raumName])
+        if (newQty == null) return item
+        const qty = Math.round(newQty * 100) / 100
+        return { ...item, quantity: qty, total_price: qty * item.unit_price }
+      }))
+      setHasChanges(true)
+
+      // Debounced persist
+      if (raumDetailsTimer.current) clearTimeout(raumDetailsTimer.current)
+      raumDetailsTimer.current = setTimeout(() => {
+        supabase.from('quotes').update({ raum_details: updated }).eq('id', quote.id)
+      }, 1000)
+
+      return updated
+    })
   }
 
   async function loadEmpfehlungen() {
@@ -1040,6 +1174,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                             <span className="text-[11px] font-black text-[#2C2C2C]/40">{fmt(raum.summe)}</span>
                           )}
                         </div>
+
+                        {/* Raum-Dimensionen */}
+                        <RaumDimensionenZeile
+                          raumName={raum.raumName}
+                          dim={raumDetails[raum.raumName] ?? {}}
+                          onChange={(field, val) => handleRaumDimChange(raum.raumName, field, val)}
+                        />
 
                         {/* Positionen ohne Raumzusatz */}
                         {raum.items.map(gi => {
