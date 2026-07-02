@@ -673,9 +673,7 @@ export default function EntwurfPage() {
 
         {/* Aufnahme-Button */}
         <button
-          onPointerDown={startRecording}
-          onPointerUp={stopRecording}
-          onPointerLeave={stopRecording}
+          onClick={recording ? stopRecording : startRecording}
           disabled={uploading}
           className={`w-full flex items-center justify-center gap-3 rounded-2xl font-extrabold text-[17px] transition-all select-none shadow-xl ${
             recording
