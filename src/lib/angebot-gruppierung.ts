@@ -1,5 +1,17 @@
 const DASH = /\s+[-–—]\s+/
 
+// Nur echte Raumbezeichnungen werden als Gruppe behandelt — alles andere (z.B. "1. Anstrich") geht in Allgemein
+const RAUM_KEYWORDS = [
+  'zimmer', 'küche', 'bad', 'badezimmer', 'toilette', 'wc', 'flur', 'diele',
+  'keller', 'dachboden', 'garage', 'treppenhaus', 'terrasse', 'balkon',
+  'fassade', 'außen', 'büro', 'werkstatt', 'eingang', 'korridor',
+]
+
+function istEchterRaum(name: string): boolean {
+  const lower = name.toLowerCase()
+  return RAUM_KEYWORDS.some(k => lower.includes(k))
+}
+
 const RAUM_EMOJIS: Record<string, string> = {
   wohnzimmer:    '🛋',
   schlafzimmer:  '🛏',
@@ -74,19 +86,35 @@ export function gruppiereNachRaum<T extends {
     if (m) {
       const raum = item.title.slice(m.index! + m[0].length).trim()
       const titleDisplay = item.title.slice(0, m.index).trim()
-      if (!raumMap.has(raum)) raumMap.set(raum, [])
-      raumMap.get(raum)!.push({
-        id: item.id,
-        title: item.title,
-        titleDisplay,
-        description: item.description ?? null,
-        quantity: item.quantity,
-        unit: item.unit,
-        unit_price: item.unit_price,
-        total_price: item.total_price,
-        position: item.position,
-      })
-      hatRaeume++
+      // Nur echte Räume gruppieren — "1. Anstrich" o.ä. geht in Allgemein
+      if (istEchterRaum(raum)) {
+        if (!raumMap.has(raum)) raumMap.set(raum, [])
+        raumMap.get(raum)!.push({
+          id: item.id,
+          title: item.title,
+          titleDisplay,
+          description: item.description ?? null,
+          quantity: item.quantity,
+          unit: item.unit,
+          unit_price: item.unit_price,
+          total_price: item.total_price,
+          position: item.position,
+        })
+        hatRaeume++
+      } else {
+        // Suffix kein Raum → als Allgemein-Item ohne Suffix anzeigen
+        allgemein.push({
+          id: item.id,
+          title: item.title,
+          titleDisplay,
+          description: item.description ?? null,
+          quantity: item.quantity,
+          unit: item.unit,
+          unit_price: item.unit_price,
+          total_price: item.total_price,
+          position: item.position,
+        })
+      }
     } else {
       allgemein.push({
         id: item.id,
