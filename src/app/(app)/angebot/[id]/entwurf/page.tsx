@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   ArrowLeft, Mic, MicOff, StickyNote, Camera, X, Check, ChevronRight,
-  Loader2, AlertCircle, ZoomIn, AlertTriangle,
+  Loader2, AlertCircle, ZoomIn, AlertTriangle, RefreshCw,
 } from 'lucide-react'
 import { AudioPlayer } from '@/components/AudioPlayer'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
@@ -38,7 +38,7 @@ function fmtRelativ(iso: string) {
 
 // ── Aufnahme Card ─────────────────────────────────────────────────────────────
 
-function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDelete?: () => void }) {
+function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithUrl; onDelete?: () => void; onRetry?: () => void }) {
   const [fotoGross, setFotoGross] = useState(false)
   const positionen = aufnahme.erkannte_positionen as ErkanntPosition[]
   const erkannte = positionen.filter(p => p.erkannt)
@@ -70,9 +70,20 @@ function AufnahmeCard({ aufnahme, onDelete }: { aufnahme: AufnahmeWithUrl; onDel
             </div>
           )}
           {aufnahme.verarbeitung_status === 'fehler' && (
-            <div className="flex items-center gap-2 text-red-500 text-[13px] font-semibold mb-3">
-              <AlertCircle size={14} />
-              Verarbeitung fehlgeschlagen
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 text-red-500 text-[13px] font-semibold">
+                <AlertCircle size={14} />
+                Verarbeitung fehlgeschlagen
+              </div>
+              {onRetry && (
+                <button
+                  onClick={onRetry}
+                  className="ml-auto flex items-center gap-1.5 bg-[#2C2C2C] text-white text-[12px] font-extrabold px-3 py-1.5 rounded-xl active:scale-95 transition-all"
+                >
+                  <RefreshCw size={12} strokeWidth={2.5} />
+                  Nochmal versuchen
+                </button>
+              )}
             </div>
           )}
 
@@ -470,6 +481,10 @@ export default function EntwurfPage() {
     setAufnahmen(prev => prev.map(a => a.id === tempId ? { ...a, id: aufnahmeId, verarbeitung_status: 'verarbeitung' } : a))
     setUploading(false)
 
+    verarbeiteAufnahme(aufnahmeId)
+  }
+
+  function verarbeiteAufnahme(aufnahmeId: string) {
     fetch('/api/entwurf/aufnahme/verarbeite', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -483,7 +498,14 @@ export default function EntwurfPage() {
       } else {
         setAufnahmen(prev => prev.map(a => a.id === aufnahmeId ? { ...a, verarbeitung_status: 'fehler' } : a))
       }
+    }).catch(() => {
+      setAufnahmen(prev => prev.map(a => a.id === aufnahmeId ? { ...a, verarbeitung_status: 'fehler' } : a))
     })
+  }
+
+  function retryAufnahme(aufnahmeId: string) {
+    setAufnahmen(prev => prev.map(a => a.id === aufnahmeId ? { ...a, verarbeitung_status: 'verarbeitung' } : a))
+    verarbeiteAufnahme(aufnahmeId)
   }
 
   async function deleteAufnahme(aufnahmeId: string) {
@@ -695,7 +717,7 @@ export default function EntwurfPage() {
 
         <div className="flex flex-col gap-3">
           {aufnahmen.map(a => (
-            <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => deleteAufnahme(a.id)} />
+            <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => deleteAufnahme(a.id)} onRetry={() => retryAufnahme(a.id)} />
           ))}
         </div>
 
