@@ -488,6 +488,14 @@ export default function EntwurfPage() {
 
   async function deleteAufnahme(aufnahmeId: string) {
     if (!confirm('Aufnahme löschen? Zugehörige Positionen im Angebot bleiben erhalten.')) return
+    // Storage-Dateien mitlöschen, sonst bleiben verwaiste Audio/Foto-Dateien liegen
+    const aufnahme = aufnahmen.find(a => a.id === aufnahmeId)
+    if (aufnahme?.audio_url) {
+      await supabase.storage.from('entwurf-audio').remove([aufnahme.audio_url])
+    }
+    if (aufnahme?.foto_url) {
+      await supabase.storage.from('entwurf-fotos').remove([aufnahme.foto_url])
+    }
     await supabase.from('entwurf_aufnahmen').delete().eq('id', aufnahmeId)
     setAufnahmen(prev => prev.filter(a => a.id !== aufnahmeId))
     // Wenn das die letzte Aufnahme war, gespeichert-Zeitstempel zurücksetzen
