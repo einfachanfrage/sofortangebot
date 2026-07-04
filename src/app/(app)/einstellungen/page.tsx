@@ -7,14 +7,14 @@ import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
 import { KLEINMATERIAL_CONFIG } from '@/lib/gewerke-config'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Users } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
 import { PushBanner } from '@/components/PushBanner'
 
 export default function EinstellungenPage() {
-  const [activeTab, setActiveTab] = useState<'betrieb' | 'preise' | 'app'>('betrieb')
+  const [activeTab, setActiveTab] = useState<'betrieb' | 'angebote' | 'app'>('betrieb')
   const [company, setCompany] = useState<Company | null>(null)
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
@@ -173,7 +173,7 @@ export default function EinstellungenPage() {
         <div className="flex gap-1 bg-white/10 md:bg-[#2C2C2C]/8 rounded-2xl p-1">
           {([
             { id: 'betrieb', label: 'Betrieb' },
-            { id: 'preise', label: 'Preise' },
+            { id: 'angebote', label: 'Angebote' },
             { id: 'app', label: 'App' },
           ] as { id: typeof activeTab; label: string }[]).map(tab => (
             <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
@@ -277,9 +277,51 @@ export default function EinstellungenPage() {
               </div>
             )}
           </Card>
+
+          {/* Gewerk */}
+          <Card icon={<Wrench size={16} />} title="Gewerk">
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
+              Aktuell unterstützt für Maler & Lackierer und Bodenbeläge & Parkett.
+            </p>
+            <div className="flex flex-col gap-1.5">
+              {[
+                { emoji: '🖌', label: 'Maler & Lackierer', desc: 'Streichen, Spachteln, Tapezieren, Lackieren' },
+                { emoji: '🏠', label: 'Bodenbeläge & Parkett', desc: 'Laminat, Vinyl, Parkett, Teppich' },
+              ].map(g => (
+                <div key={g.label} className="flex items-center gap-3 w-full rounded-xl px-3 py-2.5 border-2 border-[#F5C400] bg-[#F5C400]/5">
+                  <span className="text-lg">{g.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-sm text-[#2C2C2C]">{g.label}</div>
+                    <div className="text-xs text-[#2C2C2C]/40 font-semibold">{g.desc}</div>
+                  </div>
+                  <div className="w-5 h-5 rounded-full border-2 border-[#F5C400] bg-[#F5C400] flex items-center justify-center shrink-0">
+                    <Check size={11} color="#2C2C2C" strokeWidth={3} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-3">
+              Weitere Gewerke folgen — Fliesen, Trockenbau, Elektro & mehr.
+            </p>
+          </Card>
         </div>
 
-        {/* Desktop: 2-Spalten Grid für Rechnungsstellung + Gewerk */}
+        {/* Save Button */}
+        <button type="submit" disabled={saving}
+          className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          {saved
+            ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
+            : saving ? 'Speichere...' : 'Speichern'
+          }
+        </button>
+      </form>
+      )}
+
+      {/* ── TAB: ANGEBOTE ────────────────────────────────────────────────────── */}
+      {activeTab === 'angebote' && (
+      <form onSubmit={handleSave} className="px-5 md:px-8 flex flex-col gap-5 md:gap-6">
+
+        {/* Desktop: 2-Spalten Grid für Steuer + E-Rechnung */}
         <div className="md:grid md:grid-cols-2 md:gap-6 flex flex-col gap-5">
 
           {/* Rechnungsstellung */}
@@ -417,48 +459,8 @@ export default function EinstellungenPage() {
             </p>
           </Card>
 
-          {/* Gewerk */}
-          <Card icon={<Wrench size={16} />} title="Gewerk">
-            <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
-              Aktuell unterstützt für Maler & Lackierer und Bodenbeläge & Parkett.
-            </p>
-            <div className="flex flex-col gap-1.5">
-              {[
-                { emoji: '🖌', label: 'Maler & Lackierer', desc: 'Streichen, Spachteln, Tapezieren, Lackieren' },
-                { emoji: '🏠', label: 'Bodenbeläge & Parkett', desc: 'Laminat, Vinyl, Parkett, Teppich' },
-              ].map(g => (
-                <div key={g.label} className="flex items-center gap-3 w-full rounded-xl px-3 py-2.5 border-2 border-[#F5C400] bg-[#F5C400]/5">
-                  <span className="text-lg">{g.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-sm text-[#2C2C2C]">{g.label}</div>
-                    <div className="text-xs text-[#2C2C2C]/40 font-semibold">{g.desc}</div>
-                  </div>
-                  <div className="w-5 h-5 rounded-full border-2 border-[#F5C400] bg-[#F5C400] flex items-center justify-center shrink-0">
-                    <Check size={11} color="#2C2C2C" strokeWidth={3} />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-3">
-              Weitere Gewerke folgen — Fliesen, Trockenbau, Elektro & mehr.
-            </p>
-          </Card>
         </div>
 
-        {/* Save Button */}
-        <button type="submit" disabled={saving}
-          className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
-          {saved
-            ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
-            : saving ? 'Speichere...' : 'Speichern'
-          }
-        </button>
-      </form>
-      )}
-
-      {/* ── TAB: PREISE ──────────────────────────────────────────────────────── */}
-      {activeTab === 'preise' && (
-      <form onSubmit={handleSave} className="px-5 md:px-8 flex flex-col gap-5 md:gap-6">
         <Card icon={<Receipt size={16} />} title="Regionaler Preisfaktor">
           <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
             Aufschlag oder Abschlag auf alle berechneten Preise — je nach Region.
@@ -608,14 +610,6 @@ export default function EinstellungenPage() {
             </div>
             <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
           </Link>
-          <Link href="/einstellungen/integrationen"
-            className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
-            <div>
-              <span className="font-bold text-[#2C2C2C]">Integrationen</span>
-              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Lexoffice, sevDesk & mehr</div>
-            </div>
-            <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
-          </Link>
         </div>
 
         <button type="submit" disabled={saving}
@@ -725,12 +719,17 @@ export default function EinstellungenPage() {
           </div>
         )}
 
+        {/* Integrationen */}
+        <Link href="/einstellungen/integrationen"
+          className="flex items-center justify-between w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-4 hover:border-[#F5C400]/50 transition-colors group">
+          <div>
+            <span className="font-bold text-[#2C2C2C] text-sm block">Buchhaltung verbinden</span>
+            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">Lexoffice, sevDesk & mehr</div>
+          </div>
+          <ExternalLink size={16} className="text-[#2C2C2C]/30 group-hover:text-[#2C2C2C]/60" />
+        </Link>
+
         <div className="flex flex-col gap-1 mt-2">
-          <Link href="/kunden"
-            className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors">
-            <Users size={16} />
-            Kunden verwalten
-          </Link>
           <button onClick={handleLogout}
             className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors">
             <LogOut size={16} />
