@@ -96,6 +96,37 @@ export function kleinmaterialPosition(
   }
 }
 
+// ── An- und Abfahrt-Konfiguration ───────────────────────────────────────────
+// Anders als Kleinmaterial: keine Schwelle (Fahrtkosten hängen nicht von der
+// Auftragsgröße ab) und standardmäßig AUS, da nicht jeder Betrieb sie berechnet.
+
+export interface AnfahrtConfig {
+  aktiv: boolean
+  betrag_eur: number
+  bezeichnung: string
+}
+
+export const ANFAHRT_DEFAULT: AnfahrtConfig = {
+  aktiv: false,
+  betrag_eur: 45,
+  bezeichnung: 'An- und Abfahrt',
+}
+
+export function anfahrtPosition(
+  betriebsConfig?: Partial<AnfahrtConfig> | null
+): { title: string; description: string; quantity: number; unit: string; unit_price: number; kategorie: string } | null {
+  const cfg: AnfahrtConfig = { ...ANFAHRT_DEFAULT, ...(betriebsConfig ?? {}) }
+  if (!cfg.aktiv) return null
+  return {
+    title: cfg.bezeichnung,
+    description: '',
+    quantity: 1,
+    unit: 'Pauschale',
+    unit_price: cfg.betrag_eur,
+    kategorie: 'Anfahrt',
+  }
+}
+
 // ── Mapping von alten gewerke.ts IDs → neue Config-IDs
 // (Die Positionsdatenbank nutzt Kategorie-Präfixe wie "Maler –", "Boden –" etc.)
 export const GEWERK_KATEGORIE_PREFIXE: Record<string, string[]> = {

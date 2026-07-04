@@ -88,6 +88,11 @@ export interface Company {
     schwelle_eur?: number
     bezeichnung?: string
   } | null
+  anfahrt_config: {
+    aktiv?: boolean
+    betrag_eur?: number
+    bezeichnung?: string
+  } | null
 }
 
 export interface MengenrabattTier {

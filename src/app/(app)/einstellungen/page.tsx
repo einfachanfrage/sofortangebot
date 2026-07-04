@@ -7,7 +7,7 @@ import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
 import { KLEINMATERIAL_CONFIG } from '@/lib/gewerke-config'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Car } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
@@ -37,6 +37,9 @@ export default function EinstellungenPage() {
   const [kleinBetrag, setKleinBetrag] = useState(25)
   const [kleinSchwelle, setKleinSchwelle] = useState(200)
   const [kleinBezeichnung, setKleinBezeichnung] = useState('Kleinmaterial und Verbrauchsmaterial')
+  const [anfahrtAktiv, setAnfahrtAktiv] = useState(false)
+  const [anfahrtBetrag, setAnfahrtBetrag] = useState(45)
+  const [anfahrtBezeichnung, setAnfahrtBezeichnung] = useState('An- und Abfahrt')
   const [eRechnungAktiv, setERechnungAktiv] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -88,6 +91,11 @@ export default function EinstellungenPage() {
         setKleinBetrag(kc?.betrag_eur ?? gewerkDefault.betrag_eur)
         setKleinSchwelle(kc?.schwelle_eur ?? gewerkDefault.schwelle_eur)
         setKleinBezeichnung(kc?.bezeichnung ?? gewerkDefault.bezeichnung)
+        // An- und Abfahrt (Standard: aus)
+        const ac = (data.anfahrt_config ?? null) as { aktiv?: boolean; betrag_eur?: number; bezeichnung?: string } | null
+        setAnfahrtAktiv(ac?.aktiv ?? false)
+        setAnfahrtBetrag(ac?.betrag_eur ?? 45)
+        setAnfahrtBezeichnung(ac?.bezeichnung ?? 'An- und Abfahrt')
       }
     }
     load()
@@ -127,6 +135,11 @@ export default function EinstellungenPage() {
         betrag_eur: kleinBetrag,
         schwelle_eur: kleinSchwelle,
         bezeichnung: kleinBezeichnung.trim() || 'Kleinmaterial und Verbrauchsmaterial',
+      },
+      anfahrt_config: {
+        aktiv: anfahrtAktiv,
+        betrag_eur: anfahrtBetrag,
+        bezeichnung: anfahrtBezeichnung.trim() || 'An- und Abfahrt',
       },
     }).eq('user_id', user.id)
     setSaving(false)
@@ -582,6 +595,54 @@ export default function EinstellungenPage() {
               </Field>
               <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
                 Beispiel: Ab {kleinSchwelle} € Auftragswert wird „{kleinBezeichnung.trim() || 'Kleinmaterial und Verbrauchsmaterial'}" mit {kleinBetrag} € netto ergänzt.
+              </p>
+            </>
+          )}
+        </Card>
+
+        {/* An- und Abfahrt-Pauschale */}
+        <Card icon={<Car size={16} />} title="An- und Abfahrt">
+          <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
+            Wird als feste Position zu jedem Angebot hinzugefügt — unabhängig vom Auftragswert.
+          </p>
+          <button type="button" onClick={() => setAnfahrtAktiv(v => !v)}
+            className={`flex items-center gap-3 w-full rounded-xl border-2 px-3 py-3 transition-colors ${
+              anfahrtAktiv ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+            }`}>
+            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+              anfahrtAktiv ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'}`}>
+              {anfahrtAktiv && <Check size={11} color="#2C2C2C" strokeWidth={3} />}
+            </div>
+            <span className={`font-bold text-sm ${anfahrtAktiv ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>
+              Automatisch zum Angebot hinzufügen
+            </span>
+          </button>
+          {anfahrtAktiv && (
+            <>
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <Field label="Pauschale">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      value={anfahrtBetrag || ''}
+                      onChange={e => setAnfahrtBetrag(Number(e.target.value) || 0)}
+                      min={0}
+                      step={5}
+                    />
+                    <span className="font-bold text-[#2C2C2C]/50 shrink-0">€</span>
+                  </div>
+                </Field>
+                <Field label="Bezeichnung">
+                  <Input
+                    type="text"
+                    value={anfahrtBezeichnung}
+                    onChange={e => setAnfahrtBezeichnung(e.target.value)}
+                    placeholder="An- und Abfahrt"
+                  />
+                </Field>
+              </div>
+              <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
+                „{anfahrtBezeichnung.trim() || 'An- und Abfahrt'}" wird mit {anfahrtBetrag} € netto zu jedem Angebot ergänzt.
               </p>
             </>
           )}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAIClient, CHAT_MODEL } from '@/lib/ai-client'
-import { kleinmaterialPosition } from '@/lib/gewerke-config'
+import { kleinmaterialPosition, anfahrtPosition } from '@/lib/gewerke-config'
 
 const SYSTEM_PROMPT = `Du bist Kalkulations-Profi mit 20 Jahren Erfahrung im deutschen Handwerk.
 
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
 
   const { data: companyKlein } = await supabase
     .from('companies')
-    .select('kleinmaterial_config')
+    .select('kleinmaterial_config, anfahrt_config')
     .eq('user_id', user.id)
     .single()
 
@@ -140,6 +140,14 @@ export async function POST(req: NextRequest) {
           s + (it.unit_price ?? 0) * (it.quantity ?? 1), 0)
       const klein = kleinmaterialPosition(gewerk ?? null, summeNetto, companyKlein?.kleinmaterial_config ?? null)
       if (klein) result.items.push(klein)
+
+      // An- und Abfahrt
+      result.items = result.items.filter((it: { title?: string }) => {
+        const t = (it.title ?? '').toLowerCase()
+        return !(t.includes('anfahrt') || t.includes('abfahrt') || t.includes('fahrtkosten'))
+      })
+      const anfahrt = anfahrtPosition(companyKlein?.anfahrt_config ?? null)
+      if (anfahrt) result.items.push(anfahrt)
     }
 
     return NextResponse.json(result)

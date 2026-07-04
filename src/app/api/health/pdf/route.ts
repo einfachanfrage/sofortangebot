@@ -45,6 +45,7 @@ export async function GET() {
       onboarding_completed: true,
       onboarding_step: 8,
       kleinmaterial_config: null,
+      anfahrt_config: null,
     }
 
     const dummyItem: QuoteItem = {

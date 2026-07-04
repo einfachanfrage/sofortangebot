@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getGewerkePromptContext } from '@/lib/gewerke'
 import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
 import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
-import { kleinmaterialPosition } from '@/lib/gewerke-config'
+import { kleinmaterialPosition, anfahrtPosition } from '@/lib/gewerke-config'
 import * as Sentry from '@sentry/nextjs'
 
 // OpenAI-Analyse kann bei langen Aufmaßen >10s dauern
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
   if (!text) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
   const berechnetePositionen = (body.berechnete_positionen?.length ?? 0) > 0 ? body.berechnete_positionen : null
 
-  const { data: company } = await supabase.from('companies').select('id, vat_rate, gewerke, kleinmaterial_config').eq('user_id', user.id).single()
+  const { data: company } = await supabase.from('companies').select('id, vat_rate, gewerke, kleinmaterial_config, anfahrt_config').eq('user_id', user.id).single()
   const { data: priceItems } = await supabase.from('price_items').select('*').eq('company_id', company?.id ?? '')
   // Max 50 Einträge — Groq TPM-Limit: zu viele Preise sprengen das Token-Budget
   const priceList = priceItems?.length
@@ -174,6 +174,14 @@ export async function POST(req: NextRequest) {
       const gewerk = company?.gewerke?.[0] ?? null
       const klein = kleinmaterialPosition(gewerk, summeNetto, company?.kleinmaterial_config ?? null)
       if (klein) result.items.push(klein)
+
+      // An- und Abfahrt: AI-Vorschläge entfernen, nach Betriebs-Einstellung ergänzen
+      result.items = result.items.filter((it: { title?: string }) => {
+        const t = (it.title ?? '').toLowerCase()
+        return !(t.includes('anfahrt') || t.includes('abfahrt') || t.includes('fahrtkosten'))
+      })
+      const anfahrt = anfahrtPosition(company?.anfahrt_config ?? null)
+      if (anfahrt) result.items.push(anfahrt)
 
       // Trockenbau-Positionen bei Maler-Jobs entfernen (GPT-Halluzination)
       const textLower = text.toLowerCase()
