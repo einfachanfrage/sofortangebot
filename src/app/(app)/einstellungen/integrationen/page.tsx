@@ -332,7 +332,7 @@ export default function IntegrationenPage() {
           disabled={saving}
           className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
         >
-          {saved ? <><Check size={20} strokeWidth={3} /> Gespeichert</> : saving ? 'Speichere...' : 'Speichern'}
+          {saved ? <><Check size={20} strokeWidth={3} /> Gespeichert</> : saving ? 'Speichert…' : 'Speichern'}
         </button>
       </div>
     </div>

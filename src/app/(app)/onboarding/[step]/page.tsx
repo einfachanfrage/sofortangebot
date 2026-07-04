@@ -844,7 +844,7 @@ export default function OnboardingStep() {
           <div className="mt-4 flex gap-3 shrink-0">
             <button onClick={() => goTo(6)} className={btnBack}>← Zurück</button>
             <button onClick={handleFinish} disabled={saving} className={`${btnPrimary} flex-[2]`}>
-              {saving ? <><Loader2 size={18} className="animate-spin" /> Speichere...</> : 'Fertig 🚀'}
+              {saving ? <><Loader2 size={18} className="animate-spin" /> Speichert…</> : 'Fertig 🚀'}
             </button>
           </div>
         </div>

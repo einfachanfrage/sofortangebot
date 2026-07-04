@@ -13,6 +13,7 @@ import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
 import { PushBanner } from '@/components/PushBanner'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { Toast } from '@/components/Toast'
 
 export default function EinstellungenPage() {
   const [activeTab, setActiveTab] = useState<'betrieb' | 'angebote' | 'app'>('betrieb')
@@ -314,7 +315,7 @@ export default function EinstellungenPage() {
           className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
-            : saving ? 'Speichere...' : 'Speichern'
+            : saving ? 'Speichert…' : 'Speichern'
           }
         </button>
       </form>
@@ -619,7 +620,7 @@ export default function EinstellungenPage() {
           className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
-            : saving ? 'Speichere...' : 'Speichern'
+            : saving ? 'Speichert…' : 'Speichern'
           }
         </button>
       </form>
@@ -765,11 +766,7 @@ export default function EinstellungenPage() {
         }}
         onCancel={() => setShowExportSheet(false)}
       />
-      {exportToast && (
-        <div className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-extrabold text-sm px-5 py-3 rounded-full shadow-xl">
-          Export wird per E-Mail gesendet ✓
-        </div>
-      )}
+      {exportToast && <Toast message="Export wird per E-Mail gesendet ✓" />}
 
       {/* PWA / Push overlays — always mounted */}
       {showPwaSheet && <PwaBottomSheet onClose={() => setShowPwaSheet(false)} />}

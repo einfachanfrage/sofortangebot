@@ -330,7 +330,7 @@ export default function BriefpapierEditor() {
             disabled={saving}
             className="w-full bg-[#2C2C2C] text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50"
           >
-            {saving ? 'Wird gespeichert…' : 'Änderungen speichern'}
+            {saving ? 'Speichert…' : 'Änderungen speichern'}
           </button>
         </div>
       </div>

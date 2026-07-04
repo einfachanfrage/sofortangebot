@@ -8,6 +8,7 @@ import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
 import AvatarSheet from '@/components/AvatarSheet'
 import { Mic } from 'lucide-react'
+import { Toast } from '@/components/Toast'
 
 const STATUS_LABEL: Record<string, { label: string }> = {
   draft:          { label: 'Entwurf'        },
@@ -101,11 +102,7 @@ export default async function DashboardPage({
     <div className="min-h-dvh bg-[#F7F7F5]">
       <PwaBannerManager />
       {welcome === 'new' && <WelcomeModalWrapper />}
-      {welcome === 'pro' && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-extrabold text-sm px-5 py-3 rounded-full shadow-xl animate-bounce">
-          🚀 Pro Plan aktiv — viel Erfolg!
-        </div>
-      )}
+      {welcome === 'pro' && <Toast message="🚀 Pro Plan aktiv — viel Erfolg!" />}
 
       <div className="md:max-w-5xl md:mx-auto md:px-8 md:py-8">
 

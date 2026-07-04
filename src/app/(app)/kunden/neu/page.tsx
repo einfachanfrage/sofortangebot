@@ -125,7 +125,7 @@ export default function NeuerKundePage() {
           disabled={saving || !name.trim()}
           className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 disabled:opacity-40 transition-opacity"
         >
-          {saving ? 'Speichere...' : 'Kunde anlegen'}
+          {saving ? 'Speichert…' : 'Kunde anlegen'}
         </button>
       </div>
     </div>

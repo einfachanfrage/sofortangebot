@@ -22,6 +22,7 @@ import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { Toast } from '@/components/Toast'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -858,11 +859,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     <div className="min-h-dvh bg-[#F7F7F5] pb-10" onClick={() => { setEditingItemId(null); setShowMoreMenu(false) }}>
 
       {/* Toast */}
-      {toast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-bold text-sm rounded-2xl px-5 py-3 shadow-xl whitespace-nowrap">
-          {toast}
-        </div>
-      )}
+      <Toast message={toast} />
 
       {/* Revision-Dialog */}
       {showRevisionDialog && (
@@ -1432,7 +1429,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 </button>
                 <button onClick={() => saveEdits()} disabled={saving}
                   className="flex-[2] bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 disabled:opacity-50 flex items-center justify-center gap-2">
-                  {saving ? 'Speichere...' : <><Check size={18} strokeWidth={3} /> Speichern</>}
+                  {saving ? 'Speichert…' : <><Check size={18} strokeWidth={3} /> Speichern</>}
                 </button>
               </div>
             )}

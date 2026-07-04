@@ -286,7 +286,7 @@ export default function NummernPage() {
           disabled={saving}
           className="w-full bg-[#2C2C2C] text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50"
         >
-          {saving ? 'Wird gespeichert…' : saved ? `✓ Nächste Nummer: ${preview}` : 'Einstellungen speichern'}
+          {saving ? 'Speichert…' : saved ? `✓ Nächste Nummer: ${preview}` : 'Einstellungen speichern'}
         </button>
 
         {/* Audit-Trail */}
