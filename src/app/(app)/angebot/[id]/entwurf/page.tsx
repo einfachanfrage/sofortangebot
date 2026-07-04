@@ -283,6 +283,7 @@ export default function EntwurfPage() {
   const [showNotiz, setShowNotiz] = useState(false)
   const [loadingMsg, setLoadingMsg] = useState('Positionen werden berechnet…')
   const [fehler, setFehler] = useState('')
+  const [deleteBestaetigen, setDeleteBestaetigen] = useState<string | null>(null)
   const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
 
   const mediaRef = useRef<MediaRecorder | null>(null)
@@ -509,7 +510,7 @@ export default function EntwurfPage() {
   }
 
   async function deleteAufnahme(aufnahmeId: string) {
-    if (!confirm('Aufnahme löschen? Zugehörige Positionen im Angebot bleiben erhalten.')) return
+    setDeleteBestaetigen(null)
     // Storage-Dateien mitlöschen, sonst bleiben verwaiste Audio/Foto-Dateien liegen
     const aufnahme = aufnahmen.find(a => a.id === aufnahmeId)
     if (aufnahme?.audio_url) {
@@ -717,7 +718,7 @@ export default function EntwurfPage() {
 
         <div className="flex flex-col gap-3">
           {aufnahmen.map(a => (
-            <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => deleteAufnahme(a.id)} onRetry={() => retryAufnahme(a.id)} />
+            <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => setDeleteBestaetigen(a.id)} onRetry={() => retryAufnahme(a.id)} />
           ))}
         </div>
 
@@ -794,6 +795,34 @@ export default function EntwurfPage() {
       </div>
 
       {showNotiz && <NotizModal onSave={saveNotiz} onClose={() => setShowNotiz(false)} />}
+
+      {/* Lösch-Bestätigung Bottom-Sheet */}
+      {deleteBestaetigen && (
+        <div className="fixed inset-0 z-40 flex items-end">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteBestaetigen(null)} />
+          <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl">
+            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+            <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-2">Aufnahme löschen?</h2>
+            <p className="text-[#2C2C2C]/50 font-semibold text-[14px] mb-6 leading-relaxed">
+              Die Aufnahme wird endgültig gelöscht. Bereits berechnete Positionen im Angebot bleiben erhalten.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => deleteAufnahme(deleteBestaetigen)}
+                className="w-full bg-red-500 text-white rounded-2xl py-4 font-extrabold text-[16px] active:scale-[0.98] transition-all"
+              >
+                Löschen
+              </button>
+              <button
+                onClick={() => setDeleteBestaetigen(null)}
+                className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+              >
+                Abbrechen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
