@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import type { Briefpapier, Company } from '@/lib/types'
-import { ArrowLeft, Upload } from 'lucide-react'
+import { Upload } from 'lucide-react'
 
 const FARB_CHIPS = ['#F5C400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
 const SCHRIFTEN = [
@@ -150,9 +150,9 @@ export default function BriefpapierEditor() {
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4 flex items-center gap-3">
-        <Link href="/einstellungen/briefpapier" className="text-[#2C2C2C]/40"><ArrowLeft size={20} /></Link>
-        <h1 className="text-lg font-black text-[#2C2C2C]">
+      <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4">
+        <Link href="/einstellungen/briefpapier" className="text-[#2C2C2C]/40 text-sm font-semibold">← Briefpapier</Link>
+        <h1 className="text-lg font-black text-[#2C2C2C] mt-1">
           {bp.name || 'Briefpapier bearbeiten'}
         </h1>
       </div>

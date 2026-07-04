@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Briefpapier } from '@/lib/types'
-import { ArrowLeft, Plus, Star, Copy, Trash2, Pencil } from 'lucide-react'
+import { Plus, Star, Copy, Trash2, Pencil } from 'lucide-react'
 import BottomNav from '@/components/BottomNav'
 
 export default function BriefpapierUebersicht() {
@@ -102,9 +102,9 @@ export default function BriefpapierUebersicht() {
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
-      <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4 flex items-center gap-3">
-        <Link href="/einstellungen" className="text-[#2C2C2C]/40"><ArrowLeft size={20} /></Link>
-        <h1 className="text-lg font-black text-[#2C2C2C]">Briefpapier & Design</h1>
+      <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4">
+        <Link href="/einstellungen" className="text-[#2C2C2C]/40 text-sm font-semibold">← Einstellungen</Link>
+        <h1 className="text-lg font-black text-[#2C2C2C] mt-1">Briefpapier & Design</h1>
       </div>
 
       <div className="max-w-xl mx-auto px-4 pt-5 space-y-3">
