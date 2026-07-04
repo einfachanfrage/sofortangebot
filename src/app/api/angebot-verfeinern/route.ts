@@ -101,6 +101,12 @@ export async function POST(req: NextRequest) {
 
   const { items, antworten, aufmaß, gewerk } = await req.json()
 
+  const { data: companyKlein } = await supabase
+    .from('companies')
+    .select('kleinmaterial_config')
+    .eq('user_id', user.id)
+    .single()
+
   const antwortText = Object.entries(antworten as Record<string, string>)
     .map(([frage, antwort]) => `- ${frage}: ${antwort}`)
     .join('\n')
@@ -132,7 +138,7 @@ export async function POST(req: NextRequest) {
       const summeNetto = [...items, ...result.items].reduce(
         (s: number, it: { unit_price?: number; quantity?: number }) =>
           s + (it.unit_price ?? 0) * (it.quantity ?? 1), 0)
-      const klein = kleinmaterialPosition(gewerk ?? null, summeNetto)
+      const klein = kleinmaterialPosition(gewerk ?? null, summeNetto, companyKlein?.kleinmaterial_config ?? null)
       if (klein) result.items.push(klein)
     }
 

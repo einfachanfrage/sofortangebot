@@ -44,6 +44,7 @@ export async function GET() {
       e_rechnung_aktiv: false,
       onboarding_completed: true,
       onboarding_step: 8,
+      kleinmaterial_config: null,
     }
 
     const dummyItem: QuoteItem = {

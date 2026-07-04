@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
   if (!text) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
   const berechnetePositionen = (body.berechnete_positionen?.length ?? 0) > 0 ? body.berechnete_positionen : null
 
-  const { data: company } = await supabase.from('companies').select('id, vat_rate, gewerke').eq('user_id', user.id).single()
+  const { data: company } = await supabase.from('companies').select('id, vat_rate, gewerke, kleinmaterial_config').eq('user_id', user.id).single()
   const { data: priceItems } = await supabase.from('price_items').select('*').eq('company_id', company?.id ?? '')
   // Max 50 Einträge — Groq TPM-Limit: zu viele Preise sprengen das Token-Budget
   const priceList = priceItems?.length
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
       const summeNetto = result.items.reduce((s: number, it: { unit_price?: number; quantity?: number }) =>
         s + (it.unit_price ?? 0) * (it.quantity ?? 1), 0)
       const gewerk = company?.gewerke?.[0] ?? null
-      const klein = kleinmaterialPosition(gewerk, summeNetto)
+      const klein = kleinmaterialPosition(gewerk, summeNetto, company?.kleinmaterial_config ?? null)
       if (klein) result.items.push(klein)
 
       // Trockenbau-Positionen bei Maler-Jobs entfernen (GPT-Halluzination)

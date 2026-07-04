@@ -82,6 +82,12 @@ export interface Company {
   e_rechnung_aktiv: boolean
   onboarding_completed: boolean
   onboarding_step: number
+  kleinmaterial_config: {
+    aktiv?: boolean
+    betrag_eur?: number
+    schwelle_eur?: number
+    bezeichnung?: string
+  } | null
 }
 
 export interface MengenrabattTier {

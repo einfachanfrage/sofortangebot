@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
+import { KLEINMATERIAL_CONFIG } from '@/lib/gewerke-config'
 import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Users } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
@@ -29,6 +30,10 @@ export default function EinstellungenPage() {
   const [angebotGueltigTage, setAngebotGueltigTage] = useState(30)
   const [materialpreisHinweis, setMaterialpreisHinweis] = useState(false)
   const [mindestauftragswert, setMindestauftragswert] = useState(0)
+  const [kleinAktiv, setKleinAktiv] = useState(true)
+  const [kleinBetrag, setKleinBetrag] = useState(25)
+  const [kleinSchwelle, setKleinSchwelle] = useState(200)
+  const [kleinBezeichnung, setKleinBezeichnung] = useState('Kleinmaterial und Verbrauchsmaterial')
   const [eRechnungAktiv, setERechnungAktiv] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -71,6 +76,13 @@ export default function EinstellungenPage() {
         setMaterialpreisHinweis(data.materialpreis_hinweis_aktiv ?? false)
         setMindestauftragswert(data.mindestauftragswert ?? 0)
         setERechnungAktiv(data.e_rechnung_aktiv !== false)
+        // Kleinmaterial: Betriebs-Config oder Gewerk-Default
+        const gewerkDefault = KLEINMATERIAL_CONFIG[(data.gewerke ?? [])[0] ?? ''] ?? { aktiv: true, betrag_eur: 25, schwelle_eur: 200, bezeichnung: 'Kleinmaterial und Verbrauchsmaterial' }
+        const kc = (data.kleinmaterial_config ?? null) as { aktiv?: boolean; betrag_eur?: number; schwelle_eur?: number; bezeichnung?: string } | null
+        setKleinAktiv(kc?.aktiv ?? gewerkDefault.aktiv)
+        setKleinBetrag(kc?.betrag_eur ?? gewerkDefault.betrag_eur)
+        setKleinSchwelle(kc?.schwelle_eur ?? gewerkDefault.schwelle_eur)
+        setKleinBezeichnung(kc?.bezeichnung ?? gewerkDefault.bezeichnung)
       }
     }
     load()
@@ -105,6 +117,12 @@ export default function EinstellungenPage() {
       materialpreis_hinweis_aktiv: materialpreisHinweis,
       mindestauftragswert: mindestauftragswert,
       e_rechnung_aktiv: eRechnungAktiv,
+      kleinmaterial_config: {
+        aktiv: kleinAktiv,
+        betrag_eur: kleinBetrag,
+        schwelle_eur: kleinSchwelle,
+        bezeichnung: kleinBezeichnung.trim() || 'Kleinmaterial und Verbrauchsmaterial',
+      },
     }).eq('user_id', user.id)
     setSaving(false)
     setSaved(true)
@@ -499,6 +517,69 @@ export default function EinstellungenPage() {
             <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1.5">
               Kein Aufschlag — Standardpreise ohne Regionalanpassung.
             </p>
+          )}
+        </Card>
+
+        {/* Kleinmaterial-Pauschale */}
+        <Card icon={<Wrench size={16} />} title="Kleinmaterial-Pauschale">
+          <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
+            Wird automatisch als Position ergänzt, wenn der Netto-Auftragswert über der Schwelle liegt — einmal pro Angebot.
+          </p>
+          <button type="button" onClick={() => setKleinAktiv(v => !v)}
+            className={`flex items-center gap-3 w-full rounded-xl border-2 px-3 py-3 transition-colors ${
+              kleinAktiv ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+            }`}>
+            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+              kleinAktiv ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'}`}>
+              {kleinAktiv && <Check size={11} color="#2C2C2C" strokeWidth={3} />}
+            </div>
+            <span className={`font-bold text-sm ${kleinAktiv ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>
+              Automatisch zum Angebot hinzufügen
+            </span>
+          </button>
+          {kleinAktiv && (
+            <>
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <Field label="Pauschale">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={kleinBetrag || ''}
+                      onChange={e => setKleinBetrag(Number(e.target.value) || 0)}
+                      min={0}
+                      step={5}
+                      className={inputCls}
+                    />
+                    <span className="font-bold text-[#2C2C2C]/50 shrink-0">€</span>
+                  </div>
+                </Field>
+                <Field label="Ab Auftragswert">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={kleinSchwelle || ''}
+                      onChange={e => setKleinSchwelle(Number(e.target.value) || 0)}
+                      min={0}
+                      step={50}
+                      className={inputCls}
+                    />
+                    <span className="font-bold text-[#2C2C2C]/50 shrink-0">€</span>
+                  </div>
+                </Field>
+              </div>
+              <Field label="Bezeichnung auf dem Angebot">
+                <input
+                  type="text"
+                  value={kleinBezeichnung}
+                  onChange={e => setKleinBezeichnung(e.target.value)}
+                  placeholder="Kleinmaterial und Verbrauchsmaterial"
+                  className={inputCls}
+                />
+              </Field>
+              <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
+                Beispiel: Ab {kleinSchwelle} € Auftragswert wird „{kleinBezeichnung.trim() || 'Kleinmaterial und Verbrauchsmaterial'}" mit {kleinBetrag} € netto ergänzt.
+              </p>
+            </>
           )}
         </Card>
 

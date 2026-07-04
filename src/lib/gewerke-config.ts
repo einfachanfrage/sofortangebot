@@ -74,11 +74,18 @@ export const KLEINMATERIAL_CONFIG: Record<string, KleinmaterialConfig> = {
 
 export function kleinmaterialPosition(
   gewerk: string | null | undefined,
-  summeNetto: number
+  summeNetto: number,
+  betriebsConfig?: Partial<KleinmaterialConfig> | null
 ): { title: string; description: string; quantity: number; unit: string; unit_price: number; kategorie: string } | null {
   if (!gewerk) return null
-  const cfg = KLEINMATERIAL_CONFIG[gewerk]
-  if (!cfg?.aktiv || summeNetto < cfg.schwelle_eur) return null
+  const basis = KLEINMATERIAL_CONFIG[gewerk]
+  if (!basis && !betriebsConfig) return null
+  // Betriebs-Einstellungen aus companies.kleinmaterial_config überschreiben die Gewerk-Defaults
+  const cfg: KleinmaterialConfig = {
+    ...(basis ?? { aktiv: true, schwelle_eur: 200, betrag_eur: 25, bezeichnung: 'Kleinmaterial und Verbrauchsmaterial' }),
+    ...(betriebsConfig ?? {}),
+  }
+  if (!cfg.aktiv || summeNetto < cfg.schwelle_eur) return null
   return {
     title: cfg.bezeichnung,
     description: '',
