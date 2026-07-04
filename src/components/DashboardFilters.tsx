@@ -14,7 +14,7 @@ interface DashboardFiltersProps {
 
 const PILLS = [
   { key: '',           label: 'Alle',           hasCount: false },
-  { key: 'entwurf',    label: 'In Bearbeitung', hasCount: true  },
+  { key: 'entwurf',    label: 'Entwurf',        hasCount: true  },
   { key: 'offen',      label: 'Offen',          hasCount: true  },
   { key: 'beauftragt', label: 'Beauftragt',     hasCount: true  },
   { key: 'abgelehnt',  label: 'Abgelehnt',      hasCount: true  },

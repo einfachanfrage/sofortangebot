@@ -71,7 +71,6 @@ export default async function DashboardPage({
 
   const monat = monatQuotes ?? []
   const monatUmsatz = monat.filter(q => q.status === 'accepted').reduce((s, q) => s + (q.total_gross ?? 0), 0)
-  const monatOffen = monat.filter(q => q.status === 'sent' || q.status === 'viewed').length
   const monatBeauftragt = monat.filter(q => q.status === 'accepted').length
 
   // Preisliste leer?
@@ -149,14 +148,15 @@ export default async function DashboardPage({
       <div className="px-5 pt-5">
         <div className="grid grid-cols-3 gap-3">
           {[
-            { value: fmt(monatUmsatz), label: 'Umsatz' },
-            { value: String(monatBeauftragt), label: 'Beauftragt' },
-            { value: String(monatOffen), label: 'Offen' },
+            { value: fmt(monatUmsatz), label: 'Umsatz · Monat', href: '/angebote?status=beauftragt' },
+            { value: String(monatBeauftragt), label: 'Beauftragt · Monat', href: '/angebote?status=beauftragt' },
+            { value: String(offeneGesamtCount), label: 'Offen', href: '/angebote?status=offen' },
           ].map(stat => (
-            <div key={stat.label} className="bg-white rounded-2xl px-4 py-3.5 border border-black/5">
+            <Link key={stat.label} href={stat.href}
+              className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
               <div className="font-syne font-black text-[#1A1A1A] text-lg leading-none truncate">{stat.value}</div>
-              <div className="text-[10px] font-bold text-[#888] mt-1.5 uppercase tracking-wide">{stat.label}</div>
-            </div>
+              <div className="text-[10px] font-bold text-[#888] mt-1.5 uppercase tracking-wide truncate">{stat.label}</div>
+            </Link>
           ))}
         </div>
       </div>
@@ -183,8 +183,13 @@ export default async function DashboardPage({
       {/* ── ANGEBOTSLISTE ────────────────────────────────────────────── */}
       {(recentQuotes ?? []).length > 0 && (
         <div className="px-5 mt-6 pb-32">
-          <div className="text-[10px] font-black text-[#888] uppercase tracking-widest mb-3">
-            Zuletzt erstellt
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-[10px] font-black text-[#888] uppercase tracking-widest">
+              Zuletzt erstellt
+            </div>
+            <Link href="/angebote" className="text-[11px] font-black text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70">
+              Alle →
+            </Link>
           </div>
           <div className="flex flex-col gap-3">
             {(recentQuotes ?? []).map((quote: Quote & { customer?: { name: string } | null; gewerk?: string; quote_items?: { title: string; position: number }[] }) => {

@@ -17,8 +17,8 @@ const STATUS_FILTER_MAP: Record<string, string[]> = {
 }
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  draft:          { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
-  in_bearbeitung: { label: 'In Bearbeitung', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
+  draft:          { label: 'Entwurf', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
+  in_bearbeitung: { label: 'Entwurf', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
   sent:           { label: 'Offen',          color: 'bg-blue-50 text-blue-700'          },
   viewed:         { label: 'Geöffnet',       color: 'bg-purple-50 text-purple-700'      },
   accepted:       { label: 'Beauftragt',     color: 'bg-[#EDFAF0] text-[#1A7A38]'     },
