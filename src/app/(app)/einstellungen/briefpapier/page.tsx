@@ -107,7 +107,7 @@ export default function BriefpapierUebersicht() {
         <h1 className="text-xl font-syne font-black text-white mt-1">Briefpapier & Design</h1>
       </div>
 
-      <div className="max-w-xl mx-auto px-4 pt-5 space-y-3">
+      <div className="max-w-xl mx-auto px-5 pt-5 space-y-3">
         {loading ? (
           <div className="text-center py-12 text-[#2C2C2C]/30 text-sm">Lädt…</div>
         ) : dbError ? (

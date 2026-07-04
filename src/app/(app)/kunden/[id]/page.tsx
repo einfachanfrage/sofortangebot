@@ -54,7 +54,7 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
         )}
       </div>
 
-      <div className="px-5 mt-5 flex flex-col gap-4">
+      <div className="px-5 md:px-8 mt-5 flex flex-col gap-4 max-w-xl mx-auto">
         {/* Kontakt */}
         {(customer.phone || customer.email) && (
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">

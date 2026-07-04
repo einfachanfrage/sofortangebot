@@ -167,6 +167,7 @@ export default function EinstellungenPage() {
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
+      <div className="md:max-w-5xl md:mx-auto">
       {/* Header */}
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-4">
         <div className="text-[#F5C400] md:text-[#2C2C2C] text-2xl font-syne font-black">Einstellungen</div>
@@ -312,7 +313,7 @@ export default function EinstellungenPage() {
 
         {/* Save Button */}
         <button type="submit" disabled={saving}
-          className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
             : saving ? 'Speichert…' : 'Speichern'
@@ -617,7 +618,7 @@ export default function EinstellungenPage() {
         </div>
 
         <button type="submit" disabled={saving}
-          className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full md:max-w-xs bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
             : saving ? 'Speichert…' : 'Speichern'
@@ -751,6 +752,7 @@ export default function EinstellungenPage() {
         </div>
       </div>
       )}
+      </div>
 
       {/* Daten-Export Bestätigung */}
       <ConfirmSheet

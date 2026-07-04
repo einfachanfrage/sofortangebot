@@ -227,7 +227,7 @@ export default function IntegrationenPage() {
         <div className="text-white/40 text-sm font-semibold mt-1">Einmal einrichten — danach per Knopfdruck übertragen</div>
       </div>
 
-      <div className="px-5 pt-5 flex flex-col gap-3">
+      <div className="px-5 pt-5 flex flex-col gap-3 max-w-xl mx-auto">
 
         {SOFTWARES.map(sw => {
           const connected = isConnected(sw)
@@ -330,7 +330,7 @@ export default function IntegrationenPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
         >
           {saved ? <><Check size={20} strokeWidth={3} /> Gespeichert</> : saving ? 'Speichert…' : 'Speichern'}
         </button>

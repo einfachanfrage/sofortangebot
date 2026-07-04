@@ -26,6 +26,7 @@ export default async function KundenPage() {
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
+      <div className="md:max-w-5xl md:mx-auto">
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
         <div>
           <div className="text-white md:text-[#2C2C2C] font-syne font-black text-2xl">Kunden</div>
@@ -86,6 +87,7 @@ export default async function KundenPage() {
             </Link>
           )
         })}
+      </div>
       </div>
 
       <BottomNav />

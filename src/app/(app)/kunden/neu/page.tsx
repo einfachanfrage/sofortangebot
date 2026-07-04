@@ -50,7 +50,7 @@ export default function NeuerKundePage() {
         <div className="text-white font-syne font-black text-xl mt-1">Neuer Kunde</div>
       </div>
 
-      <div className="px-5 md:px-8 pt-5 flex flex-col gap-4 max-w-lg">
+      <div className="px-5 md:px-8 pt-5 flex flex-col gap-4 max-w-xl mx-auto">
 
         <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 flex flex-col gap-3">
           <div>
@@ -123,7 +123,7 @@ export default function NeuerKundePage() {
         <button
           onClick={handleSave}
           disabled={saving || !name.trim()}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 disabled:opacity-40 transition-opacity"
+          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 disabled:opacity-40 transition-opacity"
         >
           {saving ? 'Speichert…' : 'Kunde anlegen'}
         </button>

@@ -176,7 +176,7 @@ export default function NummernPage() {
         <h1 className="text-xl font-syne font-black text-white mt-1">Angebotsnummern</h1>
       </div>
 
-      <div className="max-w-xl mx-auto px-4 pt-5 space-y-4">
+      <div className="max-w-xl mx-auto px-5 pt-5 space-y-4">
 
         {/* Tabs */}
         <div className="flex gap-1 bg-white rounded-2xl p-1 shadow-sm border border-[#2C2C2C]/5">

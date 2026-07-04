@@ -52,7 +52,7 @@ function saveState(s: ObState) {
 // ─── Shared styles ─────────────────────────────────────────────────────────
 const inputCls = 'w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3.5 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] transition-colors'
 const labelCls = 'block text-[11px] font-extrabold text-[#2C2C2C]/40 mb-1.5 uppercase tracking-widest'
-const btnPrimary = 'w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-lg rounded-xl py-4 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+const btnPrimary = 'w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-lg rounded-2xl py-4 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
 const btnBack = 'flex-1 bg-white border-2 border-[#2C2C2C]/15 text-[#2C2C2C] font-extrabold text-base rounded-xl py-4 active:scale-95 transition-transform'
 
 // ─── Progress Bar ──────────────────────────────────────────────────────────

@@ -157,7 +157,7 @@ export default function BriefpapierEditor() {
         </h1>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-5">
+      <div className="max-w-2xl mx-auto px-5 pt-5">
         {/* Live-Vorschau */}
         <div className="mb-5">
           <div className="text-[10px] font-bold text-[#2C2C2C]/30 mb-2 uppercase tracking-wider">Live-Vorschau</div>

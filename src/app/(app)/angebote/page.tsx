@@ -115,6 +115,7 @@ export default async function AngebotePage({
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-28">
+      <div className="md:max-w-5xl md:mx-auto">
       {/* Header */}
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
         <div className="font-syne font-black text-2xl text-white md:text-[#2C2C2C]">Angebote</div>
@@ -227,7 +228,7 @@ export default async function AngebotePage({
           </div>
         </div>
       )}
-
+      </div>
 
       <BottomNav />
     </div>
