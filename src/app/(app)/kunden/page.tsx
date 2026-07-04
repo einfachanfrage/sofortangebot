@@ -28,7 +28,7 @@ export default async function KundenPage() {
     <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
         <div>
-          <div className="text-white md:text-[#2C2C2C] font-black text-2xl">Kunden</div>
+          <div className="text-white md:text-[#2C2C2C] font-syne font-black text-2xl">Kunden</div>
           <div className="text-white/40 md:text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">
             {customers?.length ?? 0} Kunden gesamt
           </div>

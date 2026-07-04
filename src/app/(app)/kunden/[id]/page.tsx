@@ -48,7 +48,7 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
       <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
         <Link href="/kunden" className="text-white/50 text-sm font-semibold">← Kunden</Link>
-        <div className="text-white font-black text-xl mt-1">{customer.name}</div>
+        <div className="text-white font-syne font-black text-xl mt-1">{customer.name}</div>
         {customer.address && (
           <div className="text-white/40 text-sm font-semibold mt-0.5">{customer.address}</div>
         )}

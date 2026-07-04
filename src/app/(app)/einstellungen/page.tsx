@@ -12,6 +12,7 @@ import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
 import { PushBanner } from '@/components/PushBanner'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 export default function EinstellungenPage() {
   const [activeTab, setActiveTab] = useState<'betrieb' | 'angebote' | 'app'>('betrieb')
@@ -42,6 +43,8 @@ export default function EinstellungenPage() {
   const [logoError, setLogoError] = useState('')
   const logoInputRef = useRef<HTMLInputElement>(null)
   const [showPwaSheet, setShowPwaSheet] = useState(false)
+  const [showExportSheet, setShowExportSheet] = useState(false)
+  const [exportToast, setExportToast] = useState(false)
   const [showPushBanner, setShowPushBanner] = useState(false)
   const [pushPermission, setPushPermission] = useState<NotificationPermission | 'unsupported'>('default')
   const [isStandalone, setIsStandalone] = useState(false)
@@ -165,7 +168,7 @@ export default function EinstellungenPage() {
     <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
       {/* Header */}
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-4">
-        <div className="text-[#F5C400] md:text-[#2C2C2C] text-2xl font-black">Einstellungen</div>
+        <div className="text-[#F5C400] md:text-[#2C2C2C] text-2xl font-syne font-black">Einstellungen</div>
       </div>
 
       {/* Tabs */}
@@ -737,12 +740,7 @@ export default function EinstellungenPage() {
           </button>
           <button
             type="button"
-            onClick={async () => {
-              if (confirm('Daten-Export per E-Mail senden?')) {
-                await fetch('/api/account/export', { method: 'POST' })
-                alert('Export wird vorbereitet und per E-Mail gesendet.')
-              }
-            }}
+            onClick={() => setShowExportSheet(true)}
             className="flex items-center gap-2 text-[#2C2C2C]/50 font-bold text-sm py-3 hover:text-[#2C2C2C] transition-colors"
           >
             <Download size={16} />
@@ -751,6 +749,26 @@ export default function EinstellungenPage() {
           <AccountDeleteModal />
         </div>
       </div>
+      )}
+
+      {/* Daten-Export Bestätigung */}
+      <ConfirmSheet
+        open={showExportSheet}
+        title="Daten exportieren?"
+        text="Wir bereiten einen Export all deiner Daten vor und senden ihn an deine E-Mail-Adresse."
+        confirmLabel="Export anfordern"
+        onConfirm={async () => {
+          setShowExportSheet(false)
+          await fetch('/api/account/export', { method: 'POST' })
+          setExportToast(true)
+          setTimeout(() => setExportToast(false), 4000)
+        }}
+        onCancel={() => setShowExportSheet(false)}
+      />
+      {exportToast && (
+        <div className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-50 bg-[#2C2C2C] text-white font-extrabold text-sm px-5 py-3 rounded-full shadow-xl">
+          Export wird per E-Mail gesendet ✓
+        </div>
       )}
 
       {/* PWA / Push overlays — always mounted */}

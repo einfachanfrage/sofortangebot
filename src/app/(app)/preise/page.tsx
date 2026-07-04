@@ -415,7 +415,7 @@ export default function PreisePage() {
             </button>
           </div>
         )}
-        <div className="text-white font-black text-xl mt-2 mb-3">
+        <div className="text-white font-syne font-black text-xl mt-2 mb-3">
           {selectedGewerk
             ? `${GEWERK_META[selectedGewerk]?.emoji ?? ''} ${GEWERK_META[selectedGewerk]?.label ?? selectedGewerk}`
             : 'Preisdatenbank'}
@@ -544,7 +544,7 @@ export default function PreisePage() {
         {/* Header */}
         <div className="px-4 pt-5 pb-3 border-b border-[#2C2C2C]/8">
           <Link href="/einstellungen" className="text-xs font-bold text-[#2C2C2C]/35 hover:text-[#2C2C2C]/60">← Einstellungen</Link>
-          <div className="font-black text-[#2C2C2C] text-base mt-1">Preisdatenbank</div>
+          <div className="font-syne font-black text-[#2C2C2C] text-base mt-1">Preisdatenbank</div>
           <div className="text-xs text-[#2C2C2C]/35 font-semibold">{items.length} Positionen</div>
         </div>
         {/* Search */}

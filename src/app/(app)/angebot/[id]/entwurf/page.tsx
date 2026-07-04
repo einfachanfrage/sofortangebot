@@ -446,7 +446,7 @@ export default function EntwurfPage() {
       setRecordingDauer(0)
       dauerTimerRef.current = setInterval(() => setRecordingDauer(d => d + 1), 1000)
     } catch {
-      alert('Mikrofon-Zugriff nicht möglich.')
+      setFehler('Mikrofon-Zugriff nicht möglich. Bitte in den Browser-Einstellungen erlauben.')
     }
   }, [])
 

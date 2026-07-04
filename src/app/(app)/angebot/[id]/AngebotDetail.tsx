@@ -21,6 +21,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -290,6 +291,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showEmail, setShowEmail] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [showDeleteSheet, setShowDeleteSheet] = useState(false)
   const [toast, setToast] = useState('')
   const [editMode, setEditMode] = useState(DRAFT_STATUSES.includes(quote.status))
   const [editItems, setEditItems] = useState<EditItem[]>(quote.items)
@@ -746,7 +748,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   async function handleDelete() {
-    if (!confirm('Angebot wirklich löschen?')) return
+    setShowDeleteSheet(false)
     setDeleting(true)
     await supabase.from('quotes').delete().eq('id', quote.id)
     router.push('/angebote')
@@ -921,7 +923,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         <Link href="/angebote" className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold">← Angebote</Link>
         <div className="flex items-center justify-between mt-1 pb-4">
           <div>
-            <div className="text-white md:text-[#2C2C2C] font-black text-xl flex items-center gap-2 flex-wrap">
+            <div className="text-white md:text-[#2C2C2C] font-syne font-black text-xl flex items-center gap-2 flex-wrap">
               Angebot {quoteNumber}
               {(quote.revision ?? 1) > 1 && (
                 <span className="text-xs font-bold bg-amber-400 text-[#2C2C2C] rounded-full px-2 py-0.5">
@@ -1544,7 +1546,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
                 {/* ── LÖSCHEN ──────────────────────────────────── */}
                 <div className="border-t border-[#EEEEEE] pt-2">
-                  <button onClick={handleDelete} disabled={deleting}
+                  <button onClick={() => setShowDeleteSheet(true)} disabled={deleting}
                     className="flex items-center justify-center gap-2 w-full text-red-400 font-semibold text-sm py-2 hover:text-red-600 transition-colors">
                     <Trash2 size={14} />{deleting ? 'Wird gelöscht...' : 'Angebot löschen'}
                   </button>
@@ -1744,6 +1746,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           }}
         />
       )}
+
+      <ConfirmSheet
+        open={showDeleteSheet}
+        title="Angebot löschen?"
+        text="Das Angebot wird endgültig gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
+        confirmLabel="Löschen"
+        destructive
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteSheet(false)}
+      />
     </div>
   )
 }

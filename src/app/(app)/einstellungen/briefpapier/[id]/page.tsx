@@ -152,7 +152,7 @@ export default function BriefpapierEditor() {
       {/* Header */}
       <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4">
         <Link href="/einstellungen/briefpapier" className="text-[#2C2C2C]/40 text-sm font-semibold">← Briefpapier</Link>
-        <h1 className="text-lg font-black text-[#2C2C2C] mt-1">
+        <h1 className="text-lg font-syne font-black text-[#2C2C2C] mt-1">
           {bp.name || 'Briefpapier bearbeiten'}
         </h1>
       </div>

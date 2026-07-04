@@ -223,7 +223,7 @@ export default function IntegrationenPage() {
     <div className="min-h-dvh bg-[#F7F7F5] pb-16">
       <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
         <Link href="/einstellungen" className="text-white/50 text-sm font-semibold">← Einstellungen</Link>
-        <div className="text-white font-black text-xl mt-1">Buchhaltung verbinden</div>
+        <div className="text-white font-syne font-black text-xl mt-1">Buchhaltung verbinden</div>
         <div className="text-white/40 text-sm font-semibold mt-1">Einmal einrichten — danach per Knopfdruck übertragen</div>
       </div>
 

@@ -173,7 +173,7 @@ export default function NummernPage() {
       {/* Header */}
       <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4">
         <Link href="/einstellungen" className="text-[#2C2C2C]/40 text-sm font-semibold">← Einstellungen</Link>
-        <h1 className="text-lg font-black text-[#2C2C2C] mt-1">Angebotsnummern</h1>
+        <h1 className="text-lg font-syne font-black text-[#2C2C2C] mt-1">Angebotsnummern</h1>
       </div>
 
       <div className="max-w-xl mx-auto px-4 pt-5 space-y-4">
