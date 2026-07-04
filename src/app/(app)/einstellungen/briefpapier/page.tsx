@@ -102,9 +102,9 @@ export default function BriefpapierUebersicht() {
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
-      <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4">
-        <Link href="/einstellungen" className="text-[#2C2C2C]/40 text-sm font-semibold">← Einstellungen</Link>
-        <h1 className="text-lg font-syne font-black text-[#2C2C2C] mt-1">Briefpapier & Design</h1>
+      <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+        <Link href="/einstellungen" className="text-white/50 text-sm font-semibold">← Einstellungen</Link>
+        <h1 className="text-xl font-syne font-black text-white mt-1">Briefpapier & Design</h1>
       </div>
 
       <div className="max-w-xl mx-auto px-4 pt-5 space-y-3">

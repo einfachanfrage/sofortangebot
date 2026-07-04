@@ -116,13 +116,13 @@ export default async function AngebotePage({
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-28">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-[#F7F7F5] px-5 pt-safe-top pt-4 pb-3 flex items-center justify-between">
-        <span className="font-syne font-black text-[#2C2C2C] text-xl">Angebote</span>
+      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
+        <div className="font-syne font-black text-2xl text-white md:text-[#2C2C2C]">Angebote</div>
         <Link
           href="/angebot/neu"
-          className="flex items-center gap-1.5 bg-[#F5C400] text-[#2C2C2C] font-black text-xs rounded-xl px-3.5 py-2"
+          className="flex items-center gap-1.5 bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-4 py-2 mt-1"
         >
-          <Mic size={13} strokeWidth={2.5} />
+          <Mic size={14} strokeWidth={2.5} />
           Neu
         </Link>
       </div>
