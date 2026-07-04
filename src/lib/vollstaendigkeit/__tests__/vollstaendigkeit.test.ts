@@ -81,7 +81,8 @@ describe('maler – sockelleisten kategorisierung', () => {
     const t = 'Sockelleisten lackieren, 18 lfm.'
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], t)
     const lacks = positionen.filter(p => p.beschreibung.toLowerCase().includes('sockelleisten lack'))
-    expect(lacks).toHaveLength(2) // 1. + 2. Anstrich
+    expect(lacks).toHaveLength(1) // zusammengefasst als "2× Anstrich"
+    expect(lacks[0].beschreibung).toContain('2× Anstrich')
     expect(lacks[0].menge).toBe(18)
   })
 })
@@ -93,14 +94,14 @@ describe('maler – fenster lackieren', () => {
     const t = '8 Holzfenster außen streichen.'
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], t, { fensterAnzahl: 8 })
     const fensterPos = positionen.filter(p => p.beschreibung.toLowerCase().includes('fenster'))
-    expect(fensterPos.length).toBeGreaterThanOrEqual(4) // abschleifen, grundieren, 1. Anstrich, 2. Anstrich
+    expect(fensterPos.length).toBeGreaterThanOrEqual(3) // abschleifen, grundieren, Lack (2× Anstrich)
     expect(fensterPos[0].menge).toBe(8)
   })
 
   it('2-seitig verdoppelt Anstrich-Menge', () => {
     const t = '4 Fenster beidseitig lackieren.'
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], t)
-    const anstrich = positionen.find(p => p.beschreibung.toLowerCase().includes('1. anstrich'))
+    const anstrich = positionen.find(p => p.beschreibung.toLowerCase().includes('2× anstrich'))
     expect(anstrich?.menge).toBe(8) // 4 × 2 Seiten
   })
 })
