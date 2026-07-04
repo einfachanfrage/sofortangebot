@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAIClient, WHISPER_MODEL, CHAT_MODEL_FAST } from '@/lib/ai-client'
+import { pruefeKIZugriff } from '@/lib/rate-limiter'
 
 export const maxDuration = 60
 
@@ -9,6 +10,9 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+
+  const blocked = await pruefeKIZugriff(user.id, 'ki_transkription')
+  if (blocked) return blocked
 
   const { aufnahme_id } = await req.json()
   if (!aufnahme_id) return NextResponse.json({ error: 'aufnahme_id fehlt' }, { status: 400 })

@@ -87,6 +87,10 @@ export async function POST(req: NextRequest) {
 
   if (!extRes.ok) {
     const err = await extRes.json().catch(() => ({})) as { error?: string }
+    // Rate-Limit / Budget-Meldung unverändert durchreichen
+    if (extRes.status === 429) {
+      return NextResponse.json({ error: err.error ?? 'Zu viele Anfragen' }, { status: 429 })
+    }
     return NextResponse.json({ error: `Extraktion fehlgeschlagen: ${err.error ?? extRes.status}` }, { status: 500 })
   }
 
@@ -144,6 +148,10 @@ export async function POST(req: NextRequest) {
   })
 
   if (!genRes.ok) {
+    if (genRes.status === 429) {
+      const err = await genRes.json().catch(() => ({})) as { error?: string }
+      return NextResponse.json({ error: err.error ?? 'Zu viele Anfragen' }, { status: 429 })
+    }
     return NextResponse.json({ error: `Preisberechnung fehlgeschlagen: ${genRes.status}` }, { status: 500 })
   }
 

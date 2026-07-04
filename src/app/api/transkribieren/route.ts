@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { pruefeKIZugriff } from '@/lib/rate-limiter'
 
 export const maxDuration = 60
 
@@ -7,6 +8,9 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+
+  const blocked = await pruefeKIZugriff(session.user.id, 'ki_transkription')
+  if (blocked) return blocked
 
   const formData = await req.formData()
   const audioFile = formData.get('audio') as File | null

@@ -12,6 +12,7 @@ import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfr
 import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
 import { pruefeUndErgaenzeVollstaendigkeit } from '@/lib/mengen/vollstaendigkeits-check'
 import { repariereDuplikatMasse, repariereDuplikatNamen } from '@/lib/mengen/mehrraum-reparatur'
+import { pruefeKIZugriff } from '@/lib/rate-limiter'
 
 export const maxDuration = 60
 
@@ -29,6 +30,9 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+
+  const blocked = await pruefeKIZugriff(session.user.id, 'ki_extraktion')
+  if (blocked) return blocked
 
   const { text } = await req.json() as { text: string }
   if (!text?.trim()) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })

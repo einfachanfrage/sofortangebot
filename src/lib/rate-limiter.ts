@@ -161,6 +161,41 @@ export async function trackKIUsage(params: {
   }
 }
 
+/**
+ * Kombinierter Check für KI-Routen: Plan laden → Rate-Limit → Tagesbudget.
+ * Gibt eine fertige 429-Response zurück wenn blockiert, sonst null.
+ */
+export async function pruefeKIZugriff(
+  userId: string,
+  endpunkt: RateLimitEndpunkt
+): Promise<Response | null> {
+  let plan = 'starter'
+  try {
+    const service = getService()
+    const { data: company } = await service
+      .from('companies')
+      .select('plan')
+      .eq('user_id', userId)
+      .single()
+    plan = (company as { plan?: string } | null)?.plan ?? 'starter'
+  } catch {
+    // Plan-Lookup-Fehler → konservativ als Free behandeln
+  }
+
+  const rlCheck = await checkUserRateLimit(userId, endpunkt, plan)
+  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
+
+  const budgetCheck = await checkKIBudget(userId)
+  if (!budgetCheck.allowed) {
+    return Response.json(
+      { error: 'KI-Tageslimit erreicht. Morgen geht\'s weiter.', isKIBudget: true },
+      { status: 429, headers: { 'Retry-After': '3600' } }
+    )
+  }
+
+  return null
+}
+
 export function rateLimitResponse(result: RateLimitResult) {
   return Response.json(
     { error: result.message ?? 'Zu viele Anfragen', reset_at: result.resetAt, isFreePlanLimit: result.isFreePlanLimit },
