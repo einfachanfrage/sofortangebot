@@ -7,6 +7,7 @@ import Link from 'next/link'
 import type { Nummernkreis, VergebeneNummer } from '@/lib/types'
 import { Download, Info } from 'lucide-react'
 import BottomNav from '@/components/BottomNav'
+import { Input } from '@/components/Input'
 
 type Typ = 'angebot' | 'rechnung'
 
@@ -203,12 +204,11 @@ export default function NummernPage() {
           {/* Kürzel */}
           <div className="px-5 py-4">
             <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5">Kürzel (Präfix)</label>
-            <input
+            <Input
               value={f.prefix ?? ''}
               onChange={e => setField('prefix', e.target.value.slice(0, 5).toUpperCase())}
               placeholder="AG"
               maxLength={5}
-              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-2.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#F5C400]/50"
             />
             <p className="text-[10px] text-[#2C2C2C]/30 mt-1">Leer lassen wenn kein Kürzel gewünscht</p>
           </div>
@@ -263,12 +263,11 @@ export default function NummernPage() {
           {/* Startnummer */}
           <div className="px-5 py-4">
             <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5">Nächste Nummer</label>
-            <input
+            <Input
               type="number"
               min={1}
               value={f.naechste_nummer ?? 1}
               onChange={e => setField('naechste_nummer', parseInt(e.target.value) || 1)}
-              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-2.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#F5C400]/50"
             />
             <p className="text-[10px] text-[#2C2C2C]/30 mt-1">Nur ändern wenn du vorherige Angebote übernehmen willst</p>
             {warning && (

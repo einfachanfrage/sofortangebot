@@ -6,6 +6,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import type { Briefpapier, Company } from '@/lib/types'
 import { Upload } from 'lucide-react'
+import { Input } from '@/components/Input'
 
 const FARB_CHIPS = ['#F5C400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
 const SCHRIFTEN = [
@@ -168,10 +169,9 @@ export default function BriefpapierEditor() {
           {/* Name */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4">
             <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5">Name dieser Variante</label>
-            <input
+            <Input
               value={bp.name ?? ''}
               onChange={e => setField('name', e.target.value)}
-              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-2.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#F5C400]/50"
             />
           </div>
 
@@ -190,11 +190,10 @@ export default function BriefpapierEditor() {
             ].map(({ label, field, placeholder }) => (
               <div key={field}>
                 <label className="block text-[10px] font-bold text-[#2C2C2C]/40 mb-1">{label}</label>
-                <input
+                <Input
                   value={(bp[field] as string) ?? ''}
                   onChange={e => setField(field, e.target.value)}
                   placeholder={placeholder}
-                  className="w-full bg-[#F7F7F5] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C400]/50"
                 />
               </div>
             ))}
@@ -297,11 +296,10 @@ export default function BriefpapierEditor() {
             ].map(({ label, field }) => (
               <div key={field}>
                 <label className="block text-[10px] font-bold text-[#2C2C2C]/40 mb-1">{label}</label>
-                <input
+                <Input
                   value={(bp[field] as string) ?? ''}
                   onChange={e => setField(field, e.target.value)}
                   placeholder={`Fußzeile ${label.toLowerCase()}`}
-                  className="w-full bg-[#F7F7F5] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C400]/50"
                 />
               </div>
             ))}

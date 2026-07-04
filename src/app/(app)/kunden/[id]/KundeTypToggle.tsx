@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Input } from '@/components/Input'
 
 interface Props {
   kundeId: string
@@ -68,24 +69,22 @@ export function KundeTypToggle({ kundeId, istUnternehmen, ustid, leitwegId }: Pr
             <label className="block text-xs font-black text-[#2C2C2C]/40 mb-1 uppercase tracking-wide">
               USt-IdNr. (optional)
             </label>
-            <input
+            <Input
               value={ustidVal}
               onChange={e => setUstidVal(e.target.value)}
               onBlur={() => save()}
               placeholder="DE123456789"
-              className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm text-[#2C2C2C] font-semibold focus:outline-none focus:border-[#F5C400]"
             />
           </div>
           <div>
             <label className="block text-xs font-black text-[#2C2C2C]/40 mb-1 uppercase tracking-wide">
               Leitweg-ID (nur öffentliche Auftraggeber)
             </label>
-            <input
+            <Input
               value={leitwegVal}
               onChange={e => setLeitwegVal(e.target.value)}
               onBlur={() => save()}
               placeholder="991-12345678-06"
-              className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm text-[#2C2C2C] font-semibold focus:outline-none focus:border-[#F5C400]"
             />
           </div>
           {saved && (

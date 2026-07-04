@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Eye, EyeOff, Check, ChevronDown, ChevronUp } from 'lucide-react'
+import { Input } from '@/components/Input'
 
 interface Keys {
   lexware_api_key: string
@@ -284,12 +285,12 @@ export default function IntegrationenPage() {
                         <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5 uppercase tracking-wide">{field.label}</label>
 
                         <div className="relative">
-                          <input
+                          <Input
                             type={showKey[field.key] ? 'text' : 'password'}
                             value={keys[field.key]}
                             onChange={e => setKeys(prev => ({ ...prev, [field.key]: e.target.value }))}
                             placeholder={field.placeholder}
-                            className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400] pr-12"
+                            className="pr-12"
                           />
                           <button
                             type="button"

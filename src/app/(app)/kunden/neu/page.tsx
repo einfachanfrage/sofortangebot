@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
+import { Input, Textarea } from '@/components/Input'
 
 export default function NeuerKundePage() {
   const router = useRouter()
@@ -55,42 +56,38 @@ export default function NeuerKundePage() {
         <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 flex flex-col gap-3">
           <div>
             <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Name *</label>
-            <input
+            <Input
               autoFocus
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Max Mustermann"
-              className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#F5C400]"
             />
           </div>
           <div>
             <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Adresse</label>
-            <textarea
+            <Textarea
               value={address}
               onChange={e => setAddress(e.target.value)}
               placeholder={"Musterstraße 1\n12345 Musterstadt"}
               rows={2}
-              className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#F5C400] resize-none"
             />
           </div>
           <div>
             <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Telefon</label>
-            <input
+            <Input
               type="tel"
               value={phone}
               onChange={e => setPhone(e.target.value)}
               placeholder="+49 170 1234567"
-              className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#F5C400]"
             />
           </div>
           <div>
             <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">E-Mail</label>
-            <input
+            <Input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="max@beispiel.de"
-              className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#F5C400]"
             />
           </div>
         </div>
@@ -108,11 +105,10 @@ export default function NeuerKundePage() {
           {istUnternehmen && (
             <div>
               <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">USt-IdNr.</label>
-              <input
+              <Input
                 value={ustid}
                 onChange={e => setUstid(e.target.value)}
                 placeholder="DE123456789"
-                className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#F5C400]"
               />
             </div>
           )}

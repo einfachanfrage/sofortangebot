@@ -14,6 +14,7 @@ import { PwaBottomSheet } from '@/components/PwaBottomSheet'
 import { PushBanner } from '@/components/PushBanner'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Toast } from '@/components/Toast'
+import { Input, Textarea } from '@/components/Input'
 
 export default function EinstellungenPage() {
   const [activeTab, setActiveTab] = useState<'betrieb' | 'angebote' | 'app'>('betrieb')
@@ -203,32 +204,32 @@ export default function EinstellungenPage() {
           {/* Betrieb */}
           <Card icon={<Building2 size={16} />} title="Betrieb">
             <Field label="Firmenname">
-              <input value={name} onChange={e => setName(e.target.value)}
-                className={inputCls} placeholder="Malerbetrieb Müller" />
+              <Input value={name} onChange={e => setName(e.target.value)}
+                placeholder="Malerbetrieb Müller" />
             </Field>
             <Field label="Adresse">
-              <textarea value={address} onChange={e => setAddress(e.target.value)}
-                rows={3} className={`${inputCls} resize-none`}
+              <Textarea value={address} onChange={e => setAddress(e.target.value)}
+                rows={3}
                 placeholder={'Musterstraße 1\n12345 Musterstadt'} />
             </Field>
             <Field label="Steuernummer">
-              <input value={taxNumber} onChange={e => setTaxNumber(e.target.value)}
-                className={inputCls} placeholder="12/345/67890" />
+              <Input value={taxNumber} onChange={e => setTaxNumber(e.target.value)}
+                placeholder="12/345/67890" />
             </Field>
             <Field label="USt-IdNr. (optional)">
-              <input value={ustId} onChange={e => setUstId(e.target.value)}
-                className={inputCls} placeholder="DE123456789" />
+              <Input value={ustId} onChange={e => setUstId(e.target.value)}
+                placeholder="DE123456789" />
               <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1">
                 Falls vorhanden, erscheint die USt-ID statt der Steuernummer auf dem Angebot.
               </p>
             </Field>
             <Field label="IBAN">
-              <input value={iban} onChange={e => setIban(e.target.value)}
-                className={inputCls} placeholder="DE89 3704 0044 0532 0130 00" />
+              <Input value={iban} onChange={e => setIban(e.target.value)}
+                placeholder="DE89 3704 0044 0532 0130 00" />
             </Field>
             <Field label="Link zu deinen AGB (optional)">
-              <input value={agbUrl} onChange={e => setAgbUrl(e.target.value)}
-                className={inputCls} placeholder="https://meinewebseite.de/agb" type="url" />
+              <Input value={agbUrl} onChange={e => setAgbUrl(e.target.value)}
+                placeholder="https://meinewebseite.de/agb" type="url" />
               <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1">
                 Wenn hinterlegt, müssen Kunden deinen AGB beim Unterschreiben zustimmen.
               </p>
@@ -411,14 +412,13 @@ export default function EinstellungenPage() {
             </Field>
             <Field label="Mindestauftragswert">
               <div className="flex items-center gap-2">
-                <input
+                <Input
                   type="number"
                   value={mindestauftragswert || ''}
                   onChange={e => setMindestauftragswert(Number(e.target.value) || 0)}
                   placeholder="0"
                   min={0}
                   step={10}
-                  className={inputCls}
                 />
                 <span className="font-bold text-[#2C2C2C]/50 shrink-0">€ netto</span>
               </div>
@@ -549,38 +549,35 @@ export default function EinstellungenPage() {
               <div className="grid grid-cols-2 gap-3 mt-3">
                 <Field label="Pauschale">
                   <div className="flex items-center gap-2">
-                    <input
+                    <Input
                       type="number"
                       value={kleinBetrag || ''}
                       onChange={e => setKleinBetrag(Number(e.target.value) || 0)}
                       min={0}
                       step={5}
-                      className={inputCls}
                     />
                     <span className="font-bold text-[#2C2C2C]/50 shrink-0">€</span>
                   </div>
                 </Field>
                 <Field label="Ab Auftragswert">
                   <div className="flex items-center gap-2">
-                    <input
+                    <Input
                       type="number"
                       value={kleinSchwelle || ''}
                       onChange={e => setKleinSchwelle(Number(e.target.value) || 0)}
                       min={0}
                       step={50}
-                      className={inputCls}
                     />
                     <span className="font-bold text-[#2C2C2C]/50 shrink-0">€</span>
                   </div>
                 </Field>
               </div>
               <Field label="Bezeichnung auf dem Angebot">
-                <input
+                <Input
                   type="text"
                   value={kleinBezeichnung}
                   onChange={e => setKleinBezeichnung(e.target.value)}
                   placeholder="Kleinmaterial und Verbrauchsmaterial"
-                  className={inputCls}
                 />
               </Field>
               <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5">
@@ -783,8 +780,6 @@ export default function EinstellungenPage() {
     </div>
   )
 }
-
-const inputCls = "w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] transition-colors"
 
 function Card({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
