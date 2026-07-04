@@ -145,8 +145,8 @@ export default async function AngebotePage({
       {filteredQuotes.length === 0 && !q && (
         <div className="px-5 mt-4">
           <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 px-6 py-10 text-center">
-            <div className="font-black text-[#1A1A1A] text-[16px]">{emptyText.title}</div>
-            <div className="text-[13px] font-semibold mt-1" style={{ color: '#888888' }}>{emptyText.sub}</div>
+            <div className="font-black text-[#2C2C2C] text-[16px]">{emptyText.title}</div>
+            <div className="text-[13px] font-semibold mt-1 text-[#2C2C2C]/50">{emptyText.sub}</div>
             {emptyText.showCta && (
               <Link
                 href="/angebot/neu"
@@ -164,8 +164,8 @@ export default async function AngebotePage({
       {filteredQuotes.length === 0 && q && (
         <div className="px-5 mt-4">
           <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
-            <div className="font-black text-[#1A1A1A] text-[16px]">Kein Treffer.</div>
-            <div className="text-[13px] font-semibold mt-1" style={{ color: '#888888' }}>Anderen Suchbegriff versuchen.</div>
+            <div className="font-black text-[#2C2C2C] text-[16px]">Kein Treffer.</div>
+            <div className="text-[13px] font-semibold mt-1 text-[#2C2C2C]/50">Anderen Suchbegriff versuchen.</div>
           </div>
         </div>
       )}

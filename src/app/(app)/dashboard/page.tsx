@@ -158,8 +158,8 @@ export default async function DashboardPage({
           ].map(stat => (
             <Link key={stat.label} href={stat.href}
               className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
-              <div className="font-syne font-black text-[#1A1A1A] text-lg leading-none truncate">{stat.value}</div>
-              <div className="text-[10px] font-bold text-[#888] mt-1.5 uppercase tracking-wide truncate">{stat.label}</div>
+              <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none truncate">{stat.value}</div>
+              <div className="text-[10px] font-bold text-[#2C2C2C]/50 mt-1.5 uppercase tracking-wide truncate">{stat.label}</div>
             </Link>
           ))}
         </div>
@@ -188,7 +188,7 @@ export default async function DashboardPage({
       {(recentQuotes ?? []).length > 0 && (
         <div className="px-5 mt-6 pb-32 md:px-0 md:mt-8 md:pb-4">
           <div className="flex items-center justify-between mb-3">
-            <div className="text-[10px] font-black text-[#888] uppercase tracking-widest">
+            <div className="text-[10px] font-black text-[#2C2C2C]/50 uppercase tracking-widest">
               Zuletzt erstellt
             </div>
             <Link href="/angebote" className="text-[11px] font-black text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70">
@@ -217,8 +217,8 @@ export default async function DashboardPage({
       {(recentQuotes ?? []).length === 0 && (
         <div className="px-5 mt-6 pb-32 md:px-0 md:mt-8 md:pb-4">
           <div className="bg-white rounded-2xl border border-black/5 p-8 text-center">
-            <div className="font-black text-[#1A1A1A] text-base">Noch keine Angebote.</div>
-            <div className="text-[#888] text-sm font-semibold mt-1">Tippe oben auf „Aufmaß starten".</div>
+            <div className="font-black text-[#2C2C2C] text-base">Noch keine Angebote.</div>
+            <div className="text-[#2C2C2C]/50 text-sm font-semibold mt-1">Tippe oben auf „Aufmaß starten".</div>
           </div>
         </div>
       )}
