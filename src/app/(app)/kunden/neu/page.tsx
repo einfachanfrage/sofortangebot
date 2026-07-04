@@ -5,14 +5,16 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
-import { Input, Textarea } from '@/components/Input'
+import { Input } from '@/components/Input'
+import { AddressFields } from '@/components/AddressFields'
+import { EMPTY_ADDRESS, composeAddress, type AddressValue } from '@/lib/address'
 
 export default function NeuerKundePage() {
   const router = useRouter()
   const supabase = createClient()
 
   const [name, setName] = useState('')
-  const [address, setAddress] = useState('')
+  const [adresse, setAdresse] = useState<AddressValue>(EMPTY_ADDRESS)
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [istUnternehmen, setIstUnternehmen] = useState(false)
@@ -32,7 +34,7 @@ export default function NeuerKundePage() {
     const { data, error: err } = await supabase.from('customers').insert({
       company_id: company.id,
       name: name.trim(),
-      address: address.trim() || null,
+      address: composeAddress(adresse) || null,
       phone: phone.trim() || null,
       email: email.trim() || null,
       ist_unternehmen: istUnternehmen,
@@ -65,12 +67,7 @@ export default function NeuerKundePage() {
           </div>
           <div>
             <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Adresse</label>
-            <Textarea
-              value={address}
-              onChange={e => setAddress(e.target.value)}
-              placeholder={"Musterstraße 1\n12345 Musterstadt"}
-              rows={2}
-            />
+            <AddressFields value={adresse} onChange={setAdresse} />
           </div>
           <div>
             <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Telefon</label>

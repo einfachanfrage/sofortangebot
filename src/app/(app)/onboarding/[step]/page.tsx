@@ -16,6 +16,7 @@ import { DEFAULT_PRICES } from '@/lib/default-prices'
 import { DEFAULT_EMPFEHLUNGEN } from '@/lib/empfehlungen-defaults'
 import { getPreisvorlagenForGewerke, type PreisVorlage } from '@/lib/preise-vorlagen'
 import type { AccountingSoftware } from '@/lib/types'
+import { composeAddress } from '@/lib/address'
 
 // ─── Storage ───────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'sofortangebot_onboarding'
@@ -25,14 +26,14 @@ type PreisMode = 'markt' | 'manuell' | null
 interface PriceEntry { category: string; title: string; unit: string; unit_price: string }
 
 interface ObState {
-  name: string; address: string; phone: string; email: string; showContact: boolean
+  name: string; strasse: string; plz: string; ort: string; phone: string; email: string; showContact: boolean
   gewerke: string[]; vatRate: 19 | 7 | 0 | null; paymentDays: number; agbUrl: string
   preisMode: PreisMode; preisEntries: PriceEntry[]
   logoUrl: string | null; accounting: AccountingSoftware; apiKey: string
 }
 
 const DEFAULT_STATE: ObState = {
-  name: '', address: '', phone: '', email: '', showContact: false,
+  name: '', strasse: '', plz: '', ort: '', phone: '', email: '', showContact: false,
   gewerke: [], vatRate: null, paymentDays: 14, agbUrl: '',
   preisMode: null, preisEntries: [], logoUrl: null, accounting: 'none', apiKey: '',
 }
@@ -57,10 +58,10 @@ const btnBack = 'flex-1 bg-white border-2 border-[#2C2C2C]/15 text-[#2C2C2C] fon
 
 // ─── Progress Bar ──────────────────────────────────────────────────────────
 function ProgressBar({ step }: { step: number }) {
-  const filled = step - 1 // step 2→1 filled, step 7→6 filled
+  const filled = step - 1 // Schritte 2–7 zeigen die Leiste: step 2→1/6, step 7→6/6
   return (
     <div className="flex gap-1.5 mb-8">
-      {Array.from({ length: 8 }, (_, i) => (
+      {Array.from({ length: 6 }, (_, i) => (
         <div
           key={i}
           className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < filled ? 'bg-[#F5C400]' : 'bg-[#2C2C2C]/12'}`}
@@ -202,9 +203,10 @@ export default function OnboardingStep() {
       papierkram: 'papierkram_api_key', easybill: 'easybill_api_key',
     }
 
+    const adresse = composeAddress({ strasse: state.strasse, plz: state.plz, ort: state.ort })
     const updateData: Record<string, unknown> = {
       name: state.name,
-      address: state.address,
+      address: adresse,
       gewerke: state.gewerke,
       vat_rate: state.vatRate ?? 19,
       payment_days: state.paymentDays,
@@ -313,17 +315,35 @@ export default function OnboardingStep() {
             </div>
             <div>
               <label className={labelCls}>Adresse</label>
-              <textarea
-                placeholder={'Musterstraße 1\n12345 Berlin'}
-                value={state.address}
-                onChange={e => { update({ address: e.target.value }); setAddrError(false) }}
-                rows={3}
-                className={`${inputCls} resize-none ${addrError ? 'border-red-400' : ''}`}
-              />
+              <div className="flex flex-col gap-2">
+                <input
+                  type="text"
+                  placeholder="Straße und Hausnummer"
+                  value={state.strasse}
+                  onChange={e => { update({ strasse: e.target.value }); setAddrError(false) }}
+                  className={`${inputCls} ${addrError ? 'border-red-400' : ''}`}
+                />
+                <div className="grid grid-cols-[90px_1fr] gap-2">
+                  <input
+                    type="text" inputMode="numeric" maxLength={5}
+                    placeholder="PLZ"
+                    value={state.plz}
+                    onChange={e => { update({ plz: e.target.value.replace(/\D/g, '') }); setAddrError(false) }}
+                    className={`${inputCls} ${addrError ? 'border-red-400' : ''}`}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Ort"
+                    value={state.ort}
+                    onChange={e => { update({ ort: e.target.value }); setAddrError(false) }}
+                    className={`${inputCls} ${addrError ? 'border-red-400' : ''}`}
+                  />
+                </div>
+              </div>
               <p className="text-[13px] text-[#2C2C2C]/30 font-semibold mt-1.5">
                 Wird auf dem Angebot als Absender angezeigt.
               </p>
-              {addrError && <p className="text-[12px] text-red-500 font-semibold mt-1">Bitte Adresse eingeben.</p>}
+              {addrError && <p className="text-[12px] text-red-500 font-semibold mt-1">Bitte vollständige Adresse eingeben.</p>}
             </div>
 
             {/* Optional contact */}
@@ -356,13 +376,9 @@ export default function OnboardingStep() {
             <button
               onClick={() => {
                 const noName = !state.name.trim()
-                const noAddr = state.address.trim().length < 5
+                const noAddr = !state.strasse.trim() || !state.plz.trim() || !state.ort.trim()
                 setNameError(noName); setAddrError(noAddr)
-                if (!noName && !noAddr) {
-                  // Gewerk-Auswahl entfällt — Preset: Maler + Bodenbeläge
-                  update({ gewerke: ['maler', 'boden_parkett'] })
-                  goTo(4)
-                }
+                if (!noName && !noAddr) goTo(3)
               }}
               className={btnPrimary}
             >
@@ -518,7 +534,7 @@ export default function OnboardingStep() {
           </p>
 
           <div className="mt-auto pt-6 flex gap-3">
-            <button onClick={() => goTo(2)} className={btnBack}>← Zurück</button>
+            <button onClick={() => goTo(3)} className={btnBack}>← Zurück</button>
             <button
               onClick={() => { if (state.vatRate === null) return; goTo(5) }}
               disabled={state.vatRate === null}

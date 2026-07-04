@@ -14,13 +14,15 @@ import { PwaBottomSheet } from '@/components/PwaBottomSheet'
 import { PushBanner } from '@/components/PushBanner'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Toast } from '@/components/Toast'
-import { Input, Textarea } from '@/components/Input'
+import { Input } from '@/components/Input'
+import { AddressFields } from '@/components/AddressFields'
+import { EMPTY_ADDRESS, parseAddress, composeAddress, type AddressValue } from '@/lib/address'
 
 export default function EinstellungenPage() {
   const [activeTab, setActiveTab] = useState<'betrieb' | 'angebote' | 'app'>('betrieb')
   const [company, setCompany] = useState<Company | null>(null)
   const [name, setName] = useState('')
-  const [address, setAddress] = useState('')
+  const [adresse, setAdresse] = useState<AddressValue>(EMPTY_ADDRESS)
   const [taxNumber, setTaxNumber] = useState('')
   const [ustId, setUstId] = useState('')
   const [iban, setIban] = useState('')
@@ -67,7 +69,7 @@ export default function EinstellungenPage() {
       if (data) {
         setCompany(data)
         setName(data.name ?? '')
-        setAddress(data.address ?? '')
+        setAdresse(parseAddress(data.address))
         setTaxNumber(data.tax_number ?? '')
         setUstId(data.ust_id ?? '')
         setIban(data.iban ?? '')
@@ -122,7 +124,7 @@ export default function EinstellungenPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     await supabase.from('companies').update({
-      name, address, tax_number: taxNumber, ust_id: ustId || null,
+      name, address: composeAddress(adresse), tax_number: taxNumber, ust_id: ustId || null,
       iban, agb_url: agbUrl || null,
       vat_rate: vatRate, payment_days: paymentDays, gewerke,
       regionaler_preisfaktor_prozent: regionalFaktor,
@@ -221,9 +223,7 @@ export default function EinstellungenPage() {
                 placeholder="Malerbetrieb Müller" />
             </Field>
             <Field label="Adresse">
-              <Textarea value={address} onChange={e => setAddress(e.target.value)}
-                rows={3}
-                placeholder={'Musterstraße 1\n12345 Musterstadt'} />
+              <AddressFields value={adresse} onChange={setAdresse} />
             </Field>
             <Field label="Steuernummer">
               <Input value={taxNumber} onChange={e => setTaxNumber(e.target.value)}
