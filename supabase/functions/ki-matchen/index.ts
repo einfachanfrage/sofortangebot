@@ -5,6 +5,9 @@ import { createOpenAIClient, openaiRequest } from '../_shared/openai.ts'
 // deno-lint-ignore no-unused-vars
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+// PROMPT_KONTEXTUELLES_MATCHING — EINZIGE Quelle dieses Prompts (das frühere
+// Duplikat in src/lib/ai-prompts.ts war ungenutzt; im Juli 2026 entfernt).
+// Nach Änderungen deployen: supabase functions deploy ki-matchen
 const PROMPT_KONTEXTUELLES_MATCHING = `Du bist ein spezialisierter Kalkulator für das deutsche Handwerk.
 
 Deine Aufgabe: Ordne alle Positionen eines Angebots auf einmal den passenden Einträgen aus der Positionsdatenbank zu.

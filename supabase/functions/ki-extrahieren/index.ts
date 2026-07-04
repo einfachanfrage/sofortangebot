@@ -3,7 +3,9 @@ import { getUser } from '../_shared/auth.ts'
 import { mitTimeout } from '../_shared/timeout.ts'
 import { createOpenAIClient, openaiRequest } from '../_shared/openai.ts'
 
-// Vollständiger PROMPT_EXTRAKTION_V4 — synchronisiert mit /src/lib/ai-prompts.ts
+// PROMPT_EXTRAKTION_V4 — EINZIGE Quelle dieses Prompts (das frühere Duplikat
+// in src/lib/ai-prompts.ts war ungenutzt + divergiert; im Juli 2026 entfernt).
+// Nach Änderungen deployen: supabase functions deploy ki-extrahieren
 const PROMPT_EXTRAKTION_V4 = `Du bist ein erfahrener Kalkulator für das deutsche Handwerk mit 20 Jahren Erfahrung. Du hörst einem Handwerker zu der sein Aufmaß einspricht.
 
 DEINE AUFGABE:
