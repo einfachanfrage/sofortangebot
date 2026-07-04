@@ -1,7 +1,8 @@
 -- ============================================================
 -- sofortangebot.app — Vollständiges Datenbankschema
 -- Für NEUE Supabase-Projekte: dieses File komplett ausführen.
--- Für BESTEHENDE Projekte: nur alle_migrationen.sql ausführen.
+-- Für BESTEHENDE Projekte: fehlende Dateien aus migrations/ ausführen
+-- (Status prüfen mit check_migrationen.sql).
 -- ============================================================
 
 -- Enable UUID extension

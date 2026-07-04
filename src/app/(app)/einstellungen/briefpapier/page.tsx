@@ -121,7 +121,7 @@ export default function BriefpapierUebersicht() {
               <div className="text-[11px] font-black text-amber-800 uppercase tracking-wider mb-2">Schritt: SQL in Supabase ausführen</div>
               <p className="text-amber-700 text-xs leading-relaxed">
                 Öffne das Supabase Dashboard → SQL Editor → führe die Datei{' '}
-                <code className="bg-amber-200 px-1 rounded">supabase/create_briefpapiere.sql</code>{' '}
+                <code className="bg-amber-200 px-1 rounded">supabase/migrations/20260614132752_create_briefpapiere.sql</code>{' '}
                 aus dem Projektordner aus.
               </p>
             </div>
