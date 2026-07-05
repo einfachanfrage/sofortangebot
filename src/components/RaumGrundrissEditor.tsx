@@ -21,6 +21,8 @@ export function RaumGrundrissEditor({
     initial && initial.length >= 1 ? initial : [{ laenge: 4 }, { laenge: 3, turn: 'R' }, { laenge: 4, turn: 'R' }, { laenge: 3, turn: 'R' }]
   )
   const g = berechneGrundriss(waende)
+  const ende = g.pfad[g.pfad.length - 1] ?? { x: 0, y: 0 }
+  const luecke = Math.round(Math.hypot(ende.x, ende.y) * 10) / 10 // Abstand Endpunkt→Start in m
 
   function setLaenge(i: number, val: string) {
     const n = parseFloat(val.replace(',', '.'))
@@ -30,7 +32,9 @@ export function RaumGrundrissEditor({
     setWaende(w => w.map((wand, idx) => idx === i ? { ...wand, turn } : wand))
   }
   function addWand() {
-    setWaende(w => [...w, { laenge: 2, turn: 'R' }])
+    // Leere Wand: wird erst gezeichnet wenn eine Länge eingegeben wird — bricht die
+    // aktuelle Form also nicht sofort auf.
+    setWaende(w => [...w, { laenge: 0, turn: 'R' }])
   }
   function removeWand(i: number) {
     setWaende(w => w.length > 1 ? w.filter((_, idx) => idx !== i) : w)
@@ -47,13 +51,13 @@ export function RaumGrundrissEditor({
         </p>
 
         {/* Vorschau */}
-        <GrundrissVorschau pfad={g.pfad} geschlossen={g.geschlossen} />
+        <GrundrissVorschau pfad={g.pfad} geschlossen={g.geschlossen} laengen={waende.filter(w => w.laenge > 0).map(w => w.laenge)} />
 
         {/* Status */}
         <div className={`flex items-center justify-between rounded-xl px-3 py-2 mb-4 text-[13px] font-bold ${
           g.geschlossen ? 'bg-[#EDFAF0] text-[#1A7A38]' : 'bg-amber-50 text-amber-700'
         }`}>
-          <span>{g.geschlossen ? '✓ Form geschlossen' : 'Form schließt noch nicht'}</span>
+          <span>{g.geschlossen ? '✓ Form geschlossen' : luecke > 0 ? `Noch ${String(luecke).replace('.', ',')} m Lücke` : 'Form schließt noch nicht'}</span>
           <span className="font-extrabold">
             {g.geschlossen ? `${g.flaeche} m² · Umfang ${g.umfang} m` : `Umfang ${g.umfang} m`}
           </span>
@@ -119,8 +123,8 @@ export function RaumGrundrissEditor({
 }
 
 // ── SVG-Vorschau ────────────────────────────────────────────────────────────
-function GrundrissVorschau({ pfad, geschlossen }: { pfad: { x: number; y: number }[]; geschlossen: boolean }) {
-  const W = 260, H = 170, PAD = 24
+function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; y: number }[]; geschlossen: boolean; laengen: number[] }) {
+  const W = 260, H = 170, PAD = 30
   if (pfad.length < 2) {
     return <div className="bg-[#F7F7F5] rounded-2xl h-[170px] mb-3 flex items-center justify-center text-[#2C2C2C]/30 text-sm font-semibold">Wände eingeben…</div>
   }
@@ -134,6 +138,7 @@ function GrundrissVorschau({ pfad, geschlossen }: { pfad: { x: number; y: number
   const ty = (y: number) => (y - minY) * scale + offY
   const punkteStr = pfad.map(p => `${tx(p.x)},${ty(p.y)}`).join(' ')
   const stroke = geschlossen ? '#1A7A38' : '#D97706'
+  const start = pfad[0], ende = pfad[pfad.length - 1]
 
   return (
     <div className="bg-[#F7F7F5] rounded-2xl mb-3 flex items-center justify-center">
@@ -141,10 +146,34 @@ function GrundrissVorschau({ pfad, geschlossen }: { pfad: { x: number; y: number
         {geschlossen ? (
           <polygon points={punkteStr} fill="#F5C40022" stroke={stroke} strokeWidth={2.5} strokeLinejoin="round" />
         ) : (
-          <polyline points={punkteStr} fill="none" stroke={stroke} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+          <>
+            <polyline points={punkteStr} fill="none" stroke={stroke} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+            {/* Lücke zwischen Ende und Start */}
+            <line x1={tx(ende.x)} y1={ty(ende.y)} x2={tx(start.x)} y2={ty(start.y)} stroke="#D97706" strokeWidth={1.5} strokeDasharray="4 3" opacity={0.6} />
+          </>
         )}
+        {/* Längen-Beschriftung je Wand (Mittelpunkt des Segments) */}
+        {laengen.map((len, i) => {
+          const a = pfad[i], b = pfad[i + 1]
+          if (!a || !b) return null
+          const mx = (tx(a.x) + tx(b.x)) / 2
+          const my = (ty(a.y) + ty(b.y)) / 2
+          const horizontal = Math.abs(a.y - b.y) < 0.01
+          return (
+            <text
+              key={i}
+              x={mx} y={my}
+              dx={horizontal ? 0 : 7} dy={horizontal ? -3 : 3}
+              textAnchor="middle"
+              className="fill-[#2C2C2C]"
+              style={{ fontSize: 9, fontWeight: 800 }}
+            >
+              {String(len).replace('.', ',')}
+            </text>
+          )
+        })}
         {/* Startpunkt */}
-        <circle cx={tx(pfad[0].x)} cy={ty(pfad[0].y)} r={4} fill={stroke} />
+        <circle cx={tx(start.x)} cy={ty(start.y)} r={4} fill={stroke} />
       </svg>
     </div>
   )
