@@ -18,9 +18,10 @@ const FUSSZEILE_CHIPS = ['Steuernummer', 'IBAN', 'Handwerkskammer', 'USt-IdNr.',
 
 // ── Mini Live-Vorschau ─────────────────────────────────────────────────────
 function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; company: Company | null }) {
-  const firmenname = bp.firmenname || company?.name || 'Musterfirma'
+  // Firmeninfo kommt aus dem Betrieb (companies), nicht mehr aus dem Briefpapier.
+  const firmenname = company?.name || 'Musterfirma'
   const akzent = bp.akzentfarbe || '#F5C400'
-  const adresse = [bp.strasse, bp.plz && bp.ort ? `${bp.plz} ${bp.ort}` : bp.ort].filter(Boolean).join('\n')
+  const adresse = company?.address || ''
 
   const dummyItems = [
     { pos: 1, title: 'Malerarbeiten Innen', qty: 45, unit: 'm²', price: 18, total: 810 },
@@ -175,29 +176,22 @@ export default function BriefpapierEditor() {
             />
           </div>
 
-          {/* Firmeninfo */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 space-y-3">
-            <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wider">Firmeninfo</div>
-            {[
-              { label: 'Firmenname', field: 'firmenname' as const, placeholder: 'Musterfirma GmbH' },
-              { label: 'Zusatz', field: 'zusatz' as const, placeholder: 'Inh. Max Mustermann' },
-              { label: 'Straße', field: 'strasse' as const, placeholder: 'Musterstraße 1' },
-              { label: 'PLZ', field: 'plz' as const, placeholder: '12345' },
-              { label: 'Ort', field: 'ort' as const, placeholder: 'Berlin' },
-              { label: 'Telefon', field: 'telefon' as const, placeholder: '+49 30 1234567' },
-              { label: 'E-Mail', field: 'email' as const, placeholder: 'info@firma.de' },
-              { label: 'Website', field: 'website' as const, placeholder: 'www.firma.de' },
-            ].map(({ label, field, placeholder }) => (
-              <div key={field}>
-                <label className="block text-[10px] font-bold text-[#2C2C2C]/40 mb-1">{label}</label>
-                <Input
-                  value={(bp[field] as string) ?? ''}
-                  onChange={e => setField(field, e.target.value)}
-                  placeholder={placeholder}
-                />
+          {/* Firmeninfo — zentral aus dem Betrieb */}
+          <Link href="/einstellungen" className="block bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 hover:border-[#F5C400]/50 transition-colors">
+            <div className="flex items-center justify-between">
+              <div className="min-w-0">
+                <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wider mb-1">Firmenangaben</div>
+                <div className="font-bold text-[#2C2C2C] text-sm truncate">{company?.name || 'Noch kein Firmenname'}</div>
+                {company?.address && (
+                  <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{company.address.replace('\n', ' · ')}</div>
+                )}
               </div>
-            ))}
-          </div>
+              <span className="text-xs font-black text-[#F5C400] shrink-0 ml-3">Ändern →</span>
+            </div>
+            <p className="text-[11px] text-[#2C2C2C]/30 font-semibold mt-2 leading-relaxed">
+              Name, Adresse & Kontakt werden zentral unter Einstellungen → Betrieb gepflegt und erscheinen automatisch auf jedem Angebot.
+            </p>
+          </Link>
 
           {/* Logo */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 space-y-3">

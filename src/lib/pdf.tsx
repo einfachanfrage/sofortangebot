@@ -191,13 +191,12 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   const isKleinunternehmer = company.vat_rate === 0
   const vatRate = company.vat_rate
 
-  const firmenname   = briefpapier?.firmenname || company.name
-  const strasse      = briefpapier?.strasse || ''
-  const plzOrt       = [briefpapier?.plz, briefpapier?.ort].filter(Boolean).join(' ')
-  const adresse      = company.address || [strasse, plzOrt].filter(Boolean).join('\n')
-  const telefon      = briefpapier?.telefon || ''
-  const email        = briefpapier?.email || ''
-  const website      = briefpapier?.website || ''
+  // Firmeninfo kommt zentral aus dem Betrieb (companies), nicht mehr pro Briefpapier.
+  const firmenname   = company.name
+  const adresse      = company.address || ''
+  const telefon      = company.phone || ''
+  const email        = company.contact_email || ''
+  const website      = company.website || ''
   const ustId        = (company as Company & { ust_id?: string }).ust_id || ''
   const steuernummer = company.tax_number || ''
   const iban         = company.iban || ''

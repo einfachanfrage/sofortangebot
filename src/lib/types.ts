@@ -52,6 +52,9 @@ export interface Company {
   user_id: string
   name: string
   address: string
+  phone: string | null
+  contact_email: string | null
+  website: string | null
   tax_number: string | null
   iban: string | null
   logo_url: string | null

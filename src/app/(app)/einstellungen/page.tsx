@@ -23,6 +23,9 @@ export default function EinstellungenPage() {
   const [company, setCompany] = useState<Company | null>(null)
   const [name, setName] = useState('')
   const [adresse, setAdresse] = useState<AddressValue>(EMPTY_ADDRESS)
+  const [phone, setPhone] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [website, setWebsite] = useState('')
   const [taxNumber, setTaxNumber] = useState('')
   const [ustId, setUstId] = useState('')
   const [iban, setIban] = useState('')
@@ -70,6 +73,9 @@ export default function EinstellungenPage() {
         setCompany(data)
         setName(data.name ?? '')
         setAdresse(parseAddress(data.address))
+        setPhone(data.phone ?? '')
+        setContactEmail(data.contact_email ?? '')
+        setWebsite(data.website ?? '')
         setTaxNumber(data.tax_number ?? '')
         setUstId(data.ust_id ?? '')
         setIban(data.iban ?? '')
@@ -124,7 +130,9 @@ export default function EinstellungenPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     await supabase.from('companies').update({
-      name, address: composeAddress(adresse), tax_number: taxNumber, ust_id: ustId || null,
+      name, address: composeAddress(adresse),
+      phone: phone || null, contact_email: contactEmail || null, website: website || null,
+      tax_number: taxNumber, ust_id: ustId || null,
       iban, agb_url: agbUrl || null,
       vat_rate: vatRate, payment_days: paymentDays, gewerke,
       regionaler_preisfaktor_prozent: regionalFaktor,
@@ -224,6 +232,21 @@ export default function EinstellungenPage() {
             </Field>
             <Field label="Adresse">
               <AddressFields value={adresse} onChange={setAdresse} />
+            </Field>
+            <Field label="Telefon (optional)">
+              <Input value={phone} onChange={e => setPhone(e.target.value)}
+                type="tel" placeholder="+49 30 1234567" />
+            </Field>
+            <Field label="E-Mail (optional)">
+              <Input value={contactEmail} onChange={e => setContactEmail(e.target.value)}
+                type="email" placeholder="info@meinbetrieb.de" />
+            </Field>
+            <Field label="Website (optional)">
+              <Input value={website} onChange={e => setWebsite(e.target.value)}
+                type="text" placeholder="www.meinbetrieb.de" />
+              <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-1">
+                Telefon, E-Mail & Website erscheinen im Kopf jedes Angebots.
+              </p>
             </Field>
             <Field label="Steuernummer">
               <Input value={taxNumber} onChange={e => setTaxNumber(e.target.value)}

@@ -41,7 +41,8 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
   (33, '20260701173856_create_waitlist',             'Tabelle waitlist',                  EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='waitlist')),
   (34, '20260702092924_add_raum_details',            'quotes.raum_details',               EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quotes' AND column_name='raum_details')),
   (35, '20260704074603_add_kleinmaterial_config',    'companies.kleinmaterial_config',    EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='kleinmaterial_config')),
-  (36, '20260704203908_add_anfahrt_config',          'companies.anfahrt_config',          EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='anfahrt_config'))
+  (36, '20260704203908_add_anfahrt_config',          'companies.anfahrt_config',          EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='anfahrt_config')),
+  (37, '20260705064529_add_company_kontakt',         'companies.website',                 EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='website'))
 )
 SELECT
   migration,

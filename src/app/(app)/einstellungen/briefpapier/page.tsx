@@ -136,10 +136,6 @@ export default function BriefpapierUebersicht() {
                       {bp.ist_standard && <Star size={13} className="text-[#F5C400] fill-[#F5C400]" />}
                       <span className="font-black text-[#2C2C2C] text-sm">{bp.name}</span>
                     </div>
-                    <div className="text-[11px] text-[#2C2C2C]/40 mt-0.5">
-                      {bp.firmenname ?? '—'}
-                      {bp.ort ? ` · ${bp.ort}` : ''}
-                    </div>
                     <div className="flex gap-3 mt-1.5 text-[10px] text-[#2C2C2C]/30">
                       <span>Logo: {bp.logo_url ? '✓' : '—'}</span>
                       <span>Fußzeile: {(bp.fusszeile_links || bp.fusszeile_mitte || bp.fusszeile_rechts) ? '✓' : '—'}</span>
