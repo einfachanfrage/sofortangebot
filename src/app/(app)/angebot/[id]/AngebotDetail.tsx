@@ -23,6 +23,11 @@ import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Toast } from '@/components/Toast'
+import { RaumGrundrissEditor } from '@/components/RaumGrundrissEditor'
+import {
+  type RaumDimension, type RaumModus,
+  berechneQuantityFuerItem, berechneRaumMasse,
+} from '@/lib/raum-geometrie'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -76,102 +81,121 @@ const UNITS = ['m²', 'lfdm', 'Stk', 'Stunde', 'pauschal', 'm³', 'kg', 'ltr', '
 function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
 
 // ── Raum-Dimensionen ──────────────────────────────────────────────────────────
-export interface RaumDimension {
-  breite?: number
-  laenge?: number
-  hoehe?: number
-  tueren?: number
-  fenster?: number
-}
+// RaumDimension, Geometrie + Mengen-Berechnung liegen jetzt in @/lib/raum-geometrie
 
-function berechneQuantityFuerItem(titleDisplay: string, unit: string, dim: RaumDimension): number | null {
-  if (!dim.breite || !dim.laenge) return null
-  const b = dim.breite, l = dim.laenge, h = dim.hoehe ?? 2.5
-  const t = dim.tueren ?? 0, f = dim.fenster ?? 0
-  const titelLower = titleDisplay.toLowerCase()
+// Ein einzelnes inline-editierbares Zahlenfeld
+function InlineNum({ value, label, suffix, onCommit }: { value: number | undefined; label: string; suffix?: string; onCommit: (val: number | undefined) => void }) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(String(value ?? ''))
 
-  if (unit === 'm²') {
-    if (titelLower.includes('wand')) {
-      const bruttoWand = 2 * (b + l) * h
-      const abzug = t * 2.0 + f * 1.5
-      return Math.max(0, bruttoWand - abzug)
-    }
-    if (titelLower.includes('deck')) return b * l
-    if (titelLower.includes('boden') || titelLower.includes('fliesen') || titelLower.includes('laminat') || titelLower.includes('parkett') || titelLower.includes('vinyl')) return b * l
+  function commit() {
+    const n = parseFloat(draft.replace(',', '.'))
+    onCommit(isNaN(n) || n <= 0 ? undefined : n)
+    setEditing(false)
   }
-  if (unit === 'lfdm') {
-    if (titelLower.includes('sockel') || titelLower.includes('leiste')) {
-      return Math.max(0, 2 * (b + l) - t * 0.9)
-    }
+
+  if (editing) {
+    return (
+      <input
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') setEditing(false) }}
+        autoFocus
+        className="w-12 text-center bg-[#F5C400]/20 border border-[#F5C400] rounded text-[12px] font-extrabold text-[#2C2C2C] outline-none px-1 py-0.5"
+      />
+    )
   }
-  return null
+  const missing = value == null
+  return (
+    <button
+      onClick={() => { setDraft(String(value ?? '')); setEditing(true) }}
+      className={`text-[12px] font-extrabold rounded px-1.5 py-0.5 transition-colors ${
+        missing ? 'bg-red-50 text-red-500 hover:bg-red-100 border border-red-200' : 'text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20'
+      }`}
+      title={missing ? `${label} fehlt — tippen zum Eintragen` : label}
+    >
+      {missing ? '!' : `${String(value).replace('.', ',')}${suffix ?? ''}`}
+    </button>
+  )
 }
 
 function RaumDimensionenZeile({
-  raumName,
   dim,
   onChange,
+  onGrundriss,
 }: {
-  raumName: string
+  raumName?: string
   dim: RaumDimension
-  onChange: (field: keyof RaumDimension, val: number | undefined) => void
+  onChange: (patch: Partial<RaumDimension>) => void
+  onGrundriss: () => void
 }) {
-  function InlineInput({ field, value, label, suffix }: { field: keyof RaumDimension; value: number | undefined; label: string; suffix?: string }) {
-    const [editing, setEditing] = useState(false)
-    const [draft, setDraft] = useState(String(value ?? ''))
-    const inputRef = useRef<HTMLInputElement>(null)
-
-    function commit() {
-      const n = parseFloat(draft.replace(',', '.'))
-      onChange(field, isNaN(n) || n <= 0 ? undefined : n)
-      setEditing(false)
-    }
-
-    if (editing) {
-      return (
-        <input
-          ref={inputRef}
-          value={draft}
-          onChange={e => setDraft(e.target.value)}
-          onBlur={commit}
-          onKeyDown={e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') setEditing(false) }}
-          autoFocus
-          className="w-10 text-center bg-[#F5C400]/20 border border-[#F5C400] rounded text-[12px] font-extrabold text-[#2C2C2C] outline-none px-1 py-0.5"
-        />
-      )
-    }
-
-    const missing = value == null
-    return (
-      <button
-        onClick={() => { setDraft(String(value ?? '')); setEditing(true) }}
-        className={`text-[12px] font-extrabold rounded px-1.5 py-0.5 transition-colors ${
-          missing
-            ? 'bg-red-50 text-red-500 hover:bg-red-100 border border-red-200'
-            : 'text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20'
-        }`}
-        title={missing ? `${label} fehlt — tippen zum Eintragen` : label}
-      >
-        {missing ? '!' : `${String(value).replace('.', ',')}${suffix ?? ''}`}
-      </button>
-    )
-  }
+  const modus: RaumModus = dim.modus ?? 'rechteck'
+  const masse = berechneRaumMasse(dim)
 
   return (
-    <div className="px-4 pb-2 pt-0.5 flex items-center gap-1.5 flex-wrap">
-      <InlineInput field="breite" value={dim.breite} label="Breite" />
-      <span className="text-[11px] text-[#2C2C2C]/30 font-bold">×</span>
-      <InlineInput field="laenge" value={dim.laenge} label="Länge" />
-      <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">m</span>
-      <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-      <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
-      <InlineInput field="hoehe" value={dim.hoehe} label="Deckenhöhe" suffix=" m" />
-      <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-      <span className="text-[12px]">🚪</span>
-      <InlineInput field="tueren" value={dim.tueren} label="Türen" />
-      <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-      <span className="text-[12px]">🪟</span>
-      <InlineInput field="fenster" value={dim.fenster} label="Fenster" />
+    <div className="px-4 pb-2 pt-0.5 flex flex-col gap-1.5">
+      {/* Modus-Umschalter */}
+      <div className="flex items-center gap-1 self-start bg-[#2C2C2C]/5 rounded-lg p-0.5">
+        {([
+          { id: 'rechteck', label: 'Rechteck' },
+          { id: 'flaeche', label: 'Fläche' },
+          { id: 'grundriss', label: 'Grundriss' },
+        ] as { id: RaumModus; label: string }[]).map(m => (
+          <button
+            key={m.id}
+            onClick={() => m.id === 'grundriss' ? onGrundriss() : onChange({ modus: m.id })}
+            className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md transition-colors ${
+              modus === m.id ? 'bg-white text-[#2C2C2C] shadow-sm' : 'text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70'
+            }`}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Felder je nach Modus */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {modus === 'rechteck' && (
+          <>
+            <InlineNum value={dim.breite} label="Breite" onCommit={v => onChange({ breite: v })} />
+            <span className="text-[11px] text-[#2C2C2C]/30 font-bold">×</span>
+            <InlineNum value={dim.laenge} label="Länge" onCommit={v => onChange({ laenge: v })} />
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">m</span>
+          </>
+        )}
+
+        {modus === 'flaeche' && (
+          <>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wand</span>
+            <InlineNum value={dim.wandflaeche} label="Wandfläche (fertig, ohne Fenster/Türen)" suffix=" m²" onCommit={v => onChange({ wandflaeche: v })} />
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Boden</span>
+            <InlineNum value={dim.bodenflaeche} label="Bodenfläche" suffix=" m²" onCommit={v => onChange({ bodenflaeche: v })} />
+          </>
+        )}
+
+        {modus === 'grundriss' && (
+          <button onClick={onGrundriss} className="flex items-center gap-1.5 text-[12px] font-extrabold text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 rounded px-2 py-0.5 transition-colors">
+            📐 {dim.grundriss?.length ? `${dim.grundriss.filter(w => w.laenge > 0).length} Wände · ${masse.bodenflaeche ?? '?'} m²` : 'Grundriss zeichnen'}
+          </button>
+        )}
+
+        {/* Höhe + Öffnungen (nicht im reinen Flächen-Modus für Boden nötig, aber Höhe für Wand) */}
+        {modus !== 'flaeche' && (
+          <>
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
+            <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
+          </>
+        )}
+        <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+        <span className="text-[12px]">🚪</span>
+        <InlineNum value={dim.tueren} label="Türen" onCommit={v => onChange({ tueren: v })} />
+        <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+        <span className="text-[12px]">🪟</span>
+        <InlineNum value={dim.fenster} label="Fenster" onCommit={v => onChange({ fenster: v })} />
+      </div>
     </div>
   )
 }
@@ -332,6 +356,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
   const [kundenListe, setKundenListe] = useState<Customer[]>([])
   const [raumDetails, setRaumDetails] = useState<Record<string, RaumDimension>>({})
+  const [grundrissRaum, setGrundrissRaum] = useState<string | null>(null)
   const [showRaumPicker, setShowRaumPicker] = useState(false)
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const raumDetailsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -378,9 +403,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     }
   }
 
-  function handleRaumDimChange(raumName: string, field: keyof RaumDimension, val: number | undefined) {
+  function handleRaumDimChange(raumName: string, patch: Partial<RaumDimension>) {
     setRaumDetails(prev => {
-      const updated = { ...prev, [raumName]: { ...prev[raumName], [field]: val } }
+      const updated = { ...prev, [raumName]: { ...prev[raumName], ...patch } }
 
       // Live-Neuberechnung der betroffenen Items
       setEditItems(items => items.map(item => {
@@ -1243,7 +1268,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           <RaumDimensionenZeile
                             raumName={raum.raumName}
                             dim={raumDetails[raum.raumName] ?? {}}
-                            onChange={(field, val) => handleRaumDimChange(raum.raumName, field, val)}
+                            onChange={patch => handleRaumDimChange(raum.raumName, patch)}
+                            onGrundriss={() => setGrundrissRaum(raum.raumName)}
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
@@ -1321,7 +1347,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                         <RaumDimensionenZeile
                           raumName={raum.raumName}
                           dim={raumDetails[raum.raumName] ?? {}}
-                          onChange={(field, val) => handleRaumDimChange(raum.raumName, field, val)}
+                          onChange={patch => handleRaumDimChange(raum.raumName, patch)}
+                          onGrundriss={() => setGrundrissRaum(raum.raumName)}
                         />
 
                         {/* Positionen ohne Raumzusatz */}
@@ -1753,6 +1780,18 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteSheet(false)}
       />
+
+      {grundrissRaum && (
+        <RaumGrundrissEditor
+          raumName={grundrissRaum}
+          initial={raumDetails[grundrissRaum]?.grundriss}
+          onClose={() => setGrundrissRaum(null)}
+          onSave={(waende) => {
+            handleRaumDimChange(grundrissRaum, { modus: 'grundriss', grundriss: waende })
+            setGrundrissRaum(null)
+          }}
+        />
+      )}
     </div>
   )
 }
