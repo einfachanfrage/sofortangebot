@@ -42,10 +42,13 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
 
 // Tapete entfernen + dann streichen (kein neues Tapezieren)
 export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): boolean {
-  const hatTapeteWegDannStreich = (lower.includes('tapete') || lower.includes('tapeten')) &&
-    (lower.includes('runter') || lower.includes('herunter') || lower.includes('entfern') || lower.includes('abnehm') || lower.includes('abmachen')) &&
-    (lower.includes('streich') || lower.includes('anstrich')) &&
-    !lower.includes('tapezier') && !lower.includes('raufaser') && !lower.includes('aufzieh')
+  // Auch "Raufasertapete abnehmen, dann streichen" ist dieser Fall — 'raufaser' allein
+  // heißt NICHT neu tapezieren. Nur echte Neu-Tapezier-Signale schließen aus.
+  const hatTapeteWegDannStreich = (lower.includes('tapete') || lower.includes('tapeten') || lower.includes('raufaser')) &&
+    (lower.includes('runter') || lower.includes('herunter') || lower.includes('entfern') || lower.includes('abnehm') || lower.includes('abmachen') || lower.includes('abreiß') || lower.includes('ab und')) &&
+    // 'gestrichen' enthält NICHT 'streich' (Partizip!) — beide Formen prüfen
+    (lower.includes('streich') || lower.includes('gestrichen') || lower.includes('anstrich')) &&
+    !lower.includes('tapezier') && !lower.includes('aufzieh') && !lower.includes('neue tapete') && !lower.includes('neue raufaser')
   if (!hatTapeteWegDannStreich) return false
 
   const wandPosTapRaus = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))

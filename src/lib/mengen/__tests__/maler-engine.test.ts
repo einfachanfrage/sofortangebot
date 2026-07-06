@@ -233,3 +233,66 @@ describe('Maler-Engine – 10 Integrationstests', () => {
     expect(lasur?.einheit).toBe('lfdm')
   })
 })
+
+// ─── Freies Sprechen (Beta-Feedback Clemens) ────────────────────────────────
+// Handwerker sprechen nicht im Schema "5×4 Meter, 2,60 hoch" sondern erzählen:
+// "20 qm Bodenfläche, Decke 3 m hoch, Raufaser abnehmen, dann streichen, spachteln"
+describe('Maler-Engine – freies Sprechen (Bodenfläche + Höhe statt L×B)', () => {
+  const clemensTranskript =
+    'Ich hab hier ein Zimmer, da müssen wir erst die Raufasertapete abnehmen und danach wird noch gestrichen. ' +
+    'Wir haben hier 20 Quadratmeter Bodenfläche, die Decke ist 3 Meter hoch. ' +
+    'Nach dem Raufasertapete abmachen müssen wir auf jeden Fall auch noch ein bisschen spachteln.'
+
+  function pipeline() {
+    const { positionen } = malerEngine({
+      transkript: clemensTranskript,
+      raeume: [{
+        name: 'Zimmer',
+        flaeche: 20,
+        hoehe: 3,
+        arbeiten: ['raufasertapete entfernen', 'streichen', 'spachteln'],
+      }],
+    })
+    return positionen
+  }
+
+  it('Wandfläche wird per Quadrat-Annahme aus Bodenfläche + Höhe geschätzt', () => {
+    const positionen = pipeline()
+    const wand = find(positionen, 'wandflächen')
+    expect(wand).toBeDefined()
+    // Umfang ≈ 4×√20 = 17,89 → 17,89×3 = 53,67 − Std-Fenster 1,2 − Std-Tür 1,89 ≈ 50,6
+    expect(wand!.menge).toBeGreaterThan(45)
+    expect(wand!.menge).toBeLessThan(55)
+    expect(wand!.konfidenz).toBe('medium')
+    expect(wand!.annahmen.join(' ')).toContain('geschätzt')
+  })
+
+  it('Decke bekommt die echte Bodenfläche (20 m²)', () => {
+    const positionen = pipeline()
+    const decke = find(positionen, 'deckenfläche')
+    expect(decke?.menge).toBe(20)
+  })
+
+  it('Vollständigkeits-Check: Raufaser entfernen + Spachteln mit echter Wandfläche, KEIN neu Aufziehen', async () => {
+    const { pruefeUndErgaenzeVollstaendigkeit } = await import('../../vollstaendigkeit/index')
+    const enginePositionen = pipeline()
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', enginePositionen, clemensTranskript)
+
+    const entfernen = find(positionen, 'tapete entfern')
+    expect(entfernen).toBeDefined()
+    expect(entfernen!.menge).toBeGreaterThan(45) // Wandfläche, NICHT die 20 m² Bodenfläche
+
+    const spachteln = find(positionen, 'spachteln')
+    expect(spachteln).toBeDefined()
+    expect(spachteln!.menge).toBeGreaterThan(45)
+
+    // Er will NICHT neu tapezieren — nur abnehmen und streichen
+    const aufziehen = find(positionen, 'aufziehen')
+    expect(aufziehen).toBeUndefined()
+
+    // Keine Position mit Menge 0 oder null
+    for (const p of positionen) {
+      expect(p.menge, `"${p.beschreibung}" hat keine Menge`).toBeGreaterThan(0)
+    }
+  })
+})

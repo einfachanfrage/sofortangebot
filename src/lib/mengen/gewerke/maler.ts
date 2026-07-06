@@ -33,6 +33,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     let wandflaecheNettoM2: number | null = null
     let deckenflaecheM2: number | null = null
     let umfangM: number | null = null
+    const annahmenUmfang: string[] = []
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
@@ -112,16 +113,31 @@ export function malerEngine(daten: any): MengenErgebnis {
       } else {
         bodenflaecheM2 = flaeche_angegeben
         deckenflaecheM2 = flaeche_angegeben
-        // Wandfläche kann ohne Höhe nicht berechnet werden → null (Rückfrage kommt)
+        if (hoehe) {
+          // Nutzer nennt nur Bodenfläche + Höhe (typische Sprechweise: "20 qm, Decke 3 m hoch").
+          // Umfang über Quadrat-Annahme schätzen: Seite = √Fläche → Umfang = 4·√Fläche.
+          // Bei üblichen Raumproportionen (bis ~1:2) liegt der Fehler unter ~7 % — klar als Annahme markiert.
+          umfangM = round2(4 * Math.sqrt(flaeche_angegeben))
+          const fensterFlQ = effFenster.reduce(
+            (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
+          )
+          const tuerFlQ = effTueren.reduce(
+            (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
+          )
+          wandflaecheNettoM2 = Math.max(0, round2(umfangM * hoehe - fensterFlQ - tuerFlQ))
+          annahmenUmfang.push(`Umfang aus Bodenfläche geschätzt (≈ quadratischer Raum, ${umfangM} lfm) — bei länglichem Raum bitte Maße prüfen`)
+        }
+        // Ohne Höhe: Wandfläche bleibt null (Rückfrage kommt)
       }
     }
 
     // Explizite Wandfläche/Deckfläche vom User überschreiben Engine-Berechnungen
-    if (wandflaeche_direkt_raw !== null) {
+    // (`!= null` statt `!== null`: GPT lässt Felder oft ganz weg → undefined, sonst NaN!)
+    if (wandflaeche_direkt_raw != null) {
       const abzug = (wandflaeche_abzug_raw as number | null) ?? 0
       wandflaecheNettoM2 = round2((wandflaeche_direkt_raw as number) - abzug)
     }
-    if (deckflaeche_direkt_raw !== null) {
+    if (deckflaeche_direkt_raw != null) {
       deckenflaecheM2 = deckflaeche_direkt_raw as number
       // Bodenfläche ≈ Deckenfläche wenn nicht anders bekannt
       if (bodenflaecheM2 === null) bodenflaecheM2 = deckflaeche_direkt_raw as number
@@ -285,9 +301,9 @@ export function malerEngine(daten: any): MengenErgebnis {
           const fensterEinzel2 = fensterAnzahl2 > 0 ? round2(fensterFlaeche2 / fensterAnzahl2) : 0
           const tuerEinzel2 = tuerAnzahl2 > 0 ? round2(tuerFlaeche2 / tuerAnzahl2) : 0
           positionen.push({
-            beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: 'high',
+            beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: annahmenUmfang.length > 0 ? 'medium' : 'high',
             berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
-            annahmen: annahmenFenster,
+            annahmen: [...annahmenFenster, ...annahmenUmfang],
             ...(!istDachschraege && umfangM && hoehe ? {
               flaechen_parameter: {
                 brutto_m2: wandBrutto2,
@@ -301,7 +317,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         }
       }
       if (anDecke && deckenflaecheM2 !== null) {
-        positionen.push({ beschreibung: `Deckenfläche streichen — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Länge (${laenge}) × Breite (${breite})`, annahmen: [] })
+        positionen.push({ beschreibung: `Deckenfläche streichen — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [] })
       }
       if (bodenStreichen && bodenflaecheM2 !== null) {
         positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })
