@@ -48,6 +48,16 @@ describe('berechneGrundriss — rechtwinklige Polygone', () => {
     expect(g.flaeche).toBe(0)
     expect(g.geschlossen).toBe(false)
   })
+
+  it('U-Form (6×4 mit 2×2-Einschnitt oben): geschlossen, Umfang 24, Fläche 20', () => {
+    const g = berechneGrundriss([
+      { laenge: 2 }, { laenge: 2, turn: 'R' }, { laenge: 2, turn: 'L' }, { laenge: 2, turn: 'L' },
+      { laenge: 2, turn: 'R' }, { laenge: 4, turn: 'R' }, { laenge: 6, turn: 'R' }, { laenge: 4, turn: 'R' },
+    ])
+    expect(g.geschlossen).toBe(true)
+    expect(g.umfang).toBe(24)
+    expect(g.flaeche).toBe(20)
+  })
 })
 
 describe('berechneRaumMasse — Modi', () => {

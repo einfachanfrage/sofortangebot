@@ -4,6 +4,26 @@ import { useState } from 'react'
 import { Plus, Trash2, RotateCcw, RotateCw, Check } from 'lucide-react'
 import { berechneGrundriss, type Wand } from '@/lib/raum-geometrie'
 
+// Fertige, geschlossene Ausgangsformen — der Nutzer muss nur noch bemaßen,
+// kein manuelles Wand-für-Wand-Abbiegen nötig.
+const VORLAGEN: { id: string; label: string; waende: Wand[] }[] = [
+  {
+    id: 'rechteck', label: 'Rechteck',
+    waende: [{ laenge: 4 }, { laenge: 3, turn: 'R' }, { laenge: 4, turn: 'R' }, { laenge: 3, turn: 'R' }],
+  },
+  {
+    id: 'l-form', label: 'L-Form',
+    waende: [{ laenge: 5 }, { laenge: 2, turn: 'R' }, { laenge: 2, turn: 'R' }, { laenge: 2, turn: 'L' }, { laenge: 3, turn: 'R' }, { laenge: 4, turn: 'R' }],
+  },
+  {
+    id: 'u-form', label: 'U-Form',
+    waende: [
+      { laenge: 2 }, { laenge: 2, turn: 'R' }, { laenge: 2, turn: 'L' }, { laenge: 2, turn: 'L' },
+      { laenge: 2, turn: 'R' }, { laenge: 4, turn: 'R' }, { laenge: 6, turn: 'R' }, { laenge: 4, turn: 'R' },
+    ],
+  },
+]
+
 // Rechtwinkliger Grundriss-Zeichner: Wand für Wand Länge + Abbiegung eingeben,
 // Live-Vorschau zeigt die Form. Umfang → Wandfläche, Fläche → Boden/Decke.
 export function RaumGrundrissEditor({
@@ -46,9 +66,23 @@ export function RaumGrundrissEditor({
       <div className="relative w-full md:max-w-md bg-white rounded-t-3xl md:rounded-3xl px-5 pt-4 pb-8 shadow-2xl max-h-[92dvh] overflow-y-auto">
         <div className="flex justify-center mb-3 md:hidden"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
         <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[19px] mb-1">Grundriss · {raumName}</h2>
-        <p className="text-[#2C2C2C]/50 font-semibold text-[13px] mb-4 leading-relaxed">
-          Gib jede Wand der Reihe nach an und ob es an der Ecke nach links oder rechts geht.
+        <p className="text-[#2C2C2C]/50 font-semibold text-[13px] mb-3 leading-relaxed">
+          Wähle eine Form und passe nur noch die Wandlängen an — oder baue frei Wand für Wand.
         </p>
+
+        {/* Vorlagen */}
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-[11px] font-black text-[#2C2C2C]/30 uppercase tracking-wide shrink-0">Vorlage</span>
+          {VORLAGEN.map(v => (
+            <button
+              key={v.id}
+              onClick={() => setWaende(v.waende.map(w => ({ ...w })))}
+              className="flex-1 text-[12px] font-extrabold text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 rounded-lg py-1.5 transition-colors"
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
 
         {/* Vorschau */}
         <GrundrissVorschau pfad={g.pfad} geschlossen={g.geschlossen} laengen={waende.filter(w => w.laenge > 0).map(w => w.laenge)} />
