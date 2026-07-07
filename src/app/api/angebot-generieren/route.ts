@@ -4,6 +4,8 @@ import { getGewerkePromptContext } from '@/lib/gewerke'
 import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
 import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
 import { kleinmaterialPosition, anfahrtPosition } from '@/lib/gewerke-config'
+import { erkenneArbeiten } from '@/lib/arbeiten-normalisierer'
+import { malerFallbackPreis } from '@/lib/preis-fallback'
 import * as Sentry from '@sentry/nextjs'
 
 // OpenAI-Analyse kann bei langen Aufmaßen >10s dauern
@@ -154,7 +156,10 @@ export async function POST(req: NextRequest) {
       result.items = berechnetePositionen.map((eng, i) => {
         const engKey = eng.beschreibung.toLowerCase().replace(/[^a-zäöüß0-9]/g, '')
         const gptItem = gptItemsOrig[i]
-        const price = gptPreise.get(engKey) ?? gptItem?.unit_price ?? 0
+        let price = gptPreise.get(engKey) ?? gptItem?.unit_price ?? 0
+        // Sicherheitsnetz: kein Preis von GPT → deterministischer Marktpreis-Fallback,
+        // damit Kernpositionen nie stumm auf 0 € stehen (Beta: "Nullerpositionen")
+        if (!price || price <= 0) price = malerFallbackPreis(eng.beschreibung, eng.einheit) ?? 0
         return {
           title: eng.beschreibung,
           description: gptItem?.description ?? eng.beschreibung,
@@ -183,10 +188,12 @@ export async function POST(req: NextRequest) {
       const anfahrt = anfahrtPosition(company?.anfahrt_config ?? null)
       if (anfahrt) result.items.push(anfahrt)
 
-      // Trockenbau-Positionen bei Maler-Jobs entfernen (GPT-Halluzination)
-      const textLower = text.toLowerCase()
-      const istTapezierJob = textLower.includes('tapez') || textLower.includes('raufaser') || textLower.includes('vliestapete')
-      if (istTapezierJob) {
+      // Bei NEU-Tapezieren (Raufaser/Vlies aufziehen): Untergrund glätten/Spachteln
+      // entfällt — die Tapete verbirgt Unebenheiten. ABER nur bei echtem Neu-Aufziehen,
+      // NICHT bei "Raufaser abnehmen und streichen" (da ist Spachteln nötig!).
+      const arbeiten = erkenneArbeiten(text)
+      const istNeuTapezieren = arbeiten.has('tapezieren') && !arbeiten.has('tapete_entfernen')
+      if (istNeuTapezieren) {
         result.items = result.items.filter((it: { title?: string; kategorie?: string }) => {
           const t = (it.title ?? '').toLowerCase()
           const k = (it.kategorie ?? '').toLowerCase()
