@@ -1,5 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, filtereArray } from './helpers'
+import { erkenneArbeiten } from '../arbeiten-normalisierer'
 
 // Sockelleisten lackieren: Schleifen + 2× Lackieren
 export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
@@ -42,13 +43,10 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
 
 // Tapete entfernen + dann streichen (kein neues Tapezieren)
 export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): boolean {
-  // Auch "Raufasertapete abnehmen, dann streichen" ist dieser Fall — 'raufaser' allein
-  // heißt NICHT neu tapezieren. Nur echte Neu-Tapezier-Signale schließen aus.
-  const hatTapeteWegDannStreich = (lower.includes('tapete') || lower.includes('tapeten') || lower.includes('raufaser')) &&
-    (lower.includes('runter') || lower.includes('herunter') || lower.includes('entfern') || lower.includes('abnehm') || lower.includes('abmachen') || lower.includes('abreiß') || lower.includes('ab und')) &&
-    // 'gestrichen' enthält NICHT 'streich' (Partizip!) — beide Formen prüfen
-    (lower.includes('streich') || lower.includes('gestrichen') || lower.includes('anstrich')) &&
-    !lower.includes('tapezier') && !lower.includes('aufzieh') && !lower.includes('neue tapete') && !lower.includes('neue raufaser')
+  // Normalisierte Kategorien statt Wort-Fetzen: deckt "gestrichen", "abgemacht",
+  // "muss runter" etc. zentral ab (siehe arbeiten-normalisierer.ts)
+  const kat = erkenneArbeiten(lower)
+  const hatTapeteWegDannStreich = kat.has('tapete_entfernen') && kat.has('streichen') && !kat.has('tapezieren')
   if (!hatTapeteWegDannStreich) return false
 
   const wandPosTapRaus = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))

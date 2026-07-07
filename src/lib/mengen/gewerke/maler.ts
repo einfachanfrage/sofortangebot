@@ -1,4 +1,5 @@
 import type { MengenErgebnis, BerechnetePosition } from '../types'
+import { hatArbeit } from '../../arbeiten-normalisierer'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -146,7 +147,9 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
     // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
     const leerOderKomplett = arbeiten.length === 0 || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
-    const hatStreichen = leerOderKomplett || arbeitenStr.includes('streichen') || arbeitenStr.includes('anstrich') || arbeitenStr.includes('anstreichen')
+    // Normalisierer deckt Flexionen ab ("gestrichen", "anmalen" …) — nur auf arbeiten[],
+    // NICHT aufs Transkript (das gilt raumübergreifend und würde Signale in andere Räume streuen)
+    const hatStreichen = leerOderKomplett || hatArbeit(arbeitenStr, 'streichen')
     // nurDecke/nurWaende: GPT schreibt selten "nur X" in arbeiten[] — Transkript als Primärquelle
     const nurWaende = arbeitenStr.includes('nur wand') || arbeitenStr.includes('nur die wand')
       || transkriptLower.includes('nur wand') || transkriptLower.includes('nur die wand') || transkriptLower.includes('nur wände')
