@@ -7,7 +7,7 @@ const steps = [
   {
     nr: '1',
     title: 'Einsprechen',
-    desc: 'Aufmaß und Arbeiten einfach einsprechen.',
+    desc: 'Aufmaß auf der Baustelle einsprechen — so wie du eben redest. „Wohnzimmer, fünf mal vier, Raufaser runter, dann streichen."',
     icon: (
       <SketchIcon width={56} height={56} seed={11} roughness={0.8} strokeWidth={2} shapes={[
         { type: 'rect', x: 19, y: 8, w: 18, h: 22 },
@@ -21,8 +21,8 @@ const steps = [
   },
   {
     nr: '2',
-    title: 'Angebot erstellen',
-    desc: 'Mengen, Positionen und Preise werden automatisch ermittelt.',
+    title: 'Wir rechnen. Richtig.',
+    desc: 'Keine Schätzung: Wandflächen aus Umfang × Höhe, Fenster und Türen abgezogen, Sockelleisten in lfdm. An jeder Position steht der Rechenweg — zum Nachprüfen.',
     icon: (
       <SketchIcon width={48} height={58} seed={7} roughness={0.8} strokeWidth={2} shapes={[
         { type: 'rect', x: 6, y: 8, w: 36, h: 46 },
@@ -36,8 +36,8 @@ const steps = [
   },
   {
     nr: '3',
-    title: 'Versenden',
-    desc: 'Angebot prüfen und direkt an den Kunden senden.',
+    title: 'Prüfen & versenden',
+    desc: 'Kurz drüberschauen, als PDF an den Kunden — der unterschreibt direkt auf dem Handy.',
     icon: (
       <SketchIcon width={58} height={46} seed={3} roughness={0.8} strokeWidth={2} shapes={[
         { type: 'rect', x: 3, y: 6, w: 46, h: 32 },

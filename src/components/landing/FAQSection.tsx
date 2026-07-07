@@ -5,6 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const faqs = [
   {
+    q: 'Woher weiß ich, dass die Mengen stimmen?',
+    a: 'Weil du es nachrechnen kannst. Sofortangebot schätzt keine Flächen mit KI, sondern berechnet sie: Umfang × Höhe, Fenster und Türen abgezogen. An jeder Position steht der Rechenweg — z.B. „18 lfm × 2,60 m − Fenster 1,20 m²". Und bevor etwas rausgeht, prüfst du es selbst.',
+  },
+  {
+    q: 'Warum nur Maler und Boden — und nicht alle Gewerke?',
+    a: 'Weil richtig rechnen Fachwissen braucht. Statt zwanzig Gewerke oberflächlich abzudecken, kennt Sofortangebot die Sonderfälle deines Handwerks: Raufaser abnehmen heißt danach spachteln, Keller haben keine Sockelleisten, über 3 m Raumhöhe gehört ein Erschwerniszuschlag rein. Weitere Gewerke kommen — aber erst, wenn sie dieses Niveau haben.',
+  },
+  {
     q: 'Kann ich das direkt auf der Baustelle nutzen?',
     a: 'Ja. Sofortangebot wurde speziell für das Smartphone entwickelt. Du kannst Angebote direkt beim Kunden oder auf der Baustelle erstellen – ohne Laptop.',
   },

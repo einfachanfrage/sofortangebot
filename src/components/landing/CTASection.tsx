@@ -21,7 +21,7 @@ export function CTASection() {
               Angebot schreiben.
             </h2>
             <p className="text-[#2C2C2C]/60 text-base md:text-lg leading-relaxed mb-10 max-w-xl">
-              Sprich dein Aufmaß direkt beim Kunden ein. Sofortangebot erstellt automatisch ein professionelles Angebot als PDF – bereit zum Versenden, bevor du losfährst.
+              Sprich dein Aufmaß direkt beim Kunden ein. Sofortangebot rechnet die Flächen, baut das Angebot und macht ein PDF draus — geprüft versendet, bevor du losfährst. Der Küchentisch bleibt heute frei.
             </p>
             <Link
               href="/register"
@@ -48,7 +48,7 @@ export function CTASection() {
           >
             {[
               { icon: '🎤', label: 'Aufmaß einsprechen' },
-              { icon: '📄', label: 'Angebot erstellt' },
+              { icon: '📐', label: 'Flächen berechnet' },
               { icon: '📧', label: 'Kunde erhält PDF' },
             ].map((step, i) => (
               <div key={step.label}>

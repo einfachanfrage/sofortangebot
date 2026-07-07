@@ -26,11 +26,11 @@ export function VorherNachherSection() {
             <div className="font-syne font-extrabold text-[#2C2C2C] text-[22px] md:text-[26px] tracking-tight mb-8">Ohne Sofortangebot</div>
             <div className="flex flex-col gap-5">
               {[
-                'Feierabend verschiebt sich',
-                'Zettel suchen',
-                'Maße nachrechnen',
-                'Angebot tippen',
-                'Fehler vermeiden',
+                'Feierabend verschiebt sich — wieder Küchentisch',
+                'Zettel vom Aufmaß suchen',
+                'Flächen nachrechnen und hoffen, dass sie stimmen',
+                'Angebot in Word tippen',
+                'Zwei Tage später erst beim Kunden',
               ].map((t) => (
                 <div key={t} className="flex items-start gap-4">
                   <span className="text-red-300 font-black text-sm mt-0.5 shrink-0 w-4">✕</span>
@@ -52,10 +52,10 @@ export function VorherNachherSection() {
             <div className="font-syne font-extrabold text-white text-[22px] md:text-[26px] tracking-tight mb-8">Mit Sofortangebot</div>
             <div className="flex flex-col gap-5">
               {[
-                'Baustelle verlassen',
-                'Aufmaß eingesprochen',
-                'Angebot fertig',
-                'Kunde erhält es noch am selben Tag',
+                'Aufmaß auf der Baustelle eingesprochen',
+                'Flächen berechnet — mit Rechenweg, nicht geschätzt',
+                'Kurz geprüft, Angebot fertig',
+                'Kunde hat es, bevor du zu Hause bist',
               ].map((t) => (
                 <div key={t} className="flex items-start gap-4">
                   <span className="text-[#F5C400] font-black text-sm mt-0.5 shrink-0 w-4">✓</span>

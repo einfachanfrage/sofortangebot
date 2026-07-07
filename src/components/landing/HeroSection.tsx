@@ -75,13 +75,17 @@ export function HeroSection() {
 
           {/* LEFT */}
           <div>
+            <span className="inline-block border border-[#F5C400]/40 text-[#F5C400] text-[12px] font-extrabold tracking-widest uppercase px-3 py-1.5 mb-6">
+              Für Malerbetriebe
+            </span>
+
             <h1 className="font-syne font-extrabold text-white text-[34px] md:text-[50px] lg:text-[60px] leading-[1.06] tracking-tight mb-7 max-w-2xl">
-              Angebot fertig, bevor du wieder{' '}
-              <span className="text-[#F5C400]">im Auto sitzt.</span>
+              Sprich dein Aufmaß ein.{' '}
+              <span className="text-[#F5C400]">Fertig gerechnet</span>, bevor du im Auto sitzt.
             </h1>
 
             <p className="text-white/50 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
-              Du sprichst dein Aufmaß direkt auf der Baustelle ein. Sofortangebot erstellt daraus automatisch ein vollständiges Angebot - mit Positionen, Mengen und deinen Preisen. Kurz prüfen, als PDF versenden und weiter zur nächsten Baustelle.
+              Sofortangebot ist die Angebots-App für Maler — und sie <span className="text-white/80 font-semibold">rechnet, statt zu schätzen</span>: Wandflächen aus Umfang × Höhe, Fenster und Türen abgezogen, jeder Rechenweg zum Nachprüfen. Kurz drüberschauen, als PDF raus, Feierabend.
             </p>
 
             <Link
@@ -107,34 +111,47 @@ export function HeroSection() {
                   </div>
                 </div>
 
-                {/* App-Header wie echt */}
-                <div className="text-center mb-5">
-                  <p className="font-syne font-extrabold text-white text-[18px] tracking-tight">Einfach drauflos.</p>
-                  <p className="text-white/35 text-[11px] mt-0.5">Was hast du heute gemacht?</p>
-                </div>
-
-                {/* Transkript */}
-                <div className="mb-6 px-1">
-                  <p className="text-white/40 text-[12px] leading-relaxed italic">
-                    „Parkett verlegen, 30qm, Sockelleisten neu."
+                {/* Gesprochenes Aufmaß */}
+                <div className="mb-4 px-1 flex items-start gap-2.5">
+                  <div className="w-7 h-7 rounded-full bg-[#F5C400] flex items-center justify-center shrink-0 mt-0.5">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="9" y="1" width="6" height="12" rx="3"/>
+                      <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
+                      <line x1="12" y1="19" x2="12" y2="23"/>
+                    </svg>
+                  </div>
+                  <p className="text-white/45 text-[12px] leading-relaxed italic">
+                    „Wohnzimmer, fünf mal vier, zwei sechzig hoch, Wände und Decke streichen, ein Fenster, eine Tür."
                   </p>
                 </div>
 
-                {/* Großer gelber Mic-Button — wie in der echten App */}
-                <div className="flex flex-col items-center gap-3 mb-5">
-                  <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-[#F5C400]/20 scale-[1.35] blur-md" />
-                    <div className="relative w-16 h-16 rounded-full bg-[#F5C400] flex items-center justify-center shadow-lg">
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="9" y="1" width="6" height="12" rx="3"/>
-                        <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
-                        <line x1="12" y1="19" x2="12" y2="23"/>
-                        <line x1="8" y1="23" x2="16" y2="23"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <span className="text-white/30 text-[10px] font-medium">· Antippen und sprechen</span>
+                {/* Pfeil */}
+                <div className="flex justify-center mb-4">
+                  <span className="text-[#F5C400] text-[16px]">↓</span>
                 </div>
+
+                {/* Berechnete Position MIT Rechenweg — die Differenzierung */}
+                <div className="bg-white rounded-xl px-3.5 py-3 mb-2">
+                  <div className="flex items-baseline justify-between gap-2 mb-1">
+                    <span className="text-[#2C2C2C] text-[12px] font-extrabold">Wandflächen streichen</span>
+                    <span className="text-[#2C2C2C] text-[12px] font-extrabold shrink-0">43,71 m²</span>
+                  </div>
+                  <p className="text-[#2C2C2C]/45 text-[9.5px] leading-relaxed font-medium">
+                    18 lfm Umfang × 2,60 m − Fenster 1,20 m² − Tür 1,89 m²
+                  </p>
+                </div>
+                <div className="bg-white/[0.07] rounded-xl px-3.5 py-2.5 mb-2 flex items-baseline justify-between gap-2">
+                  <span className="text-white/70 text-[11px] font-bold">Deckenfläche streichen</span>
+                  <span className="text-white/70 text-[11px] font-bold shrink-0">20,00 m²</span>
+                </div>
+                <div className="bg-white/[0.07] rounded-xl px-3.5 py-2.5 mb-4 flex items-baseline justify-between gap-2">
+                  <span className="text-white/70 text-[11px] font-bold">Sockelleisten abkleben</span>
+                  <span className="text-white/70 text-[11px] font-bold shrink-0">17,10 lfdm</span>
+                </div>
+
+                <p className="text-center text-[#F5C400]/70 text-[9.5px] font-bold tracking-wide uppercase mb-1">
+                  Gerechnet, nicht geschätzt
+                </p>
 
               </div>
 

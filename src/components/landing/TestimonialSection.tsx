@@ -32,10 +32,10 @@ export function TestimonialSection() {
           className="mb-12"
         >
           <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-3">
-            Für deinen Betrieb gemacht.
+            Spezialisiert. Mit Absicht.
           </h2>
           <p className="text-[#888] text-base max-w-2xl leading-relaxed">
-            Sofortangebot kennt bereits die wichtigsten Leistungen, Einheiten und Positionen deines Gewerks. Preise und Kalkulationen kannst du jederzeit individuell anpassen.
+            Andere Tools wollen jedes Gewerk ein bisschen können. Sofortangebot kann Maler- und Bodenarbeiten richtig — inklusive der Sonderfälle, an denen Alleskönner scheitern: Raufaser, Dachschrägen, Erschwerniszuschläge, Verschnitt.
           </p>
         </motion.div>
 

@@ -6,7 +6,7 @@ import { SketchIcon } from './SketchIcon'
 const features = [
   {
     name: 'Aufmaß einsprechen',
-    desc: 'Direkt auf der Baustelle eingesprochen. Egal ob Dialekt, Korrekturen oder Nachträge – Sofortangebot versteht deine Beschreibung.',
+    desc: 'Direkt auf der Baustelle, so wie du redest. Dialekt, Korrekturen („warte, nicht fünf — sechs Meter"), Nachträge – alles kein Problem.',
     icon: <SketchIcon width={26} height={30} seed={11} roughness={0.6} strokeWidth={1.8} shapes={[
       { type: 'rect', x: 8, y: 1, w: 10, h: 16 },
       { type: 'arc', cx: 13, cy: 17, r: 8, start: 0, stop: Math.PI },
@@ -15,8 +15,8 @@ const features = [
     ]} />,
   },
   {
-    name: 'Mehrere Räume, eine Aufnahme',
-    desc: 'Wohnzimmer, Flur und Kinderzimmer? Alles in einer Aufnahme. Kein Neustart zwischen den Räumen.',
+    name: 'Verwinkelte Räume? Kein Problem.',
+    desc: 'L-Form, Nischen, acht Wände: Grundriss antippen, Wandlängen eingeben — Flächen und Umfang werden exakt berechnet. Oder sag einfach die Bodenfläche.',
     icon: <SketchIcon width={28} height={26} seed={5} roughness={0.6} strokeWidth={1.8} shapes={[
       { type: 'rect', x: 2, y: 2, w: 24, h: 22 },
       { type: 'line', x1: 14, y1: 2, x2: 14, y2: 24 },
@@ -24,8 +24,8 @@ const features = [
     ]} />,
   },
   {
-    name: 'Angebot automatisch erstellt',
-    desc: 'Fertiges Angebot als professionelles PDF – mit deinem Logo, deinen Preisen und bereit zum Versenden.',
+    name: 'Rechenweg an jeder Position',
+    desc: '„43,71 m² — 18 lfm Umfang × 2,60 m, Fenster und Tür abgezogen." Du siehst bei jeder Zahl, wo sie herkommt. Keine Blackbox.',
     icon: <SketchIcon width={22} height={28} seed={3} roughness={0.6} strokeWidth={1.8} shapes={[
       { type: 'rect', x: 2, y: 1, w: 18, h: 26 },
       { type: 'line', x1: 5, y1: 9, x2: 17, y2: 9 },
@@ -53,21 +53,23 @@ const features = [
     ]} />,
   },
   {
-    name: 'Jederzeit weitermachen',
-    desc: 'Baustelle unterbrechen? Kein Problem. Die App wartet genau an der gleichen Stelle auf dich.',
+    name: 'Denkt an das, was man vergisst',
+    desc: 'Boden abdecken, Türen abkleben, Grundierung nach dem Tapetenabriss: Sofortangebot prüft dein Angebot auf Vollständigkeit — bevor du für die Position umsonst arbeitest.',
     icon: <SketchIcon width={26} height={26} seed={23} roughness={0.6} strokeWidth={1.8} shapes={[
       { type: 'circle', cx: 13, cy: 13, r: 11 },
-      { type: 'line', x1: 13, y1: 6, x2: 13, y2: 13 },
-      { type: 'line', x1: 13, y1: 13, x2: 19, y2: 16 },
+      { type: 'line', x1: 8, y1: 13, x2: 12, y2: 17 },
+      { type: 'line', x1: 12, y1: 17, x2: 19, y2: 9 },
     ]} />,
   },
 ]
 
 const killer = [
-  { label: 'Eigene Preisdatenbank', desc: 'Stunden- und Einheitspreise individuell anpassbar.' },
-  { label: 'KI berechnet Mengen', desc: 'Wandflächen, Decken, Sockelleisten – alles wird automatisch ermittelt.' },
+  { label: 'Deine Preise, nicht unsere', desc: 'Eigene Stunden- und Einheitspreise — oder Marktpreise als Start, jederzeit anpassbar.' },
+  { label: 'Mehrere Räume, eine Aufnahme', desc: 'Wohnzimmer, Flur, Kinderzimmer — alles in einem Rutsch einsprechen.' },
   { label: 'Deine Firmenvorlagen', desc: 'Logo, Zahlungsziel, Angebotsnummern und Briefpapier automatisch.' },
-  { label: 'Regionale Preisfaktoren', desc: 'Preise automatisch an deinen Standort und Markt angepasst.' },
+  { label: 'Kleinmaterial & Anfahrt', desc: 'Pauschalen einmal einstellen — landen automatisch auf jedem Angebot.' },
+  { label: 'Regionale Preisfaktoren', desc: 'Preise an deinen Standort angepasst — München rechnet anders als Dessau.' },
+  { label: 'E-Rechnung & GoBD', desc: 'ZUGFeRD, fortlaufende Nummernkreise, digitale Unterschrift — rechtssicher.' },
 ]
 
 export function FeaturesSection() {
@@ -84,7 +86,7 @@ export function FeaturesSection() {
           <h2 className="font-syne font-extrabold text-white text-[28px] md:text-[36px] tracking-tight mb-3">
             Vom Aufmaß bis zur Unterschrift.
           </h2>
-          <p className="text-white/35 text-base">Alles in einer App.</p>
+          <p className="text-white/35 text-base">Gebaut für den Maler-Alltag — nicht für alle ein bisschen.</p>
         </motion.div>
 
         {/* Workflow Features */}
