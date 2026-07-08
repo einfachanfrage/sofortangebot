@@ -48,7 +48,7 @@ export function TestimonialSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="border border-[#E5E5E5] p-6 md:p-8"
+              className="border border-[#2C2C2C]/8 rounded-3xl p-6 md:p-8"
             >
               {/* Header */}
               <div className="flex items-start justify-between gap-3 mb-5">
@@ -99,7 +99,7 @@ export function TestimonialSection() {
           <p className="text-[#999] text-sm mb-5">Wir erweitern Sofortangebot kontinuierlich.</p>
           <div className="flex flex-wrap gap-2">
             {bald.map(g => (
-              <span key={g} className="flex items-center gap-1.5 border border-[#E5E5E5] text-[#2C2C2C]/40 text-sm px-3.5 py-2">
+              <span key={g} className="flex items-center gap-1.5 border border-[#2C2C2C]/8 rounded-full text-[#2C2C2C]/40 text-sm px-3.5 py-2">
                 <span>🚧</span> {g}
               </span>
             ))}

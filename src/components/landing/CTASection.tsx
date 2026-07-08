@@ -25,7 +25,7 @@ export function CTASection() {
             </p>
             <Link
               href="/register"
-              className="inline-block bg-[#2C2C2C] text-white font-black text-base md:text-lg px-10 py-4 hover:bg-[#1a1a1a] transition-colors mb-5 w-full md:w-auto text-center"
+              className="inline-block bg-[#2C2C2C] text-white font-black text-base md:text-lg px-10 py-4 rounded-2xl hover:bg-[#1a1a1a] active:scale-95 transition-all mb-5 w-full md:w-auto text-center"
             >
               Erstes Angebot kostenlos erstellen →
             </Link>
@@ -52,7 +52,7 @@ export function CTASection() {
               { icon: '📧', label: 'Kunde erhält PDF' },
             ].map((step, i) => (
               <div key={step.label}>
-                <div className="flex items-center gap-3 bg-[#2C2C2C]/8 px-5 py-3.5">
+                <div className="flex items-center gap-3 bg-white/40 rounded-2xl px-5 py-3.5">
                   <span className="text-xl">{step.icon}</span>
                   <span className="font-syne font-extrabold text-[#2C2C2C] text-[14px]">{step.label}</span>
                 </div>

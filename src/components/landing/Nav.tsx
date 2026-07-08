@@ -20,7 +20,7 @@ export function Nav() {
       }`}>
         <div className="max-w-6xl mx-auto px-5 md:px-10 flex items-center justify-between h-16">
           {/* Logo */}
-          <span className={`font-syne font-extrabold text-[20px] tracking-tight ${scrolled ? 'text-[#2C2C2C]' : 'text-white'}`}>
+          <span className="font-syne font-extrabold text-[20px] tracking-tight text-[#2C2C2C]">
             sofort<span className="text-[#F5C400]">angebot</span>
           </span>
 
@@ -28,17 +28,13 @@ export function Nav() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/login"
-              className={`font-semibold text-sm px-4 py-2 border rounded-lg transition-colors ${
-                scrolled
-                  ? 'border-[#2C2C2C]/20 text-[#2C2C2C] hover:border-[#2C2C2C]'
-                  : 'border-white/30 text-white hover:border-white'
-              }`}
+              className="font-semibold text-sm px-4 py-2 border rounded-xl transition-colors border-[#2C2C2C]/15 text-[#2C2C2C] hover:border-[#2C2C2C]/40"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="bg-[#F5C400] text-[#2C2C2C] font-extrabold text-sm px-5 py-2 rounded-lg hover:bg-[#e6b800] transition-colors"
+              className="bg-[#F5C400] text-[#2C2C2C] font-extrabold text-sm px-5 py-2 rounded-xl hover:bg-[#e6b800] transition-colors"
             >
               Kostenlos testen
             </Link>
@@ -50,9 +46,9 @@ export function Nav() {
             className="md:hidden flex flex-col gap-1.5 p-2"
             aria-label="Menü öffnen"
           >
-            <span className={`block w-5 h-0.5 ${scrolled ? 'bg-[#2C2C2C]' : 'bg-white'}`} />
-            <span className={`block w-5 h-0.5 ${scrolled ? 'bg-[#2C2C2C]' : 'bg-white'}`} />
-            <span className={`block w-5 h-0.5 ${scrolled ? 'bg-[#2C2C2C]' : 'bg-white'}`} />
+            <span className="block w-5 h-0.5 bg-[#2C2C2C]" />
+            <span className="block w-5 h-0.5 bg-[#2C2C2C]" />
+            <span className="block w-5 h-0.5 bg-[#2C2C2C]" />
           </button>
         </div>
       </nav>

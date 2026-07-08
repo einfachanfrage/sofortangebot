@@ -1,162 +1,102 @@
 'use client'
 
 import Link from 'next/link'
-import { SketchIcon } from './SketchIcon'
-
-/* Einzelne Tool-Skizzen — dezent im Hintergrund verteilt */
-const toolFarbrolle = [
-  { type: 'line' as const, x1: 52, y1: 18, x2: 72, y2: 58 },
-  { type: 'line' as const, x1: 12, y1: 16, x2: 52, y2: 16 },
-  { type: 'line' as const, x1: 12, y1: 16, x2: 12, y2: 32 },
-  { type: 'rect' as const, x: 4, y: 32, w: 44, h: 18 },
-]
-
-const toolHammer = [
-  { type: 'line' as const, x1: 44, y1: 26, x2: 66, y2: 72 },
-  { type: 'line' as const, x1: 6, y1: 6, x2: 48, y2: 6 },
-  { type: 'line' as const, x1: 10, y1: 30, x2: 50, y2: 30 },
-  { type: 'line' as const, x1: 6, y1: 6, x2: 10, y2: 30 },
-  { type: 'line' as const, x1: 48, y1: 6, x2: 52, y2: 18 },
-  { type: 'line' as const, x1: 52, y1: 18, x2: 50, y2: 30 },
-]
-
-const toolBohrmaschine = [
-  { type: 'rect' as const, x: 6, y: 16, w: 46, h: 24 },
-  { type: 'line' as const, x1: 40, y1: 40, x2: 36, y2: 64 },
-  { type: 'line' as const, x1: 52, y1: 40, x2: 48, y2: 64 },
-  { type: 'line' as const, x1: 36, y1: 64, x2: 48, y2: 64 },
-  { type: 'line' as const, x1: 52, y1: 28, x2: 76, y2: 28 },
-  { type: 'rect' as const, x: 46, y: 22, w: 8, h: 10 },
-]
 
 export function HeroSection() {
   return (
-    <section className="bg-[#2C2C2C] min-h-screen flex flex-col justify-center pt-16 relative overflow-hidden">
-      {/* Background floor plan sketch */}
-      <svg
-        viewBox="0 0 900 600"
-        fill="none"
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ opacity: 0.05 }}
-        aria-hidden="true"
-      >
-        <rect x="80" y="60" width="380" height="260" stroke="white" strokeWidth="2"/>
-        <rect x="80" y="340" width="180" height="180" stroke="white" strokeWidth="2"/>
-        <rect x="280" y="340" width="180" height="120" stroke="white" strokeWidth="2"/>
-        <rect x="480" y="60" width="340" height="200" stroke="white" strokeWidth="2"/>
-        <rect x="480" y="280" width="200" height="240" stroke="white" strokeWidth="2"/>
-        <line x1="260" y1="60" x2="260" y2="320" stroke="white" strokeWidth="1.5"/>
-        <line x1="80" y1="200" x2="260" y2="200" stroke="white" strokeWidth="1.5"/>
-        <path d="M 260 120 A 40 40 0 0 1 300 120" stroke="white" strokeWidth="1"/>
-        <line x1="130" y1="60" x2="210" y2="60" stroke="white" strokeWidth="2.5"/>
-        <line x1="530" y1="60" x2="640" y2="60" stroke="white" strokeWidth="2.5"/>
-        <line x1="80" y1="30" x2="460" y2="30" stroke="white" strokeWidth="1"/>
-        <line x1="80" y1="24" x2="80" y2="36" stroke="white" strokeWidth="1"/>
-        <line x1="460" y1="24" x2="460" y2="36" stroke="white" strokeWidth="1"/>
-      </svg>
-
-      {/* Farbrolle — oben links, sehr dezent */}
-      <div className="absolute top-24 left-4 md:left-12 opacity-[0.12] pointer-events-none rotate-[-12deg]">
-        <SketchIcon width={72} height={68} seed={5} roughness={1.4} strokeWidth={2} color="white" shapes={toolFarbrolle} />
-      </div>
-
-      {/* Hammer — unten rechts */}
-      <div className="absolute bottom-16 right-4 md:right-16 opacity-[0.10] pointer-events-none rotate-[18deg]">
-        <SketchIcon width={72} height={78} seed={13} roughness={1.4} strokeWidth={2} color="white" shapes={toolHammer} />
-      </div>
-
-      {/* Bohrmaschine — unten links */}
-      <div className="absolute bottom-24 left-8 md:left-24 opacity-[0.08] pointer-events-none rotate-[-8deg]">
-        <SketchIcon width={82} height={72} seed={33} roughness={1.4} strokeWidth={2} color="white" shapes={toolBohrmaschine} />
-      </div>
-
-      <div className="max-w-6xl mx-auto px-5 md:px-10 w-full py-16 md:py-24 relative">
+    <section className="bg-[#F7F7F5] min-h-screen flex flex-col justify-center pt-16">
+      <div className="max-w-6xl mx-auto px-5 md:px-10 w-full py-16 md:py-24">
         <div className="grid md:grid-cols-[3fr_2fr] gap-12 md:gap-16 items-center">
 
           {/* LEFT */}
           <div>
-            <span className="inline-block border border-[#F5C400]/40 text-[#F5C400] text-[12px] font-extrabold tracking-widest uppercase px-3 py-1.5 mb-6">
-              Für Malerbetriebe
+            <span className="inline-flex items-center gap-2 bg-[#F5C400]/15 text-[#8B7000] text-[13px] font-extrabold px-4 py-2 rounded-full mb-6">
+              🖌 Für Malerbetriebe
             </span>
 
-            <h1 className="font-syne font-extrabold text-white text-[34px] md:text-[50px] lg:text-[60px] leading-[1.06] tracking-tight mb-7 max-w-2xl">
+            <h1 className="font-syne font-extrabold text-[#2C2C2C] text-[34px] md:text-[50px] lg:text-[58px] leading-[1.08] tracking-tight mb-7 max-w-2xl">
               Sprich dein Aufmaß ein.{' '}
-              <span className="text-[#F5C400]">Fertig gerechnet</span>, bevor du im Auto sitzt.
+              <span className="bg-[#F5C400] px-2 rounded-xl whitespace-nowrap">Fertig gerechnet</span>, bevor du im Auto sitzt.
             </h1>
 
-            <p className="text-white/50 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
-              Sofortangebot ist die Angebots-App für Maler — und sie <span className="text-white/80 font-semibold">rechnet, statt zu schätzen</span>: Wandflächen aus Umfang × Höhe, Fenster und Türen abgezogen, jeder Rechenweg zum Nachprüfen. Kurz drüberschauen, als PDF raus, Feierabend.
+            <p className="text-[#2C2C2C]/55 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
+              Sofortangebot ist die Angebots-App für Maler — und sie <span className="text-[#2C2C2C] font-bold">rechnet, statt zu schätzen</span>: Wandflächen aus Umfang × Höhe, Fenster und Türen abgezogen, jeder Rechenweg zum Nachprüfen. Kurz drüberschauen, als PDF raus, Feierabend.
             </p>
 
             <Link
               href="/register"
-              className="inline-block bg-[#F5C400] text-[#2C2C2C] font-black text-base md:text-lg px-8 py-4 hover:bg-[#e6b800] transition-colors mb-4"
+              className="inline-block bg-[#F5C400] text-[#2C2C2C] font-black text-base md:text-lg px-8 py-4 rounded-2xl hover:bg-[#e6b800] active:scale-95 transition-all mb-4 shadow-lg shadow-[#F5C400]/30"
             >
               Kostenlos testen →
             </Link>
-            <p className="text-white/25 text-sm font-medium">Die ersten 5 Angebote kostenlos · Monatlich kündbar · Kein Abo-Stress</p>
+            <p className="text-[#2C2C2C]/35 text-sm font-semibold">Die ersten 5 Angebote kostenlos · Monatlich kündbar · Kein Abo-Stress</p>
           </div>
 
-          {/* RIGHT — Phone Mockup, menschlicher */}
+          {/* RIGHT — Sprachnachricht wird Angebot */}
           <div className="flex justify-center md:justify-end">
-            <div className="relative w-[240px] md:w-[256px]">
-              <div className="bg-[#1a1a1a] border border-white/10 rounded-[28px] px-5 pt-5 pb-6 shadow-2xl">
+            <div className="w-full max-w-[340px] flex flex-col gap-3">
 
-                {/* Statusbar */}
-                <div className="flex justify-between items-center mb-5 px-1">
-                  <span className="text-white/30 text-[10px] font-semibold tracking-wide">9:41</span>
-                  <div className="flex gap-1 items-center">
-                    <div className="w-3 h-1.5 bg-white/20 rounded-sm" />
-                    <div className="w-1 h-1.5 bg-white/20 rounded-sm" />
-                  </div>
-                </div>
-
-                {/* Gesprochenes Aufmaß */}
-                <div className="mb-4 px-1 flex items-start gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-[#F5C400] flex items-center justify-center shrink-0 mt-0.5">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              {/* Sprachnachricht — wie man sie kennt */}
+              <div className="bg-[#2C2C2C] rounded-3xl rounded-br-lg px-5 py-4 shadow-xl self-end w-[92%]">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-[#F5C400] flex items-center justify-center shrink-0">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="9" y="1" width="6" height="12" rx="3"/>
                       <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
                       <line x1="12" y1="19" x2="12" y2="23"/>
                     </svg>
                   </div>
-                  <p className="text-white/45 text-[12px] leading-relaxed italic">
-                    „Wohnzimmer, fünf mal vier, zwei sechzig hoch, Wände und Decke streichen, ein Fenster, eine Tür."
-                  </p>
-                </div>
-
-                {/* Pfeil */}
-                <div className="flex justify-center mb-4">
-                  <span className="text-[#F5C400] text-[16px]">↓</span>
-                </div>
-
-                {/* Berechnete Position MIT Rechenweg — die Differenzierung */}
-                <div className="bg-white rounded-xl px-3.5 py-3 mb-2">
-                  <div className="flex items-baseline justify-between gap-2 mb-1">
-                    <span className="text-[#2C2C2C] text-[12px] font-extrabold">Wandflächen streichen</span>
-                    <span className="text-[#2C2C2C] text-[12px] font-extrabold shrink-0">43,71 m²</span>
+                  {/* Wellenform */}
+                  <div className="flex items-center gap-[3px] flex-1">
+                    {[4, 9, 14, 8, 16, 11, 6, 13, 9, 15, 7, 11, 5, 9, 12, 6].map((h, i) => (
+                      <span key={i} className="w-[3px] rounded-full bg-white/40" style={{ height: `${h}px` }} />
+                    ))}
                   </div>
-                  <p className="text-[#2C2C2C]/45 text-[9.5px] leading-relaxed font-medium">
-                    18 lfm Umfang × 2,60 m − Fenster 1,20 m² − Tür 1,89 m²
-                  </p>
+                  <span className="text-white/40 text-[11px] font-semibold shrink-0">0:19</span>
                 </div>
-                <div className="bg-white/[0.07] rounded-xl px-3.5 py-2.5 mb-2 flex items-baseline justify-between gap-2">
-                  <span className="text-white/70 text-[11px] font-bold">Deckenfläche streichen</span>
-                  <span className="text-white/70 text-[11px] font-bold shrink-0">20,00 m²</span>
-                </div>
-                <div className="bg-white/[0.07] rounded-xl px-3.5 py-2.5 mb-4 flex items-baseline justify-between gap-2">
-                  <span className="text-white/70 text-[11px] font-bold">Sockelleisten abkleben</span>
-                  <span className="text-white/70 text-[11px] font-bold shrink-0">17,10 lfdm</span>
-                </div>
-
-                <p className="text-center text-[#F5C400]/70 text-[9.5px] font-bold tracking-wide uppercase mb-1">
-                  Gerechnet, nicht geschätzt
+                <p className="text-white/60 text-[13px] leading-relaxed italic">
+                  „Wohnzimmer, fünf mal vier, zwei sechzig hoch, Wände und Decke streichen, ein Fenster, eine Tür."
                 </p>
-
               </div>
 
-              {/* Glow */}
-              <div className="absolute -inset-6 bg-[#F5C400]/5 rounded-[56px] -z-10 blur-2xl" />
+              {/* Pfeil */}
+              <div className="flex justify-center items-center gap-2 py-1">
+                <span className="text-[#2C2C2C]/30 text-[12px] font-bold">wird zu</span>
+                <span className="text-[#F5C400] text-[18px]">↓</span>
+              </div>
+
+              {/* Angebots-Karte — wie in der App */}
+              <div className="bg-white rounded-3xl p-5 shadow-xl border border-[#2C2C2C]/5">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-[17px]">🛋</span>
+                  <span className="font-syne font-extrabold text-[#2C2C2C] text-[14px]">Wohnzimmer</span>
+                  <span className="ml-auto bg-[#EDFAF0] text-[#1A7A38] text-[10px] font-extrabold px-2 py-0.5 rounded-full">✓ Geprüft</span>
+                </div>
+
+                <div className="border-b border-[#2C2C2C]/6 pb-3 mb-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-[#2C2C2C] text-[13px] font-bold">Wandflächen streichen</span>
+                    <span className="text-[#2C2C2C] text-[13px] font-extrabold shrink-0">43,71 m²</span>
+                  </div>
+                  <p className="text-[#2C2C2C]/40 text-[10.5px] font-semibold mt-1">
+                    = 18 lfm Umfang × 2,60 m − Fenster − Tür
+                  </p>
+                </div>
+
+                <div className="flex items-baseline justify-between gap-2 mb-2.5">
+                  <span className="text-[#2C2C2C]/70 text-[13px] font-bold">Deckenfläche streichen</span>
+                  <span className="text-[#2C2C2C]/70 text-[13px] font-extrabold shrink-0">20,00 m²</span>
+                </div>
+                <div className="flex items-baseline justify-between gap-2 mb-4">
+                  <span className="text-[#2C2C2C]/70 text-[13px] font-bold">Sockelleisten abkleben</span>
+                  <span className="text-[#2C2C2C]/70 text-[13px] font-extrabold shrink-0">17,10 lfdm</span>
+                </div>
+
+                <div className="bg-[#F5C400]/12 rounded-2xl px-4 py-2.5 text-center">
+                  <span className="text-[#8B7000] text-[11px] font-extrabold tracking-wide">GERECHNET, NICHT GESCHÄTZT</span>
+                </div>
+              </div>
+
             </div>
           </div>
 
