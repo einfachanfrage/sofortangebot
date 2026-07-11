@@ -169,29 +169,33 @@ export async function pruefeKIZugriff(
   userId: string,
   endpunkt: RateLimitEndpunkt
 ): Promise<Response | null> {
-  let plan = 'starter'
-  try {
-    const service = getService()
-    const { data: company } = await service
-      .from('companies')
-      .select('plan')
-      .eq('user_id', userId)
-      .single()
-    plan = (company as { plan?: string } | null)?.plan ?? 'starter'
-  } catch {
-    // Plan-Lookup-Fehler → konservativ als Free behandeln
-  }
+  // Plan-Lookup und Budget-Check parallel (Budget ist plan-unabhängig) —
+  // spart einen DB-Roundtrip pro KI-Aufruf
+  const planPromise = (async () => {
+    try {
+      const service = getService()
+      const { data: company } = await service
+        .from('companies')
+        .select('plan')
+        .eq('user_id', userId)
+        .single()
+      return (company as { plan?: string } | null)?.plan ?? 'starter'
+    } catch {
+      return 'starter' // Lookup-Fehler → konservativ als Free behandeln
+    }
+  })()
 
-  const rlCheck = await checkUserRateLimit(userId, endpunkt, plan)
-  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
+  const [plan, budgetCheck] = await Promise.all([planPromise, checkKIBudget(userId)])
 
-  const budgetCheck = await checkKIBudget(userId)
   if (!budgetCheck.allowed) {
     return Response.json(
       { error: 'KI-Tageslimit erreicht. Morgen geht\'s weiter.', isKIBudget: true },
       { status: 429, headers: { 'Retry-After': '3600' } }
     )
   }
+
+  const rlCheck = await checkUserRateLimit(userId, endpunkt, plan)
+  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
 
   return null
 }

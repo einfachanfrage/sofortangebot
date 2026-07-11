@@ -293,7 +293,7 @@ export default function EntwurfPage() {
 
   const [recording, setRecording] = useState(false)
   const [recordingDauer, setRecordingDauer] = useState(0)
-  const [uploading, setUploading] = useState(false)
+  
   const [showNotiz, setShowNotiz] = useState(false)
   const [loadingMsg, setLoadingMsg] = useState('Positionen werden berechnet…')
   const [fehler, setFehler] = useState('')
@@ -473,12 +473,11 @@ export default function EntwurfPage() {
   }
 
   async function handleAudioStop(blob: Blob) {
-    setUploading(true)
     const tempId = `temp-${Date.now()}`
     const tempEntry: AufnahmeWithUrl = {
       id: tempId, angebot_id: angebotId, typ: 'sprache',
       audio_url: null, audio_dauer_sekunden: recordingDauer,
-      transkript: null, erkannte_positionen: [], verarbeitung_status: 'ausstehend',
+      transkript: null, erkannte_positionen: [], verarbeitung_status: 'verarbeitung',
       notiz_text: null, foto_url: null, foto_beschreibung: null,
       in_pdf: false, erstellt_am: new Date().toISOString(), geraet: geraet.current, sortierung: 0,
     }
@@ -491,14 +490,29 @@ export default function EntwurfPage() {
     fd.append('dauer_sekunden', String(recordingDauer))
     fd.append('geraet', geraet.current)
 
-    const uploadRes = await fetch('/api/entwurf/aufnahme/upload', { method: 'POST', body: fd })
-    if (!uploadRes.ok) { setUploading(false); return }
-    const { id: aufnahmeId } = await uploadRes.json() as { id: string }
-
-    setAufnahmen(prev => prev.map(a => a.id === tempId ? { ...a, id: aufnahmeId, verarbeitung_status: 'verarbeitung' } : a))
-    setUploading(false)
-
-    verarbeiteAufnahme(aufnahmeId)
+    // Ein Request macht alles (Upload + Whisper + Chips parallel im Backend).
+    // Fire-and-forget: das Mikro ist sofort wieder frei, die Card zeigt den Status.
+    fetch('/api/entwurf/aufnahme/upload', { method: 'POST', body: fd })
+      .then(async res => {
+        const data = await res.json().catch(() => ({})) as {
+          id?: string; transkript?: string; positionen?: ErkanntPosition[]; error?: string
+        }
+        if (res.ok && data.id) {
+          setAufnahmen(prev => prev.map(a => a.id === tempId ? {
+            ...a, id: data.id!, transkript: data.transkript ?? null,
+            erkannte_positionen: data.positionen ?? [], verarbeitung_status: 'fertig',
+          } : a))
+        } else if (data.id) {
+          // Aufnahme existiert, aber keine Sprache erkannt → Fehler-Card mit Retry
+          setAufnahmen(prev => prev.map(a => a.id === tempId ? { ...a, id: data.id!, verarbeitung_status: 'fehler' } : a))
+        } else {
+          setAufnahmen(prev => prev.filter(a => a.id !== tempId))
+          setFehler(data.error ?? 'Upload fehlgeschlagen. Bitte nochmal versuchen.')
+        }
+      })
+      .catch(() => {
+        setAufnahmen(prev => prev.map(a => a.id === tempId ? { ...a, verarbeitung_status: 'fehler' } : a))
+      })
   }
 
   // ── Zettel-Scan: Foto vom handschriftlichen Aufmaß → Vision liest ab ─────
@@ -521,7 +535,7 @@ export default function EntwurfPage() {
     fd.append('geraet', geraet.current)
 
     try {
-      const res = await fetch('/api/entwurf/zettel', { method: 'POST', body: fd })
+      const res = await fetch('/api/entwurf/scan', { method: 'POST', body: fd })
       const data = await res.json() as { id?: string; transkript?: string; positionen?: ErkanntPosition[]; foto_url?: string | null; error?: string }
 
       if (!res.ok || !data.id) {
@@ -639,7 +653,7 @@ export default function EntwurfPage() {
   const neueAufnahmen = letzteGenerierung
     ? sprachen.filter(a => new Date(a.erstellt_am) > new Date(letzteGenerierung))
     : sprachen
-  const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung && !uploading
+  const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung
 
   // ── Zurück-Bestätigung Screen ─────────────────────────────────────────────
 
@@ -802,22 +816,13 @@ export default function EntwurfPage() {
         </div>
 
         {/* Aufnahme-Indikator */}
-        {(recording || uploading) && (
+        {recording && (
           <div className="mt-3 bg-white rounded-2xl border border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-3">
-            {recording ? (
-              <>
-                <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
-                <span className="font-extrabold text-[#2C2C2C] text-[14px]">
-                  Aufnahme läuft — {recordingDauer}s
-                </span>
-                <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Nochmal tippen zum Stoppen</span>
-              </>
-            ) : (
-              <>
-                <Loader2 size={16} className="animate-spin text-[#2C2C2C]/40" />
-                <span className="font-semibold text-[#2C2C2C]/60 text-[14px]">Wird hochgeladen…</span>
-              </>
-            )}
+            <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
+            <span className="font-extrabold text-[#2C2C2C] text-[14px]">
+              Aufnahme läuft — {recordingDauer}s
+            </span>
+            <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Nochmal tippen zum Stoppen</span>
           </div>
         )}
 
@@ -863,7 +868,7 @@ export default function EntwurfPage() {
             <div className="flex flex-col items-center gap-2 pb-[3px]">
               <button
                 onClick={() => zettelInputRef.current?.click()}
-                disabled={uploading || zettelUploading}
+                disabled={zettelUploading}
                 className="w-14 h-14 rounded-full bg-white border-2 border-[#2C2C2C]/10 flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-50"
               >
                 {zettelUploading
@@ -877,7 +882,7 @@ export default function EntwurfPage() {
             <div className="flex flex-col items-center gap-2">
               <button
                 onClick={startRecording}
-                disabled={uploading}
+                
                 className="w-20 h-20 rounded-full bg-[#2C2C2C] flex items-center justify-center shadow-2xl shadow-black/30 active:scale-95 transition-all disabled:opacity-50"
               >
                 <Mic size={32} strokeWidth={2} className="text-white" />

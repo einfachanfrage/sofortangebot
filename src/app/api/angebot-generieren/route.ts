@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getGewerkePromptContext } from '@/lib/gewerke'
 import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
-import { checkUserRateLimit, checkKIBudget, trackKIUsage, rateLimitResponse } from '@/lib/rate-limiter'
+import { pruefeKIZugriff, trackKIUsage } from '@/lib/rate-limiter'
 import { kleinmaterialPosition, anfahrtPosition } from '@/lib/gewerke-config'
 import { erkenneArbeiten } from '@/lib/arbeiten-normalisierer'
 import { malerFallbackPreis } from '@/lib/preis-fallback'
@@ -92,16 +92,8 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  const { data: companyPlan } = await supabase.from('companies').select('plan').eq('user_id', user.id).single()
-  const plan = (companyPlan as { plan?: string } | null)?.plan ?? 'starter'
-
-  const rlCheck = await checkUserRateLimit(user.id, 'ki_extraktion', plan)
-  if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
-
-  const budgetCheck = await checkKIBudget(user.id)
-  if (!budgetCheck.allowed) {
-    return NextResponse.json({ error: 'KI-Tageslimit erreicht. Morgen geht\'s weiter.', isKIBudget: true }, { status: 429 })
-  }
+  const blocked = await pruefeKIZugriff(user.id, 'ki_extraktion')
+  if (blocked) return blocked
 
   const body = await req.json() as { text?: string; berechnete_positionen?: Array<{ beschreibung: string; menge: number; einheit: string; annahmen: string[]; flaechen_parameter?: { brutto_m2: number; fenster_anzahl: number; fenster_einzelflaeche: number; tuer_anzahl: number; tuer_einzelflaeche: number } }>; originaltext?: string }
   const text = body.text ?? body.originaltext ?? ''
