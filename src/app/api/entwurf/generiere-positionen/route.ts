@@ -57,13 +57,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, positionen_count: 0, rueckfragen: [], keine_neuen: true })
   }
 
-  // Texte sammeln: Sprach-Transkripte + Notizen
+  // Texte sammeln: Sprach-Transkripte + Notizen + Zettel-Scans (foto mit transkript)
   const texte: string[] = []
   for (const a of aufnahmen) {
     if (a.typ === 'sprache' && a.verarbeitung_status === 'fertig' && a.transkript) {
       texte.push(a.transkript as string)
     } else if (a.typ === 'notiz' && a.notiz_text) {
       texte.push(a.notiz_text as string)
+    } else if (a.typ === 'foto' && a.verarbeitung_status === 'fertig' && a.transkript) {
+      // Zettel-Scan: Vision hat den handschriftlichen Zettel abgelesen
+      texte.push(a.transkript as string)
     }
   }
 

@@ -42,17 +42,20 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
   const [fotoGross, setFotoGross] = useState(false)
   const positionen = aufnahme.erkannte_positionen as ErkanntPosition[]
   const erkannte = positionen.filter(p => p.erkannt)
+  // Zettel-Scan = Foto mit Vision-Transkript (bzw. gerade in Verarbeitung)
+  const istZettel = aufnahme.typ === 'foto' && (aufnahme.transkript != null || aufnahme.foto_beschreibung === 'Aufmaß-Zettel')
 
   return (
     <div className="bg-white rounded-2xl border border-[#2C2C2C]/6 overflow-hidden">
 
-      {/* Sprach-Aufnahme */}
-      {aufnahme.typ === 'sprache' && (
+      {/* Sprach-Aufnahme oder Zettel-Scan */}
+      {(aufnahme.typ === 'sprache' || istZettel) && (
         <div className="px-4 pt-3.5 pb-4">
           {/* Kopfzeile: Zeit + Status + Löschen */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <span className="text-[#2C2C2C]/30 font-semibold text-[12px]">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
+              {istZettel && <span className="text-[11px] font-extrabold text-[#2C2C2C]/40 bg-[#2C2C2C]/5 px-2 py-0.5 rounded-full">📷 Zettel</span>}
               <StatusBadge status={aufnahme.verarbeitung_status} />
             </div>
             {onDelete && (
@@ -73,9 +76,9 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center gap-2 text-red-500 text-[13px] font-semibold">
                 <AlertCircle size={14} />
-                Verarbeitung fehlgeschlagen
+                {istZettel ? 'Zettel nicht lesbar — bitte neu fotografieren' : 'Verarbeitung fehlgeschlagen'}
               </div>
-              {onRetry && (
+              {onRetry && aufnahme.typ === 'sprache' && (
                 <button
                   onClick={onRetry}
                   className="ml-auto flex items-center gap-1.5 bg-[#2C2C2C] text-white text-[12px] font-extrabold px-3 py-1.5 rounded-xl active:scale-95 transition-all"
@@ -120,6 +123,17 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
           {aufnahme.audio_signed_url && (
             <AudioPlayer src={aufnahme.audio_signed_url} dauer={aufnahme.audio_dauer_sekunden} />
           )}
+
+          {/* Zettel-Thumbnail */}
+          {istZettel && aufnahme.foto_signed_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={aufnahme.foto_signed_url}
+              alt="Aufmaß-Zettel"
+              className="w-full max-h-32 object-cover rounded-xl cursor-pointer border border-[#2C2C2C]/8"
+              onClick={() => setFotoGross(true)}
+            />
+          )}
         </div>
       )}
 
@@ -139,8 +153,8 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
         </div>
       )}
 
-      {/* Foto */}
-      {aufnahme.typ === 'foto' && aufnahme.foto_signed_url && (
+      {/* Foto (Baustellendoku — ohne Zettel-Scan) */}
+      {aufnahme.typ === 'foto' && !istZettel && aufnahme.foto_signed_url && (
         <>
           <div className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -285,11 +299,13 @@ export default function EntwurfPage() {
   const [fehler, setFehler] = useState('')
   const [deleteBestaetigen, setDeleteBestaetigen] = useState<string | null>(null)
   const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
+  const [zettelUploading, setZettelUploading] = useState(false)
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const dauerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const geraet = useRef('')
+  const zettelInputRef = useRef<HTMLInputElement>(null)
 
   // ── Daten laden ──────────────────────────────────────────────────────────
 
@@ -485,6 +501,64 @@ export default function EntwurfPage() {
     verarbeiteAufnahme(aufnahmeId)
   }
 
+  // ── Zettel-Scan: Foto vom handschriftlichen Aufmaß → Vision liest ab ─────
+  async function handleZettelUpload(file: File) {
+    setZettelUploading(true)
+    setFehler('')
+    const tempId = `temp-zettel-${Date.now()}`
+    const tempEntry: AufnahmeWithUrl = {
+      id: tempId, angebot_id: angebotId, typ: 'foto',
+      audio_url: null, audio_dauer_sekunden: null,
+      transkript: null, erkannte_positionen: [], verarbeitung_status: 'verarbeitung',
+      notiz_text: null, foto_url: null, foto_beschreibung: 'Aufmaß-Zettel',
+      in_pdf: false, erstellt_am: new Date().toISOString(), geraet: geraet.current, sortierung: 0,
+    }
+    setAufnahmen(prev => [...prev, tempEntry])
+
+    const fd = new FormData()
+    fd.append('angebot_id', angebotId)
+    fd.append('foto', file)
+    fd.append('geraet', geraet.current)
+
+    try {
+      const res = await fetch('/api/entwurf/zettel', { method: 'POST', body: fd })
+      const data = await res.json() as { id?: string; transkript?: string; positionen?: ErkanntPosition[]; foto_url?: string | null; error?: string }
+
+      if (!res.ok || !data.id) {
+        setAufnahmen(prev => prev.filter(a => a.id !== tempId))
+        setFehler(data.error ?? 'Zettel konnte nicht gelesen werden')
+        return
+      }
+
+      // Signed-URL fürs Thumbnail holen
+      let signedUrl: string | undefined
+      if (data.foto_url) {
+        const urlRes = await fetch('/api/entwurf/signed-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paths: [{ bucket: 'entwurf-fotos', path: data.foto_url }] }),
+        })
+        const urlData = await urlRes.json().catch(() => ({})) as { urls?: Record<string, string> }
+        signedUrl = urlData.urls?.[data.foto_url]
+      }
+
+      setAufnahmen(prev => prev.map(a => a.id === tempId ? {
+        ...a,
+        id: data.id!,
+        transkript: data.transkript ?? null,
+        erkannte_positionen: data.positionen ?? [],
+        verarbeitung_status: 'fertig',
+        foto_url: data.foto_url ?? null,
+        foto_signed_url: signedUrl,
+      } : a))
+    } catch {
+      setAufnahmen(prev => prev.filter(a => a.id !== tempId))
+      setFehler('Netzwerkfehler beim Zettel-Upload. Bitte nochmal versuchen.')
+    } finally {
+      setZettelUploading(false)
+    }
+  }
+
   function verarbeiteAufnahme(aufnahmeId: string) {
     fetch('/api/entwurf/aufnahme/verarbeite', {
       method: 'POST',
@@ -553,7 +627,12 @@ export default function EntwurfPage() {
 
   const kundenname = (quoteInfo?.customer as { name?: string } | null)?.name
   const hatBestehendPositionen = (quoteInfo?.quote_items?.length ?? 0) > 0
-  const sprachen = aufnahmen.filter(a => a.typ === 'sprache')
+  // "Verwertbar" = fließt in die Angebots-Generierung: Sprache + Zettel-Scans
+  // (typ 'foto' mit Transkript bzw. gerade in Verarbeitung). Reine Doku-Fotos nicht.
+  const sprachen = aufnahmen.filter(a =>
+    a.typ === 'sprache' ||
+    (a.typ === 'foto' && (a.transkript != null || a.verarbeitung_status === 'verarbeitung' || a.verarbeitung_status === 'fehler'))
+  )
   const alleTranskribiertOderFehler = sprachen.length > 0 && sprachen.every(a => a.verarbeitung_status === 'fertig' || a.verarbeitung_status === 'fehler')
   const nochVerarbeitung = sprachen.some(a => a.verarbeitung_status === 'verarbeitung' || a.verarbeitung_status === 'ausstehend')
   const letzteGenerierung = quoteInfo?.entwurf_gespeichert_am
@@ -682,7 +761,7 @@ export default function EntwurfPage() {
             Einfach lossprechen
           </div>
           <div className="text-[#2C2C2C]/40 font-semibold text-[15px] leading-relaxed max-w-xs">
-            Beschreib die Baustelle — Räume, Maße, was gemacht werden soll.
+            Beschreib die Baustelle — Räume, Maße, was gemacht werden soll. Oder fotografier einfach deinen Aufmaß-Zettel. 📷
           </div>
           <div className="mt-6 flex flex-col gap-2 text-left w-full max-w-xs">
             {[
@@ -779,19 +858,47 @@ export default function EntwurfPage() {
             Tippen zum Stoppen — {recordingDauer}s
           </button>
         ) : (
-          <div className="flex flex-col items-center gap-2">
-            <button
-              onClick={startRecording}
-              disabled={uploading}
-              className="w-20 h-20 rounded-full bg-[#2C2C2C] flex items-center justify-center shadow-2xl shadow-black/30 active:scale-95 transition-all disabled:opacity-50"
-            >
-              <Mic size={32} strokeWidth={2} className="text-white" />
-            </button>
-            <span className="text-[#2C2C2C]/40 font-semibold text-[13px]">
-              {aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}
-            </span>
+          <div className="flex items-end justify-center gap-8">
+            {/* Zettel scannen */}
+            <div className="flex flex-col items-center gap-2 pb-[3px]">
+              <button
+                onClick={() => zettelInputRef.current?.click()}
+                disabled={uploading || zettelUploading}
+                className="w-14 h-14 rounded-full bg-white border-2 border-[#2C2C2C]/10 flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-50"
+              >
+                {zettelUploading
+                  ? <Loader2 size={22} className="animate-spin text-[#2C2C2C]/40" />
+                  : <Camera size={22} strokeWidth={2} className="text-[#2C2C2C]" />}
+              </button>
+              <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Zettel</span>
+            </div>
+
+            {/* Aufnehmen */}
+            <div className="flex flex-col items-center gap-2">
+              <button
+                onClick={startRecording}
+                disabled={uploading}
+                className="w-20 h-20 rounded-full bg-[#2C2C2C] flex items-center justify-center shadow-2xl shadow-black/30 active:scale-95 transition-all disabled:opacity-50"
+              >
+                <Mic size={32} strokeWidth={2} className="text-white" />
+              </button>
+              <span className="text-[#2C2C2C]/40 font-semibold text-[13px]">
+                {aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}
+              </span>
+            </div>
+
+            {/* Platzhalter für Symmetrie */}
+            <div className="w-14 pb-[3px]" />
           </div>
         )}
+        <input
+          ref={zettelInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleZettelUpload(f); e.target.value = '' }}
+        />
       </div>
 
       {showNotiz && <NotizModal onSave={saveNotiz} onClose={() => setShowNotiz(false)} />}
