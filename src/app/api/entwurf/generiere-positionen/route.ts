@@ -114,16 +114,34 @@ export async function POST(req: NextRequest) {
   const positionen = extData.mengen?.positionen ?? []
   const rueckfragen = extData.mengen?.rueckfragen ?? []
 
-  // Raumdimensionen aus Extraktion in raum_details speichern
+  // Raumdimensionen aus Extraktion in raum_details speichern.
+  // WICHTIG: Der Schlüssel muss exakt dem Raumnamen in den Positions-Titeln
+  // entsprechen ("… — Wohnzimmer"), sonst findet die Bearbeiten-Ansicht die
+  // Maße nicht (Casing-Mismatch: Extraktion "wohnzimmer" vs. Titel "Wohnzimmer").
   const extraktionRaeume = extData.extraktion?.raeume ?? []
   if (extraktionRaeume.length > 0) {
+    // Kanonische Raumnamen, wie sie in den Positionen stehen
+    const titelRaeume: string[] = []
+    for (const p of positionen) {
+      const beschr = (p as { beschreibung?: string }).beschreibung ?? ''
+      const m = beschr.match(/\s+[-–—]\s+(.+)$/)
+      if (m && !titelRaeume.includes(m[1].trim())) titelRaeume.push(m[1].trim())
+    }
+    const findeTitelName = (rawName: string): string => {
+      const low = rawName.toLowerCase()
+      return titelRaeume.find(t => t.toLowerCase() === low)
+        ?? titelRaeume.find(t => t.toLowerCase().includes(low) || low.includes(t.toLowerCase()))
+        ?? rawName
+    }
+
     const raumDetails: Record<string, { breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number }> = {}
     for (const raum of extraktionRaeume) {
       const name = raum.name?.trim()
       if (!name) continue
+      const key = findeTitelName(name)
       const fensterAnzahl = raum.fenster?.reduce((s, f) => s + (f.anzahl ?? 1), 0) || undefined
       const tuerenAnzahl = raum.tueren?.reduce((s, t) => s + (t.anzahl ?? 1), 0) || undefined
-      raumDetails[name] = {
+      raumDetails[key] = {
         ...(raum.breite != null ? { breite: raum.breite } : {}),
         ...(raum.laenge != null ? { laenge: raum.laenge } : {}),
         ...(raum.hoehe != null ? { hoehe: raum.hoehe } : {}),

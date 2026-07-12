@@ -150,11 +150,13 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Normalisierer deckt Flexionen ab ("gestrichen", "anmalen" …) — nur auf arbeiten[],
     // NICHT aufs Transkript (das gilt raumübergreifend und würde Signale in andere Räume streuen)
     const hatStreichen = leerOderKomplett || hatArbeit(arbeitenStr, 'streichen')
-    // nurDecke/nurWaende: GPT schreibt selten "nur X" in arbeiten[] — Transkript als Primärquelle
-    const nurWaende = arbeitenStr.includes('nur wand') || arbeitenStr.includes('nur die wand')
-      || transkriptLower.includes('nur wand') || transkriptLower.includes('nur die wand') || transkriptLower.includes('nur wände')
-    const nurDecke = arbeitenStr.includes('nur decke') || arbeitenStr.includes('nur die decke')
-      || transkriptLower.includes('nur decke') || transkriptLower.includes('nur die decke')
+    // nurDecke/nurWaende: GPT schreibt selten "nur X" in arbeiten[] — Transkript als Primärquelle.
+    // Regex statt includes(): deckt Flexionen (Wand/Wände/Wänden) und "die" dazwischen ab.
+    // "nur die Wände" scheiterte vorher an ä≠a und dem "die".
+    const NUR_WAND = /nur\s+(?:die\s+)?(?:wänd|wand\b)/i
+    const NUR_DECKE = /nur\s+(?:die\s+)?decke/i
+    const nurWaende = NUR_WAND.test(arbeitenStr) || NUR_WAND.test(transkriptLower)
+    const nurDecke = NUR_DECKE.test(arbeitenStr) || NUR_DECKE.test(transkriptLower)
     // Akzentwand: "nur eine Wand tapezieren, Rest streichen" — eine Wand = min(laenge,breite) × hoehe
     const hatAkzentwand = (transkriptLower.includes('eine wand') || transkriptLower.includes('akzentwand') || transkriptLower.includes('1 wand'))
       && (transkriptLower.includes('tapez') || transkriptLower.includes('vliestapete') || transkriptLower.includes('tapete'))

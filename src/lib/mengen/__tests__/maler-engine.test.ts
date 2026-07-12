@@ -234,6 +234,39 @@ describe('Maler-Engine – 10 Integrationstests', () => {
   })
 })
 
+// ─── "nur die Wände" (Beta-Bug: Decke kam trotzdem) ─────────────────────────
+describe('Maler-Engine – Scope "nur die Wände"', () => {
+  it('"Wohnzimmer nur die Wände, 5×4, 2,60 hoch, 2 Fenster 1 Tür" → KEINE Decke', () => {
+    const { positionen } = malerEngine({
+      transkript: 'Wohnzimmer streichen, nur die Wände, 5 mal 4 Meter, 2 Fenster, 1 Tür, 2,60 hoch',
+      raeume: [{
+        name: 'Wohnzimmer', breite: 5, laenge: 4, hoehe: 2.6,
+        fenster: [{ anzahl: 2 }], tueren: [{ anzahl: 1 }],
+        arbeiten: ['streichen'],
+      }],
+    })
+    expect(find(positionen, 'wandflächen')).toBeDefined()
+    expect(find(positionen, 'deckenfläche')).toBeUndefined() // <- der Bug
+  })
+
+  it('"nur Wände" ohne "die" funktioniert auch', () => {
+    const { positionen } = malerEngine({
+      transkript: 'Bad, nur Wände streichen, 3 mal 2, 2,50 hoch',
+      raeume: [{ name: 'Bad', breite: 3, laenge: 2, hoehe: 2.5, arbeiten: ['streichen'] }],
+    })
+    expect(find(positionen, 'deckenfläche')).toBeUndefined()
+  })
+
+  it('"nur die Decke" → KEINE Wandflächen', () => {
+    const { positionen } = malerEngine({
+      transkript: 'Flur, nur die Decke streichen, 4 mal 2, 2,50 hoch',
+      raeume: [{ name: 'Flur', breite: 4, laenge: 2, hoehe: 2.5, arbeiten: ['streichen'] }],
+    })
+    expect(find(positionen, 'deckenfläche')).toBeDefined()
+    expect(find(positionen, 'wandflächen')).toBeUndefined()
+  })
+})
+
 // ─── Freies Sprechen (Beta-Feedback Clemens) ────────────────────────────────
 // Handwerker sprechen nicht im Schema "5×4 Meter, 2,60 hoch" sondern erzählen:
 // "20 qm Bodenfläche, Decke 3 m hoch, Raufaser abnehmen, dann streichen, spachteln"
