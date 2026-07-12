@@ -1,6 +1,7 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add } from './helpers'
 import { extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName, erkenneBelag } from './boden-basis'
+import { hatArbeit } from '../arbeiten-normalisierer'
 
 function round2(n: number): number { return Math.round(n * 100) / 100 }
 
@@ -45,7 +46,7 @@ export function pruefeParkettSchleifen(
   lower: string,
 ): void {
   const hatSchleifen =
-    (lower.includes('schleifen') || lower.includes('abgeschliffen') || lower.includes('geschliffen')) &&
+    hatArbeit(lower, 'schleifen') &&
     (lower.includes('parkett') || lower.includes('diele') || lower.includes('holzboden') || lower.includes('eichen'))
   if (!hatSchleifen) return
   if (hat(ergaenzt, 'schleifen')) return

@@ -1,51 +1,12 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add } from './helpers'
-
-export type BelagTyp = 'parkett' | 'laminat' | 'vinyl' | 'kork' | 'linoleum' | 'teppich' | null
-
-export function erkenneBelag(lower: string): BelagTyp {
-  if (lower.includes('parkett') || lower.includes('dielen') || lower.includes('massivholz') || lower.includes('fertigparkett'))
-    return 'parkett'
-  if (lower.includes('laminat')) return 'laminat'
-  if (lower.includes('vinyl') || lower.includes('designboden') || lower.includes('lvt') || lower.includes('klick'))
-    return 'vinyl'
-  if (lower.includes('kork')) return 'kork'
-  if (lower.includes('linoleum')) return 'linoleum'
-  if (lower.includes('teppich') || lower.includes('teppichboden') || lower.includes('nadelvlies'))
-    return 'teppich'
-  return null
-}
-
-export function belagBezeichnung(belag: BelagTyp): string {
-  const map: Record<NonNullable<BelagTyp>, string> = {
-    parkett: 'Parkett',
-    laminat: 'Laminat',
-    vinyl: 'Vinyl / Designboden',
-    kork: 'Kork',
-    linoleum: 'Linoleum',
-    teppich: 'Teppich',
-  }
-  return belag ? (map[belag] ?? 'Bodenbelag') : 'Bodenbelag'
-}
-
-// Spezifischeren Belagnamen aus Transkript ableiten
-export function erkenneBelagName(lower: string, belag: BelagTyp): string {
-  if (belag === 'vinyl') {
-    if (lower.includes('klick-vinyl') || (lower.includes('klick') && lower.includes('vinyl')))
-      return 'Klick-Vinyl'
-    if (lower.includes('designboden')) return 'Designboden'
-    if (lower.includes('vinyl')) return 'Vinyl-Boden'
-  }
-  if (belag === 'teppich') {
-    if (lower.includes('nadelvlies')) return 'Nadelvlies-Teppichboden'
-    return 'Teppichboden'
-  }
-  if (belag === 'parkett') {
-    if (lower.includes('fertigparkett')) return 'Fertigparkett'
-    if (lower.includes('eichenparkett') || lower.includes('eichen')) return 'Eichenparkett'
-  }
-  return belagBezeichnung(belag)
-}
+import { hatArbeit } from '../arbeiten-normalisierer'
+// Belag-Erkennung zentral im boden-normalisierer (eine Quelle, getestet).
+// Re-Export, damit bestehende Importe aus './boden-basis' unverändert bleiben.
+import type { BelagTyp } from '../boden-normalisierer'
+import { erkenneBelag, belagBezeichnung, erkenneBelagName } from '../boden-normalisierer'
+export type { BelagTyp }
+export { erkenneBelag, belagBezeichnung, erkenneBelagName }
 
 export function extrahiereFlaeche(lower: string): number | null {
   const m = lower.match(/(\d+[\.,]?\d*)\s*(?:m²|qm|quadratmeter)/)
@@ -95,7 +56,7 @@ export function pruefeBodenBasis(
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
 
   // ── Untergrundvorbereitung ───────────────────────────────────────────────
-  const hatGrundieren = lower.includes('grundier')
+  const hatGrundieren = hatArbeit(lower, 'grundieren')
   const hatAusgleich = lower.includes('ausgleich') || lower.includes('ausgleichsmasse')
   const hatSperre = lower.includes('feuchtigkeitssperre') || lower.includes('epoxidharz')
 

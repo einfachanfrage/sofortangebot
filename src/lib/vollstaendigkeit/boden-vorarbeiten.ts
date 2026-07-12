@@ -1,6 +1,8 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, addMitMenge } from './helpers'
 import { extrahiereFlaeche, extrahiereFlaecheAusAbmessungen } from './boden-basis'
+import { hatBodenArbeit } from '../boden-normalisierer'
+import { hatArbeit } from '../arbeiten-normalisierer'
 
 function extrahiereLfdm(lower: string, schluessel: string): number | null {
   const esc = schluessel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -22,26 +24,9 @@ export function pruefeAltbelag(
     lower.includes('verklebter teppich') ||
     lower.includes('verklebt') && (lower.includes('teppich') || lower.includes('belag'))
 
-  const hatAltbelag =
-    lower.includes('altbelag') ||
-    lower.includes('alter boden') ||
-    lower.includes('alten boden') ||
-    lower.includes('alter belag') ||
-    lower.includes('alten belag') ||
-    lower.includes('alter teppich') ||
-    lower.includes('alten teppich') ||
-    lower.includes('uralter')
-
-  const hatEntfernen =
-    lower.includes('entfern') ||
-    lower.includes('raus') ||
-    lower.includes('rausreißen') ||
-    lower.includes('stripper') ||
-    (lower.includes('weg') && (lower.includes('belag') || lower.includes('boden'))) ||
-    lower.includes('abbrech') ||
-    lower.includes('abreiß')
-
-  if (!((hatAltbelag || hatEntfernen) && !hat(ergaenzt, 'altbelag', 'entfernen', 'demontage', 'teppichboden entfernen'))) return
+  // Altbelag-Demontage zentral erkannt (Subjekt+Aktion im Satz, alle Partizipien:
+  // "abgerissen", "abgebrochen", "rausgerissen" …).
+  if (!(hatBodenArbeit(lower, 'altbelag_entfernen') && !hat(ergaenzt, 'altbelag', 'entfernen', 'demontage', 'teppichboden entfernen'))) return
 
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
@@ -53,7 +38,7 @@ export function pruefeAltbelag(
     } else {
       fehlende.push('Alten Teppichboden entfernen (verklebt)')
     }
-    if (lower.includes('kleber') || lower.includes('kleberreste') || lower.includes('abschleifen')) {
+    if (lower.includes('kleber') || lower.includes('kleberreste') || hatArbeit(lower, 'schleifen')) {
       if (m2) {
         ergaenzt.push({ beschreibung: 'Kleberreste abschleifen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
       } else {
