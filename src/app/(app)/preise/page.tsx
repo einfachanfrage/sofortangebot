@@ -545,7 +545,6 @@ export default function PreisePage() {
         <div className="px-4 pt-5 pb-3 border-b border-[#2C2C2C]/8">
           <Link href="/einstellungen" className="text-xs font-bold text-[#2C2C2C]/35 hover:text-[#2C2C2C]/60">← Einstellungen</Link>
           <div className="font-syne font-black text-[#2C2C2C] text-base mt-1">Preisdatenbank</div>
-          <div className="text-xs text-[#2C2C2C]/35 font-semibold">{items.length} Positionen</div>
         </div>
         {/* Search */}
         <div className="px-3 py-2.5 border-b border-[#2C2C2C]/8">
