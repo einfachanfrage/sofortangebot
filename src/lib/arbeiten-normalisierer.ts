@@ -66,3 +66,59 @@ export function erkenneArbeiten(text: string): Set<ArbeitsKategorie> {
 export function hatArbeit(text: string, kategorie: ArbeitsKategorie): boolean {
   return erkenneArbeiten(text).has(kategorie)
 }
+
+// ── Scope-Einschränkung: "nur die Wände / nur Decke / nur Boden" ────────────
+// Zentral, weil das an ä≠a und Wortstellung immer wieder scheiterte
+// ("nur die Wände" ≠ "nur die wand", ≠ "nur wände").
+
+export interface RaumScope {
+  nurWaende: boolean
+  nurDecke: boolean
+  nurBoden: boolean
+}
+
+// Einschränkungs-Wörter: nur, bloß, lediglich, ausschließlich, einzig, allein
+const NUR = String.raw`(?:nur|blo[sß]{1,2}|lediglich|ausschlie[sß]{1,2}lich|einzig|allein)`
+// Flächen (mit Flexionen): Wand/Wände/Wänden, Decke/Decken, Boden/Böden
+const FLAECHE = {
+  waende: String.raw`(?:wänd\w*|wand)`,
+  decke: String.raw`(?:decke\w*)`,
+  boden: String.raw`(?:b[oö]den|boden)`,
+}
+// Optionaler Artikel/Präposition zwischen Einschränkung und Fläche: "die", "an den", …
+const LUECKE = String.raw`(?:\s+(?:die|den|der|das|an|am|auf|nur)\b)*\s+`
+
+function nurMuster(flaeche: string): RegExp {
+  return new RegExp(`${NUR}${LUECKE}${flaeche}`, 'i')
+}
+// Negation: nur das eindeutige "ohne Decke" / "keine Decke" (word-order-unabhängig).
+// "Decke ... nicht" bewusst NICHT — zu gierig (matcht auch "Decke streichen, Wände nicht").
+function ohneMuster(flaeche: string): RegExp {
+  return new RegExp(`(?:ohne|keine?)\\s+${flaeche}`, 'i')
+}
+
+const NUR_WAENDE = nurMuster(FLAECHE.waende)
+const NUR_DECKE = nurMuster(FLAECHE.decke)
+const NUR_BODEN = nurMuster(FLAECHE.boden)
+const OHNE_DECKE = ohneMuster(FLAECHE.decke)
+const OHNE_WAENDE = ohneMuster(FLAECHE.waende)
+
+/**
+ * Erkennt, ob nur bestimmte Flächen bearbeitet werden sollen.
+ * Deckt "nur die Wände", "bloß Decke", "ohne Decke", "Wände, Decke nicht" ab.
+ */
+export function erkenneScope(text: string): RaumScope {
+  const t = (text ?? '').toLowerCase()
+  // Explizites "nur X" hat Vorrang
+  let nurWaende = NUR_WAENDE.test(t) && !NUR_DECKE.test(t) && !NUR_BODEN.test(t)
+  let nurDecke = NUR_DECKE.test(t) && !NUR_WAENDE.test(t) && !NUR_BODEN.test(t)
+  const nurBoden = NUR_BODEN.test(t) && !NUR_WAENDE.test(t) && !NUR_DECKE.test(t)
+
+  // Negation: "Wände streichen, ohne Decke" → nur Wände
+  if (!nurWaende && !nurDecke && !nurBoden) {
+    if (OHNE_DECKE.test(t) && FLAECHE.waende && new RegExp(FLAECHE.waende, 'i').test(t)) nurWaende = true
+    else if (OHNE_WAENDE.test(t) && new RegExp(FLAECHE.decke, 'i').test(t)) nurDecke = true
+  }
+
+  return { nurWaende, nurDecke, nurBoden }
+}

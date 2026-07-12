@@ -1,5 +1,5 @@
 import type { MengenErgebnis, BerechnetePosition } from '../types'
-import { hatArbeit } from '../../arbeiten-normalisierer'
+import { hatArbeit, erkenneScope } from '../../arbeiten-normalisierer'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -150,24 +150,25 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Normalisierer deckt Flexionen ab ("gestrichen", "anmalen" …) — nur auf arbeiten[],
     // NICHT aufs Transkript (das gilt raumübergreifend und würde Signale in andere Räume streuen)
     const hatStreichen = leerOderKomplett || hatArbeit(arbeitenStr, 'streichen')
-    // nurDecke/nurWaende: GPT schreibt selten "nur X" in arbeiten[] — Transkript als Primärquelle.
-    // Regex statt includes(): deckt Flexionen (Wand/Wände/Wänden) und "die" dazwischen ab.
-    // "nur die Wände" scheiterte vorher an ä≠a und dem "die".
-    const NUR_WAND = /nur\s+(?:die\s+)?(?:wänd|wand\b)/i
-    const NUR_DECKE = /nur\s+(?:die\s+)?decke/i
-    const nurWaende = NUR_WAND.test(arbeitenStr) || NUR_WAND.test(transkriptLower)
-    const nurDecke = NUR_DECKE.test(arbeitenStr) || NUR_DECKE.test(transkriptLower)
+    // Scope ("nur die Wände / Decke / Boden") zentral im Normalisierer — deckt
+    // Flexionen, Einschränkungs-Synonyme und "ohne Decke" ab (siehe arbeiten-normalisierer).
+    // Sowohl arbeiten[] als auch Transkript prüfen (GPT schreibt "nur X" selten in arbeiten[]).
+    const scopeArb = erkenneScope(arbeitenStr)
+    const scopeTxt = erkenneScope(transkriptLower)
+    const nurWaende = scopeArb.nurWaende || scopeTxt.nurWaende
+    const nurDecke = scopeArb.nurDecke || scopeTxt.nurDecke
+    const nurBoden = scopeArb.nurBoden || scopeTxt.nurBoden
     // Akzentwand: "nur eine Wand tapezieren, Rest streichen" — eine Wand = min(laenge,breite) × hoehe
     const hatAkzentwand = (transkriptLower.includes('eine wand') || transkriptLower.includes('akzentwand') || transkriptLower.includes('1 wand'))
       && (transkriptLower.includes('tapez') || transkriptLower.includes('vliestapete') || transkriptLower.includes('tapete'))
       && (transkriptLower.includes('rest') || transkriptLower.includes('übrige') || transkriptLower.includes('weiß'))
     // Boden streichen (Keller/Garage): NUR wenn explizit "boden streichen"/"boden anstrich" — nicht bei "boden abdecken"/"boden schützen"
-    const hatBodenStreichen = arbeitenStr.includes('boden streich') || arbeitenStr.includes('boden anstrich')
+    const hatBodenStreichen = nurBoden || arbeitenStr.includes('boden streich') || arbeitenStr.includes('boden anstrich')
       || transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')
       || ((istKellerRaum || istGarageRaum) && (transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')))
-    const anWaenden = !nurDecke && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
-    // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall) oder nurWaende
-    const anDecke = !nurWaende && !hatBodenStreichen && ((hatStreichen) || arbeitenStr.includes('decke'))
+    const anWaenden = !nurDecke && !nurBoden && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
+    // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall), nurWaende oder nurBoden
+    const anDecke = !nurWaende && !nurBoden && !hatBodenStreichen && ((hatStreichen) || arbeitenStr.includes('decke'))
     const bodenStreichen = hatBodenStreichen && bodenflaecheM2 !== null
     // Boden schützen: immer wenn Wände ODER Decke gestrichen wird (Farbe tropft)
     const bodenSchutz = !bodenStreichen && (hatStreichen || arbeitenStr.includes('schutz') || anDecke || anWaenden)

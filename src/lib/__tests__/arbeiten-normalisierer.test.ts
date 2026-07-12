@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { erkenneArbeiten, hatArbeit } from '../arbeiten-normalisierer'
+import { erkenneArbeiten, hatArbeit, erkenneScope } from '../arbeiten-normalisierer'
 
 describe('erkenneArbeiten — streichen (Flexionen & Umgangssprache)', () => {
   it.each([
@@ -76,6 +76,58 @@ describe('erkenneArbeiten — spachteln', () => {
     'gespachtelt wird nächste Woche',
   ])('"%s" → spachteln', (text) => {
     expect(hatArbeit(text, 'spachteln')).toBe(true)
+  })
+})
+
+describe('erkenneScope — nur Wände / Decke / Boden (alle Flexionen)', () => {
+  it.each([
+    'Wohnzimmer streichen, nur die Wände, 5 mal 4 Meter',  // der Beta-Bug
+    'nur Wände streichen',
+    'bloß die Wände',
+    'lediglich die Wände neu',
+    'ausschließlich die Wände',
+    'nur an den Wänden was machen',
+    'nur die Wand im Flur',
+    'Wände streichen, ohne Decke',
+    'Wände ja, keine Decke',
+  ])('"%s" → nurWaende', (text) => {
+    expect(erkenneScope(text).nurWaende).toBe(true)
+  })
+
+  it.each([
+    'nur die Decke streichen',
+    'bloß die Decke',
+    'nur Decke',
+    'Decke streichen, ohne Wände',
+  ])('"%s" → nurDecke', (text) => {
+    expect(erkenneScope(text).nurDecke).toBe(true)
+  })
+
+  it.each([
+    'nur den Boden streichen',
+    'nur Boden',
+    'bloß der Boden',
+  ])('"%s" → nurBoden', (text) => {
+    expect(erkenneScope(text).nurBoden).toBe(true)
+  })
+
+  it('komplett streichen → keine Einschränkung', () => {
+    const s = erkenneScope('Wohnzimmer komplett streichen, Wände und Decke')
+    expect(s.nurWaende).toBe(false)
+    expect(s.nurDecke).toBe(false)
+    expect(s.nurBoden).toBe(false)
+  })
+
+  it('"Decke streichen, Wände nicht" wird NICHT fälschlich zu nurWaende', () => {
+    // Negation nur bei eindeutigem "ohne/keine X" — nicht bei "... nicht"
+    const s = erkenneScope('Decke streichen, Wände nicht')
+    expect(s.nurWaende).toBe(false)
+  })
+
+  it('widersprüchliche Angaben (nur Wände UND nur Decke) → keine exklusive Wahl', () => {
+    const s = erkenneScope('erster Raum nur die Wände, zweiter Raum nur die Decke')
+    expect(s.nurWaende).toBe(false)
+    expect(s.nurDecke).toBe(false)
   })
 })
 
