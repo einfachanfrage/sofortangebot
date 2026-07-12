@@ -63,6 +63,7 @@ export interface Company {
   payment_days: number
   language: string
   accounting_software: AccountingSoftware
+  abrechnungs_modus: 'inapp' | 'extern'
   gewerke: string[]
   created_at: string
   lexoffice_api_key: string | null

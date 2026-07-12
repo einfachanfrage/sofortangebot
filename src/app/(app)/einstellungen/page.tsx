@@ -7,7 +7,7 @@ import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { GEWERKE } from '@/lib/gewerke'
 import { KLEINMATERIAL_CONFIG } from '@/lib/gewerke-config'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Car } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Car, ArrowLeftRight } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
@@ -46,6 +46,7 @@ export default function EinstellungenPage() {
   const [anfahrtBetrag, setAnfahrtBetrag] = useState(45)
   const [anfahrtBezeichnung, setAnfahrtBezeichnung] = useState('An- und Abfahrt')
   const [eRechnungAktiv, setERechnungAktiv] = useState(true)
+  const [abrechnungsModus, setAbrechnungsModus] = useState<'inapp' | 'extern'>('inapp')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
@@ -92,6 +93,7 @@ export default function EinstellungenPage() {
         setMaterialpreisHinweis(data.materialpreis_hinweis_aktiv ?? false)
         setMindestauftragswert(data.mindestauftragswert ?? 0)
         setERechnungAktiv(data.e_rechnung_aktiv !== false)
+        setAbrechnungsModus((data.abrechnungs_modus ?? 'inapp') as 'inapp' | 'extern')
         // Kleinmaterial: Betriebs-Config oder Gewerk-Default
         const gewerkDefault = KLEINMATERIAL_CONFIG[(data.gewerke ?? [])[0] ?? ''] ?? { aktiv: true, betrag_eur: 25, schwelle_eur: 200, bezeichnung: 'Kleinmaterial und Verbrauchsmaterial' }
         const kc = (data.kleinmaterial_config ?? null) as { aktiv?: boolean; betrag_eur?: number; schwelle_eur?: number; bezeichnung?: string } | null
@@ -140,6 +142,7 @@ export default function EinstellungenPage() {
       materialpreis_hinweis_aktiv: materialpreisHinweis,
       mindestauftragswert: mindestauftragswert,
       e_rechnung_aktiv: eRechnungAktiv,
+      abrechnungs_modus: abrechnungsModus,
       kleinmaterial_config: {
         aktiv: kleinAktiv,
         betrag_eur: kleinBetrag,
@@ -501,6 +504,36 @@ export default function EinstellungenPage() {
           </Card>
 
         </div>
+
+        <Card icon={<ArrowLeftRight size={16} />} title="Abrechnung">
+          <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
+            Wer kümmert sich um Rechnungen und Zahlungserinnerungen? Angebote erstellst du in jedem Fall hier.
+          </p>
+          <div className="flex flex-col gap-2">
+            {([
+              { value: 'inapp', label: '🧾 Alles bei sofortangebot', desc: 'Rechnungen & Zahlungserinnerungen laufen direkt hier.' },
+              { value: 'extern', label: '🔗 Über meine Buchhaltung', desc: 'Rechnung/Mahnung in lexoffice, sevDesk & Co. — sofortangebot schickt keine Zahlungserinnerungen.' },
+            ] as { value: 'inapp' | 'extern'; label: string; desc: string }[]).map(opt => (
+              <button key={opt.value} type="button"
+                onClick={() => setAbrechnungsModus(opt.value)}
+                className={`flex items-start gap-3 w-full rounded-xl border-2 px-3 py-3 text-left transition-colors ${
+                  abrechnungsModus === opt.value ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+                }`}>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                  abrechnungsModus === opt.value ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'}`}>
+                  {abrechnungsModus === opt.value && <div className="w-2 h-2 rounded-full bg-[#2C2C2C]" />}
+                </div>
+                <div className="min-w-0">
+                  <div className={`font-black text-sm ${abrechnungsModus === opt.value ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>{opt.label}</div>
+                  <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5 leading-relaxed">{opt.desc}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-3 leading-relaxed">
+            Angebots-Nachfassen (Erinnerung an offene Angebote vor der Rechnung) läuft in beiden Fällen.
+          </p>
+        </Card>
 
         <Card icon={<Receipt size={16} />} title="Regionaler Preisfaktor">
           <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">

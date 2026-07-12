@@ -52,6 +52,12 @@ async function processCompany(
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - days)
 
+  // WICHTIG (Abrechnungs-Modus): Dies ist ein ANGEBOTS-Nachfass (Status 'sent',
+  // vor der Rechnung) — kein Zahlungs-Mahnwesen. Läuft daher bewusst in BEIDEN
+  // Modi ('inapp' und 'extern'), weil Buchhaltungstools Angebots-Nachfassen nicht
+  // abdecken. Eine spätere Zahlungs-Erinnerung (bei In-App-Rechnung) MUSS dagegen
+  // auf abrechnungs_modus === 'inapp' gaten, sonst Doppel-Mahnung in Modus 'extern'.
+
   // Offene Angebote mit Kunden-E-Mail, noch ohne Erinnerung
   const { data: quotes } = await supabase
     .from('quotes')

@@ -25,6 +25,7 @@ export async function GET() {
       payment_days: 14,
       language: 'de',
       accounting_software: 'none',
+      abrechnungs_modus: 'inapp',
       gewerke: [],
       created_at: new Date().toISOString(),
       lexware_api_key: null,

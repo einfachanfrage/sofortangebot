@@ -212,6 +212,9 @@ export default function OnboardingStep() {
       payment_days: state.paymentDays,
       agb_url: state.agbUrl || null,
       accounting_software: state.accounting,
+      // Abrechnungs-Modus aus der Buchhaltungs-Wahl ableiten: eigenes Tool → extern
+      // (Rechnung/Mahnung dort), sonst alles in sofortangebot. Später in Einstellungen änderbar.
+      abrechnungs_modus: state.accounting === 'none' ? 'inapp' : 'extern',
       onboarding_completed: true,
     }
     if (state.phone) updateData.phone = state.phone
@@ -783,6 +786,12 @@ export default function OnboardingStep() {
               Kannst du auch später in den Einstellungen einrichten. Kein Druck.
             </p>
           </div>
+
+          <p className="text-[13px] text-[#2C2C2C]/40 font-semibold mb-3 leading-relaxed">
+            {state.accounting === 'none'
+              ? '🧾 Ohne Tool: Rechnungen & Zahlungserinnerungen laufen direkt über sofortangebot.'
+              : '🔗 Mit Verknüpfung: Rechnungen & Mahnungen laufen in deiner Buchhaltung — sofortangebot schickt keine doppelten Erinnerungen.'}
+          </p>
 
           <div className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
             {ACCOUNTING_OPTIONS.map(opt => (
