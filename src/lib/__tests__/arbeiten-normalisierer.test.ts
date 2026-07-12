@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { erkenneArbeiten, hatArbeit, erkenneScope } from '../arbeiten-normalisierer'
+import {
+  erkenneArbeiten, hatArbeit, erkenneScope,
+  erkenneRaumkontext, erkenneOeffnungen, istKomplett, hatAkzentwand,
+} from '../arbeiten-normalisierer'
 
 describe('erkenneArbeiten — streichen (Flexionen & Umgangssprache)', () => {
   it.each([
@@ -77,6 +80,55 @@ describe('erkenneArbeiten — spachteln', () => {
   ])('"%s" → spachteln', (text) => {
     expect(hatArbeit(text, 'spachteln')).toBe(true)
   })
+})
+
+describe('erkenneArbeiten — lackieren / schleifen / grundieren', () => {
+  it.each([
+    ['Türen lackieren', 'lackieren'],
+    ['die Zargen werden lackiert', 'lackieren'],
+    ['Heizkörper neu lacken', 'lackieren'],
+    ['Balken mit Lasur behandeln', 'lackieren'],
+    ['Fenster abschleifen', 'schleifen'],
+    ['erst anschleifen, dann lackieren', 'schleifen'],
+    ['Dielen abgeschliffen', 'schleifen'],
+    ['Wände grundieren', 'grundieren'],
+    ['ein Voranstrich muss drauf', 'grundieren'],
+  ] as const)('"%s" → %s', (text, kat) => {
+    expect(hatArbeit(text, kat)).toBe(true)
+  })
+})
+
+describe('erkenneRaumkontext', () => {
+  it('Keller', () => { expect(erkenneRaumkontext('im Keller streichen').istKeller).toBe(true) })
+  it('Souterrain', () => { expect(erkenneRaumkontext('Souterrain-Wohnung').istKeller).toBe(true) })
+  it('Garage', () => { expect(erkenneRaumkontext('Garage weiß streichen').istGarage).toBe(true) })
+  it('Dachschräge', () => { expect(erkenneRaumkontext('mit Dachschräge').istDachschraege).toBe(true) })
+  it('Mansarde', () => { expect(erkenneRaumkontext('Mansardenzimmer').istDachschraege).toBe(true) })
+  it('Fassade', () => { expect(erkenneRaumkontext('Fassade neu').istFassade).toBe(true) })
+  it('normaler Raum → nichts', () => {
+    const k = erkenneRaumkontext('Wohnzimmer streichen')
+    expect(k.istKeller || k.istGarage || k.istDachschraege || k.istFassade).toBe(false)
+  })
+})
+
+describe('erkenneOeffnungen — kein Fenster / keine Tür', () => {
+  it.each(['kein Fenster', 'keine Fenster', 'ohne Fenster', 'fensterlos', '0 Fenster'])(
+    '"%s" → keinFenster', (t) => { expect(erkenneOeffnungen(t).keinFenster).toBe(true) })
+  it.each(['keine Tür', 'ohne Türen', 'kein Eingang', 'türlos'])(
+    '"%s" → keineTuer', (t) => { expect(erkenneOeffnungen(t).keineTuer).toBe(true) })
+  it('"2 Fenster, 1 Tür" → keine Negation', () => {
+    const o = erkenneOeffnungen('2 Fenster, 1 Tür')
+    expect(o.keinFenster).toBe(false)
+    expect(o.keineTuer).toBe(false)
+  })
+})
+
+describe('istKomplett & hatAkzentwand', () => {
+  it.each(['komplett streichen', 'alles neu', 'ganze Wohnung', 'vollständig'])(
+    '"%s" → komplett', (t) => { expect(istKomplett(t)).toBe(true) })
+  it('"nur die Wände" → nicht komplett', () => { expect(istKomplett('nur die Wände')).toBe(false) })
+  it.each(['Akzentwand tapezieren', 'eine Wand betonen', '1 Wand anders'])(
+    '"%s" → Akzentwand', (t) => { expect(hatAkzentwand(t)).toBe(true) })
 })
 
 describe('erkenneScope — nur Wände / Decke / Boden (alle Flexionen)', () => {

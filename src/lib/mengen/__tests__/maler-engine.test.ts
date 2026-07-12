@@ -315,7 +315,8 @@ describe('Maler-Engine – freies Sprechen (Bodenfläche + Höhe statt L×B)', (
     expect(entfernen).toBeDefined()
     expect(entfernen!.menge).toBeGreaterThan(45) // Wandfläche, NICHT die 20 m² Bodenfläche
 
-    const spachteln = find(positionen, 'spachteln')
+    // Spachteln kommt als "Spachtelarbeiten Q2 — Zimmer" mit echter Wandfläche
+    const spachteln = find(positionen, 'spachtel')
     expect(spachteln).toBeDefined()
     expect(spachteln!.menge).toBeGreaterThan(45)
 

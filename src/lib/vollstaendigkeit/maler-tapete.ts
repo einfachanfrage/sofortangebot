@@ -1,10 +1,10 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, filtereArray } from './helpers'
-import { erkenneArbeiten } from '../arbeiten-normalisierer'
+import { erkenneArbeiten, hatArbeit } from '../arbeiten-normalisierer'
 
 // Sockelleisten lackieren: Schleifen + 2× Lackieren
 export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
-  const hatSockelLackieren = lower.includes('sockelleist') && (lower.includes('lackier') || lower.includes('lack'))
+  const hatSockelLackieren = lower.includes('sockelleist') && hatArbeit(lower, 'lackieren')
   if (!hatSockelLackieren || hat(ergaenzt, 'sockelleisten lackieren', 'sockelleisten abschleifen')) return
 
   const lfdmMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfm|lfdm|laufende?r?\s*meter|meter\s*umfang|meter)/i)
@@ -23,8 +23,8 @@ export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], feh
 export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
   const hatSockelAufnehmen = lower.includes('sockelleist') &&
     (lower.includes('aufnehm') || lower.includes('mit aufnehm') || lower.includes('montier') || lower.includes('aufbring'))
-  const hatSockelStreichenExplizit = lower.includes('sockelleist') && lower.includes('streich') &&
-    !lower.includes('lackier') && !lower.includes('lack ') && !hatSockelAufnehmen
+  const hatSockelStreichenExplizit = lower.includes('sockelleist') && hatArbeit(lower, 'streichen') &&
+    !hatArbeit(lower, 'lackieren') && !hatSockelAufnehmen
   if (!hatSockelStreichenExplizit || hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) return
 
   const lfdmMatchStr = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfm|lfdm|laufende?r?\s*meter|meter)/i)
@@ -136,7 +136,7 @@ export function pruefeTapezieren(
 // Fassade: Folgepositionen mit gleicher Fläche
 export function pruefeFassade(ergaenzt: BerechnetePosition[], lower: string, transkript: string): void {
   const istFassade = lower.includes('fassade') || lower.includes('außenwand')
-    || (lower.includes('außen') && lower.includes('streichen') && !lower.includes('fenster') && !lower.includes('außenfen'))
+    || (lower.includes('außen') && hatArbeit(lower, 'streichen') && !lower.includes('fenster') && !lower.includes('außenfen'))
     || lower.includes('garagenfassade') || lower.includes('garage außen')
   if (!istFassade) return
 

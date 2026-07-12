@@ -1,5 +1,5 @@
 import type { MengenErgebnis, BerechnetePosition } from '../types'
-import { hatArbeit, erkenneScope } from '../../arbeiten-normalisierer'
+import { hatArbeit, erkenneScope, erkenneRaumkontext, erkenneOeffnungen, istKomplett, hatAkzentwand } from '../../arbeiten-normalisierer'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -38,9 +38,11 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
+    // Sprach-Erkennung zentral (arbeiten-normalisierer) — Flexionen, Umgangssprache
+    const kontext = erkenneRaumkontext(`${transkriptLower} ${arbeitenStr}`)
+    const oeffnungen = erkenneOeffnungen(transkriptLower)
     // Früh deklarieren — wird in flaeche_angegeben-Branch benötigt
-    const istDachschraege = arbeitenStr.includes('dachschräge') || arbeitenStr.includes('schräge')
-      || transkriptLower.includes('dachschräge') || transkriptLower.includes('schräge')
+    const istDachschraege = kontext.istDachschraege
     const dgLinksM2: number | null = (dgLinks as number | null) ?? (dgJeSeite as number | null)
     const dgRechtsM2: number | null = (dgRechts as number | null) ?? (dgJeSeite as number | null)
     const dgFenster = dgFensterRoh as any[]
@@ -54,16 +56,14 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Ersten Buchstaben großschreiben
     const name = nameAusTranskript.charAt(0).toUpperCase() + nameAusTranskript.slice(1)
 
-    // Garagen/Keller: kein Standard-Fenster — Tor/Tür wird separat behandelt
-    const istGarageRaum = name.toLowerCase().includes('garage') || name.toLowerCase().includes('carport')
-      || transkriptLower.includes('garage') || transkriptLower.includes('carport')
-    const istKellerRaum = name.toLowerCase().includes('keller') || transkriptLower.includes('keller')
-      || name.toLowerCase().includes('souterrain')
+    // Garagen/Keller: kein Standard-Fenster — Tor/Tür wird separat behandelt.
+    // Auch den (ggf. abgeleiteten) Raumnamen prüfen, nicht nur das Transkript.
+    const nameKontext = erkenneRaumkontext(name.toLowerCase())
+    const istGarageRaum = kontext.istGarage || nameKontext.istGarage
+    const istKellerRaum = kontext.istKeller || nameKontext.istKeller
     // "kein Fenster" / "ohne Fenster" → Standard-Fenster-Fallback unterdrücken
-    const keinFenster = transkriptLower.includes('kein fenster') || transkriptLower.includes('keine fenster')
-      || transkriptLower.includes('ohne fenster') || transkriptLower.includes('fensterlos')
-    const keineTuer = transkriptLower.includes('keine tür') || transkriptLower.includes('ohne tür')
-      || transkriptLower.includes('kein eingang') || transkriptLower.includes('keine türen')
+    const keinFenster = oeffnungen.keinFenster
+    const keineTuer = oeffnungen.keineTuer
     const fensterGefiltert = (fenster as any[]).filter(Boolean)
     const tuerenGefiltert = (tueren as any[]).filter(Boolean)
     const effFenster = fensterGefiltert.length > 0 ? fensterGefiltert : (istGarageRaum || istKellerRaum || keinFenster) ? [] : [{ breite: 1.2, hoehe: 1.0, annahme: true }]
@@ -146,7 +146,7 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
     // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
-    const leerOderKomplett = arbeiten.length === 0 || arbeitenStr.includes('komplett') || arbeitenStr.includes('alles')
+    const leerOderKomplett = arbeiten.length === 0 || istKomplett(arbeitenStr)
     // Normalisierer deckt Flexionen ab ("gestrichen", "anmalen" …) — nur auf arbeiten[],
     // NICHT aufs Transkript (das gilt raumübergreifend und würde Signale in andere Räume streuen)
     const hatStreichen = leerOderKomplett || hatArbeit(arbeitenStr, 'streichen')
@@ -159,9 +159,9 @@ export function malerEngine(daten: any): MengenErgebnis {
     const nurDecke = scopeArb.nurDecke || scopeTxt.nurDecke
     const nurBoden = scopeArb.nurBoden || scopeTxt.nurBoden
     // Akzentwand: "nur eine Wand tapezieren, Rest streichen" — eine Wand = min(laenge,breite) × hoehe
-    const hatAkzentwand = (transkriptLower.includes('eine wand') || transkriptLower.includes('akzentwand') || transkriptLower.includes('1 wand'))
-      && (transkriptLower.includes('tapez') || transkriptLower.includes('vliestapete') || transkriptLower.includes('tapete'))
-      && (transkriptLower.includes('rest') || transkriptLower.includes('übrige') || transkriptLower.includes('weiß'))
+    const hatAkzentwandRaum = hatAkzentwand(transkriptLower)
+      && /tapez|vliestapete|tapete/i.test(transkriptLower)
+      && /rest|übrige|weiß|weiss/i.test(transkriptLower)
     // Boden streichen (Keller/Garage): NUR wenn explizit "boden streichen"/"boden anstrich" — nicht bei "boden abdecken"/"boden schützen"
     const hatBodenStreichen = nurBoden || arbeitenStr.includes('boden streich') || arbeitenStr.includes('boden anstrich')
       || transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')
@@ -293,7 +293,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       if (anWaenden && wandflaecheNettoM2 !== null) {
         const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
         const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
-        if (hatAkzentwand && laenge && breite && hoehe) {
+        if (hatAkzentwandRaum && laenge && breite && hoehe) {
           const akzentWandBreite = Math.max(laenge, breite)
           const akzentWandFlaeche = round2(akzentWandBreite * hoehe)
           const restwandFlaeche = round2(wandflaecheNettoM2 - akzentWandFlaeche)

@@ -15,12 +15,21 @@ export type ArbeitsKategorie =
   | 'tapete_entfernen'
   | 'tapezieren'        // NEU aufziehen — nicht bloß "Tapete" erwähnt
   | 'spachteln'
+  | 'lackieren'
+  | 'schleifen'
+  | 'grundieren'
 
 const STAMM_MUSTER: Partial<Record<ArbeitsKategorie, RegExp>> = {
   streichen:
-    /streich\w*|gestrichen|anstrich|anstreich\w*|\banmal(en|t)\b|angemalt|\bpinsel\w*|gepinselt|weißeln|geweißelt|farbe\s+(drauf|dran|an\s+die|auf\s+die)/i,
+    /streich\w*|gestrichen|anstrich|anstreich\w*|\banmal(en|t)\b|angemalt|\bpinsel\w*|gepinselt|weißel\w*|geweißelt|farbe\s+(drauf|dran|an\s+die|auf\s+die)/i,
   spachteln:
     /spachtel\w*|gespachtelt|verspachtel\w*|glätt(en|et)|geglättet|\bq[234]\b/i,
+  lackieren:
+    /lackier\w*|lackiert|lackierung|\black(?:e|en)?\b|lasier\w*|lasur/i,
+  schleifen:
+    /(?:ab)?schleif\w*|geschliffen|angeschliffen|anschleif\w*/i,
+  grundieren:
+    /grundier\w*|grundierung|voranstrich|primer/i,
 }
 
 // Subjekt + Aktion müssen im selben Satz vorkommen (Reihenfolge egal)
@@ -121,4 +130,65 @@ export function erkenneScope(text: string): RaumScope {
   }
 
   return { nurWaende, nurDecke, nurBoden }
+}
+
+// ── Raumkontext: Keller / Garage / Dachschräge / Fassade ────────────────────
+// Bestimmt Sonderregeln (Keller: kein Std-Fenster, keine Sockelleisten; …).
+
+export interface Raumkontext {
+  istKeller: boolean
+  istGarage: boolean
+  istDachschraege: boolean
+  istFassade: boolean
+}
+
+const MUSTER_KELLER = /keller|souterrain|untergeschoss|kellerraum/i
+const MUSTER_GARAGE = /garage|carport|tiefgarage/i
+const MUSTER_DACHSCHRAEGE = /dachschräg\w*|\bschräge?n?\b|mansard\w*|dachgeschoss|dachboden/i
+const MUSTER_FASSADE = /fassade|außenwand|außenwände|außenfassade|hauswand/i
+
+export function erkenneRaumkontext(text: string): Raumkontext {
+  const t = text ?? ''
+  return {
+    istKeller: MUSTER_KELLER.test(t),
+    istGarage: MUSTER_GARAGE.test(t),
+    istDachschraege: MUSTER_DACHSCHRAEGE.test(t),
+    istFassade: MUSTER_FASSADE.test(t),
+  }
+}
+
+// ── Öffnungs-Negation: "kein Fenster" / "ohne Tür" ──────────────────────────
+// Unterdrückt die Standard-Annahme (sonst wird 1 Fenster / 1 Tür unterstellt).
+
+export interface OeffnungsNegation {
+  keinFenster: boolean
+  keineTuer: boolean
+}
+
+// "kein/keine/ohne Fenster", "fensterlos", "0 Fenster"
+const KEIN_FENSTER = /(?:kein[e]?|ohne)\s+fenster|fensterlos|\b0\s*fenster|null\s+fenster/i
+// "kein/keine/ohne Tür(en)", "kein Eingang", "türlos"
+const KEINE_TUER = /(?:kein[e]?|ohne)\s+(?:tür|türe|türen)|kein\s+eingang|türlos|\b0\s*tür|null\s+tür/i
+
+export function erkenneOeffnungen(text: string): OeffnungsNegation {
+  const t = text ?? ''
+  return {
+    keinFenster: KEIN_FENSTER.test(t),
+    keineTuer: KEINE_TUER.test(t),
+  }
+}
+
+// ── "komplett / alles / ganze Wohnung" ──────────────────────────────────────
+const MUSTER_KOMPLETT = /\bkomplett\b|\balles\b|\bvollständig\b|ganze[sn]?\s+(?:wohnung|haus|zimmer|raum|räume|fläche)/i
+
+export function istKomplett(text: string): boolean {
+  return MUSTER_KOMPLETT.test(text ?? '')
+}
+
+// ── "eine Wand" / Akzentwand ────────────────────────────────────────────────
+// Eine Wand wird anders behandelt (z.B. Akzentwand tapezieren, Rest streichen).
+const MUSTER_AKZENTWAND = /akzentwand|\beine\s+wand\b|\b1\s+wand\b|einzelne\s+wand/i
+
+export function hatAkzentwand(text: string): boolean {
+  return MUSTER_AKZENTWAND.test(text ?? '')
 }

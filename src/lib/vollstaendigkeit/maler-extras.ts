@@ -1,5 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, anzahlAus, filtereArray } from './helpers'
+import { hatArbeit } from '../arbeiten-normalisierer'
 
 export function pruefeErschwerniszuschlagHoehe(ergaenzt: BerechnetePosition[], lower: string): void {
   // Deckenhöhe nur aus expliziten Höhenangaben lesen, nicht aus Raummaßen
@@ -45,7 +46,7 @@ export function pruefeDenkmalschutz(ergaenzt: BerechnetePosition[], lower: strin
 }
 
 export function pruefeSpachteln(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
-  const hatStreichen = lower.includes('streichen') || lower.includes('anstrich') || lower.includes('anstreichen')
+  const hatStreichen = hatArbeit(lower, 'streichen')
   const hatSpachteln = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3') || lower.includes('q4')
   const istNurSpachteln = hatSpachteln && !hatStreichen
     && (lower.includes('spachtel') || lower.includes(' q2 ') || lower.includes(' q3 ') || lower.includes(' q4 '))
@@ -64,9 +65,9 @@ export function pruefeSpachteln(ergaenzt: BerechnetePosition[], fehlende: string
 }
 
 export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
-  const hatStreichen = lower.includes('streichen') || lower.includes('anstrich') || lower.includes('anstreichen')
+  const hatStreichen = hatArbeit(lower, 'streichen')
   const hatSpachteln2 = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3')
-  const hatSchleifenArb = lower.includes('schleifen') && !lower.includes('abschleifen')
+  const hatSchleifenArb = /\bschleif(?:en|t)?\b/i.test(lower) && !lower.includes('abschleif')
   if ((!hatSpachteln2 && !hatSchleifenArb) || hat(ergaenzt, 'spachtelarbeiten', 'q2')) return
 
   const basisPositionen = ergaenzt.filter(p => {
@@ -222,12 +223,12 @@ export function pruefeStuckleisten(ergaenzt: BerechnetePosition[], fehlende: str
   const stuckM = umfangAusEngine ?? umfangGeschaetzt
   if (stuckM !== null && stuckM > 0) {
     ergaenzt.push({ beschreibung: 'Stuckleisten montieren', menge: stuckM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: fm2 ? `Umfang ≈ 4 × √${fm2} m² = ${stuckM} lfdm (voller Umfang, kein Türabzug)` : `${stuckM} lfdm`, annahmen: fm2 ? ['Quadratischer Raum angenommen'] : [] })
-    if (lower.includes('weiß') || lower.includes('weiss') || lower.includes('streich') || lower.includes('streichen') || lower.includes('anstrich')) {
+    if (hatArbeit(lower, 'streichen')) {
       ergaenzt.push({ beschreibung: 'Stuckleisten streichen / weißen', menge: stuckM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${stuckM} lfdm`, annahmen: [] })
     }
   } else {
     add(ergaenzt, fehlende, 'Stuckleisten montieren')
-    if (lower.includes('weiß') || lower.includes('weiss') || lower.includes('streich')) add(ergaenzt, fehlende, 'Stuckleisten streichen / weißen')
+    if (hatArbeit(lower, 'streichen')) add(ergaenzt, fehlende, 'Stuckleisten streichen / weißen')
   }
 }
 

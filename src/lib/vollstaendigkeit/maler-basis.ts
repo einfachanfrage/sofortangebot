@@ -1,5 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, filtereArray } from './helpers'
+import { erkenneScope, hatArbeit } from '../arbeiten-normalisierer'
 
 // "nur X"-Filter: entfernt widersprechende Positionen aus der Engine-Liste
 export function wendeNurXFilterAn(ergaenzt: BerechnetePosition[], lower: string): {
@@ -7,9 +8,8 @@ export function wendeNurXFilterAn(ergaenzt: BerechnetePosition[], lower: string)
   nurWaende: boolean
   nurBoden: boolean
 } {
-  const nurDecke = lower.includes('nur decke') || lower.includes('nur die decke')
-  const nurWaende = lower.includes('nur wand') || lower.includes('nur die wand') || lower.includes('nur wände')
-  const nurBoden = lower.includes('nur boden') || lower.includes('nur den boden')
+  // Scope zentral — deckt Flexionen (Wände) + Synonyme + "ohne Decke" ab
+  const { nurWaende, nurDecke, nurBoden } = erkenneScope(lower)
 
   if (nurDecke) {
     filtereArray(ergaenzt, p => {
@@ -43,8 +43,7 @@ export function pruefeStreichenBasis(
   nurWaende: boolean,
   nurBoden: boolean,
 ): void {
-  const hatStreichen = lower.includes('streichen') || lower.includes('anstrich') || lower.includes('anstreichen')
-  if (!hatStreichen) return
+  if (!hatArbeit(lower, 'streichen')) return
 
   if (!nurDecke && !nurBoden && !hat(ergaenzt, 'wand', 'wandfläche')) add(ergaenzt, fehlende, 'Wandflächen streichen')
   if (!nurWaende && !nurBoden && !hat(ergaenzt, 'decke', 'deckenfläche')) add(ergaenzt, fehlende, 'Deckenfläche streichen')
@@ -58,11 +57,10 @@ export function pruefeGrundierung(
   fehlende: string[],
   lower: string,
 ): void {
-  const hatStreichen = lower.includes('streichen') || lower.includes('anstrich') || lower.includes('anstreichen')
-  const hatGrundierung = lower.includes('grundier') || lower.includes('voranstrich') || lower.includes('tiefengrund')
+  const hatGrundierung = hatArbeit(lower, 'grundieren') || lower.includes('tiefengrund')
     || lower.includes('neubau') || lower.includes('erstanstrich') || lower.includes('rohbau')
 
-  if (!hatStreichen || !hatGrundierung) return
+  if (!hatArbeit(lower, 'streichen') || !hatGrundierung) return
   if (hat(ergaenzt, 'grundier', 'voranstrich', 'tiefengrund')) return
 
   const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
