@@ -1,6 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, anzahlAus } from './helpers'
-import { hatArbeit } from '../arbeiten-normalisierer'
+import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 export function pruefeBodenAbdecken(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
   const hatBodenAbdecken = lower.includes('boden abdecken') || lower.includes('böden abdecken')
@@ -38,8 +38,8 @@ export function pruefeFliesenspiegel(ergaenzt: BerechnetePosition[], fehlende: s
   }
 }
 
-export function pruefeLampenAbkleben(ergaenzt: BerechnetePosition[], lower: string): void {
-  const hatStreichen = hatArbeit(lower, 'streichen')
+export function pruefeLampenAbkleben(ergaenzt: BerechnetePosition[], lower: string, v: AuftragsVerstaendnis): void {
+  const hatStreichen = v.hatArbeit('streichen')
   const hatLampenAbkleben = lower.includes('lamp') || lower.includes('leuchte') || lower.includes('deckenleuchte')
     || lower.includes('pendelleuchte') || lower.includes('einbauspot') || lower.includes('spot')
   if (!hatLampenAbkleben || !hatStreichen || hat(ergaenzt, 'lampen abkl', 'leuchten abkl', 'spots abkl', 'pendelleuchte')) return
@@ -52,8 +52,8 @@ export function pruefeLampenAbkleben(ergaenzt: BerechnetePosition[], lower: stri
   if (anzLampen > 0 && anzPendel === 0 && anzSpots === 0) ergaenzt.push({ beschreibung: 'Lampen / Leuchten abkleben', menge: anzLampen, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzLampen} Leuchte(n) aus Transkript`, annahmen: [] })
 }
 
-export function pruefeHeizkAbkleben(ergaenzt: BerechnetePosition[], lower: string, hatHeizkLackierenFlag: boolean): void {
-  const hatStreichen = hatArbeit(lower, 'streichen')
+export function pruefeHeizkAbkleben(ergaenzt: BerechnetePosition[], lower: string, v: AuftragsVerstaendnis, hatHeizkLackierenFlag: boolean): void {
+  const hatStreichen = v.hatArbeit('streichen')
   const hatHeizkAbkleben = hatStreichen && (lower.includes('heizkörper') || lower.includes('heizkoerper')) && !hatHeizkLackierenFlag
   if (!hatHeizkAbkleben || hat(ergaenzt, 'heizkörper abkl', 'heizkörper abschleifen')) return
 
@@ -61,9 +61,9 @@ export function pruefeHeizkAbkleben(ergaenzt: BerechnetePosition[], lower: strin
   ergaenzt.push({ beschreibung: 'Heizkörper abkleben', menge: anzHzkAbkl, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzkAbkl} Heizkörper aus Transkript`, annahmen: [] })
 }
 
-export function pruefeTreppenhausGelaender(ergaenzt: BerechnetePosition[], lower: string): void {
+export function pruefeTreppenhausGelaender(ergaenzt: BerechnetePosition[], lower: string, v: AuftragsVerstaendnis): void {
   const hatTreppenhaus = lower.includes('treppenhaus') || lower.includes('treppe') || lower.includes('treppenaufgang')
-  const hatStreichen = hatArbeit(lower, 'streichen')
+  const hatStreichen = v.hatArbeit('streichen')
   if (hatTreppenhaus && hatStreichen && !hat(ergaenzt, 'geländer abkl', 'geländer abdecken')) {
     ergaenzt.push({ beschreibung: 'Geländer abkleben', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Treppenhaus — Geländer immer abkleben', annahmen: [] })
   }

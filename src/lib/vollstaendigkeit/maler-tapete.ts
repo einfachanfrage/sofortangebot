@@ -1,10 +1,10 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, filtereArray } from './helpers'
-import { erkenneArbeiten, hatArbeit } from '../arbeiten-normalisierer'
+import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 // Sockelleisten lackieren: Schleifen + 2× Lackieren
-export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
-  const hatSockelLackieren = lower.includes('sockelleist') && hatArbeit(lower, 'lackieren')
+export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
+  const hatSockelLackieren = lower.includes('sockelleist') && v.hatArbeit('lackieren')
   if (!hatSockelLackieren || hat(ergaenzt, 'sockelleisten lackieren', 'sockelleisten abschleifen')) return
 
   const lfdmMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfm|lfdm|laufende?r?\s*meter|meter\s*umfang|meter)/i)
@@ -20,11 +20,11 @@ export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], feh
 }
 
 // Sockelleisten streichen: nur wenn explizit "Sockelleisten streichen" ohne Lackkontext
-export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
+export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
   const hatSockelAufnehmen = lower.includes('sockelleist') &&
     (lower.includes('aufnehm') || lower.includes('mit aufnehm') || lower.includes('montier') || lower.includes('aufbring'))
-  const hatSockelStreichenExplizit = lower.includes('sockelleist') && hatArbeit(lower, 'streichen') &&
-    !hatArbeit(lower, 'lackieren') && !hatSockelAufnehmen
+  const hatSockelStreichenExplizit = lower.includes('sockelleist') && v.hatArbeit('streichen') &&
+    !v.hatArbeit('lackieren') && !hatSockelAufnehmen
   if (!hatSockelStreichenExplizit || hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) return
 
   const lfdmMatchStr = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfm|lfdm|laufende?r?\s*meter|meter)/i)
@@ -42,10 +42,10 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
 }
 
 // Tapete entfernen + dann streichen (kein neues Tapezieren)
-export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): boolean {
-  // Normalisierte Kategorien statt Wort-Fetzen: deckt "gestrichen", "abgemacht",
-  // "muss runter" etc. zentral ab (siehe arbeiten-normalisierer.ts)
-  const kat = erkenneArbeiten(lower)
+export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehlende: string[], v: AuftragsVerstaendnis): boolean {
+  // Normalisierte Kategorien aus dem Vertrag statt Wort-Fetzen: deckt "gestrichen",
+  // "abgemacht", "muss runter" etc. zentral ab.
+  const kat = v.arbeiten
   const hatTapeteWegDannStreich = kat.has('tapete_entfernen') && kat.has('streichen') && !kat.has('tapezieren')
   if (!hatTapeteWegDannStreich) return false
 
@@ -134,9 +134,9 @@ export function pruefeTapezieren(
 }
 
 // Fassade: Folgepositionen mit gleicher Fläche
-export function pruefeFassade(ergaenzt: BerechnetePosition[], lower: string, transkript: string): void {
+export function pruefeFassade(ergaenzt: BerechnetePosition[], lower: string, transkript: string, v: AuftragsVerstaendnis): void {
   const istFassade = lower.includes('fassade') || lower.includes('außenwand')
-    || (lower.includes('außen') && hatArbeit(lower, 'streichen') && !lower.includes('fenster') && !lower.includes('außenfen'))
+    || (lower.includes('außen') && v.hatArbeit('streichen') && !lower.includes('fenster') && !lower.includes('außenfen'))
     || lower.includes('garagenfassade') || lower.includes('garage außen')
   if (!istFassade) return
 

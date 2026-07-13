@@ -1,15 +1,16 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, anzahlAus } from './helpers'
-import { hatArbeit } from '../arbeiten-normalisierer'
+import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 // Türen lackieren: Schleifen, Grundieren, 2× Lackieren, Zargen
 export function pruefeTuerenLackieren(
   ergaenzt: BerechnetePosition[],
   lower: string,
+  v: AuftragsVerstaendnis,
   meta?: { tuerenAnzahl?: number },
 ): void {
   const hatTuerenLackieren = /tür|türe|türen/i.test(lower) &&
-    (hatArbeit(lower, 'lackieren') || lower.includes('neu streich'))
+    (v.hatArbeit('lackieren') || lower.includes('neu streich'))
   if (!hatTuerenLackieren || hat(ergaenzt, 'türen abschleifen', 'tür abschleifen')) return
 
   const anzTuerenExplizit = anzahlAus(lower, 'tür', anzahlAus(lower, 'türen', 0))
@@ -30,12 +31,13 @@ export function pruefeTuerenLackieren(
 export function pruefeFensterLackieren(
   ergaenzt: BerechnetePosition[],
   lower: string,
+  v: AuftragsVerstaendnis,
   meta?: { fensterAnzahl?: number },
 ): void {
   const hatFensterLackieren = lower.includes('fenster') &&
-    (hatArbeit(lower, 'lackieren') || lower.includes('holzfenster') ||
+    (v.hatArbeit('lackieren') || lower.includes('holzfenster') ||
      /fenster\s+(?:streich|anstrich)/i.test(lower) ||
-     (lower.includes('außen') && hatArbeit(lower, 'streichen') && lower.includes('fenster'))) &&
+     (lower.includes('außen') && v.hatArbeit('streichen') && lower.includes('fenster'))) &&
     !lower.includes('fenster ab')
   if (!hatFensterLackieren || hat(ergaenzt, 'fenster abschleifen')) return
 
@@ -61,9 +63,10 @@ export function pruefeFensterLackieren(
 export function pruefeHeizkLackieren(
   ergaenzt: BerechnetePosition[],
   lower: string,
+  v: AuftragsVerstaendnis,
 ): boolean {
   const hatHeizkLackieren = /heizkörper|heizkoerper|heizung/i.test(lower) &&
-    (hatArbeit(lower, 'lackieren') || lower.includes('neu streich'))
+    (v.hatArbeit('lackieren') || lower.includes('neu streich'))
   if (!hatHeizkLackieren || hat(ergaenzt, 'heizkörper abschleifen', 'heizkoerper abschleifen')) return false
 
   const jeHzkMatch = lower.match(/je\s+(\d+)\s*(?:stück\s*)?(?:heizkörper|heizkoerper)/i)
