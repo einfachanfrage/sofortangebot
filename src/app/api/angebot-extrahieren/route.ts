@@ -13,6 +13,10 @@ import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
 import { pruefeUndErgaenzeVollstaendigkeit } from '@/lib/mengen/vollstaendigkeits-check'
 import { repariereDuplikatMasse, repariereDuplikatNamen } from '@/lib/mengen/mehrraum-reparatur'
 import { pruefeKIZugriff } from '@/lib/rate-limiter'
+import {
+  extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereAbzug,
+  extrahiereTorMasse, zaehleFenster, zaehleTueren,
+} from '@/lib/extraktion-masse'
 
 export const maxDuration = 60
 
@@ -147,24 +151,21 @@ export async function POST(req: NextRequest) {
       const t = verarbeitetText
 
       if (r.wandflaeche_direkt === null || r.wandflaeche_direkt === undefined) {
-        const wandM = t.match(/(?:wandfläche|wand(?:fläche)?|wände)[^.!?\n]*?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
-          ?? t.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)[^.!?\n]*?(?:wandfläche|wand(?:fläche)?|wände)/i)
-        if (wandM) r.wandflaeche_direkt = parseFloat(wandM[1].replace(',', '.'))
+        const wand = extrahiereWandflaeche(t)
+        if (wand !== null) r.wandflaeche_direkt = wand
       }
 
       if (r.deckflaeche_direkt === null || r.deckflaeche_direkt === undefined) {
-        const deckM = t.match(/(?:deckenfläche|die\s+decke\s+ist|decke)\s+(?:so\s+)?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
-          ?? t.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)\s*(?:deckenfläche|für\s+die\s+decke)/i)
-        if (deckM) {
-          r.deckflaeche_direkt = parseFloat(deckM[1].replace(',', '.'))
-          if (!r.flaeche) r.flaeche = r.deckflaeche_direkt
+        const deck = extrahiereDeckenflaeche(t)
+        if (deck !== null) {
+          r.deckflaeche_direkt = deck
+          if (!r.flaeche) r.flaeche = deck
         }
       }
 
       if ((r.wandflaeche_abzug_m2 === null || r.wandflaeche_abzug_m2 === undefined) && r.wandflaeche_direkt) {
-        const abzugM = t.match(/(?:abzieh|minus|abzug|abzügl)[^.!?\n]*?(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)/i)
-          ?? t.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)[^.!?\n]*?(?:abzieh|abzug)/i)
-        if (abzugM) r.wandflaeche_abzug_m2 = parseFloat(abzugM[1].replace(',', '.'))
+        const abzug = extrahiereAbzug(t)
+        if (abzug !== null) r.wandflaeche_abzug_m2 = abzug
       }
 
       if (r.wandflaeche_direkt) {
@@ -172,21 +173,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Tor/Garagentor direkt aus vorverarbeitetem Text in tueren[] injizieren — GPT erkennt "Tor" oft nicht
+    // Tor/Garagentor in tueren[] injizieren — GPT erkennt "Tor" oft nicht
     if (extraktion.gewerk === 'maler') {
-      const tl = textMitZahlen.toLowerCase()
-      // Permissive Regex: nach "tor" jede zwei Zahlen — egal ob × / mal / x / Leerzeichen trennt
-      const tm = tl.match(/\b(?:tor|garagentor|einfahrtstor)\b[^\d]*(\d+(?:[.,]\d+)?)[^\d]+(\d+(?:[.,]\d+)?)/i)
-      if (tm) {
-        const torBreite = parseFloat(tm[1].replace(',', '.'))
-        const torHoehe = parseFloat(tm[2].replace(',', '.'))
-        if (torBreite > 0 && torHoehe > 0) {
-          for (const raum of extraktion.raeume ?? []) {
-            // Nur injizieren wenn noch keine passende Tür/kein Tor vorhanden
-            const hatBigTuer = (raum.tueren ?? []).some((t: {breite?: number}) => (t.breite ?? 0) >= 1.5)
-            if (!hatBigTuer) {
-              raum.tueren = [{ breite: torBreite, hoehe: torHoehe }]
-            }
+      const tor = extrahiereTorMasse(textMitZahlen)
+      if (tor) {
+        for (const raum of extraktion.raeume ?? []) {
+          // Nur injizieren wenn noch keine passende Tür/kein Tor vorhanden
+          const hatBigTuer = (raum.tueren ?? []).some((t: {breite?: number}) => (t.breite ?? 0) >= 1.5)
+          if (!hatBigTuer) {
+            raum.tueren = [{ breite: tor.breite, hoehe: tor.hoehe }]
           }
         }
       }
@@ -195,11 +190,8 @@ export async function POST(req: NextRequest) {
     const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
 
     // Fenster/Tür-Anzahl: direkt aus Text extrahieren (zuverlässiger als GPT-Felder)
-    const tl = textMitZahlen.toLowerCase()
-    const fensterTextMatch = tl.match(/(\d+)\s*\S*fenster/i)
-    const fensterAnzahlText = fensterTextMatch ? parseInt(fensterTextMatch[1]) : 0
-const tuerTextMatch = tl.match(/(\d+)\s*(?:stück\s*)?\S*tür(?:en)?/i)
-    const tuerenAnzahlText = tuerTextMatch ? parseInt(tuerTextMatch[1]) : 0
+    const fensterAnzahlText = zaehleFenster(textMitZahlen)
+    const tuerenAnzahlText = zaehleTueren(textMitZahlen)
 
     // Etappe 2: saubere KI-Signale bündeln — der Vertrag bevorzugt diese vor Rohtext-Regex
     const kiSignale = {
