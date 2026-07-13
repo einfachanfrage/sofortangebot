@@ -77,8 +77,30 @@ describe('erkenneArbeiten — spachteln', () => {
     'die Wände werden verspachtelt',
     'alles glätten auf Q3',
     'gespachtelt wird nächste Woche',
+    'die Wände glattgemacht werden',      // Umgangssprache: glatt statt glätt
+    'die Wände glatt gemacht',
+    'erst glatt ziehen, dann streichen',
   ])('"%s" → spachteln', (text) => {
     expect(hatArbeit(text, 'spachteln')).toBe(true)
+  })
+})
+
+describe('Beta-Frust-Ansage: gestrichen + Tapete ab + glattgemacht', () => {
+  const voll = 'hier im Wohnzimmer muss gestrichen werden, 24 Quadratmeter Bodenfläche. ' +
+    'Die Wände sind 2,60 hoch. Muss erst die Tapete ab und dann die Wände glattgemacht werden und dann streichen.'
+  it('erkennt ALLE drei Arbeiten', () => {
+    const kat = erkenneArbeiten(voll)
+    expect(kat.has('streichen')).toBe(true)
+    expect(kat.has('tapete_entfernen')).toBe(true)   // "Tapete ab"
+    expect(kat.has('spachteln')).toBe(true)          // "glattgemacht"
+    expect(kat.has('tapezieren')).toBe(false)        // NICHT neu aufziehen
+  })
+  it('"Tapete ab" allein → tapete_entfernen', () => {
+    expect(hatArbeit('Muss erst die Tapete ab', 'tapete_entfernen')).toBe(true)
+  })
+  it('"ab 20 km" / "ab und zu" lösen KEIN tapete_entfernen aus', () => {
+    expect(hatArbeit('Tapete liefern wir ab 20 Stück', 'tapete_entfernen')).toBe(false)
+    expect(hatArbeit('die Tapete ist ab und zu wellig', 'tapete_entfernen')).toBe(false)
   })
 })
 

@@ -89,7 +89,8 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
 }
 
 export function pruefeEstrich(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
-  const hatEstrich = lower.includes('estrich') || lower.includes('epoxid') || lower.includes('versiegeln')
+  // \bestrich statt includes('estrich') — sonst matcht "gESTRICHen" (Partizip von streichen)!
+  const hatEstrich = /\bestrich/i.test(lower) || lower.includes('epoxid') || lower.includes('versiegeln')
   if (!hatEstrich || hat(ergaenzt, 'estrich schleifen', 'epoxid')) return
 
   const bodenPosEstrich = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('boden'))

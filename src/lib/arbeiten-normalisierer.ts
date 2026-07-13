@@ -23,7 +23,7 @@ const STAMM_MUSTER: Partial<Record<ArbeitsKategorie, RegExp>> = {
   streichen:
     /streich\w*|gestrichen|anstrich|anstreich\w*|\banmal(en|t)\b|angemalt|\bpinsel\w*|gepinselt|weißel\w*|geweißelt|farbe\s+(drauf|dran|an\s+die|auf\s+die)/i,
   spachteln:
-    /spachtel\w*|gespachtelt|verspachtel\w*|glätt(en|et)|geglättet|\bq[234]\b/i,
+    /spachtel\w*|gespachtelt|verspachtel\w*|glätt(en|et)|geglättet|glatt\s?(?:gemacht|machen|gezogen|ziehen|geschliffen|schleifen)|\bq[234]\b/i,
   lackieren:
     /lackier\w*|lackiert|lackierung|\black(?:e|en)?\b|lasier\w*|lasur/i,
   schleifen:
@@ -37,7 +37,11 @@ const SATZ_MUSTER: Partial<Record<ArbeitsKategorie, { subjekt: RegExp; aktion: R
   tapete_entfernen: {
     subjekt: /tapete|raufaser/i,
     aktion:
-      /runter|herunter|entfern\w*|abnehm\w*|abgenommen|abmach\w*|abgemacht|abreiß\w*|abgerissen|abzieh\w*|abgezogen|ablös\w*|abgelöst|\bweg\b|\bmuss\s+ab\b|\bkommt\s+ab\b/i,
+      // "\bab\b" fängt das lose Partikel ("die Tapete ab", "erst die Tapete ab") —
+      // sicher, weil im selben Satz zwingend "tapete/raufaser" stehen muss.
+      // Guard nur gegen "ab 20 km" (Zahl) und das Idiom "ab und zu" —
+      // "ab und dann/danach streichen" bleibt gültig.
+      /runter|herunter|entfern\w*|abnehm\w*|abgenommen|abmach\w*|abgemacht|abreiß\w*|abgerissen|abzieh\w*|abgezogen|ablös\w*|abgelöst|\bweg\b|\bab\b(?!\s*(?:\d|und\s+zu\b))/i,
   },
   tapezieren: {
     subjekt: /tapete|raufaser|vlies/i,
