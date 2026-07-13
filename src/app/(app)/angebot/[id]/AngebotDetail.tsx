@@ -130,7 +130,9 @@ function RaumDimensionenZeile({
   onChange: (patch: Partial<RaumDimension>) => void
   onGrundriss: () => void
 }) {
-  const modus: RaumModus = dim.modus ?? 'rechteck'
+  // Wenn eine Fläche (Wand/Boden) vorliegt aber keine L×B → direkt Flächen-Reiter
+  const modus: RaumModus = dim.modus
+    ?? ((dim.wandflaeche != null || dim.bodenflaeche != null) ? 'flaeche' : 'rechteck')
   const masse = berechneRaumMasse(dim)
 
   return (
@@ -138,7 +140,7 @@ function RaumDimensionenZeile({
       {/* Modus-Umschalter */}
       <div className="flex items-center gap-1 self-start bg-[#2C2C2C]/5 rounded-lg p-0.5">
         {([
-          { id: 'rechteck', label: 'Rechteck' },
+          { id: 'rechteck', label: 'L × B' },
           { id: 'flaeche', label: 'Fläche' },
           { id: 'grundriss', label: 'Grundriss' },
         ] as { id: RaumModus; label: string }[]).map(m => (
@@ -181,14 +183,10 @@ function RaumDimensionenZeile({
           </button>
         )}
 
-        {/* Höhe + Öffnungen (nicht im reinen Flächen-Modus für Boden nötig, aber Höhe für Wand) */}
-        {modus !== 'flaeche' && (
-          <>
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
-            <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
-          </>
-        )}
+        {/* Höhe immer — auch im Flächen-Modus (Wandfläche aus Bodenfläche braucht die Raumhöhe) */}
+        <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+        <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
+        <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
         <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
         <span className="text-[12px]">🚪</span>
         <InlineNum value={dim.tueren} label="Türen" onCommit={v => onChange({ tueren: v })} />

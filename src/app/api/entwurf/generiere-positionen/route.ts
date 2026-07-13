@@ -106,6 +106,9 @@ export async function POST(req: NextRequest) {
         breite?: number | null
         laenge?: number | null
         hoehe?: number | null
+        flaeche?: number | null
+        wandflaeche_direkt?: number | null
+        deckflaeche_direkt?: number | null
         fenster?: Array<{ anzahl?: number }>
         tueren?: Array<{ anzahl?: number }>
       }>
@@ -134,17 +137,30 @@ export async function POST(req: NextRequest) {
         ?? rawName
     }
 
-    const raumDetails: Record<string, { breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number }> = {}
+    const raumDetails: Record<string, {
+      modus?: 'rechteck' | 'flaeche'
+      breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number
+      wandflaeche?: number; bodenflaeche?: number
+    }> = {}
     for (const raum of extraktionRaeume) {
       const name = raum.name?.trim()
       if (!name) continue
       const key = findeTitelName(name)
       const fensterAnzahl = raum.fenster?.reduce((s, f) => s + (f.anzahl ?? 1), 0) || undefined
       const tuerenAnzahl = raum.tueren?.reduce((s, t) => s + (t.anzahl ?? 1), 0) || undefined
+      // Fläche vs. L×B: hat der Nutzer eine Fläche genannt (Boden/Wand) statt Maße?
+      const bodenflaeche = raum.flaeche ?? raum.deckflaeche_direkt ?? undefined
+      const wandflaeche = raum.wandflaeche_direkt ?? undefined
+      const hatMasse = raum.breite != null && raum.laenge != null
+      const hatFlaeche = bodenflaeche != null || wandflaeche != null
       raumDetails[key] = {
+        // Ohne L×B, aber mit Fläche → Flächen-Reiter direkt aktiv
+        ...(!hatMasse && hatFlaeche ? { modus: 'flaeche' as const } : {}),
         ...(raum.breite != null ? { breite: raum.breite } : {}),
         ...(raum.laenge != null ? { laenge: raum.laenge } : {}),
         ...(raum.hoehe != null ? { hoehe: raum.hoehe } : {}),
+        ...(wandflaeche != null ? { wandflaeche } : {}),
+        ...(bodenflaeche != null ? { bodenflaeche } : {}),
         ...(tuerenAnzahl ? { tueren: tuerenAnzahl } : {}),
         ...(fensterAnzahl ? { fenster: fensterAnzahl } : {}),
       }
