@@ -201,12 +201,23 @@ export async function POST(req: NextRequest) {
 const tuerTextMatch = tl.match(/(\d+)\s*(?:stück\s*)?\S*tür(?:en)?/i)
     const tuerenAnzahlText = tuerTextMatch ? parseInt(tuerTextMatch[1]) : 0
 
+    // Etappe 2: saubere KI-Signale bündeln — der Vertrag bevorzugt diese vor Rohtext-Regex
+    const kiSignale = {
+      arbeitenTexte: [
+        ...(extraktion.raeume ?? []).flatMap(r => r.arbeiten ?? []),
+        ...(extraktion.bereiche ?? []).flatMap(b => b.arbeiten ?? []),
+      ],
+      belagText: (extraktion.raeume ?? []).find(r => r.belag)?.belag ?? null,
+      altbelagEntfernen: (extraktion.raeume ?? []).some(r => r.altbelag_entfernen),
+    }
+
     // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
     const { fehlende, positionen: positionenKomplett } = pruefeUndErgaenzeVollstaendigkeit(
       extraktion.gewerk,
       mengenRoh.positionen,
       textMitZahlen,
-      { fensterAnzahl: fensterAnzahlText || undefined, tuerenAnzahl: tuerenAnzahlText || undefined }
+      { fensterAnzahl: fensterAnzahlText || undefined, tuerenAnzahl: tuerenAnzahlText || undefined },
+      kiSignale
     )
     if (fehlende.length > 0) {
       console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)

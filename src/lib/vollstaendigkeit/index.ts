@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { baueVerstaendnis } from '../auftrags-verstaendnis'
+import { baueVerstaendnis, type ExtraktionSignale } from '../auftrags-verstaendnis'
 import { pruefeMaler } from './maler'
 import { pruefeFliesen } from './fliesen'
 import { pruefeSanitaer } from './sanitaer'
@@ -21,14 +21,15 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   positionen: BerechnetePosition[],
   transkript: string,
   meta?: { fensterAnzahl?: number; tuerenAnzahl?: number },
+  signale?: ExtraktionSignale,
 ): CheckErgebnis {
   const lower = transkript.toLowerCase()
   const fehlende: string[] = []
   const ergaenzt: BerechnetePosition[] = [...positionen]
 
-  // Typisierter Auftrags-Vertrag: EINMAL aus dem Transkript bauen (heute per
-  // Normalisierer, Etappe 2: direkt von der KI). Downstream liest den Vertrag.
-  const verstaendnis = baueVerstaendnis(transkript)
+  // Typisierter Auftrags-Vertrag: EINMAL bauen. Etappe 2: mit KI-Signalen
+  // (saubere Arbeiten/Belag/Altbelag) als Vorrang, Rohtext-Regex als Fallback.
+  const verstaendnis = baueVerstaendnis(transkript, signale)
 
   if (gewerk === 'maler') {
     pruefeMaler(ergaenzt, fehlende, lower, transkript, positionen, verstaendnis, meta)

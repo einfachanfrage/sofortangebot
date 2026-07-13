@@ -34,6 +34,35 @@ describe('baueVerstaendnis — typisierter Auftrags-Vertrag', () => {
     expect(v.altbelagEntfernen).toBe(false)
   })
 
+  it('Etappe 2: KI-Signale ergänzen, wo Rohtext-Regex nichts fände', () => {
+    // Rohtext ohne erkennbares Verb, aber die KI hat die Arbeit sauber verstanden
+    const v = baueVerstaendnis('die Oberflächen im Bad auffrischen', {
+      arbeitenTexte: ['Wände streichen', 'Tapete entfernen'],
+      belagText: null,
+      altbelagEntfernen: false,
+    })
+    expect(v.hatArbeit('streichen')).toBe(true)
+    expect(v.hatArbeit('tapete_entfernen')).toBe(true)
+  })
+
+  it('Etappe 2: KI-Belag hat Vorrang, KI-Altbelag-Flag greift', () => {
+    const v = baueVerstaendnis('Boden neu machen', {
+      arbeitenTexte: ['Belag verlegen'],
+      belagText: 'Eichenparkett',
+      altbelagEntfernen: true,
+    })
+    expect(v.belag).toBe('parkett')
+    expect(v.altbelagEntfernen).toBe(true)
+  })
+
+  it('Etappe 2: ohne Signale identisch zum Regex-Weg (Fallback)', () => {
+    const text = 'Wände streichen, nur die Wände'
+    const mit = baueVerstaendnis(text, undefined)
+    const ohne = baueVerstaendnis(text)
+    expect([...mit.arbeiten]).toEqual([...ohne.arbeiten])
+    expect(mit.scope.nurWaende).toBe(ohne.scope.nurWaende)
+  })
+
   it('die Frust-Ansage wird vollständig verstanden', () => {
     const v = baueVerstaendnis(
       'hier im Wohnzimmer muss gestrichen werden, 24 Quadratmeter Bodenfläche. ' +
