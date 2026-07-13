@@ -21,7 +21,7 @@ export type ArbeitsKategorie =
 
 const STAMM_MUSTER: Partial<Record<ArbeitsKategorie, RegExp>> = {
   streichen:
-    /streich\w*|gestrichen|anstrich|anstreich\w*|\banmal(en|t)\b|angemalt|\bpinsel\w*|gepinselt|weißel\w*|geweißelt|farbe\s+(drauf|dran|an\s+die|auf\s+die)/i,
+    /streich\w*|gestrichen|anstrich|anstreich\w*|\banmal(en|t)\b|angemalt|pinsel\w*|gepinselt|weißel\w*|geweißelt|farbe\s+(drauf|dran|an\s+die|auf\s+die)/i,
   spachteln:
     /spachtel\w*|gespachtelt|verspachtel\w*|glätt(en|et)|geglättet|glatt\s?(?:gemacht|machen|gezogen|ziehen|geschliffen|schleifen)|\bq[234]\b/i,
   lackieren:
