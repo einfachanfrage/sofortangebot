@@ -1,6 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add } from './helpers'
-import { hatArbeit } from '../arbeiten-normalisierer'
+import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 // Belag-Erkennung zentral im boden-normalisierer (eine Quelle, getestet).
 // Re-Export, damit bestehende Importe aus './boden-basis' unverändert bleiben.
 import type { BelagTyp } from '../boden-normalisierer'
@@ -46,6 +46,7 @@ export function pruefeBodenBasis(
   fehlende: string[],
   lower: string,
   belag: BelagTyp,
+  v: AuftragsVerstaendnis,
 ): { nurOhneSockel: boolean } {
   const nurOhneSockel =
     lower.includes('ohne sockelleisten') ||
@@ -56,7 +57,7 @@ export function pruefeBodenBasis(
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
 
   // ── Untergrundvorbereitung ───────────────────────────────────────────────
-  const hatGrundieren = hatArbeit(lower, 'grundieren')
+  const hatGrundieren = v.hatArbeit('grundieren')
   const hatAusgleich = lower.includes('ausgleich') || lower.includes('ausgleichsmasse')
   const hatSperre = lower.includes('feuchtigkeitssperre') || lower.includes('epoxidharz')
 

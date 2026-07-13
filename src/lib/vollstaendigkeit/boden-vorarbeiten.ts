@@ -1,8 +1,7 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, addMitMenge } from './helpers'
 import { extrahiereFlaeche, extrahiereFlaecheAusAbmessungen } from './boden-basis'
-import { hatBodenArbeit } from '../boden-normalisierer'
-import { hatArbeit } from '../arbeiten-normalisierer'
+import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 function extrahiereLfdm(lower: string, schluessel: string): number | null {
   const esc = schluessel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -17,6 +16,7 @@ export function pruefeAltbelag(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
+  v: AuftragsVerstaendnis,
 ): void {
   const hatVerklebt =
     lower.includes('vollflächig verklebt') ||
@@ -26,7 +26,7 @@ export function pruefeAltbelag(
 
   // Altbelag-Demontage zentral erkannt (Subjekt+Aktion im Satz, alle Partizipien:
   // "abgerissen", "abgebrochen", "rausgerissen" …).
-  if (!(hatBodenArbeit(lower, 'altbelag_entfernen') && !hat(ergaenzt, 'altbelag', 'entfernen', 'demontage', 'teppichboden entfernen'))) return
+  if (!(v.altbelagEntfernen && !hat(ergaenzt, 'altbelag', 'entfernen', 'demontage', 'teppichboden entfernen'))) return
 
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
@@ -38,7 +38,7 @@ export function pruefeAltbelag(
     } else {
       fehlende.push('Alten Teppichboden entfernen (verklebt)')
     }
-    if (lower.includes('kleber') || lower.includes('kleberreste') || hatArbeit(lower, 'schleifen')) {
+    if (lower.includes('kleber') || lower.includes('kleberreste') || v.hatArbeit('schleifen')) {
       if (m2) {
         ergaenzt.push({ beschreibung: 'Kleberreste abschleifen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
       } else {

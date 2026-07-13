@@ -1,7 +1,7 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add } from './helpers'
-import { extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName, erkenneBelag } from './boden-basis'
-import { hatArbeit } from '../arbeiten-normalisierer'
+import { extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
+import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 function round2(n: number): number { return Math.round(n * 100) / 100 }
 
@@ -44,9 +44,10 @@ export function pruefeParkettSchleifen(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
+  v: AuftragsVerstaendnis,
 ): void {
   const hatSchleifen =
-    hatArbeit(lower, 'schleifen') &&
+    v.hatArbeit('schleifen') &&
     (lower.includes('parkett') || lower.includes('diele') || lower.includes('holzboden') || lower.includes('eichen'))
   if (!hatSchleifen) return
   if (hat(ergaenzt, 'schleifen')) return
@@ -114,6 +115,7 @@ export function pruefeTreppenBoden(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
+  v: AuftragsVerstaendnis,
 ): void {
   const hatTreppe =
     lower.includes('treppe') || lower.includes('treppenhaus') || lower.includes('trittstufe')
@@ -127,7 +129,7 @@ export function pruefeTreppenBoden(
   const anzahl = m ? parseInt(m[1]) : 0
 
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
-  const belag = erkenneBelag(lower)
+  const belag = v.belag
   const belagName = belag ? erkenneBelagName(lower, belag) : 'Belag'
   const istVerkleiden = lower.includes('verkleid')
 
@@ -253,6 +255,7 @@ export function pruefeFischgraet(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
+  v: AuftragsVerstaendnis,
 ): void {
   const hatFischgraet = lower.includes('fischgrät') || lower.includes('fischgraet')
   if (!hatFischgraet) return
@@ -266,7 +269,7 @@ export function pruefeFischgraet(
 
   if (m2) {
     const mengeMitVerschnitt = round2(m2 * (1 + verschnitt))
-    const belag = erkenneBelag(lower)
+    const belag = v.belag
     const name = erkenneBelagName(lower, belag)
     ergaenzt.push({
       beschreibung: `${name} Fischgrät vollflächig verkleben (Aufpreis Verlegemuster)`,

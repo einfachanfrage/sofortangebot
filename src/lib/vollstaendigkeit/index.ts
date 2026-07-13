@@ -43,7 +43,7 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     pruefeTrockenbau(ergaenzt, fehlende, lower)
   }
   if (gewerk === 'boden') {
-    pruefeBoden(ergaenzt, fehlende, lower)
+    pruefeBoden(ergaenzt, fehlende, lower, verstaendnis)
   }
   if (gewerk === 'elektro') {
     pruefeElektro(ergaenzt, fehlende, lower)

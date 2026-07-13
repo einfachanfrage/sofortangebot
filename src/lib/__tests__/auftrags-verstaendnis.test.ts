@@ -21,6 +21,19 @@ describe('baueVerstaendnis — typisierter Auftrags-Vertrag', () => {
     expect(v.hatArbeit('streichen')).toBe(false)
   })
 
+  it('Boden-Felder: Belag + Altbelag-Demontage (inkl. Partizip)', () => {
+    const v = baueVerstaendnis('alten Teppich rausgerissen, neues Klick-Vinyl verlegen und abschleifen')
+    expect(v.belag).toBe('vinyl')
+    expect(v.altbelagEntfernen).toBe(true)
+    expect(v.hatArbeit('schleifen')).toBe(true)
+  })
+
+  it('kein Boden-Auftrag → belag null, altbelagEntfernen false', () => {
+    const v = baueVerstaendnis('Wände streichen')
+    expect(v.belag).toBe(null)
+    expect(v.altbelagEntfernen).toBe(false)
+  })
+
   it('die Frust-Ansage wird vollständig verstanden', () => {
     const v = baueVerstaendnis(
       'hier im Wohnzimmer muss gestrichen werden, 24 Quadratmeter Bodenfläche. ' +

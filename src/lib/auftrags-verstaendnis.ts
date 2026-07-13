@@ -11,6 +11,7 @@ import {
   istKomplett as istKomplettFn, hatAkzentwand as hatAkzentwandFn,
   type ArbeitsKategorie, type RaumScope, type Raumkontext, type OeffnungsNegation,
 } from './arbeiten-normalisierer'
+import { erkenneBelag, hatBodenArbeit, type BelagTyp } from './boden-normalisierer'
 
 export interface AuftragsVerstaendnis {
   /** Erkannte Arbeits-Kategorien (streichen, tapete_entfernen, spachteln, …). */
@@ -25,6 +26,10 @@ export interface AuftragsVerstaendnis {
   istKomplett: boolean
   /** "eine Wand" / Akzentwand. */
   hatAkzentwand: boolean
+  /** Boden-Gewerk: erkannter Belagstyp (parkett/laminat/vinyl/…), null wenn keiner. */
+  belag: BelagTyp
+  /** Boden-Gewerk: Altbelag-Demontage erkannt (inkl. Partizipien). */
+  altbelagEntfernen: boolean
   /** Bequemer Einzel-Check. */
   hatArbeit(kategorie: ArbeitsKategorie): boolean
 }
@@ -40,6 +45,8 @@ export function baueVerstaendnis(text: string): AuftragsVerstaendnis {
     kontext: erkenneRaumkontext(t),
     istKomplett: istKomplettFn(t),
     hatAkzentwand: hatAkzentwandFn(t),
+    belag: erkenneBelag(t),
+    altbelagEntfernen: hatBodenArbeit(t, 'altbelag_entfernen'),
     hatArbeit: (kategorie) => arbeiten.has(kategorie),
   }
 }
