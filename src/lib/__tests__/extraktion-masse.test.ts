@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereAbzug,
-  extrahiereTorMasse, zaehleFenster, zaehleTueren,
+  extrahiereTorMasse, zaehleFenster, zaehleTueren, extrahiereRaumhoehe,
 } from '../extraktion-masse'
 
 describe('extrahiereWandflaeche', () => {
@@ -40,6 +40,22 @@ describe('extrahiereTorMasse', () => {
     ['Tor 3x2,2', { breite: 3, hoehe: 2.2 }],
   ] as const)('"%s"', (t, erw) => { expect(extrahiereTorMasse(t)).toEqual(erw) })
   it('kein Tor → null', () => { expect(extrahiereTorMasse('normale Tür 0,9 x 2,1')).toBe(null) })
+})
+
+describe('extrahiereRaumhoehe — robust gegen "2 Meter 60"-Falle', () => {
+  it.each([
+    ['2,60 m hoch', 2.6],
+    ['2,60 hoch', 2.6],
+    ['2,60 meter hoch', 2.6],
+    ['2 Meter 60 hoch', 2.6],   // Whisper-Kompaktform — DARF nicht 60 werden
+    ['2 m 60 hoch', 2.6],
+    ['3 meter hoch', 3],
+    ['Raumhöhe 4,5', 4.5],
+    ['bodenfläche 20qm, 2,60 hoch, eine tür', 2.6],
+  ] as const)('"%s" → %s', (t, erw) => { expect(extrahiereRaumhoehe(t)).toBe(erw) })
+
+  it('keine Höhe → null', () => { expect(extrahiereRaumhoehe('20 qm streichen')).toBe(null) })
+  it('unplausibel (60 m) → null', () => { expect(extrahiereRaumhoehe('60 m hoch')).toBe(null) })
 })
 
 describe('zaehleFenster / zaehleTueren', () => {

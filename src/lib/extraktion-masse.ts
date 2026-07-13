@@ -39,6 +39,34 @@ export function extrahiereTorMasse(text: string): { breite: number; hoehe: numbe
   return breite > 0 && hoehe > 0 ? { breite, hoehe } : null
 }
 
+/**
+ * Raumhöhe in Metern aus freiem Text — robust gegen "2 Meter 60"-Fallen.
+ * "2,60 m hoch" / "2,60 hoch" / "2 Meter 60 hoch" / "3 m hoch" → korrekt.
+ * NICHT: "2 Meter 60" → 60 (der alte Bug, der Erschwerniszuschlag auslöste).
+ */
+export function extrahiereRaumhoehe(text: string): number | null {
+  const t = text ?? ''
+  const HOCH = '(?:hoch|deckenh(?:ö|oe)he|raumh(?:ö|oe)he)'
+  // Kompakt "X Meter YZ [hoch]" → X + YZ/100 (z.B. "2 meter 60" = 2,60 m)
+  const komp = t.match(new RegExp(`(\\d+)\\s*(?:m|meter)\\s+(\\d{1,2})\\s*(?:m\\s*)?${HOCH}`, 'i'))
+  if (komp) {
+    const val = parseInt(komp[1]) + parseInt(komp[2]) / 100
+    return plausibleHoehe(val)
+  }
+  // Dezimal oder ganze Meter: "2,60 (m) hoch" / "3 meter hoch"
+  const dez = t.match(new RegExp(`(\\d+(?:[.,]\\d+)?)\\s*(?:m|meter)?\\s*${HOCH}`, 'i'))
+  if (dez) return plausibleHoehe(parseFloat(dez[1].replace(',', '.')))
+  // Schlüsselwort zuerst: "Raumhöhe 4,5" / "Deckenhöhe von 3,20 m"
+  const kw = t.match(/(?:deckenh(?:ö|oe)he|raumh(?:ö|oe)he)\s*(?:von\s*|ist\s*|beträgt\s*|:\s*)?(\d+(?:[.,]\d+)?)/i)
+  if (kw) return plausibleHoehe(parseFloat(kw[1].replace(',', '.')))
+  return null
+}
+
+// Raumhöhen liegen realistisch zwischen ~2 und ~12 m — alles andere ist Fehl-Parse.
+function plausibleHoehe(v: number): number | null {
+  return v >= 1.5 && v <= 12 ? v : null
+}
+
 /** Fenster-Anzahl ("2 Fenster", "3 Dachfenster"). 0 wenn keine Zahl. */
 export function zaehleFenster(text: string): number {
   const m = (text ?? '').match(/(\d+)\s*\S*fenster/i)

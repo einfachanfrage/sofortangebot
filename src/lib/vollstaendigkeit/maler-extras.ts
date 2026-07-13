@@ -1,13 +1,12 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, anzahlAus, filtereArray } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
+import { extrahiereRaumhoehe } from '../extraktion-masse'
 
 export function pruefeErschwerniszuschlagHoehe(ergaenzt: BerechnetePosition[], lower: string): void {
-  // Deckenhöhe nur aus expliziten Höhenangaben lesen, nicht aus Raummaßen
-  const hoeheMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*m?\s*(?:hoch|deckenhöhe|raumhöhe)/i)
-  const raumHoehe = hoeheMatch ? parseFloat(hoeheMatch[1].replace(',', '.')) : 0
+  // Robuster Höhen-Parser (fängt "2 Meter 60" = 2,60 m korrekt, nicht 60 m!)
+  const raumHoehe = extrahiereRaumhoehe(lower) ?? 0
   const hatHohesRaum = raumHoehe > 3.0
-    || /[45][.,]\d*\s*m\s*(?:hoch|deckenhöhe|raumhöhe)/i.test(lower)
     || lower.includes('hohe decke') || lower.includes('hohen decken')
   if (hatHohesRaum && !hat(ergaenzt, 'erschwerniszuschlag höhe', 'höhe zuschlag', 'gerüst')) {
     ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Raumhöhe > 3m', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: `Raumhöhe ${raumHoehe > 0 ? raumHoehe + 'm' : 'erkannt'} > 3m`, annahmen: [] })
