@@ -1,4 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
+import { baueVerstaendnis } from '../auftrags-verstaendnis'
 import { pruefeMaler } from './maler'
 import { pruefeFliesen } from './fliesen'
 import { pruefeSanitaer } from './sanitaer'
@@ -25,8 +26,12 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   const fehlende: string[] = []
   const ergaenzt: BerechnetePosition[] = [...positionen]
 
+  // Typisierter Auftrags-Vertrag: EINMAL aus dem Transkript bauen (heute per
+  // Normalisierer, Etappe 2: direkt von der KI). Downstream liest den Vertrag.
+  const verstaendnis = baueVerstaendnis(transkript)
+
   if (gewerk === 'maler') {
-    pruefeMaler(ergaenzt, fehlende, lower, transkript, positionen, meta)
+    pruefeMaler(ergaenzt, fehlende, lower, transkript, positionen, verstaendnis, meta)
   }
   if (gewerk === 'fliesen') {
     pruefeFliesen(ergaenzt, fehlende, lower)

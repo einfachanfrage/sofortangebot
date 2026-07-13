@@ -1,4 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
+import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import { wendeNurXFilterAn, pruefeStreichenBasis, pruefeGrundierung } from './maler-basis'
 import { pruefeTuerenLackieren, pruefeFensterLackieren, pruefeHeizkLackieren } from './maler-lackieren'
 import { pruefeBodenAbdecken, pruefeFliesenspiegel, pruefeLampenAbkleben, pruefeHeizkAbkleben, pruefeTreppenhausGelaender } from './maler-abkleben'
@@ -23,12 +24,13 @@ export function pruefeMaler(
   lower: string,
   transkript: string,
   positionen: BerechnetePosition[],
+  verstaendnis: AuftragsVerstaendnis,
   meta?: { fensterAnzahl?: number; tuerenAnzahl?: number },
 ): void {
-  const { nurDecke, nurWaende, nurBoden } = wendeNurXFilterAn(ergaenzt, lower)
+  const { nurDecke, nurWaende, nurBoden } = wendeNurXFilterAn(ergaenzt, verstaendnis)
 
-  pruefeStreichenBasis(ergaenzt, fehlende, lower, nurDecke, nurWaende, nurBoden)
-  pruefeGrundierung(ergaenzt, fehlende, lower)
+  pruefeStreichenBasis(ergaenzt, fehlende, verstaendnis, nurDecke, nurWaende, nurBoden)
+  pruefeGrundierung(ergaenzt, fehlende, verstaendnis, lower)
 
   pruefeTuerenLackieren(ergaenzt, lower, meta)
   pruefeFensterLackieren(ergaenzt, lower, meta)
