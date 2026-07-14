@@ -43,7 +43,9 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   if (gewerk === 'trockenbau') {
     pruefeTrockenbau(ergaenzt, fehlende, lower)
   }
-  if (gewerk === 'boden') {
+  // WICHTIG: normalisiereGewerk liefert 'boden_parkett' (nicht 'boden') — beide abdecken,
+  // sonst läuft die Boden-Vollständigkeit im echten Betrieb nie.
+  if (gewerk === 'boden' || gewerk === 'boden_parkett') {
     pruefeBoden(ergaenzt, fehlende, lower, verstaendnis)
   }
   if (gewerk === 'elektro') {

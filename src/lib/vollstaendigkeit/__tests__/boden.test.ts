@@ -12,7 +12,8 @@ describe('boden – basis', () => {
     // Mit bekannter m² → Untergrundvorbereitung in positionen (nicht fehlende)
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
     expect(alle.some(b => b.toLowerCase().includes('untergrundvorbereitung'))).toBe(true)
-    expect(fehlende).toContain('Sockelleisten montieren')
+    // Ohne Meter → Umfang aus Fläche geschätzt → Position (nicht mehr nur "fehlende")
+    expect(alle).toContain('Sockelleisten montieren')
   })
 
   it('Laminat → wird als Laminat-Position erkannt', () => {

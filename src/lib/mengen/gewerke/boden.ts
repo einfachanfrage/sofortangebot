@@ -7,8 +7,8 @@ function round2(n: number): number {
 function belagLabel(belag: string | undefined): string {
   if (!belag) return 'Bodenbelag'
   const b = belag.toLowerCase()
-  if (b.includes('klick-vinyl') || (b.includes('klick') && b.includes('vinyl'))) return 'Klick-Vinyl'
-  if (b.includes('vinyl') || b.includes('designboden') || b.includes('lvt')) return 'Vinyl-Boden'
+  if (b.includes('klick-vinyl') || (b.includes('klick') && /v[ie]nyl/.test(b))) return 'Klick-Vinyl'
+  if (/v[ie]nyl/.test(b) || b.includes('designboden') || b.includes('lvt')) return 'Vinyl-Boden'
   if (b.includes('laminat')) return 'Laminat'
   if (b.includes('parkett') || b.includes('fertigparkett')) return 'Fertigparkett'
   if (b.includes('kork')) return 'Kork'
@@ -21,7 +21,7 @@ function belagLabel(belag: string | undefined): string {
 function standardVerschnitt(belag: string | undefined): number {
   if (!belag) return 0.10
   const b = belag.toLowerCase()
-  if (b.includes('laminat') || b.includes('vinyl') || b.includes('linoleum') || b.includes('lvt') || b.includes('klick')) return 0.10
+  if (b.includes('laminat') || /v[ie]nyl/.test(b) || b.includes('linoleum') || b.includes('lvt') || b.includes('klick')) return 0.10
   return 0
 }
 

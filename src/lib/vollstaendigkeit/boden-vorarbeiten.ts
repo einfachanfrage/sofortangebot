@@ -24,33 +24,29 @@ export function pruefeAltbelag(
     lower.includes('verklebter teppich') ||
     lower.includes('verklebt') && (lower.includes('teppich') || lower.includes('belag'))
 
-  // Altbelag-Demontage zentral erkannt (Subjekt+Aktion im Satz, alle Partizipien:
-  // "abgerissen", "abgebrochen", "rausgerissen" …).
+  const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
+  // Fläche: aus Text, sonst aus bereits vorhandener Altbelag-/Boden-Position (netto)
+  const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+    ?? ergaenzt.find(p => /altbelag entfernen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
+    ?? null
+
+  // Kleberreste abschleifen bei verklebtem Altbelag — UNABHÄNGIG davon, ob die Engine
+  // schon "Altbelag entfernen" angelegt hat (sonst lief dieser Zweig in Prod nie).
+  const willKleber = hatVerklebt && (lower.includes('kleber') || lower.includes('kleberreste') || v.hatArbeit('schleifen'))
+  if (willKleber && !hat(ergaenzt, 'kleberreste', 'kleber abschleif')) {
+    if (m2) ergaenzt.push({ beschreibung: 'Kleberreste abschleifen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push('Kleberreste abschleifen')
+  }
+
+  // Basis-Altbelag nur, wenn noch keine Entfernen-Position existiert
   if (!(v.altbelagEntfernen && !hat(ergaenzt, 'altbelag', 'entfernen', 'demontage', 'teppichboden entfernen'))) return
 
-  const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
-  const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
-
   if (hatVerklebt) {
-    // Verklebter Altbelag → zwei separate Positionen
-    if (m2) {
-      ergaenzt.push({ beschreibung: 'Alten Teppichboden entfernen (verklebt)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-    } else {
-      fehlende.push('Alten Teppichboden entfernen (verklebt)')
-    }
-    if (lower.includes('kleber') || lower.includes('kleberreste') || v.hatArbeit('schleifen')) {
-      if (m2) {
-        ergaenzt.push({ beschreibung: 'Kleberreste abschleifen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-      } else {
-        fehlende.push('Kleberreste abschleifen')
-      }
-    }
+    if (m2) ergaenzt.push({ beschreibung: 'Alten Teppichboden entfernen (verklebt)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push('Alten Teppichboden entfernen (verklebt)')
   } else {
-    if (m2) {
-      addMitMenge(ergaenzt, 'Altbelag entfernen', m2, 'm²', `${m2} m² aus Transkript`)
-    } else {
-      add(ergaenzt, fehlende, 'Altbelag entfernen')
-    }
+    if (m2) addMitMenge(ergaenzt, 'Altbelag entfernen', m2, 'm²', `${m2} m² aus Transkript`)
+    else add(ergaenzt, fehlende, 'Altbelag entfernen')
   }
 }
 
@@ -119,8 +115,20 @@ export function pruefeSockelleisten(
   const lfm = extrahiereLfdm(lower, 'sockelleisten') ?? extrahiereLfdm(lower, 'sockel')
   if (lfm && lfm > 0 && lfm < 500) {
     addMitMenge(ergaenzt, 'Sockelleisten montieren', lfm, 'lfdm', `${lfm} lfdm aus Transkript`)
-  } else {
-    add(ergaenzt, fehlende, 'Sockelleisten montieren')
+    return
+  }
+  // Keine Meter genannt → Umfang aus der Bodenfläche schätzen (quadratischer Raum),
+  // statt die Position stumm in "fehlende" zu schieben.
+  if (!hat(ergaenzt, 'sockel')) {
+    const flaeche = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+      ?? ergaenzt.find(p => /altbelag entfernen|verlegen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
+      ?? null
+    if (flaeche && flaeche > 0) {
+      const umfang = Math.round(4 * Math.sqrt(flaeche))
+      ergaenzt.push({ beschreibung: 'Sockelleisten montieren', menge: umfang, einheit: 'lfdm', konfidenz: 'medium', berechnungsweg: `Umfang ≈ 4 × √${flaeche} m² = ${umfang} lfdm`, annahmen: ['Quadratischer Raum angenommen — Meter bitte prüfen'] })
+    } else {
+      add(ergaenzt, fehlende, 'Sockelleisten montieren')
+    }
   }
 }
 

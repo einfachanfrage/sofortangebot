@@ -14,8 +14,13 @@ export function pruefeBoden(
   lower: string,
   v: AuftragsVerstaendnis,
 ): void {
+  // Belag kann null sein (Whisper verstümmelt "Klick-Vinyl" → "Glykvenyl"). Statt am
+  // Belag-Wort zu hängen: Ist es überhaupt ein Boden-Auftrag? Erkennbar an Belag,
+  // Altbelag-Demontage oder einer bereits erzeugten Verlegen-/Boden-Position.
   const belag = v.belag
-  if (!belag) return
+  const istBodenAuftrag = belag != null || v.altbelagEntfernen
+    || ergaenzt.some(p => /verlegen|bodenbelag|parkett|laminat|v[ie]nyl|teppich|estrich/i.test(p.beschreibung))
+  if (!istBodenAuftrag) return
 
   const { nurOhneSockel } = pruefeBodenBasis(ergaenzt, fehlende, lower, belag, v)
   pruefeAltbelag(ergaenzt, fehlende, lower, v)

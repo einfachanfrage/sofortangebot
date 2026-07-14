@@ -15,7 +15,7 @@ export function erkenneBelag(text: string): BelagTyp {
   const t = (text ?? '').toLowerCase()
   if (/parkett|dielen?|massivholz|fertigparkett|eichenparkett/.test(t)) return 'parkett'
   if (/laminat/.test(t)) return 'laminat'
-  if (/vinyl|designboden|\blvt\b|klick/.test(t)) return 'vinyl'
+  if (/v[ie]nyl|designboden|\blvt\b|klick/.test(t)) return 'vinyl'
   if (/kork/.test(t)) return 'kork'
   if (/linoleum/.test(t)) return 'linoleum'
   if (/teppich|teppichboden|nadelvlies/.test(t)) return 'teppich'
