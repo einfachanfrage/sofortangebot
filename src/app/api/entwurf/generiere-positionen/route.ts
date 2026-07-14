@@ -137,6 +137,17 @@ export async function POST(req: NextRequest) {
         ?? rawName
     }
 
+    // Berechnete Wandfläche je Raum (aus "Wandflächen streichen — Raum") — zum Vorbelegen
+    const wandProRaum: Record<string, number> = {}
+    for (const p of positionen) {
+      const b = (p as { beschreibung?: string }).beschreibung ?? ''
+      if (/wandfläch/i.test(b) && (p as { einheit?: string }).einheit === 'm²') {
+        const mm = b.match(/\s+[-–—]\s+(.+)$/)
+        const rn = mm ? mm[1].trim() : null
+        if (rn) wandProRaum[rn] = (p as { menge?: number }).menge ?? 0
+      }
+    }
+
     const raumDetails: Record<string, {
       modus?: 'rechteck' | 'flaeche'
       breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number
@@ -149,9 +160,10 @@ export async function POST(req: NextRequest) {
       const fensterAnzahl = raum.fenster?.reduce((s, f) => s + (f.anzahl ?? 1), 0) || undefined
       const tuerenAnzahl = raum.tueren?.reduce((s, t) => s + (t.anzahl ?? 1), 0) || undefined
       // Fläche vs. L×B: hat der Nutzer eine Fläche genannt (Boden/Wand) statt Maße?
-      const bodenflaeche = raum.flaeche ?? raum.deckflaeche_direkt ?? undefined
-      const wandflaeche = raum.wandflaeche_direkt ?? undefined
       const hatMasse = raum.breite != null && raum.laenge != null
+      const bodenflaeche = raum.flaeche ?? raum.deckflaeche_direkt ?? undefined
+      // Wandfläche: direkt genannt, sonst (nur bei Flächen-Räumen) die berechnete aus der Position
+      const wandflaeche = raum.wandflaeche_direkt ?? (!hatMasse ? wandProRaum[key] : undefined) ?? undefined
       const hatFlaeche = bodenflaeche != null || wandflaeche != null
       raumDetails[key] = {
         // Ohne L×B, aber mit Fläche → Flächen-Reiter direkt aktiv
