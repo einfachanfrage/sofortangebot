@@ -199,6 +199,8 @@ export async function POST(req: NextRequest) {
       quantity: number
       unit: string
       unit_price: number
+      berechnungsweg?: string | null
+      annahmen?: string[]
     }>
     zusammenfassung?: string
     notizen?: string
@@ -242,6 +244,8 @@ export async function POST(req: NextRequest) {
       unit: item.unit ?? 'Stk',
       unit_price: item.unit_price ?? 0,
       total_price: (item.quantity ?? 1) * (item.unit_price ?? 0),
+      berechnungsweg: item.berechnungsweg ?? null,
+      annahmen: item.annahmen ?? [],
     }))
 
     const { error: insertErr } = await supabase.from('quote_items').insert(itemRows)
