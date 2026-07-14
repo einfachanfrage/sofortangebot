@@ -243,6 +243,14 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
               className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-[#F5C400] pb-0.5 mb-2"
               autoFocus
             />
+            <textarea
+              value={item.description ?? ''}
+              onChange={e => updateEditItem(item.id, 'description', e.target.value)}
+              onClick={e => e.stopPropagation()}
+              placeholder="Untertitel (z.B. Farbe, Material, Detail) — leer lassen zum Ausblenden"
+              rows={1}
+              className="w-full text-xs font-semibold text-[#2C2C2C]/60 bg-[#F7F7F5] rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:ring-1 focus:ring-[#F5C400] resize-none"
+            />
             <div className="flex gap-2 items-center flex-wrap">
               <input
                 type="number"
@@ -428,8 +436,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         const newQty = berechneQuantityFuerItem(titleDisplay, item.unit, updated[raumName])
         if (newQty == null) return item
         const qty = Math.round(newQty * 100) / 100
-        const newDesc = `${qty} ${item.unit}`
-        return { ...item, quantity: qty, total_price: qty * item.unit_price, description: newDesc }
+        // Untertitel NICHT überschreiben — Menge wird separat angezeigt
+        return { ...item, quantity: qty, total_price: qty * item.unit_price }
       }))
       setHasChanges(true)
 
