@@ -116,6 +116,154 @@ const KORPUS: Fall[] = [
     muss: ['streichen'],
     verboten: ['estrich', 'erschwerniszuschlag', 'deckenfläche streichen'],
   },
+
+  // ── Maler Sonderregeln ────────────────────────────────────────────────────
+  {
+    name: 'Schimmel im Bad + streichen',
+    gewerk: 'maler',
+    transkript: 'im bad ist schimmel an der wand, muss behandelt und dann gestrichen werden, 12 quadratmeter, 2,40 hoch',
+    raeume: [{ name: 'Bad', flaeche: 12, hoehe: 2.4, arbeiten: ['wände streichen'] }],
+    muss: ['schimmel'],
+    verboten: ['estrich', 'erschwerniszuschlag'],
+  },
+  {
+    name: 'Feuchtraum Bad — abwaschbare Farbe',
+    gewerk: 'maler',
+    transkript: 'badezimmer streichen mit abwaschbarer feuchtraumfarbe, 10 quadratmeter wandfläche',
+    raeume: [{ name: 'Bad', wandflaeche_direkt: 10, arbeiten: ['wände streichen'] }],
+    muss: ['streichen'],
+    verboten: ['estrich', 'erschwerniszuschlag'],
+  },
+  {
+    name: 'Türen lackieren (3 Türen)',
+    gewerk: 'maler',
+    transkript: 'drei zimmertüren abschleifen grundieren und weiß lackieren',
+    raeume: [{ name: 'Wohnung', arbeiten: ['türen lackieren'], tueren: [{ anzahl: 3 }] }],
+    muss: ['türen', 'lackier'],
+    verboten: ['estrich', 'deckenfläche streichen'],
+  },
+  {
+    name: 'Fenster außen lackieren',
+    gewerk: 'maler',
+    transkript: 'zwei holzfenster außen abschleifen und mit ölfarbe streichen',
+    raeume: [{ name: 'Haus', arbeiten: ['fenster lackieren'], fenster: [{ anzahl: 2 }] }],
+    muss: ['fenster'],
+    verboten: ['estrich', 'erschwerniszuschlag'],
+  },
+  {
+    name: 'Heizkörper lackieren',
+    gewerk: 'maler',
+    transkript: 'im wohnzimmer den heizkörper abschleifen und neu lackieren',
+    raeume: [{ name: 'Wohnzimmer', arbeiten: ['heizkörper lackieren'] }],
+    muss: ['heizkörper'],
+    verboten: ['estrich'],
+  },
+  {
+    name: 'Raufaser neu tapezieren + streichen',
+    gewerk: 'maler',
+    transkript: 'wohnzimmer, alte tapete runter, neue raufaser aufziehen und weiß streichen, 45 quadratmeter wandfläche',
+    raeume: [{ name: 'Wohnzimmer', wandflaeche_direkt: 45, arbeiten: ['tapete entfernen', 'raufaser aufziehen', 'streichen'] }],
+    muss: ['tapete entfernen', 'aufziehen'],
+    verboten: ['estrich'],
+  },
+  {
+    name: 'Dachschräge streichen',
+    gewerk: 'maler',
+    transkript: 'dachgeschoss mit schräge komplett streichen, 40 quadratmeter, 2,40 an der niedrigsten stelle',
+    raeume: [{ name: 'Dachzimmer', flaeche: 40, hoehe: 2.4, arbeiten: ['wände streichen', 'decke streichen'] }],
+    muss: ['streichen'],
+    verboten: ['estrich'],
+  },
+  {
+    name: 'Stuckleisten montieren + streichen',
+    gewerk: 'maler',
+    transkript: 'altbauwohnzimmer streichen und neue stuckleisten anbringen, 30 quadratmeter',
+    raeume: [{ name: 'Wohnzimmer', flaeche: 30, hoehe: 3.2, arbeiten: ['wände streichen', 'decke streichen'] }],
+    muss: ['stuckleisten'],
+    verboten: ['estrich'],
+  },
+  {
+    name: 'Graffiti entfernen',
+    gewerk: 'maler',
+    transkript: 'an der hauswand ist ein graffiti, das soll entfernt und überstrichen werden, 15 quadratmeter',
+    raeume: [{ name: 'Hauswand', wandflaeche_direkt: 15, arbeiten: ['wände streichen'] }],
+    muss: ['graffiti'],
+    verboten: ['estrich', 'erschwerniszuschlag'],
+  },
+  {
+    name: 'Denkmalschutz Altbau',
+    gewerk: 'maler',
+    transkript: 'denkmalgeschütztes altbauzimmer streichen, 25 quadratmeter, 3 meter 20 hoch',
+    raeume: [{ name: 'Altbauzimmer', flaeche: 25, hoehe: 3.2, arbeiten: ['wände streichen', 'decke streichen'] }],
+    muss: ['denkmal'],
+    verboten: ['estrich'],
+  },
+  {
+    name: 'Fassade mit Gerüst',
+    gewerk: 'maler',
+    transkript: 'fassade streichen, dafür brauchen wir ein gerüst, 80 quadratmeter außenwand',
+    raeume: [{ name: 'Fassade', wandflaeche_direkt: 80, arbeiten: ['fassade streichen'] }],
+    muss: ['gerüst'],
+    verboten: ['estrich', 'deckenfläche streichen'],
+  },
+  {
+    name: 'Kellerraum streichen, kein Fenster',
+    gewerk: 'maler',
+    transkript: 'kellerraum weiß streichen, 18 quadratmeter bodenfläche, 2,20 hoch, keine fenster',
+    raeume: [{ name: 'Keller', flaeche: 18, hoehe: 2.2, arbeiten: ['wände streichen', 'decke streichen'] }],
+    muss: ['wandflächen streichen'],
+    verboten: ['estrich', 'erschwerniszuschlag'],
+  },
+
+  // ── Boden Sonderregeln ────────────────────────────────────────────────────
+  {
+    name: 'Vinyl diagonal verlegen',
+    gewerk: 'boden_parkett',
+    transkript: 'wohnzimmer klick-vinyl diagonal verlegen, 25 quadratmeter',
+    raeume: [{ name: 'Wohnzimmer', flaeche: 25, belag: 'klick-vinyl', verlegerichtung: 'diagonal', sockelleisten: true, arbeiten: ['vinyl verlegen', 'sockelleisten'] }],
+    muss: ['vinyl'],
+    verboten: ['estrich', 'glykvenyl'],
+  },
+  {
+    name: 'Laminat + Fußbodenheizung',
+    gewerk: 'boden_parkett',
+    transkript: 'schlafzimmer laminat verlegen, ist eine fußbodenheizung drunter, 20 quadratmeter',
+    raeume: [{ name: 'Schlafzimmer', flaeche: 20, belag: 'laminat', arbeiten: ['laminat verlegen'] }],
+    muss: ['laminat'],
+    verboten: ['estrich', 'glykvenyl'],
+  },
+  {
+    name: 'Fertigparkett Fischgrät verkleben',
+    gewerk: 'boden_parkett',
+    transkript: 'esszimmer fertigparkett im fischgrätmuster vollflächig verkleben, 30 quadratmeter',
+    raeume: [{ name: 'Esszimmer', flaeche: 30, belag: 'fertigparkett', arbeiten: ['parkett verlegen'] }],
+    muss: ['fischgrät'],
+    verboten: ['estrich', 'glykvenyl'],
+  },
+  {
+    name: 'Trittschalldämmung + Laminat',
+    gewerk: 'boden_parkett',
+    transkript: 'kinderzimmer, erst trittschalldämmung dann laminat, 4 mal 4 meter',
+    raeume: [{ name: 'Kinderzimmer', laenge: 4, breite: 4, belag: 'laminat', sockelleisten: true, arbeiten: ['laminat verlegen'] }],
+    muss: ['trittschall', 'laminat'],
+    verboten: ['estrich', 'glykvenyl'],
+  },
+  {
+    name: 'Übergangsprofil zwischen Räumen',
+    gewerk: 'boden_parkett',
+    transkript: 'vinyl im flur verlegen, am übergang zum wohnzimmer ein alu-anschlussprofil, 12 quadratmeter',
+    raeume: [{ name: 'Flur', flaeche: 12, belag: 'vinyl', arbeiten: ['vinyl verlegen'] }],
+    muss: ['übergangsprofil'],
+    verboten: ['estrich', 'glykvenyl'],
+  },
+  {
+    name: 'Estrich grundieren + ausgleichen (estrich HIER erlaubt)',
+    gewerk: 'boden_parkett',
+    transkript: 'estrich grundieren und mit ausgleichsmasse bis 5 millimeter ausgleichen, dann vinyl, 22 quadratmeter',
+    raeume: [{ name: 'Raum', flaeche: 22, belag: 'vinyl', ausgleich: true, arbeiten: ['vinyl verlegen'] }],
+    muss: ['ausgleich', 'vinyl'],
+    verboten: ['glykvenyl'],
+  },
 ]
 
 describe('Golden Corpus — echte Pipeline, echte Gewerk-Strings', () => {
@@ -147,10 +295,11 @@ describe('Golden Corpus — globale Invarianten (fangen ganze Fehlerklassen)', (
     if (!/\bestrich/.test(t)) expect(positionen.some(p => /\bestrich/i.test(p.beschreibung))).toBe(false)
     if (!t.includes('epoxid')) expect(positionen.some(p => /epoxid/i.test(p.beschreibung))).toBe(false)
 
-    // 2) Kein falscher Erschwerniszuschlag bei normaler Höhe
+    // 2) Kein falscher HÖHEN-Erschwerniszuschlag bei normaler Höhe
+    //    (Altbau-/Denkmal-Zuschläge sind höhenunabhängig und legitim)
     const hoehe = extrahiereRaumhoehe(t)
     if ((hoehe == null || hoehe <= 3) && !t.includes('hohe decke')) {
-      expect(positionen.some(p => /erschwerniszuschlag/i.test(p.beschreibung))).toBe(false)
+      expect(positionen.some(p => /erschwerniszuschlag\s*raumhöhe|raumhöhe.*3\s*m/i.test(p.beschreibung))).toBe(false)
     }
 
     // 3) Keine kaputten Mengen (NaN / ≤0) — die "Nullerpositionen"-Klasse

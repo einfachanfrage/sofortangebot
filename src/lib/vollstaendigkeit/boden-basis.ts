@@ -14,12 +14,15 @@ export function extrahiereFlaeche(lower: string): number | null {
   return null
 }
 
-// Fläche aus "X Meter lang und Y Meter breit" berechnen
+// Fläche aus "X Meter lang und Y Meter breit" ODER "X mal Y Meter" berechnen
 export function extrahiereFlaecheAusAbmessungen(lower: string): number | null {
   const m = lower.match(/(\d+[\.,]?\d*)\s*m(?:eter)?\s+lang\s+und\s+(\d+[\.,]?\d*)\s*m(?:eter)?\s+breit/)
+    // "4 mal 4 meter", "3 x 5 m" — "meter/m" am Ende verhindert Fehltreffer wie "3 mal streichen"
+    ?? lower.match(/(\d+(?:[.,]\d+)?)\s*(?:mal|x|×)\s*(\d+(?:[.,]\d+)?)\s*m(?:eter)?\b/)
   if (!m) return null
   const l = parseFloat(m[1].replace(',', '.'))
   const b = parseFloat(m[2].replace(',', '.'))
+  if (l <= 0 || b <= 0 || l > 100 || b > 100) return null
   return Math.round(l * b * 100) / 100
 }
 
