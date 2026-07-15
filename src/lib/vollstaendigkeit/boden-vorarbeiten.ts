@@ -62,19 +62,20 @@ export function pruefeFeuchtigkeitssperre(
     lower.includes('feuchtigkeit') && lower.includes('sperr')
 
   if (!hatSperre) return
-  if (hat(ergaenzt, 'feuchtigkeitssperre', 'epoxidharz')) return
 
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+    ?? ergaenzt.find(p => /feuchtigkeitssperre|epoxidharz|verlegen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
+    ?? null
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
 
-  const name = lower.includes('epoxidharz') ? 'Epoxidharz-Feuchtigkeitssperre aufwalzen' : 'Feuchtigkeitssperre aufbringen'
-  if (m2) {
-    ergaenzt.push({ beschreibung: name, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-  } else {
-    fehlende.push(name)
+  // Sperre nur, wenn die Engine sie nicht schon angelegt hat
+  if (!hat(ergaenzt, 'feuchtigkeitssperre', 'epoxidharz')) {
+    const name = lower.includes('epoxidharz') ? 'Epoxidharz-Feuchtigkeitssperre aufwalzen' : 'Feuchtigkeitssperre aufbringen'
+    if (m2) ergaenzt.push({ beschreibung: name, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push(name)
   }
 
-  // Quarzsand absanden — häufig im Zusammenhang
+  // Quarzsand absanden — UNABHÄNGIG (die Engine legt die Sperre selbst an)
   if (lower.includes('quarzsand') || lower.includes('absanden')) {
     if (!hat(ergaenzt, 'quarzsand', 'absanden')) {
       if (m2) {

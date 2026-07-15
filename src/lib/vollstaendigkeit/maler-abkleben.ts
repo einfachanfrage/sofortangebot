@@ -34,7 +34,8 @@ export function pruefeFliesenspiegel(ergaenzt: BerechnetePosition[], fehlende: s
   if (flm !== null && flm > 0) {
     ergaenzt.push({ beschreibung: 'Fliesenspiegel abkleben', menge: flm, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${flm} lfdm aus Transkript`, annahmen: [] })
   } else {
-    add(ergaenzt, fehlende, 'Fliesenspiegel abkleben')
+    // Keine Meter genannt → als Pauschale, damit die angefragte Position nicht verschwindet
+    ergaenzt.push({ beschreibung: 'Fliesenspiegel abkleben', menge: 1, einheit: 'Pauschale', konfidenz: 'medium', berechnungsweg: 'Fliesenspiegel abkleben (Meter vor Ort prüfen)', annahmen: ['Laufmeter nicht genannt'] })
   }
 }
 
