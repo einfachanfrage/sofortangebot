@@ -28,6 +28,7 @@ import {
   type RaumDimension, type RaumModus,
   berechneQuantityFuerItem, berechneRaumMasse,
 } from '@/lib/raum-geometrie'
+import { materialFuerPosition } from '@/lib/material-mapping'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -204,7 +205,7 @@ function fmtDate(d: string) {
 }
 
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, onInfo }: {
+function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, onInfo, onAddMaterial }: {
   item: EditItem
   titleOverride?: string
   editingId: string | null
@@ -214,11 +215,13 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   vatRate: number
   onUnitPick: (id: string) => void
   onInfo: (id: string) => void
+  onAddMaterial: (item: EditItem) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
   const isEditing = editingId === item.id
   const isUnsure = (item.confidence ?? 1) < 0.7
+  const materialVorschlag = materialFuerPosition(titleOverride ?? item.title)
 
   return (
     <div
@@ -309,6 +312,14 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 </button>
               )}
             </div>
+            {materialVorschlag && (
+              <button
+                onClick={e => { e.stopPropagation(); onAddMaterial(item) }}
+                className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-extrabold text-[#2C2C2C]/60 bg-[#2C2C2C]/5 hover:bg-[#F5C400]/25 rounded-full px-2 py-0.5 transition-colors"
+              >
+                ＋ {materialVorschlag.name}
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <div className="font-black text-[#2C2C2C]">{fmt(item.quantity * item.unit_price)}</div>
@@ -371,6 +382,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
   const [infoItemId, setInfoItemId] = useState<string | null>(null)
+  const [priceItems, setPriceItems] = useState<{ title: string; unit_price: number; unit: string }[]>([])
   const [currentCustomer, setCurrentCustomer] = useState(quote.customer ?? null)
   const [showKundenSuche, setShowKundenSuche] = useState(false)
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
@@ -393,7 +405,27 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     loadPhotos()
     loadQuoteExtras()
     loadEmpfehlungen()
+    loadPriceItems()
   }, [])
+
+  async function loadPriceItems() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
+    if (!co) return
+    const { data } = await supabase.from('price_items').select('title, unit_price, unit').eq('company_id', co.id)
+    if (data) setPriceItems(data as { title: string; unit_price: number; unit: string }[])
+  }
+
+  // Materialpreis aus der Preisdatenbank (bester Namens-Treffer), sonst 0
+  function materialPreis(name: string): number {
+    const n = name.toLowerCase().replace(/\s*\(material\)/, '').trim()
+    const hit = priceItems.find(p => {
+      const t = p.title.toLowerCase()
+      return t === n || t.includes(n) || n.includes(t)
+    })
+    return hit?.unit_price ?? 0
+  }
 
   async function loadPhotos() {
     setPhotosLoading(true)
@@ -631,6 +663,37 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       total_price: 0,
     }
     setEditItems(prev => [...prev, newItem])
+    setEditingItemId(newItem.id)
+    setHasChanges(true)
+  }
+
+  // Material-Position zu einer Arbeits-Position ergänzen (Preis aus DB, sonst 0)
+  function addMaterialFor(laborItem: EditItem) {
+    const mat = materialFuerPosition(laborItem.title)
+    if (!mat) return
+    const suffixMatch = laborItem.title.match(/\s+(—\s+.+)$/)
+    const suffix = suffixMatch ? ` ${suffixMatch[1]}` : ''
+    const titel = `${mat.name}${suffix}`
+    // Schon vorhanden? Nicht doppelt anlegen
+    if (editItems.some(i => i.title.toLowerCase() === titel.toLowerCase())) return
+    const preis = materialPreis(mat.name)
+    const menge = laborItem.quantity
+    const newItem: EditItem = {
+      id: `new-mat-${Date.now()}`,
+      position: laborItem.position + 1,
+      title: titel,
+      description: 'Produkt / Farbe eintragen',
+      quantity: menge,
+      unit: mat.unit,
+      unit_price: preis,
+      total_price: menge * preis,
+    }
+    // Direkt hinter der Arbeits-Position einfügen
+    setEditItems(prev => {
+      const idx = prev.findIndex(i => i.id === laborItem.id)
+      if (idx === -1) return [...prev, newItem]
+      return [...prev.slice(0, idx + 1), newItem, ...prev.slice(idx + 1)]
+    })
     setEditingItemId(newItem.id)
     setHasChanges(true)
   }
@@ -1266,7 +1329,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                         {editItems.map(item => (
-                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} />
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} />
                         ))}
                       </SortableContext>
                     </DndContext>
@@ -1293,7 +1356,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} />
                           })}
                         </div>
                       ))}
@@ -1304,7 +1367,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} />
                           })}
                         </div>
                       )}
