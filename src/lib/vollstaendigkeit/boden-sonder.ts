@@ -50,30 +50,30 @@ export function pruefeParkettSchleifen(
     v.hatArbeit('schleifen') &&
     (lower.includes('parkett') || lower.includes('diele') || lower.includes('holzboden') || lower.includes('eichen'))
   if (!hatSchleifen) return
-  if (hat(ergaenzt, 'schleifen')) return
 
+  // Fläche: aus Text, sonst aus vorhandener Schleif-/Boden-Position
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+    ?? ergaenzt.find(p => /parkett schleifen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
+    ?? null
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
 
-  // Schleifgänge
-  let schleifGaenge = 1
-  const gangMatch = lower.match(/(\d+)[\s-]*(?:fach|mal|x)\s*(?:abgeschliffen|schleif|schleifen)?/i)
-  if (gangMatch) {
-    schleifGaenge = parseInt(gangMatch[1])
-  } else {
-    for (const [wort, val] of Object.entries(zahlwoerter)) {
-      if (lower.includes(wort)) { schleifGaenge = val; break }
+  // Schleif-Position nur, wenn die Engine sie noch nicht angelegt hat.
+  // WICHTIG: NICHT die ganze Funktion abbrechen — Versiegelung/Verkitten müssen folgen.
+  if (!hat(ergaenzt, 'schleifen')) {
+    let schleifGaenge = 1
+    const gangMatch = lower.match(/(\d+)[\s-]*(?:fach|mal|x)\s*(?:abgeschliffen|schleif|schleifen)?/i)
+    if (gangMatch) {
+      schleifGaenge = parseInt(gangMatch[1])
+    } else {
+      for (const [wort, val] of Object.entries(zahlwoerter)) {
+        if (lower.includes(wort)) { schleifGaenge = val; break }
+      }
     }
-  }
-
-  const schleifLabel = schleifGaenge > 1
-    ? `Parkett schleifen ${schleifGaenge}-fach (grob bis fein)`
-    : 'Parkett schleifen'
-
-  if (m2) {
-    ergaenzt.push({ beschreibung: schleifLabel, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-  } else {
-    fehlende.push(schleifLabel)
+    const schleifLabel = schleifGaenge > 1
+      ? `Parkett schleifen ${schleifGaenge}-fach (grob bis fein)`
+      : 'Parkett schleifen'
+    if (m2) ergaenzt.push({ beschreibung: schleifLabel, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push(schleifLabel)
   }
 
   // Fugen / Unreinheiten verkitten
@@ -102,11 +102,13 @@ export function pruefeParkettSchleifen(
   }
 
   const versName = lower.includes('parkettlack') ? 'Parkettlack versiegeln' : 'Versiegelung'
-  for (let i = 1; i <= versGaenge; i++) {
-    if (m2) {
-      ergaenzt.push({ beschreibung: `${versName} ${i}. Gang`, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-    } else {
-      fehlende.push(`${versName} ${i}. Gang`)
+  if (!hat(ergaenzt, 'versiegel', 'parkettlack')) {
+    for (let i = 1; i <= versGaenge; i++) {
+      if (m2) {
+        ergaenzt.push({ beschreibung: `${versName} ${i}. Gang`, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+      } else {
+        fehlende.push(`${versName} ${i}. Gang`)
+      }
     }
   }
 }

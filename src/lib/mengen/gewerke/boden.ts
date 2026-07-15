@@ -60,16 +60,20 @@ export function bodenEngine(daten: any): MengenErgebnis {
     const pct = Math.round(verschnitt * 100)
     const verschnittSuffix = verschnitt > 0 ? ` inkl. ${pct}% Verschnitt` : ''
 
-    positionen.push({
-      beschreibung: `${label} verlegen${verschnittSuffix} — ${name}`,
-      menge: round2(flaeche * (1 + verschnitt)),
-      einheit: 'm²',
-      konfidenz: 'high',
-      berechnungsweg: `${flaeche} m² + ${pct}% Verschnitt`,
-      annahmen: [
-        `${pct}% Verschnitt${verlegerichtung === 'diagonal' ? ' (Diagonalverlegung)' : ' (Standard)'}`,
-      ],
-    })
+    // Verlegen NUR wenn kein reines Abschleif-/Refinish-Auftrag (man legt keinen
+    // neuen Boden, wenn der bestehende nur abgeschliffen + versiegelt wird).
+    if (!parkett_schleifen) {
+      positionen.push({
+        beschreibung: `${label} verlegen${verschnittSuffix} — ${name}`,
+        menge: round2(flaeche * (1 + verschnitt)),
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `${flaeche} m² + ${pct}% Verschnitt`,
+        annahmen: [
+          `${pct}% Verschnitt${verlegerichtung === 'diagonal' ? ' (Diagonalverlegung)' : ' (Standard)'}`,
+        ],
+      })
+    }
 
     if (altbelag_entfernen) {
       positionen.push({
