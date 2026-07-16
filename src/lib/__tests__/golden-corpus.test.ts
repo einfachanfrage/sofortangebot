@@ -105,8 +105,9 @@ const KORPUS: Fall[] = [
     transkript: 'altes eichenparkett abschleifen und versiegeln, 35 quadratmeter',
     raeume: [{ name: 'Zimmer', flaeche: 35, belag: 'parkett', parkett_schleifen: true, arbeiten: ['parkett schleifen', 'versiegeln'] }],
     muss: ['schleifen', 'versiegel'],
-    // "verlegen" verboten: bei reinem Abschleifen wird KEIN neuer Boden gelegt
-    verboten: ['estrich', 'glykvenyl', 'verlegen'],
+    // Reines Abschleifen: KEIN neuer Boden, keine Untergrundvorbereitung, keine
+    // neuen Sockelleisten (die alten bleiben dran)
+    verboten: ['estrich', 'glykvenyl', 'verlegen', 'untergrundvorbereitung', 'sockelleisten montieren'],
   },
   {
     name: 'Fassade außen streichen',

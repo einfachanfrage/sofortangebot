@@ -50,6 +50,7 @@ export function pruefeBodenBasis(
   lower: string,
   belag: BelagTyp,
   v: AuftragsVerstaendnis,
+  istRefinish = false,
 ): { nurOhneSockel: boolean } {
   const nurOhneSockel =
     lower.includes('ohne sockelleisten') ||
@@ -81,7 +82,8 @@ export function pruefeBodenBasis(
           fehlende.push(`Ausgleichsmasse einbringen${mmStr}`)
         }
       }
-    } else {
+    } else if (!istRefinish) {
+      // Reines Abschleifen braucht keine generische Untergrundvorbereitung
       if (m2) {
         ergaenzt.push({ beschreibung: 'Untergrundvorbereitung / Ausgleich', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
       } else {

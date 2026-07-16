@@ -22,12 +22,21 @@ export function pruefeBoden(
     || ergaenzt.some(p => /verlegen|bodenbelag|parkett|laminat|v[ie]nyl|teppich|estrich/i.test(p.beschreibung))
   if (!istBodenAuftrag) return
 
-  const { nurOhneSockel } = pruefeBodenBasis(ergaenzt, fehlende, lower, belag, v)
+  // Reiner Abschleif-/Refinish-Auftrag: Parkett wird geschliffen, aber KEIN neuer
+  // Boden gelegt (kein Verlegen). Dann keine Untergrundvorbereitung/Ausgleich und
+  // keine Sockelleisten-Montage — die alten bleiben dran.
+  const istRefinish = ergaenzt.some(p => /parkett\s*schleifen|dielen\s*schleifen|holzboden\s*schleifen/i.test(p.beschreibung))
+    && !ergaenzt.some(p => /verlegen|verkleben/i.test(p.beschreibung))
+
+  const { nurOhneSockel } = pruefeBodenBasis(ergaenzt, fehlende, lower, belag, v, istRefinish)
   pruefeAltbelag(ergaenzt, fehlende, lower, v)
   pruefeFeuchtigkeitssperre(ergaenzt, fehlende, lower)
   pruefeFischgraet(ergaenzt, fehlende, lower, v)
   pruefeVollflaechigeVerklebung(ergaenzt, fehlende, lower)
-  pruefeSockelleisten(ergaenzt, fehlende, lower, nurOhneSockel)
+  // Bei Refinish nur Sockelleisten, wenn explizit genannt
+  if (!istRefinish || lower.includes('sockelleiste')) {
+    pruefeSockelleisten(ergaenzt, fehlende, lower, nurOhneSockel)
+  }
   pruefeUebergangsprofil(ergaenzt, fehlende, lower)
   pruefeDiagonalBoden(ergaenzt, fehlende, lower)
   pruefeFBHBoden(ergaenzt, fehlende, lower)
