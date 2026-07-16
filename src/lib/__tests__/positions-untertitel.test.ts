@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { positionsUntertitel } from '../positions-untertitel'
+import { positionsUntertitel, waehleUntertitel } from '../positions-untertitel'
 
 describe('positionsUntertitel', () => {
   it.each([
@@ -29,5 +29,23 @@ describe('positionsUntertitel', () => {
   it('Untertitel wiederholt nie den Titel', () => {
     const titel = 'Wandflächen streichen — Wohnzimmer'
     expect(positionsUntertitel(titel)).not.toBe(titel)
+  })
+})
+
+describe('waehleUntertitel — Generator gewinnt, KI nur bei echtem Satz', () => {
+  it('Generator gewinnt IMMER gegen KI-Mengen-Echo (der Live-Bug)', () => {
+    expect(waehleUntertitel('Wandflächen streichen — Wohnzimmer', '47,71 m²'))
+      .toMatch(/anstrich/i)
+  })
+  it('Mengen-Echo wird NIE zum Untertitel', () => {
+    expect(waehleUntertitel('Exotische Sonderposition XY', '28,65 lfdm')).toBe(null)
+    expect(waehleUntertitel('Exotische Sonderposition XY', '1 Pauschale')).toBe(null)
+  })
+  it('echter KI-Satz greift nur ohne Generator-Treffer', () => {
+    expect(waehleUntertitel('Exotische Sonderposition XY', 'Sorgfältige Vorarbeit inklusive Randabdichtung'))
+      .toMatch(/randabdichtung/i)
+  })
+  it('KI = Titel → verworfen', () => {
+    expect(waehleUntertitel('Irgendwas Spezielles', 'Irgendwas Spezielles')).toBe(null)
   })
 })

@@ -6,7 +6,7 @@ import { pruefeKIZugriff, trackKIUsage } from '@/lib/rate-limiter'
 import { kleinmaterialPosition, anfahrtPosition } from '@/lib/gewerke-config'
 import { erkenneArbeiten } from '@/lib/arbeiten-normalisierer'
 import { malerFallbackPreis } from '@/lib/preis-fallback'
-import { positionsUntertitel } from '@/lib/positions-untertitel'
+import { waehleUntertitel } from '@/lib/positions-untertitel'
 import * as Sentry from '@sentry/nextjs'
 
 // OpenAI-Analyse kann bei langen Aufmaßen >10s dauern
@@ -153,12 +153,9 @@ export async function POST(req: NextRequest) {
         // Sicherheitsnetz: kein Preis von GPT → deterministischer Marktpreis-Fallback,
         // damit Kernpositionen nie stumm auf 0 € stehen (Beta: "Nullerpositionen")
         if (!price || price <= 0) price = malerFallbackPreis(eng.beschreibung, eng.einheit) ?? 0
-        // Untertitel: sinnvolle KI-Beschreibung bevorzugen (nicht leer, nicht = Titel),
-        // sonst deterministischer Generator — nie den Titel wiederholen.
-        const kiDesc = (gptItem?.description ?? '').trim()
-        const description = kiDesc && kiDesc.toLowerCase() !== eng.beschreibung.toLowerCase()
-          ? kiDesc
-          : (positionsUntertitel(eng.beschreibung) ?? undefined)
+        // Untertitel: deterministischer Generator gewinnt; KI nur bei echtem Satz
+        // (GPT liefert im Preis-Modus oft nur die Menge zurück → würde "47,71 m²" zeigen)
+        const description = waehleUntertitel(eng.beschreibung, gptItem?.description) ?? undefined
         return {
           title: eng.beschreibung,
           description,

@@ -48,3 +48,22 @@ export function positionsUntertitel(titel: string): string | null {
   }
   return null
 }
+
+/**
+ * Wählt den finalen Untertitel: deterministischer Generator gewinnt IMMER.
+ * Die KI-Beschreibung greift nur, wenn kein Generator-Treffer UND sie ein echter
+ * Satz ist — nicht der Titel und keine Mengen-Echo ("47,71 m²").
+ * Warum: Im Preis-Modus liefert GPT als description oft nur die Menge zurück.
+ */
+export function waehleUntertitel(titel: string, kiBeschreibung?: string | null): string | null {
+  const gen = positionsUntertitel(titel)
+  if (gen) return gen
+  const ki = (kiBeschreibung ?? '').trim()
+  const istEchterSatz =
+    ki.length > 8 &&
+    /[a-zäöüß]{4,}/i.test(ki) &&                 // enthält ein echtes Wort
+    !/^\d/.test(ki) &&                            // beginnt nicht mit einer Zahl
+    !/^[\d.,]+\s*(m²|qm|lfdm|lfm|stück|stk|pauschale)/i.test(ki) && // kein Mengen-Echo
+    ki.toLowerCase() !== (titel ?? '').toLowerCase()
+  return istEchterSatz ? ki : null
+}
