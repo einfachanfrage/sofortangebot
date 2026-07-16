@@ -127,11 +127,14 @@ function RaumDimensionenZeile({
   dim,
   onChange,
   onGrundriss,
+  wandRelevant = true,
 }: {
   raumName?: string
   dim: RaumDimension
   onChange: (patch: Partial<RaumDimension>) => void
   onGrundriss: () => void
+  /** Hat der Raum Wand-/Deckenarbeiten? Bei reinem Boden nur das Boden-Feld zeigen. */
+  wandRelevant?: boolean
 }) {
   // Wenn eine Fläche (Wand/Boden) vorliegt aber keine L×B → direkt Flächen-Reiter
   const modus: RaumModus = dim.modus
@@ -172,9 +175,13 @@ function RaumDimensionenZeile({
 
         {modus === 'flaeche' && (
           <>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wand</span>
-            <InlineNum value={dim.wandflaeche} label="Wandfläche (fertig, ohne Fenster/Türen)" suffix=" m²" onCommit={v => onChange({ wandflaeche: v })} />
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            {wandRelevant && (
+              <>
+                <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wand</span>
+                <InlineNum value={dim.wandflaeche} label="Wandfläche (fertig, ohne Fenster/Türen)" suffix=" m²" onCommit={v => onChange({ wandflaeche: v })} />
+                <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+              </>
+            )}
             <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Boden</span>
             <InlineNum value={dim.bodenflaeche} label="Bodenfläche" suffix=" m²" onCommit={v => onChange({ bodenflaeche: v })} />
           </>
@@ -186,16 +193,21 @@ function RaumDimensionenZeile({
           </button>
         )}
 
-        {/* Höhe immer — auch im Flächen-Modus (Wandfläche aus Bodenfläche braucht die Raumhöhe) */}
-        <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-        <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
-        <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
-        <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-        <span className="text-[12px]">🚪</span>
-        <InlineNum value={dim.tueren} label="Türen" onCommit={v => onChange({ tueren: v })} />
-        <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-        <span className="text-[12px]">🪟</span>
-        <InlineNum value={dim.fenster} label="Fenster" onCommit={v => onChange({ fenster: v })} />
+        {/* Höhe/Öffnungen nur bei Wandarbeiten (Wandfläche braucht Höhe; Fenster/Türen
+            werden von der Wandfläche abgezogen). Reiner Bodenauftrag braucht sie nicht. */}
+        {wandRelevant && (
+          <>
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
+            <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[12px]">🚪</span>
+            <InlineNum value={dim.tueren} label="Türen" onCommit={v => onChange({ tueren: v })} />
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[12px]">🪟</span>
+            <InlineNum value={dim.fenster} label="Fenster" onCommit={v => onChange({ fenster: v })} />
+          </>
+        )}
       </div>
     </div>
   )
@@ -1339,7 +1351,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 return (
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
-                      {raeume.map(raum => (
+                      {raeume.map(raum => {
+                        // Wand-/Deckenarbeiten im Raum? Bei reinem Bodenauftrag nur Boden-Feld zeigen.
+                        const wandRelevant = raum.items.some(gi =>
+                          /wand|wände|decke|tapete|spachtel|glätt|stuck|grundier|voranstrich|streich|akzent|lackier/i.test(gi.titleDisplay ?? '')
+                        )
+                        return (
                         <div key={raum.raumName}>
                           <div className={`border-t border-[#2C2C2C]/5 px-4 py-2.5 flex items-center justify-between ${hatMehrereRaeume ? 'bg-[#F7F7F5]' : 'bg-[#F5C400]/8'}`}>
                             <div className="flex items-center gap-1.5">
@@ -1353,13 +1370,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                             dim={raumDetails[raum.raumName] ?? {}}
                             onChange={patch => handleRaumDimChange(raum.raumName, patch)}
                             onGrundriss={() => setGrundrissRaum(raum.raumName)}
+                            wandRelevant={wandRelevant}
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
                             return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} />
                           })}
                         </div>
-                      ))}
+                        )
+                      })}
                       {allgemein.length > 0 && (
                         <div>
                           <div className="border-t border-[#2C2C2C]/5 px-4 py-2 bg-[#F7F7F5]">
