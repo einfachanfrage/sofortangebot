@@ -98,6 +98,8 @@ Wenn "Fassade", "Außenwand", "Garagenfassade", "Fassadenarbeiten" → Einzelfl�
 
 MULTI-RAUM PARSING — KRITISCH:
 [RAUM] = neuer Raum, eigener Eintrag in raeume[] mit EIGENEN Maßen. [ERGAENZUNG] = Zusatz zum letzten Raum. [KORREKTUR] = vorherige Angabe verwerfen.
+ZWINGEND: Erzeuge für JEDES [RAUM]-Segment GENAU EINEN Eintrag in raeume[]. Die Anzahl der raeume[]-Einträge MUSS gleich der Anzahl der [RAUM]-Marker sein. NIEMALS zwei Räume zu einem zusammenfassen, NIEMALS einen Raum weglassen — auch wenn er wenig Info hat.
+Pro Raum ALLE genannten Arbeiten in arbeiten[] eintragen: wenn "Wände und Decke" gesagt wird, gehören BEIDE rein ("wände streichen" UND "decke streichen"). "komplett" = Wände + Decke.
 NIEMALS Maße von einem Raum auf einen anderen übertragen. Jeder Raum hat seine EIGENEN laenge+breite.
 Beispiel: "Wohnzimmer 6×4m, Schlafzimmer 4.5×3.5m" → raeume[0].laenge=6, raeume[0].breite=4 UND raeume[1].laenge=4.5, raeume[1].breite=3.5
 WC und Bad sind IMMER separate Räume mit EIGENEN Maßen.
