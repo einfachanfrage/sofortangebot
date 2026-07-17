@@ -138,14 +138,11 @@ export function pruefeUebergangsprofil(
   fehlende: string[],
   lower: string,
 ): void {
+  // Robust gegen Flexion (Türübergäng-EN mit ä) und "Alu-Profil(e)"
   const hatUebergang =
-    lower.includes('übergangsprofil') ||
-    lower.includes('uebergangsprofil') ||
-    lower.includes('raumübergang') ||
-    lower.includes('türübergang') ||
-    lower.includes('anschlussprofil') ||
-    lower.includes('alu-übergangsprofil') ||
-    (lower.includes('übergang') && (lower.includes('profil') || lower.includes('alu')))
+    /überg[aä]ngsprofil|uebergangsprofil|anschlussprofil/i.test(lower) ||
+    /alu-?profil/i.test(lower) ||
+    (/überg[aä]ng/i.test(lower) && (lower.includes('profil') || lower.includes('alu')))
 
   if (!hatUebergang) return
   if (hat(ergaenzt, 'übergangsprofil', 'uebergangsprofil', 'anschlussprofil')) return
@@ -156,7 +153,8 @@ export function pruefeUebergangsprofil(
   const zahlwoerter: Record<string, number> = { ein: 1, zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6 }
   let anzahl = 0
   const numMatch = lower.match(/(\d+)\s*(?:stück\s*)?(?:alu-?)?(?:übergangs|anschluss)?profil/i)
-    ?? lower.match(/(?:an|bei)\s+(\d+)\s*(?:zimmer|raum|tür)/i)
+    ?? lower.match(/(\d+)\s*(?:tür|türe|zimmer|raum)?überg[aä]ng/i)   // "2 Türübergängen"
+    ?? lower.match(/(?:an|bei)\s+(?:den\s+|der\s+)?(\d+)\s*(?:zimmer|raum|tür|überg)/i)
   if (numMatch) {
     anzahl = parseInt(numMatch[1])
   } else {

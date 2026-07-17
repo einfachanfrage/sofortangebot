@@ -374,6 +374,15 @@ const KORPUS: Fall[] = [
     muss: ['kork'],
     verboten: ['estrich', 'glykvenyl'],
   },
+  {
+    name: 'Boden gestapelt: Teppich raus + Ausgleich + Vinyl diagonal + Türübergäng-Profile',
+    gewerk: 'boden_parkett',
+    transkript: 'großes wohnzimmer, 40 quadratmeter. alter verklebter teppich raus, kleberreste abschleifen. dann ausgleichsmasse bis 3 millimeter. danach klick-vinyl diagonal verlegen, neue sockelleisten, und an den 2 türübergängen alu-profile.',
+    raeume: [{ name: 'Wohnzimmer', flaeche: 40, belag: 'klick-vinyl', verlegerichtung: 'diagonal', altbelag_entfernen: true, sockelleisten: true, ausgleich: true, arbeiten: ['vinyl verlegen'] }],
+    // "übergangsprofil" trotz Flexion "türübergängEN" (ä) + "alu-profile"
+    muss: ['vinyl', 'kleberreste', 'sockelleisten', 'übergangsprofil'],
+    verboten: ['estrich', 'glykvenyl'],
+  },
 ]
 
 describe('Golden Corpus — echte Pipeline, echte Gewerk-Strings', () => {
