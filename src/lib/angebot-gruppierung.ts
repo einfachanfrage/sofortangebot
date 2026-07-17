@@ -12,6 +12,14 @@ function istEchterRaum(name: string): boolean {
   return RAUM_KEYWORDS.some(k => lower.includes(k))
 }
 
+// Nur DAS gehört wirklich unter "Allgemein" — alles andere ist raumbezogene Arbeit
+// (z.B. "Türen lackieren" gehört in den Raum, nicht in den Allgemein-Topf).
+const ALLGEMEIN_MUSTER = /an-?\s*und\s*abfahrt|anfahrt|abfahrt|fahrtkosten|kleinmaterial|verbrauchsmaterial|aufma(ß|ss)|entsorgung|schuttcontainer|gerüst|baustelleneinrichtung|besichtigung/i
+
+export function istAllgemeinPosition(titel: string): boolean {
+  return ALLGEMEIN_MUSTER.test(titel ?? '')
+}
+
 const RAUM_EMOJIS: Record<string, string> = {
   wohnzimmer:    '🛋',
   schlafzimmer:  '🛏',
@@ -140,12 +148,18 @@ export function gruppiereNachRaum<T extends {
     summe: raumItems.reduce((s, i) => s + i.total_price, 0),
   }))
 
-  // Allgemein-Items (ohne Raum-Marker): bei einem einzigen Raum direkt zuordnen
-  let verbleibendAllgemein = allgemein
-  if (raeume.length === 1 && allgemein.length > 0) {
-    raeume[0].items = [...raeume[0].items, ...allgemein]
+  // Echte Allgemein-Positionen (Anfahrt, Kleinmaterial, Aufmaß …) bleiben IMMER
+  // unter Allgemein. Raumbezogene Arbeiten ohne Suffix (z.B. "Türen lackieren")
+  // gehören in den Raum — bei genau einem Raum eindeutig zuordenbar.
+  let verbleibendAllgemein = allgemein.filter(i => istAllgemeinPosition(i.title))
+  const raumbezogenOhneSuffix = allgemein.filter(i => !istAllgemeinPosition(i.title))
+
+  if (raeume.length === 1 && raumbezogenOhneSuffix.length > 0) {
+    raeume[0].items = [...raeume[0].items, ...raumbezogenOhneSuffix]
     raeume[0].summe = raeume[0].items.reduce((s, i) => s + i.total_price, 0)
-    verbleibendAllgemein = []
+  } else if (raumbezogenOhneSuffix.length > 0) {
+    // Mehrere Räume → nicht eindeutig zuordenbar, bleibt sichtbar bei Allgemein
+    verbleibendAllgemein = [...raumbezogenOhneSuffix, ...verbleibendAllgemein]
   }
 
   const gesamtsumme = items.reduce((s, i) => s + i.total_price, 0)

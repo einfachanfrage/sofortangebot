@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, anzahlAus } from './helpers'
+import { hat, add, anzahlAus, findeRaumImSatz, raumNamenAus } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 // Türen lackieren: Schleifen, Grundieren, 2× Lackieren, Zargen
@@ -9,6 +9,10 @@ export function pruefeTuerenLackieren(
   v: AuftragsVerstaendnis,
   meta?: { tuerenAnzahl?: number },
 ): void {
+  // Raumbezug aus dem Satz ("im Wohnzimmer die Türen lackieren") → Suffix,
+  // damit die Position im Raum landet und nicht unter Allgemein
+  const raum = findeRaumImSatz(/tür/i, lower, raumNamenAus(ergaenzt))
+  const sfx = raum ? ` — ${raum}` : ''
   const hatTuerenLackieren = /tür|türe|türen/i.test(lower) &&
     (v.hatArbeit('lackieren') || lower.includes('neu streich'))
   if (!hatTuerenLackieren || hat(ergaenzt, 'türen abschleifen', 'tür abschleifen')) return
@@ -18,12 +22,12 @@ export function pruefeTuerenLackieren(
   const anzTueren = meta?.tuerenAnzahl ?? (anzTuerenExplizit > 0 ? anzTuerenExplizit : anzZimmerFuerTuer > 0 ? anzZimmerFuerTuer : 1)
   const tuerAnnahme = anzTuerenExplizit === 0 && anzZimmerFuerTuer > 0 ? [`${anzZimmerFuerTuer} Zimmer → je 1 Tür angenommen`] : []
 
-  ergaenzt.push({ beschreibung: 'Türen abschleifen', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) aus Transkript`, annahmen: tuerAnnahme })
-  ergaenzt.push({ beschreibung: 'Türen grundieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
-  ergaenzt.push({ beschreibung: 'Türen lackieren (2× Anstrich)', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
-  ergaenzt.push({ beschreibung: 'Türzargen lackieren', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: tuerAnnahme })
+  ergaenzt.push({ beschreibung: `Türen abschleifen${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) aus Transkript`, annahmen: tuerAnnahme })
+  ergaenzt.push({ beschreibung: `Türen grundieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+  ergaenzt.push({ beschreibung: `Türen lackieren (2× Anstrich)${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+  ergaenzt.push({ beschreibung: `Türzargen lackieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: tuerAnnahme })
   if (!hat(ergaenzt, 'sockelleisten abkl', 'sockel abkl')) {
-    ergaenzt.push({ beschreibung: 'Sockelleisten abkleben', menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) → je 1 Sockelleistenbereich`, annahmen: tuerAnnahme })
+    ergaenzt.push({ beschreibung: `Sockelleisten abkleben${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) → je 1 Sockelleistenbereich`, annahmen: tuerAnnahme })
   }
 }
 
@@ -41,6 +45,8 @@ export function pruefeFensterLackieren(
     !lower.includes('fenster ab')
   if (!hatFensterLackieren || hat(ergaenzt, 'fenster abschleifen')) return
 
+  const raum = findeRaumImSatz(/fenster/i, lower, raumNamenAus(ergaenzt))
+  const sfx = raum ? ` — ${raum}` : ''
   const anzFenster = (meta?.fensterAnzahl ?? 0) > 1 ? meta!.fensterAnzahl! : anzahlAus(lower, 'fenster')
   const istOelfarbe = lower.includes('ölfarbe') || lower.includes('oelfarbe') || lower.includes('öl')
   const farbTyp = istOelfarbe ? 'Ölfarbe' : 'Lack'
@@ -51,9 +57,9 @@ export function pruefeFensterLackieren(
   const anzAnstrich = istZweiSeitig ? anzFenster * 2 : anzFenster
   const zweiSeitigHinweis = istZweiSeitig ? ' (2-seitig)' : ''
 
-  ergaenzt.push({ beschreibung: 'Fenster abschleifen', menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster aus Transkript`, annahmen: [] })
-  ergaenzt.push({ beschreibung: 'Fenster grundieren', menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
-  ergaenzt.push({ beschreibung: `Fenster ${farbTyp} (2× Anstrich${zweiSeitigHinweis})`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
+  ergaenzt.push({ beschreibung: `Fenster abschleifen${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster aus Transkript`, annahmen: [] })
+  ergaenzt.push({ beschreibung: `Fenster grundieren${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
+  ergaenzt.push({ beschreibung: `Fenster ${farbTyp} (2× Anstrich${zweiSeitigHinweis})${sfx}`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
   if (istAußen && !hat(ergaenzt, 'abdecken umgebung', 'umgebung abdecken')) {
     ergaenzt.push({ beschreibung: 'Abdecken Umgebung', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Außenarbeiten — Umgebung abdecken', annahmen: [] })
   }
@@ -69,6 +75,8 @@ export function pruefeHeizkLackieren(
     (v.hatArbeit('lackieren') || lower.includes('neu streich'))
   if (!hatHeizkLackieren || hat(ergaenzt, 'heizkörper abschleifen', 'heizkoerper abschleifen')) return false
 
+  const raum = findeRaumImSatz(/heizkörper|heizkoerper|heizung/i, lower, raumNamenAus(ergaenzt))
+  const sfx = raum ? ` — ${raum}` : ''
   const jeHzkMatch = lower.match(/je\s+(\d+)\s*(?:stück\s*)?(?:heizkörper|heizkoerper)/i)
   const anzHzkExplizit = !jeHzkMatch ? anzahlAus(lower, 'heizkörper', anzahlAus(lower, 'heizkoerper', 0)) : 0
   const anzZimmer = anzahlAus(lower, 'zimmer', anzahlAus(lower, 'raum', anzahlAus(lower, 'räume', 0)))
@@ -82,9 +90,9 @@ export function pruefeHeizkLackieren(
   }
   const hzkAnnahme = !jeHzkMatch && anzHzkExplizit === 0 && anzZimmerEff > 0 ? [`${anzZimmerEff} Zimmer → je 1 Heizkörper angenommen`] : []
 
-  ergaenzt.push({ beschreibung: 'Heizkörper abschleifen', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper aus Transkript`, annahmen: hzkAnnahme })
-  ergaenzt.push({ beschreibung: 'Heizkörper grundieren', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
-  ergaenzt.push({ beschreibung: 'Heizkörper lackieren (2× Anstrich)', menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
+  ergaenzt.push({ beschreibung: `Heizkörper abschleifen${sfx}`, menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper aus Transkript`, annahmen: hzkAnnahme })
+  ergaenzt.push({ beschreibung: `Heizkörper grundieren${sfx}`, menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
+  ergaenzt.push({ beschreibung: `Heizkörper lackieren (2× Anstrich)${sfx}`, menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
 
   const hatRohre = lower.includes('rohr') || lower.includes('heizungsrohr') || lower.includes('rohre')
   if (hatRohre && !hat(ergaenzt, 'rohr lackier', 'rohre lackier')) {

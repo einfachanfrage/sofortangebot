@@ -10,6 +10,33 @@ export function add(ergaenzt: BerechnetePosition[], fehlende: string[], beschrei
   }
 }
 
+/**
+ * Findet den Raum, zu dem eine Arbeit gehört: sucht den Satz, der den Begriff
+ * enthält ("im Wohnzimmer den Heizkörper lackieren"), und darin einen der
+ * bekannten Raumnamen. So bekommen raumbezogene Positionen ihr "— Raum"-Suffix
+ * und landen nicht im Allgemein-Topf.
+ */
+export function findeRaumImSatz(begriff: RegExp, lower: string, raumNamen: string[]): string | null {
+  if (raumNamen.length === 0) return null
+  for (const satz of (lower ?? '').split(/[.!?\n;]+/)) {
+    if (!begriff.test(satz)) continue
+    const treffer = raumNamen.find(r => satz.includes(r.toLowerCase()))
+    if (treffer) return treffer
+  }
+  return null
+}
+
+/** Alle Raumnamen aus vorhandenen Positions-Suffixen ("… — Wohnzimmer"). */
+export function raumNamenAus(positionen: BerechnetePosition[]): string[] {
+  const namen: string[] = []
+  for (const p of positionen) {
+    const m = p.beschreibung?.match(/\s+[-–—]\s+(.+)$/)
+    const n = m?.[1]?.trim()
+    if (n && !namen.includes(n)) namen.push(n)
+  }
+  return namen
+}
+
 export function addMitMenge(ergaenzt: BerechnetePosition[], beschreibung: string, menge: number, einheit: string, berechnungsweg: string): void {
   if (!hat(ergaenzt, ...beschreibung.toLowerCase().split(' ').slice(0, 2))) {
     ergaenzt.push({ beschreibung, menge, einheit, konfidenz: 'high', berechnungsweg, annahmen: [] })
