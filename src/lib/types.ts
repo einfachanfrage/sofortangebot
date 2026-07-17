@@ -153,6 +153,16 @@ export interface Quote {
   signed_by: string | null
   angebotsnummer: string | null
   briefpapier_id: string | null
+  // ── Pro-Angebot-Optionen (Zahnrad) — NULL = aus Betriebs-Einstellungen erben
+  angebot_struktur?: 'raeume' | 'arbeitsablauf' | 'gewerk' | null
+  kopftext?: string | null
+  fusstext?: string | null
+  zahlungsziel_tage?: number | null
+  dokument_typ?: 'angebot' | 'kostenvoranschlag' | null
+  skonto_prozent?: number | null
+  skonto_tage?: number | null
+  widerruf_beilegen?: boolean | null
+  preis_darstellung?: 'netto' | 'brutto' | null
   revision: number
   original_id: string | null
   customer?: Customer

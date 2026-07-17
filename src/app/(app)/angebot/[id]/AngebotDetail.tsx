@@ -8,7 +8,7 @@ import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
 import {
   Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, MicOff, Loader2, Image, StickyNote,
-  Camera, AlertTriangle, GripVertical, MoreHorizontal, Percent, Tag,
+  Camera, AlertTriangle, GripVertical, MoreHorizontal, Percent, Tag, Settings,
 } from 'lucide-react'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
@@ -395,6 +395,21 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
   const [infoItemId, setInfoItemId] = useState<string | null>(null)
   const [priceItems, setPriceItems] = useState<{ title: string; unit_price: number; unit: string }[]>([])
+  // ── Pro-Angebot-Optionen (Zahnrad) — null/'' = aus Betriebs-Einstellungen erben
+  const [showOptionen, setShowOptionen] = useState(false)
+  const [optStruktur, setOptStruktur] = useState<'' | 'raeume' | 'arbeitsablauf' | 'gewerk'>((quote.angebot_struktur ?? '') as '')
+  const [optKopftext, setOptKopftext] = useState(quote.kopftext ?? '')
+  const [optFusstext, setOptFusstext] = useState(quote.fusstext ?? '')
+  const [optBriefpapierId, setOptBriefpapierId] = useState(quote.briefpapier_id ?? '')
+  const [optZahlungsziel, setOptZahlungsziel] = useState<string>(quote.zahlungsziel_tage != null ? String(quote.zahlungsziel_tage) : '')
+  const [optGueltigBis, setOptGueltigBis] = useState(quote.valid_until ? quote.valid_until.slice(0, 10) : '')
+  const [optDokumentTyp, setOptDokumentTyp] = useState<'angebot' | 'kostenvoranschlag'>(quote.dokument_typ ?? 'angebot')
+  const [optSkontoProzent, setOptSkontoProzent] = useState<string>(quote.skonto_prozent != null ? String(quote.skonto_prozent) : '')
+  const [optSkontoTage, setOptSkontoTage] = useState<string>(quote.skonto_tage != null ? String(quote.skonto_tage) : '')
+  const [optWiderruf, setOptWiderruf] = useState<'' | 'ja' | 'nein'>(quote.widerruf_beilegen == null ? '' : (quote.widerruf_beilegen ? 'ja' : 'nein'))
+  const [optPreis, setOptPreis] = useState<'' | 'netto' | 'brutto'>((quote.preis_darstellung ?? '') as '')
+  const [briefpapiere, setBriefpapiere] = useState<{ id: string; name: string }[]>([])
+  const [optSaving, setOptSaving] = useState(false)
   const [currentCustomer, setCurrentCustomer] = useState(quote.customer ?? null)
   const [showKundenSuche, setShowKundenSuche] = useState(false)
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
@@ -418,7 +433,40 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     loadQuoteExtras()
     loadEmpfehlungen()
     loadPriceItems()
+    loadBriefpapiere()
   }, [])
+
+  // Pro-Angebot-Optionen speichern (leer = erben → null)
+  async function speichereOptionen() {
+    setOptSaving(true)
+    const num = (s: string) => { const n = parseFloat(s.replace(',', '.')); return Number.isFinite(n) ? n : null }
+    await supabase.from('quotes').update({
+      angebot_struktur: optStruktur || null,
+      kopftext: optKopftext.trim() || null,
+      fusstext: optFusstext.trim() || null,
+      briefpapier_id: optBriefpapierId || null,
+      zahlungsziel_tage: optZahlungsziel ? Math.round(num(optZahlungsziel) ?? 0) || null : null,
+      valid_until: optGueltigBis || null,
+      dokument_typ: optDokumentTyp,
+      skonto_prozent: num(optSkontoProzent),
+      skonto_tage: optSkontoTage ? Math.round(num(optSkontoTage) ?? 0) || null : null,
+      widerruf_beilegen: optWiderruf === '' ? null : optWiderruf === 'ja',
+      preis_darstellung: optPreis || null,
+    }).eq('id', quote.id)
+    setOptSaving(false)
+    setShowOptionen(false)
+    setToast('Einstellungen gespeichert')
+    router.refresh()
+  }
+
+  async function loadBriefpapiere() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
+    if (!co) return
+    const { data } = await supabase.from('briefpapier').select('id, name').eq('betrieb_id', co.id)
+    if (data) setBriefpapiere(data as { id: string; name: string }[])
+  }
 
   async function loadPriceItems() {
     const { data: { user } } = await supabase.auth.getUser()
@@ -1058,6 +1106,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             {autosaveLabel && <div className="text-white/30 text-xs font-semibold mt-0.5">{autosaveLabel}</div>}
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={() => setShowOptionen(true)} title="Einstellungen für dieses Angebot"
+              className="bg-white/10 md:bg-[#2C2C2C]/5 text-white md:text-[#2C2C2C]/60 rounded-xl p-2 hover:bg-[#F5C400]/30 transition-colors">
+              <Settings size={16} />
+            </button>
             <button onClick={() => setShowStatusPicker(true)}
               className={`flex items-center gap-1 text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text}`}>
               {status.label}<ChevronDown size={13} strokeWidth={3} />
@@ -1335,7 +1387,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
 
               {editMode ? (() => {
-                const gruppen = gruppiereNachStruktur(editItems, company?.angebot_struktur ?? 'raeume')
+                const gruppen = gruppiereNachStruktur(editItems, (optStruktur || company?.angebot_struktur || 'raeume'))
                 if (!gruppen) {
                   return (
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -1394,7 +1446,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </DndContext>
                 )
               })() : (() => {
-                const gruppen = gruppiereNachStruktur(displayItems, company?.angebot_struktur ?? 'raeume')
+                const gruppen = gruppiereNachStruktur(displayItems, (optStruktur || company?.angebot_struktur || 'raeume'))
 
                 const renderItem = (title: string, item: EditItem) => (
                   <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">
@@ -1921,6 +1973,129 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           </div>
         )
       })()}
+
+      {/* ── Zahnrad: Einstellungen für DIESES Angebot ────────────────────── */}
+      {showOptionen && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowOptionen(false)}>
+          <div className="bg-white w-full rounded-t-3xl p-5 max-h-[88vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex items-start justify-between gap-3 mb-1">
+              <div className="font-black text-[#2C2C2C] text-lg">Einstellungen für dieses Angebot</div>
+              <button onClick={() => setShowOptionen(false)} className="text-[#2C2C2C]/40 font-black text-xl leading-none shrink-0">×</button>
+            </div>
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-4">
+              Leer = aus den allgemeinen Einstellungen übernehmen. Gilt nur für dieses Angebot.
+            </p>
+
+            {/* Dokumenttyp */}
+            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Dokumenttyp</div>
+            <div className="flex gap-2 mb-4">
+              {([['angebot', 'Angebot'], ['kostenvoranschlag', 'Kostenvoranschlag']] as const).map(([v, l]) => (
+                <button key={v} onClick={() => setOptDokumentTyp(v)}
+                  className={`flex-1 py-2.5 rounded-xl border-2 font-black text-xs transition-colors ${
+                    optDokumentTyp === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                  }`}>{l}</button>
+              ))}
+            </div>
+            {optDokumentTyp === 'kostenvoranschlag' && (
+              <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-3 mb-4">
+                Unverbindlich — wesentliche Überschreitungen musst du vorab anzeigen (§ 650 BGB). Steht dann auch im PDF.
+              </p>
+            )}
+
+            {/* Gliederung */}
+            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Gliederung</div>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {([['', 'Wie eingestellt'], ['raeume', '🏠 Räume'], ['arbeitsablauf', '🧹 Ablauf'], ['gewerk', '🎨 Gewerk']] as const).map(([v, l]) => (
+                <button key={v} onClick={() => setOptStruktur(v as '')}
+                  className={`px-3 py-2 rounded-xl border-2 font-black text-xs transition-colors ${
+                    optStruktur === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                  }`}>{l}</button>
+              ))}
+            </div>
+
+            {/* Kopf-/Fußtext */}
+            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Kopftext (Anschreiben)</div>
+            <textarea value={optKopftext} onChange={e => setOptKopftext(e.target.value)} rows={2}
+              placeholder="Leer = „Gerne unterbreiten wir Ihnen folgendes Angebot:“"
+              className="w-full text-xs font-semibold text-[#2C2C2C]/70 bg-[#F7F7F5] rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-1 focus:ring-[#F5C400] resize-y" />
+            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Fußtext (Schlusstext)</div>
+            <textarea value={optFusstext} onChange={e => setOptFusstext(e.target.value)} rows={2}
+              placeholder="Leer = Standard-Schlusstext"
+              className="w-full text-xs font-semibold text-[#2C2C2C]/70 bg-[#F7F7F5] rounded-xl px-3 py-2 mb-4 focus:outline-none focus:ring-1 focus:ring-[#F5C400] resize-y" />
+
+            {/* Briefpapier */}
+            {briefpapiere.length > 0 && (
+              <>
+                <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Briefpapier</div>
+                <select value={optBriefpapierId} onChange={e => setOptBriefpapierId(e.target.value)}
+                  className="w-full text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 mb-4 focus:outline-none">
+                  <option value="">Standard</option>
+                  {briefpapiere.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                </select>
+              </>
+            )}
+
+            {/* Gültigkeit + Zahlungsziel */}
+            <div className="flex gap-3 mb-4">
+              <div className="flex-1">
+                <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Gültig bis</div>
+                <input type="date" value={optGueltigBis} onChange={e => setOptGueltigBis(e.target.value)}
+                  className="w-full text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
+              </div>
+              <div className="flex-1">
+                <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Zahlungsziel (Tage)</div>
+                <input type="number" inputMode="numeric" value={optZahlungsziel} onChange={e => setOptZahlungsziel(e.target.value)}
+                  placeholder={String(company?.payment_days ?? 14)}
+                  className="w-full text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
+              </div>
+            </div>
+
+            {/* Skonto */}
+            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Skonto</div>
+            <div className="flex gap-3 items-center mb-4">
+              <input type="number" inputMode="decimal" value={optSkontoProzent} onChange={e => setOptSkontoProzent(e.target.value)}
+                placeholder="z.B. 2" className="w-20 text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
+              <span className="text-xs font-bold text-[#2C2C2C]/50">% bei Zahlung in</span>
+              <input type="number" inputMode="numeric" value={optSkontoTage} onChange={e => setOptSkontoTage(e.target.value)}
+                placeholder="z.B. 10" className="w-20 text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
+              <span className="text-xs font-bold text-[#2C2C2C]/50">Tagen</span>
+            </div>
+
+            {/* Preisdarstellung */}
+            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Preisdarstellung</div>
+            <div className="flex gap-2 mb-1">
+              {([['', 'Automatisch'], ['brutto', 'Brutto (Endpreise)'], ['netto', 'Netto']] as const).map(([v, l]) => (
+                <button key={v} onClick={() => setOptPreis(v as '')}
+                  className={`flex-1 py-2.5 rounded-xl border-2 font-black text-[11px] transition-colors ${
+                    optPreis === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                  }`}>{l}</button>
+              ))}
+            </div>
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-4">
+              Automatisch: Privatkunden sehen Endpreise (brutto), Geschäftskunden netto.
+            </p>
+
+            {/* Widerrufsbelehrung */}
+            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Widerrufsbelehrung anhängen</div>
+            <div className="flex gap-2 mb-1">
+              {([['', 'Automatisch'], ['ja', 'Ja'], ['nein', 'Nein']] as const).map(([v, l]) => (
+                <button key={v} onClick={() => setOptWiderruf(v as '')}
+                  className={`flex-1 py-2.5 rounded-xl border-2 font-black text-xs transition-colors ${
+                    optWiderruf === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                  }`}>{l}</button>
+              ))}
+            </div>
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-5">
+              Automatisch: nur bei Privatkunden (Geschäftskunden haben kein Widerrufsrecht).
+            </p>
+
+            <button onClick={speichereOptionen} disabled={optSaving}
+              className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 disabled:opacity-50">
+              {optSaving ? <><Loader2 size={16} className="animate-spin" /> Speichert…</> : <><Check size={16} strokeWidth={3} /> Speichern</>}
+            </button>
+          </div>
+        </div>
+      )}
 
       {grundrissRaum && (
         <RaumGrundrissEditor

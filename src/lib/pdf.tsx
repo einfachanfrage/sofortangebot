@@ -1,7 +1,8 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
-import { braucheWiderrufsbelehrung, widerrufsbelehrungText, musterWiderrufsformular } from './widerrufsbelehrung'
+import { widerrufsbelehrungText, musterWiderrufsformular } from './widerrufsbelehrung'
+import { effektiveOptionen, skontoText, DOKUMENT_TYP_LABEL } from './angebot-optionen'
 
 // ── Hilfsfunktionen ────────────────────────────────────────────────────────
 function fmtEuro(n: number) {
@@ -201,7 +202,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   const ustId        = (company as Company & { ust_id?: string }).ust_id || ''
   const steuernummer = company.tax_number || ''
   const iban         = company.iban || ''
-  const zahlungsTage = company.payment_days || 14
+  // Pro-Angebot-Optionen (Zahnrad) schlagen die Betriebs-Einstellungen
+  const opt = effektiveOptionen(quote, company, quote.customer?.ist_unternehmen)
+  const dokTitel = DOKUMENT_TYP_LABEL[opt.dokumentTyp]
+  const zahlungsTage = opt.zahlungszielTage
   const logoSrc      = logoBase64 || briefpapier?.logo_url || (company as Company & { logo_url?: string }).logo_url
 
   const footerLinks  = [firmenname, adresse?.split('\n')[0]].filter(Boolean).join(' · ')
@@ -233,7 +237,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
           {/* Rechts: Dokumentinfos */}
           <View style={S.headerRight}>
-            <Text style={S.angebotLabel}>{revision && revision > 1 ? `Angebot · Revision ${revision}` : 'Angebot'}</Text>
+            <Text style={S.angebotLabel}>{revision && revision > 1 ? `${dokTitel} · Revision ${revision}` : dokTitel}</Text>
             <View style={S.metaGrid}>
               <View style={S.metaZeile}>
                 <Text style={S.metaLabel}>Nr.</Text>
@@ -276,7 +280,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
         {/* ── BETREFF ────────────────────────────────────────────────────── */}
         <Text style={S.betreff}>{projektBeschreibung}</Text>
-        <Text style={S.anrede}>Gerne unterbreiten wir Ihnen folgendes Angebot:</Text>
+        <Text style={S.anrede}>{opt.kopftext ?? `Gerne unterbreiten wir Ihnen folgendes ${dokTitel}:`}</Text>
 
         {/* ── TABELLEN-HEADER ────────────────────────────────────────────── */}
         <View style={S.tableHeader}>
@@ -290,7 +294,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
         {/* ── POSITIONEN ─────────────────────────────────────────────────── */}
         {(() => {
-          const gruppen = gruppiereNachStruktur(quote.items, company.angebot_struktur ?? 'raeume')
+          const gruppen = gruppiereNachStruktur(quote.items, opt.struktur)
 
           if (!gruppen) {
             return quote.items.map((item, idx) => (
@@ -381,6 +385,14 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
         {/* Zahlungsziel */}
         <Text style={S.zahlungsziel}>Zahlungsziel: {zahlungsTage} Tage ohne Abzug</Text>
+        {skontoText(opt) && (
+          <Text style={S.zahlungsziel}>{skontoText(opt)}</Text>
+        )}
+        {opt.dokumentTyp === 'kostenvoranschlag' && (
+          <Text style={S.zahlungsziel}>
+            Unverbindlicher Kostenvoranschlag. Wesentliche Überschreitungen zeigen wir vorab an (§ 650 BGB).
+          </Text>
+        )}
 
         {/* Normverweise */}
         {(() => {
@@ -396,9 +408,9 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
           )
         })()}
 
-        {/* Schlusstext */}
+        {/* Schlusstext — eigener Fußtext schlägt Standard */}
         <Text style={S.schlussText}>
-          Wir freuen uns auf Ihre Auftragserteilung und sichern eine fachgerechte und einwandfreie Ausführung zu.
+          {opt.fusstext ?? 'Wir freuen uns auf Ihre Auftragserteilung und sichern eine fachgerechte und einwandfreie Ausführung zu.'}
         </Text>
 
         {/* Unterschrift */}
@@ -430,10 +442,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
       </Page>
 
       {/* ── WIDERRUFSBELEHRUNG (nur Verbraucher / Haustürgeschäft) ─────────── */}
-      {braucheWiderrufsbelehrung({
-        widerrufAktiv: (company as Company & { widerruf_aktiv?: boolean }).widerruf_aktiv,
-        kundeIstUnternehmen: quote.customer?.ist_unternehmen,
-      }) && (() => {
+      {opt.widerrufBeilegen && (() => {
         const absender = { name: firmenname, adresse, telefon, email: company.contact_email }
         const text = widerrufsbelehrungText(absender, (company as Company & { widerruf_text?: string | null }).widerruf_text)
         return (
