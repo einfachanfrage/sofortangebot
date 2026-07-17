@@ -826,8 +826,8 @@ export default function EntwurfPage() {
           </div>
         )}
 
-        {/* Status wenn alle Aufnahmen fertig */}
-        {alleTranskribiertOderFehler && aufnahmen.length > 0 && (
+        {/* Status wenn alle Aufnahmen fertig — nicht während laufender Aufnahme */}
+        {alleTranskribiertOderFehler && aufnahmen.length > 0 && !recording && (
           <div className="mt-3 bg-[#EDFAF0] border border-[#1A7A38]/20 rounded-2xl px-4 py-3 flex items-center gap-2">
             <Check size={14} className="text-[#1A7A38] shrink-0" />
             <span className="text-[13px] font-semibold text-[#1A7A38]">
@@ -843,8 +843,9 @@ export default function EntwurfPage() {
       {/* Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 px-5 pt-3 pb-8 flex flex-col gap-3" style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}>
 
-        {/* Positionen-berechnen-Button (erscheint wenn Aufnahmen fertig transkribiert) */}
-        {kannFertigstellen && (
+        {/* Positionen-berechnen-Button — NICHT während laufender Aufnahme (verwirrt:
+            erst fertig aufnehmen, dann berechnen) */}
+        {kannFertigstellen && !recording && (
           <button
             onClick={fertigstellen}
             className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
