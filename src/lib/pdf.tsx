@@ -1,6 +1,6 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
-import { gruppiereNachRaum } from './angebot-gruppierung'
+import { gruppiereNachStruktur } from './angebot-struktur'
 
 // ── Hilfsfunktionen ────────────────────────────────────────────────────────
 function fmtEuro(n: number) {
@@ -289,7 +289,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
         {/* ── POSITIONEN ─────────────────────────────────────────────────── */}
         {(() => {
-          const gruppen = gruppiereNachRaum(quote.items)
+          const gruppen = gruppiereNachStruktur(quote.items, company.angebot_struktur ?? 'raeume')
 
           if (!gruppen) {
             return quote.items.map((item, idx) => (

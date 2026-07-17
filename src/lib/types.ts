@@ -64,6 +64,7 @@ export interface Company {
   language: string
   accounting_software: AccountingSoftware
   abrechnungs_modus: 'inapp' | 'extern'
+  angebot_struktur: 'raeume' | 'arbeitsablauf' | 'gewerk'
   gewerke: string[]
   created_at: string
   lexoffice_api_key: string | null

@@ -18,7 +18,7 @@ import {
   SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
+import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
@@ -1335,7 +1335,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
 
               {editMode ? (() => {
-                const gruppen = gruppiereNachRaum(editItems)
+                const gruppen = gruppiereNachStruktur(editItems, company?.angebot_struktur ?? 'raeume')
                 if (!gruppen) {
                   return (
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -1394,7 +1394,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </DndContext>
                 )
               })() : (() => {
-                const gruppen = gruppiereNachRaum(displayItems)
+                const gruppen = gruppiereNachStruktur(displayItems, company?.angebot_struktur ?? 'raeume')
 
                 const renderItem = (title: string, item: EditItem) => (
                   <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">

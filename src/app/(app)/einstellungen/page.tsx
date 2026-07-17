@@ -47,6 +47,7 @@ export default function EinstellungenPage() {
   const [anfahrtBezeichnung, setAnfahrtBezeichnung] = useState('An- und Abfahrt')
   const [eRechnungAktiv, setERechnungAktiv] = useState(true)
   const [abrechnungsModus, setAbrechnungsModus] = useState<'inapp' | 'extern'>('inapp')
+  const [angebotStruktur, setAngebotStruktur] = useState<'raeume' | 'arbeitsablauf' | 'gewerk'>('raeume')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
@@ -94,6 +95,7 @@ export default function EinstellungenPage() {
         setMindestauftragswert(data.mindestauftragswert ?? 0)
         setERechnungAktiv(data.e_rechnung_aktiv !== false)
         setAbrechnungsModus((data.abrechnungs_modus ?? 'inapp') as 'inapp' | 'extern')
+        setAngebotStruktur((data.angebot_struktur ?? 'raeume') as 'raeume' | 'arbeitsablauf' | 'gewerk')
         // Kleinmaterial: Betriebs-Config oder Gewerk-Default
         const gewerkDefault = KLEINMATERIAL_CONFIG[(data.gewerke ?? [])[0] ?? ''] ?? { aktiv: true, betrag_eur: 25, schwelle_eur: 200, bezeichnung: 'Kleinmaterial und Verbrauchsmaterial' }
         const kc = (data.kleinmaterial_config ?? null) as { aktiv?: boolean; betrag_eur?: number; schwelle_eur?: number; bezeichnung?: string } | null
@@ -143,6 +145,7 @@ export default function EinstellungenPage() {
       mindestauftragswert: mindestauftragswert,
       e_rechnung_aktiv: eRechnungAktiv,
       abrechnungs_modus: abrechnungsModus,
+      angebot_struktur: angebotStruktur,
       kleinmaterial_config: {
         aktiv: kleinAktiv,
         betrag_eur: kleinBetrag,
@@ -532,6 +535,37 @@ export default function EinstellungenPage() {
           </div>
           <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-3 leading-relaxed">
             Angebots-Nachfassen (Erinnerung an offene Angebote vor der Rechnung) läuft in beiden Fällen.
+          </p>
+        </Card>
+
+        <Card icon={<Receipt size={16} />} title="Angebots-Gliederung">
+          <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
+            Wie werden die Positionen im Angebot und PDF gruppiert?
+          </p>
+          <div className="flex flex-col gap-2">
+            {([
+              { value: 'raeume', label: '🏠 Nach Räumen', desc: 'Wohnzimmer, Küche … — Kunde versteht es sofort, du arbeitest Raum für Raum ab.' },
+              { value: 'arbeitsablauf', label: '🧹 Nach Arbeitsablauf', desc: 'Vorarbeiten → Hauptarbeit → Abschluss. So wie viele Betriebe kalkulieren.' },
+              { value: 'gewerk', label: '🎨 Nach Gewerk', desc: 'Erst alle Malerarbeiten, dann alle Bodenarbeiten. Gut bei gemischten Aufträgen.' },
+            ] as { value: 'raeume' | 'arbeitsablauf' | 'gewerk'; label: string; desc: string }[]).map(opt => (
+              <button key={opt.value} type="button"
+                onClick={() => setAngebotStruktur(opt.value)}
+                className={`flex items-start gap-3 w-full rounded-xl border-2 px-3 py-3 text-left transition-colors ${
+                  angebotStruktur === opt.value ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10 bg-[#F7F7F5]'
+                }`}>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                  angebotStruktur === opt.value ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'}`}>
+                  {angebotStruktur === opt.value && <div className="w-2 h-2 rounded-full bg-[#2C2C2C]" />}
+                </div>
+                <div className="min-w-0">
+                  <div className={`font-black text-sm ${angebotStruktur === opt.value ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/50'}`}>{opt.label}</div>
+                  <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5 leading-relaxed">{opt.desc}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-3 leading-relaxed">
+            An- und Abfahrt, Kleinmaterial und Aufmaß stehen immer separat unter „Allgemein".
           </p>
         </Card>
 
