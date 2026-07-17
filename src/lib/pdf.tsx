@@ -1,6 +1,7 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
+import { braucheWiderrufsbelehrung, widerrufsbelehrungText, musterWiderrufsformular } from './widerrufsbelehrung'
 
 // ── Hilfsfunktionen ────────────────────────────────────────────────────────
 function fmtEuro(n: number) {
@@ -427,6 +428,28 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
         </View>
 
       </Page>
+
+      {/* ── WIDERRUFSBELEHRUNG (nur Verbraucher / Haustürgeschäft) ─────────── */}
+      {braucheWiderrufsbelehrung({
+        widerrufAktiv: (company as Company & { widerruf_aktiv?: boolean }).widerruf_aktiv,
+        kundeIstUnternehmen: quote.customer?.ist_unternehmen,
+      }) && (() => {
+        const absender = { name: firmenname, adresse, telefon, email: company.contact_email }
+        const text = widerrufsbelehrungText(absender, (company as Company & { widerruf_text?: string | null }).widerruf_text)
+        return (
+          <Page size="A4" style={S.page} wrap>
+            <Text style={{ fontSize: 14, fontFamily: 'Helvetica-Bold', marginBottom: 10 }}>Widerrufsbelehrung</Text>
+            <Text style={{ fontSize: 9, lineHeight: 1.6, color: '#333333' }}>{text}</Text>
+
+            <Text style={{ fontSize: 12, fontFamily: 'Helvetica-Bold', marginTop: 20, marginBottom: 8 }}>
+              Muster-Widerrufsformular
+            </Text>
+            <Text style={{ fontSize: 9, lineHeight: 1.6, color: '#333333' }}>
+              {musterWiderrufsformular(absender)}
+            </Text>
+          </Page>
+        )
+      })()}
     </Document>
   )
 }

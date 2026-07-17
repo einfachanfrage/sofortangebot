@@ -27,6 +27,8 @@ export async function GET() {
       accounting_software: 'none',
       abrechnungs_modus: 'inapp',
       angebot_struktur: 'raeume',
+      widerruf_aktiv: true,
+      widerruf_text: null,
       gewerke: [],
       created_at: new Date().toISOString(),
       lexware_api_key: null,

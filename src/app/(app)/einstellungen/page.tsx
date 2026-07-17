@@ -48,6 +48,8 @@ export default function EinstellungenPage() {
   const [eRechnungAktiv, setERechnungAktiv] = useState(true)
   const [abrechnungsModus, setAbrechnungsModus] = useState<'inapp' | 'extern'>('inapp')
   const [angebotStruktur, setAngebotStruktur] = useState<'raeume' | 'arbeitsablauf' | 'gewerk'>('raeume')
+  const [widerrufAktiv, setWiderrufAktiv] = useState(true)
+  const [widerrufText, setWiderrufText] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
@@ -96,6 +98,8 @@ export default function EinstellungenPage() {
         setERechnungAktiv(data.e_rechnung_aktiv !== false)
         setAbrechnungsModus((data.abrechnungs_modus ?? 'inapp') as 'inapp' | 'extern')
         setAngebotStruktur((data.angebot_struktur ?? 'raeume') as 'raeume' | 'arbeitsablauf' | 'gewerk')
+        setWiderrufAktiv(data.widerruf_aktiv !== false)
+        setWiderrufText(data.widerruf_text ?? '')
         // Kleinmaterial: Betriebs-Config oder Gewerk-Default
         const gewerkDefault = KLEINMATERIAL_CONFIG[(data.gewerke ?? [])[0] ?? ''] ?? { aktiv: true, betrag_eur: 25, schwelle_eur: 200, bezeichnung: 'Kleinmaterial und Verbrauchsmaterial' }
         const kc = (data.kleinmaterial_config ?? null) as { aktiv?: boolean; betrag_eur?: number; schwelle_eur?: number; bezeichnung?: string } | null
@@ -146,6 +150,8 @@ export default function EinstellungenPage() {
       e_rechnung_aktiv: eRechnungAktiv,
       abrechnungs_modus: abrechnungsModus,
       angebot_struktur: angebotStruktur,
+      widerruf_aktiv: widerrufAktiv,
+      widerruf_text: widerrufText.trim() || null,
       kleinmaterial_config: {
         aktiv: kleinAktiv,
         betrag_eur: kleinBetrag,
@@ -536,6 +542,39 @@ export default function EinstellungenPage() {
           <p className="text-xs text-[#2C2C2C]/30 font-semibold mt-3 leading-relaxed">
             Angebots-Nachfassen (Erinnerung an offene Angebote vor der Rechnung) läuft in beiden Fällen.
           </p>
+        </Card>
+
+        <Card icon={<FileCheck2 size={16} />} title="Widerrufsbelehrung">
+          <div className="flex items-start gap-2 bg-[#F5C400]/15 border border-[#F5C400]/40 rounded-xl px-3 py-3 -mt-1 mb-3">
+            <span className="text-sm mt-0.5">⚖️</span>
+            <p className="text-xs font-semibold text-[#2C2C2C]/70 leading-relaxed">
+              Unterschreibt ein <strong>Privatkunde bei sich zuhause</strong>, hat er 14 Tage Widerrufsrecht.
+              Ohne Belehrung verlängert sich die Frist auf <strong>12 Monate + 14 Tage</strong>.
+              Der Text ist eine Vorlage nach amtlichem Muster — bitte einmal <strong>anwaltlich prüfen</strong> lassen.
+            </p>
+          </div>
+          <Field label="Dem Angebot anhängen (nur bei Privatkunden)">
+            <button type="button" onClick={() => setWiderrufAktiv(v => !v)}
+              className={`relative inline-flex h-7 w-12 items-center rounded-full border-2 transition-colors ${
+                widerrufAktiv ? 'bg-[#F5C400] border-[#F5C400]' : 'bg-[#2C2C2C]/10 border-transparent'
+              }`}>
+              <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+                widerrufAktiv ? 'translate-x-6' : 'translate-x-1'
+              }`} />
+            </button>
+            <p className="text-xs text-[#2C2C2C]/40 font-semibold mt-1.5 leading-relaxed">
+              Geschäftskunden bekommen keine Belehrung (kein Widerrufsrecht) — das erkennt das Tool automatisch.
+            </p>
+          </Field>
+          <Field label="Eigener Text (leer = amtliches Muster)">
+            <textarea
+              value={widerrufText}
+              onChange={e => setWiderrufText(e.target.value)}
+              rows={4}
+              placeholder="Leer lassen → Standard-Muster mit deinen Betriebsdaten wird verwendet."
+              className="w-full text-xs font-semibold text-[#2C2C2C]/70 bg-[#F7F7F5] rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#F5C400] resize-y"
+            />
+          </Field>
         </Card>
 
         <Card icon={<Receipt size={16} />} title="Angebots-Gliederung">

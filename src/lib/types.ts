@@ -65,6 +65,10 @@ export interface Company {
   accounting_software: AccountingSoftware
   abrechnungs_modus: 'inapp' | 'extern'
   angebot_struktur: 'raeume' | 'arbeitsablauf' | 'gewerk'
+  /** Widerrufsbelehrung ans Angebot anhängen (nur bei Privatkunden) */
+  widerruf_aktiv: boolean
+  /** Eigener Belehrungstext; null = amtliches Muster */
+  widerruf_text: string | null
   gewerke: string[]
   created_at: string
   lexoffice_api_key: string | null
