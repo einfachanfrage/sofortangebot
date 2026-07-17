@@ -74,7 +74,22 @@ export function berechneUndPruefeAlleGewerke(
     fehlende.push(...res.fehlende)
   }
 
+  // 3) Finaler Exakt-Dedup: identische Position (gleicher Titel + gleiche Menge)
+  //    kann nie doppelt gewollt sein (verschiedene Räume tragen ihr "— Raum"-Suffix)
+  positionen = dedupExakt(positionen)
+
   return { positionen, fehlende, mengenRoh: { ...mengenPrimaer, positionen: rohPositionen } }
+}
+
+/** Entfernt exakte Duplikate (gleicher Titel + gleiche Menge), erste Position bleibt. */
+function dedupExakt(positionen: BerechnetePosition[]): BerechnetePosition[] {
+  const seen = new Set<string>()
+  return positionen.filter(p => {
+    const key = `${p.beschreibung.toLowerCase().trim()}|${p.menge}|${p.einheit}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
 }
 
 function mergePositionen(a: BerechnetePosition[], b: BerechnetePosition[]): BerechnetePosition[] {
