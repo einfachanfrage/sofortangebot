@@ -387,7 +387,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
   const [dismissedHints, setDismissedHints] = useState<Set<string>>(new Set())
   const [showMoreMenu, setShowMoreMenu] = useState(false)
-  const [showWeitereOptionen, setShowWeitereOptionen] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [autosaveLabel, setAutosaveLabel] = useState('')
   const [showVorschau, setShowVorschau] = useState(false)
@@ -397,6 +396,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [priceItems, setPriceItems] = useState<{ title: string; unit_price: number; unit: string }[]>([])
   // ── Pro-Angebot-Optionen (Zahnrad) — null/'' = aus Betriebs-Einstellungen erben
   const [showOptionen, setShowOptionen] = useState(false)
+  const [showAktionen, setShowAktionen] = useState(false)
   const [optStruktur, setOptStruktur] = useState<'' | 'raeume' | 'arbeitsablauf' | 'gewerk'>((quote.angebot_struktur ?? '') as '')
   const [optKopftext, setOptKopftext] = useState(quote.kopftext ?? '')
   const [optFusstext, setOptFusstext] = useState(quote.fusstext ?? '')
@@ -1677,67 +1677,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </div>
                 )}
 
-                {/* ── PDF + LINK ───────────────────────────────── */}
-                <a href={`/api/pdf?id=${quote.id}`} target="_blank"
-                  className="flex items-center justify-center gap-3 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-base rounded-2xl py-[14px]">
-                  <Download size={19} strokeWidth={2.5} />
-                  {istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'}
-                </a>
-
-                <button onClick={copyLink}
-                  className="flex items-center justify-center gap-2 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-2xl py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                  <Link2 size={15} strokeWidth={2} /> Link zum Angebot kopieren
-                </button>
-
-                {/* ── BUCHHALTUNG (immer sichtbar wenn verbunden) ─ */}
-                {activeIntegrations.length > 0 && (
-                  <div className="flex flex-col gap-1.5">
-                    <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest text-center pt-1">Buchhaltung</div>
-                    {activeIntegrations.map(int => (
-                      <button key={int.id} onClick={() => handleExport(int.id, int.label)}
-                        disabled={exporting === int.id}
-                        className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors disabled:opacity-50">
-                        <span className="font-black text-[#2C2C2C]/50 text-xs w-5 text-center shrink-0">{int.short}</span>
-                        {exporting === int.id ? 'Übertrage...' : `Zu ${int.label}`}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* ── WEITERE OPTIONEN ─────────────────────────── */}
-                <div className="border-t border-[#EEEEEE] pt-2">
-                  <button onClick={() => setShowWeitereOptionen(v => !v)}
-                    className="flex items-center justify-center gap-1.5 w-full text-[#2C2C2C]/40 font-bold text-xs py-1.5 hover:text-[#2C2C2C]/60 transition-colors">
-                    <ChevronDown size={13} className={`transition-transform ${showWeitereOptionen ? 'rotate-180' : ''}`} />
-                    Weitere Optionen
-                  </button>
-                  {showWeitereOptionen && (
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <button onClick={handleDuplicate}
-                        className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                        <Copy size={15} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> Angebot duplizieren
-                      </button>
-                      {!!quote.customer?.leitweg_id && (
-                        <a href={`/api/pdf/xrechnung?id=${quote.id}`} target="_blank"
-                          className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                          <Download size={15} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> XRechnung XML
-                        </a>
-                      )}
-                      <a href={`/api/csv?id=${quote.id}`}
-                        className="flex items-center gap-3 w-full bg-white border border-[#EEEEEE] text-[#2C2C2C] font-semibold text-sm rounded-xl px-4 py-3 hover:border-[#2C2C2C]/20 transition-colors">
-                        <FileText size={15} strokeWidth={2.5} className="text-[#2C2C2C]/40" /> CSV Export
-                      </a>
-                    </div>
-                  )}
-                </div>
-
-                {/* ── LÖSCHEN ──────────────────────────────────── */}
-                <div className="border-t border-[#EEEEEE] pt-2">
-                  <button onClick={() => setShowDeleteSheet(true)} disabled={deleting}
-                    className="flex items-center justify-center gap-2 w-full text-red-400 font-semibold text-sm py-2 hover:text-red-600 transition-colors">
-                    <Trash2 size={14} />{deleting ? 'Wird gelöscht...' : 'Angebot löschen'}
-                  </button>
-                </div>
+                {/* Aktionen leben ALLE in der Fußleiste (⋯) — kein zweiter Satz Buttons hier */}
               </>
             )}
           </div>
@@ -1906,6 +1846,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             >
               <Share2 size={15} strokeWidth={2.5} /> Senden →
             </button>
+            {/* Alle weiteren Aktionen an EINER Stelle */}
+            <button
+              onClick={() => setShowAktionen(true)}
+              title="Weitere Aktionen"
+              className="flex items-center justify-center px-3 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C]/60 border border-[#2C2C2C]/10 shrink-0"
+            >
+              <MoreHorizontal size={16} />
+            </button>
           </div>
         )}
       </div>
@@ -1969,6 +1917,57 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </ul>
                 </>
               )}
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* ── Aktionen-Sheet (⋯) — ALLE Neben-Aktionen an einer Stelle ─────── */}
+      {showAktionen && (() => {
+        const Zeile = ({ icon, label, onClick, href, danger }: {
+          icon: React.ReactNode; label: string; onClick?: () => void; href?: string; danger?: boolean
+        }) => {
+          const cls = `flex items-center gap-3 w-full text-left rounded-xl px-4 py-3.5 font-bold text-sm transition-colors ${
+            danger ? 'text-red-500 hover:bg-red-50' : 'text-[#2C2C2C] hover:bg-[#F7F7F5]'
+          }`
+          const inhalt = <><span className={danger ? 'text-red-400' : 'text-[#2C2C2C]/35'}>{icon}</span>{label}</>
+          return href
+            ? <a href={href} target="_blank" className={cls} onClick={() => setShowAktionen(false)}>{inhalt}</a>
+            : <button onClick={() => { setShowAktionen(false); onClick?.() }} className={cls}>{inhalt}</button>
+        }
+        return (
+          <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowAktionen(false)}>
+            <div className="bg-white w-full rounded-t-3xl p-4 pb-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-2 mb-2">
+                <div className="font-black text-[#2C2C2C] text-lg">Aktionen</div>
+                <button onClick={() => setShowAktionen(false)} className="text-[#2C2C2C]/40 font-black text-xl leading-none">×</button>
+              </div>
+
+              <Zeile icon={<Download size={17} strokeWidth={2.5} />} label={istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'} href={`/api/pdf?id=${quote.id}`} />
+              <Zeile icon={<Link2 size={17} strokeWidth={2.5} />} label="Link zum Angebot kopieren" onClick={copyLink} />
+              <Zeile icon={<Copy size={17} strokeWidth={2.5} />} label="Angebot duplizieren" onClick={handleDuplicate} />
+              <Zeile icon={<FileText size={17} strokeWidth={2.5} />} label="CSV Export" href={`/api/csv?id=${quote.id}`} />
+              {!!quote.customer?.leitweg_id && (
+                <Zeile icon={<Download size={17} strokeWidth={2.5} />} label="XRechnung XML" href={`/api/pdf/xrechnung?id=${quote.id}`} />
+              )}
+
+              {activeIntegrations.length > 0 && (
+                <>
+                  <div className="border-t border-[#EEEEEE] my-2" />
+                  <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest px-4 py-1.5">Buchhaltung</div>
+                  {activeIntegrations.map(int => (
+                    <button key={int.id} onClick={() => { setShowAktionen(false); handleExport(int.id, int.label) }}
+                      disabled={exporting === int.id}
+                      className="flex items-center gap-3 w-full text-left rounded-xl px-4 py-3.5 font-bold text-sm text-[#2C2C2C] hover:bg-[#F7F7F5] disabled:opacity-50">
+                      <span className="font-black text-[#2C2C2C]/35 text-xs w-[17px] text-center">{int.short}</span>
+                      {exporting === int.id ? 'Übertrage…' : `Zu ${int.label} übertragen`}
+                    </button>
+                  ))}
+                </>
+              )}
+
+              <div className="border-t border-[#EEEEEE] my-2" />
+              <Zeile icon={<Trash2 size={17} strokeWidth={2.5} />} label="Angebot löschen" danger onClick={() => setShowDeleteSheet(true)} />
             </div>
           </div>
         )
