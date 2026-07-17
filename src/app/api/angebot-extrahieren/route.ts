@@ -6,11 +6,10 @@ import { segmentiereRaeume, loeseKorrekturenAuf, bauSegmentiertenTranskript } fr
 import { erkenneErgaenzungen, bereiteFuerKiAuf } from '@/lib/ergaenzungs-erkenner'
 import { extrahiereKorrekturen, formatKorrekturenFuerKi } from '@/lib/korrektur-resolver'
 import { wendeImplizitRegelnAn } from '@/lib/implizit-wissen'
-import { berechneMengen } from '@/lib/mengen/engine'
+import { berechneUndPruefeAlleGewerke } from '@/lib/mengen/mehrgewerk'
 import { berechneBewertung } from '@/lib/mengen/bewertung'
 import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfrage } from '@/lib/mengen/types'
 import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
-import { pruefeUndErgaenzeVollstaendigkeit } from '@/lib/mengen/vollstaendigkeits-check'
 import { repariereDuplikatMasse, repariereDuplikatNamen } from '@/lib/mengen/mehrraum-reparatur'
 import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import {
@@ -187,8 +186,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const mengenRoh = berechneMengen(extraktion.gewerk, extraktion)
-
     // Fenster/Tür-Anzahl: direkt aus Text extrahieren (zuverlässiger als GPT-Felder)
     const fensterAnzahlText = zaehleFenster(textMitZahlen)
     const tuerenAnzahlText = zaehleTueren(textMitZahlen)
@@ -203,13 +200,13 @@ export async function POST(req: NextRequest) {
       altbelagEntfernen: (extraktion.raeume ?? []).some(r => r.altbelag_entfernen),
     }
 
-    // Vollständigkeits-Check: fehlende Pflicht-Positionen automatisch ergänzen
-    const { fehlende, positionen: positionenKomplett } = pruefeUndErgaenzeVollstaendigkeit(
-      extraktion.gewerk,
-      mengenRoh.positionen,
+    // Mengen + Vollständigkeit über ALLE beteiligten Gewerke (Maler UND Boden im
+    // selben Auftrag) — nicht nur das Haupt-Gewerk.
+    const { fehlende, positionen: positionenKomplett, mengenRoh } = berechneUndPruefeAlleGewerke(
+      extraktion,
       textMitZahlen,
       { fensterAnzahl: fensterAnzahlText || undefined, tuerenAnzahl: tuerenAnzahlText || undefined },
-      kiSignale
+      kiSignale,
     )
     if (fehlende.length > 0) {
       console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)
