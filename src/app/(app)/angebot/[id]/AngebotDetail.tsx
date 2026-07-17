@@ -1610,19 +1610,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               </div>
             )}
 
-            {/* Edit-Aktionen */}
-            {editMode && (
-              <div className="flex gap-3">
-                <button onClick={() => { setEditMode(false); setEditItems(quote.items); setEditingItemId(null); setHasChanges(false) }}
-                  className="flex-1 bg-white border-2 border-[#2C2C2C]/20 text-[#2C2C2C] font-black text-base rounded-2xl py-4">
-                  Abbrechen
-                </button>
-                <button onClick={() => saveEdits()} disabled={saving}
-                  className="flex-[2] bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 disabled:opacity-50 flex items-center justify-center gap-2">
-                  {saving ? 'Speichert…' : <><Check size={18} strokeWidth={3} /> Speichern</>}
-                </button>
-              </div>
-            )}
+            {/* Edit-Aktionen leben in der Fußleiste (Abbrechen · Speichern · Fertigstellen) */}
           </div>
 
           {/* Rechte Spalte: Summen + Aktionen */}
@@ -1798,13 +1786,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {/* ── Footer-Bar ──────────────────────────────────────────────────── */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3">
         {editMode ? (
-          /* ENTWURF-MODUS: Position+ | Zwischenspeichern | Fertigstellen */
+          /* ENTWURF-MODUS: Abbrechen | Speichern | Fertigstellen */
           <div className="flex gap-2">
             <button
-              onClick={addEditItem}
-              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
+              onClick={() => { setEditMode(false); setEditItems(quote.items); setEditingItemId(null); setHasChanges(false) }}
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white text-[#2C2C2C]/60 font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
             >
-              <Plus size={15} strokeWidth={2.5} /> Position
+              Abbrechen
             </button>
             <button
               onClick={() => saveEdits()}
