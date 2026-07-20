@@ -9,36 +9,59 @@ import type { BerechnetePosition, MengenErgebnis } from './types'
 import { berechneMengen } from './engine'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../vollstaendigkeit/index'
 import type { ExtraktionSignale } from '../auftrags-verstaendnis'
+import { erkenneBelag, hatBodenArbeit } from '../boden-normalisierer'
 
-type RaumLike = { arbeiten?: string[]; belag?: string | null; altbelag_entfernen?: boolean }
+type RaumLike = { arbeiten?: string[]; belag?: string | null; altbelag_entfernen?: boolean; sockelleisten?: boolean }
 
 const MALER_ARBEIT = /streich|anstrich|tapete|tapezier|raufaser|spachtel|glätt|lackier|grundier|voranstrich/i
-const BODEN_ARBEIT = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|altbelag|sockelleisten|trittschall|abschleif|estrich/i
+const BODEN_ARBEIT = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|altbelag|trittschall|estrich/i
+// Im Rohtext: distinktive Boden-Signale (NICHT bloßes "boden" — "Boden schützen" ist Maler)
+const BODEN_TEXT = /vinyl|laminat|parkett|diele|kork|linoleum|nadelvlies|designboden|teppich|bodenbelag|\bverleg|trittschall/i
+const MALER_TEXT = /streich|anstrich|tapete|tapezier|raufaser|spachtel|glätt|lackier|grundier/i
 
 function raeumeAllerArt(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }): RaumLike[] {
   return [...(extraktion.raeume ?? []), ...(extraktion.bereiche ?? [])]
 }
 
-/** Sind Boden-Arbeiten vorhanden? (Belag, Altbelag oder Boden-Verb in arbeiten[]) */
-function hatBodenAnteil(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }): boolean {
-  return raeumeAllerArt(extraktion).some(r =>
+/** Boden-Anteil — aus der Struktur ODER dem Rohtext (KI packt Boden oft nicht in die Struktur). */
+function hatBodenAnteil(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }, transkript: string): boolean {
+  const inStruktur = raeumeAllerArt(extraktion).some(r =>
     r.belag != null || r.altbelag_entfernen === true ||
     (r.arbeiten ?? []).some(a => BODEN_ARBEIT.test(a)))
+  return inStruktur || BODEN_TEXT.test(transkript)
 }
 
-/** Sind Maler-Arbeiten vorhanden? */
-function hatMalerAnteil(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }): boolean {
-  return raeumeAllerArt(extraktion).some(r => (r.arbeiten ?? []).some(a => MALER_ARBEIT.test(a)))
+function hatMalerAnteil(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }, transkript: string): boolean {
+  const inStruktur = raeumeAllerArt(extraktion).some(r => (r.arbeiten ?? []).some(a => MALER_ARBEIT.test(a)))
+  return inStruktur || MALER_TEXT.test(transkript)
 }
 
 /**
  * Zweites Gewerk, das zusätzlich zum primären berechnet werden soll — oder null.
- * Nur zwischen Maler ↔ Boden (die häufige Kombi im selben Raum).
+ * Erkennt auch am Rohtext (nicht nur an der Struktur), weil die KI bei
+ * gewerk=maler die Boden-Arbeiten oft gar nicht in raeume[] ablegt.
  */
-export function sekundaerGewerk(primaer: string, extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }): string | null {
-  if (primaer === 'maler' && hatBodenAnteil(extraktion)) return 'boden_parkett'
-  if (primaer === 'boden_parkett' && hatMalerAnteil(extraktion)) return 'maler'
+export function sekundaerGewerk(primaer: string, extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }, transkript = ''): string | null {
+  if (primaer === 'maler' && hatBodenAnteil(extraktion, transkript)) return 'boden_parkett'
+  if (primaer === 'boden_parkett' && hatMalerAnteil(extraktion, transkript)) return 'maler'
   return null
+}
+
+/** Reichert die Räume mit Boden-Infos aus dem Rohtext an (Belag/Altbelag), damit
+ *  die Boden-Engine "Vinyl verlegen" statt "Bodenbelag verlegen" liefert. */
+function reichereBodenAn<E extends { raeume?: RaumLike[]; bereiche?: RaumLike[] }>(extraktion: E, transkript: string): E {
+  const belag = erkenneBelag(transkript)
+  const altbelag = hatBodenArbeit(transkript, 'altbelag_entfernen')
+  const anreichern = (r: RaumLike): RaumLike => ({
+    ...r,
+    belag: r.belag ?? belag ?? undefined,
+    altbelag_entfernen: r.altbelag_entfernen ?? altbelag,
+  })
+  return {
+    ...extraktion,
+    raeume: (extraktion.raeume ?? []).map(anreichern),
+    bereiche: (extraktion.bereiche ?? []).map(anreichern),
+  }
 }
 
 interface Meta { fensterAnzahl?: number; tuerenAnzahl?: number }
@@ -55,13 +78,17 @@ export function berechneUndPruefeAlleGewerke(
   signale: ExtraktionSignale,
 ): { positionen: BerechnetePosition[]; fehlende: string[]; mengenRoh: MengenErgebnis } {
   const primaer = extraktion.gewerk
-  const sekundaer = sekundaerGewerk(primaer, extraktion)
+  const sekundaer = sekundaerGewerk(primaer, extraktion, textMitZahlen)
 
   // 1) Engines (Mengen)
   const mengenPrimaer = berechneMengen(primaer, extraktion)
   let rohPositionen = mengenPrimaer.positionen
   if (sekundaer) {
-    const mengenSek = berechneMengen(sekundaer, extraktion)
+    // Für die Boden-Engine die Räume mit Belag/Altbelag aus dem Text anreichern
+    const sekExtraktion = sekundaer === 'boden_parkett'
+      ? reichereBodenAn({ ...extraktion, gewerk: sekundaer }, textMitZahlen)
+      : { ...extraktion, gewerk: sekundaer }
+    const mengenSek = berechneMengen(sekundaer, sekExtraktion)
     rohPositionen = mergePositionen(rohPositionen, mengenSek.positionen)
   }
 

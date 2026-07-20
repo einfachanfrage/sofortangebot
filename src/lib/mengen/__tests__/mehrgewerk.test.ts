@@ -21,21 +21,23 @@ describe('sekundaerGewerk — erkennt das zweite Gewerk im Auftrag', () => {
 })
 
 describe('berechneUndPruefeAlleGewerke — Maler UND Boden im selben Raum', () => {
-  // Der Beta-Fall: "Im Flur streichen (Wände+Decke) UND neuen Vinylboden, alter Teppich raus"
+  // ECHTER Prod-Fall: KI wählte gewerk=maler und legte die Boden-Arbeiten GAR NICHT
+  // in raeume[] ab (kein belag, keine Boden-Arbeiten) — nur der Rohtext verrät es.
   const extraktion = {
     gewerk: 'maler',
-    transkript: 'im flur wird gestrichen, wände und decke, 15 quadratmeter, 2,60 hoch. neuer vinylboden, alter teppich raus.',
+    transkript: 'im flur wird gestrichen, wände und decke, 15 quadratmeter, 2,60 hoch. und im gleichen flur kommt neuer vinylboden rein, der alte teppich muss vorher raus.',
     raeume: [{
       name: 'Flur', flaeche: 15, hoehe: 2.6,
-      arbeiten: ['wände streichen', 'decke streichen', 'teppich entfernen', 'vinyl verlegen'],
-      belag: 'vinyl', altbelag_entfernen: true, sockelleisten: true,
+      arbeiten: ['wände streichen', 'decke streichen'],
     }],
   }
   const { positionen } = berechneUndPruefeAlleGewerke(
     extraktion as never,
     extraktion.transkript,
     {},
-    { arbeitenTexte: extraktion.raeume[0].arbeiten, belagText: 'vinyl', altbelagEntfernen: true },
+    // Signale wie bei Maler-Extraktion: NUR Maler-Arbeiten, kein Belag/Altbelag —
+    // der Boden-Anteil muss allein aus dem Rohtext kommen
+    { arbeitenTexte: extraktion.raeume[0].arbeiten, belagText: null, altbelagEntfernen: false },
   )
   const namen = positionen.map(p => p.beschreibung.toLowerCase())
 
