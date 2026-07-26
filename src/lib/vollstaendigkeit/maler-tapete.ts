@@ -111,15 +111,24 @@ export function pruefeTapezieren(
     filtereArray(ergaenzt, p => !p.beschreibung.toLowerCase().includes('wandflächen streichen'))
 
     const hatEntfernen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('tapete entf') || p.beschreibung.toLowerCase().includes('tapete abneh'))
-    const hatAufziehen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('aufzieh') || p.beschreibung.toLowerCase().includes('tapezier'))
+    const aufziehenPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('aufzieh') || p.beschreibung.toLowerCase().includes('tapezier'))
+    const hatAufziehen = !!aufziehenPos
     const hatStreichen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('raufaser streich') || p.beschreibung.toLowerCase().includes('tapete streich') || p.beschreibung.toLowerCase().includes('vliestapete streich'))
 
     const istRaufaser = lower.includes('raufaser')
+    const istMalervlies = lower.includes('malervlies') || lower.includes('renoviervlies')
     const istVliestapete = lower.includes('vliestapete') || lower.includes('vlies')
-    const tapetenTyp = istRaufaser ? 'Raufaser' : istVliestapete ? 'Vliestapete' : 'Tapete'
+    const tapetenTyp = istRaufaser ? 'Raufaser' : istMalervlies ? 'Malervlies' : istVliestapete ? 'Vliestapete' : 'Tapete'
+
+    // Die KI liefert in arbeiten[] gelegentlich nur das generische
+    // "Tapete aufziehen". Der im Transkript genannte Tapetentyp muss für die
+    // eindeutige Preiszuordnung erhalten bleiben.
+    if (aufziehenPos && tapetenTyp !== 'Tapete' && /^tapete (?:aufzieh|tapezier)/i.test(aufziehenPos.beschreibung)) {
+      aufziehenPos.beschreibung = `${tapetenTyp} tapezieren`
+    }
 
     if (!hatEntfernen) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
-    if (!hatAufziehen) ergaenzt.push({ beschreibung: `${tapetenTyp} aufziehen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+    if (!hatAufziehen) ergaenzt.push({ beschreibung: `${tapetenTyp} tapezieren`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
     if (!hatStreichen) ergaenzt.push({ beschreibung: `${tapetenTyp} streichen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
 
     const bodenWirdEntfernt = /(?:teppich|altbelag|bodenbelag|laminat|vinyl|parkett).{0,30}(?:entfern|raus|aufnehm|demont)/i.test(lower)

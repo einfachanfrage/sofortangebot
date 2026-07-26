@@ -164,8 +164,16 @@ const KORPUS: Fall[] = [
     gewerk: 'maler',
     transkript: 'wohnzimmer, alte tapete runter, neue raufaser aufziehen und weiß streichen, 45 quadratmeter wandfläche',
     raeume: [{ name: 'Wohnzimmer', wandflaeche_direkt: 45, arbeiten: ['tapete entfernen', 'raufaser aufziehen', 'streichen'] }],
-    muss: ['tapete entfernen', 'aufziehen'],
+    muss: ['tapete entfernen', 'tapezieren'],
     verboten: ['estrich'],
+  },
+  {
+    name: 'Malervlies bleibt für die Preiszuordnung erhalten',
+    gewerk: 'maler',
+    transkript: 'Im Schlafzimmer sind 42 Quadratmeter Wandfläche. Malervlies tapezieren und zweimal weiß streichen.',
+    raeume: [{ name: 'Schlafzimmer', wandflaeche_direkt: 42, arbeiten: ['Tapete aufziehen', 'Wände streichen'] }],
+    muss: ['malervlies tapezieren'],
+    verboten: ['fototapete', 'digitaldrucktapete', 'estrich'],
   },
   {
     name: 'Dachschräge streichen',
