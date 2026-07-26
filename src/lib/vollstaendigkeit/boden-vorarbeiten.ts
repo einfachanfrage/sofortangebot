@@ -43,12 +43,21 @@ export function pruefeAltbelag(
   // schon "Altbelag entfernen" angelegt hat (sonst lief dieser Zweig in Prod nie).
   const willKleber = hatVerklebt && (lower.includes('kleber') || lower.includes('kleberreste') || v.hatArbeit('schleifen'))
   if (willKleber && !hat(ergaenzt, 'kleberreste', 'kleber abschleif')) {
-    if (m2) ergaenzt.push({ beschreibung: 'Kleberreste abschleifen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-    else fehlende.push('Kleberreste abschleifen')
+    if (m2) ergaenzt.push({ beschreibung: 'Untergrund schleifen (Unebenheiten, Kleberreste)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push('Untergrund schleifen (Unebenheiten, Kleberreste)')
   }
 
   // Basis-Altbelag nur, wenn noch keine Entfernen-Position existiert
-  const hatBodenEntfernung = ergaenzt.some(p => /altbelag entfernen|teppichboden entfernen|bodenbelag entfernen/i.test(p.beschreibung))
+  const vorhandeneEntfernung = ergaenzt.find(p => /altbelag entfernen|teppichboden entfernen|bodenbelag entfernen/i.test(p.beschreibung))
+  const entsorgungBeauftragt = /entsorg|abtransport|abfahren|wegfahren/i.test(lower)
+  if (vorhandeneEntfernung && entsorgungBeauftragt) {
+    const suffix = vorhandeneEntfernung.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[0] ?? ''
+    if (/laminat/i.test(lower)) vorhandeneEntfernung.beschreibung = `Laminat demontieren und entsorgen${suffix}`
+    else if (/teppich/i.test(lower)) vorhandeneEntfernung.beschreibung = `Teppichboden entfernen und entsorgen${suffix}`
+    else if (/vinyl|pvc/i.test(lower)) vorhandeneEntfernung.beschreibung = `Vinyl / PVC entfernen und entsorgen${suffix}`
+    else if (/linoleum/i.test(lower)) vorhandeneEntfernung.beschreibung = `Linoleum entfernen und entsorgen${suffix}`
+  }
+  const hatBodenEntfernung = !!vorhandeneEntfernung
   if (!v.altbelagEntfernen || hatBodenEntfernung) return
 
   if (hatVerklebt) {
@@ -124,6 +133,26 @@ export function pruefeSockelleisten(
   }
 
   const lfm = extrahiereLfdm(lower, 'sockelleisten') ?? extrahiereLfdm(lower, 'sockel')
+  const alteSockelEntfernen = /(?:alte[nr]?\s+)?sockelleisten?.{0,35}(?:entfern|demontier|abnehm)|(?:entfern|demontier|abnehm).{0,35}sockelleisten?/i.test(lower)
+  if (alteSockelEntfernen && !hat(ergaenzt, 'sockelleisten entfernen')) {
+    const menge = lfm ?? vorhandeneMontage?.menge
+      ?? (() => {
+        const flaeche = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+        return flaeche ? Math.round(4 * Math.sqrt(flaeche)) : null
+      })()
+    if (menge && menge > 0) {
+      ergaenzt.push({
+        beschreibung: 'Sockelleisten entfernen (alt)',
+        menge,
+        einheit: 'lfdm',
+        konfidenz: lfm ? 'high' : 'medium',
+        berechnungsweg: lfm ? `${lfm} lfdm aus Transkript` : `${menge} lfdm wie neue Sockelleisten`,
+        annahmen: lfm ? [] : ['Länge wie neue Sockelleisten angenommen — bitte prüfen'],
+      })
+    } else {
+      fehlende.push('Sockelleisten entfernen (alt)')
+    }
+  }
   if (lfm && lfm > 0 && lfm < 500) {
     if (vorhandeneMontage) {
       vorhandeneMontage.menge = lfm

@@ -36,3 +36,34 @@ describe('Boden Prod-Fall — Flur mit verklebtem Teppich + garbeltem Klick-Viny
     expect(sockel!.menge).toBeLessThan(20)
   })
 })
+
+describe('Boden Phase 3 — Entfernen und Entsorgen bleibt sichtbar', () => {
+  it('erhält Laminat-Entsorgung, alte Sockelleisten und Untergrundprüfung', () => {
+    const t = 'Schlafzimmer 20 Quadratmeter. Laminatboden entfernen und entsorgen, alte Sockelleisten entfernen und entsorgen, Untergrund prüfen und ausgleichen, Trittschalldämmung und Klick-Vinyl verlegen, 18 Meter neue Sockelleisten und zwei Übergangsprofile.'
+    const eng = bodenEngine({
+      transkript: t,
+      raeume: [{ name: 'Schlafzimmer', flaeche: 20, belag: 'vinyl', altbelag_entfernen: true, sockelleisten: true, arbeiten: ['laminat entfernen', 'vinyl verlegen', 'sockelleisten montieren'] }],
+    })
+    const result = pruefeUndErgaenzeVollstaendigkeit('boden_parkett', eng.positionen, t).positionen
+    const namen = result.map(position => position.beschreibung.toLowerCase())
+
+    expect(namen.some(name => name.includes('laminat demontieren und entsorgen'))).toBe(true)
+    expect(namen.some(name => name.includes('sockelleisten entfernen'))).toBe(true)
+    expect(namen.some(name => name.includes('untergrundprüfung'))).toBe(true)
+  })
+
+  it('erhält Teppich-Entsorgung und nutzt Datenbanktitel für Kleberreste und Fischgrät', () => {
+    const t = 'Wohnzimmer 32 Quadratmeter. Verklebten Teppichboden entfernen und entsorgen, Kleberreste abschleifen, Eiche-Fertigparkett vollflächig im Fischgrät verkleben und Sockelleisten montieren.'
+    const eng = bodenEngine({
+      transkript: t,
+      raeume: [{ name: 'Wohnzimmer', flaeche: 32, belag: 'fertigparkett', altbelag_entfernen: true, sockelleisten: true, arbeiten: ['teppich entfernen', 'kleberreste abschleifen', 'fertigparkett verkleben'] }],
+    })
+    const result = pruefeUndErgaenzeVollstaendigkeit('boden_parkett', eng.positionen, t).positionen
+    const namen = result.map(position => position.beschreibung.toLowerCase())
+
+    expect(namen.some(name => name.includes('teppichboden entfernen und entsorgen'))).toBe(true)
+    expect(namen.some(name => name.includes('untergrund schleifen') && name.includes('kleberreste'))).toBe(true)
+    expect(namen.some(name => name.includes('fertigparkett verlegen vollflächig verklebt'))).toBe(true)
+    expect(namen.some(name => name.includes('aufpreis fischgrät-verlegemuster'))).toBe(true)
+  })
+})

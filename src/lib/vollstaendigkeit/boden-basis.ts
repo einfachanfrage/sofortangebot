@@ -73,8 +73,19 @@ export function pruefeBodenBasis(
   const hatGrundieren = v.hatArbeit('grundieren')
   const hatAusgleich = lower.includes('ausgleich') || lower.includes('ausgleichsmasse')
   const hatSperre = lower.includes('feuchtigkeitssperre') || lower.includes('epoxidharz')
+  const hatUntergrundpruefung = /untergrund.{0,30}(?:prüf|kontroll|beurteil)|(?:prüf|kontroll|beurteil).{0,30}untergrund/i.test(lower)
 
-  if (!hatSperre && !hat(ergaenzt, 'untergrund', 'ausgleich', 'spachtelmasse', 'grundier')) {
+  if (hatUntergrundpruefung && !hat(ergaenzt, 'untergrundprüfung', 'untergrund prüfen')) {
+    ergaenzt.push({
+      beschreibung: 'Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)',
+      menge: 1,
+      einheit: 'Pauschale',
+      berechnungsweg: 'Untergrundprüfung ausdrücklich beauftragt',
+      ...mk,
+    })
+  }
+
+  if (!hatSperre && !hat(ergaenzt, 'ausgleich', 'spachtelmasse', 'grundier')) {
     if (hatGrundieren) {
       if (m2) {
         ergaenzt.push({ beschreibung: 'Estrich grundieren', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
@@ -95,6 +106,13 @@ export function pruefeBodenBasis(
   }
 
   // ── Belag verlegen ───────────────────────────────────────────────────────
+  const vorhandeneVerlegung = ergaenzt.find(position => /verlegen|verkleben/i.test(position.beschreibung))
+  const vollflaechigVerklebt = /vollflächig.{0,25}verkleb|verkleb.{0,25}vollflächig/i.test(lower)
+  if (vorhandeneVerlegung && vollflaechigVerklebt && /fertigparkett/i.test(lower)) {
+    const suffix = vorhandeneVerlegung.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[0] ?? ''
+    vorhandeneVerlegung.beschreibung = `Fertigparkett verlegen vollflächig verklebt${suffix}`
+    vorhandeneVerlegung.berechnungsweg = `${bodenNettoflaecheAusPositionen([vorhandeneVerlegung]) ?? vorhandeneVerlegung.menge} m² vollflächig verklebt`
+  }
   if (hat(ergaenzt, 'verlegen', belag ?? 'bodenbelag', 'verkleb', 'fischgrät')) return { nurOhneSockel }
 
   const spezName = erkenneBelagName(lower, belag)

@@ -75,6 +75,19 @@ describe('betriebliche Preiszuordnung', () => {
     expect(treffer?.position.unit_price).toBe(8)
   })
 
+  it.each([
+    ['Untergrund schleifen (Unebenheiten, Kleberreste)', 'm²', 7],
+    ['Aufpreis Fischgrät-Verlegemuster (vollflächig verklebt)', 'm²', 14],
+    ['Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)', 'Pauschale', 45],
+    ['Fertigparkett verlegen vollflächig verklebt', 'm²', 35],
+    ['Laminat demontieren und entsorgen', 'm²', 5],
+    ['Teppichboden entfernen und entsorgen', 'm²', 6],
+    ['Sockelleisten entfernen (alt)', 'lfdm', 2],
+  ])('ordnet Boden-Standardposition %s eindeutig zu', (beschreibung, einheit, preis) => {
+    const boden = preise.filter(position => position.category.startsWith('Boden'))
+    expect(findePreisposition(beschreibung, einheit, boden)?.position.unit_price).toBe(preis)
+  })
+
   it('ordnet einen expliziten 2x-Wandanstrich nicht dem 1x-Preis zu', () => {
     const maler = preise.filter(preis => preis.category.startsWith('Maler'))
     const treffer = findePreisposition('Wandflächen streichen 2x — Wohnzimmer', 'm²', maler)
