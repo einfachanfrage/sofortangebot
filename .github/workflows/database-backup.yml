@@ -52,13 +52,13 @@ jobs:
           dump="sofortangebot-production-${stamp}.dump"
           encrypted="${dump}.enc"
 
-          pg_dump "$PGDATABASE_URL" \
+          /usr/lib/postgresql/17/bin/pg_dump "$PGDATABASE_URL" \
             --format=custom \
             --no-owner \
             --no-privileges \
             --file="$dump"
 
-          pg_restore --list "$dump" >/dev/null
+          /usr/lib/postgresql/17/bin/pg_restore --list "$dump" >/dev/null
           openssl enc -aes-256-cbc -salt -pbkdf2 -iter 250000 \
             -in "$dump" \
             -out "$encrypted" \
