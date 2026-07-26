@@ -140,9 +140,9 @@ function RaumDimensionenZeile({
   // Vorhandene Raummaße haben Vorrang. Der Flächenmodus ist nur für Fälle,
   // in denen wirklich ausschließlich fertige Flächen genannt wurden.
   const modus: RaumModus = dim.modus
-    ?? ((dim.breite != null && dim.laenge != null)
+    ?? (((dim.breite ?? 0) > 0 && (dim.laenge ?? 0) > 0)
       ? 'rechteck'
-      : ((dim.wandflaeche != null || dim.bodenflaeche != null) ? 'flaeche' : 'rechteck'))
+      : (((dim.wandflaeche ?? 0) > 0 || (dim.bodenflaeche ?? 0) > 0) ? 'flaeche' : 'rechteck'))
   const masse = berechneRaumMasse(dim)
 
   return (
@@ -181,12 +181,12 @@ function RaumDimensionenZeile({
           <>
             {wandRelevant && (
               <>
-                <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandfläche</span>
+                <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandfläche fertig</span>
                 <InlineNum value={dim.wandflaeche} label="Wandfläche (fertig, ohne Fenster/Türen)" suffix=" m²" onCommit={v => onChange({ wandflaeche: v })} />
                 <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
               </>
             )}
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Bodenfläche</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Boden-/Deckenfläche</span>
             <InlineNum value={dim.bodenflaeche} label="Bodenfläche" suffix=" m²" onCommit={v => onChange({ bodenflaeche: v })} />
           </>
         )}
@@ -199,7 +199,7 @@ function RaumDimensionenZeile({
 
         {/* Höhe/Öffnungen nur bei Wandarbeiten (Wandfläche braucht Höhe; Fenster/Türen
             werden von der Wandfläche abgezogen). Reiner Bodenauftrag braucht sie nicht. */}
-        {wandRelevant && (
+        {wandRelevant && !(modus === 'flaeche' && (dim.wandflaeche ?? 0) > 0) && (
           <>
             <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
             <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Raumhöhe</span>
@@ -406,6 +406,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [priceItems, setPriceItems] = useState<{ title: string; unit_price: number; unit: string }[]>([])
   const [priceItemToAdd, setPriceItemToAdd] = useState<EditItem | null>(null)
   const [newDatabasePrice, setNewDatabasePrice] = useState('')
+  const [newDatabaseUnit, setNewDatabaseUnit] = useState('m²')
   const [addingDatabasePrice, setAddingDatabasePrice] = useState(false)
   const [databasePriceError, setDatabasePriceError] = useState('')
   // ── Pro-Angebot-Optionen (Zahnrad) — null/'' = aus Betriebs-Einstellungen erben
@@ -687,13 +688,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     const response = await fetch(`/api/quotes/${quote.id}/items/${priceItemToAdd.id}/preis`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ unit_price: unitPrice }),
+      body: JSON.stringify({ unit_price: unitPrice, unit: newDatabaseUnit }),
     })
     const result = await response.json().catch(() => ({})) as {
       error?: string
       price_item_id?: string
       unit_price?: number
       total_price?: number
+      unit?: string
     }
     if (!response.ok || !result.price_item_id) {
       setDatabasePriceError(result.error ?? 'Preis konnte nicht gespeichert werden.')
@@ -706,14 +708,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       price_item_id: result.price_item_id,
       unit_price: result.unit_price ?? unitPrice,
       total_price: result.total_price ?? item.quantity * unitPrice,
+      unit: result.unit ?? newDatabaseUnit,
     } : item))
     setPriceItems(previous => [...previous, {
       title: priceItemToAdd.title.replace(/\s+—\s+.+$/, '').trim(),
-      unit: priceItemToAdd.unit,
+      unit: result.unit ?? newDatabaseUnit,
       unit_price: unitPrice,
     }])
     setPriceItemToAdd(null)
     setNewDatabasePrice('')
+    setNewDatabaseUnit('m²')
     setAddingDatabasePrice(false)
     showToast('Preis in Preisdatenbank und Angebot übernommen ✓')
     router.refresh()
@@ -1416,7 +1420,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                         {editItems.map(item => (
-                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setDatabasePriceError('') }} />
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} />
                         ))}
                       </SortableContext>
                     </DndContext>
@@ -1449,7 +1453,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setDatabasePriceError('') }} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} />
                           })}
                         </div>
                         )
@@ -1461,7 +1465,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setDatabasePriceError('') }} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} />
                           })}
                         </div>
                       )}
@@ -2135,8 +2139,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               </button>
             </div>
 
-            <label className="mt-5 block text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Preis pro {priceItemToAdd.unit}</label>
-            <div className="mt-1.5 flex items-center rounded-xl border-2 border-[#F5C400] bg-[#F7F7F5] px-3">
+            <div className="mt-5 grid grid-cols-[1fr_120px] gap-2">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Preis</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Einheit</label>
+            </div>
+            <div className="mt-1.5 grid grid-cols-[1fr_120px] gap-2">
+              <div className="flex items-center rounded-xl border-2 border-[#F5C400] bg-[#F7F7F5] px-3">
               <input
                 autoFocus
                 type="number"
@@ -2149,7 +2157,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 placeholder="z. B. 12,50"
                 className="min-w-0 flex-1 bg-transparent py-3 text-lg font-black text-[#2C2C2C] outline-none"
               />
-              <span className="text-sm font-black text-[#2C2C2C]/50">€ / {priceItemToAdd.unit}</span>
+                <span className="text-sm font-black text-[#2C2C2C]/50">€</span>
+              </div>
+              <select
+                value={newDatabaseUnit}
+                onChange={event => { setNewDatabaseUnit(event.target.value); setDatabasePriceError('') }}
+                className="rounded-xl border-2 border-[#2C2C2C]/10 bg-[#F7F7F5] px-2 text-sm font-black text-[#2C2C2C] outline-none focus:border-[#F5C400]"
+              >
+                {UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
+              </select>
             </div>
             {databasePriceError && <div className="mt-2 text-xs font-bold text-red-600">{databasePriceError}</div>}
 
