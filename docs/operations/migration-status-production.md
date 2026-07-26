@@ -6,16 +6,15 @@ Produktionsprojekt: `yqlledouhfovytifeekd`
 
 ## Was sicher belegt ist
 
-- Im Repository liegen 45 versionierte SQL-Migrationen.
+- Im Repository liegen 46 versionierte SQL-Migrationen.
 - Die produktive Anwendung verwendet Datenbankobjekte aus den jüngsten
   Migrationen, und deren fachliche Wirkung wurde bei den letzten
   Produktionsprüfungen kontrolliert.
-- Ein vollständiger, direkt aus `supabase_migrations.schema_migrations`
-  gelesener Ledger liegt im Repository noch nicht vor.
-
-Deshalb werden die 45 Dateien hier **nicht pauschal als ausgeführt markiert**.
-Das Vorhandensein einer Datei beweist nicht, dass sie in Produktion angewendet
-wurde.
+- Der vollständige, direkt aus `supabase_migrations.schema_migrations`
+  gelesene Vorher-/Nachher-Stand liegt als unveränderliches Workflow-Artefakt
+  des Produktionslaufs `30210419583` vor.
+- Die Historie wurde erst nach einem inhaltlichen Kernobjektcheck abgeglichen;
+  drei tatsächlich fehlende Migrationen wurden regulär ausgeführt.
 
 ## Verbindlicher Nachweis
 
@@ -40,13 +39,18 @@ und Ergebnis hier ergänzt.
 - [x] Verschlüsseltes Produktionsbackup erfolgreich erstellt:
       GitHub Actions Run `30204132535`, Artefakt
       `production-db-30204132535`
-- [x] Stagingprojekt aus `supabase/schema.sql` initialisiert und alle
-      45 versionierten Migrationen angewendet:
-      GitHub Actions Run `30204381894`
-- [ ] Produktions-Audit nach Korrektur des Environment-Secrets erneut
-      erfolgreich ausführen
-- [ ] Erst danach über einen Produktionslauf mit `operation: apply` und
-      `DEPLOY-PRODUCTION` entscheiden
-- [ ] Vorher-/Nachher-Artefakt prüfen
-- [ ] Run-ID und bestätigten Stand in diesem Dokument ergänzen
-- [ ] `supabase/check_migrationen.sql` zusätzlich ausführen
+- [x] Stagingprojekt aus `supabase/schema.sql` initialisiert und danach auf
+      alle 46 versionierten Migrationen aktualisiert:
+      GitHub Actions Runs `30204381894` und `30210388805`
+- [x] Produktiven Kernobjektbestand vor dem Historienabgleich mit
+      `supabase/check_migrationen.sql` geprüft
+- [x] Nachweislich vorhandene Altänderungen einmalig in
+      `supabase_migrations.schema_migrations` abgeglichen
+- [x] Drei tatsächlich fehlende Altänderungen regulär angewendet:
+      `20260613213937`, `20260614192523`, `20260720183000`
+- [x] Vollständigen Maler-Katalog mit Migration
+      `20260726183000_complete_maler_catalog` angewendet
+- [x] Produktionslauf erfolgreich:
+      GitHub Actions Run `30210419583`
+- [x] Vorher-/Nachher-Stand als Artefakt
+      `migration-status-production-30210419583` gespeichert
