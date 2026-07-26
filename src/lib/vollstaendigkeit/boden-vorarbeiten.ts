@@ -1,6 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, addMitMenge } from './helpers'
-import { extrahiereFlaeche, extrahiereFlaecheAusAbmessungen } from './boden-basis'
+import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen } from './boden-basis'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 function extrahiereLfdm(lower: string, schluessel: string): number | null {
@@ -9,7 +9,16 @@ function extrahiereLfdm(lower: string, schluessel: string): number | null {
     lower.match(new RegExp(`(\\d+)\\s*(?:laufende meter|lfm|lfdm|lm)\\s*${esc}`, 'i')) ??
     lower.match(new RegExp(`${esc}.*?(\\d+)\\s*(?:laufende meter|lfm|lfdm|lm|meter)`, 'i')) ??
     lower.match(new RegExp(`(\\d+)\\s*${esc}`, 'i'))
-  return m ? parseInt(m[1]) : null
+  if (m) return parseInt(m[1])
+  const zahlwoerter: Record<string, number> = {
+    ein: 1, eine: 1, eins: 1, zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6,
+    sieben: 7, acht: 8, neun: 9, zehn: 10, elf: 11, zwölf: 12, dreizehn: 13,
+    vierzehn: 14, fünfzehn: 15, sechzehn: 16, siebzehn: 17, achtzehn: 18,
+    neunzehn: 19, zwanzig: 20,
+  }
+  const wort = lower.match(new RegExp(`\\b(${Object.keys(zahlwoerter).join('|')})\\s+(?:laufende meter|lfm|lfdm|lm)\\s*${esc}`, 'i'))
+    ?? lower.match(new RegExp(`${esc}.*?\\b(${Object.keys(zahlwoerter).join('|')})\\s+(?:laufende meter|lfm|lfdm|lm|meter)`, 'i'))
+  return wort ? zahlwoerter[wort[1].toLowerCase()] ?? null : null
 }
 
 export function pruefeAltbelag(
@@ -27,7 +36,7 @@ export function pruefeAltbelag(
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
   // Fläche: aus Text, sonst aus bereits vorhandener Altbelag-/Boden-Position (netto)
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
-    ?? ergaenzt.find(p => /altbelag entfernen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
+    ?? bodenNettoflaecheAusPositionen(ergaenzt)
     ?? null
 
   // Kleberreste abschleifen bei verklebtem Altbelag — UNABHÄNGIG davon, ob die Engine
@@ -39,7 +48,8 @@ export function pruefeAltbelag(
   }
 
   // Basis-Altbelag nur, wenn noch keine Entfernen-Position existiert
-  if (!(v.altbelagEntfernen && !hat(ergaenzt, 'altbelag', 'entfernen', 'demontage', 'teppichboden entfernen'))) return
+  const hatBodenEntfernung = ergaenzt.some(p => /altbelag entfernen|teppichboden entfernen|bodenbelag entfernen/i.test(p.beschreibung))
+  if (!v.altbelagEntfernen || hatBodenEntfernung) return
 
   if (hatVerklebt) {
     if (m2) ergaenzt.push({ beschreibung: 'Alten Teppichboden entfernen (verklebt)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
@@ -94,7 +104,7 @@ export function pruefeSockelleisten(
   nurOhneSockel: boolean,
 ): void {
   if (nurOhneSockel) return
-  if (hat(ergaenzt, 'sockel', 'profilleiste')) return
+  const vorhandeneMontage = ergaenzt.find(p => /sockelleisten montieren/i.test(p.beschreibung))
 
   // Streichen/Lackieren → Maler-Gewerk
   if (lower.includes('sockelleisten streichen') || lower.includes('sockelleisten lackieren')) return
@@ -115,9 +125,23 @@ export function pruefeSockelleisten(
 
   const lfm = extrahiereLfdm(lower, 'sockelleisten') ?? extrahiereLfdm(lower, 'sockel')
   if (lfm && lfm > 0 && lfm < 500) {
-    addMitMenge(ergaenzt, 'Sockelleisten montieren', lfm, 'lfdm', `${lfm} lfdm aus Transkript`)
+    if (vorhandeneMontage) {
+      vorhandeneMontage.menge = lfm
+      vorhandeneMontage.einheit = 'lfdm'
+      vorhandeneMontage.konfidenz = 'high'
+      vorhandeneMontage.berechnungsweg = `${lfm} lfdm aus Transkript`
+      vorhandeneMontage.annahmen = []
+    } else {
+      const verlegeRaum = ergaenzt.find(p => /verlegen/i.test(p.beschreibung))?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
+      ergaenzt.push({
+        beschreibung: `Sockelleisten montieren${verlegeRaum ? ` — ${verlegeRaum}` : ''}`,
+        menge: lfm, einheit: 'lfdm', konfidenz: 'high',
+        berechnungsweg: `${lfm} lfdm aus Transkript`, annahmen: [],
+      })
+    }
     return
   }
+  if (vorhandeneMontage || hat(ergaenzt, 'profilleiste montieren')) return
   // Keine Meter genannt → Umfang aus der Bodenfläche schätzen (quadratischer Raum),
   // statt die Position stumm in "fehlende" zu schieben.
   if (!hat(ergaenzt, 'sockel')) {

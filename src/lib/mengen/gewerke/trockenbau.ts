@@ -78,7 +78,7 @@ export function trockenBauEngine(daten: any): MengenErgebnis {
   }
 
   for (const raum of (daten.raeume ?? [])) {
-    const { name = 'Raum', laenge, breite, hoehe, arbeiten = [] } = raum
+    const { name = 'Raum', laenge, breite, arbeiten = [] } = raum
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
 
     if ((arbeitenStr.includes('unterdecke') || arbeitenStr.includes('abgehängt')) && laenge && breite) {

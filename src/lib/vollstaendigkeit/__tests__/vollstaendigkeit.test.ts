@@ -9,10 +9,16 @@ function pos(beschreibung: string, menge = 10, einheit = 'm²'): BerechnetePosit
 // ─── MALER BASIS ───────────────────────────────────────────────────────────
 
 describe('maler – streichen basis', () => {
-  it('ergänzt Wandflächen + Decke + Boden + Sockel wenn streichen erwähnt', () => {
+  it('ergänzt nur die ausdrücklich beauftragten Streicharbeiten', () => {
     const { fehlende } = pruefeUndErgaenzeVollstaendigkeit('maler', [], 'Wände und Decke streichen')
     expect(fehlende).toContain('Wandflächen streichen')
     expect(fehlende).toContain('Deckenfläche streichen')
+    expect(fehlende).not.toContain('Boden schützen / Abdecken')
+    expect(fehlende).not.toContain('Sockelleisten abkleben')
+  })
+
+  it('ergänzt ausdrücklich genannten Bodenschutz und Sockel-Abkleben', () => {
+    const { fehlende } = pruefeUndErgaenzeVollstaendigkeit('maler', [], 'Wände streichen, Boden mit Vlies schützen und Sockelleisten abkleben')
     expect(fehlende).toContain('Boden schützen / Abdecken')
     expect(fehlende).toContain('Sockelleisten abkleben')
   })
@@ -60,6 +66,14 @@ describe('maler – tapete mit direkter Wandfläche + Abzug', () => {
 // ─── MALER SOCKELLEISTEN (Bug 2 Regression) ────────────────────────────────
 
 describe('maler – sockelleisten kategorisierung', () => {
+  it('Wände streichen plus Sockelleisten abkleben wird nicht zu Sockelleisten streichen', () => {
+    const t = 'Der Raum ist fünf Meter lang. Wände und Decke werden gestrichen. Die Sockelleisten werden abgeklebt.'
+    const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], t)
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)].map(b => b.toLowerCase())
+    expect(alle.some(b => b.includes('sockelleisten streichen'))).toBe(false)
+    expect(alle.some(b => b.includes('sockelleisten abkleben'))).toBe(true)
+  })
+
   it('"Sockelleisten aufnehmen" erzeugt KEIN schleifen/streichen', () => {
     const t = 'Nimm bitte die Sockelleisten mit auf, 18 laufende Meter.'
     const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], t)

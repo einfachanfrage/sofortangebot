@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import type { KalkulationsAntworten } from '@/lib/mengen/antworten-verarbeiter'
+import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
+import type { ExtrahierteDaten } from '@/lib/mengen/types'
+import type { BerechnetePosition } from '@/lib/mengen/types'
+import { ergaenzeAusAufnahmeHinweisen } from '@/lib/mengen/aufnahme-hinweise'
 
 export const maxDuration = 90
 
 /**
  * Kombiniert alle Transkripte des Entwurfs und führt die volle Pipeline aus:
  * angebot-extrahieren (Engine + Vollständigkeits-Check) →
- * angebot-generieren (KI-Preise) →
+ * angebot-generieren (ausschließlich betriebliche Datenbankpreise) →
  * quote_items aktualisieren
  */
 export async function POST(req: NextRequest) {
@@ -14,8 +19,14 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  const body = await req.json() as { angebot_id: string; aufnahmen_ids?: string[] }
-  const { angebot_id, aufnahmen_ids } = body
+  const body = await req.json() as {
+    angebot_id: string
+    aufnahmen_ids?: string[]
+    antworten?: KalkulationsAntworten
+    basis_extraktion?: ExtrahierteDaten
+    rueckfragen_ueberspringen?: boolean
+  }
+  const { angebot_id, aufnahmen_ids, antworten = {}, basis_extraktion, rueckfragen_ueberspringen = false } = body
   if (!angebot_id) return NextResponse.json({ error: 'angebot_id fehlt' }, { status: 400 })
 
   // Nur Aufnahmen dieses Users (Sicherheit: Angebot gehört zur Company des Users)
@@ -37,7 +48,7 @@ export async function POST(req: NextRequest) {
   // Aufnahmen laden — per expliziter ID-Liste (vom Frontend) oder Timestamp-Fallback
   let query = supabase
     .from('entwurf_aufnahmen')
-    .select('typ, transkript, notiz_text, verarbeitung_status, erstellt_am')
+    .select('typ, transkript, notiz_text, erkannte_positionen, verarbeitung_status, erstellt_am')
     .eq('angebot_id', angebot_id)
     .order('erstellt_am', { ascending: true })
   if (aufnahmen_ids !== undefined) {
@@ -75,6 +86,15 @@ export async function POST(req: NextRequest) {
   }
 
   // Transkripte kombinieren (Trenner damit GPT Räume auseinanderhält)
+  const erkannteArbeiten: string[] = []
+  for (const aufnahme of aufnahmen) {
+    const chips = Array.isArray(aufnahme.erkannte_positionen) ? aufnahme.erkannte_positionen : []
+    for (const chip of chips) {
+      if (!chip || typeof chip !== 'object') continue
+      const titel = String((chip as { titel?: unknown }).titel ?? '').trim()
+      if (titel && !erkannteArbeiten.includes(titel)) erkannteArbeiten.push(titel)
+    }
+  }
   const combinedText = texte.join('\n\n---\n\n')
 
   // Basis-URL für interne API-Calls
@@ -85,7 +105,7 @@ export async function POST(req: NextRequest) {
   const extRes = await fetch(`${origin}/api/angebot-extrahieren`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Cookie': cookieHeader },
-    body: JSON.stringify({ text: combinedText }),
+    body: JSON.stringify({ text: combinedText, antworten, basis_extraktion }),
   })
 
   if (!extRes.ok) {
@@ -100,7 +120,9 @@ export async function POST(req: NextRequest) {
   const extData = await extRes.json() as {
     mengen?: { positionen?: unknown[]; rueckfragen?: unknown[] }
     hat_rueckfragen?: boolean
+    rueckfragen?: RueckfrageItem[]
     extraktion?: {
+      gewerk?: string
       raeume?: Array<{
         name?: string
         breite?: number | null
@@ -114,8 +136,24 @@ export async function POST(req: NextRequest) {
       }>
     }
   }
-  const positionen = extData.mengen?.positionen ?? []
-  const rueckfragen = extData.mengen?.rueckfragen ?? []
+  const positionen = ergaenzeAusAufnahmeHinweisen(
+    (extData.mengen?.positionen ?? []) as BerechnetePosition[],
+    erkannteArbeiten,
+    combinedText,
+  )
+  const rueckfragen = extData.rueckfragen ?? []
+
+  // Phase 1 endet hier: Noch nichts speichern oder bepreisen, solange wichtige
+  // Angaben fehlen. Nach den Antworten wird dieselbe Pipeline neu berechnet.
+  if (rueckfragen.length > 0 && !rueckfragen_ueberspringen) {
+    return NextResponse.json({
+      ok: true,
+      requires_input: true,
+      positionen_count: 0,
+      rueckfragen,
+      basis_extraktion: extData.extraktion,
+    })
+  }
 
   // Raumdimensionen aus Extraktion in raum_details speichern.
   // WICHTIG: Der Schlüssel muss exakt dem Raumnamen in den Positions-Titeln
@@ -134,6 +172,7 @@ export async function POST(req: NextRequest) {
       const low = rawName.toLowerCase()
       return titelRaeume.find(t => t.toLowerCase() === low)
         ?? titelRaeume.find(t => t.toLowerCase().includes(low) || low.includes(t.toLowerCase()))
+        ?? (titelRaeume.length === 1 && extraktionRaeume.length === 1 ? titelRaeume[0] : undefined)
         ?? rawName
     }
 
@@ -157,8 +196,12 @@ export async function POST(req: NextRequest) {
       const name = raum.name?.trim()
       if (!name) continue
       const key = findeTitelName(name)
-      const fensterAnzahl = raum.fenster?.reduce((s, f) => s + (f.anzahl ?? 1), 0) || undefined
-      const tuerenAnzahl = raum.tueren?.reduce((s, t) => s + (t.anzahl ?? 1), 0) || undefined
+      const fensterAnzahl = raum.fenster?.length
+        ? raum.fenster.reduce((s, f) => s + (f.anzahl ?? 1), 0)
+        : undefined
+      const tuerenAnzahl = raum.tueren?.length
+        ? raum.tueren.reduce((s, t) => s + (t.anzahl ?? 1), 0)
+        : undefined
       // Fläche vs. L×B: hat der Nutzer eine Fläche genannt (Boden/Wand) statt Maße?
       const hatMasse = raum.breite != null && raum.laenge != null
       const bodenflaeche = raum.flaeche ?? raum.deckflaeche_direkt ?? undefined
@@ -173,12 +216,19 @@ export async function POST(req: NextRequest) {
         ...(raum.hoehe != null ? { hoehe: raum.hoehe } : {}),
         ...(wandflaeche != null ? { wandflaeche } : {}),
         ...(bodenflaeche != null ? { bodenflaeche } : {}),
-        ...(tuerenAnzahl ? { tueren: tuerenAnzahl } : {}),
-        ...(fensterAnzahl ? { fenster: fensterAnzahl } : {}),
+        ...(tuerenAnzahl !== undefined ? { tueren: tuerenAnzahl } : {}),
+        ...(fensterAnzahl !== undefined ? { fenster: fensterAnzahl } : {}),
       }
     }
     if (Object.keys(raumDetails).length > 0) {
-      await supabase.from('quotes').update({ raum_details: raumDetails }).eq('id', angebot_id)
+      const { error: raumDetailsError } = await supabase
+        .from('quotes')
+        .update({ raum_details: raumDetails })
+        .eq('id', angebot_id)
+      if (raumDetailsError) {
+        console.error('[positionen-generieren] Raumdaten konnten nicht gespeichert werden')
+        return NextResponse.json({ error: 'Raummaße konnten nicht gespeichert werden' }, { status: 500 })
+      }
     }
   }
 
@@ -192,11 +242,24 @@ export async function POST(req: NextRequest) {
     headers: { 'Content-Type': 'application/json', 'Cookie': cookieHeader },
     body: JSON.stringify({
       text: combinedText,
+      gewerk: extData.extraktion?.gewerk,
       berechnete_positionen: positionen,
     }),
   })
 
   if (!genRes.ok) {
+    if (genRes.status === 422) {
+      const err = await genRes.json().catch(() => ({})) as {
+        error?: string
+        code?: string
+        fehlende_positionen?: Array<{ beschreibung: string; einheit: string }>
+      }
+      return NextResponse.json({
+        error: err.error ?? 'Preise fehlen in der betrieblichen Preisdatenbank',
+        code: err.code ?? 'PREIS_FEHLT',
+        fehlende_positionen: err.fehlende_positionen ?? [],
+      }, { status: 422 })
+    }
     if (genRes.status === 429) {
       const err = await genRes.json().catch(() => ({})) as { error?: string }
       return NextResponse.json({ error: err.error ?? 'Zu viele Anfragen' }, { status: 429 })
@@ -211,6 +274,7 @@ export async function POST(req: NextRequest) {
       quantity: number
       unit: string
       unit_price: number
+      preis_position_id?: string
       berechnungsweg?: string | null
       annahmen?: string[]
     }>
@@ -255,6 +319,7 @@ export async function POST(req: NextRequest) {
       quantity: item.quantity ?? 1,
       unit: item.unit ?? 'Stk',
       unit_price: item.unit_price ?? 0,
+      price_item_id: item.preis_position_id ?? null,
       total_price: (item.quantity ?? 1) * (item.unit_price ?? 0),
       berechnungsweg: item.berechnungsweg ?? null,
       annahmen: item.annahmen ?? [],
@@ -262,7 +327,7 @@ export async function POST(req: NextRequest) {
 
     const { error: insertErr } = await supabase.from('quote_items').insert(itemRows)
     if (insertErr) {
-      console.error('quote_items insert Fehler:', insertErr)
+      console.error('[positionen-generieren] Datenbankeintrag fehlgeschlagen')
       return NextResponse.json({ error: 'Positionen konnten nicht gespeichert werden' }, { status: 500 })
     }
   }

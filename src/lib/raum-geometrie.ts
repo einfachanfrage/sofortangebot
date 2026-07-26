@@ -32,8 +32,10 @@ export interface RaumDimension {
 }
 
 const STANDARD_HOEHE = 2.5
-const TUER_FLAECHE = 2.0   // m² Abzug pro Tür (0,9 × 2,1 ≈ 1,9, gerundet)
-const FENSTER_FLAECHE = 1.5 // m² Abzug pro Fenster (1,2 × 1,0 + Rahmen)
+// Dieselben Standardmaße wie die Mengen-Engine. Abweichende Konstanten hier
+// würden beim Bearbeiten still andere Mengen und Angebotssummen erzeugen.
+const TUER_FLAECHE = 1.89   // 0,90 × 2,10 m
+const FENSTER_FLAECHE = 1.20 // 1,20 × 1,00 m
 const TUER_BREITE = 0.9    // lfdm Abzug Sockelleiste pro Tür
 
 export interface GrundrissErgebnis {
@@ -144,7 +146,14 @@ export function berechneQuantityFuerItem(titleDisplay: string, unit: string, dim
   const titel = titleDisplay.toLowerCase()
 
   if (unit === 'm²') {
-    if (titel.includes('wand')) return m.wandflaeche
+    // Alle Leistungen, die auf derselben Wandfläche aufbauen, müssen beim
+    // Bearbeiten gemeinsam neu berechnet werden. Zuvor wurde nur die Position
+    // mit "Wand" im Titel aktualisiert; Spachteln, Schleifen, Grundieren und
+    // Tapete blieben auf der alten Menge stehen.
+    const istBodenSchleifen = /boden|parkett|estrich|kleber/.test(titel)
+    const istWandLeistung = /wand|tapete|raufaser|spachtel|grundier|voranstrich/.test(titel)
+      || (!istBodenSchleifen && /^schleifen(?:\s|$)/.test(titel))
+    if (istWandLeistung) return m.wandflaeche
     if (titel.includes('deck')) return m.bodenflaeche
     if (titel.includes('boden') || titel.includes('fliesen') || titel.includes('laminat') || titel.includes('parkett') || titel.includes('vinyl')) {
       return m.bodenflaeche

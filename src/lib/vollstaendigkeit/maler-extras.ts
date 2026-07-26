@@ -66,23 +66,36 @@ export function pruefeSpachteln(ergaenzt: BerechnetePosition[], fehlende: string
 export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
   const hatStreichen = v.hatArbeit('streichen')
   const hatSpachteln2 = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3')
-  const hatSchleifenArb = /\bschleif(?:en|t)?\b/i.test(lower) && !lower.includes('abschleif')
-  if ((!hatSpachteln2 && !hatSchleifenArb) || hat(ergaenzt, 'spachtelarbeiten', 'q2')) return
+  const hatSchleifenArb = /\b(?:schleif\w*|geschliff\w*)\b/i.test(lower) && !lower.includes('abschleif')
+  if (!hatSpachteln2 && !hatSchleifenArb) return
+  const spachtelnSchonVorhanden = hat(ergaenzt, 'spachtelarbeiten', 'q2')
+  const schleifenSchonVorhanden = ergaenzt.some(p => /\bschleifen\b/i.test(p.beschreibung))
 
+  const deckeExplizitSpachteln = /deck\w*(?:\s+\w+){0,4}\s+spachtel|spachtel\w*(?:\s+\w+){0,4}\s+deck/i.test(lower)
   const basisPositionen = ergaenzt.filter(p => {
     const d = p.beschreibung.toLowerCase()
-    return (d.includes('wandfläch') || d.includes('deckenfläch')) && p.einheit === 'm²'
+    return (d.includes('wandfläch') || (deckeExplizitSpachteln && d.includes('deckenfläch'))) && p.einheit === 'm²'
   })
   if (basisPositionen.length > 0) {
     for (const basisPos of basisPositionen) {
       const raumMatch = basisPos.beschreibung.match(/ — (.+)$/)
       const raumSuffix = raumMatch ? ` — ${raumMatch[1]}` : ''
-      if (hatSpachteln2) ergaenzt.push({ beschreibung: `Spachtelarbeiten Q2${raumSuffix}`, menge: basisPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`, annahmen: [] })
-      if (hatSchleifenArb) ergaenzt.push({ beschreibung: `Schleifen${raumSuffix}`, menge: basisPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`, annahmen: [] })
+      if (hatSpachteln2 && !spachtelnSchonVorhanden) ergaenzt.push({
+        beschreibung: `Spachtelarbeiten Q2${raumSuffix}`,
+        menge: basisPos.menge,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`,
+        annahmen: [
+          ...basisPos.annahmen,
+          ...(/\bq[1-4]\b/i.test(lower) ? [] : ['Qualitätsstufe Q2 angenommen — bitte prüfen; Q3/Q4 werden abweichend kalkuliert']),
+        ],
+      })
+      if (hatSchleifenArb && !schleifenSchonVorhanden) ergaenzt.push({ beschreibung: `Schleifen${raumSuffix}`, menge: basisPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`, annahmen: [...basisPos.annahmen] })
     }
   } else {
-    if (hatSpachteln2) add(ergaenzt, fehlende, 'Spachtelarbeiten Q2')
-    if (hatSchleifenArb) add(ergaenzt, fehlende, 'Schleifen')
+    if (hatSpachteln2 && !spachtelnSchonVorhanden) add(ergaenzt, fehlende, 'Spachtelarbeiten Q2')
+    if (hatSchleifenArb && !schleifenSchonVorhanden) add(ergaenzt, fehlende, 'Schleifen')
   }
   void hatStreichen // unused but preserved for clarity
 }

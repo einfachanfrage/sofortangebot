@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-let cache: Record<string, string> = {}
+const cache: Record<string, string> = {}
 
 export async function getVaultSecret(name: string): Promise<string | null> {
   if (cache[name]) return cache[name]

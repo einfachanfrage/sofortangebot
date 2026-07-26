@@ -313,6 +313,10 @@ export function wendeImplizitRegelnAn(
   for (const regel of IMPLIZIT_REGELN) {
     if (regel.gewerk && !regel.gewerk.includes(gewerk)) continue
 
+    const istAbdeckRegel = regel.schlussfolgerung.position_beschreibung === 'Abdecken/Abkleben Böden und Möbel'
+    const leerOderBodenRaus = /leer\s*steh|unbewohnt|ohne\s+möbel|möbelfrei|(?:boden|teppich|altbelag).{0,30}(?:raus|entfern|aufnehm|demont)/i.test(transkript)
+    if (istAbdeckRegel && leerOderBodenRaus) continue
+
     const getriggert = regel.trigger.some(t => istGetriggert(t, transkript))
     if (!getriggert) continue
 

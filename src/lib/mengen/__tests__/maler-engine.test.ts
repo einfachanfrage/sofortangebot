@@ -300,10 +300,10 @@ describe('Maler-Engine – freies Sprechen (Bodenfläche + Höhe statt L×B)', (
     expect(wand!.annahmen.join(' ')).toContain('geschätzt')
   })
 
-  it('Decke bekommt die echte Bodenfläche (20 m²)', () => {
+  it('ergänzt keine Decke, wenn nur unspezifisch Streichen und Wandvorarbeiten genannt sind', () => {
     const positionen = pipeline()
     const decke = find(positionen, 'deckenfläche')
-    expect(decke?.menge).toBe(20)
+    expect(decke).toBeUndefined()
   })
 
   it('Vollständigkeits-Check: Raufaser entfernen + Spachteln mit echter Wandfläche, KEIN neu Aufziehen', async () => {

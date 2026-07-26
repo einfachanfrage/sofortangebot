@@ -30,6 +30,10 @@ describe('positionsUntertitel', () => {
     const titel = 'Wandflächen streichen — Wohnzimmer'
     expect(positionsUntertitel(titel)).not.toBe(titel)
   })
+
+  it('Spachtel-Untertext berechnet Schleifen nicht verdeckt doppelt', () => {
+    expect(positionsUntertitel('Spachtelarbeiten Q2 — Wohnzimmer')).not.toMatch(/schleif/i)
+  })
 })
 
 describe('waehleUntertitel — Generator gewinnt, KI nur bei echtem Satz', () => {

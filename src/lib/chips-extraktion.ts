@@ -54,6 +54,37 @@ Typische Preise: Maler 25-45€/m², Fliesen 35-65€/m², Elektro 65-95€/h`
   let positionen: unknown[] = []
   try {
     positionen = JSON.parse(response.choices[0]?.message?.content ?? '{}').positionen ?? []
+    const gesehen = new Set<string>()
+    positionen = positionen.filter(position => {
+      if (!position || typeof position !== 'object') return false
+      const titel = String((position as { titel?: unknown }).titel ?? '')
+        .toLocaleLowerCase('de-DE')
+        .replace(/[^a-zäöüß0-9]/g, '')
+      if (!titel || gesehen.has(titel)) return false
+      gesehen.add(titel)
+      return true
+    })
+
+    // Explizit gesprochene Trittschalldämmung ist eine eigene Leistung. Das
+    // schnelle Modell hat sie wiederholt nur als Teil von Klickvinyl behandelt,
+    // obwohl die finale Kalkulation sie korrekt separat ausgibt.
+    if (/trittschall|trittsdämm|unterlagsmatte/i.test(transkript)) {
+      const hatTrittschall = positionen.some(position =>
+        /trittschall|trittsdämm|unterlagsmatte/i.test(String((position as { titel?: unknown }).titel ?? ''))
+      )
+      if (!hatTrittschall) {
+        const raumSuffix = String((positionen.find(position => /\s+[—–-]\s+/.test(String((position as { titel?: unknown }).titel ?? ''))) as { titel?: string } | undefined)?.titel ?? '')
+          .match(/\s+[—–-]\s+(.+)$/)?.[1]
+        positionen.push({
+          titel: `Trittschalldämmung verlegen${raumSuffix ? ` — ${raumSuffix}` : ''}`,
+          menge: 0,
+          einheit: 'm²',
+          einzelpreis: 0,
+          gesamtpreis: 0,
+          erkannt: true,
+        })
+      }
+    }
   } catch {
     positionen = []
   }

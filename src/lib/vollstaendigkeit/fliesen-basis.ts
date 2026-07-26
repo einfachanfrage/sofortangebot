@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, addMitMenge } from './helpers'
+import { hat, add } from './helpers'
 
 export type FliesenBereich = {
   hatBoden: boolean

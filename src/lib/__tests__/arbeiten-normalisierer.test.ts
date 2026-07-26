@@ -155,6 +155,7 @@ describe('istKomplett & hatAkzentwand', () => {
 
 describe('erkenneScope — nur Wände / Decke / Boden (alle Flexionen)', () => {
   it.each([
+    'Die Wände grundieren und anschließend zweimal weiß streichen',
     'Wohnzimmer streichen, nur die Wände, 5 mal 4 Meter',  // der Beta-Bug
     'nur Wände streichen',
     'bloß die Wände',

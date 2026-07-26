@@ -42,13 +42,22 @@ export function pruefeStreichenBasis(
   nurDecke: boolean,
   nurWaende: boolean,
   nurBoden: boolean,
+  lower: string,
 ): void {
   if (!v.hatArbeit('streichen')) return
 
   if (!nurDecke && !nurBoden && !hat(ergaenzt, 'wand', 'wandfläche')) add(ergaenzt, fehlende, 'Wandflächen streichen')
   if (!nurWaende && !nurBoden && !hat(ergaenzt, 'decke', 'deckenfläche')) add(ergaenzt, fehlende, 'Deckenfläche streichen')
-  if (!nurDecke && !hat(ergaenzt, 'boden schütz', 'abdeck', 'abdecken')) add(ergaenzt, fehlende, 'Boden schützen / Abdecken')
-  if (!nurDecke && !nurBoden && !hat(ergaenzt, 'sockel', 'abkleben')) add(ergaenzt, fehlende, 'Sockelleisten abkleben')
+  // Schutz- und Abklebearbeiten nur ausgeben, wenn sie im Auftrag tatsächlich
+  // genannt wurden. Keine ungefragten Zusatzpositionen erzeugen.
+  const bodenSchutzGenannt = /(?:boden|böden).{0,35}(?:schütz|abdeck|vlies)|(?:schütz|abdeck|vlies).{0,35}(?:boden|böden)/i.test(lower)
+  const sockelAbklebenGenannt = /sockel(?:leisten)?.{0,35}(?:abkl|abgekl)|(?:abkl|abgekl).{0,35}sockel(?:leisten)?/i.test(lower)
+  if (!nurBoden && bodenSchutzGenannt && !hat(ergaenzt, 'boden schütz', 'boden abdeck', 'abdeckfolie')) {
+    add(ergaenzt, fehlende, 'Boden schützen / Abdecken')
+  }
+  if (!nurDecke && !nurBoden && sockelAbklebenGenannt && !hat(ergaenzt, 'sockelleisten abkl')) {
+    add(ergaenzt, fehlende, 'Sockelleisten abkleben')
+  }
 }
 
 // Grundierung: Neubau/Erstanstrich triggert automatisch
@@ -73,7 +82,7 @@ export function pruefeGrundierung(
       einheit: 'm²',
       konfidenz: 'high',
       berechnungsweg: `Gleiche Fläche wie Wandflächen (${wandPos.menge} m²)`,
-      annahmen: [],
+      annahmen: [...wandPos.annahmen],
     })
   } else {
     add(ergaenzt, fehlende, 'Voranstrich / Grundierung')

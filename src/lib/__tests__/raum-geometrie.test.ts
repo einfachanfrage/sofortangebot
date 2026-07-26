@@ -63,9 +63,9 @@ describe('berechneGrundriss — rechtwinklige Polygone', () => {
 describe('berechneRaumMasse — Modi', () => {
   it('rechteck: Wand = Umfang×H − Öffnungen, Boden = b×l', () => {
     const m = berechneRaumMasse({ modus: 'rechteck', breite: 5, laenge: 4, hoehe: 2.6, tueren: 1, fenster: 2 })
-    // Umfang 18, ×2.6 = 46.8, − (1×2 + 2×1.5=5) = 41.8
+    // Umfang 18, ×2.6 = 46.8, − (1×1.89 + 2×1.20=4.29) = 42.51
     expect(m.umfang).toBe(18)
-    expect(m.wandflaeche).toBe(41.8)
+    expect(m.wandflaeche).toBe(42.51)
     expect(m.bodenflaeche).toBe(20)
   })
 
@@ -90,9 +90,9 @@ describe('berechneRaumMasse — Modi', () => {
         { laenge: 2, turn: 'L' }, { laenge: 3, turn: 'R' }, { laenge: 4, turn: 'R' },
       ],
     })
-    // Umfang 18 × 2.5 = 45, − (2 + 1.5) = 41.5
+    // Umfang 18 × 2.5 = 45, − (1.89 + 1.20) = 41.91
     expect(m.umfang).toBe(18)
-    expect(m.wandflaeche).toBe(41.5)
+    expect(m.wandflaeche).toBe(41.91)
     expect(m.bodenflaeche).toBe(16)
   })
 })
@@ -101,7 +101,21 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
   const rechteck = { modus: 'rechteck' as const, breite: 5, laenge: 4, hoehe: 2.5, tueren: 1, fenster: 2 }
 
   it('Wandflächen streichen → Wandfläche', () => {
-    expect(berechneQuantityFuerItem('Wandflächen streichen', 'm²', rechteck)).toBe(40) // 18×2.5=45 −5 =40
+    expect(berechneQuantityFuerItem('Wandflächen streichen', 'm²', rechteck)).toBe(40.71) // 18×2.5=45 −4.29
+  })
+
+  it('nutzt für 5,20 × 4,10 × 2,70 mit zwei Fenstern und einer Tür exakt 45,93 m²', () => {
+    const dim = { modus: 'rechteck' as const, breite: 4.1, laenge: 5.2, hoehe: 2.7, tueren: 1, fenster: 2 }
+    expect(berechneRaumMasse(dim).wandflaeche).toBe(45.93)
+    for (const titel of [
+      'Wandflächen streichen 2x',
+      'Spachtelarbeiten Q2',
+      'Schleifen',
+      'Voranstrich / Grundierung',
+      'Tapete entfernen',
+    ]) {
+      expect(berechneQuantityFuerItem(titel, 'm²', dim), titel).toBe(45.93)
+    }
   })
   it('Deckenfläche streichen → Bodenfläche', () => {
     expect(berechneQuantityFuerItem('Deckenfläche streichen', 'm²', rechteck)).toBe(20)

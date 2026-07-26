@@ -126,8 +126,6 @@ export function parseZahlWort(text: string): number | null {
 
 // ── ZAHLWÖRTER IM TEXT ERSETZEN ───────────────────────────────────────────────
 
-const EINHEITEN_REGEX = 'm²|lfdm|m³|cm|meter|quadrat|stück|stk|quadratmeter|laufmeter|kubikmeter'
-
 export function ersetzeZahlenWorte(text: string): string {
   let result = text
 

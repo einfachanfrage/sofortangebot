@@ -141,7 +141,7 @@ export function gruppiereNachRaum<T extends {
   // Kein einziges Item hat Raum-Marker → kein Grouping
   if (hatRaeume === 0) return null
 
-  let raeume: RaumGruppe[] = Array.from(raumMap.entries()).map(([raumName, raumItems]) => ({
+  const raeume: RaumGruppe[] = Array.from(raumMap.entries()).map(([raumName, raumItems]) => ({
     raumName,
     emoji: getRaumEmoji(raumName),
     items: raumItems,

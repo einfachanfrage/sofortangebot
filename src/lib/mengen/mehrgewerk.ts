@@ -101,7 +101,12 @@ export function berechneUndPruefeAlleGewerke(
     fehlende.push(...res.fehlende)
   }
 
-  // 3) Finaler Exakt-Dedup: identische Position (gleicher Titel + gleiche Menge)
+  // 3) "Boden schützen" (Maler) ist überflüssig, wenn im selben Raum ein neuer
+  //    Boden verlegt wird — man schützt keinen Boden, den man ersetzt.
+  positionen = entferneRedundantenBodenschutz(positionen)
+  positionen = entferneRedundantesSockelAbkleben(positionen)
+
+  // 4) Finaler Exakt-Dedup: identische Position (gleicher Titel + gleiche Menge)
   //    kann nie doppelt gewollt sein (verschiedene Räume tragen ihr "— Raum"-Suffix)
   positionen = dedupExakt(positionen)
 
@@ -116,6 +121,50 @@ function dedupExakt(positionen: BerechnetePosition[]): BerechnetePosition[] {
     if (seen.has(key)) return false
     seen.add(key)
     return true
+  })
+}
+
+const BODENSCHUTZ_POSITION = /boden\s*(?:schütz|schuetz)|boden[^—–]*(?:abdeck|schutz)/i
+const BODEN_VERLEGEN_POSITION = /\bverleg(?:en|ung)\b/i
+
+function raumSuffix(beschreibung: string): string | null {
+  const match = beschreibung.match(/\s[—–]\s*(.+)$/)
+  return match?.[1]?.trim().toLocaleLowerCase('de-DE') || null
+}
+
+/**
+ * Entfernt Bodenschutz nur bei eindeutig gleicher Raumzuordnung. Eine
+ * pauschale Schutzposition ohne Raum-Suffix bleibt bestehen, weil sie sich auf
+ * andere Flächen oder Laufwege beziehen kann.
+ */
+export function entferneRedundantenBodenschutz(positionen: BerechnetePosition[]): BerechnetePosition[] {
+  const raeumeMitNeuemBoden = new Set(
+    positionen
+      .filter(p => BODEN_VERLEGEN_POSITION.test(p.beschreibung))
+      .map(p => raumSuffix(p.beschreibung))
+      .filter((raum): raum is string => raum !== null)
+  )
+
+  if (raeumeMitNeuemBoden.size === 0) return positionen
+
+  return positionen.filter(position => {
+    if (!BODENSCHUTZ_POSITION.test(position.beschreibung)) return true
+    const raum = raumSuffix(position.beschreibung)
+    return !raum || !raeumeMitNeuemBoden.has(raum)
+  })
+}
+
+export function entferneRedundantesSockelAbkleben(positionen: BerechnetePosition[]): BerechnetePosition[] {
+  const raeumeMitMontage = new Set(
+    positionen
+      .filter(p => /sockelleisten montieren/i.test(p.beschreibung))
+      .map(p => raumSuffix(p.beschreibung))
+      .filter((raum): raum is string => raum !== null)
+  )
+  return positionen.filter(position => {
+    if (!/sockelleisten abkleben/i.test(position.beschreibung)) return true
+    const raum = raumSuffix(position.beschreibung)
+    return !raum || !raeumeMitMontage.has(raum)
   })
 }
 

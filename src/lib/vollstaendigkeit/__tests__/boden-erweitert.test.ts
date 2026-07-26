@@ -7,6 +7,16 @@ function find(positionen: BerechnetePosition[], substr: string) {
 }
 
 describe('Boden – 10 Integrationstests', () => {
+  it('ergänzt bei Klickvinyl die notwendige Trittschalldämmung', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'boden_parkett',
+      [{ beschreibung: 'Klick-Vinyl verlegen inkl. 10% Verschnitt — Wohnzimmer', menge: 23.45, einheit: 'm²', konfidenz: 'high', berechnungsweg: '21.32 m² + 10% Verschnitt', annahmen: [] }],
+      'Klickvinyl im Wohnzimmer verlegen',
+    )
+    const trittschall = positionen.find(position => /trittschall/i.test(position.beschreibung))
+    expect(trittschall?.menge).toBe(21.32)
+  })
+
   it('Test 1: Klick-Vinyl 34 m² + 10% Verschnitt + Estrich grundieren + Ausgleichsmasse 3mm', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Wohnzimmer mit Klick-Vinyl auslegen. Bodenfläche 34 Quadratmeter. 10 Prozent Verschnitt. Estrich grundieren und Ausgleichsmasse glattgezogen, 3 Millimeter stark.'
@@ -53,9 +63,7 @@ describe('Boden – 10 Integrationstests', () => {
       'Nadelvlies-Teppichboden. Raum ist 5,50 Meter lang und 4,00 Meter breit. Bahnenware vollflächig verklebt mit Öko-Klebstoff.'
     )
 
-    const untergrund = find(positionen, 'untergrundvorbereitung')
-    expect(untergrund).toBeDefined()
-    expect(untergrund?.menge).toBeCloseTo(22, 1)
+    expect(find(positionen, 'untergrundvorbereitung')).toBeUndefined()
 
     const teppich = find(positionen, 'nadelvlies')
     expect(teppich).toBeDefined()
@@ -147,9 +155,7 @@ describe('Boden – 10 Integrationstests', () => {
       'Arztpraxis: 65 Quadratmeter Linoleum verlegen. Thermisches Verschweißen der Fugen mit passendem Schweißdraht. Schätzungsweise 50 laufende Meter Fuge, die gefräst und verschweißt werden müssen.'
     )
 
-    const untergrund = find(positionen, 'untergrundvorbereitung')
-    expect(untergrund).toBeDefined()
-    expect(untergrund?.menge).toBe(65)
+    expect(find(positionen, 'untergrundvorbereitung')).toBeUndefined()
 
     const lino = find(positionen, 'linoleum')
     expect(lino).toBeDefined()
@@ -190,9 +196,7 @@ describe('Boden – 10 Integrationstests', () => {
       '50 Quadratmeter Fertigparkett, klassisches Fischgrät-Muster vollflächig verklebt. Verschnitt 15 Prozent.'
     )
 
-    const untergrund = find(positionen, 'untergrundvorbereitung')
-    expect(untergrund).toBeDefined()
-    expect(untergrund?.menge).toBe(50)
+    expect(find(positionen, 'untergrundvorbereitung')).toBeUndefined()
 
     const fischgraet = find(positionen, 'fischgrät')
     expect(fischgraet).toBeDefined()

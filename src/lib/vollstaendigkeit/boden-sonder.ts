@@ -1,6 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add } from './helpers'
-import { extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
+import { hat } from './helpers'
+import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 function round2(n: number): number { return Math.round(n * 100) / 100 }
@@ -53,6 +53,7 @@ export function pruefeParkettSchleifen(
 
   // Fläche: aus Text, sonst aus vorhandener Schleif-/Boden-Position
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+    ?? bodenNettoflaecheAusPositionen(ergaenzt)
     ?? ergaenzt.find(p => /parkett schleifen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
     ?? null
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
@@ -216,11 +217,13 @@ export function pruefeTrittschalldaemmung(
     lower.includes('trittschalldämmung') ||
     lower.includes('trittschalldaemmung') ||
     lower.includes('gehschall') ||
-    (lower.includes('pur-schaum') || lower.includes('pur schaum'))
+    (lower.includes('pur-schaum') || lower.includes('pur schaum')) ||
+    lower.includes('klickvinyl') || lower.includes('klick-vinyl')
   if (!hatDaemmung) return
   if (hat(ergaenzt, 'trittschall', 'pur-schaum')) return
 
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+    ?? bodenNettoflaecheAusPositionen(ergaenzt)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
   const istHochwertig = lower.includes('hochwertig') || lower.includes('pur') || lower.includes('alufolie') || lower.includes('alukaschiert') || lower.includes('gehschall')
   const beschreibung = istHochwertig ? 'Trittschalldämmung hochwertig (PUR-Schaum, alukaschiert)' : 'Trittschalldämmung'

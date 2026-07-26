@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../index'
-import type { BerechnetePosition } from '../../mengen/types'
-
-function pos(beschreibung: string): BerechnetePosition {
-  return { beschreibung, menge: 1, einheit: 'Stück', konfidenz: 'high', berechnungsweg: 'test', annahmen: [] }
-}
 
 describe('elektro – basis', () => {
   it('3 Steckdosen → Stück-Position mit Menge 3', () => {
@@ -60,8 +55,7 @@ describe('elektro – spezial', () => {
   })
 
   it('Wallbox mit Zuleitungslänge → Zuleitung als lfdm', () => {
-    const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('elektro', [], 'Wallbox einbauen, Zuleitung 15 Meter')
-    const alle = [...positionen.map(p => p.beschreibung), ...fehlende]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('elektro', [], 'Wallbox einbauen, Zuleitung 15 Meter')
     const zuleitungPos = positionen.find(p => p.beschreibung.includes('Zuleitung'))
     expect(zuleitungPos?.menge).toBe(15)
     expect(zuleitungPos?.einheit).toBe('lfdm')

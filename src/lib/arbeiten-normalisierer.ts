@@ -133,6 +133,18 @@ export function erkenneScope(text: string): RaumScope {
     else if (OHNE_WAENDE.test(t) && new RegExp(FLAECHE.decke, 'i').test(t)) nurDecke = true
   }
 
+  // Eine ausdrücklich benannte Fläche begrenzt den Auftrag ebenfalls. Der Nutzer
+  // muss nicht künstlich "nur die Wände" sagen.
+  if (!nurWaende && !nurDecke && !nurBoden) {
+    const arbeit = '(?:streich|anstrich|grundier|tapezier|spachtel|glätt)'
+    const waende = '(?:w[äa]nd(?:e|en|flächen?))'
+    const decke = '(?:deck(?:e|en|enfläche|enflächen))'
+    const hatWaendeArbeit = new RegExp(`\\b${waende}\\b(?:\\s+\\w+){0,3}\\s+${arbeit}|${arbeit}\\w*(?:\\s+\\w+){0,3}\\s+\\b${waende}\\b`, 'i').test(t)
+    const hatDeckenArbeit = new RegExp(`\\b${decke}\\b(?:\\s+\\w+){0,3}\\s+${arbeit}|${arbeit}\\w*(?:\\s+\\w+){0,3}\\s+\\b${decke}\\b`, 'i').test(t)
+    if (hatWaendeArbeit && !hatDeckenArbeit) nurWaende = true
+    else if (hatDeckenArbeit && !hatWaendeArbeit) nurDecke = true
+  }
+
   return { nurWaende, nurDecke, nurBoden }
 }
 

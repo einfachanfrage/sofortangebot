@@ -94,8 +94,8 @@ export async function matchePositionen(
       }
     })
 
-  } catch (err) {
-    console.warn('Kontextuelles Matching fehlgeschlagen, Fallback auf kein Match:', err)
+  } catch {
+    console.warn('[ki-flow] Kontextuelles Matching fehlgeschlagen; Fallback aktiv')
     // Fallback: alle Positionen ohne Match zurückgeben
     return positionen.map(pos => ({
       ...pos,

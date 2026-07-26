@@ -163,6 +163,7 @@ export interface Quote {
   skonto_tage?: number | null
   widerruf_beilegen?: boolean | null
   preis_darstellung?: 'netto' | 'brutto' | null
+  raum_details?: Record<string, unknown> | null
   revision: number
   original_id: string | null
   customer?: Customer
@@ -227,6 +228,9 @@ export interface QuoteItem {
   unit: string
   unit_price: number
   total_price: number
+  price_item_id?: string | null
+  berechnungsweg?: string | null
+  annahmen?: string[]
   vob_norm: string | null
   din_normen: string[] | null
 }

@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add } from './helpers'
+import { hat } from './helpers'
 
 export function pruefeWaermepumpe(
   ergaenzt: BerechnetePosition[],

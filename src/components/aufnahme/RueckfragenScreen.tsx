@@ -4,15 +4,16 @@ import { useState, useEffect } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { RueckfrageItem, SchnellAntwort } from '@/lib/mengen/rueckfragen-generator'
 
-interface Antwort {
+export interface RueckfragenAntwort {
   wert: number | number[]
   einheit: string
 }
 
 interface Props {
   fragen: RueckfrageItem[]
-  onFertig: (antworten: Record<string, Antwort>) => void
+  onFertig: (antworten: Record<string, RueckfragenAntwort>) => void
   onUeberspringen: () => void
+  onZurueck?: () => void
 }
 
 // ── Masse Einzel ────────────────────────────────────────────────────────────
@@ -22,12 +23,18 @@ function MasseEinzelInput({
   onChange,
 }: {
   frage: RueckfrageItem
-  antwort: Antwort | null
-  onChange: (a: Antwort) => void
+  antwort: RueckfragenAntwort | null
+  onChange: (a: RueckfragenAntwort) => void
 }) {
   const current = Array.isArray(antwort?.wert) ? antwort!.wert as number[] : [0, 0]
   const [feld1, setFeld1] = useState(current[0] > 0 ? String(current[0]).replace('.', ',') : '')
   const [feld2, setFeld2] = useState(current[1] > 0 ? String(current[1]).replace('.', ',') : '')
+  const [eingabeart, setEingabeart] = useState<'masse' | 'flaeche'>(
+    antwort && !Array.isArray(antwort.wert) && antwort.einheit === 'm²' ? 'flaeche' : 'masse',
+  )
+  const [direkteFlaeche, setDirekteFlaeche] = useState(
+    antwort && !Array.isArray(antwort.wert) && antwort.einheit === 'm²' ? String(antwort.wert).replace('.', ',') : '',
+  )
 
   const frageText = frage.frage.toLowerCase()
   const istFenster = frageText.includes('fenster')
@@ -90,8 +97,21 @@ function MasseEinzelInput({
         </div>
       )}
 
+      {!istOeffnung && (
+        <div className="grid grid-cols-2 rounded-xl bg-[#2C2C2C]/5 p-1">
+          <button type="button" onClick={() => setEingabeart('masse')}
+            className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'masse' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
+            Länge × Breite
+          </button>
+          <button type="button" onClick={() => setEingabeart('flaeche')}
+            className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'flaeche' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
+            Fläche in m²
+          </button>
+        </div>
+      )}
+
       {/* Felder */}
-      <div className="flex items-center gap-3">
+      {(istOeffnung || eingabeart === 'masse') && <div className="flex items-center gap-3">
         <div className="flex-1">
           <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">{label1}</div>
           <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
@@ -121,10 +141,28 @@ function MasseEinzelInput({
             <span className="text-[#2C2C2C]/40 font-semibold text-sm shrink-0">m</span>
           </div>
         </div>
-      </div>
+      </div>}
+
+      {!istOeffnung && eingabeart === 'flaeche' && (
+        <div>
+          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">Fläche</div>
+          <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
+            <input type="number" inputMode="decimal" autoFocus placeholder="z. B. 18"
+              value={direkteFlaeche}
+              onChange={e => {
+                setDirekteFlaeche(e.target.value)
+                const wert = parseFloat(e.target.value.replace(',', '.'))
+                if (wert > 0) onChange({ wert, einheit: 'm²' })
+              }}
+              className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none w-0" />
+            <span className="text-[#2C2C2C]/40 font-semibold text-sm">m²</span>
+          </div>
+          <div className="mt-2 text-xs font-semibold text-[#2C2C2C]/45">Bei Wandarbeiten wird anschließend die fertige Wandfläche verwendet.</div>
+        </div>
+      )}
 
       {/* Live-Vorschau */}
-      {flaeche !== null && (
+      {eingabeart === 'masse' && flaeche !== null && (
         <div className="bg-[#F5C400]/15 border border-[#F5C400]/40 rounded-xl px-4 py-3">
           <div className="font-black text-[#2C2C2C] text-sm">✓ Fläche: {String(flaeche).replace('.', ',')} m²</div>
           {umfang !== null && (
@@ -143,8 +181,8 @@ function MasseMehrereInput({
   onChange,
 }: {
   frage: RueckfrageItem
-  antwort: Antwort | null
-  onChange: (a: Antwort) => void
+  antwort: RueckfragenAntwort | null
+  onChange: (a: RueckfragenAntwort) => void
 }) {
   const count = frage.plural_count ?? 2
   const flat = Array.isArray(antwort?.wert) ? antwort!.wert as number[] : []
@@ -207,8 +245,8 @@ function HoeheInput({
   onChange,
 }: {
   frage: RueckfrageItem
-  antwort: Antwort | null
-  onChange: (a: Antwort) => void
+  antwort: RueckfragenAntwort | null
+  onChange: (a: RueckfragenAntwort) => void
 }) {
   const [andereHoehe, setAndereHoehe] = useState('')
   const [zeigeAndere, setZeigeAndere] = useState(false)
@@ -269,10 +307,11 @@ function AnzahlInput({
   onChange,
 }: {
   frage: RueckfrageItem
-  antwort: Antwort | null
-  onChange: (a: Antwort) => void
+  antwort: RueckfragenAntwort | null
+  onChange: (a: RueckfragenAntwort) => void
 }) {
   const [freitext, setFreitext] = useState('')
+  const [zeigeFreieAnzahl, setZeigeFreieAnzahl] = useState(false)
 
   if (frage.schnell_antworten.length === 0) {
     return (
@@ -298,7 +337,8 @@ function AnzahlInput({
   }
 
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-4 gap-2">
       {frage.schnell_antworten.map(s => {
         const aktiv = !Array.isArray(antwort?.wert) && antwort?.wert === s.wert
         return (
@@ -311,26 +351,50 @@ function AnzahlInput({
           </button>
         )
       })}
+        <button onClick={() => setZeigeFreieAnzahl(true)}
+          className={`rounded-2xl py-5 font-black text-base transition-colors border-2 ${zeigeFreieAnzahl ? 'bg-[#F5C400] border-[#F5C400]' : 'bg-white border-[#2C2C2C]/8'}`}>
+          Mehr …
+        </button>
+      </div>
+      {zeigeFreieAnzahl && (
+        <div className="flex items-center gap-2 bg-white border-2 border-[#F5C400] rounded-xl px-4 py-3">
+          <input type="number" inputMode="numeric" min="0" autoFocus placeholder="Beliebige Anzahl"
+            value={freitext}
+            onChange={e => {
+              setFreitext(e.target.value)
+              const wert = Number(e.target.value)
+              if (Number.isInteger(wert) && wert >= 0) onChange({ wert, einheit: 'Stück' })
+            }}
+            className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none" />
+          <span className="text-[#2C2C2C]/40 font-semibold">Stück</span>
+        </div>
+      )}
     </div>
   )
 }
 
 // ── Haupt-Screen ────────────────────────────────────────────────────────────
-export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen }: Props) {
+export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, onZurueck }: Props) {
   const [aktuelleIdx, setAktuelleIdx] = useState(0)
-  const [antworten, setAntworten] = useState<Record<string, Antwort>>({})
+  const [antworten, setAntworten] = useState<Record<string, RueckfragenAntwort>>({})
   const [fertig, setFertig] = useState(false)
 
-  const frage = fragen[aktuelleIdx]
+  const flaechenRaumIds = new Set(Object.entries(antworten)
+    .filter(([id, antwort]) => /^masse_/.test(id) && antwort.einheit === 'm²' && !Array.isArray(antwort.wert))
+    .map(([id]) => id.replace(/^masse_/, '')))
+  const sichtbareFragen = fragen.filter(item => ![...flaechenRaumIds].some(raumId =>
+    item.id === `hoehe_${raumId}` || item.id === `tueren_anzahl_${raumId}` || item.id === `fenster_anzahl_${raumId}`
+  ))
+  const frage = sichtbareFragen[Math.min(aktuelleIdx, sichtbareFragen.length - 1)]
   const antwort = antworten[frage.id] ?? null
   const hatAntwort = antwort !== null
 
-  function setAntwort(a: Antwort) {
+  function setAntwort(a: RueckfragenAntwort) {
     setAntworten(prev => ({ ...prev, [frage.id]: a }))
   }
 
   async function weiter() {
-    if (aktuelleIdx < fragen.length - 1) {
+    if (aktuelleIdx < sichtbareFragen.length - 1) {
       setAktuelleIdx(i => i + 1)
     } else {
       setFertig(true)
@@ -353,16 +417,16 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen }:
       {/* Header */}
       <div className="bg-[#2C2C2C] px-5 pt-12 pb-5">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={onUeberspringen} className="text-white/50 text-sm font-semibold">← Zurück</button>
+          <button onClick={onZurueck ?? onUeberspringen} className="text-white/50 text-sm font-semibold">← Zurück</button>
           <button onClick={onUeberspringen} className="text-white/40 text-sm font-semibold">Überspringen</button>
         </div>
         <div className="text-white/50 text-[10px] font-black uppercase tracking-widest mb-1">
-          Kurze Rückfrage {fragen.length > 1 ? `${aktuelleIdx + 1} von ${fragen.length}` : ''}
+          Kurze Rückfrage {sichtbareFragen.length > 1 ? `${aktuelleIdx + 1} von ${sichtbareFragen.length}` : ''}
         </div>
         {/* Fortschrittsbalken */}
-        {fragen.length > 1 && (
+        {sichtbareFragen.length > 1 && (
           <div className="flex gap-1.5 mb-3">
-            {fragen.map((_, i) => (
+            {sichtbareFragen.map((_, i) => (
               <div
                 key={i}
                 className={`h-1.5 flex-1 rounded-full transition-colors ${i <= aktuelleIdx ? 'bg-[#F5C400]' : 'bg-white/15'}`}

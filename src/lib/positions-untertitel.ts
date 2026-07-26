@@ -10,11 +10,11 @@ const REGELN: Regel[] = [
   // — Maler: Wand/Decke/Boden —
   { test: /wandfläche(n)?\s*streich|wände\s*streich/i, text: 'Deckender 2-fach-Anstrich, Kanten sauber abgeschnitten' },
   { test: /decken(fläche)?\s*streich|decke\s*streich/i, text: 'Deckenanstrich in 2 Lagen, gleichmäßig deckend' },
-  { test: /spachtel|glätt/i, text: 'Wände spachteln & schleifen für einen ebenen Untergrund' },
+  { test: /spachtel|glätt/i, text: 'Wände für einen ebenen Untergrund vollflächig spachteln' },
   { test: /grundier|voranstrich|tiefengrund/i, text: 'Grundierung für gleichmäßige Saugfähigkeit und Haftung' },
   { test: /tapete\s*(entfern|ablös|abnehm|abreiß)|raufaser\s*(entfern|ab)/i, text: 'Alte Tapete ablösen und fachgerecht entsorgen' },
   { test: /(raufaser|vlies|tapete)\s*(aufzieh|tapezier|aufbring)/i, text: 'Neue Bahnen faltenfrei und stoßgenau aufziehen' },
-  { test: /boden\s*(schütz|abdeck)|abdeckvlies|abdeckfolie/i, text: 'Böden und Möbel mit Abdeckvlies schützen' },
+  { test: /boden\s*(schütz|abdeck)|abdeckvlies|abdeckfolie/i, text: 'Bodenfläche mit Abdeckvlies schützen' },
   { test: /sockelleisten\s*abkleb|sockel\s*abkleb/i, text: 'Sockelleisten und Kanten sauber abkleben' },
   { test: /fenster.*abkleb|abkleb.*fenster|rahmen\s*abkleb/i, text: 'Rahmen und Flächen sauber abkleben' },
   // — Lackieren —

@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, anzahlAus } from './helpers'
+import { hat, anzahlAus } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 export function pruefeBodenAbdecken(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
@@ -51,6 +51,7 @@ export function pruefeLampenAbkleben(ergaenzt: BerechnetePosition[], lower: stri
   if (anzPendel > 0) ergaenzt.push({ beschreibung: 'Pendelleuchten abkleben', menge: anzPendel, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzPendel} Pendelleuchten aus Transkript`, annahmen: [] })
   if (anzSpots > 0) ergaenzt.push({ beschreibung: 'Einbauspots abkleben', menge: anzSpots, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzSpots} Spots aus Transkript`, annahmen: [] })
   if (anzLampen > 0 && anzPendel === 0 && anzSpots === 0) ergaenzt.push({ beschreibung: 'Lampen / Leuchten abkleben', menge: anzLampen, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzLampen} Leuchte(n) aus Transkript`, annahmen: [] })
+  if (anzLampen === 0 && anzPendel === 0 && anzSpots === 0) ergaenzt.push({ beschreibung: 'Lampen / Leuchten abkleben', menge: 1, einheit: 'Stück', konfidenz: 'medium', berechnungsweg: 'Eine genannte Leuchte', annahmen: ['Anzahl nicht ausdrücklich genannt'] })
 }
 
 export function pruefeHeizkAbkleben(ergaenzt: BerechnetePosition[], lower: string, v: AuftragsVerstaendnis, hatHeizkLackierenFlag: boolean): void {

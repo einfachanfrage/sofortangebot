@@ -29,7 +29,7 @@ export function pruefeMaler(
 ): void {
   const { nurDecke, nurWaende, nurBoden } = wendeNurXFilterAn(ergaenzt, verstaendnis)
 
-  pruefeStreichenBasis(ergaenzt, fehlende, verstaendnis, nurDecke, nurWaende, nurBoden)
+  pruefeStreichenBasis(ergaenzt, fehlende, verstaendnis, nurDecke, nurWaende, nurBoden, lower)
   pruefeGrundierung(ergaenzt, fehlende, verstaendnis, lower)
 
   pruefeTuerenLackieren(ergaenzt, lower, verstaendnis, meta)

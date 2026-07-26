@@ -16,6 +16,10 @@ import {
   extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereAbzug,
   extrahiereTorMasse, zaehleFenster, zaehleTueren,
 } from '@/lib/extraktion-masse'
+import { bereiteRueckfragenVor } from '@/lib/mengen/rueckfragen-flow'
+import type { KalkulationsAntworten } from '@/lib/mengen/antworten-verarbeiter'
+import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
+import { konsolidierePlatzhalterRaum } from '@/lib/mengen/raum-konsolidierung'
 
 export const maxDuration = 60
 
@@ -27,21 +31,28 @@ export interface ExtraktionResponse {
   implizit_positionen: string[]
   implizit_flags: Record<string, unknown>
   korrekturen_erkannt: number
+  rueckfragen: RueckfrageItem[]
 }
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+  if (!user || !session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  const blocked = await pruefeKIZugriff(session.user.id, 'ki_extraktion')
+  const blocked = await pruefeKIZugriff(user.id, 'ki_extraktion')
   if (blocked) return blocked
 
-  const { text } = await req.json() as { text: string }
+  const { text, antworten = {}, basis_extraktion } = await req.json() as {
+    text: string
+    antworten?: KalkulationsAntworten
+    basis_extraktion?: ExtrahierteDaten
+  }
   if (!text?.trim()) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
+  if (text.length > 50_000) return NextResponse.json({ error: 'Text zu lang' }, { status: 413 })
 
   // Gewerk-Hinweis aus Company-Profil
-  const { data: company } = await supabase.from('companies').select('gewerke').eq('user_id', session.user.id).single()
+  const { data: company } = await supabase.from('companies').select('gewerke').eq('user_id', user.id).single()
   const gewerke = (company as { gewerke?: string[] } | null)?.gewerke ?? []
   const gewerk_hinweis = gewerke.length > 0
     ? `Der Handwerker arbeitet hauptsächlich in: ${gewerke.join(', ')}. Bevorzuge diese Gewerke bei der Zuweisung.`
@@ -62,42 +73,44 @@ export async function POST(req: NextRequest) {
     verarbeitetText += formatKorrekturenFuerKi(korrekturen)
   }
 
-  // Bug 2: Logging — Whisper-Text VOR GPT sichtbar machen
-  console.log('=== WHISPER TRANSKRIPT RAW ===')
-  console.log(text)
-  console.log('=== VERARBEITET FÜR GPT ===')
-  console.log(verarbeitetText)
-  console.log('==============================')
-
   try {
-    // KI-Extraktion via Edge Function
-    const edgeResult = await callEdgeFunction(
+    // Bei beantworteten Rückfragen muss exakt dieselbe Extraktion weiterlaufen.
+    // Eine erneute KI-Auswertung könnte Räume oder Arbeiten anders erkennen.
+    const edgeResult = basis_extraktion ? null : await callEdgeFunction(
       'ki-extrahieren',
       { transkript: verarbeitetText, gewerk_hinweis },
       session.access_token
     ) as { result: ExtrahierteDaten }
 
-    let extraktion = normalisiereExtraktion(edgeResult.result as unknown as Record<string, unknown>)
+    let extraktion = basis_extraktion
+      ? normalisiereExtraktion(structuredClone(basis_extraktion) as unknown as Record<string, unknown>)
+      : normalisiereExtraktion(edgeResult!.result as unknown as Record<string, unknown>)
+
+    // Manche KI-Antworten enthalten zusätzlich zum benannten Einzelraum einen
+    // generischen Platzhalter "Raum". Bei genau einem echten Raum werden beide
+    // zusammengeführt, statt den Nutzer doppelt nach denselben Maßen zu fragen.
+    extraktion = konsolidierePlatzhalterRaum(extraktion, text)
     extraktion.transkript = verarbeitetText
 
     // GPT-Bug: Bei Mehrraum-Aufträgen gibt GPT manchmal falsche Namen oder kopierte Maße zurück
     if (extraktion.raeume.length > 1) {
       const { repariert: mitNamen, wurdeRepariert: nRep } = repariereDuplikatNamen(extraktion.raeume, text)
-      if (nRep) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Namen korrigiert ==='); extraktion = { ...extraktion, raeume: mitNamen } }
+      if (nRep) extraktion = { ...extraktion, raeume: mitNamen }
       const { repariert, wurdeRepariert } = repariereDuplikatMasse(extraktion.raeume, text)
-      if (wurdeRepariert) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Maße korrigiert ==='); extraktion = { ...extraktion, raeume: repariert } }
+      if (wurdeRepariert) extraktion = { ...extraktion, raeume: repariert }
     }
     if (extraktion.bereiche.length > 1) {
       const { repariert: mitNamen, wurdeRepariert: nRep } = repariereDuplikatNamen(extraktion.bereiche, text)
-      if (nRep) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Namen in bereiche[] korrigiert ==='); extraktion = { ...extraktion, bereiche: mitNamen } }
+      if (nRep) extraktion = { ...extraktion, bereiche: mitNamen }
       const { repariert, wurdeRepariert } = repariereDuplikatMasse(extraktion.bereiche, text)
-      if (wurdeRepariert) { console.log('=== MEHRRAUM-REPARATUR: Duplikat-Maße in bereiche[] korrigiert ==='); extraktion = { ...extraktion, bereiche: repariert } }
+      if (wurdeRepariert) extraktion = { ...extraktion, bereiche: repariert }
     }
 
-    // Bug 2: GPT-Extraktion loggen
-    console.log('=== GPT-4o EXTRAKTION ===')
-    console.log(JSON.stringify({ gewerk: extraktion.gewerk, confidence: extraktion.confidence_gewerk, raeume: extraktion.raeume?.length }, null, 2))
-    console.log('=========================')
+    // Rückfragen aus KI und deterministischer Kontextanalyse zusammenführen.
+    // Bereits beantwortete Angaben werden vor der Mengenberechnung eingesetzt.
+    const rueckfragenErgebnis = bereiteRueckfragenVor(extraktion, antworten)
+    extraktion = rueckfragenErgebnis.extraktion
+    const rueckfragen = rueckfragenErgebnis.rueckfragen
 
     // Implizit-Wissen lokal anwenden (kein extra Edge-Function-Call nötig)
     const implizitResultat = wendeImplizitRegelnAn(text, extraktion.gewerk, extraktion)
@@ -167,9 +180,6 @@ export async function POST(req: NextRequest) {
         if (abzug !== null) r.wandflaeche_abzug_m2 = abzug
       }
 
-      if (r.wandflaeche_direkt) {
-        console.log(`=== FLÄCHEN-PATCH: wandflaeche_direkt=${r.wandflaeche_direkt} deckflaeche_direkt=${r.deckflaeche_direkt} abzug=${r.wandflaeche_abzug_m2} ===`)
-      }
     }
 
     // Tor/Garagentor in tueren[] injizieren — GPT erkennt "Tor" oft nicht
@@ -202,15 +212,12 @@ export async function POST(req: NextRequest) {
 
     // Mengen + Vollständigkeit über ALLE beteiligten Gewerke (Maler UND Boden im
     // selben Auftrag) — nicht nur das Haupt-Gewerk.
-    const { fehlende, positionen: positionenKomplett, mengenRoh } = berechneUndPruefeAlleGewerke(
+    const { positionen: positionenKomplett, mengenRoh } = berechneUndPruefeAlleGewerke(
       extraktion,
       textMitZahlen,
       { fensterAnzahl: fensterAnzahlText || undefined, tuerenAnzahl: tuerenAnzahlText || undefined },
       kiSignale,
     )
-    if (fehlende.length > 0) {
-      console.log('=== VOLLSTÄNDIGKEITS-CHECK: ergänzt ===', fehlende)
-    }
     const mengen = { ...mengenRoh, positionen: positionenKomplett }
     const bewertung = berechneBewertung(extraktion, mengen)
 
@@ -218,14 +225,15 @@ export async function POST(req: NextRequest) {
       extraktion,
       mengen,
       bewertung,
-      hat_rueckfragen: mengen.rueckfragen.length > 0,
+      hat_rueckfragen: rueckfragen.length > 0,
+      rueckfragen,
       implizit_positionen: implizitResultat.neue_positionen,
       implizit_flags: implizitResultat.neue_flags,
       korrekturen_erkannt: korrekturen.length,
     } satisfies ExtraktionResponse)
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error('angebot-extrahieren error:', msg)
+    console.error('[angebot-extrahieren] Verarbeitung fehlgeschlagen')
     return NextResponse.json({ error: `Extraktion fehlgeschlagen: ${msg}` }, { status: 500 })
   }
 }

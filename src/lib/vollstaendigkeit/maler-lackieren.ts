@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, anzahlAus, findeRaumImSatz, raumNamenAus } from './helpers'
+import { hat, anzahlAus, findeRaumImSatz, raumNamenAus } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 // Türen lackieren: Schleifen, Grundieren, 2× Lackieren, Zargen

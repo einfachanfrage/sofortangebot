@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, addMitMenge } from './helpers'
+import { hat, addMitMenge } from './helpers'
 
 export function pruefeWallbox(
   ergaenzt: BerechnetePosition[],

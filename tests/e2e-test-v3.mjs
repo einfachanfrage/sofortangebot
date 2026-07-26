@@ -31,18 +31,6 @@ function extrahiereMasseAusText(transkript) {
   }
   return ergebnis
 }
-function hatDuplikatMasse(liste) {
-  if (!liste || liste.length < 2) return false
-  const seen = new Set()
-  for (const r of liste) {
-    if (r.laenge != null && r.breite != null) {
-      const key = `${r.laenge}x${r.breite}`
-      if (seen.has(key)) return true
-      seen.add(key)
-    }
-  }
-  return false
-}
 function repariereDuplikatMasse(raeume, transkript) {
   if (!raeume || raeume.length < 2) return { repariert: raeume, wurdeRepariert: false }
   const textMasse = extrahiereMasseAusText(transkript)

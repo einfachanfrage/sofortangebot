@@ -226,6 +226,8 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
         <View style={S.headerRow} fixed>
           {/* Links: Logo + Firmenname + Adresse */}
           <View style={S.headerLeft}>
+            {/* react-pdf's Image does not support the DOM alt attribute. */}
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             {logoSrc && <Image src={logoSrc} style={S.logoImg} />}
             <Text style={S.firmennameH}>{firmenname}</Text>
             {adresse && (

@@ -23,7 +23,12 @@ export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], feh
 export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
   const hatSockelAufnehmen = lower.includes('sockelleist') &&
     (lower.includes('aufnehm') || lower.includes('mit aufnehm') || lower.includes('montier') || lower.includes('aufbring'))
-  const hatSockelStreichenExplizit = lower.includes('sockelleist') && v.hatArbeit('streichen') &&
+  // "Wände streichen ... Sockelleisten abkleben" darf niemals als
+  // Sockelleisten-Anstrich interpretiert werden. Die Arbeit muss unmittelbar
+  // bei den Sockelleisten stehen.
+  const hatSockelStreichenFormulierung = /sockelleist\w*(?:\s+\w+){0,3}\s+(?:streich|anstrich)/i.test(lower)
+    || /(?:streich|anstrich)\w*(?:\s+\w+){0,3}\s+sockelleist/i.test(lower)
+  const hatSockelStreichenExplizit = hatSockelStreichenFormulierung && v.hatArbeit('streichen') &&
     !v.hatArbeit('lackieren') && !hatSockelAufnehmen
   if (!hatSockelStreichenExplizit || hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) return
 
@@ -53,10 +58,10 @@ export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehle
   const tfmRaus = wandPosTapRaus?.menge ?? null
   if (tfmRaus !== null && tfmRaus > 0) {
     if (!hat(ergaenzt, 'tapete entfern')) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfmRaus, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfmRaus} m²`, annahmen: [] })
-    if (!hat(ergaenzt, 'spachtel', 'glätten')) ergaenzt.push({ beschreibung: 'Wände spachteln / glätten', menge: tfmRaus, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfmRaus} m²`, annahmen: [] })
+    if (v.hatArbeit('spachteln') && !hat(ergaenzt, 'spachtel', 'glätten')) ergaenzt.push({ beschreibung: 'Wände spachteln / glätten', menge: tfmRaus, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfmRaus} m²`, annahmen: [] })
   } else {
     if (!hat(ergaenzt, 'tapete entfern')) add(ergaenzt, fehlende, 'Tapete entfernen')
-    if (!hat(ergaenzt, 'spachtel', 'glätten')) add(ergaenzt, fehlende, 'Wände spachteln / glätten')
+    if (v.hatArbeit('spachteln') && !hat(ergaenzt, 'spachtel', 'glätten')) add(ergaenzt, fehlende, 'Wände spachteln / glätten')
   }
   return true
 }
@@ -117,7 +122,9 @@ export function pruefeTapezieren(
     if (!hatAufziehen) ergaenzt.push({ beschreibung: `${tapetenTyp} aufziehen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
     if (!hatStreichen) ergaenzt.push({ beschreibung: `${tapetenTyp} streichen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
 
-    if (!hat(ergaenzt, 'boden schütz', 'abdeck')) {
+    const bodenWirdEntfernt = /(?:teppich|altbelag|bodenbelag|laminat|vinyl|parkett).{0,30}(?:entfern|raus|aufnehm|demont)/i.test(lower)
+    const leerstehend = /leer\s*steh|unbewohnt|ohne\s+möbel|möbelfrei/i.test(lower)
+    if (!bodenWirdEntfernt && !leerstehend && !hat(ergaenzt, 'boden schütz', 'abdeck')) {
       const bodenEnginePos = positionen.find(p => p.beschreibung.toLowerCase().includes('boden'))
       if (bodenEnginePos) {
         ergaenzt.push({ beschreibung: 'Boden schützen / Abdecken', menge: bodenEnginePos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenEnginePos.menge} m²`, annahmen: [] })

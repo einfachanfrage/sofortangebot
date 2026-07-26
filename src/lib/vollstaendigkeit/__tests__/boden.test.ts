@@ -1,17 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../index'
-import type { BerechnetePosition } from '../../mengen/types'
-
-function pos(beschreibung: string, menge = 10, einheit = 'm²'): BerechnetePosition {
-  return { beschreibung, menge, einheit, konfidenz: 'high', berechnungsweg: 'test', annahmen: [] }
-}
 
 describe('boden – basis', () => {
-  it('Parkett → Untergrundvorbereitung + Verlegen + Sockelleisten', () => {
+  it('Parkett → nur beauftragtes Verlegen + Sockelleisten, kein erfundener Ausgleich', () => {
     const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett verlegen, 35 qm')
-    // Mit bekannter m² → Untergrundvorbereitung in positionen (nicht fehlende)
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
-    expect(alle.some(b => b.toLowerCase().includes('untergrundvorbereitung'))).toBe(true)
+    expect(alle.some(b => b.toLowerCase().includes('untergrundvorbereitung'))).toBe(false)
     // Ohne Meter → Umfang aus Fläche geschätzt → Position (nicht mehr nur "fehlende")
     expect(alle).toContain('Sockelleisten montieren')
   })

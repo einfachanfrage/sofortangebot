@@ -3,7 +3,6 @@
 // Ausführen: node tests/e2e-test.mjs
 // ──────────────────────────────────────────────────────────────────
 import { readFileSync } from 'fs'
-import { fileURLToPath } from 'url'
 import path from 'path'
 import OpenAI from '/tmp/nodebin/lib/node_modules/openai/index.js'
 

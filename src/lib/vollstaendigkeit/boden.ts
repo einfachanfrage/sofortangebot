@@ -28,7 +28,7 @@ export function pruefeBoden(
   const istRefinish = ergaenzt.some(p => /parkett\s*schleifen|dielen\s*schleifen|holzboden\s*schleifen/i.test(p.beschreibung))
     && !ergaenzt.some(p => /verlegen|verkleben/i.test(p.beschreibung))
 
-  const { nurOhneSockel } = pruefeBodenBasis(ergaenzt, fehlende, lower, belag, v, istRefinish)
+  const { nurOhneSockel } = pruefeBodenBasis(ergaenzt, fehlende, lower, belag, v)
   pruefeAltbelag(ergaenzt, fehlende, lower, v)
   pruefeFeuchtigkeitssperre(ergaenzt, fehlende, lower)
   pruefeFischgraet(ergaenzt, fehlende, lower, v)

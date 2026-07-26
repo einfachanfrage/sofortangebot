@@ -12,8 +12,8 @@ function malerEngine(daten) {
   const warnungen = []
 
   for (const raum of (daten.raeume ?? [])) {
-    const { name: nameRaw = 'Raum', laenge, breite, hoehe, flaeche: flaeche_angegeben,
-      umfang: umfang_direkt, fenster = [], tueren = [], arbeiten = [], sockelleisten: sockel = false } = raum
+    const { name: nameRaw = 'Raum', laenge, breite, hoehe,
+      fenster = [], tueren = [], arbeiten = [], sockelleisten: sockel = false } = raum
 
     let bodenflaecheM2 = null, wandflaecheNettoM2 = null, deckenflaecheM2 = null, umfangM = null
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
@@ -136,7 +136,7 @@ function assert(label, actual, expected, toleranz = 0.05) {
   }
 }
 
-function check(label, positionen, suchbegriff, expectedMenge, einheit) {
+function check(label, positionen, suchbegriff, expectedMenge) {
   const pos = positionen.find(p => p.beschreibung.toLowerCase().includes(suchbegriff.toLowerCase()))
   if (!pos) {
     console.log(`  ❌  "${suchbegriff}" fehlt komplett`)

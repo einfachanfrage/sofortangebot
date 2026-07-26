@@ -38,19 +38,47 @@ function situationIncludes(ext: ExtMitExtra, ...begriffe: string[]): boolean {
 
 function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: KontextAnalyse['automatische_ergaenzungen']) {
   for (const raum of ext.raeume) {
+    // GPT legt eine ausdrücklich genannte Wandfläche gelegentlich im allgemeinen
+    // Feld `flaeche` ab. Über den zum Raum gehörenden Transkriptabschnitt wird sie
+    // eindeutig als Wandfläche eingeordnet, statt später L×B und Höhe zu erfragen.
+    if (!raum.wandflaeche_direkt && raum.flaeche != null) {
+      const text = (ext.transkript ?? '').toLocaleLowerCase('de-DE')
+      const name = (raum.name ?? '').toLocaleLowerCase('de-DE')
+      const start = name ? text.lastIndexOf(name) : -1
+      if (start >= 0) {
+        const naechsterRaum = ext.raeume
+          .filter(r => r !== raum && r.name)
+          .map(r => text.indexOf(r.name.toLocaleLowerCase('de-DE'), start + name.length))
+          .filter(index => index > start)
+          .sort((a, b) => a - b)[0]
+        const abschnitt = text.slice(start, naechsterRaum ?? text.length)
+        if (/wandfl[äa]che/.test(abschnitt)) {
+          raum.wandflaeche_direkt = raum.flaeche
+          raum.flaeche = null
+        }
+      }
+    }
+
     // Generisches "streichen" → Wände + Decke
     if ((raum.arbeiten ?? []).some(a => a === 'streichen' || a === 'anstreichen') &&
         !raum.arbeiten.includes('waende_streichen') &&
         !raum.arbeiten.includes('decke_streichen')) {
       raum.arbeiten = raum.arbeiten.filter(a => a !== 'streichen' && a !== 'anstreichen')
-      raum.arbeiten.push('waende_streichen', 'decke_streichen')
-      hinweise.push(`${raum.name}: "Streichen" → Wände + Decke`)
+      const transkript = (ext.transkript ?? '').toLocaleLowerCase('de-DE')
+      const nurWaendeGenannt = /w[aä]nd/.test(transkript) && !/deck/.test(transkript)
+      raum.arbeiten.push('waende_streichen')
+      if (!nurWaendeGenannt) raum.arbeiten.push('decke_streichen')
+      hinweise.push(`${raum.name}: "Streichen" → ${nurWaendeGenannt ? 'Wände' : 'Wände + Decke'}`)
     }
 
     // "Zimmer" / "Raum" ohne Spezifikation → Wände + Decke
     if (raum.arbeiten.length === 0 || raum.arbeiten.every(a => a === 'allgemein')) {
-      raum.arbeiten = ['waende_streichen', 'decke_streichen']
-      hinweise.push(`${raum.name}: Keine Spezifikation → Wände + Decke Standard`)
+      const transkript = (ext.transkript ?? '').toLocaleLowerCase('de-DE')
+      const nurWaendeGenannt = /w[aä]nd/.test(transkript) && !/deck/.test(transkript)
+      raum.arbeiten = nurWaendeGenannt
+        ? ['waende_streichen']
+        : ['waende_streichen', 'decke_streichen']
+      hinweise.push(`${raum.name}: Keine strukturierte Spezifikation → ${nurWaendeGenannt ? 'Wände aus Transkript' : 'Wände + Decke Standard'}`)
     }
 
     // Streichen ohne Abkleben → Abkleben ergänzen
@@ -67,7 +95,7 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
     const hatFlaeche = raum.flaeche !== null && raum.flaeche !== undefined
 
     // Gar keine Maße → Rückfrage
-    if (hatStreichen && !hatLB && !hatFlaeche && !(raum as any).wandflaeche_direkt) {
+    if (hatStreichen && !hatLB && !hatFlaeche && !raum.wandflaeche_direkt) {
       addRueckfrage(ext, {
         id: `masse_${raumId}`,
         frage: `Wie groß ist "${raum.name}"? (Länge × Breite oder Fläche in m²)`,
@@ -79,7 +107,7 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
     }
 
     // Nur Fläche, keine L×B → Wandfläche kann nicht berechnet werden
-    const hatNurFlaeche = hatFlaeche && !hatLB && !(raum as any).wandflaeche_direkt
+    const hatNurFlaeche = hatFlaeche && !hatLB && !raum.wandflaeche_direkt
     if (hatStreichen && hatNurFlaeche) {
       addRueckfrage(ext, {
         id: `masse_lb_${raumId}`,
@@ -91,8 +119,9 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
       })
     }
 
-    // Höhe fehlt (L×B bekannt, aber keine Höhe) → Wandfläche nicht berechenbar
-    if (hatStreichen && hatLB && !raum.hoehe && !(raum as any).wandflaeche_direkt) {
+    // Höhe unabhängig von L×B direkt mit abfragen. So ist die Gesamtzahl aller
+    // Rückfragen von Beginn an bekannt und es entsteht keine zweite Fragerunde.
+    if (hatStreichen && !raum.hoehe && !raum.wandflaeche_direkt) {
       addRueckfrage(ext, {
         id: `hoehe_${raumId}`,
         frage: `Wie hoch sind die Wände in "${raum.name}"?`,
@@ -104,6 +133,37 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
           { label: '2,60 m', wert: 2.6 },
           { label: '3,00 m', wert: 3.0 },
         ],
+      })
+    }
+
+    // Auch Öffnungen direkt mit abfragen, nicht erst nach der Geometrie.
+    if (hatStreichen && !raum.wandflaeche_direkt) {
+      if (!Array.isArray(raum.tueren) || raum.tueren.length === 0) {
+        addRueckfrage(ext, {
+          id: `tueren_anzahl_${raumId}`,
+          frage: `Wie viele Türen hat "${raum.name}"?`,
+          typ: 'anzahl', betrifft: raum.name, prioritaet: 1,
+          schnell_antworten: [0, 1, 2, 3, 4, 5, 6].map(wert => ({ label: String(wert), wert })),
+        })
+      }
+      if (!Array.isArray(raum.fenster) || raum.fenster.length === 0) {
+        addRueckfrage(ext, {
+          id: `fenster_anzahl_${raumId}`,
+          frage: `Wie viele Fenster hat "${raum.name}"?`,
+          typ: 'anzahl', betrifft: raum.name, prioritaet: 1,
+          schnell_antworten: [0, 1, 2, 3, 4, 5, 6].map(wert => ({ label: String(wert), wert })),
+        })
+      }
+    }
+
+    // Bei direkt genannter Wandfläche sind Türen/Fenster bereits in der Menge
+    // enthalten. Für den Bodenschutz fehlt aber weiterhin die Bodenfläche.
+    if (hatStreichen && raum.wandflaeche_direkt && !hatFlaeche) {
+      addRueckfrage(ext, {
+        id: `masse_boden_${raumId}`,
+        frage: `Wie groß ist die Bodenfläche in "${raum.name}"?`,
+        typ: 'masse_einzel', betrifft: raum.name, prioritaet: 1,
+        schnell_antworten: [],
       })
     }
 
@@ -227,7 +287,7 @@ function anreichernFliesen(ext: ExtMitExtra, hinweise: string[], ergaenzungen: K
 
 // ── TROCKENBAU ────────────────────────────────────────────────────────────────
 
-function anreichernTrockenbau(ext: ExtMitExtra, hinweise: string[], ergaenzungen: KontextAnalyse['automatische_ergaenzungen']) {
+function anreichernTrockenbau(ext: ExtMitExtra, hinweise: string[]) {
   for (const wand of ext.waende) {
     // Doppelte Beplankung prüfen — standard bei Ständerwänden
     if ((wand.beplankung ?? 0) < 2) {
@@ -304,7 +364,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
     // Belag fehlt → Rückfrage welcher Belag (wert 1-4 = Laminat/Vinyl/Parkett/Teppich)
     const hatBodenArbeit = (raum.arbeiten ?? []).some(a =>
       a.includes('verlegen') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl') || a.includes('boden'))
-    if (hatBodenArbeit && !(raum as any).belag) {
+    if (hatBodenArbeit && !raum.belag) {
       addRueckfrage(ext, {
         id: `belag_${(raum.name ?? '').toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Welcher Belag soll in "${raum.name}" verlegt werden?`,
@@ -560,7 +620,7 @@ export function analysiereKontext(extraktion: ExtrahierteDaten): KontextAnalyse 
       anreichernFliesen(ext, hinweise, automatische_ergaenzungen)
       break
     case 'trockenbau':
-      anreichernTrockenbau(ext, hinweise, automatische_ergaenzungen)
+      anreichernTrockenbau(ext, hinweise)
       break
     case 'boden_parkett':
       anreichernBodenParkett(ext, hinweise, automatische_ergaenzungen)

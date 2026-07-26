@@ -38,6 +38,16 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
+    // Bei mehreren Räumen darf die Angabe "zweimal" eines Raums nicht auf
+    // alle anderen Räume überspringen. Der Gesamttext ist nur im Ein-Raum-Fall
+    // ein sicherer zusätzlicher Kontext.
+    const anstrichText = `${arbeitenStr} ${(daten.raeume?.length ?? 0) === 1 ? transkriptLower : ''}`
+    const explizitEinAnstrich = /(?:einmal|1\s*[x×]|ein(?:en)?\s+anstrich|eine\s+lage)/i.test(anstrichText)
+    const explizitZweiAnstriche = /(?:zweimal|2\s*[x×]|zwei\s+anstrich|zwei\s+lagen|2-fach)/i.test(anstrichText)
+    const anstriche = explizitEinAnstrich && !explizitZweiAnstriche ? 1 : 2
+    const anstrichAnnahmen = explizitEinAnstrich || explizitZweiAnstriche
+      ? []
+      : ['Zweifacher Anstrich als Standard angenommen — bitte prüfen']
     // Sprach-Erkennung zentral (arbeiten-normalisierer) — Flexionen, Umgangssprache
     const kontext = erkenneRaumkontext(`${transkriptLower} ${arbeitenStr}`)
     const oeffnungen = erkenneOeffnungen(transkriptLower)
@@ -153,8 +163,17 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Scope ("nur die Wände / Decke / Boden") zentral im Normalisierer — deckt
     // Flexionen, Einschränkungs-Synonyme und "ohne Decke" ab (siehe arbeiten-normalisierer).
     // Sowohl arbeiten[] als auch Transkript prüfen (GPT schreibt "nur X" selten in arbeiten[]).
-    const scopeArb = erkenneScope(arbeitenStr)
-    const scopeTxt = erkenneScope(transkriptLower)
+    // In der strukturierten Arbeiten-Liste kann z.B. "tapezieren" neben
+    // "Decke streichen" stehen. Daraus darf nicht "nur Decke" werden; eine
+    // implizite Flächenbegrenzung ist nur im vollständigen Transkript sicher.
+    const scopeArb = /\b(?:nur|bloß|lediglich|ausschließlich|ohne|keine?)\b/i.test(arbeitenStr)
+      ? erkenneScope(arbeitenStr)
+      : { nurWaende: false, nurDecke: false, nurBoden: false }
+    // Globale Formulierungen wie „im Arbeitszimmer nur die Decke“ dürfen bei
+    // mehreren Räumen nicht auf Wohnzimmer/Flur übertragen werden.
+    const scopeTxt = (daten.raeume?.length ?? 0) === 1
+      ? erkenneScope(transkriptLower)
+      : { nurWaende: false, nurDecke: false, nurBoden: false }
     const nurWaende = scopeArb.nurWaende || scopeTxt.nurWaende
     const nurDecke = scopeArb.nurDecke || scopeTxt.nurDecke
     const nurBoden = scopeArb.nurBoden || scopeTxt.nurBoden
@@ -166,19 +185,24 @@ export function malerEngine(daten: any): MengenErgebnis {
     const hatBodenStreichen = nurBoden || arbeitenStr.includes('boden streich') || arbeitenStr.includes('boden anstrich')
       || transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')
       || ((istKellerRaum || istGarageRaum) && (transkriptLower.includes('boden streich') || transkriptLower.includes('boden anstrich')))
-    const anWaenden = !nurDecke && !nurBoden && (hatStreichen || arbeitenStr.includes('wand') || arbeitenStr.includes('tapez'))
+    const einzelraum = (daten.raeume?.length ?? 0) === 1
+    const hatWandSignal = /wand|wände|waende|tapez|spachtel|grundier/.test(arbeitenStr)
+      || (einzelraum && /(?:wand|wände|waende).{0,35}(?:streich|anstrich|maler)/.test(transkriptLower))
+    const hatDeckenSignal = /decke/.test(arbeitenStr)
+      || (einzelraum && /decke.{0,35}(?:streich|anstrich|maler)|(?:streich|anstrich).{0,35}decke/.test(transkriptLower))
+    const hatExpliziteFlaeche = hatWandSignal || hatDeckenSignal || /boden/.test(arbeitenStr)
+    const anWaenden = !nurDecke && !nurBoden && (hatWandSignal || (!hatExpliziteFlaeche && hatStreichen))
     // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall), nurWaende oder nurBoden
-    const anDecke = !nurWaende && !nurBoden && !hatBodenStreichen && ((hatStreichen) || arbeitenStr.includes('decke'))
+    const anDecke = !nurWaende && !nurBoden && !hatBodenStreichen && (hatDeckenSignal || (!hatExpliziteFlaeche && hatStreichen))
     const bodenStreichen = hatBodenStreichen && bodenflaecheM2 !== null
     // Boden schützen: immer wenn Wände ODER Decke gestrichen wird (Farbe tropft)
-    const bodenSchutz = !bodenStreichen && (hatStreichen || arbeitenStr.includes('schutz') || anDecke || anWaenden)
+    const bodenSchutz = !bodenStreichen && /schutz|abdeck|vlies/.test(arbeitenStr)
     // Sockelleisten: nicht in Kellern (kein Sockelleisten-Standard im Keller)
-    const nameLower = name.toLowerCase()
     const hatSockel = anWaenden && wandflaecheNettoM2 !== null && !istKellerRaum
-      && (hatStreichen || sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
+      && (sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
-    const fensterStandard = fenster.some((f: any) => !f.breite || !f.hoehe)
-    const annahmenFenster = fensterStandard ? ['Standardmaß Fenster 1,50 × 1,20 m verwendet (nicht angegeben)'] : []
+    const fensterStandard = fenster.some((f: any) => (f.anzahl ?? 1) > 0 && (!f.breite || !f.hoehe))
+    const annahmenFenster = fensterStandard ? ['Fensterfläche mit Standardmaß 1,20 × 1,00 m je Fenster angenommen — bitte prüfen'] : []
 
     const wandzonen = (raum.wandzonen ?? []) as Array<{zone: string, hoehe: number, farbe?: string, aktion?: string}>
     const effUmfangWZ = umfangM ?? (laenge && breite ? round2(2 * (laenge + breite)) : null)
@@ -300,7 +324,7 @@ export function malerEngine(daten: any): MengenErgebnis {
           positionen.push({ beschreibung: `Akzentwand Vliestapete — ${name}`, menge: akzentWandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`, annahmen: ['Kürzere Raumseite als Akzentwand angenommen'] })
           if (restwandFlaeche > 0) positionen.push({ beschreibung: `Restwände streichen — ${name}`, menge: restwandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`, annahmen: annahmenFenster })
         } else {
-          const wandLabel = istDachschraege ? `Dachschräge streichen — ${name}` : `Wandflächen streichen — ${name}`
+          const wandLabel = istDachschraege ? `Dachschräge streichen ${anstriche}x — ${name}` : `Wandflächen streichen ${anstriche}x — ${name}`
           const wandBrutto2 = round2((umfangM ?? 0) * (hoehe ?? 0))
           const fensterAnzahl2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1), 0)
           const tuerAnzahl2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1), 0)
@@ -309,7 +333,7 @@ export function malerEngine(daten: any): MengenErgebnis {
           positionen.push({
             beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: annahmenUmfang.length > 0 ? 'medium' : 'high',
             berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
-            annahmen: [...annahmenFenster, ...annahmenUmfang],
+            annahmen: [...annahmenFenster, ...annahmenUmfang, ...anstrichAnnahmen],
             ...(!istDachschraege && umfangM && hoehe ? {
               flaechen_parameter: {
                 brutto_m2: wandBrutto2,
@@ -323,7 +347,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         }
       }
       if (anDecke && deckenflaecheM2 !== null) {
-        positionen.push({ beschreibung: `Deckenfläche streichen — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [] })
+        positionen.push({ beschreibung: `Deckenfläche streichen ${anstriche}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [...anstrichAnnahmen] })
       }
       if (bodenStreichen && bodenflaecheM2 !== null) {
         positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })

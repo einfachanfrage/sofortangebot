@@ -44,13 +44,22 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
 
+export function bodenNettoflaecheAusPositionen(positionen: BerechnetePosition[]): number | null {
+  const verlegen = positionen.find(p => /verlegen/i.test(p.beschreibung) && p.einheit === 'm²')
+  if (!verlegen) return null
+  const ausRechenweg = verlegen.berechnungsweg?.match(/(\d+(?:[.,]\d+)?)\s*m²/i)
+  if (ausRechenweg) return parseFloat(ausRechenweg[1].replace(',', '.'))
+  if (/15\s*%\s*verschnitt/i.test(verlegen.beschreibung)) return round2(verlegen.menge / 1.15)
+  if (/10\s*%\s*verschnitt/i.test(verlegen.beschreibung)) return round2(verlegen.menge / 1.1)
+  return verlegen.menge
+}
+
 export function pruefeBodenBasis(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
   belag: BelagTyp,
   v: AuftragsVerstaendnis,
-  istRefinish = false,
 ): { nurOhneSockel: boolean } {
   const nurOhneSockel =
     lower.includes('ohne sockelleisten') ||
@@ -81,13 +90,6 @@ export function pruefeBodenBasis(
         } else {
           fehlende.push(`Ausgleichsmasse einbringen${mmStr}`)
         }
-      }
-    } else if (!istRefinish) {
-      // Reines Abschleifen braucht keine generische Untergrundvorbereitung
-      if (m2) {
-        ergaenzt.push({ beschreibung: 'Untergrundvorbereitung / Ausgleich', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-      } else {
-        fehlende.push('Untergrundvorbereitung / Ausgleich')
       }
     }
   }

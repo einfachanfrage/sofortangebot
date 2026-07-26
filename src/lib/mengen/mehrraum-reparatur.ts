@@ -35,19 +35,6 @@ export function extrahiereMasseAusText(transkript: string): Map<string, RaumMass
   return ergebnis
 }
 
-function hatDuplikatMasse(liste: Array<{ laenge?: number | null; breite?: number | null }>): boolean {
-  if (!liste || liste.length < 2) return false
-  const seen = new Set<string>()
-  for (const r of liste) {
-    if (r.laenge != null && r.breite != null) {
-      const key = `${r.laenge}x${r.breite}`
-      if (seen.has(key)) return true
-      seen.add(key)
-    }
-  }
-  return false
-}
-
 /**
  * Bei Mehrraum-Aufträgen: extrahiert Maße direkt aus Originaltext und überschreibt
  * GPT-Werte wenn der Text klare Maße für diesen Raum enthält.
