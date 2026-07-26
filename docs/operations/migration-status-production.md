@@ -6,7 +6,7 @@ Produktionsprojekt: `yqlledouhfovytifeekd`
 
 ## Was sicher belegt ist
 
-- Im Repository liegen 46 versionierte SQL-Migrationen.
+- Im Repository liegen 47 versionierte SQL-Migrationen.
 - Die produktive Anwendung verwendet Datenbankobjekte aus den jüngsten
   Migrationen, und deren fachliche Wirkung wurde bei den letzten
   Produktionsprüfungen kontrolliert.
@@ -40,8 +40,8 @@ und Ergebnis hier ergänzt.
       GitHub Actions Run `30204132535`, Artefakt
       `production-db-30204132535`
 - [x] Stagingprojekt aus `supabase/schema.sql` initialisiert und danach auf
-      alle 46 versionierten Migrationen aktualisiert:
-      GitHub Actions Runs `30204381894` und `30210388805`
+      alle 47 versionierten Migrationen aktualisiert:
+      zuletzt GitHub Actions Run `30211822002`
 - [x] Produktiven Kernobjektbestand vor dem Historienabgleich mit
       `supabase/check_migrationen.sql` geprüft
 - [x] Nachweislich vorhandene Altänderungen einmalig in
@@ -50,6 +50,12 @@ und Ergebnis hier ergänzt.
       `20260613213937`, `20260614192523`, `20260720183000`
 - [x] Vollständigen Maler-Katalog mit Migration
       `20260726183000_complete_maler_catalog` angewendet
+- [x] Frisches verschlüsseltes Produktionsbackup vor dem Boden-Rollout:
+      GitHub Actions Run `30211884170`
+- [x] Vollständigen Boden-Katalog mit Migration
+      `20260726190000_complete_boden_catalog` angewendet
+- [x] Boden-Produktionslauf erfolgreich:
+      GitHub Actions Run `30211961102`
 - [x] Produktionslauf erfolgreich:
       GitHub Actions Run `30210419583`
 - [x] Vorher-/Nachher-Stand als Artefakt
