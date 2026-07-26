@@ -72,13 +72,19 @@ export function verarbeiteAntworten(
     if (masseM && !id.startsWith('masse_boden_')) {
       const raum = raumById(angereichert.raeume, masseM[1])
       if (raum) {
-        if (Array.isArray(antwort.wert) && antwort.wert.length === 2) {
+        if (antwort.einheit === 'flaechen_m2' && Array.isArray(antwort.wert)) {
+          const wandflaeche = Number(antwort.wert[0]) || 0
+          const bodenflaeche = Number(antwort.wert[1]) || 0
+          if (wandflaeche > 0) raum.wandflaeche_direkt = wandflaeche
+          if (bodenflaeche > 0) raum.flaeche = bodenflaeche
+        } else if (Array.isArray(antwort.wert) && antwort.wert.length === 2) {
           raum.laenge = antwort.wert[0]; raum.breite = antwort.wert[1]
           raum.flaeche = round2(antwort.wert[0] * antwort.wert[1])
         } else if (typeof antwort.wert === 'number') {
-          raum.flaeche = antwort.wert
           if (raum.arbeiten.some(arbeit => /wand|streich|tapete|spachtel|grundier/i.test(arbeit))) {
             raum.wandflaeche_direkt = antwort.wert
+          } else {
+            raum.flaeche = antwort.wert
           }
         }
       }
@@ -89,7 +95,10 @@ export function verarbeiteAntworten(
     if (masseBodenM) {
       const raum = raumById(angereichert.raeume, masseBodenM[1])
       if (raum) {
-        if (Array.isArray(antwort.wert) && antwort.wert.length === 2) {
+        if (antwort.einheit === 'flaechen_m2' && Array.isArray(antwort.wert)) {
+          const bodenflaeche = Number(antwort.wert[1]) || Number(antwort.wert[0]) || 0
+          if (bodenflaeche > 0) raum.flaeche = bodenflaeche
+        } else if (Array.isArray(antwort.wert) && antwort.wert.length === 2) {
           raum.laenge = antwort.wert[0]; raum.breite = antwort.wert[1]
           raum.flaeche = round2(antwort.wert[0] * antwort.wert[1])
         } else if (typeof antwort.wert === 'number') {

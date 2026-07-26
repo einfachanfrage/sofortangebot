@@ -23,6 +23,36 @@ describe('maler – streichen basis', () => {
     expect(fehlende).toContain('Sockelleisten abkleben')
   })
 
+  it('erfindet bei ausdrücklich genannten Wänden keine Deckenarbeit', () => {
+    const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 35)],
+      'Im Wohnzimmer die Wände zweimal streichen.',
+    )
+    expect(fehlende).not.toContain('Deckenfläche streichen')
+    expect(positionen.some(position => /decke/i.test(position.beschreibung))).toBe(false)
+  })
+
+  it('prüft Möbelabdeckung und Bewohnt-Zuschlag unabhängig voneinander', () => {
+    const { fehlende } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 35), pos('Erschwerniszuschlag bewohnt', 1, 'Pauschale')],
+      'Bewohnte Wohnung, die Möbel müssen gerückt und abgedeckt werden.',
+    )
+    expect(fehlende).toContain('Möbel schützen / Abdecken')
+  })
+
+  it('macht aus Dübellöchern und Schadstellen keine vollflächige Q2-Spachtelung', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 35)],
+      'Wände streichen, fünf Dübellöcher schließen und zwei kleine Schadstellen spachteln.',
+    )
+    expect(positionen.some(position => /dübellöcher spachteln/i.test(position.beschreibung))).toBe(true)
+    expect(positionen.some(position => /kleine schadstellen/i.test(position.beschreibung))).toBe(true)
+    expect(positionen.some(position => /spachtelarbeiten q2/i.test(position.beschreibung))).toBe(false)
+  })
+
   it('"nur Decke" filtert Wand+Sockel aus Engine-Positionen', () => {
     const eingabe = [pos('Wandflächen streichen'), pos('Deckenfläche streichen'), pos('Sockelleisten montieren')]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'nur Decke streichen')
@@ -49,7 +79,7 @@ describe('maler – tapete mit direkter Wandfläche + Abzug', () => {
   it('nimmt 45 m² Brutto-Wandfläche aus Text', () => {
     const wandPos = pos('Wandflächen streichen', 42)
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [wandPos], transkript)
-    const tapetePos = positionen.find(p => p.beschreibung.includes('aufziehen'))
+    const tapetePos = positionen.find(p => /aufziehen|tapezieren/i.test(p.beschreibung))
     // Fläche aus Engine-Position (42), nicht neu aus Text berechnen da wandPos vorhanden
     expect(tapetePos).toBeDefined()
     expect(tapetePos!.menge).toBe(42)
@@ -57,7 +87,7 @@ describe('maler – tapete mit direkter Wandfläche + Abzug', () => {
 
   it('berechnet Netto = 45 − 3 = 42 m² wenn keine Engine-Position vorhanden', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], transkript)
-    const tapetePos = positionen.find(p => p.beschreibung.toLowerCase().includes('aufziehen') || p.beschreibung.toLowerCase().includes('raufaser aufziehen'))
+    const tapetePos = positionen.find(p => /aufziehen|tapezieren/i.test(p.beschreibung))
     expect(tapetePos).toBeDefined()
     expect(tapetePos!.menge).toBe(42)
   })
