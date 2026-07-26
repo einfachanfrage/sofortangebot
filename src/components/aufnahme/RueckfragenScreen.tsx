@@ -98,15 +98,22 @@ function MasseEinzelInput({
       )}
 
       {!istOeffnung && (
-        <div className="grid grid-cols-2 rounded-xl bg-[#2C2C2C]/5 p-1">
-          <button type="button" onClick={() => setEingabeart('masse')}
-            className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'masse' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
-            Länge × Breite
-          </button>
-          <button type="button" onClick={() => setEingabeart('flaeche')}
-            className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'flaeche' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
-            Fläche in m²
-          </button>
+        <div className="flex flex-col gap-2">
+          <div className="text-xs font-bold text-[#2C2C2C]/55">Was hast du aufgemessen?</div>
+          <div className="grid grid-cols-2 rounded-xl bg-[#2C2C2C]/5 p-1">
+            <button type="button" onClick={() => setEingabeart('masse')}
+              className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'masse' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
+              Raummaße
+            </button>
+            <button type="button" onClick={() => setEingabeart('flaeche')}
+              className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'flaeche' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
+              Fläche direkt
+            </button>
+          </div>
+          <div className="text-xs font-semibold text-[#2C2C2C]/45">
+            Raummaße = Länge × Breite. Für Wandflächen fragen wir danach zusätzlich die Raumhöhe.
+            Kennst du bereits die fertige Wandfläche, sind keine weiteren Raummaße nötig.
+          </div>
         </div>
       )}
 
@@ -145,7 +152,9 @@ function MasseEinzelInput({
 
       {!istOeffnung && eingabeart === 'flaeche' && (
         <div>
-          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">Fläche</div>
+          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">
+            Wandfläche oder Boden-/Deckenfläche
+          </div>
           <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
             <input type="number" inputMode="decimal" autoFocus placeholder="z. B. 18"
               value={direkteFlaeche}
@@ -157,7 +166,9 @@ function MasseEinzelInput({
               className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none w-0" />
             <span className="text-[#2C2C2C]/40 font-semibold text-sm">m²</span>
           </div>
-          <div className="mt-2 text-xs font-semibold text-[#2C2C2C]/45">Bei Wandarbeiten wird anschließend die fertige Wandfläche verwendet.</div>
+          <div className="mt-2 text-xs font-semibold text-[#2C2C2C]/45">
+            Bei Wandarbeiten gilt der Wert als fertige Wandfläche. Bei Boden- oder Deckenarbeiten gilt er als Boden-/Deckenfläche.
+          </div>
         </div>
       )}
 
@@ -421,19 +432,17 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
           <button onClick={onUeberspringen} className="text-white/40 text-sm font-semibold">Überspringen</button>
         </div>
         <div className="text-white/50 text-[10px] font-black uppercase tracking-widest mb-1">
-          Kurze Rückfrage {sichtbareFragen.length > 1 ? `${aktuelleIdx + 1} von ${sichtbareFragen.length}` : ''}
+          Kurze Rückfrage {aktuelleIdx + 1} von {sichtbareFragen.length}
         </div>
         {/* Fortschrittsbalken */}
-        {sichtbareFragen.length > 1 && (
-          <div className="flex gap-1.5 mb-3">
-            {sichtbareFragen.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${i <= aktuelleIdx ? 'bg-[#F5C400]' : 'bg-white/15'}`}
-              />
-            ))}
-          </div>
-        )}
+        <div className="flex gap-1.5 mb-3">
+          {sichtbareFragen.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${i <= aktuelleIdx ? 'bg-[#F5C400]' : 'bg-white/15'}`}
+            />
+          ))}
+        </div>
         {/* Kontext-Chip */}
         <div className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1 mb-3">
           <span className="text-[#F5C400] text-xs">💬</span>

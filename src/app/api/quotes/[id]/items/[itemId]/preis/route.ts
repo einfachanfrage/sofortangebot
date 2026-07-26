@@ -21,10 +21,14 @@ export async function POST(
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
   const { id: quoteId, itemId } = await params
-  const body = await req.json().catch(() => ({})) as { unit_price?: number }
+  const body = await req.json().catch(() => ({})) as { unit_price?: number; unit?: string }
   const unitPrice = Number(body.unit_price)
+  const unit = String(body.unit ?? '').trim()
   if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
     return NextResponse.json({ error: 'Bitte einen Preis größer als 0 eingeben.' }, { status: 400 })
+  }
+  if (!unit || unit.length > 30) {
+    return NextResponse.json({ error: 'Bitte eine gültige Einheit auswählen.' }, { status: 400 })
   }
 
   const { data: company } = await supabase
@@ -58,7 +62,7 @@ export async function POST(
     .eq('company_id', company.id)
     .ilike('category', category)
     .ilike('title', datenbankTitel)
-    .ilike('unit', item.unit)
+    .ilike('unit', unit)
     .maybeSingle()
 
   const priceResult = existingPriceItem
@@ -75,7 +79,7 @@ export async function POST(
           company_id: company.id,
           category,
           title: datenbankTitel,
-          unit: item.unit,
+          unit,
           unit_price: unitPrice,
         })
         .select('id, title, unit, unit_price')
@@ -89,7 +93,7 @@ export async function POST(
   const totalPrice = Number(item.quantity) * unitPrice
   const { error: itemError } = await supabase
     .from('quote_items')
-    .update({ unit_price: unitPrice, total_price: totalPrice, price_item_id: priceItem.id })
+    .update({ unit, unit_price: unitPrice, total_price: totalPrice, price_item_id: priceItem.id })
     .eq('id', item.id)
     .eq('quote_id', quoteId)
 
@@ -122,5 +126,6 @@ export async function POST(
     price_item_id: priceItem.id,
     unit_price: unitPrice,
     total_price: totalPrice,
+    unit,
   })
 }
