@@ -98,6 +98,41 @@ jobs:
             echo "::error::Für das Anwenden auf Produktion fehlt DEPLOY-PRODUCTION"
             exit 1
           }
+      - name: Historischen Produktionsstand einmalig abgleichen
+        if: inputs.operation == 'apply'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$(psql "$TARGET_DB_URL" -Atc "select 1 from supabase_migrations.schema_migrations where version = '20260613142431'")" ]; then
+            psql "$TARGET_DB_URL" -v ON_ERROR_STOP=1 -At -F '|' \
+              -f supabase/check_migrationen.sql > production-core-check.txt
+            cat production-core-check.txt
+
+            unexpected_missing="$(
+              grep 'FEHLT' production-core-check.txt \
+                | grep -v '^20260726183000_complete_maler_catalog|' \
+                || true
+            )"
+            if [ -n "$unexpected_missing" ]; then
+              echo "::error::Der produktive Schema-Stand passt nicht vollständig zu den historischen Migrationen."
+              printf '%s\n' "$unexpected_missing"
+              exit 1
+            fi
+
+            supabase migration repair \
+              20260613142431 20260613142432 20260613144614 \
+              20260613150138 20260613191600 20260613213937 \
+              20260614054925 20260614060425 20260614132752 \
+              20260614182218 20260614192523 20260614192524 \
+              20260614192525 20260615065725 20260615070303 \
+              20260615193423 20260615193424 20260617063703 \
+              20260623195834 20260701173855 20260701173856 \
+              20260702092924 20260704074603 20260704203908 \
+              20260705064529 20260712120000 20260714120000 \
+              20260717120000 20260717140000 20260717160000 \
+              20260720183000 20260720204500 20260720211000 \
+              --status applied --db-url "$TARGET_DB_URL"
+          fi
       - name: Produktions-Migrationen anwenden
         if: inputs.operation == 'apply'
         shell: bash
