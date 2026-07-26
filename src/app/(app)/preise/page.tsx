@@ -114,7 +114,8 @@ export default function PreisePage() {
   const [loading, setLoading] = useState(true)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [selectedGewerk, setSelectedGewerk] = useState<string | null>(null)
-  const [selectedBereich, setSelectedBereich] = useState<string>('Alle')
+  const [selectedUnit, setSelectedUnit] = useState<string>('Alle')
+  const [sortMode, setSortMode] = useState<'name' | 'price-asc' | 'price-desc'>('name')
   const [searchQuery, setSearchQuery] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editState, setEditState] = useState<EditState>({ title: '', category: '', unit_price: '', unit: '' })
@@ -173,35 +174,30 @@ export default function PreisePage() {
     [items, selectedGewerk]
   )
 
-  const bereiche = useMemo(() => {
-    const map = new Map<string, number>()
-    for (const item of gewerkItems) {
-      const b = getBereich(item.category)
-      map.set(b, (map.get(b) ?? 0) + 1)
-    }
-    const ordered = Array.from(map.entries())
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count)
-    return [{ name: 'Alle', count: gewerkItems.length }, ...ordered]
-  }, [gewerkItems])
+  const availableUnits = useMemo(() =>
+    ['Alle', ...Array.from(new Set(gewerkItems.map(item => item.unit))).sort((a, b) => a.localeCompare(b, 'de'))],
+    [gewerkItems]
+  )
 
   const visibleItems = useMemo(() => {
-    const base = selectedBereich === 'Alle'
-      ? gewerkItems
-      : gewerkItems.filter(i => getBereich(i.category) === selectedBereich)
-    return base.sort((a, b) =>
-      (b.nutzungshaeufigkeit ?? 0) - (a.nutzungshaeufigkeit ?? 0) ||
-      a.title.localeCompare(b.title, 'de')
-    )
-  }, [gewerkItems, selectedBereich])
+    const base = selectedUnit === 'Alle'
+      ? [...gewerkItems]
+      : gewerkItems.filter(item => item.unit === selectedUnit)
+    return base.sort((a, b) => {
+      if (sortMode === 'price-asc') return a.unit_price - b.unit_price || a.title.localeCompare(b.title, 'de')
+      if (sortMode === 'price-desc') return b.unit_price - a.unit_price || a.title.localeCompare(b.title, 'de')
+      return a.title.localeCompare(b.title, 'de')
+    })
+  }, [gewerkItems, selectedUnit, sortMode])
 
   const searchResults = useMemo(() => {
     if (searchQuery.length < 3) return []
     const q = searchQuery.toLowerCase()
-    return items
+    return (selectedGewerk ? gewerkItems : items)
       .filter(i => i.title.toLowerCase().includes(q) || i.category.toLowerCase().includes(q))
+      .filter(i => selectedUnit === 'Alle' || i.unit === selectedUnit)
       .slice(0, 50)
-  }, [items, searchQuery])
+  }, [items, gewerkItems, searchQuery, selectedGewerk, selectedUnit])
 
   const isSearching = searchQuery.length >= 3
 
@@ -318,7 +314,7 @@ export default function PreisePage() {
         {gewerke.map(g => (
           <button
             key={g.key}
-            onClick={() => { setSelectedGewerk(g.key); setSelectedBereich('Alle') }}
+            onClick={() => { setSelectedGewerk(g.key); setSelectedUnit('Alle') }}
             className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 text-left active:scale-95 transition-transform"
           >
             <div className="text-3xl mb-2">{g.emoji}</div>
@@ -420,12 +416,14 @@ export default function PreisePage() {
             <div className="text-3xl mb-3">🔍</div>
             <div className="font-black text-[#2C2C2C]">Nichts gefunden</div>
             <div className="text-sm text-[#2C2C2C]/45 font-semibold mt-1 mb-4">"{searchQuery}" ist in keiner Position</div>
-            <button
-              onClick={() => { setAdding(true); setNewItem(p => ({ ...p, title: searchQuery })) }}
-              className="bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-5 py-2.5"
-            >
-              + Eigene Position erstellen
-            </button>
+            {selectedGewerk && (
+              <button
+                onClick={() => { setAdding(true); setNewItem(p => ({ ...p, title: searchQuery })) }}
+                className="bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-5 py-2.5"
+              >
+                + Eigene Position erstellen
+              </button>
+            )}
           </div>
         ) : (
           <>
@@ -458,7 +456,7 @@ export default function PreisePage() {
       <div className="bg-[#2C2C2C] px-5 pt-12 pb-4">
         {selectedGewerk ? (
           <div className="flex items-center justify-between">
-            <button onClick={() => { setSelectedGewerk(null); setSelectedBereich('Alle'); setSearchQuery('') }} className="flex items-center gap-1 text-white/50 text-sm font-bold">
+            <button onClick={() => { setSelectedGewerk(null); setSelectedUnit('Alle'); setSearchQuery('') }} className="flex items-center gap-1 text-white/50 text-sm font-bold">
               <ArrowLeft size={16} />
               {GEWERK_META[selectedGewerk]?.label ?? selectedGewerk}
             </button>
@@ -469,9 +467,6 @@ export default function PreisePage() {
         ) : (
           <div className="flex items-center justify-between">
             <Link href="/einstellungen" className="text-white/50 text-sm font-semibold">← Einstellungen</Link>
-            <button onClick={() => setAdding(true)} className="bg-[#F5C400] rounded-xl p-2">
-              <Plus size={18} color="#2C2C2C" strokeWidth={3} />
-            </button>
           </div>
         )}
         <div className="text-white font-syne font-black text-xl mt-2 mb-3">
@@ -510,13 +505,6 @@ export default function PreisePage() {
               autoFocus
               className={inputCls}
             />
-            <input
-              aria-label="Automatisch gewählter Bereich"
-              value={selectedGewerk ? getBereich(inferPriceCategory(selectedGewerk, newItem.title)) : ''}
-              readOnly
-              title="Der Bereich wird automatisch aus der Bezeichnung ermittelt."
-              className={inputCls}
-            />
             <div className="grid grid-cols-2 gap-2.5">
               <input
                 placeholder="Preis (€)"
@@ -553,26 +541,15 @@ export default function PreisePage() {
         <GewerkGrid />
       ) : (
         <>
-          {/* Bereich Tabs */}
-          <div className="overflow-x-auto scrollbar-hide px-5 pt-4 pb-2">
-            <div className="flex gap-2 w-max">
-              {bereiche.map(b => (
-                <button
-                  key={b.name}
-                  onClick={() => setSelectedBereich(b.name)}
-                  className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-black transition-colors ${
-                    selectedBereich === b.name
-                      ? 'bg-[#F5C400] text-[#2C2C2C]'
-                      : 'bg-white text-[#2C2C2C]/50 border border-[#2C2C2C]/8'
-                  }`}
-                >
-                  {b.name}
-                  <span className={`ml-1.5 text-xs font-semibold ${selectedBereich === b.name ? 'text-[#2C2C2C]/50' : 'text-[#2C2C2C]/25'}`}>
-                    {b.count}
-                  </span>
-                </button>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 gap-2 px-5 pt-4 pb-2">
+            <select value={selectedUnit} onChange={e => setSelectedUnit(e.target.value)} className={inputCls}>
+              {availableUnits.map(unit => <option key={unit} value={unit}>{unit === 'Alle' ? 'Alle Einheiten' : unit}</option>)}
+            </select>
+            <select value={sortMode} onChange={e => setSortMode(e.target.value as typeof sortMode)} className={inputCls}>
+              <option value="name">A–Z</option>
+              <option value="price-asc">Preis aufsteigend</option>
+              <option value="price-desc">Preis absteigend</option>
+            </select>
           </div>
 
           {/* Positions List */}
@@ -622,7 +599,7 @@ export default function PreisePage() {
           {gewerke.map(g => (
             <button
               key={g.key}
-              onClick={() => { setSelectedGewerk(g.key); setSelectedBereich('Alle'); setSearchQuery('') }}
+              onClick={() => { setSelectedGewerk(g.key); setSelectedUnit('Alle'); setSearchQuery('') }}
               className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors group
                 ${selectedGewerk === g.key
                   ? 'bg-[#F5C400]/15 border-l-[3px] border-[#F5C400]'
@@ -655,43 +632,7 @@ export default function PreisePage() {
         </div>
       </div>
 
-      {/* COL 2 — BEREICHE (180px) */}
-      <div className="w-[180px] shrink-0 flex flex-col border-r border-[#2C2C2C]/8 bg-[#FAFAF8]">
-        {selectedGewerk ? (
-          <>
-            <div className="px-4 py-4 border-b border-[#2C2C2C]/8">
-              <div className="text-xs font-black text-[#2C2C2C]/35 uppercase tracking-widest">Bereich</div>
-            </div>
-            <div className="flex-1 overflow-y-auto py-1">
-              {bereiche.map(b => (
-                <button
-                  key={b.name}
-                  onClick={() => setSelectedBereich(b.name)}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors
-                    ${selectedBereich === b.name
-                      ? 'bg-[#F5C400]/15 border-l-[3px] border-[#F5C400]'
-                      : 'border-l-[3px] border-transparent hover:bg-[#F7F7F5]'}`}
-                >
-                  <span className={`text-sm font-black truncate ${selectedBereich === b.name ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/55'}`}>
-                    {b.name}
-                  </span>
-                  <span className={`text-xs font-semibold ml-1 shrink-0 ${selectedBereich === b.name ? 'text-[#2C2C2C]/40' : 'text-[#2C2C2C]/25'}`}>
-                    {b.count}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center text-[#2C2C2C]/20 font-semibold text-xs px-4">
-              ← Gewerk wählen
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* COL 3 — POSITIONEN (flex grow) */}
+      {/* POSITIONEN (flex grow) */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Toolbar */}
         <div className="px-6 py-3.5 border-b border-[#2C2C2C]/8 bg-white flex items-center justify-between">
@@ -699,17 +640,41 @@ export default function PreisePage() {
             {isSearching
               ? `${searchResults.length} Suchergebnisse für „${searchQuery}"`
               : selectedGewerk
-                ? `${GEWERK_META[selectedGewerk]?.label} — ${selectedBereich}`
+                ? GEWERK_META[selectedGewerk]?.label
                 : 'Alle Positionen'}
             {!isSearching && <span className="ml-2 text-[#2C2C2C]/30 font-semibold text-xs">{visibleItems.length}</span>}
           </div>
-          <button
-            onClick={() => { setAdding(true); setNewItem(p => ({ ...p, category: selectedGewerk ? `${selectedGewerk} – ` : '' })) }}
-            className="flex items-center gap-1.5 bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-2 rounded-xl"
-          >
-            <Plus size={13} strokeWidth={3} />
-            Position
-          </button>
+          <div className="flex items-center gap-2">
+            {selectedGewerk && (
+              <>
+                <select
+                  value={selectedUnit}
+                  onChange={e => setSelectedUnit(e.target.value)}
+                  className="bg-[#F7F7F5] rounded-xl px-3 py-2 text-xs font-bold text-[#2C2C2C] outline-none"
+                >
+                  {availableUnits.map(unit => <option key={unit} value={unit}>{unit === 'Alle' ? 'Alle Einheiten' : unit}</option>)}
+                </select>
+                <select
+                  value={sortMode}
+                  onChange={e => setSortMode(e.target.value as typeof sortMode)}
+                  className="bg-[#F7F7F5] rounded-xl px-3 py-2 text-xs font-bold text-[#2C2C2C] outline-none"
+                >
+                  <option value="name">A–Z</option>
+                  <option value="price-asc">Preis ↑</option>
+                  <option value="price-desc">Preis ↓</option>
+                </select>
+              </>
+            )}
+            {selectedGewerk && (
+              <button
+                onClick={() => { setAdding(true); setNewItem(p => ({ ...p, category: selectedGewerk })) }}
+                className="flex items-center gap-1.5 bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-2 rounded-xl"
+              >
+                <Plus size={13} strokeWidth={3} />
+                Position
+              </button>
+            )}
+          </div>
         </div>
 
         {/* New Item Form (inline) */}
@@ -723,14 +688,6 @@ export default function PreisePage() {
                   onChange={e => setNewItem(p => ({ ...p, title: e.target.value }))}
                   autoFocus required
                   placeholder="z.B. Wand streichen 2× Anstrich"
-                  className="w-full mt-1 bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold text-[#2C2C2C] focus:outline-none focus:border-[#F5C400]"
-                />
-              </div>
-              <div className="flex-[2]">
-                <label className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-wide">Bereich (automatisch)</label>
-                <input
-                  value={selectedGewerk ? getBereich(inferPriceCategory(selectedGewerk, newItem.title)) : ''}
-                  readOnly
                   className="w-full mt-1 bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold text-[#2C2C2C] focus:outline-none focus:border-[#F5C400]"
                 />
               </div>
@@ -801,7 +758,7 @@ export default function PreisePage() {
               <div className="text-sm text-[#2C2C2C]/20 font-semibold mt-1">oder oben suchen</div>
             </div>
           ) : visibleItems.length === 0 ? (
-            <div className="text-center py-12 text-[#2C2C2C]/30 font-semibold">Keine Positionen in diesem Bereich</div>
+            <div className="text-center py-12 text-[#2C2C2C]/30 font-semibold">Keine Positionen für diesen Filter</div>
           ) : (
             <div className="p-6 pt-4">
               <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
