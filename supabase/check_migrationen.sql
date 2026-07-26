@@ -86,6 +86,24 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
         WHERE p.company_id = c.id
           AND p.category LIKE 'Maler %'
       ) < 164
+  )),
+  (47, '20260726190000_complete_boden_catalog',       '177 Boden-Katalogpositionen',        NOT EXISTS (
+    SELECT 1
+    FROM companies c
+    WHERE (
+        'boden_parkett' = any(coalesce(c.gewerke, '{}'::text[]))
+        OR EXISTS (
+          SELECT 1 FROM price_items p0
+          WHERE p0.company_id = c.id
+            AND p0.category LIKE 'Boden %'
+        )
+      )
+      AND (
+        SELECT count(DISTINCT lower(p.title) || '|' || lower(p.unit))
+        FROM price_items p
+        WHERE p.company_id = c.id
+          AND p.category LIKE 'Boden %'
+      ) < 177
   ))
 )
 SELECT

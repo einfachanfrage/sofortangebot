@@ -19,7 +19,7 @@ export const AKTIVE_GEWERKE = [
     emoji: '🏠',
     beschreibung: 'Laminat, Vinyl, Parkett, Teppich, Kork, Linoleum',
     farbe: '#F5C400',
-    positionen_count: 101,
+    positionen_count: 177,
     typische_auftraege: [
       'Parkett verlegen',
       'Laminat verlegen',
