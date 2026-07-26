@@ -141,7 +141,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          supabase db push --yes --db-url "$TARGET_DB_URL"
+          supabase db push --yes --include-all --db-url "$TARGET_DB_URL"
           supabase migration list --db-url "$TARGET_DB_URL" > migration-status-production-after.txt
       - uses: actions/upload-artifact@v4
         with:
