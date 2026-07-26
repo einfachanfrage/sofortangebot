@@ -1,6 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
-import { pruefeBodenBasis } from './boden-basis'
+import { bodenNettoflaecheAusPositionen, pruefeBodenBasis } from './boden-basis'
 import { pruefeAltbelag, pruefeFeuchtigkeitssperre, pruefeSockelleisten, pruefeUebergangsprofil } from './boden-vorarbeiten'
 import {
   pruefeDiagonalBoden, pruefeFBHBoden, pruefeParkettSchleifen, pruefeTreppenBoden,
@@ -45,4 +45,18 @@ export function pruefeBoden(
   pruefeTrittschalldaemmung(ergaenzt, fehlende, lower)
   pruefeStosskanten(ergaenzt, fehlende, lower)
   pruefeTreppenBoden(ergaenzt, fehlende, lower, v)
+
+  // Abschließende, deterministische Zuordnung: Bei ausdrücklich vollflächig
+  // verklebtem Fertigparkett muss immer der exakte Katalogtitel verwendet werden.
+  // Diese Normalisierung steht bewusst nach allen Ergänzungsregeln.
+  if (/fertigparkett/i.test(lower) && /vollfl.chig.{0,30}verkleb|verkleb.{0,30}vollfl.chig/i.test(lower)) {
+    const parkettPosition = ergaenzt.find(position =>
+      /fertigparkett|parkett\s+verlegen/i.test(position.beschreibung) &&
+      !/aufpreis|fischgr.t|sockel|entfern/i.test(position.beschreibung),
+    )
+    if (parkettPosition) {
+      parkettPosition.beschreibung = 'Fertigparkett verlegen vollflächig verklebt'
+      parkettPosition.berechnungsweg = `${bodenNettoflaecheAusPositionen([parkettPosition]) ?? parkettPosition.menge} m² vollflächig verklebt`
+    }
+  }
 }

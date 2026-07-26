@@ -44,9 +44,20 @@ export function pruefeParkettSchleifen(
   lower: string,
   v: AuftragsVerstaendnis,
 ): void {
+  // "Kleberreste/Untergrund abschleifen" darf nicht allein deshalb als
+  // Parkett-Renovierung gelten, weil im selben Auftrag neues Parkett erwähnt wird.
+  // Eine nachfolgende Schleif-Anweisung darf sich auf den zuvor genannten
+  // Holzbelag beziehen; rückwärts gilt nur derselbe Satz (sonst Test-6-Fehltreffer).
+  const hatParkettSchleifauftrag =
+    /(?:parkett|dielen?|holzboden|eichenboden).{0,160}(?:abge|ab)?schl/i.test(lower) ||
+    /(?:abge|ab)?schl[^.!?]{0,100}(?:parkett|dielen?|holzboden|eichenboden)/i.test(lower)
+  const nurUntergrundOderKleberreste =
+    /(?:kleberreste?|untergrund|estrich).{0,35}(?:abge|ab)?schl/i.test(lower) ||
+    /(?:abge|ab)?schl.{0,35}(?:kleberreste?|untergrund|estrich)/i.test(lower)
   const hatSchleifen =
     v.hatArbeit('schleifen') &&
-    (lower.includes('parkett') || lower.includes('diele') || lower.includes('holzboden') || lower.includes('eichen'))
+    hatParkettSchleifauftrag &&
+    (!nurUntergrundOderKleberreste || /parkett.{0,20}(?:abge|ab)?schl|(?:abge|ab)?schl.{0,20}parkett/i.test(lower))
   if (!hatSchleifen) return
 
   // Fläche: aus Text, sonst aus vorhandener Schleif-/Boden-Position
