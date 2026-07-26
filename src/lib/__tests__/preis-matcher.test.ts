@@ -61,6 +61,13 @@ describe('betriebliche Preiszuordnung', () => {
     expect(findePreisposition('Vinyl-Boden verlegen inkl. 10% Verschnitt — Wohnzimmer', 'm²', boden)).not.toBeNull()
   })
 
+  it('ordnet Malervlies dem Malervlies-Preis und nicht einer Fototapete zu', () => {
+    const maler = preise.filter(preis => preis.category.startsWith('Maler'))
+    const treffer = findePreisposition('Malervlies tapezieren — Schlafzimmer', 'm²', maler)
+    expect(treffer?.position.title).toContain('Malervlies')
+    expect(treffer?.position.unit_price).toBe(15)
+  })
+
   it('ordnet einen expliziten 2x-Wandanstrich nicht dem 1x-Preis zu', () => {
     const maler = preise.filter(preis => preis.category.startsWith('Maler'))
     const treffer = findePreisposition('Wandflächen streichen 2x — Wohnzimmer', 'm²', maler)
