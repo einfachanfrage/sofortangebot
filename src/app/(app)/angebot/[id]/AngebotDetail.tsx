@@ -490,8 +490,20 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     if (!user) return
     const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
     if (!co) return
-    const { data } = await supabase.from('price_items').select('title, unit_price, unit').eq('company_id', co.id)
-    if (data) setPriceItems(data as { title: string; unit_price: number; unit: string }[])
+    const allPriceItems: { title: string; unit_price: number; unit: string }[] = []
+    const pageSize = 1000
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await supabase
+        .from('price_items')
+        .select('title, unit_price, unit')
+        .eq('company_id', co.id)
+        .order('title')
+        .range(from, from + pageSize - 1)
+      if (error) break
+      allPriceItems.push(...((data ?? []) as { title: string; unit_price: number; unit: string }[]))
+      if (!data || data.length < pageSize) break
+    }
+    setPriceItems(allPriceItems)
   }
 
   // Materialpreis aus der Preisdatenbank (bester Namens-Treffer), sonst 0

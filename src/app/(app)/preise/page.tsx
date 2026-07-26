@@ -132,8 +132,23 @@ export default function PreisePage() {
       const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
       if (!co) return
       setCompanyId(co.id)
-      const { data } = await supabase.from('price_items').select('*').eq('company_id', co.id).order('title')
-      setItems(data ?? [])
+      const allItems: PriceItem[] = []
+      const pageSize = 1000
+      for (let from = 0; ; from += pageSize) {
+        const { data, error } = await supabase
+          .from('price_items')
+          .select('*')
+          .eq('company_id', co.id)
+          .order('title')
+          .range(from, from + pageSize - 1)
+        if (error) {
+          setMutationError('Die Preisdatenbank konnte nicht vollständig geladen werden.')
+          break
+        }
+        allItems.push(...(data ?? []))
+        if (!data || data.length < pageSize) break
+      }
+      setItems(allItems)
       setLoading(false)
     }
     load()
