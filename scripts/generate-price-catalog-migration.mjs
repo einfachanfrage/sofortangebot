@@ -51,6 +51,7 @@ where (
     select 1
     from price_items existing
     where existing.company_id = c.id
+      and lower(btrim(existing.category)) = lower(btrim(p.category))
       and lower(existing.title) = lower(p.title)
       and lower(existing.unit) = lower(p.unit)
   );

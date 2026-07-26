@@ -6,6 +6,7 @@ import { DEFAULT_PRICES } from '@/lib/default-prices'
 import { Trash2, Plus, Check, X, Search, ArrowLeft, ChevronRight, Pencil } from 'lucide-react'
 import Link from 'next/link'
 import type { PriceItem } from '@/lib/types'
+import { getPriceTradeKey, priceItemIdentity } from '@/lib/price-catalog'
 
 // ─── GEWERK METADATA — nur aktive Gewerke ────────────────────────────────────
 
@@ -21,7 +22,7 @@ const AKTIVE_GEWERK_KEYS = new Set(['Maler', 'Boden', 'Allgemein'])
 // ─── BEREICH DERIVATION ─────────────────────────────────────────────────────
 
 function getGewerkKey(category: string): string {
-  return category.split(' – ')[0] ?? category
+  return getPriceTradeKey(category)
 }
 
 function getBereich(category: string): string {
@@ -120,6 +121,7 @@ export default function PreisePage() {
   const [adding, setAdding] = useState(false)
   const [newItem, setNewItem] = useState({ category: '', title: '', unit: 'm²', unit_price: '' })
   const [importing, setImporting] = useState(false)
+  const [mutationError, setMutationError] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
@@ -191,7 +193,13 @@ export default function PreisePage() {
   // ─── HANDLERS ────────────────────────────────────────────────────────────
 
   async function handleDelete(id: string) {
-    await supabase.from('price_items').delete().eq('id', id)
+    if (!companyId || !window.confirm('Position wirklich aus der Preisdatenbank löschen?')) return
+    setMutationError('')
+    const { error } = await supabase.from('price_items').delete().eq('id', id).eq('company_id', companyId)
+    if (error) {
+      setMutationError('Die Position konnte nicht gelöscht werden. Bitte erneut versuchen.')
+      return
+    }
     setItems(prev => prev.filter(i => i.id !== id))
   }
 
@@ -202,27 +210,56 @@ export default function PreisePage() {
 
   async function saveEdit(id: string) {
     const unit_price = parseFloat(editState.unit_price)
-    if (isNaN(unit_price) || unit_price < 0) return
-    await supabase.from('price_items').update({
-      title: editState.title,
-      category: editState.category,
+    const candidate = {
+      category: editState.category.trim(),
+      title: editState.title.trim(),
+      unit: editState.unit.trim(),
+    }
+    if (!candidate.title || !candidate.category || isNaN(unit_price) || unit_price < 0) {
+      setMutationError('Bezeichnung, Kategorie, Einheit und Preis müssen gültig sein.')
+      return
+    }
+    if (items.some(item => item.id !== id && priceItemIdentity(item) === priceItemIdentity(candidate))) {
+      setMutationError('Diese Position existiert in derselben Kategorie bereits.')
+      return
+    }
+    setMutationError('')
+    const { error } = await supabase.from('price_items').update({
+      title: candidate.title,
+      category: candidate.category,
       unit_price,
-      unit: editState.unit,
-    }).eq('id', id)
-    setItems(prev => prev.map(i => i.id === id ? { ...i, title: editState.title, category: editState.category, unit_price, unit: editState.unit } : i))
+      unit: candidate.unit,
+    }).eq('id', id).eq('company_id', companyId)
+    if (error) {
+      setMutationError('Die Änderung konnte nicht gespeichert werden. Möglicherweise existiert die Position bereits.')
+      return
+    }
+    setItems(prev => prev.map(i => i.id === id ? { ...i, ...candidate, unit_price } : i))
     setEditingId(null)
   }
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()
-    if (!companyId || !newItem.title || !newItem.category) return
-    const { data } = await supabase.from('price_items').insert({
+    if (!companyId || !newItem.title.trim() || !newItem.category.trim()) return
+    const candidate = {
+      category: newItem.category.trim(),
+      title: newItem.title.trim(),
+      unit: newItem.unit.trim(),
+    }
+    if (items.some(item => priceItemIdentity(item) === priceItemIdentity(candidate))) {
+      setMutationError('Diese Position existiert in derselben Kategorie bereits.')
+      return
+    }
+    setMutationError('')
+    const { data, error } = await supabase.from('price_items').insert({
       company_id: companyId,
-      category: newItem.category || (selectedGewerk ?? 'Allgemein'),
-      title: newItem.title,
-      unit: newItem.unit,
+      ...candidate,
       unit_price: parseFloat(newItem.unit_price) || 0,
     }).select().single()
+    if (error) {
+      setMutationError('Die Position konnte nicht angelegt werden. Bitte Eingaben prüfen.')
+      return
+    }
     if (data) {
       setItems(prev => [...prev, data])
       setNewItem({ category: selectedGewerk ?? '', title: '', unit: 'm²', unit_price: '' })
@@ -233,19 +270,25 @@ export default function PreisePage() {
   async function handleImport() {
     if (!companyId) return
     setImporting(true)
-    const existingKeys = new Set(items.map(i => `${i.title.toLowerCase()}::${i.unit.toLowerCase()}`))
+    setMutationError('')
+    const existingKeys = new Set(items.map(priceItemIdentity))
     const toInsert = DEFAULT_PRICES
-      .filter(p => !existingKeys.has(`${p.title.toLowerCase()}::${p.unit.toLowerCase()}`))
+      .filter(p => ['Maler', 'Boden'].includes(getPriceTradeKey(p.category)))
+      .filter(p => !existingKeys.has(priceItemIdentity(p)))
       .map(p => ({ ...p, company_id: companyId }))
 
     // Supabase limits single inserts to ~1000 rows — insert in batches
     const BATCH = 400
     const allInserted: PriceItem[] = []
     for (let i = 0; i < toInsert.length; i += BATCH) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('price_items')
         .insert(toInsert.slice(i, i + BATCH))
         .select()
+      if (error) {
+        setMutationError('Die Standardpreise konnten nicht vollständig ergänzt werden.')
+        break
+      }
       if (data) allInserted.push(...data)
     }
     if (allInserted.length > 0) setItems(prev => [...prev, ...allInserted])
@@ -844,6 +887,12 @@ export default function PreisePage() {
 
   return (
     <>
+      {mutationError && (
+        <div className="fixed left-1/2 top-4 z-[100] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700 shadow-lg">
+          {mutationError}
+          <button type="button" onClick={() => setMutationError('')} className="float-right ml-3">×</button>
+        </div>
+      )}
       {MobileLayout}
       {DesktopLayout}
     </>

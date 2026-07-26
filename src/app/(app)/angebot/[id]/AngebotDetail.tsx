@@ -800,44 +800,61 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   async function saveEdits(nextStatus?: string) {
     setSaving(true)
-    for (const item of editItems) {
-      if (item.id.startsWith('new-')) {
-        await supabase.from('quote_items').insert({
-          quote_id: quote.id, position: item.position, title: item.title,
-          description: item.description, quantity: item.quantity, unit: item.unit,
-          unit_price: item.unit_price, total_price: item.total_price,
-        })
-      } else {
-        await supabase.from('quote_items').update({
-          title: item.title, description: item.description, quantity: item.quantity,
-          unit: item.unit, unit_price: item.unit_price, total_price: item.total_price,
-          position: item.position,
-        }).eq('id', item.id)
+    try {
+      if (editItems.some(item => !item.title.trim())) {
+        throw new Error('Bitte gib jeder Position eine Bezeichnung.')
       }
+      for (const item of editItems) {
+        if (item.id.startsWith('new-')) {
+          const { error } = await supabase.from('quote_items').insert({
+            quote_id: quote.id, position: item.position, title: item.title.trim(),
+            description: item.description, quantity: item.quantity, unit: item.unit,
+            unit_price: item.unit_price, total_price: item.total_price,
+          })
+          if (error) throw error
+        } else {
+          const { error } = await supabase.from('quote_items').update({
+            title: item.title.trim(), description: item.description, quantity: item.quantity,
+            unit: item.unit, unit_price: item.unit_price, total_price: item.total_price,
+            position: item.position,
+          }).eq('id', item.id)
+          if (error) throw error
+        }
+      }
+      const deletedIds = quote.items.filter(orig => !editItems.some(e => e.id === orig.id)).map(i => i.id)
+      if (deletedIds.length) {
+        const { error } = await supabase.from('quote_items').delete().in('id', deletedIds)
+        if (error) throw error
+      }
+
+      const totalNet = editItems.reduce((s, i) => s + i.total_price, 0)
+      const discountValue = discountPercent > 0 ? totalNet * (discountPercent / 100) : discountAmount
+      const netAfterDiscount = totalNet - discountValue
+      const netWithSurcharge = netAfterDiscount + surchargeAmount
+      const totalVat = company && company.vat_rate > 0 ? netWithSurcharge * (company.vat_rate / 100) : 0
+      const { error: quoteError } = await supabase.from('quotes').update({
+        total_net: totalNet, total_vat: totalVat, total_gross: netWithSurcharge + totalVat,
+        discount_percent: discountPercent, discount_amount: discountAmount,
+        surcharge_amount: surchargeAmount, surcharge_label: surchargeLabel,
+        ...(nextStatus ? { status: nextStatus } : {}),
+      }).eq('id', quote.id)
+      if (quoteError) throw quoteError
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (nextStatus) setCurrentStatus(nextStatus as any)
+      setEditMode(false)
+      setEditingItemId(null)
+      setHasChanges(false)
+      showToast(nextStatus === 'bereit' ? 'Angebot fertiggestellt ✓' : 'Entwurf gespeichert ✓')
+      router.refresh()
+    } catch (error) {
+      console.error('Entwurf konnte nicht gespeichert werden', error)
+      showToast(error instanceof Error && error.message.startsWith('Bitte')
+        ? error.message
+        : 'Speichern fehlgeschlagen – bitte erneut versuchen')
+    } finally {
+      setSaving(false)
     }
-    const deletedIds = quote.items.filter(orig => !editItems.some(e => e.id === orig.id)).map(i => i.id)
-    if (deletedIds.length) await supabase.from('quote_items').delete().in('id', deletedIds)
-
-    const totalNet = editItems.reduce((s, i) => s + i.total_price, 0)
-    const discountValue = discountPercent > 0 ? totalNet * (discountPercent / 100) : discountAmount
-    const netAfterDiscount = totalNet - discountValue
-    const netWithSurcharge = netAfterDiscount + surchargeAmount
-    const totalVat = company && company.vat_rate > 0 ? netWithSurcharge * (company.vat_rate / 100) : 0
-    await supabase.from('quotes').update({
-      total_net: totalNet, total_vat: totalVat, total_gross: netWithSurcharge + totalVat,
-      discount_percent: discountPercent, discount_amount: discountAmount,
-      surcharge_amount: surchargeAmount, surcharge_label: surchargeLabel,
-      ...(nextStatus ? { status: nextStatus } : {}),
-    }).eq('id', quote.id)
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (nextStatus) setCurrentStatus(nextStatus as any)
-    setSaving(false)
-    setEditMode(false)
-    setEditingItemId(null)
-    setHasChanges(false)
-    showToast(nextStatus === 'bereit' ? 'Angebot fertiggestellt ✓' : 'Entwurf gespeichert ✓')
-    router.refresh()
   }
 
   async function fertigstellen() {

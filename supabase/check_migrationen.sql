@@ -103,7 +103,39 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
         FROM price_items p
         WHERE p.company_id = c.id
           AND p.category LIKE 'Boden %'
-      ) < 177
+      ) < 169
+  )),
+  (48, '20260726200000_deduplicate_price_items',      'eindeutige Preispositionen',         NOT EXISTS (
+    SELECT 1
+    FROM price_items
+    GROUP BY company_id, lower(btrim(category)), lower(btrim(title)), lower(btrim(unit))
+    HAVING count(*) > 1
+  )),
+  (49, '20260726201000_reconcile_maler_catalog',      '164 Maler-Positionen je Kategorie',  NOT EXISTS (
+    SELECT 1
+    FROM companies c
+    WHERE EXISTS (
+      SELECT 1 FROM price_items p0
+      WHERE p0.company_id = c.id AND p0.category LIKE 'Maler%'
+    )
+    AND (
+      SELECT count(DISTINCT lower(btrim(p.category)) || '|' || lower(btrim(p.title)) || '|' || lower(btrim(p.unit)))
+      FROM price_items p
+      WHERE p.company_id = c.id AND p.category LIKE 'Maler%'
+    ) < 164
+  )),
+  (50, '20260726202000_reconcile_boden_catalog',      '177 Boden-Positionen je Kategorie',  NOT EXISTS (
+    SELECT 1
+    FROM companies c
+    WHERE EXISTS (
+      SELECT 1 FROM price_items p0
+      WHERE p0.company_id = c.id AND p0.category LIKE 'Boden%'
+    )
+    AND (
+      SELECT count(DISTINCT lower(btrim(p.category)) || '|' || lower(btrim(p.title)) || '|' || lower(btrim(p.unit)))
+      FROM price_items p
+      WHERE p.company_id = c.id AND p.category LIKE 'Boden%'
+    ) < 177
   ))
 )
 SELECT

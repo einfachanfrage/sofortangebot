@@ -51,17 +51,36 @@ export async function POST(
   if (!item) return NextResponse.json({ error: 'Position nicht gefunden' }, { status: 404 })
 
   const datenbankTitel = item.title.replace(/\s+—\s+.+$/, '').trim()
-  const { data: priceItem, error: priceError } = await supabase
+  const category = kategorieFuerTitel(datenbankTitel)
+  const { data: existingPriceItem } = await supabase
     .from('price_items')
-    .insert({
-      company_id: company.id,
-      category: kategorieFuerTitel(datenbankTitel),
-      title: datenbankTitel,
-      unit: item.unit,
-      unit_price: unitPrice,
-    })
     .select('id, title, unit, unit_price')
-    .single()
+    .eq('company_id', company.id)
+    .ilike('category', category)
+    .ilike('title', datenbankTitel)
+    .ilike('unit', item.unit)
+    .maybeSingle()
+
+  const priceResult = existingPriceItem
+    ? await supabase
+        .from('price_items')
+        .update({ unit_price: unitPrice })
+        .eq('id', existingPriceItem.id)
+        .eq('company_id', company.id)
+        .select('id, title, unit, unit_price')
+        .single()
+    : await supabase
+        .from('price_items')
+        .insert({
+          company_id: company.id,
+          category,
+          title: datenbankTitel,
+          unit: item.unit,
+          unit_price: unitPrice,
+        })
+        .select('id, title, unit, unit_price')
+        .single()
+  const { data: priceItem, error: priceError } = priceResult
 
   if (priceError || !priceItem) {
     return NextResponse.json({ error: 'Preis konnte nicht in der Preisdatenbank angelegt werden.' }, { status: 500 })
@@ -75,7 +94,9 @@ export async function POST(
     .eq('quote_id', quoteId)
 
   if (itemError) {
-    await supabase.from('price_items').delete().eq('id', priceItem.id).eq('company_id', company.id)
+    if (!existingPriceItem) {
+      await supabase.from('price_items').delete().eq('id', priceItem.id).eq('company_id', company.id)
+    }
     return NextResponse.json({ error: 'Preis konnte nicht in das Angebot übernommen werden.' }, { status: 500 })
   }
 
