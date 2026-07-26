@@ -6,7 +6,7 @@ import { DEFAULT_PRICES } from '@/lib/default-prices'
 import { Trash2, Plus, Check, X, Search, ArrowLeft, ChevronRight, Pencil } from 'lucide-react'
 import Link from 'next/link'
 import type { PriceItem } from '@/lib/types'
-import { getPriceTradeKey, priceItemIdentity } from '@/lib/price-catalog'
+import { getPriceTradeKey, inferPriceCategory, priceItemIdentity } from '@/lib/price-catalog'
 
 // ─── GEWERK METADATA — nur aktive Gewerke ────────────────────────────────────
 
@@ -255,9 +255,9 @@ export default function PreisePage() {
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()
-    if (!companyId || !newItem.title.trim() || !newItem.category.trim()) return
+    if (!companyId || !newItem.title.trim() || !selectedGewerk) return
     const candidate = {
-      category: newItem.category.trim(),
+      category: inferPriceCategory(selectedGewerk, newItem.title),
       title: newItem.title.trim(),
       unit: newItem.unit.trim(),
     }
@@ -511,10 +511,10 @@ export default function PreisePage() {
               className={inputCls}
             />
             <input
-              placeholder="Gewerk / Kategorie"
-              value={newItem.category || (selectedGewerk ? `${selectedGewerk} – ` : '')}
-              onChange={e => setNewItem(p => ({ ...p, category: e.target.value }))}
-              required
+              aria-label="Automatisch gewählter Bereich"
+              value={selectedGewerk ? getBereich(inferPriceCategory(selectedGewerk, newItem.title)) : ''}
+              readOnly
+              title="Der Bereich wird automatisch aus der Bezeichnung ermittelt."
               className={inputCls}
             />
             <div className="grid grid-cols-2 gap-2.5">
@@ -727,12 +727,10 @@ export default function PreisePage() {
                 />
               </div>
               <div className="flex-[2]">
-                <label className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-wide">Kategorie</label>
+                <label className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-wide">Bereich (automatisch)</label>
                 <input
-                  value={newItem.category}
-                  onChange={e => setNewItem(p => ({ ...p, category: e.target.value }))}
-                  required
-                  placeholder="Gewerk – Bereich"
+                  value={selectedGewerk ? getBereich(inferPriceCategory(selectedGewerk, newItem.title)) : ''}
+                  readOnly
                   className="w-full mt-1 bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold text-[#2C2C2C] focus:outline-none focus:border-[#F5C400]"
                 />
               </div>
