@@ -1,8 +1,9 @@
 -- ============================================================
--- sofortangebot.app — Vollständiges Datenbankschema
--- Für NEUE Supabase-Projekte: dieses File komplett ausführen.
--- Für BESTEHENDE Projekte: fehlende Dateien aus migrations/ ausführen
--- (Status prüfen mit check_migrationen.sql).
+-- sofortangebot.app — Basis-Schema
+-- Dieses File enthält nur das historische Kernschema.
+-- Quelle der Wahrheit für den vollständigen aktuellen Stand sind ALLE Dateien
+-- aus migrations/ in Dateinamen-Reihenfolge. Das gilt auch für neue Projekte.
+-- Bestehende Projekte mit check_migrationen.sql prüfen.
 -- ============================================================
 
 -- Enable UUID extension
@@ -120,9 +121,8 @@ create policy "Users can manage own quotes" on quotes
     exists (select 1 from companies where id = company_id and user_id = auth.uid())
   );
 
--- Kunden können gesendete Angebote per share_token lesen (kein auth nötig)
-create policy "Public can view sent quotes" on quotes
-  for select using (status in ('sent', 'accepted', 'rejected'));
+-- Öffentliche Angebote werden ausschließlich über serverseitige API-Endpunkte
+-- mit geprüftem share_token ausgeliefert. Kein anonymer Tabellenzugriff.
 
 -- ── Quote Items (Positionen) ──────────────────────────────────
 create table if not exists quote_items (
@@ -134,7 +134,8 @@ create table if not exists quote_items (
   quantity    numeric(10,3) not null default 1,
   unit        text not null default 'Stk',
   unit_price  numeric(10,2) not null default 0,
-  total_price numeric(12,2) not null default 0
+  total_price numeric(12,2) not null default 0,
+  price_item_id uuid references price_items(id) on delete set null
 );
 
 alter table quote_items enable row level security;
@@ -148,12 +149,6 @@ create policy "Users can manage own quote items" on quote_items
     )
   );
 
-create policy "Public can view items of sent quotes" on quote_items
-  for select using (
-    exists (
-      select 1 from quotes where id = quote_id and status in ('sent', 'accepted', 'rejected')
-    )
-  );
 
 -- ── Integrations (OAuth Tokens — für zukünftige OAuth-Flows) ──
 create table if not exists integrations (

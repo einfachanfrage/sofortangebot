@@ -42,7 +42,33 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
   (34, '20260702092924_add_raum_details',            'quotes.raum_details',               EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quotes' AND column_name='raum_details')),
   (35, '20260704074603_add_kleinmaterial_config',    'companies.kleinmaterial_config',    EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='kleinmaterial_config')),
   (36, '20260704203908_add_anfahrt_config',          'companies.anfahrt_config',          EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='anfahrt_config')),
-  (37, '20260705064529_add_company_kontakt',         'companies.website',                 EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='website'))
+  (37, '20260705064529_add_company_kontakt',         'companies.website',                 EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='website')),
+  (38, '20260712120000_add_abrechnungs_modus',       'companies.abrechnungs_modus',       EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='abrechnungs_modus')),
+  (39, '20260714120000_add_berechnungsweg',          'quote_items.berechnungsweg',        EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quote_items' AND column_name='berechnungsweg')),
+  (40, '20260717120000_add_angebot_struktur',         'companies.angebot_struktur',        EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='angebot_struktur')),
+  (41, '20260717140000_add_widerruf',                'companies.widerruf_aktiv',          EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='widerruf_aktiv')),
+  (42, '20260717160000_add_angebot_optionen',         'quotes.dokument_typ',               EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quotes' AND column_name='dokument_typ')),
+  (43, '20260720183000_lock_down_public_quotes',      'keine anonymen Quote-Policies',     NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname='public'
+      AND tablename IN ('quotes', 'quote_items')
+      AND policyname IN (
+        'Public can view sent quotes',
+        'Public can fetch quote by share_token',
+        'Public can view items of sent quotes'
+      )
+  )),
+  (44, '20260720204500_add_engine_price_positions',  'Engine-Katalogpositionen',          NOT EXISTS (
+    SELECT 1
+    FROM companies c
+    WHERE NOT EXISTS (
+      SELECT 1 FROM price_items p
+      WHERE p.company_id = c.id
+        AND lower(p.title) = lower('Sockelleisten abkleben')
+        AND lower(p.unit) = lower('lfdm')
+    )
+  )),
+  (45, '20260720211000_link_quote_items_to_price_items', 'quote_items.price_item_id',      EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quote_items' AND column_name='price_item_id'))
 )
 SELECT
   migration,

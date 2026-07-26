@@ -4,7 +4,7 @@ const { getAllPosts } = require('./src/lib/blog')
 module.exports = {
   siteUrl: 'https://sofortangebot.app',
   generateRobotsTxt: true,
-  additionalPaths: async (config) => {
+  additionalPaths: async () => {
     try {
       const posts = getAllPosts()
       return posts.map(post => ({

@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# sofortangebot
 
-## Getting Started
+Webanwendung zum Erfassen, Kalkulieren, Versenden und Unterzeichnen von Handwerkerangeboten. Die Anwendung basiert auf Next.js, React, Supabase und TypeScript und unterstützt unter anderem KI-gestützte Angebotserstellung, PDF-Ausgabe, Kundenverwaltung und Buchhaltungsintegrationen.
 
-First, run the development server:
+## Voraussetzungen
+
+- Node.js 20
+- npm
+- Ein Supabase-Projekt
+- API-Zugänge für die Funktionen, die lokal verwendet werden sollen
+
+## Lokale Einrichtung
+
+```bash
+npm ci
+```
+
+Die Beispielkonfiguration kopieren und anschließend mit lokalen Zugangsdaten befüllen:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+Unter macOS oder Linux:
+
+```bash
+cp .env.example .env.local
+```
+
+Danach den Entwicklungsserver starten:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Die Anwendung ist anschließend unter [http://localhost:3000](http://localhost:3000) erreichbar.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Konfiguration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Alle unterstützten Variablen und Erläuterungen stehen in [`.env.example`](.env.example). Für den grundlegenden Betrieb werden insbesondere diese Werte benötigt:
 
-## Learn More
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_APP_URL`
+- `ADMIN_EMAIL`
+- `ALERT_SECRET`
 
-To learn more about Next.js, take a look at the following resources:
+Je nach aktivierter Funktion werden außerdem Zugangsdaten für OpenAI, Resend und Stripe benötigt. `.env.local` enthält Geheimnisse und darf nicht committet werden.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Datenbank
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Das aktuelle Referenzschema liegt in [`supabase/schema.sql`](supabase/schema.sql). Fortlaufende Änderungen befinden sich in [`supabase/migrations`](supabase/migrations) und müssen in der vorgesehenen Reihenfolge auf das Zielprojekt angewendet werden.
 
-## Deploy on Vercel
+Vor einem Deployment ist insbesondere zu prüfen, dass alle Migrationen eingespielt und die Row-Level-Security-Regeln aktiv sind.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Qualitätsprüfungen
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vor einem Push sollten dieselben Prüfungen wie in der CI ausgeführt werden:
+
+```bash
+npm run lint:ci
+npm run typecheck
+npm test
+npm run build
+```
+
+`lint:ci` akzeptiert den aktuell dokumentierten Bestand an ESLint-Warnungen, schlägt aber bei neuen Warnungen oder Fehlern fehl. Der Warnungsgrenzwert soll bei jeder Bereinigung entsprechend abgesenkt werden.
+
+## Continuous Integration
+
+Die GitHub-Actions-Pipeline in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) läuft bei Pull Requests, Pushes auf `main` und bei manueller Ausführung. Sie verwendet Node.js 20 und führt nacheinander folgende Schritte aus:
+
+1. reproduzierbare Installation mit `npm ci`
+2. ESLint-Prüfung
+3. TypeScript-Prüfung
+4. automatisierte Tests
+5. Next.js-Produktions-Build
+
+Die CI verwendet ausschließlich Platzhalterwerte für Buildzeit-Validierungen. Echte Produktionsgeheimnisse gehören in die geschützten Umgebungsvariablen der jeweiligen Deployment-Plattform und nicht in den Workflow.
+
+## Projektstruktur
+
+```text
+src/app/          Next.js-Seiten und API-Routen
+src/components/   wiederverwendbare UI-Komponenten
+src/data/         serverseitige Data-Access-Schicht
+src/lib/          Fachlogik und Infrastruktur
+supabase/         Schema, Migrationen und Edge Functions
+tests/            ergänzende Tests und Prüfszenarien
+```
+
+Serverseitige Seiten sollen Daten über `src/data` laden. Authentifizierung, Mandantenzuordnung und die Auswahl sicherer Rückgabefelder gehören in diese Data-Access-Schicht, nicht in UI-Komponenten.
+
+## Produktionsbetrieb
+
+```bash
+npm run build
+npm start
+```
+
+Vor einem Launch zusätzlich Migrationen, Secrets, E-Mail-Domain, Stripe-Webhooks, Cron-Authentifizierung und die öffentlichen Angebots- beziehungsweise Signaturabläufe in der Zielumgebung prüfen.

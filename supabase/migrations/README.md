@@ -14,7 +14,8 @@ Ausführungs-Reihenfolge.
    - `CREATE OR REPLACE FUNCTION …`
    - Policies absichern: `DROP POLICY IF EXISTS "name" ON tabelle;` vor `CREATE POLICY`
 3. Im Supabase SQL-Editor ausführen (Produktion)
-4. **Repräsentatives Objekt in `../check_migrationen.sql` ergänzen** (eine Zeile im VALUES-Block)
+4. **Repräsentatives Objekt in `../check_migrationen.sql` ergänzen** (eine Zeile im VALUES-Block).
+   Der Check muss mit derselben laufenden Nummer wie die Migration enden.
 
 **Status prüfen — welche Migrationen fehlen noch?**
 Inhalt von [`../check_migrationen.sql`](../check_migrationen.sql) im Supabase
@@ -24,7 +25,7 @@ SQL-Editor ausführen. Jede Zeile mit `❌ FEHLT` muss noch ausgeführt werden.
 
 | Datei | Zweck |
 |---|---|
-| `schema.sql` | Basis-Schema — nur für **komplett neue** Supabase-Projekte |
+| `schema.sql` | Historisches Basis-Schema; danach immer alle Migrationen in Reihenfolge anwenden |
 | `check_migrationen.sql` | Status-Check (siehe oben) |
 | `seed-staging.sql` | Testdaten für Staging |
 | `functions/` | Edge Functions (Deno) |
@@ -33,6 +34,8 @@ SQL-Editor ausführen. Jede Zeile mit `❌ FEHLT` muss noch ausgeführt werden.
 
 - `alle_migrationen.sql` (veralteter Sammel-Dump) wurde im Juli 2026 entfernt —
   die Einzeldateien hier sind die einzige Quelle der Wahrheit.
+- `schema.sql` ersetzt die Migrationen nicht. Ein neues Projekt ist erst nach
+  Anwendung aller Einzelmigrationen auf dem aktuellen Stand.
 - Bekannte Stolperfalle: `CREATE POLICY` ohne vorheriges `DROP POLICY IF EXISTS`
   bricht bei erneuter Ausführung mit Fehler 42710 ab — dann läuft der **Rest der
   Datei nicht mehr**! (So ist im Juni 2026 die `check_rate_limit`-Funktion aus
