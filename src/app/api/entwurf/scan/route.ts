@@ -72,6 +72,12 @@ export async function POST(req: NextRequest) {
   if (!angebotId || !foto) {
     return NextResponse.json({ error: 'angebot_id und foto erforderlich' }, { status: 400 })
   }
+  if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'].includes(foto.type)) {
+    return NextResponse.json({ error: 'Ungültiges Bildformat' }, { status: 400 })
+  }
+  if (foto.size > 10 * 1024 * 1024) {
+    return NextResponse.json({ error: 'Bild zu groß (max. 10 MB)' }, { status: 413 })
+  }
 
   // Zugriff prüfen (Angebot gehört zur Company des Users)
   const { data: quote } = await supabase
@@ -160,8 +166,8 @@ export async function POST(req: NextRequest) {
       positionen,
       foto_url: storageErr ? null : storagePath,
     })
-  } catch (err) {
-    console.error('Scan Fehler:', err)
+  } catch {
+    console.error('[entwurf-scan] Verarbeitung fehlgeschlagen')
     await supabase.from('entwurf_aufnahmen')
       .update({ verarbeitung_status: 'fehler' }).eq('id', aufnahme.id)
     return NextResponse.json({ error: `${cfg.beschreibung} konnte nicht gelesen werden` }, { status: 500 })

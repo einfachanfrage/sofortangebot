@@ -18,6 +18,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
 
+  const relation = quote.companies as unknown as { user_id?: string } | Array<{ user_id?: string }> | null
+  const ownerId = Array.isArray(relation) ? relation[0]?.user_id : relation?.user_id
+  if (ownerId !== user.id) return NextResponse.json({ error: 'Kein Zugriff' }, { status: 403 })
+
+  const allowedVia = new Set(['email', 'whatsapp', 'link', 'pdf'])
+  if (typeof via !== 'string' || !allowedVia.has(via)) {
+    return NextResponse.json({ error: 'Ungültiger Versandweg' }, { status: 400 })
+  }
+
   const existing: string[] = quote.sent_via ?? []
   if (existing.includes(via)) return NextResponse.json({ ok: true })
 

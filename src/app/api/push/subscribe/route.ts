@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   }, { onConflict: 'endpoint' })
 
   if (error) {
-    console.error('push subscribe error:', error)
+    console.error('[push-subscribe] Datenbankeintrag fehlgeschlagen')
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 

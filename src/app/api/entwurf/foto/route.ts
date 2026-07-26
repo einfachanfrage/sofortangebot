@@ -17,6 +17,12 @@ export async function POST(req: NextRequest) {
   if (!angebotId || !foto) {
     return NextResponse.json({ error: 'angebot_id und foto erforderlich' }, { status: 400 })
   }
+  if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'].includes(foto.type)) {
+    return NextResponse.json({ error: 'Ungültiges Bildformat' }, { status: 400 })
+  }
+  if (foto.size > 10 * 1024 * 1024) {
+    return NextResponse.json({ error: 'Bild zu groß (max. 10 MB)' }, { status: 413 })
+  }
 
   // Eintrag anlegen
   const { data: aufnahme, error: insertErr } = await supabase

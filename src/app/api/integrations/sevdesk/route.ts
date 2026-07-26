@@ -75,8 +75,7 @@ export async function POST(req: NextRequest) {
   })
 
   if (!orderRes.ok) {
-    const err = await orderRes.text()
-    console.error('sevDesk Order error:', err)
+    console.error('[sevdesk] API-Anfrage fehlgeschlagen, Status:', orderRes.status)
     return NextResponse.json({ error: 'sevDesk-Fehler beim Anlegen des Angebots' }, { status: 502 })
   }
 

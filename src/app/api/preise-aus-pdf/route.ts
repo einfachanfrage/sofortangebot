@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
+import { pruefeKIZugriff } from '@/lib/rate-limiter'
 
 const SYSTEM_PROMPT = `Du bist Experte für Handwerker-Kalkulation in Deutschland.
 Dir wird der extrahierte Text aus einem oder mehreren echten Handwerker-Angeboten übergeben.
@@ -44,6 +45,8 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+  const blocked = await pruefeKIZugriff(user.id, 'ki_extraktion')
+  if (blocked) return blocked
 
   const formData = await req.formData()
   const files = formData.getAll('pdfs') as File[]
@@ -51,9 +54,12 @@ export async function POST(req: NextRequest) {
   if (!files.length) {
     return NextResponse.json({ error: 'Keine Dateien hochgeladen' }, { status: 400 })
   }
+  if (files.length > 5 || files.some(file => file.type !== 'application/pdf' || file.size > 10 * 1024 * 1024)) {
+    return NextResponse.json({ error: 'Maximal 5 PDF-Dateien mit je 10 MB erlaubt' }, { status: 413 })
+  }
 
   // PDF-Text extrahieren
-  let extractedTexts: string[] = []
+  const extractedTexts: string[] = []
 
   for (const file of files.slice(0, 5)) {
     try {
@@ -65,8 +71,8 @@ export async function POST(req: NextRequest) {
       if (data.text?.trim()) {
         extractedTexts.push(`--- Angebot: ${file.name} ---\n${data.text.trim()}`)
       }
-    } catch (err) {
-      console.error(`PDF parse Fehler bei ${file.name}:`, err)
+    } catch {
+      console.error('[preise-aus-pdf] PDF konnte nicht gelesen werden')
       // Weiter mit nächster Datei
     }
   }

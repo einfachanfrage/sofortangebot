@@ -19,6 +19,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
   if (!company) return NextResponse.json({ error: 'No company' }, { status: 403 })
 
+  const { data: quote } = await supabase
+    .from('quotes')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', company.id)
+    .single()
+  if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
   const { data: photos } = await supabase
     .from('quote_photos')
     .select('*')
@@ -48,6 +56,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
   if (!company) return NextResponse.json({ error: 'No company' }, { status: 403 })
 
+  const { data: quote } = await supabase
+    .from('quotes')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', company.id)
+    .single()
+  if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
   // Foto-Limit prüfen
   const { count } = await supabase
     .from('quote_photos')
@@ -58,6 +74,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const form = await req.formData()
   const file = form.get('file') as File | null
   if (!file) return NextResponse.json({ error: 'Kein Bild' }, { status: 400 })
+  const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'])
+  if (!allowedTypes.has(file.type)) {
+    return NextResponse.json({ error: 'Ungültiges Bildformat' }, { status: 400 })
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    return NextResponse.json({ error: 'Bild zu groß (max. 10 MB)' }, { status: 413 })
+  }
 
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
   const uuid = crypto.randomUUID()
@@ -72,7 +95,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     })
 
   if (uploadError) {
-    console.error('Storage upload error:', uploadError)
+    console.error('[quote-photos] Storage-Upload fehlgeschlagen')
     return NextResponse.json({ error: 'Upload fehlgeschlagen' }, { status: 500 })
   }
 
@@ -94,7 +117,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .single()
 
   if (dbError) {
-    console.error('DB insert error:', dbError)
+    console.error('[quote-photos] Datenbankeintrag fehlgeschlagen')
     return NextResponse.json({ error: 'Datenbankfehler' }, { status: 500 })
   }
 
@@ -109,7 +132,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { photo_id, in_pdf } = await req.json()
-  await supabase.from('quote_photos').update({ in_pdf }).eq('id', photo_id).eq('quote_id', id)
+  if (typeof photo_id !== 'string' || typeof in_pdf !== 'boolean') {
+    return NextResponse.json({ error: 'Ungültige Parameter' }, { status: 400 })
+  }
+  const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
+  if (!company) return NextResponse.json({ error: 'No company' }, { status: 403 })
+  const { error } = await supabase.from('quote_photos').update({ in_pdf })
+    .eq('id', photo_id).eq('quote_id', id).eq('company_id', company.id)
+  if (error) return NextResponse.json({ error: 'Aktualisierung fehlgeschlagen' }, { status: 500 })
   return NextResponse.json({ ok: true })
 }
 
@@ -121,17 +151,23 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { photo_id } = await req.json()
+  if (typeof photo_id !== 'string') {
+    return NextResponse.json({ error: 'Ungültige Parameter' }, { status: 400 })
+  }
+  const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
+  if (!company) return NextResponse.json({ error: 'No company' }, { status: 403 })
   const { data: photo } = await supabase
     .from('quote_photos')
     .select('filename')
     .eq('id', photo_id)
     .eq('quote_id', id)
+    .eq('company_id', company.id)
     .single()
 
   if (photo) {
     const service = getService()
     await service.storage.from('quote-photos').remove([photo.filename])
-    await supabase.from('quote_photos').delete().eq('id', photo_id)
+    await supabase.from('quote_photos').delete().eq('id', photo_id).eq('company_id', company.id)
   }
 
   return NextResponse.json({ ok: true })

@@ -6,10 +6,11 @@ export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+  if (!user || !session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  const blocked = await pruefeKIZugriff(session.user.id, 'ki_transkription')
+  const blocked = await pruefeKIZugriff(user.id, 'ki_transkription')
   if (blocked) return blocked
 
   const formData = await req.formData()
@@ -18,6 +19,9 @@ export async function POST(req: NextRequest) {
 
   if (!audioFile) {
     return NextResponse.json({ error: 'Keine Audiodatei' }, { status: 400 })
+  }
+  if (audioFile.size > 25 * 1024 * 1024) {
+    return NextResponse.json({ error: 'Audiodatei zu groß (max. 25 MB)' }, { status: 413 })
   }
 
   // FormData neu aufbauen damit Dateiname + Typ erhalten bleiben
@@ -37,9 +41,8 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json()
     return NextResponse.json(data, { status: res.status })
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Unbekannt'
-    console.error('Transkribieren Proxy Fehler:', msg)
+  } catch {
+    console.error('[transkribieren] Upstream-Anfrage fehlgeschlagen')
     return NextResponse.json(
       { error: 'Transkription fehlgeschlagen. Nochmal versuchen.', retry: true },
       { status: 500 }

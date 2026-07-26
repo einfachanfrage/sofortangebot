@@ -32,8 +32,8 @@ export async function POST() {
     try {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2026-05-27.dahlia' })
       await stripe.subscriptions.cancel(company.stripe_subscription_id)
-    } catch (e) {
-      console.error('[AccountDelete] Stripe cancel error:', e)
+    } catch {
+      console.error('[account-delete] Stripe-Kündigung fehlgeschlagen')
     }
   }
 

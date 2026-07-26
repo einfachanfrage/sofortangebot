@@ -16,8 +16,19 @@ const supabaseAdmin = createClient(
 export async function POST(req: NextRequest) {
   const { shareToken, signedBy, signatureDataUrl } = await req.json()
 
-  if (!shareToken || !signedBy || !signatureDataUrl) {
+  if (typeof shareToken !== 'string' || typeof signedBy !== 'string' || typeof signatureDataUrl !== 'string') {
     return NextResponse.json({ error: 'Fehlende Parameter' }, { status: 400 })
+  }
+  if (shareToken.length > 100 || !signedBy.trim() || signedBy.trim().length > 120) {
+    return NextResponse.json({ error: 'Ungültige Parameter' }, { status: 400 })
+  }
+  const signatureMatch = signatureDataUrl.match(/^data:image\/png;base64,([A-Za-z0-9+/]+={0,2})$/)
+  if (!signatureMatch) {
+    return NextResponse.json({ error: 'Ungültiges Unterschriftsformat' }, { status: 400 })
+  }
+  const base64 = signatureMatch[1]
+  if (base64.length > 1_500_000) {
+    return NextResponse.json({ error: 'Unterschrift zu groß' }, { status: 413 })
   }
 
   // Angebot per share_token laden (NICHT per UUID — sicherer)
@@ -39,7 +50,6 @@ export async function POST(req: NextRequest) {
     'unbekannt'
 
   // Unterschrift-PNG aus DataURL → Buffer
-  const base64 = signatureDataUrl.replace(/^data:image\/png;base64,/, '')
   const sigBuffer = Buffer.from(base64, 'base64')
   const filePath = `signatures/${quote.id}.png`
 
@@ -57,22 +67,24 @@ export async function POST(req: NextRequest) {
   await supabaseAdmin.from('quotes').update({
     status: 'accepted',
     signed_at: new Date().toISOString(),
-    signed_by: signedBy,
+    signed_by: signedBy.trim(),
     signer_ip: ip,
     ...(signaturePath && { signature_url: signaturePath }),
   }).eq('id', quote.id)
 
   // Handwerker + Kunde benachrichtigen (intern, mit Secret gesichert)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
-  const cronSecret = process.env.CRON_SECRET ?? ''
-  fetch(`${appUrl}/api/notifications/unterschrift`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${cronSecret}`,
-    },
-    body: JSON.stringify({ quoteId: quote.id, signedBy }),
-  }).catch(() => {})
+  const cronSecret = process.env.CRON_SECRET
+  if (cronSecret) {
+    fetch(`${appUrl}/api/notifications/unterschrift`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${cronSecret}`,
+      },
+      body: JSON.stringify({ quoteId: quote.id, signedBy: signedBy.trim() }),
+    }).catch(() => {})
+  }
 
   return NextResponse.json({ ok: true })
 }

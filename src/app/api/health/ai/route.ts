@@ -13,8 +13,8 @@ export async function GET() {
       messages: [{ role: 'user', content: 'Ping' }],
     })
     return NextResponse.json({ status: 'ok' })
-  } catch (error) {
-    console.error('AI health check failed:', error)
-    return NextResponse.json({ status: 'error', error: String(error) }, { status: 503 })
+  } catch {
+    console.error('[health-ai] Prüfung fehlgeschlagen')
+    return NextResponse.json({ status: 'error' }, { status: 503 })
   }
 }

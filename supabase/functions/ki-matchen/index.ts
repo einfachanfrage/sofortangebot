@@ -2,9 +2,6 @@ import { corsHeaders } from '../_shared/cors.ts'
 import { getUser } from '../_shared/auth.ts'
 import { mitTimeout } from '../_shared/timeout.ts'
 import { createOpenAIClient, openaiRequest } from '../_shared/openai.ts'
-// deno-lint-ignore no-unused-vars
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
 // PROMPT_KONTEXTUELLES_MATCHING — EINZIGE Quelle dieses Prompts (das frühere
 // Duplikat in src/lib/ai-prompts.ts war ungenutzt; im Juli 2026 entfernt).
 // Nach Änderungen deployen: supabase functions deploy ki-matchen
@@ -165,7 +162,7 @@ Deno.serve(async (req: Request) => {
     })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unbekannt'
-    console.error('KI-Matching Fehler:', msg)
+    console.error('[ki-matchen] Verarbeitung fehlgeschlagen')
 
     // Matching-Fehler soll Flow nicht brechen → 200 mit leerem Array
     return new Response(JSON.stringify({ matches: [], fehler: msg, fallback: true }), {

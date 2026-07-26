@@ -20,8 +20,6 @@ export async function GET(req: NextRequest) {
 
   if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
 
-  const { data: company } = await supabase.from('companies').select('name').eq('id', quote.company_id).single()
-
   let quoteNumber = (quote as { quote_number?: string }).quote_number ?? ''
   if (!quoteNumber) {
     const { count } = await supabase.from('quotes').select('*', { count: 'exact', head: true }).eq('company_id', quote.company_id).lte('created_at', quote.created_at)

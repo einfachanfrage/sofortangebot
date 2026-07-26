@@ -5,11 +5,10 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = process.env.ADMIN_ALERT_EMAIL ?? 'sandraholm95@gmail.com'
 
 // Interne Secret-Prüfung — nur Supabase-Trigger dürfen diesen Endpoint aufrufen
-const ALERT_SECRET = process.env.ALERT_SECRET ?? ''
-
 export async function POST(req: NextRequest) {
+  const alertSecret = process.env.ALERT_SECRET
   const secret = req.headers.get('x-alert-secret')
-  if (ALERT_SECRET && secret !== ALERT_SECRET) {
+  if (!alertSecret || secret !== alertSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -52,7 +51,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (error) {
-      console.error('[Admin Alert] E-Mail Fehler:', error)
+      console.error('[admin-alert] E-Mail-Versand fehlgeschlagen')
       return NextResponse.json({ error: 'E-Mail konnte nicht gesendet werden' }, { status: 500 })
     }
   }

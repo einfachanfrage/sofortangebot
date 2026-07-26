@@ -42,9 +42,8 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({ gespeichert: true, zeitpunkt: new Date().toISOString() }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : 'Unbekannt'
-    console.error('Autosave Fehler:', msg)
+  } catch {
+    console.error('[angebot-autosave] Speicherung fehlgeschlagen')
     return new Response(JSON.stringify({ error: 'Autosave fehlgeschlagen' }), {
       status: 500,
       headers: corsHeaders,

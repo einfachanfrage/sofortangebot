@@ -2,9 +2,30 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 
-const PUBLIC_PATHS = ['/', '/login', '/register', '/auth/callback', '/angebot', '/vorschau', '/preise', '/impressum', '/datenschutz']
+const PUBLIC_EXACT_PATHS = new Set([
+  '/',
+  '/login',
+  '/register',
+  '/passwort-vergessen',
+  '/passwort-reset',
+  '/auth/callback',
+  '/vorschau',
+  '/agb',
+  '/avv',
+  '/impressum',
+  '/datenschutz',
+])
+const PUBLIC_PATH_PREFIXES = ['/blog/']
 const ADMIN_PATHS = ['/admin']
 const RATE_LIMIT_EXEMPT = ['/api/health', '/api/stripe']
+
+export function isPublicPagePath(pathname: string) {
+  if (PUBLIC_EXACT_PATHS.has(pathname)) return true
+  if (pathname === '/blog' || PUBLIC_PATH_PREFIXES.some(prefix => pathname.startsWith(prefix))) return true
+
+  // Der öffentliche Unterschrifts-Link verwendet den share_token als [id].
+  return /^\/angebot\/[^/]+\/unterschreiben$/.test(pathname)
+}
 
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname
@@ -37,7 +58,9 @@ export async function proxy(request: NextRequest) {
   }
 
   const { pathname } = request.nextUrl
-  const isPublic = PUBLIC_PATHS.some(p => pathname.startsWith(p))
+  // API-Routen autorisieren sich selbst. Das ist nötig für Webhooks und andere
+  // bewusst öffentliche Endpunkte und verhindert Redirect-Antworten statt 401/403.
+  const isPublic = pathname.startsWith('/api/') || isPublicPagePath(pathname)
 
   // Ohne Supabase-Credentials (lokal ohne .env) alle public Pfade durchlassen
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL

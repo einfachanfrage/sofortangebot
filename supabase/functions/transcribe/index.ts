@@ -110,7 +110,7 @@ Deno.serve(async (req: Request) => {
     )
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unbekannt'
-    console.error('Transcribe Fehler:', msg)
+    console.error('[transcribe] Verarbeitung fehlgeschlagen')
 
     if (msg.includes('zu lange')) {
       return new Response(JSON.stringify({ error: msg, retry: true }), {

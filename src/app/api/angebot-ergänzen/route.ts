@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import { getAIClient, CHAT_MODEL_FAST } from '@/lib/ai-client'
 
 export const maxDuration = 60
@@ -29,6 +30,8 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+  const blocked = await pruefeKIZugriff(user.id, 'ki_extraktion')
+  if (blocked) return blocked
 
   const { existingItems, transcript } = await req.json()
   if (!transcript) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
@@ -54,8 +57,8 @@ export async function POST(req: NextRequest) {
       temperature: 0.1,
       max_tokens: 2000,
     })
-  } catch (err) {
-    console.error('angebot-ergänzen error:', err)
+  } catch {
+    console.error('[angebot-ergänzen] Verarbeitung fehlgeschlagen')
     return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 })
   }
 

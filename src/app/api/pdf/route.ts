@@ -56,13 +56,6 @@ export async function GET(req: NextRequest) {
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 
-  console.log('PDF Debug — quoteId:', quoteId, '| items count:', sortedItems.length)
-  if (sortedItems.length > 0) {
-    console.log('PDF Debug — erste 3 Titel:', sortedItems.slice(0, 3).map((i: { title: string }) => i.title))
-  } else {
-    console.log('PDF Debug — quote_items ist LEER für dieses Angebot!')
-  }
-
   const revision = (quote as { revision?: number }).revision ?? 1
 
   // @ts-expect-error react-pdf renderToBuffer typing mismatch
@@ -122,7 +115,7 @@ export async function GET(req: NextRequest) {
 
       buffer = Buffer.from(await embedZUGFeRDInPdf(new Uint8Array(buffer), xml))
     } catch (e) {
-      console.error('[ZUGFeRD] Einbettung fehlgeschlagen:', e)
+      console.error('[pdf] ZUGFeRD-Einbettung fehlgeschlagen')
       Sentry.captureException(e, { tags: { feature: 'pdf_zugferd' } })
       // PDF ohne ZUGFeRD zurückgeben — kein harter Fehler
     }

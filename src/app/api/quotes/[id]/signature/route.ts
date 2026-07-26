@@ -15,11 +15,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const { id } = await params
 
+  const { data: company } = await supabase
+    .from('companies')
+    .select('id')
+    .eq('user_id', user.id)
+    .single()
+  if (!company) return NextResponse.json({ error: 'Kein Zugriff' }, { status: 403 })
+
   // Ownership prüfen
   const { data: quote } = await supabase
     .from('quotes')
     .select('id, signature_url')
     .eq('id', id)
+    .eq('company_id', company.id)
     .single()
 
   if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })

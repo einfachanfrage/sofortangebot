@@ -103,8 +103,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ transkript, positionen })
 
-  } catch (err) {
-    console.error('Verarbeitung Fehler:', err)
+  } catch {
+    console.error('[aufnahme-verarbeiten] Verarbeitung fehlgeschlagen')
     await supabase
       .from('entwurf_aufnahmen')
       .update({ verarbeitung_status: 'fehler' })

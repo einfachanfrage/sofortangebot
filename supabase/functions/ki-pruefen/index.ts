@@ -108,9 +108,8 @@ Deno.serve(async (req: Request) => {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : 'Unbekannt'
-    console.error('Plausibilität Fehler:', msg)
+  } catch {
+    console.error('[ki-pruefen] Verarbeitung fehlgeschlagen')
 
     // Plausibilitätsfehler NIE den Flow blocken
     return new Response(JSON.stringify({ result: leerErgebnis }), {

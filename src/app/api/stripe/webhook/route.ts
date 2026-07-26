@@ -112,7 +112,9 @@ export async function POST(req: NextRequest) {
         ? new Date(subAny.current_period_end * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
         : '–'
       const email = await getEmailForCustomer(customerId)
-      if (email) sendCancellationEmail(email, ablaufdatum).catch(console.error)
+      if (email) sendCancellationEmail(email, ablaufdatum).catch(() => {
+        console.error('[stripe-webhook] Kündigungs-E-Mail fehlgeschlagen')
+      })
       break
     }
 
@@ -126,7 +128,9 @@ export async function POST(req: NextRequest) {
       // E-Mail bei jedem Fehlschlag (nicht nur beim letzten)
       if (customerId) {
         const email = await getEmailForCustomer(customerId)
-        if (email) sendPaymentFailedEmail(email).catch(console.error)
+        if (email) sendPaymentFailedEmail(email).catch(() => {
+          console.error('[stripe-webhook] Zahlungswarnung fehlgeschlagen')
+        })
       }
       break
     }

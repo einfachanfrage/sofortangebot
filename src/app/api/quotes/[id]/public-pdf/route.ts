@@ -76,7 +76,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     })
 
   if (uploadError) {
-    console.error('PDF upload error:', uploadError)
+    console.error('[public-pdf] Storage-Upload fehlgeschlagen')
     return NextResponse.json({ error: 'PDF-Upload fehlgeschlagen' }, { status: 500 })
   }
 

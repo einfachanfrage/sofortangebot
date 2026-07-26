@@ -97,8 +97,8 @@ export async function GET() {
     }))
 
     return NextResponse.json({ status: 'ok', size_bytes: buffer.length })
-  } catch (error) {
-    console.error('PDF health check failed:', error)
-    return NextResponse.json({ status: 'error', error: String(error) }, { status: 503 })
+  } catch {
+    console.error('[health-pdf] Prüfung fehlgeschlagen')
+    return NextResponse.json({ status: 'error' }, { status: 503 })
   }
 }

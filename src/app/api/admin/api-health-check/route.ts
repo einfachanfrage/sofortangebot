@@ -5,13 +5,21 @@ import { testLexofficeAPI } from '@/lib/api-health/lexoffice'
 import { testSevdeskAPI } from '@/lib/api-health/sevdesk'
 import { testOpenAIAPI } from '@/lib/api-health/openai'
 import type { ApiHealthResult } from '@/lib/api-health/lexoffice'
+import { createClient } from '@/lib/supabase/server'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = process.env.ADMIN_ALERT_EMAIL ?? 'sandraholm95@gmail.com'
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-alert-secret')
-  if (process.env.ALERT_SECRET && secret !== process.env.ALERT_SECRET) {
+  const alertSecret = process.env.ALERT_SECRET
+  const hasValidInternalSecret = !!alertSecret && secret === alertSecret
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isAdmin = !!user && !!process.env.ADMIN_EMAIL && user.email === process.env.ADMIN_EMAIL
+
+  if (!hasValidInternalSecret && !isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -53,7 +61,9 @@ export async function POST(req: NextRequest) {
             <p>Alle Nutzer mit ${anbieter}-Integration sind betroffen.</p>
           </div>
         `,
-      }).catch(console.error)
+      }).catch(() => {
+        console.error('[api-health-check] Warn-E-Mail fehlgeschlagen')
+      })
     }
   }
 

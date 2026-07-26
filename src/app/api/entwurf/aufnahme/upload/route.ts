@@ -27,6 +27,14 @@ export async function POST(req: NextRequest) {
   if (!angebotId || !audio) {
     return NextResponse.json({ error: 'angebot_id und audio erforderlich' }, { status: 400 })
   }
+  const allowedAudioTypes = ['audio/webm', 'audio/mp4', 'audio/m4a', 'audio/ogg', 'audio/mpeg', 'audio/wav']
+  const normalizedAudioType = (audio.type || 'audio/webm').split(';')[0]
+  if (!allowedAudioTypes.includes(normalizedAudioType)) {
+    return NextResponse.json({ error: 'Ungültiges Audioformat' }, { status: 400 })
+  }
+  if (audio.size > 25 * 1024 * 1024) {
+    return NextResponse.json({ error: 'Audiodatei zu groß (max. 25 MB)' }, { status: 413 })
+  }
 
   // Zugriff prüfen
   const { data: quote } = await supabase
@@ -93,13 +101,13 @@ export async function POST(req: NextRequest) {
   // Storage-Ergebnis: bei Erfolg audio_url merken (Fehler ist nicht fatal — Transkript zählt)
   const storageOk = storageErgebnis.status === 'fulfilled' && !storageErgebnis.value.error
   if (storageErgebnis.status === 'fulfilled' && storageErgebnis.value.error) {
-    console.error('Audio upload error:', storageErgebnis.value.error)
+    console.error('[aufnahme-upload] Storage-Upload fehlgeschlagen')
   }
 
   // Whisper-Ergebnis
   const transkript = whisperErgebnis.status === 'fulfilled' ? whisperErgebnis.value.text?.trim() : ''
   if (whisperErgebnis.status === 'rejected') {
-    console.error('Whisper Fehler:', whisperErgebnis.reason)
+    console.error('[aufnahme-upload] Transkription fehlgeschlagen')
   }
 
   if (!transkript) {
@@ -129,8 +137,8 @@ export async function POST(req: NextRequest) {
     const chips = await extrahiereChips(ai, transkript, kontextNotizen || undefined)
     positionen = chips.positionen
     chipTokens = { tokensIn: chips.tokensIn, tokensOut: chips.tokensOut }
-  } catch (err) {
-    console.error('Chips-Extraktion Fehler (Transkript bleibt nutzbar):', err)
+  } catch {
+    console.error('[aufnahme-upload] Positionsextraktion fehlgeschlagen')
   }
 
   // ── Ergebnis in EINEM Update speichern ────────────────────────────────────

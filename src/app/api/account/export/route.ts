@@ -13,10 +13,9 @@ export async function POST() {
     .from('companies').select('id').eq('user_id', user.id).single()
   if (!company) return NextResponse.json({ error: 'Betrieb nicht gefunden' }, { status: 404 })
 
-  const [{ data: customers }, { data: quotes }, { data: items }] = await Promise.all([
+  const [{ data: customers }, { data: quotes }] = await Promise.all([
     supabase.from('customers').select('*').eq('company_id', company.id),
     supabase.from('quotes').select('*').eq('company_id', company.id).order('created_at', { ascending: false }),
-    supabase.from('quote_items').select('*, quotes!inner(company_id)').eq('quotes.company_id', company.id),
   ])
 
   function toCsv(rows: Record<string, unknown>[]): string {

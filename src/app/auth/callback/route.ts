@@ -16,7 +16,9 @@ export async function GET(request: Request) {
       const isNew = next.includes('/onboarding')
       if (isNew && data.user.email) {
         const vorname = data.user.user_metadata?.full_name?.split(' ')[0]
-        sendWelcomeEmail(data.user.email, vorname).catch(console.error)
+        sendWelcomeEmail(data.user.email, vorname).catch(() => {
+          console.error('[auth-callback] Willkommens-E-Mail fehlgeschlagen')
+        })
       }
       return NextResponse.redirect(`${origin}${next}`)
     }

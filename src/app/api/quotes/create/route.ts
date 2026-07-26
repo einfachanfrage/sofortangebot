@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (quoteError || !quote) {
-    console.error('quotes insert error:', quoteError?.message)
+    console.error('[quote-create] Datenbankeintrag fehlgeschlagen')
     return NextResponse.json({
       error: 'Angebot konnte nicht gespeichert werden',
       detail: quoteError?.message,
@@ -201,7 +201,16 @@ export async function POST(req: NextRequest) {
   if (itemsError) {
     // Fallback: ohne optionale Normspalten (Migration noch nicht ausgeführt)
     await supabase.from('quote_items').insert(
-      itemRows.map(({ vob_norm: _v, din_normen: _d, ...rest }) => rest)
+      itemRows.map(item => ({
+        quote_id: item.quote_id,
+        position: item.position,
+        title: item.title,
+        description: item.description,
+        quantity: item.quantity,
+        unit: item.unit,
+        unit_price: item.unit_price,
+        total_price: item.total_price,
+      }))
     )
   }
 

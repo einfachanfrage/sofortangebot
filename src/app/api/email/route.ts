@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
       pdfBuffer = Buffer.from(await embedZUGFeRDInPdf(new Uint8Array(pdfBuffer), xml))
       xmlAttachment = { filename: `factur-x-${quoteNumber}.xml`, content: Buffer.from(xml, 'utf-8') }
     } catch (e) {
-      console.error('[ZUGFeRD] Fehler beim E-Mail-Versand:', e)
+      console.error('[email] ZUGFeRD-Erstellung fehlgeschlagen')
       Sentry.captureException(e, { tags: { feature: 'email_zugferd' } })
     }
   }
@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
   })
 
   if (error) {
-    console.error('Resend error:', error)
+    console.error('[email] Versand fehlgeschlagen')
     Sentry.captureException(new Error(String(error)), { tags: { feature: 'email_versand' } })
     return NextResponse.json({ error: 'E-Mail konnte nicht gesendet werden' }, { status: 500 })
   }

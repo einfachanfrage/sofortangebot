@@ -77,8 +77,7 @@ export async function POST(req: NextRequest) {
   })
 
   if (!res.ok) {
-    const err = await res.text()
-    console.error('Lexoffice error:', err)
+    console.error('[lexoffice] API-Anfrage fehlgeschlagen, Status:', res.status)
     return NextResponse.json({ error: 'Lexoffice-Fehler: ' + res.status }, { status: 502 })
   }
 

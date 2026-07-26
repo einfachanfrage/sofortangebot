@@ -97,8 +97,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         })
         pdfBuffer = Buffer.from(await embedZUGFeRDInPdf(pdfBuffer, xml))
         xmlAttachment = { filename: `factur-x-${quoteNumber}.xml`, content: Buffer.from(xml) }
-      } catch (e) {
-        console.error('ZUGFeRD error (ignored):', e)
+      } catch {
+        console.error('[quote-send] ZUGFeRD-Erstellung fehlgeschlagen')
       }
     }
 

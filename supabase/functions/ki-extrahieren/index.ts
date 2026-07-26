@@ -209,7 +209,7 @@ Deno.serve(async (req: Request) => {
     })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unbekannt'
-    console.error('KI-Extraktion Fehler:', msg)
+    console.error('[ki-extrahieren] Verarbeitung fehlgeschlagen')
 
     if (msg.includes('zu lange')) {
       return new Response(JSON.stringify({ error: msg, fallback: true, retry: true }), {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import { getAIClient, CHAT_MODEL } from '@/lib/ai-client'
 import { kleinmaterialPosition, anfahrtPosition } from '@/lib/gewerke-config'
 
@@ -98,6 +99,8 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+  const blocked = await pruefeKIZugriff(user.id, 'ki_extraktion')
+  if (blocked) return blocked
 
   const { items, antworten, aufmaß, gewerk } = await req.json()
 
@@ -151,8 +154,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(result)
-  } catch (err) {
-    console.error('angebot-verfeinern error:', err)
+  } catch {
+    console.error('[angebot-verfeinern] Verarbeitung fehlgeschlagen')
     return NextResponse.json({ error: 'Verfeinerung fehlgeschlagen' }, { status: 500 })
   }
 }

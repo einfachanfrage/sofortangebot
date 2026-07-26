@@ -91,8 +91,7 @@ export async function POST(req: NextRequest) {
 
   if (!res.ok) {
     const err = await res.text()
-    console.error('Lexware Office error:', res.status, err)
-    console.error('Lexware request body:', JSON.stringify(body))
+    console.error('[lexware] API-Anfrage fehlgeschlagen, Status:', res.status)
     let detail = ''
     try {
       const parsed = JSON.parse(err)
