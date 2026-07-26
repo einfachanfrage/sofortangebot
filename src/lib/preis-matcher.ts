@@ -29,6 +29,11 @@ const SYNONYME: Array<[RegExp, string]> = [
   [/voranstrich|grundierung/g, 'grundieren'],
   [/spachtelarbeiten?/g, 'spachteln'],
   [/glatten|glaetten/g, 'spachteln'],
+  [/malervlies|renoviervlies|glattvlies/g, 'renoviervlies'],
+  [/rauhfaser|raufasertapete/g, 'raufaser'],
+  [/fototapete|digitaldrucktapete|motivtapete/g, 'fototapete'],
+  [/grastapete|naturtapete|naturwerkstofftapete/g, 'naturwerkstofftapete'],
+  [/lackieren|lackierung|lackanstrich/g, 'lackieren'],
   [/wande?|flache/g, 'flaeche'],
   [/zweifach|2fach|2x/g, '2x'], [/einfach|1fach|1x/g, '1x'],
 ]

@@ -52,6 +52,20 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Untergrundvorbereitung', title: 'GK-Fugen verspachteln inkl. Gewebe', unit: 'lfdm', unit_price: 5.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Putz ausbessern', unit: 'm²', unit_price: 18.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Dübellöcher spachteln', unit: 'Stück', unit_price: 3.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Untergrund entstauben / absaugen', unit: 'm²', unit_price: 1.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Leimfarbenanstrich abwaschen', unit: 'm²', unit_price: 6.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Kalkfarbenanstrich abbürsten', unit: 'm²', unit_price: 5.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Dispersionsanstrich anschleifen', unit: 'm²', unit_price: 3.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Lackanstrich anschleifen', unit: 'm²', unit_price: 7.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Spachtelung Q1', unit: 'm²', unit_price: 6.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Spachtelung Q2', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Spachtelung Q3', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Spachtelung Q4', unit: 'm²', unit_price: 22.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Eckschutzschiene setzen und verspachteln', unit: 'lfdm', unit_price: 8.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Armierungsgewebe vollflächig einbetten', unit: 'm²', unit_price: 13.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Tapetenwechselgrund auftragen', unit: 'm²', unit_price: 5.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Makulatur / Renoviervlies als Untergrund kleben', unit: 'm²', unit_price: 12.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MALERARBEITEN — Anstrich Innen
@@ -70,6 +84,18 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Innen', title: 'Treppenstufen streichen / versiegeln', unit: 'Stück', unit_price: 18.00 },
   { category: 'Maler – Anstrich Innen', title: 'Geländer / Handlauf streichen', unit: 'lfdm', unit_price: 12.00 },
   { category: 'Maler – Anstrich Innen', title: 'Sonderfarbe / RAL-Farbe (Aufpreis)', unit: 'm²', unit_price: 3.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Wand mit Latexfarbe streichen 2x', unit: 'm²', unit_price: 13.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Wand mit Silikatfarbe streichen 2x', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Feuchtraumanstrich 2x', unit: 'm²', unit_price: 13.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Anti-Schimmel-Anstrich 2x', unit: 'm²', unit_price: 15.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Tapete / Raufaser überstreichen 1x', unit: 'm²', unit_price: 7.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Tapete / Raufaser überstreichen 2x', unit: 'm²', unit_price: 11.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Farbig absetzen / Akzentfläche streichen', unit: 'm²', unit_price: 12.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Trennlinie zwischen Farbtönen herstellen', unit: 'lfdm', unit_price: 3.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Rohrleitungen lackieren', unit: 'lfdm', unit_price: 9.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Stahlzarge lackieren', unit: 'Stück', unit_price: 55.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Holzdecke / Paneele deckend streichen', unit: 'm²', unit_price: 16.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Holzdecke / Paneele lasieren', unit: 'm²', unit_price: 14.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MALERARBEITEN — Anstrich Außen
@@ -80,6 +106,14 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Außen', title: 'Holzschutzanstrich außen (Lasur)', unit: 'm²', unit_price: 13.00 },
   { category: 'Maler – Anstrich Außen', title: 'Metallbauteil grundieren + lackieren außen', unit: 'm²', unit_price: 18.00 },
   { category: 'Maler – Anstrich Außen', title: 'Rostschutzbehandlung', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassade reinigen / druckwaschen', unit: 'm²', unit_price: 5.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Algen- und Pilzbefall an Fassade behandeln', unit: 'm²', unit_price: 8.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassadengrundierung auftragen', unit: 'm²', unit_price: 6.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassadenrisse schließen', unit: 'lfdm', unit_price: 9.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassadenputz ausbessern', unit: 'm²', unit_price: 24.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Dachkasten / Untersicht streichen', unit: 'm²', unit_price: 18.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Außentür lackieren beidseitig', unit: 'Stück', unit_price: 110.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fensterläden lackieren', unit: 'Stück', unit_price: 75.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MALERARBEITEN — Tapezieren
@@ -90,6 +124,37 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Tapezieren', title: 'Glasfasertapete tapezieren', unit: 'm²', unit_price: 20.00 },
   { category: 'Maler – Tapezieren', title: 'Strukturtapete tapezieren', unit: 'm²', unit_price: 22.00 },
   { category: 'Maler – Tapezieren', title: 'Fototapete / Designertapete (Aufpreis Rapport)', unit: 'm²', unit_price: 8.00 },
+  { category: 'Maler – Tapezieren', title: 'Raufaser tapezieren ohne Anstrich', unit: 'm²', unit_price: 10.00 },
+  { category: 'Maler – Tapezieren', title: 'Papiertapete tapezieren', unit: 'm²', unit_price: 16.00 },
+  { category: 'Maler – Tapezieren', title: 'Vinyltapete tapezieren', unit: 'm²', unit_price: 21.00 },
+  { category: 'Maler – Tapezieren', title: 'Textiltapete tapezieren', unit: 'm²', unit_price: 28.00 },
+  { category: 'Maler – Tapezieren', title: 'Naturwerkstofftapete / Grastapete tapezieren', unit: 'm²', unit_price: 30.00 },
+  { category: 'Maler – Tapezieren', title: 'Metalltapete tapezieren', unit: 'm²', unit_price: 34.00 },
+  { category: 'Maler – Tapezieren', title: 'Fototapete / Digitaldrucktapete tapezieren', unit: 'm²', unit_price: 26.00 },
+  { category: 'Maler – Tapezieren', title: 'Mustertapete mit Rapport tapezieren', unit: 'm²', unit_price: 23.00 },
+  { category: 'Maler – Tapezieren', title: 'Renoviervlies / Malervlies tapezieren', unit: 'm²', unit_price: 15.00 },
+  { category: 'Maler – Tapezieren', title: 'Decke tapezieren (Aufpreis)', unit: 'm²', unit_price: 7.00 },
+  { category: 'Maler – Tapezieren', title: 'Dachschräge tapezieren (Aufpreis)', unit: 'm²', unit_price: 5.00 },
+  { category: 'Maler – Tapezieren', title: 'Bordüre kleben', unit: 'lfdm', unit_price: 7.00 },
+  { category: 'Maler – Tapezieren', title: 'Ecken / Nischen / Laibungen tapezieren (Aufpreis)', unit: 'lfdm', unit_price: 6.00 },
+  { category: 'Maler – Tapezieren', title: 'Tapetenstoß nacharbeiten', unit: 'lfdm', unit_price: 4.00 },
+  { category: 'Maler – Tapezieren', title: 'Kleinfläche / einzelne Tapetenbahn tapezieren', unit: 'Stück', unit_price: 35.00 },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // MALERARBEITEN — Lackierarbeiten
+  // ═══════════════════════════════════════════════════════════════════════════
+  { category: 'Maler – Lackierarbeiten', title: 'Holzbauteil anschleifen und entstauben', unit: 'm²', unit_price: 8.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Holzbauteil grundieren', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Holzbauteil lackieren 2x', unit: 'm²', unit_price: 18.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Metallbauteil entrosten', unit: 'm²', unit_price: 12.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Metallbauteil Rostschutzgrundierung', unit: 'm²', unit_price: 10.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Metallbauteil lackieren 2x', unit: 'm²', unit_price: 20.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Innentürblatt lackieren einseitig', unit: 'Stück', unit_price: 55.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Innentürblatt lackieren beidseitig', unit: 'Stück', unit_price: 90.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Türzarge lackieren', unit: 'Stück', unit_price: 45.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Fensterrahmen Holz lackieren innen und außen', unit: 'Stück', unit_price: 130.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Heizkörper Rippenradiator lackieren', unit: 'm² Heizfläche', unit_price: 18.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Treppengeländer lackieren', unit: 'lfdm', unit_price: 18.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MALERARBEITEN — Bodenbeschichtung
@@ -3216,7 +3281,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen', unit: 'm²', unit_price: 11.00 },
   { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen', unit: 'm²', unit_price: 11.00 },
   { category: 'Maler – Anstrich Innen', title: 'Deckenspiegel streichen', unit: 'm²', unit_price: 11.00 },
-  { category: 'Maler – Tapezierarbeiten', title: 'Akzentwand Vliestapete', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Tapezieren', title: 'Akzentwand Vliestapete', unit: 'm²', unit_price: 14.00 },
   { category: 'Maler – Anstrich Innen', title: 'Restwände streichen', unit: 'm²', unit_price: 9.50 },
   { category: 'Maler – Schimmel & Sanierung', title: 'Schimmelbehandlung / Grundierung', unit: 'm²', unit_price: 12.00 },
   { category: 'Maler – Dekorative Techniken', title: 'Kalkputz aufbringen', unit: 'm²', unit_price: 35.00 },

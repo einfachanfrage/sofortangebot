@@ -85,12 +85,30 @@ Deno.serve(async (req: Request) => {
       .eq('user_id', user.id)
       .single()
 
-    // price_items der Firma laden (das ist die echte Preistabelle)
-    const { data: dbPositionen } = await supabase
+    // Nur das angefragte Gewerk laden, dafür aber den vollständigen Katalog.
+    // Das frühere globale limit(60) schnitt insbesondere Tapezier-, Lackier-
+    // und Bodenpositionen alphabetisch ab.
+    const gewerkPrefix = (() => {
+      const normalisiert = gewerk.toLocaleLowerCase('de-DE')
+      if (normalisiert.includes('maler')) return 'Maler%'
+      if (
+        normalisiert.includes('boden') ||
+        normalisiert.includes('parkett') ||
+        normalisiert.includes('vinyl')
+      ) return 'Boden%'
+      return null
+    })()
+
+    let preisQuery = supabase
       .from('price_items')
-      .select('id, title, unit, unit_price')
+      .select('id, category, title, unit, unit_price')
       .eq('company_id', company?.id ?? '')
-      .limit(60)
+      .order('nutzungshaeufigkeit', { ascending: false })
+      .order('title')
+      .limit(500)
+
+    if (gewerkPrefix) preisQuery = preisQuery.ilike('category', gewerkPrefix)
+    const { data: dbPositionen } = await preisQuery
 
     // deno-lint-ignore no-explicit-any
     const positionenListe = positionen.map((p: any, i: number) =>

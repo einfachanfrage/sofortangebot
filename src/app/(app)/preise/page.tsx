@@ -43,6 +43,7 @@ function getBereich(category: string): string {
   // Maler
   if (lower.includes('anstrich')) return 'Anstrich'
   if (lower.includes('tapezier') || lower.includes('oberflächen')) return 'Tapezieren'
+  if (lower.includes('lackier') || lower.includes('holzbeschichtung')) return 'Lackieren'
   // Fliesen
   if (lower.includes('wandfliesen') || (lower.includes('wand') && !lower.includes('trennwand'))) return 'Wand'
   if (lower.includes('bodenfliesen') || lower.includes('altbelag')) return 'Boden'
@@ -232,9 +233,9 @@ export default function PreisePage() {
   async function handleImport() {
     if (!companyId) return
     setImporting(true)
-    const existingTitles = new Set(items.map(i => i.title.toLowerCase()))
+    const existingKeys = new Set(items.map(i => `${i.title.toLowerCase()}::${i.unit.toLowerCase()}`))
     const toInsert = DEFAULT_PRICES
-      .filter(p => !existingTitles.has(p.title.toLowerCase()))
+      .filter(p => !existingKeys.has(`${p.title.toLowerCase()}::${p.unit.toLowerCase()}`))
       .map(p => ({ ...p, company_id: companyId }))
 
     // Supabase limits single inserts to ~1000 rows — insert in batches

@@ -5,7 +5,7 @@ export const AKTIVE_GEWERKE = [
     emoji: '🖌',
     beschreibung: 'Streichen, Spachteln, Tapezieren, Lackieren',
     farbe: '#F5C400',
-    positionen_count: 85,
+    positionen_count: 164,
     typische_auftraege: [
       'Wohnung streichen',
       'Fassade streichen',

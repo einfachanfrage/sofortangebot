@@ -68,7 +68,25 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
         AND lower(p.unit) = lower('lfdm')
     )
   )),
-  (45, '20260720211000_link_quote_items_to_price_items', 'quote_items.price_item_id',      EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quote_items' AND column_name='price_item_id'))
+  (45, '20260720211000_link_quote_items_to_price_items', 'quote_items.price_item_id',      EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quote_items' AND column_name='price_item_id')),
+  (46, '20260726183000_complete_maler_catalog',       '164 Maler-Katalogpositionen',        NOT EXISTS (
+    SELECT 1
+    FROM companies c
+    WHERE (
+        'malerarbeiten' = any(coalesce(c.gewerke, '{}'::text[]))
+        OR EXISTS (
+          SELECT 1 FROM price_items p0
+          WHERE p0.company_id = c.id
+            AND p0.category LIKE 'Maler %'
+        )
+      )
+      AND (
+        SELECT count(DISTINCT lower(p.title) || '|' || lower(p.unit))
+        FROM price_items p
+        WHERE p.company_id = c.id
+          AND p.category LIKE 'Maler %'
+      ) < 164
+  ))
 )
 SELECT
   migration,
