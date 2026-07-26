@@ -42,8 +42,10 @@ Backup-Workflow beschränkt.
 3. Der Workflow `Database migrations` spielt sie automatisch auf Staging.
 4. Staging fachlich testen.
 5. `develop` nach `main` mergen.
-6. Workflow manuell mit Ziel `production` und Bestätigung
-   `DEPLOY-PRODUCTION` starten.
+6. Workflow manuell mit Ziel `production` und `operation: audit` starten.
+7. Den Vorher-Stand prüfen.
+8. Erst danach mit `operation: apply` und Bestätigung
+   `DEPLOY-PRODUCTION` anwenden.
 
 Jeder Lauf speichert die Ausgabe von `supabase migration list` **vor und nach**
 dem Anwenden als GitHub-Artefakt:
@@ -77,6 +79,9 @@ gestartet werden. Der Ablauf:
 Die Passphrase gehört nicht ins Repository und muss unabhängig von GitHub im
 Passwortmanager liegen. Ein Backup gilt erst als belastbar, wenn mindestens
 ein Test-Restore in das Stagingprojekt erfolgreich durchgeführt wurde.
+
+Erster erfolgreicher Sicherungslauf: GitHub Actions Run `30204132535` vom
+26. Juli 2026, verschlüsseltes Artefakt `production-db-30204132535`.
 
 ## Restore-Test
 

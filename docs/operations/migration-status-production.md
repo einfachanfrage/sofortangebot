@@ -19,8 +19,9 @@ wurde.
 
 ## Verbindlicher Nachweis
 
-Der erste manuelle Lauf von **Database migrations** mit Ziel `production`
-erzeugt:
+Der Workflow **Database migrations** besitzt einen sicheren `audit`-Modus.
+Dieser liest den Ledger, ohne Migrationen anzuwenden. Ein Lauf mit
+`operation: apply` erzeugt:
 
 - `migration-status-production-before.txt`
 - `migration-status-production-after.txt`
@@ -33,10 +34,19 @@ Voraussetzung ist das Secret `PRODUCTION_DB_URL` im GitHub-Environment
 `production`. Nach dem ersten erfolgreichen Lauf werden Datum, Workflow-Run
 und Ergebnis hier ergänzt.
 
-## Offener Betriebsnachweis
+## Betriebsnachweis vom 26. Juli 2026
 
-- [ ] `PRODUCTION_DB_URL` in GitHub `production` hinterlegen
-- [ ] Workflow erstmals mit `DEPLOY-PRODUCTION` ausführen
+- [x] `PRODUCTION_DB_URL` in GitHub `Production` hinterlegt
+- [x] Verschlüsseltes Produktionsbackup erfolgreich erstellt:
+      GitHub Actions Run `30204132535`, Artefakt
+      `production-db-30204132535`
+- [x] Stagingprojekt aus `supabase/schema.sql` initialisiert und alle
+      45 versionierten Migrationen angewendet:
+      GitHub Actions Run `30204381894`
+- [ ] Produktions-Audit nach Korrektur des Environment-Secrets erneut
+      erfolgreich ausführen
+- [ ] Erst danach über einen Produktionslauf mit `operation: apply` und
+      `DEPLOY-PRODUCTION` entscheiden
 - [ ] Vorher-/Nachher-Artefakt prüfen
 - [ ] Run-ID und bestätigten Stand in diesem Dokument ergänzen
 - [ ] `supabase/check_migrationen.sql` zusätzlich ausführen
