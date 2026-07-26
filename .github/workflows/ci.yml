@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
+      NEXT_PUBLIC_APP_ENV: ci
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
       SUPABASE_SERVICE_ROLE_KEY: ci-placeholder
@@ -49,6 +50,9 @@ jobs:
 
       - name: TypeScript
         run: npm run typecheck
+
+      - name: Umgebungskonfiguration
+        run: npm run env:check
 
       - name: Tests
         run: npm test

@@ -1,0 +1,73 @@
+name: Production database backup
+
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-database-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Absichtlich getrennt vom freigabepflichtigen Deployment-Environment:
+    # geplante Sicherungen dürfen nicht auf einen manuellen Reviewer warten.
+    environment: production-backup
+    env:
+      PGDATABASE_URL: ${{ secrets.PRODUCTION_DB_URL }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+
+    steps:
+      - name: Pflicht-Secrets prüfen
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$PGDATABASE_URL" || { echo "::error::PRODUCTION_DB_URL fehlt im GitHub-Environment production-backup"; exit 1; }
+          test -n "$BACKUP_PASSPHRASE" || { echo "::error::BACKUP_PASSPHRASE fehlt im GitHub-Environment production-backup"; exit 1; }
+
+      - name: PostgreSQL-Client installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client
+
+      - name: Logisches Backup erstellen und prüfen
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          stamp="$(date -u +'%Y-%m-%dT%H-%M-%SZ')"
+          dump="sofortangebot-production-${stamp}.dump"
+          encrypted="${dump}.enc"
+
+          pg_dump "$PGDATABASE_URL" \
+            --format=custom \
+            --no-owner \
+            --no-privileges \
+            --file="$dump"
+
+          pg_restore --list "$dump" >/dev/null
+          openssl enc -aes-256-cbc -salt -pbkdf2 -iter 250000 \
+            -in "$dump" \
+            -out "$encrypted" \
+            -pass env:BACKUP_PASSPHRASE
+
+          sha256sum "$encrypted" >"${encrypted}.sha256"
+          rm -f "$dump"
+          echo "BACKUP_FILE=$encrypted" >>"$GITHUB_ENV"
+
+      - name: Verschlüsseltes Backup aufbewahren
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-db-${{ github.run_id }}
+          path: |
+            ${{ env.BACKUP_FILE }}
+            ${{ env.BACKUP_FILE }}.sha256
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0

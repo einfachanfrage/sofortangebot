@@ -100,3 +100,12 @@ npm start
 ```
 
 Vor einem Launch zusätzlich Migrationen, Secrets, E-Mail-Domain, Stripe-Webhooks, Cron-Authentifizierung und die öffentlichen Angebots- beziehungsweise Signaturabläufe in der Zielumgebung prüfen.
+
+## Datenbank-Backups und Umgebungen
+
+Backup, Restore-Test, Migrationsfreigabe sowie die verbindliche Trennung von
+Staging und Produktion sind in
+[`docs/operations/database-and-environments.md`](docs/operations/database-and-environments.md)
+dokumentiert. Die zugehörigen GitHub-Actions liegen in
+`.github/workflows/database-backup.yml` und
+`.github/workflows/database-migrations.yml`.
