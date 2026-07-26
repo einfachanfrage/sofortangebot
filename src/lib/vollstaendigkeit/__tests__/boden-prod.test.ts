@@ -53,7 +53,7 @@ describe('Boden Phase 3 — Entfernen und Entsorgen bleibt sichtbar', () => {
   })
 
   it('erhält Teppich-Entsorgung und nutzt Datenbanktitel für Kleberreste und Fischgrät', () => {
-    const t = 'Wohnzimmer 32 Quadratmeter. Verklebten Teppichboden entfernen und entsorgen, Kleberreste abschleifen, Eiche-Fertigparkett vollflächig im Fischgrät verkleben und Sockelleisten montieren.'
+    const t = 'Im Wohnzimmer werden 32 Quadratmeter vollflächig verklebter Teppichboden entfernt und entsorgt. Die Kleberreste werden abgeschliffen. Danach wird Eichen-Fertigparkett im Fischgrätmuster vollflächig verklebt. Der Estrich ist trocken und muss nicht ausgeglichen werden. Es werden 24 laufende Meter Sockelleisten montiert.'
     const eng = bodenEngine({
       transkript: t,
       raeume: [{ name: 'Wohnzimmer', flaeche: 32, belag: 'fertigparkett', altbelag_entfernen: true, sockelleisten: true, arbeiten: ['teppich entfernen', 'kleberreste abschleifen', 'fertigparkett verkleben'] }],
@@ -65,5 +65,8 @@ describe('Boden Phase 3 — Entfernen und Entsorgen bleibt sichtbar', () => {
     expect(namen.some(name => name.includes('untergrund schleifen') && name.includes('kleberreste'))).toBe(true)
     expect(namen.some(name => name.includes('fertigparkett verlegen vollflächig verklebt'))).toBe(true)
     expect(namen.some(name => name.includes('aufpreis fischgrät-verlegemuster'))).toBe(true)
+    expect(namen.some(name => name.includes('versiegelung'))).toBe(false)
+    expect(namen.some(name => name.includes('parkett schleifen'))).toBe(false)
+    expect(namen.some(name => name.includes('ausgleich'))).toBe(false)
   })
 })

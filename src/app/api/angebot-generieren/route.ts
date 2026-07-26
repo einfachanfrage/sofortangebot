@@ -23,7 +23,7 @@ interface BerechnetePositionInput {
 
 function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): string | undefined {
   const text = beschreibung.toLocaleLowerCase('de-DE')
-  const istBoden = /vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleisten montier|boden (?:verleg|entfern|schleif)/i.test(text)
+  const istBoden = /vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleisten montier|boden (?:verleg|entfern|schleif)|untergrund schleifen.*kleberreste|kleberreste.*schleifen/i.test(text)
   if (istBoden) return 'boden_parkett'
   const istMaler = /wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleifen|grundier|abdeck|abkleb/i.test(text)
   if (istMaler) return 'maler'
