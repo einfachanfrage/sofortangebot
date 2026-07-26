@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getAllPosts } from '@/lib/blog'
-import { KATEGORIE_META, formatDate } from '@/lib/blog-client'
+import { formatDate } from '@/lib/blog-client'
 
 export function BlogTeaserSection() {
   const posts = getAllPosts().slice(0, 3)
@@ -25,7 +25,6 @@ export function BlogTeaserSection() {
 
         <div className="grid md:grid-cols-3 gap-5">
           {posts.map(post => {
-            const meta = KATEGORIE_META[post.kategorie] ?? KATEGORIE_META['Angebote']
             return (
               <Link
                 key={post.slug}

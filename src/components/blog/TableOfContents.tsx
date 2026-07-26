@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 interface Heading { id: string; text: string }

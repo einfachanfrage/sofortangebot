@@ -1,7 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { Quote } from '@/lib/types'
 import { PwaBannerManager } from '@/components/PwaBannerManager'
 import BottomNav from '@/components/BottomNav'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
@@ -9,6 +7,7 @@ import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
 import AvatarSheet from '@/components/AvatarSheet'
 import { Mic } from 'lucide-react'
 import { Toast } from '@/components/Toast'
+import { getDashboardData } from '@/data/dashboard'
 
 const STATUS_LABEL: Record<string, { label: string }> = {
   draft:          { label: 'Entwurf'        },
@@ -38,60 +37,17 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ welcome?: string }>
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const { data: company } = await supabase
-    .from('companies')
-    .select('*')
-    .eq('user_id', user.id)
-    .single()
-  if (company && !company.name) redirect('/onboarding')
-
   const { welcome } = await searchParams
-
-  // Letzte 5 Angebote — ersten Item-Titel für Fallback-Bezeichnung
-  const { data: recentQuotes } = await supabase
-    .from('quotes')
-    .select('*, customer:customers(name), quote_items(title, position), quote_number')
-    .eq('company_id', company?.id)
-    .not('status', 'eq', 'archived')
-    .order('created_at', { ascending: false })
-    .limit(5)
-
-  // Monatsstats
-  const now = new Date()
-  const monatStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-  const { data: monatQuotes } = await supabase
-    .from('quotes')
-    .select('status, total_gross')
-    .eq('company_id', company?.id)
-    .gte('created_at', monatStart)
-    .not('status', 'in', '("draft","in_bearbeitung","archived")')
-
-  const monat = monatQuotes ?? []
-  const monatUmsatz = monat.filter(q => q.status === 'accepted').reduce((s, q) => s + (q.total_gross ?? 0), 0)
-  const monatBeauftragt = monat.filter(q => q.status === 'accepted').length
-
-  // Preisliste leer?
-  const { count: preisCount } = await supabase
-    .from('price_items')
-    .select('id', { count: 'exact', head: true })
-    .eq('company_id', company?.id ?? '')
-  const preislisteIstLeer = (preisCount ?? 0) === 0
-
-  // Offene gesamt (alle Monate, für Hero-Hinweis)
-  const { data: offeneGesamt } = await supabase
-    .from('quotes')
-    .select('id')
-    .eq('company_id', company?.id)
-    .in('status', ['sent', 'viewed'])
-  const offeneGesamtCount = (offeneGesamt ?? []).length
-
-  const firstName = company?.name?.split(' ')[0] ?? 'Hallo'
-  const initial = company?.name?.[0]?.toUpperCase() ?? 'A'
-  const plan = (company as { plan?: string } | null)?.plan ?? 'starter'
+  const data = await getDashboardData()
+  if (data.needsOnboarding) redirect('/onboarding')
+  const {
+    company, recentQuotes, monthRevenue: monatUmsatz,
+    monthAccepted: monatBeauftragt, priceListEmpty: preislisteIstLeer,
+    openCount: offeneGesamtCount,
+  } = data
+  const firstName = company.name?.split(' ')[0] ?? 'Hallo'
+  const initial = company.name?.[0]?.toUpperCase() ?? 'A'
+  const plan = company.plan
 
   const heroStatusText = offeneGesamtCount > 0
     ? `● ${offeneGesamtCount} ${offeneGesamtCount === 1 ? 'Angebot wartet' : 'Angebote warten'} auf Antwort`
@@ -196,7 +152,7 @@ export default async function DashboardPage({
             </Link>
           </div>
           <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-3">
-            {(recentQuotes ?? []).map((quote: Quote & { customer?: { name: string } | null; gewerk?: string; quote_items?: { title: string; position: number }[] }) => {
+            {recentQuotes.map(quote => {
               const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
               const items = (quote.quote_items ?? []).sort((a, b) => a.position - b.position)
               return (

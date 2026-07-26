@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
 import {
-  Download, Mail, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
-  Plus, ChevronDown, Copy, Mic, MicOff, Loader2, Image, StickyNote,
+  Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
+  Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon, StickyNote,
   Camera, AlertTriangle, GripVertical, MoreHorizontal, Percent, Tag, Settings,
 } from 'lucide-react'
 import {
@@ -55,6 +55,7 @@ interface EditItem {
   unit: string
   unit_price: number
   total_price: number
+  price_item_id?: string | null
   confidence?: number
   berechnungsweg?: string | null
   annahmen?: string[]
@@ -136,9 +137,12 @@ function RaumDimensionenZeile({
   /** Hat der Raum Wand-/Deckenarbeiten? Bei reinem Boden nur das Boden-Feld zeigen. */
   wandRelevant?: boolean
 }) {
-  // Wenn eine Fläche (Wand/Boden) vorliegt aber keine L×B → direkt Flächen-Reiter
+  // Vorhandene Raummaße haben Vorrang. Der Flächenmodus ist nur für Fälle,
+  // in denen wirklich ausschließlich fertige Flächen genannt wurden.
   const modus: RaumModus = dim.modus
-    ?? ((dim.wandflaeche != null || dim.bodenflaeche != null) ? 'flaeche' : 'rechteck')
+    ?? ((dim.breite != null && dim.laenge != null)
+      ? 'rechteck'
+      : ((dim.wandflaeche != null || dim.bodenflaeche != null) ? 'flaeche' : 'rechteck'))
   const masse = berechneRaumMasse(dim)
 
   return (
@@ -146,9 +150,9 @@ function RaumDimensionenZeile({
       {/* Modus-Umschalter */}
       <div className="flex items-center gap-1 self-start bg-[#2C2C2C]/5 rounded-lg p-0.5">
         {([
-          { id: 'rechteck', label: 'L × B' },
-          { id: 'flaeche', label: 'Fläche' },
-          { id: 'grundriss', label: 'Grundriss' },
+          { id: 'rechteck', label: 'Raummaße' },
+          { id: 'flaeche', label: 'Flächen eingeben' },
+          { id: 'grundriss', label: 'Raumform' },
         ] as { id: RaumModus; label: string }[]).map(m => (
           <button
             key={m.id}
@@ -177,12 +181,12 @@ function RaumDimensionenZeile({
           <>
             {wandRelevant && (
               <>
-                <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wand</span>
+                <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandfläche</span>
                 <InlineNum value={dim.wandflaeche} label="Wandfläche (fertig, ohne Fenster/Türen)" suffix=" m²" onCommit={v => onChange({ wandflaeche: v })} />
                 <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
               </>
             )}
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Boden</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Bodenfläche</span>
             <InlineNum value={dim.bodenflaeche} label="Bodenfläche" suffix=" m²" onCommit={v => onChange({ bodenflaeche: v })} />
           </>
         )}
@@ -198,13 +202,13 @@ function RaumDimensionenZeile({
         {wandRelevant && (
           <>
             <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">H</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Raumhöhe</span>
             <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
             <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[12px]">🚪</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Türen</span>
             <InlineNum value={dim.tueren} label="Türen" onCommit={v => onChange({ tueren: v })} />
             <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[12px]">🪟</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Fenster</span>
             <InlineNum value={dim.fenster} label="Fenster" onCommit={v => onChange({ fenster: v })} />
           </>
         )}
@@ -217,7 +221,7 @@ function fmtDate(d: string) {
 }
 
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, onInfo, onAddMaterial }: {
+function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, onInfo, onAddMaterial, onAddPrice }: {
   item: EditItem
   titleOverride?: string
   editingId: string | null
@@ -228,12 +232,14 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   onUnitPick: (id: string) => void
   onInfo: (id: string) => void
   onAddMaterial: (item: EditItem) => void
+  onAddPrice: (item: EditItem) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
   const isEditing = editingId === item.id
   const isUnsure = (item.confidence ?? 1) < 0.7
   const materialVorschlag = materialFuerPosition(titleOverride ?? item.title)
+  const preisFehlt = !item.price_item_id && item.unit_price <= 0
 
   return (
     <div
@@ -324,6 +330,19 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 </button>
               )}
             </div>
+            {preisFehlt && (
+              <div className="mt-2 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-2.5 py-2">
+                <AlertTriangle size={14} className="shrink-0 text-red-500" />
+                <span className="flex-1 text-[11px] font-bold text-red-700">Preis fehlt in deiner Preisdatenbank</span>
+                <button
+                  type="button"
+                  onClick={e => { e.stopPropagation(); onAddPrice(item) }}
+                  className="shrink-0 rounded-lg bg-[#2C2C2C] px-2.5 py-1.5 text-[11px] font-black text-white"
+                >
+                  Preis anlegen
+                </button>
+              </div>
+            )}
             {materialVorschlag && (
               <button
                 onClick={e => { e.stopPropagation(); onAddMaterial(item) }}
@@ -353,11 +372,6 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
 
 // ── Hauptkomponente ───────────────────────────────────────────────────────────
 export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
-  const [sending, setSending] = useState(false)
-  const [emailInput, setEmailInput] = useState(quote.customer?.email ?? '')
-  const [showEmail, setShowEmail] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
-  const [deleting, setDeleting] = useState(false)
   const [showDeleteSheet, setShowDeleteSheet] = useState(false)
   const [toast, setToast] = useState('')
   const [editMode, setEditMode] = useState(DRAFT_STATUSES.includes(quote.status))
@@ -370,9 +384,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showRevisionDialog, setShowRevisionDialog] = useState(false)
   const [creatingRevision, setCreatingRevision] = useState(false)
   const [sentVia, setSentVia] = useState<string[]>(quote.sent_via ?? [])
-  const [voiceRecording, setVoiceRecording] = useState(false)
-  const [voiceLoading, setVoiceLoading] = useState(false)
-  const [voiceError, setVoiceError] = useState('')
   const [activeTab, setActiveTab] = useState<'positionen' | 'notizen'>('positionen')
   const [showExtras, setShowExtras] = useState(false)
   const [discountPercent, setDiscountPercent] = useState(0)
@@ -386,7 +397,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [lightboxPhoto, setLightboxPhoto] = useState<QuotePhoto | null>(null)
   const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
   const [dismissedHints, setDismissedHints] = useState<Set<string>>(new Set())
-  const [showMoreMenu, setShowMoreMenu] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [autosaveLabel, setAutosaveLabel] = useState('')
   const [showVorschau, setShowVorschau] = useState(false)
@@ -394,6 +404,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
   const [infoItemId, setInfoItemId] = useState<string | null>(null)
   const [priceItems, setPriceItems] = useState<{ title: string; unit_price: number; unit: string }[]>([])
+  const [priceItemToAdd, setPriceItemToAdd] = useState<EditItem | null>(null)
+  const [newDatabasePrice, setNewDatabasePrice] = useState('')
+  const [addingDatabasePrice, setAddingDatabasePrice] = useState(false)
+  const [databasePriceError, setDatabasePriceError] = useState('')
   // ── Pro-Angebot-Optionen (Zahnrad) — null/'' = aus Betriebs-Einstellungen erben
   const [showOptionen, setShowOptionen] = useState(false)
   const [showAktionen, setShowAktionen] = useState(false)
@@ -414,14 +428,17 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showKundenSuche, setShowKundenSuche] = useState(false)
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
   const [kundenListe, setKundenListe] = useState<Customer[]>([])
-  const [raumDetails, setRaumDetails] = useState<Record<string, RaumDimension>>({})
+  // Die Server-Seite liefert raum_details bereits mit dem Angebot. Direkt daraus
+  // initialisieren, damit bekannte Maße beim ersten Render nicht als fehlend
+  // aufblitzen, während die zusätzliche Detailabfrage noch läuft.
+  const [raumDetails, setRaumDetails] = useState<Record<string, RaumDimension>>(
+    (quote.raum_details as Record<string, RaumDimension> | null | undefined) ?? {},
+  )
   const [grundrissRaum, setGrundrissRaum] = useState<string | null>(null)
   const [showRaumPicker, setShowRaumPicker] = useState(false)
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const raumDetailsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const mediaRef = useRef<MediaRecorder | null>(null)
-  const chunksRef = useRef<Blob[]>([])
   const router = useRouter()
   const supabase = createClient()
 
@@ -591,72 +608,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   // ── Spracheingabe ──────────────────────────────────────────────────────────
-  const startVoiceRecording = useCallback(async () => {
-    setVoiceError('')
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
-        .find(m => MediaRecorder.isTypeSupported(m)) ?? ''
-      const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {})
-      chunksRef.current = []
-      mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
-      mr.onstop = async () => {
-        stream.getTracks().forEach(t => t.stop())
-        await processVoiceAddition(new Blob(chunksRef.current, { type: mr.mimeType || 'audio/webm' }))
-      }
-      mr.start()
-      mediaRef.current = mr
-      setVoiceRecording(true)
-    } catch {
-      setVoiceError('Mikrofon nicht verfügbar')
-    }
-  }, [editItems])
-
-  const stopVoiceRecording = useCallback(() => {
-    mediaRef.current?.stop()
-    setVoiceRecording(false)
-  }, [])
-
-  async function processVoiceAddition(blob: Blob) {
-    setVoiceLoading(true)
-    try {
-      const fd = new FormData()
-      fd.append('audio', blob, 'aufnahme.webm')
-      const tRes = await fetch('/api/transkribieren', { method: 'POST', body: fd })
-      if (!tRes.ok) { setVoiceError('Transkription fehlgeschlagen'); return }
-      const { text } = await tRes.json()
-
-      const aRes = await fetch('/api/angebot-ergänzen', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          existingItems: editItems.map(i => ({ title: i.title, quantity: i.quantity, unit: i.unit, unit_price: i.unit_price })),
-          transcript: text,
-        }),
-      })
-      if (!aRes.ok) { setVoiceError('Analyse fehlgeschlagen'); return }
-      const result = await aRes.json()
-      const newItems = (result.items ?? []) as Array<{ title: string; description?: string; quantity: number; unit: string; unit_price: number }>
-
-      setEditItems(prev => {
-        let updated = [...prev]
-        for (const ni of newItems) {
-          if (ni.title.startsWith('KORREKTUR:')) {
-            const cleanTitle = ni.title.replace('KORREKTUR:', '').trim()
-            const idx = updated.findIndex(e => e.title.toLowerCase() === cleanTitle.toLowerCase())
-            if (idx >= 0) updated[idx] = { ...updated[idx], quantity: ni.quantity, unit: ni.unit, unit_price: ni.unit_price, total_price: ni.quantity * ni.unit_price }
-          } else if (!updated.some(e => e.title.toLowerCase() === ni.title.toLowerCase())) {
-            updated = [...updated, { id: `new-${Date.now()}-${Math.random()}`, position: (updated[updated.length - 1]?.position ?? 0) + 1, title: ni.title, description: ni.description ?? null, quantity: ni.quantity, unit: ni.unit, unit_price: ni.unit_price, total_price: ni.quantity * ni.unit_price }]
-          }
-        }
-        return updated
-      })
-      setHasChanges(true)
-    } finally {
-      setVoiceLoading(false)
-    }
-  }
-
   // ── Fotos ──────────────────────────────────────────────────────────────────
   async function handlePhotoUpload(file: File) {
     if (photos.length >= 10) { showToast('Maximal 10 Fotos'); return }
@@ -709,6 +660,51 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     setEditItems(prev => prev.filter(item => item.id !== id))
     setEditingItemId(null)
     setHasChanges(true)
+  }
+
+  async function addMissingDatabasePrice() {
+    if (!priceItemToAdd) return
+    const unitPrice = Number(newDatabasePrice.replace(',', '.'))
+    if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+      setDatabasePriceError('Bitte einen Preis größer als 0 eingeben.')
+      return
+    }
+
+    setAddingDatabasePrice(true)
+    setDatabasePriceError('')
+    const response = await fetch(`/api/quotes/${quote.id}/items/${priceItemToAdd.id}/preis`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ unit_price: unitPrice }),
+    })
+    const result = await response.json().catch(() => ({})) as {
+      error?: string
+      price_item_id?: string
+      unit_price?: number
+      total_price?: number
+    }
+    if (!response.ok || !result.price_item_id) {
+      setDatabasePriceError(result.error ?? 'Preis konnte nicht gespeichert werden.')
+      setAddingDatabasePrice(false)
+      return
+    }
+
+    setEditItems(previous => previous.map(item => item.id === priceItemToAdd.id ? {
+      ...item,
+      price_item_id: result.price_item_id,
+      unit_price: result.unit_price ?? unitPrice,
+      total_price: result.total_price ?? item.quantity * unitPrice,
+    } : item))
+    setPriceItems(previous => [...previous, {
+      title: priceItemToAdd.title.replace(/\s+—\s+.+$/, '').trim(),
+      unit: priceItemToAdd.unit,
+      unit_price: unitPrice,
+    }])
+    setPriceItemToAdd(null)
+    setNewDatabasePrice('')
+    setAddingDatabasePrice(false)
+    showToast('Preis in Preisdatenbank und Angebot übernommen ✓')
+    router.refresh()
   }
 
   function addEditItem() {
@@ -898,18 +894,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     showToast('Status aktualisiert ✓')
   }
 
-  async function handleSendEmail() {
-    if (!emailInput.trim()) return
-    setSending(true)
-    const r = await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.id, to: emailInput }) })
-    setSending(false)
-    if (r.ok) {
-      setEmailSent(true); setShowEmail(false); setCurrentStatus('sent'); trackVia('email')
-      await supabase.from('quotes').update({ status: 'sent' }).eq('id', quote.id)
-      showToast('E-Mail versendet ✓')
-    } else { showToast('E-Mail fehlgeschlagen') }
-  }
-
   async function handleDuplicate() {
     const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: quote.items.map(i => ({ title: i.title, description: i.description, quantity: i.quantity, unit: i.unit, unit_price: i.unit_price })), notes: quote.notes, customerName: quote.customer?.name ?? '', customerEmail: quote.customer?.email ?? '', customerPhone: quote.customer?.phone ?? '', customerAddress: quote.customer?.address ?? '' }) })
     if (r.ok) { const { id } = await r.json(); showToast('Dupliziert ✓'); router.push(`/angebot/${id}`) }
@@ -918,7 +902,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   async function handleDelete() {
     setShowDeleteSheet(false)
-    setDeleting(true)
     await supabase.from('quotes').delete().eq('id', quote.id)
     router.push('/angebote')
   }
@@ -1014,17 +997,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     else { const err = await r.json(); showToast(err.error ?? 'Export fehlgeschlagen') }
   }
 
-  const publicPdfUrl = quote.share_token ? `${typeof window !== 'undefined' ? window.location.origin : ''}/api/pdf/public?token=${quote.share_token}` : null
-  const signingLink = `${typeof window !== 'undefined' ? window.location.origin : 'https://sofortangebot.app'}/angebot/${quote.share_token ?? quote.id}/unterschreiben`
-  const whatsappText = encodeURIComponent(`Hallo, anbei mein Angebot ${quoteNumber} über ${fmt(totalGross)}.\n\nOnline ansehen & unterschreiben: ${signingLink}${publicPdfUrl ? `\n\nPDF: ${publicPdfUrl}` : ''}`)
-
   const displayItems = editItems
   const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
   const istZugferd = company?.e_rechnung_aktiv !== false && kundeIstUnternehmen
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-10" onClick={() => { setEditingItemId(null); setShowMoreMenu(false) }}>
+    <div className="min-h-dvh bg-[#F7F7F5] pb-10" onClick={() => setEditingItemId(null)}>
 
       {/* Toast */}
       <Toast message={toast} />
@@ -1357,6 +1336,22 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <div className="font-black text-[#2C2C2C]">Positionen</div>
               </div>
 
+              {editItems.some(item => !item.price_item_id && item.unit_price <= 0) && (
+                <div className="mx-3 mb-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 flex gap-2">
+                  <AlertTriangle size={17} className="mt-0.5 shrink-0 text-red-500" />
+                  <div>
+                    <div className="text-xs font-black text-red-700">
+                      {editItems.filter(item => !item.price_item_id && item.unit_price <= 0).length === 1
+                        ? 'Bei 1 Position fehlt noch der Preis.'
+                        : `Bei ${editItems.filter(item => !item.price_item_id && item.unit_price <= 0).length} Positionen fehlen noch Preise.`}
+                    </div>
+                    <div className="mt-0.5 text-[11px] font-semibold text-red-600/80">
+                      Das Angebot bleibt bearbeitbar. Lege den Preis direkt an der markierten Position an.
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Action-Row oben — immer sichtbar */}
               {editMode && (
                 <div className="border-t border-b border-[#2C2C2C]/5 grid grid-cols-3">
@@ -1384,7 +1379,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 </div>
               )}
 
-              {editMode && voiceError && <div className="mx-4 mb-2 text-xs text-red-500 font-semibold">{voiceError}</div>}
 
               {editMode ? (() => {
                 const gruppen = gruppiereNachStruktur(editItems, (optStruktur || company?.angebot_struktur || 'raeume'))
@@ -1393,7 +1387,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                         {editItems.map(item => (
-                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} />
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setDatabasePriceError('') }} />
                         ))}
                       </SortableContext>
                     </DndContext>
@@ -1426,7 +1420,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setDatabasePriceError('') }} />
                           })}
                         </div>
                         )
@@ -1438,7 +1432,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setDatabasePriceError('') }} />
                           })}
                         </div>
                       )}
@@ -1734,7 +1728,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 onClick={() => fileInputRef.current?.click()}
                 className="w-full border-2 border-dashed border-[#2C2C2C]/15 rounded-2xl py-10 flex flex-col items-center gap-3 text-[#2C2C2C]/30 hover:border-[#F5C400]/50 transition-colors"
               >
-                <Image size={32} strokeWidth={1.5} />
+                <ImageIcon size={32} strokeWidth={1.5} />
                 <span className="font-bold text-sm">Fotos vom Aufmaß hinzufügen</span>
                 <span className="text-xs">Kamera oder Galerie · max. 10 Fotos</span>
               </button>
@@ -2094,6 +2088,52 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             setGrundrissRaum(null)
           }}
         />
+      )}
+
+      {priceItemToAdd && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/45 p-3" onClick={() => !addingDatabasePrice && setPriceItemToAdd(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl" onClick={event => event.stopPropagation()}>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Fehlenden Preis anlegen</div>
+                <div className="mt-1 text-base font-black text-[#2C2C2C]">{priceItemToAdd.title.replace(/\s+—\s+.+$/, '')}</div>
+                <div className="mt-0.5 text-xs font-semibold text-[#2C2C2C]/50">
+                  Wird in deiner Preisdatenbank gespeichert und sofort in dieses Angebot übernommen.
+                </div>
+              </div>
+              <button type="button" onClick={() => setPriceItemToAdd(null)} disabled={addingDatabasePrice} className="p-1 text-[#2C2C2C]/40">
+                <X size={19} />
+              </button>
+            </div>
+
+            <label className="mt-5 block text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Preis pro {priceItemToAdd.unit}</label>
+            <div className="mt-1.5 flex items-center rounded-xl border-2 border-[#F5C400] bg-[#F7F7F5] px-3">
+              <input
+                autoFocus
+                type="number"
+                inputMode="decimal"
+                min="0.01"
+                step="0.01"
+                value={newDatabasePrice}
+                onChange={event => { setNewDatabasePrice(event.target.value); setDatabasePriceError('') }}
+                onKeyDown={event => { if (event.key === 'Enter') void addMissingDatabasePrice() }}
+                placeholder="z. B. 12,50"
+                className="min-w-0 flex-1 bg-transparent py-3 text-lg font-black text-[#2C2C2C] outline-none"
+              />
+              <span className="text-sm font-black text-[#2C2C2C]/50">€ / {priceItemToAdd.unit}</span>
+            </div>
+            {databasePriceError && <div className="mt-2 text-xs font-bold text-red-600">{databasePriceError}</div>}
+
+            <button
+              type="button"
+              onClick={() => void addMissingDatabasePrice()}
+              disabled={addingDatabasePrice}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#F5C400] py-3 font-black text-[#2C2C2C] disabled:opacity-50"
+            >
+              {addingDatabasePrice ? <><Loader2 size={17} className="animate-spin" /> Speichert…</> : <><Check size={17} strokeWidth={3} /> Preis anlegen & übernehmen</>}
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

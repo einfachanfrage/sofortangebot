@@ -3,15 +3,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
 import {
-  ArrowLeft, Mic, MicOff, StickyNote, Camera, X, Check, ChevronRight,
-  Loader2, AlertCircle, ZoomIn, AlertTriangle, RefreshCw,
+  ArrowLeft, Mic, Camera, X, Check, ChevronRight,
+  Loader2, AlertCircle, RefreshCw,
 } from 'lucide-react'
 import { AudioPlayer } from '@/components/AudioPlayer'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
+import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { EntwurfAufnahme, ErkanntPosition } from '@/lib/types'
-import type { KIRueckfrage } from '@/lib/mengen/types'
+import { extrahiereRaumhoehe, zaehleFenster, zaehleTueren } from '@/lib/extraktion-masse'
+import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
+import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahme/RueckfragenScreen'
 
 type AufnahmeWithUrl = EntwurfAufnahme & { audio_signed_url?: string; foto_signed_url?: string }
 
@@ -28,12 +30,42 @@ function fmtZeit(iso: string) {
   return new Date(iso).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
 }
 
-function fmtRelativ(iso: string) {
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
-  if (diff < 60) return 'gerade eben'
-  if (diff < 3600) return `vor ${Math.floor(diff / 60)} Min.`
-  if (diff < 86400) return `vor ${Math.floor(diff / 3600)} Std.`
-  return new Date(iso).toLocaleDateString('de-DE')
+const RAUMNAMEN = ['Wohnzimmer', 'Schlafzimmer', 'Kinderzimmer', 'Arbeitszimmer', 'Esszimmer', 'Gästezimmer', 'Badezimmer', 'Bad', 'Küche', 'Flur', 'Diele', 'Keller', 'Garage', 'Treppenhaus', 'Büro', 'Abstellraum']
+const TITEL_TRENNER = /\s+[-–—]\s+/
+
+function raumAusTitel(titel: string): string | null {
+  const treffer = titel.match(TITEL_TRENNER)
+  return treffer ? titel.slice(treffer.index! + treffer[0].length).trim() : null
+}
+
+function erkenneEinzelraum(transkript: string | null, positionen: ErkanntPosition[]): string | null {
+  const ausTiteln = [...new Set(positionen.map(p => raumAusTitel(p.titel)).filter(Boolean) as string[])]
+  if (ausTiteln.length === 1) return ausTiteln[0]
+  const text = (transkript ?? '').toLocaleLowerCase('de-DE')
+  const ausText = RAUMNAMEN.filter(name => new RegExp(`\\b${name.toLocaleLowerCase('de-DE')}\\b`, 'i').test(text))
+  return ausText.length === 1 ? ausText[0] : null
+}
+
+function extrahiereRaumdaten(transkript: string | null) {
+  const text = ersetzeZahlenWorte(transkript ?? '')
+  const lb = text.match(/(\d+(?:[.,]\d+)?)\s*(?:m(?:eter)?)?\s*(?:mal|x|×)\s*(\d+(?:[.,]\d+)?)\s*(?:m(?:eter)?)?/i)
+    ?? text.match(/(\d+(?:[.,]\d+)?)\s*(?:m|meter)\s+lang[^.!?\n]*?(\d+(?:[.,]\d+)?)\s*(?:m|meter)\s+breit/i)
+  const zahl = (wert: string) => Number(wert.replace(',', '.'))
+  return {
+    laenge: lb ? zahl(lb[1]) : null,
+    breite: lb ? zahl(lb[2]) : null,
+    hoehe: extrahiereRaumhoehe(text),
+    fenster: zaehleFenster(text),
+    tueren: zaehleTueren(text),
+  }
+}
+
+function formatMass(wert: number) {
+  return wert.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+function geschaetzteSekunden(positionen: number) {
+  return Math.max(10, Math.ceil((positionen * 2) / 5) * 5)
 }
 
 // ── Aufnahme Card ─────────────────────────────────────────────────────────────
@@ -42,6 +74,8 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
   const [fotoGross, setFotoGross] = useState(false)
   const positionen = aufnahme.erkannte_positionen as ErkanntPosition[]
   const erkannte = positionen.filter(p => p.erkannt)
+  const einzelraum = erkenneEinzelraum(aufnahme.transkript, erkannte)
+  const raumdaten = extrahiereRaumdaten(aufnahme.transkript)
   // Zettel-Scan = Foto mit Vision-Transkript (bzw. gerade in Verarbeitung)
   const istZettel = aufnahme.typ === 'foto' && (aufnahme.transkript != null || aufnahme.foto_beschreibung === 'Aufmaß-Zettel')
 
@@ -90,34 +124,46 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
             </div>
           )}
 
-          {/* Erkannte Positionen */}
-          {erkannte.length > 0 && (() => {
-            // Raum aus Titel extrahieren (Format: "Titel — Raum")
-            const DASH = /\s+[-–—]\s+/
-            const raumSet = new Set(erkannte.map(p => { const m = p.titel?.match(DASH); return m ? p.titel.slice(m.index! + m[0].length).trim() : null }).filter(Boolean) as string[])
-            const raum = raumSet.size === 1 ? [...raumSet][0] : null
-            return (
-              <div className="mb-3">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[11px] font-extrabold text-[#1A7A38] uppercase tracking-wide">✓ Erkannt</span>
-                  <span className="text-[11px] font-bold text-[#2C2C2C]/30">{erkannte.length} Position{erkannte.length !== 1 ? 'en' : ''}</span>
-                  {raum && <span className="text-[11px] font-extrabold text-[#2C2C2C]/50 bg-[#2C2C2C]/6 px-2 py-0.5 rounded-full">{raum}</span>}
+          {/* Ruhige, fachlich gegliederte Zusammenfassung */}
+          {erkannte.length > 0 && (
+            <div className="mb-3 space-y-3">
+              {einzelraum && (
+                <div>
+                  <div className="font-syne font-extrabold text-[16px] text-[#2C2C2C]">{einzelraum}</div>
+                  <div className="flex items-center gap-1.5 mt-1 text-[12px] font-bold text-[#1A7A38]"><Check size={13} strokeWidth={3} /> Raum erkannt</div>
                 </div>
-                <div className="flex flex-col gap-1">
+              )}
+              {raumdaten.laenge && raumdaten.breite && (
+                <div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35 mb-1">Maße</div>
+                  <div className="text-[14px] font-bold text-[#2C2C2C]">
+                    {formatMass(raumdaten.laenge)} × {formatMass(raumdaten.breite)}{raumdaten.hoehe ? ` × ${formatMass(raumdaten.hoehe)}` : ''} m
+                  </div>
+                </div>
+              )}
+              <div>
+                <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35 mb-1.5">Leistungen</div>
+                <div className="flex flex-col gap-1.5">
                   {erkannte.map((p, i) => {
-                    const m = p.titel?.match(DASH)
-                    const titelDisplay = m ? p.titel.slice(0, m.index).trim() : p.titel
+                    const treffer = p.titel?.match(TITEL_TRENNER)
+                    const titelDisplay = treffer ? p.titel.slice(0, treffer.index).trim() : p.titel
                     return (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-[#1A7A38] shrink-0" />
+                        <Check size={13} strokeWidth={3} className="text-[#1A7A38] shrink-0" />
                         <span className="text-[13px] font-semibold text-[#2C2C2C]">{titelDisplay}</span>
                       </div>
                     )
                   })}
                 </div>
               </div>
-            )
-          })()}
+              {(raumdaten.fenster > 0 || raumdaten.tueren > 0) && (
+                <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-[#2C2C2C]/6 pt-2.5 text-[12px] font-semibold text-[#2C2C2C]/65">
+                  {raumdaten.fenster > 0 && <span>Fenster: <b className="text-[#2C2C2C]">{raumdaten.fenster}</b></span>}
+                  {raumdaten.tueren > 0 && <span>{raumdaten.tueren === 1 ? 'Tür' : 'Türen'}: <b className="text-[#2C2C2C]">{raumdaten.tueren}</b></span>}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Audio-Player */}
           {aufnahme.audio_signed_url && (
@@ -227,57 +273,6 @@ function NotizModal({ onSave, onClose }: { onSave: (text: string) => void; onClo
   )
 }
 
-// ── Rückfragen Hinweis (nach Fertigstellen) ───────────────────────────────────
-
-function RueckfragenHinweis({
-  rueckfragen,
-  onWeiter,
-  onNochEineAufnahme,
-}: {
-  rueckfragen: RueckfrageItem[]
-  onWeiter: () => void
-  onNochEineAufnahme: () => void
-}) {
-  return (
-    <div className="fixed inset-0 z-40 flex items-end">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onWeiter} />
-      <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl max-h-[85vh] overflow-y-auto">
-        <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-        <div className="flex items-center gap-2 mb-3">
-          <AlertTriangle size={18} className="text-[#F5C400] shrink-0" strokeWidth={2.5} />
-          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px]">Noch ein paar Infos fehlen</h2>
-        </div>
-        <p className="text-[#2C2C2C]/50 font-semibold text-[14px] mb-4 leading-relaxed">
-          Das Angebot wurde erstellt — aber für genauere Preise würden wir noch folgendes brauchen:
-        </p>
-        <div className="flex flex-col gap-2 mb-6">
-          {rueckfragen.map(rq => (
-            <div key={rq.id} className="flex items-start gap-3 bg-[#F7F7F5] rounded-xl px-4 py-3">
-              <span className="text-[#F5C400] font-black text-lg shrink-0">?</span>
-              <span className="text-[#2C2C2C] font-semibold text-[14px] leading-snug">{rq.frage}</span>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={onNochEineAufnahme}
-            className="w-full bg-[#2C2C2C] text-white rounded-2xl py-4 font-extrabold text-[15px] flex items-center justify-center gap-2"
-          >
-            <Mic size={18} />
-            Infos einsprechen & neu berechnen
-          </button>
-          <button
-            onClick={onWeiter}
-            className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
-          >
-            Trotzdem fertigstellen →
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ── Hauptseite ────────────────────────────────────────────────────────────────
 
 export default function EntwurfPage() {
@@ -299,6 +294,8 @@ export default function EntwurfPage() {
   const [fehler, setFehler] = useState('')
   const [deleteBestaetigen, setDeleteBestaetigen] = useState<string | null>(null)
   const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
+  const [basisExtraktion, setBasisExtraktion] = useState<ExtrahierteDaten | null>(null)
+  const [gesammelteAntworten, setGesammelteAntworten] = useState<Record<string, RueckfragenAntwort>>({})
   const [zettelUploading, setZettelUploading] = useState(false)
 
   const mediaRef = useRef<MediaRecorder | null>(null)
@@ -368,7 +365,12 @@ export default function EntwurfPage() {
 
   // ── Fertigstellen ────────────────────────────────────────────────────────
 
-  async function fertigstellen() {
+  async function fertigstellen(
+    antworten: Record<string, RueckfragenAntwort> = {},
+    rueckfragenUeberspringen = false,
+  ) {
+    const alleAntworten = { ...gesammelteAntworten, ...antworten }
+    if (Object.keys(antworten).length > 0) setGesammelteAntworten(alleAntworten)
     setScreen('fertigstellen_loading')
     setFehler('')
     setLoadingMsg('Alle Aufnahmen werden zusammengeführt…')
@@ -388,20 +390,34 @@ export default function EntwurfPage() {
       const res = await fetch('/api/entwurf/generiere-positionen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ angebot_id: angebotId, aufnahmen_ids: neueIds }),
+        body: JSON.stringify({
+          angebot_id: angebotId,
+          aufnahmen_ids: neueIds,
+          antworten: alleAntworten,
+          basis_extraktion: basisExtraktion,
+          rueckfragen_ueberspringen: rueckfragenUeberspringen,
+        }),
       })
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({})) as { error?: string }
-        setFehler(err.error ?? 'Fehler beim Berechnen')
+        const err = await res.json().catch(() => ({})) as {
+          error?: string
+          fehlende_positionen?: Array<{ beschreibung: string; einheit: string }>
+        }
+        const fehlende = err.fehlende_positionen ?? []
+        setFehler(fehlende.length > 0
+          ? `Preis fehlt in deiner Preisdatenbank: ${fehlende.map(p => `${p.beschreibung} (${p.einheit})`).join(', ')}`
+          : (err.error ?? 'Fehler beim Berechnen'))
         setScreen('timeline')
         return
       }
 
       const data = await res.json() as {
         positionen_count?: number
-        rueckfragen?: KIRueckfrage[]
+        rueckfragen?: RueckfrageItem[]
         keine_neuen?: boolean
+        requires_input?: boolean
+        basis_extraktion?: ExtrahierteDaten
       }
 
       // Keine neuen Aufnahmen seit letzter Generierung → direkt zur Angebots-Ansicht
@@ -410,22 +426,10 @@ export default function EntwurfPage() {
         return
       }
 
-      const kiRueckfragen = (data.rueckfragen ?? []) as KIRueckfrage[]
-      const konvertiert: RueckfrageItem[] = kiRueckfragen
-        .filter(r => r.frage)
-        .slice(0, 3)
-        .map(r => ({
-          id: r.id,
-          frage: r.frage,
-          kontext: r.betrifft ?? '',
-          typ: (r.typ === 'hoehe' ? 'hoehe' : r.typ === 'masse_einzel' ? 'masse_einzel' : 'ja_nein') as RueckfrageItem['typ'],
-          schnell_antworten: (r.schnell_antworten ?? [])
-            .filter(a => typeof a.wert === 'number')
-            .map(a => ({ label: a.label, wert: a.wert as number, einheit: r.typ === 'hoehe' ? 'm' : 'Stk' })),
-        }))
-
-      if (konvertiert.length > 0) {
-        setRueckfragen(konvertiert)
+      const offeneRueckfragen = (data.rueckfragen ?? []).filter(r => r.frage)
+      if (data.requires_input && offeneRueckfragen.length > 0) {
+        setBasisExtraktion(data.basis_extraktion ?? null)
+        setRueckfragen(offeneRueckfragen)
         setScreen('rueckfragen')
       } else {
         router.push(`/angebot/${angebotId}`)
@@ -434,10 +438,6 @@ export default function EntwurfPage() {
       setFehler('Netzwerkfehler. Bitte nochmal versuchen.')
       setScreen('timeline')
     }
-  }
-
-  function zuAngebot() {
-    router.push(`/angebot/${angebotId}`)
   }
 
   // ── Aufnahme ─────────────────────────────────────────────────────────────
@@ -628,15 +628,6 @@ export default function EntwurfPage() {
     }
   }
 
-  async function handleFoto(file: File) {
-    const fd = new FormData()
-    fd.append('angebot_id', angebotId)
-    fd.append('foto', file)
-    fd.append('geraet', geraet.current)
-    const res = await fetch('/api/entwurf/foto', { method: 'POST', body: fd })
-    if (res.ok) await loadData()
-  }
-
   // ── Rendering ─────────────────────────────────────────────────────────────
 
   const kundenname = (quoteInfo?.customer as { name?: string } | null)?.name
@@ -654,6 +645,9 @@ export default function EntwurfPage() {
     ? sprachen.filter(a => new Date(a.erstellt_am) > new Date(letzteGenerierung))
     : sprachen
   const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung
+  const erkannteAnzahl = neueAufnahmen.reduce((sum, aufnahme) =>
+    sum + ((aufnahme.erkannte_positionen as ErkanntPosition[]) ?? []).filter(position => position.erkannt).length, 0)
+  const bearbeitungszeit = geschaetzteSekunden(erkannteAnzahl)
 
   // ── Zurück-Bestätigung Screen ─────────────────────────────────────────────
 
@@ -700,13 +694,11 @@ export default function EntwurfPage() {
 
   if (screen === 'rueckfragen' && rueckfragen.length > 0) {
     return (
-      <RueckfragenHinweis
-        rueckfragen={rueckfragen}
-        onWeiter={zuAngebot}
-        onNochEineAufnahme={() => {
-          setRueckfragen([])
-          setScreen('timeline')
-        }}
+      <RueckfragenScreen
+        fragen={rueckfragen}
+        onFertig={antworten => fertigstellen(antworten)}
+        onUeberspringen={() => fertigstellen({}, true)}
+        onZurueck={() => setScreen('timeline')}
       />
     )
   }
@@ -832,7 +824,7 @@ export default function EntwurfPage() {
             <Check size={14} className="text-[#1A7A38] shrink-0" />
             <span className="text-[13px] font-semibold text-[#1A7A38]">
               {neueAufnahmen.length > 0
-            ? 'Alle Aufnahmen transkribiert — tippe auf "Positionen berechnen" um fortzufahren.'
+            ? `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt — bereit für den Entwurf.`
             : 'Alle Aufnahmen bereits verarbeitet — neue Aufnahme hinzufügen um mehr Positionen zu ergänzen.'
           }
             </span>
@@ -847,10 +839,14 @@ export default function EntwurfPage() {
             erst fertig aufnehmen, dann berechnen) */}
         {kannFertigstellen && !recording && (
           <button
-            onClick={fertigstellen}
+            onClick={() => fertigstellen()}
             className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
           >
-            Positionen berechnen <ChevronRight size={18} strokeWidth={3} />
+            <span className="flex flex-col items-center leading-tight">
+              <span>✓ {erkannteAnzahl} {erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
+              <span className="text-[12px] font-bold opacity-65 mt-1">Entwurf erstellen · ca. {bearbeitungszeit} Sekunden</span>
+            </span>
+            <ChevronRight size={18} strokeWidth={3} />
           </button>
         )}
 

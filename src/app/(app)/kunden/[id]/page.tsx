@@ -1,8 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import BottomNav from '@/components/BottomNav'
 import { KundeTypToggle } from './KundeTypToggle'
+import { getCustomerDetail } from '@/data/customers'
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -20,29 +19,9 @@ const STATUS: Record<string, { label: string; color: string }> = {
 
 export default async function KundeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { customer, quotes } = await getCustomerDetail(id)
 
-  const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
-  if (!company) redirect('/onboarding')
-
-  const { data: customer } = await supabase
-    .from('customers')
-    .select('*')
-    .eq('id', id)
-    .eq('company_id', company.id)
-    .single()
-  if (!customer) notFound()
-
-  const { data: quotes } = await supabase
-    .from('quotes')
-    .select('id, status, total_gross, created_at, valid_until')
-    .eq('customer_id', id)
-    .order('created_at', { ascending: false })
-
-  const totalValue = quotes?.reduce((s, q) => s + (q.total_gross ?? 0), 0) ?? 0
-  const acceptedValue = quotes?.filter(q => q.status === 'accepted').reduce((s, q) => s + (q.total_gross ?? 0), 0) ?? 0
+  const acceptedValue = quotes.filter(q => q.status === 'accepted').reduce((s, q) => s + (q.total_gross ?? 0), 0)
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
@@ -87,7 +66,7 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
         {/* Statistik */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="text-2xl font-black text-[#2C2C2C]">{quotes?.length ?? 0}</div>
+            <div className="text-2xl font-black text-[#2C2C2C]">{quotes.length}</div>
             <div className="text-xs font-semibold text-[#2C2C2C]/50 mt-0.5">Angebote gesamt</div>
           </div>
           <div className="bg-[#F5C400]/10 rounded-2xl p-4 border border-[#F5C400]/20">
@@ -100,12 +79,12 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
         <div>
           <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-3">Angebote</div>
           <div className="flex flex-col gap-2">
-            {!quotes?.length && (
+            {!quotes.length && (
               <div className="bg-white rounded-2xl p-6 text-center border border-[#2C2C2C]/5">
                 <div className="text-[#2C2C2C]/40 font-semibold text-sm">Noch keine Angebote</div>
               </div>
             )}
-            {quotes?.map(quote => {
+            {quotes.map(quote => {
               const st = STATUS[quote.status] ?? STATUS.draft
               return (
                 <Link

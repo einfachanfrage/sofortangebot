@@ -5,9 +5,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
-import { GEWERKE } from '@/lib/gewerke'
 import { KLEINMATERIAL_CONFIG } from '@/lib/gewerke-config'
-import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Car, ArrowLeftRight } from 'lucide-react'
+import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image as ImageIcon, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Car, ArrowLeftRight } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
@@ -17,10 +16,11 @@ import { Toast } from '@/components/Toast'
 import { Input } from '@/components/Input'
 import { AddressFields } from '@/components/AddressFields'
 import { EMPTY_ADDRESS, parseAddress, composeAddress, type AddressValue } from '@/lib/address'
+import { SettingsCard as Card, SettingsField as Field } from '@/components/settings/SettingsCard'
 
 export default function EinstellungenPage() {
   const [activeTab, setActiveTab] = useState<'betrieb' | 'angebote' | 'app'>('betrieb')
-  const [company, setCompany] = useState<Company | null>(null)
+  const [, setCompany] = useState<Company | null>(null)
   const [name, setName] = useState('')
   const [adresse, setAdresse] = useState<AddressValue>(EMPTY_ADDRESS)
   const [phone, setPhone] = useState('')
@@ -285,7 +285,7 @@ export default function EinstellungenPage() {
           </Card>
 
           {/* Logo */}
-          <Card icon={<Image size={16} />} title="Firmenlogo">
+          <Card icon={<ImageIcon size={16} />} title="Firmenlogo">
             <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-2 mb-3">
               PNG, JPG, WebP oder SVG · max. 5 MB · empfohlen 400×200 px
             </p>
@@ -967,29 +967,6 @@ export default function EinstellungenPage() {
       )}
 
       <BottomNav />
-    </div>
-  )
-}
-
-function Card({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white rounded-2xl p-5 border border-[#2C2C2C]/5">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-7 h-7 bg-[#2C2C2C]/5 rounded-lg flex items-center justify-center text-[#2C2C2C]/50">
-          {icon}
-        </div>
-        <div className="font-black text-[#2C2C2C]">{title}</div>
-      </div>
-      <div className="flex flex-col gap-4">{children}</div>
-    </div>
-  )
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label className="block text-xs font-black text-[#2C2C2C]/40 mb-1.5 uppercase tracking-wide">{label}</label>
-      {children}
     </div>
   )
 }

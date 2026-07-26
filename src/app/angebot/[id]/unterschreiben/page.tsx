@@ -8,7 +8,6 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { use } from 'react'
 import Link from 'next/link'
 
@@ -52,19 +51,13 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
   const [name, setName] = useState('')
   const [agbChecked, setAgbChecked] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const supabase = createClient()
-
   useEffect(() => {
     async function load() {
-      // Lookup per share_token (NICHT per UUID)
-      const { data: q } = await supabase
-        .from('quotes')
-        .select('*, items:quote_items(*), customer:customers(*)')
-        .eq('share_token', shareToken)
-        .in('status', ['sent', 'accepted'])
-        .single()
-
-      if (!q) { setLoading(false); return }
+      const response = await fetch(`/api/public/quotes/${encodeURIComponent(shareToken)}`, {
+        cache: 'no-store',
+      })
+      if (!response.ok) { setLoading(false); return }
+      const { quote: q, company: co, quoteNumber: number } = await response.json()
 
       if (q.valid_until && new Date(q.valid_until) < new Date() && q.status !== 'accepted') {
         setLoading(false)
@@ -74,25 +67,8 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
 
       setQuote({ ...q, items: (q.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position) })
 
-      const { data: co } = await supabase
-        .from('companies')
-        .select('name,address,vat_rate,payment_days,agb_url')
-        .eq('id', q.company_id)
-        .single()
       setCompany(co)
-
-      // Angebotsnummer — aus gespeichertem Feld oder dynamisch berechnet
-      if (q.quote_number) {
-        setQuoteNumber(q.quote_number)
-      } else {
-        const { count } = await supabase
-          .from('quotes')
-          .select('*', { count: 'exact', head: true })
-          .eq('company_id', q.company_id)
-          .lte('created_at', q.created_at)
-        const year = new Date(q.created_at).getFullYear()
-        setQuoteNumber(`${year}-${String(count ?? 1).padStart(4, '0')}`)
-      }
+      setQuoteNumber(number)
       setLoading(false)
     }
     load()

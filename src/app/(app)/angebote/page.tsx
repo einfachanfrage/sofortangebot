@@ -1,20 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import type { Quote } from '@/lib/types'
 import BottomNav from '@/components/BottomNav'
 import DashboardFilters from '@/components/DashboardFilters'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { Mic } from 'lucide-react'
-
-const STATUS_FILTER_MAP: Record<string, string[]> = {
-  entwurf:    ['draft', 'in_bearbeitung'],
-  offen:      ['sent', 'viewed'],
-  beauftragt: ['accepted'],
-  abgelehnt:  ['rejected'],
-  archived:   ['archived'],
-}
+import { getQuotesOverview } from '@/data/quotes'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   draft:          { label: 'Entwurf', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
@@ -56,56 +46,13 @@ export default async function AngebotePage({
 }: {
   searchParams: Promise<{ q?: string; status?: string }>
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const { data: company } = await supabase
-    .from('companies')
-    .select('id, name')
-    .eq('user_id', user.id)
-    .single()
-
   const { q, status } = await searchParams
-
-  const statusValues = status && STATUS_FILTER_MAP[status] ? STATUS_FILTER_MAP[status] : null
-
-  const { data: allQuotes, error: quotesError } = statusValues
-    ? await supabase
-        .from('quotes')
-        .select('*, customer:customers(name), quote_items(title, position)')
-        .eq('company_id', company?.id)
-        .in('status', statusValues)
-        .order('created_at', { ascending: false })
-    : await supabase
-        .from('quotes')
-        .select('*, customer:customers(name), quote_items(title, position)')
-        .eq('company_id', company?.id)
-        .order('created_at', { ascending: false })
-
-  if (quotesError) console.error('Angebote query error:', quotesError.message)
-
-  const { data: entwurfData } = await supabase
-    .from('quotes').select('id').eq('company_id', company?.id).in('status', ['draft', 'in_bearbeitung'])
-  const entwurfCount = (entwurfData ?? []).length
-
-  const { data: archivData } = await supabase
-    .from('quotes').select('id').eq('company_id', company?.id).eq('status', 'archived')
-  const archivCount = (archivData ?? []).length
-
-  const now = new Date()
-  const monatStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-  const { data: monatQuotes } = await supabase
-    .from('quotes').select('status, total_gross')
-    .eq('company_id', company?.id)
-    .gte('created_at', monatStart)
-    .not('status', 'in', '("draft","in_bearbeitung","archived")')
-  const monatDaten = monatQuotes ?? []
-  const openCount = monatDaten.filter(q => q.status === 'sent' || q.status === 'viewed').length
-  const acceptedCount = monatDaten.filter(q => q.status === 'accepted').length
-  const rejectedCount = monatDaten.filter(q => q.status === 'rejected').length
-
-  const quotes = allQuotes ?? []
+  const { quotes, counts } = await getQuotesOverview(status)
+  const entwurfCount = counts.drafts
+  const archivCount = counts.archive
+  const openCount = counts.open
+  const acceptedCount = counts.accepted
+  const rejectedCount = counts.rejected
   const filteredQuotes = q
     ? quotes.filter(qt => (qt.customer?.name ?? '').toLowerCase().includes(q.toLowerCase()))
     : quotes
@@ -173,7 +120,7 @@ export default async function AngebotePage({
       {/* Mobile list */}
       {filteredQuotes.length > 0 && (
         <div className="md:hidden px-5 mt-4 flex flex-col gap-3">
-          {filteredQuotes.map((quote: Quote & { customer?: { name: string } | null; gewerk?: string; quote_items?: { title: string; position: number }[] }) => {
+          {filteredQuotes.map(quote => {
             const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
             const items = (quote.quote_items ?? []).sort((a, b) => a.position - b.position)
             return (
@@ -200,7 +147,7 @@ export default async function AngebotePage({
                 <div key={h} className={`text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest ${i === 4 ? 'text-right' : ''}`}>{h}</div>
               ))}
             </div>
-            {filteredQuotes.map((quote: Quote & { customer?: { name: string } | null; gewerk?: string }) => {
+            {filteredQuotes.map(quote => {
               const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
               const gewerkBadge = quote.gewerk ? GEWERK_BADGE[quote.gewerk as string] : null
               return (

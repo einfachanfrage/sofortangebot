@@ -34,17 +34,6 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
 }
 
-function MiniBar({ value, max, color }: { value: number; max: number; color: string }) {
-  const pct = max > 0 ? (value / max) * 100 : 0
-  return (
-    <div className="flex-1 flex flex-col items-center gap-1">
-      <div className="w-full bg-[#2C2C2C]/5 rounded-full h-2 overflow-hidden">
-        <div className={`h-full rounded-full ${color} transition-all`} style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  )
-}
-
 export default function AdminPage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)

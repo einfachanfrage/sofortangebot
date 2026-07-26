@@ -9,46 +9,25 @@ import {
   Loader2, X, ArrowRight,
 } from 'lucide-react'
 import { Logo } from '@/components/Logo'
-import { GEWERKE } from '@/lib/gewerke'
 import { AKTIVE_GEWERKE } from '@/lib/gewerke-config'
 import { ACCOUNTING_OPTIONS, TIER_LABEL } from '@/lib/accounting-options'
-import { DEFAULT_PRICES } from '@/lib/default-prices'
+import { standardpreiseFuerGewerke } from '@/lib/default-price-selection'
 import { DEFAULT_EMPFEHLUNGEN } from '@/lib/empfehlungen-defaults'
 import { getPreisvorlagenForGewerke, type PreisVorlage } from '@/lib/preise-vorlagen'
 import type { AccountingSoftware } from '@/lib/types'
 import { composeAddress } from '@/lib/address'
+import {
+  DEFAULT_ONBOARDING_STATE as DEFAULT_STATE,
+  clearOnboardingState,
+  loadOnboardingState as loadState,
+  saveOnboardingState as saveState,
+  type OnboardingState as ObState,
+  type PreisMode,
+  type PriceEntry,
+} from '@/components/onboarding/state'
+import { OnboardingProgress as ProgressBar } from '@/components/onboarding/OnboardingProgress'
 
 // ─── Storage ───────────────────────────────────────────────────────────────
-const STORAGE_KEY = 'sofortangebot_onboarding'
-
-type PreisMode = 'markt' | 'manuell' | null
-
-interface PriceEntry { category: string; title: string; unit: string; unit_price: string }
-
-interface ObState {
-  name: string; strasse: string; plz: string; ort: string; phone: string; email: string; showContact: boolean
-  gewerke: string[]; vatRate: 19 | 7 | 0 | null; paymentDays: number; agbUrl: string
-  preisMode: PreisMode; preisEntries: PriceEntry[]
-  logoUrl: string | null; accounting: AccountingSoftware; apiKey: string
-}
-
-const DEFAULT_STATE: ObState = {
-  name: '', strasse: '', plz: '', ort: '', phone: '', email: '', showContact: false,
-  gewerke: [], vatRate: null, paymentDays: 14, agbUrl: '',
-  preisMode: null, preisEntries: [], logoUrl: null, accounting: 'none', apiKey: '',
-}
-
-function loadState(): ObState {
-  if (typeof window === 'undefined') return DEFAULT_STATE
-  try {
-    const s = localStorage.getItem(STORAGE_KEY)
-    return s ? { ...DEFAULT_STATE, ...JSON.parse(s) } : DEFAULT_STATE
-  } catch { return DEFAULT_STATE }
-}
-
-function saveState(s: ObState) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)) } catch {}
-}
 
 // ─── Shared styles ─────────────────────────────────────────────────────────
 const inputCls = 'w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3.5 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] transition-colors'
@@ -57,20 +36,6 @@ const btnPrimary = 'w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-lg ro
 const btnBack = 'flex-1 bg-white border-2 border-[#2C2C2C]/15 text-[#2C2C2C] font-extrabold text-base rounded-xl py-4 active:scale-95 transition-transform'
 
 // ─── Progress Bar ──────────────────────────────────────────────────────────
-function ProgressBar({ step }: { step: number }) {
-  const filled = step - 1 // Schritte 2–7 zeigen die Leiste: step 2→1/6, step 7→6/6
-  return (
-    <div className="flex gap-1.5 mb-8">
-      {Array.from({ length: 6 }, (_, i) => (
-        <div
-          key={i}
-          className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < filled ? 'bg-[#F5C400]' : 'bg-[#2C2C2C]/12'}`}
-        />
-      ))}
-    </div>
-  )
-}
-
 // ─── Accounting label helper ────────────────────────────────────────────────
 function softwareLabel(s: string) {
   const m: Record<string, string> = {
@@ -170,7 +135,12 @@ export default function OnboardingStep() {
     update({ preisEntries: state.preisEntries.filter((_, i) => i !== idx) })
   }
   function toggleCat(cat: string) {
-    setExpandedCats(prev => { const n = new Set(prev); n.has(cat) ? n.delete(cat) : n.add(cat); return n })
+    setExpandedCats(prev => {
+      const next = new Set(prev)
+      if (next.has(cat)) next.delete(cat)
+      else next.add(cat)
+      return next
+    })
   }
 
   const grouped = state.preisEntries.reduce<Record<string, { e: PriceEntry; idx: number }[]>>((acc, e, idx) => {
@@ -230,7 +200,7 @@ export default function OnboardingStep() {
     const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
     if (company) {
       if (state.preisMode === 'markt') {
-        const all = DEFAULT_PRICES.map(p => ({ ...p, company_id: company.id }))
+        const all = standardpreiseFuerGewerke(state.gewerke).map(p => ({ ...p, company_id: company.id }))
         const BATCH = 400
         for (let i = 0; i < all.length; i += BATCH) {
           await supabase.from('price_items').insert(all.slice(i, i + BATCH))
@@ -245,7 +215,7 @@ export default function OnboardingStep() {
         .insert(DEFAULT_EMPFEHLUNGEN.map(e => ({ ...e, company_id: company.id })))
     }
 
-    try { localStorage.removeItem(STORAGE_KEY) } catch {}
+      clearOnboardingState()
     setSaving(false)
     router.push('/onboarding/8')
   }

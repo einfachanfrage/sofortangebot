@@ -51,7 +51,6 @@ export default function ApiStatusPage() {
     setTestResult(null)
     const res = await fetch('/api/admin/api-health-check', {
       method: 'POST',
-      headers: { 'x-alert-secret': '' },
     })
     const data = await res.json()
     const ok = data.ergebnisse?.filter((r: { ok: boolean }) => r.ok).length ?? 0

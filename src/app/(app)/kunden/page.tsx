@@ -1,7 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import BottomNav from '@/components/BottomNav'
+import { getCustomersOverview } from '@/data/customers'
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
@@ -11,18 +10,7 @@ function formatCurrency(n: number) {
 }
 
 export default async function KundenPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
-  if (!company) redirect('/onboarding')
-
-  const { data: customers } = await supabase
-    .from('customers')
-    .select('*, quotes(id, status, total_gross, created_at)')
-    .eq('company_id', company.id)
-    .order('name')
+  const customers = await getCustomersOverview()
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
@@ -31,7 +19,7 @@ export default async function KundenPage() {
         <div>
           <div className="text-white md:text-[#2C2C2C] font-syne font-black text-2xl">Kunden</div>
           <div className="text-white/40 md:text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">
-            {customers?.length ?? 0} Kunden gesamt
+            {customers.length} Kunden gesamt
           </div>
         </div>
         <Link href="/kunden/neu"
@@ -41,7 +29,7 @@ export default async function KundenPage() {
       </div>
 
       <div className="px-5 md:px-8 mt-5 md:grid md:grid-cols-2 md:gap-3 flex flex-col gap-3">
-        {!customers?.length && (
+        {!customers.length && (
           <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
             <div className="text-4xl mb-3">👷</div>
             <div className="font-black text-[#2C2C2C] mb-1">Noch keine Kunden</div>
@@ -49,7 +37,7 @@ export default async function KundenPage() {
           </div>
         )}
 
-        {customers?.map(customer => {
+        {customers.map(customer => {
           const quotes = customer.quotes ?? []
           const totalValue = quotes.reduce((s: number, q: { total_gross: number }) => s + (q.total_gross ?? 0), 0)
           const lastQuote = quotes.sort((a: { created_at: string }, b: { created_at: string }) =>
