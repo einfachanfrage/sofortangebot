@@ -15,6 +15,14 @@ on:
         options:
           - staging
           - production
+      operation:
+        description: Nur prüfen oder Migrationen anwenden
+        required: true
+        default: audit
+        type: choice
+        options:
+          - audit
+          - apply
       confirm_production:
         description: Für Produktion exakt DEPLOY-PRODUCTION eingeben
         required: false
@@ -37,12 +45,17 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - name: Staging-Migrationen anwenden
+      - name: Staging-Migrationsstand prüfen
         shell: bash
         run: |
           set -euo pipefail
           test -n "$TARGET_DB_URL" || { echo "::error::STAGING_DB_URL fehlt"; exit 1; }
           supabase migration list --db-url "$TARGET_DB_URL" > migration-status-staging-before.txt
+      - name: Staging-Migrationen anwenden
+        if: github.event_name == 'push' || inputs.operation == 'apply'
+        shell: bash
+        run: |
+          set -euo pipefail
           supabase db push --db-url "$TARGET_DB_URL"
           supabase migration list --db-url "$TARGET_DB_URL" > migration-status-staging-after.txt
       - uses: actions/upload-artifact@v4
@@ -52,7 +65,7 @@ jobs:
           retention-days: 90
 
   production:
-    if: inputs.target == 'production' && inputs.confirm_production == 'DEPLOY-PRODUCTION'
+    if: inputs.target == 'production'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: production
@@ -64,12 +77,28 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - name: Produktions-Migrationen anwenden
+      - name: Produktions-Migrationsstand prüfen
         shell: bash
         run: |
           set -euo pipefail
           test -n "$TARGET_DB_URL" || { echo "::error::PRODUCTION_DB_URL fehlt"; exit 1; }
           supabase migration list --db-url "$TARGET_DB_URL" > migration-status-production-before.txt
+      - name: Produktionsfreigabe prüfen
+        if: inputs.operation == 'apply'
+        shell: bash
+        env:
+          CONFIRM_PRODUCTION: ${{ inputs.confirm_production }}
+        run: |
+          set -euo pipefail
+          test "$CONFIRM_PRODUCTION" = "DEPLOY-PRODUCTION" || {
+            echo "::error::Für das Anwenden auf Produktion fehlt DEPLOY-PRODUCTION"
+            exit 1
+          }
+      - name: Produktions-Migrationen anwenden
+        if: inputs.operation == 'apply'
+        shell: bash
+        run: |
+          set -euo pipefail
           supabase db push --db-url "$TARGET_DB_URL"
           supabase migration list --db-url "$TARGET_DB_URL" > migration-status-production-after.txt
       - uses: actions/upload-artifact@v4
