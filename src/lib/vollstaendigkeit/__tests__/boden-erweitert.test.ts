@@ -80,7 +80,7 @@ describe('Boden – 10 Integrationstests', () => {
     expect(entfernen).toBeDefined()
     expect(entfernen?.menge).toBe(18)
 
-    const kleberreste = find(positionen, 'kleberreste abschleifen')
+    const kleberreste = find(positionen, 'untergrund schleifen')
     expect(kleberreste).toBeDefined()
     expect(kleberreste?.menge).toBe(18)
 

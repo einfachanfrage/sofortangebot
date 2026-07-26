@@ -3,8 +3,6 @@ import { hat } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
-function round2(n: number): number { return Math.round(n * 100) / 100 }
-
 const zahlwoerter: Record<string, number> = { einmal: 1, zweimal: 2, dreimal: 3, viermal: 4 }
 
 export function pruefeDiagonalBoden(
@@ -268,16 +266,13 @@ export function pruefeFischgraet(
 
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
-  const explizitVerschnitt = extrahiereVerschnitt(lower)
-  const verschnitt = explizitVerschnitt ?? 0.15
-  const pct = Math.round(verschnitt * 100)
-
   if (m2) {
-    const mengeMitVerschnitt = round2(m2 * (1 + verschnitt))
-    const belag = v.belag
-    const name = erkenneBelagName(lower, belag)
+    const explizitVerschnitt = extrahiereVerschnitt(lower)
+    const verschnitt = explizitVerschnitt ?? 0.15
+    const pct = Math.round(verschnitt * 100)
+    const mengeMitVerschnitt = Math.round(m2 * (1 + verschnitt) * 100) / 100
     ergaenzt.push({
-      beschreibung: `${name} Fischgrät vollflächig verkleben (Aufpreis Verlegemuster)`,
+      beschreibung: 'Aufpreis Fischgrät-Verlegemuster (vollflächig verklebt)',
       menge: mengeMitVerschnitt,
       einheit: 'm²',
       berechnungsweg: `${m2} m² × ${1 + verschnitt} = ${mengeMitVerschnitt} m²`,
