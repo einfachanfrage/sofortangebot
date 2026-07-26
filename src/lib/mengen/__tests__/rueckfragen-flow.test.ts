@@ -68,8 +68,30 @@ describe('geschlossener Rückfragen-Flow', () => {
     const beantwortet = bereiteRueckfragenVor(extraktion, {
       masse_flur: { wert: 42, einheit: 'm²' },
     })
-    expect(beantwortet.extraktion.raeume[0]).toMatchObject({ flaeche: 42, wandflaeche_direkt: 42 })
+    expect(beantwortet.extraktion.raeume[0]).toMatchObject({ flaeche: null, wandflaeche_direkt: 42 })
     expect(beantwortet.rueckfragen.some(frage => /^(hoehe|tueren_anzahl|fenster_anzahl)_flur$/.test(frage.id))).toBe(false)
+  })
+
+  it('speichert direkte Wand- und Bodenfläche getrennt', () => {
+    const extraktion = basis({
+      raeume: [{ name: 'Flur', laenge: null, breite: null, hoehe: null, flaeche: null, fenster: [], tueren: [], arbeiten: ['waende_streichen', 'boden_schuetzen'], altbelag_entfernen: false, sockelleisten: false, nassbereich: false }],
+    })
+    const beantwortet = bereiteRueckfragenVor(extraktion, {
+      masse_flur: { wert: [35, 12], einheit: 'flaechen_m2' },
+    })
+    expect(beantwortet.extraktion.raeume[0]).toMatchObject({ flaeche: 12, wandflaeche_direkt: 35 })
+    expect(beantwortet.rueckfragen.some(frage => /^(hoehe|tueren_anzahl|fenster_anzahl)_flur$/.test(frage.id))).toBe(false)
+  })
+
+  it('überträgt eine direkte Wandfläche niemals in die Bodenfläche', () => {
+    const extraktion = basis({
+      raeume: [{ name: 'Wohnzimmer', laenge: null, breite: null, hoehe: null, flaeche: null, fenster: [], tueren: [], arbeiten: ['waende_streichen'], altbelag_entfernen: false, sockelleisten: false, nassbereich: false }],
+    })
+    const beantwortet = bereiteRueckfragenVor(extraktion, {
+      masse_wohnzimmer: { wert: [38, 0], einheit: 'flaechen_m2' },
+    })
+    expect(beantwortet.extraktion.raeume[0].wandflaeche_direkt).toBe(38)
+    expect(beantwortet.extraktion.raeume[0].flaeche).toBeNull()
   })
 
   it('fragt nach vollständiger Geometrie noch Türen und Fenster ab', () => {

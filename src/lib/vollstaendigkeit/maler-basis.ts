@@ -46,8 +46,14 @@ export function pruefeStreichenBasis(
 ): void {
   if (!v.hatArbeit('streichen')) return
 
-  if (!nurDecke && !nurBoden && !hat(ergaenzt, 'wand', 'wandfläche')) add(ergaenzt, fehlende, 'Wandflächen streichen')
-  if (!nurWaende && !nurBoden && !hat(ergaenzt, 'decke', 'deckenfläche')) add(ergaenzt, fehlende, 'Deckenfläche streichen')
+  const waendeAusdruecklich = /w(?:a|ä)nd|wandfl(?:a|ä)che/i.test(lower)
+  const deckeAusdruecklich = /decke|deckenfl(?:a|ä)che/i.test(lower)
+  if (waendeAusdruecklich && !nurDecke && !nurBoden && !hat(ergaenzt, 'wand', 'wandfläche')) {
+    add(ergaenzt, fehlende, 'Wandflächen streichen')
+  }
+  if (deckeAusdruecklich && !nurWaende && !nurBoden && !hat(ergaenzt, 'decke', 'deckenfläche')) {
+    add(ergaenzt, fehlende, 'Deckenfläche streichen')
+  }
   // Schutz- und Abklebearbeiten nur ausgeben, wenn sie im Auftrag tatsächlich
   // genannt wurden. Keine ungefragten Zusatzpositionen erzeugen.
   const bodenSchutzGenannt = /(?:boden|böden).{0,35}(?:schütz|abdeck|vlies)|(?:schütz|abdeck|vlies).{0,35}(?:boden|böden)/i.test(lower)

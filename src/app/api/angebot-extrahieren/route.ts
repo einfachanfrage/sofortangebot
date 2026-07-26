@@ -90,6 +90,38 @@ export async function POST(req: NextRequest) {
     // generischen Platzhalter "Raum". Bei genau einem echten Raum werden beide
     // zusammengeführt, statt den Nutzer doppelt nach denselben Maßen zu fragen.
     extraktion = konsolidierePlatzhalterRaum(extraktion, text)
+
+    // Sicherheitsnetz: Erkennt die schnelle Vorschau konkrete Malerarbeiten,
+    // darf die Kalkulation nicht wegen eines von der KI ausgelassenen
+    // raeume[]-Eintrags bei "Keine Positionen erkannt" enden. Ein im Text
+    // genannter Raumname bleibt erhalten; nur ohne jeden Namen heißt er "Raum".
+    if (extraktion.gewerk === 'maler' && extraktion.raeume.length === 0) {
+      const raumTreffer = text.match(/\b(Wohnzimmer|Schlafzimmer|Kinderzimmer|Badezimmer|Bad|Küche|Flur|Arbeitszimmer|Büro|Esszimmer|Treppenhaus|Keller|Garage)\b/i)
+      const lowerText = text.toLocaleLowerCase('de-DE')
+      const arbeiten: string[] = []
+      if (/tapete|tapezier|malervlies|raufaser|vliestapete/.test(lowerText)) arbeiten.push('tapezieren')
+      if (/tapete|raufaser|vliestapete/.test(lowerText) && /entfern|ablös|abzieh/.test(lowerText)) arbeiten.push('tapete entfernen')
+      if (/grundier|tiefengrund|haftgrund/.test(lowerText)) arbeiten.push('wände grundieren')
+      if (/spachtel|glätt/.test(lowerText)) arbeiten.push('wände spachteln')
+      if (/w[äa]nd|wandfl/.test(lowerText) && /streich|anstrich|weiß|weiss/.test(lowerText)) arbeiten.push('wände streichen')
+      if (/decke|deckenfl/.test(lowerText) && /streich|anstrich|weiß|weiss/.test(lowerText)) arbeiten.push('decke streichen')
+
+      if (arbeiten.length > 0) {
+        extraktion.raeume.push({
+          name: raumTreffer?.[1] ?? 'Raum',
+          laenge: null,
+          breite: null,
+          hoehe: null,
+          flaeche: null,
+          fenster: [],
+          tueren: [],
+          arbeiten: [...new Set(arbeiten)],
+          altbelag_entfernen: /tapete|raufaser|vliestapete/.test(lowerText) && /entfern|ablös|abzieh/.test(lowerText),
+          sockelleisten: false,
+          nassbereich: false,
+        })
+      }
+    }
     extraktion.transkript = verarbeitetText
 
     // GPT-Bug: Bei Mehrraum-Aufträgen gibt GPT manchmal falsche Namen oder kopierte Maße zurück

@@ -68,6 +68,40 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
   const hatSpachteln2 = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3')
   const hatSchleifenArb = /\b(?:schleif\w*|geschliff\w*)\b/i.test(lower) && !lower.includes('abschleif')
   if (!hatSpachteln2 && !hatSchleifenArb) return
+
+  // Einzelne Dübellöcher und Schadstellen sind Kleinreparaturen, keine
+  // vollflächige Q2-Spachtelung. Sie müssen als eigene Stückpositionen erhalten
+  // bleiben, statt unbemerkt die komplette Wandfläche zu verteuern.
+  const hatDuebelloecher = /dübellöch|duebelloech|bohrlöch|nagellöch/i.test(lower)
+  const hatSchadstellen = /schadstell|fehlstell|kleine[nr]?\s+(?:loch|löcher|ausbesser)/i.test(lower)
+  if (hatDuebelloecher || hatSchadstellen) {
+    if (hatDuebelloecher && !hat(ergaenzt, 'dübellöcher', 'duebelloecher')) {
+      const anzahl = anzahlAus(lower, 'dübellöch', 1)
+      ergaenzt.push({
+        beschreibung: 'Dübellöcher spachteln',
+        menge: anzahl,
+        einheit: 'Stück',
+        konfidenz: anzahl > 1 ? 'high' : 'medium',
+        berechnungsweg: anzahl > 1 ? `${anzahl} Stück aus Aufnahme` : 'Mindestens eine Kleinreparatur erkannt',
+        annahmen: anzahl > 1 ? [] : ['Anzahl 1 angenommen — bitte prüfen'],
+      })
+    }
+    if (hatSchadstellen && !hat(ergaenzt, 'risse / löcher spachteln', 'kleine schadstellen')) {
+      const anzahl = anzahlAus(lower, 'schadstell', 1)
+      ergaenzt.push({
+        beschreibung: 'Risse / Löcher spachteln (kleine Schadstellen)',
+        menge: anzahl,
+        einheit: 'Stück',
+        konfidenz: anzahl > 1 ? 'high' : 'medium',
+        berechnungsweg: anzahl > 1 ? `${anzahl} Stück aus Aufnahme` : 'Mindestens eine Schadstelle erkannt',
+        annahmen: anzahl > 1 ? [] : ['Anzahl 1 angenommen — bitte prüfen'],
+      })
+    }
+    // Nur eine zusätzlich ausdrücklich genannte vollflächige Qualitätsstufe
+    // darf daneben noch Q2/Q3/Q4 erzeugen.
+    if (!/\bq[1-4]\b|vollflächig|ganze\s+wandfl/i.test(lower)) return
+  }
+
   const spachtelnSchonVorhanden = hat(ergaenzt, 'spachtelarbeiten', 'q2')
   const schleifenSchonVorhanden = ergaenzt.some(p => /\bschleifen\b/i.test(p.beschreibung))
 
@@ -142,16 +176,20 @@ export function pruefeGeruest(ergaenzt: BerechnetePosition[], lower: string): vo
 
 export function pruefeBewohnt(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
   const hatBewohnt = lower.includes('bewohnt') || lower.includes('möbel') || lower.includes('einrichtung') || lower.includes('bewohnte')
-  if (!hatBewohnt || hat(ergaenzt, 'möbel schütz', 'möbel abdeck', 'erschwerniszuschlag bewohnt')) return
+  if (!hatBewohnt) return
 
-  const bodenPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('boden'))
-  const bodenmenge = bodenPos?.menge ?? null
-  if (bodenmenge !== null) {
-    ergaenzt.push({ beschreibung: 'Möbel schützen / Abdecken', menge: bodenmenge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenmenge} m²`, annahmen: [] })
-  } else {
-    add(ergaenzt, fehlende, 'Möbel schützen / Abdecken')
+  if (!hat(ergaenzt, 'möbel schütz', 'möbel abdeck')) {
+    const bodenPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('boden'))
+    const bodenmenge = bodenPos?.menge ?? null
+    if (bodenmenge !== null) {
+      ergaenzt.push({ beschreibung: 'Möbel schützen / Abdecken', menge: bodenmenge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenmenge} m²`, annahmen: [] })
+    } else {
+      add(ergaenzt, fehlende, 'Möbel schützen / Abdecken')
+    }
   }
-  ergaenzt.push({ beschreibung: 'Erschwerniszuschlag bewohnt', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Bewohnter Zustand im Transkript erkannt', annahmen: [] })
+  if (!hat(ergaenzt, 'erschwerniszuschlag bewohnt')) {
+    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag bewohnt', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Bewohnter Zustand im Transkript erkannt', annahmen: [] })
+  }
 }
 
 export function pruefeBalkon(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {

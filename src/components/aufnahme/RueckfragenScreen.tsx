@@ -30,16 +30,25 @@ function MasseEinzelInput({
   const [feld1, setFeld1] = useState(current[0] > 0 ? String(current[0]).replace('.', ',') : '')
   const [feld2, setFeld2] = useState(current[1] > 0 ? String(current[1]).replace('.', ',') : '')
   const [eingabeart, setEingabeart] = useState<'masse' | 'flaeche'>(
-    antwort && !Array.isArray(antwort.wert) && antwort.einheit === 'm²' ? 'flaeche' : 'masse',
+    antwort?.einheit === 'flaechen_m2' || (antwort && !Array.isArray(antwort.wert) && antwort.einheit === 'm²')
+      ? 'flaeche'
+      : 'masse',
   )
-  const [direkteFlaeche, setDirekteFlaeche] = useState(
-    antwort && !Array.isArray(antwort.wert) && antwort.einheit === 'm²' ? String(antwort.wert).replace('.', ',') : '',
+  const direkteWerte = antwort?.einheit === 'flaechen_m2' && Array.isArray(antwort.wert)
+    ? antwort.wert
+    : [!Array.isArray(antwort?.wert) && antwort?.einheit === 'm²' ? antwort.wert : 0, 0]
+  const [direkteWandflaeche, setDirekteWandflaeche] = useState(
+    direkteWerte[0] ? String(direkteWerte[0]).replace('.', ',') : '',
+  )
+  const [direkteBodenflaeche, setDirekteBodenflaeche] = useState(
+    direkteWerte[1] ? String(direkteWerte[1]).replace('.', ',') : '',
   )
 
   const frageText = frage.frage.toLowerCase()
   const istFenster = frageText.includes('fenster')
   const istTuer = frageText.includes('tür') || frageText.includes('tuer')
   const istOeffnung = istFenster || istTuer
+  const istReineBodenfrage = frage.id.startsWith('masse_boden_')
   const label1 = istOeffnung ? 'Breite' : 'Länge'
   const label2 = istOeffnung ? 'Höhe' : 'Breite'
   const placeholder1 = istFenster ? '1,20' : istTuer ? '0,90' : '5,20'
@@ -99,20 +108,20 @@ function MasseEinzelInput({
 
       {!istOeffnung && (
         <div className="flex flex-col gap-2">
-          <div className="text-xs font-bold text-[#2C2C2C]/55">Was hast du aufgemessen?</div>
+          <div className="text-xs font-bold text-[#2C2C2C]/55">Wie möchtest du die Menge angeben?</div>
           <div className="grid grid-cols-2 rounded-xl bg-[#2C2C2C]/5 p-1">
             <button type="button" onClick={() => setEingabeart('masse')}
               className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'masse' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
-              Raummaße
+              Mit Raummaßen
             </button>
             <button type="button" onClick={() => setEingabeart('flaeche')}
               className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'flaeche' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
-              Fläche direkt
+              Flächen direkt
             </button>
           </div>
           <div className="text-xs font-semibold text-[#2C2C2C]/45">
-            Raummaße = Länge × Breite. Für Wandflächen fragen wir danach zusätzlich die Raumhöhe.
-            Kennst du bereits die fertige Wandfläche, sind keine weiteren Raummaße nötig.
+            Raummaße berechnen wir aus Länge, Breite und Raumhöhe. Wenn du fertige Flächen kennst,
+            kannst du Wandfläche und Boden-/Deckenfläche getrennt eintragen.
           </div>
         </div>
       )}
@@ -151,23 +160,35 @@ function MasseEinzelInput({
       </div>}
 
       {!istOeffnung && eingabeart === 'flaeche' && (
-        <div>
-          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">
-            Wandfläche oder Boden-/Deckenfläche
-          </div>
-          <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
-            <input type="number" inputMode="decimal" autoFocus placeholder="z. B. 18"
-              value={direkteFlaeche}
-              onChange={e => {
-                setDirekteFlaeche(e.target.value)
-                const wert = parseFloat(e.target.value.replace(',', '.'))
-                if (wert > 0) onChange({ wert, einheit: 'm²' })
+        <div className="flex flex-col gap-3">
+          {!istReineBodenfrage && (
+            <DirekteFlaecheFeld
+              label="Fertige Wandfläche"
+              hilfe="Für Streichen, Spachteln, Grundieren und Tapezieren. Türen und Fenster sind darin bereits berücksichtigt."
+              value={direkteWandflaeche}
+              autoFocus
+              onChange={value => {
+                setDirekteWandflaeche(value)
+                const wand = parseFloat(value.replace(',', '.')) || 0
+                const boden = parseFloat(direkteBodenflaeche.replace(',', '.')) || 0
+                if (wand > 0 || boden > 0) onChange({ wert: [wand, boden], einheit: 'flaechen_m2' })
               }}
-              className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none w-0" />
-            <span className="text-[#2C2C2C]/40 font-semibold text-sm">m²</span>
-          </div>
-          <div className="mt-2 text-xs font-semibold text-[#2C2C2C]/45">
-            Bei Wandarbeiten gilt der Wert als fertige Wandfläche. Bei Boden- oder Deckenarbeiten gilt er als Boden-/Deckenfläche.
+            />
+          )}
+          <DirekteFlaecheFeld
+            label="Boden- / Deckenfläche"
+            hilfe="Nur für Bodenarbeiten, Bodenschutz oder ausdrücklich beauftragte Deckenarbeiten."
+            value={direkteBodenflaeche}
+            autoFocus={istReineBodenfrage}
+            onChange={value => {
+              setDirekteBodenflaeche(value)
+              const wand = parseFloat(direkteWandflaeche.replace(',', '.')) || 0
+              const boden = parseFloat(value.replace(',', '.')) || 0
+              if (wand > 0 || boden > 0) onChange({ wert: [wand, boden], einheit: 'flaechen_m2' })
+            }}
+          />
+          <div className="rounded-xl bg-[#2C2C2C]/5 px-3 py-2 text-xs font-semibold text-[#2C2C2C]/55">
+            Du kannst nur eine oder beide Flächen eintragen. Leere Felder werden nicht geschätzt.
           </div>
         </div>
       )}
@@ -182,6 +203,39 @@ function MasseEinzelInput({
         </div>
       )}
     </div>
+  )
+}
+
+function DirekteFlaecheFeld({
+  label,
+  hilfe,
+  value,
+  onChange,
+  autoFocus = false,
+}: {
+  label: string
+  hilfe: string
+  value: string
+  onChange: (value: string) => void
+  autoFocus?: boolean
+}) {
+  return (
+    <label className="block rounded-2xl border border-[#2C2C2C]/10 bg-white p-4 focus-within:border-[#F5C400] focus-within:ring-2 focus-within:ring-[#F5C400]/15">
+      <span className="mb-2 block text-sm font-black text-[#2C2C2C]">{label}</span>
+      <span className="flex items-center gap-2 rounded-xl bg-[#F7F7F5] px-3 py-2.5">
+        <input
+          type="number"
+          inputMode="decimal"
+          autoFocus={autoFocus}
+          placeholder="z. B. 38"
+          value={value}
+          onChange={event => onChange(event.target.value)}
+          className="w-0 flex-1 bg-transparent text-lg font-bold text-[#2C2C2C] focus:outline-none"
+        />
+        <span className="text-sm font-semibold text-[#2C2C2C]/40">m²</span>
+      </span>
+      <span className="mt-2 block text-xs font-semibold leading-relaxed text-[#2C2C2C]/45">{hilfe}</span>
+    </label>
   )
 }
 
@@ -391,7 +445,11 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
   const [fertig, setFertig] = useState(false)
 
   const flaechenRaumIds = new Set(Object.entries(antworten)
-    .filter(([id, antwort]) => /^masse_/.test(id) && antwort.einheit === 'm²' && !Array.isArray(antwort.wert))
+    .filter(([id, antwort]) => {
+      if (!/^masse_/.test(id)) return false
+      if (antwort.einheit === 'm²' && !Array.isArray(antwort.wert)) return true
+      return antwort.einheit === 'flaechen_m2' && Array.isArray(antwort.wert) && Number(antwort.wert[0]) > 0
+    })
     .map(([id]) => id.replace(/^masse_/, '')))
   const sichtbareFragen = fragen.filter(item => ![...flaechenRaumIds].some(raumId =>
     item.id === `hoehe_${raumId}` || item.id === `tueren_anzahl_${raumId}` || item.id === `fenster_anzahl_${raumId}`
@@ -399,6 +457,10 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
   const frage = sichtbareFragen[Math.min(aktuelleIdx, sichtbareFragen.length - 1)]
   const antwort = antworten[frage.id] ?? null
   const hatAntwort = antwort !== null
+  const raumSchritte = [...new Set(fragen.map(item => item.kontext).filter(Boolean))]
+  const aktuellerRaum = frage.kontext
+  const raumSchrittIdx = Math.max(0, raumSchritte.indexOf(aktuellerRaum))
+  const istMasseFrage = frage.typ === 'masse_einzel' && !/fenster|tür|tuer/i.test(frage.frage)
 
   function setAntwort(a: RueckfragenAntwort) {
     setAntworten(prev => ({ ...prev, [frage.id]: a }))
@@ -414,6 +476,16 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
     }
   }
 
+  async function dieseFrageUeberspringen() {
+    if (aktuelleIdx < sichtbareFragen.length - 1) {
+      setAktuelleIdx(i => i + 1)
+      return
+    }
+    setFertig(true)
+    await new Promise(r => setTimeout(r, 300))
+    onFertig(antworten)
+  }
+
   if (fertig) {
     return (
       <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center gap-4 px-5">
@@ -426,20 +498,22 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
   return (
     <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
       {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-5">
-        <div className="flex items-center justify-between mb-4">
-          <button onClick={onZurueck ?? onUeberspringen} className="text-white/50 text-sm font-semibold">← Zurück</button>
-          <button onClick={onUeberspringen} className="text-white/40 text-sm font-semibold">Überspringen</button>
+      <div className="bg-[#2C2C2C] px-5 pt-8 pb-5">
+        <div className="flex items-center justify-between mb-5">
+          <button onClick={onZurueck ?? onUeberspringen} className="rounded-full px-3 py-2 text-sm font-bold text-white/65 hover:bg-white/10">← Zurück</button>
+          <button onClick={onUeberspringen} className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-white/55 hover:bg-white/10">
+            Rückfragen beenden
+          </button>
         </div>
         <div className="text-white/50 text-[10px] font-black uppercase tracking-widest mb-1">
-          Kurze Rückfrage {aktuelleIdx + 1} von {sichtbareFragen.length}
+          Raum {raumSchrittIdx + 1} von {Math.max(raumSchritte.length, 1)}
         </div>
         {/* Fortschrittsbalken */}
         <div className="flex gap-1.5 mb-3">
-          {sichtbareFragen.map((_, i) => (
+          {Array.from({ length: Math.max(raumSchritte.length, 1) }, (_, i) => (
             <div
               key={i}
-              className={`h-1.5 flex-1 rounded-full transition-colors ${i <= aktuelleIdx ? 'bg-[#F5C400]' : 'bg-white/15'}`}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${i <= raumSchrittIdx ? 'bg-[#F5C400]' : 'bg-white/15'}`}
             />
           ))}
         </div>
@@ -449,7 +523,7 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
           <span className="text-white/60 text-xs font-semibold italic">&ldquo;{frage.kontext}&rdquo;</span>
         </div>
         <h1 className="font-syne font-extrabold text-white text-[22px] leading-tight">
-          {frage.frage}
+          {istMasseFrage ? `Welche Maße kennst du für „${frage.kontext}“?` : frage.frage}
         </h1>
       </div>
 
@@ -513,10 +587,10 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
           Weiter <ChevronRight size={18} strokeWidth={3} />
         </button>
         <button
-          onClick={onUeberspringen}
-          className="text-center text-[#2C2C2C]/30 font-semibold text-[13px] py-1"
+          onClick={dieseFrageUeberspringen}
+          className="rounded-xl py-2 text-center text-[13px] font-bold text-[#2C2C2C]/40 hover:bg-[#2C2C2C]/5"
         >
-          Überspringen — ich trage die Menge danach manuell ein
+          Diese Angabe überspringen
         </button>
       </div>
     </div>
