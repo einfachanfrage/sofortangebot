@@ -91,3 +91,28 @@ export function ergaenzeAusAufnahmeHinweisen(
   }
   return ergebnis
 }
+
+/**
+ * Letzte fachliche Normalisierung direkt vor dem Speichern/Bepreisen.
+ * Damit bleibt der exakte Katalogtitel auch dann erhalten, wenn ein vorgelagerter
+ * Extraktionspfad nur das allgemeine "Fertigparkett verlegen" geliefert hat.
+ */
+export function normalisiereBodenPositionenAusAufnahme(
+  positionen: BerechnetePosition[],
+  quelltext: string,
+): BerechnetePosition[] {
+  const text = quelltext.toLocaleLowerCase('de-DE')
+  if (!/fertigparkett/.test(text) || !/vollfl.chig.{0,40}verkleb|verkleb.{0,40}vollfl.chig/.test(text)) {
+    return positionen
+  }
+  return positionen.map(position => {
+    if (!/fertigparkett verlegen/i.test(position.beschreibung) || /vollfl.chig verklebt/i.test(position.beschreibung)) {
+      return position
+    }
+    const suffix = position.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[0] ?? ''
+    return {
+      ...position,
+      beschreibung: `Fertigparkett verlegen vollflächig verklebt${suffix}`,
+    }
+  })
+}

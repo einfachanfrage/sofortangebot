@@ -97,6 +97,22 @@ export function pruefeParkettSchleifen(
     }
   }
 
+  // Antworten aus dem Rückfragen-Screen kommen strukturiert über raum.arbeiten.
+  // Sie dürfen nicht beim Übergang in die textbasierte Vollständigkeitsprüfung
+  // verloren gehen und verwenden direkt die exakten Katalogtitel.
+  const antwortVersiegeln = v.arbeitenTexte.some(arbeit => /^versiegeln$/i.test(arbeit.trim()))
+  const antwortOelen = v.arbeitenTexte.some(arbeit => /^(?:ölen|oelen)$/i.test(arbeit.trim()))
+  if (antwortVersiegeln && !hat(ergaenzt, 'parkett versiegeln')) {
+    if (m2) ergaenzt.push({ beschreibung: 'Parkett versiegeln (Lack, 2-lagig)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push('Parkett versiegeln (Lack, 2-lagig)')
+    return
+  }
+  if (antwortOelen && !hat(ergaenzt, 'parkett ölen')) {
+    if (m2) ergaenzt.push({ beschreibung: 'Parkett ölen (maschinell, 1-lagig)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push('Parkett ölen (maschinell, 1-lagig)')
+    return
+  }
+
   // Versiegelung: Anzahl bestimmen
   let versGaenge = 2
   const versMatch = lower.match(/(\d+)[\s-]*(?:mal|x|fach|gang)\s*(?:versiegelung|versiegeln|lack|parkettlack)/i)

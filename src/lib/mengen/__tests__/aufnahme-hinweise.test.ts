@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ergaenzeAusAufnahmeHinweisen } from '../aufnahme-hinweise'
+import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '../aufnahme-hinweise'
 import type { BerechnetePosition } from '../types'
 
 const pos = (beschreibung: string, menge: number, einheit = 'm²', berechnungsweg = ''): BerechnetePosition => ({
@@ -45,5 +45,13 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
 
     expect(ergebnis.find(p => /sockelleisten demontieren/i.test(p.beschreibung))?.menge).toBe(22)
     expect(ergebnis.find(p => /sockelleisten montieren/i.test(p.beschreibung))?.menge).toBe(22)
+  })
+
+  it('setzt für vollflächig verklebtes Fertigparkett den exakten Katalogtitel', () => {
+    const ergebnis = normalisiereBodenPositionenAusAufnahme([
+      pos('Fertigparkett verlegen — Wohnzimmer', 32),
+    ], 'Eichen-Fertigparkett im Fischgrätmuster vollflächig verkleben.')
+
+    expect(ergebnis[0].beschreibung).toBe('Fertigparkett verlegen vollflächig verklebt — Wohnzimmer')
   })
 })

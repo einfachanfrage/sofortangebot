@@ -425,7 +425,10 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
 
   // Parkett schleifen + versiegeln: Versiegelung ergänzen
   for (const raum of ext.raeume) {
-    if ((raum.arbeiten ?? []).some(a => a.includes('schleifen')) &&
+    const hatParkettSchleifen = (raum.arbeiten ?? []).some(arbeit =>
+      /(?:parkett|dielen?|holzboden).*(?:ab)?schleif|(?:ab)?schleif.*(?:parkett|dielen?|holzboden)/i.test(arbeit)
+    )
+    if (hatParkettSchleifen &&
         !raum.arbeiten.includes('versiegeln') &&
         !raum.arbeiten.includes('oelen')) {
       addRueckfrage(ext, {
