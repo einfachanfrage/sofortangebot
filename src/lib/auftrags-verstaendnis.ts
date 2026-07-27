@@ -30,6 +30,8 @@ export interface AuftragsVerstaendnis {
   belag: BelagTyp
   /** Boden-Gewerk: Altbelag-Demontage erkannt (inkl. Partizipien). */
   altbelagEntfernen: boolean
+  /** Ungekürzte, strukturierte Arbeitsbezeichnungen aus der Extraktion. */
+  arbeitenTexte: string[]
   /** Bequemer Einzel-Check. */
   hatArbeit(kategorie: ArbeitsKategorie): boolean
 }
@@ -62,8 +64,9 @@ export function baueVerstaendnis(text: string, signale?: ExtraktionSignale): Auf
   let altbelag = hatBodenArbeit(t, 'altbelag_entfernen')
 
   // Etappe 2: saubere KI-Signale einweben
+  const arbeitenTexte = (signale?.arbeitenTexte ?? []).filter(Boolean)
   if (signale) {
-    const arbeitenText = (signale.arbeitenTexte ?? []).filter(Boolean).join('. ')
+    const arbeitenText = arbeitenTexte.join('. ')
     if (arbeitenText.trim()) {
       for (const k of erkenneArbeiten(arbeitenText)) arbeiten.add(k)
     }
@@ -83,6 +86,7 @@ export function baueVerstaendnis(text: string, signale?: ExtraktionSignale): Auf
     hatAkzentwand: hatAkzentwandFn(t),
     belag,
     altbelagEntfernen: altbelag,
+    arbeitenTexte,
     hatArbeit: (kategorie) => arbeiten.has(kategorie),
   }
 }

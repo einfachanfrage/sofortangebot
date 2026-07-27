@@ -4,7 +4,7 @@ import type { KalkulationsAntworten } from '@/lib/mengen/antworten-verarbeiter'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { BerechnetePosition } from '@/lib/mengen/types'
-import { ergaenzeAusAufnahmeHinweisen } from '@/lib/mengen/aufnahme-hinweise'
+import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 
 export const maxDuration = 90
 
@@ -136,9 +136,12 @@ export async function POST(req: NextRequest) {
       }>
     }
   }
-  const positionen = ergaenzeAusAufnahmeHinweisen(
-    (extData.mengen?.positionen ?? []) as BerechnetePosition[],
-    erkannteArbeiten,
+  const positionen = normalisiereBodenPositionenAusAufnahme(
+    ergaenzeAusAufnahmeHinweisen(
+      (extData.mengen?.positionen ?? []) as BerechnetePosition[],
+      erkannteArbeiten,
+      combinedText,
+    ),
     combinedText,
   )
   const rueckfragen = extData.rueckfragen ?? []

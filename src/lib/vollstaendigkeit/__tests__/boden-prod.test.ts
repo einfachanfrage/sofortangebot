@@ -69,4 +69,17 @@ describe('Boden Phase 3 — Entfernen und Entsorgen bleibt sichtbar', () => {
     expect(namen.some(name => name.includes('parkett schleifen'))).toBe(false)
     expect(namen.some(name => name.includes('ausgleich'))).toBe(false)
   })
+
+  it('macht eine beantwortete echte Parkett-Rückfrage zur bepreisten Leistung', () => {
+    const t = 'Altes Parkett im Wohnzimmer auf 32 Quadratmetern abschleifen.'
+    const result = pruefeUndErgaenzeVollstaendigkeit(
+      'boden_parkett',
+      [],
+      t,
+      undefined,
+      { arbeitenTexte: ['Parkett schleifen', 'versiegeln'], belagText: 'Parkett' },
+    ).positionen
+
+    expect(result.some(position => position.beschreibung === 'Parkett versiegeln (Lack, 2-lagig)')).toBe(true)
+  })
 })

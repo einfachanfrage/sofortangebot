@@ -179,4 +179,40 @@ describe('geschlossener Rückfragen-Flow', () => {
     expect(elektro.kabelmeter).toBe(40)
     expect(elektro.unterverteilung).toBe(true)
   })
+
+  it('verwechselt Kleberreste abschleifen nicht mit Parkett schleifen', () => {
+    const extraktion = basis({
+      gewerk: 'boden_parkett',
+      transkript: '32 Quadratmeter verklebten Teppich entfernen. Kleberreste abschleifen. Eichen-Fertigparkett vollflächig verkleben.',
+      raeume: [{
+        name: 'Wohnzimmer', laenge: null, breite: null, hoehe: null, flaeche: 32,
+        fenster: [], tueren: [],
+        arbeiten: ['Teppichboden entfernen', 'Kleberreste abschleifen', 'Eichen-Fertigparkett vollflächig verkleben'],
+        belag: 'Fertigparkett', altbelag_entfernen: true, sockelleisten: true, nassbereich: false,
+      }],
+    })
+
+    const analyse = bereiteRueckfragenVor(extraktion)
+    expect(analyse.rueckfragen.some(frage => frage.id === 'versiegelung_wohnzimmer')).toBe(false)
+  })
+
+  it('übernimmt die Antwort auf eine echte Parkett-Schleif-Rückfrage', () => {
+    const extraktion = basis({
+      gewerk: 'boden_parkett',
+      raeume: [{
+        name: 'Wohnzimmer', laenge: null, breite: null, hoehe: null, flaeche: 32,
+        fenster: [], tueren: [], arbeiten: ['Parkett schleifen'],
+        belag: 'Parkett', altbelag_entfernen: false, sockelleisten: false, nassbereich: false,
+      }],
+    })
+
+    const analyse = bereiteRueckfragenVor(extraktion)
+    expect(analyse.rueckfragen.some(frage => frage.id === 'versiegelung_wohnzimmer')).toBe(true)
+
+    const beantwortet = bereiteRueckfragenVor(extraktion, {
+      versiegelung_wohnzimmer: { wert: 1, einheit: 'bool' },
+    })
+    expect(beantwortet.extraktion.raeume[0].arbeiten).toContain('versiegeln')
+    expect(beantwortet.rueckfragen.some(frage => frage.id === 'versiegelung_wohnzimmer')).toBe(false)
+  })
 })
