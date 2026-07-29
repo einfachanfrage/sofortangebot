@@ -125,6 +125,7 @@ export interface ExtrahierteDaten {
     wandflaeche_direkt?: number | null
     deckflaeche_direkt?: number | null
     wandflaeche_abzug_m2?: number | null
+    dachschraege_flaeche_m2?: number | null
     belag?: string
     verlegerichtung?: string
     ausgleich?: boolean

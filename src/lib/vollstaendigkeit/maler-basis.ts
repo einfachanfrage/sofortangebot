@@ -78,7 +78,27 @@ export function pruefeGrundierung(
     || lower.includes('neubau') || lower.includes('erstanstrich') || lower.includes('rohbau')
 
   if (!v.hatArbeit('streichen') || !hatGrundierung) return
-  if (hat(ergaenzt, 'grundier', 'voranstrich', 'tiefengrund')) return
+
+  // Dachschrägen (im selben Raum wie Wände) grundieren separat — eigene Fläche.
+  // Vor der Wand-Grundierung, damit die generische hat(...'grundier') Prüfung greift.
+  const dgPos = ergaenzt.find(p => /dachschräge/i.test(p.beschreibung) && p.einheit === 'm²')
+  const hatDgGrundierung = ergaenzt.some(p =>
+    /dachschräge/i.test(p.beschreibung) && /grundier|voranstrich|tiefengrund/i.test(p.beschreibung))
+  if (dgPos && !hatDgGrundierung) {
+    ergaenzt.push({
+      beschreibung: 'Dachschrägen grundieren',
+      menge: dgPos.menge,
+      einheit: 'm²',
+      konfidenz: 'high',
+      berechnungsweg: `Gleiche Fläche wie Dachschrägen (${dgPos.menge} m²)`,
+      annahmen: [...dgPos.annahmen],
+    })
+  }
+
+  // Wand-Grundierung: nur wenn noch keine Wand-Grundierung existiert.
+  const hatWandGrundierung = ergaenzt.some(p =>
+    /grundier|voranstrich|tiefengrund/i.test(p.beschreibung) && !/dachschräge/i.test(p.beschreibung))
+  if (hatWandGrundierung) return
 
   const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
   if (wandPos) {

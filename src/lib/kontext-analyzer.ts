@@ -167,6 +167,20 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
       })
     }
 
+    // Dachschrägen im selben Raum wie Wände (z.B. Treppenhaus mit Dachschräge):
+    // eigene Fläche erfragen — sonst würden Schrägen die Wandfläche kapern.
+    const hatDachschraege = (raum.arbeiten ?? []).some(a => /dachschr/i.test(a))
+    if (hatStreichen && hatDachschraege && raum.dachschraege_flaeche_m2 == null) {
+      addRueckfrage(ext, {
+        id: `dachschraege_flaeche_${raumId}`,
+        frage: `Wie groß ist die Dachschrägenfläche in "${raum.name}"? (in m²)`,
+        typ: 'anzahl',
+        betrifft: raum.name,
+        prioritaet: 1,
+        schnell_antworten: [],
+      })
+    }
+
     // Tapete vorhanden aber Entfernen nicht explizit: Rückfrage
     if ((raum.altbelag_vorhanden || raum.arbeiten.includes('tapezieren')) &&
         !raum.altbelag_entfernen) {

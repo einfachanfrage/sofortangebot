@@ -17,6 +17,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       wandflaeche_direkt: wandflaeche_direkt_raw,
       deckflaeche_direkt: deckflaeche_direkt_raw,
       wandflaeche_abzug_m2: wandflaeche_abzug_raw,
+      dachschraege_flaeche_m2: dachschraege_flaeche_raw = null,
       umfang: umfang_direkt,
       kniestockhoehe = null,
       dachschraege_links_m2: dgLinks = null,
@@ -51,8 +52,16 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Sprach-Erkennung zentral (arbeiten-normalisierer) — Flexionen, Umgangssprache
     const kontext = erkenneRaumkontext(`${transkriptLower} ${arbeitenStr}`)
     const oeffnungen = erkenneOeffnungen(transkriptLower)
-    // Früh deklarieren — wird in flaeche_angegeben-Branch benötigt
-    const istDachschraege = kontext.istDachschraege
+    // Früh deklarieren — wird in flaeche_angegeben-Branch benötigt.
+    // Dachschräge kann ALLEIN vorkommen (ganzer Raum ist Schräge → Fläche = Wandfläche)
+    // ODER neben normalen Wänden im selben Raum (Treppenhaus: Wände 68 m² + Schrägen 22 m²).
+    // Im gemischten Fall dürfen die Schrägen NICHT die Wand-Positionen kapern — sie
+    // bekommen eine eigene Fläche (dachschraege_flaeche_m2) und eine eigene Position.
+    const dgUserFlaeche = (dachschraege_flaeche_raw as number | null)
+    const hatDachschraegeArbeit = kontext.istDachschraege || /dachschr/i.test(arbeitenStr)
+    const hatEchteWandArbeit = /w[aä]nde?\b|wandfl|decke/i.test(arbeitenStr)
+    const istDachschraege = hatDachschraegeArbeit && !hatEchteWandArbeit
+    const dachschraegeSeparat = hatDachschraegeArbeit && hatEchteWandArbeit
     const dgLinksM2: number | null = (dgLinks as number | null) ?? (dgJeSeite as number | null)
     const dgRechtsM2: number | null = (dgRechts as number | null) ?? (dgJeSeite as number | null)
     const dgFenster = dgFensterRoh as any[]
@@ -345,6 +354,11 @@ export function malerEngine(daten: any): MengenErgebnis {
             } : {}),
           })
         }
+      }
+      // Dachschrägen im selben Raum wie normale Wände: eigene Position mit eigener
+      // Fläche — kapert NICHT die Wandfläche (siehe dachschraegeSeparat/dgUserFlaeche).
+      if (dachschraegeSeparat && dgUserFlaeche != null && dgUserFlaeche > 0) {
+        positionen.push({ beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`, menge: dgUserFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Dachschrägenfläche ${dgUserFlaeche} m²`, annahmen: [...anstrichAnnahmen] })
       }
       if (anDecke && deckenflaecheM2 !== null) {
         positionen.push({ beschreibung: `Deckenfläche streichen ${anstriche}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [...anstrichAnnahmen] })

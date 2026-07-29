@@ -267,6 +267,51 @@ describe('Maler-Engine – Scope "nur die Wände"', () => {
   })
 })
 
+// ─── Dachschräge NEBEN Wänden im selben Raum (Beta-Bug Treppenhaus) ─────────
+// "68 m² Wandfläche UND 22 m² Dachschrägen" landete komplett unter einer Fläche
+// (68 in Wand UND Boden). Wände und Schrägen müssen getrennte Positionen mit
+// eigener Fläche sein.
+describe('Maler-Engine – Dachschräge neben Wänden (Treppenhaus)', () => {
+  it('Wände 68 m² + Dachschrägen 22 m² → zwei Positionen mit getrennten Flächen', () => {
+    const { positionen } = malerEngine({
+      transkript: 'Treppenhaus, Wände und Dachschrägen grundieren und zweimal streichen. 68 m² Wandfläche, 22 m² Dachschrägen.',
+      raeume: [{
+        name: 'Treppenhaus',
+        wandflaeche_direkt: 68,
+        dachschraege_flaeche_m2: 22,
+        arbeiten: ['wände streichen', 'dachschrägen streichen'],
+      }],
+    })
+
+    const wand = find(positionen, 'wandflächen streichen')
+    expect(wand).toBeDefined()
+    expect(wand?.menge).toBe(68)
+
+    const dach = find(positionen, 'dachschrägen streichen')
+    expect(dach).toBeDefined()
+    expect(dach?.menge).toBe(22)
+
+    // Die Wand-Position darf NICHT als "Dachschräge" gelabelt sein
+    expect(wand?.beschreibung.toLowerCase()).not.toContain('dachschräge')
+    // Keine Position trägt fälschlich die andere Fläche
+    expect(dach?.menge).not.toBe(68)
+  })
+
+  it('Reine Dachschräge (kein Wandwerk) behält altes Verhalten: Fläche = Wandfläche', () => {
+    const { positionen } = malerEngine({
+      transkript: 'Dachschrägen im Spitzboden streichen, 30 m²',
+      raeume: [{
+        name: 'Spitzboden',
+        wandflaeche_direkt: 30,
+        arbeiten: ['dachschrägen streichen'],
+      }],
+    })
+    const dach = find(positionen, 'dachschräge')
+    expect(dach).toBeDefined()
+    expect(dach?.menge).toBe(30)
+  })
+})
+
 // ─── Freies Sprechen (Beta-Feedback Clemens) ────────────────────────────────
 // Handwerker sprechen nicht im Schema "5×4 Meter, 2,60 hoch" sondern erzählen:
 // "20 qm Bodenfläche, Decke 3 m hoch, Raufaser abnehmen, dann streichen, spachteln"

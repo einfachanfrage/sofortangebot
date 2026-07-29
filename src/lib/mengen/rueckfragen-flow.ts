@@ -5,6 +5,7 @@ import type { ExtrahierteDaten } from './types'
 
 const ANTWORTBARE_IDS = [
   /^masse_/, /^hoehe_/, /^raum_/, /^plural_/, /^belag_/, /^altbelag_/,
+  /^dachschraege_flaeche_/,
   /^tueren_anzahl_/, /^fenster_anzahl_/,
   /^tapete_entfernen_/, /^altfliesen_/, /^flieshoehe_/, /^versiegelung_/,
   /^decke_masse$/, /^geruest$/, /^daemmung_staenderwand$/, /^brandschutz$/,
@@ -23,12 +24,15 @@ function normalisiereTyp(typ: KIRueckfrageRaw['typ']): RueckfrageTyp {
 
 function konvertiereKIRueckfrage(frage: KIRueckfrageRaw): RueckfrageItem {
   const typ = normalisiereTyp(frage.typ)
+  // Flächen-Rückfragen (Dachschräge) sind freie m²-Eingaben, keine Stückzahl.
+  const istFlaeche = /_flaeche_/.test(frage.id)
+  const einheit = typ === 'hoehe' || typ === 'laenge' ? 'm' : istFlaeche ? 'm²' : undefined
   return {
     id: frage.id,
     frage: frage.frage,
     kontext: frage.betrifft ?? '',
     typ,
-    einheit: typ === 'hoehe' || typ === 'laenge' ? 'm' : undefined,
+    einheit,
     schnell_antworten: (frage.schnell_antworten ?? [])
       .filter(option => option.wert !== null)
       .map(option => ({
@@ -68,7 +72,16 @@ export function bereiteRueckfragenVor(
     .filter(frage => istAntwortbar(frage.id))
     .map(frage => konvertiereKIRueckfrage(frage))
   const vageFragen = generiereRueckfragen(kontext)
-  const rueckfragen = dedupliziere([...kontextFragen, ...vageFragen])
+  const zusammen = dedupliziere([...kontextFragen, ...vageFragen])
+  // Wenn die volle Maßfrage (masse_<raum>, Wand- UND Bodenfläche) vorliegt, ist die
+  // reine Bodenfrage (masse_boden_<raum>) redundant — sonst wird derselbe Raum zweimal
+  // nach Maßen gefragt. Die volle Frage deckt beide Flächen bereits ab.
+  const volleMasseRaeume = new Set(
+    zusammen.filter(f => /^masse_[^_]/.test(f.id) && !f.id.startsWith('masse_boden_') && !f.id.startsWith('masse_lb_'))
+      .map(f => f.id.replace(/^masse_/, '')),
+  )
+  const rueckfragen = zusammen
+    .filter(frage => !(frage.id.startsWith('masse_boden_') && volleMasseRaeume.has(frage.id.replace(/^masse_boden_/, ''))))
     .filter(frage => !beantworteteIds.has(frage.id))
 
   const angereichert = kontext

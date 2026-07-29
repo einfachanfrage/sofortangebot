@@ -108,6 +108,13 @@ export function verarbeiteAntworten(
       continue
     }
 
+    const dachschraegeM = id.match(/^dachschraege_flaeche_(.+)$/)
+    if (dachschraegeM && typeof antwort.wert === 'number') {
+      const raum = raumById(angereichert.raeume, dachschraegeM[1])
+      if (raum && antwort.wert > 0) raum.dachschraege_flaeche_m2 = antwort.wert
+      continue
+    }
+
     const belagM = id.match(/^belag_(.+)$/)
     if (belagM && typeof antwort.wert === 'number') {
       const raum = raumById(angereichert.raeume, belagM[1])

@@ -460,7 +460,12 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
   const raumSchritte = [...new Set(fragen.map(item => item.kontext).filter(Boolean))]
   const aktuellerRaum = frage.kontext
   const raumSchrittIdx = Math.max(0, raumSchritte.indexOf(aktuellerRaum))
-  const istMasseFrage = frage.typ === 'masse_einzel' && !/fenster|tür|tuer/i.test(frage.frage)
+  // Nur die primäre Raum-Maßfrage bekommt den generischen Titel „Welche Maße …".
+  // Reine Bodenflächen-Fragen (masse_boden_) behalten ihren eigenen Wortlaut,
+  // sonst sehen zwei verschiedene Fragen zum selben Raum identisch aus.
+  const istMasseFrage = frage.typ === 'masse_einzel'
+    && !frage.id.startsWith('masse_boden_')
+    && !/fenster|tür|tuer/i.test(frage.frage)
 
   function setAntwort(a: RueckfragenAntwort) {
     setAntworten(prev => ({ ...prev, [frage.id]: a }))
