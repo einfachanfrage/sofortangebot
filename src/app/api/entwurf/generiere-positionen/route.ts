@@ -121,6 +121,7 @@ export async function POST(req: NextRequest) {
     mengen?: { positionen?: unknown[]; rueckfragen?: unknown[] }
     hat_rueckfragen?: boolean
     rueckfragen?: RueckfrageItem[]
+    extraktion_roh?: unknown
     extraktion?: {
       gewerk?: string
       raeume?: Array<{
@@ -145,6 +146,17 @@ export async function POST(req: NextRequest) {
     combinedText,
   )
   const rueckfragen = extData.rueckfragen ?? []
+
+  // Sichtbarkeit: roh (direkt von GPT) + final (nach allen Nachbearbeitungs-
+  // Modulen) speichern — unabhängig davon, ob noch Rückfragen offen sind.
+  // Nur bei einer Rückfragen-Runde (extraktion_roh === undefined, weil
+  // basis_extraktion genutzt wurde) den vorherigen Rohstand nicht überschreiben.
+  if (extData.extraktion_roh !== undefined) {
+    await supabase.from('quotes').update({
+      extraktion_roh: extData.extraktion_roh,
+      extraktion_final: extData.extraktion ?? null,
+    }).eq('id', angebot_id)
+  }
 
   // Phase 1 endet hier: Noch nichts speichern oder bepreisen, solange wichtige
   // Angaben fehlen. Nach den Antworten wird dieselbe Pipeline neu berechnet.

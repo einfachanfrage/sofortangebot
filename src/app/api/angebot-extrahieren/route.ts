@@ -25,6 +25,7 @@ export const maxDuration = 60
 
 export interface ExtraktionResponse {
   extraktion: ExtrahierteDaten
+  extraktion_roh: ExtrahierteDaten | null
   mengen: MengenErgebnis
   bewertung: KalkulationsBewertung
   hat_rueckfragen: boolean
@@ -81,6 +82,12 @@ export async function POST(req: NextRequest) {
       { transkript: verarbeitetText, gewerk_hinweis },
       session.access_token
     ) as { result: ExtrahierteDaten }
+
+    // Sichtbarkeit: Schnappschuss der Struktur GENAU so, wie GPT sie geliefert
+    // hat — bevor irgendeines der Nachbearbeitungs-Module (unten) sie anfasst.
+    const extraktionRoh = basis_extraktion
+      ? null // Rückfragen-Runde: keine neue GPT-Antwort, nichts Neues zu zeigen
+      : structuredClone(edgeResult!.result)
 
     let extraktion = basis_extraktion
       ? normalisiereExtraktion(structuredClone(basis_extraktion) as unknown as Record<string, unknown>)
@@ -255,6 +262,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       extraktion,
+      extraktion_roh: extraktionRoh,
       mengen,
       bewertung,
       hat_rueckfragen: rueckfragen.length > 0,
