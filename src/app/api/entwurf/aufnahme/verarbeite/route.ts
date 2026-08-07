@@ -3,8 +3,27 @@ import { createClient } from '@/lib/supabase/server'
 import { getAIClient, WHISPER_MODEL } from '@/lib/ai-client'
 import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
+import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
+import { segmentiereRaeume } from '@/lib/raum-segmentierer'
 
 export const maxDuration = 60
+
+// Sichtbarkeit: zählt Wörter, die ersetzeZahlenWorte von Wort in Ziffer
+// umgewandelt hat ("drei" → "3"). Reine Anzeige-Kennzahl, keine Business-Logik.
+function zaehleErsetzteZahlen(original: string, verarbeitet: string): number {
+  const origTokens = original.split(/\s+/)
+  const neuTokens = verarbeitet.split(/\s+/)
+  const laenge = Math.min(origTokens.length, neuTokens.length)
+  let anzahl = 0
+  for (let i = 0; i < laenge; i++) {
+    const alt = origTokens[i].toLowerCase().replace(/[^\wäöüß.,]/g, '')
+    const neu = neuTokens[i]
+    const altIstZahl = /^\d+([.,]\d+)?$/.test(alt)
+    const neuIstZahl = /^\d+([.,]\d+)?$/.test(neu)
+    if (!altIstZahl && neuIstZahl) anzahl++
+  }
+  return anzahl
+}
 
 // Retry-Pfad: Whisper + Chips für eine bereits hochgeladene Aufnahme
 // (der normale Weg läuft direkt in /aufnahme/upload — dort reist das Audio
@@ -91,6 +110,12 @@ export async function POST(req: NextRequest) {
     // ── Chips-Extraktion ──────────────────────────────────────────────────
     const { positionen } = await extrahiereChips(ai, transkript, kontextNotizen || undefined)
 
+    // ── Sichtbarkeit: was hat die Vorverarbeitung mit dem Rohtext gemacht? ──
+    // Rein zu Anzeigezwecken (Logging-Spalten) — verändert nichts an der
+    // eigentlichen Pipeline, die läuft weiterhin über /angebot-extrahieren.
+    const transkriptVerarbeitet = ersetzeZahlenWorte(transkript)
+    const segmente = segmentiereRaeume(transkriptVerarbeitet)
+
     // ── Ergebnis speichern ────────────────────────────────────────────────
     await supabase
       .from('entwurf_aufnahmen')
@@ -98,6 +123,11 @@ export async function POST(req: NextRequest) {
         transkript,
         erkannte_positionen: positionen,
         verarbeitung_status: 'fertig',
+        transkript_original: transkript,
+        transkript_verarbeitet: transkriptVerarbeitet,
+        hat_raumwechsel: segmente.length > 1,
+        segment_anzahl: segmente.length,
+        zahlen_ersetzt: zaehleErsetzteZahlen(transkript, transkriptVerarbeitet),
       })
       .eq('id', aufnahme_id)
 

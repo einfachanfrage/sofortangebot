@@ -3,8 +3,27 @@ import { createClient } from '@/lib/supabase/server'
 import { getAIClient, WHISPER_MODEL } from '@/lib/ai-client'
 import { pruefeKIZugriff, trackKIUsage } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
+import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
+import { segmentiereRaeume } from '@/lib/raum-segmentierer'
 
 export const maxDuration = 60
+
+// Sichtbarkeit: zählt Wörter, die ersetzeZahlenWorte von Wort in Ziffer
+// umgewandelt hat ("drei" → "3"). Reine Anzeige-Kennzahl, keine Business-Logik.
+function zaehleErsetzteZahlen(original: string, verarbeitet: string): number {
+  const origTokens = original.split(/\s+/)
+  const neuTokens = verarbeitet.split(/\s+/)
+  const laenge = Math.min(origTokens.length, neuTokens.length)
+  let anzahl = 0
+  for (let i = 0; i < laenge; i++) {
+    const alt = origTokens[i].toLowerCase().replace(/[^\wäöüß.,]/g, '')
+    const neu = neuTokens[i]
+    const altIstZahl = /^\d+([.,]\d+)?$/.test(alt)
+    const neuIstZahl = /^\d+([.,]\d+)?$/.test(neu)
+    if (!altIstZahl && neuIstZahl) anzahl++
+  }
+  return anzahl
+}
 
 // Aufnahme-Eingang: EIN Request macht alles — Storage-Upload, Whisper und
 // Kontext-Query laufen PARALLEL (das Audio reist nur einmal zum Server,
@@ -141,12 +160,23 @@ export async function POST(req: NextRequest) {
     console.error('[aufnahme-upload] Positionsextraktion fehlgeschlagen')
   }
 
+  // ── Sichtbarkeit: was hat die Vorverarbeitung mit dem Rohtext gemacht? ────
+  // Rein zu Anzeigezwecken (Logging-Spalten) — verändert nichts an der
+  // eigentlichen Pipeline, die läuft weiterhin über /angebot-extrahieren.
+  const transkriptVerarbeitet = ersetzeZahlenWorte(transkript)
+  const segmente = segmentiereRaeume(transkriptVerarbeitet)
+
   // ── Ergebnis in EINEM Update speichern ────────────────────────────────────
   await supabase.from('entwurf_aufnahmen').update({
     ...(storageOk ? { audio_url: storagePath } : {}),
     transkript,
     erkannte_positionen: positionen,
     verarbeitung_status: 'fertig',
+    transkript_original: transkript,
+    transkript_verarbeitet: transkriptVerarbeitet,
+    hat_raumwechsel: segmente.length > 1,
+    segment_anzahl: segmente.length,
+    zahlen_ersetzt: zaehleErsetzteZahlen(transkript, transkriptVerarbeitet),
   }).eq('id', aufnahme.id)
 
   await trackKIUsage({
