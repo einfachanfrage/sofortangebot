@@ -125,12 +125,18 @@ export function segmentiereRaeume(transkript: string): RaumSegment[] {
     const zeile = zeilen[i]
     const lower = zeile.toLowerCase()
 
-    // Signal-Wort identifizieren
-    const signal = RAUMWECHSEL_SIGNALE.find(s => lower.startsWith(s) || lower.includes(s))
+    // Signal-Wort identifizieren — NUR am Anfang des Abschnitts. Ein Signal wie
+    // "und dann" kann auch als Übergangs-Rest am ENDE des vorherigen Segments
+    // stehen (z.B. wenn splitInlineRaeume mitten in "...streichen. Und dann
+    // noch das Schlafzimmer..." vor dem Raumnamen trennt). Mit .includes()
+    // fraß der Strip-Regex darunter fast den kompletten ersten Raum weg, weil
+    // "^.*?signal" alles bis zum Signal löscht — auch wenn das Signal erst
+    // ganz am Ende steht. Nur startsWith ist sicher.
+    const signal = RAUMWECHSEL_SIGNALE.find(s => lower.startsWith(s))
 
     // Text ohne Signal-Präfix
     const textOhneSignal = signal
-      ? zeile.replace(new RegExp(`^.*?${signal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[:\\s]*`, 'i'), '').trim() || zeile
+      ? zeile.replace(new RegExp(`^${signal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[:\\s]*`, 'i'), '').trim() || zeile
       : zeile
 
     const typ = i === 0 ? 'raum' : erkennTyp(textOhneSignal, vorherText)
