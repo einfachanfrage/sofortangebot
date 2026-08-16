@@ -27,11 +27,14 @@ function belagLabel(belag: string | undefined, typ: BelagTyp): string {
   }
 }
 
+// PM-004: pauschal 10% war für JEDE gerade Verlegung zu hoch (Fachwissen-
+// Standard bei gerader Verlegung: ca. 5%) — nur bei Diagonalverlegung
+// (siehe Aufrufer unten) braucht es wirklich 15% mehr Verschnitt.
 function standardVerschnitt(belag: string | undefined, typ: BelagTyp): number {
-  if (!belag) return 0.10
+  if (!belag) return 0.05
   // Plattenware (Laminat/Vinyl/Linoleum) hat Schneidverschnitt; Parkett/Kork/
   // Teppich in dieser Konvention nicht.
-  if (typ === 'laminat' || typ === 'vinyl' || typ === 'linoleum') return 0.10
+  if (typ === 'laminat' || typ === 'vinyl' || typ === 'linoleum') return 0.05
   return 0
 }
 

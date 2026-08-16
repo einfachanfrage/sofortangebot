@@ -1,4 +1,5 @@
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
+import { erkenneOeffnungen } from '@/lib/arbeiten-normalisierer'
 
 export interface KontextAnalyse {
   hinweise: string[]
@@ -37,6 +38,12 @@ function situationIncludes(ext: ExtMitExtra, ...begriffe: string[]): boolean {
 // ── MALER ─────────────────────────────────────────────────────────────────────
 
 function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: KontextAnalyse['automatische_ergaenzungen']) {
+  // PM-003: "kein Fenster im Flur" wurde hier nie mitgelesen — die Rückfrage
+  // nach der Fensteranzahl kam trotzdem. maler.ts nutzt für die Berechnung
+  // schon dasselbe Signal (erkenneOeffnungen); jetzt auch hier, statt einer
+  // eigenen zweiten Text-Prüfung.
+  const oeffnungen = erkenneOeffnungen(ext.transkript ?? '')
+
   for (const raum of ext.raeume) {
     // GPT legt eine ausdrücklich genannte Wandfläche gelegentlich im allgemeinen
     // Feld `flaeche` ab. Über den zum Raum gehörenden Transkriptabschnitt wird sie
@@ -138,7 +145,7 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
 
     // Auch Öffnungen direkt mit abfragen, nicht erst nach der Geometrie.
     if (hatStreichen && !raum.wandflaeche_direkt) {
-      if (!Array.isArray(raum.tueren) || raum.tueren.length === 0) {
+      if (!oeffnungen.keineTuer && (!Array.isArray(raum.tueren) || raum.tueren.length === 0)) {
         addRueckfrage(ext, {
           id: `tueren_anzahl_${raumId}`,
           frage: `Wie viele Türen hat "${raum.name}"?`,
@@ -146,7 +153,7 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
           schnell_antworten: [0, 1, 2, 3, 4, 5, 6].map(wert => ({ label: String(wert), wert })),
         })
       }
-      if (!Array.isArray(raum.fenster) || raum.fenster.length === 0) {
+      if (!oeffnungen.keinFenster && (!Array.isArray(raum.fenster) || raum.fenster.length === 0)) {
         addRueckfrage(ext, {
           id: `fenster_anzahl_${raumId}`,
           frage: `Wie viele Fenster hat "${raum.name}"?`,

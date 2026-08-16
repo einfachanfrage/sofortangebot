@@ -90,6 +90,21 @@ export function pruefeGrundierung(
 
   if (!v.hatArbeit('streichen') || !hatGrundierung) return
 
+  // PM-003: "Grundierung" kam hier oft nur aus der GPT-Struktur, weil im Raum
+  // eine Kleinreparatur steckt (Dübellöcher/Schadstellen) — der Nutzer selbst
+  // hat nie "grundieren"/"Neubau"/"Erstanstrich" gesagt. Unten wurde das
+  // trotzdem auf die VOLLE Wandfläche gerechnet (276,66 € für zwei
+  // Dübellöcher). Ohne echtes Maß für "die geflickte Stelle" raten wir hier
+  // keine Zahl — stattdessen Erinnerung in "fehlende", der Handwerker trägt
+  // die reale Reparaturfläche selbst ein.
+  const explizitVollflaechig = /grundier\w*|grundierung|voranstrich|primer|tiefengrund|neubau|erstanstrich|rohbau/i.test(lower)
+  const nurKleinreparatur = !explizitVollflaechig
+    && /dübellöch|duebelloech|bohrlöch|nagellöch|schadstell|fehlstell/i.test(lower)
+  if (nurKleinreparatur) {
+    add(ergaenzt, fehlende, 'Voranstrich / Grundierung (nur Reparaturstelle)')
+    return
+  }
+
   // Dachschrägen (im selben Raum wie Wände) grundieren separat — eigene Fläche.
   // Vor der Wand-Grundierung, damit die generische hat(...'grundier') Prüfung greift.
   const dgPos = ergaenzt.find(p => /dachschräge/i.test(p.beschreibung) && p.einheit === 'm²')

@@ -193,6 +193,69 @@ const KORPUS: Fall[] = [
     // oben (siehe exakteMengen) nicht mit wegreißen.
     verboten: ['wandflächen streichen 2x — speisekammer'],
   },
+  {
+    name: 'PM-003 — Kleinreparatur (Dübellöcher) darf keine Grundierung auf volle Wandfläche auslösen',
+    gewerk: 'maler',
+    // PM-003, 2026-08-16. Fund: GPT trug "grundieren" wegen der Dübellöcher in
+    // die arbeiten[]-Liste ein (fachlich nachvollziehbar), obwohl im Transkript
+    // nie "grundieren"/"Neubau"/"Erstanstrich" fällt. pruefeGrundierung hat das
+    // trotzdem auf die KOMPLETTE Wandfläche gerechnet: 276,66 € für zwei
+    // Dübellöcher. Fix: ohne echtes Vollflächen-Signal im Rohtext gibt's dafür
+    // nur noch eine Erinnerung in "fehlende", keine erfundene Zahl.
+    transkript:
+      'Flur, sechs mal eins fünfzig, Deckenhöhe drei zwanzig — is schon ne hohe Bude hier. Kein Fenster im ' +
+      'Flur, aber eine Tür, normal Maß. Wände streichen, zweimal, Decke auch mit. 2 Dübellöcher spachteln, ' +
+      'sonst nix Großes. Boden lass mal weg, der bleibt wie er ist, den nicht anfassen.',
+    raeume: [{
+      name: 'Flur',
+      laenge: 6,
+      breite: 1.5,
+      hoehe: 3.2,
+      // 'grundieren' bewusst mit drin — genau das hat GPT im echten Fall
+      // getan (Reparatur → Grundierung mitgedacht). Der Bug war NIE, ob das
+      // erkannt wird, sondern WELCHE Fläche dafür berechnet wird.
+      arbeiten: ['wände streichen', 'decke streichen', 'grundieren'],
+      tueren: [{ anzahl: 1 }],
+    }],
+    // ACHTUNG: Deckenfläche fehlt hier separat — eigener, neu gefundener Bug
+    // (nicht Teil der ursprünglichen PM-003-Befunde, siehe Notiz an Sandy):
+    // "Wände streichen, zweimal, Decke auch mit." lässt erkenneScope() wegen
+    // der Kommas fälschlich "nur Wände" annehmen. Erster Fixversuch hat 4
+    // andere Tests zerschossen — bewusst NICHT hier mit-repariert, sondern
+    // zurückgestellt für einen eigenen, sauberen Anlauf. Dieser Test prüft
+    // NUR den Grundierungs-Fix, nicht die Decke.
+    exakteMengen: [
+      // Umfang 2×(6,00+1,50)=15,00 lfm; Wandbrutto 48,00 m²; kein Fenster-
+      // Abzug (explizit "kein Fenster"), minus 1 Tür Standard (1,89) = 46,11 m²
+      { enthaelt: 'wandflächen streichen', menge: 46.11 },
+      { enthaelt: 'dübellöcher spachteln', menge: 2 },
+    ],
+    // Kernpunkt: keine Grundierung/Voranstrich-Position auf 46,11 m² (276,66 €)
+    verboten: ['voranstrich', 'grundierung'],
+  },
+  {
+    name: 'PM-004 — Verschnitt bei gerader Verlegung: 5%, nicht pauschal 10%',
+    gewerk: 'boden_parkett',
+    // PM-004, 2026-08-16. Fund: standardVerschnitt() gab pauschal 10% für
+    // Laminat/Vinyl/Linoleum, egal wie verlegt wird — nur Diagonal hatte
+    // einen eigenen Wert (15%). Fachwissen-Standard bei gerader Verlegung:
+    // ca. 5%. Fix: standardVerschnitt() gibt jetzt 5%.
+    transkript: 'Kinderzimmer, vier mal drei, Höhe zwo sechzig. Laminat, ganz normal gerade verlegt, keine ' +
+      'Muster oder so. Drunter kommt noch ne Trittschalldämmung.',
+    raeume: [{
+      name: 'Kinderzimmer',
+      laenge: 4,
+      breite: 3,
+      belag: 'laminat',
+      verlegerichtung: 'gerade',
+      arbeiten: ['laminat verlegen'],
+    }],
+    exakteMengen: [
+      // Fläche 4×3=12,00 m² + 5% Verschnitt = 12,60 m² (vorher, ohne Fix: 13,20 m²)
+      { enthaelt: 'laminat verlegen', menge: 12.60 },
+    ],
+    verboten: ['estrich'],
+  },
 ]
 
 describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {
