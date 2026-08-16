@@ -217,17 +217,16 @@ const KORPUS: Fall[] = [
       arbeiten: ['wände streichen', 'decke streichen', 'grundieren'],
       tueren: [{ anzahl: 1 }],
     }],
-    // ACHTUNG: Deckenfläche fehlt hier separat — eigener, neu gefundener Bug
-    // (nicht Teil der ursprünglichen PM-003-Befunde, siehe Notiz an Sandy):
-    // "Wände streichen, zweimal, Decke auch mit." lässt erkenneScope() wegen
-    // der Kommas fälschlich "nur Wände" annehmen. Erster Fixversuch hat 4
-    // andere Tests zerschossen — bewusst NICHT hier mit-repariert, sondern
-    // zurückgestellt für einen eigenen, sauberen Anlauf. Dieser Test prüft
-    // NUR den Grundierungs-Fix, nicht die Decke.
+    // Nachtrag: "Wände streichen, zweimal, Decke auch mit." hatte anfangs die
+    // Decke verschwinden lassen — eigener, separat gefundener Bug in
+    // erkenneScope() (Kommas blockierten die alte Wortabstands-Prüfung) und
+    // in der Engine (maler.ts las "Deckenhöhe" fälschlich als "Decke wird
+    // gestrichen"). Beides jetzt mitrepariert, deshalb hier mitgeprüft.
     exakteMengen: [
       // Umfang 2×(6,00+1,50)=15,00 lfm; Wandbrutto 48,00 m²; kein Fenster-
       // Abzug (explizit "kein Fenster"), minus 1 Tür Standard (1,89) = 46,11 m²
       { enthaelt: 'wandflächen streichen', menge: 46.11 },
+      { enthaelt: 'deckenfläche streichen', menge: 9.00 },
       { enthaelt: 'dübellöcher spachteln', menge: 2 },
     ],
     // Kernpunkt: keine Grundierung/Voranstrich-Position auf 46,11 m² (276,66 €)

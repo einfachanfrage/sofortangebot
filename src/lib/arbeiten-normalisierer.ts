@@ -134,15 +134,28 @@ export function erkenneScope(text: string): RaumScope {
   }
 
   // Eine ausdrücklich benannte Fläche begrenzt den Auftrag ebenfalls. Der Nutzer
-  // muss nicht künstlich "nur die Wände" sagen.
+  // muss nicht künstlich "nur die Wände" sagen: kommt "Decke" im GANZEN Text
+  // kein einziges Mal vor, während "Wand" ausdrücklich fällt, ist das genug.
+  //
+  // PM-003-Nachtrag: Die alte Version prüfte stattdessen Wortabstand zum
+  // Arbeits-Verb ("Wände ... streichen", höchstens 3 Wörter auseinander).
+  // Das brach an Kommas ("Wände streichen, Decke auch mit" — das Komma
+  // blockierte die Abstandsprüfung) UND an Umlauten (\w kennt kein ä/ö/ü/ß,
+  // "Wände" wurde als Lückenfüller-Wort nie vollständig erkannt) — beides hat
+  // in PM-003 die Decke aus einem Angebot geworfen, obwohl sie ausdrücklich
+  // genannt wurde. Reine Erwähnung statt Wortabstand ist robuster — aber
+  // Maßangaben zur Deckenhöhe ("Deckenhöhe 3,20", "Decke ist 3 Meter hoch",
+  // "4 Meter hohe Decke") zählen NICHT als Erwähnung, sonst geriete jeder
+  // Raum mit Höhenangabe fälschlich auf "nur Decke".
+  const tOhneDeckenhoehe = t
+    .replace(/deckenh[öo]he\w*/gi, ' ')
+    .replace(/decke\w*[^.,;]{0,20}\bhoch\w*/gi, ' ')
+    .replace(/\d[^.,;]{0,15}\bhohe?\b[^.,;]{0,10}decke\w*/gi, ' ')
   if (!nurWaende && !nurDecke && !nurBoden) {
-    const arbeit = '(?:streich|anstrich|grundier|tapezier|spachtel|glätt)'
-    const waende = '(?:w[äa]nd(?:e|en|flächen?))'
-    const decke = '(?:deck(?:e|en|enfläche|enflächen))'
-    const hatWaendeArbeit = new RegExp(`\\b${waende}\\b(?:\\s+\\w+){0,3}\\s+${arbeit}|${arbeit}\\w*(?:\\s+\\w+){0,3}\\s+\\b${waende}\\b`, 'i').test(t)
-    const hatDeckenArbeit = new RegExp(`\\b${decke}\\b(?:\\s+\\w+){0,3}\\s+${arbeit}|${arbeit}\\w*(?:\\s+\\w+){0,3}\\s+\\b${decke}\\b`, 'i').test(t)
-    if (hatWaendeArbeit && !hatDeckenArbeit) nurWaende = true
-    else if (hatDeckenArbeit && !hatWaendeArbeit) nurDecke = true
+    const erwaehntWaende = new RegExp(FLAECHE.waende, 'i').test(t)
+    const erwaehntDecke = new RegExp(FLAECHE.decke, 'i').test(tOhneDeckenhoehe)
+    if (erwaehntWaende && !erwaehntDecke) nurWaende = true
+    else if (erwaehntDecke && !erwaehntWaende) nurDecke = true
   }
 
   return { nurWaende, nurDecke, nurBoden }

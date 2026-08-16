@@ -217,8 +217,13 @@ export function malerEngine(daten: any): MengenErgebnis {
     const einzelraum = (daten.raeume?.length ?? 0) === 1
     const hatWandSignal = /wand|wände|waende|tapez|spachtel|grundier/.test(arbeitenStr)
       || (einzelraum && /(?:wand|wände|waende).{0,35}(?:streich|anstrich|maler)/.test(transkriptLower))
+    // "Deckenhöhe drei zwanzig" ist eine Maßangabe, kein Arbeits-Signal — sonst
+    // liest "decke.{0,35}streich" das "Decke" aus "Deckenhöhe" fälschlich als
+    // "Decke wird gestrichen" (PM-003-Folgefund: sichtbar geworden, nachdem
+    // erkenneScope() nicht mehr aus Versehen kompensiert hat).
+    const transkriptOhneDeckenhoehe = transkriptLower.replace(/deckenh[öo]he\w*/g, ' ')
     const hatDeckenSignal = /decke/.test(arbeitenStr)
-      || (einzelraum && /decke.{0,35}(?:streich|anstrich|maler)|(?:streich|anstrich).{0,35}decke/.test(transkriptLower))
+      || (einzelraum && /decke.{0,35}(?:streich|anstrich|maler)|(?:streich|anstrich).{0,35}decke/.test(transkriptOhneDeckenhoehe))
     const hatExpliziteFlaeche = hatWandSignal || hatDeckenSignal || /boden/.test(arbeitenStr)
     const anWaenden = !nurDecke && !nurBoden && (hatWandSignal || (!hatExpliziteFlaeche && hatStreichen))
     // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall), nurWaende oder nurBoden
