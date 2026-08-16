@@ -83,11 +83,23 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
     arbeiten: arr<string>(b.arbeiten).filter(a => typeof a === 'string'),
   }))
 
+  // PM-008: fenster/arbeiten gingen hier verloren — GPT liefert sie bei
+  // Fassaden korrekt mit (siehe raw_result in debug_extraktion_roh), aber sie
+  // wurden beim Einlesen nie übernommen. Ohne fenster keine Fensterabzugs-
+  // Rechnung, ohne arbeiten kein Signal für die Maler-Engine.
   const waende = arr<Record<string, unknown>>(raw.waende).map(w => ({
     laenge: num(w.laenge),
     hoehe: num(w.hoehe),
     beplankung: typeof w.beplankung === 'number' ? w.beplankung : 1,
     daemmung: bool(w.daemmung),
+    fenster: arr<Record<string, unknown>>(w.fenster).map(f => ({
+      anzahl: num(f.anzahl) ?? 1,
+      breite: num(f.breite) ?? undefined,
+      hoehe: num(f.hoehe) ?? undefined,
+      annahme: bool(f.annahme),
+    })),
+    arbeiten: arr<string>(w.arbeiten).filter(a => typeof a === 'string'),
+    name: typeof w.name === 'string' ? w.name : undefined,
   }))
 
   const decken = arr<Record<string, unknown>>(raw.decken).map(d => ({

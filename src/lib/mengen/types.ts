@@ -137,6 +137,12 @@ export interface ExtrahierteDaten {
     hoehe: number | null
     beplankung: number
     daemmung: boolean
+    // PM-008: Fassaden landen bei GPT hier (kein "Raum"), nicht in raeume[].
+    // Vorher gingen fenster/arbeiten hier verloren — die Maler-Engine rechnet
+    // ohne Fensterabzug faktisch nichts (leere raeume[] → "Keine Positionen").
+    fenster?: Array<{ anzahl?: number; breite?: number; hoehe?: number; annahme?: boolean }>
+    arbeiten?: string[]
+    name?: string
   }>
   decken: Array<{
     laenge: number | null

@@ -375,3 +375,52 @@ describe('Maler-Engine – freies Sprechen (Bodenfläche + Höhe statt L×B)', (
     }
   })
 })
+
+// ─── PM-008: Fassade (waende[]) ─────────────────────────────────────────────
+// Vorher: waende[] wurde von der Engine komplett ignoriert (nur raeume[] wurde
+// gelesen) → bei reinen Fassaden-Aufträgen ("kein Raum") kamen buchstäblich
+// null Positionen raus, Nutzer stand ohne Angebot da. Fixture-Daten stammen
+// 1:1 aus der echten GPT-Extraktion (verifiziert über debug_extraktion_roh)
+// für den Prüfmeister-Fall "Fassade Südseite, 12×6 m, 3 Fenster 1,20×1,40 m,
+// zweimal Fassadenfarbe, ohne Vorhergrundierung".
+describe('Maler-Engine – PM-008 Fassade (waende[] statt raeume[])', () => {
+  function pipeline() {
+    const { positionen } = malerEngine({
+      transkript: 'Fassade an der Südseite, 12 Meter lang, Giebelhöhe im Schnitt 6 Meter, 3 Fenster drin, 1,20 mal 1,40, Fassadenfarbe zweimal drauf, ohne Vorhergrundierung.',
+      raeume: [],
+      waende: [{
+        laenge: 12,
+        hoehe: 6,
+        name: 'Südseite',
+        arbeiten: ['fassadenanstrich'],
+        fenster: [{ anzahl: 3, breite: 1.2, hoehe: 1.4 }],
+      }],
+    })
+    return positionen
+  }
+
+  it('erzeugt eine Fassadenfläche-Position statt "keine Positionen erkannt"', () => {
+    const positionen = pipeline()
+    expect(positionen.length).toBeGreaterThan(0)
+    const fassade = find(positionen, 'fassadenfläche')
+    expect(fassade).toBeDefined()
+  })
+
+  it('rechnet Netto = Brutto (12×6=72,00 m²) minus 3 Fenster (1,20×1,40=5,04 m²) = 66,96 m²', () => {
+    const positionen = pipeline()
+    const fassade = find(positionen, 'fassadenfläche')
+    expect(fassade!.menge).toBeCloseTo(66.96, 1)
+  })
+
+  it('erkennt "zweimal" korrekt als 2 Anstriche', () => {
+    const positionen = pipeline()
+    const fassade = find(positionen, 'fassadenfläche')
+    expect(fassade!.beschreibung).toContain('2x')
+  })
+
+  it('erfindet KEINE Grundierung, wenn arbeiten[] sie nicht enthält (PM-003-Lehre: kein Raten aus Rohtext)', () => {
+    const positionen = pipeline()
+    const grundierung = find(positionen, 'grundierung')
+    expect(grundierung).toBeUndefined()
+  })
+})

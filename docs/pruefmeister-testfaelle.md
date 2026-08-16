@@ -27,8 +27,8 @@ Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | 🟡 Verschnitt-Bug behoben (Sockelleisten-Fix war schon Teil von PM-002) |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | 🟡 behoben (schwerster Fund bisher), Live-Test steht noch aus |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ⏳ noch nicht geprüft |
-| PM-008 | Fassade | ⏳ noch nicht geprüft |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ❌ Dachgeschoss-Zweig aktiviert nie — noch offen |
+| PM-008 | Fassade | 🟡 Root-cause behoben (Engine ignorierte waende[] komplett) — Live-Test steht noch aus |
 | PM-009 | Bodenleger-Komplettpaket | ⏳ noch nicht geprüft |
 | PM-010 | Sockelleisten-Doppel-Falle | ⏳ noch nicht geprüft |
 
@@ -365,7 +365,7 @@ fertigen Angebot jetzt sauber getrennt erscheinen (Küche/Speisekammer).
 ## PM-008 — Fassade (kein Raum, kein Boden, keine Decke)
 
 **Datum:** 2026-08-16
-**Status:** ❌ Blockierender Fehler — Tool erzeugt gar kein Angebot
+**Status:** 🟡 Root-cause behoben (2026-08-16) — Live-Test steht noch aus
 
 **Zum Einsprechen:**
 „Fassade an der Südseite, zwölf Meter lang, Giebelhöhe im Schnitt sechs Meter. Drei Fenster drin, eins zwanzig mal eins vierzig. Fassadenfarbe zweimal drauf, dazu vorher Grundierung."
@@ -395,6 +395,30 @@ fertigen Angebot jetzt sauber getrennt erscheinen (Küche/Speisekammer).
    - Tatsächlich: 1,20 × 1,40 m als Grundfläche verwendet (das sind exakt die genannten Fenstermaße). Mit 3 Fenstern à 1,20×1,40 = 5,04 m² Abzug von einer Bruttofläche von nur 1,68 m² (1,20×1,40) geht die Rechnung natürlich ins Negative — vermutlich deshalb „Keine Positionen erkannt": die Menge wird 0 oder negativ und komplett verworfen, statt dass eine Rückfrage kommt.
    - Abweichung: Das ist kein Zahlendreher, den man in 10 Sekunden korrigiert — der Nutzer bekommt gar kein Angebot, landet in einer Sackgasse und muss von vorn anfangen. Schlimmer als jeder bisherige Fund, weil das Tool hier komplett verweigert statt (auch falsch) zu liefern.
    - Für Head of IT: Vermutlich ein Extraktionsfehler bei der Fassaden-Erkennung (`laenge`/`hoehe` ohne `breite`, siehe `src/lib/mengen/gewerke/maler.ts` Zeile 126–136) — die GPT-Extraktion scheint die zuletzt im Satz genannten Zahlen (Fenstermaße) statt der Fassadenmaße ins `laenge`/`hoehe`-Feld zu packen. Zusätzlich: das Tool sollte bei einer Menge ≤ 0 nicht einfach schweigen, sondern eine Warnung oder Rückfrage auslösen statt „Keine Positionen erkannt" ohne Ausweg.
+
+**Fix-Update (Head of IT, 2026-08-16):** Root-Ursache ist eine andere als
+vermutet — kein Zahlendreher bei der Extraktion. Ich hab per Debug-Tabelle
+nachgesehen, was GPT beim Original-Transkript wirklich geliefert hat: die
+Fassadenmaße (12 × 6 m) waren korrekt, die 3 Fenster (1,20 × 1,40 m) auch —
+GPT legt Fassaden nur in einem eigenen Feld ab (`waende[]`), weil eine
+Fassade kein „Raum" ist (kein Boden, keine Decke). Zwei Stellen im Code haben
+das nicht richtig behandelt:
+1. Beim Einlesen der GPT-Antwort wurden Fenster und Arbeiten aus diesem Feld
+   verworfen (nur bei „echten" Räumen übernommen).
+2. Die Mengen-Engine hat dieses Feld danach komplett ignoriert — sie kannte
+   nur Räume. Ergebnis: bei jeder reinen Fassade (kein Innenraum dabei) kamen
+   buchstäblich null Positionen raus, daher „Keine Positionen erkannt" und die
+   Sackgasse.
+
+Fix: Fassaden werden jetzt wie ein Raum ohne Boden/Decke behandelt — Wandfläche
+minus Fensterfläche, mit Grundierung NUR wenn das ausdrücklich in der
+strukturierten Arbeiten-Liste steht (gleiche Regel wie bei PM-003 — nichts
+aus dem Rohtext raten). 4 neue Tests in `maler-engine.test.ts` (u.a. exakt
+66,96 m² bei 12×6 m minus 3 Fenster à 1,20×1,40 m), alle 662 Tests im Projekt
+laufen weiter grün. Noch offen: woher genau die von dir gesehene
+„1,20 × 1,40 m"-Anzeige als vermeintliche Grundfläche kam, ist eine separate,
+noch ungeklärte Frage (vermutlich eine andere Anzeige-Stelle) — für den
+Blocker selbst aber nicht relevant. Live-Test durch dich steht noch aus.
 
 ---
 

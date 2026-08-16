@@ -431,6 +431,62 @@ export function malerEngine(daten: any): MengenErgebnis {
     }
   }
 
+  // Fassade: GPT legt Fassaden-Maße ins waende[]-Feld ab, weil eine Fassade
+  // kein "Raum" ist (kein Boden, keine Decke). PM-008: das wurde bisher
+  // komplett ignoriert — die Engine kannte nur raeume[], das bei einer
+  // Fassade leer bleibt. Ergebnis: buchstäblich keine einzige Position,
+  // "Keine Positionen erkannt", Nutzer blieb ohne Angebot stecken.
+  // Behandlung wie ein Raum, nur ohne Boden/Decke: Wandfläche minus Fenster.
+  for (const wand of ((daten.waende ?? []) as any[])) {
+    const wLaenge = wand.laenge as number | null
+    const wHoehe = wand.hoehe as number | null
+    if (!wLaenge || !wHoehe) continue
+
+    const wArbeiten = ((wand.arbeiten ?? []) as string[]).join(' ').toLowerCase()
+    const wName = (wand.name as string | undefined)?.trim() || 'Fassade'
+
+    const wFensterRoh = ((wand.fenster ?? []) as any[]).filter(Boolean)
+    const wFensterFlaeche = wFensterRoh.reduce(
+      (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
+    )
+    const bruttoFlaeche = round2(wLaenge * wHoehe)
+    const nettoFlaeche = Math.max(0, round2(bruttoFlaeche - wFensterFlaeche))
+
+    const wAnstrichText = `${wArbeiten} ${transkriptAll}`
+    const wEinAnstrich = /(?:einmal|1\s*[x×]|ein(?:en)?\s+anstrich|eine\s+lage)/i.test(wAnstrichText)
+    const wZweiAnstriche = /(?:zweimal|2\s*[x×]|zwei\s+anstrich|zwei\s+lagen|2-fach)/i.test(wAnstrichText)
+    const wAnstriche = wEinAnstrich && !wZweiAnstriche ? 1 : 2
+    const wAnstrichAnnahmen = wEinAnstrich || wZweiAnstriche
+      ? []
+      : ['Zweifacher Anstrich als Standard angenommen — bitte prüfen']
+
+    positionen.push({
+      beschreibung: `Fassadenfläche streichen ${wAnstriche}x — ${wName}`,
+      menge: nettoFlaeche,
+      einheit: 'm²',
+      konfidenz: 'high',
+      berechnungsweg: wFensterRoh.length > 0
+        ? `${wLaenge}m × ${wHoehe}m − Fenster (${round2(wFensterFlaeche)} m²)`
+        : `${wLaenge}m × ${wHoehe}m`,
+      annahmen: wAnstrichAnnahmen,
+    })
+
+    // Grundierung NUR aus der strukturierten arbeiten[]-Liste, nicht aus dem
+    // Rohtext geraten — sonst würde ein ausdrücklicher Ausschluss ("ohne
+    // Grundierung") von einer Text-Heuristik übersteuert (PM-003-Lehre).
+    const wHatGrundierung = /grundier|voranstrich|tiefengrund/.test(wArbeiten)
+    if (wHatGrundierung) {
+      positionen.push({
+        beschreibung: `Grundierung — ${wName}`,
+        menge: nettoFlaeche,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${nettoFlaeche} m²)`,
+        annahmen: [],
+      })
+    }
+  }
+
   // Sonderarbeiten — top-level fields, unabhängig von Räumen
   for (const s of ((daten.sonder ?? []) as any[])) {
     const m2 = s.m2 ?? null
