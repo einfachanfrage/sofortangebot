@@ -1,10 +1,20 @@
 const DASH = /\s+[-–—]\s+/
 
 // Nur echte Raumbezeichnungen werden als Gruppe behandelt — alles andere (z.B. "1. Anstrich") geht in Allgemein
+//
+// PM-005: "Speisekammer" fehlte hier. Ergebnis: die Anzeige hielt den Namen
+// für keinen Raum, entfernte das Suffix und hängte die Position an die
+// einzige ANDERE erkannte Raumgruppe (Küche) — sah aus wie ein Duplikat,
+// obwohl die Berechnung längst zwei getrennte, korrekt benannte Positionen
+// hatte. Reine Anzeige-Lücke, keine Rechenlücke. Ergänzt um Speisekammer plus
+// die gängigsten weiteren Nebenräume, die aus demselben Grund betroffen wären
+// (keiner davon enthält eins der bisherigen Schlüsselwörter als Teilstring).
 const RAUM_KEYWORDS = [
   'zimmer', 'küche', 'bad', 'badezimmer', 'toilette', 'wc', 'flur', 'diele',
   'keller', 'dachboden', 'garage', 'treppenhaus', 'terrasse', 'balkon',
   'fassade', 'außen', 'büro', 'werkstatt', 'eingang', 'korridor',
+  'speisekammer', 'abstellraum', 'abstellkammer', 'vorratsraum',
+  'hauswirtschaftsraum', 'hobbyraum',
 ]
 
 function istEchterRaum(name: string): boolean {
@@ -33,6 +43,8 @@ const RAUM_EMOJIS: Record<string, string> = {
   arbeitszimmer: '💼',
   büro:          '💼',
   keller:        '📦',
+  speisekammer:  '📦',
+  abstellraum:   '📦',
   dachboden:     '🏚',
   garage:        '🚗',
   treppenhaus:   '📐',

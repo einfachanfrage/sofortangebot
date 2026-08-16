@@ -107,10 +107,17 @@ export function pruefeGrundierung(
 
   // Dachschrägen (im selben Raum wie Wände) grundieren separat — eigene Fläche.
   // Vor der Wand-Grundierung, damit die generische hat(...'grundier') Prüfung greift.
+  //
+  // PM-007: gleicher Fehler wie PM-003, nur beim Dachschrägen-Zweig nachgeholt.
+  // GPT trägt "grundieren" öfter reflexartig in arbeiten[] ein (fachlich
+  // nachvollziehbar bei älteren Schrägen), ohne dass der Nutzer das je gesagt
+  // hat. Ohne `explizitVollflaechig`-Gate hätte das eine ungefragte 136,80-€-
+  // Position auf die komplette Dachschrägenfläche erzeugt — exakt das Muster,
+  // das der Wand-Grundierung oben schon (PM-003) verboten wurde.
   const dgPos = ergaenzt.find(p => /dachschräge/i.test(p.beschreibung) && p.einheit === 'm²')
   const hatDgGrundierung = ergaenzt.some(p =>
     /dachschräge/i.test(p.beschreibung) && /grundier|voranstrich|tiefengrund/i.test(p.beschreibung))
-  if (dgPos && !hatDgGrundierung) {
+  if (dgPos && !hatDgGrundierung && explizitVollflaechig) {
     ergaenzt.push({
       beschreibung: 'Dachschrägen grundieren',
       menge: dgPos.menge,

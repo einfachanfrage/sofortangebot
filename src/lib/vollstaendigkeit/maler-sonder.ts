@@ -122,14 +122,21 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
   const schraegenPos = ergaenzt.find(p => (p.beschreibung ?? '').toLowerCase().includes('dachschrägen streich'))
   const dsm2 = schraegenPos?.menge ?? dachPos?.menge ?? null
 
+  // PM-007: "Dachschräge Grundierung" wurde HIER unconditional draufgesetzt,
+  // sobald irgendwo "Dachschräge"/"Kniestock" fiel — ganz ohne Prüfung, ob der
+  // Nutzer je "grundieren" gesagt hat. Gleicher Fehlerbau wie PM-003 (Wand-
+  // Grundierung) und wie oben bei pruefeGrundierung: nur bei echtem, im
+  // Rohtext genanntem Grundierungs-Wunsch, sonst nur Erinnerung.
+  const explizitGrundierung = /grundier\w*|grundierung|voranstrich|primer|tiefengrund/i.test(lower)
+
   if (dsm2 !== null && dsm2 > 0) {
     if (!hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² Dachschrägenfläche`, annahmen: [] })
-    if (!hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Dachschräge Grundierung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
+    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Dachschräge Grundierung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
     if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschräge streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
     if (!hat(ergaenzt, 'boden schütz', 'abdecken')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: ['Bodenfläche geschätzt'] })
   } else {
     if (!hat(ergaenzt, 'spachtel')) add(ergaenzt, fehlende, 'Dachschräge spachteln / Untergrundvorbereitung')
-    if (!hat(ergaenzt, 'grundier')) add(ergaenzt, fehlende, 'Dachschräge Grundierung')
+    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) add(ergaenzt, fehlende, 'Dachschräge Grundierung')
     if (!hat(ergaenzt, 'dachschräg streich', 'schräge streich')) add(ergaenzt, fehlende, 'Dachschräge streichen')
     if (!hat(ergaenzt, 'boden schütz')) add(ergaenzt, fehlende, 'Boden schützen / Abdeckfolie')
   }

@@ -291,6 +291,38 @@ const KORPUS: Fall[] = [
     ],
     verboten: ['estrich'],
   },
+  {
+    name: 'PM-007b — Dachschrägen-Grundierung nur bei explizitem Wunsch, nicht weil GPT "grundieren" vermutet',
+    gewerk: 'maler',
+    // PM-007, Live-Nachtest 2026-08-16: Kniestock/Dachschrägen liefen korrekt,
+    // ABER eine ungefragte "Dachschrägen grundieren"-Position für 136,80 €
+    // tauchte auf. "grundieren" fällt im Transkript kein einziges Mal — GPT
+    // hatte es nur reflexartig in arbeiten[] gepackt (gleiches Muster wie
+    // PM-003s Dübellöcher). pruefeGrundierung() hatte für den Dachschrägen-
+    // Zweig keinen Schutz gegen genau diesen Fall, obwohl die Wand-Grundierung
+    // direkt daneben ihn längst hatte (PM-003).
+    transkript:
+      'Dachzimmer, fünf mal dreieinhalb. Kniestock ist eins zwanzig hoch. Die Dachschrägen links und rechts ' +
+      'jeweils zwölf Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles ' +
+      'streichen, zweimal.',
+    raeume: [{
+      name: 'Dachzimmer',
+      laenge: 5,
+      breite: 3.5,
+      kniestockhoehe: 1.2,
+      dachschraege_je_seite_m2: 12,
+      dachfenster: [{ anzahl: 1 }],
+      // 'grundieren' bewusst mit drin — genau das hat GPT im echten Fall
+      // getan, obwohl der Nutzer es nie gesagt hat.
+      arbeiten: ['wände streichen', 'dachschrägen streichen', 'kniestock streichen', 'grundieren'],
+    }],
+    exakteMengen: [
+      { enthaelt: 'kniestockwände streichen', menge: 20.40 },
+      { enthaelt: 'dachschrägen streichen', menge: 23.08 },
+    ],
+    // Kernpunkt: keine erfundene Grundierung auf die volle Dachschrägenfläche (136,80 €)
+    verboten: ['grundier', 'voranstrich'],
+  },
 ]
 
 describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {

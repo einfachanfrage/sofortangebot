@@ -25,9 +25,9 @@ Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 | PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | ✅ beide Bugs live nachgetestet, bestätigt behoben |
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | 🟡 Grundierung live bestätigt behoben; Fenster-Rückfrage-Fix nicht sauber verifizierbar (siehe Nachtest); Grenzfall Boden bewusst nicht angefasst |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
-| PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | 🟡 nur teilweise behoben — Küche hat ihre Wände zurück, Speisekammer fehlt als eigene Raumgruppe weiterhin |
+| PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | 🟡 Anzeige-Bug gefunden und behoben (Speisekammer fehlte in einer Namensliste) — Live-Test steht aus |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Kniestock/Dachschrägen live bestätigt (großer Fortschritt), aber neue unverlangte Dachschräge-Grundierung (136,80 €) gefunden |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Grundierungs-Bug behoben (zweite Fundstelle zusätzlich zur ersten) — Live-Test steht aus |
 | PM-008 | Fassade | 🟡 Blocker weg, Fläche live bestätigt korrekt, aber vermutliche Doppelberechnung + unverlangte 334,80-€-Position gefunden |
 | PM-009 | Bodenleger-Komplettpaket | 🟡 Verschnitt-Fix bestätigt auch für Vinyl; Übergangsschiene fehlt komplett trotz „erkannt" |
 | PM-010 | Sockelleisten-Doppel-Falle | ❌ Schwerer Extraktionsfehler bei Maßen (350 statt 3,50 m) + bestätigte Lücke „Sockelleisten streichen" |
@@ -363,6 +363,23 @@ eigenen Gruppe. Sandys Vermutung („vielleicht wird die Speisekammer gar nicht
 als eigener Raum angelegt") trifft also nur zum Teil: bis zu den Rückfragen
 ist sie ein eigener Raum, danach nicht mehr sichtbar als einer.
 
+**Fix-Update (Head of IT, 2026-08-16):** Genau da gefunden, wo der Prüfmeister
+es eingegrenzt hatte — zwischen Berechnung und Anzeige, nicht mehr im Scope.
+Die Berechnung hatte die ganze Zeit zwei saubere, korrekt benannte Positionen
+("… — Küche" und "… — Speisekammer"). Die Anzeige-Funktion, die Positionen zu
+Raumgruppen zusammenfasst, prüft dafür jeden Namen gegen eine feste Liste
+bekannter Räume ("zimmer", "küche", "flur", …) — und "Speisekammer" stand
+nicht drauf. Für die Anzeige war "Speisekammer" damit kein Raum, das Suffix
+wurde entfernt, und die jetzt namenlose Position landete automatisch bei der
+einzigen ANDEREN erkannten Gruppe (Küche) — sah wie ein Duplikat aus, war
+aber ein Anzeige-Fehler, kein Rechenfehler.
+
+Fix: Speisekammer und ein paar naheliegende weitere Nebenräume (Abstellraum,
+Vorratsraum, Hauswirtschaftsraum, Hobbyraum) zur Liste ergänzt. Neuer Test in
+`angebot-gruppierung.test.ts` stellt genau deinen Fall nach (Küche + Speise-
+kammer, je eigene Deckenposition) und prüft, dass beide als eigene Gruppe
+erscheinen. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
+
 ---
 
 ## PM-006 — Kleines Fenster (Übermessungsfrage) + Altbau-Zuschlag
@@ -455,6 +472,26 @@ und Dachschrägen-Positionen zeigen jetzt auch „{n}x" für den Anstrich, wie
 alle anderen Positionen. 4 neue Tests (`maler-engine.test.ts`, exakt deine
 Soll-Zahlen: Kniestock 20,40 m², Dachschrägen 23,08 m²), alle 666 Tests im
 Projekt laufen weiter grün. Live-Test durch dich steht noch aus.
+
+**Fix-Update 2 (Head of IT, 2026-08-16) — die unverlangte 136,80-€-Grundierung:**
+Zwei getrennte Fundstellen, gleicher Fehlerbau, beide jetzt behoben.
+1. `pruefeGrundierung` (dieselbe Funktion wie beim PM-003-Fix) hatte für den
+   Dachschrägen-Fall keine Prüfung, ob wirklich "grundieren" gewünscht war —
+   sie hat die Fläche unconditional draufgesetzt, sobald überhaupt eine
+   Dachschrägen-Position da war. Jetzt gilt dasselbe Gate wie bei der
+   Wand-Grundierung: nur bei einem echten, im Transkript genannten
+   Grundierungs-Wunsch.
+2. Eine ZWEITE, ältere Funktion (`pruefeDachschraege`) hat unabhängig davon
+   noch eine eigene "Dachschräge Grundierung" ergänzt, ausgelöst allein durch
+   die WÖRTER "Dachschräge"/"Kniestock" irgendwo im Text — ganz ohne jeden
+   Grundierungs-Bezug. Sie stammt vermutlich noch aus der Zeit vor der
+   Dachgeschoss-Engine (als die Vollständigkeitsprüfung versucht hat, die
+   fehlende Berechnung selbst zu kompensieren) und wurde bei deren Einbau
+   nicht mit angepasst. Gleiches Gate jetzt auch hier ergänzt.
+Neuer Golden-Test PM-007b (`golden-korrekturen.test.ts`) stellt genau deinen
+Fall nach (Dachzimmer, GPT trägt "grundieren" impliziter Weise in arbeiten[]
+ein, Nutzer hat es nie gesagt) und prüft, dass keine Grundierungs-Position
+mehr entsteht. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
 
 ---
 

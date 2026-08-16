@@ -58,4 +58,27 @@ describe('gruppiereNachRaum — Allgemein bleibt sauber', () => {
     expect(wohnzimmer.items.map(i => i.title)).toContain('Heizkörper lackieren (2× Anstrich) — Wohnzimmer')
     expect(g.allgemein.map(i => i.title)).toEqual(['Kleinmaterial und Verbrauchsmaterial'])
   })
+
+  it('PM-005: Speisekammer bekommt eine eigene Raumgruppe, statt unter Küche zu landen', () => {
+    // Live-Nachtest 2026-08-16: Berechnung lieferte korrekt ZWEI Positionen
+    // ("Deckenfläche streichen 2× — Küche" und "— Speisekammer"), aber die
+    // Anzeige kannte "Speisekammer" nicht als echten Raum, entfernte das
+    // Suffix und hängte sie an die einzige erkannte Gruppe (Küche) — sah wie
+    // ein Duplikat aus.
+    const g = gruppiereNachRaum([
+      item('1', 'Wandflächen streichen 2x — Küche', 250),
+      item('2', 'Deckenfläche streichen 2x — Küche', 107.80),
+      item('3', 'Deckenfläche streichen 2x — Speisekammer', 107.80),
+    ])!
+    expect(g.hatMehrereRaeume).toBe(true)
+    const kueche = g.raeume.find(r => r.raumName === 'Küche')!
+    const speisekammer = g.raeume.find(r => r.raumName === 'Speisekammer')!
+    expect(kueche).toBeDefined()
+    expect(speisekammer).toBeDefined()
+    expect(kueche.items).toHaveLength(2)
+    expect(speisekammer.items).toHaveLength(1)
+    expect(speisekammer.items[0].title).toBe('Deckenfläche streichen 2x — Speisekammer')
+    // Kernpunkt: keine doppelte "Deckenfläche" in der Küche-Gruppe
+    expect(kueche.items.filter(i => i.title.includes('Deckenfläche'))).toHaveLength(1)
+  })
 })
