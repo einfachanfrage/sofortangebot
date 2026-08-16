@@ -304,7 +304,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       if (knH && laenge && breite && anWaenden) {
         const kniestockM2 = round2(2 * (laenge + breite) * knH)
         positionen.push({
-          beschreibung: `Kniestockwände streichen — ${name}`,
+          beschreibung: `Kniestockwände streichen ${anstriche}x — ${name}`,
           menge: kniestockM2, einheit: 'm²', konfidenz: 'high',
           berechnungsweg: `Umfang ${round2(2*(laenge+breite))} lfm × ${knH} m = ${kniestockM2} m²`,
           annahmen: [],
@@ -315,7 +315,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         const dgFensterFl = round2(dgFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 0.78) * (f.hoehe ?? 1.18), 0))
         const netto = round2(brutto - dgFensterFl)
         positionen.push({
-          beschreibung: `Dachschrägen streichen — ${name}`,
+          beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`,
           menge: Math.max(0, netto), einheit: 'm²', konfidenz: 'high',
           berechnungsweg: dgFensterFl > 0
             ? `Links ${dgLinksM2 ?? 0} m² + Rechts ${dgRechtsM2 ?? 0} m² = ${brutto} m² − Dachfenster ${dgFensterFl} m²`

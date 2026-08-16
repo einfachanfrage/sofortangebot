@@ -126,6 +126,14 @@ export interface ExtrahierteDaten {
     deckflaeche_direkt?: number | null
     wandflaeche_abzug_m2?: number | null
     dachschraege_flaeche_m2?: number | null
+    // PM-007: Dachgeschoss/Kniestock/Dachschräge — siehe Fix-Kommentar in
+    // extraktion-normalisierer.ts. Aktiviert `istDachgeschoss` in maler.ts.
+    kniestockhoehe?: number | null
+    dachschraege_links_m2?: number | null
+    dachschraege_rechts_m2?: number | null
+    dachschraege_je_seite_m2?: number | null
+    deckenspiegel_m2?: number | null
+    dachfenster?: Array<{ anzahl?: number; breite?: number; hoehe?: number; annahme?: boolean }>
     belag?: string
     verlegerichtung?: string
     ausgleich?: boolean

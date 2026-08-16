@@ -27,7 +27,7 @@ Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | 🟡 Verschnitt-Bug behoben (Sockelleisten-Fix war schon Teil von PM-002) |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | 🟡 behoben (schwerster Fund bisher), Live-Test steht noch aus |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ❌ Dachgeschoss-Zweig aktiviert nie — noch offen |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Root-cause behoben (gleicher Fehlerbau wie PM-008) — Live-Test steht noch aus |
 | PM-008 | Fassade | 🟡 Root-cause behoben (Engine ignorierte waende[] komplett) — Live-Test steht noch aus |
 | PM-009 | Bodenleger-Komplettpaket | ⏳ noch nicht geprüft |
 | PM-010 | Sockelleisten-Doppel-Falle | ⏳ noch nicht geprüft |
@@ -329,7 +329,7 @@ fertigen Angebot jetzt sauber getrennt erscheinen (Küche/Speisekammer).
 ## PM-007 — Dachgeschoss: Kniestock + Dachschrägen + Dachfenster
 
 **Datum:** 2026-08-16
-**Status:** ❌ Kompletter Fehlschlag — Dachgeschoss-Zweig wurde gar nicht aktiviert
+**Status:** 🟡 Root-cause behoben (2026-08-16) — Live-Test steht noch aus
 
 **Zum Einsprechen:**
 „Dachzimmer, fünf mal dreieinhalb. Kniestock ist eins zwanzig hoch. Die Dachschrägen links und rechts jeweils zwölf Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles streichen, zweimal."
@@ -359,6 +359,27 @@ fertigen Angebot jetzt sauber getrennt erscheinen (Küche/Speisekammer).
    - Erwartet: Kniestockwände (20,40 m²) und Dachschrägen (23,08 m² netto) als zwei eigene Positionen.
    - Tatsächlich: Beides fehlt vollständig. Stattdessen eine einzelne „Wandflächen streichen"-Position mit einer Zahl (12 m²), die sich nicht aus den angezeigten Maßen herleiten lässt — es steckt also vermutlich noch ein zweiter Fehler in der Berechnung selbst, on top von der fehlenden Zweig-Aktivierung.
    - Einordnung: Das ist der schwerste strukturelle Fund bisher, gleichauf mit PM-005. Die komplette Produktkategorie „Dachgeschoss/Kniestock/Dachschräge" scheint vom Aufnahme-Schritt an nicht zu funktionieren, nicht nur an einer einzelnen Berechnungsstelle. Bitte zuerst bei der Extraktion (wie wird `kniestockhoehe` aus der Sprache erkannt?) ansetzen, dann erst bei der Menge nachschauen.
+
+**Fix-Update (Head of IT, 2026-08-16):** Genau derselbe Fehlerbau wie bei
+PM-008, nur an einer anderen Stelle — deshalb diesmal schnell gefunden. Der
+GPT-Prompt weist GPT ausdrücklich an, bei Kniestock/Dachschräge/Deckenspiegel
+die Felder `kniestockhoehe`, `dachschraege_links_m2`, `dachschraege_rechts_m2`,
+`dachschraege_je_seite_m2`, `deckenspiegel_m2` und `dachfenster` zu setzen —
+GPT bekommt also den richtigen Auftrag. Aber beim Einlesen der GPT-Antwort
+wurden genau diese 6 Felder nie in die interne Raum-Struktur übernommen (die
+Liste der "erlaubten" Felder war unvollständig). Ergebnis: die Werte waren
+nach dem Einlesen immer leer, egal was GPT geliefert hat — deshalb hat
+`istDachgeschoss` nie angeschlagen und der Raum ist in die normale (falsche)
+Wandflächen-Rechnung gerutscht. Das erklärt auch die unerklärliche „12 m²":
+das war der Zufallswert aus der falsch gegriffenen normalen Rechnung, keine
+eigene zweite Fehlerquelle.
+
+Fix: alle 6 Felder werden jetzt beim Einlesen übernommen. Nebenbei die
+kosmetische Lücke behoben, die du selbst schon markiert hattest — Kniestock-
+und Dachschrägen-Positionen zeigen jetzt auch „{n}x" für den Anstrich, wie
+alle anderen Positionen. 4 neue Tests (`maler-engine.test.ts`, exakt deine
+Soll-Zahlen: Kniestock 20,40 m², Dachschrägen 23,08 m²), alle 666 Tests im
+Projekt laufen weiter grün. Live-Test durch dich steht noch aus.
 
 ---
 

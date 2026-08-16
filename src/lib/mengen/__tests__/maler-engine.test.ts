@@ -424,3 +424,54 @@ describe('Maler-Engine – PM-008 Fassade (waende[] statt raeume[])', () => {
     expect(grundierung).toBeUndefined()
   })
 })
+
+// ─── PM-007: Dachgeschoss (Kniestock + Dachschrägen) ───────────────────────
+// Vorher: kniestockhoehe/dachschraege_*_m2/deckenspiegel_m2/dachfenster gingen
+// beim Normalisieren der GPT-Antwort verloren (der GPT-Prompt verlangt sie
+// ausdrücklich, siehe ki-extrahieren/index.ts "DACHGESCHOSS / MANSARDE"), aber
+// extraktion-normalisierer.ts hat sie nie ins Raum-Objekt kopiert. Ohne diese
+// Felder aktiviert `istDachgeschoss` in maler.ts nie den Dachgeschoss-Zweig —
+// der Raum rutschte in die normale (falsche) Wandflächen-Rechnung.
+describe('Maler-Engine – PM-007 Dachgeschoss (Kniestock + Dachschrägen)', () => {
+  function pipeline() {
+    const { positionen } = malerEngine({
+      transkript: 'Dachzimmer, fünf mal dreieinhalb. Kniestock ist eins zwanzig hoch. Die Dachschrägen links und rechts jeweils zwölf Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles streichen, zweimal.',
+      raeume: [{
+        name: 'Dachzimmer',
+        laenge: 5,
+        breite: 3.5,
+        kniestockhoehe: 1.2,
+        dachschraege_je_seite_m2: 12,
+        dachfenster: [{ anzahl: 1 }],
+        arbeiten: ['wände streichen', 'dachschrägen streichen', 'kniestock streichen'],
+      }],
+    })
+    return positionen
+  }
+
+  it('aktiviert den Dachgeschoss-Zweig statt der normalen Wandflächen-Rechnung', () => {
+    const positionen = pipeline()
+    expect(find(positionen, 'wandflächen')).toBeUndefined()
+  })
+
+  it('Kniestockwände: Umfang 2×(5+3,5)=17 lfm × 1,20 m = 20,40 m²', () => {
+    const positionen = pipeline()
+    const kniestock = find(positionen, 'kniestockwände')
+    expect(kniestock).toBeDefined()
+    expect(kniestock!.menge).toBeCloseTo(20.4, 1)
+    expect(kniestock!.beschreibung).toContain('2x')
+  })
+
+  it('Dachschrägen: links 12 + rechts 12 = 24 m² minus 1 Dachfenster (0,78×1,18=0,92 m²) = 23,08 m²', () => {
+    const positionen = pipeline()
+    const schraegen = find(positionen, 'dachschrägen')
+    expect(schraegen).toBeDefined()
+    expect(schraegen!.menge).toBeCloseTo(23.08, 1)
+    expect(schraegen!.beschreibung).toContain('2x')
+  })
+
+  it('ohne Deckenspiegel-Angabe keine Deckenspiegel-Position', () => {
+    const positionen = pipeline()
+    expect(find(positionen, 'deckenspiegel')).toBeUndefined()
+  })
+})

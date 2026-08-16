@@ -44,6 +44,24 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
     deckflaeche_direkt: num((r as any).deckflaeche_direkt),
     wandflaeche_abzug_m2: num((r as any).wandflaeche_abzug_m2),
     umfang: num(r.umfang),
+    // PM-007: Dachgeschoss-Felder gingen hier verloren — GPT-Prompt weist GPT
+    // ausdrücklich an, sie bei Kniestock/Dachschräge/Deckenspiegel zu setzen
+    // (siehe ki-extrahieren/index.ts "DACHGESCHOSS / MANSARDE"), aber sie
+    // wurden beim Einlesen nie übernommen. Ohne kniestockhoehe/dgLinksM2/
+    // dgDeckenspiegel aktiviert `istDachgeschoss` in maler.ts nie den
+    // Dachgeschoss-Zweig — der Raum rutscht in die normale Wandflächen-Rechnung.
+    dachschraege_flaeche_m2: num((r as any).dachschraege_flaeche_m2),
+    kniestockhoehe: num((r as any).kniestockhoehe),
+    dachschraege_links_m2: num((r as any).dachschraege_links_m2),
+    dachschraege_rechts_m2: num((r as any).dachschraege_rechts_m2),
+    dachschraege_je_seite_m2: num((r as any).dachschraege_je_seite_m2),
+    deckenspiegel_m2: num((r as any).deckenspiegel_m2),
+    dachfenster: arr<Record<string, unknown>>((r as any).dachfenster).map(f => ({
+      anzahl: num(f.anzahl) ?? 1,
+      breite: num(f.breite) ?? undefined,
+      hoehe: num(f.hoehe) ?? undefined,
+      annahme: bool(f.annahme),
+    })),
     fenster: arr<Record<string, unknown>>(r.fenster).map(f => ({
       anzahl: num(f.anzahl) ?? 1,
       breite: num(f.breite) ?? undefined,
