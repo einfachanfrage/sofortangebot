@@ -90,6 +90,42 @@ const KORPUS: Fall[] = [
     verboten: ['decke', 'sockelleisten montieren'],
   },
   {
+    name: 'Testfall 1b — Realitäts-Fall: GPT verpasst den Ausschluss trotzdem (Decke in arbeiten[])',
+    gewerk: 'maler',
+    // PM-001, echter Nachtest im Tool (2026-08-16): die Aufnahme-Karte zeigte
+    // den Ausschluss korrekt (kein "Decke streichen"), aber das FERTIGE
+    // Angebot enthielt trotzdem "Deckenfläche streichen 2×" für 234,52 €.
+    // Erklärung: Karte und finaler Entwurf lösen zwei UNABHÄNGIGE GPT-
+    // Extraktionen auf demselben Transkript aus (kein rueckfragen-Fall, also
+    // kein Wiederverwenden von basis_extraktion) — bei einer davon hat GPT
+    // den weit hinten im Satz stehenden Ausschluss übersehen und 'decke
+    // streichen' doch in arbeiten[] gepackt. Dieser Testfall simuliert genau
+    // DIESEN (nicht den korrekten) Extraktions-Ausgang und prüft, ob die
+    // deterministische Scope-Prüfung — die NICHT auf GPT angewiesen ist,
+    // sondern die eigenen Worte des Nutzers im Rohtranskript liest — die
+    // fälschlich hinzugefügte Position trotzdem wieder rausfiltert.
+    transkript:
+      'Also, äh, Wohnzimmer, fünf zwanzig mal vier zehn, Deckenhöhe zwo fünfzig. Wände komplett streichen, ' +
+      'zweimal drüber. Ein Fenster — ne halt, zwei Fenster sind da drin, Standardgröße reicht. Eine Tür, normal ' +
+      'Maß. Die Decke lassen wir, ist erst letztes Jahr gemacht worden, die bitte NICHT mitrechnen. Sockelleisten ' +
+      'kleben wir noch ab, sind aus Holz, werden mitgestrichen.',
+    raeume: [{
+      name: 'Wohnzimmer',
+      laenge: 5.2,
+      breite: 4.1,
+      hoehe: 2.5,
+      // Bewusst MIT 'decke streichen' — simuliert GPTs gelegentlichen Fehler.
+      arbeiten: ['wände streichen', 'decke streichen'],
+      fenster: [{ anzahl: 2 }],
+      tueren: [{ anzahl: 1 }],
+      sockelleisten: true,
+    }],
+    exakteMengen: [
+      { enthaelt: 'wandflächen streichen', menge: 42.21 },
+    ],
+    verboten: ['decke'],
+  },
+  {
     name: 'PM-002a — Akzentwand + Restwände (Maler-Teil, Schlafzimmer)',
     gewerk: 'maler',
     // PM-002, 2026-08-16. Fund: Code nahm die LÄNGERE Wandseite (Math.max),

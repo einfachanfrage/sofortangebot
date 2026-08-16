@@ -116,6 +116,27 @@ const NUR_BODEN = nurMuster(FLAECHE.boden)
 const OHNE_DECKE = ohneMuster(FLAECHE.decke)
 const OHNE_WAENDE = ohneMuster(FLAECHE.waende)
 
+// Ausschluss-Verben: "lassen wir" (X bleibt unangetastet) und "nicht
+// mitrechnen/-kalkulieren/berücksichtigen" — im Ausschluss-Kontext eindeutig,
+// anders als bloßes "nicht" (siehe Kommentar bei ohneMuster, bewusst NICHT
+// erweitert). Bewusst als eigene, ENGE Phrasen-Erkennung: Fläche und Verb
+// müssen im selben Satz stehen ([^.!?]), aber die Wortzahl dazwischen darf
+// groß sein — echte Sprache schiebt oft einen ganzen Nebensatz dazwischen.
+//
+// Fund PM-001 (schwerster Fund bisher): "Die Decke lassen wir, ist erst
+// letztes Jahr gemacht worden, die bitte NICHT mitrechnen" wurde von KEINEM
+// bestehenden Muster erkannt — das Tool hat die Decke danach trotzdem
+// stillschweigend wieder eingerechnet. Genau der eine Fehler, den Sandy als
+// kritisch markiert hat: ein ausdrücklicher Ausschluss wird überschrieben.
+function ausschlussMuster(flaeche: string): RegExp {
+  return new RegExp(
+    `${flaeche}[^.!?]{0,90}(?:lassen wir\\b|nicht\\s+mit(?:ein)?(?:rechnen|kalkulieren)|nicht\\s+ber[üu]cksichtig\\w*)`,
+    'i',
+  )
+}
+const AUSSCHLUSS_DECKE = ausschlussMuster(FLAECHE.decke)
+const AUSSCHLUSS_WAENDE = ausschlussMuster(FLAECHE.waende)
+
 /**
  * Erkennt, ob nur bestimmte Flächen bearbeitet werden sollen.
  * Deckt "nur die Wände", "bloß Decke", "ohne Decke", "Wände, Decke nicht" ab.
@@ -131,6 +152,12 @@ export function erkenneScope(text: string): RaumScope {
   if (!nurWaende && !nurDecke && !nurBoden) {
     if (OHNE_DECKE.test(t) && FLAECHE.waende && new RegExp(FLAECHE.waende, 'i').test(t)) nurWaende = true
     else if (OHNE_WAENDE.test(t) && new RegExp(FLAECHE.decke, 'i').test(t)) nurDecke = true
+  }
+
+  // Ausschluss-Phrasen ("lassen wir" / "nicht mitrechnen") — PM-001.
+  if (!nurWaende && !nurDecke && !nurBoden) {
+    if (AUSSCHLUSS_DECKE.test(t)) nurWaende = true
+    else if (AUSSCHLUSS_WAENDE.test(t)) nurDecke = true
   }
 
   // Eine ausdrücklich benannte Fläche begrenzt den Auftrag ebenfalls. Der Nutzer
