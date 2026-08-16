@@ -67,14 +67,20 @@ function plausibleHoehe(v: number): number | null {
   return v >= 1.5 && v <= 12 ? v : null
 }
 
-/** Fenster-Anzahl ("2 Fenster", "3 Dachfenster"). 0 wenn keine Zahl. */
+// PM-001: nahm bisher das ERSTE "N Fenster"/"N Tür" im Text. Bei einer
+// Selbstkorrektur ("Ein Fenster — ne halt, zwei Fenster") steht die falsche
+// Zahl aber zuerst — die Karte zeigte "1", obwohl "2" gemeint und im Rest der
+// Berechnung (die auf GPTs Extraktion vertraut) korrekt verwendet wurde. Die
+// LETZTE genannte Zahl ist in gesprochener Sprache so gut wie immer die
+// gemeinte — Menschen korrigieren sich nach vorne, nicht nach hinten.
+/** Fenster-Anzahl ("2 Fenster", "3 Dachfenster"). Bei mehreren Nennungen zählt die letzte. 0 wenn keine Zahl. */
 export function zaehleFenster(text: string): number {
-  const m = (text ?? '').match(/(\d+)\s*\S*fenster/i)
-  return m ? parseInt(m[1]) : 0
+  const treffer = [...(text ?? '').matchAll(/(\d+)\s*\S*fenster/gi)]
+  return treffer.length ? parseInt(treffer[treffer.length - 1][1]) : 0
 }
 
-/** Tür-Anzahl ("1 Tür", "2 Stück Türen"). 0 wenn keine Zahl. */
+/** Tür-Anzahl ("1 Tür", "2 Stück Türen"). Bei mehreren Nennungen zählt die letzte. 0 wenn keine Zahl. */
 export function zaehleTueren(text: string): number {
-  const m = (text ?? '').match(/(\d+)\s*(?:stück\s*)?\S*tür(?:en)?/i)
-  return m ? parseInt(m[1]) : 0
+  const treffer = [...(text ?? '').matchAll(/(\d+)\s*(?:stück\s*)?\S*tür(?:en)?/gi)]
+  return treffer.length ? parseInt(treffer[treffer.length - 1][1]) : 0
 }

@@ -148,15 +148,13 @@ export async function POST(req: NextRequest) {
   const rueckfragen = extData.rueckfragen ?? []
 
   // Sichtbarkeit: roh (direkt von GPT) + final (nach allen Nachbearbeitungs-
-  // Modulen) speichern — unabhängig davon, ob noch Rückfragen offen sind.
-  // Nur bei einer Rückfragen-Runde (extraktion_roh === undefined, weil
-  // basis_extraktion genutzt wurde) den vorherigen Rohstand nicht überschreiben.
-  if (extData.extraktion_roh !== undefined) {
-    await supabase.from('quotes').update({
-      extraktion_roh: extData.extraktion_roh,
-      extraktion_final: extData.extraktion ?? null,
-    }).eq('id', angebot_id)
-  }
+  // Modulen) speichern. Bei Rückfragen ruft das Frontend diese Route für
+  // denselben Auftrag zweimal auf — die zweite Runde läuft mit basis_extraktion
+  // und hat KEINE neue GPT-Antwort (extraktion_roh dann null). Den echten
+  // Rohschnappschuss aus der ersten Runde darf das nicht überschreiben.
+  const rohUpdate: Record<string, unknown> = { extraktion_final: extData.extraktion ?? null }
+  if (extData.extraktion_roh != null) rohUpdate.extraktion_roh = extData.extraktion_roh
+  await supabase.from('quotes').update(rohUpdate).eq('id', angebot_id)
 
   // Phase 1 endet hier: Noch nichts speichern oder bepreisen, solange wichtige
   // Angaben fehlen. Nach den Antworten wird dieselbe Pipeline neu berechnet.
@@ -211,10 +209,17 @@ export async function POST(req: NextRequest) {
       const name = raum.name?.trim()
       if (!name) continue
       const key = findeTitelName(name)
-      const fensterAnzahl = raum.fenster?.length
+      // PM-003: vorher `raum.fenster?.length ? summe : undefined` — bei
+      // ausdrücklich "kein Fenster" liefert die Extraktion ein LEERES Array
+      // (fenster: []), .length ist dann 0, und 0 ist in JS "falsy". Das hat
+      // den echten, korrekten Wert "0 Fenster" wie "gar keine Angabe"
+      // behandelt → Anzeige zeigte ein rotes "!" statt der 0. Fix: prüfen, ob
+      // überhaupt ein Array da ist (auch ein leeres zählt als Antwort),
+      // nicht ob die Summe > 0 ist.
+      const fensterAnzahl = Array.isArray(raum.fenster)
         ? raum.fenster.reduce((s, f) => s + (f.anzahl ?? 1), 0)
         : undefined
-      const tuerenAnzahl = raum.tueren?.length
+      const tuerenAnzahl = Array.isArray(raum.tueren)
         ? raum.tueren.reduce((s, t) => s + (t.anzahl ?? 1), 0)
         : undefined
       // Fläche vs. L×B: hat der Nutzer eine Fläche genannt (Boden/Wand) statt Maße?

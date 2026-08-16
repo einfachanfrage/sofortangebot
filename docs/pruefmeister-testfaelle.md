@@ -21,9 +21,9 @@ Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 
 | ID | Thema | Status |
 |---|---|---|
-| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | 🟡 Root-cause gefunden und behoben — Live-Test steht noch aus (siehe Fix-Update; Klärungsbedarf zur Testfall-Historie bleibt offen, betrifft aber nicht den Fix) |
+| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | 🟡 Ausschluss-Fix + Fenster-Karte-Diskrepanz behoben — Live-Test steht noch aus (Klärungsbedarf zur Testfall-Historie bleibt offen, betrifft aber nicht den Fix) |
 | PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | ✅ beide Bugs live nachgetestet, bestätigt behoben |
-| PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | 🟡 Grundierung live bestätigt behoben; Fenster-Rückfrage-Fix nicht sauber verifizierbar (siehe Nachtest); Grenzfall Boden bewusst nicht angefasst |
+| PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | 🟡 Grundierung live bestätigt behoben; rotes „!" beim Fenster-Feld gefunden + behoben (Anzeige-Bug); Grenzfall Boden bewusst nicht angefasst |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | 🟡 Anzeige-Bug gefunden und behoben (Speisekammer fehlte in einer Namensliste) — Live-Test steht aus |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
@@ -231,6 +231,20 @@ streichen, zweimal, Decke auch mit" — einmal wegen Kommas in einer alten
 Text-Erkennung, einmal weil „Deckenhöhe drei zwanzig" fälschlich als „Decke
 wird gestrichen" gelesen wurde. Beides jetzt auch behoben (siehe Golden-Test
 PM-003 in `golden-korrekturen.test.ts`, prüft jetzt Wand UND Decke).
+
+**Fix-Update 2 (Head of IT, 2026-08-16) — rotes „!" beim Fenster-Feld:**
+Gefunden, im Bearbeiten-Screen des fertigen Entwurfs (`AngebotDetail.tsx`):
+das rote „!" heißt dort „Wert fehlt", wenn das Feld `undefined` ist. Der Code,
+der die Fenster-Anzahl für dieses Feld befüllt, hat bisher geprüft
+„gibt's Fenster-Einträge?" (`raum.fenster?.length`) statt „gibt's überhaupt
+eine Antwort?" — und 0 zählt in JavaScript als „nein". Bei „kein Fenster im
+Flur" liefert die Extraktion korrekt ein LEERES Fenster-Array, `.length` ist
+0, und das wurde wie „gar keine Angabe" behandelt statt wie die echte, richtige
+Antwort „0 Fenster". Deshalb das rote „!" statt einer ruhigen 0 — kein
+Rechenfehler, nur eine falsch interpretierte Null. Fix: geprüft wird jetzt,
+ob überhaupt ein Fenster-Array da ist (auch ein leeres zählt), nicht mehr, ob
+die Summe größer null ist. Gleicher Fix auch bei Türen ergänzt, da exakt
+derselbe Code direkt daneben stand. Live-Test durch dich steht aus.
 
 ---
 
@@ -552,6 +566,22 @@ laufen weiter grün. Noch offen: woher genau die von dir gesehene
 „1,20 × 1,40 m"-Anzeige als vermeintliche Grundfläche kam, ist eine separate,
 noch ungeklärte Frage (vermutlich eine andere Anzeige-Stelle) — für den
 Blocker selbst aber nicht relevant. Live-Test durch dich steht noch aus.
+
+**Fix-Update 2 (Head of IT, 2026-08-16) — Fenster „1" auf der Karte vs. „2" in
+der Rechnung:** Die Aufnahme-Karte zeigt die Fenster-Zahl NICHT aus GPTs
+Extraktion, sondern über eine eigene, ganz einfache Text-Suche (die erste
+Zahl vor dem Wort „Fenster" im Rohtext) — schnell und ohne KI-Aufruf, aber
+blind für Selbstkorrekturen. Bei „Ein Fenster — ne halt, zwei Fenster" nimmt
+sie die 1, weil die zuerst im Satz steht. Die eigentliche Berechnung
+vertraut zu Recht GPTs Extraktion (die die Korrektur verstanden hat), daher
+war die Rechnung schon vorher richtig — nur die Karte hat vorher falsch
+angezeigt.
+
+Fix: die Text-Suche nimmt jetzt die LETZTE genannte Zahl statt der ersten —
+bei einer Selbstkorrektur ist praktisch immer die letzte gemeint. 2 neue
+Tests (`extraktion-masse.test.ts`, exakt dein Fall). Kein Live-Test nötig,
+weil hier nur eine Anzeige ohne echten GPT-Aufruf betroffen ist — mit den
+Tests reicht die Absicherung.
 
 ---
 

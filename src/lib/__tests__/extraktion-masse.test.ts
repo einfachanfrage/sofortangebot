@@ -68,4 +68,11 @@ describe('zaehleFenster / zaehleTueren', () => {
     expect(zaehleFenster('mit Fenster')).toBe(0)
     expect(zaehleTueren('eine Tür')).toBe(0)
   })
+  // PM-001: Selbstkorrektur — die LETZTE genannte Zahl zählt, nicht die erste.
+  it('Selbstkorrektur "1 Fenster — ne halt, 2 Fenster" → 2 (nicht 1)', () => {
+    expect(zaehleFenster('1 Fenster — ne halt, 2 Fenster sind da drin, Standardgröße reicht.')).toBe(2)
+  })
+  it('Selbstkorrektur bei Türen ebenso: letzte Nennung gewinnt', () => {
+    expect(zaehleTueren('1 Tür, ach nein warte, 2 Türen sind es.')).toBe(2)
+  })
 })
