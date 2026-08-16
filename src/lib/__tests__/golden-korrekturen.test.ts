@@ -1,0 +1,173 @@
+import { describe, it, expect } from 'vitest'
+import { berechneMengen } from '../mengen/engine'
+import { pruefeUndErgaenzeVollstaendigkeit } from '../vollstaendigkeit/index'
+import { zaehleFenster, zaehleTueren } from '../extraktion-masse'
+import type { BerechnetePosition } from '../mengen/types'
+
+// ── GOLDEN TESTS: Ausschlüsse & Korrekturen ─────────────────────────────────
+//
+// Diese Fälle kommen von Sandy (händisch eingesprochen + im echten Tool
+// geprüft) und decken genau die Fehlerklasse ab, die dem Audit am meisten
+// Sorgen macht: der Nutzer sagt ausdrücklich "X NICHT" oder korrigiert sich
+// ("ein Fenster — ne, zwei"), und später überschreibt eine der Verarbeitungs-
+// Stufen das still.
+//
+// WICHTIG — was dieser Test NICHT prüft:
+// Er ruft NICHT die echte GPT-Extraktion auf (kostet Geld, ist nicht
+// deterministisch). Die `raeume`-Struktur unten ist das, was eine KORREKTE
+// Extraktion für den Transkript-Text liefern muss (per Hand geprüft, siehe
+// Kommentar je Fall). Der Test schützt also: WENN die Extraktion richtig
+// war, rechnet die Engine weiterhin richtig UND erfindet keine Position, die
+// der Nutzer ausdrücklich ausgeschlossen hat. Ob GPT selbst den Ausschluss
+// immer korrekt erkennt, ist eine separate Frage — dafür bräuchte es einen
+// echten (kostenpflichtigen) End-to-End-Test.
+
+type Raum = Record<string, unknown> & { name: string; arbeiten?: string[] }
+interface Fall {
+  name: string
+  gewerk: 'maler' | 'boden_parkett'
+  transkript: string
+  raeume: Raum[]
+  // Exakte Mengen-Prüfungen: Substring in beschreibung → erwartete Menge (±0.05)
+  exakteMengen: Array<{ enthaelt: string; menge: number }>
+  verboten: string[]
+  // Optional: Annahme-Text muss einen Substring enthalten (fängt PM-002-Klasse:
+  // Text sagt etwas anderes, als die Rechnung tatsächlich tut)
+  annahmenPruefung?: Array<{ enthaelt: string; textEnthaelt: string }>
+}
+
+function pipeline(fall: Fall): BerechnetePosition[] {
+  const eng = berechneMengen(fall.gewerk, { transkript: fall.transkript, raeume: fall.raeume, gewerk: fall.gewerk })
+  const signale = {
+    arbeitenTexte: fall.raeume.flatMap(r => r.arbeiten ?? []),
+    belagText: (fall.raeume.find(r => r.belag) as { belag?: string } | undefined)?.belag ?? null,
+    altbelagEntfernen: fall.raeume.some(r => (r as { altbelag_entfernen?: boolean }).altbelag_entfernen === true),
+  }
+  const meta = {
+    fensterAnzahl: zaehleFenster(fall.transkript) || undefined,
+    tuerenAnzahl: zaehleTueren(fall.transkript) || undefined,
+  }
+  const { positionen } = pruefeUndErgaenzeVollstaendigkeit(fall.gewerk, eng.positionen, fall.transkript, meta, signale)
+  return positionen
+}
+
+const KORPUS: Fall[] = [
+  {
+    name: 'Testfall 1 — Ausschluss + Selbstkorrektur (Wohnzimmer)',
+    gewerk: 'maler',
+    // Sandys Original-Einsprache, 2026-08-09. Im Tool geprüft (gpt-4o):
+    // Decke korrekt ausgeschlossen, Fenster korrekt bei 2 (Korrektur gefangen).
+    // raeume unten spiegelt genau dieses korrekte Extraktions-Ergebnis.
+    transkript:
+      'Also, äh, Wohnzimmer, fünf zwanzig mal vier zehn, Deckenhöhe zwo fünfzig. Wände komplett streichen, ' +
+      'zweimal drüber. Ein Fenster — ne halt, zwei Fenster sind da drin, Standardgröße reicht. Eine Tür, normal ' +
+      'Maß. Die Decke lassen wir, ist erst letztes Jahr gemacht worden, die bitte NICHT mitrechnen. Sockelleisten ' +
+      'kleben wir noch ab, sind aus Holz, werden mitgestrichen.',
+    raeume: [{
+      name: 'Wohnzimmer',
+      laenge: 5.2,
+      breite: 4.1,
+      hoehe: 2.5,
+      // Bewusst OHNE 'decke streichen' — das ist der ausdrückliche Ausschluss.
+      arbeiten: ['wände streichen'],
+      fenster: [{ anzahl: 2 }],
+      tueren: [{ anzahl: 1 }],
+      sockelleisten: true,
+    }],
+    exakteMengen: [
+      // Umfang 2×(5,20+4,10)=18,60 lfm; Wandfläche brutto 46,50 m²;
+      // Abzug 2 Fenster Standard (1,20×1,00=1,20 je Stk) + 1 Tür Standard
+      // (0,90×2,10=1,89): 46,50 − 2,40 − 1,89 = 42,21 m²
+      { enthaelt: 'wandflächen streichen', menge: 42.21 },
+      // Sockelleisten abkleben: Umfang 18,60 − 1 Türbreite (0,90) = 17,70 lfm
+      { enthaelt: 'sockelleisten abkleben', menge: 17.70 },
+    ],
+    // Größter Fehler laut Sandy: Decke taucht trotz ausdrücklichem
+    // Ausschluss doch auf. Zweitgrößter: Sockelleisten landet als
+    // "montieren" statt "abkleben" (falsches Gewerk-Verhalten).
+    verboten: ['decke', 'sockelleisten montieren'],
+  },
+  {
+    name: 'PM-002a — Akzentwand + Restwände (Maler-Teil, Schlafzimmer)',
+    gewerk: 'maler',
+    // PM-002, 2026-08-16. Fund: Code nahm die LÄNGERE Wandseite (Math.max),
+    // Kommentar + Annahme-Text sagten "kürzere" — Code war abgedriftet.
+    // Fix: zurück auf Math.min (siehe maler.ts), Text und Rechnung stimmen
+    // jetzt wieder überein.
+    transkript:
+      'Schlafzimmer, vier mal dreieinhalb, Höhe zwo sechzig. Drei Wände weiß streichen, zweimal. Die Wand ' +
+      'hinterm Bett kriegt Tapete, sozusagen Akzentwand, der Rest bleibt weiß. Ein Fenster, eine Tür, normal.',
+    raeume: [{
+      name: 'Schlafzimmer',
+      laenge: 4,
+      breite: 3.5,
+      hoehe: 2.6,
+      arbeiten: ['wände streichen'],
+      fenster: [{ anzahl: 1 }],
+      tueren: [{ anzahl: 1 }],
+    }],
+    exakteMengen: [
+      // Umfang 2×(4+3,5)=15,00 lfm; Wandbrutto 39,00 m²; Abzug Fenster
+      // 1,20 m² + Tür 1,89 m² = Wandnetto 35,91 m²
+      // Akzentwand = KÜRZERE Seite (3,50 m) × 2,60 m = 9,10 m²
+      { enthaelt: 'akzentwand', menge: 9.10 },
+      // Restwände: 35,91 − 9,10 = 26,81 m²
+      { enthaelt: 'restwände streichen', menge: 26.81 },
+    ],
+    verboten: [],
+    annahmenPruefung: [
+      { enthaelt: 'akzentwand', textEnthaelt: 'kürzere' },
+    ],
+  },
+  {
+    name: 'PM-002b — Sockelleisten mit Türabzug (Boden-Teil, Schlafzimmer)',
+    gewerk: 'boden_parkett',
+    // PM-002, 2026-08-16. Fund: boden.ts hat tueren[] nie aus dem Raum
+    // gelesen, Sockelleisten-Umfang lief immer ohne Türabzug — inkonsistent
+    // zu maler.ts, wo der Abzug an zwei Stellen schon lief. Fix: gemeinsame
+    // Funktion berechneSockelleistenLaenge() für beide Gewerke.
+    transkript: 'Schlafzimmer, Boden kriegt Klick-Vinyl, diagonal verlegt. Sockelleisten werden neu montiert.',
+    raeume: [{
+      name: 'Schlafzimmer',
+      laenge: 4,
+      breite: 3.5,
+      belag: 'klick-vinyl',
+      verlegerichtung: 'diagonal',
+      sockelleisten: true,
+      tueren: [{ anzahl: 1, breite: 0.9 }],
+      arbeiten: ['vinyl verlegen'],
+    }],
+    exakteMengen: [
+      // Vinyl diagonal: 4×3,5=14,00 m² + 15% Verschnitt = 16,10 m²
+      { enthaelt: 'vinyl verlegen', menge: 16.10 },
+      // Sockelleisten: Umfang 15,00 − 1 Türbreite (0,90) = 14,10 lfm
+      // (vorher, ohne Fix: 15,00 lfm — kompletter Türabzug hat gefehlt)
+      { enthaelt: 'sockelleisten montieren', menge: 14.10 },
+    ],
+    verboten: ['estrich'],
+  },
+]
+
+describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {
+  it.each(KORPUS)('$name', (fall) => {
+    const positionen = pipeline(fall)
+    const namen = positionen.map(p => p.beschreibung.toLowerCase())
+
+    for (const { enthaelt, menge } of fall.exakteMengen) {
+      const treffer = positionen.find(p => p.beschreibung.toLowerCase().includes(enthaelt))
+      expect(treffer, `Position fehlt: "${enthaelt}" — vorhanden: ${namen.join(' | ')}`).toBeDefined()
+      expect(treffer!.menge, `Falsche Menge bei "${enthaelt}"`).toBeCloseTo(menge, 1)
+    }
+
+    for (const v of fall.verboten) {
+      expect(namen.some(n => n.includes(v)), `VERBOTEN aber vorhanden: "${v}" — hat: ${namen.join(' | ')}`).toBe(false)
+    }
+
+    for (const { enthaelt, textEnthaelt } of fall.annahmenPruefung ?? []) {
+      const treffer = positionen.find(p => p.beschreibung.toLowerCase().includes(enthaelt))
+      expect(treffer, `Position fehlt: "${enthaelt}"`).toBeDefined()
+      const annahmenText = treffer!.annahmen.join(' ').toLowerCase()
+      expect(annahmenText.includes(textEnthaelt), `Annahme-Text bei "${enthaelt}" sollte "${textEnthaelt}" enthalten — hat: "${annahmenText}"`).toBe(true)
+    }
+  })
+})

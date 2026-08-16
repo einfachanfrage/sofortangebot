@@ -1,27 +1,37 @@
 import type { MengenErgebnis, BerechnetePosition } from '../types'
+import type { BelagTyp } from '../../boden-normalisierer'
+import { baueVerstaendnis } from '../../auftrags-verstaendnis'
+import { berechneSockelleistenLaenge } from './sockelleisten'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
 
-function belagLabel(belag: string | undefined): string {
+// Label und Verschnitt schalten auf den TYPISIERTEN Belag (BelagTyp aus dem
+// Vertrag/erkenneBelag) statt auf eine engine-eigene includes()-Kette — Schluss
+// mit der dreifachen Belag-Erkennung. Die Label-Strings bleiben bewusst
+// unverändert, weil sie als Katalog-Schlüssel dienen (preis-matcher,
+// material-mapping erwarten exakt "Fertigparkett"/"Vinyl-Boden").
+function belagLabel(belag: string | undefined, typ: BelagTyp): string {
   if (!belag) return 'Bodenbelag'
   const b = belag.toLowerCase()
-  if (b.includes('klick-vinyl') || (b.includes('klick') && /v[ie]nyl/.test(b))) return 'Klick-Vinyl'
-  if (/v[ie]nyl/.test(b) || b.includes('designboden') || b.includes('lvt')) return 'Vinyl-Boden'
-  if (b.includes('laminat')) return 'Laminat'
-  if (b.includes('parkett') || b.includes('fertigparkett')) return 'Fertigparkett'
-  if (b.includes('kork')) return 'Kork'
-  if (b.includes('linoleum')) return 'Linoleum'
-  if (b.includes('nadelvlies')) return 'Nadelvlies-Teppichboden'
-  if (b.includes('teppich')) return 'Teppichboden'
-  return belag
+  switch (typ) {
+    case 'vinyl':
+      return b.includes('klick-vinyl') || (b.includes('klick') && /v[ie]nyl/.test(b)) ? 'Klick-Vinyl' : 'Vinyl-Boden'
+    case 'laminat':  return 'Laminat'
+    case 'parkett':  return 'Fertigparkett'
+    case 'kork':     return 'Kork'
+    case 'linoleum': return 'Linoleum'
+    case 'teppich':  return b.includes('nadelvlies') ? 'Nadelvlies-Teppichboden' : 'Teppichboden'
+    default:         return belag // unklassifiziert: Rohwert als Katalog-Fallback
+  }
 }
 
-function standardVerschnitt(belag: string | undefined): number {
+function standardVerschnitt(belag: string | undefined, typ: BelagTyp): number {
   if (!belag) return 0.10
-  const b = belag.toLowerCase()
-  if (b.includes('laminat') || /v[ie]nyl/.test(b) || b.includes('linoleum') || b.includes('lvt') || b.includes('klick')) return 0.10
+  // Plattenware (Laminat/Vinyl/Linoleum) hat Schneidverschnitt; Parkett/Kork/
+  // Teppich in dieser Konvention nicht.
+  if (typ === 'laminat' || typ === 'vinyl' || typ === 'linoleum') return 0.10
   return 0
 }
 
@@ -36,6 +46,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
       flaeche: f,
       belag,
       verlegerichtung,
+      tueren = [],
       altbelag_entfernen = false,
       sockelleisten = false,
       ausgleich = false,
@@ -55,8 +66,12 @@ export function bodenEngine(daten: any): MengenErgebnis {
 
     if (!flaeche) continue
 
-    const verschnitt = verlegerichtung === 'diagonal' ? 0.15 : standardVerschnitt(belag)
-    const label = belagLabel(belag)
+    // Typisierter Auftrags-Vertrag: der Belag-Feldwert wird EINMAL zentral über
+    // erkenneBelag klassifiziert (belagText-Signal, Etappe 2). Kein Rohtext vom
+    // Transkript → kein Cross-Room-Bleed bei mehreren Räumen.
+    const belagTyp: BelagTyp = baueVerstaendnis(belag ?? '', { belagText: belag }).belag
+    const verschnitt = verlegerichtung === 'diagonal' ? 0.15 : standardVerschnitt(belag, belagTyp)
+    const label = belagLabel(belag, belagTyp)
     const pct = Math.round(verschnitt * 100)
     const verschnittSuffix = verschnitt > 0 ? ` inkl. ${pct}% Verschnitt` : ''
 
@@ -87,12 +102,19 @@ export function bodenEngine(daten: any): MengenErgebnis {
     }
 
     if (sockelleisten && umfang) {
+      // PM-002: Türen unterbrechen die Sockelleiste — genau wie beim Maler
+      // (maler.ts), nur bisher hier nie abgezogen worden. Gleiche Funktion
+      // wie dort, damit das nicht wieder auseinanderdriftet.
+      const effTueren = (tueren as Array<{ breite?: number }>).filter(Boolean)
+      const sockelM = effTueren.length > 0 ? berechneSockelleistenLaenge(umfang, effTueren) : umfang
       positionen.push({
         beschreibung: `Sockelleisten montieren — ${name}`,
-        menge: umfang,
+        menge: sockelM,
         einheit: 'lfdm',
         konfidenz: 'high',
-        berechnungsweg: `Umfang: ${umfang} lfm`,
+        berechnungsweg: effTueren.length > 0
+          ? `Umfang: ${umfang} lfm − Türbreiten: ${round2(umfang - sockelM)} m`
+          : `Umfang: ${umfang} lfm`,
         annahmen: [],
       })
     }

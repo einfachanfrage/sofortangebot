@@ -1,5 +1,7 @@
 import type { MengenErgebnis, BerechnetePosition } from '../types'
-import { hatArbeit, erkenneScope, erkenneRaumkontext, erkenneOeffnungen, istKomplett, hatAkzentwand } from '../../arbeiten-normalisierer'
+import { erkenneScope } from '../../arbeiten-normalisierer'
+import { baueVerstaendnis } from '../../auftrags-verstaendnis'
+import { berechneSockelleistenLaenge } from './sockelleisten'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -8,6 +10,12 @@ function round2(n: number): number {
 export function malerEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
   const warnungen: string[] = []
+
+  // Typisierter Auftrags-Vertrag auf Transkript-Ebene: Öffnungs-Negation
+  // ("kein Fenster") und Raumkontext (Keller/Garage/Schräge) sowie eine
+  // Akzentwand-Ansage gelten transkriptweit — deshalb EINMAL außerhalb der
+  // Raum-Schleife aus dem Gesamt-Transkript, nicht je Raum neu.
+  const vGesamt = baueVerstaendnis(daten.transkript ?? '')
 
   for (const raum of (daten.raeume ?? [])) {
     const {
@@ -39,6 +47,11 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
+    // Raum-Ebene des typisierten Vertrags: NUR aus den (KI-verstandenen)
+    // Raum-Arbeiten gebaut — so bluten Signale eines Raums nicht in andere
+    // Räume. `arbeitenTexte` aktiviert den KI-Signalpfad (Etappe 2) des Vertrags:
+    // saubere KI-Arbeiten statt reiner Rohtext-Regex.
+    const vRaum = baueVerstaendnis(arbeitenStr, { arbeitenTexte: arbeiten })
     // Bei mehreren Räumen darf die Angabe "zweimal" eines Raums nicht auf
     // alle anderen Räume überspringen. Der Gesamttext ist nur im Ein-Raum-Fall
     // ein sicherer zusätzlicher Kontext.
@@ -49,9 +62,16 @@ export function malerEngine(daten: any): MengenErgebnis {
     const anstrichAnnahmen = explizitEinAnstrich || explizitZweiAnstriche
       ? []
       : ['Zweifacher Anstrich als Standard angenommen — bitte prüfen']
-    // Sprach-Erkennung zentral (arbeiten-normalisierer) — Flexionen, Umgangssprache
-    const kontext = erkenneRaumkontext(`${transkriptLower} ${arbeitenStr}`)
-    const oeffnungen = erkenneOeffnungen(transkriptLower)
+    // Kontext (Keller/Garage/Schräge/Fassade) = Union aus Transkript-Ebene und
+    // Raum-Arbeiten. Öffnungs-Negation gilt transkriptweit. Beides jetzt aus dem
+    // typisierten Vertrag statt aus direkten Normalisierer-/Rohtext-Aufrufen.
+    const kontext = {
+      istKeller: vGesamt.kontext.istKeller || vRaum.kontext.istKeller,
+      istGarage: vGesamt.kontext.istGarage || vRaum.kontext.istGarage,
+      istDachschraege: vGesamt.kontext.istDachschraege || vRaum.kontext.istDachschraege,
+      istFassade: vGesamt.kontext.istFassade || vRaum.kontext.istFassade,
+    }
+    const oeffnungen = vGesamt.oeffnungen
     // Früh deklarieren — wird in flaeche_angegeben-Branch benötigt.
     // Dachschräge kann ALLEIN vorkommen (ganzer Raum ist Schräge → Fläche = Wandfläche)
     // ODER neben normalen Wänden im selben Raum (Treppenhaus: Wände 68 m² + Schrägen 22 m²).
@@ -77,7 +97,7 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     // Garagen/Keller: kein Standard-Fenster — Tor/Tür wird separat behandelt.
     // Auch den (ggf. abgeleiteten) Raumnamen prüfen, nicht nur das Transkript.
-    const nameKontext = erkenneRaumkontext(name.toLowerCase())
+    const nameKontext = baueVerstaendnis(name).kontext
     const istGarageRaum = kontext.istGarage || nameKontext.istGarage
     const istKellerRaum = kontext.istKeller || nameKontext.istKeller
     // "kein Fenster" / "ohne Fenster" → Standard-Fenster-Fallback unterdrücken
@@ -165,10 +185,10 @@ export function malerEngine(daten: any): MengenErgebnis {
 
     // Keine Maße: Engine überspringt den Raum (Rückfrage kommt aus rueckfragen-generator)
     // Leeres arbeiten[] = implizit "komplett streichen" (GPT hat Feld weggelassen)
-    const leerOderKomplett = arbeiten.length === 0 || istKomplett(arbeitenStr)
+    const leerOderKomplett = arbeiten.length === 0 || vRaum.istKomplett
     // Normalisierer deckt Flexionen ab ("gestrichen", "anmalen" …) — nur auf arbeiten[],
     // NICHT aufs Transkript (das gilt raumübergreifend und würde Signale in andere Räume streuen)
-    const hatStreichen = leerOderKomplett || hatArbeit(arbeitenStr, 'streichen')
+    const hatStreichen = leerOderKomplett || vRaum.hatArbeit('streichen')
     // Scope ("nur die Wände / Decke / Boden") zentral im Normalisierer — deckt
     // Flexionen, Einschränkungs-Synonyme und "ohne Decke" ab (siehe arbeiten-normalisierer).
     // Sowohl arbeiten[] als auch Transkript prüfen (GPT schreibt "nur X" selten in arbeiten[]).
@@ -181,13 +201,13 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Globale Formulierungen wie „im Arbeitszimmer nur die Decke“ dürfen bei
     // mehreren Räumen nicht auf Wohnzimmer/Flur übertragen werden.
     const scopeTxt = (daten.raeume?.length ?? 0) === 1
-      ? erkenneScope(transkriptLower)
+      ? vGesamt.scope
       : { nurWaende: false, nurDecke: false, nurBoden: false }
     const nurWaende = scopeArb.nurWaende || scopeTxt.nurWaende
     const nurDecke = scopeArb.nurDecke || scopeTxt.nurDecke
     const nurBoden = scopeArb.nurBoden || scopeTxt.nurBoden
     // Akzentwand: "nur eine Wand tapezieren, Rest streichen" — eine Wand = min(laenge,breite) × hoehe
-    const hatAkzentwandRaum = hatAkzentwand(transkriptLower)
+    const hatAkzentwandRaum = vGesamt.hatAkzentwand
       && /tapez|vliestapete|tapete/i.test(transkriptLower)
       && /rest|übrige|weiß|weiss/i.test(transkriptLower)
     // Boden streichen (Keller/Garage): NUR wenn explizit "boden streichen"/"boden anstrich" — nicht bei "boden abdecken"/"boden schützen"
@@ -314,11 +334,11 @@ export function malerEngine(daten: any): MengenErgebnis {
       // Sockelleisten am Kniestockumfang
       if (knH && laenge && breite && hatSockel) {
         const knUmfang = round2(2 * (laenge + breite))
-        const tuerBr = effTueren.reduce((s: number, t: any) => s + (t.breite ?? 0.9), 0)
+        const sockelKnM = berechneSockelleistenLaenge(knUmfang, effTueren)
         positionen.push({
           beschreibung: `Sockelleisten abkleben — ${name}`,
-          menge: round2(knUmfang - tuerBr), einheit: 'lfdm', konfidenz: 'high',
-          berechnungsweg: `Kniestockumfang ${knUmfang} lfm − Türen ${round2(tuerBr)} m`, annahmen: [],
+          menge: sockelKnM, einheit: 'lfdm', konfidenz: 'high',
+          berechnungsweg: `Kniestockumfang ${knUmfang} lfm − Türen ${round2(knUmfang - sockelKnM)} m`, annahmen: [],
         })
       }
     } else {
@@ -327,10 +347,14 @@ export function malerEngine(daten: any): MengenErgebnis {
         const fensterFlaeche2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0)
         const tuerFlaeche2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0)
         if (hatAkzentwandRaum && laenge && breite && hoehe) {
-          const akzentWandBreite = Math.max(laenge, breite)
+          // PM-002: war Math.max, widersprach dem Kommentar oben ("min") UND
+          // dem Annahme-Text ("Kürzere Raumseite") — Code war vom
+          // dokumentierten Verhalten abgedriftet. Zurück auf min, damit
+          // Kommentar, Text und Rechnung wieder dasselbe sagen.
+          const akzentWandBreite = Math.min(laenge, breite)
           const akzentWandFlaeche = round2(akzentWandBreite * hoehe)
           const restwandFlaeche = round2(wandflaecheNettoM2 - akzentWandFlaeche)
-          positionen.push({ beschreibung: `Akzentwand Vliestapete — ${name}`, menge: akzentWandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`, annahmen: ['Kürzere Raumseite als Akzentwand angenommen'] })
+          positionen.push({ beschreibung: `Akzentwand Vliestapete — ${name}`, menge: akzentWandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`, annahmen: ['Kürzere Raumseite als Akzentwand angenommen — bitte prüfen, welche Wand gemeint war'] })
           if (restwandFlaeche > 0) positionen.push({ beschreibung: `Restwände streichen — ${name}`, menge: restwandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`, annahmen: annahmenFenster })
         } else {
           const wandLabel = istDachschraege ? `Dachschräge streichen ${anstriche}x — ${name}` : `Wandflächen streichen ${anstriche}x — ${name}`
@@ -370,9 +394,8 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })
       }
       if (hatSockel && umfangM !== null) {
-        const tuerBreiten = effTueren.reduce((sum: number, t: any) => sum + (t.breite ?? 0.9), 0)
-        const sockelM = round2(umfangM - tuerBreiten)
-        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(tuerBreiten)} m)`, annahmen: [] })
+        const sockelM = berechneSockelleistenLaenge(umfangM, effTueren)
+        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(umfangM - sockelM)} m)`, annahmen: [] })
       }
     }
   }
