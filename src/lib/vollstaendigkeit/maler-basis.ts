@@ -1,8 +1,24 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, filtereArray } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
+import type { RaumScope } from '../arbeiten-normalisierer'
 
-// "nur X"-Filter: entfernt widersprechende Positionen aus der Engine-Liste
+// Raumname aus der Positions-Beschreibung lesen ("Wandflächen streichen —
+// Küche" → "küche"). Gleiches Muster wie raumSuffix() in mengen/mehrgewerk.ts;
+// bewusst hier lokal gehalten statt importiert, um keinen Zirkel-Import
+// zwischen vollstaendigkeit/ und mengen/ zu erzeugen.
+function raumAusBeschreibung(beschreibung: string): string | null {
+  const match = beschreibung.match(/\s[—–]\s*(.+)$/)
+  return match?.[1]?.trim().toLocaleLowerCase('de-DE') || null
+}
+
+// "nur X"-Filter: entfernt widersprechende Positionen aus der Engine-Liste.
+//
+// Fund PM-005: früher lief das über EINEN globalen Scope (aus dem
+// Gesamt-Transkript aller Räume). Sagte Raum B "nur Decke", flog auch Raum A's
+// Wand raus — obwohl Raum A nie etwas eingeschränkt hat. Jetzt: pro Position
+// erst der eigene Raum-Scope (aus dessen arbeiten[]-Liste), der globale Scope
+// bleibt nur Fallback für Positionen ohne erkennbaren Raum.
 export function wendeNurXFilterAn(ergaenzt: BerechnetePosition[], v: AuftragsVerstaendnis): {
   nurDecke: boolean
   nurWaende: boolean
@@ -10,26 +26,21 @@ export function wendeNurXFilterAn(ergaenzt: BerechnetePosition[], v: AuftragsVer
 } {
   // Scope aus dem typisierten Vertrag — deckt Flexionen + Synonyme + "ohne Decke" ab
   const { nurWaende, nurDecke, nurBoden } = v.scope
+  const globalScope: RaumScope = { nurWaende, nurDecke, nurBoden }
 
-  if (nurDecke) {
-    filtereArray(ergaenzt, p => {
-      const d = p.beschreibung.toLowerCase()
-      return !d.includes('sockel') && !d.includes('wand')
-    })
-  }
-  if (nurWaende) {
-    filtereArray(ergaenzt, p => {
-      const d = p.beschreibung.toLowerCase()
+  filtereArray(ergaenzt, p => {
+    const raum = raumAusBeschreibung(p.beschreibung)
+    const scope = (raum && v.scopeProRaum.get(raum)) || globalScope
+    const d = p.beschreibung.toLowerCase()
+
+    if (scope.nurDecke) return !d.includes('sockel') && !d.includes('wand')
+    if (scope.nurWaende) {
       const istBodenSchutz = d.includes('boden schütz') || d.includes('boden abkl') || d.includes('abdeck')
       return !d.includes('decke') && (!d.includes('boden') || istBodenSchutz)
-    })
-  }
-  if (nurBoden) {
-    filtereArray(ergaenzt, p => {
-      const d = p.beschreibung.toLowerCase()
-      return !d.includes('wand') && !d.includes('decke') && !d.includes('sockel')
-    })
-  }
+    }
+    if (scope.nurBoden) return !d.includes('wand') && !d.includes('decke') && !d.includes('sockel')
+    return true
+  })
 
   return { nurDecke, nurWaende, nurBoden }
 }

@@ -247,6 +247,12 @@ export async function POST(req: NextRequest) {
       ],
       belagText: (extraktion.raeume ?? []).find(r => r.belag)?.belag ?? null,
       altbelagEntfernen: (extraktion.raeume ?? []).some(r => r.altbelag_entfernen),
+      // PM-005: Räume mit Namen + eigener arbeiten[]-Liste durchreichen, damit
+      // "nur Decke"/"nur Wände" pro Raum geprüft wird statt global.
+      raeume: [
+        ...(extraktion.raeume ?? []).map(r => ({ name: r.name, arbeiten: r.arbeiten })),
+        ...(extraktion.bereiche ?? []).map(b => ({ name: b.name, arbeiten: b.arbeiten })),
+      ],
     }
 
     // Mengen + Vollständigkeit über ALLE beteiligten Gewerke (Maler UND Boden im

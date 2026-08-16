@@ -32,6 +32,14 @@ export interface AuftragsVerstaendnis {
   altbelagEntfernen: boolean
   /** Ungekürzte, strukturierte Arbeitsbezeichnungen aus der Extraktion. */
   arbeitenTexte: string[]
+  /**
+   * Scope PRO RAUM (Name → RaumScope), aus der strukturierten arbeiten[]-Liste
+   * jedes Raums — nicht aus dem Rohtext. Fund PM-005: "nur Decke" in einem Raum
+   * (z.B. Speisekammer) darf niemals den Scope eines ANDEREN Raums (z.B. Küche)
+   * beeinflussen. `scope` oben bleibt der GLOBALE Fallback für Fälle ohne
+   * Raum-Struktur (z.B. Ein-Raum-Aufträge, alte Tests ohne signale.raeume).
+   */
+  scopeProRaum: Map<string, RaumScope>
   /** Bequemer Einzel-Check. */
   hatArbeit(kategorie: ArbeitsKategorie): boolean
 }
@@ -49,6 +57,12 @@ export interface ExtraktionSignale {
   belagText?: string | null
   /** KI-Boolean: Altbelag soll entfernt werden. */
   altbelagEntfernen?: boolean
+  /**
+   * Räume mit Namen + eigener arbeiten[]-Liste — Grundlage für scopeProRaum.
+   * Ohne dieses Feld: Scope-Prüfung bleibt beim alten globalen Verhalten
+   * (Rohtext, ein Wert für den ganzen Auftrag).
+   */
+  raeume?: Array<{ name?: string; arbeiten?: string[] }>
 }
 
 /**
@@ -77,9 +91,19 @@ export function baueVerstaendnis(text: string, signale?: ExtraktionSignale): Auf
     if (signale.altbelagEntfernen) altbelag = true
   }
 
+  // Scope PRO RAUM: aus der eigenen arbeiten[]-Liste jedes Raums (Struktur,
+  // kein Rohtext-Bleed zwischen Räumen). Fund PM-005.
+  const scopeProRaum = new Map<string, RaumScope>()
+  for (const raum of signale?.raeume ?? []) {
+    const key = raum?.name?.trim().toLocaleLowerCase('de-DE')
+    if (!key) continue
+    scopeProRaum.set(key, erkenneScope((raum.arbeiten ?? []).join('. ')))
+  }
+
   return {
     arbeiten,
     scope: erkenneScope(t),
+    scopeProRaum,
     oeffnungen: erkenneOeffnungen(t),
     kontext: erkenneRaumkontext(t),
     istKomplett: istKomplettFn(t),

@@ -42,6 +42,8 @@ function pipeline(fall: Fall): BerechnetePosition[] {
     arbeitenTexte: fall.raeume.flatMap(r => r.arbeiten ?? []),
     belagText: (fall.raeume.find(r => r.belag) as { belag?: string } | undefined)?.belag ?? null,
     altbelagEntfernen: fall.raeume.some(r => (r as { altbelag_entfernen?: boolean }).altbelag_entfernen === true),
+    // PM-005: Räume mit Namen weiterreichen, damit "nur X" pro Raum geprüft wird.
+    raeume: fall.raeume.map(r => ({ name: r.name, arbeiten: r.arbeiten })),
   }
   const meta = {
     fensterAnzahl: zaehleFenster(fall.transkript) || undefined,
@@ -145,6 +147,51 @@ const KORPUS: Fall[] = [
       { enthaelt: 'sockelleisten montieren', menge: 14.10 },
     ],
     verboten: ['estrich'],
+  },
+  {
+    name: 'PM-005 — Zwei Räume, "nur Decke" in einem Raum darf den anderen nicht ausbremsen',
+    gewerk: 'maler',
+    // PM-005, 2026-08-16, Sandys "schwerster Fund bisher". Fund: "nur Decke"
+    // wurde GLOBAL über den ganzen Mehrraum-Text erkannt statt pro Raum — die
+    // Speisekammer-Einschränkung hat der Küche ihre Wandflächen weggefiltert.
+    // Fix: scopeProRaum in auftrags-verstaendnis.ts (Scope aus der arbeiten[]-
+    // Liste JEDES Raums, nicht aus dem Rohtext) + raum-scoped Filter in
+    // wendeNurXFilterAn (maler-basis.ts).
+    transkript:
+      'Zwei Räume: Küche, dreieinhalb mal zwo achtzig, Höhe zwo fünfzig, Wände und Decke komplett streichen, ' +
+      'zweimal. Daneben die Speisekammer, auch dreieinhalb mal zwo achtzig, Höhe genauso — aber da nur die ' +
+      'Decke streichen, zweimal, die Wände lassen wir in Ruhe.',
+    raeume: [
+      {
+        name: 'Küche',
+        laenge: 3.5,
+        breite: 2.8,
+        hoehe: 2.5,
+        arbeiten: ['wände streichen', 'decke streichen'],
+        fenster: [{ anzahl: 1 }],
+        tueren: [{ anzahl: 1 }],
+      },
+      {
+        name: 'Speisekammer',
+        laenge: 3.5,
+        breite: 2.8,
+        hoehe: 2.5,
+        // Bewusst OHNE 'wände streichen' — ausdrücklicher Ausschluss
+        // ("die Wände lassen wir in Ruhe").
+        arbeiten: ['decke streichen'],
+      },
+    ],
+    exakteMengen: [
+      // Umfang 2×(3,50+2,80)=12,60 lfm; Wandbrutto 31,50 m²; Abzug 1 Fenster
+      // Standard (1,20) + 1 Tür Standard (1,89) = 28,41 m²
+      { enthaelt: 'wandflächen streichen 2x — küche', menge: 28.41 },
+      { enthaelt: 'deckenfläche streichen 2x — küche', menge: 9.80 },
+      { enthaelt: 'deckenfläche streichen 2x — speisekammer', menge: 9.80 },
+    ],
+    // Kernpunkt des Fixes: die Speisekammer darf trotz "nur Decke" niemals
+    // eine eigene Wandposition bekommen — UND das darf die Küches Wand von
+    // oben (siehe exakteMengen) nicht mit wegreißen.
+    verboten: ['wandflächen streichen 2x — speisekammer'],
   },
 ]
 
