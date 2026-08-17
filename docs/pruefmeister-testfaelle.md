@@ -17,20 +17,25 @@ verweisen, dann ist für alle Beteiligten klar, welcher Fall gemeint ist.
 **Status-Zeichen:** ✅ behoben & getestet · 🟡 behoben, noch nicht live von
 Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-17)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-16, Prüfmeister)
+
+**Hinweis zur Pflege dieser Tabelle:** Sie ist jetzt zweimal durch gleichzeitige Bearbeitung auf einen
+älteren Stand zurückgefallen (einmal ein ganzer Detail-Eintrag weg, einmal die ganze Tabelle). Kein
+Vorwurf an irgendwen — bei einer Datei mit mehreren Autoren passiert das. Bitte beim Bearbeiten kurz
+vorher nochmal lesen, was gerade drinsteht, dann fällt sowas seltener auf.
 
 | ID | Thema | Status |
 |---|---|---|
-| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | 🟡 Ausschluss-Fix + Fenster-Karte-Diskrepanz behoben — Live-Test steht noch aus (Klärungsbedarf zur Testfall-Historie bleibt offen, betrifft aber nicht den Fix) |
+| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | 🟡 Root-cause gefunden und behoben (GPT nicht deterministisch + Sicherheitsprüfung kannte „X lassen wir" nicht) — Fix passt zum beobachteten Muster (2 von 3 Durchläufen korrekt), gezielter Nachtest nach Deploy steht aus |
 | PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | ✅ beide Bugs live nachgetestet, bestätigt behoben |
-| PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | 🟡 Grundierung live bestätigt behoben; rotes „!" beim Fenster-Feld gefunden + behoben (Anzeige-Bug); Grenzfall Boden bewusst nicht angefasst |
+| PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
-| PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | 🟡 Anzeige-Bug gefunden und behoben (Speisekammer fehlte in einer Namensliste) — Live-Test steht aus |
+| PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Grundierungs-Bug behoben (zweite Fundstelle zusätzlich zur ersten) — Live-Test steht aus |
-| PM-008 | Fassade | 🟡 Blocker weg, Fläche live bestätigt korrekt, Doppelberechnung + unverlangte 334,80-€-Position jetzt auch behoben — Live-Test steht aus |
-| PM-009 | Bodenleger-Komplettpaket | 🟡 Verschnitt-Fix bestätigt auch für Vinyl; Übergangsschiene fehlt komplett trotz „erkannt" |
-| PM-010 | Sockelleisten-Doppel-Falle | ❌ Schwerer Extraktionsfehler bei Maßen (350 statt 3,50 m) + bestätigte Lücke „Sockelleisten streichen" |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Kniestock + Grundierungs-Fix live bestätigt; unverlangte „Dachschräge spachteln" bleibt offen; unnötige Rückfragen trotz bereits genannter Werte neu gefunden |
+| PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin 5 rote Fehler trotz korrekter Rechnung (Designer-Thema); „Gondierung"-Tippfehler neu gefunden |
+| PM-009 | Bodenleger-Komplettpaket | 🟡 Verschnitt-Fix bestätigt auch für Vinyl — Übergangsschiene fehlt weiterhin, jetzt zweifach reproduziert |
+| PM-010 | Sockelleisten-Doppel-Falle | ❌ 350-statt-3,50-Extraktionsfehler zweifach reproduziert (kein Zufall mehr); „Sockelleisten streichen" fehlt weiterhin; NEU: Tool erfindet unverlangten kompletten Bodenbelag-Austausch |
 
 **Noch offen, bewusst zurückgestellt (niedrige Priorität, siehe PM-003/006):**
 1-Cent-Rundungsdrift zwischen Positions-Summe und Gesamtbetrag; fehlende
@@ -104,6 +109,15 @@ Prüfung, die den Rohtext bewusst nicht mehr querliest) — für Mehrraum-Fälle
 mit demselben Muster bräuchte es einen eigenen, weiteren Schritt, aber dafür
 liegt noch kein bestätigter Testfall vor. Live-Test durch dich steht aus.
 
+**Dritter Durchlauf (Prüfmeister, 2026-08-16):** Erklärung von Head of IT passt exakt zu dem, was ich
+gerade nochmal live gesehen habe. Denselben Fall ein drittes Mal eingesprochen — diesmal wieder
+**korrekt**: keine Decken-Position, Wandflächen exakt 42,21 m², Sockelleisten abkleben exakt 17,7 lfdm,
+alles Soll-genau. Damit stehen jetzt 2 von 3 Durchläufen korrekt gegen 1 von 3 falsch (der Nachtest mit
+den 234,52 €) — passt zur „GPT nicht bei jedem Aufruf exakt gleich"-Erklärung oben. Ob dieser dritte
+Durchlauf schon nach dem Fix lief oder noch davor reiner Zufallstreffer war, weiß ich nicht — aber als
+zusätzlicher Datenpunkt für „das war Flakiness, kein fester Logikfehler" passt es. Sag Bescheid, wenn
+du möchtest, dass ich das nochmal gezielt nach dem Fix-Deploy zum Gegenchecken einspreche.
+
 ---
 
 ## PM-002 — Akzentwand + Boden diagonal (Schlafzimmer)
@@ -165,7 +179,7 @@ auch im echten Tool stimmt.
 ## PM-003 — Kleinreparatur + Höhenzuschlag + Boden-Ausschluss trotz Erwähnung (Flur)
 
 **Datum:** 2026-08-16
-**Status:** 🟡 Grundierungs-Bug live bestätigt behoben; Fenster-Rückfrage-Fix nicht sauber verifizierbar (rotes „!" statt Zahl im Nachtest, unklar ob übersprungen oder Restfehler); Grenzfall Boden bewusst offen gelassen
+**Status:** ✅ Alle drei Punkte live bestätigt behoben (Grundierung weg, Fenster zeigt sauber „0" statt rotem „!", Werte weiterhin exakt); Grenzfall Boden bewusst offen gelassen, kein Fehler
 
 **Zum Einsprechen:**
 „Flur, sechs mal eins fünfzig, Deckenhöhe drei zwanzig — is schon ne hohe Bude hier. Kein Fenster im Flur, aber eine Tür, normal Maß. Wände streichen, zweimal, Decke auch mit. Zwei Dübellöcher spachteln, sonst nix Großes. Boden lass mal weg, der bleibt wie er ist, den nicht anfassen.“
@@ -246,6 +260,11 @@ ob überhaupt ein Fenster-Array da ist (auch ein leeres zählt), nicht mehr, ob
 die Summe größer null ist. Gleicher Fix auch bei Türen ergänzt, da exakt
 derselbe Code direkt daneben stand. Live-Test durch dich steht aus.
 
+**Nachtest (Prüfmeister, 2026-08-16):** Bestätigt. Fenster-Feld zeigt jetzt sauber „0" statt dem roten
+„!". Alle anderen Werte weiterhin exakt (Wandfläche 46,11 m², Dübellöcher 2 Stück, Höhenzuschlag
+erkannt, keine Grundierung). Dieser Fall ist jetzt komplett grün, alle drei gefundenen Punkte bestätigt
+behoben.
+
 ---
 
 ## PM-004 — Laminat gerade verlegt + Trittschalldämmung (Verschnitt-Grundsatzfrage)
@@ -306,7 +325,7 @@ untersucht — kein akuter Fehler in diesem Fall, aber vorgemerkt.
 ## PM-005 — Zwei Räume, Duplikat-Falle + Scope „nur Decke" darf nicht überspringen
 
 **Datum:** 2026-08-16
-**Status:** 🟡 Nur teilweise behoben — Küche behält jetzt ihre Wände (Fix wirkt), aber Speisekammer bekommt weiterhin keine eigene Raumgruppe im fertigen Angebot (siehe Nachtest)
+**Status:** ✅ Komplett behoben und live bestätigt — beide Räume erscheinen jetzt korrekt getrennt, mit eigenen Zwischensummen
 
 **Zum Einsprechen:**
 „Zwei Räume: Küche, dreieinhalb mal zwo achtzig, Höhe zwo fünfzig, Wände und Decke komplett streichen, zweimal. Daneben die Speisekammer, auch dreieinhalb mal zwo achtzig, Höhe genauso — aber da nur die Decke streichen, zweimal, die Wände lassen wir in Ruhe."
@@ -394,6 +413,13 @@ Vorratsraum, Hauswirtschaftsraum, Hobbyraum) zur Liste ergänzt. Neuer Test in
 kammer, je eigene Deckenposition) und prüft, dass beide als eigene Gruppe
 erscheinen. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
 
+**Nachtest (Prüfmeister, 2026-08-16) — vollständig bestätigt, kompletter Fix:** Dritter Durchlauf.
+Jetzt zwei saubere, getrennte Raumgruppen mit eigenen Zwischensummen direkt neben dem Namen:
+„KÜCHE — 380,86 €" mit allen vier erwarteten Positionen (Wandflächen 26,52 m², Decke, Boden schützen,
+Sockelleisten abkleben), und „SPEISEKAMMER — 107,80 €" mit genau der einen erwarteten Deckenposition,
+keine Wandfläche. Keine Duplikate mehr, keine Vermischung. Gesamtsumme (581,51 €) ergibt sich exakt aus
+den beiden Raumsummen. Das war der schwerste Fund der ganzen Testreihe — jetzt sauber zu.
+
 ---
 
 ## PM-006 — Kleines Fenster (Übermessungsfrage) + Altbau-Zuschlag
@@ -435,7 +461,7 @@ erscheinen. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
 ## PM-007 — Dachgeschoss: Kniestock + Dachschrägen + Dachfenster
 
 **Datum:** 2026-08-16
-**Status:** 🟡 Root-cause behoben (2026-08-16) — Live-Test steht noch aus
+**Status:** 🟡 Kniestock/Grundierungs-Fix live bestätigt; unverlangte „Dachschräge spachteln" bleibt offen; unnötige Rückfragen trotz bereits genannter Werte neu gefunden
 
 **Zum Einsprechen:**
 „Dachzimmer, fünf mal dreieinhalb. Kniestock ist eins zwanzig hoch. Die Dachschrägen links und rechts jeweils zwölf Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles streichen, zweimal."
@@ -507,12 +533,30 @@ Fall nach (Dachzimmer, GPT trägt "grundieren" impliziter Weise in arbeiten[]
 ein, Nutzer hat es nie gesagt) und prüft, dass keine Grundierungs-Position
 mehr entsteht. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
 
+**Nachtest (Prüfmeister, 2026-08-16):** Grundierung (136,80 €) ist bestätigt weg — Fix wirkt. Kniestock
+(20,4 m²) weiterhin exakt Soll. Zwei offene Punkte bleiben:
+
+1. **„Dachschräge spachteln / Untergrundvorbereitung" (0 €, unbepreist) taucht weiterhin auf**, obwohl
+   nie erwähnt — sieht nach derselben Fehlerfamilie aus wie die Grundierung, nur eine dritte, noch nicht
+   angefasste Fundstelle (evtl. noch in `pruefeFassade`/`maler-tapete.ts` oder einer Nachbarfunktion mit
+   demselben „nur weil das Wort Dachschräge irgendwo steht"-Muster).
+2. **Neuer Fund, direkt von Sandy bemerkt:** Die Rückfragen fragen weiterhin nach Fensteranzahl und nach
+   der Bodenfläche (Länge × Breite), obwohl beides im Transkript klar genannt wurde („Ein Dachfenster",
+   „fünf mal dreieinhalb") — bei Letzterem sind die Werte auf der Rückfrage sogar schon korrekt
+   vorausgefüllt (5,0 / 3,5), der Nutzer muss trotzdem einmal bestätigen. Das ist kein Rechenfehler,
+   sondern unnötige Reibung — siehe Notiz an den Designer (PD-005), Sandy hat dazu eine grundsätzliche
+   Meinung zur Rückfragen-UX.
+
+Dachschrägenfläche weiterhin 22,8 m² statt der von mir erwarteten 23,08 m² (Dachfenster-Abzug mit
+falschem Standardmaß) — reproduziert sich jetzt zum zweiten Mal identisch, also stabil und kein
+Zufall.
+
 ---
 
 ## PM-008 — Fassade (kein Raum, kein Boden, keine Decke)
 
 **Datum:** 2026-08-16
-**Status:** 🟡 Root-cause behoben (2026-08-16) — Live-Test steht noch aus
+**Status:** 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin fünf rote Fehler trotz korrekter Rechnung (Designer-Thema, PD-003); neuer kleiner Fund: garbelter Positionsname „Gondierung"
 
 **Zum Einsprechen:**
 „Fassade an der Südseite, zwölf Meter lang, Giebelhöhe im Schnitt sechs Meter. Drei Fenster drin, eins zwanzig mal eins vierzig. Fassadenfarbe zweimal drauf, dazu vorher Grundierung."
@@ -622,11 +666,35 @@ statt 1: Grundierung+Farbe kommen weiter, Reinigung NICHT ohne Signal, Reinigung
 JA bei Algen/Moos/Schmutz). Alle 674 Tests im Projekt grün, `tsc` sauber.
 Live-Test durch dich steht aus.
 
+**Nachtest (Prüfmeister, 2026-08-16):** Beide Fixes bestätigt — nur noch 2 Positionen
+(„Fassadenfläche streichen 2×" + „Grundierung / Tiefengrund Fassade", 401,76 €), keine Duplikate, keine
+unverlangte Reinigung mehr. Die Grundierung selbst ist hier fachlich korrekt, weil ich sie im Transkript
+ausdrücklich verlangt hatte — kein Fehler.
+
+Zwei Dinge bleiben offen:
+1. **Raummaße-Chip zeigt weiterhin fünf rote „!"** (Länge, Breite, Höhe, Türen, Fenster), obwohl die
+   Rechnung dahinter stimmt — unverändert zum letzten Mal, siehe PD-003 an den Designer.
+2. **Neuer kleiner Fund:** Auf der Aufnahme-Karte stand als Leistung „Gondierung" — offensichtlich ein
+   verstümmeltes „Grundierung", das so roh (unkorrigiert) angezeigt wird. Wirkt kaputt/unprofessionell,
+   auch wenn's die Berechnung nicht stört. Dazu kam „Fenster streichen" als Leistung, obwohl ich nur
+   Fenstermaße genannt hatte, keinen Anstrich der Fensterrahmen verlangt — diese Leistung ist im
+   fertigen Angebot zu Recht nicht aufgetaucht, war also eine Fehlmeldung der Karte, keine fehlende
+   Berechnung (siehe Notiz an den Designer, PD-004/005-Familie: die Karte zeigt wieder etwas anderes
+   als das, was am Ende passiert — hier andersrum als sonst, sie verspricht zu viel statt zu wenig).
+
 ---
 
 ## PM-009 — Bodenleger Komplettpaket: Altbelag, Ausgleich, Vinyl gerade, Sockelleisten, Übergangsschiene
 
-**Status:** ⏳ Noch nicht getestet
+**Datum:** 2026-08-16
+**Status:** 🟡 Verschnitt-Fix bestätigt auch für Vinyl — aber Übergangsschiene fehlt komplett, obwohl „erkannt"
+
+**Hinweis an Chief of Staff (Prüfmeister, 2026-08-17):** Das Ist-Ergebnis unten
+stand hier schon einmal, ist aber offenbar bei einer gleichzeitigen Bearbeitung
+verloren gegangen (kein Vorwurf — passiert bei einer gemeinsamen Datei mit
+mehreren Autoren). Ich hab's aus meinem eigenen Gesprächsverlauf wiederhergestellt,
+Wortlaut sollte identisch zum Original sein. War tatsächlich schon getestet,
+nicht nur in der Tabelle behauptet.
 
 **Zum Einsprechen:**
 „Flur, vier mal eins achtzig. Alter Teppich muss komplett raus und entsorgt werden, Untergrund ist uneben, den gleich mit ausgleichen. Dann Vinylboden drauf, ganz normal gerade verlegt. Neue Sockelleisten drumrum. Am Übergang zum Wohnzimmer brauchen wir noch ne Übergangsschiene."
@@ -643,11 +711,33 @@ Live-Test durch dich steht aus.
 - Verschnitt-Bug aus PM-004 nochmal, diesmal bei Vinyl statt Laminat: kommt 7,56 m² oder wieder 7,92 m² (10%)? Falls auch hier 10%, ist bestätigt, dass es alle Plattenware gleichermaßen betrifft, nicht nur Laminat.
 - Taucht die Übergangsschiene überhaupt als eigene Position auf? Ich habe im Code keine Stelle gefunden, die dafür eine Position erzeugt — Verdacht auf echte Lücke, nicht nur eine Fehlberechnung.
 
+**Ist-Ergebnis (aus dem Tool):**
+- Aufnahme-Karte: „5 Positionen erkannt" — Teppich entfernen, Untergrund ausgleichen, Vinylboden verlegen, Sockelleisten anbringen, **Übergangsschiene einbauen** (alle 5 als Leistungen gelistet, inkl. Übergangsschiene).
+- Vinyl-Boden verlegen inkl. **5% Verschnitt**: 7,56 m² × 22,00 € = 166,32 € ✓ — Verschnitt-Fix wirkt auch bei Vinyl, nicht nur bei Laminat.
+- Teppichboden entfernen und entsorgen: 7,2 m² × 6,00 € = 43,20 € ✓
+- Untergrundvorbereitung / Ausgleich: 7,2 m² × 12,00 € = 86,40 € ✓
+- Sockelleisten montieren: 11,6 lfdm × 5,50 € = 63,80 € ✓ (Umfang, kein Türabzug — hier gab's im Boden-Kontext keine erfasste Tür, also strukturell erwartbar)
+- **Übergangsschiene fehlt komplett in der finalen Positionsliste.** Die Nettosumme (359,72 €) ergibt sich exakt aus den anderen 4 Positionen — es ist rechnerisch kein 5. Posten versteckt.
+
+**Befund:**
+
+1. **Übergangsschiene: „erkannt", aber nie berechnet — Lücke bestätigt**
+   - Die Aufnahme-Karte zählt „5 Positionen erkannt" und listet die Übergangsschiene als Leistung. Im fertigen Angebot kommen nur 4 Positionen raus, die Übergangsschiene fehlt spurlos.
+   - Bestätigt meinen Verdacht: es gibt keine Berechnungsstelle für Übergangsschienen im Code — die Leistung wird zwar erkannt, aber nirgends in eine Position umgesetzt.
+   - Das ist zusätzlich eine Instanz des Karte-zeigt-nicht-was-berechnet-wird-Musters, diesmal als glatte Zahl sichtbar: „5 erkannt" vs. 4 geliefert. Sowas fällt einem Handwerker eher auf als ein falscher Flächenwert, weil die Zahl direkt vorne auf der Karte steht.
+
+**Für Head of IT:** Übergangsschiene als eigene Position ergänzen (Stück oder lfdm, an Türdurchgängen zwischen unterschiedlichen Belägen).
+**Für den Designer:** siehe PD-004 — die „X Positionen erkannt"-Zahl selbst war hier schlicht falsch, nicht nur die Detailtiefe dahinter.
+
+**Nachtest (Prüfmeister, 2026-08-16):** Identisch reproduziert — Übergangsschiene fehlt weiterhin, Netto
+(359,72 €) unverändert exakt aus den 4 anderen Positionen. Noch nicht gefixt, aber jetzt zweifach
+bestätigt, also sicher kein Zufall.
+
 ---
 
 ## PM-010 — Sockelleisten-Doppel-Falle: alte raus, neue montiert, dann gestrichen
 
-**Status:** ⏳ Noch nicht getestet
+**Status:** ❌ Drei reale Bugs offen, einer davon neu und potenziell schwerwiegend — 350-statt-3,50-Extraktionsfehler jetzt zweifach reproduziert (kein Zufall mehr), „Sockelleisten streichen" fehlt weiterhin, UND neu: das Tool erfindet einen kompletten, nie verlangten Bodenbelag-Austausch dazu (siehe Nachtest unten). *(Status-Zeile war stehengeblieben auf „ungetestet", obwohl der Testfall unten längst vollständig dokumentiert ist — Chief of Staff, 2026-08-17, Doku-Hygiene passend zur „eine Wahrheit pro Sache"-Regel.)*
 
 **Zum Einsprechen:**
 „Gästezimmer, drei fünfzig mal drei, Höhe zwo sechzig. Die alten Sockelleisten kommen raus, neue werden montiert, weiße MDF-Leisten. Die sollen dann auch noch gestrichen werden, passend zur Wand. Wände und Decke streichen, zweimal."
@@ -682,3 +772,27 @@ Live-Test durch dich steht aus.
 
 **Für Head of IT:** zwei getrennte Themen — (1) Zahlenerkennung bei „X-Y"-Sprechweise für Maße prüfen, (2) eigene „Sockelleisten streichen"-Position in der Maler-Engine ergänzen, analog zu „Sockelleisten abkleben", aber als tatsächliche Anstrich-Leistung (mit lfdm-Fläche, nicht nur als Nebenleistung).
 **Für den Designer:** wieder „X Positionen erkannt" ≠ tatsächliche Positionen, siehe PD-004. Und: sollte eine derart auffällige Maßangabe wie „350 m" bei einem Innenraum nicht schon auf der Aufnahme-Karte selbst eine Warnung auslösen, bevor der Nutzer weiterklickt?
+
+**Nachtest (Prüfmeister, 2026-08-16) — beide alten Funde bestätigt, plus ein neuer, ernster:**
+
+Denselben Fall nochmal eingesprochen. Die Karte zeigte wieder **„350,00 × 3,00 m"** statt 3,50 × 3,00 —
+identisch zum ersten Mal, also kein Einzelfall, sondern reproduzierbar bei genau dieser Sprechweise
+(„drei fünfzig mal drei"). Das ist jetzt bestätigt, nicht mehr nur Verdacht. „Sockelleisten streichen"
+fehlt weiterhin im fertigen Angebot, ebenfalls reproduziert.
+
+**Neuer Fund, schwerer als die beiden anderen:** Im fertigen Angebot tauchten diesmal zusätzlich zwei
+Positionen auf, die ich nie verlangt habe — **„Bodenbelag verlegen inkl. 5% Verschnitt"** (11,03 m²,
+Preis fehlt) und **„Altbelag entfernen"** (10,5 m², Preis fehlt). Ich hatte ausschließlich von
+Sockelleisten gesprochen (alte raus, neue montiert, gestrichen) — nie davon, dass der Bodenbelag selbst
+ausgetauscht wird. Sieht so aus, als hätte die Extraktion „die alten Sockelleisten kommen raus" mit
+„der alte Bodenbelag kommt raus" verwechselt und daraus einen kompletten (nie verlangten) Bodenaustausch
+gemacht, inklusive neuer Verlegung. Beide Positionen sind zum Glück noch unbepreist (roter Warnhinweis),
+würden aber, wenn übersehen und mit Preis versehen, ein völlig falsches Leistungsbild ins Angebot
+bringen — eine Fußbodenerneuerung kostet erheblich mehr als ein Sockelleisten-Tausch.
+
+**Einordnung:** Das ist eine neue Fehlerkategorie gegenüber allem bisher Gefundenen — nicht „Position
+fehlt" oder „Position doppelt", sondern „Tool erfindet einen ganzen, nie angefragten Leistungsblock".
+Für Head of IT: bitte prüfen, ob die Extraktion bei Sockelleisten-Erwähnungen („alte raus", „neue
+montiert") fälschlich auch Bodenbelag-Signale auslöst — evtl. dieselbe Fundstelle wie bei
+„altbelag_entfernen"/"belag"-Erkennung in der Boden-Engine, die zu breit auf Wörter wie „alte …
+kommen raus" anspringt, ohne zu prüfen, WAS genau rauskommt.
