@@ -7,6 +7,8 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
 
+const BODEN_VERLEGEN_SIGNAL = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|estrich/i
+
 // Label und Verschnitt schalten auf den TYPISIERTEN Belag (BelagTyp aus dem
 // Vertrag/erkenneBelag) statt auf eine engine-eigene includes()-Kette — Schluss
 // mit der dreifachen Belag-Erkennung. Die Label-Strings bleiben bewusst
@@ -55,6 +57,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
       ausgleich = false,
       feuchtigkeitssperre = false,
       parkett_schleifen = false,
+      arbeiten = [],
     } = raum
 
     let flaeche: number | null = null
@@ -78,9 +81,22 @@ export function bodenEngine(daten: any): MengenErgebnis {
     const pct = Math.round(verschnitt * 100)
     const verschnittSuffix = verschnitt > 0 ? ` inkl. ${pct}% Verschnitt` : ''
 
+    // PM-010: diese Engine läuft jetzt auch für Räume, die NUR Sockelleisten
+    // wollen (kein neuer Belag) — sockelleisten.ts braucht dafür die Engine,
+    // siehe hatBodenAnteil in mehrgewerk.ts. Ohne diese Prüfung würde für JEDEN
+    // Raum mit Maßen automatisch "Bodenbelag verlegen" erfunden, egal ob
+    // überhaupt ein neuer Belag verlangt wurde. Echter Beleg-Auftrag liegt vor,
+    // wenn: ein Belag-Name genannt wurde, ODER Altbelag raus soll (schon oben
+    // gegen GPT-Selbstwidersprüche geprüft), ODER ein echtes Verlege-Verb in
+    // den (KI-geprüften) arbeiten[] steht.
+    const hatEchtenBelagAuftrag = (typeof belag === 'string' && belag.trim() !== '')
+      || altbelag_entfernen
+      || (Array.isArray(arbeiten) && arbeiten.some((a: string) => BODEN_VERLEGEN_SIGNAL.test(a)))
+
     // Verlegen NUR wenn kein reines Abschleif-/Refinish-Auftrag (man legt keinen
-    // neuen Boden, wenn der bestehende nur abgeschliffen + versiegelt wird).
-    if (!parkett_schleifen) {
+    // neuen Boden, wenn der bestehende nur abgeschliffen + versiegelt wird) UND
+    // nur wenn überhaupt ein echter Belag-Auftrag vorliegt.
+    if (!parkett_schleifen && hatEchtenBelagAuftrag) {
       positionen.push({
         beschreibung: `${label} verlegen${verschnittSuffix} — ${name}`,
         menge: round2(flaeche * (1 + verschnitt)),

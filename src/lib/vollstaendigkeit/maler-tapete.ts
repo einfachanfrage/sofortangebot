@@ -42,7 +42,24 @@ function hatVerneinungVorStreichen(satz: string): boolean {
   return /\b(nicht|kein\w*)\b/i.test(satz.slice(0, m.index))
 }
 
-function hatSockelleistenStreichenSignal(lower: string): boolean {
+// PM-010, zweiter Nachtest (2026-08-17): die Satz-Logik unten geht von
+// Punkten zwischen Sätzen aus ("... MDF-Leisten. Die sollen ..."). Echte,
+// frei gesprochene Transkripte sind aber oft EIN einziger, kommagetrennter
+// Redefluss ganz ohne Punkte dazwischen — dann greift die Satzgrenzen-Logik
+// nie, egal wie weit das Fenster wäre. Deshalb JETZT ZUERST das robustere
+// Signal: GPT liefert "sockelleisten streichen" oft schon als eigenen,
+// bereits geprüften Eintrag in der arbeiten[]-Liste des Raums (dieselbe
+// "eine geprüfte Struktur lesen, nicht den Rohtext neu interpretieren"-Regel
+// wie beim PM-005-Fix). Die Satz-Logik bleibt als Rückfallebene für Fälle
+// ohne diese Struktur (z.B. ältere Tests, die nur Rohtext ohne Signale
+// übergeben).
+function hatSockelleistenStreichenSignal(lower: string, arbeitenTexte: string[]): boolean {
+  const hatStrukturSignal = arbeitenTexte.some(a => {
+    const al = a.toLowerCase()
+    return /sockelleist/.test(al) && STREICH_WORT.test(al) && !hatVerneinungVorStreichen(al)
+  })
+  if (hatStrukturSignal) return true
+
   const saetzeArr = lower.split(/[.!?\n;]+/).map(s => s.trim()).filter(Boolean)
   for (let i = 0; i < saetzeArr.length; i++) {
     const satz = saetzeArr[i]
@@ -64,7 +81,7 @@ function hatSockelleistenStreichenSignal(lower: string): boolean {
 }
 
 export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
-  const hatSockelStreichenExplizit = hatSockelleistenStreichenSignal(lower) && v.hatArbeit('streichen') && !v.hatArbeit('lackieren')
+  const hatSockelStreichenExplizit = hatSockelleistenStreichenSignal(lower, v.arbeitenTexte) && v.hatArbeit('streichen') && !v.hatArbeit('lackieren')
   if (!hatSockelStreichenExplizit || hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) return
 
   const lfdmMatchStr = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfm|lfdm|laufende?r?\s*meter|meter)/i)
@@ -76,8 +93,16 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
     }
     ergaenzt.push({ beschreibung: 'Sockelleisten streichen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm`, annahmen: [] })
   } else {
-    if (lower.includes('schleifen') || lower.includes('schleif')) add(ergaenzt, fehlende, 'Sockelleisten schleifen')
-    add(ergaenzt, fehlende, 'Sockelleisten streichen')
+    // PM-010, dritter Fund: der generische add()-Helfer blockt anhand der
+    // ersten zwei Wörter ("sockelleisten", "streichen" einzeln geprüft) —
+    // sobald im selben Raum schon "Sockelleisten montieren" steht (jetzt durch
+    // den vorherigen Fix wieder korrekt vorhanden), hält add() das fälschlich
+    // für "sockelleisten schon abgedeckt" und verwirft "Sockelleisten
+    // streichen" still. Der Guard oben (Zeile 85) hat aber schon spezifisch
+    // genug geprüft ("sockelleisten streich" als zusammenhängender Text) —
+    // hier deshalb direkt eintragen statt nochmal grob über add() zu filtern.
+    if (lower.includes('schleifen') || lower.includes('schleif')) fehlende.push('Sockelleisten schleifen')
+    fehlende.push('Sockelleisten streichen')
   }
 }
 

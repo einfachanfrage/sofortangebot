@@ -17,29 +17,75 @@ verweisen, dann ist für alle Beteiligten klar, welcher Fall gemeint ist.
 **Status-Zeichen:** ✅ behoben & getestet · 🟡 behoben, noch nicht live von
 Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-16, Prüfmeister)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-17, Prüfmeister)
 
 **Hinweis zur Pflege dieser Tabelle:** Sie ist jetzt zweimal durch gleichzeitige Bearbeitung auf einen
 älteren Stand zurückgefallen (einmal ein ganzer Detail-Eintrag weg, einmal die ganze Tabelle). Kein
 Vorwurf an irgendwen — bei einer Datei mit mehreren Autoren passiert das. Bitte beim Bearbeiten kurz
 vorher nochmal lesen, was gerade drinsteht, dann fällt sowas seltener auf.
 
+**Wichtig zum heutigen Stand (2026-08-17):** Sandy hat direkt nach den drei „Fix-Update"-Einträgen zu
+PM-010 (350-Bug, erfundener Bodenaustausch, fehlendes „Sockelleisten streichen") denselben Fall nochmal
+frisch eingesprochen — alle drei sollten laut Fix-Update behoben sein. **Alle drei sind im Live-Test
+wieder aufgetreten, identisch zu vorher.** Das ist kein neuer Fund, sondern ein Widerspruch zwischen
+„Fix-Update sagt behoben" und „live sieht man den Bug trotzdem" — bitte zuerst klären, ob der Fix
+überhaupt deployed ist, bevor an der Logik selbst weitergesucht wird. Details unten bei PM-010.
+
 | ID | Thema | Status |
 |---|---|---|
-| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | 🟡 Root-cause gefunden und behoben (GPT nicht deterministisch + Sicherheitsprüfung kannte „X lassen wir" nicht) — Fix passt zum beobachteten Muster (2 von 3 Durchläufen korrekt), gezielter Nachtest nach Deploy steht aus |
+| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Ausschluss-Fix live bestätigt (keine Decken-Position mehr) — neuer, kleinerer Fund: Karte zeigt 2 Positionen, Angebot liefert 3 (Boden schützen fehlt auf der Karte) |
 | PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | ✅ beide Bugs live nachgetestet, bestätigt behoben |
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Alle Rechenfehler behoben (Grundierung, Spachteln, Dachfenster-Fläche) — Live-Test steht aus; Rückfragen-UX-Punkt geht an den Designer (PD-005) |
-| PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin 5 rote Fehler trotz korrekter Rechnung (Designer-Thema); „Gondierung"-Tippfehler neu gefunden |
-| PM-009 | Bodenleger-Komplettpaket | 🟡 Übergangsschiene behoben — Live-Test steht aus; Verschnitt-Fix bereits bestätigt |
-| PM-010 | Sockelleisten-Doppel-Falle | 🟡 Alle drei Funde behoben (erfundener Bodenaustausch, 350-statt-3,50-Extraktion, fehlendes „Sockelleisten streichen") — Live-Test steht aus |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Alle Rechenfehler live bestätigt behoben (Kniestock 20,4 m², Dachschrägen 23,08 m², keine unverlangte Spachtelposition mehr); offen bleiben nur Designer-Themen (PD-005) und fehlende Standardpreise |
+| PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung weiterhin stabil behoben; NEU und ernst: widersprüchliche Meldung „Keine Positionen erkannt" trotz „2 Positionen erkannt", erst im 2. Versuch weiter; Masse-Anzeige zeigt weiterhin Fenster- statt Fassadenmaße; Raummaße-Chip weiterhin 5× rot (PD-003) |
+| PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf) — fehlt nur noch ein Standardpreis dafür |
+| PM-010 | Sockelleisten-Doppel-Falle | 🟡 echte Ursache gefunden (kein Deploy-Problem — drei Fixes waren gegen falsche Eingabeform gebaut), neuer Fix gegen echte Live-Daten verifiziert, Live-Nachtest steht aus; 350-Bug bleibt Whisper-Ebene, Vorschlag (Plausibilitäts-Warnung) dokumentiert, wartet auf Go |
+
+**Neu, quer zu mehreren Fällen (2026-08-17):** Mehrere fachlich absolut normale Positionen
+(Kniestockwände streichen, Dachschrägen streichen, Fassadenfläche streichen, Übergangsschiene) haben
+gar keinen Preis in der Preisdatenbank hinterlegt (0,00 €, „Preis fehlt"). Sandys klare Ansage dazu
+unten im Abschnitt „Systemischer Fund".
 
 **Noch offen, bewusst zurückgestellt (niedrige Priorität, siehe PM-003/006):**
 1-Cent-Rundungsdrift zwischen Positions-Summe und Gesamtbetrag; fehlende
 VOB-Übermessungsregel für kleine Fensteröffnungen.
+
+---
+
+## Systemischer Fund (2026-08-17): fehlende Standardpreise + blockierender Fehler-Flow
+
+Nicht an einen einzelnen Testfall gebunden, kam aber in fast jedem Nachtest heute vor — deshalb hier
+zentral, nicht bei einer einzelnen PM-ID.
+
+**1. Fehlende Standardpreise für ganz normale Positionen.** In den heutigen Nachtests hatten folgende
+Positionen KEINEN Preis in der Preisdatenbank (0,00 €, roter Hinweis „Preis fehlt in deiner
+Preisdatenbank"): Kniestockwände streichen (PM-007), Dachschrägen streichen (PM-007), Fassadenfläche
+streichen (PM-008), Übergangsschiene (PM-009), Bodenbelag verlegen / Altbelag entfernen (PM-010, hier
+aber ohnehin Phantom-Positionen, siehe unten). Sandys Ansage dazu direkt: *„das sind alles absolute
+Standardpositionen die der Head of IT in Preisdatenbank anlegen muss"* — das sind keine seltenen
+Sonderfälle, sondern Kernleistungen von Dachgeschoss, Fassade und Bodenleger-Übergängen. Bitte
+Standardpreise dafür in der Preisdatenbank anlegen, genau wie es sie für „Wandflächen streichen"
+(9,50 €) oder „Grundierung" (6,00 €) schon gibt.
+
+**2. Fehlender Preis darf niemals den Weg zur Entwurfsansicht blockieren.** Sandys zweite, ebenso klare
+Ansage: *„falls tatsächlich mal keine Position vorhanden ist... dann muss ich natürlich TROTZDEM zur
+Entwurfsansicht kommen"* — ob ein Preis fehlt oder nicht, darf niemals verhindern, dass der Handwerker
+zumindest den Entwurf sieht und bearbeiten kann. Bitte sicherstellen, dass „Preis fehlt" höchstens ein
+Hinweis ist, nie eine Blockade.
+
+**3. Neuer, ernster Bug: widersprüchliche Meldung „Keine Positionen erkannt".** Bei PM-008 erschien nach
+der Aufnahme kurzzeitig ein roter Banner „❗ Keine Positionen erkannt" — GLEICHZEITIG mit dem grünen
+Banner „✓ 2 Positionen erkannt — bereit für den Entwurf" direkt darunter, auf demselben Screen. Sandy
+musste es zweimal versuchen, um zur Entwurfsansicht zu kommen. Ihre Frage dazu ist berechtigt: *„es
+wurden ja positionen erkannt, wieso sagt er keine pos erkannt?"* Zwei sich widersprechende
+Statusmeldungen gleichzeitig auf einem Screen ist unabhängig von der Ursache ein Vertrauensbruch — das
+geht an Head of IT (warum feuert die Prüfung überhaupt, wenn Positionen längst da sind — evtl. verwandt
+mit dem bekannten Race-Condition-Verdacht) UND an den Designer (so ein Widerspruch darf, selbst wenn
+er nur eine Sekunde lang auftritt, dem Nutzer nie angezeigt werden). Sandy hat ausdrücklich gesagt,
+dass das an beide weitergegeben werden soll.
 
 ---
 
@@ -117,6 +163,20 @@ den 234,52 €) — passt zur „GPT nicht bei jedem Aufruf exakt gleich"-Erklä
 Durchlauf schon nach dem Fix lief oder noch davor reiner Zufallstreffer war, weiß ich nicht — aber als
 zusätzlicher Datenpunkt für „das war Flakiness, kein fester Logikfehler" passt es. Sag Bescheid, wenn
 du möchtest, dass ich das nochmal gezielt nach dem Fix-Deploy zum Gegenchecken einspreche.
+
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Fix bestätigt. Wohnzimmer nochmal frisch
+eingesprochen (5,20×4,10×2,50, Ausschluss „Decke lassen wir, NICHT mitrechnen" wie im Original). Karte
+zeigt jetzt korrekt nur „Wände streichen" + „Sockelleisten abkleben", **keine Decke** — und im fertigen
+Angebot bleibt es auch dabei: keine Deckenposition. Zahlen exakt Soll: Wandflächen 42,21 m² × 9,50 € =
+401,00 €, Sockelleisten abkleben 17,7 lfdm × 0,80 € = 14,16 €. Der Kernbug (Ausschluss wird ignoriert)
+ist damit live bestätigt behoben.
+
+Ein kleinerer, neuer Fund bleibt: die Karte zeigte „2 Positionen erkannt" (Wände streichen,
+Sockelleisten abkleben), das fertige Angebot liefert aber **3** — zusätzlich „Boden schützen" (21,32 m²
+× 1,20 € = 25,58 €), das nie im Transkript vorkam und auch nicht auf der Karte stand. Fachlich ist
+„Boden schützen" beim Streichen plausibel als automatisch abgeleitete Nebenleistung (kein Rechenfehler),
+aber die Karte verspricht damit wieder eine andere Zahl als das, was am Ende berechnet wird — dieselbe
+Familie wie PD-001/PD-004. Kein Blocker, aber bitte beim Designer mitdenken (siehe PD-004).
 
 ---
 
@@ -579,6 +639,27 @@ Zufall.
 `vollstaendigkeit.test.ts`). Alle 687 Tests grün, `tsc` sauber. Live-Test
 durch dich steht für beide Punkte aus.
 
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Beide Restpunkte bestätigt behoben. Dachzimmer
+nochmal frisch eingesprochen (5×3,5, Kniestock 1,20, Dachschrägen je 12 m², 1 Dachfenster). Karte zeigt
+diesmal sauber 3 Leistungen (Wände/Dachschrägen/Kniestock streichen), keine unverlangte „Dachschräge
+spachteln" mehr. Im fertigen Angebot: Kniestockwände streichen 2× **20,4 m²** exakt Soll, Dachschrägen
+streichen 2× **23,08 m²** exakt Soll (Dachfenster-Abzug jetzt mit dem richtigen kleineren Standardmaß,
+vorher 22,8 m²) — beides bestätigt korrekt. Keine unverlangte Spachtel- oder Grundierungsposition mehr.
+Fachlich ist dieser Fall damit sauber.
+
+Zwei Punkte bleiben, keiner davon ein Rechenfehler:
+1. **Rückfragen-Redundanz reproduziert sich weiter** (PD-005): Bodenfläche wird erneut abgefragt, obwohl
+   auf der Karte schon „5,00 × 3,50 m" stand — die Rückfrage kommt sogar mit den richtigen Werten
+   vorausgefüllt (5,0/3,5), muss aber trotzdem bestätigt werden. Fenster-Anzahl (1) genauso nochmal
+   gefragt, obwohl „Fenster: 1" schon auf der Karte stand.
+2. **Neu:** Kniestockwände streichen UND Dachschrägen streichen haben beide **keinen Preis in der
+   Preisdatenbank** hinterlegt (0,00 €, „Preis fehlt in deiner Preisdatenbank"). Anders als bei einem
+   Erschwerniszuschlag ist das hier keine bewusste Nutzer-Preisfestlegung, sondern schlicht eine fehlende
+   Standardposition — siehe „Systemischer Fund" oben, Sandy will das für alle diese Fälle ergänzt haben.
+
+Damit ist PM-007 rechnerisch komplett grün. Offene Punkte sind Designer-Thema (PD-005) bzw.
+Preisdatenbank-Pflege, kein Code-Bug mehr in der eigentlichen Berechnung.
+
 ---
 
 ## PM-008 — Fassade (kein Raum, kein Boden, keine Decke)
@@ -694,6 +775,26 @@ statt 1: Grundierung+Farbe kommen weiter, Reinigung NICHT ohne Signal, Reinigung
 JA bei Algen/Moos/Schmutz). Alle 674 Tests im Projekt grün, `tsc` sauber.
 Live-Test durch dich steht aus.
 
+**Nachtest 2 nach Fix-Deploy (Sandy, 2026-08-17):** Duplikat- und Reinigungs-Fix bleiben stabil — auch
+im dritten Durchlauf weiterhin nur 2 Positionen (Fassadenfläche streichen 2×, 66,96 m², + Grundierung
+66,96 m² × 6,00 € = 401,76 €), keine Duplikate, keine unverlangte Reinigung. Aber drei Funde, die noch
+offen sind bzw. neu dazukommen:
+
+1. **Die Masse-Anzeige auf der Aufnahmekarte zeigt weiterhin „1,20 × 1,40 m"** statt der tatsächlichen
+   Fassadenmaße (12 × 6 m) — genau die Anzeige-Frage, die im ersten Fix-Update ausdrücklich als „separate,
+   noch ungeklärte Frage" offengelassen wurde. Jetzt live bestätigt: sie ist immer noch offen, nicht aus
+   Versehen mitgefixt. Die Rechnung selbst stimmt (66,96 m²), nur die Anzeige auf der Karte zeigt die
+   falschen Zahlen — das ist trotzdem verwirrend, weil der Handwerker genau dort als Erstes prüft, ob
+   die Maße stimmen.
+2. **Neuer, ernster Bug:** Direkt nach der Aufnahme erschien kurz ein roter Banner „❗ Keine Positionen
+   erkannt" — GLEICHZEITIG mit dem grünen „✓ 2 Positionen erkannt — bereit für den Entwurf" darunter, auf
+   demselben Screen. Erst im zweiten Versuch kam Sandy zur Entwurfsansicht durch. Siehe „Systemischer
+   Fund" oben — das geht an Head of IT UND an den Designer, auf Sandys ausdrücklichen Wunsch.
+3. **Fassadenfläche streichen hat keinen Preis in der Preisdatenbank** (0,00 €, „Preis fehlt") —
+   dieselbe Kategorie wie bei PM-007, siehe „Systemischer Fund".
+
+Raummaße-Chip (PD-003, 5× rotes „!") bleibt unverändert offen, unverändert zum letzten Nachtest.
+
 **Nachtest (Prüfmeister, 2026-08-16):** Beide Fixes bestätigt — nur noch 2 Positionen
 („Fassadenfläche streichen 2×" + „Grundierung / Tiefengrund Fassade", 401,76 €), keine Duplikate, keine
 unverlangte Reinigung mehr. Die Grundierung selbst ist hier fachlich korrekt, weil ich sie im Transkript
@@ -782,11 +883,19 @@ Hab einen Test extra dafür ergänzt, der das absichert.
 2 neue Tests in `boden.test.ts` (dein Fall + der Zahlen-Fallstrick). Alle 684
 Tests grün, `tsc` sauber. Live-Test durch dich steht aus.
 
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Bestätigt behoben. Flur nochmal frisch eingesprochen
+(4×1,80, Teppich raus, Untergrund ausgleichen, Vinyl gerade, Sockelleisten, Übergangsschiene). Karte
+zeigt „5 Positionen erkannt" inkl. Übergangsschiene — und diesmal taucht sie auch im fertigen Angebot
+auf: „Übergangsschiene, 1 Stück". Verschnitt weiterhin korrekt bei 5 % (166,32 €, 7,56 m²). Einzige
+offene Kleinigkeit: die Übergangsschiene hat noch keinen Preis in der Preisdatenbank hinterlegt
+(0,00 €, „Preis fehlt") — reine Preisdatenbank-Pflege, siehe „Systemischer Fund" oben, kein Rechenfehler
+mehr. Dieser Fall ist damit fachlich komplett grün.
+
 ---
 
 ## PM-010 — Sockelleisten-Doppel-Falle: alte raus, neue montiert, dann gestrichen
 
-**Status:** ❌ Drei reale Bugs offen, einer davon neu und potenziell schwerwiegend — 350-statt-3,50-Extraktionsfehler jetzt zweifach reproduziert (kein Zufall mehr), „Sockelleisten streichen" fehlt weiterhin, UND neu: das Tool erfindet einen kompletten, nie verlangten Bodenbelag-Austausch dazu (siehe Nachtest unten). *(Status-Zeile war stehengeblieben auf „ungetestet", obwohl der Testfall unten längst vollständig dokumentiert ist — Chief of Staff, 2026-08-17, Doku-Hygiene passend zur „eine Wahrheit pro Sache"-Regel.)*
+**Status:** ❌ Alle drei Bugs weiterhin offen — 350-statt-3,50-Extraktionsfehler jetzt DREIFACH reproduziert, „Sockelleisten streichen" fehlt weiterhin, erfundener Bodenbelag-Austausch weiterhin da. Head of IT hat für alle drei ein Fix-Update dokumentiert (siehe unten), aber der Nachtest NACH diesen Fixes (2026-08-17) zeigt exakt denselben fehlerhaften Stand wie davor — Verdacht: Fixes noch nicht deployed, siehe letzter Nachtest-Eintrag unten. *(Status-Zeile war zwischenzeitlich stehengeblieben auf „ungetestet" — Chief of Staff, 2026-08-17 — das war schon damals überholt, siehe History unten.)*
 
 **Zum Einsprechen:**
 „Gästezimmer, drei fünfzig mal drei, Höhe zwo sechzig. Die alten Sockelleisten kommen raus, neue werden montiert, weiße MDF-Leisten. Die sollen dann auch noch gestrichen werden, passend zur Wand. Wände und Decke streichen, zweimal."
@@ -911,3 +1020,83 @@ korrekt leer). Alle 682 Tests grün, `tsc` sauber.
 
 Damit sind jetzt alle drei PM-010-Funde behoben. Live-Test durch dich steht
 für alle drei noch aus.
+
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17) — ⚠️ alle drei Fixes wirken im Live-Test NICHT:**
+Denselben Fall („Gästezimmer, drei fünfzig mal drei...") nochmal frisch eingesprochen, ausdrücklich NACH
+den drei oben dokumentierten Fix-Updates. Ergebnis: alle drei Bugs sind unverändert wieder da, identisch
+zu den vorherigen Durchläufen.
+
+1. **350-Bug:** Karte zeigt wieder „350,00 × 3,00 m" statt 3,50 × 3,00 m — dritte identische
+   Reproduktion, jetzt auch nach dem Fix, der laut Update genau diesen Fall in `zahlen-parser.test.ts`
+   testet.
+2. **Erfundener Bodenaustausch:** „Bodenbelag verlegen inkl. 5% Verschnitt" (11,03 m²) und „Altbelag
+   entfernen" (10,5 m²) sind wieder im Angebot, obwohl nur von Sockelleisten die Rede war — trotz Fix in
+   `boden-normalisierer.ts`.
+3. **„Sockelleisten streichen" fehlt weiterhin** in der finalen Positionsliste — Karte verspricht es
+   („5 Positionen erkannt"), das fertige Angebot liefert nur 4 (Wandflächen, Deckenfläche, Bodenbelag-
+   Phantom, Altbelag-Phantom, Sockelleisten montieren — „streichen" fehlt), trotz Fix in
+   `vollstaendigkeit.test.ts`.
+
+Nettosumme (462,40 €) und alle Einzelwerte (Wandflächen 29,51 m², Decke 10,5 m², Sockelleisten montieren
+12,1 lfdm mit korrektem Türabzug) sind untereinander konsistent — es ist also nicht so, dass hier
+irgendwas krude durcheinander wäre, es sieht einfach exakt wie der Stand VOR den drei Fixes aus.
+
+**Einordnung:** Das ist kein neuer Fund, sondern ein direkter Widerspruch zu den drei „Fix-Update"-
+Einträgen oben. Zwei Erklärungen liegen nahe, beide für Head of IT zu prüfen, bevor an der Logik selbst
+weitergesucht wird: entweder die Fixes sind noch nicht in der Umgebung deployed, in der Sandy testet,
+oder die neuen Tests (`zahlen-parser.test.ts`, `boden-normalisierer.test.ts`, `vollstaendigkeit.test.ts`)
+decken einen Fall ab, der sich von Sandys tatsächlichem Testsatz doch in einer Kleinigkeit unterscheidet
+(z. B. Groß-/Kleinschreibung, Satzzeichen, exakte Wortstellung). Angesichts dessen, dass alle DREI
+unabhängig behaupteten Fixes gleichzeitig nicht greifen, ist „nicht deployed" die wahrscheinlichere
+Erklärung als drei zufällig gleichzeitig unvollständige Fixes.
+
+**Fix-Update (Head of IT, 2026-08-17) — echte Ursache gefunden, kein Deploy-Problem:**
+Per echter Supabase-Rohdaten deines Nachtests (`debug_extraktion_roh`, id `9f7c0ed9…`) geprüft statt
+weiter zu raten. Ergebnis: alle drei Commits waren live (Git-Historie linear, spätere Commits vom selben
+Tag sind laut deinen eigenen Notizen bestätigt live) — aber alle drei Fixes waren **gegen die falsche
+Eingabeform gebaut**. Drei getrennte Erkenntnisse:
+
+1. **Die 350 ist gar nicht unser Bug, sondern Whisper.** In den echten Rohdaten aus deinem Nachtest steht
+   „350 x 3" schon so im Transkript-Text selbst — BEVOR unser eigener Code überhaupt läuft. Whisper (die
+   Spracherkennung) hat „drei fünfzig" direkt als Ziffernfolge „350" verschriftlicht, nicht als Wörter.
+   Mein erster Fix (`zahlen-parser.ts`) repariert einen anderen, ebenfalls echten Fall — wenn Whisper die
+   Zahlwörter „drei" und „fünfzig" ausschreibt, verbindet mein Fix sie richtig zu 3.50. Aber wenn Whisper
+   direkt „350" transkribiert, sieht unser Code diese 350 gar nicht anders als eine echte Meterangabe. Das
+   ist mit Text-Nachbearbeitung grundsätzlich nicht lösbar — dafür siehe Vorschlag ganz unten.
+2. **Erfundener Bodenaustausch — Ursache stimmte, aber mein erster Fix hat einen NEUEN Fehler eingebaut.**
+   GPT lieferte selbst `altbelag_entfernen:true` UND `altbelag_vorhanden:true`, obwohl `belag:null` war und
+   kein Belag-Wort im Text stand — das eigene Signal von GPT war falsch, und meine Regex-Korrektur (Fund
+   vom ersten Fix-Update) griff hier gar nicht, weil sie nur den TEXT prüft, nicht GPTs eigenes,
+   gegensätzliches Strukturfeld. Neuer Fix an der richtigen Stelle: `extraktion-normalisierer.ts` prüft
+   jetzt, ob `altbelag_entfernen`/`altbelag_vorhanden` durch einen echten Belag-Namen oder ein echtes
+   Verlege-Wort in `arbeiten[]` gedeckt sind — sonst werden beide auf `false` korrigiert. Nebenwirkung
+   dabei entdeckt und gleich mitbehoben: diese Korrektur hätte sonst auch „Sockelleisten montieren"
+   verschwinden lassen (lief technisch über dieselbe Boden-Engine) — dafür `mehrgewerk.ts` und `boden.ts`
+   so angepasst, dass Sockelleisten-Arbeiten unabhängig vom Belag-Signal laufen, aber „X verlegen"
+   weiterhin nur bei echtem Belag-Auftrag.
+3. **„Sockelleisten streichen" fehlte aus einem DRITTEN, bisher unentdeckten Grund.** Mein zweiter Fix
+   (Satzgrenzen-Erkennung über „gestrichen"/Folgesatz) war technisch korrekt, griff aber nie, weil echte
+   Transkripte (wie deins) keine Satzpunkte zwischen den Teilsätzen haben, sondern nur Kommas — meine
+   Testfälle hatten künstlich Punkte gesetzt. Fix: die Prüfung liest jetzt zuerst GPTs eigene, bereits
+   geprüfte `arbeiten[]`-Liste (dort stand „sockelleisten streichen" die ganze Zeit korrekt drin), die
+   Satzgrenzen-Logik bleibt nur als Rückfallebene. Dabei noch einen VIERTEN, ganz eigenständigen Bug
+   gefunden: ein genereller Dubletten-Filter hat „Sockelleisten streichen" verworfen, sobald „Sockelleisten
+   montieren" schon als Position existierte (beide fangen mit „Sockelleisten" an, der Filter prüft nur
+   grob die ersten zwei Wörter) — auch das jetzt behoben (`maler-tapete.ts`).
+
+Alle drei Fixe zusammen gegen genau deine echten Live-Daten geprüft (nicht nur gegen eigene Testfälle):
+neuer Golden-Test in `mehrgewerk.test.ts` (Block „PM-010 — Sockelleisten-only-Auftrag erfindet keinen
+Bodenaustausch mehr") nutzt exakt GPTs Rohantwort aus deinem Nachtest 1:1. Ergebnis: kein „verlegen"/
+„Altbelag entfernen" mehr, „Sockelleisten montieren" bleibt korrekt, „Sockelleisten streichen" fehlt nicht
+mehr (landet als offene Rückfrage, weil keine Meterangabe explizit fürs Streichen genannt wurde — das ist
+gewollt: lieber fragen als raten). Volle Testsuite (691 Tests) + `tsc --noEmit` grün. Live-Test durch dich
+steht noch aus — bitte diesmal wieder denselben Satz einsprechen und auf alle drei Punkte gleichzeitig
+achten.
+
+**Vorschlag für den 350-Bug (Whisper-Ebene, noch nicht umgesetzt, wartet auf Sandys Go):** Weil das vor
+unserem Code passiert, kann Text-Nachbearbeitung es nicht zuverlässig fangen. Vorschlag: eine
+Plausibilitäts-Warnung direkt nach der Extraktion — wenn eine Raum-Seitenlänge einen unrealistischen Wert
+hat (z. B. über 15–20 m für einen Innenraum), wird das auf der Aufnahme-Karte rot markiert, so wie
+Sandy es selbst für PD-004 schon vorgeschlagen hat, statt dass der Nutzer die Karte genau durchlesen
+muss, um es selbst zu bemerken. Kein Rewrite, eine einzelne Prüfung an einer Stelle — aber das ist ein
+neuer, separater Auftrag, kein Teil dieses PM-010-Fixes, deshalb hier nur als Vorschlag notiert.

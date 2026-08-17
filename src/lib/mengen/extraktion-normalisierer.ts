@@ -12,6 +12,23 @@ function bool(val: unknown, fallback = false): boolean {
   return typeof val === 'boolean' ? val : fallback
 }
 
+// PM-010 (2026-08-17): GPT liefert manchmal altbelag_entfernen:true, obwohl
+// belag:null UND kein einziges Boden-Wort in arbeiten[] steht (reiner
+// Sockelleisten-Auftrag, kein Bodenwechsel). Dieses widersprüchliche eigene
+// Signal von GPT rutscht unkorrigiert durch, weil alle späteren Stellen
+// (mehrgewerk.ts, boden.ts) das Flag einfach übernehmen (`?? `/`===true`-Logik
+// korrigiert nie, nur ergänzt). Deshalb hier an der EINEN Normalisierungs-
+// Stelle validieren: altbelag_entfernen/-vorhanden nur glauben, wenn es einen
+// echten Boden-Hinweis gibt (Belag-Name gesetzt ODER ein Boden-Verb in
+// arbeiten[]) — sonst war es vermutlich ein GPT-Fehlgriff.
+const BODEN_ARBEIT_SIGNAL = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|estrich/i
+
+function hatEchtenBodenHinweis(r: Record<string, unknown>): boolean {
+  if (typeof r.belag === 'string' && r.belag.trim() !== '') return true
+  const arbeiten = arr<string>(r.arbeiten).filter(a => typeof a === 'string')
+  return arbeiten.some(a => BODEN_ARBEIT_SIGNAL.test(a))
+}
+
 // GPT verwendet manchmal Varianten wie "fassadenarbeiten", "malerarbeiten" etc.
 function normalisiereGewerk(raw: string): string {
   const g = raw.toLowerCase().trim()
@@ -75,8 +92,8 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
       annahme: bool(t.annahme),
     })),
     arbeiten: arr<string>(r.arbeiten).filter(a => typeof a === 'string'),
-    altbelag_vorhanden: bool(r.altbelag_vorhanden),
-    altbelag_entfernen: bool(r.altbelag_entfernen),
+    altbelag_vorhanden: bool(r.altbelag_vorhanden) && hatEchtenBodenHinweis(r),
+    altbelag_entfernen: bool(r.altbelag_entfernen) && hatEchtenBodenHinweis(r),
     sockelleisten: bool(r.sockelleisten),
     nassbereich: bool(r.nassbereich),
     belag: typeof r.belag === 'string' ? r.belag : undefined,

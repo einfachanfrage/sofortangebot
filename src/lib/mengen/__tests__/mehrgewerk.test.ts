@@ -4,6 +4,7 @@ import {
   berechneUndPruefeAlleGewerke,
   entferneRedundantenBodenschutz,
 } from '../mehrgewerk'
+import { normalisiereExtraktion } from '../extraktion-normalisierer'
 import type { BerechnetePosition } from '../types'
 
 function position(beschreibung: string): BerechnetePosition {
@@ -101,6 +102,72 @@ describe('Komplettrenovierung mit Maler- und Bodenarbeiten', () => {
     expect(sockel?.menge).toBe(18)
     const trittschall = positionen.find(p => /trittschall/i.test(p.beschreibung))
     expect(trittschall?.menge).toBe(21.32)
+  })
+})
+
+describe('PM-010 — Sockelleisten-only-Auftrag erfindet keinen Bodenaustausch mehr', () => {
+  // ECHTER Prod-Fall (Supabase debug_extraktion_roh, id 9f7c0ed9…, 2026-08-17,
+  // Sandys zweiter Live-Nachtest NACH dem ersten PM-010-Fix). GPTs eigene
+  // Rohantwort — bewusst NICHT von Hand nachgebaut, 1:1 aus der DB kopiert.
+  // Zeigt alle drei damals noch offenen Lücken auf einmal:
+  //  1) altbelag_entfernen:true + altbelag_vorhanden:true, obwohl belag:null
+  //     und kein Belag-Verb in arbeiten[] steht — GPTs eigener Widerspruch
+  //     (Fix: extraktion-normalisierer.ts, hatEchtenBodenHinweis).
+  //  2) Der Boden-Anteil wird trotzdem korrekt aktiviert (wegen
+  //     sockelleisten:true — reine Sockelleisten-Arbeiten laufen über die
+  //     Boden-Engine), aber die Engine darf dann NICHT automatisch auch noch
+  //     einen neuen Belag verlegen (Fix: boden.ts, hatEchtenBelagAuftrag).
+  //  3) "Sockelleisten streichen" steht sauber in arbeiten[], wurde aber vom
+  //     groben add()-Dublettencheck verschluckt, sobald "Sockelleisten
+  //     montieren" schon als Position existierte (Fix: maler-tapete.ts,
+  //     direkter fehlende.push() statt add()).
+  const rawGptResult = {
+    gewerk: 'maler',
+    raeume: [{
+      name: 'Gästezimmer', hoehe: 2.6, breite: 3, laenge: 3.5, tueren: [], fenster: [],
+      arbeiten: [
+        'wände streichen', 'decke streichen', 'boden abdecken',
+        'sockelleisten abkleben', 'sockelleisten demontieren',
+        'sockelleisten montieren', 'sockelleisten streichen',
+      ],
+      sockelleisten: true, altbelag_entfernen: true, altbelag_vorhanden: true,
+    }],
+  }
+  const extraktion = normalisiereExtraktion(rawGptResult as never)
+  const transkript = 'Gästezimmer, 350 x 3, Höhe 260, die alten Sockelleisten kommen raus, neue werden montiert, ' +
+    'weiße MDF-Leisten, die sollen dann noch gestrichen werden, passend zur Wand, Wände und Decke streichen, zweimal.'
+  const signale = {
+    arbeitenTexte: extraktion.raeume.flatMap(r => r.arbeiten ?? []),
+    belagText: null,
+    altbelagEntfernen: extraktion.raeume.some(r => r.altbelag_entfernen === true),
+    raeume: [],
+  }
+  const { positionen, fehlende } = berechneUndPruefeAlleGewerke(
+    { ...extraktion, transkript },
+    transkript,
+    {},
+    signale,
+  )
+  const namen = positionen.map(p => p.beschreibung.toLowerCase())
+
+  it('korrigiert GPTs widersprüchliches altbelag_entfernen-Signal (kein Belag genannt)', () => {
+    expect(extraktion.raeume[0].altbelag_entfernen).toBe(false)
+    expect(extraktion.raeume[0].altbelag_vorhanden).toBe(false)
+  })
+
+  it('erfindet keinen Bodenbelag-Austausch', () => {
+    expect(namen.some(n => n.includes('verlegen'))).toBe(false)
+    expect(namen.some(n => n.includes('altbelag entfernen'))).toBe(false)
+  })
+
+  it('behält die echten Sockelleisten-Arbeiten (montieren)', () => {
+    expect(namen.some(n => n.includes('sockelleisten montieren'))).toBe(true)
+  })
+
+  it('verliert "Sockelleisten streichen" nicht (landet mindestens als offene Rückfrage)', () => {
+    const alsPosition = namen.some(n => n.includes('sockelleisten streich'))
+    const alsFehlend = fehlende.some(f => f.toLowerCase().includes('sockelleisten streich'))
+    expect(alsPosition || alsFehlend, `weder Position noch fehlend — hat: ${namen.join(' | ')} | fehlend: ${fehlende.join(' | ')}`).toBe(true)
   })
 })
 

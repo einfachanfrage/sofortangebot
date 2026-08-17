@@ -23,10 +23,15 @@ function raeumeAllerArt(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[]
   return [...(extraktion.raeume ?? []), ...(extraktion.bereiche ?? [])]
 }
 
-/** Boden-Anteil — aus der Struktur ODER dem Rohtext (KI packt Boden oft nicht in die Struktur). */
+/** Boden-Anteil — aus der Struktur ODER dem Rohtext (KI packt Boden oft nicht in die Struktur).
+ *  PM-010: `sockelleisten` zählt bewusst mit dazu — reine Sockelleisten-Arbeiten
+ *  (montieren/streichen, ohne neuen Belag) laufen technisch über die Boden-Engine
+ *  (sockelleisten.ts), auch wenn kein Belag gewechselt wird. Die Engine selbst
+ *  entscheidet dann separat (siehe boden.ts hatEchtenBodenAuftrag), ob sie
+ *  zusätzlich "X verlegen" anlegt — das hier ist nur die Aktivierung. */
 function hatBodenAnteil(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }, transkript: string): boolean {
   const inStruktur = raeumeAllerArt(extraktion).some(r =>
-    r.belag != null || r.altbelag_entfernen === true ||
+    r.belag != null || r.altbelag_entfernen === true || r.sockelleisten === true ||
     (r.arbeiten ?? []).some(a => BODEN_ARBEIT.test(a)))
   return inStruktur || BODEN_TEXT.test(transkript)
 }
