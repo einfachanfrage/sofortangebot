@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../index'
+import { ersetzeZahlenWorte } from '../../zahlen-parser'
 
 describe('boden – basis', () => {
   it('Parkett → nur beauftragtes Verlegen + Sockelleisten, kein erfundener Ausgleich', () => {
@@ -56,6 +57,32 @@ describe('boden – vorarbeiten', () => {
     const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett verlegen, am Übergang zum Flur ein Anschlussprofil')
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)].join(' ')
     expect(alle.toLowerCase()).toContain('übergangsprofil')
+  })
+
+  // PM-009: "Übergangsschiene" fehlte komplett — die Erkennung kannte nur
+  // "-profil"/"Alu", nicht das mindestens genauso gebräuchliche Wort
+  // "Schiene". Auf der Aufnahme-Karte wurde die Leistung erkannt, im
+  // fertigen Angebot kam sie nie an.
+  it('PM-009: Übergangsschiene wird erkannt (nicht nur "-profil")', () => {
+    const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Vinylboden verlegen. Am Übergang zum Wohnzimmer brauchen wir noch eine Übergangsschiene.')
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)].join(' ').toLowerCase()
+    expect(alle).toContain('übergangsschiene')
+  })
+
+  // PM-009, exaktes Original-Transkript über die echte Pipeline (erst
+  // ersetzeZahlenWorte, wie im echten Tool). Prüft zusätzlich, dass die
+  // Übergangsschiene NICHT versehentlich die Raummaß-Zahl ("vier" aus
+  // "vier mal eins achtzig") als eigene Stückzahl erbt — beim Testen dieses
+  // Fixes ist genau das zuerst passiert, als noch mit Rohtext ohne
+  // Zahlen-Vorverarbeitung getestet wurde.
+  it('PM-009: Original-Transkript → Übergangsschiene ohne erfundene Stückzahl aus der Raummaß-Zahl', () => {
+    const roh = 'Flur, vier mal eins achtzig. Alter Teppich muss komplett raus und entsorgt werden, Untergrund ist uneben, den gleich mit ausgleichen. Dann Vinylboden drauf, ganz normal gerade verlegt. Neue Sockelleisten drumrum. Am Übergang zum Wohnzimmer brauchen wir noch ne Übergangsschiene.'
+    const t = ersetzeZahlenWorte(roh)
+    const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], t)
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)].join(' ').toLowerCase()
+    expect(alle).toContain('übergangsschiene')
+    const schieneMitFalscherMenge = positionen.find(p => p.beschreibung.toLowerCase().includes('übergangsschiene') && p.menge === 4)
+    expect(schieneMitFalscherMenge).toBeUndefined()
   })
 })
 

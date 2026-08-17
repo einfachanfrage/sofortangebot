@@ -34,7 +34,7 @@ vorher nochmal lesen, was gerade drinsteht, dann fällt sowas seltener auf.
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Kniestock + Grundierungs-Fix live bestätigt; unverlangte „Dachschräge spachteln" bleibt offen; unnötige Rückfragen trotz bereits genannter Werte neu gefunden |
 | PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin 5 rote Fehler trotz korrekter Rechnung (Designer-Thema); „Gondierung"-Tippfehler neu gefunden |
-| PM-009 | Bodenleger-Komplettpaket | 🟡 Verschnitt-Fix bestätigt auch für Vinyl — Übergangsschiene fehlt weiterhin, jetzt zweifach reproduziert |
+| PM-009 | Bodenleger-Komplettpaket | 🟡 Übergangsschiene behoben — Live-Test steht aus; Verschnitt-Fix bereits bestätigt |
 | PM-010 | Sockelleisten-Doppel-Falle | 🟡 Alle drei Funde behoben (erfundener Bodenaustausch, 350-statt-3,50-Extraktion, fehlendes „Sockelleisten streichen") — Live-Test steht aus |
 
 **Noch offen, bewusst zurückgestellt (niedrige Priorität, siehe PM-003/006):**
@@ -732,6 +732,27 @@ nicht nur in der Tabelle behauptet.
 **Nachtest (Prüfmeister, 2026-08-16):** Identisch reproduziert — Übergangsschiene fehlt weiterhin, Netto
 (359,72 €) unverändert exakt aus den 4 anderen Positionen. Noch nicht gefixt, aber jetzt zweifach
 bestätigt, also sicher kein Zufall.
+
+**Fix-Update (Head of IT, 2026-08-17):** Es gab schon eine Berechnungsstelle
+dafür — dein Verdacht "keine Stelle im Code" war knapp daneben, aber der
+Effekt war derselbe. Sie kannte nur das Wort "Profil" (und "Alu"), nicht
+"Schiene" — und "Übergangsschiene" ist im Handwerk mindestens genauso
+gebräuchlich wie "Übergangsprofil". Weil das Wort fehlte, wurde die
+Erkennung nie ausgelöst, egal wie klar du's gesagt hast.
+
+Fix: "Schiene" als gleichwertiges Wort ergänzt, und die Positionsbezeichnung
+übernimmt jetzt deine Wortwahl ("Übergangsschiene" bleibt "Übergangsschiene",
+nicht automatisch "Übergangsprofil"). Beim Testen ist mir dabei noch ein
+zweiter, latenter Fehler in derselben Funktion aufgefallen: die Stückzahl-
+Erkennung sucht Zahlwörter wie "vier" irgendwo im GANZEN Text, nicht in der
+Nähe von "Übergang" — bei deinem Transkript hätte sie fälschlich die "vier"
+aus der Raummaß-Angabe ("vier mal eins achtzig") als Stückzahl der
+Übergangsschiene genommen. In der echten Pipeline (Zahlen werden vorher
+schon in Ziffern umgewandelt) passiert das zum Glück nicht — dort landet es
+korrekt als Erinnerung "Anzahl prüfen" statt eine falsche Zahl zu erfinden.
+Hab einen Test extra dafür ergänzt, der das absichert.
+2 neue Tests in `boden.test.ts` (dein Fall + der Zahlen-Fallstrick). Alle 684
+Tests grün, `tsc` sauber. Live-Test durch dich steht aus.
 
 ---
 

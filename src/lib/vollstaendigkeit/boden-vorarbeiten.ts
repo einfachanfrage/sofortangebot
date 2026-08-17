@@ -191,11 +191,15 @@ export function pruefeUebergangsprofil(
   fehlende: string[],
   lower: string,
 ): void {
-  // Robust gegen Flexion (Türübergäng-EN mit ä) und "Alu-Profil(e)"
+  // Robust gegen Flexion (Türübergäng-EN mit ä) und "Alu-Profil(e)".
+  // PM-009: "Übergangsschiene" (mindestens so gebräuchlich wie "-profil" im
+  // Handwerk, an Türdurchgängen zwischen zwei Bodenbelägen) fehlte komplett
+  // in der Wortliste — die Leistung wurde auf der Aufnahme-Karte erkannt,
+  // landete aber nie als echte Position im Angebot.
   const hatUebergang =
-    /überg[aä]ngsprofil|uebergangsprofil|anschlussprofil/i.test(lower) ||
+    /überg[aä]ngsprofil|uebergangsprofil|anschlussprofil|überg[aä]ngsschiene|uebergangsschiene/i.test(lower) ||
     /alu-?profil/i.test(lower) ||
-    (/überg[aä]ng/i.test(lower) && (lower.includes('profil') || lower.includes('alu')))
+    (/überg[aä]ng/i.test(lower) && (lower.includes('profil') || lower.includes('alu') || lower.includes('schiene')))
 
   if (!hatUebergang) return
   if (hat(ergaenzt, 'übergangsprofil', 'uebergangsprofil', 'anschlussprofil')) return
@@ -216,11 +220,15 @@ export function pruefeUebergangsprofil(
     }
   }
 
-  // Bezeichnung
+  // Bezeichnung — Wortwahl aus dem Transkript übernehmen (Profil vs. Schiene),
+  // statt immer "Profil" zu sagen, auch wenn der Handwerker "Schiene" meinte.
+  const nurSchiene = lower.includes('schiene') && !lower.includes('profil')
   const beschreibung = lower.includes('alu') && lower.includes('silber')
     ? 'Alu-Übergangsprofil Silber'
     : lower.includes('alu')
     ? 'Alu-Übergangsprofil'
+    : nurSchiene
+    ? 'Übergangsschiene'
     : 'Übergangsprofil'
 
   if (anzahl > 0) {
