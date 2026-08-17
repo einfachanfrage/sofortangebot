@@ -13,10 +13,10 @@ import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
 import { repariereDuplikatMasse, repariereDuplikatNamen } from '@/lib/mengen/mehrraum-reparatur'
 import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import {
-import * as Sentry from '@sentry/nextjs'
   extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereAbzug,
   extrahiereTorMasse, zaehleFenster, zaehleTueren,
 } from '@/lib/extraktion-masse'
+import * as Sentry from '@sentry/nextjs'
 import { bereiteRueckfragenVor } from '@/lib/mengen/rueckfragen-flow'
 import type { KalkulationsAntworten } from '@/lib/mengen/antworten-verarbeiter'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
