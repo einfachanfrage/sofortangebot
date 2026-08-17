@@ -13,6 +13,7 @@ import { normalisiereExtraktion } from '@/lib/mengen/extraktion-normalisierer'
 import { repariereDuplikatMasse, repariereDuplikatNamen } from '@/lib/mengen/mehrraum-reparatur'
 import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import {
+import * as Sentry from '@sentry/nextjs'
   extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereAbzug,
   extrahiereTorMasse, zaehleFenster, zaehleTueren,
 } from '@/lib/extraktion-masse'
@@ -280,6 +281,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     console.error('[angebot-extrahieren] Verarbeitung fehlgeschlagen')
+    Sentry.captureException(err, { tags: { feature: 'angebot_extrahieren' } })
     return NextResponse.json({ error: `Extraktion fehlgeschlagen: ${msg}` }, { status: 500 })
   }
 }

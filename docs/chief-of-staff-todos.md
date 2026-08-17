@@ -1,6 +1,12 @@
-# Chief of Staff ↔ Head of IT — Koordinations-Todos
+# Chief of Staff ↔ Head of Product Engineering — Koordinations-Todos
 
-Gemeinsame Datei von Chief of Staff und Head of IT. Hier landen Aufgaben, die
+*(bis 17.08.2026 abends: „Head of IT" — Rolle enger gefasst und in zwei
+Positionen aufgeteilt, siehe CoS-009. Für Stripe/Buchhaltung/Sentry/Auth-
+RLS/Deployment/Accounts/Transaktions-E-Mails ist jetzt
+`docs/chief-of-staff-platform-todos.md` mit dem neuen Platform &
+Integrations Engineer die richtige Datei, nicht mehr hier.)*
+
+Gemeinsame Datei von Chief of Staff und Head of Product Engineering. Hier landen Aufgaben, die
 aus der Gesamtkoordination entstehen und noch keinen festen Platz in einer
 anderen Datei haben — nicht QA (das läuft über
 `docs/pruefmeister-testfaelle.md`), nicht reines Design (das läuft über
@@ -23,24 +29,53 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-007 | **DRINGEND:** PM-010-Fixes im Live-Nachtest nicht sichtbar — Deploy-Lücke? | 🟡 behoben (echte Ursache gefunden, 3 Code-Lücken gefixt), Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010 |
+| CoS-010 | **DRINGEND, höchste Priorität:** Angebot verdoppelt sich (2.000,28€ statt 1.000,14€), Auslöser ungeklärt | ❌ offen, schwerster Einzelfund bisher | `pruefmeister-testfaelle.md` PM-014 |
+| CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | ❌ offen, jetzt 3-fach bestätigt (PM-010/012), Muster statt Einzelfall | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | ❌ offen | `docs/design-check.md` DC-001 |
 | CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | ⏳ dokumentiert, kein akuter Auftrag | Prüfmeister-Notiz an CoS + PM-001-Fix-Update |
-| CoS-003 | Accounts/Onboarding-Flow (Registrierung/Login/E-Mail-Verifizierung/Passwort-Reset) — echter Status? | ❌ offen, Status-Anfrage an Head of IT | `docs/launch-readiness.md` Abschnitt 2 |
-| CoS-004 | Transaktions-E-Mails (Willkommen/Verifizierung/Reset) — werden sie wirklich zugestellt? | ❌ offen, Status-Anfrage an Head of IT | `docs/launch-readiness.md` Abschnitt 3 |
-| CoS-005 | Row-Level-Security: greift die Datenisolierung überall, keine Secrets sichtbar? | ❌ offen, Status-Anfrage an Head of IT | `docs/launch-readiness.md` Abschnitt 6 |
-| CoS-006 | Observability + Race-Condition-Check der Angebots-Pipeline | ❌ offen, Status-Anfrage an Head of IT | `docs/launch-readiness.md` Abschnitt 8 |
-| CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ⏳ Sandys Entscheidung ausstehend | Vier-Augen-Gespräch Sandy ↔ Head of IT, 2026-08-17 |
+| CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
+| ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 
 ---
 
-## CoS-007 — DRINGEND: Sind die PM-010-Fixes wirklich live?
+## CoS-010 — DRINGEND: Angebot verdoppelt sich (Race-Condition-Verdacht)
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen, höchste Priorität — vor jedem weiteren Testblock zu klären
+**Status:** ❌ offen, höchste Priorität im ganzen Projekt — schwerster Einzelfund bisher
 
-**Hintergrund:** Head of IT hat für PM-010 drei unabhängige Bugs mit
+**Hintergrund:** Prüfmeister hat live beobachtet (kein geplanter Testfall,
+beim Nachschauen im Browser aufgefallen), dass sich ein bereits sauber
+geprüftes Angebot (2026-0016, ursprünglich 1.000,14 €) komplett verdoppelt
+hat: 2.000,28 €, jede einzelne Position exakt zweimal vorhanden, stabil
+reproduzierbar über zwei unabhängige Seitenaufrufe. Volle Details, inkl.
+Prüfmeisters transparenter Offenlegung seines eigenen Testverhaltens als
+möglichen (nicht sicheren) Auslöser: `docs/pruefmeister-testfaelle.md`
+PM-014.
+
+**Warum das vor CoS-007 steht:** Bisherige Funde waren falsche/fehlende
+Einzelpositionen (ein paar hundert Euro Abweichung). Hier verdoppelt sich
+das GESAMTE Angebot ohne jede Fehlermeldung — im schlimmsten Fall ein
+Angebot, das ein Kunde mit doppeltem Preis bekommt, weil jemand die Seite
+zweimal aufgerufen oder neu geladen hat.
+
+**Konkrete Bitte an Head of Product Engineering:** Mit höchster Priorität
+prüfen, ob erneutes Aufrufen/Neuladen der Entwurfsseite eines bereits
+generierten Angebots die Positions-Generierung nochmal auslöst und dabei
+ANHÄNGT statt zu ERSETZEN oder „ist schon da, nichts tun" zu erkennen
+(Prüfmeisters eigene Vermutung, PM-014). Separat davon: die
+Dashboard-Übersichtsliste zeigt für dasselbe Angebot je nach Zeitpunkt
+unterschiedliche Beträge (0€/2.000€) — vermutlich ein zweiter, unabhängiger
+Sync-Bug.
+
+---
+
+## CoS-007 — Sind die PM-010-Fixes wirklich live?
+
+**Datum:** 2026-08-17
+**Status:** ❌ offen — nach jetzt VIER Fix-Versuchen weiterhin nicht behoben, 3-fach unabhängig bestätigt (PM-010, PM-012). Kein Deploy-Verdacht mehr (siehe Erklärung unten), aber ein klares Muster: dieselbe konkrete Lücke („Sockelleisten streichen" fehlt in der Maler-Engine, unabhängig vom Kontext) übersteht wiederholte Fix-Versuche. Empfehlung an Head of Product Engineering: Ansatz wechseln statt einen fünften ähnlichen Versuch zu starten — evtl. Root-Cause-Annahme nochmal von Grund auf prüfen statt nachzubessern.
+
+**Hintergrund:** Head of Product Engineering hat für PM-010 drei unabhängige Bugs mit
 dokumentiertem Fix-Update gemeldet (Zahlenerkennung „drei fünfzig" → 350,
 erfundener Bodenaustausch, fehlende „Sockelleisten streichen"-Position),
 jeweils mit neuen grünen Tests belegt. Sandys Live-Nachtest DANACH zeigt
@@ -51,7 +86,7 @@ greifen, ist „noch nicht deployed" wahrscheinlicher als drei zufällig
 unvollständige Fixes — zumal am selben Tag andere Fixes (PM-001, PM-007,
 PM-008, PM-009) im Live-Nachtest nachweislich angekommen sind.
 
-**Konkrete Bitte an Head of IT:** Bitte kurz bestätigen, welcher Commit/
+**Konkrete Bitte an Head of Product Engineering:** Bitte kurz bestätigen, welcher Commit/
 Deploy-Stand aktuell in der Umgebung läuft, die Sandy testet — und ob die
 drei PM-010-Fixes (`zahlen-parser.test.ts`, `boden-normalisierer.ts`,
 `vollstaendigkeit.test.ts`) darin enthalten sind. Falls ja: dann liegt eine
@@ -65,65 +100,50 @@ wirklich live ist, ist jedes „🟡 behoben, Live-Test steht aus" in
 potenziell auch bereits als „✅ live bestätigt" verbuchte Fälle, auch wenn
 dafür aktuell kein konkreter Verdacht vorliegt.
 
-**Update Head of IT (2026-08-17, jetzt mit echtem Beleg statt nur mündlich):**
-Bestätigt: **kein Deploy-Problem.** Alle vier PM-010-Commits sind auf
-`origin/main` und nachweislich live (spätere Commits am selben Tag — PM-009,
-PM-007 — sind laut Sandys eigenen Nachtest-Notizen bestätigt live, Git-
-Historie ist linear, also müssen die früheren PM-010-Commits es auch sein).
-Der reale Grund: die ersten drei Fixes waren **jeweils technisch korrekt,
-aber gegen die falsche Eingabeform gebaut** — meine Testfälle nutzten Punkte
-zwischen Sätzen und einzeln gesprochene Zahlwörter, echte Whisper-Transkripte
-sind aber ein einziger kommagetrennter Redefluss ohne Satzpunkte, und die
-„350" stand teils schon so im rohen Transkript (Whisper-Ebene, vor jedem
-eigenen Code). Beleg: echte Supabase-Extraktion vom Live-Nachtest
-(`debug_extraktion_roh`, id `9f7c0ed9…`) direkt durch die Pipeline gejagt.
-
-Drei echte, jetzt behobene Ursachen (Details siehe PM-010-Fix-Update in
-`pruefmeister-testfaelle.md`):
-1. GPTs eigenes `altbelag_entfernen:true`-Signal war selbst falsch/
-   widersprüchlich (kein `belag` genannt) — unser Code hat es einfach
-   übernommen statt zu prüfen. Fix: `extraktion-normalisierer.ts`.
-2. Diese Korrektur hätte als Nebenwirkung auch die legitime „Sockelleisten
-   montieren"-Position mit gekillt (lief über dieselbe Aktivierung) — dafür
-   zusätzlich `mehrgewerk.ts` + `boden.ts` angepasst, damit Sockelleisten-
-   Arbeiten unabhängig vom Belag-Signal laufen.
-3. „Sockelleisten streichen" stand korrekt in GPTs eigener `arbeiten[]`-Liste,
-   wurde aber vom groben Dubletten-Filter verschluckt, sobald „Sockelleisten
-   montieren" schon als Position existierte. Fix: `maler-tapete.ts`.
-
-Alle drei zusammen gegen die echten Live-Daten in einem neuen Golden-Test
-verifiziert (`mehrgewerk.test.ts`, Block „PM-010 — Sockelleisten-only-
-Auftrag..."), volle Testsuite (691 Tests) + `tsc --noEmit` grün. Bitte Sandy
-im nächsten Durchgang live nachtesten lassen, dann auf ✅ setzen.
+**Erklärung von Head of Product Engineering (2026-08-17, aus einem direkten Gespräch mit
+Sandy, noch nicht als formeller Fix-Update im Testfälle-Dokument
+protokolliert):** Kein Deploy-Problem, sondern eine Testmethodik-Lücke —
+die drei neuen Tests (`zahlen-parser.test.ts` u. a.) liefen gegen
+künstliche, „zu ordentliche" Testfälle statt gegen echte Whisper/GPT-
+Rohdaten, deshalb wurden sie grün, obwohl der reale Fall weiterhin
+fehlschlägt. Plausibel und weniger besorgniserregend als eine Deploy-Lücke
+(betrifft dann vermutlich nicht die anderen „✅ live bestätigt"-Fälle vom
+selben Tag), **aber bisher nur mündlich erklärt, nicht durch einen neuen
+Fix + Live-Nachtest belegt.** Status bleibt ❌ offen, bis das nachgewiesen
+ist. Head of Product Engineering hat sich selbst eine feste Regel auferlegt: nie „behoben"
+sagen, ohne vorher gegen echte Supabase-Produktionsdaten geprüft zu haben,
+nicht nur gegen eigene Testfälle — bitte das auch für den PM-010-Refix
+anwenden, bevor er wieder als erledigt gemeldet wird.
 
 ---
 
-## CoS-009 — Team-Struktur: Head-of-IT-Rolle splitten?
+## CoS-009 — Team-Struktur: Head-of-IT-Rolle gesplittet
 
 **Datum:** 2026-08-17
-**Status:** ⏳ Sandys Entscheidung ausstehend — Chief-of-Staff-Einschätzung siehe Chat
+**Status:** ✅ entschieden und eingerichtet
 
-**Hintergrund:** Sandy hat Head of IT direkt gefragt, ob er sich mit dem
+**Hintergrund:** Sandy hat Head of Product Engineering direkt gefragt, ob er sich mit dem
 kompletten Zuständigkeitsbereich (Preis-Engine, KI-Pipeline bis Stripe/
 Lexware/sevDesk/Sentry) überfordert fühlt. Seine Antwort: kein
 Kompetenzproblem, sondern ein Risiko, dass unterschiedliche Themen
-unterschiedliche Vorsichtsstufen brauchen und sich die falsche Vorsicht aus
-dem falschen Kontext einschleicht. Vorschlag: **Position 1 „Head of Product
-Engineering"** (Preis-Engine, Mengen-/Extraktions-Pipeline, Vollständigkeits-
-prüfung, Preisdatenbank, laufende QA-Schleife — bleibt bei ihm) und
-**Position 2 „Platform & Integrations Engineer"** (Stripe, Lexware/sevDesk,
-Sentry, Auth/RLS, Deployment/Infra — neu, eigener Kontext/eigenes
-CLAUDE.md, evtl. anderes Werkzeug wie Codex).
+unterschiedliche Vorsichtsstufen brauchen. Chief-of-Staff-Einschätzung: die
+Grundidee ist sinnvoll (unterschiedliche Fehlerkosten-Kategorien
+rechtfertigen getrennte Kontexte). Sandy hat zugestimmt.
 
-**Chief-of-Staff-Einschätzung (Kurzfassung, siehe Chat für die volle
-Begründung):** Grundidee sinnvoll (unterschiedliche Fehlerkosten-Kategorien
-rechtfertigen getrennte Kontexte), aber zwei Lücken im Vorschlag noch zu
-klären, bevor er umgesetzt wird — Abschnitt 3 (Transaktions-E-Mails) taucht
-in keiner der beiden Rollen auf, Abschnitt 2 (Accounts/Onboarding) liegt an
-der Grenze zwischen beiden. Empfehlung: falls Sandy zustimmt, CoS-005/006
-(RLS, Observability — beide seit Tagen unbeantwortet) als ersten Auftrag an
-die neue Position 2 geben — das testet die Aufteilung direkt an echten,
-bereits wartenden Aufgaben.
+**Ergebnis, umgesetzt am 17.08.2026:**
+- **Head of Product Engineering** (diese Rolle, bisher „Head of Product Engineering"): Preis-
+  Engine, Mengen-/Extraktions-Pipeline, Vollständigkeitsprüfung,
+  Preisdatenbank, laufende QA-Schleife. Neue Anweisungsdatei ausgeliefert
+  an Sandy (`rolle-head-of-product-engineering.md`).
+- **Platform & Integrations Engineer** (NEU): Stripe, Lexware/sevDesk +
+  weitere Buchhaltungs-Anbindungen, Sentry, Auth/RLS, Deployment/Infra,
+  Accounts/Onboarding, Transaktions-E-Mails — inkl. der beiden Lücken, die
+  im ursprünglichen Vorschlag fehlten. Eigene Anweisungsdatei ausgeliefert
+  (`rolle-platform-integrations-engineer.md`), eigene Koordinationsdatei
+  `docs/chief-of-staff-platform-todos.md`.
+- CoS-003 bis CoS-006 dorthin verschoben (neu: CoS-P-001 bis CoS-P-004).
+  CoS-P-001 (RLS) und CoS-P-002 (Observability) sind bewusst als erste
+  Aufgaben markiert — das ist der Praxistest, ob die Aufteilung greift.
 
 ---
 
@@ -140,40 +160,10 @@ Das ist kein Rechenfehler, sondern fehlende Stammdaten — Sandy hat
 ausdrücklich gesagt, das soll für alle betroffenen Fälle nachgepflegt
 werden, nicht nur einzeln.
 
-**Aufgabe:** Head of IT/Sandy gemeinsam die Preisdatenbank für die neu
+**Aufgabe:** Head of Product Engineering/Sandy gemeinsam die Preisdatenbank für die neu
 validierten Positionstypen vervollständigen. Kein technischer Bug, daher
 kein Blocker für weitere QA-Testläufe, aber Blocker dafür, dass ein
 Dachgeschoss- oder Fassaden-Angebot tatsächlich versendet werden kann.
-
----
-
-## CoS-003 bis CoS-006 — Gate-1-Blindflecken aus `launch-readiness.md`
-
-**Datum:** 2026-08-17
-**Status:** ❌ offen — noch keine Antwort von Head of IT
-
-**Hintergrund:** Sandy hat mich gebeten, den vollständigen Launch-Scope zu
-führen (`docs/launch-readiness.md`), nicht nur den QA-Ausschnitt. Beim
-ersten Durchgang durch alle 12 Bereiche sind vier Themenblöcke aufgefallen,
-zu denen es **aktuell in keiner Datei irgendeinen Status gibt** — weder bei
-QA noch hier — obwohl sie für Gate 1 (erste echte Testnutzer) nötig sind.
-Ich will hier keinen Status raten, deshalb frage ich stattdessen an:
-
-- **CoS-003 Accounts/Onboarding:** Laufen Registrierung, Login, Logout,
-  Passwort-Reset zuverlässig? Wurde das je end-to-end durchgespielt?
-- **CoS-004 Transaktions-E-Mails:** Kommen Willkommens-/Verifizierungs-/
-  Reset-Mails wirklich an (nicht nur im Code ausgelöst)? Landen sie im Spam?
-- **CoS-005 Row-Level-Security:** Ist bestätigt, dass ein Nutzer ausschließlich
-  seine eigenen Daten sieht? Gibt es dafür einen Test?
-- **CoS-006 Observability:** Gibt es strukturiertes Logging über die
-  Angebots-Pipeline hinweg, oder wird weiterhin nur reaktiv gefixt, wenn ein
-  Testfall etwas findet? Ist eine Race Condition bei der Summenbildung
-  ausgeschlossen?
-
-**Kein Auftrag, erstmal nur eine Statusfrage** — falls das schon läuft und
-nur nirgends dokumentiert ist, reicht ein kurzer Vermerk hier oder in einer
-neuen eigenen Datei. Falls es echte Lücken sind, tragen wir sie danach als
-eigene Punkte mit Priorität ein.
 
 ---
 
@@ -186,12 +176,12 @@ eigene Punkte mit Priorität ein.
 sondern in einer eigenen Notiz `docs/pruefmeister-notiz-fuer-chief-of-staff.md`)
 gemeldet, dass in 6 von 10 Testfällen die Bestätigungskarte etwas anderes
 zeigt als das, was am Ende berechnet wird — kein Einzelfall, sondern ein
-Muster über fast alle Tests hinweg. Beim Fixen von PM-001 hat Head of IT die
+Muster über fast alle Tests hinweg. Beim Fixen von PM-001 hat Head of Product Engineering die
 technische Ursache dafür gefunden: Karte und fertiger Entwurf lösen **zwei
 unabhängige GPT-Aufrufe auf demselben Transkript aus** (kein Wiederverwenden
 der ersten Extraktion), und GPT liefert nicht bei jedem Aufruf exakt
 dasselbe Ergebnis. Der PM-001-Fix fängt das für Ein-Raum-Fälle über eine
-zusätzliche, text-basierte Sicherheitsprüfung ab — Head of IT hat selbst
+zusätzliche, text-basierte Sicherheitsprüfung ab — Head of Product Engineering hat selbst
 notiert, dass das für Mehrraum-Fälle nicht reicht und dafür ein eigener
 Schritt nötig wäre.
 
@@ -227,7 +217,7 @@ Startpreis festzulegen. Entscheidung (siehe DC-001 für die volle Begründung):
 - **Gewerke-Werbung:** „Maler & Bodenleger" statt „Alle 18 Gewerke" — nur
   diese zwei sind bisher durch die Prüfmeister-Testreihe gelaufen.
 
-**Aufgabe für Head of IT:**
+**Aufgabe für Head of Product Engineering:**
 1. Landingpage (`src/components/landing/PreiseSection.tsx`): Preis + Free-Kontingent von 29 €/5 frei auf 22 €/17 € (Jahresabo)/3 frei ändern.
 2. Alte, unverlinkte Vorschau-Seite (`src/app/vorschau/page.tsx`, `/vorschau`): entfernen oder auf die Landingpage umleiten — nicht als dritte Preisquelle weiterpflegen.
 3. `PlanWahlModal.tsx`: „Alle 18 Gewerke" durch „Maler & Bodenleger" ersetzen.

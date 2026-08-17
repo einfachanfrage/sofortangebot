@@ -20,7 +20,9 @@ export async function POST(req: NextRequest) {
   }
 
   const ext = file.type === 'image/svg+xml' ? 'svg' : file.type.split('/')[1]
-  const path = `logos/${user.id}.${ext}`
+  // Erstes Pfadsegment muss die User-ID sein — die RLS-Policies auf
+  // storage.objects prüfen genau das (storage.foldername(name)[1]).
+  const path = `${user.id}/logo.${ext}`
   const buffer = Buffer.from(await file.arrayBuffer())
 
   const { error: uploadError } = await supabase.storage

@@ -6,6 +6,7 @@ import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { BerechnetePosition } from '@/lib/mengen/types'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
+import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 90
 
@@ -256,6 +257,7 @@ export async function POST(req: NextRequest) {
         .eq('id', angebot_id)
       if (raumDetailsError) {
         console.error('[positionen-generieren] Raumdaten konnten nicht gespeichert werden')
+        Sentry.captureException(new Error(raumDetailsError.message), { tags: { feature: 'positionen_generieren_raumdetails' } })
         return NextResponse.json({ error: 'Raummaße konnten nicht gespeichert werden' }, { status: 500 })
       }
     }
@@ -357,6 +359,7 @@ export async function POST(req: NextRequest) {
     const { error: insertErr } = await supabase.from('quote_items').insert(itemRows)
     if (insertErr) {
       console.error('[positionen-generieren] Datenbankeintrag fehlgeschlagen')
+      Sentry.captureException(new Error(insertErr.message), { tags: { feature: 'positionen_generieren_insert' } })
       return NextResponse.json({ error: 'Positionen konnten nicht gespeichert werden' }, { status: 500 })
     }
   }

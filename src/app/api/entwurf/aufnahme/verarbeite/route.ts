@@ -5,6 +5,7 @@ import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { segmentiereRaeume } from '@/lib/raum-segmentierer'
+import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
 
@@ -133,8 +134,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ transkript, positionen })
 
-  } catch {
+  } catch (e) {
     console.error('[aufnahme-verarbeiten] Verarbeitung fehlgeschlagen')
+    Sentry.captureException(e, { tags: { feature: 'aufnahme_verarbeiten' } })
     await supabase
       .from('entwurf_aufnahmen')
       .update({ verarbeitung_status: 'fehler' })

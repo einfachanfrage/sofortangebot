@@ -171,7 +171,11 @@ Deno.serve(async (req: Request) => {
         const data = await openaiRequest(
           'chat/completions',
           {
-            model: 'gpt-4o-mini',
+            // Bewusst gpt-4o statt gpt-4o-mini: bei diesem langen Multi-Gewerk-
+            // Prompt (v. a. "genau ein Raum pro [RAUM]-Segment") hält das große
+            // Modell die Anweisungen zuverlässiger ein. Kostet ca. 16× mehr pro
+            // Aufruf, dafür weniger Positionen, die falsch zusammengelegt werden.
+            model: 'gpt-4o',
             temperature: 0.1,
             max_tokens: 2000,
             response_format: { type: 'json_object' },
@@ -192,12 +196,23 @@ Deno.serve(async (req: Request) => {
             prompt_typ: 'extraktion',
             input_tokens: pIn,
             output_tokens: pOut,
-            kosten_eur: ((pIn * 0.00015 + pOut * 0.0006) / 1000) * 0.92,
+            // gpt-4o-Preise: $2.50 / $10.00 pro 1M Tokens (Stand 2026)
+            kosten_eur: ((pIn * 0.0025 + pOut * 0.01) / 1000) * 0.92,
           }).then(() => {})
         }
 
         const raw = data.choices[0].message.content
-        return JSON.parse(raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim())
+        const parsed = JSON.parse(raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim())
+        // TEMP-DEBUG (Sandy + Claude, 2026-08-07): rohe GPT-Antwort in eigene
+        // Tabelle schreiben, um den Multi-Raum-Bug zu finden, ohne Next.js-
+        // Deploy zu brauchen. Wieder entfernen sobald geklärt.
+        supabase.from('debug_extraktion_roh').insert({
+          user_id: user.id,
+          transkript,
+          raw_result: parsed,
+          model: 'gpt-4o',
+        }).then(() => {})
+        return parsed
       },
       25000,
       'KI-Verarbeitung dauerte zu lange.'

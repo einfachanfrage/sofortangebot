@@ -17,7 +17,11 @@ function getSupabase() {
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // Ohne konfiguriertes Secret IMMER ablehnen — sonst würde der Vergleich
+  // gegen "Bearer undefined" laufen und wäre von außen erratbar
+  // (gleiche Härtung wie in notifications/unterschrift).
+  const cronSecret = process.env.CRON_SECRET
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

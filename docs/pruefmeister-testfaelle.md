@@ -17,6 +17,23 @@ verweisen, dann ist für alle Beteiligten klar, welcher Fall gemeint ist.
 **Status-Zeichen:** ✅ behoben & getestet · 🟡 behoben, noch nicht live von
 Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 
+## Organigramm-Änderung (2026-08-17)
+
+Kurz zur Info: „Head of IT" heißt seit heute **Head of Product Engineering**
+— zuständig bleibt weiterhin die Sprach-zu-Angebot-Pipeline, Preisdatenbank
+und alles, was hier in dieser Datei landet (also alle Fix-Updates unten,
+auch die schon eingetragenen). Alte Einträge in diesem Dokument, die noch
+„Head of IT" sagen, bleiben unverändert stehen — reine Geschichtsschreibung,
+gemeint ist dieselbe Person/Stelle. Neu dazugekommen ist eine zweite Stelle,
+**Platform & Integrations Engineer** (Zahlungen/Stripe, Accounts/Login,
+Datentrennung/RLS, E-Mail-Zustellung, Deployment/Infra). Für dich als
+Prüfmeister praktisch relevant: Findet ein Testfall künftig etwas, das eher
+in diese zweite Kategorie fällt (z. B. Login klappt nicht, falsche Person
+sieht fremde Daten, eine Bestätigungs-Mail kommt nicht an) statt ein
+Pipeline-/Rechenbug zu sein, bitte trotzdem wie gewohnt hier dokumentieren —
+die Zuordnung an die richtige Stelle übernimmt der Chief of Staff.
+Vollständiger Hintergrund: CoS-009 in `docs/chief-of-staff-todos.md`.
+
 ## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-17, Prüfmeister)
 
 **Hinweis zur Pflege dieser Tabelle:** Sie ist jetzt zweimal durch gleichzeitige Bearbeitung auf einen
@@ -24,12 +41,11 @@ Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 Vorwurf an irgendwen — bei einer Datei mit mehreren Autoren passiert das. Bitte beim Bearbeiten kurz
 vorher nochmal lesen, was gerade drinsteht, dann fällt sowas seltener auf.
 
-**Wichtig zum heutigen Stand (2026-08-17):** Sandy hat direkt nach den drei „Fix-Update"-Einträgen zu
-PM-010 (350-Bug, erfundener Bodenaustausch, fehlendes „Sockelleisten streichen") denselben Fall nochmal
-frisch eingesprochen — alle drei sollten laut Fix-Update behoben sein. **Alle drei sind im Live-Test
-wieder aufgetreten, identisch zu vorher.** Das ist kein neuer Fund, sondern ein Widerspruch zwischen
-„Fix-Update sagt behoben" und „live sieht man den Bug trotzdem" — bitte zuerst klären, ob der Fix
-überhaupt deployed ist, bevor an der Logik selbst weitergesucht wird. Details unten bei PM-010.
+**Wichtig zum heutigen Stand (2026-08-17, spätere Ergänzung):** Der von Head of IT angeforderte
+Live-Nachtest zu PM-010 (nach der „echte Ursache gefunden"-Runde) ist inzwischen gelaufen — siehe unten
+bei PM-010: zwei der drei Punkte bestätigt behoben, einer bleibt unklar/offen. Meine ursprüngliche
+Deploy-Theorie oben war also überholt, sobald Head of IT mit den echten Rohdaten nachgesehen hat — das
+war der richtige nächste Schritt, nicht meiner.
 
 | ID | Thema | Status |
 |---|---|---|
@@ -40,9 +56,13 @@ wieder aufgetreten, identisch zu vorher.** Das ist kein neuer Fund, sondern ein 
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Alle Rechenfehler live bestätigt behoben (Kniestock 20,4 m², Dachschrägen 23,08 m², keine unverlangte Spachtelposition mehr); offen bleiben nur Designer-Themen (PD-005) und fehlende Standardpreise |
-| PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung weiterhin stabil behoben; NEU und ernst: widersprüchliche Meldung „Keine Positionen erkannt" trotz „2 Positionen erkannt", erst im 2. Versuch weiter; Masse-Anzeige zeigt weiterhin Fenster- statt Fassadenmaße; Raummaße-Chip weiterhin 5× rot (PD-003) |
+| PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung jetzt 3-fach bestätigt stabil behoben; Masse-Anzeige zeigt weiterhin Fenster- statt Fassadenmaße (3. Bestätigung, PD-007); Preis für Fassadenfläche streichen weiterhin nicht hinterlegt; widersprüchlicher „Keine Positionen erkannt"-Banner ist in diesem Durchlauf NICHT wieder aufgetreten |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf) — fehlt nur noch ein Standardpreis dafür |
-| PM-010 | Sockelleisten-Doppel-Falle | 🟡 echte Ursache gefunden (kein Deploy-Problem — drei Fixes waren gegen falsche Eingabeform gebaut), neuer Fix gegen echte Live-Daten verifiziert, Live-Nachtest steht aus; 350-Bug bleibt Whisper-Ebene, Vorschlag (Plausibilitäts-Warnung) dokumentiert, wartet auf Go |
+| PM-010 | Sockelleisten-Doppel-Falle | ❌ Erfundener Bodenaustausch bestätigt behoben; 350-Bug auf der Karte bleibt (erwartet, Whisper-Ebene, Rechnung selbst korrekt); „Sockelleisten streichen" fehlt weiterhin definitiv — von Sandy am Bildschirm bestätigt, vierter Fix-Versuch wirkt nicht |
+| PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | 🟡 Q2-Vollflächenspachtelung + Grundierung fachlich korrekt (Erfolg, Grundierung war entgegen erster Einschätzung kein Bug — siehe Korrektur); ein echter Bug bleibt: 8-€-Kleinreparaturposition trotz ausdrücklicher Verneinung; neuer Designer-Fund PD-008 (Vorschlag-Kennzeichnung für auto-ergänzte Positionen) |
+| PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ❌ Wandfläche exakt Soll, kein Boden-Phantom (Ausschluss respektiert) — „Sockelleisten streichen" fehlt, 3. unabhängige Bestätigung derselben Lücke wie PM-010 |
+| PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ⏳ noch nicht geprüft — neu |
+| PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | ❌ Bestätigt und reproduzierbar — schwerster Einzelfund der Testreihe, Auslöser noch ungeklärt |
 
 **Neu, quer zu mehreren Fällen (2026-08-17):** Mehrere fachlich absolut normale Positionen
 (Kniestockwände streichen, Dachschrägen streichen, Fassadenfläche streichen, Übergangsschiene) haben
@@ -795,6 +815,21 @@ offen sind bzw. neu dazukommen:
 
 Raummaße-Chip (PD-003, 5× rotes „!") bleibt unverändert offen, unverändert zum letzten Nachtest.
 
+**Nachtest 3 (Sandy, 2026-08-17):** Dritter Durchlauf, gleiche Fassade. Duplikat-/Reinigungs-Fix bleibt
+stabil (weiterhin nur 2 Positionen, 401,76 € Netto). Der widersprüchliche „Keine Positionen erkannt"-
+Banner von letztem Mal ist diesmal NICHT aufgetreten — passt zum Verdacht, dass es sich um einen
+intermittierenden/Race-Condition-artigen Fehler handelt, nicht um einen, der bei jedem Durchlauf greift
+(also nicht „behoben", nur nicht ausgelöst).
+
+Zwei Punkte bestätigen sich unverändert:
+1. **Masse-Anzeige auf der Karte zeigt weiterhin „1,20 × 1,40 m"** statt der echten Fassadenmaße (12×6 m)
+   — dritte identische Reproduktion (PD-007). Interessanter Beleg dazu: das neue „So gerechnet"-Infofeld
+   in der Positionsansicht zeigt korrekt „12m × 6m − Fenster (5,04 m²) = 66,96 m²" — die eigentliche
+   Rechnung nutzt also die richtigen Zahlen, nur die Karten-Anzeige ganz am Anfang zeigt weiterhin die
+   falschen. Bestätigt: reiner Anzeige-Bug an einer isolierten Stelle, kein Rechenfehler.
+2. **Fassadenfläche streichen hat weiterhin keinen Preis in der Preisdatenbank** (0,00 €, „Preis fehlt")
+   — trotz Sandys expliziter Ansage dazu vor zwei Tests. Bitte nachziehen, siehe „Systemischer Fund" oben.
+
 **Nachtest (Prüfmeister, 2026-08-16):** Beide Fixes bestätigt — nur noch 2 Positionen
 („Fassadenfläche streichen 2×" + „Grundierung / Tiefengrund Fassade", 401,76 €), keine Duplikate, keine
 unverlangte Reinigung mehr. Die Grundierung selbst ist hier fachlich korrekt, weil ich sie im Transkript
@@ -1105,4 +1140,332 @@ GPT-Chip-Vorschau ganz am Anfang (die, wo du „350,00 × 3,00 m" zuerst siehst)
 über eine andere, unabhängige Schnellvorschau läuft (dasselbe „Karte ≠ Berechnung"-Muster wie bei CoS-002)
 — dafür bräuchte es einen zweiten, separaten Schritt, absichtlich nicht mit reingenommen. Live-Test durch
 dich steht aus.
+
+**Nachtest zum neuen Fix (Sandy, 2026-08-17):** Denselben Fall nochmal frisch eingesprochen, wie von
+Head of IT erbeten, auf alle drei Punkte gleichzeitig geachtet. Gemischtes, aber größtenteils gutes
+Ergebnis:
+
+1. **Erfundener Bodenaustausch: bestätigt weg.** ✅ Weder „Bodenbelag verlegen" noch „Altbelag entfernen"
+   tauchen diesmal im fertigen Angebot auf. Nur die vier erwarteten Positionen (Wandflächen 30,71 m² ×
+   9,50 € = 291,75 €, Deckenfläche 10,5 m² × 11,00 € = 115,50 €, Boden schützen 12,60 €, Sockelleisten
+   montieren 12,1 lfdm × 5,50 € = 66,55 €). Dieser Fix wirkt live — genau wie in der neuen Root-Cause-
+   Erklärung beschrieben.
+2. **350-Bug: weiterhin auf der Karte sichtbar** („350,00 × 3,00 m"), aber das deckt sich mit deiner
+   eigenen Erklärung (Whisper verschriftlicht „drei fünfzig" direkt als Ziffernfolge, das ist vor eurem
+   Code passiert) — im fertigen Entwurf stehen die Raummaße dann korrekt bei „3 × 3,5 m", die Rechnung
+   selbst ist also nicht betroffen. Kein neuer Fund, sondern die erwartete Restwirkung der gewählten
+   Lösung (Warnung statt Korrektur). Die neue gelbe Plausibilitäts-Warnung auf der Entwurf-Seite war in
+   meinem Screenshot-Ausschnitt nicht zu sehen (könnte oberhalb des sichtbaren Bereichs gewesen sein) —
+   kann ich nicht bestätigen oder verneinen, bitte bei Gelegenheit gezielt draufschauen.
+3. **„Sockelleisten streichen" fehlt definitiv — bestätigt von Sandy direkt am Bildschirm.** Ich hatte
+   das wegen des abgeschnittenen Screenshots erst offengelassen; Sandy hat direkt bestätigt, dass danach
+   nichts mehr kommt — kein 5. Position, keine offene Rückfrage dazu. Die Liste endet bei vier Positionen
+   (Wandflächen, Deckenfläche, Boden schützen, Sockelleisten montieren). Damit ist der vierte Root-Cause-
+   Fix aus dem letzten Fix-Update (Dubletten-Filter, der „Sockelleisten streichen" verwirft, weil
+   „Sockelleisten montieren" schon existiert) **nicht wirksam** — die klassische Doppel-Falle aus dem
+   Fachwissen (montiert UND gestrichen, zwei Gewerke, zwei Positionen) bleibt live weiterhin unvollständig.
+   Der Handwerker bekäme in diesem Angebot das Streichen der Sockelleisten nicht in Rechnung gestellt,
+   obwohl ausdrücklich verlangt — genau der stille, teure Fehler, um den es in diesem Testfall von Anfang
+   an ging.
+
+**Zwischenstand:** 1 von 3 sauber bestätigt behoben (erfundener Bodenaustausch), 1 von 3 wie erwartet
+(350-Bug auf der Karte, bewusste Design-Entscheidung, Rechnung selbst korrekt), 1 von 3 **weiterhin real
+und bestätigt offen** („Sockelleisten streichen" fehlt komplett). Damit ist PM-010 noch nicht grün.
+
+---
+
+## PM-011 — Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer)
+
+**Datum:** 2026-08-17
+**Status:** 🟡 Kernfrage bestanden (Q2-Vollflächenspachtelung sauber erfasst, inkl. Grundierung — fachlich korrekt, siehe Korrektur unten). Ein echter, kleiner Bug bleibt: Kleinreparatur-Position trotz ausdrücklicher Verneinung. Größerer Fund ist jetzt ein Designer-Thema geworden: automatisch ergänzte Positionen brauchen eine „Vorschlag"-Kennzeichnung (PD-008)
+
+**Warum dieser Fall:** PM-003 hat schon gezeigt, dass eine Kleinreparatur (zwei Dübellöcher) nicht als
+Vollflächen-Grundierung durchgehen darf. Hier die Gegenprobe: ein Fall, der ausdrücklich KEINE
+Kleinreparatur ist, sondern eine echte, ganzflächige Spachtelung vor dem Streichen. Testet, ob das Tool
+diese fachlich völlig andere Leistung (Stückzahl/Aufwand vs. m²-Vollfläche) sauber unterscheidet — und
+ob der PM-003/007-Fix, der Grundierung jetzt zu Recht zurückhaltend macht, nicht versehentlich auch die
+echte, hier klar verlangte Vollflächenspachtelung mit wegfiltert.
+
+**Zum Einsprechen:**
+„Ähm, Arbeitszimmer, vier mal drei zwanzig, Höhe zwo fünfzig. Ist n Altbau, die Wände sind ordentlich
+uneben — die müssen komplett gespachtelt werden, Qualitätsstufe Q2, nicht nur ne kleine Ausbesserung,
+wirklich die ganze Fläche. Danach zweimal streichen. Ein Fenster, Standardmaß, eine Tür, normal.
+Sockelleisten kleben wir ab, die bleiben wie sie sind.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,20) = 14,40 lfm
+- Wandbrutto: 14,40×2,50 = 36,00 m²
+- Abzug 1 Fenster Standard (1,20 m²) + 1 Tür Standard (1,89 m²) = 3,09 m²
+- Wandfläche netto: **32,91 m²**
+- Vollflächenspachtelung Q2: **32,91 m²** — eigene m²-Position über die GANZE Wandfläche, nicht als
+  Stückzahl/Kleinreparatur erfasst
+- Wandflächen streichen 2×: **32,91 m²**
+- Sockelleisten abkleben (Maler-Schutz): 14,40 − 0,90 (Tür) = **13,50 lfm**
+- Keine automatische Grundierungsposition erwartet — im Text steht kein explizites Grundierungssignal
+  (weder „grundieren" noch „Neubau/Erstanstrich/Tiefengrund"); höchstens als Erinnerung in „fehlende
+  Positionen" akzeptabel, keine automatisch bepreiste Position
+- Keine Deckenposition (nicht erwähnt)
+
+**Worauf achten:**
+- Wird die Vollflächenspachtelung als eigene m²-Position mit der vollen Wandfläche (32,91 m²) erfasst —
+  oder rutscht sie fälschlich in die für Kleinreparaturen gedachte Stückzahl-Logik (die für „zwei Löcher"
+  gebaut ist, siehe `maler-extras.ts`)?
+- Wird die Spachtelqualität Q2 irgendwo im Positionstext oder als Zusatzinfo festgehalten, oder geht sie
+  komplett verloren?
+- Bleibt es bei den korrekten 32,91 m², ohne dass zusätzlich ungefragt eine Grundierung auf die volle
+  Fläche gesetzt wird? Das wäre ein Rückfall in genau die PM-003/007-Fehlerfamilie, nur diesmal ausgelöst
+  durch das Wort „Spachtelung" statt „Grundierung".
+- Landet die Sockelleiste korrekt als „abkleben" (Malerschutz), nicht als „streichen" oder „montieren" —
+  hier ist ausdrücklich nur Schutz gewünscht, nichts weiter.
+
+**Ist-Ergebnis (Prüfmeister, direkt im Browser-Tab geprüft, 2026-08-17):** Arbeitszimmer korrekt erkannt,
+Raummaße exakt (4,00×3,20, Höhe 2,50 m, Türen 1, Fenster 1). Positionen im fertigen Entwurf:
+
+- Wandflächen streichen 2×: 32,91 m² × 9,50 € = 312,64 € ✓ exakt Soll
+- Boden schützen: 12,8 m² × 1,20 € = 15,36 € (automatisch abgeleitete Nebenleistung, wie in fast jedem
+  Testfall — kein Fehler)
+- Sockelleisten abkleben: 13,5 lfdm × 0,80 € = 10,80 € ✓ exakt Soll
+- **Spachtelarbeiten Q2** — „Wände für einen ebenen Untergrund vollflächig spachteln": 32,91 m² ×
+  9,00 € = 296,19 € ✓ **exakt Soll, inklusive Q2-Kennzeichnung im Positionstext selbst**
+- **Voranstrich / Grundierung: 32,91 m² × 6,00 € = 197,46 €** — nicht im Soll, nie verlangt
+- Erschwerniszuschlag Altbau: 1 Pauschale × 0,00 € („Preis fehlt in deiner Preisdatenbank")
+- **Risse / Löcher spachteln (kleine Schadstellen): 1 Stück × 8,00 € = 8,00 €** — nicht im Soll, nie
+  verlangt
+- Gesamt: Netto 840,45 € × 1,19 = **1.000,14 €** — rechnerisch exakt konsistent mit allen Positionen oben
+
+**Befund:**
+
+1. **Korrigiert (Sandy, 2026-08-17): das war fachlich falsch von mir eingeordnet — kein Bug, sondern eine
+   sinnvolle Ergänzung, nur ohne Kennzeichnung.** Ursprünglich hatte ich hier „ungefragte Grundierung,
+   197,46 €, Rückfall in die PM-003/007-Fehlerfamilie" stehen. Sandy hat zu Recht nachgehakt: als Maler
+   gedacht ist eine Grundierung NACH einer echten Vollflächenspachtelung Q2 auf Altbau-Untergrund kein
+   Fehler, sondern genau das, was ein Maler sowieso machen würde — frisch gespachtelte Flächen saugen
+   ungleichmäßig, ohne Grundierung gibt's Fleckenbildung im ersten Anstrich. Das ist ein echter fachlicher
+   Unterschied zu PM-003/007: dort war entweder die Fläche falsch (Grundierung auf die GANZE Wand wegen
+   zwei Dübellöchern — Flächen-Mismatch) oder es gab gar kein Signal (Grundierung nur wegen des Wortes
+   „Dachschräge"). Hier passt die Grundierungsfläche (32,91 m²) exakt zur tatsächlich gespachtelten
+   Fläche — kein Mismatch, ein plausibler, gut begründeter Vorschlag.
+   Der eigentliche, jetzt neu formulierte Fund: **im fertigen Angebot ist nirgends zu erkennen, dass diese
+   Position vom Tool sinnvoll ERGÄNZT wurde statt vom Nutzer selbst GESAGT** — „Voranstrich / Grundierung"
+   sieht optisch exakt gleich aus wie „Wandflächen streichen 2×", das wörtlich im Transkript stand. Sandys
+   Vorschlag dazu, den ich für sehr gut halte: automatisch ergänzte Positionen sollten sichtbar markiert
+   sein (z. B. „Vorschlag — bitte prüfen"), damit der Handwerker gezielt genau diese Positionen
+   gegenchecken kann, statt bei jeder Position gleich viel nachdenken zu müssen. Das würde nicht nur
+   diesen Fall entschärfen, sondern noch viele andere „automatisch abgeleitete Nebenleistungen", die in
+   fast jedem bisherigen Testfall unmarkiert mitgelaufen sind (Boden schützen, Sockelleisten abkleben,
+   Erschwerniszuschläge) — siehe PD-008 an den Designer, dorthin geht dieser Fund jetzt in erster Linie.
+2. **Zweiter Fund — „Risse / Löcher spachteln (kleine Schadstellen)" trotz ausdrücklicher Verneinung.**
+   Ich hatte wörtlich gesagt „nicht nur ne kleine Ausbesserung, wirklich die ganze Fläche" — trotzdem kam
+   zusätzlich eine eigene Kleinreparatur-Stückzahl-Position (1 Stück, 8,00 €) dazu, obwohl im Transkript
+   nirgends von Rissen oder Löchern die Rede war. Kleiner Betrag, aber vom Muster her verwandt mit dem
+   „ausdrücklicher Ausschluss wird ignoriert"-Fehler (wie beim Decke-Fall in PM-001) — nur diesmal ist die
+   Verneinung nicht „X nicht" sondern „nicht nur X, sondern Y". Anders als Punkt 1: dieser Fund bleibt auch
+   mit einer „Vorschlag"-Kennzeichnung (siehe oben) ein echter Fund — es geht nicht darum, DASS etwas
+   ergänzt wurde, sondern dass ausgerechnet etwas ergänzt wurde, das ausdrücklich verneint war. Trotzdem
+   gilt: mit klarer Kennzeichnung würde ein Handwerker das in Sekunden erkennen und löschen, der Schaden
+   bliebe klein — ohne Kennzeichnung ist es der stille, leicht übersehbare Fehler, um den es hier eigentlich
+   geht.
+3. **Kein Fehler, sondern eine Lücke in meiner eigenen Soll-Lösung:** Der Erschwerniszuschlag Altbau kam
+   korrekt (ich hatte „Altbau" im Text — das ist fachlich ein legitimer Auslöser, siehe PM-006). Den hatte
+   ich in der Soll-Lösung oben schlicht vergessen mit reinzuschreiben, das geht auf meine Kappe, nicht auf
+   die vom Tool. Reiht sich in den „Systemischen Fund" oben ein (0,00 €, Preis fehlt in der
+   Preisdatenbank) — nichts Neues.
+
+**Positiv festzuhalten:** Die eigentliche Kernfrage dieses Testfalls — wird Vollflächenspachtelung sauber
+von Kleinreparatur unterschieden, und bleibt die Spachtelqualität (Q2) erhalten — ist ein klares Ja.
+32,91 m² auf die volle Fläche, korrekt als „Spachtelarbeiten Q2" benannt. Das ist ein echter Erfolg, den
+ich nicht kleinreden will, auch wenn zwei andere Bugs den Fall insgesamt nicht grün machen.
+
+**Für Head of IT:** nur noch ein Thema, Punkt 1 ist raus (siehe Korrektur oben, kein Rechenfehler mehr) —
+die Kleinreparatur-Erkennung sollte eine ausdrückliche Verneinung wie „nicht nur eine kleine Ausbesserung"
+genauso respektieren wie andere Ausschlüsse (Punkt 2). Falls der Designer die „Vorschlag"-Kennzeichnung
+aus PD-008 umsetzen will, bräuchte es zusätzlich eine technische Kleinigkeit: irgendein Flag pro Position,
+ob sie aus dem Transkript direkt kam oder vom Tool selbst ergänzt wurde — das gibt's laut meinem
+bisherigen Eindruck noch nicht, aber das entscheidet ihr zwei am besten direkt miteinander.
+
+---
+
+## PM-012 — Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich NICHT neu (Esszimmer)
+
+**Datum:** 2026-08-17
+**Status:** ❌ Wandfläche exakt Soll, Ausschluss sauber respektiert (kein Boden-Phantom) — aber „Sockelleisten streichen" fehlt komplett, jetzt DRITTE unabhängige Bestätigung derselben Lücke wie PM-010, diesmal isoliert ohne Doppel-Fall-Verwicklung
+
+**Warum dieser Fall:** PM-010 prüft die Doppel-Falle in eine Richtung (beides verlangt, „streichen" fehlt
+im Ergebnis — bestätigt offen). Dieser Fall prüft die GEGENRICHTUNG desselben Themas, isoliert: nur
+Streichen ist verlangt, Neumontage ist ausdrücklich ausgeschlossen. Zwei Dinge auf einmal getestet: (a)
+kommt „Sockelleisten streichen" (Maler) diesmal, ganz ohne die Doppel-Fall-Verwicklung von PM-010 — falls
+sie auch hier fehlt, ist das ein weiterer, unabhängiger Beleg, dass die Lücke generell besteht, nicht nur
+im Doppel-Fall; (b) wird trotz des ausdrücklichen Ausschlusses fälschlich eine Boden-Position
+„Sockelleisten montieren" erfunden — die Über-Erkennungs-Variante desselben Fehlertyps, den wir bei den
+Fassaden- und Bodenaustausch-Phantompositionen schon gesehen haben.
+
+**Zum Einsprechen:**
+„Esszimmer, viereinhalb mal drei, Höhe zwo fünfundfünfzig. Wände streichen, zweimal drüber, ganz normal.
+Die Sockelleisten bleiben genau wie sie sind, die werden NICHT neu gemacht, die NICHT demontiert — die
+sollen nur nochmal mitgestrichen werden, in der gleichen Farbe wie die Wand. Ein Fenster, Standardgröße,
+eine Tür, normal Maß.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,50+3,00) = 15,00 lfm
+- Wandbrutto: 15,00×2,55 = 38,25 m²
+- Abzug 1 Fenster Standard (1,20 m²) + 1 Tür Standard (1,89 m²) = 3,09 m²
+- Wandfläche netto: **35,16 m²**
+- Wandflächen streichen 2×: **35,16 m²**
+- Sockelleisten streichen (Maler): eigene Position, 15,00 − 0,90 (Tür) = **14,10 lfm**
+- Sockelleisten montieren (Boden): **keine Position** — ausdrücklich ausgeschlossen
+- Sockelleisten entfernen (Boden): **keine Position** — ausdrücklich ausgeschlossen
+
+**Worauf achten:**
+- Kommt „Sockelleisten streichen" (Maler) überhaupt als eigene Position — isolierter Test derselben
+  Lücke, die bei PM-010 bereits bestätigt offen ist, diesmal ohne die Doppel-Fall-Verwicklung. Fehlt sie
+  auch hier, ist das ein zusätzlicher, unabhängiger Beleg für eine generelle Lücke, kein Sonderfall.
+- Wird trotz „bleiben wie sie sind", „NICHT neu gemacht", „NICHT demontiert" trotzdem eine Boden-Position
+  „Sockelleisten montieren" oder „entfernen" erfunden? Das wäre die Über-Erkennungs-Variante desselben
+  Fehlertyps wie beim phantomen Bodenaustausch in PM-010.
+- Wird der ausdrückliche, dreifach wiederholte Ausschluss überhaupt als solcher erkannt (ähnlich der
+  Ausschluss-Erkennung aus PM-001), oder wird das Wort „Sockelleisten" trotzdem als generelles
+  Boden-Signal gewertet?
+
+**Ist-Ergebnis (Prüfmeister, direkt im Browser-Tab geprüft, 2026-08-17):** Esszimmer korrekt erkannt,
+Raummaße exakt (3×4,5 m, Höhe 2,55 m, Türen 1, Fenster 1). Positionen im fertigen Entwurf:
+
+- Wandflächen streichen 2×: 35,16 m² × 9,50 € = 334,02 € ✓ exakt Soll
+- Boden schützen: 13,5 m² × 1,20 € = 16,20 € (automatisch abgeleitete Nebenleistung, wie in jedem
+  anderen Testfall — kein Fehler)
+- Sockelleisten abkleben: 14,1 lfdm × 0,80 € = 11,28 € — das ist die normale, in praktisch jedem Testfall
+  auftauchende Schutz-Nebenleistung fürs Streichen der Wand, KEIN Ersatz für die verlangte Leistung
+- **„Sockelleisten streichen" (Maler) fehlt komplett** — trotz ausdrücklichem, dreifachem Verlangen
+  im Transkript
+- **Keine Boden-Position** („Sockelleisten montieren"/„entfernen") — der Ausschluss wurde also sauber
+  respektiert, keine Über-Erkennung
+- Gesamt: Netto 361,50 € × 1,19 = **430,19 €** — rechnerisch konsistent, kein versteckter 4. Posten
+
+**Befund:**
+
+1. **„Sockelleisten streichen" fehlt — dritte unabhängige Bestätigung derselben Lücke wie PM-010.** Diesmal
+   ganz ohne die Doppel-Fall-Verwicklung (kein „montiert UND gestrichen" im selben Satz, keine Verwechslung
+   mit „Sockelleisten abkleben" möglich, da diese ja ohnehin als eigene, normale Position da ist). Das
+   entkräftet die Hoffnung, dass es sich bei PM-010 um einen Sonderfall der Doppel-Situation handeln
+   könnte — die Lücke ist generell: die Maler-Engine kennt offenbar überhaupt keine „Sockelleisten
+   streichen"-Position, unabhängig vom Kontext.
+2. **Gute Nachricht: kein Phantom auf der Boden-Seite.** Trotz drei verschiedener Verneinungs-
+   Formulierungen im selben Satz („bleiben wie sie sind", „NICHT neu gemacht", „NICHT demontiert") kam
+   keine einzige unverlangte Boden-Position. Die Über-Erkennungs-Sorge aus der „Worauf achten"-Liste hat
+   sich nicht bestätigt — die Ausschluss-Erkennung funktioniert hier sauber, in beide Richtungen (weder
+   „montieren" noch „entfernen" wurde fälschlich ergänzt).
+
+**Für Head of IT:** Zusammen mit PM-010 jetzt dreifach bestätigt (Doppel-Fall + zwei isolierte
+Wiederholungen an anderer Stelle in diesem Test): eine eigene „Sockelleisten streichen"-Position fehlt
+in der Maler-Engine komplett, unabhängig vom Kontext. Das ist keine Rand-Situation mehr, sondern eine
+grundsätzliche Lücke — bitte mit entsprechender Priorität behandeln.
+
+---
+
+## PM-014 — Neuer, schwerer Fund: doppelte Positionen + instabile Summen bei Angebot 2026-0016 (nicht geplant, live entdeckt)
+
+**Datum:** 2026-08-17
+**Status:** ❌ Bestätigt, reproduzierbar, ungeklärter Auslöser — schwerster Einzelfund der bisherigen Testreihe
+
+**Wie das aufgefallen ist:** Kein geplanter Testfall, sondern eine Beobachtung beim direkten Nachschauen
+im Browser-Tab. Angebot 2026-0016 (das PM-011-Arbeitszimmer, ursprünglich sauber mit 1.000,14 € geprüft
+und dokumentiert) zeigt jetzt **2.000,28 € — exakt das Doppelte**. Beim Auslesen der Seite direkt (nicht
+nur per Screenshot, sondern über den tatsächlichen Seiteninhalt) ist bestätigt: **jede einzelne Position
+im Arbeitszimmer ist exakt zweimal vorhanden** — Wandflächen streichen 2× (zweimal als Zeile),
+Boden schützen (zweimal), Sockelleisten abkleben (zweimal), Spachtelarbeiten Q2 (zweimal), Voranstrich/
+Grundierung (zweimal), Erschwerniszuschlag Altbau (zweimal), Risse/Löcher spachteln (zweimal) — 14
+Positionszeilen statt der ursprünglichen 7, alle mit identischen Werten. Nettosumme 1.680,91 € = exakt
+2 × 840,45 €. Das ist bei zwei unabhängigen Aufrufen der Seite (mit Neuladen dazwischen) stabil
+reproduzierbar — kein Einzelbild, kein Zufall.
+
+**Zusätzlich, separat davon:** Die Übersichtsliste auf dem Dashboard („Zuletzt erstellt") zeigt für
+dasselbe Angebot je nach Zeitpunkt unterschiedliche Beträge — mal 2.000 €, mal 0 € — obwohl die
+Detailseite des Angebots selbst stabil bei 2.000,28 € bleibt. Das ist vermutlich ein zweiter, unabhängiger
+Anzeige-Bug (Dashboard-Liste synchronisiert sich nicht zuverlässig mit dem echten Stand), nicht Teil der
+eigentlichen Verdopplung — aber selbst als reiner Anzeigefehler ernst zu nehmen, weil ein Handwerker sich
+auf diese Übersicht verlässt, um zu sehen, was offen ist.
+
+**Ehrliche Offenlegung zum möglichen Auslöser:** Ich habe dieses Angebot im Rahmen der PM-011-Prüfung
+mehrfach direkt im Browser besucht — u. a. einmal auf „Entwurf erstellen" geklickt (einmalig, als der
+Entwurf noch gar nicht existierte), danach mehrfach per URL neu aufgerufen, das Fenster in der Größe
+verändert (mobile vs. Desktop-Breite) und hoch-/runtergescrollt. Ich habe kein zweites Mal auf „Entwurf
+erstellen" oder eine vergleichbare Aktion geklickt. Trotzdem kann ich nicht zu 100 % ausschließen, dass
+mein wiederholtes Neu-Navigieren zur selben Entwurfs-URL selbst der Auslöser war (z. B. falls das erneute
+Laden dieser Seite die Positions-Generierung nochmal anstößt, statt nur den vorhandenen Stand zu laden).
+Das wäre allerdings selbst dann ein echter Bug — ein Handwerker, der aus Versehen zweimal auf einen Link
+klickt oder die Seite neu lädt, würde genau dasselbe auslösen und am Ende ein Angebot mit doppelt so
+hohem Preis verschicken, ohne dass irgendeine Fehlermeldung kommt.
+
+**Warum das der schwerste Fund der bisherigen Testreihe ist:** Bisher ging es immer um einzelne falsche
+oder fehlende Positionen (ein paar hundert Euro Abweichung). Hier verdoppelt sich das GESAMTE Angebot,
+lückenlos über alle Positionen hinweg, ohne jede Fehlermeldung oder Auffälligkeit außer der reinen Zahl
+oben. Ein Handwerker, der die Positionsliste nicht Zeile für Zeile mit der vorherigen Version vergleicht
+(warum sollte er auch), sieht nur „2.000 € statt erwarteter 1.000 €" und hat keinen offensichtlichen
+Hinweis, WARUM — die einzelnen Zeilen sehen für sich genommen ja plausibel aus, es gibt nur doppelt so
+viele davon. Das ist genau das im Fachwissen beschriebene „Race Condition: Summe schwankt ohne
+Nutzeraktion"-Muster, hier zum ersten Mal tatsächlich beobachtet und mit Beweis (doppelte Positionszeilen
+im Seiteninhalt) belegt, nicht nur vermutet.
+
+**Für Head of IT:** Bitte mit hoher Priorität prüfen, ob erneutes Aufrufen/Neuladen der Entwurfsseite
+eines bereits generierten Angebots die Positions-Generierung nochmal auslöst und dabei ANHÄNGT statt zu
+ERSETZEN oder zu erkennen „ist schon da, nichts tun". Das würde exakt zu dem beobachteten Muster passen.
+Zusätzlich, separat: die Dashboard-Übersichtsliste sollte zuverlässig denselben Betrag zeigen wie die
+Detailseite — aktuell tut sie das nicht.
+
+---
+
+## PM-013 — Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur)
+
+**Datum:** 2026-08-17
+**Status:** ⏳ noch nicht geprüft — neuer Testfall
+
+**Warum dieser Fall:** Deckt gleich drei bisher ungetestete Punkte gleichzeitig ab. Erstens: ein
+Mehrraum-Auftrag, bei dem die Räume nicht nur unterschiedlichen Scope haben (wie bei PM-005), sondern
+komplett unterschiedliche GEWERKE — ein Raum nur Boden, der andere nur Maler. Das ist ein härterer Test
+für die Raum-/Gewerke-Trennung als PM-005, weil hier auch geprüft wird, ob im einen Raum trotz Wort
+„Boden" im Nebensatz keine Maler-Positionen und im anderen Raum trotz Rauminhalt keine Boden-Positionen
+entstehen. Zweitens: Fischgrät-Verlegung — im Fachwissen als eigener, höherer Verschnittsatz (10–15 %)
+gegenüber gerader Verlegung (5 %) explizit benannt, aber bisher in keinem Testfall genutzt (PM-002 hat nur
+„diagonal" getestet). Drittens: eine ausdrücklich verlangte Dehnungsfuge — bisher komplett ungetestet.
+
+**Zum Einsprechen:**
+„Wohnzimmer, acht mal viereinhalb. Eichenparkett, Fischgrät verlegt, das braucht ja mehr Verschnitt. Ist
+schon ne große Fläche, da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte mit rein. Boden nur,
+an den Wänden machen wir nix.
+
+Flur daneben, fünf mal eins achtzig, Höhe zwo sechzig. Kein Fenster da, aber eine Tür, normal Maß. Nur
+Wände und Decke streichen, zweimal. Da wird nix am Boden gemacht, der bleibt wie er ist.“
+
+**Soll-Lösung:**
+
+*Wohnzimmer (nur Boden-Gewerk):*
+- Fläche: 8,00×4,50 = 36,00 m²
+- Fischgrät-Verlegung: Verschnitt im Korridor **10–15 %** (Fachwissen-Standard für Fischgrät/diagonal) →
+  zwischen 39,60 m² (10 %) und 41,40 m² (15 %). Alles in diesem Korridor ist ok, klar falsch wäre 5 %
+  (Standard für gerade Verlegung) oder 0 %.
+- Dehnungsfuge: eine eigene Position (egal ob Preis hinterlegt oder nicht) — Raumlänge 8,00 m liegt an
+  bzw. über der handwerksüblichen Faustregel für schwimmend verlegte Bodenbeläge ohne Fuge
+- Keine Trittschalldämmung erwartet (nicht erwähnt, bei Parkett fachlich auch nicht zwingend Standard
+  wie bei Laminat/Vinyl)
+- Keine Sockelleisten-Position (nicht erwähnt)
+- **Keine** Wand- oder Deckenposition — ausdrücklich ausgeschlossen („an den Wänden machen wir nix")
+
+*Flur (nur Maler-Gewerk):*
+- Umfang: 2×(5,00+1,80) = 13,60 lfm; Wandbrutto: 13,60×2,60 = 35,36 m²
+- Abzug 1 Tür Standard (1,89 m²), kein Fenster-Abzug (ausdrücklich „kein Fenster da")
+- Wandflächen streichen 2×: **33,47 m²**
+- Deckenfläche streichen 2×: 5,00×1,80 = **9,00 m²**
+- **Keine** Boden-Position jeglicher Art — ausdrücklich ausgeschlossen („da wird nix am Boden gemacht,
+  der bleibt wie er ist"), obwohl das Wort „Boden" im Satz vorkommt
+
+**Worauf achten:**
+- Bleiben beide Räume klar getrennte Gruppen mit jeweils nur einem Gewerk — keine Vermischung, kein
+  PM-005-artiges Verschwinden einer Gruppe?
+- Fischgrät-Verschnitt spürbar höher als 5 % (der Standard für gerade Verlegung) — landet er im
+  erwarteten 10–15 %-Korridor?
+- Taucht überhaupt eine „Dehnungsfuge"-Position auf, wenn ausdrücklich verlangt — auch unbepreist wäre
+  hier schon ein Erfolg (siehe „Systemischer Fund" oben zu fehlenden Standardpreisen)?
+- Bleibt der Flur wirklich ganz ohne jede Boden-Position, obwohl das Wort „Boden" im Flur-Satz auftaucht
+  — direkte Verwandtschaft zum PM-010-Phantom-Bug (Wortauslöser ohne echten inhaltlichen Bezug)?
+- Bleibt das Wohnzimmer wirklich ganz ohne jede Wand-/Deckenposition, trotz des Namens „Wohnzimmer" (kein
+  automatisches Default-Streichen, nur weil es sich wie ein normaler Wohnraum anhört)?
 

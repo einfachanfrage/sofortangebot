@@ -20,19 +20,24 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: quote } = await supabase
-    .from('quotes')
-    .select('*, items:quote_items(*), customer:customers(*)')
-    .eq('id', id)
-    .single()
-
   const { data: company } = await supabase
     .from('companies')
     .select('*')
     .eq('user_id', user.id)
     .single()
 
-  if (!quote || !company) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+  if (!company) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
+  // Explizit auf company_id filtern statt nur auf RLS zu vertrauen (Verteidigung
+  // in der Tiefe -- zweite, unabhaengige Absicherung derselben Regel).
+  const { data: quote } = await supabase
+    .from('quotes')
+    .select('*, items:quote_items(*), customer:customers(*)')
+    .eq('id', id)
+    .eq('company_id', company.id)
+    .single()
+
+  if (!quote) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
 
   // Bereits vorhandene URL zurückgeben wenn noch gültig
   const existingUrl = (quote as { pdf_public_url?: string; pdf_url_gueltig_bis?: string }).pdf_public_url

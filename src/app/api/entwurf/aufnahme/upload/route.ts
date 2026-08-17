@@ -5,6 +5,7 @@ import { pruefeKIZugriff, trackKIUsage } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { segmentiereRaeume } from '@/lib/raum-segmentierer'
+import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
 
@@ -121,12 +122,14 @@ export async function POST(req: NextRequest) {
   const storageOk = storageErgebnis.status === 'fulfilled' && !storageErgebnis.value.error
   if (storageErgebnis.status === 'fulfilled' && storageErgebnis.value.error) {
     console.error('[aufnahme-upload] Storage-Upload fehlgeschlagen')
+    Sentry.captureException(new Error(String(storageErgebnis.value.error.message ?? storageErgebnis.value.error)), { tags: { feature: 'aufnahme_upload_storage' } })
   }
 
   // Whisper-Ergebnis
   const transkript = whisperErgebnis.status === 'fulfilled' ? whisperErgebnis.value.text?.trim() : ''
   if (whisperErgebnis.status === 'rejected') {
     console.error('[aufnahme-upload] Transkription fehlgeschlagen')
+    Sentry.captureException(whisperErgebnis.reason, { tags: { feature: 'aufnahme_upload_whisper' } })
   }
 
   if (!transkript) {
@@ -156,8 +159,9 @@ export async function POST(req: NextRequest) {
     const chips = await extrahiereChips(ai, transkript, kontextNotizen || undefined)
     positionen = chips.positionen
     chipTokens = { tokensIn: chips.tokensIn, tokensOut: chips.tokensOut }
-  } catch {
+  } catch (e) {
     console.error('[aufnahme-upload] Positionsextraktion fehlgeschlagen')
+    Sentry.captureException(e, { tags: { feature: 'aufnahme_upload_positionen' } })
   }
 
   // ── Sichtbarkeit: was hat die Vorverarbeitung mit dem Rohtext gemacht? ────

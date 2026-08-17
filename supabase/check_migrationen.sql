@@ -136,6 +136,11 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
       FROM price_items p
       WHERE p.company_id = c.id AND p.category LIKE 'Boden%'
     ) < 177
+  )),
+  (51, '20260817190000_add_company_logos_storage_policies', 'Policy "Eigenes Firmenlogo hochladen"', EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'storage' AND tablename = 'objects'
+      AND policyname = 'Eigenes Firmenlogo hochladen'
   ))
 )
 SELECT
