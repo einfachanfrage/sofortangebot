@@ -69,9 +69,16 @@ function saetze(text: string): string[] {
 //
 // 1) expliziter Altbelag-Nomen  ("alter Boden", "Altbelag", "uralter …")
 const ALTBELAG_NOMEN = /altbelag|alt(?:e|er|en)\s+(?:boden|belag|teppich\w*|parkett|laminat\w*|dielen|vinyl|linoleum|pvc)|uralt\w*/i
-// 2) eindeutiges Entfernen-Verb (inkl. aller Partizipien) irgendwo im Text
-const ENTFERNEN_STARK = /entfern\w*|raus(?:reiß\w*|gerissen|geriss\w*)|\braus\b|herausgerissen|abreiß\w*|abgerissen|abbrech\w*|abgebrochen|abnehm\w*|abgenommen|demontier\w*|demontage|stripper/i
-// 3) schwaches "weg" nur zusammen mit einem Belag-Nomen im selben Satz
+// 2) eindeutige Entfernen-Wörter (inkl. aller Partizipien) — gelten textweit,
+// auch über Satzgrenzen hinweg ("Alter Teppichboden … 18 m². Mit dem
+// Stripper rausreißen.") — weil diese Wörter kaum für irgendwas anderes als
+// eine Boden-Demontage stehen.
+const ENTFERNEN_EINDEUTIG = /entfern\w*|raus(?:reiß\w*|gerissen|geriss\w*)|herausgerissen|abreiß\w*|abgerissen|abbrech\w*|abgebrochen|abnehm\w*|abgenommen|demontier\w*|demontage|stripper/i
+// 3) das bloße "weg" oder "raus" sind zu generisch — die können sich auf
+// ALLES beziehen (PM-010: "Die alten Sockelleisten kommen raus" hat mit dem
+// alten, textweiten Check fälschlich einen kompletten Bodenaustausch
+// ausgelöst). Zählen deshalb nur zusammen mit einem Belag-Nomen im SELBEN SATZ.
+const SCHWACHES_ENTFERNEN = /\bweg\b|\braus\b/i
 const BELAG_NOMEN_SATZ = /teppich\w*|belag|boden|parkett|laminat\w*|dielen|vinyl|linoleum|pvc/i
 
 /** Erkennt alle flexions-anfälligen Boden-Arbeiten in freiem Text. */
@@ -79,8 +86,8 @@ export function erkenneBodenArbeiten(text: string): Set<BodenArbeit> {
   const ergebnis = new Set<BodenArbeit>()
   if (!text?.trim()) return ergebnis
 
-  const wegMitBelag = saetze(text).some(s => /\bweg\b/i.test(s) && BELAG_NOMEN_SATZ.test(s))
-  if (ALTBELAG_NOMEN.test(text) || ENTFERNEN_STARK.test(text) || wegMitBelag) {
+  const schwachMitBelag = saetze(text).some(s => SCHWACHES_ENTFERNEN.test(s) && BELAG_NOMEN_SATZ.test(s))
+  if (ALTBELAG_NOMEN.test(text) || ENTFERNEN_EINDEUTIG.test(text) || schwachMitBelag) {
     ergebnis.add('altbelag_entfernen')
   }
   return ergebnis

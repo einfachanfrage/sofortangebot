@@ -62,4 +62,19 @@ describe('erkenneBodenArbeiten — altbelag_entfernen (alle Flexionen/Partizipie
   it('Subjekt und Aktion in verschiedenen Sätzen → NICHT', () => {
     expect(hatBodenArbeit('Der Boden ist schön. Die Möbel müssen weg.', 'altbelag_entfernen')).toBe(false)
   })
+
+  // PM-010: das bloße Wort "raus" ohne Belag-Bezug im selben Satz hat vorher
+  // textweit gezündet — auch wenn's gar nicht um den Boden ging, sondern z.B.
+  // um Sockelleisten. Ergebnis war ein kompletter, nie verlangter
+  // Bodenbelag-Austausch im fertigen Angebot.
+  it('PM-010: "Sockelleisten kommen raus" → KEIN Altbelag-Entfernen (raus bezieht sich nicht auf den Boden)', () => {
+    expect(hatBodenArbeit(
+      'Die alten Sockelleisten kommen raus, neue werden montiert, weiße MDF-Leisten.',
+      'altbelag_entfernen',
+    )).toBe(false)
+  })
+
+  it('"Boden raus" im selben Satz → weiterhin Altbelag-Entfernen', () => {
+    expect(hatBodenArbeit('Der alte Boden muss hier raus.', 'altbelag_entfernen')).toBe(true)
+  })
 })

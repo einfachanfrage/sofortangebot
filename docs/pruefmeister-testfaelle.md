@@ -35,7 +35,7 @@ vorher nochmal lesen, was gerade drinsteht, dann fällt sowas seltener auf.
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Kniestock + Grundierungs-Fix live bestätigt; unverlangte „Dachschräge spachteln" bleibt offen; unnötige Rückfragen trotz bereits genannter Werte neu gefunden |
 | PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin 5 rote Fehler trotz korrekter Rechnung (Designer-Thema); „Gondierung"-Tippfehler neu gefunden |
 | PM-009 | Bodenleger-Komplettpaket | 🟡 Verschnitt-Fix bestätigt auch für Vinyl — Übergangsschiene fehlt weiterhin, jetzt zweifach reproduziert |
-| PM-010 | Sockelleisten-Doppel-Falle | ❌ 350-statt-3,50-Extraktionsfehler zweifach reproduziert (kein Zufall mehr); „Sockelleisten streichen" fehlt weiterhin; NEU: Tool erfindet unverlangten kompletten Bodenbelag-Austausch |
+| PM-010 | Sockelleisten-Doppel-Falle | 🟡 Erfundener Bodenaustausch behoben — Live-Test steht aus; 350-statt-3,50-Extraktionsfehler + fehlendes „Sockelleisten streichen" weiterhin offen |
 
 **Noch offen, bewusst zurückgestellt (niedrige Priorität, siehe PM-003/006):**
 1-Cent-Rundungsdrift zwischen Positions-Summe und Gesamtbetrag; fehlende
@@ -796,3 +796,25 @@ Für Head of IT: bitte prüfen, ob die Extraktion bei Sockelleisten-Erwähnungen
 montiert") fälschlich auch Bodenbelag-Signale auslöst — evtl. dieselbe Fundstelle wie bei
 „altbelag_entfernen"/"belag"-Erkennung in der Boden-Engine, die zu breit auf Wörter wie „alte …
 kommen raus" anspringt, ohne zu prüfen, WAS genau rauskommt.
+
+**Fix-Update (Head of IT, 2026-08-17) — erfundener Bodenaustausch:** Genau
+dort gefunden, wo der Prüfmeister es vermutet hat. In `boden-normalisierer.ts`
+gibt es eine Erkennung für „Altbelag muss raus" — die hatte einen Textbaustein,
+der auf das BLOSSE Wort „raus" reagiert, ganz ohne zu prüfen, wovon im Satz
+überhaupt die Rede ist. Bei „Die alten Sockelleisten kommen raus" reicht das
+Wort „raus" allein, damit das Tool einen kompletten Bodenaustausch dazu
+erfindet — obwohl kein einziges Mal von Teppich, Parkett, Vinyl o.ä. die Rede
+war. Interessant dabei: für das schwächere Wort „weg" gab es diese Prüfung
+("steht im selben Satz auch ein Boden-Wort?") schon längst — nur beim Wort
+„raus" fehlte sie.
+
+Fix: „raus" (und „weg") zählen jetzt nur noch, wenn im selben Satz auch
+wirklich ein Boden-Wort steht (Teppich/Parkett/Vinyl/Laminat/Belag/Boden/…).
+Eindeutigere Wörter wie „rausreißen", „entfernen", „demontiert", „abgerissen"
+bleiben unverändert (die sind spezifisch genug, kein Bug bekannt). Neuer Test
+in `boden-normalisierer.test.ts` mit genau deinem Sockelleisten-Fall (jetzt:
+kein Bodenaustausch mehr) plus einem Gegen-Test, dass „Der alte Boden muss
+raus" weiterhin korrekt erkannt wird. Alle 676 Tests im Projekt grün, `tsc`
+sauber. Die anderen zwei PM-010-Funde (350-statt-3,50-Extraktion,
+„Sockelleisten streichen" fehlt) sind davon unberührt, noch offen.
+Live-Test durch dich steht aus.
