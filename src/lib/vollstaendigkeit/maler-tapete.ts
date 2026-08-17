@@ -92,18 +92,59 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
       ergaenzt.push({ beschreibung: 'Sockelleisten schleifen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm aus Transkript`, annahmen: [] })
     }
     ergaenzt.push({ beschreibung: 'Sockelleisten streichen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm`, annahmen: [] })
-  } else {
-    // PM-010, dritter Fund: der generische add()-Helfer blockt anhand der
-    // ersten zwei Wörter ("sockelleisten", "streichen" einzeln geprüft) —
-    // sobald im selben Raum schon "Sockelleisten montieren" steht (jetzt durch
-    // den vorherigen Fix wieder korrekt vorhanden), hält add() das fälschlich
-    // für "sockelleisten schon abgedeckt" und verwirft "Sockelleisten
-    // streichen" still. Der Guard oben (Zeile 85) hat aber schon spezifisch
-    // genug geprüft ("sockelleisten streich" als zusammenhängender Text) —
-    // hier deshalb direkt eintragen statt nochmal grob über add() zu filtern.
-    if (lower.includes('schleifen') || lower.includes('schleif')) fehlende.push('Sockelleisten schleifen')
-    fehlende.push('Sockelleisten streichen')
+    return
   }
+
+  // PM-010, FÜNFTER Fund — der eigentliche Grund, warum die letzten vier
+  // Fix-Versuche live nie gewirkt haben: "fehlende" (der Rückgabewert von
+  // pruefeUndErgaenzeVollstaendigkeit) wird in angebot-extrahieren/route.ts
+  // beim Destrukturieren des Ergebnisses NIE gelesen — nur `positionen` und
+  // `mengenRoh` kommen an, `fehlende` landet in `{ positionen, mengenRoh }`
+  // gar nicht erst in einer Variable. Es existiert kein Feld dafür in
+  // ExtraktionResponse. Ein Eintrag in "fehlende" ist technisch korrekt,
+  // aber für den Nutzer unsichtbar — er sieht nicht 5 Positionen mit einer
+  // offenen Rückfrage, er sieht einfach nur 4. Genau das hat Sandy im
+  // Nachtest bestätigt ("keine offene Rückfrage dazu"). Alle vier bisherigen
+  // Fix-Versuche haben die SIGNAL-ERKENNUNG repariert (erkennt der Code,
+  // dass "Sockelleisten streichen" gemeint ist) — die war am Ende jedes Mal
+  // korrekt, hat aber nie etwas genutzt, weil das Ergebnis in ein Loch fiel.
+  //
+  // Deshalb hier NICHT mehr auf eine explizite Meterangabe im Text warten
+  // (die landet sowieso nur in "fehlende"), sondern die Menge von einer
+  // bereits berechneten Schwester-Position übernehmen:
+  // 1. "Sockelleisten montieren" (PM-010: alte raus, neue rein UND streichen)
+  //    — dieselben neuen Leisten werden logischerweise mit derselben Länge
+  //    gestrichen.
+  // 2. Sonst "Sockelleisten abkleben" (PM-012: gar keine Neumontage, die
+  //    VORHANDENEN Leisten sollen nur mitgestrichen werden) — die Abkleben-
+  //    Position nutzt exakt dieselbe Umfang-minus-Türen-Formel wie
+  //    "montieren" (siehe maler.ts), ist aber IMMER da, sobald in dem Raum
+  //    gestrichen wird und Sockelleisten existieren — unabhängig davon, ob
+  //    neu montiert wird oder nicht.
+  // Nur bei MEHREREN Räumen mit je einer eigenen Kandidaten-Position raten
+  // wir nicht, welche gemeint ist (lieber fragen als raten) und fallen auf
+  // "fehlende" zurück — auch wenn das aktuell noch nicht beim Nutzer
+  // ankommt, ist es nicht falsch.
+  const montiertPositionen = ergaenzt.filter(p => /sockelleisten (?:montieren|erneuern)/i.test(p.beschreibung))
+  const abklebenPositionen = ergaenzt.filter(p => /sockelleisten abkleben/i.test(p.beschreibung))
+  const kandidaten = montiertPositionen.length > 0 ? montiertPositionen : abklebenPositionen
+  if (kandidaten.length === 1) {
+    const quelle = kandidaten[0]
+    const raumSuffix = quelle.beschreibung.match(/\s+[—–-]\s+.+$/)?.[0] ?? ''
+    filtereArray(ergaenzt, p => !p.beschreibung.toLowerCase().includes('sockelleisten abkl'))
+    ergaenzt.push({
+      beschreibung: `Sockelleisten streichen${raumSuffix}`,
+      menge: quelle.menge,
+      einheit: quelle.einheit,
+      konfidenz: 'medium',
+      berechnungsweg: `Gleiche Länge wie „${quelle.beschreibung}" — im Transkript stand keine eigene Meterangabe fürs Streichen`,
+      annahmen: [`Menge von „${quelle.beschreibung}" übernommen (keine eigene Meterangabe fürs Streichen genannt) — bitte kurz prüfen`],
+    })
+    return
+  }
+
+  if (lower.includes('schleifen') || lower.includes('schleif')) fehlende.push('Sockelleisten schleifen')
+  fehlende.push('Sockelleisten streichen')
 }
 
 // Tapete entfernen + dann streichen (kein neues Tapezieren)

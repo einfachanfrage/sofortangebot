@@ -30,7 +30,7 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
 | CoS-010 | **DRINGEND, höchste Priorität:** Angebot verdoppelt sich (2.000,28€ statt 1.000,14€), Auslöser ungeklärt | 🟡 Fix da (exakte Dubletten werden jetzt geblockt), echter Auslöser weiter ungeklärt, Live-Nachtest steht aus | `pruefmeister-testfaelle.md` PM-014 |
-| CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | ❌ offen, jetzt 3-fach bestätigt (PM-010/012), Muster statt Einzelfall | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
+| CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | ❌ offen | `docs/design-check.md` DC-001 |
 | CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | ⏳ dokumentiert, kein akuter Auftrag | Prüfmeister-Notiz an CoS + PM-001-Fix-Update |
@@ -143,6 +143,51 @@ ist. Head of Product Engineering hat sich selbst eine feste Regel auferlegt: nie
 sagen, ohne vorher gegen echte Supabase-Produktionsdaten geprüft zu haben,
 nicht nur gegen eigene Testfälle — bitte das auch für den PM-010-Refix
 anwenden, bevor er wieder als erledigt gemeldet wird.
+
+**Fix-Update (Head of Product Engineering, 2026-08-17) — Ansatz gewechselt, wie empfohlen:**
+Der Prüfmeister hatte recht, dass ein fünfter ähnlicher Versuch (Signal-
+Erkennung nochmal nachbessern) sinnlos gewesen wäre. Grund: die
+Signal-Erkennung war bei allen vier bisherigen Versuchen am Ende JEDES MAL
+korrekt — geprüft, bestätigt, mit echten Live-Daten belegt. Das eigentliche
+Problem lag eine Ebene tiefer und wurde bisher nie angeschaut: `fehlende`
+(der Rückgabewert von `pruefeUndErgaenzeVollstaendigkeit`, der genau für
+Fälle wie diesen gedacht ist — "erkannt, aber keine sichere Menge, bitte
+Nutzer fragen") wird in `angebot-extrahieren/route.ts` beim Auswerten des
+Ergebnisses schlicht NIE gelesen. Es gibt dafür kein Feld in
+`ExtraktionResponse`. Jeder Fund, der in `fehlende` statt in einer echten
+Position landet, ist für den Nutzer unsichtbar — er sieht nicht "4
+Positionen + 1 offene Frage", er sieht einfach nur 4 Positionen. Das erklärt
+exakt, was Sandy beobachtet hat ("keine offene Rückfrage dazu").
+
+**Für PM-010/PM-012 konkret gelöst (nicht über das API-Leck, sondern
+drumherum):** `pruefeSockelleistenStreichen` fragt jetzt nicht mehr nach
+einer expliziten Meterangabe im Text (die sowieso nur in `fehlende` landen
+würde), sondern übernimmt die Menge von einer bereits berechneten
+Schwester-Position im selben Raum — "Sockelleisten montieren" (PM-010: neu
+montiert UND gestrichen) oder sonst "Sockelleisten abkleben" (PM-012: gar
+keine Neumontage, nur mitgestrichen — diese Position ist praktisch immer da,
+sobald im Raum gestrichen wird und Sockelleisten existieren, nutzt dieselbe
+Umfang-minus-Türen-Formel). Bei mehreren Räumen mit je eigener Kandidaten-
+Position wird nicht geraten, sondern weiterhin auf `fehlende` zurückgefallen
+(auch wenn das aktuell noch unsichtbar bleibt — besser nichts erfinden).
+Neuer Golden-Test für PM-012 mit dem exakten Prüfmeister-Transkript
+(`golden-korrekturen.test.ts`), bestehender PM-010-Test verschärft (prüft
+jetzt hart auf eine echte Position, nicht nur "irgendwas"). Volle Testsuite
+(706 Tests) + `tsc --noEmit` grün.
+
+**Größerer Systemfund, NICHT in diesem Fix behoben:** Die gleiche
+`fehlende`-Lücke betrifft nicht nur Sockelleisten — 130 Stellen in 18
+Dateien unter `src/lib/vollstaendigkeit/` nutzen denselben Rückfall-
+Mechanismus (`add(ergaenzt, fehlende, ...)` bzw. `fehlende.push(...)`) für
+Fälle, wo eine Arbeit erkannt, aber keine sichere Menge bekannt ist. Jeder
+dieser Fälle ist potenziell genauso unsichtbar für den Nutzer wie
+"Sockelleisten streichen" es war. Das ist eine Architektur-Frage auf CoS-002-
+Niveau (gehört vermutlich dort mit rein oder als eigener Punkt), keine, die
+ich in einem Rutsch löse — bräuchte eine bewusste Entscheidung, WIE
+`fehlende` beim Nutzer ankommen soll (als Rückfrage? als gelbe Warnung wie
+bei der 350-Warnung? als automatisch ergänzte, niedrig-konfidente Position
+mit Hinweis?), das ist Sandys/CoS' Entscheidung, kein rein technischer
+Schritt. Bewusst nicht angefasst, nur dokumentiert.
 
 ---
 

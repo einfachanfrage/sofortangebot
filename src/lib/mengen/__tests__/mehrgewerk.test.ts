@@ -164,10 +164,16 @@ describe('PM-010 — Sockelleisten-only-Auftrag erfindet keinen Bodenaustausch m
     expect(namen.some(n => n.includes('sockelleisten montieren'))).toBe(true)
   })
 
-  it('verliert "Sockelleisten streichen" nicht (landet mindestens als offene Rückfrage)', () => {
-    const alsPosition = namen.some(n => n.includes('sockelleisten streich'))
-    const alsFehlend = fehlende.some(f => f.toLowerCase().includes('sockelleisten streich'))
-    expect(alsPosition || alsFehlend, `weder Position noch fehlend — hat: ${namen.join(' | ')} | fehlend: ${fehlende.join(' | ')}`).toBe(true)
+  it('"Sockelleisten streichen" wird eine ECHTE Position, nicht nur "fehlende" (fünfter PM-010-Fund)', () => {
+    // "fehlende" aus pruefeUndErgaenzeVollstaendigkeit wird in
+    // angebot-extrahieren/route.ts nie gelesen — landet ein Fund NUR dort,
+    // sieht der Nutzer ihn nie (das war der wahre Grund, warum die letzten
+    // vier Fix-Versuche live nie gewirkt haben). Deshalb hier hart prüfen,
+    // dass es eine echte Position wird, nicht nur in "fehlende" landet.
+    const streichPosition = positionen.find(p => p.beschreibung.toLowerCase().includes('sockelleisten streich'))
+    expect(streichPosition, `keine Position — hat: ${namen.join(' | ')} | fehlend: ${fehlende.join(' | ')}`).toBeDefined()
+    // Gleiche Länge wie "Sockelleisten montieren" (13,00 lfdm, keine Tür in diesem Testfall) — keine eigene Meterangabe fürs Streichen im Transkript.
+    expect(streichPosition!.menge).toBeCloseTo(13.0, 1)
   })
 })
 

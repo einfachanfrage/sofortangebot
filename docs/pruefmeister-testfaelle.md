@@ -58,9 +58,9 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Alle Rechenfehler live bestätigt behoben (Kniestock 20,4 m², Dachschrägen 23,08 m², keine unverlangte Spachtelposition mehr); offen bleiben nur Designer-Themen (PD-005) und fehlende Standardpreise |
 | PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung jetzt 3-fach bestätigt stabil behoben; Masse-Anzeige zeigt weiterhin Fenster- statt Fassadenmaße (3. Bestätigung, PD-007); Preis für Fassadenfläche streichen weiterhin nicht hinterlegt; widersprüchlicher „Keine Positionen erkannt"-Banner ist in diesem Durchlauf NICHT wieder aufgetreten |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf) — fehlt nur noch ein Standardpreis dafür |
-| PM-010 | Sockelleisten-Doppel-Falle | ❌ Erfundener Bodenaustausch bestätigt behoben; 350-Bug auf der Karte bleibt (erwartet, Whisper-Ebene, Rechnung selbst korrekt); „Sockelleisten streichen" fehlt weiterhin definitiv — von Sandy am Bildschirm bestätigt, vierter Fix-Versuch wirkt nicht |
+| PM-010 | Sockelleisten-Doppel-Falle | 🟡 Erfundener Bodenaustausch + 350-Bug wie zuvor; „Sockelleisten streichen": wahrer Grund gefunden (Systemfund, siehe Fix-Update), fünfter Fix umgeht ihn, Live-Nachtest steht aus |
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | 🟡 Q2-Vollflächenspachtelung + Grundierung fachlich korrekt (Erfolg, Grundierung war entgegen erster Einschätzung kein Bug — siehe Korrektur); ein echter Bug bleibt: 8-€-Kleinreparaturposition trotz ausdrücklicher Verneinung; neuer Designer-Fund PD-008 (Vorschlag-Kennzeichnung für auto-ergänzte Positionen) |
-| PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ❌ Wandfläche exakt Soll, kein Boden-Phantom (Ausschluss respektiert) — „Sockelleisten streichen" fehlt, 3. unabhängige Bestätigung derselben Lücke wie PM-010 |
+| PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | 🟡 Fix da (Menge von „Sockelleisten abkleben" übernommen), Live-Nachtest steht aus |
 | PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ⏳ noch nicht geprüft — neu |
 | PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | 🟡 Fix da (exakte Dubletten werden geblockt), Auslöser weiterhin ungeklärt, Live-Nachtest steht aus |
 
@@ -1172,6 +1172,25 @@ Ergebnis:
 (350-Bug auf der Karte, bewusste Design-Entscheidung, Rechnung selbst korrekt), 1 von 3 **weiterhin real
 und bestätigt offen** („Sockelleisten streichen" fehlt komplett). Damit ist PM-010 noch nicht grün.
 
+**Fix-Update (Head of Product Engineering, 2026-08-17) — der wahre Grund, warum vier Versuche nicht
+gewirkt haben:** Nicht die Signal-Erkennung war das Problem (die war bei allen vier Versuchen am Ende
+korrekt, mit echten Live-Daten geprüft). Das Problem lag eine Ebene tiefer: `fehlende` — der Rückgabewert
+der Vollständigkeitsprüfung, extra dafür gedacht, "erkannt, aber keine sichere Menge, bitte fragen" an den
+Nutzer weiterzugeben — wird in `angebot-extrahieren/route.ts` beim Auswerten NIE gelesen. Kein Feld dafür
+in der API-Antwort. Jeder Fund, der dort landet, ist unsichtbar — keine 5. Position, keine offene Frage,
+einfach nichts. Genau das hast du gesehen.
+
+Fix (Ansatz gewechselt, wie vom Prüfmeister empfohlen): „Sockelleisten streichen" fragt jetzt nicht mehr
+nach einer expliziten Meterangabe im Text, sondern übernimmt die Menge von „Sockelleisten montieren"
+(derselbe Raum, schon berechnet) — dieselben neuen Leisten, dieselbe Länge. Nur bei mehreren Räumen mit
+je eigener Position wird nicht geraten. Test verschärft: prüft jetzt hart, dass es eine ECHTE Position
+wird (13,00 lfdm), nicht nur „irgendwas". Volle Testsuite (706 Tests) + `tsc --noEmit` grün.
+
+**Wichtig, ehrlich:** Der größere Fund dahinter (`fehlende` erreicht generell nie den Nutzer, betrifft
+130 Stellen in 18 Dateien, nicht nur Sockelleisten) ist NICHT mit gelöst — das ist eine größere
+Architektur-Entscheidung, dokumentiert bei CoS-007/CoS-002, wartet auf Sandys/CoS' Einordnung. Live-Nachtest
+für diesen konkreten Fix steht noch aus.
+
 ---
 
 ## PM-011 — Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer)
@@ -1358,6 +1377,14 @@ Raummaße exakt (3×4,5 m, Höhe 2,55 m, Türen 1, Fenster 1). Positionen im fer
 Wiederholungen an anderer Stelle in diesem Test): eine eigene „Sockelleisten streichen"-Position fehlt
 in der Maler-Engine komplett, unabhängig vom Kontext. Das ist keine Rand-Situation mehr, sondern eine
 grundsätzliche Lücke — bitte mit entsprechender Priorität behandeln.
+
+**Fix-Update (Head of Product Engineering, 2026-08-17):** Gleicher Fix wie bei PM-010 (siehe dortiges
+Update für die volle Root-Cause-Erklärung), hier zusätzlich wichtig: in diesem Fall gibt es GAR KEINE
+„Sockelleisten montieren"-Position (ausdrücklich ausgeschlossen). Die Menge wird deshalb stattdessen von
+„Sockelleisten abkleben" übernommen — die nutzt dieselbe Umfang-minus-Türen-Formel und ist praktisch immer
+da, sobald im Raum gestrichen wird und Sockelleisten existieren, unabhängig davon, ob neu montiert wird.
+Neuer Golden-Test mit deinem exakten Transkript (`golden-korrekturen.test.ts`, „PM-012"), erwartet 14,10
+lfdm. Volle Testsuite (706 Tests) + `tsc --noEmit` grün. Live-Nachtest steht aus.
 
 ---
 

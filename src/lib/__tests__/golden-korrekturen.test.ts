@@ -395,6 +395,50 @@ const KORPUS: Fall[] = [
     // "Riss", "Loch" etc.), also darf sie nicht erscheinen.
     verboten: ['spachtel'],
   },
+  {
+    name: 'PM-012 — Sockelleisten nur streichen, ausdrücklich NICHT neu montiert (Esszimmer)',
+    gewerk: 'maler',
+    // PM-012, Live-Nachtest 2026-08-17. Gegenrichtung von PM-010: hier wird
+    // GAR NICHT neu montiert, nur die vorhandenen Sockelleisten sollen
+    // mitgestrichen werden — dreifacher, ausdrücklicher Ausschluss der
+    // Neumontage im Transkript. Prüfmeister bestätigt live: kein Boden-
+    // Phantom (Ausschluss wird respektiert), ABER "Sockelleisten streichen"
+    // fehlte komplett — dritte unabhängige Bestätigung derselben Lücke wie
+    // PM-010. Ursache (siehe Fix-Update PM-010 im Testfälle-Dokument): der
+    // fünfte, eigentliche Root-Cause war, dass "fehlende" nie beim Nutzer
+    // ankommt. Fix: die Menge wird jetzt von "Sockelleisten abkleben"
+    // übernommen (dieselbe Umfang-minus-Türen-Formel, IMMER vorhanden sobald
+    // im Raum gestrichen wird), unabhängig davon, ob neu montiert wird.
+    transkript:
+      'Esszimmer, viereinhalb mal drei, Höhe zwo fünfundfünfzig. Wände streichen, zweimal drüber, ganz normal. ' +
+      'Die Sockelleisten bleiben genau wie sie sind, die werden NICHT neu gemacht, die NICHT demontiert — die ' +
+      'sollen nur nochmal mitgestrichen werden, in der gleichen Farbe wie die Wand. Ein Fenster, Standardgröße, ' +
+      'eine Tür, normal Maß.',
+    raeume: [{
+      name: 'Esszimmer',
+      laenge: 4.5,
+      breite: 3,
+      hoehe: 2.55,
+      // Bewusst OHNE 'sockelleisten montieren'/'entfernen' — ausdrücklicher
+      // Ausschluss der Neumontage. NUR 'sockelleisten streichen' drin, das
+      // korrekte Signal für den Wunsch "nur mitstreichen".
+      arbeiten: ['wände streichen', 'sockelleisten streichen'],
+      fenster: [{ anzahl: 1 }],
+      tueren: [{ anzahl: 1 }],
+      sockelleisten: true,
+    }],
+    exakteMengen: [
+      // Umfang 2×(4,50+3,00)=15,00 lfm; Wandbrutto 38,25 m²; Abzug 1 Fenster
+      // Standard (1,20) + 1 Tür Standard (1,89) = 35,16 m²
+      { enthaelt: 'wandflächen streichen', menge: 35.16 },
+      // Sockelleisten streichen: Umfang 15,00 − 1 Türbreite (0,90) = 14,10 lfdm
+      // — übernommen von "Sockelleisten abkleben", keine eigene Meterangabe im Transkript.
+      { enthaelt: 'sockelleisten streichen', menge: 14.10 },
+    ],
+    // Kernpunkt: kein Boden-Phantom trotz dreifacher Sockelleisten-Erwähnung,
+    // UND "Sockelleisten montieren" darf nicht als Maler-Position auftauchen.
+    verboten: ['sockelleisten montieren', 'sockelleisten entfernen'],
+  },
 ]
 
 describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {
