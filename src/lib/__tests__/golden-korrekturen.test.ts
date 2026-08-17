@@ -361,6 +361,40 @@ const KORPUS: Fall[] = [
     // ungefragte Reinigung.
     verboten: ['fassadenfarbe', 'reinigen'],
   },
+  {
+    name: 'PM-007c — Dachfenster "normale Größe": GPTs eigene Annahme (1,20×1,00) schlägt unseren Dachfenster-Standard nicht',
+    gewerk: 'maler',
+    // PM-007, zweiter Live-Nachtest (2026-08-17). Fixture 1:1 aus der echten
+    // GPT-Extraktion (Supabase debug_extraktion_roh, id e69ad0d0…). Sandy hat
+    // "normale Größe" gesagt, ohne Maße — GPT hat sich SELBST eine Zahl
+    // ausgedacht (1,20×1,00m, sein generischer "normales Fenster"-Standard,
+    // ehrlich mit annahme:true markiert) statt den kleineren, für Dachfenster
+    // richtigen Standard (0,78×1,18m) zu verwenden, den unser Code kennt.
+    // Ergebnis vorher: 24,00 − 1,20 = 22,80 m² statt der korrekten 23,08 m².
+    // Fix: bei GPTs eigener Annahme (annahme:true) gilt unser
+    // Dachfenster-Standard, nicht GPTs generische Zahl.
+    transkript:
+      'Dachzimmer, 5 x 3.5, Kniestock ist 1.20 hoch, die Dachschrägen links und rechts jeweils 12 Quadratmeter, ' +
+      '1 Dachfenster drin, normale Größe, Wände, Schrägen und Kniestock, alles streichen, zweimal.',
+    raeume: [{
+      name: 'Dachzimmer',
+      laenge: 5,
+      breite: 3.5,
+      kniestockhoehe: 1.2,
+      dachschraege_je_seite_m2: 12,
+      dachfenster: [{ hoehe: 1, anzahl: 1, breite: 1.2, annahme: true }],
+      arbeiten: ['wände streichen', 'decke streichen', 'boden abdecken', 'sockelleisten abkleben'],
+    }],
+    exakteMengen: [
+      { enthaelt: 'kniestockwände streichen', menge: 20.40 },
+      // 24,00 m² brutto − 0,92 m² (unser Dachfenster-Standard 0,78×1,18) = 23,08 m²
+      { enthaelt: 'dachschrägen streichen', menge: 23.08 },
+    ],
+    // Nebenfund im selben Nachtest: unverlangte "Dachschräge spachteln"-
+    // Position — im Transkript nie ein Ausbesserungs-Signal (kein "spachteln",
+    // "Riss", "Loch" etc.), also darf sie nicht erscheinen.
+    verboten: ['spachtel'],
+  },
 ]
 
 describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {

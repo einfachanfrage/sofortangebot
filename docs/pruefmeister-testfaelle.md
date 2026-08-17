@@ -32,7 +32,7 @@ vorher nochmal lesen, was gerade drinsteht, dann fällt sowas seltener auf.
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Kniestock + Grundierungs-Fix live bestätigt; unverlangte „Dachschräge spachteln" bleibt offen; unnötige Rückfragen trotz bereits genannter Werte neu gefunden |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Alle Rechenfehler behoben (Grundierung, Spachteln, Dachfenster-Fläche) — Live-Test steht aus; Rückfragen-UX-Punkt geht an den Designer (PD-005) |
 | PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin 5 rote Fehler trotz korrekter Rechnung (Designer-Thema); „Gondierung"-Tippfehler neu gefunden |
 | PM-009 | Bodenleger-Komplettpaket | 🟡 Übergangsschiene behoben — Live-Test steht aus; Verschnitt-Fix bereits bestätigt |
 | PM-010 | Sockelleisten-Doppel-Falle | 🟡 Alle drei Funde behoben (erfundener Bodenaustausch, 350-statt-3,50-Extraktion, fehlendes „Sockelleisten streichen") — Live-Test steht aus |
@@ -550,6 +550,34 @@ mehr entsteht. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
 Dachschrägenfläche weiterhin 22,8 m² statt der von mir erwarteten 23,08 m² (Dachfenster-Abzug mit
 falschem Standardmaß) — reproduziert sich jetzt zum zweiten Mal identisch, also stabil und kein
 Zufall.
+
+**Fix-Update 3 (Head of IT, 2026-08-17) — beide Restpunkte behoben:**
+
+1. **Falsche Fläche (22,8 statt 23,08 m²):** Ursache war nicht bei uns im
+   Code, sondern ein Widerspruch zwischen GPT und unserem Code. Ich hab in
+   der Datenbank nachgesehen, was GPT bei deinem Testfall wirklich geliefert
+   hat: bei „normale Größe" (keine Maße genannt) hat sich GPT SELBST eine
+   Zahl ausgedacht — 1,20×1,00m, sein Standard für ein GANZ NORMALES Fenster
+   (denselben, den es überall im Tool nutzt), ehrlich mit einem eigenen Flag
+   „das ist geraten" markiert. Unser Code kennt aber einen ANDEREN, kleineren
+   Standard extra für Dachfenster (0,78×1,18m — Dachfenster sind in echt
+   meist kleiner als Wandfenster), genau der Wert aus deiner eigenen
+   Soll-Lösung. Weil GPT schon eine Zahl mitliefert, kam unser eigener,
+   passenderer Standard nie zum Zug. Fix: wenn GPT sein eigenes „geraten"-
+   Flag setzt, gilt jetzt unser Dachfenster-Standard statt GPTs Zahl — nur
+   bei echten, von dir genannten Maßen zählt GPTs Wert. Neuer Golden-Test
+   PM-007c mit deinen exakten Original-Extraktionsdaten aus der Datenbank.
+2. **Unverlangte „Dachschräge spachteln"-Position:** Genau die dritte
+   Fundstelle derselben Fehlerfamilie wie die schon gefixte Grundierung —
+   die Position kam bisher immer dazu, sobald „Dachschräge"/„Kniestock"
+   irgendwo im Text fiel, ganz ohne Prüfung auf ein echtes Signal. Jetzt nur
+   noch bei einem echten Ausbesserungs-Hinweis (Risse, Löcher, uneben,
+   spachteln, etc.), sonst nur als Erinnerung — gleiches Muster wie überall
+   sonst in diesem Bug-Komplex.
+
+3 neue Tests (PM-007c-Golden-Test + 2 Gegen-Tests für Spachteln in
+`vollstaendigkeit.test.ts`). Alle 687 Tests grün, `tsc` sauber. Live-Test
+durch dich steht für beide Punkte aus.
 
 ---
 

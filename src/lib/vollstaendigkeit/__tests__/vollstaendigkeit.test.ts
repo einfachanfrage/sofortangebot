@@ -221,6 +221,28 @@ describe('maler – fassade', () => {
   })
 })
 
+// ─── DACHSCHRÄGE ────────────────────────────────────────────────────────────
+
+describe('maler – dachschräge', () => {
+  // PM-007, zweiter Live-Nachtest: "Dachschräge spachteln / Untergrund-
+  // vorbereitung" (0 €, unbepreist) kam bisher ungefragt bei JEDER
+  // Dachschräge dazu — dieselbe Fehlerfamilie wie die schon gefixte
+  // Grundierung, nur eine dritte Fundstelle. Jetzt nur bei echtem Signal.
+  it('ergänzt KEIN Spachteln ohne Ausbesserungs-Signal', () => {
+    const eingabe = [pos('Dachschrägen streichen 2x — Dachzimmer', 23.08)]
+    const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Dachschrägen streichen, 23 qm, zweimal.')
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
+    expect(alle.some(b => b.toLowerCase().includes('spachtel'))).toBe(false)
+  })
+
+  it('ergänzt Spachteln, wenn Risse/Löcher/uneben explizit genannt sind', () => {
+    const eingabe = [pos('Dachschrägen streichen 2x — Dachzimmer', 23.08)]
+    const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Dachschrägen streichen, 23 qm, ein paar Risse drin, bitte ausbessern.')
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
+    expect(alle.some(b => b.toLowerCase().includes('spachtel'))).toBe(true)
+  })
+})
+
 // ─── FLIESEN ────────────────────────────────────────────────────────────────
 
 describe('fliesen', () => {

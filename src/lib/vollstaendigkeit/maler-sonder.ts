@@ -128,14 +128,19 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
   // Grundierung) und wie oben bei pruefeGrundierung: nur bei echtem, im
   // Rohtext genanntem Grundierungs-Wunsch, sonst nur Erinnerung.
   const explizitGrundierung = /grundier\w*|grundierung|voranstrich|primer|tiefengrund/i.test(lower)
+  // PM-007-Nachtest: dieselbe Fehlerfamilie, dritte Fundstelle — "Dachschräge
+  // spachteln / Untergrundvorbereitung" kam bisher ebenso unconditional dazu,
+  // nur weil "Dachschräge"/"Kniestock" irgendwo fiel. Jetzt nur bei einem
+  // echten Signal für Ausbesserungsbedarf.
+  const explizitSpachteln = /spachtel\w*|ausbesser\w*|reparier\w*|riss\w*|löcher|loch\b|uneben\w*|beschädigt\w*|untergrundvorbereitung/i.test(lower)
 
   if (dsm2 !== null && dsm2 > 0) {
-    if (!hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² Dachschrägenfläche`, annahmen: [] })
+    if (explizitSpachteln && !hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² Dachschrägenfläche`, annahmen: [] })
     if (explizitGrundierung && !hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Dachschräge Grundierung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
     if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschräge streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
     if (!hat(ergaenzt, 'boden schütz', 'abdecken')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: ['Bodenfläche geschätzt'] })
   } else {
-    if (!hat(ergaenzt, 'spachtel')) add(ergaenzt, fehlende, 'Dachschräge spachteln / Untergrundvorbereitung')
+    if (explizitSpachteln && !hat(ergaenzt, 'spachtel')) add(ergaenzt, fehlende, 'Dachschräge spachteln / Untergrundvorbereitung')
     if (explizitGrundierung && !hat(ergaenzt, 'grundier')) add(ergaenzt, fehlende, 'Dachschräge Grundierung')
     if (!hat(ergaenzt, 'dachschräg streich', 'schräge streich')) add(ergaenzt, fehlende, 'Dachschräge streichen')
     if (!hat(ergaenzt, 'boden schütz')) add(ergaenzt, fehlende, 'Boden schützen / Abdeckfolie')

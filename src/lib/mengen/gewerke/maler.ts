@@ -312,7 +312,21 @@ export function malerEngine(daten: any): MengenErgebnis {
       }
       if (dgLinksM2 !== null || dgRechtsM2 !== null) {
         const brutto = round2((dgLinksM2 ?? 0) + (dgRechtsM2 ?? 0))
-        const dgFensterFl = round2(dgFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1) * (f.breite ?? 0.78) * (f.hoehe ?? 1.18), 0))
+        // PM-007: bei "normale Größe" (keine Maße genannt) rät GPT selbst
+        // eine Fenstergröße und markiert das ehrlich mit `annahme: true` —
+        // dabei greift GPT auf sein generisches "normales Fenster" zurück
+        // (1,20×1,00m, dasselbe wie bei Wandfenstern), nicht auf den kleineren,
+        // für Dachfenster typischen Standard (0,78×1,18m), den unser eigener
+        // Code extra dafür kennt. Weil GPT schon eine Zahl liefert, kam unser
+        // eigener (passenderer) Standard nie zum Zug — zwei unabhängige
+        // Annahmen, die sich widersprechen. Bei GPTs eigener Annahme gilt
+        // deshalb jetzt UNSER Dachfenster-Standard; nur bei echten, vom Nutzer
+        // genannten Maßen zählt GPTs Zahl.
+        const dgFensterFl = round2(dgFenster.reduce((s: number, f: any) => {
+          const breite = f.annahme ? 0.78 : (f.breite ?? 0.78)
+          const hoehe = f.annahme ? 1.18 : (f.hoehe ?? 1.18)
+          return s + (f.anzahl ?? 1) * breite * hoehe
+        }, 0))
         const netto = round2(brutto - dgFensterFl)
         positionen.push({
           beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`,
