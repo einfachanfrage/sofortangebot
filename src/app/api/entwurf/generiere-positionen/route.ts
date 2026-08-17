@@ -5,6 +5,7 @@ import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { BerechnetePosition } from '@/lib/mengen/types'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
+import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 
 export const maxDuration = 90
 
@@ -147,6 +148,13 @@ export async function POST(req: NextRequest) {
   )
   const rueckfragen = extData.rueckfragen ?? []
 
+  // PM-010, Whisper-Vorschlag (freigegeben 2026-08-17): unrealistische
+  // Raummaße (z.B. Whisper hat "drei fünfzig" als "350" transkribiert) sind
+  // hier schon strukturiert als Zahl verfügbar — deterministisch prüfbar,
+  // bevor irgendetwas gerechnet oder gespeichert wird. Blockiert nichts,
+  // wird nur an beide möglichen Antworten unten drangehängt.
+  const massWarnungen = pruefeMassPlausibilitaet(extData.extraktion?.raeume ?? [])
+
   // Sichtbarkeit: roh (direkt von GPT) + final (nach allen Nachbearbeitungs-
   // Modulen) speichern. Bei Rückfragen ruft das Frontend diese Route für
   // denselben Auftrag zweimal auf — die zweite Runde läuft mit basis_extraktion
@@ -165,6 +173,7 @@ export async function POST(req: NextRequest) {
       positionen_count: 0,
       rueckfragen,
       basis_extraktion: extData.extraktion,
+      warnungen: massWarnungen,
     })
   }
 
@@ -375,5 +384,5 @@ export async function POST(req: NextRequest) {
     entwurf_gespeichert_am: new Date().toISOString(),
   }).eq('id', angebot_id)
 
-  return NextResponse.json({ ok: true, positionen_count: gefilterteItems.length, rueckfragen })
+  return NextResponse.json({ ok: true, positionen_count: gefilterteItems.length, rueckfragen, warnungen: massWarnungen })
 }

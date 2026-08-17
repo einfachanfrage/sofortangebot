@@ -1093,10 +1093,16 @@ gewollt: lieber fragen als raten). Volle Testsuite (691 Tests) + `tsc --noEmit` 
 steht noch aus — bitte diesmal wieder denselben Satz einsprechen und auf alle drei Punkte gleichzeitig
 achten.
 
-**Vorschlag für den 350-Bug (Whisper-Ebene, noch nicht umgesetzt, wartet auf Sandys Go):** Weil das vor
-unserem Code passiert, kann Text-Nachbearbeitung es nicht zuverlässig fangen. Vorschlag: eine
-Plausibilitäts-Warnung direkt nach der Extraktion — wenn eine Raum-Seitenlänge einen unrealistischen Wert
-hat (z. B. über 15–20 m für einen Innenraum), wird das auf der Aufnahme-Karte rot markiert, so wie
-Sandy es selbst für PD-004 schon vorgeschlagen hat, statt dass der Nutzer die Karte genau durchlesen
-muss, um es selbst zu bemerken. Kein Rewrite, eine einzelne Prüfung an einer Stelle — aber das ist ein
-neuer, separater Auftrag, kein Teil dieses PM-010-Fixes, deshalb hier nur als Vorschlag notiert.
+**Vorschlag für den 350-Bug (Whisper-Ebene) — umgesetzt (Sandys Go: 2026-08-17):** Weil das vor unserem
+Code passiert, kann Text-Nachbearbeitung es nicht zuverlässig fangen. Umgesetzt: eine deterministische
+Plausibilitäts-Prüfung direkt nach der Extraktion (`src/lib/mass-plausibilitaet.ts`, 7 eigene Tests) —
+wenn eine Raum-Länge oder -Breite über 15 m liegt, kommt eine Warnung zurück. Eingebaut in
+`generiere-positionen/route.ts` (läuft bei jeder Generierung mit) und in der Entwurf-Seite als gelber,
+nicht blockierender Hinweis mit „Trotzdem weiter zum Angebot"-Button — genau nach der Grundregel „nie
+den Flow blockieren, nur sichtbar machen". Kein Rewrite, eine einzelne Prüfung an einer Stelle. Noch
+offen: das ist eine Warnung an der Stelle, wo die Karte gerade sowieso schon geprüft wird — die
+GPT-Chip-Vorschau ganz am Anfang (die, wo du „350,00 × 3,00 m" zuerst siehst) zeigt sie NICHT, weil die
+über eine andere, unabhängige Schnellvorschau läuft (dasselbe „Karte ≠ Berechnung"-Muster wie bei CoS-002)
+— dafür bräuchte es einen zweiten, separaten Schritt, absichtlich nicht mit reingenommen. Live-Test durch
+dich steht aus.
+

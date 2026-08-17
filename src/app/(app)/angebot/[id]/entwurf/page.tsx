@@ -292,6 +292,11 @@ export default function EntwurfPage() {
   const [showNotiz, setShowNotiz] = useState(false)
   const [loadingMsg, setLoadingMsg] = useState('Positionen werden berechnet…')
   const [fehler, setFehler] = useState('')
+  // PM-010, Whisper-Vorschlag (2026-08-17): unrealistische Raummaße (z.B.
+  // "350 m" statt "3,50 m") blockieren nie den Flow, aber werden hier kurz
+  // gezeigt, bevor automatisch zum Angebot weitergegangen wird — sonst sieht
+  // man die Warnung nie (Navigation passiert sofort nach Erfolg).
+  const [massWarnungen, setMassWarnungen] = useState<string[]>([])
   const [deleteBestaetigen, setDeleteBestaetigen] = useState<string | null>(null)
   const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
   const [basisExtraktion, setBasisExtraktion] = useState<ExtrahierteDaten | null>(null)
@@ -373,6 +378,7 @@ export default function EntwurfPage() {
     if (Object.keys(antworten).length > 0) setGesammelteAntworten(alleAntworten)
     setScreen('fertigstellen_loading')
     setFehler('')
+    setMassWarnungen([])
     setLoadingMsg('Alle Aufnahmen werden zusammengeführt…')
 
     const nochwarten = aufnahmen.some(a => a.typ === 'sprache' && a.verarbeitung_status === 'verarbeitung')
@@ -418,6 +424,7 @@ export default function EntwurfPage() {
         keine_neuen?: boolean
         requires_input?: boolean
         basis_extraktion?: ExtrahierteDaten
+        warnungen?: string[]
       }
 
       // Keine neuen Aufnahmen seit letzter Generierung → direkt zur Angebots-Ansicht
@@ -431,6 +438,11 @@ export default function EntwurfPage() {
         setBasisExtraktion(data.basis_extraktion ?? null)
         setRueckfragen(offeneRueckfragen)
         setScreen('rueckfragen')
+      } else if (data.warnungen && data.warnungen.length > 0) {
+        // PM-010: nicht sofort weiterleiten, sonst sieht sie die Warnung nie —
+        // erst zeigen, sie entscheidet selbst, ob sie trotzdem weiter will.
+        setMassWarnungen(data.warnungen)
+        setScreen('timeline')
       } else {
         router.push(`/angebot/${angebotId}`)
       }
@@ -790,6 +802,27 @@ export default function EntwurfPage() {
           <AlertCircle size={16} className="text-red-500 shrink-0" />
           <p className="text-red-700 font-semibold text-[13px]">{fehler}</p>
           <button onClick={() => setFehler('')} className="ml-auto text-red-400"><X size={14} /></button>
+        </div>
+      )}
+
+      {/* PM-010: Plausibilitäts-Warnung bei unrealistischen Raummaßen — blockiert nie, nur ein Hinweis */}
+      {massWarnungen.length > 0 && (
+        <div className="mx-4 mt-4 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
+            <div className="flex flex-col gap-1">
+              {massWarnungen.map((w, i) => (
+                <p key={i} className="text-amber-800 font-semibold text-[13px]">{w}</p>
+              ))}
+            </div>
+            <button onClick={() => setMassWarnungen([])} className="ml-auto text-amber-400 shrink-0"><X size={14} /></button>
+          </div>
+          <button
+            onClick={() => router.push(`/angebot/${angebotId}`)}
+            className="self-start text-amber-700 font-bold text-[13px] underline"
+          >
+            Trotzdem weiter zum Angebot
+          </button>
         </div>
       )}
 
