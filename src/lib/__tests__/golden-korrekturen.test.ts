@@ -23,11 +23,14 @@ import type { BerechnetePosition } from '../mengen/types'
 // echten (kostenpflichtigen) End-to-End-Test.
 
 type Raum = Record<string, unknown> & { name: string; arbeiten?: string[] }
+type Wand = Record<string, unknown> & { name?: string; arbeiten?: string[] }
 interface Fall {
   name: string
   gewerk: 'maler' | 'boden_parkett'
   transkript: string
   raeume: Raum[]
+  // Fassaden (kein Raum, kein Boden/Decke) — PM-008.
+  waende?: Wand[]
   // Exakte Mengen-Prüfungen: Substring in beschreibung → erwartete Menge (±0.05)
   exakteMengen: Array<{ enthaelt: string; menge: number }>
   verboten: string[]
@@ -37,9 +40,12 @@ interface Fall {
 }
 
 function pipeline(fall: Fall): BerechnetePosition[] {
-  const eng = berechneMengen(fall.gewerk, { transkript: fall.transkript, raeume: fall.raeume, gewerk: fall.gewerk })
+  const eng = berechneMengen(fall.gewerk, { transkript: fall.transkript, raeume: fall.raeume, waende: fall.waende ?? [], gewerk: fall.gewerk })
   const signale = {
-    arbeitenTexte: fall.raeume.flatMap(r => r.arbeiten ?? []),
+    arbeitenTexte: [
+      ...fall.raeume.flatMap(r => r.arbeiten ?? []),
+      ...(fall.waende ?? []).flatMap(w => w.arbeiten ?? []),
+    ],
     belagText: (fall.raeume.find(r => r.belag) as { belag?: string } | undefined)?.belag ?? null,
     altbelagEntfernen: fall.raeume.some(r => (r as { altbelag_entfernen?: boolean }).altbelag_entfernen === true),
     // PM-005: Räume mit Namen weiterreichen, damit "nur X" pro Raum geprüft wird.
@@ -322,6 +328,38 @@ const KORPUS: Fall[] = [
     ],
     // Kernpunkt: keine erfundene Grundierung auf die volle Dachschrägenfläche (136,80 €)
     verboten: ['grundier', 'voranstrich'],
+  },
+  {
+    name: 'PM-008b — Fassade: keine Doppelberechnung + keine ungefragte Reinigung',
+    gewerk: 'maler',
+    // PM-008, Live-Nachtest 2026-08-16. Fixture 1:1 aus der echten GPT-
+    // Extraktion (Supabase debug_extraktion_roh, id 57ac09f2…). Fund: zwei
+    // ungefragte Zusatzpositionen kamen von `pruefeFassade()` in
+    // maler-tapete.ts — einer alten Funktion, die noch aus der Zeit VOR der
+    // Fassaden-Engine (PM-008-Fix) stammt und die Standardpositionen selbst
+    // geraten hat:
+    // 1. "Fassadenfarbe 2× Anstrich" — Doppelberechnung derselben 66,96 m²,
+    //    die die Engine schon als "Fassadenfläche streichen 2x" berechnet.
+    // 2. "Fassade reinigen / Untergrundvorbereitung" — 66,96 m² × 5,00 € =
+    //    exakt die gemeldeten 334,80 €, obwohl nie von Reinigung die Rede war.
+    transkript:
+      'Fassade an der Südseite, 12 Meter lang, Giebelhöhe im Schnitt 6 Meter, 3 Fenster drin, je 1.20 x 1.40, ' +
+      'Fassadenfarbe zweimal drauf, dazu vorher Grundierung.',
+    raeume: [],
+    waende: [{
+      name: 'Fassade',
+      laenge: 12,
+      hoehe: 6,
+      fenster: [{ anzahl: 3, breite: 1.2, hoehe: 1.4 }],
+      arbeiten: ['fassade grundieren', 'fassade streichen'],
+    }],
+    exakteMengen: [
+      { enthaelt: 'fassadenfläche streichen', menge: 66.96 },
+      { enthaelt: 'grundierung', menge: 66.96 },
+    ],
+    // Kernpunkt: keine zweite Anstrich-Position unter anderem Namen, keine
+    // ungefragte Reinigung.
+    verboten: ['fassadenfarbe', 'reinigen'],
   },
 ]
 

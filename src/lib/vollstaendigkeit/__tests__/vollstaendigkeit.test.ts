@@ -172,13 +172,30 @@ describe('maler – schimmel', () => {
 // ─── MALER FASSADE ──────────────────────────────────────────────────────────
 
 describe('maler – fassade', () => {
-  it('ergänzt Reinigung + Grundierung + Farbe bei Fassadenauftrag', () => {
+  it('ergänzt Grundierung + Farbe bei Fassadenauftrag', () => {
     const eingabe = [pos('Fassade streichen', 200)]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Fassade streichen, 200 qm.')
     const beschr = positionen.map(p => p.beschreibung)
-    expect(beschr.some(b => b.includes('reinigen'))).toBe(true)
     expect(beschr.some(b => b.includes('Grundierung'))).toBe(true)
     expect(beschr.some(b => b.includes('Fassadenfarbe'))).toBe(true)
+  })
+
+  // PM-008-Nachtest: "Fassade reinigen" kam bisher ungefragt bei JEDEM
+  // Fassadenauftrag dazu (334,80 € Beispiel), egal ob von Schmutz/Verschmutzung
+  // je die Rede war — gleiches Muster wie PM-003 (nichts erfinden, was nicht
+  // gesagt wurde). Jetzt nur noch bei echtem Signal (Schmutz, Algen, Risse …).
+  it('ergänzt KEINE Reinigung ohne Schmutz-/Reinigungs-Signal', () => {
+    const eingabe = [pos('Fassade streichen', 200)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Fassade streichen, 200 qm.')
+    const beschr = positionen.map(p => p.beschreibung)
+    expect(beschr.some(b => b.includes('reinigen'))).toBe(false)
+  })
+
+  it('ergänzt Reinigung, wenn Schmutz/Algen/Moos explizit genannt sind', () => {
+    const eingabe = [pos('Fassade streichen', 200)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Fassade streichen, 200 qm, viel Algen und Moos dran.')
+    const beschr = positionen.map(p => p.beschreibung)
+    expect(beschr.some(b => b.includes('reinigen'))).toBe(true)
   })
 })
 

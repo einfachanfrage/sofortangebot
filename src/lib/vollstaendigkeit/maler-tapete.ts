@@ -170,13 +170,36 @@ export function pruefeFassade(ergaenzt: BerechnetePosition[], lower: string, tra
   }
   if (fm === null || fm <= 0) return
 
+  // PM-008-Nachtest: diese Funktion stammt noch aus der Zeit, bevor die
+  // Fassaden-Engine (maler.ts, `daten.waende[]`-Zweig) selbst rechnen konnte
+  // — sie hat die Standardpositionen damals selbst geraten. Seit die Engine
+  // "Fassadenfläche streichen …" korrekt berechnet, hat das zwei Folgen, die
+  // beide im Nachtest aufgefallen sind:
+  //  1. "Fassadenfarbe 2× Anstrich" wurde trotzdem nochmal draufgesetzt —
+  //     der `hat...`-Check hier kannte den NEUEN Positionsnamen
+  //     "Fassadenfläche streichen" nicht, also doppelte Berechnung derselben
+  //     Fläche unter zwei verschiedenen Namen.
+  //  2. "Fassade reinigen" kam ungefragt dazu (334,80 €), nur weil das Wort
+  //     "Fassade" irgendwo im Text steht — ohne dass je von Schmutz,
+  //     Verschmutzung oder Reinigung die Rede war. Gleiches Muster wie schon
+  //     bei PM-003/PM-007: nur bei echtem Signal, nicht geraten.
+  const hatReinigenSignal = /reinig|s[äa]uber|waschen|druckwasch|hochdruck|schmutz/i.test(lower) || hatRisse
   const hatReinigen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('reinigen'))
   const hatGrundierung = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('grundierung'))
-  const hatFarbe = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('fassadenfarbe'))
+  // Nur "fassadenfarbe" (alte Funktion hier) und "fassadenfläche" (neuer
+  // Engine-Name) zählen als Duplikat. NICHT "fassade streichen" — das ist
+  // exakt der rohe Eingabetext, den diese Funktion erst noch zur echten
+  // 2×-Anstrich-Position anreichern soll. Hätten wir das mitgezählt, würde
+  // die Anreicherung nie passieren, weil der Rohtext ja schon "streichen"
+  // enthält.
+  const hatFarbe = ergaenzt.some(p => {
+    const b = p.beschreibung.toLowerCase()
+    return b.includes('fassadenfarbe') || b.includes('fassadenfläche')
+  })
   const hatRissfix = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('rissverschluss'))
   const fassadeFarbTyp = lower.includes('silikat') ? 'Silikatfarbe' : lower.includes('dispersion') ? 'Dispersionsfarbe' : 'Fassadenfarbe'
 
-  if (!hatReinigen) ergaenzt.push({ beschreibung: 'Fassade reinigen / Untergrundvorbereitung', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
+  if (hatReinigenSignal && !hatReinigen) ergaenzt.push({ beschreibung: 'Fassade reinigen / Untergrundvorbereitung', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   if (!hatGrundierung) ergaenzt.push({ beschreibung: 'Grundierung / Tiefengrund Fassade', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   if (!hatFarbe) ergaenzt.push({ beschreibung: `${fassadeFarbTyp} 2× Anstrich`, menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   if (hatRisse && !hatRissfix) ergaenzt.push({ beschreibung: 'Rissverschluss / Spachtelarbeiten Außen', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Pauschale bei Rissen/Schäden', annahmen: [] })

@@ -17,7 +17,7 @@ verweisen, dann ist für alle Beteiligten klar, welcher Fall gemeint ist.
 **Status-Zeichen:** ✅ behoben & getestet · 🟡 behoben, noch nicht live von
 Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-16)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-17)
 
 | ID | Thema | Status |
 |---|---|---|
@@ -28,7 +28,7 @@ Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | 🟡 Anzeige-Bug gefunden und behoben (Speisekammer fehlte in einer Namensliste) — Live-Test steht aus |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Grundierungs-Bug behoben (zweite Fundstelle zusätzlich zur ersten) — Live-Test steht aus |
-| PM-008 | Fassade | 🟡 Blocker weg, Fläche live bestätigt korrekt, aber vermutliche Doppelberechnung + unverlangte 334,80-€-Position gefunden |
+| PM-008 | Fassade | 🟡 Blocker weg, Fläche live bestätigt korrekt, Doppelberechnung + unverlangte 334,80-€-Position jetzt auch behoben — Live-Test steht aus |
 | PM-009 | Bodenleger-Komplettpaket | 🟡 Verschnitt-Fix bestätigt auch für Vinyl; Übergangsschiene fehlt komplett trotz „erkannt" |
 | PM-010 | Sockelleisten-Doppel-Falle | ❌ Schwerer Extraktionsfehler bei Maßen (350 statt 3,50 m) + bestätigte Lücke „Sockelleisten streichen" |
 
@@ -582,6 +582,45 @@ bei einer Selbstkorrektur ist praktisch immer die letzte gemeint. 2 neue
 Tests (`extraktion-masse.test.ts`, exakt dein Fall). Kein Live-Test nötig,
 weil hier nur eine Anzeige ohne echten GPT-Aufruf betroffen ist — mit den
 Tests reicht die Absicherung.
+
+**Nachtest (2026-08-16, späterer Durchlauf):** Blocker weg, Fläche (66,96 m²)
+live bestätigt korrekt. Aber zwei neue Funde: 1) die Fassadenfläche wird
+zweimal berechnet, einmal als „Fassadenfläche streichen 2×" (von der Engine)
+und nochmal als „Fassadenfarbe 2× Anstrich" (von einer zweiten Stelle) — echte
+Doppelberechnung derselben Fläche unter zwei Namen. 2) eine unverlangte
+„Fassade reinigen"-Position über 334,80 € taucht auf, obwohl im Transkript nie
+von Schmutz, Verschmutzung oder Reinigung die Rede war.
+
+**Fix-Update 3 (Head of IT, 2026-08-16) — Doppelberechnung + unverlangte
+334,80-€-Reinigung:** Über die Debug-Tabelle die exakte GPT-Extraktion zu
+deinem Live-Test geholt und nachgebaut — beide Funde bestätigt und auf
+dieselbe Ursache zurückgeführt: `pruefeFassade`
+(`src/lib/vollstaendigkeit/maler-tapete.ts`) ist eine ÄLTERE Funktion, die
+noch aus der Zeit vor dem PM-008-Blocker-Fix stammt, als die Engine bei
+Fassaden noch gar nichts berechnen konnte — sie hat damals selbst geraten,
+welche Standardpositionen bei „Fassade" wohl dazugehören (reinigen,
+grundieren, streichen), einfach weil das Wort „Fassade" irgendwo im Text
+stand. Seit die Engine die Fassadenfläche jetzt selbst korrekt berechnet
+(„Fassadenfläche streichen 2×"), hat diese alte Funktion nicht mitbekommen,
+dass ihre eigene „Fassadenfarbe"-Position davon ein Duplikat ist — sie kannte
+nur den alten Namen, nicht den neuen der Engine.
+
+Fix: zwei Stellen in `pruefeFassade` angepasst.
+1. „Fassade reinigen" wird nur noch ergänzt, wenn im Text wirklich ein
+   Reinigungs-Signal steht (reinigen/säubern/waschen/Hochdruck/Schmutz/Risse/
+   Algen/Moos) — nicht mehr allein durchs Wort „Fassade". Gleiches Muster wie
+   schon bei PM-003/PM-007.
+2. Die Duplikat-Prüfung für „Fassadenfarbe" erkennt jetzt auch den neuen
+   Engine-Positionsnamen „Fassadenfläche" und überspringt die eigene Position,
+   wenn die Engine die Fläche schon berechnet hat.
+Die Grundierung bleibt bewusst unverändert (weiterhin unconditional) — das war
+nicht Teil deines gemeldeten Befunds. Neuer Golden-Test PM-008b mit deinen
+echten Extraktionsdaten (bestätigt: nur noch 2 Positionen statt 4, keine
+„Fassadenfarbe"- oder „reinigen"-Duplikate mehr). Bestehender Test in
+`vollstaendigkeit.test.ts` an das neue, korrekte Verhalten angepasst (3 Fälle
+statt 1: Grundierung+Farbe kommen weiter, Reinigung NICHT ohne Signal, Reinigung
+JA bei Algen/Moos/Schmutz). Alle 674 Tests im Projekt grün, `tsc` sauber.
+Live-Test durch dich steht aus.
 
 ---
 
