@@ -29,7 +29,7 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-010 | **DRINGEND, höchste Priorität:** Angebot verdoppelt sich (2.000,28€ statt 1.000,14€), Auslöser ungeklärt | ❌ offen, schwerster Einzelfund bisher | `pruefmeister-testfaelle.md` PM-014 |
+| CoS-010 | **DRINGEND, höchste Priorität:** Angebot verdoppelt sich (2.000,28€ statt 1.000,14€), Auslöser ungeklärt | 🟡 Fix da (exakte Dubletten werden jetzt geblockt), echter Auslöser weiter ungeklärt, Live-Nachtest steht aus | `pruefmeister-testfaelle.md` PM-014 |
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | ❌ offen, jetzt 3-fach bestätigt (PM-010/012), Muster statt Einzelfall | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | ❌ offen | `docs/design-check.md` DC-001 |
@@ -67,6 +67,35 @@ ANHÄNGT statt zu ERSETZEN oder „ist schon da, nichts tun" zu erkennen
 Dashboard-Übersichtsliste zeigt für dasselbe Angebot je nach Zeitpunkt
 unterschiedliche Beträge (0€/2.000€) — vermutlich ein zweiter, unabhängiger
 Sync-Bug.
+
+**Fix-Update (Head of Product Engineering, 2026-08-17):** Fundstelle bestätigt:
+`generiere-positionen/route.ts`, Schritt 3 (Positionen in `quote_items`
+schreiben). Positionen MIT Raum-Suffix ("Wandflächen streichen — Flur")
+wurden bisher NIE gegen bereits vorhandene Positionen derselben Quote
+geprüft — nur eine kleine "einmalig"-Kategorie (Kleinmaterial, Anfahrt o.ä.)
+hatte überhaupt einen Dubletten-Schutz. Löst also die Route ein zweites Mal
+für dieselben Daten aus (Doppelklick, doppelte Anfrage nach Neuladen o.ä.),
+landet jede Raum-Position exakt nochmal in der Liste — passt exakt zum
+beobachteten Muster (jede Zeile exakt 2×).
+
+Fix: neue, eigene, getestete Funktion `filtereExakteDubletten()`
+(`src/lib/quote-items-dedup.ts`, 7 Tests) — blockt eine neue Position nur,
+wenn Titel UND Menge exakt mit einer bereits vorhandenen Position
+übereinstimmen. Läuft jetzt vor der bestehenden Filterlogik, für ALLE
+Positionen (nicht nur die "einmalig"-Kategorie). Zwei unterschiedliche Räume
+mit demselben Titel bleiben weiterhin beide erlaubt (unterschiedlicher
+Titel-Suffix), eine echte Korrektur mit anderer Menge im selben Raum auch.
+
+**Ehrliche Einschränkung:** Das ist eine Absicherung auf Anwendungsebene
+(prüft „gibt's das schon in der Datenbank", dann fügt ein) — sie schließt
+den beobachteten Fall, aber KEINE echte Race Condition, bei der zwei
+Anfragen gleichzeitig lesen, bevor eine von beiden geschrieben hat. Für
+100%ige Sicherheit bräuchte es einen Datenbank-seitigen Unique-Constraint
+oder eine Sperr-Spalte — das ist ein größerer Schritt, mache ich nicht ohne
+Sandys Go. Der eigentliche AUSLÖSER (was genau die Route zweimal ausgelöst
+hat) ist damit auch noch nicht gefunden, nur die Auswirkung geblockt — das
+war aber der Teil, der akut Geld-Schaden anrichten konnte. Volle Testsuite
+(705 Tests) + `tsc --noEmit` grün. Live-Nachtest durch Sandy steht aus.
 
 ---
 

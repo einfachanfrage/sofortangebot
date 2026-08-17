@@ -62,7 +62,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | 🟡 Q2-Vollflächenspachtelung + Grundierung fachlich korrekt (Erfolg, Grundierung war entgegen erster Einschätzung kein Bug — siehe Korrektur); ein echter Bug bleibt: 8-€-Kleinreparaturposition trotz ausdrücklicher Verneinung; neuer Designer-Fund PD-008 (Vorschlag-Kennzeichnung für auto-ergänzte Positionen) |
 | PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ❌ Wandfläche exakt Soll, kein Boden-Phantom (Ausschluss respektiert) — „Sockelleisten streichen" fehlt, 3. unabhängige Bestätigung derselben Lücke wie PM-010 |
 | PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ⏳ noch nicht geprüft — neu |
-| PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | ❌ Bestätigt und reproduzierbar — schwerster Einzelfund der Testreihe, Auslöser noch ungeklärt |
+| PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | 🟡 Fix da (exakte Dubletten werden geblockt), Auslöser weiterhin ungeklärt, Live-Nachtest steht aus |
 
 **Neu, quer zu mehreren Fällen (2026-08-17):** Mehrere fachlich absolut normale Positionen
 (Kniestockwände streichen, Dachschrägen streichen, Fassadenfläche streichen, Übergangsschiene) haben
@@ -1410,6 +1410,30 @@ eines bereits generierten Angebots die Positions-Generierung nochmal auslöst un
 ERSETZEN oder zu erkennen „ist schon da, nichts tun". Das würde exakt zu dem beobachteten Muster passen.
 Zusätzlich, separat: die Dashboard-Übersichtsliste sollte zuverlässig denselben Betrag zeigen wie die
 Detailseite — aktuell tut sie das nicht.
+
+**Fix-Update (Head of Product Engineering, 2026-08-17):** Gefunden in
+`generiere-positionen/route.ts` — Positionen mit Raum-Suffix ("Wandflächen
+streichen — Arbeitszimmer") wurden nie gegen bereits in der Datenbank
+vorhandene Positionen geprüft, nur eine kleine Extra-Kategorie
+(Kleinmaterial/Anfahrt) hatte einen Dubletten-Schutz. Löst die Route ein
+zweites Mal für dieselben Daten aus, landet jede Position exakt nochmal in
+der Liste — genau das gemeldete Muster (14 statt 7 Zeilen, exakt verdoppelt).
+Fix: neue Prüfung, die eine Position nur dann blockt, wenn Titel UND Menge
+exakt mit einer schon vorhandenen übereinstimmen (eigene Datei
+`quote-items-dedup.ts`, 7 Tests) — zwei Räume mit demselben Titel bleiben
+weiter beide erlaubt, eine echte Korrektur mit anderer Menge im selben Raum
+auch. Volle Testsuite (705 Tests) + `tsc --noEmit` grün.
+
+**Was das NICHT klärt:** Den eigentlichen Auslöser (WARUM die Route
+zweimal lief) habe ich nicht gefunden — nur die Auswirkung geblockt. Und:
+diese Prüfung schützt nicht vor zwei Anfragen, die wirklich zur exakt
+gleichen Zeit laufen und beide den Datenbankstand lesen, bevor die andere
+geschrieben hat (echte Race Condition) — dafür bräuchte es einen
+Datenbank-Constraint, das ist ein größerer Schritt und wartet auf Sandys Go.
+Bitte beim nächsten Nachtest gezielt versuchen, den Auslöser einzugrenzen
+(z. B. bewusst schnell doppelt klicken oder die Entwurfsseite während des
+Ladens neu laden), damit wir wissen, ob das Muster jetzt weg ist oder nur
+seltener auftritt.
 
 ---
 

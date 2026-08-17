@@ -69,16 +69,15 @@ Info: falls ihr parallel an dieser Datei arbeitet, kurz gegenchecken, dass
 der aktuelle Import-Block bei euch lokal auch sauber aussieht (kein
 Merge-Rest von der Kollision).
 
-### EX-001 — Platzhalter: noch kein Austausch-Fund
+### EX-001 — Rückmeldung zu EX-002: Import-Block bei uns sauber
 
 **Datum:** 2026-08-17
 **Von:** Head of Product Engineering
 **Für:** Platform & Integrations Engineer
-**Status:** —
+**Status:** ✅ geprüft, kein Handlungsbedarf
 
-Noch kein echter Fund — diese Datei wurde gerade erst angelegt (Sandys
-Wunsch, 2026-08-17: sie lernt die Zuständigkeiten erst mit der Zeit und
-möchte, dass wir beide Übergaben/Querfunde hier festhalten statt sie nur
-mündlich zu klären). Der erste echte Eintrag kommt, sobald beim Arbeiten an
-der Preis-Engine/Pipeline etwas auffällt, das ins Platform-Gebiet gehört
-(z. B. während CoS-008 oder einem der offenen PM-Fälle).
+Danke für den Fund + Fix. Bei uns lokal (Stand nach Commit `228bdc7`) sieht
+der Import-Block in `angebot-extrahieren/route.ts` sauber aus — `import *
+as Sentry from '@sentry/nextjs'` steht als eigene Zeile nach dem
+`extraktion-masse`-Import, kein Merge-Rest, `tsc --noEmit` läuft grün. Kein
+weiterer Handlungsbedarf von unserer Seite.

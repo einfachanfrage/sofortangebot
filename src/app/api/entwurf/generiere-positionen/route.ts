@@ -6,6 +6,7 @@ import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { BerechnetePosition } from '@/lib/mengen/types'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
+import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 90
@@ -319,18 +320,29 @@ export async function POST(req: NextRequest) {
   // Bestehende Positionen: höchste Nummer + vorhandene Titel (für Dedup)
   const { data: bestehendeItems } = await supabase
     .from('quote_items')
-    .select('position, title')
+    .select('position, title, quantity')
     .eq('quote_id', angebot_id)
     .order('position', { ascending: false })
   const startPosition = (bestehendeItems?.[0]?.position ?? 0) + 1
   const bestehendeTitle = new Set((bestehendeItems ?? []).map(i => (i.title as string).toLowerCase().trim()))
 
+  // PM-014: Angebot 2026-0016 verdoppelte sich komplett (jede Position exakt
+  // 2×, Nettosumme exakt verdoppelt). Ursache: Positionen MIT Raum-Suffix
+  // ("Wandflächen streichen — Flur") wurden nie gegen bereits vorhandene
+  // Positionen geprüft (nur die "einmalig"-Kategorie unten). Trifft diese
+  // Route ein zweites Mal auf dieselben Daten, landet exakt derselbe Titel
+  // MIT derselben Menge nochmal in der Liste. Details + Tests: `quote-items-dedup.ts`.
+  const ohneExakteDubletten = filtereExakteDubletten(
+    items,
+    (bestehendeItems ?? []).map(i => ({ title: i.title as string, quantity: i.quantity as number | null })),
+  )
+
   // Nur allgemeine Positionen OHNE Raum-Suffix dürfen nur einmal vorkommen
   const EINMALIG_MUSTER = ['kleinmaterial', 'verbrauchsmaterial', 'an- und abfahrt', 'anfahrt', 'abfahrt', 'schutzfolie', 'schutzmaßnahmen']
-  const gefilterteItems = items.filter(item => {
+  const gefilterteItems = ohneExakteDubletten.filter(item => {
     const titelLower = (item.title as string).toLowerCase().trim()
     const hatRaumSuffix = titelLower.includes(' — ')
-    // Positionen mit Raum-Suffix immer erlauben (Wandflächen — Flur + Wandflächen — Küche)
+    // Positionen mit Raum-Suffix (aber unterschiedlicher Menge) immer erlauben (Wandflächen — Flur + Wandflächen — Küche)
     if (hatRaumSuffix) return true
     // Allgemeine Positionen: nur einmal pro Quote
     const istEinmalig = EINMALIG_MUSTER.some(m => titelLower.includes(m))
