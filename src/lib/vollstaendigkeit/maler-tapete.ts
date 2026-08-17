@@ -20,16 +20,51 @@ export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], feh
 }
 
 // Sockelleisten streichen: nur wenn explizit "Sockelleisten streichen" ohne Lackkontext
+//
+// PM-010: zwei Lücken gleichzeitig behoben.
+// 1. "gestrichen" (Partizip von "streichen") enthält den Wortstamm "streich"
+//    NICHT wörtlich (streichen → gestrichen, Vokalwechsel bei starken Verben)
+//    — wurde bisher komplett übersehen.
+// 2. "Sockelleisten [Details]. Die sollen dann auch noch gestrichen werden."
+//    ist ein in der Praxis übliches Muster: die Sockelleisten und das
+//    Streichen stehen in ZWEI Sätzen, verbunden über ein Bezugswort
+//    ("die"/"sie"/"diese"). Das reine 3-Wörter-Fenster im selben Satz hat
+//    das nie erreicht.
+// Wichtig dabei: eine echte Verneinungs-Prüfung, damit "nicht gestrichen,
+// nur montiert" (siehe PM-002) niemals als Ja zählt — sonst würde hier
+// derselbe Fehler entstehen, den wir gerade erst für den Bodenaustausch
+// gefixt haben (Position erfinden, wo keine gewollt war).
+const STREICH_WORT = /streich\w*|anstrich\w*|gestrichen|angestrichen/i
+
+function hatVerneinungVorStreichen(satz: string): boolean {
+  const m = satz.match(STREICH_WORT)
+  if (!m || m.index === undefined) return false
+  return /\b(nicht|kein\w*)\b/i.test(satz.slice(0, m.index))
+}
+
+function hatSockelleistenStreichenSignal(lower: string): boolean {
+  const saetzeArr = lower.split(/[.!?\n;]+/).map(s => s.trim()).filter(Boolean)
+  for (let i = 0; i < saetzeArr.length; i++) {
+    const satz = saetzeArr[i]
+    if (!/sockelleist/.test(satz)) continue
+
+    // Fall A: "Sockelleisten" und "streichen/gestrichen" im selben Satz, nah beieinander.
+    const naheBeieinander = /sockelleist\w*(?:\s+\w+){0,3}\s+(?:streich\w*|anstrich\w*|gestrichen|angestrichen)/i.test(satz)
+      || /(?:streich\w*|anstrich\w*|gestrichen|angestrichen)(?:\s+\w+){0,3}\s+sockelleist/i.test(satz)
+    if (naheBeieinander && !hatVerneinungVorStreichen(satz)) return true
+
+    // Fall B: eigener Folgesatz mit Bezugswort ("Die sollen ... gestrichen werden").
+    const naechsterSatz = saetzeArr[i + 1]
+    if (naechsterSatz && /^(?:die|sie|diese)\b/.test(naechsterSatz)
+      && STREICH_WORT.test(naechsterSatz) && !hatVerneinungVorStreichen(naechsterSatz)) {
+      return true
+    }
+  }
+  return false
+}
+
 export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
-  const hatSockelAufnehmen = lower.includes('sockelleist') &&
-    (lower.includes('aufnehm') || lower.includes('mit aufnehm') || lower.includes('montier') || lower.includes('aufbring'))
-  // "Wände streichen ... Sockelleisten abkleben" darf niemals als
-  // Sockelleisten-Anstrich interpretiert werden. Die Arbeit muss unmittelbar
-  // bei den Sockelleisten stehen.
-  const hatSockelStreichenFormulierung = /sockelleist\w*(?:\s+\w+){0,3}\s+(?:streich|anstrich)/i.test(lower)
-    || /(?:streich|anstrich)\w*(?:\s+\w+){0,3}\s+sockelleist/i.test(lower)
-  const hatSockelStreichenExplizit = hatSockelStreichenFormulierung && v.hatArbeit('streichen') &&
-    !v.hatArbeit('lackieren') && !hatSockelAufnehmen
+  const hatSockelStreichenExplizit = hatSockelleistenStreichenSignal(lower) && v.hatArbeit('streichen') && !v.hatArbeit('lackieren')
   if (!hatSockelStreichenExplizit || hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) return
 
   const lfdmMatchStr = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:lfm|lfdm|laufende?r?\s*meter|meter)/i)

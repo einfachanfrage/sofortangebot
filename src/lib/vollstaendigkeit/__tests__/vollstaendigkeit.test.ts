@@ -129,6 +129,28 @@ describe('maler – sockelleisten kategorisierung', () => {
     expect(lacks[0].beschreibung).toContain('2× Anstrich')
     expect(lacks[0].menge).toBe(18)
   })
+
+  // PM-010: "Sockelleisten [Details]. Die sollen dann auch noch gestrichen
+  // werden." — Partizip "gestrichen" über einen Satz hinweg, verbunden per
+  // Bezugswort "die". Vorher komplett übersehen (zwei Lücken: Partizip nicht
+  // erkannt + Satzgrenze).
+  it('PM-010: "Die sollen dann auch noch gestrichen werden" (Satzgrenze) → Sockelleisten streichen erkannt', () => {
+    const t = 'Die alten Sockelleisten kommen raus, neue werden montiert, weiße MDF-Leisten. Die sollen dann auch noch gestrichen werden, passend zur Wand. Wände und Decke streichen, zweimal.'
+    const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], t)
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)].map(b => b.toLowerCase())
+    expect(alle.some(b => b.includes('sockelleisten streichen'))).toBe(true)
+  })
+
+  // Gegen-Test: "montiert" UND "gestrichen" kommen beide im Text vor (wie bei
+  // PM-010), aber diesmal mit einer echten Verneinung — darf NIE als Ja
+  // zählen, sonst reproduzieren wir den gerade erst gefixten
+  // "Tool erfindet Position"-Fehler an anderer Stelle.
+  it('PM-002: "nicht gestrichen, nur montiert" → KEINE Sockelleisten-Streichen-Position', () => {
+    const t = 'Drei Wände weiß streichen, zweimal. Sockelleisten werden neu montiert, nicht gestrichen, nur montiert.'
+    const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [], t)
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)].map(b => b.toLowerCase())
+    expect(alle.some(b => b.includes('sockelleisten streichen'))).toBe(false)
+  })
 })
 
 // ─── MALER FENSTER LACKIEREN ────────────────────────────────────────────────

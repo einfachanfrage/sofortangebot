@@ -134,6 +134,20 @@ export function ersetzeZahlenWorte(text: string): string {
     result = result.replace(new RegExp(`\\b${wort}\\b`, 'gi'), String(zahl))
   }
 
+  // 1b. Handwerker-Doppelzahl: "drei fünfzig" heißt in der Ansage IMMER
+  // 3 Meter 50 (= 3,50 m), NIE 350. Muss VOR Schritt 4 laufen — sonst werden
+  // "drei" und "fünfzig" unabhängig zu "3" und "50" (zwei Zahlen mit nur
+  // einem Leerzeichen dazwischen), und die KI liest "3 50" leicht als "350"
+  // (PM-010: "Gästezimmer, drei fünfzig mal drei" wurde dadurch zu
+  // "350 mal 3" — ein Zimmer mit 350 Metern Länge).
+  const EINER_FUER_MASS = ['ein', 'eine', 'eins', 'zwei', 'zwo', 'zwee', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun']
+  for (const einerWort of EINER_FUER_MASS) {
+    const einerZahl = EINER[einerWort]
+    for (const [zehnerWort, zehnerZahl] of Object.entries(ZEHNER)) {
+      result = result.replace(new RegExp(`\\b${einerWort}\\s+${zehnerWort}\\b`, 'gi'), `${einerZahl}.${zehnerZahl}`)
+    }
+  }
+
   // 2. "X Komma Y" → Dezimalzahl
   result = result.replace(/\b(\w+)\s+komma\s+(\w+)\b/gi, (_match, vorTeil, nachTeil) => {
     const v = parseZahlWort(vorTeil)

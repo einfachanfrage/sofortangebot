@@ -35,7 +35,7 @@ vorher nochmal lesen, was gerade drinsteht, dann fällt sowas seltener auf.
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Kniestock + Grundierungs-Fix live bestätigt; unverlangte „Dachschräge spachteln" bleibt offen; unnötige Rückfragen trotz bereits genannter Werte neu gefunden |
 | PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin 5 rote Fehler trotz korrekter Rechnung (Designer-Thema); „Gondierung"-Tippfehler neu gefunden |
 | PM-009 | Bodenleger-Komplettpaket | 🟡 Verschnitt-Fix bestätigt auch für Vinyl — Übergangsschiene fehlt weiterhin, jetzt zweifach reproduziert |
-| PM-010 | Sockelleisten-Doppel-Falle | 🟡 Erfundener Bodenaustausch behoben — Live-Test steht aus; 350-statt-3,50-Extraktionsfehler + fehlendes „Sockelleisten streichen" weiterhin offen |
+| PM-010 | Sockelleisten-Doppel-Falle | 🟡 Alle drei Funde behoben (erfundener Bodenaustausch, 350-statt-3,50-Extraktion, fehlendes „Sockelleisten streichen") — Live-Test steht aus |
 
 **Noch offen, bewusst zurückgestellt (niedrige Priorität, siehe PM-003/006):**
 1-Cent-Rundungsdrift zwischen Positions-Summe und Gesamtbetrag; fehlende
@@ -815,6 +815,50 @@ bleiben unverändert (die sind spezifisch genug, kein Bug bekannt). Neuer Test
 in `boden-normalisierer.test.ts` mit genau deinem Sockelleisten-Fall (jetzt:
 kein Bodenaustausch mehr) plus einem Gegen-Test, dass „Der alte Boden muss
 raus" weiterhin korrekt erkannt wird. Alle 676 Tests im Projekt grün, `tsc`
-sauber. Die anderen zwei PM-010-Funde (350-statt-3,50-Extraktion,
-„Sockelleisten streichen" fehlt) sind davon unberührt, noch offen.
-Live-Test durch dich steht aus.
+sauber. Live-Test durch dich steht aus.
+
+**Fix-Update (Head of IT, 2026-08-17) — „drei fünfzig" wurde zu 350:**
+Ursache lag NICHT bei GPT, sondern bei UNS selbst — eine eigene Vorverarbeitung
+wandelt Zahlwörter in Ziffern um, bevor der Text überhaupt zu GPT geschickt
+wird. Sie hat „drei" und „fünfzig" JEDES FÜR SICH ersetzt: aus „drei fünfzig
+mal drei" wurde „3 50 mal 3" — zwei Zahlen nur mit einem Leerzeichen
+getrennt, keine Verbindung mehr zur Handwerker-Sprechweise „X Y" = X Meter Y
+Zentimeter. GPT hat dann verständlicherweise „3 50" als „350" gelesen, weil
+es die Trennung nicht mehr sehen konnte — der Fehler war zum Zeitpunkt der
+GPT-Anfrage schon längst passiert.
+
+Fix: Eine neue Vorverarbeitungs-Regel erkennt genau dieses Muster
+(Einer-Zahlwort + Zehner-Zahlwort, z.B. „drei fünfzig", „eins zwanzig", „zwei
+achtzig") und wandelt es VOR der Einzelwort-Ersetzung direkt in die richtige
+Dezimalzahl um (3.50, 1.20, 2.80). Das betrifft nicht nur diesen einen Fall,
+sondern JEDE Ansage in diesem Sprechmuster — bisher hat's zufällig meistens
+geklappt, weil GPT es meistens richtig geraten hat, nur bei dir nicht.
+Jetzt ist es kein Raten mehr. Neue Testdatei `zahlen-parser.test.ts` (4 Tests,
+u.a. dein genauer Fall + alle bisher bekannten „X Y mal Z"-Fälle aus anderen
+Testfällen zur Kontrolle). Alle 680 Tests grün, `tsc` sauber.
+
+**Fix-Update (Head of IT, 2026-08-17) — „Sockelleisten streichen" fehlte:**
+Es gab schon eine passende Funktion dafür, sie hat aus zwei Gründen nicht
+gegriffen. Erstens: „gestrichen" (die Form, die du benutzt hast: „sollen
+dann auch noch gestrichen werden") ist ein unregelmäßiges Verb — anders als
+„streichen" enthält „gestrichen" den Wortstamm „streich" nicht wörtlich
+(Vokal ändert sich), die Funktion hat das Wort schlicht nie erkannt.
+Zweitens: du hast „Sockelleisten" und „gestrichen" in zwei GETRENNTEN Sätzen
+gesagt, verbunden nur über das Wort „Die" — die Funktion hat aber nur 3
+Wörter weit im selben Satz geschaut. Dazu kam eine dritte, zu grobe Bremse:
+sobald irgendwo im Text das Wort „montiert" vorkam, wurde „Sockelleisten
+streichen" komplett blockiert — gedacht für den Fall „nur montiert, nicht
+gestrichen", hat aber auch den legitimen Doppel-Fall („montiert UND
+gestrichen", genau deine Sockelleisten-Falle) mit blockiert.
+
+Fix: „gestrichen" wird jetzt erkannt, auch über einen Satz hinweg per
+Bezugswort „die"/„sie"/„diese". Die zu grobe „montiert"-Bremse ist raus,
+dafür gibt's jetzt eine echte Verneinungs-Prüfung („nicht gestrichen" zählt
+nie als Ja) — wichtig, damit hier nicht der gleiche Fehler entsteht wie beim
+gerade gefixten Bodenaustausch (Position erfinden, wo keine gewollt war).
+2 neue Tests in `vollstaendigkeit.test.ts`: dein Fall (jetzt erkannt) und ein
+Gegen-Test mit echter Verneinung („nicht gestrichen, nur montiert" — bleibt
+korrekt leer). Alle 682 Tests grün, `tsc` sauber.
+
+Damit sind jetzt alle drei PM-010-Funde behoben. Live-Test durch dich steht
+für alle drei noch aus.
