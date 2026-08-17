@@ -35,7 +35,7 @@ gerade drinsteht — das Problem gab es in anderen Dateien hier schon öfter.
 | CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟡 Erster Schritt umgesetzt (Sentry im Kernpfad), Restarbeit sauber abgegrenzt | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
 | CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | ❌ offen | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
 | CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | ❌ offen | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
-| CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 gefixt, noch nicht auf Staging nachgetestet | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
+| CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
 
 ---
 
@@ -177,7 +177,7 @@ ausgelöst.
 ## CoS-P-005 — Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl
 
 **Datum:** 2026-08-17
-**Status:** 🟡 gefixt, noch nicht auf Staging nachgetestet
+**Status:** 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus
 
 **Hintergrund:** Sandy meldete aus einem Onboarding-Testlauf (Screenshots),
 dass der Logo-Upload zuverlässig (zweimal in Folge) mit *"Upload
@@ -201,19 +201,72 @@ Muster im Projekt (Bucket + Policies gemeinsam per Migration, Ordner =
   auf `${user.id}/logo.${ext}` geändert, damit das erste Pfadsegment (worauf
   die Policy prüft) tatsächlich der User-ID entspricht.
 - `supabase/check_migrationen.sql`: Zeile 51 für die neue Migration ergänzt.
-- **Noch offen:** Migration ist nur lokal geschrieben, noch nicht auf
-  Staging ausgeführt. Erst nach erfolgreichem Staging-Test und Merge nach
-  `main` auf Produktion anwenden — dann auf ✅ setzen.
 - **Nebenbefund:** `supabase/check_migrationen.sql` hatte schon vor diesem
   Fix eine Lücke — drei Migrationen zwischen `#50` und dieser hier fehlten
   im Status-Check komplett. Nicht Teil dieses Fixes, aber notiert.
-
----
-
-## Weiterhin blockiert: Git-Sperrdatei
-
-Alle Fix-Updates oben (CoS-P-001, CoS-P-002, CoS-P-005) liegen lokal fertig,
-aber eine Git-Sperrdatei (`.git/index.lock` im Projektordner) verhindert
-seit dem 17.08. das Committen. Braucht einmalig jemanden mit Zugriff auf
-den Ordner, der die Datei löscht — der Platform Engineer kann das selbst
-technisch nicht.
+- **Git-Sperrdatei-Blocker (17.08.) gelöst:** `.git/HEAD.lock` bzw.
+  `.git/index.lock` hingen fest und verhinderten jeden Commit/Push — Sandy
+  hat die Dateien auf ihrem Rechner gelöscht, danach lief alles durch.
+- **Gepusht auf `main`:** Commit `3bcfc2b` (ursprünglich `01ec0d7`, dann per
+  `git commit --amend` bereinigt, siehe Sicherheitsfund unten), 25 Dateien.
+  **Wichtig:** ist direkt auf `main` gelandet, nicht über `develop` →
+  Staging-Test wie im normalen Workflow vorgesehen — das lokale Terminal
+  stand zum Zeitpunkt des Commits schon auf `main`. Ob dadurch automatisch
+  ein Vercel-Produktions-Deploy der App ausgelöst wurde, ist ungeprüft.
+- **Sicherheitsfund beim Pushen:** GitHub Push Protection hat den ersten
+  Push-Versuch blockiert — `.claude/settings.local.json` enthielt einen
+  Resend-API-Key im Klartext (`re_JA1uDZRb...`), unabhängig von diesem Fix
+  schon länger in der Historie. Zeile entfernt, Commit amended, sauber
+  gepusht. **Erledigt (Sandy, 2026-08-17):** Key im Resend-Dashboard
+  rotiert/widerrufen, alter Key aus der Git-Historie damit wertlos. Neuen
+  Key auch direkt selbst in den Vercel-Umgebungsvariablen hinterlegt.
+  Prüfen (Platform Engineer, kurz gegenchecken): ob prod UND preview
+  gesetzt sind und ob ein Redeploy nötig ist, damit die laufende App den
+  neuen Key wirklich zieht. **Noch offen** — kein Vercel-Zugriff aus dieser
+  Session heraus, muss jemand mit Dashboard-Zugriff kurz gegenchecken.
+- **Migration angewendet (Platform Engineer, 2026-08-17, mit Sandys
+  ausdrücklicher `DEPLOY-PRODUCTION`-Bestätigung):** Der GitHub-Actions-
+  Workflow war aus dieser Session heraus nicht auslösbar (kein
+  Actions-Zugriff auf das Repo, nur Lesezugriff). Migration stattdessen
+  direkt über die Supabase-Verwaltungs-API angewendet — erst auf Staging
+  (`bkldyddstovvkkhpiqiy`), dann verifiziert, dann identisch auf Produktion
+  (`yqlledouhfovytifeekd`), dann verifiziert (4 Policies + Bucket vorhanden
+  auf beiden). Security-Advisor-Check auf Produktion danach durchlaufen:
+  keine neuen Warnungen durch diesen Fix, nur die bekannten alten
+  (search_path, Leaked-Password-Protection, `rate_limit_log`ohne Policy —
+  siehe CoS-P-001-Notiz oben). **Abweichung vom dokumentierten Workflow:**
+  dadurch wurden keine `migration-status-*.txt`-Artefakte über die GitHub
+  Action erzeugt, wie es `docs/operations/database-and-environments.md`
+  eigentlich vorsieht (Vorher-/Nachher-Nachweis als Artefakt). Sollte bei
+  Gelegenheit nachgezogen werden (z. B. den Workflow einmal im `audit`-Modus
+  laufen lassen, damit der dokumentierte Nachweis existiert) — inhaltlich
+  ist die Migration aber angewendet und verifiziert.
+- **Produktions-Deploy war nach dem Migrations-Fix zunächst kaputt, jetzt
+  behoben (Platform Engineer, 2026-08-17):** Nach der `DEPLOY-PRODUCTION`-
+  Bestätigung wollte Sandy zusätzlich prüfen, ob der frühere Push auf `main`
+  versehentlich einen Vercel-Deploy ausgelöst hatte. Ergebnis: ja — und der
+  Build war **fehlgeschlagen** (Sandys Vercel-Screenshot zeigte "Build
+  Failed"). Fehler laut Vercel-Log: `Turbopack build failed ... ./src/app/api/
+  angebot-extrahieren/route.ts:16:8 Expected ',', got '*'`.
+  **Root Cause:** Kein Zusammenhang mit dem Logo-Fix selbst, sondern eine
+  Merge-Kollision in einer Datei aus dem Zuständigkeitsbereich Head of
+  Product Engineering: `import * as Sentry from '@sentry/nextjs'`
+  (vermutlich aus paralleler Observability-Arbeit, CoS-P-002) war mitten in
+  ein anderes mehrzeiliges Import-Statement (`extraktion-masse`) hineingerutscht
+  statt danach zu stehen — dadurch ungültiges JavaScript. **Fix:** Sentry-
+  Import-Zeile hinter die schließende Klammer des `extraktion-masse`-Imports
+  verschoben, per Skript verifiziert (Klammer-Balance geprüft). Commit
+  `228bdc7` ("fix: kaputten Import in angebot-extrahieren/route.ts
+  reparieren (Vercel-Build-Fehler)"), 1 Datei geändert, von Sandy gepusht.
+  Vercel-Screenshot danach bestätigt: Deploy für `228bdc7` steht auf
+  **"Ready"** — Produktion baut wieder erfolgreich. Der vorherige fehlerhafte
+  Deploy-Versuch (`3bcfc2b`) bleibt in der Vercel-Historie als "Error"
+  stehen, das ist unproblematisch, da `228bdc7` der aktuelle Produktionsstand
+  ist. **Cross-Ref:** siehe `docs/engineering-austausch.md` EX-002 — dieser
+  Fund betrifft eine Datei aus dem Product-Engineering-Bereich und wurde dort
+  zusätzlich vermerkt, da er nicht durch den Logo-Fix verursacht wurde.
+- **Noch offen:** Live-Test im echten Onboarding-Flow (Logo tatsächlich
+  über die UI hochladen und bestätigen) steht noch aus — DB-seitig und
+  deploy-seitig ist jetzt alles bereit (Migration verifiziert, Produktions-
+  Build wieder grün). Auf ✅ setzen, sobald das einmal live durchgeklickt
+  wurde.

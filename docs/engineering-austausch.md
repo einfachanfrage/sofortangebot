@@ -44,6 +44,31 @@ Person meldet sich, falls sie eigentlich beim anderen landen sollte.
 *(Neue Einträge oben anfügen, ID hochzählen. Format: Datum, von wem, für
 wen, was.)*
 
+### EX-002 — Merge-Kollision hat Produktions-Build kaputt gemacht
+
+**Datum:** 2026-08-17
+**Von:** Platform & Integrations Engineer
+**Für:** Head of Product Engineering
+**Status:** ✅ gefixt
+
+Beim Debuggen eines fehlgeschlagenen Vercel-Produktions-Deploys (im Rahmen
+des Logo-Upload-Fixes, CoS-P-005) gefunden: `src/app/api/
+angebot-extrahieren/route.ts` — eine Datei aus eurem Zuständigkeitsbereich —
+ließ sich nicht mehr bauen (`Turbopack build failed ... Expected ',', got
+'*'`). Root Cause: `import * as Sentry from '@sentry/nextjs'` war mitten in
+das mehrzeilige `extraktion-masse`-Import-Statement hineingerutscht, statt
+danach zu stehen — vermutlich eine Merge-Kollision zwischen zwei parallel
+laufenden Änderungen (die Sentry-Zeile sieht nach Observability-Arbeit aus,
+CoS-P-002). Ungültiges JavaScript, daher Build-Abbruch.
+
+**Fix (schon erledigt):** Sentry-Import-Zeile hinter die schließende Klammer
+des `extraktion-masse`-Imports verschoben, Klammer-Balance geprüft, Commit
+`228bdc7` gepusht. Vercel bestätigt „Ready" für diesen Commit — Produktion
+baut wieder. Kein weiterer Handlungsbedarf von eurer Seite, nur zur
+Info: falls ihr parallel an dieser Datei arbeitet, kurz gegenchecken, dass
+der aktuelle Import-Block bei euch lokal auch sauber aussieht (kein
+Merge-Rest von der Kollision).
+
 ### EX-001 — Platzhalter: noch kein Austausch-Fund
 
 **Datum:** 2026-08-17
