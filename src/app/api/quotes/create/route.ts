@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
   const body = await req.json()
-  const { items, notes, gewerk, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id } = body
+  const { items, notes, customerName, customerEmail, customerPhone, customerAddress, externalContactId, validUntil, briefpapier_id } = body
   const extId = externalContactId as { source: string; id: string } | null
 
   // Company + Plan laden
@@ -130,7 +130,11 @@ export async function POST(req: NextRequest) {
     total_gross: totalNet + totalVat,
     notes: notes || null,
     valid_until: validUntilDate,
-    ...(gewerk ? { gewerk } : {}),
+    // DC-011: `quotes.gewerk` gibt es nicht als Spalte (siehe quotes.ts) —
+    // dieser Insert wäre fehlgeschlagen, sobald `gewerk` mitgeschickt wird.
+    // Aktuell ruft niemand diese Route mit `gewerk` auf, aber die Spalte
+    // trotzdem anzufragen war eine tickende Zeitbombe. Entfernt statt nur
+    // abgesichert, weil sie nirgends gebraucht wird.
     ...(resolvedBriefpapierId ? { briefpapier_id: resolvedBriefpapierId } : {}),
   }
 

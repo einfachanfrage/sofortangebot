@@ -137,10 +137,29 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
       WHERE p.company_id = c.id AND p.category LIKE 'Boden%'
     ) < 177
   )),
-  (51, '20260817190000_add_company_logos_storage_policies', 'Policy "Eigenes Firmenlogo hochladen"', EXISTS (
+  (51, '20260807054617_add_extraktion_logging', 'quotes.extraktion_roh',    EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quotes' AND column_name='extraktion_roh')),
+  -- Hinweis zu #52: debug_extraktion_roh ist eine am 07.08. manuell (nicht
+  -- per Migration) direkt in Produktion angelegte Debug-Tabelle. Existiert
+  -- sie auf einer Umgebung nicht, zeigt dieser Check "FEHLT" — das ist dann
+  -- korrekt und kein Grund, die Tabelle dort extra anzulegen.
+  (52, '20260817180000_secure_debug_extraktion_roh', 'Policy "debug_extraktion_roh_own"', EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'debug_extraktion_roh'
+      AND policyname = 'debug_extraktion_roh_own'
+  )),
+  (53, '20260817180100_drop_duplicate_briefpapiere_policy', 'Duplikat-Policy entfernt', NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'briefpapiere'
+      AND policyname = 'Nur eigene Briefpapiere'
+  )),
+  (54, '20260817190000_add_company_logos_storage_policies', 'Policy "Eigenes Firmenlogo hochladen"', EXISTS (
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'storage' AND tablename = 'objects'
       AND policyname = 'Eigenes Firmenlogo hochladen'
+  )),
+  (55, '20260818000000_fix_function_search_path', 'get_vault_secret() search_path gesetzt', EXISTS (
+    SELECT 1 FROM pg_proc
+    WHERE proname = 'get_vault_secret' AND proconfig::text LIKE '%search_path%'
   ))
 )
 SELECT

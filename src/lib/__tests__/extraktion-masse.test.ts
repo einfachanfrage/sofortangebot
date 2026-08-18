@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereAbzug,
   extrahiereTorMasse, zaehleFenster, zaehleTueren, extrahiereRaumhoehe,
+  extrahiereRaumdaten,
 } from '../extraktion-masse'
 
 describe('extrahiereWandflaeche', () => {
@@ -56,6 +57,49 @@ describe('extrahiereRaumhoehe — robust gegen "2 Meter 60"-Falle', () => {
 
   it('keine Höhe → null', () => { expect(extrahiereRaumhoehe('20 qm streichen')).toBe(null) })
   it('unplausibel (60 m) → null', () => { expect(extrahiereRaumhoehe('60 m hoch')).toBe(null) })
+})
+
+// PM-008: Fassaden haben keine "Raumhöhe", sondern eine Giebel-/Wandhöhe —
+// vorher gar nicht erkannt, weil das Schlüsselwort fehlte.
+describe('extrahiereRaumhoehe — Fassade (PM-008)', () => {
+  it.each([
+    ['Giebelhöhe im Schnitt sechs Meter', 6],
+    ['Giebelhöhe im Schnitt 6 Meter', 6],
+    ['Wandhöhe durchschnittlich 5,5 Meter', 5.5],
+    ['Giebelhöhe 6,20 m', 6.2],
+  ] as const)('"%s" → %s', (t, erw) => { expect(extrahiereRaumhoehe(t)).toBe(erw) })
+})
+
+// PM-008-Nachtest: echter Transkript-Fund aus Sandys Live-Test (2026-08-18).
+// Die Aufnahmekarte zeigte "1,20 × 1,40 × 6,00 m" statt der echten Fassade
+// (12 m lang, 6 m Giebelhöhe) — das Fenstermaß "1,20 x 1,40" steht im
+// Rohtext in einer eigenen, knappen Kommaklausel, "Fenster" selbst eine
+// Klausel davor. Ein zu enges Zeichenfenster in der ersten Fix-Version hat
+// genau das verpasst (siehe istOeffnungsKontext-Kommentar oben).
+describe('extrahiereRaumdaten — Fassaden-Vorschau (PM-008)', () => {
+  it('Sandys echtes Test-Transkript: Fenstermaß wird NICHT als Fassadenmaß übernommen', () => {
+    const transkript = 'Fassade an der Südseite, 12 Meter lang, Giebelhöhe im Schnitt 6 Meter, 3 Fenster drin, 1,20 x 1,40, Fassadenfarbe zweimal drauf, dazu vorher Grundierung.'
+    const ergebnis = extrahiereRaumdaten(transkript)
+    // Die Fassadenmaße selbst stehen NICHT im "X mal Y"-Format im Text
+    // ("12 Meter lang" + "Giebelhöhe … 6 Meter" getrennt) — die Heuristik
+    // zeigt dann lieber nichts als die falschen Fenstermaße.
+    expect(ergebnis.laenge).toBe(null)
+    expect(ergebnis.breite).toBe(null)
+    expect(ergebnis.hoehe).toBe(6)
+    expect(ergebnis.fenster).toBe(3)
+  })
+
+  it('Gegenprobe: eine echte "X mal Y"-Fassadendimension wird weiter erkannt', () => {
+    const ergebnis = extrahiereRaumdaten('Fassade Nordseite, 10 mal 4 Meter, keine Fenster, einfacher Anstrich.')
+    expect(ergebnis.laenge).toBe(10)
+    expect(ergebnis.breite).toBe(4)
+  })
+
+  it('Raummaß bleibt erkannt, wenn kein Fenster/Tür-Kontext in der Nähe steht', () => {
+    const ergebnis = extrahiereRaumdaten('Wohnzimmer, 5 mal 4 Meter, 2,60 hoch, zwei Fenster weiter hinten im Text erwähnt.')
+    expect(ergebnis.laenge).toBe(5)
+    expect(ergebnis.breite).toBe(4)
+  })
 })
 
 describe('zaehleFenster / zaehleTueren', () => {

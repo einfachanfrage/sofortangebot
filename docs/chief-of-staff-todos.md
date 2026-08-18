@@ -25,17 +25,18 @@ Jeder Punkt hat eine feste ID (CoS-XXX).
 **Status-Zeichen:** ✅ erledigt & geprüft · 🟡 erledigt, noch nicht
 nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-17, Abend)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-18)
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-010 | **DRINGEND, höchste Priorität:** Angebot verdoppelt sich (2.000,28€ statt 1.000,14€), Auslöser ungeklärt | 🟡 Fix da (exakte Dubletten werden jetzt geblockt), echter Auslöser weiter ungeklärt, Live-Nachtest steht aus | `pruefmeister-testfaelle.md` PM-014 |
+| CoS-010 | **DRINGEND, höchste Priorität:** Angebot verdoppelt sich (2.000,28€ statt 1.000,14€), Auslöser ungeklärt | 🟡 Auslöser gefunden (fehlender Doppel-Tap-Schutz auf "Fertigstellen") + Fix angewendet, `typecheck` + volle Testsuite (706/706) von Sandy lokal grün bestätigt, Live-Nachtest (bewusst doppelt tippen) steht noch aus | `pruefmeister-testfaelle.md` PM-014 |
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | ❌ offen | `docs/design-check.md` DC-001 |
 | CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | ⏳ dokumentiert, kein akuter Auftrag | Prüfmeister-Notiz an CoS + PM-001-Fix-Update |
 | CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
+| CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | ❌ offen — hiermit gebrieft, Aufwandsschätzung von dir nötig | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
 
 ---
 
@@ -96,6 +97,48 @@ Sandys Go. Der eigentliche AUSLÖSER (was genau die Route zweimal ausgelöst
 hat) ist damit auch noch nicht gefunden, nur die Auswirkung geblockt — das
 war aber der Teil, der akut Geld-Schaden anrichten konnte. Volle Testsuite
 (705 Tests) + `tsc --noEmit` grün. Live-Nachtest durch Sandy steht aus.
+
+**Auslöser gefunden + Fix (Head of Product Engineering, 2026-08-18):**
+Beim Code-Review von `src/app/(app)/angebot/[id]/entwurf/page.tsx` (die
+Seite mit dem "Positionen berechnen"-Button, der `generiere-positionen`
+auslöst) gefunden: Der Button hatte **keinerlei Schutz gegen doppeltes
+Tippen/Klicken** — kein `disabled`, kein Lade-Flag, kein Debounce. Die
+Funktion `fertigstellen()` setzt den Bildschirm erst NACH dem Klick auf
+"lädt" um (React aktualisiert das nicht sofort synchron), in diesem kurzen
+Fenster war der Button weiter klickbar. Ein zweiter Tap in diesem Fenster
+(Ungeduld, weil vor dem Laden nichts sichtbar passiert, oder ein doppeltes
+Klick-/Touch-Event, wie es auf manchen Mobilgeräten vorkommt) schickt eine
+zweite, praktisch gleichzeitige Anfrage an `generiere-positionen` — mit
+denselben `aufnahmen_ids`. Genau das ist die "echte Race Condition", die
+oben als offen benannt wurde: beide Anfragen lesen `bestehendeItems`
+(Schritt 3), bevor eine von beiden geschrieben hat, also sieht keine der
+beiden die Positionen der jeweils anderen — beide fügen die komplette
+Positionsliste ein, jede Position landet exakt 2×. Passt exakt zu PM-014
+(Prüfmeister hatte selbst sein eigenes Testverhalten als möglichen Auslöser
+genannt).
+
+Fix: `fertigstellenLaufendRef` (ein `useRef`, kein State — wichtig, weil der
+Check synchron vor jedem `await` greifen muss, ein State-Update käme zu
+spät) in `fertigstellen()`. Erster Aufruf setzt die Sperre sofort, jeder
+weitere Aufruf während die Sperre steht wird ignoriert, `finally` gibt sie
+wieder frei (damit ein bewusster erneuter Aufruf — z. B. nach
+Rückfragen-Antworten — weiter funktioniert). Das ist die kleinstmögliche
+Lösung: sie verhindert die Anfrage-Verdopplung genau an der Stelle, wo sie
+entsteht, statt die Auswirkung hinterher nochmal abzufangen.
+
+**Ehrlich zum Stand:** Das schließt den wahrscheinlichsten Auslöser
+(Doppel-Tap in derselben Browser-Session). Was es NICHT abdeckt: zwei
+wirklich unabhängige Sessions (z. B. Handy + Laptop gleichzeitig offen) —
+dafür bräuchte es weiterhin die Datenbank-seitige Absicherung von oben, die
+extra Sandys Go braucht. Geprüft mit `eslint` (grün, keine Fehler an der
+geänderten Datei); ein vollständiger Projekt-Lauf hat in der Cowork-Sitzung
+selbst aus Zeitgründen nicht reingepasst.
+
+**Bestätigung (Sandy, 2026-08-18):** `npm run typecheck` sauber durch (keine
+Fehler), `npm test` 706/706 grün. Der Fix bricht also nichts Bestehendes.
+Fehlt noch der eigentliche Live-Nachtest — auf der echten Entwurfsseite
+bewusst zweimal schnell auf "Positionen berechnen" tippen und prüfen, dass
+nur einmal gespeichert wird, bevor CoS-010 als ✅ erledigt gilt.
 
 ---
 
@@ -271,6 +314,47 @@ verstoßen. Aber: sollte bei einer künftigen Priorisierung mitgedacht werden,
 z. B. als Kandidat für „Karte liest dieselbe geprüfte Struktur wie die
 Berechnung, statt einen zweiten GPT-Aufruf zu machen" — dann aber mit Sandys
 ausdrücklichem Go, wie in den eigenen Grundregeln festgelegt.
+
+---
+
+## CoS-011 — Rückfragen-UI komplett neu (DC-025/DC-026): Briefing für die Umsetzung
+
+**Datum:** 2026-08-18
+**Status:** ❌ offen — hiermit gebrieft, Aufwandsschätzung von dir als Nächstes
+
+**Hintergrund:** Sandy fand die bisherige Rückfragen-UI „hässlich und
+kacke" und wollte sie komplett neu gedacht, nicht nachgebessert (PD-002).
+Product Designer hat dafür Konzept + klickbaren Prototyp geliefert
+(`docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html`
+— beides an Sandy verschickt, sie sagt „ich finds super"). Volle
+Design-Begründung steht in `docs/design-check.md` DC-025 (Layout/Flow) und
+DC-026 (schon Gesagtes nicht nochmal fragen).
+
+**Kernidee laut Product Designer:** Ein Screen pro Raum statt pro
+Einzelfrage (Daten sind intern schon nach `kontext` gruppiert), eine
+durchgängige Fortschrittsanzeige über alle offenen Fragen statt nur pro
+Raum, weicherer Übergang statt Vollbild-Schwarz, „Du hast gesagt: …"-
+Vorschläge mit Zitat-Quelle statt Doppelfragen, sichtbare Konsequenz beim
+Überspringen statt Kleingedrucktem, editierbares Recap vor der Berechnung.
+Die bestehenden Eingabe-Bausteine (Maße/Höhe/Anzahl) bleiben fachlich
+unverändert — nur das Gerüst drumherum ändert sich, siehe Prototyp.
+
+**Der einzige Teil mit echtem Erkennungs-Mehraufwand (nicht nur UI):** Für
+die „Du hast gesagt: …"-Vorschläge (löst zugleich DC-026) braucht es ein
+neues Flag/Feld pro Rückfrage, ob ein Wert im Transkript bereits vorhanden,
+aber bisher nicht strukturiert erkannt wurde — das ist eine Erweiterung der
+bestehenden Extraktion, keine reine Frontend-Änderung. Volle technische
+Notizen dazu (inkl. der zwei rein UI-seitigen Punkte) in
+`docs/dc-025-konzept-rueckfragen.md`, Abschnitt „Was das technisch braucht".
+
+**Konkrete Bitte:** Bitte grob schätzen (Größenordnung reicht, kein Sprint-
+Ticket nötig) und mit Product Designer direkt abstimmen, wo Rückfragen
+offen sind (`docs/marketing-design-austausch.md` ist der falsche Kanal
+dafür — das läuft über `docs/design-check.md`/direkte Absprache wie bisher
+bei DC-Punkten). Sandy will das zügig in Bearbeitung sehen, aber es ist ein
+eigenständiges, größeres Vorhaben — bitte nicht nebenbei mit einem
+Klein-Fix verwechseln, sondern wie ein eigenes kleines Projekt einplanen,
+neben CoS-010/CoS-007.
 
 ---
 

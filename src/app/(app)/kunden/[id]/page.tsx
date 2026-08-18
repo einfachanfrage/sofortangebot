@@ -90,7 +90,7 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
                 <Link
                   key={quote.id}
                   href={`/angebot/${quote.id}`}
-                  className="bg-white rounded-2xl px-4 py-3 border border-[#2C2C2C]/5 flex items-center justify-between gap-2 active:scale-98 transition-transform"
+                  className="bg-white rounded-2xl px-4 py-3 border border-[#2C2C2C]/5 flex items-center justify-between gap-2 active:scale-[0.98] transition-transform"
                 >
                   <div>
                     <div className="font-black text-[#2C2C2C]">{formatCurrency(quote.total_gross)}</div>

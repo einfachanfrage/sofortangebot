@@ -11,8 +11,7 @@ import { AudioPlayer } from '@/components/AudioPlayer'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { EntwurfAufnahme, ErkanntPosition } from '@/lib/types'
-import { extrahiereRaumhoehe, zaehleFenster, zaehleTueren } from '@/lib/extraktion-masse'
-import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
+import { extrahiereRaumdaten } from '@/lib/extraktion-masse'
 import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahme/RueckfragenScreen'
 
 type AufnahmeWithUrl = EntwurfAufnahme & { audio_signed_url?: string; foto_signed_url?: string }
@@ -46,20 +45,14 @@ function erkenneEinzelraum(transkript: string | null, positionen: ErkanntPositio
   return ausText.length === 1 ? ausText[0] : null
 }
 
-function extrahiereRaumdaten(transkript: string | null) {
-  const text = ersetzeZahlenWorte(transkript ?? '')
-  const lb = text.match(/(\d+(?:[.,]\d+)?)\s*(?:m(?:eter)?)?\s*(?:mal|x|×)\s*(\d+(?:[.,]\d+)?)\s*(?:m(?:eter)?)?/i)
-    ?? text.match(/(\d+(?:[.,]\d+)?)\s*(?:m|meter)\s+lang[^.!?\n]*?(\d+(?:[.,]\d+)?)\s*(?:m|meter)\s+breit/i)
-  const zahl = (wert: string) => Number(wert.replace(',', '.'))
-  return {
-    laenge: lb ? zahl(lb[1]) : null,
-    breite: lb ? zahl(lb[2]) : null,
-    hoehe: extrahiereRaumhoehe(text),
-    fenster: zaehleFenster(text),
-    tueren: zaehleTueren(text),
-  }
-}
-
+// PM-008: extrahiereRaumdaten() lebt jetzt in @/lib/extraktion-masse (mit
+// Tests) statt hier inline — nur fürs schnelle Vorschau-Gefühl direkt nach
+// der Aufnahme, die echte Berechnung läuft komplett getrennt davon
+// (GPT-Extraktion + Mengen-Engine) und war hiervon nie betroffen. War vorher
+// UNGETESTETER Code direkt in der Seite; der 12-Zeichen-Kontextfenster-Bug
+// (PM-008-Nachtest) wäre mit einem Test gegen einen echten Transkript-Fall
+// vermutlich schon vorher aufgefallen — jetzt zentral + getestet wie die
+// übrigen Rohtext-Parser in dieser Datei.
 function formatMass(wert: number) {
   return wert.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
@@ -308,6 +301,16 @@ export default function EntwurfPage() {
   const dauerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const geraet = useRef('')
   const zettelInputRef = useRef<HTMLInputElement>(null)
+  // CoS-010: Schutz gegen Doppel-Tap/Doppel-Klick auf "Positionen berechnen".
+  // Der "Fertigstellen"-Button hatte kein disabled/Ladezustand — zwischen
+  // Klick und dem Umschalten auf den Ladebildschirm (setScreen ist async)
+  // blieb er kurz weiter klickbar. Ein zweiter Tap in diesem Fenster löst
+  // eine zweite, praktisch gleichzeitige Anfrage an generiere-positionen
+  // aus; beide lesen "gibt's das schon" BEVOR die andere geschrieben hat,
+  // beide fügen dieselben Positionen ein → komplettes Angebot exakt 2×.
+  // Das erklärt PM-014, ohne dass eine echte Server-seitige Race-Condition
+  // (zwei verschiedene Tabs/Geräte gleichzeitig) nötig ist.
+  const fertigstellenLaufendRef = useRef(false)
 
   // ── Daten laden ──────────────────────────────────────────────────────────
 
@@ -374,6 +377,10 @@ export default function EntwurfPage() {
     antworten: Record<string, RueckfragenAntwort> = {},
     rueckfragenUeberspringen = false,
   ) {
+    // Läuft schon eine Berechnung (Doppel-Tap)? Dann diese zweite ignorieren.
+    if (fertigstellenLaufendRef.current) return
+    fertigstellenLaufendRef.current = true
+
     const alleAntworten = { ...gesammelteAntworten, ...antworten }
     if (Object.keys(antworten).length > 0) setGesammelteAntworten(alleAntworten)
     setScreen('fertigstellen_loading')
@@ -449,6 +456,11 @@ export default function EntwurfPage() {
     } catch {
       setFehler('Netzwerkfehler. Bitte nochmal versuchen.')
       setScreen('timeline')
+    } finally {
+      // Freigeben, damit ein bewusster erneuter Aufruf (z.B. nach
+      // Rückfragen-Antworten oder nach einem Fehler) wieder möglich ist —
+      // die Sperre soll nur GLEICHZEITIGE Doppel-Anfragen verhindern.
+      fertigstellenLaufendRef.current = false
     }
   }
 
@@ -484,6 +496,23 @@ export default function EntwurfPage() {
     if (dauerTimerRef.current) clearInterval(dauerTimerRef.current)
   }
 
+  // PM-008: Ein früherer "Fertigstellen"-Versuch OHNE erkannte Positionen setzt
+  // fehler = "Keine Positionen erkannt" und bleibt als rotes Banner stehen — auch
+  // nachdem eine noch verarbeitende Aufnahme fertig wird und durchaus Positionen
+  // liefert. Dann zeigt der Screen gleichzeitig das rote Fehler- und das grüne
+  // Erfolgs-Banner ("✓ X Positionen erkannt"), was wie eine Race-Condition
+  // aussieht, aber keine ist: `fehler` wurde einfach nie geräumt, weil nur
+  // fertigstellen() (Zeile ~409) und die Upload-Fehlerpfade setFehler aufrufen,
+  // nicht die Erfolgspfade. Hier gezielt NUR diese eine Meldung räumen, sobald
+  // eine Aufnahme tatsächlich Positionen liefert — andere Fehler (Netzwerk,
+  // fehlender Preis) sollen stehen bleiben, bis der Nutzer sie schließt oder
+  // erneut auf Fertigstellen tippt.
+  function raeumeStaleKeinePositionenFehler(positionen: ErkanntPosition[] | undefined) {
+    if ((positionen ?? []).some(p => p.erkannt)) {
+      setFehler(prev => prev === 'Keine Positionen erkannt' ? '' : prev)
+    }
+  }
+
   async function handleAudioStop(blob: Blob) {
     const tempId = `temp-${Date.now()}`
     const tempEntry: AufnahmeWithUrl = {
@@ -514,6 +543,7 @@ export default function EntwurfPage() {
             ...a, id: data.id!, transkript: data.transkript ?? null,
             erkannte_positionen: data.positionen ?? [], verarbeitung_status: 'fertig',
           } : a))
+          raeumeStaleKeinePositionenFehler(data.positionen)
         } else if (data.id) {
           // Aufnahme existiert, aber keine Sprache erkannt → Fehler-Card mit Retry
           setAufnahmen(prev => prev.map(a => a.id === tempId ? { ...a, id: data.id!, verarbeitung_status: 'fehler' } : a))
@@ -577,6 +607,7 @@ export default function EntwurfPage() {
         foto_url: data.foto_url ?? null,
         foto_signed_url: signedUrl,
       } : a))
+      raeumeStaleKeinePositionenFehler(data.positionen)
     } catch {
       setAufnahmen(prev => prev.filter(a => a.id !== tempId))
       setFehler('Netzwerkfehler beim Zettel-Upload. Bitte nochmal versuchen.')
@@ -596,6 +627,7 @@ export default function EntwurfPage() {
         setAufnahmen(prev => prev.map(a =>
           a.id === aufnahmeId ? { ...a, transkript: data.transkript ?? null, erkannte_positionen: data.positionen ?? [], verarbeitung_status: 'fertig' } : a
         ))
+        raeumeStaleKeinePositionenFehler(data.positionen)
       } else {
         setAufnahmen(prev => prev.map(a => a.id === aufnahmeId ? { ...a, verarbeitung_status: 'fehler' } : a))
       }

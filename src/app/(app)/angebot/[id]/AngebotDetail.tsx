@@ -83,6 +83,8 @@ const VIA_LABELS: Record<string, string> = {
 const UNITS = ['m²', 'lfdm', 'Stk', 'Stunde', 'pauschal', 'm³', 'kg', 'ltr', 'Rolle', 'Satz']
 
 function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
+function fmtZahl(n: number) { return n.toFixed(2).replace('.', ',') }
+function round2(n: number) { return Math.round(n * 100) / 100 }
 
 // ── Raum-Dimensionen ──────────────────────────────────────────────────────────
 // RaumDimension, Geometrie + Mengen-Berechnung liegen jetzt in @/lib/raum-geometrie
@@ -139,32 +141,68 @@ function RaumDimensionenZeile({
 }) {
   // Vorhandene Raummaße haben Vorrang. Der Flächenmodus ist nur für Fälle,
   // in denen wirklich ausschließlich fertige Flächen genannt wurden.
+  // 'wand' kommt ausschließlich aus der Aufnahme (Fassade/Einzelwand, siehe
+  // DC-024) — kein Fallback hierher, das entscheidet nie die Zeilen-Logik
+  // selbst, nur ein explizit gesetztes dim.modus.
   const modus: RaumModus = dim.modus
     ?? (((dim.breite ?? 0) > 0 && (dim.laenge ?? 0) > 0)
       ? 'rechteck'
       : (((dim.wandflaeche ?? 0) > 0 || (dim.bodenflaeche ?? 0) > 0) ? 'flaeche' : 'rechteck'))
   const masse = berechneRaumMasse(dim)
+  const istWand = modus === 'wand'
+
+  // „So gerechnet"-Zeile für den Wand-Chip (DC-024-Konzept) — reine
+  // Anzeige-Ableitung aus dem bereits berechneten Netto-Wert, dupliziert
+  // keine Öffnungs-Konstanten aus raum-geometrie.ts.
+  const wandRechnungText = (() => {
+    if (!istWand || !dim.laenge || dim.laenge <= 0 || masse.wandflaeche == null) return null
+    const brutto = round2(dim.laenge * masse.hoehe)
+    const abzug = round2(brutto - masse.wandflaeche)
+    const oeffnungen: string[] = []
+    if ((dim.tueren ?? 0) > 0) oeffnungen.push(`${dim.tueren} ${dim.tueren === 1 ? 'Tür' : 'Türen'}`)
+    if ((dim.fenster ?? 0) > 0) oeffnungen.push(`${dim.fenster} Fenster`)
+    const basis = `${fmtZahl(dim.laenge)} m × ${fmtZahl(masse.hoehe)} m`
+    if (abzug > 0 && oeffnungen.length > 0) {
+      return `${basis} − ${oeffnungen.join(', ')} (${fmtZahl(abzug)} m²) = ${fmtZahl(masse.wandflaeche)} m²`
+    }
+    return `${basis} = ${fmtZahl(masse.wandflaeche)} m²`
+  })()
 
   return (
     <div className="px-4 pb-2 pt-0.5 flex flex-col gap-1.5">
-      {/* Modus-Umschalter */}
-      <div className="flex items-center gap-1 self-start bg-[#2C2C2C]/5 rounded-lg p-0.5">
-        {([
-          { id: 'rechteck', label: 'Raummaße' },
-          { id: 'flaeche', label: 'Flächen eingeben' },
-          { id: 'grundriss', label: 'Raumform' },
-        ] as { id: RaumModus; label: string }[]).map(m => (
+      {/* Modus-Umschalter — bei einer Wand/Fassade kein Umschalter, das
+          entscheidet die Aufnahme, nicht der Handwerker (DC-024). Statt
+          drei bedeutungslosen Tabs nur ein kurzer Hinweis + Ausstieg für
+          den Fall, dass die Erkennung danebenlag. */}
+      {istWand ? (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35">Wand / Fassade</span>
           <button
-            key={m.id}
-            onClick={() => m.id === 'grundriss' ? onGrundriss() : onChange({ modus: m.id })}
-            className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md transition-colors ${
-              modus === m.id ? 'bg-white text-[#2C2C2C] shadow-sm' : 'text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70'
-            }`}
+            onClick={() => onChange({ modus: 'rechteck' })}
+            className="text-[10px] font-bold text-[#2C2C2C]/35 hover:text-[#2C2C2C]/60 underline decoration-dotted transition-colors"
           >
-            {m.label}
+            Kein Wand-Objekt? Als Raum bearbeiten
           </button>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-1 self-start bg-[#2C2C2C]/5 rounded-lg p-0.5">
+          {([
+            { id: 'rechteck', label: 'Raummaße' },
+            { id: 'flaeche', label: 'Flächen eingeben' },
+            { id: 'grundriss', label: 'Raumform' },
+          ] as { id: RaumModus; label: string }[]).map(m => (
+            <button
+              key={m.id}
+              onClick={() => m.id === 'grundriss' ? onGrundriss() : onChange({ modus: m.id })}
+              className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md transition-colors ${
+                modus === m.id ? 'bg-white text-[#2C2C2C] shadow-sm' : 'text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70'
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Felder je nach Modus */}
       <div className="flex items-center gap-1.5 flex-wrap">
@@ -197,9 +235,35 @@ function RaumDimensionenZeile({
           </button>
         )}
 
+        {/* Wand-Chip (DC-024): nur Länge + Höhe einer einzelnen Wand, kein
+            Breite-Feld (das gibt es bei einer Wand konzeptionell nicht,
+            also auch kein „!" mehr dafür). Türen/Fenster wie gehabt. */}
+        {istWand && (
+          <>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandlänge</span>
+            <InlineNum value={dim.laenge} label="Wandlänge" suffix=" m" onCommit={v => onChange({ laenge: v })} />
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandhöhe</span>
+            <InlineNum value={dim.hoehe} label="Wandhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Türen</span>
+            {/* waende[]-Extraktion kennt gar kein Türen-Feld (siehe
+                generiere-positionen/route.ts) — fehlend heißt hier "wurde nie
+                gefragt", nicht "echte Lücke", und die allermeisten Fassaden
+                haben ohnehin keine Tür. Default 0 statt "!", damit genau die
+                Art Fehlanzeige nicht zurückkommt, die DC-024 beheben soll.
+                Tippen zum Eintragen bleibt möglich, falls doch eine Tür da ist. */}
+            <InlineNum value={dim.tueren ?? 0} label="Türen" onCommit={v => onChange({ tueren: v })} />
+            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Fenster</span>
+            <InlineNum value={dim.fenster} label="Fenster" onCommit={v => onChange({ fenster: v })} />
+          </>
+        )}
+
         {/* Höhe/Öffnungen nur bei Wandarbeiten (Wandfläche braucht Höhe; Fenster/Türen
-            werden von der Wandfläche abgezogen). Reiner Bodenauftrag braucht sie nicht. */}
-        {wandRelevant && !(modus === 'flaeche' && (dim.wandflaeche ?? 0) > 0) && (
+            werden von der Wandfläche abgezogen). Reiner Bodenauftrag braucht sie nicht.
+            Für 'wand' oben bereits als eigener Block gerendert. */}
+        {!istWand && wandRelevant && !(modus === 'flaeche' && (dim.wandflaeche ?? 0) > 0) && (
           <>
             <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
             <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Raumhöhe</span>
@@ -213,6 +277,15 @@ function RaumDimensionenZeile({
           </>
         )}
       </div>
+
+      {/* „So gerechnet" — direkt am Wand-Chip, dasselbe Vertrauens-Element,
+          das in der Positionsansicht schon gut funktioniert (DC-023-Nebenfund),
+          jetzt eine Stufe früher statt erst dort. */}
+      {wandRechnungText && (
+        <div className="text-[11px] font-bold text-[#2C2C2C]/60 bg-[#F5C400]/10 border border-[#F5C400]/25 rounded-lg px-2.5 py-1.5 w-fit">
+          So gerechnet: <span className="text-[#2C2C2C] font-extrabold">{wandRechnungText}</span>
+        </div>
+      )}
     </div>
   )
 }

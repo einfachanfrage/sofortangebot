@@ -34,7 +34,7 @@ Pipeline-/Rechenbug zu sein, bitte trotzdem wie gewohnt hier dokumentieren —
 die Zuordnung an die richtige Stelle übernimmt der Chief of Staff.
 Vollständiger Hintergrund: CoS-009 in `docs/chief-of-staff-todos.md`.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-17, Prüfmeister)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-18, Prüfmeister)
 
 **Hinweis zur Pflege dieser Tabelle:** Sie ist jetzt zweimal durch gleichzeitige Bearbeitung auf einen
 älteren Stand zurückgefallen (einmal ein ganzer Detail-Eintrag weg, einmal die ganze Tabelle). Kein
@@ -56,13 +56,14 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Alle Rechenfehler live bestätigt behoben (Kniestock 20,4 m², Dachschrägen 23,08 m², keine unverlangte Spachtelposition mehr); offen bleiben nur Designer-Themen (PD-005) und fehlende Standardpreise |
-| PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung jetzt 3-fach bestätigt stabil behoben; Masse-Anzeige zeigt weiterhin Fenster- statt Fassadenmaße (3. Bestätigung, PD-007); Preis für Fassadenfläche streichen weiterhin nicht hinterlegt; widersprüchlicher „Keine Positionen erkannt"-Banner ist in diesem Durchlauf NICHT wieder aufgetreten |
+| PM-008 | Fassade | 🟡 Doppelberechnung + unverlangte Reinigung weiterhin stabil behoben. Widersprüchlicher Banner + fehlender Preis (Grundierung/Fassadenfläche): direkt gegen Sandys echten Preiskatalog nachgerechnet, bestätigt korrekt. Masse-Anzeige brauchte einen zweiten Fix-Durchgang (erster Fix zu eng, an Sandys echtem Transkript nachgewiesen und behoben) — Logik jetzt zentral + getestet statt inline. Neuer Nebenfund: Erschwerniszuschlag-Position hat Einheit „Pauschale", Katalogeinträge dafür „%" — noch offen. Strukturelle Root-Cause (Fassade wird wie ein Raum behandelt, hat aber keine Raumtiefe): Datenmodell (`modus: 'wand'`) jetzt umgesetzt (Sandys Go lag vor) — `raum-geometrie.ts` + `generiere-positionen/route.ts`, 9 neue Tests, zwei Nebenfunde direkt mitgefixt (Raum-ohne-Breite-Fall, Fassadenfläche-Titel in der Mengen-Neuberechnung). Designer baut jetzt die passende Chip-Anzeige (DC-024) auf dieser Basis. Live-Bestätigung durch Sandy im Browser (inkl. `typecheck`/`test`) steht für alle Punkte weiterhin aus. |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf) — fehlt nur noch ein Standardpreis dafür |
 | PM-010 | Sockelleisten-Doppel-Falle | 🟡 Erfundener Bodenaustausch + 350-Bug wie zuvor; „Sockelleisten streichen": wahrer Grund gefunden (Systemfund, siehe Fix-Update), fünfter Fix umgeht ihn, Live-Nachtest steht aus |
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | 🟡 Q2-Vollflächenspachtelung + Grundierung fachlich korrekt (Erfolg, Grundierung war entgegen erster Einschätzung kein Bug — siehe Korrektur); ein echter Bug bleibt: 8-€-Kleinreparaturposition trotz ausdrücklicher Verneinung; neuer Designer-Fund PD-008 (Vorschlag-Kennzeichnung für auto-ergänzte Positionen) |
 | PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | 🟡 Fix da (Menge von „Sockelleisten abkleben" übernommen), Live-Nachtest steht aus |
 | PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ⏳ noch nicht geprüft — neu |
 | PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | 🟡 Fix da (exakte Dubletten werden geblockt), Auslöser weiterhin ungeklärt, Live-Nachtest steht aus |
+| PM-015 | Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | 🟡 Beide Ursachen gefunden und gefixt (Onboarding seedet jetzt immer den Basis-Katalog; Preisdatenbank-Seite zeigt den vorhandenen „Standardpreise importieren"-Button jetzt auch, wenn nur Positionen außerhalb Maler/Boden/Allgemein da sind), Live-Nachtest steht aus |
 
 **Neu, quer zu mehreren Fällen (2026-08-17):** Mehrere fachlich absolut normale Positionen
 (Kniestockwände streichen, Dachschrägen streichen, Fassadenfläche streichen, Übergangsschiene) haben
@@ -106,6 +107,19 @@ geht an Head of IT (warum feuert die Prüfung überhaupt, wenn Positionen längs
 mit dem bekannten Race-Condition-Verdacht) UND an den Designer (so ein Widerspruch darf, selbst wenn
 er nur eine Sekunde lang auftritt, dem Nutzer nie angezeigt werden). Sandy hat ausdrücklich gesagt,
 dass das an beide weitergegeben werden soll.
+
+**4. Struktureller Fund (2026-08-18): Nicht-Raum-Objekte (Fassaden) werden technisch wie Räume
+behandelt, sind es aber nicht.** Sandy hat beim fünften PM-008-Nachtest selbst die vermutliche
+gemeinsame Ursache für mehrere PM-008/PD-003/PD-007-Funde benannt: die Entwurfsansicht filtert nach
+Räumen, jeder Raum hat eine feste Zeile mit fixen Raummaßen (Länge, Breite, Höhe, Türen, Fenster), auf
+deren Basis alle Positionen berechnet werden. Eine Fassade ist kein Raum — relevant sind nur Wandlänge
+und Wandhöhe, es gibt keine Raumtiefe. Ihre Worte: *„das muss irgendwie umgedacht werden, weil das wird
+auf jeden Fall auch vorkommen."* Das ist vermutlich die gemeinsame Wurzel für: die falsche Masse-Anzeige
+auf der Aufnahmekarte (PD-007), die roten „!" im Raummaße-Chip trotz korrekter Rechnung dahinter
+(PD-003), und das „Fenster: 0" in der Entwurfsansicht trotz „Fenster: 3" auf der Karte. Sandy verlangt
+ausdrücklich eine eigene Aufgabe dafür — sowohl für Head of Product Engineering (eigenes Datenmodell für
+Wand-/Fassaden-Objekte ohne Raumtiefe) als auch für den Designer (eigenes Anzeige-Format dafür, siehe
+PD-003/PD-007-Update in `pruefmeister-notizen-fuer-designer.md`). Details siehe PM-008, Nachtest 5.
 
 ---
 
@@ -685,7 +699,7 @@ Preisdatenbank-Pflege, kein Code-Bug mehr in der eigentlichen Berechnung.
 ## PM-008 — Fassade (kein Raum, kein Boden, keine Decke)
 
 **Datum:** 2026-08-16
-**Status:** 🟡 Doppelberechnung + unverlangte Reinigung live bestätigt behoben; Raummaße-Chip zeigt weiterhin fünf rote Fehler trotz korrekter Rechnung (Designer-Thema, PD-003); neuer kleiner Fund: garbelter Positionsname „Gondierung"
+**Status:** ❌ Doppelberechnung + unverlangte Reinigung stabil behoben (4-fach bestätigt) — offen bleiben: Masse-Anzeige zeigt weiterhin falsche Maße (5-fach bestätigt, jetzt neue Variante „120,00 × 140,00 m" statt „1,20 × 1,40 m" — Verdacht auf Zusammenhang mit dem Spracherkennungs-Bug aus PM-010), widersprüchlicher „Keine Positionen erkannt"-Banner (intermittierend, 2 von 3 Durchläufen), Grundierung weiterhin ohne Preis zusammen mit Fassadenfläche streichen. **Neu (2026-08-18):** Sandy hat selbst die vermutliche Root-Cause benannt — Fassaden sind keine Räume (keine Raumtiefe), werden aber technisch wie Räume behandelt; sie verlangt ausdrücklich eine Aufgabe dafür bei Head of Product Engineering UND beim Designer. (Ein vierter Punkt — „Fenster streichen" als Phantom-Leistung — wurde von mir am 17.08. fälschlich als zweite Bestätigung gemeldet, das war ein Lesefehler und ist zurückgenommen.)
 
 **Zum Einsprechen:**
 „Fassade an der Südseite, zwölf Meter lang, Giebelhöhe im Schnitt sechs Meter. Drei Fenster drin, eins zwanzig mal eins vierzig. Fassadenfarbe zweimal drauf, dazu vorher Grundierung."
@@ -845,6 +859,203 @@ Zwei Dinge bleiben offen:
    fertigen Angebot zu Recht nicht aufgetaucht, war also eine Fehlmeldung der Karte, keine fehlende
    Berechnung (siehe Notiz an den Designer, PD-004/005-Familie: die Karte zeigt wieder etwas anderes
    als das, was am Ende passiert — hier andersrum als sonst, sie verspricht zu viel statt zu wenig).
+
+**Nachtest 4 (Sandy, 2026-08-17):** Vierter Durchlauf, gleiche Fassade. Ein bekannter Bug bestätigt sich
+wieder, einer kehrt zurück, und ein neuer, ärgerlicher Fund kommt dazu:
+
+1. Masse-Anzeige zeigt weiterhin „1,20 × 1,40 m" statt 12×6 m — vierte identische Reproduktion (PD-007).
+   Das „So gerechnet"-Infofeld zeigt wieder korrekt „12m × 6m − Fenster (5,04 m²) = 66,96 m²" — die
+   Rechnung bleibt richtig, nur die Karten-Anzeige nicht.
+2. Der widersprüchliche „Keine Positionen erkannt"-Banner ist zurück (war beim letzten Durchlauf nicht
+   aufgetreten, jetzt wieder da) — bestätigt endgültig den Verdacht auf einen intermittierenden Fehler:
+   2 von 3 bisherigen Fassade-Durchläufen hatten ihn, 1 von 3 nicht. Kein Einzelfall, kein „behoben",
+   sondern ein Fehler, der nur nicht bei jedem Durchlauf auslöst.
+3. **Korrektur (Sandy, 2026-08-17):** Hier stand „‚Fenster streichen' als Phantom-Leistung auf der
+   Karte — zweite Bestätigung". Das war ein Lesefehler von mir beim Auswerten des Screenshots — auf der
+   Karte stand das gar nicht, Sandy hat direkt nachgefragt und ich konnte es nicht bestätigen. Nehme
+   ich zurück. Der einzelne ältere Fund dazu (weiter unten in diesem Abschnitt, aus einem früheren
+   Durchlauf) bleibt bestehen, ist aber weiterhin nur EINFACH belegt, nicht zweifach — falls jemand
+   das nochmal gezielt gegenchecken will, gerne, aber ohne neue Bestätigung von meiner Seite heute.
+4. Neu und ein Rückschritt: die Grundierung hat jetzt auch keinen Preis mehr. Bisher war
+   „Fassadenfläche streichen" die einzige unbepreiste Position (0,00 €), „Grundierung" hatte einen Preis
+   (6,00 €/m², 401,76 €). Diesmal zeigen BEIDE Positionen „Preis fehlt in deiner Preisdatenbank" —
+   Gesamtsumme jetzt 0,00 € statt vorher wenigstens 401,76 €. Auffällig: die Position heißt hier schlicht
+   „Grundierung", in den Raum-basierten Testfällen (z. B. PM-011) aber „Voranstrich / Grundierung" —
+   meine Vermutung: das sind für die Preisdatenbank zwei VERSCHIEDENE Einträge, kein gemeinsamer. Falls
+   das stimmt, würde ein Preis, den Sandy für „Voranstrich / Grundierung" hinterlegt, die Fassade
+   trotzdem nicht abdecken — das wäre eine zusätzliche Erklärung dafür, warum die Preislücke bei der
+   Fassade so hartnäckig ist. Bitte von Head of IT gegenchecken, ob es sich wirklich um zwei getrennte
+   Preisdatenbank-Schlüssel handelt.
+
+Raummaße-Chip (PD-003) weiterhin unverändert offen.
+
+**Nachtest 5 (Sandy, 2026-08-18) — struktureller Fund: Fassade ist kein Raum, Datenmodell muss
+überarbeitet werden.** Fünfter Durchlauf, gleiche Fassade Südseite (12 m lang, Giebelhöhe 6 m, 3 Fenster
+1,20×1,40 m). Zwei bekannte Punkte bestätigen sich wieder, eine neue Variante des Masse-Anzeige-Bugs
+kommt dazu — vor allem aber liefert Sandy selbst die wahrscheinliche Root-Cause für die ganze
+PM-008-Fehlerfamilie:
+
+1. **Masse-Anzeige zeigt jetzt „120,00 × 140,00 m"** statt der Fassadenmaße (12×6 m) — eine neue Variante
+   desselben bekannten Anzeige-Bugs (bisher stand dort immer „1,20 × 1,40 m"). Auffällig: 120/140 sieht
+   aus wie dieselben Fenstermaße (1,20/1,40), nur um den Faktor 100 verschoben — genau das Muster, das
+   beim PM-010-Fund („drei fünfzig" → 350 statt 3,50 m) schon einmal auftrat und dort von Head of IT auf
+   die Spracherkennung selbst zurückgeführt wurde, nicht auf eigenen Code. Kann hier derselbe Effekt sein
+   („eins zwanzig" wird als „120" gelesen), zusätzlich zur schon bekannten falschen Feld-Zuordnung
+   (Fenstermaß statt Fassadenmaß auf der Karte). Bitte gegenchecken, ob beide Bugs zusammenhängen oder
+   unabhängig sind.
+2. **Fenster in der Entwurfsansicht zeigt „0" (rotes „!")**, obwohl die Aufnahmekarte korrekt
+   „Fenster: 3" zeigt — deckt sich mit dem seit Langem bekannten PD-003 (Raummaße-Chip zeigt bei
+   Nicht-Raum-Objekten überall rote Fehler statt Werten), nicht neu, aber erneut bestätigt.
+3. **Grundierung weiterhin ohne Preis**, zusammen mit Fassadenfläche streichen — unverändert zum letzten
+   Nachtest, siehe „Systemischer Fund" oben.
+
+**Sandys eigene Einordnung, wichtiger als die Einzelfunde oben (wörtlich sinngemäß):** Sie hat beim Bauen
+des Tools die Entwurfsansicht so angelegt, dass nach Räumen gefiltert wird und jeder Raum eine feste
+Zeile mit fixen Raummaßen hat — auf deren Basis werden alle Positionen für diesen Raum berechnet. Eine
+Fassade ist aber kein Raum: relevant sind nur Wandlänge und Wandhöhe, es gibt keine Raumtiefe. Ihre
+Worte: „das muss irgendwie umgedacht werden, weil das wird auf jeden Fall auch vorkommen." Das ist
+vermutlich die gemeinsame Ursache für Punkt 1 und 2 oben (und für PD-003/PD-007 insgesamt) — kein Bündel
+zufälliger Einzelbugs, sondern ein Datenmodell, das nur für „echte" Räume gebaut ist und Nicht-Raum-
+Objekte wie Fassaden in dasselbe Formular presst, in das sie strukturell nicht passen.
+
+**Aufgabe, ausdrücklich von Sandy verlangt:** Daraus soll eine echte Aufgabe werden, nicht nur eine
+weitere Zeile hier — sowohl für Head of Product Engineering (eigenes Datenmodell für Wand-/Fassaden-Objekte
+ohne Raumtiefe, das nicht in die feste Raum-Zeile gepresst wird) als auch für den Designer (eigenes
+Anzeige-Format für Nicht-Raum-Objekte, siehe Update zu PD-003/PD-007 in
+`pruefmeister-notizen-fuer-designer.md`). Prüfmeister meldet strukturell zusätzlich an Chief of Staff
+weiter, siehe `pruefmeister-notiz-fuer-chief-of-staff.md`.
+
+**Separat, unabhängig von der Fassade:** Sandy hat außerdem klar gesagt, dass ihr die Aufnahmekarte selbst
+(nicht die Entwurfsansicht mit den fehlenden Preisen, sondern die Karte direkt davor, der erste
+Gegencheck) grundsätzlich nicht gefällt — ihre Worte: „Das gefällt mir gar nicht" und „Es ist einfach
+eine Katastrophe", weil dort andere Dinge stehen als später im Angebotsentwurf. Inhaltlich deckt sich das
+mit dem längst bekannten PD-001/PD-004 (Karte zeigt etwas anderes als das, was am Ende berechnet wird),
+ist aber eine ausdrückliche Bekräftigung, dass dieser Punkt nicht als Kleinigkeit behandelt werden soll.
+
+**Fix-Update (Head of Product Engineering, 2026-08-18):** Alle vier Engineering-seitigen Punkte aus der
+PM-008-Fehlerfamilie einzeln durchgegangen, jeweils bis zur Ursache zurückverfolgt statt nur das Symptom
+abzudichten:
+
+1. **Masse-Anzeige falsch** (zuletzt „120,00 × 140,00 m" statt 12×6 m): Ursache gefunden. Die Karte holt
+   ihre Vorschau-Maße NICHT aus der echten Berechnung, sondern aus einer eigenen, rein clientseitigen
+   Text-Heuristik (`extrahiereRaumdaten()` in der Entwurfsansicht), die im Rohtranskript nach dem ERSTEN
+   „X mal Y" sucht — bei einer Fassade mit erwähnten Fenstermaßen („Fenster ist 1,20 mal 1,40") greift sie
+   auf das falsche Zahlenpaar zu, weil das zufällig zuerst im Satz steht. Die 100er-Verschiebung (120/140
+   statt 1,20/1,40) ist ein zweiter, unabhängiger Effekt der Sprach-zu-Text-Stufe — siehe PM-010, nicht
+   Teil dieses Fixes. Fix: die Heuristik überspringt jetzt Zahlenpaare, die im Text erkennbar im
+   Fenster-/Tür-Kontext stehen, und nimmt das erste Paar außerhalb davon.
+2. **Widersprüchlicher „Keine Positionen erkannt"-Banner:** Ursache gefunden, keine echte
+   Race-Condition. Ein früherer „Fertigstellen"-Versuch ohne erkannte Positionen setzt eine Fehlermeldung
+   in der Entwurfsansicht — die aber nie wieder geräumt wurde, auch nicht, wenn eine noch verarbeitende
+   Aufnahme kurz danach doch Positionen liefert. Dadurch standen rotes Fehler- und grünes Erfolgs-Banner
+   gleichzeitig auf dem Schirm. Fix: die Fehlermeldung wird jetzt gezielt geräumt, sobald eine Aufnahme
+   tatsächlich Positionen liefert — andere Fehler (Netzwerk, fehlender Preis) bleiben unangetastet stehen.
+3. **Grundierung/Fassadenfläche ohne Preis:** Ursache gefunden. Der Preiskatalog schreibt Anstriche mit
+   echtem Multiplikationszeichen („2× Anstrich"), die generierten Positionen mit normalem „x" („2x") — beim
+   Abgleich wurde das „×" bisher komplett entfernt statt wie „x" behandelt, wodurch die
+   Anstrich-Zahl auf beiden Seiten verloren ging. Zusätzlich verschmolz „Fassadenfläche" beim Normalisieren
+   mit einer generischen Flächen-Regel zu einem Wort, das nicht mehr zu „Fassade" im Katalog passte. Beides
+   gefixt und mit gezielten Tests gegen den echten Preiskatalog abgesichert (`findePreisposition` findet
+   „Fassadenfläche streichen 2x" jetzt korrekt zum passenden 2×-Preis, nicht zum 1×-Preis).
+4. **Strukturelle Root-Cause (Datenmodell):** Sandys Befund bestätigt und genauer eingegrenzt. Die
+   Mengen-Engine selbst behandelt eine Fassade bereits nicht als Raum (eigenes `waende[]`-Feld, nur
+   Wandlänge/-höhe, kein Boden/Decke). Die Lücke liegt eine Ebene weiter außen: Die Bearbeiten-Ansicht
+   eines fertigen Angebots (Live-Neuberechnung bei manueller Maß-Korrektur) füllt ihre Daten
+   ausschließlich aus `raeume[]` — bei einer reinen Fassaden-Aufnahme bleibt dieses Feld leer, und die
+   Bearbeiten-Ansicht hat für die Fassaden-Position schlicht keine editierbaren Maße, unabhängig vom
+   Anzeige-Format. Konkreter Vorschlag für die Datenmodell-Hälfte (Vorschlag, noch nicht umgesetzt — wie
+   von Sandy verlangt als eigene, koordinierte Aufgabe mit dem Designer, nicht blind implementiert):
+   einen `typ: 'wand'`-Zweig ergänzen, der nur Länge/Höhe/Türen/Fenster kennt (keine Breite, keine
+   Bodenfläche), die Bearbeiten-Ansicht zusätzlich aus `waende[]` befüllen, und die Flächenberechnung für
+   diesen Zweig direkt aus Länge × Höhe ableiten statt aus einem Raumumfang. Wartet auf Sandys Go, bevor
+   das umgesetzt wird — betrifft den Live-Berechnungspfad fertiger Angebote.
+
+   **Go (Sandy, 2026-08-18):** „go" — Freigabe erteilt, koordiniert mit dem
+   Designer (Konzept „Wand-Chip" liegt bereits vor, siehe
+   `docs/dc-024-konzept-wandchip.md` bzw. DC-024 in `docs/design-check.md`).
+   Head of Product Engineering kann den `'wand'`-Zweig umsetzen.
+
+**Ehrlich zum Stand:** Punkte 1–3 sind lokal gegen den echten Preiskatalog bzw. mit gezielten
+Regressionstests verifiziert (neue Testfälle in `extraktion-masse.test.ts` und `preis-matcher.test.ts`).
+Punkt 4 ist bewusst nur als Vorschlag dokumentiert, nicht implementiert.
+
+**Update (2026-08-18, nach Sandys Testlauf):** `npm run typecheck` sauber, `npm test` hat von 712 Tests
+einen einzigen echten Treffer geliefert — genau das, wofür die Testsuite da ist. Der neue Testfall
+„Giebelhöhe im Schnitt sechs Meter" (ausgeschriebene Zahl) schlug fehl, weil `extrahiereRaumhoehe()`
+bisher nur Ziffern verstand, keine Zahlwörter. Nachgegangen: einer der beiden echten Aufrufer dieser
+Funktion (die Erschwerniszuschlag-Prüfung für hohe Wände/Decken) übergibt das Rohtranskript OHNE
+vorherige Zahlwort-Umwandlung — bei „Giebelhöhe im Schnitt sechs Meter" (ohne dass Whisper das schon
+selbst in Ziffern verwandelt hätte) wäre der Zuschlag also gar nicht ausgelöst worden. Fix:
+`extrahiereRaumhoehe()` wandelt Zahlwörter jetzt selbst zuerst um, unabhängig davon, ob der Aufrufer das
+schon gemacht hat. Erneut isoliert gegen alle 32 Fälle der Testdatei geprüft (inklusive der alten
+„2 Meter 60"-Falle, die dabei nicht anfassen durfte) — alle grün, keine Regression. An Sandy geliefert;
+kompletter `npm test`-Lauf mit dieser letzten Korrektur steht noch aus.
+
+**Update (2026-08-18, nach Sandys Live-Nachtest):** `npm test` danach komplett grün (712/712). Live-Test
+auf `sofortangebot.app` zeigte trotzdem alle drei Symptome unverändert — Ursache: die Fixes lagen zu dem
+Zeitpunkt nur lokal, `sofortangebot.app` läuft auf einem separaten Deployment, das erst durch den
+Platform-&-Integrations-Engineer aktualisiert wird (nicht meine Zuständigkeit, an Sandy so kommuniziert).
+Test auf `localhost:3000` (mit den Fixes) brachte zwei echte, neue Erkenntnisse:
+
+1. **Masse-Anzeige — zweiter, subtilerer Fund:** Sandys echtes Test-Transkript („Fassade an der Südseite,
+   12 Meter lang, Giebelhöhe im Schnitt 6 Meter, 3 Fenster drin, 1,20 x 1,40, Fassadenfarbe zweimal drauf,
+   dazu vorher Grundierung.") zeigte weiterhin „1,20 × 1,40 × 6,00 m" statt der echten Fassadenmaße. Der
+   erste Fix (Fenster-/Tür-Kontext überspringen) griff hier nicht: das Fenstermaß „1,20 x 1,40" steht in
+   einer EIGENEN, knappen Kommaklausel, das Wort „Fenster" selbst eine Klausel davor — das alte
+   12-Zeichen-Kontextfenster war schlicht zu eng (fehlte um 2 Zeichen), um das noch zu erfassen. Fix:
+   satzzeichenbasiert statt fester Zeichenzahl — prüft jetzt die eigene Klausel PLUS die davor. Direkt
+   gegen Sandys echten Transkript-Text verifiziert (Ergebnis jetzt: Fenstermaß korrekt übersprungen,
+   Fassadenmaße selbst stehen aber gar nicht im „X mal Y"-Format im Text — „12 Meter lang" +
+   „Giebelhöhe … 6 Meter" getrennt —, die Karte zeigt deshalb ehrlich GAR KEINE Maße statt falscher; besser
+   nichts als Falsches). Bei dieser Gelegenheit außerdem die bis dahin ungetestete, direkt in der
+   Entwurfsseite lebende Logik (`extrahiereRaumdaten`, `istOeffnungsKontext`) nach `extraktion-masse.ts`
+   verschoben und mit 3 neuen Tests abgesichert (inkl. Sandys echtem Satz als Testfall) — genau die Art
+   fragiler Rohtext-Stelle, für die diese Datei laut ihrem eigenen Kopfkommentar gedacht ist.
+2. **„Preis fehlt" auf localhost war KEIN Bug:** das Test-Angebot lief unter einem anderen Firmen-Konto
+   als Sandys reguläres (Preisdatenbank dort hat nur 5 generische Positionen, keine Maler-/Fassadenpreise
+   — „Preis fehlt" war in diesem Fall also die ehrliche Wahrheit, nicht der Bug). Mit Sandys Hauptkonto
+   (echte ~2155 Positionen) direkt gegen den echten Preiskatalog nachgerechnet: „Fassadenfläche streichen
+   2x" und „Grundierung" finden beide korrekt ihren Katalogpreis. Zusätzlich aufgefallen, aber NICHT Teil
+   von PM-008: die neue „Erschwerniszuschlag Raumhöhe > 3m"-Position (jetzt korrekt ausgelöst dank Fix 1)
+   hat ebenfalls keinen Katalogpreis — die passenden Erschwernis-Einträge im Katalog haben Einheit „%",
+   die generierte Position aber „Pauschale". Separater, neuer Fund — noch nicht gefixt, wird als eigener
+   Punkt nachgetragen statt hier untergemischt.
+
+**Fix-Update (Head of Product Engineering, 2026-08-18) — Punkt 4, Datenmodell `modus: 'wand'`:**
+Sandys Go lag vor (siehe `docs/entscheidungen-fuer-sandy.md`), der Designer hatte sein Konzept
+„Wand-Chip" fertig (`docs/dc-024-konzept-wandchip.md`) und ausdrücklich signalisiert: sobald das
+Datenfeld existiert, baut er die Komponente. Umgesetzt, genau nach dem dort abgestimmten Umfang:
+
+1. `RaumModus` in `raum-geometrie.ts` um `'wand'` erweitert (Geschwister von `rechteck`/`flaeche`/
+   `grundriss`). `berechneRaumMasse()` rechnet für `'wand'` die Wandfläche direkt aus Länge × Höhe −
+   Öffnungen (Türen/Fenster wie gehabt abgezogen) — bewusst ohne Umfang und ohne Bodenfläche, weil eine
+   Fassade keinen Boden/keine Decke hat (dieselbe fachliche Begründung wie der bestehende Kommentar
+   „Keine Decke, kein Boden, kein Umfang für Fassaden" in `maler.ts`). 9 neue Tests in
+   `raum-geometrie.test.ts`.
+2. `generiere-positionen/route.ts` befüllt `raum_details` jetzt zusätzlich aus `extraktion.waende[]`
+   (mit `modus: 'wand'`) — vorher lief die gesamte Raumdimensionen-Speicherung ausschließlich über
+   `extraktion.raeume[]`, bei einer reinen Fassaden-Aufnahme (Fassade landet bei GPT strukturell in
+   `waende[]`, nicht in `raeume[]`) blieb `raum_details` deshalb komplett leer — die Bearbeiten-Ansicht
+   hatte nichts zum Anzeigen oder Neuberechnen, ganz unabhängig vom Chip-Format.
+3. **Nebenfund beim Umsetzen, direkt mitgefixt:** dieselbe Lücke gab es ein zweites Mal, auf einem
+   anderen Weg — GPT legt manche Fassaden nicht in `waende[]`, sondern als „Raum" mit nur Länge+Höhe ab
+   (Breite fehlt strukturell). Dieser Fall bekommt jetzt ebenfalls `modus: 'wand'` statt stillschweigend
+   als unvollständiges Rechteck gespeichert zu werden — genau der Fall, der zuvor die 5 roten „!" im
+   Chip erzeugt hat, obwohl die Rechnung dahinter stimmte (PD-003).
+4. **Zweiter Nebenfund:** `berechneQuantityFuerItem()` (rechnet beim Bearbeiten die Menge einer
+   einzelnen Position neu) erkannte „Fassadenfläche streichen …" bisher nicht als Wandleistung (nur
+   „wand"/„tapete"/„spachtel"/„grundier"/… im Titel), weil die Maler-Engine Fassaden-Positionen anders
+   benennt als Raum-Positionen. Ohne diese Ergänzung hätte eine Änderung an den neuen Wand-Maßen die
+   zugehörige Fassadenfläche-Position beim Bearbeiten NICHT aktualisiert — „fassade" ergänzt.
+
+**Bewusst NICHT angefasst:** `AngebotDetail.tsx` (die eigentliche Chip-Anzeige). Das ist abgestimmt
+Designer-Terrain — das fertige Konzept liegt in `docs/dc-024-konzept-wandchip.md`, ich habe nur die
+Datenbasis dafür gebaut. Ehrlich zum Zwischenstand: bis die neue Komponente eingebaut ist, zeigt die
+Bearbeiten-Ansicht bei `modus: 'wand'` eine leere Maße-Zeile statt der 5 roten „!" von vorher (keiner
+der drei bisherigen UI-Zweige `rechteck`/`flaeche`/`grundriss` greift für `'wand'`) — kein Rechenfehler,
+nur noch kein passendes Format. Datenmodell + Speicherung sind isoliert gegen die exakten Zahlen aus
+Sandys eigenem Testfall geprüft (12 m × 6 m − 3 Fenster = 68,4 m²), `npm run typecheck && npm test`
+durch Sandy steht noch aus.
 
 ---
 
@@ -1520,3 +1731,75 @@ Wände und Decke streichen, zweimal. Da wird nix am Boden gemacht, der bleibt wi
 - Bleibt das Wohnzimmer wirklich ganz ohne jede Wand-/Deckenposition, trotz des Namens „Wohnzimmer" (kein
   automatisches Default-Streichen, nur weil es sich wie ein normaler Wohnraum anhört)?
 
+
+---
+
+## PM-015 — Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (nicht geplant, live entdeckt)
+
+**Datum:** 2026-08-18
+**Status:** 🟡 Beide Ursachen gefunden und behoben, Live-Nachtest steht aus
+
+**Wie das aufgefallen ist:** Kein geplanter Testfall, sondern Sandys eigene Reaktion beim Öffnen von
+„Preisdatenbank" (`/preise`) auf localhost während des PM-008-Nachtests: die Seite war komplett leer —
+kein Kategorie-Raster, keine Positionen, nicht mal ein Hinweistext, nur die Kopfzeile und die Suchleiste.
+Ihre berechtigte Erwartung: „Jeder User müsste hier vorangelegte Positionen für Maler+Bodenleger haben,
+das ist doch die Basis, aus der sich die KI beim Angebotsprozess bedient."
+
+**Root-Cause, zwei getrennte Ursachen, die sich gegenseitig verstärkt haben:**
+
+1. *Lücke im Onboarding:* Beim Firmen-Setup gibt es zwei „Preismodi" — „Marktpreise" (`preisMode ===
+   'markt'`) seedet automatisch einen Standard-Katalog über `standardpreiseFuerGewerke()`. Der zweite
+   Modus, „manuell" (`preisMode === 'manuell'`), tat das bisher NICHT — er legte ausschließlich die vom
+   Nutzer während des Onboardings selbst eingetippten Positionen an. Wer sich für „manuell" entscheidet,
+   aber (wie im Testkonto „Lisa Schein Malerbetrieb") nur eine Handvoll Einträge tippt oder das
+   Preis-Onboarding größtenteils überspringt, landet mit einer fast leeren Datenbank (im konkreten Fall:
+   5 generische Positionen statt der vollen Maler/Boden-Basis).
+2. *Anzeige-Bug auf `/preise` selbst:* Die Seite hat schon lange eine eingebaute Rettungsleine — einen
+   „Standardpreise importieren"-Button, der genau für diesen Fall gedacht ist (lädt den Maler+Boden-
+   Standardkatalog nachträglich, mit Dubletten-Schutz). Der Button war aber falsch verdrahtet: er wurde
+   nur angezeigt, wenn `items.length === 0` (also wirklich GAR KEINE Positionen in der Datenbank
+   existieren). Konten wie „Lisa Schein", die zwar ein paar Positionen haben, aber nur in Kategorien
+   außerhalb von Maler/Boden/Allgemein (z. B. „Arbeitszeit", „Fahrtkosten" — diese Kategorien werden auf
+   der Seite gar nicht als Kacheln angezeigt), hatten `items.length > 0`, aber `gewerke.length === 0` (die
+   Liste der tatsächlich angezeigten Kategorien). Ergebnis: weder Kategorie-Kacheln noch der
+   Rettungs-Button — eine komplett leere, wirkungslos aussehende Seite, obwohl die Lösung technisch längst
+   im Code vorhanden war, nur nie sichtbar wurde.
+
+**Warum ich hier erst gefragt und nicht direkt gefixt habe:** Ob „manuell" trotzdem automatisch einen
+Basis-Katalog bekommen soll und ob es einen Nachlade-Weg aus den Einstellungen heraus geben soll, sind
+Produktentscheidungen, keine reinen Bugfixes — denkbar wäre z. B. auch gewesen, dass „manuell" bewusst
+leer bleiben soll, weil manche Handwerker wirklich nur ihre eigenen Preise sehen wollen. Sandy hat beides
+per Rückfrage bestätigt: (1) „Ja, immer Basis-Katalog vorbefüllen" und (2) „Ja, das brauchen wir"
+(Nachlade-Möglichkeit für Bestandskonten).
+
+**Fix (Head of Product Engineering, 2026-08-18):**
+
+1. `src/app/(app)/onboarding/[step]/page.tsx`: Der Basis-Katalog (`standardpreiseFuerGewerke()`) wird
+   jetzt IMMER beim Firmen-Setup angelegt, unabhängig vom gewählten `preisMode`. Bei „manuell" kommen die
+   selbst eingetippten Positionen zusätzlich obendrauf (nicht ersetzend) — wer wirklich nur eigene Preise
+   will, kann die Standardeinträge danach in `/preise` einzeln löschen oder überschreiben, aber niemand
+   startet mehr bei null.
+2. `src/app/(app)/preise/page.tsx`: Die Anzeige-Bedingung für den leeren Zustand (Hinweistext +
+   „Standardpreise importieren"-Button) wurde von `items.length === 0` auf `gewerke.length === 0`
+   geändert — der Button erscheint jetzt auch, wenn zwar irgendwelche Positionen da sind, aber keine in
+   den drei sichtbaren Kategorien. Der Hinweistext unterscheidet jetzt außerdem beide Fälle („wirklich
+   leer" vs. „nur Positionen in anderen Kategorien vorhanden").
+
+**Verifiziert:** Beide Änderungen sind reine Steuerlogik ohne eigene Testabdeckung (Seiten-Ebene, nicht
+Bibliotheksfunktion) — `handleImport()` selbst (der eigentliche Import samt Dubletten-Schutz über
+`priceItemIdentity`) existierte bereits vorher unverändert und ist über die bestehende Praxisnutzung
+implizit erprobt. Beide Dateien sind ans Gerät ausgeliefert.
+
+**Ehrlich zum Stand:** Noch kein Live-Nachtest. Zu prüfen bleiben: (a) ein frischer Onboarding-Durchlauf
+mit „manuell" — landet danach die volle Maler/Boden-Basis in `/preise`? (b) das Konto „Lisa Schein" auf
+`/preise` neu laden — erscheint jetzt der „Standardpreise importieren"-Button statt der leeren Seite, und
+befüllt ein Klick darauf tatsächlich die Datenbank? Bitte `npm run typecheck && npm test` einmal
+gegenlaufen lassen, auch wenn für Seiten-Dateien ohne eigene Tests eher stumpfe TypeScript-Fehler als
+Logikfehler zu erwarten sind.
+
+**Offener Seitenfund, noch ungeklärt:** Bei derselben Live-Session ist aufgefallen, dass die generierte
+Position „Erschwerniszuschlag Raumhöhe > 3m" die Einheit `Pauschale` trägt, während die passenden
+Katalogeinträge (z. B. „Erschwerniszuschlag Höhe (Leitern/Gerüst über 4 m)") die Einheit `%` verwenden —
+das verhindert jeden Preis-Treffer, weil `findePreisposition()` auf exakter Einheiten-Übereinstimmung
+besteht. Noch nicht gefixt, da noch keine Rückmeldung von Sandy, ob das gewünschte Verhalten ist oder ob
+sich die Einheit auf einer der beiden Seiten ändern soll.

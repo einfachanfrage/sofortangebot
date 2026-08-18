@@ -127,3 +127,30 @@ ernster als ich erwartet hatte. Für die „reif für echte Nutzer"-Frage von ob
 jeder einzelne Rechenfehler bisher — ein falsch berechneter Zuschlag kostet den Kunden ein paar Euro zu
 viel oder zu wenig, ein verdoppeltes Angebot kann einen Auftrag komplett kippen, wenn es unbemerkt
 rausgeht.
+
+## Dritter Nachtrag (2026-08-18): Sandy hat selbst eine strukturelle Root-Cause benannt und verlangt
+ausdrücklich einen formalen Auftrag für zwei Rollen gleichzeitig
+
+Neu, anders als meine bisherigen Einträge hier: diesmal kommt die strukturelle Einordnung nicht von mir,
+sondern direkt von Sandy, beim fünften PM-008-Nachtest (Fassade). Ihre eigene Erklärung: Die
+Entwurfsansicht filtert nach Räumen, jeder Raum hat eine feste Zeile mit fixen Raummaßen, auf deren Basis
+alle Positionen berechnet werden — eine Fassade ist aber kein Raum (keine Raumtiefe, nur Wandlänge und
+Wandhöhe zählen). Ihre Worte: „das muss irgendwie umgedacht werden, weil das wird auf jeden Fall auch
+vorkommen." Das erklärt vermutlich mehrere seit Tagen offene Einzelfunde auf einen Schlag (falsche
+Masse-Anzeige auf der Aufnahmekarte, rote „!" im Raummaße-Chip trotz korrekter Rechnung, „Fenster: 0" in
+der Entwurfsansicht trotz korrekt erkannter 3 Fenster auf der Karte) — nicht drei Zufälle, sondern eine
+gemeinsame Wurzel. Volle Details in `pruefmeister-testfaelle.md`, PM-008 Nachtest 5.
+
+Sandy hat dabei ausdrücklich gesagt, dass daraus **eine echte Aufgabe** werden muss — sowohl für Head of
+Product Engineering (Datenmodell) als auch für den Designer (Anzeige-Format), nicht nur ein weiterer
+Denkanstoß in meinen Notizen. Ich hab beides dokumentiert (Testfälle-Datei + Update bei PD-003/PD-007 in
+`pruefmeister-notizen-fuer-designer.md`), aber ob daraus ein formaler, priorisierter Auftrag mit eigener ID
+wird (wie sonst über `chief-of-staff-todos.md` gehandhabt), ist deine Entscheidung, nicht meine — ich wollte
+nur sicherstellen, dass Sandys ausdrücklicher Wunsch nicht in der Testfälle-Datei untergeht.
+
+Im selben Test hat Sandy außerdem noch einmal bekräftigt, was ich oben schon als Gesamtbild beschrieben
+hatte: die Aufnahmekarte selbst („der erste Gegencheck") gefällt ihr grundsätzlich nicht, ihre Worte „Das
+gefällt mir gar nicht" / „Es ist einfach eine Katastrophe" — weil dort andere Dinge stehen als später im
+Angebotsentwurf. Das ist keine neue Kategorie, sondern genau der Vertrauens-Mechanismus-Punkt, den ich
+oben als meine größte Sorge beschrieben hatte — jetzt noch einmal von Sandy selbst, unabhängig von mir,
+mit denselben Worten bekräftigt.

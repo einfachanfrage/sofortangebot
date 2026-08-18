@@ -199,13 +199,24 @@ export default function OnboardingStep() {
 
     const { data: company } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
     if (company) {
-      if (state.preisMode === 'markt') {
-        const all = standardpreiseFuerGewerke(state.gewerke).map(p => ({ ...p, company_id: company.id }))
-        const BATCH = 400
-        for (let i = 0; i < all.length; i += BATCH) {
-          await supabase.from('price_items').insert(all.slice(i, i + BATCH))
-        }
-      } else if (state.preisMode === 'manuell' && state.preisEntries.length > 0) {
+      // Sandy (2026-08-18, nach PM-008-Nachtest): JEDER Nutzer bekommt einen
+      // Basis-Preiskatalog, unabhängig vom gewählten Preismodus — "manuell"
+      // heißt "ich will meine eigenen Preise ERGÄNZEN", nicht "ich fange bei
+      // null an". Vorher wurde im manuellen Modus NUR das eingetippte
+      // übernommen; ein Nutzer, der beim Onboarding nur 2-3 Posten eintippte,
+      // hatte danach faktisch keine nutzbare Preisdatenbank mehr (live
+      // gefunden am Konto "Lisa Schein Malerbetrieb" — nur 5 generische
+      // Posten, keine einzige Maler-Position, Preis-Matching lief komplett
+      // leer). Basis-Katalog IMMER zuerst einfügen, manuelle Einträge (falls
+      // vorhanden) danach zusätzlich — bei Dopplung mit dem Basis-Katalog
+      // gewinnt einfach der zuletzt eingefügte Eintrag nicht automatisch,
+      // beide bleiben stehen; der Nutzer kann in den Einstellungen bereinigen.
+      const basis = standardpreiseFuerGewerke(state.gewerke).map(p => ({ ...p, company_id: company.id }))
+      const BATCH = 400
+      for (let i = 0; i < basis.length; i += BATCH) {
+        await supabase.from('price_items').insert(basis.slice(i, i + BATCH))
+      }
+      if (state.preisMode === 'manuell' && state.preisEntries.length > 0) {
         const toInsert = state.preisEntries
           .filter(e => e.title.trim() && parseFloat(e.unit_price) > 0)
           .map(e => ({ company_id: company.id, category: e.category, title: e.title, unit: e.unit, unit_price: parseFloat(e.unit_price) }))

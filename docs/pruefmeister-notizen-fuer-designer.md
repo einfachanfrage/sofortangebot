@@ -75,6 +75,10 @@ zweimal begegnet — einmal wieder als doppelter „Decke streichen"-Eintrag bei
 (Küche/Speisekammer), obwohl die spätere Rechnung diesmal korrekt war. Das bestätigt: das ist kein
 Einzelfall, sondern ein wiederkehrendes Muster.
 
+**Update (2026-08-18):** Sandy hat das jetzt selbst noch einmal ausdrücklich bekräftigt (bei PM-008,
+Fassade, fünfter Nachtest) — Zitat: „Das gefällt mir gar nicht" / „Es ist einfach eine Katastrophe", weil
+auf der Karte andere Dinge stehen als später im Entwurf. Details bei PD-007 weiter unten.
+
 ---
 
 ## PD-002 — Sandys eigenes Urteil zur Rückfragen-UI: komplett neu denken
@@ -123,6 +127,18 @@ Anzeige-Format fehlt, das zu diesem Objekttyp passt.
 **Frage an dich:** Lohnt sich ein eigenes, reduziertes Chip-Format für Nicht-Raum-Objekte (Fassaden,
 später vielleicht auch andere Sonderfälle), das nur die Felder zeigt, die dort wirklich Sinn ergeben —
 statt der vollen Raum-Vorlage mit lauter roten Fehlern für Felder, die gar nicht gebraucht werden?
+
+**Update (2026-08-18) — jetzt mit der wahrscheinlichen Ursache, direkt von Sandy:** Beim fünften
+PM-008-Nachtest hat Sandy selbst erklärt, woher das kommt: Sie hat beim Bauen des Tools die
+Entwurfsansicht so angelegt, dass jeder Raum eine feste Zeile mit fixen Raummaßen hat (Länge, Breite,
+Höhe, Türen, Fenster), auf deren Basis alle Positionen für diesen Raum berechnet werden. Eine Fassade ist
+aber kein Raum — es gibt keine Raumtiefe, relevant sind nur Wandlänge und Wandhöhe. Ihre Worte: „das muss
+irgendwie umgedacht werden, weil das wird auf jeden Fall auch vorkommen." Im selben Nachtest zeigte die
+Entwurfsansicht zusätzlich „Fenster: 0" (rotes „!"), obwohl die Aufnahmekarte davor korrekt „Fenster: 3"
+angezeigt hatte — nicht nur Kosmetik, sondern derselbe fehlende Datenrahmen für Nicht-Raum-Objekte wie
+oben beschrieben. **Sandy verlangt ausdrücklich, dass daraus eine eigene Aufgabe für dich wird, kein bloßer
+Denkanstoß mehr** — parallel dazu geht dieselbe strukturelle Frage ans Engineering für das zugrundeliegende
+Datenmodell (Details in `pruefmeister-testfaelle.md`, PM-008 Nachtest 5).
 
 ---
 
@@ -196,6 +212,12 @@ ausdrücklich gesagt, dass das sowohl an dich als auch an Head of IT gehen soll.
 Fehler-Banner und ein Erfolgs-Banner sollten sich nie gleichzeitig anzeigen lassen können — im Zweifel
 sollte der letzte, verlässlichere Zustand gewinnen, nicht beide nebeneinander.
 
+**Update (2026-08-17):** Bei einem weiteren Fassade-Test blieb der Widerspruch einmal aus, ist jetzt aber
+in einem vierten Durchlauf wieder aufgetreten — 2 von 3 Fassade-Tests hatten ihn. Bestätigt: kein
+Einzelfall, sondern ein Fehler, der nur nicht bei jedem Durchlauf auslöst (intermittierend). Macht die
+Design-Regel oben eher wichtiger als weniger wichtig — ein Fehler, der nur manchmal auftritt, ist für den
+Nutzer noch verwirrender als einer, der immer da ist.
+
 ---
 
 ## PD-007 — Fassade: Aufnahmekarte zeigt die Fenstermaße statt der Fassadenmaße
@@ -212,6 +234,33 @@ Handwerker prüft, ob das Tool die Grundmaße richtig verstanden hat — bevor e
 Leistungen ist. Wenn dort die falschen Zahlen stehen (selbst wenn die spätere Rechnung sie korrigiert),
 wirkt das Tool auf den ersten Blick kaputt, obwohl es am Ende richtig rechnet. Passt in dieselbe Familie
 wie PD-001/PD-003: die Karte ist der Vertrauens-Moment, und genau da geht was schief.
+
+**Update (2026-08-17):** Vierte identische Reproduktion — steht immer noch bei „1,20 × 1,40 m" statt
+12×6 m, unverändert.
+
+**Korrektur (2026-08-17):** Hier stand noch ein zweiter Absatz zu einer angeblich zweiten Bestätigung von
+„Fenster streichen" als Phantom-Leistung auf der Karte. Das war ein Lesefehler von mir beim Auswerten
+eines Screenshots, Sandy hat direkt nachgefragt und ich konnte es nicht bestätigen — zurückgenommen. Der
+einzelne ältere Fund dazu (aus einem früheren Test, siehe `pruefmeister-testfaelle.md` PM-008) bleibt
+stehen, aber nur einfach belegt, nicht zweifach.
+
+**Update (2026-08-18) — fünfte Reproduktion, neue Variante, plus Root-Cause von Sandy:** Die Karte zeigt
+diesmal nicht mehr „1,20 × 1,40 m", sondern „120,00 × 140,00 m" — dieselben Fenstermaße, nur um den
+Faktor 100 verschoben. Auffällige Nähe zu dem Spracherkennungs-Bug aus PM-010 („drei fünfzig" wurde dort
+als 350 statt 3,50 gelesen) — möglich, dass hier ein verwandter Effekt mitspielt, zusätzlich zur
+bekannten falschen Feld-Zuordnung. Wichtiger als die Zahl selbst: Sandy hat für diese ganze Fundfamilie
+(PD-003/PD-007, plus das neue „Fenster: 0" in der Entwurfsansicht) jetzt die vermutliche gemeinsame
+Ursache benannt — Fassaden werden technisch wie Räume behandelt, obwohl sie keine Raumtiefe haben — und
+ausdrücklich eine eigene Aufgabe für dich verlangt, nicht nur einen weiteren Einzelfund. Siehe Update bei
+PD-003 oben für den vollen Wortlaut, Details in `pruefmeister-testfaelle.md` PM-008 Nachtest 5.
+
+Zusätzlich, unabhängig von der Fassade: Sandy hat im selben Test klar gesagt, dass ihr die Aufnahmekarte
+als Ganzes (der erste Gegencheck vor der Entwurfsansicht) grundsätzlich nicht gefällt — ihre Worte: „Das
+gefällt mir gar nicht" und „Es ist einfach eine Katastrophe", weil dort andere Dinge stehen als später im
+Angebotsentwurf. Das ist inhaltlich PD-001 (Karte zeigt nicht zuverlässig, was am Ende berechnet wird),
+aber eine ausdrückliche Bekräftigung von ihr, dass das kein Kleinfund mehr ist, sondern Priorität hat.
+
+---
 
 ## PD-008 — Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein
 
@@ -253,5 +302,78 @@ RICHTIGEN Zahlen. Nur die Masse-Zeile ganz oben auf der Aufnahmekarte zeigt weit
 dich als Design-Info: dieses „So gerechnet"-Feld scheint grundsätzlich ein gutes Vertrauens-Element zu
 sein (zeigt genau den Rechenweg) — vielleicht lohnt sich sowas Ähnliches auch schon auf der allerersten
 Aufnahmekarte, nicht erst später in der Positionsansicht.
+
+---
+
+## Rückmeldung vom Product Designer (2026-08-18)
+
+Danke, alle acht Punkte gelesen und übernommen. Übersicht, wo sie jetzt
+stehen (alles in `docs/design-check.md`, dort mit vollem Text inkl. meiner
+Empfehlung):
+
+- **PD-001** → **DC-021** (Bestätigungskarte unzuverlässig)
+- **PD-002** → **DC-025** (Rückfragen-UI komplett neu denken — eigenes,
+  größeres Vorhaben, ich muss zuerst eine Richtung erarbeiten, bevor Head
+  of Product Engineering etwas bauen kann; melde mich beim Chief of Staff,
+  sobald ich so weit bin)
+- **PD-003** → **DC-024** (Raummaße-Chip bei Fassaden)
+- **PD-004** → **DC-022** (Positionsanzahl stimmt nicht, verwandt mit
+  meinem eigenen DC-009)
+- **PD-005** → **DC-026** (Rückfragen ignorieren Gesagtes — gehört
+  inhaltlich zu DC-025)
+- **PD-006** → direkt in **DC-010** eingearbeitet (nicht als neuer Punkt,
+  weil es exakt derselbe Befund ist, den ich selbst schon live reproduziert
+  hatte — nur mit 2 Positionen statt meinen 0. Danke für die unabhängige
+  Bestätigung, das erhöht bei mir die Priorität)
+- **PD-007** → **DC-023** (Fassade: falsche Maße auf Aufnahmekarte)
+- **PD-008** → **DC-027** (ergänzte Positionen als „Vorschlag" kennzeichnen)
+
+Bei DC-021/DC-023 (beides „Karte zeigt falsche Zahlen") und DC-025/DC-026
+(beides Rückfragen-UI) sind die technischen Ursachen bei Head of Product
+Engineering, die Design-Fragen dahinter jetzt bei mir eingeplant. DC-025
+ist das mit Abstand größte Stück — behandle ich als eigenständiges Projekt,
+nicht zusammen mit den kleineren Punkten.
+
+---
+
+## Update (Product Designer, 2026-08-18) — PD-003/PD-007 nach Nachtest 5
+
+Beide nochmal durchgegangen, jetzt mit Head of Product Engineerings
+Root-Cause-Analyse aus PM-008 Nachtest 5:
+
+- **PD-007 (DC-023):** Extraktions-Fix ist da und lokal verifiziert (712/712
+  Tests, inkl. Sandys echtem Transkript als Testfall) — die Karte zeigt bei
+  Sandys Fassaden-Satz nicht mehr die falschen Fenstermaße, sondern ehrlich
+  gar keine Maße (die echten Fassadenmaße stehen im Rohtext nicht im „X mal
+  Y"-Format). Auf `sofortangebot.app` noch nicht deployt. „Lieber nichts als
+  Falsches" ist als Zwischenstand aus meiner Sicht in Ordnung.
+- **PD-003 (DC-024):** Design-Konzept steht — „Wand-Chip" statt Raum-Chip,
+  kein Modus-Umschalter, kein „Breite"-Feld, „So gerechnet"-Zeile direkt am
+  Chip. Vollständig in `docs/dc-024-konzept-wandchip.md`, Mockup in
+  `docs/dc-024-wandchip-mockup.html`. Ich habe bewusst noch keinen Code
+  angefasst — die Datenmodell-Hälfte (`modus: 'wand'`) fehlt noch und
+  betrifft den Live-Berechnungspfad fertiger Angebote, das wartet laut Head
+  of Product Engineering ausdrücklich auf Sandys Go. Sobald das steht, baue
+  ich die Komponente direkt dazu.
+
+Beide Stände auch in `docs/design-check.md` (DC-023/DC-024) aktualisiert.
+
+---
+
+## Update (Product Designer, 2026-08-18) — DC-024 umgesetzt
+
+Head of Product Engineering hat `modus: 'wand'` geliefert (`waende[]` fließt
+jetzt in `raum_details`). Wand-Chip nach meinem eigenen Konzept
+(`dc-024-konzept-wandchip.md`) direkt in `AngebotDetail.tsx` gebaut: kein
+Modus-Umschalter mehr für Wand-Objekte, Wandlänge × Wandhöhe statt
+Breite/Länge, „So gerechnet"-Zeile direkt am Chip. Dabei eine eigene
+Design-Lücke gefunden und gleich mitgeschlossen: `waende[]` fragt strukturell
+nie nach Türen, darum zeigt das Türen-Feld jetzt `0` statt „!", wenn nichts
+erfasst wurde (Standardannahme „keine Tür", weiter editierbar) — sonst wäre
+genau die Art Fehlanzeige zurückgekommen, die DC-024 eigentlich beheben
+sollte. Scoped Typecheck + ESLint auf den geänderten Dateien sauber, kompletten
+`npm test` konnte ich nicht laufen lassen (Umgebungsproblem, kein
+Rolldown-Binding fürs Zielsystem) — bitte einmal gegenlaufen lassen. Details
+und Status in `docs/design-check.md`, DC-024.
 
 ---

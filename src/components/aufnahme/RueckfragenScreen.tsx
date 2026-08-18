@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { ChevronRight } from 'lucide-react'
-import type { RueckfrageItem, SchnellAntwort } from '@/lib/mengen/rueckfragen-generator'
+import { useState } from 'react'
+import { Button } from '@/components/Button'
+import type { RueckfrageItem, RueckfrageTyp, SchnellAntwort } from '@/lib/mengen/rueckfragen-generator'
 
 export interface RueckfragenAntwort {
   wert: number | number[]
@@ -17,6 +17,8 @@ interface Props {
 }
 
 // ── Masse Einzel ────────────────────────────────────────────────────────────
+// (unverändert gegenüber der Vorversion — die Eingabelogik ist inhaltlich gut,
+// DC-025 ändert nur das Gerüst drumherum, nicht diese Bausteine.)
 function MasseEinzelInput({
   frage,
   antwort,
@@ -59,14 +61,15 @@ function MasseEinzelInput({
   const flaeche = v1 > 0 && v2 > 0 ? Math.round(v1 * v2 * 100) / 100 : null
   const umfang = !istOeffnung && v1 > 0 && v2 > 0 ? Math.round((2 * v1 + 2 * v2) * 100) / 100 : null
 
-  useEffect(() => {
-    if (v1 > 0 && v2 > 0) onChange({ wert: [v1, v2], einheit: 'm' })
-  }, [v1, v2]) // eslint-disable-line react-hooks/exhaustive-deps
+  function commitMasse(nv1: number, nv2: number) {
+    if (nv1 > 0 && nv2 > 0) onChange({ wert: [nv1, nv2], einheit: 'm' })
+  }
 
   function applySchnell(s: SchnellAntwort) {
     if (Array.isArray(s.wert) && s.wert.length === 2) {
       setFeld1(String(s.wert[0]).replace('.', ','))
       setFeld2(String(s.wert[1]).replace('.', ','))
+      commitMasse(s.wert[0], s.wert[1])
     }
   }
 
@@ -74,7 +77,7 @@ function MasseEinzelInput({
     <div className="flex flex-col gap-4">
       {/* Hint für Öffnungen */}
       {istOeffnung && (
-        <div className="bg-[#2C2C2C]/5 rounded-xl px-4 py-3 text-[13px] text-[#2C2C2C]/60 font-semibold">
+        <div className="bg-anthracite/5 rounded-xl px-4 py-3 text-[13px] text-anthracite/60 font-semibold">
           Wenn du's nicht genau weißt — einfach &ldquo;Standard&rdquo; wählen, das passt für die meisten {istFenster ? 'Fenster' : 'Türen'}.
         </div>
       )}
@@ -93,10 +96,10 @@ function MasseEinzelInput({
                 onClick={() => applySchnell(s)}
                 className={`text-[13px] font-extrabold px-3 py-1.5 rounded-full border-2 transition-colors ${
                   aktiv
-                    ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]'
+                    ? 'bg-yellow border-yellow text-anthracite'
                     : istStandard
-                    ? 'bg-[#2C2C2C] border-[#2C2C2C] text-white'
-                    : 'bg-white border-[#2C2C2C]/15 text-[#2C2C2C]/60'
+                    ? 'bg-anthracite border-anthracite text-white'
+                    : 'bg-white border-anthracite/15 text-anthracite/60'
                 }`}
               >
                 {s.label}
@@ -108,18 +111,18 @@ function MasseEinzelInput({
 
       {!istOeffnung && (
         <div className="flex flex-col gap-2">
-          <div className="text-xs font-bold text-[#2C2C2C]/55">Wie möchtest du die Menge angeben?</div>
-          <div className="grid grid-cols-2 rounded-xl bg-[#2C2C2C]/5 p-1">
+          <div className="text-xs font-bold text-anthracite/55">Wie möchtest du die Menge angeben?</div>
+          <div className="grid grid-cols-2 rounded-xl bg-anthracite/5 p-1">
             <button type="button" onClick={() => setEingabeart('masse')}
-              className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'masse' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
+              className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'masse' ? 'bg-white shadow-sm text-anthracite' : 'text-anthracite/45'}`}>
               Mit Raummaßen
             </button>
             <button type="button" onClick={() => setEingabeart('flaeche')}
-              className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'flaeche' ? 'bg-white shadow-sm text-[#2C2C2C]' : 'text-[#2C2C2C]/45'}`}>
+              className={`rounded-lg py-2 text-sm font-black ${eingabeart === 'flaeche' ? 'bg-white shadow-sm text-anthracite' : 'text-anthracite/45'}`}>
               Flächen direkt
             </button>
           </div>
-          <div className="text-xs font-semibold text-[#2C2C2C]/45">
+          <div className="text-xs font-semibold text-anthracite/45">
             Raummaße berechnen wir aus Länge, Breite und Raumhöhe. Wenn du fertige Flächen kennst,
             kannst du Wandfläche und Boden-/Deckenfläche getrennt eintragen.
           </div>
@@ -129,32 +132,32 @@ function MasseEinzelInput({
       {/* Felder */}
       {(istOeffnung || eingabeart === 'masse') && <div className="flex items-center gap-3">
         <div className="flex-1">
-          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">{label1}</div>
-          <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
+          <div className="text-[11px] font-black text-anthracite/40 uppercase tracking-wide mb-1">{label1}</div>
+          <div className="flex items-center gap-2 bg-white border-2 border-anthracite/15 rounded-xl px-3 py-2.5 focus-within:border-yellow">
             <input
               type="number"
               inputMode="decimal"
               placeholder={placeholder1}
               value={feld1}
-              onChange={e => setFeld1(e.target.value)}
-              className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none w-0"
+              onChange={e => { setFeld1(e.target.value); commitMasse(parseFloat(e.target.value.replace(',', '.')) || 0, v2) }}
+              className="flex-1 font-bold text-anthracite text-lg bg-transparent focus:outline-none w-0"
             />
-            <span className="text-[#2C2C2C]/40 font-semibold text-sm shrink-0">m</span>
+            <span className="text-anthracite/40 font-semibold text-sm shrink-0">m</span>
           </div>
         </div>
-        <div className="text-[#2C2C2C]/30 font-black text-xl mt-4">×</div>
+        <div className="text-anthracite/30 font-black text-xl mt-4">×</div>
         <div className="flex-1">
-          <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-1">{label2}</div>
-          <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-3 py-2.5 focus-within:border-[#F5C400]">
+          <div className="text-[11px] font-black text-anthracite/40 uppercase tracking-wide mb-1">{label2}</div>
+          <div className="flex items-center gap-2 bg-white border-2 border-anthracite/15 rounded-xl px-3 py-2.5 focus-within:border-yellow">
             <input
               type="number"
               inputMode="decimal"
               placeholder={placeholder2}
               value={feld2}
-              onChange={e => setFeld2(e.target.value)}
-              className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none w-0"
+              onChange={e => { setFeld2(e.target.value); commitMasse(v1, parseFloat(e.target.value.replace(',', '.')) || 0) }}
+              className="flex-1 font-bold text-anthracite text-lg bg-transparent focus:outline-none w-0"
             />
-            <span className="text-[#2C2C2C]/40 font-semibold text-sm shrink-0">m</span>
+            <span className="text-anthracite/40 font-semibold text-sm shrink-0">m</span>
           </div>
         </div>
       </div>}
@@ -187,7 +190,7 @@ function MasseEinzelInput({
               if (wand > 0 || boden > 0) onChange({ wert: [wand, boden], einheit: 'flaechen_m2' })
             }}
           />
-          <div className="rounded-xl bg-[#2C2C2C]/5 px-3 py-2 text-xs font-semibold text-[#2C2C2C]/55">
+          <div className="rounded-xl bg-anthracite/5 px-3 py-2 text-xs font-semibold text-anthracite/55">
             Du kannst nur eine oder beide Flächen eintragen. Leere Felder werden nicht geschätzt.
           </div>
         </div>
@@ -195,10 +198,10 @@ function MasseEinzelInput({
 
       {/* Live-Vorschau */}
       {eingabeart === 'masse' && flaeche !== null && (
-        <div className="bg-[#F5C400]/15 border border-[#F5C400]/40 rounded-xl px-4 py-3">
-          <div className="font-black text-[#2C2C2C] text-sm">✓ Fläche: {String(flaeche).replace('.', ',')} m²</div>
+        <div className="bg-yellow/15 border border-yellow/40 rounded-xl px-4 py-3">
+          <div className="font-black text-anthracite text-sm">✓ Fläche: {String(flaeche).replace('.', ',')} m²</div>
           {umfang !== null && (
-            <div className="text-[#2C2C2C]/60 font-semibold text-xs mt-0.5">Umfang: {String(umfang).replace('.', ',')} lfm</div>
+            <div className="text-anthracite/60 font-semibold text-xs mt-0.5">Umfang: {String(umfang).replace('.', ',')} lfm</div>
           )}
         </div>
       )}
@@ -220,9 +223,9 @@ function DirekteFlaecheFeld({
   autoFocus?: boolean
 }) {
   return (
-    <label className="block rounded-2xl border border-[#2C2C2C]/10 bg-white p-4 focus-within:border-[#F5C400] focus-within:ring-2 focus-within:ring-[#F5C400]/15">
-      <span className="mb-2 block text-sm font-black text-[#2C2C2C]">{label}</span>
-      <span className="flex items-center gap-2 rounded-xl bg-[#F7F7F5] px-3 py-2.5">
+    <label className="block rounded-2xl border border-anthracite/10 bg-white p-4 focus-within:border-yellow focus-within:ring-2 focus-within:ring-yellow/15">
+      <span className="mb-2 block text-sm font-black text-anthracite">{label}</span>
+      <span className="flex items-center gap-2 rounded-xl bg-bg px-3 py-2.5">
         <input
           type="number"
           inputMode="decimal"
@@ -230,11 +233,11 @@ function DirekteFlaecheFeld({
           placeholder="z. B. 38"
           value={value}
           onChange={event => onChange(event.target.value)}
-          className="w-0 flex-1 bg-transparent text-lg font-bold text-[#2C2C2C] focus:outline-none"
+          className="w-0 flex-1 bg-transparent text-lg font-bold text-anthracite focus:outline-none"
         />
-        <span className="text-sm font-semibold text-[#2C2C2C]/40">m²</span>
+        <span className="text-sm font-semibold text-anthracite/40">m²</span>
       </span>
-      <span className="mt-2 block text-xs font-semibold leading-relaxed text-[#2C2C2C]/45">{hilfe}</span>
+      <span className="mt-2 block text-xs font-semibold leading-relaxed text-anthracite/45">{hilfe}</span>
     </label>
   )
 }
@@ -261,12 +264,12 @@ function MasseMehrereInput({
   function update(zimmer: number, idx: number, val: string) {
     const next = werte.map((w, i) => i === zimmer ? w.map((v, j) => j === idx ? val : v) : w)
     setWerte(next)
-    const flat: number[] = []
+    const flatNext: number[] = []
     for (const w of next) {
-      flat.push(parseFloat(w[0].replace(',', '.')) || 0)
-      flat.push(parseFloat(w[1].replace(',', '.')) || 0)
+      flatNext.push(parseFloat(w[0].replace(',', '.')) || 0)
+      flatNext.push(parseFloat(w[1].replace(',', '.')) || 0)
     }
-    if (flat.some(v => v > 0)) onChange({ wert: flat, einheit: 'm' })
+    if (flatNext.some(v => v > 0)) onChange({ wert: flatNext, einheit: 'm' })
   }
 
   return (
@@ -276,25 +279,25 @@ function MasseMehrereInput({
         const b = parseFloat(werte[i][1].replace(',', '.')) || 0
         const fl = l > 0 && b > 0 ? Math.round(l * b * 100) / 100 : null
         return (
-          <div key={i} className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/8">
-            <div className="text-[11px] font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Zimmer {i + 1}</div>
+          <div key={i} className="bg-bg rounded-2xl p-4 border border-anthracite/8">
+            <div className="text-[11px] font-black text-anthracite/40 uppercase tracking-wide mb-2">Zimmer {i + 1}</div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 flex-1 bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-[#F5C400]">
+              <div className="flex items-center gap-2 flex-1 bg-white rounded-xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-yellow">
                 <input type="number" inputMode="decimal" placeholder="4,00" value={werte[i][0]}
                   onChange={e => update(i, 0, e.target.value)}
-                  className="w-0 flex-1 font-bold text-[#2C2C2C] bg-transparent focus:outline-none" />
-                <span className="text-[#2C2C2C]/40 font-semibold text-sm">m</span>
+                  className="w-0 flex-1 font-bold text-anthracite bg-transparent focus:outline-none" />
+                <span className="text-anthracite/40 font-semibold text-sm">m</span>
               </div>
-              <span className="text-[#2C2C2C]/30 font-black">×</span>
-              <div className="flex items-center gap-2 flex-1 bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-[#F5C400]">
+              <span className="text-anthracite/30 font-black">×</span>
+              <div className="flex items-center gap-2 flex-1 bg-white rounded-xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-yellow">
                 <input type="number" inputMode="decimal" placeholder="3,50" value={werte[i][1]}
                   onChange={e => update(i, 1, e.target.value)}
-                  className="w-0 flex-1 font-bold text-[#2C2C2C] bg-transparent focus:outline-none" />
-                <span className="text-[#2C2C2C]/40 font-semibold text-sm">m</span>
+                  className="w-0 flex-1 font-bold text-anthracite bg-transparent focus:outline-none" />
+                <span className="text-anthracite/40 font-semibold text-sm">m</span>
               </div>
             </div>
             {fl !== null && (
-              <div className="text-xs font-semibold text-[#2C2C2C]/40 mt-1.5">= {String(fl).replace('.', ',')} m²</div>
+              <div className="text-xs font-semibold text-anthracite/40 mt-1.5">= {String(fl).replace('.', ',')} m²</div>
             )}
           </div>
         )
@@ -327,10 +330,10 @@ function HoeheInput({
             onClick={() => { onChange({ wert: s.wert as number, einheit: 'm' }); setZeigeAndere(false) }}
             className={`w-full rounded-2xl py-4 font-extrabold text-base transition-colors border-2 ${
               aktiv
-                ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]'
+                ? 'bg-yellow border-yellow text-anthracite'
                 : istHaeufigste
-                ? 'bg-white border-[#2C2C2C]/20 text-[#2C2C2C] shadow-sm'
-                : 'bg-white border-[#2C2C2C]/8 text-[#2C2C2C]/70'
+                ? 'bg-white border-anthracite/20 text-anthracite shadow-sm'
+                : 'bg-white border-anthracite/8 text-anthracite/70'
             }`}
           >
             {s.label}{istHaeufigste && !aktiv ? ' ← häufigste Höhe' : ''}
@@ -339,12 +342,12 @@ function HoeheInput({
       })}
       <button
         onClick={() => setZeigeAndere(v => !v)}
-        className={`w-full rounded-2xl py-4 font-extrabold text-base border-2 transition-colors ${zeigeAndere ? 'border-[#F5C400] text-[#2C2C2C]' : 'border-[#2C2C2C]/8 text-[#2C2C2C]/40'} bg-white`}
+        className={`w-full rounded-2xl py-4 font-extrabold text-base border-2 transition-colors ${zeigeAndere ? 'border-yellow text-anthracite' : 'border-anthracite/8 text-anthracite/40'} bg-white`}
       >
         Andere Höhe eingeben
       </button>
       {zeigeAndere && (
-        <div className="flex items-center gap-2 bg-white border-2 border-[#F5C400] rounded-xl px-4 py-3 mt-1">
+        <div className="flex items-center gap-2 bg-white border-2 border-yellow rounded-xl px-4 py-3 mt-1">
           <input
             type="number"
             inputMode="decimal"
@@ -356,9 +359,9 @@ function HoeheInput({
               const v = parseFloat(e.target.value.replace(',', '.'))
               if (v > 0) onChange({ wert: v, einheit: 'm' })
             }}
-            className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none"
+            className="flex-1 font-bold text-anthracite text-lg bg-transparent focus:outline-none"
           />
-          <span className="text-[#2C2C2C]/40 font-semibold">m</span>
+          <span className="text-anthracite/40 font-semibold">m</span>
         </div>
       )}
     </div>
@@ -381,7 +384,7 @@ function AnzahlInput({
   if (frage.schnell_antworten.length === 0) {
     return (
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2 bg-white border-2 border-[#2C2C2C]/15 rounded-xl px-4 py-3 focus-within:border-[#F5C400]">
+        <div className="flex items-center gap-2 bg-white border-2 border-anthracite/15 rounded-xl px-4 py-3 focus-within:border-yellow">
           <input
             type="number"
             inputMode="decimal"
@@ -393,9 +396,9 @@ function AnzahlInput({
               const v = parseFloat(e.target.value.replace(',', '.'))
               if (v > 0) onChange({ wert: v, einheit: frage.einheit ?? 'Stück' })
             }}
-            className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none"
+            className="flex-1 font-bold text-anthracite text-lg bg-transparent focus:outline-none"
           />
-          {frage.einheit && <span className="text-[#2C2C2C]/40 font-semibold shrink-0">{frage.einheit}</span>}
+          {frage.einheit && <span className="text-anthracite/40 font-semibold shrink-0">{frage.einheit}</span>}
         </div>
       </div>
     )
@@ -410,19 +413,19 @@ function AnzahlInput({
           <button
             key={s.label}
             onClick={() => onChange({ wert: s.wert as number, einheit: 'Stück' })}
-            className={`rounded-2xl py-5 font-black text-xl transition-colors border-2 ${aktiv ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]' : 'bg-white border-[#2C2C2C]/8 text-[#2C2C2C]'}`}
+            className={`rounded-2xl py-5 font-black text-xl transition-colors border-2 ${aktiv ? 'bg-yellow border-yellow text-anthracite' : 'bg-white border-anthracite/8 text-anthracite'}`}
           >
             {s.label}
           </button>
         )
       })}
         <button onClick={() => setZeigeFreieAnzahl(true)}
-          className={`rounded-2xl py-5 font-black text-base transition-colors border-2 ${zeigeFreieAnzahl ? 'bg-[#F5C400] border-[#F5C400]' : 'bg-white border-[#2C2C2C]/8'}`}>
+          className={`rounded-2xl py-5 font-black text-base transition-colors border-2 ${zeigeFreieAnzahl ? 'bg-yellow border-yellow' : 'bg-white border-anthracite/8'}`}>
           Mehr …
         </button>
       </div>
       {zeigeFreieAnzahl && (
-        <div className="flex items-center gap-2 bg-white border-2 border-[#F5C400] rounded-xl px-4 py-3">
+        <div className="flex items-center gap-2 bg-white border-2 border-yellow rounded-xl px-4 py-3">
           <input type="number" inputMode="numeric" min="0" autoFocus placeholder="Beliebige Anzahl"
             value={freitext}
             onChange={e => {
@@ -430,20 +433,137 @@ function AnzahlInput({
               const wert = Number(e.target.value)
               if (Number.isInteger(wert) && wert >= 0) onChange({ wert, einheit: 'Stück' })
             }}
-            className="flex-1 font-bold text-[#2C2C2C] text-lg bg-transparent focus:outline-none" />
-          <span className="text-[#2C2C2C]/40 font-semibold">Stück</span>
+            className="flex-1 font-bold text-anthracite text-lg bg-transparent focus:outline-none" />
+          <span className="text-anthracite/40 font-semibold">Stück</span>
         </div>
       )}
     </div>
   )
 }
 
+// ── Ja/Nein ─────────────────────────────────────────────────────────────────
+function JaNeinInput({
+  frage,
+  antwort,
+  onChange,
+}: {
+  frage: RueckfrageItem
+  antwort: RueckfragenAntwort | null
+  onChange: (a: RueckfragenAntwort) => void
+}) {
+  const optionen = frage.schnell_antworten.length > 0
+    ? frage.schnell_antworten.map(s => ({ label: s.label, wert: s.wert as number }))
+    : [{ label: 'Ja', wert: 1 }, { label: 'Nein', wert: 0 }]
+  return (
+    <div className="flex flex-col gap-3">
+      {optionen.map(opt => {
+        const aktiv = !Array.isArray(antwort?.wert) && antwort?.wert === opt.wert
+        return (
+          <button
+            key={opt.label}
+            onClick={() => onChange({ wert: opt.wert, einheit: 'bool' })}
+            className={`rounded-2xl py-5 font-black text-xl transition-colors border-2 ${aktiv ? 'bg-yellow border-yellow text-anthracite' : 'bg-white border-anthracite/8 text-anthracite'}`}
+          >
+            {opt.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function renderEingabe(frage: RueckfrageItem, antwort: RueckfragenAntwort | null, onChange: (a: RueckfragenAntwort) => void) {
+  switch (frage.typ) {
+    case 'masse_einzel':
+      return <MasseEinzelInput frage={frage} antwort={antwort} onChange={onChange} />
+    case 'masse_mehrere':
+      return <MasseMehrereInput frage={frage} antwort={antwort} onChange={onChange} />
+    case 'hoehe':
+      return <HoeheInput frage={frage} antwort={antwort} onChange={onChange} />
+    case 'ja_nein':
+      return <JaNeinInput frage={frage} antwort={antwort} onChange={onChange} />
+    case 'anzahl':
+    case 'laenge':
+    case 'flaeche_einzel':
+      return <AnzahlInput frage={frage} antwort={antwort} onChange={onChange} />
+  }
+}
+
+// Kurzer, für den Handwerker verständlicher Text, was ohne diese Angabe
+// passiert — Antwort auf PD-002: "Diese Angabe überspringen" war vorher
+// klein und folgenlos, obwohl das Überspringen später zu einer roten
+// Fehleranzeige führen kann (PM-003). Jetzt sichtbar VOR dem Überspringen.
+const KONSEQUENZ_TEXT: Record<RueckfrageTyp, string> = {
+  masse_einzel: 'Ohne diese Maße kann für diesen Bereich keine Fläche berechnet werden — die Position bleibt offen, bis du sie später in der Positionsliste nachträgst.',
+  masse_mehrere: 'Ohne diese Maße kann für diese Räume keine Fläche berechnet werden — die Positionen bleiben offen, bis du sie später nachträgst.',
+  flaeche_einzel: 'Ohne diese Fläche bleibt die Position offen — du kannst sie später in der Positionsliste nachtragen.',
+  hoehe: 'Ohne Raumhöhe nehmen wir die häufigste Standardhöhe (2,60 m) an — das kann bei sehr hohen oder niedrigen Räumen leicht danebenliegen.',
+  anzahl: 'Ohne diese Angabe rechnen wir ohne Abzug für Fenster/Türen bei der Wandfläche — du kannst es später in der Positionsliste nachtragen.',
+  laenge: 'Ohne diese Angabe fehlt diese Position in der Berechnung — du kannst sie später in der Positionsliste nachtragen.',
+  ja_nein: "Ohne Antwort gehen wir von „Nein“ aus — du kannst das später in der Positionsliste korrigieren.",
+}
+
+function formatAntwort(frage: RueckfrageItem, antwort: RueckfragenAntwort): string {
+  const wert = antwort.wert
+  if (frage.typ === 'masse_einzel') {
+    if (antwort.einheit === 'flaechen_m2' && Array.isArray(wert)) {
+      const teile: string[] = []
+      if (wert[0] > 0) teile.push(`Wandfläche ${String(wert[0]).replace('.', ',')} m²`)
+      if (wert[1] > 0) teile.push(`Boden-/Deckenfläche ${String(wert[1]).replace('.', ',')} m²`)
+      return teile.length > 0 ? teile.join(' · ') : 'Erfasst'
+    }
+    if (!Array.isArray(wert) && antwort.einheit === 'm²') {
+      return `${String(wert).replace('.', ',')} m²`
+    }
+    if (Array.isArray(wert) && wert.length === 2 && wert[0] > 0 && wert[1] > 0) {
+      const flaeche = Math.round(wert[0] * wert[1] * 100) / 100
+      return `${String(wert[0]).replace('.', ',')} × ${String(wert[1]).replace('.', ',')} m → ${String(flaeche).replace('.', ',')} m²`
+    }
+    return 'Erfasst'
+  }
+  if (frage.typ === 'masse_mehrere' && Array.isArray(wert)) {
+    const paare: string[] = []
+    for (let i = 0; i < wert.length; i += 2) {
+      const l = wert[i], b = wert[i + 1]
+      if (l > 0 && b > 0) paare.push(`${String(l).replace('.', ',')}×${String(b).replace('.', ',')} m`)
+    }
+    return paare.length > 0 ? paare.join(', ') : 'Erfasst'
+  }
+  if (frage.typ === 'hoehe' && !Array.isArray(wert)) {
+    return `${String(wert).replace('.', ',')} m`
+  }
+  if (frage.typ === 'ja_nein' && !Array.isArray(wert)) {
+    const treffer = frage.schnell_antworten.find(s => !Array.isArray(s.wert) && s.wert === wert)
+    return treffer ? treffer.label : (wert === 1 ? 'Ja' : 'Nein')
+  }
+  if (!Array.isArray(wert)) {
+    const einheit = antwort.einheit && antwort.einheit !== 'bool' ? antwort.einheit : (frage.einheit ?? 'Stück')
+    return `${String(wert).replace('.', ',')} ${einheit}`
+  }
+  return 'Erfasst'
+}
+
+interface RaumGruppe {
+  name: string
+  fragen: RueckfrageItem[]
+}
+
 // ── Haupt-Screen ────────────────────────────────────────────────────────────
+// DC-025-Redesign: statt einem Vollbild-Screen pro einzelner Frage (alte
+// Version) jetzt ein Screen pro RAUM mit allen offenen Fragen dazu als
+// Karten untereinander, plus durchgängiger Gesamt-Fortschritt und sichtbarer
+// Überspringen-Konsequenz. Details/Begründung: docs/dc-025-konzept-rueckfragen.md
 export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, onZurueck }: Props) {
-  const [aktuelleIdx, setAktuelleIdx] = useState(0)
+  const [roomIdx, setRoomIdx] = useState(0)
   const [antworten, setAntworten] = useState<Record<string, RueckfragenAntwort>>({})
+  const [uebersprungen, setUebersprungen] = useState<Set<string>>(new Set())
+  const [offeneKonsequenz, setOffeneKonsequenz] = useState<string | null>(null)
+  const [ansicht, setAnsicht] = useState<'flow' | 'zusammenfassung'>('flow')
   const [fertig, setFertig] = useState(false)
 
+  // Unverändert aus der Vorversion: Wenn für einen Raum bereits eine volle
+  // Flächenangabe vorliegt, sind Höhe/Türen/Fenster-Fragen für DIESEN Raum
+  // redundant geworden und verschwinden automatisch aus der sichtbaren Liste.
   const flaechenRaumIds = new Set(Object.entries(antworten)
     .filter(([id, antwort]) => {
       if (!/^masse_/.test(id)) return false
@@ -454,149 +574,253 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
   const sichtbareFragen = fragen.filter(item => ![...flaechenRaumIds].some(raumId =>
     item.id === `hoehe_${raumId}` || item.id === `tueren_anzahl_${raumId}` || item.id === `fenster_anzahl_${raumId}`
   ))
-  const frage = sichtbareFragen[Math.min(aktuelleIdx, sichtbareFragen.length - 1)]
-  const antwort = antworten[frage.id] ?? null
-  const hatAntwort = antwort !== null
-  const raumSchritte = [...new Set(fragen.map(item => item.kontext).filter(Boolean))]
-  const aktuellerRaum = frage.kontext
-  const raumSchrittIdx = Math.max(0, raumSchritte.indexOf(aktuellerRaum))
-  // Nur die primäre Raum-Maßfrage bekommt den generischen Titel „Welche Maße …".
-  // Reine Bodenflächen-Fragen (masse_boden_) behalten ihren eigenen Wortlaut,
-  // sonst sehen zwei verschiedene Fragen zum selben Raum identisch aus.
-  const istMasseFrage = frage.typ === 'masse_einzel'
-    && !frage.id.startsWith('masse_boden_')
-    && !/fenster|tür|tuer/i.test(frage.frage)
 
-  function setAntwort(a: RueckfragenAntwort) {
-    setAntworten(prev => ({ ...prev, [frage.id]: a }))
+  const raeume: RaumGruppe[] = []
+  for (const f of sichtbareFragen) {
+    const name = f.kontext || 'Allgemein'
+    let raum = raeume.find(r => r.name === name)
+    if (!raum) { raum = { name, fragen: [] }; raeume.push(raum) }
+    raum.fragen.push(f)
   }
 
-  async function weiter() {
-    if (aktuelleIdx < sichtbareFragen.length - 1) {
-      setAktuelleIdx(i => i + 1)
-    } else {
-      setFertig(true)
-      await new Promise(r => setTimeout(r, 500))
-      onFertig(antworten)
-    }
+  const istGeloest = (id: string) => antworten[id] !== undefined || uebersprungen.has(id)
+  const raumIstFertig = (r: RaumGruppe) => r.fragen.every(f => istGeloest(f.id))
+  const gesamt = sichtbareFragen.length
+  const geloestAnzahl = sichtbareFragen.filter(f => istGeloest(f.id)).length
+
+  const zeigeZusammenfassung = ansicht === 'zusammenfassung' || raeume.length === 0
+
+  function setAntwortFuer(id: string, a: RueckfragenAntwort) {
+    setAntworten(prev => ({ ...prev, [id]: a }))
+    setOffeneKonsequenz(null)
   }
 
-  async function dieseFrageUeberspringen() {
-    if (aktuelleIdx < sichtbareFragen.length - 1) {
-      setAktuelleIdx(i => i + 1)
-      return
-    }
+  function undoFuer(id: string) {
+    setAntworten(prev => {
+      const { [id]: _entfernt, ...rest } = prev
+      return rest
+    })
+    setUebersprungen(prev => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
+  }
+
+  function springeZuFrage(f: RueckfrageItem) {
+    const name = f.kontext || 'Allgemein'
+    const idx = raeume.findIndex(r => r.name === name)
+    if (idx >= 0) setRoomIdx(idx)
+    setAnsicht('flow')
+  }
+
+  async function abschliessen() {
     setFertig(true)
-    await new Promise(r => setTimeout(r, 300))
+    await new Promise(r => setTimeout(r, 500))
     onFertig(antworten)
   }
 
   if (fertig) {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center gap-4 px-5">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center gap-4 px-5">
         <div className="text-6xl animate-bounce">✓</div>
-        <div className="font-black text-[#2C2C2C] text-xl text-center">Mengen werden berechnet...</div>
+        <div className="font-black text-anthracite text-xl text-center">Mengen werden berechnet...</div>
+      </div>
+    )
+  }
+
+  // ── Zusammenfassung ────────────────────────────────────────────────────
+  // Recap vor der Berechnung — derselbe Vertrauens-Moment wie die
+  // Bestätigungskarte (DC-021), nur schon hier, editierbar per Tap.
+  if (zeigeZusammenfassung) {
+    function zurueckZurLetztenFrage() {
+      if (raeume.length > 0) { setRoomIdx(raeume.length - 1); setAnsicht('flow') }
+      else (onZurueck ?? onUeberspringen)()
+    }
+    return (
+      <div className="min-h-dvh bg-bg flex flex-col">
+        <div className="bg-anthracite px-5 pt-8 pb-6">
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={zurueckZurLetztenFrage} className="rounded-full px-3 py-2 text-sm font-bold text-white/65 hover:bg-white/10">← Zurück</button>
+            <span />
+          </div>
+          <h1 className="font-syne font-extrabold text-white text-[22px] leading-tight">Kurz geprüft?</h1>
+          <p className="text-white/50 text-[13px] font-semibold mt-1">Alle Antworten aus den Rückfragen auf einen Blick — vor der Berechnung.</p>
+        </div>
+        <div className="flex-1 px-5 py-5 overflow-y-auto flex flex-col gap-2.5">
+          {sichtbareFragen.length === 0 && (
+            <div className="text-center text-anthracite/40 font-semibold text-sm py-10">Keine offenen Fragen mehr.</div>
+          )}
+          {sichtbareFragen.map(f => {
+            const wurdeUebersprungen = uebersprungen.has(f.id)
+            const a = antworten[f.id]
+            return (
+              <div key={f.id} className="bg-white rounded-2xl px-4 py-3 border border-anthracite/6 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-xs font-bold text-anthracite/45 mb-0.5 truncate">{f.frage}</div>
+                  <div className={`text-sm font-extrabold ${wurdeUebersprungen ? 'text-[#B91C1C]' : 'text-anthracite'}`}>
+                    {wurdeUebersprungen ? '⏭ Übersprungen — später ergänzen' : a ? formatAntwort(f, a) : '—'}
+                  </div>
+                </div>
+                <button onClick={() => springeZuFrage(f)} className="shrink-0 text-xs font-extrabold text-anthracite bg-anthracite/6 rounded-lg px-2.5 py-1.5">
+                  Ändern
+                </button>
+              </div>
+            )
+          })}
+        </div>
+        <div className="px-5 pb-8 pt-3 bg-white border-t border-anthracite/8">
+          <Button variant="primary" className="w-full" onClick={abschliessen}>Angebot berechnen →</Button>
+          <div className="text-center text-[11px] font-bold text-anthracite/35 mt-1.5">
+            Wie die Bestätigungskarte danach — nur schon hier, bevor überhaupt gerechnet wird.
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Raum-Screen ─────────────────────────────────────────────────────────
+  const aktuellerRaumIdx = Math.min(roomIdx, raeume.length - 1)
+  const raum = raeume[aktuellerRaumIdx]
+  if (!raum) return null // defensiv — kann bei raeume.length > 0 nicht eintreten
+
+  const istLetzterRaum = aktuellerRaumIdx === raeume.length - 1
+  const raumFertig = raumIstFertig(raum)
+  const offenInRaum = raum.fragen.filter(f => !istGeloest(f.id)).length
+
+  function zurueckKlick() {
+    if (aktuellerRaumIdx > 0) setRoomIdx(aktuellerRaumIdx - 1)
+    else (onZurueck ?? onUeberspringen)()
+  }
+
+  function weiterKlick() {
+    if (istLetzterRaum) setAnsicht('zusammenfassung')
+    else setRoomIdx(aktuellerRaumIdx + 1)
+  }
+
+  function renderKarte(frage: RueckfrageItem) {
+    const antwort = antworten[frage.id] ?? null
+    const wurdeUebersprungen = uebersprungen.has(frage.id)
+    const geloest = antwort !== null || wurdeUebersprungen
+    const zeigeKonsequenz = offeneKonsequenz === frage.id
+    const istMasseFrage = frage.typ === 'masse_einzel'
+      && !frage.id.startsWith('masse_boden_')
+      && !/fenster|tür|tuer/i.test(frage.frage)
+    const titel = istMasseFrage ? `Welche Maße kennst du für „${frage.kontext}“?` : frage.frage
+
+    return (
+      <div
+        key={frage.id}
+        className={`rounded-2xl p-4 border transition-colors ${geloest ? 'bg-yellow/5 border-yellow/40' : 'bg-white border-anthracite/8'}`}
+      >
+        <div className="font-black text-anthracite text-[15px] mb-3 leading-snug">{titel}</div>
+
+        {!geloest && renderEingabe(frage, antwort, a => setAntwortFuer(frage.id, a))}
+
+        {geloest && !wurdeUebersprungen && antwort && (
+          <div className="flex items-center gap-1.5 text-anthracite font-extrabold text-sm">
+            <span className="text-yellow">✓</span> {formatAntwort(frage, antwort)}
+          </div>
+        )}
+        {wurdeUebersprungen && (
+          <div className="text-[#B91C1C] font-extrabold text-sm">⏭ Später ergänzen</div>
+        )}
+
+        <div className="flex justify-end mt-2">
+          {!geloest ? (
+            <button
+              onClick={() => setOffeneKonsequenz(zeigeKonsequenz ? null : frage.id)}
+              className="text-[12px] font-bold text-anthracite/35 hover:text-anthracite/55"
+            >
+              Später ergänzen
+            </button>
+          ) : (
+            <button onClick={() => undoFuer(frage.id)} className="text-[12px] font-bold text-anthracite/35 hover:text-anthracite/55">
+              Ändern
+            </button>
+          )}
+        </div>
+
+        {!geloest && zeigeKonsequenz && (
+          <div className="mt-2 bg-[#DC2626]/6 border border-[#DC2626]/20 rounded-xl px-3 py-3">
+            <p className="text-[12px] font-semibold text-[#7A2020] leading-relaxed mb-2">{KONSEQUENZ_TEXT[frage.typ]}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setOffeneKonsequenz(null)}
+                className="flex-1 bg-anthracite text-white font-extrabold text-[11px] rounded-lg py-2"
+              >
+                Doch beantworten
+              </button>
+              <button
+                onClick={() => { setUebersprungen(prev => new Set(prev).add(frage.id)); setOffeneKonsequenz(null) }}
+                className="flex-1 bg-white border border-[#DC2626]/30 text-[#B91C1C] font-extrabold text-[11px] rounded-lg py-2"
+              >
+                Trotzdem überspringen
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     )
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
+    <div className="min-h-dvh bg-bg flex flex-col">
       {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 pt-8 pb-5">
-        <div className="flex items-center justify-between mb-5">
-          <button onClick={onZurueck ?? onUeberspringen} className="rounded-full px-3 py-2 text-sm font-bold text-white/65 hover:bg-white/10">← Zurück</button>
+      <div className="bg-anthracite px-5 pt-8 pb-5">
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={zurueckKlick} className="rounded-full px-3 py-2 text-sm font-bold text-white/65 hover:bg-white/10">← Zurück</button>
           <button onClick={onUeberspringen} className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-white/55 hover:bg-white/10">
             Rückfragen beenden
           </button>
         </div>
-        <div className="text-white/50 text-[10px] font-black uppercase tracking-widest mb-1">
-          Raum {raumSchrittIdx + 1} von {Math.max(raumSchritte.length, 1)}
+
+        {raeume.length > 1 && (
+          <div className="flex gap-1.5 mb-3 overflow-x-auto">
+            {raeume.map((r, i) => (
+              <div
+                key={r.name + i}
+                className={`shrink-0 text-xs font-extrabold px-3 py-1.5 rounded-full whitespace-nowrap ${
+                  i === aktuellerRaumIdx
+                    ? 'bg-yellow text-anthracite'
+                    : raumIstFertig(r)
+                    ? 'bg-white/12 text-white/50'
+                    : 'bg-white/6 text-white/35'
+                }`}
+              >
+                {raumIstFertig(r) && i !== aktuellerRaumIdx ? '✓ ' : ''}{r.name}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/45">Insgesamt</span>
+          <span className="text-[11px] font-black text-yellow">{geloestAnzahl} von {gesamt} beantwortet</span>
         </div>
-        {/* Fortschrittsbalken */}
-        <div className="flex gap-1.5 mb-3">
-          {Array.from({ length: Math.max(raumSchritte.length, 1) }, (_, i) => (
-            <div
-              key={i}
-              className={`h-1.5 flex-1 rounded-full transition-colors ${i <= raumSchrittIdx ? 'bg-[#F5C400]' : 'bg-white/15'}`}
-            />
-          ))}
+        <div className="h-1.5 rounded-full bg-white/12 overflow-hidden mb-3">
+          <div
+            className="h-full bg-yellow rounded-full transition-all"
+            style={{ width: `${gesamt > 0 ? Math.round((geloestAnzahl / gesamt) * 100) : 100}%` }}
+          />
         </div>
-        {/* Kontext-Chip */}
-        <div className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1 mb-3">
-          <span className="text-[#F5C400] text-xs">💬</span>
-          <span className="text-white/60 text-xs font-semibold italic">&ldquo;{frage.kontext}&rdquo;</span>
-        </div>
-        <h1 className="font-syne font-extrabold text-white text-[22px] leading-tight">
-          {istMasseFrage ? `Welche Maße kennst du für „${frage.kontext}“?` : frage.frage}
-        </h1>
+
+        <h1 className="font-syne font-extrabold text-white text-[20px] leading-tight">{raum.name}</h1>
       </div>
 
       {/* Inhalt */}
-      <div className="flex-1 px-5 py-5 overflow-y-auto">
-        {frage.typ === 'masse_einzel' && (
-          <MasseEinzelInput frage={frage} antwort={antwort} onChange={setAntwort} />
-        )}
-        {frage.typ === 'masse_mehrere' && (
-          <MasseMehrereInput frage={frage} antwort={antwort} onChange={setAntwort} />
-        )}
-        {frage.typ === 'hoehe' && (
-          <HoeheInput frage={frage} antwort={antwort} onChange={setAntwort} />
-        )}
-        {frage.typ === 'ja_nein' && (
-          <div className="flex flex-col gap-3">
-            {(frage.schnell_antworten.length > 0
-              ? frage.schnell_antworten.map(s => ({ label: s.label, wert: s.wert as number }))
-              : [{ label: 'Ja', wert: 1 }, { label: 'Nein', wert: 0 }]
-            ).map(opt => {
-              const aktiv = !Array.isArray(antwort?.wert) && antwort?.wert === opt.wert
-              return (
-                <button
-                  key={opt.label}
-                  onClick={() => setAntwort({ wert: opt.wert, einheit: 'bool' })}
-                  className={`rounded-2xl py-5 font-black text-xl transition-colors border-2 ${aktiv ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]' : 'bg-white border-[#2C2C2C]/8 text-[#2C2C2C]'}`}
-                >
-                  {opt.label}
-                </button>
-              )
-            })}
-          </div>
-        )}
-        {(frage.typ === 'anzahl' || frage.typ === 'laenge' || frage.typ === 'flaeche_einzel') && (
-          <AnzahlInput frage={frage} antwort={antwort} onChange={setAntwort} />
-        )}
-        {/* Fallback: unbekannter Typ → Ja/Nein */}
-        {frage.typ !== 'masse_einzel' && frage.typ !== 'masse_mehrere' && frage.typ !== 'hoehe' &&
-         frage.typ !== 'ja_nein' && frage.typ !== 'anzahl' && frage.typ !== 'laenge' && frage.typ !== 'flaeche_einzel' && (
-          <div className="flex flex-col gap-3">
-            {[{ label: 'Ja', wert: 1 }, { label: 'Nein', wert: 0 }].map(opt => {
-              const aktiv = !Array.isArray(antwort?.wert) && antwort?.wert === opt.wert
-              return (
-                <button key={opt.label} onClick={() => setAntwort({ wert: opt.wert, einheit: 'bool' })}
-                  className={`rounded-2xl py-5 font-black text-xl transition-colors border-2 ${aktiv ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]' : 'bg-white border-[#2C2C2C]/8 text-[#2C2C2C]'}`}>
-                  {opt.label}
-                </button>
-              )
-            })}
-          </div>
-        )}
+      <div className="flex-1 px-5 py-5 overflow-y-auto flex flex-col gap-3">
+        {raum.fragen.map(f => renderKarte(f))}
       </div>
 
       {/* Footer */}
-      <div className="px-5 pb-8 pt-3 bg-white border-t border-[#2C2C2C]/8 flex flex-col gap-2">
-        <button
-          onClick={weiter}
-          disabled={!hatAntwort}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-[16px] rounded-2xl py-4 disabled:opacity-40 active:scale-95 transition-transform flex items-center justify-center gap-2"
-        >
-          Weiter <ChevronRight size={18} strokeWidth={3} />
-        </button>
-        <button
-          onClick={dieseFrageUeberspringen}
-          className="rounded-xl py-2 text-center text-[13px] font-bold text-[#2C2C2C]/40 hover:bg-[#2C2C2C]/5"
-        >
-          Diese Angabe überspringen
-        </button>
+      <div className="px-5 pb-8 pt-3 bg-white border-t border-anthracite/8 flex flex-col gap-1.5">
+        <Button variant="primary" className="w-full" disabled={!raumFertig} onClick={weiterKlick}>
+          {istLetzterRaum ? 'Fertig — Angebot berechnen' : `Weiter: ${raeume[aktuellerRaumIdx + 1].name} →`}
+        </Button>
+        <div className="text-center text-[11px] font-bold text-anthracite/35">
+          {raumFertig ? 'Alle Fragen zu diesem Raum beantwortet' : `noch ${offenInRaum} von ${raum.fragen.length} in diesem Raum offen`}
+        </div>
       </div>
     </div>
   )

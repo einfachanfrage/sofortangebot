@@ -36,6 +36,7 @@ gerade drinsteht — das Problem gab es in anderen Dateien hier schon öfter.
 | CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | ❌ offen | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
 | CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | ❌ offen | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
+| CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei erledigt, einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
 
 ---
 
@@ -270,3 +271,68 @@ Muster im Projekt (Bucket + Policies gemeinsam per Migration, Ordner =
   deploy-seitig ist jetzt alles bereit (Migration verifiziert, Produktions-
   Build wieder grün). Auf ✅ setzen, sobald das einmal live durchgeklickt
   wurde.
+
+---
+
+## CoS-P-006 — Drei Nebenbefunde abarbeiten
+
+**Datum:** 2026-08-17
+**Status:** 🟡 zwei von drei erledigt, einer wartet auf Dashboard-Zugriff
+
+**Hintergrund:** Sammelte sich aus vorherigen Punkten an — drei nur notierte,
+nicht gefixte Kleinfunde. Sandy bat mit "nebenbefunde" darum, sie abzuräumen.
+
+**1. `check_migrationen.sql`-Lücke (aus CoS-P-005) — ✅ erledigt:**
+Drei Migrationen zwischen `#50` und der Logo-Migration fehlten im
+Status-Check: `20260807054617_add_extraktion_logging`,
+`20260817180000_secure_debug_extraktion_roh`,
+`20260817180100_drop_duplicate_briefpapiere_policy`. Alle drei als #51–#53
+ergänzt (Logo-Migration dadurch zu #54 verschoben), Prüf-Logik pro Migration
+gegen das jeweils erwartete Datenbank-Objekt geschrieben.
+
+**Dabei ein echter, bisher unbekannter Fund:** Der neue Check zeigte, dass
+zwei dieser Migrationen (`add_extraktion_logging`,
+`secure_debug_extraktion_roh`) zwar auf Produktion angewendet waren, auf
+Staging aber fehlten — echte Umgebungs-Drift, nicht nur eine Doku-Lücke.
+`add_extraktion_logging` (zwei neue Spalten auf `quotes`) direkt auf Staging
+nachgezogen und verifiziert. `secure_debug_extraktion_roh` ließ sich auf
+Staging nicht anwenden, weil die betroffene Tabelle `debug_extraktion_roh`
+dort gar nicht existiert — sie wurde laut CoS-P-001-Fund am 07.08. manuell
+(nicht per Migration) direkt in Produktion angelegt, rein als Debug-Hilfe.
+**Bewusst nicht nachgezogen:** die Tabelle jetzt auch auf Staging anzulegen,
+nur um den Check grün zu bekommen, wäre das falsche Signal — sie ist eine
+Altlast, die eigentlich eher aufgeräumt (in Produktion entfernt) als
+repliziert gehört. Als Kommentar direkt im Check-Skript vermerkt, damit ein
+"FEHLT" bei #52 auf Staging nicht als Handlungsaufforderung missverstanden
+wird. **Möglicher Folgepunkt, falls gewünscht:** `debug_extraktion_roh` in
+Produktion ganz entfernen, wenn sie nicht mehr gebraucht wird.
+
+**2. Zwei allgemeine Supabase-Warnhinweise aus CoS-P-001 — 🟡 halb erledigt:**
+- **`search_path` bei 9 Funktionen — ✅ erledigt (auf Staging):** Neue
+  Migration `supabase/migrations/20260818000000_fix_function_search_path.sql`
+  setzt `search_path = public, pg_temp` fest für alle 9 betroffenen
+  Funktionen (Signaturen vorher per `pg_proc` abgefragt, nicht geraten).
+  Reiner Härtungs-Fix, kein Verhaltensunterschied für die App. Auf Staging
+  angewendet und verifiziert (Warnung im Security-Advisor verschwunden).
+  **Auf Produktion noch nicht angewendet** — wartet auf deine
+  `DEPLOY-PRODUCTION`-Bestätigung wie beim Logo-Fix.
+- **"Leaked Password Protection" aus — ❌ weiterhin offen:** Das ist kein
+  SQL-Fix, sondern ein Schalter im Supabase-Dashboard (Auth-Einstellungen →
+  Password Security), auf den diese Session keinen Zugriff hat. Ein Klick,
+  sobald jemand mit Dashboard-Zugriff kurz reinschaut.
+
+**Nebenbei beim Security-Advisor-Check entdeckt, NICHT Teil dieses Punkts
+(neuer Fund, nur notiert):** mehrere `SECURITY DEFINER`-Funktionen
+(`check_rate_limit`, `get_vault_secret`, `handle_new_user`,
+`increment_nutzung`, `init_nummernkreise`, `vergib_naechste_nummer`) sind
+auch für nicht eingeloggte Besucher (`anon`) über die REST-API aufrufbar.
+Das muss nicht zwangsläufig ein Fehler sein (z. B. `handle_new_user` läuft
+vermutlich bewusst beim Registrieren), aber verdient einen eigenen,
+gezielten Blick — nicht einfach mit hier durchgewunken.
+
+**3. Vercel-Env-Check für den rotierten Resend-Key (aus CoS-P-005) — ❌
+weiterhin offen:** Kein Vercel-Dashboard-Zugriff aus dieser Session. Bitte
+kurz selbst gegenchecken (Vercel → Projekt → Settings → Environment
+Variables → `RESEND_API_KEY`): ist der neue Key für **Production UND
+Preview** gesetzt, und war nach dem Setzen ein Redeploy nötig, damit die
+laufende App ihn zieht?

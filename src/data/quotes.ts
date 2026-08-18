@@ -18,6 +18,22 @@ function normalizeCustomer(value: unknown): { name: string } | null {
   return (value as { name: string } | null) ?? null
 }
 
+// DC-011: `quotes.gewerk` und `quotes.title` existieren NICHT als Spalten
+// (per Datenbank-Check am 2026-08-18 bestätigt) — die Abfrage unten hat sie
+// bisher trotzdem angefragt und ist deshalb IMMER mit einem SQL-Fehler
+// gescheitert ("column gewerk does not exist"), für JEDE Firma und JEDEN
+// Filter, nicht nur für ein einzelnes Angebot. Der Fehler wurde nur
+// geloggt, nicht angezeigt — die Seite zeigte einfach "Noch kein Angebot.".
+// `title` wurde nirgends im Ergebnis genutzt (einfach entfernt). `gewerk`
+// wird für das Positionen-Badge gebraucht — steckt aber bereits im
+// `extraktion_final`-JSON (siehe generiere-positionen/route.ts), hier nur
+// sicher auslesen statt aus einer eigenen Spalte.
+function extrahiereGewerk(extraktion: unknown): string | null {
+  if (!extraktion || typeof extraktion !== 'object') return null
+  const gewerk = (extraktion as { gewerk?: unknown }).gewerk
+  return typeof gewerk === 'string' ? gewerk : null
+}
+
 const STATUS_FILTERS: Record<string, string[]> = {
   entwurf: ['draft', 'in_bearbeitung'],
   offen: ['sent', 'viewed'],
@@ -30,7 +46,7 @@ export async function getQuotesOverview(status?: string) {
   const { supabase, company } = await requireCompany()
   const statusValues = status ? STATUS_FILTERS[status] : undefined
   let query = supabase.from('quotes')
-    .select('id, status, total_gross, created_at, gewerk, title, customer:customers(name), quote_items(title, position)')
+    .select('id, status, total_gross, created_at, extraktion_final, customer:customers(name), quote_items(title, position)')
     .eq('company_id', company.id)
     .order('created_at', { ascending: false })
   if (statusValues) query = query.in('status', statusValues)
@@ -51,7 +67,7 @@ export async function getQuotesOverview(status?: string) {
       status: row.status,
       total_gross: row.total_gross,
       created_at: row.created_at,
-      gewerk: row.gewerk,
+      gewerk: extrahiereGewerk(row.extraktion_final),
       customer: normalizeCustomer(row.customer),
       quote_items: row.quote_items ?? [],
     })) satisfies QuoteListDTO[],

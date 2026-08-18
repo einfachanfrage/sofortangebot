@@ -104,4 +104,25 @@ describe('betriebliche Preiszuordnung', () => {
     expect(treffer?.position.id).toBe('2x')
     expect(treffer?.position.unit_price).toBe(9.5)
   })
+
+  // PM-008: Die Mengen-Engine erzeugt für Fassaden "Fassadenfläche streichen
+  // Nx — Wandname" (maler.ts), der Katalog listet dazu "Fassade streichen
+  // N× Anstrich" — mit echtem Multiplikationszeichen "×" statt "x". Das ×
+  // wurde bisher beim Normalisieren restlos entfernt (nicht a-z0-9), UND
+  // "Fassadenfläche" verschmolz mit der generischen Flächen-Regel zu
+  // "fassadenflaeche" statt zu "fassade" verkürzt zu werden — zusammen ergab
+  // das nie einen Treffer, obwohl der Preis im Katalog längst existierte.
+  it('findet einen Preis für Fassadenfläche streichen (× im Katalogtitel)', () => {
+    const maler = preise.filter(preis => preis.category.startsWith('Fassade'))
+    const treffer = findePreisposition('Fassadenfläche streichen 2x — Südwand', 'm²', maler)
+    expect(treffer, 'Fassadenfläche streichen 2x ist nicht abgedeckt').not.toBeNull()
+    expect(treffer?.position.title).toContain('2× Anstrich')
+  })
+
+  it('ordnet Fassadenfläche streichen 1x nicht dem 2x-Preis zu', () => {
+    const maler = preise.filter(preis => preis.category.startsWith('Fassade'))
+    const treffer = findePreisposition('Fassadenfläche streichen 1x — Südwand', 'm²', maler)
+    expect(treffer?.position.title).toContain('1× Anstrich')
+    expect(treffer?.position.unit_price).toBe(9)
+  })
 })

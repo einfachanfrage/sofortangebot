@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>DC-024 — Wand-Chip statt Raum-Chip (Vorher/Nachher)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2C2C2C;
+    --yellow: #F5C400;
+    --green: #1A7A38;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 40px 20px 60px;
+    background: #F7F7F5;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--ink);
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 6px;
+  }
+  p.sub {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 40px;
+    font-weight: 600;
+    font-size: 14px;
+    color: rgba(44,44,44,0.55);
+    line-height: 1.5;
+  }
+  .wrap {
+    display: flex;
+    gap: 28px;
+    max-width: 900px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .col {
+    flex: 1 1 380px;
+    max-width: 400px;
+  }
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .label.bad { color: var(--red); }
+  .label.good { color: var(--green); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.bad { background: var(--red); }
+  .dot.good { background: var(--green); }
+
+  .card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(44,44,44,0.06);
+    overflow: hidden;
+  }
+  .card-head {
+    padding: 14px 16px 10px;
+    font-weight: 800;
+    font-size: 15px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* Vorher: Modus-Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(44,44,44,0.05);
+    border-radius: 10px;
+    padding: 3px;
+    margin: 0 16px 12px;
+    width: fit-content;
+  }
+  .tab { font-size: 10px; font-weight: 800; padding: 4px 9px; border-radius: 7px; color: rgba(44,44,44,0.4); }
+  .tab.active { background: white; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+
+  .fields {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 0 16px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(44,44,44,0.4);
+  }
+  .fields .sep { color: rgba(44,44,44,0.2); margin: 0 2px; }
+  .chip {
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 6px;
+    padding: 3px 7px;
+  }
+  .chip.missing {
+    background: #fef2f2;
+    color: var(--red);
+    border: 1px solid #fecaca;
+  }
+  .chip.value {
+    background: rgba(44,44,44,0.06);
+    color: var(--ink);
+  }
+
+  .rechnet {
+    margin: 0 16px 16px;
+    padding: 10px 12px;
+    background: rgba(245,196,0,0.10);
+    border: 1px solid rgba(245,196,0,0.35);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(44,44,44,0.75);
+  }
+  .rechnet b { color: var(--ink); }
+
+  .foot {
+    padding: 10px 16px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(44,44,44,0.5);
+    line-height: 1.5;
+  }
+  .foot b { color: var(--ink); font-weight: 800; }
+
+  .badge {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-align: center;
+  }
+  .badge.bad { background: #fef2f2; color: var(--red); }
+  .badge.good { background: #EAF6EE; color: var(--green); }
+  .badge-wrap { text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>DC-024 — Raummaße-Chip bei Nicht-Raum-Objekten</h1>
+<p class="sub">
+  Dieselbe Fassade (12&nbsp;m lang, 6&nbsp;m hoch, 3&nbsp;Fenster à 1,20×1,40&nbsp;m,
+  66,96&nbsp;m² netto — Rechnung stimmt in beiden Fällen). Links das heutige
+  Verhalten, rechts der Vorschlag.
+</p>
+
+<div class="wrap">
+
+  <!-- VORHER -->
+  <div class="col">
+    <div class="label bad"><span class="dot bad"></span>Jetzt — Raum-Chip auf eine Fassade gepresst</div>
+    <div class="card">
+      <div class="card-head">Fassade Südseite</div>
+      <div class="tabs">
+        <div class="tab active">Raummaße</div>
+        <div class="tab">Flächen eingeben</div>
+        <div class="tab">Raumform</div>
+      </div>
+      <div class="fields">
+        <span class="chip missing">!</span>
+        <span class="sep">×</span>
+        <span class="chip missing">!</span>
+        <span>m</span>
+        <span class="sep">·</span>
+        <span>Raumhöhe</span>
+        <span class="chip missing">!</span>
+        <span class="sep">·</span>
+        <span>Türen</span>
+        <span class="chip missing">!</span>
+        <span class="sep">·</span>
+        <span>Fenster</span>
+        <span class="chip missing">!</span>
+      </div>
+      <div class="foot">
+        5 rote „!" gleichzeitig — sieht aus wie „alles kaputt". Ursache: <b>Breite</b> gibt es bei einer
+        Wand konzeptionell gar nicht, <b>Länge/Höhe/Türen/Fenster</b> bleiben leer, weil die Fassade nie
+        in die Raum-Datenstruktur (<code>raeume[]</code>) einsortiert wurde. Die Fläche darunter
+        (66,96&nbsp;m²) ist trotzdem korrekt.
+      </div>
+    </div>
+    <div class="badge-wrap"><span class="badge bad">bis zu 5 mögliche Fehleranzeigen</span></div>
+  </div>
+
+  <!-- NACHHER -->
+  <div class="col">
+    <div class="label good"><span class="dot good"></span>Vorschlag — eigener Wand-Chip</div>
+    <div class="card">
+      <div class="card-head">Fassade Südseite</div>
+      <div class="fields" style="padding-top:2px;">
+        <span>Wandlänge</span>
+        <span class="chip value">12,00 m</span>
+        <span class="sep">·</span>
+        <span>Wandhöhe</span>
+        <span class="chip value">6,00 m</span>
+        <span class="sep">·</span>
+        <span>Fenster</span>
+        <span class="chip value">3</span>
+      </div>
+      <div class="rechnet">
+        So gerechnet: <b>12,00 m × 6,00 m − 3 Fenster (5,04 m²) = 66,96 m²</b> netto
+      </div>
+      <div class="foot">
+        Kein Modus-Umschalter (eine Wand hat eine Form, nicht drei), kein „Breite"-Feld (gibt es bei einer
+        Wand nicht), Rechenweg direkt sichtbar statt erst später in der Positionsansicht. Nur noch
+        <b>Länge</b> und <b>Höhe</b> könnten überhaupt als „!" auftauchen — und nur, wenn sie wirklich
+        fehlen.
+      </div>
+    </div>
+    <div class="badge-wrap"><span class="badge good">max. 2 mögliche Fehleranzeigen, nur echte Lücken</span></div>
+  </div>
+
+</div>
+
+</body>
+</html>

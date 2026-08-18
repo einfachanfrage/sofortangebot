@@ -95,6 +95,31 @@ describe('berechneRaumMasse — Modi', () => {
     expect(m.wandflaeche).toBe(41.91)
     expect(m.bodenflaeche).toBe(16)
   })
+
+  it('wand (PM-008/PD-003): Länge × Höhe − Fenster, kein Boden, kein Umfang', () => {
+    const m = berechneRaumMasse({ modus: 'wand', laenge: 12, hoehe: 6, fenster: 3 })
+    // 12 × 6 = 72, − 3 × 1.20 = 68.4
+    expect(m.wandflaeche).toBe(68.4)
+    expect(m.bodenflaeche).toBeNull()
+    expect(m.umfang).toBeNull()
+  })
+
+  it('wand: eine Tür wird genauso abgezogen wie bei einem Raum', () => {
+    const m = berechneRaumMasse({ modus: 'wand', laenge: 10, hoehe: 3, tueren: 1 })
+    // 10 × 3 = 30, − 1.89 = 28.11
+    expect(m.wandflaeche).toBe(28.11)
+  })
+
+  it('wand ohne Länge → keine Fläche berechenbar (echte Lücke, kein Rechenfehler)', () => {
+    const m = berechneRaumMasse({ modus: 'wand', hoehe: 6 })
+    expect(m.wandflaeche).toBeNull()
+  })
+
+  it('wand ohne Höhe nutzt Standard 2,5 m, genau wie rechteck', () => {
+    const m = berechneRaumMasse({ modus: 'wand', laenge: 8 })
+    expect(m.hoehe).toBe(2.5)
+    expect(m.wandflaeche).toBe(20)
+  })
 })
 
 describe('berechneQuantityFuerItem — Positions-Mapping', () => {
@@ -128,5 +153,20 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
   })
   it('flaeche-Modus: Wand nimmt direkte Fläche', () => {
     expect(berechneQuantityFuerItem('Wandflächen streichen', 'm²', { modus: 'flaeche', wandflaeche: 37.5 })).toBe(37.5)
+  })
+
+  it('wand-Modus: "Fassadenfläche streichen" nimmt die Wandfläche', () => {
+    const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3 }
+    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', dim)).toBe(68.4)
+  })
+
+  it('wand-Modus: Grundierung folgt derselben Fläche wie die Fassade', () => {
+    const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3 }
+    expect(berechneQuantityFuerItem('Grundierung — Südseite', 'm²', dim)).toBe(68.4)
+  })
+
+  it('wand-Modus: Sockelleisten nicht berechenbar (kein Umfang an einer Fassade)', () => {
+    const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6 }
+    expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', dim)).toBeNull()
   })
 })

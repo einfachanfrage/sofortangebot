@@ -138,6 +138,16 @@ export async function POST(req: NextRequest) {
         fenster?: Array<{ anzahl?: number }>
         tueren?: Array<{ anzahl?: number }>
       }>
+      // PM-008/PD-003: Fassaden landen bei GPT hier, nicht in raeume[] (siehe
+      // Kommentar in maler.ts) — kein Boden/Decke, keine Breite. Bisher wurde
+      // dieses Feld beim Speichern der Raumdimensionen komplett ignoriert,
+      // weshalb `raum_details` bei einer reinen Fassaden-Aufnahme leer blieb.
+      waende?: Array<{
+        name?: string
+        laenge?: number | null
+        hoehe?: number | null
+        fenster?: Array<{ anzahl?: number }>
+      }>
     }
   }
   const positionen = normalisiereBodenPositionenAusAufnahme(
@@ -184,7 +194,15 @@ export async function POST(req: NextRequest) {
   // entsprechen ("… — Wohnzimmer"), sonst findet die Bearbeiten-Ansicht die
   // Maße nicht (Casing-Mismatch: Extraktion "wohnzimmer" vs. Titel "Wohnzimmer").
   const extraktionRaeume = extData.extraktion?.raeume ?? []
-  if (extraktionRaeume.length > 0) {
+  // PM-008/PD-003, Punkt 4: Fassaden stehen bei GPT in einem eigenen
+  // waende[]-Feld, nicht in raeume[] (siehe maler.ts). Die Prüfung unten lief
+  // bisher NUR über extraktionRaeume — bei einer reinen Fassaden-Aufnahme war
+  // extraktionRaeume leer, also blieb raum_details für diesen Auftrag
+  // komplett leer, und die Bearbeiten-Ansicht hatte buchstäblich nichts zum
+  // Anzeigen/Neuberechnen. Jetzt zählt auch waende[] als Grund, den Block
+  // überhaupt zu betreten.
+  const extraktionWaende = extData.extraktion?.waende ?? []
+  if (extraktionRaeume.length > 0 || extraktionWaende.length > 0) {
     // Kanonische Raumnamen, wie sie in den Positionen stehen
     const titelRaeume: string[] = []
     for (const p of positionen) {
@@ -212,7 +230,7 @@ export async function POST(req: NextRequest) {
     }
 
     const raumDetails: Record<string, {
-      modus?: 'rechteck' | 'flaeche'
+      modus?: 'rechteck' | 'flaeche' | 'wand'
       breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number
       wandflaeche?: number; bodenflaeche?: number
     }> = {}
@@ -239,9 +257,18 @@ export async function POST(req: NextRequest) {
       // Wandfläche: direkt genannt, sonst (nur bei Flächen-Räumen) die berechnete aus der Position
       const wandflaeche = raum.wandflaeche_direkt ?? (!hatMasse ? wandProRaum[key] : undefined) ?? undefined
       const hatFlaeche = bodenflaeche != null || wandflaeche != null
+      // PM-008/PD-003, Nebenfund: GPT legt manche Fassaden nicht in waende[],
+      // sondern als "Raum" mit nur Länge+Höhe ab (Breite fehlt strukturell,
+      // nicht durch eine Rückfrage-Lücke). Genau dieser Fall zeigte in der
+      // Bearbeiten-Ansicht 5 rote "!" gleichzeitig, obwohl die Rechnung
+      // dahinter stimmte — derselbe Fund wie bei waende[], nur ein anderer
+      // Eingang. Ohne modus 'wand' würde die Anzeige weiterhin "rechteck"
+      // annehmen und eine nie vorhandene Breite verlangen.
+      const istWandOhneBreite = !hatMasse && !hatFlaeche && raum.laenge != null && raum.hoehe != null
       raumDetails[key] = {
         // Ohne L×B, aber mit Fläche → Flächen-Reiter direkt aktiv
-        ...(!hatMasse && hatFlaeche ? { modus: 'flaeche' as const } : {}),
+        ...(istWandOhneBreite ? { modus: 'wand' as const }
+          : (!hatMasse && hatFlaeche ? { modus: 'flaeche' as const } : {})),
         ...(raum.breite != null ? { breite: raum.breite } : {}),
         ...(raum.laenge != null ? { laenge: raum.laenge } : {}),
         ...(raum.hoehe != null ? { hoehe: raum.hoehe } : {}),
@@ -251,6 +278,30 @@ export async function POST(req: NextRequest) {
         ...(fensterAnzahl !== undefined ? { fenster: fensterAnzahl } : {}),
       }
     }
+
+    // PM-008/PD-003, Punkt 4 (Sandys Go 2026-08-18): Wände/Fassaden aus
+    // waende[] genauso in raum_details ablegen wie Räume — mit modus 'wand',
+    // damit die Bearbeiten-Ansicht sie erkennt und mit Länge×Höhe−Öffnungen
+    // statt der Raumumfang-Formel neu berechnet (siehe raum-geometrie.ts).
+    // Namensfindung exakt wie bei Räumen: dieselbe findeTitelName-Logik,
+    // derselbe Fallback-Name 'Fassade' wie in maler.ts (damit Schlüssel und
+    // Positions-Titel garantiert übereinstimmen).
+    for (const wand of extraktionWaende) {
+      if (wand.laenge == null || wand.hoehe == null) continue
+      const name = wand.name?.trim() || 'Fassade'
+      const key = findeTitelName(name)
+      const fensterAnzahl = Array.isArray(wand.fenster)
+        ? wand.fenster.reduce((s, f) => s + (f.anzahl ?? 1), 0)
+        : undefined
+      raumDetails[key] = {
+        ...raumDetails[key],
+        modus: 'wand',
+        laenge: wand.laenge,
+        hoehe: wand.hoehe,
+        ...(fensterAnzahl !== undefined ? { fenster: fensterAnzahl } : {}),
+      }
+    }
+
     if (Object.keys(raumDetails).length > 0) {
       const { error: raumDetailsError } = await supabase
         .from('quotes')

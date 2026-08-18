@@ -22,17 +22,23 @@ der Einzige mit Überblick über alle Fäden gleichzeitig.
                     (Koordination, Überblick, Go/No-Go —
                      entscheidet nie fachlich für andere)
                                     │
-        ┌───────────────┬──────────┴──────────┬───────────────┐
-        │               │                     │               │
-  Head of Product   Platform &          Prüfmeister      Product Designer
-  Engineering        Integrations         (QA)              (UI/UX)
-                       Engineer
+    ┌───────────────┬──────────┬───┴────────┬───────────────┬───────────────┐
+    │               │          │             │               │
+Head of Product  Platform &  Prüfmeister  Product        Head of
+Engineering      Integrations  (QA)       Designer       Marketing
+                  Engineer                (UI/UX)        (CI/Marke)
+                                                              │
+                                                    [geplant, laut Sandy:
+                                                     Social Media, Blog/
+                                                     Content, weitere ...]
 ```
 
 Head of Product Engineering und Platform & Integrations Engineer tauschen
 sich zusätzlich direkt untereinander aus (`docs/engineering-austausch.md`),
 weil ihre Themen oft ineinandergreifen — der Chief of Staff liest dort mit,
-muss aber nicht jeden Eintrag bearbeiten.
+muss aber nicht jeden Eintrag bearbeiten. Genauso tauschen sich Head of
+Marketing und Product Designer direkt aus (`docs/marketing-design-austausch.md`),
+weil CI/Marke und Produkt-Design-System sich oft berühren.
 
 ---
 
@@ -54,6 +60,15 @@ proaktiv Lücken, hält das Dashboard aktuell. Trifft **keine** fachlichen
 Entscheidungen für die Spezialisten — nur Business-/Priorisierungs-
 Entscheidungen, die Sandy ausdrücklich delegiert (z. B. DC-001 Preis).
 **Seit:** Projektstart.
+
+**Arbeitsweise, angepasst am 18.08.2026:** Zwei getrennte Ebenen. (1)
+Operativ/täglich: Status, Priorisierung, Konflikte zwischen den
+Spezialisten — läuft wie bisher über die Koordinationsdateien und das
+Dashboard, wird Sandy aber standardmäßig verdichtet auf Ziel-Ebene
+zurückgemeldet, nicht als Ticket-Liste. (2) Strategisch/wöchentlich: ein
+eigener Check-in NUR auf großer Flughöhe (Kurs zum Launch, was ändert sich
+strategisch, was kommt danach), geführt gegen `docs/vision-strategie.md`
+als Leitplanke — Details/Historie dort.
 
 ---
 
@@ -121,6 +136,51 @@ Design-System-Konsistenz.
 - `docs/pruefmeister-notizen-fuer-designer.md` (empfängt PD-Punkte vom
   Prüfmeister)
 **Seit:** Projektstart.
+
+---
+
+## Head of Marketing
+
+*(NEU seit 17.08.2026 — erste Position im geplanten Marketing-Team. Sandys
+langfristiger Plan: mehrere Spezialisten, z. B. Social Media, Blog/Content —
+diese Position ist bewusst zuerst dran, weil sie die CI-Richtung setzt, auf
+der die anderen aufbauen.)*
+
+**Rolle:** Verantwortet Corporate Identity (Marke, Look & Feel außerhalb des
+Produkts: Logo, Farben, Typografie, Tonalität, Marketing-Materialien) und
+baut darauf aufbauend das Marketing auf. Extrem klares, cleanes,
+aufgeräumtes Ästhetik-Gefühl ist die Kernanforderung an diese Rolle — sie
+darf die aktuelle CI grundlegend infrage stellen und neu vorschlagen.
+**Umsetzung einer neuen CI erst nach Sandys ausdrücklicher Zustimmung** —
+Positionierung/Marke ist eine der wenigen Entscheidungen, die laut
+Organigramm-Prinzip oben nur Sandy trifft.
+
+**Abgrenzung zum Product Designer:** Product Designer bleibt zuständig für
+In-Produkt-UI/UX und die technische Umsetzung des Design-Systems (Code,
+Komponenten, Design-Tokens). Head of Marketing ist zuständig für die
+Marken-/CI-Richtung und alles außerhalb des Produkts (Landingpage-Content,
+Kampagnen, Social, Blog). Bei Überschneidungen (z. B. Farb-Tokens, die
+sowohl Marke als auch Produkt-UI betreffen) gilt: Head of Marketing
+schlägt vor, Product Designer prüft Umsetzbarkeit im Design-System — beide
+klären das über `docs/marketing-design-austausch.md`, der Chief of Staff
+hilft bei Konflikten.
+
+**Koordination:**
+- `docs/chief-of-staff-marketing-todos.md` (mit Chief of Staff, ID-Schema
+  CoS-M-XXX)
+- `docs/marketing-design-austausch.md` (mit Product Designer)
+
+**Erster Auftrag:** CI-Bestandsaufnahme + begründeter Vorschlag für eine
+neue Richtung, dann Sandy zur Entscheidung vorlegen — siehe CoS-M-001 in
+`docs/chief-of-staff-marketing-todos.md`.
+
+**Ausblick (laut Sandys Plan, noch nicht besetzt):** weitere Spezialisten
+im Marketing-Team, z. B. Social Media, Blog/Content — werden einzeln
+ergänzt, sobald Head of Marketing eingearbeitet ist und die konkrete
+Aufteilung mit vorschlägt (wer diese Position wird, kennt das Themenfeld
+am besten).
+
+**Seit:** 17.08.2026.
 
 ---
 

@@ -1,12 +1,18 @@
-// Geometrie für Raum-Aufmaß — unterstützt drei Eingabe-Modi:
+// Geometrie für Raum-Aufmaß — unterstützt vier Eingabe-Modi:
 //   'rechteck'  — Breite × Länge (Standard)
 //   'flaeche'   — Wand- und/oder Bodenfläche direkt in m² (für L-Räume, Nischen…)
 //   'grundriss' — rechtwinkliger Polygonzug (Wandlängen + Abbiegungen)
+//   'wand'      — einzelne Wand/Fassade: Länge × Höhe, kein Raum (keine Breite,
+//                 kein Boden, keine Decke, kein Umfang). PM-008/PD-003: eine
+//                 Fassade wurde bisher wie ein unvollständiger Raum behandelt
+//                 (Breite fehlt immer) statt wie ein eigener Objekttyp —
+//                 dieser Modus macht "hat keine Breite" zu einem echten
+//                 Zustand statt einer Fehlanzeige.
 //
 // Kernidee: Die WANDFLÄCHE braucht nur den Umfang (Summe der Wandlängen) × Höhe,
 // ist also formunabhängig. Die BODENFLÄCHE braucht die echte Form (Eckpunkte).
 
-export type RaumModus = 'rechteck' | 'flaeche' | 'grundriss'
+export type RaumModus = 'rechteck' | 'flaeche' | 'grundriss' | 'wand'
 
 /** Eine Wand im Grundriss: Länge in Metern + Abbiegung an ihrer Startecke. */
 export interface Wand {
@@ -19,6 +25,7 @@ export interface RaumDimension {
   modus?: RaumModus
   // Rechteck:
   breite?: number
+  // Rechteck UND Wand (modus 'wand': Wandlänge, keine Breite):
   laenge?: number
   // Gemeinsam:
   hoehe?: number
@@ -129,6 +136,21 @@ export function berechneRaumMasse(dim: RaumDimension): RaumMasse {
     }
   }
 
+  if (modus === 'wand') {
+    // Einzelne Wand/Fassade: nur Länge × Höhe, keine Raumtiefe. Bewusst kein
+    // Umfang (keine Sockelleisten an einer Fassade) und keine Bodenfläche
+    // (keine Decke/kein Boden) — siehe Kommentar zu maler.ts, Zeile "Keine
+    // Decke, kein Boden, kein Umfang für Fassaden", derselbe Fachgrund gilt
+    // hier für die Bearbeiten-Ansicht.
+    if (!dim.laenge || dim.laenge <= 0) return { wandflaeche: null, bodenflaeche: null, umfang: null, hoehe }
+    return {
+      wandflaeche: Math.max(0, round2(dim.laenge * hoehe - oeffnungsabzug)),
+      bodenflaeche: null,
+      umfang: null,
+      hoehe,
+    }
+  }
+
   // rechteck
   if (!dim.breite || !dim.laenge) return { wandflaeche: null, bodenflaeche: null, umfang: null, hoehe }
   const umfang = round2(2 * (dim.breite + dim.laenge))
@@ -150,8 +172,14 @@ export function berechneQuantityFuerItem(titleDisplay: string, unit: string, dim
     // Bearbeiten gemeinsam neu berechnet werden. Zuvor wurde nur die Position
     // mit "Wand" im Titel aktualisiert; Spachteln, Schleifen, Grundieren und
     // Tapete blieben auf der alten Menge stehen.
+    // PM-008/PD-003: "fassade" ergänzt — die Maler-Engine nennt die Position
+    // einer Wand/Fassade "Fassadenfläche streichen …", nicht "Wandfläche …".
+    // Ohne diese Erweiterung hätte eine Änderung an den neuen Wand-Maßen
+    // (modus 'wand') die zugehörige Position beim Bearbeiten NICHT
+    // aktualisiert — dieselbe Familie von Bug wie der ursprüngliche Fund
+    // oben (Spachteln/Schleifen/Grundieren blieben auf alter Menge stehen).
     const istBodenSchleifen = /boden|parkett|estrich|kleber/.test(titel)
-    const istWandLeistung = /wand|tapete|raufaser|spachtel|grundier|voranstrich/.test(titel)
+    const istWandLeistung = /wand|tapete|raufaser|spachtel|grundier|voranstrich|fassade/.test(titel)
       || (!istBodenSchleifen && /^schleifen(?:\s|$)/.test(titel))
     if (istWandLeistung) return m.wandflaeche
     if (titel.includes('deck')) return m.bodenflaeche

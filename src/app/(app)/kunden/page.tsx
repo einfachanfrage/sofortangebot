@@ -49,7 +49,7 @@ export default async function KundenPage() {
             <Link
               key={customer.id}
               href={`/kunden/${customer.id}`}
-              className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 active:scale-98 transition-transform"
+              className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 active:scale-[0.98] transition-transform"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">

@@ -322,11 +322,23 @@ export default function PreisePage() {
             <div className="text-[#2C2C2C]/35 font-semibold text-xs mt-1">{g.count} Positionen</div>
           </button>
         ))}
-        {items.length === 0 && !loading && (
+        {/* PM-008-Nachtest (2026-08-18): Bedingung war `items.length === 0` —
+            ein Konto mit Positionen NUR außerhalb von Maler/Boden/Allgemein
+            (z.B. nur "Arbeitszeit"/"Entsorgung"/"Fahrtkosten" aus dem
+            manuellen Onboarding) hatte dann `items.length > 0`, aber
+            `gewerke` blieb leer: keine Karten UND kein Import-Hinweis, die
+            Seite wirkte komplett leer/kaputt (live an Sandys Testkonto
+            gefunden). Jetzt an `gewerke.length` geprüft — das trifft genau
+            den Fall "nichts in einer der hier verwalteten Kategorien". */}
+        {gewerke.length === 0 && !loading && (
           <div className="col-span-2 bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
             <div className="text-4xl mb-3">💰</div>
             <div className="font-black text-[#2C2C2C] mb-1">Keine Preise hinterlegt</div>
-            <div className="text-sm text-[#2C2C2C]/50 font-semibold mb-5">Lade marktübliche Preise als Startpunkt.</div>
+            <div className="text-sm text-[#2C2C2C]/50 font-semibold mb-5">
+              {items.length > 0
+                ? 'Es gibt Positionen in anderen Kategorien — für Maler & Boden lade marktübliche Preise als Startpunkt.'
+                : 'Lade marktübliche Preise als Startpunkt.'}
+            </div>
             <button
               onClick={handleImport}
               disabled={importing}

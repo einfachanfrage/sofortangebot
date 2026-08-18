@@ -18,6 +18,14 @@ const STOPP = new Set([
 ])
 
 const SYNONYME: Array<[RegExp, string]> = [
+  // PM-008: "Fassadenfläche streichen" (von der Mengen-Engine generiert) fand
+  // KEINEN Preis, obwohl "Fassade streichen …" im Katalog existiert — die
+  // Katalog-Titel matchen nur als Ganzes ("a.includes(b) || b.includes(a)")
+  // oder per Token-Überlappung, und "fassadenflache" (ein zusammengesetztes
+  // Wort ohne Leerzeichen) enthält "fassade" nicht als eigenes Token. Muss
+  // VOR der generischen "wande?|flache"-Regel stehen, sonst wird "fassaden"
+  // + "flache" zu "fassadenflaeche" verschmolzen statt zu "fassade" verkürzt.
+  [/fassadenflachen?/g, 'fassade'],
   [/wandflachen?/g, 'wand'], [/deckenflachen?/g, 'decke'], [/bodenflachen?/g, 'boden'],
   [/schutzen|abdecken|abdeckvlies/g, 'abdecken'], [/aufziehen|tapezieren|kleben/g, 'tapezieren'],
   [/ablosen|entfernung|demontieren|aufnehmen/g, 'entfernen'],
@@ -52,6 +60,12 @@ export function normalisierePreistext(text: string): string {
     .replace(/ß/g, 'ss')
     .replace(/\binkl\.?\s+\d+(?:[.,]\d+)?\s*%\s*verschnitt\b/g, '')
     .replace(/\([^)]*\)/g, ' ')
+    // PM-008: "×" (Multiplikationszeichen, z.B. "2× Anstrich" im Preiskatalog)
+    // fiel bisher ersatzlos der nächsten Zeile zum Opfer (nicht a-z0-9 → Leerzeichen),
+    // während generierte Positionen ein ASCII-"x" nutzen ("2x"). Beide Seiten
+    // verloren dadurch das Anstriche-Signal aus der zweifach/2fach/2x-Regel unten
+    // — hier vereinheitlichen, BEVOR nicht-alphanumerische Zeichen entfernt werden.
+    .replace(/×/g, 'x')
     .replace(/[^a-z0-9]+/g, ' ')
 
   for (const [muster, ersatz] of SYNONYME) wert = wert.replace(muster, ersatz)

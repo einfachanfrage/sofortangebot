@@ -206,7 +206,7 @@ export default function EinstellungenPage() {
       <div className="md:max-w-5xl md:mx-auto">
       {/* Header */}
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-4">
-        <div className="text-[#F5C400] md:text-[#2C2C2C] text-2xl font-syne font-black">Einstellungen</div>
+        <div className="text-white md:text-[#2C2C2C] text-2xl font-syne font-black">Einstellungen</div>
       </div>
 
       {/* Tabs */}

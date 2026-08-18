@@ -14,7 +14,7 @@ const NAV = [
 export default function SideNav() {
   const path = usePathname()
   return (
-    <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-[220px] bg-[#2C2C2C] z-50">
+    <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-[220px] bg-anthracite z-50">
       {/* Logo */}
       <div className="px-5 pt-7 pb-5 border-b border-white/8">
         <Logo variant="dark" className="text-lg" />
@@ -30,7 +30,7 @@ export default function SideNav() {
               href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 active
-                  ? 'bg-[#F5C400] text-[#2C2C2C] font-black'
+                  ? 'bg-yellow text-anthracite font-black'
                   : 'text-white/50 hover:text-white hover:bg-white/5 font-semibold'
               }`}
             >
@@ -45,7 +45,7 @@ export default function SideNav() {
       <div className="px-3 pb-4">
         <Link
           href="/angebot/neu"
-          className="flex items-center justify-center gap-2 w-full bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-lg py-3 hover:bg-[#e6b800] transition-colors"
+          className="flex items-center justify-center gap-2 w-full bg-yellow text-anthracite font-black text-sm rounded-lg py-3 hover:bg-[#e6b800] transition-colors"
         >
           <Mic size={15} strokeWidth={2.5} />
           Neues Angebot
@@ -56,7 +56,7 @@ export default function SideNav() {
       <div className="px-4 pb-6 pt-4 border-t border-white/8">
         <div className="flex items-center justify-between">
           <span className="text-white/30 text-xs font-semibold">Dein Plan</span>
-          <span className="text-[10px] font-black text-[#F5C400] bg-[#F5C400]/10 px-2 py-0.5 rounded-full">PRO</span>
+          <span className="text-[10px] font-black text-yellow bg-yellow/10 px-2 py-0.5 rounded-full">PRO</span>
         </div>
       </div>
     </aside>

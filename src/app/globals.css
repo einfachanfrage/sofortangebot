@@ -42,3 +42,11 @@ body {
 input, textarea, select, button {
   min-height: 44px;
 }
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pt-safe-top {
+  padding-top: env(safe-area-inset-top);
+}

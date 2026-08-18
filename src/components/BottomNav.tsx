@@ -22,7 +22,7 @@ export default function BottomNav() {
       <Link
         href={href}
         className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
-          active ? 'text-[#F5C400]' : 'text-[#AAAAAA]'
+          active ? 'text-yellow' : 'text-[#AAAAAA]'
         }`}
       >
         <Icon size={22} strokeWidth={active ? 2.5 : 1.75} />
@@ -36,7 +36,7 @@ export default function BottomNav() {
       {/* FAB */}
       <Link
         href="/angebot/neu"
-        className="absolute left-1/2 -translate-x-1/2 -top-5 w-14 h-14 rounded-full bg-[#F5C400] flex items-center justify-center active:opacity-80 transition-opacity"
+        className="absolute left-1/2 -translate-x-1/2 -top-5 w-14 h-14 rounded-full bg-yellow flex items-center justify-center active:opacity-80 transition-opacity"
         style={{ boxShadow: '0 4px 16px rgba(245,196,0,0.5)' }}
       >
         <Mic size={24} strokeWidth={2.5} className="text-white" />

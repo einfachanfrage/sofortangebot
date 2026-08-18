@@ -5,6 +5,8 @@
 // FALLBACK, wenn die KI ein Zahlenfeld nicht geliefert hat. Hier zentral + per
 // Fuzzer bewacht; später kann die KI diese Werte direkt liefern (dann nur Fallback).
 
+import { ersetzeZahlenWorte } from './zahlen-parser'
+
 /** Direkte Wandfläche in m² ("Wandfläche 40 m²", "40 qm Wandfläche"). */
 export function extrahiereWandflaeche(text: string): number | null {
   const t = text ?? ''
@@ -45,8 +47,18 @@ export function extrahiereTorMasse(text: string): { breite: number; hoehe: numbe
  * NICHT: "2 Meter 60" → 60 (der alte Bug, der Erschwerniszuschlag auslöste).
  */
 export function extrahiereRaumhoehe(text: string): number | null {
-  const t = text ?? ''
-  const HOCH = '(?:hoch|deckenh(?:ö|oe)he|raumh(?:ö|oe)he)'
+  // PM-008-Nachtest: "Giebelhöhe im Schnitt sechs Meter" (ausgeschriebene Zahl,
+  // nicht "6") lief bisher ins Leere — diese Funktion kannte nur Ziffern. Einer
+  // der beiden echten Aufrufer (Erschwerniszuschlag-Prüfung in maler-extras.ts)
+  // übergibt das rohe, noch NICHT zahlwort-konvertierte Transkript, also muss
+  // die Konvertierung HIER passieren, nicht nur beim Aufrufer in der
+  // Entwurfsansicht (der das schon vorher selbst macht — doppelt konvertieren
+  // ist unschädlich, da ersetzeZahlenWorte auf bereits-digitalem Text ein No-op ist).
+  const t = ersetzeZahlenWorte(text ?? '')
+  // PM-008: "giebelhöhe"/"wandhöhe" ergänzt — bei einer Fassade gibt's keine
+  // "Raumhöhe", sondern die Höhe der Wand/des Giebels, das sagen Handwerker
+  // typischerweise so ("Giebelhöhe im Schnitt sechs Meter").
+  const HOCH = '(?:hoch|deckenh(?:ö|oe)he|raumh(?:ö|oe)he|giebelh(?:ö|oe)he|wandh(?:ö|oe)he)'
   // Kompakt "X Meter YZ [hoch]" → X + YZ/100 (z.B. "2 meter 60" = 2,60 m)
   const komp = t.match(new RegExp(`(\\d+)\\s*(?:m|meter)\\s+(\\d{1,2})\\s*(?:m\\s*)?${HOCH}`, 'i'))
   if (komp) {
@@ -56,8 +68,10 @@ export function extrahiereRaumhoehe(text: string): number | null {
   // Dezimal oder ganze Meter: "2,60 (m) hoch" / "3 meter hoch"
   const dez = t.match(new RegExp(`(\\d+(?:[.,]\\d+)?)\\s*(?:m|meter)?\\s*${HOCH}`, 'i'))
   if (dez) return plausibleHoehe(parseFloat(dez[1].replace(',', '.')))
-  // Schlüsselwort zuerst: "Raumhöhe 4,5" / "Deckenhöhe von 3,20 m"
-  const kw = t.match(/(?:deckenh(?:ö|oe)he|raumh(?:ö|oe)he)\s*(?:von\s*|ist\s*|beträgt\s*|:\s*)?(\d+(?:[.,]\d+)?)/i)
+  // Schlüsselwort zuerst: "Raumhöhe 4,5" / "Deckenhöhe von 3,20 m" /
+  // "Giebelhöhe im Schnitt sechs Meter" (übliche Fassaden-Formulierung,
+  // "im Schnitt"/"durchschnittlich" statt einer festen Zahl direkt danach).
+  const kw = t.match(/(?:deckenh(?:ö|oe)he|raumh(?:ö|oe)he|giebelh(?:ö|oe)he|wandh(?:ö|oe)he)\s*(?:von\s*|ist\s*|beträgt\s*|im\s+schnitt\s*|durchschnittlich\s*|:\s*)?(\d+(?:[.,]\d+)?)/i)
   if (kw) return plausibleHoehe(parseFloat(kw[1].replace(',', '.')))
   return null
 }
@@ -83,4 +97,59 @@ export function zaehleFenster(text: string): number {
 export function zaehleTueren(text: string): number {
   const treffer = [...(text ?? '').matchAll(/(\d+)\s*(?:stück\s*)?\S*tür(?:en)?/gi)]
   return treffer.length ? parseInt(treffer[treffer.length - 1][1]) : 0
+}
+
+// PM-008: Steht "X mal Y" in derselben (oder der direkt vorherigen)
+// Komma-/Satzklausel wie "fenster"/"tür", ist es fast immer das Maß DIESER
+// Öffnung, nicht das Maß des Raums/der Fassade selbst — z.B. "3 Fenster
+// drin, 1,20 x 1,40" (Fenstermaß in eigener, knapper Klausel direkt nach der
+// Fenster-Erwähnung). Ein festes Zeichenfenster hat das an einem echten
+// Sandy-Transkript nachweislich verpasst (zu eng); jetzt satzzeichenbasiert:
+// die eigene Klausel PLUS die davor.
+function istOeffnungsKontext(text: string, index: number, laenge: number): boolean {
+  const grenzen = /[,.!?]/g
+  let letzteGrenze = -1
+  let vorletzteGrenze = -1
+  let treffer: RegExpExecArray | null
+  while ((treffer = grenzen.exec(text)) && treffer.index < index) {
+    vorletzteGrenze = letzteGrenze
+    letzteGrenze = treffer.index
+  }
+  const start = Math.max(0, vorletzteGrenze + 1)
+  // Ab index + laenge suchen, nicht ab index — sonst trifft die Suche den
+  // Dezimalpunkt IM Treffer selbst (z.B. "1.20" enthält einen Punkt) und
+  // bricht die Klausel viel zu früh ab.
+  const restAbEnde = text.slice(index + laenge).search(/[,.!?]/)
+  const ende = restAbEnde === -1 ? text.length : index + laenge + restAbEnde
+  const umgebung = text.slice(start, ende).toLowerCase()
+  return /fenster|tür/.test(umgebung)
+}
+
+export interface RaumdatenVorschau {
+  laenge: number | null
+  breite: number | null
+  hoehe: number | null
+  fenster: number
+  tueren: number
+}
+
+/**
+ * Grobe Vorschau-Maße für die Aufnahmekarte (rein clientseitige Heuristik,
+ * NICHT die echte Berechnung — die läuft serverseitig über die Mengen-Engine
+ * und ist davon unabhängig korrekt). Nimmt das erste "X mal Y" im Text, das
+ * NICHT erkennbar eine Fenster-/Türöffnung beschreibt.
+ */
+export function extrahiereRaumdaten(transkript: string | null): RaumdatenVorschau {
+  const text = ersetzeZahlenWorte(transkript ?? '')
+  const lbTreffer = [...text.matchAll(/(\d+(?:[.,]\d+)?)\s*(?:m(?:eter)?)?\s*(?:mal|x|×)\s*(\d+(?:[.,]\d+)?)\s*(?:m(?:eter)?)?/gi)]
+  const lb = lbTreffer.find(t => !istOeffnungsKontext(text, t.index ?? 0, t[0].length))
+    ?? text.match(/(\d+(?:[.,]\d+)?)\s*(?:m|meter)\s+lang[^.!?\n]*?(\d+(?:[.,]\d+)?)\s*(?:m|meter)\s+breit/i)
+  const zahl = (wert: string) => Number(wert.replace(',', '.'))
+  return {
+    laenge: lb ? zahl(lb[1]) : null,
+    breite: lb ? zahl(lb[2]) : null,
+    hoehe: extrahiereRaumhoehe(text),
+    fenster: zaehleFenster(text),
+    tueren: zaehleTueren(text),
+  }
 }
