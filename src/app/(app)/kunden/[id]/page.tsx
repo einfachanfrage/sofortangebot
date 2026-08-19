@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import BottomNav from '@/components/BottomNav'
 import { KundeTypToggle } from './KundeTypToggle'
+import { NeueBaustelleButton } from '@/components/NeueBaustelleButton'
 import { getCustomerDetail } from '@/data/customers'
 
 function formatDate(d: string) {
@@ -17,11 +18,48 @@ const STATUS: Record<string, { label: string; color: string }> = {
   rejected: { label: 'Abgelehnt', color: 'bg-red-50 text-red-700' },
 }
 
+interface AngebotRowData {
+  id: string
+  status: string
+  total_gross: number
+  created_at: string
+  valid_until: string | null
+  baustelle_id?: string | null
+}
+
+function AngebotRow({ quote }: { quote: AngebotRowData }) {
+  const st = STATUS[quote.status] ?? STATUS.draft
+  return (
+    <Link
+      href={`/angebot/${quote.id}`}
+      className="bg-white rounded-2xl px-4 py-3 border border-[#2C2C2C]/5 flex items-center justify-between gap-2 active:scale-[0.98] transition-transform"
+    >
+      <div>
+        <div className="font-black text-[#2C2C2C]">{formatCurrency(quote.total_gross)}</div>
+        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{formatDate(quote.created_at)}</div>
+      </div>
+      <span className={`text-xs font-bold px-2 py-1 rounded-full ${st.color}`}>{st.label}</span>
+    </Link>
+  )
+}
+
 export default async function KundeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { customer, quotes } = await getCustomerDetail(id)
+  const { customer, quotes, baustellen } = await getCustomerDetail(id)
 
   const acceptedValue = quotes.filter(q => q.status === 'accepted').reduce((s, q) => s + (q.total_gross ?? 0), 0)
+
+  // DC-029: "unsichtbar, bis es gebraucht wird" — bei höchstens einer
+  // Baustelle bringt eine Gruppierung keinen Mehrwert, nur eine leere
+  // Gruppen-Überschrift. Erst ab der zweiten wird nach Baustelle gruppiert
+  // (der Clemens-Fall: mehrere Angebote für dieselbe Baustelle über Zeit).
+  const gruppiert = baustellen.length > 1
+  const baustellenMitAngeboten = gruppiert
+    ? baustellen.map(b => ({ baustelle: b, angebote: quotes.filter(q => q.baustelle_id === b.id) }))
+    : []
+  const ohneBaustelle = gruppiert
+    ? quotes.filter(q => !baustellen.some(b => b.id === q.baustelle_id))
+    : []
 
   return (
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
@@ -75,33 +113,61 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
           </div>
         </div>
 
-        {/* Angebotsliste */}
-        <div>
-          <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-3">Angebote</div>
-          <div className="flex flex-col gap-2">
-            {!quotes.length && (
-              <div className="bg-white rounded-2xl p-6 text-center border border-[#2C2C2C]/5">
-                <div className="text-[#2C2C2C]/40 font-semibold text-sm">Noch keine Angebote</div>
-              </div>
-            )}
-            {quotes.map(quote => {
-              const st = STATUS[quote.status] ?? STATUS.draft
-              return (
-                <Link
-                  key={quote.id}
-                  href={`/angebot/${quote.id}`}
-                  className="bg-white rounded-2xl px-4 py-3 border border-[#2C2C2C]/5 flex items-center justify-between gap-2 active:scale-[0.98] transition-transform"
-                >
-                  <div>
-                    <div className="font-black text-[#2C2C2C]">{formatCurrency(quote.total_gross)}</div>
-                    <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{formatDate(quote.created_at)}</div>
+        {gruppiert ? (
+          <div>
+            <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-3">Baustellen</div>
+            <div className="flex flex-col gap-3">
+              {baustellenMitAngeboten.map(({ baustelle, angebote }) => (
+                <div key={baustelle.id} className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-sm">🏗️</span>
+                    <span className="font-syne font-bold text-[#2C2C2C] text-sm">{baustelle.name}</span>
+                    <span className="ml-auto text-xs font-bold text-[#2C2C2C]/40">
+                      {angebote.length === 0 ? 'Noch kein Angebot' : `${angebote.length} ${angebote.length === 1 ? 'Angebot' : 'Angebote'}`}
+                    </span>
                   </div>
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${st.color}`}>{st.label}</span>
-                </Link>
-              )
-            })}
+                  {angebote.length > 0 && (
+                    <div className="flex flex-col gap-2 mb-2">
+                      {angebote.map(q => <AngebotRow key={q.id} quote={q} />)}
+                    </div>
+                  )}
+                  <Link
+                    href={`/angebot/neu?customerId=${customer.id}&baustelleId=${baustelle.id}`}
+                    className="block w-full text-center border border-dashed border-[#2C2C2C]/15 text-[#2C2C2C]/50 font-bold text-xs rounded-xl py-2.5 hover:border-[#2C2C2C]/30 hover:text-[#2C2C2C]/70 transition-colors"
+                  >
+                    + Neues Angebot für diese Baustelle
+                  </Link>
+                </div>
+              ))}
+
+              {ohneBaustelle.length > 0 && (
+                <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="font-syne font-bold text-[#2C2C2C] text-sm">Sonstige Angebote</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {ohneBaustelle.map(q => <AngebotRow key={q.id} quote={q} />)}
+                  </div>
+                </div>
+              )}
+
+              <NeueBaustelleButton customerId={customer.id} variant="primary" />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-3">Angebote</div>
+            <div className="flex flex-col gap-2">
+              {!quotes.length && (
+                <div className="bg-white rounded-2xl p-6 text-center border border-[#2C2C2C]/5">
+                  <div className="text-[#2C2C2C]/40 font-semibold text-sm">Noch keine Angebote</div>
+                </div>
+              )}
+              {quotes.map(q => <AngebotRow key={q.id} quote={q} />)}
+            </div>
+            <NeueBaustelleButton customerId={customer.id} variant="subtle" />
+          </div>
+        )}
       </div>
 
       <BottomNav />

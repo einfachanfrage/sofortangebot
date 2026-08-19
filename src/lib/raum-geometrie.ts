@@ -31,6 +31,17 @@ export interface RaumDimension {
   hoehe?: number
   tueren?: number
   fenster?: number
+  // PM-008-Nachtest 6 (2026-08-19): echte Öffnungsflächen aus der Extraktion,
+  // falls bekannt (z.B. ein Fenster 1,20×1,40m statt Standardmaß). Wenn
+  // gesetzt, ERSETZT dieser Wert den Abzug aus tueren/fenster × Standardmaß
+  // unten — exakt dieselbe Formel wie die Mengen-Engine (maler.ts:
+  // anzahl × (breite ?? Standard) × (hoehe ?? Standard)), damit die
+  // "So gerechnet"-Anzeige beim Bearbeiten wieder zur tatsächlich
+  // abgerechneten Position passt. Ohne diese Felder (Normalfall: nur eine
+  // Stückzahl bekannt, keine Maße) bleibt das bisherige Verhalten
+  // unverändert — Fallback auf tueren/fenster × Standardmaß.
+  tuerFlaeche?: number
+  fensterFlaeche?: number
   // Direkte Flächen (modus 'flaeche'):
   wandflaeche?: number
   bodenflaeche?: number
@@ -112,7 +123,12 @@ export function berechneRaumMasse(dim: RaumDimension): RaumMasse {
   const hoehe = dim.hoehe && dim.hoehe > 0 ? dim.hoehe : STANDARD_HOEHE
   const t = dim.tueren ?? 0
   const f = dim.fenster ?? 0
-  const oeffnungsabzug = t * TUER_FLAECHE + f * FENSTER_FLAECHE
+  // PM-008-Nachtest 6: echte Fläche bevorzugen, falls bekannt (siehe
+  // Kommentar bei tuerFlaeche/fensterFlaeche oben) — sonst wie bisher
+  // Stückzahl × Standardmaß.
+  const tuerAbzug = dim.tuerFlaeche ?? (t * TUER_FLAECHE)
+  const fensterAbzug = dim.fensterFlaeche ?? (f * FENSTER_FLAECHE)
+  const oeffnungsabzug = tuerAbzug + fensterAbzug
   const modus = dim.modus ?? 'rechteck'
 
   if (modus === 'flaeche') {

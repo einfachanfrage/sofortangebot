@@ -7,6 +7,7 @@ import { Trash2, Plus, Check, X, Search, ArrowLeft, ChevronRight, Pencil } from 
 import Link from 'next/link'
 import type { PriceItem } from '@/lib/types'
 import { getPriceTradeKey, inferPriceCategory, priceItemIdentity } from '@/lib/price-catalog'
+import { zuPriceItemRows } from '@/lib/default-price-selection'
 
 // ─── GEWERK METADATA — nur aktive Gewerke ────────────────────────────────────
 
@@ -283,10 +284,11 @@ export default function PreisePage() {
     setImporting(true)
     setMutationError('')
     const existingKeys = new Set(items.map(priceItemIdentity))
-    const toInsert = DEFAULT_PRICES
+    const zuImportieren = DEFAULT_PRICES
       .filter(p => ['Maler', 'Boden'].includes(getPriceTradeKey(p.category)))
       .filter(p => !existingKeys.has(priceItemIdentity(p)))
-      .map(p => ({ ...p, company_id: companyId }))
+    // PM-016 (2026-08-19): einheitliche Spalten pro Zeile, s. zuPriceItemRows
+    const toInsert = zuPriceItemRows(zuImportieren, companyId)
 
     // Supabase limits single inserts to ~1000 rows — insert in batches
     const BATCH = 400

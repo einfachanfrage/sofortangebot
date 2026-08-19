@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { PRICING } from '@/lib/pricing'
 
 const freeFeatures = [
-  '5 Angebote kostenlos',
-  'Maler & Bodenbeläge',
+  `${PRICING.freeAngeboteProMonat} Angebote kostenlos`,
+  PRICING.unterstuetzteGewerke,
   'PDF mit Sofortangebot-Logo',
 ]
 
@@ -81,9 +82,12 @@ export function PreiseSection() {
             </div>
             <div className="font-syne font-extrabold text-white text-[18px] tracking-tight mb-1">Vollgas</div>
             <div className="text-white/30 text-sm mb-8">Für den Alltag</div>
-            <div className="mb-8 flex items-end gap-1.5">
-              <span className="font-syne font-extrabold text-white leading-none text-[52px] tracking-tight">29€</span>
+            <div className="mb-1 flex items-end gap-1.5">
+              <span className="font-syne font-extrabold text-white leading-none text-[52px] tracking-tight">{PRICING.proJahresabo}€</span>
               <span className="text-white/40 text-sm pb-2">/Monat</span>
+            </div>
+            <div className="text-white/30 text-xs font-semibold mb-7">
+              Bei Jahresabo. Monatlich {PRICING.proMonatlich} €.
             </div>
             <ul className="flex flex-col gap-3 mb-10 flex-1">
               {proFeatures.map(f => (

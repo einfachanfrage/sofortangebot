@@ -29,14 +29,15 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-010 | **DRINGEND, höchste Priorität:** Angebot verdoppelt sich (2.000,28€ statt 1.000,14€), Auslöser ungeklärt | 🟡 Auslöser gefunden (fehlender Doppel-Tap-Schutz auf "Fertigstellen") + Fix angewendet, `typecheck` + volle Testsuite (706/706) von Sandy lokal grün bestätigt, Live-Nachtest (bewusst doppelt tippen) steht noch aus | `pruefmeister-testfaelle.md` PM-014 |
+| CoS-010 | Angebot verdoppelt sich (2.000,28€ statt 1.000,14€) | 🟡 Live-Nachtest durch Sandy (19.08.) bestanden: bewusster Doppelklick auf „Angebot erstellen" erzeugt keine Verdopplung mehr. Für den alltäglichen Fall (Handwerker klickt aus Versehen doppelt) damit erledigt. Offen bleibt nur die theoretische Absicherung gegen zwei wirklich zeitgleiche Server-Anfragen (DB-Constraint) — größerer Schritt, wartet auf Sandys Go, kein akuter Blocker mehr | `pruefmeister-testfaelle.md` PM-014 |
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
-| CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | ❌ offen | `docs/design-check.md` DC-001 |
+| CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | 🟡 umgesetzt (Landingpage, PlanWahlModal, `/vorschau` entfernt/umgeleitet, zentrale `pricing.ts` angelegt), Live-Nachtest steht aus | `docs/design-check.md` DC-001 |
 | CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | ⏳ dokumentiert, kein akuter Auftrag | Prüfmeister-Notiz an CoS + PM-001-Fix-Update |
 | CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
-| CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | ❌ offen — hiermit gebrieft, Aufwandsschätzung von dir nötig | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
+| CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
+| CoS-012 | DC-029 „Baustelle"/Projekt-Zuordnung — Wording-Konzept vom Product Designer steht, zwei Teilstücke formal zu vergeben | 🟡 Lexware/Lexoffice-Machbarkeit erledigt. Datenmodell (Head of Product Engineering) jetzt umgesetzt und live: Tabelle `baustellen` + `quotes.baustelle_id` + Migration + Backfill in der echten Datenbank angewendet, App-Code an allen vier Stellen verdrahtet. Live-Nachtest steht aus, Designer baut jetzt Konzept + Prototyp für die Baustellen-UI darauf auf | `docs/design-check.md` DC-029 |
 
 ---
 
@@ -136,9 +137,16 @@ selbst aus Zeitgründen nicht reingepasst.
 
 **Bestätigung (Sandy, 2026-08-18):** `npm run typecheck` sauber durch (keine
 Fehler), `npm test` 706/706 grün. Der Fix bricht also nichts Bestehendes.
-Fehlt noch der eigentliche Live-Nachtest — auf der echten Entwurfsseite
-bewusst zweimal schnell auf "Positionen berechnen" tippen und prüfen, dass
-nur einmal gespeichert wird, bevor CoS-010 als ✅ erledigt gilt.
+
+**Live-Nachtest bestanden (Sandy, 2026-08-19):** Bewusst zweimal direkt
+hintereinander auf „Angebot erstellen" geklickt (PM-014-Nachtest) — keine
+Verdopplung, alle Positionen genau einmal vorhanden. Für den naheliegendsten,
+alltäglichen Auslöser (versehentlicher Doppelklick) ist CoS-010 damit
+praktisch erledigt. Bewusst nicht auf ✅ gesetzt, weil eine echte, zeitgleiche
+Race Condition auf Serverebene (zwei komplett unabhängige Anfragen exakt
+gleichzeitig) davon nicht ausgeschlossen ist — dafür bräuchte es einen
+Datenbank-Constraint, ein größerer Schritt, der Sandys Go braucht. Kein
+akuter Blocker mehr, siehe `pruefmeister-testfaelle.md` PM-014.
 
 ---
 
@@ -320,7 +328,14 @@ ausdrücklichem Go, wie in den eigenen Grundregeln festgelegt.
 ## CoS-011 — Rückfragen-UI komplett neu (DC-025/DC-026): Briefing für die Umsetzung
 
 **Datum:** 2026-08-18
-**Status:** ❌ offen — hiermit gebrieft, Aufwandsschätzung von dir als Nächstes
+**Status:** 🟡 überholt durch direkte Anweisung — Product Designer hat auf
+Sandys „setz dc-025 um" bereits gebaut (`RueckfragenScreen.tsx`), noch bevor
+die hier erbetene Aufwandsschätzung stattfinden konnte. Chief-of-Staff-Sicht:
+kein Problem — läuft nur an dieser Stelle als Prozess-Nachtrag statt vorher,
+Ergebnis ist da. Offen bleibt nur der Live-Test im Browser (siehe DC-025).
+Die „Du hast gesagt: …"-Vorschläge (DC-026, Erkennungs-Flag) sind bewusst
+NICHT enthalten — das bleibt ein eigener, noch zu schätzender Auftrag an
+dich, sobald DC-025 live bestätigt ist.
 
 **Hintergrund:** Sandy fand die bisherige Rückfragen-UI „hässlich und
 kacke" und wollte sie komplett neu gedacht, nicht nachgebessert (PD-002).
@@ -361,7 +376,7 @@ neben CoS-010/CoS-007.
 ## CoS-001 — DC-001 umsetzen: Preis + Gewerke-Werbung angleichen
 
 **Datum:** 2026-08-16
-**Status:** ❌ offen
+**Status:** 🟡 umgesetzt, Live-Nachtest steht aus
 
 **Hintergrund:** Product Designer hat in `docs/design-check.md` (DC-001) drei
 widersprüchliche Preise und ein „18 Gewerke"-Versprechen gefunden, das nicht
@@ -384,3 +399,156 @@ Startpreis festzulegen. Entscheidung (siehe DC-001 für die volle Begründung):
 **Nicht vergessen:** Sobald Fliesen, Elektro, Sanitär oder Trockenbau vom
 Prüfmeister freigegeben sind (siehe Launch-Todoliste beim Chief of Staff),
 die Gewerke-Werbung hier wieder erweitern.
+
+**Fix-Update (Head of Product Engineering, 2026-08-18):** Alle vier Punkte umgesetzt.
+
+1. `PreiseSection.tsx`: Preis-Kachel zeigt jetzt 17 €/Monat (Bei Jahresabo.
+   Monatlich 22 €.) statt 29 €/Monat — exakt dieselbe Darstellungsweise wie
+   im Upgrade-Dialog, damit beide Stellen wirklich gleich aussehen, nicht nur
+   dieselbe Zahl haben. Free-Kontingent von „5 Angebote kostenlos" auf „3
+   Angebote kostenlos" korrigiert.
+2. `PlanWahlModal.tsx`: „Alle 18 Gewerke" → „Maler & Bodenleger". Die Preis
+   lag hier schon richtig (17/22 €), Zahlen jetzt trotzdem auch aus
+   `pricing.ts` gezogen statt hart einprogrammiert.
+3. `/vorschau`: Seite zeigt keine eigenen Inhalte/Preise mehr, sondern leitet
+   direkt auf die Landingpage (`/`) weiter (`redirect('/')`). Route bewusst
+   NICHT ganz gelöscht — sie ist zusätzlich das Fallback-Ziel in `proxy.ts`,
+   wenn lokal keine Supabase-Umgebungsvariablen gesetzt sind (dort jetzt
+   direkt auf `/` statt auf `/vorschau` verwiesen, ein Redirect-Hop weniger).
+   Alte Bookmarks/Links auf `/vorschau` landen so immer auf der echten,
+   aktuellen Landingpage statt auf einer toten Seite oder einem 404.
+4. `src/lib/pricing.ts` angelegt (Punkt 4, „bei Gelegenheit") — einzige
+   Quelle für Preis + Gewerke-Werbetext, `PreiseSection.tsx` und
+   `PlanWahlModal.tsx` lesen jetzt beide von dort. Da ich für Punkt 1–3
+   ohnehin alle drei Stellen anfassen musste, war das kein Mehraufwand mehr,
+   sondern genau der richtige Moment dafür — der ursprüngliche DC-001-Fund
+   war ja exakt diese Drift zwischen unabhängig gepflegten Zahlen.
+
+**Ehrlich zum Stand:** Keine automatisierte Testabdeckung für diese
+UI-Texte/Preise (reine Marketing-/Modal-Komponenten, kein Bibliotheks-Code).
+Lokal nur per isoliertem TypeScript-Syntaxcheck geprüft (kein vollständiger
+Checkout in dieser Umgebung verfügbar) — `npm run typecheck` durch Sandy
+steht noch aus, genauso wie ein Blick auf Landingpage/Upgrade-Dialog/
+`/vorschau` im Browser.
+
+---
+
+## CoS-012 — DC-029 „Baustelle"/Projekt-Zuordnung: Briefing für die Umsetzung
+
+**Datum:** 2026-08-19
+**Status:** 🟡 Lexware/Lexoffice-Machbarkeit erledigt (kein Blocker, nur
+Text statt Struktur, s. Update unten). Teil 1 (Datenmodell, Head of Product
+Engineering) jetzt umgesetzt und live — Designer hatte alle vier
+Abstimmungsfragen beantwortet, siehe Fix-Update ganz unten sowie
+`docs/design-check.md` DC-029. Live-Nachtest durch Sandy steht aus, danach
+liefert der Designer Konzept + Prototyp für die eigentliche Baustellen-UI.
+
+**Hintergrund:** Sandy hat einen neuen Bedarf eingebracht, Quelle: Clemens
+(ihr Partner, selbst Handwerker, künftiger Testnutzer nach Gate 1) — bei
+größeren Aufträgen entstehen mehrere Angebote nacheinander für denselben
+Auftrag/dieselbe Baustelle (z. B. erst Entrümpelung, dann Ausbau-Gewerke).
+Aktuell gibt es in Sofortangebot keine Ebene zwischen Kunde und Angebot, die
+das bündelt. Product Designer hat das geprüft (`Customer`/`Quote` haben
+kein Projekt-/Baustellen-/Lieferadress-Feld) und einen Wording- +
+UX-Grundsatzvorschlag geliefert — volle Begründung in `docs/design-check.md`
+DC-029.
+
+**Wording-Entscheidung des Designers (nicht meine, nur übernommen):**
+„Baustelle" statt „Projekt" als nutzersichtbarer Begriff — passt zur
+Sprache der Zielgruppe (Maler/Bodenleger/Innenausbau), „Projekt" klingt zu
+sehr nach Software/Agentur. Eine Baustelle gehört zu genau einem Kunden,
+ein Kunde kann mehrere haben. Wichtig: für die Mehrheit der Nutzer mit nur
+einem Auftrag pro Kunde darf das keine zusätzliche Pflicht-Hürde werden —
+Vorschlag ist eine automatisch vorbefüllte erste Baustelle pro Kunde,
+sichtbar/benennbar erst ab der zweiten.
+
+**Zwei offene Teile, die hiermit formal vergeben sind:**
+
+1. **An Head of Product Engineering — Datenmodell:** neue Tabelle
+   (`baustellen` o. ä.), FK `baustelle_id` auf `quotes`, Migration
+   bestehender Angebote auf eine automatisch erzeugte Erst-Baustelle pro
+   Kunde, damit nichts verwaist. Bitte grob schätzen und mit Product
+   Designer abstimmen (`docs/design-check.md`, nicht
+   `engineering-austausch.md` — ist ein Design-Thema, kein reines
+   Engineering-Thema).
+2. **An Platform & Integrations Engineer — Lexware/Lexoffice-Machbarkeit:**
+   prüfen, ob/wie Lexware/Lexoffice ein Konzept wie „Lieferadresse" oder
+   Projekt/Kostenstelle in der API kennt, auf das die Baustelle abgebildet
+   werden könnte — es gibt bereits eine Kontakt-Ebene-Anbindung
+   (`lexoffice_contact_id`), die Frage ist, ob sich das erweitern lässt.
+   Bitte kurze Machbarkeits-Einschätzung, kein fertiges Konzept nötig.
+
+**Update (2026-08-19, Platform & Integrations Engineer — Teil 2 erledigt):**
+Lexoffice und Lexware Office sind dieselbe API (`api.lexoffice.io/v1`,
+Lexware Office ist nur der neue Name), daher eine Antwort für beide. Laut
+aktueller API-Doku gibt es dort **kein** separates Projekt-/Kostenstellen-
+oder Lieferadress-Feld — Angebote/Rechnungen haben genau ein `address`-
+Objekt, das bereits belegt ist. Workaround ohne Umbau der Anbindung: den
+Baustellen-Namen sobald vorhanden in die freien Textfelder (`title`/
+`introduction`) schreiben, z. B. „Angebot – Baustelle: Wohnung Familie
+Müller, 2. OG" — für den Handwerker in der Buchhaltungssoftware sichtbar,
+aber nicht strukturiert filterbar. Geschätzter Aufwand dafür: klein (je eine
+Zeile in den zwei bestehenden Route-Dateien). Ausdrücklicher Vorbehalt:
+nur anhand der öffentlichen API-Doku geprüft, nicht gegen einen echten
+Account getestet — das vor der Umsetzung nachholen. Volle Einschätzung in
+`docs/design-check.md` DC-029. **Fazit: kein Blocker** — Teil 1 (Datenmodell
+bei Head of Product Engineering) bleibt der eigentliche Startpunkt.
+
+**Bewusst noch nicht Teil dieses Auftrags:** UI/Screens/Menü-Platzierung —
+Sandy hat das selbst auf „nächster Schritt" gelegt. Product Designer liefert
+dafür Konzept + Prototyp, sobald Datenmodell und Lexware-Machbarkeit stehen,
+genau wie bei DC-025/DC-028.
+
+**Für Sandy:** Sobald beide Rückmeldungen da sind, lege ich dir kurz vor, ob
+das als eigenes kleines Projekt eingeplant wird (ähnliche Größenordnung wie
+DC-025/DC-028) oder ob es Rückfragen gibt, bevor es weitergeht — reine
+Datenmodell-Änderung an einer Kern-Tabelle (`quotes`), daher mit derselben
+Sorgfalt wie bei CoS-P-005/DC-024 behandeln, nicht nebenbei.
+
+**Fix-Update — Datenmodell umgesetzt (Head of Product Engineering, 2026-08-19):**
+Der Designer hat alle vier offenen Abstimmungsfragen aus meiner Schätzung
+beantwortet (volle Antworten in `docs/design-check.md` DC-029) — Kernregel:
+sobald `customer_id` an einem Angebot gesetzt wird, egal auf welchem Weg,
+wird automatisch die Erstbaustelle dieses Kunden mitgesetzt, ohne dass der
+Nutzer etwas tun muss; `baustelle_id` bleibt dauerhaft nullable, genau wie
+`customer_id`. Umgesetzt, exakt nach dem abgestimmten Schema:
+
+- Zwei Migrationen (Supabase-Projekt `yqlledouhfovytifeekd`, per
+  `apply_migration` angewendet, außerdem als Dateien im Repo abgelegt):
+  `20260819120000_create_baustellen.sql` (Tabelle + RLS nach dem
+  `briefpapiere`-Muster + nullable `quotes.baustelle_id`) und
+  `20260819120100_backfill_baustellen.sql` (Erstbaustelle je Bestandskunde
+  mit Angebot + Verknüpfung). Beide live angewendet und verifiziert
+  (Spalte/Tabelle/RLS-Policy per SQL-Abfrage bestätigt). Ehrlich dazu: der
+  Backfill hat aktuell 0 Zeilen erzeugt, weil es in der Produktionsdatenbank
+  gerade schlicht noch keine `customers`-Einträge gibt (0 Kunden, 66
+  Angebote, alle ohne `customer_id`) — kein Fehler, nur der aktuelle
+  Test-Datenstand. Sobald echte Kunden dazukommen, greift dieselbe Logik
+  automatisch über die App-Seite, nicht mehr über den einmaligen Backfill.
+- Neue, zentrale Funktion `getOrCreateErstbaustelle()` in
+  `src/lib/baustellen.ts` — die eine Stelle, die die Designer-Regel oben
+  umsetzt, inklusive Race-Condition-Absicherung über den Unique-Index.
+- Verdrahtet an allen vier Stellen, an denen `quotes.customer_id` gesetzt
+  wird: `src/app/api/quotes/create/route.ts`, `src/app/api/entwurf/neu/
+  route.ts`, `src/app/(app)/angebot/[id]/AngebotDetail.tsx` (Kundenwahl UND
+  Lexware-Import, beide über dieselbe Regel, wie vom Designer verlangt) und
+  `src/app/api/quotes/[id]/revise/route.ts` (übernimmt `baustelle_id` 1:1
+  vom Original, leitet sie nicht neu ab — falls ein Kunde später mal
+  bewusst eine zweite Baustelle bekommt, soll eine Überarbeitung nicht
+  stillschweigend zurück auf die Erstbaustelle springen).
+- Jede Stelle, die `quotes` mit `baustelle_id` schreibt, hat denselben
+  Fallback wie das bestehende Muster für `share_token`/`briefpapier_id`
+  (Spalte fehlt noch → ohne nochmal versuchen) — auch wenn die Migration
+  hier schon live ist, aus Konsistenz mit dem Rest der Datei und für den
+  Fall, dass ein Deploy die Migration doch mal überholt.
+- `Quote`-Typ um `baustelle_id` erweitert, neuer `Baustelle`-Typ in
+  `src/lib/types.ts`, nach dem `Briefpapier`-Vorbild.
+
+**Ehrlich zum Stand:** Kein automatisierter Test dafür — die Funktion macht
+reine Datenbank-I/O (select-or-insert), die Codebasis hat dafür aktuell kein
+Mocking-Muster, ein neues nur für diese eine Funktion einzuführen wäre mehr
+Aufwand als Nutzen gewesen. Migration + Schema sind live verifiziert, die
+eigentliche Anwendungslogik (Kunde zuweisen → Erstbaustelle entsteht/wird
+gefunden → Angebot verknüpft) ist bisher NICHT live durchgeklickt, weil es
+aktuell keine echten Kunden gibt, an denen das zu testen wäre — das steht
+als Live-Nachtest aus, sobald ein Testkunde angelegt wird.

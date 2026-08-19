@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-029 — Baustellen-UI Prototyp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2C2C2C;
+    --yellow: #F5C400;
+    --green: #1A7A38;
+    --green-bg: #EDFAF0;
+    --paper: #F7F7F5;
+    --card: #FFFFFF;
+    --line: rgba(44,44,44,.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #EDEAE2;
+    color: var(--ink);
+  }
+  .syne { font-family: 'Syne', sans-serif; }
+
+  .switcher {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    background: #1c1c1c;
+  }
+  .switcher button {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    background: #333;
+    color: #ccc;
+    transition: all .15s ease;
+  }
+  .switcher button.active {
+    background: var(--yellow);
+    color: var(--ink);
+    border-color: var(--yellow);
+  }
+  .note-bar {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    padding: 6px 16px 0;
+    background: #1c1c1c;
+  }
+
+  .phone {
+    max-width: 420px;
+    margin: 28px auto 60px;
+    background: var(--paper);
+    border-radius: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    overflow: hidden;
+    min-height: 700px;
+    border: 8px solid #111;
+    position: relative;
+  }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ---- AngebotDetail-Style ---- */
+  .content { padding: 18px 16px 100px; }
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    padding: 16px;
+  }
+  .label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(44,44,44,.4);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .pill-btn {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--yellow);
+    background: transparent;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .kunde-name { font-weight: 800; color: var(--ink); font-size: 15px; }
+  .kunde-adresse { font-size: 13px; color: rgba(44,44,44,.6); font-weight: 600; margin-top: 2px; }
+
+  .baustelle-row {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 9px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .baustelle-row .muted { color: rgba(44,44,44,.4); font-weight: 600; }
+  .baustelle-row .chev { margin-left: auto; color: rgba(44,44,44,.3); }
+
+  /* ---- Kunde-Seite header ---- */
+  .kunde-header {
+    background: var(--ink);
+    padding: 40px 20px 22px;
+  }
+  .kunde-header .back { color: rgba(255,255,255,.5); font-size: 13px; font-weight: 700; }
+  .kunde-header .name { color: white; font-weight: 800; font-size: 21px; margin-top: 4px; }
+  .kunde-header .addr { color: rgba(255,255,255,.4); font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .stat-card { background: var(--card); border-radius: 16px; padding: 14px; border: 1px solid var(--line); }
+  .stat-card.accent { background: rgba(245,196,0,.1); border-color: rgba(245,196,0,.2); }
+  .stat-num { font-size: 20px; font-weight: 900; color: var(--ink); }
+  .stat-sub { font-size: 11px; font-weight: 600; color: rgba(44,44,44,.5); margin-top: 2px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(44,44,44,.4);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin: 18px 0 10px;
+  }
+
+  .angebot-row {
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .angebot-row .sum { font-weight: 800; color: var(--ink); }
+  .angebot-row .date { font-size: 11px; color: rgba(44,44,44,.4); font-weight: 600; margin-top: 2px; }
+  .status-pill { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .status-accepted { background: var(--green-bg); color: var(--green); }
+  .status-sent { background: #EFF6FF; color: #1D4ED8; }
+  .status-draft { background: #F1F1F0; color: rgba(44,44,44,.5); }
+
+  .baustelle-card {
+    background: var(--card);
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .baustelle-card-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .baustelle-card-head .emoji { font-size: 16px; }
+  .baustelle-card-head .name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; color: var(--ink); }
+  .baustelle-card-head .count { margin-left: auto; font-size: 11px; font-weight: 700; color: rgba(44,44,44,.4); }
+  .add-angebot-btn {
+    width: 100%;
+    margin-top: 6px;
+    padding: 9px;
+    border-radius: 10px;
+    border: 1.5px dashed rgba(44,44,44,.15);
+    background: transparent;
+    color: rgba(44,44,44,.5);
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .add-baustelle-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 14px;
+    border: none;
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+
+  /* ---- Bottom sheet ---- */
+  .sheet-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    display: none;
+    align-items: flex-end;
+    z-index: 20;
+  }
+  .sheet-overlay.open { display: flex; }
+  .sheet {
+    width: 100%;
+    background: white;
+    border-radius: 24px 24px 0 0;
+    padding: 16px 18px 26px;
+    max-height: 80%;
+    overflow-y: auto;
+  }
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(44,44,44,.2);
+    border-radius: 999px;
+    margin: 0 auto 14px;
+  }
+  .sheet-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; margin-bottom: 12px; }
+  .baustelle-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1.5px solid var(--line);
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .baustelle-option.selected {
+    border-color: var(--yellow);
+    background: rgba(245,196,0,.08);
+  }
+  .baustelle-option .radio {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(44,44,44,.25);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .baustelle-option.selected .radio { border-color: var(--yellow); }
+  .baustelle-option.selected .radio::after {
+    content: '';
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--yellow);
+  }
+  .baustelle-option .info .name { font-weight: 700; font-size: 13px; color: var(--ink); }
+  .baustelle-option .info .sub { font-size: 11px; color: rgba(44,44,44,.45); font-weight: 600; margin-top: 1px; }
+
+  .new-baustelle-form {
+    border: 1.5px dashed rgba(44,44,44,.2);
+    border-radius: 14px;
+    padding: 12px;
+    margin-top: 4px;
+  }
+  .new-baustelle-form input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 9px 11px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-family: inherit;
+  }
+  .new-baustelle-form .save-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: var(--ink);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .close-sheet {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(44,44,44,.4);
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .annot {
+    max-width: 420px;
+    margin: 0 auto 40px;
+    padding: 0 16px;
+  }
+  .annot .callout {
+    background: #fff;
+    border-left: 4px solid var(--yellow);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .annot .callout b { display: block; margin-bottom: 3px; font-family: 'Syne', sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <button class="active" onclick="show('a1')">Angebot · normal</button>
+  <button onclick="show('a2')">Angebot · mehrere Baustellen</button>
+  <button onclick="show('k1')">Kunde-Seite · normal</button>
+  <button onclick="show('k2')">Kunde-Seite · mehrere Baustellen</button>
+</div>
+<div class="note-bar" id="note-bar">DC-029 · Kunde mit nur einer (Erst-)Baustelle — sieht aus wie heute, nichts Neues sichtbar</div>
+
+<!-- ============ A1: Angebot-Editor, Normalfall ============ -->
+<div class="screen active" id="screen-a1">
+  <div class="phone">
+    <div class="content">
+      <div class="card">
+        <div class="label-row">
+          <span class="label">Kunde</span>
+          <button class="pill-btn">Ändern</button>
+        </div>
+        <div class="kunde-name">Familie Weber</div>
+        <div class="kunde-adresse">Musterstraße 12, 12345 Musterstadt</div>
+      </div>
+    </div>
+  </div>
+  <div class="annot">
+    <div class="callout">
+      <b>Normalfall — unverändert</b>
+      Ein Auftrag, eine Baustelle (automatisch angelegt, Name = Adresse). Keine zusätzliche Zeile, kein neues Label — genau wie heute.
+    </div>
+  </div>
+</div>
+
+<!-- ============ A2: Angebot-Editor, mehrere Baustellen ============ -->
+<div class="screen" id="screen-a2">
+  <div class="phone">
+    <div class="content">
+      <div class="card">
+        <div class="label-row">
+          <span class="label">Kunde</span>
+          <button class="pill-btn">Ändern</button>
+        </div>
+        <div class="kunde-name">Hausverwaltung Clemens GmbH</div>
+        <div class="kunde-adresse">Rathausplatz 3, 80331 München</div>
+        <div class="baustelle-row" onclick="document.getElementById('sheet-a2').classList.add('open')">
+          🏗️ Wohnung 2. OG, Musterstr. 12 <span class="chev">›</span>
+        </div>
+        <div style="margin-top:4px; font-size:11px; color:rgba(44,44,44,.4); font-weight:600; padding-left:2px;">3 Angebote für diese Baustelle</div>
+      </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheet-a2">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Baustelle wählen</div>
+
+        <div class="baustelle-option selected">
+          <div class="radio"></div>
+          <div class="info">
+            <div class="name">Wohnung 2. OG, Musterstr. 12</div>
+            <div class="sub">3 Angebote · zuletzt: Entrümpelung</div>
+          </div>
+        </div>
+        <div class="baustelle-option">
+          <div class="radio"></div>
+          <div class="info">
+            <div class="name">Wohnung 3. OG, Musterstr. 12</div>
+            <div class="sub">1 Angebot</div>
+          </div>
+        </div>
+        <div class="baustelle-option">
+          <div class="radio"></div>
+          <div class="info">
+            <div class="name">Gewerbeeinheit EG, Bahnhofstr. 5</div>
+            <div class="sub">Noch kein Angebot</div>
+          </div>
+        </div>
+
+        <div class="new-baustelle-form">
+          <input type="text" placeholder="Name (z. B. Bad OG links)">
+          <input type="text" placeholder="Adresse (optional)">
+          <button class="save-btn">+ Baustelle anlegen &amp; zuweisen</button>
+        </div>
+
+        <button class="close-sheet" onclick="document.getElementById('sheet-a2').classList.remove('open')">Schließen</button>
+      </div>
+    </div>
+  </div>
+  <div class="annot">
+    <div class="callout">
+      <b>Clemens-Fall — Baustellen-Zeile erscheint</b>
+      Sobald ein Kunde mehr als eine Baustelle hat, wird aus der reinen Adresszeile eine antippbare Zeile mit Baustellen-Name + Anzahl Angebote.
+    </div>
+    <div class="callout">
+      <b>Sheet: wählen oder neu anlegen</b>
+      Tippen auf die Zeile öffnet die Auswahl — bestehende Baustellen mit Kontext (wie viele Angebote, was zuletzt lief), ganz unten direkt eine neue anlegen. Auswahl wirkt sofort auf das gerade offene Angebot, keine Bestätigung nötig.
+    </div>
+  </div>
+</div>
+
+<!-- ============ K1: Kunde-Seite, Normalfall ============ -->
+<div class="screen" id="screen-k1">
+  <div class="phone">
+    <div class="kunde-header">
+      <div class="back">← Kunden</div>
+      <div class="name syne">Familie Weber</div>
+      <div class="addr">Musterstraße 12, 12345 Musterstadt</div>
+    </div>
+    <div class="content" style="padding-top:16px;">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num">2</div><div class="stat-sub">Angebote gesamt</div></div>
+        <div class="stat-card accent"><div class="stat-num">3.420 €</div><div class="stat-sub">Angenommen</div></div>
+      </div>
+      <div class="section-label">Angebote</div>
+      <div class="angebot-row">
+        <div><div class="sum">3.420 €</div><div class="date">12.08.2026</div></div>
+        <span class="status-pill status-accepted">Angenommen</span>
+      </div>
+      <div class="angebot-row">
+        <div><div class="sum">890 €</div><div class="date">03.07.2026</div></div>
+        <span class="status-pill status-sent">Versendet</span>
+      </div>
+    </div>
+  </div>
+  <div class="annot">
+    <div class="callout">
+      <b>Normalfall — unverändert</b>
+      Eine Baustelle, keine Gruppierung nötig. Sieht exakt so aus wie die heutige Kunde-Seite.
+    </div>
+  </div>
+</div>
+
+<!-- ============ K2: Kunde-Seite, mehrere Baustellen ============ -->
+<div class="screen" id="screen-k2">
+  <div class="phone">
+    <div class="kunde-header">
+      <div class="back">← Kunden</div>
+      <div class="name syne">Hausverwaltung Clemens GmbH</div>
+      <div class="addr">Rathausplatz 3, 80331 München</div>
+    </div>
+    <div class="content" style="padding-top:16px;">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num">5</div><div class="stat-sub">Angebote gesamt</div></div>
+        <div class="stat-card accent"><div class="stat-num">6.150 €</div><div class="stat-sub">Angenommen</div></div>
+      </div>
+
+      <div class="section-label">Baustellen</div>
+
+      <div class="baustelle-card">
+        <div class="baustelle-card-head">
+          <span class="emoji">🏗️</span>
+          <span class="name">Wohnung 2. OG, Musterstr. 12</span>
+          <span class="count">3 Angebote</span>
+        </div>
+        <div class="angebot-row" style="margin-top:8px;">
+          <div><div class="sum">1.200 €</div><div class="date">Entrümpelung · 02.08.2026</div></div>
+          <span class="status-pill status-accepted">Angenommen</span>
+        </div>
+        <div class="angebot-row">
+          <div><div class="sum">2.900 €</div><div class="date">Malerarbeiten · 14.08.2026</div></div>
+          <span class="status-pill status-sent">Versendet</span>
+        </div>
+        <div class="angebot-row" style="margin-bottom:0;">
+          <div><div class="sum">650 €</div><div class="date">Bodenbelag · 18.08.2026</div></div>
+          <span class="status-pill status-draft">Entwurf</span>
+        </div>
+        <button class="add-angebot-btn">+ Neues Angebot für diese Baustelle</button>
+      </div>
+
+      <div class="baustelle-card">
+        <div class="baustelle-card-head">
+          <span class="emoji">🏗️</span>
+          <span class="name">Wohnung 3. OG, Musterstr. 12</span>
+          <span class="count">1 Angebot</span>
+        </div>
+        <div class="angebot-row" style="margin-top:8px; margin-bottom:0;">
+          <div><div class="sum">2.050 €</div><div class="date">05.08.2026</div></div>
+          <span class="status-pill status-accepted">Angenommen</span>
+        </div>
+        <button class="add-angebot-btn">+ Neues Angebot für diese Baustelle</button>
+      </div>
+
+      <div class="baustelle-card">
+        <div class="baustelle-card-head">
+          <span class="emoji">🏗️</span>
+          <span class="name">Gewerbeeinheit EG, Bahnhofstr. 5</span>
+          <span class="count">0 Angebote</span>
+        </div>
+        <button class="add-angebot-btn">+ Neues Angebot für diese Baustelle</button>
+      </div>
+
+      <button class="add-baustelle-btn" onclick="document.getElementById('sheet-k2').classList.add('open')">+ Neue Baustelle</button>
+    </div>
+
+    <div class="sheet-overlay" id="sheet-k2">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Neue Baustelle</div>
+        <div class="new-baustelle-form" style="margin-top:0;">
+          <input type="text" placeholder="Name (z. B. Bad OG links)">
+          <input type="text" placeholder="Adresse (optional)">
+          <button class="save-btn">+ Baustelle anlegen</button>
+        </div>
+        <button class="close-sheet" onclick="document.getElementById('sheet-k2').classList.remove('open')">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+  <div class="annot">
+    <div class="callout">
+      <b>Clemens-Fall — nach Baustelle gruppiert</b>
+      Statt einer flachen Liste eine Karte pro Baustelle — exakt die Situation, die Clemens beschrieben hat: Entrümpelung, dann Malerarbeiten, dann Bodenbelag, alles sichtbar zusammengehörig statt lose nebeneinander.
+    </div>
+    <div class="callout">
+      <b>Gleiche visuelle Sprache wie DC-028</b>
+      Weiße Karte, Emoji + Name im Header, Liste darunter — bewusst dieselbe Optik wie die Raum-Karten in der Aufmaß-Sammelansicht, damit es sich wie ein durchgängiges Produkt anfühlt, auch wenn die Gruppierung technisch anders funktioniert.
+    </div>
+    <div class="callout">
+      <b>Direkter Einstieg pro Baustelle</b>
+      „+ Neues Angebot für diese Baustelle" übergibt die Baustelle direkt an den Erstellungs-Flow — kein Umweg über den Editor nötig, wenn man schon weiß, wofür das nächste Angebot ist.
+    </div>
+  </div>
+</div>
+
+<script>
+const notes = {
+  a1: 'DC-029 · Kunde mit nur einer (Erst-)Baustelle — sieht aus wie heute, nichts Neues sichtbar',
+  a2: 'DC-029 · Clemens-Fall im Angebot-Editor — Baustellen-Zeile antippbar, Sheet zum Wählen/Anlegen',
+  k1: 'DC-029 · Kunde-Seite, Normalfall — unverändert, flache Angebotsliste',
+  k2: 'DC-029 · Kunde-Seite, Clemens-Fall — nach Baustelle gruppiert, „+ Neues Angebot" pro Baustelle',
+};
+function show(which) {
+  ['a1','a2','k1','k2'].forEach(id => {
+    document.getElementById('screen-' + id).classList.toggle('active', which === id);
+  });
+  document.querySelectorAll('.switcher button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('note-bar').textContent = notes[which];
+}
+</script>
+
+</body>
+</html>

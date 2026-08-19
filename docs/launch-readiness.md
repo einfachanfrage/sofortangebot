@@ -34,30 +34,41 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 17.08.2026, später Nachmittag)
+## Gate-Fortschritt (Stand 18.08.2026, Abend)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **19 %** | 46 |
-| **Gate 2** — öffentlicher Launch | **10 %** | 35 |
-| **Gate 3** — danach/Skalierung | **17 %** | 11 |
+| **Gate 1** — erste Testnutzer | **22 %** (↑ von 19 %) | 46 |
+| **Gate 2** — öffentlicher Launch | **10 %** (unverändert) | 35 |
+| **Gate 3** — danach/Skalierung | **17 %** (unverändert) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
-Gate 1 bleibt zufällig bei ~19 % trotz 19 neuer Punkte — zwei echte
-Fortschritte (RLS bestätigt+gefixt, Deploy-Kette als zuverlässig bestätigt)
-gleichen die neu entdeckten Lücken (KI-Transparenzpflicht, bestätigte
-Race-Condition, mehr UX-Bugs) gerade aus.
+**Update 18.08.2026 (Abend), echte Neubewertung, keine Schätzung:** Alle 46
+Gate-1-Punkte einzeln gegen den heutigen Stand der jeweiligen Heimat-Datei
+durchgegangen (nicht nur die, die offensichtlich betroffen waren). Ergebnis:
++3 Prozentpunkte, von 19 % auf 22 %. Das wirkt nach einem starken Tag wenig —
+der Grund ist der große, ehrliche Nenner: von den 46 Gate-1-Punkten hat sich
+heute an 8 konkret etwas verbessert, die übrigen 38 stehen unverändert (viele
+davon bei „0 %, nicht erhoben" — Accounts-End-to-End, E-Mail-Zustellung,
+Rate-Limiting u. a. — dort ist heute schlicht nichts passiert). Die 8
+verbesserten Punkte im Einzelnen: 8.2 Race Condition (5→45, Auslöser
+gefunden + Fix, Live-Nachtest fehlt), 9.2 Preis-Text (40→80, umgesetzt,
+Live-Check fehlt), 5.2 Buttons/Listen (15→40, DC-011 behoben), 1.3
+Bestätigungskarte (25→30, kleiner Fortschritt, Kernproblem laut Prüfmeister
+weiterhin ungelöst), 2.8 erster Eindruck (10→20, PM-015-Fix), 1.1/1.2/1.4
+(Fallbasis/Abdeckung/Golden-Tests, je kleine Zuwächse). Gate 2 und Gate 3
+unverändert — heute war reine Gate-1-Arbeit, an keinem G2/G3-Punkt hat sich
+etwas bewegt.
 
-> ⚠️ **Wichtigster Befund, wichtiger als jede Prozentzahl hier:** Der
-> Prüfmeister hat live beobachtet, dass sich ein komplettes Angebot
-> verdoppelt hat (2.000,28 € statt 1.000,14 €, jede Position exakt zweimal),
-> stabil reproduzierbar, Auslöser noch ungeklärt (Race-Condition-Verdacht
-> beim Neuladen der Entwurfsseite). Das ist der schwerste Einzelfund im
-> ganzen Projekt bisher — nicht wegen der Häufigkeit, sondern weil ein
-> Kunde im schlimmsten Fall ein Angebot mit doppeltem Preis bekommt, ohne
-> jede Fehlermeldung. Neuer Punkt 8.2 unten, außerdem **CoS-010 (höchste
-> Priorität)** in `chief-of-staff-todos.md`.
+> ✓ **Größte Verbesserung seit gestern:** Die beiden bisher schwersten
+> Einzelfunde sind auf der Zielgeraden statt offen. Verschwindende Angebote
+> (**DC-011**) sind live bestätigt behoben — betraf alle 56 in Produktion
+> gespeicherten Angebote. Bei der Angebots-Verdopplung (**CoS-010**,
+> **8.2**) ist der wahre Auslöser gefunden (fehlender Doppel-Tap-Schutz auf
+> „Fertigstellen"), Fix ist drin, 706/706 Tests grün — fehlt nur noch Sandys
+> bewusster Live-Test (zweimal schnell tippen). Bis dahin bleibt 8.2 der
+> wichtigste offene Einzelpunkt im ganzen Projekt.
 
 Zweiter wichtiger Befund, diesmal eine Entwarnung: der am 17.08. vormittags
 vermutete „Deploy-Lücke" bei PM-010 (drei gemeldete Fixes wirkten live nicht)
@@ -105,10 +116,10 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 18 % — jetzt 14 von ~100 Fällen (PM-001–014), die meisten live bestätigt, aber PM-014 (Verdopplung) ist ein neuer, schwerer Fund. Quelle: `docs/pruefmeister-testfaelle.md` |
-| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 48 % (CoS-Schätzung) — inzwischen auch Sockelleisten-Grenzfälle (PM-010/012), Fischgrät/Dehnungsfuge (PM-013) im Test |
-| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🔴 25 % — PM-001-Kernfall live bestätigt gefixt, aber Muster hält an: PD-004/006/007/008 (falsche Positionszahl, widersprüchliche Banner, falsche Maße, unmarkierte Auto-Ergänzungen). Quelle: CoS-002 |
-| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟡 65 % — Praxis etabliert (regelmäßig „alle Tests grün" dokumentiert), kein direkter CI-Dashboard-Zugriff |
+| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 20 % — jetzt 15 von ~100 Fällen (PM-001–015), 7 davon komplett abgeschlossen und archiviert; neuer Fund PM-015 (leere Preisdatenbank bei „manuell"-Onboarding) zeigt weiter, dass die Fallbasis selbst der Engpass bleibt, nicht die Einzelfixes. Quelle: `docs/pruefmeister-testfaelle.md` |
+| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 50 % (CoS-Schätzung) — Fassade (kein Raum) jetzt mit eigenem Datenmodell abgedeckt (DC-024/PM-008), Fischgrät/Dehnungsfuge (PM-013) noch ungeprüft |
+| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🔴 30 % — kleiner Fortschritt (DC-023-Fix lokal verifiziert, Wand-Chip zeigt jetzt „So gerechnet"-Zeile), aber Prüfmeister bestätigt ausdrücklich: der Kern-Vertrauensmechanismus hält weiterhin nicht durchgängig, was er verspricht (DC-021/022). Quelle: CoS-002 |
+| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟡 70 % — Praxis weiter gefestigt (706/706 Tests nach jedem Fix bestätigt, u. a. heute bei CoS-010, DC-025), kein direkter CI-Dashboard-Zugriff |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
 | 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🔴 20 % — weiterhin: Kniestock/Dachschräge/Fassadenfläche streichen, Übergangsschiene ohne Preis |
 | 1.7 | KI-Grenzen/Fehlerrate den Nutzern gegenüber transparent kommuniziert (kein 100 %-Versprechen) | G2 | ⚪ offen — nicht erhoben (neu) |
@@ -126,7 +137,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 2.5 | Account-Löschung möglich | G2 | 🟡 vermutlich vorhanden (Code existiert), kein QA-Test |
 | 2.6 | Schutz vor automatisierten Massen-Registrierungen (Captcha/Rate-Limit) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 2.7 | Session-Sicherheit: Token-Ablauf sinnvoll, Logout wirklich überall wirksam | G1 | ⚪ offen — nicht erhoben (neu) |
-| 2.8 | Erster Eindruck für brandneue Nutzer durchdacht (leere Zustände) | G1 | 🔴 10 % — bestätigt schlecht in einem Fall: leere Aufnahme wird als grüner Erfolg angezeigt (DC-009), neu |
+| 2.8 | Erster Eindruck für brandneue Nutzer durchdacht (leere Zustände) | G1 | 🔴 20 % — DC-009 (leere Aufnahme als Erfolg) weiterhin offen, aber PM-015-Fix behebt einen konkreten, echten Fall: „manuell"-Onboarding landete bisher mit fast leerer Preisdatenbank |
 
 ## 3. Transaktions-E-Mails
 
@@ -155,7 +166,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 5.1 | Man kommt von überall leicht zurück/zur Startseite — keine Sackgassen | G1 | ⚪ offen — nicht erhoben |
-| 5.2 | Jeder Button an sinnvoller Stelle, nichts Wichtiges fehlt/kaputt | G1 | 🔴 15 % — jetzt mehrere bestätigte Lücken: DC-002 (Nav fehlt), DC-009/010 (irreführende Erfolgs-Anzeige, fehlende Guardrail), **DC-011 kritisch** (fertiges Angebot verschwindet aus der Liste, potenziell bezahlte Angebote betroffen) |
+| 5.2 | Jeder Button an sinnvoller Stelle, nichts Wichtiges fehlt/kaputt | G1 | 🟡 40 % — **DC-011 behoben + live bestätigt** (fertiges Angebot verschwand aus der Liste, betraf alle 56 Angebote in Produktion). Weiterhin offen: DC-002 (Nav fehlt), DC-009/010 (irreführende Erfolgs-Anzeige, fehlende Guardrail) |
 | 5.3 | Funktioniert auf Handy UND Desktop | G1 | ⚪ offen — nicht erhoben |
 | 5.4 | Leere/Fehler-/Ladezustände überall sinnvoll gestaltet | G2 | 🔴 10 % — DC-009/010 bestätigt: widersprüchliche Fehler-/Erfolgs-Banner gleichzeitig |
 | 5.5 | Statusfarben & Design-Tokens konsistent | G2 | 🟡 30 % — siehe DC-003, DC-006, DC-007 |
@@ -198,7 +209,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 8.1 | Observability: jede Pipeline-Stufe nachvollziehbar geloggt | G1 | 🟡 30 % — erster Schritt umgesetzt (CoS-P-002: Sentry meldet jetzt 8 Fehlerstellen im Kernpfad), Rest (Edge-Functions, ~27 weitere Stellen, 2 tote Logging-Spalten) noch offen |
-| 8.2 | Race Condition ausgeschlossen (Summe stabil ohne Nutzeraktion) | G1 | 🔴 5 % — **jetzt bestätigt real statt nur befürchtet**: Angebot verdoppelt sich reproduzierbar (PM-014), höchste Priorität, CoS-010 |
+| 8.2 | Race Condition ausgeschlossen (Summe stabil ohne Nutzeraktion) | G1 | 🟡 45 % — **wahrer Auslöser gefunden** (fehlender Doppel-Tap-Schutz auf „Fertigstellen", kein reines DB-Race), Fix drin, 706/706 Tests grün. Bewusst nicht auf höher gesetzt: Sandys Live-Nachtest (bewusst doppelt tippen) steht noch aus, und der Fix schließt kein DB-seitiges Unique-Constraint für echte Gleichzeitigkeit ein. Höchste Priorität bis zur Bestätigung, CoS-010 |
 | 8.3 | Backups eingerichtet und einmal ein Restore getestet | G2 | 🟡 65 % — tägliches verschlüsseltes Backup läuft produktiv, Restore-Prozess definiert, aber kein protokollierter Restore-Test-Durchlauf sichtbar |
 | 8.4 | Fehler-Monitoring: du merkst, wenn im Betrieb etwas bricht | G2 | 🔴 20 % — Health-Checks (`/api/health*`) und Kosten-Alarm existieren und funktionieren, aber Sentry deckt bisher nur den Kernpfad ab |
 | 8.5 | OpenAI-Kosten pro Angebot bekannt und tragbar; Rate-Limits bedacht | G2 | ⚪ offen — nicht erhoben |
@@ -215,7 +226,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 9.1 | Landingpage erklärt klar, was das Tool tut und für wen | G1 | ⚪ offen — nicht erhoben |
-| 9.2 | Preis-/Gewerke-Text final | G1 | 🟡 40 % — Entscheidung getroffen (DC-001), Umsetzung auf Landingpage/`/vorschau`/Modal noch offen |
+| 9.2 | Preis-/Gewerke-Text final | G1 | 🟢 80 % — Entscheidung umgesetzt: Landingpage, Upgrade-Dialog, `/vorschau` (leitet jetzt weiter) und zentrale `pricing.ts` fertig. Nicht auf 100 %, weil noch niemand im Browser draufgeschaut hat. CoS-001 |
 | 9.3 | In-App-Wording durchgängig klar und menschlich | G2 | ⚪ offen — nicht erhoben |
 | 9.4 | Preisseite verständlich | G2 | ⚪ offen — nicht erhoben |
 | 9.5 | SEO-Grundlagen (Meta-Tags, Sitemap, robots.txt, Ladezeit) | G3 | ⚪ offen — nicht erhoben (neu) |

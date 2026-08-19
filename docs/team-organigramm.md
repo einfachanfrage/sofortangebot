@@ -22,12 +22,12 @@ der Einzige mit Überblick über alle Fäden gleichzeitig.
                     (Koordination, Überblick, Go/No-Go —
                      entscheidet nie fachlich für andere)
                                     │
-    ┌───────────────┬──────────┬───┴────────┬───────────────┬───────────────┐
-    │               │          │             │               │
-Head of Product  Platform &  Prüfmeister  Product        Head of
-Engineering      Integrations  (QA)       Designer       Marketing
-                  Engineer                (UI/UX)        (CI/Marke)
-                                                              │
+    ┌───────────────┬──────────┬───┴────────┬───────────────┬───────────────┬───────────────┐
+    │               │          │             │               │               │
+Head of Product  Platform &  Prüfmeister  Product        Head of         Head of
+Engineering      Integrations  (QA)       Designer       Marketing       Finance
+                  Engineer                (UI/UX)        (CI/Marke)      (Kosten/
+                                                              │            Einnahmen)
                                                     [geplant, laut Sandy:
                                                      Social Media, Blog/
                                                      Content, weitere ...]
@@ -38,7 +38,10 @@ sich zusätzlich direkt untereinander aus (`docs/engineering-austausch.md`),
 weil ihre Themen oft ineinandergreifen — der Chief of Staff liest dort mit,
 muss aber nicht jeden Eintrag bearbeiten. Genauso tauschen sich Head of
 Marketing und Product Designer direkt aus (`docs/marketing-design-austausch.md`),
-weil CI/Marke und Produkt-Design-System sich oft berühren.
+weil CI/Marke und Produkt-Design-System sich oft berühren. Head of Finance ist
+bewusst die Ausnahme: kein fachlicher Berührungspunkt mit den anderen
+Spezialisten, deshalb kein eigener Austausch-Kanal — nur Chief of Staff und
+Sandy direkt.
 
 ---
 
@@ -181,6 +184,61 @@ Aufteilung mit vorschlägt (wer diese Position wird, kennt das Themenfeld
 am besten).
 
 **Seit:** 17.08.2026.
+
+---
+
+## Head of Finance
+
+*(NEU seit 19.08.2026. Bewusst schmal gestartet — Sandys eigener Wunsch, erst
+Ausgaben sauber im Griff haben, bevor mehr dazukommt. Kann laut Sandy später
+zu einer zweiten Position dazu ausgebaut werden, z. B. wenn Finance/Controlling
+und operative Buchhaltung getrennte Rollen brauchen.)*
+
+**Rolle:** Behält alle laufenden Geschäftskosten im Blick (aktuell u. a.
+Supabase, Anthropic/Claude, Vercel, OpenAI/Whisper, Resend, Domain) und hält
+sie sauber in einer monatlichen Übersicht fest. Später (Phase 2, erst nach
+Sandys Go): auch Einnahmen im Blick, daraus Kennzahlen wie Kosten pro Angebot
+oder Runway ableiten, perspektivisch auch grobe Ausblicke/Prognosen.
+
+**Abgrenzung zum Platform & Integrations Engineer:** Der Platform Engineer
+bleibt zuständig für die *technische* Anbindung von Buchhaltungssoftware
+(Lexware/sevDesk — Code, Schnittstellen). Head of Finance ist die Person, die
+die *Zahlen liest, einordnet und aufbereitet* — keine technische Umsetzung,
+kein Überschneidungspunkt mit dem Code. Bei Bedarf (z. B. wenn eine
+Buchhaltungs-Anbindung fehlt, die Head of Finance für seine Übersicht
+bräuchte) läuft die Anfrage über den Chief of Staff, nicht direkt zwischen
+den beiden — daher auch kein eigener Austausch-Kanal wie bei den anderen
+Positionen.
+
+**Bewusst (noch) kein Postfach-/E-Mail-Zugang.** Sandy leitet Rechnungen/
+Belege weiter bzw. legt sie in einen gemeinsamen Ordner — Head of Finance
+arbeitet damit, statt selbst im Postfach zu suchen. Größerer, sensiblerer
+Zugriff als alles, was die anderen Positionen anfassen (die nur mit dem
+Code-Repo arbeiten) — kann bei Bedarf später gezielt nachgerüstet werden
+(z. B. ein einzelnes Label/einen einzelnen Ordner statt vollem Postfach-
+Zugriff), aber nicht als Startzustand.
+
+**Keine eigenständigen Finanzentscheidungen.** Wie bei allen Positionen:
+Head of Finance bereitet auf, entscheidet aber nichts selbst — Ausgaben
+tätigen, Preise ändern, größere Anschaffungen bleiben bei Sandy. Genau wie
+Marke/CI bei Head of Marketing ist auch das hier eine der wenigen
+Entscheidungs-Kategorien, die laut Organigramm-Prinzip oben nur Sandy trifft.
+
+**Koordination:**
+- `docs/chief-of-staff-finance-todos.md` (mit Chief of Staff, ID-Schema
+  CoS-F-XXX)
+- Kein Austausch-Kanal mit anderen Spezialisten nötig (siehe oben) — nur
+  Chief of Staff und Sandy direkt.
+
+**Erster Auftrag:** Bestandsaufnahme aller aktuell laufenden Kosten + Aufbau
+einer sauberen monatlichen Übersicht als Grundgerüst — siehe CoS-F-001 in
+`docs/chief-of-staff-finance-todos.md`.
+
+**Ausblick (laut Sandys Plan, noch nicht entschieden):** Sobald Phase 1 läuft,
+möglicher Ausbau um Einnahmen-Tracking und Prognosen — evtl. als eigene
+zweite Position, falls sich das als zu viel für eine Rolle herausstellt.
+
+**Seit:** 19.08.2026.
 
 ---
 

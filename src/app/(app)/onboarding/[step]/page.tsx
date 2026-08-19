@@ -11,7 +11,7 @@ import {
 import { Logo } from '@/components/Logo'
 import { AKTIVE_GEWERKE } from '@/lib/gewerke-config'
 import { ACCOUNTING_OPTIONS, TIER_LABEL } from '@/lib/accounting-options'
-import { standardpreiseFuerGewerke } from '@/lib/default-price-selection'
+import { standardpreiseFuerGewerke, zuPriceItemRows } from '@/lib/default-price-selection'
 import { DEFAULT_EMPFEHLUNGEN } from '@/lib/empfehlungen-defaults'
 import { getPreisvorlagenForGewerke, type PreisVorlage } from '@/lib/preise-vorlagen'
 import type { AccountingSoftware } from '@/lib/types'
@@ -211,10 +211,18 @@ export default function OnboardingStep() {
       // vorhanden) danach zusätzlich — bei Dopplung mit dem Basis-Katalog
       // gewinnt einfach der zuletzt eingefügte Eintrag nicht automatisch,
       // beide bleiben stehen; der Nutzer kann in den Einstellungen bereinigen.
-      const basis = standardpreiseFuerGewerke(state.gewerke).map(p => ({ ...p, company_id: company.id }))
+      // PM-016 (2026-08-19): zuPriceItemRows sorgt für einheitliche Spalten
+      // pro Zeile — vorher scheiterte dieser Insert praktisch immer komplett
+      // (gemischte Positions-Form löst NOT-NULL-Verletzung bei
+      // ist_erschwerniszuschlag aus, s. Kommentar in default-price-selection.ts),
+      // und der Fehler wurde hier nicht mal geprüft. Genau das war vermutlich
+      // der eigentliche Grund, warum "Lisa Schein Malerbetrieb" trotz dieses
+      // Codes nur 5 generische Posten bekam.
+      const basis = zuPriceItemRows(standardpreiseFuerGewerke(state.gewerke), company.id)
       const BATCH = 400
       for (let i = 0; i < basis.length; i += BATCH) {
-        await supabase.from('price_items').insert(basis.slice(i, i + BATCH))
+        const { error: basisErr } = await supabase.from('price_items').insert(basis.slice(i, i + BATCH))
+        if (basisErr) console.error('Basis-Preiskatalog: Batch fehlgeschlagen', basisErr)
       }
       if (state.preisMode === 'manuell' && state.preisEntries.length > 0) {
         const toInsert = state.preisEntries

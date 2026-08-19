@@ -3,20 +3,21 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, X } from 'lucide-react'
+import { PRICING } from '@/lib/pricing'
 
 interface Props {
   onClose: () => void
 }
 
 const FREE_FEATURES = [
-  '3 Angebote / Monat',
+  `${PRICING.freeAngeboteProMonat} Angebote / Monat`,
   '1 Gewerk',
   'PDF mit Logo',
 ]
 
 const PRO_FEATURES = [
   'Unbegrenzte Angebote',
-  'Alle 18 Gewerke',
+  PRICING.unterstuetzteGewerke,
   'Digitale Unterschrift',
   'Lexoffice & sevDesk',
   '30 Tage gratis testen',
@@ -111,10 +112,10 @@ export function PlanWahlModal({ onClose }: Props) {
               </span>
             </div>
             <div className="font-extrabold text-[#2C2C2C] text-3xl mb-0.5">
-              17 <span className="text-base font-semibold text-[#2C2C2C]/40">€/Monat</span>
+              {PRICING.proJahresabo} <span className="text-base font-semibold text-[#2C2C2C]/40">€/Monat</span>
             </div>
             <div className="text-[12px] text-[#2C2C2C]/40 font-semibold mb-3">
-              Bei Jahresabo. Monatlich 22 €.
+              Bei Jahresabo. Monatlich {PRICING.proMonatlich} €.
             </div>
             <div className="flex flex-col gap-1.5 mb-4">
               {PRO_FEATURES.map(f => (

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
+import { getOrCreateErstbaustelle } from '@/lib/baustellen'
 
 const PLAN_LIMITS = {
   starter: 5,   // 5 Angebote/Monat
@@ -99,6 +100,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // CoS-012/DC-029: sobald ein Kunde am Angebot hängt, automatisch dessen
+  // Erstbaustelle mitsetzen (Designer-Regel, DC-029 Antwort 1) — ohne
+  // Kunde bleibt baustelleId null, genau wie customerId auch.
+  const baustelleId = customerId
+    ? await getOrCreateErstbaustelle(supabase, company.id, customerId)
+    : null
+
   // Gesamtpreise berechnen
   const totalNet = (items as Array<{ quantity: number; unit_price: number }>)
     .reduce((s, i) => s + i.quantity * i.unit_price, 0)
@@ -136,6 +144,7 @@ export async function POST(req: NextRequest) {
     // trotzdem anzufragen war eine tickende Zeitbombe. Entfernt statt nur
     // abgesichert, weil sie nirgends gebraucht wird.
     ...(resolvedBriefpapierId ? { briefpapier_id: resolvedBriefpapierId } : {}),
+    ...(baustelleId ? { baustelle_id: baustelleId } : {}),
   }
 
   // Versuche zuerst mit share_token, Fallback ohne falls Spalte fehlt
@@ -143,7 +152,7 @@ export async function POST(req: NextRequest) {
   let quoteError: { message: string } | null = null
 
   const full = await supabase.from('quotes').insert(baseInsert).select('id, share_token, created_at').single()
-  if (full.error?.message?.includes('share_token') || full.error?.message?.includes('briefpapier_id')) {
+  if (full.error?.message?.includes('share_token') || full.error?.message?.includes('briefpapier_id') || full.error?.message?.includes('baustelle_id')) {
     // Spalte fehlt noch — ohne optionale Felder nochmal versuchen
     const minimal = await supabase.from('quotes').insert({
       company_id: company.id, customer_id: customerId, status: 'draft',

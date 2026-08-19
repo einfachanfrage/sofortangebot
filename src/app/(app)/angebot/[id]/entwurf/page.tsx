@@ -13,6 +13,72 @@ import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { EntwurfAufnahme, ErkanntPosition } from '@/lib/types'
 import { extrahiereRaumdaten } from '@/lib/extraktion-masse'
 import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahme/RueckfragenScreen'
+// DC-028: dieselbe Raum-Gruppierung wie im fertigen Angebot (AngebotDetail.tsx)
+// und in der Entwurfsansicht — gleicher Code-Pfad, damit diese Sammelansicht
+// strukturell nie von der finalen Darstellung abweichen kann.
+import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
+
+// Bereits berechnete quote_items — vollständig geladen (nicht nur die Anzahl),
+// damit sie sich zusammen mit frischen Vorschau-Positionen raum-gruppieren
+// lassen (Nachtrag-Fall: Rückkehr nach "Entwurf erstellen").
+interface BestehendeQuotePosition {
+  id: string
+  title: string
+  description: string | null
+  quantity: number
+  unit: string
+  unit_price: number
+  total_price: number
+  position: number
+}
+
+// Ein Eintrag im gepoolten Sammel-Bestand für die Raum-Gruppierung dieser
+// Ansicht: entweder eine echte, bereits berechnete Position (pending=false)
+// oder eine frische Vorschau-Position aus einer noch nicht "fertiggestellten"
+// Aufnahme (pending=true) — beide zusammen ergeben die Raum-Karten.
+interface SammelPoolItem {
+  id: string
+  title: string
+  description: string | null
+  quantity: number
+  unit: string
+  unit_price: number
+  total_price: number
+  position: number
+  pending: boolean
+}
+
+function baueSammelPool(
+  bestehende: BestehendeQuotePosition[],
+  neueAufnahmen: AufnahmeWithUrl[],
+): SammelPoolItem[] {
+  const pool: SammelPoolItem[] = bestehende.map(item => ({ ...item, pending: false }))
+  // Pending-Markierung nur, wenn es schon einen echten, berechneten Bestand
+  // gibt, an dem "neu" erkennbar ist — beim allerersten Aufnehmen (noch nichts
+  // berechnet) wäre "wird berechnet" auf jeder Position nur Lärm, keine
+  // hilfreiche Unterscheidung.
+  const markierePending = bestehende.length > 0
+  let laufendePosition = pool.length
+  for (const aufnahme of neueAufnahmen) {
+    const positionen = (aufnahme.erkannte_positionen as ErkanntPosition[] | undefined) ?? []
+    for (const p of positionen) {
+      if (!p.erkannt) continue
+      pool.push({
+        id: `preview-${aufnahme.id}-${laufendePosition}`,
+        title: p.titel,
+        description: null,
+        quantity: p.menge,
+        unit: p.einheit,
+        unit_price: p.einzelpreis,
+        total_price: p.gesamtpreis,
+        position: laufendePosition,
+        pending: markierePending,
+      })
+      laufendePosition++
+    }
+  }
+  return pool
+}
 
 type AufnahmeWithUrl = EntwurfAufnahme & { audio_signed_url?: string; foto_signed_url?: string }
 
@@ -226,6 +292,94 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
   )
 }
 
+// ── DC-028: schlanke Aufnahme-Chip-Leiste ───────────────────────────────────
+// Ersetzt die vorherige volle AufnahmeCard als primäre Timeline-Darstellung —
+// die Raum-Karten (RaumKarte) übernehmen jetzt den Inhalt, die Chips bleiben
+// als Nachweis/Zugriff auf die einzelne Aufnahme (Audio, Löschen, Retry).
+
+function chipStatusFarbe(status: string): string {
+  if (status === 'fertig') return 'bg-[#1A7A38]'
+  if (status === 'fehler') return 'bg-red-500'
+  return 'bg-[#F5C400]'
+}
+
+function AufnahmeChip({ aufnahme, onOpen }: { aufnahme: AufnahmeWithUrl; onOpen: () => void }) {
+  const positionen = (aufnahme.erkannte_positionen as ErkanntPosition[] | undefined) ?? []
+  const erkannte = positionen.filter(p => p.erkannt)
+  const einzelraum = erkenneEinzelraum(aufnahme.transkript, erkannte)
+  const istZettel = aufnahme.typ === 'foto' && (aufnahme.transkript != null || aufnahme.foto_beschreibung === 'Aufmaß-Zettel')
+  const label = aufnahme.typ === 'notiz'
+    ? (aufnahme.notiz_text ?? '').slice(0, 18) || 'Notiz'
+    : istZettel ? '📷 Zettel'
+    : einzelraum ?? (aufnahme.typ === 'foto' ? 'Foto' : null)
+
+  return (
+    <button
+      onClick={onOpen}
+      className={`shrink-0 flex items-center gap-2 rounded-full border px-3.5 py-2 transition-colors ${
+        aufnahme.verarbeitung_status === 'fehler'
+          ? 'border-red-200 bg-red-50'
+          : 'border-[#2C2C2C]/8 bg-white hover:border-[#2C2C2C]/20'
+      }`}
+    >
+      <span className={`w-2 h-2 rounded-full shrink-0 ${chipStatusFarbe(aufnahme.verarbeitung_status)} ${aufnahme.verarbeitung_status === 'verarbeitung' ? 'animate-pulse' : ''}`} />
+      <span className="font-bold text-[12px] text-[#2C2C2C] whitespace-nowrap">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
+      {label && (
+        <span className="font-semibold text-[12px] text-[#2C2C2C]/45 whitespace-nowrap">· {label}</span>
+      )}
+    </button>
+  )
+}
+
+// ── DC-028: Raum-Karte ───────────────────────────────────────────────────────
+// Zeigt genau eine Raum-Gruppe aus gruppiereNachRaum() — gleiche Funktion,
+// gleiche Emoji-/Namens-Logik wie im fertigen Angebot (AngebotDetail.tsx).
+// Frische, noch nicht berechnete Positionen sind per pendingById erkennbar
+// und bekommen eine "Wird berechnet"-Markierung statt eines Preises.
+
+function RaumKarte({
+  raumName, emoji, items, pendingById,
+}: {
+  raumName: string
+  emoji: string
+  items: { id: string; titleDisplay: string; quantity: number; unit: string }[]
+  pendingById: Map<string, boolean>
+}) {
+  return (
+    <div className="bg-white rounded-2xl border border-[#2C2C2C]/6 px-4 py-3.5">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-[17px]">{emoji}</span>
+        <span className="font-syne font-extrabold text-[15px] text-[#2C2C2C]">{raumName}</span>
+        <span className="ml-auto text-[11px] font-bold text-[#2C2C2C]/35">
+          {items.length} {items.length === 1 ? 'Position' : 'Positionen'}
+        </span>
+      </div>
+      <div className="flex flex-col">
+        {items.map(item => {
+          const pending = pendingById.get(item.id) ?? false
+          return (
+            <div
+              key={item.id}
+              className="flex items-center justify-between gap-2 py-2 border-t border-[#2C2C2C]/6 first:border-t-0"
+            >
+              <span className={`text-[13px] font-semibold ${pending ? 'italic text-[#2C2C2C]/55' : 'text-[#2C2C2C]'}`}>
+                {item.titleDisplay}
+              </span>
+              {pending ? (
+                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-[#8B7000] bg-[#F5C400]/20 px-2 py-0.5 rounded-full">
+                  Wird berechnet
+                </span>
+              ) : (
+                <span className="shrink-0 text-[12px] font-bold text-[#2C2C2C]/45">{item.quantity} {item.unit}</span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function StatusBadge({ status }: { status: string }) {
   if (status === 'fertig') return (
     <span className="text-[11px] font-extrabold text-[#1A7A38] bg-[#EDFAF0] px-2 py-0.5 rounded-full">✓ Fertig</span>
@@ -275,7 +429,7 @@ export default function EntwurfPage() {
   const supabase = createClient()
 
   const [aufnahmen, setAufnahmen] = useState<AufnahmeWithUrl[]>([])
-  const [quoteInfo, setQuoteInfo] = useState<{ customer?: { name: string } | null; entwurf_gespeichert_am?: string; quote_items?: { id: string }[] } | null>(null)
+  const [quoteInfo, setQuoteInfo] = useState<{ customer?: { name: string } | null; entwurf_gespeichert_am?: string; quote_items?: BestehendeQuotePosition[] } | null>(null)
   const [loading, setLoading] = useState(true)
   const [screen, setScreen] = useState<Screen>('timeline')
 
@@ -291,6 +445,9 @@ export default function EntwurfPage() {
   // man die Warnung nie (Navigation passiert sofort nach Erfolg).
   const [massWarnungen, setMassWarnungen] = useState<string[]>([])
   const [deleteBestaetigen, setDeleteBestaetigen] = useState<string | null>(null)
+  // DC-028: welche Aufnahme gerade als Detail-Sheet offen ist (Chip antippen) —
+  // ersetzt die vorherige feste Liste aus AufnahmeCard-Kästen in der Timeline.
+  const [aufnahmeDetail, setAufnahmeDetail] = useState<string | null>(null)
   const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
   const [basisExtraktion, setBasisExtraktion] = useState<ExtrahierteDaten | null>(null)
   const [gesammelteAntworten, setGesammelteAntworten] = useState<Record<string, RueckfragenAntwort>>({})
@@ -337,7 +494,7 @@ export default function EntwurfPage() {
   async function loadData() {
     setLoading(true)
     const [{ data: quote }, { data: rows }] = await Promise.all([
-      supabase.from('quotes').select('entwurf_gespeichert_am, customer:customers(name), quote_items(id)').eq('id', angebotId).single(),
+      supabase.from('quotes').select('entwurf_gespeichert_am, customer:customers(name), quote_items(id, title, description, quantity, unit, unit_price, total_price, position)').eq('id', angebotId).single(),
       supabase.from('entwurf_aufnahmen').select('*').eq('angebot_id', angebotId).order('erstellt_am', { ascending: true }),
     ])
 
@@ -688,10 +845,42 @@ export default function EntwurfPage() {
   const neueAufnahmen = letzteGenerierung
     ? sprachen.filter(a => new Date(a.erstellt_am) > new Date(letzteGenerierung))
     : sprachen
-  const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung
   const erkannteAnzahl = neueAufnahmen.reduce((sum, aufnahme) =>
     sum + ((aufnahme.erkannte_positionen as ErkanntPosition[]) ?? []).filter(position => position.erkannt).length, 0)
   const bearbeitungszeit = geschaetzteSekunden(erkannteAnzahl)
+  // DC-009: 0 erkannte Positionen ist kein "bereit für den Entwurf" — vorher
+  // stand hier trotzdem "✓ 0 Positionen erkannt", grün, mit aktivem Button.
+  // Der Button erscheint jetzt nur noch, wenn wirklich etwas zu berechnen da ist.
+  const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung && erkannteAnzahl > 0
+  const nichtsErkannt = alleTranskribiertOderFehler && neueAufnahmen.length > 0 && !nochVerarbeitung && erkannteAnzahl === 0
+
+  // ── DC-028: Raum-gruppierter Sammel-Bestand ──────────────────────────────
+  // Pool aus bereits berechneten quote_items (echt) + Vorschau-Positionen
+  // frischer, noch nicht "fertiggestellter" Aufnahmen (vorläufig) — dieselbe
+  // Gruppierungsfunktion wie im fertigen Angebot, damit diese Ansicht
+  // strukturell nie von der finalen Darstellung abweichen kann.
+  const sammelPool = baueSammelPool(quoteInfo?.quote_items ?? [], neueAufnahmen)
+  const pendingById = new Map(sammelPool.map(item => [item.id, item.pending]))
+  const gruppen = gruppiereNachRaum(sammelPool)
+  const gesamtPositionen = sammelPool.length
+
+  type BannerTon = 'success' | 'mixed' | 'neutral'
+  const bannerZustand: { ton: BannerTon; text: string } | null = (() => {
+    if (!alleTranskribiertOderFehler || aufnahmen.length === 0 || recording) return null
+    if (nichtsErkannt) {
+      return { ton: 'neutral', text: 'Noch nichts erkannt — nochmal versuchen? Lauter oder mit mehr Details sprechen hilft oft.' }
+    }
+    if (neueAufnahmen.length === 0) {
+      return { ton: 'success', text: 'Alle Aufnahmen bereits verarbeitet — neue Aufnahme hinzufügen um mehr Positionen zu ergänzen.' }
+    }
+    if (hatBestehendPositionen) {
+      return {
+        ton: 'mixed',
+        text: `${gesamtPositionen} ${gesamtPositionen === 1 ? 'Position' : 'Positionen'} — ${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'neu, wird berechnet.' : 'neu, werden berechnet.'}`,
+      }
+    }
+    return { ton: 'success', text: `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt — bereit für den Entwurf.` }
+  })()
 
   // ── Zurück-Bestätigung Screen ─────────────────────────────────────────────
 
@@ -779,7 +968,9 @@ export default function EntwurfPage() {
             </div>
             {aufnahmen.length > 0 && (
               <div className="text-[11px] text-[#2C2C2C]/40 font-semibold">
-                {aufnahmen.length} {aufnahmen.length === 1 ? 'Aufnahme' : 'Aufnahmen'}
+                {gruppen
+                  ? `${gruppen.raeume.length} ${gruppen.raeume.length === 1 ? 'Raum' : 'Räume'} · ${gesamtPositionen} ${gesamtPositionen === 1 ? 'Position' : 'Positionen'}`
+                  : `${aufnahmen.length} ${aufnahmen.length === 1 ? 'Aufnahme' : 'Aufnahmen'}`}
               </div>
             )}
           </div>
@@ -787,21 +978,6 @@ export default function EntwurfPage() {
           <div className="w-[72px]" />
         </div>
       </div>
-
-      {/* Hinweis: bestehende Positionen */}
-      {hatBestehendPositionen && (
-        <div className="mx-4 mt-4 bg-[#2C2C2C] rounded-2xl px-4 py-3 flex items-center gap-3">
-          <Check size={16} className="text-[#F5C400] shrink-0" strokeWidth={2.5} />
-          <div>
-            <p className="text-white font-extrabold text-[13px]">
-              {quoteInfo?.quote_items?.length} Positionen bereits berechnet
-            </p>
-            <p className="text-white/50 font-semibold text-[12px] mt-0.5">
-              Neue Aufnahmen werden als weitere Positionen ergänzt.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Intro wenn noch keine Aufnahmen */}
       {!loading && aufnahmen.length === 0 && (
@@ -866,11 +1042,54 @@ export default function EntwurfPage() {
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
-          {aufnahmen.map(a => (
-            <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => setDeleteBestaetigen(a.id)} onRetry={() => retryAufnahme(a.id)} />
-          ))}
-        </div>
+        {/* DC-028: raum-gruppierter Sammel-Bestand — dieselbe Gruppierung wie im
+            fertigen Angebot. Ohne erkennbare Räume (gruppen === null) Fallback
+            auf die vorherige, ungruppierte Aufnahme-Liste — lieber nichts
+            erfinden als eine Raum-Struktur vortäuschen, die nicht da ist. */}
+        {gruppen ? (
+          <>
+            <div className="flex flex-col gap-3">
+              {gruppen.raeume.map(raum => (
+                <RaumKarte key={raum.raumName} raumName={raum.raumName} emoji={raum.emoji} items={raum.items} pendingById={pendingById} />
+              ))}
+              {gruppen.allgemein.length > 0 && (
+                <RaumKarte raumName="Allgemein" emoji="📋" items={gruppen.allgemein} pendingById={pendingById} />
+              )}
+            </div>
+
+            {/* Einzelne Aufnahmen — schlanke Chip-Leiste statt großer Kästen.
+                Antippen öffnet die Details (Transkript, Audio, Löschen, Retry). */}
+            <div className="mt-5">
+              <div className="text-[11px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35 mb-2">
+                Aufnahmen ({aufnahmen.length})
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+                {aufnahmen.map(a => (
+                  <AufnahmeChip key={a.id} aufnahme={a} onOpen={() => setAufnahmeDetail(a.id)} />
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {hatBestehendPositionen && (
+              <div className="bg-[#2C2C2C] rounded-2xl px-4 py-3 flex items-center gap-3">
+                <Check size={16} className="text-[#F5C400] shrink-0" strokeWidth={2.5} />
+                <div>
+                  <p className="text-white font-extrabold text-[13px]">
+                    {quoteInfo?.quote_items?.length} Positionen bereits berechnet
+                  </p>
+                  <p className="text-white/50 font-semibold text-[12px] mt-0.5">
+                    Neue Aufnahmen werden als weitere Positionen ergänzt.
+                  </p>
+                </div>
+              </div>
+            )}
+            {aufnahmen.map(a => (
+              <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => setDeleteBestaetigen(a.id)} onRetry={() => retryAufnahme(a.id)} />
+            ))}
+          </div>
+        )}
 
         {/* Aufnahme-Indikator */}
         {recording && (
@@ -883,16 +1102,22 @@ export default function EntwurfPage() {
           </div>
         )}
 
-        {/* Status wenn alle Aufnahmen fertig — nicht während laufender Aufnahme */}
-        {alleTranskribiertOderFehler && aufnahmen.length > 0 && !recording && (
-          <div className="mt-3 bg-[#EDFAF0] border border-[#1A7A38]/20 rounded-2xl px-4 py-3 flex items-center gap-2">
-            <Check size={14} className="text-[#1A7A38] shrink-0" />
-            <span className="text-[13px] font-semibold text-[#1A7A38]">
-              {neueAufnahmen.length > 0
-            ? `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt — bereit für den Entwurf.`
-            : 'Alle Aufnahmen bereits verarbeitet — neue Aufnahme hinzufügen um mehr Positionen zu ergänzen.'
-          }
-            </span>
+        {/* Status wenn alle Aufnahmen fertig — nicht während laufender Aufnahme.
+            DC-009: 0 erkannte Positionen ist kein grüner Erfolg mehr, sondern ein
+            neutraler Hinweis. DC-010: eine einzige Quelle (gesamtPositionen /
+            erkannteAnzahl) statt zwei separat geführter Zähler. */}
+        {bannerZustand && (
+          <div className={`mt-3 rounded-2xl border px-4 py-3 flex items-center gap-2 ${
+            bannerZustand.ton === 'success' ? 'bg-[#EDFAF0] border-[#1A7A38]/20'
+            : bannerZustand.ton === 'mixed' ? 'bg-[#F5C400]/10 border-[#F5C400]/40'
+            : 'bg-[#2C2C2C]/5 border-[#2C2C2C]/10'
+          }`}>
+            {bannerZustand.ton === 'neutral'
+              ? <AlertCircle size={14} className="text-[#2C2C2C]/40 shrink-0" />
+              : <Check size={14} className={`shrink-0 ${bannerZustand.ton === 'mixed' ? 'text-[#8B7000]' : 'text-[#1A7A38]'}`} />}
+            <span className={`text-[13px] font-semibold ${
+              bannerZustand.ton === 'success' ? 'text-[#1A7A38]' : bannerZustand.ton === 'mixed' ? 'text-[#8B7000]' : 'text-[#2C2C2C]/60'
+            }`}>{bannerZustand.text}</span>
           </div>
         )}
       </div>
@@ -908,8 +1133,8 @@ export default function EntwurfPage() {
             className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
           >
             <span className="flex flex-col items-center leading-tight">
-              <span>✓ {erkannteAnzahl} {erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
-              <span className="text-[12px] font-bold opacity-65 mt-1">Entwurf erstellen · ca. {bearbeitungszeit} Sekunden</span>
+              <span>✓ {erkannteAnzahl} {hatBestehendPositionen ? 'neue ' : ''}{erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
+              <span className="text-[12px] font-bold opacity-65 mt-1">{hatBestehendPositionen ? 'Entwurf aktualisieren' : 'Entwurf erstellen'} · ca. {bearbeitungszeit} Sekunden</span>
             </span>
             <ChevronRight size={18} strokeWidth={3} />
           </button>
@@ -950,7 +1175,7 @@ export default function EntwurfPage() {
                 <Mic size={32} strokeWidth={2} className="text-white" />
               </button>
               <span className="text-[#2C2C2C]/40 font-semibold text-[13px]">
-                {aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}
+                {nichtsErkannt ? 'Nochmal aufnehmen' : aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}
               </span>
             </div>
 
@@ -969,6 +1194,27 @@ export default function EntwurfPage() {
       </div>
 
       {showNotiz && <NotizModal onSave={saveNotiz} onClose={() => setShowNotiz(false)} />}
+
+      {/* DC-028: Aufnahme-Detail-Sheet — aufgerufen über die Chip-Leiste, zeigt
+          dieselbe AufnahmeCard wie vorher (Transkript, Audio, Löschen, Retry),
+          nur nicht mehr fest in der Timeline, sondern bei Bedarf. */}
+      {aufnahmeDetail && (() => {
+        const a = aufnahmen.find(x => x.id === aufnahmeDetail)
+        if (!a) return null
+        return (
+          <div className="fixed inset-0 z-40 flex items-end">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAufnahmeDetail(null)} />
+            <div className="relative w-full max-h-[85dvh] overflow-y-auto bg-[#F7F7F5] rounded-t-3xl px-4 pt-4 pb-8 shadow-2xl">
+              <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+              <AufnahmeCard
+                aufnahme={a}
+                onDelete={() => { setAufnahmeDetail(null); setDeleteBestaetigen(a.id) }}
+                onRetry={() => retryAufnahme(a.id)}
+              />
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Lösch-Bestätigung Bottom-Sheet */}
       {deleteBestaetigen && (

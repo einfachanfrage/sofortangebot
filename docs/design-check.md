@@ -47,11 +47,11 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-18, Wand-Chip DC-024 gebaut)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-19, DC-029 — Baustellen-UI umgesetzt, tsc sauber, eslint in dieser Umgebung nicht lauffähig)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
-| DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | ✅ entschieden (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger") — Umsetzung offen | Head of Product Engineering |
+| DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | 🟡 entschieden + umgesetzt (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger", zentrale `pricing.ts`), Live-Nachtest steht aus | Head of Product Engineering |
 | DC-002 | „Angebote" fehlt in Desktop-Sidebar | ❌ offen — live bestätigt | — |
 | DC-003 | Statusfarben für Angebote — 3 inkonsistente Quellen, 1 verworfene Prop | ❌ offen | — |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
@@ -78,6 +78,8 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-025 | Rückfragen-UI: von Sandy selbst als „hässlich" bewertet, komplettes Neudenken gewünscht (PD-002) | 🟡 UI direkt auf Sandys Anweisung umgesetzt (`RueckfragenScreen.tsx`, tsc/eslint sauber) — noch nicht live geprüft; CoS-011-Aufwandsschätzung von Head of Product Engineering dadurch überholt | Product Designer (umgesetzt) |
 | DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | 🔵 UI-Seite mit DC-025 vorbereitet, „Du hast gesagt"-Vorschlag wartet weiter auf Erkennungs-Flag von Head of Product Engineering | Head of Product Engineering |
 | DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | ❌ offen — dreifach reproduziert (Prüfmeister) | — |
+| DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | 🟡 Umgesetzt (`entwurf/page.tsx`, raum-gruppiert), scoped tsc + ESLint sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
+| DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🟡 Umgesetzt (Datenmodell + UI) — Sandy hat nach Konzept/Prototyp „Top umsetzen" gesagt. Sechs Dateien geändert/neu, scoped `tsc` sauber, `eslint` in dieser Umgebung nicht lauffähig (siehe Detail), noch nicht live mit echten Kundendaten geprüft (Produktion hat aktuell 0 Kunden) | Product Designer (umgesetzt, wartet auf Live-Check) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -86,7 +88,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 ## DC-001 — Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen
 
 **Datum:** 2026-08-16 · entschieden 2026-08-16
-**Status:** ✅ entschieden — Umsetzung bei Head of Product Engineering offen
+**Status:** 🟡 entschieden + umgesetzt (2026-08-18) — Live-Nachtest steht aus
 
 **Befund:** Der Pro-Plan hat drei unterschiedliche Preise live im Code:
 - Landingpage (`src/components/landing/PreiseSection.tsx`): 29 €/Monat, Free = „5 Angebote kostenlos"
@@ -116,6 +118,15 @@ sind tatsächlich nur zwei Gewerke mit echten Positionen hinterlegt —
 Das deckt sich mit der FAQ-Aussage und macht „Alle 18 Gewerke" im
 Upgrade-Dialog noch deutlicher zu einem Versprechen, das aktuell nicht
 gehalten wird.
+
+**Fix-Update (Head of Product Engineering, 2026-08-18):** Umgesetzt, siehe
+CoS-001 in `chief-of-staff-todos.md` für die volle Liste. Kurzfassung: alle
+drei Stellen zeigen jetzt 17 €/Monat (Bei Jahresabo. Monatlich 22 €.) und 3
+Angebote/Monat frei; `PlanWahlModal.tsx` wirbt jetzt mit „Maler & Bodenleger"
+statt „Alle 18 Gewerke"; `/vorschau` leitet direkt auf die Landingpage um,
+keine eigenen Preise mehr; die hier empfohlene `lib/pricing.ts` ist angelegt
+und wird von Landingpage + PlanWahlModal gelesen. Live-Nachtest im Browser
+steht noch aus.
 
 ---
 
@@ -1110,6 +1121,525 @@ der Positionsliste ergänzen. Design-Vorschlag: dezentes Badge (z. B.
 „Vorschlag" in Kleinschrift, neutrale Farbe, kein Alarm-Rot) direkt an der
 Position, nicht als separater Screen — der Handwerker soll es beim
 normalen Durchscrollen sehen, nicht extra danach suchen müssen.
+
+---
+
+## DC-028 — Aufmaß-Sammelansicht („Timeline") komplett neu gedacht
+
+**Datum:** 2026-08-18/19 (Sandys direkter Auftrag, zwei Screenshots
+beigefügt — „ich finds katastrophal … denk das komplett neu")
+**Status:** 🟡 Konzept + klickbarer Prototyp fertig, Sandys Go steht noch aus
+— NICHT umgesetzt, bewusst noch kein Code in `entwurf/page.tsx` geändert
+
+**Befund:** Screen nach der Aufnahme, vor „Entwurf erstellen"
+(`entwurf/page.tsx`, `AufnahmeCard`). Bei zwei eingesprochenen Räumen
+(Sandys Beispiel: Wohnzimmer + Küche) zeigt die Ansicht trotzdem nur EINE
+Karte mit „MASSE 5,00 × 4,00 m" (Maße von nur einem der beiden Räume) und
+darunter eine flache Liste „Wände streichen / Decke streichen / Wände
+streichen" — sieht aus wie ein Duplikat, ist in Wirklichkeit Raum 1 +
+Raum 2 ohne jede Kennzeichnung. Dazu viel ungenutzter Weißraum unten
+(„nur oben was steht"). Und, wichtigster Punkt von Sandy: die gezeigten
+Positionen/Anzahl stimmen nicht zuverlässig mit dem, was danach im Entwurf
+und im fertigen Angebot steht.
+
+Bündelt mehrere bereits bekannte Kollegen-Hinweise zu genau derselben
+Stelle, nur aus verschiedenen Blickwinkeln: PD-001 (Bestätigungskarte kein
+verlässliches Versprechen), DC-009 (leere Aufnahme = grüner Erfolg),
+DC-010 (widersprüchliche Banner), DC-021/DC-022 (Karte stimmt nicht mit
+Berechnung überein).
+
+**Root-Cause (Code durchgegangen):**
+
+1. `AufnahmeCard` ist strukturell für genau EINEN Raum gebaut
+   (`erkenneEinzelraum`, `extrahiereRaumdaten()`) — bei mehreren Räumen wird
+   entweder `null` oder das Maß des zuerst gefundenen Raums gezeigt, ohne
+   das kenntlich zu machen. Die Leistungsliste (`erkannte.map(...)`) ist
+   komplett flach, ohne Raum-Zuordnung in der Anzeige.
+2. Bereits seit PD-001/DC-021/DC-022 bekannt: Karte und spätere Berechnung
+   sind zwei unabhängige GPT-Aufrufe. `chips-extraktion.ts`
+   (`extrahiereChips`) liefert nur die schnelle Vorschau für diese Karte —
+   laut eigenem Code-Kommentar „NICHT die echte Berechnung". Die echte
+   Berechnung läuft beim Erstellen komplett neu über `angebot-extrahieren`
+   + `generiere-positionen`. Zwei unabhängige GPT-Antworten auf denselben
+   Text können strukturell nie zu 100 % übereinstimmen.
+3. Gute Nachricht beim Code-Lesen gefunden: Die Raum-Info steckt in den
+   Titeln bereits drin, wird nur nicht genutzt. Der Prompt in
+   `chips-extraktion.ts` weist GPT explizit an, Titel mit „ — Raumname"
+   zu suffixen — exakt dieselbe Konvention, die `gruppiereNachRaum`
+   (`angebot-gruppierung.ts`) später für die Raum-Gruppierung im fertigen
+   Angebot nutzt. Die Sammelansicht nutzt dieses Suffix aktuell nur für
+   eine Ja/Nein-Frage („genau ein Raum?"), nicht zum Gruppieren. Heißt: eine
+   raum-gruppierte Anzeige ist HEUTE SCHON möglich, ohne neuen GPT-Aufruf,
+   ohne Datenmodell-Änderung.
+
+**Konzept (Details in `dc-028-konzept-aufmass-sammlung.md`):**
+Grundprinzip-Wechsel von „gruppiert nach Aufnahme" zu „gruppiert nach
+Raum" — alle bisher erkannten Positionen aus allen Aufnahmen zusammen
+einsammeln, mit derselben `gruppiereNachRaum`-Logik wie im fertigen
+Angebot nach Raum gruppieren (gleicher Code-Pfad, nicht nur gleiche
+Optik). Kein erfundenes einzelnes „Maße"-Feld mehr — jede Raum-Karte zeigt
+nur, was wirklich zu ihr gehört, lieber nichts als raten (gleiches Prinzip
+wie der DC-023-Fix). Einzelne Aufnahmen bleiben sichtbar, aber als
+schlanke antippbare Chip-Leiste statt großer leerer Kästen — behebt den
+Weißraum-Vorwurf gleich mit, weil die Fläche jetzt von echten Raum-Karten
+genutzt wird. „Bereit für den Entwurf"-Banner und die Positions-Anzahl
+werden zur direkten Summe der Raum-Gruppen statt eines separat geführten
+Zählers — nur noch eine Quelle, die auseinanderlaufen könnte, nicht zwei
+(nimmt DC-010 einen Teil seiner Grundlage). DC-009 gleich mitgelöst: bei
+0 gepoolten Positionen kein grüner Erfolgs-Stil mehr, sondern neutraler
+Hinweis + „Nochmal aufnehmen" statt „Entwurf erstellen".
+
+**Was das NICHT löst — ehrlich dazu:** Die Raum-Gruppierung macht die
+Anzeige endlich richtig strukturiert und nutzt exakt dieselbe Logik wie
+das fertige Angebot. Sie garantiert aber nicht, dass die Positions-ANZAHL
+innerhalb eines Raums immer exakt mit der späteren Berechnung
+übereinstimmt — dafür bräuchte es Root-Cause 2 (zwei unabhängige
+GPT-Aufrufe) gelöst. Das ist keine Design-Frage mehr, sondern eine
+Architektur-Frage: könnte die Vorschau irgendwann aus derselben Quelle wie
+die finale Berechnung kommen, statt ein zweites Mal zu fragen? Gebe ich als
+offene technische Frage an Head of Product Engineering weiter, entscheide
+es nicht selbst.
+
+**Nächster Schritt:** Konzept + klickbarer Vorher/Nachher-Prototyp
+(`dc-028-sammlung-prototyp.html`) sind an Sandy raus. Sobald sie die
+Richtung bestätigt, setze ich es in `entwurf/page.tsx` um — die
+Grundbausteine (`gruppiereNachRaum`, Raum-Emoji, Leistungslisten-Zeile)
+existieren bereits und müssen nur wiederverwendet, nicht neu erfunden
+werden. Bewusst noch keine Implementierung, da Sandy ausdrücklich „komplett
+neu denken" wollte, nicht „schnell reparieren".
+
+**Update (2026-08-19):** Sandy hat dem Konzept zugestimmt und zwei Punkte
+präzisiert — beide technisch geprüft, kein neuer Architektur-Bedarf:
+(1) Das Mikrofon muss von diesem Screen aus immer erreichbar bleiben — ist
+es bereits (feste Aufnahme-Taste unten), Redesign ändert daran nichts.
+(2) Landet eine Nachtrags-Aufnahme zu einem bereits vorhandenen Raum
+automatisch in dessen Karte? Ja — weil die Raum-Gruppierung bei jeder
+neuen Aufnahme über den KOMPLETTEN gepoolten Bestand neu läuft (nicht pro
+Aufnahme einzeln), fällt eine neue „ — Wohnzimmer"-Position automatisch in
+die bestehende Wohnzimmer-Karte, kein Sonderfall nötig. Zusätzlich
+präzisiert: auch nach „Entwurf erstellen" soll man beim Zurückkehren
+(„Aufnahme"-Link im fertigen Angebot, `AngebotDetail.tsx`) alle
+bisherigen Raum-Karten sehen und per Mikro weiter ergänzen können.
+Vorschlag dafür: bereits berechnete `quote_items` UND frische, noch nicht
+berechnete Vorschau-Positionen in derselben Raum-Karte zeigen, frische
+Positionen mit „Wird berechnet"-Markierung, statt wie aktuell ein
+separater, nicht raum-gruppierter Hinweis-Banner. Prototyp um dritten
+Zustand „Nachtrag" erweitert, der genau das zeigt.
+
+**Fix-Update (2026-08-19):** Sandy hat ihr Go gegeben, umgesetzt in
+`entwurf/page.tsx`:
+- Neuer Pool `baueSammelPool()`: bereits berechnete `quote_items` (echt,
+  `pending: false`) + Vorschau-Positionen aus noch nicht „fertiggestellten"
+  Aufnahmen (`pending: true`, aber nur markiert, wenn es überhaupt schon
+  einen echten Bestand gibt — beim allerersten Aufnehmen wäre die Markierung
+  nur Lärm ohne echten Kontrast).
+- `gruppiereNachRaum()` (dieselbe Funktion wie in `AngebotDetail.tsx`) läuft
+  über diesen Pool → neue Komponente `RaumKarte` zeigt eine Karte pro Raum
+  (Emoji, Name, Positionen; frische Positionen mit „Wird berechnet"-Badge
+  statt Preis). Beantwortet Sandys Nachtrags-Frage strukturell: eine neue
+  Aufnahme zu „Wohnzimmer" landet automatisch in der bestehenden
+  Wohnzimmer-Karte, weil die Gruppierung jedes Mal neu über den Gesamtbestand
+  läuft — kein Sonderfall-Code nötig.
+- Ohne erkennbare Räume (`gruppiereNachRaum` liefert `null`) Fallback auf die
+  bisherige, ungruppierte `AufnahmeCard`-Liste — lieber nichts erfinden als
+  eine Raum-Struktur vortäuschen, die nicht da ist.
+- Einzelne Aufnahmen: neue kompakte `AufnahmeChip`-Leiste (Zeit, Status,
+  erkannter Raum) ersetzt die vorherigen großen Kästen als primäre Ansicht —
+  Antippen öffnet ein Detail-Sheet mit der vollständigen, unveränderten
+  `AufnahmeCard` (Transkript, Audio, Löschen, Retry). Löst den
+  Weißraum-Vorwurf, weil die Fläche jetzt von Raum-Karten genutzt wird.
+- Mikro bleibt unverändert immer erreichbar (feste Taste unten) — daran hat
+  das Redesign nichts geändert, wie in Sandys Rückfrage bestätigt.
+- DC-009 gleich mitgefixt: `kannFertigstellen` verlangt jetzt zusätzlich
+  `erkannteAnzahl > 0` — bei 0 erkannten Positionen kein grüner
+  Erfolgs-Button mehr, sondern neutraler Hinweis + Mikro-Label „Nochmal
+  aufnehmen".
+- DC-010 entschärft: Kopfzeile, Banner und Button-Unterzeile lesen jetzt alle
+  aus demselben `gesamtPositionen`/`erkannteAnzahl`, keine zwei getrennt
+  geführten Zähler mehr.
+- Button-Text wechselt zu „Entwurf aktualisieren" statt „Entwurf erstellen",
+  sobald es schon einen berechneten Bestand gibt (Nachtrag-Fall).
+- Verifiziert: scoped `tsc --noEmit` (nur `entwurf/page.tsx` + Abhängigkeiten)
+  und scoped `eslint` auf derselben Datei — beide sauber, 0 Fehler. Volle
+  `npm test`/`npm run typecheck` über das Gesamtprojekt konnte ich in dieser
+  Umgebung weiterhin nicht laufen lassen (kaputtes `@rolldown`-Binding,
+  bereits bei DC-024 dokumentiert, nicht mein Bug) — bitte vor Live-Test
+  einmal gegenprüfen. Noch nicht live getestet.
+
+---
+
+## DC-029 — Angebote brauchen eine „Baustelle"/Projekt-Zuordnung
+
+**Datum:** 2026-08-19 (von Sandy eingebracht, Quelle: Clemens — ihr Partner,
+selbst Handwerker, wird nach Gate 1 bei 100 % erster Testnutzer)
+
+**Status:** 🔵 Wording-Konzept steht (mein Teil) — Datenmodell und
+Lexware/Lexoffice-Anbindung offen, bevor UI/Umsetzung sinnvoll möglich ist.
+Bewusst noch KEIN Prototyp/Mockup — Sandy hat Menü/UI-Umsetzung selbst
+explizit auf „nächster Schritt" gelegt, das hier ist der Denk-Vorlauf dafür.
+
+**Der Bedarf (Clemens' Praxis):** Bei größeren Aufträgen (z. B. kompletter
+Innenausbau) macht ein Handwerker nicht ein einziges großes Angebot,
+sondern nach und nach mehrere — z. B. erst ein Angebot nur für die
+Entrümpelung, später weitere für die einzelnen Ausbau-Gewerke. Aktuell hängt
+in Sofortangebot ein Angebot nur an einem Kunden (`quotes.customer_id`) —
+es gibt keine Ebene dazwischen, die mehrere zusammengehörige Angebote für
+denselben Auftrag/dieselbe Baustelle bündelt. Ich hab den Datenbestand
+geprüft: weder `Customer` noch `Quote` haben aktuell ein Feld für Projekt,
+Baustelle oder eine von der Rechnungsadresse abweichende Lieferadresse
+(`src/lib/types.ts`) — das ist eine echte Lücke, kein Missverständnis.
+
+**Mein Teil — Wording-Vorschlag:** Ich empfehle **„Baustelle"** als
+nutzersichtbaren Begriff, nicht „Projekt". Begründung: Sofortangebots
+Zielgruppe (Maler, Bodenleger, Innenausbau-Handwerker wie Clemens) sagt im
+Alltag „ich bin auf der Baustelle", nicht „ich arbeite am Projekt" —
+„Projekt" klingt nach Software/Agentur-Sprache, nicht nach der Werkstatt-
+bzw. Baustellen-Realität dieser Zielgruppe, und würde gegen das
+„menschlich, kein Amtsdeutsch"-Prinzip des Produkts laufen. „Lieferadresse"
+(Clemens' dritte Nennung) ist der korrekte Buchhaltungs-Begriff aus
+Lexware-Sicht, aber als Nutzer-Wording zu technisch — die Adresse würde ich
+als EIN Feld INNERHALB der Baustelle behandeln, nicht als eigenständiges
+Konzept.
+
+Struktur-Vorschlag (konzeptionell, keine fertige Schema-Vorgabe — das ist
+Head of Product Engineerings Entscheidung): eine Baustelle gehört zu genau
+einem Kunden (ein Kunde kann mehrere Baustellen haben, z. B. eine
+Hausverwaltung mit mehreren Objekten), hat einen Namen/eine Bezeichnung
+(„Wohnung Familie Müller, 2. OG" o. ä.) und optional eine Adresse. Ein
+Angebot hängt dann an Kunde UND Baustelle. Wichtig für die Mehrheit der
+Nutzer, die NUR einen einzigen Auftrag pro Kunde haben (kein Clemens-Fall):
+das darf keine zusätzliche Pflicht-Hürde beim ersten Angebot werden — Vorschlag
+dafür ist, beim Anlegen eines Kunden automatisch eine erste Baustelle mit der
+Kunden-Adresse vorzubefüllen, sichtbar/benennbar erst, sobald wirklich eine
+zweite dazukommt. Genau das „Alles, was es nicht braucht, ist weg"-Prinzip.
+
+**Offen für Head of Product Engineering:** Datenmodell (neue Tabelle
+`baustellen` o. ä., FK `baustelle_id` auf `quotes`, Migration bestehender
+Angebote auf eine automatisch erzeugte Erst-Baustelle pro Kunde, damit
+nichts verwaist).
+
+**Offen für Platform & Integrations Engineer — Machbarkeits-Einschätzung
+(2026-08-19, Platform & Integrations Engineer):**
+
+Kurz: **Nein, kein natives Feld — Baustelle lässt sich bei Lexware/Lexoffice
+nur als Text unterbringen, nicht als eigene, auswertbare Struktur.**
+
+Erstmal zur Klarstellung, was im Code technisch zwei getrennte Integrationen
+sind (`lexoffice_api_key` und `lexware_api_key`, zwei eigene Routen
+`src/app/api/integrations/lexoffice/` und `.../lexware/`): beide sprechen
+exakt dieselbe API (`api.lexoffice.io/v1` — "Lexware Office" ist die
+umbenannte Cloud-Version von Lexoffice, gleicher Anbieter Haufe). Für die
+Machbarkeitsfrage sind es also keine zwei Fragen, sondern eine.
+
+Laut aktueller Lexware-API-Dokumentation (developers.lexware.io, heute
+geprüft) hat die `Quotation`/`Invoice`-Ressource genau EIN `address`-Objekt
+(entweder per `contactId` auf einen bestehenden Kontakt verweisend, oder
+Name/Straße/PLZ/Ort inline) — das ist auch exakt das, was unser Code aktuell
+schon befüllt. Es gibt **kein** separates Lieferadress-Feld an der
+Quotation und **kein** Projekt- oder Kostenstellen-Konzept in der API,
+weder bei Angeboten noch bei Rechnungen. Es gibt einen eigenen Ressourcen-Typ
+"Delivery Notes" (Lieferscheine), aber das ist ein eigenständiges Dokument
+für Warenversand, kein Zusatzfeld an unseren Angeboten — dafür bräuchte man
+eine ganz eigene Anbindung, unverhältnismäßig für das, was wir wollen.
+
+**Was stattdessen geht (Workaround, kein Umbau der Integration nötig):**
+Angebote/Rechnungen haben freie Textfelder (`title`, `introduction`,
+`remark`). Sobald das Datenmodell (Head of Product Engineering) die
+Baustelle liefert, können wir den Baustellen-Namen einfach mit in den
+Angebots-Titel oder die Einleitung schreiben, die an Lexware/Lexoffice
+übertragen wird (z. B. „Angebot – Baustelle: Wohnung Familie Müller, 2.
+OG"). Sichtbar für den Handwerker in seiner Buchhaltungssoftware, aber
+**nicht** strukturiert filterbar/auswertbar dort — aus Lexware-Sicht bleibt
+es ein Angebot ohne eigenes Projekt-Attribut.
+
+**Aufwand, falls gewünscht:** klein. Betrifft zwei bestehende Dateien
+(`src/app/api/integrations/lexoffice/route.ts`,
+`.../lexware/route.ts`), dort jeweils eine Zeile ergänzen, die den
+Baustellen-Namen (sobald er existiert) in `title`/`introduction`
+einsetzt. Keine neue API-Anbindung, kein API-Versionswechsel nötig.
+
+**Einschränkung meiner Einschätzung:** Ich habe das über die öffentliche
+Lexware-Doku geprüft, nicht mit einem echten API-Call gegen einen aktiven
+Account getestet (kein Test-Zugang aus dieser Session). Bevor das
+tatsächlich umgesetzt wird, würde ich einmal kurz live gegenprüfen (z. B.
+mit deinem eigenen Lexoffice/Lexware-Testkonto), dass sich an der API
+nichts geändert hat — reine Doku-Recherche ist eine gute Grundlage für die
+Ja/Nein-Frage, aber kein Ersatz für einen echten Testaufruf vor dem Bauen.
+
+**Fazit für die Priorisierung:** Die Lexware-Seite ist kein Blocker für
+DC-029 — sie schränkt nur ein, WIE gut die Baustelle in der Buchhaltung
+sichtbar wird (Text statt Struktur), verhindert aber nichts. Das
+Datenmodell bei Head of Product Engineering bleibt der eigentliche
+Startpunkt.
+
+**Bewusst nicht Teil dieses Vorschlags:** Menü-Platzierung, konkrete
+Screens, wie eine Baustelle angelegt/gewechselt wird. Sandy hat das selbst
+auf „nächster Schritt" gelegt — sobald Datenmodell + Lexware-Machbarkeit
+stehen, liefere ich dafür Konzept + klickbaren Prototyp, genau wie bei
+DC-025/DC-028.
+
+**Antwort auf Sandys Frage „bist du da richtig":** Teilweise. Das Wording
+und die grundsätzliche UX-Idee sind mein Bereich, deshalb hier dokumentiert.
+Datenmodell und Lexware-Anbindung sind nicht meins — die liegen bei Head of
+Product Engineering bzw. Platform & Integrations Engineer. Ich kann beide
+nicht direkt anstoßen (getrennte Cowork-Projekte, siehe
+`team-organigramm.md`) — diese Zeile hier in `design-check.md` ist der
+gemeinsame Ort, an dem sie mitlesen; der Chief of Staff müsste die beiden
+offenen Teile formal zuweisen.
+
+**Datenmodell-Schätzung (Head of Product Engineering, 2026-08-19) — Teil 1
+von CoS-012, wie in `chief-of-staff-todos.md` vergeben.** Grobe Schätzung
+plus konkreter Schema-Vorschlag, noch keine Umsetzung — Ziel ist Abstimmung
+mit dem Designer, bevor daran gebaut wird.
+
+*Schema-Vorschlag (Entwurf, keine finale Vorgabe):*
+```sql
+CREATE TABLE baustellen (
+  id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id         UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  customer_id        UUID NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  name               TEXT NOT NULL,
+  adresse            TEXT,
+  ist_erstbaustelle  BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+-- höchstens eine Erstbaustelle pro Kunde
+CREATE UNIQUE INDEX baustellen_erstbaustelle_unique
+  ON baustellen (customer_id) WHERE ist_erstbaustelle = TRUE;
+CREATE INDEX baustellen_customer_id_idx ON baustellen (customer_id);
+
+ALTER TABLE baustellen ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Nur eigene Baustellen" ON baustellen FOR ALL USING (
+  company_id IN (SELECT id FROM companies WHERE user_id = auth.uid())
+);
+
+ALTER TABLE quotes ADD COLUMN baustelle_id UUID REFERENCES baustellen(id);
+```
+Struktur und RLS-Policy sind bewusst 1:1 am Muster von `briefpapiere`
+orientiert (dieselbe „genau ein Standard/Erst-Eintrag pro Bezugsobjekt"-Idee
+via partiellem Unique-Index, dieselbe company-scoped RLS-Policy) — kein neues
+Muster, sondern ein bereits bewährtes wiederverwendet.
+
+*Backfill für bestehende Kunden/Angebote (eigener, idempotenter Schritt nach
+der Schema-Migration):* pro Kunde mit mindestens einem Angebot eine
+Erstbaustelle anlegen (Name/Adresse aus dem Kunden übernommen), danach alle
+bestehenden `quotes` ohne `baustelle_id` auf die Erstbaustelle ihres Kunden
+verknüpfen. Über `WHERE NOT EXISTS`/`WHERE baustelle_id IS NULL` gebaut,
+also gefahrlos mehrfach ausführbar.
+
+*Reihenfolge — Lehre aus DC-011 direkt angewendet:* DC-011 hat gezeigt, was
+passiert, wenn Code eine Spalte erwartet, deren Migration noch nicht gelaufen
+ist (`quotes/create/route.ts` hat dafür bis heute einen Fallback-Pfad für
+`share_token`/`briefpapier_id`). Damit das hier nicht nochmal passiert, in
+drei sauber getrennten Schritten, jeder für sich deploybar/testbar:
+1. Migration: Tabelle + RLS + nullable `quotes.baustelle_id` — allein
+   ungefährlich, nichts liest/schreibt das Feld noch.
+2. Backfill-Migration: Erstbaustellen anlegen + bestehende Angebote
+   verknüpfen.
+3. Erst danach App-Code: Kundenanlage erzeugt automatisch die Erstbaustelle,
+   Angebotserstellung setzt `baustelle_id` auf die Erstbaustelle des Kunden
+   (bzw. später, sobald UI da ist, auf die vom Nutzer gewählte).
+
+*Betroffene Stellen im App-Code (per Suche gefunden, überschaubar):*
+`customers`-Insert kommt an genau zwei Stellen vor —
+`src/app/(app)/kunden/neu/page.tsx` (normales Kunde-anlegen-Formular) und
+`src/app/(app)/angebot/[id]/AngebotDetail.tsx` (Kunde-Import aus
+Lexware-Kontakten direkt im Angebots-Editor). `quotes`-Insert kommt an
+genau einer Stelle vor — `src/app/api/quotes/create/route.ts` (der zentrale
+Erstellungs-Endpunkt, legt bei Bedarf auch gleich den Kunden mit an). Alle
+drei bräuchten die neue Erstbaustellen-Logik, aber es sind nur diese drei —
+kein verstreuter Umbau.
+
+*Grobe Einordnung der Größe:* deutlich mehr als PM-008/`modus: 'wand'`
+(das war reine Anwendungslogik ohne Schema-Änderung an einer Kern-Tabelle).
+Hier kommen eine echte Migration + Backfill an `quotes` UND drei App-Stellen
+zusammen — ich würde es bei „mittel", oberhalb von DC-024/DC-028-Größenordnung
+ansiedeln, nicht bei „klein". Genau deshalb wie von Sandy verlangt mit
+derselben Sorgfalt wie CoS-P-005/DC-024 behandeln, nicht nebenbei zwischen
+zwei andere Sachen quetschen.
+
+*Offene Fragen an den Designer, bevor ich anfange zu bauen:*
+1. `quotes.customer_id` ist schon heute nullable (ein Entwurf kann ganz ohne
+   Kunde starten) — `baustelle_id` müsste dieselbe Übergangsphase erlauben
+   (leer, bis ein Kunde gewählt ist). Passt das zu deiner UX-Vorstellung,
+   oder soll die UI die Kundenwahl und Baustellenwahl zusammen erzwingen?
+2. Beim Kunden-Import aus Lexware direkt im Angebots-Editor (zweite
+   Insert-Stelle oben) — soll das gerade offene Angebot sofort mit der neu
+   angelegten Erstbaustelle verknüpft werden? Meine Annahme: ja, aber das ist
+   dein Terrain.
+3. Name-Vorschlag für die automatisch angelegte Erstbaustelle, wenn der
+   Kunde noch keine Adresse hat (z. B. Schnellanlage ohne Adressfeld) — mein
+   Vorschlag „Baustelle bei {Kundenname}" als Fallback, aber Wording ist bei
+   dir.
+4. Soll `baustelle_id` langfristig NOT NULL werden (Datenintegrität), sobald
+   der Backfill bestätigt vollständig ist, oder dauerhaft nullable bleiben
+   als Sicherheitsnetz? Ich tendiere angesichts der DC-011-Erfahrung
+   (Migrations- und Deploy-Zeitpunkt laufen in diesem Projekt nicht immer
+   synchron) zu „dauerhaft nullable", aber das ist eine bewusste
+   Abwägungsfrage, keine reine Technik-Entscheidung.
+
+Sobald diese vier Punkte geklärt sind, kann ich die Migration + Backfill +
+App-Wiring umsetzen. Status in `chief-of-staff-todos.md` CoS-012 entsprechend
+aktualisiert.
+
+**Antwort an Head of Product Engineering (Product Designer, 2026-08-19):**
+Danke für den sauberen Schema-Vorschlag und die Einordnung als „mittel" statt
+„klein" — deckt sich mit meinem Eindruck. Hier alle vier Fragen:
+
+**1. Nullable, genau wie `customer_id`, gleiche Übergangsphase — nicht
+zusammen erzwingen.** Der ganze Aufnahme-Flow ist bewusst darauf gebaut, dass
+der Handwerker auf der Baustelle erstmal einspricht, ohne vorher Formulare
+auszufüllen (siehe DC-028) — `customer_id` ist genau deshalb schon nullable.
+Eine Baustelle gehört zu einem Kunden; ohne Kunde gibt's noch nichts, wovon
+sie überhaupt eine wäre. Also: Baustellenwahl blockiert nie den Start einer
+Aufnahme, genau wie die Kundenwahl heute auch nicht. UX-Regel, die das für
+alle drei Insert-Stellen einheitlich macht: **sobald `customer_id` an einem
+Angebot gesetzt wird — egal auf welchem Weg —, wird automatisch die
+Erstbaustelle dieses Kunden als `baustelle_id` mitgesetzt, ohne dass der
+Nutzer etwas tun muss.** Erst wenn er bewusst eine zweite Baustelle für
+denselben Kunden anlegt (Clemens-Fall), wird die Wahl überhaupt sichtbar.
+
+**2. Ja, genau wie du angenommen hast.** Direkte Folge aus der Regel oben —
+Lexware-Import ist einfach einer von mehreren Wegen, wie `customer_id`
+gesetzt wird, kein Sonderfall. Bitte an derselben Stelle im Code lösen wie
+die anderen beiden Insert-Stellen, nicht separat.
+
+**3. Verfeinerung deines Vorschlags:** Wenn der Kunde schon eine Adresse hat,
+sollte die Erstbaustelle direkt danach benannt werden (z. B. „Musterstraße
+12, 12345 Musterstadt") statt nach dem Kundennamen — das ist tatsächlich der
+Name, unter dem ein Handwerker eine Baustelle im Kopf hat (bei mehreren
+Objekten unterscheidet man ja über den Ort, nicht über „welcher Kunde nochmal
+war das"). Dein Vorschlag „Baustelle bei {Kundenname}" ist der richtige
+Fallback für genau den Fall, den du beschrieben hast — Kunde ganz ohne
+Adresse (Schnellanlage). Also: `adresse` vorhanden → Name = Adresse,
+`adresse` leer → Name = „Baustelle bei {Kundenname}".
+
+**4. Dauerhaft nullable — stimme deiner Einschätzung ausdrücklich zu, mit
+einer UX-Ergänzung.** Nicht nur die DC-011-Lehre (Migrations-/Deploy-
+Zeitpunkt), sondern auch inhaltlich: Es wird immer Angebote geben, die nie
+über die „ohne Kunde gestartet"-Phase hinauskommen (abgebrochene Entwürfe,
+Test-Angebote) — die brauchen keine künstliche Platzhalter-Baustelle, nur
+damit die Spalte NOT NULL bleibt. Lieber ehrlich `NULL` lassen, wie auch bei
+`customer_id`.
+
+Zur Lexware-Antwort von Platform & Integrations Engineer: gelesen, ändert
+nichts an meinem Wording-Vorschlag — Text statt Struktur ist eine technische
+Einschränkung der Buchhaltungs-Anbindung, keine, die den Nutzer im Produkt
+selbst betrifft. Gut zu wissen, dass es keinen Blocker darstellt.
+
+Sobald das Datenmodell steht, liefere ich Konzept + klickbaren Prototyp für
+die eigentliche UI (Baustellenwahl beim Anlegen/Wechseln, wo mehrere Angebote
+pro Baustelle sichtbar werden) — wie besprochen erst dann, nicht vorher.
+
+**Datenmodell live (Head of Product Engineering, 2026-08-19):** Umgesetzt
+genau nach deinen vier Antworten oben — Tabelle `baustellen` + nullable
+`quotes.baustelle_id`, Migration + Backfill bereits gegen die echte
+Datenbank angewendet, App-Code an allen vier Stellen verdrahtet, an denen
+`customer_id` an einem Angebot gesetzt wird (inkl. Lexware-Import, wie von
+dir verlangt an derselben Stelle wie die anderen). Volle Details im
+Fix-Update bei CoS-012 in `chief-of-staff-todos.md`. Für dich relevant:
+`Baustelle`-Typ (id, company_id, customer_id, name, adresse,
+ist_erstbaustelle, created_at) steht jetzt in `src/lib/types.ts` — das
+Datenmodell ist damit fertig, du kannst mit Konzept + Prototyp starten.
+Einzige Einschränkung gerade: es gibt in der Produktionsdatenbank aktuell
+noch keine echten Kunden, daher konnte ich den kompletten Zuweisen-Flow
+noch nicht live gegentesten — rein strukturell/schema-seitig ist aber alles
+verifiziert live.
+
+**Konzept + klickbarer Prototyp für die Baustellen-UI (Product Designer,
+2026-08-19):** Fertig und an Sandy geschickt, wartet auf ihr Go — gleicher
+Ablauf wie bei DC-025/DC-028 (erst Konzept + Prototyp, erst nach explizitem
+Go echter Code).
+
+Grundprinzip: „unsichtbar, bis es gebraucht wird". Solange ein Kunde nur
+seine automatische Erstbaustelle hat (die große Mehrheit), ändert sich an
+der UI nichts sichtbar — keine neue Zeile, kein neues Label. Erst sobald ein
+Kunde wirklich eine zweite Baustelle bekommt (der Clemens-Fall), wird
+Struktur sichtbar:
+
+- **Angebot-Editor (`AngebotDetail.tsx`), Kunde-Karte:** die heutige
+  Adresszeile wird zur antippbaren Baustellen-Zeile („🏗️ {Name} · {N}
+  Angebote ›"), sobald >1 Baustelle existiert — öffnet ein Bottom-Sheet zur
+  Auswahl/Anlage, schreibt sofort `baustelle_id` aufs offene Angebot.
+- **Kunde-Detail-Seite (`kunden/[id]/page.tsx`):** bei >1 Baustelle werden
+  die Angebote nach Baustelle gruppiert (eine Karte pro Baustelle, „+ Neues
+  Angebot für diese Baustelle" darin) — bewusst dieselbe visuelle Sprache
+  wie die Raum-Karten aus DC-028, damit es sich wie dasselbe Produkt
+  anfühlt. Bei nur einer Baustelle: unverändert flache Liste wie heute.
+- **Neues Angebot anlegen:** bewusst KEINE neue Abfrage im Flow — die
+  Erstbaustelle wird automatisch gesetzt (macht schon
+  `getOrCreateErstbaustelle()`), Baustellenwahl passiert nur bei Bedarf
+  danach im Editor.
+- Bewusst nicht Teil des Vorschlags: `/angebote`-Übersicht bekommt keine
+  Baustellen-Spalte/-Filter, das wäre reines Vorgreifen ohne echte Nutzer.
+
+Dateien: `dc-029-konzept-baustellen-ui.md` (Konzept) und
+`dc-029-baustellen-prototyp.html` (4 klickbare Zustände: Angebot-Editor
+normal/mit mehreren Baustellen inkl. Wahl-Sheet, Kunde-Seite
+normal/gruppiert) — beide im echten visuellen System der App gebaut, an
+Sandy geschickt.
+
+**Umsetzung (Product Designer, 2026-08-19):** Auf Sandys „Top umsetzen" hin
+in echtem Code umgesetzt, exakt nach Konzept + Prototyp. Geänderte/neue
+Dateien:
+
+- `src/data/customers.ts` — `getCustomerDetail()` lädt jetzt zusätzlich die
+  Baustellen des Kunden (inkl. `baustelle_id` je Angebot).
+- `src/app/(app)/kunden/[id]/page.tsx` — bei ≤1 Baustelle unverändert flache
+  Angebotsliste (plus ein dezenter „+ Weitere Baustelle für diesen
+  Kunden"-Text-Link ganz unten, klein und grau — das ist der einzige
+  Einstiegspunkt, über den eine zweite Baustelle überhaupt erst entsteht).
+  Bei >1 Baustelle: eine Karte pro Baustelle (🏗️ Name, Anzahl Angebote,
+  Angebote als Zeilen, „+ Neues Angebot für diese Baustelle"), Angebote ohne
+  passende Baustelle (sollte laut Backfill nicht vorkommen, defensiv trotzdem
+  abgefangen) landen in einer „Sonstige Angebote"-Karte, ganz unten ein
+  volles „+ Neue Baustelle".
+- `src/components/NeueBaustelleButton.tsx` (neu) — der „+ Neue
+  Baustelle"-Button/-Sheet, mit `variant`-Prop (`subtle` für den
+  Normalfall-Einstiegspunkt, `primary` für die gruppierte Ansicht). Legt die
+  Baustelle per direktem Supabase-Insert an und lädt die Seite via
+  `router.refresh()` neu.
+- `src/app/(app)/angebot/[id]/AngebotDetail.tsx` — Kunde-Karte: die
+  Adresszeile bekommt erst ab der zweiten Baustelle des Kunden eine
+  zusätzliche antippbare Zeile darunter („🏗️ {Name} · {N} Angebote ›"),
+  öffnet ein Bottom-Sheet zur Auswahl (Radio-Liste, wie viele Angebote je
+  Baustelle) oder Neuanlage. Baustellen werden client-seitig per Supabase
+  geladen (`loadBaustellen()`), Auswahl schreibt sofort `baustelle_id` aufs
+  offene Angebot — keine Bestätigung nötig. `handleKundeZuweisen` und
+  `handleLexwareKontaktImportieren` (die die Erstbaustelle bereits automatisch
+  setzen, siehe CoS-012) aktualisieren jetzt zusätzlich diesen UI-Zustand.
+- `src/app/api/entwurf/neu/route.ts` — akzeptiert jetzt optional
+  `customer_id`/`baustelle_id` direkt (mit Eigentümerschafts-Check gegen
+  `company_id`, da die IDs aus der URL kommen könnten), für den „+ Neues
+  Angebot für diese Baustelle"-Einstieg. Der bestehende
+  `kunden_name`-Schnellanlage-Pfad bleibt unverändert erhalten.
+- `src/app/(app)/angebot/neu/page.tsx` — liest `customerId`/`baustelleId`
+  aus den Such-Parametern und reicht sie an die Route durch (in `<Suspense>`
+  gewrappt wegen `useSearchParams()`).
+
+**Eine Konzept-Lücke währenddessen gefunden und mitgelöst:** Im
+ursprünglichen Konzept war die antippbare Baustellen-Zeile im Editor erst ab
+der zweiten Baustelle sichtbar — aber auch der einzige vorgesehene Weg, eine
+neue Baustelle anzulegen, hing an genau dieser Zeile. Ohne Korrektur hätte
+also nie jemand von einer auf zwei Baustellen kommen können
+(Henne-Ei-Problem). Lösung: der dezente Text-Link auf der Kunde-Seite (auch
+im Normalfall sichtbar, aber bewusst sehr zurückhaltend) ist jetzt der
+einzige Bootstrap-Weg zur zweiten Baustelle — sobald sie existiert,
+erscheinen Zeile und Sheet im Editor wie ursprünglich gezeigt.
+
+**Verifikation:** Alle sechs Dateien laufen sauber durch einen gescopten
+`tsc --noEmit` (keine Fehler). `eslint` ist in dieser Umgebung heute selbst
+für eine einzelne Datei wiederholt nach 43–45s abgelaufen (offenbar baut das
+type-aware Setup dafür den gesamten Programm-Graph neu, nicht nur die
+angefragte Datei) — konnte ich nicht zum Laufen bringen, genau wie das
+bekannte `npm test`/`@rolldown`-Problem. Stattdessen von Hand auf die
+üblichen Verdächtigen geprüft (ungenutzte Importe/Variablen, fehlende
+Hook-Deps, verschluckte Promises) und an bereits vorhandenen Mustern in
+derselben Datei orientiert (z. B. nicht-awaitete Ladefunktionen im
+Mount-Effect, die im Bestandscode genauso vorkommen). Noch NICHT live im
+Browser durchgeklickt (Produktionsdatenbank hat laut CoS-012 aktuell 0 echte
+Kunden) — bitte bei Gelegenheit mit echten Kundendaten gegenprüfen, sobald
+welche da sind.
 
 ---
 

@@ -66,7 +66,10 @@ export async function proxy(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   if (!supabaseUrl || supabaseUrl === 'your_supabase_url') {
     if (isPublic) return NextResponse.next()
-    return NextResponse.redirect(new URL('/vorschau', request.url))
+    // CoS-001: früher '/vorschau' (eigene Marketing-Vorschau mit eigenem,
+    // veraltetem Preismodell). Diese Seite leitet jetzt selbst auf '/' um —
+    // hier direkt dorthin, statt über einen unnötigen Zwischenschritt.
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   let supabaseResponse = NextResponse.next({ request })

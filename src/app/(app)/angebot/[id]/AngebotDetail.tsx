@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
+import type { Quote, QuoteItem, Company, Customer, Baustelle } from '@/lib/types'
 import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon, StickyNote,
@@ -29,6 +29,7 @@ import {
   berechneQuantityFuerItem, berechneRaumMasse,
 } from '@/lib/raum-geometrie'
 import { materialFuerPosition } from '@/lib/material-mapping'
+import { getOrCreateErstbaustelle } from '@/lib/baustellen'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -502,6 +503,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showKundenSuche, setShowKundenSuche] = useState(false)
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
   const [kundenListe, setKundenListe] = useState<Customer[]>([])
+  // DC-029: Baustelle dieses Angebots — Zeile/Sheet erscheint erst, sobald
+  // der Kunde wirklich mehr als eine Baustelle hat ("unsichtbar, bis es
+  // gebraucht wird"). Bis dahin bleibt die Adresszeile unten unverändert.
+  const [currentBaustelleId, setCurrentBaustelleId] = useState<string | null>(quote.baustelle_id ?? null)
+  const [kundenBaustellen, setKundenBaustellen] = useState<(Baustelle & { angebote_anzahl: number })[]>([])
+  const [showBaustelleSheet, setShowBaustelleSheet] = useState(false)
+  const [neueBaustelleName, setNeueBaustelleName] = useState('')
+  const [neueBaustelleAdresse, setNeueBaustelleAdresse] = useState('')
+  const [savingBaustelle, setSavingBaustelle] = useState(false)
   // Die Server-Seite liefert raum_details bereits mit dem Angebot. Direkt daraus
   // initialisieren, damit bekannte Maße beim ersten Render nicht als fehlend
   // aufblitzen, während die zusätzliche Detailabfrage noch läuft.
@@ -525,7 +535,26 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     loadEmpfehlungen()
     loadPriceItems()
     loadBriefpapiere()
+    if (currentCustomer) loadBaustellen(currentCustomer.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // DC-029: Baustellen des aktuell zugewiesenen Kunden laden (inkl. Anzahl
+  // Angebote je Baustelle, für die Auswahl-Zeile/das Sheet unten).
+  async function loadBaustellen(customerId: string) {
+    const { data } = await supabase
+      .from('baustellen')
+      .select('id, company_id, customer_id, name, adresse, ist_erstbaustelle, created_at, quotes(id)')
+      .eq('customer_id', customerId)
+      .order('ist_erstbaustelle', { ascending: false })
+      .order('created_at', { ascending: true })
+    setKundenBaustellen(
+      (data ?? []).map(b => ({
+        ...(b as unknown as Baustelle),
+        angebote_anzahl: (b as unknown as { quotes: { id: string }[] | null }).quotes?.length ?? 0,
+      }))
+    )
+  }
 
   // Pro-Angebot-Optionen speichern (leer = erben → null)
   async function speichereOptionen() {
@@ -1063,8 +1092,25 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   async function handleKundeZuweisen(kunde: typeof kundenListe[0] | null) {
-    await supabase.from('quotes').update({ customer_id: kunde?.id ?? null }).eq('id', quote.id)
+    // CoS-012/DC-029: sobald ein Kunde zugewiesen wird, automatisch dessen
+    // Erstbaustelle mitsetzen; beim Entfernen des Kunden auch die Baustelle
+    // wieder leeren (baustelle_id gehört ohne Kunde nirgendwo hin).
+    let baustelleId: string | null = null
+    if (kunde) {
+      const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
+      if (co) baustelleId = await getOrCreateErstbaustelle(supabase, co.id, kunde.id)
+    }
+    const { error: zuweisenError } = await supabase
+      .from('quotes')
+      .update({ customer_id: kunde?.id ?? null, baustelle_id: baustelleId })
+      .eq('id', quote.id)
+    if (zuweisenError?.message?.includes('baustelle_id')) {
+      // Spalte fehlt noch (Migration nicht ausgeführt) — ohne nochmal versuchen.
+      await supabase.from('quotes').update({ customer_id: kunde?.id ?? null }).eq('id', quote.id)
+    }
     setCurrentCustomer(kunde)
+    setCurrentBaustelleId(baustelleId)
+    if (kunde) { loadBaustellen(kunde.id) } else { setKundenBaustellen([]) }
     setShowKundenSuche(false)
     setKundenSucheQuery('')
     setKundenListe([])
@@ -1085,14 +1131,59 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       lexoffice_contact_id: k.id,
     }).select().single()
     if (neu) {
-      await supabase.from('quotes').update({ customer_id: neu.id }).eq('id', quote.id)
+      // CoS-012/DC-029, Designer-Antwort 2: Lexware-Import ist einer von
+      // mehreren Wegen, wie customer_id gesetzt wird — dieselbe Regel wie
+      // bei der normalen Kundenzuweisung, nicht separat behandelt.
+      const baustelleId = await getOrCreateErstbaustelle(supabase, co.id, neu.id)
+      const { error: importError } = await supabase
+        .from('quotes')
+        .update({ customer_id: neu.id, baustelle_id: baustelleId })
+        .eq('id', quote.id)
+      if (importError?.message?.includes('baustelle_id')) {
+        await supabase.from('quotes').update({ customer_id: neu.id }).eq('id', quote.id)
+      }
       setCurrentCustomer(neu as Customer)
+      setCurrentBaustelleId(baustelleId)
+      loadBaustellen(neu.id)
       setShowKundenSuche(false)
       setKundenSucheQuery('')
       setKundenListe([])
       setLexwareKontakte([])
       showToast(`${k.name} aus Lexware importiert ✓`)
     }
+  }
+
+  // DC-029: gewählte Baustelle diesem Angebot zuweisen (Sheet unten).
+  async function handleBaustelleWaehlen(baustelleId: string) {
+    const { error } = await supabase.from('quotes').update({ baustelle_id: baustelleId }).eq('id', quote.id)
+    if (error) { showToast('Baustelle konnte nicht zugewiesen werden'); return }
+    setCurrentBaustelleId(baustelleId)
+    setShowBaustelleSheet(false)
+    showToast('Baustelle zugewiesen ✓')
+  }
+
+  // DC-029: neue Baustelle für den aktuellen Kunden anlegen und direkt
+  // diesem Angebot zuweisen (Formular unten im Sheet, „+ Baustelle anlegen
+  // & zuweisen").
+  async function handleNeueBaustelleAnlegen() {
+    if (!currentCustomer || !neueBaustelleName.trim()) return
+    setSavingBaustelle(true)
+    const { data: co } = await supabase.from('companies').select('id')
+      .eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
+    if (!co) { setSavingBaustelle(false); showToast('Betrieb nicht gefunden'); return }
+    const { data: neu, error } = await supabase.from('baustellen').insert({
+      company_id: co.id,
+      customer_id: currentCustomer.id,
+      name: neueBaustelleName.trim(),
+      adresse: neueBaustelleAdresse.trim() || null,
+      ist_erstbaustelle: false,
+    }).select('id').single()
+    setSavingBaustelle(false)
+    if (error || !neu) { showToast('Baustelle konnte nicht angelegt werden'); return }
+    setNeueBaustelleName('')
+    setNeueBaustelleAdresse('')
+    await loadBaustellen(currentCustomer.id)
+    await handleBaustelleWaehlen(neu.id)
   }
 
   async function handleExport(provider: string, label: string) {
@@ -1113,6 +1204,67 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
       {/* Toast */}
       <Toast message={toast} />
+
+      {/* DC-029: Baustelle-Wahl-Sheet — nur relevant, wenn die Zeile oben
+          überhaupt sichtbar ist (kundenBaustellen.length > 1). */}
+      {showBaustelleSheet && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center" onClick={e => e.stopPropagation()}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowBaustelleSheet(false)} />
+          <div className="relative w-full md:max-w-sm bg-white rounded-t-3xl md:rounded-3xl px-5 pt-4 pb-8 md:pb-6 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="flex justify-center mb-4 md:hidden"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+            <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-4">Baustelle wählen</h2>
+            <div className="flex flex-col gap-2 mb-4">
+              {kundenBaustellen.map(b => (
+                <button
+                  key={b.id}
+                  onClick={() => handleBaustelleWaehlen(b.id)}
+                  className={`flex items-center gap-3 text-left px-3 py-3 rounded-2xl border-2 transition-colors ${
+                    b.id === currentBaustelleId ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10'
+                  }`}
+                >
+                  <div className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                    b.id === currentBaustelleId ? 'border-[#F5C400]' : 'border-[#2C2C2C]/25'
+                  }`}>
+                    {b.id === currentBaustelleId && <div className="w-[9px] h-[9px] rounded-full bg-[#F5C400]" />}
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm text-[#2C2C2C]">{b.name}</div>
+                    <div className="text-xs text-[#2C2C2C]/45 font-semibold mt-0.5">
+                      {b.angebote_anzahl === 0 ? 'Noch kein Angebot' : `${b.angebote_anzahl} ${b.angebote_anzahl === 1 ? 'Angebot' : 'Angebote'}`}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="border border-dashed border-[#2C2C2C]/20 rounded-2xl p-3">
+              <input
+                type="text"
+                value={neueBaustelleName}
+                onChange={e => setNeueBaustelleName(e.target.value)}
+                placeholder="Name (z. B. Bad OG links)"
+                className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold mb-2 focus:outline-none focus:border-[#F5C400]"
+              />
+              <input
+                type="text"
+                value={neueBaustelleAdresse}
+                onChange={e => setNeueBaustelleAdresse(e.target.value)}
+                placeholder="Adresse (optional)"
+                className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold mb-2 focus:outline-none focus:border-[#F5C400]"
+              />
+              <button
+                onClick={handleNeueBaustelleAnlegen}
+                disabled={!neueBaustelleName.trim() || savingBaustelle}
+                className="w-full bg-[#2C2C2C] text-white font-black rounded-xl py-2.5 text-sm disabled:opacity-50"
+              >
+                {savingBaustelle ? 'Wird angelegt…' : '+ Baustelle anlegen & zuweisen'}
+              </button>
+            </div>
+            <button onClick={() => setShowBaustelleSheet(false)} className="mt-3 w-full text-center text-xs font-bold text-[#2C2C2C]/40 py-2">
+              Schließen
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Revision-Dialog */}
       {showRevisionDialog && (
@@ -1430,6 +1582,26 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                       <Phone size={14} className="text-[#F5C400]" />{currentCustomer.phone}
                     </a>
                   )}
+                  {/* DC-029: erst sichtbar, sobald dieser Kunde wirklich mehr
+                      als eine Baustelle hat — vorher unverändert wie oben. */}
+                  {kundenBaustellen.length > 1 && (() => {
+                    const aktuelle = kundenBaustellen.find(b => b.id === currentBaustelleId)
+                    return (
+                      <button
+                        onClick={() => setShowBaustelleSheet(true)}
+                        className="mt-2 w-full flex items-center gap-1.5 bg-[#F7F7F5] border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-xs font-bold text-[#2C2C2C] text-left"
+                      >
+                        <span>🏗️</span>
+                        <span>{aktuelle?.name ?? 'Baustelle wählen'}</span>
+                        {aktuelle && (
+                          <span className="text-[#2C2C2C]/40 font-semibold">
+                            · {aktuelle.angebote_anzahl} {aktuelle.angebote_anzahl === 1 ? 'Angebot' : 'Angebote'}
+                          </span>
+                        )}
+                        <span className="ml-auto text-[#2C2C2C]/30">›</span>
+                      </button>
+                    )
+                  })()}
                 </>
               ) : (
                 <div className="text-sm text-[#2C2C2C]/30 font-semibold">Kein Kunde zugewiesen</div>

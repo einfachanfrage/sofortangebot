@@ -120,6 +120,31 @@ describe('berechneRaumMasse — Modi', () => {
     expect(m.hoehe).toBe(2.5)
     expect(m.wandflaeche).toBe(20)
   })
+
+  // PM-008-Nachtest 6 (2026-08-19): Sandys Fund — 3 Fenster à echten 1,20×1,40m
+  // (= 1,68 m² je Fenster, nicht das Standardmaß 1,20×1,00m = 1,20 m²)
+  // rechneten in der Bearbeiten-Ansicht bisher trotzdem mit dem Standardmaß
+  // (68,40 statt korrekt 66,96 m²), obwohl die ursprüngliche, korrekt
+  // bepreiste Position (Mengen-Engine, maler.ts) die echten Maße kannte.
+  // fensterFlaeche/tuerFlaeche geben genau diese echte, schon aufsummierte
+  // Fläche weiter und ersetzen dann den Stückzahl×Standard-Abzug.
+  it('wand mit echter fensterFlaeche (3× 1,20×1,40m): 66,96 m² statt 68,40 m² mit Standardmaß', () => {
+    const mStandard = berechneRaumMasse({ modus: 'wand', laenge: 12, hoehe: 6, fenster: 3 })
+    expect(mStandard.wandflaeche).toBe(68.4) // unverändertes Verhalten ohne echte Maße
+
+    const mEcht = berechneRaumMasse({
+      modus: 'wand', laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 3 * 1.2 * 1.4,
+    })
+    expect(mEcht.wandflaeche).toBe(66.96)
+  })
+
+  it('rechteck mit echter tuerFlaeche überschreibt den Standard-Türabzug', () => {
+    const m = berechneRaumMasse({
+      modus: 'rechteck', breite: 5, laenge: 4, hoehe: 2.6, tueren: 1, fenster: 0, tuerFlaeche: 2.2,
+    })
+    // Umfang 18 × 2.6 = 46.8, − 2.2 (echte Türfläche statt Standard 1.89) = 44.6
+    expect(m.wandflaeche).toBe(44.6)
+  })
 })
 
 describe('berechneQuantityFuerItem — Positions-Mapping', () => {
@@ -163,6 +188,11 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
   it('wand-Modus: Grundierung folgt derselben Fläche wie die Fassade', () => {
     const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3 }
     expect(berechneQuantityFuerItem('Grundierung — Südseite', 'm²', dim)).toBe(68.4)
+  })
+
+  it('wand-Modus: "Fassadenfläche streichen" nutzt die echte Fensterfläche, wenn bekannt (PM-008-Nachtest 6)', () => {
+    const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 3 * 1.2 * 1.4 }
+    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', dim)).toBe(66.96)
   })
 
   it('wand-Modus: Sockelleisten nicht berechenbar (kein Umfang an einer Fassade)', () => {

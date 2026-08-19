@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-028 — Aufmaß-Sammlung: Vorher/Nachher Prototyp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2C2C2C;
+    --ink-soft: #6b6b6b;
+    --yellow: #F5C400;
+    --green: #1A7A38;
+    --green-bg: #EAF6EC;
+    --red: #C4453B;
+    --red-bg: #FBEAE8;
+    --paper: #FAF9F6;
+    --card: #FFFFFF;
+    --line: #E7E4DD;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #EDEAE2;
+    color: var(--ink);
+  }
+  h1, h2, h3, .headline { font-family: 'Syne', sans-serif; font-weight: 700; }
+
+  .switcher {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    background: #1c1c1c;
+  }
+  .switcher button {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    background: #333;
+    color: #ccc;
+    transition: all .15s ease;
+  }
+  .switcher button.active.before {
+    background: var(--red-bg);
+    color: var(--red);
+    border-color: var(--red);
+  }
+  .switcher button.active.after {
+    background: var(--yellow);
+    color: var(--ink);
+    border-color: var(--yellow);
+  }
+  .note-bar {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    padding: 6px 16px 0;
+    background: #1c1c1c;
+  }
+
+  .phone {
+    max-width: 430px;
+    margin: 28px auto 60px;
+    background: var(--paper);
+    border-radius: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    overflow: hidden;
+    min-height: 780px;
+    border: 8px solid #111;
+  }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .topbar {
+    padding: 18px 20px 14px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .topbar h1 {
+    margin: 4px 0 0;
+    font-size: 22px;
+  }
+
+  .content { padding: 16px; }
+
+  /* ---------- BEFORE ---------- */
+  .before-card {
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .before-card .rec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .before-card .rec-head .time {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .before-card .rec-head .status {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-bg);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .masse-line {
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .masse-value {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    margin-bottom: 14px;
+  }
+  .pos-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .pos-row .qty { color: var(--ink-soft); }
+  .empty-space {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 13px;
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed #ddd;
+    border-radius: 16px;
+    margin-top: 8px;
+  }
+  .confused-flag {
+    margin-top: -4px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--red);
+    background: var(--red-bg);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  /* ---------- AFTER ---------- */
+  .room-card {
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+  .room-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .room-emoji { font-size: 22px; }
+  .room-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .room-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .room-flaeche {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .room-pos {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .room-pos .qty { color: var(--ink-soft); }
+
+  .chip-strip-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin: 20px 0 8px;
+  }
+  .chip-strip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .rec-chip {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .rec-chip .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .rec-chip .room-tag {
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .rec-chip.pending {
+    border-color: var(--yellow);
+    background: #FFFBEB;
+  }
+  .rec-chip.pending .dot {
+    background: var(--yellow);
+  }
+
+  .room-pos.pending {
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .room-pos.pending .qty { color: #C7A200; }
+  .pending-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #C7A200;
+    background: #FFF4CC;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-left: 8px;
+  }
+  .room-card.has-pending {
+    border-color: var(--yellow);
+  }
+
+  .banner {
+    margin: 4px 0 16px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: var(--green-bg);
+    color: var(--green);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .banner.bad {
+    background: var(--red-bg);
+    color: var(--red);
+  }
+  .banner.mixed {
+    background: #FFF4CC;
+    color: #8a6d00;
+  }
+
+  .bottom-cta {
+    padding: 16px;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+  .cta-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: none;
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .cta-sub {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+
+  .annot {
+    max-width: 430px;
+    margin: 0 auto 40px;
+    padding: 0 16px;
+  }
+  .annot .callout {
+    background: #fff;
+    border-left: 4px solid var(--yellow);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .annot .callout.bad { border-left-color: var(--red); }
+  .annot .callout b { display: block; margin-bottom: 3px; font-family: 'Syne', sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <button class="active before" onclick="show('before')">Vorher</button>
+  <button class="after" onclick="show('after')">Nachher</button>
+  <button class="after nachtrag" onclick="show('nachtrag')">Nachtrag</button>
+</div>
+<div class="note-bar" id="note-bar">DC-028 · Aufmaß-Sammelansicht · Sandys Beispiel: 2 Räume eingesprochen (Wohnzimmer, Küche)</div>
+
+<!-- ======================= BEFORE ======================= -->
+<div class="screen active" id="screen-before">
+  <div class="phone">
+    <div class="topbar">
+      <div class="label">Aufmaß</div>
+      <h1>1 Aufnahme</h1>
+    </div>
+    <div class="content">
+
+      <div class="before-card">
+        <div class="rec-head">
+          <span class="time">🎙 14:02 Uhr</span>
+          <span class="status">Fertig</span>
+        </div>
+        <div class="masse-line">Masse</div>
+        <div class="masse-value">5,00 × 4,00 m</div>
+
+        <div class="pos-row"><span>Wände streichen</span><span class="qty">35 m²</span></div>
+        <div class="pos-row"><span>Decke streichen</span><span class="qty">20 m²</span></div>
+        <div class="pos-row"><span>Wände streichen</span><span class="qty">28 m²</span></div>
+
+        <div class="empty-space">viel leere Fläche darunter —<br>nichts, was den Platz nutzt</div>
+      </div>
+
+    </div>
+    <div class="bottom-cta">
+      <button class="cta-btn">Entwurf erstellen</button>
+      <div class="cta-sub">3 Positionen erkannt</div>
+    </div>
+  </div>
+
+  <div class="annot">
+    <div class="callout bad">
+      <b>Problem 1 — falsche Maße</b>
+      „5,00 × 4,00 m" sind die Maße von nur EINEM der beiden eingesprochenen Räume (Wohnzimmer). Für die Küche wird nichts angezeigt — die Karte kann nur einen Raum abbilden.
+    </div>
+    <div class="callout bad">
+      <b>Problem 2 — sieht aus wie ein Duplikat</b>
+      „Wände streichen" taucht zweimal auf. In Wirklichkeit ist das Wohnzimmer + Küche, aber ohne Raum-Kennzeichnung wirkt es wie ein Fehler.
+    </div>
+    <div class="callout bad">
+      <b>Problem 3 — stimmt nicht mit dem Entwurf überein</b>
+      Diese Liste kommt aus einer separaten, schnellen Vorschau-KI. Der Entwurf im nächsten Schritt rechnet komplett neu — die Positionen können strukturell abweichen.
+    </div>
+    <div class="callout">
+      <b>Problem 4 — Weißraum</b>
+      Die Karte ist auf einen Raum ausgelegt, der Rest der Fläche bleibt leer. Optisch unausgewogen, vor allem bei mehreren Aufnahmen.
+    </div>
+  </div>
+</div>
+
+<!-- ======================= AFTER ======================= -->
+<div class="screen" id="screen-after">
+  <div class="phone">
+    <div class="topbar">
+      <div class="label">Aufmaß</div>
+      <h1>2 Räume · 5 Positionen</h1>
+    </div>
+    <div class="content">
+
+      <div class="banner">✓ Bereit für den Entwurf</div>
+
+      <div class="room-card">
+        <div class="room-head">
+          <span class="room-emoji">🛋️</span>
+          <span class="room-name">Wohnzimmer</span>
+          <span class="room-count">3 Positionen</span>
+        </div>
+        <div class="room-flaeche">5,00 × 4,00 m</div>
+        <div class="room-pos"><span>Wände streichen</span><span class="qty">35 m²</span></div>
+        <div class="room-pos"><span>Decke streichen</span><span class="qty">20 m²</span></div>
+        <div class="room-pos"><span>Boden verlegen</span><span class="qty">20 m²</span></div>
+      </div>
+
+      <div class="room-card">
+        <div class="room-head">
+          <span class="room-emoji">🍳</span>
+          <span class="room-name">Küche</span>
+          <span class="room-count">2 Positionen</span>
+        </div>
+        <div class="room-pos"><span>Wände streichen</span><span class="qty">28 m²</span></div>
+        <div class="room-pos"><span>Fliesen legen</span><span class="qty">12 m²</span></div>
+      </div>
+
+      <div class="chip-strip-label">Aufnahmen (2)</div>
+      <div class="chip-strip">
+        <div class="rec-chip"><span class="dot"></span>14:02 Uhr <span class="room-tag">· Wohnzimmer</span></div>
+        <div class="rec-chip"><span class="dot"></span>14:08 Uhr <span class="room-tag">· Küche</span></div>
+      </div>
+
+    </div>
+    <div class="bottom-cta">
+      <button class="cta-btn">Entwurf erstellen</button>
+      <div class="cta-sub">5 Positionen aus 2 Räumen</div>
+    </div>
+  </div>
+
+  <div class="annot">
+    <div class="callout">
+      <b>Grundprinzip gewechselt: Raum statt Aufnahme</b>
+      Beide Aufnahmen wurden zu Raum-Karten zusammengeführt — mit <code>gruppiereNachRaum</code>, derselben Funktion, die Entwurf und fertiges Angebot gruppiert. Gleicher Code-Pfad, keine neue KI-Logik nötig.
+    </div>
+    <div class="callout">
+      <b>Kein Duplikat-Eindruck mehr</b>
+      „Wände streichen" steht jetzt sichtbar getrennt unter Wohnzimmer und Küche.
+    </div>
+    <div class="callout">
+      <b>Kein erfundenes Maß</b>
+      Wohnzimmer zeigt seine echten Maße, Küche zeigt gar keine (falls keine erkannt wurden) — lieber nichts zeigen als raten, wie beim DC-023-Fix.
+    </div>
+    <div class="callout">
+      <b>Aufnahmen bleiben nachvollziehbar</b>
+      Als schlanke Chip-Leiste statt großer leerer Kästen — löst den Weißraum-Vorwurf, weil die Fläche jetzt von echtem Inhalt (Raum-Karten) genutzt wird.
+    </div>
+    <div class="callout">
+      <b>Eine Quelle für die Anzahl</b>
+      Banner und Button-Unterzeile zählen jetzt beide direkt aus den gepoolten Raum-Gruppen — nicht mehr zwei getrennte Zähler, die auseinanderlaufen können.
+    </div>
+    <div class="callout bad">
+      <b>Was das NICHT löst</b>
+      Ob die Positions-ANZAHL exakt mit der späteren Berechnung übereinstimmt, hängt von den zwei unabhängigen KI-Aufrufen ab (Vorschau vs. echte Berechnung) — das ist eine Architektur-Frage für Head of Product Engineering, keine Design-Frage.
+    </div>
+  </div>
+</div>
+
+<!-- ======================= NACHTRAG ======================= -->
+<div class="screen" id="screen-nachtrag">
+  <div class="phone">
+    <div class="topbar">
+      <div class="label">Aufmaß</div>
+      <h1>2 Räume · 5 + 1 Positionen</h1>
+    </div>
+    <div class="content">
+
+      <div class="banner mixed">5 Positionen bereits im Angebot — 1 neu, wird berechnet</div>
+
+      <div class="room-card has-pending">
+        <div class="room-head">
+          <span class="room-emoji">🛋️</span>
+          <span class="room-name">Wohnzimmer</span>
+          <span class="room-count">4 Positionen</span>
+        </div>
+        <div class="room-flaeche">5,00 × 4,00 m</div>
+        <div class="room-pos"><span>Wände streichen</span><span class="qty">35 m²</span></div>
+        <div class="room-pos"><span>Decke streichen</span><span class="qty">20 m²</span></div>
+        <div class="room-pos"><span>Boden verlegen</span><span class="qty">20 m²</span></div>
+        <div class="room-pos pending"><span>Fenster lackieren <span class="pending-badge">Wird berechnet</span></span><span class="qty">—</span></div>
+      </div>
+
+      <div class="room-card">
+        <div class="room-head">
+          <span class="room-emoji">🍳</span>
+          <span class="room-name">Küche</span>
+          <span class="room-count">2 Positionen</span>
+        </div>
+        <div class="room-pos"><span>Wände streichen</span><span class="qty">28 m²</span></div>
+        <div class="room-pos"><span>Fliesen legen</span><span class="qty">12 m²</span></div>
+      </div>
+
+      <div class="chip-strip-label">Aufnahmen (3)</div>
+      <div class="chip-strip">
+        <div class="rec-chip"><span class="dot"></span>14:02 Uhr <span class="room-tag">· Wohnzimmer</span></div>
+        <div class="rec-chip"><span class="dot"></span>14:08 Uhr <span class="room-tag">· Küche</span></div>
+        <div class="rec-chip pending"><span class="dot"></span>Heute 09:14 Uhr <span class="room-tag">· Wohnzimmer, neu</span></div>
+      </div>
+
+    </div>
+    <div class="bottom-cta">
+      <button class="cta-btn">Entwurf aktualisieren</button>
+      <div class="cta-sub">1 neue Position aus 1 Aufnahme</div>
+    </div>
+  </div>
+
+  <div class="annot">
+    <div class="callout">
+      <b>Sandys Frage: landet eine Nachtrags-Aufnahme in der richtigen Raum-Karte?</b>
+      Ja — hier eine dritte Aufnahme, Tage später, über den Mikro-Button aus dem fertigen Angebot heraus gestartet: „ah nochmal was zum Wohnzimmer, die Fenster sollen auch lackiert werden." Landet automatisch als vierte Zeile in der schon bestehenden Wohnzimmer-Karte — keine zweite, neue Wohnzimmer-Karte.
+    </div>
+    <div class="callout">
+      <b>Warum das ohne Sonderfall funktioniert</b>
+      Die Raum-Gruppierung läuft bei jeder Änderung neu über den kompletten Positions-Pool (alt + neu). Der „ — Wohnzimmer"-Titel-Suffix aus der neuen Aufnahme reicht, damit sie in dieselbe Karte fällt. „Ergänzen" ist einfach der Normalfall von „neu gruppieren", kein eigener Code-Pfad.
+    </div>
+    <div class="callout">
+      <b>Klar getrennt: fest vs. frisch</b>
+      Die drei alten Wohnzimmer-Positionen sind schon berechneter Teil des Angebots (normale Schrift). Die neue Position ist erkennbar als „wird berechnet" markiert (gedämpft, gelber Rand um die Karte) — der Handwerker sieht auf einen Blick, was schon feststeht und was gerade frisch dazukam, ohne zwei getrennte Listen durchsuchen zu müssen.
+    </div>
+    <div class="callout">
+      <b>Mikro bleibt immer erreichbar</b>
+      Der Aufnahme-Button in der unteren Leiste ist unverändert vorhanden (hier nicht extra gezeigt, weil er in allen drei Screens gleich aussieht) — auch in diesem „schon berechnet + neu"-Zustand, Label „Weitere Aufnahme".
+    </div>
+    <div class="callout">
+      <b>Rückkehr nach „Entwurf erstellen"</b>
+      So sieht der Screen aus, wenn man über den „Aufnahme"-Link im fertigen Angebot zurückkommt. Statt des heutigen separaten Hinweis-Banners „X Positionen bereits berechnet" (das nicht raum-gruppiert war) sind bereits berechnete und frische Positionen jetzt in derselben Raum-Karte — ein einziger, immer gleich aussehender Ort statt zwei getrennter Systeme.
+    </div>
+  </div>
+</div>
+
+<script>
+const notes = {
+  before: 'DC-028 · Aufmaß-Sammelansicht · Sandys Beispiel: 2 Räume eingesprochen (Wohnzimmer, Küche)',
+  after: 'DC-028 · Neu: raum-gruppiert statt aufnahme-gruppiert, gleicher Code-Pfad wie das fertige Angebot',
+  nachtrag: 'DC-028 · Nachtrag-Fall: dritte Aufnahme Tage später ergänzt die bestehende Wohnzimmer-Karte, auch nach „Entwurf erstellen"',
+};
+function show(which) {
+  ['before', 'after', 'nachtrag'].forEach(id => {
+    document.getElementById('screen-' + id).classList.toggle('active', which === id);
+  });
+  document.querySelectorAll('.switcher button').forEach(b => b.classList.remove('active'));
+  document.querySelector('.switcher .' + which).classList.add('active');
+  document.getElementById('note-bar').textContent = notes[which];
+}
+</script>
+
+</body>
+</html>

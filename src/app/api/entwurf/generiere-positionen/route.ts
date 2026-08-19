@@ -135,8 +135,17 @@ export async function POST(req: NextRequest) {
         flaeche?: number | null
         wandflaeche_direkt?: number | null
         deckflaeche_direkt?: number | null
-        fenster?: Array<{ anzahl?: number }>
-        tueren?: Array<{ anzahl?: number }>
+        // PM-008-Nachtest 6 (2026-08-19): breite/hoehe/annahme mit aufnehmen —
+        // vorher wurde hier nur die Stückzahl gelesen, obwohl die Extraktion
+        // (siehe ExtrahierteDaten in mengen/types.ts) echte Öffnungsmaße
+        // liefert, wenn der Nutzer sie genannt hat. Ohne die Maße fiel die
+        // Bearbeiten-Ansicht beim Neuberechnen immer auf das Standardmaß
+        // zurück (1,20×1,00m je Fenster), auch wenn ein Fenster laut
+        // Transkript größer war — das machte "So gerechnet" im Chip falsch,
+        // obwohl die ursprüngliche Position (aus derselben Extraktion,
+        // siehe maler.ts) korrekt mit den echten Maßen gerechnet hatte.
+        fenster?: Array<{ anzahl?: number; breite?: number; hoehe?: number; annahme?: boolean }>
+        tueren?: Array<{ anzahl?: number; breite?: number; hoehe?: number; annahme?: boolean }>
       }>
       // PM-008/PD-003: Fassaden landen bei GPT hier, nicht in raeume[] (siehe
       // Kommentar in maler.ts) — kein Boden/Decke, keine Breite. Bisher wurde
@@ -146,7 +155,9 @@ export async function POST(req: NextRequest) {
         name?: string
         laenge?: number | null
         hoehe?: number | null
-        fenster?: Array<{ anzahl?: number }>
+        // PM-008-Nachtest 6: siehe Kommentar bei raeume[].fenster oben —
+        // dieselbe Erweiterung, derselbe Grund.
+        fenster?: Array<{ anzahl?: number; breite?: number; hoehe?: number; annahme?: boolean }>
       }>
     }
   }
@@ -229,9 +240,32 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // PM-008-Nachtest 6 (2026-08-19): echte Öffnungsfläche aus Anzahl ×
+    // (Breite ?? Standard) × (Höhe ?? Standard) summieren — exakt dieselbe
+    // Formel wie in maler.ts (dort z.B. `effFenster.reduce(... (f.breite ??
+    // 1.2) * (f.hoehe ?? 1.0) ...)`). Ohne diese Funktion wurde beim
+    // Speichern der Raummaße nur die Stückzahl übernommen, die reale Größe
+    // ging verloren — die Bearbeiten-Ansicht rechnete beim Neuberechnen dann
+    // immer mit dem Standardmaß, selbst wenn ein Fenster laut Transkript
+    // größer war als 1,20×1,00m. Rückgabe `undefined` bei leerem/fehlendem
+    // Array, damit `raumDetails` weiterhin sauber auf den bestehenden
+    // Stückzahl×Standard-Fallback in raum-geometrie.ts zurückfallen kann.
+    const flaecheAusOeffnungen = (
+      liste: Array<{ anzahl?: number; breite?: number; hoehe?: number }> | undefined,
+      standardBreite: number,
+      standardHoehe: number,
+    ): number | undefined => {
+      if (!Array.isArray(liste) || liste.length === 0) return undefined
+      const summe = liste.reduce(
+        (s, o) => s + (o.anzahl ?? 1) * (o.breite ?? standardBreite) * (o.hoehe ?? standardHoehe), 0
+      )
+      return Math.round(summe * 100) / 100
+    }
+
     const raumDetails: Record<string, {
       modus?: 'rechteck' | 'flaeche' | 'wand'
       breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number
+      tuerFlaeche?: number; fensterFlaeche?: number
       wandflaeche?: number; bodenflaeche?: number
     }> = {}
     for (const raum of extraktionRaeume) {
@@ -251,6 +285,10 @@ export async function POST(req: NextRequest) {
       const tuerenAnzahl = Array.isArray(raum.tueren)
         ? raum.tueren.reduce((s, t) => s + (t.anzahl ?? 1), 0)
         : undefined
+      // Standardmaße 1,20×1,00m (Fenster) / 0,90×2,10m (Tür) — dieselben wie
+      // in maler.ts und raum-geometrie.ts (siehe Kommentar dort).
+      const fensterFlaeche = flaecheAusOeffnungen(raum.fenster, 1.2, 1.0)
+      const tuerFlaeche = flaecheAusOeffnungen(raum.tueren, 0.9, 2.1)
       // Fläche vs. L×B: hat der Nutzer eine Fläche genannt (Boden/Wand) statt Maße?
       const hatMasse = raum.breite != null && raum.laenge != null
       const bodenflaeche = raum.flaeche ?? raum.deckflaeche_direkt ?? undefined
@@ -276,6 +314,8 @@ export async function POST(req: NextRequest) {
         ...(bodenflaeche != null ? { bodenflaeche } : {}),
         ...(tuerenAnzahl !== undefined ? { tueren: tuerenAnzahl } : {}),
         ...(fensterAnzahl !== undefined ? { fenster: fensterAnzahl } : {}),
+        ...(tuerFlaeche !== undefined ? { tuerFlaeche } : {}),
+        ...(fensterFlaeche !== undefined ? { fensterFlaeche } : {}),
       }
     }
 
@@ -293,12 +333,14 @@ export async function POST(req: NextRequest) {
       const fensterAnzahl = Array.isArray(wand.fenster)
         ? wand.fenster.reduce((s, f) => s + (f.anzahl ?? 1), 0)
         : undefined
+      const fensterFlaeche = flaecheAusOeffnungen(wand.fenster, 1.2, 1.0)
       raumDetails[key] = {
         ...raumDetails[key],
         modus: 'wand',
         laenge: wand.laenge,
         hoehe: wand.hoehe,
         ...(fensterAnzahl !== undefined ? { fenster: fensterAnzahl } : {}),
+        ...(fensterFlaeche !== undefined ? { fensterFlaeche } : {}),
       }
     }
 

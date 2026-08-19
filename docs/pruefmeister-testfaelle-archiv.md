@@ -1,0 +1,572 @@
+# Prüfmeister-Testfälle — Archiv (abgeschlossene Fälle)
+
+Ausgelagert aus `pruefmeister-testfaelle.md` am 2026-08-19, damit die aktive
+Datei klein und weniger fehleranfällig bleibt (siehe Hinweis dort). Hier
+liegen nur Fälle, die vollständig abgeschlossen sind: behoben, live von
+Sandy nachgetestet, nichts mehr offen. Die Kurzfassung/Status jedes Falls
+steht weiterhin in der Übersichtstabelle der Hauptdatei — hier steht nur die
+volle historische Diskussion, falls sie mal gebraucht wird. Diese Datei wird
+selten bis nie wieder bearbeitet, nur ergänzt, wenn ein weiterer Fall aus der
+Hauptdatei fertig wird.
+
+---
+
+## PM-002 — Akzentwand + Boden diagonal (Schlafzimmer)
+
+**Datum:** 2026-08-16
+**Status:** ✅ Beide Bugs behoben und live nachgetestet — bestätigt
+
+**Zum Einsprechen:**
+„Schlafzimmer, vier mal dreieinhalb, Höhe zwo sechzig. Drei Wände weiß streichen, zweimal. Die Wand hinterm Bett kriegt Tapete, sozusagen Akzentwand, der Rest bleibt weiß. Ein Fenster, eine Tür, normal. Boden kriegt Klick-Vinyl, diagonal verlegt. Sockelleisten werden neu montiert, nicht gestrichen, nur montiert.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,50) = 15,00 lfm; Wandbrutto: 15,00×2,60 = 39,00 m²
+- Abzug Fenster 1,20 m² + Tür 1,89 m² → Wandnetto gesamt 35,91 m²
+- Akzentwand-Fläche: je nach gewählter Seite 9,10 m² (kurze, 3,50 m) oder 10,40 m² (lange, 4,00 m) — muss klar definiert und der Annahme-Text dazu korrekt sein
+- Restwände streichen 2×: Gesamt − Akzentwand
+- Boden Klick-Vinyl diagonal: 4,00×3,50 = 14,00 m² + 15% Verschnitt = 16,10 m²
+- Sockelleisten montieren — Boden: 15,00 − 0,90 (Tür) = **14,10 lfm**
+
+**Ist-Ergebnis (aus dem Tool):**
+- Akzentwand Vliestapete: 10,4 m² × 14,00 € = 145,60 € — Berechnung „4 m × 2,6 m", Annahme-Text sagt „Kürzere Raumseite als Akzentwand angenommen"
+- Restwände streichen: 25,51 m² × 9,50 € = 242,35 €
+- Deckenfläche streichen 2×: 14 m² × 11,00 € = 154,00 € ✓
+- Klick-Vinyl verlegen inkl. 15% Verschnitt: 16,1 m² × 16,00 € = 257,60 € ✓
+- Sockelleisten montieren: **15 lfdm** × 5,50 € = 82,50 €
+- Summe: Netto 882,05 € / MwSt 167,59 € / Gesamt 1.049,63 € (1 Cent Rundungsdifferenz zur Nachrechnung — vernachlässigbar)
+
+**Befund:**
+
+1. **Akzentwand-Annahme widerspricht der Berechnung**
+   - Fundort: `src/lib/mengen/gewerke/maler.ts`, ca. Zeile 349–352
+   - Erwartet: Annahme-Text muss zur tatsächlichen Rechnung passen
+   - Tatsächlich: Code nimmt `Math.max(laenge, breite)` → längere Seite (4,00 m). Annahme-Text sagt „Kürzere Raumseite als Akzentwand angenommen" — genau das Gegenteil.
+   - Abweichung: Handwerker verlässt sich beim Schnellcheck auf den Annahme-Text und wird in die Irre geführt. Zusätzlich: ohne Signal aus dem Text, welche Wand wirklich gemeint ist, ist „automatisch längere Seite" ein Münzwurf — bei diesem Raum macht der Unterschied zwischen 9,10 m² und 10,40 m² schon 18,20 € aus.
+   - Fix-Vorschlag: Text und Code angleichen; grundsätzlich klären, ob Default „länger" oder „kürzer" sein soll, oder ob das Tool lieber nachfragt statt zu raten.
+
+2. **Sockelleisten Boden ohne Türabzug**
+   - Fundort: `src/lib/mengen/gewerke/boden.ts`, ca. Zeile 102–111
+   - Erwartet: 15,00 − 0,90 (Türbreite) = 14,10 lfm — genauso wie bei der Maler-Sockelleiste in `maler.ts`
+   - Tatsächlich: 15,00 lfm, kein Türabzug
+   - Abweichung: 4,95 € zu teuer beim Kunden, Inkonsistenz zwischen Maler- und Boden-Engine.
+   - Fix-Vorschlag: Türbreiten-Abzug in `boden.ts` analog zu `maler.ts` ergänzen.
+
+**Nachtest (2026-08-16, späterer Durchlauf):** ✅ Beide Bugs gefixt. Gleiches Schlafzimmer (3,5×4, Akzentwand, Klick-Vinyl diagonal): Akzentwand-Fläche ist jetzt 9,1 m² (3,5 m × 2,6 m = die tatsächlich kürzere Seite), und der Annahme-Text „Kürzere Raumseite als Akzentwand angenommen" stimmt jetzt mit der Rechnung überein. Sockelleisten montieren zeigt jetzt 14,1 lfdm (15,00 − 0,90 Türbreite) statt vorher 15,00 lfdm. Rest (Restwände 26,81 m², Klick-Vinyl 16,1 m²) unverändert korrekt, Summe (717,24 € Netto) passt exakt zusammen.
+
+**Fix-Update (Head of IT, 2026-08-16):** Beide Bugs behoben, root-cause statt
+Pflaster.
+1. Akzentwand: Code hatte sich vom eigenen Kommentar entfernt (`Math.max`
+   statt dokumentiertem `Math.min`) — zurück auf die kürzere Seite, Annahme-
+   Text stimmt jetzt wieder mit der Rechnung überein.
+2. Sockelleisten-Türabzug: neue gemeinsame Funktion `berechneSockelleistenLaenge`
+   (`src/lib/mengen/gewerke/sockelleisten.ts`), von Maler- UND Boden-Engine
+   genutzt — damit das nicht wieder auseinanderdriftet.
+Golden-Tests PM-002a/PM-002b ergänzt (exakte Mengen, laufen bei jedem
+zukünftigen Fix automatisch mit). Noch offen: Sandy testet live nach, ob's
+auch im echten Tool stimmt.
+
+---
+
+## PM-003 — Kleinreparatur + Höhenzuschlag + Boden-Ausschluss trotz Erwähnung (Flur)
+
+**Datum:** 2026-08-16
+**Status:** ✅ Alle drei Punkte live bestätigt behoben (Grundierung weg, Fenster zeigt sauber „0" statt rotem „!", Werte weiterhin exakt); Grenzfall Boden bewusst offen gelassen, kein Fehler
+
+**Zum Einsprechen:**
+„Flur, sechs mal eins fünfzig, Deckenhöhe drei zwanzig — is schon ne hohe Bude hier. Kein Fenster im Flur, aber eine Tür, normal Maß. Wände streichen, zweimal, Decke auch mit. Zwei Dübellöcher spachteln, sonst nix Großes. Boden lass mal weg, der bleibt wie er ist, den nicht anfassen.“
+
+**Soll-Lösung:**
+- Umfang: 2×(6,00+1,50) = 15,00 lfm; Wandbrutto: 15,00×3,20 = 48,00 m²
+- Kein Fenster-Abzug (explizit ausgeschlossen); 1 Tür Standard 1,89 m² abziehen
+- Wandflächen streichen 2×: **46,11 m²**
+- Deckenfläche streichen 2×: 6,00×1,50 = **9,00 m²**
+- Dübellöcher spachteln: **2 Stück**
+- Erschwerniszuschlag Raumhöhe >3m: **1 Pauschale**
+- Boden: **keine Position** — weder Streichen noch Schützen, trotz Erwähnung des Worts „Boden“
+- Falls eine Grundierung wegen der Reparatur ergänzt wird: nur auf der Reparaturstelle, nicht auf der vollen Wandfläche
+
+**Ist-Ergebnis (aus dem Tool):**
+- Wandflächen streichen 2×: 46,11 m² × 9,50 € = 438,05 € ✓ (exakt wie im Soll)
+- Dübellöcher spachteln: 2 Stück × 3,00 € = 6,00 € ✓ (Anzahl korrekt erkannt, nicht auf Default 1 zurückgefallen)
+- Erschwerniszuschlag Raumhöhe > 3m: 1 Pauschale erkannt ✓ (Preis 0,00 €, das ist gewollt — Nutzer legt Preis fest)
+- Boden schützen: 9 m² × 1,20 € = 10,80 €
+- Sockelleisten abkleben: 14,1 lfdm × 0,80 € = 11,28 €
+- **Voranstrich / Grundierung: 46,11 m² × 6,00 € = 276,66 €**
+- Netto gesamt: 742,78 €
+- Vor der Fenster-Frage: Rückfrage-Screen fragte explizit „Wie viele Fenster hat 'Flur'?" trotz gesprochenem „kein Fenster im Flur"
+
+**Befund:**
+
+1. **Größter Fund: Grundierung auf volle Wandfläche statt nur Reparaturstelle — teuer und still**
+   - Fundort: `src/lib/vollstaendigkeit/maler-basis.ts`, Funktion `pruefeGrundierung`, ca. Zeile 103–112
+   - Erwartet: Nach Reparatur (2 Dübellöcher) ist eine Grundierung fachlich zwar richtig gedacht — aber nur auf der geflickten Stelle, ein paar Handbreit, keine paar Euro.
+   - Tatsächlich: Grundierung wird auf `wandPos.menge` gesetzt, also die komplette Wandfläche (46,11 m²) → 276,66 €.
+   - Abweichung: 276,66 € von 742,78 € Netto — über ein Drittel des ganzen Angebots — für zwei Dübellöcher. Das ist der teuerste und gefährlichste Fehler von allen drei Testfällen, weil er auf den ersten Blick plausibel aussieht (Grundierung nach Reparatur ist ja grundsätzlich richtig) und deshalb leicht durchrutscht.
+
+2. **Rückfrage nach Fensteranzahl trotz explizitem „kein Fenster"**
+   - Fundort: `src/lib/kontext-analyzer.ts`, ca. Zeile 149–156
+   - Erwartet: Wenn der Text „kein Fenster" enthält (wird an anderer Stelle, `maler.ts` Zeile 103, korrekt als `keinFenster`-Signal erkannt und für die Berechnung genutzt), sollte die Rückfrage nach Fenster-Anzahl gar nicht erst kommen.
+   - Tatsächlich: Rückfragen-Generator prüft nur, ob `raum.fenster` ein leeres Array ist — die transkriptweite Verneinung wird hier nicht mitgelesen. Frage kam trotzdem.
+   - Abweichung: Kein teurer Fehler (Endergebnis mit 0 Fenstern stimmt, nachdem manuell beantwortet), aber unnötiger Klick und wirkt so, als würde das Tool nicht zuhören.
+
+3. **Grenzfall: Boden schützen + Sockelleisten abkleben trotz „Boden lass mal weg, nicht anfassen"**
+   - Für mich kein harter Fehler: „nicht anfassen" heißt fachlich „keine Bodenarbeiten", schützt aber nicht davor, dass beim Streichen Farbe tropft — Abdecken bleibt sinnvoll, genau wie in PM-001. Trage ich hier nur ein, falls ihr die Ausschluss-Erkennung strenger auslegen wollt als ich.
+
+**Insgesamt zu diesem Fall:** Wandfläche, Dübellöcher-Stückzahl und Höhenzuschlag laufen sauber. Der Grundierungs-Fehler ist der mit Abstand wichtigste Fund aus allen drei Testfällen bisher — bitte zuerst angehen.
+
+**Nachtest (2026-08-16, späterer Durchlauf):** ✅ Grundierungs-Bug ist weg. Gleicher Raum (Flur, 6×1,5×3,2, 2 Dübellöcher) — diesmal **keine** „Voranstrich/Grundierung"-Position mehr im Angebot, die Summe (565,13 € Netto) ergibt sich exakt aus den erwarteten Positionen ohne Grundierung. Wandfläche (46,11 m²), Dübellöcher (2 Stück, 6,00 €) und Höhenzuschlag weiterhin korrekt. Kleine Randnotiz: Diesmal war beim Fenster-Feld ein rotes „!" statt einer Zahl zu sehen — unklar, ob die Rückfrage übersprungen wurde. Die Wandfläche (46,11 m²) passt aber exakt zu „0 Fenster", also rechnerisch kein Problem, nur die Anzeige unklar.
+
+**Fix-Update (Head of IT, 2026-08-16):**
+1. **Grundierung:** Erfindet jetzt keine Fläche mehr für Kleinreparaturen. Ohne
+   echtes Vollflächen-Signal im Rohtext (Neubau/Erstanstrich/Tiefengrund/
+   Grundieren wörtlich genannt) landet „Grundierung" nur noch als Erinnerung
+   in der Liste offener Punkte — der Handwerker trägt die reale
+   Reparaturfläche selbst ein, statt dass das Tool 276,66 € für zwei
+   Dübellöcher erfindet.
+2. **Fenster-Rückfrage trotz „kein Fenster":** behoben — der Rückfragen-
+   Generator nutzt jetzt dasselbe `keinFenster`/`keineTuer`-Signal, das die
+   Berechnung schon vorher korrekt genutzt hat.
+3. **Grenzfall Boden schützen/Sockelleisten:** bewusst NICHT verändert — dein
+   eigener Einschätzung nach kein Fehler, siehe Punkt 3 oben.
+
+**Nebenfund beim Testen (2026-08-16):** Beim Bauen des Tests für diesen Fall
+ist noch ein unabhängiger Bug aufgefallen, der NICHT in deinen ursprünglichen
+3 Befunden stand: die Deckenfläche verschwand komplett aus Fällen wie „Wände
+streichen, zweimal, Decke auch mit" — einmal wegen Kommas in einer alten
+Text-Erkennung, einmal weil „Deckenhöhe drei zwanzig" fälschlich als „Decke
+wird gestrichen" gelesen wurde. Beides jetzt auch behoben (siehe Golden-Test
+PM-003 in `golden-korrekturen.test.ts`, prüft jetzt Wand UND Decke).
+
+**Fix-Update 2 (Head of IT, 2026-08-16) — rotes „!" beim Fenster-Feld:**
+Gefunden, im Bearbeiten-Screen des fertigen Entwurfs (`AngebotDetail.tsx`):
+das rote „!" heißt dort „Wert fehlt", wenn das Feld `undefined` ist. Der Code,
+der die Fenster-Anzahl für dieses Feld befüllt, hat bisher geprüft
+„gibt's Fenster-Einträge?" (`raum.fenster?.length`) statt „gibt's überhaupt
+eine Antwort?" — und 0 zählt in JavaScript als „nein". Bei „kein Fenster im
+Flur" liefert die Extraktion korrekt ein LEERES Fenster-Array, `.length` ist
+0, und das wurde wie „gar keine Angabe" behandelt statt wie die echte, richtige
+Antwort „0 Fenster". Deshalb das rote „!" statt einer ruhigen 0 — kein
+Rechenfehler, nur eine falsch interpretierte Null. Fix: geprüft wird jetzt,
+ob überhaupt ein Fenster-Array da ist (auch ein leeres zählt), nicht mehr, ob
+die Summe größer null ist. Gleicher Fix auch bei Türen ergänzt, da exakt
+derselbe Code direkt daneben stand. Live-Test durch dich steht aus.
+
+**Nachtest (Prüfmeister, 2026-08-16):** Bestätigt. Fenster-Feld zeigt jetzt sauber „0" statt dem roten
+„!". Alle anderen Werte weiterhin exakt (Wandfläche 46,11 m², Dübellöcher 2 Stück, Höhenzuschlag
+erkannt, keine Grundierung). Dieser Fall ist jetzt komplett grün, alle drei gefundenen Punkte bestätigt
+behoben.
+
+---
+
+## PM-004 — Laminat gerade verlegt + Trittschalldämmung (Verschnitt-Grundsatzfrage)
+
+**Datum:** 2026-08-16
+**Status:** ✅ Verschnitt-Bug behoben und live nachgetestet — bestätigt (Trittschalldämmung war schon vorher korrekt)
+
+**Zum Einsprechen:**
+„Kinderzimmer, vier mal drei, Höhe zwo sechzig. Laminat, ganz normal gerade verlegt, keine Muster oder so. Drunter kommt noch ne Trittschalldämmung."
+
+**Soll-Lösung:**
+- Fläche: 4,00×3,00 = 12,00 m²
+- Laminat verlegen: nach Fachwissen-Standard 5% Verschnitt bei gerader Verlegung = **12,60 m²**
+- Trittschalldämmung als eigene Position: **12,00 m²**
+
+**Worauf achten:**
+- Fundort für den Verschnitt-Verdacht: `src/lib/mengen/gewerke/boden.ts`, Funktion `standardVerschnitt`, ca. Zeile 29–35 — dort steht pauschal 10% für Laminat/Vinyl/Linoleum, unabhängig von der Verlegerichtung. Falls das Tool 13,20 m² statt 12,60 m² ausgibt, bestätigt das die Vermutung: bei gerader Verlegung wird systematisch der doppelte Verschnitt berechnet.
+- Trittschalldämmung wird an anderer Stelle ergänzt (`src/lib/vollstaendigkeit/boden-sonder.ts`, `pruefeTrittschalldaemmung`, ca. Zeile 236–261) — die Funktion triggert eigentlich schon allein bei „Klick-Vinyl", trotzdem fehlte sie in PM-002. Hier jetzt mit „Trittschalldämmung" wörtlich genannt — kommt sie diesmal?
+
+**Ist-Ergebnis (aus dem Tool):**
+- Rückfrage kam zuerst: „Muss der alte Bodenbelag entfernt werden?" — sinnvoll, war im Transkript nicht erwähnt, keine Kritik. Mit „Ja, raus" beantwortet.
+- Laminat verlegen inkl. **10% Verschnitt**: 13,2 m² × 18,00 € = 237,60 €
+- Altbelag entfernen: 12 m² × 12,00 € = 144,00 €
+- Sockelleisten montieren: 14 lfdm × 5,50 € = 77,00 € (nicht erwähnt, automatisch ergänzt — bei Belagwechsel fachlich plausibel, siehe Befund 2)
+- Trittschalldämmung: 12 m² × 4,50 € = 54,00 € ✓ (diesmal korrekt da, keine Ergänzung nötig)
+- Netto 512,60 € / MwSt 97,39 € / Gesamt 609,99 € — rechnerisch konsistent
+
+**Befund:**
+
+1. **Verschnitt-Bug bestätigt: 10% statt 5% bei gerader Verlegung**
+   - Fundort: `src/lib/mengen/gewerke/boden.ts`, Funktion `standardVerschnitt`, ca. Zeile 29–35
+   - Erwartet: 12,00 m² × 1,05 = 12,60 m² (Fachwissen-Standard: gerade Verlegung ca. 5%)
+   - Tatsächlich: 12,00 m² × 1,10 = 13,20 m²
+   - Abweichung: 0,60 m² zu viel Material, 10,80 € zu teuer — allein in diesem kleinen Kinderzimmer. Da der Code den Verschnitt pauschal auf 10% für Laminat/Vinyl/Linoleum setzt (nur diagonal geht auf 15% hoch, „gerade" wird nirgends separat behandelt), zieht sich das vermutlich durch **jedes** Angebot mit gerade verlegtem Plattenboden. Das ist der wichtigste Fund aus PM-004 — bitte mit hoher Priorität prüfen, weil er nicht nur diesen einen Fall betrifft.
+
+2. **Sockelleisten montieren ohne Türabzug — strukturell, nicht nur ein Rechenfehler**
+   - Fundort: `src/lib/mengen/gewerke/boden.ts`, Zeile 42–53 (Raum-Destrukturierung) und Zeile 102–111 (Sockelleisten-Position)
+   - Die Boden-Engine erfasst für Räume gar keine Türen/Fenster-Felder — anders als die Maler-Engine. Deshalb kann die Sockelleisten-Position dort strukturell nie eine Tür abziehen, das ist nicht nur eine vergessene Zeile wie in PM-002 vermutet, sondern es fehlt das Datenfeld komplett. Selbe Abweichung wie in PM-002: 14,00 lfdm statt 14,00 − Türbreite.
+
+**Positiv:** Trittschalldämmung kam diesmal korrekt als eigene Position — der Fehlschlag in PM-002 war also entweder ein Einzelfall oder tritt nur auf, wenn die Dämmung nicht wörtlich genannt wird, sondern nur aus „Klick-Vinyl" abgeleitet werden müsste. Wert für Head of IT: die implizite Ableitung (`pruefeTrittschalldaemmung` triggert laut Code schon bei „klick-vinyl" allein) scheint unzuverlässiger zu sein als die explizite Nennung.
+
+**Nachtest (2026-08-16, späterer Durchlauf):** ✅ Verschnitt-Bug ist gefixt. Gleiches Kinderzimmer, gerade verlegtes Laminat — jetzt **12,6 m² (5% Verschnitt)** statt vorher 13,2 m² (10%). Trittschalldämmung weiterhin korrekt dabei (54,00 €, über die Summe verifiziert). Sockelleisten diesmal ohne Türabzug (14 lfdm voll) — das ist hier kein Rückfall, weil in diesem Transkript gar keine Tür genannt wurde, die Boden-Engine also nichts zum Abziehen hatte (siehe PM-002-Nachtest, wo mit genannter Tür korrekt abgezogen wurde). Neue Kleinigkeit: Auf der Aufnahme-Karte stand „Kinderzimmer" selbst als eigener Eintrag in der Leistungen-Liste, obwohl das kein Task ist, sondern der Raumname — kosmetischer Fehler, keine Auswirkung auf die Berechnung.
+
+**Fix-Update (Head of IT, 2026-08-16):**
+1. **Verschnitt:** `standardVerschnitt()` gibt jetzt 5% für gerade verlegte
+   Plattenware (Laminat/Vinyl/Linoleum) statt pauschal 10% — Diagonalverlegung
+   bleibt unverändert bei 15%. Betraf laut deiner Einschätzung vermutlich
+   jedes Angebot mit gerade verlegtem Plattenboden, nicht nur diesen Fall.
+2. **Sockelleisten ohne Türabzug:** war schon durch den PM-002-Fix miterledigt
+   (gemeinsame Funktion `berechneSockelleistenLaenge`, siehe dort) — hier
+   nochmal bestätigt.
+Golden-Test PM-004 ergänzt (prüft 12,60 m² statt 13,20 m²).
+Implizite Trittschalldämmung-Ableitung (dein Randbefund) noch nicht
+untersucht — kein akuter Fehler in diesem Fall, aber vorgemerkt.
+
+---
+
+## PM-005 — Zwei Räume, Duplikat-Falle + Scope „nur Decke" darf nicht überspringen
+
+**Datum:** 2026-08-16
+**Status:** ✅ Komplett behoben und live bestätigt — beide Räume erscheinen jetzt korrekt getrennt, mit eigenen Zwischensummen
+
+**Zum Einsprechen:**
+„Zwei Räume: Küche, dreieinhalb mal zwo achtzig, Höhe zwo fünfzig, Wände und Decke komplett streichen, zweimal. Daneben die Speisekammer, auch dreieinhalb mal zwo achtzig, Höhe genauso — aber da nur die Decke streichen, zweimal, die Wände lassen wir in Ruhe."
+
+**Soll-Lösung:**
+- Küche: Umfang 2×(3,50+2,80)=12,60 lfm; Wandbrutto 12,60×2,50=31,50 m²; minus Standard-Fenster 1,20 + Standard-Tür 1,89 → Wandflächen streichen 2×: **28,41 m²**; Decke 3,50×2,80= **9,80 m² 2×**
+- Speisekammer: nur Decke **9,80 m² 2×**, **keine Wandposition**
+
+**Worauf achten:** Bleiben beide Räume unter eigenem Namen (nicht beide „Küche")? Bleibt „nur Decke" auf die Speisekammer beschränkt, ohne dass die Küche dadurch ihre Wandposition verliert (Scope-Bleed zwischen Räumen, siehe Kommentar zu `scopeTxt` in `src/lib/mengen/gewerke/maler.ts` ca. Zeile 200–207)?
+
+**Ist-Ergebnis (aus dem Tool):**
+- Rückfragen liefen für beide Räume durch: Küche → Türen 2, Fenster 1 (von mir frei gewählt, da im Transkript nicht genannt — das ist kein Fehler, Rückfrage war berechtigt). Speisekammer → Höhe erneut abgefragt trotz „Höhe genauso" (2,50 m manuell nachgetragen), Türen 1, Fenster 0.
+- Auf der Aufnahme-Karte zeigte „Küche" als Leistungen **zweimal „Decke streichen" und kein „Wände streichen"** — obwohl ich für die Küche ausdrücklich „Wände UND Decke komplett streichen" gesagt habe.
+- Im fertigen Angebot (2026-543F, 270,56 €) gibt es nur eine Raumgruppe „KÜCHE" mit genau drei Positionen: Deckenfläche streichen 2× (9,8 m² × 11,00 € = 107,80 €) — **zweimal identisch untereinander** — und Boden schützen (9,8 m² × 1,20 € = 11,76 €). Eine eigene „SPEISEKAMMER"-Raumgruppe taucht in der Positionsliste nicht auf.
+- Die Netto-Summe (227,36 €) ergibt sich exakt aus diesen drei Positionen (107,80 + 11,76 + 107,80) — es fehlt rechnerisch kein Cent auf einen vierten, unsichtbaren Posten. Das spricht stark dafür, dass wirklich nichts weiter im Angebot steckt.
+
+**Befund:**
+
+1. **Speisekammer verschwindet als eigener Raum — Küche verliert ihre Wandposition (schwerster Fund bisher)**
+   - Erwartet: Zwei getrennte Raumgruppen. Küche mit Wandflächen 2× (~28 m² je nach Türen/Fenstern) + Decke 2× (9,8 m²). Speisekammer mit nur Decke 2× (9,8 m²), eigene Raumgruppe, eigener Name.
+   - Tatsächlich: Nur eine Raumgruppe „Küche" mit zwei baugleichen „Deckenfläche streichen 2×"-Positionen (9,8 m², 107,80 €) und ganz ohne Wandflächen-Position. Meine Lesart: die zweite „Decke"-Position ist eigentlich die der Speisekammer, die aber unter „Küche" gelandet ist statt in einer eigenen Raumgruppe — und Küches eigene Wandfläche ist dabei komplett verloren gegangen.
+   - Abweichung: Der Kunde bekommt ein Angebot, in dem „Speisekammer" nirgends als eigener Posten auftaucht, obwohl 3 eigene Rückfragen dafür beantwortet wurden — und in dem die Küchenwände (der größte Batzen von diesem Auftrag) komplett fehlen. Das ist ein stiller, teurer Fehler: das Angebot sieht auf den ersten Blick vollständig aus (3 Positionen, Preis draufsteht), ist aber inhaltlich falsch und um die Wandflächen zu billig.
+   - **Bestätigt (2026-08-16):** Speisekammer taucht nirgends im Angebot auf — durchgescrollt und geprüft. Kein Grenzfall, harter Bug.
+   - Für Head of IT als Ausgangspunkt: das deterministische Scope-Handling in `src/lib/mengen/gewerke/maler.ts` (ca. Zeile 200–207) hat extra eine Sperre eingebaut, damit „nur Decke" bei mehreren Räumen nicht über die Grenzen bleedet — die greift hier anscheinend nicht bzw. das Problem entsteht vermutlich schon eine Ebene früher, bei der GPT-Extraktion der Raum-Arbeiten (jeder Raum bekommt sein eigenes `arbeiten[]`-Array, und genau da scheint „Decke" der Speisekammer in die Küche zu rutschen).
+
+**Sonst:** Der Rückfragen-Flow selbst (Höhe/Türen/Fenster pro Raum einzeln) lief für beide Räume sauber durch, auch bei zwei fast identischen Räumen wurden keine Maße oder Namen verwechselt — das Duplikat-Namen-Problem, das ich befürchtet hatte, trat nicht auf.
+
+**Fix-Update (Head of IT, 2026-08-16):** Root-Ursache gefunden und behoben —
+genau das strukturelle Muster, das der Audit befürchtet hat: eine Stufe hat
+nochmal den ganzen Rohtext gelesen statt nur die schon geprüfte Struktur.
+Die "nur Decke"-Prüfung lief bisher über EINEN globalen Wert für den ganzen
+(Mehrraum-)Auftrag — sagte die Speisekammer "nur Decke", flog auch die Wand
+der Küche raus, obwohl die nie eingeschränkt wurde. Die Mengen-Engine selbst
+war die ganze Zeit korrekt (im Debug bestätigt: alle 5 Positionen richtig
+berechnet); der Fehler saß erst in der Vollständigkeitsprüfung danach, die
+Küches Wand- und Sockelleisten-Position wieder gelöscht hat.
+
+Fix: Der Scope wird jetzt PRO RAUM aus dessen eigener, schon geprüfter
+`arbeiten[]`-Liste gebildet (nicht mehr aus dem Rohtext), und beim Filtern
+schaut jede Position zuerst auf den Scope ihres EIGENEN Raums. Golden-Test
+PM-005 ergänzt (Küche behält ihre Wände, Speisekammer bekommt garantiert
+keine). Noch offen: Sandy testet live nach, ob auch die Raumgruppen im
+fertigen Angebot jetzt sauber getrennt erscheinen (Küche/Speisekammer).
+
+**Nachtest (2026-08-16, späterer Durchlauf) — halber Erfolg, ein Teil des Problems bleibt:**
+Gleicher Einsprech-Text nochmal. Diesmal hat Küche ihre eigene Wandfläche:
+**26,52 m² Wandflächen streichen 2× (251,94 €)** taucht jetzt korrekt auf —
+der Kern-Fix wirkt also, Küche verliert ihre Wände nicht mehr.
+
+Aber: Auf der Küche-Aufnahmekarte (ganz am Anfang, noch bevor überhaupt eine
+Rückfrage zur Speisekammer lief) standen wieder zweimal „Decke streichen" und
+kein „Wände streichen" als Leistungen — obwohl die spätere Berechnung die
+Wände dann doch richtig hatte (wieder die Karte-zeigt-nicht-was-berechnet-
+wird-Sache, siehe Notiz an den Designer). Im fertigen Angebot gibt es weiterhin
+**nur eine Raumgruppe „KÜCHE"**, darin diesmal: Wandflächen (korrekt),
+Deckenfläche 2× (107,80 €), Boden schützen, Sockelleisten abkleben — UND am
+Ende der Liste nochmal eine zweite, identische „Deckenfläche streichen 2×"
+(107,80 €). Eine eigene „SPEISEKAMMER"-Gruppe erscheint weiterhin nicht.
+
+**Wichtige Präzisierung für Head of IT:** Die Rückfragen selbst laufen klar
+getrennt — „RAUM 2 VON 2, Speisekammer" fragt eigenständig nach Höhe und
+Türen, das Tool weiß also bis mindestens zur Rückfragen-Stufe, dass es zwei
+Räume sind. Der Fehler passiert also nicht (mehr) beim Scope, sondern
+irgendwo ZWISCHEN „Rückfragen pro Raum beantwortet" und „Positionen werden zu
+Raumgruppen für die Anzeige zusammengefasst" — die berechnete Speisekammer-
+Deckenposition landet dabei unter der Raumgruppe „Küche" statt in einer
+eigenen Gruppe. Sandys Vermutung („vielleicht wird die Speisekammer gar nicht
+als eigener Raum angelegt") trifft also nur zum Teil: bis zu den Rückfragen
+ist sie ein eigener Raum, danach nicht mehr sichtbar als einer.
+
+**Fix-Update (Head of IT, 2026-08-16):** Genau da gefunden, wo der Prüfmeister
+es eingegrenzt hatte — zwischen Berechnung und Anzeige, nicht mehr im Scope.
+Die Berechnung hatte die ganze Zeit zwei saubere, korrekt benannte Positionen
+("… — Küche" und "… — Speisekammer"). Die Anzeige-Funktion, die Positionen zu
+Raumgruppen zusammenfasst, prüft dafür jeden Namen gegen eine feste Liste
+bekannter Räume ("zimmer", "küche", "flur", …) — und "Speisekammer" stand
+nicht drauf. Für die Anzeige war "Speisekammer" damit kein Raum, das Suffix
+wurde entfernt, und die jetzt namenlose Position landete automatisch bei der
+einzigen ANDEREN erkannten Gruppe (Küche) — sah wie ein Duplikat aus, war
+aber ein Anzeige-Fehler, kein Rechenfehler.
+
+Fix: Speisekammer und ein paar naheliegende weitere Nebenräume (Abstellraum,
+Vorratsraum, Hauswirtschaftsraum, Hobbyraum) zur Liste ergänzt. Neuer Test in
+`angebot-gruppierung.test.ts` stellt genau deinen Fall nach (Küche + Speise-
+kammer, je eigene Deckenposition) und prüft, dass beide als eigene Gruppe
+erscheinen. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
+
+**Nachtest (Prüfmeister, 2026-08-16) — vollständig bestätigt, kompletter Fix:** Dritter Durchlauf.
+Jetzt zwei saubere, getrennte Raumgruppen mit eigenen Zwischensummen direkt neben dem Namen:
+„KÜCHE — 380,86 €" mit allen vier erwarteten Positionen (Wandflächen 26,52 m², Decke, Boden schützen,
+Sockelleisten abkleben), und „SPEISEKAMMER — 107,80 €" mit genau der einen erwarteten Deckenposition,
+keine Wandfläche. Keine Duplikate mehr, keine Vermischung. Gesamtsumme (581,51 €) ergibt sich exakt aus
+den beiden Raumsummen. Das war der schwerste Fund der ganzen Testreihe — jetzt sauber zu.
+
+---
+
+## PM-006 — Kleines Fenster (Übermessungsfrage) + Altbau-Zuschlag
+
+**Datum:** 2026-08-16
+**Status:** ✅ Wie erwartet — bestätigt bekannten Punkt, keine Überraschung; 1 neue Randbeobachtung
+
+**Zum Einsprechen:**
+„Büro, Altbau, drei mal drei, Höhe zwo vierzig. Ein kleines Fenster, fünfzig mal sechzig, sonst nix Besonderes. Wände und Decke streichen, zweimal."
+
+**Soll-Lösung:**
+- Umfang 12,00 lfm; Wandbrutto 12,00×2,40=28,80 m²
+- Fachlich korrekt nach VOB (Öffnung 0,30 m², unter der 2,5 m²-Grenze für Übermessung): kein Abzug fürs Fenster, nur Standard-Tür 1,89 m² abziehen → **26,91 m²**
+- Erschwerniszuschlag Altbau: **1 Pauschale**
+
+**Worauf achten:** Erwartung ist, dass das Tool das kleine Fenster trotzdem 1:1 abzieht (26,61 m² statt 26,91 m²) — das bestätigt mit echten Zahlen die fehlende Übermessungslogik für kleine Öffnungen (bekannter Punkt, kein neuer Fund). Zusätzlich 20 Sekunden nach dem Erstellen auf die Summe schauen (Race-Condition-Check).
+
+**Ist-Ergebnis (aus dem Tool):**
+- Wandflächen streichen 2×: 26,61 m² × 9,50 € = 252,79 € — exakt wie erwartet, kleines Fenster (0,30 m²) wurde 1:1 abgezogen
+- Deckenfläche streichen 2×: 9 m² × 11,00 € = 99,00 € ✓
+- Boden schützen: 9 m² × 1,20 € = 10,80 € (automatisch ergänzt, nicht erwähnt — wie in PM-001/PM-003 fachlich plausibel)
+- Sockelleisten abkleben: 11,1 lfdm × 0,80 € = 8,88 € (automatisch ergänzt; Umfang 12,00 − Türbreite 0,90 = 11,10 — Türabzug hier korrekt, da Maler-Sockelleiste)
+- Erschwerniszuschlag Altbau: 1 Pauschale erkannt, Preis 0,00 € (gewollt) — nach manueller Preiseingabe (100,00 €/pauschal) korrekt ins Angebot übernommen
+- Vor Preiseingabe: Netto 371,47 € / MwSt 70,58 € / Gesamt 442,06 €
+- Nach Preiseingabe: Netto 471,47 € / MwSt 89,58 € / Gesamt 561,06 €
+
+**Befund:**
+
+1. **Bestätigt, kein neuer Fund:** Übermessungsregel für kleine Öffnungen (VOB/DIN 18363) ist nicht implementiert — 26,61 m² statt fachlich korrekten 26,91 m². 0,30 m² Differenz, macht bei diesem Preis 2,85 €. Klein hier, aber jetzt mit echten Zahlen belegt statt nur Verdacht.
+2. **Randbeobachtung — 1-Cent-Rundungsdrift, jetzt zum zweiten Mal gesehen:** Netto+MwSt ergibt rechnerisch 442,05 € bzw. 561,05 €, angezeigt werden aber 442,06 € bzw. 561,06 €. Gleiches Muster wie schon in PM-002 (dort 1049,64 € erwartet vs. 1049,63 € angezeigt, nur in die andere Richtung). Für sich genommen nicht der Rede wert, aber zwei Treffer aus zwei Tests deuten auf einen systematischen Rundungs-Unterschied hin — vermutlich wird pro Position brutto gerundet und dann aufsummiert, statt einmal auf die Gesamtsumme. Reine Beobachtung, keine Dringlichkeit.
+3. Race-Condition-Check (20 Sekunden warten) habe ich nicht dokumentiert bekommen — offen, ob das noch gemacht wurde.
+
+**Sonst:** Erschwerniszuschlag Altbau wurde korrekt erkannt und als Pauschale angelegt, Einheit „pauschal" war im Preis-Dialog schon sinnvoll vorausgewählt.
+
+**Nachtest (2026-08-16, späterer Durchlauf):** Identisch reproduziert, Zahl für Zahl (26,61 m², 442,06 € vor Zuschlag). Keine neuen Auffälligkeiten — bestätigt nur nochmal den bekannten Übermessungs-Punkt und die 1-Cent-Rundungsdrift (jetzt zum dritten Mal beobachtet, immer noch niedrige Priorität).
+
+---
+
+## PM-007 — Dachgeschoss: Kniestock + Dachschrägen + Dachfenster
+
+**Datum:** 2026-08-16
+**Status:** 🟡 Kniestock/Grundierungs-Fix live bestätigt; unverlangte „Dachschräge spachteln" bleibt offen; unnötige Rückfragen trotz bereits genannter Werte neu gefunden
+
+**Zum Einsprechen:**
+„Dachzimmer, fünf mal dreieinhalb. Kniestock ist eins zwanzig hoch. Die Dachschrägen links und rechts jeweils zwölf Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles streichen, zweimal."
+
+**Soll-Lösung:**
+- Kniestockwände: Umfang 2×(5,00+3,50)=17,00 lfm × 1,20 m = **20,40 m²**
+- Dachschrägen: links 12 + rechts 12 = 24,00 m² brutto, minus 1 Dachfenster Standard (0,78×1,18=0,92 m²) = **23,08 m²**
+- Kein Deckenspiegel (nicht erwähnt) — keine eigene Position dafür
+- Keine normale „Wandflächen streichen"-Position — wäre falscher Zweig
+
+**Worauf achten:**
+- Wird der Dachgeschoss-Zweig überhaupt erkannt (braucht `kniestockhoehe` aus der Extraktion), oder rutscht das in die normale Wandflächen-Berechnung?
+- Kommen Kniestock und Dachschrägen als zwei getrennte Positionen mit den oben genannten Flächen?
+- Wird das Dachfenster von der Schrägenfläche abgezogen?
+- Fundort/Vorab-Hinweis: In `src/lib/mengen/gewerke/maler.ts`, Dachgeschoss-Zweig (ca. Zeile 295–342), fehlt bei „Kniestockwände streichen" und „Dachschrägen streichen" die „{anstriche}x"-Kennzeichnung im Positionstext, die der normale Zweig hat — rein kosmetisch (Menge/Preis unberührt), aber auf dem Papier sieht's dann so aus, als wäre nur 1× Anstrich drin. Schau, ob das im Ergebnis auch so aussieht.
+
+**Ist-Ergebnis (aus dem Tool):**
+- Erkennungskarte zeigte 3 getrennte Leistungen: „Wände streichen", „Dachschrägen streichen", „Kniestock streichen" — schon hier ein schlechtes Zeichen, weil ein Dachzimmer ohne genannte Giebelwand eigentlich nur Kniestock + Schräge hat, nicht noch eine dritte „Wände"-Leistung.
+- Rückfragen waren komplett generisch: „Wie hoch sind die Wände in Dachzimmer?" (2,60 m gewählt), „Wie viele Türen/Fenster?", „Wie groß ist die Bodenfläche?" (5 × 3,5 erneut eingegeben). Keine einzige Rückfrage zur Kniestockhöhe oder zu den Dachschrägenflächen — obwohl beides im Transkript klar genannt wurde („Kniestock eins zwanzig hoch", „Dachschrägen links und rechts je zwölf Quadratmeter").
+- Fertiges Angebot (2026-03EE, 175,98 €) enthält **nur**: Wandflächen streichen 2× (12 m² × 9,50 € = 114,00 €), Boden schützen (17,5 m² × 1,20 € = 21,00 €), Sockelleisten abkleben (16,1 lfdm × 0,80 € = 12,88 €). Weder „Kniestockwände" noch „Dachschrägen" tauchen als eigene Position auf.
+- Die 12 m² bei „Wandflächen streichen" lassen sich nicht aus den angezeigten Raumdaten (3,5 × 5 m, Höhe 2,6 m, 1 Tür, 1 Fenster) nachrechnen — nach Standardformel (Umfang 17,00 lfm × 2,60 m − Fenster − Tür) käme man auf rund 41 m², nicht 12 m².
+
+**Befund:**
+
+1. **Kompletter Fehlschlag des Dachgeschoss-Zweigs**
+   - Fundort: die Aktivierungsbedingung `istDachgeschoss` in `src/lib/mengen/gewerke/maler.ts`, ca. Zeile 87, greift nur wenn `kniestockhoehe`, `dachschraege_links_m2`/`_rechts_m2` oder `deckenspiegel_m2` aus der Extraktion gefüllt sind. Die Rückfragen legen nahe, dass keins davon gesetzt wurde — der Raum ist komplett in den normalen Wandflächen-Zweig gerutscht.
+   - Erwartet: Kniestockwände (20,40 m²) und Dachschrägen (23,08 m² netto) als zwei eigene Positionen.
+   - Tatsächlich: Beides fehlt vollständig. Stattdessen eine einzelne „Wandflächen streichen"-Position mit einer Zahl (12 m²), die sich nicht aus den angezeigten Maßen herleiten lässt — es steckt also vermutlich noch ein zweiter Fehler in der Berechnung selbst, on top von der fehlenden Zweig-Aktivierung.
+   - Einordnung: Das ist der schwerste strukturelle Fund bisher, gleichauf mit PM-005. Die komplette Produktkategorie „Dachgeschoss/Kniestock/Dachschräge" scheint vom Aufnahme-Schritt an nicht zu funktionieren, nicht nur an einer einzelnen Berechnungsstelle. Bitte zuerst bei der Extraktion (wie wird `kniestockhoehe` aus der Sprache erkannt?) ansetzen, dann erst bei der Menge nachschauen.
+
+**Fix-Update (Head of IT, 2026-08-16):** Genau derselbe Fehlerbau wie bei
+PM-008, nur an einer anderen Stelle — deshalb diesmal schnell gefunden. Der
+GPT-Prompt weist GPT ausdrücklich an, bei Kniestock/Dachschräge/Deckenspiegel
+die Felder `kniestockhoehe`, `dachschraege_links_m2`, `dachschraege_rechts_m2`,
+`dachschraege_je_seite_m2`, `deckenspiegel_m2` und `dachfenster` zu setzen —
+GPT bekommt also den richtigen Auftrag. Aber beim Einlesen der GPT-Antwort
+wurden genau diese 6 Felder nie in die interne Raum-Struktur übernommen (die
+Liste der "erlaubten" Felder war unvollständig). Ergebnis: die Werte waren
+nach dem Einlesen immer leer, egal was GPT geliefert hat — deshalb hat
+`istDachgeschoss` nie angeschlagen und der Raum ist in die normale (falsche)
+Wandflächen-Rechnung gerutscht. Das erklärt auch die unerklärliche „12 m²":
+das war der Zufallswert aus der falsch gegriffenen normalen Rechnung, keine
+eigene zweite Fehlerquelle.
+
+Fix: alle 6 Felder werden jetzt beim Einlesen übernommen. Nebenbei die
+kosmetische Lücke behoben, die du selbst schon markiert hattest — Kniestock-
+und Dachschrägen-Positionen zeigen jetzt auch „{n}x" für den Anstrich, wie
+alle anderen Positionen. 4 neue Tests (`maler-engine.test.ts`, exakt deine
+Soll-Zahlen: Kniestock 20,40 m², Dachschrägen 23,08 m²), alle 666 Tests im
+Projekt laufen weiter grün. Live-Test durch dich steht noch aus.
+
+**Fix-Update 2 (Head of IT, 2026-08-16) — die unverlangte 136,80-€-Grundierung:**
+Zwei getrennte Fundstellen, gleicher Fehlerbau, beide jetzt behoben.
+1. `pruefeGrundierung` (dieselbe Funktion wie beim PM-003-Fix) hatte für den
+   Dachschrägen-Fall keine Prüfung, ob wirklich "grundieren" gewünscht war —
+   sie hat die Fläche unconditional draufgesetzt, sobald überhaupt eine
+   Dachschrägen-Position da war. Jetzt gilt dasselbe Gate wie bei der
+   Wand-Grundierung: nur bei einem echten, im Transkript genannten
+   Grundierungs-Wunsch.
+2. Eine ZWEITE, ältere Funktion (`pruefeDachschraege`) hat unabhängig davon
+   noch eine eigene "Dachschräge Grundierung" ergänzt, ausgelöst allein durch
+   die WÖRTER "Dachschräge"/"Kniestock" irgendwo im Text — ganz ohne jeden
+   Grundierungs-Bezug. Sie stammt vermutlich noch aus der Zeit vor der
+   Dachgeschoss-Engine (als die Vollständigkeitsprüfung versucht hat, die
+   fehlende Berechnung selbst zu kompensieren) und wurde bei deren Einbau
+   nicht mit angepasst. Gleiches Gate jetzt auch hier ergänzt.
+Neuer Golden-Test PM-007b (`golden-korrekturen.test.ts`) stellt genau deinen
+Fall nach (Dachzimmer, GPT trägt "grundieren" impliziter Weise in arbeiten[]
+ein, Nutzer hat es nie gesagt) und prüft, dass keine Grundierungs-Position
+mehr entsteht. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
+
+**Nachtest (Prüfmeister, 2026-08-16):** Grundierung (136,80 €) ist bestätigt weg — Fix wirkt. Kniestock
+(20,4 m²) weiterhin exakt Soll. Zwei offene Punkte bleiben:
+
+1. **„Dachschräge spachteln / Untergrundvorbereitung" (0 €, unbepreist) taucht weiterhin auf**, obwohl
+   nie erwähnt — sieht nach derselben Fehlerfamilie aus wie die Grundierung, nur eine dritte, noch nicht
+   angefasste Fundstelle (evtl. noch in `pruefeFassade`/`maler-tapete.ts` oder einer Nachbarfunktion mit
+   demselben „nur weil das Wort Dachschräge irgendwo steht"-Muster).
+2. **Neuer Fund, direkt von Sandy bemerkt:** Die Rückfragen fragen weiterhin nach Fensteranzahl und nach
+   der Bodenfläche (Länge × Breite), obwohl beides im Transkript klar genannt wurde („Ein Dachfenster",
+   „fünf mal dreieinhalb") — bei Letzterem sind die Werte auf der Rückfrage sogar schon korrekt
+   vorausgefüllt (5,0 / 3,5), der Nutzer muss trotzdem einmal bestätigen. Das ist kein Rechenfehler,
+   sondern unnötige Reibung — siehe Notiz an den Designer (PD-005), Sandy hat dazu eine grundsätzliche
+   Meinung zur Rückfragen-UX.
+
+Dachschrägenfläche weiterhin 22,8 m² statt der von mir erwarteten 23,08 m² (Dachfenster-Abzug mit
+falschem Standardmaß) — reproduziert sich jetzt zum zweiten Mal identisch, also stabil und kein
+Zufall.
+
+**Fix-Update 3 (Head of IT, 2026-08-17) — beide Restpunkte behoben:**
+
+1. **Falsche Fläche (22,8 statt 23,08 m²):** Ursache war nicht bei uns im
+   Code, sondern ein Widerspruch zwischen GPT und unserem Code. Ich hab in
+   der Datenbank nachgesehen, was GPT bei deinem Testfall wirklich geliefert
+   hat: bei „normale Größe" (keine Maße genannt) hat sich GPT SELBST eine
+   Zahl ausgedacht — 1,20×1,00m, sein Standard für ein GANZ NORMALES Fenster
+   (denselben, den es überall im Tool nutzt), ehrlich mit einem eigenen Flag
+   „das ist geraten" markiert. Unser Code kennt aber einen ANDEREN, kleineren
+   Standard extra für Dachfenster (0,78×1,18m — Dachfenster sind in echt
+   meist kleiner als Wandfenster), genau der Wert aus deiner eigenen
+   Soll-Lösung. Weil GPT schon eine Zahl mitliefert, kam unser eigener,
+   passenderer Standard nie zum Zug. Fix: wenn GPT sein eigenes „geraten"-
+   Flag setzt, gilt jetzt unser Dachfenster-Standard statt GPTs Zahl — nur
+   bei echten, von dir genannten Maßen zählt GPTs Wert. Neuer Golden-Test
+   PM-007c mit deinen exakten Original-Extraktionsdaten aus der Datenbank.
+2. **Unverlangte „Dachschräge spachteln"-Position:** Genau die dritte
+   Fundstelle derselben Fehlerfamilie wie die schon gefixte Grundierung —
+   die Position kam bisher immer dazu, sobald „Dachschräge"/„Kniestock"
+   irgendwo im Text fiel, ganz ohne Prüfung auf ein echtes Signal. Jetzt nur
+   noch bei einem echten Ausbesserungs-Hinweis (Risse, Löcher, uneben,
+   spachteln, etc.), sonst nur als Erinnerung — gleiches Muster wie überall
+   sonst in diesem Bug-Komplex.
+
+3 neue Tests (PM-007c-Golden-Test + 2 Gegen-Tests für Spachteln in
+`vollstaendigkeit.test.ts`). Alle 687 Tests grün, `tsc` sauber. Live-Test
+durch dich steht für beide Punkte aus.
+
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Beide Restpunkte bestätigt behoben. Dachzimmer
+nochmal frisch eingesprochen (5×3,5, Kniestock 1,20, Dachschrägen je 12 m², 1 Dachfenster). Karte zeigt
+diesmal sauber 3 Leistungen (Wände/Dachschrägen/Kniestock streichen), keine unverlangte „Dachschräge
+spachteln" mehr. Im fertigen Angebot: Kniestockwände streichen 2× **20,4 m²** exakt Soll, Dachschrägen
+streichen 2× **23,08 m²** exakt Soll (Dachfenster-Abzug jetzt mit dem richtigen kleineren Standardmaß,
+vorher 22,8 m²) — beides bestätigt korrekt. Keine unverlangte Spachtel- oder Grundierungsposition mehr.
+Fachlich ist dieser Fall damit sauber.
+
+Zwei Punkte bleiben, keiner davon ein Rechenfehler:
+1. **Rückfragen-Redundanz reproduziert sich weiter** (PD-005): Bodenfläche wird erneut abgefragt, obwohl
+   auf der Karte schon „5,00 × 3,50 m" stand — die Rückfrage kommt sogar mit den richtigen Werten
+   vorausgefüllt (5,0/3,5), muss aber trotzdem bestätigt werden. Fenster-Anzahl (1) genauso nochmal
+   gefragt, obwohl „Fenster: 1" schon auf der Karte stand.
+2. **Neu:** Kniestockwände streichen UND Dachschrägen streichen haben beide **keinen Preis in der
+   Preisdatenbank** hinterlegt (0,00 €, „Preis fehlt in deiner Preisdatenbank"). Anders als bei einem
+   Erschwerniszuschlag ist das hier keine bewusste Nutzer-Preisfestlegung, sondern schlicht eine fehlende
+   Standardposition — siehe „Systemischer Fund" oben, Sandy will das für alle diese Fälle ergänzt haben.
+
+Damit ist PM-007 rechnerisch komplett grün. Offene Punkte sind Designer-Thema (PD-005) bzw.
+Preisdatenbank-Pflege, kein Code-Bug mehr in der eigentlichen Berechnung.
+
+---
+
+## PM-009 — Bodenleger Komplettpaket: Altbelag, Ausgleich, Vinyl gerade, Sockelleisten, Übergangsschiene
+
+**Datum:** 2026-08-16
+**Status:** 🟡 Verschnitt-Fix bestätigt auch für Vinyl — aber Übergangsschiene fehlt komplett, obwohl „erkannt"
+
+**Hinweis an Chief of Staff (Prüfmeister, 2026-08-17):** Das Ist-Ergebnis unten
+stand hier schon einmal, ist aber offenbar bei einer gleichzeitigen Bearbeitung
+verloren gegangen (kein Vorwurf — passiert bei einer gemeinsamen Datei mit
+mehreren Autoren). Ich hab's aus meinem eigenen Gesprächsverlauf wiederhergestellt,
+Wortlaut sollte identisch zum Original sein. War tatsächlich schon getestet,
+nicht nur in der Tabelle behauptet.
+
+**Zum Einsprechen:**
+„Flur, vier mal eins achtzig. Alter Teppich muss komplett raus und entsorgt werden, Untergrund ist uneben, den gleich mit ausgleichen. Dann Vinylboden drauf, ganz normal gerade verlegt. Neue Sockelleisten drumrum. Am Übergang zum Wohnzimmer brauchen wir noch ne Übergangsschiene."
+
+**Soll-Lösung:**
+- Fläche: 4,00×1,80=7,20 m²
+- Altbelag entfernen: **7,20 m²**
+- Untergrundvorbereitung/Ausgleich: **7,20 m²**
+- Vinyl verlegen gerade: nach Fachwissen-Standard 5% Verschnitt = **7,56 m²**
+- Sockelleisten montieren: Umfang 2×(4,00+1,80)=11,60 lfm
+- Übergangsschiene: **1 eigene Position** (Stück oder lfdm, an der Tür zum Wohnzimmer)
+
+**Worauf achten:**
+- Verschnitt-Bug aus PM-004 nochmal, diesmal bei Vinyl statt Laminat: kommt 7,56 m² oder wieder 7,92 m² (10%)? Falls auch hier 10%, ist bestätigt, dass es alle Plattenware gleichermaßen betrifft, nicht nur Laminat.
+- Taucht die Übergangsschiene überhaupt als eigene Position auf? Ich habe im Code keine Stelle gefunden, die dafür eine Position erzeugt — Verdacht auf echte Lücke, nicht nur eine Fehlberechnung.
+
+**Ist-Ergebnis (aus dem Tool):**
+- Aufnahme-Karte: „5 Positionen erkannt" — Teppich entfernen, Untergrund ausgleichen, Vinylboden verlegen, Sockelleisten anbringen, **Übergangsschiene einbauen** (alle 5 als Leistungen gelistet, inkl. Übergangsschiene).
+- Vinyl-Boden verlegen inkl. **5% Verschnitt**: 7,56 m² × 22,00 € = 166,32 € ✓ — Verschnitt-Fix wirkt auch bei Vinyl, nicht nur bei Laminat.
+- Teppichboden entfernen und entsorgen: 7,2 m² × 6,00 € = 43,20 € ✓
+- Untergrundvorbereitung / Ausgleich: 7,2 m² × 12,00 € = 86,40 € ✓
+- Sockelleisten montieren: 11,6 lfdm × 5,50 € = 63,80 € ✓ (Umfang, kein Türabzug — hier gab's im Boden-Kontext keine erfasste Tür, also strukturell erwartbar)
+- **Übergangsschiene fehlt komplett in der finalen Positionsliste.** Die Nettosumme (359,72 €) ergibt sich exakt aus den anderen 4 Positionen — es ist rechnerisch kein 5. Posten versteckt.
+
+**Befund:**
+
+1. **Übergangsschiene: „erkannt", aber nie berechnet — Lücke bestätigt**
+   - Die Aufnahme-Karte zählt „5 Positionen erkannt" und listet die Übergangsschiene als Leistung. Im fertigen Angebot kommen nur 4 Positionen raus, die Übergangsschiene fehlt spurlos.
+   - Bestätigt meinen Verdacht: es gibt keine Berechnungsstelle für Übergangsschienen im Code — die Leistung wird zwar erkannt, aber nirgends in eine Position umgesetzt.
+   - Das ist zusätzlich eine Instanz des Karte-zeigt-nicht-was-berechnet-wird-Musters, diesmal als glatte Zahl sichtbar: „5 erkannt" vs. 4 geliefert. Sowas fällt einem Handwerker eher auf als ein falscher Flächenwert, weil die Zahl direkt vorne auf der Karte steht.
+
+**Für Head of IT:** Übergangsschiene als eigene Position ergänzen (Stück oder lfdm, an Türdurchgängen zwischen unterschiedlichen Belägen).
+**Für den Designer:** siehe PD-004 — die „X Positionen erkannt"-Zahl selbst war hier schlicht falsch, nicht nur die Detailtiefe dahinter.
+
+**Nachtest (Prüfmeister, 2026-08-16):** Identisch reproduziert — Übergangsschiene fehlt weiterhin, Netto
+(359,72 €) unverändert exakt aus den 4 anderen Positionen. Noch nicht gefixt, aber jetzt zweifach
+bestätigt, also sicher kein Zufall.
+
+**Fix-Update (Head of IT, 2026-08-17):** Es gab schon eine Berechnungsstelle
+dafür — dein Verdacht "keine Stelle im Code" war knapp daneben, aber der
+Effekt war derselbe. Sie kannte nur das Wort "Profil" (und "Alu"), nicht
+"Schiene" — und "Übergangsschiene" ist im Handwerk mindestens genauso
+gebräuchlich wie "Übergangsprofil". Weil das Wort fehlte, wurde die
+Erkennung nie ausgelöst, egal wie klar du's gesagt hast.
+
+Fix: "Schiene" als gleichwertiges Wort ergänzt, und die Positionsbezeichnung
+übernimmt jetzt deine Wortwahl ("Übergangsschiene" bleibt "Übergangsschiene",
+nicht automatisch "Übergangsprofil"). Beim Testen ist mir dabei noch ein
+zweiter, latenter Fehler in derselben Funktion aufgefallen: die Stückzahl-
+Erkennung sucht Zahlwörter wie "vier" irgendwo im GANZEN Text, nicht in der
+Nähe von "Übergang" — bei deinem Transkript hätte sie fälschlich die "vier"
+aus der Raummaß-Angabe ("vier mal eins achtzig") als Stückzahl der
+Übergangsschiene genommen. In der echten Pipeline (Zahlen werden vorher
+schon in Ziffern umgewandelt) passiert das zum Glück nicht — dort landet es
+korrekt als Erinnerung "Anzahl prüfen" statt eine falsche Zahl zu erfinden.
+Hab einen Test extra dafür ergänzt, der das absichert.
+2 neue Tests in `boden.test.ts` (dein Fall + der Zahlen-Fallstrick). Alle 684
+Tests grün, `tsc` sauber. Live-Test durch dich steht aus.
+
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Bestätigt behoben. Flur nochmal frisch eingesprochen
+(4×1,80, Teppich raus, Untergrund ausgleichen, Vinyl gerade, Sockelleisten, Übergangsschiene). Karte
+zeigt „5 Positionen erkannt" inkl. Übergangsschiene — und diesmal taucht sie auch im fertigen Angebot
+auf: „Übergangsschiene, 1 Stück". Verschnitt weiterhin korrekt bei 5 % (166,32 €, 7,56 m²). Einzige
+offene Kleinigkeit: die Übergangsschiene hat noch keinen Preis in der Preisdatenbank hinterlegt
+(0,00 €, „Preis fehlt") — reine Preisdatenbank-Pflege, siehe „Systemischer Fund" oben, kein Rechenfehler
+mehr. Dieser Fall ist damit fachlich komplett grün.

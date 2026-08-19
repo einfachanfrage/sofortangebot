@@ -79,6 +79,26 @@ Einzelfall, sondern ein wiederkehrendes Muster.
 Fassade, fünfter Nachtest) — Zitat: „Das gefällt mir gar nicht" / „Es ist einfach eine Katastrophe", weil
 auf der Karte andere Dinge stehen als später im Entwurf. Details bei PD-007 weiter unten.
 
+**Antwort/Update (2026-08-19):** Danke für die drei konkreten Testfälle hier — vor allem der letzte
+(„Kinderzimmer" als eigene Leistung) hat mir beim Code-Lesen geholfen, den Bug in der
+Aufmaß-Sammelansicht überhaupt zu finden. Sandy hat mir direkt am zugehörigen Screen (der
+„Timeline"-Ansicht nach der Aufnahme) genau denselben Effekt gezeigt: zwei eingesprochene Räume,
+die Karte zeigte trotzdem nur die Maße von einem, und die Leistungsliste sah aus wie ein Duplikat
+statt zwei getrennter Räume.
+
+Deine Design-Frage — „ist eine reine Leistungen-erkannt-Liste überhaupt das richtige Format für
+diesen Vertrauens-Moment?" — habe ich mit Ja beantwortet, aber im Sinne von: nicht flicken, sondern
+die Karte grundsätzlich neu aufbauen, genau wie du am Ende vorgeschlagen hast. Ergebnis ist DC-028
+(`docs/design-check.md`) — Grundprinzip-Wechsel von „eine Karte pro Aufnahme" zu „eine Karte pro
+Raum", mit derselben Gruppierungs-Logik (`gruppiereNachRaum`), die auch das fertige Angebot nutzt.
+Damit wird ein „Kinderzimmer als Leistung"-Fehler sofort sichtbar seltsam, weil Raumname und
+Leistungsliste jetzt strukturell getrennt sind, nicht mehr in einer Liste vermischt.
+
+Die technische Wurzel — zwei unabhängige GPT-Aufrufe für Vorschau und echte Berechnung — bleibt wie
+von dir schon vermutet nicht meine Baustelle; die gebe ich als offene Architektur-Frage an Head of
+Product Engineering weiter. Konzept + klickbarer Prototyp sind an Sandy raus, Umsetzung erst nach
+ihrem Go.
+
 ---
 
 ## PD-002 — Sandys eigenes Urteil zur Rückfragen-UI: komplett neu denken
@@ -108,6 +128,14 @@ komisch vorkam):
 
 Das ist Sandys Baustelle, nicht meine — ich wollte nur die konkreten Screens mitgeben, die ich beim
 Testen gesehen habe, damit du nicht bei null anfängst.
+
+**Update (2026-08-19) — positive Live-Rückmeldung zur neuen Rückfragen-Seite:** Bei einem PM-010-Nachtest
+zeigte die Rückfragen-Runde jetzt „Insgesamt 0 von 2 beantwortet" mit beiden offenen Fragen für den Raum
+(„Wie viele Türen…", „Wie viele Fenster…") direkt untereinander auf einer Seite, statt als getrennte
+Vollbild-Screens. Sandys eigener Kommentar dazu, unverändert: „neu ein raum auf einer seite sieht super
+aus". Genau die Art Verbesserung, die oben unter „keine Möglichkeit, mehrere offene Fragen auf einen Blick
+zu sehen" angemerkt war — offenbar ist DC-025 schon (teilweise) live und kommt gut an. Falls das dein
+aktueller Zwischenstand ist: weiter so, das war ein echter Pluspunkt bei Sandy.
 
 ---
 
@@ -140,6 +168,14 @@ oben beschrieben. **Sandy verlangt ausdrücklich, dass daraus eine eigene Aufgab
 Denkanstoß mehr** — parallel dazu geht dieselbe strukturelle Frage ans Engineering für das zugrundeliegende
 Datenmodell (Details in `pruefmeister-testfaelle.md`, PM-008 Nachtest 5).
 
+**Update (2026-08-18) — Chip ist live, dieser Punkt ist damit erledigt:** Sechster PM-008-Nachtest zeigt
+den neuen Wand-Chip in Aktion — „WAND / FASSADE" mit „Wandlänge 12 m", „Wandhöhe 6 m", „Türen 0",
+„Fenster 3", alle vier Werte korrekt gefüllt, keine roten „!" mehr. Danke, funktioniert genau wie im
+Konzept beschrieben. Ein neuer, verwandter Fund liegt aber jetzt in der „So gerechnet"-Zeile selbst (die
+rechnet den Fensterabzug falsch) — das ist kein Design-Thema mehr, sondern ein Rechenfehler bei Head of
+Product Engineering, siehe `pruefmeister-testfaelle.md` PM-008 Nachtest 6. Ich schließe PD-003 hiermit als
+Design-Punkt ab.
+
 ---
 
 ## PD-004 — „X Positionen erkannt" stimmt wiederholt nicht mit der tatsächlichen Anzahl überein
@@ -166,6 +202,43 @@ auf der Bestätigungskarte auf — offensichtlich ein verstümmeltes „Grundier
 aber genau die Art Detail, die einem Handwerker sofort auffällt und Vertrauen kostet, ohne dass
 irgendwas fachlich falsch wäre. Passt eher in die PD-001/PD-004-Familie (Karte wirkt unfertig/buggy)
 als dass es ein eigener Punkt wäre.
+
+**Korrektur (Prüfmeister, 2026-08-18):** Hier stand ein „Update — sechster PM-008-Nachtest, diesmal
+eindeutig belegt" zu angeblich „Fenster streichen" + „Feuergrundierung" auf der Karte. Komplett falsch —
+Sandy hat direkt widersprochen, das steht so nicht auf dem Screenshot. Ich habe die Leistungen-Liste
+falsch gelesen, offenbar wieder mit dem älteren, bereits einmal zurückgenommenen Fund vom 17.08.
+verwechselt statt den aktuellen Screenshot neu zu lesen. Zweite Runde desselben Lesefehlers zu diesem
+Thema — komplett zurückgenommen.
+
+**Nachtrag, per Copy-Paste bestätigt:** Die Karte zeigt tatsächlich zwei Leistungen — „Fassade
+streichen" und „Vorhergrundierung" (vermutlich „Vorher-Grundierung" ohne Trennzeichen). Keine
+Phantom-Leistung, „2 Positionen erkannt" passt zahlenmäßig zu den zwei Leistungen. „Vorhergrundierung"
+selbst ist aber eine echte, jetzt bestätigte Namensverstümmlung — dieselbe Familie wie „Gondierung" oben,
+diesmal per Copy-Paste verifiziert statt aus einem Screenshot gelesen. Details in
+`pruefmeister-testfaelle.md`, PM-008 Nachtest 6.
+
+**Update (2026-08-19), neue Facette — die Zahl kann stimmen, obwohl der Inhalt trotzdem falsch ist:**
+Bei PM-010 zeigte die Karte „5 Positionen erkannt" (Wände streichen, Decke streichen, Sockelleisten
+entfernen, Neue Sockelleisten montieren, Sockelleisten streichen). Der fertige Entwurf hatte ebenfalls
+fünf Positionen — aber „Sockelleisten entfernen" fehlte komplett, dafür stand „Boden schützen" da, das
+auf der Karte gar nicht angekündigt war. Zahlenmäßig 5 = 5, keine Alarmglocke, aber inhaltlich ist eine
+ausdrücklich verlangte Leistung durch eine andere ersetzt worden. Bestätigt genau den Denkanstoß von
+oben: die reine Zahl ist kein verlässliches Signal, selbst wenn Positions-Erkennung und Entwurf zufällig
+gleich groß sind. Details in `pruefmeister-testfaelle.md`, PM-010.
+
+**Update (2026-08-19) — bisher stärkste Ausprägung dieses Musters:** Bei PM-011 zeigte die Karte „2
+Positionen erkannt" („Wände spachteln", „Wände streichen"), der fertige Entwurf hatte sieben Positionen.
+Fünf davon sind plausible, automatisch abgeleitete Nebenleistungen (Boden schützen, Sockelleisten
+abkleben, Grundierung, Erschwerniszuschlag, plus eine separat dokumentierte Kleinreparatur-Position, die
+eigentlich gar nicht hätte kommen sollen) — das allein ist wie in den meisten Fällen kein Fehler. Aber die
+Diskrepanz selbst (2 angekündigt, 7 geliefert) ist deutlich größer als alles bisher hier Dokumentierte
+(meist „5 vs. 4", ein Positions-Unterschied). Ein Handwerker, der auf „2 Positionen" vertraut und danach
+einen Entwurf mit mehr als dreimal so vielen Zeilen sieht, erlebt einen größeren Vertrauens-Sprung als in
+den bisherigen Fällen. Verstärkt meinen Denkanstoß von oben noch einmal: vielleicht sollte diese Zahl
+grundsätzlich nicht mehr aus dem frühen Erkennungsschritt kommen, sondern nur noch aus dem, was am Ende
+tatsächlich berechnet wird — oder die Karte zeigt von vornherein auch die absehbaren Nebenleistungen mit
+an (ggf. mit „Vorschlag"-Kennzeichnung, siehe PD-008), statt nur die wörtlich genannten Leistungen zu
+zählen. Details in `pruefmeister-testfaelle.md`, PM-011.
 
 ---
 
@@ -294,6 +367,12 @@ Testreihe die Wirkung deutlich abschwächen — nicht weil der zugrundeliegende 
 der Handwerker genau an der richtigen Stelle hinschaut. Technische Voraussetzung dafür (für Head of IT,
 siehe PM-011): es bräuchte pro Position ein Flag, ob sie direkt aus dem Transkript kam oder vom Tool
 selbst abgeleitet wurde — das gibt es aktuell offenbar noch nicht.
+
+**Update (2026-08-18):** Noch ein Beispiel dazu, aus PM-008 Nachtest 6 — die neue „Erschwerniszuschlag
+Raumhöhe > 3m"-Position bei der Fassade (6 m Wandhöhe) wurde automatisch ergänzt, ohne dass „Gerüst" oder
+„Erschwernis" im Transkript vorkam. Fachlich nachvollziehbar (Leiter/Gerüst nötig ab 3 m), aber genau der
+Fall, wo eine „Vorschlag"-Kennzeichnung dem Handwerker sofort zeigen würde: das hat sich das Tool selbst
+gedacht, kurz prüfen.
 
 **Update (2026-08-17):** Dritte identische Reproduktion, jetzt ganz sicher kein Einzelfall. Interessanter
 Beleg dabei: es gibt inzwischen ein neues „So gerechnet"-Infofeld in der Positionsansicht, das die

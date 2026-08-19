@@ -166,8 +166,21 @@ export interface Quote {
   raum_details?: Record<string, unknown> | null
   revision: number
   original_id: string | null
+  // CoS-012/DC-029: bewusst dauerhaft nullable, siehe src/lib/baustellen.ts
+  baustelle_id?: string | null
   customer?: Customer
   items?: QuoteItem[]
+}
+
+// CoS-012/DC-029: "Baustelle"/Projekt-Zuordnung — siehe src/lib/baustellen.ts
+export interface Baustelle {
+  id: string
+  company_id: string
+  customer_id: string
+  name: string
+  adresse: string | null
+  ist_erstbaustelle: boolean
+  created_at: string
 }
 
 export interface Nummernkreis {

@@ -49,6 +49,11 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     .insert({
       company_id: original.company_id,
       customer_id: original.customer_id,
+      // CoS-012/DC-029: 1:1 vom Original übernehmen statt neu abzuleiten —
+      // falls der Kunde inzwischen mehrere Baustellen hat und das Original
+      // bewusst nicht auf der Erstbaustelle stand, soll die Revision nicht
+      // stillschweigend zurück auf die Erstbaustelle springen.
+      baustelle_id: original.baustelle_id,
       status: 'draft',
       angebotsnummer: neueNummer,
       valid_until: original.valid_until,
