@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAIClient, WHISPER_MODEL } from '@/lib/ai-client'
 import { pruefeKIZugriff } from '@/lib/rate-limiter'
@@ -6,6 +6,7 @@ import { extrahiereChips } from '@/lib/chips-extraktion'
 import { ergaenzeChipsUmAutomatischeNebenpositionen } from '@/lib/chips-vervollstaendigung'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { segmentiereRaeume } from '@/lib/raum-segmentierer'
+import { cacheVolleExtraktion } from '@/lib/volle-extraktion-cache'
 import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
@@ -137,6 +138,10 @@ export async function POST(req: NextRequest) {
         zahlen_ersetzt: zaehleErsetzteZahlen(transkript, transkriptVerarbeitet),
       })
       .eq('id', aufnahme_id)
+
+    // CoS-002 Option 1, Schritt 1 (2026-08-20): läuft NACH der Antwort,
+    // siehe volle-extraktion-cache.ts.
+    after(() => cacheVolleExtraktion(supabase, user.id, aufnahme_id, aufnahme.angebot_id as string, transkript))
 
     return NextResponse.json({ transkript, positionen })
 

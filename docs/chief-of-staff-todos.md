@@ -43,19 +43,21 @@ Lösungsvorschlag: CoS-013.
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | 🟡 umgesetzt (Landingpage, PlanWahlModal, `/vorschau` entfernt/umgeleitet, zentrale `pricing.ts` angelegt), Live-Nachtest steht aus | `docs/design-check.md` DC-001 |
-| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | ⏳ dokumentiert, kein akuter Auftrag | Prüfmeister-Notiz an CoS + PM-001-Fix-Update |
+| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | 🟡 **In Umsetzung (Head of Product Engineering, 20.08.2026).** Option 2 fertig. Option 1 Schritt 1 (voll_extraktion cachen) fertig. Schritt 2: die geteilte Nachbearbeitungs-Funktion (`extraktion-pipeline.ts`) ist fertig und regressionsgeprüft (236 Tests grün), die eigentliche Karten-Umstellung wartet bewusst auf eine UX-Abstimmung zum „vorläufig"-Zustand. Schritt 3 (Geld-Pfad, Gate-1-Bedingung) noch offen. Noch KEIN Live-Nachtest | Sandy-Entscheidung 20.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md` |
 | CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
 | CoS-012 | DC-029 „Baustelle"/Projekt-Zuordnung — Wording-Konzept vom Product Designer steht, zwei Teilstücke formal zu vergeben | 🟡 Lexware/Lexoffice-Machbarkeit erledigt. Datenmodell (Head of Product Engineering) jetzt umgesetzt und live: Tabelle `baustellen` + `quotes.baustelle_id` + Migration + Backfill in der echten Datenbank angewendet, App-Code an allen vier Stellen verdrahtet. Live-Nachtest steht aus, Designer baut jetzt Konzept + Prototyp für die Baustellen-UI darauf auf | `docs/design-check.md` DC-029 |
 | CoS-013 | Strukturelle Lösung für den wiederholten Datei-Speicherfehler bei gemeinsamen Doku-Dateien (jetzt 6. Mal) | ❌ offen — Sofortmaßnahme (Dateiende-Markierung) bereits umgesetzt, eigentlicher Lösungsvorschlag (Git statt Direkt-Überschreiben) braucht Sandys Go | Sandys Frage „kannst du es richtig lösen", 2026-08-20 |
+| CoS-014 | Nebenfund aus CoS-002: manuelle Positions-Änderungen sind heute nur durch Zufall vor Neu-Berechnung sicher (kein echter Schutz-Mechanismus) | ❌ offen — beschrieben, nicht angefasst | `docs/cos-002-architektur-vorschlag.md` Abschnitt 2 |
+| CoS-015 | Nebenfund aus CoS-002: Kosten-Protokollierung (`ki_usage`) für die teure `ki-extrahieren`-Extraktion läuft seit 20.07.2026 wegen Spalten-Mismatch still ins Leere | ❌ offen — Ursache gefunden (Edge Function schreibt `prompt_typ`/`input_tokens` statt `endpunkt`/`tokens_in`), nicht behoben | `docs/cos-002-architektur-vorschlag.md` Abschnitt „Daten, die ich geprüft habe" |
 
 ---
 
-## CoS-010 — DRINGEND: Angebot verdoppelt sich (Race-Condition-Verdacht)
+## CoS-010 — Angebot verdoppelt sich (Race-Condition-Verdacht)
 
-**Datum:** 2026-08-17
-**Status:** ❌ offen, höchste Priorität im ganzen Projekt — schwerster Einzelfund bisher
+**Datum:** 2026-08-17, zuletzt aktualisiert 2026-08-20
+**Status:** 🟡 App-seitiger Schutz + DB-seitiges Unique-Constraint laut PM-014 (20.08.) beide live — nur noch ein gezielter Gleichzeitigkeits-Test offen. Kein akuter Blocker mehr, aber inzwischen von CoS-002 als Top-Priorität im Projekt abgelöst (Sandys ausdrücklicher Auftrag „endgültig fixen", 20.08.)
 
 **Hintergrund:** Prüfmeister hat live beobachtet (kein geplanter Testfall,
 beim Nachschauen im Browser aufgefallen), dass sich ein bereits sauber
@@ -158,6 +160,17 @@ Race Condition auf Serverebene (zwei komplett unabhängige Anfragen exakt
 gleichzeitig) davon nicht ausgeschlossen ist — dafür bräuchte es einen
 Datenbank-Constraint, ein größerer Schritt, der Sandys Go braucht. Kein
 akuter Blocker mehr, siehe `pruefmeister-testfaelle.md` PM-014.
+
+**Update (Chief of Staff, 2026-08-20):** Laut aktuellem Stand in
+`pruefmeister-testfaelle.md` PM-014 (dortige Fix-Update-2, 20.08. — das ist
+die Heimat-Datei für diesen Punkt, hier nur übernommen, nicht neu bewertet)
+ist der Datenbank-seitige Unique-Constraint inzwischen mit Sandys Go
+umgesetzt und live (`unique(quote_id, position)`, Migration
+`20260820103931_add_quote_items_position_unique.sql`, mit
+Retry-bei-Konflikt). Diese Datei war seit dem 19.08. dahinter zurück — bitte
+bei Gelegenheit selbst kurz gegenlesen und bestätigen, dann kann CoS-010 auf
+✅ gesetzt werden. Offen bleibt laut PM-014 nur ein gezielter Test mit zwei
+wirklich gleichzeitigen Anfragen.
 
 ---
 
@@ -305,8 +318,8 @@ Dachgeschoss- oder Fassaden-Angebot tatsächlich versendet werden kann.
 
 ## CoS-002 — Strukturelle Ursache für das „Karte ≠ Berechnung"-Muster
 
-**Datum:** 2026-08-16
-**Status:** ⏳ Dokumentiert und eingeordnet, aktuell kein akuter Umsetzungsauftrag — nur damit es nicht verloren geht
+**Datum:** 2026-08-16, aktiviert 2026-08-20, entschieden 2026-08-20
+**Status:** 🟢 ENTSCHIEDEN — Option 2 sofort + Option 1 komplett (3 Schritte). Höchste Priorität im ganzen Projekt, vor allem anderen Gate-1-Punkten. Schritt 3 muss fertig sein, bevor der erste echte Testnutzer ran darf
 
 **Hintergrund:** Der Prüfmeister hat mir (Chief of Staff, nicht im Bug-Tracker,
 sondern in einer eigenen Notiz `docs/pruefmeister-notiz-fuer-chief-of-staff.md`)
@@ -341,9 +354,148 @@ Neu-Berechnung überleben — plus die Erkenntnis, dass Aufnahmen heute nur
 additiv verarbeitet werden (jede neue Aufnahme kennt frühere Räume nicht),
 also ein größerer Eingriff als ursprünglich gedacht. Sandy wollte das dann
 nicht spontan entscheiden — Auftrag zurückgestellt, nichts umgesetzt, nichts
-kaputt. Bleibt wie oben: kein akuter Auftrag, wartet auf einen Moment mit
-mehr Zeit/Kopf, dann am besten mit einem konkreten Vorschlag von mir statt
-einer offenen Entweder-Oder-Frage.
+kaputt.
+
+**Update (Chief of Staff, 2026-08-20) — diesmal endgültig aktiviert:** Beim
+heutigen Gesamtüberblick hat Sandy unaufgefordert und unabhängig vom
+Prüfmeister fast wortgleich dieselbe Sorge geäußert wie seine Meta-Notiz
+(„der Vertrauens-Mechanismus … wiederholt nicht hält, was er verspricht") —
+und danach ausdrücklich angewiesen: **„das soll endgültig gefixt werden."**
+Das ist keine spontane „ok los"-Zusage wie am 19.08. mehr, sondern eine klare
+Priorisierungsentscheidung: CoS-002 steht jetzt vor allen anderen
+Gate-1-Punkten, auch vor reiner Live-Test-Verifikation bereits gebauter
+Fixes.
+
+**Was das für dich als konkreter Auftrag heißt** (ich entscheide nicht, WIE
+du das baust — das ist deine fachliche Entscheidung): Bitte einen konkreten
+Umsetzungsvorschlag ausarbeiten, keine offene Entweder-Oder-Frage mehr wie
+letztes Mal. Der Vorschlag sollte mindestens enthalten:
+- Ein bis zwei realistische Architektur-Optionen (z. B. „Karte liest
+  dieselbe geprüfte Struktur wie die finale Berechnung, statt einen zweiten
+  GPT-Aufruf zu machen" als ein möglicher Ansatz — deine Einschätzung zählt,
+  nicht meine).
+- Für jede Option: geschätzter Aufwand, Risiko, und wie die beiden am 19.08.
+  aufgetauchten Kompliziertheiten behandelt werden (manuelle Positions-
+  Änderungen vs. Neu-Berechnung; additive statt vollständige
+  Raum-Verarbeitung bei mehreren Aufnahmen).
+- Eine Einschätzung, ob sich das in kleinen, sicheren Schritten machen lässt
+  (eure eigene Grundregel) oder ob an dieser Stelle ausnahmsweise ein
+  größerer, in sich abgeschlossener Schritt nötig ist — mit Begründung.
+
+Sobald der Vorschlag steht, lege ich ihn Sandy zur Entscheidung vor (siehe
+`docs/entscheidungen-fuer-sandy.md`). Cross-Referenz: Die sichtbare Seite
+desselben Problems liegt beim Product Designer unter **DC-021** (Karte zeigt
+nicht zuverlässig, was berechnet wird) und **DC-022** („X Positionen
+erkannt" stimmt nicht) — eine Architekturlösung hier dürfte beide mit
+lösen, lohnt sich also, das kurz mit ihm/ihr abzustimmen, bevor du eine
+UI-seitige Ursache vermutest, die eigentlich hier liegt.
+
+**Vorschlag geliefert (Head of Product Engineering, 2026-08-20):** Voller
+Vorschlag in `docs/cos-002-architektur-vorschlag.md`. Kurz zusammengefasst:
+Root Cause bestätigt (Karte `gpt-4o-mini`, finale Berechnung `gpt-4o`, ~16×
+teurer, kein gemeinsamer Kontext). Zwei Optionen ausgearbeitet — **Option 1
+(empfohlen): echte Single-Source-of-Truth**, die teure Extraktion läuft nur
+noch einmal pro Aufnahme statt zweimal, in drei einzeln auslieferbaren
+Schritten (Ergebnis cachen → Karte liest daraus → „Entwurf erstellen" ruft
+GPT nicht mehr neu auf), Gesamtaufwand grob 2–3 Wochen, nur der letzte
+Schritt fasst den Geld-Pfad an. **Option 2: schneller nachträglicher
+Abgleich** (1–2 Tage, sehr risikoarm), behebt aber nur die Situation NACH
+dem ersten „Entwurf erstellen", nicht das eigentliche Vertrauensproblem VOR
+dem Klick. Beide Kompliziertheiten vom 19.08. einzeln durchgespielt (additive
+Verarbeitung: wird durch denselben Kontext-Mechanismus gemildert, den die
+Karte heute schon nutzt, aber nicht vollständig gelöst; manuelle
+Änderungen: sind schon heute nur durch Zufall sicher, eigener, von CoS-002
+unabhängiger Bug — separates kleines Ticket empfohlen, nicht Teil dieses
+Vorschlags). Empfehlung: kein Big-Bang, sondern Option 2 sofort + Option 1
+in den drei Schritten, mit echten Produktionszahlen unterlegt (nur lesend
+geprüft: 70 Aufnahmen/68 Angebote, frühe Testphase). Nebenfund dabei: die
+Kosten-Protokollierung für die teure Extraktion läuft seit 20.07. still ins
+Leere (Spalten-Mismatch) — eigenes kleines Ticket, nicht selbst angefasst.
+
+**Entscheidung (Sandy, 2026-08-20):** Deiner Empfehlung folgen — **Option 2
+sofort als Sofortmaßnahme, parallel dazu Option 1 komplett in den drei
+Schritten.** Zusätzliche, klare Bedingung: **Schritt 3 (der den Geld-Pfad
+anfasst) muss vollständig fertig und bestätigt sein, bevor der erste echte
+Testnutzer an das Tool darf** — das ist ab jetzt eine Voraussetzung für den
+Beginn von Gate 1, nicht nur ein „wäre schön". Bitte loslegen. Grobe
+Zeitschätzung laut deinem Vorschlag: ca. 2–3 Wochen bis Schritt 3 steht.
+Melde bitte jeweils, wenn Schritt 1, 2 und 3 einzeln fertig sind — nicht
+erst am Ende alles auf einmal. Die zwei Nebenfunde (manuelle
+Positions-Änderungen vs. Neu-Berechnung; kaputtes Kosten-Logging seit
+20.07.) bitte als eigene kleine Tickets anlegen, unabhängig davon.
+
+**Fix-Update (Head of Product Engineering, 2026-08-20) — Option 2 fertig,
+Schritt 1 fertig, wie gewünscht einzeln gemeldet:**
+
+- **Option 2 (fertig):** `generiere-positionen/route.ts` schreibt nach
+  erfolgreicher Berechnung das echte, autoritative Ergebnis zurück auf
+  `erkannte_positionen` der beteiligten Aufnahmen — geht man zu einer bereits
+  generierten Aufnahme zurück, zeigt die Karte jetzt die Wahrheit statt der
+  ursprünglichen Vorschau. Rein additiv (Update NACH dem Insert, Fehler
+  blockiert nie die eigentliche Berechnung), syntaktisch geprüft (esbuild).
+- **Option 1, Schritt 1 (fertig):** neue Spalte
+  `entwurf_aufnahmen.voll_extraktion` (Migration `20260820140000`, live in
+  Produktions-DB angewendet und verifiziert). Neues Modul
+  `src/lib/volle-extraktion-cache.ts` ruft `ki-extrahieren` jetzt zusätzlich
+  zur bestehenden Chip-Vorschau bei jeder Aufnahme auf und cached das
+  Rohergebnis — noch von niemandem gelesen, reines Plumbing für Schritt 2/3.
+  Läuft über `next/server`'s `after()`, also NACH der eigentlichen Antwort,
+  damit sich am heutigen Antwortverhalten/Tempo nichts ändert, wie im
+  Vorschlag versprochen.
+  **Eine Entscheidung, die über den Vorschlag hinausgeht:** beim Umsetzen
+  festgestellt, dass `ki_extraktion` auf dem Free-Plan auf 10/Tag begrenzt
+  ist (`rate-limiter.ts`) — ohne Gegenmaßnahme hätte der zusätzliche
+  Cache-Aufruf dieses Budget in der Übergangszeit faktisch verdoppelt
+  belastet. Der Cache-Aufruf teilt sich jetzt bewusst dasselbe Budget mit
+  „Entwurf erstellen" (kein neuer, unbegrenzter Pfad) — ist es schon
+  aufgebraucht, wird einfach übersprungen statt selbst zu zählen oder zu
+  blockieren. Heißt konkret: in der jetzigen Zwischenphase verbraucht eine
+  Aufnahme + ein „Entwurf erstellen" zusammen effektiv 2 statt 1 Einheit des
+  Tagesbudgets — befristeter, bewusster Kompromiss, endet automatisch sobald
+  Schritt 3 live ist.
+- **Ehrlich zum Stand:** beides syntaktisch geprüft (esbuild), noch KEIN
+  Live-Nachtest — insbesondere ob `after()` im echten Deployment zuverlässig
+  durchläuft, sollte einmal beobachtet werden (z. B. `voll_extraktion` nach
+  ein paar echten Aufnahmen stichprobenartig prüfen, ob sie sich füllt).
+- Schritt 2 und Schritt 3 bewusst noch NICHT begonnen — wie angekündigt
+  größere, risikoreichere Schritte, für die ich mir mehr Sorgfalt nehme statt
+  sie im selben Rutsch mitzuziehen. Melde mich einzeln, sobald Schritt 2
+  steht.
+- Die zwei angeforderten Nebenfund-Tickets sind angelegt: **CoS-014**
+  (manuelle Positions-Änderungen vs. Neu-Berechnung) und **CoS-015** (kaputtes
+  Kosten-Logging seit 20.07.), beide unten in der Übersichtstabelle und als
+  eigene Abschnitte.
+
+**Fix-Update (Head of Product Engineering, 2026-08-20) — Schritt 2, erste
+Hälfte fertig, zweite Hälfte bewusst noch offen:**
+
+- **Vorbereitung für Schritt 2 (fertig):** die komplette deterministische
+  Nachbearbeitung, die aus einer rohen GPT-Extraktion die fertigen Positionen
+  macht (Normalisierung, Mehrraum-Reparaturen, Rückfragen-Zusammenführung,
+  implizite Regeln, Flächen-Patches, Mengenberechnung …), lag bisher NUR
+  inline in `angebot-extrahieren/route.ts`. Sie ist jetzt in eine eigene,
+  reine Funktion ausgelagert: `src/lib/mengen/extraktion-pipeline.ts`
+  (`verarbeiteExtraktion`) — 1:1 herausgezogen, nicht neu geschrieben, um
+  nicht genau die PM-012-Falle zu wiederholen (zwei Stellen mit derselben
+  Logik laufen irgendwann auseinander), die diesen ganzen CoS-002-Fund erst
+  ausgelöst hat. Die Live-Route für die Kalkulation ist jetzt ein dünner
+  Wrapper, der diese eine Funktion aufruft — inhaltlich unverändert.
+  **Regressionsprüfung:** alle 236 bestehenden Tests laufen unverändert
+  grün, `tsc` zeigt für beide geänderten Dateien keine neuen Fehler.
+- **Warum das noch nicht „Schritt 2 fertig" ist:** die eigentliche Aufgabe —
+  die Karte liest die gecachte, volle Extraktion statt der schnellen
+  Chip-Vorschau — habe ich bewusst noch nicht gebaut. Sobald die volle
+  Extraktion asynchron im Hintergrund läuft (siehe Schritt 1, `after()`),
+  braucht die Karte kurzzeitig einen sichtbaren „vorläufig"-Zustand, bevor
+  die bestätigten Daten da sind. Das ist eine echte UX-Entscheidung, keine
+  reine Backend-Frage — genau der Punkt, den ich im Vorschlag als
+  Cross-Referenz zu DC-021/DC-022 markiert hatte. Bevor ich das im
+  Alleingang in `entwurf/page.tsx` verdrahte, will ich das kurz mit
+  Sandy/Product Designer abstimmen statt eine UI-Entscheidung zu treffen,
+  die eigentlich nicht meine ist.
+- **Ehrlich zum Stand:** die neue, gemeinsame Funktion selbst ist geprüft und
+  sicher (Tests grün), aber noch KEIN Live-Nachtest des refaktorierten
+  Geld-Pfads im echten Deployment.
 
 ---
 
@@ -636,6 +788,70 @@ nicht nur behandeln.
 **Für Sandy:** Die Sofortmaßnahme läuft bereits. Bei der Git-Lösung sag mir
 kurz, ob ich das Head of Product Engineering und Platform & Integrations
 Engineer als neue, feste Regel für `docs/`-Änderungen mitgeben soll.
+
+---
+
+## CoS-014 — Manuelle Positions-Änderungen nur durch Zufall vor Neu-Berechnung sicher
+
+**Datum:** 2026-08-20 (Nebenfund beim CoS-002-Architektur-Vorschlag)
+**Status:** ❌ offen — beschrieben, nicht angefasst. Auf Sandys ausdrücklichen
+Wunsch als eigenes, von CoS-002 unabhängiges Ticket angelegt.
+
+**Befund:** Beim Recherchieren für CoS-002 geprüft, ob eine manuelle
+Positions-Änderung (Preis geändert, Position gelöscht, eigene ergänzt) eine
+spätere Neu-Berechnung überlebt. Antwort: ja, aber **nicht weil es einen
+echten Schutz-Mechanismus gibt** — es gibt aktuell keinen „manuell
+bearbeitet, nicht anfassen"-Flag, weder in der Datenbank
+(`quote_items`-Tabelle) noch im Code (`src/lib/types.ts` hat noch nicht
+einmal ein eigenes `QuoteItem`-Interface). Es funktioniert nur, weil
+`generiere-positionen/route.ts` rein additiv arbeitet (nur `INSERT`, nie
+`UPDATE`/`DELETE` auf bestehende Zeilen) — bestehende, auch manuell
+bearbeitete Zeilen werden dadurch zufällig nie angerührt.
+
+**Der eigentliche Riss:** Der Dublettenschutz (`filtereExakteDubletten`)
+vergleicht nur Titel + Menge exakt. Ändert ein Nutzer manuell den Preis
+einer Position und beschreibt später denselben Raum nochmal (leicht anders
+formuliert, andere Menge), kann eine fast-doppelte Zeile NEBEN der
+bearbeiteten Position entstehen, statt sie zu ersetzen oder wenigstens
+darauf hinzuweisen. Kein akuter, beobachteter Vorfall — beim Code-Lesen
+gefunden, nicht live reproduziert.
+
+**Für Head of Product Engineering:** Eigene, kleine Aufgabe, unabhängig vom
+CoS-002-Fahrplan. Mögliche Richtung (keine Festlegung, das ist deine
+fachliche Entscheidung): entweder ein echtes „manuell bearbeitet"-Flag
+einführen, das eine Neu-Berechnung explizit respektieren muss, oder den
+Dublettenschutz auf eine robustere Raum+Arbeit-Identität statt reinem
+Titel-String umstellen.
+
+---
+
+## CoS-015 — KI-Kosten-Protokollierung für Extraktion seit 20.07. kaputt
+
+**Datum:** 2026-08-20 (Nebenfund beim CoS-002-Architektur-Vorschlag)
+**Status:** ❌ offen — Ursache gefunden, nicht behoben. Auf Sandys
+ausdrücklichen Wunsch als eigenes, von CoS-002 unabhängiges Ticket angelegt.
+
+**Befund:** Beim Prüfen der Produktions-Datenbank (nur lesend, für die
+Kosten-Einschätzung in CoS-002) festgestellt: die `ki_usage`-Tabelle hat seit
+dem **20.07.2026 keinen einzigen neuen Eintrag mehr für `endpunkt =
+'extraktion'`** — während die `transkription`-Protokollierung bis heute
+normal weiterläuft. Seit einem Monat gibt es also keinen sichtbaren Überblick
+mehr über die tatsächlichen Kosten der teuren `gpt-4o`-Extraktion.
+
+**Ursache:** Spalten-Mismatch. Die Edge Function `ki-extrahieren`
+(`supabase/functions/ki-extrahieren/index.ts`) schreibt beim Insert
+`prompt_typ`/`input_tokens`/`output_tokens`/`angebot_id` — die echte
+`ki_usage`-Tabelle hat aber `endpunkt`/`tokens_in`/`tokens_out` (kein
+`angebot_id`-Feld). Der Insert schlägt seither bei jedem Aufruf fehl, wird
+aber nie bemerkt, weil er als reines Fire-and-forget
+(`.then(() => {})`) geschrieben ist und den Fehler stillschweigend
+schluckt.
+
+**Für Head of Product Engineering:** Kleiner, klar umrissener Fix — entweder
+die Spaltennamen im Insert an die echte Tabelle anpassen, oder (sauberer)
+denselben `trackKIUsage`-Helper wiederverwenden, den
+`aufnahme/upload/route.ts` bereits korrekt nutzt, statt eines eigenen,
+inline geschriebenen Inserts in der Edge Function.
 
 ---
 

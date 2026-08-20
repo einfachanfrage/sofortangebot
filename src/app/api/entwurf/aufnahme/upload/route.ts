@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAIClient, WHISPER_MODEL } from '@/lib/ai-client'
 import { pruefeKIZugriff, trackKIUsage } from '@/lib/rate-limiter'
@@ -6,6 +6,7 @@ import { extrahiereChips } from '@/lib/chips-extraktion'
 import { ergaenzeChipsUmAutomatischeNebenpositionen } from '@/lib/chips-vervollstaendigung'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { segmentiereRaeume } from '@/lib/raum-segmentierer'
+import { cacheVolleExtraktion } from '@/lib/volle-extraktion-cache'
 import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
@@ -198,6 +199,11 @@ export async function POST(req: NextRequest) {
     // whisper-1: ~$0.006/Minute
     kostenEur: (dauerSek / 60) * 0.006 + (chipTokens.tokensIn * 0.00015 + chipTokens.tokensOut * 0.0006) / 1000,
   })
+
+  // CoS-002 Option 1, Schritt 1 (2026-08-20): läuft NACH der Antwort, damit
+  // sich am heutigen Antwortverhalten nichts ändert. Reines Caching für
+  // spätere Schritte, siehe volle-extraktion-cache.ts.
+  after(() => cacheVolleExtraktion(supabase, user.id, aufnahme.id, angebotId, transkript))
 
   return NextResponse.json({
     id: aufnahme.id,

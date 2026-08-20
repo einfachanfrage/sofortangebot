@@ -34,43 +34,92 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 18.08.2026, Abend)
+## Gate-Fortschritt (Stand 20.08.2026, Vormittag)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **22 %** (↑ von 19 %) | 46 |
-| **Gate 2** — öffentlicher Launch | **10 %** (unverändert) | 35 |
+| **Gate 1** — erste Testnutzer | **23 %** (↑ von 22 %) | 46 |
+| **Gate 2** — öffentlicher Launch | **13 %** (↑ von 10 %) | 37 (neu: 9.7, 11.6) |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
-**Update 18.08.2026 (Abend), echte Neubewertung, keine Schätzung:** Alle 46
-Gate-1-Punkte einzeln gegen den heutigen Stand der jeweiligen Heimat-Datei
-durchgegangen (nicht nur die, die offensichtlich betroffen waren). Ergebnis:
-+3 Prozentpunkte, von 19 % auf 22 %. Das wirkt nach einem starken Tag wenig —
-der Grund ist der große, ehrliche Nenner: von den 46 Gate-1-Punkten hat sich
-heute an 8 konkret etwas verbessert, die übrigen 38 stehen unverändert (viele
-davon bei „0 %, nicht erhoben" — Accounts-End-to-End, E-Mail-Zustellung,
-Rate-Limiting u. a. — dort ist heute schlicht nichts passiert). Die 8
-verbesserten Punkte im Einzelnen: 8.2 Race Condition (5→45, Auslöser
-gefunden + Fix, Live-Nachtest fehlt), 9.2 Preis-Text (40→80, umgesetzt,
-Live-Check fehlt), 5.2 Buttons/Listen (15→40, DC-011 behoben), 1.3
-Bestätigungskarte (25→30, kleiner Fortschritt, Kernproblem laut Prüfmeister
-weiterhin ungelöst), 2.8 erster Eindruck (10→20, PM-015-Fix), 1.1/1.2/1.4
-(Fallbasis/Abdeckung/Golden-Tests, je kleine Zuwächse). Gate 2 und Gate 3
-unverändert — heute war reine Gate-1-Arbeit, an keinem G2/G3-Punkt hat sich
-etwas bewegt.
 
-> ✓ **Größte Verbesserung seit gestern:** Die beiden bisher schwersten
-> Einzelfunde sind auf der Zielgeraden statt offen. Verschwindende Angebote
-> (**DC-011**) sind live bestätigt behoben — betraf alle 56 in Produktion
-> gespeicherten Angebote. Bei der Angebots-Verdopplung (**CoS-010**,
-> **8.2**) ist der wahre Auslöser gefunden (fehlender Doppel-Tap-Schutz auf
-> „Fertigstellen"), Fix ist drin, 706/706 Tests grün — fehlt nur noch Sandys
-> bewusster Live-Test (zweimal schnell tippen). Bis dahin bleibt 8.2 der
-> wichtigste offene Einzelpunkt im ganzen Projekt.
+**Update 20.08.2026 (Vormittag), echte Neubewertung, keine Schätzung:** Alle
+46 Gate-1-Punkte frisch gegen `pruefmeister-testfaelle.md`,
+`design-check.md`, `chief-of-staff-todos.md` und
+`chief-of-staff-platform-todos.md` abgeglichen (Stand dieser Dateien:
+20.08. vormittags — seit dem letzten Dashboard-Update am 18.08. lag viel
+neue Arbeit an, u. a. PM-001/011/013/014 Fix-Updates, DC-023/024/025/028
+Umsetzung, CoS-P-001 abgeschlossen). Ergebnis: nur **+1 Prozentpunkt**, von
+22 % auf 23 % — bewusst nicht mehr, obwohl fachlich viel passiert ist: die
+meisten Fixes der letzten zwei Tage sind „code-fertig, Live-Nachtest steht
+aus" (PM-001, PM-008, PM-011, PM-013 Dehnungsfuge, PM-014, DC-023, DC-024,
+DC-025, DC-028) — nach der eigenen Regel dieser Datei zählt „im Code fertig"
+nicht wie „live bestätigt". Größte Einzelbewegungen: 1.6 Standardpreise
+(20→55, Kniestock/Dachschräge/Fassade/Übergangsschiene ergänzt), 8.2 Race
+Condition (45→65, DB-seitiges Unique-Constraint jetzt live, siehe Flag
+unten), 1.1 Fallbasis (20→25, jetzt 16 statt 15 Fälle, mehrere davon näher
+an „fertig"), 1.3 Bestätigungskarte (30→35, DC-023/024 verringern konkrete
+Fälle, Kernproblem laut Prüfmeister aber unverändert ungelöst), 2.8 erster
+Eindruck (20→30, DC-009-Fix über DC-028 mitgeliefert). Gate 3 unverändert —
+keine neue G3-Bewegung seit 18.08.
 
-Zweiter wichtiger Befund, diesmal eine Entwarnung: der am 17.08. vormittags
+**Gate 2 (10→13 %, neuer Nenner 35→37):** Zwei neue Punkte ergänzt, weil in
+den letzten Tagen echte, bisher nicht erfasste Arbeit entstanden ist: **9.7**
+(CI/Marke final festgelegt) und **11.6** (laufende Kostenübersicht) — siehe
+unten. Daneben drei bestehende Punkte bewegt: 5.4 Leere/Fehlerzustände
+(10→20, DC-009/010-Fix code-fertig), 5.5 Statusfarben/Tokens (30→35, erste
+Migrationsrunde von DC-006 abgeschlossen), 11.1 Kleinunternehmergrenze
+(0→20, Sandy hat §19 UStG/Kleinunternehmer-Status bestätigt, Anmeldung
+selbst noch offen).
+
+> ⚠ **Governance-Hinweis, nicht in die Prozentzahl eingerechnet:** Beim
+> Abgleich sind in `pruefmeister-testfaelle.md` und `design-check.md`
+> mehrfach veraltete Status-Kopfzeilen aufgefallen, die einem später in
+> derselben Sektion dokumentierten Fix-Update widersprechen (u. a. PM-001,
+> PM-011, PM-014, DC-009, DC-024, DC-028). Nach der Ein-Wahrheit-pro-Sache-
+> Regel wurde für die Bewertung hier jeweils der **neueste Inhalt der
+> Sektion** verwendet, nicht die veraltete Kopfzeile — das ist aber eine
+> offene Doku-Lücke bei Prüfmeister und Designer selbst, nicht von mir
+> korrigiert (nicht mein Home-File). Bitte beide bei Gelegenheit bitten,
+> ihre eigenen Status-Kopfzeilen nachzuziehen. — Chief of Staff, 20.08.2026
+
+> ⚠ **Zweiter Governance-Hinweis:** `chief-of-staff-todos.md` (CoS-010,
+> Stand 19.08.) sagt, das DB-seitige Unique-Constraint gegen echte
+> Gleichzeitigkeit warte noch auf Sandys Go. `pruefmeister-testfaelle.md`
+> (PM-014, Stand 20.08., neuer) beschreibt dieselbe Sache bereits als
+> **umgesetzt und live** (Migration `20260820103931_add_quote_items_position_
+> unique.sql`, mit Sandys Go, Retry-bei-Konflikt eingebaut) — nur ein
+> gezielter Gleichzeitigkeits-Test fehlt noch. Für Punkt 8.2 unten wurde der
+> neuere PM-014-Stand verwendet. Bitte Head of Product Engineering bitten,
+> CoS-010 entsprechend nachzuziehen. — Chief of Staff, 20.08.2026
+
+> 🔴 **NEU, 20.08.2026 — CoS-002 entschieden, jetzt höchste Priorität im
+> ganzen Projekt UND harte Bedingung für den Start von Gate 1:** Sandy hat
+> unabhängig vom Prüfmeister fast wortgleich dieselbe Sorge geäußert
+> („Bestätigungskarte zeigt nicht zuverlässig, was berechnet wird") und
+> danach ausdrücklich angewiesen: „das soll endgültig gefixt werden." Head
+> of Product Engineering hat noch am selben Tag einen Architektur-Vorschlag
+> geliefert (Root Cause bestätigt: Karte nutzt `gpt-4o-mini`, Berechnung
+> `gpt-4o`, zwei unabhängige nicht-deterministische Aufrufe). Sandys
+> Entscheidung: Sofort-Zwischenlösung diese Woche + echte
+> Single-Source-of-Truth in 3 Schritten (~2–3 Wochen). **Schritt 3 (fasst
+> den Geld-Pfad an) muss fertig sein, bevor der erste echte Testnutzer ran
+> darf** — Gate 1 kann also frühestens nach Abschluss von CoS-002 starten,
+> unabhängig vom sonstigen Gate-1-Prozentwert. Details:
+> `docs/cos-002-architektur-vorschlag.md`, Punkt **1.3** unten.
+
+> ✓ **Größte Verbesserung seit dem letzten Update:** Bei der
+> Angebots-Verdopplung (**CoS-010**/**PM-014**, **8.2**) ist nicht nur der
+> App-seitige Doppel-Tap-Schutz drin, sondern jetzt auch ein DB-seitiges
+> Unique-Constraint mit automatischem Retry — die strukturelle Absicherung,
+> die vorher fehlte. Offen bleibt nur ein gezielter
+> Gleichzeitigkeits-Test. Bei den Standardpreisen (1.6) sind alle bekannten
+> Lücken (Kniestock, Dachschräge, Fassadenfläche, Übergangsschiene) jetzt
+> nachgepflegt — Live-Nachtest dafür steht noch aus.
+
+Zweiter wichtiger Befund, weiterhin gültig (18.08.): der am 17.08. vormittags
 vermutete „Deploy-Lücke" bei PM-010 (drei gemeldete Fixes wirkten live nicht)
 ist **keine Deploy-Lücke** — Head of Product Engineering hat gegen echte
 Produktionsdaten nachgesehen und die wahre Ursache gefunden (Tests liefen
@@ -116,12 +165,12 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 20 % — jetzt 15 von ~100 Fällen (PM-001–015), 7 davon komplett abgeschlossen und archiviert; neuer Fund PM-015 (leere Preisdatenbank bei „manuell"-Onboarding) zeigt weiter, dass die Fallbasis selbst der Engpass bleibt, nicht die Einzelfixes. Quelle: `docs/pruefmeister-testfaelle.md` |
-| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 50 % (CoS-Schätzung) — Fassade (kein Raum) jetzt mit eigenem Datenmodell abgedeckt (DC-024/PM-008), Fischgrät/Dehnungsfuge (PM-013) noch ungeprüft |
-| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🔴 30 % — kleiner Fortschritt (DC-023-Fix lokal verifiziert, Wand-Chip zeigt jetzt „So gerechnet"-Zeile), aber Prüfmeister bestätigt ausdrücklich: der Kern-Vertrauensmechanismus hält weiterhin nicht durchgängig, was er verspricht (DC-021/022). Quelle: CoS-002 |
-| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟡 70 % — Praxis weiter gefestigt (706/706 Tests nach jedem Fix bestätigt, u. a. heute bei CoS-010, DC-025), kein direkter CI-Dashboard-Zugriff |
+| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 25 % — jetzt 16 von ~100 Fällen (PM-001–016), mehrere davon (PM-001/008/011/013/014) code-fertig gefixt, aber Live-Nachtest steht noch aus; die Fallbasis selbst bleibt der Hauptengpass, nicht die Einzelfixes. Quelle: `docs/pruefmeister-testfaelle.md` |
+| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 55 % (CoS-Schätzung) — Fassade (kein Raum) jetzt mit eigenem Datenmodell abgedeckt (DC-024/PM-008), Fischgrät/Dehnungsfuge (PM-013) zu 2 von 3 Punkten live bestätigt |
+| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🔴 35 % — **20.08.2026: von Sandy entschieden.** Root Cause bestätigt (Karte nutzt `gpt-4o-mini`, Berechnung `gpt-4o`, zwei unabhängige, nicht-deterministische Aufrufe). Weg: Sofort-Zwischenlösung diese Woche + echte Single-Source-of-Truth in 3 Schritten (~2–3 Wochen). **Harte Bedingung: Schritt 3 muss fertig sein, bevor der erste echte Testnutzer ran darf — das blockiert damit den Beginn von Gate 1.** Quelle: CoS-002, `docs/cos-002-architektur-vorschlag.md` |
+| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟡 75 % — Praxis weiter gefestigt (706/706 Tests nach jedem Fix bestätigt, zuletzt bei CoS-010/PM-014, DC-024, DC-025, DC-028), kein direkter CI-Dashboard-Zugriff |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
-| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🔴 20 % — weiterhin: Kniestock/Dachschräge/Fassadenfläche streichen, Übergangsschiene ohne Preis |
+| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 55 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.), Live-Nachtest dafür steht noch aus |
 | 1.7 | KI-Grenzen/Fehlerrate den Nutzern gegenüber transparent kommuniziert (kein 100 %-Versprechen) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.8 | Lasttest: mehrere gleichzeitige Aufnahmen/Nutzer ohne Fehler | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.9 | Bekannte Sprach-/Dialekt-/Störgeräusch-Grenzen dokumentiert | G3 | ⚪ offen — nicht erhoben (neu) |
@@ -137,7 +186,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 2.5 | Account-Löschung möglich | G2 | 🟡 vermutlich vorhanden (Code existiert), kein QA-Test |
 | 2.6 | Schutz vor automatisierten Massen-Registrierungen (Captcha/Rate-Limit) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 2.7 | Session-Sicherheit: Token-Ablauf sinnvoll, Logout wirklich überall wirksam | G1 | ⚪ offen — nicht erhoben (neu) |
-| 2.8 | Erster Eindruck für brandneue Nutzer durchdacht (leere Zustände) | G1 | 🔴 20 % — DC-009 (leere Aufnahme als Erfolg) weiterhin offen, aber PM-015-Fix behebt einen konkreten, echten Fall: „manuell"-Onboarding landete bisher mit fast leerer Preisdatenbank |
+| 2.8 | Erster Eindruck für brandneue Nutzer durchdacht (leere Zustände) | G1 | 🔴 30 % — DC-009 (leere Aufnahme als Erfolg) jetzt über DC-028 code-seitig mitgefixt, Live-Nachtest steht aus; PM-015-Fix behebt zusätzlich einen konkreten Fall: „manuell"-Onboarding landete bisher mit fast leerer Preisdatenbank |
 
 ## 3. Transaktions-E-Mails
 
@@ -168,8 +217,8 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 5.1 | Man kommt von überall leicht zurück/zur Startseite — keine Sackgassen | G1 | ⚪ offen — nicht erhoben |
 | 5.2 | Jeder Button an sinnvoller Stelle, nichts Wichtiges fehlt/kaputt | G1 | 🟡 40 % — **DC-011 behoben + live bestätigt** (fertiges Angebot verschwand aus der Liste, betraf alle 56 Angebote in Produktion). Weiterhin offen: DC-002 (Nav fehlt), DC-009/010 (irreführende Erfolgs-Anzeige, fehlende Guardrail) |
 | 5.3 | Funktioniert auf Handy UND Desktop | G1 | ⚪ offen — nicht erhoben |
-| 5.4 | Leere/Fehler-/Ladezustände überall sinnvoll gestaltet | G2 | 🔴 10 % — DC-009/010 bestätigt: widersprüchliche Fehler-/Erfolgs-Banner gleichzeitig |
-| 5.5 | Statusfarben & Design-Tokens konsistent | G2 | 🟡 30 % — siehe DC-003, DC-006, DC-007 |
+| 5.4 | Leere/Fehler-/Ladezustände überall sinnvoll gestaltet | G2 | 🔴 20 % — DC-009/010: widersprüchliche Fehler-/Erfolgs-Banner code-seitig gefixt (20.08., Root Cause war GPT-Nichtdeterminismus, nicht Race Condition), Live-Nachtest steht aus; die fehlende Guardrail beim Fertigstellen leerer Angebote (zweiter Teil von DC-010) bleibt offen |
+| 5.5 | Statusfarben & Design-Tokens konsistent | G2 | 🟡 35 % — erste Migrationsrunde von DC-006 abgeschlossen (5 Kernkomponenten auf Tokens umgestellt), Großteil der >1.900 Fundstellen weiterhin offen; siehe auch DC-003, DC-007 |
 | 5.6 | Barrierefreiheit (BFSG) bewusst geprüft statt nur angenommen | G3 | 🟢 60 % — wahrscheinlich nicht einschlägig (reines B2B, Verbraucher per AGB ausgeschlossen), rechtlich nicht abschließend bestätigt (neu). Quelle: [accessgo.de, BFSG B2B](https://www.accessgo.de/wissen/barrierefreiheitsstaerkungsgesetz/b2b/) |
 
 ## 6. Datenschutz & Datensicherheit (technisch)
@@ -209,7 +258,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 8.1 | Observability: jede Pipeline-Stufe nachvollziehbar geloggt | G1 | 🟡 30 % — erster Schritt umgesetzt (CoS-P-002: Sentry meldet jetzt 8 Fehlerstellen im Kernpfad), Rest (Edge-Functions, ~27 weitere Stellen, 2 tote Logging-Spalten) noch offen |
-| 8.2 | Race Condition ausgeschlossen (Summe stabil ohne Nutzeraktion) | G1 | 🟡 45 % — **wahrer Auslöser gefunden** (fehlender Doppel-Tap-Schutz auf „Fertigstellen", kein reines DB-Race), Fix drin, 706/706 Tests grün. Bewusst nicht auf höher gesetzt: Sandys Live-Nachtest (bewusst doppelt tippen) steht noch aus, und der Fix schließt kein DB-seitiges Unique-Constraint für echte Gleichzeitigkeit ein. Höchste Priorität bis zur Bestätigung, CoS-010 |
+| 8.2 | Race Condition ausgeschlossen (Summe stabil ohne Nutzeraktion) | G1 | 🟡 65 % — App-seitiger Doppel-Tap-Schutz UND (neu, 20.08., laut PM-014) ein DB-seitiges Unique-Constraint (`unique(quote_id, position)`, Migration `20260820103931`) mit Retry-bei-Konflikt sind jetzt beide live, 706/706 Tests grün. Bewusst nicht auf höher gesetzt: ein gezielter Gleichzeitigkeits-Test (zwei echte parallele Anfragen) ist noch nicht gefahren. Siehe Governance-Hinweis oben zu CoS-010 vs. PM-014 |
 | 8.3 | Backups eingerichtet und einmal ein Restore getestet | G2 | 🟡 65 % — tägliches verschlüsseltes Backup läuft produktiv, Restore-Prozess definiert, aber kein protokollierter Restore-Test-Durchlauf sichtbar |
 | 8.4 | Fehler-Monitoring: du merkst, wenn im Betrieb etwas bricht | G2 | 🔴 20 % — Health-Checks (`/api/health*`) und Kosten-Alarm existieren und funktionieren, aber Sentry deckt bisher nur den Kernpfad ab |
 | 8.5 | OpenAI-Kosten pro Angebot bekannt und tragbar; Rate-Limits bedacht | G2 | ⚪ offen — nicht erhoben |
@@ -231,6 +280,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 9.4 | Preisseite verständlich | G2 | ⚪ offen — nicht erhoben |
 | 9.5 | SEO-Grundlagen (Meta-Tags, Sitemap, robots.txt, Ladezeit) | G3 | ⚪ offen — nicht erhoben (neu) |
 | 9.6 | Social-Media-Vorschaubilder (Open-Graph) | G3 | ⚪ offen — nicht erhoben (neu) |
+| 9.7 | Eigene Marke/CI final festgelegt (Farbe, Typografie, Logo, Icon-Sprache) | G2 | 🟡 35 % — **neu, 20.08.2026, ergänzt vom Chief of Staff** (Lücke aufgefallen: eine komplette neue Team-Rolle + fertige CI-Entscheidung hatten noch keinen Platz in dieser Datei). Richtung von Sandy final bestätigt („ok leg die CI fest", CoS-M-001), Referenz-Guide fertig (`docs/ci-guide.html`). Umsetzung im Produkt-Code läuft erst an (Schritt 1 von 10, Token-Aufräumung DC-006, in Arbeit; Farbe/Typografie/Mono-Zahlen/Icon-Set/Logomark-Vektorisierung noch offen) |
 
 ## 10. Support & Notfall
 
@@ -246,11 +296,12 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 11.1 | Kleinunternehmergrenze (25.000 €) im Blick, steuerliche Anmeldung abgeschlossen | G2 | ⚪ offen — Sandys Bereich. Hängt mit 7.1 zusammen (USt-ID noch offen) |
+| 11.1 | Kleinunternehmergrenze (25.000 €) im Blick, steuerliche Anmeldung abgeschlossen | G2 | 🔴 20 % — Sandy hat bestätigt: noch kein Gewerbe für Sofortangebot separat angemeldet, Plan ist Kleingewerbe/Kleinunternehmerin nach §19 UStG (CoS-F-001). Entscheidung steht, Anmeldung selbst noch offen. Hängt weiterhin mit 7.1 zusammen (USt-ID) |
 | 11.2 | Separate EÜR für Sofortangebot-Einnahmen | G2 | ⚪ offen — Sandys Bereich |
 | 11.3 | Gewerbeanmeldung | — | ✅ erledigt (Sandy) |
 | 11.4 | Geschäftskonto getrennt von privat | G1 | ⚪ offen — nicht erhoben, Sandys Bereich (neu) |
-| 11.5 | Buchhaltungssystem angebunden (Lexware/sevDesk) | G2 | ⚪ offen — nicht erhoben, jetzt Platform-Engineer-Scope (neu) |
+| 11.5 | Buchhaltungssystem angebunden (Lexware/sevDesk) | G2 | ⚪ offen — nicht erhoben, jetzt Platform-Engineer-Scope. Erste Machbarkeits-Prüfung (CoS-P/DC-029): kein natives Projekt-/Lieferadressfeld in der Lexware-API, Workaround als Freitext identifiziert, kein Blocker |
+| 11.6 | Laufende Kostenübersicht als Grundlage für Preis-/Runway-Entscheidungen | G2 | 🟡 60 % — **neu, 20.08.2026, ergänzt vom Chief of Staff** (neue Rolle Head of Finance seit 19.08., noch nicht erfasst). Grundgerüst mit echten Zahlen steht (`docs/kostenuebersicht-finance.xlsx`, CoS-F-001), aber 4 Anomalien warten auf Sandys Klärung (steigende Supabase-Kosten + 5 statt 2 Projekt-Refs, zwei getrennte Claude-Kostenströme, OpenAI-Rechnung auf Fremdnamen, zwei Rechnungsadressen), plus fehlende Belege (Resend/Domain/Sentry/GitHub) |
 
 ## 12. Go-to-Market (nach der Entwicklungsphase)
 

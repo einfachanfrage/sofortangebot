@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
   // Aufnahmen laden — per expliziter ID-Liste (vom Frontend) oder Timestamp-Fallback
   let query = supabase
     .from('entwurf_aufnahmen')
-    .select('typ, transkript, notiz_text, erkannte_positionen, verarbeitung_status, erstellt_am')
+    .select('id, typ, transkript, notiz_text, erkannte_positionen, verarbeitung_status, erstellt_am')
     .eq('angebot_id', angebot_id)
     .order('erstellt_am', { ascending: true })
   if (aufnahmen_ids !== undefined) {
@@ -492,6 +492,45 @@ export async function POST(req: NextRequest) {
     console.error('[positionen-generieren] Datenbankeintrag fehlgeschlagen')
     Sentry.captureException(new Error(insertErr.message), { tags: { feature: 'positionen_generieren_insert' } })
     return NextResponse.json({ error: 'Positionen konnten nicht gespeichert werden' }, { status: 500 })
+  }
+
+  // CoS-002 Option 2 (Head of Product Engineering, 2026-08-20, Sandys Auftrag
+  // "Option 2 sofort"): die Aufnahmekarte zeigt bis hierhin für jede Aufnahme
+  // noch die ursprüngliche, schnelle Chip-Vorschau (erkannte_positionen aus
+  // extrahiereChips) — auch nachdem die echte, autoritative Berechnung oben
+  // etwas anderes ergeben hat. Kein Architekturwechsel (siehe
+  // docs/cos-002-architektur-vorschlag.md, das ist Option 1), sondern ein
+  // nachträglicher Abgleich: sobald die echte Berechnung erfolgreich war,
+  // überschreiben wir erkannte_positionen der beteiligten Aufnahmen mit dem
+  // tatsächlich berechneten Ergebnis. Geht man später zu einer dieser
+  // Aufnahmen zurück (Detail-Ansicht), sieht man die Wahrheit, nicht mehr die
+  // ursprüngliche Vermutung. Behebt NICHT den Moment direkt nach dem
+  // Sprechen, VOR diesem Klick — das bleibt Option 1.
+  // Bewusst nur wenn tatsächlich etwas Neues eingefügt wurde (gefilterteItems
+  // nicht leer) — sonst gäbe es nichts Verlässlicheres, um die Vorschau zu
+  // ersetzen, und ein Leerschreiben würde eine sonst korrekte Karte kaputt
+  // machen.
+  if (gefilterteItems.length > 0) {
+    const autoritativePositionen = gefilterteItems.map(item => ({
+      titel: item.title,
+      menge: item.quantity ?? 1,
+      einheit: item.unit ?? 'Stk',
+      einzelpreis: item.unit_price ?? 0,
+      gesamtpreis: (item.quantity ?? 1) * (item.unit_price ?? 0),
+      erkannt: true,
+    }))
+    const batchAufnahmenIds = aufnahmen.map(a => a.id)
+    const { error: rueckschreibFehler } = await supabase
+      .from('entwurf_aufnahmen')
+      .update({ erkannte_positionen: autoritativePositionen })
+      .in('id', batchAufnahmenIds)
+    if (rueckschreibFehler) {
+      // Nur protokollieren, nie blockieren — dieselbe "Fehler darf nie
+      // blockieren"-Regel wie beim Preis-Fehlt-Fall. Die Positionen sind zu
+      // diesem Zeitpunkt schon sicher in quote_items gespeichert.
+      console.error('[positionen-generieren] Karten-Abgleich (CoS-002 Option 2) fehlgeschlagen, Berechnung selbst aber erfolgreich')
+      Sentry.captureException(new Error(rueckschreibFehler.message), { tags: { feature: 'cos002_option2_kartenabgleich' } })
+    }
   }
 
   // Totals neu berechnen (alle Positionen, nicht nur neue)
