@@ -87,8 +87,26 @@ export function ergaenzeAusAufnahmeHinweisen(
   // Dehnungsfuge". Fehlt dadurch ein passender Katalogpreis, bleibt die
   // Position sichtbar mit 0,00 € offen (gleiches, bewährtes Prinzip wie bei
   // fehlenden Preisen generell) statt zu verschwinden.
+  // PM-013, Nachtest 2 (2026-08-20): der Chip-Titel-Fix von gestern war zu
+  // zerbrechlich — bei NACHWEISLICH IDENTISCHEM Transkript hat GPTs
+  // Karten-Erkennung die Dehnungsfuge im zweiten Testlauf gar nicht mehr
+  // gemeldet (Sandy bestätigt: „habe Dehnungsfuge mit gesagt", gleicher
+  // Wortlaut wie beim ersten Test). Der Fix hing komplett an dieser einen,
+  // nachweislich nicht deterministischen Chip-Antwort — technisch
+  // einwandfrei, aber nur so zuverlässig wie die vorgelagerte Erkennung.
+  // Fix: zusätzlicher Fallback direkt im Rohtranskript, unabhängig vom Chip
+  // — analog zu BODEN_VERLEGEN_SIGNAL (boden.ts/kontext-analyzer.ts).
+  // Unterschied zu den Chip-Titeln: die sind bereits kuratierte Kurzlabel
+  // (GPT formuliert nie "keine Dehnungsfuge" als Chip-Titel), das
+  // Rohtranskript ist aber echter Fließtext und könnte eine Verneinung
+  // enthalten ("keine Dehnungsfuge nötig") — deshalb hier zusätzlich
+  // dieselbe Verneinungserkennung wie bei "kein Fenster"/"keine Tür"
+  // (arbeiten-normalisierer.ts), damit der Fallback nicht selbst zum
+  // Phantom-Auslöser wird.
   const dehnungsfugeMuster = /dehnungsfuge|bewegungsfuge/i
-  if (dehnungsfugeMuster.test(hinweise) && !hatPos(dehnungsfugeMuster)) {
+  const dehnungsfugeVerneint = /(?:kein[e]?|ohne)\s+(?:dehnungsfuge|bewegungsfuge)/i
+  const dehnungsfugeImTranskript = dehnungsfugeMuster.test(textMitZahlen) && !dehnungsfugeVerneint.test(textMitZahlen)
+  if ((dehnungsfugeMuster.test(hinweise) || dehnungsfugeImTranskript) && !hatPos(dehnungsfugeMuster)) {
     const stueckTreffer = textMitZahlen.match(/(\d+)\s*(?:stück\s*)?(?:dehnungsfuge|bewegungsfuge)/i)
       ?? textMitZahlen.match(/(?:dehnungsfuge|bewegungsfuge)[^.]{0,20}?(\d+)\s*stück/i)
     const stueck = stueckTreffer ? parseInt(stueckTreffer[1], 10) : 1
@@ -97,7 +115,7 @@ export function ergaenzeAusAufnahmeHinweisen(
       menge: stueck,
       einheit: 'Stück',
       konfidenz: stueckTreffer ? 'high' : 'medium',
-      berechnungsweg: stueckTreffer ? `${stueck} Stück aus Aufnahme` : 'Karte hat Dehnungsfuge erkannt, keine explizite Stückzahl im Transkript — 1 Stück angenommen',
+      berechnungsweg: stueckTreffer ? `${stueck} Stück aus Aufnahme` : 'Dehnungsfuge erkannt, keine explizite Stückzahl im Transkript — 1 Stück angenommen',
       annahmen: stueckTreffer ? [] : ['1 Stück angenommen — bitte Anzahl/Länge prüfen'],
     })
   }

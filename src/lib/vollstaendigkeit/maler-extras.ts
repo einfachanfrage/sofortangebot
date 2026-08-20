@@ -72,8 +72,21 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
   // Einzelne Dübellöcher und Schadstellen sind Kleinreparaturen, keine
   // vollflächige Q2-Spachtelung. Sie müssen als eigene Stückpositionen erhalten
   // bleiben, statt unbemerkt die komplette Wandfläche zu verteuern.
-  const hatDuebelloecher = /dübellöch|duebelloech|bohrlöch|nagellöch/i.test(lower)
-  const hatSchadstellen = /schadstell|fehlstell|kleine[nr]?\s+(?:loch|löcher|ausbesser)/i.test(lower)
+  //
+  // PM-011, Nachtest (2026-08-17/19/20): "...nicht nur ne kleine Ausbesserung,
+  // wirklich die ganze Fläche" hat trotzdem die Kleinreparatur-Stückposition
+  // "Risse / Löcher spachteln" erzeugt — der Nutzer hat die Kleinreparatur-
+  // Einordnung ausdrücklich VERNEINT, aber der reine Substring-Check unten
+  // sucht nur nach der Wortfolge "kleine[r] Ausbesserung/Loch/Löcher" im
+  // Text, ohne auf ein direkt davorstehendes "kein[e]"/"nicht nur/bloß/
+  // allein" zu achten — exakt dieselbe Fehlerklasse wie "kein Fenster"/
+  // "keine Tür" (arbeiten-normalisierer.ts) oder "keine Dehnungsfuge"
+  // (PM-013, aufnahme-hinweise.ts). Gleiche Lösung: Verneinung direkt vor
+  // der Wortfolge ausschließen, für Dübellöcher und Schadstellen
+  // gleichermaßen (dieselbe Fehlerklasse an derselben Stelle).
+  const kleinreparaturVerneint = /(?:kein[e]?\s|nicht\s+(?:nur|bloß|allein)\s+)[^.!?]{0,20}?(?:d[üu]bell[öo]ch\w*|bohrl[öo]ch\w*|nagell[öo]ch\w*|schadstell\w*|fehlstell\w*|\bloch\b|l[öo]cher|ausbesser\w*)/i
+  const hatDuebelloecher = /dübellöch|duebelloech|bohrlöch|nagellöch/i.test(lower) && !kleinreparaturVerneint.test(lower)
+  const hatSchadstellen = /schadstell|fehlstell|kleine[nr]?\s+(?:loch|löcher|ausbesser)/i.test(lower) && !kleinreparaturVerneint.test(lower)
   if (hatDuebelloecher || hatSchadstellen) {
     if (hatDuebelloecher && !hat(ergaenzt, 'dübellöcher', 'duebelloecher')) {
       const anzahl = anzahlAus(lower, 'dübellöch', 1)

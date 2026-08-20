@@ -85,6 +85,39 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
     expect(dehnungsfuge!.einheit).toBe('Stück')
   })
 
+  // PM-013, Nachtest 2 (2026-08-20): echter Live-Fund, direkte Folge des
+  // Fixes oben. Bei NACHWEISLICH IDENTISCHEM Transkript (Sandy bestätigt:
+  // "habe Dehnungsfuge mit gesagt", gleicher Wortlaut wie beim ersten Test)
+  // hat GPTs Karten-Erkennung die Dehnungsfuge beim zweiten Testlauf NICHT
+  // gemeldet — der reine Chip-Titel-Fix von PM-013 hing komplett an dieser
+  // einen, nachweislich nicht deterministischen Chip-Antwort und griff
+  // deshalb ins Leere. Fix: Fallback direkt im Rohtranskript, unabhängig
+  // vom Chip (analog BODEN_VERLEGEN_SIGNAL in boden.ts/kontext-analyzer.ts).
+  it('erkennt "Dehnungsfuge" auch im Rohtranskript, wenn der Chip sie diesmal NICHT meldet — PM-013 Nachtest 2', () => {
+    const ergebnis = ergaenzeAusAufnahmeHinweisen([
+      pos('Fertigparkett verlegen inkl. 15% Verschnitt — Wohnzimmer', 41.4, 'm²'),
+      // Chip meldet diesmal absichtlich KEINE Dehnungsfuge — genau das reale
+      // Nachtest-2-Muster (Karte: "3 Positionen erkannt" statt "4").
+    ], ['Eichenparkett verlegen — Wohnzimmer'],
+      'Wohnzimmer, acht mal viereinhalb. Eichenparkett, Fischgrät verlegt, das braucht ja mehr Verschnitt. ' +
+      'Ist schon ne große Fläche, da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte mit rein.')
+
+    const dehnungsfuge = ergebnis.find(p => /dehnungsfuge/i.test(p.beschreibung))
+    expect(dehnungsfuge, `keine Position — hat: ${ergebnis.map(p => p.beschreibung).join(' | ')}`).toBeDefined()
+    expect(dehnungsfuge!.menge).toBe(1)
+    expect(dehnungsfuge!.einheit).toBe('Stück')
+  })
+
+  it('erfindet keine Dehnungsfuge, wenn sie im Transkript ausdrücklich verneint wird', () => {
+    const ergebnis = ergaenzeAusAufnahmeHinweisen([
+      pos('Fertigparkett verlegen — Wohnzimmer', 36, 'm²'),
+    ], ['Eichenparkett verlegen — Wohnzimmer'],
+      'Wohnzimmer, acht mal viereinhalb. Eichenparkett verlegt. Keine Dehnungsfuge nötig, die Fläche ist nicht so groß.')
+
+    const dehnungsfuge = ergebnis.find(p => /dehnungsfuge/i.test(p.beschreibung))
+    expect(dehnungsfuge).toBeUndefined()
+  })
+
   // PM-012, zweiter Nachtest (2026-08-19): echter Live-Fund. Nur Streichen
   // verlangt, Neumontage ausdrücklich ausgeschlossen — Karte meldet
   // "Sockelleisten streichen" zuverlässig, der Fix in der Maler-Engine vom

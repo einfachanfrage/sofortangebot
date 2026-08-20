@@ -3340,26 +3340,133 @@ export const DEFAULT_PRICES: Array<{
   },
   // Engine-genaue Basispositionen: garantieren eine eindeutige Zuordnung im
   // aktiven Angebotsablauf, ohne KI- oder Marktpreis-Fallback.
+  //
+  // Head of Product Engineering (2026-08-20): komplett durchgesehen und
+  // aufgeräumt (Sandys Auftrag "schau dir die komplette Preisdatenbank für
+  // Maler und Bodenleger an — nichts doppelt, alles sauber einheitlich").
+  // Drei Dinge waren hier kaputt bzw. unvollständig:
+  //  1. Diese Zeilen hatten eigene, nirgendwo sonst verwendete Kategorien
+  //     ("Maler – Schimmel & Sanierung", "– Dekorative Techniken",
+  //     "– Spezialbeschichtungen", "– Baustelleneinrichtung",
+  //     "– Holzbeschichtung", "Boden – Feuchtigkeitsschutz") statt der 12
+  //     etablierten Maler-Kategorien bzw. der Boden-Kategorien weiter oben —
+  //     jede Zeile ist jetzt einer bestehenden Kategorie zugeordnet (bzw.
+  //     "Maler – Stuck & Dekorative Techniken", einer einzigen NEUEN, sauber
+  //     benannten 13. Kategorie für die fünf Stuck-Positionen + die beiden
+  //     Dekortechniken, die sonst nirgendwo hineinpassen).
+  //  2. "Holzvertäfelung / Wandbelag abkleben" hatte die falsche Einheit (m²
+  //     statt lfdm) — die Engine berechnet das Abkleben von Wandbelag-Kanten
+  //     immer in laufenden Metern (mengen/gewerke/maler.ts), ein m²-Preis
+  //     konnte hier nie greifen.
+  //  3. "Kniestockwände streichen" / "Dachschrägen streichen" hatten nur EINEN
+  //     Preis ohne 1x/2x/3x-Unterscheidung. Das ist kein Stilproblem, sondern
+  //     ein echter Matching-Bug: sobald IRGENDEIN anderer Preis mit gleicher
+  //     Einheit im Katalog eine explizite "1x/2x/3x"-Variante hat (z. B. "Wand
+  //     streichen 2x Anstrich"), sperrt preis-matcher.ts jeden Eintrag OHNE
+  //     eigene Zahl für JEDE 1x/2x/3x-Suche — unabhängig vom Thema. Ergebnis:
+  //     "Kniestockwände streichen 2x — Dachzimmer" fand nie den (existierenden!)
+  //     Preis, weil der Katalogeintrag keine "2x" im Titel hatte. Programmatisch
+  //     gegen preis-matcher.ts geprüft (Simulation aller von maler.ts/boden.ts/
+  //     vollständigkeit/*.ts erzeugten Positionstitel gegen den Katalog) — jetzt
+  //     mit expliziten 1x/2x/3x-Zeilen behoben, dieselbe Lücke bei "Fassadenfläche
+  //     streichen" (bisher GAR KEIN Preis) gleich mit.
+  // Strukturelle Beobachtung für Head of IT: Punkt 3 ist ein generisches
+  // Matcher-Verhalten (preis-matcher.ts, `hatPassendeAnstrichVariante`) und
+  // betrifft vermutlich auch andere Gewerke mit 1x/2x/3x-Anstrichen (Trockenbau,
+  // Putz) — hier nur für Maler/Boden geprüft und mit Katalog-Einträgen
+  // umgangen, nicht am Matcher selbst repariert (das wäre ein Eingriff in
+  // aktiven Produktionscode, bewusst außerhalb dieses Preisdatenbank-Auftrags).
+  // Ebenso strukturell: "Übergangsprofil" (Bodenleger, Einbau) matchte bisher
+  // versehentlich auf "Schwelle / Übergangsprofil ENTFERNEN" (falsche Richtung,
+  // Score 0.94 durch Teilstring-Treffer) — durch den neuen exakten Eintrag
+  // unten jetzt korrekt (Score 1.0 gewinnt).
+  //
+  // Fehlende Standardpreise ergänzt (Sandys Ansage, "Systemischer Fund" Punkt 1
+  // in pruefmeister-testfaelle.md: Kniestockwände/Dachschrägen/Fassadenfläche
+  // streichen, Übergangsschiene) sowie eine echte Handwerker-Vollständigkeits-
+  // prüfung für beide Gewerke: Stuck-Nebenleistungen, Brandschutzfarbe für
+  // Stahlträger, Sockelleisten-Aufarbeitung (schleifen/lackieren getrennt von
+  // "streichen"), Q2/Q3/Q4-Spachtel- und Schleif-Varianten, generisches
+  // "Altbelag entfernen" ohne Materialangabe (Bodenleger) und die komplette
+  // Übergangsschienen-/Profilleisten-Familie (Übergangsprofil, Alu-Varianten,
+  // Hamburger Profilleiste, generisches Profilleiste montieren).
   { category: 'Maler – Vorbereitung & Schutz', title: 'Sockelleisten abkleben', unit: 'lfdm', unit_price: 0.80 },
+  { category: 'Maler – Vorbereitung & Schutz', title: 'Holzvertäfelung / Wandbelag abkleben', unit: 'lfdm', unit_price: 1.20 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Untergrundvorbereitung / Ausgleich', unit: 'm²', unit_price: 12.00 },
-  { category: 'Boden – Feuchtigkeitsschutz', title: 'Epoxidharz-Feuchtigkeitssperre aufwalzen', unit: 'm²', unit_price: 18.00 },
-  { category: 'Maler – Vorbereitung & Schutz', title: 'Holzvertäfelung / Wandbelag abkleben', unit: 'm²', unit_price: 3.00 },
-  { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen', unit: 'm²', unit_price: 11.00 },
-  { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen', unit: 'm²', unit_price: 11.00 },
+  { category: 'Boden – Untergrundvorbereitung', title: 'Epoxidharz-Feuchtigkeitssperre aufwalzen', unit: 'm²', unit_price: 18.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen 1x', unit: 'm²', unit_price: 7.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen 2x', unit: 'm²', unit_price: 11.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen 3x', unit: 'm²', unit_price: 15.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen 1x', unit: 'm²', unit_price: 7.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen 2x', unit: 'm²', unit_price: 11.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen 3x', unit: 'm²', unit_price: 15.50 },
   { category: 'Maler – Anstrich Innen', title: 'Deckenspiegel streichen', unit: 'm²', unit_price: 11.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Decke streichen 3x Anstrich', unit: 'm²', unit_price: 15.00 },
   { category: 'Maler – Tapezieren', title: 'Akzentwand Vliestapete', unit: 'm²', unit_price: 14.00 },
   { category: 'Maler – Anstrich Innen', title: 'Restwände streichen', unit: 'm²', unit_price: 9.50 },
-  { category: 'Maler – Schimmel & Sanierung', title: 'Schimmelbehandlung / Grundierung', unit: 'm²', unit_price: 12.00 },
-  { category: 'Maler – Dekorative Techniken', title: 'Kalkputz aufbringen', unit: 'm²', unit_price: 35.00 },
-  { category: 'Maler – Spezialbeschichtungen', title: 'Silikatfarbe auftragen (2×)', unit: 'm²', unit_price: 13.00 },
-  { category: 'Maler – Spezialbeschichtungen', title: 'Nikotinsperre auftragen', unit: 'm²', unit_price: 9.00 },
-  { category: 'Maler – Baustelleneinrichtung', title: 'Gerüst stellen (Pauschale)', unit: 'Pauschale', unit_price: 450.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Schimmelbehandlung / Grundierung', unit: 'm²', unit_price: 12.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Kalkputz aufbringen', unit: 'm²', unit_price: 35.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Silikatfarbe auftragen (2×)', unit: 'm²', unit_price: 13.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Nikotinsperre auftragen', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Gerüst & Arbeitsmittel', title: 'Gerüst stellen (Pauschale)', unit: 'Pauschale', unit_price: 450.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Rissverschluss mit Gewebe', unit: 'm²', unit_price: 18.00 },
-  { category: 'Maler – Baustelleneinrichtung', title: 'Bautrockner aufstellen und betreiben', unit: 'Tage', unit_price: 45.00 },
-  { category: 'Maler – Schimmel & Sanierung', title: 'Anti-Schimmel-Anstrich', unit: 'm²', unit_price: 15.00 },
+  { category: 'Maler – Gerüst & Arbeitsmittel', title: 'Bautrockner aufstellen und betreiben', unit: 'Tage', unit_price: 45.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Anti-Schimmel-Anstrich', unit: 'm²', unit_price: 15.00 },
   { category: 'Maler – Anstrich Innen', title: 'Kalken / Weißkalkung', unit: 'm²', unit_price: 10.00 },
-  { category: 'Maler – Dekorative Techniken', title: 'Spachteltechnik (Betonoptik)', unit: 'm²', unit_price: 45.00 },
-  { category: 'Maler – Spezialbeschichtungen', title: 'Versiegelung / Schutzanstrich', unit: 'm²', unit_price: 14.00 },
-  { category: 'Maler – Holzbeschichtung', title: 'Holzbalken anschleifen', unit: 'lfdm', unit_price: 8.00 },
-  { category: 'Maler – Holzbeschichtung', title: 'Lasur auftragen (transparent)', unit: 'lfdm', unit_price: 9.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Spachteltechnik (Betonoptik)', unit: 'm²', unit_price: 45.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Versiegelung / Schutzanstrich', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Holzbalken anschleifen', unit: 'lfdm', unit_price: 8.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Lasur auftragen (transparent)', unit: 'lfdm', unit_price: 9.00 },
+
+  // MALERARBEITEN — fehlende Standardpreise + Handwerker-Vollständigkeitsprüfung (2026-08-20)
+  { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche streichen 1x', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche streichen 2x', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche streichen 3x', unit: 'm²', unit_price: 19.00 },
+  { category: 'Maler – Bodenbeschichtung', title: 'Boden streichen', unit: 'm²', unit_price: 12.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Fensterbänke streichen', unit: 'm²', unit_price: 45.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Fußleisten schleifen und lackieren', unit: 'lfdm', unit_price: 6.50 },
+  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Raumhöhe > 3m', unit: 'Pauschale', unit_price: 90.00 },
+  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Altbau', unit: 'Pauschale', unit_price: 70.00 },
+  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Denkmalschutz', unit: 'Pauschale', unit_price: 120.00 },
+  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag bewohnt', unit: 'Pauschale', unit_price: 80.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q2', unit: 'm²', unit_price: 5.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q3', unit: 'm²', unit_price: 7.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q4', unit: 'm²', unit_price: 9.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände spachteln Q3', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände spachteln Q4', unit: 'm²', unit_price: 22.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Untergrundvorbereitung Beton', unit: 'Pauschale', unit_price: 45.00 },
+  { category: 'Maler – Bodenbeschichtung', title: 'Estrich schleifen / Untergrundvorbereitung', unit: 'm²', unit_price: 8.00 },
+  { category: 'Maler – Bodenbeschichtung', title: 'Epoxid / Versiegelung — Schicht 1', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Bodenbeschichtung', title: 'Epoxid / Versiegelung — Schicht 2', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Bodenbeschichtung', title: 'Garagenboden Betonfarbe', unit: 'm²', unit_price: 12.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Brüstung innen streichen', unit: 'm²', unit_price: 9.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Holzdecke abschleifen', unit: 'm²', unit_price: 9.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Holzdecke ölen — 2× Anstrich', unit: 'm²', unit_price: 16.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Rostschutzgrund Träger', unit: 'lfdm', unit_price: 14.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Brandschutzfarbe F30/F60', unit: 'lfdm', unit_price: 28.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Stuckleisten montieren', unit: 'lfdm', unit_price: 14.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Stuckleisten streichen / weißen', unit: 'lfdm', unit_price: 6.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Stuckrosette abkleben', unit: 'Stück', unit_price: 12.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Stuck restaurieren', unit: 'Pauschale', unit_price: 350.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Stuckdecke / Stuckelemente abkleben', unit: 'Pauschale', unit_price: 65.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Türrahmen schleifen', unit: 'Stück', unit_price: 20.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Türrahmen streichen', unit: 'Stück', unit_price: 35.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Sockelleisten abschleifen', unit: 'lfdm', unit_price: 2.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Sockelleisten schleifen', unit: 'lfdm', unit_price: 2.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Sockelleisten lackieren (2× Anstrich)', unit: 'lfdm', unit_price: 6.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Graffiti entfernen', unit: 'm²', unit_price: 18.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Grundierung Fassade nach Graffiti', unit: 'm²', unit_price: 6.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassadenfarbe 2× Anstrich', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Rissverschluss / Spachtelarbeiten Außen', unit: 'Pauschale', unit_price: 90.00 },
+
+  // BODENBELÄGE & PARKETT — fehlende Standardpreise + Handwerker-Vollständigkeitsprüfung (2026-08-20)
+  { category: 'Boden – Altbelag entfernen', title: 'Altbelag entfernen', unit: 'm²', unit_price: 7.00 },
+  { category: 'Boden – Abschlussarbeiten', title: 'Dehnungsfuge einbauen', unit: 'Stück', unit_price: 45.00 },
+  { category: 'Boden – Untergrundvorbereitung', title: 'Quarzsand absanden', unit: 'm²', unit_price: 4.00 },
+  { category: 'Boden – Abschlussarbeiten', title: 'Übergangsschiene', unit: 'Stück', unit_price: 15.00 },
+  { category: 'Boden – Abschlussarbeiten', title: 'Übergangsprofil', unit: 'Stück', unit_price: 15.00 },
+  { category: 'Boden – Abschlussarbeiten', title: 'Alu-Übergangsprofil', unit: 'Stück', unit_price: 18.00 },
+  { category: 'Boden – Abschlussarbeiten', title: 'Alu-Übergangsprofil Silber', unit: 'Stück', unit_price: 18.00 },
+  { category: 'Boden – Abschlussarbeiten', title: 'Profilleiste montieren', unit: 'lfdm', unit_price: 9.00 },
+  { category: 'Boden – Abschlussarbeiten', title: 'Hamburger Profilleiste MDF weiß foliert (geklippt)', unit: 'lfdm', unit_price: 11.00 },
 ]
