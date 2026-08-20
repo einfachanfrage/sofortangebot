@@ -52,6 +52,20 @@ export function sekundaerGewerk(primaer: string, extraktion: { raeume?: RaumLike
   return null
 }
 
+/**
+ * Grobe, rein textbasierte Haupt-Gewerk-Erkennung — für Stellen OHNE
+ * strukturierte raeume[]/bereiche[]-Extraktion (z.B. die schnelle Chip-
+ * Vorschau direkt nach der Aufnahme, siehe chips-vervollstaendigung.ts).
+ * Dieselben Signalwörter wie hatBodenAnteil/hatMalerAnteil oben, nur ohne
+ * Struktur-Anteil — bewusst konservativ (nur maler/boden_parkett, die beiden
+ * aktuell unterstützten Gewerke), gibt sonst null zurück.
+ */
+export function erkenneHauptgewerkAusText(transkript: string): 'maler' | 'boden_parkett' | null {
+  if (MALER_TEXT.test(transkript)) return 'maler'
+  if (BODEN_TEXT.test(transkript)) return 'boden_parkett'
+  return null
+}
+
 /** Reichert die Räume mit Boden-Infos aus dem Rohtext an (Belag/Altbelag), damit
  *  die Boden-Engine "Vinyl verlegen" statt "Bodenbelag verlegen" liefert. */
 function reichereBodenAn<E extends { raeume?: RaumLike[]; bereiche?: RaumLike[] }>(extraktion: E, transkript: string): E {

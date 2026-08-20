@@ -53,6 +53,24 @@ describe('maler – streichen basis', () => {
     expect(positionen.some(position => /spachtelarbeiten q2/i.test(position.beschreibung))).toBe(false)
   })
 
+  // PM-011, Nachtest (2026-08-17/19/20): echter Live-Fund. "...nicht nur ne
+  // kleine Ausbesserung, wirklich die ganze Fläche" hat trotzdem eine eigene
+  // Kleinreparatur-Stückposition ("Risse / Löcher spachteln") erzeugt — der
+  // Nutzer hat die Kleinreparatur-Einordnung ausdrücklich verneint. Gegenprobe
+  // zum Test oben: dort ist "kleine Schadstellen" echt gemeint (kein
+  // "kein[e]"/"nicht nur" davor), hier ist sie ausdrücklich ausgeschlossen.
+  it('erfindet keine Kleinreparatur-Position, wenn der Nutzer die volle Fläche verlangt (PM-011)', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 32.91)],
+      'Die Wände sind ordentlich uneben — die müssen komplett gespachtelt werden, Qualitätsstufe Q2, ' +
+      'nicht nur ne kleine Ausbesserung, wirklich die ganze Fläche. Danach zweimal streichen.',
+    )
+    expect(positionen.some(position => /risse\s*\/\s*löcher spachteln|kleine schadstellen/i.test(position.beschreibung))).toBe(false)
+    expect(positionen.some(position => /dübellöcher spachteln/i.test(position.beschreibung))).toBe(false)
+    expect(positionen.some(position => /spachtelarbeiten q2/i.test(position.beschreibung))).toBe(true)
+  })
+
   it('"nur Decke" filtert Wand+Sockel aus Engine-Positionen', () => {
     const eingabe = [pos('Wandflächen streichen'), pos('Deckenfläche streichen'), pos('Sockelleisten montieren')]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'nur Decke streichen')
@@ -67,6 +85,22 @@ describe('maler – streichen basis', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'nur Wände streichen')
     const beschr = positionen.map(p => p.beschreibung)
     expect(beschr).not.toContain('Deckenfläche streichen')
+    expect(beschr).toContain('Wandflächen streichen')
+  })
+
+  // PM-001-Nebenfund (2026-08-20, gefunden beim Bauen des Aufnahmekarten-Fixes):
+  // "abdecken"/"abdeckfolie" enthält selbst die Zeichenkette "decke"
+  // (ab-DECKE-n) — der "nur Wände"-Scope-Filter hat jede Boden-schützen-
+  // Position deshalb wieder rausgeworfen, OBWOHL eine extra Ausnahme dafür im
+  // Code stand (die Ausnahme griff nur für den zweiten Teil der Bedingung,
+  // nicht für die "kein decke"-Prüfung selbst). Betraf die reguläre, bepreiste
+  // Kalkulation, nicht nur eine Vorschau — "nur Wände streichen" ist der
+  // Alltagsfall bei einem reinen Wandanstrich.
+  it('"nur Wände" behält Boden schützen / Abdecken trotz der "decke"-Zeichenkette in "abdecken" (PM-001-Nebenfund)', () => {
+    const eingabe = [pos('Wandflächen streichen'), pos('Boden schützen / Abdecken', 0)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'nur Wände streichen, Boden vorher abdecken')
+    const beschr = positionen.map(p => p.beschreibung)
+    expect(beschr).toContain('Boden schützen / Abdecken')
     expect(beschr).toContain('Wandflächen streichen')
   })
 })

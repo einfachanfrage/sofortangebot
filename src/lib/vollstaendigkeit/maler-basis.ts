@@ -36,7 +36,16 @@ export function wendeNurXFilterAn(ergaenzt: BerechnetePosition[], v: AuftragsVer
     if (scope.nurDecke) return !d.includes('sockel') && !d.includes('wand')
     if (scope.nurWaende) {
       const istBodenSchutz = d.includes('boden schütz') || d.includes('boden abkl') || d.includes('abdeck')
-      return !d.includes('decke') && (!d.includes('boden') || istBodenSchutz)
+      // PM-001-Nebenfund (2026-08-20): "abdecken"/"abdeckfolie" enthält
+      // selbst die Zeichenkette "decke" (ab-DECKE-n) — ohne die
+      // istBodenSchutz-Ausnahme HIER mit reinzunehmen, flog jede Boden-
+      // schützen-Position bei "nur Wände"-Aufträgen (der Alltagsfall bei
+      // einem reinen Wandanstrich) sofort wieder raus, obwohl die Zeile
+      // darüber sie extra für genau diesen Fall retten wollte. Bug bestand
+      // unabhängig von diesem Chip-Vorschau-Fix — betraf auch die finale,
+      // bepreiste Kalkulation.
+      const istDeckenPosition = !istBodenSchutz && d.includes('decke')
+      return !istDeckenPosition && (!d.includes('boden') || istBodenSchutz)
     }
     if (scope.nurBoden) return !d.includes('wand') && !d.includes('decke') && !d.includes('sockel')
     return true

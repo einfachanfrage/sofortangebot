@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getAIClient, WHISPER_MODEL } from '@/lib/ai-client'
 import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
+import { ergaenzeChipsUmAutomatischeNebenpositionen } from '@/lib/chips-vervollstaendigung'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { segmentiereRaeume } from '@/lib/raum-segmentierer'
 import * as Sentry from '@sentry/nextjs'
@@ -109,7 +110,12 @@ export async function POST(req: NextRequest) {
       .join('\n')
 
     // ── Chips-Extraktion ──────────────────────────────────────────────────
-    const { positionen } = await extrahiereChips(ai, transkript, kontextNotizen || undefined)
+    const chipsErgebnis = await extrahiereChips(ai, transkript, kontextNotizen || undefined)
+    // PM-001 (2026-08-20): automatisch ergänzte Nebentätigkeiten (Boden
+    // schützen, Sockelleisten abkleben, Grundierung, ...) mit auf die Karte
+    // bringen, sonst weicht die Karten-Anzahl von der finalen Angebotsanzahl
+    // ab. Siehe chips-vervollstaendigung.ts für die volle Begründung.
+    const positionen = ergaenzeChipsUmAutomatischeNebenpositionen(chipsErgebnis.positionen, transkript)
 
     // ── Sichtbarkeit: was hat die Vorverarbeitung mit dem Rohtext gemacht? ──
     // Rein zu Anzeigezwecken (Logging-Spalten) — verändert nichts an der

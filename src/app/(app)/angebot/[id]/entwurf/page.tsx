@@ -866,6 +866,26 @@ export default function EntwurfPage() {
 
   type BannerTon = 'success' | 'mixed' | 'neutral'
   const bannerZustand: { ton: BannerTon; text: string } | null = (() => {
+    // "Systemischer Fund" Punkt 3 / DC-010 (Head of Product Engineering,
+    // 2026-08-20): der widersprüchliche rote+grüne Doppel-Banner entsteht,
+    // weil dieser Banner aus `erkannteAnzahl` berechnet wird — Zahlen aus der
+    // SCHNELLEN Chip-Vorschau (extrahiereChips) — während `fehler` u.a. vom
+    // Server aus der UNABHÄNGIGEN, vollständigen Berechnung
+    // (generiere-positionen → "Keine Positionen erkannt", 400) gesetzt wird.
+    // Zwei getrennte GPT-Aufrufe auf denselben Text können strukturell
+    // divergieren (exakt das in DC-028 als offene Architektur-Frage benannte
+    // Problem) — das erklärt auch, warum es nur manchmal auftrat (PD-006:
+    // 2 von 3 Fassaden-Durchläufen) und in einem späteren Nachtest ausblieb:
+    // reine GPT-Nichtdeterminismus-Frage, keine echte Race-Condition wie
+    // ursprünglich vermutet. `raeumeStaleKeinePositionenFehler` räumt einen
+    // stehen gebliebenen Fehler nur auf, wenn DANACH eine Aufnahme fertig
+    // verarbeitet wird — bleibt aber wirkungslos, wenn gar keine weitere
+    // Aufnahme mehr verarbeitet wird (genau der PD-006-Fall). Fix hier folgt
+    // Sandys eigener, schon in PD-006 formulierter Design-Regel: Fehler- und
+    // Erfolgs-Banner dürfen nie gleichzeitig stehen — im Zweifel gewinnt der
+    // zuletzt bestätigte, verlässlichere Zustand (hier: der Fehler aus der
+    // echten Server-Berechnung, nicht die schnelle Vorschau-Zahl).
+    if (fehler) return null
     if (!alleTranskribiertOderFehler || aufnahmen.length === 0 || recording) return null
     if (nichtsErkannt) {
       return { ton: 'neutral', text: 'Noch nichts erkannt — nochmal versuchen? Lauter oder mit mehr Details sprechen hilft oft.' }

@@ -373,18 +373,16 @@ export async function POST(req: NextRequest) {
   })
 
   if (!genRes.ok) {
-    if (genRes.status === 422) {
-      const err = await genRes.json().catch(() => ({})) as {
-        error?: string
-        code?: string
-        fehlende_positionen?: Array<{ beschreibung: string; einheit: string }>
-      }
-      return NextResponse.json({
-        error: err.error ?? 'Preise fehlen in der betrieblichen Preisdatenbank',
-        code: err.code ?? 'PREIS_FEHLT',
-        fehlende_positionen: err.fehlende_positionen ?? [],
-      }, { status: 422 })
-    }
+    // Systemischer Fund Punkt 2 (2026-08-20): hier stand früher eine
+    // Fehlerbehandlung für "Preisberechnung antwortet mit 422/PREIS_FEHLT",
+    // die ein rotes Banner gezeigt und NICHT zur Entwurfsansicht
+    // weitergeleitet hätte — genau der Verstoß, den Sandy ausdrücklich
+    // verboten hat ("muss ich natürlich TROTZDEM zur Entwurfsansicht
+    // kommen"). Entfernt, weil toter Code: angebot-generieren liefert nie
+    // mehr 422 (siehe Kommentar dort — fehlende Preise blockieren nicht
+    // mehr, sondern kommen mit 0,00 € sichtbar in die Positionen; Status
+    // ist dabei immer 200). Ohne diesen Branch fällt ein tatsächlich
+    // fehlerhafter Aufruf jetzt sauber auf den generischen 500er unten.
     if (genRes.status === 429) {
       const err = await genRes.json().catch(() => ({})) as { error?: string }
       return NextResponse.json({ error: err.error ?? 'Zu viele Anfragen' }, { status: 429 })
@@ -410,43 +408,63 @@ export async function POST(req: NextRequest) {
   const items = genData.items ?? []
 
   // ── Schritt 3: quote_items ergänzen ──────────────────────────────────────
-  // Bestehende Positionen: höchste Nummer + vorhandene Titel (für Dedup)
-  const { data: bestehendeItems } = await supabase
-    .from('quote_items')
-    .select('position, title, quantity')
-    .eq('quote_id', angebot_id)
-    .order('position', { ascending: false })
-  const startPosition = (bestehendeItems?.[0]?.position ?? 0) + 1
-  const bestehendeTitle = new Set((bestehendeItems ?? []).map(i => (i.title as string).toLowerCase().trim()))
+  // PM-014, App-seitiger Dedup-Fix (2026-08-19): Angebot 2026-0016
+  // verdoppelte sich komplett (jede Position exakt 2×, Nettosumme exakt
+  // verdoppelt). Ursache: Positionen MIT Raum-Suffix ("Wandflächen streichen
+  // — Flur") wurden nie gegen bereits vorhandene Positionen geprüft (nur die
+  // "einmalig"-Kategorie unten). Trifft diese Route ein zweites Mal auf
+  // dieselben Daten, landet exakt derselbe Titel MIT derselben Menge nochmal
+  // in der Liste. Details + Tests: `quote-items-dedup.ts`.
+  //
+  // PM-014, DB-seitiger Race-Fix (2026-08-20, Sandys Go): der App-Dedup oben
+  // schützt nur gegen einen erneuten Aufruf NACHDEM der vorherige committed
+  // hat. Er schützt NICHT gegen zwei wirklich zeitgleiche Anfragen — beide
+  // lesen "bestehendeItems" (unten), bevor eine von beiden geschrieben hat
+  // (TOCTOU), bestehen beide denselben Dedup-Check und fügen beide denselben
+  // Positionsbereich ein. Der neue DB-Constraint
+  // `quote_items_quote_id_position_key` (unique auf quote_id+position,
+  // Migration 20260820103931) macht das strukturell unmöglich: die zweite,
+  // kollidierende Schreibung schlägt jetzt mit Fehlercode 23505 fehl statt
+  // still zu duplizieren. Diese Schleife fängt genau diesen Fehler ab, liest
+  // den inzwischen frischen Datenbankstand neu ein und versucht es EINMAL
+  // erneut — die andere Anfrage hat zu diesem Zeitpunkt bereits committed,
+  // der zweite Versuch berechnet also entweder eine freie Positionsspanne
+  // oder erkennt (über denselben Dedup wie oben), dass gar nichts Neues mehr
+  // einzufügen ist.
+  let gefilterteItems: typeof items = []
+  for (let versuch = 1; versuch <= 2; versuch++) {
+    // Bestehende Positionen: höchste Nummer + vorhandene Titel (für Dedup)
+    const { data: bestehendeItems } = await supabase
+      .from('quote_items')
+      .select('position, title, quantity')
+      .eq('quote_id', angebot_id)
+      .order('position', { ascending: false })
+    const startPosition = (bestehendeItems?.[0]?.position ?? 0) + 1
+    const bestehendeTitle = new Set((bestehendeItems ?? []).map(i => (i.title as string).toLowerCase().trim()))
 
-  // PM-014: Angebot 2026-0016 verdoppelte sich komplett (jede Position exakt
-  // 2×, Nettosumme exakt verdoppelt). Ursache: Positionen MIT Raum-Suffix
-  // ("Wandflächen streichen — Flur") wurden nie gegen bereits vorhandene
-  // Positionen geprüft (nur die "einmalig"-Kategorie unten). Trifft diese
-  // Route ein zweites Mal auf dieselben Daten, landet exakt derselbe Titel
-  // MIT derselben Menge nochmal in der Liste. Details + Tests: `quote-items-dedup.ts`.
-  const ohneExakteDubletten = filtereExakteDubletten(
-    items,
-    (bestehendeItems ?? []).map(i => ({ title: i.title as string, quantity: i.quantity as number | null })),
-  )
+    const ohneExakteDubletten = filtereExakteDubletten(
+      items,
+      (bestehendeItems ?? []).map(i => ({ title: i.title as string, quantity: i.quantity as number | null })),
+    )
 
-  // Nur allgemeine Positionen OHNE Raum-Suffix dürfen nur einmal vorkommen
-  const EINMALIG_MUSTER = ['kleinmaterial', 'verbrauchsmaterial', 'an- und abfahrt', 'anfahrt', 'abfahrt', 'schutzfolie', 'schutzmaßnahmen']
-  const gefilterteItems = ohneExakteDubletten.filter(item => {
-    const titelLower = (item.title as string).toLowerCase().trim()
-    const hatRaumSuffix = titelLower.includes(' — ')
-    // Positionen mit Raum-Suffix (aber unterschiedlicher Menge) immer erlauben (Wandflächen — Flur + Wandflächen — Küche)
-    if (hatRaumSuffix) return true
-    // Allgemeine Positionen: nur einmal pro Quote
-    const istEinmalig = EINMALIG_MUSTER.some(m => titelLower.includes(m))
-    if (istEinmalig) {
-      const schonDa = [...bestehendeTitle].some(t => EINMALIG_MUSTER.some(m => t.includes(m) && titelLower.includes(m)))
-      if (schonDa) return false
-    }
-    return true
-  })
+    // Nur allgemeine Positionen OHNE Raum-Suffix dürfen nur einmal vorkommen
+    const EINMALIG_MUSTER = ['kleinmaterial', 'verbrauchsmaterial', 'an- und abfahrt', 'anfahrt', 'abfahrt', 'schutzfolie', 'schutzmaßnahmen']
+    gefilterteItems = ohneExakteDubletten.filter(item => {
+      const titelLower = (item.title as string).toLowerCase().trim()
+      const hatRaumSuffix = titelLower.includes(' — ')
+      // Positionen mit Raum-Suffix (aber unterschiedlicher Menge) immer erlauben (Wandflächen — Flur + Wandflächen — Küche)
+      if (hatRaumSuffix) return true
+      // Allgemeine Positionen: nur einmal pro Quote
+      const istEinmalig = EINMALIG_MUSTER.some(m => titelLower.includes(m))
+      if (istEinmalig) {
+        const schonDa = [...bestehendeTitle].some(t => EINMALIG_MUSTER.some(m => t.includes(m) && titelLower.includes(m)))
+        if (schonDa) return false
+      }
+      return true
+    })
 
-  if (gefilterteItems.length > 0) {
+    if (gefilterteItems.length === 0) break // nichts (mehr) einzufügen — z.B. eine parallele Anfrage hatte schon alles ergänzt
+
     const itemRows = gefilterteItems.map((item, idx) => ({
       quote_id: angebot_id,
       position: startPosition + idx,
@@ -462,11 +480,18 @@ export async function POST(req: NextRequest) {
     }))
 
     const { error: insertErr } = await supabase.from('quote_items').insert(itemRows)
-    if (insertErr) {
-      console.error('[positionen-generieren] Datenbankeintrag fehlgeschlagen')
-      Sentry.captureException(new Error(insertErr.message), { tags: { feature: 'positionen_generieren_insert' } })
-      return NextResponse.json({ error: 'Positionen konnten nicht gespeichert werden' }, { status: 500 })
+    if (!insertErr) break // Erfolg
+
+    const istPositionsKonflikt = insertErr.code === '23505' && insertErr.message.includes('quote_items_quote_id_position_key')
+    if (istPositionsKonflikt && versuch === 1) {
+      // Echte Race Condition erwischt — parallele Anfrage war schneller.
+      // Nicht als Fehler behandeln, einfach mit frischem Stand neu versuchen.
+      continue
     }
+
+    console.error('[positionen-generieren] Datenbankeintrag fehlgeschlagen')
+    Sentry.captureException(new Error(insertErr.message), { tags: { feature: 'positionen_generieren_insert' } })
+    return NextResponse.json({ error: 'Positionen konnten nicht gespeichert werden' }, { status: 500 })
   }
 
   // Totals neu berechnen (alle Positionen, nicht nur neue)

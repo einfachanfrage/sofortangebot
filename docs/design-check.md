@@ -22,15 +22,14 @@ verweisen.
 🔵 Entscheidung nötig, bevor Umsetzung möglich ist · ❌ offen, bestätigter
 Befund · ⏳ noch nicht geprüft.
 
-**Datei-Sicherheit (aktualisiert 20.08.2026):** Der Speicherfehler bei
-gleichzeitiger Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten
-(hier zuletzt am 17.08., seither zum Glück nicht mehr in dieser Datei).
-Ganz am Ende dieser Datei steht jetzt eine feste Markierung
-(`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
-Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
-löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
-wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
-schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
+**Hinweis zur Pflege dieser Datei:** Sie ist am 17.08. (jetzt zum zweiten Mal
+in dieser Datei, projektweit schon das 5. Mal) durch gleichzeitige
+Bearbeitung kurz auf einen älteren Stand zurückgefallen — die
+Organigramm-Hinweise und die DC-001-Entscheidung waren dadurch kurz weg,
+jetzt vom Chief of Staff wiederhergestellt. DC-007–DC-020 (deine neuen
+Befunde) waren davon nicht betroffen. Bitte vor dem Speichern kurz nochmal
+lesen, was gerade in der Datei steht, statt eine lokal ältere Kopie
+zurückzuschreiben.
 
 ## Organigramm-Hinweise
 
@@ -48,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-19, DC-029 — Baustellen-UI umgesetzt, tsc sauber, eslint in dieser Umgebung nicht lauffähig)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-19, DC-029 — Designer-Antworten an Head of Product Engineering)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -60,8 +59,8 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | ❌ offen — Aufräumen läuft, erste 5 Komponenten migriert (siehe Update 2026-08-18) | Product Designer |
 | DC-007 | Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb | 🟡 behoben, noch nicht live nachgeprüft | Product Designer |
 | DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ❌ offen | — |
-| DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | ❌ offen — live reproduziert | — |
-| DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen | ❌ offen — Widerspruchs-Banner unabhängig von Prüfmeister/Sandy bestätigt (PD-006), Priorität erhöht | — |
+| DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | 🟡 mit DC-028 mitgefixt (2026-08-19): `kannFertigstellen` verlangt jetzt `erkannteAnzahl > 0`, 0 Positionen zeigt neutralen Hinweis statt grünem Erfolg — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
+| DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | 🟡 Widerspruchs-Banner root-caused + gefixt (Head of Product Engineering, 2026-08-20, siehe „Systemischer Fund" Punkt 3 in `pruefmeister-testfaelle.md`) — zwei unabhängige GPT-Aufrufe (Chip-Vorschau vs. Server-Berechnung) konnten divergieren, `bannerZustand` zeigt jetzt nie mehr gleichzeitig mit `fehler`; noch nicht live nachgeprüft. Fehlende Guardrail (leeres Angebot lässt sich trotzdem fertigstellen) bleibt separat offen | Head of Product Engineering (Banner-Widerspruch) / offen (Guardrail) |
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
 | DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ❌ offen | — |
 | DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ❌ offen — live bestätigt | — |
@@ -80,7 +79,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | 🔵 UI-Seite mit DC-025 vorbereitet, „Du hast gesagt"-Vorschlag wartet weiter auf Erkennungs-Flag von Head of Product Engineering | Head of Product Engineering |
 | DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | ❌ offen — dreifach reproduziert (Prüfmeister) | — |
 | DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | 🟡 Umgesetzt (`entwurf/page.tsx`, raum-gruppiert), scoped tsc + ESLint sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
-| DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🟡 Umgesetzt (Datenmodell + UI) — Sandy hat nach Konzept/Prototyp „Top umsetzen" gesagt. Sechs Dateien geändert/neu, scoped `tsc` sauber, `eslint` in dieser Umgebung nicht lauffähig (siehe Detail), noch nicht live mit echten Kundendaten geprüft (Produktion hat aktuell 0 Kunden) | Product Designer (umgesetzt, wartet auf Live-Check) |
+| DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🔵 Wording-Konzept + Antworten auf alle 4 Rückfragen von Head of Product Engineering geliefert (nullable wie customer_id, Auto-Erstbaustelle bei jedem customer_id-Set, Name-Logik, dauerhaft nullable) — Lexware-Machbarkeit von Platform & Integrations Engineer bereits geprüft (Text-Workaround, kein Blocker). Umsetzung liegt jetzt bei Head of Product Engineering | Product Designer (Konzept beantwortet) / Head of Product Engineering (Umsetzung) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -1547,101 +1546,6 @@ noch keine echten Kunden, daher konnte ich den kompletten Zuweisen-Flow
 noch nicht live gegentesten — rein strukturell/schema-seitig ist aber alles
 verifiziert live.
 
-**Konzept + klickbarer Prototyp für die Baustellen-UI (Product Designer,
-2026-08-19):** Fertig und an Sandy geschickt, wartet auf ihr Go — gleicher
-Ablauf wie bei DC-025/DC-028 (erst Konzept + Prototyp, erst nach explizitem
-Go echter Code).
-
-Grundprinzip: „unsichtbar, bis es gebraucht wird". Solange ein Kunde nur
-seine automatische Erstbaustelle hat (die große Mehrheit), ändert sich an
-der UI nichts sichtbar — keine neue Zeile, kein neues Label. Erst sobald ein
-Kunde wirklich eine zweite Baustelle bekommt (der Clemens-Fall), wird
-Struktur sichtbar:
-
-- **Angebot-Editor (`AngebotDetail.tsx`), Kunde-Karte:** die heutige
-  Adresszeile wird zur antippbaren Baustellen-Zeile („🏗️ {Name} · {N}
-  Angebote ›"), sobald >1 Baustelle existiert — öffnet ein Bottom-Sheet zur
-  Auswahl/Anlage, schreibt sofort `baustelle_id` aufs offene Angebot.
-- **Kunde-Detail-Seite (`kunden/[id]/page.tsx`):** bei >1 Baustelle werden
-  die Angebote nach Baustelle gruppiert (eine Karte pro Baustelle, „+ Neues
-  Angebot für diese Baustelle" darin) — bewusst dieselbe visuelle Sprache
-  wie die Raum-Karten aus DC-028, damit es sich wie dasselbe Produkt
-  anfühlt. Bei nur einer Baustelle: unverändert flache Liste wie heute.
-- **Neues Angebot anlegen:** bewusst KEINE neue Abfrage im Flow — die
-  Erstbaustelle wird automatisch gesetzt (macht schon
-  `getOrCreateErstbaustelle()`), Baustellenwahl passiert nur bei Bedarf
-  danach im Editor.
-- Bewusst nicht Teil des Vorschlags: `/angebote`-Übersicht bekommt keine
-  Baustellen-Spalte/-Filter, das wäre reines Vorgreifen ohne echte Nutzer.
-
-Dateien: `dc-029-konzept-baustellen-ui.md` (Konzept) und
-`dc-029-baustellen-prototyp.html` (4 klickbare Zustände: Angebot-Editor
-normal/mit mehreren Baustellen inkl. Wahl-Sheet, Kunde-Seite
-normal/gruppiert) — beide im echten visuellen System der App gebaut, an
-Sandy geschickt.
-
-**Umsetzung (Product Designer, 2026-08-19):** Auf Sandys „Top umsetzen" hin
-in echtem Code umgesetzt, exakt nach Konzept + Prototyp. Geänderte/neue
-Dateien:
-
-- `src/data/customers.ts` — `getCustomerDetail()` lädt jetzt zusätzlich die
-  Baustellen des Kunden (inkl. `baustelle_id` je Angebot).
-- `src/app/(app)/kunden/[id]/page.tsx` — bei ≤1 Baustelle unverändert flache
-  Angebotsliste (plus ein dezenter „+ Weitere Baustelle für diesen
-  Kunden"-Text-Link ganz unten, klein und grau — das ist der einzige
-  Einstiegspunkt, über den eine zweite Baustelle überhaupt erst entsteht).
-  Bei >1 Baustelle: eine Karte pro Baustelle (🏗️ Name, Anzahl Angebote,
-  Angebote als Zeilen, „+ Neues Angebot für diese Baustelle"), Angebote ohne
-  passende Baustelle (sollte laut Backfill nicht vorkommen, defensiv trotzdem
-  abgefangen) landen in einer „Sonstige Angebote"-Karte, ganz unten ein
-  volles „+ Neue Baustelle".
-- `src/components/NeueBaustelleButton.tsx` (neu) — der „+ Neue
-  Baustelle"-Button/-Sheet, mit `variant`-Prop (`subtle` für den
-  Normalfall-Einstiegspunkt, `primary` für die gruppierte Ansicht). Legt die
-  Baustelle per direktem Supabase-Insert an und lädt die Seite via
-  `router.refresh()` neu.
-- `src/app/(app)/angebot/[id]/AngebotDetail.tsx` — Kunde-Karte: die
-  Adresszeile bekommt erst ab der zweiten Baustelle des Kunden eine
-  zusätzliche antippbare Zeile darunter („🏗️ {Name} · {N} Angebote ›"),
-  öffnet ein Bottom-Sheet zur Auswahl (Radio-Liste, wie viele Angebote je
-  Baustelle) oder Neuanlage. Baustellen werden client-seitig per Supabase
-  geladen (`loadBaustellen()`), Auswahl schreibt sofort `baustelle_id` aufs
-  offene Angebot — keine Bestätigung nötig. `handleKundeZuweisen` und
-  `handleLexwareKontaktImportieren` (die die Erstbaustelle bereits automatisch
-  setzen, siehe CoS-012) aktualisieren jetzt zusätzlich diesen UI-Zustand.
-- `src/app/api/entwurf/neu/route.ts` — akzeptiert jetzt optional
-  `customer_id`/`baustelle_id` direkt (mit Eigentümerschafts-Check gegen
-  `company_id`, da die IDs aus der URL kommen könnten), für den „+ Neues
-  Angebot für diese Baustelle"-Einstieg. Der bestehende
-  `kunden_name`-Schnellanlage-Pfad bleibt unverändert erhalten.
-- `src/app/(app)/angebot/neu/page.tsx` — liest `customerId`/`baustelleId`
-  aus den Such-Parametern und reicht sie an die Route durch (in `<Suspense>`
-  gewrappt wegen `useSearchParams()`).
-
-**Eine Konzept-Lücke währenddessen gefunden und mitgelöst:** Im
-ursprünglichen Konzept war die antippbare Baustellen-Zeile im Editor erst ab
-der zweiten Baustelle sichtbar — aber auch der einzige vorgesehene Weg, eine
-neue Baustelle anzulegen, hing an genau dieser Zeile. Ohne Korrektur hätte
-also nie jemand von einer auf zwei Baustellen kommen können
-(Henne-Ei-Problem). Lösung: der dezente Text-Link auf der Kunde-Seite (auch
-im Normalfall sichtbar, aber bewusst sehr zurückhaltend) ist jetzt der
-einzige Bootstrap-Weg zur zweiten Baustelle — sobald sie existiert,
-erscheinen Zeile und Sheet im Editor wie ursprünglich gezeigt.
-
-**Verifikation:** Alle sechs Dateien laufen sauber durch einen gescopten
-`tsc --noEmit` (keine Fehler). `eslint` ist in dieser Umgebung heute selbst
-für eine einzelne Datei wiederholt nach 43–45s abgelaufen (offenbar baut das
-type-aware Setup dafür den gesamten Programm-Graph neu, nicht nur die
-angefragte Datei) — konnte ich nicht zum Laufen bringen, genau wie das
-bekannte `npm test`/`@rolldown`-Problem. Stattdessen von Hand auf die
-üblichen Verdächtigen geprüft (ungenutzte Importe/Variablen, fehlende
-Hook-Deps, verschluckte Promises) und an bereits vorhandenen Mustern in
-derselben Datei orientiert (z. B. nicht-awaitete Ladefunktionen im
-Mount-Effect, die im Bestandscode genauso vorkommen). Noch NICHT live im
-Browser durchgeklickt (Produktionsdatenbank hat laut CoS-012 aktuell 0 echte
-Kunden) — bitte bei Gelegenheit mit echten Kundendaten gegenprüfen, sobald
-welche da sind.
-
 ---
 
 ## Kleinkram (beobachtet, niedrige Priorität, noch keine eigene ID)
@@ -1694,8 +1598,3 @@ Verknüpfung" im Buchhaltungs-Schritt ist eine klare, schnell verständliche
 Entscheidungshilfe ohne viel Text. Der Preis-Editor mit Akkordeon
 (Fahrtkosten/Arbeitszeit/Entsorgung, auf/zuklappbar) hält eine an sich
 komplexe Aufgabe (eigene Preise eintragen) übersichtlich.
-
----
-
-<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
-
