@@ -115,6 +115,47 @@ export function berechneUndPruefeAlleGewerke(
   //    kann nie doppelt gewollt sein (verschiedene Räume tragen ihr "— Raum"-Suffix)
   positionen = dedupExakt(positionen)
 
+  // 5) PM-010/PM-012/PM-013 (2026-08-19): `fehlende` wurde bisher nirgends
+  // gelesen — angebot-extrahieren/route.ts destrukturierte nur `positionen`
+  // und `mengenRoh` aus dieser Funktion, `fehlende` fiel komplett unter den
+  // Tisch. Jede hier erkannte, aber ohne sichere Menge dastehende Leistung
+  // ("Sockelleisten entfernen", "Sockelleisten streichen", "Dehnungsfuge
+  // einbauen", ...) erreichte den Nutzer dadurch NIE — weder als Position
+  // noch als Rückfrage, einfach stillschweigend nichts. Betrifft strukturell
+  // ~130 Fundstellen in src/lib/vollstaendigkeit/*, die alle über `fehlende`
+  // denselben unsichtbaren Ausgang nehmen.
+  //
+  // Statt jeden einzelnen Fall mit einer eigenen Mengen-Heuristik nachzuziehen
+  // (fragil — siehe PM-012: die "Menge von Sockelleisten abkleben übernehmen"-
+  // Heuristik war im Golden-Test grün, hat aber live nicht gegriffen, weil der
+  // reale Satzbau den Happy-Path nicht getroffen hat und der Fallback in
+  // `fehlende` landete): zentral hier jede noch offene `fehlende`-Meldung in
+  // eine echte, sichtbare Position mit Menge 0 verwandeln. Der Handwerker
+  // sieht sie garantiert (Karte UND fertiger Entwurf, exakt wie eine Position
+  // ohne Katalogpreis — 0,00 € statt komplett fehlend) und trägt die reale
+  // Menge selbst ein, statt dass die Leistung spurlos verschwindet. Blockiert
+  // nichts (Systemischer Fund Punkt 2 in pruefmeister-testfaelle.md).
+  //
+  // Bekannte Einschränkung: `fehlende`-Einträge tragen (anders als die meisten
+  // erfolgreich berechneten Positionen) noch kein "— Raum"-Suffix, weil die
+  // Vollständigkeitsprüfung gewerkweise über alle gemergten Räume läuft, nicht
+  // pro Raum. Bei Mehrraum-Aufträgen mit mehreren gleichnamigen offenen Punkten
+  // erscheint die Platzhalter-Position darum nur einmal, nicht pro Raum — das
+  // ist immer noch strikt besser als das bisherige komplette Verschwinden,
+  // aber kein Ersatz für eine spätere, pro Raum aufgelöste Lösung.
+  const bekannteBeschreibungen = new Set(positionen.map(p => p.beschreibung.toLowerCase().trim()))
+  for (const beschreibung of [...new Set(fehlende)]) {
+    if (bekannteBeschreibungen.has(beschreibung.toLowerCase().trim())) continue
+    positionen.push({
+      beschreibung,
+      menge: 0,
+      einheit: 'Stück',
+      konfidenz: 'low',
+      berechnungsweg: 'Erkannt, aber Menge nicht sicher berechenbar — bitte manuell ergänzen',
+      annahmen: [],
+    })
+  }
+
   return { positionen, fehlende, mengenRoh: { ...mengenPrimaer, positionen: rohPositionen } }
 }
 

@@ -21,11 +21,17 @@ Jeder Punkt hat eine feste ID (CoS-P-XXX).
 **Status-Zeichen:** ✅ erledigt & geprüft · 🟡 erledigt, noch nicht
 nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 
-**Hinweis zur Pflege dieser Datei:** Sie ist am 17.08. durch gleichzeitige
-Bearbeitung kurz auf einen älteren Stand zurückgefallen (die Fix-Updates zu
-CoS-P-001/002 waren kurz weg, jetzt vom Chief of Staff wiederhergestellt,
-CoS-P-005 unangetastet). Bitte vor dem Speichern kurz nochmal lesen, was
-gerade drinsteht — das Problem gab es in anderen Dateien hier schon öfter.
+**Datei-Sicherheit (aktualisiert 20.08.2026):** Der Speicherfehler bei
+gleichzeitiger Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten
+(hier am 17.08., zuletzt in `chief-of-staff-todos.md`). Ganz am Ende dieser
+Datei steht jetzt eine feste Markierung (`<!-- ENDE DER DATEI -->`). Taucht
+beim Lesen noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
+Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
+melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt
+mitten in bestehende Abschnitte zu schreiben. Voller Hintergrund und der
+eigentliche Lösungsvorschlag (Git-Commits statt Direkt-Überschreiben, dafür
+bräuchte es genau den Terminal-/Git-Zugriff, den du laut CoS-P-005 bereits
+hast): CoS-013 in `chief-of-staff-todos.md`.
 
 ## Stand auf einen Blick (angelegt: 2026-08-17)
 
@@ -336,3 +342,8 @@ kurz selbst gegenchecken (Vercel → Projekt → Settings → Environment
 Variables → `RESEND_API_KEY`): ist der neue Key für **Production UND
 Preview** gesetzt, und war nach dem Setzen ein Redeploy nötig, damit die
 laufende App ihn zieht?
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+

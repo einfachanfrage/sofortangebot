@@ -439,6 +439,39 @@ const KORPUS: Fall[] = [
     // UND "Sockelleisten montieren" darf nicht als Maler-Position auftauchen.
     verboten: ['sockelleisten montieren', 'sockelleisten entfernen'],
   },
+  {
+    name: 'PM-013 — Fischgrät-Verlegung braucht denselben Verschnitt wie Diagonal (Wohnzimmer)',
+    gewerk: 'boden_parkett',
+    // PM-013, Live-Nachtest 2026-08-19. Fund: GPTs Extraktion liefert für
+    // Fischgrät-Verlegung `verlegerichtung: "fischgrät"` (bestätigt an echten
+    // Produktions-Rohdaten, debug_extraktion_roh) — boden.ts hat aber bisher
+    // NUR auf den exakten String 'diagonal' geprüft, Fischgrät fiel auf
+    // standardVerschnitt() zurück, die für Parkett 0% liefert. Ergebnis im
+    // echten Entwurf: 36,00 m² statt der geforderten 39,60–41,40 m²
+    // (10–15% Verschnitt-Korridor lt. Testfall-Soll-Lösung). Fix:
+    // MUSTER_MIT_MEHR_VERSCHNITT-Regex erkennt jetzt auch "fischgrät"/
+    // "fischgrat" und wendet denselben 15%-Satz an wie bei Diagonalverlegung.
+    transkript:
+      'Wohnzimmer, acht mal viereinhalb. Eichenparkett, Fischgrät verlegt, das braucht ja mehr Verschnitt. ' +
+      'Boden nur, an den Wänden machen wir nix.',
+    raeume: [{
+      name: 'Wohnzimmer',
+      laenge: 8,
+      breite: 4.5,
+      belag: 'eichenparkett',
+      verlegerichtung: 'fischgrät',
+      arbeiten: ['parkett verlegen'],
+    }],
+    exakteMengen: [
+      // Fläche 8×4,5=36,00 m² + 15% Verschnitt = 41,40 m² — liegt am oberen
+      // Rand des geforderten 39,60–41,40 m²-Korridors (10–15%), klar über dem
+      // (falschen) 0%-Ist-Zustand und über dem Standard für gerade Verlegung (5%).
+      { enthaelt: 'fertigparkett verlegen', menge: 41.40 },
+    ],
+    // Kernpunkt: keine Wand-/Deckenposition — ausdrücklich ausgeschlossen
+    // ("an den Wänden machen wir nix"), reiner Boden-Gewerk-Testfall.
+    verboten: ['wandflächen streichen', 'deckenfläche streichen'],
+  },
 ]
 
 describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {

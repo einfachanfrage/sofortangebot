@@ -7,7 +7,11 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
 
-const BODEN_VERLEGEN_SIGNAL = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|estrich/i
+// PM-013 (2026-08-19): auch von kontext-analyzer.ts (anreichernBodenParkett)
+// wiederverwendet, um zu erkennen, ob ein Raum überhaupt einen echten
+// Verlege-Auftrag hat — EINE Stelle für dieses Signal, damit es nicht wie
+// beim losen "boden"-Substring-Bug ein zweites Mal auseinanderdriftet.
+export const BODEN_VERLEGEN_SIGNAL = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|estrich/i
 
 // Label und Verschnitt schalten auf den TYPISIERTEN Belag (BelagTyp aus dem
 // Vertrag/erkenneBelag) statt auf eine engine-eigene includes()-Kette — Schluss
@@ -39,6 +43,18 @@ function standardVerschnitt(belag: string | undefined, typ: BelagTyp): number {
   if (typ === 'laminat' || typ === 'vinyl' || typ === 'linoleum') return 0.05
   return 0
 }
+
+// PM-013 (2026-08-19): "verlegerichtung" prüfte bisher NUR auf den exakten
+// String 'diagonal' — GPT liefert für Fischgrät-Verlegung aber wörtlich
+// "fischgrät" (bestätigt an echten Produktions-Rohdaten, siehe
+// debug_extraktion_roh), nicht 'diagonal'. Fachwissen verlangt für BEIDE
+// Verlegearten denselben erhöhten Verschnitt (10–15%, hier wie bei diagonal
+// bisher schon: pauschal 15%) — Fischgrät ist Muster-/Winkelverlegung,
+// braucht mindestens genauso viel Zuschnittsverschnitt wie diagonal. Ohne
+// diesen Treffer fiel Fischgrät-Parkett auf `standardVerschnitt()` zurück,
+// die für Parkett 0% liefert (siehe oben) — schlechter als sogar der falsche
+// Standard für gerade Verlegung (dort wären es bei Laminat/Vinyl 5%).
+const MUSTER_MIT_MEHR_VERSCHNITT = /diagonal|fischgr[äa]t/i
 
 export function bodenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
@@ -76,7 +92,8 @@ export function bodenEngine(daten: any): MengenErgebnis {
     // erkenneBelag klassifiziert (belagText-Signal, Etappe 2). Kein Rohtext vom
     // Transkript → kein Cross-Room-Bleed bei mehreren Räumen.
     const belagTyp: BelagTyp = baueVerstaendnis(belag ?? '', { belagText: belag }).belag
-    const verschnitt = verlegerichtung === 'diagonal' ? 0.15 : standardVerschnitt(belag, belagTyp)
+    const hatMusterverlegung = typeof verlegerichtung === 'string' && MUSTER_MIT_MEHR_VERSCHNITT.test(verlegerichtung)
+    const verschnitt = hatMusterverlegung ? 0.15 : standardVerschnitt(belag, belagTyp)
     const label = belagLabel(belag, belagTyp)
     const pct = Math.round(verschnitt * 100)
     const verschnittSuffix = verschnitt > 0 ? ` inkl. ${pct}% Verschnitt` : ''
@@ -104,7 +121,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
         konfidenz: 'high',
         berechnungsweg: `${flaeche} m² + ${pct}% Verschnitt`,
         annahmen: [
-          `${pct}% Verschnitt${verlegerichtung === 'diagonal' ? ' (Diagonalverlegung)' : ' (Standard)'}`,
+          `${pct}% Verschnitt${hatMusterverlegung ? ` (${verlegerichtung === 'diagonal' ? 'Diagonalverlegung' : 'Fischgrät-/Musterverlegung'})` : ' (Standard)'}`,
         ],
       })
     }

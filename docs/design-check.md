@@ -22,14 +22,15 @@ verweisen.
 🔵 Entscheidung nötig, bevor Umsetzung möglich ist · ❌ offen, bestätigter
 Befund · ⏳ noch nicht geprüft.
 
-**Hinweis zur Pflege dieser Datei:** Sie ist am 17.08. (jetzt zum zweiten Mal
-in dieser Datei, projektweit schon das 5. Mal) durch gleichzeitige
-Bearbeitung kurz auf einen älteren Stand zurückgefallen — die
-Organigramm-Hinweise und die DC-001-Entscheidung waren dadurch kurz weg,
-jetzt vom Chief of Staff wiederhergestellt. DC-007–DC-020 (deine neuen
-Befunde) waren davon nicht betroffen. Bitte vor dem Speichern kurz nochmal
-lesen, was gerade in der Datei steht, statt eine lokal ältere Kopie
-zurückzuschreiben.
+**Datei-Sicherheit (aktualisiert 20.08.2026):** Der Speicherfehler bei
+gleichzeitiger Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten
+(hier zuletzt am 17.08., seither zum Glück nicht mehr in dieser Datei).
+Ganz am Ende dieser Datei steht jetzt eine feste Markierung
+(`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
+Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
+löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
+wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
+schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
 
 ## Organigramm-Hinweise
 
@@ -1693,3 +1694,8 @@ Verknüpfung" im Buchhaltungs-Schritt ist eine klare, schnell verständliche
 Entscheidungshilfe ohne viel Text. Der Preis-Editor mit Akkordeon
 (Fahrtkosten/Arbeitszeit/Entsorgung, auf/zuklappbar) hält eine an sich
 komplexe Aufgabe (eigene Preise eintragen) übersichtlich.
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+

@@ -399,6 +399,30 @@ Eigenregie mit Product Designer entschieden.
 
 ---
 
+## CoS-M-001 — CI-Guide (Referenz-Dokument, Stand: 2026-08-19)
+
+Auf Sandys Wunsch („erstell vollständige detaillierte CI mit allen Infos
+für das Business Sofortangebot") die gesamte bestätigte CI in einem
+eigenständigen Referenz-Dokument gebündelt: `docs/ci-guide.html`. Fasst
+alles aus Teil 1–3 dieser Datei visuell und geschäftlich zusammen — Business-
+Eckdaten (Zielgruppe Maler/Bodenleger/Innenausbau, Preismodell 22 €/17 €,
+Kernversprechen Rechenweg-an-jeder-Position), Positionierung, Tonalität mit
+So/Nicht-so-Beispielen, Logo (Lockup + Icon-only, Schutzraum, No-Gos),
+Farbpalette mit Einsatzregeln, Typografie-Spezimen, Icon-Sprache,
+Anwendungsbeispiele (Visitenkarte, PDF-Kopf, App-Icon) und eine
+Governance-Seite. Als persistentes Artefakt bei Sandy abgelegt und als
+Datei ins Repo committed.
+
+**Verhältnis zu den anderen Dateien:** `docs/marketing-ci.md` (diese Datei)
+bleibt die vollständige Arbeits-/Entscheidungshistorie mit allen
+Feedback-Runden. `docs/moodboard.html` bleibt das visuelle Arbeitsdokument
+mit Vorher/Nachher-Vergleichen. `docs/ci-guide.html` ist neu die
+aufgeräumte, präsentable Endfassung ohne Verlaufsrauschen — für Weitergabe
+an Dritte (Agenturen, Druckerei, neue Team-Mitglieder) gedacht, nicht für
+die laufende Abstimmung.
+
+---
+
 *Nächster Schritt: Handoff an Product Designer über
 `docs/marketing-design-austausch.md` (EX-M-005) — Umsetzungsplan mit
 Reihenfolge und Zuständigkeiten übergeben, damit Schritt 1 (läuft) und

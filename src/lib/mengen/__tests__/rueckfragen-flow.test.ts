@@ -261,4 +261,55 @@ describe('geschlossener Rückfragen-Flow', () => {
     expect(beantwortet.extraktion.raeume[0].arbeiten).toContain('versiegeln')
     expect(beantwortet.rueckfragen.some(frage => frage.id === 'versiegelung_wohnzimmer')).toBe(false)
   })
+
+  it('stellt keine Boden-Rückfragen für einen Raum, der Boden im selben Satz ausschließt (PM-013)', () => {
+    // PM-013, Live-Nachtest 2026-08-19. Echte Produktions-Rohdaten
+    // (debug_extraktion_roh e7d71649-...): zwei Räume, unterschiedliche
+    // Gewerke — Wohnzimmer nur Boden, Flur nur Maler ("da wird nix am Boden
+    // gemacht, der bleibt wie er ist"). Flurs `arbeiten` enthielt trotzdem
+    // "boden abdecken" (Maler-Nebenleistung, Schutzfolie beim Streichen) und
+    // "sockelleisten abkleben" — beides kein echter Verlege-Auftrag. Bug:
+    // weil das GLOBALE extraktion.gewerk 'boden_parkett' war (ein einziges
+    // Feld für den ganzen Auftrag, nicht pro Raum), hat anreichernBodenParkett
+    // trotzdem über JEDEN Raum inkl. Flur geprüft und wegen des losen
+    // "boden"-Substring-Treffers in "boden abdecken" zwei Boden-Rückfragen
+    // gestellt, obwohl der Ausschluss im selben Satz stand.
+    const extraktion = basis({
+      gewerk: 'boden_parkett',
+      transkript:
+        'Wohnzimmer, acht mal viereinhalb. Eichenparkett, Fischgrät verlegt, das braucht ja mehr Verschnitt. ' +
+        'Boden nur, an den Wänden machen wir nix. Flur daneben, fünf mal eins achtzig, Höhe zwo sechzig. ' +
+        'Nur Wände und Decke streichen, zweimal. Da wird nix am Boden gemacht, der bleibt wie er ist.',
+      raeume: [
+        {
+          name: 'Wohnzimmer', laenge: 8, breite: 4.5, hoehe: null, flaeche: null,
+          fenster: [], tueren: [], arbeiten: ['eichenparkett verlegen'],
+          belag: 'parkett', verlegerichtung: 'fischgrät',
+          altbelag_entfernen: false, sockelleisten: false, nassbereich: false,
+        },
+        {
+          name: 'Flur', laenge: 5, breite: 1.8, hoehe: 2.6, flaeche: null,
+          fenster: [], tueren: [{ anzahl: 1, breite: 0.9, hoehe: 2.1, annahme: true }],
+          // Bewusst mit "boden abdecken" — genau das hat GPT im echten Fall
+          // geliefert, kein echtes Verlege-Signal (siehe Kommentar oben).
+          arbeiten: ['wände streichen', 'decke streichen', 'boden abdecken', 'sockelleisten abkleben'],
+          altbelag_entfernen: false, sockelleisten: false, nassbereich: false,
+        },
+      ],
+    })
+
+    const analyse = bereiteRueckfragenVor(extraktion)
+    const ids = analyse.rueckfragen.map(frage => frage.id)
+
+    // Kernpunkt: der Flur bekommt KEINE einzige Boden-Rückfrage.
+    expect(ids).not.toContain('belag_flur')
+    expect(ids).not.toContain('altbelag_flur')
+    expect(ids).not.toContain('masse_boden_flur')
+
+    // Gegenprobe: das Wohnzimmer bleibt ein ganz normaler Boden-Raum — Belag
+    // ist schon bekannt (keine belag_wohnzimmer-Frage), aber die legitime
+    // Altbelag-Frage (nicht explizit im Transkript beantwortet) kommt weiterhin.
+    expect(ids).not.toContain('belag_wohnzimmer')
+    expect(ids).toContain('altbelag_wohnzimmer')
+  })
 })

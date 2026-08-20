@@ -1,5 +1,6 @@
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import { erkenneOeffnungen } from '@/lib/arbeiten-normalisierer'
+import { BODEN_VERLEGEN_SIGNAL } from '@/lib/mengen/gewerke/boden'
 
 export interface KontextAnalyse {
   hinweise: string[]
@@ -373,19 +374,46 @@ function anreichernTrockenbau(ext: ExtMitExtra, hinweise: string[]) {
 
 // ── BODEN / PARKETT ───────────────────────────────────────────────────────────
 
+// PM-013 (2026-08-19): der lose Substring-Check `a.includes('boden')` fing
+// auch reine Schutz-/Nebenleistungen wie "Boden abdecken" (normale Maler-
+// Vorbereitung beim Streichen, siehe Ist-Ergebnis Flur — dort korrekt als
+// eigene Maler-Position "Boden schützen" berechnet, siehe maler.ts) — nicht
+// nur echte Verlege-Aufträge. Bestätigt an echten Produktions-Rohdaten
+// (debug_extraktion_roh e7d71649-...): Flurs `arbeiten` enthielt u.a.
+// "boden abdecken" und "sockelleisten abkleben" (beides Maler-Nebenleistung),
+// KEIN einziges echtes Verlege-Signal — trotzdem hat diese Funktion den Flur
+// wie einen Boden-Raum behandelt und ihm zwei Boden-Rückfragen gestellt
+// ("Welcher Belag...", "Muss der alte Bodenbelag...entfernt werden?"),
+// obwohl im selben Satz ausdrücklich "da wird nix am Boden gemacht" stand.
+// Grund: diese Funktion läuft schon dann über JEDEN Raum der Anfrage, wenn
+// nur das GLOBALE ext.gewerk (ein einzelnes Feld pro Auftrag) 'boden_parkett'
+// ist — bei Mehrgewerk-Anfragen (ein Raum nur Boden, ein anderer nur Maler,
+// wie hier) fehlte jede Prüfung, ob der einzelne Raum das überhaupt betrifft.
+// Fix: dieselbe, bereits bewährte Verlege-Signal-Erkennung wie in boden.ts
+// (BODEN_VERLEGEN_SIGNAL, von dort importiert statt hier zweimal gepflegt) —
+// verlangt ein echtes Verlege-/Belag-Wort statt bloß "boden" irgendwo im
+// Satz — plus ein früher Skip für Räume ohne dieses Signal, damit KEINE der
+// Regeln unten (Rückfragen UND stille Ergänzungen wie Sockelleisten/
+// Übergangsprofil) versehentlich auf einen reinen Maler-Raum wirkt.
+
 function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzungen: KontextAnalyse['automatische_ergaenzungen']) {
+  const bodenRaeume = ext.raeume.filter(r => (r.arbeiten ?? []).some(a => BODEN_VERLEGEN_SIGNAL.test(a)))
+
   for (const raum of ext.raeume) {
+    const hatBodenArbeit = (raum.arbeiten ?? []).some(a => BODEN_VERLEGEN_SIGNAL.test(a))
+    // Raum ohne echtes Boden-Signal (z.B. reiner Maler-Raum, der nur "Boden
+    // abdecken" als Nebenleistung erwähnt) betrifft dieses Gewerk gar nicht —
+    // komplett überspringen, statt einzelne Regeln unten einzeln abzusichern.
+    if (!hatBodenArbeit) continue
+
     // "Boden" ohne Spezifikation → Verlegen + Sockelleisten
-    if ((raum.arbeiten ?? []).some(a => a.includes('boden') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl')) &&
-        !raum.arbeiten.includes('sockelleisten')) {
+    if (!raum.arbeiten.includes('sockelleisten')) {
       raum.arbeiten.push('sockelleisten')
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Sockelleisten', grund: 'Bei Bodenbelag immer mit erfassen' })
     }
 
     // Belag fehlt → Rückfrage welcher Belag (wert 1-4 = Laminat/Vinyl/Parkett/Teppich)
-    const hatBodenArbeit = (raum.arbeiten ?? []).some(a =>
-      a.includes('verlegen') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl') || a.includes('boden'))
-    if (hatBodenArbeit && !raum.belag) {
+    if (!raum.belag) {
       addRueckfrage(ext, {
         id: `belag_${(raum.name ?? '').toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Welcher Belag soll in "${raum.name}" verlegt werden?`,
@@ -402,8 +430,7 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
     }
 
     // Altbelag-Frage wenn nicht explizit
-    if (!raum.altbelag_entfernen && (raum.arbeiten ?? []).some(a =>
-        a.includes('verlegen') || a.includes('parkett') || a.includes('laminat') || a.includes('vinyl') || a.includes('boden'))) {
+    if (!raum.altbelag_entfernen) {
       addRueckfrage(ext, {
         id: `altbelag_${( raum.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,
         frage: `Muss der alte Bodenbelag in "${raum.name}" entfernt werden?`,
@@ -421,8 +448,10 @@ function anreichernBodenParkett(ext: ExtMitExtra, hinweise: string[], ergaenzung
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Untergrundvorbereitung', grund: 'Vor Parkett/Laminat immer prüfen' })
     }
 
-    // Übergangsprofile bei mehreren Räumen
-    if (ext.raeume.length > 1 && !raum.arbeiten.includes('uebergangsprofil')) {
+    // Übergangsprofile bei mehreren Räumen — "mehrere" meint hier echte
+    // Boden-Räume (nicht die Gesamt-Raumzahl der Anfrage, siehe PM-013: bei
+    // 1 Boden-Raum + 1 Maler-Raum gibt es keinen zweiten Boden-Übergang).
+    if (bodenRaeume.length > 1 && !raum.arbeiten.includes('uebergangsprofil')) {
       raum.arbeiten.push('uebergangsprofil')
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Übergangsprofile', grund: 'Bei mehreren Räumen an Übergängen' })
     }

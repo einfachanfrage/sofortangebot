@@ -25,7 +25,17 @@ Jeder Punkt hat eine feste ID (CoS-XXX).
 **Status-Zeichen:** ✅ erledigt & geprüft · 🟡 erledigt, noch nicht
 nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-18)
+**Datei-Sicherheit (neu, 20.08.2026):** Der Speicherfehler bei gleichzeitiger
+Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten, zuletzt genau in
+dieser Datei. Ganz am Ende dieser Datei steht jetzt eine feste Markierung
+(`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
+Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
+löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
+wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
+schreiben, das verkleinert die Kollisionsfläche. Details und der eigentliche
+Lösungsvorschlag: CoS-013.
+
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-20)
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
@@ -38,6 +48,7 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
 | CoS-012 | DC-029 „Baustelle"/Projekt-Zuordnung — Wording-Konzept vom Product Designer steht, zwei Teilstücke formal zu vergeben | 🟡 Lexware/Lexoffice-Machbarkeit erledigt. Datenmodell (Head of Product Engineering) jetzt umgesetzt und live: Tabelle `baustellen` + `quotes.baustelle_id` + Migration + Backfill in der echten Datenbank angewendet, App-Code an allen vier Stellen verdrahtet. Live-Nachtest steht aus, Designer baut jetzt Konzept + Prototyp für die Baustellen-UI darauf auf | `docs/design-check.md` DC-029 |
+| CoS-013 | Strukturelle Lösung für den wiederholten Datei-Speicherfehler bei gemeinsamen Doku-Dateien (jetzt 6. Mal) | ❌ offen — Sofortmaßnahme (Dateiende-Markierung) bereits umgesetzt, eigentlicher Lösungsvorschlag (Git statt Direkt-Überschreiben) braucht Sandys Go | Sandys Frage „kannst du es richtig lösen", 2026-08-20 |
 
 ---
 
@@ -323,6 +334,17 @@ z. B. als Kandidat für „Karte liest dieselbe geprüfte Struktur wie die
 Berechnung, statt einen zweiten GPT-Aufruf zu machen" — dann aber mit Sandys
 ausdrücklichem Go, wie in den eigenen Grundregeln festgelegt.
 
+**Update (Head of Product Engineering, 2026-08-19):** Sandy hatte spontan „ok los" gegeben, auf
+Nachfrage stellte sich unterwegs heraus, dass eine saubere Umsetzung auch die
+Frage klären müsste, ob manuelle Änderungen an Positionen eine spätere
+Neu-Berechnung überleben — plus die Erkenntnis, dass Aufnahmen heute nur
+additiv verarbeitet werden (jede neue Aufnahme kennt frühere Räume nicht),
+also ein größerer Eingriff als ursprünglich gedacht. Sandy wollte das dann
+nicht spontan entscheiden — Auftrag zurückgestellt, nichts umgesetzt, nichts
+kaputt. Bleibt wie oben: kein akuter Auftrag, wartet auf einen Moment mit
+mehr Zeit/Kopf, dann am besten mit einem konkreten Vorschlag von mir statt
+einer offenen Entweder-Oder-Frage.
+
 ---
 
 ## CoS-011 — Rückfragen-UI komplett neu (DC-025/DC-026): Briefing für die Umsetzung
@@ -552,3 +574,70 @@ eigentliche Anwendungslogik (Kunde zuweisen → Erstbaustelle entsteht/wird
 gefunden → Angebot verknüpft) ist bisher NICHT live durchgeklickt, weil es
 aktuell keine echten Kunden gibt, an denen das zu testen wäre — das steht
 als Live-Nachtest aus, sobald ein Testkunde angelegt wird.
+
+---
+
+## CoS-013 — Strukturelle Lösung für den wiederholten Datei-Speicherfehler
+
+**Datum:** 2026-08-20
+**Status:** ❌ offen — Sofortmaßnahme umgesetzt, eigentlicher Lösungsvorschlag
+braucht Sandys Go
+
+**Hintergrund:** Der Speicherfehler bei gleichzeitiger Bearbeitung
+gemeinsamer Doku-Dateien ist jetzt zum 6. Mal aufgetreten (zuletzt in dieser
+Datei, 19./20.08. — ein verwaister Textrest am Dateiende, inzwischen
+repariert). Sandys Frage dazu: „kannst du es richtig lösen?" Ich habe das
+Setup dafür genauer angeschaut, statt es wieder nur zu reparieren.
+
+**Was ich gefunden habe:** `docs/` ist Teil dieses Git-Repos (nicht in
+`.gitignore` ausgeschlossen, `.git`/`.github` existieren im Projekt). Für
+Code-Änderungen läuft hier bereits ein echter Git-Workflow (Commit + Push,
+siehe z. B. CoS-P-005 — Platform & Integrations Engineer hat dort sichtbar
+Terminal-/Git-Zugriff auf deinen Rechner). Für die Koordinationsdateien hier
+unter `docs/` läuft das aber offenbar NICHT über Git — jedes Projekt liest
+und schreibt diese Dateien direkt auf deinem Rechner über seine eigene
+Geräteanbindung, ohne dass ein Commit dazwischenliegt. Das ist vermutlich die
+eigentliche Ursache: zwei zeitlich nah beieinanderliegende, unkoordinierte
+Schreibvorgänge auf dieselbe Datei, statt eines echten Merges.
+
+**Sofortmaßnahme, bereits umgesetzt (keine Rückfrage nötig):** Jede der
+sechs am stärksten betroffenen Koordinationsdateien (diese hier,
+`chief-of-staff-platform-todos.md`, `chief-of-staff-marketing-todos.md`,
+`chief-of-staff-finance-todos.md`, `design-check.md`,
+`pruefmeister-testfaelle.md`) bekommt jetzt eine feste Markierung am echten
+Dateiende. Taucht beim Lesen noch Text NACH dieser Markierung auf, ist das
+sofort und eindeutig als Speicherfehler erkennbar — bisher ist mir das
+zweimal nur durch Zufall aufgefallen, nicht systematisch. Außerdem die Bitte
+an alle Kollegen: neue Einträge wenn möglich ans Dateiende anhängen statt
+mitten in bestehende Abschnitte zu schreiben — das verkleinert die
+Kollisionsfläche bei zeitgleicher Bearbeitung, löst das Problem aber nicht
+grundsätzlich.
+
+**Die eigentliche Lösung, die ich nicht selbst umsetzen kann:**
+`docs/`-Änderungen genauso über echte Git-Commits laufen lassen wie
+Code-Änderungen (pull → bearbeiten → commit → push), statt die Dateien
+direkt zu überschreiben. Dann übernimmt Git die Zusammenführung — bei zwei
+unabhängigen Änderungen an verschiedenen Stellen derselben Datei klappt das
+zuverlässig, nur bei einer echten Überschneidung gäbe es einen sichtbaren
+Konflikt statt einer stillen Beschädigung. Dafür bräuchte es aber
+Terminal-/Git-Zugriff, den offenbar nicht jedes Projekt hat — meins zum
+Beispiel nicht. Head of Product Engineering und Platform & Integrations
+Engineer haben laut den bisherigen Fix-Updates (z. B. CoS-P-005, dortige
+Commits/Pushes) bereits echten Git-Zugriff auf deinen Rechner.
+
+**Ehrlich dazu:** Ich kann das nicht zu 100 % garantiert lösen — ich habe
+keinen vollständigen Einblick, wie genau jedes einzelne Projekt technisch
+auf deinen Rechner zugreift, nur was sich aus den bisherigen Fix-Updates der
+anderen ablesen lässt. Aber die Sofortmaßnahme macht jeden künftigen Fall ab
+sofort zuverlässig sichtbar statt durch Zufall, und die Git-Lösung würde die
+Wahrscheinlichkeit eines echten, stillen Datenverlusts strukturell senken,
+nicht nur behandeln.
+
+**Für Sandy:** Die Sofortmaßnahme läuft bereits. Bei der Git-Lösung sag mir
+kurz, ob ich das Head of Product Engineering und Platform & Integrations
+Engineer als neue, feste Regel für `docs/`-Änderungen mitgeben soll.
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+

@@ -48,17 +48,85 @@ export function ergaenzeAusAufnahmeHinweisen(
     ergebnis.push({ beschreibung: `Trittschalldämmung${raumSuffix(boden)}`, menge: bodenM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${bodenM2} m² Bodenfläche`, annahmen: [] })
   }
 
-  if (/sockelleisten demontieren/i.test(hinweise) && !hatPos(/sockelleisten demontieren/i)) {
+  // PM-010, Nachtest 5 (2026-08-19): Der Karten-Chip sagt "Sockelleisten
+  // entfernen" (bestätigt am echten Live-Fall) — diese Prüfung verlangte
+  // aber wörtlich "demontieren". Weil GPT die Chip-Titel frei formuliert
+  // (kein festes Vokabular), hat "entfernen" hier nie gegriffen, obwohl die
+  // Karte die Arbeit korrekt erkannt hatte — die Position ist deshalb
+  // komplett verschwunden, nicht mal als offene Rückfrage. Jetzt alle
+  // gängigen Synonyme fürs Entfernen zulassen. Risikoarm: Chip-Titel sind
+  // bereits kuratierte Kurzlabel aus der Aufnahme-Erkennung, kein Rohtext —
+  // anders als bei Fließtext-Regex droht hier keine "Über-Erkennung".
+  const sockelEntfernenMuster = /sockelleiste(?:n)?\s*(?:demontieren|entfernen|abbauen|abmontieren|ausbauen)/i
+  if (sockelEntfernenMuster.test(hinweise) && !hatPos(sockelEntfernenMuster)) {
     const montage = ergebnis.find(p => /sockelleisten montieren/i.test(p.beschreibung))
     const menge = expliziteSockelMenge ?? montage?.menge
     if (menge && menge > 0) {
       ergebnis.push({
-        beschreibung: `Sockelleisten demontieren${raumSuffix(boden ?? montage)}`,
+        beschreibung: `Sockelleisten entfernen (alt)${raumSuffix(boden ?? montage)}`,
         menge,
         einheit: 'lfdm',
         konfidenz: expliziteSockelMenge ? 'high' : 'medium',
         berechnungsweg: expliziteSockelMenge ? `${menge} lfdm aus Aufnahme` : 'Gleiche Länge wie neue Sockelleisten',
         annahmen: expliziteSockelMenge ? [] : ['Gleiche Länge wie neue Sockelleisten angenommen'],
+      })
+    }
+  }
+
+  // PM-013 (2026-08-19): "Dehnungsfuge einbauen" wird von der Karte als
+  // eigene Leistung mit eigener Menge erkannt ("1 Stück"), verschwindet im
+  // fertigen Entwurf aber komplett — keine Zeile, keine offene Rückfrage.
+  // Anders als bei den Sockelleisten-Fällen (PM-010/PM-012) gibt es hier
+  // bisher AUCH keine Erkennung in der Boden-Engine oder der
+  // Vollständigkeitsprüfung, die man nur "sichtbar machen" müsste — die
+  // Karten-Erkennung ist aktuell die EINZIGE Stelle im System, die
+  // "Dehnungsfuge" überhaupt kennt. Deshalb hier, wie bei den Sockelleisten-
+  // Funden, den Chip-Titel als alleiniges Signal nehmen. Einheit bewusst
+  // "Stück" (wie vom Chip erkannt) statt an einen der beiden lfdm-
+  // Katalogpreise anzugleichen — im Transkript stand keine Länge, nur "eine
+  // Dehnungsfuge". Fehlt dadurch ein passender Katalogpreis, bleibt die
+  // Position sichtbar mit 0,00 € offen (gleiches, bewährtes Prinzip wie bei
+  // fehlenden Preisen generell) statt zu verschwinden.
+  const dehnungsfugeMuster = /dehnungsfuge|bewegungsfuge/i
+  if (dehnungsfugeMuster.test(hinweise) && !hatPos(dehnungsfugeMuster)) {
+    const stueckTreffer = textMitZahlen.match(/(\d+)\s*(?:stück\s*)?(?:dehnungsfuge|bewegungsfuge)/i)
+      ?? textMitZahlen.match(/(?:dehnungsfuge|bewegungsfuge)[^.]{0,20}?(\d+)\s*stück/i)
+    const stueck = stueckTreffer ? parseInt(stueckTreffer[1], 10) : 1
+    ergebnis.push({
+      beschreibung: `Dehnungsfuge einbauen${raumSuffix(boden)}`,
+      menge: stueck,
+      einheit: 'Stück',
+      konfidenz: stueckTreffer ? 'high' : 'medium',
+      berechnungsweg: stueckTreffer ? `${stueck} Stück aus Aufnahme` : 'Karte hat Dehnungsfuge erkannt, keine explizite Stückzahl im Transkript — 1 Stück angenommen',
+      annahmen: stueckTreffer ? [] : ['1 Stück angenommen — bitte Anzahl/Länge prüfen'],
+    })
+  }
+
+  // PM-012, zweiter Nachtest (2026-08-19): der Fix vom 17.08. in der
+  // Maler-Engine (vollstaendigkeit/maler-tapete.ts) war im Golden-Test grün,
+  // live aber weiterhin wirkungslos — „Sockelleisten streichen" fehlte
+  // erneut komplett, obwohl der Karten-Chip sie zuverlässig mit eigener
+  // Menge meldet ("Sockelleisten streichen, 10 m"). Gleiches
+  // Sicherheitsnetz-Prinzip wie bei den anderen Sockelleisten-/Dehnungsfuge-
+  // Fällen oben: nur ergänzen, wenn die tiefere Engine noch keine
+  // "Sockelleisten streich..."-Position angelegt hat (die Ursache, WARUM die
+  // Text-Heuristik dort live nicht greift, obwohl der Golden-Test sie
+  // bestätigt, ist ohne echten GPT-Rohdaten-Zugriff nicht abschließend
+  // nachvollziehbar — dieser Fix behebt die SICHTBARKEIT unabhängig davon).
+  const sockelStreichenMuster = /sockelleiste(?:n)?\s*streichen/i
+  if (sockelStreichenMuster.test(hinweise) && !hatPos(/sockelleisten streich/i)) {
+    const montage = ergebnis.find(p => /sockelleisten (?:montieren|erneuern)/i.test(p.beschreibung))
+    const abkleben = ergebnis.find(p => /sockelleisten abkleben/i.test(p.beschreibung))
+    const quelle = montage ?? abkleben
+    const menge = expliziteSockelMenge ?? quelle?.menge
+    if (menge && menge > 0) {
+      ergebnis.push({
+        beschreibung: `Sockelleisten streichen${raumSuffix(boden ?? quelle ?? wand)}`,
+        menge,
+        einheit: 'lfdm',
+        konfidenz: expliziteSockelMenge ? 'high' : 'medium',
+        berechnungsweg: expliziteSockelMenge ? `${menge} lfdm aus Aufnahme` : `Gleiche Länge wie „${quelle?.beschreibung}"`,
+        annahmen: expliziteSockelMenge ? [] : ['Menge von vorhandener Sockelleisten-Position übernommen — bitte kurz prüfen'],
       })
     }
   }

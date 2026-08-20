@@ -69,7 +69,15 @@ describe('berechneUndPruefeAlleGewerke — Maler UND Boden im selben Raum', () =
   it('keine kaputten Mengen, keine exakten Duplikate', () => {
     for (const p of positionen) {
       expect(Number.isFinite(p.menge)).toBe(true)
-      expect(p.menge > 0).toBe(true)
+      // PM-016 (2026-08-19): eine `konfidenz: 'low'`-Platzhalterposition
+      // (aus `fehlende`, siehe mehrgewerk.ts Schritt 5) hat bewusst `menge:
+      // 0` — sichtbar statt spurlos verschwunden, s. PM-010/012/013. Jede
+      // andere Position muss weiterhin eine echte, positive Menge haben.
+      if (p.konfidenz === 'low') {
+        expect(p.menge).toBe(0)
+      } else {
+        expect(p.menge > 0).toBe(true)
+      }
     }
     const keys = positionen.map(p => `${p.beschreibung.toLowerCase()}|${p.menge}`)
     expect(new Set(keys).size).toBe(keys.length)

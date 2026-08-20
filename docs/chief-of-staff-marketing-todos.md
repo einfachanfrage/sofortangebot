@@ -30,11 +30,15 @@ Zustimmung. Entscheidungen, die auf Sandy warten, bitte zusätzlich kurz in
 `docs/entscheidungen-fuer-sandy.md` eintragen (Chief of Staff übernimmt das
 in der Regel).
 
-**Hinweis zur Pflege dieser Datei:** In anderen Koordinations-Dateien des
-Projekts ist es mehrfach passiert, dass gleichzeitige Bearbeitung durch
-zwei Projekte eine lokal ältere Kopie zurückgeschrieben und dadurch fremde
-Änderungen verloren hat. Bitte vor dem Speichern kurz nochmal lesen, was
-aktuell in der Datei steht.
+**Datei-Sicherheit (aktualisiert 20.08.2026):** Der Speicherfehler bei
+gleichzeitiger Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten
+(zuletzt in `chief-of-staff-todos.md`). Ganz am Ende dieser Datei steht
+jetzt eine feste Markierung (`<!-- ENDE DER DATEI -->`). Taucht beim Lesen
+noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
+Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
+melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt
+mitten in bestehende Abschnitte zu schreiben. Voller Hintergrund:
+CoS-013 in `chief-of-staff-todos.md`.
 
 ## Stand auf einen Blick (angelegt: 2026-08-17)
 
@@ -223,3 +227,8 @@ und die jeweiligen Punkte in `docs/design-check.md` nachverfolgt, nicht
 mehr über diese Datei. CoS-M-001 als Vorschlags-/Freigabe-Auftrag ist
 damit inhaltlich, planerisch und mit Sandys expliziter Bestätigung
 abgeschlossen.
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+

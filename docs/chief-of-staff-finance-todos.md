@@ -28,6 +28,16 @@ falls die Arbeit ohne echten Blick ins Postfach nicht sauber möglich ist,
 das als offenen Punkt hier eintragen, Chief of Staff bespricht das dann mit
 Sandy.
 
+**Datei-Sicherheit (neu, 20.08.2026):** In anderen Koordinationsdateien
+dieses Projekts ist wiederholt (6. Mal) ein Speicherfehler bei
+gleichzeitiger Bearbeitung aufgetreten. Ganz am Ende dieser Datei steht
+deshalb jetzt eine feste Markierung (`<!-- ENDE DER DATEI -->`). Taucht beim
+Lesen noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
+Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
+melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt
+mitten in bestehende Abschnitte zu schreiben. Voller Hintergrund: CoS-013 in
+`chief-of-staff-todos.md`.
+
 ## Stand auf einen Blick (angelegt: 2026-08-19)
 
 | ID | Thema | Status | Quelle |
@@ -199,3 +209,8 @@ sondern als bestätigter Status vermerkt. Einzig offene Detailfrage bleibt,
 wie die Supabase-Reverse-Charge-Rechnungen konkret als Kleinunternehmerin
 zu behandeln sind (§13b UStG kann trotz §19 UStG greifen) — das braucht
 den Steuerberater, keine eigene Auskunft von mir.
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+
