@@ -17,6 +17,16 @@ verweisen, dann ist für alle Beteiligten klar, welcher Fall gemeint ist.
 **Status-Zeichen:** ✅ behoben & getestet · 🟡 behoben, noch nicht live von
 Sandy nachgetestet · ❌ Bug offen · ⏳ noch nicht geprüft.
 
+**Wichtig für Prüfmeister — Rechenregel geändert (2026-08-21, bitte ab sofort berücksichtigen):** Seit heute
+gilt bei Maler-Wandflächen die VOB-Übermessungsregel (Sandys Go, siehe Entscheidung ganz am Ende dieser
+Datei). Kleine Fenster/Türen (Einzelgröße bis 2,5 m²) werden von der Wandfläche NICHT mehr abgezogen — nur
+Öffnungen über 2,5 m² (z. B. eine breite Terrassentür) noch wie gewohnt. Das heißt konkret für dich: bei
+JEDEM neuen Testfall mit Maler-Wandflächen und normalgroßen Fenstern/Türen muss deine eigene
+Soll-Lösung das ab jetzt genauso rechnen (also i. d. R. NICHT mehr abziehen), sonst stimmt dein Soll nicht
+mit dem korrekten Ist überein und es sieht wie ein neuer Bug aus, ist aber keiner. Faustregel: Breite ×
+Höhe der einzelnen Öffnung ausrechnen — unter/gleich 2,5 m² → nicht abziehen, drüber → wie bisher abziehen.
+Details/Beispielrechnungen: siehe „VOB-Übermessungsregel für Anstricharbeiten" ganz am Ende dieser Datei.
+
 ## Organigramm-Änderung (2026-08-17)
 
 Kurz zur Info: „Head of IT" heißt seit heute **Head of Product Engineering**
