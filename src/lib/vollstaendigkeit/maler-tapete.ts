@@ -216,6 +216,17 @@ export function pruefeTapezieren(
     const hatAufziehen = !!aufziehenPos
     const hatStreichen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('raufaser streich') || p.beschreibung.toLowerCase().includes('tapete streich') || p.beschreibung.toLowerCase().includes('vliestapete streich'))
 
+    // PM-017: bisher wurden Entfernen + Streichen IMMER mit erzeugt, sobald
+    // irgendein Tapezier-Signal da war — auch wenn der Kunde nur frisch
+    // verputzte, unbehandelte Wände neu tapeziert ("frischer Putz, keine
+    // Farbe") und weder eine alte Tapete zu entfernen noch ein Anstrich
+    // danach gewünscht war. Beide Zusatzschritte jetzt nur noch, wenn der
+    // Text sie tatsächlich hergibt — echte Verneinung ("keine Farbe") hat
+    // dabei Vorrang vor jedem Streich-Signal.
+    const hatEntfernenSignal = /entfern|abl[öo]s|abzieh|alte\s+tapete|tapete\s+(?:ab|raus|runter)|tapete\s+kommt\s+(?:ab|raus|runter)/i.test(lower)
+    const keineFarbeSignal = /keine\s+farbe|ohne\s+farbe|nicht\s+(?:mehr\s+)?streich\w*|nicht\s+anstreich\w*|kein\s+anstrich/i.test(lower)
+    const hatStreichSignal = !keineFarbeSignal && /streich|anstrich|farbe/i.test(lower)
+
     const istRaufaser = lower.includes('raufaser')
     const istMalervlies = lower.includes('malervlies') || lower.includes('renoviervlies')
     const istVliestapete = lower.includes('vliestapete') || lower.includes('vlies')
@@ -228,9 +239,9 @@ export function pruefeTapezieren(
       aufziehenPos.beschreibung = `${tapetenTyp} tapezieren`
     }
 
-    if (!hatEntfernen) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+    if (!hatEntfernen && hatEntfernenSignal) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
     if (!hatAufziehen) ergaenzt.push({ beschreibung: `${tapetenTyp} tapezieren`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
-    if (!hatStreichen) ergaenzt.push({ beschreibung: `${tapetenTyp} streichen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+    if (!hatStreichen && hatStreichSignal) ergaenzt.push({ beschreibung: `${tapetenTyp} streichen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
 
     const bodenWirdEntfernt = /(?:teppich|altbelag|bodenbelag|laminat|vinyl|parkett).{0,30}(?:entfern|raus|aufnehm|demont)/i.test(lower)
     const leerstehend = /leer\s*steh|unbewohnt|ohne\s+möbel|möbelfrei/i.test(lower)
@@ -243,10 +254,21 @@ export function pruefeTapezieren(
       }
     }
   } else {
-    if (!hat(ergaenzt, 'tapete entfern', 'tapete abnehm')) add(ergaenzt, fehlende, 'Tapete entfernen')
-    if (!hat(ergaenzt, 'untergrund', 'glätten')) add(ergaenzt, fehlende, 'Untergrund glätten / Spachteln')
-    if (!hat(ergaenzt, 'aufzieh', 'tapezieren')) add(ergaenzt, fehlende, 'Raufaser aufziehen')
-    if (!hat(ergaenzt, 'raufaser streich')) add(ergaenzt, fehlende, 'Raufaser streichen')
+    // PM-017, Punkt 2: hier wurde bisher IMMER ein fester Vier-Schritte-
+    // Workflow (entfernen/glätten/aufziehen/streichen) erfunden, sobald das
+    // Wort "tapezieren" fiel — unabhängig davon, was der Kunde tatsächlich
+    // gesagt hat. Sandy hat bestätigt, drei der vier Positionen nie gesagt
+    // zu haben. Jetzt nur noch das erkannte Tapezieren selbst (der Auslöser
+    // dieser Funktion) als fehlende Menge vermerken, plus die drei
+    // Zusatzschritte nur bei echtem Signal dafür im Text.
+    const hatEntfernenSignal = /entfern|abl[öo]s|abzieh|alte\s+tapete|tapete\s+(?:ab|raus|runter)/i.test(lower)
+    const hatGlaettenSignal = /gl[äa]tt|untergrund.{0,20}spachtel|spachtel.{0,20}untergrund/i.test(lower)
+    const keineFarbeSignal = /keine\s+farbe|ohne\s+farbe|nicht\s+(?:mehr\s+)?streich\w*|nicht\s+anstreich\w*|kein\s+anstrich/i.test(lower)
+    const hatStreichSignal = !keineFarbeSignal && /streich|anstrich|farbe/i.test(lower)
+    if (hatEntfernenSignal && !hat(ergaenzt, 'tapete entfern', 'tapete abnehm')) add(ergaenzt, fehlende, 'Tapete entfernen')
+    if (hatGlaettenSignal && !hat(ergaenzt, 'untergrund', 'glätten')) add(ergaenzt, fehlende, 'Untergrund glätten / Spachteln')
+    if (!hat(ergaenzt, 'aufzieh', 'tapezieren')) add(ergaenzt, fehlende, 'Tapete/Raufaser aufziehen — Fläche bitte angeben')
+    if (hatStreichSignal && !hat(ergaenzt, 'raufaser streich')) add(ergaenzt, fehlende, 'Raufaser streichen')
   }
 }
 

@@ -115,7 +115,13 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
     if (!/\bq[1-4]\b|vollflächig|ganze\s+wandfl/i.test(lower)) return
   }
 
-  const spachtelnSchonVorhanden = hat(ergaenzt, 'spachtelarbeiten', 'q2')
+  // PM-018: die Position hieß bisher IMMER "Spachtelarbeiten Q2", selbst
+  // wenn der Kunde ausdrücklich Q3/Q4 verlangt hat — die Prüfung, OB eine
+  // Qualitätsstufe genannt wurde, existierte schon (für die "angenommen"-
+  // Annahme unten), nur die tatsächlich genannte Stufe wurde nie in die
+  // Beschreibung übernommen. Gleiche Lehre wie bei "Q2" in pruefeSpachteln().
+  const qLevel = lower.includes('q4') ? 'Q4' : lower.includes('q3') ? 'Q3' : 'Q2'
+  const spachtelnSchonVorhanden = hat(ergaenzt, 'spachtelarbeiten')
   const schleifenSchonVorhanden = ergaenzt.some(p => /\bschleifen\b/i.test(p.beschreibung))
 
   const deckeExplizitSpachteln = /deck\w*(?:\s+\w+){0,4}\s+spachtel|spachtel\w*(?:\s+\w+){0,4}\s+deck/i.test(lower)
@@ -128,7 +134,7 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
       const raumMatch = basisPos.beschreibung.match(/ — (.+)$/)
       const raumSuffix = raumMatch ? ` — ${raumMatch[1]}` : ''
       if (hatSpachteln2 && !spachtelnSchonVorhanden) ergaenzt.push({
-        beschreibung: `Spachtelarbeiten Q2${raumSuffix}`,
+        beschreibung: `Spachtelarbeiten ${qLevel}${raumSuffix}`,
         menge: basisPos.menge,
         einheit: 'm²',
         konfidenz: 'high',
@@ -141,7 +147,7 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
       if (hatSchleifenArb && !schleifenSchonVorhanden) ergaenzt.push({ beschreibung: `Schleifen${raumSuffix}`, menge: basisPos.menge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie ${basisPos.beschreibung.split(' — ')[0]}`, annahmen: [...basisPos.annahmen] })
     }
   } else {
-    if (hatSpachteln2 && !spachtelnSchonVorhanden) add(ergaenzt, fehlende, 'Spachtelarbeiten Q2')
+    if (hatSpachteln2 && !spachtelnSchonVorhanden) add(ergaenzt, fehlende, `Spachtelarbeiten ${qLevel}`)
     if (hatSchleifenArb && !schleifenSchonVorhanden) add(ergaenzt, fehlende, 'Schleifen')
   }
   void hatStreichen // unused but preserved for clarity

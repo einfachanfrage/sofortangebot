@@ -137,9 +137,30 @@ export function pruefeGrundierung(
     })
   }
 
+  // Decken-Grundierung: PM-018 — bisher kannte diese Funktion Grundierung
+  // NUR für Wände. Sagt der Kunde "beides grundieren" (Wand UND Decke), gibt
+  // es aber eine eigene Deckenfläche im Ergebnis, muss auch die Decke ihre
+  // eigene Grundierungs-Position bekommen — sonst fehlt bezahlte Arbeit,
+  // ohne dass der ausdrückliche Auftrag dazu widersprochen wird. Vor der
+  // Wand-Grundierung geprüft, aus demselben Grund wie beim Dachschrägen-Fall
+  // oben: die generische hat(...'grundier')-Prüfung soll erst danach greifen.
+  const deckePos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('deckenfläch'))
+  const hatDeckenGrundierung = ergaenzt.some(p =>
+    /grundier|voranstrich|tiefengrund/i.test(p.beschreibung) && /decke/i.test(p.beschreibung))
+  if (deckePos && !hatDeckenGrundierung && explizitVollflaechig) {
+    ergaenzt.unshift({
+      beschreibung: 'Voranstrich / Grundierung Decke',
+      menge: deckePos.menge,
+      einheit: 'm²',
+      konfidenz: 'high',
+      berechnungsweg: `Gleiche Fläche wie Deckenfläche (${deckePos.menge} m²)`,
+      annahmen: [...deckePos.annahmen],
+    })
+  }
+
   // Wand-Grundierung: nur wenn noch keine Wand-Grundierung existiert.
   const hatWandGrundierung = ergaenzt.some(p =>
-    /grundier|voranstrich|tiefengrund/i.test(p.beschreibung) && !/dachschräge/i.test(p.beschreibung))
+    /grundier|voranstrich|tiefengrund/i.test(p.beschreibung) && !/dachschräge/i.test(p.beschreibung) && !/decke/i.test(p.beschreibung))
   if (hatWandGrundierung) return
 
   const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))

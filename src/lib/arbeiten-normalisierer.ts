@@ -93,9 +93,20 @@ export interface RaumScope {
 // Einschränkungs-Wörter: nur, bloß, lediglich, ausschließlich, einzig, allein
 const NUR = String.raw`(?:nur|blo[sß]{1,2}|lediglich|ausschlie[sß]{1,2}lich|einzig|allein)`
 // Flächen (mit Flexionen): Wand/Wände/Wänden, Decke/Decken, Boden/Böden
+//
+// PM-017: "decke\w*" traf auch mitten in "abdecken"/"Abdeckens" (Boden
+// schützen/abdecken) — die Zeichenkette "decke" steckt buchstäblich in
+// "ab-DECKE-n". Dadurch wurde z. B. bei "Wände tapezieren... Boden
+// abdecken" ein Decken-Scope erkannt, obwohl "Decke" nie gemeint war —
+// mit Folgefehlern bis in erkenneScope()/scopeProRaum hinein (ein Raum
+// bekam fälschlich "nur Decke" zugewiesen, wodurch die echte Wandposition
+// aus dem Ergebnis herausgefiltert wurde). Gleiche Fehlerklasse wie schon
+// vorher lokal in maler-basis.ts (istBodenSchutz) und maler.ts
+// (hatDeckenSignal) umschifft — hier jetzt an der gemeinsamen Quelle
+// behoben, die von beiden mitbenutzt wird.
 const FLAECHE = {
   waende: String.raw`(?:wänd\w*|wand)`,
-  decke: String.raw`(?:decke\w*)`,
+  decke: String.raw`(?:(?<!ab)decke\w*)`,
   boden: String.raw`(?:b[oö]den|boden)`,
 }
 // Optionaler Artikel/Präposition zwischen Einschränkung und Fläche: "die", "an den", …

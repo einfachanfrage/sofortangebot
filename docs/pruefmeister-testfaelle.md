@@ -67,6 +67,11 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | 🟡 Dubletten-Fix bestätigt (Doppelklick-Test). Echte Race Condition jetzt mit DB-Constraint geschlossen (2026-08-20, Sandys Go, siehe Fix-Update 2) — Migration live, Code-Fix grün gegen Testsuite, gezielter Gleichzeitigkeits-Nachtest steht noch aus |
 | PM-015 | Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | 🟡 Beide Ursachen gefunden und gefixt, geprüft live im Code korrekt. **Klargestellt (2026-08-19):** der PM-011-„alle Preise fehlen"-Fund war KEIN neuer, dritter Bug — derselbe Nachtest lief auf demselben, schon damals betroffenen Konto „Lisa Schein Malerbetrieb", das vor dem Fix (17.08.) angelegt wurde und dadurch nicht rückwirkend versorgt ist, siehe „Systemischer Fund" Punkt 5. Für alle NEU angelegten Konten ab 18.08. gilt der Fix nachweislich. **Korrektur (2026-08-19, siehe PM-016):** der 18.08.-Fix selbst war kaputt — der Onboarding-Insert scheiterte durch denselben Bug wie PM-016 komplett und unbemerkt (Fehler wurde nicht geprüft). „Lisa Schein" ist inzwischen live nachversorgt |
 | PM-016 | „Standardpreise importieren" auf `/preise` schlägt fehl: „Die Standardpreise konnten nicht vollständig ergänzt werden." (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | ✅ Root-Cause gefunden und gefixt (2026-08-19), Konto live nachversorgt (341 Positionen), gleicher Bug auch im Onboarding-Seeding gefixt |
+| PM-017 | Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer) | 🟡 Beide Bugs root-caused und gefixt (2026-08-21, siehe Fix-Update): „Wände tapezieren" erscheint jetzt mit exakt 31,91 m², keine Phantom-Positionen mehr. Gegen die reale GPT-Rohantwort dieses Falls nachgerechnet (nicht nur angenommen). Live-Nachtest steht aus |
+| PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | 🟡 Beide Bugs root-caused und gefixt (2026-08-21, siehe Fix-Update): „Q3" statt „Q2", Deckengrundierung (14 m²) jetzt vorhanden. Gegen die reale GPT-Rohantwort dieses Falls nachgerechnet. Live-Nachtest steht aus |
+| PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ⏳ noch nicht geprüft — neu |
+| PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ⏳ noch nicht geprüft — neu |
+| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ⏳ noch nicht geprüft — neu |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -1158,6 +1163,346 @@ ungeprüftes „sieht richtig aus" bei PM-015 schon einmal zu der falschen Aussa
 Noch offen: ein frischer Onboarding-Durchlauf (neues Testkonto, `preisMode: 'markt'` oder `'manuell'`) als
 End-to-End-Nachtest des zweiten Fixes — bisher nur der Import-Pfad live verifiziert, nicht der
 Onboarding-Pfad selbst.
+
+---
+
+## PM-017 — Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer)
+
+**Datum:** 2026-08-20
+**Status:** ❌ Ist-Ergebnis (2026-08-20): „Wände tapezieren" — die eine sicher verlangte Leistung, mit
+echter Menge auf der Karte erkannt — fehlt komplett im Entwurf. Zusätzlich bestätigt: drei nicht verlangte
+Phantom-Positionen mit Menge 0 (Sandy hat den Testskript-Wortlaut exakt und vollständig gesprochen, siehe
+Ist-Ergebnis unten) — zwei eigenständige Bugs in einem Fall
+
+**Warum dieser Fall:** Im Code taucht wiederholt eine Datei `maler-tapete.ts` auf (u. a. bei PM-007/PM-008
+als Fundort für Positionsnamen erwähnt), aber bisher wurde in keinem Testfall tatsächlich tapeziert statt
+gestrichen — die Tapete-Seite dieser Datei ist damit praktisch ungetestet. Zweitens: „Neuputz → Grundierung"
+ist eine der zentralen Fachwissen-Regeln, aber noch nie gegen einen ausdrücklichen Kunden-Widerspruch dazu
+geprüft worden („neuer Putz, aber trotzdem keine Grundierung gewünscht"). Beides zusammen in einem Fall.
+
+**Zum Einsprechen:**
+„Kinderzimmer, vier mal drei, Höhe zwo fünfzig. Wände tapezieren, keine Farbe. Der Putz ist frisch, aber
+Grundierung brauchen wir trotzdem nicht, das lassen wir weg. Ein Fenster, normale Größe, eine Tür, normal
+Maß.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,00)=14,00 lfm
+- Wandbrutto: 14,00×2,50=35,00 m²
+- Abzug 1 Fenster Standard (1,20 m²) + 1 Tür Standard (1,89 m²) = 3,09 m²
+- Wandfläche netto: **31,91 m²**
+- Wände tapezieren: **31,91 m²** — einlagig, keine „2x"-Vervielfachung wie bei einem Farbanstrich
+- **Keine** „Wände streichen"-Position — ausdrücklich „keine Farbe"
+- **Keine** Grundierung — ausdrücklich abgelehnt, obwohl „frischer Putz" sonst ein Grundierungs-Trigger
+  wäre (genau die Regel aus dem Fachwissen, hier bewusst durchbrochen)
+- Keine Deckenposition (nicht erwähnt)
+
+**Worauf achten:**
+- Erkennt das Tool „tapezieren" überhaupt als eigene Leistung, oder rutscht das mangels eigener Erkennung
+  in die normale „Wände streichen"-Position (falsche Leistungsbezeichnung fürs Angebot)?
+- Wird trotz „keine Farbe" trotzdem eine Anstrich-Position erzeugt (Über-Erkennung, dieselbe Fehlerfamilie
+  wie beim phantomen Bodenaustausch bei PM-010)?
+- Ist die Tapezier-Menge einlagig, oder wird sie fälschlich wie ein „2x"-Anstrich behandelt (falsche
+  Einheit/Menge)?
+- Wird die Grundierung trotz des starken „Neuputz"-Signals korrekt NICHT erzeugt, weil der ausdrückliche
+  Widerspruch („brauchen wir trotzdem nicht") Vorrang vor der sonst automatisch abgeleiteten Regel hat?
+
+**Ist-Ergebnis (Sandy, 2026-08-20):** Karte: „4 Positionen erkannt" — Wände tapezieren (30 m²), Tapete
+entfernen (0 Stück), Untergrund glätten/Spachteln (0 Stück), Raufaser streichen (0 Stück). Sandy hat auf
+Nachfrage bestätigt: sie hat exakt den oben stehenden Testskript-Wortlaut gesprochen, wie immer, ohne etwas
+wegzulassen ("hab alles so gesagt wie du es formuliert hast im testfall, mach ich IMMER so, lasse nie was
+weg"). Die drei zusätzlichen Positionen (Tapete entfernen, Untergrund glätten/Spachteln, Raufaser
+streichen) sind damit **bestätigt nicht gesagt worden** — reine Erfindung der Extraktion, kein
+Transkriptionsproblem.
+
+Damit stehen zwei unabhängige, jetzt beide bestätigte Befunde fest:
+
+Entwurf, Raummaße korrekt (3×4 m, Höhe 2,5 m, 1 Tür, 1 Fenster):
+- Boden schützen: 12 m² × 1,20 € = 14,40 € — normale Nebenleistung, exakt Soll (3×4=12 m² Bodenfläche)
+- Tapete entfernen: 0 Stück, Preis fehlt, 0,00 €
+- Untergrund glätten/Spachteln: 0 Stück, Preis fehlt, 0,00 €
+- Raufaser aufziehen: 0 Stück, Preis fehlt, 0,00 €
+- Raufaser streichen: 0 Stück, Preis fehlt, 0,00 €
+- **„Wände tapezieren" — die eine Position, die in jedem Fall verlangt wurde und auf der Karte mit
+  einer echten Menge (30 m²) erkannt wurde — taucht im fertigen Entwurf NIRGENDS auf.** Weder als eigene
+  Zeile noch eingerechnet in eine der vier oben gezeigten Positionen.
+
+**Befund:**
+
+1. **Schwerster Fund: die eigentlich verlangte Leistung „Wände tapezieren" fehlt komplett, obwohl mit
+   echter Menge erkannt.** Genau die stille Fehlerkategorie aus PM-010/PM-012/PM-013 (Karte kündigt eine
+   Leistung mit Menge an, Entwurf liefert sie nicht) — nur diesmal bei der Kernleistung selbst, nicht bei
+   einer Nebenposition. Stattdessen stehen vier andere Positionen da, alle mit Menge 0 und ohne Preis —
+   der Handwerker bekäme für das eigentliche Tapezieren der Wände gar nichts berechnet.
+2. **Neuer, jetzt bestätigter Bug: Über-Erkennung / Phantom-Positionen durch das Wort „tapezieren".**
+   Sandy hat bestätigt, exakt den Testskript-Wortlaut gesprochen zu haben — „Tapete entfernen",
+   „Untergrund glätten/Spachteln" und „Raufaser streichen" kamen darin nicht vor. Die Extraktion hat aus
+   dem einen Wort „tapezieren" einen kompletten, nicht angeforderten Standard-Workflow erfunden (Altes
+   entfernen → Untergrund glätten → Raufaser aufziehen → Raufaser streichen), analog zur PM-010-Familie
+   (dort löste „kommen raus" einen ganzen Phantom-Bodenaustausch aus). Dass alle vier Phantom-Positionen
+   zusätzlich mit Menge 0 erscheinen, macht den Effekt harmlos für die Kalkulation, aber die Erkennung
+   selbst ist falsch und würde bei anderer Formulierung reale Fehlmengen erzeugen.
+3. Keine Grundierungs-Position vorhanden — korrekt, konsistent mit dem ausdrücklichen Ausschluss im
+   Testskript. Dieser Teil des Falls funktioniert wie gewollt.
+
+**Für Head of Product Engineering:** Zwei getrennte Bugs, bitte auch getrennt fixen:
+- Punkt 1: eine mit realer Menge erkannte Kernleistung („Wände tapezieren", 30 m² auf der Karte)
+  verschwindet komplett aus dem Entwurf. Bitte wie bei PM-010/PM-012/PM-013 behandeln
+  (`fehlende`/Chip-Titel-Fallback-Familie).
+- Punkt 2: das Wort „tapezieren" triggert offenbar eine feste Vier-Schritte-Vorlage
+  (entfernen/glätten/Raufaser aufziehen/Raufaser streichen), die niemand verlangt hat. Bitte in der
+  Extraktionslogik den Auslöser dafür finden (vermutlich ein Tapete-Zusatzfeature aus `maler-tapete.ts`,
+  das immer mitgeneriert wird statt nur bei explizitem „Tapete raus"/„neu tapezieren über alter Tapete").
+
+**Fix-Update (Head of Product Engineering, 2026-08-21):** Beide Punkte root-caused — nicht gegen ein
+angenommenes GPT-Ergebnis, sondern gegen die echte, in der Produktions-DB gespeicherte GPT-Rohantwort
+zu genau diesem Testfall nachgerechnet (`entwurf_aufnahmen.voll_extraktion`, Aufnahme vom 21.08.):
+
+- **Ursache für Punkt 1:** GPT liefert `arbeiten: ["tapete aufziehen", "abdecken"]` — nicht wörtlich
+  „tapezieren". Das Wand-Signal in der Engine (`gewerke/maler.ts`) suchte nur nach dem Fragment „tapez",
+  das in „tapete aufziehen" nicht vorkommt — kein Wand-Signal, keine Wandflächen-Position, nichts, worauf
+  „Wände tapezieren" hätte aufbauen können. Zusätzlich, verschärfend: „abdecken" (Boden schützen) enthält
+  selbst die Zeichenkette „decke" (ab-DECKE-n) — das hat an gleich zwei Stellen ein falsches Decken-Signal
+  ausgelöst: einmal lokal in der Engine, vor allem aber in der GEMEINSAMEN Scope-Erkennung
+  (`arbeiten-normalisierer.ts`, von Engine UND Vollständigkeits-Prüfung genutzt) — dort wurde dem Raum
+  fälschlich „nur Decke" zugewiesen, wodurch selbst eine korrekt erkannte Wandfläche nachträglich wieder
+  herausgefiltert worden wäre. Alle drei Stellen jetzt gefixt: „tapete" zählt jetzt selbst als Wand-Signal,
+  und „decke" zählt an allen drei Stellen nicht mehr, wenn ihm direkt ein „ab" vorausgeht (dieselbe
+  Fehlerklasse, die schon einmal lokal in `maler-basis.ts` umschifft wurde — jetzt an der gemeinsamen
+  Quelle behoben, nicht nur an einer einzelnen Stelle).
+- **Ursache für Punkt 2:** Die Vier-Schritte-Vorlage in `pruefeTapezieren()` (`maler-tapete.ts`) wurde
+  IMMER komplett erzeugt, sobald „tapezieren" fiel — unabhängig davon, ob Entfernen/Glätten/Streichen
+  überhaupt gesagt wurden. Jetzt signalabhängig: „Tapete entfernen" nur bei echtem Entfernen-Signal im
+  Text, „… streichen" nur bei echtem Streich-Signal — UND eine ausdrückliche Verneinung („keine Farbe")
+  hat dabei Vorrang und unterdrückt das Streichen zuverlässig. Gilt sowohl für den Haupt-Pfad (Fläche
+  bekannt) als auch für den bisherigen Fallback ohne Fläche.
+- **Nachgerechnet gegen die echte GPT-Antwort dieses Testfalls:** Ergebnis jetzt „Boden schützen — 12 m²"
+  + „Tapete tapezieren — 31,91 m²" — keine weiteren Positionen, keine Grundierung, exakt wie im Soll (nur
+  die Positionsbezeichnung heißt „Tapete tapezieren" statt „Wände tapezieren" — inhaltlich gleichwertig,
+  nicht extra angepasst, da im Befund nicht als eigener Punkt verlangt).
+- Regressionsprüfung: alle 236 bestehenden Tests weiterhin grün, `tsc` für alle geänderten Dateien ohne
+  neue Fehler. **Noch offen:** Live-Nachtest im Browser durch dich.
+
+---
+
+## PM-018 — Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer)
+
+**Datum:** 2026-08-20
+**Status:** ❌ Ist-Ergebnis (2026-08-20): Decke bekommt korrekt eine eigene Spachtel-Position (guter
+Befund) — aber Qualitätsstufe zeigt „Q2" statt der verlangten „Q3", und die Deckengrundierung fehlt
+komplett trotz „beides einmal grundieren"
+
+**Warum dieser Fall:** PM-011 hat Q2-Spachtelung nur an der Wand getestet. Q3/Q4 sind bisher komplett
+ungetestet, ebenso die Frage, ob eine Deckenspachtelung überhaupt als eigene Position mit eigener Fläche
+existiert oder in der Wandfläche verschwindet/vergessen wird — eine Lücke, die einem Handwerker sofort
+auffallen würde, weil Wand und Decke fachlich immer getrennte Flächen und damit getrennte Positionen sind.
+
+**Zum Einsprechen:**
+„Arbeitszimmer, vier mal dreieinhalb, Höhe zwo sechzig. Wände UND Decke komplett spachteln, Qualitätsstufe
+Q3, weil später Streiflicht draufscheint. Danach beides einmal grundieren und zweimal streichen. Eine Tür,
+normal Maß, ein Fenster, normale Größe.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,50)=15,00 lfm; Wandbrutto: 15,00×2,60=39,00 m²
+- Abzug 1 Fenster (1,20 m²) + 1 Tür (1,89 m²) = 3,09 m² → Wandfläche netto: **35,91 m²**
+- Deckenfläche: 4,00×3,50=**14,00 m²**
+- Spachtelarbeiten Q3 Wand: **35,91 m²**
+- Spachtelarbeiten Q3 Decke: **14,00 m²** — eigene Position mit eigener Fläche, nicht mit der Wand
+  vermischt
+- Grundierung Wand: 35,91 m² (1x)
+- Grundierung Decke: 14,00 m² (1x) — offen, ob das Tool das überhaupt als eigene Position kennt, siehe
+  „Worauf achten"
+- Wandflächen streichen 2×: 35,91 m²
+- Deckenfläche streichen 2×: 14,00 m²
+
+**Worauf achten:**
+- Wird die Qualitätsstufe korrekt als „Q3" benannt, nicht standardmäßig auf „Q2" zurückfallend?
+- Bekommt die Decke überhaupt eine eigene Spachtel-Position mit eigener Fläche (14,00 m²), oder wird sie
+  in die Wandfläche eingerechnet, verdoppelt oder schlicht vergessen?
+- Existiert für die Decke überhaupt eine eigene Grundierungs-Position, oder kennt das Tool Grundierung
+  bisher nur für Wände? Falls Letzteres: kein Blocker, aber ein Punkt für Head of Product Engineering.
+- Werden Wand- und Deckenzahlen sauber getrennt gehalten (kein Verwechseln der beiden Flächen, wie es bei
+  Sonderfällen wie PM-007/PM-008 schon an anderer Stelle passiert ist)?
+
+**Ist-Ergebnis (Sandy, 2026-08-20):** Karte: „8 Positionen erkannt" — Wände spachteln (35 m²), Decke
+spachteln (14 m²), Wände grundieren (35 m²), Decke grundieren (14 m²), Wände streichen (35 m²), Decke
+streichen (14 m²), Boden schützen (0 m²), Spachtelarbeiten Q2 (0 Stück) — schon auf der Karte fällt auf,
+dass „Q2" statt „Q3" auftaucht, obwohl im Transkript ausdrücklich „Qualitätsstufe Q3" gesagt wurde.
+
+Entwurf, Raummaße exakt (3,5×4 m, Höhe 2,6 m, 1 Tür, 1 Fenster):
+- Wandflächen streichen 2×: 35,91 m² × 9,50 € = 341,14 € — exakt Soll
+- Deckenfläche streichen 2×: 14 m² × 11,00 € = 154,00 € — exakt Soll
+- Boden schützen: 14 m² × 1,20 € = 16,80 € — normale Nebenleistung
+- Sockelleisten abkleben: 14,1 lfdm × 0,80 € = 11,28 € — exakt Soll (15,00 − 0,90 Türbreite)
+- **Spachtelarbeiten „Q2" (Wand): 35,91 m² × 9,00 € = 323,19 €** — Menge exakt Soll, aber Qualitätsstufe
+  falsch (verlangt: Q3)
+- **Spachtelarbeiten „Q2" (Decke): 14 m² × 9,00 € = 126,00 €** — ✅ die Decke bekommt tatsächlich eine
+  eigene Spachtel-Position mit eigener Fläche, exakt wie im Soll erhofft. Auch hier aber „Q2" statt „Q3"
+- **Voranstrich/Grundierung: 35,91 m² × 6,00 € = 215,46 €** — nur EINE Grundierungs-Position, für die
+  Wand. **Keine Deckengrundierung** trotz „beides einmal grundieren" im Transkript.
+
+**Befund:**
+
+1. **Falsche Qualitätsstufe: Q2 statt der ausdrücklich verlangten Q3.** Beide Spachtelpositionen (Wand
+   und Decke) zeigen „Q2", obwohl im Transkript klar „Qualitätsstufe Q3" gesagt wurde — die Menge stimmt,
+   aber die Qualitätsstufe scheint auf einen festen Standardwert (Q2) zu fallen, statt aus dem Gesagten
+   übernommen zu werden. Fachlich genau die Verwechslung, vor der das eigene Fachwissen ausdrücklich warnt
+   („Diese zwei niemals verwechseln" — dort zwar zu Kleinreparatur/Vollflächenspachtelung gesagt, aber das
+   Prinzip gilt genauso zwischen den Qualitätsstufen selbst: Q2 und Q3 sind unterschiedlich viel Arbeit und
+   unterschiedlich bepreist).
+2. **Deckengrundierung fehlt komplett**, obwohl „beides" (Wand UND Decke) ausdrücklich grundiert werden
+   sollte. Damit ist die „Worauf achten"-Frage von oben beantwortet: das Tool kennt aktuell keine eigene
+   Grundierungs-Position für die Decke, nur für die Wand.
+3. **Gute Nachricht:** Die Decke bekommt korrekt eine eigene Spachtel-Position mit eigener, richtiger
+   Fläche (14 m²) — wird nicht mit der Wandfläche vermischt, verdoppelt oder vergessen. Genau das war die
+   größere Sorge dieses Testfalls, und sie hat sich nicht bestätigt.
+
+**Für Head of Product Engineering:** (1) Bitte prüfen, warum die im Transkript genannte Qualitätsstufe
+(„Q3") nicht übernommen wird und stattdessen „Q2" als Standard erscheint — vermutlich ein fest codierter
+Default statt einer echten Extraktion der genannten Stufe. (2) Bitte klären, ob Grundierung grundsätzlich
+nur für Wände vorgesehen ist (dann bewusste Design-Entscheidung, aber bitte dann auch nicht als
+„beides grundieren" im Transkript unwidersprochen stehen lassen) oder ob eine eigene Deckengrundierung
+fachlich ergänzt werden sollte.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21):** Beide Punkte root-caused und gefixt, gegen die
+echte GPT-Rohantwort dieses Testfalls aus der Produktions-DB nachgerechnet (nicht nur angenommen):
+
+- **Punkt 1 (Q2 statt Q3):** In `pruefeSpachtelarbeiten()` (`maler-extras.ts`) stand die Prüfung, OB eine
+  Qualitätsstufe im Text genannt wurde, schon — nur um zu entscheiden, ob eine „Q2 angenommen"-Warnung
+  dazukommt. Welche Stufe tatsächlich genannt wurde, floss nie in die Positionsbezeichnung selbst ein —
+  dort stand hart codiert immer „Q2". Jetzt wird dieselbe Erkennung (Q2/Q3/Q4 aus dem Text, wie im
+  Schwesterfall `pruefeSpachteln()` schon korrekt gemacht) auch tatsächlich in die Bezeichnung übernommen.
+- **Punkt 2 (Deckengrundierung fehlt):** Design-Entscheidung war keine — die Wand-Grundierung war schlicht
+  die einzige, die je gebaut wurde. `pruefeGrundierung()` (`maler-basis.ts`) prüft jetzt zusätzlich, ob im
+  Ergebnis eine eigene Deckenfläche existiert, und legt dafür (unter derselben Voraussetzung wie bei der
+  Wand — Grundierung wurde im Text tatsächlich erwähnt) eine eigene „Voranstrich / Grundierung Decke"
+  Position an.
+- **Nachgerechnet gegen die echte GPT-Antwort dieses Testfalls:** Ergebnis jetzt Grundierung Wand
+  35,91 m² + Grundierung Decke 14 m² + Wände streichen 2× 35,91 m² + Decke streichen 2× 14 m² + Boden
+  schützen 14 m² + Sockelleisten abkleben 14,1 lfdm + Spachtelarbeiten **Q3** (Wand) 35,91 m² +
+  Spachtelarbeiten **Q3** (Decke) 14 m² — exakt wie im Soll, keine Abweichung.
+- Regressionsprüfung: alle 236 bestehenden Tests weiterhin grün, `tsc` für alle geänderten Dateien ohne
+  neue Fehler. **Noch offen:** Live-Nachtest im Browser durch dich.
+
+---
+
+## PM-019 — Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC)
+
+**Datum:** 2026-08-20
+**Status:** ⏳ noch nicht geprüft — neuer Testfall
+
+**Warum dieser Fall:** Das Fachwissen nennt drei Erschwernis-Trigger: Raumhöhe > 3 m (mehrfach getestet,
+z. B. PM-008), Altbau (PM-006), und „schwieriger Untergrund" — Letzterer bisher in keinem einzigen Testfall
+verwendet. Damit isoliert getestet wird, ob das Tool dieses dritte Kriterium überhaupt kennt, ist der Raum
+bewusst klein und niedrig (unter der 3-m-Schwelle) und ausdrücklich kein Altbau, damit keine der beiden
+anderen Trigger versehentlich mitgreifen und das Ergebnis verfälschen.
+
+**Zum Einsprechen:**
+„Gästeklo, zwei mal eins fünfzig, Höhe zwo vierzig. Wände streichen, zweimal. Der Putz ist aber total
+uneben und bröckelig, ein wirklich schwieriger Untergrund, das wird aufwendiger als normal. Eine Tür, kein
+Fenster.“
+
+**Soll-Lösung:**
+- Umfang: 2×(2,00+1,50)=7,00 lfm; Wandbrutto: 7,00×2,40=16,80 m²
+- Abzug 1 Tür Standard (1,89 m²), kein Fenster-Abzug (kein Fenster vorhanden)
+- Wandflächen streichen 2×: **14,91 m²**
+- Erschwerniszuschlag „schwieriger Untergrund": eigene Position (Aufschlag, egal ob schon bepreist)
+- **Kein** Höhen-Erschwerniszuschlag (2,40 m liegt unter der 3-m-Schwelle)
+- **Kein** Altbau-Zuschlag (nicht erwähnt)
+
+**Worauf achten:**
+- Erkennt das Tool „schwieriger Untergrund"/„uneben und bröckelig" überhaupt als eigenständigen
+  Erschwernis-Trigger, oder kennt die Engine bisher nur die beiden anderen (Höhe, Altbau)?
+- Schlägt fälschlich zusätzlich ein Höhen- oder Altbau-Zuschlag auf, obwohl keiner der beiden Trigger im
+  Transkript vorkommt?
+- Fachliche Zusatzfrage, kein harter Soll-Verstoß: „uneben und bröckelig" klingt nach echtem
+  Ausbesserungsbedarf, nicht nur nach einem pauschalen Prozentaufschlag — würde ein echter Maler hier nicht
+  eher eine Rückfrage zur Untergrundvorbereitung/Spachtelung erwarten, statt nur einen Zuschlag draufzusetzen?
+  Kein Fehler, wenn das Tool nur den Zuschlag bringt, aber ein Gedanke für den Designer/die Rückfragen-Logik.
+
+---
+
+## PM-020 — Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2)
+
+**Datum:** 2026-08-20
+**Status:** ⏳ noch nicht geprüft — neuer Testfall
+
+**Warum dieser Fall:** Verschnitt wurde bisher nur für Laminat/Vinyl (5 % gerade, PM-004/PM-009) und Parkett
+Fischgrät (15 %, PM-013) getestet — nie für Teppich, für den das Fachwissen keinen expliziten Standard-Satz
+nennt. Zusätzlich testet dieser Fall eine dritte, neue Formulierung für den Boden-Ausschluss („bleiben
+einfach drunter liegen"), nachdem frühere Fixes bisher nur auf „X lassen wir"/„ohne X"/„keine X" bzw. „bleibt
+wie er ist" reagiert haben — jede neue Sprechweise ist ein eigener Risikofall für dieselbe Erkennung.
+
+**Zum Einsprechen:**
+„Kinderzimmer zwei, drei mal drei sechzig. Teppichboden auslegen, ganz normal, kein Muster. Die alten
+Dielen bleiben einfach drunter liegen, die kommen nicht raus.“
+
+**Soll-Lösung:**
+- Fläche: 3,00×3,60=**10,80 m²**
+- Teppich verlegen: 10,80 m² zzgl. Verschnitt — das Fachwissen nennt für Teppich keinen expliziten
+  Standardsatz, daher kein hartes Soll für den genauen Prozentwert; zu dokumentieren ist, was das Tool
+  tatsächlich ansetzt, als Referenzwert für künftige Fälle
+- **Keine** Altbelag-entfernen-Position — ausdrücklich ausgeschlossen („bleiben einfach drunter liegen,
+  die kommen nicht raus")
+- **Keine** Trittschalldämmung — nicht erwähnt, bei Teppich fachlich auch nicht zwingend Standard wie bei
+  Klick-Vinyl/Laminat
+
+**Worauf achten:**
+- Wird die neue Ausschluss-Formulierung „bleiben einfach drunter liegen" überhaupt als Ausschluss erkannt?
+  Bisherige Fixes kannten explizit nur bestimmte Wortmuster — eine vierte, wieder andere Formulierung ist
+  ein eigener Testfall für die Robustheit dieser Erkennung, nicht automatisch durch frühere Fixes gedeckt.
+- Welchen Verschnittsatz setzt das Tool für Teppich an (0 %? 5 % wie Laminat? etwas Eigenes?) — kein
+  Fehler an sich, aber wichtig zu wissen und ggf. mit Sandys fachlicher Einschätzung abzugleichen, ob der
+  Wert plausibel ist.
+- Wird trotz des Wortes „Boden" im Nebensatz keine unverlangte zusätzliche Boden-Position erfunden
+  (Verwandtschaft zum PM-010-Phantom-Bug)?
+
+---
+
+## PM-021 — Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche)
+
+**Datum:** 2026-08-20
+**Status:** ⏳ noch nicht geprüft — neuer Testfall
+
+**Warum dieser Fall:** Bisherige Tests hatten immer gleich große Fenster/Türen mit Standardmaßen oder
+höchstens EINE individuell genannte Größe. Dieser Fall hat zwei unterschiedlich große Fenster UND zwei
+unterschiedlich große Türen (inkl. einer breiten Terrassentür) im selben Raum — ein härterer Test dafür, ob
+jede Öffnung mit ihrem EIGENEN Maß abgezogen wird, statt pauschal mit einem einzigen Standardmaß pro
+Öffnungstyp zu rechnen. Zusätzlich wird bewusst „einmal streichen" statt der sonst in fast jedem Testfall
+verlangten zwei Anstriche gesagt — testet, ob das Tool wirklich der Aussage folgt statt einem eingebauten
+2x-Standardwert. Und: die Kombination aus einem sehr kleinen Fenster (deutlich unter der 2,5-m²-VOB-
+Übermessungsschwelle) und einer sehr großen Terrassentür im selben Raum eignet sich gut, um die im Kopf der
+Datei als „bewusst zurückgestellt, niedrige Priorität" vermerkte fehlende VOB-Übermessungsregel an einem
+konkreten, krassen Beispiel sichtbar zu machen.
+
+**Zum Einsprechen:**
+„Wohnküche, sechs mal fünf, Höhe zwo sechzig. Zwei Fenster: eins ist eins zwanzig mal eins vierzig, das
+andere achtzig mal eins zehn. Zwei Türen: eine normal Maß, die andere eine breite Terrassentür, zwei Meter
+mal zwo zehn. Wände streichen, einmal drüber reicht.“
+
+**Soll-Lösung:**
+- Umfang: 2×(6,00+5,00)=22,00 lfm; Wandbrutto: 22,00×2,60=57,20 m²
+- Fenster 1: 1,20×1,40=1,68 m²; Fenster 2: 0,80×1,10=0,88 m²
+- Tür 1 (normal): 0,90×2,10=1,89 m²; Tür 2 (Terrassentür): 2,00×2,10=4,20 m²
+- Öffnungsfläche gesamt (Standard-Abzugslogik ohne Übermessung): 1,68+0,88+1,89+4,20=8,65 m²
+- Wandfläche netto: **48,55 m²**
+- Wandflächen streichen **1×** (nicht 2×, ausdrücklich „einmal drüber reicht"): 48,55 m²
+- Fachliche Zusatzbetrachtung zur bekannten, offenen VOB-Übermessungsfrage: Fenster 2 (0,88 m²) liegt weit
+  unter der 2,5-m²-Schwelle für kleine Öffnungen und dürfte nach VOB/DIN 18363 eigentlich NICHT abgezogen
+  werden (Übermessung wegen Kantenarbeit) — die Terrassentür (4,20 m²) liegt dagegen klar darüber und
+  gehört in jedem Fall abgezogen. Käme die Übermessungsregel zur Anwendung, wäre die korrekte Wandfläche
+  49,43 m² (nur 7,77 m² statt 8,65 m² abgezogen). Kein hartes Soll an dieser Stelle, aber ein sehr klares
+  Beispiel, um diese seit Längerem zurückgestellte Entscheidung endlich zu treffen.
+
+**Worauf achten:**
+- Werden alle vier Öffnungen mit ihren INDIVIDUELLEN Maßen abgezogen, oder rechnet das Tool pauschal mit
+  einem einzigen Standardmaß pro Öffnungstyp (z. B. „2 Fenster à Standardmaß" statt der beiden echten,
+  unterschiedlichen Größen)?
+- Wird „einmal streichen" korrekt als 1× übernommen, oder rutscht die Engine trotzdem auf den in fast
+  jedem anderen Testfall gültigen 2×-Standard?
+- Wird die Terrassentür überhaupt als „Tür" erkannt (ungewöhnlich groß, ungewöhnliches Wort „Terrassentür"
+  statt „Tür"), oder fällt sie durchs Raster und wird gar nicht abgezogen?
+- Ergibt sich aus dieser Gegenüberstellung (sehr kleines Fenster vs. sehr große Tür im selben Raum) ein
+  guter, konkreter Anlass, die VOB-Übermessungsregel endlich zu entscheiden und umzusetzen?
 
 ---
 
