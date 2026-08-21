@@ -70,11 +70,34 @@ describe('PM-001 — Aufnahmekarte zeigt automatisch ergänzte Nebentätigkeiten
     expect(ergebnis).toBe(chips) // exakt dieselbe Referenz — kein unnötiges Klonen
   })
 
-  it('ergänzt bei reinem Boden-Auftrag automatisch Sockelleisten montieren, wenn noch nicht auf der Karte', () => {
+  // PM-020 (2026-08-21), Korrektur dieses ursprünglichen PM-001-Tests: eine
+  // reine Bodenverlegung OHNE jede Sockelleisten-Erwähnung darf NICHT mehr
+  // automatisch eine "Sockelleisten montieren"-Position erfinden. Exakt diese
+  // Annahme ("neuer Boden → automatisch neue Sockelleisten") wurde zweimal
+  // unabhängig als Phantom-Fund an echten Produktionsdaten bestätigt (PM-013
+  // Wohnzimmer, 25 lfdm; PM-020 Kinderzimmer 2, 13,2 lfdm — beide exakt der
+  // volle Raumumfang, nie erwähnt). Fix in gewerke/boden.ts (Engine) UND
+  // vollstaendigkeit/boden-vorarbeiten.ts (dieser Vollständigkeits-Check, den
+  // diese Funktion hier per Design 1:1 mitbenutzt — siehe Kommentar oben in
+  // chips-vervollstaendigung.ts, "kein Drift-Risiko"): beide verlangen jetzt
+  // ein echtes "sockelleist"-Textsignal, bevor irgendetwas erfunden wird. Die
+  // alte Erwartung hier (`toBe(true)`) hatte exakt diesen Bug als Feature
+  // verankert — durch das Redundanz-Prinzip der Datei musste sie mitkorrigiert
+  // werden, sonst hätte dieser Test den korrigierten Code als kaputt gemeldet.
+  it('erfindet KEINE Sockelleisten bei reinem Boden-Auftrag ohne jede Erwähnung (PM-020-Korrektur)', () => {
     const chips = [
       { titel: 'Vinyl verlegen — Wohnzimmer', menge: 20, einheit: 'm²', erkannt: true },
     ]
     const transkript = 'Vinylboden im Wohnzimmer verlegen, sonst nichts.'
+    const ergebnis = ergaenzeChipsUmAutomatischeNebenpositionen(chips, transkript) as Array<{ titel: string }>
+    expect(ergebnis.some(p => /sockelleisten/i.test(p.titel))).toBe(false)
+  })
+
+  it('ergänzt weiterhin Sockelleisten, wenn im Transkript erwähnt, aber ohne Meterangabe', () => {
+    const chips = [
+      { titel: 'Vinyl verlegen — Wohnzimmer', menge: 20, einheit: 'm²', erkannt: true },
+    ]
+    const transkript = 'Vinylboden im Wohnzimmer verlegen, Sockelleisten kommen auch neu dran.'
     const ergebnis = ergaenzeChipsUmAutomatischeNebenpositionen(chips, transkript) as Array<{ titel: string }>
     expect(ergebnis.some(p => /sockelleisten/i.test(p.titel))).toBe(true)
   })

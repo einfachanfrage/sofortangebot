@@ -70,7 +70,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-017 | Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: „Tapete tapezieren" jetzt mit exakt 31,91 m² und korrektem Preis, keine Phantom-Positionen mehr, keine Grundierung — Details im Archiv |
 | PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv |
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | 🟡 Fix-Update (2026-08-21): „schwieriger Untergrund"-Zuschlag ergänzt, Raum-Gruppierung für „Gästeklo" behoben. Falsche Raummaße root-caused als Whisper-Transkriptionsfehler (kein Code-Bug, nicht fixbar). Noch ohne Live-Nachtest |
-| PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ❌ Ist-Ergebnis (2026-08-21): „Altbelag entfernen" trotz explizit mit „Nein, bleibt" beantworteter Rückfrage im Entwurf. Zusätzlich Phantom-„Sockelleisten montieren" (13,2 lfdm), nie erwähnt — dasselbe Muster wie PM-013 |
+| PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | 🟡 Fix-Update (2026-08-21): Altbelag-Verneinungserkennung ergänzt (boden-normalisierer.ts), Sockelleisten-Phantom-Fallback verlangt jetzt Textsignal (boden-vorarbeiten.ts). Noch ohne Live-Nachtest |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ❌ Ist-Ergebnis (2026-08-21): Wandfläche exakt Soll (48,55 m², alle 3 Kernfragen positiv). Neuer Fund: unverlangte „Balkonboden streichen"-Position (30 m²), vermutlich durch „Terrassentür" ausgelöst |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
@@ -1157,10 +1157,11 @@ FALSCHE Frage zuverlässig, ersetzt sie aber (noch) nicht durch die richtige. Bi
 gewünscht — der Fix dafür ist größer (beide Gewerke müssten `analysiereKontext` durchlaufen, nicht nur das
 primäre) und ich wollte ihn nicht ungetestet in denselben Fix mit reinziehen.
 
-**Wahrscheinlicher Bonus-Fix:** PM-020s „Phantom-Sockelleisten montieren" (13,2 lfdm, Kinderzimmer 2) ist im
-Doc selbst schon als „dasselbe Muster wie PM-013" markiert — Fund 2s Fix (`boden.ts`) dürfte diesen Fall
-strukturell mitlösen, da er exakt an derselben Stelle greift. Nicht extra verifiziert, da nicht explizit
-beauftragt — bitte bei Gelegenheit gegentesten, bevor PM-020 als behoben gilt.
+**Nachtrag (2026-08-21, beim PM-020-Fix geprüft):** die Vermutung oben war nur zur Hälfte richtig. Fund 2s
+Fix (`boden.ts`, Engine) hat PM-020s Phantom in der Engine selbst tatsächlich mitgelöst — aber ein zweiter,
+unabhängiger Fallback in `vollstaendigkeit/boden-vorarbeiten.ts` hat exakt dieselbe Annahme separat nochmal
+gemacht und die Position trotzdem wieder erzeugt. Musste extra gefixt werden, siehe Fix-Update direkt bei
+PM-020.
 
 **Wie geprüft:** alle vier Cross-Room-Positionsbugs an den ECHTEN Produktionsrohdaten für diesen Testlauf
 verifiziert (GPTs `voll_extraktion.result` 1:1 aus der DB, durch die reale `verarbeiteExtraktion`-Pipeline
@@ -1452,7 +1453,11 @@ Suite weiterhin grün (247/247, vorher 243). Wie immer: noch OHNE Live-Nachtest 
 ## PM-020 — Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2)
 
 **Datum:** 2026-08-20
-**Status:** ❌ Ist-Ergebnis (2026-08-21): „Altbelag entfernen" steht trotz ausdrücklichem Ausschluss UND
+**Status:** 🟡 Fix-Update (2026-08-21): beide Funde root-caused und behoben — Altbelag-Verneinung wird jetzt
+erkannt (`boden-normalisierer.ts`), Sockelleisten-Phantom-Fallback verlangt jetzt ein echtes Textsignal
+(`boden-vorarbeiten.ts`). Noch ohne Live-Nachtest.
+
+Ursprünglicher Befund (2026-08-21): „Altbelag entfernen" stand trotz ausdrücklichem Ausschluss UND
 explizit mit „Nein, bleibt" beantworteter Rückfrage im Entwurf, mit echter Menge (10,8 m²). Zusätzlich
 Phantom-„Sockelleisten montieren" (13,2 lfdm), nie erwähnt — dieselbe Fehlerfamilie wie bei PM-013
 
@@ -1527,6 +1532,51 @@ Position eigentlich unterdrücken sollen. (2) Dasselbe „Sockelleisten montiere
 jetzt zweimal unabhängig bestätigt, sollte sich mit vertretbarem Aufwand an einer Stelle fixen lassen: die
 Position wird offenbar automatisch bei jeder Boden-Neuverlegung erzeugt, ohne eigenes Signal im Transkript
 zu prüfen.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — beide Funde root-caused, KEINER hing mit der
+ursprünglichen Vermutung zusammen:**
+
+1. **„Altbelag entfernen" trotz „Nein, bleibt" — Ursache war NICHT die Rückfragen-Antwortverarbeitung.**
+   Erste Vermutung (Boolean- vs. Number-Typkonflikt zwischen `kontext-analyzer.ts`s `schnell_antworten` und
+   `antworten-verarbeiter.ts`s `KalkulationsAntwort`) hat sich bei näherer Prüfung als falsch erwiesen —
+   `rueckfragen-flow.ts`s `konvertiereKIRueckfrage` wandelt Boolean bereits sauber in 0/1 um, und
+   `antworten-verarbeiter.ts` verarbeitet das korrekt weiter. Der tatsächliche Fund lag einen Schritt tiefer,
+   bestätigt per Reproduktionstest gegen die exakten Produktionsdaten (auch OHNE jede Rückfragen-Antwort im
+   Spiel — das Problem trat schon in Runde 1 auf): `boden-normalisierer.ts`s `erkenneBodenArbeiten` ist ein
+   Regex-Fallback, der komplett unabhängig vom (hier korrekten) KI-Feld `raum.altbelag_entfernen: false`
+   läuft. „Die alten Dielen bleiben einfach drunter liegen, die kommen nicht raus" hat gleich zwei seiner
+   Regeln ausgelöst — `ALTBELAG_NOMEN` durch die bloße Erwähnung „alten Dielen", `SCHWACHES_ENTFERNEN` durch
+   das Wort „raus" im selben Satz — beide OHNE jede Verneinungs-Prüfung, obwohl der Satz wörtlich das
+   Gegenteil sagt. Verschärft durch `auftrags-verstaendnis.ts`: das KI-Signal wird dort nur einseitig auf
+   `true` verodert (`if (signale.altbelagEntfernen) altbelag = true`), nie zurück auf `false` korrigiert, wenn
+   der Regex-Fallback (fälschlich) `true` lieferte. Fix: neue `ALTBELAG_VERNEINT`-Regex in
+   `boden-normalisierer.ts` (deckt „bleibt liegen/drunter", „kommt nicht raus", „kein/ohne Altbelag", „bleibt
+   wie er ist" ab — inklusive der schon vorher beobachteten Formulierungen), pro Satz geprüft, bevor
+   `ALTBELAG_NOMEN`/`SCHWACHES_ENTFERNEN` greifen dürfen.
+2. **„Sockelleisten montieren"-Phantom — andere Stelle als bei PM-013, gleiche Ursache.** Der PM-013-Fix in
+   `gewerke/boden.ts` (Engine) hat hier korrekt NICHTS erzeugt — bestätigt der Reproduktionstest. Trotzdem
+   tauchte die Position auf, weil ein zweiter, unabhängiger Vollständigkeits-Fallback
+   (`vollstaendigkeit/boden-vorarbeiten.ts`, `pruefeSockelleisten`) genau dieselbe „neuer Boden → automatisch
+   neue Sockelleisten"-Annahme selbst nochmal macht: ohne explizite Meterangabe und ohne vorhandene
+   Montage-Position schätzt er den Umfang blind aus der Bodenfläche (`4 × √Fläche`), ganz ohne zu prüfen, ob
+   Sockelleisten je erwähnt wurden. Fix: derselbe „sockelleist"-Textsignal-Gate wie in der Engine, jetzt auch
+   hier.
+
+**Nebenfund beim Fixen:** Ein bestehender Test (`chips-vervollstaendigung.test.ts`, PM-001) hatte exakt diese
+„Sockelleisten ohne jedes Signal erfinden"-Annahme als erwartetes Verhalten festgeschrieben — die
+Chip-Vorschau der Aufnahmekarte nutzt bewusst dieselbe Vollständigkeits-Prüfung wie die finale Kalkulation
+(Anti-Drift-Prinzip, siehe Kommentar in `chips-vervollstaendigung.ts`), lief also automatisch mit. Test
+korrigiert (jetzt: keine Erfindung ohne Signal, aber weiterhin Ergänzung bei echter — nur unbezifferter —
+Erwähnung) statt den alten, jetzt als Bug erkannten Zustand künstlich zu erhalten.
+
+**Wie geprüft:** Beide Funde gegen die echten Produktionsdaten dieses Testfalls (id `2738c3a1…`) durch die
+reale `verarbeiteExtraktion`-Pipeline reproduziert (Phantome vor dem Fix vorhanden, danach weg), zusätzlich
+Runde-2-Test mit simulierter „Nein, bleibt"-Antwort UND ein Regressionstest mit einer echten
+Altbelag-Entfernung („alter Teppich muss raus") zur Kontrolle, dass der neue Verneinungs-Filter legitime
+Fälle nicht mit wegfiltert. Neuer dauerhafter Golden-Test `golden-korrekturen.test.ts` (PM-020) mit den
+exakten Produktionsdaten. Ganze Suite weiterhin grün (262/262, vorher 261 inkl. der einen korrigierten
+PM-001-Erwartung). Verschnittsatz für Teppich (aktuell 0%, siehe Ist-Ergebnis) unverändert offen — das war
+als reine Info, kein Bug, markiert und bleibt das. Wie immer: noch OHNE Live-Nachtest im echten Tool.
 
 ---
 

@@ -173,7 +173,20 @@ export function pruefeSockelleisten(
   if (vorhandeneMontage || hat(ergaenzt, 'profilleiste montieren')) return
   // Keine Meter genannt → Umfang aus der Bodenfläche schätzen (quadratischer Raum),
   // statt die Position stumm in "fehlende" zu schieben.
-  if (!hat(ergaenzt, 'sockel')) {
+  //
+  // PM-013/PM-020 (2026-08-19/21): dieser Fallback lief bisher OHNE jede
+  // Prüfung, ob Sockelleisten im Transkript überhaupt vorkommen — bei JEDER
+  // Bodenverlegung wurde automatisch eine "Sockelleisten montieren"-Position
+  // (bzw. ein "fehlende"-Eintrag) erzeugt, unabhängig davon, ob das je gesagt
+  // wurde ("neuer Boden → automatisch neue Sockelleisten"-Annahme). Zwei
+  // unabhängige Live-Funde (PM-013 Wohnzimmer, PM-020 Kinderzimmer 2) hatten
+  // dieselbe Ursache: die Engine (gewerke/boden.ts) verlangt seit PM-013
+  // bereits ein echtes "sockelleist"-Textsignal, bevor sie GPTs
+  // `sockelleisten`-Boolean vertraut — dieser separate Vollständigkeits-
+  // Fallback hier kannte diese Bedingung nicht und hat den Phantom-Fund
+  // munter erneut erzeugt, sobald die Engine (korrekt) nichts angelegt hatte.
+  // Gleiches Prinzip wie dort: ohne ein eigenes Textsignal keine Erfindung.
+  if (!hat(ergaenzt, 'sockel') && lower.includes('sockelleist')) {
     const flaeche = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
       ?? ergaenzt.find(p => /altbelag entfernen|verlegen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
       ?? null

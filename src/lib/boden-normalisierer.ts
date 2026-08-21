@@ -81,13 +81,30 @@ const ENTFERNEN_EINDEUTIG = /entfern\w*|raus(?:reiß\w*|gerissen|geriss\w*)|hera
 const SCHWACHES_ENTFERNEN = /\bweg\b|\braus\b/i
 const BELAG_NOMEN_SATZ = /teppich\w*|belag|boden|parkett|laminat\w*|dielen|vinyl|linoleum|pvc/i
 
+// PM-020 (2026-08-21): ALTBELAG_NOMEN allein erkennt nur die ERWÄHNUNG eines
+// alten Belags ("die alten Dielen …"), nicht ob er auch WEG soll — Live-Fund
+// "die alten Dielen bleiben einfach drunter liegen, die kommen nicht raus"
+// hat ALTBELAG_NOMEN ("alten Dielen") UND SCHWACHES_ENTFERNEN ("raus" im
+// selben Satz wie "Dielen"/"Teppichboden") ausgelöst, obwohl der Satz
+// explizit das Gegenteil sagt. Dieser Regex-Fallback lief zudem komplett
+// unabhängig vom KI-Signal `raum.altbelag_entfernen` — in auftrags-
+// verstaendnis.ts wird `signale.altbelagEntfernen` nur EINSEITIG auf true
+// verodert, nie zurück auf false korrigiert (siehe Kommentar dort), GPT hatte
+// hier aber schon korrekt false erkannt. Deckt außerdem die schon vorher
+// beobachteten Ausschluss-Formulierungen ab ("X lassen wir", "ohne X",
+// "keine X", "bleibt wie er ist").
+const ALTBELAG_VERNEINT =
+  /bleib\w*[^.!?\n;]{0,40}(?:liegen|drunter|drin|wie\s+(?:er|es|sie)\s+(?:ist|sind))|komm\w*\s+nicht\s+raus|nicht\s+raus\w*|(?:kein[e]?|ohne)\s+(?:altbelag|entfernung)|lassen\s+(?:wir|ihn|sie|es)[^.!?\n;]{0,20}(?:liegen|drunter|drin)/i
+
 /** Erkennt alle flexions-anfälligen Boden-Arbeiten in freiem Text. */
 export function erkenneBodenArbeiten(text: string): Set<BodenArbeit> {
   const ergebnis = new Set<BodenArbeit>()
   if (!text?.trim()) return ergebnis
 
-  const schwachMitBelag = saetze(text).some(s => SCHWACHES_ENTFERNEN.test(s) && BELAG_NOMEN_SATZ.test(s))
-  if (ALTBELAG_NOMEN.test(text) || ENTFERNEN_EINDEUTIG.test(text) || schwachMitBelag) {
+  const saetzeListe = saetze(text)
+  const altbelagNomenOhneVerneinung = saetzeListe.some(s => ALTBELAG_NOMEN.test(s) && !ALTBELAG_VERNEINT.test(s))
+  const schwachMitBelag = saetzeListe.some(s => SCHWACHES_ENTFERNEN.test(s) && BELAG_NOMEN_SATZ.test(s) && !ALTBELAG_VERNEINT.test(s))
+  if (altbelagNomenOhneVerneinung || ENTFERNEN_EINDEUTIG.test(text) || schwachMitBelag) {
     ergebnis.add('altbelag_entfernen')
   }
   return ergebnis

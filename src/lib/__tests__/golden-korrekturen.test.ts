@@ -472,6 +472,57 @@ const KORPUS: Fall[] = [
     // ("an den Wänden machen wir nix"), reiner Boden-Gewerk-Testfall.
     verboten: ['wandflächen streichen', 'deckenfläche streichen'],
   },
+  {
+    name: 'PM-020 — Alter Belag bleibt ausdrücklich liegen, kein Sockelleisten-Phantom (Kinderzimmer 2)',
+    gewerk: 'boden_parkett',
+    // PM-020, Live-Nachtest 2026-08-21. Zwei unabhängige Funde an echten
+    // Produktionsdaten (id 2738c3a1-…):
+    //
+    // 1) "Altbelag entfernen" (10,8 m²) stand trotz ausdrücklichem Ausschluss
+    //    UND einer explizit mit "Nein, bleibt" beantworteten Rückfrage im
+    //    Entwurf. Ursache war NICHT die Rückfragen-Antwortverarbeitung
+    //    (die konvertiert boolesche Antworten korrekt zu 0/1, siehe
+    //    rueckfragen-flow.ts) — sondern ein völlig unabhängiger Regex-
+    //    Fallback in boden-normalisierer.ts (erkenneBodenArbeiten), der schon
+    //    die bloße ERWÄHNUNG des alten Belags ("die alten Dielen …") und das
+    //    Wort "raus" im selben Satz als Entfernungs-Auftrag gewertet hat —
+    //    ohne jede Verneinungs-Prüfung. Dieser Regex-Fallback lief in
+    //    auftrags-verstaendnis.ts UNABHÄNGIG vom (hier korrekten) KI-Signal
+    //    `raum.altbelag_entfernen: false` und wurde nur einseitig auf true
+    //    verodert, nie zurück auf false korrigiert. Fix: ALTBELAG_VERNEINT-
+    //    Regex (bleibt liegen/drunter, kommt nicht raus, kein/ohne Altbelag …)
+    //    in boden-normalisierer.ts.
+    // 2) "Sockelleisten montieren" (13,2 lfdm = exakt voller Raumumfang)
+    //    wurde nie erwähnt — zweiter unabhängiger Beleg desselben Phantom-
+    //    Musters wie PM-013 (Wohnzimmer, 25 lfdm). Die Engine (gewerke/
+    //    boden.ts) verlangt seit PM-013 bereits ein "sockelleist"-Textsignal,
+    //    aber ein separater Vollständigkeits-Fallback (vollstaendigkeit/
+    //    boden-vorarbeiten.ts, pruefeSockelleisten) hat die Position bei
+    //    JEDER Bodenverlegung ohne jedes eigene Textsignal aus der reinen
+    //    Bodenfläche geschätzt. Fix: derselbe "sockelleist"-Textsignal-Gate
+    //    auch dort.
+    transkript:
+      'Kinderzimmer 2, 3 x 360, Teppichboden auslegen, ganz normal, kein Muster, die alten Dielen bleiben ' +
+      'einfach drunter liegen, die kommen nicht raus.',
+    raeume: [{
+      name: 'Kinderzimmer',
+      laenge: 3,
+      breite: 3.6,
+      belag: 'teppich',
+      verlegerichtung: 'standard',
+      sockelleisten: true, // GPTs Standard-Annahme-Flag — bewusst OHNE Textbeleg im Transkript
+      altbelag_entfernen: false, // GPT hat den Ausschluss korrekt erkannt
+      arbeiten: ['teppich verlegen'],
+    }],
+    exakteMengen: [
+      // Fläche 3×3,60=10,80 m², Teppich bekommt aktuell 0% Verschnitt (kein
+      // etablierter Fachwissen-Standard dafür, siehe Testfall-Dokumentation).
+      { enthaelt: 'teppichboden verlegen', menge: 10.80 },
+    ],
+    // Kernpunkt: weder die explizit ausgeschlossene Altbelag-Entfernung noch
+    // das nie erwähnte Sockelleisten-Phantom dürfen im Ergebnis auftauchen.
+    verboten: ['altbelag entfernen', 'sockelleisten'],
+  },
 ]
 
 describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {
