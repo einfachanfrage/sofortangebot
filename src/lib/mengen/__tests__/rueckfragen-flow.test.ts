@@ -196,6 +196,39 @@ describe('geschlossener Rückfragen-Flow', () => {
     expect(analyse.rueckfragen.some(frage => frage.id === 'versiegelung_wohnzimmer')).toBe(false)
   })
 
+  // PM-013, Nachtest 3 (2026-08-21): echter Live-Fund. `altbelag_vorhanden`
+  // ist ein generisches "alter Belag da"-Flag, das GPT für Boden- UND
+  // Maler-Räume gleichermaßen setzt — bei einem reinen Boden-Raum (hier:
+  // Wohnzimmer, "Eichenparkett... Boden nur, an den Wänden machen wir nix")
+  // bedeutet es "alter Bodenbelag vorhanden", nicht "alte Tapete". Die
+  // Tapete-Rückfrage lief bisher ohne den `hatStreichen`-Gate, den alle
+  // anderen Maler-Rückfragen in dieser Schleife schon hatten, und fragte
+  // deshalb "Muss die alte Tapete in 'Wohnzimmer' vorher runter?" — für einen
+  // Raum ganz ohne Wandarbeit.
+  it('PM-013, Nachtest 3: fragt nicht nach "alter Tapete" in einem reinen Boden-Raum', () => {
+    const extraktion = basis({
+      gewerk: 'maler',
+      transkript: 'Wohnzimmer, 8x4,5, Eichenparkett, Fischgrät verlegt, Boden nur, an den Wänden machen wir ' +
+        'nix. Daneben ist noch der Flur, nur Wände und Decke streichen, zweimal.',
+      raeume: [
+        {
+          name: 'Wohnzimmer', laenge: 8, breite: 4.5, hoehe: null, flaeche: null,
+          fenster: [], tueren: [], arbeiten: ['eichenparkett verlegen'],
+          altbelag_entfernen: false, altbelag_vorhanden: true, sockelleisten: true, nassbereich: false,
+        },
+        {
+          name: 'Flur', laenge: 5, breite: 1.8, hoehe: 2.6, flaeche: null,
+          fenster: [], tueren: [{ anzahl: 1, breite: 0.9 }],
+          arbeiten: ['wände streichen', 'decke streichen', 'boden abdecken', 'sockelleisten abkleben'],
+          altbelag_entfernen: false, altbelag_vorhanden: false, sockelleisten: false, nassbereich: false,
+        },
+      ],
+    })
+
+    const analyse = bereiteRueckfragenVor(extraktion)
+    expect(analyse.rueckfragen.some(frage => frage.frage.includes('alte Tapete'))).toBe(false)
+  })
+
   it('fragt bei Dachschräge im Raum die Schrägenfläche separat ab (nicht doppelt nach Maßen)', () => {
     const extraktion = basis({
       transkript: 'Treppenhaus, Wände und Dachschrägen grundieren und zweimal streichen.',

@@ -10,6 +10,7 @@ import { berechneMengen } from './engine'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../vollstaendigkeit/index'
 import type { ExtraktionSignale } from '../auftrags-verstaendnis'
 import { erkenneBelag, hatBodenArbeit } from '../boden-normalisierer'
+import { BODEN_VERLEGEN_SIGNAL } from './gewerke/boden'
 
 type RaumLike = { arbeiten?: string[]; belag?: string | null; altbelag_entfernen?: boolean; sockelleisten?: boolean }
 
@@ -71,11 +72,30 @@ export function erkenneHauptgewerkAusText(transkript: string): 'maler' | 'boden_
 function reichereBodenAn<E extends { raeume?: RaumLike[]; bereiche?: RaumLike[] }>(extraktion: E, transkript: string): E {
   const belag = erkenneBelag(transkript)
   const altbelag = hatBodenArbeit(transkript, 'altbelag_entfernen')
-  const anreichern = (r: RaumLike): RaumLike => ({
-    ...r,
-    belag: r.belag ?? belag ?? undefined,
-    altbelag_entfernen: r.altbelag_entfernen ?? altbelag,
-  })
+  const raeumeGesamt = (extraktion.raeume ?? []).length + (extraktion.bereiche ?? []).length
+
+  // PM-013, Nachtest 3 (2026-08-21): bei GENAU EINEM Raum ist der aus dem
+  // GANZEN Transkript erkannte Belag per Definition der Belag DIESES Raums —
+  // die bisherige, ungefilterte Anreicherung ist dafür gebaut und bleibt hier
+  // für den Single-Raum-Fall unverändert. Ab ZWEI Räumen gilt das nicht mehr:
+  // echter Prod-Fall (Wohnzimmer "Eichenparkett, Fischgrät verlegt", Flur
+  // daneben "nur Wände und Decke streichen ... da wird nix am Boden gemacht,
+  // der bleibt wie er ist") — der global erkannte Belag ("parkett") wurde
+  // bisher trotzdem auch dem Flur übergestülpt, weil der Flur selbst keinen
+  // eigenen belag-Wert hatte. Ergebnis: eine echte, bepreiste "Fertigparkett
+  // verlegen — Flur"-Position (9 m², exakt die Flur-Bodenfläche) trotz
+  // ausdrücklichem Ausschluss. Ab zwei Räumen zusätzlich verlangen, dass der
+  // Raum SELBST ein echtes Verlege-Signal in seiner eigenen arbeiten[]-Liste
+  // hat (dasselbe BODEN_VERLEGEN_SIGNAL, das boden.ts direkt danach für
+  // hatEchtenBelagAuftrag prüft) — sonst bleibt der Raum unangetastet.
+  const anreichern = (r: RaumLike): RaumLike => {
+    const darfAnreichern = raeumeGesamt <= 1 || (r.arbeiten ?? []).some(a => BODEN_VERLEGEN_SIGNAL.test(a))
+    return {
+      ...r,
+      belag: r.belag ?? (darfAnreichern ? belag : undefined) ?? undefined,
+      altbelag_entfernen: r.altbelag_entfernen ?? (darfAnreichern ? altbelag : false),
+    }
+  }
   return {
     ...extraktion,
     raeume: (extraktion.raeume ?? []).map(anreichern),

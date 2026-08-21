@@ -190,7 +190,21 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
     }
 
     // Tapete vorhanden aber Entfernen nicht explizit: Rückfrage
-    if ((raum.altbelag_vorhanden || raum.arbeiten.includes('tapezieren')) &&
+    //
+    // PM-013, Nachtest 3 (2026-08-21): echter Live-Fund. `altbelag_vorhanden`
+    // ist ein generisches "alter Belag da"-Flag, das GPT für BEIDE Gewerke
+    // setzt — bei Boden-Räumen heißt es "alte Bodenbelag vorhanden", bei
+    // Maler-Räumen "alte Tapete vorhanden". Diese Prüfung nahm es bisher
+    // IMMER als Tapete-Signal, unabhängig davon, ob der Raum überhaupt etwas
+    // mit Malerarbeiten zu tun hat — bei einem reinen Boden-Raum (Wohnzimmer:
+    // "Eichenparkett... Boden nur, an den Wänden machen wir nix",
+    // `altbelag_vorhanden: true` wegen des alten Parketts) entstand dadurch
+    // die fachlich falsche Rückfrage "Muss die alte Tapete... vorher runter?"
+    // für einen Raum ohne jede Wandarbeit. Fix: denselben `hatStreichen`-Gate
+    // wie alle anderen Maler-Rückfragen in dieser Schleife verlangen (Türen/
+    // Fenster/Höhe oben) — ein Raum ohne Streich-/Wandbezug ist kein
+    // Tapete-Kandidat, egal was `altbelag_vorhanden` sagt.
+    if (hatStreichen && (raum.altbelag_vorhanden || raum.arbeiten.includes('tapezieren')) &&
         !raum.altbelag_entfernen) {
       addRueckfrage(ext, {
         id: `tapete_entfernen_${( raum.name ?? "").toLowerCase().replace(/\s+/g, '_')}`,

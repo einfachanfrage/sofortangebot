@@ -63,15 +63,15 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-010 | Sockelleisten-Doppel-Falle | ✅ Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv |
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | 🟡 Q2-Vollflächenspachtelung + Grundierung fachlich korrekt; Kleinreparatur-Bug trotz Verneinung jetzt gefixt (2026-08-20, siehe Fix-Update), Live-Nachtest steht aus; PD-008 beim Designer. „Alle 7 Positionen ohne Preis"-Fund root-caused (2026-08-19): kein Matching-Bug, Nachtest lief auf dem bekannten PM-015-Testkonto ohne Maler-Katalog — siehe „Systemischer Fund" Punkt 5, Entscheidung bei Sandy, wie das Konto nachversorgt wird |
 | PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ✅ Nachtest (2026-08-20): „Sockelleisten streichen" jetzt live bestätigt behoben (14,1 lfdm, exakt Soll), nach fünf gescheiterten Versuchen. Kein Boden-Phantom, Ausschluss weiterhin sauber respektiert — Details im Archiv |
-| PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | 🟡 Nachtest (2026-08-20): 2 von 3 Fixes bestätigt (Fischgrät-Verschnitt jetzt 15%, Flur-Boden-Rückfragen weg). „Dehnungsfuge" jetzt zusätzlich über einen vom Karten-Chip unabhängigen Rohtranskript-Fallback abgesichert (2026-08-20, siehe Fix-Update) — Live-Nachtest dafür steht noch aus |
+| PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | 🟡 Fix-Update (2026-08-21): alle fünf Nachtest-3-Funde behoben (Phantom-Parkett Flur, Phantom-Sockelleisten Wohnzimmer, verschwundenes „Sockelleisten abkleben" Flur, doppelte Fischgrät-Position, falsche „Tapete"-Rückfrage). Dehnungsfuge-Fallback weiter bestätigt. Noch ohne Live-Nachtest |
 | PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | 🟡 Dubletten-Fix bestätigt (Doppelklick-Test). Echte Race Condition jetzt mit DB-Constraint geschlossen (2026-08-20, Sandys Go, siehe Fix-Update 2) — Migration live, Code-Fix grün gegen Testsuite, gezielter Gleichzeitigkeits-Nachtest steht noch aus |
 | PM-015 | Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | 🟡 Beide Ursachen gefunden und gefixt, geprüft live im Code korrekt. **Klargestellt (2026-08-19):** der PM-011-„alle Preise fehlen"-Fund war KEIN neuer, dritter Bug — derselbe Nachtest lief auf demselben, schon damals betroffenen Konto „Lisa Schein Malerbetrieb", das vor dem Fix (17.08.) angelegt wurde und dadurch nicht rückwirkend versorgt ist, siehe „Systemischer Fund" Punkt 5. Für alle NEU angelegten Konten ab 18.08. gilt der Fix nachweislich. **Korrektur (2026-08-19, siehe PM-016):** der 18.08.-Fix selbst war kaputt — der Onboarding-Insert scheiterte durch denselben Bug wie PM-016 komplett und unbemerkt (Fehler wurde nicht geprüft). „Lisa Schein" ist inzwischen live nachversorgt |
 | PM-016 | „Standardpreise importieren" auf `/preise` schlägt fehl: „Die Standardpreise konnten nicht vollständig ergänzt werden." (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | ✅ Root-Cause gefunden und gefixt (2026-08-19), Konto live nachversorgt (341 Positionen), gleicher Bug auch im Onboarding-Seeding gefixt |
-| PM-017 | Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer) | 🟡 Beide Bugs root-caused und gefixt (2026-08-21, siehe Fix-Update): „Wände tapezieren" erscheint jetzt mit exakt 31,91 m², keine Phantom-Positionen mehr. Gegen die reale GPT-Rohantwort dieses Falls nachgerechnet (nicht nur angenommen). Live-Nachtest steht aus |
-| PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | 🟡 Beide Bugs root-caused und gefixt (2026-08-21, siehe Fix-Update): „Q3" statt „Q2", Deckengrundierung (14 m²) jetzt vorhanden. Gegen die reale GPT-Rohantwort dieses Falls nachgerechnet. Live-Nachtest steht aus |
-| PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ⏳ noch nicht geprüft — neu |
-| PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ⏳ noch nicht geprüft — neu |
-| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ⏳ noch nicht geprüft — neu |
+| PM-017 | Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: „Tapete tapezieren" jetzt mit exakt 31,91 m² und korrektem Preis, keine Phantom-Positionen mehr, keine Grundierung — Details im Archiv |
+| PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv |
+| PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ❌ Ist-Ergebnis (2026-08-21): „schwieriger Untergrund" komplett unerkannt (kein Zuschlag). Zusätzlich zwei neue Funde: Raummaße falsch berechnet (1,5×1,5 statt 2×1,5 m) und keine Raumkarte im Entwurf (Titel-Suffix statt Gruppierung) |
+| PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ❌ Ist-Ergebnis (2026-08-21): „Altbelag entfernen" trotz explizit mit „Nein, bleibt" beantworteter Rückfrage im Entwurf. Zusätzlich Phantom-„Sockelleisten montieren" (13,2 lfdm), nie erwähnt — dasselbe Muster wie PM-013 |
+| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ❌ Ist-Ergebnis (2026-08-21): Wandfläche exakt Soll (48,55 m², alle 3 Kernfragen positiv). Neuer Fund: unverlangte „Balkonboden streichen"-Position (30 m²), vermutlich durch „Terrassentür" ausgelöst |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -764,10 +764,11 @@ braucht wahrscheinlich ein kleines Testskript statt eines manuellen Klicks.
 ## PM-013 — Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur)
 
 **Datum:** 2026-08-17
-**Status:** 🟡 Nachtest (2026-08-20): Fischgrät-Verschnitt (jetzt 15%) und Boden-Rückfragen-Fix beide live
-bestätigt behoben. Neuer Fund: „Dehnungsfuge" wird bei nachweislich identischem Transkript nicht
-zuverlässig erkannt (Sandy bestätigt: gleicher Wortlaut wie beim ersten Test) — der Chip-Titel-abhängige
-Fix kann so nicht zuverlässig greifen, braucht eine vom Karten-Chip unabhängige Fallback-Prüfung
+**Status:** 🟡 Fix-Update (2026-08-21): alle fünf Nachtest-3-Funde root-caused und behoben — Phantom-
+„Fertigparkett verlegen" im Flur, Phantom-„Sockelleisten montieren" im Wohnzimmer, das dadurch verschwundene
+„Sockelleisten abkleben" (Flur), die doppelte raumlose Fischgrät-Position und die falsch formulierte
+„alte Tapete"-Rückfrage. Dehnungsfuge-Fallback bleibt bestätigt wirksam. Details siehe Fix-Update unten,
+noch ohne Live-Nachtest.
 
 **Warum dieser Fall:** Deckt gleich drei bisher ungetestete Punkte gleichzeitig ab. Erstens: ein
 Mehrraum-Auftrag, bei dem die Räume nicht nur unterschiedlichen Scope haben (wie bei PM-005), sondern
@@ -1023,6 +1024,156 @@ Beweis (das galt schon beim letzten Mal) — aussagekräftiger wäre, den Fall 2
 demselben Transkript zu wiederholen und zu prüfen, ob die Dehnungsfuge jedes Mal auftaucht, unabhängig
 davon, was die Karte in der Zwischenzeit anzeigt.
 
+**Nachtest 3 (Sandy, 2026-08-21) — Dehnungsfuge-Fallback bestätigt, aber vier neue Funde:**
+
+Karte: „7 Positionen erkannt" — Flur: Wandflächen streichen 2x (33,47 m²), Deckenfläche streichen 2x
+(9 m²), Sockelleisten abkleben (12,7 lfdm), **Fertigparkett verlegen (9 m²)**; Wohnzimmer: Fertigparkett
+verlegen inkl. 15% Verschnitt (41,4 m²), **Sockelleisten montieren (25 lfdm)**; Allgemein: **Fertigparkett
+Fischgrät vollflächig verkleben (Menge prüfen, 0 Stück)**. Auffällig: diesmal KEIN eigener „Dehnungsfuge"-
+Chip auf der Karte — genau der Fall, für den Fix-Update 3 gebaut wurde. Rückfrage nur eine: „Muss die
+**alte Tapete** in 'Wohnzimmer' vorher runter?" → „Nein, drüber" beantwortet — die Wortwahl „Tapete" für
+einen reinen Boden-Raum ist fachlich falsch (sollte „alter Bodenbelag" heißen, wie in den beiden
+vorherigen Tests).
+
+Entwurf Wohnzimmer (1.876,30 €):
+- Fertigparkett verlegen inkl. 15% Verschnitt: 41,4 m² × 42,00 € = 1.738,80 € — ✅ exakt Soll, Fischgrät-
+  Fix hält weiterhin
+- **Dehnungsfuge einbauen: 1 Stück × 0,00 € (Preis fehlt)** — ✅ **jetzt im Entwurf, obwohl auf der Karte
+  diesmal gar nicht als eigener Chip gemeldet.** Genau das Szenario, für das der Rohtranskript-Fallback aus
+  Fix-Update 3 gebaut wurde — Fix bestätigt wirksam.
+- **Sockelleisten montieren: 25 lfdm × 5,50 € = 137,50 €** — nicht im Soll, im Transkript nirgends
+  erwähnt. 25 lfdm = exakt der volle Wohnzimmer-Umfang (2×(8+4,5)=25). Neuer Phantom-Fund.
+
+Entwurf Flur (794,97 €):
+- Wandflächen streichen 2×: 33,47 m² × 9,50 € = 317,96 € — exakt Soll
+- Deckenfläche streichen 2×: 9 m² × 11,00 € = 99,00 € — exakt Soll
+- **Fertigparkett verlegen: 9 m² × 42,00 € = 378,00 €** — nicht im Soll, ausdrücklich ausgeschlossen
+  („da wird nix am Boden gemacht, der bleibt wie er ist"). 9 m² = exakt die Flur-Bodenfläche (5×1,8).
+  Schwererer Phantom-Fund als die Boden-Rückfragen aus dem letzten Test (die waren mit Fix-Update 2
+  behoben) — diesmal entsteht direkt eine echte, bepreiste Position, keine überspringbare Rückfrage.
+- **„Sockelleisten abkleben" fehlt komplett** — auf der Karte mit 12,7 lfdm gemeldet, im Entwurf nicht
+  vorhanden. Auch „Boden schützen" (im vorigen Test noch da, 9 m² ohne Preis) fehlt diesmal ganz.
+
+Allgemein:
+- **„Fertigparkett Fischgrät vollflächig verkleben (Menge prüfen)": 0 Stück, Preis fehlt** — offenbar eine
+  doppelte, fehlerhafte Extraktion derselben Fischgrät-Verlegung, die im Wohnzimmer schon korrekt als
+  eigene Position steht. Landet in keinem Raum, sondern in einem raumlosen „Allgemein"-Topf. Wegen Menge 0
+  rechnerisch harmlos, aber verwirrend im fertigen Angebot.
+
+**Befund:**
+
+1. **Dehnungsfuge-Fix bestätigt.** Fix-Update 3 funktioniert wie gedacht — die Position erscheint jetzt
+   im Entwurf, obwohl die Karte sie diesmal gar nicht als Chip gemeldet hat. Das war der eigentliche Zweck
+   des Rohtranskript-Fallbacks, und er hält.
+2. **Neuer, ernster Fund: Phantom-Bodenposition im Flur.** Trotz ausdrücklichem Ausschluss bekommt der
+   Flur eine echte, bepreiste „Fertigparkett verlegen"-Position (9 m², 378 €) — dieselbe Fehlerkategorie,
+   die Fix-Update 2 schon einmal auf Rückfragen-Ebene für genau diesen Fall behoben hatte
+   (`kontext-analyzer.ts`/`anreichernBodenParkett`), jetzt aber offenbar auf der Positions-Erzeugungs-Ebene
+   erneut aufgetreten — möglicherweise ein anderer Code-Pfad mit demselben losen „boden"-Substring-Problem,
+   oder eine Nebenwirkung des neuen Dehnungsfuge-Fallbacks aus Fix-Update 3, falls dessen
+   Rohtranskript-Scan nicht sauber pro Raum eingegrenzt ist.
+3. **Neuer Fund: Phantom-Sockelleisten im Wohnzimmer**, exakt in Höhe des vollen Raumumfangs (25 lfdm) —
+   nie erwähnt, wo doch „an den Wänden machen wir nix" ausdrücklich gesagt wurde. Sieht nach einer festen
+   Annahme „neuer Boden → automatisch neue Sockelleisten" aus, unabhängig davon, ob das gesagt wurde.
+4. **Neuer Fund: „Sockelleisten abkleben" (Flur) verschwindet trotz Karten-Erkennung mit echter Menge** —
+   dieselbe „fehlende"-Fehlerfamilie wie bei PM-010/012 und der ursprünglichen Dehnungsfuge selbst, jetzt
+   an einer weiteren Stelle. Zusätzlich fehlt auch „Boden schützen" (Flur), das im letzten Test noch da war.
+5. **Neuer, kleinerer Fund: doppelte/fehlerhafte Fischgrät-Position im „Allgemein"-Topf**, Menge 0, kein
+   Raum zugeordnet — rechnerisch harmlos, aber verwirrend.
+6. **Neuer, kleinerer Fund: falsche Rückfrage-Formulierung.** „Muss die alte Tapete... vorher runter?" für
+   einen Raum, der ausschließlich Boden-Gewerk ist (kein Maler-Bezug) — sollte „alter Bodenbelag" heißen
+   wie in den beiden vorherigen Tests. Deutet auf eine Vermischung der Rückfragen-Texte zwischen den
+   Gewerken hin — genau die Art Fehler, die dieser Testfall von Anfang an gezielt prüfen sollte (siehe
+   „Warum dieser Fall").
+
+**Für Head of Product Engineering:** Die gute Nachricht zuerst — Dehnungsfuge ist jetzt zuverlässig,
+Fix-Update 3 hält. Aber der Fix scheint neue oder wiederaufgetauchte Probleme in der Nachbarschaft
+aufgedeckt oder ausgelöst zu haben, alle in derselben strukturellen Familie wie die Mehrgewerk-Themen aus
+Fix-Update 2: Boden-Signale, die room-übergreifend statt pro Raum ausgewertet werden. Bitte prüfen:
+(1) warum trotz explizitem Ausschluss eine echte, bepreiste Parkett-Position im Flur entsteht (nicht nur
+eine überspringbare Rückfrage wie beim letzten Mal); (2) woher die Sockelleisten-Position im Wohnzimmer
+kommt, obwohl nie erwähnt; (3) warum „Sockelleisten abkleben" und „Boden schützen" im Flur diesmal
+verschwinden, obwohl die Karte „Sockelleisten abkleben" korrekt mit Menge meldet; (4) die doppelte,
+raumlose Fischgrät-„Allgemein"-Position; (5) die falsche „Tapete"-Formulierung in der Boden-Rückfrage. Ein
+möglicher gemeinsamer Nenner bei (1)–(3): der neue Rohtranskript-Fallback aus Fix-Update 3 scannt jetzt das
+GANZE kombinierte Transkript — falls das nicht sauber pro Raum eingegrenzt ist, könnte er Boden- und
+Maler-Signale zwischen den beiden Räumen neu vermischen, wo Fix-Update 2 das eigentlich schon sauber
+getrennt hatte. Das ist ein Regressions-Verdacht, kein bestätigter Befund — aber als erste Spur bei der
+Fehlersuche hilfreich.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — alle fünf Nachtest-3-Funde, root-caused an echten
+Produktionsrohdaten:** Sandys Regressions-Verdacht oben war die richtige Spur, aber nicht direkt der
+Rohtranskript-Fallback aus Fix-Update 3 selbst — echte GPT-Rohdaten für genau diesen Testlauf gezogen
+(Supabase, `entwurf_aufnahmen`, id `704a58d1…`) und durch die echte Pipeline-Funktion laufen lassen. Zwei
+unabhängige Cross-Room-Bugs, beide dieselbe Fehlerfamilie wie schon Fix-Update 2 (ein GLOBALES Signal —
+ganzes Transkript oder ein bloßes Boolean-Flag — wurde ungeprüft auf JEDEN Raum angewendet, nicht nur auf
+den, der es wirklich betrifft):
+
+1. **Phantom-„Fertigparkett verlegen" im Flur.** `mehrgewerk.ts` (`reichereBodenAn`) übergab den aus dem
+   GANZEN Transkript erkannten Belag („parkett", wegen Wohnzimmers „Eichenparkett") bisher auch Räumen ohne
+   eigenen Belag-Wert — beim Flur trotz „da wird nix am Boden gemacht, der bleibt wie er ist". Fix: ab zwei
+   Räumen zusätzlich verlangen, dass der Raum SELBST ein Verlege-Signal in seiner eigenen `arbeiten[]`-Liste
+   hat (bei genau einem Raum bleibt es unverändert, dort ist „ganzes Transkript" gleichbedeutend mit „dieser
+   Raum" — bestätigt an einem bestehenden Test, der genau das braucht).
+2. **Phantom-„Sockelleisten montieren" im Wohnzimmer (25 lfdm, voller Raumumfang).** `boden.ts` vertraute
+   GPTs `sockelleisten`-Boolean blind — hier stand es auf true, obwohl „Sockelleisten" im Transkript kein
+   einziges Mal vorkommt. Sieht nach einer GPT-seitigen Standardannahme „neuer Boden → automatisch neue
+   Sockelleisten" aus. Fix: das Flag reicht allein nicht mehr, es braucht zusätzlich einen echten
+   „sockelleist…"-Treffer im Rohtranskript (bewusst NICHT die `arbeiten[]`-Liste dieses Raums geprüft — ein
+   bestehender Golden-Test, PM-002b, zeigt einen echten Fall, wo GPT „Sockelleisten werden neu montiert" im
+   Transkript korrekt umsetzt, es aber NICHT zusätzlich in `arbeiten[]` verewigt; ein `arbeiten[]`-Gate hätte
+   diesen legitimen Fall mitgestrichen — das ist mir beim ersten Versuch passiert und der volle Testlauf hat
+   es aufgedeckt).
+3. **„Sockelleisten abkleben" (Flur) verschwindet.** War kein eigener dritter Bug, sondern eine
+   Kettenreaktion von Fund 2: `aufnahme-hinweise.ts`s „Sockelleisten montieren"-Sicherheitsnetz entfernte
+   bisher JEDE „Sockelleisten abkleben"-Position im GESAMTEN Auftrag, sobald irgendein Raum eine
+   Montage-Karte hatte — die Karten-Chip-Titel selbst tragen keinen Raumbezug. Mit Fund 2 behoben verschwindet
+   der Auslöser, zusätzlich aber auch direkt gehärtet: der Filter entfernt jetzt nur noch im selben Raum wie
+   die Montage-Position (analog zu `entferneRedundantesSockelAbkleben`, das in `mehrgewerk.ts` schon richtig
+   raumscharf war). Auch der zweite Zweig (der ohne vorhandene Montage-Position sonst raten müsste, welchem
+   Raum eine raumlose Chip-Menge gehört) greift jetzt nur noch bei eindeutig einem einzigen Raum.
+4. **Doppelte, raumlose Fischgrät-Position im „Allgemein"-Topf.** Seit Fix-Update 2 rechnet die Boden-Engine
+   den Fischgrät-Verschnitt direkt in die Hauptposition ein („Fertigparkett verlegen inkl. 15% Verschnitt"),
+   ohne dass deren Text „fischgrät" oder „verkleben" enthält — die ältere, auf einen eigenen Aufpreis-Posten
+   ausgelegte Vollständigkeits-Prüfung (`boden-sonder.ts`, `pruefeFischgraet`) erkannte das nicht und legte
+   bei der hier kombinierten Mehrraum-Transkriptfläche eine zweite, raumlose „(Menge prüfen)"-Position an.
+   Fix: die Prüfung erkennt „verschnitt" jetzt zusätzlich als Beleg, dass der Verschnitt schon in der echten
+   Position steckt.
+5. **Falsche Rückfrage-Formulierung („alte Tapete" in einem reinen Boden-Raum).** `kontext-analyzer.ts`s
+   Tapete-Rückfrage lief bisher ohne den `hatStreichen`-Gate, den alle anderen Maler-Rückfragen in derselben
+   Schleife schon hatten — `altbelag_vorhanden` ist ein generisches „alter Belag da"-Flag, das GPT für Boden-
+   UND Maler-Räume gleichermaßen setzt, und wurde hier fälschlich immer als „alte Tapete" gelesen. Fix: Gate
+   ergänzt, ein Raum ohne Streich-/Wandbezug ist kein Tapete-Kandidat mehr, egal was `altbelag_vorhanden`
+   sagt.
+
+**Bewusst nicht (mit-)behoben:** die korrekte „Muss der alte Bodenbelag entfernt werden?"-Rückfrage für das
+Wohnzimmer fehlt in Nachtest 3 weiterhin komplett — nicht weil Fund 5 falsch behoben wurde, sondern weil
+`analysiereKontext` (kontext-analyzer.ts) über einen `switch(gewerk)` nur EINE Gewerke-Anreicherung pro
+Auftrag aufruft, basierend auf dem einen globalen `gewerk`-Feld („maler" hier). Bei einem echten
+Mehrgewerk-Auftrag läuft `anreichernBodenParkett` (die Funktion, die die richtige Frage stellen würde) dadurch
+nie. Das ist dieselbe offene Architektur-Frage, die schon in Fix-Update 2 („sollte `analysiereKontext`
+grundsätzlich pro Raum/Gewerk statt pro Auftrag laufen") zurückgestellt wurde — Fund 5s Fix entfernt die
+FALSCHE Frage zuverlässig, ersetzt sie aber (noch) nicht durch die richtige. Bitte separat priorisieren, falls
+gewünscht — der Fix dafür ist größer (beide Gewerke müssten `analysiereKontext` durchlaufen, nicht nur das
+primäre) und ich wollte ihn nicht ungetestet in denselben Fix mit reinziehen.
+
+**Wahrscheinlicher Bonus-Fix:** PM-020s „Phantom-Sockelleisten montieren" (13,2 lfdm, Kinderzimmer 2) ist im
+Doc selbst schon als „dasselbe Muster wie PM-013" markiert — Fund 2s Fix (`boden.ts`) dürfte diesen Fall
+strukturell mitlösen, da er exakt an derselben Stelle greift. Nicht extra verifiziert, da nicht explizit
+beauftragt — bitte bei Gelegenheit gegentesten, bevor PM-020 als behoben gilt.
+
+**Wie geprüft:** alle vier Cross-Room-Positionsbugs an den ECHTEN Produktionsrohdaten für diesen Testlauf
+verifiziert (GPTs `voll_extraktion.result` 1:1 aus der DB, durch die reale `verarbeiteExtraktion`-Pipeline
+laufen lassen) — Ergebnis danach: keine Flur-Parkett-Position, keine Wohnzimmer-Sockelleisten-Montage, Boden
+schützen + Sockelleisten abkleben im Flur beide wieder da, keine doppelte Fischgrät-Position, Fischgrät-
+Verschnitt weiterhin korrekt bei 41,4 m². Zusätzlich 7 neue, dauerhafte Tests (nicht nur der Debug-Lauf):
+`mehrgewerk.test.ts` (neue Testgruppe mit den echten PM-013-Nachtest-3-Rohdaten, 5 Assertions),
+`aufnahme-hinweise.test.ts` (raumscharfe Filterung), `rueckfragen-flow.test.ts` (Tapete-Rückfrage-Gate).
+Ganze Suite weiterhin grün (243/243, vorher 236 — 7 neue Tests, keine Regression), inkl. des bestehenden
+PM-002b-Golden-Tests, der beim ersten (zu strengen) Anlauf des Sockelleisten-Fixes tatsächlich rot wurde und
+mich auf die richtige, transkriptbasierte statt arbeiten[]-basierte Lösung gebracht hat. Wie immer: noch OHNE
+Live-Nachtest im echten Tool.
+
 ---
 
 ## PM-015 — Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (nicht geplant, live entdeckt)
@@ -1166,229 +1317,13 @@ Onboarding-Pfad selbst.
 
 ---
 
-## PM-017 — Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer)
-
-**Datum:** 2026-08-20
-**Status:** ❌ Ist-Ergebnis (2026-08-20): „Wände tapezieren" — die eine sicher verlangte Leistung, mit
-echter Menge auf der Karte erkannt — fehlt komplett im Entwurf. Zusätzlich bestätigt: drei nicht verlangte
-Phantom-Positionen mit Menge 0 (Sandy hat den Testskript-Wortlaut exakt und vollständig gesprochen, siehe
-Ist-Ergebnis unten) — zwei eigenständige Bugs in einem Fall
-
-**Warum dieser Fall:** Im Code taucht wiederholt eine Datei `maler-tapete.ts` auf (u. a. bei PM-007/PM-008
-als Fundort für Positionsnamen erwähnt), aber bisher wurde in keinem Testfall tatsächlich tapeziert statt
-gestrichen — die Tapete-Seite dieser Datei ist damit praktisch ungetestet. Zweitens: „Neuputz → Grundierung"
-ist eine der zentralen Fachwissen-Regeln, aber noch nie gegen einen ausdrücklichen Kunden-Widerspruch dazu
-geprüft worden („neuer Putz, aber trotzdem keine Grundierung gewünscht"). Beides zusammen in einem Fall.
-
-**Zum Einsprechen:**
-„Kinderzimmer, vier mal drei, Höhe zwo fünfzig. Wände tapezieren, keine Farbe. Der Putz ist frisch, aber
-Grundierung brauchen wir trotzdem nicht, das lassen wir weg. Ein Fenster, normale Größe, eine Tür, normal
-Maß.“
-
-**Soll-Lösung:**
-- Umfang: 2×(4,00+3,00)=14,00 lfm
-- Wandbrutto: 14,00×2,50=35,00 m²
-- Abzug 1 Fenster Standard (1,20 m²) + 1 Tür Standard (1,89 m²) = 3,09 m²
-- Wandfläche netto: **31,91 m²**
-- Wände tapezieren: **31,91 m²** — einlagig, keine „2x"-Vervielfachung wie bei einem Farbanstrich
-- **Keine** „Wände streichen"-Position — ausdrücklich „keine Farbe"
-- **Keine** Grundierung — ausdrücklich abgelehnt, obwohl „frischer Putz" sonst ein Grundierungs-Trigger
-  wäre (genau die Regel aus dem Fachwissen, hier bewusst durchbrochen)
-- Keine Deckenposition (nicht erwähnt)
-
-**Worauf achten:**
-- Erkennt das Tool „tapezieren" überhaupt als eigene Leistung, oder rutscht das mangels eigener Erkennung
-  in die normale „Wände streichen"-Position (falsche Leistungsbezeichnung fürs Angebot)?
-- Wird trotz „keine Farbe" trotzdem eine Anstrich-Position erzeugt (Über-Erkennung, dieselbe Fehlerfamilie
-  wie beim phantomen Bodenaustausch bei PM-010)?
-- Ist die Tapezier-Menge einlagig, oder wird sie fälschlich wie ein „2x"-Anstrich behandelt (falsche
-  Einheit/Menge)?
-- Wird die Grundierung trotz des starken „Neuputz"-Signals korrekt NICHT erzeugt, weil der ausdrückliche
-  Widerspruch („brauchen wir trotzdem nicht") Vorrang vor der sonst automatisch abgeleiteten Regel hat?
-
-**Ist-Ergebnis (Sandy, 2026-08-20):** Karte: „4 Positionen erkannt" — Wände tapezieren (30 m²), Tapete
-entfernen (0 Stück), Untergrund glätten/Spachteln (0 Stück), Raufaser streichen (0 Stück). Sandy hat auf
-Nachfrage bestätigt: sie hat exakt den oben stehenden Testskript-Wortlaut gesprochen, wie immer, ohne etwas
-wegzulassen ("hab alles so gesagt wie du es formuliert hast im testfall, mach ich IMMER so, lasse nie was
-weg"). Die drei zusätzlichen Positionen (Tapete entfernen, Untergrund glätten/Spachteln, Raufaser
-streichen) sind damit **bestätigt nicht gesagt worden** — reine Erfindung der Extraktion, kein
-Transkriptionsproblem.
-
-Damit stehen zwei unabhängige, jetzt beide bestätigte Befunde fest:
-
-Entwurf, Raummaße korrekt (3×4 m, Höhe 2,5 m, 1 Tür, 1 Fenster):
-- Boden schützen: 12 m² × 1,20 € = 14,40 € — normale Nebenleistung, exakt Soll (3×4=12 m² Bodenfläche)
-- Tapete entfernen: 0 Stück, Preis fehlt, 0,00 €
-- Untergrund glätten/Spachteln: 0 Stück, Preis fehlt, 0,00 €
-- Raufaser aufziehen: 0 Stück, Preis fehlt, 0,00 €
-- Raufaser streichen: 0 Stück, Preis fehlt, 0,00 €
-- **„Wände tapezieren" — die eine Position, die in jedem Fall verlangt wurde und auf der Karte mit
-  einer echten Menge (30 m²) erkannt wurde — taucht im fertigen Entwurf NIRGENDS auf.** Weder als eigene
-  Zeile noch eingerechnet in eine der vier oben gezeigten Positionen.
-
-**Befund:**
-
-1. **Schwerster Fund: die eigentlich verlangte Leistung „Wände tapezieren" fehlt komplett, obwohl mit
-   echter Menge erkannt.** Genau die stille Fehlerkategorie aus PM-010/PM-012/PM-013 (Karte kündigt eine
-   Leistung mit Menge an, Entwurf liefert sie nicht) — nur diesmal bei der Kernleistung selbst, nicht bei
-   einer Nebenposition. Stattdessen stehen vier andere Positionen da, alle mit Menge 0 und ohne Preis —
-   der Handwerker bekäme für das eigentliche Tapezieren der Wände gar nichts berechnet.
-2. **Neuer, jetzt bestätigter Bug: Über-Erkennung / Phantom-Positionen durch das Wort „tapezieren".**
-   Sandy hat bestätigt, exakt den Testskript-Wortlaut gesprochen zu haben — „Tapete entfernen",
-   „Untergrund glätten/Spachteln" und „Raufaser streichen" kamen darin nicht vor. Die Extraktion hat aus
-   dem einen Wort „tapezieren" einen kompletten, nicht angeforderten Standard-Workflow erfunden (Altes
-   entfernen → Untergrund glätten → Raufaser aufziehen → Raufaser streichen), analog zur PM-010-Familie
-   (dort löste „kommen raus" einen ganzen Phantom-Bodenaustausch aus). Dass alle vier Phantom-Positionen
-   zusätzlich mit Menge 0 erscheinen, macht den Effekt harmlos für die Kalkulation, aber die Erkennung
-   selbst ist falsch und würde bei anderer Formulierung reale Fehlmengen erzeugen.
-3. Keine Grundierungs-Position vorhanden — korrekt, konsistent mit dem ausdrücklichen Ausschluss im
-   Testskript. Dieser Teil des Falls funktioniert wie gewollt.
-
-**Für Head of Product Engineering:** Zwei getrennte Bugs, bitte auch getrennt fixen:
-- Punkt 1: eine mit realer Menge erkannte Kernleistung („Wände tapezieren", 30 m² auf der Karte)
-  verschwindet komplett aus dem Entwurf. Bitte wie bei PM-010/PM-012/PM-013 behandeln
-  (`fehlende`/Chip-Titel-Fallback-Familie).
-- Punkt 2: das Wort „tapezieren" triggert offenbar eine feste Vier-Schritte-Vorlage
-  (entfernen/glätten/Raufaser aufziehen/Raufaser streichen), die niemand verlangt hat. Bitte in der
-  Extraktionslogik den Auslöser dafür finden (vermutlich ein Tapete-Zusatzfeature aus `maler-tapete.ts`,
-  das immer mitgeneriert wird statt nur bei explizitem „Tapete raus"/„neu tapezieren über alter Tapete").
-
-**Fix-Update (Head of Product Engineering, 2026-08-21):** Beide Punkte root-caused — nicht gegen ein
-angenommenes GPT-Ergebnis, sondern gegen die echte, in der Produktions-DB gespeicherte GPT-Rohantwort
-zu genau diesem Testfall nachgerechnet (`entwurf_aufnahmen.voll_extraktion`, Aufnahme vom 21.08.):
-
-- **Ursache für Punkt 1:** GPT liefert `arbeiten: ["tapete aufziehen", "abdecken"]` — nicht wörtlich
-  „tapezieren". Das Wand-Signal in der Engine (`gewerke/maler.ts`) suchte nur nach dem Fragment „tapez",
-  das in „tapete aufziehen" nicht vorkommt — kein Wand-Signal, keine Wandflächen-Position, nichts, worauf
-  „Wände tapezieren" hätte aufbauen können. Zusätzlich, verschärfend: „abdecken" (Boden schützen) enthält
-  selbst die Zeichenkette „decke" (ab-DECKE-n) — das hat an gleich zwei Stellen ein falsches Decken-Signal
-  ausgelöst: einmal lokal in der Engine, vor allem aber in der GEMEINSAMEN Scope-Erkennung
-  (`arbeiten-normalisierer.ts`, von Engine UND Vollständigkeits-Prüfung genutzt) — dort wurde dem Raum
-  fälschlich „nur Decke" zugewiesen, wodurch selbst eine korrekt erkannte Wandfläche nachträglich wieder
-  herausgefiltert worden wäre. Alle drei Stellen jetzt gefixt: „tapete" zählt jetzt selbst als Wand-Signal,
-  und „decke" zählt an allen drei Stellen nicht mehr, wenn ihm direkt ein „ab" vorausgeht (dieselbe
-  Fehlerklasse, die schon einmal lokal in `maler-basis.ts` umschifft wurde — jetzt an der gemeinsamen
-  Quelle behoben, nicht nur an einer einzelnen Stelle).
-- **Ursache für Punkt 2:** Die Vier-Schritte-Vorlage in `pruefeTapezieren()` (`maler-tapete.ts`) wurde
-  IMMER komplett erzeugt, sobald „tapezieren" fiel — unabhängig davon, ob Entfernen/Glätten/Streichen
-  überhaupt gesagt wurden. Jetzt signalabhängig: „Tapete entfernen" nur bei echtem Entfernen-Signal im
-  Text, „… streichen" nur bei echtem Streich-Signal — UND eine ausdrückliche Verneinung („keine Farbe")
-  hat dabei Vorrang und unterdrückt das Streichen zuverlässig. Gilt sowohl für den Haupt-Pfad (Fläche
-  bekannt) als auch für den bisherigen Fallback ohne Fläche.
-- **Nachgerechnet gegen die echte GPT-Antwort dieses Testfalls:** Ergebnis jetzt „Boden schützen — 12 m²"
-  + „Tapete tapezieren — 31,91 m²" — keine weiteren Positionen, keine Grundierung, exakt wie im Soll (nur
-  die Positionsbezeichnung heißt „Tapete tapezieren" statt „Wände tapezieren" — inhaltlich gleichwertig,
-  nicht extra angepasst, da im Befund nicht als eigener Punkt verlangt).
-- Regressionsprüfung: alle 236 bestehenden Tests weiterhin grün, `tsc` für alle geänderten Dateien ohne
-  neue Fehler. **Noch offen:** Live-Nachtest im Browser durch dich.
-
----
-
-## PM-018 — Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer)
-
-**Datum:** 2026-08-20
-**Status:** ❌ Ist-Ergebnis (2026-08-20): Decke bekommt korrekt eine eigene Spachtel-Position (guter
-Befund) — aber Qualitätsstufe zeigt „Q2" statt der verlangten „Q3", und die Deckengrundierung fehlt
-komplett trotz „beides einmal grundieren"
-
-**Warum dieser Fall:** PM-011 hat Q2-Spachtelung nur an der Wand getestet. Q3/Q4 sind bisher komplett
-ungetestet, ebenso die Frage, ob eine Deckenspachtelung überhaupt als eigene Position mit eigener Fläche
-existiert oder in der Wandfläche verschwindet/vergessen wird — eine Lücke, die einem Handwerker sofort
-auffallen würde, weil Wand und Decke fachlich immer getrennte Flächen und damit getrennte Positionen sind.
-
-**Zum Einsprechen:**
-„Arbeitszimmer, vier mal dreieinhalb, Höhe zwo sechzig. Wände UND Decke komplett spachteln, Qualitätsstufe
-Q3, weil später Streiflicht draufscheint. Danach beides einmal grundieren und zweimal streichen. Eine Tür,
-normal Maß, ein Fenster, normale Größe.“
-
-**Soll-Lösung:**
-- Umfang: 2×(4,00+3,50)=15,00 lfm; Wandbrutto: 15,00×2,60=39,00 m²
-- Abzug 1 Fenster (1,20 m²) + 1 Tür (1,89 m²) = 3,09 m² → Wandfläche netto: **35,91 m²**
-- Deckenfläche: 4,00×3,50=**14,00 m²**
-- Spachtelarbeiten Q3 Wand: **35,91 m²**
-- Spachtelarbeiten Q3 Decke: **14,00 m²** — eigene Position mit eigener Fläche, nicht mit der Wand
-  vermischt
-- Grundierung Wand: 35,91 m² (1x)
-- Grundierung Decke: 14,00 m² (1x) — offen, ob das Tool das überhaupt als eigene Position kennt, siehe
-  „Worauf achten"
-- Wandflächen streichen 2×: 35,91 m²
-- Deckenfläche streichen 2×: 14,00 m²
-
-**Worauf achten:**
-- Wird die Qualitätsstufe korrekt als „Q3" benannt, nicht standardmäßig auf „Q2" zurückfallend?
-- Bekommt die Decke überhaupt eine eigene Spachtel-Position mit eigener Fläche (14,00 m²), oder wird sie
-  in die Wandfläche eingerechnet, verdoppelt oder schlicht vergessen?
-- Existiert für die Decke überhaupt eine eigene Grundierungs-Position, oder kennt das Tool Grundierung
-  bisher nur für Wände? Falls Letzteres: kein Blocker, aber ein Punkt für Head of Product Engineering.
-- Werden Wand- und Deckenzahlen sauber getrennt gehalten (kein Verwechseln der beiden Flächen, wie es bei
-  Sonderfällen wie PM-007/PM-008 schon an anderer Stelle passiert ist)?
-
-**Ist-Ergebnis (Sandy, 2026-08-20):** Karte: „8 Positionen erkannt" — Wände spachteln (35 m²), Decke
-spachteln (14 m²), Wände grundieren (35 m²), Decke grundieren (14 m²), Wände streichen (35 m²), Decke
-streichen (14 m²), Boden schützen (0 m²), Spachtelarbeiten Q2 (0 Stück) — schon auf der Karte fällt auf,
-dass „Q2" statt „Q3" auftaucht, obwohl im Transkript ausdrücklich „Qualitätsstufe Q3" gesagt wurde.
-
-Entwurf, Raummaße exakt (3,5×4 m, Höhe 2,6 m, 1 Tür, 1 Fenster):
-- Wandflächen streichen 2×: 35,91 m² × 9,50 € = 341,14 € — exakt Soll
-- Deckenfläche streichen 2×: 14 m² × 11,00 € = 154,00 € — exakt Soll
-- Boden schützen: 14 m² × 1,20 € = 16,80 € — normale Nebenleistung
-- Sockelleisten abkleben: 14,1 lfdm × 0,80 € = 11,28 € — exakt Soll (15,00 − 0,90 Türbreite)
-- **Spachtelarbeiten „Q2" (Wand): 35,91 m² × 9,00 € = 323,19 €** — Menge exakt Soll, aber Qualitätsstufe
-  falsch (verlangt: Q3)
-- **Spachtelarbeiten „Q2" (Decke): 14 m² × 9,00 € = 126,00 €** — ✅ die Decke bekommt tatsächlich eine
-  eigene Spachtel-Position mit eigener Fläche, exakt wie im Soll erhofft. Auch hier aber „Q2" statt „Q3"
-- **Voranstrich/Grundierung: 35,91 m² × 6,00 € = 215,46 €** — nur EINE Grundierungs-Position, für die
-  Wand. **Keine Deckengrundierung** trotz „beides einmal grundieren" im Transkript.
-
-**Befund:**
-
-1. **Falsche Qualitätsstufe: Q2 statt der ausdrücklich verlangten Q3.** Beide Spachtelpositionen (Wand
-   und Decke) zeigen „Q2", obwohl im Transkript klar „Qualitätsstufe Q3" gesagt wurde — die Menge stimmt,
-   aber die Qualitätsstufe scheint auf einen festen Standardwert (Q2) zu fallen, statt aus dem Gesagten
-   übernommen zu werden. Fachlich genau die Verwechslung, vor der das eigene Fachwissen ausdrücklich warnt
-   („Diese zwei niemals verwechseln" — dort zwar zu Kleinreparatur/Vollflächenspachtelung gesagt, aber das
-   Prinzip gilt genauso zwischen den Qualitätsstufen selbst: Q2 und Q3 sind unterschiedlich viel Arbeit und
-   unterschiedlich bepreist).
-2. **Deckengrundierung fehlt komplett**, obwohl „beides" (Wand UND Decke) ausdrücklich grundiert werden
-   sollte. Damit ist die „Worauf achten"-Frage von oben beantwortet: das Tool kennt aktuell keine eigene
-   Grundierungs-Position für die Decke, nur für die Wand.
-3. **Gute Nachricht:** Die Decke bekommt korrekt eine eigene Spachtel-Position mit eigener, richtiger
-   Fläche (14 m²) — wird nicht mit der Wandfläche vermischt, verdoppelt oder vergessen. Genau das war die
-   größere Sorge dieses Testfalls, und sie hat sich nicht bestätigt.
-
-**Für Head of Product Engineering:** (1) Bitte prüfen, warum die im Transkript genannte Qualitätsstufe
-(„Q3") nicht übernommen wird und stattdessen „Q2" als Standard erscheint — vermutlich ein fest codierter
-Default statt einer echten Extraktion der genannten Stufe. (2) Bitte klären, ob Grundierung grundsätzlich
-nur für Wände vorgesehen ist (dann bewusste Design-Entscheidung, aber bitte dann auch nicht als
-„beides grundieren" im Transkript unwidersprochen stehen lassen) oder ob eine eigene Deckengrundierung
-fachlich ergänzt werden sollte.
-
-**Fix-Update (Head of Product Engineering, 2026-08-21):** Beide Punkte root-caused und gefixt, gegen die
-echte GPT-Rohantwort dieses Testfalls aus der Produktions-DB nachgerechnet (nicht nur angenommen):
-
-- **Punkt 1 (Q2 statt Q3):** In `pruefeSpachtelarbeiten()` (`maler-extras.ts`) stand die Prüfung, OB eine
-  Qualitätsstufe im Text genannt wurde, schon — nur um zu entscheiden, ob eine „Q2 angenommen"-Warnung
-  dazukommt. Welche Stufe tatsächlich genannt wurde, floss nie in die Positionsbezeichnung selbst ein —
-  dort stand hart codiert immer „Q2". Jetzt wird dieselbe Erkennung (Q2/Q3/Q4 aus dem Text, wie im
-  Schwesterfall `pruefeSpachteln()` schon korrekt gemacht) auch tatsächlich in die Bezeichnung übernommen.
-- **Punkt 2 (Deckengrundierung fehlt):** Design-Entscheidung war keine — die Wand-Grundierung war schlicht
-  die einzige, die je gebaut wurde. `pruefeGrundierung()` (`maler-basis.ts`) prüft jetzt zusätzlich, ob im
-  Ergebnis eine eigene Deckenfläche existiert, und legt dafür (unter derselben Voraussetzung wie bei der
-  Wand — Grundierung wurde im Text tatsächlich erwähnt) eine eigene „Voranstrich / Grundierung Decke"
-  Position an.
-- **Nachgerechnet gegen die echte GPT-Antwort dieses Testfalls:** Ergebnis jetzt Grundierung Wand
-  35,91 m² + Grundierung Decke 14 m² + Wände streichen 2× 35,91 m² + Decke streichen 2× 14 m² + Boden
-  schützen 14 m² + Sockelleisten abkleben 14,1 lfdm + Spachtelarbeiten **Q3** (Wand) 35,91 m² +
-  Spachtelarbeiten **Q3** (Decke) 14 m² — exakt wie im Soll, keine Abweichung.
-- Regressionsprüfung: alle 236 bestehenden Tests weiterhin grün, `tsc` für alle geänderten Dateien ohne
-  neue Fehler. **Noch offen:** Live-Nachtest im Browser durch dich.
-
----
-
 ## PM-019 — Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC)
 
 **Datum:** 2026-08-20
-**Status:** ⏳ noch nicht geprüft — neuer Testfall
+**Status:** ❌ Ist-Ergebnis (2026-08-21): Erschwerniszuschlag „schwieriger Untergrund" fehlt komplett
+(weder Karte noch Entwurf) — Kernfrage des Testfalls damit klar beantwortet: nicht erkannt. Zusätzlich zwei
+schwerwiegende Neufunde: falsche Raummaße (1,5×1,5 statt 2×1,5 gerechnet) und fehlende Raum-Gruppierung im
+Entwurf
 
 **Warum dieser Fall:** Das Fachwissen nennt drei Erschwernis-Trigger: Raumhöhe > 3 m (mehrfach getestet,
 z. B. PM-008), Altbau (PM-006), und „schwieriger Untergrund" — Letzterer bisher in keinem einzigen Testfall
@@ -1419,12 +1354,59 @@ Fenster.“
   eher eine Rückfrage zur Untergrundvorbereitung/Spachtelung erwarten, statt nur einen Zuschlag draufzusetzen?
   Kein Fehler, wenn das Tool nur den Zuschlag bringt, aber ein Gedanke für den Designer/die Rückfragen-Logik.
 
+**Ist-Ergebnis (Sandy, 2026-08-21):** Karte: „3 Positionen erkannt" — Wandflächen streichen 2x, Boden
+schützen, Sockelleisten abkleben, Tür: 1. **Kein „Erschwerniszuschlag" irgendwo auf der Karte.**
+
+Entwurf: alle drei Positionen tragen im Titel einzeln den Zusatz „— Gästeklo" (z. B. „Wandflächen
+streichen 2x — Gästeklo"), statt dass eine gemeinsame Raum-Überschrift/-Karte mit Maßen darüber steht, wie
+bei jedem anderen bisherigen Test (vgl. „🚪Flur ... Raummaße ... Raumform" bei PM-013). Sandys eigene
+Einschätzung dazu: der Raum scheint nicht richtig als eigenes Objekt angelegt/ausgewählt worden zu sein.
+
+- Wandflächen streichen 2x — Gästeklo: 12,51 m² × 9,50 € = 118,84 €
+- Boden schützen — Gästeklo: 2,25 m² × 1,20 € = 2,70 €
+- Sockelleisten abkleben — Gästeklo: 5,1 lfdm × 0,80 € = 4,08 €
+- **Keine Erschwerniszuschlag-Position** — weder als eigene Zeile noch als Rückfrage
+
+Nachgerechnet, was diesen drei Zahlen zugrunde liegt: sie passen exakt zu einem Raum **1,50×1,50 m**
+(Umfang 6,00 lfm, Wandbrutto 6,00×2,40=14,40 m², minus 1 Tür Standard 1,89 m² = 12,51 m² ✓; Bodenfläche
+1,50×1,50=2,25 m² ✓; Sockelleisten 6,00−0,90 Türbreite=5,10 lfdm ✓) — **nicht zu den diktierten „zwei mal
+eins fünfzig" (2,00×1,50 m).** Die Soll-Lösung wäre 16,80 m² Wandbrutto, 14,91 m² Wandfläche, 3,00 m²
+Bodenfläche, 6,10 lfdm Sockelleisten gewesen. Das Tool hat also offenbar „zwei" als zweites „eins fünfzig"
+verstanden bzw. eine der beiden Maßangaben verloren — ein quadratischer statt eines rechteckigen Raums.
+
+**Befund:**
+
+1. **Kernfrage des Testfalls beantwortet: „schwieriger Untergrund" wird nicht als Erschwernis-Trigger
+   erkannt.** Anders als bei Raumhöhe (PM-008) und Altbau (PM-006) gibt es für diesen dritten,
+   fachwissenmäßig gleichwertigen Trigger aktuell offenbar überhaupt keine Erkennung — weder auf der Karte
+   noch im Entwurf, keine Spur, kein Aufschlag.
+2. **Neuer, unabhängiger und schwerwiegender Fund: falsche Raummaße.** Der Raum wurde als 1,50×1,50 m
+   statt der diktierten 2,00×1,50 m gerechnet — alle drei Positionen (Wand, Boden, Sockelleisten) sind
+   dadurch zu klein. Bei diesem Mini-Raum nur ein paar Euro Differenz, aber bei einem großen Raum wäre der
+   gleiche Fehler (eine Maßangabe geht verloren, wird durch die andere ersetzt) ein vierstelliger
+   Rechenfehler.
+3. **Neuer Fund: keine Raum-Gruppierung im Entwurf.** Statt einer gemeinsamen Raumkarte mit Maßen (wie bei
+   jedem anderen Testfall) trägt jede einzelne Position nur einen angehängten „— Gästeklo"-Titel-Suffix.
+   Möglicherweise dieselbe Ursache wie Punkt 2 — wenn der Raum nicht sauber als eigenes Objekt angelegt
+   wurde, käme sowohl die falsche Maß-Zuordnung als auch das Fehlen der Raumkarte aus derselben Quelle.
+
+**Für Head of Product Engineering:** Drei Themen, vermutlich zwei davon zusammenhängend:
+(1) „Schwieriger Untergrund"/„uneben und bröckelig" fehlt komplett als Erschwernis-Trigger — bitte
+ergänzen, analog zu Höhe/Altbau. (2) + (3) bitte zusammen untersuchen: der Raum „Gästeklo" wurde mit
+1,50×1,50 statt 2,00×1,50 m gerechnet UND ohne eigene Raumkarte im Entwurf dargestellt (Titel-Suffix statt
+Gruppierung) — das riecht nach dem Raum-Anlegen selbst, das hier fehlgeschlagen oder auf einen Fallback
+zurückgefallen ist, nicht nach einem reinen Rechenfehler. Bitte gegen die echte GPT-Rohantwort dieses
+Testfalls prüfen, ob beide Räume (Höhe „zwo vierzig", Maße „zwei mal eins fünfzig") korrekt ankamen oder
+ob schon dort eine Maßangabe verlorenging.
+
 ---
 
 ## PM-020 — Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2)
 
 **Datum:** 2026-08-20
-**Status:** ⏳ noch nicht geprüft — neuer Testfall
+**Status:** ❌ Ist-Ergebnis (2026-08-21): „Altbelag entfernen" steht trotz ausdrücklichem Ausschluss UND
+explizit mit „Nein, bleibt" beantworteter Rückfrage im Entwurf, mit echter Menge (10,8 m²). Zusätzlich
+Phantom-„Sockelleisten montieren" (13,2 lfdm), nie erwähnt — dieselbe Fehlerfamilie wie bei PM-013
 
 **Warum dieser Fall:** Verschnitt wurde bisher nur für Laminat/Vinyl (5 % gerade, PM-004/PM-009) und Parkett
 Fischgrät (15 %, PM-013) getestet — nie für Teppich, für den das Fachwissen keinen expliziten Standard-Satz
@@ -1456,12 +1438,57 @@ Dielen bleiben einfach drunter liegen, die kommen nicht raus.“
 - Wird trotz des Wortes „Boden" im Nebensatz keine unverlangte zusätzliche Boden-Position erfunden
   (Verwandtschaft zum PM-010-Phantom-Bug)?
 
+**Ist-Ergebnis (Sandy, 2026-08-21):** Karte: „3 Positionen erkannt" — Teppichboden verlegen (10,8 m²),
+Sockelleisten montieren (13,2 lfdm), Altbelag entfernen (10,8 m²). Rückfrage: „Muss der alte Bodenbelag in
+'Kinderzimmer' entfernt werden?" → **„Nein, bleibt" beantwortet.**
+
+Entwurf:
+- Teppichboden verlegen: 10,8 m² × 14,00 € = 151,20 € — Fläche exakt Soll (3,00×3,60=10,80 m²), **0%
+  Verschnitt angesetzt** (reine Rohfläche, kein Aufschlag). Kein hartes Soll hierzu, aber jetzt als
+  Referenzwert dokumentiert: Teppich bekommt aktuell keinerlei Verschnittzuschlag.
+- **Sockelleisten montieren: 13,2 lfdm × 5,50 € = 72,60 €** — nie erwähnt im Transkript. 13,2 lfdm = exakt
+  der volle Raumumfang (2×(3+3,6)=13,2). Neuer Beleg für dasselbe Phantom-Muster wie bei PM-013
+  (Wohnzimmer): eine Bodenverlegung scheint automatisch eine „Sockelleisten montieren"-Position mit vollem
+  Raumumfang zu erzeugen, unabhängig davon, ob das gesagt wurde.
+- **Altbelag entfernen: 10,8 m² × 0,00 € (Preis fehlt)** — steht trotzdem im Entwurf, mit echter Fläche
+  (nicht 0), **obwohl sowohl der Transkript-Ausschluss („die kommen nicht raus") als auch die explizit mit
+  „Nein, bleibt" beantwortete Rückfrage beide dagegen sprechen.** Schwerster Fund dieses Falls: hier wird
+  nicht nur eine Formulierung nicht erkannt, sondern eine bereits eindeutig beantwortete Rückfrage
+  im Ergebnis schlicht ignoriert.
+
+**Befund:**
+
+1. **Schwerster Fund: die explizit beantwortete Rückfrage wird nicht respektiert.** Sandy hat aktiv „Nein,
+   bleibt" angeklickt — trotzdem taucht „Altbelag entfernen" mit voller Fläche (10,8 m²) im Entwurf auf.
+   Das ist kein Erkennungsproblem mehr (die Frage wurde ja korrekt gestellt und beantwortet), sondern ein
+   Bug darin, wie die Antwort in die Positions-Generierung zurückfließt — oder gar nicht zurückfließt.
+   Würde ein Handwerker das nicht bemerken (Preis fehlt macht es finanziell harmlos, aber die Zeile allein
+   sorgt für Verwirrung beim Kunden), würde er für eine Leistung kalkulieren, die ausdrücklich nicht
+   gewünscht ist.
+2. **Bestätigtes Muster: Phantom-„Sockelleisten montieren" bei jeder Bodenverlegung.** Zweiter unabhängiger
+   Beleg nach PM-013 (Wohnzimmer, 25 lfdm) — hier 13,2 lfdm, wieder exakt der volle Raumumfang. Scheint eine
+   feste Annahme „neuer Boden → automatisch neue Sockelleisten" zu sein, unabhängig vom Transkript.
+3. **Info, kein Bug:** Teppich bekommt aktuell 0% Verschnitt. Das Fachwissen kennt für Teppich keinen
+   etablierten Standardsatz — daher kein hartes Soll, aber wert, mit Sandys fachlicher Einschätzung
+   abzugleichen, ob 0% realistisch ist oder ob auch hier ein kleiner Aufschlag branchenüblich wäre.
+
+**Für Head of Product Engineering:** Zwei Themen. (1) **Priorität hoch:** die Rückfragen-Antwort „Nein,
+bleibt" fließt nicht (oder nicht zuverlässig) in die finale Positionsliste zurück — bitte prüfen, ob das
+isoliert bei „Altbelag entfernen" auftritt oder strukturell alle Rückfragen-Antworten betrifft, die eine
+Position eigentlich unterdrücken sollen. (2) Dasselbe „Sockelleisten montieren"-Phantom wie bei PM-013 —
+jetzt zweimal unabhängig bestätigt, sollte sich mit vertretbarem Aufwand an einer Stelle fixen lassen: die
+Position wird offenbar automatisch bei jeder Boden-Neuverlegung erzeugt, ohne eigenes Signal im Transkript
+zu prüfen.
+
 ---
 
 ## PM-021 — Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche)
 
 **Datum:** 2026-08-20
-**Status:** ⏳ noch nicht geprüft — neuer Testfall
+**Status:** ❌ Ist-Ergebnis (2026-08-21): Alle drei Kernfragen positiv beantwortet (individuelle
+Öffnungsmaße, „1x" statt „2x", Terrassentür korrekt erkannt — Wandfläche exakt Soll 48,55 m²). Aber neuer,
+kurioser Fund: komplett unverlangte „Balkonboden streichen"-Position (30 m²), vermutlich durch das Wort
+„Terrassentür" ausgelöst
 
 **Warum dieser Fall:** Bisherige Tests hatten immer gleich große Fenster/Türen mit Standardmaßen oder
 höchstens EINE individuell genannte Größe. Dieser Fall hat zwei unterschiedlich große Fenster UND zwei
@@ -1503,6 +1530,52 @@ mal zwo zehn. Wände streichen, einmal drüber reicht.“
   statt „Tür"), oder fällt sie durchs Raster und wird gar nicht abgezogen?
 - Ergibt sich aus dieser Gegenüberstellung (sehr kleines Fenster vs. sehr große Tür im selben Raum) ein
   guter, konkreter Anlass, die VOB-Übermessungsregel endlich zu entscheiden und umzusetzen?
+
+**Ist-Ergebnis (Sandy, 2026-08-21):** Karte: „4 Positionen erkannt" — Wandflächen streichen 1x (48,55 m²),
+Boden schützen (30 m²), Sockelleisten abkleben (19,1 lfdm), Balkonboden streichen (30 m²). Entwurf,
+Raummaße korrekt (5×6 m, Höhe 2,6 m, 2 Türen, 2 Fenster):
+
+- **Wandflächen streichen 1x: 48,55 m² × 6,00 € = 291,30 €** — ✅ **exakt Soll.** Rückrechnung bestätigt:
+  57,20 m² Wandbrutto minus alle vier Öffnungen einzeln (1,68+0,88+1,89+4,20=8,65 m²) = 48,55 m². Damit
+  sind gleich drei Kernfragen des Falls positiv beantwortet: alle vier Öffnungen wurden mit ihren
+  INDIVIDUELLEN Maßen abgezogen (kein Pauschal-Standardmaß), „einmal streichen" wurde korrekt als 1×
+  übernommen (nicht der sonst übliche 2×-Default), und die Terrassentür wurde trotz ungewöhnlicher
+  Bezeichnung korrekt als Tür erkannt und mit ihrem echten Maß (2,00×2,10=4,20 m²) abgezogen.
+- Boden schützen: 30 m² × 1,20 € = 36,00 € — normale Nebenleistung, exakt Raumfläche (5×6=30 m²)
+- **Sockelleisten abkleben: 19,1 lfdm × 0,80 € = 15,28 €** — ebenfalls korrekt: 22,00 lfm Umfang minus
+  BEIDER Türbreiten (0,90+2,00=2,90) = 19,10 lfdm. Auch hier wird die Terrassentür korrekt mit ihrer
+  eigenen, größeren Breite berücksichtigt, nicht mit der Standard-Türbreite.
+- **Balkonboden streichen: 30 m² × 0,00 € (Preis fehlt)** — komplett unverlangt. Im Transkript kommt weder
+  „Balkon" noch „Terrasse" als eigener Ort vor, nur „Terrassentür" als Türbezeichnung. Menge (30 m²) ist
+  exakt die Fläche des Raums selbst (5×6), nicht irgendeine plausible Balkongröße. Sieht so aus, als hätte
+  das Wort „Terrassentür" die Annahme „hier gibt's auch einen Balkon/eine Terrasse, die separat gestrichen
+  werden muss" ausgelöst und dafür einfach die Raumfläche wiederverwendet.
+- Zur bekannten, offenen VOB-Übermessungsfrage: 48,55 m² bestätigt, dass die Übermessungsregel weiterhin
+  nicht angewendet wird (wäre mit Regel 49,43 m²) — wie erwartet, das bewusst zurückgestellte Thema bleibt
+  unverändert, kein neuer Fund, aber ein sauberes Rechenbeispiel für später.
+
+**Befund:**
+
+1. **Gute Nachricht, gleich dreifach:** individuelle Öffnungsmaße, „1x statt 2x"-Anstrich und die korrekt
+   erkannte Terrassentür funktionieren alle einwandfrei — die Wandfläche trifft exakt die Soll-Lösung.
+   Sowohl bei der Wandflächen- als auch bei der Sockelleisten-Berechnung wird die Terrassentür korrekt mit
+   ihrer eigenen, größeren Breite (statt der Standard-Türbreite) berücksichtigt.
+2. **Neuer, kurioser Fund: Phantom-„Balkonboden streichen".** Eine komplett unverlangte Position taucht auf,
+   vermutlich ausgelöst durch das Wort „Terrassentür" — analog zu anderen Ein-Wort-Über-Erkennungsbugs
+   dieser Testreihe (PM-010: „kommen raus" → Phantom-Bodenaustausch; PM-017: „tapezieren" → vier
+   Phantom-Positionen), nur diesmal mit einer kompletten Fehlinterpretation des Ortes (ein Balkon, der nie
+   erwähnt wurde). Wegen fehlendem Preis rechnerisch harmlos, aber eine Zeile im fertigen Angebot, die
+   fachlich keinen Sinn ergibt und Kunden wie Handwerker verwirren würde.
+3. VOB-Übermessung weiterhin nicht angewendet — erwartungsgemäß, bekannter, bewusst niedrig priorisierter
+   Punkt, kein neuer Fund.
+
+**Für Head of Product Engineering:** Die Kernlogik dieses Falls (individuelle Öffnungsmaße, 1×/2×-Anstrich,
+Terrassentür-Erkennung) funktioniert sauber, keine Änderung nötig. Bitte nur die „Balkonboden
+streichen"-Phantom-Position untersuchen — vermutlich löst das Wort „Terrassentür" irgendwo eine
+Zusatzannahme „es gibt einen Balkon" aus, die hier fachlich nicht zutrifft (eine Terrassentür bedeutet nicht
+zwingend einen Balkon, und selbst wenn, wäre dessen Fläche nicht identisch mit der Raumfläche). Die
+VOB-Übermessungsregel bleibt wie besprochen bewusst zurückgestellt, hier nur als sauberes Beispiel
+dokumentiert, keine Handlung nötig.
 
 ---
 

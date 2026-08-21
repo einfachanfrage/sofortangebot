@@ -141,6 +141,30 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
     expect(ergebnis.some(p => /sockelleisten montieren|sockelleisten entfernen/i.test(p.beschreibung))).toBe(false)
   })
 
+  // PM-013, Nachtest 3 (2026-08-21): echter Live-Fund. Die Karten-Chip-Titel
+  // tragen selbst keinen Raumbezug (siehe generiere-positionen/route.ts,
+  // `erkannteArbeiten` ist eine flache, deduplizierte Liste über alle
+  // Aufnahmen) — das "sockelleisten montieren"-Sicherheitsnetz entfernte
+  // deshalb bisher JEDE "Sockelleisten abkleben"-Position im GESAMTEN
+  // Auftrag, sobald IRGENDEIN Raum eine Montage-Karte hatte. Live traf das
+  // eine völlig unbeteiligte "Sockelleisten abkleben — Flur"-Position, nur
+  // weil das Wohnzimmer eine (fehlerhafte) Sockelleisten-Montage-Karte hatte.
+  it('entfernt "Sockelleisten abkleben" nur im selben Raum wie die Montage-Position — PM-013 Nachtest 3', () => {
+    const ergebnis = ergaenzeAusAufnahmeHinweisen([
+      pos('Wandflächen streichen — Flur', 33.47),
+      pos('Deckenfläche streichen — Flur', 9),
+      pos('Sockelleisten abkleben — Flur', 12.7, 'lfdm'),
+      pos('Fertigparkett verlegen inkl. 15% Verschnitt — Wohnzimmer', 41.4),
+      pos('Sockelleisten montieren — Wohnzimmer', 25, 'lfdm'),
+    ], ['Wandflächen streichen', 'Deckenfläche streichen', 'Sockelleisten abkleben', 'Fertigparkett verlegen', 'Sockelleisten montieren'],
+      'Wohnzimmer, 8x4,5, Eichenparkett, Fischgrät verlegt. Flur daneben, nur Wände und Decke streichen.')
+
+    const abklebenFlur = ergebnis.find(p => /sockelleisten abkleben/i.test(p.beschreibung))
+    expect(abklebenFlur, `Flur-Abkleben fehlt — hat: ${ergebnis.map(p => p.beschreibung).join(' | ')}`).toBeDefined()
+    expect(abklebenFlur!.beschreibung).toContain('Flur')
+    expect(abklebenFlur!.menge).toBe(12.7)
+  })
+
   it('setzt für vollflächig verklebtes Fertigparkett den exakten Katalogtitel', () => {
     const ergebnis = normalisiereBodenPositionenAusAufnahme([
       pos('Fertigparkett verlegen — Wohnzimmer', 32),

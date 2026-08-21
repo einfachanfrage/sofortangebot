@@ -137,7 +137,27 @@ export function bodenEngine(daten: any): MengenErgebnis {
       })
     }
 
-    if (sockelleisten && umfang) {
+    // PM-013, Nachtest 3 (2026-08-21): GPTs `sockelleisten`-Flag ist ein
+    // reines Boolean ohne Textbeleg-Pflicht — bei diesem Testfall stand es
+    // für das Wohnzimmer auf true, obwohl im Transkript nie "Sockelleisten"
+    // vorkam und ausdrücklich "an den Wänden machen wir nix" gesagt wurde.
+    // Menge exakt 25 lfdm = voller Wohnzimmer-Umfang (2×(8+4,5)) — sieht nach
+    // einer GPT-seitigen Standardannahme "neuer Boden → automatisch neue
+    // Sockelleisten" aus. Gleiches Prinzip wie bei den Schutz-/Abklebearbeiten
+    // in maler-basis.ts (pruefeStreichenBasis): keine ungefragte
+    // Zusatzposition — das Flag allein reicht nicht, es braucht zusätzlich
+    // ein eigenes Textsignal.
+    //
+    // Bewusst gegen das ROHTRANSKRIPT geprüft, nicht gegen die arbeiten[]-
+    // Liste dieses Raums: PM-002b (Golden-Test) zeigt einen echten Fall, bei
+    // dem der Nutzer "Sockelleisten werden neu montiert" sagt, GPT das aber
+    // NICHT zusätzlich in arbeiten[] verewigt (dort steht nur "vinyl
+    // verlegen") — ein arbeiten[]-Gate hätte diesen legitimen Fall
+    // fälschlich mitgestrichen. Kein perfektes Pro-Raum-Signal bei mehreren
+    // Räumen, aber strikt besser als das bisherige blinde Vertrauen auf ein
+    // unbelegtes Boolean.
+    const hatSockelleistenSignal = /sockelleist/i.test(daten.transkript ?? '')
+    if (sockelleisten && hatSockelleistenSignal && umfang) {
       // PM-002: Türen unterbrechen die Sockelleiste — genau wie beim Maler
       // (maler.ts), nur bisher hier nie abgezogen worden. Gleiche Funktion
       // wie dort, damit das nicht wieder auseinanderdriftet.

@@ -149,6 +149,24 @@ export function ergaenzeAusAufnahmeHinweisen(
     }
   }
 
+  // PM-013, Nachtest 3 (2026-08-21): echter Live-Fund. Beide Zweige unten
+  // liefen bisher komplett raum-blind über den GANZEN (Mehrraum-)Auftrag,
+  // weil die Karten-Chip-Titel selbst keinen Raumbezug tragen
+  // (generiere-positionen/route.ts baut `erkannteArbeiten`/`titel` als
+  // flache, deduplizierte Liste über alle Aufnahmen — kein "— Raum"-Suffix).
+  // Der erste Zweig entfernte dadurch JEDE "Sockelleisten abkleben"-Position
+  // im gesamten Auftrag, sobald IRGENDEIN Raum eine Montage-Karte hatte —
+  // live traf das eine völlig unbeteiligte "Sockelleisten abkleben —
+  // Flur"-Position, nur weil das Wohnzimmer (falsch, siehe boden.ts-Fix
+  // daneben) eine Sockelleisten-Montage-Karte hatte. Fix: nur im selben Raum
+  // wie die Montage-Position selbst entfernen (gleiches Prinzip wie
+  // entferneRedundantesSockelAbkleben in mehrgewerk.ts). Der zweite Zweig
+  // (ohne vorhandene Montage-Position) müsste sonst raten, WELCHEM Raum die
+  // raumlose Chip-Menge gehört — das nur noch zulassen, wenn der Auftrag
+  // eindeutig einen einzigen Raum betrifft.
+  const raumVon = (p: BerechnetePosition | undefined): string | null =>
+    p?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim().toLocaleLowerCase('de-DE') ?? null
+
   if (/sockelleisten montieren/i.test(hinweise)) {
     const expliziteMenge = expliziteSockelMenge
     const montage = ergebnis.find(p => /sockelleisten montieren/i.test(p.beschreibung))
@@ -158,8 +176,12 @@ export function ergaenzeAusAufnahmeHinweisen(
         montage.berechnungsweg = `${expliziteMenge} lfdm aus Aufnahme`
         montage.annahmen = []
       }
-      return ergebnis.filter(p => !/sockelleisten abkleben/i.test(p.beschreibung))
+      const montageRaum = raumVon(montage)
+      return ergebnis.filter(p => !(/sockelleisten abkleben/i.test(p.beschreibung) && raumVon(p) === montageRaum))
     }
+
+    const alleRaeume = new Set(ergebnis.map(raumVon).filter((r): r is string => r !== null))
+    if (alleRaeume.size > 1) return ergebnis
 
     const abkleben = ergebnis.find(p => /sockelleisten abkleben/i.test(p.beschreibung))
     const menge = expliziteMenge && expliziteMenge > 0 ? expliziteMenge : abkleben?.menge

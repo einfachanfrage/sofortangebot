@@ -185,6 +185,89 @@ describe('PM-010 — Sockelleisten-only-Auftrag erfindet keinen Bodenaustausch m
   })
 })
 
+describe('PM-013, Nachtest 3 — Zwei Räume, Maler-primär + Boden-sekundär, keine Cross-Room-Phantome', () => {
+  // ECHTER Prod-Fall (Supabase entwurf_aufnahmen, id 704a58d1…, 2026-08-21,
+  // Sandys dritter Live-Nachtest). GPTs eigene Rohantwort — bewusst NICHT von
+  // Hand nachgebaut, 1:1 aus der DB kopiert (voll_extraktion.result).
+  //
+  // Zeigt zwei unabhängige Cross-Room-Bugs auf einmal, beide mit derselben
+  // Wurzel wie schon in Fix-Update 2 (kontext-analyzer.ts,
+  // anreichernBodenParkett): ein GLOBALES Signal (aus dem GANZEN Transkript
+  // oder einem bloßen Boolean-Flag) wurde ungeprüft auf JEDEN Raum
+  // angewendet, statt nur auf den Raum, der es wirklich betrifft.
+  //  1) reichereBodenAn (mehrgewerk.ts) übergab den aus dem GANZEN Transkript
+  //     erkannten Belag ("parkett", wegen Wohnzimmers "Eichenparkett") auch
+  //     dem Flur, der ausdrücklich "da wird nix am Boden gemacht" sagt —
+  //     Ergebnis: eine echte, bepreiste "Fertigparkett verlegen — Flur"
+  //     (9 m²), die wiederum "Boden schützen — Flur" als vermeintlich
+  //     redundant entfernte (Fix: boden.ts, hatEchtenBelagAuftrag).
+  //  2) boden.ts vertraute GPTs `sockelleisten`-Boolean blind — beim
+  //     Wohnzimmer stand es auf true, obwohl "Sockelleisten" im Transkript
+  //     kein einziges Mal vorkommt. Menge exakt 25 lfdm = voller
+  //     Wohnzimmer-Umfang (2×(8+4,5)) — sieht nach einer GPT-seitigen
+  //     Standardannahme "neuer Boden → automatisch neue Sockelleisten" aus.
+  //     Diese Phantom-Position triggerte wiederum aufnahme-hinweise.ts'
+  //     "sockelleisten montieren"-Sicherheitsnetz, das (raumblind) ALLE
+  //     "Sockelleisten abkleben"-Positionen im ganzen Auftrag entfernte —
+  //     hier speziell die des Flurs, obwohl die Karte sie korrekt mit Menge
+  //     gemeldet hatte.
+  const rawGptResult = {
+    gewerk: 'maler',
+    raeume: [
+      {
+        name: 'Wohnzimmer', belag: 'parkett', breite: 4.5, laenge: 8, tueren: [], fenster: [],
+        arbeiten: ['eichenparkett verlegen'], sockelleisten: true, verlegerichtung: 'fischgrät',
+        altbelag_entfernen: false, altbelag_vorhanden: true,
+      },
+      {
+        name: 'Flur', hoehe: 2.6, breite: 1.8, laenge: 5,
+        tueren: [{ hoehe: 2.1, anzahl: 1, breite: 0.9, annahme: true }], fenster: [],
+        arbeiten: ['wände streichen', 'decke streichen', 'boden abdecken', 'sockelleisten abkleben'],
+      },
+    ],
+  }
+  const extraktion = normalisiereExtraktion(rawGptResult as never)
+  const transkript = 'Wohnzimmer, 8x4,5, Eichenparkett, Fischgrät verlegt, das brauche ja mehr Verschnitt, ist ' +
+    'schon eine große Fläche, da muss wahrscheinlich eine Dehnungsfuge rein, macht das bitte mit rein, Boden ' +
+    'nur, an den Wänden machen wir nix. Daneben ist noch der Flur, 5x1,80, Höhe 2,60, kein Fenster, aber eine ' +
+    'Tür Normalmaß, nur Wände und Decke streichen, zweimal, da wird nix am Boden gemacht, der bleibt wie er ist.'
+  const signale = {
+    arbeitenTexte: extraktion.raeume.flatMap(r => r.arbeiten ?? []),
+    belagText: null,
+    altbelagEntfernen: extraktion.raeume.some(r => r.altbelag_entfernen === true),
+    raeume: [],
+  }
+  const { positionen } = berechneUndPruefeAlleGewerke(
+    { ...extraktion, transkript },
+    transkript,
+    {},
+    signale,
+  )
+  const namen = positionen.map(p => p.beschreibung.toLowerCase())
+
+  it('erfindet keine Bodenposition im Flur trotz global erkanntem Belag', () => {
+    expect(namen.some(n => n.includes('verlegen') && n.includes('flur'))).toBe(false)
+  })
+
+  it('erfindet keine Sockelleisten-Montage im Wohnzimmer ohne Textbeleg', () => {
+    expect(namen.some(n => n.includes('sockelleisten montieren'))).toBe(false)
+  })
+
+  it('behält die echten Flur-Nebenleistungen (Boden schützen, Sockelleisten abkleben)', () => {
+    expect(namen.some(n => n.includes('boden schütz') && n.includes('flur'))).toBe(true)
+    expect(namen.some(n => n.includes('sockelleisten abkleben') && n.includes('flur'))).toBe(true)
+  })
+
+  it('rechnet den Fischgrät-Verschnitt weiterhin korrekt in die Wohnzimmer-Position ein', () => {
+    const parkett = positionen.find(p => /fertigparkett verlegen/i.test(p.beschreibung))
+    expect(parkett?.menge).toBe(41.4)
+  })
+
+  it('erzeugt keine doppelte, raumlose Fischgrät-Position', () => {
+    expect(namen.some(n => n.includes('fischgrät') || n.includes('fischgraet'))).toBe(false)
+  })
+})
+
 describe('entferneRedundantenBodenschutz', () => {
   it('entfernt Schutz nur im Raum mit einer Verlegeposition', () => {
     const ergebnis = entferneRedundantenBodenschutz([

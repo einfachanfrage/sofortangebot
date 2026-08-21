@@ -289,7 +289,18 @@ export function pruefeFischgraet(
 ): void {
   const hatFischgraet = lower.includes('fischgrät') || lower.includes('fischgraet')
   if (!hatFischgraet) return
-  if (hat(ergaenzt, 'fischgrät', 'fischgraet', 'verkleben')) return
+  // PM-013, Nachtest 3 (2026-08-21): "verschnitt" zusätzlich zur Guard-Liste.
+  // Seit Fix-Update 2 (2026-08-19) rechnet die Boden-Engine (boden.ts,
+  // MUSTER_MIT_MEHR_VERSCHNITT) den Fischgrät-Verschnitt schon direkt in die
+  // Hauptposition ein ("Fertigparkett verlegen inkl. 15% Verschnitt —
+  // Wohnzimmer") — ohne dass deren Beschreibung "fischgrät"/"verkleben"
+  // enthält. Diese (ältere, auf einen eigenen "Aufpreis"-Posten ausgelegte)
+  // Prüfung erkannte das nicht, lief bei der HIER kombinierten
+  // Mehrraum-Transkript-Fläche (Wohnzimmer + Flur gemischt) auf einen
+  // Extraktionsfehler und landete als raumlose, doppelte
+  // "(Menge prüfen)"-Position im "Allgemein"-Topf — obwohl der Verschnitt für
+  // das Wohnzimmer längst korrekt in der echten Position steckt.
+  if (hat(ergaenzt, 'fischgrät', 'fischgraet', 'verkleben', 'verschnitt')) return
 
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
