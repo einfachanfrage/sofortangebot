@@ -18,14 +18,32 @@ löschen — Verlauf ist wertvoll).
 
 ---
 
-## Offen (aktuell keine)
+## Offen
 
-Stand 20.08.2026, Mittag: CoS-002 ist entschieden (siehe unten). Die
-weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage,
-sondern die Gate-1-Gesamtfrage „ist das Tool reif für erste echte
-Testnutzer?" — die läuft über `docs/launch-readiness.md` (aktuell 23 % gegen
-den vollen Scope, Stand 20.08.) und ist jetzt an eine harte Bedingung
-geknüpft: Gate 1 startet erst, wenn CoS-002 Schritt 3 fertig ist.
+🔵 **CoS-002 Schritt 3 — reicht der aktuelle Umfang für Gate 1?** (Head of
+Product Engineering, 2026-08-21): Alle drei Schritte sind umgesetzt. Das
+eigentliche Vertrauensproblem („Karte zeigt etwas anderes als die
+Berechnung") ist damit in JEDEM Fall gelöst, unabhängig von der Anzahl
+Aufnahmen (Option 2 + Schritt 2 greifen immer). Schritt 3 selbst (nur noch
+ein KI-Aufruf statt zwei) ist nur für den häufigen Fall „genau eine neue
+Sprachaufnahme" umgesetzt — bei mehreren gleichzeitig neuen Aufnahmen
+bleibt es bewusst beim bisherigen Verhalten (zwei GPT-Aufrufe), weil der
+Cache pro Aufnahme einzeln entsteht und die aktuelle Mehrfach-Aufnahmen-
+Logik den Text aller Aufnahmen gemeinsam an GPT gibt (bessere
+Querbezüge). Das ist jetzt eine reine Kosten-/Tempo-Frage, keine
+Korrektheits-Frage mehr. Sandys Wortlaut „Schritt 3 muss vollständig
+fertig sein" liest sich nach Alles-oder-nichts — deshalb hier die
+Rückfrage, statt das selbst zu interpretieren: reicht dieser Umfang, um
+Gate 1 zu starten, oder soll der Mehrfach-Aufnahmen-Fall auch noch
+geschlossen werden, bevor der erste echte Testnutzer ans Tool darf?
+Details: `docs/chief-of-staff-todos.md` CoS-002.
+
+Stand 20.08.2026, Mittag: die weiterhin große, laufende Abwägung ist keine
+einzelne Ja/Nein-Frage, sondern die Gate-1-Gesamtfrage „ist das Tool reif
+für erste echte Testnutzer?" — die läuft über `docs/launch-readiness.md`
+(aktuell 23 % gegen den vollen Scope, Stand 20.08.) und war an eine harte
+Bedingung geknüpft: Gate 1 startet erst, wenn CoS-002 Schritt 3 fertig ist
+— siehe Rückfrage oben, ob dieser Umfang das schon erfüllt.
 
 ---
 

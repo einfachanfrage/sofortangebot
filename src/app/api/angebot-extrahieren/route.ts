@@ -33,16 +33,35 @@ export async function POST(req: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession()
   if (!user || !session) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
 
-  const blocked = await pruefeKIZugriff(user.id, 'ki_extraktion')
-  if (blocked) return blocked
-
-  const { text, antworten = {}, basis_extraktion } = await req.json() as {
+  const { text, antworten = {}, basis_extraktion, voll_extraktion_cache } = await req.json() as {
     text: string
     antworten?: KalkulationsAntworten
     basis_extraktion?: ExtrahierteDaten
+    // CoS-002 Option 1, Schritt 3 (Head of Product Engineering, 2026-08-21,
+    // docs/cos-002-architektur-vorschlag.md): das rohe ki-extrahieren-
+    // Ergebnis aus entwurf_aufnahmen.voll_extraktion (Schritt 1/2), von
+    // generiere-positionen/route.ts durchgereicht, wenn genau EINE
+    // Sprachaufnahme neu ist und deren Cache noch gültig ist (siehe dortiger
+    // Kommentar). Ist dieser Wert gesetzt, entfällt der eigene, zweite
+    // GPT-Aufruf hier komplett — exakt das CoS-002-Ziel: nur noch EIN
+    // KI-Aufruf pro Aufnahme statt zwei.
+    voll_extraktion_cache?: ExtrahierteDaten
   }
   if (!text?.trim()) return NextResponse.json({ error: 'Kein Text' }, { status: 400 })
   if (text.length > 50_000) return NextResponse.json({ error: 'Text zu lang' }, { status: 413 })
+
+  // Rate-Limit nur prüfen, wenn hier tatsächlich ein frischer, kostenpflichtiger
+  // GPT-Aufruf ansteht — bei einer Rückfragen-Runde (basis_extraktion) oder
+  // einem Cache-Treffer (voll_extraktion_cache, neu seit Schritt 3) findet
+  // keiner statt, ein Blockieren wäre hier falsch (ein Nutzer, der sein
+  // Tageslimit gerade erreicht hat, muss trotzdem seine bereits laufende
+  // Rückfragen-Runde zu Ende bringen bzw. von einem Cache-Treffer profitieren
+  // können, ohne neu gezählt zu werden).
+  const brauchtFrischenGptAufruf = !basis_extraktion && !voll_extraktion_cache
+  if (brauchtFrischenGptAufruf) {
+    const blocked = await pruefeKIZugriff(user.id, 'ki_extraktion')
+    if (blocked) return blocked
+  }
 
   // Gewerk-Hinweis aus Company-Profil
   const { data: company } = await supabase.from('companies').select('gewerke').eq('user_id', user.id).single()
@@ -71,13 +90,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Bei beantworteten Rückfragen muss exakt dieselbe Extraktion weiterlaufen.
-    // Eine erneute KI-Auswertung könnte Räume oder Arbeiten anders erkennen.
-    const edgeResult = basis_extraktion ? null : await callEdgeFunction(
-      'ki-extrahieren',
-      { transkript: verarbeitetText, gewerk_hinweis },
-      session.access_token
-    ) as { result: ExtrahierteDaten }
+    // Reihenfolge der Vorrangregel: Rückfragen-Runde (basis_extraktion) zuerst
+    // — die lief schon immer ohne neuen GPT-Aufruf und ändert sich hier
+    // nicht. Erst danach der neue Cache-Treffer (Schritt 3): nur wenn WEDER
+    // eine Rückfragen-Runde läuft NOCH ein gültiger Cache vorliegt, wird
+    // ki-extrahieren tatsächlich frisch aufgerufen.
+    const edgeResult = basis_extraktion
+      ? null
+      : voll_extraktion_cache
+        ? { result: voll_extraktion_cache }
+        : await callEdgeFunction(
+            'ki-extrahieren',
+            { transkript: verarbeitetText, gewerk_hinweis },
+            session.access_token
+          ) as { result: ExtrahierteDaten }
 
     const antwort = verarbeiteExtraktion(text, edgeResult, antworten, basis_extraktion)
 

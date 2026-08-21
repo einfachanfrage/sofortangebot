@@ -10,7 +10,7 @@ import {
 import { AudioPlayer } from '@/components/AudioPlayer'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
-import type { EntwurfAufnahme, ErkanntPosition } from '@/lib/types'
+import type { EntwurfAufnahme, ErkanntPosition, VollExtraktionCache } from '@/lib/types'
 import { extrahiereRaumdaten } from '@/lib/extraktion-masse'
 import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahme/RueckfragenScreen'
 // DC-028: dieselbe Raum-Gruppierung wie im fertigen Angebot (AngebotDetail.tsx)
@@ -51,6 +51,8 @@ interface SammelPoolItem {
 function baueSammelPool(
   bestehende: BestehendeQuotePosition[],
   neueAufnahmen: AufnahmeWithUrl[],
+  wartetSeitMap: Map<string, number>,
+  jetzt: number,
 ): SammelPoolItem[] {
   const pool: SammelPoolItem[] = bestehende.map(item => ({ ...item, pending: false }))
   // Pending-Markierung nur, wenn es schon einen echten, berechneten Bestand
@@ -60,7 +62,13 @@ function baueSammelPool(
   const markierePending = bestehende.length > 0
   let laufendePosition = pool.length
   for (const aufnahme of neueAufnahmen) {
-    const positionen = (aufnahme.erkannte_positionen as ErkanntPosition[] | undefined) ?? []
+    // DC-030-Nachtrag (Product Designer, 2026-08-21): eine frisch begonnene
+    // Aufnahme soll in der Raum-Karte erst auftauchen, sobald die geprüfte
+    // Extraktion da ist — nicht vorher mit einer möglicherweise falschen
+    // Vorschau-Zeile. Sonst löst Schritt 2 das Problem auf der einzelnen
+    // Aufnahmekarte, führt es hier aber in kleinerer Form wieder ein.
+    const { status, positionen } = kartenAnsicht(aufnahme, wartetSeitMap.get(aufnahme.id), jetzt)
+    if (status !== 'bereit') continue
     for (const p of positionen) {
       if (!p.erkannt) continue
       pool.push({
@@ -127,14 +135,75 @@ function geschaetzteSekunden(positionen: number) {
   return Math.max(10, Math.ceil((positionen * 2) / 5) * 5)
 }
 
+// ── CoS-002 Schritt 2 (Head of Product Engineering, 2026-08-21) ────────────
+// Product Designer, DC-030: die Karte soll für Sprachaufnahmen so lange
+// gar keine Positionen zeigen, bis die vollständige, geprüfte Extraktion
+// da ist (voll_extraktion, siehe volle-extraktion-cache.ts) — lieber
+// "Verarbeitung…" länger stehen lassen als eine Zahl zeigen, die später
+// wieder abweichen kann (genau das Problem hinter DC-021/DC-022). Sandys
+// Gate-Anforderung (DC-030-Nachtrag): "Entwurf erstellen" darf sich aus
+// demselben Grund erst freischalten, wenn diese Prüfung durch ist, sonst
+// entsteht ein zweites, separates Wartefenster am Button.
+//
+// Absicherung gegen Dauerblockade: volle-extraktion-cache.ts schreibt bei
+// jedem Fehlschlag (Rate-Limit, GPT-/Netzwerkfehler) explizit eine
+// `__fehlgeschlagen`-Markierung statt die Zeile unverändert zu lassen —
+// aber falls selbst DAS mal nicht ankommt (z. B. Server-Absturz mitten in
+// after()), sorgt dieser Timeout zusätzlich dafür, dass die Karte nach
+// spätestens ~30s auf die schnelle Vorschau zurückfällt, statt für immer
+// zu warten. 30s = das in docs/cos-002-architektur-vorschlag.md genannte
+// ~25s-Timeout-Budget der Edge Function plus kleiner Sicherheitsabstand.
+const VOLL_EXTRAKTION_TIMEOUT_MS = 30_000
+// Ab wann der zusätzliche "prüft genau, dauert kurz"-Hinweis erscheint —
+// laut Designer die heutige gefühlte Normalzeit für die schnelle Vorschau.
+const VOLL_EXTRAKTION_HINWEIS_MS = 5_000
+
+type KartenAnsichtStatus = 'wartet_transkription' | 'wartet_pruefung' | 'bereit'
+
+// Eine einzige Stelle, die entscheidet, was eine Aufnahme gerade anzeigen
+// soll — Badge-Zustand UND Positionsliste kommen beide von hier, damit sie
+// nie auseinanderlaufen können (dieselbe Lehre wie bei CoS-002 selbst).
+function kartenAnsicht(
+  aufnahme: AufnahmeWithUrl,
+  wartetSeit: number | undefined,
+  jetzt: number,
+): { status: KartenAnsichtStatus; positionen: ErkanntPosition[] } {
+  const schnelleVorschau = (aufnahme.erkannte_positionen as ErkanntPosition[] | undefined) ?? []
+  // Foto (Zettel-Scan) und Notiz haben kein voll_extraktion-Gegenstück
+  // (volle-extraktion-cache.ts läuft nur für typ 'sprache') — für sie bleibt
+  // die schnelle Vorschau die einzige Quelle, wie schon vor CoS-002.
+  if (aufnahme.typ !== 'sprache') return { status: 'bereit', positionen: schnelleVorschau }
+  if (aufnahme.verarbeitung_status !== 'fertig') return { status: 'wartet_transkription', positionen: [] }
+  const voll = aufnahme.voll_extraktion as VollExtraktionCache | null | undefined
+  if (voll?.positionen) return { status: 'bereit', positionen: voll.positionen }
+  if (voll?.__fehlgeschlagen) return { status: 'bereit', positionen: schnelleVorschau } // Fail-open
+  if (wartetSeit !== undefined && jetzt - wartetSeit > VOLL_EXTRAKTION_TIMEOUT_MS) {
+    return { status: 'bereit', positionen: schnelleVorschau } // Fail-open nach Timeout
+  }
+  return { status: 'wartet_pruefung', positionen: [] }
+}
+
+// Anzeige-Status fürs bestehende StatusBadge/Chip-Farbschema: solange
+// 'wartet_pruefung', bewusst wie 'verarbeitung' behandeln (Designer, DC-030
+// — Option 3), obwohl verarbeitung_status in der DB längst 'fertig' ist.
+function anzeigeStatus(aufnahme: AufnahmeWithUrl, wartetSeit: number | undefined, jetzt: number): EntwurfAufnahme['verarbeitung_status'] {
+  if (aufnahme.typ !== 'sprache') return aufnahme.verarbeitung_status
+  return kartenAnsicht(aufnahme, wartetSeit, jetzt).status === 'wartet_pruefung' ? 'verarbeitung' : aufnahme.verarbeitung_status
+}
+
 // ── Aufnahme Card ─────────────────────────────────────────────────────────────
 
-function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithUrl; onDelete?: () => void; onRetry?: () => void }) {
+function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: AufnahmeWithUrl; wartetSeit?: number; onDelete?: () => void; onRetry?: () => void }) {
   const [fotoGross, setFotoGross] = useState(false)
-  const positionen = aufnahme.erkannte_positionen as ErkanntPosition[]
+  const jetzt = Date.now()
+  const { status: kartenStatus, positionen } = kartenAnsicht(aufnahme, wartetSeit, jetzt)
+  const badgeStatus = anzeigeStatus(aufnahme, wartetSeit, jetzt)
   const erkannte = positionen.filter(p => p.erkannt)
   const einzelraum = erkenneEinzelraum(aufnahme.transkript, erkannte)
   const raumdaten = extrahiereRaumdaten(aufnahme.transkript)
+  // DC-030: der zusätzliche "prüft genau"-Hinweis erscheint erst nach einer
+  // kurzen Wartezeit, nicht sofort — sonst wirkt jede Aufnahme unnötig langsam.
+  const zeigePruefHinweis = kartenStatus === 'wartet_pruefung' && wartetSeit !== undefined && jetzt - wartetSeit > VOLL_EXTRAKTION_HINWEIS_MS
   // Zettel-Scan = Foto mit Vision-Transkript (bzw. gerade in Verarbeitung)
   const istZettel = aufnahme.typ === 'foto' && (aufnahme.transkript != null || aufnahme.foto_beschreibung === 'Aufmaß-Zettel')
 
@@ -149,7 +218,7 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
             <div className="flex items-center gap-2">
               <span className="text-[#2C2C2C]/30 font-semibold text-[12px]">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
               {istZettel && <span className="text-[11px] font-extrabold text-[#2C2C2C]/40 bg-[#2C2C2C]/5 px-2 py-0.5 rounded-full">📷 Zettel</span>}
-              <StatusBadge status={aufnahme.verarbeitung_status} />
+              <StatusBadge status={badgeStatus} />
             </div>
             {onDelete && (
               <button onClick={onDelete} className="p-1 text-[#2C2C2C]/20 hover:text-red-400 transition-colors">
@@ -159,10 +228,19 @@ function AufnahmeCard({ aufnahme, onDelete, onRetry }: { aufnahme: AufnahmeWithU
           </div>
 
           {/* Status: lädt / Fehler */}
-          {aufnahme.verarbeitung_status === 'verarbeitung' && (
-            <div className="flex items-center gap-2 text-[#2C2C2C]/40 text-[13px] font-semibold mb-3">
-              <Loader2 size={14} className="animate-spin" />
-              Wird ausgewertet…
+          {badgeStatus === 'verarbeitung' && (
+            <div className="flex flex-col gap-1 mb-3">
+              <div className="flex items-center gap-2 text-[#2C2C2C]/40 text-[13px] font-semibold">
+                <Loader2 size={14} className="animate-spin" />
+                Wird ausgewertet…
+              </div>
+              {/* DC-030 (Product Designer, 2026-08-20): bewusst vage — keine
+                  Sekundenzahl, kein Fortschrittsbalken. Eine falsche
+                  Zeitangabe wäre dasselbe Vertrauensproblem nur eine Ebene
+                  tiefer (siehe DC-022). */}
+              {zeigePruefHinweis && (
+                <div className="text-[#2C2C2C]/35 text-[12px] font-semibold pl-[22px]">prüft genau, dauert kurz</div>
+              )}
             </div>
           )}
           {aufnahme.verarbeitung_status === 'fehler' && (
@@ -303,8 +381,10 @@ function chipStatusFarbe(status: string): string {
   return 'bg-[#F5C400]'
 }
 
-function AufnahmeChip({ aufnahme, onOpen }: { aufnahme: AufnahmeWithUrl; onOpen: () => void }) {
-  const positionen = (aufnahme.erkannte_positionen as ErkanntPosition[] | undefined) ?? []
+function AufnahmeChip({ aufnahme, wartetSeit, onOpen }: { aufnahme: AufnahmeWithUrl; wartetSeit?: number; onOpen: () => void }) {
+  const jetzt = Date.now()
+  const badgeStatus = anzeigeStatus(aufnahme, wartetSeit, jetzt)
+  const { positionen } = kartenAnsicht(aufnahme, wartetSeit, jetzt)
   const erkannte = positionen.filter(p => p.erkannt)
   const einzelraum = erkenneEinzelraum(aufnahme.transkript, erkannte)
   const istZettel = aufnahme.typ === 'foto' && (aufnahme.transkript != null || aufnahme.foto_beschreibung === 'Aufmaß-Zettel')
@@ -322,7 +402,7 @@ function AufnahmeChip({ aufnahme, onOpen }: { aufnahme: AufnahmeWithUrl; onOpen:
           : 'border-[#2C2C2C]/8 bg-white hover:border-[#2C2C2C]/20'
       }`}
     >
-      <span className={`w-2 h-2 rounded-full shrink-0 ${chipStatusFarbe(aufnahme.verarbeitung_status)} ${aufnahme.verarbeitung_status === 'verarbeitung' ? 'animate-pulse' : ''}`} />
+      <span className={`w-2 h-2 rounded-full shrink-0 ${chipStatusFarbe(badgeStatus)} ${badgeStatus === 'verarbeitung' ? 'animate-pulse' : ''}`} />
       <span className="font-bold text-[12px] text-[#2C2C2C] whitespace-nowrap">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
       {label && (
         <span className="font-semibold text-[12px] text-[#2C2C2C]/45 whitespace-nowrap">· {label}</span>
@@ -468,6 +548,12 @@ export default function EntwurfPage() {
   // Das erklärt PM-014, ohne dass eine echte Server-seitige Race-Condition
   // (zwei verschiedene Tabs/Geräte gleichzeitig) nötig ist.
   const fertigstellenLaufendRef = useRef(false)
+  // CoS-002 Schritt 2 (2026-08-21): merkt sich pro Aufnahme, seit wann sie auf
+  // voll_extraktion wartet (verarbeitung_status schon 'fertig', aber noch
+  // keine geprüfte Extraktion da) — Basis für den 30s-Timeout-Fallback und
+  // den "prüft genau"-Hinweis nach 5s, siehe kartenAnsicht()/VOLL_EXTRAKTION_*.
+  const vollExtraktionWartetSeitRef = useRef<Map<string, number>>(new Map())
+  const [, setVollExtraktionTick] = useState(0)
 
   // ── Daten laden ──────────────────────────────────────────────────────────
 
@@ -490,6 +576,38 @@ export default function EntwurfPage() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [angebotId])
+
+  // CoS-002 Schritt 2 (2026-08-21): sobald eine Sprachaufnahme 'fertig' wird,
+  // aber noch kein voll_extraktion da ist, hier den Startzeitpunkt des
+  // Wartens vermerken (einmalig — spätere Aufrufe überschreiben ihn nicht).
+  // Realtime-Updates (Effekt oben) lösen diesen Effekt über die
+  // aufnahmen-Abhängigkeit erneut aus, sobald voll_extraktion eintrifft;
+  // der Eintrag bleibt dann einfach ungenutzt stehen (harmlos).
+  useEffect(() => {
+    const jetzt = Date.now()
+    for (const a of aufnahmen) {
+      if (a.typ !== 'sprache' || a.verarbeitung_status !== 'fertig') continue
+      const voll = a.voll_extraktion as VollExtraktionCache | null | undefined
+      const bereit = !!(voll && (voll.positionen || voll.__fehlgeschlagen))
+      if (!bereit && !vollExtraktionWartetSeitRef.current.has(a.id)) {
+        vollExtraktionWartetSeitRef.current.set(a.id, jetzt)
+      }
+    }
+  }, [aufnahmen])
+
+  // Erzwingt alle 1s einen Re-Render, SOLANGE mindestens eine Aufnahme auf
+  // voll_extraktion wartet — damit der 5s-Hinweis und der 30s-Timeout-Fallback
+  // (kartenAnsicht()) auch ohne neues Realtime-Event sichtbar werden.
+  useEffect(() => {
+    const wartendGerade = aufnahmen.some(a => {
+      if (a.typ !== 'sprache' || a.verarbeitung_status !== 'fertig') return false
+      const voll = a.voll_extraktion as VollExtraktionCache | null | undefined
+      return !(voll && (voll.positionen || voll.__fehlgeschlagen))
+    })
+    if (!wartendGerade) return
+    const interval = setInterval(() => setVollExtraktionTick(t => t + 1), 1000)
+    return () => clearInterval(interval)
+  }, [aufnahmen])
 
   async function loadData() {
     setLoading(true)
@@ -845,21 +963,37 @@ export default function EntwurfPage() {
   const neueAufnahmen = letzteGenerierung
     ? sprachen.filter(a => new Date(a.erstellt_am) > new Date(letzteGenerierung))
     : sprachen
+  // CoS-002 Schritt 2 / DC-030-Nachtrag (2026-08-21): "Entwurf erstellen"
+  // darf sich erst freischalten, wenn für jede neue Sprachaufnahme entweder
+  // die geprüfte Extraktion da ist ODER endgültig feststeht, dass sie nicht
+  // mehr kommt (Fehlschlag/Timeout — kartenAnsicht() behandelt beides als
+  // 'bereit', fail-open). Sonst könnte ein schneller Nutzer klicken, bevor
+  // voll_extraktion da ist, und würde ein ZWEITES, separates Warten am
+  // Button erleben statt nur des einen auf der Karte (Sandys Rückfrage,
+  // von der Designerin als harte Anforderung bestätigt).
+  const jetztFuerWarten = Date.now()
+  const nochVollExtraktion = neueAufnahmen.some(a =>
+    kartenAnsicht(a, vollExtraktionWartetSeitRef.current.get(a.id), jetztFuerWarten).status === 'wartet_pruefung')
+  // erkannteAnzahl zählt jetzt aus derselben Quelle wie die Karten-Anzeige
+  // (kartenAnsicht) statt direkt aus der schnellen Chip-Vorschau — während
+  // nochVollExtraktion ist das pro wartender Aufnahme 0 (siehe Banner unten,
+  // das dafür einen eigenen, ehrlichen Zwischenzustand zeigt statt einer
+  // möglicherweise falschen Zahl).
   const erkannteAnzahl = neueAufnahmen.reduce((sum, aufnahme) =>
-    sum + ((aufnahme.erkannte_positionen as ErkanntPosition[]) ?? []).filter(position => position.erkannt).length, 0)
+    sum + kartenAnsicht(aufnahme, vollExtraktionWartetSeitRef.current.get(aufnahme.id), jetztFuerWarten).positionen.filter(p => p.erkannt).length, 0)
   const bearbeitungszeit = geschaetzteSekunden(erkannteAnzahl)
   // DC-009: 0 erkannte Positionen ist kein "bereit für den Entwurf" — vorher
   // stand hier trotzdem "✓ 0 Positionen erkannt", grün, mit aktivem Button.
   // Der Button erscheint jetzt nur noch, wenn wirklich etwas zu berechnen da ist.
-  const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung && erkannteAnzahl > 0
-  const nichtsErkannt = alleTranskribiertOderFehler && neueAufnahmen.length > 0 && !nochVerarbeitung && erkannteAnzahl === 0
+  const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung && !nochVollExtraktion && erkannteAnzahl > 0
+  const nichtsErkannt = alleTranskribiertOderFehler && !nochVollExtraktion && neueAufnahmen.length > 0 && !nochVerarbeitung && erkannteAnzahl === 0
 
   // ── DC-028: Raum-gruppierter Sammel-Bestand ──────────────────────────────
   // Pool aus bereits berechneten quote_items (echt) + Vorschau-Positionen
   // frischer, noch nicht "fertiggestellter" Aufnahmen (vorläufig) — dieselbe
   // Gruppierungsfunktion wie im fertigen Angebot, damit diese Ansicht
   // strukturell nie von der finalen Darstellung abweichen kann.
-  const sammelPool = baueSammelPool(quoteInfo?.quote_items ?? [], neueAufnahmen)
+  const sammelPool = baueSammelPool(quoteInfo?.quote_items ?? [], neueAufnahmen, vollExtraktionWartetSeitRef.current, jetztFuerWarten)
   const pendingById = new Map(sammelPool.map(item => [item.id, item.pending]))
   const gruppen = gruppiereNachRaum(sammelPool)
   const gesamtPositionen = sammelPool.length
@@ -889,6 +1023,12 @@ export default function EntwurfPage() {
     if (!alleTranskribiertOderFehler || aufnahmen.length === 0 || recording) return null
     if (nichtsErkannt) {
       return { ton: 'neutral', text: 'Noch nichts erkannt — nochmal versuchen? Lauter oder mit mehr Details sprechen hilft oft.' }
+    }
+    // CoS-002 Schritt 2 / DC-030: eigener, ehrlicher Zwischenzustand statt
+    // einer Zahl aus erkannteAnzahl, die während des Wartens auf
+    // voll_extraktion künstlich niedrig (0 pro wartender Aufnahme) wäre.
+    if (nochVollExtraktion) {
+      return { ton: 'neutral', text: 'Wird geprüft — dauert kurz.' }
     }
     if (neueAufnahmen.length === 0) {
       return { ton: 'success', text: 'Alle Aufnahmen bereits verarbeitet — neue Aufnahme hinzufügen um mehr Positionen zu ergänzen.' }
@@ -1085,7 +1225,7 @@ export default function EntwurfPage() {
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
                 {aufnahmen.map(a => (
-                  <AufnahmeChip key={a.id} aufnahme={a} onOpen={() => setAufnahmeDetail(a.id)} />
+                  <AufnahmeChip key={a.id} aufnahme={a} wartetSeit={vollExtraktionWartetSeitRef.current.get(a.id)} onOpen={() => setAufnahmeDetail(a.id)} />
                 ))}
               </div>
             </div>
@@ -1106,7 +1246,7 @@ export default function EntwurfPage() {
               </div>
             )}
             {aufnahmen.map(a => (
-              <AufnahmeCard key={a.id} aufnahme={a} onDelete={() => setDeleteBestaetigen(a.id)} onRetry={() => retryAufnahme(a.id)} />
+              <AufnahmeCard key={a.id} aufnahme={a} wartetSeit={vollExtraktionWartetSeitRef.current.get(a.id)} onDelete={() => setDeleteBestaetigen(a.id)} onRetry={() => retryAufnahme(a.id)} />
             ))}
           </div>
         )}
@@ -1228,6 +1368,7 @@ export default function EntwurfPage() {
               <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
               <AufnahmeCard
                 aufnahme={a}
+                wartetSeit={vollExtraktionWartetSeitRef.current.get(a.id)}
                 onDelete={() => { setAufnahmeDetail(null); setDeleteBestaetigen(a.id) }}
                 onRetry={() => retryAufnahme(a.id)}
               />

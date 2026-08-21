@@ -4,6 +4,7 @@ import type { KalkulationsAntworten } from '@/lib/mengen/antworten-verarbeiter'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { BerechnetePosition } from '@/lib/mengen/types'
+import type { VollExtraktionCache } from '@/lib/types'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
@@ -51,7 +52,9 @@ export async function POST(req: NextRequest) {
   // Aufnahmen laden — per expliziter ID-Liste (vom Frontend) oder Timestamp-Fallback
   let query = supabase
     .from('entwurf_aufnahmen')
-    .select('id, typ, transkript, notiz_text, erkannte_positionen, verarbeitung_status, erstellt_am')
+    // voll_extraktion neu seit CoS-002 Schritt 3 (Head of Product
+    // Engineering, 2026-08-21) — siehe Cache-Wiederverwendung weiter unten.
+    .select('id, typ, transkript, notiz_text, erkannte_positionen, verarbeitung_status, erstellt_am, voll_extraktion')
     .eq('angebot_id', angebot_id)
     .order('erstellt_am', { ascending: true })
   if (aufnahmen_ids !== undefined) {
@@ -104,11 +107,40 @@ export async function POST(req: NextRequest) {
   const origin = req.nextUrl.origin
   const cookieHeader = req.headers.get('cookie') ?? ''
 
+  // CoS-002 Option 1, Schritt 3 (Head of Product Engineering, 2026-08-21,
+  // docs/cos-002-architektur-vorschlag.md): statt hier IMMER einen frischen
+  // ki-extrahieren-Aufruf über /api/angebot-extrahieren auszulösen, wird
+  // — wenn möglich — die in Schritt 1 gecachte volle Extraktion
+  // (entwurf_aufnahmen.voll_extraktion) wiederverwendet. Nur EIN KI-Aufruf
+  // pro Aufnahme statt zwei, das ist das eigentliche CoS-002-Ziel.
+  //
+  // Bewusst NUR im einfachsten, sicheren Fall aktiv (kleine Schritte statt
+  // Big-Bang, wie im eigenen Vorschlag empfohlen): genau EINE neue Aufnahme
+  // im Batch, vom Typ 'sprache', ohne laufende Rückfragen-Runde. Grund: der
+  // Cache wurde pro Aufnahme auf DEREN EIGENEM Transkript berechnet — bei
+  // mehreren gleichzeitig neuen Aufnahmen kombiniert combinedText mehrere
+  // Transkripte zu EINEM GPT-Aufruf (damit z. B. ein in Aufnahme 2 erwähnter
+  // Bezug auf einen Raum aus Aufnahme 1 aufgelöst werden kann) — das können
+  // die einzeln gecachten Extraktionen strukturell nicht nachbilden, ein
+  // Wiederverwenden würde diese Cross-Aufnahme-Korrektur stillschweigend
+  // verlieren. In diesem Mehr-Aufnahmen-Fall läuft weiterhin der bisherige,
+  // frische Kombi-Aufruf — unverändertes, bekanntes Verhalten.
+  let vollExtraktionCache: ExtrahierteDaten | undefined
+  if (
+    !basis_extraktion
+    && aufnahmen.length === 1
+    && aufnahmen[0].typ === 'sprache'
+    && aufnahmen[0].verarbeitung_status === 'fertig'
+  ) {
+    const voll = aufnahmen[0].voll_extraktion as VollExtraktionCache | null | undefined
+    if (voll?.result) vollExtraktionCache = voll.result
+  }
+
   // ── Schritt 1: Extraktion + Engine + Vollständigkeits-Check ──────────────
   const extRes = await fetch(`${origin}/api/angebot-extrahieren`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Cookie': cookieHeader },
-    body: JSON.stringify({ text: combinedText, antworten, basis_extraktion }),
+    body: JSON.stringify({ text: combinedText, antworten, basis_extraktion, voll_extraktion_cache: vollExtraktionCache }),
   })
 
   if (!extRes.ok) {

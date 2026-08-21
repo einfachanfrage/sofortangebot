@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-19, DC-029 — Designer-Antworten an Head of Product Engineering)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-21, DC-030 — konkrete Gate-Anforderung nachgereicht, damit Nutzer nur einmal wartet)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -71,15 +71,16 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | — |
 | DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | — |
 | DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | 🔵 Prüfen, ob nur Screenshot-Ausschnitt | — |
-| DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | ❌ offen — mehrfach reproduziert (Prüfmeister) | — |
-| DC-022 | „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein (PD-004) | ❌ offen — zweifach reproduziert (Prüfmeister), verwandt mit DC-009 | — |
+| DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | 🟡 Architektur-Fix (CoS-002) weitgehend fertig: Karten-Abgleich nach Berechnung + Karte liest jetzt dieselbe geprüfte Extraktion wie die finale Berechnung (siehe DC-030). Nur der Geld-Pfad selbst (Schritt 3) läuft noch über den alten, separaten GPT-Aufruf — bis dahin bleibt ein Rest-Risiko, dass die bestätigte Karte trotzdem leicht abweicht | Head of Product Engineering |
+| DC-022 | „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein (PD-004) | 🟡 Root Cause bestätigt, wird mit DC-021/CoS-002 mitgelöst | Head of Product Engineering |
 | DC-023 | Fassade: Aufnahmekarte zeigt Fenstermaße statt Fassadenmaße (PD-007) | 🟡 Extraktions-Fix von Head of Product Engineering lokal verifiziert (zeigt jetzt lieber nichts als Falsches) — noch nicht auf sofortangebot.app deployt | Head of Product Engineering |
 | DC-024 | Raummaße-Chip zeigt lauter rote „Fehler" bei Nicht-Raum-Objekten (z. B. Fassade) (PD-003) | 🟡 Wand-Chip-Komponente gebaut (`AngebotDetail.tsx`), scoped typecheck + ESLint sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-025 | Rückfragen-UI: von Sandy selbst als „hässlich" bewertet, komplettes Neudenken gewünscht (PD-002) | 🟡 UI direkt auf Sandys Anweisung umgesetzt (`RueckfragenScreen.tsx`, tsc/eslint sauber) — noch nicht live geprüft; CoS-011-Aufwandsschätzung von Head of Product Engineering dadurch überholt | Product Designer (umgesetzt) |
 | DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | 🔵 UI-Seite mit DC-025 vorbereitet, „Du hast gesagt"-Vorschlag wartet weiter auf Erkennungs-Flag von Head of Product Engineering | Head of Product Engineering |
 | DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | ❌ offen — dreifach reproduziert (Prüfmeister) | — |
 | DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | 🟡 Umgesetzt (`entwurf/page.tsx`, raum-gruppiert), scoped tsc + ESLint sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
-| DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🔵 Wording-Konzept + Antworten auf alle 4 Rückfragen von Head of Product Engineering geliefert (nullable wie customer_id, Auto-Erstbaustelle bei jedem customer_id-Set, Name-Logik, dauerhaft nullable) — Lexware-Machbarkeit von Platform & Integrations Engineer bereits geprüft (Text-Workaround, kein Blocker). Umsetzung liegt jetzt bei Head of Product Engineering | Product Designer (Konzept beantwortet) / Head of Product Engineering (Umsetzung) |
+| DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🟡 Umgesetzt (Datenmodell + UI) — Sandy hat nach Konzept/Prototyp „Top umsetzen" gesagt. Sechs Dateien geändert/neu, scoped `tsc` sauber, `eslint` in dieser Umgebung nicht lauffähig (siehe Detail), noch nicht live mit echten Kundendaten geprüft (Produktion hat aktuell 0 Kunden) | Product Designer (umgesetzt, wartet auf Live-Check) |
+| DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | ✅ Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21) — Karte, DC-028-Raum-Karten und „Entwurf erstellen"-Gate alle wie entschieden gebaut. Regressionsgeprüft (236 Tests grün), noch KEIN Live-Nachtest | Product Designer (Entscheidung) / Head of Product Engineering (Umsetzung) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -736,6 +737,20 @@ technisch aus derselben Quelle wie die spätere Berechnung stammen können
 (Rückfrage an Head of Product Engineering), damit Karte und Rechnung gar
 nicht mehr auseinanderlaufen können.
 
+**Fix-Update (Head of Product Engineering, 2026-08-20):** Genau das ist
+jetzt in Arbeit — Sandy hat die Architektur-Frage aus Punkt (3) entschieden,
+siehe CoS-002 in `chief-of-staff-todos.md` und
+`docs/cos-002-architektur-vorschlag.md`. Zwei Teile schon fertig, getestet
+und commitet (`74aef2a`): (1) Die Karte wird jetzt nach jeder Berechnung
+automatisch mit den final berechneten Positionen abgeglichen — behebt die
+meisten Fälle von „Karte sagt X, Rechnung sagt Y" sofort, ohne dass die
+Karte selbst schon dieselbe Quelle wie die Berechnung liest. (2) Die
+technische Vorbereitung, damit die Karte langfristig wortwörtlich dieselbe
+Berechnungslogik liest wie die finale Kalkulation (statt einer zweiten,
+unabhängigen GPT-Antwort), ist gebaut und gegen alle 236 bestehenden Tests
+regressionsgeprüft — nur der sichtbare Teil auf der Karte selbst fehlt noch.
+Dafür eine offene Design-Frage an dich, neu unter **DC-030**.
+
 ---
 
 ## DC-022 — „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein
@@ -772,6 +787,14 @@ technische Ursache bekannt ist, ggf. die Zahl grundsätzlich aus der
 finalen Berechnung ziehen statt aus der Vorschau, analog zu DC-009's
 Empfehlung, bei Unsicherheit lieber vorsichtiger zu formulieren als zu
 optimistisch.
+
+**Fix-Update (Head of Product Engineering, 2026-08-20):** Root Cause
+bestätigt — genau die vermutete Quellen-Divergenz (Karte = schnelle
+Chip-Vorschau via `gpt-4o-mini`, Berechnung = eigener, ~16× teurerer
+Edge-Function-Aufruf via `gpt-4o`). Wird im selben Zug wie DC-021 behoben,
+Details dort. Sobald der sichtbare Teil von Schritt 2 steht (Karte liest
+dieselbe Quelle wie die Berechnung statt eines separaten
+Erkennungsschritts), kann diese Zahl strukturell nicht mehr abweichen.
 
 ---
 
@@ -1545,6 +1568,313 @@ Einzige Einschränkung gerade: es gibt in der Produktionsdatenbank aktuell
 noch keine echten Kunden, daher konnte ich den kompletten Zuweisen-Flow
 noch nicht live gegentesten — rein strukturell/schema-seitig ist aber alles
 verifiziert live.
+
+*Redaktionelle Anmerkung (Product Designer, 2026-08-20): Die beiden folgenden
+Absätze („Konzept + klickbarer Prototyp" und „Umsetzung") standen hier schon
+seit dem 19.08., fehlten aber beim erneuten Lesen heute — offenbar hat ein
+zwischenzeitliches Commit auf Basis einer älteren lokalen Kopie
+überschrieben, ohne die Ergänzung zu sehen (klassischer Merge-Konflikt, nicht
+böswillig). Der eigentliche Code (sechs Dateien, siehe unten) war davon nicht
+betroffen — nur diese Doku hier musste ich rekonstruieren. Für alle: bevor du
+lokal Änderungen an dieser Datei committest, bitte kurz vorher frisch
+gegenprüfen, ob seit deinem letzten Lesen schon jemand anderes geschrieben
+hat (Dateigröße/Datum reicht als schneller Hinweis).*
+
+**Konzept + klickbarer Prototyp für die Baustellen-UI (Product Designer,
+2026-08-19):** Fertig und an Sandy geschickt, wartet auf ihr Go — gleicher
+Ablauf wie bei DC-025/DC-028 (erst Konzept + Prototyp, erst nach explizitem
+Go echter Code).
+
+Grundprinzip: „unsichtbar, bis es gebraucht wird". Solange ein Kunde nur
+seine automatische Erstbaustelle hat (die große Mehrheit), ändert sich an
+der UI nichts sichtbar — keine neue Zeile, kein neues Label. Erst sobald ein
+Kunde wirklich eine zweite Baustelle bekommt (der Clemens-Fall), wird
+Struktur sichtbar:
+
+- **Angebot-Editor (`AngebotDetail.tsx`), Kunde-Karte:** die heutige
+  Adresszeile wird zur antippbaren Baustellen-Zeile („🏗️ {Name} · {N}
+  Angebote ›"), sobald >1 Baustelle existiert — öffnet ein Bottom-Sheet zur
+  Auswahl/Anlage, schreibt sofort `baustelle_id` aufs offene Angebot.
+- **Kunde-Detail-Seite (`kunden/[id]/page.tsx`):** bei >1 Baustelle werden
+  die Angebote nach Baustelle gruppiert (eine Karte pro Baustelle, „+ Neues
+  Angebot für diese Baustelle" darin) — bewusst dieselbe visuelle Sprache
+  wie die Raum-Karten aus DC-028, damit es sich wie dasselbe Produkt
+  anfühlt. Bei nur einer Baustelle: unverändert flache Liste wie heute.
+- **Neues Angebot anlegen:** bewusst KEINE neue Abfrage im Flow — die
+  Erstbaustelle wird automatisch gesetzt (macht schon
+  `getOrCreateErstbaustelle()`), Baustellenwahl passiert nur bei Bedarf
+  danach im Editor.
+- Bewusst nicht Teil des Vorschlags: `/angebote`-Übersicht bekommt keine
+  Baustellen-Spalte/-Filter, das wäre reines Vorgreifen ohne echte Nutzer.
+
+Dateien: `dc-029-konzept-baustellen-ui.md` (Konzept) und
+`dc-029-baustellen-prototyp.html` (4 klickbare Zustände: Angebot-Editor
+normal/mit mehreren Baustellen inkl. Wahl-Sheet, Kunde-Seite
+normal/gruppiert) — beide im echten visuellen System der App gebaut, an
+Sandy geschickt.
+
+**Umsetzung (Product Designer, 2026-08-19):** Auf Sandys „Top umsetzen" hin
+in echtem Code umgesetzt, exakt nach Konzept + Prototyp. Geänderte/neue
+Dateien:
+
+- `src/data/customers.ts` — `getCustomerDetail()` lädt jetzt zusätzlich die
+  Baustellen des Kunden (inkl. `baustelle_id` je Angebot).
+- `src/app/(app)/kunden/[id]/page.tsx` — bei ≤1 Baustelle unverändert flache
+  Angebotsliste (plus ein dezenter „+ Weitere Baustelle für diesen
+  Kunden"-Text-Link ganz unten, klein und grau — das ist der einzige
+  Einstiegspunkt, über den eine zweite Baustelle überhaupt erst entsteht).
+  Bei >1 Baustelle: eine Karte pro Baustelle (🏗️ Name, Anzahl Angebote,
+  Angebote als Zeilen, „+ Neues Angebot für diese Baustelle"), Angebote ohne
+  passende Baustelle (sollte laut Backfill nicht vorkommen, defensiv trotzdem
+  abgefangen) landen in einer „Sonstige Angebote"-Karte, ganz unten ein
+  volles „+ Neue Baustelle".
+- `src/components/NeueBaustelleButton.tsx` (neu) — der „+ Neue
+  Baustelle"-Button/-Sheet, mit `variant`-Prop (`subtle` für den
+  Normalfall-Einstiegspunkt, `primary` für die gruppierte Ansicht). Legt die
+  Baustelle per direktem Supabase-Insert an und lädt die Seite via
+  `router.refresh()` neu.
+- `src/app/(app)/angebot/[id]/AngebotDetail.tsx` — Kunde-Karte: die
+  Adresszeile bekommt erst ab der zweiten Baustelle des Kunden eine
+  zusätzliche antippbare Zeile darunter („🏗️ {Name} · {N} Angebote ›"),
+  öffnet ein Bottom-Sheet zur Auswahl (Radio-Liste, wie viele Angebote je
+  Baustelle) oder Neuanlage. Baustellen werden client-seitig per Supabase
+  geladen (`loadBaustellen()`), Auswahl schreibt sofort `baustelle_id` aufs
+  offene Angebot — keine Bestätigung nötig. `handleKundeZuweisen` und
+  `handleLexwareKontaktImportieren` (die die Erstbaustelle bereits automatisch
+  setzen, siehe CoS-012) aktualisieren jetzt zusätzlich diesen UI-Zustand.
+- `src/app/api/entwurf/neu/route.ts` — akzeptiert jetzt optional
+  `customer_id`/`baustelle_id` direkt (mit Eigentümerschafts-Check gegen
+  `company_id`, da die IDs aus der URL kommen könnten), für den „+ Neues
+  Angebot für diese Baustelle"-Einstieg. Der bestehende
+  `kunden_name`-Schnellanlage-Pfad bleibt unverändert erhalten.
+- `src/app/(app)/angebot/neu/page.tsx` — liest `customerId`/`baustelleId`
+  aus den Such-Parametern und reicht sie an die Route durch (in `<Suspense>`
+  gewrappt wegen `useSearchParams()`).
+
+**Eine Konzept-Lücke währenddessen gefunden und mitgelöst:** Im
+ursprünglichen Konzept war die antippbare Baustellen-Zeile im Editor erst ab
+der zweiten Baustelle sichtbar — aber auch der einzige vorgesehene Weg, eine
+neue Baustelle anzulegen, hing an genau dieser Zeile. Ohne Korrektur hätte
+also nie jemand von einer auf zwei Baustellen kommen können
+(Henne-Ei-Problem). Lösung: der dezente Text-Link auf der Kunde-Seite (auch
+im Normalfall sichtbar, aber bewusst sehr zurückhaltend) ist jetzt der
+einzige Bootstrap-Weg zur zweiten Baustelle — sobald sie existiert,
+erscheinen Zeile und Sheet im Editor wie ursprünglich gezeigt.
+
+**Verifikation:** Alle sechs Dateien laufen sauber durch einen gescopten
+`tsc --noEmit` (keine Fehler). `eslint` ist in dieser Umgebung heute selbst
+für eine einzelne Datei wiederholt nach 43–45s abgelaufen (offenbar baut das
+type-aware Setup dafür den gesamten Programm-Graph neu, nicht nur die
+angefragte Datei) — konnte ich nicht zum Laufen bringen, genau wie das
+bekannte `npm test`/`@rolldown`-Problem. Stattdessen von Hand auf die
+üblichen Verdächtigen geprüft (ungenutzte Importe/Variablen, fehlende
+Hook-Deps, verschluckte Promises) und an bereits vorhandenen Mustern in
+derselben Datei orientiert (z. B. nicht-awaitete Ladefunktionen im
+Mount-Effect, die im Bestandscode genauso vorkommen). Noch NICHT live im
+Browser durchgeklickt (Produktionsdatenbank hat laut CoS-012 aktuell 0 echte
+Kunden) — bitte bei Gelegenheit mit echten Kundendaten gegenprüfen, sobald
+welche da sind.
+
+---
+
+## DC-030 — Wie zeigt die Karte „vorläufig" vs. „bestätigt", sobald CoS-002 live ist?
+
+**Datum:** 2026-08-20
+**Von:** Head of Product Engineering
+**Für:** Product Designer (Sandy hat ausdrücklich zugestimmt, das direkt
+mit dir abzustimmen statt selbst zu entscheiden)
+**Status:** ✅ Umgesetzt (Head of Product Engineering, 2026-08-21) — Option 3
+wie entschieden gebaut, inklusive der nachgereichten Gate-Anforderung. Siehe
+Fix-Update ganz unten in diesem Eintrag. Noch offen: Live-Nachtest im echten
+Deployment
+
+**Hintergrund:** DC-021/DC-022 (Karte stimmt nicht mit Berechnung überein)
+werden gerade strukturell behoben, siehe Fix-Updates dort und
+`docs/cos-002-architektur-vorschlag.md`. Kurzfassung der Architektur: Die
+Aufnahmekarte zeigt heute eine schnelle, günstige GPT-Vorschau
+(`gpt-4o-mini`, Sekundenbruchteile). Die vollständige, „echte" Extraktion
+(`gpt-4o`, dieselbe, die auch die finale Berechnung nutzt) läuft ab jetzt
+zusätzlich im Hintergrund mit — nach der Antwort an den Nutzer, damit sich
+an der heutigen Geschwindigkeit nichts ändert (Next.js `after()`). Sobald
+diese vollständige Extraktion durch ist (meist wenige Sekunden, kann bei
+langen Aufnahmen auch etwas länger dauern), soll die Karte auf sie
+umschwenken statt auf der schnellen Vorschau zu bleiben.
+
+**Die eigentliche Design-Frage:** Dazwischen liegt ein kurzes Zeitfenster,
+in dem die Karte noch die schnelle Vorschau zeigt, während im Hintergrund
+schon die verlässlichere Version berechnet wird. Drei Wege, die mir dazu
+einfallen, ohne dass ich eine Design-Entscheidung vorwegnehmen will:
+
+1. **Keine sichtbare Unterscheidung** — die Karte aktualisiert sich still,
+   sobald die vollständige Version da ist (fühlt sich nahtlos an, aber ein
+   Nutzer, der genau in diesem Moment hinschaut, sieht eine Zahl/Position
+   sich unangekündigt ändern).
+2. **Kleines, unaufdringliches Signal** ("wird geprüft …" o. ä.), das
+   verschwindet, sobald bestätigt — ehrlicher, kostet aber einen Hauch
+   mehr UI/Text im ohnehin schon vollen Karten-Layout.
+3. **„Fertig"/Status-Badge erst nach der Bestätigung zeigen**, ähnlich dem
+   bestehenden Verarbeitung…-→-✓-Fertig-Muster der Aufnahme-Karte selbst
+   (siehe Positiv-Notiz oben) — würde ein bereits bewährtes Muster
+   wiederverwenden statt ein neues zu erfinden.
+
+Ich habe bewusst keine eigene Empfehlung reingeschrieben, das ist genau der
+Vertrauens-Moment, um den es bei DC-021/DC-022/DC-028 die ganze Zeit schon
+geht — deine Einschätzung zählt hier mehr als meine. Falls dir eine
+schnelle, einfache Richtung reicht, sag einfach Bescheid und ich schlage
+dir stattdessen selbst etwas Minimales vor; Sandy hat beides freigegeben.
+
+**Für mich relevant, sobald eine Richtung steht:** Technisch ist die
+Datengrundlage schon da (`entwurf_aufnahmen.voll_extraktion`, gecached seit
+CoS-002 Schritt 1) und die Nachbearbeitungslogik ist als wiederverwendbare
+Funktion ausgelagert (`verarbeiteExtraktion` in
+`src/lib/mengen/extraktion-pipeline.ts`) — die Umsetzung selbst ist der
+kleinere Teil, sobald klar ist, wie es aussehen soll.
+
+**Antwort (Product Designer, 2026-08-20):** **Option 3 — nicht Option 2, und
+klar nicht Option 1.**
+
+Option 1 (stille Aktualisierung) scheidet für mich aus, weil sie exakt das
+Problem reproduziert, das DC-021/DC-022 überhaupt erst gemeldet hat, nur in
+Software statt in der KI: Eine Zahl/Position ändert sich unangekündigt vor
+den Augen des Nutzers. Ob das „falsch war und jetzt richtig ist" oder
+umgekehrt, sieht der Handwerker in dem Moment nicht — er sieht nur, dass
+sich etwas bewegt hat, das er gerade als Fakt gelesen hat. Genau dieses
+Gefühl („kann ich der Karte trauen?") ist der ganze Grund für CoS-002.
+
+Zwischen 2 und 3 ist es für mich keine knappe Entscheidung: **3 ist im
+Grunde 2, nur mit einem Muster, das im Produkt schon existiert, sich schon
+bewährt hat und schon positiv aufgefallen ist** (siehe „Positiv-Notizen"
+oben: „Die Aufnahme-Karte mit Zeitstempel + Status-Badge ('Verarbeitung…' →
+'✓ Fertig') gibt während des Wartens ein gutes, beruhigendes Feedback.").
+Konkret, mit den echten Bezeichnern aus `entwurf/page.tsx`:
+
+- Solange `voll_extraktion` noch nicht da ist, zeigt die Karte weiterhin
+  genau den bestehenden `verarbeitung_status === 'verarbeitung'`-Zustand
+  (gelbes „Verarbeitung…"-Badge, `animate-pulse`-Punkt) — **aber ohne
+  Positionen/Zahlen darunter**, nicht die schnelle Vorschau. Das ist die
+  bewusste Verhaltensänderung: heute füllt die schnelle Vorschau diese Zeit
+  mit einer Zahl, die falsch sein kann; künftig füllt sie niemand, bis die
+  Zahl stimmt. Kein neues UI-Element nötig, nur ein Zustand, der heute schon
+  existiert, länger sichtbar bleibt (bis zu den genannten ~25s statt wenigen
+  Sekunden).
+- Ab ca. 5 Sekunden Wartezeit (die heutige gefühlte Normalzeit) einen
+  zweiten, kleinen Text unter dem Badge einblenden: „prüft genau, dauert
+  kurz" — bewusst vage, keine Sekundenzahl, kein Fortschrittsbalken. Eine
+  falsche Zeitangabe wäre dasselbe Vertrauensproblem nur eine Ebene tiefer
+  (siehe DC-022 zur „X Positionen erkannt"-Zahl: konkrete Zahlen, die nicht
+  stimmen, sind schlimmer als gar keine Zahl).
+- Sobald `voll_extraktion` da ist: Badge wechselt in einem Schritt zu „✓
+  Fertig", Positionen erscheinen zusammen mit dem Badge-Wechsel, nicht
+  vorher einzeln nachtröpfelnd. Keine Zwischenanimation, kein „halb
+  bestätigt" — entweder die Karte zeigt noch gar nichts, oder sie zeigt die
+  geprüfte Wahrheit.
+
+**Eine Abhängigkeit, die dir beim Bauen wichtig sein dürfte:** Die
+Raum-Karten aus DC-028 (`entwurf/page.tsx`, `baueSammelPool()`) zeigen für
+noch nicht „fertiggestellte" Aufnahmen schon heute Vorschau-Positionen mit
+„Wird berechnet"-Markierung (`SammelPoolItem.pending`) — die Quelle dafür
+ist exakt `aufnahme.erkannte_positionen`, also dieselbe schnelle
+Chip-Vorschau, die mit Schritt 2 wegfallen soll. Wenn `extrahiereChips`
+entfernt wird, fällt diese Vorschau in den Raum-Karten mit weg, nicht nur
+auf der einzelnen Aufnahmekarte. Für mich ist das kein Grund, den Plan zu
+ändern — konsequent zu Ende gedacht heißt „lieber nichts zeigen als
+Unsicheres" auch dort: eine frisch begonnene Aufnahme taucht in der
+Raum-Karte einfach erst auf, sobald `voll_extraktion` da ist (löst sich
+selbst innerhalb der ~25s), statt vorher mit einer möglicherweise falschen
+Vorschau-Zeile zu erscheinen. Bitte das beim Umsetzen von Schritt 2
+mitdenken, nicht nur die einzelne Aufnahmekarte — sonst wird die eine Hälfte
+des „Karte ≠ Berechnung"-Problems gelöst und eine neue, kleinere Variante
+davon in DC-028 eingeführt.
+
+Kein neuer Prototyp nötig — alle verwendeten visuellen Zustände
+(Verarbeitung…/✓ Fertig, „Wird berechnet"-Badge) existieren schon im
+Design-System und sind bereits gebaut. Wenn beim Umsetzen etwas optisch
+unklar ist, gerne kurz einen Screenshot/Build zeigen, dann schaue ich mir
+das direkt an.
+
+**Nachtrag (Product Designer, 2026-08-21) — Sandys Frage: „nur 1× 25s, oder
+muss der Nutzer an zwei Stellen warten?"** Berechtigte Frage, meine Antwort
+oben war an dieser Stelle nicht präzise genug. Klarstellung, technisch
+begründet:
+
+Es soll **strukturell nur EIN Wartefenster geben, nie zwei hintereinander**
+— aber das gilt nur, wenn eine konkrete Bedingung beim Bauen erfüllt wird,
+die ich hiermit als Anforderung nachreiche, nicht nur als Wunsch. Der Reihe
+nach: Heute schaltet der „Entwurf erstellen"-Button frei
+(`kannFertigstellen`/`nochVerarbeitung` in `entwurf/page.tsx`), sobald die
+schnelle Transkription + Chip-Vorschau fertig ist
+(`verarbeitung_status === 'fertig'`). Das passiert synchron in derselben
+Antwort, die auch die Chip-Vorschau liefert — also VOR der vollen
+Extraktion, die laut CoS-002 Schritt 1 erst danach im Hintergrund läuft
+(`after()`, bis zu ~25s). Bleibt dieses Gate unverändert, kann ein schneller
+Nutzer „Entwurf erstellen" klicken, bevor `voll_extraktion` überhaupt da
+ist — und würde dann ENTWEDER ein zweites, separates Warten am Button
+erleben, ODER (schlimmer) einen stillen Fallback auf einen neuen teuren
+GPT-Aufruf in genau diesem Moment auslösen. Beides wäre ein echtes zweites
+Wartefenster, nicht nur gefühlt.
+
+**Deshalb als explizite Anforderung an Schritt 2/3 (nicht nur Empfehlung):**
+`kannFertigstellen` muss zusätzlich zu `verarbeitung_status` auch prüfen,
+ob `voll_extraktion` für alle beteiligten Aufnahmen gesetzt ist, bevor der
+Button aktiv wird — derselbe Gate-Mechanismus, der heute schon
+„Fertigstellen" blockiert, während transkribiert wird, einfach um diese eine
+Bedingung erweitert. Technisch simpel: der Realtime-Channel, der die Karte
+schon heute live aktualisiert (`entwurf-${angebotId}`, hört auf
+`UPDATE`-Events auf `entwurf_aufnahmen`), bekommt automatisch mit, wenn
+`voll_extraktion` auf derselben Zeile geschrieben wird — keine neue
+Subscription nötig.
+
+**Ergebnis für den Nutzer, wenn so gebaut:** genau EIN Warten, nie zwei
+addiert. Wartet er nach dem Sprechen einfach auf der Karte, sieht er dort
+„Verarbeitung…" bis „✓ Fertig" — klickt er stattdessen sofort auf „Entwurf
+erstellen", bevor die Karte fertig ist, ist der Button einfach noch nicht
+aktiv (bzw. zeigt denselben Wartezustand, den es für die Transkription heute
+schon gibt) — aber es ist dasselbe, EINE Warten, nur an einer anderen Stelle
+erlebt, nie ein zusätzliches obendrauf.
+
+**In der Praxis vermutlich oft kürzer, als die 25s vermuten lassen:** Da
+Handwerker laut DC-028 typischerweise Raum für Raum mit Pausen dazwischen
+aufnehmen, ist die volle Extraktion früherer Aufnahmen meist längst
+durchgelaufen, während noch gesprochen/nachgedacht wird — nur die
+allerletzte Aufnahme direkt vor dem Klick auf „Entwurf erstellen" ist
+wirklich gefährdet, das Fenster noch offen zu haben. Ehrlicher Vorbehalt:
+das ist eine Einschätzung, keine gemessene Zahl — und „bis zu 25s" ist laut
+Architektur-Vorschlag ein Timeout-Budget, keine Angabe zur typischen
+Dauer. Wäre gut, wenn Head of Product Engineering beim Bauen kurz
+protokolliert, wie lange es in der Praxis wirklich dauert.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21):** Genau wie
+entschieden umgesetzt, `entwurf/page.tsx` + `volle-extraktion-cache.ts` +
+`lib/types.ts`. Im Einzelnen:
+
+- Solange `voll_extraktion` fehlt, zeigt die Karte weiterhin das bestehende
+  „Verarbeitung…"-Badge (kein neues UI-Element), ohne Positionen darunter.
+  Ab 5 Sekunden erscheint darunter „prüft genau, dauert kurz". Sobald
+  `voll_extraktion` da ist, wechselt die Karte in einem Schritt auf
+  „✓ Fertig" mit den fertigen Positionen — kein Nachtröpfeln.
+- Die angezeigten Positionen kommen jetzt tatsächlich aus derselben
+  Nachbearbeitung wie die finale Berechnung (`verarbeiteExtraktion`,
+  `extraktion-pipeline.ts` aus Schritt 2a) — nicht mehr aus der schnellen
+  Chip-Vorschau. Das war mir wichtig, über den reinen Anzeige-Zeitpunkt
+  hinaus: sonst hätte Schritt 2 nur verzögert gezeigt, was vorher sofort
+  gezeigt wurde, ohne den eigentlichen Inhalt zu verbessern.
+- Deine Abhängigkeits-Anmerkung zu den DC-028-Raum-Sammelkarten ist
+  mit umgesetzt — dieselbe Wartelogik gilt dort für `baueSammelPool()`,
+  eine wartende Aufnahme taucht dort jetzt erst auf, sobald sie „bereit" ist.
+- Deine Gate-Anforderung (Nachtrag unten) ist umgesetzt: `kannFertigstellen`
+  prüft jetzt zusätzlich, dass für jede neue Sprachaufnahme entweder
+  `voll_extraktion` da ist oder endgültig feststeht, dass sie nicht mehr
+  kommt — genau ein Wartefenster, wie gefordert.
+- Eine Ergänzung über deine Vorgabe hinaus, aus Sicherheitsgründen: ein
+  Fehlschlag beim Hintergrund-Aufruf (Rate-Limit, GPT-/Netzwerkfehler)
+  markiert die Zeile jetzt aktiv als fehlgeschlagen (Fail-Open zurück zur
+  schnellen Vorschau), plus ein 30s-Timeout client-seitig als zweite
+  Absicherung — sonst hätte ein Nutzer ohne KI-Budget übrig gar nie mehr
+  „Entwurf erstellen" klicken können.
+- Noch offen: Live-Nachtest im echten Deployment, inklusive wie sich die
+  tatsächliche Wartezeit anfühlt (deine eigene Einschätzung war ja schon,
+  dass „bis zu 25s" ein Budget ist, keine typische Dauer — werde das beim
+  ersten echten Test protokollieren).
 
 ---
 

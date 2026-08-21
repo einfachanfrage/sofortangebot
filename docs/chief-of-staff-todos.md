@@ -43,7 +43,7 @@ Lösungsvorschlag: CoS-013.
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | 🟡 umgesetzt (Landingpage, PlanWahlModal, `/vorschau` entfernt/umgeleitet, zentrale `pricing.ts` angelegt), Live-Nachtest steht aus | `docs/design-check.md` DC-001 |
-| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | 🟡 **In Umsetzung (Head of Product Engineering, 20.08.2026).** Option 2 fertig. Option 1 Schritt 1 (voll_extraktion cachen) fertig. Schritt 2: die geteilte Nachbearbeitungs-Funktion (`extraktion-pipeline.ts`) ist fertig und regressionsgeprüft (236 Tests grün), die eigentliche Karten-Umstellung wartet bewusst auf eine UX-Abstimmung zum „vorläufig"-Zustand. Schritt 3 (Geld-Pfad, Gate-1-Bedingung) noch offen. Noch KEIN Live-Nachtest | Sandy-Entscheidung 20.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md` |
+| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | 🟡 **In Umsetzung (Head of Product Engineering, 21.08.2026).** Option 2 fertig. Option 1 Schritt 1 fertig. **Schritt 2 jetzt komplett** (Karte + DC-028-Raum-Karten lesen die gecachte, geprüfte Extraktion; „Entwurf erstellen" wartet auf dasselbe Ergebnis statt eines zweiten Wartefensters — DC-030-Entscheidung der Product Designerin umgesetzt). Nur noch **Schritt 3** (Geld-Pfad, Gate-1-Bedingung) offen. Noch KEIN Live-Nachtest | Sandy-Entscheidung 20.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md`, DC-030 in `docs/design-check.md` |
 | CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
@@ -496,6 +496,52 @@ Hälfte fertig, zweite Hälfte bewusst noch offen:**
 - **Ehrlich zum Stand:** die neue, gemeinsame Funktion selbst ist geprüft und
   sicher (Tests grün), aber noch KEIN Live-Nachtest des refaktorierten
   Geld-Pfads im echten Deployment.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — Schritt 2 jetzt
+komplett, inklusive der zurückgestellten UX-Entscheidung:**
+
+- Product Designer hat die offene Design-Frage (`docs/design-check.md`
+  DC-030) entschieden: Karte zeigt für Sprachaufnahmen keine Positionen mehr,
+  solange die volle Extraktion noch läuft — bleibt beim bestehenden
+  „Verarbeitung…"-Badge (nur länger sichtbar als bisher), ab ~5s zusätzlich
+  ein vager Hinweis „prüft genau, dauert kurz", dann in einem Schritt auf
+  „✓ Fertig" + fertige Positionen wechseln. Kein neues UI-Element, bewusst
+  dasselbe Muster wie das bestehende Verarbeitung→Fertig-Badge.
+- Umgesetzt (`entwurf/page.tsx`, `volle-extraktion-cache.ts`, `lib/types.ts`):
+  `volle-extraktion-cache.ts` jagt das rohe `ki-extrahieren`-Ergebnis jetzt
+  direkt durch dieselbe `verarbeiteExtraktion`-Funktion aus Schritt 2a und
+  cached eine daraus gebaute Positionsliste mit in `voll_extraktion` — die
+  Karte zeigt also, sobald bereit, dieselbe geprüfte Struktur wie die finale
+  Berechnung, keine neue, dritte Heuristik. Gilt für die einzelne
+  Aufnahmekarte UND für die DC-028-Raum-Sammelkarten (auf Hinweis der
+  Designerin: dieselbe schnelle Vorschau speiste dort denselben
+  „Wird berechnet"-Zustand — sonst wäre das Problem dort in kleinerer Form
+  wieder aufgetaucht).
+- **Sandys Rückfrage („nur 1× warten oder zweimal?") ist umgesetzt:**
+  `kannFertigstellen` prüft jetzt zusätzlich, dass für jede neue
+  Sprachaufnahme entweder die geprüfte Extraktion da ist oder endgültig feststeht,
+  dass sie nicht mehr kommt — „Entwurf erstellen" schaltet sich nicht mehr
+  frei, bevor das durch ist. Genau ein Wartefenster, wie von der Designerin
+  als harte Anforderung (nicht nur Empfehlung) formuliert.
+- **Absicherung gegen Dauerblockade, über den Vorschlag/DC-030 hinaus:**
+  ein Fehlschlag beim Hintergrund-Aufruf (Rate-Limit aufgebraucht,
+  GPT-/Netzwerkfehler) schreibt jetzt aktiv eine Fehlschlag-Markierung statt
+  die Zeile einfach unverändert zu lassen — sonst hätte ein Nutzer, der sein
+  Tagesbudget schon verbraucht hat, nie wieder einen Entwurf erstellen können.
+  Zusätzlich ein 30-Sekunden-Timeout client-seitig, falls selbst dieser
+  Schreibvorgang mal ausbleibt (z. B. Server-Absturz) — fällt dann automatisch
+  auf die alte, schnelle Vorschau zurück statt endlos zu warten.
+- **Regressionsprüfung:** alle 236 bestehenden Tests weiterhin grün, `tsc`
+  zeigt für alle geänderten Dateien keine neuen Fehler (nur vorbestehende,
+  unabhängige Fehler durch die unvollständige lokale Kopie dieses Checkouts).
+- **Ehrlich zum Stand:** alles nur statisch geprüft (esbuild/tsc) und gegen
+  die bestehende Testsuite — noch KEIN Live-Nachtest im echten Deployment,
+  insbesondere nicht, wie sich die neue Wartezeit auf der Karte in der Praxis
+  anfühlt (die Designerin selbst merkte an, dass die tatsächliche Dauer eine
+  Einschätzung ist, keine gemessene Zahl — bitte beim ersten echten Test
+  beobachten). Damit ist Option 1 Schritt 2 komplett. Nur noch **Schritt 3**
+  (Geld-Pfad selbst auf `voll_extraktion` umstellen, Sandys Gate-1-Bedingung)
+  steht zwischen CoS-002 und dem ersten echten Testnutzer.
 
 ---
 

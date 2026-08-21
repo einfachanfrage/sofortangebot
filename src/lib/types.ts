@@ -1,3 +1,5 @@
+import type { ExtrahierteDaten } from './mengen/types'
+
 export type Plan = 'starter' | 'pro'
 export type AccountingSoftware =
   | 'lexoffice'
@@ -32,6 +34,12 @@ export interface EntwurfAufnahme {
   erstellt_am: string
   geraet: string | null
   sortierung: number
+  // CoS-002 Option 1 (docs/cos-002-architektur-vorschlag.md): gecachtes
+  // Ergebnis der vollen ki-extrahieren-Extraktion, zusätzlich zur schnellen
+  // Chip-Vorschau in erkannte_positionen — siehe VollExtraktionCache.
+  // Optional statt Pflichtfeld, damit ältere Row-Lesestellen/Objekt-Literale
+  // im Code nicht überall angepasst werden müssen.
+  voll_extraktion?: VollExtraktionCache | null
   // für Signed URLs
   audio_signed_url?: string
   foto_signed_url?: string
@@ -44,6 +52,27 @@ export interface ErkanntPosition {
   einzelpreis: number
   gesamtpreis: number
   erkannt: boolean
+}
+
+// CoS-002 Option 1 Schritt 1+2+3 (Head of Product Engineering, 2026-08-21,
+// docs/design-check.md DC-030): Inhalt der neuen Spalte
+// entwurf_aufnahmen.voll_extraktion. Zwei mögliche Formen, je nachdem, wie
+// der Hintergrund-Aufruf in src/lib/volle-extraktion-cache.ts ausging:
+// - Erfolg: `result` ist das ROHE ki-extrahieren-Ergebnis (für Schritt 3 —
+//   der Geld-Pfad in /api/angebot-extrahieren führt es noch einmal durch
+//   verarbeiteExtraktion, diesmal mit dem tatsächlichen combinedText/
+//   antworten/basis_extraktion zum Zeitpunkt von "Entwurf erstellen", statt
+//   selbst erneut ki-extrahieren aufzurufen). `positionen` ist zusätzlich
+//   schon fertig durch dieselbe Pipeline gejagt (verarbeiteExtraktion,
+//   src/lib/mengen/extraktion-pipeline.ts) — nur für die Karten-Vorschau
+//   (Schritt 2), NICHT die Quelle für Schritt 3 (dort zählt `result`).
+// - Fehlschlag (Rate-Limit, Netzwerk-/GPT-Fehler): `__fehlgeschlagen` markiert
+//   das explizit, damit die Karte NICHT endlos auf ein Ergebnis wartet, das
+//   nie kommt (siehe DC-030-Nachtrag zur Entwurf-erstellen-Gate-Anforderung).
+export interface VollExtraktionCache {
+  result?: ExtrahierteDaten
+  positionen?: ErkanntPosition[]
+  __fehlgeschlagen?: true
 }
 export type VatRate = 19 | 7 | 0
 
