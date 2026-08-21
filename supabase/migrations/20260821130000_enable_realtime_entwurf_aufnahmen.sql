@@ -1,0 +1,14 @@
+-- CoS-002 Schritt 2: die Entwurf-Karte wartet bis zu 30s auf voll_extraktion und
+-- verlaesst sich dabei auf Supabase Realtime (postgres_changes UPDATE), um sich
+-- automatisch zu aktualisieren, sobald die geprueft Extraktion eintrifft. Ohne
+-- diese Publication-Erweiterung feuert das Realtime-Event NIE (kein Fehler,
+-- einfach still nichts) -- die Karte faellt nach 30s dauerhaft auf die schnelle,
+-- fehleranfaellige Chip-Vorschau zurueck, selbst wenn die korrekte Extraktion
+-- kurz danach fertig wird. Root cause des "Boden schuetzen 0 m2"-Live-Bugs
+-- (Sandy, 2026-08-21) -- supabase_realtime-Publication war komplett leer,
+-- Realtime war fuer keine einzige Tabelle aktiv.
+--
+-- Bereits direkt gegen die Produktions-DB angewendet (Supabase-MCP,
+-- 2026-08-21) -- diese Datei bringt die lokale Migrationshistorie auf den
+-- gleichen Stand.
+alter publication supabase_realtime add table public.entwurf_aufnahmen;
