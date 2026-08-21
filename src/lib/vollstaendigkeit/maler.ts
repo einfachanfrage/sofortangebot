@@ -8,7 +8,7 @@ import {
   pruefeBetonwand, pruefeKalkputz, pruefeDachschraege,
 } from './maler-sonder'
 import {
-  pruefeErschwerniszuschlagHoehe, pruefeGraffiti, pruefeAltbau, pruefeDenkmalschutz,
+  pruefeErschwerniszuschlagHoehe, pruefeErschwerniszuschlagUntergrund, pruefeGraffiti, pruefeAltbau, pruefeDenkmalschutz,
   pruefeSpachteln, pruefeSpachtelarbeiten, pruefeEstrich, pruefeGaragenboden,
   pruefeGeruest, pruefeBewohnt, pruefeBalkon, pruefeHolzOelen, pruefeBrandschutzfarbe,
   pruefeStuckleisten, pruefeStuck, pruefeTuerrahmen,
@@ -40,6 +40,7 @@ export function pruefeMaler(
   pruefeFliesenspiegel(ergaenzt, fehlende, lower)
   pruefeLampenAbkleben(ergaenzt, lower, verstaendnis)
   pruefeErschwerniszuschlagHoehe(ergaenzt, lower)
+  pruefeErschwerniszuschlagUntergrund(ergaenzt, lower)
   pruefeSockelleistenLackieren(ergaenzt, fehlende, lower, verstaendnis)
   pruefeDachschraege(ergaenzt, fehlende, lower)
   pruefeStuckleisten(ergaenzt, fehlende, lower, verstaendnis)

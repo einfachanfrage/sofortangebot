@@ -81,4 +81,22 @@ describe('gruppiereNachRaum — Allgemein bleibt sauber', () => {
     // Kernpunkt: keine doppelte "Deckenfläche" in der Küche-Gruppe
     expect(kueche.items.filter(i => i.title.includes('Deckenfläche'))).toHaveLength(1)
   })
+
+  // PM-019 (2026-08-21): echter Live-Fund derselben Fehlerkategorie wie
+  // PM-005 — "Gästeklo" enthält weder "toilette" noch "wc" noch sonst ein
+  // bisheriges Schlüsselwort als Teilstring. Alle drei Positionen liefen
+  // dadurch ohne gemeinsame Raumkarte/Maße-Header in den Allgemein-Topf,
+  // obwohl die Berechnung selbst den Raum korrekt als eigenes Objekt hatte.
+  it('PM-019: "Gästeklo" bekommt eine eigene Raumgruppe', () => {
+    const g = gruppiereNachRaum([
+      item('1', 'Wandflächen streichen 2x — Gästeklo'),
+      item('2', 'Boden schützen — Gästeklo'),
+      item('3', 'Sockelleisten abkleben — Gästeklo'),
+    ])!
+    expect(g).not.toBe(null)
+    expect(g.raeume).toHaveLength(1)
+    expect(g.raeume[0].raumName).toBe('Gästeklo')
+    expect(g.raeume[0].items).toHaveLength(3)
+    expect(g.allgemein).toHaveLength(0)
+  })
 })

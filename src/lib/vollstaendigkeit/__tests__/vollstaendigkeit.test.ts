@@ -33,6 +33,30 @@ describe('maler – streichen basis', () => {
     expect(positionen.some(position => /decke/i.test(position.beschreibung))).toBe(false)
   })
 
+  // PM-019 (2026-08-21): echter Live-Fund. Das Fachwissen kennt drei
+  // gleichwertige Erschwernis-Trigger (Höhe, Altbau, schwieriger Untergrund) —
+  // nur die ersten beiden hatten eine Erkennung. "Der Putz ist total uneben
+  // und bröckelig, ein wirklich schwieriger Untergrund" blieb bisher
+  // komplett unerkannt, weder auf der Karte noch im Entwurf.
+  it('erkennt "schwieriger Untergrund" als eigenen Erschwerniszuschlag — PM-019', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 14.91)],
+      'Gästeklo, Wände streichen, zweimal. Der Putz ist aber total uneben und bröckelig, ' +
+      'ein wirklich schwieriger Untergrund, das wird aufwendiger als normal.',
+    )
+    expect(positionen.some(p => /erschwerniszuschlag.*untergrund/i.test(p.beschreibung))).toBe(true)
+  })
+
+  it('erfindet keinen Untergrund-Zuschlag ohne entsprechenden Hinweis', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 14.91)],
+      'Gästeklo, Wände streichen, zweimal. Eine Tür, kein Fenster.',
+    )
+    expect(positionen.some(p => /erschwerniszuschlag.*untergrund/i.test(p.beschreibung))).toBe(false)
+  })
+
   it('prüft Möbelabdeckung und Bewohnt-Zuschlag unabhängig voneinander', () => {
     const { fehlende } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',

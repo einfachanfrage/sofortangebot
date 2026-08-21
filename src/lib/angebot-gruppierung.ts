@@ -9,8 +9,17 @@ const DASH = /\s+[-–—]\s+/
 // hatte. Reine Anzeige-Lücke, keine Rechenlücke. Ergänzt um Speisekammer plus
 // die gängigsten weiteren Nebenräume, die aus demselben Grund betroffen wären
 // (keiner davon enthält eins der bisherigen Schlüsselwörter als Teilstring).
+//
+// PM-019 (2026-08-21): dieselbe Fehlerkategorie, neu aufgetreten bei
+// "Gästeklo" — enthält weder "toilette" noch "wc" noch sonst eins der obigen
+// Schlüsselwörter als Teilstring. Ergebnis: alle drei Positionen liefen ohne
+// gemeinsame Raumkarte einzeln in den Allgemein-Topf, nur noch mit sichtbarem
+// "— Gästeklo"-Titel-Suffix statt einer echten Gruppierung mit Maßen —
+// obwohl die Berechnung selbst (Wandfläche/Bodenfläche/Sockelleisten) den
+// Raum korrekt als eigenes Objekt hatte. "klo" ergänzt (deckt "Gästeklo",
+// "Klo" und ähnliche Kurzformen ab).
 const RAUM_KEYWORDS = [
-  'zimmer', 'küche', 'bad', 'badezimmer', 'toilette', 'wc', 'flur', 'diele',
+  'zimmer', 'küche', 'bad', 'badezimmer', 'toilette', 'wc', 'klo', 'flur', 'diele',
   'keller', 'dachboden', 'garage', 'treppenhaus', 'terrasse', 'balkon',
   'fassade', 'außen', 'büro', 'werkstatt', 'eingang', 'korridor',
   'speisekammer', 'abstellraum', 'abstellkammer', 'vorratsraum',
@@ -38,6 +47,7 @@ const RAUM_EMOJIS: Record<string, string> = {
   bad:           '🚿',
   badezimmer:    '🚿',
   toilette:      '🚽',
+  klo:           '🚽',
   flur:          '🚪',
   diele:         '🚪',
   arbeitszimmer: '💼',

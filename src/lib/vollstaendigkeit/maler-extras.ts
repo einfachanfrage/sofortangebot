@@ -13,6 +13,32 @@ export function pruefeErschwerniszuschlagHoehe(ergaenzt: BerechnetePosition[], l
   }
 }
 
+// PM-019 (2026-08-21): echter Live-Fund. Das Fachwissen kennt drei
+// gleichwertige Erschwernis-Trigger — Raumhöhe > 3m, Altbau, und
+// "schwieriger Untergrund" — aber nur die ersten beiden hatten hier
+// überhaupt eine Erkennung. GPTs eigene Extraktion tagt "schwieriger
+// Untergrund" bereits sauber als eigenes `erschwernisse`-Feld
+// (`["unebener und bröckeliger Putz"]`, bestätigt an echten
+// Produktionsrohdaten) — nur unsere Vollständigkeitsprüfung hat nie danach
+// gesehen. Bewusst wie Höhe/Altbau/Denkmalschutz direkt gegen den
+// Rohtranskript-Text geprüft (nicht gegen das `erschwernisse`-Feld), damit
+// dieselbe robuste, deterministische Erkennung greift, egal ob GPTs
+// Struktur-Extraktion es diesmal sauber tagt oder nicht.
+export function pruefeErschwerniszuschlagUntergrund(ergaenzt: BerechnetePosition[], lower: string): void {
+  const hatSchwierigenUntergrund =
+    /schwierig\w*\s+untergrund|untergrund\w*\s+(?:ist\s+)?schwierig|br[öo]ckel|uneben\w*.{0,40}(?:putz|untergrund|wand|wände|waende)|(?:putz|untergrund|wand|wände|waende).{0,40}uneben\w*/i.test(lower)
+  if (hatSchwierigenUntergrund && !hat(ergaenzt, 'erschwerniszuschlag untergrund', 'untergrund zuschlag')) {
+    ergaenzt.push({
+      beschreibung: 'Erschwerniszuschlag schwieriger Untergrund',
+      menge: 1,
+      einheit: 'Pauschale',
+      konfidenz: 'high',
+      berechnungsweg: 'Schwieriger/unebener Untergrund im Transkript erkannt',
+      annahmen: [],
+    })
+  }
+}
+
 export function pruefeGraffiti(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
   const hatGraffiti = lower.includes('graffiti') || lower.includes('schmiererei') || lower.includes('vandalism')
   if (!hatGraffiti || hat(ergaenzt, 'graffiti entfern')) return

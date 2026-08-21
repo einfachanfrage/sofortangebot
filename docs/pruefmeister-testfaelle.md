@@ -69,7 +69,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-016 | „Standardpreise importieren" auf `/preise` schlägt fehl: „Die Standardpreise konnten nicht vollständig ergänzt werden." (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | ✅ Root-Cause gefunden und gefixt (2026-08-19), Konto live nachversorgt (341 Positionen), gleicher Bug auch im Onboarding-Seeding gefixt |
 | PM-017 | Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: „Tapete tapezieren" jetzt mit exakt 31,91 m² und korrektem Preis, keine Phantom-Positionen mehr, keine Grundierung — Details im Archiv |
 | PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv |
-| PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ❌ Ist-Ergebnis (2026-08-21): „schwieriger Untergrund" komplett unerkannt (kein Zuschlag). Zusätzlich zwei neue Funde: Raummaße falsch berechnet (1,5×1,5 statt 2×1,5 m) und keine Raumkarte im Entwurf (Titel-Suffix statt Gruppierung) |
+| PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | 🟡 Fix-Update (2026-08-21): „schwieriger Untergrund"-Zuschlag ergänzt, Raum-Gruppierung für „Gästeklo" behoben. Falsche Raummaße root-caused als Whisper-Transkriptionsfehler (kein Code-Bug, nicht fixbar). Noch ohne Live-Nachtest |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ❌ Ist-Ergebnis (2026-08-21): „Altbelag entfernen" trotz explizit mit „Nein, bleibt" beantworteter Rückfrage im Entwurf. Zusätzlich Phantom-„Sockelleisten montieren" (13,2 lfdm), nie erwähnt — dasselbe Muster wie PM-013 |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ❌ Ist-Ergebnis (2026-08-21): Wandfläche exakt Soll (48,55 m², alle 3 Kernfragen positiv). Neuer Fund: unverlangte „Balkonboden streichen"-Position (30 m²), vermutlich durch „Terrassentür" ausgelöst |
 
@@ -1320,10 +1320,10 @@ Onboarding-Pfad selbst.
 ## PM-019 — Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC)
 
 **Datum:** 2026-08-20
-**Status:** ❌ Ist-Ergebnis (2026-08-21): Erschwerniszuschlag „schwieriger Untergrund" fehlt komplett
-(weder Karte noch Entwurf) — Kernfrage des Testfalls damit klar beantwortet: nicht erkannt. Zusätzlich zwei
-schwerwiegende Neufunde: falsche Raummaße (1,5×1,5 statt 2×1,5 gerechnet) und fehlende Raum-Gruppierung im
-Entwurf
+**Status:** 🟡 Fix-Update (2026-08-21): Erschwerniszuschlag „schwieriger Untergrund" ergänzt, fehlende
+Raum-Gruppierung behoben. Die falschen Raummaße sind KEIN Code-Bug — root-caused auf einen
+Whisper-Transkriptionsfehler, der die zweite Maßangabe schon vor GPT verliert (Details siehe Fix-Update
+unten). Noch ohne Live-Nachtest
 
 **Warum dieser Fall:** Das Fachwissen nennt drei Erschwernis-Trigger: Raumhöhe > 3 m (mehrfach getestet,
 z. B. PM-008), Altbau (PM-006), und „schwieriger Untergrund" — Letzterer bisher in keinem einzigen Testfall
@@ -1398,6 +1398,54 @@ Gruppierung) — das riecht nach dem Raum-Anlegen selbst, das hier fehlgeschlage
 zurückgefallen ist, nicht nach einem reinen Rechenfehler. Bitte gegen die echte GPT-Rohantwort dieses
 Testfalls prüfen, ob beide Räume (Höhe „zwo vierzig", Maße „zwei mal eins fünfzig") korrekt ankamen oder
 ob schon dort eine Maßangabe verlorenging.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — an echten Produktionsrohdaten root-caused:** Rohdaten
+für genau diesen Testlauf gezogen (Supabase, `entwurf_aufnahmen`, id `dbbd79c4…`) — das beantwortet auch die
+eigene Bitte oben, gegen die echte GPT-Rohantwort zu prüfen.
+
+**Gefunden — der eigentliche Wortlaut, der bei GPT ankam:** „Gästeklo **zweimal 1,50m**, Höhe 2,40m,
+Wändestreichen zweimal, …". Nicht „zwei mal eins fünfzig" wie eingesprochen — Whisper hat „zwei mal eins
+fünfzig" (2,00 × 1,50 m) offenbar als „zweimal 1,50m" verstanden: „zwei mal" (Multiplikation) wurde zu
+„zweimal" (Wiederholung), die zweite Maßangabe „eins fünfzig" ist dabei komplett verschwunden. GPTs
+Struktur-Extraktion hat aus dem verbliebenen EINEN Maß „1,50m" dann selbst `breite: 1.5, laenge: 1.5` gemacht
+— ein quadratischer Rateversuch, weil ihr schlicht keine zweite Zahl mehr vorlag.
+
+**Punkt 2 (falsche Raummaße) ist damit kein Code-Bug, sondern ein Transkriptionsfehler, der schon VOR
+unserer Pipeline entsteht** — zum Zeitpunkt, an dem unser Code die Daten bekommt, ist die zweite Maßangabe
+bereits unwiederbringlich weg. Es gibt hier nichts in `mengen/`, `vollstaendigkeit/` oder `kontext-analyzer.ts`
+zu reparieren, weil die Information dort nie ankommt. Bewusst NICHT gefixt: eine „verdächtig quadratische
+Raummaße"-Heuristik (Rückfrage auslösen, wenn Länge = Breite exakt), die diesen Fall abfangen könnte — das
+wäre eine neue, spekulative Verhaltensänderung mit Risiko für echte quadratische Räume (die es ja wirklich
+gibt), nicht Teil des ursprünglichen Befunds und eine Produktentscheidung, keine Bugfix-Entscheidung. Bitte
+separat besprechen, falls gewünscht.
+
+**Punkt 1 (schwieriger Untergrund) UND Punkt 3 (keine Raumkarte) waren dagegen echte, unabhängige Bugs in
+unserem Code — beide behoben, beide NICHT dieselbe Ursache wie ursprünglich vermutet:**
+
+1. **„Schwieriger Untergrund" fehlte als Erschwernis-Trigger.** GPTs Rohantwort tagt es tatsächlich sauber
+   als eigenes Feld (`erschwernisse: ["unebener und bröckeliger Putz"]`) — nur unsere Vollständigkeitsprüfung
+   (`maler-extras.ts`) kannte bisher nur die beiden anderen Trigger (Höhe, Altbau). Neue Funktion
+   `pruefeErschwerniszuschlagUntergrund`, bewusst wie die anderen beiden direkt gegen den Rohtranskript-Text
+   geprüft (nicht gegen das `erschwernisse`-Feld) — damit dieselbe robuste Erkennung greift, egal ob GPTs
+   Struktur-Tagging diesmal sauber ist oder nicht. In `maler.ts` neben `pruefeErschwerniszuschlagHoehe`
+   eingehängt.
+2. **Keine Raumkarte für „Gästeklo".** Das war NICHT dieselbe Ursache wie die falschen Raummaße (Sandys
+   Vermutung, dass der Raum nicht sauber als Objekt angelegt wurde, stimmt nicht — GPTs Rohantwort hat
+   „Gästeklo" als ganz normales, komplett wohlgeformtes Raum-Objekt mit allen Feldern). Der eigentliche Fund:
+   dieselbe Fehlerkategorie wie PM-005 (dort: „Speisekammer" fehlte in der Anzeige-Gruppierung), diesmal in
+   `angebot-gruppierung.ts`s `RAUM_KEYWORDS`-Liste — „Gästeklo" enthält weder „toilette" noch „wc" noch sonst
+   eins der bisherigen Schlüsselwörter als Teilstring, wurde deshalb von der Anzeige nicht als echter Raum
+   erkannt und landete einzeln im Allgemein-Topf statt in einer gemeinsamen Raumkarte mit Maßen — reine
+   Anzeige-Lücke, keine Rechenlücke (die drei Positionen selbst waren immer korrekt berechnet). Fix: „klo" zur
+   Schlüsselwortliste ergänzt (deckt „Gästeklo", „Klo" und ähnliche Kurzformen ab), plus Emoji-Zuordnung.
+
+**Wie geprüft:** Erschwernis-Fix an den echten Produktionsrohdaten dieses Testlaufs durch die reale
+`verarbeiteExtraktion`-Pipeline verifiziert — „Erschwerniszuschlag schwieriger Untergrund" erscheint jetzt,
+Raummaße bleiben wie erwartet unverändert bei 1,50×1,50 (das ist der bestätigte Transkriptionsfehler, keine
+Regression). Gruppierungs-Fix isoliert gegen die drei echten Gästeklo-Positionstitel getestet. 4 neue,
+dauerhafte Tests: `vollstaendigkeit.test.ts` (Untergrund-Erschwernis, positiv + negativ) und ein neues
+`angebot-gruppierung.test.ts` (Gästeklo-Gruppierung + Regressionsschutz für bestehende Nebenräume). Ganze
+Suite weiterhin grün (247/247, vorher 243). Wie immer: noch OHNE Live-Nachtest im echten Tool.
 
 ---
 
