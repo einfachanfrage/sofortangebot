@@ -71,7 +71,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv |
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | 🟡 Fix-Update (2026-08-21): „schwieriger Untergrund"-Zuschlag ergänzt, Raum-Gruppierung für „Gästeklo" behoben. Falsche Raummaße root-caused als Whisper-Transkriptionsfehler (kein Code-Bug, nicht fixbar). Noch ohne Live-Nachtest |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | 🟡 Fix-Update (2026-08-21): Altbelag-Verneinungserkennung ergänzt (boden-normalisierer.ts), Sockelleisten-Phantom-Fallback verlangt jetzt Textsignal (boden-vorarbeiten.ts). Noch ohne Live-Nachtest |
-| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | 🟡 Fix-Update (2026-08-21): Phantom-„Balkonboden streichen" behoben — „Terrassentür"/„Balkontür" zählen jetzt nur noch als Türname, nicht als Ortsangabe (maler-extras.ts). Noch ohne Live-Nachtest |
+| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | 🟡 Fix-Update (2026-08-21): Phantom-„Balkonboden streichen" behoben — „Terrassentür"/„Balkontür" zählen jetzt nur noch als Türname, nicht als Ortsangabe (maler-extras.ts). Zusätzlich (2026-08-21, eigenes Fix-Update am Dateiende): die in diesem Fall aufgeworfene VOB-Übermessungsfrage ist jetzt entschieden und umgesetzt — Standard für alle Malerangebote. Noch ohne Live-Nachtest |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -79,8 +79,12 @@ kompletten Sauber-Durchsicht der ganzen Preisdatenbank für Maler und Bodenleger
 Abschnitt „Systemischer Fund" Punkt 1 (Fix-Update).
 
 **Noch offen, bewusst zurückgestellt (niedrige Priorität, siehe PM-003/006):**
-1-Cent-Rundungsdrift zwischen Positions-Summe und Gesamtbetrag; fehlende
-VOB-Übermessungsregel für kleine Fensteröffnungen.
+1-Cent-Rundungsdrift zwischen Positions-Summe und Gesamtbetrag.
+
+**Entschieden & umgesetzt (2026-08-21):** die vormals zurückgestellte
+VOB-Übermessungsregel für kleine Fensteröffnungen ist nach Sandys
+ausdrücklichem Go jetzt Standard für alle Malerangebote — Details ganz am
+Ende dieser Datei, direkt vor dem PM-021-Fix-Update.
 
 
 **Neu (2026-08-19): Datei aufgeteilt, damit sie nicht unbegrenzt wächst.**
@@ -1707,6 +1711,62 @@ Zusatzannahme „es gibt einen Balkon" aus, die hier fachlich nicht zutrifft (ei
 zwingend einen Balkon, und selbst wenn, wäre dessen Fläche nicht identisch mit der Raumfläche). Die
 VOB-Übermessungsregel bleibt wie besprochen bewusst zurückgestellt, hier nur als sauberes Beispiel
 dokumentiert, keine Handlung nötig.
+
+---
+
+## VOB-Übermessungsregel für Anstricharbeiten — Entscheidung & Umsetzung (2026-08-21)
+
+**Kein eigener PM-XXX-Fall** — kein neuer Testfall mit eigenem Soll/Ist, sondern eine eigenständige
+Entscheidung, die aus PM-021s „Worauf achten"-Frage hervorging (siehe oben: „Ergibt sich aus dieser
+Gegenüberstellung … ein guter, konkreter Anlass, die VOB-Übermessungsregel endlich zu entscheiden und
+umzusetzen?"). War zuvor unter „Noch offen, bewusst zurückgestellt" im Stand-auf-einen-Blick vermerkt.
+
+**Worum es geht (kurz):** VOB/C (DIN 18363) ist die branchenübliche Regelung für Bauleistungen — hier
+relevant ist eine einzelne, gängige Handwerker-Konvention beim Ausmessen von Anstrichflächen: kleine
+Fenster/Türen (Einzelgröße bis 2,5 m²) werden von der zu streichenden Wandfläche NICHT abgezogen, weil der
+Mehraufwand für die Kantenarbeit/Leibungen rund um die kleine Öffnung die eingesparte Fläche ungefähr
+ausgleicht. Nur Öffnungen ÜBER 2,5 m² (z. B. eine breite Terrassentür) werden weiterhin einzeln abgezogen —
+so wie bisher.
+
+**Sandys Entscheidung (2026-08-21):** Auf Nachfrage, ob das standardmäßig für alle gelten oder als
+Onboarding-Frage + Einstellungen-Schalter angeboten werden soll, hat Sandy klar zurückgemeldet: keine
+Ahnung, keine feste Meinung dazu — wenn das gängige Praxis ist, soll es einfach automatisch für alle gelten,
+mit einem Hinweis irgendwo dazu. Umgesetzt als: automatisch für ALLE Malerangebote, kein Einstellungen-
+Schalter, kein Onboarding-Schritt (bewusst einfach gehalten, siehe unten „Was NICHT gemacht wurde").
+
+**Umsetzung:** neue, zentrale Funktion `berechneOeffnungsabzugVob()` in der neuen Datei
+`src/lib/mengen/gewerke/vob-uebermessung.ts` — EINE Stelle für die 2,5-m²-Prüfung, die überall dort
+eingebunden wurde, wo `maler.ts` bisher Fenster-/Türflächen von der Wandfläche abgezogen hat: normale
+Räume, Fassade/Einzelwand, direkt angegebener Umfang, quadratische-Raum-Annahme, sowie die Fassaden-Schleife
+in `daten.waende[]`. Sichtbarer Hinweis für Kunde/Handwerker: wenn die Regel gegriffen hat, erscheint ein
+Satz wie „2 Öffnungen bis 2,5 m² Einzelgröße nicht abgezogen (3,09 m², VOB/C DIN 18363 Übermessung)" in den
+Annahmen der Wandflächen-Position (`vobHinweistext()`).
+
+**Was bewusst NICHT angefasst wurde (Scoping-Entscheidung, kein Bug):**
+1. Die Wandzonen-Berechnung (mehrfarbige Wände, pro Zone einzeln) — zu komplex/riskant für diese Runde,
+   bisher keine Testabdeckung, ein Nischen-Feature.
+2. Dachgeschoss-Dachfenster — eigene, andere Ausmessungs-Konvention, nicht Teil von PM-021s Fund.
+3. Die zusätzliche VOB-Feinheit, dass Leibungen übermessener (nicht abgezogener) Öffnungen ebenfalls nicht
+   separat berechnet werden dürften — `daten.leibungen[]` hat aktuell keine Verknüpfung zu einzelnen
+   Fenster-/Tür-Objekten, das wäre eine größere, eigene Änderung.
+
+**Auswirkung, wichtig für Sandy:** Das ändert die berechnete Wandfläche (und damit den Preis) für praktisch
+jedes künftige Malerangebot mit normalgroßen Fenstern/Türen — die Wandfläche wird jetzt tendenziell etwas
+GRÖSSER, weil kleine Öffnungen nicht mehr abgezogen werden. Das ist die gewollte, fachlich korrekte
+Konsequenz der Entscheidung, kein Fehler.
+
+**Wie geprüft:** alle 8 bestehenden Golden-Tests in `golden-korrekturen.test.ts`, die Standard-Fenster/Türen
+enthalten, mussten wegen der jetzt korrekt NICHT mehr abgezogenen Flächen aktualisiert werden (jeweils mit
+Kommentar, der die neue Rechnung erklärt) — u. a. Testfall 1 (42,21 → 46,50 m²), PM-002a Restwände (26,81 →
+29,90 m²), PM-005 Küche (28,41 → 31,50 m²), PM-003 Flur (46,11 → 48,00 m²), PM-008b Fassade (66,96 → 72,00
+m², zwei Positionen), PM-012 Esszimmer (35,16 → 38,25 m²), PM-021 Wohnküche (48,55 → 53,00 m², da hier NUR
+die große Terrassentür über der 2,5-m²-Schwelle liegt und weiterhin abgezogen wird — die Rechnung aus
+PM-021s „Soll-Lösung" oben, 49,43 m², war noch von der ALTEN, inzwischen überholten Annahme ausgegangen,
+dass nur EIN kleines Fenster übermessen wird, nicht auch die zweite Öffnung und die normale Tür). Alle 8
+Anpassungen sind reine Bestätigung der neuen, korrekten Rechnung, kein Hinweis auf einen Bug. Ganze Suite
+grün (267/267), `tsc --noEmit` sauber für alle geänderten Dateien. Wie immer: noch OHNE Live-Nachtest im
+echten Tool — bitte bei Gelegenheit einmal ein Malerangebot mit normalgroßen Fenstern/Türen live prüfen und
+schauen, ob der neue Hinweistext in den Annahmen erscheint und die Wandfläche wie erwartet größer ausfällt.
 
 ---
 

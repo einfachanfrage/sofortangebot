@@ -83,11 +83,16 @@ const KORPUS: Fall[] = [
       sockelleisten: true,
     }],
     exakteMengen: [
-      // Umfang 2×(5,20+4,10)=18,60 lfm; Wandfläche brutto 46,50 m²;
-      // Abzug 2 Fenster Standard (1,20×1,00=1,20 je Stk) + 1 Tür Standard
-      // (0,90×2,10=1,89): 46,50 − 2,40 − 1,89 = 42,21 m²
-      { enthaelt: 'wandflächen streichen', menge: 42.21 },
+      // Umfang 2×(5,20+4,10)=18,60 lfm; Wandfläche brutto 46,50 m².
+      // VOB-Übermessung (PM-021, 2026-08-21, Sandys Entscheidung — siehe
+      // vob-uebermessung.ts): 2 Standardfenster (1,20×1,00=1,20 m² je Stk)
+      // UND die Standardtür (0,90×2,10=1,89 m²) liegen beide unter der
+      // 2,5-m²-Schwelle → werden NICHT mehr abgezogen. Netto = Brutto = 46,50 m²
+      // (vorher, ohne VOB-Regel: 42,21 m²).
+      { enthaelt: 'wandflächen streichen', menge: 46.50 },
       // Sockelleisten abkleben: Umfang 18,60 − 1 Türbreite (0,90) = 17,70 lfm
+      // — unverändert durch VOB (die Tür unterbricht die Leiste physisch,
+      // unabhängig von der Ausmess-Konvention für Wandfläche).
       { enthaelt: 'sockelleisten abkleben', menge: 17.70 },
     ],
     // Größter Fehler laut Sandy: Decke taucht trotz ausdrücklichem
@@ -127,7 +132,8 @@ const KORPUS: Fall[] = [
       sockelleisten: true,
     }],
     exakteMengen: [
-      { enthaelt: 'wandflächen streichen', menge: 42.21 },
+      // Siehe VOB-Kommentar bei Testfall 1 — identische Raumdaten.
+      { enthaelt: 'wandflächen streichen', menge: 46.50 },
     ],
     verboten: ['decke'],
   },
@@ -151,12 +157,14 @@ const KORPUS: Fall[] = [
       tueren: [{ anzahl: 1 }],
     }],
     exakteMengen: [
-      // Umfang 2×(4+3,5)=15,00 lfm; Wandbrutto 39,00 m²; Abzug Fenster
-      // 1,20 m² + Tür 1,89 m² = Wandnetto 35,91 m²
-      // Akzentwand = KÜRZERE Seite (3,50 m) × 2,60 m = 9,10 m²
+      // Umfang 2×(4+3,5)=15,00 lfm; Wandbrutto 39,00 m². VOB-Übermessung
+      // (PM-021): Standardfenster (1,20 m²) und Standardtür (1,89 m²) beide
+      // ≤2,5 m² → kein Abzug mehr. Wandnetto = 39,00 m² (vorher 35,91 m²).
+      // Akzentwand = KÜRZERE Seite (3,50 m) × 2,60 m = 9,10 m² — unverändert,
+      // hängt nicht von Fenster/Tür ab.
       { enthaelt: 'akzentwand', menge: 9.10 },
-      // Restwände: 35,91 − 9,10 = 26,81 m²
-      { enthaelt: 'restwände streichen', menge: 26.81 },
+      // Restwände: 39,00 − 9,10 = 29,90 m² (vorher 26,81 m²)
+      { enthaelt: 'restwände streichen', menge: 29.90 },
     ],
     verboten: [],
     annahmenPruefung: [
@@ -224,9 +232,10 @@ const KORPUS: Fall[] = [
       },
     ],
     exakteMengen: [
-      // Umfang 2×(3,50+2,80)=12,60 lfm; Wandbrutto 31,50 m²; Abzug 1 Fenster
-      // Standard (1,20) + 1 Tür Standard (1,89) = 28,41 m²
-      { enthaelt: 'wandflächen streichen 2x — küche', menge: 28.41 },
+      // Umfang 2×(3,50+2,80)=12,60 lfm; Wandbrutto 31,50 m²; Fenster (1,20 m²)
+      // und Tür (1,89 m²) sind beide Standardgröße ≤2,5 m² → VOB-Übermessung
+      // greift, kein Abzug (VOB/C DIN 18363, siehe pruefmeister-testfaelle.md)
+      { enthaelt: 'wandflächen streichen 2x — küche', menge: 31.50 },
       { enthaelt: 'deckenfläche streichen 2x — küche', menge: 9.80 },
       { enthaelt: 'deckenfläche streichen 2x — speisekammer', menge: 9.80 },
     ],
@@ -265,9 +274,10 @@ const KORPUS: Fall[] = [
     // in der Engine (maler.ts las "Deckenhöhe" fälschlich als "Decke wird
     // gestrichen"). Beides jetzt mitrepariert, deshalb hier mitgeprüft.
     exakteMengen: [
-      // Umfang 2×(6,00+1,50)=15,00 lfm; Wandbrutto 48,00 m²; kein Fenster-
-      // Abzug (explizit "kein Fenster"), minus 1 Tür Standard (1,89) = 46,11 m²
-      { enthaelt: 'wandflächen streichen', menge: 46.11 },
+      // Umfang 2×(6,00+1,50)=15,00 lfm; Wandbrutto 48,00 m²; kein Fenster,
+      // die einzige Tür ist Standardgröße (1,89 m²) ≤2,5 m² → VOB-
+      // Übermessung greift, kein Abzug (VOB/C DIN 18363)
+      { enthaelt: 'wandflächen streichen', menge: 48.00 },
       { enthaelt: 'deckenfläche streichen', menge: 9.00 },
       { enthaelt: 'dübellöcher spachteln', menge: 2 },
     ],
@@ -354,8 +364,10 @@ const KORPUS: Fall[] = [
       arbeiten: ['fassade grundieren', 'fassade streichen'],
     }],
     exakteMengen: [
-      { enthaelt: 'fassadenfläche streichen', menge: 66.96 },
-      { enthaelt: 'grundierung', menge: 66.96 },
+      // Wandbrutto 12×6=72,00 m²; alle 3 Fenster gleich groß (1,2×1,4=1,68 m²)
+      // ≤2,5 m² → VOB-Übermessung greift für alle, kein Abzug (VOB/C DIN 18363)
+      { enthaelt: 'fassadenfläche streichen', menge: 72.00 },
+      { enthaelt: 'grundierung', menge: 72.00 },
     ],
     // Kernpunkt: keine zweite Anstrich-Position unter anderem Namen, keine
     // ungefragte Reinigung.
@@ -428,9 +440,10 @@ const KORPUS: Fall[] = [
       sockelleisten: true,
     }],
     exakteMengen: [
-      // Umfang 2×(4,50+3,00)=15,00 lfm; Wandbrutto 38,25 m²; Abzug 1 Fenster
-      // Standard (1,20) + 1 Tür Standard (1,89) = 35,16 m²
-      { enthaelt: 'wandflächen streichen', menge: 35.16 },
+      // Umfang 2×(4,50+3,00)=15,00 lfm; Wandbrutto 38,25 m²; Fenster (1,20 m²)
+      // und Tür (1,89 m²) sind beide Standardgröße ≤2,5 m² → VOB-Übermessung
+      // greift, kein Abzug (VOB/C DIN 18363)
+      { enthaelt: 'wandflächen streichen', menge: 38.25 },
       // Sockelleisten streichen: Umfang 15,00 − 1 Türbreite (0,90) = 14,10 lfdm
       // — übernommen von "Sockelleisten abkleben", keine eigene Meterangabe im Transkript.
       { enthaelt: 'sockelleisten streichen', menge: 14.10 },
@@ -551,9 +564,11 @@ const KORPUS: Fall[] = [
       tueren: [{ anzahl: 1, breite: 0.9, hoehe: 2.1 }, { anzahl: 1, breite: 2, hoehe: 2.1 }],
     }],
     exakteMengen: [
-      // Umfang 2×(6+5)=22,00 lfm; Wandbrutto 57,20 m²; Abzug beider Fenster
-      // (1,68+0,88=2,56 m²) + beider Türen (1,89+4,20=6,09 m²) = 48,55 m²
-      { enthaelt: 'wandflächen streichen 1x', menge: 48.55 },
+      // Umfang 2×(6+5)=22,00 lfm; Wandbrutto 57,20 m²; beide Fenster (1,68 m²,
+      // 0,88 m²) und die normale Tür (1,89 m²) sind ≤2,5 m² → VOB-Übermessung,
+      // kein Abzug. Nur die breite Terrassentür (2×2,1=4,20 m²) liegt über der
+      // 2,5 m²-Schwelle und wird weiterhin abgezogen: 57,20 − 4,20 = 53,00 m²
+      { enthaelt: 'wandflächen streichen 1x', menge: 53.00 },
       { enthaelt: 'sockelleisten abkleben', menge: 19.10 },
     ],
     // Kernpunkt: keine Balkon-/Terrassen-Position — im Transkript kommt nur

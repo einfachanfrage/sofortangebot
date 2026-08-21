@@ -2,6 +2,7 @@ import type { MengenErgebnis, BerechnetePosition } from '../types'
 import { erkenneScope } from '../../arbeiten-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge } from './sockelleisten'
+import { berechneOeffnungsabzugVob, vobHinweistext, type OeffnungsabzugErgebnis } from './vob-uebermessung'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -44,6 +45,11 @@ export function malerEngine(daten: any): MengenErgebnis {
     let deckenflaecheM2: number | null = null
     let umfangM: number | null = null
     const annahmenUmfang: string[] = []
+    // VOB-Übermessung (siehe vob-uebermessung.ts): einmal je Raum berechnet,
+    // damit die Wandflächen-Rechnung UND der spätere Anzeige-/Annahmetext
+    // (weiter unten) garantiert dieselben Zahlen verwenden.
+    let fensterAbzugVob: OeffnungsabzugErgebnis | null = null
+    let tuerAbzugVob: OeffnungsabzugErgebnis | null = null
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
@@ -116,35 +122,23 @@ export function malerEngine(daten: any): MengenErgebnis {
 
       if (hoehe) {
         const wandBrutto = round2(umfangM * hoehe)
-        const fensterFlaeche = effFenster.reduce(
-          (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
-        )
-        const tuerFlaeche = effTueren.reduce(
-          (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
-        )
-        wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
+        fensterAbzugVob = berechneOeffnungsabzugVob(effFenster, 1.2, 1.0)
+        tuerAbzugVob = berechneOeffnungsabzugVob(effTueren, 0.9, 2.1)
+        wandflaecheNettoM2 = round2(wandBrutto - fensterAbzugVob.abzugFlaeche - tuerAbzugVob.abzugFlaeche)
       }
     } else if (laenge && hoehe && !breite) {
       // Fassade / einzelne Wand: Breite × Höhe — kein Raum, nur Wandfläche
       const wandBrutto = round2(laenge * hoehe)
-      const fensterFlaeche = effFenster.reduce(
-        (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
-      )
-      const tuerFlaeche = effTueren.reduce(
-        (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
-      )
-      wandflaecheNettoM2 = round2(wandBrutto - fensterFlaeche - tuerFlaeche)
+      fensterAbzugVob = berechneOeffnungsabzugVob(effFenster, 1.2, 1.0)
+      tuerAbzugVob = berechneOeffnungsabzugVob(effTueren, 0.9, 2.1)
+      wandflaecheNettoM2 = round2(wandBrutto - fensterAbzugVob.abzugFlaeche - tuerAbzugVob.abzugFlaeche)
       // Keine Decke, kein Boden, kein Umfang für Fassaden
     } else if (umfang_direkt && hoehe) {
       // Umfang direkt angegeben (Halle, Lagerhalle) — ohne L×B
       umfangM = round2(umfang_direkt)
-      const fensterFlU = effFenster.reduce(
-        (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
-      )
-      const tuerFlU = effTueren.reduce(
-        (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
-      )
-      wandflaecheNettoM2 = round2(umfangM * hoehe - fensterFlU - tuerFlU)
+      fensterAbzugVob = berechneOeffnungsabzugVob(effFenster, 1.2, 1.0)
+      tuerAbzugVob = berechneOeffnungsabzugVob(effTueren, 0.9, 2.1)
+      wandflaecheNettoM2 = round2(umfangM * hoehe - fensterAbzugVob.abzugFlaeche - tuerAbzugVob.abzugFlaeche)
       // Boden-/Deckenfläche unbekannt ohne L×B → Rückfrage kommt
     } else if (flaeche_angegeben) {
       // flaeche = immer Bodenfläche (GPT-Konvention). Nur bei Dachschräge/Fassade = Wandfläche.
@@ -158,13 +152,9 @@ export function malerEngine(daten: any): MengenErgebnis {
           // Umfang über Quadrat-Annahme schätzen: Seite = √Fläche → Umfang = 4·√Fläche.
           // Bei üblichen Raumproportionen (bis ~1:2) liegt der Fehler unter ~7 % — klar als Annahme markiert.
           umfangM = round2(4 * Math.sqrt(flaeche_angegeben))
-          const fensterFlQ = effFenster.reduce(
-            (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
-          )
-          const tuerFlQ = effTueren.reduce(
-            (sum: number, t: any) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9) * (t.hoehe ?? 2.1), 0
-          )
-          wandflaecheNettoM2 = Math.max(0, round2(umfangM * hoehe - fensterFlQ - tuerFlQ))
+          fensterAbzugVob = berechneOeffnungsabzugVob(effFenster, 1.2, 1.0)
+          tuerAbzugVob = berechneOeffnungsabzugVob(effTueren, 0.9, 2.1)
+          wandflaecheNettoM2 = Math.max(0, round2(umfangM * hoehe - fensterAbzugVob.abzugFlaeche - tuerAbzugVob.abzugFlaeche))
           annahmenUmfang.push(`Umfang aus Bodenfläche geschätzt (≈ quadratischer Raum, ${umfangM} lfm) — bei länglichem Raum bitte Maße prüfen`)
         }
         // Ohne Höhe: Wandfläche bleibt null (Rückfrage kommt)
@@ -392,10 +382,20 @@ export function malerEngine(daten: any): MengenErgebnis {
           const tuerAnzahl2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1), 0)
           const fensterEinzel2 = fensterAnzahl2 > 0 ? round2(fensterFlaeche2 / fensterAnzahl2) : 0
           const tuerEinzel2 = tuerAnzahl2 > 0 ? round2(tuerFlaeche2 / tuerAnzahl2) : 0
+          // VOB-Übermessung: die Wandfläche oben wurde bereits mit dem
+          // tatsächlichen (übermessungsbereinigten) Abzug berechnet
+          // (fensterAbzugVob/tuerAbzugVob) — hier dieselben Zahlen für den
+          // Anzeigetext wiederverwenden, sonst würde die Rechenweg-Anzeige
+          // eine größere Fläche abziehen, als tatsächlich passiert ist.
+          // Fällt nur bei Dachschräge/direkter Wandflächen-Angabe auf die
+          // rohe Summe zurück (dort greift die VOB-Regel nicht, siehe oben).
+          const fensterAbzugAnzeige = fensterAbzugVob?.abzugFlaeche ?? round2(fensterFlaeche2)
+          const tuerAbzugAnzeige = tuerAbzugVob?.abzugFlaeche ?? round2(tuerFlaeche2)
+          const vobHinweis = fensterAbzugVob && tuerAbzugVob ? vobHinweistext(fensterAbzugVob, tuerAbzugVob) : null
           positionen.push({
             beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: annahmenUmfang.length > 0 ? 'medium' : 'high',
-            berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m² − Fenster ${round2(fensterFlaeche2)} m² − Türen ${round2(tuerFlaeche2)} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
-            annahmen: [...annahmenFenster, ...annahmenUmfang, ...anstrichAnnahmen],
+            berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m² − Fenster ${fensterAbzugAnzeige} m² − Türen ${tuerAbzugAnzeige} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
+            annahmen: [...annahmenFenster, ...annahmenUmfang, ...anstrichAnnahmen, ...(vobHinweis ? [vobHinweis] : [])],
             ...(!istDachschraege && umfangM && hoehe ? {
               flaechen_parameter: {
                 brutto_m2: wandBrutto2,
@@ -470,11 +470,10 @@ export function malerEngine(daten: any): MengenErgebnis {
     const wName = (wand.name as string | undefined)?.trim() || 'Fassade'
 
     const wFensterRoh = ((wand.fenster ?? []) as any[]).filter(Boolean)
-    const wFensterFlaeche = wFensterRoh.reduce(
-      (sum: number, f: any) => sum + (f.anzahl ?? 1) * (f.breite ?? 1.2) * (f.hoehe ?? 1.0), 0
-    )
+    const wFensterAbzugVob = berechneOeffnungsabzugVob(wFensterRoh, 1.2, 1.0)
     const bruttoFlaeche = round2(wLaenge * wHoehe)
-    const nettoFlaeche = Math.max(0, round2(bruttoFlaeche - wFensterFlaeche))
+    const nettoFlaeche = Math.max(0, round2(bruttoFlaeche - wFensterAbzugVob.abzugFlaeche))
+    const wVobHinweis = wFensterAbzugVob.uebermessenAnzahl > 0 ? vobHinweistext(wFensterAbzugVob, { uebermessenAnzahl: 0, uebermessenFlaeche: 0, abzugFlaeche: 0, rohFlaeche: 0 }) : null
 
     const wAnstrichText = `${wArbeiten} ${transkriptAll}`
     const wEinAnstrich = /(?:einmal|1\s*[x×]|ein(?:en)?\s+anstrich|eine\s+lage)/i.test(wAnstrichText)
@@ -490,9 +489,9 @@ export function malerEngine(daten: any): MengenErgebnis {
       einheit: 'm²',
       konfidenz: 'high',
       berechnungsweg: wFensterRoh.length > 0
-        ? `${wLaenge}m × ${wHoehe}m − Fenster (${round2(wFensterFlaeche)} m²)`
+        ? `${wLaenge}m × ${wHoehe}m − Fenster (${wFensterAbzugVob.abzugFlaeche} m²)`
         : `${wLaenge}m × ${wHoehe}m`,
-      annahmen: wAnstrichAnnahmen,
+      annahmen: [...wAnstrichAnnahmen, ...(wVobHinweis ? [wVobHinweis] : [])],
     })
 
     // Grundierung NUR aus der strukturierten arbeiten[]-Liste, nicht aus dem
