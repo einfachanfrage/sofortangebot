@@ -4,7 +4,7 @@ import type { KalkulationsAntworten } from '@/lib/mengen/antworten-verarbeiter'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { BerechnetePosition } from '@/lib/mengen/types'
-import type { VollExtraktionCache } from '@/lib/types'
+import type { VollExtraktionCache, KombinierteExtraktionCache } from '@/lib/types'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
@@ -36,7 +36,10 @@ export async function POST(req: NextRequest) {
   // Nur Aufnahmen dieses Users (Sicherheit: Angebot gehört zur Company des Users)
   const { data: quoteCheck } = await supabase
     .from('quotes')
-    .select('id, entwurf_gespeichert_am, companies!inner(user_id)')
+    // kombinierte_extraktion_cache neu seit CoS-002 Schritt 3,
+    // Mehrfach-Aufnahmen-Fall (Head of Product Engineering, 2026-08-21) —
+    // siehe Cache-Wiederverwendung weiter unten.
+    .select('id, entwurf_gespeichert_am, kombinierte_extraktion_cache, companies!inner(user_id)')
     .eq('id', angebot_id)
     .single()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -110,21 +113,31 @@ export async function POST(req: NextRequest) {
   // CoS-002 Option 1, Schritt 3 (Head of Product Engineering, 2026-08-21,
   // docs/cos-002-architektur-vorschlag.md): statt hier IMMER einen frischen
   // ki-extrahieren-Aufruf über /api/angebot-extrahieren auszulösen, wird
-  // — wenn möglich — die in Schritt 1 gecachte volle Extraktion
-  // (entwurf_aufnahmen.voll_extraktion) wiederverwendet. Nur EIN KI-Aufruf
-  // pro Aufnahme statt zwei, das ist das eigentliche CoS-002-Ziel.
+  // — wenn möglich — eine bereits gecachte volle Extraktion wiederverwendet.
+  // Nur EIN KI-Aufruf pro Aufnahme statt zwei, das ist das eigentliche
+  // CoS-002-Ziel. Zwei getrennte Cache-Quellen, je nach Aufnahmen-Menge:
   //
-  // Bewusst NUR im einfachsten, sicheren Fall aktiv (kleine Schritte statt
-  // Big-Bang, wie im eigenen Vorschlag empfohlen): genau EINE neue Aufnahme
-  // im Batch, vom Typ 'sprache', ohne laufende Rückfragen-Runde. Grund: der
-  // Cache wurde pro Aufnahme auf DEREN EIGENEM Transkript berechnet — bei
-  // mehreren gleichzeitig neuen Aufnahmen kombiniert combinedText mehrere
-  // Transkripte zu EINEM GPT-Aufruf (damit z. B. ein in Aufnahme 2 erwähnter
-  // Bezug auf einen Raum aus Aufnahme 1 aufgelöst werden kann) — das können
-  // die einzeln gecachten Extraktionen strukturell nicht nachbilden, ein
-  // Wiederverwenden würde diese Cross-Aufnahme-Korrektur stillschweigend
-  // verlieren. In diesem Mehr-Aufnahmen-Fall läuft weiterhin der bisherige,
-  // frische Kombi-Aufruf — unverändertes, bekanntes Verhalten.
+  // 1) Genau EINE neue Aufnahme, vom Typ 'sprache': die in Schritt 1 pro
+  //    Aufnahme gecachte Extraktion (entwurf_aufnahmen.voll_extraktion) —
+  //    unverändert seit Schritt 3.
+  //
+  // 2) MEHRERE neue Aufnahmen (Mehrfach-Aufnahmen-Fall, ergänzt 2026-08-21
+  //    auf Sandys Auftrag "mach komplett rund, das auch noch schließen"):
+  //    Ein deterministisches Zusammenführen mehrerer UNABHÄNGIG (je Aufnahme
+  //    isoliert) extrahierter Ergebnisse wäre riskant — Cross-Aufnahme-
+  //    Bezüge (z. B. "noch die Decke im Wohnzimmer" in Aufnahme 2, bezogen
+  //    auf ein in Aufnahme 1 erwähntes Wohnzimmer) lassen sich nicht
+  //    zuverlässig aus zwei getrennten JSON-Ergebnissen rekonstruieren.
+  //    Deshalb hier KEIN Merge der Einzel-Caches, sondern die Wieder-
+  //    verwendung eines spekulativ VORAB berechneten KOMBINIERTEN Ergebnisses
+  //    (quotes.kombinierte_extraktion_cache, siehe
+  //    src/lib/kombinierte-extraktion-cache.ts und
+  //    src/app/api/entwurf/vorab-kombinieren/route.ts) — nur wenn dessen
+  //    aufnahme_ids EXAKT zur aktuellen Aufnahmen-Menge passen. Jede
+  //    Abweichung (Cache fehlt, Menge hat sich geändert) fällt automatisch
+  //    auf den bisherigen frischen Kombi-Aufruf zurück — kein Korrektheits-
+  //    Risiko, GPT sieht in beiden Fällen denselben combinedText auf einmal,
+  //    nur WANN der Aufruf passiert unterscheidet sich.
   let vollExtraktionCache: ExtrahierteDaten | undefined
   if (
     !basis_extraktion
@@ -134,6 +147,16 @@ export async function POST(req: NextRequest) {
   ) {
     const voll = aufnahmen[0].voll_extraktion as VollExtraktionCache | null | undefined
     if (voll?.result) vollExtraktionCache = voll.result
+  } else if (!basis_extraktion && aufnahmen.length > 1) {
+    const kombiniert = (quoteCheck as { kombinierte_extraktion_cache?: KombinierteExtraktionCache | null })
+      .kombinierte_extraktion_cache
+    if (kombiniert?.result && Array.isArray(kombiniert.aufnahme_ids)) {
+      const aktuelleIds = aufnahmen.map(a => a.id).sort()
+      const gecachteIds = [...kombiniert.aufnahme_ids].sort()
+      const passtGenau = aktuelleIds.length === gecachteIds.length
+        && aktuelleIds.every((id, i) => id === gecachteIds[i])
+      if (passtGenau) vollExtraktionCache = kombiniert.result
+    }
   }
 
   // ── Schritt 1: Extraktion + Engine + Vollständigkeits-Check ──────────────

@@ -18,32 +18,14 @@ löschen — Verlauf ist wertvoll).
 
 ---
 
-## Offen
+## Offen (aktuell keine)
 
-🔵 **CoS-002 Schritt 3 — reicht der aktuelle Umfang für Gate 1?** (Head of
-Product Engineering, 2026-08-21): Alle drei Schritte sind umgesetzt. Das
-eigentliche Vertrauensproblem („Karte zeigt etwas anderes als die
-Berechnung") ist damit in JEDEM Fall gelöst, unabhängig von der Anzahl
-Aufnahmen (Option 2 + Schritt 2 greifen immer). Schritt 3 selbst (nur noch
-ein KI-Aufruf statt zwei) ist nur für den häufigen Fall „genau eine neue
-Sprachaufnahme" umgesetzt — bei mehreren gleichzeitig neuen Aufnahmen
-bleibt es bewusst beim bisherigen Verhalten (zwei GPT-Aufrufe), weil der
-Cache pro Aufnahme einzeln entsteht und die aktuelle Mehrfach-Aufnahmen-
-Logik den Text aller Aufnahmen gemeinsam an GPT gibt (bessere
-Querbezüge). Das ist jetzt eine reine Kosten-/Tempo-Frage, keine
-Korrektheits-Frage mehr. Sandys Wortlaut „Schritt 3 muss vollständig
-fertig sein" liest sich nach Alles-oder-nichts — deshalb hier die
-Rückfrage, statt das selbst zu interpretieren: reicht dieser Umfang, um
-Gate 1 zu starten, oder soll der Mehrfach-Aufnahmen-Fall auch noch
-geschlossen werden, bevor der erste echte Testnutzer ans Tool darf?
-Details: `docs/chief-of-staff-todos.md` CoS-002.
-
-Stand 20.08.2026, Mittag: die weiterhin große, laufende Abwägung ist keine
-einzelne Ja/Nein-Frage, sondern die Gate-1-Gesamtfrage „ist das Tool reif
-für erste echte Testnutzer?" — die läuft über `docs/launch-readiness.md`
-(aktuell 23 % gegen den vollen Scope, Stand 20.08.) und war an eine harte
-Bedingung geknüpft: Gate 1 startet erst, wenn CoS-002 Schritt 3 fertig ist
-— siehe Rückfrage oben, ob dieser Umfang das schon erfüllt.
+Stand 21.08.2026: CoS-002 Schritt 3 ist entschieden (siehe unten) — Sandys
+Antwort auf die Rückfrage war eindeutig, keine weitere Klärung nötig. Die
+weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage,
+sondern die Gate-1-Gesamtfrage „ist das Tool reif für erste echte
+Testnutzer?" — die läuft über `docs/launch-readiness.md` (aktuell 23 %
+gegen den vollen Scope, Stand 20.08.).
 
 ---
 
@@ -57,3 +39,4 @@ Bedingung geknüpft: Gate 1 startet erst, wenn CoS-002 Schritt 3 fertig ist
 | 2026-08-18 | PM-008/DC-024: Datenmodell für Wand-/Fassaden-Objekte (`modus: 'wand'`) — betrifft den Live-Berechnungspfad fertiger Angebote, deshalb Go nötig statt blinder Umsetzung | Go erteilt (direkt an den Designer, Konzept „Wand-Chip" lag zu dem Zeitpunkt schon vor). Head of Product Engineering setzt jetzt den `'wand'`-Zweig um (Länge/Höhe/Türen/Fenster, keine Breite/Bodenfläche; Bearbeiten-Ansicht zusätzlich aus `waende[]`; Fläche = Länge × Höhe − Öffnungen). Diese Zeile trage nachträglich ich (Product Designer) ein, war nicht vorher als „Offen" hier gelistet — Chief of Staff bitte gegenlesen | `docs/design-check.md` DC-024, `docs/pruefmeister-testfaelle.md` PM-008 Nachtest 5 |
 | 2026-08-20 | CoS-002: Bestätigungskarte-Vertrauensproblem („Karte ≠ Berechnung") — nach zweimal zurückgestelltem Auftrag (16.08. dokumentiert ohne Auftrag, 19.08. spontanes „ok los" wieder zurückgezogen, weil Umsetzung komplizierter war als gedacht) | Endgültig aktiviert: „das soll endgültig gefixt werden" — höchste Priorität im Projekt, vor Live-Test-Verifikation anderer bereits gebauter Fixes. Head of Product Engineering soll einen konkreten Umsetzungsvorschlag mit Optionen/Aufwand/Risiko liefern | `docs/chief-of-staff-todos.md` CoS-002 |
 | 2026-08-20 | CoS-002, Architektur-Wahl: Head of Product Engineering hat Option 1 (echte Single-Source-of-Truth, 3 Schritte, ~2–3 Wochen) + Option 2 (Sofort-Zwischenlösung, 1–2 Tage) vorgeschlagen (`docs/cos-002-architektur-vorschlag.md`) | **Option 2 sofort + Option 1 komplett (alle 3 Schritte).** Zusätzliche Bedingung von Sandy: Schritt 3 (Geld-Pfad) muss vollständig fertig sein, bevor der erste echte Testnutzer ans Tool darf — Voraussetzung für den Beginn von Gate 1, nicht nur wünschenswert. Zwei Nebenfunde (manuelle Positions-Änderungen vs. Neu-Berechnung; kaputtes Kosten-Logging seit 20.07.) als eigene kleine Tickets | `docs/chief-of-staff-todos.md` CoS-002, `docs/cos-002-architektur-vorschlag.md` |
+| 2026-08-21 | CoS-002 Schritt 3: reicht die Umsetzung nur für den Einzelaufnahme-Fall für Gate 1, oder soll auch der Mehrfach-Aufnahmen-Fall geschlossen werden? | **„mach komplett rund also das auch noch schließen"** — auch der Mehrfach-Aufnahmen-Fall soll denselben doppelten KI-Aufruf vermeiden. Head of Product Engineering hat das über einen spekulativen Vorab-Kombi-Aufruf umgesetzt (kein Merge einzelner Caches — Korrektheits-Risiko —, sondern derselbe kombinierte Aufruf nur vorgezogen). Damit ist Schritt 3 in beiden Fällen fertig | `docs/chief-of-staff-todos.md` CoS-002 |

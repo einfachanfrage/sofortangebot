@@ -43,7 +43,7 @@ Lösungsvorschlag: CoS-013.
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | 🟡 umgesetzt (Landingpage, PlanWahlModal, `/vorschau` entfernt/umgeleitet, zentrale `pricing.ts` angelegt), Live-Nachtest steht aus | `docs/design-check.md` DC-001 |
-| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | 🟡 **In Umsetzung (Head of Product Engineering, 21.08.2026).** Option 2 fertig. Option 1 Schritt 1 fertig. **Schritt 2 jetzt komplett** (Karte + DC-028-Raum-Karten lesen die gecachte, geprüfte Extraktion; „Entwurf erstellen" wartet auf dasselbe Ergebnis statt eines zweiten Wartefensters — DC-030-Entscheidung der Product Designerin umgesetzt). Nur noch **Schritt 3** (Geld-Pfad, Gate-1-Bedingung) offen. Noch KEIN Live-Nachtest | Sandy-Entscheidung 20.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md`, DC-030 in `docs/design-check.md` |
+| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | 🟢 **Alle drei Schritte vollständig umgesetzt, inkl. Mehrfach-Aufnahmen-Fall (Head of Product Engineering, 21.08.2026, Sandys Auftrag „mach komplett rund").** Karte zeigt nie mehr etwas, das von der Berechnung abweicht (Option 2 + Schritt 2, gilt immer, unabhängig von Aufnahmen-Anzahl). „Entwurf erstellen" ruft GPT jetzt in JEDEM Fall nur noch einmal statt zweimal auf — Einzelaufnahme über den Pro-Aufnahme-Cache, mehrere Aufnahmen über einen spekulativen Vorab-Kombi-Aufruf (neue Spalte `quotes.kombinierte_extraktion_cache`, bereits auf Produktions-DB angewendet). Aus meiner Sicht erfüllt das Sandys Gate-1-Bedingung vollständig. Noch KEIN Live-Nachtest (App-Code wegen Git/Deploy-Blockade noch nicht live) | Sandy-Entscheidung 20.08. + 21.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md`, DC-030 in `docs/design-check.md` |
 | CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
@@ -319,7 +319,7 @@ Dachgeschoss- oder Fassaden-Angebot tatsächlich versendet werden kann.
 ## CoS-002 — Strukturelle Ursache für das „Karte ≠ Berechnung"-Muster
 
 **Datum:** 2026-08-16, aktiviert 2026-08-20, entschieden 2026-08-20
-**Status:** 🟢 ENTSCHIEDEN — Option 2 sofort + Option 1 komplett (3 Schritte). Höchste Priorität im ganzen Projekt, vor allem anderen Gate-1-Punkten. Schritt 3 muss fertig sein, bevor der erste echte Testnutzer ran darf
+**Status:** 🟢 UMGESETZT — Option 2 + Option 1 komplett (alle 3 Schritte, inkl. Mehrfach-Aufnahmen-Fall in Schritt 3, 21.08.2026). Noch kein Live-Nachtest, siehe Fix-Updates unten
 
 **Hintergrund:** Der Prüfmeister hat mir (Chief of Staff, nicht im Bug-Tracker,
 sondern in einer eigenen Notiz `docs/pruefmeister-notiz-fuer-chief-of-staff.md`)
@@ -542,6 +542,82 @@ komplett, inklusive der zurückgestellten UX-Entscheidung:**
   beobachten). Damit ist Option 1 Schritt 2 komplett. Nur noch **Schritt 3**
   (Geld-Pfad selbst auf `voll_extraktion` umstellen, Sandys Gate-1-Bedingung)
   steht zwischen CoS-002 und dem ersten echten Testnutzer.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — Schritt 3
+umgesetzt, zunächst mit einer bewusst offen benannten Grenze:**
+
+- `/api/entwurf/generiere-positionen` löst „Entwurf erstellen" nicht mehr
+  blind einen zweiten, frischen `ki-extrahieren`-Aufruf aus, sondern nutzt
+  — wenn vorhanden — die in Schritt 1 pro Aufnahme gecachte volle
+  Extraktion (`entwurf_aufnahmen.voll_extraktion.result`) direkt weiter.
+  Nur EIN KI-Aufruf pro Aufnahme statt zwei — exakt das CoS-002-Ziel.
+- Bewusst zunächst NUR im einfachsten, sicheren Fall aktiv: genau EINE neue
+  Sprachaufnahme, ohne laufende Rückfragen-Runde (kleine Schritte statt
+  Big-Bang). Grund: der Cache wurde pro Aufnahme auf DEREN EIGENEM
+  Transkript berechnet — bei mehreren gleichzeitig neuen Aufnahmen
+  kombiniert `combinedText` mehrere Transkripte zu EINEM GPT-Aufruf (damit
+  z. B. ein in Aufnahme 2 erwähnter Bezug auf einen Raum aus Aufnahme 1
+  aufgelöst werden kann); das können einzeln gecachte Extraktionen
+  strukturell nicht nachbilden.
+- Drive-by-Fix: die Rate-Limit-Prüfung in `angebot-extrahieren/route.ts`
+  lief bisher auch dann, wenn gar kein frischer GPT-Aufruf anstand
+  (Rückfragen-Runde) — jetzt nur noch, wenn tatsächlich einer ansteht.
+- **Wichtig, unabhängig vom Rest-Umfang:** das eigentliche
+  CoS-002-Vertrauensproblem („Karte zeigt etwas anderes als die
+  Berechnung") ist damit in JEDEM Fall gelöst, unabhängig von der Anzahl
+  Aufnahmen — das läuft über Option 2 + Schritt 2, beide greifen immer.
+  Der verbleibende Mehrfach-Aufnahmen-Fall war nur noch eine
+  Kosten-/Tempo-Frage (ein zweiter, redundanter GPT-Aufruf), keine
+  Korrektheits-Frage mehr.
+- Regressionsprüfung: 236/236 Tests grün, `tsc`/`esbuild` ohne neue Fehler.
+- Diese Teil-Lücke wurde Sandy transparent in
+  `docs/entscheidungen-fuer-sandy.md` zur Entscheidung vorgelegt (reicht der
+  Umfang für Gate 1, oder auch den Mehrfach-Fall schließen?).
+
+**Fix-Update (Head of Product Engineering, 2026-08-21, Folgeauftrag „mach
+komplett rund, das auch noch schließen") — Mehrfach-Aufnahmen-Fall jetzt
+ebenfalls geschlossen, Schritt 3 damit vollständig:**
+
+- Ein deterministisches Zusammenführen mehrerer UNABHÄNGIG (je Aufnahme
+  isoliert) extrahierter Ergebnisse wäre riskant gewesen — Cross-Aufnahme-
+  Bezüge (z. B. „noch die Decke im Wohnzimmer" in Aufnahme 2, bezogen auf
+  ein in Aufnahme 1 erwähntes Wohnzimmer) lassen sich nicht zuverlässig aus
+  zwei getrennten JSON-Ergebnissen rekonstruieren — genau die Art von
+  stillem Korrektheits-Fehler, die CoS-002 beheben soll. Deshalb bewusst
+  KEIN lokaler Merge der Einzel-Caches.
+- Stattdessen: ein neuer, rein spekulativer Vorab-Aufruf
+  (`src/lib/kombinierte-extraktion-cache.ts`,
+  `/api/entwurf/vorab-kombinieren`, neue Spalte
+  `quotes.kombinierte_extraktion_cache`, Migration
+  `20260821060000_add_kombinierte_extraktion_cache.sql`, bereits auf der
+  Produktions-DB angewendet). Sobald „Entwurf erstellen" für MEHRERE neue
+  Aufnahmen klickbar wird (`kannFertigstellen`), feuert das Frontend
+  fire-and-forget denselben kombinierten `ki-extrahieren`-Aufruf, den
+  „Entwurf erstellen" sonst erst beim Klick frisch ausgelöst hätte — noch
+  bevor der Nutzer tatsächlich klickt. Klickt er später auf exakt dieselbe
+  Aufnahmen-Menge, nutzt `generiere-positionen` dieses Ergebnis, geprüft
+  über einen exakten Abgleich der Aufnahme-IDs; bei jeder Abweichung
+  (Aufnahme dazugekommen, Cache fehlt/fehlgeschlagen) automatisch der
+  bisherige frische Kombi-Aufruf als Fallback — kein Korrektheits-Risiko,
+  GPT sieht in beiden Fällen denselben Text auf einmal, nur WANN der Aufruf
+  passiert verschiebt sich.
+- Kosten-Einordnung: im Erwartungsfall kein Mehrverbrauch (derselbe eine
+  Kombi-Aufruf, nur vorgezogen); feuert bewusst nur einmal pro tatsächlich
+  geänderter Aufnahmen-Menge (nicht pro Aufnahme), um kein wiederholtes
+  Neuberechnen bei wachsenden Batches auszulösen.
+- Rein additiv, fail-open, ohne sichtbaren Zustand: schlägt der Vorab-Aufruf
+  fehl, merkt der Nutzer nichts — die Route fällt automatisch auf das
+  bisherige, bekannte Verhalten zurück.
+- Regressionsprüfung: 236/236 Tests weiterhin grün, `tsc`/`esbuild` für alle
+  neuen/geänderten Dateien ohne neue Fehler.
+- **Ehrlich zum Stand:** alles nur statisch geprüft und die DB-Migration
+  direkt gegen die Produktions-DB angewendet (Supabase-MCP, wie schon bei
+  Schritt 1) — noch KEIN Live-Nachtest im echten Deployment, weil der
+  App-Code selbst wegen der App-seitigen Git/Deploy-Blockade (separates,
+  bereits gemeldetes Thema) noch nicht live ist. Damit ist CoS-002 Option 1
+  jetzt in allen drei Schritten UND für beide Aufnahmen-Fälle vollständig
+  umgesetzt — aus meiner Sicht erfüllt das Sandys Gate-1-Bedingung
+  vollständig, sobald der App-Code deployed ist.
 
 ---
 

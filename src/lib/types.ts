@@ -74,6 +74,21 @@ export interface VollExtraktionCache {
   positionen?: ErkanntPosition[]
   __fehlgeschlagen?: true
 }
+
+// CoS-002 Option 1 Schritt 3, Mehrfach-Aufnahmen-Fall (Head of Product
+// Engineering, 2026-08-21, Sandys Auftrag "mach komplett rund, das auch
+// noch schließen" — siehe src/lib/kombinierte-extraktion-cache.ts für die
+// volle Begründung). Inhalt der neuen Spalte quotes.kombinierte_
+// extraktion_cache: ein spekulativ VORAB berechnetes ki-extrahieren-
+// Ergebnis für eine bestimmte Menge Aufnahmen (aufnahme_ids, sortiert).
+// generiere-positionen nutzt `result` nur wieder, wenn aufnahme_ids exakt
+// zur aktuell kombinierten Aufnahmen-Menge passt — bei jeder Abweichung
+// (Menge geändert, Cache fehlt) unverändert der bisherige frische
+// Kombi-Aufruf, kein Korrektheits-Risiko.
+export interface KombinierteExtraktionCache {
+  aufnahme_ids: string[]
+  result: ExtrahierteDaten
+}
 export type VatRate = 19 | 7 | 0
 
 export interface Company {
@@ -197,6 +212,9 @@ export interface Quote {
   original_id: string | null
   // CoS-012/DC-029: bewusst dauerhaft nullable, siehe src/lib/baustellen.ts
   baustelle_id?: string | null
+  // CoS-002 Option 1 Schritt 3, Mehrfach-Aufnahmen-Fall — siehe
+  // KombinierteExtraktionCache-Kommentar oben.
+  kombinierte_extraktion_cache?: KombinierteExtraktionCache | null
   customer?: Customer
   items?: QuoteItem[]
 }

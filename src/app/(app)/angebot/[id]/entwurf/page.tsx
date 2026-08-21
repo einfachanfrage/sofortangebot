@@ -554,6 +554,12 @@ export default function EntwurfPage() {
   // den "prüft genau"-Hinweis nach 5s, siehe kartenAnsicht()/VOLL_EXTRAKTION_*.
   const vollExtraktionWartetSeitRef = useRef<Map<string, number>>(new Map())
   const [, setVollExtraktionTick] = useState(0)
+  // CoS-002 Schritt 3, Mehrfach-Aufnahmen-Fall (2026-08-21, Sandys Auftrag
+  // "mach komplett rund, das auch noch schließen"): merkt sich die zuletzt
+  // spekulativ angestoßene Aufnahmen-Menge (als sortierter ID-String), damit
+  // der Vorab-Kombi-Aufruf pro tatsächlich geänderter Menge nur EINMAL
+  // feuert, siehe Effekt weiter unten und src/lib/kombinierte-extraktion-cache.ts.
+  const kombiVorabGefeuertRef = useRef<string>('')
 
   // ── Daten laden ──────────────────────────────────────────────────────────
 
@@ -987,6 +993,30 @@ export default function EntwurfPage() {
   // Der Button erscheint jetzt nur noch, wenn wirklich etwas zu berechnen da ist.
   const kannFertigstellen = neueAufnahmen.length > 0 && !nochVerarbeitung && !nochVollExtraktion && erkannteAnzahl > 0
   const nichtsErkannt = alleTranskribiertOderFehler && !nochVollExtraktion && neueAufnahmen.length > 0 && !nochVerarbeitung && erkannteAnzahl === 0
+
+  // CoS-002 Schritt 3, Mehrfach-Aufnahmen-Fall (2026-08-21): sobald "Entwurf
+  // erstellen" für MEHRERE neue Aufnahmen klickbar wird (kannFertigstellen),
+  // spekulativ den kombinierten Vorab-Aufruf anstoßen — bevor der Nutzer
+  // tatsächlich klickt (siehe src/lib/kombinierte-extraktion-cache.ts).
+  // Fire-and-forget: Antwort wird bewusst nicht ausgewertet, ein Fehlschlag
+  // ist harmlos (generiere-positionen fällt beim Klick automatisch auf den
+  // bisherigen frischen Kombi-Aufruf zurück). Während einer Rückfragen-Runde
+  // (basisExtraktion gesetzt) nicht sinnvoll nutzbar — dort nicht feuern.
+  useEffect(() => {
+    if (basisExtraktion) return
+    if (!kannFertigstellen || neueAufnahmen.length < 2) return
+    const ids = neueAufnahmen.filter(a => a.verarbeitung_status === 'fertig').map(a => a.id).sort()
+    if (ids.length < 2) return
+    const key = ids.join(',')
+    if (kombiVorabGefeuertRef.current === key) return
+    kombiVorabGefeuertRef.current = key
+    fetch('/api/entwurf/vorab-kombinieren', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ angebot_id: angebotId, aufnahmen_ids: ids }),
+    }).catch(() => {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kannFertigstellen, aufnahmen, quoteInfo, basisExtraktion])
 
   // ── DC-028: Raum-gruppierter Sammel-Bestand ──────────────────────────────
   // Pool aus bereits berechneten quote_items (echt) + Vorschau-Positionen
