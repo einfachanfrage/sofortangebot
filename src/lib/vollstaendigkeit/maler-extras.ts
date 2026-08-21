@@ -237,8 +237,23 @@ export function pruefeBewohnt(ergaenzt: BerechnetePosition[], fehlende: string[]
   }
 }
 
+// PM-021 (2026-08-21): loses `includes('terrasse')` fing auch "Terrassentür"
+// als Türbezeichnung — Sandys Live-Fall nannte nur eine Terrassentür (Öffnung
+// im Wohnküche-Raum selbst), nie einen tatsächlichen Balkon/eine Terrasse als
+// eigenen Ort. Trotzdem wurde ein kompletter Phantom-Workflow ausgelöst:
+// "Balkonboden streichen" mit 30 m² — exakt der Fläche des Wohnküche-Raums
+// selbst (5×6), nicht irgendeiner plausiblen Balkongröße. Dieselbe
+// Ein-Wort-Über-Erkennungs-Fehlerklasse wie PM-010 ("kommen raus" → Phantom-
+// Bodenaustausch) und PM-017 ("tapezieren" → vier Phantom-Positionen). Fix:
+// "balkon"/"terrasse"/"loggia" müssen als eigenständiger Ort erkannt werden —
+// ein Treffer direkt gefolgt von "tür" (ggf. mit "n"-Fuge wie bei
+// "Terrassentür" oder direkt wie bei "Balkontür") zählt nur als Türname,
+// nicht als Ortsangabe. Echte Wortzusammensetzungen wie "Balkonboden" oder
+// "Terrassenbrüstung" bleiben davon unberührt (kein "tür" direkt danach).
+const BALKON_ORT = /balkon(?!s?t[üu]r)\w*|loggia(?!t[üu]r)\w*|terrasse(?!nt[üu]r)\w*/i
+
 export function pruefeBalkon(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
-  const hatBalkon = lower.includes('balkon') || lower.includes('loggia') || lower.includes('terrasse')
+  const hatBalkon = BALKON_ORT.test(lower)
   if (!hatBalkon || hat(ergaenzt, 'balkonboden', 'brüstung', 'terrasse')) return
 
   const hatBeton = lower.includes('beton') || lower.includes('betonfarbe')

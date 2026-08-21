@@ -523,6 +523,43 @@ const KORPUS: Fall[] = [
     // das nie erwähnte Sockelleisten-Phantom dürfen im Ergebnis auftauchen.
     verboten: ['altbelag entfernen', 'sockelleisten'],
   },
+  {
+    name: 'PM-021 — "Terrassentür" darf keinen Phantom-Balkon auslösen (Wohnküche)',
+    gewerk: 'maler',
+    // PM-021, Live-Nachtest 2026-08-21, echte Produktionsdaten (id
+    // c4dfd8e7-…). Fund: `pruefeBalkon` (vollstaendigkeit/maler-extras.ts)
+    // prüfte bisher nur `lower.includes('terrasse')` — ein reiner Substring-
+    // Treffer, der auch in „Terrassentür"/„Breitterrassentür" (Whisper-
+    // Verschreiber für „breite Terrassentür") steckt, obwohl das Transkript
+    // nie einen tatsächlichen Balkon/eine Terrasse als eigenen Ort erwähnt,
+    // nur eine Türbezeichnung. Ergebnis im echten Entwurf: komplett erfundene
+    // Position „Balkonboden streichen" (30 m²) — exakt die Fläche der
+    // Wohnküche selbst, nicht irgendeine plausible Balkongröße. Dieselbe
+    // Ein-Wort-Über-Erkennungs-Fehlerklasse wie PM-010 („kommen raus") und
+    // PM-017 („tapezieren"). Fix: BALKON_ORT-Regex verlangt jetzt, dass
+    // „terrasse"/„balkon"/„loggia" NICHT direkt von „tür" gefolgt wird.
+    transkript:
+      'Wohnküche, 6 x 5, Höhe 2,60, zwei Fenster, eins ist ein 20 x 1,40, das andere 80 x 1,10, zwei Türen, ' +
+      'eine Normalmaß, die andere eine Breitterrassentür, zwei Meter x 2,10, Wände streichen, einmal drüber reicht.',
+    raeume: [{
+      name: 'Wohnküche',
+      laenge: 6,
+      breite: 5,
+      hoehe: 2.6,
+      arbeiten: ['wände streichen', 'boden abdecken', 'sockelleisten abkleben'],
+      fenster: [{ anzahl: 1, breite: 1.2, hoehe: 1.4 }, { anzahl: 1, breite: 0.8, hoehe: 1.1 }],
+      tueren: [{ anzahl: 1, breite: 0.9, hoehe: 2.1 }, { anzahl: 1, breite: 2, hoehe: 2.1 }],
+    }],
+    exakteMengen: [
+      // Umfang 2×(6+5)=22,00 lfm; Wandbrutto 57,20 m²; Abzug beider Fenster
+      // (1,68+0,88=2,56 m²) + beider Türen (1,89+4,20=6,09 m²) = 48,55 m²
+      { enthaelt: 'wandflächen streichen 1x', menge: 48.55 },
+      { enthaelt: 'sockelleisten abkleben', menge: 19.10 },
+    ],
+    // Kernpunkt: keine Balkon-/Terrassen-Position — im Transkript kommt nur
+    // eine Türbezeichnung vor, kein eigener Ort.
+    verboten: ['balkon', 'terrasse', 'brüstung'],
+  },
 ]
 
 describe('Golden Tests — Ausschlüsse & Korrekturen (exakte Mengen)', () => {

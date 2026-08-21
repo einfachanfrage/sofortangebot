@@ -71,7 +71,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv |
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | 🟡 Fix-Update (2026-08-21): „schwieriger Untergrund"-Zuschlag ergänzt, Raum-Gruppierung für „Gästeklo" behoben. Falsche Raummaße root-caused als Whisper-Transkriptionsfehler (kein Code-Bug, nicht fixbar). Noch ohne Live-Nachtest |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | 🟡 Fix-Update (2026-08-21): Altbelag-Verneinungserkennung ergänzt (boden-normalisierer.ts), Sockelleisten-Phantom-Fallback verlangt jetzt Textsignal (boden-vorarbeiten.ts). Noch ohne Live-Nachtest |
-| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ❌ Ist-Ergebnis (2026-08-21): Wandfläche exakt Soll (48,55 m², alle 3 Kernfragen positiv). Neuer Fund: unverlangte „Balkonboden streichen"-Position (30 m²), vermutlich durch „Terrassentür" ausgelöst |
+| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | 🟡 Fix-Update (2026-08-21): Phantom-„Balkonboden streichen" behoben — „Terrassentür"/„Balkontür" zählen jetzt nur noch als Türname, nicht als Ortsangabe (maler-extras.ts). Noch ohne Live-Nachtest |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -1583,7 +1583,11 @@ als reine Info, kein Bug, markiert und bleibt das. Wie immer: noch OHNE Live-Nac
 ## PM-021 — Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche)
 
 **Datum:** 2026-08-20
-**Status:** ❌ Ist-Ergebnis (2026-08-21): Alle drei Kernfragen positiv beantwortet (individuelle
+**Status:** 🟡 Fix-Update (2026-08-21): Phantom-„Balkonboden streichen" behoben —
+`pruefeBalkon` verwechselte „Terrassentür"/„Breitterrassentür" (reine Türbezeichnung) mit einem
+tatsächlichen Balkon als Ort. Noch ohne Live-Nachtest.
+
+Ursprünglicher Befund (2026-08-21): Alle drei Kernfragen positiv beantwortet (individuelle
 Öffnungsmaße, „1x" statt „2x", Terrassentür korrekt erkannt — Wandfläche exakt Soll 48,55 m²). Aber neuer,
 kurioser Fund: komplett unverlangte „Balkonboden streichen"-Position (30 m²), vermutlich durch das Wort
 „Terrassentür" ausgelöst
@@ -1666,6 +1670,35 @@ Raummaße korrekt (5×6 m, Höhe 2,6 m, 2 Türen, 2 Fenster):
    fachlich keinen Sinn ergibt und Kunden wie Handwerker verwirren würde.
 3. VOB-Übermessung weiterhin nicht angewendet — erwartungsgemäß, bekannter, bewusst niedrig priorisierter
    Punkt, kein neuer Fund.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — an echten Produktionsdaten root-caused:** Rohdaten
+für diesen Testlauf gezogen (Supabase, `entwurf_aufnahmen`, id `c4dfd8e7…`). Transkript im Original sogar
+noch deutlicher als vermutet: Whisper hat „breite Terrassentür" zu „**Breitterrassentür**" verschliffen —
+noch klarer erkennbar, dass das eine reine Türbezeichnung ist, kein eigener Ort.
+
+**Ursache bestätigt: `pruefeBalkon`** (`vollstaendigkeit/maler-extras.ts`) prüfte bisher nur
+`lower.includes('terrasse')` — ein bloßer Substring-Treffer, der auch in „Terrassentür"/„Breitterrassentür"
+steckt. Sobald das Wort irgendwo vorkam, hat die Funktion einen kompletten Zusatz-Workflow ausgelöst: eine
+„Balkonboden streichen"-Position, deren Menge einfach von der ERSTEN gefundenen „…boden…"-Position
+übernommen wurde — hier „Boden schützen — Wohnküche" (30 m², die Fläche des Zimmers selbst, nicht
+irgendeine Balkongröße). Exakt Sandys Strukturbeobachtung: ein einzelnes Trigger-Wort löst einen kompletten
+erfundenen Workflow aus, plus Wiederverwendung einer fachlich unpassenden Fläche — dieselbe Fehlerfamilie
+wie PM-010 („kommen raus" → Phantom-Bodenaustausch) und PM-017 („tapezieren" → vier Phantom-Positionen).
+
+**Fix:** neue `BALKON_ORT`-Regex verlangt, dass „balkon"/„terrasse"/„loggia" NICHT direkt von „tür" gefolgt
+wird (mit oder ohne „n"-Fuge, deckt „Terrassentür", „Breitterrassentür" UND „Balkontür" ab). Echte
+Wortzusammensetzungen wie „Balkonboden" oder „Terrassenbrüstung" (kein „tür" direkt danach) lösen die
+Erkennung weiterhin korrekt aus — nur die Türbezeichnung selbst zählt nicht mehr als Ortsangabe.
+
+**Wie geprüft:** gegen die echten Produktionsdaten dieses Testfalls durch die reale
+`pruefeUndErgaenzeVollstaendigkeit`-Pipeline reproduziert (Phantom vor dem Fix vorhanden — „Balkonboden
+streichen", 30 m² —, danach weg; alle drei korrekten Positionen unverändert exakt Soll: Wandflächen 1×
+48,55 m², Boden schützen 30 m², Sockelleisten abkleben 19,1 lfdm). 4 neue Regressionstests in
+`vollstaendigkeit.test.ts` (verhindert „Terrassentür"/„Balkontür" als Auslöser, bestätigt dass ein
+tatsächlich erwähnter Balkon sowie die echte Wortzusammensetzung „Balkonboden" weiterhin korrekt erkannt
+werden). Neuer Golden-Test in `golden-korrekturen.test.ts` mit den exakten Produktionsdaten. Ganze Suite
+grün (267/267). Bewusst NICHT angefasst: die VOB-Übermessungsfrage (Punkt 3) bleibt wie dokumentiert
+zurückgestellt, kein Teil dieses Fixes. Wie immer: noch OHNE Live-Nachtest im echten Tool.
 
 **Für Head of Product Engineering:** Die Kernlogik dieses Falls (individuelle Öffnungsmaße, 1×/2×-Anstrich,
 Terrassentür-Erkennung) funktioniert sauber, keine Änderung nötig. Bitte nur die „Balkonboden

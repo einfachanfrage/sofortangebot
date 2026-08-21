@@ -279,6 +279,55 @@ describe('maler – fassade', () => {
   })
 })
 
+// ─── BALKON ─────────────────────────────────────────────────────────────────
+
+describe('maler – balkon (PM-021)', () => {
+  // PM-021, Live-Nachtest 2026-08-21: `lower.includes('terrasse')` fing auch
+  // "Terrassentür"/"Breitterrassentür" (reine Türbezeichnung, kein eigener
+  // Ort) — hat einen kompletten Phantom-Workflow ausgelöst ("Balkonboden
+  // streichen", Menge = Fläche des Raums selbst). Siehe golden-korrekturen.
+  // test.ts für den vollen End-to-End-Fall mit echten Produktionsdaten.
+  it('erfindet KEINEN Balkon bei "Terrassentür" (nur Türbezeichnung, kein eigener Ort)', () => {
+    const eingabe = [pos('Wandflächen streichen', 40), pos('Boden schützen', 30)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler', eingabe,
+      'Wohnküche, Wände streichen. Eine Terrassentür, zwei Meter breit.',
+    )
+    const beschr = positionen.map(p => p.beschreibung.toLowerCase())
+    expect(beschr.some(b => b.includes('balkon') || b.includes('terrasse'))).toBe(false)
+  })
+
+  it('erfindet KEINEN Balkon bei "Balkontür" (direkte Zusammensetzung, kein eigener Ort)', () => {
+    const eingabe = [pos('Wandflächen streichen', 40), pos('Boden schützen', 30)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler', eingabe,
+      'Wohnzimmer, Wände streichen. Eine Balkontür, normal breit.',
+    )
+    const beschr = positionen.map(p => p.beschreibung.toLowerCase())
+    expect(beschr.some(b => b.includes('balkon'))).toBe(false)
+  })
+
+  it('ergänzt weiterhin Balkonboden, wenn der Balkon selbst als eigener Ort erwähnt wird', () => {
+    const eingabe = [pos('Boden schützen', 12)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler', eingabe,
+      'Der Balkon soll auch gestrichen werden, Boden mit inklusive.',
+    )
+    const beschr = positionen.map(p => p.beschreibung.toLowerCase())
+    expect(beschr.some(b => b.includes('balkonboden'))).toBe(true)
+  })
+
+  it('ergänzt weiterhin Balkonboden bei echter Wortzusammensetzung ("Balkonboden")', () => {
+    const eingabe = [pos('Boden schützen', 12)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler', eingabe,
+      'Der Balkonboden soll auch gestrichen werden.',
+    )
+    const beschr = positionen.map(p => p.beschreibung.toLowerCase())
+    expect(beschr.some(b => b.includes('balkonboden'))).toBe(true)
+  })
+})
+
 // ─── DACHSCHRÄGE ────────────────────────────────────────────────────────────
 
 describe('maler – dachschräge', () => {
