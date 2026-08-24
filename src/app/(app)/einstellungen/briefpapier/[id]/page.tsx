@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { Briefpapier, Company } from '@/lib/types'
 import { Upload } from 'lucide-react'
@@ -91,7 +91,7 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
 }
 
 // ── Hauptseite ─────────────────────────────────────────────────────────────
-export default function BriefpapierEditor() {
+function BriefpapierEditorInner() {
   const params = useParams()
   const id = params.id as string
   const supabase = createClient()
@@ -106,6 +106,13 @@ export default function BriefpapierEditor() {
   const [saving, setSaving] = useState(false)
   const [logoUploading, setLogoUploading] = useState(false)
   const logoRef = useRef<HTMLInputElement>(null)
+  const searchParams = useSearchParams()
+  // DC-031: kommt von "+ Neue Variante erstellen" (siehe briefpapier/page.tsx),
+  // die Zeile existiert also schon in der DB, aber der Nutzer hat noch nichts
+  // eingegeben. originalRef hält den geladenen Ausgangsstand fest, damit
+  // handleBack() erkennen kann, ob seitdem wirklich etwas geändert wurde.
+  const istNeu = searchParams.get('neu') === '1'
+  const originalRef = useRef<Partial<Briefpapier> | null>(null)
 
   useEffect(() => { load() }, [id])
 
@@ -115,7 +122,21 @@ export default function BriefpapierEditor() {
     const { data: co } = await supabase.from('companies').select('*').eq('user_id', user.id).single()
     setCompany(co)
     const { data } = await supabase.from('briefpapiere').select('*').eq('id', id).single()
-    if (data) setBp(data)
+    if (data) { setBp(data); originalRef.current = data }
+  }
+
+  // DC-031: Zurück ohne zu speichern — bei einer frisch (leer) angelegten
+  // Variante, die unverändert geblieben ist, die Zeile wieder entfernen statt
+  // eine leere "Neue Variante" in der Liste liegen zu lassen (gleiches Muster
+  // wie DC-010/DC-029 bei leeren Angebots-Entwürfen).
+  async function handleBack() {
+    const geaendert = originalRef.current && JSON.stringify(bp) !== JSON.stringify(originalRef.current)
+    if (istNeu && !geaendert) {
+      await supabase.from('briefpapiere').delete().eq('id', id)
+    } else if (geaendert && !window.confirm('Änderungen wurden noch nicht gespeichert. Trotzdem verlassen?')) {
+      return
+    }
+    router.push('/einstellungen/briefpapier')
   }
 
   function setField<K extends keyof Briefpapier>(field: K, value: Briefpapier[K]) {
@@ -153,7 +174,7 @@ export default function BriefpapierEditor() {
     <div className="min-h-dvh bg-[#F7F7F5] pb-24">
       {/* Header */}
       <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
-        <Link href="/einstellungen/briefpapier" className="text-white/50 text-sm font-semibold">← Briefpapier</Link>
+        <button onClick={handleBack} className="text-white/50 text-sm font-semibold">← Briefpapier</button>
         <h1 className="text-xl font-syne font-black text-white mt-1">
           {bp.name || 'Briefpapier bearbeiten'}
         </h1>
@@ -327,5 +348,16 @@ export default function BriefpapierEditor() {
         </div>
       </div>
     </div>
+  )
+}
+
+// DC-031: BriefpapierEditorInner nutzt useSearchParams() (für den ?neu=1-Flag)
+// — Next.js verlangt dafür einen Suspense-Rand um die Seite, sonst schlägt
+// der Build fehl. Gleiches Muster wie in angebot/neu/page.tsx.
+export default function BriefpapierEditor() {
+  return (
+    <Suspense fallback={<div className="min-h-dvh bg-[#F7F7F5]" />}>
+      <BriefpapierEditorInner />
+    </Suspense>
   )
 }

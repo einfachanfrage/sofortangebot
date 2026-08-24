@@ -2,6 +2,7 @@ import { analysiereKontext, type KIRueckfrageRaw } from '@/lib/kontext-analyzer'
 import { generiereRueckfragen, type RueckfrageItem, type RueckfrageTyp } from './rueckfragen-generator'
 import { verarbeiteAntworten, type KalkulationsAntworten } from './antworten-verarbeiter'
 import type { ExtrahierteDaten } from './types'
+import { artFuerRueckfrage, findeGesagtenWert } from './gesagte-werte'
 
 const ANTWORTBARE_IDS = [
   /^masse_/, /^hoehe_/, /^raum_/, /^plural_/, /^belag_/, /^altbelag_/,
@@ -55,9 +56,34 @@ function dedupliziere(fragen: RueckfrageItem[]): RueckfrageItem[] {
   })
 }
 
+/**
+ * DC-026: Hängt an eine Frage den Wert an, der schon im Transkript steht.
+ * Findet sich keiner (oder wäre er bei mehreren Räumen geraten), bleibt die
+ * Frage unverändert eine normale offene Frage.
+ */
+function ergaenzeVorschlag(
+  frage: RueckfrageItem,
+  transkript: string,
+  kontext: ExtrahierteDaten,
+): RueckfrageItem {
+  if (!transkript.trim()) return frage
+  const art = artFuerRueckfrage(frage.id, frage.typ)
+  if (!art) return frage
+  const alleRaumNamen = [
+    ...(kontext.raeume ?? []).map(r => r.name),
+    ...(kontext.bereiche ?? []).map(b => b.name),
+  ].filter((name): name is string => Boolean(name))
+  const vorschlag = findeGesagtenWert(art, transkript, frage.kontext || null, alleRaumNamen)
+  return vorschlag ? { ...frage, vorschlag } : frage
+}
+
 export function bereiteRueckfragenVor(
   extraktion: ExtrahierteDaten,
   antworten: KalkulationsAntworten = {},
+  // DC-026: das rohe Transkript, um Werte zu finden, die zwar gesagt, aber
+  // nicht strukturiert erkannt wurden. Optional, damit bestehende Aufrufer
+  // und Tests unverändert funktionieren.
+  transkript?: string,
 ): { extraktion: ExtrahierteDaten; rueckfragen: RueckfrageItem[] } {
   // Antworten zuerst einsetzen und erst danach erneut prüfen, was noch fehlt.
   // Beispiel: Nach Länge × Breite wird bei Malerarbeiten erst erkennbar, dass
@@ -83,6 +109,7 @@ export function bereiteRueckfragenVor(
   const rueckfragen = zusammen
     .filter(frage => !(frage.id.startsWith('masse_boden_') && volleMasseRaeume.has(frage.id.replace(/^masse_boden_/, ''))))
     .filter(frage => !beantworteteIds.has(frage.id))
+    .map(frage => ergaenzeVorschlag(frage, transkript ?? kontext.transkript ?? '', kontext))
 
   const angereichert = kontext
   angereichert.rueckfragen = []

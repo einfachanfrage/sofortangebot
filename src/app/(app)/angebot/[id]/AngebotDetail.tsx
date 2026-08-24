@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import type { Quote, QuoteItem, Company, Customer, Baustelle } from '@/lib/types'
+import { DRAFT_STATUSES, SENT_STATUSES, waehlbareStatus, getStatusInfo } from '@/lib/status'
 import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon, StickyNote,
@@ -20,6 +21,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
+import { ermittleHandaenderungen } from '@/lib/manuelle-positionen'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Toast } from '@/components/Toast'
@@ -60,20 +62,14 @@ interface EditItem {
   confidence?: number
   berechnungsweg?: string | null
   annahmen?: string[]
+  /** DC-027: true = vom Tool ergänzt (nicht gesagt) -> "Vorschlag"-Badge. */
+  automatisch_ergaenzt?: boolean
 }
 
-const STATUS_CONFIG = {
-  draft:           { label: 'Entwurf',         bg: 'bg-gray-100',   text: 'text-gray-600'   },
-  in_bearbeitung:  { label: 'Entwurf',         bg: 'bg-gray-100',   text: 'text-gray-600'   },
-  bereit:          { label: 'Fertiggestellt',  bg: 'bg-[#EDFAF0]',  text: 'text-[#1A7A38]'  },
-  sent:            { label: 'Offen',           bg: 'bg-blue-50',    text: 'text-blue-700'   },
-  accepted:        { label: 'Beauftragt',      bg: 'bg-green-50',   text: 'text-green-700'  },
-  rejected:        { label: 'Abgelehnt',       bg: 'bg-red-50',     text: 'text-red-700'    },
-  archived:        { label: 'Archiviert',      bg: 'bg-gray-50',    text: 'text-gray-400'   },
-}
-
-const DRAFT_STATUSES = ['draft', 'in_bearbeitung']
-const SENT_STATUSES = ['sent', 'accepted', 'rejected']
+// DC-003: eigene STATUS_CONFIG/DRAFT_STATUSES/SENT_STATUSES kamen bisher raus
+// aus src/lib/status.ts — eine von fünf Kopien im Produkt, die sich beim
+// selben Status in Label UND Farbe widersprachen. Jetzt importiert, keine
+// lokale Kopie mehr.
 
 const VIA_LABELS: Record<string, string> = {
   email: '✉️ E-Mail', whatsapp: '💬 WhatsApp', link: '🔗 Link',
@@ -390,7 +386,18 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
       ) : (
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0 flex-1">
-            <div className="font-bold text-[#2C2C2C] text-sm">{titleOverride ?? item.title}</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <div className="font-bold text-[#2C2C2C] text-sm">{titleOverride ?? item.title}</div>
+              {/* DC-027: dezent statt Alarm-Rot/-Gelb wie "KI unsicher" oben —
+                  eine vom Tool mitgedachte Position ist meistens fachlich
+                  richtig, soll neugierig machen ("kurz checken"), nicht wie
+                  ein Fehler wirken. */}
+              {item.automatisch_ergaenzt && (
+                <span className="text-[10px] font-bold bg-[#2C2C2C]/5 text-[#2C2C2C]/40 rounded-full px-2 py-0.5 shrink-0">
+                  Vorschlag
+                </span>
+              )}
+            </div>
             {item.description && <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>}
             <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 flex items-center gap-1">
               <span>{item.quantity} {item.unit} × {fmt(item.unit_price)}</span>
@@ -922,6 +929,28 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       if (editItems.some(item => !item.title.trim())) {
         throw new Error('Bitte gib jeder Position eine Bezeichnung.')
       }
+      // DC-010: leeres Angebot (0 Positionen oder kein Kunde) darf nicht
+      // fertiggestellt werden können — der Button ist dafür unten schon
+      // deaktiviert, dieser Check ist das Sicherheitsnetz, falls
+      // fertigstellen() doch mal ohne die Button-Prüfung aufgerufen wird.
+      if (nextStatus === 'bereit') {
+        if (editItems.length === 0) {
+          throw new Error('Bitte füge mindestens eine Position hinzu, bevor du das Angebot fertigstellst.')
+        }
+        if (!currentCustomer) {
+          throw new Error('Bitte weise einen Kunden zu, bevor du das Angebot fertigstellst.')
+        }
+      }
+      // CoS-014 (2026-08-24): Festhalten, WAS der Handwerker hier von Hand
+      // angefasst hat — geändert, gelöscht oder selbst hinzugefügt. Eine
+      // spätere Neu-Berechnung legt genau diese Positionen nicht erneut an.
+      // Bewusst vor dem Schreiben ermittelt, weil danach der Vorher-Stand
+      // (`quote.items`) nicht mehr rekonstruierbar wäre. Wichtig: nur
+      // tatsächliche Unterschiede zählen — der Speichervorgang schreibt
+      // ohnehin JEDE Zeile neu, ohne diesen Vergleich wäre nach einmal
+      // „Bearbeiten → Speichern" das ganze Angebot eingefroren.
+      const handaenderungen = ermittleHandaenderungen(quote.items, editItems)
+
       for (const item of editItems) {
         if (item.id.startsWith('new-')) {
           const { error } = await supabase.from('quote_items').insert({
@@ -950,10 +979,19 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       const netAfterDiscount = totalNet - discountValue
       const netWithSurcharge = netAfterDiscount + surchargeAmount
       const totalVat = company && company.vat_rate > 0 ? netWithSurcharge * (company.vat_rate / 100) : 0
+      const bisherGeschuetzt = quote.manuell_bearbeitete_positionen ?? []
+      const alleGeschuetzt = [...bisherGeschuetzt]
+      for (const titel of handaenderungen) {
+        if (!alleGeschuetzt.some(v => v.toLocaleLowerCase('de-DE').trim() === titel.toLocaleLowerCase('de-DE').trim())) {
+          alleGeschuetzt.push(titel)
+        }
+      }
+
       const { error: quoteError } = await supabase.from('quotes').update({
         total_net: totalNet, total_vat: totalVat, total_gross: netWithSurcharge + totalVat,
         discount_percent: discountPercent, discount_amount: discountAmount,
         surcharge_amount: surchargeAmount, surcharge_label: surchargeLabel,
+        ...(alleGeschuetzt.length !== bisherGeschuetzt.length ? { manuell_bearbeitete_positionen: alleGeschuetzt } : {}),
         ...(nextStatus ? { status: nextStatus } : {}),
       }).eq('id', quote.id)
       if (quoteError) throw quoteError
@@ -985,6 +1023,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     setUnitPickerItemId(null)
     if (!itemId.startsWith('new-')) {
       await supabase.from('quote_items').update({ unit: newUnit }).eq('id', itemId)
+      // CoS-014: auch dieser Schnellweg (ohne Bearbeiten-Modus) ist eine
+      // Handänderung und muss eine Neu-Berechnung überstehen.
+      const titel = quote.items.find(i => i.id === itemId)?.title
+      if (titel) {
+        const bisher = quote.manuell_bearbeitete_positionen ?? []
+        const schonDrin = bisher.some(v => v.toLocaleLowerCase('de-DE').trim() === titel.toLocaleLowerCase('de-DE').trim())
+        if (!schonDrin) {
+          await supabase.from('quotes').update({ manuell_bearbeitete_positionen: [...bisher, titel] }).eq('id', quote.id)
+        }
+      }
     }
   }
 
@@ -1013,7 +1061,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   ]
   const activeIntegrations = INTEGRATIONS.filter(i => i.active)
 
-  const status = STATUS_CONFIG[currentStatus as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.draft
+  const status = getStatusInfo(currentStatus)
 
   function showToast(msg: string) { setToast(msg); setTimeout(() => setToast(''), 2500) }
   function trackVia(via: string) {
@@ -1026,7 +1074,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     setCurrentStatus(newStatus as typeof currentStatus)
     setShowStatusPicker(false)
     await supabase.from('quotes').update({ status: newStatus }).eq('id', quote.id)
-    showToast('Status aktualisiert ✓')
+    showToast(`Status: ${getStatusInfo(newStatus).label} ✓`)
   }
 
   async function handleDuplicate() {
@@ -1063,6 +1111,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       if (currentStatus === 'bereit') {
         setCurrentStatus('draft')
         supabase.from('quotes').update({ status: 'draft' }).eq('id', quote.id)
+        // DC-003: dieser Statuswechsel passierte bisher lautlos — man klickt
+        // "Bearbeiten" und merkt erst beim nächsten Blick auf den Badge, dass
+        // "Fertiggestellt" jetzt wieder "Entwurf" ist.
+        showToast('Zurück zu Entwurf, weil bearbeitet ✓')
       }
     }
   }
@@ -1348,7 +1400,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               <Settings size={16} />
             </button>
             <button onClick={() => setShowStatusPicker(true)}
-              className={`flex items-center gap-1 text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text}`}>
+              className={`flex items-center gap-1.5 text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text}`}>
+              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: status.dot }} />
               {status.label}<ChevronDown size={13} strokeWidth={3} />
             </button>
             {!editMode ? (
@@ -1462,12 +1515,23 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
             <div className="font-black text-[#2C2C2C] text-lg mb-4">Status ändern</div>
             <div className="flex flex-col gap-2">
-              {(['bereit', 'sent', 'accepted', 'rejected', 'archived'] as const).map(key => {
-                const cfg = STATUS_CONFIG[key]
+              {/* DC-003: vorher fix ['bereit','sent','accepted','rejected','archived']
+                  ohne Weg zurück zu 'draft' — waehlbareStatus() bietet den, aber
+                  bewusst nur ab 'bereit', siehe Kommentar in src/lib/status.ts. */}
+              {waehlbareStatus(currentStatus).map(key => {
+                const cfg = getStatusInfo(key)
                 return (
                   <button key={key} onClick={() => changeStatus(key)}
                     className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}>
-                    <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
+                    <span className="flex items-center gap-2.5">
+                      <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: cfg.dot }} />
+                      <span className="flex flex-col items-start">
+                        <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
+                        {key === 'draft' && (
+                          <span className="text-[11px] font-semibold text-[#2C2C2C]/40">zurück zum Bearbeiten</span>
+                        )}
+                      </span>
+                    </span>
                     {currentStatus === key && <Check size={18} color="#2C2C2C" strokeWidth={3} />}
                   </button>
                 )
@@ -2059,29 +2123,40 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3">
         {editMode ? (
           /* ENTWURF-MODUS: Abbrechen | Speichern | Fertigstellen */
-          <div className="flex gap-2">
-            <button
-              onClick={() => { setEditMode(false); setEditItems(quote.items); setEditingItemId(null); setHasChanges(false) }}
-              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white text-[#2C2C2C]/60 font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
-            >
-              Abbrechen
-            </button>
-            <button
-              onClick={() => saveEdits()}
-              disabled={saving || !hasChanges}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 disabled:opacity-40"
-            >
-              {saving ? <Loader2 size={14} className="animate-spin" /> : null}
-              Speichern
-            </button>
-            <button
-              onClick={fertigstellen}
-              disabled={saving}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm disabled:opacity-50"
-            >
-              {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={15} strokeWidth={2.5} />}
-              Fertigstellen
-            </button>
+          <div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setEditMode(false); setEditItems(quote.items); setEditingItemId(null); setHasChanges(false) }}
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white text-[#2C2C2C]/60 font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={() => saveEdits()}
+                disabled={saving || !hasChanges}
+                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 disabled:opacity-40"
+              >
+                {saving ? <Loader2 size={14} className="animate-spin" /> : null}
+                Speichern
+              </button>
+              <button
+                onClick={fertigstellen}
+                disabled={saving || editItems.length === 0 || !currentCustomer}
+                title={editItems.length === 0 ? 'Mindestens eine Position nötig' : !currentCustomer ? 'Bitte zuerst einen Kunden zuweisen' : undefined}
+                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm disabled:opacity-50"
+              >
+                {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={15} strokeWidth={2.5} />}
+                Fertigstellen
+              </button>
+            </div>
+            {/* DC-010: Guardrail sichtbar erklären statt nur den Button stumm zu deaktivieren */}
+            {!saving && (editItems.length === 0 || !currentCustomer) && (
+              <div className="text-xs text-[#2C2C2C]/40 font-semibold text-center mt-2">
+                {editItems.length === 0
+                  ? 'Noch keine Position — füge mindestens eine hinzu, um fertigzustellen.'
+                  : 'Noch kein Kunde zugewiesen — weise oben einen Kunden zu, um fertigzustellen.'}
+              </div>
+            )}
           </div>
         ) : (
           /* FERTIGGESTELLT / VERSENDET: Vorschau | Senden */

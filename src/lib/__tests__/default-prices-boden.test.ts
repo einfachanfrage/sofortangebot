@@ -4,8 +4,12 @@ import { DEFAULT_PRICES } from '../default-prices'
 const boden = DEFAULT_PRICES.filter(position => position.category.startsWith('Boden – '))
 
 describe('Boden-Standardpreiskatalog', () => {
+  // CoS-018 (2026-08-24): wie beim Maler-Katalog — 177 → 186 durch die 9 im
+  // Preisdatenbank-Audit vom 20.08. (Commit e06b7f5) bewusst ergänzten
+  // Boden-Positionen. Keine Dopplung, Dopplungs-Test unten war durchgehend
+  // grün.
   it('enthält den vollständigen kuratierten Boden-Katalog', () => {
-    expect(boden).toHaveLength(177)
+    expect(boden).toHaveLength(186)
   })
 
   it('enthält keine doppelten Kombinationen aus Bezeichnung und Einheit', () => {

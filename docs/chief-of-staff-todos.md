@@ -35,13 +35,17 @@ wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
 schreiben, das verkleinert die Kollisionsfläche. Details und der eigentliche
 Lösungsvorschlag: CoS-013.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-21)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-24)
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-020 | DC-026 „fragt nach Sachen, die ich schon gesagt habe" — Erkennungsseite, Sandys direkter Auftrag | ✅ erledigt 24.08. — Ursache war eine falsche Reihenfolge in der Pipeline, nicht fehlende Erkennung. Fenster/Türen-Fragen fallen weg, `vorschlag`-Feld mit Zitat liegt für den Designer bereit. **Nebenbefund: toter Filter, siehe unten** | Sandy direkt, 24.08.2026 |
+| CoS-019 | Doppelte Rubriken im Preiskatalog („– Erschwernisse" neben „– Erschwernisse & Zuschläge") vereinheitlichen — Sandys direkter Auftrag | ✅ erledigt 24.08. — 6 Gewerke vereinheitlicht, 1 echte Dublette entfernt, Bestandsdaten live nachgezogen, neuer Hygiene-Test verhindert Rückfall | Sandy direkt, 24.08.2026 |
+| CoS-018 | Auftrag für dich (aus deinem eigenen Nebenbefund bei CoS-017): 4 vorbestehende `npm test`-Fehlschläge aufräumen, unabhängig von CoS-017 selbst | ✅ erledigt 24.08. — alle vier waren veralteter Testcode, KEIN verlorener Fix; Suite jetzt 765/765 grün. Details unten, 1.4 kannst du nachtragen | Chief of Staff, 24.08.2026 |
+| CoS-017 | Auftrag für dich: DC-027 braucht ein Positions-Herkunfts-Flag (Transkript vs. vom Tool ergänzt), sonst kann Product Designer die „Vorschlag"-Kennzeichnung nicht bauen | ✅ umgesetzt 24.08. (Flag `automatisch_ergaenzt`, Spalte live auf Staging + Produktion, Tests grün) — Live-Nachtest steht aus, Ball liegt beim Product Designer | `docs/design-check.md` DC-027, Chief of Staff, 21.08.2026 |
 | CoS-010 | Angebot verdoppelt sich (2.000,28€ statt 1.000,14€) | 🟡 Live-Nachtest durch Sandy (19.08.) bestanden: bewusster Doppelklick auf „Angebot erstellen" erzeugt keine Verdopplung mehr. Für den alltäglichen Fall (Handwerker klickt aus Versehen doppelt) damit erledigt. Offen bleibt nur die theoretische Absicherung gegen zwei wirklich zeitgleiche Server-Anfragen (DB-Constraint) — größerer Schritt, wartet auf Sandys Go, kein akuter Blocker mehr | `pruefmeister-testfaelle.md` PM-014 |
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
-| CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ❌ offen | PM-007, PM-008 Nachtests |
+| CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ✅ erledigt — bereits am 20.08. im Preisdatenbank-Audit mit erledigt, Ticket war nur nicht nachgezogen (Nachtrag 24.08.). Live-Nachtest offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | 🟡 umgesetzt (Landingpage, PlanWahlModal, `/vorschau` entfernt/umgeleitet, zentrale `pricing.ts` angelegt), Live-Nachtest steht aus | `docs/design-check.md` DC-001 |
 | CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | 🟡 Code vollständig umgesetzt und gepusht (alle drei Schritte, inkl. Mehrfach-Aufnahmen-Fall). Live-Nachtest durch Sandy (21.08.) fand einen echten Bug: Karte zeigte „Boden schützen 0 m²" statt 12. Ursache war NICHT die Berechnung (DB-Check bestätigte sie als korrekt), sondern eine leere `supabase_realtime`-Publication — die Karte sollte sich automatisch aktualisieren, sobald die geprüfte Extraktion da ist, bekam davon aber nie ein Signal und fiel nach 30s dauerhaft auf die fehleranfällige Chip-Vorschau zurück. Fix direkt auf der Produktions-DB angewendet (Migration, kein Deploy nötig), Sandys Bestätigungstest steht noch aus | Sandy-Entscheidung 20.08. + 21.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md`, DC-030 in `docs/design-check.md` |
 | CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
@@ -49,7 +53,7 @@ Lösungsvorschlag: CoS-013.
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
 | CoS-012 | DC-029 „Baustelle"/Projekt-Zuordnung — Wording-Konzept vom Product Designer steht, zwei Teilstücke formal zu vergeben | 🟡 Lexware/Lexoffice-Machbarkeit erledigt. Datenmodell (Head of Product Engineering) jetzt umgesetzt und live: Tabelle `baustellen` + `quotes.baustelle_id` + Migration + Backfill in der echten Datenbank angewendet, App-Code an allen vier Stellen verdrahtet. Live-Nachtest steht aus, Designer baut jetzt Konzept + Prototyp für die Baustellen-UI darauf auf | `docs/design-check.md` DC-029 |
 | CoS-013 | Strukturelle Lösung für den wiederholten Datei-Speicherfehler bei gemeinsamen Doku-Dateien (jetzt 6. Mal) | ❌ offen — Sofortmaßnahme (Dateiende-Markierung) bereits umgesetzt, eigentlicher Lösungsvorschlag (Git statt Direkt-Überschreiben) braucht Sandys Go | Sandys Frage „kannst du es richtig lösen", 2026-08-20 |
-| CoS-014 | Nebenfund aus CoS-002: manuelle Positions-Änderungen sind heute nur durch Zufall vor Neu-Berechnung sicher (kein echter Schutz-Mechanismus) | ❌ offen — beschrieben, nicht angefasst | `docs/cos-002-architektur-vorschlag.md` Abschnitt 2 |
+| CoS-014 | Nebenfund aus CoS-002: manuelle Positions-Änderungen sind heute nur durch Zufall vor Neu-Berechnung sicher (kein echter Schutz-Mechanismus) | ✅ umgesetzt 24.08. (Sandys direkter Auftrag „fix das") — echter Schutz über `quotes.manuell_bearbeitete_positionen`, Spalte live, 18 neue Tests. Live-Nachtest steht aus | `docs/cos-002-architektur-vorschlag.md` Abschnitt 2 |
 | CoS-015 | Nebenfund aus CoS-002: Kosten-Protokollierung (`ki_usage`) für die teure `ki-extrahieren`-Extraktion läuft seit 20.07.2026 wegen Spalten-Mismatch still ins Leere | ❌ offen — Ursache gefunden (Edge Function schreibt `prompt_typ`/`input_tokens` statt `endpunkt`/`tokens_in`), nicht behoben | `docs/cos-002-architektur-vorschlag.md` Abschnitt „Daten, die ich geprüft habe" |
 | CoS-016 | Rückfrage: welche „App-seitige Git/Deploy-Blockade" verhindert gerade das Deployen von CoS-002? | ✅ beantwortet — device_bash-Lock-Datei-Problem (nie als eigenes Ticket dokumentiert, mein Versäumnis), inzwischen selbst gelöst (Lock-Dateien lassen sich verschieben statt löschen). Sandy hat beide CoS-002-Commits gepusht, kein offener Blocker mehr | Chief of Staff, 21.08.2026, beim CoS-002-Fix-Update aufgefallen; Antwort Head of Product Engineering, 21.08.2026 |
 
@@ -300,7 +304,15 @@ rechtfertigen getrennte Kontexte). Sandy hat zugestimmt.
 ## CoS-008 — Preisdatenbank-Lücken bei neuen Positionstypen
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen
+**Status:** ✅ erledigt (Head of Product Engineering, Nachtrag 2026-08-24) —
+das Ticket war nur nicht nachgezogen worden. Alle drei hier genannten
+Positionstypen (Kniestockwände streichen, Dachschrägen streichen,
+Fassadenfläche streichen) wurden am 20.08. im Rahmen des kompletten
+Preisdatenbank-Audits mit Preisen versorgt — sie waren dort ausdrücklich
+Teil der 50 geschlossenen „Preis fehlt"-Lücken. Live-Nachtest steht wie beim
+übrigen Audit noch aus.
+
+**Ursprünglicher Status:** ❌ offen
 
 **Hintergrund:** Seit PM-007 (Dachgeschoss) und PM-008 (Fassade) rechnerisch
 grün sind, ist aufgefallen, dass mehrere neu bestätigte Positionstypen keinen
@@ -995,6 +1007,76 @@ Titel-String umstellen.
 
 ---
 
+### Erledigung (Head of Product Engineering, 2026-08-24, Sandy direkt: „fix das")
+
+**Status:** ✅ umgesetzt, Spalte auf Staging + Produktion live, Suite
+783/783 grün, `tsc --noEmit` sauber. Live-Nachtest steht aus.
+
+**Deine Analyse war richtig, aber der Riss ist größer als beschrieben.** Beim
+Nachprüfen sind es zwei Löcher, nicht eins:
+
+1. Das von dir beschriebene: geänderte Menge → der Dublettenschutz vergleicht
+   Titel UND Menge exakt, also entsteht eine fast-gleiche Zeile DANEBEN.
+2. **Löschen war vollständig ungeschützt.** Löscht der Handwerker eine
+   Position und läuft danach eine Neu-Berechnung, kam sie kommentarlos
+   zurück. Das ist meiner Meinung nach der unangenehmere Fall: eine
+   Doppelung sieht man, eine wiederauferstandene Position hält man für die
+   eigene.
+
+**Gewählter Weg — bewusst NICHT das Flag je Zeile, das du vorgeschlagen
+hast:** Der Löschfall hat gar keine Zeile mehr, an der ein Flag hängen
+könnte. Stattdessen EINE Liste am Angebot,
+`quotes.manuell_bearbeitete_positionen text[]` — sie deckt Ändern, Löschen
+und Selbst-Hinzufügen mit demselben Mechanismus ab. Der Titel ist dabei die
+Identität, und das ist keine Notlösung: er trägt im ganzen Produkt schon die
+Raum-Zuordnung als Suffix („Wandflächen streichen — Flur") und ist exakt das,
+was die Engine bei einer Neu-Berechnung wieder erzeugen würde. Deine zweite
+Idee (robustere Raum+Arbeit-Identität) wäre ein deutlich größerer Umbau für
+denselben Effekt.
+
+**Die Falle, die dabei fast zugeschnappt wäre — und der wichtigste Test der
+Aufgabe:** `saveEdits` in `AngebotDetail.tsx` schreibt beim Speichern JEDE
+Position neu, nicht nur die geänderten. Hätte ich beim Speichern pauschal
+markiert, wäre nach einmal „Bearbeiten → Speichern" das komplette Angebot
+eingefroren und keine spätere Aufnahme hätte je wieder etwas ergänzen
+können. Deshalb echter Vorher-/Nachher-Vergleich (Titel, Menge, Einheit,
+Preis, Beschreibung, mit Toleranz gegen Cent-Rundungsrauschen) — nur
+tatsächliche Unterschiede zählen. Genau dafür gibt es einen eigenen Test.
+
+**Es passiert nichts stillschweigend.** Wird eine Position wegen einer
+Handänderung nicht neu angelegt, sagt das Tool es: der Hinweis läuft über den
+bereits vorhandenen, nicht blockierenden Warnkanal aus PM-010, wird also auf
+dem Timeline-Screen angezeigt und der Handwerker entscheidet selbst, ob er
+weiter will. Kein neues UI nötig. Formulierung bewusst erklärend statt
+alarmierend: „… hast du selbst angepasst — deine Fassung bleibt stehen, sie
+wurde nicht neu berechnet."
+
+**Umfang:** neue `src/lib/manuelle-positionen.ts` (die komplette Logik,
+testbar ohne Datenbank), Verdrahtung in `AngebotDetail.tsx` (Speichern +
+Schnell-Einheitenwechsel), `generiere-positionen/route.ts` (Liste laden,
+filtern, Hinweis anhängen), `revise/route.ts` (Handänderungen gelten auch in
+der neuen Revision — die Positionen werden ja 1:1 mitkopiert),
+`QuoteItem`-Umfeld in `types.ts`, Migration
+`20260824180000_add_quotes_manuell_bearbeitete_positionen.sql`. 18 neue
+Tests.
+
+**Bewusst NICHT als Handänderung gewertet:** der Weg „Preis fehlt →
+nachtragen" (`/api/quotes/[id]/items/[itemId]/preis`). Dort trägt der
+Handwerker einen fehlenden Preis nach, der im selben Schritt in seine
+Preisdatenbank wandert — eine Neu-Berechnung findet ihn also ohnehin und
+kommt zum selben Ergebnis. Diesen Fall zu sperren würde nur verhindern, dass
+eine später korrigierte Menge noch ankommt. Er bedeutet „Preis ergänzen",
+nicht „diese Position ist meine".
+
+**Ehrliche Grenze:** Benennt der Handwerker eine Position komplett um, merken
+wir uns beide Titel — der alte schützt zuverlässig. Erfindet die Engine beim
+nächsten Mal aber einen ganz anderen Titel für dieselbe Arbeit (anderer
+Satzbau in der Aufnahme), greift der Schutz nicht. Das wäre nur mit einer
+echten Positions-Identität über die ganze Pipeline lösbar — großer Umbau,
+bewusst nicht Teil dieser Aufgabe.
+
+---
+
 ## CoS-015 — KI-Kosten-Protokollierung für Extraktion seit 20.07. kaputt
 
 **Datum:** 2026-08-20 (Nebenfund beim CoS-002-Architektur-Vorschlag)
@@ -1097,6 +1179,315 @@ Doku (dieses Ticket) war kurz hinter dem tatsächlichen Stand zurück.
 Bitte `launch-readiness.md` Punkt 8.7 entsprechend nachtragen: kein offener
 Blocker, CoS-002 bereit für Gate 1, sobald der Deploy durchgelaufen ist
 (bitte einmal live bestätigen, sobald möglich — noch kein Live-Nachtest).
+
+---
+
+## CoS-017 — Auftrag: DC-027 braucht ein Positions-Herkunfts-Flag (Transkript vs. vom Tool ergänzt)
+
+**Datum:** 2026-08-21, Abend (Sandy: „check dc027 und gib Aufgabe ggfs weiter")
+**Status:** ❌ offen, neu an dich weitergegeben
+
+**Was Product Designer in DC-027 bereits vollständig ausgearbeitet hat**
+(`docs/design-check.md`, Status dort: „❌ offen — dreifach reproduziert"):
+Das Tool ergänzt an vielen Stellen automatisch sinnvolle Positionen, ohne
+dass der Handwerker sie ausdrücklich gesagt hat (z. B. „Boden schützen",
+Erschwerniszuschläge, Grundierung nach Spachtelarbeiten — fachlich korrekt,
+kein Bug). Im fertigen Angebot sieht eine ergänzte Position aber optisch
+exakt gleich aus wie eine wörtlich gesagte. Der Handwerker kann beim
+schnellen Prüfen nicht unterscheiden „das hab ich gesagt" von „das hat das
+Tool für mich mitgedacht, checken!" — und das wird noch relevanter, weil es
+auch den umgekehrten Fall gibt (Tool ergänzt etwas, das nicht passt, siehe
+diverse PM-Funde der letzten Tage). Eine klare Kennzeichnung würde den Blick
+gezielt dahin lenken, wo wirklich nochmal geprüft werden sollte.
+
+**Der Haken, den Product Designer selbst schon benennt:** „Es bräuchte pro
+Position ein Flag, ob sie direkt aus dem Transkript kam oder vom Tool selbst
+abgeleitet wurde — das gibt es aktuell offenbar noch nicht." Das ist reine
+Backend-/Extraktionsarbeit, nicht UI — deshalb landet der eigentliche
+Auftrag hier bei dir, nicht beim Designer. Ich finde dazu **kein eigenes
+Ticket** in dieser Datei — DC-027 stand seit dem 18.08. nur in
+`design-check.md`, ohne dass dir das je aktiv zugetragen wurde. Genau die
+Art Lücke, die ich sonst bei euch beiden auch schon gefunden habe
+(CoS-016), diesmal andersherum: nicht beiläufig erwähnt und nicht
+dokumentiert, sondern sauber dokumentiert, aber nie weitergereicht.
+
+**Konkrete Bitte:** Bitte grob einschätzen, wie aufwändig ein
+`herkunft`-Feld (oder ähnlich) pro Position wäre — reine Größenordnung
+reicht — und wenn machbar, umsetzen. Sobald das Flag existiert, kann
+Product Designer direkt mit dem Vorschlag-Badge loslegen, den sie in DC-027
+bereits fertig spezifiziert hat (dezentes „Vorschlag"-Badge, neutrale
+Farbe, direkt an der Position). Bitte kurz hier eintragen, wenn du dran
+bist oder wenn's aus deiner Sicht nicht so einfach ist wie es klingt.
+
+**Antwort + Erledigung (Head of Product Engineering, 2026-08-24, Sandys Go):**
+✅ umgesetzt. Aufwand war klein — aber nicht auf dem Weg, den die Spec
+beschrieb. Der Designer schlug vor, das Flag an jedem `ergaenzt.push(...)`
+zu setzen: 117 Fundstellen in 19 Dateien. Alle diese Ergänzungen laufen
+jedoch durch EINE zentrale Funktion, die die Liste vorher und nachher in der
+Hand hat — ein Vorher/Nachher-Vergleich an dieser einen Stelle erledigt alle
+117 Fälle auf einmal, und neue Regeln bekommen die Kennzeichnung künftig
+automatisch. Dazu Durchreichen an 4 Stellen (exakt derselbe Weg, den
+`berechnungsweg` schon geht) und eine neue Spalte.
+
+Konkret: Feld `automatisch_ergaenzt` (Boolean, Default `false`) auf
+`BerechnetePosition` und `QuoteItem`, gesetzt in
+`src/lib/vollstaendigkeit/index.ts`, durchgereicht über
+`/api/angebot-generieren` → `/api/entwurf/generiere-positionen` → Spalte auf
+`quote_items` (Migration `20260824090000_add_quote_items_automatisch_ergaenzt.sql`,
+auf Staging und Produktion angewendet). 4 neue Tests grün, Typecheck sauber,
+763 Tests insgesamt ohne neue Fehlschläge. Product Designer ist in DC-027
+informiert und kann das Badge bauen. Live-Nachtest steht noch aus.
+
+**Zwei Dinge fürs Protokoll:**
+
+1. **Grenze der Kennzeichnung (bitte nicht überversprechen):** Das Flag
+   markiert, was die Vollständigkeitsprüfung ergänzt. Es markiert NICHT,
+   wenn GPT schon beim Zuhören etwas dazuerfindet, das nie gesagt wurde —
+   der unverlangte Bodenaustausch-Block aus den PM-Funden fällt vermutlich
+   genau dort hinein und bliebe ohne Badge. „Vorschlag" als Wortwahl ist
+   deshalb gut; eine Umkehrung („alles ohne Badge hast du wörtlich gesagt")
+   wäre eine Zusage, die das Flag nicht halten kann.
+2. **Nebenbefund, gehört nicht zu CoS-017:** `npm test` war schon VOR dieser
+   Arbeit rot — 4 Fehlschläge, unabhängig nachgewiesen gegen den Stand ohne
+   meine Änderung. Zwei davon sind Katalog-Zählungen aus dem
+   Preisdatenbank-Audit vom 20.08. (Test erwartet 164 Maler-Positionen, es
+   sind jetzt 208), dazu je einer in `maler-engine.test.ts` (PM-008 Fassade)
+   und `boden.test.ts` (Sockelleisten). Solange die rot stehen, kann niemand
+   eine echte neue Regression von dem alten Rauschen unterscheiden. Bitte als
+   eigenes Ticket aufnehmen, ich räume das gern auf.
+
+---
+
+## CoS-018 — Auftrag: vier vorbestehende `npm test`-Fehlschläge aufräumen (dein eigener Nebenbefund aus CoS-017)
+
+**Datum:** 2026-08-24 (Sandy: „schau dir das an und deleg[ier] Aufgaben
+weiter", zu deiner CoS-017-Antwort)
+**Status:** ❌ offen, an dich delegiert — du hast selbst angeboten, es zu
+übernehmen, hier die formelle Zuweisung, damit es nicht wieder nur beiläufig
+irgendwo steht
+
+Direkt aus deinem eigenen „Zwei Dinge fürs Protokoll"-Punkt 2 übernommen:
+`npm test` war schon **vor** der CoS-017-Arbeit rot, unabhängig davon
+nachgewiesen — vier Fehlschläge:
+
+1. Zwei Katalog-Zählungen aus dem Preisdatenbank-Audit vom 20.08. (Test
+   erwartet 164 Maler-Positionen, es sind inzwischen 208) — klingt nach
+   einem einfachen Fall von „Test kennt die neuen, absichtlich ergänzten
+   Standardpreise noch nicht", aber bitte einmal kurz bestätigen, dass das
+   wirklich nur die Erwartungszahl betrifft und keine Katalog-Dopplung o. Ä.
+2. Ein Fehlschlag in `maler-engine.test.ts` — laut Dateiname PM-008-Umfeld
+   (Fassade). PM-008 steht bei Prüfmeister als „Nachtest 7 (2026-08-20):
+   Rechenbug live bestätigt behoben" — bitte **explizit gegenprüfen**, ob
+   dieser Testfehlschlag derselbe längst gelöste Fall ist (dann nur
+   veralteter Testcode) oder ob er auf etwas hinweist, das dem
+   Live-Nachtest entgangen ist. Bitte kurz hier vermerken, welcher Fall es
+   ist.
+3. Ein Fehlschlag in `boden.test.ts` — laut Dateiname Sockelleisten-Umfeld.
+   Gleiche Bitte wie bei Punkt 2: einmal gegen PM-010/PM-012 (beide „live
+   bestätigt behoben") abgleichen, bevor der Test einfach angepasst wird.
+
+**Warum das ein eigenes Ticket wert ist, nicht nur eine Randnotiz:** Solange
+diese vier rot bleiben, kann — wie du selbst schreibst — niemand eine echte
+neue Regression vom alten Rauschen unterscheiden. Das betrifft auch, wie
+belastbar „236/236" bzw. „763 Tests grün" als Aussage in
+`launch-readiness.md` Punkt 1.4 ist — bisher ohne Hinweis auf diese vier
+gemeldet. Bitte nach Abschluss kurz hier eintragen, was an den vieren
+tatsächlich dran war, dann trage ich 1.4 entsprechend nach.
+
+---
+
+### Erledigung (Head of Product Engineering, 2026-08-24, Sandys Auftrag „bearbeite cos018")
+
+**Ergebnis vorweg, das ist die eigentliche Nachricht: alle vier waren
+veralteter Testcode. Kein einziger deutete auf einen verlorenen oder nur
+scheinbar behobenen Fix hin.** Suite jetzt **765/765 grün** (763 vorher,
+davon 4 rot; +2 neue Tests, siehe unten), `tsc --noEmit` sauber.
+
+**1./2. Die beiden Katalog-Zählungen — bestätigt: nur die Erwartungszahl,
+keine Dopplung.** Über die Commit-Historie nachgezählt statt geraten:
+
+| Commit | Maler | Boden |
+|---|---|---|
+| `040809e` (Maler-Katalog, Test entstand hier) | 164 | 117 |
+| `e4db6f7` (Boden-Katalog, Boden-Test entstand hier) | 164 | 177 |
+| `e06b7f5` (Preisdatenbank-Audit, 20.08.) | **208** | **186** |
+
+Beide Sprünge stammen aus **genau einem** Commit, dem Audit vom 20.08. —
++44 Maler, +9 Boden, also die dort bewusst ergänzten Standardpreise. Der
+jeweils zweite Test in denselben Dateien („enthält keine doppelten
+Kombinationen aus Bezeichnung und Einheit") war die ganze Zeit **grün** —
+eine Katalog-Dopplung gab es also zu keinem Zeitpunkt. Zahlen aktualisiert,
+Zahl bewusst weiter hart im Test (fängt versehentliches Löschen ganzer
+Rubriken ab), mit Kommentar, dass sie beim nächsten bewussten Ausbau
+mitzupflegen ist.
+
+**3. `maler-engine.test.ts` (PM-008 Fassade) — gegengeprüft wie gebeten:
+NICHT derselbe Fall, aber auch kein Problem.** Der Test erwartete 66,96 m²
+und bekam 72,00 m². Ursache ist nicht PM-008, sondern **PM-021 vom 21.08.**:
+die VOB-Übermessungsregel (VOB/C DIN 18363, Commit `3e13a46`, per Sandys
+ausdrücklichem Go) zieht Öffnungen bis 2,5 m² Einzelgröße nicht mehr von der
+Anstrichfläche ab. Die drei Fenster im Testfall sind 1,20 × 1,40 = 1,68 m² —
+liegen also darunter, werden übermessen, 72,00 m² ist seitdem das fachlich
+richtige Ergebnis. Der PM-008-Fix selbst (`waende[]` wird überhaupt gelesen,
+Fenstermaße gehen nicht als reine Stückzahl verloren) ist unberührt und
+weiterhin wirksam — der andere PM-008-Test in derselben Datei
+(„erzeugt eine Fassadenfläche-Position statt ‚keine Positionen erkannt'")
+war durchgehend grün. **Wie es passieren konnte:** Commit `3e13a46` hat 8
+Golden-Tests sauber nachgezogen, diesen einen in einer anderen Datei aber
+übersehen. Der Test prüft jetzt 72,00 m² **und zusätzlich**, dass der
+VOB-Hinweis in den Annahmen steht — fällt die Regel künftig weg, schlägt der
+Test aus dem richtigen Grund fehl statt nur die Zahl zu vergleichen. Dazu
+**ein neuer Test**: eine Terrassentür mit 2,40 × 2,20 = 5,28 m² wird
+weiterhin voll abgezogen (66,72 m²), damit die 2,5-m²-Schwelle in beide
+Richtungen abgesichert ist.
+
+**4. `boden.test.ts` (Sockelleisten) — gegengeprüft wie gebeten: der Test
+verlangte genau das, was PM-013/PM-020 absichtlich abgeschafft haben.**
+Er erwartete bei „Parkett verlegen, 35 qm" eine Position „Sockelleisten
+montieren" — also die alte Annahme „neuer Boden ⇒ automatisch neue
+Sockelleisten". Genau die ist am 19.08. (PM-013, Wohnzimmer) und am 21.08.
+(PM-020, Kinderzimmer 2) zweimal unabhängig als Phantom-Position live
+aufgeschlagen und wurde bewusst entfernt: ohne eigenes „sockelleist"-Signal
+im Transkript wird nichts mehr erfunden. Erwartung entsprechend umgedreht,
+plus **ein neuer Gegenprobe-Test**: wird sie genannt, kommt die Position
+weiterhin mit geschätztem Umfang in lfdm — damit der Phantom-Fix nicht
+unbemerkt zu weit gehen und die Leistung ganz abschaffen kann.
+
+**Für deinen 1.4-Nachtrag:** „763 Tests grün" war nie falsch gemeint, aber
+unvollständig — die 4 roten wurden schlicht nirgends mitgemeldet. Stand
+jetzt: 765/765, und jeder der vier Fehlschläge ist als Kommentar im Test
+selbst dokumentiert, samt Datum und Ticket, warum die Erwartung heute so
+lautet. Die eigentliche Lehre ist nicht „Tests waren rot", sondern: **eine
+bewusste fachliche Regeländerung (VOB) und ein bewusster Phantom-Fix haben
+Tests hinterlassen, die die alte Wahrheit behaupteten** — wer die Suite nicht
+läuft, hätte beides für einen Rückschritt halten können. Es lohnt sich, bei
+Regeländerungen künftig einmal gezielt nach Tests zu greppen, die die alte
+Zahl festhalten.
+
+**Nebenbefund, gehört nicht zu CoS-018 (nur zur Kenntnis, kein Ticket von
+mir):** Beim Nachzählen ist mir eine Rubrik-Doppelung in *anderen* Gewerken
+aufgefallen — in „Abbruch" existieren „Erschwernisse & Zuschläge" (2
+Positionen) und „Erschwernisse" (8) nebeneinander, in „Rohbau" genauso
+(1 und 7). Dieselbe Unsauberkeit, die der Preisdatenbank-Audit vom 20.08.
+für Maler und Boden aufgeräumt hat, nur eben in Gewerken, die damals nicht
+Teil des Auftrags waren. Betrifft aktuell niemanden live (nur Maler und
+Bodenleger sind ausgeliefert). Sag Bescheid, wenn du das als eigenen Punkt
+willst.
+
+**Nachtrag (2026-08-24, noch am selben Tag erledigt):** Sandy direkt gefragt,
+Antwort war „ja es stört mich ändere das". Umgesetzt, Details unten unter
+CoS-019.
+
+---
+
+## CoS-019 — Doppelte Rubriken im Preiskatalog vereinheitlicht
+
+**Datum:** 2026-08-24 (Sandy direkt, auf meinen CoS-018-Nebenbefund:
+„ja es stört mich ändere das")
+**Status:** ✅ erledigt, Bestandsdaten live nachgezogen
+
+**Was wirklich dahintersteckte — nicht Schlamperei beim Tippen:** Eine spätere
+Erweiterung (Commit `af0abce`, strukturierte VOB/DIN-Erschwerniszuschläge mit
+eigenen Feldern `ist_erschwerniszuschlag`, `vob_norm`, `din_normen`) hat eine
+eigene Rubrik-Schreibweise „<Gewerk> – Erschwernisse & Zuschläge"
+mitgebracht, statt die vorhandene „<Gewerk> – Erschwernisse" zu benutzen.
+Ergebnis: in **Abbruch** (8 alt + 2 neu) und **Rohbau** (7 + 1) standen zwei
+Rubriken für dieselbe Sache nebeneinander, und über den Gesamtkatalog gab es
+zwei konkurrierende Schreibweisen (14 Gewerke so, 6 Gewerke anders).
+
+**Systematisch gesucht statt nur die zwei bekannten angefasst:** Ein Skript
+hat alle Gewerke auf Rubrik-Paare geprüft, bei denen ein Name im anderen
+steckt. Einziger weiterer Treffer: „Boden – Parkett" neben „Boden – Parkett
+Aufarbeitung" — das ist fachlich korrekt getrennt (neu verlegen vs.
+vorhandenes Parkett abschleifen) und bleibt.
+
+**Gemacht:**
+
+- 40 Katalogzeilen in `src/lib/default-prices.ts` und 11 in
+  `src/lib/preise-vorlagen.ts` auf die Mehrheits-Schreibweise
+  „Erschwernisse & Zuschläge" vereinheitlicht (Abbruch, Rohbau,
+  Entrümpelung, Fassade, Garten, Reinigung).
+- **Eine echte inhaltliche Dublette entfernt**, die durch das Zusammenlegen
+  sichtbar wurde: „Winterbau-Aufpreis (Heizung + Schutzmaßnahmen)" (15 %)
+  war dasselbe wie „Erschwerniszuschlag Winterbau (Frost- und Kälteschutz)"
+  (12 %). Behalten habe ich die VOB-Variante, weil nur sie die strukturierten
+  Felder trägt, mit denen die Erschwerniszuschlag-Logik überhaupt arbeiten
+  kann. Katalog dadurch 2365 → 2364 Positionen.
+- **Bestandsdaten nachgezogen:** In der Produktions-Datenbank lagen bereits
+  33 Zeilen mit der alten Rubrik in einem Konto (Allrounder-Katalog). Ohne
+  Nachziehen hätte genau dieses Konto weiterhin zwei Rubriken nebeneinander
+  gesehen. Migration `20260824170000_vereinheitliche_erschwernis_rubriken.sql`,
+  auf Staging und Produktion angewendet, live gegengeprüft: 0 alte, 134 neue.
+  Vorher auf Kollisionen geprüft (keine) — die Zusammenlegung konnte also
+  keine Dublette erzeugen.
+- **Neuer Test `src/lib/__tests__/katalog-hygiene.test.ts`** (4 Prüfungen):
+  kein Gewerk darf zwei Rubriken für offensichtlich dasselbe haben (weder im
+  Katalog noch in den Onboarding-Vorlagen), Erschwernis-Rubriken müssen
+  überall gleich heißen, und keine Position darf innerhalb derselben Rubrik
+  doppelt vorkommen. Das ersetzt Aufräumen im Nachhinein durch Auffallen beim
+  Anlegen. Suite jetzt 769/769 grün, `tsc --noEmit` sauber.
+
+**Warum das gefahrlos war:** Preis-Matching und Gewerk-Zuordnung hängen
+ausschließlich am Gewerk-Präfix vor dem „–"
+(`preisKategoriePasstZuGewerk`), nie am Rubriknamen dahinter. Die Rubrik ist
+reine Gruppierung in der Anzeige auf `/preise`.
+
+**Eine Sache habe ich bewusst NICHT angefasst und lege sie dir vor:** In
+Abbruch stehen jetzt „Erschwerniszuschlag Handabbruch (kein Maschineneinsatz
+möglich)" (25 %) und „Zuschlag schwierige Zufahrt (kein Bagger, Handabbruch)"
+(40 %) in derselben Rubrik. Das ist fachlich *fast* dasselbe — der eine
+beschreibt die Methode, der andere den Grund — aber eben nicht eindeutig
+genug, dass ich einen der beiden Preise eigenmächtig aus einem Katalog
+lösche. Betrifft live niemanden (nur Maler und Bodenleger sind
+ausgeliefert). Sag Bescheid, wenn ich zusammenlegen soll.
+
+**Ebenfalls bewusst nicht angefasst:** Die Rubriken „Anfahrt & Organisation"
+(12 Gewerke), „Anfahrt & Planung" (5) und „Anfahrt & Vorbereitung" (1,
+Abbruch) heißen zwar uneinheitlich, aber **kein Gewerk hat zwei davon
+gleichzeitig** — es gibt also nirgends zwei Töpfe für dasselbe. Eine
+Umbenennung wäre reine Kosmetik mit Migrationsaufwand auf Bestandsdaten.
+Auch hier: sag Bescheid, wenn du es trotzdem einheitlich willst.
+
+---
+
+## CoS-020 — DC-026: Rückfragen zu bereits Gesagtem (Erkennungsseite)
+
+**Datum:** 2026-08-24 (Sandy direkt: „setz dich an dc026")
+**Status:** ✅ erledigt, Live-Nachtest steht aus. Details für den Product
+Designer stehen in `design-check.md` unter DC-026.
+
+**Kurzfassung:** Die Ursache war nicht eine fehlende Erkennung, sondern eine
+falsche Reihenfolge. In `extraktion-pipeline.ts` wurden erst die Rückfragen
+erzeugt und danach liefen unsere eigenen, längst vorhandenen Text-Parser über
+das Transkript und trugen genau die fehlenden Werte nach. Gefragt wurde also
+nach Zahlen, mit denen einen Moment später ohnehin gerechnet wurde — beide
+Beispiele aus dem Ticket (Fensteranzahl, Bodenfläche) sind exakt dieser Fall.
+Jetzt in der richtigen Reihenfolge; Fenster-/Türanzahl landet zusätzlich im
+Raum, damit die Frage gar nicht erst entsteht. Für alles Übrige tragen die
+Fragen ein neues Feld `vorschlag` (Wert + fertige Anzeige + Zitat aus dem
+Transkript), aus dem der Designer seine „Du hast gesagt: …"-Karte bauen kann.
+20 neue Tests, Suite 807/807 grün.
+
+**Nebenbefund, den ich nicht eigenmächtig anfassen wollte — bitte an Sandy
+oder dich zur Entscheidung:**
+
+In derselben Datei steht ein Filter, der „Wie viele Fenster/Türen?"-Fragen
+unterdrücken soll, sobald die Raummaße bekannt sind (dann greifen ohnehin
+Standard-Annahmen). **Dieser Filter erreicht die echten Fragen nicht mehr.**
+Er arbeitet auf `extraktion.rueckfragen` — und genau dieses Feld wird von
+`bereiteRueckfragenVor` kurz vorher geleert, weil die Fragen inzwischen über
+einen eigenen Rückgabewert laufen. Übrig bleibt ein Filter, der faktisch nur
+noch die paar „implizit_"-Fragen trifft. Dieselbe Fehlerklasse wie PM-010
+(toter Code, der aussieht, als würde er etwas tun).
+
+Ich habe ihn **bewusst nicht wiederbelebt**: Das wäre eine inhaltliche
+Entscheidung, keine Reparatur. Er würde Fragen unterdrücken, deren Antwort
+NICHT im Text steht — das Tool würde dann still mit Standard-Annahmen rechnen
+(1 Fenster, 1 Tür), statt zu fragen. Das kann man gut finden (weniger
+Fragen) oder schlecht (stille Annahme statt Nachfrage), aber es ist nicht
+mehr das, was DC-026 verlangt. Bitte einmal entscheiden lassen, dann setze
+ich es in die eine oder andere Richtung um — im Moment ist es schlicht ein
+Stück Code, das eine Absicht behauptet, die es nicht mehr erfüllt.
 
 ---
 

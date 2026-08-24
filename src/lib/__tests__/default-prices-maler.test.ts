@@ -5,8 +5,15 @@ const maler = DEFAULT_PRICES.filter(position => position.category.startsWith('Ma
 const tapezieren = maler.filter(position => position.category === 'Maler – Tapezieren')
 
 describe('Maler-Standardpreiskatalog', () => {
+  // CoS-018 (2026-08-24): Die Zahl war seit dem Preisdatenbank-Audit vom
+  // 20.08. (Commit e06b7f5) veraltet — 164 → 208, also exakt die dort
+  // bewusst ergänzten 44 Maler-Positionen. Über die Commit-Historie
+  // nachgezählt, keine Dopplung (der Dopplungs-Test unten war die ganze Zeit
+  // grün). Die Zahl bleibt bewusst hart, damit ein versehentliches Löschen
+  // halber Rubriken auffällt — beim nächsten bewussten Katalog-Ausbau hier
+  // mit anpassen.
   it('enthält den vollständigen kuratierten Maler-Katalog', () => {
-    expect(maler).toHaveLength(164)
+    expect(maler).toHaveLength(208)
     expect(tapezieren).toHaveLength(22)
   })
 

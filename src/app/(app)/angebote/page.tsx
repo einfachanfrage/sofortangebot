@@ -5,16 +5,7 @@ import DashboardFilters from '@/components/DashboardFilters'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { Mic } from 'lucide-react'
 import { getQuotesOverview } from '@/data/quotes'
-
-const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  draft:          { label: 'Entwurf', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
-  in_bearbeitung: { label: 'Entwurf', color: 'bg-[#F5C400]/15 text-[#8B7000]'  },
-  sent:           { label: 'Offen',          color: 'bg-blue-50 text-blue-700'          },
-  viewed:         { label: 'Geöffnet',       color: 'bg-purple-50 text-purple-700'      },
-  accepted:       { label: 'Beauftragt',     color: 'bg-[#EDFAF0] text-[#1A7A38]'     },
-  rejected:       { label: 'Abgelehnt',      color: 'bg-red-50 text-red-600'            },
-  archived:       { label: 'Archiviert',     color: 'bg-[#F7F7F5] text-[#2C2C2C]/30'  },
-}
+import { getStatusInfo } from '@/lib/status'
 
 const GEWERK_BADGE: Record<string, string> = {
   maler:            '🖌 Maler',
@@ -61,14 +52,14 @@ export default async function AngebotePage({
   const emptyText = EMPTY_STATE_TEXT[currentStatus] ?? EMPTY_STATE_TEXT['']
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-28">
+    <div className="min-h-dvh bg-bg pb-28">
       <div className="md:max-w-5xl md:mx-auto">
       {/* Header */}
-      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
-        <div className="font-syne font-black text-2xl text-white md:text-[#2C2C2C]">Angebote</div>
+      <div className="bg-anthracite md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
+        <div className="font-syne font-black text-2xl text-white md:text-anthracite">Angebote</div>
         <Link
           href="/angebot/neu"
-          className="flex items-center gap-1.5 bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-4 py-2 mt-1"
+          className="flex items-center gap-1.5 bg-yellow text-anthracite font-black text-sm rounded-xl px-4 py-2 mt-1"
         >
           <Mic size={14} strokeWidth={2.5} />
           Neu
@@ -91,13 +82,13 @@ export default async function AngebotePage({
       {/* Empty state — kein Suchbegriff */}
       {filteredQuotes.length === 0 && !q && (
         <div className="px-5 mt-4">
-          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 px-6 py-10 text-center">
-            <div className="font-black text-[#2C2C2C] text-[16px]">{emptyText.title}</div>
-            <div className="text-[13px] font-semibold mt-1 text-[#2C2C2C]/50">{emptyText.sub}</div>
+          <div className="bg-white rounded-2xl border border-anthracite/5 px-6 py-10 text-center">
+            <div className="font-black text-anthracite text-[16px]">{emptyText.title}</div>
+            <div className="text-[13px] font-semibold mt-1 text-anthracite/50">{emptyText.sub}</div>
             {emptyText.showCta && (
               <Link
                 href="/angebot/neu"
-                className="inline-flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-5 py-2.5 rounded-xl mt-5"
+                className="inline-flex items-center gap-2 bg-yellow text-anthracite font-black text-sm px-5 py-2.5 rounded-xl mt-5"
               >
                 <Mic size={14} />
                 {status === 'entwurf' ? 'Aufmaß starten' : 'Erstes Aufmaß starten'}
@@ -110,9 +101,9 @@ export default async function AngebotePage({
       {/* Empty state — Suche ohne Treffer */}
       {filteredQuotes.length === 0 && q && (
         <div className="px-5 mt-4">
-          <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
-            <div className="font-black text-[#2C2C2C] text-[16px]">Kein Treffer.</div>
-            <div className="text-[13px] font-semibold mt-1 text-[#2C2C2C]/50">Anderen Suchbegriff versuchen.</div>
+          <div className="bg-white rounded-2xl p-8 text-center border border-anthracite/5">
+            <div className="font-black text-anthracite text-[16px]">Kein Treffer.</div>
+            <div className="text-[13px] font-semibold mt-1 text-anthracite/50">Anderen Suchbegriff versuchen.</div>
           </div>
         </div>
       )}
@@ -121,14 +112,11 @@ export default async function AngebotePage({
       {filteredQuotes.length > 0 && (
         <div className="md:hidden px-5 mt-4 flex flex-col gap-3">
           {filteredQuotes.map(quote => {
-            const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
             const items = (quote.quote_items ?? []).sort((a, b) => a.position - b.position)
             return (
               <MobileQuoteCard
                 key={quote.id}
                 quote={quote}
-                statusLabel={cfg.label}
-                statusColor={cfg.color}
                 formattedDate={fmtDate(quote.created_at)}
                 formattedAmount={fmt(quote.total_gross)}
                 ersterItemTitel={items[0]?.title ?? null}
@@ -141,34 +129,34 @@ export default async function AngebotePage({
       {/* Desktop table */}
       {filteredQuotes.length > 0 && (
         <div className="hidden md:block px-8 mt-4">
-          <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
-            <div className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3 border-b border-[#2C2C2C]/5">
+          <div className="bg-white rounded-2xl border border-anthracite/5 overflow-hidden">
+            <div className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3 border-b border-anthracite/5">
               {['Kunde', 'Gewerk', 'Datum', 'Status', 'Betrag'].map((h, i) => (
-                <div key={h} className={`text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest ${i === 4 ? 'text-right' : ''}`}>{h}</div>
+                <div key={h} className={`text-[10px] font-black text-anthracite/30 uppercase tracking-widest ${i === 4 ? 'text-right' : ''}`}>{h}</div>
               ))}
             </div>
             {filteredQuotes.map(quote => {
-              const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
+              const cfg = getStatusInfo(quote.status)
               const gewerkBadge = quote.gewerk ? GEWERK_BADGE[quote.gewerk as string] : null
               return (
                 <Link
                   key={quote.id}
                   href={`/angebot/${quote.id}`}
-                  className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3.5 border-b border-[#2C2C2C]/5 last:border-0 hover:bg-[#F7F7F5] transition-colors group"
+                  className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3.5 border-b border-anthracite/5 last:border-0 hover:bg-bg transition-colors group"
                 >
-                  <div className="font-black text-[#2C2C2C] text-sm truncate group-hover:text-[#F5C400] transition-colors self-center">
+                  <div className="font-black text-anthracite text-sm truncate group-hover:text-yellow transition-colors self-center">
                     {quote.customer?.name || 'Kunde unbekannt'}
                   </div>
                   <div className="self-center">
                     {gewerkBadge
-                      ? <span className="text-[11px] font-bold text-[#2C2C2C]/50 bg-[#2C2C2C]/5 px-2 py-0.5 rounded-full">{gewerkBadge}</span>
-                      : <span className="text-[#2C2C2C]/20 text-sm">—</span>}
+                      ? <span className="text-[11px] font-bold text-anthracite/50 bg-anthracite/5 px-2 py-0.5 rounded-full">{gewerkBadge}</span>
+                      : <span className="text-anthracite/20 text-sm">—</span>}
                   </div>
-                  <div className="text-sm text-[#2C2C2C]/40 font-semibold self-center">{fmtDate(quote.created_at)}</div>
+                  <div className="text-sm text-anthracite/40 font-semibold self-center">{fmtDate(quote.created_at)}</div>
                   <div className="self-center">
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${cfg.color}`}>{cfg.label}</span>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${cfg.bg} ${cfg.text}`}>{cfg.label}</span>
                   </div>
-                  <div className="text-right font-black text-[#2C2C2C] text-sm self-center">{fmt(quote.total_gross)}</div>
+                  <div className="text-right font-black text-anthracite text-sm self-center">{fmt(quote.total_gross)}</div>
                 </Link>
               )
             })}

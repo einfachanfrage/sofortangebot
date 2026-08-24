@@ -187,6 +187,9 @@ export function berechneUndPruefeAlleGewerke(
       konfidenz: 'low',
       berechnungsweg: 'Erkannt, aber Menge nicht sicher berechenbar — bitte manuell ergänzen',
       annahmen: [],
+      // DC-027/CoS-017: stammt wie alle anderen Ergaenzungen aus den
+      // Vollstaendigkeitsregeln, nicht aus dem gesprochenen Text.
+      automatisch_ergaenzt: true,
     })
   }
 

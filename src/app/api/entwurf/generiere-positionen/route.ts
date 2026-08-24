@@ -8,6 +8,7 @@ import type { VollExtraktionCache, KombinierteExtraktionCache } from '@/lib/type
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
+import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
 import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 90
@@ -39,7 +40,9 @@ export async function POST(req: NextRequest) {
     // kombinierte_extraktion_cache neu seit CoS-002 Schritt 3,
     // Mehrfach-Aufnahmen-Fall (Head of Product Engineering, 2026-08-21) —
     // siehe Cache-Wiederverwendung weiter unten.
-    .select('id, entwurf_gespeichert_am, kombinierte_extraktion_cache, companies!inner(user_id)')
+    // manuell_bearbeitete_positionen neu seit CoS-014 (2026-08-24) — die
+    // Handänderungen des Handwerkers, die eine Neu-Berechnung respektieren muss.
+    .select('id, entwurf_gespeichert_am, kombinierte_extraktion_cache, manuell_bearbeitete_positionen, companies!inner(user_id)')
     .eq('id', angebot_id)
     .single()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -455,12 +458,26 @@ export async function POST(req: NextRequest) {
       preis_position_id?: string
       berechnungsweg?: string | null
       annahmen?: string[]
+      automatisch_ergaenzt?: boolean
     }>
     zusammenfassung?: string
     notizen?: string
   }
 
-  const items = genData.items ?? []
+  const alleBerechneten = genData.items ?? []
+
+  // CoS-014: Positionen, die der Handwerker selbst angefasst hat, gewinnen
+  // gegen die Neu-Berechnung. Ohne das entstand bei geänderter Menge eine
+  // fast-gleiche Zeile DANEBEN (der Dublettenschutz vergleicht Titel UND
+  // Menge exakt), und eine gelöschte Position kam kommentarlos zurück.
+  // Bewusst still übergangen wird nichts: was hier hängen bleibt, steht
+  // gleich als Hinweis auf dem Bildschirm.
+  const { behalten: items, geschuetzt: handGeschuetzt } = trenneGeschuetzte(
+    alleBerechneten,
+    quoteCheck.manuell_bearbeitete_positionen as string[] | null,
+  )
+  const handHinweis = handaenderungsHinweis(handGeschuetzt)
+  if (handHinweis) massWarnungen.push(handHinweis)
 
   // ── Schritt 3: quote_items ergänzen ──────────────────────────────────────
   // PM-014, App-seitiger Dedup-Fix (2026-08-19): Angebot 2026-0016
@@ -532,6 +549,7 @@ export async function POST(req: NextRequest) {
       total_price: (item.quantity ?? 1) * (item.unit_price ?? 0),
       berechnungsweg: item.berechnungsweg ?? null,
       annahmen: item.annahmen ?? [],
+      automatisch_ergaenzt: item.automatisch_ergaenzt ?? false,
     }))
 
     const { error: insertErr } = await supabase.from('quote_items').insert(itemRows)
@@ -611,5 +629,13 @@ export async function POST(req: NextRequest) {
     entwurf_gespeichert_am: new Date().toISOString(),
   }).eq('id', angebot_id)
 
-  return NextResponse.json({ ok: true, positionen_count: gefilterteItems.length, rueckfragen, warnungen: massWarnungen })
+  return NextResponse.json({
+    ok: true,
+    positionen_count: gefilterteItems.length,
+    rueckfragen,
+    warnungen: massWarnungen,
+    // CoS-014: wie viele Positionen wegen einer Handänderung bewusst NICHT
+    // neu angelegt wurden (0 im Normalfall).
+    hand_geschuetzt_count: handGeschuetzt.length,
+  })
 }

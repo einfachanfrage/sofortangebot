@@ -39,8 +39,8 @@ hast): CoS-013 in `chief-of-staff-todos.md`.
 |---|---|---|---|
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
 | CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟡 Erster Schritt umgesetzt (Sentry im Kernpfad), Restarbeit sauber abgegrenzt | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
-| CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | ❌ offen | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
-| CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | ❌ offen | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
+| CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🔴 Code-Review fertig — wahrscheinlicher Bug gefunden: Passwort-Reset dürfte aktuell fehlschlagen | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
+| CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟡 Code-Review fertig — Willkommens-Mail sauber aufgesetzt, Verifizierung/Reset laufen über Supabase-eigenes Mailsystem, nicht geprüft | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
 | CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei erledigt, einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
 
@@ -163,21 +163,122 @@ Fehlerstellen außerhalb des Kernpfads; die zwei toten Logging-Spalten.
 ## CoS-P-003 — Accounts/Onboarding end-to-end testen
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen
+**Status:** 🔴 Code-Review fertig (2026-08-24) — wahrscheinlicher Bug beim
+Passwort-Reset gefunden, Live-Test steht noch aus
 
 **Hintergrund:** Übernommen von CoS-003. Registrierung, Login, Logout,
 Passwort-Reset — nie dokumentiert end-to-end durchgespielt.
+
+**Fix-Update (Platform & Integrations Engineer, 2026-08-24) —
+Code-Review aller vier Flows:**
+
+- **Registrierung** (`src/app/(auth)/register/page.tsx`): sauber. Passwort-
+  Mindestlänge 8, AGB-Pflicht-Checkbox mit Versionsstempel
+  (`agb_akzeptiert_am`/`agb_version`), generische Erfolgsmeldung unabhängig
+  davon ob die E-Mail schon existiert (verhindert Account-Enumeration).
+  Bestätigungslink läuft über `/auth/callback` (`src/app/auth/callback/
+  route.ts`), der den PKCE-Code serverseitig korrekt gegen eine Session
+  tauscht (`exchangeCodeForSession`) und danach die Willkommens-Mail
+  auslöst.
+- **Login** (`.../login/page.tsx`): sauber. `signInWithPassword`,
+  bewusst generische Fehlermeldung „E-Mail oder Passwort falsch" (verrät
+  nicht, ob die E-Mail existiert), Redirect ins Dashboard.
+- **Logout** (u. a. `einstellungen/page.tsx`, `AvatarSheet.tsx`): sauber.
+  `signOut()` + Redirect auf `/login`.
+- **Passwort-Reset — 🔴 wahrscheinlicher Bug:** `passwort-vergessen/
+  page.tsx` schickt den Reset-Link direkt auf `/passwort-reset` (nicht über
+  `/auth/callback`). Die Seite `passwort-reset/page.tsx` tauscht den
+  PKCE-Code aus der URL aber **nirgends aktiv gegen eine Session** — sie
+  wartet nur passiv auf ein `PASSWORD_RECOVERY`-Event von
+  `onAuthStateChange`. Das ist exakt das Muster aus einem bekannten,
+  dokumentierten Supabase/Next.js-Problem („Auth Session Missing" beim
+  PKCE-Passwort-Reset, siehe Quelle unten) — die Registrierung macht es
+  beim strukturell gleichen Problem richtig (expliziter Tausch in
+  `/auth/callback`), der Passwort-Reset tut es nicht. Wahrscheinlicher
+  Effekt: Nutzer klickt den Reset-Link, landet auf „Link wird geprüft..."
+  und das Formular erscheint nie, oder `updateUser()` schlägt mit „Auth
+  session missing" fehl.
+
+  **Konfidenz:** hoch, aber **nicht live nachgetestet** — das ist reine
+  Code-/Doku-Analyse, kein tatsächlicher Klick-Durchlauf mit einem echten
+  Test-Konto. Vor dem Fixen kurz live bestätigen (z. B. echte Registrierung
+  + Passwort-vergessen-Link anklicken), dann fixen.
+
+  **Vorgeschlagener Fix (noch nicht umgesetzt):** `resetPasswordForEmail`
+  in `passwort-vergessen/page.tsx` auf `redirectTo:
+  ${origin}/auth/callback?next=/passwort-reset` ändern (statt direkt auf
+  `/passwort-reset`) — dann läuft der Code-Tausch serverseitig genauso wie
+  bei der Registrierung, und `/passwort-reset` sieht beim Laden bereits
+  eine gültige Session. Kleine Ergänzung in `auth/callback/route.ts` nötig,
+  damit die Willkommens-Mail-Logik (`next.includes('/onboarding')`) dabei
+  nicht anspringt — ist aktuell schon eng genug gefasst, sollte kein
+  Problem sein.
+
+  Quelle zum bekannten Fehlerbild:
+  [supabase/supabase#27816](https://github.com/supabase/supabase/issues/27816)
+
+**Nicht Teil dieser Runde:** Rate-Limit/Captcha gegen automatisierte
+Massen-Registrierung (`launch-readiness.md` 2.6) und Session-/Token-Ablauf
+im Detail (2.7) — reine Supabase-Dashboard-Einstellungen, aus dieser
+Session nicht einsehbar, bräuchten einen Blick von jemandem mit
+Dashboard-Zugriff.
 
 ---
 
 ## CoS-P-004 — Transaktions-E-Mails auf echte Zustellung prüfen
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen
+**Status:** 🟡 Code-Review fertig (2026-08-24), Zustellung nicht live
+getestet
 
 **Hintergrund:** Übernommen von CoS-004. Unklar, ob Willkommens-/
 Verifizierungs-/Reset-Mails wirklich zugestellt werden, nicht nur im Code
 ausgelöst.
+
+**Fix-Update (Platform & Integrations Engineer, 2026-08-24):**
+
+- **Wichtigster Fund:** Von den drei Pflicht-Mails läuft nur die
+  **Willkommens-Mail** über die eigene, sauber aufgesetzte Resend-Anbindung
+  (`src/lib/email.ts`, Absender `sandra@sofortangebot.app`). Die
+  **Verifizierungs-Mail** (bei Registrierung) und die **Reset-Mail** (bei
+  Passwort vergessen) werden dagegen von **Supabase selbst** verschickt —
+  ausgelöst durch `supabase.auth.signUp()` bzw.
+  `resetPasswordForEmail()`, nicht durch unseren Resend-Code. Das ist eine
+  strukturell andere, aus dem Code heraus nicht einsehbare Versandstrecke:
+  ob die dabei Supabase-eigene Standard-Mail-Infrastruktur nutzt (bekannt
+  für niedrige Rate-Limits und schwache Zustellbarkeit) oder ob dafür schon
+  ein eigenes SMTP (z. B. über Resend) im Supabase-Dashboard hinterlegt
+  ist, lässt sich nicht per Code/API prüfen — das steht unter
+  Authentication → Emails → SMTP Settings im Supabase-Dashboard, sowohl auf
+  Staging als auch auf Produktion.
+
+  **Bitte kurz gegenchecken (Dashboard-Zugriff nötig):** Ist dort Custom
+  SMTP aktiv? Falls nicht, ist das der wahrscheinlichste Grund für
+  unzuverlässige Zustellung bei Verifizierung/Reset — würde ich empfehlen,
+  dieselbe Resend-Verbindung wie für die Willkommens-Mail zu nutzen, dann
+  laufen alle drei Mails über dieselbe, bereits sauber authentifizierte
+  Strecke.
+
+- **DNS-Check der Versanddomain `sofortangebot.app`** (heute per DNS-Abfrage
+  geprüft, nicht nur behauptet):
+  - **DKIM für Resend** (`resend._domainkey.sofortangebot.app`): ✅ korrekt
+    gesetzt, gültiger Schlüssel vorhanden. Die Willkommens-Mail sollte
+    DKIM-authentifiziert ankommen.
+  - **SPF** (`v=spf1 include:_spf-eu.ionos.com ~all`): deckt nur den
+    normalen Geschäfts-Mail-Versand über IONOS ab, **nicht** Resend. Kein
+    akutes Problem, weil DMARC bereits per DKIM-Alignment durchkommt
+    (From-Domain = DKIM-Domain = `sofortangebot.app`) — für volle
+    Absicherung könnte man zusätzlich `include:amazonses.com` (Resend
+    versendet über AWS SES) ergänzen, ist aber kein Blocker.
+  - **DMARC** (`_dmarc.sofortangebot.app`): gesetzt, aber `p=none` —
+    reiner Beobachtungsmodus, keine Durchsetzung. Für den Start okay,
+    könnte später auf `p=quarantine` verschärft werden, sobald Vertrauen
+    in den Versand besteht.
+
+- **Noch offen, aus dieser Session heraus nicht möglich:** eine echte
+  Zustellung live beobachten (Test-Registrierung durchspielen, schauen ob
+  die Mail ankommt/im Spam landet) und der Vercel-Env-Check für den
+  rotierten Resend-Key aus CoS-P-006 (Prod + Preview gesetzt?).
 
 ---
 

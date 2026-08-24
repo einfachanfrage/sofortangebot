@@ -12,6 +12,7 @@ interface BerechnetePositionInput {
   einheit: string
   annahmen: string[]
   berechnungsweg?: string
+  automatisch_ergaenzt?: boolean
   flaechen_parameter?: {
     brutto_m2: number
     fenster_anzahl: number
@@ -105,6 +106,8 @@ export async function POST(req: NextRequest) {
     preis_match_score: treffer?.score,
     berechnungsweg: position.berechnungsweg ?? null,
     annahmen: position.annahmen ?? [],
+    // DC-027/CoS-017: "vom Tool ergaenzt"-Kennzeichnung bis zur Position durchreichen
+    automatisch_ergaenzt: position.automatisch_ergaenzt ?? false,
     ...(position.flaechen_parameter ? { flaechen_parameter: position.flaechen_parameter } : {}),
   }))
 

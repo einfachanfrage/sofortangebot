@@ -3,19 +3,18 @@ import BottomNav from '@/components/BottomNav'
 import { KundeTypToggle } from './KundeTypToggle'
 import { NeueBaustelleButton } from '@/components/NeueBaustelleButton'
 import { getCustomerDetail } from '@/data/customers'
+// DC-003: hatte hier eine eigene, nur 4 von 7 Status abdeckende STATUS-Tabelle
+// (bereit/in_bearbeitung/archived fielen ohne Warnung auf "Entwurf" zurück)
+// mit eigenen, von den anderen 4 Stellen im Produkt abweichenden Labels
+// ("Versendet" statt "Offen", "Angenommen" statt "Beauftragt"). Jetzt die
+// gemeinsame Quelle, siehe src/lib/status.ts.
+import { getStatusInfo } from '@/lib/status'
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 function formatCurrency(n: number) {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(n)
-}
-
-const STATUS: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Entwurf', color: 'bg-gray-100 text-gray-600' },
-  sent: { label: 'Versendet', color: 'bg-blue-50 text-blue-700' },
-  accepted: { label: 'Angenommen', color: 'bg-green-50 text-green-700' },
-  rejected: { label: 'Abgelehnt', color: 'bg-red-50 text-red-700' },
 }
 
 interface AngebotRowData {
@@ -28,17 +27,17 @@ interface AngebotRowData {
 }
 
 function AngebotRow({ quote }: { quote: AngebotRowData }) {
-  const st = STATUS[quote.status] ?? STATUS.draft
+  const st = getStatusInfo(quote.status)
   return (
     <Link
       href={`/angebot/${quote.id}`}
-      className="bg-white rounded-2xl px-4 py-3 border border-[#2C2C2C]/5 flex items-center justify-between gap-2 active:scale-[0.98] transition-transform"
+      className="bg-white rounded-2xl px-4 py-3 border border-anthracite/5 flex items-center justify-between gap-2 active:scale-[0.98] transition-transform"
     >
       <div>
-        <div className="font-black text-[#2C2C2C]">{formatCurrency(quote.total_gross)}</div>
-        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{formatDate(quote.created_at)}</div>
+        <div className="font-black text-anthracite">{formatCurrency(quote.total_gross)}</div>
+        <div className="text-xs text-anthracite/40 font-semibold mt-0.5">{formatDate(quote.created_at)}</div>
       </div>
-      <span className={`text-xs font-bold px-2 py-1 rounded-full ${st.color}`}>{st.label}</span>
+      <span className={`text-xs font-bold px-2 py-1 rounded-full ${st.bg} ${st.text}`}>{st.label}</span>
     </Link>
   )
 }
@@ -62,8 +61,8 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
     : []
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-24">
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+    <div className="min-h-dvh bg-bg pb-24">
+      <div className="bg-anthracite px-5 pt-12 pb-6">
         <Link href="/kunden" className="text-white/50 text-sm font-semibold">← Kunden</Link>
         <div className="text-white font-syne font-black text-xl mt-1">{customer.name}</div>
         {customer.address && (
@@ -74,19 +73,19 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
       <div className="px-5 md:px-8 mt-5 flex flex-col gap-4 max-w-xl mx-auto">
         {/* Kontakt */}
         {(customer.phone || customer.email) && (
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-3">Kontakt</div>
+          <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+            <div className="text-xs font-black text-anthracite/40 uppercase tracking-wide mb-3">Kontakt</div>
             <div className="flex flex-col gap-2">
               {customer.phone && (
                 <a href={`tel:${customer.phone}`} className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#F5C400]/20 rounded-xl flex items-center justify-center text-sm">📞</div>
-                  <span className="font-semibold text-[#2C2C2C]">{customer.phone}</span>
+                  <div className="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center text-sm">📞</div>
+                  <span className="font-semibold text-anthracite">{customer.phone}</span>
                 </a>
               )}
               {customer.email && (
                 <a href={`mailto:${customer.email}`} className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#F5C400]/20 rounded-xl flex items-center justify-center text-sm">✉️</div>
-                  <span className="font-semibold text-[#2C2C2C]">{customer.email}</span>
+                  <div className="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center text-sm">✉️</div>
+                  <span className="font-semibold text-anthracite">{customer.email}</span>
                 </a>
               )}
             </div>
@@ -103,26 +102,26 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
 
         {/* Statistik */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="text-2xl font-black text-[#2C2C2C]">{quotes.length}</div>
-            <div className="text-xs font-semibold text-[#2C2C2C]/50 mt-0.5">Angebote gesamt</div>
+          <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+            <div className="text-2xl font-black text-anthracite">{quotes.length}</div>
+            <div className="text-xs font-semibold text-anthracite/50 mt-0.5">Angebote gesamt</div>
           </div>
-          <div className="bg-[#F5C400]/10 rounded-2xl p-4 border border-[#F5C400]/20">
-            <div className="text-lg font-black text-[#2C2C2C] leading-tight">{formatCurrency(acceptedValue)}</div>
-            <div className="text-xs font-semibold text-[#2C2C2C]/50 mt-0.5">Angenommen</div>
+          <div className="bg-yellow/10 rounded-2xl p-4 border border-yellow/20">
+            <div className="text-lg font-black text-anthracite leading-tight">{formatCurrency(acceptedValue)}</div>
+            <div className="text-xs font-semibold text-anthracite/50 mt-0.5">Angenommen</div>
           </div>
         </div>
 
         {gruppiert ? (
           <div>
-            <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-3">Baustellen</div>
+            <div className="text-xs font-black text-anthracite/40 uppercase tracking-wide mb-3">Baustellen</div>
             <div className="flex flex-col gap-3">
               {baustellenMitAngeboten.map(({ baustelle, angebote }) => (
-                <div key={baustelle.id} className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+                <div key={baustelle.id} className="bg-white rounded-2xl p-4 border border-anthracite/5">
                   <div className="flex items-baseline gap-2 mb-3">
                     <span className="text-sm">🏗️</span>
-                    <span className="font-syne font-bold text-[#2C2C2C] text-sm">{baustelle.name}</span>
-                    <span className="ml-auto text-xs font-bold text-[#2C2C2C]/40">
+                    <span className="font-syne font-bold text-anthracite text-sm">{baustelle.name}</span>
+                    <span className="ml-auto text-xs font-bold text-anthracite/40">
                       {angebote.length === 0 ? 'Noch kein Angebot' : `${angebote.length} ${angebote.length === 1 ? 'Angebot' : 'Angebote'}`}
                     </span>
                   </div>
@@ -133,7 +132,7 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
                   )}
                   <Link
                     href={`/angebot/neu?customerId=${customer.id}&baustelleId=${baustelle.id}`}
-                    className="block w-full text-center border border-dashed border-[#2C2C2C]/15 text-[#2C2C2C]/50 font-bold text-xs rounded-xl py-2.5 hover:border-[#2C2C2C]/30 hover:text-[#2C2C2C]/70 transition-colors"
+                    className="block w-full text-center border border-dashed border-anthracite/15 text-anthracite/50 font-bold text-xs rounded-xl py-2.5 hover:border-anthracite/30 hover:text-anthracite/70 transition-colors"
                   >
                     + Neues Angebot für diese Baustelle
                   </Link>
@@ -141,9 +140,9 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
               ))}
 
               {ohneBaustelle.length > 0 && (
-                <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+                <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
                   <div className="flex items-baseline gap-2 mb-3">
-                    <span className="font-syne font-bold text-[#2C2C2C] text-sm">Sonstige Angebote</span>
+                    <span className="font-syne font-bold text-anthracite text-sm">Sonstige Angebote</span>
                   </div>
                   <div className="flex flex-col gap-2">
                     {ohneBaustelle.map(q => <AngebotRow key={q.id} quote={q} />)}
@@ -156,11 +155,11 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
           </div>
         ) : (
           <div>
-            <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide mb-3">Angebote</div>
+            <div className="text-xs font-black text-anthracite/40 uppercase tracking-wide mb-3">Angebote</div>
             <div className="flex flex-col gap-2">
               {!quotes.length && (
-                <div className="bg-white rounded-2xl p-6 text-center border border-[#2C2C2C]/5">
-                  <div className="text-[#2C2C2C]/40 font-semibold text-sm">Noch keine Angebote</div>
+                <div className="bg-white rounded-2xl p-6 text-center border border-anthracite/5">
+                  <div className="text-anthracite/40 font-semibold text-sm">Noch keine Angebote</div>
                 </div>
               )}
               {quotes.map(q => <AngebotRow key={q.id} quote={q} />)}

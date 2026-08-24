@@ -101,3 +101,16 @@ bewusst zurück. Keine akute strategische Entscheidung diese Woche. Frage aus
 „Was hier noch fehlt" an Sandy weitergegeben: Zielgröße/Ambition
 (Lifestyle-Business vs. Wachstum mit Team/Kapital) — Antwort steht noch aus,
 daher unten unverändert gelassen.
+
+**24.08.2026 (zweiter Check-in):** Stand Richtung Launch: weiter auf Kurs zu
+Gate 1, mit spürbarer Bewegung seit letzter Woche (Gate 1 von 23 % auf
+25 %) — die vermeintliche Deploy-Blockade war ein Fehlalarm und ist gelöst,
+dafür fand der erste echte Live-Test der Bestätigungskarte sofort einen
+echten (inzwischen gefixten) Bug; Sandys Bestätigungs-Retest steht noch aus
+und ist damit der nächste Schritt vor dem eigentlichen
+Vertrauensthema bei der Kernrechnung. Keine akute strategische
+Entscheidung diese Woche (`entscheidungen-fuer-sandy.md`: aktuell nichts
+offen). Frage aus „Was hier noch fehlt" an Sandy weitergegeben:
+Wettbewerbslandschaft — was macht Sofortangebot aus ihrer Sicht anders/
+besser als bestehende Alternativen? Antwort steht noch aus, daher unten
+unverändert gelassen.

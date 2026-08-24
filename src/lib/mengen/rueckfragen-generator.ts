@@ -21,6 +21,20 @@ export interface RueckfrageItem {
   schnell_antworten: SchnellAntwort[]
   einheit?: string
   plural_count?: number
+  /**
+   * DC-026: Der Wert steht bereits im Transkript, wurde aber nicht
+   * strukturiert erkannt. Statt blind zu fragen, kann die Oberfläche ihn als
+   * „Du hast gesagt: … — stimmt das?" anbieten (Design-Spec DC-025).
+   * Fehlt das Feld, ist es eine ganz normale offene Frage.
+   */
+  vorschlag?: {
+    wert: number | number[]
+    einheit: string
+    /** Fertig formatiert: „2,60 m", „5 × 4 m", „3 Fenster". */
+    anzeige: string
+    /** Der Satz aus dem Transkript, aus dem der Wert stammt — als Beleg. */
+    zitat: string
+  }
 }
 
 function artikel(name: string): string {

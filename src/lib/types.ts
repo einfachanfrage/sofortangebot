@@ -13,7 +13,14 @@ export type AccountingSoftware =
   | 'sage'
   | 'plancraft'
   | 'none'
-export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected' | 'in_bearbeitung' | 'archived'
+// DC-003: 'bereit' war schon lange ein echter, live geschriebener Status
+// (siehe fertigstellen() in AngebotDetail.tsx), stand hier aber nie im Typ —
+// dadurch musste currentStatus dort auf ein einfaches string verbreitert
+// werden, um überhaupt zu kompilieren. Jetzt vollständig: die 7 Status, die
+// die App tatsächlich verwendet. 'viewed' existierte nur als totes Label in
+// mehreren Anzeige-Tabellen, wird aber nirgends geschrieben — bewusst nicht
+// aufgenommen, siehe src/lib/status.ts.
+export type QuoteStatus = 'draft' | 'in_bearbeitung' | 'bereit' | 'sent' | 'accepted' | 'rejected' | 'archived'
 
 export type EntwurfVerarbeitungStatus = 'ausstehend' | 'verarbeitung' | 'fertig' | 'fehler'
 export type EntwurfAufnahmeTyp = 'sprache' | 'notiz' | 'foto'
@@ -215,6 +222,10 @@ export interface Quote {
   // CoS-002 Option 1 Schritt 3, Mehrfach-Aufnahmen-Fall — siehe
   // KombinierteExtraktionCache-Kommentar oben.
   kombinierte_extraktion_cache?: KombinierteExtraktionCache | null
+  // CoS-014: Titel der Positionen, die der Handwerker selbst angefasst hat
+  // (geändert, gelöscht, hinzugefügt). Eine Neu-Berechnung legt sie nicht
+  // erneut an — siehe src/lib/manuelle-positionen.ts.
+  manuell_bearbeitete_positionen?: string[] | null
   customer?: Customer
   items?: QuoteItem[]
 }
@@ -291,6 +302,8 @@ export interface QuoteItem {
   price_item_id?: string | null
   berechnungsweg?: string | null
   annahmen?: string[]
+  /** DC-027/CoS-017: true = vom Tool ergaenzt (nicht gesagt) -> "Vorschlag"-Badge. */
+  automatisch_ergaenzt?: boolean
   vob_norm: string | null
   din_normen: string[] | null
 }

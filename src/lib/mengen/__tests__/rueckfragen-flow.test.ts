@@ -346,3 +346,42 @@ describe('geschlossener Rückfragen-Flow', () => {
     expect(ids).toContain('altbelag_wohnzimmer')
   })
 })
+
+// DC-026 (2026-08-24): Fragen, deren Antwort schon im Gesagten steht, tragen
+// jetzt den gefundenen Wert samt Beleg-Satz mit sich — die Oberfläche kann
+// daraus „Du hast gesagt: … stimmt das?" machen, statt blind zu fragen
+// (Design-Spec DC-025).
+describe('DC-026 – Vorschläge aus dem Transkript', () => {
+  it('hängt die im Text genannte Fensterzahl als Vorschlag an die Frage', () => {
+    const extraktion = basis({
+      transkript: 'Im Wohnzimmer und in der Küche die Wände streichen. Im Wohnzimmer sind drei Fenster drin.',
+      raeume: [
+        { name: 'Wohnzimmer', laenge: 5, breite: 4, hoehe: 2.5, flaeche: 20, fenster: [], tueren: [], arbeiten: ['waende_streichen'], altbelag_entfernen: false, sockelleisten: false, nassbereich: false },
+        { name: 'Küche', laenge: 3, breite: 3, hoehe: 2.5, flaeche: 9, fenster: [], tueren: [], arbeiten: ['waende_streichen'], altbelag_entfernen: false, sockelleisten: false, nassbereich: false },
+      ],
+    })
+    const { rueckfragen } = bereiteRueckfragenVor(extraktion)
+    const wohnzimmer = rueckfragen.find(frage => frage.id === 'fenster_anzahl_wohnzimmer')
+    expect(wohnzimmer?.vorschlag?.wert).toBe(3)
+    expect(wohnzimmer?.vorschlag?.anzeige).toBe('3 Fenster')
+    expect(wohnzimmer?.vorschlag?.zitat).toContain('drei Fenster')
+
+    // Für die Küche steht nichts im Text — die bleibt eine normale Frage,
+    // statt die Zahl aus dem anderen Zimmer zu übernehmen.
+    const kueche = rueckfragen.find(frage => frage.id === 'fenster_anzahl_küche')
+    expect(kueche).toBeDefined()
+    expect(kueche?.vorschlag).toBeUndefined()
+  })
+
+  it('lässt Fragen ohne Fund unverändert offen', () => {
+    const extraktion = basis({
+      transkript: 'Wände und Decke streichen.',
+      raeume: [
+        { name: 'Flur', laenge: 4, breite: 4, hoehe: 2.6, flaeche: 16, fenster: [], tueren: [], arbeiten: ['waende_streichen'], altbelag_entfernen: false, sockelleisten: false, nassbereich: false },
+      ],
+    })
+    const { rueckfragen } = bereiteRueckfragenVor(extraktion)
+    expect(rueckfragen.length).toBeGreaterThan(0)
+    expect(rueckfragen.every(frage => frage.vorschlag === undefined)).toBe(true)
+  })
+})

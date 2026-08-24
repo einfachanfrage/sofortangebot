@@ -406,10 +406,39 @@ describe('Maler-Engine – PM-008 Fassade (waende[] statt raeume[])', () => {
     expect(fassade).toBeDefined()
   })
 
-  it('rechnet Netto = Brutto (12×6=72,00 m²) minus 3 Fenster (1,20×1,40=5,04 m²) = 66,96 m²', () => {
+  // CoS-018 (2026-08-24): Dieser Test erwartete bis heute 66,96 m² und war
+  // rot. Er zeigt KEINEN verlorengegangenen Fix — er hinkt einer bewussten
+  // Regeländerung hinterher: seit PM-021 (2026-08-21, Sandys ausdrückliches
+  // Go, siehe vob-uebermessung.ts) werden Öffnungen bis 2,5 m² Einzelgröße
+  // nach VOB/C DIN 18363 NICHT mehr von der Anstrichfläche abgezogen. Drei
+  // Fenster à 1,20×1,40 = 1,68 m² liegen darunter → 72,00 m² ist ab dann das
+  // fachlich richtige Ergebnis. Der PM-008-Fix selbst (waende[] wird
+  // überhaupt gelesen, Fenstermaße gehen nicht als reine Stückzahl verloren)
+  // ist davon unberührt und weiterhin wirksam.
+  it('übermisst kleine Fenster nach VOB: 12×6 = 72,00 m², 3 Fenster à 1,68 m² bleiben drin', () => {
     const positionen = pipeline()
     const fassade = find(positionen, 'fassadenfläche')
-    expect(fassade!.menge).toBeCloseTo(66.96, 1)
+    expect(fassade!.menge).toBeCloseTo(72.0, 1)
+    // Der GRUND steht sichtbar in den Annahmen. Fällt dieser Hinweis weg, ist
+    // die Regel selbst weg und nicht bloß eine Zahl anders — deshalb hier mit
+    // festgehalten, damit der Test nicht wieder still auseinanderläuft.
+    expect(fassade!.annahmen.join(' ')).toMatch(/übermessung|nicht abgezogen/i)
+  })
+
+  it('zieht eine Öffnung über 2,5 m² weiterhin voll ab (Terrassentür 2,40×2,20 = 5,28 m²)', () => {
+    const { positionen } = malerEngine({
+      transkript: 'Fassade an der Südseite, 12 Meter lang, 6 Meter hoch, eine große Terrassentür 2,40 mal 2,20, Fassadenfarbe zweimal drauf.',
+      raeume: [],
+      waende: [{
+        laenge: 12,
+        hoehe: 6,
+        name: 'Südseite',
+        arbeiten: ['fassadenanstrich'],
+        fenster: [{ anzahl: 1, breite: 2.4, hoehe: 2.2 }],
+      }],
+    })
+    const fassade = find(positionen, 'fassadenfläche')
+    expect(fassade!.menge).toBeCloseTo(66.72, 1)
   })
 
   it('erkennt "zweimal" korrekt als 2 Anstriche', () => {

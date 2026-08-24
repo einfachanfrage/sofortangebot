@@ -1536,3 +1536,248 @@ weil man Sockelleisten, die man ohnehin streicht, nicht zusätzlich zum Schutz a
 Kernbug dieses Falls — „Sockelleisten streichen" fehlte trotz dreifach ausdrücklichem Verlangen — nach
 fünf gescheiterten Versuchen jetzt live bestätigt behoben. Wandert damit ins Archiv, volle Historie bleibt
 dort erhalten.
+
+---
+
+## PM-017 — Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer)
+
+**Datum:** 2026-08-20
+**Status:** ✅ behoben & getestet (Live-Nachtest 2026-08-21): „Tapete tapezieren" jetzt mit exakt 31,91 m²
+und korrektem Preis im Entwurf, keine Phantom-Positionen mehr, keine Grundierung — genau wie im Soll
+
+**Warum dieser Fall:** Im Code taucht wiederholt eine Datei `maler-tapete.ts` auf (u. a. bei PM-007/PM-008
+als Fundort für Positionsnamen erwähnt), aber bisher wurde in keinem Testfall tatsächlich tapeziert statt
+gestrichen — die Tapete-Seite dieser Datei ist damit praktisch ungetestet. Zweitens: „Neuputz → Grundierung"
+ist eine der zentralen Fachwissen-Regeln, aber noch nie gegen einen ausdrücklichen Kunden-Widerspruch dazu
+geprüft worden („neuer Putz, aber trotzdem keine Grundierung gewünscht"). Beides zusammen in einem Fall.
+
+**Zum Einsprechen:**
+„Kinderzimmer, vier mal drei, Höhe zwo fünfzig. Wände tapezieren, keine Farbe. Der Putz ist frisch, aber
+Grundierung brauchen wir trotzdem nicht, das lassen wir weg. Ein Fenster, normale Größe, eine Tür, normal
+Maß.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,00)=14,00 lfm
+- Wandbrutto: 14,00×2,50=35,00 m²
+- Abzug 1 Fenster Standard (1,20 m²) + 1 Tür Standard (1,89 m²) = 3,09 m²
+- Wandfläche netto: **31,91 m²**
+- Wände tapezieren: **31,91 m²** — einlagig, keine „2x"-Vervielfachung wie bei einem Farbanstrich
+- **Keine** „Wände streichen"-Position — ausdrücklich „keine Farbe"
+- **Keine** Grundierung — ausdrücklich abgelehnt, obwohl „frischer Putz" sonst ein Grundierungs-Trigger
+  wäre (genau die Regel aus dem Fachwissen, hier bewusst durchbrochen)
+- Keine Deckenposition (nicht erwähnt)
+
+**Worauf achten:**
+- Erkennt das Tool „tapezieren" überhaupt als eigene Leistung, oder rutscht das mangels eigener Erkennung
+  in die normale „Wände streichen"-Position (falsche Leistungsbezeichnung fürs Angebot)?
+- Wird trotz „keine Farbe" trotzdem eine Anstrich-Position erzeugt (Über-Erkennung, dieselbe Fehlerfamilie
+  wie beim phantomen Bodenaustausch bei PM-010)?
+- Ist die Tapezier-Menge einlagig, oder wird sie fälschlich wie ein „2x"-Anstrich behandelt (falsche
+  Einheit/Menge)?
+- Wird die Grundierung trotz des starken „Neuputz"-Signals korrekt NICHT erzeugt, weil der ausdrückliche
+  Widerspruch („brauchen wir trotzdem nicht") Vorrang vor der sonst automatisch abgeleiteten Regel hat?
+
+**Ist-Ergebnis (Sandy, 2026-08-20):** Karte: „4 Positionen erkannt" — Wände tapezieren (30 m²), Tapete
+entfernen (0 Stück), Untergrund glätten/Spachteln (0 Stück), Raufaser streichen (0 Stück). Sandy hat auf
+Nachfrage bestätigt: sie hat exakt den oben stehenden Testskript-Wortlaut gesprochen, wie immer, ohne etwas
+wegzulassen ("hab alles so gesagt wie du es formuliert hast im testfall, mach ich IMMER so, lasse nie was
+weg"). Die drei zusätzlichen Positionen (Tapete entfernen, Untergrund glätten/Spachteln, Raufaser
+streichen) sind damit **bestätigt nicht gesagt worden** — reine Erfindung der Extraktion, kein
+Transkriptionsproblem.
+
+Damit stehen zwei unabhängige, jetzt beide bestätigte Befunde fest:
+
+Entwurf, Raummaße korrekt (3×4 m, Höhe 2,5 m, 1 Tür, 1 Fenster):
+- Boden schützen: 12 m² × 1,20 € = 14,40 € — normale Nebenleistung, exakt Soll (3×4=12 m² Bodenfläche)
+- Tapete entfernen: 0 Stück, Preis fehlt, 0,00 €
+- Untergrund glätten/Spachteln: 0 Stück, Preis fehlt, 0,00 €
+- Raufaser aufziehen: 0 Stück, Preis fehlt, 0,00 €
+- Raufaser streichen: 0 Stück, Preis fehlt, 0,00 €
+- **„Wände tapezieren" — die eine Position, die in jedem Fall verlangt wurde und auf der Karte mit
+  einer echten Menge (30 m²) erkannt wurde — taucht im fertigen Entwurf NIRGENDS auf.** Weder als eigene
+  Zeile noch eingerechnet in eine der vier oben gezeigten Positionen.
+
+**Befund:**
+
+1. **Schwerster Fund: die eigentlich verlangte Leistung „Wände tapezieren" fehlt komplett, obwohl mit
+   echter Menge erkannt.** Genau die stille Fehlerkategorie aus PM-010/PM-012/PM-013 (Karte kündigt eine
+   Leistung mit Menge an, Entwurf liefert sie nicht) — nur diesmal bei der Kernleistung selbst, nicht bei
+   einer Nebenposition. Stattdessen stehen vier andere Positionen da, alle mit Menge 0 und ohne Preis —
+   der Handwerker bekäme für das eigentliche Tapezieren der Wände gar nichts berechnet.
+2. **Neuer, jetzt bestätigter Bug: Über-Erkennung / Phantom-Positionen durch das Wort „tapezieren".**
+   Sandy hat bestätigt, exakt den Testskript-Wortlaut gesprochen zu haben — „Tapete entfernen",
+   „Untergrund glätten/Spachteln" und „Raufaser streichen" kamen darin nicht vor. Die Extraktion hat aus
+   dem einen Wort „tapezieren" einen kompletten, nicht angeforderten Standard-Workflow erfunden (Altes
+   entfernen → Untergrund glätten → Raufaser aufziehen → Raufaser streichen), analog zur PM-010-Familie
+   (dort löste „kommen raus" einen ganzen Phantom-Bodenaustausch aus). Dass alle vier Phantom-Positionen
+   zusätzlich mit Menge 0 erscheinen, macht den Effekt harmlos für die Kalkulation, aber die Erkennung
+   selbst ist falsch und würde bei anderer Formulierung reale Fehlmengen erzeugen.
+3. Keine Grundierungs-Position vorhanden — korrekt, konsistent mit dem ausdrücklichen Ausschluss im
+   Testskript. Dieser Teil des Falls funktioniert wie gewollt.
+
+**Für Head of Product Engineering:** Zwei getrennte Bugs, bitte auch getrennt fixen:
+- Punkt 1: eine mit realer Menge erkannte Kernleistung („Wände tapezieren", 30 m² auf der Karte)
+  verschwindet komplett aus dem Entwurf. Bitte wie bei PM-010/PM-012/PM-013 behandeln
+  (`fehlende`/Chip-Titel-Fallback-Familie).
+- Punkt 2: das Wort „tapezieren" triggert offenbar eine feste Vier-Schritte-Vorlage
+  (entfernen/glätten/Raufaser aufziehen/Raufaser streichen), die niemand verlangt hat. Bitte in der
+  Extraktionslogik den Auslöser dafür finden (vermutlich ein Tapete-Zusatzfeature aus `maler-tapete.ts`,
+  das immer mitgeneriert wird statt nur bei explizitem „Tapete raus"/„neu tapezieren über alter Tapete").
+
+**Fix-Update (Head of Product Engineering, 2026-08-21):** Beide Punkte root-caused — nicht gegen ein
+angenommenes GPT-Ergebnis, sondern gegen die echte, in der Produktions-DB gespeicherte GPT-Rohantwort
+zu genau diesem Testfall nachgerechnet (`entwurf_aufnahmen.voll_extraktion`, Aufnahme vom 21.08.):
+
+- **Ursache für Punkt 1:** GPT liefert `arbeiten: ["tapete aufziehen", "abdecken"]` — nicht wörtlich
+  „tapezieren". Das Wand-Signal in der Engine (`gewerke/maler.ts`) suchte nur nach dem Fragment „tapez",
+  das in „tapete aufziehen" nicht vorkommt — kein Wand-Signal, keine Wandflächen-Position, nichts, worauf
+  „Wände tapezieren" hätte aufbauen können. Zusätzlich, verschärfend: „abdecken" (Boden schützen) enthält
+  selbst die Zeichenkette „decke" (ab-DECKE-n) — das hat an gleich zwei Stellen ein falsches Decken-Signal
+  ausgelöst: einmal lokal in der Engine, vor allem aber in der GEMEINSAMEN Scope-Erkennung
+  (`arbeiten-normalisierer.ts`, von Engine UND Vollständigkeits-Prüfung genutzt) — dort wurde dem Raum
+  fälschlich „nur Decke" zugewiesen, wodurch selbst eine korrekt erkannte Wandfläche nachträglich wieder
+  herausgefiltert worden wäre. Alle drei Stellen jetzt gefixt: „tapete" zählt jetzt selbst als Wand-Signal,
+  und „decke" zählt an allen drei Stellen nicht mehr, wenn ihm direkt ein „ab" vorausgeht (dieselbe
+  Fehlerklasse, die schon einmal lokal in `maler-basis.ts` umschifft wurde — jetzt an der gemeinsamen
+  Quelle behoben, nicht nur an einer einzelnen Stelle).
+- **Ursache für Punkt 2:** Die Vier-Schritte-Vorlage in `pruefeTapezieren()` (`maler-tapete.ts`) wurde
+  IMMER komplett erzeugt, sobald „tapezieren" fiel — unabhängig davon, ob Entfernen/Glätten/Streichen
+  überhaupt gesagt wurden. Jetzt signalabhängig: „Tapete entfernen" nur bei echtem Entfernen-Signal im
+  Text, „… streichen" nur bei echtem Streich-Signal — UND eine ausdrückliche Verneinung („keine Farbe")
+  hat dabei Vorrang und unterdrückt das Streichen zuverlässig. Gilt sowohl für den Haupt-Pfad (Fläche
+  bekannt) als auch für den bisherigen Fallback ohne Fläche.
+- **Nachgerechnet gegen die echte GPT-Antwort dieses Testfalls:** Ergebnis jetzt „Boden schützen — 12 m²"
+  + „Tapete tapezieren — 31,91 m²" — keine weiteren Positionen, keine Grundierung, exakt wie im Soll (nur
+  die Positionsbezeichnung heißt „Tapete tapezieren" statt „Wände tapezieren" — inhaltlich gleichwertig,
+  nicht extra angepasst, da im Befund nicht als eigener Punkt verlangt).
+- Regressionsprüfung: alle 236 bestehenden Tests weiterhin grün, `tsc` für alle geänderten Dateien ohne
+  neue Fehler. **Noch offen:** Live-Nachtest im Browser durch dich.
+
+**Ist-Ergebnis (Live-Nachtest, Sandy, 2026-08-21):** Karte jetzt „2 Positionen erkannt" — Boden schützen
+(12 m²), Tapete tapezieren (31,91 m²). Entwurf, Raummaße korrekt (3×4 m, Höhe 2,5 m, 1 Tür, 1 Fenster):
+- Boden schützen: 12 m² × 1,20 € = 14,40 € — exakt Soll
+- Tapete tapezieren: 31,91 m² × 26,00 € = 829,66 € — Menge exakt Soll (31,91 m²), Rechnung stimmt
+  (31,91 × 26,00 = 829,66), Preis ist hinterlegt
+- Keine der drei Phantom-Positionen (Tapete entfernen/Untergrund glätten/Raufaser) mehr vorhanden
+- Keine Grundierung — korrekt, wie ausdrücklich abgelehnt
+- Keine „Wände streichen"-Position — korrekt, wie ausdrücklich „keine Farbe"
+
+Beide Befunde bestätigt behoben. Einziger kosmetischer Unterschied zum Soll: die Position heißt „Tapete
+tapezieren" statt „Wände tapezieren" — inhaltlich identisch, im Befund nie als eigener Punkt verlangt,
+kein Blocker. **Grün, kann archiviert werden.**
+
+---
+
+## PM-018 — Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer)
+
+**Datum:** 2026-08-20
+**Status:** ✅ behoben & getestet (Live-Nachtest 2026-08-21): Spachtelarbeiten zeigen jetzt korrekt „Q3"
+an Wand und Decke, Deckengrundierung ist jetzt vorhanden — alle 8 Positionen exakt wie im Soll
+
+**Warum dieser Fall:** PM-011 hat Q2-Spachtelung nur an der Wand getestet. Q3/Q4 sind bisher komplett
+ungetestet, ebenso die Frage, ob eine Deckenspachtelung überhaupt als eigene Position mit eigener Fläche
+existiert oder in der Wandfläche verschwindet/vergessen wird — eine Lücke, die einem Handwerker sofort
+auffallen würde, weil Wand und Decke fachlich immer getrennte Flächen und damit getrennte Positionen sind.
+
+**Zum Einsprechen:**
+„Arbeitszimmer, vier mal dreieinhalb, Höhe zwo sechzig. Wände UND Decke komplett spachteln, Qualitätsstufe
+Q3, weil später Streiflicht draufscheint. Danach beides einmal grundieren und zweimal streichen. Eine Tür,
+normal Maß, ein Fenster, normale Größe.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,50)=15,00 lfm; Wandbrutto: 15,00×2,60=39,00 m²
+- Abzug 1 Fenster (1,20 m²) + 1 Tür (1,89 m²) = 3,09 m² → Wandfläche netto: **35,91 m²**
+- Deckenfläche: 4,00×3,50=**14,00 m²**
+- Spachtelarbeiten Q3 Wand: **35,91 m²**
+- Spachtelarbeiten Q3 Decke: **14,00 m²** — eigene Position mit eigener Fläche, nicht mit der Wand
+  vermischt
+- Grundierung Wand: 35,91 m² (1x)
+- Grundierung Decke: 14,00 m² (1x) — offen, ob das Tool das überhaupt als eigene Position kennt, siehe
+  „Worauf achten"
+- Wandflächen streichen 2×: 35,91 m²
+- Deckenfläche streichen 2×: 14,00 m²
+
+**Worauf achten:**
+- Wird die Qualitätsstufe korrekt als „Q3" benannt, nicht standardmäßig auf „Q2" zurückfallend?
+- Bekommt die Decke überhaupt eine eigene Spachtel-Position mit eigener Fläche (14,00 m²), oder wird sie
+  in die Wandfläche eingerechnet, verdoppelt oder schlicht vergessen?
+- Existiert für die Decke überhaupt eine eigene Grundierungs-Position, oder kennt das Tool Grundierung
+  bisher nur für Wände? Falls Letzteres: kein Blocker, aber ein Punkt für Head of Product Engineering.
+- Werden Wand- und Deckenzahlen sauber getrennt gehalten (kein Verwechseln der beiden Flächen, wie es bei
+  Sonderfällen wie PM-007/PM-008 schon an anderer Stelle passiert ist)?
+
+**Ist-Ergebnis (Sandy, 2026-08-20):** Karte: „8 Positionen erkannt" — Wände spachteln (35 m²), Decke
+spachteln (14 m²), Wände grundieren (35 m²), Decke grundieren (14 m²), Wände streichen (35 m²), Decke
+streichen (14 m²), Boden schützen (0 m²), Spachtelarbeiten Q2 (0 Stück) — schon auf der Karte fällt auf,
+dass „Q2" statt „Q3" auftaucht, obwohl im Transkript ausdrücklich „Qualitätsstufe Q3" gesagt wurde.
+
+Entwurf, Raummaße exakt (3,5×4 m, Höhe 2,6 m, 1 Tür, 1 Fenster):
+- Wandflächen streichen 2×: 35,91 m² × 9,50 € = 341,14 € — exakt Soll
+- Deckenfläche streichen 2×: 14 m² × 11,00 € = 154,00 € — exakt Soll
+- Boden schützen: 14 m² × 1,20 € = 16,80 € — normale Nebenleistung
+- Sockelleisten abkleben: 14,1 lfdm × 0,80 € = 11,28 € — exakt Soll (15,00 − 0,90 Türbreite)
+- **Spachtelarbeiten „Q2" (Wand): 35,91 m² × 9,00 € = 323,19 €** — Menge exakt Soll, aber Qualitätsstufe
+  falsch (verlangt: Q3)
+- **Spachtelarbeiten „Q2" (Decke): 14 m² × 9,00 € = 126,00 €** — ✅ die Decke bekommt tatsächlich eine
+  eigene Spachtel-Position mit eigener Fläche, exakt wie im Soll erhofft. Auch hier aber „Q2" statt „Q3"
+- **Voranstrich/Grundierung: 35,91 m² × 6,00 € = 215,46 €** — nur EINE Grundierungs-Position, für die
+  Wand. **Keine Deckengrundierung** trotz „beides einmal grundieren" im Transkript.
+
+**Befund:**
+
+1. **Falsche Qualitätsstufe: Q2 statt der ausdrücklich verlangten Q3.** Beide Spachtelpositionen (Wand
+   und Decke) zeigen „Q2", obwohl im Transkript klar „Qualitätsstufe Q3" gesagt wurde — die Menge stimmt,
+   aber die Qualitätsstufe scheint auf einen festen Standardwert (Q2) zu fallen, statt aus dem Gesagten
+   übernommen zu werden. Fachlich genau die Verwechslung, vor der das eigene Fachwissen ausdrücklich warnt
+   („Diese zwei niemals verwechseln" — dort zwar zu Kleinreparatur/Vollflächenspachtelung gesagt, aber das
+   Prinzip gilt genauso zwischen den Qualitätsstufen selbst: Q2 und Q3 sind unterschiedlich viel Arbeit und
+   unterschiedlich bepreist).
+2. **Deckengrundierung fehlt komplett**, obwohl „beides" (Wand UND Decke) ausdrücklich grundiert werden
+   sollte. Damit ist die „Worauf achten"-Frage von oben beantwortet: das Tool kennt aktuell keine eigene
+   Grundierungs-Position für die Decke, nur für die Wand.
+3. **Gute Nachricht:** Die Decke bekommt korrekt eine eigene Spachtel-Position mit eigener, richtiger
+   Fläche (14 m²) — wird nicht mit der Wandfläche vermischt, verdoppelt oder vergessen. Genau das war die
+   größere Sorge dieses Testfalls, und sie hat sich nicht bestätigt.
+
+**Für Head of Product Engineering:** (1) Bitte prüfen, warum die im Transkript genannte Qualitätsstufe
+(„Q3") nicht übernommen wird und stattdessen „Q2" als Standard erscheint — vermutlich ein fest codierter
+Default statt einer echten Extraktion der genannten Stufe. (2) Bitte klären, ob Grundierung grundsätzlich
+nur für Wände vorgesehen ist (dann bewusste Design-Entscheidung, aber bitte dann auch nicht als
+„beides grundieren" im Transkript unwidersprochen stehen lassen) oder ob eine eigene Deckengrundierung
+fachlich ergänzt werden sollte.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21):** Beide Punkte root-caused und gefixt, gegen die
+echte GPT-Rohantwort dieses Testfalls aus der Produktions-DB nachgerechnet (nicht nur angenommen):
+
+- **Punkt 1 (Q2 statt Q3):** In `pruefeSpachtelarbeiten()` (`maler-extras.ts`) stand die Prüfung, OB eine
+  Qualitätsstufe im Text genannt wurde, schon — nur um zu entscheiden, ob eine „Q2 angenommen"-Warnung
+  dazukommt. Welche Stufe tatsächlich genannt wurde, floss nie in die Positionsbezeichnung selbst ein —
+  dort stand hart codiert immer „Q2". Jetzt wird dieselbe Erkennung (Q2/Q3/Q4 aus dem Text, wie im
+  Schwesterfall `pruefeSpachteln()` schon korrekt gemacht) auch tatsächlich in die Bezeichnung übernommen.
+- **Punkt 2 (Deckengrundierung fehlt):** Design-Entscheidung war keine — die Wand-Grundierung war schlicht
+  die einzige, die je gebaut wurde. `pruefeGrundierung()` (`maler-basis.ts`) prüft jetzt zusätzlich, ob im
+  Ergebnis eine eigene Deckenfläche existiert, und legt dafür (unter derselben Voraussetzung wie bei der
+  Wand — Grundierung wurde im Text tatsächlich erwähnt) eine eigene „Voranstrich / Grundierung Decke"
+  Position an.
+- **Nachgerechnet gegen die echte GPT-Antwort dieses Testfalls:** Ergebnis jetzt Grundierung Wand
+  35,91 m² + Grundierung Decke 14 m² + Wände streichen 2× 35,91 m² + Decke streichen 2× 14 m² + Boden
+  schützen 14 m² + Sockelleisten abkleben 14,1 lfdm + Spachtelarbeiten **Q3** (Wand) 35,91 m² +
+  Spachtelarbeiten **Q3** (Decke) 14 m² — exakt wie im Soll, keine Abweichung.
+- Regressionsprüfung: alle 236 bestehenden Tests weiterhin grün, `tsc` für alle geänderten Dateien ohne
+  neue Fehler. **Noch offen:** Live-Nachtest im Browser durch dich.
+
+**Ist-Ergebnis (Live-Nachtest, Sandy, 2026-08-21):** Karte jetzt „8 Positionen erkannt". Entwurf, Raummaße
+exakt (3,5×4 m, Höhe 2,6 m, 1 Tür, 1 Fenster):
+- Wandflächen streichen 2×: 35,91 m² × 9,50 € = 341,14 € — exakt Soll (1 Cent Rundungsdifferenz zu
+  341,145 €, bekanntes, separat priorisiertes Rundungsthema, kein neuer Fund)
+- Deckenfläche streichen 2×: 14 m² × 11,00 € = 154,00 € — exakt Soll
+- Boden schützen: 14 m² × 1,20 € = 16,80 € — exakt Soll
+- Sockelleisten abkleben: 14,1 lfdm × 0,80 € = 11,28 € — exakt Soll
+- **Spachtelarbeiten Q3 (Wand): 35,91 m² × 9,00 € = 323,19 €** — jetzt korrekt „Q3" statt „Q2"
+- **Spachtelarbeiten Q3 (Decke): 14 m² × 9,00 € = 126,00 €** — jetzt korrekt „Q3" statt „Q2"
+- **Voranstrich/Grundierung (Wand): 35,91 m² × 6,00 € = 215,46 €** — exakt Soll
+- **Voranstrich/Grundierung Decke: 14 m² × 6,00 € = 84,00 €** — jetzt vorhanden, exakt Soll
+
+Beide Befunde bestätigt behoben, alle 8 Positionen exakt wie im Soll. **Grün, kann archiviert werden.**
+
+---

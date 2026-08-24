@@ -3,12 +3,28 @@ import { pruefeUndErgaenzeVollstaendigkeit } from '../index'
 import { ersetzeZahlenWorte } from '../../zahlen-parser'
 
 describe('boden – basis', () => {
-  it('Parkett → nur beauftragtes Verlegen + Sockelleisten, kein erfundener Ausgleich', () => {
+  // CoS-018 (2026-08-24): Dieser Test erwartete bis heute genau das
+  // Verhalten, das PM-013 (19.08.) und PM-020 (21.08.) als Phantom-Fund
+  // BESEITIGT haben — "neuer Boden ⇒ automatisch neue Sockelleisten", zweimal
+  // unabhängig live aufgeschlagen. Kein verlorener Fix, sondern ein Test, der
+  // der bewussten Änderung hinterherhinkte. Erwartung deshalb umgedreht.
+  it('Parkett ohne Sockel-Erwähnung → kein erfundener Ausgleich, keine erfundenen Sockelleisten', () => {
     const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett verlegen, 35 qm')
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
     expect(alle.some(b => b.toLowerCase().includes('untergrundvorbereitung'))).toBe(false)
-    // Ohne Meter → Umfang aus Fläche geschätzt → Position (nicht mehr nur "fehlende")
+    expect(alle).not.toContain('Sockelleisten montieren')
+  })
+
+  // Gegenprobe: die Leistung darf bei echtem Textsignal natürlich weiterhin
+  // kommen — sonst wäre der Phantom-Fix zu weit gegangen und hätte die
+  // Position ganz abgeschafft.
+  it('Parkett MIT genannten Sockelleisten → Position mit geschätztem Umfang', () => {
+    const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett verlegen, 35 qm, und neue Sockelleisten montieren')
+    const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
     expect(alle).toContain('Sockelleisten montieren')
+    const sockel = positionen.find(p => p.beschreibung === 'Sockelleisten montieren')
+    expect(sockel?.einheit).toBe('lfdm')
+    expect(sockel?.menge).toBeGreaterThan(0)
   })
 
   it('Laminat → wird als Laminat-Position erkannt', () => {

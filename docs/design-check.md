@@ -47,20 +47,20 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-21, DC-030 — konkrete Gate-Anforderung nachgereicht, damit Nutzer nur einmal wartet)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-24 — DC-002: „Angebote" in Desktop-Sidebar ergänzt; DC-003: Status-Farben+UX komplett neu, eine Quelle für alle 5 Stellen; DC-006: zweite Token-Migrationsrunde (5 weitere Dateien); DC-027: Backend-Flag live (Head of Product Engineering) + „Vorschlag"-Badge gebaut (Product Designer) — alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
 | DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | 🟡 entschieden + umgesetzt (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger", zentrale `pricing.ts`), Live-Nachtest steht aus | Head of Product Engineering |
-| DC-002 | „Angebote" fehlt in Desktop-Sidebar | ❌ offen — live bestätigt | — |
-| DC-003 | Statusfarben für Angebote — 3 inkonsistente Quellen, 1 verworfene Prop | ❌ offen | — |
+| DC-002 | „Angebote" fehlt in Desktop-Sidebar | 🟡 behoben (Product Designer, 2026-08-24): vierter Nav-Punkt in `SideNav.tsx`, `tsc` sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
+| DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | 🟡 behoben (Product Designer, 2026-08-24): eine gemeinsame Quelle `src/lib/status.ts`, alle 5 Stellen migriert, Status-Sheet neu (farbige Punkte + Weg zurück zu Entwurf ab „Fertiggestellt"), `tsc` sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
 | DC-005 | Kein gemeinsamer Button-Baustein | 🟡 `active:scale-98`-Bug behoben, `Button.tsx` erstellt — Migration bestehender Stellen offen | Product Designer |
-| DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | ❌ offen — Aufräumen läuft, erste 5 Komponenten migriert (siehe Update 2026-08-18) | Product Designer |
+| DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | 🟡 läuft schrittweise weiter, jetzt 10 Komponenten migriert (2 Runden, zuletzt 2026-08-24), größte verbleibende Brocken (`AngebotDetail.tsx`, `einstellungen`, `preise`, `onboarding`) bewusst vorgemerkt statt riskant nebenbei angefasst | Product Designer |
 | DC-007 | Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb | 🟡 behoben, noch nicht live nachgeprüft | Product Designer |
 | DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ❌ offen | — |
 | DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | 🟡 mit DC-028 mitgefixt (2026-08-19): `kannFertigstellen` verlangt jetzt `erkannteAnzahl > 0`, 0 Positionen zeigt neutralen Hinweis statt grünem Erfolg — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
-| DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | 🟡 Widerspruchs-Banner root-caused + gefixt (Head of Product Engineering, 2026-08-20, siehe „Systemischer Fund" Punkt 3 in `pruefmeister-testfaelle.md`) — zwei unabhängige GPT-Aufrufe (Chip-Vorschau vs. Server-Berechnung) konnten divergieren, `bannerZustand` zeigt jetzt nie mehr gleichzeitig mit `fehler`; noch nicht live nachgeprüft. Fehlende Guardrail (leeres Angebot lässt sich trotzdem fertigstellen) bleibt separat offen | Head of Product Engineering (Banner-Widerspruch) / offen (Guardrail) |
+| DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | 🟡 Widerspruchs-Banner behoben (Head of Product Engineering, 2026-08-20). Guardrail jetzt umgesetzt (Product Designer, 2026-08-23): `AngebotDetail.tsx`, „Fertigstellen" ist deaktiviert ohne mindestens 1 Position oder ohne zugewiesenen Kunden, plus sichtbarer Hinweistext + serverseitiger Sicherheitsnetz-Check — noch nicht live nachgeprüft | Head of Product Engineering (Banner-Widerspruch, live bestätigt ausstehend) / Product Designer (Guardrail, live bestätigt ausstehend) |
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
 | DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ❌ offen | — |
 | DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ❌ offen — live bestätigt | — |
@@ -71,16 +71,18 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | — |
 | DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | — |
 | DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | 🔵 Prüfen, ob nur Screenshot-Ausschnitt | — |
-| DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | 🟡 Architektur-Fix (CoS-002) weitgehend fertig: Karten-Abgleich nach Berechnung + Karte liest jetzt dieselbe geprüfte Extraktion wie die finale Berechnung (siehe DC-030). Nur der Geld-Pfad selbst (Schritt 3) läuft noch über den alten, separaten GPT-Aufruf — bis dahin bleibt ein Rest-Risiko, dass die bestätigte Karte trotzdem leicht abweicht | Head of Product Engineering |
-| DC-022 | „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein (PD-004) | 🟡 Root Cause bestätigt, wird mit DC-021/CoS-002 mitgelöst | Head of Product Engineering |
+| DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — CoS-002 komplett (alle 3 Schritte inkl. Mehrfach-Aufnahmen-Fall), Realtime-Bug gefunden+gefixt, Retest danach „passt" | Head of Product Engineering |
+| DC-022 | „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein (PD-004) | ✅ behoben + live bestätigt — strukturell mitgelöst mit DC-021/CoS-002, siehe dort | Head of Product Engineering |
 | DC-023 | Fassade: Aufnahmekarte zeigt Fenstermaße statt Fassadenmaße (PD-007) | 🟡 Extraktions-Fix von Head of Product Engineering lokal verifiziert (zeigt jetzt lieber nichts als Falsches) — noch nicht auf sofortangebot.app deployt | Head of Product Engineering |
-| DC-024 | Raummaße-Chip zeigt lauter rote „Fehler" bei Nicht-Raum-Objekten (z. B. Fassade) (PD-003) | 🟡 Wand-Chip-Komponente gebaut (`AngebotDetail.tsx`), scoped typecheck + ESLint sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
-| DC-025 | Rückfragen-UI: von Sandy selbst als „hässlich" bewertet, komplettes Neudenken gewünscht (PD-002) | 🟡 UI direkt auf Sandys Anweisung umgesetzt (`RueckfragenScreen.tsx`, tsc/eslint sauber) — noch nicht live geprüft; CoS-011-Aufwandsschätzung von Head of Product Engineering dadurch überholt | Product Designer (umgesetzt) |
-| DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | 🔵 UI-Seite mit DC-025 vorbereitet, „Du hast gesagt"-Vorschlag wartet weiter auf Erkennungs-Flag von Head of Product Engineering | Head of Product Engineering |
-| DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | ❌ offen — dreifach reproduziert (Prüfmeister) | — |
-| DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | 🟡 Umgesetzt (`entwurf/page.tsx`, raum-gruppiert), scoped tsc + ESLint sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
+| DC-024 | Raummaße-Chip zeigt lauter rote „Fehler" bei Nicht-Raum-Objekten (z. B. Fassade) (PD-003) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — Wand-Chip (`AngebotDetail.tsx`) | Product Designer (umgesetzt) |
+| DC-025 | Rückfragen-UI: von Sandy selbst als „hässlich" bewertet, komplettes Neudenken gewünscht (PD-002) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — neue `RueckfragenScreen.tsx`; CoS-011-Aufwandsschätzung dadurch überholt | Product Designer (umgesetzt) |
+| DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | 🟡 Ursache gefunden und behoben (Head of Product Engineering, 2026-08-24): falsche Reihenfolge in der Pipeline — gefragt wurde nach Werten, die drei Blöcke später aus dem Text gelesen wurden. Fenster/Türen fallen jetzt ganz weg, für den Rest liegt das `vorschlag`-Feld samt Zitat bereit. Live-Nachtest steht aus. Rest ist UI von Head of Product Engineering | Head of Product Engineering |
+| DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | 🟡 Badge gebaut (Product Designer, 2026-08-24), gegen die eigene Spec, direkt nachdem das Backend-Flag live ging — `tsc` sauber, Live-Nachtest steht aus | Head of Product Engineering (Flag, ✅) / Product Designer (Badge, umgesetzt) |
+| DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — raum-gruppiert (`entwurf/page.tsx`) | Product Designer (umgesetzt) |
 | DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🟡 Umgesetzt (Datenmodell + UI) — Sandy hat nach Konzept/Prototyp „Top umsetzen" gesagt. Sechs Dateien geändert/neu, scoped `tsc` sauber, `eslint` in dieser Umgebung nicht lauffähig (siehe Detail), noch nicht live mit echten Kundendaten geprüft (Produktion hat aktuell 0 Kunden) | Product Designer (umgesetzt, wartet auf Live-Check) |
 | DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | ✅ Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21) — Karte, DC-028-Raum-Karten und „Entwurf erstellen"-Gate alle wie entschieden gebaut. Regressionsgeprüft (236 Tests grün), noch KEIN Live-Nachtest | Product Designer (Entscheidung) / Head of Product Engineering (Umsetzung) |
+| DC-031 | Navigations-Sackgassen: laufende Aufnahme nicht abbrechbar (Mikro bleibt offen), Aufnahme-Detail-Sheet nur per unsichtbarem Backdrop-Tap schließbar (sichtbares „X" löscht stattdessen), „Zurück" aus dem frischen 0€-Entwurf landet auf der leeren Angebotsseite statt am Dashboard (von Sandy gemeldet, 2026-08-23) | ✅ Alle drei umgesetzt (Product Designer, 2026-08-23): Abbrechen-Button während Aufnahme (verwirft, lädt nicht hoch) + Mikro wird beim Verlassen der Seite automatisch freigegeben; Sheet hat jetzt einen eigenen „Schließen"-Text-Button getrennt vom Lösch-„X"; „Zurück"/„Trotzdem zurück ohne Berechnen" gehen zum Dashboard, wenn das Angebot noch keinen Kunden und keine Positionen hat, sonst weiterhin zur Angebotsseite. Beim Nachtesten „an allen anderen Stellen" (Sandys Auftrag) zusätzlich dieselbe Baustelle bei „+ Neue Variante erstellen" in Briefpapier & Design gefunden und gleich mitgefixt: leere Variante wird beim Zurückgehen ohne Änderung automatisch wieder gelöscht, mit ungespeicherten echten Änderungen kommt jetzt eine Rückfrage statt stillem Datenverlust. Scoped tsc sauber, noch kein Live-Test | Product Designer (umgesetzt) |
+| DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -150,6 +152,11 @@ bestätigt — Desktop-Sidebar zeigt nur Dashboard/Kunden/Einstellungen,
 `/angebote` ist nur per direktem Link erreichbar. Mobil ist „Angebote"
 selbstverständlich einer von vier Reitern in der Bottom-Nav.
 
+**Fix-Update (Product Designer, 2026-08-24):** `SideNav.tsx`, vierter
+Nav-Punkt „Angebote" (FileText-Icon) zwischen Dashboard und Kunden ergänzt —
+Reihenfolge/Icon spiegeln jetzt exakt `BottomNav.tsx`. `tsc` sauber. Noch
+nicht live geprüft.
+
 ---
 
 ## DC-003 — Statusfarben für Angebote: 3 inkonsistente Quellen
@@ -176,6 +183,51 @@ obwohl das Angebot schon fertig ist.
 (inkl. `bereit`), von der alle drei Stellen importieren. `MobileQuoteCard`
 so anpassen, dass die `statusColor`-Prop tatsächlich verwendet wird (oder
 ganz entfernt wird, wenn die zentrale Quelle reicht).
+
+**Fix-Update (Product Designer, 2026-08-24):** Sandy hat direkt mit dem
+Wunsch kombiniert, die ganze Status-Änderung im Angebot umzubauen ("die
+ganze status bearbeitung find ich kacke ... mach direkt dc-003 also auch
+farben das alles überall einheitlich ist"). Bei genauerem Hinsehen waren es
+nicht drei, sondern **fünf** unabhängige Kopien — zusätzlich zu den drei
+oben auch `AngebotDetail.tsx` und `src/app/(app)/kunden/[id]/page.tsx`
+(Letztere deckte nur 4 von 7 Status ab: `bereit`/`in_bearbeitung`/`archived`
+fielen auf grauen „Entwurf"-Stil zurück, und nannte „Offen" konsequent
+„Versendet", „Beauftragt" konsequent „Angenommen" — Sprache und Farbe
+widersprachen sich also auch inhaltlich, nicht nur farblich, je nachdem wo
+man hinschaute).
+
+Umgesetzt:
+- Neue einzige Quelle `src/lib/status.ts` (`STATUS_CONFIG`, `getStatusInfo()`,
+  `DRAFT_STATUSES`, `SENT_STATUSES`, `waehlbareStatus()`) — alle 5 Stellen
+  (`AngebotDetail.tsx`, `MobileQuoteCard.tsx`, `angebote/page.tsx`,
+  `dashboard/page.tsx`, `kunden/[id]/page.tsx`) importieren jetzt von dort,
+  keine lokalen Kopien mehr. `MobileQuoteCard` bekommt `statusLabel`/
+  `statusColor` nicht mehr als Props (die nie ausgewertete `statusColor`-Prop
+  ist damit weg) — berechnet Label+Farbe selbst aus `quote.status`, kann also
+  strukturell nicht mehr von einer Aufrufstelle abweichen.
+- `QuoteStatus`-Typ (`src/lib/types.ts`) um `'bereit'` ergänzt — stand dort
+  nie, obwohl seit Langem ein echter, geschriebener Status. Toter `'viewed'`-
+  Status (nur in alten Label-Tabellen, nirgends je geschrieben) bewusst nicht
+  übernommen.
+- Kanonische Labels/Farben entschieden: „Offen" (nicht „Versendet"),
+  „Beauftragt" (nicht „Angenommen"), `bereit` = Gelb/Marke (nicht Grün) —
+  Grün bleibt exklusiv für „Kunde hat beauftragt" reserviert, sonst wirken
+  „ich bin fertig" und „Kunde hat zugesagt" optisch gleich bedeutsam.
+- Status-Änderung selbst neu gebaut (das eigentliche „kacke, zu umständlich"
+  aus Sandys Auftrag): Das „Status ändern"-Sheet in `AngebotDetail.tsx` zeigt
+  jetzt bei jeder Option einen farbigen Punkt (`status.dot`) statt reinem
+  Text, und bietet — neu — auch einen Weg **zurück zu „Entwurf"**, aber
+  bewusst nur ausgehend von `bereit` (`waehlbareStatus()`), nicht aus
+  sent/accepted/rejected: die haben schon einen bewussteren, extra
+  abgesicherten „Neue Version erstellen"-Weg (Revisions-Dialog), den das
+  einfache Sheet nicht umgehen soll. Der Status-Badge oben in der Kopfzeile
+  hat jetzt ebenfalls einen farbigen Punkt statt nur Textfarbe. Der bisher
+  stille automatische Rückfall auf „Entwurf" beim Klick auf „Bearbeiten" (bei
+  Status `bereit`) zeigt jetzt einen Toast, damit es nicht überrascht.
+
+Scoped `tsc --noEmit` über alle 7 geänderten Dateien: 0 Fehler. Noch nicht
+live geprüft — bitte einmal durchklicken (Status ändern, zurück zu Entwurf
+ab „Fertiggestellt", Badges auf Angebote-Liste/Dashboard/Kundendetail).
 
 ---
 
@@ -290,6 +342,25 @@ der >1.900 Fundstellen über ~30-40 Dateien (siehe Aufwandsschätzung in
 `docs/marketing-design-austausch.md`, EX-M-002) — geht schrittweise weiter,
 nicht in einem Rutsch.
 
+**Fix-Update (Product Designer, 2026-08-24):** Zweite Migrations-Runde, auf
+Sandys „und dc006". Statt blind querbeet zu migrieren: die 5 Dateien
+genommen, die ich für DC-003 sowieso gerade frisch bearbeitet und schon
+verifiziert hatte (geringstes Risiko, ich kannte den Code bereits) —
+`src/lib/status.ts`, `MobileQuoteCard.tsx`, `angebote/page.tsx`,
+`dashboard/page.tsx`, `kunden/[id]/page.tsx`. Reine, mechanische Ersetzung
+von `[#2C2C2C]` → `anthracite`, `[#F5C400]` → `yellow`, `[#F7F7F5]` → `bg`
+(inkl. Opazitäts-Suffixe wie `/50`, Tailwind v4 unterstützt die auf
+benannten Farben nativ) — 47 Fundstellen über die 5 Dateien, `tsc` danach
+sauber. **Bewusst NICHT angefasst:** `AngebotDetail.tsx` (330 Treffer allein
+dort, aktuell parallel von Head of Product Engineering in Arbeit — zu groß
+und zu riskant für eine mechanische Aktion nebenbei), `einstellungen/page.tsx`
+(204), `preise/page.tsx` (132), `onboarding/[step]/page.tsx` (116) — die
+größten verbleibenden Brocken, für eine eigene Runde vorgemerkt. Reine
+Farbwerte, die keinem der 4 Tokens exakt entsprechen (Grau-/Grüntöne,
+Status-Punktfarben in `status.ts`), bewusst unverändert gelassen — das ist
+eine Design-Entscheidung (welche Nuance wird kanonisch?), kein reines
+Aufräumen.
+
 ---
 
 ## DC-007 — Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb
@@ -396,6 +467,35 @@ verlässlichere Zustand. Volltext siehe
 `docs/pruefmeister-notizen-fuer-designer.md`, PD-006. Sandy hat
 ausdrücklich gesagt, das soll sowohl an mich als auch an Head of Product
 Engineering (technische Ursache) gehen.
+
+**Fix-Update — Guardrail (Product Designer, 2026-08-23):** Code-Check vor
+dem Fix bestätigt: `fertigstellen()`/`saveEdits('bereit')` in
+`AngebotDetail.tsx` hatte bislang nur eine Prüfung, dass jede Position eine
+Bezeichnung hat — weder 0 Positionen noch ein fehlender Kunde blockierten
+das Fertigstellen. Umgesetzt:
+
+- Der „Fertigstellen"-Button im Footer ist jetzt zusätzlich deaktiviert,
+  wenn `editItems.length === 0` oder kein `currentCustomer` zugewiesen ist
+  (`title`-Tooltip erklärt warum).
+- Direkt darunter erscheint bei diesem Zustand ein kurzer Hinweistext
+  („Noch keine Position — füge mindestens eine hinzu…" bzw. „Noch kein
+  Kunde zugewiesen…") — sichtbar erklärt statt nur stumm deaktiviert, wie
+  in der ursprünglichen Empfehlung oben.
+- In `saveEdits()` selbst zusätzlich ein serverseitiges Sicherheitsnetz:
+  Bei `nextStatus === 'bereit'` wird derselbe Zustand nochmal geprüft und
+  wirft eine `Bitte …`-Fehlermeldung (nutzt denselben bereits vorhandenen
+  Fehler-Toast-Mechanismus wie die Bezeichnungs-Prüfung) — falls
+  `fertigstellen()` je ohne die Button-Prüfung ausgelöst wird.
+- Bewusst NICHT verschärft: Der „Speichern"-Button (Entwurf ohne
+  Statuswechsel) bleibt unverändert nutzbar auch ohne Kunde/Positionen —
+  DC-010 betrifft nur das tatsächliche Fertigstellen/Versandfertig-Machen.
+
+**Verifiziert:** Scoped `tsc --noEmit` (nur `AngebotDetail.tsx` +
+next-env.d.ts) — 0 Fehler. `eslint`/volles `npm test` in dieser Umgebung
+weiterhin nicht zuverlässig lauffähig (bekanntes Umgebungsproblem, siehe
+DC-024/DC-028) — von Hand auf ungenutzte Importe/Variablen geprüft, keine
+gefunden. Noch nicht live im Browser geprüft (leeres Angebot ohne Kunde
+durchklicken, Button sollte deaktiviert bleiben bis beides erfüllt ist).
 
 ---
 
@@ -698,7 +798,7 @@ wie die einzige Option anfühlen.
 ## DC-021 — Bestätigungskarte zeigt nicht zuverlässig, was am Ende berechnet wird
 
 **Datum:** 2026-08-18 (übernommen aus `docs/pruefmeister-notizen-fuer-designer.md`, PD-001)
-**Status:** ❌ offen — mehrfach reproduziert
+**Status:** ✅ behoben + live bestätigt (Sandy, 2026-08-23) — „passt"
 
 **Befund:** Die Bestätigungskarte vor „Entwurf erstellen" (Raum erkannt +
 Maße + Leistungsliste) ist der Moment, in dem der Handwerker in wenigen
@@ -751,12 +851,51 @@ unabhängigen GPT-Antwort), ist gebaut und gegen alle 236 bestehenden Tests
 regressionsgeprüft — nur der sichtbare Teil auf der Karte selbst fehlt noch.
 Dafür eine offene Design-Frage an dich, neu unter **DC-030**.
 
+**Fix-Update (Head of Product Engineering, 2026-08-21) — CoS-002 jetzt in
+allen drei Schritten umgesetzt, inkl. Mehrfach-Aufnahmen-Fall, plus ein
+echter Live-Bug gefunden und behoben (Product Designer, 2026-08-21, beim
+Nachlesen für Sandys Prioritäten-Frage zusammengefasst):** Nach meiner
+DC-030-Entscheidung (Option 3) hat Head of Product Engineering Schritt 2
+fertiggestellt und direkt danach Schritt 3 — „Entwurf erstellen" ruft
+`ki-extrahieren` jetzt nicht mehr blind neu auf, sondern nutzt die pro
+Aufnahme gecachte volle Extraktion weiter (nur EIN KI-Aufruf statt zwei).
+Auf Sandys Wunsch „auch noch schließen" wurde direkt danach auch der
+Mehrfach-Aufnahmen-Fall geschlossen (spekulativer Kombi-Vorab-Aufruf, siehe
+CoS-002-Detail in `chief-of-staff-todos.md`). Alle 236 Tests grün, beide
+Commits gepusht und live deployt.
+
+Sandy hat direkt nach dem Deploy selbst live getestet und einen echten Bug
+gefunden: die Karte zeigte „Boden schützen 0 m²" statt der erwarteten 12
+m². Root Cause (nach mehreren falschen Fährten, siehe CoS-002-Detail): die
+`supabase_realtime`-Publication war für KEINE Tabelle aktiv — die Karte
+konnte das Signal „volle Extraktion ist da" nie empfangen und fiel nach dem
+Fail-open-Timeout dauerhaft auf die schnelle, fehleranfällige Chip-Vorschau
+zurück. Die Berechnung selbst war die ganze Zeit korrekt (12 m² in der DB)
+— reiner Anzeige-Fehler, aber genau der Vertrauens-Moment, um den es bei
+DC-021 die ganze Zeit geht. Fix: Migration, die die Tabelle in die
+Realtime-Publication aufnimmt, direkt auf der Produktions-DB angewendet.
+**Sandys erneuter Test nach diesem Fix steht laut Head of Product
+Engineering noch aus** — das ist aktuell der letzte offene Schritt, bevor
+DC-021/DC-022 als vollständig gelöst gelten können.
+
+Separater, niedrig priorisierter Nebenfund dabei: die schnelle
+Chip-Vorschau selbst hat einen kleinen Bug (automatisch ergänztes „Boden
+schützen" bekommt `menge: 0` statt der Raumfläche) — betrifft jetzt nur noch
+das kurze Zeitfenster vor der geprüften Extraktion, kein Blocker mehr,
+eigenes kleines Ticket wert (bei Head of Product Engineering, nicht hier
+neu angelegt, um Dopplung zu vermeiden).
+
+**Live-Bestätigung (Sandy, 2026-08-23):** „dc021 passt" — der
+Bestätigungs-Retest nach dem Realtime-Fix war erfolgreich. Damit ist
+CoS-002 (alle drei Schritte, inkl. Realtime-Bugfix) vollständig gelöst und
+live bestätigt, kein offener Schritt mehr.
+
 ---
 
 ## DC-022 — „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein
 
 **Datum:** 2026-08-18 (übernommen aus PD-004)
-**Status:** ❌ offen — zweifach reproduziert, verwandt mit DC-009
+**Status:** ✅ behoben + live bestätigt — strukturell mitgelöst mit DC-021/CoS-002, siehe dort für den Live-Nachweis
 
 **Befund:** Die grüne Leiste „5 Positionen erkannt" kurz vor „Entwurf
 erstellen" hat in zwei unabhängigen Tests tatsächlich nur 4 Positionen
@@ -795,6 +934,13 @@ Edge-Function-Aufruf via `gpt-4o`). Wird im selben Zug wie DC-021 behoben,
 Details dort. Sobald der sichtbare Teil von Schritt 2 steht (Karte liest
 dieselbe Quelle wie die Berechnung statt eines separaten
 Erkennungsschritts), kann diese Zahl strukturell nicht mehr abweichen.
+
+**Fix-Update (Product Designer, 2026-08-21):** Wie unter DC-021 — Schritt 2
+und Schritt 3 sind jetzt beide umgesetzt und deployt, die Zahl kommt damit
+strukturell aus derselben geprüften Quelle wie die Berechnung. Ein
+Anzeige-Bug (leere Realtime-Publication) wurde live gefunden und behoben,
+Sandys Bestätigungstest danach steht noch aus — Details unter DC-021, nicht
+doppelt gepflegt.
 
 ---
 
@@ -861,8 +1007,7 @@ nicht separat.
 ## DC-024 — Raummaße-Chip zeigt lauter rote „Fehler" bei Nicht-Raum-Objekten
 
 **Datum:** 2026-08-18 (übernommen aus PD-003)
-**Status:** ❌ offen — Design-Konzept steht, Sandys Go liegt vor, Umsetzung
-Datenmodell aussteht
+**Status:** ✅ behoben + live bestätigt (Sandy, 2026-08-23) — „dc-24 passt live!"
 
 **Befund:** Bei einer Fassade (kein Innenraum — nur eine Wand ohne Boden,
 Decke oder „echte" Tür) zeigt der Raummaße-Chip im fertigen Angebot bei
@@ -949,15 +1094,16 @@ gemounteten Projektordner fehlt ein natives Rolldown-Binding für Linux
 offenbar ein Node-Modules-Zustand, der nicht zu dieser Umgebung passt, nicht
 etwas, das mein Code auslöst — bitte einmal gegenlaufen lassen, bevor's live
 getestet wird (gleiche Bitte wie von Head of Product Engineering oben).
-Noch nicht live im Browser geprüft.
+
+**Live-Bestätigung (Sandy, 2026-08-23):** „dc-24 passt live!" — Wand-Chip
+im Browser bestätigt korrekt.
 
 ---
 
 ## DC-025 — Rückfragen-UI: komplettes Neudenken gewünscht
 
 **Datum:** 2026-08-18 (übernommen aus PD-002, direkt von Sandy)
-**Status:** 🟡 UI umgesetzt (siehe Fix-Update unten), noch nicht live im
-Browser geprüft
+**Status:** ✅ behoben + live bestätigt (Sandy, 2026-08-23) — „dc-025, pass live!"
 
 **Befund:** Sandy findet die gesamte Rückfragen-UI/UX „sehr hässlich und
 kacke" und möchte sie komplett neu gedacht, nicht nachgebessert haben.
@@ -1070,6 +1216,9 @@ löschen (Rechte-Limit der Datei-Brücke) — liegt jetzt in
 `_to_delete/tsconfig.check.json`, bitte einmal von Hand entfernen.~~ —
 erledigt, Sandy hat sie am 2026-08-18 von Hand gelöscht.
 
+**Live-Bestätigung (Sandy, 2026-08-23):** „dc-025, pass live!" — im Browser
+durchgespielt und bestätigt.
+
 ---
 
 ## DC-026 — Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht
@@ -1110,6 +1259,65 @@ gesetzt) — Details dort.
 
 ---
 
+**Umsetzung (Head of Product Engineering, 2026-08-24, Sandys Auftrag „setz
+dich an dc026"): Ursache gefunden — und sie war eine andere als vermutet.**
+
+Deine Vermutung im Befund („prüft nur, ob ein Feld strukturiert gesetzt ist,
+nicht ob der Wert schon im freien Text vorkam") war richtig, aber die
+eigentliche Ursache liegt eine Ebene tiefer und ist ärgerlich banal: **Die
+Reihenfolge in der Pipeline war falsch.** In `extraktion-pipeline.ts` wurden
+zuerst die Rückfragen erzeugt — und erst DANACH liefen unsere eigenen,
+längst vorhandenen und getesteten Text-Parser (`extrahiereWandflaeche`,
+`extrahiereDeckenflaeche`, `zaehleFenster`, `zaehleTueren`) über das
+Transkript und trugen genau die fehlenden Werte nach. Gefragt wurde also nach
+Zahlen, mit denen einen Moment später ohnehin gerechnet wurde.
+
+**Beide Beispiele aus deinem Befund sind exakt das:**
+
+- **Fensteranzahl:** `zaehleFenster` liest die Zahl aus dem Text und reichte
+  sie an die Mengenberechnung weiter — schrieb sie aber nie nach
+  `raum.fenster`, und genau daran hängt die Frage im `kontext-analyzer`.
+- **Bodenfläche:** `masse_boden_<raum>` entsteht, wenn keine Fläche gesetzt
+  ist. `extrahiereDeckenflaeche` setzt sie aus dem Text — lief aber zu spät.
+
+**Was jetzt anders ist:**
+
+1. Die drei Nachlese-Blöcke laufen **vor** der Rückfragen-Erzeugung. Inhaltlich
+   unverändert, nur an der richtigen Stelle. Gefragt wird nur noch, was danach
+   wirklich offen ist.
+2. Fenster-/Türanzahl wird zusätzlich in den Raum geschrieben
+   (`ergaenzeOeffnungenAusText`), damit die Frage gar nicht erst entsteht.
+   Bewusst nur bei genau EINEM Raum — bei mehreren wäre die Zuordnung geraten.
+   Verneinungen gewinnen weiter („ohne Fenster" injiziert nichts).
+3. **Dein Flag ist da, und es kann mehr als ein Flag:** Jede Rückfrage kann
+   jetzt ein Feld `vorschlag` tragen:
+   `{ wert, einheit, anzeige, zitat }` — `wert` im selben Format wie
+   `schnell_antworten[].wert` (Zahl bzw. `[länge, breite]`), `anzeige` fertig
+   formatiert („2,60 m", „5 × 4 m", „3 Fenster"), `zitat` der Satz aus dem
+   Transkript für deine „Du hast gesagt: …"-Karte. Fehlt das Feld, ist es
+   eine ganz normale offene Frage — deine bestehende Oberfläche bleibt also
+   gültig, das Feld ist rein additiv.
+
+**Zwei Dinge, die dir beim Bauen der Karte wichtig sein dürften:**
+
+- **Das Zitat sind SEINE Worte, nicht unsere.** Intern wird „drei Fenster" zu
+  „3 Fenster" normalisiert; im `zitat` steht trotzdem „drei Fenster". Sonst
+  prüft der Handwerker einen Satz, den er so nie gesagt hat — das würde genau
+  das Vertrauen kosten, das die Karte aufbauen soll.
+- **Lieber kein Vorschlag als ein falscher.** Bei mehreren Räumen wird nur aus
+  Sätzen gelesen, die diesen Raum nennen. Und eine nackte Quadratmeterzahl
+  wird nie blind übernommen: „18 Quadratmeter Wandfläche" erscheint garantiert
+  nicht als Vorschlag für die Bodenfläche. In Zweifelsfällen bleibt es bei der
+  normalen Frage — der Vorschlag darf nie schlimmer sein als die Frage, die er
+  ersetzt.
+
+Abgesichert mit 20 neuen Tests (`gesagte-werte.test.ts` +
+`rueckfragen-flow.test.ts`), Suite 807/807 grün. Live-Nachtest steht aus.
+Damit ist die Erkennungsseite von DC-026 fertig — der Rest ist die Karte aus
+deinem DC-025-Konzept.
+
+---
+
 ## DC-027 — Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein
 
 **Datum:** 2026-08-18 (übernommen aus PD-008, Idee ursprünglich von Sandy)
@@ -1145,14 +1353,112 @@ der Positionsliste ergänzen. Design-Vorschlag: dezentes Badge (z. B.
 Position, nicht als separater Screen — der Handwerker soll es beim
 normalen Durchscrollen sehen, nicht extra danach suchen müssen.
 
+**Nachtrag (Product Designer, 2026-08-24, auf Sandys „dc027 fixen"):**
+Nachgesehen, ob die CoS-002-Architektur-Arbeit das Flag inzwischen
+nebenbei mitgebracht hat — hat sie nicht: CoS-002 hat verändert, WANN/WIE
+OFT GPT aufgerufen wird (Caching, Vermeidung doppelter Aufrufe), nicht
+WELCHE Form eine einzelne Position hat. Die Blockade von oben ist
+unverändert real. Konkret geprüft (Schema, `QuoteItem`/`BerechnetePosition`-
+Typen, der komplette Vervollständigungs-Code, die Positionsliste in
+`AngebotDetail.tsx`): kein Feld, keine Spalte, kein Prompt-Output
+unterscheidet heute „wörtlich gesagt" von „vom Tool ergänzt". Root Cause
+technisch lokalisiert: `src/lib/vollstaendigkeit/index.ts`,
+`pruefeUndErgaenzeVollstaendigkeit()` — die Original-Positionen werden in
+ein Array `ergaenzt` kopiert, danach hängen ca. 30 `pruefeX()`-Funktionen
+(verteilt über `maler-abkleben.ts`, `maler-extras.ts`, `maler-basis.ts`,
+`maler-tapete.ts` u. a., je eine pro Zusatz-Regel wie „Boden schützen",
+Erschwerniszuschläge, Grundierung) per `ergaenzt.push(...)` weitere
+Positionen an — ab dem Zeitpunkt ist nicht mehr unterscheidbar, was woher
+kam. Das ist echte Backend-/Pipeline-Arbeit über viele Dateien und eine
+neue DB-Spalte, nicht etwas, das ich als Product Designer selbst umsetzen
+kann oder sollte — genau wie bei DC-021/CoS-002 bleibt das bei Head of
+Product Engineering.
+
+**Damit das kein zweites Mal blockiert, hier meine komplette Design-Spec
+schon fertig — Engineering muss nicht auf mich warten, sobald das Flag
+da ist:**
+
+- Neues Boolean-Feld, Vorschlag `automatisch_ergaenzt` (Default `false`),
+  gesetzt bei jedem `ergaenzt.push(...)` in `src/lib/vollstaendigkeit/*.ts`
+  (die original vom Nutzer/GPT direkt gelieferten Positionen bleiben
+  `false`). Durchreichen: `BerechnetePosition`
+  (`src/lib/mengen/types.ts`) → `BerechnetePositionInput` in
+  `angebot-generieren/route.ts` → `itemRows` in
+  `generiere-positionen/route.ts` (Zeile ~523–535) → neue Spalte auf
+  `quote_items` (Migration) → `QuoteItem`-Typ in `src/lib/types.ts`.
+- Anzeige in `AngebotDetail.tsx`, in der View-Mode-Zeile jeder Position
+  (aktuell Zeile ~393, direkt neben `{titleOverride ?? item.title}`):
+  ein kleines Pill-Badge im Stil des bereits bestehenden
+  „KI unsicher"-Hinweises direkt darüber (Zeile ~325–330), aber bewusst
+  NEUTRAL statt gelb/warnend — `Vorschlag`, Kleinschrift, z. B.
+  `bg-[#2C2C2C]/5 text-[#2C2C2C]/40 rounded-full px-2 py-0.5 text-[10px]
+  font-bold`. Direkt inline neben dem Titel, kein eigener Screen, keine
+  zusätzliche Zeile, die die Liste länger macht.
+- Bewusst NICHT dieselbe visuelle Sprache wie „KI unsicher" (gelber
+  linker Rand + Warndreieck) — das würde „vom Tool ergänzt" wie einen
+  Fehler wirken lassen, ist aber meistens fachlich korrekt und gewollt.
+  „Vorschlag" soll neugierig machen, nicht alarmieren.
+- Reichweite bewusst nur die fertige Positionsliste (`AngebotDetail.tsx`),
+  wie ursprünglich gefordert — NICHT die Aufmaß-Sammelansicht
+  (`entwurf/page.tsx`/DC-028), das wäre eine Erweiterung über diesen
+  Ticket-Scope hinaus und würde die Karten dort unnötig überladen, bevor
+  überhaupt das Flag existiert.
+
+**Nächster Schritt:** ~~Braucht die Backend-Umsetzung des Flags durch Head
+of Product Engineering~~ — erledigt, siehe Nachtrag unten.
+
+**Nachtrag (Head of Product Engineering, 2026-08-24, über CoS-017 zugewiesen,
+Sandys Go): Flag ist gebaut, du kannst loslegen.**
+
+Das Feld heißt genau wie von dir vorgeschlagen: `automatisch_ergaenzt`,
+Boolean, Default `false`. Verfügbar auf `QuoteItem` (`src/lib/types.ts`) und
+als Spalte auf `quote_items` — Migration
+`supabase/migrations/20260824090000_add_quote_items_automatisch_ergaenzt.sql`,
+auf Staging UND Produktion bereits angewendet. Alte Positionen stehen auf
+`false`, das Badge erscheint dort also einfach nicht.
+
+**Eine Abweichung von deiner Spec, bewusst:** Du hast vorgeschlagen, das Flag
+an jedem `ergaenzt.push(...)` zu setzen — das wären 117 Fundstellen in 19
+Dateien gewesen. Stattdessen sitzt es an EINER zentralen Stelle am Ende von
+`pruefeUndErgaenzeVollstaendigkeit()`: dort liegen die Original-Positionen
+unverändert vor, alles was danach neu in der Liste steht, kann nur aus den
+Vollständigkeitsregeln stammen (Objekt-Identitäts-Vergleich). Ergebnis ist
+identisch, Angriffsfläche für Flüchtigkeitsfehler deutlich kleiner, und neue
+Regeln bekommen die Kennzeichnung künftig automatisch, ohne dass jemand
+daran denken muss. Für dich ändert das nichts — das Feld verhält sich exakt
+wie spezifiziert.
+
+**Was du beim Badge-Text wissen solltest (wichtig, ehrlich):** Das Flag
+markiert zuverlässig alles, was die Vollständigkeitsprüfung ergänzt (Boden
+schützen, Erschwerniszuschläge, Grundierung nach Spachteln, die
+Sockelleisten-Fälle usw.). Es markiert NICHT, wenn GPT schon beim Zuhören
+etwas dazuerfindet, das nie gesagt wurde — der unverlangte
+Bodenaustausch-Block aus den PM-Funden fällt vermutlich genau in diese Lücke
+und bliebe ohne Badge. Dein gewähltes Wort „Vorschlag" passt deshalb gut,
+weil es nichts Falsches verspricht. Ein Text wie „das hast du nicht gesagt"
+oder eine Umkehrung („alles ohne Badge kam wörtlich von dir") wäre dagegen
+eine Zusage, die das Flag heute nicht halten kann.
+
+**Fix-Update (Product Designer, 2026-08-24):** Badge gebaut, genau nach der
+eigenen Spec von oben, in `AngebotDetail.tsx` direkt neben dem Positions-
+Titel in der View-Mode-Zeile: `item.automatisch_ergaenzt` → dezentes Pill
+„Vorschlag" (`bg-[#2C2C2C]/5 text-[#2C2C2C]/40`, `text-[10px]`), bewusst
+NICHT im gelben/warnenden Stil des „KI unsicher"-Hinweises direkt darüber.
+`EditItem`-Interface (lokaler Zeilen-Typ) um das optionale Feld ergänzt,
+damit es durch den Editier-Zustand durchgereicht wird. Scoped `tsc` sauber.
+Alte Positionen haben `automatisch_ergaenzt = false` (Default) und zeigen
+entsprechend kein Badge — erst neu berechnete/ergänzte Angebote sollten
+welche zeigen. Noch nicht live geprüft (brauche ein frisches Angebot mit
+einer der Vollständigkeitsregeln, z. B. „Boden schützen" bei Maler, um das
+Badge tatsächlich zu sehen).
+
 ---
 
 ## DC-028 — Aufmaß-Sammelansicht („Timeline") komplett neu gedacht
 
 **Datum:** 2026-08-18/19 (Sandys direkter Auftrag, zwei Screenshots
 beigefügt — „ich finds katastrophal … denk das komplett neu")
-**Status:** 🟡 Konzept + klickbarer Prototyp fertig, Sandys Go steht noch aus
-— NICHT umgesetzt, bewusst noch kein Code in `entwurf/page.tsx` geändert
+**Status:** ✅ behoben + live bestätigt (Sandy, 2026-08-23) — „dc-028 passt live!"
 
 **Befund:** Screen nach der Aufnahme, vor „Entwurf erstellen"
 (`entwurf/page.tsx`, `AufnahmeCard`). Bei zwei eingesprochenen Räumen
@@ -1287,7 +1593,10 @@ Zustand „Nachtrag" erweitert, der genau das zeigt.
   `npm test`/`npm run typecheck` über das Gesamtprojekt konnte ich in dieser
   Umgebung weiterhin nicht laufen lassen (kaputtes `@rolldown`-Binding,
   bereits bei DC-024 dokumentiert, nicht mein Bug) — bitte vor Live-Test
-  einmal gegenprüfen. Noch nicht live getestet.
+  einmal gegenprüfen.
+
+**Live-Bestätigung (Sandy, 2026-08-23):** „dc-028 passt live!" — Raum-
+gruppierte Sammelansicht im Browser bestätigt korrekt.
 
 ---
 
@@ -1875,6 +2184,157 @@ entschieden umgesetzt, `entwurf/page.tsx` + `volle-extraktion-cache.ts` +
   tatsächliche Wartezeit anfühlt (deine eigene Einschätzung war ja schon,
   dass „bis zu 25s" ein Budget ist, keine typische Dauer — werde das beim
   ersten echten Test protokollieren).
+
+---
+
+## DC-031 — Navigations-Sackgassen: laufende Aufnahme, Aufnahme-Sheet, „Zurück" aus leerem Entwurf
+
+**Datum:** 2026-08-23 (von Sandy live gemeldet)
+**Status:** ✅ Umgesetzt (Product Designer, 2026-08-23), noch kein Live-Test
+
+**Befund (Sandys Formulierung):** „der user muss während einer aufnahme
+abbrechen können und zurück zum dashboard gehen können. genauso die karte
+muss schließbar sein können. wenn man da auf zurück geht landet man beim
+0euro angebot, man soll aber zurück zum dashboard. teste das auch an allen
+anderen stellen, man soll immer easy zurückkommen können."
+
+Drei konkrete Probleme in `entwurf/page.tsx` (Aufmaß-Sammelansicht), beim
+Code-Lesen bestätigt:
+
+1. **Laufende Aufnahme nicht abbrechbar.** `stopRecording()` war der
+   einzige Button während einer Aufnahme („Tippen zum Stoppen") — er
+   stoppt UND lädt IMMER hoch. Keine Möglichkeit, eine Aufnahme zu
+   verwerfen. Schlimmer: `handleBackClick()` (der „Zurück"-Header-Button)
+   prüfte den `recording`-Zustand gar nicht — ein Klick auf „Zurück"
+   während einer laufenden Aufnahme hätte den `MediaRecorder`/Mikro-Stream
+   einfach im Hintergrund weiterlaufen lassen (Mikro bleibt offen, obwohl
+   die Seite verlassen wird).
+2. **Aufnahme-Detail-Sheet nur unsichtbar schließbar.** Das Bottom-Sheet
+   (`aufnahmeDetail`-State, zeigt `AufnahmeCard`) hatte kein eigenes
+   Schließen-Element — nur einen Tap auf den dunklen Hintergrund (kein
+   sichtbarer Hinweis darauf). Das sichtbare „X" oben rechts in der Karte
+   sieht aus wie ein Schließen-Button, ist aber `onDelete` — löst im Sheet
+   sogar eine Lösch-Bestätigung für die Aufnahme aus. Genau die Falle, vor
+   der Sandy warnt: ein Nutzer, der auf das „X" tippt, weil er die Karte
+   schließen will, landet stattdessen im Lösch-Dialog.
+3. **„Zurück" ignoriert, ob überhaupt etwas da ist.** `handleBackClick()`
+   und der „Trotzdem zurück ohne Berechnen"-Button im Zurück-Bestätigungs-
+   Sheet gingen IMMER zu `/angebot/${angebotId}` — auch für ein frisches,
+   über „+ Neues Angebot" gerade erst angelegtes, leeres Angebot (0 €,
+   kein Kunde, keine Positionen). Der Nutzer landet dann auf einer
+   Angebots-Detailseite, die ihm nichts sagt, statt zurück dorthin, wo er
+   eigentlich herkam.
+
+**Fix (Product Designer, 2026-08-23):**
+
+- Neue Funktion `cancelRecording()` (Gegenstück zu `stopRecording()`):
+  stoppt den `MediaRecorder`, gibt das Mikro frei, setzt ein
+  `skipUploadRef`-Flag, das `mr.onstop` prüft und bei `true` den Upload
+  überspringt (statt wie bisher immer `handleAudioStop()` aufzurufen).
+  Sichtbar als eigener Button links neben „Tippen zum Stoppen", solange
+  eine Aufnahme läuft.
+- `handleBackClick()` ruft jetzt zuerst `cancelRecording()` auf, falls
+  `recording === true`, bevor überhaupt über die Navigation entschieden
+  wird — eine laufende Aufnahme wird beim Verlassen der Seite verworfen,
+  nicht unbemerkt zu Ende weiterlaufen gelassen.
+- Neuer `zielZurueck`-Wert: `/dashboard`, wenn das Angebot weder einen
+  Kunden noch bereits bestehende Positionen hat (der frische-leer-Fall),
+  sonst weiterhin `/angebot/${angebotId}` (der Nachtrags-Fall — Aufnahme
+  über den „Aufnahme"-Link eines bereits bestehenden Angebots mit echtem
+  Inhalt, dort ist „zurück zum Angebot" weiterhin richtig). Verwendet in
+  `handleBackClick()` UND im „Trotzdem zurück ohne Berechnen"-Button.
+- Aufnahme-Detail-Sheet bekommt eine eigene Kopfzeile mit einem
+  eindeutigen „Schließen"-Text-Button, bewusst als Text statt als
+  zweitem „X" (zwei optisch gleiche X mit unterschiedlicher Bedeutung im
+  selben Sheet wäre die nächste Falle gewesen) — getrennt vom
+  Lösch-„X" innerhalb der Karte selbst.
+
+**Beim Nachtesten „an allen anderen Stellen" gefunden (derselbe Auftrag):**
+Briefpapier & Design (`einstellungen/briefpapier/page.tsx` +
+`einstellungen/briefpapier/[id]/page.tsx`) hat exakt dasselbe
+Grundmuster wie Problem 3, nur für Briefpapier-Varianten statt Angebote:
+„+ Neue Variante erstellen" legt sofort eine echte, leere DB-Zeile
+(„Neue Variante") an, bevor der Nutzer irgendetwas eingegeben hat. Geht
+man direkt danach ohne Änderung zurück, blieb die leere Variante
+dauerhaft in der Liste stehen. Mitgefixt: die Editor-Seite merkt sich per
+`?neu=1`-Marker + einem Snapshot des geladenen Ausgangsstands, ob seit dem
+Anlegen wirklich etwas geändert wurde — unverändert + frisch angelegt →
+Zeile wird beim Zurückgehen automatisch wieder gelöscht; verändert (egal
+ob frisch oder eine bestehende Variante) → Rückfrage „Änderungen wurden
+noch nicht gespeichert. Trotzdem verlassen?" statt stillem Datenverlust
+(vorher gab es dafür überhaupt keine Warnung).
+
+**Sonst geprüft, keine weiteren Funde:** `RueckfragenScreen.tsx` hat einen
+sauberen, immer sichtbaren „Rückfragen beenden"-Ausstieg plus sinnvolles
+Zurück-Verhalten zwischen den Räumen. Alle Modals/Sheets unter
+`src/components/` (`ConfirmSheet`, `AvatarSheet`, `PlanWahlModal`,
+`VorschauUndVersand`, `NotizModal`, Foto-Vollbild u. a.) schließen über
+ihr „X"/Backdrop tatsächlich nur — keine versteckten Lösch-Aktionen wie
+bei DC-031 Problem 2. Kunden-Bereich (`kunden/neu`, `kunden/[id]`,
+`kunden/page.tsx`), Angebote-Liste, Dashboard, Einstellungen-Unterseiten:
+überall ein funktionierender „← [Elternseite]"-Link, keine neuen
+Sackgassen gefunden (DC-002, die fehlende Desktop-Sidebar-Navigation,
+bleibt der einzige bereits bekannte, separat getrackte Nav-Punkt).
+
+**Verifiziert:** Scoped `tsc --noEmit` über alle drei geänderten Dateien
+(`entwurf/page.tsx`, `briefpapier/page.tsx`, `briefpapier/[id]/page.tsx`)
+— 0 Fehler. `eslint`/volles `npm test` weiterhin nicht zuverlässig
+lauffähig in dieser Umgebung (bekanntes Umgebungsproblem, siehe
+DC-024/DC-028/DC-010). Noch nicht live geprüft — bitte gezielt
+gegentesten: (1) eine Aufnahme starten und über den neuen
+Abbrechen-Button verwerfen, (2) das Aufnahme-Detail-Sheet über
+„Schließen" verlassen ohne dass etwas gelöscht wird, (3) über „+ Neues
+Angebot" starten, direkt „Zurück" tippen → sollte am Dashboard landen,
+nicht auf der leeren Angebotsseite, (4) eine bestehende Baustelle über
+den „Aufnahme"-Link erneut aufrufen, „Zurück" tippen → sollte weiter zur
+Angebotsseite gehen, nicht zum Dashboard (Nachtrags-Fall darf sich nicht
+ändern).
+
+**Nicht gelöst, bewusst außerhalb dieses Fixes:** Der native
+Browser-Zurück-Button (statt des In-App-„Zurück") wird von keiner der
+Änderungen abgefangen — eine laufende Aufnahme könnte darüber weiterhin
+unbemerkt im Hintergrund laufen. Wie groß dieses Risiko praktisch ist
+(wie oft nutzen Handwerker unterwegs den Browser-Zurück statt des
+In-App-Buttons) kann ich nicht einschätzen; als bekannte Grenze
+dokumentiert statt stillschweigend übersehen.
+
+---
+
+## DC-032 — Onboarding-Assistent: kein Ausstieg auf Mobile
+
+**Datum:** 2026-08-23 (gefunden beim „an allen anderen Stellen
+testen"-Auftrag zu DC-031)
+**Status:** 🔵 Konzept, noch nicht umgesetzt — braucht kurze Abstimmung
+mit Head of Product Engineering vor dem Bauen
+
+**Befund:** Der Onboarding-Assistent (`onboarding/[step]/page.tsx`,
+Schritte 2–7) hat auf Mobile keine Möglichkeit, ihn zu verlassen oder zu
+unterbrechen — kein „X", kein „Später fertigstellen"-Link, nichts. Die
+gemeinsame `(app)`-Layout-Navigation (`SideNav`) ist mit `hidden md:flex`
+bewusst nur ab Desktop-Breite sichtbar, `BottomNav` wird auf den
+Onboarding-Seiten gar nicht gerendert. `goTo()` navigiert ausschließlich
+zwischen den eigenen Schritten, Schritt 5 hat zwar ein „Erstmal
+überspringen →", aber das überspringt nur die Preiseingabe INNERHALB des
+Assistenten, kein App-Level-Ausstieg. Auf Mobile — dem Hauptgerät für
+Handwerker unterwegs, also dem eigentlichen Kernfall der App — bleibt
+einem mitten im Onboarding nur, den Tab/die App hart zu schließen, wenn
+man gerade nicht weitermachen kann oder will.
+
+**Warum ich das nicht einfach umgesetzt habe:** Das ist der erste
+Eindruck der App, ein Ausstieg mittendrin ist keine reine UI-Frage — es
+braucht eine bewusste Antwort darauf, was mit dem angefangenen Zustand
+passiert (ist zu dem Zeitpunkt schon eine Firma/ein Account-Datensatz in
+der DB angelegt, oder liegt der Fortschritt bis dahin nur im laut Code
+schon unterstützten `localStorage`-Zwischenstand?). Das will ich kurz mit
+Head of Product Engineering klären, bevor ich blind einen „Später
+fertigstellen"-Button baue, der eventuell einen halb angelegten Zustand
+hinterlässt, den das Dashboard nicht sauber abfängt.
+
+**Vorschlag:** Ab Schritt 2 einen sichtbaren, dezenten
+„Später fertigstellen"-Ausstieg (Text-Link, kein Alarm-Rot), der den
+Fortschritt sichert und zum Dashboard führt; das Dashboard müsste dann
+tolerant mit unvollständigem Onboarding umgehen (z. B. ein Hinweis-Banner
+„Onboarding fortsetzen" statt eines gesperrten Zustands).
 
 ---
 

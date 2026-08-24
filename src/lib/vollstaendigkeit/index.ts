@@ -52,5 +52,19 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     pruefeElektro(ergaenzt, fehlende, lower)
   }
 
-  return { fehlende, positionen: ergaenzt }
+  // DC-027 / CoS-017 (2026-08-24): Kennzeichnung "vom Tool ergaenzt" statt "gesagt".
+  // Bewusst EINE zentrale Stelle statt eines Flags an ~117 `ergaenzt.push(...)`-
+  // Fundstellen: `positionen` liegt oben unveraendert vor, alles was danach neu in
+  // `ergaenzt` steht, kann nur aus den Vollstaendigkeitsregeln stammen.
+  // Objekt-Identitaet ist dafuer verlaesslich: die Regeln pushen ausschliesslich
+  // NEUE Objekte und kopieren bestehende nie um (filtereArray/dedup behalten
+  // Referenzen). Wichtig fuer den Mehrgewerk-Fall, wo diese Funktion zweimal
+  // nacheinander laeuft: bereits gesetzte Flags bleiben erhalten, weil die
+  // Ergebnisse des ersten Laufs beim zweiten als Originale hereinkommen.
+  const originale = new Set<BerechnetePosition>(positionen)
+  const markiert = ergaenzt.map(p =>
+    originale.has(p) || p.automatisch_ergaenzt ? p : { ...p, automatisch_ergaenzt: true },
+  )
+
+  return { fehlende, positionen: markiert }
 }

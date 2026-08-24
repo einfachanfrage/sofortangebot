@@ -34,16 +34,116 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 20.08.2026, Vormittag)
+## Gate-Fortschritt (Stand 21.08.2026, Abend/Tagesabschluss)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **23 %** (↑ von 22 %) | 46 |
-| **Gate 2** — öffentlicher Launch | **13 %** (↑ von 10 %) | 37 (neu: 9.7, 11.6) |
+| **Gate 1** — erste Testnutzer | **25 %** (von 23 % — echte Bewegung, kein Rauschen, siehe unten) | 46 |
+| **Gate 2** — öffentlicher Launch | **13 %** (unverändert, keine neue G2-Bewegung heute) | 37 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+**Update 21.08.2026, Abend — Tagesabschluss: die Deploy-Blockade war ein
+Fehlalarm meinerseits und ist aufgelöst, dafür hat der erste echte
+Live-Test von CoS-002 sofort einen echten (jetzt gefixten) Bug gefunden.**
+Zusammengefasst, was seit dem Vormittags-Update heute noch passiert ist:
+
+- **CoS-016 beantwortet, Punkt 8.7 springt von 35 % auf 80 %.** Die
+  „App-seitige Git/Deploy-Blockade" war keine strukturelle Sache, sondern
+  ein technisches Detail von Head of Product Engineerings Fernzugriff auf
+  Sandys Rechner (konnte Git-Lock-Dateien nicht löschen, nur verschieben)
+  — inzwischen selbst gelöst (Lock-Dateien landen jetzt in einem
+  `_to_delete/`-Ordner statt gelöscht zu werden). Sandy hat beide
+  CoS-002-Commits (`434ba16`, `d582048`) gepusht, `main`/`origin/main`
+  gleichauf. Kein offener Deploy-Blocker mehr.
+- **Direkt nach dem Deploy: Sandys Live-Test fand einen echten Bug in
+  genau der Bestätigungskarte, die CoS-002 reparieren sollte.** Test
+  „Wohnzimmer streichen, 3x4 Meter" zeigte „Boden schützen 0 m²" statt der
+  erwarteten 12 m². Nach mehreren falschen Fährten (PM-013-Fallback,
+  Browser-Cache, Vercel-Branch) die echte Ursache: die
+  `supabase_realtime`-Publication war für keine einzige Tabelle aktiv —
+  die Karte wartete auf ein Signal, das nie ankam, und fiel nach 30
+  Sekunden dauerhaft auf die fehleranfällige Schnell-Vorschau zurück. Die
+  eigentliche Berechnung war die ganze Zeit korrekt (per Datenbank-Check
+  bestätigt) — der Fehler saß ausschließlich in der Anzeige. **Fix:**
+  eine Migration, die Realtime für die richtige Tabelle aktiviert, direkt
+  auf der Produktions-DB angewendet, kein neuer Code-Deploy nötig. Sandys
+  Bestätigungs-Retest steht noch aus — deshalb 1.3 auf 75 %, nicht höher.
+- **1.1 Fallbasis (27→30) und 1.2 Abdeckung (57→60):** die drei zuvor
+  ungeprüften Fälle PM-019/020/021 sind jetzt alle getestet — und alle
+  drei haben wie schon PM-017/018 einen echten Bug gefunden (isolierter
+  Erschwerniszuschlag, Altbelag-Verneinung beim Teppich, Phantom-Position
+  „Balkonboden streichen" durch Wortverwechslung). Alle drei sind bereits
+  gefixt, aber noch ohne Live-Nachtest. Positiv: kein einziger der 21
+  Fälle steht mehr komplett ungeprüft da. Negativ, ehrlich gesagt: die
+  Trefferquote „neuer Sondertestfall findet neuen Bug" bleibt bei 100 %
+  über PM-017 bis PM-021 — noch kein Anzeichen einer Verlangsamung.
+- **Nebenbei entschieden und sofort umgesetzt:** die VOB-Übermessungsregel
+  für kleine Fensteröffnungen (aus PM-021 aufgeworfen) ist jetzt Standard
+  für alle Malerangebote, nach Sandys ausdrücklichem Go — kein
+  Einstellungs-Schalter, kein Onboarding-Schritt, nur ein sichtbarer
+  Hinweistext. Details: `entscheidungen-fuer-sandy.md`.
+- **1.4 Golden Tests (78→80):** weiterhin 236/236 grün, auch nach den
+  PM-019–021-Fixes.
+
+Damit ist der eigentliche Engpass heute Abend nicht mehr die
+Deploy-Kette, sondern wieder das, was es strukturell immer war: eine
+lange Kette von Live-Bestätigungstests, die noch aussteht (CoS-002-Retest
+plus PM-001/007/008/009/011/013/014/015/019/020/021).
+
+**Update 21.08.2026, früher Vormittag — wichtigster Befund des Tages: die
+Gate-1-Zahl steht still, aber nicht weil nichts passiert ist.** Zwei fast
+gleich große Bewegungen heben sich gegenseitig auf:
+- **Punkt 1.3 (Bestätigungskarte) springt von 35 % auf 65 %** — CoS-002 ist
+  jetzt in allen drei Schritten UND für den Mehrfach-Aufnahmen-Fall
+  vollständig im Code umgesetzt (Head of Product Engineering, 20./21.08.,
+  Sandys Folgeauftrag „mach komplett rund" bereits erledigt). Laut Head of
+  Product Engineering erfüllt das Sandys Gate-1-Bedingung inhaltlich
+  vollständig — **sobald der App-Code live ist.**
+- **Genau daran hakt es gerade neu: Punkt 8.7 (verlässliche Kette
+  Code→Deploy→live) fällt von 80 % auf 35 %.** Im selben Fix-Update schreibt
+  Head of Product Engineering beiläufig, der App-Code sei „wegen der
+  App-seitigen Git/Deploy-Blockade (separates, bereits gemeldetes Thema)"
+  noch nicht live. Ich finde dazu **kein eigenes Ticket** in keiner der
+  Koordinationsdateien — das ist entweder an einer Stelle gemeldet, die ich
+  nicht kenne, oder es ist neu und wurde nur beiläufig erwähnt. Habe eine
+  direkte Rückfrage dazu in `chief-of-staff-todos.md` (CoS-016) hinterlassen.
+  Bis das geklärt ist, bleibt das der eigentliche Flaschenhals für den Start
+  von Gate 1 — nicht mehr CoS-002 selbst.
+- Daneben kleinere Bewegungen: 1.1 Fallbasis (25→27, jetzt 21 statt 16 Fälle
+  — aber zwei davon, PM-017/018, sind neue, bestätigte Bugs, drei weitere
+  noch ungeprüft), 1.2 Abdeckung (55→57, neue Sonderfälle wie Tapete- statt
+  Streich-Erkennung und Q2/Q3-Verwechslung getestet), 1.4 Golden Tests
+  (75→78, 236/236 Tests bleiben auch nach dem großen CoS-002-Umbau grün),
+  11.6 Kostenübersicht (60→75, zwei von vier Finance-Auffälligkeiten von
+  Sandy geklärt: Kleinunternehmer-Status bestätigt, OpenAI-Konto geklärt).
+
+> ✅ **Update, Abend — CoS-016 geklärt, kein offener Deploy-Blocker mehr:**
+> war ein technisches Detail von Head of Product Engineerings Fernzugriff
+> (Git-Lock-Dateien ließen sich nicht löschen, nur verschieben), kein
+> eigenes Ticket wert gewesen, jetzt beantwortet und selbst gelöst. Sandy
+> hat beide CoS-002-Commits gepusht, `main`/`origin/main` gleichauf. Dafür
+> hat der erste Live-Test nach dem Deploy sofort einen echten Bug in der
+> Bestätigungskarte selbst gefunden (leere `supabase_realtime`-Publication)
+> — bereits gefixt, Sandys Bestätigungs-Retest steht noch aus. Siehe Punkte
+> **1.3** und **8.7** unten.
+
+> ✓ **Zwei von vier Finance-Auffälligkeiten geklärt (Head of Finance,
+> 21.08.):** Kleinunternehmer-Status ist bestätigt §19 UStG, das
+> OpenAI-Konto ist echt Sandys eigenes (historischer Alias „Hugo", kein
+> Fremdkonto). Offen bleiben: steigende Supabase-Kosten/Projektanzahl und
+> die zwei getrennten Claude-Kostenströme (geschäftlich/privat).
+
+> ✅ **Update, Abend — PM-017/018 live bestätigt behoben, PM-019/020/021
+> neu getestet:** Beide Vormittags-Bugs (Tapete-Position verschwand,
+> Q2/Q3-Verwechslung + fehlende Deckengrundierung) sind im Live-Nachtest
+> (21.08.) bestätigt korrekt. Die drei bis dahin ungeprüften Fälle
+> PM-019–021 sind jetzt durchgetestet — alle drei fanden wieder einen
+> echten Bug (Erschwerniszuschlag-Isolation, Altbelag-Verneinung,
+> Phantom-Position durch Wortverwechslung), alle drei bereits gefixt, noch
+> ohne Live-Nachtest. Details: `pruefmeister-testfaelle.md` PM-017–021.
 
 **Update 20.08.2026 (Vormittag), echte Neubewertung, keine Schätzung:** Alle
 46 Gate-1-Punkte frisch gegen `pruefmeister-testfaelle.md`,
@@ -95,20 +195,18 @@ selbst noch offen).
 > neuere PM-014-Stand verwendet. Bitte Head of Product Engineering bitten,
 > CoS-010 entsprechend nachzuziehen. — Chief of Staff, 20.08.2026
 
-> 🔴 **NEU, 20.08.2026 — CoS-002 entschieden, jetzt höchste Priorität im
-> ganzen Projekt UND harte Bedingung für den Start von Gate 1:** Sandy hat
-> unabhängig vom Prüfmeister fast wortgleich dieselbe Sorge geäußert
-> („Bestätigungskarte zeigt nicht zuverlässig, was berechnet wird") und
-> danach ausdrücklich angewiesen: „das soll endgültig gefixt werden." Head
-> of Product Engineering hat noch am selben Tag einen Architektur-Vorschlag
-> geliefert (Root Cause bestätigt: Karte nutzt `gpt-4o-mini`, Berechnung
-> `gpt-4o`, zwei unabhängige nicht-deterministische Aufrufe). Sandys
-> Entscheidung: Sofort-Zwischenlösung diese Woche + echte
-> Single-Source-of-Truth in 3 Schritten (~2–3 Wochen). **Schritt 3 (fasst
-> den Geld-Pfad an) muss fertig sein, bevor der erste echte Testnutzer ran
-> darf** — Gate 1 kann also frühestens nach Abschluss von CoS-002 starten,
-> unabhängig vom sonstigen Gate-1-Prozentwert. Details:
-> `docs/cos-002-architektur-vorschlag.md`, Punkt **1.3** unten.
+> ✅ **UPDATE 21.08.2026 — CoS-002 code-seitig komplett fertig, inkl.
+> Mehrfach-Aufnahmen-Fall.** Sandys Bedingung war: Schritt 3 (Geld-Pfad) muss
+> fertig sein, bevor der erste echte Testnutzer ran darf. Head of Product
+> Engineering meldet alle drei Schritte fertig, 236/236 Tests grün, Sandys
+> Folgefrage („auch den Mehrfach-Fall schließen?") bereits mit „ja" beantwortet
+> und umgesetzt. **Einziger verbleibender Haken: der App-Code selbst ist
+> laut Head of Product Engineering aktuell wegen einer noch ungeklärten
+> „Git/Deploy-Blockade" nicht live zu bringen** — dazu existiert kein
+> eigenes Ticket, ich habe nachgefragt (CoS-016 in `chief-of-staff-todos.md`).
+> Bis das geklärt ist, ist das der eigentliche Flaschenhals vor Gate 1, nicht
+> mehr CoS-002 selbst. Details: `docs/cos-002-architektur-vorschlag.md`,
+> Punkt **1.3** und **8.7** unten.
 
 > ✓ **Größte Verbesserung seit dem letzten Update:** Bei der
 > Angebots-Verdopplung (**CoS-010**/**PM-014**, **8.2**) ist nicht nur der
@@ -165,10 +263,10 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 25 % — jetzt 16 von ~100 Fällen (PM-001–016), mehrere davon (PM-001/008/011/013/014) code-fertig gefixt, aber Live-Nachtest steht noch aus; die Fallbasis selbst bleibt der Hauptengpass, nicht die Einzelfixes. Quelle: `docs/pruefmeister-testfaelle.md` |
-| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 55 % (CoS-Schätzung) — Fassade (kein Raum) jetzt mit eigenem Datenmodell abgedeckt (DC-024/PM-008), Fischgrät/Dehnungsfuge (PM-013) zu 2 von 3 Punkten live bestätigt |
-| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🔴 35 % — **20.08.2026: von Sandy entschieden.** Root Cause bestätigt (Karte nutzt `gpt-4o-mini`, Berechnung `gpt-4o`, zwei unabhängige, nicht-deterministische Aufrufe). Weg: Sofort-Zwischenlösung diese Woche + echte Single-Source-of-Truth in 3 Schritten (~2–3 Wochen). **Harte Bedingung: Schritt 3 muss fertig sein, bevor der erste echte Testnutzer ran darf — das blockiert damit den Beginn von Gate 1.** Quelle: CoS-002, `docs/cos-002-architektur-vorschlag.md` |
-| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟡 75 % — Praxis weiter gefestigt (706/706 Tests nach jedem Fix bestätigt, zuletzt bei CoS-010/PM-014, DC-024, DC-025, DC-028), kein direkter CI-Dashboard-Zugriff |
+| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 30 % — weiter 21 von ~100 Fällen (PM-001–021), aber jetzt sind ALLE 21 mindestens einmal getestet (keiner mehr „ungeprüft" wie noch heute Vormittag). PM-019–021 fanden je einen echten Bug, alle drei bereits gefixt, noch ohne Live-Nachtest. Trefferquote „neuer Sondertestfall findet neuen Bug" bleibt bei 100 % (PM-017 bis PM-021). Quelle: `docs/pruefmeister-testfaelle.md` |
+| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 60 % (CoS-Schätzung) — weitere Sonderfälle getestet (isolierter Erschwerniszuschlag, Altbelag-Verneinung beim Teppich, zugespitzte VOB-Übermessungsfrage), VOB-Regel daraus jetzt als Standard umgesetzt |
+| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 75 % — **21.08.2026 Abend: code-fertig, deployt UND erster Live-Test gelaufen.** Sandys Test fand einen echten Bug (Karte zeigte „Boden schützen 0 m²" statt 12 — leere `supabase_realtime`-Publication, nicht die Berechnung war falsch), Ursache gefunden und per DB-Migration gefixt. **Sandys Bestätigungs-Retest steht noch aus**, deshalb nicht höher. Quelle: CoS-002, `docs/cos-002-architektur-vorschlag.md` |
+| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟡 75 % — **24.08.:** Head of Product Engineering meldet bei anderer Gelegenheit (CoS-017), dass 4 von 763 Tests bereits VOR seiner Arbeit rot waren, unabhängig davon (2 veraltete Katalog-Zählungen, 2 im PM-008-/Sockelleisten-Umfeld, noch nicht gegen die „live bestätigt behoben"-Fälle abgeglichen) — bisher nirgends gemeldet. Deshalb nicht mehr auf 80 %, obwohl CoS-002-Kernpfad weiterhin 236/236 grün bleibt. Aufräumen als **CoS-018** an Head of Product Engineering delegiert, kein direkter CI-Dashboard-Zugriff |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
 | 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 55 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.), Live-Nachtest dafür steht noch aus |
 | 1.7 | KI-Grenzen/Fehlerrate den Nutzern gegenüber transparent kommuniziert (kein 100 %-Versprechen) | G2 | ⚪ offen — nicht erhoben (neu) |
@@ -179,9 +277,9 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 2.1 | Registrierung, Login, Logout laufen sauber durch — komplett | G1 | ⚪ offen — nicht erhoben. Jetzt CoS-P-003 beim Platform Engineer |
-| 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | ⚪ offen — nicht erhoben |
-| 2.3 | Passwort-Zurücksetzen funktioniert | G1 | ⚪ offen — nicht erhoben |
+| 2.1 | Registrierung, Login, Logout laufen sauber durch — komplett | G1 | 🟡 Registrierung/Login/Logout per Code-Review geprüft, sauber — Live-Nachtest steht aus (CoS-P-003) |
+| 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟡 läuft über Supabase-eigenes Mailsystem, nicht über unsere Resend-Anbindung — SMTP-Konfiguration im Supabase-Dashboard ungeprüft (CoS-P-004) |
+| 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🔴 wahrscheinlicher Bug gefunden (PKCE-Code wird nie gegen Session getauscht) — Live-Bestätigung + Fix stehen aus (CoS-P-003) |
 | 2.4 | Kompletter erster Durchlauf (erste Anmeldung → erstes Angebot) end-to-end | G1 | ⚪ offen — nicht erhoben |
 | 2.5 | Account-Löschung möglich | G2 | 🟡 vermutlich vorhanden (Code existiert), kein QA-Test |
 | 2.6 | Schutz vor automatisierten Massen-Registrierungen (Captcha/Rate-Limit) | G2 | ⚪ offen — nicht erhoben (neu) |
@@ -192,8 +290,8 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 3.1 | Pflicht-Mails werden wirklich versendet (Willkommen, Verifizierung, Reset) | G1 | ⚪ offen — nicht erhoben. Jetzt CoS-P-004 |
-| 3.2 | Absender korrekt, Links funktionieren, Inhalt stimmt, landen nicht im Spam | G1 | ⚪ offen — nicht erhoben |
+| 3.1 | Pflicht-Mails werden wirklich versendet (Willkommen, Verifizierung, Reset) | G1 | 🟡 Willkommens-Mail sauber über Resend, Verifizierung/Reset über Supabase-eigenes Mailsystem — Live-Zustellung ungetestet (CoS-P-004) |
+| 3.2 | Absender korrekt, Links funktionieren, Inhalt stimmt, landen nicht im Spam | G1 | 🟡 DNS für sofortangebot.app geprüft: DKIM für Resend korrekt gesetzt, DMARC nur im Beobachtungsmodus (p=none) — Live-Spam-Test steht aus |
 | 3.3 | Weitere Mails je nach Flow (Quittung/Rechnung, Angebot fertig) | G2 | ⚪ offen — nicht erhoben |
 | 3.4 | SPF/DKIM/DMARC korrekt gesetzt (Zustellbarkeit, kein Spam-Ordner) | G1 | ⚪ offen — nicht erhoben (neu) |
 
@@ -263,7 +361,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 8.4 | Fehler-Monitoring: du merkst, wenn im Betrieb etwas bricht | G2 | 🔴 20 % — Health-Checks (`/api/health*`) und Kosten-Alarm existieren und funktionieren, aber Sentry deckt bisher nur den Kernpfad ab |
 | 8.5 | OpenAI-Kosten pro Angebot bekannt und tragbar; Rate-Limits bedacht | G2 | ⚪ offen — nicht erhoben |
 | 8.6 | Domain, SSL, Hosting-Konfiguration sauber | G2 | 🟡 50 % — läuft auf `www.sofortangebot.app` über Vercel, kein separater Sicherheitscheck dokumentiert |
-| 8.7 | Verlässliche Kette Code-Fix → Deploy → tatsächlich live | G1 | 🟢 80 % — **Entwarnung**: der Verdacht auf eine Deploy-Lücke hat sich nicht bestätigt, Head of Product Engineering hat die echte Ursache (Testmethodik) direkt an Produktionsdaten nachgewiesen — die Kette selbst ist zuverlässig |
+| 8.7 | Verlässliche Kette Code-Fix → Deploy → tatsächlich live | G1 | 🟢 80 % — **21.08.2026 Abend: CoS-016 geklärt, kein offener Blocker mehr.** War kein System-/Architekturproblem, sondern ein technisches Detail von Head of Product Engineerings Fernzugriff (Git-Lock-Dateien nicht löschbar, nur verschiebbar) — inzwischen selbst gelöst, Sandy hat beide CoS-002-Commits gepusht, `main`/`origin/main` gleichauf. Nicht auf 100 %, weil der anschließende Live-Test zeigte, dass „deployt" allein nicht „korrekt live" garantiert (siehe 1.3) |
 | 8.8 | Status-Seite für Nutzer (zeigt Verfügbarkeit) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 8.9 | Eskalationsweg bei Ausfall definiert (wer wird wann wie alarmiert) | G1 | ⚪ offen — nicht erhoben (neu) |
 | 8.10 | Kostenbudget-Alarme (OpenAI/Vercel/Supabase) gegen Kostenexplosion | G1 | 🟡 40 % — Kostenalarm bei ungewöhnlich hohen KI-Kosten eines Nutzers existiert bereits (CoS-P-002), projektweite Budget-Alarme offen |
@@ -301,7 +399,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 11.3 | Gewerbeanmeldung | — | ✅ erledigt (Sandy) |
 | 11.4 | Geschäftskonto getrennt von privat | G1 | ⚪ offen — nicht erhoben, Sandys Bereich (neu) |
 | 11.5 | Buchhaltungssystem angebunden (Lexware/sevDesk) | G2 | ⚪ offen — nicht erhoben, jetzt Platform-Engineer-Scope. Erste Machbarkeits-Prüfung (CoS-P/DC-029): kein natives Projekt-/Lieferadressfeld in der Lexware-API, Workaround als Freitext identifiziert, kein Blocker |
-| 11.6 | Laufende Kostenübersicht als Grundlage für Preis-/Runway-Entscheidungen | G2 | 🟡 60 % — **neu, 20.08.2026, ergänzt vom Chief of Staff** (neue Rolle Head of Finance seit 19.08., noch nicht erfasst). Grundgerüst mit echten Zahlen steht (`docs/kostenuebersicht-finance.xlsx`, CoS-F-001), aber 4 Anomalien warten auf Sandys Klärung (steigende Supabase-Kosten + 5 statt 2 Projekt-Refs, zwei getrennte Claude-Kostenströme, OpenAI-Rechnung auf Fremdnamen, zwei Rechnungsadressen), plus fehlende Belege (Resend/Domain/Sentry/GitHub) |
+| 11.6 | Laufende Kostenübersicht als Grundlage für Preis-/Runway-Entscheidungen | G2 | 🟡 75 % — **21.08.2026:** zwei von vier Auffälligkeiten von Sandy geklärt (Kleinunternehmer-Status §19 UStG bestätigt, OpenAI-Konto ist echt Sandys eigenes). Offen bleiben: steigende Supabase-Kosten/Projektanzahl, zwei getrennte Claude-Kostenströme (geschäftlich/privat), plus fehlende Belege (Resend/Domain/Sentry/GitHub) |
 
 ## 12. Go-to-Market (nach der Entwicklungsphase)
 

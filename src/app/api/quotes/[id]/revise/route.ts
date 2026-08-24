@@ -39,7 +39,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   // Extras aus der alten Quote holen (Rabatte, Aufschläge etc.)
   const { data: extras } = await supabase
     .from('quotes')
-    .select('discount_percent, discount_amount, surcharge_amount, surcharge_label, internal_notes, briefpapier_id')
+    .select('discount_percent, discount_amount, surcharge_amount, surcharge_label, internal_notes, briefpapier_id, manuell_bearbeitete_positionen')
     .eq('id', id)
     .single()
 
@@ -70,6 +70,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       surcharge_label: extras?.surcharge_label ?? 'Zuschlag',
       internal_notes: extras?.internal_notes ?? null,
       briefpapier_id: extras?.briefpapier_id ?? null,
+      // CoS-014: Handänderungen gelten auch in der neuen Revision — die
+      // Positionen werden ja 1:1 mitkopiert, also darf eine spätere
+      // Neu-Berechnung sie dort genauso wenig überschreiben.
+      manuell_bearbeitete_positionen: extras?.manuell_bearbeitete_positionen ?? [],
       // Versand-/Unterschrift-Felder bewusst leer lassen
       sent_via: [],
     })

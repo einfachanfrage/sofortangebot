@@ -210,6 +210,16 @@ wie die Supabase-Reverse-Charge-Rechnungen konkret als Kleinunternehmerin
 zu behandeln sind (§13b UStG kann trotz §19 UStG greifen) — das braucht
 den Steuerberater, keine eigene Auskunft von mir.
 
+**Update (Head of Finance, 2026-08-19, Teil 6):** OpenAI-Punkt geklärt —
+Sandy bestätigt, der Account gehört ihr, „Hugo" ist ein historischer
+Nutzername/E-Mail-Alias bei OpenAI, der sich nachträglich nicht mehr auf
+„Sandra Holm" ändern lässt. Kein falscher Account. In
+`docs/kostenuebersicht-finance.xlsx` als geklärt markiert (Journal,
+Kostenübersicht, Legende) — damit sind von den ursprünglich vier
+Auffälligkeiten jetzt zwei abschließend geklärt (Kleinunternehmer-Status,
+OpenAI-Konto), zwei bleiben offen (Supabase-Projektanzahl/Kostentrend,
+Claude-Doppel-Abo geschäftlich/privat).
+
 ---
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -60,6 +60,13 @@ export interface BerechnetePosition {
   annahmen: string[]
   position_id_vorschlag?: string
   flaechen_parameter?: FlaechenParameter
+  /**
+   * DC-027 / CoS-017: true = diese Position hat das Tool selbst ergaenzt
+   * (Vollstaendigkeits-Regeln), der Handwerker hat sie nicht gesagt.
+   * Wird ZENTRAL in `pruefeUndErgaenzeVollstaendigkeit()` gesetzt, nicht an den
+   * ~117 einzelnen `ergaenzt.push(...)`-Fundstellen.
+   */
+  automatisch_ergaenzt?: boolean
 }
 
 export interface MengenErgebnis {

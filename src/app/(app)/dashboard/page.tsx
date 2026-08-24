@@ -9,16 +9,11 @@ import { Mic } from 'lucide-react'
 import { Toast } from '@/components/Toast'
 import { getDashboardData } from '@/data/dashboard'
 
-const STATUS_LABEL: Record<string, { label: string }> = {
-  draft:          { label: 'Entwurf'        },
-  in_bearbeitung: { label: 'Entwurf'        },
-  bereit:         { label: 'Fertiggestellt' },
-  sent:           { label: 'Offen'          },
-  viewed:         { label: 'Geöffnet'       },
-  accepted:       { label: 'Beauftragt'     },
-  rejected:       { label: 'Abgelehnt'      },
-  archived:       { label: 'Archiviert'     },
-}
+// DC-003: hatte hier eine eigene, nur teilweise passende STATUS_LABEL-Tabelle
+// (fehlte 'bereit' im Blick, führte lokal zu keinem Fehler, weil ??
+// STATUS_LABEL.draft still auf "Entwurf" zurückfiel — nur eben falsch).
+// MobileQuoteCard berechnet Label/Farbe jetzt selbst aus quote.status, siehe
+// src/lib/status.ts — hier daher keine eigene Tabelle mehr nötig.
 
 function fmt(n: number) {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)
@@ -55,7 +50,7 @@ export default async function DashboardPage({
   const heroStatusLink = offeneGesamtCount > 0 ? '/angebote?status=offen' : null
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5]">
+    <div className="min-h-dvh bg-bg">
       <PwaBannerManager />
       {welcome === 'new' && <WelcomeModalWrapper />}
       {welcome === 'pro' && <Toast message="🚀 Pro Plan aktiv — viel Erfolg!" />}
@@ -63,7 +58,7 @@ export default async function DashboardPage({
       <div className="md:max-w-5xl md:mx-auto md:px-8 md:py-8">
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
-      <div className="bg-[#2C2C2C] px-5 pt-safe-top pt-5 pb-7 md:rounded-3xl md:px-8 md:pt-6 md:pb-8">
+      <div className="bg-anthracite px-5 pt-safe-top pt-5 pb-7 md:rounded-3xl md:px-8 md:pt-6 md:pb-8">
         {/* Topbar */}
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <span className="text-white/50 font-black text-sm tracking-wide md:hidden">sofortangebot</span>
@@ -80,7 +75,7 @@ export default async function DashboardPage({
 
             {/* Dynamischer Status */}
             {heroStatusLink ? (
-              <Link href={heroStatusLink} className="inline-block text-[#F5C400] text-[13px] font-black mb-6 md:mb-0">
+              <Link href={heroStatusLink} className="inline-block text-yellow text-[13px] font-black mb-6 md:mb-0">
                 {heroStatusText}
               </Link>
             ) : (
@@ -91,14 +86,14 @@ export default async function DashboardPage({
           {/* Großer Aufmaß-Button */}
           <Link
             href="/angebot/neu"
-            className="flex items-center gap-4 w-full md:w-auto md:shrink-0 bg-[#F5C400] rounded-xl px-5 md:pr-8 h-16 active:opacity-90 hover:opacity-90 transition-opacity"
+            className="flex items-center gap-4 w-full md:w-auto md:shrink-0 bg-yellow rounded-xl px-5 md:pr-8 h-16 active:opacity-90 hover:opacity-90 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-lg bg-[#2C2C2C]/15 flex items-center justify-center shrink-0">
-              <Mic size={22} className="text-[#2C2C2C]" strokeWidth={2.5} />
+            <div className="w-10 h-10 rounded-lg bg-anthracite/15 flex items-center justify-center shrink-0">
+              <Mic size={22} className="text-anthracite" strokeWidth={2.5} />
             </div>
             <div>
-              <div className="font-syne font-black text-[#2C2C2C] text-[17px] leading-tight">Aufmaß starten</div>
-              <div className="text-[#2C2C2C]/55 text-[12px] font-semibold">Einsprechen → Angebot fertig</div>
+              <div className="font-syne font-black text-anthracite text-[17px] leading-tight">Aufmaß starten</div>
+              <div className="text-anthracite/55 text-[12px] font-semibold">Einsprechen → Angebot fertig</div>
             </div>
           </Link>
         </div>
@@ -114,8 +109,8 @@ export default async function DashboardPage({
           ].map(stat => (
             <Link key={stat.label} href={stat.href}
               className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
-              <div className="font-syne font-black text-[#2C2C2C] text-lg leading-none truncate">{stat.value}</div>
-              <div className="text-[10px] font-bold text-[#2C2C2C]/50 mt-1.5 uppercase tracking-wide truncate">{stat.label}</div>
+              <div className="font-syne font-black text-anthracite text-lg leading-none truncate">{stat.value}</div>
+              <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide truncate">{stat.label}</div>
             </Link>
           ))}
         </div>
@@ -126,16 +121,16 @@ export default async function DashboardPage({
         <div className="px-5 mt-4 md:px-0">
           <Link
             href="/preise"
-            className="flex items-center gap-3 bg-[#F5C400]/10 border border-[#F5C400]/40 rounded-2xl px-4 py-3.5 active:opacity-80 transition-opacity"
+            className="flex items-center gap-3 bg-yellow/10 border border-yellow/40 rounded-2xl px-4 py-3.5 active:opacity-80 transition-opacity"
           >
             <span className="text-xl shrink-0">💰</span>
             <div className="flex-1 min-w-0">
-              <div className="font-extrabold text-[#2C2C2C] text-[14px]">Deine Preise eintragen</div>
-              <div className="text-[#2C2C2C]/50 font-semibold text-[12px] leading-snug mt-0.5">
+              <div className="font-extrabold text-anthracite text-[14px]">Deine Preise eintragen</div>
+              <div className="text-anthracite/50 font-semibold text-[12px] leading-snug mt-0.5">
                 Noch keine eigenen Preise — KI nutzt Marktpreise. Trag deine echten Preise ein für genauere Angebote.
               </div>
             </div>
-            <span className="text-[#2C2C2C]/30 font-black text-lg shrink-0">›</span>
+            <span className="text-anthracite/30 font-black text-lg shrink-0">›</span>
           </Link>
         </div>
       )}
@@ -144,22 +139,20 @@ export default async function DashboardPage({
       {(recentQuotes ?? []).length > 0 && (
         <div className="px-5 mt-6 pb-32 md:px-0 md:mt-8 md:pb-4">
           <div className="flex items-center justify-between mb-3">
-            <div className="text-[10px] font-black text-[#2C2C2C]/50 uppercase tracking-widest">
+            <div className="text-[10px] font-black text-anthracite/50 uppercase tracking-widest">
               Zuletzt erstellt
             </div>
-            <Link href="/angebote" className="text-[11px] font-black text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70">
+            <Link href="/angebote" className="text-[11px] font-black text-anthracite/40 hover:text-anthracite/70">
               Alle →
             </Link>
           </div>
           <div className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-3">
             {recentQuotes.map(quote => {
-              const cfg = STATUS_LABEL[quote.status] ?? STATUS_LABEL.draft
               const items = (quote.quote_items ?? []).sort((a, b) => a.position - b.position)
               return (
                 <MobileQuoteCard
                   key={quote.id}
                   quote={quote}
-                  statusLabel={cfg.label}
                   formattedDate={fmtDate(quote.created_at)}
                   formattedAmount={fmt(quote.total_gross)}
                   ersterItemTitel={items[0]?.title ?? null}
@@ -173,8 +166,8 @@ export default async function DashboardPage({
       {(recentQuotes ?? []).length === 0 && (
         <div className="px-5 mt-6 pb-32 md:px-0 md:mt-8 md:pb-4">
           <div className="bg-white rounded-2xl border border-black/5 p-8 text-center">
-            <div className="font-black text-[#2C2C2C] text-base">Noch keine Angebote.</div>
-            <div className="text-[#2C2C2C]/50 text-sm font-semibold mt-1">Tippe oben auf „Aufmaß starten".</div>
+            <div className="font-black text-anthracite text-base">Noch keine Angebote.</div>
+            <div className="text-anthracite/50 text-sm font-semibold mt-1">Tippe oben auf „Aufmaß starten".</div>
           </div>
         </div>
       )}

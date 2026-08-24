@@ -420,3 +420,56 @@ describe('API – kein Seiteneffekt auf input-positionen', () => {
     expect(original[0].beschreibung).toBe(kopie[0].beschreibung)
   })
 })
+
+// ─── DC-027 / CoS-017: "vom Tool ergänzt" vs. "gesagt" ─────────────────────
+// Die Kennzeichnung wird bewusst an EINER zentralen Stelle gesetzt
+// (Vorher/Nachher-Vergleich in index.ts), nicht an ~117 push-Fundstellen.
+// Diese Tests sichern genau diese zentrale Stelle ab.
+
+describe('DC-027 – Kennzeichnung automatisch ergänzter Positionen', () => {
+  it('lässt vom Nutzer gesagte Positionen unmarkiert', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 35)],
+      'Im Wohnzimmer die Wände zweimal streichen.',
+    )
+    const gesagt = positionen.find(p => p.beschreibung === 'Wandflächen streichen')
+    expect(gesagt).toBeDefined()
+    expect(gesagt?.automatisch_ergaenzt).toBeFalsy()
+  })
+
+  it('markiert eine vom Tool ergänzte Position als automatisch ergänzt', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 35)],
+      'Im Wohnzimmer die Wände streichen, wir haben hohe Decken.',
+    )
+    const ergaenzt = positionen.find(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))
+    expect(ergaenzt).toBeDefined()
+    expect(ergaenzt?.automatisch_ergaenzt).toBe(true)
+  })
+
+  it('verliert eine bereits gesetzte Markierung im zweiten Durchlauf nicht', () => {
+    // Mehrgewerk-Fall: die Prüfung läuft nacheinander für zwei Gewerke.
+    const ersterLauf = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [pos('Wandflächen streichen', 35)],
+      'Im Wohnzimmer die Wände streichen, wir haben hohe Decken.',
+    )
+    const zweiterLauf = pruefeUndErgaenzeVollstaendigkeit(
+      'boden_parkett',
+      ersterLauf.positionen,
+      'Im Wohnzimmer die Wände streichen, wir haben hohe Decken.',
+    )
+    const ergaenzt = zweiterLauf.positionen.find(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))
+    expect(ergaenzt?.automatisch_ergaenzt).toBe(true)
+    const gesagt = zweiterLauf.positionen.find(p => p.beschreibung === 'Wandflächen streichen')
+    expect(gesagt?.automatisch_ergaenzt).toBeFalsy()
+  })
+
+  it('mutiert die übergebenen Original-Positionen nicht', () => {
+    const original = [pos('Wandflächen streichen', 35)]
+    pruefeUndErgaenzeVollstaendigkeit('maler', original, 'Wände streichen, hohe Decken.')
+    expect(original[0].automatisch_ergaenzt).toBeUndefined()
+  })
+})

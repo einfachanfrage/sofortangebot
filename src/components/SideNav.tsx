@@ -2,11 +2,16 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, Mic } from 'lucide-react'
+import { Home, FileText, Users, Settings, Mic } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 
+// DC-002: „Angebote" fehlte hier komplett — am Desktop kam man nur über
+// einen kleinen „Alle →"-Link auf dem Dashboard dorthin, mobil ist es einer
+// von vier BottomNav-Hauptreitern. Reihenfolge/Icon spiegeln jetzt
+// BottomNav.tsx (Dashboard, Angebote, Kunden, Einstellungen).
 const NAV = [
   { href: '/dashboard', icon: Home, label: 'Dashboard' },
+  { href: '/angebote', icon: FileText, label: 'Angebote' },
   { href: '/kunden', icon: Users, label: 'Kunden' },
   { href: '/einstellungen', icon: Settings, label: 'Einstellungen' },
 ]

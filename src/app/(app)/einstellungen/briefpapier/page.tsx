@@ -97,7 +97,11 @@ export default function BriefpapierUebersicht() {
       ist_standard: false,
     }).select().single()
     if (error) { setDbError(true); return }
-    if (data) router.push(`/einstellungen/briefpapier/${data.id}`)
+    // DC-031: ?neu=1 markiert, dass diese Zeile gerade erst leer angelegt
+    // wurde — der Editor löscht sie beim Zurückgehen wieder, falls der
+    // Nutzer nichts geändert hat, statt eine leere "Neue Variante" liegen
+    // zu lassen (gleiches Muster wie bei leeren Angebots-Entwürfen).
+    if (data) router.push(`/einstellungen/briefpapier/${data.id}?neu=1`)
   }
 
   return (

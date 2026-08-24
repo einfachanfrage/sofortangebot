@@ -3,6 +3,7 @@ import { segmentiereRaeume, loeseKorrekturenAuf, bauSegmentiertenTranskript } fr
 import { erkenneErgaenzungen, bereiteFuerKiAuf } from '@/lib/ergaenzungs-erkenner'
 import { extrahiereKorrekturen, formatKorrekturenFuerKi } from '@/lib/korrektur-resolver'
 import { wendeImplizitRegelnAn } from '@/lib/implizit-wissen'
+import { ergaenzeOeffnungenAusText } from './gesagte-werte'
 import { berechneUndPruefeAlleGewerke } from './mehrgewerk'
 import { berechneBewertung } from './bewertung'
 import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfrage } from './types'
@@ -135,9 +136,78 @@ export function verarbeiteExtraktion(
     if (wurdeRepariert) extraktion = { ...extraktion, bereiche: repariert }
   }
 
+  // ── DC-026 (2026-08-24): erst selbst nachlesen, dann fragen ──────────────
+  // Diese drei Blöcke standen bisher UNTERHALB der Rückfragen-Erzeugung. Das
+  // war die eigentliche Ursache von DC-026 („fragt nach Sachen, die ich schon
+  // gesagt habe"): Die Fragen entstanden aus dem, was GPT strukturiert
+  // geliefert hatte — und erst danach lasen unsere eigenen, getesteten Parser
+  // dieselben Werte aus dem Transkript nach. Gefragt wurde also nach Zahlen,
+  // mit denen einen Moment später ohnehin gerechnet wurde. Jetzt in der
+  // richtigen Reihenfolge: Hausaufgaben zuerst, gefragt wird nur noch, was
+  // dann wirklich offen ist. Inhaltlich ist an den Blöcken nichts geändert.
+
+  // Direkte Flächenangaben aus Transkript patchen wenn GPT sie nicht extrahiert hat
+  // Greift für Single-Raum — bei Multi-Raum zu riskant (Zuordnung unklar)
+  if ((extraktion.raeume?.length ?? 0) === 1) {
+    const r = extraktion.raeume[0]
+    const t = verarbeitetText
+
+    if (r.wandflaeche_direkt === null || r.wandflaeche_direkt === undefined) {
+      const wand = extrahiereWandflaeche(t)
+      if (wand !== null) r.wandflaeche_direkt = wand
+    }
+
+    if (r.deckflaeche_direkt === null || r.deckflaeche_direkt === undefined) {
+      const deck = extrahiereDeckenflaeche(t)
+      if (deck !== null) {
+        r.deckflaeche_direkt = deck
+        if (!r.flaeche) r.flaeche = deck
+      }
+    }
+
+    if ((r.wandflaeche_abzug_m2 === null || r.wandflaeche_abzug_m2 === undefined) && r.wandflaeche_direkt) {
+      const abzug = extrahiereAbzug(t)
+      if (abzug !== null) r.wandflaeche_abzug_m2 = abzug
+    }
+  }
+
+  // Tor/Garagentor in tueren[] injizieren — GPT erkennt "Tor" oft nicht
+  if (extraktion.gewerk === 'maler') {
+    const tor = extrahiereTorMasse(textMitZahlen)
+    if (tor) {
+      for (const raum of extraktion.raeume ?? []) {
+        // Nur injizieren wenn noch keine passende Tür/kein Tor vorhanden
+        const hatBigTuer = (raum.tueren ?? []).some((t: { breite?: number }) => (t.breite ?? 0) >= 1.5)
+        if (!hatBigTuer) {
+          raum.tueren = [{ breite: tor.breite, hoehe: tor.hoehe }]
+        }
+      }
+    }
+  }
+
+  // Fenster/Tür-Anzahl: direkt aus Text extrahieren (zuverlässiger als GPT-Felder)
+  const fensterAnzahlText = zaehleFenster(textMitZahlen)
+  const tuerenAnzahlText = zaehleTueren(textMitZahlen)
+
+  // DC-026: Die eben gezählten Öffnungen auch in den Raum schreiben. Bisher
+  // wurden sie nur als `meta` an die Mengenberechnung weitergereicht — an
+  // `raum.fenster` hängt aber die Rückfrage „Wie viele Fenster hat X?"
+  // (kontext-analyzer.ts). Ergebnis war: gefragt wurde nach einer Zahl, mit
+  // der längst gerechnet wurde. Genau der Fall aus Sandys Testtranskript.
+  //
+  // Bewusst nur bei GENAU EINEM Raum: `zaehleFenster`/`zaehleTueren` lesen
+  // über das ganze Transkript, bei mehreren Räumen wäre die Zuordnung
+  // geraten — dieselbe Vorsicht wie beim Flächen-Patch oben. Für die
+  // Mehrraum-Fälle greift stattdessen der Vorschlag mit Zitat (DC-025).
+  //
+  // Die Verneinung gewinnt weiter: sagt jemand „ohne Fenster", wird nichts
+  // injiziert (gleiche Prüfung wie im kontext-analyzer, gleiche Fehlerklasse
+  // wie PM-011 „keine Kleinreparatur trotz Verneinung").
+  ergaenzeOeffnungenAusText(extraktion, textMitZahlen)
+
   // Rückfragen aus KI und deterministischer Kontextanalyse zusammenführen.
   // Bereits beantwortete Angaben werden vor der Mengenberechnung eingesetzt.
-  const rueckfragenErgebnis = bereiteRueckfragenVor(extraktion, antworten)
+  const rueckfragenErgebnis = bereiteRueckfragenVor(extraktion, antworten, textMitZahlen)
   extraktion = rueckfragenErgebnis.extraktion
   const rueckfragen = rueckfragenErgebnis.rueckfragen
 
@@ -184,49 +254,6 @@ export function verarbeiteExtraktion(
 
   // Raw-Text überschreibt GPT-Transkript — GPT normalisiert und verliert "nur X"-Angaben
   extraktion.transkript = text
-
-  // Direkte Flächenangaben aus Transkript patchen wenn GPT sie nicht extrahiert hat
-  // Greift für Single-Raum — bei Multi-Raum zu riskant (Zuordnung unklar)
-  if ((extraktion.raeume?.length ?? 0) === 1) {
-    const r = extraktion.raeume[0]
-    const t = verarbeitetText
-
-    if (r.wandflaeche_direkt === null || r.wandflaeche_direkt === undefined) {
-      const wand = extrahiereWandflaeche(t)
-      if (wand !== null) r.wandflaeche_direkt = wand
-    }
-
-    if (r.deckflaeche_direkt === null || r.deckflaeche_direkt === undefined) {
-      const deck = extrahiereDeckenflaeche(t)
-      if (deck !== null) {
-        r.deckflaeche_direkt = deck
-        if (!r.flaeche) r.flaeche = deck
-      }
-    }
-
-    if ((r.wandflaeche_abzug_m2 === null || r.wandflaeche_abzug_m2 === undefined) && r.wandflaeche_direkt) {
-      const abzug = extrahiereAbzug(t)
-      if (abzug !== null) r.wandflaeche_abzug_m2 = abzug
-    }
-  }
-
-  // Tor/Garagentor in tueren[] injizieren — GPT erkennt "Tor" oft nicht
-  if (extraktion.gewerk === 'maler') {
-    const tor = extrahiereTorMasse(textMitZahlen)
-    if (tor) {
-      for (const raum of extraktion.raeume ?? []) {
-        // Nur injizieren wenn noch keine passende Tür/kein Tor vorhanden
-        const hatBigTuer = (raum.tueren ?? []).some((t: { breite?: number }) => (t.breite ?? 0) >= 1.5)
-        if (!hatBigTuer) {
-          raum.tueren = [{ breite: tor.breite, hoehe: tor.hoehe }]
-        }
-      }
-    }
-  }
-
-  // Fenster/Tür-Anzahl: direkt aus Text extrahieren (zuverlässiger als GPT-Felder)
-  const fensterAnzahlText = zaehleFenster(textMitZahlen)
-  const tuerenAnzahlText = zaehleTueren(textMitZahlen)
 
   // Etappe 2: saubere KI-Signale bündeln — der Vertrag bevorzugt diese vor Rohtext-Regex
   const kiSignale = {

@@ -535,6 +535,11 @@ export default function EntwurfPage() {
 
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
+  // DC-031: wird kurz vor mediaRef.current?.stop() auf true gesetzt, wenn die
+  // Aufnahme verworfen statt hochgeladen werden soll (Abbrechen-Button, oder
+  // Navigation weg von der Seite während einer laufenden Aufnahme) — mr.onstop
+  // prüft das und überspringt dann handleAudioStop()/den Upload.
+  const skipUploadRef = useRef(false)
   const dauerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const geraet = useRef('')
   const zettelInputRef = useRef<HTMLInputElement>(null)
@@ -759,6 +764,7 @@ export default function EntwurfPage() {
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       mr.onstop = async () => {
         stream.getTracks().forEach(t => t.stop())
+        if (skipUploadRef.current) { skipUploadRef.current = false; return }
         await handleAudioStop(new Blob(chunksRef.current, { type: mimeType || mr.mimeType || 'audio/webm' }))
       }
       mr.start()
@@ -772,6 +778,15 @@ export default function EntwurfPage() {
   }, [])
 
   function stopRecording() {
+    mediaRef.current?.stop()
+    setRecording(false)
+    if (dauerTimerRef.current) clearInterval(dauerTimerRef.current)
+  }
+
+  // DC-031: Aufnahme abbrechen — Mikro sofort freigeben, NICHTS hochladen.
+  // Anders als stopRecording() (stoppt UND lädt hoch).
+  function cancelRecording() {
+    skipUploadRef.current = true
     mediaRef.current?.stop()
     setRecording(false)
     if (dauerTimerRef.current) clearInterval(dauerTimerRef.current)
@@ -957,6 +972,14 @@ export default function EntwurfPage() {
 
   const kundenname = (quoteInfo?.customer as { name?: string } | null)?.name
   const hatBestehendPositionen = (quoteInfo?.quote_items?.length ?? 0) > 0
+  // DC-031: "Zurück" landete bisher IMMER auf /angebot/[id] — für ein frisches,
+  // leeres Angebot (0 €, kein Kunde, keine Positionen — der Fall direkt nach
+  // "+ Neues Angebot") ist das eine verwirrende Sackgasse. Nur wenn dieses
+  // Angebot schon einen Kunden ODER bereits berechnete Positionen hat (also
+  // wirklich schon "etwas ist", z. B. der Nachtrags-Fall über den
+  // "Aufnahme"-Link in einem bestehenden Angebot), geht's zurück dorthin —
+  // sonst zurück zum Dashboard, wo der Nutzer eigentlich herkam.
+  const zielZurueck = (!kundenname && !hatBestehendPositionen) ? '/dashboard' : `/angebot/${angebotId}`
   // "Verwertbar" = fließt in die Angebots-Generierung: Sprache + Zettel-Scans
   // (typ 'foto' mit Transkript bzw. gerade in Verarbeitung). Reine Doku-Fotos nicht.
   const sprachen = aufnahmen.filter(a =>
@@ -1075,12 +1098,17 @@ export default function EntwurfPage() {
   // ── Zurück-Bestätigung Screen ─────────────────────────────────────────────
 
   function handleBackClick() {
+    // DC-031: Eine laufende Aufnahme darf nicht einfach im Hintergrund
+    // weiterlaufen (Mikro bliebe offen) — beim Verlassen der Seite wird sie
+    // verworfen, nicht hochgeladen (der Nutzer wollte ja gerade zurück, nicht
+    // fertig aufnehmen).
+    if (recording) cancelRecording()
     // Wenn Aufnahmen vorhanden aber noch keine Positionen generiert → nachfragen
     const hatUnverarbeiteteAufnahmen = sprachen.length > 0 && !hatBestehendPositionen
     if (hatUnverarbeiteteAufnahmen) {
       setScreen('zurueck_bestaetigen')
     } else {
-      router.push(`/angebot/${angebotId}`)
+      router.push(zielZurueck)
     }
   }
 
@@ -1102,7 +1130,7 @@ export default function EntwurfPage() {
               Positionen berechnen →
             </button>
             <button
-              onClick={() => router.push(`/angebot/${angebotId}`)}
+              onClick={() => router.push(zielZurueck)}
               className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
             >
               Trotzdem zurück ohne Berechnen
@@ -1332,13 +1360,25 @@ export default function EntwurfPage() {
 
         {/* Aufnahme-Button */}
         {recording ? (
-          <button
-            onClick={stopRecording}
-            className="w-full flex items-center justify-center gap-3 rounded-2xl font-extrabold text-[17px] bg-red-500 text-white py-5 shadow-xl shadow-red-300 scale-[1.02] transition-all select-none"
-          >
-            <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
-            Tippen zum Stoppen — {recordingDauer}s
-          </button>
+          <div className="flex items-center gap-2">
+            {/* DC-031: Aufnahme abbrechen, ohne sie hochzuladen — vorher gab es
+                während einer laufenden Aufnahme keine Möglichkeit, sie zu
+                verwerfen; "Tippen zum Stoppen" hat immer hochgeladen. */}
+            <button
+              onClick={cancelRecording}
+              aria-label="Aufnahme abbrechen"
+              className="shrink-0 w-14 h-[60px] flex items-center justify-center rounded-2xl bg-white border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/50 active:scale-95 transition-all"
+            >
+              <X size={22} strokeWidth={2.5} />
+            </button>
+            <button
+              onClick={stopRecording}
+              className="flex-1 flex items-center justify-center gap-3 rounded-2xl font-extrabold text-[17px] bg-red-500 text-white py-5 shadow-xl shadow-red-300 scale-[1.02] transition-all select-none"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+              Tippen zum Stoppen — {recordingDauer}s
+            </button>
+          </div>
         ) : (
           <div className="flex items-end justify-center gap-8">
             {/* Zettel scannen */}
@@ -1395,7 +1435,24 @@ export default function EntwurfPage() {
           <div className="fixed inset-0 z-40 flex items-end">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAufnahmeDetail(null)} />
             <div className="relative w-full max-h-[85dvh] overflow-y-auto bg-[#F7F7F5] rounded-t-3xl px-4 pt-4 pb-8 shadow-2xl">
-              <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+              {/* DC-031: eigener, eindeutiger Schließen-Button — die einzige
+                  vorherige Möglichkeit, dieses Sheet zu schließen, ohne die
+                  Aufnahme zu löschen, war ein Tap auf den dunklen Hintergrund
+                  (nicht erkennbar). Bewusst als Text statt als "X", weil die
+                  Karte selbst schon ein "X" hat — das aber löscht, nicht
+                  schließt (siehe onDelete unten). Zwei optisch gleiche X in
+                  einem Sheet mit unterschiedlicher Bedeutung wäre die nächste
+                  Falle gewesen. */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-16" />
+                <div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" />
+                <button
+                  onClick={() => setAufnahmeDetail(null)}
+                  className="w-16 text-right text-[#2C2C2C]/40 font-semibold text-[13px]"
+                >
+                  Schließen
+                </button>
+              </div>
               <AufnahmeCard
                 aufnahme={a}
                 wartetSeit={vollExtraktionWartetSeitRef.current.get(a.id)}
