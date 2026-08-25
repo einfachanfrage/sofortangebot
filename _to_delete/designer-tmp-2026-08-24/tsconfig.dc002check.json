@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "tsBuildInfoFile": null },
+  "include": ["src/components/SideNav.tsx", "next-env.d.ts"]
+}

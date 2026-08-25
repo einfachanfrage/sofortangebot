@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 
 export default function PasswortResetPage() {
@@ -11,19 +12,43 @@ export default function PasswortResetPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [ready, setReady] = useState(false)
+  const [linkInvalid, setLinkInvalid] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
-    // Supabase verarbeitet den Token aus dem URL-Hash automatisch
-    // onAuthStateChange feuert mit SIGNED_IN wenn Token gültig
+    // CoS-P-003-Fix: der Reset-Link läuft jetzt über /auth/callback, das
+    // den Code serverseitig bereits gegen eine Session getauscht hat —
+    // beim Laden dieser Seite ist der Nutzer also im Normalfall schon
+    // eingeloggt. Direkt prüfen, statt nur passiv auf ein Auth-Event zu
+    // warten (das in diesem Fall gar nicht mehr feuert).
+    let cancelled = false
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!cancelled && user) setReady(true)
+    })
+
+    // Fallback für ältere/abweichende Link-Formate.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
+      if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
         setReady(true)
       }
     })
-    return () => subscription.unsubscribe()
+
+    return () => {
+      cancelled = true
+      subscription.unsubscribe()
+    }
   }, [])
+
+  useEffect(() => {
+    // Falls nach ein paar Sekunden weder Session noch Event da ist, ist der
+    // Link vermutlich abgelaufen oder ungültig — nicht ewig "wird geprüft"
+    // anzeigen, sondern das dem Nutzer sagen (statt einer Endlos-Warteseite).
+    if (ready) return
+    const timeout = setTimeout(() => setLinkInvalid(true), 4000)
+    return () => clearTimeout(timeout)
+  }, [ready])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -48,6 +73,26 @@ export default function PasswortResetPage() {
     }
 
     router.push('/dashboard')
+  }
+
+  if (!ready && linkInvalid) {
+    return (
+      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col justify-center px-5">
+        <div className="mb-10">
+          <Logo variant="light" className="text-4xl" />
+        </div>
+        <h1 className="text-xl font-black text-[#2C2C2C] mb-3 text-center">Link ungültig oder abgelaufen</h1>
+        <p className="text-[#2C2C2C]/60 font-semibold text-sm text-center mb-8">
+          Dieser Reset-Link funktioniert nicht mehr. Fordere einfach einen neuen an.
+        </p>
+        <Link
+          href="/passwort-vergessen"
+          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 text-center active:scale-95 transition-transform"
+        >
+          Neuen Link anfordern
+        </Link>
+      </div>
+    )
   }
 
   if (!ready) {

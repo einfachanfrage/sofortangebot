@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 
@@ -10,19 +9,20 @@ export default function PasswortVergessenPage() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
-  const supabase = createClient()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/passwort-reset`,
+    const res = await fetch('/api/auth/passwort-vergessen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
     })
 
     setLoading(false)
-    if (error) {
+    if (!res.ok) {
       setError('E-Mail konnte nicht gesendet werden. Bitte prüfe die Adresse.')
       return
     }

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "tsBuildInfoFile": null },
+  "include": [
+    "next-env.d.ts",
+    "src/app/(app)/angebot/[id]/AngebotDetail.tsx",
+    "src/lib/raum-geometrie.ts",
+    "src/lib/__tests__/raum-geometrie.test.ts"
+  ]
+}

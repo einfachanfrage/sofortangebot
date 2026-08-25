@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "tsBuildInfoFile": null },
+  "include": [
+    "next-env.d.ts",
+    "src/app/(app)/angebot/[id]/entwurf/page.tsx"
+  ]
+}

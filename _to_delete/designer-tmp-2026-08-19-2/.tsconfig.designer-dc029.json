@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "tsBuildInfoFile": null
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/data/customers.ts",
+    "src/components/NeueBaustelleButton.tsx",
+    "src/app/(app)/kunden/[id]/page.tsx",
+    "src/app/api/entwurf/neu/route.ts",
+    "src/app/(app)/angebot/neu/page.tsx",
+    "src/app/(app)/angebot/[id]/AngebotDetail.tsx",
+    "src/lib/types.ts",
+    "src/lib/baustellen.ts",
+    "src/lib/supabase/client.ts",
+    "src/lib/supabase/server.ts"
+  ]
+}

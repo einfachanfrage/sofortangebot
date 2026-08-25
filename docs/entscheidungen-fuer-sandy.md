@@ -18,14 +18,36 @@ löschen — Verlauf ist wertvoll).
 
 ---
 
-## Offen (aktuell keine)
+## Offen
 
-Stand 21.08.2026: CoS-002 Schritt 3 ist entschieden (siehe unten) — Sandys
+**🔵 DC-026-Nebenbefund (Head of Product Engineering, 24.08.):** Beim Fixen
+der „fragt nach Sachen, die ich schon gesagt habe"-Rückfragen ist ein toter
+Filter aufgefallen, der Fenster-/Türanzahl-Fragen unterdrücken sollte, wenn
+die Raummaße schon bekannt sind — der Filter greift technisch nicht mehr
+(er prüft ein Feld, das inzwischen vorher geleert wird), Head of Product
+Engineering hat ihn bewusst nicht repariert, weil das eine inhaltliche
+Entscheidung ist, keine Reparatur: **Soll das Tool bei bekannten Raummaßen
+weiterhin nach Fenster-/Türanzahl fragen, oder stillschweigend mit
+Standard-Annahmen (1 Fenster, 1 Tür) rechnen und gar nicht erst fragen?**
+Beides ist vertretbar — weniger Fragen vs. keine stille Annahme. Quelle:
+`docs/chief-of-staff-todos.md` CoS-020.
+
+**🔵 Zwei kleine Katalog-Fragen (Head of Product Engineering, 24.08., aus
+CoS-019):** (1) In „Abbruch" stehen jetzt „Erschwerniszuschlag Handabbruch"
+(25 %) und „Zuschlag schwierige Zufahrt" (40 %) nebeneinander — fachlich
+sehr ähnlich, aber nicht identisch. Zusammenlegen oder getrennt lassen? (2)
+Die Rubriken „Anfahrt & Organisation"/„Anfahrt & Planung"/„Anfahrt &
+Vorbereitung" heißen uneinheitlich, aber kein Gewerk hat zwei davon
+gleichzeitig — nur Kosmetik. Vereinheitlichen? Beide betreffen aktuell
+niemanden live (nur Maler/Bodenleger ausgeliefert), niedrige Priorität.
+Quelle: `docs/chief-of-staff-todos.md` CoS-019.
+
+Stand 24.08.2026: CoS-002 Schritt 3 ist entschieden (siehe unten) — Sandys
 Antwort auf die Rückfrage war eindeutig, keine weitere Klärung nötig. Die
 weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage,
 sondern die Gate-1-Gesamtfrage „ist das Tool reif für erste echte
-Testnutzer?" — die läuft über `docs/launch-readiness.md` (aktuell 23 %
-gegen den vollen Scope, Stand 20.08.).
+Testnutzer?" — die läuft über `docs/launch-readiness.md` (aktuell 31 %
+gegen den vollen Scope, Stand 24.08.).
 
 ---
 

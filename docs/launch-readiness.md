@@ -278,8 +278,8 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 2.1 | Registrierung, Login, Logout laufen sauber durch — komplett | G1 | 🟡 Registrierung/Login/Logout per Code-Review geprüft, sauber — Live-Nachtest steht aus (CoS-P-003) |
-| 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟡 läuft über Supabase-eigenes Mailsystem, nicht über unsere Resend-Anbindung — SMTP-Konfiguration im Supabase-Dashboard ungeprüft (CoS-P-004) |
-| 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🔴 wahrscheinlicher Bug gefunden (PKCE-Code wird nie gegen Session getauscht) — Live-Bestätigung + Fix stehen aus (CoS-P-003) |
+| 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟢 läuft jetzt über unsere eigene Resend-Anbindung statt Supabase-eigenes Mailsystem — Fix umgesetzt, Live-Test steht aus (CoS-P-004) |
+| 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🟢 Bug behoben (PKCE-Code-Tausch läuft jetzt über /auth/callback, „Link ungültig"-Anzeige statt Endlos-Ladeseite) — Live-Test steht aus (CoS-P-003) |
 | 2.4 | Kompletter erster Durchlauf (erste Anmeldung → erstes Angebot) end-to-end | G1 | ⚪ offen — nicht erhoben |
 | 2.5 | Account-Löschung möglich | G2 | 🟡 vermutlich vorhanden (Code existiert), kein QA-Test |
 | 2.6 | Schutz vor automatisierten Massen-Registrierungen (Captcha/Rate-Limit) | G2 | ⚪ offen — nicht erhoben (neu) |
@@ -290,7 +290,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 3.1 | Pflicht-Mails werden wirklich versendet (Willkommen, Verifizierung, Reset) | G1 | 🟡 Willkommens-Mail sauber über Resend, Verifizierung/Reset über Supabase-eigenes Mailsystem — Live-Zustellung ungetestet (CoS-P-004) |
+| 3.1 | Pflicht-Mails werden wirklich versendet (Willkommen, Verifizierung, Reset) | G1 | 🟢 alle drei Mails laufen jetzt über dieselbe eigene Resend-Anbindung — Fix umgesetzt, Live-Zustellung ungetestet (CoS-P-004) |
 | 3.2 | Absender korrekt, Links funktionieren, Inhalt stimmt, landen nicht im Spam | G1 | 🟡 DNS für sofortangebot.app geprüft: DKIM für Resend korrekt gesetzt, DMARC nur im Beobachtungsmodus (p=none) — Live-Spam-Test steht aus |
 | 3.3 | Weitere Mails je nach Flow (Quittung/Rechnung, Angebot fertig) | G2 | ⚪ offen — nicht erhoben |
 | 3.4 | SPF/DKIM/DMARC korrekt gesetzt (Zustellbarkeit, kein Spam-Ordner) | G1 | ⚪ offen — nicht erhoben (neu) |

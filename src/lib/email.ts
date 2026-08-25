@@ -38,6 +38,44 @@ export async function sendWelcomeEmail(to: string, vorname?: string): Promise<Se
   return error ? { ok: false, error: error.message } : { ok: true }
 }
 
+// ── 1b. E-Mail-Bestätigung (Registrierung) ──────────────────────────────────
+// Ersetzt Supabases eingebaute Bestätigungs-Mail (CoS-P-004): läuft jetzt
+// über dieselbe, bereits sauber authentifizierte Resend-Anbindung wie die
+// Willkommens-Mail, statt über Supabases eigenes (ungeprüftes) Mailsystem.
+export async function sendVerificationEmail(to: string, link: string): Promise<SendResult> {
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: [to],
+    subject: 'Bitte bestätige deine E-Mail-Adresse',
+    text: `Hey,\n\nbitte bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren:\n\n${link}\n\nDer Link ist eine Stunde gültig.\n\nSandra`,
+    html: wrap(`
+      <p style="font-size:18px;font-weight:900;margin-top:0;">Fast geschafft.</p>
+      <p>Bitte bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren.</p>
+      <p>${btn('E-Mail bestätigen →', link)}</p>
+      <p style="margin-bottom:0;color:#999;font-size:13px;">Der Link ist eine Stunde gültig. Falls du dich nicht registriert hast, kannst du diese Mail einfach ignorieren.</p>
+    `),
+  })
+  return error ? { ok: false, error: error.message } : { ok: true }
+}
+
+// ── 1c. Passwort zurücksetzen ───────────────────────────────────────────────
+// Ersetzt Supabases eingebaute Reset-Mail (CoS-P-004), gleicher Grund wie oben.
+export async function sendPasswordResetEmail(to: string, link: string): Promise<SendResult> {
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: [to],
+    subject: 'Passwort zurücksetzen',
+    text: `Hallo,\n\nhier ist dein Link zum Zurücksetzen deines Passworts:\n\n${link}\n\nDer Link ist eine Stunde gültig. Falls du das nicht angefordert hast, kannst du diese Mail ignorieren — es passiert nichts mit deinem Konto.\n\nSandra`,
+    html: wrap(`
+      <p style="font-size:18px;font-weight:900;margin-top:0;">Passwort zurücksetzen</p>
+      <p>Hier ist dein Link zum Zurücksetzen deines Passworts.</p>
+      <p>${btn('Neues Passwort festlegen →', link)}</p>
+      <p style="margin-bottom:0;color:#999;font-size:13px;">Der Link ist eine Stunde gültig. Falls du das nicht angefordert hast, kannst du diese Mail ignorieren — es passiert nichts mit deinem Konto.</p>
+    `),
+  })
+  return error ? { ok: false, error: error.message } : { ok: true }
+}
+
 // ── 2. Angebot versendet (interne Kopie an Handwerker) ─────────────────────
 export async function sendQuoteSentConfirmation(opts: {
   to: string

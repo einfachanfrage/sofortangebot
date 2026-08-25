@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "tsBuildInfoFile": null },
+  "include": [
+    "src/lib/status.ts",
+    "src/lib/types.ts",
+    "src/app/(app)/angebot/[id]/AngebotDetail.tsx",
+    "src/components/MobileQuoteCard.tsx",
+    "src/app/(app)/angebote/page.tsx",
+    "src/app/(app)/dashboard/page.tsx",
+    "src/app/(app)/kunden/[id]/page.tsx",
+    "next-env.d.ts"
+  ]
+}

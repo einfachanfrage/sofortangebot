@@ -1,11 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
-
-const AGB_VERSION = '2026-06'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -14,7 +11,6 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
-  const supabase = createClient()
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
@@ -32,20 +28,15 @@ export default function RegisterPage() {
 
     setLoading(true)
 
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
-        data: {
-          agb_akzeptiert_am: new Date().toISOString(),
-          agb_version: AGB_VERSION,
-        },
-      },
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, agbAkzeptiert }),
     })
+    const result = await res.json()
 
-    if (signUpError) {
-      setError('Registrierung fehlgeschlagen. Versuche es nochmal.')
+    if (!res.ok || result.error) {
+      setError(result.error ?? 'Registrierung fehlgeschlagen. Versuche es nochmal.')
       setLoading(false)
       return
     }

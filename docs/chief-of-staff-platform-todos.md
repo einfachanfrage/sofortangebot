@@ -39,8 +39,8 @@ hast): CoS-013 in `chief-of-staff-todos.md`.
 |---|---|---|---|
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
 | CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟡 Erster Schritt umgesetzt (Sentry im Kernpfad), Restarbeit sauber abgegrenzt | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
-| CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🔴 Code-Review fertig — wahrscheinlicher Bug gefunden: Passwort-Reset dürfte aktuell fehlschlagen | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
-| CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟡 Code-Review fertig — Willkommens-Mail sauber aufgesetzt, Verifizierung/Reset laufen über Supabase-eigenes Mailsystem, nicht geprüft | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
+| CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🟢 Fix umgesetzt — Passwort-Reset-Bug behoben, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
+| CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟢 Fix umgesetzt — alle drei Mails laufen jetzt über unsere eigene Resend-Anbindung, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
 | CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei erledigt, einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
 
@@ -163,8 +163,8 @@ Fehlerstellen außerhalb des Kernpfads; die zwei toten Logging-Spalten.
 ## CoS-P-003 — Accounts/Onboarding end-to-end testen
 
 **Datum:** 2026-08-17
-**Status:** 🔴 Code-Review fertig (2026-08-24) — wahrscheinlicher Bug beim
-Passwort-Reset gefunden, Live-Test steht noch aus
+**Status:** 🟢 Fix umgesetzt (2026-08-25), auf Sandys Rechner ausgeliefert —
+Live-Test mit echtem Klick-Durchlauf steht noch aus
 
 **Hintergrund:** Übernommen von CoS-003. Registrierung, Login, Logout,
 Passwort-Reset — nie dokumentiert end-to-end durchgespielt.
@@ -204,18 +204,32 @@ Code-Review aller vier Flows:**
   Test-Konto. Vor dem Fixen kurz live bestätigen (z. B. echte Registrierung
   + Passwort-vergessen-Link anklicken), dann fixen.
 
-  **Vorgeschlagener Fix (noch nicht umgesetzt):** `resetPasswordForEmail`
-  in `passwort-vergessen/page.tsx` auf `redirectTo:
-  ${origin}/auth/callback?next=/passwort-reset` ändern (statt direkt auf
-  `/passwort-reset`) — dann läuft der Code-Tausch serverseitig genauso wie
-  bei der Registrierung, und `/passwort-reset` sieht beim Laden bereits
-  eine gültige Session. Kleine Ergänzung in `auth/callback/route.ts` nötig,
-  damit die Willkommens-Mail-Logik (`next.includes('/onboarding')`) dabei
-  nicht anspringt — ist aktuell schon eng genug gefasst, sollte kein
-  Problem sein.
-
   Quelle zum bekannten Fehlerbild:
   [supabase/supabase#27816](https://github.com/supabase/supabase/issues/27816)
+
+  **Fix umgesetzt (2026-08-25), auf Sandys Freigabe „003 ja bitte direkt
+  reparieren":** Der Reset-Link läuft jetzt über `/auth/callback` statt
+  direkt auf `/passwort-reset` (Redirect via `admin.generateLink({type:
+  'recovery', ...})` in der neuen Route `src/app/api/auth/passwort-
+  vergessen/route.ts`, siehe CoS-P-004 unten — beide Fixes hängen technisch
+  zusammen, weil der Versand jetzt über dieselbe neue Route läuft). Zusätzlich
+  prüft `passwort-reset/page.tsx` beim Laden aktiv per `getUser()`, ob schon
+  eine Session besteht (statt nur passiv auf ein Auth-Event zu warten), und
+  zeigt nach 4 Sekunden ohne Session eine „Link ungültig oder abgelaufen"-
+  Seite mit Link zurück zu „Neuen Link anfordern" statt einer endlosen
+  Lade-Anzeige. Die Willkommens-Mail-Logik in `auth/callback/route.ts`
+  bleibt unberührt (`next.includes('/onboarding')` greift für
+  `/passwort-reset` weiterhin nicht).
+
+  **Noch offen:** kein Live-Klick-Durchlauf mit echtem Test-Konto und
+  echtem Posteingang (aus dieser Session heraus kein E-Mail-Zugriff
+  möglich) — Code-Review + bekanntes Fehlerbild ergeben hohe Konfidenz,
+  aber der Fix ist nicht scharf gegen ein echtes Postfach getestet. Ein
+  automatischer TypeScript-Check der geänderten Dateien war im
+  Geräte-Terminal aus Ressourcengründen nicht vollständig durchführbar
+  (bricht regelmäßig nach 45s ab) — sollte aber beim Vercel-Deploy selbst
+  auffallen, falls doch ein Tippfehler drin wäre, da der Build bei
+  TypeScript-Fehlern automatisch abbricht.
 
 **Nicht Teil dieser Runde:** Rate-Limit/Captcha gegen automatisierte
 Massen-Registrierung (`launch-readiness.md` 2.6) und Session-/Token-Ablauf
@@ -228,8 +242,9 @@ Dashboard-Zugriff.
 ## CoS-P-004 — Transaktions-E-Mails auf echte Zustellung prüfen
 
 **Datum:** 2026-08-17
-**Status:** 🟡 Code-Review fertig (2026-08-24), Zustellung nicht live
-getestet
+**Status:** 🟢 Fix umgesetzt (2026-08-25), auf Sandys Rechner ausgeliefert —
+alle drei Mails laufen jetzt über die eigene Resend-Anbindung, Live-Test
+steht noch aus
 
 **Hintergrund:** Übernommen von CoS-004. Unklar, ob Willkommens-/
 Verifizierungs-/Reset-Mails wirklich zugestellt werden, nicht nur im Code
@@ -274,6 +289,27 @@ ausgelöst.
     reiner Beobachtungsmodus, keine Durchsetzung. Für den Start okay,
     könnte später auf `p=quarantine` verschärft werden, sobald Vertrauen
     in den Versand besteht.
+
+- **Fix umgesetzt (2026-08-25), auf Sandys Freigabe „004 bitte b)":**
+  Option (b) — Verifizierungs- und Reset-Mail laufen jetzt beide über
+  unsere eigene Resend-Anbindung statt über Supabase, genau wie die
+  Willkommens-Mail. Damit entfällt der Dashboard-Gegencheck oben komplett;
+  es muss nichts mehr manuell geprüft werden.
+  - Neue Route `src/app/api/auth/register/route.ts`: legt den Nutzer per
+    `admin.createUser()` an (liefert sauber einen 422 bei bereits
+    existierender E-Mail, ohne das bestehende Konto anzufassen) und
+    verschickt danach die Bestätigungs-Mail selbst über
+    `sendVerificationEmail()`.
+  - Neue Route `src/app/api/auth/passwort-vergessen/route.ts`: erzeugt den
+    Reset-Link per `admin.generateLink({type:'recovery', ...})` und
+    verschickt ihn über die neue `sendPasswordResetEmail()` — Antwort ist
+    bewusst immer „E-Mail gesendet", egal ob die Adresse existiert (verhindert
+    Account-Enumeration, wie zuvor bei Supabases eigenem Versand).
+  - `register/page.tsx` und `passwort-vergessen/page.tsx` rufen jetzt diese
+    beiden Routen auf statt Supabase direkt.
+  - Beide neuen Mail-Bausteine (`sendVerificationEmail`,
+    `sendPasswordResetEmail`) liegen in `src/lib/email.ts`, gleiche
+    Vorlage/Absender wie die bestehende Willkommens-Mail.
 
 - **Noch offen, aus dieser Session heraus nicht möglich:** eine echte
   Zustellung live beobachten (Test-Registrierung durchspielen, schauen ob
