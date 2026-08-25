@@ -173,3 +173,45 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
     expect(ergebnis[0].beschreibung).toBe('Fertigparkett verlegen vollflächig verklebt — Wohnzimmer')
   })
 })
+
+// PM-013, Nachtest 4 (2026-08-25): Die Dehnungsfuge war zum dritten Mal anders
+// ausgegangen — diesmal komplett weg. Im Rohtranskript aus der Produktions-DB
+// stand der Grund: Whisper hat „Dehnungsfuge" als „DEHNUNGSFUHRE" geschrieben.
+// Der Fallback war nie kaputt, das Wort kam nur nie bei ihm an.
+describe('PM-013 – Whisper-Verhörer bei „Dehnungsfuge"', () => {
+  const parkett = (): BerechnetePosition[] => ([
+    pos('Fertigparkett verlegen inkl. 15% Verschnitt — Wohnzimmer', 41.4),
+  ])
+
+  it('erkennt die Dehnungsfuge auch als „Dehnungsfuhre" (echtes Transkript)', () => {
+    const ergebnis = ergaenzeAusAufnahmeHinweisen(
+      parkett(), [],
+      '8 x 4,5, Wohnzimmer, Eichenparkett, Fischgrät verlegt. Das braucht ja mehr Verschnitt, ist schon eine große Fläche, da muss wahrscheinlich eine Dehnungsfuhre rein. Macht das mal bitte mit rein.',
+    )
+    const treffer = ergebnis.find(p => /dehnungsfuge/i.test(p.beschreibung))
+    expect(treffer, `keine Position — hat: ${ergebnis.map(p => p.beschreibung).join(' | ')}`).toBeDefined()
+    expect(treffer!.menge).toBe(1)
+    expect(treffer!.einheit).toBe('Stück')
+  })
+
+  it.each([
+    'da muss ne Dehnungsfuge rein',
+    'da muss ne Dehnungsfuhre rein',
+    'da muss eine Bewegungsfuge rein',
+    'da müssen Dehnungsfugen rein',
+    'da muss eine Dehn-Fuge rein',
+  ])('versteht die Schreibweise „%s"', satz => {
+    const ergebnis = ergaenzeAusAufnahmeHinweisen(parkett(), [], satz)
+    expect(ergebnis.some(p => /dehnungsfuge/i.test(p.beschreibung))).toBe(true)
+  })
+
+  it('erfindet ohne Wortstamm nichts — eine „Fuhre" allein reicht nicht', () => {
+    const ergebnis = ergaenzeAusAufnahmeHinweisen(parkett(), [], 'Eine Fuhre Sand kommt noch dazu.')
+    expect(ergebnis.some(p => /dehnungsfuge/i.test(p.beschreibung))).toBe(false)
+  })
+
+  it('respektiert die Verneinung weiterhin, auch beim Verhörer', () => {
+    const ergebnis = ergaenzeAusAufnahmeHinweisen(parkett(), [], 'Ohne Dehnungsfuhre, das brauchen wir hier nicht.')
+    expect(ergebnis.some(p => /dehnungsfuge/i.test(p.beschreibung))).toBe(false)
+  })
+})

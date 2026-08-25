@@ -515,6 +515,366 @@ den beiden Raumsummen. Das war der schwerste Fund der ganzen Testreihe — jetzt
 
 ---
 
+## PM-007 — Dachgeschoss: Kniestock + Dachschrägen + Dachfenster
+
+**Datum:** 2026-08-16 (aus dem Archiv zurückgeholt, 2026-08-21 — neuer, schwerwiegender Blocker-Bug macht
+den Fall wieder aktiv)
+**Status:** ❌ NEU, dringend (2026-08-21): Sandy hängt bei „Trotzdem überspringen" auf der
+Bodenflächen-Rückfrage komplett fest — dieselbe Rückfrage-Maske erscheint immer wieder, kein Weg zum
+Angebotsentwurf. Blockiert die komplette Nutzung dieses Falls. Vorherige Historie (Kniestock/Dachschrägen
+rechnerisch korrekt, siehe unten) bleibt als Referenz erhalten, wurde aber diesmal nicht mehr erreicht.
+
+**Zum Einsprechen:**
+„Dachzimmer, fünf mal dreieinhalb. Kniestock ist eins zwanzig hoch. Die Dachschrägen links und rechts jeweils zwölf Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles streichen, zweimal."
+
+**Soll-Lösung:**
+- Kniestockwände: Umfang 2×(5,00+3,50)=17,00 lfm × 1,20 m = **20,40 m²**
+- Dachschrägen: links 12 + rechts 12 = 24,00 m² brutto, minus 1 Dachfenster Standard (0,78×1,18=0,92 m²) = **23,08 m²**
+- Kein Deckenspiegel (nicht erwähnt) — keine eigene Position dafür
+- Keine normale „Wandflächen streichen"-Position — wäre falscher Zweig
+
+**Worauf achten:**
+- Wird der Dachgeschoss-Zweig überhaupt erkannt (braucht `kniestockhoehe` aus der Extraktion), oder rutscht das in die normale Wandflächen-Berechnung?
+- Kommen Kniestock und Dachschrägen als zwei getrennte Positionen mit den oben genannten Flächen?
+- Wird das Dachfenster von der Schrägenfläche abgezogen?
+- Fundort/Vorab-Hinweis: In `src/lib/mengen/gewerke/maler.ts`, Dachgeschoss-Zweig (ca. Zeile 295–342), fehlt bei „Kniestockwände streichen" und „Dachschrägen streichen" die „{anstriche}x"-Kennzeichnung im Positionstext, die der normale Zweig hat — rein kosmetisch (Menge/Preis unberührt), aber auf dem Papier sieht's dann so aus, als wäre nur 1× Anstrich drin. Schau, ob das im Ergebnis auch so aussieht.
+
+**Ist-Ergebnis (aus dem Tool):**
+- Erkennungskarte zeigte 3 getrennte Leistungen: „Wände streichen", „Dachschrägen streichen", „Kniestock streichen" — schon hier ein schlechtes Zeichen, weil ein Dachzimmer ohne genannte Giebelwand eigentlich nur Kniestock + Schräge hat, nicht noch eine dritte „Wände"-Leistung.
+- Rückfragen waren komplett generisch: „Wie hoch sind die Wände in Dachzimmer?" (2,60 m gewählt), „Wie viele Türen/Fenster?", „Wie groß ist die Bodenfläche?" (5 × 3,5 erneut eingegeben). Keine einzige Rückfrage zur Kniestockhöhe oder zu den Dachschrägenflächen — obwohl beides im Transkript klar genannt wurde („Kniestock eins zwanzig hoch", „Dachschrägen links und rechts je zwölf Quadratmeter").
+- Fertiges Angebot (2026-03EE, 175,98 €) enthält **nur**: Wandflächen streichen 2× (12 m² × 9,50 € = 114,00 €), Boden schützen (17,5 m² × 1,20 € = 21,00 €), Sockelleisten abkleben (16,1 lfdm × 0,80 € = 12,88 €). Weder „Kniestockwände" noch „Dachschrägen" tauchen als eigene Position auf.
+- Die 12 m² bei „Wandflächen streichen" lassen sich nicht aus den angezeigten Raumdaten (3,5 × 5 m, Höhe 2,6 m, 1 Tür, 1 Fenster) nachrechnen — nach Standardformel (Umfang 17,00 lfm × 2,60 m − Fenster − Tür) käme man auf rund 41 m², nicht 12 m².
+
+**Befund:**
+
+1. **Kompletter Fehlschlag des Dachgeschoss-Zweigs**
+   - Fundort: die Aktivierungsbedingung `istDachgeschoss` in `src/lib/mengen/gewerke/maler.ts`, ca. Zeile 87, greift nur wenn `kniestockhoehe`, `dachschraege_links_m2`/`_rechts_m2` oder `deckenspiegel_m2` aus der Extraktion gefüllt sind. Die Rückfragen legen nahe, dass keins davon gesetzt wurde — der Raum ist komplett in den normalen Wandflächen-Zweig gerutscht.
+   - Erwartet: Kniestockwände (20,40 m²) und Dachschrägen (23,08 m² netto) als zwei eigene Positionen.
+   - Tatsächlich: Beides fehlt vollständig. Stattdessen eine einzelne „Wandflächen streichen"-Position mit einer Zahl (12 m²), die sich nicht aus den angezeigten Maßen herleiten lässt — es steckt also vermutlich noch ein zweiter Fehler in der Berechnung selbst, on top von der fehlenden Zweig-Aktivierung.
+   - Einordnung: Das ist der schwerste strukturelle Fund bisher, gleichauf mit PM-005. Die komplette Produktkategorie „Dachgeschoss/Kniestock/Dachschräge" scheint vom Aufnahme-Schritt an nicht zu funktionieren, nicht nur an einer einzelnen Berechnungsstelle. Bitte zuerst bei der Extraktion (wie wird `kniestockhoehe` aus der Sprache erkannt?) ansetzen, dann erst bei der Menge nachschauen.
+
+**Fix-Update (Head of IT, 2026-08-16):** Genau derselbe Fehlerbau wie bei
+PM-008, nur an einer anderen Stelle — deshalb diesmal schnell gefunden. Der
+GPT-Prompt weist GPT ausdrücklich an, bei Kniestock/Dachschräge/Deckenspiegel
+die Felder `kniestockhoehe`, `dachschraege_links_m2`, `dachschraege_rechts_m2`,
+`dachschraege_je_seite_m2`, `deckenspiegel_m2` und `dachfenster` zu setzen —
+GPT bekommt also den richtigen Auftrag. Aber beim Einlesen der GPT-Antwort
+wurden genau diese 6 Felder nie in die interne Raum-Struktur übernommen (die
+Liste der "erlaubten" Felder war unvollständig). Ergebnis: die Werte waren
+nach dem Einlesen immer leer, egal was GPT geliefert hat — deshalb hat
+`istDachgeschoss` nie angeschlagen und der Raum ist in die normale (falsche)
+Wandflächen-Rechnung gerutscht. Das erklärt auch die unerklärliche „12 m²":
+das war der Zufallswert aus der falsch gegriffenen normalen Rechnung, keine
+eigene zweite Fehlerquelle.
+
+Fix: alle 6 Felder werden jetzt beim Einlesen übernommen. Nebenbei die
+kosmetische Lücke behoben, die du selbst schon markiert hattest — Kniestock-
+und Dachschrägen-Positionen zeigen jetzt auch „{n}x" für den Anstrich, wie
+alle anderen Positionen. 4 neue Tests (`maler-engine.test.ts`, exakt deine
+Soll-Zahlen: Kniestock 20,40 m², Dachschrägen 23,08 m²), alle 666 Tests im
+Projekt laufen weiter grün. Live-Test durch dich steht noch aus.
+
+**Fix-Update 2 (Head of IT, 2026-08-16) — die unverlangte 136,80-€-Grundierung:**
+Zwei getrennte Fundstellen, gleicher Fehlerbau, beide jetzt behoben.
+1. `pruefeGrundierung` (dieselbe Funktion wie beim PM-003-Fix) hatte für den
+   Dachschrägen-Fall keine Prüfung, ob wirklich "grundieren" gewünscht war —
+   sie hat die Fläche unconditional draufgesetzt, sobald überhaupt eine
+   Dachschrägen-Position da war. Jetzt gilt dasselbe Gate wie bei der
+   Wand-Grundierung: nur bei einem echten, im Transkript genannten
+   Grundierungs-Wunsch.
+2. Eine ZWEITE, ältere Funktion (`pruefeDachschraege`) hat unabhängig davon
+   noch eine eigene "Dachschräge Grundierung" ergänzt, ausgelöst allein durch
+   die WÖRTER "Dachschräge"/"Kniestock" irgendwo im Text — ganz ohne jeden
+   Grundierungs-Bezug. Sie stammt vermutlich noch aus der Zeit vor der
+   Dachgeschoss-Engine (als die Vollständigkeitsprüfung versucht hat, die
+   fehlende Berechnung selbst zu kompensieren) und wurde bei deren Einbau
+   nicht mit angepasst. Gleiches Gate jetzt auch hier ergänzt.
+Neuer Golden-Test PM-007b (`golden-korrekturen.test.ts`) stellt genau deinen
+Fall nach (Dachzimmer, GPT trägt "grundieren" impliziter Weise in arbeiten[]
+ein, Nutzer hat es nie gesagt) und prüft, dass keine Grundierungs-Position
+mehr entsteht. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
+
+**Nachtest (Prüfmeister, 2026-08-16):** Grundierung (136,80 €) ist bestätigt weg — Fix wirkt. Kniestock
+(20,4 m²) weiterhin exakt Soll. Zwei offene Punkte bleiben:
+
+1. **„Dachschräge spachteln / Untergrundvorbereitung" (0 €, unbepreist) taucht weiterhin auf**, obwohl
+   nie erwähnt — sieht nach derselben Fehlerfamilie aus wie die Grundierung, nur eine dritte, noch nicht
+   angefasste Fundstelle (evtl. noch in `pruefeFassade`/`maler-tapete.ts` oder einer Nachbarfunktion mit
+   demselben „nur weil das Wort Dachschräge irgendwo steht"-Muster).
+2. **Neuer Fund, direkt von Sandy bemerkt:** Die Rückfragen fragen weiterhin nach Fensteranzahl und nach
+   der Bodenfläche (Länge × Breite), obwohl beides im Transkript klar genannt wurde („Ein Dachfenster",
+   „fünf mal dreieinhalb") — bei Letzterem sind die Werte auf der Rückfrage sogar schon korrekt
+   vorausgefüllt (5,0 / 3,5), der Nutzer muss trotzdem einmal bestätigen. Das ist kein Rechenfehler,
+   sondern unnötige Reibung — siehe Notiz an den Designer (PD-005), Sandy hat dazu eine grundsätzliche
+   Meinung zur Rückfragen-UX.
+
+Dachschrägenfläche weiterhin 22,8 m² statt der von mir erwarteten 23,08 m² (Dachfenster-Abzug mit
+falschem Standardmaß) — reproduziert sich jetzt zum zweiten Mal identisch, also stabil und kein
+Zufall.
+
+**Fix-Update 3 (Head of IT, 2026-08-17) — beide Restpunkte behoben:**
+
+1. **Falsche Fläche (22,8 statt 23,08 m²):** Ursache war nicht bei uns im
+   Code, sondern ein Widerspruch zwischen GPT und unserem Code. Ich hab in
+   der Datenbank nachgesehen, was GPT bei deinem Testfall wirklich geliefert
+   hat: bei „normale Größe" (keine Maße genannt) hat sich GPT SELBST eine
+   Zahl ausgedacht — 1,20×1,00m, sein Standard für ein GANZ NORMALES Fenster
+   (denselben, den es überall im Tool nutzt), ehrlich mit einem eigenen Flag
+   „das ist geraten" markiert. Unser Code kennt aber einen ANDEREN, kleineren
+   Standard extra für Dachfenster (0,78×1,18m — Dachfenster sind in echt
+   meist kleiner als Wandfenster), genau der Wert aus deiner eigenen
+   Soll-Lösung. Weil GPT schon eine Zahl mitliefert, kam unser eigener,
+   passenderer Standard nie zum Zug. Fix: wenn GPT sein eigenes „geraten"-
+   Flag setzt, gilt jetzt unser Dachfenster-Standard statt GPTs Zahl — nur
+   bei echten, von dir genannten Maßen zählt GPTs Wert. Neuer Golden-Test
+   PM-007c mit deinen exakten Original-Extraktionsdaten aus der Datenbank.
+2. **Unverlangte „Dachschräge spachteln"-Position:** Genau die dritte
+   Fundstelle derselben Fehlerfamilie wie die schon gefixte Grundierung —
+   die Position kam bisher immer dazu, sobald „Dachschräge"/„Kniestock"
+   irgendwo im Text fiel, ganz ohne Prüfung auf ein echtes Signal. Jetzt nur
+   noch bei einem echten Ausbesserungs-Hinweis (Risse, Löcher, uneben,
+   spachteln, etc.), sonst nur als Erinnerung — gleiches Muster wie überall
+   sonst in diesem Bug-Komplex.
+
+3 neue Tests (PM-007c-Golden-Test + 2 Gegen-Tests für Spachteln in
+`vollstaendigkeit.test.ts`). Alle 687 Tests grün, `tsc` sauber. Live-Test
+durch dich steht für beide Punkte aus.
+
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Beide Restpunkte bestätigt behoben. Dachzimmer
+nochmal frisch eingesprochen (5×3,5, Kniestock 1,20, Dachschrägen je 12 m², 1 Dachfenster). Karte zeigt
+diesmal sauber 3 Leistungen (Wände/Dachschrägen/Kniestock streichen), keine unverlangte „Dachschräge
+spachteln" mehr. Im fertigen Angebot: Kniestockwände streichen 2× **20,4 m²** exakt Soll, Dachschrägen
+streichen 2× **23,08 m²** exakt Soll (Dachfenster-Abzug jetzt mit dem richtigen kleineren Standardmaß,
+vorher 22,8 m²) — beides bestätigt korrekt. Keine unverlangte Spachtel- oder Grundierungsposition mehr.
+Fachlich ist dieser Fall damit sauber.
+
+Zwei Punkte bleiben, keiner davon ein Rechenfehler:
+1. **Rückfragen-Redundanz reproduziert sich weiter** (PD-005): Bodenfläche wird erneut abgefragt, obwohl
+   auf der Karte schon „5,00 × 3,50 m" stand — die Rückfrage kommt sogar mit den richtigen Werten
+   vorausgefüllt (5,0/3,5), muss aber trotzdem bestätigt werden. Fenster-Anzahl (1) genauso nochmal
+   gefragt, obwohl „Fenster: 1" schon auf der Karte stand.
+2. **Neu:** Kniestockwände streichen UND Dachschrägen streichen haben beide **keinen Preis in der
+   Preisdatenbank** hinterlegt (0,00 €, „Preis fehlt in deiner Preisdatenbank"). Anders als bei einem
+   Erschwerniszuschlag ist das hier keine bewusste Nutzer-Preisfestlegung, sondern schlicht eine fehlende
+   Standardposition — siehe „Systemischer Fund" oben, Sandy will das für alle diese Fälle ergänzt haben.
+
+Damit ist PM-007 rechnerisch komplett grün. Offene Punkte sind Designer-Thema (PD-005) bzw.
+Preisdatenbank-Pflege, kein Code-Bug mehr in der eigentlichen Berechnung.
+
+
+**Nachtest (Sandy, 2026-08-21) — NEU: kompletter Blocker, kein Ergebnis erreichbar:**
+
+Karte zeigte diesmal „4 Positionen erkannt" — **Kniestockwände streichen 2× (20,4 m²)**,
+**Dachschrägen streichen 2× (23,08 m²)**, Boden schützen (17,5 m²), Sockelleisten abkleben (16,1 lfdm).
+Das ist ein echter Fortschritt gegenüber der allerersten Karte von 2026-08-16 (damals nur „Wände
+streichen" statt Kniestock/Dachschrägen) — die Karte erkennt die beiden Dachgeschoss-Positionen jetzt mit
+exakt den Soll-Werten.
+
+Beim Übergang zum Entwurf kam die Rückfrage „Wie groß ist die Bodenfläche in 'Dachzimmer'?" (mit den
+Optionen „Mit Raummaßen" / „Flächen direkt"). Sandy hat „Später ergänzen" bzw. „Trotzdem überspringen"
+angeklickt — **dieselbe Rückfrage-Maske erschien danach wieder, in einer Endlosschleife.** Kein Weg zum
+Angebotsentwurf gefunden, der Test musste an dieser Stelle abgebrochen werden. **Kein Ist-Ergebnis für den
+fertigen Entwurf verfügbar.**
+
+**Befund:**
+
+1. **Guter Teilerfolg:** Die Kniestock-/Dachschrägen-Erkennung auf der Karte selbst funktioniert jetzt mit
+   exakt den Soll-Zahlen (20,4 m² / 23,08 m²) — ein deutlicher Unterschied zum allerersten Testlauf.
+2. **Neuer, schwerwiegender Blocker: die Bodenflächen-Rückfrage lässt sich nicht überspringen.** Weder
+   „Später ergänzen" noch „Trotzdem überspringen" führt zum Entwurf — die Maske kommt stattdessen erneut.
+   Das ist potenziell kritischer als jeder bisher gefundene Rechenfehler: ein Nutzer, der aus welchem Grund
+   auch immer diese eine Rückfrage nicht direkt beantworten kann oder will, kommt überhaupt nicht mehr zu
+   seinem Angebot. Die schon länger bekannte Rückfragen-Redundanz bei diesem Fall (PD-005 — Bodenfläche
+   wird nochmal gefragt, obwohl „fünf mal dreieinhalb" im Transkript steht) ist damit von einer reinen
+   UX-Reibung zu einem kompletten Stopper eskaliert.
+3. Weil der Test hier feststeckte, ist unklar, ob die zugrundeliegende Berechnung (Kniestock/Dachschrägen
+   im fertigen Entwurf, nicht nur auf der Karte) noch so korrekt ist wie beim letzten bestätigten Durchlauf
+   vom 17.08. — das bleibt offen, bis der Blocker behoben ist.
+
+**Fix-Update 4 (Head of Product Engineering, 2026-08-24, Sandys Auftrag „guck's dir ganz genau an"):**
+
+**Sandys Verdacht war richtig: Die Frage hätte nie gestellt werden dürfen.** Und der Blocker hat nicht
+eine Ursache, sondern zwei voneinander unabhängige. Nicht geraten, sondern am echten Datensatz geprüft —
+die Extraktion zu Sandys Lauf (Angebot `93192e79`) aus der Produktions-Datenbank geholt und die echte
+Rückfragen-Logik dagegen laufen lassen. Ergebnis vorher: genau eine Frage, „Wie groß ist die Bodenfläche
+in 'Dachzimmer'?" — und beim Überspringen kam sie in der nächsten Runde identisch wieder. Die
+Endlosschleife ist damit im Testlabor reproduziert, nicht nur beschrieben.
+
+**Ursache 1 — die Frage war überflüssig.** GPT liefert für das Dachzimmer `laenge: 5` und `breite: 3.5`,
+lässt das Feld `flaeche` aber leer. Die Frage hing allein an diesem leeren Feld — gefragt wurde also nach
+einer Zahl, die eine Multiplikation entfernt danebenstand, und die die Engine für „Boden schützen" ohnehin
+selbst ausrechnet (die 17,5 m² auf der Karte). Fix: fehlt `flaeche`, wird sie aus Länge × Breite
+abgeleitet, bevor überhaupt Fragen entstehen.
+
+**Ursache 2 — „Überspringen" kam nie beim Server an.** Übersprungene Fragen lagen ausschließlich im
+Rückfragen-Bildschirm (`uebersprungen`-Set) und wurden beim Absenden weggelassen. Die Berechnung sah eine
+unbeantwortete Frage und stellte sie erneut — dieselbe Maske, beliebig oft. Fix: „übersprungen" geht
+jetzt als ausdrückliches `null` mit. Das Format war schon vorgesehen (`KalkulationsAntwort` erlaubt
+`null`, `verarbeiteAntworten` überspringt es) — es wurde nur nie genutzt. **Das betrifft nicht nur diesen
+Testfall:** jede übersprungene Frage in jedem Auftrag konnte so hängen bleiben.
+
+**Ursache 3, beim Nachsehen aufgefallen — eine Frage nach einer Zahl, die niemand benutzt.** Ohne einen
+Zufall hätte Sandy hier zusätzlich „Wie hoch sind die Wände in 'Dachzimmer'?" bekommen. Der
+Dachgeschoss-Zweig der Engine rechnet über Kniestockhöhe × Umfang und die Dachschrägen-m² — `raum.hoehe`
+liest er nie. Im echten Lauf blieb die Frage nur deshalb aus, weil GPT versehentlich eine falsche
+`wandflaeche_direkt: 12` gesetzt hatte (dazu unten). Fix: im Dachgeschoss entfällt die Höhenfrage,
+Bedingung wortgleich zum `istDachgeschoss` der Engine.
+
+**Ergebnis:** Sandys Fall stellt jetzt **keine einzige Rückfrage** mehr. 8 neue Tests
+(`pm007-rueckfragen.test.ts`, u. a. mit dem echten Extraktionsdatensatz), Suite 815/815 grün, `tsc`
+sauber. Live-Nachtest steht aus.
+
+**Ein Fund, den ich NICHT angefasst habe, der aber auf dem Zettel bleiben sollte:** GPT legt die
+Dachschrägen-Quadratmeter zusätzlich als `wandflaeche_direkt: 12` ab — ein Feld, in das sie fachlich nicht
+gehören. Aktuell harmlos, weil der Dachgeschoss-Zweig Vorrang hat und das Feld nicht liest. Es ist aber
+genau die Zahl, die am 16.08. als unerklärliche „Wandflächen streichen 12 m²" im Angebot stand. Sollte GPT
+irgendwann `kniestockhoehe` nicht mehr liefern, wäre dieser Fehler sofort wieder da. Eine Bereinigung
+müsste an der Extraktion ansetzen, nicht an der Berechnung — bewusst nicht im Rahmen dieses Blocker-Fixes.
+
+**Live-Nachtest nach dem Fix (Head of Product Engineering, gegen die
+Produktions-Datenbank geprüft, Angebot `1bbfa91a`):** ✅ **Blocker ist weg.**
+Der Entwurf wurde diesmal erreicht (`entwurf_gespeichert_am` gesetzt, eine
+Stunde nach dem steckengebliebenen Lauf `93192e79` mit 0 Positionen). Vier
+Positionen, Mengen exakt Soll:
+
+| Position | Menge | Preis |
+|---|---|---|
+| Kniestockwände streichen 2× — Dachzimmer | 20,40 m² ✅ | **0,00 € ❌** |
+| Dachschrägen streichen 2× — Dachzimmer | 23,08 m² ✅ | **0,00 € ❌** |
+| Boden schützen — Dachzimmer | 17,50 m² ✅ | 21,00 € |
+| Sockelleisten abkleben — Dachzimmer | 16,10 lfdm ✅ | 12,88 € |
+
+**Rechnerisch ist der Fall damit sauber. Die beiden Hauptpositionen haben aber
+keinen Preis — und der Grund ist ein Versäumnis von mir beim
+Preisdatenbank-Audit am 20.08.**
+
+Der Katalog im Konto ist noch der Stand vom **19.08.**: 164 Maler- und 177
+Boden-Positionen, neuester Eintrag 19.08. Der Katalog im Code hat seit dem
+Audit **208 und 186**. Die 53 damals ergänzten Preise sind also nur in den
+Code gewandert, **nicht in die bereits bestehenden Betriebs-Preisdatenbanken**.
+Genau die Lücke, die ich bei CoS-019 (Rubriken) mit einer Migration
+geschlossen habe — beim Audit hatte ich nicht daran gedacht.
+
+Konkret trifft es hier eine Titel-Variante: Die Engine erzeugt
+„Kniestockwände streichen **2x**", der Katalog im Konto kennt nur
+„Kniestockwände streichen" (ohne Variante). Gegen den heutigen Code-Katalog
+(mit 1x/2x/3x-Varianten) matcht derselbe Titel einwandfrei — nachgestellt mit
+der echten Matching-Logik.
+
+**Nebenbefund, Asymmetrie im Matcher — und eine Korrektur meiner eigenen
+Einschätzung:** Gegen einen Katalogeintrag OHNE Variante fand „Dachschrägen
+streichen **1x** — Dachzimmer" einen Treffer, „**2x**" dagegen keinen. Ich
+hatte Sandy gegenüber vermutet, das sei Absicht. **Das war falsch — es war ein
+Fehler**, und zwar genau der, den ich beim Preisdatenbank-Audit am 20.08. schon
+notiert („1x/2x/3x-Varianten sperren sich gegenseitig global"), aber nur im
+Katalog umgangen statt im Matcher behoben hatte.
+
+Die Ursache, nachgerechnet: `findePreisposition` prüfte GLOBAL, ob irgendein
+Katalogeintrag mit derselben Einheit die gesuchte Anstrichzahl trägt — und
+sperrte dann ALLE variantenlosen Einträge. In Sandys Konto genügte das völlig
+unbeteiligte „Wand streichen 2x Anstrich", damit „Kniestockwände streichen 2x"
+seinen eigenen Katalogpreis (11 €) nicht mehr finden durfte. Mit „1x" gab es
+keinen solchen Sperr-Eintrag, deshalb klappte es dort.
+
+**Festgeklopft (Sandys „ja klopf fest", 2026-08-24)** — drei Regeln, jetzt im
+Code kommentiert und mit 6 Tests gesichert (`preis-matcher.test.ts`):
+1. Ein 2×-Auftrag bekommt **nie** einen 1×-Preis (und umgekehrt). Lieber
+   „Preis fehlt" als eine Position, die zu billig im Angebot steht. Nicht
+   verhandelbar.
+2. Gibt es die passende Variante im Katalog, gewinnt sie gegen einen Eintrag
+   ohne Anstrichzahl — auch bei zufällig besserem Text-Score.
+3. Gibt es keine passende Variante, darf ein Eintrag **ohne** Anstrichzahl
+   einspringen. Ein Katalogeintrag „Kniestockwände streichen" ohne Zusatz ist
+   der eigene Preis des Betriebs für genau diese Arbeit — den zu ignorieren
+   wäre kein Schutz, sondern Verlust.
+
+Regel 2 wirkt jetzt innerhalb einer Suche statt über den ganzen Katalog.
+Damit findet Sandys Konto seine 11 € auch ohne Katalog-Nachimport — der
+Nachimport bleibt trotzdem sinnvoll, weil ihr Katalog 53 Positionen hinterher
+ist.
+
+**Nötiger Schritt (Sandy, ein Klick):** Auf `/preise` den Button
+„Standardpreise importieren" — der ergänzt genau die fehlenden
+Standardpositionen, ohne bestehende eigene Preise anzufassen (im Code
+geprüft: er filtert vorhandene Titel heraus). Danach denselben Fall nochmal
+einsprechen; dann sollten Kniestock und Dachschrägen echte Preise tragen.
+
+---
+
+**Entschieden (Sandy, 2026-08-24): Die Türen-Frage bleibt.** Sie war die einzige Frage, die nach den
+Fixes bei sauberer Extraktion noch übrig bleibt, und sie hat echten Einfluss (die Türbreite geht von der
+Sockelleisten-Länge ab). Kein Code-Änderungsbedarf — der aktuelle Stand entspricht der Entscheidung. Für
+künftige Aufräum-Runden gilt damit die Linie: Fragen nach Zahlen, die **im Transkript stehen** oder die
+**niemand liest**, kommen weg. Fragen nach Zahlen, die das Ergebnis verändern und die der Handwerker nicht
+gesagt hat, bleiben.
+
+---
+
+**Ursprünglicher Auftrag (2026-08-21):** Höchste Priorität — bitte den „Trotzdem überspringen"/„Später
+ergänzen"-Pfad der Bodenflächen-Rückfrage bei diesem Fall untersuchen. Vermutungsweise hängt das mit der
+schon bekannten Rückfragen-Redundanz zusammen (die Frage wird gestellt, obwohl die Bodenfläche eigentlich
+aus dem Transkript ableitbar wäre) — aber das Kernproblem jetzt ist nicht mehr nur „unnötig gefragt",
+sondern „lässt sich nicht mehr aus dem Weg räumen". Bitte auch generell prüfen, ob ähnliche
+Rückfragen-Masken in anderen Fällen genauso in einer Schleife hängen bleiben können, wenn übersprungen
+wird — das könnte ein Launch-Blocker sein, nicht nur ein Einzelfall bei diesem Dachgeschoss-Testfall.
+
+**Nachtest (Sandy, 2026-08-25) — ✅ Blocker weg, zwei neue, kleinere Funde:**
+
+Karte: „4 Positionen erkannt" — Kniestockwände streichen 2x (20,4 m²), Dachschrägen streichen 2x
+(23,08 m²), Boden schützen (17,5 m²), Sockelleisten abkleben (16,1 lfdm). **Diesmal kam gar keine
+Rückfrage** — direkt von der Karte zum Entwurf, keine Endlosschleife, keine einzige Maske. Das deckt sich
+genau mit dem, was Fix-Update 4 versprochen hat („Sandys Fall stellt jetzt keine einzige Rückfrage mehr").
+
+Entwurf, Raummaße: 3,5×5 m, **Raumhöhe „!"**, 0 Türen, 1 Fenster:
+- Kniestockwände streichen 2×: 20,4 m² × 0,00 € (Preis fehlt) — Menge exakt Soll, Preis weiterhin nicht
+  hinterlegt (bekannter, separat priorisierter Preisdatenbank-Punkt, kein neuer Fund)
+- Dachschrägen streichen 2×: 23,08 m² × 0,00 € (Preis fehlt) — Menge exakt Soll, gleiches Preisthema
+- Boden schützen: 17,5 m² × 1,20 € = 21,00 € — exakt Soll (3,5×5=17,5 m²)
+- **Sockelleisten abkleben: 16,1 lfdm × 0,80 € = 12,88 €** — das ist Umfang (17,00 lfm) minus 0,90 m
+  Türbreite, obwohl die Raummaße direkt daneben „**Türen: 0**" zeigen. Wenn wirklich keine Tür da ist,
+  müssten es die vollen 17,0 lfdm sein.
+
+**Befund:**
+
+1. **Guter Erfolg: die Endlosschleife ist weg.** Kein Hängenbleiben mehr, direkter Durchlauf zum Entwurf —
+   Fix-Update 4 hält bei diesem Testlauf. Kniestock und Dachschrägen bleiben beide exakt Soll.
+2. **Neuer, kleiner Fund: „Türen: 0" vs. Sockelleisten rechnet mit einer Tür.** Die angezeigte Türanzahl
+   und die tatsächlich verwendete Sockelleisten-Länge widersprechen sich — entweder wird die Türanzahl
+   nicht an die Sockelleisten-Berechnung durchgereicht, oder die Anzeige „Türen: 0" selbst stimmt nicht mit
+   dem, was intern gerechnet wurde, überein. Kein großer Betrag hier (0,9 lfdm × 0,80 € ≈ 0,72 €), aber ein
+   Anzeige-vs-Rechnung-Widerspruch, den schon mehrere andere Fälle in dieser Testreihe hatten.
+3. **Neuer, kleiner Fund: „Raumhöhe" zeigt ein bloßes „!"** statt einer Zahl oder eines sinnvollen
+   Platzhalters. Passt zeitlich zu Fix-Update 4, Punkt „Ursache 3" — seit die überflüssige Höhenfrage im
+   Dachgeschoss-Zweig entfällt, hat der Raum offenbar keinen Höhenwert mehr, aber die Raummaße-Kopfzeile
+   ist nicht darauf vorbereitet, dass „Raumhöhe" bei einem Dachgeschoss fehlen kann, und zeigt stattdessen
+   einen rohen Fehler-Platzhalter an.
+
+**Für Head of Product Engineering:** Der Blocker selbst scheint behoben — danke, guter Fang mit den drei
+Ursachen. Zwei neue Kleinigkeiten, vermutlich beide Nebenwirkungen von Fix-Update 4: (1) bitte prüfen, ob
+die Sockelleisten-Berechnung bei diesem Fall wirklich die aktuelle Türanzahl (0) verwendet oder noch einen
+alten/falschen Wert; (2) die Raummaße-Anzeige sollte bei einem Dachgeschoss ohne Höhenwert etwas Sinnvolles
+zeigen (z. B. das Feld ausblenden oder „–") statt eines bloßen „!".
+
+**Nachtest 2 (Sandy, 2026-08-25, nach dem Matcher-Fix) — ✅ Preise jetzt auch da:**
+
+Karte: „4 Positionen erkannt", identisch zum vorigen Lauf. Entwurf, gleiche Raummaße (3,5×5 m,
+Raumhöhe „!", 0 Türen, 1 Fenster):
+- Kniestockwände streichen 2×: 20,4 m² × **11,00 €** = 224,40 € — ✅ Preis jetzt da, Rechnung stimmt
+  (20,4×11=224,40), Matcher-Fix vom Preisdatenbank-Update wirkt
+- Dachschrägen streichen 2×: 23,08 m² × **11,00 €** = 253,88 € — ✅ ebenfalls jetzt bepreist, Rechnung
+  stimmt (23,08×11=253,88)
+- Boden schützen: 17,5 m² × 1,20 € = 21,00 € — unverändert, exakt Soll
+- Sockelleisten abkleben: 16,1 lfdm × 0,80 € = 12,88 € — unverändert, die beiden kleinen Funde von eben
+  (Türen: 0 vs. Sockelleisten rechnet mit Tür; Raumhöhe „!") bestehen weiterhin, nichts dran verändert
+
+**Damit ist PM-007 rechnerisch und preislich komplett grün.** Der ursprüngliche Fall (Dachgeschoss-Zweig
++ Rückfragen-Blocker) ist vollständig gelöst und bestätigt. Offen bleiben nur die zwei kleinen, harmlosen
+Funde von eben (Türen-Anzeige-Widerspruch bei Sockelleisten, ca. 72 Cent Differenz; „Raumhöhe" zeigt „!"
+statt Wert) — beide dokumentiert, beide nicht blockierend. **Wandert damit ins Archiv, offene Kleinfunde
+bleiben in der Historie sichtbar.**
+
+---
+
 ## PM-008 — Fassade (kein Raum, kein Boden, keine Decke)
 
 **Datum:** 2026-08-16
@@ -1803,3 +2163,464 @@ exakt (3,5×4 m, Höhe 2,6 m, 1 Tür, 1 Fenster):
 Beide Befunde bestätigt behoben, alle 8 Positionen exakt wie im Soll. **Grün, kann archiviert werden.**
 
 ---
+
+## PM-019 — Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC)
+
+**Datum:** 2026-08-20
+**Status:** ✅ Live-Nachtest (2026-08-25) bestätigt: alle drei Funde behoben bzw. korrekt eingeordnet.
+„Schwieriger Untergrund" erscheint jetzt als eigene Position, „Gästeklo" bekommt eine echte Raumkarte, und
+die 1,50×1,50-m-Raummaße sind der schon erklärte, nicht fixbare Whisper-Transkriptionsfehler — kein Bug.
+Einziger offener Punkt: Preis für den Erschwerniszuschlag fehlt noch im Katalog (Preisdatenbank-Pflege,
+nicht blockierend). Details im Archiv.
+
+**Warum dieser Fall:** Das Fachwissen nennt drei Erschwernis-Trigger: Raumhöhe > 3 m (mehrfach getestet,
+z. B. PM-008), Altbau (PM-006), und „schwieriger Untergrund" — Letzterer bisher in keinem einzigen Testfall
+verwendet. Damit isoliert getestet wird, ob das Tool dieses dritte Kriterium überhaupt kennt, ist der Raum
+bewusst klein und niedrig (unter der 3-m-Schwelle) und ausdrücklich kein Altbau, damit keine der beiden
+anderen Trigger versehentlich mitgreifen und das Ergebnis verfälschen.
+
+**Zum Einsprechen:**
+„Gästeklo, zwei mal eins fünfzig, Höhe zwo vierzig. Wände streichen, zweimal. Der Putz ist aber total
+uneben und bröckelig, ein wirklich schwieriger Untergrund, das wird aufwendiger als normal. Eine Tür, kein
+Fenster.“
+
+**Soll-Lösung:**
+- Umfang: 2×(2,00+1,50)=7,00 lfm; Wandbrutto: 7,00×2,40=16,80 m²
+- Abzug 1 Tür Standard (1,89 m²), kein Fenster-Abzug (kein Fenster vorhanden)
+- Wandflächen streichen 2×: **14,91 m²**
+- Erschwerniszuschlag „schwieriger Untergrund": eigene Position (Aufschlag, egal ob schon bepreist)
+- **Kein** Höhen-Erschwerniszuschlag (2,40 m liegt unter der 3-m-Schwelle)
+- **Kein** Altbau-Zuschlag (nicht erwähnt)
+
+**Worauf achten:**
+- Erkennt das Tool „schwieriger Untergrund"/„uneben und bröckelig" überhaupt als eigenständigen
+  Erschwernis-Trigger, oder kennt die Engine bisher nur die beiden anderen (Höhe, Altbau)?
+- Schlägt fälschlich zusätzlich ein Höhen- oder Altbau-Zuschlag auf, obwohl keiner der beiden Trigger im
+  Transkript vorkommt?
+- Fachliche Zusatzfrage, kein harter Soll-Verstoß: „uneben und bröckelig" klingt nach echtem
+  Ausbesserungsbedarf, nicht nur nach einem pauschalen Prozentaufschlag — würde ein echter Maler hier nicht
+  eher eine Rückfrage zur Untergrundvorbereitung/Spachtelung erwarten, statt nur einen Zuschlag draufzusetzen?
+  Kein Fehler, wenn das Tool nur den Zuschlag bringt, aber ein Gedanke für den Designer/die Rückfragen-Logik.
+
+**Ist-Ergebnis (Sandy, 2026-08-21):** Karte: „3 Positionen erkannt" — Wandflächen streichen 2x, Boden
+schützen, Sockelleisten abkleben, Tür: 1. **Kein „Erschwerniszuschlag" irgendwo auf der Karte.**
+
+Entwurf: alle drei Positionen tragen im Titel einzeln den Zusatz „— Gästeklo" (z. B. „Wandflächen
+streichen 2x — Gästeklo"), statt dass eine gemeinsame Raum-Überschrift/-Karte mit Maßen darüber steht, wie
+bei jedem anderen bisherigen Test (vgl. „🚪Flur ... Raummaße ... Raumform" bei PM-013). Sandys eigene
+Einschätzung dazu: der Raum scheint nicht richtig als eigenes Objekt angelegt/ausgewählt worden zu sein.
+
+- Wandflächen streichen 2x — Gästeklo: 12,51 m² × 9,50 € = 118,84 €
+- Boden schützen — Gästeklo: 2,25 m² × 1,20 € = 2,70 €
+- Sockelleisten abkleben — Gästeklo: 5,1 lfdm × 0,80 € = 4,08 €
+- **Keine Erschwerniszuschlag-Position** — weder als eigene Zeile noch als Rückfrage
+
+Nachgerechnet, was diesen drei Zahlen zugrunde liegt: sie passen exakt zu einem Raum **1,50×1,50 m**
+(Umfang 6,00 lfm, Wandbrutto 6,00×2,40=14,40 m², minus 1 Tür Standard 1,89 m² = 12,51 m² ✓; Bodenfläche
+1,50×1,50=2,25 m² ✓; Sockelleisten 6,00−0,90 Türbreite=5,10 lfdm ✓) — **nicht zu den diktierten „zwei mal
+eins fünfzig" (2,00×1,50 m).** Die Soll-Lösung wäre 16,80 m² Wandbrutto, 14,91 m² Wandfläche, 3,00 m²
+Bodenfläche, 6,10 lfdm Sockelleisten gewesen. Das Tool hat also offenbar „zwei" als zweites „eins fünfzig"
+verstanden bzw. eine der beiden Maßangaben verloren — ein quadratischer statt eines rechteckigen Raums.
+
+**Befund:**
+
+1. **Kernfrage des Testfalls beantwortet: „schwieriger Untergrund" wird nicht als Erschwernis-Trigger
+   erkannt.** Anders als bei Raumhöhe (PM-008) und Altbau (PM-006) gibt es für diesen dritten,
+   fachwissenmäßig gleichwertigen Trigger aktuell offenbar überhaupt keine Erkennung — weder auf der Karte
+   noch im Entwurf, keine Spur, kein Aufschlag.
+2. **Neuer, unabhängiger und schwerwiegender Fund: falsche Raummaße.** Der Raum wurde als 1,50×1,50 m
+   statt der diktierten 2,00×1,50 m gerechnet — alle drei Positionen (Wand, Boden, Sockelleisten) sind
+   dadurch zu klein. Bei diesem Mini-Raum nur ein paar Euro Differenz, aber bei einem großen Raum wäre der
+   gleiche Fehler (eine Maßangabe geht verloren, wird durch die andere ersetzt) ein vierstelliger
+   Rechenfehler.
+3. **Neuer Fund: keine Raum-Gruppierung im Entwurf.** Statt einer gemeinsamen Raumkarte mit Maßen (wie bei
+   jedem anderen Testfall) trägt jede einzelne Position nur einen angehängten „— Gästeklo"-Titel-Suffix.
+   Möglicherweise dieselbe Ursache wie Punkt 2 — wenn der Raum nicht sauber als eigenes Objekt angelegt
+   wurde, käme sowohl die falsche Maß-Zuordnung als auch das Fehlen der Raumkarte aus derselben Quelle.
+
+**Für Head of Product Engineering:** Drei Themen, vermutlich zwei davon zusammenhängend:
+(1) „Schwieriger Untergrund"/„uneben und bröckelig" fehlt komplett als Erschwernis-Trigger — bitte
+ergänzen, analog zu Höhe/Altbau. (2) + (3) bitte zusammen untersuchen: der Raum „Gästeklo" wurde mit
+1,50×1,50 statt 2,00×1,50 m gerechnet UND ohne eigene Raumkarte im Entwurf dargestellt (Titel-Suffix statt
+Gruppierung) — das riecht nach dem Raum-Anlegen selbst, das hier fehlgeschlagen oder auf einen Fallback
+zurückgefallen ist, nicht nach einem reinen Rechenfehler. Bitte gegen die echte GPT-Rohantwort dieses
+Testfalls prüfen, ob beide Räume (Höhe „zwo vierzig", Maße „zwei mal eins fünfzig") korrekt ankamen oder
+ob schon dort eine Maßangabe verlorenging.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — an echten Produktionsrohdaten root-caused:** Rohdaten
+für genau diesen Testlauf gezogen (Supabase, `entwurf_aufnahmen`, id `dbbd79c4…`) — das beantwortet auch die
+eigene Bitte oben, gegen die echte GPT-Rohantwort zu prüfen.
+
+**Gefunden — der eigentliche Wortlaut, der bei GPT ankam:** „Gästeklo **zweimal 1,50m**, Höhe 2,40m,
+Wändestreichen zweimal, …". Nicht „zwei mal eins fünfzig" wie eingesprochen — Whisper hat „zwei mal eins
+fünfzig" (2,00 × 1,50 m) offenbar als „zweimal 1,50m" verstanden: „zwei mal" (Multiplikation) wurde zu
+„zweimal" (Wiederholung), die zweite Maßangabe „eins fünfzig" ist dabei komplett verschwunden. GPTs
+Struktur-Extraktion hat aus dem verbliebenen EINEN Maß „1,50m" dann selbst `breite: 1.5, laenge: 1.5` gemacht
+— ein quadratischer Rateversuch, weil ihr schlicht keine zweite Zahl mehr vorlag.
+
+**Punkt 2 (falsche Raummaße) ist damit kein Code-Bug, sondern ein Transkriptionsfehler, der schon VOR
+unserer Pipeline entsteht** — zum Zeitpunkt, an dem unser Code die Daten bekommt, ist die zweite Maßangabe
+bereits unwiederbringlich weg. Es gibt hier nichts in `mengen/`, `vollstaendigkeit/` oder `kontext-analyzer.ts`
+zu reparieren, weil die Information dort nie ankommt. Bewusst NICHT gefixt: eine „verdächtig quadratische
+Raummaße"-Heuristik (Rückfrage auslösen, wenn Länge = Breite exakt), die diesen Fall abfangen könnte — das
+wäre eine neue, spekulative Verhaltensänderung mit Risiko für echte quadratische Räume (die es ja wirklich
+gibt), nicht Teil des ursprünglichen Befunds und eine Produktentscheidung, keine Bugfix-Entscheidung. Bitte
+separat besprechen, falls gewünscht.
+
+**Punkt 1 (schwieriger Untergrund) UND Punkt 3 (keine Raumkarte) waren dagegen echte, unabhängige Bugs in
+unserem Code — beide behoben, beide NICHT dieselbe Ursache wie ursprünglich vermutet:**
+
+1. **„Schwieriger Untergrund" fehlte als Erschwernis-Trigger.** GPTs Rohantwort tagt es tatsächlich sauber
+   als eigenes Feld (`erschwernisse: ["unebener und bröckeliger Putz"]`) — nur unsere Vollständigkeitsprüfung
+   (`maler-extras.ts`) kannte bisher nur die beiden anderen Trigger (Höhe, Altbau). Neue Funktion
+   `pruefeErschwerniszuschlagUntergrund`, bewusst wie die anderen beiden direkt gegen den Rohtranskript-Text
+   geprüft (nicht gegen das `erschwernisse`-Feld) — damit dieselbe robuste Erkennung greift, egal ob GPTs
+   Struktur-Tagging diesmal sauber ist oder nicht. In `maler.ts` neben `pruefeErschwerniszuschlagHoehe`
+   eingehängt.
+2. **Keine Raumkarte für „Gästeklo".** Das war NICHT dieselbe Ursache wie die falschen Raummaße (Sandys
+   Vermutung, dass der Raum nicht sauber als Objekt angelegt wurde, stimmt nicht — GPTs Rohantwort hat
+   „Gästeklo" als ganz normales, komplett wohlgeformtes Raum-Objekt mit allen Feldern). Der eigentliche Fund:
+   dieselbe Fehlerkategorie wie PM-005 (dort: „Speisekammer" fehlte in der Anzeige-Gruppierung), diesmal in
+   `angebot-gruppierung.ts`s `RAUM_KEYWORDS`-Liste — „Gästeklo" enthält weder „toilette" noch „wc" noch sonst
+   eins der bisherigen Schlüsselwörter als Teilstring, wurde deshalb von der Anzeige nicht als echter Raum
+   erkannt und landete einzeln im Allgemein-Topf statt in einer gemeinsamen Raumkarte mit Maßen — reine
+   Anzeige-Lücke, keine Rechenlücke (die drei Positionen selbst waren immer korrekt berechnet). Fix: „klo" zur
+   Schlüsselwortliste ergänzt (deckt „Gästeklo", „Klo" und ähnliche Kurzformen ab), plus Emoji-Zuordnung.
+
+**Wie geprüft:** Erschwernis-Fix an den echten Produktionsrohdaten dieses Testlaufs durch die reale
+`verarbeiteExtraktion`-Pipeline verifiziert — „Erschwerniszuschlag schwieriger Untergrund" erscheint jetzt,
+Raummaße bleiben wie erwartet unverändert bei 1,50×1,50 (das ist der bestätigte Transkriptionsfehler, keine
+Regression). Gruppierungs-Fix isoliert gegen die drei echten Gästeklo-Positionstitel getestet. 4 neue,
+dauerhafte Tests: `vollstaendigkeit.test.ts` (Untergrund-Erschwernis, positiv + negativ) und ein neues
+`angebot-gruppierung.test.ts` (Gästeklo-Gruppierung + Regressionsschutz für bestehende Nebenräume). Ganze
+Suite weiterhin grün (247/247, vorher 243). Wie immer: noch OHNE Live-Nachtest im echten Tool.
+
+**Live-Nachtest (Sandy, 2026-08-25) — alle drei Funde bestätigt:**
+
+Karte: „4 Positionen erkannt" — Wandflächen streichen 2x (14,4 m²), Boden schützen (2,25 m²), Sockelleisten
+abkleben (5,1 lfdm), Erschwerniszuschlag schwieriger Untergrund (1 Pauschale). Entwurf zeigt jetzt eine
+echte „🚽Gästeklo"-Raumkarte mit Raummaße-Zeile „1,5×1,5m·Raumhöhe 2,4 m·Türen 1·Fenster 0" oben drüber,
+keine „— Gästeklo"-Titel-Suffixe mehr.
+
+- Wandflächen streichen 2×: 14,40 m² × 9,50 € = 136,80 € — **kein Bug.** Unter den 1,50×1,50 m (bestätigter
+  Transkriptionsfehler, s.o.) plus der neuen VOB-Regel (Tür 1,89 m² ≤ 2,5 m² wird nicht mehr abgezogen)
+  ist 14,40 m² (= 6,00 lfm Umfang × 2,40 m) exakt die richtige Zahl für diesen Raum.
+- Boden schützen: 2,25 m² × 1,20 € = 2,70 € — exakt (1,50×1,50 m).
+- Sockelleisten abkleben: 5,1 lfdm × 0,80 € = 4,08 € — exakt (6,00 − 0,90 Türbreite, VOB gilt hier nicht).
+- **Erschwerniszuschlag schwieriger Untergrund: 1 Pauschale × 0,00 € (Preis fehlt in der Preisdatenbank)**
+  — ✅ Fund 1 bestätigt behoben: die Position erscheint jetzt zuverlässig. Der fehlende Preis ist ein
+  Katalog-Lücke (Preisdatenbank-Pflege), kein Code-Bug.
+- ✅ Fund 3 bestätigt behoben: „Gästeklo" bekommt jetzt eine echte, gruppierte Raumkarte.
+- Fund 2 (falsche Raummaße) bleibt wie dokumentiert ein bewusst nicht behobener Whisper-Transkriptionsfehler
+  — kein neuer Befund, nur zur Vollständigkeit nochmal bestätigt (dieselben Zahlen wie beim ersten Test).
+
+**Ergebnis:** Alle drei Funde entweder live bestätigt behoben (1, 3) oder korrekt als Nicht-Code-Bug
+eingeordnet (2). Einzig offen: der Katalogpreis für den Erschwerniszuschlag fehlt noch — das ist reine
+Preisdatenbank-Pflege (Sandy müsste einen Preis für „Untergrund vorbereiten und ausgleichen" anlegen),
+kein Grund, den Fall weiter offen zu halten. PM-019 ist damit fachlich abgeschlossen.
+
+---
+
+## PM-020 — Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2)
+
+**Datum:** 2026-08-20
+**Status:** ✅ Live-Nachtest (2026-08-25) bestätigt: beide Funde behoben — „Nein, bleibt" wird jetzt
+respektiert (keine Altbelag-Position mehr), kein Sockelleisten-Phantom mehr. Neue Beobachtung, kein neuer
+Code-Bug: dieselbe Whisper-„quadratischer Raum"-Transkriptionslücke wie bei PM-019 ist hier ein zweites Mal
+aufgetreten (Details im Archiv).
+
+Ursprünglicher Befund (2026-08-21): „Altbelag entfernen" stand trotz ausdrücklichem Ausschluss UND
+explizit mit „Nein, bleibt" beantworteter Rückfrage im Entwurf, mit echter Menge (10,8 m²). Zusätzlich
+Phantom-„Sockelleisten montieren" (13,2 lfdm), nie erwähnt — dieselbe Fehlerfamilie wie bei PM-013
+
+**Warum dieser Fall:** Verschnitt wurde bisher nur für Laminat/Vinyl (5 % gerade, PM-004/PM-009) und Parkett
+Fischgrät (15 %, PM-013) getestet — nie für Teppich, für den das Fachwissen keinen expliziten Standard-Satz
+nennt. Zusätzlich testet dieser Fall eine dritte, neue Formulierung für den Boden-Ausschluss („bleiben
+einfach drunter liegen"), nachdem frühere Fixes bisher nur auf „X lassen wir"/„ohne X"/„keine X" bzw. „bleibt
+wie er ist" reagiert haben — jede neue Sprechweise ist ein eigener Risikofall für dieselbe Erkennung.
+
+**Zum Einsprechen:**
+„Kinderzimmer zwei, drei mal drei sechzig. Teppichboden auslegen, ganz normal, kein Muster. Die alten
+Dielen bleiben einfach drunter liegen, die kommen nicht raus.“
+
+**Soll-Lösung:**
+- Fläche: 3,00×3,60=**10,80 m²**
+- Teppich verlegen: 10,80 m² zzgl. Verschnitt — das Fachwissen nennt für Teppich keinen expliziten
+  Standardsatz, daher kein hartes Soll für den genauen Prozentwert; zu dokumentieren ist, was das Tool
+  tatsächlich ansetzt, als Referenzwert für künftige Fälle
+- **Keine** Altbelag-entfernen-Position — ausdrücklich ausgeschlossen („bleiben einfach drunter liegen,
+  die kommen nicht raus")
+- **Keine** Trittschalldämmung — nicht erwähnt, bei Teppich fachlich auch nicht zwingend Standard wie bei
+  Klick-Vinyl/Laminat
+
+**Worauf achten:**
+- Wird die neue Ausschluss-Formulierung „bleiben einfach drunter liegen" überhaupt als Ausschluss erkannt?
+  Bisherige Fixes kannten explizit nur bestimmte Wortmuster — eine vierte, wieder andere Formulierung ist
+  ein eigener Testfall für die Robustheit dieser Erkennung, nicht automatisch durch frühere Fixes gedeckt.
+- Welchen Verschnittsatz setzt das Tool für Teppich an (0 %? 5 % wie Laminat? etwas Eigenes?) — kein
+  Fehler an sich, aber wichtig zu wissen und ggf. mit Sandys fachlicher Einschätzung abzugleichen, ob der
+  Wert plausibel ist.
+- Wird trotz des Wortes „Boden" im Nebensatz keine unverlangte zusätzliche Boden-Position erfunden
+  (Verwandtschaft zum PM-010-Phantom-Bug)?
+
+**Ist-Ergebnis (Sandy, 2026-08-21):** Karte: „3 Positionen erkannt" — Teppichboden verlegen (10,8 m²),
+Sockelleisten montieren (13,2 lfdm), Altbelag entfernen (10,8 m²). Rückfrage: „Muss der alte Bodenbelag in
+'Kinderzimmer' entfernt werden?" → **„Nein, bleibt" beantwortet.**
+
+Entwurf:
+- Teppichboden verlegen: 10,8 m² × 14,00 € = 151,20 € — Fläche exakt Soll (3,00×3,60=10,80 m²), **0%
+  Verschnitt angesetzt** (reine Rohfläche, kein Aufschlag). Kein hartes Soll hierzu, aber jetzt als
+  Referenzwert dokumentiert: Teppich bekommt aktuell keinerlei Verschnittzuschlag.
+- **Sockelleisten montieren: 13,2 lfdm × 5,50 € = 72,60 €** — nie erwähnt im Transkript. 13,2 lfdm = exakt
+  der volle Raumumfang (2×(3+3,6)=13,2). Neuer Beleg für dasselbe Phantom-Muster wie bei PM-013
+  (Wohnzimmer): eine Bodenverlegung scheint automatisch eine „Sockelleisten montieren"-Position mit vollem
+  Raumumfang zu erzeugen, unabhängig davon, ob das gesagt wurde.
+- **Altbelag entfernen: 10,8 m² × 0,00 € (Preis fehlt)** — steht trotzdem im Entwurf, mit echter Fläche
+  (nicht 0), **obwohl sowohl der Transkript-Ausschluss („die kommen nicht raus") als auch die explizit mit
+  „Nein, bleibt" beantwortete Rückfrage beide dagegen sprechen.** Schwerster Fund dieses Falls: hier wird
+  nicht nur eine Formulierung nicht erkannt, sondern eine bereits eindeutig beantwortete Rückfrage
+  im Ergebnis schlicht ignoriert.
+
+**Befund:**
+
+1. **Schwerster Fund: die explizit beantwortete Rückfrage wird nicht respektiert.** Sandy hat aktiv „Nein,
+   bleibt" angeklickt — trotzdem taucht „Altbelag entfernen" mit voller Fläche (10,8 m²) im Entwurf auf.
+   Das ist kein Erkennungsproblem mehr (die Frage wurde ja korrekt gestellt und beantwortet), sondern ein
+   Bug darin, wie die Antwort in die Positions-Generierung zurückfließt — oder gar nicht zurückfließt.
+   Würde ein Handwerker das nicht bemerken (Preis fehlt macht es finanziell harmlos, aber die Zeile allein
+   sorgt für Verwirrung beim Kunden), würde er für eine Leistung kalkulieren, die ausdrücklich nicht
+   gewünscht ist.
+2. **Bestätigtes Muster: Phantom-„Sockelleisten montieren" bei jeder Bodenverlegung.** Zweiter unabhängiger
+   Beleg nach PM-013 (Wohnzimmer, 25 lfdm) — hier 13,2 lfdm, wieder exakt der volle Raumumfang. Scheint eine
+   feste Annahme „neuer Boden → automatisch neue Sockelleisten" zu sein, unabhängig vom Transkript.
+3. **Info, kein Bug:** Teppich bekommt aktuell 0% Verschnitt. Das Fachwissen kennt für Teppich keinen
+   etablierten Standardsatz — daher kein hartes Soll, aber wert, mit Sandys fachlicher Einschätzung
+   abzugleichen, ob 0% realistisch ist oder ob auch hier ein kleiner Aufschlag branchenüblich wäre.
+
+**Für Head of Product Engineering:** Zwei Themen. (1) **Priorität hoch:** die Rückfragen-Antwort „Nein,
+bleibt" fließt nicht (oder nicht zuverlässig) in die finale Positionsliste zurück — bitte prüfen, ob das
+isoliert bei „Altbelag entfernen" auftritt oder strukturell alle Rückfragen-Antworten betrifft, die eine
+Position eigentlich unterdrücken sollen. (2) Dasselbe „Sockelleisten montieren"-Phantom wie bei PM-013 —
+jetzt zweimal unabhängig bestätigt, sollte sich mit vertretbarem Aufwand an einer Stelle fixen lassen: die
+Position wird offenbar automatisch bei jeder Boden-Neuverlegung erzeugt, ohne eigenes Signal im Transkript
+zu prüfen.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — beide Funde root-caused, KEINER hing mit der
+ursprünglichen Vermutung zusammen:**
+
+1. **„Altbelag entfernen" trotz „Nein, bleibt" — Ursache war NICHT die Rückfragen-Antwortverarbeitung.**
+   Erste Vermutung (Boolean- vs. Number-Typkonflikt zwischen `kontext-analyzer.ts`s `schnell_antworten` und
+   `antworten-verarbeiter.ts`s `KalkulationsAntwort`) hat sich bei näherer Prüfung als falsch erwiesen —
+   `rueckfragen-flow.ts`s `konvertiereKIRueckfrage` wandelt Boolean bereits sauber in 0/1 um, und
+   `antworten-verarbeiter.ts` verarbeitet das korrekt weiter. Der tatsächliche Fund lag einen Schritt tiefer,
+   bestätigt per Reproduktionstest gegen die exakten Produktionsdaten (auch OHNE jede Rückfragen-Antwort im
+   Spiel — das Problem trat schon in Runde 1 auf): `boden-normalisierer.ts`s `erkenneBodenArbeiten` ist ein
+   Regex-Fallback, der komplett unabhängig vom (hier korrekten) KI-Feld `raum.altbelag_entfernen: false`
+   läuft. „Die alten Dielen bleiben einfach drunter liegen, die kommen nicht raus" hat gleich zwei seiner
+   Regeln ausgelöst — `ALTBELAG_NOMEN` durch die bloße Erwähnung „alten Dielen", `SCHWACHES_ENTFERNEN` durch
+   das Wort „raus" im selben Satz — beide OHNE jede Verneinungs-Prüfung, obwohl der Satz wörtlich das
+   Gegenteil sagt. Verschärft durch `auftrags-verstaendnis.ts`: das KI-Signal wird dort nur einseitig auf
+   `true` verodert (`if (signale.altbelagEntfernen) altbelag = true`), nie zurück auf `false` korrigiert, wenn
+   der Regex-Fallback (fälschlich) `true` lieferte. Fix: neue `ALTBELAG_VERNEINT`-Regex in
+   `boden-normalisierer.ts` (deckt „bleibt liegen/drunter", „kommt nicht raus", „kein/ohne Altbelag", „bleibt
+   wie er ist" ab — inklusive der schon vorher beobachteten Formulierungen), pro Satz geprüft, bevor
+   `ALTBELAG_NOMEN`/`SCHWACHES_ENTFERNEN` greifen dürfen.
+2. **„Sockelleisten montieren"-Phantom — andere Stelle als bei PM-013, gleiche Ursache.** Der PM-013-Fix in
+   `gewerke/boden.ts` (Engine) hat hier korrekt NICHTS erzeugt — bestätigt der Reproduktionstest. Trotzdem
+   tauchte die Position auf, weil ein zweiter, unabhängiger Vollständigkeits-Fallback
+   (`vollstaendigkeit/boden-vorarbeiten.ts`, `pruefeSockelleisten`) genau dieselbe „neuer Boden → automatisch
+   neue Sockelleisten"-Annahme selbst nochmal macht: ohne explizite Meterangabe und ohne vorhandene
+   Montage-Position schätzt er den Umfang blind aus der Bodenfläche (`4 × √Fläche`), ganz ohne zu prüfen, ob
+   Sockelleisten je erwähnt wurden. Fix: derselbe „sockelleist"-Textsignal-Gate wie in der Engine, jetzt auch
+   hier.
+
+**Nebenfund beim Fixen:** Ein bestehender Test (`chips-vervollstaendigung.test.ts`, PM-001) hatte exakt diese
+„Sockelleisten ohne jedes Signal erfinden"-Annahme als erwartetes Verhalten festgeschrieben — die
+Chip-Vorschau der Aufnahmekarte nutzt bewusst dieselbe Vollständigkeits-Prüfung wie die finale Kalkulation
+(Anti-Drift-Prinzip, siehe Kommentar in `chips-vervollstaendigung.ts`), lief also automatisch mit. Test
+korrigiert (jetzt: keine Erfindung ohne Signal, aber weiterhin Ergänzung bei echter — nur unbezifferter —
+Erwähnung) statt den alten, jetzt als Bug erkannten Zustand künstlich zu erhalten.
+
+**Wie geprüft:** Beide Funde gegen die echten Produktionsdaten dieses Testfalls (id `2738c3a1…`) durch die
+reale `verarbeiteExtraktion`-Pipeline reproduziert (Phantome vor dem Fix vorhanden, danach weg), zusätzlich
+Runde-2-Test mit simulierter „Nein, bleibt"-Antwort UND ein Regressionstest mit einer echten
+Altbelag-Entfernung („alter Teppich muss raus") zur Kontrolle, dass der neue Verneinungs-Filter legitime
+Fälle nicht mit wegfiltert. Neuer dauerhafter Golden-Test `golden-korrekturen.test.ts` (PM-020) mit den
+exakten Produktionsdaten. Ganze Suite weiterhin grün (262/262, vorher 261 inkl. der einen korrigierten
+PM-001-Erwartung). Verschnittsatz für Teppich (aktuell 0%, siehe Ist-Ergebnis) unverändert offen — das war
+als reine Info, kein Bug, markiert und bleibt das. Wie immer: noch OHNE Live-Nachtest im echten Tool.
+
+**Live-Nachtest (Sandy, 2026-08-25) — beide Funde bestätigt, plus eine neue, nicht blockierende Beobachtung:**
+
+Karte: „1 Position" — Teppichboden verlegen (12,96 m²). Rückfrage „Muss der alte Bodenbelag in
+'Kinderzimmer' entfernt werden?" → „Nein, bleibt" beantwortet. Entwurf: nur eine einzige Position,
+Teppichboden verlegen 12,96 m² × 14,00 € = 181,44 €.
+
+- ✅ **Fund 1 bestätigt behoben:** keine „Altbelag entfernen"-Position mehr trotz beantworteter Rückfrage —
+  die Verneinung wird jetzt respektiert.
+- ✅ **Fund 2 bestätigt behoben:** keine „Sockelleisten montieren"-Phantom-Position mehr.
+- **Neue Beobachtung, kein neuer Code-Bug:** Die Entwurf-Raummaße zeigen „3,6×3,6m" statt der diktierten
+  „drei mal drei sechzig" (3,00×3,60 m) — 3,6×3,6=12,96 m² erklärt die gezeigte Fläche exakt, ohne jeden
+  Verschnittzuschlag (0%, wie schon beim ersten Test dokumentiert). Das ist derselbe Whisper-Mechanismus
+  wie bei PM-019: „drei mal drei sechzig" scheint (analog zu „zwei mal eins fünfzig" → „zweimal 1,50m")
+  als „dreimal 3,60m" verstanden worden zu sein, die erste Maßangabe geht verloren, GPT rät auf ein
+  Quadrat. Korrekte Fläche wäre 3,00×3,60=10,80 m² gewesen.
+- **Wert für Sandy:** Dieselbe Wortfolge „[kleine Zahl] mal [Zahl,Nachkommastelle]" ist jetzt zweimal
+  unabhängig (PM-019, PM-020) genau gleich falsch transkribiert worden. Bei PM-019 wurde bewusst
+  entschieden, die dafür diskutierte „verdächtig quadratisch"-Rückfrage-Heuristik NICHT einzubauen (Risiko
+  für echte quadratische Räume). Mit jetzt zwei Treffern könnte sich diese Abwägung ändern — das ist aber
+  eine Produktentscheidung für dich, kein automatischer Fix.
+
+**Ergebnis:** Beide ursprünglichen Bugs live bestätigt behoben. Die Raummaß-Abweichung ist kein neuer
+Code-Fund, sondern der zweite Beleg für den schon bekannten, bewusst nicht gefixten
+Transkriptionsmechanismus. PM-020 ist damit fachlich abgeschlossen.
+
+---
+
+## PM-021 — Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche)
+
+**Datum:** 2026-08-20
+**Status:** ✅ Live-Nachtest (2026-08-25) bestätigt: Phantom-„Balkonboden streichen" ist weg, alle drei
+verbleibenden Positionen exakt Soll — inklusive der neuen VOB-Übermessungsregel (53,00 m² statt der alten
+48,55 m²). Fall vollständig grün, Details im Archiv.
+
+Ursprünglicher Befund (2026-08-21): Alle drei Kernfragen positiv beantwortet (individuelle
+Öffnungsmaße, „1x" statt „2x", Terrassentür korrekt erkannt — Wandfläche exakt Soll 48,55 m²). Aber neuer,
+kurioser Fund: komplett unverlangte „Balkonboden streichen"-Position (30 m²), vermutlich durch das Wort
+„Terrassentür" ausgelöst
+
+**Warum dieser Fall:** Bisherige Tests hatten immer gleich große Fenster/Türen mit Standardmaßen oder
+höchstens EINE individuell genannte Größe. Dieser Fall hat zwei unterschiedlich große Fenster UND zwei
+unterschiedlich große Türen (inkl. einer breiten Terrassentür) im selben Raum — ein härterer Test dafür, ob
+jede Öffnung mit ihrem EIGENEN Maß abgezogen wird, statt pauschal mit einem einzigen Standardmaß pro
+Öffnungstyp zu rechnen. Zusätzlich wird bewusst „einmal streichen" statt der sonst in fast jedem Testfall
+verlangten zwei Anstriche gesagt — testet, ob das Tool wirklich der Aussage folgt statt einem eingebauten
+2x-Standardwert. Und: die Kombination aus einem sehr kleinen Fenster (deutlich unter der 2,5-m²-VOB-
+Übermessungsschwelle) und einer sehr großen Terrassentür im selben Raum eignet sich gut, um die im Kopf der
+Datei als „bewusst zurückgestellt, niedrige Priorität" vermerkte fehlende VOB-Übermessungsregel an einem
+konkreten, krassen Beispiel sichtbar zu machen.
+
+**Zum Einsprechen:**
+„Wohnküche, sechs mal fünf, Höhe zwo sechzig. Zwei Fenster: eins ist eins zwanzig mal eins vierzig, das
+andere achtzig mal eins zehn. Zwei Türen: eine normal Maß, die andere eine breite Terrassentür, zwei Meter
+mal zwo zehn. Wände streichen, einmal drüber reicht.“
+
+**Soll-Lösung:**
+- Umfang: 2×(6,00+5,00)=22,00 lfm; Wandbrutto: 22,00×2,60=57,20 m²
+- Fenster 1: 1,20×1,40=1,68 m²; Fenster 2: 0,80×1,10=0,88 m²
+- Tür 1 (normal): 0,90×2,10=1,89 m²; Tür 2 (Terrassentür): 2,00×2,10=4,20 m²
+- Öffnungsfläche gesamt (Standard-Abzugslogik ohne Übermessung): 1,68+0,88+1,89+4,20=8,65 m²
+- Wandfläche netto: **48,55 m²**
+- Wandflächen streichen **1×** (nicht 2×, ausdrücklich „einmal drüber reicht"): 48,55 m²
+- Fachliche Zusatzbetrachtung zur bekannten, offenen VOB-Übermessungsfrage: Fenster 2 (0,88 m²) liegt weit
+  unter der 2,5-m²-Schwelle für kleine Öffnungen und dürfte nach VOB/DIN 18363 eigentlich NICHT abgezogen
+  werden (Übermessung wegen Kantenarbeit) — die Terrassentür (4,20 m²) liegt dagegen klar darüber und
+  gehört in jedem Fall abgezogen. Käme die Übermessungsregel zur Anwendung, wäre die korrekte Wandfläche
+  49,43 m² (nur 7,77 m² statt 8,65 m² abgezogen). Kein hartes Soll an dieser Stelle, aber ein sehr klares
+  Beispiel, um diese seit Längerem zurückgestellte Entscheidung endlich zu treffen.
+
+**Worauf achten:**
+- Werden alle vier Öffnungen mit ihren INDIVIDUELLEN Maßen abgezogen, oder rechnet das Tool pauschal mit
+  einem einzigen Standardmaß pro Öffnungstyp (z. B. „2 Fenster à Standardmaß" statt der beiden echten,
+  unterschiedlichen Größen)?
+- Wird „einmal streichen" korrekt als 1× übernommen, oder rutscht die Engine trotzdem auf den in fast
+  jedem anderen Testfall gültigen 2×-Standard?
+- Wird die Terrassentür überhaupt als „Tür" erkannt (ungewöhnlich groß, ungewöhnliches Wort „Terrassentür"
+  statt „Tür"), oder fällt sie durchs Raster und wird gar nicht abgezogen?
+- Ergibt sich aus dieser Gegenüberstellung (sehr kleines Fenster vs. sehr große Tür im selben Raum) ein
+  guter, konkreter Anlass, die VOB-Übermessungsregel endlich zu entscheiden und umzusetzen?
+
+**Ist-Ergebnis (Sandy, 2026-08-21):** Karte: „4 Positionen erkannt" — Wandflächen streichen 1x (48,55 m²),
+Boden schützen (30 m²), Sockelleisten abkleben (19,1 lfdm), Balkonboden streichen (30 m²). Entwurf,
+Raummaße korrekt (5×6 m, Höhe 2,6 m, 2 Türen, 2 Fenster):
+
+- **Wandflächen streichen 1x: 48,55 m² × 6,00 € = 291,30 €** — ✅ **exakt Soll.** Rückrechnung bestätigt:
+  57,20 m² Wandbrutto minus alle vier Öffnungen einzeln (1,68+0,88+1,89+4,20=8,65 m²) = 48,55 m². Damit
+  sind gleich drei Kernfragen des Falls positiv beantwortet: alle vier Öffnungen wurden mit ihren
+  INDIVIDUELLEN Maßen abgezogen (kein Pauschal-Standardmaß), „einmal streichen" wurde korrekt als 1×
+  übernommen (nicht der sonst übliche 2×-Default), und die Terrassentür wurde trotz ungewöhnlicher
+  Bezeichnung korrekt als Tür erkannt und mit ihrem echten Maß (2,00×2,10=4,20 m²) abgezogen.
+- Boden schützen: 30 m² × 1,20 € = 36,00 € — normale Nebenleistung, exakt Raumfläche (5×6=30 m²)
+- **Sockelleisten abkleben: 19,1 lfdm × 0,80 € = 15,28 €** — ebenfalls korrekt: 22,00 lfm Umfang minus
+  BEIDER Türbreiten (0,90+2,00=2,90) = 19,10 lfdm. Auch hier wird die Terrassentür korrekt mit ihrer
+  eigenen, größeren Breite berücksichtigt, nicht mit der Standard-Türbreite.
+- **Balkonboden streichen: 30 m² × 0,00 € (Preis fehlt)** — komplett unverlangt. Im Transkript kommt weder
+  „Balkon" noch „Terrasse" als eigener Ort vor, nur „Terrassentür" als Türbezeichnung. Menge (30 m²) ist
+  exakt die Fläche des Raums selbst (5×6), nicht irgendeine plausible Balkongröße. Sieht so aus, als hätte
+  das Wort „Terrassentür" die Annahme „hier gibt's auch einen Balkon/eine Terrasse, die separat gestrichen
+  werden muss" ausgelöst und dafür einfach die Raumfläche wiederverwendet.
+- Zur bekannten, offenen VOB-Übermessungsfrage: 48,55 m² bestätigt, dass die Übermessungsregel weiterhin
+  nicht angewendet wird (wäre mit Regel 49,43 m²) — wie erwartet, das bewusst zurückgestellte Thema bleibt
+  unverändert, kein neuer Fund, aber ein sauberes Rechenbeispiel für später.
+
+**Befund:**
+
+1. **Gute Nachricht, gleich dreifach:** individuelle Öffnungsmaße, „1x statt 2x"-Anstrich und die korrekt
+   erkannte Terrassentür funktionieren alle einwandfrei — die Wandfläche trifft exakt die Soll-Lösung.
+   Sowohl bei der Wandflächen- als auch bei der Sockelleisten-Berechnung wird die Terrassentür korrekt mit
+   ihrer eigenen, größeren Breite (statt der Standard-Türbreite) berücksichtigt.
+2. **Neuer, kurioser Fund: Phantom-„Balkonboden streichen".** Eine komplett unverlangte Position taucht auf,
+   vermutlich ausgelöst durch das Wort „Terrassentür" — analog zu anderen Ein-Wort-Über-Erkennungsbugs
+   dieser Testreihe (PM-010: „kommen raus" → Phantom-Bodenaustausch; PM-017: „tapezieren" → vier
+   Phantom-Positionen), nur diesmal mit einer kompletten Fehlinterpretation des Ortes (ein Balkon, der nie
+   erwähnt wurde). Wegen fehlendem Preis rechnerisch harmlos, aber eine Zeile im fertigen Angebot, die
+   fachlich keinen Sinn ergibt und Kunden wie Handwerker verwirren würde.
+3. VOB-Übermessung weiterhin nicht angewendet — erwartungsgemäß, bekannter, bewusst niedrig priorisierter
+   Punkt, kein neuer Fund.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — an echten Produktionsdaten root-caused:** Rohdaten
+für diesen Testlauf gezogen (Supabase, `entwurf_aufnahmen`, id `c4dfd8e7…`). Transkript im Original sogar
+noch deutlicher als vermutet: Whisper hat „breite Terrassentür" zu „**Breitterrassentür**" verschliffen —
+noch klarer erkennbar, dass das eine reine Türbezeichnung ist, kein eigener Ort.
+
+**Ursache bestätigt: `pruefeBalkon`** (`vollstaendigkeit/maler-extras.ts`) prüfte bisher nur
+`lower.includes('terrasse')` — ein bloßer Substring-Treffer, der auch in „Terrassentür"/„Breitterrassentür"
+steckt. Sobald das Wort irgendwo vorkam, hat die Funktion einen kompletten Zusatz-Workflow ausgelöst: eine
+„Balkonboden streichen"-Position, deren Menge einfach von der ERSTEN gefundenen „…boden…"-Position
+übernommen wurde — hier „Boden schützen — Wohnküche" (30 m², die Fläche des Zimmers selbst, nicht
+irgendeine Balkongröße). Exakt Sandys Strukturbeobachtung: ein einzelnes Trigger-Wort löst einen kompletten
+erfundenen Workflow aus, plus Wiederverwendung einer fachlich unpassenden Fläche — dieselbe Fehlerfamilie
+wie PM-010 („kommen raus" → Phantom-Bodenaustausch) und PM-017 („tapezieren" → vier Phantom-Positionen).
+
+**Fix:** neue `BALKON_ORT`-Regex verlangt, dass „balkon"/„terrasse"/„loggia" NICHT direkt von „tür" gefolgt
+wird (mit oder ohne „n"-Fuge, deckt „Terrassentür", „Breitterrassentür" UND „Balkontür" ab). Echte
+Wortzusammensetzungen wie „Balkonboden" oder „Terrassenbrüstung" (kein „tür" direkt danach) lösen die
+Erkennung weiterhin korrekt aus — nur die Türbezeichnung selbst zählt nicht mehr als Ortsangabe.
+
+**Wie geprüft:** gegen die echten Produktionsdaten dieses Testfalls durch die reale
+`pruefeUndErgaenzeVollstaendigkeit`-Pipeline reproduziert (Phantom vor dem Fix vorhanden — „Balkonboden
+streichen", 30 m² —, danach weg; alle drei korrekten Positionen unverändert exakt Soll: Wandflächen 1×
+48,55 m², Boden schützen 30 m², Sockelleisten abkleben 19,1 lfdm). 4 neue Regressionstests in
+`vollstaendigkeit.test.ts` (verhindert „Terrassentür"/„Balkontür" als Auslöser, bestätigt dass ein
+tatsächlich erwähnter Balkon sowie die echte Wortzusammensetzung „Balkonboden" weiterhin korrekt erkannt
+werden). Neuer Golden-Test in `golden-korrekturen.test.ts` mit den exakten Produktionsdaten. Ganze Suite
+grün (267/267). Bewusst NICHT angefasst: die VOB-Übermessungsfrage (Punkt 3) bleibt wie dokumentiert
+zurückgestellt, kein Teil dieses Fixes. Wie immer: noch OHNE Live-Nachtest im echten Tool.
+
+**Für Head of Product Engineering:** Die Kernlogik dieses Falls (individuelle Öffnungsmaße, 1×/2×-Anstrich,
+Terrassentür-Erkennung) funktioniert sauber, keine Änderung nötig. Bitte nur die „Balkonboden
+streichen"-Phantom-Position untersuchen — vermutlich löst das Wort „Terrassentür" irgendwo eine
+Zusatzannahme „es gibt einen Balkon" aus, die hier fachlich nicht zutrifft (eine Terrassentür bedeutet nicht
+zwingend einen Balkon, und selbst wenn, wäre dessen Fläche nicht identisch mit der Raumfläche). Die
+VOB-Übermessungsregel bleibt wie besprochen bewusst zurückgestellt, hier nur als sauberes Beispiel
+dokumentiert, keine Handlung nötig.
+
+**Live-Nachtest (Sandy, 2026-08-25) — alles bestätigt, Fall grün:**
+
+Karte: „3 Positionen erkannt" — Wandflächen streichen 1x (53 m²), Boden schützen (30 m²), Sockelleisten
+abkleben (19,1 lfdm). **Kein „Balkonboden streichen" mehr.** Entwurf, Raummaße korrekt (5×6 m, Höhe 2,6 m,
+2 Türen, 2 Fenster):
+
+- ✅ **Wandflächen streichen 1×: 53 m² × 6,00 € = 318,00 €** — exakt Soll unter der neuen VOB-Regel.
+  Wandbrutto 57,20 m² minus nur der Terrassentür (4,20 m², über der 2,5-m²-Schwelle) = 53,00 m². Beide
+  Fenster (1,68 m² und 0,88 m²) und die normale Tür (1,89 m²) bleiben jetzt zu Recht unabgezogen. „1×"
+  weiterhin korrekt übernommen, keine 2×-Standardabweichung.
+- Boden schützen: 30 m² × 1,20 € = 36,00 € — exakt Soll (5×6=30 m²).
+- Sockelleisten abkleben: 19,1 lfdm × 0,80 € = 15,28 € — exakt Soll (22,00 lfm Umfang minus beider
+  Türbreiten 0,90+2,00=2,90 lfm; die VOB-Regel gilt hier bewusst nicht, wie an anderer Stelle schon
+  festgelegt).
+- ✅ **Phantom-„Balkonboden streichen" ist weg** — Fix bestätigt, keine unverlangte Position mehr.
+
+**Ergebnis:** Beide offenen Punkte (Phantom-Balkonboden, VOB-Regel-Anwendung) sind jetzt live bestätigt —
+der eine als behobener Bug, der andere als korrekt angewendete, bewusst getroffene Entscheidung. PM-021
+ist damit fachlich vollständig abgeschlossen, keine offenen Funde mehr.

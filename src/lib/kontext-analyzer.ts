@@ -701,6 +701,77 @@ function anreichernElektro(ext: ExtMitExtra, hinweise: string[], ergaenzungen: K
 
 // ── HAUPTFUNKTION ─────────────────────────────────────────────────────────────
 
+// ── Systemischer Fund Punkt 6 / PM-019 + PM-020 ───────────────────────────
+// Whisper verschluckt beim Muster „[Zahlwort] mal [Zahl]" die erste
+// Maßangabe: aus „zwei mal eins fünfzig" wird „zweimal 1,50", aus „drei mal
+// drei sechzig" wird „dreimal 360". GPT macht daraus einen quadratischen Raum
+// (Länge = Breite) — und eine falsche Fläche läuft unbemerkt ins Angebot.
+// Zweimal unabhängig live bestätigt (Gästeklo 1,50×1,50 statt 2,00×1,50;
+// Kinderzimmer 3,60×3,60 statt 3,00×3,60). Sandys Ansage dazu (2026-08-25):
+// „die maße müssen natürlich stimmen!!!"
+//
+// Die verlorene Zahl steht nicht mehr im Text — es gibt keinen Fix, der sie
+// zurückholt. Der einzige ehrliche Weg zu „die Fläche stimmt immer" ist eine
+// Rückfrage. Damit sie NUR im Verdachtsfall kommt und einen echt
+// quadratischen Raum nicht nervt, müssen zwei Dinge zusammentreffen:
+//   1. Der Raum ist exakt quadratisch (Länge = Breite).
+//   2. Im Transkript steht das verräterische zusammengeschriebene Muster
+//      „<Zahlwort>mal <Ziffer>" — genau das, was Whisper aus zwei getrennten
+//      Maßen macht. „Wände streichen zweimal" löst nichts aus, weil danach
+//      keine Ziffer folgt.
+// Die Frage nennt beide Lesarten, damit der Handwerker nicht raten muss,
+// worum es geht.
+const ZAHLWORTE_MAL: Record<string, number> = {
+  zwei: 2, drei: 3, vier: 4, fünf: 5, fuenf: 5, sechs: 6, sieben: 7, acht: 8, neun: 9, zehn: 10,
+}
+const ZAHLWORT_MAL_ZIFFER = new RegExp(`\\b(${Object.keys(ZAHLWORTE_MAL).join('|')})mal\\s+(\\d+(?:[.,]\\d+)?)`, 'i')
+
+function meterText(wert: number): string {
+  return wert.toFixed(2).replace('.', ',')
+}
+
+function verdaechtigesMasseMuster(transkript: string, raumName: string, raumAnzahl: number): RegExpMatchArray | null {
+  const text = transkript ?? ''
+  if (!text.trim()) return null
+  const name = (raumName ?? '').trim().toLocaleLowerCase('de-DE')
+  if (name) {
+    const satz = text.split(/[.!?;\n]+/).find(s => s.toLocaleLowerCase('de-DE').includes(name))
+    if (satz) {
+      const treffer = satz.match(ZAHLWORT_MAL_ZIFFER)
+      if (treffer) return treffer
+    }
+  }
+  // Ohne Satzbezug nur bei einem einzigen Raum — sonst wäre die Zuordnung geraten.
+  return raumAnzahl === 1 ? text.match(ZAHLWORT_MAL_ZIFFER) : null
+}
+
+function pruefeQuadratVerdacht(ext: ExtMitExtra): void {
+  const raeume = ext.raeume ?? []
+  for (const raum of raeume) {
+    const laenge = raum.laenge
+    const breite = raum.breite
+    if (!laenge || !breite || Math.abs(laenge - breite) > 0.001) continue
+
+    const treffer = verdaechtigesMasseMuster(ext.transkript ?? '', raum.name ?? '', raeume.length)
+    if (!treffer) continue
+
+    const verlorene = ZAHLWORTE_MAL[treffer[1].toLocaleLowerCase('de-DE')]
+    const raumId = (raum.name ?? '').toLowerCase().replace(/\s+/g, '_')
+    const vermutet = verlorene && verlorene !== laenge
+      ? ` Im Gesagten stand „${treffer[0]}" — war es vielleicht ${meterText(verlorene)} × ${meterText(breite)} m?`
+      : ''
+
+    addRueckfrage(ext, {
+      id: `masse_${raumId}`,
+      frage: `Ich habe „${raum.name}" als ${meterText(laenge)} × ${meterText(breite)} m verstanden — stimmt das?${vermutet}`,
+      typ: 'masse_einzel',
+      betrifft: raum.name,
+      prioritaet: 0,
+      schnell_antworten: [],
+    })
+  }
+}
+
 export function analysiereKontext(extraktion: ExtrahierteDaten): KontextAnalyse {
   const hinweise: string[] = []
   const automatische_ergaenzungen: KontextAnalyse['automatische_ergaenzungen'] = []
@@ -726,6 +797,10 @@ export function analysiereKontext(extraktion: ExtrahierteDaten): KontextAnalyse 
       anreichernElektro(ext, hinweise, automatische_ergaenzungen)
       break
   }
+
+  // Gewerk-unabhängig: der Whisper-Quadrat-Verdacht trifft Maler wie Boden
+  // gleichermaßen (PM-019 war Maler, PM-020 Bodenleger).
+  pruefeQuadratVerdacht(ext)
 
   return { hinweise, automatische_ergaenzungen, extraktion_angereichert: ext as ExtrahierteDaten }
 }

@@ -103,12 +103,20 @@ export function ergaenzeAusAufnahmeHinweisen(
   // dieselbe Verneinungserkennung wie bei "kein Fenster"/"keine Tür"
   // (arbeiten-normalisierer.ts), damit der Fallback nicht selbst zum
   // Phantom-Auslöser wird.
-  const dehnungsfugeMuster = /dehnungsfuge|bewegungsfuge/i
-  const dehnungsfugeVerneint = /(?:kein[e]?|ohne)\s+(?:dehnungsfuge|bewegungsfuge)/i
+  // PM-013, Nachtest 4 (2026-08-25): Die Dehnungsfuge war wieder komplett weg
+  // — dritter unterschiedlicher Ausgang für denselben Satz. Diesmal am
+  // Rohtranskript aus der Produktions-DB nachgesehen, statt im Code zu suchen.
+  // Dort stand: „da muss wahrscheinlich eine DEHNUNGSFUHRE rein". Whisper hat
+  // sich verhört — der Fallback war nie kaputt, das Wort kam nur nie bei ihm
+  // an. Deshalb toleriert das Muster jetzt die üblichen Verhörer
+  // (Fuge/Fuhre/Fuhr, Dehn-/Dehnungs-/Bewegungs-, mit oder ohne Bindestrich).
+  // Der Wortstamm davor bleibt Pflicht — eine „Fuhre" allein löst nichts aus.
+  const dehnungsfugeMuster = /(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i
+  const dehnungsfugeVerneint = /(?:kein[e]?|ohne)\s+(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i
   const dehnungsfugeImTranskript = dehnungsfugeMuster.test(textMitZahlen) && !dehnungsfugeVerneint.test(textMitZahlen)
   if ((dehnungsfugeMuster.test(hinweise) || dehnungsfugeImTranskript) && !hatPos(dehnungsfugeMuster)) {
-    const stueckTreffer = textMitZahlen.match(/(\d+)\s*(?:stück\s*)?(?:dehnungsfuge|bewegungsfuge)/i)
-      ?? textMitZahlen.match(/(?:dehnungsfuge|bewegungsfuge)[^.]{0,20}?(\d+)\s*stück/i)
+    const stueckTreffer = textMitZahlen.match(/(\d+)\s*(?:stück\s*)?(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i)
+      ?? textMitZahlen.match(/(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?[^.]{0,20}?(\d+)\s*stück/i)
     const stueck = stueckTreffer ? parseInt(stueckTreffer[1], 10) : 1
     ergebnis.push({
       beschreibung: `Dehnungsfuge einbauen${raumSuffix(boden)}`,
