@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-24 — DC-002: „Angebote" in Desktop-Sidebar ergänzt; DC-003: Status-Farben+UX komplett neu + Nachtrag: Status-Button nach Sandys Live-Feedback aus der Icon-Reihe raus, eigene erkennbare Zeile; DC-006: zweite Token-Migrationsrunde (5 weitere Dateien); DC-027: Backend-Flag live (Head of Product Engineering) + „Vorschlag"-Badge gebaut (Product Designer) — alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-25 — DC-033 NEU: Angebotsnummern-Bug gefunden, Root Cause = verschluckter RPC-Fehler bei Angebots-Erstellung, betrifft 103/106 Angebote live, an Head of Product Engineering weitergegeben. Vortag: DC-002/DC-003 (inkl. Header-Nachtrag)/DC-006/DC-027 — alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -83,6 +83,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | ✅ Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21) — Karte, DC-028-Raum-Karten und „Entwurf erstellen"-Gate alle wie entschieden gebaut. Regressionsgeprüft (236 Tests grün), noch KEIN Live-Nachtest | Product Designer (Entscheidung) / Head of Product Engineering (Umsetzung) |
 | DC-031 | Navigations-Sackgassen: laufende Aufnahme nicht abbrechbar (Mikro bleibt offen), Aufnahme-Detail-Sheet nur per unsichtbarem Backdrop-Tap schließbar (sichtbares „X" löscht stattdessen), „Zurück" aus dem frischen 0€-Entwurf landet auf der leeren Angebotsseite statt am Dashboard (von Sandy gemeldet, 2026-08-23) | ✅ Alle drei umgesetzt (Product Designer, 2026-08-23): Abbrechen-Button während Aufnahme (verwirft, lädt nicht hoch) + Mikro wird beim Verlassen der Seite automatisch freigegeben; Sheet hat jetzt einen eigenen „Schließen"-Text-Button getrennt vom Lösch-„X"; „Zurück"/„Trotzdem zurück ohne Berechnen" gehen zum Dashboard, wenn das Angebot noch keinen Kunden und keine Positionen hat, sonst weiterhin zur Angebotsseite. Beim Nachtesten „an allen anderen Stellen" (Sandys Auftrag) zusätzlich dieselbe Baustelle bei „+ Neue Variante erstellen" in Briefpapier & Design gefunden und gleich mitgefixt: leere Variante wird beim Zurückgehen ohne Änderung automatisch wieder gelöscht, mit ungespeicherten echten Änderungen kommt jetzt eine Rückfrage statt stillem Datenverlust. Scoped tsc sauber, noch kein Live-Test | Product Designer (umgesetzt) |
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
+| DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | ❌ offen — Root Cause gefunden: fertig gebautes Nummernkreis-System wird durch einen verschluckten RPC-Fehler bei der Angebots-Erstellung nie erreicht, UI fällt still auf UUID-Fragmente zurück. Betrifft live 103 von 106 Angeboten in Produktion. NICHT mein Bereich (Backend-Pipeline-Bug) — an Head of Product Engineering weitergegeben | Head of Product Engineering |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2370,6 +2371,73 @@ hinterlässt, den das Dashboard nicht sauber abfängt.
 Fortschritt sichert und zum Dashboard führt; das Dashboard müsste dann
 tolerant mit unvollständigem Onboarding umgehen (z. B. ein Hinweis-Banner
 „Onboarding fortsetzen" statt eines gesperrten Zustands).
+
+---
+
+## DC-033 — Angebotsnummern sehen zufällig aus, keine erkennbare Logik
+
+**Datum:** 2026-08-25 (Sandy, live beobachtet: „Angebot 2026-5EC9",
+„Angebot 2026-4732", „Angebot 2026-B381" — „ich erkenne keine logik?!")
+**Status:** ❌ offen — Root Cause gefunden, Fix ist Backend-Arbeit
+
+**Auftrag:** „schau dir das ganze system an, auch in den einstellungen wie
+der user das da einstellt. wenns nicht dein thema ist gibs weiter." — habe
+das komplette System untersucht (Anzeige, Erzeugung, Settings-Seite,
+Produktionsdaten), bevor ich es weitergebe.
+
+**Befund — wo die angezeigte Nummer herkommt:** `src/data/quotes.ts:92-93`:
+```ts
+const quoteNumber = (quote as { angebotsnummer?: string | null }).angebotsnummer
+  ?? `${new Date(quote.created_at).getFullYear()}-${quote.id.slice(-4).toUpperCase()}`
+```
+Wenn `angebotsnummer` `null` ist, fällt die Anzeige still auf Jahr + letzte
+4 Zeichen der internen UUID zurück — genau das sind „5EC9"/„4732"/„B381",
+keine echten Nummern, sondern UUID-Fragmente. Das ist reine Anzeigelogik
+und für sich genommen sogar ein sinnvoller Notfall-Fallback (besser als
+„undefined") — das eigentliche Problem liegt eine Ebene tiefer.
+
+**Befund — das echte Nummernkreis-System existiert und ist sauber gebaut:**
+Migration `supabase/migrations/20260613150138_add_nummernkreise.sql` legt
+`nummernkreise` + `vergebene_nummern` an, dazu zwei `SECURITY DEFINER`-RPCs:
+`init_nummernkreise` (legt pro Betrieb Standard-Kreise `AG-2026-`/`RE-2026-`
+an) und `vergib_naechste_nummer` (sperrt die Zeile `FOR UPDATE`, baut die
+Nummer, zählt hoch, schreibt ins Audit-Log, setzt `quotes.angebotsnummer`).
+Wird korrekt aus `src/app/api/quotes/create/route.ts:179-185` aufgerufen,
+direkt nach dem `quotes`-Insert.
+
+**Der eigentliche Bug:** Das RPC-Ergebnis wird nie auf Fehler geprüft:
+```ts
+const { data: angebotsnummer } = await supabase.rpc('vergib_naechste_nummer', {...})
+```
+Kein `error` wird ausgelesen, geloggt oder irgendwo sichtbar gemacht. Wirft
+das RPC (z. B. weil keine `nummernkreise`-Zeile existiert), bleibt
+`angebotsnummer` für immer `null` — und jeder spätere Aufruf landet im
+UUID-Fallback von oben. Ein klassischer „stiller Fehler", wie DC-006/DC-027
+vorher schon (fertig gebaut, aber nie sichtbar kaputt).
+
+**Live in Produktion bestätigt (direkt in Supabase geprüft):** 106 Angebote
+über 2 Betriebe, nur **3** haben eine echte `angebotsnummer`. „Holm GmbH"
+(54 Angebote) hat eine `nummernkreise`-Zeile (`naechste_nummer = 4`) — nur
+die ersten 3 Angebote nach dem Migrations-Rollout wurden je nummeriert, die
+folgenden 51 fielen seitdem still durch. „Lisa Schein Malerbetrieb"
+(52 Angebote, 17.–25.08. — passt zu Sandys aktuellem Testzeitraum) hat
+**gar keine** `nummernkreise`-Zeile, obwohl `init_nummernkreise` laut Code
+bei jeder Erstellung mitlaufen sollte — vermutlich genau das, was Sandy
+gerade sieht.
+
+**Einstellungen-Seite (`einstellungen/nummern/page.tsx`):** Vollständig
+fertig und korrekt verdrahtet — echte Live-Vorschau, liest/schreibt echte
+`nummernkreise`-Zeilen, Lücken-Warnung bei manuellem Überschreiben, echter
+Audit-Trail mit CSV-Export aus `vergebene_nummern`. **Kein Design-/
+UX-Problem, keine Änderung nötig.**
+
+**Warum ich das nicht selbst fixe:** Das ist ein verschluckter Backend-
+Fehler in der Erstellungs-Pipeline (`api/quotes/create/route.ts`), kein
+UI-Thema — genau der Fall aus Sandys „wenns nicht dein thema ist gibs
+weiter". Gehört zu Head of Product Engineering: `error` aus beiden RPC-
+Aufrufen (`init_nummernkreise`, `vergib_naechste_nummer`) auslesen/loggen,
+dann herausfinden, warum es seit Mitte Juni fehlschlägt, und die 51+52
+betroffenen Bestandsangebote ggf. nachträglich nummerieren.
 
 ---
 
