@@ -11,7 +11,10 @@ export interface RueckfragenAntwort {
 
 interface Props {
   fragen: RueckfrageItem[]
-  onFertig: (antworten: Record<string, RueckfragenAntwort>) => void
+  // PM-007: `null` = bewusst übersprungen. Der Wert MUSS mitgeschickt werden,
+  // sonst hält die Berechnung die Frage für unbeantwortet und stellt sie
+  // erneut — genau die Endlosschleife, in der Sandy festhing.
+  onFertig: (antworten: Record<string, RueckfragenAntwort | null>) => void
   onUeberspringen: () => void
   onZurueck?: () => void
 }
@@ -617,7 +620,16 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
   async function abschliessen() {
     setFertig(true)
     await new Promise(r => setTimeout(r, 500))
-    onFertig(antworten)
+    // PM-007 (2026-08-24): Übersprungene Fragen lagen bisher nur in diesem
+    // Bildschirm (`uebersprungen`) und wurden NICHT mitgeschickt. Die
+    // Berechnung sah eine unbeantwortete Frage, stellte sie erneut — dieselbe
+    // Maske, immer wieder, kein Weg zum Entwurf. Jetzt geht „übersprungen" als
+    // ausdrückliches `null` mit: die Berechnung weiß dadurch, dass die Frage
+    // erledigt ist, und rechnet mit ihren Standard-Annahmen weiter.
+    const uebersprungenAlsNull = Object.fromEntries(
+      [...uebersprungen].map(id => [id, null as RueckfragenAntwort | null]),
+    )
+    onFertig({ ...uebersprungenAlsNull, ...antworten })
   }
 
   if (fertig) {

@@ -58,18 +58,18 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-005 | Kein gemeinsamer Button-Baustein | 🟡 `active:scale-98`-Bug behoben, `Button.tsx` erstellt — Migration bestehender Stellen offen | Product Designer |
 | DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | 🟡 läuft schrittweise weiter, jetzt 10 Komponenten migriert (2 Runden, zuletzt 2026-08-24), größte verbleibende Brocken (`AngebotDetail.tsx`, `einstellungen`, `preise`, `onboarding`) bewusst vorgemerkt statt riskant nebenbei angefasst | Product Designer |
 | DC-007 | Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb | 🟡 behoben, noch nicht live nachgeprüft | Product Designer |
-| DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ❌ offen | — |
+| DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ❌ offen | Product Designer (25.08. zugewiesen) |
 | DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | 🟡 mit DC-028 mitgefixt (2026-08-19): `kannFertigstellen` verlangt jetzt `erkannteAnzahl > 0`, 0 Positionen zeigt neutralen Hinweis statt grünem Erfolg — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | 🟡 Widerspruchs-Banner behoben (Head of Product Engineering, 2026-08-20). Guardrail jetzt umgesetzt (Product Designer, 2026-08-23): `AngebotDetail.tsx`, „Fertigstellen" ist deaktiviert ohne mindestens 1 Position oder ohne zugewiesenen Kunden, plus sichtbarer Hinweistext + serverseitiger Sicherheitsnetz-Check — noch nicht live nachgeprüft | Head of Product Engineering (Banner-Widerspruch, live bestätigt ausstehend) / Product Designer (Guardrail, live bestätigt ausstehend) |
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
-| DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ❌ offen | — |
-| DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ❌ offen — live bestätigt | — |
-| DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / offen (Text) |
-| DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ❌ offen — live bestätigt | — |
-| DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ❌ offen — live bestätigt | — |
-| DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ❌ offen — live bestätigt | — |
-| DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | — |
-| DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | — |
+| DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ❌ offen | Product Designer (25.08. zugewiesen) |
+| DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / Product Designer (Text, 25.08. zugewiesen) |
+| DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen, hängt inhaltlich mit DC-006 zusammen) |
+| DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen — falls der fachliche Unterschied selbst unklar ist, bitte kurz bei Head of Product Engineering nachfragen, bevor Text geschrieben wird) |
 | DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | 🔵 Prüfen, ob nur Screenshot-Ausschnitt | — |
 | DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — CoS-002 komplett (alle 3 Schritte inkl. Mehrfach-Aufnahmen-Fall), Realtime-Bug gefunden+gefixt, Retest danach „passt" | Head of Product Engineering |
 | DC-022 | „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein (PD-004) | ✅ behoben + live bestätigt — strukturell mitgelöst mit DC-021/CoS-002, siehe dort | Head of Product Engineering |
@@ -85,6 +85,22 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
+
+> **Chief-of-Staff-Update (25.08.2026):** Acht bis dahin unzugewiesene
+> Punkte (DC-008, 012, 013, 015, 016, 017, 018, 019 — Textpolitur,
+> Icon-Sprachen, Onboarding-Leerraum, Footer-Überlappung u. ä.) jetzt an
+> **Product Designer** zugewiesen. Auf Sandys Nachfrage kurz die Frage
+> geprüft, ob dafür statt einer Zuweisung eine neue Stelle sinnvoller wäre
+> — Antwort: nein. Alle acht Punkte sind inhaltlich UI/UX-/Design-System-
+> Polituren, exakt dieselbe Art Arbeit, die Product Designer bei DC-002/
+> 005/006/007 usw. bereits selbst umsetzt — kein neuer Aufgabentyp, nur
+> bisher nicht formal eingetragen. Eine neue Stelle wäre hier reine
+> Backlog-Vergrößerung ohne strukturellen Grund. Eine echte künftige
+> Lücke sehe ich eher bei Support/Kundenservice nach dem ersten
+> Testnutzer (Abschnitt 10 in `launch-readiness.md` — Feedback-Kanal,
+> Reaktionszeit, Notfallplan) sowie bei Content/Wachstum Richtung Gate 3
+> (SEO, Blog, Nutzer-Gewinnung) — dafür aber jetzt, vor dem ersten
+> Testnutzer, noch zu früh.
 
 ---
 

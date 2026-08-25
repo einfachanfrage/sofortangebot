@@ -61,13 +61,13 @@ war der richtige nächste Schritt, nicht meiner.
 
 | ID | Thema | Status |
 |---|---|---|
-| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Ausschluss-Fix live bestätigt (keine Decken-Position mehr). Karte-vs-Angebot-Diskrepanz (Boden schützen fehlte auf der Karte) jetzt systematisch für alle Nebentätigkeiten behoben (2026-08-20, siehe Fix-Update) — inkl. eines dabei gefundenen separaten Bugs in der echten Kalkulation (nicht nur der Vorschau). 236 Tests grün, Live-Nachtest steht noch aus |
+| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: Ausschluss-Fix hält (keine Decke, Fenster-Zähler konsistent). Wandfläche jetzt 46,5 m² statt 42,21 m² — korrekt nach der neu eingeführten VOB-Übermessungsregel, kein Bug — Details im Archiv |
 | PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | ✅ beide Bugs live nachgetestet, bestätigt behoben |
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Alle Rechenfehler live bestätigt behoben (Kniestock 20,4 m², Dachschrägen 23,08 m², keine unverlangte Spachtelposition mehr); fehlende Standardpreise jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus; offen bleibt nur das Designer-Thema (PD-005) |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Blocker behoben (Head of Product Engineering, 2026-08-24): zwei getrennte Ursachen — die Bodenflächen-Frage war überflüssig (Fläche aus 5 × 3,5 ableitbar) UND „Überspringen" erreichte den Server nie, deshalb die Schleife. Beides gefixt, dazu die überflüssige Wandhöhen-Frage im Dachgeschoss. Der Fall stellt jetzt **null** Rückfragen. Live-Nachtest steht aus |
 | PM-008 | Fassade | ✅ Nachtest 7 (2026-08-20): „So gerechnet"-Rechenbug live bestätigt behoben (66,96 m², kein Widerspruch mehr zur abgerechneten Position), Wand-Chip/PD-003 bleibt fehlerfrei. Fachlich/rechnerisch komplett grün, offen bleibt nur die Erschwerniszuschlag-Einheitenfrage (Pauschale vs. %, wartet auf Sandys Entscheidung, siehe PM-015) — Details im Archiv |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf); fehlender Standardpreis dafür jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus |
 | PM-010 | Sockelleisten-Doppel-Falle | ✅ Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv |
@@ -341,137 +341,242 @@ meiner Datenbank-Abfrage gibt es aktuell nur zwei Konten insgesamt (dein Hauptko
 vollen Katalog, und dieses eine Testkonto) — das Risiko für unentdeckte weitere Fälle ist also aktuell
 gering, aber real, sobald echte Nutzer dazukommen.
 
-**Details für abgeschlossene Fälle (PM-002, PM-003, PM-004, PM-005, PM-006, PM-007, PM-009):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen.
+**Details für abgeschlossene Fälle (PM-001, PM-002, PM-003, PM-004, PM-005, PM-006, PM-009):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen. (PM-007 am 2026-08-21 aus dem Archiv zurückgeholt, siehe eigener Abschnitt unten — ist wegen eines neuen Blocker-Bugs nicht mehr abgeschlossen. PM-001 ist am selben Tag frisch dazugekommen.)
 
 ---
 
-## PM-001 — Ausschluss + Selbstkorrektur (Wohnzimmer)
+## PM-007 — Dachgeschoss: Kniestock + Dachschrägen + Dachfenster
 
-**Datum:** 2026-08-16
-**Status:** ❌ Bug real und reproduzierbar — aber KEIN Rückfall/keine Regression. Der erste Durchlauf hat den Ausschluss-Satz gar nicht enthalten (Eingabefehler beim Einsprechen, siehe Korrektur unten). Der Nachtest mit vollständigem Text war der erste echte Test dieses Falls. Höchste Priorität bleibt bestehen.
+**Datum:** 2026-08-16 (aus dem Archiv zurückgeholt, 2026-08-21 — neuer, schwerwiegender Blocker-Bug macht
+den Fall wieder aktiv)
+**Status:** ❌ NEU, dringend (2026-08-21): Sandy hängt bei „Trotzdem überspringen" auf der
+Bodenflächen-Rückfrage komplett fest — dieselbe Rückfrage-Maske erscheint immer wieder, kein Weg zum
+Angebotsentwurf. Blockiert die komplette Nutzung dieses Falls. Vorherige Historie (Kniestock/Dachschrägen
+rechnerisch korrekt, siehe unten) bleibt als Referenz erhalten, wurde aber diesmal nicht mehr erreicht.
 
 **Zum Einsprechen:**
-„Also, äh, Wohnzimmer, fünf zwanzig mal vier zehn, Deckenhöhe zwo fünfzig. Wände komplett streichen, zweimal drüber. Ein Fenster — ne halt, zwei Fenster sind da drin, Standardgröße reicht. Eine Tür, normal Maß. Die Decke lassen wir, ist erst letztes Jahr gemacht worden, die bitte NICHT mitrechnen. Sockelleisten kleben wir noch ab, sind aus Holz, werden mitgestrichen.“
+„Dachzimmer, fünf mal dreieinhalb. Kniestock ist eins zwanzig hoch. Die Dachschrägen links und rechts jeweils zwölf Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles streichen, zweimal."
 
 **Soll-Lösung:**
-- Umfang: 2×(5,20+4,10) = 18,60 lfm
-- Wandfläche brutto: 18,60 × 2,50 = 46,50 m²
-- Abzug 2 Fenster Standard (1,20×1,00 je): 2,40 m²; 1 Tür Standard (0,90×2,10): 1,89 m²
-- Wandflächen streichen 2×: **42,21 m²**
-- Decke: **keine Position** (ausdrücklich ausgeschlossen)
-- Sockelleisten abkleben — Maler: 18,60 − 0,90 = **17,70 lfm**
+- Kniestockwände: Umfang 2×(5,00+3,50)=17,00 lfm × 1,20 m = **20,40 m²**
+- Dachschrägen: links 12 + rechts 12 = 24,00 m² brutto, minus 1 Dachfenster Standard (0,78×1,18=0,92 m²) = **23,08 m²**
+- Kein Deckenspiegel (nicht erwähnt) — keine eigene Position dafür
+- Keine normale „Wandflächen streichen"-Position — wäre falscher Zweig
+
+**Worauf achten:**
+- Wird der Dachgeschoss-Zweig überhaupt erkannt (braucht `kniestockhoehe` aus der Extraktion), oder rutscht das in die normale Wandflächen-Berechnung?
+- Kommen Kniestock und Dachschrägen als zwei getrennte Positionen mit den oben genannten Flächen?
+- Wird das Dachfenster von der Schrägenfläche abgezogen?
+- Fundort/Vorab-Hinweis: In `src/lib/mengen/gewerke/maler.ts`, Dachgeschoss-Zweig (ca. Zeile 295–342), fehlt bei „Kniestockwände streichen" und „Dachschrägen streichen" die „{anstriche}x"-Kennzeichnung im Positionstext, die der normale Zweig hat — rein kosmetisch (Menge/Preis unberührt), aber auf dem Papier sieht's dann so aus, als wäre nur 1× Anstrich drin. Schau, ob das im Ergebnis auch so aussieht.
 
 **Ist-Ergebnis (aus dem Tool):**
-- Wandflächen streichen 2×: 42,21 m² × 9,50 € = 401,00 € ✓
-- Boden schützen: 21,32 m² × 1,20 € = 25,58 € (nicht im ursprünglichen Soll, aber fachlich plausibel als automatisch abgeleitete Nebenleistung — kein Fehler)
-- Sockelleisten abkleben: 17,7 lfdm × 0,80 € = 14,16 € ✓
-- Keine Decken-Position ✓
-- Summe: Netto 440,74 € / MwSt 83,74 € / Gesamt 524,48 € — rechnerisch konsistent
+- Erkennungskarte zeigte 3 getrennte Leistungen: „Wände streichen", „Dachschrägen streichen", „Kniestock streichen" — schon hier ein schlechtes Zeichen, weil ein Dachzimmer ohne genannte Giebelwand eigentlich nur Kniestock + Schräge hat, nicht noch eine dritte „Wände"-Leistung.
+- Rückfragen waren komplett generisch: „Wie hoch sind die Wände in Dachzimmer?" (2,60 m gewählt), „Wie viele Türen/Fenster?", „Wie groß ist die Bodenfläche?" (5 × 3,5 erneut eingegeben). Keine einzige Rückfrage zur Kniestockhöhe oder zu den Dachschrägenflächen — obwohl beides im Transkript klar genannt wurde („Kniestock eins zwanzig hoch", „Dachschrägen links und rechts je zwölf Quadratmeter").
+- Fertiges Angebot (2026-03EE, 175,98 €) enthält **nur**: Wandflächen streichen 2× (12 m² × 9,50 € = 114,00 €), Boden schützen (17,5 m² × 1,20 € = 21,00 €), Sockelleisten abkleben (16,1 lfdm × 0,80 € = 12,88 €). Weder „Kniestockwände" noch „Dachschrägen" tauchen als eigene Position auf.
+- Die 12 m² bei „Wandflächen streichen" lassen sich nicht aus den angezeigten Raumdaten (3,5 × 5 m, Höhe 2,6 m, 1 Tür, 1 Fenster) nachrechnen — nach Standardformel (Umfang 17,00 lfm × 2,60 m − Fenster − Tür) käme man auf rund 41 m², nicht 12 m².
 
-**Befund:** Keiner. Selbstkorrektur, expliziter Ausschluss und Gewerk-Zuordnung Sockelleiste liefen alle korrekt.
+**Befund:**
 
-**Nachtest (2026-08-16, späterer Durchlauf):** Aufnahme-Karte zeigte diesmal nur „Wände streichen" und „Sockelleisten abkleben" (kein „Decke streichen" — die Karte hat den Ausschluss also richtig verstanden), aber das fertige Angebot enthält trotzdem „Deckenfläche streichen 2×" für 234,52 € (Netto insgesamt 675,26 € statt ursprünglich 440,74 €). Zusätzlich weiterhin die Diskrepanz „Fenster: 1" auf der Karte vs. „Fenster: 2" in der Rechnung. Das ist genau der in den Bekannten-Schwachstellen als „schlimmster Fehler" benannte Fall: ausdrücklicher Ausschluss wird von der Karte korrekt verstanden, aber von der finalen Berechnung ignoriert.
+1. **Kompletter Fehlschlag des Dachgeschoss-Zweigs**
+   - Fundort: die Aktivierungsbedingung `istDachgeschoss` in `src/lib/mengen/gewerke/maler.ts`, ca. Zeile 87, greift nur wenn `kniestockhoehe`, `dachschraege_links_m2`/`_rechts_m2` oder `deckenspiegel_m2` aus der Extraktion gefüllt sind. Die Rückfragen legen nahe, dass keins davon gesetzt wurde — der Raum ist komplett in den normalen Wandflächen-Zweig gerutscht.
+   - Erwartet: Kniestockwände (20,40 m²) und Dachschrägen (23,08 m² netto) als zwei eigene Positionen.
+   - Tatsächlich: Beides fehlt vollständig. Stattdessen eine einzelne „Wandflächen streichen"-Position mit einer Zahl (12 m²), die sich nicht aus den angezeigten Maßen herleiten lässt — es steckt also vermutlich noch ein zweiter Fehler in der Berechnung selbst, on top von der fehlenden Zweig-Aktivierung.
+   - Einordnung: Das ist der schwerste strukturelle Fund bisher, gleichauf mit PM-005. Die komplette Produktkategorie „Dachgeschoss/Kniestock/Dachschräge" scheint vom Aufnahme-Schritt an nicht zu funktionieren, nicht nur an einer einzelnen Berechnungsstelle. Bitte zuerst bei der Extraktion (wie wird `kniestockhoehe` aus der Sprache erkannt?) ansetzen, dann erst bei der Menge nachschauen.
 
-**Korrektur (Sandy, 2026-08-16, über Chief of Staff eingetragen):** Die Einordnung oben als „bestätigter Rückfall, identischer Input" war falsch, das muss ich richtigstellen. Beim allerersten Einsprechen von PM-001 hab ich nicht den Wortlaut aus dieser Datei vorgelesen, sondern eine kurze Zusammenfassung aus dem Chat gesagt — dabei ist der Ausschluss-Teil („die bitte NICHT mitrechnen") komplett weggefallen. Der erste Durchlauf hat den Ausschluss-Fall also gar nicht getestet, deshalb lief er sauber durch — das „Bestanden" von damals war kein echtes Bestanden für diesen Fall. Erst beim Nachtest hab ich den vollständigen Text aus dieser Datei eingesprochen, mit dem Ausschluss drin. Das war der erste echte Test dieses Falls, nicht ein zweiter Durchlauf mit identischem Input — und er ist fehlgeschlagen. **Kein Hinweis auf eine Regression oder Flakiness der Pipeline, sondern ein Bug, der vermutlich von Anfang an da war und jetzt zum ersten Mal richtig getestet wurde.** Bleibt trotzdem höchste Priorität, weil es genau der „schlimmster Fehler"-Fall ist — nur die Ursache ist eine andere als gedacht.
+**Fix-Update (Head of IT, 2026-08-16):** Genau derselbe Fehlerbau wie bei
+PM-008, nur an einer anderen Stelle — deshalb diesmal schnell gefunden. Der
+GPT-Prompt weist GPT ausdrücklich an, bei Kniestock/Dachschräge/Deckenspiegel
+die Felder `kniestockhoehe`, `dachschraege_links_m2`, `dachschraege_rechts_m2`,
+`dachschraege_je_seite_m2`, `deckenspiegel_m2` und `dachfenster` zu setzen —
+GPT bekommt also den richtigen Auftrag. Aber beim Einlesen der GPT-Antwort
+wurden genau diese 6 Felder nie in die interne Raum-Struktur übernommen (die
+Liste der "erlaubten" Felder war unvollständig). Ergebnis: die Werte waren
+nach dem Einlesen immer leer, egal was GPT geliefert hat — deshalb hat
+`istDachgeschoss` nie angeschlagen und der Raum ist in die normale (falsche)
+Wandflächen-Rechnung gerutscht. Das erklärt auch die unerklärliche „12 m²":
+das war der Zufallswert aus der falsch gegriffenen normalen Rechnung, keine
+eigene zweite Fehlerquelle.
 
-**Klärungsbedarf (Prüfmeister, 2026-08-16):** Das steht im Widerspruch zu dem, was Sandy mir direkt im Chat gesagt hat, als ich genau danach gefragt habe — dort hat sie mir bestätigt, dass sie den Nachtest „genauso" wie beim ersten Mal eingesprochen hat, und mir den vollständigen Wortlaut inklusive Ausschluss-Satz zitiert. Kann sein, dass sich diese Bestätigung nur auf den Nachtest selbst bezog (und der allererste Durchlauf tatsächlich, wie hier beschrieben, eine Zusammenfassung war) — dann widersprechen sich die beiden Aussagen gar nicht wirklich. Sandy, magst du kurz bestätigen, welche Version stimmt? Für die Einordnung „Regression/Flakiness vs. nie richtig getesteter Bug" macht das einen Unterschied, für die Priorität (fixen!) ändert sich nichts.
+Fix: alle 6 Felder werden jetzt beim Einlesen übernommen. Nebenbei die
+kosmetische Lücke behoben, die du selbst schon markiert hattest — Kniestock-
+und Dachschrägen-Positionen zeigen jetzt auch „{n}x" für den Anstrich, wie
+alle anderen Positionen. 4 neue Tests (`maler-engine.test.ts`, exakt deine
+Soll-Zahlen: Kniestock 20,40 m², Dachschrägen 23,08 m²), alle 666 Tests im
+Projekt laufen weiter grün. Live-Test durch dich steht noch aus.
 
-**Fix-Update (Head of IT, 2026-08-16):** Root-Ursache gefunden — und sie
-erklärt nebenbei auch das übergreifende Muster, das der Prüfmeister an den
-Chief of Staff gemeldet hat („Karte zeigt was anderes als am Ende berechnet
-wird"). Karte und fertiger Entwurf lösen bei dir zwei UNABHÄNGIGE GPT-
-Aufrufe auf demselben Transkript aus (kein Rückfragen-Fall hier, also kein
-Wiederverwenden der ersten Extraktion). GPT ist nicht bei jedem Aufruf exakt
-gleich — bei einem der beiden Aufrufe hat es den Ausschluss-Satz „die bitte
-NICHT mitrechnen" übersehen (er steht weit hinten im Satz, mit viel Text
-dazwischen) und die Decke doch in die Arbeiten-Liste gepackt. Das ist an
-sich schon nicht ideal, aber der eigentliche Fehler war: die Sicherheitsprüfung
-danach, die genau solche Fälle auffangen soll, kannte die Formulierung „X
-lassen wir" / „X nicht mitrechnen" gar nicht als Ausschluss — nur die engeren
-Formen „ohne X" / „keine X". Dadurch kam die fälschlich hinzugefügte Decke
-ungebremst durch bis ins fertige, bepreiste Angebot.
+**Fix-Update 2 (Head of IT, 2026-08-16) — die unverlangte 136,80-€-Grundierung:**
+Zwei getrennte Fundstellen, gleicher Fehlerbau, beide jetzt behoben.
+1. `pruefeGrundierung` (dieselbe Funktion wie beim PM-003-Fix) hatte für den
+   Dachschrägen-Fall keine Prüfung, ob wirklich "grundieren" gewünscht war —
+   sie hat die Fläche unconditional draufgesetzt, sobald überhaupt eine
+   Dachschrägen-Position da war. Jetzt gilt dasselbe Gate wie bei der
+   Wand-Grundierung: nur bei einem echten, im Transkript genannten
+   Grundierungs-Wunsch.
+2. Eine ZWEITE, ältere Funktion (`pruefeDachschraege`) hat unabhängig davon
+   noch eine eigene "Dachschräge Grundierung" ergänzt, ausgelöst allein durch
+   die WÖRTER "Dachschräge"/"Kniestock" irgendwo im Text — ganz ohne jeden
+   Grundierungs-Bezug. Sie stammt vermutlich noch aus der Zeit vor der
+   Dachgeschoss-Engine (als die Vollständigkeitsprüfung versucht hat, die
+   fehlende Berechnung selbst zu kompensieren) und wurde bei deren Einbau
+   nicht mit angepasst. Gleiches Gate jetzt auch hier ergänzt.
+Neuer Golden-Test PM-007b (`golden-korrekturen.test.ts`) stellt genau deinen
+Fall nach (Dachzimmer, GPT trägt "grundieren" impliziter Weise in arbeiten[]
+ein, Nutzer hat es nie gesagt) und prüft, dass keine Grundierungs-Position
+mehr entsteht. Alle 669 Tests im Projekt grün. Live-Test durch dich steht aus.
 
-Fix: Die Ausschluss-Erkennung (`erkenneScope` in `arbeiten-normalisierer.ts`)
-kennt jetzt zusätzlich „X lassen wir" und „X nicht mitrechnen/-kalkulieren/
-berücksichtigen" — bewusst als eigene, enge Formulierungen, nicht als
-allgemeines „X ... nicht" (das wäre zu unsicher, siehe Code-Kommentar). Diese
-Prüfung liest die ORIGINALEN Worte aus dem Transkript, ist also unabhängig
-davon, ob GPT bei einem bestimmten Aufruf den Ausschluss selbst korrekt
-umsetzt — sie fängt genau das nochmal ab, was GPT gelegentlich verpasst.
-2 neue Tests: einer mit korrekter GPT-Extraktion (bestand schon vorher),
-einer, der genau den beobachteten Fehlerfall nachstellt (GPT vergisst den
-Ausschluss trotzdem) — der wäre vorher durchgerutscht, jetzt nicht mehr.
-Alle 667 Tests im Projekt grün.
+**Nachtest (Prüfmeister, 2026-08-16):** Grundierung (136,80 €) ist bestätigt weg — Fix wirkt. Kniestock
+(20,4 m²) weiterhin exakt Soll. Zwei offene Punkte bleiben:
 
-Noch offen, bewusst nicht mit angefasst: die Fenster-Diskrepanz („1" auf der
-Karte vs. „2" in der Rechnung) aus dem Nachtest — anderes Thema, separat
-prüfen. Und: diese Art Fix schützt nur Ein-Raum-Aufträge zuverlässig (bei
-mehreren Räumen greift aus dem PM-005-Grund eine engere, raumbezogene
-Prüfung, die den Rohtext bewusst nicht mehr querliest) — für Mehrraum-Fälle
-mit demselben Muster bräuchte es einen eigenen, weiteren Schritt, aber dafür
-liegt noch kein bestätigter Testfall vor. Live-Test durch dich steht aus.
+1. **„Dachschräge spachteln / Untergrundvorbereitung" (0 €, unbepreist) taucht weiterhin auf**, obwohl
+   nie erwähnt — sieht nach derselben Fehlerfamilie aus wie die Grundierung, nur eine dritte, noch nicht
+   angefasste Fundstelle (evtl. noch in `pruefeFassade`/`maler-tapete.ts` oder einer Nachbarfunktion mit
+   demselben „nur weil das Wort Dachschräge irgendwo steht"-Muster).
+2. **Neuer Fund, direkt von Sandy bemerkt:** Die Rückfragen fragen weiterhin nach Fensteranzahl und nach
+   der Bodenfläche (Länge × Breite), obwohl beides im Transkript klar genannt wurde („Ein Dachfenster",
+   „fünf mal dreieinhalb") — bei Letzterem sind die Werte auf der Rückfrage sogar schon korrekt
+   vorausgefüllt (5,0 / 3,5), der Nutzer muss trotzdem einmal bestätigen. Das ist kein Rechenfehler,
+   sondern unnötige Reibung — siehe Notiz an den Designer (PD-005), Sandy hat dazu eine grundsätzliche
+   Meinung zur Rückfragen-UX.
 
-**Dritter Durchlauf (Prüfmeister, 2026-08-16):** Erklärung von Head of IT passt exakt zu dem, was ich
-gerade nochmal live gesehen habe. Denselben Fall ein drittes Mal eingesprochen — diesmal wieder
-**korrekt**: keine Decken-Position, Wandflächen exakt 42,21 m², Sockelleisten abkleben exakt 17,7 lfdm,
-alles Soll-genau. Damit stehen jetzt 2 von 3 Durchläufen korrekt gegen 1 von 3 falsch (der Nachtest mit
-den 234,52 €) — passt zur „GPT nicht bei jedem Aufruf exakt gleich"-Erklärung oben. Ob dieser dritte
-Durchlauf schon nach dem Fix lief oder noch davor reiner Zufallstreffer war, weiß ich nicht — aber als
-zusätzlicher Datenpunkt für „das war Flakiness, kein fester Logikfehler" passt es. Sag Bescheid, wenn
-du möchtest, dass ich das nochmal gezielt nach dem Fix-Deploy zum Gegenchecken einspreche.
+Dachschrägenfläche weiterhin 22,8 m² statt der von mir erwarteten 23,08 m² (Dachfenster-Abzug mit
+falschem Standardmaß) — reproduziert sich jetzt zum zweiten Mal identisch, also stabil und kein
+Zufall.
 
-**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Fix bestätigt. Wohnzimmer nochmal frisch
-eingesprochen (5,20×4,10×2,50, Ausschluss „Decke lassen wir, NICHT mitrechnen" wie im Original). Karte
-zeigt jetzt korrekt nur „Wände streichen" + „Sockelleisten abkleben", **keine Decke** — und im fertigen
-Angebot bleibt es auch dabei: keine Deckenposition. Zahlen exakt Soll: Wandflächen 42,21 m² × 9,50 € =
-401,00 €, Sockelleisten abkleben 17,7 lfdm × 0,80 € = 14,16 €. Der Kernbug (Ausschluss wird ignoriert)
-ist damit live bestätigt behoben.
+**Fix-Update 3 (Head of IT, 2026-08-17) — beide Restpunkte behoben:**
 
-Ein kleinerer, neuer Fund bleibt: die Karte zeigte „2 Positionen erkannt" (Wände streichen,
-Sockelleisten abkleben), das fertige Angebot liefert aber **3** — zusätzlich „Boden schützen" (21,32 m²
-× 1,20 € = 25,58 €), das nie im Transkript vorkam und auch nicht auf der Karte stand. Fachlich ist
-„Boden schützen" beim Streichen plausibel als automatisch abgeleitete Nebenleistung (kein Rechenfehler),
-aber die Karte verspricht damit wieder eine andere Zahl als das, was am Ende berechnet wird — dieselbe
-Familie wie PD-001/PD-004. Kein Blocker, aber bitte beim Designer mitdenken (siehe PD-004).
+1. **Falsche Fläche (22,8 statt 23,08 m²):** Ursache war nicht bei uns im
+   Code, sondern ein Widerspruch zwischen GPT und unserem Code. Ich hab in
+   der Datenbank nachgesehen, was GPT bei deinem Testfall wirklich geliefert
+   hat: bei „normale Größe" (keine Maße genannt) hat sich GPT SELBST eine
+   Zahl ausgedacht — 1,20×1,00m, sein Standard für ein GANZ NORMALES Fenster
+   (denselben, den es überall im Tool nutzt), ehrlich mit einem eigenen Flag
+   „das ist geraten" markiert. Unser Code kennt aber einen ANDEREN, kleineren
+   Standard extra für Dachfenster (0,78×1,18m — Dachfenster sind in echt
+   meist kleiner als Wandfenster), genau der Wert aus deiner eigenen
+   Soll-Lösung. Weil GPT schon eine Zahl mitliefert, kam unser eigener,
+   passenderer Standard nie zum Zug. Fix: wenn GPT sein eigenes „geraten"-
+   Flag setzt, gilt jetzt unser Dachfenster-Standard statt GPTs Zahl — nur
+   bei echten, von dir genannten Maßen zählt GPTs Wert. Neuer Golden-Test
+   PM-007c mit deinen exakten Original-Extraktionsdaten aus der Datenbank.
+2. **Unverlangte „Dachschräge spachteln"-Position:** Genau die dritte
+   Fundstelle derselben Fehlerfamilie wie die schon gefixte Grundierung —
+   die Position kam bisher immer dazu, sobald „Dachschräge"/„Kniestock"
+   irgendwo im Text fiel, ganz ohne Prüfung auf ein echtes Signal. Jetzt nur
+   noch bei einem echten Ausbesserungs-Hinweis (Risse, Löcher, uneben,
+   spachteln, etc.), sonst nur als Erinnerung — gleiches Muster wie überall
+   sonst in diesem Bug-Komplex.
 
-**Fix-Update (Head of Product Engineering, 2026-08-20):** Sandys Ansage dazu war eindeutig: *„das
-angehen!! für alle 'nebentätigkeiten', auch sockelleisten abkleben etc"* — nicht nur „Boden schützen"
-reparieren, sondern das systematisch für jede automatisch ergänzte Nebentätigkeit lösen. Root-Ursache:
-die Aufnahmekarte nutzt bisher ausschließlich das schnelle, günstige Chip-Modell
-(`extrahiereChips`/`CHAT_MODEL_FAST`) direkt nach der Aufnahme — reine Vorschau, extra dafür so benannt
-im Code-Kommentar: „Zeigt dem Nutzer sofort, WAS erkannt wurde — die echten Mengen/Preise rechnet später
-die Engine". Was diese Vorschau nie sieht: die Vollständigkeits-Prüfung (`vollstaendigkeit/*.ts`), die
-beim „Positionen berechnen" automatisch Nebentätigkeiten wie Boden schützen, Sockelleisten abkleben,
-Grundierung, Fliesenspiegel/Lampen/Heizkörper abkleben usw. ergänzt.
+3 neue Tests (PM-007c-Golden-Test + 2 Gegen-Tests für Spachteln in
+`vollstaendigkeit.test.ts`). Alle 687 Tests grün, `tsc` sauber. Live-Test
+durch dich steht für beide Punkte aus.
 
-Neue Datei `src/lib/chips-vervollstaendigung.ts`, direkt in beide Aufnahme-Routen eingehängt
-(`aufnahme/upload` + `aufnahme/verarbeite`, der Retry-Pfad): wendet dieselbe echte
-Vollständigkeits-Prüfung (`pruefeUndErgaenzeVollstaendigkeit`) auf die Chip-Liste an — keine eigene
-Kopie der Regeln, also kein Drift-Risiko wie bei früheren Heuristiken (PM-012-Lehre). Ihre Regeln laufen
-textbasiert auf dem Transkript, brauchen also keine Raum-Geometrie und funktionieren deshalb auch mit der
-schnellen, unstrukturierten Chip-Vorschau — ohne die teurere KI-Extraktion ein zweites Mal aufzurufen
-(kein Mehrkosten pro Aufnahme). Zusätzlich eine gezielte Regel für „Boden schützen" selbst: die finale
-Engine setzt diese Position praktisch immer bei jedem Wand-/Deckenanstrich, weil die teure, strukturierte
-KI-Extraktion das oft schon selbst als Handwerker-Wissen einträgt, auch ganz ohne Erwähnung im Transkript
-— genau Sandys Originalfund. Das kann die schnelle Vorschau nicht nachbilden (andere KI, anderer Aufruf),
-deshalb dafür eine eigene, deterministische Regel: jeder Raum mit erkanntem Anstrich bekommt automatisch
-einen Bodenschutz-Hinweis, außer es gibt schon einen oder im selben Raum wird ohnehin ein neuer Boden
-verlegt.
+**Nachtest nach Fix-Deploy (Sandy, 2026-08-17):** ✅ Beide Restpunkte bestätigt behoben. Dachzimmer
+nochmal frisch eingesprochen (5×3,5, Kniestock 1,20, Dachschrägen je 12 m², 1 Dachfenster). Karte zeigt
+diesmal sauber 3 Leistungen (Wände/Dachschrägen/Kniestock streichen), keine unverlangte „Dachschräge
+spachteln" mehr. Im fertigen Angebot: Kniestockwände streichen 2× **20,4 m²** exakt Soll, Dachschrägen
+streichen 2× **23,08 m²** exakt Soll (Dachfenster-Abzug jetzt mit dem richtigen kleineren Standardmaß,
+vorher 22,8 m²) — beides bestätigt korrekt. Keine unverlangte Spachtel- oder Grundierungsposition mehr.
+Fachlich ist dieser Fall damit sauber.
 
-**Ehrlicher Nebenfund dabei:** beim Nachbauen der Logik ist aufgefallen, dass „Boden schützen /
-Abdecken" in der ECHTEN, bepreisten Kalkulation bei „nur Wände streichen"-Aufträgen (der Alltagsfall bei
-einem reinen Wandanstrich) bisher fälschlich verschwinden konnte — nicht nur in der Vorschau. Ursache:
-„abdecken"/„abdeckfolie" enthält selbst die Zeichenkette „decke" (ab-DECKE-n), und der „nur Wände"-Filter
-in `maler-basis.ts` hat trotz einer extra dafür eingebauten Ausnahme jede Position mit „decke" darin
-rausgefiltert — die Ausnahme griff nicht an der richtigen Stelle. Jetzt behoben (die Ausnahme gilt jetzt
-auch für die „ist das eine Decken-Position"-Prüfung selbst), mit eigenem Regressionstest in
-`vollstaendigkeit.test.ts`. Betraf vermutlich einen Teil der Fälle, in denen „Boden schützen" schon vorher
-unerwartet gefehlt hat.
+Zwei Punkte bleiben, keiner davon ein Rechenfehler:
+1. **Rückfragen-Redundanz reproduziert sich weiter** (PD-005): Bodenfläche wird erneut abgefragt, obwohl
+   auf der Karte schon „5,00 × 3,50 m" stand — die Rückfrage kommt sogar mit den richtigen Werten
+   vorausgefüllt (5,0/3,5), muss aber trotzdem bestätigt werden. Fenster-Anzahl (1) genauso nochmal
+   gefragt, obwohl „Fenster: 1" schon auf der Karte stand.
+2. **Neu:** Kniestockwände streichen UND Dachschrägen streichen haben beide **keinen Preis in der
+   Preisdatenbank** hinterlegt (0,00 €, „Preis fehlt in deiner Preisdatenbank"). Anders als bei einem
+   Erschwerniszuschlag ist das hier keine bewusste Nutzer-Preisfestlegung, sondern schlicht eine fehlende
+   Standardposition — siehe „Systemischer Fund" oben, Sandy will das für alle diese Fälle ergänzt haben.
 
-**Ehrlich zum Stand:** 236 Tests grün (10 neue, keine Regression), inklusive dem exakten
-PM-001-Originaltranskript als Testfall. Bewusst nur für Maler/Boden umgesetzt (die aktuell unterstützten
-Gewerke) — Elektro/Fliesen/Sanitär/Trockenbau bleiben unangetastet. Noch KEIN Live-Nachtest mit echter
-Aufnahme.
+Damit ist PM-007 rechnerisch komplett grün. Offene Punkte sind Designer-Thema (PD-005) bzw.
+Preisdatenbank-Pflege, kein Code-Bug mehr in der eigentlichen Berechnung.
+
+
+**Nachtest (Sandy, 2026-08-21) — NEU: kompletter Blocker, kein Ergebnis erreichbar:**
+
+Karte zeigte diesmal „4 Positionen erkannt" — **Kniestockwände streichen 2× (20,4 m²)**,
+**Dachschrägen streichen 2× (23,08 m²)**, Boden schützen (17,5 m²), Sockelleisten abkleben (16,1 lfdm).
+Das ist ein echter Fortschritt gegenüber der allerersten Karte von 2026-08-16 (damals nur „Wände
+streichen" statt Kniestock/Dachschrägen) — die Karte erkennt die beiden Dachgeschoss-Positionen jetzt mit
+exakt den Soll-Werten.
+
+Beim Übergang zum Entwurf kam die Rückfrage „Wie groß ist die Bodenfläche in 'Dachzimmer'?" (mit den
+Optionen „Mit Raummaßen" / „Flächen direkt"). Sandy hat „Später ergänzen" bzw. „Trotzdem überspringen"
+angeklickt — **dieselbe Rückfrage-Maske erschien danach wieder, in einer Endlosschleife.** Kein Weg zum
+Angebotsentwurf gefunden, der Test musste an dieser Stelle abgebrochen werden. **Kein Ist-Ergebnis für den
+fertigen Entwurf verfügbar.**
+
+**Befund:**
+
+1. **Guter Teilerfolg:** Die Kniestock-/Dachschrägen-Erkennung auf der Karte selbst funktioniert jetzt mit
+   exakt den Soll-Zahlen (20,4 m² / 23,08 m²) — ein deutlicher Unterschied zum allerersten Testlauf.
+2. **Neuer, schwerwiegender Blocker: die Bodenflächen-Rückfrage lässt sich nicht überspringen.** Weder
+   „Später ergänzen" noch „Trotzdem überspringen" führt zum Entwurf — die Maske kommt stattdessen erneut.
+   Das ist potenziell kritischer als jeder bisher gefundene Rechenfehler: ein Nutzer, der aus welchem Grund
+   auch immer diese eine Rückfrage nicht direkt beantworten kann oder will, kommt überhaupt nicht mehr zu
+   seinem Angebot. Die schon länger bekannte Rückfragen-Redundanz bei diesem Fall (PD-005 — Bodenfläche
+   wird nochmal gefragt, obwohl „fünf mal dreieinhalb" im Transkript steht) ist damit von einer reinen
+   UX-Reibung zu einem kompletten Stopper eskaliert.
+3. Weil der Test hier feststeckte, ist unklar, ob die zugrundeliegende Berechnung (Kniestock/Dachschrägen
+   im fertigen Entwurf, nicht nur auf der Karte) noch so korrekt ist wie beim letzten bestätigten Durchlauf
+   vom 17.08. — das bleibt offen, bis der Blocker behoben ist.
+
+**Fix-Update 4 (Head of Product Engineering, 2026-08-24, Sandys Auftrag „guck's dir ganz genau an"):**
+
+**Sandys Verdacht war richtig: Die Frage hätte nie gestellt werden dürfen.** Und der Blocker hat nicht
+eine Ursache, sondern zwei voneinander unabhängige. Nicht geraten, sondern am echten Datensatz geprüft —
+die Extraktion zu Sandys Lauf (Angebot `93192e79`) aus der Produktions-Datenbank geholt und die echte
+Rückfragen-Logik dagegen laufen lassen. Ergebnis vorher: genau eine Frage, „Wie groß ist die Bodenfläche
+in 'Dachzimmer'?" — und beim Überspringen kam sie in der nächsten Runde identisch wieder. Die
+Endlosschleife ist damit im Testlabor reproduziert, nicht nur beschrieben.
+
+**Ursache 1 — die Frage war überflüssig.** GPT liefert für das Dachzimmer `laenge: 5` und `breite: 3.5`,
+lässt das Feld `flaeche` aber leer. Die Frage hing allein an diesem leeren Feld — gefragt wurde also nach
+einer Zahl, die eine Multiplikation entfernt danebenstand, und die die Engine für „Boden schützen" ohnehin
+selbst ausrechnet (die 17,5 m² auf der Karte). Fix: fehlt `flaeche`, wird sie aus Länge × Breite
+abgeleitet, bevor überhaupt Fragen entstehen.
+
+**Ursache 2 — „Überspringen" kam nie beim Server an.** Übersprungene Fragen lagen ausschließlich im
+Rückfragen-Bildschirm (`uebersprungen`-Set) und wurden beim Absenden weggelassen. Die Berechnung sah eine
+unbeantwortete Frage und stellte sie erneut — dieselbe Maske, beliebig oft. Fix: „übersprungen" geht
+jetzt als ausdrückliches `null` mit. Das Format war schon vorgesehen (`KalkulationsAntwort` erlaubt
+`null`, `verarbeiteAntworten` überspringt es) — es wurde nur nie genutzt. **Das betrifft nicht nur diesen
+Testfall:** jede übersprungene Frage in jedem Auftrag konnte so hängen bleiben.
+
+**Ursache 3, beim Nachsehen aufgefallen — eine Frage nach einer Zahl, die niemand benutzt.** Ohne einen
+Zufall hätte Sandy hier zusätzlich „Wie hoch sind die Wände in 'Dachzimmer'?" bekommen. Der
+Dachgeschoss-Zweig der Engine rechnet über Kniestockhöhe × Umfang und die Dachschrägen-m² — `raum.hoehe`
+liest er nie. Im echten Lauf blieb die Frage nur deshalb aus, weil GPT versehentlich eine falsche
+`wandflaeche_direkt: 12` gesetzt hatte (dazu unten). Fix: im Dachgeschoss entfällt die Höhenfrage,
+Bedingung wortgleich zum `istDachgeschoss` der Engine.
+
+**Ergebnis:** Sandys Fall stellt jetzt **keine einzige Rückfrage** mehr. 8 neue Tests
+(`pm007-rueckfragen.test.ts`, u. a. mit dem echten Extraktionsdatensatz), Suite 815/815 grün, `tsc`
+sauber. Live-Nachtest steht aus.
+
+**Ein Fund, den ich NICHT angefasst habe, der aber auf dem Zettel bleiben sollte:** GPT legt die
+Dachschrägen-Quadratmeter zusätzlich als `wandflaeche_direkt: 12` ab — ein Feld, in das sie fachlich nicht
+gehören. Aktuell harmlos, weil der Dachgeschoss-Zweig Vorrang hat und das Feld nicht liest. Es ist aber
+genau die Zahl, die am 16.08. als unerklärliche „Wandflächen streichen 12 m²" im Angebot stand. Sollte GPT
+irgendwann `kniestockhoehe` nicht mehr liefern, wäre dieser Fehler sofort wieder da. Eine Bereinigung
+müsste an der Extraktion ansetzen, nicht an der Berechnung — bewusst nicht im Rahmen dieses Blocker-Fixes.
+
+**Entschieden (Sandy, 2026-08-24): Die Türen-Frage bleibt.** Sie war die einzige Frage, die nach den
+Fixes bei sauberer Extraktion noch übrig bleibt, und sie hat echten Einfluss (die Türbreite geht von der
+Sockelleisten-Länge ab). Kein Code-Änderungsbedarf — der aktuelle Stand entspricht der Entscheidung. Für
+künftige Aufräum-Runden gilt damit die Linie: Fragen nach Zahlen, die **im Transkript stehen** oder die
+**niemand liest**, kommen weg. Fragen nach Zahlen, die das Ergebnis verändern und die der Handwerker nicht
+gesagt hat, bleiben.
+
+---
+
+**Ursprünglicher Auftrag (2026-08-21):** Höchste Priorität — bitte den „Trotzdem überspringen"/„Später
+ergänzen"-Pfad der Bodenflächen-Rückfrage bei diesem Fall untersuchen. Vermutungsweise hängt das mit der
+schon bekannten Rückfragen-Redundanz zusammen (die Frage wird gestellt, obwohl die Bodenfläche eigentlich
+aus dem Transkript ableitbar wäre) — aber das Kernproblem jetzt ist nicht mehr nur „unnötig gefragt",
+sondern „lässt sich nicht mehr aus dem Weg räumen". Bitte auch generell prüfen, ob ähnliche
+Rückfragen-Masken in anderen Fällen genauso in einer Schleife hängen bleiben können, wenn übersprungen
+wird — das könnte ein Launch-Blocker sein, nicht nur ein Einzelfall bei diesem Dachgeschoss-Testfall.
 
 ---
 

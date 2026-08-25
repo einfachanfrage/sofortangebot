@@ -530,7 +530,8 @@ export default function EntwurfPage() {
   const [aufnahmeDetail, setAufnahmeDetail] = useState<string | null>(null)
   const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
   const [basisExtraktion, setBasisExtraktion] = useState<ExtrahierteDaten | null>(null)
-  const [gesammelteAntworten, setGesammelteAntworten] = useState<Record<string, RueckfragenAntwort>>({})
+  // PM-007: `null` als Wert = „diese Frage wurde bewusst übersprungen".
+  const [gesammelteAntworten, setGesammelteAntworten] = useState<Record<string, RueckfragenAntwort | null>>({})
   const [zettelUploading, setZettelUploading] = useState(false)
 
   const mediaRef = useRef<MediaRecorder | null>(null)
@@ -660,7 +661,7 @@ export default function EntwurfPage() {
   // ── Fertigstellen ────────────────────────────────────────────────────────
 
   async function fertigstellen(
-    antworten: Record<string, RueckfragenAntwort> = {},
+    antworten: Record<string, RueckfragenAntwort | null> = {},
     rueckfragenUeberspringen = false,
   ) {
     // Läuft schon eine Berechnung (Doppel-Tap)? Dann diese zweite ignorieren.

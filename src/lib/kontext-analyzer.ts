@@ -97,6 +97,22 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
       ergaenzungen.push({ raum: raum.name, ergaenzung: 'Abdecken/Abkleben', grund: 'Bei Streicharbeiten immer nötig' })
     }
 
+    // PM-007 (2026-08-24, Sandys Fund): Bei „Dachzimmer, fünf mal dreieinhalb"
+    // liefert GPT laenge=5 und breite=3.5, lässt `flaeche` aber leer. Die
+    // Rückfrage „Wie groß ist die Bodenfläche?" hing bisher allein an diesem
+    // leeren Feld — gefragt wurde also nach einer Zahl, die einen Multiplikator
+    // entfernt danebenstand (und die die Engine für „Boden schützen" ohnehin
+    // selbst ausrechnet: 17,5 m²).
+    //
+    // Bewusst HIER, nach dem Wandflächen-Block oben: der verschiebt eine
+    // ausdrücklich genannte Wandfläche aus `flaeche` heraus. Würden wir vorher
+    // ableiten, würde er unsere abgeleitete BODENfläche für eine Wandfläche
+    // halten.
+    if ((raum.flaeche === null || raum.flaeche === undefined) && raum.laenge && raum.breite) {
+      raum.flaeche = Math.round(raum.laenge * raum.breite * 100) / 100
+      hinweise.push(`${raum.name}: Bodenfläche aus ${raum.laenge} × ${raum.breite} m abgeleitet (${raum.flaeche} m²) — keine Rückfrage nötig`)
+    }
+
     const hatStreichen = raum.arbeiten.some(a => a.includes('streichen') || a.includes('wand'))
     const raumId = (raum.name ?? '').toLowerCase().replace(/\s+/g, '_')
     const hatLB = raum.laenge && raum.breite
@@ -129,7 +145,18 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
 
     // Höhe unabhängig von L×B direkt mit abfragen. So ist die Gesamtzahl aller
     // Rückfragen von Beginn an bekannt und es entsteht keine zweite Fragerunde.
-    if (hatStreichen && !raum.hoehe && !raum.wandflaeche_direkt) {
+    // PM-007 (2026-08-24): Im Dachgeschoss ist die Wandhöhe keine sinnvolle
+    // Frage. Die Engine rechnet dort über Kniestockhöhe (× Umfang) und die
+    // Dachschrägen-Quadratmeter — `raum.hoehe` wird im Dachgeschoss-Zweig von
+    // `maler.ts` überhaupt nicht gelesen. Gefragt wurde also nach einer Zahl,
+    // die anschließend niemand benutzt. Bedingung bewusst wortgleich zum
+    // `istDachgeschoss` der Engine, damit beide nicht auseinanderlaufen.
+    const istDachgeschossRaum =
+      raum.kniestockhoehe != null
+      || (raum.dachschraege_links_m2 ?? raum.dachschraege_je_seite_m2) != null
+      || raum.deckenspiegel_m2 != null
+
+    if (hatStreichen && !raum.hoehe && !raum.wandflaeche_direkt && !istDachgeschossRaum) {
       addRueckfrage(ext, {
         id: `hoehe_${raumId}`,
         frage: `Wie hoch sind die Wände in "${raum.name}"?`,

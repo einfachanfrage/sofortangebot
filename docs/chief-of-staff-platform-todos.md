@@ -42,7 +42,7 @@ hast): CoS-013 in `chief-of-staff-todos.md`.
 | CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🟢 Fix umgesetzt — Passwort-Reset-Bug behoben, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
 | CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟢 Fix umgesetzt — alle drei Mails laufen jetzt über unsere eigene Resend-Anbindung, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
-| CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei erledigt, einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
+| CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei komplett erledigt (inkl. Produktion), einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
 
 ---
 
@@ -420,7 +420,8 @@ Muster im Projekt (Bucket + Policies gemeinsam per Migration, Ordner =
 ## CoS-P-006 — Drei Nebenbefunde abarbeiten
 
 **Datum:** 2026-08-17
-**Status:** 🟡 zwei von drei erledigt, einer wartet auf Dashboard-Zugriff
+**Status:** 🟡 zwei von drei komplett erledigt (inkl. Produktion), einer
+wartet auf Dashboard-Zugriff
 
 **Hintergrund:** Sammelte sich aus vorherigen Punkten an — drei nur notierte,
 nicht gefixte Kleinfunde. Sandy bat mit "nebenbefunde" darum, sie abzuräumen.
@@ -451,18 +452,17 @@ wird. **Möglicher Folgepunkt, falls gewünscht:** `debug_extraktion_roh` in
 Produktion ganz entfernen, wenn sie nicht mehr gebraucht wird.
 
 **2. Zwei allgemeine Supabase-Warnhinweise aus CoS-P-001 — 🟡 halb erledigt:**
-- **`search_path` bei 9 Funktionen — ✅ erledigt (auf Staging):** Neue
+- **`search_path` bei 9 Funktionen — ✅ erledigt (Staging + Produktion):**
   Migration `supabase/migrations/20260818000000_fix_function_search_path.sql`
   setzt `search_path = public, pg_temp` fest für alle 9 betroffenen
   Funktionen (Signaturen vorher per `pg_proc` abgefragt, nicht geraten).
-  Reiner Härtungs-Fix, kein Verhaltensunterschied für die App. Auf Staging
-  angewendet und verifiziert (Warnung im Security-Advisor verschwunden).
-  **Auf Produktion noch nicht angewendet** — wartet auf deine
-  `DEPLOY-PRODUCTION`-Bestätigung wie beim Logo-Fix.
-- **"Leaked Password Protection" aus — ❌ weiterhin offen:** Das ist kein
-  SQL-Fix, sondern ein Schalter im Supabase-Dashboard (Auth-Einstellungen →
-  Password Security), auf den diese Session keinen Zugriff hat. Ein Klick,
-  sobald jemand mit Dashboard-Zugriff kurz reinschaut.
+  Reiner Härtungs-Fix, kein Verhaltensunterschied für die App. Erst auf
+  Staging, am 2026-08-25 auf Sandys Freigabe ("ja mach 1 live") auch auf
+  Produktion angewendet und per Security-Advisor verifiziert — die
+  `search_path`-Warnung ist auf beiden Umgebungen weg.
+- **"Leaked Password Protection" aus — ✅ erledigt:** Sandy hat den Schalter
+  am 2026-08-17 in beiden Supabase-Projekten (Staging + Produktion) selbst
+  im Dashboard aktiviert, per Security-Advisor bestätigt.
 
 **Nebenbei beim Security-Advisor-Check entdeckt, NICHT Teil dieses Punkts
 (neuer Fund, nur notiert):** mehrere `SECURITY DEFINER`-Funktionen
@@ -472,6 +472,12 @@ auch für nicht eingeloggte Besucher (`anon`) über die REST-API aufrufbar.
 Das muss nicht zwangsläufig ein Fehler sein (z. B. `handle_new_user` läuft
 vermutlich bewusst beim Registrieren), aber verdient einen eigenen,
 gezielten Blick — nicht einfach mit hier durchgewunken.
+
+**Weiterer Nebenfund beim Produktions-Advisor-Check (2026-08-25, nur
+notiert):** Tabelle `public.rate_limit_log` hat RLS aktiviert, aber keine
+Policy hinterlegt (reine Info-Meldung, kein Sicherheitsrisiko, da RLS ohne
+Policy standardmäßig alles blockt statt öffnet — aber falls dort mal Zugriff
+gebraucht wird, fehlt aktuell die Regel dafür).
 
 **3. Vercel-Env-Check für den rotierten Resend-Key (aus CoS-P-005) — ❌
 weiterhin offen:** Kein Vercel-Dashboard-Zugriff aus dieser Session. Bitte
