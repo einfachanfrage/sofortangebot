@@ -1375,7 +1375,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {/* Header */}
       <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-0">
         <Link href="/angebote" className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold">← Angebote</Link>
-        <div className="flex items-center justify-between mt-1 pb-4">
+        <div className="flex items-start justify-between mt-1 pb-4">
           <div>
             <div className="text-white md:text-[#2C2C2C] font-syne font-black text-xl flex items-center gap-2 flex-wrap">
               Angebot {quoteNumber}
@@ -1388,7 +1388,23 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             </div>
             {/* Echtzeit-Gesamtsumme */}
             <div className="text-[#F5C400] font-black text-2xl mt-1">{fmt(totalGross)}</div>
-            <div className="text-white/40 text-xs font-semibold">
+            {/* DC-003-Nachtrag (Sandy, 2026-08-24, live getestet): Status-Button
+                stand vorher in der schmalen Icon-Reihe rechts, zwischen Zahnrad
+                und Bearbeiten/Speichern — dort sah er wie ein drittes Icon aus
+                ("dieser kleine Punkt ist zum Status ändern?! da kommt kein
+                Schwein drauf"). Jetzt eine eigene, klar als Button erkennbare
+                Zeile direkt unter der Summe: sichtbarer Rahmen (macht ihn von
+                einem reinen Info-Badge unterscheidbar), größerer Punkt,
+                Chevron als Tap-Hinweis. */}
+            <button
+              onClick={() => setShowStatusPicker(true)}
+              className={`flex items-center gap-1.5 text-sm font-bold pl-2.5 pr-2 py-1.5 rounded-full border border-current/20 mt-2 active:opacity-70 transition-opacity ${status.bg} ${status.text}`}
+            >
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: status.dot }} />
+              {status.label}
+              <ChevronDown size={14} strokeWidth={3} />
+            </button>
+            <div className="text-white/40 text-xs font-semibold mt-2">
               {isKleinunternehmer ? 'kein MwSt-Ausweis · ' : `inkl. ${company?.vat_rate ?? 0}% MwSt · `}
               {company?.payment_days ?? 14} Tage Zahlungsziel
             </div>
@@ -1398,11 +1414,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <button onClick={() => setShowOptionen(true)} title="Einstellungen für dieses Angebot"
               className="bg-white/10 md:bg-[#2C2C2C]/5 text-white md:text-[#2C2C2C]/60 rounded-xl p-2 hover:bg-[#F5C400]/30 transition-colors">
               <Settings size={16} />
-            </button>
-            <button onClick={() => setShowStatusPicker(true)}
-              className={`flex items-center gap-1.5 text-sm font-bold px-3 py-1 rounded-full ${status.bg} ${status.text}`}>
-              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: status.dot }} />
-              {status.label}<ChevronDown size={13} strokeWidth={3} />
             </button>
             {!editMode ? (
               <button onClick={handleEditClick}

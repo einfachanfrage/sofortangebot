@@ -47,13 +47,13 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-24 — DC-002: „Angebote" in Desktop-Sidebar ergänzt; DC-003: Status-Farben+UX komplett neu, eine Quelle für alle 5 Stellen; DC-006: zweite Token-Migrationsrunde (5 weitere Dateien); DC-027: Backend-Flag live (Head of Product Engineering) + „Vorschlag"-Badge gebaut (Product Designer) — alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-24 — DC-002: „Angebote" in Desktop-Sidebar ergänzt; DC-003: Status-Farben+UX komplett neu + Nachtrag: Status-Button nach Sandys Live-Feedback aus der Icon-Reihe raus, eigene erkennbare Zeile; DC-006: zweite Token-Migrationsrunde (5 weitere Dateien); DC-027: Backend-Flag live (Head of Product Engineering) + „Vorschlag"-Badge gebaut (Product Designer) — alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
 | DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | 🟡 entschieden + umgesetzt (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger", zentrale `pricing.ts`), Live-Nachtest steht aus | Head of Product Engineering |
 | DC-002 | „Angebote" fehlt in Desktop-Sidebar | 🟡 behoben (Product Designer, 2026-08-24): vierter Nav-Punkt in `SideNav.tsx`, `tsc` sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
-| DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | 🟡 behoben (Product Designer, 2026-08-24): eine gemeinsame Quelle `src/lib/status.ts`, alle 5 Stellen migriert, Status-Sheet neu (farbige Punkte + Weg zurück zu Entwurf ab „Fertiggestellt"), `tsc` sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
+| DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | 🟡 behoben (Product Designer, 2026-08-24): eine gemeinsame Quelle, alle 5 Stellen migriert, Status-Sheet neu — plus Nachtrag nach Sandys Live-Test (Status-Button war „kein Schwein kommt drauf"), Button aus der Icon-Reihe raus, eigene erkennbare Zeile mit Rahmen — `tsc` sauber, noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
 | DC-005 | Kein gemeinsamer Button-Baustein | 🟡 `active:scale-98`-Bug behoben, `Button.tsx` erstellt — Migration bestehender Stellen offen | Product Designer |
 | DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | 🟡 läuft schrittweise weiter, jetzt 10 Komponenten migriert (2 Runden, zuletzt 2026-08-24), größte verbleibende Brocken (`AngebotDetail.tsx`, `einstellungen`, `preise`, `onboarding`) bewusst vorgemerkt statt riskant nebenbei angefasst | Product Designer |
@@ -244,6 +244,25 @@ Umgesetzt:
 Scoped `tsc --noEmit` über alle 7 geänderten Dateien: 0 Fehler. Noch nicht
 live geprüft — bitte einmal durchklicken (Status ändern, zurück zu Entwurf
 ab „Fertiggestellt", Badges auf Angebote-Liste/Dashboard/Kundendetail).
+
+**Nachtrag (Sandy, 2026-08-24, live getestet, mit Screenshot):** „dieser
+kleine punkt ist zum status ändern?!? da kommt doch kein schwein
+drauf....?! dieser ganze header da ist nichts iwie." Zu Recht — der neue
+Status-Button saß in der schmalen Icon-Reihe der Kopfzeile direkt zwischen
+Zahnrad und Bearbeiten/Speichern, gleich groß wie die reinen Icon-Buttons
+daneben. Ohne erkennbaren Rahmen und mit wenig Kontrast sah er dort wie ein
+drittes stummes Icon aus, nicht wie ein Button mit eigenem Text.
+
+**Fix-Update (Product Designer, 2026-08-24):** Status-Button aus der
+Icon-Reihe herausgenommen und bekommt jetzt eine eigene Zeile direkt unter
+der Angebotssumme — mit sichtbarem Rahmen (`border-current/20`, unterscheidet
+ihn von einem reinen Info-Badge), größerem Farbpunkt und Chevron als
+Tap-Hinweis. Icon-Reihe rechts (Zahnrad, Bearbeiten/Speichern) bleibt für
+reine Werkzeug-Aktionen, jetzt am oberen Rand ausgerichtet (`items-start`
+statt `items-center`) statt mittig an einem jetzt höheren linken Block.
+Scoped `tsc` sauber. Noch nicht live geprüft — bitte nochmal drüberschauen,
+ob der Button jetzt eindeutig als „hier kann ich den Status ändern" zu
+erkennen ist.
 
 ---
 
