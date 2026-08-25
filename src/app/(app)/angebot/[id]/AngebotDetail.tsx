@@ -2289,6 +2289,19 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <button onClick={() => setShowAktionen(false)} className="text-[#2C2C2C]/40 font-black text-xl leading-none">×</button>
               </div>
 
+              {/* Sandy, 2026-08-25: Der "Aufnahme"-Link (Sprache/Foto/Notiz vom
+                  Aufmaß) lebte bisher nur in der Icon-Reihe des Bearbeiten-Modus
+                  (editMode && ...) — bei fertiggestellten/versendeten Angeboten
+                  verschwand er dadurch komplett, obwohl die Original-Aufnahmen
+                  (inkl. Fotos wie "Stromkabel in der Wand") weiter existieren.
+                  Jetzt hier auch im Lese-Modus über die Aktionen erreichbar,
+                  bewusst NICHT als eigenes Icon in der Kopfzeile (würde neben
+                  dem gerade erst aufgeräumten Status-Button wieder Enge
+                  schaffen) — passt eher zu "PDF"/"Duplizieren" als
+                  Neben-Aktion. Nicht zu verwechseln mit dem separaten
+                  "Notizen & Fotos"-Tab weiter unten (eigenständiges Feld,
+                  keine Verbindung zu den Aufnahmen). */}
+              <Zeile icon={<Mic size={17} strokeWidth={2.5} />} label="Aufmaß-Aufnahme ansehen" href={`/angebot/${quote.id}/entwurf`} />
               <Zeile icon={<Download size={17} strokeWidth={2.5} />} label={istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'} href={`/api/pdf?id=${quote.id}`} />
               <Zeile icon={<Link2 size={17} strokeWidth={2.5} />} label="Link zum Angebot kopieren" onClick={copyLink} />
               <Zeile icon={<Copy size={17} strokeWidth={2.5} />} label="Angebot duplizieren" onClick={handleDuplicate} />

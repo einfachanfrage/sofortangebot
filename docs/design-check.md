@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-25 — DC-033 NEU: Angebotsnummern-Bug gefunden, Root Cause = verschluckter RPC-Fehler bei Angebots-Erstellung, betrifft 103/106 Angebote live, an Head of Product Engineering weitergegeben. Vortag: DC-002/DC-003 (inkl. Header-Nachtrag)/DC-006/DC-027 — alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-25 — DC-034 NEU: zwei getrennte Notiz-/Foto-Systeme im Angebot gefunden (Aufnahme vs. „Notizen & Fotos"-Tab), Auffindbarkeits-Teil behoben, Grundsatzfrage bewusst offen für Sandy + Chief of Staff, Ist-Zustand dokumentiert; DC-033: Angebotsnummern-Bug gefunden, an Head of Product Engineering weitergegeben. Vortag: DC-002/DC-003 (inkl. Header-Nachtrag)/DC-006/DC-027 — alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -84,6 +84,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-031 | Navigations-Sackgassen: laufende Aufnahme nicht abbrechbar (Mikro bleibt offen), Aufnahme-Detail-Sheet nur per unsichtbarem Backdrop-Tap schließbar (sichtbares „X" löscht stattdessen), „Zurück" aus dem frischen 0€-Entwurf landet auf der leeren Angebotsseite statt am Dashboard (von Sandy gemeldet, 2026-08-23) | ✅ Alle drei umgesetzt (Product Designer, 2026-08-23): Abbrechen-Button während Aufnahme (verwirft, lädt nicht hoch) + Mikro wird beim Verlassen der Seite automatisch freigegeben; Sheet hat jetzt einen eigenen „Schließen"-Text-Button getrennt vom Lösch-„X"; „Zurück"/„Trotzdem zurück ohne Berechnen" gehen zum Dashboard, wenn das Angebot noch keinen Kunden und keine Positionen hat, sonst weiterhin zur Angebotsseite. Beim Nachtesten „an allen anderen Stellen" (Sandys Auftrag) zusätzlich dieselbe Baustelle bei „+ Neue Variante erstellen" in Briefpapier & Design gefunden und gleich mitgefixt: leere Variante wird beim Zurückgehen ohne Änderung automatisch wieder gelöscht, mit ungespeicherten echten Änderungen kommt jetzt eine Rückfrage statt stillem Datenverlust. Scoped tsc sauber, noch kein Live-Test | Product Designer (umgesetzt) |
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
 | DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | ❌ offen — Root Cause gefunden: fertig gebautes Nummernkreis-System wird durch einen verschluckten RPC-Fehler bei der Angebots-Erstellung nie erreicht, UI fällt still auf UUID-Fragmente zurück. Betrifft live 103 von 106 Angeboten in Produktion. NICHT mein Bereich (Backend-Pipeline-Bug) — an Head of Product Engineering weitergegeben | Head of Product Engineering |
+| DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Auffindbarkeits-Teil behoben (Product Designer, 2026-08-25): „Aufnahme ansehen"-Link jetzt auch im Lese-Modus über das Aktionen-Menü erreichbar, nicht mehr nur im Bearbeiten-Modus. Die größere Frage (braucht es beide Systeme, oder zusammenlegen/umbenennen?) ist bewusst NICHT von mir entschieden — Sandy bespricht das direkt mit dir, Ist-Zustand unten komplett aufbereitet | Sandy + Chief of Staff (Entscheidung) / Product Designer (Auffindbarkeits-Fix umgesetzt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2438,6 +2439,69 @@ weiter". Gehört zu Head of Product Engineering: `error` aus beiden RPC-
 Aufrufen (`init_nummernkreise`, `vergib_naechste_nummer`) auslesen/loggen,
 dann herausfinden, warum es seit Mitte Juni fehlschlägt, und die 51+52
 betroffenen Bestandsangebote ggf. nachträglich nummerieren.
+
+---
+
+## DC-034 — Zwei getrennte Notiz-/Foto-Systeme im Angebot: macht das als Ganzes Sinn?
+
+**Datum:** 2026-08-25 (Sandy, ausgehend von einem Screenshot des
+„Notizen & Fotos"-Tabs: „checke null was es sein soll")
+**Status:** 🟡 Auffindbarkeits-Teil behoben, größere Frage bewusst offen
+für Sandy + Chief of Staff
+
+**Auftrag:** „ja. aber macht das überhaupt generell sinn?!? dass fotos und
+notizen gemacht werden können... gib das mal an cos und formulier ihm den
+istzustand ich wills mit ihm besprechen." Der folgende Abschnitt ist
+bewusst NEUTRAL gehalten — reine Bestandsaufnahme, keine Handlungsempfehlung
+meinerseits, weil Sandy das mit dir direkt besprechen möchte.
+
+**Ist-Zustand — zwei Systeme, die beide „Notiz"/„Foto" heißen, aber
+unterschiedliche Zwecke haben:**
+
+1. **„Aufnahme"** (`entwurf_aufnahmen`, Route `/angebot/[id]/entwurf`): Das,
+   was der Handwerker VOR OrT tatsächlich einspricht/fotografiert/tippt —
+   Rohmaterial, das die KI-Extraktion in Positionen übersetzt. Typen:
+   `sprache` (Sprachmemo + Transkript), `notiz` (Text), `foto` (Bild +
+   Beschreibung). Beispiel: „Achtung, Stromkabel in der Wand" als
+   Foto-Notiz während der Aufnahme.
+2. **„Notizen & Fotos"-Tab** (`AngebotDetail.tsx`, komplett eigenständig):
+   Eine interne Freitext-Notiz (`quotes.internal_notes`, ausdrücklich
+   NICHT im PDF) + bis zu 10 zusätzliche Fotos (eigene Tabelle
+   `quote_photos`, eigener Storage-Bucket), die einzeln per Schalter INS
+   PDF aufgenommen werden können. Kein technischer Zusammenhang zu den
+   Aufnahmen — komplett andere Datenbank-Tabellen, kein Code verbindet
+   beide.
+
+**Der plausible Grund für die Trennung** (Vermutung, keine bestätigte
+Absicht): Aufnahme = Rohmaterial für die Berechnung, rein intern für die
+KI. „Notizen & Fotos" = Dokumentation NACH der Berechnung, teils sogar
+kundensichtbar (PDF-Schalter) — zwei echte unterschiedliche Zwecke. Das
+Problem ist nicht zwingend, DASS es zwei Systeme gibt, sondern (a) beide
+im UI „Notizen"/„Fotos" heißen, ohne dass der Unterschied erklärt wird,
+und (b) Punkt 2 unten.
+
+**Konkretes Symptom, das den Punkt ausgelöst hat:** Bis eben war die
+Original-Aufnahme nach Fertigstellung/Versand des Angebots aus der Ansicht
+verschwunden — der Link dazu lebte nur in einer Icon-Reihe, die es
+ausschließlich im Bearbeiten-Modus gab. Ein Handwerker, der sein
+Stromkabel-Foto von der Aufnahme später nachschauen wollte, landete
+stattdessen im leeren, komplett anderen „Notizen & Fotos"-Tab.
+
+**Fix-Update (Product Designer, 2026-08-25) — nur der Auffindbarkeits-Teil:**
+„Aufmaß-Aufnahme ansehen" ist jetzt auch im normalen Lese-Modus über das
+Aktionen-Menü (⋯) erreichbar, neben PDF/Duplizieren/CSV — nicht mehr nur
+im Bearbeiten-Modus versteckt. `AngebotDetail.tsx`, scoped `tsc` sauber,
+noch nicht live geprüft. Das behebt NUR das „ich finde es nicht mehr
+wieder"-Problem, nicht die grundsätzliche Zwei-Systeme-Frage.
+
+**Offen für Sandy + Chief of Staff:** Soll es weiterhin zwei getrennte
+Systeme geben (dann bräuchten beide im UI klarere, unterscheidbare Namen,
+z. B. „Aufmaß-Aufnahme" vs. „Zusätzliche Notizen & Fotos"), oder sollen sie
+zusammengelegt werden (z. B. Aufnahme-Fotos wählbar ins PDF aufnehmbar
+machen wie die Tab-Fotos, oder umgekehrt der Tab ganz verschwinden
+zugunsten der Aufnahme-Ansicht)? Ich habe hier bewusst keine eigene
+Empfehlung ausgesprochen, das ist eine Produktentscheidung, keine reine
+UI-Frage.
 
 ---
 
