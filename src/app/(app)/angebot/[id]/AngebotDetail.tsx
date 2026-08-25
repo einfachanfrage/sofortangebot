@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import type { Quote, QuoteItem, Company, Customer, Baustelle } from '@/lib/types'
+import type { Quote, QuoteItem, Company, Customer, Baustelle, EntwurfAufnahme } from '@/lib/types'
 import { DRAFT_STATUSES, SENT_STATUSES, waehlbareStatus, getStatusInfo } from '@/lib/status'
 import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
-  Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon, StickyNote,
+  Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon,
   Camera, AlertTriangle, GripVertical, MoreHorizontal, Percent, Tag, Settings,
 } from 'lucide-react'
 import {
@@ -37,16 +37,6 @@ interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
   company: Company | null
   quoteNumber: string
-}
-
-interface QuotePhoto {
-  id: string
-  quote_id: string
-  url: string
-  filename: string
-  in_pdf: boolean
-  erstellt_am: string
-  signed_url?: string
 }
 
 interface EditItem {
@@ -472,10 +462,26 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [surchargeAmount, setSurchargeAmount] = useState(0)
   const [surchargeLabel, setSurchargeLabel] = useState('Zuschlag')
   const [internalNotes, setInternalNotes] = useState('')
-  const [photos, setPhotos] = useState<QuotePhoto[]>([])
+  // CoS-021/DC-034 (2026-08-25, Sandys Entscheidung "ein Foto-Pool statt
+  // zwei"): Fotos kommen jetzt aus derselben Quelle wie die Aufmaß-Aufnahme
+  // (entwurf_aufnahmen, typ='foto') statt aus dem separaten
+  // quote_photos-Upload — siehe loadPhotos() unten für die Begründung.
+  const [photos, setPhotos] = useState<EntwurfAufnahme[]>([])
   const [photosLoading, setPhotosLoading] = useState(false)
   const [photoUploading, setPhotoUploading] = useState(false)
-  const [lightboxPhoto, setLightboxPhoto] = useState<QuotePhoto | null>(null)
+  const [lightboxPhoto, setLightboxPhoto] = useState<EntwurfAufnahme | null>(null)
+  const [pendingPhotoFile, setPendingPhotoFile] = useState<File | null>(null)
+  const [pendingPhotoCaption, setPendingPhotoCaption] = useState('')
+  // useMemo statt direkt in der JSX: sonst würde jeder Tastenanschlag beim
+  // Beschreibung-Eintippen (eigener Re-Render) eine neue Blob-URL erzeugen
+  // und die alte nie freigeben. Revoke beim Wechsel/Schließen unten.
+  const pendingPhotoPreviewUrl = useMemo(
+    () => (pendingPhotoFile ? URL.createObjectURL(pendingPhotoFile) : null),
+    [pendingPhotoFile],
+  )
+  useEffect(() => {
+    return () => { if (pendingPhotoPreviewUrl) URL.revokeObjectURL(pendingPhotoPreviewUrl) }
+  }, [pendingPhotoPreviewUrl])
   const [empfehlungen, setEmpfehlungen] = useState<EmpfehlungDefault[]>([])
   const [dismissedHints, setDismissedHints] = useState<Set<string>>(new Set())
   const [hasChanges, setHasChanges] = useState(false)
@@ -626,10 +632,43 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     return hit?.unit_price ?? 0
   }
 
+  // CoS-021/DC-034: Fotos kommen aus entwurf_aufnahmen (typ='foto') — der
+  // Tabelle, die auch die Aufmaß-Aufnahme befüllt. Vorher gab es hier einen
+  // zweiten, komplett getrennten Upload-Weg (quote_photos), dessen "Ins
+  // PDF"-Schalter zwar anzeigte, aber nie wirklich etwas bewirkte (kein
+  // PDF-Code hat das Flag je gelesen — siehe src/lib/angebot-fotos.ts).
+  // Ein Foto-Pool statt zwei; Muster/Signed-URL-Abruf identisch zu
+  // entwurf/page.tsx loadData().
   async function loadPhotos() {
     setPhotosLoading(true)
-    const res = await fetch(`/api/quotes/${quote.id}/photos`)
-    if (res.ok) setPhotos(await res.json())
+    const { data: rows } = await supabase
+      .from('entwurf_aufnahmen')
+      .select('*')
+      .eq('angebot_id', quote.id)
+      .eq('typ', 'foto')
+      .order('sortierung', { ascending: true })
+      .order('erstellt_am', { ascending: true })
+
+    if (rows?.length) {
+      const paths = rows
+        .filter(r => r.foto_url)
+        .map(r => ({ bucket: 'entwurf-fotos', path: r.foto_url as string }))
+      let urls: Record<string, string> = {}
+      if (paths.length) {
+        const res = await fetch('/api/entwurf/signed-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paths }),
+        })
+        if (res.ok) urls = (await res.json()).urls ?? {}
+      }
+      setPhotos(rows.map(r => ({
+        ...r,
+        foto_signed_url: r.foto_url ? urls[r.foto_url as string] : undefined,
+      })) as EntwurfAufnahme[])
+    } else {
+      setPhotos([])
+    }
     setPhotosLoading(false)
   }
 
@@ -731,40 +770,62 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   // ── Spracheingabe ──────────────────────────────────────────────────────────
   // ── Fotos ──────────────────────────────────────────────────────────────────
-  async function handlePhotoUpload(file: File) {
-    if (photos.length >= 10) { showToast('Maximal 10 Fotos'); return }
+  // Lädt über denselben Endpunkt hoch, den auch die Aufmaß-Aufnahme nutzt
+  // (POST /api/entwurf/foto) — die Beschreibung landet in foto_beschreibung
+  // und erscheint damit automatisch als Bildunterschrift im PDF, falls das
+  // Foto dort mit aufgenommen wird (siehe src/lib/angebot-fotos.ts).
+  async function handlePhotoUpload(file: File, beschreibung?: string) {
     setPhotoUploading(true)
     const fd = new FormData()
-    fd.append('file', file)
-    const res = await fetch(`/api/quotes/${quote.id}/photos`, { method: 'POST', body: fd })
+    fd.append('angebot_id', quote.id)
+    fd.append('foto', file)
+    if (beschreibung?.trim()) fd.append('beschreibung', beschreibung.trim())
+    const res = await fetch('/api/entwurf/foto', { method: 'POST', body: fd })
     if (res.ok) {
-      const photo = await res.json()
-      setPhotos(prev => [...prev, photo])
       showToast('Foto hinzugefügt ✓')
+      await loadPhotos()
     } else {
       showToast('Upload fehlgeschlagen')
     }
     setPhotoUploading(false)
   }
 
-  async function togglePhotoInPdf(photo: QuotePhoto) {
+  // Nur maximal 8 Fotos werden überhaupt ins PDF übernommen (harte Grenze
+  // in src/lib/angebot-fotos.ts, MAX_FOTOS — ein Angebots-PDF ist ein
+  // Dokument, kein Fotoalbum). Ohne diese Vorab-Warnung könnte man hier
+  // z.B. 12 Fotos anhaken und stillschweigend würden nur die ersten 8
+  // im PDF landen — das wäre wieder eine Zusage, die das Produkt nicht
+  // einlöst (genau der Fehler beim alten Schalter, den wir gerade beheben).
+  async function togglePhotoInPdf(photo: EntwurfAufnahme) {
     const newVal = !photo.in_pdf
+    if (newVal && photos.filter(p => p.in_pdf).length >= 8) {
+      showToast('Maximal 8 Fotos im PDF — zuerst eins abwählen')
+      return
+    }
     setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, in_pdf: newVal } : p))
-    await fetch(`/api/quotes/${quote.id}/photos`, {
+    setLightboxPhoto(prev => (prev && prev.id === photo.id ? { ...prev, in_pdf: newVal } : prev))
+    const res = await fetch('/api/entwurf/foto', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ photo_id: photo.id, in_pdf: newVal }),
+      body: JSON.stringify({ aufnahme_id: photo.id, in_pdf: newVal }),
     })
+    if (!res.ok) {
+      setPhotos(prev => prev.map(p => p.id === photo.id ? { ...p, in_pdf: !newVal } : p))
+      setLightboxPhoto(prev => (prev && prev.id === photo.id ? { ...prev, in_pdf: !newVal } : prev))
+      showToast('Konnte nicht gespeichert werden')
+    }
   }
 
-  async function deletePhoto(photo: QuotePhoto) {
+  // Kein eigener DELETE-Endpunkt für Aufnahme-Fotos — dasselbe direkte
+  // Client-Muster wie deleteAufnahme() in entwurf/page.tsx (RLS-geschützt):
+  // erst die Datei aus dem Storage, dann die Zeile.
+  async function deletePhoto(photo: EntwurfAufnahme) {
     setPhotos(prev => prev.filter(p => p.id !== photo.id))
     setLightboxPhoto(null)
-    await fetch(`/api/quotes/${quote.id}/photos`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ photo_id: photo.id }),
-    })
+    if (photo.foto_url) {
+      await supabase.storage.from('entwurf-fotos').remove([photo.foto_url])
+    }
+    await supabase.from('entwurf_aufnahmen').delete().eq('id', photo.id)
   }
 
   // ── Edit-Modus ─────────────────────────────────────────────────────────────
@@ -1354,7 +1415,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {lightboxPhoto && (
         <div className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center" onClick={() => setLightboxPhoto(null)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={lightboxPhoto.signed_url ?? lightboxPhoto.url} alt="" className="max-w-full max-h-[70vh] object-contain rounded-xl" />
+          <img src={lightboxPhoto.foto_signed_url} alt="" className="max-w-full max-h-[70vh] object-contain rounded-xl" />
+          {lightboxPhoto.foto_beschreibung && (
+            <div className="text-white/70 text-sm font-semibold mt-3 px-6 text-center max-w-md">{lightboxPhoto.foto_beschreibung}</div>
+          )}
           <div className="flex gap-4 mt-4" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => togglePhotoInPdf(lightboxPhoto)}
@@ -1442,8 +1506,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             onClick={() => setActiveTab('notizen')}
             className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'notizen' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}
           >
-            <StickyNote size={14} strokeWidth={2.5} />
-            Notizen & Fotos
+            {/* CoS-021/DC-034: "Notizen & Fotos" war die konkrete
+                Verwirrungsquelle aus Sandys Feedback — klang nach einem
+                einzigen Bereich, war aber zwei getrennte Systeme mit
+                getrennten Fotos. Jetzt: Fotos zuerst (der jetzt echte,
+                gemeinsame Foto-Pool aus der Aufmaß-Aufnahme), "Notiz"
+                bewusst im Singular (ein einzelnes privates Textfeld, siehe
+                Kommentar bei "Interne Notiz" unten). */}
+            <Camera size={14} strokeWidth={2.5} />
+            Fotos & Notiz
             {photos.length > 0 && (
               <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${activeTab === 'notizen' ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/20 text-white'}`}>{photos.length}</span>
             )}
@@ -2019,43 +2090,33 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         </div>
       )}
 
-      {/* ── TAB: NOTIZEN & FOTOS ─────────────────────────────────────────── */}
+      {/* ── TAB: FOTOS & NOTIZ ────────────────────────────────────────────
+          CoS-021/DC-034 (2026-08-25): Ex-Tab "Notizen & Fotos" bündelte zwei
+          Systeme unter einem Namen, der nach EINEM Bereich klang. Jetzt echt
+          ein Bereich: alle Fotos kommen aus entwurf_aufnahmen (derselben
+          Tabelle wie die Aufmaß-Aufnahme — ein Foto-Pool statt zwei), Fotos
+          zuerst (das ist jetzt die "echte" Dokumentation), die private
+          Notiz eigenständig und klar benannt darunter. */}
       {activeTab === 'notizen' && (
         <div className="px-5 md:px-8 pt-5 flex flex-col gap-4 pb-10">
-
-          {/* Interne Notizen */}
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="font-black text-[#2C2C2C]">Interne Notizen</div>
-              <span className="text-xs font-semibold text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-2.5 py-1 rounded-full">Nicht im PDF</span>
-            </div>
-            <textarea
-              value={internalNotes}
-              onChange={e => scheduleAutosaveNotes(e.target.value)}
-              placeholder="Aufmaß-Notizen, Besonderheiten, Hinweise für später..."
-              rows={5}
-              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C400]/40 resize-none"
-            />
-            {autosaveLabel && <div className="text-xs text-[#2C2C2C]/30 font-semibold mt-1">{autosaveLabel}</div>}
-          </div>
 
           {/* Fotos */}
           <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <div className="font-black text-[#2C2C2C]">Fotos</div>
-                <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{photos.length}/10 · Tippen um zu vergrößern</div>
+                <div className="font-black text-[#2C2C2C]">Fotos vom Aufmaß</div>
+                <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">
+                  {photos.length === 0 ? 'Noch keine Fotos' : `${photos.length} Foto${photos.length !== 1 ? 's' : ''}`} · Tippen zum Vergrößern
+                </div>
               </div>
-              {photos.length < 10 && (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={photoUploading}
-                  className="flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-4 py-2 rounded-xl disabled:opacity-50"
-                >
-                  {photoUploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} strokeWidth={2.5} />}
-                  {photoUploading ? 'Lädt...' : 'Foto hinzufügen'}
-                </button>
-              )}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={photoUploading}
+                className="flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-4 py-2 rounded-xl disabled:opacity-50"
+              >
+                {photoUploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} strokeWidth={2.5} />}
+                {photoUploading ? 'Lädt...' : 'Foto hinzufügen'}
+              </button>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -2064,7 +2125,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 className="hidden"
                 onChange={e => {
                   const file = e.target.files?.[0]
-                  if (file) handlePhotoUpload(file)
+                  if (file) { setPendingPhotoFile(file); setPendingPhotoCaption('') }
                   e.target.value = ''
                 }}
               />
@@ -2083,7 +2144,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               >
                 <ImageIcon size={32} strokeWidth={1.5} />
                 <span className="font-bold text-sm">Fotos vom Aufmaß hinzufügen</span>
-                <span className="text-xs">Kamera oder Galerie · max. 10 Fotos</span>
+                <span className="text-xs">Kamera oder Galerie</span>
               </button>
             )}
 
@@ -2097,7 +2158,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={photo.signed_url ?? photo.url}
+                      src={photo.foto_signed_url}
                       alt=""
                       className="w-full h-full object-cover"
                     />
@@ -2109,14 +2170,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                   </div>
                 ))}
-                {photos.length < 10 && (
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square rounded-xl border-2 border-dashed border-[#2C2C2C]/15 flex items-center justify-center text-[#2C2C2C]/20 hover:border-[#F5C400]/50 transition-colors"
-                  >
-                    <Plus size={24} strokeWidth={1.5} />
-                  </button>
-                )}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-square rounded-xl border-2 border-dashed border-[#2C2C2C]/15 flex items-center justify-center text-[#2C2C2C]/20 hover:border-[#F5C400]/50 transition-colors"
+                >
+                  <Plus size={24} strokeWidth={1.5} />
+                </button>
               </div>
             )}
 
@@ -2126,6 +2185,70 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 {photos.filter(p => p.in_pdf).length} Foto{photos.filter(p => p.in_pdf).length !== 1 ? 's' : ''} werden ins PDF übernommen
               </div>
             )}
+          </div>
+
+          {/* Interne Notiz — bewusst Singular und optisch klar getrennt von
+              den Fotos oben: anderer Zweck (privater Vermerk für einen
+              selbst, nie fürs PDF/den Kunden gedacht) als die Foto-
+              Dokumentation, siehe CoS-021 Punkt 2. */}
+          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <div className="flex items-center justify-between mb-1">
+              <div className="font-black text-[#2C2C2C]">Interne Notiz</div>
+              <span className="text-xs font-semibold text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-2.5 py-1 rounded-full">Nicht im PDF</span>
+            </div>
+            <div className="text-xs text-[#2C2C2C]/40 font-semibold mb-3">Nur für dich — der Kunde sieht das nie.</div>
+            <textarea
+              value={internalNotes}
+              onChange={e => scheduleAutosaveNotes(e.target.value)}
+              placeholder="Aufmaß-Notizen, Besonderheiten, Hinweise für später..."
+              rows={5}
+              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C400]/40 resize-none"
+            />
+            {autosaveLabel && <div className="text-xs text-[#2C2C2C]/30 font-semibold mt-1">{autosaveLabel}</div>}
+          </div>
+        </div>
+      )}
+
+      {/* Foto-Beschreibung vor dem Hochladen — optional, landet in
+          foto_beschreibung und damit automatisch als Bildunterschrift im
+          PDF, falls das Foto dort mit aufgenommen wird. PATCH /api/entwurf/
+          foto kann nur in_pdf ändern, keine Beschreibung nachträglich —
+          darum hier abfragen, bevor der Upload überhaupt losgeht. */}
+      {pendingPhotoFile && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setPendingPhotoFile(null)}>
+          <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
+            <div className="font-syne font-black text-[#2C2C2C] text-[18px] mb-4">Foto hinzufügen</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {pendingPhotoPreviewUrl && (
+              <img src={pendingPhotoPreviewUrl} alt="" className="w-full max-h-64 object-cover rounded-2xl mb-4" />
+            )}
+            <input
+              type="text"
+              value={pendingPhotoCaption}
+              onChange={e => setPendingPhotoCaption(e.target.value)}
+              placeholder="Beschreibung (optional) — z.B. „Wasserschaden Decke Bad“"
+              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 font-semibold text-[14px] text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#F5C400] mb-4"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPendingPhotoFile(null)}
+                className="flex-1 py-3 rounded-xl bg-[#F7F7F5] text-[#2C2C2C]/60 font-semibold text-sm"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={() => {
+                  const file = pendingPhotoFile
+                  const caption = pendingPhotoCaption
+                  setPendingPhotoFile(null)
+                  if (file) handlePhotoUpload(file, caption)
+                }}
+                className="flex-1 py-3 rounded-xl bg-[#2C2C2C] text-white font-black text-sm"
+              >
+                Hinzufügen
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -2298,9 +2421,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   bewusst NICHT als eigenes Icon in der Kopfzeile (würde neben
                   dem gerade erst aufgeräumten Status-Button wieder Enge
                   schaffen) — passt eher zu "PDF"/"Duplizieren" als
-                  Neben-Aktion. Nicht zu verwechseln mit dem separaten
-                  "Notizen & Fotos"-Tab weiter unten (eigenständiges Feld,
-                  keine Verbindung zu den Aufnahmen). */}
+                  Neben-Aktion. Update CoS-021 (2026-08-25): der "Fotos &
+                  Notiz"-Tab zeigt inzwischen dieselben Aufnahme-Fotos (ein
+                  Pool statt zwei, siehe dortiger Kommentar) — dieser
+                  Aktionen-Eintrag bleibt trotzdem sinnvoll, weil er
+                  zusätzlich Sprachaufnahme/Transkript/erkannte Positionen
+                  zeigt, die der Tab nicht abbildet. */}
               <Zeile icon={<Mic size={17} strokeWidth={2.5} />} label="Aufmaß-Aufnahme ansehen" href={`/angebot/${quote.id}/entwurf`} />
               <Zeile icon={<Download size={17} strokeWidth={2.5} />} label={istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'} href={`/api/pdf?id=${quote.id}`} />
               <Zeile icon={<Link2 size={17} strokeWidth={2.5} />} label="Link zum Angebot kopieren" onClick={copyLink} />
