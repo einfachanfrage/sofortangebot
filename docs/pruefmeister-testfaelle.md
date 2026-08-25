@@ -67,7 +67,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | ✅ bestätigt bekannter Punkt, keine Dringlichkeit |
-| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | 🟡 Blocker behoben (Head of Product Engineering, 2026-08-24): zwei getrennte Ursachen — die Bodenflächen-Frage war überflüssig (Fläche aus 5 × 3,5 ableitbar) UND „Überspringen" erreichte den Server nie, deshalb die Schleife. Beides gefixt, dazu die überflüssige Wandhöhen-Frage im Dachgeschoss. Der Fall stellt jetzt **null** Rückfragen. Live-Nachtest steht aus |
+| PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ❌ Nachtest (2026-08-25): Blocker bestätigt weg — direkt zur Karte durchgelaufen, keine Rückfrage mehr. Kniestock/Dachschrägen weiter exakt Soll. Zwei neue, kleinere Funde: „Türen: 0" widerspricht der Sockelleisten-Berechnung (rechnet mit einer Tür), „Raumhöhe" zeigt nur „!" statt Wert oder Platzhalter |
 | PM-008 | Fassade | ✅ Nachtest 7 (2026-08-20): „So gerechnet"-Rechenbug live bestätigt behoben (66,96 m², kein Widerspruch mehr zur abgerechneten Position), Wand-Chip/PD-003 bleibt fehlerfrei. Fachlich/rechnerisch komplett grün, offen bleibt nur die Erschwerniszuschlag-Einheitenfrage (Pauschale vs. %, wartet auf Sandys Entscheidung, siehe PM-015) — Details im Archiv |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf); fehlender Standardpreis dafür jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus |
 | PM-010 | Sockelleisten-Doppel-Falle | ✅ Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv |
@@ -561,6 +561,76 @@ genau die Zahl, die am 16.08. als unerklärliche „Wandflächen streichen 12 m�
 irgendwann `kniestockhoehe` nicht mehr liefern, wäre dieser Fehler sofort wieder da. Eine Bereinigung
 müsste an der Extraktion ansetzen, nicht an der Berechnung — bewusst nicht im Rahmen dieses Blocker-Fixes.
 
+**Live-Nachtest nach dem Fix (Head of Product Engineering, gegen die
+Produktions-Datenbank geprüft, Angebot `1bbfa91a`):** ✅ **Blocker ist weg.**
+Der Entwurf wurde diesmal erreicht (`entwurf_gespeichert_am` gesetzt, eine
+Stunde nach dem steckengebliebenen Lauf `93192e79` mit 0 Positionen). Vier
+Positionen, Mengen exakt Soll:
+
+| Position | Menge | Preis |
+|---|---|---|
+| Kniestockwände streichen 2× — Dachzimmer | 20,40 m² ✅ | **0,00 € ❌** |
+| Dachschrägen streichen 2× — Dachzimmer | 23,08 m² ✅ | **0,00 € ❌** |
+| Boden schützen — Dachzimmer | 17,50 m² ✅ | 21,00 € |
+| Sockelleisten abkleben — Dachzimmer | 16,10 lfdm ✅ | 12,88 € |
+
+**Rechnerisch ist der Fall damit sauber. Die beiden Hauptpositionen haben aber
+keinen Preis — und der Grund ist ein Versäumnis von mir beim
+Preisdatenbank-Audit am 20.08.**
+
+Der Katalog im Konto ist noch der Stand vom **19.08.**: 164 Maler- und 177
+Boden-Positionen, neuester Eintrag 19.08. Der Katalog im Code hat seit dem
+Audit **208 und 186**. Die 53 damals ergänzten Preise sind also nur in den
+Code gewandert, **nicht in die bereits bestehenden Betriebs-Preisdatenbanken**.
+Genau die Lücke, die ich bei CoS-019 (Rubriken) mit einer Migration
+geschlossen habe — beim Audit hatte ich nicht daran gedacht.
+
+Konkret trifft es hier eine Titel-Variante: Die Engine erzeugt
+„Kniestockwände streichen **2x**", der Katalog im Konto kennt nur
+„Kniestockwände streichen" (ohne Variante). Gegen den heutigen Code-Katalog
+(mit 1x/2x/3x-Varianten) matcht derselbe Titel einwandfrei — nachgestellt mit
+der echten Matching-Logik.
+
+**Nebenbefund, Asymmetrie im Matcher — und eine Korrektur meiner eigenen
+Einschätzung:** Gegen einen Katalogeintrag OHNE Variante fand „Dachschrägen
+streichen **1x** — Dachzimmer" einen Treffer, „**2x**" dagegen keinen. Ich
+hatte Sandy gegenüber vermutet, das sei Absicht. **Das war falsch — es war ein
+Fehler**, und zwar genau der, den ich beim Preisdatenbank-Audit am 20.08. schon
+notiert („1x/2x/3x-Varianten sperren sich gegenseitig global"), aber nur im
+Katalog umgangen statt im Matcher behoben hatte.
+
+Die Ursache, nachgerechnet: `findePreisposition` prüfte GLOBAL, ob irgendein
+Katalogeintrag mit derselben Einheit die gesuchte Anstrichzahl trägt — und
+sperrte dann ALLE variantenlosen Einträge. In Sandys Konto genügte das völlig
+unbeteiligte „Wand streichen 2x Anstrich", damit „Kniestockwände streichen 2x"
+seinen eigenen Katalogpreis (11 €) nicht mehr finden durfte. Mit „1x" gab es
+keinen solchen Sperr-Eintrag, deshalb klappte es dort.
+
+**Festgeklopft (Sandys „ja klopf fest", 2026-08-24)** — drei Regeln, jetzt im
+Code kommentiert und mit 6 Tests gesichert (`preis-matcher.test.ts`):
+1. Ein 2×-Auftrag bekommt **nie** einen 1×-Preis (und umgekehrt). Lieber
+   „Preis fehlt" als eine Position, die zu billig im Angebot steht. Nicht
+   verhandelbar.
+2. Gibt es die passende Variante im Katalog, gewinnt sie gegen einen Eintrag
+   ohne Anstrichzahl — auch bei zufällig besserem Text-Score.
+3. Gibt es keine passende Variante, darf ein Eintrag **ohne** Anstrichzahl
+   einspringen. Ein Katalogeintrag „Kniestockwände streichen" ohne Zusatz ist
+   der eigene Preis des Betriebs für genau diese Arbeit — den zu ignorieren
+   wäre kein Schutz, sondern Verlust.
+
+Regel 2 wirkt jetzt innerhalb einer Suche statt über den ganzen Katalog.
+Damit findet Sandys Konto seine 11 € auch ohne Katalog-Nachimport — der
+Nachimport bleibt trotzdem sinnvoll, weil ihr Katalog 53 Positionen hinterher
+ist.
+
+**Nötiger Schritt (Sandy, ein Klick):** Auf `/preise` den Button
+„Standardpreise importieren" — der ergänzt genau die fehlenden
+Standardpositionen, ohne bestehende eigene Preise anzufassen (im Code
+geprüft: er filtert vorhandene Titel heraus). Danach denselben Fall nochmal
+einsprechen; dann sollten Kniestock und Dachschrägen echte Preise tragen.
+
+---
+
 **Entschieden (Sandy, 2026-08-24): Die Türen-Frage bleibt.** Sie war die einzige Frage, die nach den
 Fixes bei sauberer Extraktion noch übrig bleibt, und sie hat echten Einfluss (die Türbreite geht von der
 Sockelleisten-Länge ab). Kein Code-Änderungsbedarf — der aktuelle Stand entspricht der Entscheidung. Für
@@ -577,6 +647,43 @@ aus dem Transkript ableitbar wäre) — aber das Kernproblem jetzt ist nicht meh
 sondern „lässt sich nicht mehr aus dem Weg räumen". Bitte auch generell prüfen, ob ähnliche
 Rückfragen-Masken in anderen Fällen genauso in einer Schleife hängen bleiben können, wenn übersprungen
 wird — das könnte ein Launch-Blocker sein, nicht nur ein Einzelfall bei diesem Dachgeschoss-Testfall.
+
+**Nachtest (Sandy, 2026-08-25) — ✅ Blocker weg, zwei neue, kleinere Funde:**
+
+Karte: „4 Positionen erkannt" — Kniestockwände streichen 2x (20,4 m²), Dachschrägen streichen 2x
+(23,08 m²), Boden schützen (17,5 m²), Sockelleisten abkleben (16,1 lfdm). **Diesmal kam gar keine
+Rückfrage** — direkt von der Karte zum Entwurf, keine Endlosschleife, keine einzige Maske. Das deckt sich
+genau mit dem, was Fix-Update 4 versprochen hat („Sandys Fall stellt jetzt keine einzige Rückfrage mehr").
+
+Entwurf, Raummaße: 3,5×5 m, **Raumhöhe „!"**, 0 Türen, 1 Fenster:
+- Kniestockwände streichen 2×: 20,4 m² × 0,00 € (Preis fehlt) — Menge exakt Soll, Preis weiterhin nicht
+  hinterlegt (bekannter, separat priorisierter Preisdatenbank-Punkt, kein neuer Fund)
+- Dachschrägen streichen 2×: 23,08 m² × 0,00 € (Preis fehlt) — Menge exakt Soll, gleiches Preisthema
+- Boden schützen: 17,5 m² × 1,20 € = 21,00 € — exakt Soll (3,5×5=17,5 m²)
+- **Sockelleisten abkleben: 16,1 lfdm × 0,80 € = 12,88 €** — das ist Umfang (17,00 lfm) minus 0,90 m
+  Türbreite, obwohl die Raummaße direkt daneben „**Türen: 0**" zeigen. Wenn wirklich keine Tür da ist,
+  müssten es die vollen 17,0 lfdm sein.
+
+**Befund:**
+
+1. **Guter Erfolg: die Endlosschleife ist weg.** Kein Hängenbleiben mehr, direkter Durchlauf zum Entwurf —
+   Fix-Update 4 hält bei diesem Testlauf. Kniestock und Dachschrägen bleiben beide exakt Soll.
+2. **Neuer, kleiner Fund: „Türen: 0" vs. Sockelleisten rechnet mit einer Tür.** Die angezeigte Türanzahl
+   und die tatsächlich verwendete Sockelleisten-Länge widersprechen sich — entweder wird die Türanzahl
+   nicht an die Sockelleisten-Berechnung durchgereicht, oder die Anzeige „Türen: 0" selbst stimmt nicht mit
+   dem, was intern gerechnet wurde, überein. Kein großer Betrag hier (0,9 lfdm × 0,80 € ≈ 0,72 €), aber ein
+   Anzeige-vs-Rechnung-Widerspruch, den schon mehrere andere Fälle in dieser Testreihe hatten.
+3. **Neuer, kleiner Fund: „Raumhöhe" zeigt ein bloßes „!"** statt einer Zahl oder eines sinnvollen
+   Platzhalters. Passt zeitlich zu Fix-Update 4, Punkt „Ursache 3" — seit die überflüssige Höhenfrage im
+   Dachgeschoss-Zweig entfällt, hat der Raum offenbar keinen Höhenwert mehr, aber die Raummaße-Kopfzeile
+   ist nicht darauf vorbereitet, dass „Raumhöhe" bei einem Dachgeschoss fehlen kann, und zeigt stattdessen
+   einen rohen Fehler-Platzhalter an.
+
+**Für Head of Product Engineering:** Der Blocker selbst scheint behoben — danke, guter Fang mit den drei
+Ursachen. Zwei neue Kleinigkeiten, vermutlich beide Nebenwirkungen von Fix-Update 4: (1) bitte prüfen, ob
+die Sockelleisten-Berechnung bei diesem Fall wirklich die aktuelle Türanzahl (0) verwendet oder noch einen
+alten/falschen Wert; (2) die Raummaße-Anzeige sollte bei einem Dachgeschoss ohne Höhenwert etwas Sinnvolles
+zeigen (z. B. das Feld ausblenden oder „–") statt eines bloßen „!".
 
 ---
 

@@ -102,26 +102,57 @@ export function findePreisposition(
   const gesucht = normalisierePreistext(beschreibung)
   const einheitNorm = normalisiereEinheit(einheit)
   const gesuchtAnstriche = gesucht.match(/\b([123])x\b/)?.[1]
-  const hatPassendeAnstrichVariante = !!gesuchtAnstriche && preise.some(position => {
-    if (normalisiereEinheit(position.unit) !== einheitNorm) return false
-    return normalisierePreistext(position.title).match(/\b([123])x\b/)?.[1] === gesuchtAnstriche
-  })
-  let beste: Zuordnung | null = null
+
+  // Anstrich-Varianten (1x/2x/3x) — die Regeln, festgeklopft am 2026-08-24
+  // (Sandys „klopf fest"), nachdem PM-007 gezeigt hat, wie teuer eine
+  // ungeschriebene Regel wird:
+  //
+  //   1. Ein 2x-Auftrag bekommt NIE einen 1x-Preis (und umgekehrt). Lieber
+  //      „Preis fehlt" und 0,00 € als eine Position, die zu billig im Angebot
+  //      steht. Das ist die eine Regel, die nicht verhandelbar ist — sie
+  //      schützt den Handwerker vor einer Kalkulation, die er nicht bemerkt.
+  //   2. Gibt es zum gesuchten Anstrich eine passende Variante im Katalog,
+  //      gewinnt sie gegen einen Eintrag ohne Anstrichzahl — auch wenn der
+  //      rein textlich zufällig besser passt.
+  //   3. Gibt es KEINE passende Variante, darf ein Eintrag ohne Anstrichzahl
+  //      einspringen. Ein Katalogeintrag „Kniestockwände streichen" ohne
+  //      Zusatz ist der eigene Preis des Betriebs für genau diese Arbeit —
+  //      den zu ignorieren wäre keine Vorsicht, sondern Verlust.
+  //
+  // PM-007 (2026-08-24): Regel 2 war vorher GLOBAL formuliert — es genügte,
+  // dass IRGENDEIN Katalogeintrag mit derselben Einheit ein „2x" trug, um
+  // jeden variantenlosen Eintrag zu sperren. In Sandys Konto reichte das
+  // unbeteiligte „Wand streichen 2x Anstrich", damit „Kniestockwände
+  // streichen 2x" seinen eigenen Katalogpreis (11 €) nicht mehr fand und mit
+  // 0,00 € im Angebot stand — während dieselbe Position mit „1x" sauber
+  // matchte. Diese Asymmetrie war kein Vorsatz, sondern ein Fehler. Jetzt
+  // wirkt Regel 2 dort, wo sie hingehört: zwischen den Kandidaten dieser
+  // einen Suche, nicht über den ganzen Katalog.
+  const SCHWELLE = 0.62
+  let besteMitVariante: Zuordnung | null = null
+  let besteOhneVariante: Zuordnung | null = null
 
   for (const position of preise) {
     if (normalisiereEinheit(position.unit) !== einheitNorm) continue
     const kandidat = normalisierePreistext(position.title)
-    // Ein expliziter 1x/2x/3x-Auftrag darf niemals auf eine andere Anzahl
-    // Anstriche gematcht werden, auch wenn der restliche Titel ähnlich ist.
     const kandidatAnstriche = kandidat.match(/\b([123])x\b/)?.[1]
+
+    // Regel 1: andere Anstrichzahl → nie ein Treffer.
     if (gesuchtAnstriche && kandidatAnstriche && gesuchtAnstriche !== kandidatAnstriche) continue
-    // Existiert eine passende explizite Preisvariante, darf ein generischer
-    // Eintrag ohne Anstrichzahl sie nicht durch einen zufällig höheren
-    // Text-Score verdrängen.
-    if (hatPassendeAnstrichVariante && !kandidatAnstriche) continue
+
     const score = tokenScore(gesucht, kandidat)
-    if (!beste || score > beste.score) beste = { position, score }
+
+    // Regel 2/3: variantenlose Kandidaten getrennt sammeln — sie kommen nur
+    // zum Zug, wenn keine passende Variante über die Schwelle kommt.
+    if (gesuchtAnstriche && !kandidatAnstriche) {
+      if (!besteOhneVariante || score > besteOhneVariante.score) besteOhneVariante = { position, score }
+      continue
+    }
+
+    if (!besteMitVariante || score > besteMitVariante.score) besteMitVariante = { position, score }
   }
 
-  return beste && beste.score >= 0.62 ? beste : null
+  if (besteMitVariante && besteMitVariante.score >= SCHWELLE) return besteMitVariante
+  if (besteOhneVariante && besteOhneVariante.score >= SCHWELLE) return besteOhneVariante
+  return null
 }

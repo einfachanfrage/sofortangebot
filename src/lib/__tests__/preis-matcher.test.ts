@@ -111,3 +111,63 @@ describe('betriebliche Preiszuordnung', () => {
     expect(treffer?.position.unit_price).toBe(9.5)
   })
 })
+
+// ── Anstrich-Varianten: die festgeklopften Regeln (2026-08-24, Sandys „klopf
+// fest") ────────────────────────────────────────────────────────────────────
+// Aufgedeckt durch PM-007: „Kniestockwände streichen 2x" fand seinen eigenen
+// Katalogpreis nicht und stand mit 0,00 € im Angebot, während dieselbe
+// Position mit „1x" sauber matchte. Diese Tests halten fest, was gewollt ist —
+// und was der Fehler war.
+describe('Anstrich-Varianten (1x/2x/3x)', () => {
+  const p = (title: string, unit_price: number, unit = 'm²') => ({
+    id: title, title, category: 'Maler – Anstrich Innen', unit, unit_price,
+  })
+
+  it('gibt einem 2x-Auftrag NIEMALS den 1x-Preis', () => {
+    // Die eine Regel, die nicht verhandelbar ist: lieber „Preis fehlt" als
+    // eine Position, die zu billig im Angebot steht.
+    const katalog = [p('Wandflächen streichen 1x', 7.5)]
+    expect(findePreisposition('Wandflächen streichen 2x — Flur', 'm²', katalog)).toBeNull()
+  })
+
+  it('gibt einem 1x-Auftrag NIEMALS den 2x-Preis', () => {
+    const katalog = [p('Wandflächen streichen 2x', 11.5)]
+    expect(findePreisposition('Wandflächen streichen 1x — Flur', 'm²', katalog)).toBeNull()
+  })
+
+  it('bevorzugt die passende Variante gegenüber einem Eintrag ohne Anstrichzahl', () => {
+    const katalog = [p('Wandflächen streichen', 9), p('Wandflächen streichen 2x', 11.5)]
+    const treffer = findePreisposition('Wandflächen streichen 2x — Flur', 'm²', katalog)
+    expect(treffer?.position.title).toBe('Wandflächen streichen 2x')
+  })
+
+  it('nimmt den Eintrag ohne Anstrichzahl, wenn es keine passende Variante gibt', () => {
+    // Ein Katalogeintrag ohne Zusatz ist der eigene Preis des Betriebs für
+    // genau diese Arbeit — den zu ignorieren wäre kein Schutz, sondern Verlust.
+    const katalog = [p('Kniestockwände streichen', 11)]
+    const treffer = findePreisposition('Kniestockwände streichen 2x — Dachzimmer', 'm²', katalog)
+    expect(treffer?.position.title).toBe('Kniestockwände streichen')
+    expect(treffer?.position.unit_price).toBe(11)
+  })
+
+  it('PM-007: ein fremder 2x-Eintrag sperrt den eigenen Katalogpreis nicht mehr', () => {
+    // Genau Sandys Live-Katalog. Vorher sorgte allein die Existenz von
+    // „Wand streichen 2x Anstrich" dafür, dass „Kniestockwände streichen"
+    // gar nicht mehr in Frage kam → 0,00 € im Angebot.
+    const katalog = [
+      p('Kniestockwände streichen', 11),
+      p('Dachschrägen streichen', 11),
+      p('Wand streichen 2x Anstrich', 9.5),
+    ]
+    expect(findePreisposition('Kniestockwände streichen 2x — Dachzimmer', 'm²', katalog)?.position.unit_price).toBe(11)
+    expect(findePreisposition('Dachschrägen streichen 2x — Dachzimmer', 'm²', katalog)?.position.unit_price).toBe(11)
+  })
+
+  it('behandelt 1x und 2x gleich — keine Asymmetrie mehr', () => {
+    const katalog = [p('Dachschrägen streichen', 11), p('Wand streichen 2x Anstrich', 9.5)]
+    const einfach = findePreisposition('Dachschrägen streichen 1x — Dachzimmer', 'm²', katalog)
+    const zweifach = findePreisposition('Dachschrägen streichen 2x — Dachzimmer', 'm²', katalog)
+    expect(einfach?.position.title).toBe('Dachschrägen streichen')
+    expect(zweifach?.position.title).toBe('Dachschrägen streichen')
+  })
+})
