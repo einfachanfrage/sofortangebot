@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-25 — DC-034 NEU: zwei getrennte Notiz-/Foto-Systeme im Angebot gefunden (Aufnahme vs. „Notizen & Fotos"-Tab), Auffindbarkeits-Teil behoben, Grundsatzfrage bewusst offen für Sandy + Chief of Staff, Ist-Zustand dokumentiert; DC-033: Angebotsnummern-Bug gefunden, an Head of Product Engineering weitergegeben. Vortag: DC-002/DC-003 (inkl. Header-Nachtrag)/DC-006/DC-027 — alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-25 — DC-034/CoS-021: zwei getrennte Notiz-/Foto-Systeme im Angebot gefunden, Sandy+Chief of Staff haben "zusammenlegen" entschieden, UI-Teil jetzt umgesetzt ("Notizen & Fotos" → "Fotos & Notiz", ein Foto-Pool aus der Aufmaß-Aufnahme, interne Notiz eigenständig); DC-033: Angebotsnummern-Bug gefunden, von Head of Product Engineering behoben. Vortag: DC-002/DC-003 (inkl. Header-Nachtrag)/DC-006/DC-027 — alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -83,8 +83,8 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | ✅ Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21) — Karte, DC-028-Raum-Karten und „Entwurf erstellen"-Gate alle wie entschieden gebaut. Regressionsgeprüft (236 Tests grün), noch KEIN Live-Nachtest | Product Designer (Entscheidung) / Head of Product Engineering (Umsetzung) |
 | DC-031 | Navigations-Sackgassen: laufende Aufnahme nicht abbrechbar (Mikro bleibt offen), Aufnahme-Detail-Sheet nur per unsichtbarem Backdrop-Tap schließbar (sichtbares „X" löscht stattdessen), „Zurück" aus dem frischen 0€-Entwurf landet auf der leeren Angebotsseite statt am Dashboard (von Sandy gemeldet, 2026-08-23) | ✅ Alle drei umgesetzt (Product Designer, 2026-08-23): Abbrechen-Button während Aufnahme (verwirft, lädt nicht hoch) + Mikro wird beim Verlassen der Seite automatisch freigegeben; Sheet hat jetzt einen eigenen „Schließen"-Text-Button getrennt vom Lösch-„X"; „Zurück"/„Trotzdem zurück ohne Berechnen" gehen zum Dashboard, wenn das Angebot noch keinen Kunden und keine Positionen hat, sonst weiterhin zur Angebotsseite. Beim Nachtesten „an allen anderen Stellen" (Sandys Auftrag) zusätzlich dieselbe Baustelle bei „+ Neue Variante erstellen" in Briefpapier & Design gefunden und gleich mitgefixt: leere Variante wird beim Zurückgehen ohne Änderung automatisch wieder gelöscht, mit ungespeicherten echten Änderungen kommt jetzt eine Rückfrage statt stillem Datenverlust. Scoped tsc sauber, noch kein Live-Test | Product Designer (umgesetzt) |
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
-| DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | ❌ offen — Root Cause gefunden: fertig gebautes Nummernkreis-System wird durch einen verschluckten RPC-Fehler bei der Angebots-Erstellung nie erreicht, UI fällt still auf UUID-Fragmente zurück. Betrifft live 103 von 106 Angeboten in Produktion. NICHT mein Bereich (Backend-Pipeline-Bug) — an Head of Product Engineering weitergegeben | Head of Product Engineering |
-| DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Auffindbarkeits-Teil behoben (Product Designer, 2026-08-25): „Aufnahme ansehen"-Link jetzt auch im Lese-Modus über das Aktionen-Menü erreichbar, nicht mehr nur im Bearbeiten-Modus. Die größere Frage (braucht es beide Systeme, oder zusammenlegen/umbenennen?) ist bewusst NICHT von mir entschieden — Sandy bespricht das direkt mit dir, Ist-Zustand unten komplett aufbereitet | Sandy + Chief of Staff (Entscheidung) / Product Designer (Auffindbarkeits-Fix umgesetzt) |
+| DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | 🟡 behoben (Head of Product Engineering, 2026-08-25): Deine Analyse stimmte, die Hauptursache lag aber noch tiefer — der heutige Erstellungsweg (Aufnahme-Flow) hat **nie** eine Nummer angefordert, die Vergabe stand nur in der alten Route. Nummer wird jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind sichtbar. Live-Nachtest steht aus | Head of Product Engineering |
+| DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2442,12 +2442,71 @@ betroffenen Bestandsangebote ggf. nachträglich nummerieren.
 
 ---
 
+**Fix-Update (Head of Product Engineering, 2026-08-25) — deine Analyse war
+richtig, die Hauptursache lag aber noch eine Ebene tiefer.**
+
+Deine Vorarbeit hat mir den halben Weg gespart: Anzeige-Fallback, RPCs,
+Settings-Seite, Produktionsdaten — alles nachvollzogen und alles korrekt. Zwei
+Dinge kamen beim Nachprüfen dazu.
+
+**1. Der verschluckte Fehler ist real, war aber nicht die Ursache.** Beide
+RPC-Funktionen existieren in der Produktions-Datenbank und sind funktionsfähig.
+Sie wurden nur nie aufgerufen: **Der Weg, auf dem Angebote heute entstehen
+(`api/entwurf/neu`, der Aufnahme-Flow), fordert überhaupt keine Nummer an.**
+Die Vergabe stand ausschließlich in der älteren Route `api/quotes/create`.
+Also kein fehlgeschlagener Aufruf, sondern ein fehlender — deshalb auch die
+Verteilung, die du gefunden hast: Holm GmbH hat genau die 3 Angebote
+nummeriert, die noch über den alten Weg entstanden sind, danach nichts mehr.
+
+**2. Wo die Nummer jetzt vergeben wird — und warum nicht beim Anlegen.**
+Ein Entwurf entsteht bei jeder Aufnahme, auch bei Fehlversuchen: 101 der 106
+Angebote in der Datenbank sind Entwürfe. Würde jeder davon eine Nummer ziehen,
+stünde der Nummernkreis nach einer Woche Testen bei 100+ und wäre voller
+Lücken, die man bei einer Betriebsprüfung erklären müsste — genau das, wovor
+deine Lücken-Warnung auf der Einstellungsseite warnt. Eine Nummer bekommt
+deshalb nur, was der Handwerker wirklich **fertigstellt**. Der Aufruf ist
+gefahrlos wiederholbar (eine vergebene Nummer wird nie überschrieben) und
+blockiert das Fertigstellen nicht: Klappt die Vergabe nicht, ist das Angebot
+trotzdem fertig und zeigt wie bisher die Ersatzbezeichnung — dann aber mit
+einem Hinweis für den Nutzer und einem Eintrag im Fehler-Protokoll, statt
+lautlos.
+
+**Was jetzt im Code steht:** neue Route `POST /api/quotes/[id]/nummer`
+(prüft Betriebszugehörigkeit, legt den Nummernkreis bei Bedarf an, vergibt
+idempotent), aufgerufen beim Fertigstellen in `AngebotDetail.tsx`; dazu
+ausgelesene und protokollierte `error` in beiden RPC-Aufrufen der alten Route.
+
+**Was ab jetzt zu sehen ist:** „Holm GmbH" hat einen Nummernkreis mit
+`AG-2026-` und nächster Nummer 4 → das nächste fertiggestellte Angebot heißt
+**AG-2026-004**. „Lisa Schein Malerbetrieb" hat noch gar keinen Nummernkreis;
+der wird beim ersten Fertigstellen automatisch angelegt und beginnt bei
+**AG-2026-001**.
+
+**Bestandsangebote — bewusst NICHT automatisch nachnummeriert.** Von den 106
+Angeboten sind 101 Entwürfe; nur **4** haben den Entwurfsstatus je verlassen
+und keine Nummer (3× „fertiggestellt", 1× „versendet"). Nachträglich Nummern
+zu vergeben ist ein Eingriff in Zahlen, die auf Papier gelandet sein könnten —
+das mache ich nicht ungefragt. Sandy entscheidet; die 4 wären in einer Minute
+nachgetragen.
+
+**Nebenfund, gleich mitgenommen:** `QuoteStatus` in `src/lib/types.ts` kannte
+den Status `bereit` nicht, obwohl `fertigstellen()` genau den setzt und die
+Datenbank ihn führt. Deine neue `src/lib/status.ts` (DC-003) rechnet zu Recht
+damit — ohne den Eintrag scheitert `tsc`. Ist ergänzt, ohne Folgefehler.
+
+**Einstellungsseite:** unverändert, deine Einschätzung war richtig — dort war
+nichts zu tun.
+
+---
+
 ## DC-034 — Zwei getrennte Notiz-/Foto-Systeme im Angebot: macht das als Ganzes Sinn?
 
 **Datum:** 2026-08-25 (Sandy, ausgehend von einem Screenshot des
 „Notizen & Fotos"-Tabs: „checke null was es sein soll")
-**Status:** 🟡 Auffindbarkeits-Teil behoben, größere Frage bewusst offen
-für Sandy + Chief of Staff
+**Status:** 🟡 Entschieden UND umgesetzt (CoS-021) — Engineering-Teil
+(Datenmodell/PDF) und Product-Designer-Teil (UI) beide fertig, committet,
+`tsc` sauber. Live-Nachtest steht für beide Teile noch aus, siehe
+Umsetzungs-Update ganz unten
 
 **Auftrag:** „ja. aber macht das überhaupt generell sinn?!? dass fotos und
 notizen gemacht werden können... gib das mal an cos und formulier ihm den
@@ -2502,6 +2561,37 @@ machen wie die Tab-Fotos, oder umgekehrt der Tab ganz verschwinden
 zugunsten der Aufnahme-Ansicht)? Ich habe hier bewusst keine eigene
 Empfehlung ausgesprochen, das ist eine Produktentscheidung, keine reine
 UI-Frage.
+
+**Chief-of-Staff-Update (2026-08-25) — entschieden, Sandy: „ja so machen
+wie von dir vorgeschlagen":** Nicht ersatzlos streichen, echter Bedarf im
+Gewerbe (Vorher-Zustand-Nachweis), aber **zusammenlegen statt zwei
+Systeme parallel pflegen.** Konkret: die Aufnahme-Fotos bekommen denselben
+„ins PDF aufnehmen"-Schalter, den der Tab heute pro Foto hat — kein
+zweiter Upload-Weg mehr. Interne Notiz bleibt als eigene, klar benannte
+Mini-Funktion (nie im PDF), wird NICHT mit den Fotos zusammengelegt,
+anderer Zweck (privater Merkzettel vs. Dokumentation). Dazu klare,
+unterscheidbare Bezeichnungen im UI — die Doppel-Verwendung von „Notizen"/
+„Fotos" für zwei verschiedene Dinge war die eigentliche Ursache der
+Verwirrung. Als **CoS-021** in `chief-of-staff-todos.md` angelegt, an dich
+(UI-Teil: ein Foto-Bereich statt zwei, interne Notiz eigene Zeile,
+Umbenennung) und Head of Product Engineering (Datenmodell/PDF-Teil, Klärung
+Altdaten-Migration) übergeben — bitte untereinander abstimmen, wer was
+zuerst anfasst.
+
+**Umsetzungs-Update (Product Designer, 2026-08-25) — UI-Teil fertig:**
+Der „Notizen & Fotos"-Tab in `AngebotDetail.tsx` ist jetzt „Fotos & Notiz"
+und zeigt einen einzigen Foto-Pool aus `entwurf_aufnahmen` (`typ='foto'`)
+— derselben Tabelle wie die Aufmaß-Aufnahme, kein zweiter Upload-Weg mehr.
+Der „ins PDF"-Schalter nutzt Engineerings `PATCH /api/entwurf/foto` und
+wirkt jetzt tatsächlich (siehe Engineerings Befund oben: der alte Schalter
+hat nie etwas bewirkt). Fotos stehen jetzt zuerst im Tab, „Interne Notiz"
+(Singular) eigenständig darunter mit eigener Erklärzeile „Nur für dich —
+der Kunde sieht das nie." Zusätzlich: optionale Bildunterschrift beim
+Hochladen abfragbar (landet automatisch im PDF) und eine Vorab-Warnung ab
+8 ausgewählten Fotos (Engineerings `MAX_FOTOS`-Grenze), damit hier nicht
+dieselbe Zusage-ohne-Einlösung wie beim alten Schalter passiert. Volle
+Details siehe CoS-021-Erledigungsvermerk in `chief-of-staff-todos.md`.
+Committet (`fde462c`), scoped `tsc` sauber, noch nicht live geprüft.
 
 ---
 

@@ -1491,5 +1491,184 @@ Stück Code, das eine Absicht behauptet, die es nicht mehr erfüllt.
 
 ---
 
+## CoS-021 — DC-034: Aufnahme-Fotos und „Notizen & Fotos"-Tab zu einem System zusammenlegen
+
+**Datum:** 2026-08-25 (Sandy, nach Product Designers Ist-Zustands-Bericht zu
+DC-034: „ja so machen wie von dir vorgeschlagen")
+
+**Status:** 🟡 Engineering-Teil UND Product-Designer-Teil fertig umgesetzt,
+committet, `tsc` sauber — Live-Nachtest in der echten App steht für beide
+Teile noch aus.
+
+**Ausgangslage:** Product Designer hat in `design-check.md` (DC-034)
+neutral dokumentiert, dass es aktuell zwei komplett getrennte Foto-/Notiz-
+Systeme gibt — die Aufnahme-Fotos/-Notizen (Rohmaterial vor der Berechnung,
+eigene Tabelle `entwurf_aufnahmen`) und der „Notizen & Fotos"-Tab (interne
+Freitext-Notiz `quotes.internal_notes`, nie im PDF, plus bis zu 10 separat
+hochgeladene Fotos in `quote_photos`, einzeln per Schalter ins PDF
+aufnehmbar) — ohne jeden technischen Zusammenhang. Ausgelöst dadurch, dass
+Sandy selbst nicht mehr wusste, wofür der Tab da ist.
+
+**Entscheidung (Sandy, direkt mit mir besprochen):** Nicht ersatzlos
+streichen — Vorher-Zustand dokumentieren ist im Gewerbe echter Bedarf
+(Nachweis bei Streit über Vorschäden, Vertrauensaufbau beim Kunden). Aber
+zusammenlegen statt zwei parallele Systeme zu pflegen:
+
+1. **Ein Foto-Pool statt zwei.** Die Aufnahme-Fotos (die ohnehin schon
+   existieren, weil der Handwerker sie sowieso vor Ort macht) bekommen
+   denselben „ins PDF aufnehmen"-Schalter, den der Tab heute pro Foto hat.
+   Kein zweiter Upload-Weg mehr nötig. Der separate `quote_photos`-Upload-
+   Flow im Tab kann damit entfallen — ob die Tabelle selbst wegfällt oder
+   nur der UI-Upload-Weg, bitte technisch entscheiden (Migration von
+   eventuell schon vorhandenen `quote_photos`-Daten falls Produktionsdaten
+   existieren — Stand jetzt 0 Kunden, vermutlich unkritisch, bitte trotzdem
+   kurz prüfen).
+2. **Interne Notiz bleibt als eigenständige, klar benannte Mini-Funktion**
+   (`quotes.internal_notes`, weiterhin nie im PDF) — anderer Zweck als
+   Fotos (privater Merkzettel, keine Dokumentation), wird NICHT
+   zusammengelegt, nur klarer benannt („Interne Notiz" statt Teil von
+   „Notizen & Fotos").
+3. **Klare, unterscheidbare Bezeichnungen im UI** — die heutige Doppel-
+   Verwendung von „Notizen"/„Fotos" für zwei verschiedene Dinge war die
+   eigentliche Ursache der Verwirrung, unabhängig vom Zusammenlegen.
+
+**Aufteilung (bitte untereinander abstimmen, wer was übernimmt):**
+- **Head of Product Engineering:** Datenmodell/Migration — Aufnahme-Fotos
+  um ein „ins PDF aufnehmen"-Flag erweitern (analog zum bestehenden
+  Schalter bei `quote_photos`), PDF-Generierung entsprechend anpassen,
+  Altdaten-/Migrationsfrage aus Punkt 1 klären.
+- **Product Designer:** UI — ein Foto-Bereich statt zwei, „Notizen & Fotos"-
+  Tab durch die neue, konsolidierte Ansicht ersetzen, interne Notiz als
+  eigene klar benannte Zeile, Umbenennung wie in Punkt 3.
+
+**Referenz:** volle Ist-Zustands-Analyse in `design-check.md` DC-034,
+Entscheidung auch in `entscheidungen-fuer-sandy.md` festgehalten.
+
+---
+
+### Erledigung Engineering-Teil (Head of Product Engineering, 2026-08-25)
+
+**Status:** ✅ Datenmodell, PDF und Schalter-Endpunkt fertig, 842/842 grün,
+`tsc` sauber. Live-Nachtest steht aus. Der UI-Teil liegt beim Product Designer
+— alles, was er dafür braucht, steht unten.
+
+**Zuerst ein Befund, der die Aufgabenbeschreibung korrigiert.** Im Ticket steht,
+die Aufnahme-Fotos sollen „denselben ‚ins PDF'-Schalter bekommen, den der Tab
+heute pro Foto hat". Diesen Schalter gibt es in der Oberfläche — aber **er hat
+noch nie etwas bewirkt.** Er setzt ein Flag (`quote_photos.in_pdf`), und
+**kein einziger PDF-Code-Pfad hat dieses Flag je gelesen**: In
+`src/lib/pdf.tsx` war bis heute nur das Firmenlogo als Bild eingebaut, sonst
+kein einziges Foto — in keiner der vier Erzeugungs-Stellen (Download, öffentlicher
+Kundenlink, E-Mail-Versand, Unterschrifts-Benachrichtigung). Der Handwerker
+konnte also „Im PDF ✓" sehen und bekam trotzdem ein PDF ohne Fotos. Das war
+keine kleine Lücke, sondern eine Zusage, die das Produkt nicht eingelöst hat.
+Deshalb war der eigentliche Umfang hier nicht „Schalter übertragen", sondern
+„Fotos im PDF überhaupt erst bauen".
+
+**Punkt 1 (ein Foto-Pool) — Altdaten-Frage beantwortet: es gibt keine.**
+Gegen die Produktions-Datenbank gezählt:
+
+| | Zeilen |
+|---|---|
+| `quote_photos` gesamt | **0** |
+| `quote_photos` mit „ins PDF" | 0 |
+| `entwurf_aufnahmen` mit Foto | **0** (98 Aufnahmen, alle Sprache) |
+| `quotes` mit interner Notiz | 0 |
+
+Es gibt also nichts zu migrieren — weder Fotos noch Notizen. Der
+`quote_photos`-Upload-Weg kann ersatzlos entfallen, sobald die neue Ansicht
+steht. **Die Tabelle selbst würde ich vorerst stehen lassen** (leer, stört
+niemanden) und erst löschen, wenn die neue Ansicht live bestätigt ist — eine
+leere Tabelle kostet nichts, ein verfrühtes `drop` kostet einen Rollback-Weg.
+
+**Was jetzt im Code steht:**
+- Die Spalte `entwurf_aufnahmen.in_pdf` existierte bereits (Default `false`),
+  wurde aber nirgends gesetzt oder gelesen — keine Migration nötig.
+- Neuer Endpunkt für den Schalter: `PATCH /api/entwurf/foto` mit
+  `{ aufnahme_id, in_pdf }`. Prüft ausdrücklich, dass die Aufnahme zu einem
+  Angebot des eigenen Betriebs gehört (nicht nur RLS), und lässt sich nur auf
+  Aufnahmen vom Typ `foto` anwenden.
+- Neue `src/lib/angebot-fotos.ts` lädt die freigegebenen Fotos als
+  Datei-Inhalt (nicht als signierte URL — sonst hinge die PDF-Erzeugung an
+  einem zweiten Netzwerkaufruf und einer Ablauffrist).
+- `src/lib/pdf.tsx` bekommt eine eigene Seite **„Fotos zur Baustelle"** am
+  Ende, mit Untertitel „Aufgenommen beim Aufmaß — dokumentiert den Zustand vor
+  Beginn der Arbeiten" und der Foto-Beschreibung als Bildunterschrift. Bewusst
+  eine eigene Seite: Positionen, Summen und Bedingungen bleiben unverändert
+  kompakt lesbar, die Fotos stehen nicht zwischen den Preisen.
+- Eingebunden in alle drei kundenrelevanten Erzeugungs-Stellen: Download,
+  öffentlicher Kundenlink, E-Mail-Versand.
+
+**Zwei Grenzen, bewusst gesetzt:** höchstens 8 Fotos und maximal 6 MB je Bild.
+Ein Angebot ist kein Fotoalbum, und ein PDF, das im Postfach hängen bleibt,
+hilft niemandem. Wichtiger noch: **ein Foto darf die Angebotserstellung
+niemals verhindern** — jedes Bild wird einzeln versucht, ein fehlendes,
+kaputtes oder zu großes wird stillschweigend übersprungen und das Angebot
+entsteht trotzdem. Dafür gibt es 8 eigene Tests.
+
+**Für den Product Designer (UI-Teil):**
+- Schalter je Foto: `PATCH /api/entwurf/foto` → `{ aufnahme_id, in_pdf }`,
+  Antwort `{ ok: true, in_pdf }`. Der Zustand steht in
+  `entwurf_aufnahmen.in_pdf`.
+- Die Fotos selbst liegen in `entwurf_aufnahmen` (`typ = 'foto'`,
+  `foto_url` = Storage-Pfad im Bucket `entwurf-fotos`, `foto_beschreibung`).
+  Zum Anzeigen wie bisher signierte URLs über `/api/entwurf/signed-url`.
+- Der Text unter den Fotos im PDF ist `foto_beschreibung` — wenn die Ansicht
+  ein Beschriftungsfeld bekommt, landet es damit automatisch im Dokument.
+- Ein Hinweis wie „X Fotos werden ins PDF übernommen" (den es im alten Tab
+  schon gibt) ist jetzt eine ehrliche Aussage — vorher war sie es nicht.
+
+---
+
+### Erledigung Product-Designer-Teil (Product Designer, 2026-08-25)
+
+**Status:** ✅ UI umgesetzt, committet (`fde462c`), scoped `tsc` sauber.
+Live-Nachtest in der echten App steht aus (ich kann selbst nicht live
+testen).
+
+**Umgesetzt in `AngebotDetail.tsx`, ehemaliger „Notizen & Fotos"-Tab:**
+
+- **Punkt 1 (ein Foto-Pool):** Der Tab lädt und zeigt jetzt die Fotos aus
+  `entwurf_aufnahmen` (`typ='foto'`) — genau die Tabelle, die auch die
+  Aufmaß-Aufnahme befüllt. Der alte, separate `quote_photos`-Upload-Weg im
+  Tab (eigener Zustand `photos`/`loadPhotos()`/`handlePhotoUpload` gegen
+  `/api/quotes/[id]/photos`) ist komplett raus. Neuer Foto-Upload läuft über
+  `POST /api/entwurf/foto`, der „ins PDF"-Schalter über euer
+  `PATCH /api/entwurf/foto` — beides genau wie im Handoff-Abschnitt oben
+  beschrieben.
+  - Zusätzlich: beim Hochladen fragt ein kleines Sheet jetzt optional eine
+    Bildunterschrift ab (landet in `foto_beschreibung`, erscheint automatisch
+    im PDF) — weil `PATCH` das nachträglich nicht ändern kann, also vorher
+    fragen.
+  - Zusätzlich: eine Vorab-Warnung („Maximal 8 Fotos im PDF") verhindert,
+    dass jemand mehr als eure `MAX_FOTOS = 8`-Grenze anhakt und dann
+    stillschweigend nur die ersten 8 im PDF landen — sonst wäre das exakt
+    dieselbe Art Zusage-ohne-Einlösung wie beim alten Schalter.
+  - `quote_photos`-Tabelle bewusst nicht angerührt, bleibt wie von euch
+    entschieden vorerst leer stehen.
+- **Punkt 2 (interne Notiz bleibt eigenständig):** unverändert
+  `quotes.internal_notes`, nie im PDF, aber jetzt als eigene Karte *unter*
+  den Fotos, mit eigener Überschrift „Interne Notiz" (Singular statt der
+  alten, im Tab-Namen versteckten „Notizen") und einer Erklärzeile „Nur für
+  dich — der Kunde sieht das nie."
+- **Punkt 3 (klare Bezeichnungen):** Tab umbenannt „Notizen & Fotos" →
+  „Fotos & Notiz" — Fotos zuerst (jetzt der echte gemeinsame Foto-Pool),
+  „Notiz" im Singular für das eine private Textfeld. Foto-Bereich heißt
+  „Fotos vom Aufmaß" (macht die Quelle direkt im Label sichtbar).
+
+**Offener Punkt, der über dieses Ticket hinausgeht:** Der Aktionen-Menü-
+Eintrag „Aufmaß-Aufnahme ansehen" (aus meinem DC-034-Zwischenfix vom
+24.08.) bleibt bestehen — er zeigt zusätzlich Sprachaufnahme/Transkript/
+erkannte Positionen, die der Fotos-&-Notiz-Tab nicht abbildet. Zwei
+Einstiege zu denselben Fotos ist bewusst in Kauf genommen, kein neuer
+Auftrag.
+
+**Nicht angefasst:** Eure DC-033-Änderung (`fertigstellen()`-Aufruf von
+`/api/quotes/[id]/nummer`) lag beim Committen als eigener, unabhängiger
+Hunk in derselben Datei — habe sie sauber unstaged/uncommittet stehen
+lassen, damit ihr sie selbst committet.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
