@@ -1,16 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
-function kategorieFuerTitel(titel: string) {
-  const text = titel.toLocaleLowerCase('de-DE')
-  if (/vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleist/.test(text)) {
-    return 'Boden – Sonstiges'
-  }
-  if (/wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleif|grundier|abdeck|abkleb/.test(text)) {
-    return 'Maler – Sonstiges'
-  }
-  return 'Allgemein'
-}
+// DC-039: Rubrik-Regel und Titel-Bereinigung liegen jetzt in einer gemeinsamen
+// Datei — vorher stand dieselbe Regel hier und im Browser, was genau die
+// doppelten Rubriken erzeugt, die CoS-019 aufgeräumt hat.
+import { kategorieFuerTitel, titelFuerPreisdatenbank } from '@/lib/preis-kategorie'
 
 export async function POST(
   req: NextRequest,
@@ -54,7 +47,7 @@ export async function POST(
     .single()
   if (!item) return NextResponse.json({ error: 'Position nicht gefunden' }, { status: 404 })
 
-  const datenbankTitel = item.title.replace(/\s+—\s+.+$/, '').trim()
+  const datenbankTitel = titelFuerPreisdatenbank(item.title)
   const category = kategorieFuerTitel(datenbankTitel)
   const { data: existingPriceItem } = await supabase
     .from('price_items')

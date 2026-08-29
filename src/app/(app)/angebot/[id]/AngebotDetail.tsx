@@ -1047,56 +1047,41 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     setHasChanges(true)
   }
 
-  // Gleiche Kategorisierung wie /api/quotes/[id]/items/[itemId]/preis —
-  // bewusst hier dupliziert (kleine reine Funktion, kein Server-Zugriff),
-  // damit ein komplett neuer Preis (noch keine gespeicherte Position, siehe
-  // DC-039) ohne Umweg über einen Angebots-Kontext angelegt werden kann.
-  function kategorieFuerNeuenTitel(titel: string) {
-    const text = titel.toLocaleLowerCase('de-DE')
-    if (/vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleist/.test(text)) {
-      return 'Boden – Sonstiges'
-    }
-    if (/wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleif|grundier|abdeck|abkleb/.test(text)) {
-      return 'Maler – Sonstiges'
-    }
-    return 'Allgemein'
-  }
-
   // DC-039: komplett neuer Titel ohne Treffer in der Preisdatenbank — legt
-  // sofort einen echten price_items-Eintrag an (nicht erst beim
-  // "Speichern" des Angebots), damit er ab sofort für jede künftige
-  // Position durchsuchbar ist, genau wie Sandy es beschrieben hat. Prüft
-  // vorher auf einen bereits bestehenden Eintrag (Titel+Einheit), damit
-  // kein Dublett entsteht — gleiches Prinzip wie addMissingDatabasePrice.
+  // sofort einen echten price_items-Eintrag an (nicht erst beim "Speichern"
+  // des Angebots), damit er ab sofort für jede künftige Position
+  // durchsuchbar ist, genau wie Sandy es beschrieben hat.
+  //
+  // Läuft über `POST /api/preise` statt direkt über den Browser-Client:
+  // Prüfung (Preis, Länge, Tippfehler-Grenze), Rubrik und Dubletten-Schutz
+  // stehen damit an EINER Stelle statt in jeder Oberfläche mit einem
+  // Eingabefeld — dieselbe Regel, die auch der „Preis fehlt"-Ablauf nutzt.
   async function legeNeuenPreisAn(itemId: string, titel: string, einheit: string, preis: number) {
-    if (!company?.id || !(preis > 0) || !titel.trim()) return
-    const { data: bestehend } = await supabase
-      .from('price_items')
-      .select('id, title, unit, unit_price')
-      .eq('company_id', company.id)
-      .ilike('title', titel.trim())
-      .ilike('unit', einheit)
-      .maybeSingle()
-
-    if (bestehend) {
-      applyPreisVorschlag(itemId, { title: bestehend.title, unit: bestehend.unit, unit_price: bestehend.unit_price, price_item_id: bestehend.id })
-      showToast(`„${bestehend.title}" gab es schon — übernommen ✓`)
+    const antwort = await fetch('/api/preise', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ titel, einheit, preis }),
+    })
+    const ergebnis = await antwort.json().catch(() => ({})) as {
+      error?: string
+      bestehend?: boolean
+      price_item?: { id: string; title: string; unit: string; unit_price: number }
+    }
+    if (!antwort.ok || !ergebnis.price_item) {
+      showToast(ergebnis.error ?? 'Preis konnte nicht angelegt werden — bitte nochmal versuchen.')
       return
     }
 
-    const { data: neu, error } = await supabase
-      .from('price_items')
-      .insert({ company_id: company.id, category: kategorieFuerNeuenTitel(titel), title: titel.trim(), unit: einheit, unit_price: preis })
-      .select('id, title, unit, unit_price')
-      .single()
-
-    if (error || !neu) {
-      showToast('Preis konnte nicht angelegt werden — bitte nochmal versuchen.')
-      return
-    }
-    setPriceItems(prev => [...prev, { id: neu.id, title: neu.title, unit: neu.unit, unit_price: neu.unit_price }])
-    applyPreisVorschlag(itemId, { title: neu.title, unit: neu.unit, unit_price: neu.unit_price, price_item_id: neu.id })
-    showToast(`„${neu.title}" in Preisdatenbank angelegt ✓`)
+    const eintrag = ergebnis.price_item
+    setPriceItems(prev => prev.some(p => p.id === eintrag.id)
+      ? prev
+      : [...prev, { id: eintrag.id, title: eintrag.title, unit: eintrag.unit, unit_price: eintrag.unit_price }])
+    applyPreisVorschlag(itemId, {
+      title: eintrag.title, unit: eintrag.unit, unit_price: eintrag.unit_price, price_item_id: eintrag.id,
+    })
+    showToast(ergebnis.bestehend
+      ? `„${eintrag.title}" gab es schon — übernommen ✓`
+      : `„${eintrag.title}" in Preisdatenbank angelegt ✓`)
   }
 
   function addEditItem() {
@@ -1224,6 +1209,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             quote_id: quote.id, position: item.position, title: item.title.trim(),
             description: item.description, quantity: item.quantity, unit: item.unit,
             unit_price: item.unit_price, total_price: item.total_price,
+            // DC-039: Die Verknüpfung zur Preisdatenbank ging beim Speichern
+            // bisher verloren — die Spalte gibt es, gesetzt hat sie hier
+            // niemand. Danach galt die Position wieder als "Preis kommt von
+            // nirgendwo", obwohl sie gerade aus dem Katalog gewählt wurde.
+            price_item_id: item.price_item_id ?? null,
           })
           if (error) throw error
         } else {
@@ -1231,6 +1221,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             title: item.title.trim(), description: item.description, quantity: item.quantity,
             unit: item.unit, unit_price: item.unit_price, total_price: item.total_price,
             position: item.position,
+            // DC-039, siehe oben: gilt genauso für eine bestehende Position,
+            // der der Handwerker gerade einen Preis aus dem Katalog zugewiesen hat.
+            price_item_id: item.price_item_id ?? null,
           }).eq('id', item.id)
           if (error) throw error
         }
