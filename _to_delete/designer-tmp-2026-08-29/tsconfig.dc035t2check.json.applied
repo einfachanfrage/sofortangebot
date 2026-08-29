@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "tsBuildInfoFile": null },
+  "include": ["src/components/aufnahme/RueckfragenScreen.tsx", "src/lib/mengen/antworten-verarbeiter.ts", "src/lib/mengen/rueckfragen-generator.ts", "src/lib/mengen/rueckfragen-flow.ts", "next-env.d.ts"]
+}

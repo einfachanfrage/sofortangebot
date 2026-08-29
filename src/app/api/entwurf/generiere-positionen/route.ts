@@ -5,6 +5,8 @@ import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { BerechnetePosition } from '@/lib/mengen/types'
 import type { VollExtraktionCache, KombinierteExtraktionCache } from '@/lib/types'
+import type { Wand } from '@/lib/raum-geometrie'
+import { uebernehmeGrundrisse, type RaumDetail } from '@/lib/mengen/raum-details'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
@@ -30,8 +32,16 @@ export async function POST(req: NextRequest) {
     antworten?: KalkulationsAntworten
     basis_extraktion?: ExtrahierteDaten
     rueckfragen_ueberspringen?: boolean
+    /**
+     * DC-037: Grundrisse, die der Handwerker schon WÄHREND der Aufnahme
+     * gezeichnet hat (Schlüssel = Raumname aus der Aufnahme-Karte, Wert =
+     * dieselbe `Wand[]`-Liste, die `RaumGrundrissEditor` auch im fertigen
+     * Angebot liefert). Ohne dieses Feld verhält sich die Route exakt wie
+     * bisher.
+     */
+    grundrisse?: Record<string, Wand[]>
   }
-  const { angebot_id, aufnahmen_ids, antworten = {}, basis_extraktion, rueckfragen_ueberspringen = false } = body
+  const { angebot_id, aufnahmen_ids, antworten = {}, basis_extraktion, rueckfragen_ueberspringen = false, grundrisse } = body
   if (!angebot_id) return NextResponse.json({ error: 'angebot_id fehlt' }, { status: 400 })
 
   // Nur Aufnahmen dieses Users (Sicherheit: Angebot gehört zur Company des Users)
@@ -42,7 +52,12 @@ export async function POST(req: NextRequest) {
     // siehe Cache-Wiederverwendung weiter unten.
     // manuell_bearbeitete_positionen neu seit CoS-014 (2026-08-24) — die
     // Handänderungen des Handwerkers, die eine Neu-Berechnung respektieren muss.
-    .select('id, entwurf_gespeichert_am, kombinierte_extraktion_cache, manuell_bearbeitete_positionen, companies!inner(user_id)')
+    // raum_details neu seit DC-037 (2026-08-29): Dieser Block hat die Spalte
+    // bisher bei JEDEM Lauf komplett überschrieben. Alles, was die Extraktion
+    // nicht selbst erzeugen kann — allen voran ein von Hand gezeichneter
+    // Grundriss — ging dabei still verloren. Jetzt wird der bestehende Stand
+    // gelesen und als Basis untergelegt.
+    .select('id, entwurf_gespeichert_am, kombinierte_extraktion_cache, manuell_bearbeitete_positionen, raum_details, companies!inner(user_id)')
     .eq('id', angebot_id)
     .single()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -320,12 +335,13 @@ export async function POST(req: NextRequest) {
       return Math.round(summe * 100) / 100
     }
 
-    const raumDetails: Record<string, {
-      modus?: 'rechteck' | 'flaeche' | 'wand'
-      breite?: number; laenge?: number; hoehe?: number; tueren?: number; fenster?: number
-      tuerFlaeche?: number; fensterFlaeche?: number
-      wandflaeche?: number; bodenflaeche?: number
-    }> = {}
+    // DC-037: bestehender Stand als Basis, nicht bei null anfangen. Die
+    // Schleifen unten überschreiben pro Raum weiterhin alles, was die
+    // Extraktion liefert — Räume, die in dieser Aufnahme gar nicht
+    // vorkommen, behalten aber ihre bereits erfassten Maße.
+    const bestehendeRaumDetails =
+      ((quoteCheck as { raum_details?: Record<string, RaumDetail> | null }).raum_details ?? {})
+    const raumDetails: Record<string, RaumDetail> = { ...bestehendeRaumDetails }
     for (const raum of extraktionRaeume) {
       const name = raum.name?.trim()
       if (!name) continue
@@ -362,6 +378,7 @@ export async function POST(req: NextRequest) {
       // annehmen und eine nie vorhandene Breite verlangen.
       const istWandOhneBreite = !hatMasse && !hatFlaeche && raum.laenge != null && raum.hoehe != null
       raumDetails[key] = {
+        ...raumDetails[key],
         // Ohne L×B, aber mit Fläche → Flächen-Reiter direkt aktiv
         ...(istWandOhneBreite ? { modus: 'wand' as const }
           : (!hatMasse && hatFlaeche ? { modus: 'flaeche' as const } : {})),
@@ -401,6 +418,13 @@ export async function POST(req: NextRequest) {
         ...(fensterFlaeche !== undefined ? { fensterFlaeche } : {}),
       }
     }
+
+    // DC-037: Während der Aufnahme gezeichnete Grundrisse übernehmen — ZULETZT,
+    // damit eine bewusst gezeichnete Form die aus dem Transkript geratenen
+    // Standardmaße schlägt. Höhe/Türen/Fenster aus der Extraktion bleiben
+    // bewusst stehen: sie ergänzen den Grundriss, statt mit ihm zu
+    // konkurrieren (raum-geometrie.ts rechnet Umfang × Höhe − Öffnungen).
+    Object.assign(raumDetails, uebernehmeGrundrisse(raumDetails, grundrisse, findeTitelName))
 
     if (Object.keys(raumDetails).length > 0) {
       const { error: raumDetailsError } = await supabase
