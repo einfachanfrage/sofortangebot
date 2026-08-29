@@ -22,6 +22,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import { ermittleHandaenderungen } from '@/lib/manuelle-positionen'
+import { normalisierePreistext } from '@/lib/preis-matcher'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Toast } from '@/components/Toast'
@@ -286,8 +287,37 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
+// DC-039: Live-Suche für "+ Position" gegen die schon geladene
+// Preisdatenbank (priceItems) — reine Vorfilterung/Sortierung, kein
+// Netzwerk-Aufruf. normalisierePreistext kommt aus dem bestehenden
+// Preis-Matcher (preis-matcher.ts), der fürs KI-Extraktions-Matching
+// gebaut wurde — Synonyme/Normalisierung hier bewusst wiederverwendet statt
+// neu erfunden.
+type PreisKatalogEintrag = { id: string; title: string; unit: string; unit_price: number }
+function sucheVorschlaege(query: string, katalog: PreisKatalogEintrag[]): PreisKatalogEintrag[] {
+  const q = normalisierePreistext(query)
+  if (!q) return []
+  const qWoerter = q.split(' ').filter(Boolean)
+  if (qWoerter.length === 0) return []
+  const bewertet = katalog.map(eintrag => {
+    const t = normalisierePreistext(eintrag.title)
+    if (!t) return { eintrag, score: 0 }
+    let score = 0
+    if (t.startsWith(q)) score = 1
+    else if (t.includes(q)) score = 0.9
+    else {
+      const tWoerter = t.split(' ')
+      const treffer = qWoerter.filter(w => tWoerter.some(tw => tw.startsWith(w))).length
+      score = treffer === 0 ? 0 : 0.5 * (treffer / qWoerter.length)
+    }
+    return { eintrag, score }
+  }).filter(x => x.score > 0)
+  bewertet.sort((a, b) => b.score - a.score)
+  return bewertet.slice(0, 6).map(x => x.eintrag)
+}
+
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, onInfo, onAddMaterial, onAddPrice }: {
+function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, onInfo, onAddMaterial, onAddPrice, priceItems, onPreisVorschlag, onNeuePosition }: {
   item: EditItem
   titleOverride?: string
   editingId: string | null
@@ -299,6 +329,9 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   onInfo: (id: string) => void
   onAddMaterial: (item: EditItem) => void
   onAddPrice: (item: EditItem) => void
+  priceItems: PreisKatalogEintrag[]
+  onPreisVorschlag: (itemId: string, vorschlag: { title: string; unit: string; unit_price: number; price_item_id: string }) => void
+  onNeuePosition: (itemId: string, title: string, unit: string, unitPrice: number) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
@@ -306,6 +339,17 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   const isUnsure = (item.confidence ?? 1) < 0.7
   const materialVorschlag = materialFuerPosition(titleOverride ?? item.title)
   const preisFehlt = !item.price_item_id && item.unit_price <= 0
+
+  // DC-039: nur eine frisch per "+ Position" angelegte, noch nicht mit der
+  // Preisdatenbank verknüpfte Zeile bekommt die Such-Vorschläge — bei einer
+  // bestehenden/KI-erkannten Position soll beim Antippen nicht plötzlich ein
+  // Dropdown aufgehen.
+  const istNeueSuchePosition = item.id.startsWith('new-') && !item.price_item_id
+  const [sucheOffen, setSucheOffen] = useState(false)
+  const [neuAnlegenModus, setNeuAnlegenModus] = useState(false)
+  const [neuEinheit, setNeuEinheit] = useState('m²')
+  const [neuPreisText, setNeuPreisText] = useState('')
+  const vorschlaege = istNeueSuchePosition && sucheOffen ? sucheVorschlaege(item.title, priceItems) : []
 
   return (
     <div
@@ -323,13 +367,94 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
 
       {isEditing ? (
         <div className="flex items-start gap-2">
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 relative">
             <input
               value={item.title}
-              onChange={e => updateEditItem(item.id, 'title', e.target.value)}
+              onChange={e => { updateEditItem(item.id, 'title', e.target.value); if (istNeueSuchePosition) setNeuAnlegenModus(false) }}
+              onFocus={() => istNeueSuchePosition && setSucheOffen(true)}
+              onBlur={() => setTimeout(() => setSucheOffen(false), 150)}
+              placeholder={istNeueSuchePosition ? 'Was wurde gemacht? z. B. Wand streichen…' : undefined}
               className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-[#F5C400] pb-0.5 mb-2"
               autoFocus
             />
+
+            {/* DC-039: Live-Vorschläge aus der Preisdatenbank für eine neue,
+                noch unverknüpfte Position — Auswahl übernimmt Titel/Einheit/
+                Preis sofort, sonst inline "neu anlegen". */}
+            {istNeueSuchePosition && sucheOffen && !neuAnlegenModus && item.title.trim() && (
+              <div
+                className="absolute left-0 right-0 top-full z-20 -mt-1 bg-white rounded-xl shadow-lg border border-[#2C2C2C]/10 max-h-64 overflow-y-auto"
+                onClick={e => e.stopPropagation()}
+              >
+                {vorschlaege.map(v => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => { onPreisVorschlag(item.id, { title: v.title, unit: v.unit, unit_price: v.unit_price, price_item_id: v.id }); setSucheOffen(false) }}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-[#F5C400]/10 border-b border-[#2C2C2C]/5 last:border-b-0"
+                  >
+                    <div className="min-w-0">
+                      <div className="text-[12.5px] font-bold text-[#2C2C2C] truncate">{v.title}</div>
+                      <div className="text-[10px] font-semibold text-[#2C2C2C]/40">{v.unit}</div>
+                    </div>
+                    <div className="text-[12.5px] font-black text-[#2C2C2C] shrink-0">
+                      {v.unit_price.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                    </div>
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => { setNeuEinheit('m²'); setNeuPreisText(''); setNeuAnlegenModus(true) }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-left bg-[#F7F7F5] hover:bg-[#F5C400]/15"
+                >
+                  <span className="w-5 h-5 rounded-full bg-[#F5C400] flex items-center justify-center text-[12px] font-black shrink-0">+</span>
+                  <span className="text-[11.5px] font-bold text-[#2C2C2C]">Neue Position „{item.title.trim()}" anlegen</span>
+                </button>
+              </div>
+            )}
+
+            {istNeueSuchePosition && neuAnlegenModus && (
+              <div className="bg-[#F7F7F5] rounded-xl p-3 mb-2" onClick={e => e.stopPropagation()}>
+                <div className="text-[11.5px] font-bold text-[#2C2C2C] mb-2">„{item.title.trim()}" neu anlegen</div>
+                <div className="flex gap-2 mb-2">
+                  <select
+                    value={neuEinheit}
+                    onChange={e => setNeuEinheit(e.target.value)}
+                    className="bg-white rounded-lg px-2 py-2 text-[12px] font-bold flex-1 focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
+                  >
+                    <option value="m²">m²</option>
+                    <option value="lfdm">lfdm</option>
+                    <option value="Stk">Stk</option>
+                    <option value="pauschal">pauschal</option>
+                    <option value="Std">Std</option>
+                  </select>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Preis pro Einheit"
+                    value={neuPreisText}
+                    onChange={e => setNeuPreisText(e.target.value)}
+                    className="bg-white rounded-lg px-2 py-2 text-[12px] font-bold flex-1 focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
+                  />
+                </div>
+                <button
+                  type="button"
+                  disabled={!(Number(neuPreisText.replace(',', '.')) > 0)}
+                  onClick={() => {
+                    onNeuePosition(item.id, item.title.trim(), neuEinheit, Number(neuPreisText.replace(',', '.')))
+                    setNeuAnlegenModus(false)
+                    setSucheOffen(false)
+                  }}
+                  className="w-full bg-[#2C2C2C] text-white rounded-lg py-2 text-[12px] font-black disabled:opacity-30"
+                >
+                  ✓ Anlegen &amp; übernehmen
+                </button>
+                <div className="text-[10px] font-semibold text-[#2C2C2C]/40 mt-1.5 text-center">
+                  Wird direkt in deiner Preisdatenbank gespeichert.
+                </div>
+              </div>
+            )}
+
             <textarea
               value={item.description ?? ''}
               onChange={e => updateEditItem(item.id, 'description', e.target.value)}
@@ -496,7 +621,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
   const [infoItemId, setInfoItemId] = useState<string | null>(null)
-  const [priceItems, setPriceItems] = useState<{ title: string; unit_price: number; unit: string }[]>([])
+  const [priceItems, setPriceItems] = useState<{ id: string; title: string; unit_price: number; unit: string }[]>([])
   const [priceItemToAdd, setPriceItemToAdd] = useState<EditItem | null>(null)
   const [newDatabasePrice, setNewDatabasePrice] = useState('')
   const [newDatabaseUnit, setNewDatabaseUnit] = useState('m²')
@@ -612,17 +737,17 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     if (!user) return
     const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
     if (!co) return
-    const allPriceItems: { title: string; unit_price: number; unit: string }[] = []
+    const allPriceItems: { id: string; title: string; unit_price: number; unit: string }[] = []
     const pageSize = 1000
     for (let from = 0; ; from += pageSize) {
       const { data, error } = await supabase
         .from('price_items')
-        .select('title, unit_price, unit')
+        .select('id, title, unit_price, unit')
         .eq('company_id', co.id)
         .order('title')
         .range(from, from + pageSize - 1)
       if (error) break
-      allPriceItems.push(...((data ?? []) as { title: string; unit_price: number; unit: string }[]))
+      allPriceItems.push(...((data ?? []) as { id: string; title: string; unit_price: number; unit: string }[]))
       if (!data || data.length < pageSize) break
     }
     setPriceItems(allPriceItems)
@@ -887,6 +1012,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       unit: result.unit ?? newDatabaseUnit,
     } : item))
     setPriceItems(previous => [...previous, {
+      id: result.price_item_id!,
       title: priceItemToAdd.title.replace(/\s+—\s+.+$/, '').trim(),
       unit: result.unit ?? newDatabaseUnit,
       unit_price: unitPrice,
@@ -897,6 +1023,72 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     setAddingDatabasePrice(false)
     showToast('Preis in Preisdatenbank und Angebot übernommen ✓')
     router.refresh()
+  }
+
+  // DC-039: Vorschlag aus der Preisdatenbank (oder gerade neu angelegter
+  // Preis) auf eine Position übernehmen — Titel, Einheit, Preis UND die
+  // Verknüpfung (price_item_id) in einem Schritt, damit die Position beim
+  // Speichern korrekt als "aus der Preisdatenbank" erkennbar bleibt.
+  function applyPreisVorschlag(itemId: string, vorschlag: { title: string; unit: string; unit_price: number; price_item_id: string }) {
+    setEditItems(prev => prev.map(item => {
+      if (item.id !== itemId) return item
+      const updated = { ...item, title: vorschlag.title, unit: vorschlag.unit, unit_price: vorschlag.unit_price, price_item_id: vorschlag.price_item_id }
+      updated.total_price = updated.quantity * updated.unit_price
+      return updated
+    }))
+    setHasChanges(true)
+  }
+
+  // Gleiche Kategorisierung wie /api/quotes/[id]/items/[itemId]/preis —
+  // bewusst hier dupliziert (kleine reine Funktion, kein Server-Zugriff),
+  // damit ein komplett neuer Preis (noch keine gespeicherte Position, siehe
+  // DC-039) ohne Umweg über einen Angebots-Kontext angelegt werden kann.
+  function kategorieFuerNeuenTitel(titel: string) {
+    const text = titel.toLocaleLowerCase('de-DE')
+    if (/vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleist/.test(text)) {
+      return 'Boden – Sonstiges'
+    }
+    if (/wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleif|grundier|abdeck|abkleb/.test(text)) {
+      return 'Maler – Sonstiges'
+    }
+    return 'Allgemein'
+  }
+
+  // DC-039: komplett neuer Titel ohne Treffer in der Preisdatenbank — legt
+  // sofort einen echten price_items-Eintrag an (nicht erst beim
+  // "Speichern" des Angebots), damit er ab sofort für jede künftige
+  // Position durchsuchbar ist, genau wie Sandy es beschrieben hat. Prüft
+  // vorher auf einen bereits bestehenden Eintrag (Titel+Einheit), damit
+  // kein Dublett entsteht — gleiches Prinzip wie addMissingDatabasePrice.
+  async function legeNeuenPreisAn(itemId: string, titel: string, einheit: string, preis: number) {
+    if (!company?.id || !(preis > 0) || !titel.trim()) return
+    const { data: bestehend } = await supabase
+      .from('price_items')
+      .select('id, title, unit, unit_price')
+      .eq('company_id', company.id)
+      .ilike('title', titel.trim())
+      .ilike('unit', einheit)
+      .maybeSingle()
+
+    if (bestehend) {
+      applyPreisVorschlag(itemId, { title: bestehend.title, unit: bestehend.unit, unit_price: bestehend.unit_price, price_item_id: bestehend.id })
+      showToast(`„${bestehend.title}" gab es schon — übernommen ✓`)
+      return
+    }
+
+    const { data: neu, error } = await supabase
+      .from('price_items')
+      .insert({ company_id: company.id, category: kategorieFuerNeuenTitel(titel), title: titel.trim(), unit: einheit, unit_price: preis })
+      .select('id, title, unit, unit_price')
+      .single()
+
+    if (error || !neu) {
+      showToast('Preis konnte nicht angelegt werden — bitte nochmal versuchen.')
+      return
+    }
+    setPriceItems(prev => [...prev, { id: neu.id, title: neu.title, unit: neu.unit, unit_price: neu.unit_price }])
+    applyPreisVorschlag(itemId, { title: neu.title, unit: neu.unit, unit_price: neu.unit_price, price_item_id: neu.id })
+    showToast(`„${neu.title}" in Preisdatenbank angelegt ✓`)
   }
 
   function addEditItem() {
@@ -1834,7 +2026,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                         {editItems.map(item => (
-                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} />
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                         ))}
                       </SortableContext>
                     </DndContext>
@@ -1867,7 +2059,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                         )
@@ -1879,7 +2071,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                       )}
