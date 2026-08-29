@@ -67,7 +67,8 @@ export function RaumGrundrissEditor({
         <div className="flex justify-center mb-3 md:hidden"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
         <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[19px] mb-1">Grundriss · {raumName}</h2>
         <p className="text-[#2C2C2C]/50 font-semibold text-[13px] mb-3 leading-relaxed">
-          Wähle eine Form und passe nur noch die Wandlängen an — oder baue frei Wand für Wand.
+          Für Räume mit Nische, Erker oder Vorsprung: Wähle eine Form und passe
+          nur noch die Wandlängen an — oder baue frei Wand für Wand.
         </p>
 
         {/* Vorlagen */}

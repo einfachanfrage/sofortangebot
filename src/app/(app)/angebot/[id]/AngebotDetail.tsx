@@ -173,10 +173,16 @@ function RaumDimensionenZeile({
         </div>
       ) : (
         <div className="flex items-center gap-1 self-start bg-[#2C2C2C]/5 rounded-lg p-0.5">
+          {/* DC-036 (Sandy, 2026-08-29): "Raumform" hat den Grundriss-Zeichner
+              (Vorlagen L-/U-Form + freies Wand-für-Wand, siehe
+              RaumGrundrissEditor) dahinter versteckt, ohne dass der Name das
+              verrät — wer eine Nische oder einen Erker hat, sucht eher nach
+              "unregelmäßig" als nach "Form". Umbenannt, damit die Zeile
+              selbst schon zeigt, wofür sie da ist. */}
           {([
             { id: 'rechteck', label: 'Raummaße' },
             { id: 'flaeche', label: 'Flächen eingeben' },
-            { id: 'grundriss', label: 'Raumform' },
+            { id: 'grundriss', label: '📐 Unregelmäßig' },
           ] as { id: RaumModus; label: string }[]).map(m => (
             <button
               key={m.id}
