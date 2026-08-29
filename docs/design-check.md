@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-036 NEU: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg für die individuelle Öffnungsgröße (Terrassentür) gebaut + getestet — nur die Eingabe-Oberfläche fehlt noch. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-037 NEU: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben, Grund siehe DC-037; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg für die individuelle Öffnungsgröße (Terrassentür) gebaut + getestet — nur die Eingabe-Oberfläche fehlt noch. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -87,6 +87,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
 | DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | 🟡 Teil 1 (Hinweistext) umgesetzt, committet (`e463360`), `tsc` sauber, Live-Test steht aus. Teil 2: Datenweg (Fragen-Feld `ausnahme_masse`, Antwort-Feld `ausnahme`, Aufteilung in zwei Öffnungs-Einträge) umgesetzt + getestet von Head of Product Engineering — offen ist nur noch die Eingabe-Oberfläche beim Product Designer | Product Designer (Teil 1, ✅) / Head of Product Engineering (Teil 2) |
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
+| DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2771,6 +2772,91 @@ hier nachkorrigieren. Ob sich das lohnt, früher (z. B. als Option in der
 Rückfragen-Karte) anzubieten, wäre eine größere Änderung an der Aufnahme-
 /Rückfragen-Pipeline (nicht mein Bereich) — nur als Idee notiert, kein
 eigenständiger Auftrag von Sandy dafür.
+
+---
+
+## DC-037 — Grundriss-Zeichner schon während der Aufnahme anbieten (Folgeidee aus DC-036)
+
+**Datum:** 2026-08-29 (Sandys Reaktion auf die DC-036-Idee: „das find ich
+gut mach das")
+
+**Status:** 🔵 Spec fertig, Backend-Teil an Head of Product Engineering
+übergeben, UI-Teil folgt sobald der Weg steht
+
+**Warum nicht einfach sofort ein Button in der Aufnahme-Karte?**
+
+Konkretes Beispiel, damit klar ist, was sonst passieren würde: Ein
+Handwerker spricht sein Wohnzimmer ein, sieht die Karte, tippt auf einen
+neuen Button „Form zeichnen", zeichnet sorgfältig die Nische ein, tippt
+„Übernehmen" — fühlt sich fertig an. Dann tippt er „Entwurf erstellen".
+Genau in diesem Moment ruft `entwurf/page.tsx` (`fertigstellen()`,
+Zeile 690-700) `/api/entwurf/generiere-positionen` auf, und diese Route
+baut `raum_details` **komplett neu aus der KI-Extraktion des Transkripts**
+und schreibt es ungefragt in die Datenbank (`route.ts`, Zeilen 323-415,
+insbesondere der finale `.update({ raum_details: raumDetails })` in
+Zeile 405-409 — das ist ein Voll-Überschreiben, kein Merge). Die gezeichnete
+Form stünde nirgends in diesem Objekt, weil die Extraktion nichts von ihr
+weiß. Ergebnis: der Raum fällt kommentarlos auf ein Standard-Rechteck
+zurück, die Zeichenarbeit ist weg, ohne Fehlermeldung — genau die Art
+„Schalter zeigt ✓, wirkt aber nicht"-Bug, die wir bei DC-034 (Foto-Limit)
+schon einmal bewusst vermieden haben. Deswegen jetzt nicht blind einen
+Button einbauen, sondern beide Seiten sauber verdrahten.
+
+**Was ich geprüft habe (Code, nicht nur die Fläche vermutet):**
+
+- `entwurf/page.tsx` hat in der Aufnahme-Karte (`AufnahmeCard`,
+  Zeilen 196-371) aktuell nur eine reine Lese-Anzeige „Maße" (Zeilen
+  273-279), aus einer Wegwerf-Regex-Erkennung des Transkripts
+  (`extrahiereRaumdaten`, `extraktion-masse.ts`) — kein State, keine
+  Eingabe, nichts, was mit `RaumGrundrissEditor`/`Wand[]` zusammenhängt.
+  `RaumGrundrissEditor` ist dort noch gar nicht importiert.
+- Die Route hat keinen Mechanismus, einen client-seitig vorgegebenen
+  Grundriss zu übernehmen — der `raumDetails`-Typ (Zeile 323-328) kennt
+  `modus: 'rechteck' | 'flaeche' | 'wand'`, aber kein `'grundriss'` (das
+  gibt es nur in `AngebotDetail.tsx`s `RaumModus`).
+- Die Zuordnung Raumname → `raumDetails`-Schlüssel läuft über
+  `findeTitelName()` (Zeile 282-288, unscharfer Abgleich: exakte
+  Übereinstimmung, dann Teilstring in beide Richtungen, dann Fallback bei
+  genau einem Raum) — dieselbe Funktion kann für einen neuen Grundriss-
+  Parameter wiederverwendet werden, keine neue Matching-Logik nötig.
+
+**Fertige Spec (startbereit für Head of Product Engineering):**
+
+1. Request-Body von `/api/entwurf/generiere-positionen` um ein optionales
+   Feld erweitern (Zeile 27-34, direkt neben `basis_extraktion`):
+   `grundrisse?: Record<string, Wand[]>` — Schlüssel ist der Raumname, wie
+   ihn der Nutzer beim Zeichnen sieht (z. B. `einzelraum`/`raumdaten`-Titel
+   aus der Karte), Wert die `Wand[]`-Liste aus `raum-geometrie.ts` (exakt
+   dieselbe Form, die `RaumGrundrissEditor.onSave` heute schon an
+   `AngebotDetail.tsx` liefert — keine neue Datenstruktur nötig).
+2. In der `raumDetails`-Bauschleife (Zeile 323-403): NACH dem Befüllen
+   aus der Extraktion, für jeden Schlüssel in `grundrisse` per
+   `findeTitelName()` denselben kanonischen Namen ermitteln und
+   `raumDetails[key] = { ...raumDetails[key], modus: 'grundriss' as const,
+   grundriss: waende }` setzen (Höhe/Türen/Fenster aus der Extraktion
+   bewusst NICHT löschen — die bleiben als Zusatzangaben zum gezeichneten
+   Grundriss stehen, genau wie `AngebotDetail.tsx` es heute schon liest).
+   Den lokalen `raumDetails`-Typ um `modus: '... | 'grundriss'` und
+   `grundriss?: Wand[]` erweitern (`Wand` aus `raum-geometrie.ts`
+   importieren).
+3. Kein Datenbankschema-Thema — `quotes.raum_details` ist eine JSON-Spalte,
+   `AngebotDetail.tsx` interpretiert `modus: 'grundriss'` bereits korrekt
+   (liest von dort den `RaumGrundrissEditor` erneut mit `initial`).
+
+**Was ich selbst baue, sobald der Weg steht (kein erneuter Auftrag von
+Sandy nötig, bitte im Dokument vermerken):**
+
+- In `AufnahmeCard` (`entwurf/page.tsx`, neben dem „Maße"-Block, Zeile
+  273-279) einen kleinen Button „📐 Unförmig? Form zeichnen" ergänzen —
+  öffnet `RaumGrundrissEditor` (dieselbe Komponente wie in
+  `AngebotDetail.tsx`, unverändert wiederverwendbar), Ergebnis in neuem
+  State `grundrisse: Record<string, Wand[]>` (Schlüssel = Raumname aus
+  der Karte) ablegen.
+- In `fertigstellen()` (Zeile 693-699) das `grundrisse`-Objekt mit in den
+  Request-Body aufnehmen.
+- Kleiner visueller Hinweis in der Karte, wenn für diesen Raum schon eine
+  Form gezeichnet wurde (z. B. „📐 Form gezeichnet" statt der L×B-Zeile),
+  damit klar ist, dass die gezeichnete Form die Standardmaße ersetzt.
 
 ---
 
