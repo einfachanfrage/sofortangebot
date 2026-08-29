@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-035 NEU: Hinweistext "Flächen vorläufig" vor "Entwurf erstellen" umgesetzt, zweiter Teil (individuelle Öffnungsgröße bei Türen/Fenster-Rückfrage, z.B. große Terrassentür) recherchiert + Spec an Head of Product Engineering übergeben. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-036 NEU: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, individuelle Öffnungsgröße bei Rückfrage als Spec an Head of Product Engineering übergeben. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -86,6 +86,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | 🟡 behoben (Head of Product Engineering, 2026-08-25): Deine Analyse stimmte, die Hauptursache lag aber noch tiefer — der heutige Erstellungsweg (Aufnahme-Flow) hat **nie** eine Nummer angefordert, die Vergabe stand nur in der alten Route. Nummer wird jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind sichtbar. Live-Nachtest steht aus | Head of Product Engineering |
 | DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
 | DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | 🟡 Teil 1 (Hinweistext) umgesetzt, committet (`e463360`), `tsc` sauber, Live-Test steht aus. Teil 2 (individuelle Öffnungsgröße bei Rückfrage) recherchiert + fertige Design-Spec unten, an Head of Product Engineering übergeben | Product Designer (Teil 1, ✅) / Head of Product Engineering (Teil 2) |
+| DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2683,6 +2684,53 @@ Head of Product Engineering den Antwort-Datenweg (Punkt 2+3) gebaut hat,
 baue ich den `RueckfragenScreen.tsx`-Teil (Punkt 1) direkt selbst dazu,
 wie beim DC-027-Muster — kein erneuter Auftrag von Sandy nötig, bitte
 einfach im Dokument vermerken, sobald der Datenweg steht.
+
+---
+
+## DC-036 — "Raumform"-Reiter: versteht der User den Weg zur Fläche bei unförmigen Räumen?
+
+**Datum:** 2026-08-29 (Sandy, Screenshot der Raummaße-Zeile in
+`AngebotDetail.tsx`)
+
+**Status:** ✅ umgesetzt
+
+**Auftrag:** „versteht der user das? ... es geht halt darum wenn er zb
+ein sehr unförmigen vom standardabweichenden raum hat. und mehrere
+nischen oderso... wie kann er da easy dann die fläche rausbekommen
+oderso? brauchts den reiter for?"
+
+**Befund — die Fähigkeit existiert schon, gut gebaut:** Der dritte Reiter
+„Raumform" öffnet `RaumGrundrissEditor.tsx`, einen fertigen Grundriss-
+Zeichner: drei Vorlagen (Rechteck/L-Form/U-Form) zum Anpassen der
+Wandlängen, oder komplett frei Wand für Wand mit Abbiege-Richtung
+(links/rechts). Live-SVG-Vorschau, Flächen-/Umfang-Berechnung in Echtzeit,
+sichtbare Validierung ob die Form überhaupt geschlossen ist. Das deckt
+genau Sandys Beispiel ab — eine Nische oder ein Erker lässt sich als
+zusätzliche Wand mit Abbiegung abbilden, solange die Ecken rechtwinklig
+sind (der Normalfall im Wohnungsbau). Keine Lücke in der Berechnung.
+
+**Die eigentliche Lücke war reine Auffindbarkeit.** Drei Reiter
+„Raummaße" / „Flächen eingeben" / „Raumform" nebeneinander — „Raumform"
+sagt nicht, dass sich dahinter ein Zeichentool für genau den Nischen-/
+Erker-Fall verbirgt. Ein Nutzer mit einem unförmigen Raum sucht eher nach
+etwas, das „unregelmäßig" oder „nicht rechteckig" heißt, als nach „Form".
+
+**Umgesetzt (kein Neubau nötig, zwei gezielte Textänderungen):**
+- `AngebotDetail.tsx`: Tab-Label „Raumform" → „📐 Unregelmäßig".
+- `RaumGrundrissEditor.tsx`: Eröffnungssatz um „Für Räume mit Nische,
+  Erker oder Vorsprung" ergänzt, direkt beim Öffnen sichtbar.
+
+Committet (`2e9b826`), scoped `tsc` sauber, noch nicht live geprüft.
+
+**Zusätzlicher Gedanke, NICHT umgesetzt (eigene Grenze, kein Auftrag):**
+Der Grundriss-Zeichner lebt aktuell nur hier — in der bereits berechneten
+Positionsliste (`AngebotDetail.tsx`), also NACH der Aufnahme. Wer beim
+Einsprechen schon weiß, dass sein Raum unförmig ist, kann das während der
+Aufnahme selbst nirgends angeben — er muss erst fertigstellen und dann
+hier nachkorrigieren. Ob sich das lohnt, früher (z. B. als Option in der
+Rückfragen-Karte) anzubieten, wäre eine größere Änderung an der Aufnahme-
+/Rückfragen-Pipeline (nicht mein Bereich) — nur als Idee notiert, kein
+eigenständiger Auftrag von Sandy dafür.
 
 ---
 
