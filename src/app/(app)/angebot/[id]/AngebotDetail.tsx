@@ -390,7 +390,14 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                   <button
                     key={v.id}
                     type="button"
-                    onClick={() => { onPreisVorschlag(item.id, { title: v.title, unit: v.unit, unit_price: v.unit_price, price_item_id: v.id }); setSucheOffen(false) }}
+                    // DC-039-Fix: onMouseDown+preventDefault statt onClick —
+                    // ein normaler Klick lässt das Titelfeld ZUERST den Fokus
+                    // verlieren (Tastatur schließt sich auf dem Handy, Seite
+                    // reflowed), bevor der Klick registriert wird, wodurch
+                    // der Tipp ins Leere ging (Sandys gemeldeter Bug:
+                    // "wird angezeigt, aber Klick tut nichts"). preventDefault
+                    // beim mousedown verhindert den Fokusverlust komplett.
+                    onMouseDown={e => { e.preventDefault(); onPreisVorschlag(item.id, { title: v.title, unit: v.unit, unit_price: v.unit_price, price_item_id: v.id }); setSucheOffen(false) }}
                     className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-[#F5C400]/10 border-b border-[#2C2C2C]/5 last:border-b-0"
                   >
                     <div className="min-w-0">
@@ -404,7 +411,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 ))}
                 <button
                   type="button"
-                  onClick={() => { setNeuEinheit('m²'); setNeuPreisText(''); setNeuAnlegenModus(true) }}
+                  onMouseDown={e => { e.preventDefault(); setNeuEinheit('m²'); setNeuPreisText(''); setNeuAnlegenModus(true) }}
                   className="w-full flex items-center gap-2 px-3 py-2.5 text-left bg-[#F7F7F5] hover:bg-[#F5C400]/15"
                 >
                   <span className="w-5 h-5 rounded-full bg-[#F5C400] flex items-center justify-center text-[12px] font-black shrink-0">+</span>
@@ -440,7 +447,8 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 <button
                   type="button"
                   disabled={!(Number(neuPreisText.replace(',', '.')) > 0)}
-                  onClick={() => {
+                  onMouseDown={e => {
+                    e.preventDefault()
                     onNeuePosition(item.id, item.title.trim(), neuEinheit, Number(neuPreisText.replace(',', '.')))
                     setNeuAnlegenModus(false)
                     setSucheOffen(false)
