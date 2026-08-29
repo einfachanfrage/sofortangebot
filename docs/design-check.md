@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-038 NEU fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040 NEU: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Root-Cause in der Extraktion gefunden (analog zum bestehenden "Fassade"-Muster), vollständige Spec an Head of Product Engineering übergeben; DC-039 NEU: "+ Position" ohne Verbindung zur Preisdatenbank — Aktionsleiste als größtenteils selbsterklärend geprüft, Konzept + Prototyp für Live-Suche gegen die Preisdatenbank gebaut, wartet auf Go; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -89,6 +89,8 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 | DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
 | DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | ✅ Beide Teile umgesetzt: Teil 1 Wandnummern ("W1 · 4" statt nur "4"); Teil 2 nach Sandys Go ("bau den zecihner") gebaut — neuer vierter Button "✏️ Zeichnen" neben Rechteck/L-Form/U-Form, Freihand-Zeichnung wird per Ramer-Douglas-Peucker vereinfacht + auf 90° eingerastet und direkt in dieselbe `Wand[]`-Liste umgewandelt, die die Vorlagen auch erzeugen — keine Änderung an Berechnung/Vorschau/Speichern nötig, reines Frontend. Committet (`f88ca33`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
+| DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | 🔵 Aktionsleiste geprüft: größtenteils selbsterklärend (Icon+Label bei allen drei), "Raum" klärt sich spätestens beim Antippen (sauberes Sheet). Für "+ Position": Konzept + interaktiver Prototyp für Live-Suche gegen die Preisdatenbank (schon vollständig im Speicher geladen) mit "kein Treffer → neu anlegen & sofort in Preisdatenbank speichern"-Flow — technisch geprüft, größtenteils reines Frontend (bestehender Matcher + bereits geladene Preisliste wiederverwendbar), ein kleiner neuer Endpunkt nötig fürs sofortige Speichern eines komplett neuen Preises. Wartet auf Sandys Feedback/Go zum Prototyp | Product Designer |
+| DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). Vollständige Spec an Head of Product Engineering übergeben, UI-Teil (Anzeige, kleine Emoji-Ergänzung) baue ich selbst sobald der Weg steht | Head of Product Engineering (Extraktion/Berechnung) / Product Designer (Anzeige, folgt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2937,6 +2939,126 @@ Rückmeldung: „bau den zecihner"). Echte Umsetzung in
 
 Scoped `tsc --noEmit` (Datei + `raum-geometrie.ts`) sauber. Live-Test auf
 einem echten Touchscreen steht noch aus.
+
+---
+
+## DC-039 — "+ Position" smart machen (Preisdatenbank-Suche) + Verständlichkeit der Aktionsleiste
+
+**Datum:** 2026-08-29 (Sandy, Screenshots der "Positionen"-Aktionsleiste im
+Angebots-Entwurf)
+
+**Status:** 🔵 Assessment fertig, Prototyp für Teil 2 bereit, wartet auf
+Sandys Feedback/Go
+
+**Auftrag (zusammengefasst):** Ist die Aktionsleiste Aufnahme/Position/
+Raum selbsterklärend? Und: "+ Position" sollte beim Tippen Vorschläge aus
+der Preisdatenbank zeigen; findet sich nichts, soll man die Position neu
+anlegen können, direkt mit Preis, und sie landet ab dann in der
+Preisdatenbank — alles "super easy, smooth, schlau".
+
+### Teil 1 — Ist die Aktionsleiste selbsterklärend? (geprüft, keine Umsetzung nötig)
+
+Alle drei Buttons haben Icon UND Text-Label — das ist der wichtigste
+Faktor, und er ist erfüllt. "Aufnahme" und "Position" sind eindeutig,
+"Raum" könnte VOR dem Antippen kurz die Frage aufwerfen "ist ein Raum
+nicht auch eine Position?" — klärt sich aber spätestens beim Antippen
+selbst: das "Raum hinzufügen"-Sheet (12 typische Räume als Kacheln + freies
+Namensfeld) ist sauber gemacht und unmissverständlich. Kein struktureller
+Umbau nötig. Kleine Politur, die ich bei Teil 2 mitnehme: Icon-Deckkraft
+der Aktionsleiste von 40% auf ~55% erhöhen (aktuell an der Grenze zur
+Übersehbarkeit).
+
+### Teil 2 — Smarte Preisdatenbank-Suche (Konzept + Prototyp)
+
+Vollständiges Konzept in `docs/dc-039-konzept-position-suche.md`,
+interaktiver Prototyp in `docs/dc-039-position-suche-prototyp.html` (beide
+an Sandy geschickt). Kernpunkte:
+
+- Die volle Preisdatenbank (`price_items`) wird in `AngebotDetail.tsx`
+  bereits vollständig geladen (für den bestehenden "Preis fehlt"-Flow) —
+  eine Live-Suche beim Tippen braucht dafür keinen Netzwerk-Aufruf.
+- Ein Text-Matcher (`preis-matcher.ts`) existiert schon für den
+  KI-Extraktions-Abgleich und ist technisch für eine Live-Suche
+  wiederverwendbar.
+- Vorschlag antippen → Titel/Einheit/Preis werden sofort übernommen.
+  Kein Treffer → "➕ Neue Position „…" anlegen" → Einheit + Preis inline
+  eingeben → wird SOFORT in der Preisdatenbank gespeichert (nicht erst
+  beim großen "Speichern" des Angebots) und ist ab da für jede künftige
+  Position durchsuchbar.
+- Umsetzung geteilt: Suche + Auswahl sind reines Frontend (baue ich
+  selbst, keine Backend-Änderung). Das sofortige Neu-Anlegen in der
+  Preisdatenbank braucht einen kleinen neuen Endpunkt (der bestehende
+  `/preis`-Endpunkt setzt eine schon gespeicherte Position voraus, unsere
+  neue Position existiert in diesem Moment nur lokal) — Spec an Head of
+  Product Engineering, sobald Sandy grünes Licht gibt. Dabei gleich eine
+  kleine bestehende Lücke mitgefixt: der normale Bulk-Speichervorgang für
+  neue Positionen setzt aktuell nirgends `price_item_id`, obwohl das Feld
+  existiert.
+- Bewusst als Prototyp statt direkt Code: hier geht es nicht nur um
+  Interaktionsgefühl, sondern um eine SCHREIBENDE Aktion in die echte
+  Preisdatenbank — eine unpassende Kategorisierung oder ein Dubletten-
+  Titel ist in Produktion nicht so einfach rückgängig zu machen wie ein
+  reiner UI-Fehler.
+
+Baue ich komplett selbst (Frontend-Teil sofort, Backend-Teil nach Spec-
+Übergabe), sobald Sandy den Prototyp gesehen hat und ein Go gibt.
+
+---
+
+## DC-040 — "Wohnung als Ganzes" statt zwingend nach Räumen
+
+**Datum:** 2026-08-29 (Sandy, weitergegeben von Clemens, selbst Maler,
+künftiger Testnutzer)
+
+**Status:** 🔵 Root-Cause + vollständige Spec fertig, Umsetzung braucht
+Head of Product Engineering (Extraktion + Berechnung)
+
+**Auftrag (zusammengefasst):** Handwerker sprechen sehr häufig nicht
+raumweise, sondern betrachten die Wohnung als Ganzes — z. B. "in der
+ganzen Wohnung müssen 120 m² Wandfläche gestrichen werden und 55 m²
+Laminat verlegt werden". Rückfragen zu Tür-/Fensterabzug dürfen trotzdem
+kommen (Anzahl erfragen), aber bezogen auf die Wohnung als Ganzes statt
+pro Raum.
+
+### Root-Cause (kein UI-Problem — die Angabe kommt in der Extraktion nie richtig an)
+
+`src/lib/mengen/prompt-extraktion.ts` stuft "die ganze Wohnung" (neben
+"alles", "komplett") aktuell BEDINGUNGSLOS als vage/unklar ein — auch wenn
+direkt danach eine echte m²-Angabe folgt. Genau Sandys/Clemens' Beispiel
+würde also vermutlich als unklar behandelt statt als normale Position.
+
+Es gibt dafür bereits ein eingebautes Vorbild: **Fassade**. Im selben
+Prompt existiert ein Abschnitt "FASSADE IN RAEUME", der eine Fassade als
+NAMED PSEUDO-RAUM mit direkter Flächenangabe (statt Länge×Breite)
+behandelt — exakt das Muster, das "Wohnung" auch braucht.
+
+**Kein reines Copy-Paste, weil:** eine Fassade hat nur Wandfläche, "Wohnung"
+braucht Wand- UND Bodenfläche gleichzeitig. In `extraktion-pipeline.ts`
+gibt es dafür schon `wandflaeche_direkt`/`deckflaeche_direkt` (regelbasierte
+Texterkennung, unabhängig vom KI-JSON) — plausible Erweiterungsstelle für
+einen `bodenflaeche_direkt`-Gegenpart. Zusätzlich: `berechneRaumMasse()`
+zieht bei direkter m²-Eingabe (`modus: 'flaeche'`) aktuell GAR KEINEN
+Tür-/Fensterabzug ab (bewusst so gebaut, weil eine direkte Eingabe bisher
+als bereits netto galt) — für "Wohnung" mit Rückfrage zur Tür-/
+Fensteranzahl bräuchte es das aber (Angabe vermutlich brutto gemeint).
+Das betrifft auch bestehende `flaeche`-Räume (z. B. Nischen aus DC-036) —
+sollte über ein eigenes Flag laufen, nicht global geändert werden. Die
+Rückfragen-Mechanik selbst (`tueren_anzahl_<raumname>`) ist bereits pro
+Raum-NAME statt Raum-TYP gebaut — "Wohnung" würde hier vermutlich ohne
+Sonderfall mitlaufen.
+
+Vollständige Spec (4 konkrete Schritte für Prompt/Pipeline/Berechnung) in
+`docs/dc-040-wohnung-als-ganzes.md`.
+
+### Mein Teil (Product Designer)
+
+Auf der Anzeige-Seite rechne ich damit, dass eine "Wohnung"-Position
+größtenteils automatisch als eigene Raumgruppe erscheint, sobald die
+Extraktion steht — dasselbe Muster trägt schon "Fassade". Kleine Politur:
+`RAUM_EMOJIS` bekommt einen eigenen Eintrag für "wohnung" (Vorschlag: 🏡,
+statt sich das generische 🏠 mit Fassade zu teilen). Baue und teste ich
+selbst, sobald der Extraktions-/Rechenweg von Engineering steht — kein
+erneuter Auftrag nötig.
 
 ---
 

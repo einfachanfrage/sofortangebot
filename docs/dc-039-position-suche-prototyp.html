@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-039 Prototyp — Position smart hinzufügen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gelb: #F5C400;
+    --anthrazit: #2C2C2C;
+    --bg: #F7F7F5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    background: var(--anthrazit);
+    font-family: 'Inter', sans-serif;
+    color: var(--anthrazit);
+    display: flex; justify-content: center;
+    min-height: 100vh;
+  }
+  .phone {
+    width: 100%; max-width: 420px;
+    background: var(--bg);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  .top {
+    background: white; padding: 16px 16px 4px;
+  }
+  .top h1 {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; margin: 0 0 10px;
+  }
+  .hinweis {
+    background: #FFF8E1; border: 1px solid #F5C400; border-radius: 12px;
+    padding: 10px 12px; margin: 12px; font-size: 12px; font-weight: 600; line-height: 1.5;
+  }
+  .card {
+    background: white; margin: 12px; border-radius: 16px;
+    border: 1px solid rgba(44,44,44,.06); overflow: visible;
+  }
+  .card-head { padding: 14px 16px 8px; font-weight: 800; font-family: 'Syne', sans-serif; font-size: 14px; }
+  .action-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid rgba(44,44,44,.06); border-bottom: 1px solid rgba(44,44,44,.06);
+  }
+  .action-row button {
+    background: none; border: none; padding: 12px 0; display: flex; flex-direction: column;
+    align-items: center; gap: 4px; font-weight: 800; font-size: 11px; color: rgba(44,44,44,.55);
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  .action-row button:nth-child(2) { border-left: 1px solid rgba(44,44,44,.06); border-right: 1px solid rgba(44,44,44,.06); }
+  .action-row button.active { color: var(--gelb); background: #FFFBEA; }
+  .action-row svg { width: 17px; height: 17px; }
+
+  .item { padding: 12px 16px; border-top: 1px solid rgba(44,44,44,.06); font-size: 13px; }
+  .item .t { font-weight: 700; }
+  .item .m { color: rgba(44,44,44,.4); font-weight: 600; font-size: 11px; margin-top: 2px; }
+
+  .new-item { padding: 14px 16px; border-top: 1px solid rgba(44,44,44,.06); position: relative; }
+
+  .search-wrap { position: relative; }
+  .search-input {
+    width: 100%; border: none; border-bottom: 2px solid var(--gelb);
+    font-weight: 700; font-size: 14px; padding: 4px 0 6px; background: transparent;
+    font-family: 'Inter', sans-serif; color: var(--anthrazit);
+  }
+  .search-input:focus { outline: none; }
+  .search-input::placeholder { color: rgba(44,44,44,.3); font-weight: 600; }
+
+  .dropdown {
+    position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+    background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.14);
+    border: 1px solid rgba(44,44,44,.08); z-index: 20; overflow: hidden;
+    max-height: 260px; overflow-y: auto;
+  }
+  .suggestion {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; cursor: pointer; border-bottom: 1px solid rgba(44,44,44,.05);
+  }
+  .suggestion:last-child { border-bottom: none; }
+  .suggestion:hover, .suggestion.hl { background: #FFFBEA; }
+  .suggestion .st { font-weight: 700; font-size: 12.5px; }
+  .suggestion .su { font-size: 10px; color: rgba(44,44,44,.4); font-weight: 600; margin-top: 1px; }
+  .suggestion .sp { font-weight: 800; font-size: 12.5px; color: var(--anthrazit); white-space: nowrap; margin-left: 8px; }
+  .suggestion mark { background: #FDECAE; border-radius: 3px; padding: 0 1px; }
+
+  .create-row {
+    display: flex; align-items: center; gap: 8px; padding: 11px 12px;
+    background: #F7F7F5; cursor: pointer; border-top: 1px solid rgba(44,44,44,.08);
+  }
+  .create-row .plus {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--gelb);
+    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; flex-shrink: 0;
+  }
+  .create-row .ct { font-size: 12px; font-weight: 700; line-height: 1.35; }
+  .create-row .ct b { font-weight: 800; }
+
+  .newform { margin-top: 12px; }
+  .newform .row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .newform label { font-size: 10px; font-weight: 800; color: rgba(44,44,44,.45); text-transform: uppercase; letter-spacing: .04em; display: block; margin-bottom: 3px; }
+  .newform input, .newform select {
+    width: 100%; background: #F7F7F5; border: none; border-radius: 10px; padding: 9px 10px;
+    font-weight: 700; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--anthrazit);
+  }
+  .newform input:focus, .newform select:focus { outline: 2px solid var(--gelb); }
+  .confirm-btn {
+    width: 100%; background: var(--anthrazit); color: white; border: none; border-radius: 12px;
+    padding: 11px; font-weight: 800; font-size: 13px; margin-top: 4px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .confirm-btn:disabled { opacity: .35; }
+  .db-note {
+    font-size: 10.5px; color: rgba(44,44,44,.4); font-weight: 600; margin-top: 8px; text-align: center;
+  }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120%);
+    background: var(--anthrazit); color: white; padding: 11px 18px; border-radius: 100px;
+    font-size: 12.5px; font-weight: 700; box-shadow: 0 8px 20px rgba(0,0,0,.3);
+    transition: transform .3s ease; z-index: 100; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .reset-link {
+    text-align: center; margin: 18px 0 0; font-size: 11px; font-weight: 700;
+    color: rgba(255,255,255,.4); cursor: pointer;
+  }
+
+  .sect-label { color: rgba(44,44,44,.4); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 12px 16px 2px; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="top">
+    <h1>Angebot · Entwurf</h1>
+  </div>
+
+  <div class="hinweis">
+    <b>DC-039-Prototyp</b> — zeigt, wie „+ Position" statt einer leeren Zeile
+    ein Tippen-mit-Vorschlägen aus deiner Preisdatenbank wird. Tipp z.B.
+    „wand streich" oder „laminat" an, um Treffer zu sehen — oder tipp etwas,
+    das es nicht gibt, und lege es direkt neu an.
+  </div>
+
+  <div class="card">
+    <div class="card-head">Positionen</div>
+    <div class="action-row">
+      <button>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></svg>
+        Aufnahme
+      </button>
+      <button class="active" id="posBtn" onclick="startNewItem()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Position
+      </button>
+      <button>
+        <span style="font-size:15px;line-height:1">🏠</span>
+        Raum
+      </button>
+    </div>
+
+    <div class="sect-label">Wohnzimmer</div>
+    <div class="item">
+      <div class="t">Wandflächen streichen, 2× weiß</div>
+      <div class="m">42,50 m² · 8,90 €/m²</div>
+    </div>
+
+    <div id="newItemSlot"></div>
+  </div>
+
+  <div class="reset-link" onclick="location.reload()">Prototyp zurücksetzen</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Beispiel-Preisdatenbank — im echten Produkt: die schon geladenen priceItems
+// (title, unit, unit_price), gleiche Liste wie /preise heute zeigt.
+const PREISE = [
+  { title: 'Wandflächen streichen, 1× weiß', unit: 'm²', price: 6.50 },
+  { title: 'Wandflächen streichen, 2× weiß', unit: 'm²', price: 8.90 },
+  { title: 'Wandflächen streichen, 2× farbig', unit: 'm²', price: 9.80 },
+  { title: 'Decke streichen, 2× weiß', unit: 'm²', price: 7.20 },
+  { title: 'Raufasertapete aufziehen & streichen', unit: 'm²', price: 12.40 },
+  { title: 'Laminat verlegen, schwimmend', unit: 'm²', price: 18.90 },
+  { title: 'Laminat verlegen inkl. Trittschall', unit: 'm²', price: 22.50 },
+  { title: 'Parkett verlegen, Klebeverlegung', unit: 'm²', price: 34.00 },
+  { title: 'Vinylboden verlegen, klickbar', unit: 'm²', price: 24.90 },
+  { title: 'Altbelag entfernen', unit: 'm²', price: 5.50 },
+  { title: 'Sockelleisten montieren', unit: 'lfdm', price: 6.20 },
+  { title: 'Spachtelarbeiten, Q2', unit: 'm²', price: 4.80 },
+  { title: 'Grundierung auftragen', unit: 'm²', price: 2.90 },
+  { title: 'Fassade streichen, 2× Anstrich', unit: 'm²', price: 14.50 },
+  { title: 'Fenster abkleben & schützen', unit: 'Stk', price: 4.00 },
+  { title: 'Anfahrtspauschale', unit: 'pauschal', price: 45.00 },
+]
+
+function normalisiere(text) {
+  return text.toLocaleLowerCase('de-DE')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, ' ').trim()
+}
+
+function scoreMatch(query, title) {
+  const qn = normalisiere(query)
+  const tn = normalisiere(title)
+  if (!qn) return 0
+  if (tn.startsWith(qn)) return 1
+  if (tn.includes(qn)) return 0.9
+  const qWords = qn.split(' ').filter(Boolean)
+  const tWords = tn.split(' ')
+  let hits = 0
+  for (const w of qWords) {
+    if (tWords.some(tw => tw.startsWith(w) || tw.includes(w))) hits++
+  }
+  if (hits === 0) return 0
+  return 0.5 * (hits / qWords.length)
+}
+
+function highlight(title, query) {
+  const qn = normalisiere(query)
+  if (!qn) return title
+  const words = qn.split(' ').filter(Boolean)
+  let out = title
+  for (const w of words) {
+    const re = new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig')
+    out = out.replace(re, '<mark>$1</mark>')
+  }
+  return out
+}
+
+function fmtPreis(p) {
+  return p.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+}
+
+let state = 'idle' // idle | searching | creating
+
+function startNewItem() {
+  state = 'searching'
+  render()
+  setTimeout(() => { const el = document.getElementById('searchInput'); if (el) el.focus() }, 30)
+}
+
+function render() {
+  const slot = document.getElementById('newItemSlot')
+  if (state === 'idle') { slot.innerHTML = ''; return }
+
+  if (state === 'searching') {
+    slot.innerHTML = `
+      <div class="new-item">
+        <div class="search-wrap">
+          <input id="searchInput" class="search-input" placeholder="Was wurde gemacht? z.B. Wand streichen…"
+            oninput="onSearchInput(this.value)" autocomplete="off">
+          <div id="dropdown"></div>
+        </div>
+      </div>
+    `
+    return
+  }
+
+  if (state === 'creating') {
+    slot.innerHTML = `
+      <div class="new-item">
+        <div style="font-weight:800;font-size:13px;margin-bottom:8px;">„${window.__neuerTitel}"</div>
+        <div class="newform">
+          <div class="row">
+            <div style="flex:1">
+              <label>Einheit</label>
+              <select id="neuEinheit">
+                <option value="m²">m²</option>
+                <option value="lfdm">lfdm</option>
+                <option value="Stk">Stk</option>
+                <option value="pauschal">pauschal</option>
+                <option value="Std">Std</option>
+              </select>
+            </div>
+            <div style="flex:1">
+              <label>Preis pro Einheit</label>
+              <input id="neuPreis" type="number" step="0.01" inputmode="decimal" placeholder="0,00 €" oninput="checkConfirm()">
+            </div>
+          </div>
+          <button class="confirm-btn" id="confirmBtn" disabled onclick="confirmNeu()">
+            ✓ Anlegen &amp; übernehmen
+          </button>
+          <div class="db-note">Wird sofort in deiner Preisdatenbank gespeichert — beim nächsten Mal direkt als Vorschlag da.</div>
+        </div>
+      </div>
+    `
+  }
+}
+
+function onSearchInput(val) {
+  window.__neuerTitel = val.trim()
+  const dd = document.getElementById('dropdown')
+  if (!val.trim()) { dd.innerHTML = ''; return }
+
+  const matches = PREISE
+    .map(p => ({ ...p, score: scoreMatch(val, p.title) }))
+    .filter(p => p.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+
+  let html = '<div class="dropdown">'
+  for (const m of matches) {
+    html += `
+      <div class="suggestion" onclick="pickSuggestion('${m.title.replace(/'/g, "\\'")}', '${m.unit}', ${m.price})">
+        <div>
+          <div class="st">${highlight(m.title, val)}</div>
+          <div class="su">${m.unit}</div>
+        </div>
+        <div class="sp">${fmtPreis(m.price)}</div>
+      </div>
+    `
+  }
+  html += `
+    <div class="create-row" onclick="goCreate()">
+      <div class="plus">+</div>
+      <div class="ct">Neue Position <b>„${val.trim()}"</b> anlegen</div>
+    </div>
+  `
+  html += '</div>'
+  dd.innerHTML = html
+}
+
+function pickSuggestion(title, unit, price) {
+  addRealItem(title, unit, price, false)
+  state = 'idle'
+  render()
+}
+
+function goCreate() {
+  state = 'creating'
+  render()
+  setTimeout(() => { const el = document.getElementById('neuPreis'); if (el) el.focus() }, 30)
+}
+
+function checkConfirm() {
+  const preis = parseFloat(document.getElementById('neuPreis').value)
+  document.getElementById('confirmBtn').disabled = !(preis > 0)
+}
+
+function confirmNeu() {
+  const einheit = document.getElementById('neuEinheit').value
+  const preis = parseFloat(document.getElementById('neuPreis').value)
+  addRealItem(window.__neuerTitel, einheit, preis, true)
+  state = 'idle'
+  render()
+}
+
+function addRealItem(title, unit, price, isNew) {
+  const el = document.createElement('div')
+  el.className = 'item'
+  el.innerHTML = `<div class="t">${title}</div><div class="m">1 ${unit} · ${fmtPreis(price)}/${unit}</div>`
+  document.getElementById('newItemSlot').before ? null : null
+  document.getElementById('newItemSlot').parentElement.insertBefore(el, document.getElementById('newItemSlot'))
+  showToast(isNew ? `„${title}" in Preisdatenbank angelegt ✓` : `„${title}" übernommen ✓`)
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.classList.add('show')
+  setTimeout(() => t.classList.remove('show'), 2400)
+}
+
+render()
+</script>
+</body>
+</html>
