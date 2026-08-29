@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DC-038 Prototyp · Grundriss frei zeichnen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #F5C400;
+    --anthracite: #2C2C2C;
+    --bg: #F7F7F5;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--anthracite);
+    display: flex;
+    justify-content: center;
+  }
+  .phone {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    background: var(--white);
+    padding: 20px 18px 40px;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+  .sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(44,44,44,0.5);
+    line-height: 1.45;
+    margin: 0 0 16px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(44,44,44,0.08);
+    color: rgba(44,44,44,0.55);
+    border-radius: 999px;
+    padding: 3px 9px;
+    margin-bottom: 10px;
+  }
+  .modeRow {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .modeBtn {
+    flex: 1;
+    border: none;
+    border-radius: 12px;
+    background: rgba(44,44,44,0.06);
+    color: var(--anthracite);
+    font-weight: 800;
+    font-size: 12px;
+    padding: 10px 4px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .modeBtn.active {
+    background: var(--anthracite);
+    color: white;
+  }
+  .modeBtn.draw.active {
+    background: var(--yellow);
+    color: var(--anthracite);
+  }
+  .stage {
+    position: relative;
+    background: var(--bg);
+    border-radius: 20px;
+    border: 2px dashed rgba(44,44,44,0.15);
+    overflow: hidden;
+    touch-action: none;
+    margin-bottom: 14px;
+  }
+  .stage.hasShape { border-style: solid; border-color: rgba(44,44,44,0.08); }
+  svg { display: block; width: 100%; height: 320px; }
+  .hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 30px;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(44,44,44,0.35);
+    pointer-events: none;
+  }
+  .statusRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 12px;
+    padding: 9px 12px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .statusRow.ok { background: #EDFAF0; color: #1A7A38; }
+  .statusRow.warn { background: #FFF7E6; color: #92650B; }
+  .statusRow.empty { background: rgba(44,44,44,0.05); color: rgba(44,44,44,0.35); }
+  .wallList { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .wallRow { display: flex; align-items: center; gap: 8px; }
+  .wallNum {
+    font-size: 11px; font-weight: 800; color: rgba(44,44,44,0.3);
+    width: 40px; flex-shrink: 0;
+  }
+  .wallInputWrap {
+    flex: 1; display: flex; align-items: center; gap: 6px;
+    background: var(--bg); border: 2px solid rgba(44,44,44,0.1);
+    border-radius: 12px; padding: 8px 12px;
+  }
+  .wallInputWrap input {
+    flex: 1; border: none; background: transparent; font-weight: 700;
+    font-size: 15px; color: var(--anthracite); font-family: inherit; width: 0;
+  }
+  .wallInputWrap input:focus { outline: none; }
+  .wallInputWrap span { font-size: 12px; font-weight: 600; color: rgba(44,44,44,0.4); }
+  .actions { display: flex; flex-direction: column; gap: 8px; }
+  .primaryBtn {
+    width: 100%; border: none; border-radius: 16px; background: var(--yellow);
+    color: var(--anthracite); font-weight: 800; font-size: 15px; padding: 15px;
+    cursor: pointer;
+  }
+  .primaryBtn:disabled { opacity: 0.35; cursor: default; }
+  .secondaryBtn {
+    width: 100%; border: 2px solid rgba(44,44,44,0.12); background: white;
+    color: rgba(44,44,44,0.55); border-radius: 16px; font-weight: 800;
+    font-size: 13px; padding: 11px; cursor: pointer;
+  }
+  .note {
+    margin-top: 22px; padding: 12px 14px; background: rgba(44,44,44,0.035);
+    border-radius: 14px; font-size: 12px; font-weight: 600; line-height: 1.5;
+    color: rgba(44,44,44,0.55);
+  }
+  .note b { color: var(--anthracite); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <span class="badge">Prototyp · DC-038 · nicht der echte Code</span>
+  <h1>Grundriss · Wohnzimmer</h1>
+  <p class="sub">Fahr mit dem Finger einmal rundherum über die Raumform — grob reicht, wir machen daraus gerade Wände. Danach kannst du jede Wandlänge noch anpassen.</p>
+
+  <div class="modeRow">
+    <button class="modeBtn active" id="modeVorlage" onclick="setMode('vorlage')">Vorlage</button>
+    <button class="modeBtn draw" id="modeFrei" onclick="setMode('frei')">✏️ Frei zeichnen</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="svg" viewBox="0 0 380 320" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="hint" id="hint">Mit dem Finger die Raumform umranden — am Ende in der Nähe vom Startpunkt loslassen.</div>
+  </div>
+
+  <div class="statusRow empty" id="statusRow">Noch nichts gezeichnet</div>
+
+  <div class="wallList" id="wallList"></div>
+
+  <div class="actions">
+    <button class="primaryBtn" id="btnUebernehmen" disabled>✓ Übernehmen</button>
+    <button class="secondaryBtn" onclick="reset()">Nochmal zeichnen</button>
+  </div>
+
+  <div class="note">
+    <b>Was hier passiert:</b> Deine Zeichnung wird zu einer kleinen Anzahl Eckpunkte vereinfacht (Ramer–Douglas–Peucker), jede Wandrichtung wird auf ein Vielfaches von 90° zur ersten Wand eingerastet, jede Länge auf 10&nbsp;cm gerundet. Ergebnis ist exakt dieselbe Wand-Liste wie beim manuellen Zeichnen — Vorschau, Flächenberechnung und Speichern brauchen dafür keine Änderung, das ist nur ein neuer Weg, an dieselbe Liste zu kommen.
+  </div>
+</div>
+
+<script>
+const svg = document.getElementById('svg');
+const stage = document.getElementById('stage');
+const hint = document.getElementById('hint');
+const statusRow = document.getElementById('statusRow');
+const wallList = document.getElementById('wallList');
+const btnUebernehmen = document.getElementById('btnUebernehmen');
+
+const NS = 'http://www.w3.org/2000/svg';
+const W = 380, H = 320, PAD = 36;
+const PX_PER_METER = 26; // grobe Umrechnung für den Prototyp
+
+let mode = 'vorlage';
+let rawPoints = [];   // während des Zeichnens
+let waende = [];      // { laenge } — gleiche Form wie im echten Editor (turn ergibt sich aus Reihenfolge)
+let drawing = false;
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('modeVorlage').classList.toggle('active', m === 'vorlage');
+  document.getElementById('modeFrei').classList.toggle('active', m === 'frei');
+  const bar = document.getElementById('vorlagenBar');
+  if (bar) bar.style.display = m === 'vorlage' ? 'flex' : 'none';
+  hint.textContent = m === 'frei'
+    ? 'Mit dem Finger die Raumform umranden — am Ende in der Nähe vom Startpunkt loslassen.'
+    : 'Oben eine Vorlage wählen.';
+  reset();
+}
+
+function reset() {
+  rawPoints = [];
+  waende = [];
+  drawing = false;
+  render();
+}
+
+// ── Zeichnen erfassen ────────────────────────────────────────────────────
+function svgPoint(evt) {
+  const rect = svg.getBoundingClientRect();
+  const x = (evt.clientX - rect.left) / rect.width * W;
+  const y = (evt.clientY - rect.top) / rect.height * H;
+  return { x, y };
+}
+
+svg.addEventListener('pointerdown', (evt) => {
+  if (mode !== 'frei') return;
+  svg.setPointerCapture(evt.pointerId);
+  drawing = true;
+  waende = [];
+  rawPoints = [svgPoint(evt)];
+  render();
+});
+svg.addEventListener('pointermove', (evt) => {
+  if (!drawing) return;
+  rawPoints.push(svgPoint(evt));
+  render();
+});
+svg.addEventListener('pointerup', () => {
+  if (!drawing) return;
+  drawing = false;
+  if (rawPoints.length >= 3) {
+    waende = pfadZuWaenden(rawPoints);
+  }
+  rawPoints = [];
+  render();
+});
+
+// ── Geometrie: Freihand-Pfad → gerade, rechtwinklige Wände ──────────────
+function simplifyRDP(points, epsilon) {
+  if (points.length < 3) return points.slice();
+  function perpDist(pt, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    return Math.abs((pt.x - a.x) * dy - (pt.y - a.y) * dx) / len;
+  }
+  let maxD = 0, idx = 0;
+  for (let i = 1; i < points.length - 1; i++) {
+    const d = perpDist(points[i], points[0], points[points.length - 1]);
+    if (d > maxD) { maxD = d; idx = i; }
+  }
+  if (maxD > epsilon) {
+    const left = simplifyRDP(points.slice(0, idx + 1), epsilon);
+    const right = simplifyRDP(points.slice(idx), epsilon);
+    return left.slice(0, -1).concat(right);
+  }
+  return [points[0], points[points.length - 1]];
+}
+
+function pfadZuWaenden(punkte) {
+  const simplified = simplifyRDP(punkte, 9);
+  if (simplified.length < 4) return []; // zu wenig Ecken erkannt
+
+  // Jede Segmentrichtung auf ein Vielfaches von 90° relativ zur ERSTEN
+  // Wand runden — dadurch bleibt die vom Nutzer gewählte Ausrichtung
+  // erhalten, das Ergebnis ist aber garantiert rechtwinklig (wie es
+  // raum-geometrie.ts für Wand[] voraussetzt). Aus der Differenz
+  // aufeinanderfolgender Winkel ergibt sich turn 'L'/'R' — GENAU dieselbe
+  // {laenge, turn}-Form, die RaumGrundrissEditor.tsx heute schon von den
+  // Vorlagen-Buttons bekommt.
+  let ankerWinkel = null;
+  let vorherigerWinkel = null;
+  const waendeListe = [];
+  for (let i = 1; i < simplified.length; i++) {
+    const a = simplified[i - 1], b = simplified[i];
+    let winkel = Math.atan2(b.y - a.y, b.x - a.x);
+    if (ankerWinkel === null) {
+      ankerWinkel = Math.round(winkel / (Math.PI / 2)) * (Math.PI / 2);
+      winkel = ankerWinkel;
+    } else {
+      const rel = winkel - ankerWinkel;
+      const snappedRel = Math.round(rel / (Math.PI / 2)) * (Math.PI / 2);
+      winkel = ankerWinkel + snappedRel;
+    }
+    const rohLaenge = Math.hypot(b.x - a.x, b.y - a.y);
+    const meter = Math.max(0.3, Math.round((rohLaenge / PX_PER_METER) * 10) / 10);
+
+    let turn;
+    if (vorherigerWinkel !== null) {
+      let delta = winkel - vorherigerWinkel;
+      // auf (-π, π] normalisieren
+      while (delta <= -Math.PI) delta += 2 * Math.PI;
+      while (delta > Math.PI) delta -= 2 * Math.PI;
+      turn = delta < 0 ? 'L' : 'R'; // +90° (im Bildschirm-Koordinatensystem, y nach unten) = 'R', wie in berechnePfad
+    }
+    waendeListe.push(turn ? { laenge: meter, turn } : { laenge: meter });
+    vorherigerWinkel = winkel;
+  }
+  return waendeListe;
+}
+
+// ── Vorlagen (1:1 aus RaumGrundrissEditor.tsx übernommen) ────────────────
+const VORLAGEN = {
+  rechteck: [{ laenge: 4 }, { laenge: 3, turn: 'R' }, { laenge: 4, turn: 'R' }, { laenge: 3, turn: 'R' }],
+  lform: [{ laenge: 5 }, { laenge: 2, turn: 'R' }, { laenge: 2, turn: 'R' }, { laenge: 2, turn: 'L' }, { laenge: 3, turn: 'R' }, { laenge: 4, turn: 'R' }],
+  uform: [
+    { laenge: 2 }, { laenge: 2, turn: 'R' }, { laenge: 2, turn: 'L' }, { laenge: 2, turn: 'L' },
+    { laenge: 2, turn: 'R' }, { laenge: 4, turn: 'R' }, { laenge: 6, turn: 'R' }, { laenge: 4, turn: 'R' },
+  ],
+};
+
+// ── Darstellung + Wandliste ──────────────────────────────────────────────
+function berechnePfad(waendeArr) {
+  // Turn-aware Pfadaufbau — exakt dieselbe Logik wie berechneGrundriss() in
+  // raum-geometrie.ts: jede Wand läuft in der aktuellen Richtung, 'R' dreht
+  // die Richtung im Uhrzeigersinn, 'L' entgegen. Erste Wand ohne turn = Start
+  // nach rechts (Bildschirm-Ost).
+  let x = 0, y = 0, dir = 0; // 0=rechts,1=runter,2=links,3=hoch
+  const pts = [{ x, y }];
+  const dirs = [[1,0],[0,1],[-1,0],[0,-1]];
+  waendeArr.forEach((w, i) => {
+    if (i > 0) dir = w.turn === 'L' ? (dir + 3) % 4 : (dir + 1) % 4;
+    x += dirs[dir][0] * w.laenge;
+    y += dirs[dir][1] * w.laenge;
+    pts.push({ x, y });
+  });
+  return pts;
+}
+
+function render() {
+  svg.innerHTML = '';
+  hint.style.display = (mode === 'frei' && rawPoints.length === 0 && waende.length === 0) ? 'flex' : 'none';
+  stage.classList.toggle('hasShape', waende.length > 0 || rawPoints.length > 0);
+
+  // Live-Rohzeichnung während des Zeichnens
+  if (rawPoints.length > 1) {
+    const pl = document.createElementNS(NS, 'polyline');
+    pl.setAttribute('points', rawPoints.map(p => `${p.x},${p.y}`).join(' '));
+    pl.setAttribute('fill', 'none');
+    pl.setAttribute('stroke', '#D97706');
+    pl.setAttribute('stroke-width', '2.5');
+    pl.setAttribute('stroke-linecap', 'round');
+    pl.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(pl);
+  }
+
+  if (waende.length > 0) {
+    const pts = berechnePfad(waende);
+    zeichnePolygon(pts, waende);
+    zeigeStatus(pts, waende);
+    zeigeWandliste(waende);
+    btnUebernehmen.disabled = false;
+  } else {
+    statusRow.className = 'statusRow empty';
+    statusRow.textContent = mode === 'frei' ? 'Noch nichts gezeichnet' : 'Vorlage wählen';
+    wallList.innerHTML = '';
+    btnUebernehmen.disabled = true;
+  }
+}
+
+function zeichnePolygon(pts, waendeArr) {
+  const laengen = waendeArr.map(w => w.laenge);
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const spanX = (maxX - minX) || 1, spanY = (maxY - minY) || 1;
+  const scale = Math.min((W - 2 * PAD) / spanX, (H - 2 * PAD) / spanY);
+  const offX = (W - spanX * scale) / 2, offY = (H - spanY * scale) / 2;
+  const tx = x => (x - minX) * scale + offX;
+  const ty = y => (y - minY) * scale + offY;
+
+  const poly = document.createElementNS(NS, 'polygon');
+  poly.setAttribute('points', pts.map(p => `${tx(p.x)},${ty(p.y)}`).join(' '));
+  poly.setAttribute('fill', '#F5C40022');
+  poly.setAttribute('stroke', '#1A7A38');
+  poly.setAttribute('stroke-width', '2.5');
+  poly.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(poly);
+
+  laengen.forEach((len, i) => {
+    const a = pts[i], b = pts[i + 1];
+    const mx = (tx(a.x) + tx(b.x)) / 2, my = (ty(a.y) + ty(b.y)) / 2;
+    const horizontal = Math.abs(a.y - b.y) < 0.01;
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', mx);
+    t.setAttribute('y', my + (horizontal ? -8 : 4));
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-size', '11');
+    t.setAttribute('font-weight', '800');
+    t.setAttribute('fill', '#2C2C2C');
+    t.textContent = `W${i + 1} · ${String(len).replace('.', ',')}`;
+    svg.appendChild(t);
+  });
+
+  const start = document.createElementNS(NS, 'circle');
+  start.setAttribute('cx', tx(pts[0].x));
+  start.setAttribute('cy', ty(pts[0].y));
+  start.setAttribute('r', 4);
+  start.setAttribute('fill', '#1A7A38');
+  svg.appendChild(start);
+}
+
+function flaeche(waendeArr) {
+  // Shoelace-Formel — dieselbe Grundidee wie berechneGrundriss() in
+  // raum-geometrie.ts (dort mit der echten, bereits verifizierten Formel).
+  const pts = berechnePfad(waendeArr);
+  let a = 0;
+  for (let i = 0; i < pts.length - 1; i++) {
+    a += pts[i].x * pts[i + 1].y - pts[i + 1].x * pts[i].y;
+  }
+  return Math.round(Math.abs(a) / 2 * 100) / 100;
+}
+
+function zeigeStatus(pts, waendeArr) {
+  const start = pts[0], ende = pts[pts.length - 1];
+  const luecke = Math.round(Math.hypot(ende.x - start.x, ende.y - start.y) * 10) / 10;
+  const umfang = waendeArr.reduce((s, w) => s + w.laenge, 0);
+  if (luecke < 0.15) {
+    statusRow.className = 'statusRow ok';
+    statusRow.innerHTML = `<span>✓ Form geschlossen</span><span>${flaeche(waendeArr)} m² · Umfang ${umfang.toFixed(1).replace('.', ',')} m</span>`;
+  } else {
+    statusRow.className = 'statusRow warn';
+    statusRow.innerHTML = `<span>Noch ${String(luecke).replace('.', ',')} m Lücke</span><span>manuell nachjustieren</span>`;
+  }
+}
+
+function zeigeWandliste(waendeArr) {
+  wallList.innerHTML = '';
+  const laengen = waendeArr.map(w => w.laenge);
+  laengen.forEach((len, i) => {
+    const row = document.createElement('div');
+    row.className = 'wallRow';
+    row.innerHTML = `
+      <span class="wallNum">Wand ${i + 1}</span>
+      <div class="wallInputWrap">
+        <input type="text" inputmode="decimal" value="${String(len).replace('.', ',')}" data-idx="${i}">
+        <span>m</span>
+      </div>
+    `;
+    wallList.appendChild(row);
+  });
+  wallList.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', (e) => {
+      const idx = Number(e.target.dataset.idx);
+      const v = parseFloat(e.target.value.replace(',', '.'));
+      if (!isNaN(v) && v > 0) {
+        waende[idx].laenge = v;
+        render();
+        // Cursor-Fokus nach Re-Render wiederherstellen (Prototyp-Vereinfachung)
+        const again = wallList.querySelectorAll('input')[idx];
+        if (again) { again.focus(); }
+      }
+    });
+  });
+}
+
+// Klick auf "Vorlage" → kleines Untermenü simulieren: einfachheitshalber
+// direkt die drei Formen als eigene Mini-Buttons, sobald Modus aktiv ist.
+function zeigeVorlagenBar() {
+  let bar = document.getElementById('vorlagenBar');
+  if (bar) return;
+  bar = document.createElement('div');
+  bar.id = 'vorlagenBar';
+  bar.style.cssText = 'display:flex;gap:6px;margin:-8px 0 14px;';
+  bar.innerHTML = `
+    <button class="secondaryBtn" style="padding:8px;font-size:11px;" onclick="waende=VORLAGEN.rechteck.map(w=>({...w}));render()">Rechteck</button>
+    <button class="secondaryBtn" style="padding:8px;font-size:11px;" onclick="waende=VORLAGEN.lform.map(w=>({...w}));render()">L-Form</button>
+    <button class="secondaryBtn" style="padding:8px;font-size:11px;" onclick="waende=VORLAGEN.uform.map(w=>({...w}));render()">U-Form</button>
+  `;
+  document.querySelector('.modeRow').after(bar);
+}
+zeigeVorlagenBar();
+
+render();
+</script>
+</body>
+</html>

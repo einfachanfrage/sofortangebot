@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-037 NEU: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben, Grund siehe DC-037; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg für die individuelle Öffnungsgröße (Terrassentür) gebaut + getestet — nur die Eingabe-Oberfläche fehlt noch. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-038 NEU: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern in der Zeichnung, nur 3 Vorlagen) — Wandnummern sofort gefixt, für "frei zeichnen" Konzept + Prototyp gebaut, wartet auf Go; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -85,9 +85,10 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
 | DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | 🟡 behoben (Head of Product Engineering, 2026-08-25): Deine Analyse stimmte, die Hauptursache lag aber noch tiefer — der heutige Erstellungsweg (Aufnahme-Flow) hat **nie** eine Nummer angefordert, die Vergabe stand nur in der alten Route. Nummer wird jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind sichtbar. Live-Nachtest steht aus | Head of Product Engineering |
 | DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
-| DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | 🟡 Teil 1 (Hinweistext) umgesetzt, committet (`e463360`), `tsc` sauber, Live-Test steht aus. Teil 2: Datenweg (Fragen-Feld `ausnahme_masse`, Antwort-Feld `ausnahme`, Aufteilung in zwei Öffnungs-Einträge) umgesetzt + getestet von Head of Product Engineering — offen ist nur noch die Eingabe-Oberfläche beim Product Designer | Product Designer (Teil 1, ✅) / Head of Product Engineering (Teil 2) |
+| DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | ✅ Beide Teile umgesetzt: Teil 1 (Hinweistext) committet (`e463360`); Teil 2, Datenweg von Head of Product Engineering gebaut + getestet (`b421ac9`), Eingabe-Oberfläche (Zusatz-Chip nach der Stückzahl-Frage, öffnet Breite/Höhe-Felder) vom Product Designer nachgezogen — committet, sobald ein gerade aktiver, gleichzeitiger Commit einer anderen Rolle den Git-Lock freigibt. `tsc` sauber, Live-Test steht für beide Teile noch aus | Product Designer / Head of Product Engineering — beide fertig |
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 | DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
+| DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | 🟡 Wandnummern in der Zeichnung sofort gefixt ("W1 · 4" statt nur "4"). Für "frei zeichnen": Konzept + interaktiver Prototyp gebaut — Kernidee ist, dass eine vereinfachte + auf 90° eingerastete Freihand-Zeichnung genau dieselbe `Wand[]`-Liste erzeugt wie die Vorlagen-Buttons heute, also reines Frontend ohne Backend-Änderung. Wartet auf Sandys Feedback/Go zum Prototyp, bevor der echte Code gebaut wird | Product Designer |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2726,6 +2727,27 @@ Aufteilung 3 → 2+1, N = 1, ungültige/fehlende Maße, VOB-Abzug).
 
 Offen bleibt nur Punkt 1 — die Eingabe selbst, beim Product Designer.
 
+### ✅ Punkt 1 umgesetzt (Product Designer, 2026-08-29)
+
+In `RueckfragenScreen.tsx`: sobald eine Türen-/Fenster-Stückzahl-Frage mit
+≥ 1 beantwortet ist, erscheint darunter der eingeklappte Zusatz-Chip
+`ausnahme_masse.label` ("Eine davon abweichend groß? (z. B.
+Terrassentür)"). Antippen klappt Breite/Höhe-Felder auf (Platzhalter =
+Standardmaß, Live-m²-Vorschau), Werte gehen direkt in
+`antwort.ausnahme` — dieselbe Antwort-Struktur, die Engineerings
+Datenweg schon erwartet. Bewusst NICHT die bestehende
+`MasseEinzelInput`-Komponente wiederverwendet (die ist für ganze
+Raummaße gebaut, inkl. Wandfläche/Bodenfläche-Umschalter, der hier nicht
+passt) — stattdessen eine schlanke, eigene Komponente
+(`AusnahmeMasseZeile`) direkt unter der ✓-Zusammenfassung platziert, damit
+die schnelle Chip-Auswahl für die Stückzahl selbst unverändert bleibt.
+`formatAntwort`/die Zusammenfassungs-Ansicht zeigen die Ausnahme bereits
+korrekt an (das hatte Engineering beim Datenweg direkt mitgebaut).
+Committet, sobald ein gerade aktiver, gleichzeitiger Commit einer anderen
+Rolle den Git-Lock freigibt. Scoped `tsc` sauber. Live-Test steht aus.
+
+DC-035 damit komplett abgeschlossen (Teil 1 + Teil 2, beide Rollen).
+
 ---
 
 ## DC-036 — "Raumform"-Reiter: versteht der User den Weg zur Fläche bei unförmigen Räumen?
@@ -2857,6 +2879,57 @@ Sandy nötig, bitte im Dokument vermerken):**
 - Kleiner visueller Hinweis in der Karte, wenn für diesen Raum schon eine
   Form gezeichnet wurde (z. B. „📐 Form gezeichnet" statt der L×B-Zeile),
   damit klar ist, dass die gezeichnete Form die Standardmaße ersetzt.
+
+---
+
+## DC-038 — Grundriss-Zeichner: keine Wandnummern in der Zeichnung, nur drei Vorlagen
+
+**Datum:** 2026-08-29 (Sandys Reaktion auf den DC-036-Screenshot: „das hier
+find ich aber ehrlicherweise nicht geil")
+
+**Status:** 🟡 Teil 1 (Wandnummern) umgesetzt, Teil 2 (frei zeichnen) als
+Konzept + Prototyp bereit, wartet auf Sandys Go
+
+**Auftrag (Sandys eigene Worte, zusammengefasst):** In der Grundriss-
+Zeichnung stehen nur Meterzahlen an den Kanten, nicht erkennbar, welche
+Wand (1/2/3/4) aus der Liste darunter gemeint ist. Außerdem nur drei
+Vorlagen (Rechteck/L-Form/U-Form) — es gibt aber viel mehr besondere
+Raumformen. Vorschlag: der Nutzer zeichnet die Raumform grob mit dem
+Finger, die App wandelt das in gerade Wände um, die Wände werden
+nummeriert, Maße können danach angepasst werden.
+
+### Teil 1 — Wandnummern in der Zeichnung (umgesetzt)
+
+`RaumGrundrissEditor.tsx`, `GrundrissVorschau`: jede Kanten-Beschriftung
+zeigt jetzt `W1 · 4` statt nur `4` — dieselbe Nummerierung wie die
+„Wand 1"/„Wand 2"-Zeilen in der Liste darunter. Committet, sobald ein
+gerade aktiver, gleichzeitiger Commit einer anderen Rolle den Git-Lock
+freigibt. Scoped `tsc` sauber, Live-Test steht aus.
+
+### Teil 2 — Frei zeichnen statt nur Vorlagen (Konzept + Prototyp)
+
+Vollständiges Konzept in `docs/dc-038-konzept-freihandzeichnen.md`,
+interaktiver Prototyp in `docs/dc-038-freihandzeichnen-prototyp.html`
+(beide an Sandy geschickt). Kernpunkte:
+
+- Technisch geprüft: `Wand[]` ist schon heute nur `{ laenge, turn?:
+  'L'|'R' }` — eine vereinfachte (Ramer-Douglas-Peucker) und auf 90°
+  eingerastete Freihand-Zeichnung lässt sich direkt in dieses Format
+  umwandeln, inkl. automatisch abgeleitetem `turn` aus der
+  Richtungsänderung zwischen zwei Kanten.
+- Dadurch **keine Änderung an Berechnung, Vorschau oder Speichern nötig**
+  — „frei zeichnen" ist nur ein neuer Weg zur selben Liste, die die drei
+  Vorlagen-Buttons heute schon erzeugen. Anders als DC-037: reines
+  Frontend, keine Backend-Änderung, bleibt komplett in meinem Bereich.
+- Vorschlag: „Frei zeichnen" als VIERTER Button neben Rechteck/L-Form/
+  U-Form (nicht deren Ersatz).
+- Bewusst NICHT direkt gebaut, sondern erst Prototyp — die Zeichenqualität
+  (fühlt sich das Einrasten auf dem Touchscreen gut an?) lässt sich nicht
+  aus einer Beschreibung beurteilen, das muss Sandy selbst antippen.
+
+Baue ich komplett selbst, sobald Sandy den Prototyp gesehen hat und ein Go
+gibt (oder mit Anmerkungen zurückkommt) — keine Rückfrage an Engineering
+nötig.
 
 ---
 
