@@ -18,12 +18,21 @@ const DASH = /\s+[-–—]\s+/
 // obwohl die Berechnung selbst (Wandfläche/Bodenfläche/Sockelleisten) den
 // Raum korrekt als eigenes Objekt hatte. "klo" ergänzt (deckt "Gästeklo",
 // "Klo" und ähnliche Kurzformen ab).
+//
+// DC-040 (2026-08-29): dieselbe Fehlerkategorie erneut — "Wohnung" (und die
+// Geschwister "Haus"/"Etage"/"Geschoss"/"Stockwerk", siehe
+// `istGesamtflaechenRaum()` in kontext-analyzer.ts, gleiche Wortliste) sind
+// jetzt gültige raeume-Namen (Wohnung-als-Ganzes-Aufnahme), enthielten aber
+// keins der bisherigen Schlüsselwörter. Ohne diesen Eintrag wäre eine
+// "Wohnung"-Position hier fälschlich in den Allgemein-Topf gefallen, obwohl
+// die Berechnung sie korrekt als eigenen Raum mit Wand-/Bodenfläche führt.
 const RAUM_KEYWORDS = [
   'zimmer', 'küche', 'bad', 'badezimmer', 'toilette', 'wc', 'klo', 'flur', 'diele',
   'keller', 'dachboden', 'garage', 'treppenhaus', 'terrasse', 'balkon',
   'fassade', 'außen', 'büro', 'werkstatt', 'eingang', 'korridor',
   'speisekammer', 'abstellraum', 'abstellkammer', 'vorratsraum',
   'hauswirtschaftsraum', 'hobbyraum',
+  'wohnung', 'haus', 'etage', 'geschoss', 'stockwerk',
 ]
 
 function istEchterRaum(name: string): boolean {
@@ -63,6 +72,15 @@ const RAUM_EMOJIS: Record<string, string> = {
   balkon:        '🌿',
   fassade:       '🏠',
   außen:         '🏠',
+  // DC-040: eigenes Symbol statt sich das generische 🏠-Fallback mit Fassade
+  // zu teilen — macht die Wohnung-als-Ganzes-Position auf einen Blick
+  // unterscheidbar. "Haus"/"Etage"/"Geschoss"/"Stockwerk" bekommen bewusst
+  // KEINEN eigenen Eintrag hier: "haus" ist Teilstring von "treppenhaus",
+  // ein eigener Key würde dank `getRaumEmoji()`s Teilstring-Suche (statt
+  // Vollwort-Vergleich) je nach Objekt-Reihenfolge Treppenhaus fälschlich
+  // dieses Emoji zuweisen — sie fallen absichtlich auf das 🏠-Fallback
+  // zurück (unverändertes Verhalten, kein Regressionsrisiko).
+  wohnung:       '🏡',
 }
 
 function getRaumEmoji(raumName: string): string {

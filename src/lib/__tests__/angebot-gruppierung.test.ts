@@ -99,4 +99,36 @@ describe('gruppiereNachRaum — Allgemein bleibt sauber', () => {
     expect(g.raeume[0].items).toHaveLength(3)
     expect(g.allgemein).toHaveLength(0)
   })
+
+  // DC-040 (2026-08-29): dieselbe Fehlerkategorie wie PM-005/PM-019, diesmal
+  // vorab statt live gefunden — "Wohnung" (Wohnung-als-Ganzes-Aufnahme, siehe
+  // istGesamtflaechenRaum() in kontext-analyzer.ts) enthielt keins der
+  // bisherigen Schlüsselwörter. Ohne den Fix wäre die Berechnung korrekt
+  // (Wand-/Bodenfläche als eigener Raum), die Anzeige hätte die Position aber
+  // ohne Raumkarte/Maße-Header in den Allgemein-Topf geworfen.
+  it('DC-040: "Wohnung" (Wohnung als Ganzes) bekommt eine eigene Raumgruppe mit eigenem Symbol', () => {
+    const g = gruppiereNachRaum([
+      item('1', 'Wand mit Latexfarbe streichen 2x — Wohnung', 900),
+      item('2', 'Laminat verlegen — Wohnung', 660),
+    ])!
+    expect(g).not.toBe(null)
+    expect(g.raeume).toHaveLength(1)
+    expect(g.raeume[0].raumName).toBe('Wohnung')
+    expect(g.raeume[0].items).toHaveLength(2)
+    expect(g.raeume[0].emoji).toBe('🏡')
+    expect(g.allgemein).toHaveLength(0)
+  })
+
+  // Absicherung für die Emoji-Zuordnung: "haus" ist ein Teilstring von
+  // "treppenhaus" — ein eigener "haus"-Eintrag in RAUM_EMOJIS dürfte
+  // Treppenhaus je nach Objekt-Reihenfolge nicht sein 📐 wegnehmen. Deshalb
+  // bewusst KEIN eigener "haus"-Eintrag (siehe Kommentar in
+  // angebot-gruppierung.ts) — dieser Test hält das Verhalten fest.
+  it('DC-040: "Treppenhaus" behält sein eigenes Symbol, auch mit dem neuen "haus"-Schlüsselwort', () => {
+    const g = gruppiereNachRaum([
+      item('1', 'Wandflächen streichen — Treppenhaus'),
+    ])!
+    expect(g!.raeume[0].raumName).toBe('Treppenhaus')
+    expect(g!.raeume[0].emoji).toBe('📐')
+  })
 })
