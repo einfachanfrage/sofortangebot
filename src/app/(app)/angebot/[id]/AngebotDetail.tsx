@@ -337,7 +337,20 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
   const isEditing = editingId === item.id
   const isUnsure = (item.confidence ?? 1) < 0.7
-  const materialVorschlag = materialFuerPosition(titleOverride ?? item.title)
+  // DC-041: bei einer raumgruppierten Position (Titel trägt intern ein
+  // " — Raumname"-Suffix, siehe angebot-gruppierung.ts) zeigt/bearbeitet
+  // das Eingabefeld NUR den sichtbaren Basis-Titel (`titleOverride`), nicht
+  // den vollen Rohtitel — sonst stünde z. B. bei einem gerade per "Raum
+  // hinzufügen" angelegten Platzhalter wortwörtlich "— Schlafzimmer" im
+  // Titelfeld. `raumSuffix` merkt sich den abgeschnittenen Teil, damit er
+  // beim Speichern automatisch wieder drangehängt wird und die
+  // Raum-Zuordnung erhalten bleibt.
+  const basisTitel = titleOverride ?? item.title
+  const dashMatch = item.title.match(/\s+[-–—]\s+.+$/)
+  const raumSuffix = (titleOverride !== undefined && dashMatch && item.title.slice(0, dashMatch.index!).trim() === titleOverride)
+    ? dashMatch[0]
+    : ''
+  const materialVorschlag = materialFuerPosition(basisTitel)
   const preisFehlt = !item.price_item_id && item.unit_price <= 0
 
   // DC-039: nur eine frisch per "+ Position" angelegte, noch nicht mit der
@@ -349,7 +362,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   const [neuAnlegenModus, setNeuAnlegenModus] = useState(false)
   const [neuEinheit, setNeuEinheit] = useState('m²')
   const [neuPreisText, setNeuPreisText] = useState('')
-  const vorschlaege = istNeueSuchePosition && sucheOffen ? sucheVorschlaege(item.title, priceItems) : []
+  const vorschlaege = istNeueSuchePosition && sucheOffen ? sucheVorschlaege(basisTitel, priceItems) : []
 
   return (
     <div
@@ -369,8 +382,8 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
         <div className="flex items-start gap-2">
           <div className="flex-1 min-w-0 relative">
             <input
-              value={item.title}
-              onChange={e => { updateEditItem(item.id, 'title', e.target.value); if (istNeueSuchePosition) setNeuAnlegenModus(false) }}
+              value={basisTitel}
+              onChange={e => { updateEditItem(item.id, 'title', e.target.value + raumSuffix); if (istNeueSuchePosition) setNeuAnlegenModus(false) }}
               onFocus={() => istNeueSuchePosition && setSucheOffen(true)}
               onBlur={() => setTimeout(() => setSucheOffen(false), 150)}
               placeholder={istNeueSuchePosition ? 'Was wurde gemacht? z. B. Wand streichen…' : undefined}
@@ -381,7 +394,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
             {/* DC-039: Live-Vorschläge aus der Preisdatenbank für eine neue,
                 noch unverknüpfte Position — Auswahl übernimmt Titel/Einheit/
                 Preis sofort, sonst inline "neu anlegen". */}
-            {istNeueSuchePosition && sucheOffen && !neuAnlegenModus && item.title.trim() && (
+            {istNeueSuchePosition && sucheOffen && !neuAnlegenModus && basisTitel.trim() && (
               <div
                 className="absolute left-0 right-0 top-full z-20 -mt-1 bg-white rounded-xl shadow-lg border border-[#2C2C2C]/10 max-h-64 overflow-y-auto"
                 onClick={e => e.stopPropagation()}
@@ -415,14 +428,14 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                   className="w-full flex items-center gap-2 px-3 py-2.5 text-left bg-[#F7F7F5] hover:bg-[#F5C400]/15"
                 >
                   <span className="w-5 h-5 rounded-full bg-[#F5C400] flex items-center justify-center text-[12px] font-black shrink-0">+</span>
-                  <span className="text-[11.5px] font-bold text-[#2C2C2C]">Neue Position „{item.title.trim()}" anlegen</span>
+                  <span className="text-[11.5px] font-bold text-[#2C2C2C]">Neue Position „{basisTitel.trim()}" anlegen</span>
                 </button>
               </div>
             )}
 
             {istNeueSuchePosition && neuAnlegenModus && (
               <div className="bg-[#F7F7F5] rounded-xl p-3 mb-2" onClick={e => e.stopPropagation()}>
-                <div className="text-[11.5px] font-bold text-[#2C2C2C] mb-2">„{item.title.trim()}" neu anlegen</div>
+                <div className="text-[11.5px] font-bold text-[#2C2C2C] mb-2">„{basisTitel.trim()}" neu anlegen</div>
                 <div className="flex gap-2 mb-2">
                   <select
                     value={neuEinheit}
@@ -449,7 +462,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                   disabled={!(Number(neuPreisText.replace(',', '.')) > 0)}
                   onMouseDown={e => {
                     e.preventDefault()
-                    onNeuePosition(item.id, item.title.trim(), neuEinheit, Number(neuPreisText.replace(',', '.')))
+                    onNeuePosition(item.id, basisTitel.trim(), neuEinheit, Number(neuPreisText.replace(',', '.')))
                     setNeuAnlegenModus(false)
                     setSucheOffen(false)
                   }}
@@ -1040,7 +1053,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   function applyPreisVorschlag(itemId: string, vorschlag: { title: string; unit: string; unit_price: number; price_item_id: string }) {
     setEditItems(prev => prev.map(item => {
       if (item.id !== itemId) return item
-      const updated = { ...item, title: vorschlag.title, unit: vorschlag.unit, unit_price: vorschlag.unit_price, price_item_id: vorschlag.price_item_id }
+      // DC-041: die Preisdatenbank kennt keine Räume — der Vorschlagstitel
+      // ist immer roomless. Ein vorhandenes " — Raumname"-Suffix der
+      // aktuellen Position (z. B. weil die Position innerhalb eines Raums
+      // per "+ Position" oder als Raum-Platzhalter angelegt wurde) bleibt
+      // beim Übernehmen erhalten, sonst würde die Position aus ihrem Raum
+      // herausfallen und unter "Allgemein" landen.
+      const dashMatch = item.title.match(/\s+[-–—]\s+.+$/)
+      const raumSuffix = dashMatch ? dashMatch[0] : ''
+      const updated = { ...item, title: vorschlag.title + raumSuffix, unit: vorschlag.unit, unit_price: vorschlag.unit_price, price_item_id: vorschlag.price_item_id }
       updated.total_price = updated.quantity * updated.unit_price
       return updated
     }))
