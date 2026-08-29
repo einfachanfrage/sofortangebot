@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-038 NEU: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern in der Zeichnung, nur 3 Vorlagen) — Wandnummern sofort gefixt, für "frei zeichnen" Konzept + Prototyp gebaut, wartet auf Go; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-038 NEU fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -88,7 +88,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | ✅ Beide Teile umgesetzt: Teil 1 (Hinweistext) committet (`e463360`); Teil 2, Datenweg von Head of Product Engineering gebaut + getestet (`b421ac9`), Eingabe-Oberfläche (Zusatz-Chip nach der Stückzahl-Frage, öffnet Breite/Höhe-Felder) vom Product Designer nachgezogen — committet, sobald ein gerade aktiver, gleichzeitiger Commit einer anderen Rolle den Git-Lock freigibt. `tsc` sauber, Live-Test steht für beide Teile noch aus | Product Designer / Head of Product Engineering — beide fertig |
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 | DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
-| DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | 🟡 Wandnummern in der Zeichnung sofort gefixt ("W1 · 4" statt nur "4"). Für "frei zeichnen": Konzept + interaktiver Prototyp gebaut — Kernidee ist, dass eine vereinfachte + auf 90° eingerastete Freihand-Zeichnung genau dieselbe `Wand[]`-Liste erzeugt wie die Vorlagen-Buttons heute, also reines Frontend ohne Backend-Änderung. Wartet auf Sandys Feedback/Go zum Prototyp, bevor der echte Code gebaut wird | Product Designer |
+| DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | ✅ Beide Teile umgesetzt: Teil 1 Wandnummern ("W1 · 4" statt nur "4"); Teil 2 nach Sandys Go ("bau den zecihner") gebaut — neuer vierter Button "✏️ Zeichnen" neben Rechteck/L-Form/U-Form, Freihand-Zeichnung wird per Ramer-Douglas-Peucker vereinfacht + auf 90° eingerastet und direkt in dieselbe `Wand[]`-Liste umgewandelt, die die Vorlagen auch erzeugen — keine Änderung an Berechnung/Vorschau/Speichern nötig, reines Frontend. Committet (`f88ca33`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2887,8 +2887,8 @@ Sandy nötig, bitte im Dokument vermerken):**
 **Datum:** 2026-08-29 (Sandys Reaktion auf den DC-036-Screenshot: „das hier
 find ich aber ehrlicherweise nicht geil")
 
-**Status:** 🟡 Teil 1 (Wandnummern) umgesetzt, Teil 2 (frei zeichnen) als
-Konzept + Prototyp bereit, wartet auf Sandys Go
+**Status:** ✅ Beide Teile umgesetzt (Teil 1 Wandnummern, Teil 2 frei
+zeichnen) — Live-Test steht für Teil 2 noch aus
 
 **Auftrag (Sandys eigene Worte, zusammengefasst):** In der Grundriss-
 Zeichnung stehen nur Meterzahlen an den Kanten, nicht erkennbar, welche
@@ -2906,30 +2906,37 @@ zeigt jetzt `W1 · 4` statt nur `4` — dieselbe Nummerierung wie die
 gerade aktiver, gleichzeitiger Commit einer anderen Rolle den Git-Lock
 freigibt. Scoped `tsc` sauber, Live-Test steht aus.
 
-### Teil 2 — Frei zeichnen statt nur Vorlagen (Konzept + Prototyp)
+### Teil 2 — Frei zeichnen statt nur Vorlagen (umgesetzt)
 
-Vollständiges Konzept in `docs/dc-038-konzept-freihandzeichnen.md`,
-interaktiver Prototyp in `docs/dc-038-freihandzeichnen-prototyp.html`
-(beide an Sandy geschickt). Kernpunkte:
+Konzept in `docs/dc-038-konzept-freihandzeichnen.md`, Prototyp in
+`docs/dc-038-freihandzeichnen-prototyp.html` (beide an Sandy geschickt,
+Rückmeldung: „bau den zecihner"). Echte Umsetzung in
+`RaumGrundrissEditor.tsx`, committet (`f88ca33`):
 
-- Technisch geprüft: `Wand[]` ist schon heute nur `{ laenge, turn?:
-  'L'|'R' }` — eine vereinfachte (Ramer-Douglas-Peucker) und auf 90°
-  eingerastete Freihand-Zeichnung lässt sich direkt in dieses Format
-  umwandeln, inkl. automatisch abgeleitetem `turn` aus der
-  Richtungsänderung zwischen zwei Kanten.
+- Neuer vierter Button „✏️ Zeichnen" neben Rechteck/L-Form/U-Form (nicht
+  deren Ersatz) — öffnet eine SVG-Zeichenfläche, die Nutzer umranden die
+  Raumform mit dem Finger (Pointer Events, `touchAction: none` gegen
+  Scroll-Konflikt).
+- Der rohe Zeichenpfad wird per Ramer-Douglas-Peucker vereinfacht, jede
+  Kantenrichtung relativ zur ersten Wand auf ein Vielfaches von 90°
+  eingerastet, `turn: 'L'|'R'` automatisch aus der Richtungsänderung
+  zwischen zwei Kanten abgeleitet — Ergebnis ist direkt eine gültige
+  `Wand[]`, exakt dasselbe Format, das die drei Vorlagen-Buttons auch
+  erzeugen.
 - Dadurch **keine Änderung an Berechnung, Vorschau oder Speichern nötig**
-  — „frei zeichnen" ist nur ein neuer Weg zur selben Liste, die die drei
-  Vorlagen-Buttons heute schon erzeugen. Anders als DC-037: reines
-  Frontend, keine Backend-Änderung, bleibt komplett in meinem Bereich.
-- Vorschlag: „Frei zeichnen" als VIERTER Button neben Rechteck/L-Form/
-  U-Form (nicht deren Ersatz).
-- Bewusst NICHT direkt gebaut, sondern erst Prototyp — die Zeichenqualität
-  (fühlt sich das Einrasten auf dem Touchscreen gut an?) lässt sich nicht
-  aus einer Beschreibung beurteilen, das muss Sandy selbst antippen.
+  gewesen — „frei zeichnen" ist nur ein neuer Weg zur selben Liste. Reines
+  Frontend, keine Backend-Änderung.
+- Nach dem Zeichnen landet das Ergebnis in derselben editierbaren
+  Wandliste wie bei den Vorlagen (Wand 1/2/3 …, siehe Teil 1) — erkannte
+  Längen sind nur ein grober Startwert, direkt anpassbar. Bei zu wenig
+  erkannten Ecken (unter 3 Wänden) zeigt die Fläche einen Hinweis „nochmal
+  etwas deutlicher zeichnen" statt eines stillen Fehlers.
+- Technische Absicherung: `useRef` statt `setState`-Updater als
+  synchrone Quelle der Wahrheit in den Pointer-Event-Handlern (verhindert
+  doppelte Auslösung des Fertig-Callbacks unter React StrictMode).
 
-Baue ich komplett selbst, sobald Sandy den Prototyp gesehen hat und ein Go
-gibt (oder mit Anmerkungen zurückkommt) — keine Rückfrage an Engineering
-nötig.
+Scoped `tsc --noEmit` (Datei + `raum-geometrie.ts`) sauber. Live-Test auf
+einem echten Touchscreen steht noch aus.
 
 ---
 

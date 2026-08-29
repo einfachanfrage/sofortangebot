@@ -79,5 +79,6 @@ als Zeichnen). Baue ich komplett selbst, keine Rückfrage an Engineering
 nötig, sobald du den Prototyp gesehen hast und sagst "so ungefähr, mach
 das" oder mit Anmerkungen zurückkommst.
 
-**Status:** 🔵 Prototyp fertig, wartet auf dein Feedback/Go, bevor der
-echte Code gebaut wird.
+**Status:** ✅ Gebaut nach deinem Go ("bau den zecihner") — echter Code in
+`RaumGrundrissEditor.tsx`, committet (`f88ca33`), `tsc` sauber. Details
+siehe DC-038 Teil 2 in `docs/design-check.md`.
