@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-25 — DC-034/CoS-021: zwei getrennte Notiz-/Foto-Systeme im Angebot gefunden, Sandy+Chief of Staff haben "zusammenlegen" entschieden, UI-Teil jetzt umgesetzt ("Notizen & Fotos" → "Fotos & Notiz", ein Foto-Pool aus der Aufmaß-Aufnahme, interne Notiz eigenständig); DC-033: Angebotsnummern-Bug gefunden, von Head of Product Engineering behoben. Vortag: DC-002/DC-003 (inkl. Header-Nachtrag)/DC-006/DC-027 — alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-035 NEU: Hinweistext "Flächen vorläufig" vor "Entwurf erstellen" umgesetzt, zweiter Teil (individuelle Öffnungsgröße bei Türen/Fenster-Rückfrage, z.B. große Terrassentür) recherchiert + Spec an Head of Product Engineering übergeben. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -85,6 +85,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
 | DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | 🟡 behoben (Head of Product Engineering, 2026-08-25): Deine Analyse stimmte, die Hauptursache lag aber noch tiefer — der heutige Erstellungsweg (Aufnahme-Flow) hat **nie** eine Nummer angefordert, die Vergabe stand nur in der alten Route. Nummer wird jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind sichtbar. Live-Nachtest steht aus | Head of Product Engineering |
 | DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
+| DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | 🟡 Teil 1 (Hinweistext) umgesetzt, committet (`e463360`), `tsc` sauber, Live-Test steht aus. Teil 2 (individuelle Öffnungsgröße bei Rückfrage) recherchiert + fertige Design-Spec unten, an Head of Product Engineering übergeben | Product Designer (Teil 1, ✅) / Head of Product Engineering (Teil 2) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -2592,6 +2593,96 @@ Hochladen abfragbar (landet automatisch im PDF) und eine Vorab-Warnung ab
 dieselbe Zusage-ohne-Einlösung wie beim alten Schalter passiert. Volle
 Details siehe CoS-021-Erledigungsvermerk in `chief-of-staff-todos.md`.
 Committet (`fde462c`), scoped `tsc` sauber, noch nicht live geprüft.
+
+---
+
+## DC-035 — Vorläufige Flächen beim Einsprechen + fehlende individuelle Öffnungsgröße bei Rückfragen
+
+**Datum:** 2026-08-29 (Sandy, beim Einsprechen aufgefallen)
+
+**Status:** 🟡 Teil 1 umgesetzt, Teil 2 als fertige Spec an Head of Product
+Engineering übergeben
+
+**Auftrag (Sandys eigene Worte, zusammengefasst):** Nach dem Einsprechen
+zeigt die Kartendarstellung, was die KI verstanden hat — aber falls Türen/
+Fenster/Wandöffnungen noch nicht genannt wurden, sind deren Abzüge da noch
+nicht mit drin. Dafür soll ein kleiner Hinweis stehen, dass die Fläche noch
+vorläufig ist. Und wenn dann bei der Rückfrage nach Türen/Fenstern gefragt
+wird, soll der User auch eine eigene Quadratmeterzahl angeben können —
+sonst gibt es bei einer großen Terrassentür (z.B. 2×3m) nur die Wahl
+zwischen unseren hinterlegten Standardmaßen, was bei so einem Fall komplett
+daneben liegt.
+
+### Teil 1 — Hinweistext (umgesetzt)
+
+`src/app/(app)/angebot/[id]/entwurf/page.tsx`: direkt über dem „Entwurf
+erstellen"-Button (dem Moment, in dem der Nutzer von der Karten-Ansicht in
+die eigentliche Berechnung geht) steht jetzt:
+
+> „Flächen sind vorläufig — falls Fenster oder Türen noch nicht genannt
+> wurden, fragen wir im nächsten Schritt kurz nach."
+
+Bewusst als „falls" formuliert statt einer festen Zusage — die Rückfrage
+kommt nur, wenn `kontext-analyzer.ts` wirklich eine Lücke erkennt, nicht
+bei jeder Aufnahme. Committet (`e463360`), scoped `tsc` sauber, noch nicht
+live geprüft.
+
+### Teil 2 — Individuelle Öffnungsgröße bei der Rückfrage (Recherche + Spec)
+
+**Ist-Zustand, geprüft im Code (nicht nur vermutet):**
+
+- Die Rückfrage zu Türen/Fenstern fragt HEUTE noch nicht mal nach einer
+  Standardgröße zum Auswählen — sie fragt nur nach der **Stückzahl**
+  (`kontext-analyzer.ts`, Fragen-Typ `'anzahl'`, sieben Kacheln 0–6 + „Mehr…").
+  Die Größe kommt erst danach, unsichtbar, aus einer festen Annahme in
+  `src/lib/mengen/gewerke/maler.ts` (0,9×2,1m je Tür, 1,2×1,0m je Fenster),
+  wenn keine explizite Größe aus dem Transkript kam.
+- Es gibt in `RueckfragenScreen.tsx` bereits eine fertige Komponente für
+  genau diesen Fall: `MasseEinzelInput` — Breite/Höhe-Eingabe mit
+  Live-m²-Vorschau, erkennt sogar schon Öffnungs-Kontext und beschriftet
+  dann automatisch „Breite"/„Höhe" statt „Länge"/„Breite". Sie wird nur
+  bisher NIE für eine einzelne Tür/Fenster aufgerufen, nur für Raummaße.
+- Die Rechenseite ist **bereits fertig** und bräuchte keine Änderung:
+  `raeume[].tueren`/`.fenster` (`src/lib/mengen/types.ts`) sind schon
+  `Array<{ anzahl?, breite?, hoehe?, annahme? }>` — mehrere unterschiedlich
+  große Öffnungen pro Raum sind vom Datenmodell her schon vorgesehen.
+  `src/lib/mengen/gewerke/vob-uebermessung.ts` zieht Öffnungen bis 2,5m²
+  gar nicht einzeln ab (Pauschale), aber **Öffnungen über 2,5m² — genau
+  Sandys Terrassentür-Beispiel — werden schon heute einzeln mit ihrer
+  echten Größe abgezogen**, wenn eine im Objekt steht. Der Kommentar in der
+  Datei nennt das Terrassentür-Beispiel wortwörtlich.
+- Fazit: die Lücke ist ausschließlich im Frage-/Antwort-Weg, nicht in der
+  Berechnung. Drei Stellen betroffen: `kontext-analyzer.ts` (generiert nur
+  die Stückzahl-Frage), `RueckfragenScreen.tsx` (keine UI, die eine
+  Tür/Fenster-Antwort zu einer Größe macht), `src/lib/mengen/
+  antworten-verarbeiter.ts` (Zeilen ~45–55: schreibt aus der Antwort nur
+  `{ anzahl }`, nie `breite`/`hoehe`).
+
+**Vorschlag (konkret, startbereit):** Kein neuer, separat vom Server
+generierter Fragetyp nötig — schlanker als das zu bauen, geht es rein
+UI-seitig als optionale Erweiterung direkt nach der bestehenden
+Stückzahl-Frage:
+
+1. Sobald eine `tueren_anzahl_*`/`fenster_anzahl_*`-Frage mit ≥ 1
+   beantwortet ist, erscheint darunter ein schlichter, standardmäßig
+   eingeklappter Zusatz-Chip: „Eine davon abweichend groß? (z. B.
+   Terrassentür)" → „Ja" klappt `MasseEinzelInput` für GENAU EINE Öffnung
+   auf (mit m²-Vorschau).
+2. Antwort-Verarbeitung (`antworten-verarbeiter.ts`) schreibt dann nicht
+   mehr eine einzelne `{ anzahl: N }`, sondern zwei Einträge:
+   `[{ anzahl: N - 1 }, { anzahl: 1, breite, hoehe }]` — die Mehrheit läuft
+   weiter über die Standard-Annahme, die eine Ausnahme über ihre echte
+   Größe. Passt ohne Änderung in die schon vorhandene Array-Struktur.
+3. `RueckfragenAntwort`/der Fragen-Typ brauchen dafür ein zusätzliches,
+   optionales Feld für die Ausnahme-Maße neben dem bestehenden
+   Stückzahl-`wert`.
+
+Bewusst NICHT von mir umgesetzt — `kontext-analyzer.ts` und
+`antworten-verarbeiter.ts` sind Extraktions-Pipeline, nicht UI. Sobald
+Head of Product Engineering den Antwort-Datenweg (Punkt 2+3) gebaut hat,
+baue ich den `RueckfragenScreen.tsx`-Teil (Punkt 1) direkt selbst dazu,
+wie beim DC-027-Muster — kein erneuter Auftrag von Sandy nötig, bitte
+einfach im Dokument vermerken, sobald der Datenweg steht.
 
 ---
 
