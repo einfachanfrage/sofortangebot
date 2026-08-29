@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Extraktion, Bodenflächen-Erkennung und Tür-/Fensterabzug per Rückfrage ("nachfragen statt raten", Sandys Entscheidung) umgesetzt; mitgefunden und behoben: die 200-m²-Plausibilitätsgrenze im Prompt hätte eine Wohnungs-Wandfläche verworfen. Live-Test mit echter Sprachaufnahme steht aus; DC-039: "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank (Product Designer), dazu ein von Sandy live gefundener Bug behoben (Vorschlag antippen blieb wirkungslos — Tap schloss die Tastatur und die Liste rutschte weg, bevor der Klick ankam; jetzt `onMouseDown`+`preventDefault`), und eine abgesicherte Schreib-Seite (Head of Product Engineering: eigener Endpunkt `POST /api/preise`, serverseitige Prüfung, Dubletten-Schutz, Rubrik-Regel entdoppelt, `price_item_id` wird endlich mitgespeichert) — wartet jetzt auf Sandys Retest; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-041 NEU: Raum-Platzhalter ("Raum hinzufügen") zeigte im Titelfeld wörtlich "— Schlafzimmer" statt einer leeren, normal beschreibbaren Position (Sandy, Screenshot) — Eingabefeld zeigt/bearbeitet jetzt nur noch den sichtbaren Basistitel, Raum-Zuordnung bleibt beim Speichern automatisch erhalten (auch beim Übernehmen eines Preisdatenbank-Vorschlags); DC-040: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Extraktion, Bodenflächen-Erkennung und Tür-/Fensterabzug per Rückfrage ("nachfragen statt raten", Sandys Entscheidung) umgesetzt; mitgefunden und behoben: die 200-m²-Plausibilitätsgrenze im Prompt hätte eine Wohnungs-Wandfläche verworfen. Mein Anzeige-Teil dazu: "Wohnung" fehlte in der Raum-Erkennung der Anzeige (dieselbe Fehlerkategorie wie PM-005/PM-019) — jetzt nachgezogen, eigenes Symbol 🏡. Live-Test mit echter Sprachaufnahme steht aus; DC-039: "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank (Product Designer), dazu ein von Sandy live gefundener Bug behoben (Vorschlag antippen blieb wirkungslos — Tap schloss die Tastatur und die Liste rutschte weg, bevor der Klick ankam; jetzt `onMouseDown`+`preventDefault`), und eine abgesicherte Schreib-Seite (Head of Product Engineering: eigener Endpunkt `POST /api/preise`, serverseitige Prüfung, Dubletten-Schutz, Rubrik-Regel entdoppelt, `price_item_id` wird endlich mitgespeichert) — wartet jetzt auf Sandys Retest; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -90,7 +90,8 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
 | DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | ✅ Beide Teile umgesetzt: Teil 1 Wandnummern ("W1 · 4" statt nur "4"); Teil 2 nach Sandys Go ("bau den zecihner") gebaut — neuer vierter Button "✏️ Zeichnen" neben Rechteck/L-Form/U-Form, Freihand-Zeichnung wird per Ramer-Douglas-Peucker vereinfacht + auf 90° eingerastet und direkt in dieselbe `Wand[]`-Liste umgewandelt, die die Vorlagen auch erzeugen — keine Änderung an Berechnung/Vorschau/Speichern nötig, reines Frontend. Committet (`f88ca33`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 | DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | ✅ Umgesetzt: Aktionsleiste geprüft (größtenteils selbsterklärend, kein Umbau nötig). "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank direkt im Titelfeld — Vorschlag antippen übernimmt Titel/Einheit/Preis sofort, kein Treffer → "Neue Position anlegen" (Einheit+Preis inline) legt sofort einen echten Eintrag in der Preisdatenbank an (mit Dubletten-Check) und übernimmt ihn in die Position. Komplett Frontend + direkter Supabase-Insert (kein neuer Backend-Endpunkt nötig — price_items-Schreibzugriff existiert im selben Muster schon an anderen Stellen dieser Datei). Committet (`510c977`), scoped `tsc` sauber. **Bugfix (Product Designer, Sandys Live-Test):** Vorschlag antippen blieb wirkungslos — Ursache: Tap auf den Vorschlag ließ das Titelfeld zuerst den Fokus verlieren (Tastatur schließt, Seite rutscht), bevor der Klick registriert wurde, klassischer Mobile-Combobox-Bug. Fix: alle drei interaktiven Elemente der Suche (Vorschlag, „Neue Position anlegen", „Anlegen & übernehmen") von `onClick` auf `onMouseDown`+`preventDefault()` umgestellt, damit das Feld den Fokus gar nicht erst verliert. Committet (`a22d3f3`), scoped `tsc` sauber. Live-Test der Suche + des Bugfix steht aus. **Nachtrag Head of Product Engineering (Sandys Auftrag „dc039"):** Schreib-Seite auf einen eigenen Endpunkt `POST /api/preise` umgestellt — serverseitige Prüfung (Titel-Länge, Einheit, Tippfehler-Grenze beim Preis), robusterer Dubletten-Schutz (`.maybeSingle()` wäre bei historischen Dubletten im Katalog fehlgeschlagen) und die Rubrik-Regel jetzt in EINER Datei statt doppelt (CoS-019-Lehre). Mitgefixt: `price_item_id` wurde beim Speichern nie gesetzt. 9 neue Tests, Suite grün | Product Designer (UI, ✅) / Head of Product Engineering (Schreib-Seite, ✅) |
-| DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). **Umgesetzt (Head of Product Engineering, 2026-08-29):** Prompt-Abschnitt "WOHNUNG / HAUS ALS GANZES" nach Fassaden-Vorbild, `extrahiereBodenflaeche()` als Gegenstück zur Wandflächen-Erkennung (statt eines neuen Feldes ins bestehende `flaeche`), und der Tür-/Fensterabzug per Ja/Nein-Rückfrage ("Sind die 120 m² inklusive Türen und Fenster?", Sandys Entscheidung "nachfragen statt raten") — bei "ja" folgen die vorhandenen Stückzahlfragen, Abzug nach derselben VOB-Regel wie überall. Zusätzlich gefunden und behoben: die Prompt-Regel "flaeche > 200 → null" hätte eine Wohnungs-Wandfläche stillschweigend verworfen. Bewusst nur für Gesamtflächen-Räume, Einzelräume unverändert. 13 neue Tests, `tsc` sauber, Suite grün. OFFEN: Live-Test mit echter Sprachaufnahme (Prompt-Änderung — Tests prüfen die Regel, nicht das Modellverhalten); UI-Teil (🏡-Emoji) beim Product Designer | Head of Product Engineering (Extraktion/Berechnung, ✅) / Product Designer (Anzeige, folgt) |
+| DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). **Umgesetzt (Head of Product Engineering, 2026-08-29):** Prompt-Abschnitt "WOHNUNG / HAUS ALS GANZES" nach Fassaden-Vorbild, `extrahiereBodenflaeche()` als Gegenstück zur Wandflächen-Erkennung (statt eines neuen Feldes ins bestehende `flaeche`), und der Tür-/Fensterabzug per Ja/Nein-Rückfrage ("Sind die 120 m² inklusive Türen und Fenster?", Sandys Entscheidung "nachfragen statt raten") — bei "ja" folgen die vorhandenen Stückzahlfragen, Abzug nach derselben VOB-Regel wie überall. Zusätzlich gefunden und behoben: die Prompt-Regel "flaeche > 200 → null" hätte eine Wohnungs-Wandfläche stillschweigend verworfen. Bewusst nur für Gesamtflächen-Räume, Einzelräume unverändert. 13 neue Tests, `tsc` sauber, Suite grün. **Anzeige-Teil umgesetzt (Product Designer, 2026-08-29):** "Wohnung" (und Geschwister Haus/Etage/Geschoss/Stockwerk) fehlten in der Raum-Erkennung der Anzeige (`angebot-gruppierung.ts`) — dieselbe Fehlerkategorie wie PM-005 (Speisekammer)/PM-019 (Gästeklo): trotz korrekter Berechnung wäre die Position ohne Raumkarte/Maße-Header im Allgemein-Topf gelandet. Schlüsselwörter ergänzt (deckungsgleich mit Engineerings `istGesamtflaechenRaum()`), "Wohnung" bekommt ein eigenes Symbol (🏡) statt sich das generische 🏠 mit Fassade zu teilen; Haus/Etage/Geschoss/Stockwerk bewusst ohne eigenes Symbol (Kollisionsrisiko mit "Treppenhaus", per Test abgesichert). Committet (`3149406`), `tsc` sauber. OFFEN: Live-Test mit echter Sprachaufnahme (Prompt-Änderung — Tests prüfen die Regel, nicht das Modellverhalten) | Head of Product Engineering (Extraktion/Berechnung, ✅) / Product Designer (Anzeige, ✅) |
+| DC-041 | Raum-Platzhalter ("Raum hinzufügen" → neue leere Position im Raum) zeigte im Titel-Eingabefeld wörtlich "— Schlafzimmer" statt einer leeren, normal beschreibbaren Position — "sieht kacke aus und dumm" (Sandy, Screenshot, 2026-08-29) | ✅ Root-Cause: der interne " — Raumname"-Suffix, mit dem eine Position ihrem Raum zugeordnet wird (`angebot-gruppierung.ts`), steckt komplett im `title`-Feld selbst; die Anzeige blendet ihn beim Lesen zwar aus (`titleOverride`), das EDIT-Eingabefeld band aber direkt an den Rohtitel statt an den bereits vorhandenen Anzeige-Wert. Fix: Eingabefeld zeigt/bearbeitet nur noch den sichtbaren Basistitel, der Raum-Suffix wird beim Speichern automatisch wieder drangehängt (auch beim Übernehmen eines Preisdatenbank-Vorschlags, sonst wäre die Position aus ihrem Raum herausgefallen). Komplett Frontend, keine Backend-Änderung. Committet (`6a1fa0d`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -3097,8 +3098,9 @@ sag Bescheid, dann ergänze ich das Feld.
 **Datum:** 2026-08-29 (Sandy, weitergegeben von Clemens, selbst Maler,
 künftiger Testnutzer)
 
-**Status:** 🔵 Root-Cause + vollständige Spec fertig, Umsetzung braucht
-Head of Product Engineering (Extraktion + Berechnung)
+**Status:** ✅ Extraktion/Berechnung (Head of Product Engineering) und
+Anzeige-Teil (Product Designer) umgesetzt — Live-Test mit echter
+Sprachaufnahme steht aus (Prompt-Änderung, Tests prüfen nur die Regel)
 
 **Auftrag (zusammengefasst):** Handwerker sprechen sehr häufig nicht
 raumweise, sondern betrachten die Wohnung als Ganzes — z. B. "in der
@@ -3137,15 +3139,32 @@ Sonderfall mitlaufen.
 Vollständige Spec (4 konkrete Schritte für Prompt/Pipeline/Berechnung) in
 `docs/dc-040-wohnung-als-ganzes.md`.
 
-### Mein Teil (Product Designer)
+### ✅ Mein Teil (Product Designer, 2026-08-29, direkt nach Engineerings Nachtrag umgesetzt)
 
-Auf der Anzeige-Seite rechne ich damit, dass eine "Wohnung"-Position
-größtenteils automatisch als eigene Raumgruppe erscheint, sobald die
-Extraktion steht — dasselbe Muster trägt schon "Fassade". Kleine Politur:
-`RAUM_EMOJIS` bekommt einen eigenen Eintrag für "wohnung" (Vorschlag: 🏡,
-statt sich das generische 🏠 mit Fassade zu teilen). Baue und teste ich
-selbst, sobald der Extraktions-/Rechenweg von Engineering steht — kein
-erneuter Auftrag nötig.
+Die Annahme "erscheint größtenteils automatisch als eigene Raumgruppe,
+sobald die Extraktion steht" stimmte nur teilweise — beim Nachprüfen war
+"Wohnung" tatsächlich NICHT in der Raum-Erkennung der Anzeige
+(`angebot-gruppierung.ts`s `RAUM_KEYWORDS`) enthalten. Das ist exakt dieselbe
+Fehlerkategorie wie PM-005 (Speisekammer) und PM-019 (Gästeklo): die
+Berechnung hätte "Wohnung" korrekt als eigenen Raum mit Wand-/Bodenfläche
+geführt, die Anzeige hätte die Position aber mangels erkanntem Schlüsselwort
+ohne Raumkarte/Maße-Header in den Allgemein-Topf geworfen — nur noch mit
+sichtbarem "— Wohnung"-Suffix im Titel (siehe auch DC-041 direkt darunter,
+ein verwandtes, aber anderes Symptom desselben Titel-Suffix-Mechanismus).
+
+Behoben: `wohnung`, `haus`, `etage`, `geschoss`, `stockwerk` zu
+`RAUM_KEYWORDS` ergänzt — deckungsgleich mit Engineerings eigener
+`istGesamtflaechenRaum()`-Wortliste in `kontext-analyzer.ts` (gleiche Quelle,
+nicht neu erfunden). `RAUM_EMOJIS` bekommt "wohnung": 🏡, eigenes Symbol statt
+sich das generische 🏠-Fallback mit Fassade zu teilen. Bewusst KEIN eigener
+Emoji-Eintrag für Haus/Etage/Geschoss/Stockwerk: "haus" ist Teilstring von
+"treppenhaus", ein eigener Eintrag hätte Treppenhaus sein bestehendes 📐
+wegnehmen können (Teilstring-Suche, keine Wortgrenzen) — sie fallen bewusst
+auf 🏠 zurück, unverändertes Verhalten. Zwei neue Tests (Wohnung-Gruppierung
++ Symbol, Treppenhaus-Symbol bleibt trotz "haus"-Keyword unverändert),
+committet (`3149406`), scoped `tsc` sauber (`vitest` lässt sich in dieser
+Geräte-Umgebung wegen einer fehlenden Linux-`rolldown`-Bindung nicht
+ausführen — bekannte Umgebungs-Einschränkung, betrifft nicht den Code).
 
 ### ✅ Extraktion + Berechnung umgesetzt (Head of Product Engineering, 2026-08-29, Sandys Auftrag)
 
@@ -3201,6 +3220,62 @@ inklusive Terrassentür). `tsc --noEmit` sauber, Suite grün
 Verhalten eines Sprachmodells — Tests können hier nur die Regel prüfen, nicht
 das Ergebnis. Der Satz von Clemens muss einmal echt eingesprochen werden,
 bevor wir DC-040 als erledigt betrachten.
+
+---
+
+## DC-041 — Raum-Platzhalter zeigte im Titelfeld wörtlich "— Schlafzimmer"
+
+**Datum:** 2026-08-29 (Sandy, zwei Screenshots aus dem echten Angebot)
+
+**Status:** ✅ behoben, Live-Test steht aus
+
+**Auftrag (zusammengefasst):** "wenn ich nachträglich einen Raum ergänze
+dann kommt richtig der neue Abschnitt quasi Schlafzimmer aber automatisch
+auch so eine Position wo steht '- Schlafzimmer' das sieht kacke aus und
+dumm... also man soll einfach normal dann neue Positionen da eingeben können
+ohne dass da - schlafzimmer steht." Beim Antippen von "🏠 Raum" → "Schlafzimmer"
+erschien der neue Raum-Abschnitt korrekt, aber die dabei automatisch
+angelegte leere Position zeigte im Titel-Eingabefeld wörtlich "— Schlafzimmer"
+statt eines leeren, normal beschreibbaren Felds.
+
+**Root-Cause:** die Raum-Zuordnung einer Position läuft in diesem Code NICHT
+über ein eigenes Datenfeld, sondern steckt als " — Raumname"-Suffix direkt im
+`title`-String selbst (`angebot-gruppierung.ts`, DASH-Regex trennt beim
+Anzeigen Basistitel und Raumname wieder auf). `addRaumPosition()` legt beim
+"Raum hinzufügen" bewusst eine Position mit LEEREM Basistitel an — der volle
+Rohtitel lautet also exakt `" — Schlafzimmer"`. Die schreibgeschützte Anzeige
+blendet den Suffix korrekt aus (`titleOverride`), das EDIT-Eingabefeld band
+aber direkt an `item.title` (den vollen Rohtitel) statt an den bereits
+vorhandenen, sichtbaren Anzeige-Wert — dadurch stand der Suffix nackt im
+Eingabefeld, sobald man draufklickte.
+
+**Fix (`AngebotDetail.tsx`, `SortableItem`):**
+
+- Neuer `basisTitel` (= `titleOverride ?? item.title`) und `raumSuffix`
+  (der abgeschnittene " — Raumname"-Teil, nur wenn `titleOverride`
+  tatsächlich etwas abgeschnitten hat — bei einer nicht als Raum erkannten
+  Position mit sichtbarem Bindestrich im Titel, z. B. "1. Anstrich", bleibt
+  alles wie bisher).
+- Das Eingabefeld zeigt/bearbeitet nur noch `basisTitel` — bei der
+  Raum-Platzhalter-Position also ein leeres Feld mit dem normalen
+  "Was wurde gemacht?"-Platzhaltertext, exakt wie eine frisch per
+  "+ Position" angelegte Zeile.
+- Beim Tippen wird `raumSuffix` automatisch wieder ans Ende gehängt
+  (`e.target.value + raumSuffix`), damit die Position ihrem Raum zugeordnet
+  bleibt, ohne dass die Nutzerin das jemals sieht.
+- Dieselbe Lücke gab es beim Übernehmen eines Preisdatenbank-Vorschlags
+  (`applyPreisVorschlag`): der Vorschlagstitel aus der Preisdatenbank kennt
+  keine Räume und hätte den Raum-Suffix beim Übernehmen komplett gelöscht —
+  die Position wäre aus ihrem Raum herausgefallen und unter "Allgemein"
+  gelandet. Jetzt wird der Suffix der aktuellen Position auch dort erhalten.
+- Alle Preisdatenbank-Such-/Anlege-Textstellen (Live-Suche, "Neue Position
+  anlegen"-Vorschau, der letztlich in der Preisdatenbank gespeicherte Titel)
+  auf `basisTitel` statt des rohen `item.title` umgestellt — sonst hätte
+  z. B. eine neu angelegte Preisdatenbank-Position den Raumnamen im Titel
+  mitbekommen ("Wand streichen — Schlafzimmer" statt "Wand streichen").
+
+Komplett Frontend, keine Backend-/Datenmodell-Änderung. Committet
+(`6a1fa0d`), scoped `tsc` sauber. Live-Test steht aus.
 
 ---
 
