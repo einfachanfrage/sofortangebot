@@ -23,6 +23,18 @@ function normalisiereTyp(typ: KIRueckfrageRaw['typ']): RueckfrageTyp {
   return typ
 }
 
+// DC-035: Türen/Fenster-Stückzahlfragen dürfen eine abweichend große Öffnung
+// mitnehmen. Die Standardmaße sind dieselben, mit denen maler.ts rechnet.
+function ausnahmeMasseFuer(id: string): RueckfrageItem['ausnahme_masse'] {
+  if (/^tueren_anzahl_/.test(id)) {
+    return { label: 'Eine davon abweichend groß? (z. B. Terrassentür)', standard_breite: 0.9, standard_hoehe: 2.1 }
+  }
+  if (/^fenster_anzahl_/.test(id)) {
+    return { label: 'Eines davon abweichend groß? (z. B. Panoramafenster)', standard_breite: 1.2, standard_hoehe: 1.0 }
+  }
+  return undefined
+}
+
 function konvertiereKIRueckfrage(frage: KIRueckfrageRaw): RueckfrageItem {
   const typ = normalisiereTyp(frage.typ)
   // Flächen-Rückfragen (Dachschräge) sind freie m²-Eingaben, keine Stückzahl.
@@ -34,6 +46,7 @@ function konvertiereKIRueckfrage(frage: KIRueckfrageRaw): RueckfrageItem {
     kontext: frage.betrifft ?? '',
     typ,
     einheit,
+    ausnahme_masse: ausnahmeMasseFuer(frage.id),
     schnell_antworten: (frage.schnell_antworten ?? [])
       .filter(option => option.wert !== null)
       .map(option => ({

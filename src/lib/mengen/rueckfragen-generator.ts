@@ -35,6 +35,21 @@ export interface RueckfrageItem {
     /** Der Satz aus dem Transkript, aus dem der Wert stammt — als Beleg. */
     zitat: string
   }
+  /**
+   * DC-035: Bei Stückzahl-Fragen nach Türen/Fenstern darf EINE Öffnung
+   * abweichend groß sein (Terrassentür, Panoramafenster). Ist das Feld
+   * gesetzt, darf die Oberfläche dazu eine optionale, eingeklappte
+   * Maß-Eingabe anbieten; die Antwort trägt die Maße dann in
+   * `RueckfragenAntwort.ausnahme`. Fehlt das Feld, ist es eine ganz normale
+   * Stückzahl-Frage.
+   */
+  ausnahme_masse?: {
+    /** Beschriftung für den Aufklapper, z.B. „Eine davon abweichend groß?". */
+    label: string
+    /** Standardmaß, das für alle übrigen Öffnungen gilt — als Platzhalter. */
+    standard_breite: number
+    standard_hoehe: number
+  }
 }
 
 function artikel(name: string): string {

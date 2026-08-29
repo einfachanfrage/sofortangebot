@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/app/(app)/angebot/[id]/entwurf/page.tsx"]
+}

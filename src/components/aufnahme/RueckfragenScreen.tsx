@@ -7,6 +7,13 @@ import type { RueckfrageItem, RueckfrageTyp, SchnellAntwort } from '@/lib/mengen
 export interface RueckfragenAntwort {
   wert: number | number[]
   einheit: string
+  /**
+   * DC-035: Optionale Maße EINER abweichend großen Öffnung, wenn die Frage
+   * `ausnahme_masse` anbietet (Terrassentür, Panoramafenster). Die
+   * Antwort-Verarbeitung macht daraus zwei Öffnungs-Einträge: die Mehrheit
+   * über die Standard-Annahme, diese eine über ihre echten Maße.
+   */
+  ausnahme?: { breite: number; hoehe: number } | null
 }
 
 interface Props {
@@ -541,7 +548,13 @@ function formatAntwort(frage: RueckfrageItem, antwort: RueckfragenAntwort): stri
   }
   if (!Array.isArray(wert)) {
     const einheit = antwort.einheit && antwort.einheit !== 'bool' ? antwort.einheit : (frage.einheit ?? 'Stück')
-    return `${String(wert).replace('.', ',')} ${einheit}`
+    const basis = `${String(wert).replace('.', ',')} ${einheit}`
+    // DC-035: eine abweichend große Öffnung sichtbar machen.
+    const a = antwort.ausnahme
+    if (a && a.breite > 0 && a.hoehe > 0) {
+      return `${basis} · eine davon ${String(a.breite).replace('.', ',')} × ${String(a.hoehe).replace('.', ',')} m`
+    }
+    return basis
   }
   return 'Erfasst'
 }

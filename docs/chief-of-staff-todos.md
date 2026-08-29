@@ -47,7 +47,7 @@ Lösungsvorschlag: CoS-013.
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ✅ erledigt — bereits am 20.08. im Preisdatenbank-Audit mit erledigt, Ticket war nur nicht nachgezogen (Nachtrag 24.08.). Live-Nachtest offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | 🟡 umgesetzt (Landingpage, PlanWahlModal, `/vorschau` entfernt/umgeleitet, zentrale `pricing.ts` angelegt), Live-Nachtest steht aus | `docs/design-check.md` DC-001 |
-| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | 🟡 Code vollständig umgesetzt und gepusht (alle drei Schritte, inkl. Mehrfach-Aufnahmen-Fall). Live-Nachtest durch Sandy (21.08.) fand einen echten Bug: Karte zeigte „Boden schützen 0 m²" statt 12. Ursache war NICHT die Berechnung (DB-Check bestätigte sie als korrekt), sondern eine leere `supabase_realtime`-Publication — die Karte sollte sich automatisch aktualisieren, sobald die geprüfte Extraktion da ist, bekam davon aber nie ein Signal und fiel nach 30s dauerhaft auf die fehleranfällige Chip-Vorschau zurück. Fix direkt auf der Produktions-DB angewendet (Migration, kein Deploy nötig), Sandys Bestätigungstest steht noch aus | Sandy-Entscheidung 20.08. + 21.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md`, DC-030 in `docs/design-check.md` |
+| CoS-002 | Strukturelle Ursache für „Karte zeigt anderes als Berechnung": zwei unabhängige GPT-Aufrufe | ✅ **vollständig abgeschlossen (25.08.).** Code vollständig umgesetzt und gepusht (alle drei Schritte, inkl. Mehrfach-Aufnahmen-Fall). Live-Nachtest durch Sandy (21.08.) fand einen echten Bug: Karte zeigte „Boden schützen 0 m²" statt 12. Ursache war NICHT die Berechnung (DB-Check bestätigte sie als korrekt), sondern eine leere `supabase_realtime`-Publication — die Karte sollte sich automatisch aktualisieren, sobald die geprüfte Extraktion da ist, bekam davon aber nie ein Signal und fiel nach 30s dauerhaft auf die fehleranfällige Chip-Vorschau zurück. Fix direkt auf der Produktions-DB angewendet (Migration, kein Deploy nötig). **Sandys Bestätigungs-Retest ist bestanden — zweifach:** Product Designer hat bereits am 23.08. in `design-check.md` (DC-021) „Sandy: dc021 passt" dokumentiert; das war mir hier entgangen (eigener Sync-Fehler meinerseits, nicht Product Designers — deshalb stand hier bis heute fälschlich „steht noch aus"). Heute (25.08.) hat Sandy den exakt gleichen Test unabhängig noch einmal live gemacht („Wohnzimmer streichen, 3x4 Meter" → „Boden schützen 12 m²" korrekt) und bestätigt: „ja passt". Damit ist CoS-002 in jeder Hinsicht fertig, kein offener Schritt mehr | Sandy-Entscheidung 20.08. + 21.08., voller Vorschlag: `docs/cos-002-architektur-vorschlag.md`, DC-030/DC-021 in `docs/design-check.md` |
 | CoS-009 | Team-Struktur: Head-of-IT-Rolle in zwei Positionen splitten? | ✅ entschieden — Sandy hat zugestimmt | Vier-Augen-Gespräch Sandy ↔ Head of Product Engineering, 2026-08-17 |
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
@@ -1675,7 +1675,7 @@ lassen, damit ihr sie selbst committet.
 **Datum:** 2026-08-25 (Chief of Staff, nach Sandys Nachfrage „hat HoPE das
 nicht heute schon gefixt?")
 
-**Status:** 🔵 neu, an Head of Product Engineering
+**Status:** 🟡 fast fertig — Fix committet, `design-check.md` DC-033 steht auf „behoben". Offen: Push/Deploy-Verifikation, Live-Nachtest, Sandys Entscheidung zu Punkt 3 (siehe `entscheidungen-fuer-sandy.md`)
 
 **Ausgangslage:** DC-033 (`design-check.md`) ist ein echter, in Produktion
 bestätigter Bug — das Nummernkreis-RPC (`vergib_naechste_nummer`) schlägt
@@ -1767,6 +1767,46 @@ mir den halben Weg gespart, das steht auch so drin).
 **Was noch fehlt, damit der Fall wirklich zu ist:** der Live-Nachtest. Ein
 Angebot fertigstellen und sehen, dass „AG-2026-004" dransteht statt eines
 ID-Fragments. Vorher würde ich DC-033 nicht auf grün setzen.
+
+**Update (Sandy, 2026-08-25):** Hat den Befehl ausgeführt, ist committet.
+Chief-of-Staff-Notiz: Committen ist nicht automatisch Deployen — bitte
+kurz gegenchecken, ob es auch gepusht ist (bzw. Vercel den Build gezogen
+hat), dann den Live-Nachtest machen (Angebot fertigstellen, echte Nummer
+statt ID-Fragment sehen). Erst danach DC-033/CoS-022 wirklich auf grün.
+
+**Update (Chief of Staff, 29.08.):** `design-check.md` bestätigt inzwischen
+DC-033 als „🟡 behoben" — passt zur Rückmeldung oben. Noch offen: Push/
+Deploy-Verifikation, Live-Nachtest, und Sandys Entscheidung zu Punkt 3
+(unverändert offen in `entscheidungen-fuer-sandy.md`).
+
+---
+
+## CoS-023 — Governance: eigener Sync-Fehler bei CoS-P-003/CoS-P-004 (PKCE-/Mail-Fix)
+
+**Datum:** 2026-08-29 (Chief of Staff, selbst entdeckt)
+
+**Status:** ✅ erkannt und korrigiert, keine weitere Aktion an Kollegen nötig
+
+**Was passiert ist:** `chief-of-staff-platform-todos.md` verzeichnet seit
+dem 25.08. beide Fixes als umgesetzt — Passwort-Reset (CoS-P-003, korrekter
+PKCE-Tausch über `/auth/callback`, auf Sandys Freigabe „003 ja bitte direkt
+reparieren") und Transaktions-Mails (CoS-P-004, alle drei jetzt über die
+eigene Resend-Anbindung, auf Sandys Freigabe „004 bitte b)"). Der Chief of
+Staff hat das mehrere Tage lang übersehen und Sandy gegenüber wiederholt
+fälschlich behauptet, der Passwort-Reset-Bug sei „weiterhin ungefixt,
+wichtigster offener Sicherheitsfund" — obwohl der Fix längst dokumentiert
+war. Kein Fehler von Platform & Integrations Engineer, reiner Lesefehler
+beim Abgleich. `launch-readiness.md` (2.2/2.3/3.1) ist jetzt korrigiert.
+
+**Was wirklich noch fehlt:** ein echter Klick-Durchlauf mit echtem Postfach
+(Test-Registrierung, echten Reset-Link anklicken) — aus keiner
+Kollegen-Session heraus möglich (kein E-Mail-Zugriff), das ist Sandys
+eigene Aufgabe, ähnlich wie ihr CoS-002-Retest.
+
+**Lektion, festgehalten für künftige Abgleiche:** bei jeder Behauptung wie
+„X ist unverändert offen" aktiv in der aktuellen Heimat-Datei nachsehen,
+nicht aus dem Gedächtnis wiederholen — genau der Fehler, der hier passiert
+ist.
 
 ---
 

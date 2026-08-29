@@ -13,13 +13,47 @@ type RaumMit = ExtrahierteDaten['raeume'][number] & {
   belag?: string
 }
 
-export type KalkulationsAntwort = { wert: number | number[]; einheit: string } | null
+export type KalkulationsAntwort = {
+  wert: number | number[]
+  einheit: string
+  /**
+   * DC-035: Bei Stückzahl-Fragen nach Türen/Fenstern darf EINE Öffnung
+   * abweichend groß sein (Terrassentür, Panoramafenster). Fehlt das Feld,
+   * verhält sich alles wie bisher.
+   */
+  ausnahme?: { breite: number; hoehe: number } | null
+} | null
 export type KalkulationsAntworten = Record<string, KalkulationsAntwort>
 
 const BELAG_MAP: Record<number, string> = { 1: 'Laminat', 2: 'Vinyl', 3: 'Parkett', 4: 'Teppich' }
 
 function raumById(raeume: RaumMit[], raumId: string): RaumMit | undefined {
   return raeume.find(r => (r.name ?? '').toLowerCase().replace(/\s+/g, '_') === raumId)
+}
+
+/**
+ * DC-035: Aus Stückzahl + optionaler Ausnahme-Größe die Öffnungsliste bauen.
+ *
+ * Ohne Ausnahme wie bisher ein einziger Eintrag `{ anzahl: N }` — die Maße
+ * kommen dann aus den Standard-Annahmen der Maler-Engine (Tür 0,90 × 2,10 m,
+ * Fenster 1,20 × 1,00 m).
+ *
+ * Mit Ausnahme zwei Einträge: die Mehrheit läuft weiter über die Annahme, die
+ * eine abweichende Öffnung über ihre echten Maße. Dadurch greift die
+ * VOB-Übermessung (nur Öffnungen > 2,5 m² einzeln abziehen, PM-021) genau für
+ * diese eine Öffnung — der Terrassentür-Fall.
+ */
+function baueOeffnungen(
+  wert: number,
+  ausnahme?: { breite?: number; hoehe?: number } | null,
+): Array<{ anzahl?: number; breite?: number; hoehe?: number }> {
+  const anzahl = Math.max(0, Math.floor(wert))
+  const breite = Number(ausnahme?.breite) || 0
+  const hoehe = Number(ausnahme?.hoehe) || 0
+  if (anzahl < 1 || breite <= 0 || hoehe <= 0) return [{ anzahl }]
+  const rest = anzahl - 1
+  const ausnahmeEintrag = { anzahl: 1, breite, hoehe }
+  return rest > 0 ? [{ anzahl: rest }, ausnahmeEintrag] : [ausnahmeEintrag]
 }
 
 export function verarbeiteAntworten(
@@ -45,14 +79,14 @@ export function verarbeiteAntworten(
     const tuerenM = id.match(/^tueren_anzahl_(.+)$/)
     if (tuerenM && typeof antwort.wert === 'number') {
       const raum = raumById(angereichert.raeume, tuerenM[1])
-      if (raum) raum.tueren = [{ anzahl: Math.max(0, Math.floor(antwort.wert)) }]
+      if (raum) raum.tueren = baueOeffnungen(antwort.wert, antwort.ausnahme)
       continue
     }
 
     const fensterM = id.match(/^fenster_anzahl_(.+)$/)
     if (fensterM && typeof antwort.wert === 'number') {
       const raum = raumById(angereichert.raeume, fensterM[1])
-      if (raum) raum.fenster = [{ anzahl: Math.max(0, Math.floor(antwort.wert)) }]
+      if (raum) raum.fenster = baueOeffnungen(antwort.wert, antwort.ausnahme)
       continue
     }
 

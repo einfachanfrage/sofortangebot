@@ -34,16 +34,149 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 21.08.2026, Abend/Tagesabschluss)
+## Gate-Fortschritt (Stand 29.08.2026)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **25 %** (von 23 % — echte Bewegung, kein Rauschen, siehe unten) | 46 |
-| **Gate 2** — öffentlicher Launch | **13 %** (unverändert, keine neue G2-Bewegung heute) | 37 |
+| **Gate 1** — erste Testnutzer | **34 %** (siehe Korrektur-Hinweis + Update unten) | 46 |
+| **Gate 2** — öffentlicher Launch | **13 %** (unverändert, einzige Bewegung 5.5 liegt unter der Rundungsschwelle) | 37 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+> ⚠ **Korrektur-Hinweis (Chief of Staff, 25.08.2026):** Der zuletzt hier
+> gezeigte Stand „25 %" war stehengeblieben — mein eigenes Update vom
+> 24.08. (das die Rechnung von damals bereits auf 31 % gebracht hätte) ist
+> durch einen technischen Zwischenfall nie tatsächlich in dieser Datei
+> angekommen, obwohl es als erfolgreich gemeldet wurde. Dabei ist außerdem
+> aufgefallen: Platform & Integrations Engineer hatte direkt in dieser
+> Datei eigenen Fließtext für 2.1/2.2/2.3/3.1/3.2/3.4 hinterlegt, teils
+> ohne Prozentzahl, teils mit einer inzwischen überholten Aussage (z. B.
+> „Bug behoben" bei 2.3, obwohl der Passwort-Reset-Bug laut
+> `chief-of-staff-platform-todos.md` weiterhin NICHT gefixt ist). Nach der
+> Ein-Wahrheit-pro-Sache-Regel wurde das jetzt anhand der echten Heimat-
+> Datei korrigiert, siehe die einzelnen Zeilen unten.
+
+> ⚠ **Zweiter Korrektur-Hinweis (Chief of Staff, 29.08.2026):** Beim
+> heutigen Nachschauen kam heraus, dass ich selbst hier ebenfalls hinter
+> der Wahrheit hergehinkt bin — und das mehrere Tage lang. `chief-of-
+> staff-platform-todos.md` verzeichnet schon seit dem 25.08. (Sandys
+> direkten Freigaben „003 ja bitte direkt reparieren" und „004 bitte b)")
+> **beide Fixes als umgesetzt**: der Passwort-Reset-Bug (CoS-P-003) läuft
+> jetzt über den korrekten PKCE-Tausch, und alle drei Pflicht-Mails
+> (CoS-P-004) laufen über die eigene Resend-Anbindung. Ich hatte den
+> Passwort-Reset-Bug mehrere Tage lang gegenüber Sandy fälschlich als
+> „weiterhin ungefixt, wichtigster offener Sicherheitsfund" bezeichnet,
+> obwohl der Fix längst dokumentiert war — reiner Lesefehler meinerseits,
+> keine neue Information. Punkte 2.2/2.3/3.1 unten sind jetzt korrigiert.
+> Verbleibend, und das kann tatsächlich niemand aus einer Session heraus
+> erledigen: ein echter Klick-Durchlauf mit echtem Postfach — Sandys
+> Aufgabe, keine Kollegen-Aufgabe mehr. Außerdem hat sich das reale Datum
+> in der Zwischenzeit auf 29.08. bewegt (vier Tage, in denen ich nicht neu
+> gerechnet hatte) — Details dazu im „Update 29.08.2026" unten.
+
+**Update 29.08.2026 — Nachtrag der ausstehenden PKCE-/Mail-Korrektur, ein
+neuer Design-Fund (DC-035), CoS-022/DC-033 als „behoben" bestätigt.**
+
+- **2.2/2.3/3.1 korrigiert** (siehe Zeilen unten und zweiter
+  Korrektur-Hinweis oben): +25/+45/+25 Prozentpunkte auf den jeweiligen
+  Einzelpunkt.
+- **DC-033/CoS-022 von Head of Product Engineering als „🟡 behoben"
+  bestätigt** (25.08., in `design-check.md` nachgezogen): Nummer wird
+  jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind jetzt
+  sichtbar geloggt. Live-Nachtest und Sandys Entscheidung zu den 4
+  Alt-Angeboten weiterhin offen (siehe `entscheidungen-fuer-sandy.md`).
+- **Neu: DC-035 (Sandy, 29.08., beim Einsprechen selbst aufgefallen).**
+  Zwei Funde: (1) die Karten-Ansicht zeigt Flächen, bevor feststeht, ob
+  noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis, ist es aber
+  nicht immer. Teil 1 (Hinweistext „Flächen sind vorläufig…") ist bereits
+  umgesetzt und committet, Live-Test steht aus. (2) Die Rückfrage zu
+  Türen/Fenstern erlaubt keine individuelle Größenangabe (z. B. große
+  Terrassentür) — nur Standardmaße. Product Designer hat das Datenmodell
+  bereits als bereit befunden (keine Änderung nötig) und eine fertige
+  Umsetzungs-Spec an Head of Product Engineering übergeben. Fließt noch
+  nicht in eine eigene Prozentzahl ein, siehe `design-check.md` DC-035.
+
+**Update 25.08.2026, Abend — Tagesabschluss: großer QA-Meilenstein (praktisch
+der komplette Testfall-Rückstand live bestätigt) plus zwei abgeschlossene
+Tickets (CoS-021, CoS-022), UND CoS-002 endgültig geschlossen.**
+
+- **1.3 Bestätigungskarte (80→95): CoS-002 endgültig abgeschlossen.** Sandy
+  hat heute live „Wohnzimmer streichen, 3x4 Meter" erneut getestet —
+  „Boden schützen" zeigt jetzt korrekt 12 m², der Realtime-Fix hält. Beim
+  Nachschauen kam heraus: Product Designer hatte diese Bestätigung
+  eigentlich schon am 23.08. in `design-check.md` (DC-021, „dc021 passt")
+  festgehalten — das war hier nur nie übernommen worden (eigener
+  Sync-Fehler, nicht Product Designers). Damit ist CoS-002 nach fünf Tagen
+  „Live-Nachtest steht aus" tatsächlich fertig, mit zwei unabhängigen
+  Bestätigungen.
+- **Größte Einzelbewegung sonst: 1.1 Fallbasis (30→38) und 1.2 Abdeckung (60→65).**
+  Praktisch der gesamte QA-Rückstand ist heute live durchgetestet worden —
+  von den 21 geplanten Testfällen (PM-001–021) steht keiner mehr auf
+  „code-fertig, Nachtest offen"; nur noch PM-014 (gezielter
+  Gleichzeitigkeits-Test) und PM-015 (praktisch erledigt, formal 🟡) sind
+  nicht vollständig grün. Dazu ein echter neuer Sicherheits-Mechanismus:
+  Whisper verhört sich gelegentlich bei Mustern wie „zwei mal eins
+  fünfzig" und macht daraus einen falschen quadratischen Raum — nach
+  Sandys ausdrücklicher Ansage („die Maße müssen immer stimmen") jetzt
+  eine Rückfrage gebaut, die bei verdächtig quadratischen Räumen
+  nachfragt und danach die tatsächlich richtige Fläche liefert, nicht nur
+  warnt. Heute live bestätigt (PM-019 erneut eingesprochen, Rückfrage kam,
+  lieferte korrekte 3,00 m²), gewerk-unabhängig für Maler UND Bodenleger.
+  Quelle: `docs/pruefmeister-testfaelle.md`.
+- **1.4 Golden Tests (75→92):** Suite jetzt bei 842/842 (weiter gewachsen
+  seit CoS-018, u. a. durch CoS-021- und PM-019/020-Sicherheitstests), kein
+  Fund einer Regression.
+- **CoS-021 (DC-034) abgeschlossen, dabei ein echter Bug gefunden:** die
+  Frage „brauchen wir zwei getrennte Foto-/Notiz-Systeme im Angebot"
+  (Sandys „checke null was es sein soll") wurde entschieden
+  (zusammenlegen) und umgesetzt. Dabei kam heraus: der „ins PDF
+  aufnehmen"-Schalter im alten Tab hat **noch nie etwas bewirkt** — kein
+  PDF-Code-Pfad hat das Flag je gelesen, ein Handwerker bekam ein PDF ohne
+  Fotos trotz „✓ im PDF". Jetzt echt gebaut (eigene PDF-Seite „Fotos zur
+  Baustelle"), **5.2 Buttons (40→62)**. Live-Nachtest steht aus.
+- **CoS-022 (DC-033) fast abgeschlossen:** Angebotsnummern fielen seit
+  Mitte Juni auf UUID-Fragmente zurück, weil der aktuelle Erstellungsweg
+  die Nummernvergabe nie aufrief (nicht wie zuerst vermutet ein
+  verschluckter Fehler — die Vergabe wurde schlicht nie angefordert).
+  Betroffen: nur 4 echte Angebote (3 fertiggestellt, 1 versendet), nicht
+  die zunächst befürchteten 103 (der Rest waren Wegwerf-Testentwürfe, die
+  bewusst keine Nummer bekommen sollen). Fix ist committet, **Live-Nachtest
+  und Sandys Entscheidung zu den 4 betroffenen Alt-Angeboten stehen noch
+  aus** — siehe `entscheidungen-fuer-sandy.md`.
+
+**Update 24.08.2026, Abend — Tagesabschluss nach dem „großen Push" (dieser
+Abschnitt existierte gestern schon, ist aber wegen des oben beschriebenen
+Speicherproblems erst heute tatsächlich in der Datei gelandet):**
+
+- **2.1 Registrierung/Login/Logout (0→55):** CoS-P-003, per Code-Review
+  geprüft, strukturell sauber. Live-Nachtest steht aus.
+- **2.2 E-Mail-Verifizierung (0→30) — korrigiert:** läuft über Supabase-
+  eigenes Mailsystem, NICHT über die eigene Resend-Anbindung (das stand
+  vorher fälschlich hier). Ob eigenes SMTP im Supabase-Dashboard hinterlegt
+  ist, lässt sich nur dort prüfen, nicht per Code.
+- **2.3 Passwort-Zurücksetzen (0→15) — korrigiert, 🔴 wahrscheinlicher Bug
+  weiterhin ungefixt:** hier stand vorher fälschlich „Bug behoben" — laut
+  `chief-of-staff-platform-todos.md` ist das Gegenteil der Fall: der
+  PKCE-Code aus dem Reset-Link wird nirgends aktiv gegen eine Session
+  getauscht (bekanntes Supabase/Next.js-Fehlerbild). Weiterhin ungefixt,
+  weiterhin der wichtigste offene Einzelfund.
+- **3.1 Pflicht-Mails (0→35) — korrigiert:** nur die Willkommens-Mail läuft
+  über die eigene Resend-Anbindung, Verifizierung/Reset über Supabase.
+- **3.2 Absender/Spam (0→55), 3.4 SPF/DKIM/DMARC (0→60):** echter DNS-Check
+  von sofortangebot.app — DKIM für Resend korrekt, SPF deckt Resend nicht
+  direkt ab (über DMARC-Alignment kompensiert), DMARC bewusst nur im
+  Beobachtungsmodus.
+- **1.4 Golden Tests (75→90 an diesem Tag):** CoS-018 abgeschlossen, alle
+  vier vorbestehenden Testfehlschläge als veralteter Testcode aufgeklärt
+  (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix, Suite 807/807.
+- **1.3 Bestätigungskarte (75→80):** CoS-014 — echter Schutz gegen stilles
+  Überschreiben manueller Positions-Änderungen (Ändern UND Löschen).
+  Sandys Bestätigungs-Retest für den Realtime-Fix bleibt weiterhin der
+  größte einzelne Hebel, steht seit mehreren Tagen aus.
+- **5.5 Statusfarben, G2 (35→50):** DC-003 vereinheitlicht Status-Farben
+  auf eine Quelle an allen 5 Stellen, plus zweite DC-006-Migrationsrunde.
 
 **Update 21.08.2026, Abend — Tagesabschluss: die Deploy-Blockade war ein
 Fehlalarm meinerseits und ist aufgelöst, dafür hat der erste echte
@@ -263,10 +396,10 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 30 % — weiter 21 von ~100 Fällen (PM-001–021), aber jetzt sind ALLE 21 mindestens einmal getestet (keiner mehr „ungeprüft" wie noch heute Vormittag). PM-019–021 fanden je einen echten Bug, alle drei bereits gefixt, noch ohne Live-Nachtest. Trefferquote „neuer Sondertestfall findet neuen Bug" bleibt bei 100 % (PM-017 bis PM-021). Quelle: `docs/pruefmeister-testfaelle.md` |
-| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 60 % (CoS-Schätzung) — weitere Sonderfälle getestet (isolierter Erschwerniszuschlag, Altbelag-Verneinung beim Teppich, zugespitzte VOB-Übermessungsfrage), VOB-Regel daraus jetzt als Standard umgesetzt |
-| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 75 % — **21.08.2026 Abend: code-fertig, deployt UND erster Live-Test gelaufen.** Sandys Test fand einen echten Bug (Karte zeigte „Boden schützen 0 m²" statt 12 — leere `supabase_realtime`-Publication, nicht die Berechnung war falsch), Ursache gefunden und per DB-Migration gefixt. **Sandys Bestätigungs-Retest steht noch aus**, deshalb nicht höher. Quelle: CoS-002, `docs/cos-002-architektur-vorschlag.md` |
-| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟡 75 % — **24.08.:** Head of Product Engineering meldet bei anderer Gelegenheit (CoS-017), dass 4 von 763 Tests bereits VOR seiner Arbeit rot waren, unabhängig davon (2 veraltete Katalog-Zählungen, 2 im PM-008-/Sockelleisten-Umfeld, noch nicht gegen die „live bestätigt behoben"-Fälle abgeglichen) — bisher nirgends gemeldet. Deshalb nicht mehr auf 80 %, obwohl CoS-002-Kernpfad weiterhin 236/236 grün bleibt. Aufräumen als **CoS-018** an Head of Product Engineering delegiert, kein direkter CI-Dashboard-Zugriff |
+| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 38 % — weiter 21 von ~100 Fällen (PM-001–021), aber **25.08.: ALLE 21 live durchgetestet**, keiner mehr „code-fertig, Nachtest offen" außer PM-014 (Gleichzeitigkeitstest) und PM-015 (praktisch erledigt). Zusätzlich neuer, gewerk-übergreifender Sicherheitsmechanismus gegen falsch-quadratische Räume live bestätigt. Breite bleibt der limitierende Faktor (21 von ~100), deshalb nicht höher. Quelle: `docs/pruefmeister-testfaelle.md` |
+| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 65 % — **25.08.:** neuer Sicherheitsmechanismus gegen Whisper-Verhörer bei quadratischen Räumen gewerk-unabhängig (Maler UND Bodenleger) live bestätigt, dazu bereits: isolierter Erschwerniszuschlag, Altbelag-Verneinung, zugespitzte VOB-Übermessungsfrage |
+| 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 95 % — **25.08.: CoS-002 endgültig abgeschlossen.** Zusätzlich zum Realtime-Fix bereits echter Schutz gegen stilles Überschreiben manueller Positions-Änderungen, inkl. Löschfall (CoS-014). **Sandys Bestätigungs-Retest ist bestanden** — zweifach dokumentiert: Product Designer hatte es schon am 23.08. in `design-check.md` (DC-021) festgehalten (dort korrekt, hier durch einen eigenen Sync-Fehler nicht übernommen), und Sandy hat heute unabhängig denselben Test live wiederholt („Boden schützen 12 m²" korrekt) und bestätigt. Nicht auf 100 %, weil nur gezielte Testfälle bestätigt sind, keine breite Testserie. Quelle: CoS-002/CoS-014, `docs/cos-002-architektur-vorschlag.md`, DC-021 |
+| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟢 92 % — **24.08.: CoS-018 abgeschlossen**, alle vier vorbestehenden Fehlschläge als veralteter Testcode aufgeklärt (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix. **25.08.:** Suite weiter gewachsen auf 842/842, u. a. durch CoS-021- und PM-019/020-Sicherheitstests, weiterhin kein Fund einer Regression. Kein direkter CI-Dashboard-Zugriff |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
 | 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 55 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.), Live-Nachtest dafür steht noch aus |
 | 1.7 | KI-Grenzen/Fehlerrate den Nutzern gegenüber transparent kommuniziert (kein 100 %-Versprechen) | G2 | ⚪ offen — nicht erhoben (neu) |
@@ -277,9 +410,9 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 2.1 | Registrierung, Login, Logout laufen sauber durch — komplett | G1 | 🟡 Registrierung/Login/Logout per Code-Review geprüft, sauber — Live-Nachtest steht aus (CoS-P-003) |
-| 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟢 läuft jetzt über unsere eigene Resend-Anbindung statt Supabase-eigenes Mailsystem — Fix umgesetzt, Live-Test steht aus (CoS-P-004) |
-| 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🟢 Bug behoben (PKCE-Code-Tausch läuft jetzt über /auth/callback, „Link ungültig"-Anzeige statt Endlos-Ladeseite) — Live-Test steht aus (CoS-P-003) |
+| 2.1 | Registrierung, Login, Logout laufen sauber durch — komplett | G1 | 🟡 55 % — per Code-Review geprüft (CoS-P-003): strukturell sauber, Account-Enumeration-Schutz, generische Fehlermeldungen. Live-Nachtest steht aus |
+| 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟡 55 % — **korrigiert, 29.08.:** auf Sandys Freigabe „004 bitte b)" läuft die Verifizierungs-Mail jetzt über die eigene Resend-Anbindung statt Supabase (CoS-P-004, neue Route `api/auth/register`). Code fertig, **echter Zustellungs-Test mit echtem Postfach steht aus** — das kann nur Sandy selbst machen |
+| 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🟡 60 % — **korrigiert, 29.08.: Bug ist bereits gefixt, nicht mehr offen.** Auf Sandys Freigabe „003 ja bitte direkt reparieren" läuft der Reset-Link jetzt über `/auth/callback` (korrekter PKCE-Tausch, wie bei der Registrierung), plus aktive Session-Prüfung und eine „Link abgelaufen"-Seite statt Endlos-Laden (CoS-P-003). Diese Zeile stand hier fälschlich seit mehreren Tagen auf „weiterhin ungefixt" — eigener Sync-Fehler des Chief of Staff, der Fix war schon am 25.08. dokumentiert. **Einziger verbleibender Schritt: ein echter Klick-Durchlauf mit echtem Postfach**, aus keiner Session heraus möglich — Sandys Aufgabe |
 | 2.4 | Kompletter erster Durchlauf (erste Anmeldung → erstes Angebot) end-to-end | G1 | ⚪ offen — nicht erhoben |
 | 2.5 | Account-Löschung möglich | G2 | 🟡 vermutlich vorhanden (Code existiert), kein QA-Test |
 | 2.6 | Schutz vor automatisierten Massen-Registrierungen (Captcha/Rate-Limit) | G2 | ⚪ offen — nicht erhoben (neu) |
@@ -290,10 +423,10 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 3.1 | Pflicht-Mails werden wirklich versendet (Willkommen, Verifizierung, Reset) | G1 | 🟢 alle drei Mails laufen jetzt über dieselbe eigene Resend-Anbindung — Fix umgesetzt, Live-Zustellung ungetestet (CoS-P-004) |
-| 3.2 | Absender korrekt, Links funktionieren, Inhalt stimmt, landen nicht im Spam | G1 | 🟡 DNS für sofortangebot.app geprüft: DKIM für Resend korrekt gesetzt, DMARC nur im Beobachtungsmodus (p=none) — Live-Spam-Test steht aus |
+| 3.1 | Pflicht-Mails werden wirklich versendet (Willkommen, Verifizierung, Reset) | G1 | 🟡 60 % — **korrigiert, 29.08.:** alle drei Pflicht-Mails laufen jetzt über die eigene Resend-Anbindung (CoS-P-004, Sandys Freigabe „004 bitte b)"), nicht mehr nur die Willkommens-Mail. Code fertig, echte Zustellung noch nicht live beobachtet |
+| 3.2 | Absender korrekt, Links funktionieren, Inhalt stimmt, landen nicht im Spam | G1 | 🟡 55 % — DNS für sofortangebot.app geprüft: DKIM für Resend korrekt gesetzt, SPF deckt Resend nicht direkt ab (über DMARC-Alignment kompensiert), DMARC nur im Beobachtungsmodus (p=none) — Live-Spam-Test steht aus |
 | 3.3 | Weitere Mails je nach Flow (Quittung/Rechnung, Angebot fertig) | G2 | ⚪ offen — nicht erhoben |
-| 3.4 | SPF/DKIM/DMARC korrekt gesetzt (Zustellbarkeit, kein Spam-Ordner) | G1 | ⚪ offen — nicht erhoben (neu) |
+| 3.4 | SPF/DKIM/DMARC korrekt gesetzt (Zustellbarkeit, kein Spam-Ordner) | G1 | 🟡 60 % — echter DNS-Check (CoS-P-004): DKIM ✅ korrekt, SPF-Lücke über DMARC-Alignment kompensiert, DMARC bewusst nur `p=none` (Beobachtungsmodus, für den Start okay) |
 
 ## 4. Zahlung & Abrechnung (Stripe)
 
@@ -313,10 +446,10 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 5.1 | Man kommt von überall leicht zurück/zur Startseite — keine Sackgassen | G1 | ⚪ offen — nicht erhoben |
-| 5.2 | Jeder Button an sinnvoller Stelle, nichts Wichtiges fehlt/kaputt | G1 | 🟡 40 % — **DC-011 behoben + live bestätigt** (fertiges Angebot verschwand aus der Liste, betraf alle 56 Angebote in Produktion). Weiterhin offen: DC-002 (Nav fehlt), DC-009/010 (irreführende Erfolgs-Anzeige, fehlende Guardrail) |
+| 5.2 | Jeder Button an sinnvoller Stelle, nichts Wichtiges fehlt/kaputt | G1 | 🟡 62 % — **DC-011 behoben + live bestätigt** (fertiges Angebot verschwand aus der Liste). **24.08.: DC-002** (fehlender „Angebote"-Nav-Punkt) behoben. **25.08. (CoS-021/DC-034):** ein echter, bisher unbekannter kaputter Button gefunden — der „ins PDF"-Schalter bei Fotos hat noch nie etwas bewirkt (kein PDF-Code-Pfad las das Flag), jetzt echt gebaut. Weiterhin offen: DC-009/010 (Erfolgs-Anzeige/Guardrail), Live-Nachtest für alle drei Fixe |
 | 5.3 | Funktioniert auf Handy UND Desktop | G1 | ⚪ offen — nicht erhoben |
 | 5.4 | Leere/Fehler-/Ladezustände überall sinnvoll gestaltet | G2 | 🔴 20 % — DC-009/010: widersprüchliche Fehler-/Erfolgs-Banner code-seitig gefixt (20.08., Root Cause war GPT-Nichtdeterminismus, nicht Race Condition), Live-Nachtest steht aus; die fehlende Guardrail beim Fertigstellen leerer Angebote (zweiter Teil von DC-010) bleibt offen |
-| 5.5 | Statusfarben & Design-Tokens konsistent | G2 | 🟡 35 % — erste Migrationsrunde von DC-006 abgeschlossen (5 Kernkomponenten auf Tokens umgestellt), Großteil der >1.900 Fundstellen weiterhin offen; siehe auch DC-003, DC-007 |
+| 5.5 | Statusfarben & Design-Tokens konsistent | G2 | 🟡 50 % — DC-003 vereinheitlicht Status-Farben auf eine Quelle an allen 5 Stellen, plus zweite DC-006-Migrationsrunde; Großteil der >1.900 Fundstellen weiterhin offen; siehe auch DC-007 |
 | 5.6 | Barrierefreiheit (BFSG) bewusst geprüft statt nur angenommen | G3 | 🟢 60 % — wahrscheinlich nicht einschlägig (reines B2B, Verbraucher per AGB ausgeschlossen), rechtlich nicht abschließend bestätigt (neu). Quelle: [accessgo.de, BFSG B2B](https://www.accessgo.de/wissen/barrierefreiheitsstaerkungsgesetz/b2b/) |
 
 ## 6. Datenschutz & Datensicherheit (technisch)

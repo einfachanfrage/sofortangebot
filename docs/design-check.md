@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-036 NEU: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, individuelle Öffnungsgröße bei Rückfrage als Spec an Head of Product Engineering übergeben. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-036 NEU: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg für die individuelle Öffnungsgröße (Terrassentür) gebaut + getestet — nur die Eingabe-Oberfläche fehlt noch. Vortag: DC-034/CoS-021 zusammengelegt (UI-Teil fertig); DC-033: Angebotsnummern-Bug behoben. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -85,7 +85,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
 | DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | 🟡 behoben (Head of Product Engineering, 2026-08-25): Deine Analyse stimmte, die Hauptursache lag aber noch tiefer — der heutige Erstellungsweg (Aufnahme-Flow) hat **nie** eine Nummer angefordert, die Vergabe stand nur in der alten Route. Nummer wird jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind sichtbar. Live-Nachtest steht aus | Head of Product Engineering |
 | DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
-| DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | 🟡 Teil 1 (Hinweistext) umgesetzt, committet (`e463360`), `tsc` sauber, Live-Test steht aus. Teil 2 (individuelle Öffnungsgröße bei Rückfrage) recherchiert + fertige Design-Spec unten, an Head of Product Engineering übergeben | Product Designer (Teil 1, ✅) / Head of Product Engineering (Teil 2) |
+| DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | 🟡 Teil 1 (Hinweistext) umgesetzt, committet (`e463360`), `tsc` sauber, Live-Test steht aus. Teil 2: Datenweg (Fragen-Feld `ausnahme_masse`, Antwort-Feld `ausnahme`, Aufteilung in zwei Öffnungs-Einträge) umgesetzt + getestet von Head of Product Engineering — offen ist nur noch die Eingabe-Oberfläche beim Product Designer | Product Designer (Teil 1, ✅) / Head of Product Engineering (Teil 2) |
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
@@ -2684,6 +2684,46 @@ Head of Product Engineering den Antwort-Datenweg (Punkt 2+3) gebaut hat,
 baue ich den `RueckfragenScreen.tsx`-Teil (Punkt 1) direkt selbst dazu,
 wie beim DC-027-Muster — kein erneuter Auftrag von Sandy nötig, bitte
 einfach im Dokument vermerken, sobald der Datenweg steht.
+
+### ✅ Datenweg steht — Punkt 2+3 umgesetzt (Head of Product Engineering, 2026-08-29)
+
+Vermerk wie erbeten: **der Antwort-Datenweg ist gebaut, Punkt 1 (die
+Eingabe im `RueckfragenScreen.tsx`) kann direkt darauf aufsetzen.**
+
+Was jetzt da ist:
+
+- `RueckfrageItem.ausnahme_masse?` (`rueckfragen-generator.ts`) — gesetzt
+  von `rueckfragen-flow.ts` für genau `tueren_anzahl_*` und
+  `fenster_anzahl_*`, sonst `undefined`. Enthält `label` (Tür: „Eine davon
+  abweichend groß? (z. B. Terrassentür)", Fenster: „Eines davon abweichend
+  groß? (z. B. Panoramafenster)") sowie `standard_breite`/`standard_hoehe`
+  (0,90 × 2,10 m bzw. 1,20 × 1,00 m) als Platzhalter für die Eingabe. Die
+  Oberfläche muss also nichts über IDs oder Standardmaße wissen — nur
+  prüfen, ob das Feld gesetzt ist.
+- `RueckfragenAntwort.ausnahme?: { breite: number; hoehe: number } | null`
+  (`RueckfragenScreen.tsx`) — dasselbe optionale Feld auch in
+  `KalkulationsAntwort` (`antworten-verarbeiter.ts`), damit es unverändert
+  bis in die Berechnung durchläuft. Neben dem bestehenden Stückzahl-`wert`,
+  nicht statt seiner.
+- `antworten-verarbeiter.ts` schreibt daraus wie spezifiziert zwei
+  Einträge: `[{ anzahl: N - 1 }, { anzahl: 1, breite, hoehe }]`. Bei `N = 1`
+  entfällt der leere Rest-Eintrag, bei `N = 0` oder unvollständigen Maßen
+  bleibt es exakt beim alten `[{ anzahl: N }]` — kein Verhaltensänderung
+  ohne Ausnahme.
+- `formatAntwort` hängt die Ausnahme an die Zusammenfassung an
+  („3 Stück · eine davon 2 × 2,2 m"), damit sie in der Antwortkarte
+  sichtbar ist — gern überschreiben, wenn das Design es anders zeigt.
+
+Rechenseite wie vorhergesagt unverändert: `vob-uebermessung.ts` prüft jede
+Öffnung einzeln, die 2×2,2-m-Terrassentür (4,4 m²) wird abgezogen, die
+beiden Standardtüren (je 1,89 m²) werden übermessen.
+
+Belegt durch `src/lib/mengen/__tests__/dc035-ausnahme-oeffnung.test.ts`
+(6 Fälle: Feld nur bei Öffnungsfragen, unverändertes Altverhalten,
+Aufteilung 3 → 2+1, N = 1, ungültige/fehlende Maße, VOB-Abzug).
+`tsc --noEmit` sauber, gesamte Suite grün (46 Dateien / 848 Tests).
+
+Offen bleibt nur Punkt 1 — die Eingabe selbst, beim Product Designer.
 
 ---
 

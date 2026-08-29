@@ -42,6 +42,16 @@ gleichzeitig — nur Kosmetik. Vereinheitlichen? Beide betreffen aktuell
 niemanden live (nur Maler/Bodenleger ausgeliefert), niedrige Priorität.
 Quelle: `docs/chief-of-staff-todos.md` CoS-019.
 
+**🔵 DC-033/CoS-022 (Head of Product Engineering, 25.08.):** 4 bestehende
+Angebote (3 fertiggestellt, 1 versendet) haben nie eine echte Angebots-
+nummer bekommen, zeigen stattdessen ein UUID-Fragment. Sollen sie
+nachträglich eine echte Nummer bekommen? Bei den 3 fertiggestellten
+unkritisch, beim versendeten Angebot riskant: die falsche/keine Nummer
+könnte beim Kunden bereits auf Papier liegen, eine nachträglich vergebene
+andere Nummer wäre schlimmer als die jetzige Ersatzbezeichnung. Beide Wege
+sind in einer Minute umgesetzt, sobald du dich entschieden hast. Quelle:
+`docs/chief-of-staff-todos.md` CoS-022.
+
 Stand 24.08.2026: CoS-002 Schritt 3 ist entschieden (siehe unten) — Sandys
 Antwort auf die Rückfrage war eindeutig, keine weitere Klärung nötig. Die
 weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage,
