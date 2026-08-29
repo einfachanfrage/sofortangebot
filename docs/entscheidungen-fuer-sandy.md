@@ -42,6 +42,20 @@ gleichzeitig — nur Kosmetik. Vereinheitlichen? Beide betreffen aktuell
 niemanden live (nur Maler/Bodenleger ausgeliefert), niedrige Priorität.
 Quelle: `docs/chief-of-staff-todos.md` CoS-019.
 
+**🔵 DC-040-Folgefrage (Head of Product Engineering, 29.08.):** Deine
+Entscheidung „nachfragen statt raten" ist umgesetzt — aber bewusst nur für
+den Fall „ganze Wohnung/Haus/Etage". Bei einem EINZELNEN Raum („im Flur
+sind es 18 Quadratmeter Wandfläche") gilt weiterhin die alte Festlegung:
+eine direkt genannte Fläche ist schon die zu streichende, es wird nichts
+abgezogen und nicht gefragt. Die Unsicherheit ist dort aber dieselbe — auch
+ein einzelner Handwerker kann Umfang × Höhe gerechnet und die Türen noch
+drin haben. **Soll die Frage „sind Türen und Fenster da noch drin?" auch
+bei einzelnen Räumen kommen?** Dagegen spricht: eine Rückfrage mehr in
+Abläufen, die heute schon laufen (nach PM-007 fasse ich die Zahl der Fragen
+nicht ohne deinen Auftrag an). Dafür spricht: es geht um bares Geld, und
+raten tun wir dort aktuell genauso. Hängt inhaltlich mit der offenen
+CoS-020-Frage oben zusammen — am besten zusammen entscheiden.
+
 **🔵 DC-033/CoS-022 (Head of Product Engineering, 25.08.):** 4 bestehende
 Angebote (3 fertiggestellt, 1 versendet) haben nie eine echte Angebots-
 nummer bekommen, zeigen stattdessen ein UUID-Fragment. Sollen sie

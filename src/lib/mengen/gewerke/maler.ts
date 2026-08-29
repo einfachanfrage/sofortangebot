@@ -24,6 +24,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       laenge, breite, hoehe,
       flaeche: flaeche_angegeben,
       wandflaeche_direkt: wandflaeche_direkt_raw,
+      wandflaeche_brutto: wandflaeche_brutto_raw = null,
       deckflaeche_direkt: deckflaeche_direkt_raw,
       wandflaeche_abzug_m2: wandflaeche_abzug_raw,
       dachschraege_flaeche_m2: dachschraege_flaeche_raw = null,
@@ -165,7 +166,19 @@ export function malerEngine(daten: any): MengenErgebnis {
     // (`!= null` statt `!== null`: GPT lässt Felder oft ganz weg → undefined, sonst NaN!)
     if (wandflaeche_direkt_raw != null) {
       const abzug = (wandflaeche_abzug_raw as number | null) ?? 0
-      wandflaecheNettoM2 = round2((wandflaeche_direkt_raw as number) - abzug)
+      const brutto = round2((wandflaeche_direkt_raw as number) - abzug)
+      // DC-040: Nur wenn der Handwerker ausdrücklich bestätigt hat, dass
+      // Türen/Fenster in der genannten Fläche noch drinstecken, wird
+      // abgezogen — und dann nach derselben VOB-Regel wie überall sonst
+      // (Öffnungen bis 2,5 m² bleiben drin, PM-021). Ohne Antwort bleibt es
+      // beim bisherigen Verhalten: genannte Fläche = zu streichende Fläche.
+      if (wandflaeche_brutto_raw === true) {
+        fensterAbzugVob = berechneOeffnungsabzugVob(effFenster, 1.2, 1.0)
+        tuerAbzugVob = berechneOeffnungsabzugVob(effTueren, 0.9, 2.1)
+        wandflaecheNettoM2 = Math.max(0, round2(brutto - fensterAbzugVob.abzugFlaeche - tuerAbzugVob.abzugFlaeche))
+      } else {
+        wandflaecheNettoM2 = brutto
+      }
     }
     if (deckflaeche_direkt_raw != null) {
       deckenflaecheM2 = deckflaeche_direkt_raw as number

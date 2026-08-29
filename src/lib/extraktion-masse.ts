@@ -23,6 +23,27 @@ export function extrahiereDeckenflaeche(text: string): number | null {
   return m ? parseFloat(m[1].replace(',', '.')) : null
 }
 
+/**
+ * Direkte Bodenfläche in m² ("55 m² Laminat", "Bodenfläche 40 qm").
+ *
+ * DC-040: Gegenstück zu `extrahiereWandflaeche`. Ein Handwerker, der die
+ * Wohnung als Ganzes beschreibt, nennt beide Flächen in EINEM Satz
+ * ("120 m² Wandfläche streichen und 55 m² Laminat verlegen"). Bewusst nur
+ * mit ausdrücklichen Boden-Begriffen — eine nackte m²-Zahl ist mehrdeutig
+ * und würde sonst die Wandfläche als Boden verbuchen.
+ */
+export function extrahiereBodenflaeche(text: string): number | null {
+  const t = text ?? ''
+  // Wortgrenzen sind hier nicht kosmetisch: ohne sie steckt "estrich" in
+  // "gestrichen" — "120 m² Wandfläche gestrichen" wäre als Bodenfläche
+  // durchgegangen. "fliesen" bewusst nicht in der Liste (steht genauso oft
+  // an der Wand wie am Boden).
+  const BELAG = '\\b(?:bodenfl[äa]che|fußboden|fussboden|boden|bodenbelag|laminat|parkett|vinyl|teppich|designboden|linoleum|estrich)'
+  const m = t.match(new RegExp(`(\\d+(?:[.,]\\d+)?)\\s*(?:m²|qm|quadratmeter)[^.!?\\n]{0,30}?(?:${BELAG})`, 'i'))
+    ?? t.match(new RegExp(`(?:${BELAG})[^.!?\\n]{0,30}?(\\d+(?:[.,]\\d+)?)\\s*(?:m²|qm|quadratmeter)`, 'i'))
+  return m ? parseFloat(m[1].replace(',', '.')) : null
+}
+
 /** Abzugsfläche in m² ("30 m² abziehen", "minus 5 m²"). */
 export function extrahiereAbzug(text: string): number | null {
   const t = text ?? ''

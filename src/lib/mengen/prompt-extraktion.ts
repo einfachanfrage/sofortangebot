@@ -16,6 +16,7 @@ AUSGABE-FORMAT:
       "breite": 4.80,
       "hoehe": 2.60,
       "flaeche": null,
+      "wandflaeche_direkt": null,
       "fenster": [
         { "breite": 1.50, "hoehe": 1.20 }
       ],
@@ -88,6 +89,17 @@ FASSADE IN RAEUME:
 - Beispiel: "Fassade 8m breit, 6m hoch" → raeume: [{name: "Fassade", laenge: 8, hoehe: 6, breite: null, flaeche: null}]
 - Altanstrich entfernen / abschleifen in arbeiten[] eintragen, NICHT als eigene Position
 
+WOHNUNG / HAUS ALS GANZES (gleiches Muster wie Fassade):
+- Handwerker beschreiben oft NICHT raumweise, sondern die Einheit als Ganzes: "die ganze Wohnung", "gesamte Wohnung", "komplette Wohnung", "das ganze Haus", "die komplette Etage".
+- Steht dabei mindestens EINE Flächenangabe → ein einziger raeume-Eintrag mit name: "Wohnung" (bzw. "Haus"/"Etage"), vage: false.
+- Wandfläche gehört in wandflaeche_direkt, Bodenfläche in flaeche. BEIDE können in einem Satz vorkommen.
+- Beispiel: "In der ganzen Wohnung müssen 120 m² Wandfläche gestrichen werden und 55 m² Laminat verlegt werden"
+  → raeume: [{name: "Wohnung", wandflaeche_direkt: 120, flaeche: 55, laenge: null, breite: null, hoehe: null, arbeiten: ["wände streichen", "laminat verlegen"], vage: false}]
+- Beispiel: "Komplette Wohnung streichen, 95 Quadratmeter Wandfläche"
+  → raeume: [{name: "Wohnung", wandflaeche_direkt: 95, flaeche: null, arbeiten: ["wände streichen"], vage: false}]
+- NUR ohne jede Zahl bleibt es vage (siehe VAGE-ERKENNUNG): "die ganze Wohnung streichen" ohne m² → vage: true.
+- Einzeln genannte Räume NICHT zusätzlich zusammenfassen: entweder der Nutzer spricht raumweise (dann normale raeume) oder als Ganzes (dann dieser eine Eintrag) — niemals beides für dieselbe Fläche.
+
 MULTI-RAUM PARSING — KRITISCH:
 Jeder genannte Raum = eigener Eintrag in raeume[] mit EIGENEN Maßen.
 NIEMALS Maße von einem Raum auf einen anderen übertragen.
@@ -121,14 +133,14 @@ PLAUSIBILITÄTS-REGELN für Raummaße:
 - Wenn laenge oder breite < 1.5 → setze null (Rückfrage nötig)
 - Wenn laenge oder breite > 20m → setze null (wahrscheinlich Fehler)
 - Wenn hoehe > 4m → setze null
-- Wenn flaeche > 200 → setze null
+- Wenn flaeche > 200 → setze null. AUSNAHME: Pseudo-Räume, die bewusst eine Gesamtfläche tragen ("Wohnung", "Haus", "Etage", "Fassade", "Treppenhaus") — dort sind große Flächen normal und der Wert bleibt stehen (gilt ebenso für wandflaeche_direkt)
 
 VAGE-ERKENNUNG:
 Erkenne vage Mengenangaben und markiere sie mit vage: true und passendem vage_typ.
 
 Vage Raumreferenzen → vage_typ: "raum_ohne_masse":
 - "das Zimmer", "der Raum", "die Küche", "das Bad" ohne Maße
-- "alles", "komplett", "die ganze Wohnung"
+- "alles", "komplett", "die ganze Wohnung" — ABER NUR wenn keine Flächen- oder Maßangabe dabei steht; mit m²-Angabe ist es KEIN vager Fall, sondern der Pseudo-Raum "Wohnung" (siehe oben)
 - "dort", "da", "hier" als Ortsreferenz ohne Kontext
 
 Plurale ohne Zahl → vage_typ: "plural_ohne_zahl":

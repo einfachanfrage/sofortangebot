@@ -130,6 +130,13 @@ export interface ExtrahierteDaten {
     vage_typ?: string | null
     vage_beschreibung?: string | null
     wandflaeche_direkt?: number | null
+    /**
+     * DC-040: Antwort auf „sind die genannten m² inklusive Türen und
+     * Fenster?". true = brutto, es wird noch abgezogen. false = der Wert ist
+     * schon die zu streichende Fläche. undefined = nicht gefragt/übersprungen
+     * → verhält sich wie bisher (kein Abzug).
+     */
+    wandflaeche_brutto?: boolean | null
     deckflaeche_direkt?: number | null
     wandflaeche_abzug_m2?: number | null
     dachschraege_flaeche_m2?: number | null

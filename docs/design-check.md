@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040 NEU: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Root-Cause in der Extraktion gefunden (analog zum bestehenden "Fassade"-Muster), vollständige Spec an Head of Product Engineering übergeben; DC-039: "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank (Product Designer), dazu ein von Sandy live gefundener Bug behoben (Vorschlag antippen blieb wirkungslos — Tap schloss die Tastatur und die Liste rutschte weg, bevor der Klick ankam; jetzt `onMouseDown`+`preventDefault`), und eine abgesicherte Schreib-Seite (Head of Product Engineering: eigener Endpunkt `POST /api/preise`, serverseitige Prüfung, Dubletten-Schutz, Rubrik-Regel entdoppelt, `price_item_id` wird endlich mitgespeichert) — wartet jetzt auf Sandys Retest; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Extraktion, Bodenflächen-Erkennung und Tür-/Fensterabzug per Rückfrage ("nachfragen statt raten", Sandys Entscheidung) umgesetzt; mitgefunden und behoben: die 200-m²-Plausibilitätsgrenze im Prompt hätte eine Wohnungs-Wandfläche verworfen. Live-Test mit echter Sprachaufnahme steht aus; DC-039: "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank (Product Designer), dazu ein von Sandy live gefundener Bug behoben (Vorschlag antippen blieb wirkungslos — Tap schloss die Tastatur und die Liste rutschte weg, bevor der Klick ankam; jetzt `onMouseDown`+`preventDefault`), und eine abgesicherte Schreib-Seite (Head of Product Engineering: eigener Endpunkt `POST /api/preise`, serverseitige Prüfung, Dubletten-Schutz, Rubrik-Regel entdoppelt, `price_item_id` wird endlich mitgespeichert) — wartet jetzt auf Sandys Retest; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -90,7 +90,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
 | DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | ✅ Beide Teile umgesetzt: Teil 1 Wandnummern ("W1 · 4" statt nur "4"); Teil 2 nach Sandys Go ("bau den zecihner") gebaut — neuer vierter Button "✏️ Zeichnen" neben Rechteck/L-Form/U-Form, Freihand-Zeichnung wird per Ramer-Douglas-Peucker vereinfacht + auf 90° eingerastet und direkt in dieselbe `Wand[]`-Liste umgewandelt, die die Vorlagen auch erzeugen — keine Änderung an Berechnung/Vorschau/Speichern nötig, reines Frontend. Committet (`f88ca33`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 | DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | ✅ Umgesetzt: Aktionsleiste geprüft (größtenteils selbsterklärend, kein Umbau nötig). "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank direkt im Titelfeld — Vorschlag antippen übernimmt Titel/Einheit/Preis sofort, kein Treffer → "Neue Position anlegen" (Einheit+Preis inline) legt sofort einen echten Eintrag in der Preisdatenbank an (mit Dubletten-Check) und übernimmt ihn in die Position. Komplett Frontend + direkter Supabase-Insert (kein neuer Backend-Endpunkt nötig — price_items-Schreibzugriff existiert im selben Muster schon an anderen Stellen dieser Datei). Committet (`510c977`), scoped `tsc` sauber. **Bugfix (Product Designer, Sandys Live-Test):** Vorschlag antippen blieb wirkungslos — Ursache: Tap auf den Vorschlag ließ das Titelfeld zuerst den Fokus verlieren (Tastatur schließt, Seite rutscht), bevor der Klick registriert wurde, klassischer Mobile-Combobox-Bug. Fix: alle drei interaktiven Elemente der Suche (Vorschlag, „Neue Position anlegen", „Anlegen & übernehmen") von `onClick` auf `onMouseDown`+`preventDefault()` umgestellt, damit das Feld den Fokus gar nicht erst verliert. Committet (`a22d3f3`), scoped `tsc` sauber. Live-Test der Suche + des Bugfix steht aus. **Nachtrag Head of Product Engineering (Sandys Auftrag „dc039"):** Schreib-Seite auf einen eigenen Endpunkt `POST /api/preise` umgestellt — serverseitige Prüfung (Titel-Länge, Einheit, Tippfehler-Grenze beim Preis), robusterer Dubletten-Schutz (`.maybeSingle()` wäre bei historischen Dubletten im Katalog fehlgeschlagen) und die Rubrik-Regel jetzt in EINER Datei statt doppelt (CoS-019-Lehre). Mitgefixt: `price_item_id` wurde beim Speichern nie gesetzt. 9 neue Tests, Suite grün | Product Designer (UI, ✅) / Head of Product Engineering (Schreib-Seite, ✅) |
-| DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). Vollständige Spec an Head of Product Engineering übergeben, UI-Teil (Anzeige, kleine Emoji-Ergänzung) baue ich selbst sobald der Weg steht | Head of Product Engineering (Extraktion/Berechnung) / Product Designer (Anzeige, folgt) |
+| DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). **Umgesetzt (Head of Product Engineering, 2026-08-29):** Prompt-Abschnitt "WOHNUNG / HAUS ALS GANZES" nach Fassaden-Vorbild, `extrahiereBodenflaeche()` als Gegenstück zur Wandflächen-Erkennung (statt eines neuen Feldes ins bestehende `flaeche`), und der Tür-/Fensterabzug per Ja/Nein-Rückfrage ("Sind die 120 m² inklusive Türen und Fenster?", Sandys Entscheidung "nachfragen statt raten") — bei "ja" folgen die vorhandenen Stückzahlfragen, Abzug nach derselben VOB-Regel wie überall. Zusätzlich gefunden und behoben: die Prompt-Regel "flaeche > 200 → null" hätte eine Wohnungs-Wandfläche stillschweigend verworfen. Bewusst nur für Gesamtflächen-Räume, Einzelräume unverändert. 13 neue Tests, `tsc` sauber, Suite grün. OFFEN: Live-Test mit echter Sprachaufnahme (Prompt-Änderung — Tests prüfen die Regel, nicht das Modellverhalten); UI-Teil (🏡-Emoji) beim Product Designer | Head of Product Engineering (Extraktion/Berechnung, ✅) / Product Designer (Anzeige, folgt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -3146,6 +3146,61 @@ Extraktion steht — dasselbe Muster trägt schon "Fassade". Kleine Politur:
 statt sich das generische 🏠 mit Fassade zu teilen). Baue und teste ich
 selbst, sobald der Extraktions-/Rechenweg von Engineering steht — kein
 erneuter Auftrag nötig.
+
+### ✅ Extraktion + Berechnung umgesetzt (Head of Product Engineering, 2026-08-29, Sandys Auftrag)
+
+Deine Root-Cause-Analyse war richtig und hat mir viel Suchen erspart. Der
+Weg steht, dein Anzeige-Teil (🏡 in `RAUM_EMOJIS`) kann drauf.
+
+**1. Prompt (`prompt-extraktion.ts`)** — neuer Abschnitt „WOHNUNG / HAUS ALS
+GANZES" nach dem Vorbild „FASSADE IN RAEUME": ein einziger `raeume`-Eintrag
+mit `name: "Wohnung"`, Wandfläche in `wandflaeche_direkt`, Bodenfläche in
+`flaeche`, beide aus einem Satz. „die ganze Wohnung" ist nur noch vage, wenn
+KEINE Zahl dabeisteht. Zusätzlich das Feld `wandflaeche_direkt` im
+Ausgabe-Beispiel sichtbar gemacht — es war bisher nirgends im Prompt
+erwähnt, die Extraktion konnte es also nur zufällig füllen.
+
+**Ein Fund, der in deiner Spec fehlte und den Fall allein gekippt hätte:**
+im selben Prompt steht „Wenn flaeche > 200 → setze null". Eine ganze Wohnung
+liegt bei der Wandfläche regelmäßig darüber — die Zahl wäre also
+weggeworfen worden, selbst mit perfektem Rest. Die Grenze gilt jetzt
+ausdrücklich nicht für Gesamtflächen-Räume (Wohnung/Haus/Etage/Fassade/
+Treppenhaus).
+
+**2. Bodenfläche (`extraktion-masse.ts` + `extraktion-pipeline.ts`)** — statt
+eines neuen `bodenflaeche_direkt`-Feldes ein `extrahiereBodenflaeche()` als
+Gegenstück zu `extrahiereWandflaeche()`, das in das bestehende `flaeche`
+schreibt. Ein zusätzliches Feld hätte durch Typen, Engine, Bearbeiten-Ansicht
+und PDF wandern müssen, ohne etwas zu können, was `flaeche` nicht schon kann.
+
+**3. Tür-/Fensterabzug — Sandys Entscheidung war „nachfragen statt raten".**
+Umgesetzt als zusätzliche Ja/Nein-Rückfrage: „Sind die 120 m² Wandfläche in
+„Wohnung" inklusive Türen und Fenster?". Bei „ja" kommen in der nächsten
+Runde die schon vorhandenen Stückzahl-Fragen (`tueren_anzahl_wohnung`,
+`fenster_anzahl_wohnung`) und der Abzug läuft über dieselbe VOB-Regel wie
+überall (Öffnungen bis 2,5 m² bleiben drin, PM-021). Bei „nein" oder
+übersprungen bleibt alles wie bisher. Hat der Handwerker den Abzug selbst
+genannt („minus 5 m²"), entfällt die Frage.
+
+**Bewusst eng gehalten:** die Frage kommt NUR bei Gesamtflächen-Räumen
+(Wohnung/Haus/Etage/Geschoss/Stockwerk). Bei einem einzelnen Raum („im Flur
+sind es 18 m² Wandfläche") gilt weiter die bestehende Festlegung, dass eine
+direkt genannte Fläche schon netto ist — sonst hätten alle bestehenden
+Abläufe plötzlich eine Frage mehr, und nach PM-007 fasse ich die Zahl der
+Rückfragen nicht ohne Auftrag an. Ob dieselbe Frage auch für Einzelräume
+sinnvoll wäre, liegt jetzt als offene Entscheidung bei Sandy.
+
+Belegt durch `src/lib/mengen/__tests__/dc040-wohnung-als-ganzes.test.ts`
+(13 Fälle: Bodenflächen-Erkennung inkl. der Falle „gestrichen" enthält
+„estrich", Prompt-Regeln, Frage kommt/kommt nicht, Folgefragen nach „ja",
+keine Endlosschleife nach der Antwort, Berechnung mit und ohne Abzug
+inklusive Terrassentür). `tsc --noEmit` sauber, Suite grün
+(49 Dateien / 875 Tests).
+
+**Wichtig für den Live-Test:** Punkt 1 ist eine Prompt-Änderung, also das
+Verhalten eines Sprachmodells — Tests können hier nur die Regel prüfen, nicht
+das Ergebnis. Der Satz von Clemens muss einmal echt eingesprochen werden,
+bevor wir DC-040 als erledigt betrachten.
 
 ---
 

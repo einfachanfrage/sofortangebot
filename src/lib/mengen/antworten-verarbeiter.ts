@@ -76,6 +76,15 @@ export function verarbeiteAntworten(
       continue
     }
 
+    // DC-040: „Sind die 120 m² inklusive Türen und Fenster?" — Sandys
+    // Entscheidung war ausdrücklich nachfragen statt raten (29.08.).
+    const bruttoM = id.match(/^oeffnungen_brutto_(.+)$/)
+    if (bruttoM && typeof antwort.wert === 'number') {
+      const raum = raumById(angereichert.raeume, bruttoM[1])
+      if (raum) raum.wandflaeche_brutto = antwort.wert === 1
+      continue
+    }
+
     const tuerenM = id.match(/^tueren_anzahl_(.+)$/)
     if (tuerenM && typeof antwort.wert === 'number') {
       const raum = raumById(angereichert.raeume, tuerenM[1])

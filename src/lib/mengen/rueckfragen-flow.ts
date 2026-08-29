@@ -7,7 +7,7 @@ import { artFuerRueckfrage, findeGesagtenWert } from './gesagte-werte'
 const ANTWORTBARE_IDS = [
   /^masse_/, /^hoehe_/, /^raum_/, /^plural_/, /^belag_/, /^altbelag_/,
   /^dachschraege_flaeche_/,
-  /^tueren_anzahl_/, /^fenster_anzahl_/,
+  /^tueren_anzahl_/, /^fenster_anzahl_/, /^oeffnungen_brutto_/,
   /^tapete_entfernen_/, /^altfliesen_/, /^flieshoehe_/, /^versiegelung_/,
   /^decke_masse$/, /^geruest$/, /^daemmung_staenderwand$/, /^brandschutz$/,
   /^dusche_typ$/, /^rohre_erneuern$/, /^bad_ausstattung$/, /^kabel_meter$/,

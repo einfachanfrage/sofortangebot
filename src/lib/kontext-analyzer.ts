@@ -31,6 +31,21 @@ function addRueckfrage(ext: ExtMitExtra, rq: KIRueckfrageRaw) {
   }
 }
 
+/**
+ * DC-040: „Wohnung", „Haus", „Etage" sind keine Räume, sondern eine ganze
+ * Einheit in einem Eintrag — der Handwerker hat die Wohnung als Ganzes
+ * aufgenommen statt Raum für Raum.
+ *
+ * Bewusst eng gehalten: Bei einem EINZELNEN Raum („im Flur sind es 18 m²
+ * Wandfläche") gilt weiterhin die bestehende Festlegung, dass eine direkt
+ * genannte Fläche schon die zu streichende ist — dort wird nicht gefragt.
+ * Ob das auch für Einzelräume gelten soll, ist eine Produktentscheidung und
+ * liegt bei Sandy, nicht bei diesem Ticket.
+ */
+function istGesamtflaechenRaum(name: string | null | undefined): boolean {
+  return /\b(wohnung|haus|etage|geschoss|stockwerk)\b/i.test(name ?? '')
+}
+
 function situationIncludes(ext: ExtMitExtra, ...begriffe: string[]): boolean {
   const text = (ext.situation ?? ext.anmerkungen ?? '').toLowerCase()
   return begriffe.some(b => text.includes(b))
@@ -171,8 +186,32 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
       })
     }
 
+    // DC-040 (Sandys Entscheidung 29.08.: „nachfragen statt raten"): Wer eine
+    // Wandfläche direkt nennt („in der ganzen Wohnung 120 m²"), meint damit
+    // mal die Brutto-Wandfläche und mal die tatsächlich zu streichende. Bisher
+    // galt eine direkt genannte Fläche IMMER als fertig — bei einem
+    // Handwerker, der die Wohnung als Ganzes aufnimmt, ist das eine stille
+    // Annahme über bares Geld. Also einmal kurz fragen, statt zu raten.
+    // Hat er den Abzug selbst genannt („minus 5 m²"), ist die Frage
+    // beantwortet und entfällt.
+    if (hatStreichen && istGesamtflaechenRaum(raum.name) && raum.wandflaeche_direkt
+        && raum.wandflaeche_brutto == null && raum.wandflaeche_abzug_m2 == null) {
+      const flaecheText = String(raum.wandflaeche_direkt).replace('.', ',')
+      addRueckfrage(ext, {
+        id: `oeffnungen_brutto_${raumId}`,
+        frage: `Sind die ${flaecheText} m² Wandfläche in "${raum.name}" inklusive Türen und Fenster?`,
+        typ: 'ja_nein', betrifft: raum.name, prioritaet: 1,
+        schnell_antworten: [
+          { label: 'Ja, sind noch drin', wert: true },
+          { label: 'Nein, schon abgezogen', wert: false },
+        ],
+      })
+    }
+
     // Auch Öffnungen direkt mit abfragen, nicht erst nach der Geometrie.
-    if (hatStreichen && !raum.wandflaeche_direkt) {
+    // DC-040: zusätzlich, wenn eine direkt genannte Wandfläche als BRUTTO
+    // bestätigt wurde — dann brauchen wir die Stückzahlen für den Abzug.
+    if (hatStreichen && (!raum.wandflaeche_direkt || raum.wandflaeche_brutto === true)) {
       if (!oeffnungen.keineTuer && (!Array.isArray(raum.tueren) || raum.tueren.length === 0)) {
         addRueckfrage(ext, {
           id: `tueren_anzahl_${raumId}`,

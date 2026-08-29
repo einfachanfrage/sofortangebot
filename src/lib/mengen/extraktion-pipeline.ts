@@ -10,7 +10,7 @@ import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfr
 import { normalisiereExtraktion } from './extraktion-normalisierer'
 import { repariereDuplikatMasse, repariereDuplikatNamen } from './mehrraum-reparatur'
 import {
-  extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereAbzug,
+  extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereBodenflaeche, extrahiereAbzug,
   extrahiereTorMasse, zaehleFenster, zaehleTueren,
 } from '@/lib/extraktion-masse'
 import { bereiteRueckfragenVor } from './rueckfragen-flow'
@@ -163,6 +163,17 @@ export function verarbeiteExtraktion(
         r.deckflaeche_direkt = deck
         if (!r.flaeche) r.flaeche = deck
       }
+    }
+
+    // DC-040: Bodenfläche genauso nachziehen wie die Wandfläche oben. Beim
+    // Fall "ganze Wohnung" nennt der Handwerker beide Zahlen in einem Satz;
+    // ohne diesen Schritt bliebe die Bodenposition ohne Menge, obwohl die
+    // Zahl im Transkript steht (dieselbe DC-026-Lehre: erst selbst lesen,
+    // dann fragen).
+    if (r.flaeche === null || r.flaeche === undefined) {
+      const boden = extrahiereBodenflaeche(t)
+      // Nicht versehentlich die Wandfläche als Boden verbuchen.
+      if (boden !== null && boden !== r.wandflaeche_direkt) r.flaeche = boden
     }
 
     if ((r.wandflaeche_abzug_m2 === null || r.wandflaeche_abzug_m2 === undefined) && r.wandflaeche_direkt) {
