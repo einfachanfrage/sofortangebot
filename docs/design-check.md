@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040 NEU: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Root-Cause in der Extraktion gefunden (analog zum bestehenden "Fassade"-Muster), vollständige Spec an Head of Product Engineering übergeben; DC-039 NEU: "+ Position" ohne Verbindung zur Preisdatenbank — Aktionsleiste als größtenteils selbsterklärend geprüft, Konzept + Prototyp für Live-Suche gegen die Preisdatenbank gebaut, wartet auf Go; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040 NEU: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Root-Cause in der Extraktion gefunden (analog zum bestehenden "Fassade"-Muster), vollständige Spec an Head of Product Engineering übergeben; DC-039: "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank (Product Designer), dazu ein von Sandy live gefundener Bug behoben (Vorschlag antippen blieb wirkungslos — Tap schloss die Tastatur und die Liste rutschte weg, bevor der Klick ankam; jetzt `onMouseDown`+`preventDefault`), und eine abgesicherte Schreib-Seite (Head of Product Engineering: eigener Endpunkt `POST /api/preise`, serverseitige Prüfung, Dubletten-Schutz, Rubrik-Regel entdoppelt, `price_item_id` wird endlich mitgespeichert) — wartet jetzt auf Sandys Retest; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -89,7 +89,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 | DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
 | DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | ✅ Beide Teile umgesetzt: Teil 1 Wandnummern ("W1 · 4" statt nur "4"); Teil 2 nach Sandys Go ("bau den zecihner") gebaut — neuer vierter Button "✏️ Zeichnen" neben Rechteck/L-Form/U-Form, Freihand-Zeichnung wird per Ramer-Douglas-Peucker vereinfacht + auf 90° eingerastet und direkt in dieselbe `Wand[]`-Liste umgewandelt, die die Vorlagen auch erzeugen — keine Änderung an Berechnung/Vorschau/Speichern nötig, reines Frontend. Committet (`f88ca33`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
-| DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | ✅ Umgesetzt: Aktionsleiste geprüft (größtenteils selbsterklärend, kein Umbau nötig). "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank direkt im Titelfeld — Vorschlag antippen übernimmt Titel/Einheit/Preis sofort, kein Treffer → "Neue Position anlegen" (Einheit+Preis inline) legt sofort einen echten Eintrag in der Preisdatenbank an (mit Dubletten-Check) und übernimmt ihn in die Position. Komplett Frontend + direkter Supabase-Insert (kein neuer Backend-Endpunkt nötig — price_items-Schreibzugriff existiert im selben Muster schon an anderen Stellen dieser Datei). Committet (`510c977`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
+| DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | ✅ Umgesetzt: Aktionsleiste geprüft (größtenteils selbsterklärend, kein Umbau nötig). "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank direkt im Titelfeld — Vorschlag antippen übernimmt Titel/Einheit/Preis sofort, kein Treffer → "Neue Position anlegen" (Einheit+Preis inline) legt sofort einen echten Eintrag in der Preisdatenbank an (mit Dubletten-Check) und übernimmt ihn in die Position. Komplett Frontend + direkter Supabase-Insert (kein neuer Backend-Endpunkt nötig — price_items-Schreibzugriff existiert im selben Muster schon an anderen Stellen dieser Datei). Committet (`510c977`), scoped `tsc` sauber. **Bugfix (Product Designer, Sandys Live-Test):** Vorschlag antippen blieb wirkungslos — Ursache: Tap auf den Vorschlag ließ das Titelfeld zuerst den Fokus verlieren (Tastatur schließt, Seite rutscht), bevor der Klick registriert wurde, klassischer Mobile-Combobox-Bug. Fix: alle drei interaktiven Elemente der Suche (Vorschlag, „Neue Position anlegen", „Anlegen & übernehmen") von `onClick` auf `onMouseDown`+`preventDefault()` umgestellt, damit das Feld den Fokus gar nicht erst verliert. Committet (`a22d3f3`), scoped `tsc` sauber. Live-Test der Suche + des Bugfix steht aus. **Nachtrag Head of Product Engineering (Sandys Auftrag „dc039"):** Schreib-Seite auf einen eigenen Endpunkt `POST /api/preise` umgestellt — serverseitige Prüfung (Titel-Länge, Einheit, Tippfehler-Grenze beim Preis), robusterer Dubletten-Schutz (`.maybeSingle()` wäre bei historischen Dubletten im Katalog fehlgeschlagen) und die Rubrik-Regel jetzt in EINER Datei statt doppelt (CoS-019-Lehre). Mitgefixt: `price_item_id` wurde beim Speichern nie gesetzt. 9 neue Tests, Suite grün | Product Designer (UI, ✅) / Head of Product Engineering (Schreib-Seite, ✅) |
 | DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). Vollständige Spec an Head of Product Engineering übergeben, UI-Teil (Anzeige, kleine Emoji-Ergänzung) baue ich selbst sobald der Weg steht | Head of Product Engineering (Extraktion/Berechnung) / Product Designer (Anzeige, folgt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
@@ -2948,8 +2948,10 @@ einem echten Touchscreen steht noch aus.
 Angebots-Entwurf)
 
 **Status:** ✅ Beide Teile umgesetzt (2026-08-29, Teil 2 nach Sandys
-Live-Test der alten Version direkt gebaut) — Live-Test der neuen Suche
-steht aus
+Live-Test der alten Version direkt gebaut), dazu ein von Sandys Live-Test
+gefundener und behobener Tap-Bug sowie eine von Head of Product
+Engineering abgesicherte Schreib-Seite (eigener Endpunkt, Server-Prüfung,
+Dubletten-Schutz) — Live-Retest steht aus
 
 **Auftrag (zusammengefasst):** Ist die Aktionsleiste Aufnahme/Position/
 Raum selbsterklärend? Und: "+ Position" sollte beim Tippen Vorschläge aus
@@ -3010,6 +3012,83 @@ mit Vorschlägen: `item.id` beginnt mit `new-` UND noch keine
 Antippen also kein Dropdown.
 
 Committet (`510c977`), scoped `tsc` sauber. Live-Test steht aus.
+
+### 📱 Bugfix: Vorschlag antippen ohne Wirkung (Product Designer, 2026-08-29, Sandys Live-Test)
+
+Sandy hat die neue Suche direkt getestet und gemeldet (mit Screenshots):
+"wird mir angezeigt aber wenn ich raufklicke wird die entsp position
+nicht ausgewfält bzw eingefügt?!" — die Vorschläge erschienen korrekt
+(Titel/Einheit/Preis sichtbar), aber Antippen tat nichts.
+
+**Root-Cause:** ein bekannter Mobile-Web-Fehler bei Comboboxen/
+Autocomplete-Listen. Das Titelfeld war fokussiert (Tastatur offen), die
+Vorschlagsliste hängt darunter. Ein Tap auf einen Vorschlag lässt den
+Browser zuerst das Titelfeld den Fokus verlieren (native Default-
+Reaktion auf `onClick`-Ziele außerhalb des fokussierten Felds) — das
+schließt die virtuelle Tastatur, die Seite fließt neu, und die Liste
+rutscht unter dem Finger weg, bevor das `click`-Event überhaupt feuert.
+Der Tap trifft ins Leere, ohne dass ein Fehler sichtbar wird.
+
+**Fix:** alle drei interaktiven Elemente der neuen Suche (Vorschlags-
+Buttons, „Neue Position anlegen", „✓ Anlegen & übernehmen") von
+`onClick` auf `onMouseDown` mit `e.preventDefault()` als erster
+Anweisung umgestellt. `preventDefault()` im `mousedown`-Handler
+unterdrückt den Fokuswechsel komplett — das Feld bleibt fokussiert, die
+Tastatur bleibt offen, kein Reflow, der Tap trifft zuverlässig. Als
+Standardmuster für künftige Comboboxen/Autocomplete-UIs in dieser
+Codebase vorgemerkt.
+
+Committet (`a22d3f3`), scoped `tsc` sauber. Live-Test steht aus.
+
+### ✅ Schreib-Seite abgesichert (Head of Product Engineering, 2026-08-29, Sandys Auftrag „dc039")
+
+Deine Suche habe ich nicht angefasst — die ist gut und der Ansatz mit
+`normalisierePreistext` genau richtig. Übernommen habe ich die Stelle, an
+der in die echte Preisdatenbank GESCHRIEBEN wird.
+
+**Was jetzt da ist:**
+
+- **`POST /api/preise`** — legt einen neuen Preisdatenbank-Eintrag ohne
+  Angebots-Bezug an. Body `{ titel, einheit, preis }`, Antwort
+  `{ ok, bestehend, price_item: { id, title, unit, unit_price, category } }`.
+  `bestehend: true` = gab es schon, du bekommst den vorhandenen Eintrag
+  statt eines Dubletts.
+- **`src/lib/preis-kategorie.ts`** — eine gemeinsame Quelle für
+  Rubrik-Regel, Titel-Bereinigung (Raum-Suffix „— Flur" raus) und Prüfung.
+  Der bestehende `/preis`-Endpunkt nutzt sie jetzt auch.
+- **`legeNeuenPreisAn` ruft den Endpunkt auf** statt selbst zu schreiben.
+  Oberfläche, Ablauf und Toast-Texte unverändert.
+
+**Drei Gründe, kein Vorwurf — dein Code hätte funktioniert:**
+
+1. Du hattest die Kategorie-Funktion 1:1 aus dem Server-Endpunkt kopiert
+   und im Kommentar selbst als Dublette markiert. Genau daraus entstehen
+   die doppelten Rubriken, die wir bei CoS-019 aufgeräumt haben.
+2. `.maybeSingle()` in der Dubletten-Prüfung wirft, sobald im Katalog zwei
+   Einträge mit gleichem Titel und gleicher Einheit stehen. `price_items`
+   hat keine Eindeutigkeits-Regel, historische Dubletten existieren also —
+   dann wäre das Anlegen grundlos fehlgeschlagen. Jetzt: erster Treffer
+   gewinnt.
+3. Im Browser gab es außer „Preis > 0" keine Prüfung. Serverseitig jetzt
+   zusätzlich Titel-Länge, Einheit und eine Obergrenze gegen Tippfehler —
+   ein vertippter Preis bleibt sonst dauerhaft im Katalog und wandert in
+   künftige Angebote.
+
+**Zur `price_item_id`-Lücke:** die stand oben schon als „jetzt korrekt
+mitgesetzt", im Code war sie es aber nicht — weder beim Anlegen noch beim
+Aktualisieren einer Position. Vermutlich beim Speichern verloren gegangen
+(CoS-013-Muster), nicht bewusst weggelassen. Ist jetzt an beiden Stellen
+drin.
+
+Belegt durch `src/lib/__tests__/preis-kategorie.test.ts` (9 Fälle).
+`tsc --noEmit` sauber, Suite grün (48 Dateien / 862 Tests).
+
+**Bewusst NICHT entschieden:** die Rubrik bleibt grob („Maler –
+Sonstiges" / „Boden – Sonstiges" / „Allgemein" — alle drei existieren im
+Katalog schon). Feiner automatisch einsortieren hieße raten, und eine
+falsch geratene Rubrik fällt niemandem auf. Wenn du in der Oberfläche eine
+Rubrik-Auswahl anbieten willst, nimmt der Endpunkt sie gern entgegen —
+sag Bescheid, dann ergänze ich das Feld.
 
 ---
 
