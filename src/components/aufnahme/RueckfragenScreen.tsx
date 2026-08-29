@@ -451,6 +451,96 @@ function AnzahlInput({
   )
 }
 
+// ── Ausnahme-Maße (DC-035 Teil 2) ────────────────────────────────────────────
+// Nach einer Türen-/Fenster-Stückzahl-Antwort optional EINE abweichend große
+// Öffnung erfassen (z.B. eine 2×2,2m Terrassentür unter sonst normalen
+// Türen). Bewusst eingeklappt und unterhalb der ✓-Zusammenfassung platziert,
+// statt die Stückzahl-Frage selbst umzubauen — die schnelle Chip-Auswahl
+// bleibt dadurch unverändert, das ist nur ein optionaler Zusatz danach.
+function AusnahmeMasseZeile({
+  ausnahmeMasse,
+  value,
+  onChange,
+}: {
+  ausnahmeMasse: NonNullable<RueckfrageItem['ausnahme_masse']>
+  value: { breite: number; hoehe: number } | null
+  onChange: (v: { breite: number; hoehe: number } | null) => void
+}) {
+  const [offen, setOffen] = useState(!!value)
+  const [breite, setBreite] = useState(value ? String(value.breite).replace('.', ',') : '')
+  const [hoehe, setHoehe] = useState(value ? String(value.hoehe).replace('.', ',') : '')
+
+  function commit(b: string, h: string) {
+    const bv = parseFloat(b.replace(',', '.')) || 0
+    const hv = parseFloat(h.replace(',', '.')) || 0
+    onChange(bv > 0 && hv > 0 ? { breite: bv, hoehe: hv } : null)
+  }
+
+  if (!offen) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOffen(true)}
+        className="mt-2 text-[12px] font-bold text-anthracite/40 hover:text-anthracite/65 underline decoration-dotted underline-offset-2"
+      >
+        {ausnahmeMasse.label}
+      </button>
+    )
+  }
+
+  const bv = parseFloat(breite.replace(',', '.')) || 0
+  const hv = parseFloat(hoehe.replace(',', '.')) || 0
+  const flaeche = bv > 0 && hv > 0 ? Math.round(bv * hv * 100) / 100 : null
+
+  return (
+    <div className="mt-2 bg-anthracite/[0.03] border border-anthracite/10 rounded-xl p-3">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[12px] font-bold text-anthracite/55">{ausnahmeMasse.label}</span>
+        <button
+          type="button"
+          onClick={() => { setOffen(false); setBreite(''); setHoehe(''); onChange(null) }}
+          className="text-[11px] font-bold text-anthracite/35 hover:text-anthracite/55"
+        >
+          Zurück zu Standard
+        </button>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="flex-1">
+          <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-wide mb-1">Breite</div>
+          <div className="flex items-center gap-2 bg-white border-2 border-anthracite/15 rounded-xl px-3 py-2 focus-within:border-yellow">
+            <input
+              type="number" inputMode="decimal"
+              placeholder={String(ausnahmeMasse.standard_breite).replace('.', ',')}
+              autoFocus
+              value={breite}
+              onChange={e => { setBreite(e.target.value); commit(e.target.value, hoehe) }}
+              className="flex-1 font-bold text-anthracite bg-transparent focus:outline-none w-0"
+            />
+            <span className="text-anthracite/40 font-semibold text-sm shrink-0">m</span>
+          </div>
+        </div>
+        <div className="text-anthracite/30 font-black mt-4">×</div>
+        <div className="flex-1">
+          <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-wide mb-1">Höhe</div>
+          <div className="flex items-center gap-2 bg-white border-2 border-anthracite/15 rounded-xl px-3 py-2 focus-within:border-yellow">
+            <input
+              type="number" inputMode="decimal"
+              placeholder={String(ausnahmeMasse.standard_hoehe).replace('.', ',')}
+              value={hoehe}
+              onChange={e => { setHoehe(e.target.value); commit(breite, e.target.value) }}
+              className="flex-1 font-bold text-anthracite bg-transparent focus:outline-none w-0"
+            />
+            <span className="text-anthracite/40 font-semibold text-sm shrink-0">m</span>
+          </div>
+        </div>
+      </div>
+      {flaeche !== null && (
+        <div className="text-[11px] font-bold text-anthracite/45 mt-1.5">= {String(flaeche).replace('.', ',')} m²</div>
+      )}
+    </div>
+  )
+}
+
 // ── Ja/Nein ─────────────────────────────────────────────────────────────────
 function JaNeinInput({
   frage,
@@ -749,6 +839,17 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
         )}
         {wurdeUebersprungen && (
           <div className="text-[#B91C1C] font-extrabold text-sm">⏭ Später ergänzen</div>
+        )}
+
+        {/* DC-035 Teil 2: nach einer Türen-/Fenster-Stückzahl ≥ 1 optional
+            EINE abweichend große Öffnung erfassen (z.B. Terrassentür). */}
+        {geloest && !wurdeUebersprungen && antwort && frage.ausnahme_masse
+          && !Array.isArray(antwort.wert) && antwort.wert >= 1 && (
+          <AusnahmeMasseZeile
+            ausnahmeMasse={frage.ausnahme_masse}
+            value={antwort.ausnahme ?? null}
+            onChange={v => setAntwortFuer(frage.id, { ...antwort, ausnahme: v })}
+          />
         )}
 
         <div className="flex justify-end mt-2">
