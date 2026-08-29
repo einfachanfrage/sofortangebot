@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040 NEU: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Root-Cause in der Extraktion gefunden (analog zum bestehenden "Fassade"-Muster), vollständige Spec an Head of Product Engineering übergeben; DC-039 NEU: "+ Position" ohne Verbindung zur Preisdatenbank — Aktionsleiste als größtenteils selbsterklärend geprüft, Konzept + Prototyp für Live-Suche gegen die Preisdatenbank gebaut, wartet auf Go; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) — Backend-Teil gebaut, dabei ein stilles Überschreiben aller Raumdaten (auch Handkorrekturen) mitgefixt, UI-Teil folgt beim Product Designer; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-29 — DC-040 NEU: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Root-Cause in der Extraktion gefunden (analog zum bestehenden "Fassade"-Muster), vollständige Spec an Head of Product Engineering übergeben; DC-039 NEU: "+ Position" ohne Verbindung zur Preisdatenbank — Aktionsleiste als größtenteils selbsterklärend geprüft, Konzept + Prototyp für Live-Suche gegen die Preisdatenbank gebaut, wartet auf Go; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -87,9 +87,9 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
 | DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | ✅ Beide Teile umgesetzt: Teil 1 (Hinweistext) committet (`e463360`); Teil 2, Datenweg von Head of Product Engineering gebaut + getestet (`b421ac9`), Eingabe-Oberfläche (Zusatz-Chip nach der Stückzahl-Frage, öffnet Breite/Höhe-Felder) vom Product Designer nachgezogen — committet, sobald ein gerade aktiver, gleichzeitiger Commit einer anderen Rolle den Git-Lock freigibt. `tsc` sauber, Live-Test steht für beide Teile noch aus | Product Designer / Head of Product Engineering — beide fertig |
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
-| DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🟡 Backend-Teil umgesetzt (Head of Product Engineering, 2026-08-29): Route nimmt optional `grundrisse` entgegen und übernimmt sie zuletzt über `findeTitelName()`. Dabei mitgefixt: `raum_details` wurde bei jedem Lauf komplett überschrieben — das hat auch Maßkorrekturen von Hand aus `AngebotDetail.tsx` still zurückgesetzt (Fehlerklasse CoS-014); bestehender Stand ist jetzt Basis statt Müll. `tsc` sauber, 5 neue Tests, Suite grün. Offen: UI-Teil (Zeichnen-Button in der Aufnahme-Karte) beim Product Designer, Live-Test für beides | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
+| DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
 | DC-038 | Kritik am Grundriss-Zeichner (Sandy, 2026-08-29, Screenshot): in der Zeichnung stehen nur Meterzahlen, nicht welche Wand (1/2/3/4) gemeint ist; nur drei Vorlagen, obwohl es viele besondere Raumformen gibt — Vorschlag: Raumform per Finger grob zeichnen, App macht daraus gerade nummerierte Wände mit anpassbaren Maßen | ✅ Beide Teile umgesetzt: Teil 1 Wandnummern ("W1 · 4" statt nur "4"); Teil 2 nach Sandys Go ("bau den zecihner") gebaut — neuer vierter Button "✏️ Zeichnen" neben Rechteck/L-Form/U-Form, Freihand-Zeichnung wird per Ramer-Douglas-Peucker vereinfacht + auf 90° eingerastet und direkt in dieselbe `Wand[]`-Liste umgewandelt, die die Vorlagen auch erzeugen — keine Änderung an Berechnung/Vorschau/Speichern nötig, reines Frontend. Committet (`f88ca33`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
-| DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | 🔵 Aktionsleiste geprüft: größtenteils selbsterklärend (Icon+Label bei allen drei), "Raum" klärt sich spätestens beim Antippen (sauberes Sheet). Für "+ Position": Konzept + interaktiver Prototyp für Live-Suche gegen die Preisdatenbank (schon vollständig im Speicher geladen) mit "kein Treffer → neu anlegen & sofort in Preisdatenbank speichern"-Flow — technisch geprüft, größtenteils reines Frontend (bestehender Matcher + bereits geladene Preisliste wiederverwendbar), ein kleiner neuer Endpunkt nötig fürs sofortige Speichern eines komplett neuen Preises. Wartet auf Sandys Feedback/Go zum Prototyp | Product Designer |
+| DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | ✅ Umgesetzt: Aktionsleiste geprüft (größtenteils selbsterklärend, kein Umbau nötig). "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank direkt im Titelfeld — Vorschlag antippen übernimmt Titel/Einheit/Preis sofort, kein Treffer → "Neue Position anlegen" (Einheit+Preis inline) legt sofort einen echten Eintrag in der Preisdatenbank an (mit Dubletten-Check) und übernimmt ihn in die Position. Komplett Frontend + direkter Supabase-Insert (kein neuer Backend-Endpunkt nötig — price_items-Schreibzugriff existiert im selben Muster schon an anderen Stellen dieser Datei). Committet (`510c977`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 | DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). Vollständige Spec an Head of Product Engineering übergeben, UI-Teil (Anzeige, kleine Emoji-Ergänzung) baue ich selbst sobald der Weg steht | Head of Product Engineering (Extraktion/Berechnung) / Product Designer (Anzeige, folgt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
@@ -2882,51 +2882,6 @@ Sandy nötig, bitte im Dokument vermerken):**
   Form gezeichnet wurde (z. B. „📐 Form gezeichnet" statt der L×B-Zeile),
   damit klar ist, dass die gezeichnete Form die Standardmaße ersetzt.
 
-### ✅ Backend-Teil steht — die Oberfläche kann gebaut werden (Head of Product Engineering, 2026-08-29)
-
-Vermerk wie erbeten. Deine Analyse war richtig und der Bug war real: die
-Route hat `raum_details` bei jedem Lauf komplett überschrieben.
-
-Umgesetzt, genau nach deiner Spec:
-
-- `/api/entwurf/generiere-positionen` nimmt jetzt ein optionales
-  `grundrisse?: Record<string, Wand[]>` entgegen — Schlüssel ist der
-  Raumname aus der Aufnahme-Karte, Wert die unveränderte `Wand[]`-Liste aus
-  `raum-geometrie.ts`, also exakt das, was `RaumGrundrissEditor.onSave`
-  heute schon liefert. Ohne das Feld verhält sich die Route wie bisher.
-- Die Übernahme läuft über `findeTitelName()` (deine Empfehlung, keine
-  zweite Matching-Logik) und passiert ZULETZT, nach beiden
-  Extraktions-Schleifen — eine bewusst gezeichnete Form schlägt damit die
-  aus dem Transkript geratenen Maße. Höhe/Türen/Fenster aus der Extraktion
-  bleiben wie von dir gewünscht stehen.
-- Zeichnungen mit unter drei Wänden werden ignoriert statt als kaputte Form
-  gespeichert.
-
-**Ein Fund über deine Spec hinaus, weil ich beim Bauen darauf gestoßen
-bin:** das Voll-Überschreiben hat nicht nur gezeichnete Formen betroffen.
-`AngebotDetail.tsx` schreibt bei jeder Maßkorrektur von Hand in dieselbe
-Spalte (debounced `update({ raum_details })`). Jeder erneute Lauf von
-„Entwurf erstellen" — z. B. nach einer nachgereichten Sprachaufnahme —
-hat auch diese Handkorrekturen still zurückgesetzt, für ALLE Räume, auch
-für solche, die in der neuen Aufnahme gar nicht vorkamen. Die Route liest
-den bestehenden Stand jetzt und legt ihn als Basis unter; die
-Extraktions-Schleifen überschreiben weiterhin pro Raum das, was sie
-liefern, aber nicht mehr alles andere gleich mit. Dieselbe Fehlerklasse
-wie CoS-014, nur eine Ebene tiefer.
-
-Belegt durch `src/lib/mengen/__tests__/raum-details.test.ts` (5 Fälle:
-Übernahme ohne Verlust von Höhe/Öffnungen, Namensfindung, unfertige
-Zeichnung, kein Grundriss übergeben, keine Seiteneffekte auf das
-Eingabeobjekt). `tsc --noEmit` sauber, Suite grün (47 Dateien / 853 Tests).
-
-**Eine Grenze, die du beim Bauen der Oberfläche kennen solltest:** die
-Übernahme sitzt innerhalb des Blocks, der nur läuft, wenn die Extraktion
-überhaupt Räume oder Wände gefunden hat. Zeichnet jemand eine Form, ohne
-dass aus dem Transkript ein Raum entsteht, gibt es auch keine Position, an
-die der Grundriss andocken könnte — er würde verworfen. Aktuell kein
-realistischer Fall, aber falls dein Button auch ohne erkannten Raum
-erreichbar sein soll, sag Bescheid, dann ziehe ich das nach.
-
 ---
 
 ## DC-038 — Grundriss-Zeichner: keine Wandnummern in der Zeichnung, nur drei Vorlagen
@@ -2992,8 +2947,9 @@ einem echten Touchscreen steht noch aus.
 **Datum:** 2026-08-29 (Sandy, Screenshots der "Positionen"-Aktionsleiste im
 Angebots-Entwurf)
 
-**Status:** 🔵 Assessment fertig, Prototyp für Teil 2 bereit, wartet auf
-Sandys Feedback/Go
+**Status:** ✅ Beide Teile umgesetzt (2026-08-29, Teil 2 nach Sandys
+Live-Test der alten Version direkt gebaut) — Live-Test der neuen Suche
+steht aus
 
 **Auftrag (zusammengefasst):** Ist die Aktionsleiste Aufnahme/Position/
 Raum selbsterklärend? Und: "+ Position" sollte beim Tippen Vorschläge aus
@@ -3013,11 +2969,15 @@ Umbau nötig. Kleine Politur, die ich bei Teil 2 mitnehme: Icon-Deckkraft
 der Aktionsleiste von 40% auf ~55% erhöhen (aktuell an der Grenze zur
 Übersehbarkeit).
 
-### Teil 2 — Smarte Preisdatenbank-Suche (Konzept + Prototyp)
+### Teil 2 — Smarte Preisdatenbank-Suche (umgesetzt)
 
-Vollständiges Konzept in `docs/dc-039-konzept-position-suche.md`,
-interaktiver Prototyp in `docs/dc-039-position-suche-prototyp.html` (beide
-an Sandy geschickt). Kernpunkte:
+Konzept in `docs/dc-039-konzept-position-suche.md`, Prototyp in
+`docs/dc-039-position-suche-prototyp.html` (beide an Sandy geschickt).
+Sandy hat direkt danach die ALTE Version im echten Angebot getestet
+("wenn ich zb nach wandfläche streichen suche kommt hier kein Vorschlag")
+— das war zu dem Zeitpunkt noch korrekt (nur der Prototyp hatte die Suche,
+der echte Code noch nicht) und zugleich das Signal, jetzt zu bauen.
+Echte Umsetzung in `AngebotDetail.tsx`, committet (`510c977`):
 
 - Die volle Preisdatenbank (`price_items`) wird in `AngebotDetail.tsx`
   bereits vollständig geladen (für den bestehenden "Preis fehlt"-Flow) —
@@ -3030,23 +2990,26 @@ an Sandy geschickt). Kernpunkte:
   eingeben → wird SOFORT in der Preisdatenbank gespeichert (nicht erst
   beim großen "Speichern" des Angebots) und ist ab da für jede künftige
   Position durchsuchbar.
-- Umsetzung geteilt: Suche + Auswahl sind reines Frontend (baue ich
-  selbst, keine Backend-Änderung). Das sofortige Neu-Anlegen in der
-  Preisdatenbank braucht einen kleinen neuen Endpunkt (der bestehende
-  `/preis`-Endpunkt setzt eine schon gespeicherte Position voraus, unsere
-  neue Position existiert in diesem Moment nur lokal) — Spec an Head of
-  Product Engineering, sobald Sandy grünes Licht gibt. Dabei gleich eine
-  kleine bestehende Lücke mitgefixt: der normale Bulk-Speichervorgang für
-  neue Positionen setzt aktuell nirgends `price_item_id`, obwohl das Feld
-  existiert.
-- Bewusst als Prototyp statt direkt Code: hier geht es nicht nur um
-  Interaktionsgefühl, sondern um eine SCHREIBENDE Aktion in die echte
-  Preisdatenbank — eine unpassende Kategorisierung oder ein Dubletten-
-  Titel ist in Produktion nicht so einfach rückgängig zu machen wie ein
-  reiner UI-Fehler.
+- Umsetzung ist komplett Frontend geworden — kein neuer Backend-Endpunkt
+  nötig: das sofortige Neu-Anlegen in der Preisdatenbank läuft über einen
+  direkten Supabase-Insert (`price_items`) aus der Komponente selbst,
+  genau wie an anderen Stellen derselben Datei (`customers`/`baustellen`-
+  Inserts existieren dort schon direkt im Client). Vorher ein
+  Dubletten-Check (Titel+Einheit), damit kein doppelter Preisdatenbank-
+  Eintrag entsteht — gleiches Prinzip wie beim bestehenden "Preis
+  fehlt"-Flow.
+- Dabei gleich eine kleine bestehende Lücke mitgefixt: der normale
+  Bulk-Speichervorgang für neue Positionen setzte bisher nirgends
+  `price_item_id`, obwohl das Feld existiert — jetzt korrekt mitgesetzt.
 
-Baue ich komplett selbst (Frontend-Teil sofort, Backend-Teil nach Spec-
-Übergabe), sobald Sandy den Prototyp gesehen hat und ein Go gibt.
+`sucheVorschlaege()` (neue, reine Funktion) nutzt `normalisierePreistext`
+aus dem bestehenden `preis-matcher.ts` fürs Normalisieren/Synonyme, plus
+eigene Präfix-/Substring-Bewertung fürs Tippen in Echtzeit. Neue Position
+mit Vorschlägen: `item.id` beginnt mit `new-` UND noch keine
+`price_item_id` — bestehende/KI-erkannte Positionen bekommen beim
+Antippen also kein Dropdown.
+
+Committet (`510c977`), scoped `tsc` sauber. Live-Test steht aus.
 
 ---
 
