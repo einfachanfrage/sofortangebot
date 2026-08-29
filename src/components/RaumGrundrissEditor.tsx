@@ -187,7 +187,12 @@ function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; 
             <line x1={tx(ende.x)} y1={ty(ende.y)} x2={tx(start.x)} y2={ty(start.y)} stroke="#D97706" strokeWidth={1.5} strokeDasharray="4 3" opacity={0.6} />
           </>
         )}
-        {/* Längen-Beschriftung je Wand (Mittelpunkt des Segments) */}
+        {/* Wand-Nummer + Länge je Segment (Mittelpunkt des Segments) — Sandy,
+            2026-08-29: vorher stand hier nur die Meterzahl, ohne erkennbar zu
+            machen, welche Wand aus der Liste unten gemeint ist ("Wand 1"
+            dort, aber in der Zeichnung nur "4"). Jetzt "W1 · 4" — dieselbe
+            Nummerierung wie in der Wandliste, direkt an der passenden
+            Kante. */}
         {laengen.map((len, i) => {
           const a = pfad[i], b = pfad[i + 1]
           if (!a || !b) return null
@@ -203,7 +208,7 @@ function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; 
               className="fill-[#2C2C2C]"
               style={{ fontSize: 9, fontWeight: 800 }}
             >
-              {String(len).replace('.', ',')}
+              {`W${i + 1} · ${String(len).replace('.', ',')}`}
             </text>
           )
         })}
