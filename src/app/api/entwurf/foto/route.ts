@@ -63,3 +63,57 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ id: aufnahme.id, foto_url: storageErr ? null : storagePath })
 }
+
+// CoS-021 / DC-034 (2026-08-25): „Ins PDF aufnehmen"-Schalter für Aufnahme-
+// Fotos. Bisher gab es diesen Schalter nur im separaten „Notizen & Fotos"-Tab
+// und damit nur für den zweiten, getrennten Upload-Weg (`quote_photos`).
+// Sandys Entscheidung: ein Foto-Pool statt zwei — die Fotos, die beim Aufmaß
+// ohnehin entstehen, bekommen denselben Schalter. Diesen Endpunkt braucht der
+// Product Designer für die zusammengelegte Ansicht.
+export async function PATCH(req: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+
+  const body = await req.json().catch(() => ({})) as { aufnahme_id?: string; in_pdf?: boolean }
+  const { aufnahme_id, in_pdf } = body
+  if (typeof aufnahme_id !== 'string' || typeof in_pdf !== 'boolean') {
+    return NextResponse.json({ error: 'aufnahme_id und in_pdf erforderlich' }, { status: 400 })
+  }
+
+  // Eigentum ausdrücklich prüfen, nicht allein auf RLS vertrauen (dieselbe
+  // Verteidigung in der Tiefe wie in den Angebots-Routen): Die Aufnahme muss
+  // zu einem Angebot des eigenen Betriebs gehören.
+  const { data: aufnahme } = await supabase
+    .from('entwurf_aufnahmen')
+    .select('id, typ, angebot_id')
+    .eq('id', aufnahme_id)
+    .single()
+  if (!aufnahme) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
+  // Bewusst als eigene Abfrage über denselben, bereits erprobten Weg wie in
+  // den Angebots-Routen (`quotes` → `companies!inner(user_id)`), statt auf eine
+  // Verschachtelung zu setzen, die von einer Fremdschlüssel-Benennung abhängt.
+  const { data: angebot } = await supabase
+    .from('quotes')
+    .select('id, companies!inner(user_id)')
+    .eq('id', aufnahme.angebot_id)
+    .single()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const companyRel = (angebot as any)?.companies
+  const besitzerId = Array.isArray(companyRel) ? companyRel[0]?.user_id : companyRel?.user_id
+  if (!angebot || besitzerId !== user.id) {
+    return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+  }
+  if (aufnahme.typ !== 'foto') {
+    return NextResponse.json({ error: 'Nur Fotos können ins PDF übernommen werden' }, { status: 400 })
+  }
+
+  const { error } = await supabase
+    .from('entwurf_aufnahmen')
+    .update({ in_pdf })
+    .eq('id', aufnahme_id)
+
+  if (error) return NextResponse.json({ error: 'Konnte nicht gespeichert werden' }, { status: 500 })
+  return NextResponse.json({ ok: true, in_pdf })
+}

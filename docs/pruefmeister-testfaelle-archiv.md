@@ -1780,6 +1780,229 @@ Blocker mehr für „grün". Wandert damit ins Archiv, volle Historie bleibt dor
 
 ---
 
+## PM-011 — Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer)
+
+**Datum:** 2026-08-17
+**Status:** ✅ Live-Nachtest (2026-08-25) bestätigt: Kleinreparatur-Bug ist weg, alle fünf regulären
+Positionen haben wieder echte Preise, Wandfläche jetzt korrekt 36,00 m² (VOB-Regel, beide Öffnungen
+≤2,5 m²). Neue, nicht blockierende fachliche Frage: zusätzlich zum Altbau-Zuschlag erscheint jetzt auch
+„Erschwerniszuschlag schwieriger Untergrund" — mögliche Doppelberechnung neben der ohnehin schon
+bepreisten Q2-Vollflächenspachtelung, siehe Nachtest unten. Vorschlag-Kennzeichnung (PD-008) bleibt
+offenes Designer-Thema. Details im Archiv.
+
+**Warum dieser Fall:** PM-003 hat schon gezeigt, dass eine Kleinreparatur (zwei Dübellöcher) nicht als
+Vollflächen-Grundierung durchgehen darf. Hier die Gegenprobe: ein Fall, der ausdrücklich KEINE
+Kleinreparatur ist, sondern eine echte, ganzflächige Spachtelung vor dem Streichen. Testet, ob das Tool
+diese fachlich völlig andere Leistung (Stückzahl/Aufwand vs. m²-Vollfläche) sauber unterscheidet — und
+ob der PM-003/007-Fix, der Grundierung jetzt zu Recht zurückhaltend macht, nicht versehentlich auch die
+echte, hier klar verlangte Vollflächenspachtelung mit wegfiltert.
+
+**Zum Einsprechen:**
+„Ähm, Arbeitszimmer, vier mal drei zwanzig, Höhe zwo fünfzig. Ist n Altbau, die Wände sind ordentlich
+uneben — die müssen komplett gespachtelt werden, Qualitätsstufe Q2, nicht nur ne kleine Ausbesserung,
+wirklich die ganze Fläche. Danach zweimal streichen. Ein Fenster, Standardmaß, eine Tür, normal.
+Sockelleisten kleben wir ab, die bleiben wie sie sind.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,20) = 14,40 lfm
+- Wandbrutto: 14,40×2,50 = 36,00 m²
+- Abzug 1 Fenster Standard (1,20 m²) + 1 Tür Standard (1,89 m²) = 3,09 m²
+- Wandfläche netto: **32,91 m²**
+- Vollflächenspachtelung Q2: **32,91 m²** — eigene m²-Position über die GANZE Wandfläche, nicht als
+  Stückzahl/Kleinreparatur erfasst
+- Wandflächen streichen 2×: **32,91 m²**
+- Sockelleisten abkleben (Maler-Schutz): 14,40 − 0,90 (Tür) = **13,50 lfm**
+- Keine automatische Grundierungsposition erwartet — im Text steht kein explizites Grundierungssignal
+  (weder „grundieren" noch „Neubau/Erstanstrich/Tiefengrund"); höchstens als Erinnerung in „fehlende
+  Positionen" akzeptabel, keine automatisch bepreiste Position
+- Keine Deckenposition (nicht erwähnt)
+
+**Worauf achten:**
+- Wird die Vollflächenspachtelung als eigene m²-Position mit der vollen Wandfläche (32,91 m²) erfasst —
+  oder rutscht sie fälschlich in die für Kleinreparaturen gedachte Stückzahl-Logik (die für „zwei Löcher"
+  gebaut ist, siehe `maler-extras.ts`)?
+- Wird die Spachtelqualität Q2 irgendwo im Positionstext oder als Zusatzinfo festgehalten, oder geht sie
+  komplett verloren?
+- Bleibt es bei den korrekten 32,91 m², ohne dass zusätzlich ungefragt eine Grundierung auf die volle
+  Fläche gesetzt wird? Das wäre ein Rückfall in genau die PM-003/007-Fehlerfamilie, nur diesmal ausgelöst
+  durch das Wort „Spachtelung" statt „Grundierung".
+- Landet die Sockelleiste korrekt als „abkleben" (Malerschutz), nicht als „streichen" oder „montieren" —
+  hier ist ausdrücklich nur Schutz gewünscht, nichts weiter.
+
+**Ist-Ergebnis (Prüfmeister, direkt im Browser-Tab geprüft, 2026-08-17):** Arbeitszimmer korrekt erkannt,
+Raummaße exakt (4,00×3,20, Höhe 2,50 m, Türen 1, Fenster 1). Positionen im fertigen Entwurf:
+
+- Wandflächen streichen 2×: 32,91 m² × 9,50 € = 312,64 € ✓ exakt Soll
+- Boden schützen: 12,8 m² × 1,20 € = 15,36 € (automatisch abgeleitete Nebenleistung, wie in fast jedem
+  Testfall — kein Fehler)
+- Sockelleisten abkleben: 13,5 lfdm × 0,80 € = 10,80 € ✓ exakt Soll
+- **Spachtelarbeiten Q2** — „Wände für einen ebenen Untergrund vollflächig spachteln": 32,91 m² ×
+  9,00 € = 296,19 € ✓ **exakt Soll, inklusive Q2-Kennzeichnung im Positionstext selbst**
+- **Voranstrich / Grundierung: 32,91 m² × 6,00 € = 197,46 €** — nicht im Soll, nie verlangt
+- Erschwerniszuschlag Altbau: 1 Pauschale × 0,00 € („Preis fehlt in deiner Preisdatenbank")
+- **Risse / Löcher spachteln (kleine Schadstellen): 1 Stück × 8,00 € = 8,00 €** — nicht im Soll, nie
+  verlangt
+- Gesamt: Netto 840,45 € × 1,19 = **1.000,14 €** — rechnerisch exakt konsistent mit allen Positionen oben
+
+**Befund:**
+
+1. **Korrigiert (Sandy, 2026-08-17): das war fachlich falsch von mir eingeordnet — kein Bug, sondern eine
+   sinnvolle Ergänzung, nur ohne Kennzeichnung.** Ursprünglich hatte ich hier „ungefragte Grundierung,
+   197,46 €, Rückfall in die PM-003/007-Fehlerfamilie" stehen. Sandy hat zu Recht nachgehakt: als Maler
+   gedacht ist eine Grundierung NACH einer echten Vollflächenspachtelung Q2 auf Altbau-Untergrund kein
+   Fehler, sondern genau das, was ein Maler sowieso machen würde — frisch gespachtelte Flächen saugen
+   ungleichmäßig, ohne Grundierung gibt's Fleckenbildung im ersten Anstrich. Das ist ein echter fachlicher
+   Unterschied zu PM-003/007: dort war entweder die Fläche falsch (Grundierung auf die GANZE Wand wegen
+   zwei Dübellöchern — Flächen-Mismatch) oder es gab gar kein Signal (Grundierung nur wegen des Wortes
+   „Dachschräge"). Hier passt die Grundierungsfläche (32,91 m²) exakt zur tatsächlich gespachtelten
+   Fläche — kein Mismatch, ein plausibler, gut begründeter Vorschlag.
+   Der eigentliche, jetzt neu formulierte Fund: **im fertigen Angebot ist nirgends zu erkennen, dass diese
+   Position vom Tool sinnvoll ERGÄNZT wurde statt vom Nutzer selbst GESAGT** — „Voranstrich / Grundierung"
+   sieht optisch exakt gleich aus wie „Wandflächen streichen 2×", das wörtlich im Transkript stand. Sandys
+   Vorschlag dazu, den ich für sehr gut halte: automatisch ergänzte Positionen sollten sichtbar markiert
+   sein (z. B. „Vorschlag — bitte prüfen"), damit der Handwerker gezielt genau diese Positionen
+   gegenchecken kann, statt bei jeder Position gleich viel nachdenken zu müssen. Das würde nicht nur
+   diesen Fall entschärfen, sondern noch viele andere „automatisch abgeleitete Nebenleistungen", die in
+   fast jedem bisherigen Testfall unmarkiert mitgelaufen sind (Boden schützen, Sockelleisten abkleben,
+   Erschwerniszuschläge) — siehe PD-008 an den Designer, dorthin geht dieser Fund jetzt in erster Linie.
+2. **Zweiter Fund — „Risse / Löcher spachteln (kleine Schadstellen)" trotz ausdrücklicher Verneinung.**
+   Ich hatte wörtlich gesagt „nicht nur ne kleine Ausbesserung, wirklich die ganze Fläche" — trotzdem kam
+   zusätzlich eine eigene Kleinreparatur-Stückzahl-Position (1 Stück, 8,00 €) dazu, obwohl im Transkript
+   nirgends von Rissen oder Löchern die Rede war. Kleiner Betrag, aber vom Muster her verwandt mit dem
+   „ausdrücklicher Ausschluss wird ignoriert"-Fehler (wie beim Decke-Fall in PM-001) — nur diesmal ist die
+   Verneinung nicht „X nicht" sondern „nicht nur X, sondern Y". Anders als Punkt 1: dieser Fund bleibt auch
+   mit einer „Vorschlag"-Kennzeichnung (siehe oben) ein echter Fund — es geht nicht darum, DASS etwas
+   ergänzt wurde, sondern dass ausgerechnet etwas ergänzt wurde, das ausdrücklich verneint war. Trotzdem
+   gilt: mit klarer Kennzeichnung würde ein Handwerker das in Sekunden erkennen und löschen, der Schaden
+   bliebe klein — ohne Kennzeichnung ist es der stille, leicht übersehbare Fehler, um den es hier eigentlich
+   geht.
+3. **Kein Fehler, sondern eine Lücke in meiner eigenen Soll-Lösung:** Der Erschwerniszuschlag Altbau kam
+   korrekt (ich hatte „Altbau" im Text — das ist fachlich ein legitimer Auslöser, siehe PM-006). Den hatte
+   ich in der Soll-Lösung oben schlicht vergessen mit reinzuschreiben, das geht auf meine Kappe, nicht auf
+   die vom Tool. Reiht sich in den „Systemischen Fund" oben ein (0,00 €, Preis fehlt in der
+   Preisdatenbank) — nichts Neues.
+
+**Positiv festzuhalten:** Die eigentliche Kernfrage dieses Testfalls — wird Vollflächenspachtelung sauber
+von Kleinreparatur unterschieden, und bleibt die Spachtelqualität (Q2) erhalten — ist ein klares Ja.
+32,91 m² auf die volle Fläche, korrekt als „Spachtelarbeiten Q2" benannt. Das ist ein echter Erfolg, den
+ich nicht kleinreden will, auch wenn zwei andere Bugs den Fall insgesamt nicht grün machen.
+
+**Für Head of IT:** nur noch ein Thema, Punkt 1 ist raus (siehe Korrektur oben, kein Rechenfehler mehr) —
+die Kleinreparatur-Erkennung sollte eine ausdrückliche Verneinung wie „nicht nur eine kleine Ausbesserung"
+genauso respektieren wie andere Ausschlüsse (Punkt 2). Falls der Designer die „Vorschlag"-Kennzeichnung
+aus PD-008 umsetzen will, bräuchte es zusätzlich eine technische Kleinigkeit: irgendein Flag pro Position,
+ob sie aus dem Transkript direkt kam oder vom Tool selbst ergänzt wurde — das gibt's laut meinem
+bisherigen Eindruck noch nicht, aber das entscheidet ihr zwei am besten direkt miteinander.
+
+**Nachtest (Sandy, 2026-08-19) — derselbe Fall, alle Preise plötzlich weg:** Karte und Entwurf per
+Copy-Paste geschickt, Raummaße identisch zum Originaltest (4,00 × 3,20 m, Raumhöhe 2,5 m, Türen 1,
+Fenster 1) und alle Mengen weiterhin korrekt (32,91 m² Wandfläche, 12,8 m² Boden schützen, 13,5 lfdm
+Sockelleisten — Mengen-Logik also unverändert sauber). Aber: alle sieben Positionen zeigen jetzt „Preis
+fehlt in deiner Preisdatenbank", inklusive der sechs, die im Originaltest zwei Tage vorher echte Preise
+hatten (Wandflächen streichen, Boden schützen, Sockelleisten abkleben, Spachtelarbeiten Q2,
+Voranstrich/Grundierung, Risse/Löcher spachteln). Sandy war entsprechend deutlich: „WARU FEHLEN ALLE
+PREISE IN DER DATENBANK???? IN DER DATENBANK MÜSSEN ALLLEEEE POSITIONEN VORHANDEN SEIN ICH CHECKS NICHT."
+Einordnung und mögliche Ursachen bei „Systemischer Fund" Punkt 5 oben — das betrifft vermutlich nicht nur
+PM-011, sondern jeden Testfall, der gerade läuft, und sollte deshalb vor allem anderen geklärt werden.
+
+**Rest des Nachtests, unabhängig von der Preisfrage — was sonst noch auffällt:**
+
+1. **Kleinreparatur-Bug weiterhin unverändert offen, jetzt erneut reproduziert.** „Risse / Löcher
+   spachteln (kleine Schadstellen)" (1 Stück) steht wieder im Entwurf, obwohl im Transkript ausdrücklich
+   „nicht nur eine kleine Ausbesserung, wirklich die ganze Fläche" gesagt wurde. Kein neuer Fund, aber der
+   einzige der drei ursprünglichen PM-011-Befunde, für den es bisher überhaupt kein Fix-Update gibt — bitte
+   nicht aus den Augen verlieren, während die Preisfrage gerade die meiste Aufmerksamkeit bekommt.
+2. **Auffällig starke Version des PD-004-Musters: Karte verspricht 2, Entwurf liefert 7.** Die Karte zeigt
+   nur zwei Leistungen („Wände spachteln", „Wände streichen") und „2 Positionen erkannt". Der fertige
+   Entwurf hat sieben Positionen. Fünf davon sind fachlich plausible, automatisch abgeleitete
+   Nebenleistungen (Boden schützen, Sockelleisten abkleben, Grundierung, Erschwerniszuschlag, plus der
+   oben genannte Kleinreparatur-Bug) — das allein ist wie in den meisten bisherigen Fällen kein Fehler.
+   Aber die Diskrepanz selbst ist deutlich größer als alles bisher bei PD-004 Dokumentierte (dort ging es
+   meist um „5 angekündigt, 4 geliefert" — hier sind es 2 angekündigt, 7 geliefert, mehr als das
+   Dreifache). Sobald die Preise wieder da sind, würde ein Handwerker auf der Karte „2 Positionen" lesen
+   und danach einen Entwurf mit mehr als dreimal so vielen Zeilen und einer entsprechend höheren Summe
+   sehen — das ist ein größerer Vertrauens-Sprung als die bisher dokumentierten Fälle. Für den Designer:
+   ergänze ich bei PD-004, siehe `pruefmeister-notizen-fuer-designer.md`.
+3. **Kleinere Beobachtung, kein Fund:** Die Q2-Spachtelqualität steht auf der Karte nicht drin (nur
+   „Wände spachteln"), erst im Entwurf heißt die Position „Spachtelarbeiten Q2". Fachlich ist die
+   Qualitätsstufe ein Unterschied, den ein Handwerker früh sehen will — kein Bug, nur ein Denkanstoß, ob
+   sich das schon auf der Karte lohnt.
+
+Alle Mengen und die Kernfrage des Testfalls (Vollflächenspachtelung sauber von Kleinreparatur
+unterschieden, Q2-Kennzeichnung bleibt erhalten) bleiben unverändert bestätigt — das ist weiterhin ein
+Erfolg, der durch die Preis- und Kleinreparatur-Themen nicht kleiner wird.
+
+**Fix-Update zur Preisfrage (Head of Product Engineering, 2026-08-19):** Root-Ursache gefunden, direkt
+gegen die Produktionsdatenbank geprüft (nur lesend) — kein Rückschritt im Preis-Abgleich, sondern derselbe
+Fall wie bei PM-015. Details und Einordnung stehen jetzt bei „Systemischer Fund" Punkt 5 oben, hier nur
+das Ergebnis für diesen Testfall: der Nachtest lief auf dem Konto „Lisa Schein Malerbetrieb" — demselben
+Konto, an dem PM-015 ursprünglich gefunden wurde, mit bis heute nur 5 generischen Positionen statt eines
+Maler-Katalogs. Alle sieben `quote_items` dieses Nachtests haben `price_item_id: null`, weil es für dieses
+Konto in `price_items` schlicht keine Maler-Zeilen gibt, an die etwas matchen könnte — nicht, weil ein
+Matching-Bug plötzlich mehr Positionen verfehlt als vorher. Der PM-015-Fix ist im Code korrekt und live,
+wirkt aber nur für Konten, die NACH dem Fix (18.08.) onboarden — dieses eine Testkonto ist vom 17.08. und
+wird dadurch nicht rückwirkend versorgt. Für einen sauberen Wiederholungstest dieses Falls entweder auf
+`/preise` unter diesem Konto einmal „Standardpreise importieren" klicken (Button jetzt korrekt sichtbar),
+oder mir Bescheid geben, dann trage ich den fehlenden Katalog einmalig direkt nach.
+
+**Fix-Update (Head of Product Engineering, 2026-08-20) — Kleinreparatur-Bug trotz ausdrücklicher
+Verneinung:** Root-Cause gefunden in `maler-extras.ts` (`pruefeSpachtelarbeiten`). Du hattest wörtlich
+gesagt „nicht nur ne kleine Ausbesserung, wirklich die ganze Fläche" — die Erkennung dafür, ob eine
+Kleinreparatur vorliegt, hat aber nur nach der bloßen Wortfolge „kleine Ausbesserung"/„kleine[s] Loch/
+Löcher" im Text gesucht, ohne zu prüfen, ob direkt davor ein „kein[e]" oder eben „nicht nur" steht — sie hat
+die Verneinung selbst also komplett ignoriert und trotzdem eine eigene Kleinreparatur-Stückposition
+(„Risse / Löcher spachteln", 1 Stück) erzeugt. Exakt dieselbe Fehlerklasse wie „kein Fenster"/„keine Tür"
+an anderer Stelle im Code oder „keine Dehnungsfuge" bei PM-013 gestern — nur diesmal mit „nicht nur X,
+sondern Y" statt der einfacheren „kein/keine X"-Form.
+
+Fix: neue Verneinungserkennung direkt vor der Wortfolge (`kein[e]`/„nicht nur/bloß/allein" plus bis zu 20
+Zeichen Abstand, damit auch „nicht nur ne kleine Ausbesserung" erfasst wird), angewendet auf Dübellöcher
+UND Schadstellen gleichermaßen — dieselbe Lücke hätte genauso bei „keine Dübellöcher" zuschlagen können,
+auch wenn das noch nicht live beobachtet wurde. Mit der Verneinung entfällt die Kleinreparatur-Stückposition
+komplett, die restliche, bereits als korrekt bestätigte Q2-Vollflächenspachtelung (32,91 m²) läuft
+unverändert weiter — der Fix greift ausschließlich in die eine, falsch erkannte Zusatzposition ein. Neuer
+Test in `vollstaendigkeit.test.ts` mit deinem exakten Nachtest-Transkript, direkt neben dem bestehenden
+Gegenprobe-Test (wo „kleine Schadstellen" echt gemeint ist und weiterhin korrekt erkannt werden muss).
+
+**Ehrlich zum Stand:** Root-Cause und Fix sind an deinem exakten Transkript nachvollzogen und mit einem
+gezielten Test abgesichert, aber wie bei allen Fixes: noch kein Live-Nachtest im echten Tool.
+
+**Live-Nachtest (Sandy, 2026-08-25) — beide Kernfunde bestätigt, plus eine neue fachliche Frage:**
+
+Karte: „7 Positionen erkannt" — Wandflächen streichen 2x (36 m²), Boden schützen (12,8 m²), Sockelleisten
+abkleben (13,5 lfdm), Spachtelarbeiten Q2 (36 m²), Voranstrich/Grundierung (36 m²), Erschwerniszuschlag
+schwieriger Untergrund (1 Pauschale), Erschwerniszuschlag Altbau (1 Pauschale). Raummaße 3,2×4 m, Höhe
+2,5 m, 1 Tür, 1 Fenster.
+
+- ✅ **Kleinreparatur-Bug bestätigt behoben:** „Risse / Löcher spachteln" taucht nicht mehr auf, obwohl
+  die letzten beiden Nachtests das trotz „nicht nur eine kleine Ausbesserung" jedes Mal zeigten.
+- ✅ **Preise sind zurück:** Wandflächen streichen (36 m² × 9,50 € = 342,00 €), Boden schützen (12,8 m² ×
+  1,20 € = 15,36 €), Sockelleisten abkleben (13,5 lfdm × 0,80 € = 10,80 €), Spachtelarbeiten Q2 (36 m² ×
+  9,00 € = 324,00 €), Voranstrich/Grundierung (36 m² × 6,00 € = 216,00 €) — alle fünf wieder mit echten
+  Preisen, exakt wie im ursprünglichen Test vom 17.08. Der „alle Preise fehlen"-Rückschritt vom 19.08. war
+  ein Konto-spezifisches Problem (siehe „Systemischer Fund" Punkt 5) und tritt hier nicht mehr auf.
+- **Wandfläche jetzt 36,00 m² statt der alten Soll-Zahl 32,91 m² — kein Bug, sondern die VOB-Regel:**
+  Fenster (1,20 m²) und Tür (1,89 m²) liegen beide unter der 2,5-m²-Schwelle und werden seit dem 21.08.
+  nicht mehr abgezogen. 14,40 lfm Umfang × 2,50 m = 36,00 m² ist die korrekte Zahl unter der aktuellen
+  Regel. Spachtelarbeiten Q2 und Grundierung folgen konsequent derselben (jetzt größeren) Fläche.
+- Sockelleisten abkleben (13,5 lfdm) unverändert korrekt — VOB gilt hier bewusst nicht, Türbreite wird
+  weiterhin abgezogen (14,40 − 0,90).
+- **Neue, nicht blockierende Beobachtung:** Zusätzlich zum erwarteten Altbau-Zuschlag erscheint jetzt auch
+  „Erschwerniszuschlag schwieriger Untergrund" (1 Pauschale, Preis fehlt — Katalog-Lücke, kein Bug für
+  sich). Fachlich lohnt sich aber ein zweiter Blick: der Zuschlag wird vermutlich durch „die Wände sind
+  ordentlich uneben" ausgelöst (derselbe Trigger wie bei PM-019) — hier wird aber bereits eine komplette
+  Q2-Vollflächenspachtelung (324,00 €) in Rechnung gestellt, die genau diese Unebenheit behebt. Ob daneben
+  noch ein zusätzlicher „schwieriger Untergrund"-Pauschalzuschlag fachlich gerechtfertigt ist, oder ob das
+  eine Doppelberechnung derselben Wandbeschaffenheit wäre, ist eine handwerkliche Einschätzungsfrage, kein
+  klarer Bug — beide Positionen sind ohnehin als „Vorschlag" markiert und damit vor dem Versand prüfbar.
+
+**Ergebnis:** Beide ursprünglichen Bugs (Kleinreparatur trotz Verneinung, fehlende Preise) live bestätigt
+behoben. Die Wandflächen-Änderung ist die korrekte VOB-Konsequenz, kein neuer Fund. Einzig offen: die
+fachliche Doppel-Erschwernis-Frage (informativ, keine Blockade) und das separate Designer-Thema PD-008
+(Vorschlag-Kennzeichnung). PM-011 ist damit fachlich abgeschlossen.
+
+---
+
 ## PM-012 — Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich NICHT neu (Esszimmer)
 
 **Datum:** 2026-08-17
@@ -1918,6 +2141,527 @@ weil man Sockelleisten, die man ohnehin streicht, nicht zusätzlich zum Schutz a
 Kernbug dieses Falls — „Sockelleisten streichen" fehlte trotz dreifach ausdrücklichem Verlangen — nach
 fünf gescheiterten Versuchen jetzt live bestätigt behoben. Wandert damit ins Archiv, volle Historie bleibt
 dort erhalten.
+
+---
+
+## PM-013 — Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur)
+
+**Datum:** 2026-08-17
+**Status:** ✅ Nachtest 5 (2026-08-25) bestätigt: Dehnungsfuge ist zurück (Fix-Update 4, Whisper-Hörfehler-
+Toleranz „Dehnungsfuhre" hält), „Nein, bleibt"-Rückfrage wird respektiert, alle Flur-Positionen weiterhin
+exakt Soll. Damit sind alle sechs Funde dieses Falls (fünf aus Nachtest 3, plus die Dehnungsfuge-Klärung)
+live bestätigt behoben. Details im Archiv.
+
+**Warum dieser Fall:** Deckt gleich drei bisher ungetestete Punkte gleichzeitig ab. Erstens: ein
+Mehrraum-Auftrag, bei dem die Räume nicht nur unterschiedlichen Scope haben (wie bei PM-005), sondern
+komplett unterschiedliche GEWERKE — ein Raum nur Boden, der andere nur Maler. Das ist ein härterer Test
+für die Raum-/Gewerke-Trennung als PM-005, weil hier auch geprüft wird, ob im einen Raum trotz Wort
+„Boden" im Nebensatz keine Maler-Positionen und im anderen Raum trotz Rauminhalt keine Boden-Positionen
+entstehen. Zweitens: Fischgrät-Verlegung — im Fachwissen als eigener, höherer Verschnittsatz (10–15 %)
+gegenüber gerader Verlegung (5 %) explizit benannt, aber bisher in keinem Testfall genutzt (PM-002 hat nur
+„diagonal" getestet). Drittens: eine ausdrücklich verlangte Dehnungsfuge — bisher komplett ungetestet.
+
+**Zum Einsprechen:**
+„Wohnzimmer, acht mal viereinhalb. Eichenparkett, Fischgrät verlegt, das braucht ja mehr Verschnitt. Ist
+schon ne große Fläche, da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte mit rein. Boden nur,
+an den Wänden machen wir nix.
+
+Flur daneben, fünf mal eins achtzig, Höhe zwo sechzig. Kein Fenster da, aber eine Tür, normal Maß. Nur
+Wände und Decke streichen, zweimal. Da wird nix am Boden gemacht, der bleibt wie er ist.“
+
+**Soll-Lösung:**
+
+*Wohnzimmer (nur Boden-Gewerk):*
+- Fläche: 8,00×4,50 = 36,00 m²
+- Fischgrät-Verlegung: Verschnitt im Korridor **10–15 %** (Fachwissen-Standard für Fischgrät/diagonal) →
+  zwischen 39,60 m² (10 %) und 41,40 m² (15 %). Alles in diesem Korridor ist ok, klar falsch wäre 5 %
+  (Standard für gerade Verlegung) oder 0 %.
+- Dehnungsfuge: eine eigene Position (egal ob Preis hinterlegt oder nicht) — Raumlänge 8,00 m liegt an
+  bzw. über der handwerksüblichen Faustregel für schwimmend verlegte Bodenbeläge ohne Fuge
+- Keine Trittschalldämmung erwartet (nicht erwähnt, bei Parkett fachlich auch nicht zwingend Standard
+  wie bei Laminat/Vinyl)
+- Keine Sockelleisten-Position (nicht erwähnt)
+- **Keine** Wand- oder Deckenposition — ausdrücklich ausgeschlossen („an den Wänden machen wir nix")
+
+*Flur (nur Maler-Gewerk):*
+- Umfang: 2×(5,00+1,80) = 13,60 lfm; Wandbrutto: 13,60×2,60 = 35,36 m²
+- Abzug 1 Tür Standard (1,89 m²), kein Fenster-Abzug (ausdrücklich „kein Fenster da")
+- Wandflächen streichen 2×: **33,47 m²**
+- Deckenfläche streichen 2×: 5,00×1,80 = **9,00 m²**
+- **Keine** Boden-Position jeglicher Art — ausdrücklich ausgeschlossen („da wird nix am Boden gemacht,
+  der bleibt wie er ist"), obwohl das Wort „Boden" im Satz vorkommt
+
+**Worauf achten:**
+- Bleiben beide Räume klar getrennte Gruppen mit jeweils nur einem Gewerk — keine Vermischung, kein
+  PM-005-artiges Verschwinden einer Gruppe?
+- Fischgrät-Verschnitt spürbar höher als 5 % (der Standard für gerade Verlegung) — landet er im
+  erwarteten 10–15 %-Korridor?
+- Taucht überhaupt eine „Dehnungsfuge"-Position auf, wenn ausdrücklich verlangt — auch unbepreist wäre
+  hier schon ein Erfolg (siehe „Systemischer Fund" oben zu fehlenden Standardpreisen)?
+- Bleibt der Flur wirklich ganz ohne jede Boden-Position, obwohl das Wort „Boden" im Flur-Satz auftaucht
+  — direkte Verwandtschaft zum PM-010-Phantom-Bug (Wortauslöser ohne echten inhaltlichen Bezug)?
+- Bleibt das Wohnzimmer wirklich ganz ohne jede Wand-/Deckenposition, trotz des Namens „Wohnzimmer" (kein
+  automatisches Default-Streichen, nur weil es sich wie ein normaler Wohnraum anhört)?
+
+**Ist-Ergebnis (Prüfmeister, 2026-08-19, exakter Wortlaut von Karte, Rückfragen und Entwurf geprüft):**
+
+Karte: 4 Positionen erkannt — Wohnzimmer: Eichenparkett verlegen (36 m²), Dehnungsfuge einbauen (1 Stück);
+Flur: Wände streichen (20,8 m²), Decke streichen (9 m²). Rückfragen: Wohnzimmer „Muss der alte Bodenbelag
+entfernt werden?" → „Ja, raus" beantwortet (im Transkript nicht erwähnt, legitime Nachfrage). Für den Flur
+wurden aber **zwei Boden-Rückfragen gestellt** — „Welcher Belag soll in Flur verlegt werden?" und „Muss
+der alte Bodenbelag in Flur entfernt werden?" —, obwohl im Transkript ausdrücklich steht „da wird nix am
+Boden gemacht, der bleibt wie er ist". Sandy hat beide bewusst übersprungen („Später ergänzen").
+
+Entwurf Wohnzimmer (1.512,00 €), Raumform 4,5×8 m:
+- Fertigparkett verlegen: 36 m² × 42,00 € = 1.512,00 € — **kein Fischgrät-Verschnitt eingerechnet**, reine
+  Rohfläche 8×4,5=36 m², obwohl im Transkript ausdrücklich „Fischgrät verlegt, das braucht ja mehr
+  Verschnitt" gesagt wurde. Soll wäre 39,60–41,40 m² (10–15 %).
+- Altbelag entfernen: 36 m² × 0,00 € (Preis fehlt) — korrekt vorhanden, weil über die Rückfrage bestätigt,
+  kein Phantom diesmal
+- **Keine „Dehnungsfuge"-Position** — auf der Karte klar als eigene Leistung erkannt („Dehnungsfuge
+  einbauen 1 Stück"), im fertigen Entwurf aber nicht vorhanden, auch nicht als offene Rückfrage
+- Keine Trittschalldämmung, keine Sockelleisten-Position, keine Wand-/Deckenposition — alles korrekt wie
+  im Soll
+
+Entwurf Flur (427,13 €), Raumform 1,8×5 m, Höhe 2,6 m, 1 Tür, 0 Fenster:
+- Wandflächen streichen 2×: 33,47 m² × 9,50 € = 317,96 € — exakt Soll
+- Deckenfläche streichen 2×: 9 m² × 11,00 € = 99,00 € — exakt Soll
+- Boden schützen: 9 m² × 0,00 € (Preis fehlt) — normale Maler-Nebenleistung (Bodenschutz beim Streichen),
+  kein Widerspruch zum Boden-Ausschluss, da keine Bodenleger-Leistung
+- Sockelleisten abkleben: 12,7 lfdm × 0,80 € = 10,16 € — exakt Soll (13,60 − 0,90 Türbreite)
+- **Keine** echte Boden-Verlegeposition — der Ausschluss wurde im Ergebnis sauber respektiert, trotz der
+  beiden ungefragt gestellten Rückfragen oben
+
+**Befund:**
+
+1. **Neuer Fund: Fischgrät-Verschnitt wird gar nicht angewendet.** Erwartet 10–15 % Aufschlag (39,60–
+   41,40 m²), tatsächlich 0 % (36,00 m² = reine Rohfläche). Das ist schlechter als selbst der falsche
+   Standard „gerade Verlegung" (5 %) wäre — die Verlegeart „Fischgrät" scheint auf den Materialbedarf
+   überhaupt keinen Einfluss zu haben. Für den Bodenleger bedeutet das: er muss real 4–5,5 m² mehr Material
+   zuschneiden und verlegen, als ihm hier berechnet wird — bei 42,00 €/m² sind das über 150 € Differenz,
+   die er nicht bezahlt bekommt.
+2. **Neuer Fund, gleiche Fehlerkategorie wie PM-010: „Dehnungsfuge einbauen" verschwindet spurlos.** Die
+   Karte kündigt sie mit eigener Menge an (1 Stück), der fertige Entwurf enthält sie nicht — keine Zeile,
+   keine offene Rückfrage. Dritter unabhängiger Beleg (nach Sockelleisten entfernen bei PM-010, Sockel­
+   leisten streichen bei PM-012) für dasselbe größere Architekturproblem: eine erkannte, aber ohne sichere
+   Menge/Bestätigung dastehende Leistung erreicht den Nutzer nie. Diesmal zusätzlich interessant: andere
+   Einheit („Stück" statt „lfdm"/„m²") und anderes Gewerk (Boden statt Maler) — untermauert, dass es sich
+   um ein gewerke- und einheitenübergreifendes, strukturelles Problem handelt, nicht um einen
+   Maler-Spezialfall.
+3. **Neuer, kleinerer Fund: Boden-Rückfragen für den Flur, obwohl Boden dort ausdrücklich ausgeschlossen
+   wurde.** Die Ausschluss-Erkennung wirkt auf Positions-Ebene (im Ergebnis kam korrekt keine
+   Boden-Position), aber nicht auf Rückfragen-Ebene — dem Nutzer werden Fragen gestellt, die er im selben
+   Satz schon beantwortet hat. Harmlos nur, weil Sandy beide bewusst übersprungen hat; hätte sie aus
+   Versehen „Laminat" oder „Ja, raus" angetippt, wäre eine nie verlangte Boden-Position im Flur entstanden
+   — dieselbe Gefahrenklasse wie der PM-010-Phantom-Bodenaustausch, nur einen Klick vom Nutzer entfernt
+   statt automatisch.
+4. **Gute Nachricht: Gewerke-Trennung selbst hält.** Wohnzimmer bekommt keine Wand-/Deckenposition, Flur
+   bekommt keine echte Boden-Verlegeposition — trotz des Wortes „Boden" im Flur-Satz. Alle Flur-Zahlen
+   (Wandfläche, Deckenfläche, Sockelleisten-Länge) treffen exakt die Soll-Lösung.
+
+**Für Head of Product Engineering:** drei getrennte Themen — (1) Verschnittsatz für Fischgrät/diagonale
+Verlegung in der Boden-Engine ergänzen (aktuell offenbar 0 % statt 10–15 %, unabhängig davon, ob generell
+5 % für gerade Verlegung schon funktionieren — das wäre separat zu prüfen); (2) „Dehnungsfuge einbauen"
+denselben Fix geben wie „Sockelleisten entfernen/streichen" bei PM-010/PM-012 — vermutlich dieselbe
+`fehlende`-Ursache, nur in der Boden-Engine statt der Maler-Engine; (3) Rückfragen-Generierung für einen
+Raum sollte einen im selben Satz ausdrücklich ausgeschlossenen Bereich (hier: „am Boden nix gemacht")
+genauso respektieren wie die Positions-Generierung es bereits tut — sonst bekommt der Nutzer Fragen zu
+Dingen vorgesetzt, die er gerade erst verneint hat.
+
+**Fix-Update (Head of Product Engineering, 2026-08-19) — nur Punkt (2) bearbeitet, (1) und (3) bewusst
+NICHT angefasst:** Auf Sandys „das bearbeiten und fixen!" hin gezielt den `fehlende`-Fund angegangen, den
+sie in ihrer Nachricht selbst zitiert hat. Ehrlich zum Stand: „Dehnungsfuge" ist NICHT derselbe Fall wie
+„Sockelleisten entfernen/streichen" — es ist sogar noch grundlegender. Für Sockelleisten gibt es
+(fehlerhafte oder tote) Erkennungslogik im Code; für „Dehnungsfuge" gibt es **überhaupt keine** — ich habe
+den kompletten Code durchsucht (`vollstaendigkeit/*`, `mengen/*`), das Wort „Dehnungsfuge" kommt nirgends
+außer in den beiden Katalogpreis-Einträgen vor. Die einzige Stelle im gesamten System, die „Dehnungsfuge"
+kennt, ist der schnelle Karten-Chip (GPT-Erkennung für die Aufnahme-Vorschau) — der hat sie ja auch korrekt
+mit „1 Stück" gemeldet, nur landet dieses Wissen nirgends in der eigentlichen Berechnung.
+
+Fix, gleiches Sicherheitsnetz-Prinzip wie bei PM-010/PM-012: `aufnahme-hinweise.ts` erkennt jetzt den
+Chip-Titel „Dehnungsfuge"/„Bewegungsfuge" und ergänzt daraus eine echte, sichtbare Position — Menge aus dem
+Transkript, wenn genannt, sonst 1 Stück (wie vom Chip erkannt; im Transkript stand nur „eine Dehnungsfuge",
+keine Länge). Einheit bewusst „Stück" statt an einen der beiden Katalogpreise (beide „lfdm") anzugleichen,
+weil im Transkript keine Länge genannt wurde — findet sich dadurch kein passender Katalogpreis, bleibt die
+Position sichtbar mit 0,00 € offen statt zu verschwinden (Systemischer Fund Punkt 2). Neuer Test in
+`aufnahme-hinweise.test.ts` mit deinem exakten Nachtest-Transkript. Zusätzlich, als generelles
+Sicherheitsnetz: der `fehlende`→sichtbare-Position-Fix in `mehrgewerk.ts` (siehe PM-010-Fix-Update).
+
+**Bewusst nicht angefasst:** (1) Fischgrät-Verschnittsatz und (3) Boden-Rückfragen trotz Ausschluss — beides
+eigene, unabhängige Themen ohne Bezug zum `fehlende`-Fund, die Sandys „das bearbeiten und fixen!" nicht
+konkret benannt hatte. Bitte separat priorisieren, wenn gewünscht. Live-Nachtest für „Dehnungsfuge" steht
+aus.
+
+**Fix-Update 2 (Head of Product Engineering, 2026-08-19) — Punkte (1) und (3), auf Sandys explizite
+Anfrage „fix das" hin:**
+
+*(1) Fischgrät-Verschnitt.* Root-Cause an echten Produktions-Rohdaten bestätigt (`debug_extraktion_roh`,
+dieselbe Zeile wie oben): GPT liefert für die Fischgrät-Verlegung `verlegerichtung: "fischgrät"` —
+`boden.ts` hat den erhöhten Verschnitt (15%) aber bisher NUR bei exakt `'diagonal'` ausgelöst, Fischgrät fiel
+auf den Parkett-Standard (0%) zurück. Fix: `MUSTER_MIT_MEHR_VERSCHNITT`-Regex erkennt jetzt auch
+„fischgrät"/„fischgrat" und wendet denselben 15%-Satz an. Wohnzimmer-Fläche 36,00 m² → jetzt 41,40 m² (liegt
+am oberen Rand des im Testfall geforderten 10–15%-Korridors, klar über den fälschlichen 0%). Neuer Golden-
+Test in `golden-korrekturen.test.ts` mit dem exakten PM-013-Transkript.
+
+*(3) Boden-Rückfragen trotz Ausschluss.* Das war kein Sonderfall, sondern derselbe strukturelle Fehler wie
+in Punkt (1) auf einer anderen Ebene, an einer konkreten Stelle: `kontext-analyzer.ts` (`anreichernBodenParkett`,
+zuständig für alle Boden-Rückfragen) prüft nur, ob das GLOBALE `extraktion.gewerk` „boden_parkett" ist — ein
+einzelnes Feld für den GANZEN Auftrag, nicht pro Raum. Bei PM-013s Mehrgewerk-Anfrage (Wohnzimmer nur Boden,
+Flur nur Maler) lief die Funktion trotzdem über BEIDE Räume. Für den Flur reichte dabei ein loser
+Substring-Treffer: seine `arbeiten`-Liste enthielt „boden abdecken" (ganz normale Maler-Nebenleistung,
+Schutzfolie beim Streichen — im Entwurf korrekt als eigene Maler-Position „Boden schützen" berechnet) — der
+alte Check `a.includes('boden')` hat das fälschlich als Boden-Verlege-Signal gewertet und zwei Rückfragen
+ausgelöst („Welcher Belag...", „Muss der alte Bodenbelag...entfernt werden?"), obwohl im selben Satz „da
+wird nix am Boden gemacht" stand. Fix: dieselbe, bereits bewährte Verlege-Signal-Erkennung wie in `boden.ts`
+(`BODEN_VERLEGEN_SIGNAL` — verlangt ein echtes Verlege-/Belag-Wort, nicht bloß „boden" irgendwo im Satz),
+jetzt aus `boden.ts` exportiert und in `kontext-analyzer.ts` wiederverwendet statt zweimal gepflegt zu
+werden. Jeder Raum ohne dieses Signal wird in `anreichernBodenParkett` jetzt komplett übersprungen — betrifft
+damit nicht nur die zwei gemeldeten Rückfragen, sondern konsistent auch die stillen Ergänzungen der
+Funktion (z.B. wurde nebenbei sichtbar: die „Übergangsprofile"-Ergänzung zählte bisher ALLE Räume der
+Anfrage statt nur echte Boden-Räume — bei 1 Boden- + 1 Maler-Raum hätte das Wohnzimmer fälschlich eine
+Übergangsprofil-Ergänzung bekommen, obwohl es gar keinen zweiten Boden-Raum zum Übergang gibt; jetzt
+mitgefixt). Neuer Test in `rueckfragen-flow.test.ts` mit den echten PM-013-Rohdaten (inkl. „boden abdecken"
+im Flur), prüft explizit: keine `belag_flur`/`altbelag_flur`/`masse_boden_flur`-Rückfrage, aber die legitime
+`altbelag_wohnzimmer`-Rückfrage bleibt erhalten.
+
+**Ehrlich zum Stand:** Beide Fixes sind an echten Produktionsrohdaten root-caused und mit gezielten Tests
+abgesichert, aber wie bei allen Fixes dieser Session noch OHNE Live-Nachtest im echten Tool. Die
+Boden-Rückfragen-Ursache reicht etwas weiter als ursprünglich vermutet — es ist kein isolierter
+Rückfragen-Bug, sondern dieselbe Lücke, die auch mehrere stille Ergänzungen betraf; die Architektur-Frage
+„sollte `analysiereKontext` grundsätzlich pro Raum statt pro Auftrag laufen" bleibt offen und gehört eher in
+den größeren, von Sandy bewusst zurückgestellten Architektur-Kontext (siehe CoS-002), nicht in diesen
+gezielten Fix.
+
+**Nachtest (Sandy, 2026-08-20) — 2 von 3 Fixes klar bestätigt, Dehnungsfuge diesmal nicht prüfbar.**
+Karte: „3 Positionen erkannt" — Wohnzimmer: Eichenparkett verlegen (36 m²); Flur: Wände streichen
+(25,2 m²), Decke streichen (9 m²). **Auffällig: keine „Dehnungsfuge"-Zeile auf der Karte diesmal**, anders
+als beim ersten Test (dort „4 Positionen erkannt" inkl. „Dehnungsfuge einbauen 1 Stück"). Rückfrage nur
+noch eine einzige: „Muss der alte Bodenbelag in Wohnzimmer entfernt werden?" → diesmal „Nein, bleibt"
+beantwortet — die beiden Flur-Boden-Rückfragen aus dem ersten Test sind komplett weg.
+
+Entwurf Wohnzimmer (1.738,80 €), Raumform 4,5×8 m:
+- **Fertigparkett verlegen inkl. 15% Verschnitt: 41,4 m² × 42,00 € = 1.738,80 €** — ✅ **Fischgrät-
+  Verschnitt-Fix bestätigt.** 36 × 1,15 = 41,4 m², liegt exakt am oberen Rand des geforderten
+  10–15%-Korridors, klare Verbesserung gegenüber den früheren 0%.
+- Keine Altbelag-Position — korrekt, passend zur diesmal verneinten Rückfrage.
+- Keine Dehnungsfuge-Position — s.u., nicht eindeutig zuordenbar.
+- Keine Wand-/Deckenposition — weiterhin korrekt.
+
+Entwurf Flur (427,13 €): Wandflächen streichen 2× 33,47 m² × 9,50 € = 317,96 € (exakt Soll), Deckenfläche
+streichen 2× 9 m² × 11,00 € = 99,00 € (exakt Soll), Boden schützen 9 m² × 0,00 € (Preis fehlt, bekannt),
+Sockelleisten abkleben 12,7 lfdm × 0,80 € = 10,16 € (exakt Soll). ✅ **Boden-Rückfragen-Fix bestätigt** —
+keine der beiden früheren, unverlangten Flur-Boden-Rückfragen kam diesmal, nur die legitime
+Wohnzimmer-Rückfrage.
+
+**Klärung (Sandy, 2026-08-20):** Bestätigt — „habe Dehnungsfuge mit gesagt", derselbe Wortlaut wie beim
+ersten Test. Damit ist die zweite der beiden offenen Erklärungen bestätigt, und das ist ein neuer, eigener
+Fund: **GPT erkennt „Dehnungsfuge" bei identischem Transkript nicht zuverlässig.** Erster Test:
+„4 Positionen erkannt" inkl. „Dehnungsfuge einbauen 1 Stück" auf der Karte. Dieser Test, gleicher Satz:
+nur „3 Positionen erkannt", keine Dehnungsfuge irgendwo sichtbar — weder auf der Karte noch im Entwurf,
+auch keine offene Rückfrage dazu.
+
+**Warum das schwerer wiegt als ein normaler Flakiness-Fall:** Der Fix vom 19.08. für dieses Problem hängt
+komplett am Karten-Chip-Titel — er greift NUR, wenn die Karte „Dehnungsfuge" überhaupt als Leistung
+meldet (siehe Fix-Update oben: „`aufnahme-hinweise.ts` erkennt jetzt den Chip-Titel..."). Diese Architektur
+ist also nur so zuverlässig wie GPTs Karten-Erkennung selbst — und genau die ist hier gerade zweimal mit
+demselben Satz unterschiedlich ausgefallen. Der Fix kann technisch einwandfrei funktionieren und trotzdem
+regelmäßig ins Leere laufen, weil die vorgelagerte Erkennung, auf die er sich verlässt, selbst nicht
+stabil ist. Damit lässt sich dieser Fall NICHT allein durch einen weiteren Nachtest klären — ein „diesmal
+war sie wieder da" würde nur zeigen, dass es mal klappt, nicht dass es zuverlässig klappt.
+
+**Für Head of Product Engineering:** Bitte prüfen, ob es für „Dehnungsfuge" (und ggf. andere rein
+Chip-Titel-abhängige Sicherheitsnetz-Fixes) eine zweite, vom Karten-Chip unabhängige Fallback-Prüfung
+geben kann — z. B. eine einfache Stichwortsuche direkt im Rohtranskript („Dehnungsfuge"/„Bewegungsfuge"),
+analog zu den robusteren Signal-Prüfungen, die an anderer Stelle in diesem Fehlerkomplex schon eingebaut
+wurden (`BODEN_VERLEGEN_SIGNAL` u. ä.), statt sich ausschließlich auf eine einzelne, nachweislich nicht
+deterministische GPT-Chip-Antwort zu verlassen.
+
+**Zwischenstand:** 2 von 3 Funden (Fischgrät-Verschnitt, Boden-Rückfragen) live bestätigt behoben. Der
+dritte (Dehnungsfuge) ist jetzt ein eigener, neuer Fund — nicht mehr offen wegen Unklarheit über den
+Transkript-Wortlaut, sondern wegen inkonsistenter GPT-Erkennung bei nachweislich identischem Wortlaut.
+PM-013 bleibt aktiv, bis das geklärt ist.
+
+**Fix-Update 3 (Head of Product Engineering, 2026-08-20) — Dehnungsfuge, unabhängig vom Karten-Chip:**
+Genau wie empfohlen: `aufnahme-hinweise.ts` verlässt sich jetzt nicht mehr ausschließlich auf den
+Karten-Chip-Titel, sondern prüft zusätzlich einen Fallback direkt im Rohtranskript (`dehnungsfuge|
+bewegungsfuge`, dasselbe kombinierte Transkript, das auch die tiefere Berechnung sieht) — komplett
+unabhängig davon, ob GPTs Karten-Erkennung die Leistung diesmal als eigenen Chip meldet oder nicht. Damit
+kann derselbe Wortlaut nicht mehr zwei unterschiedliche Ergebnisse liefern, je nachdem, ob die (nachweislich
+nicht deterministische) Chip-Erkennung gerade mitspielt.
+
+Ein Unterschied zu den Chip-Titeln, den ich bewusst mit abgesichert habe: Chip-Titel sind kuratierte
+Kurzlabel — GPT würde nie einen Chip „Keine Dehnungsfuge" nennen. Das Rohtranskript ist aber echter
+Fließtext und könnte theoretisch eine Verneinung enthalten („keine Dehnungsfuge nötig"). Deshalb prüft der
+neue Fallback zusätzlich dieselbe Verneinungserkennung, die im Code schon für „kein Fenster"/„keine Tür"
+existiert (`arbeiten-normalisierer.ts`) — der Fallback erfindet also keine Position, wenn das Wort zwar im
+Text steht, aber ausdrücklich ausgeschlossen wurde. Zwei neue Tests in `aufnahme-hinweise.test.ts`: einer
+mit deinem exakten Nachtest-2-Transkript (Chip meldet diesmal absichtlich nichts, Fallback greift trotzdem),
+einer mit einer ausdrücklichen Verneinung (keine Position entsteht).
+
+**Ehrlich zum Stand:** Root-Cause und Fix sind mit gezielten Tests abgesichert, aber wie immer noch ohne
+Live-Nachtest — und dieser Fall ist von Natur aus schwerer sauber zu bestätigen als die anderen beiden,
+weil das eigentliche Problem (GPTs Chip-Erkennung ist nicht deterministisch) durch diesen Fix nicht
+verschwindet, sondern nur umgangen wird. Ein einzelner „diesmal war sie da"-Nachtest reicht hier nicht als
+Beweis (das galt schon beim letzten Mal) — aussagekräftiger wäre, den Fall 2-3 Mal hintereinander mit
+demselben Transkript zu wiederholen und zu prüfen, ob die Dehnungsfuge jedes Mal auftaucht, unabhängig
+davon, was die Karte in der Zwischenzeit anzeigt.
+
+**Nachtest 3 (Sandy, 2026-08-21) — Dehnungsfuge-Fallback bestätigt, aber vier neue Funde:**
+
+Karte: „7 Positionen erkannt" — Flur: Wandflächen streichen 2x (33,47 m²), Deckenfläche streichen 2x
+(9 m²), Sockelleisten abkleben (12,7 lfdm), **Fertigparkett verlegen (9 m²)**; Wohnzimmer: Fertigparkett
+verlegen inkl. 15% Verschnitt (41,4 m²), **Sockelleisten montieren (25 lfdm)**; Allgemein: **Fertigparkett
+Fischgrät vollflächig verkleben (Menge prüfen, 0 Stück)**. Auffällig: diesmal KEIN eigener „Dehnungsfuge"-
+Chip auf der Karte — genau der Fall, für den Fix-Update 3 gebaut wurde. Rückfrage nur eine: „Muss die
+**alte Tapete** in 'Wohnzimmer' vorher runter?" → „Nein, drüber" beantwortet — die Wortwahl „Tapete" für
+einen reinen Boden-Raum ist fachlich falsch (sollte „alter Bodenbelag" heißen, wie in den beiden
+vorherigen Tests).
+
+Entwurf Wohnzimmer (1.876,30 €):
+- Fertigparkett verlegen inkl. 15% Verschnitt: 41,4 m² × 42,00 € = 1.738,80 € — ✅ exakt Soll, Fischgrät-
+  Fix hält weiterhin
+- **Dehnungsfuge einbauen: 1 Stück × 0,00 € (Preis fehlt)** — ✅ **jetzt im Entwurf, obwohl auf der Karte
+  diesmal gar nicht als eigener Chip gemeldet.** Genau das Szenario, für das der Rohtranskript-Fallback aus
+  Fix-Update 3 gebaut wurde — Fix bestätigt wirksam.
+- **Sockelleisten montieren: 25 lfdm × 5,50 € = 137,50 €** — nicht im Soll, im Transkript nirgends
+  erwähnt. 25 lfdm = exakt der volle Wohnzimmer-Umfang (2×(8+4,5)=25). Neuer Phantom-Fund.
+
+Entwurf Flur (794,97 €):
+- Wandflächen streichen 2×: 33,47 m² × 9,50 € = 317,96 € — exakt Soll
+- Deckenfläche streichen 2×: 9 m² × 11,00 € = 99,00 € — exakt Soll
+- **Fertigparkett verlegen: 9 m² × 42,00 € = 378,00 €** — nicht im Soll, ausdrücklich ausgeschlossen
+  („da wird nix am Boden gemacht, der bleibt wie er ist"). 9 m² = exakt die Flur-Bodenfläche (5×1,8).
+  Schwererer Phantom-Fund als die Boden-Rückfragen aus dem letzten Test (die waren mit Fix-Update 2
+  behoben) — diesmal entsteht direkt eine echte, bepreiste Position, keine überspringbare Rückfrage.
+- **„Sockelleisten abkleben" fehlt komplett** — auf der Karte mit 12,7 lfdm gemeldet, im Entwurf nicht
+  vorhanden. Auch „Boden schützen" (im vorigen Test noch da, 9 m² ohne Preis) fehlt diesmal ganz.
+
+Allgemein:
+- **„Fertigparkett Fischgrät vollflächig verkleben (Menge prüfen)": 0 Stück, Preis fehlt** — offenbar eine
+  doppelte, fehlerhafte Extraktion derselben Fischgrät-Verlegung, die im Wohnzimmer schon korrekt als
+  eigene Position steht. Landet in keinem Raum, sondern in einem raumlosen „Allgemein"-Topf. Wegen Menge 0
+  rechnerisch harmlos, aber verwirrend im fertigen Angebot.
+
+**Befund:**
+
+1. **Dehnungsfuge-Fix bestätigt.** Fix-Update 3 funktioniert wie gedacht — die Position erscheint jetzt
+   im Entwurf, obwohl die Karte sie diesmal gar nicht als Chip gemeldet hat. Das war der eigentliche Zweck
+   des Rohtranskript-Fallbacks, und er hält.
+2. **Neuer, ernster Fund: Phantom-Bodenposition im Flur.** Trotz ausdrücklichem Ausschluss bekommt der
+   Flur eine echte, bepreiste „Fertigparkett verlegen"-Position (9 m², 378 €) — dieselbe Fehlerkategorie,
+   die Fix-Update 2 schon einmal auf Rückfragen-Ebene für genau diesen Fall behoben hatte
+   (`kontext-analyzer.ts`/`anreichernBodenParkett`), jetzt aber offenbar auf der Positions-Erzeugungs-Ebene
+   erneut aufgetreten — möglicherweise ein anderer Code-Pfad mit demselben losen „boden"-Substring-Problem,
+   oder eine Nebenwirkung des neuen Dehnungsfuge-Fallbacks aus Fix-Update 3, falls dessen
+   Rohtranskript-Scan nicht sauber pro Raum eingegrenzt ist.
+3. **Neuer Fund: Phantom-Sockelleisten im Wohnzimmer**, exakt in Höhe des vollen Raumumfangs (25 lfdm) —
+   nie erwähnt, wo doch „an den Wänden machen wir nix" ausdrücklich gesagt wurde. Sieht nach einer festen
+   Annahme „neuer Boden → automatisch neue Sockelleisten" aus, unabhängig davon, ob das gesagt wurde.
+4. **Neuer Fund: „Sockelleisten abkleben" (Flur) verschwindet trotz Karten-Erkennung mit echter Menge** —
+   dieselbe „fehlende"-Fehlerfamilie wie bei PM-010/012 und der ursprünglichen Dehnungsfuge selbst, jetzt
+   an einer weiteren Stelle. Zusätzlich fehlt auch „Boden schützen" (Flur), das im letzten Test noch da war.
+5. **Neuer, kleinerer Fund: doppelte/fehlerhafte Fischgrät-Position im „Allgemein"-Topf**, Menge 0, kein
+   Raum zugeordnet — rechnerisch harmlos, aber verwirrend.
+6. **Neuer, kleinerer Fund: falsche Rückfrage-Formulierung.** „Muss die alte Tapete... vorher runter?" für
+   einen Raum, der ausschließlich Boden-Gewerk ist (kein Maler-Bezug) — sollte „alter Bodenbelag" heißen
+   wie in den beiden vorherigen Tests. Deutet auf eine Vermischung der Rückfragen-Texte zwischen den
+   Gewerken hin — genau die Art Fehler, die dieser Testfall von Anfang an gezielt prüfen sollte (siehe
+   „Warum dieser Fall").
+
+**Für Head of Product Engineering:** Die gute Nachricht zuerst — Dehnungsfuge ist jetzt zuverlässig,
+Fix-Update 3 hält. Aber der Fix scheint neue oder wiederaufgetauchte Probleme in der Nachbarschaft
+aufgedeckt oder ausgelöst zu haben, alle in derselben strukturellen Familie wie die Mehrgewerk-Themen aus
+Fix-Update 2: Boden-Signale, die room-übergreifend statt pro Raum ausgewertet werden. Bitte prüfen:
+(1) warum trotz explizitem Ausschluss eine echte, bepreiste Parkett-Position im Flur entsteht (nicht nur
+eine überspringbare Rückfrage wie beim letzten Mal); (2) woher die Sockelleisten-Position im Wohnzimmer
+kommt, obwohl nie erwähnt; (3) warum „Sockelleisten abkleben" und „Boden schützen" im Flur diesmal
+verschwinden, obwohl die Karte „Sockelleisten abkleben" korrekt mit Menge meldet; (4) die doppelte,
+raumlose Fischgrät-„Allgemein"-Position; (5) die falsche „Tapete"-Formulierung in der Boden-Rückfrage. Ein
+möglicher gemeinsamer Nenner bei (1)–(3): der neue Rohtranskript-Fallback aus Fix-Update 3 scannt jetzt das
+GANZE kombinierte Transkript — falls das nicht sauber pro Raum eingegrenzt ist, könnte er Boden- und
+Maler-Signale zwischen den beiden Räumen neu vermischen, wo Fix-Update 2 das eigentlich schon sauber
+getrennt hatte. Das ist ein Regressions-Verdacht, kein bestätigter Befund — aber als erste Spur bei der
+Fehlersuche hilfreich.
+
+**Fix-Update (Head of Product Engineering, 2026-08-21) — alle fünf Nachtest-3-Funde, root-caused an echten
+Produktionsrohdaten:** Sandys Regressions-Verdacht oben war die richtige Spur, aber nicht direkt der
+Rohtranskript-Fallback aus Fix-Update 3 selbst — echte GPT-Rohdaten für genau diesen Testlauf gezogen
+(Supabase, `entwurf_aufnahmen`, id `704a58d1…`) und durch die echte Pipeline-Funktion laufen lassen. Zwei
+unabhängige Cross-Room-Bugs, beide dieselbe Fehlerfamilie wie schon Fix-Update 2 (ein GLOBALES Signal —
+ganzes Transkript oder ein bloßes Boolean-Flag — wurde ungeprüft auf JEDEN Raum angewendet, nicht nur auf
+den, der es wirklich betrifft):
+
+1. **Phantom-„Fertigparkett verlegen" im Flur.** `mehrgewerk.ts` (`reichereBodenAn`) übergab den aus dem
+   GANZEN Transkript erkannten Belag („parkett", wegen Wohnzimmers „Eichenparkett") bisher auch Räumen ohne
+   eigenen Belag-Wert — beim Flur trotz „da wird nix am Boden gemacht, der bleibt wie er ist". Fix: ab zwei
+   Räumen zusätzlich verlangen, dass der Raum SELBST ein Verlege-Signal in seiner eigenen `arbeiten[]`-Liste
+   hat (bei genau einem Raum bleibt es unverändert, dort ist „ganzes Transkript" gleichbedeutend mit „dieser
+   Raum" — bestätigt an einem bestehenden Test, der genau das braucht).
+2. **Phantom-„Sockelleisten montieren" im Wohnzimmer (25 lfdm, voller Raumumfang).** `boden.ts` vertraute
+   GPTs `sockelleisten`-Boolean blind — hier stand es auf true, obwohl „Sockelleisten" im Transkript kein
+   einziges Mal vorkommt. Sieht nach einer GPT-seitigen Standardannahme „neuer Boden → automatisch neue
+   Sockelleisten" aus. Fix: das Flag reicht allein nicht mehr, es braucht zusätzlich einen echten
+   „sockelleist…"-Treffer im Rohtranskript (bewusst NICHT die `arbeiten[]`-Liste dieses Raums geprüft — ein
+   bestehender Golden-Test, PM-002b, zeigt einen echten Fall, wo GPT „Sockelleisten werden neu montiert" im
+   Transkript korrekt umsetzt, es aber NICHT zusätzlich in `arbeiten[]` verewigt; ein `arbeiten[]`-Gate hätte
+   diesen legitimen Fall mitgestrichen — das ist mir beim ersten Versuch passiert und der volle Testlauf hat
+   es aufgedeckt).
+3. **„Sockelleisten abkleben" (Flur) verschwindet.** War kein eigener dritter Bug, sondern eine
+   Kettenreaktion von Fund 2: `aufnahme-hinweise.ts`s „Sockelleisten montieren"-Sicherheitsnetz entfernte
+   bisher JEDE „Sockelleisten abkleben"-Position im GESAMTEN Auftrag, sobald irgendein Raum eine
+   Montage-Karte hatte — die Karten-Chip-Titel selbst tragen keinen Raumbezug. Mit Fund 2 behoben verschwindet
+   der Auslöser, zusätzlich aber auch direkt gehärtet: der Filter entfernt jetzt nur noch im selben Raum wie
+   die Montage-Position (analog zu `entferneRedundantesSockelAbkleben`, das in `mehrgewerk.ts` schon richtig
+   raumscharf war). Auch der zweite Zweig (der ohne vorhandene Montage-Position sonst raten müsste, welchem
+   Raum eine raumlose Chip-Menge gehört) greift jetzt nur noch bei eindeutig einem einzigen Raum.
+4. **Doppelte, raumlose Fischgrät-Position im „Allgemein"-Topf.** Seit Fix-Update 2 rechnet die Boden-Engine
+   den Fischgrät-Verschnitt direkt in die Hauptposition ein („Fertigparkett verlegen inkl. 15% Verschnitt"),
+   ohne dass deren Text „fischgrät" oder „verkleben" enthält — die ältere, auf einen eigenen Aufpreis-Posten
+   ausgelegte Vollständigkeits-Prüfung (`boden-sonder.ts`, `pruefeFischgraet`) erkannte das nicht und legte
+   bei der hier kombinierten Mehrraum-Transkriptfläche eine zweite, raumlose „(Menge prüfen)"-Position an.
+   Fix: die Prüfung erkennt „verschnitt" jetzt zusätzlich als Beleg, dass der Verschnitt schon in der echten
+   Position steckt.
+5. **Falsche Rückfrage-Formulierung („alte Tapete" in einem reinen Boden-Raum).** `kontext-analyzer.ts`s
+   Tapete-Rückfrage lief bisher ohne den `hatStreichen`-Gate, den alle anderen Maler-Rückfragen in derselben
+   Schleife schon hatten — `altbelag_vorhanden` ist ein generisches „alter Belag da"-Flag, das GPT für Boden-
+   UND Maler-Räume gleichermaßen setzt, und wurde hier fälschlich immer als „alte Tapete" gelesen. Fix: Gate
+   ergänzt, ein Raum ohne Streich-/Wandbezug ist kein Tapete-Kandidat mehr, egal was `altbelag_vorhanden`
+   sagt.
+
+**Bewusst nicht (mit-)behoben:** die korrekte „Muss der alte Bodenbelag entfernt werden?"-Rückfrage für das
+Wohnzimmer fehlt in Nachtest 3 weiterhin komplett — nicht weil Fund 5 falsch behoben wurde, sondern weil
+`analysiereKontext` (kontext-analyzer.ts) über einen `switch(gewerk)` nur EINE Gewerke-Anreicherung pro
+Auftrag aufruft, basierend auf dem einen globalen `gewerk`-Feld („maler" hier). Bei einem echten
+Mehrgewerk-Auftrag läuft `anreichernBodenParkett` (die Funktion, die die richtige Frage stellen würde) dadurch
+nie. Das ist dieselbe offene Architektur-Frage, die schon in Fix-Update 2 („sollte `analysiereKontext`
+grundsätzlich pro Raum/Gewerk statt pro Auftrag laufen") zurückgestellt wurde — Fund 5s Fix entfernt die
+FALSCHE Frage zuverlässig, ersetzt sie aber (noch) nicht durch die richtige. Bitte separat priorisieren, falls
+gewünscht — der Fix dafür ist größer (beide Gewerke müssten `analysiereKontext` durchlaufen, nicht nur das
+primäre) und ich wollte ihn nicht ungetestet in denselben Fix mit reinziehen.
+
+**Nachtrag (2026-08-21, beim PM-020-Fix geprüft):** die Vermutung oben war nur zur Hälfte richtig. Fund 2s
+Fix (`boden.ts`, Engine) hat PM-020s Phantom in der Engine selbst tatsächlich mitgelöst — aber ein zweiter,
+unabhängiger Fallback in `vollstaendigkeit/boden-vorarbeiten.ts` hat exakt dieselbe Annahme separat nochmal
+gemacht und die Position trotzdem wieder erzeugt. Musste extra gefixt werden, siehe Fix-Update direkt bei
+PM-020.
+
+**Wie geprüft:** alle vier Cross-Room-Positionsbugs an den ECHTEN Produktionsrohdaten für diesen Testlauf
+verifiziert (GPTs `voll_extraktion.result` 1:1 aus der DB, durch die reale `verarbeiteExtraktion`-Pipeline
+laufen lassen) — Ergebnis danach: keine Flur-Parkett-Position, keine Wohnzimmer-Sockelleisten-Montage, Boden
+schützen + Sockelleisten abkleben im Flur beide wieder da, keine doppelte Fischgrät-Position, Fischgrät-
+Verschnitt weiterhin korrekt bei 41,4 m². Zusätzlich 7 neue, dauerhafte Tests (nicht nur der Debug-Lauf):
+`mehrgewerk.test.ts` (neue Testgruppe mit den echten PM-013-Nachtest-3-Rohdaten, 5 Assertions),
+`aufnahme-hinweise.test.ts` (raumscharfe Filterung), `rueckfragen-flow.test.ts` (Tapete-Rückfrage-Gate).
+Ganze Suite weiterhin grün (243/243, vorher 236 — 7 neue Tests, keine Regression), inkl. des bestehenden
+PM-002b-Golden-Tests, der beim ersten (zu strengen) Anlauf des Sockelleisten-Fixes tatsächlich rot wurde und
+mich auf die richtige, transkriptbasierte statt arbeiten[]-basierte Lösung gebracht hat. Wie immer: noch OHNE
+Live-Nachtest im echten Tool.
+
+**Nachtest 4 (Sandy, 2026-08-25) — alle fünf Nachtest-3-Funde bestätigt behoben, aber die Dehnungsfuge ist
+jetzt komplett weg:**
+
+Karte: Wohnzimmer „1 Position" — Fertigparkett verlegen inkl. 15% Verschnitt (41,4 m²); Flur „4 Positionen"
+— Wandflächen streichen 2× (35,36 m²), Deckenfläche streichen 2× (9 m²), Boden schützen (9 m²), Sockelleisten
+abkleben (12,7 lfdm). Rückfrage nur eine: „Muss der alte Bodenbelag in 'Wohnzimmer' entfernt werden?" →
+„Ja, raus" beantwortet — diesmal korrekt „Bodenbelag" statt „Tapete".
+
+Entwurf Wohnzimmer (1.738,80 €):
+- Fertigparkett verlegen inkl. 15% Verschnitt: 41,4 m² × 42,00 € = 1.738,80 € — exakt Soll, Fischgrät-Fix
+  hält weiterhin.
+- Altbelag entfernen: 36 m² × 0,00 € (Preis fehlt) — korrekt, passend zur bestätigten Rückfrage.
+- **Keine Dehnungsfuge-Position** — weder auf der Karte, noch im Entwurf, noch als offene Rückfrage. Dazu
+  gleich mehr unten.
+
+Entwurf Flur (445,08 €):
+- Wandflächen streichen 2×: 35,36 m² × 9,50 € = 335,92 € — **kein Bug, sondern korrekt.** Seit der
+  VOB-Übermessungsregel (2026-08-21) wird die Türöffnung (1,89 m², ≤2,5 m²) nicht mehr abgezogen — die
+  volle Umfangsfläche 13,60 × 2,60 = 35,36 m² ist jetzt die richtige Soll-Zahl, nicht mehr die alten
+  33,47 m². Das ist dieselbe Art Verwechslung, die mir bei PM-001 schon einmal passiert ist — hier bewusst
+  vermieden.
+- Deckenfläche streichen 2×: 9 m² × 11,00 € = 99,00 € — exakt Soll.
+- Boden schützen: 9 m² × 0,00 € (Preis fehlt) — korrekt, normale Maler-Nebenleistung.
+- Sockelleisten abkleben: 12,7 lfdm × 0,80 € = 10,16 € — exakt Soll (13,60 − 0,90 Türbreite; die
+  VOB-Regel gilt ausdrücklich NICHT für die Sockelleisten-Länge, dort bleibt der Türabzug bestehen).
+- **Keine** Phantom-„Fertigparkett verlegen"-Position im Flur — Nachtest-3-Fund 2 ist weg.
+
+**Befund:**
+
+1. **Alle fünf Nachtest-3-Funde live bestätigt behoben:** kein Phantom-„Fertigparkett" im Flur, keine
+   Phantom-„Sockelleisten montieren" im Wohnzimmer, „Sockelleisten abkleben" im Flur ist zurück und
+   rechnerisch exakt, keine doppelte raumlose Fischgrät-„Allgemein"-Position, und die Rückfrage fragt
+   korrekt nach „Bodenbelag" statt „Tapete". Fix-Update vom 21.08. hält vollständig.
+2. **Neuer, eigenständiger Fund: die Dehnungsfuge ist wieder komplett verschwunden.** Das ist der dritte
+   unterschiedliche Ausgang für exakt denselben Satz („da muss wahrscheinlich ne Dehnungsfuge rein, mach
+   das bitte mit rein"): Nachtest 2 — Karte meldet nichts, Entwurf auch nicht. Nachtest 3 — Karte meldet
+   nichts, aber der Rohtranskript-Fallback aus Fix-Update 3 greift und die Position erscheint im Entwurf
+   (als „bestätigt wirksam" dokumentiert). Nachtest 4 (hier) — Karte meldet nichts UND der Fallback greift
+   diesmal auch nicht: keine Position, keine 0,00-€-Zeile, keine Rückfrage. Das ist eine Regression eines
+   Mechanismus, der beim letzten Test noch nachweislich funktioniert hat, mit identischem Wortlaut.
+3. Sandy diktiert nach etabliertem Muster immer den vollständigen, exakten Testsatz — daher wird das hier
+   direkt als Bug gewertet und nicht erneut nachgefragt, ob die Dehnungsfuge diesmal wirklich gesagt wurde.
+
+**Fix-Update 4 (Head of Product Engineering, 2026-08-25) — es war keine Regression, und der Rat, in die
+Rohdaten zu schauen, war goldrichtig.**
+
+Dein Verdacht ging Richtung Nebenwirkung der Nachtest-3-Fixes. Ich habe deshalb zuerst das Rohtranskript
+dieses Laufs aus der Produktions-Datenbank geholt, bevor ich im Code gesucht habe. Dort steht wörtlich:
+
+> „…da muss wahrscheinlich eine **Dehnungsfuhre** rein."
+
+**Whisper hat sich verhört.** Der Fallback sucht nach „dehnungsfuge"/„bewegungsfuge" — und findet
+völlig zu Recht nichts, weil das Wort so nie bei ihm ankommt. Der Mechanismus war nie kaputt; er hat in
+Nachtest 3 funktioniert, weil Whisper es dort richtig geschrieben hatte. Das erklärt auch sauber, warum
+derselbe diktierte Satz drei verschiedene Ausgänge hatte: die Spracherkennung schreibt ihn jedes Mal
+etwas anders. Deine Einordnung „direkt als Bug werten, nicht nachfragen ob sie gesagt wurde" war dabei
+genau richtig — sie WURDE gesagt, sie kam nur anders an.
+
+**Fix:** Das Muster toleriert jetzt die üblichen Verhörer — Fuge/Fuhre/Fuhr, mit den Wortstämmen
+Dehnungs-/Dehn-/Bewegungs-, mit oder ohne Bindestrich, Singular wie Plural. Der Wortstamm bleibt Pflicht:
+eine „Fuhre Sand" löst nichts aus. Die Verneinungserkennung („ohne Dehnungsfuhre") gilt für alle
+Schreibweisen mit. 7 neue Tests, einer davon mit exakt deinem Transkript aus diesem Nachtest.
+
+**Einordnung, die über diesen Fall hinausgeht:** Das ist dieselbe Fehlerklasse wie „Systemischer Fund"
+Punkt 6 (verschluckte Maßangaben) — Whisper verändert etwas, bevor unser Code die Daten überhaupt sieht.
+Beide Fälle sind an einem Tag aufgetreten. Wo wir auf ein einzelnes gesprochenes Wort angewiesen sind,
+brauchen wir Toleranz gegenüber Hörfehlern, nicht exakte Wortgleichheit.
+
+**Ursprünglicher Auftrag:** Der Rohtranskript-Fallback aus Fix-Update 3 (`aufnahme-hinweise.ts`,
+Scan nach `dehnungsfuge|bewegungsfuge`) hat in Nachtest 3 nachweislich funktioniert und liefert jetzt, beim
+selben Transkript, wieder gar nichts. Bitte prüfen, ob der Fallback von etwas abhängt, das zwischen den
+beiden Testläufen still mitgeändert wurde — die naheliegendsten Kandidaten sind Nebenwirkungen der später
+verbauten Fixes aus dem „alle fünf Nachtest-3-Funde"-Update (insbesondere Fund 1, der `reichereBodenAn` jetzt
+zusätzlich ein raumeigenes Verlege-Signal in `arbeiten[]` verlangt — falls der Dehnungsfuge-Fallback
+irgendwo an denselben Raum-Gate hängt, statt wie ursprünglich gebaut komplett unabhängig vom übrigen
+Raum-Matching zu laufen, würde das genau so ein Verschwinden erklären) oder die Verneinungserkennung aus
+Fix-Update 3 selbst, falls sie zu aggressiv greift. Am aussagekräftigsten wäre ein Blick in die echten
+Rohdaten dieses Laufs (wie beim „alle fünf Nachtest-3-Funde"-Fix schon einmal gemacht), um zu sehen, ob GPT
+„Dehnungsfuge" diesmal überhaupt ins Transkript geschrieben hat oder ob der Fallback es zwar im Text findet,
+aber danach verwirft.
+
+**Nachtest 5 (Sandy, 2026-08-25) — Dehnungsfuge zurück, „Nein, bleibt" respektiert, alles Übrige unverändert exakt:**
+
+Karte: Wohnzimmer „1 Position" — Fertigparkett verlegen inkl. 15% Verschnitt (41,4 m²); Flur „4 Positionen"
+— Wandflächen streichen 2× (35,36 m²), Deckenfläche streichen 2× (9 m²), Boden schützen (9 m²),
+Sockelleisten abkleben (12,7 lfdm). Rückfrage: „Muss der alte Bodenbelag in 'Wohnzimmer' entfernt werden?"
+→ diesmal „**Nein, bleibt**" beantwortet.
+
+Entwurf Wohnzimmer (1.738,80 €):
+- Fertigparkett verlegen inkl. 15% Verschnitt: 41,4 m² × 42,00 € = 1.738,80 € — exakt Soll, Fischgrät-Fix
+  hält weiterhin.
+- ✅ **Dehnungsfuge einbauen: 1 Stück × 0,00 € (Preis fehlt)** — **zurück!** Fix-Update 4 (Whisper-
+  Hörfehler-Toleranz für „Dehnungsfuhre"/„Fuhr" etc.) bestätigt wirksam.
+- **Keine** Altbelag-entfernen-Position — korrekt, passend zur diesmal verneinten Rückfrage. Die
+  Rückfragen-Antwort wird sauber respektiert.
+
+Entwurf Flur (445,08 €): Wandflächen streichen 2× 35,36 m² × 9,50 € = 335,92 € (exakt Soll unter der
+VOB-Regel, Tür ≤2,5 m² bleibt unabgezogen), Deckenfläche streichen 2× 9 m² × 11,00 € = 99,00 € (exakt
+Soll), Boden schützen 9 m² × 0,00 € (Preis fehlt, bekannt), Sockelleisten abkleben 12,7 lfdm × 0,80 € =
+10,16 € (exakt Soll). Kein Phantom-Parkett im Flur, keine Phantom-Sockelleisten im Wohnzimmer — beide
+Nachtest-3-Fixes halten weiterhin.
+
+**Ergebnis:** Damit sind jetzt alle sechs Funde dieses Falls live bestätigt behoben — die fünf aus
+Nachtest 3 (dort schon bestätigt) und als letzter, sechster die Dehnungsfuge-Frage aus Nachtest 4
+(Whisper-Hörfehler-Toleranz). PM-013 ist fachlich vollständig abgeschlossen, keine offenen Funde mehr.
 
 ---
 

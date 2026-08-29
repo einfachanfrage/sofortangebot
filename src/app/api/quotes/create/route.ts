@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
@@ -176,12 +177,26 @@ export async function POST(req: NextRequest) {
 
   // GoBD-konforme atomare Nummernvergabe via RPC
   // Nummernkreis anlegen falls noch nicht vorhanden
-  await supabase.rpc('init_nummernkreise', { p_betrieb_id: company.id })
-  const { data: angebotsnummer } = await supabase.rpc('vergib_naechste_nummer', {
+  //
+  // DC-033 (2026-08-25): Beide Aufrufe haben ihren `error` bisher nicht
+  // ausgelesen. Schlug die Vergabe fehl, blieb `angebotsnummer` still `null`
+  // und die Anzeige fiel auf ein Fragment der internen ID zurück
+  // („2026-5EC9") — für den Nutzer sah das aus wie eine zufällige Nummer,
+  // für uns nach gar nichts. Jetzt wird jeder Fehlschlag protokolliert.
+  const { error: initFehler } = await supabase.rpc('init_nummernkreise', { p_betrieb_id: company.id })
+  if (initFehler) {
+    console.error('[quote-create] Nummernkreis konnte nicht angelegt werden')
+    Sentry.captureException(new Error(initFehler.message), { tags: { feature: 'angebotsnummer_init' } })
+  }
+  const { data: angebotsnummer, error: nummerFehler } = await supabase.rpc('vergib_naechste_nummer', {
     p_betrieb_id: company.id,
     p_typ: 'angebot',
     p_angebot_id: quote.id,
   })
+  if (nummerFehler) {
+    console.error('[quote-create] Angebotsnummer konnte nicht vergeben werden')
+    Sentry.captureException(new Error(nummerFehler.message), { tags: { feature: 'angebotsnummer_vergabe' } })
+  }
 
   // Normverweise aus Preiskatalog nachschlagen (best-effort per Titel)
   const { data: priceItems } = await supabase

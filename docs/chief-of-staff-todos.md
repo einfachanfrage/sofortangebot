@@ -1670,5 +1670,105 @@ lassen, damit ihr sie selbst committet.
 
 ---
 
+## CoS-022 — DC-033: Angebotsnummern-Fix committen und melden
+
+**Datum:** 2026-08-25 (Chief of Staff, nach Sandys Nachfrage „hat HoPE das
+nicht heute schon gefixt?")
+
+**Status:** 🔵 neu, an Head of Product Engineering
+
+**Ausgangslage:** DC-033 (`design-check.md`) ist ein echter, in Produktion
+bestätigter Bug — das Nummernkreis-RPC (`vergib_naechste_nummer`) schlägt
+seit Mitte Juni still fehl, weil sein Fehler nie ausgelesen wird. Ergebnis:
+nur 3 von 106 Angeboten über beide Testkonten haben eine echte
+Angebotsnummer, der Rest zeigt UUID-Fragmente als Fallback. Root Cause ist
+dokumentiert, Fix ist reine Backend-Arbeit, klar bei dir verortet.
+
+**Der eigentliche Anlass für dieses Ticket:** Product Designer hat beim
+Committen seines eigenen CoS-021-Codes einen unabhängigen, unfertigen
+Code-Block gefunden (`fertigstellen()`-Aufruf von
+`/api/quotes/[id]/nummer`), der nach DC-033 aussieht — bewusst nicht mit
+committet, damit er dir gehört. Das heißt: es gibt offenbar schon
+Fortschritt, aber nirgends einen offiziellen Stand dazu — nicht committet,
+nicht getestet, nicht gemeldet. Bitte:
+
+1. Den vorhandenen Zwischenstand sichten, fertigstellen und committen
+   (oder verwerfen, falls er nicht der richtige Ansatz war).
+2. Beide RPC-Aufrufe (`init_nummernkreise`, `vergib_naechste_nummer`) auf
+   Fehler prüfen und sichtbar loggen, damit das nie wieder still passiert.
+3. Klären, ob/wie die 103 betroffenen Bestandsangebote (51 bei „Holm GmbH",
+   52 bei „Lisa Schein Malerbetrieb") nachträglich echte Nummern bekommen
+   sollen, oder ob das nur für neue Angebote ab jetzt gilt.
+4. Status in `design-check.md` bei DC-033 aktualisieren, sobald etwas
+   fertig ist — der Eintrag steht aktuell noch auf „❌ offen".
+
+---
+
+### Rückmeldung (Head of Product Engineering, 2026-08-25)
+
+**Kurzfassung: 3 von 4 Punkten sind erledigt. Offen ist nur Punkt 3 — und der
+ist eine Entscheidung für Sandy, keine Arbeit für mich. Dazu zwei Korrekturen
+an der Ausgangslage, die für genau diese Entscheidung wichtig sind.**
+
+**Zur Ausgangslage — der Bug war ein anderer, als im Ticket steht.** Die
+Beschreibung sagt: „das Nummernkreis-RPC schlägt seit Mitte Juni still fehl,
+weil sein Fehler nie ausgelesen wird". Der verschluckte Fehler ist real (Punkt
+2, behoben), aber er war nicht die Ursache. Beide RPCs existieren in Produktion
+und funktionieren einwandfrei — **sie wurden nur nie aufgerufen.** Der Weg, auf
+dem Angebote heute entstehen (`api/entwurf/neu`, der Aufnahme-Flow), fordert
+überhaupt keine Nummer an; die Vergabe stand ausschließlich in der älteren
+Route `api/quotes/create`. Kein fehlgeschlagener Aufruf, sondern ein fehlender.
+Das erklärt auch die Verteilung sauber: „Holm GmbH" hat genau die 3 Angebote
+nummeriert, die noch über den alten Weg entstanden sind.
+
+**Zweite Korrektur, direkt relevant für Punkt 3: es sind nicht 103 Angebote,
+sondern 4.** Gegen die Produktions-Datenbank gezählt:
+
+| Status | Anzahl | davon ohne Nummer |
+|---|---|---|
+| Entwurf | 101 | 99 |
+| Fertiggestellt | 3 | 3 |
+| Versendet | 2 | 1 |
+
+Die 101 Entwürfe sind Wegwerf-Material aus den Testläufen — jede Aufnahme legt
+einen an, auch jeder Fehlversuch. Die dürfen **gar keine** Nummer bekommen:
+Sonst stünde der Nummernkreis nach einer Woche Testen bei 100+ und wäre voller
+Lücken, die man bei einer Betriebsprüfung erklären müsste (genau wovor die
+Lücken-Warnung auf der Einstellungsseite warnt). Übrig bleiben **4 Angebote**,
+die den Entwurfsstatus wirklich verlassen haben und keine Nummer tragen.
+
+**Punkt 1 — Zwischenstand:** Der „unfertige Code-Block", den der Product
+Designer beim Committen gefunden hat, war meine Arbeit von genau diesem Tag,
+mitten im Entstehen. Gut, dass er ihn liegen gelassen hat. Er ist inzwischen
+fertig: neue Route `POST /api/quotes/[id]/nummer` (prüft Betriebszugehörigkeit,
+legt den Nummernkreis bei Bedarf an, vergibt idempotent — eine vergebene Nummer
+wird nie überschrieben), aufgerufen beim Fertigstellen. Bewusst dort und nicht
+beim Anlegen, aus dem Grund oben. Blockiert das Fertigstellen nicht: Schlägt die
+Vergabe fehl, ist das Angebot trotzdem fertig, zeigt die Ersatzbezeichnung — aber
+mit sichtbarem Hinweis und Eintrag im Fehler-Protokoll statt lautlos.
+**Committen kann nur Sandy** (ich habe keinen Schreibzugriff auf ihr Repository);
+sie hat den fertigen Befehl bekommen.
+
+**Punkt 2 — erledigt.** Beide RPC-Aufrufe in `api/quotes/create` lesen ihren
+`error` jetzt aus, protokollieren ihn und melden ihn an Sentry. Dasselbe in der
+neuen Route.
+
+**Punkt 3 — offen, Entscheidung für Sandy.** Sollen die 4 Angebote ohne Nummer
+nachträglich eine bekommen? Ich habe das bewusst nicht ungefragt gemacht: Bei
+einem davon steht „versendet" — die Nummer könnte beim Kunden auf Papier
+liegen, und eine nachträglich vergebene andere Nummer wäre schlimmer als gar
+keine. Für die 3 fertiggestellten ist es unkritisch. Beide Wege sind in einer
+Minute umgesetzt, sobald sie es sagt.
+
+**Punkt 4 — erledigt.** `design-check.md` DC-033 steht auf 🟡 behoben, mit der
+vollständigen Ursachenanalyse für den Product Designer (seine Vorarbeit hat
+mir den halben Weg gespart, das steht auch so drin).
+
+**Was noch fehlt, damit der Fall wirklich zu ist:** der Live-Nachtest. Ein
+Angebot fertigstellen und sehen, dass „AG-2026-004" dransteht statt eines
+ID-Fragments. Vorher würde ich DC-033 nicht auf grün setzen.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

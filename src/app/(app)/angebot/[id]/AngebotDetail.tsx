@@ -1057,6 +1057,23 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       }).eq('id', quote.id)
       if (quoteError) throw quoteError
 
+      // DC-033 (2026-08-25): Hier — und nur hier — bekommt ein Angebot seine
+      // Nummer. Beim Anlegen wäre falsch: Entwürfe entstehen bei jeder
+      // Aufnahme, auch bei Fehlversuchen; jeder davon würde sonst eine Nummer
+      // verbrauchen und eine Lücke hinterlassen, die man bei einer Prüfung
+      // erklären müsste. Der Aufruf ist gefahrlos wiederholbar (eine einmal
+      // vergebene Nummer wird nie überschrieben) und darf das Fertigstellen
+      // nicht blockieren: Klappt die Vergabe nicht, ist das Angebot trotzdem
+      // fertig — es zeigt dann wie bisher die Ersatzbezeichnung.
+      if (nextStatus === 'bereit' && !quote.angebotsnummer) {
+        try {
+          const res = await fetch(`/api/quotes/${quote.id}/nummer`, { method: 'POST' })
+          if (!res.ok) showToast('Angebotsnummer konnte nicht vergeben werden')
+        } catch {
+          showToast('Angebotsnummer konnte nicht vergeben werden')
+        }
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (nextStatus) setCurrentStatus(nextStatus as any)
       setEditMode(false)

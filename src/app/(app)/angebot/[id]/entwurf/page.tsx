@@ -1347,16 +1347,30 @@ export default function EntwurfPage() {
         {/* Positionen-berechnen-Button — NICHT während laufender Aufnahme (verwirrt:
             erst fertig aufnehmen, dann berechnen) */}
         {kannFertigstellen && !recording && (
-          <button
-            onClick={() => fertigstellen()}
-            className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
-          >
-            <span className="flex flex-col items-center leading-tight">
-              <span>✓ {erkannteAnzahl} {hatBestehendPositionen ? 'neue ' : ''}{erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
-              <span className="text-[12px] font-bold opacity-65 mt-1">{hatBestehendPositionen ? 'Entwurf aktualisieren' : 'Entwurf erstellen'} · ca. {bearbeitungszeit} Sekunden</span>
-            </span>
-            <ChevronRight size={18} strokeWidth={3} />
-          </button>
+          <>
+            {/* Sandy, 2026-08-29: An genau dieser Stelle stehen die Flächen/
+                Mengen aus den Karten oben schon fest, OBWOHL Fenster/Türen
+                (Wandöffnungen) unter Umständen noch gar nicht genannt wurden
+                — deren Abzug fehlt dann noch. Ohne diesen Hinweis wirkt die
+                gezeigte Zahl wie das fertige Ergebnis, obwohl im nächsten
+                Schritt (fertigstellen() → generiere-positionen) noch
+                Rückfragen dazu kommen können. Bewusst als "ggf."/"falls" statt
+                einer festen Zusage: die Rückfrage kommt nur, wenn wirklich
+                etwas fehlt (kontext-analyzer.ts), nicht immer. */}
+            <p className="text-center text-[11px] font-semibold text-[#2C2C2C]/40 px-6 -mt-1">
+              Flächen sind vorläufig — falls Fenster oder Türen noch nicht genannt wurden, fragen wir im nächsten Schritt kurz nach.
+            </p>
+            <button
+              onClick={() => fertigstellen()}
+              className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
+            >
+              <span className="flex flex-col items-center leading-tight">
+                <span>✓ {erkannteAnzahl} {hatBestehendPositionen ? 'neue ' : ''}{erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
+                <span className="text-[12px] font-bold opacity-65 mt-1">{hatBestehendPositionen ? 'Entwurf aktualisieren' : 'Entwurf erstellen'} · ca. {bearbeitungszeit} Sekunden</span>
+              </span>
+              <ChevronRight size={18} strokeWidth={3} />
+            </button>
+          </>
         )}
 
         {/* Aufnahme-Button */}

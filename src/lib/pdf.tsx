@@ -1,4 +1,5 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
+import type { AngebotsFoto } from '@/lib/angebot-fotos'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
 import { widerrufsbelehrungText, musterWiderrufsformular } from './widerrufsbelehrung'
@@ -186,10 +187,14 @@ interface Props {
   briefpapier?: Briefpapier | null
   logoBase64?: string | null
   revision?: number
+  // CoS-021/DC-034: Aufnahme-Fotos, die der Handwerker pro Stück fürs PDF
+  // freigegeben hat (siehe src/lib/angebot-fotos.ts). Optional — wer sie nicht
+  // mitgibt (Health-Check, Unterschrifts-Mail), bekommt das PDF wie bisher.
+  fotos?: AngebotsFoto[]
 }
 
 // ── Hauptkomponente ────────────────────────────────────────────────────────
-export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase64, revision }: Props) {
+export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase64, revision, fotos }: Props) {
   const isKleinunternehmer = company.vat_rate === 0
   const vatRate = company.vat_rate
 
@@ -442,6 +447,30 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
         </View>
 
       </Page>
+
+      {/* ── FOTOS ZUR BAUSTELLE (CoS-021/DC-034) ──────────────────────────────
+          Bewusst eine eigene Seite am Ende: Das Angebot selbst — Positionen,
+          Summen, Bedingungen — bleibt unverändert kompakt lesbar. Die Fotos
+          dokumentieren den Zustand vor Ort (Nachweis bei späterem Streit über
+          Vorschäden) und gehören deshalb dazu, aber nicht zwischen die Preise. */}
+      {(fotos?.length ?? 0) > 0 && (
+        <Page size="A4" style={S.page} wrap>
+          <Text style={{ fontSize: 14, fontFamily: 'Helvetica-Bold', marginBottom: 4 }}>
+            Fotos zur Baustelle
+          </Text>
+          <Text style={{ fontSize: 9, color: '#666666', marginBottom: 14 }}>
+            Aufgenommen beim Aufmaß — dokumentiert den Zustand vor Beginn der Arbeiten.
+          </Text>
+          {fotos!.map((foto, i) => (
+            <View key={i} style={{ marginBottom: 16 }} wrap={false}>
+              <Image src={foto.bild} style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }} />
+              {foto.beschreibung && (
+                <Text style={{ fontSize: 9, color: '#333333', marginTop: 4 }}>{foto.beschreibung}</Text>
+              )}
+            </View>
+          ))}
+        </Page>
+      )}
 
       {/* ── WIDERRUFSBELEHRUNG (nur Verbraucher / Haustürgeschäft) ─────────── */}
       {opt.widerrufBeilegen && (() => {

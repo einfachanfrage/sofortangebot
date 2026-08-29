@@ -4,6 +4,7 @@ import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
 import { AngebotPDF } from '@/lib/pdf'
+import { ladeFotosFuerPdf } from '@/lib/angebot-fotos'
 
 export const maxDuration = 60
 
@@ -59,6 +60,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const sortedItems = (quote.items ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position)
 
+  const fotos = await ladeFotosFuerPdf(supabase, quote.id)
+
   // @ts-expect-error react-pdf typing
   const pdfBuffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
     quote: { ...quote, items: sortedItems },
@@ -66,6 +69,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     quoteNumber,
     briefpapier,
     revision: (quote as { revision?: number }).revision ?? 1,
+    fotos,
   }))
 
   // Upload zu Supabase Storage (public bucket)

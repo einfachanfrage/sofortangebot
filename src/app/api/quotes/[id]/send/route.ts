@@ -5,6 +5,7 @@ import { Resend } from 'resend'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
 import { AngebotPDF } from '@/lib/pdf'
+import { ladeFotosFuerPdf } from '@/lib/angebot-fotos'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
 
@@ -69,6 +70,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       briefpapier = bp
     }
 
+    const fotos = await ladeFotosFuerPdf(supabase, quote.id)
+
     // PDF generieren
     // @ts-expect-error react-pdf typing
     let pdfBuffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
@@ -77,6 +80,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       quoteNumber,
       briefpapier,
       revision: (quote as { revision?: number }).revision ?? 1,
+      fotos,
     }))
 
     // ZUGFeRD für B2B-Kunden

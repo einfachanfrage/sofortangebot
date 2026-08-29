@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { ladeFotosFuerPdf } from '@/lib/angebot-fotos'
 import { AngebotPDF } from '@/lib/pdf'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
@@ -58,6 +59,9 @@ export async function GET(req: NextRequest) {
 
   const revision = (quote as { revision?: number }).revision ?? 1
 
+  // CoS-021/DC-034: fürs PDF freigegebene Aufnahme-Fotos mitgeben.
+  const fotos = await ladeFotosFuerPdf(supabase, quote.id)
+
   // @ts-expect-error react-pdf renderToBuffer typing mismatch
   let buffer: Buffer = await renderToBuffer(createElement(AngebotPDF, {
     quote: { ...quote, items: sortedItems },
@@ -65,6 +69,7 @@ export async function GET(req: NextRequest) {
     quoteNumber,
     briefpapier,
     revision,
+    fotos,
   }))
 
   // ZUGFeRD einbetten wenn: E-Rechnung aktiv + Geschäftskunde
