@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-042 — Status-Modell Vorher/Nachher</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@500;600;700;800&display=swap');
+
+  :root {
+    --yellow: #F5C400;
+    --anthracite: #2C2C2C;
+    --bg: #F7F7F5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--anthracite);
+  }
+  .syne { font-family: 'Syne', sans-serif; }
+
+  header.page {
+    background: var(--anthracite);
+    color: white;
+    padding: 28px 20px 24px;
+    text-align: center;
+  }
+  header.page h1 { font-size: 20px; margin: 0 0 6px; }
+  header.page p { margin: 0; color: rgba(255,255,255,.55); font-size: 13px; font-weight: 600; max-width: 640px; margin: 0 auto; }
+
+  .toggle-bar {
+    max-width: 1080px;
+    margin: -18px auto 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .toggle {
+    background: white;
+    border-radius: 999px;
+    padding: 4px;
+    display: flex;
+    gap: 2px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  }
+  .toggle button {
+    border: none;
+    background: transparent;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    color: rgba(44,44,44,.5);
+  }
+  .toggle button.active {
+    background: var(--anthracite);
+    color: white;
+  }
+
+  main {
+    max-width: 1080px;
+    margin: 32px auto 60px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; }
+  }
+
+  section.card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(44,44,44,.08);
+    overflow: hidden;
+  }
+  section.card .label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: 12px 18px 0;
+    color: rgba(44,44,44,.4);
+  }
+
+  /* ---- dashboard mock ---- */
+  .dash-hero {
+    background: var(--anthracite);
+    color: white;
+    padding: 20px 18px 22px;
+    margin: 10px 14px 0;
+    border-radius: 16px;
+  }
+  .dash-greeting { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 6px; }
+  .dash-status-line { font-size: 12.5px; font-weight: 800; color: var(--yellow); }
+  .dash-status-line.muted { color: rgba(255,255,255,.4); font-weight: 600; }
+  .dash-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 14px; }
+  .stat-tile { background: white; border: 1px solid rgba(44,44,44,.08); border-radius: 14px; padding: 10px 12px; }
+  .stat-tile .v { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; }
+  .stat-tile .l { font-size: 9px; font-weight: 800; text-transform: uppercase; color: rgba(44,44,44,.5); margin-top: 3px; letter-spacing: .04em; }
+
+  /* ---- filter pills ---- */
+  .pills { display: flex; gap: 6px; flex-wrap: wrap; padding: 14px 14px 0; }
+  .pill {
+    font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 999px;
+    background: white; border: 1px solid rgba(44,44,44,.1); color: rgba(44,44,44,.6);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .pill.active { background: var(--anthracite); color: white; border-color: var(--anthracite); }
+  .pill .count { font-size: 9px; background: rgba(245,196,0,.2); color: #8B7000; padding: 1px 6px; border-radius: 999px; font-weight: 800; }
+  .pill.active .count { background: var(--yellow); color: var(--anthracite); }
+  .pill.new { outline: 2px dashed #22C55E; outline-offset: 2px; }
+
+  /* ---- quote cards ---- */
+  .quotes { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .quote-card {
+    border: 1px solid rgba(44,44,44,.08); border-radius: 14px; padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .quote-card .name { font-weight: 800; font-size: 13.5px; }
+  .quote-card .date { font-size: 11px; color: rgba(44,44,44,.4); font-weight: 600; margin-top: 1px; }
+  .quote-card .aging { font-size: 10.5px; color: #B45309; font-weight: 800; margin-top: 3px; }
+  .quote-card .amount { font-weight: 800; font-size: 14px; text-align: right; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 999px; margin-top: 4px; }
+  .tag-archived { font-size: 9px; font-weight: 800; color: rgba(44,44,44,.4); background: rgba(44,44,44,.06); padding: 2px 7px; border-radius: 999px; margin-left: 6px; }
+
+  /* ---- status sheet mock ---- */
+  .sheet { padding: 16px 18px 20px; }
+  .sheet h3 { font-family: 'Syne', sans-serif; font-size: 15px; margin: 4px 0 12px; }
+  .status-option {
+    display: flex; align-items: center; justify-content: space-between;
+    border: 2px solid rgba(44,44,44,.08); border-radius: 14px; padding: 11px 14px; margin-bottom: 7px;
+  }
+  .status-option.current { border-color: var(--yellow); background: rgba(245,196,0,.08); }
+  .status-option .dot { width: 9px; height: 9px; border-radius: 999px; display: inline-block; margin-right: 8px; }
+  .status-option .name { font-weight: 700; font-size: 13px; }
+  .archive-toggle {
+    margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(44,44,44,.15);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .archive-toggle .t { font-weight: 700; font-size: 12.5px; }
+  .archive-toggle .s { font-size: 11px; color: rgba(44,44,44,.45); font-weight: 600; margin-top: 2px; }
+  .switch { width: 38px; height: 22px; border-radius: 999px; background: rgba(44,44,44,.15); position: relative; flex-shrink: 0; }
+  .switch::after { content:''; position:absolute; width:18px; height:18px; background:white; border-radius:50%; top:2px; left:2px; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+
+  .note {
+    max-width: 1080px; margin: 0 auto 40px; padding: 0 20px;
+  }
+  .note .box {
+    background: #FEF9C3; border: 1px solid #F5C400; border-radius: 14px; padding: 14px 18px;
+    font-size: 13px; line-height: 1.6; font-weight: 600; color: #6b5500;
+  }
+  .note .box b { color: var(--anthracite); }
+
+  .word-toggle { display:flex; gap:6px; padding: 0 18px 14px; flex-wrap: wrap; }
+  .word-toggle button {
+    font-size: 10.5px; font-weight: 800; padding: 5px 10px; border-radius: 999px;
+    border: 1px solid rgba(44,44,44,.15); background: white; color: rgba(44,44,44,.55); cursor: pointer;
+  }
+  .word-toggle button.active { background: #3B82F6; color: white; border-color: #3B82F6; }
+</style>
+</head>
+<body>
+
+<header class="page">
+  <h1 class="syne">DC-042 — Status-Modell: Vorher / Nachher</h1>
+  <p>Kein Redesign der Optik — dieselben Bausteine, dieselben Farben. Es geht nur darum, ob die Struktur und Wortwahl klarer wird. Zum Ausprobieren, nicht zum endgültigen Abnicken der Pixel.</p>
+</header>
+
+<div class="toggle-bar">
+  <div class="toggle">
+    <button id="btn-vorher" class="active" onclick="setMode('vorher')">Heute</button>
+    <button id="btn-nachher" onclick="setMode('nachher')">Vorschlag</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section class="card">
+    <div class="label">Dashboard-Kopf</div>
+    <div class="dash-hero">
+      <div class="dash-greeting">Guten Tag, Lisa.</div>
+      <div id="dash-status" class="dash-status-line">● 4 Angebote warten auf Antwort</div>
+    </div>
+    <div class="dash-stats">
+      <div class="stat-tile"><div class="v">981 €</div><div class="l">Umsatz · Monat</div></div>
+      <div class="stat-tile"><div class="v">2</div><div class="l">Beauftragt · Monat</div></div>
+      <div class="stat-tile"><div class="v">4</div><div id="dash-tile-label" class="l">Offen</div></div>
+    </div>
+    <div style="height:14px"></div>
+  </section>
+
+  <!-- FILTER-LISTE -->
+  <section class="card">
+    <div class="label">Angebote-Liste — Filter</div>
+    <div id="pills" class="pills"></div>
+    <div class="quotes" id="quote-list"></div>
+  </section>
+
+  <!-- STATUS-SHEET -->
+  <section class="card">
+    <div class="label">„Status ändern"-Sheet</div>
+    <div class="sheet">
+      <h3>Status ändern</h3>
+      <div id="status-options"></div>
+      <div id="archive-block"></div>
+    </div>
+  </section>
+
+  <!-- WORDING-EXPERIMENT -->
+  <section class="card">
+    <div class="label">Wortwahl ausprobieren (nur bei „Vorschlag" aktiv)</div>
+    <div class="word-toggle" id="word-toggle"></div>
+    <div style="padding: 0 18px 18px; font-size: 12px; color: rgba(44,44,44,.5); font-weight: 600;">
+      Wirkt sich oben auf Dashboard, Liste und Sheet gleichzeitig aus — so lässt sich in Kontext beurteilen, welches Wort sich richtig anfühlt.
+    </div>
+  </section>
+
+</main>
+
+<div class="note" id="explain-note"></div>
+
+<script>
+const WORDINGS = {
+  beim_kunden: 'Beim Kunden',
+  versendet: 'Versendet',
+  wartet: 'Wartet auf Kunde',
+};
+let sentWord = 'beim_kunden';
+let mode = 'vorher';
+
+const STATUS_VORHER = [
+  { key: 'entwurf',    label: 'Entwurf',        dot: '#9CA3AF', filterable: true },
+  { key: 'bereit',     label: 'Fertiggestellt', dot: '#F5C400', filterable: false },
+  { key: 'offen',      label: 'Offen',          dot: '#3B82F6', filterable: true },
+  { key: 'beauftragt', label: 'Beauftragt',     dot: '#22C55E', filterable: true },
+  { key: 'abgelehnt',  label: 'Abgelehnt',      dot: '#EF4444', filterable: true },
+  { key: 'archiviert', label: 'Archiviert',     dot: '#9CA3AF', filterable: true },
+];
+
+function statusNachher() {
+  return [
+    { key: 'entwurf',    label: 'Entwurf',                dot: '#9CA3AF', filterable: true },
+    { key: 'bereit',     label: 'Bereit',                  dot: '#F5C400', filterable: true, isNew: true },
+    { key: 'offen',      label: WORDINGS[sentWord],        dot: '#3B82F6', filterable: true },
+    { key: 'beauftragt', label: 'Beauftragt',              dot: '#22C55E', filterable: true },
+    { key: 'abgelehnt',  label: 'Abgelehnt',               dot: '#EF4444', filterable: true },
+  ];
+}
+
+const QUOTES = [
+  { name: 'Kunde offen', date: '29.08.26', amount: '598 €', status: 'entwurf', draftItalic: true },
+  { name: 'Lina Meier',  date: '27.08.26', amount: '2.032 €', status: 'offen', days: 3 },
+  { name: 'Fischer GmbH', date: '25.08.26', amount: '180 €', status: 'offen', days: 5 },
+  { name: 'Fischer GmbH', date: '25.08.26', amount: '2.599 €', status: 'offen', days: 5 },
+  { name: 'Dieter Flegel', date: '25.08.26', amount: '171 €', status: 'beauftragt' },
+  { name: 'Alte Anfrage (Bau AG)', date: '02.06.26', amount: '4.120 €', status: 'beauftragt', archived: true },
+];
+
+function statusList() { return mode === 'vorher' ? STATUS_VORHER : statusNachher(); }
+function findStatus(key) { return statusList().find(s => s.key === key); }
+
+function render() {
+  document.getElementById('btn-vorher').classList.toggle('active', mode === 'vorher');
+  document.getElementById('btn-nachher').classList.toggle('active', mode === 'nachher');
+
+  const offenLabel = mode === 'vorher' ? 'Offen' : WORDINGS[sentWord];
+  const offenCount = 4;
+
+  // Dashboard hero
+  const dashStatus = document.getElementById('dash-status');
+  if (mode === 'vorher') {
+    dashStatus.textContent = `● ${offenCount} Angebote warten auf Antwort`;
+    dashStatus.classList.remove('muted');
+  } else {
+    const heroPhrase = sentWord === 'wartet' ? 'warten auf Kunde' : offenLabel;
+    dashStatus.textContent = `● ${offenCount} Angebote ${heroPhrase}`;
+    dashStatus.classList.remove('muted');
+  }
+  document.getElementById('dash-tile-label').textContent = offenLabel.toUpperCase();
+
+  // Pills
+  const pills = document.getElementById('pills');
+  pills.innerHTML = '';
+  const alle = document.createElement('span');
+  alle.className = 'pill active';
+  alle.textContent = 'Alle';
+  pills.appendChild(alle);
+  statusList().forEach(s => {
+    const p = document.createElement('span');
+    p.className = 'pill' + (s.isNew ? ' new' : '');
+    const count = s.key === 'bereit' ? 1 : (s.key === 'offen' ? 4 : (s.key === 'entwurf' ? 1 : (s.key === 'beauftragt' ? 2 : 0)));
+    p.innerHTML = `${s.label}` + (count > 0 ? ` <span class="count">${count}</span>` : '');
+    pills.appendChild(p);
+  });
+
+  // Quote list
+  const list = document.getElementById('quote-list');
+  list.innerHTML = '';
+  QUOTES.forEach(q => {
+    if (mode === 'vorher' && q.status === 'bereit') return; // wäre unsichtbar in "Offen"/"Entwurf"-Filtern heute — hier vereinfacht immer gezeigt
+    // Heute überschreibt Archivieren den echten Status im selben Feld — eine
+    // archivierte, eigentlich "Beauftragt"-Position zeigt also nur noch
+    // "Archiviert", der echte Ausgang ist weg. Im Vorschlag bleibt der echte
+    // Status stehen, Archivieren ist nur ein zusätzliches Tag.
+    const effectiveKey = (mode === 'vorher' && q.archived) ? 'archiviert' : q.status;
+    const st = mode === 'vorher'
+      ? STATUS_VORHER.find(s => s.key === effectiveKey)
+      : statusNachher().find(s => s.key === effectiveKey);
+    const div = document.createElement('div');
+    div.className = 'quote-card';
+    const agingHtml = (mode === 'nachher' && q.status === 'offen' && q.days)
+      ? `<div class="aging">seit ${q.days} Tagen</div>` : '';
+    const archivedTag = (mode === 'nachher' && q.archived) ? `<span class="tag-archived">📦 archiviert</span>` : '';
+    const nameStyle = q.draftItalic ? 'font-style:italic;color:rgba(44,44,44,.4);' : '';
+    div.innerHTML = `
+      <div>
+        <div class="name" style="${nameStyle}">${q.name}${(mode==='vorher' && q.archived) ? '' : archivedTag}</div>
+        <div class="date">${q.date}</div>
+        <span class="badge" style="background:${st.dot}22;color:${st.dot};">${st.label}</span>
+        ${agingHtml}
+      </div>
+      <div class="amount">${q.amount}</div>
+    `;
+    list.appendChild(div);
+  });
+
+  // Status sheet
+  const opts = document.getElementById('status-options');
+  opts.innerHTML = '';
+  statusList().forEach((s, i) => {
+    const isCurrent = s.key === 'offen';
+    const div = document.createElement('div');
+    div.className = 'status-option' + (isCurrent ? ' current' : '');
+    div.innerHTML = `<span style="display:flex;align-items:center;"><span class="dot" style="background:${s.dot}"></span><span class="name">${s.label}</span></span>` + (isCurrent ? '✓' : '');
+    opts.appendChild(div);
+  });
+  const archiveBlock = document.getElementById('archive-block');
+  if (mode === 'vorher') {
+    archiveBlock.innerHTML = `
+      <div style="font-size:10.5px;color:rgba(44,44,44,.4);font-weight:600;margin-top:-2px;">↑ „Archiviert" ist eine gleichrangige Option wie alle anderen — überschreibt den bisherigen Status vollständig</div>
+    `;
+  } else {
+    archiveBlock.innerHTML = `
+      <div class="archive-toggle">
+        <div>
+          <div class="t">📦 Aus aktiver Liste ausblenden</div>
+          <div class="s">Der Status „${WORDINGS[sentWord]}" bleibt erhalten — nur zum Archiv verschoben</div>
+        </div>
+        <div class="switch"></div>
+      </div>
+    `;
+  }
+
+  // word toggle
+  const wt = document.getElementById('word-toggle');
+  wt.innerHTML = '';
+  Object.entries(WORDINGS).forEach(([key, label]) => {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.className = (sentWord === key ? 'active' : '') ;
+    b.disabled = mode !== 'nachher';
+    b.style.opacity = mode !== 'nachher' ? '0.4' : '1';
+    b.onclick = () => { sentWord = key; render(); };
+    wt.appendChild(b);
+  });
+
+  // explain note
+  const note = document.getElementById('explain-note');
+  if (mode === 'vorher') {
+    note.innerHTML = `<div class="box"><b>Heute:</b> „Fertiggestellt" hat keinen eigenen Reiter oben (fehlt in der Liste) — nur in „Alle" zu finden. Archivieren steht gleichrangig neben den anderen Status und überschreibt den echten Ausgang (siehe letzte, ausgegraute Karte unten — war eigentlich „Beauftragt", ist als Archiviert nicht mehr erkennbar). Dashboard-Kopf und „OFFEN"-Kachel sagen mit unterschiedlichen Worten dasselbe.</div>`;
+  } else {
+    note.innerHTML = `<div class="box"><b>Vorschlag:</b> „Bereit" hat jetzt einen eigenen Reiter (grün gestrichelt markiert). Archivieren ist ein Schalter unten im Sheet, kein gleichrangiger Status mehr — die letzte Karte zeigt weiterhin „Beauftragt" + ein kleines 📦-Tag. Bei „${WORDINGS[sentWord]}"-Angeboten steht jetzt, seit wie vielen Tagen sie schon offen sind. Oben rechts kannst du zwischen drei Wortvorschlägen für den „sent"-Status wechseln.</div>`;
+  }
+}
+
+function setMode(m) { mode = m; render(); }
+render();
+</script>
+
+</body>
+</html>
