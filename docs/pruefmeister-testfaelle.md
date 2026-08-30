@@ -83,10 +83,10 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
-| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Laminat/Sockelleisten exakt korrekt. Beide Funde behoben (Head of Product Engineering, 30.08.): Trittschalldämmung war die einzige Boden-Position ohne Raum im Titel — die Gruppierung liest den Raum genau dort, deshalb „Allgemein". Übernimmt jetzt den Raum vom Verlegen. Vorschlag-Etikett nur noch, wenn WIR die Dämmung ergänzen (Klick-Vinyl), nicht wenn sie verlangt wurde. Live-Nachtest steht aus |
-| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Beide Funde behoben (Head of Product Engineering, 30.08.): (1) „Höhe 3 Meter, 20" wird wieder als 3,20 m gelesen — Prompt-Regel PLUS Sicherheitsnetz im Code, das die Nachkommastelle aus dem Transkript zurückholt; damit greift auch der Erschwerniszuschlag Höhe wieder. (2) Phantom-Decke kam aus unserer eigenen Prompt-Regel „Zimmer streichen = Wände + Decke" — gilt jetzt nur noch, wenn KEINE Fläche genannt wurde. Live-Nachtest steht aus |
-| PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ beide Positionen live bestätigt exakt Soll |
-| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | 🟡 Beide Bugs behoben (Head of Product Engineering, 30.08.): (1) Anstrichzahl gilt jetzt je Fläche statt für den ganzen Raum. (2) Ursache der verschwundenen Wandfläche gefunden — Whisper schrieb „Bände" statt „Wände", die Rohtext-Scope-Regel schloss daraus „nur Decke" und löschte Wandfläche + Sockelleisten. Rohtext darf die strukturierte Erkennung nicht mehr überstimmen. Mit dem echten Transkript jetzt alle vier Positionen exakt Soll. Live-Nachtest steht aus |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Live-Nachtest: beide ursprünglichen Funde bestätigt behoben (Gruppierung, Vorschlag-Etikett). Neuer Fund dabei: Trittschalldämmungs-Menge übernimmt fälschlich die Grundfläche des zweiten Raums im selben Zwei-Aufnahmen-Angebot (14 statt 10,8 m²) |
+| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ❌ Live-Nachtest: Höhen-Nachkommastelle jetzt korrekt (3,2 m). Aber Erschwerniszuschlag Höhe fehlt TROTZDEM weiterhin, und Phantom-Deckenfläche (220 €) ist entgegen der Fix-Notiz weiterhin da |
+| PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
+| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | 🟡 Live-Nachtest: verschwundene Wandfläche/Sockelleisten jetzt behoben. Aber Decke wird im Entwurf weiterhin 2× statt 1× berechnet, obwohl die Karte schon korrekt „1x" zeigt |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
@@ -464,6 +464,15 @@ haben inzwischen eine gefundene Ursache, und keine davon hat mit dem Zwei-Aufnah
 Damit bleibt kein Beleg für eine besondere Fehleranfälligkeit des Zwei-Aufnahmen-Pfades. Der Punkt ist
 nicht widerlegt, aber unbelegt — falls neue Auffälligkeiten auftreten, gerne wieder aufmachen.
 
+**Wieder aufgemacht (Prüfmeister, 2026-08-30): neue Auffälligkeit im selben Live-Nachtest.** Direkt beim
+Nachtesten der beiden oben genannten, jetzt behobenen Funde (siehe PM-023) ist ein neuer, dritter Fund an
+derselben Position aufgetaucht: die Trittschalldämmungs-Fläche für „Flur" (Soll 10,80 m²) kam im Entwurf
+als 14 m² zurück — exakt die Grundfläche des zweiten Raums im selben Angebot, „Gästezimmer". Das riecht
+stark nach derselben Fehlerklasse wie Punkt 9 unten („Raumkontext blutet zwischen Räumen"), nur an einer
+Stelle, die in der dortigen Liste (istKeller/istGarage/istDachschraege/istFassade) nicht vorkommt. Falls
+sich das bestätigt, ist der Zwei-Aufnahmen-Pfad doch nicht ganz frei von eigenen Fehlerbildern — siehe
+Details und Bitte an Head of Product Engineering bei PM-023.
+
 **9. NEU (2026-08-30): Regeln, die auf dem ROHTRANSKRIPT arbeiten, können Positionen löschen.** Die
 eigentliche Lehre aus PM-026. Whisper verhört sich zwangsläufig; solange eine Regex auf dem Rohtext
 darüber entscheidet, OB eine Position entsteht, kann ein einzelner Buchstabe die Hauptposition eines
@@ -523,6 +532,24 @@ Rohtext kein Wandwort fand („Bände" statt „Wände") und daraus „nur Decke
 Position deshalb noch, die Berechnung hat sie verworfen. Behoben mit demselben Fix wie PM-026: eine
 Einschränkung, die nur auf dem Nicht-Erwähnen beruht, überstimmt die strukturierte Erkennung nicht mehr.
 Punkt 8 braucht damit keine eigene Untersuchung — was bleibt, ist die allgemeine Lehre unter Punkt 9.
+
+**10. NEU, DRINGEND (2026-08-30): Fixes scheinen in der Karten-Vorschau anzukommen, aber nicht im
+fertigen Entwurf.** Direkt beim Nachtesten von PM-024 und PM-026 (zusammen in einem Angebot, zwei
+getrennte Aufnahmen) zeigte sich zweimal dasselbe Muster:
+- PM-026: Die Karte zeigt korrekt „Deckenfläche streichen **1x**" — der Entwurf berechnet trotzdem **2x**
+  (166,32 € statt des korrekten Einmal-Preises). Bug (1) aus der Fix-Notiz oben ist NICHT behoben.
+- PM-024: Die Höhen-Nachkommastelle wird jetzt korrekt gelesen (Raummaße zeigen 3,2 m), aber der
+  Erschwerniszuschlag Höhe erscheint trotzdem nicht — weder Karte noch Entwurf. Und die Phantom-
+  „Deckenfläche streichen" (220 €) ist unverändert da, obwohl in der Fix-Notiz als behoben vermerkt.
+Das passt zu Head of Product Engineerings eigener Erklärung bei Punkt 8 oben („Karte kommt aus der
+schnellen Vorschau, der Entwurf aus der vollen Pipeline") — nur dass hier nicht nur eine alte
+Karte-Entwurf-Differenz beobachtet wurde, sondern zwei NEU verifizierte Fixes, die anscheinend nur in der
+Karten-Vorschau ankamen, nicht aber in der Pipeline, die den tatsächlichen, kundenseitigen Entwurf
+berechnet. Das ist besonders heikel, weil es bedeutet: ein Test, der nur die Karte prüft, sieht einen Fix
+als erfolgreich an, obwohl das Angebot, das der Kunde am Ende bekommt, weiterhin falsch ist. Bitte
+dringend prüfen, ob Karten-Vorschau und Entwurfs-Berechnung tatsächlich zwei getrennte Code-Pfade sind,
+und wenn ja, sicherstellen, dass Fixes in beiden ankommen — oder, besser, dass es nur einen einzigen
+Berechnungspfad für beide gibt.
 
 **Details für abgeschlossene Fälle (PM-001, PM-002, PM-003, PM-004, PM-005, PM-006, PM-007, PM-009, PM-011, PM-013, PM-019, PM-020, PM-021, PM-022):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen. (PM-007 war am 2026-08-21 kurz zurückgeholt wegen eines Blocker-Bugs, ist seit dessen Fix und Live-Nachtest am 2026-08-25 wieder abgeschlossen und zurück im Archiv.)
 
@@ -915,6 +942,42 @@ nachsehen, warum sie unabhängig von den anderen beiden Positionen im selben Sat
 falsch gruppiert („Allgemein" statt „Flur") und fälschlich als „Vorschlag" markiert, obwohl explizit
 verlangt.
 
+**Live-Nachtest (Sandy, 2026-08-30, zusammen mit PM-025 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen, diesmal zusätzlich mit Altbelag-Rückfrage für beide Räume):** Karte „🚪Flur 3 Positionen" —
+Laminat verlegen inkl. 5% Verschnitt (11,34 m²), Sockelleisten montieren (14,7 lfdm),
+**Trittschalldämmung (10,8 m²) jetzt korrekt direkt unter „Flur" gelistet**, keine separate
+„Allgemein"-Karte mehr. Rückfrage „Muss der alte Bodenbelag in „Flur" entfernt werden?" → „Nein, bleibt".
+Entwurf Flur (347,97 €), Raummaße 1,8×6 m:
+
+- Laminat verlegen inkl. 5% Verschnitt: 11,34 m² × 18,00 € = 204,12 € — ✅ exakt Soll
+- Sockelleisten montieren: 14,7 lfdm × 5,50 € = 80,85 € — ✅ exakt Soll
+- **Beide oben gemeldeten Funde live bestätigt behoben:** Trittschalldämmung ist jetzt korrekt bei „Flur"
+  gruppiert und trägt kein „Vorschlag"-Etikett mehr — genau wie Head of Product Engineering oben in der
+  Tabelle beschrieben.
+- **Aber ein neuer, dritter Fund an derselben Position: Trittschalldämmung: 14 m² × 4,50 € = 63,00 € —
+  nicht Soll (Soll: 10,80 m²).** 14 m² ist nicht irgendeine falsche Zahl — es ist exakt die Grundfläche
+  des zweiten Raums in diesem Angebot, „Gästezimmer" (4,00×3,50=14,00 m², siehe PM-025). Das sieht nach
+  einer Verwechslung zwischen den beiden Räumen aus, nicht nach einem eigenständigen Rechenfehler.
+
+**Ergebnis:** Zwei von zwei ursprünglichen Funden sind live bestätigt behoben. Dabei ist aber ein neuer,
+dritter Fund an genau derselben Position (Trittschalldämmung) entstanden: die Menge übernimmt die
+Grundfläche des anderen Raums im selben Zwei-Aufnahmen-Angebot. Das könnte dieselbe Fehlerklasse sein,
+die Head of Product Engineering oben unter „Systemischer Fund" Punkt 9 als „Raumkontext blutet zwischen
+Räumen" bereits für andere Felder (istKeller/istGarage/istDachschraege/istFassade) gefunden und behoben
+hat — nur eben für die Trittschalldämmungs-Fläche, die in der Auflistung der behobenen Fälle nicht
+vorkommt. Könnte also sein, dass der Audit diese eine Stelle noch nicht erfasst hat.
+
+**Für Head of Product Engineering:** Bitte prüfen, ob die Trittschalldämmungs-Flächenberechnung von
+derselben Art Raumkontext-Vermischung betroffen ist, die unter Punkt 9 für istKeller/istGarage/
+istDachschraege/istFassade gefunden und behoben wurde — hier scheint die Fläche eines anderen Raums aus
+demselben Angebot übernommen zu werden, statt der eigenen. Falls ja: vermutlich dieselbe Korrektur
+(raum-eigener statt globaler Kontext bei mehreren Räumen) auch hier anwendbar.
+
+**Status:** 🟡 Beide ursprünglichen Funde (Gruppierung, „Vorschlag"-Markierung) live bestätigt behoben.
+Neuer Fund: Trittschalldämmungs-Menge übernimmt fälschlich die Grundfläche des anderen Raums im selben
+Zwei-Aufnahmen-Angebot (14 m² statt 10,80 m²) — möglicherweise dieselbe Fehlerklasse wie Punkt 9, aber an
+einer dort nicht erfassten Stelle.
+
 ---
 
 ### PM-024 — Büro, Erschwerniszuschlag Höhe in normalem Raum (nicht Fassade)
@@ -977,6 +1040,44 @@ den die meisten bisherigen Fälle genutzt haben.
 **Status:** ❌ Zwei neue, ernste Bugs — Höhe verliert Nachkommastelle (dadurch fehlt der berechtigte
 Erschwerniszuschlag Höhe), plus eine komplett erfundene, bepreiste Deckenposition (220 €).
 
+**Nachtest (Sandy, 2026-08-30, zusammen mit PM-026 in EIN Angebot gesprochen, zwei getrennte Aufnahmen):**
+Karte „💼Büro 3 Positionen" — Wandflächen streichen 2x (57,6 m²), Boden schützen (20 m²), Sockelleisten
+abkleben (17,1 lfdm). Entwurf (804,88 €), Raummaße 4×5 m, **Raumhöhe jetzt korrekt 3,2 m**, 1 Tür,
+2 Fenster:
+
+- Wandflächen streichen 2×: 57,6 m² × 9,50 € = 547,20 € — ✅ exakt Soll. **Die Höhen-Nachkommastelle wird
+  jetzt korrekt gelesen** (3,2 m statt vorher 3 m) — Fund 1 von Head of Product Engineerings Fix-Notiz ist
+  live bestätigt behoben.
+- **Deckenfläche streichen 2×: 20 m² × 11,00 € = 220,00 € — weiterhin komplett unverlangt.** Exakt
+  dieselbe Phantom-Position wie im Ursprungstest (gleiche Fläche 20 m², gleicher Preis 220,00 €). Steht
+  wie beim ersten Mal nicht auf der Karte („3 Positionen" passt ohne sie), taucht aber im Entwurf wieder
+  auf. **Fund 2 aus der Fix-Notiz ist NICHT behoben, trotz gegenteiliger Eintragung in der Tabelle oben.**
+- Boden schützen: 20 m² × 1,20 € = 24,00 € — ✅ exakt Soll
+- Sockelleisten abkleben: 17,1 lfdm × 0,80 € = 13,68 € — ✅ exakt Soll
+- **Erschwerniszuschlag Höhe fehlt immer noch komplett** — weder Karte noch Entwurf, obwohl die Höhe jetzt
+  korrekt als 3,2 m erkannt wird und damit klar über der 3-m-Schwelle liegt. Summe (804,88 €) besteht
+  ausschließlich aus den vier oben genannten Positionen, keine fünfte Pauschal-Position irgendwo versteckt.
+
+**Ergebnis: gemischtes Bild, ein Fix hält, zwei Bugs bestehen fort — davon einer trotz gegenteiliger
+Angabe.** Die Ursache des Höhen-Rundungsfehlers ist behoben (3,2 m wird jetzt korrekt erkannt), aber der
+eigentliche finanzielle Schaden bleibt: der Erschwerniszuschlag Höhe erscheint trotzdem nicht, obwohl die
+Höhe jetzt korrekt über der Schwelle liegt — die Auslöse-Prüfung selbst scheint also unabhängig vom
+Rundungsfehler kaputt zu sein. Und die Phantom-Deckenfläche (220 €) ist unverändert da, obwohl sie in der
+Fix-Notiz oben als behoben vermerkt ist.
+
+**Für Head of Product Engineering:** (1) Bitte die Erschwerniszuschlag-Höhe-Auslösung separat von der
+Höhen-Rundung prüfen — der Wert kommt jetzt korrekt an (Raummaße zeigen 3,2 m), aber die Pauschale wird
+trotzdem nicht erzeugt. (2) Bitte den Deckenfläche-Fix noch einmal verifizieren: Sandys Diktat war
+unverändert „Wände zweimal streichen" (eine Fläche klar benannt), trotzdem erscheint die Deckenfläche im
+Entwurf weiterhin. Auffällig: die Karte zeigt in beiden Fällen (diesem und dem PM-026-Nachtest unten) den
+korrekten, gefixten Stand — nur der Entwurf (volle Pipeline) fällt zurück auf das alte Verhalten. Das
+deutet darauf hin, dass der Fix nicht (oder nicht vollständig) in dem Code-Pfad ankommt, der den
+tatsächlichen Entwurf berechnet.
+
+**Status:** 🟡→❌ Ein Fund live bestätigt behoben (Höhen-Nachkommastelle). Zwei Funde bestehen weiter fort:
+Erschwerniszuschlag Höhe fehlt trotzdem, Phantom-Deckenfläche (220 €) weiterhin da — Letzteres trotz
+gegenteiliger Angabe in der Fix-Notiz oben.
+
 ---
 
 ### PM-025 — Gästezimmer, Vinyl im Fischgrätmuster + explizit neue Sockelleisten
@@ -1004,6 +1105,26 @@ Sockelleisten montieren (14,1 lfdm). Entwurf (431,75 €), Raummaße 3,5×4 m:
 fehlenden Positionen.
 
 **Status:** ✅ Beide Positionen live bestätigt exakt Soll.
+
+**Erweiterter Nachtest (Sandy, 2026-08-30, zusammen mit PM-023 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen, diesmal mit Altbelag-Rückfrage):** Rückfrage „Muss der alte Bodenbelag in „Gästezimmer"
+entfernt werden?" → „Ja, raus". Entwurf Gästezimmer (606,75 €), Raummaße 3,5×4 m:
+
+- Vinyl-Boden verlegen inkl. 15% Verschnitt: 16,1 m² × 22,00 € = 354,20 € — ✅ exakt Soll
+- **Altbelag entfernen (neu, durch „Ja, raus" ausgelöst): 14 m² × 12,50 € = 175,00 € — ✅ exakt Soll**
+  (Raumfläche 4,00×3,50=14,00 m², kein Verschnitt, wie bei Altbelag-Positionen üblich).
+- Sockelleisten montieren: 14,1 lfdm × 5,50 € = 77,55 € — ✅ exakt Soll
+- Summe 606,75 € rechnerisch konsistent
+
+**Ergebnis:** Auch mit der zusätzlichen Altbelag-Rückfrage bleibt dieser Fall vollständig sauber — die
+Rückfrage-Antwort „Ja, raus" hat korrekt eine neue Position mit der exakt richtigen Menge (der eigenen
+Raumfläche, 14,00 m²) ausgelöst. Bemerkenswert im Vergleich zu PM-023 im selben Angebot: dort hat
+ausgerechnet die dortige Trittschalldämmung die Fläche DIESES Raums (14 m²) übernommen — hier bei
+PM-025 selbst ist aber alles korrekt der eigenen Fläche zugeordnet. Der Fehler in PM-023 scheint also
+spezifisch an der Trittschalldämmungs-Berechnung zu hängen, nicht an einer allgemeinen
+Raumflächen-Verwechslung, die auch PM-025 selbst treffen würde.
+
+**Status:** ✅ Weiterhin alle drei Positionen live bestätigt exakt Soll, auch mit Altbelag-Rückfrage.
 
 ---
 
@@ -1088,6 +1209,36 @@ Verhörer von Whisper eine Hauptposition löschen. Diese eine Stelle ist entsch�
 **Status:** 🟡 Bug (2) behoben (Wände + Sockelleisten sind wieder da, Live-Nachtest steht aus). Bug (1)
 offen: Decke wird trotz „reicht einmal" 2× statt 1× berechnet — die Anstrichzahl gilt offenbar global
 statt je Fläche.
+
+**Nachtest (Sandy, 2026-08-30, zusammen mit PM-024 in EIN Angebot gesprochen, zwei getrennte Aufnahmen):**
+Karte „🍳Küche 4 Positionen" — Wandflächen streichen 2x (39 m²), **Deckenfläche streichen 1x (15,12 m²)**,
+Boden schützen (15,12 m²), Sockelleisten abkleben (14,7 lfdm). Entwurf (566,72 €), Raummaße 3,6×4,2 m,
+Höhe 2,5 m, 1 Tür, 2 Fenster:
+
+- Wandflächen streichen 2×: 39 m² × 9,50 € = 370,50 € — ✅ exakt Soll. **Bug (2) live bestätigt behoben** —
+  Wandflächen UND Sockelleisten sind jetzt beide da und korrekt.
+- Boden schützen: 15,12 m² × 1,20 € = 18,14 € — ✅ exakt Soll
+- Sockelleisten abkleben: 14,7 lfdm × 0,80 € = 11,76 € — ✅ exakt Soll
+- **Deckenfläche streichen 2×: 15,12 m² × 11,00 € = 166,32 € — weiterhin nicht Soll.** Die Karte zeigte
+  gerade noch korrekt „1x" — im Entwurf steht wieder „2x" mit dem entsprechend höheren Preis. **Bug (1) ist
+  NICHT behoben**, obwohl er hier auf der Karte bereits richtig aussah.
+
+**Ergebnis:** Bug (2) — die verschwundene Wandfläche — ist jetzt zuverlässig behoben, sauber bestätigt mit
+allen vier Positionen exakt Soll bis auf die Decke. Bug (1) — die Anstrichzahl der Decke — besteht dagegen
+fort, und zwar mit demselben Muster wie bei PM-024 im selben Angebot: die **Karte zeigt den korrekten,
+gefixten Wert („1x"), der Entwurf fällt aber auf den alten, falschen Wert („2x") zurück.** Das ist kein
+Zufall mehr, sondern tritt jetzt zweimal im selben Angebot auf (hier bei der Anstrichzahl, bei PM-024 beim
+Erschwerniszuschlag/der Phantom-Decke) — die Karte und der Entwurf scheinen unterschiedliche Datenstände
+oder Berechnungspfade zu verwenden, wobei der Entwurf (das, was der Kunde am Ende bekommt) der
+unzuverlässigere von beiden ist.
+
+**Für Head of Product Engineering:** Bitte prüfen, warum die Anstrichzahl-Korrektur (je Fläche statt
+global) zwar in der Karten-Vorschau ankommt, aber nicht in der Entwurfs-Berechnung — siehe dieselbe
+Beobachtung bei PM-024 (Erschwerniszuschlag Höhe/Phantom-Deckenfläche) im selben Angebot. Möglicherweise
+verwenden Karte und Entwurf zwei getrennte Code-Pfade, von denen nur einer den neuen Fix erhalten hat.
+
+**Status:** 🟡 Bug (2, verschwundene Wandfläche/Sockelleisten) live bestätigt behoben. Bug (1, Decke 2×
+statt 1×) weiterhin offen — Karte zeigt korrekt „1x", Entwurf berechnet trotzdem „2x".
 
 ---
 

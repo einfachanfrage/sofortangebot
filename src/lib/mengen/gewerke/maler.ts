@@ -8,6 +8,31 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
 
+/**
+ * Der Teil des Transkripts, der zu EINEM Raum gehört: ab der letzten Nennung
+ * seines Namens bis zur nächsten Nennung eines anderen Raumnamens.
+ *
+ * Dieselbe Logik nutzt der Kontext-Analyzer schon, um eine Wandfläche dem
+ * richtigen Raum zuzuordnen. Ohne sie bleibt bei mehreren Räumen nur die Wahl
+ * zwischen „ganzer Text" (Angaben bluten in fremde Räume, PM-005) und „gar
+ * kein Text" (Angaben gehen verloren, PM-026-Nachtest) — beides falsch.
+ */
+function abschnittFuerRaum(transkript: string, name: string, alleNamen: Array<string | undefined>): string {
+  const text = (transkript ?? '').toLocaleLowerCase('de-DE')
+  const gesucht = (name ?? '').toLocaleLowerCase('de-DE')
+  if (!text || !gesucht) return ''
+  // Nur ein Raum: der ganze Text gehört ihm.
+  if (alleNamen.filter(Boolean).length <= 1) return text
+  const start = text.lastIndexOf(gesucht)
+  if (start < 0) return ''
+  const naechster = alleNamen
+    .filter((n): n is string => Boolean(n) && String(n).toLocaleLowerCase('de-DE') !== gesucht)
+    .map(n => text.indexOf(n.toLocaleLowerCase('de-DE'), start + gesucht.length))
+    .filter(index => index > start)
+    .sort((a, b) => a - b)[0]
+  return text.slice(start, naechster ?? text.length)
+}
+
 export function malerEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
   const warnungen: string[] = []
@@ -62,7 +87,13 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Bei mehreren Räumen darf die Angabe "zweimal" eines Raums nicht auf
     // alle anderen Räume überspringen. Der Gesamttext ist nur im Ein-Raum-Fall
     // ein sicherer zusätzlicher Kontext.
-    const anstrichText = `${arbeitenStr} ${(daten.raeume?.length ?? 0) === 1 ? transkriptLower : ''}`
+    // PM-026-Nachtest (2026-08-30): Bei ZWEI Räumen im Angebot wurde der
+    // Transkripttext hier komplett weggelassen — aus Angst vor Bleeding. Damit
+    // erreichte „Decke reicht einmal" die Anstrichzahl nie, und die Decke stand
+    // wieder mit 2× im Entwurf, obwohl die Karte schon 1× zeigte. Jetzt der
+    // Mittelweg: der Abschnitt, der zu DIESEM Raum gehört — kein Bleeding, aber
+    // auch kein Informationsverlust.
+    const anstrichText = `${arbeitenStr} ${abschnittFuerRaum(daten.transkript ?? '', nameRaw, (daten.raeume ?? []).map((r: any) => r.name))}`
     const explizitEinAnstrich = /(?:einmal|1\s*[x×]|ein(?:en)?\s+anstrich|eine\s+lage)/i.test(anstrichText)
     const explizitZweiAnstriche = /(?:zweimal|2\s*[x×]|zwei\s+anstrich|zwei\s+lagen|2-fach)/i.test(anstrichText)
     const anstriche = explizitEinAnstrich && !explizitZweiAnstriche ? 1 : 2

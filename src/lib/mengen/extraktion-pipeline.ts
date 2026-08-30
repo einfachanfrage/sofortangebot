@@ -295,7 +295,15 @@ export function verarbeiteExtraktion(
   const { positionen: positionenKomplett, mengenRoh } = berechneUndPruefeAlleGewerke(
     extraktion,
     textMitZahlen,
-    { fensterAnzahl: fensterAnzahlText || undefined, tuerenAnzahl: tuerenAnzahlText || undefined },
+    {
+      fensterAnzahl: fensterAnzahlText || undefined,
+      tuerenAnzahl: tuerenAnzahlText || undefined,
+      // PM-024: die erkannten Raumhöhen mitgeben, damit der Erschwerniszuschlag
+      // nicht davon abhängt, ob eine Regex die Sprechweise kennt.
+      raumhoehen: (extraktion.raeume ?? [])
+        .map(r => r.hoehe)
+        .filter((h): h is number => typeof h === 'number' && h > 0),
+    },
     kiSignale,
   )
   const mengen = { ...mengenRoh, positionen: positionenKomplett }

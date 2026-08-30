@@ -25,7 +25,7 @@ export function pruefeMaler(
   transkript: string,
   positionen: BerechnetePosition[],
   verstaendnis: AuftragsVerstaendnis,
-  meta?: { fensterAnzahl?: number; tuerenAnzahl?: number },
+  meta?: { fensterAnzahl?: number; tuerenAnzahl?: number; raumhoehen?: number[] },
 ): void {
   const { nurDecke, nurWaende, nurBoden } = wendeNurXFilterAn(ergaenzt, verstaendnis)
 
@@ -39,7 +39,7 @@ export function pruefeMaler(
   pruefeBodenAbdecken(ergaenzt, fehlende, lower)
   pruefeFliesenspiegel(ergaenzt, fehlende, lower)
   pruefeLampenAbkleben(ergaenzt, lower, verstaendnis)
-  pruefeErschwerniszuschlagHoehe(ergaenzt, lower)
+  pruefeErschwerniszuschlagHoehe(ergaenzt, lower, meta?.raumhoehen ?? [])
   pruefeErschwerniszuschlagUntergrund(ergaenzt, lower)
   pruefeSockelleistenLackieren(ergaenzt, fehlende, lower, verstaendnis)
   pruefeDachschraege(ergaenzt, fehlende, lower)

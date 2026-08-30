@@ -132,7 +132,10 @@ export function extrahiereRaumhoehe(text: string): number | null {
   // PM-008: "giebelhöhe"/"wandhöhe" ergänzt — bei einer Fassade gibt's keine
   // "Raumhöhe", sondern die Höhe der Wand/des Giebels, das sagen Handwerker
   // typischerweise so ("Giebelhöhe im Schnitt sechs Meter").
-  const HOCH = '(?:hoch|deckenh(?:ö|oe)he|raumh(?:ö|oe)he|giebelh(?:ö|oe)he|wandh(?:ö|oe)he)'
+  // PM-024-Nachtest (2026-08-30): „Höhe 3,20 m" — die mit Abstand häufigste
+  // Sprechweise — fehlte in dieser Liste komplett. Der Erschwerniszuschlag
+  // Raumhöhe wurde deshalb nie ausgelöst, obwohl die Höhe korrekt erkannt war.
+  const HOCH = '(?:hoch|h(?:ö|oe)he|deckenh(?:ö|oe)he|raumh(?:ö|oe)he|giebelh(?:ö|oe)he|wandh(?:ö|oe)he)'
   // Kompakt "X Meter YZ [hoch]" → X + YZ/100 (z.B. "2 meter 60" = 2,60 m)
   const komp = t.match(new RegExp(`(\\d+)\\s*(?:m|meter)\\s+(\\d{1,2})\\s*(?:m\\s*)?${HOCH}`, 'i'))
   if (komp) {
@@ -145,7 +148,7 @@ export function extrahiereRaumhoehe(text: string): number | null {
   // Schlüsselwort zuerst: "Raumhöhe 4,5" / "Deckenhöhe von 3,20 m" /
   // "Giebelhöhe im Schnitt sechs Meter" (übliche Fassaden-Formulierung,
   // "im Schnitt"/"durchschnittlich" statt einer festen Zahl direkt danach).
-  const kw = t.match(/(?:deckenh(?:ö|oe)he|raumh(?:ö|oe)he|giebelh(?:ö|oe)he|wandh(?:ö|oe)he)\s*(?:von\s*|ist\s*|beträgt\s*|im\s+schnitt\s*|durchschnittlich\s*|:\s*)?(\d+(?:[.,]\d+)?)/i)
+  const kw = t.match(/(?:deckenh(?:ö|oe)he|raumh(?:ö|oe)he|giebelh(?:ö|oe)he|wandh(?:ö|oe)he|\bh(?:ö|oe)he)\s*(?:von\s*|ist\s*|beträgt\s*|im\s+schnitt\s*|durchschnittlich\s*|:\s*)?(\d+(?:[.,]\d+)?)/i)
   if (kw) return plausibleHoehe(parseFloat(kw[1].replace(',', '.')))
   return null
 }

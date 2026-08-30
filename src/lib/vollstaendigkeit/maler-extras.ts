@@ -3,9 +3,19 @@ import { hat, add, anzahlAus, filtereArray } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import { extrahiereRaumhoehe } from '../extraktion-masse'
 
-export function pruefeErschwerniszuschlagHoehe(ergaenzt: BerechnetePosition[], lower: string): void {
+export function pruefeErschwerniszuschlagHoehe(
+  ergaenzt: BerechnetePosition[],
+  lower: string,
+  // PM-024-Nachtest (2026-08-30): Die Prüfung las AUSSCHLIESSLICH den Rohtext —
+  // obwohl die Extraktion die Höhe längst sauber als Zahl geliefert hatte
+  // (3,2 m stand korrekt in den Raummaßen). Fehlte dem Parser die Sprechweise
+  // („Höhe 3,20 m" kannte er nicht), fiel der Zuschlag lautlos aus. Jetzt gilt
+  // dieselbe Rangordnung wie überall: erkannte Struktur vor Rohtext-Regex.
+  raumhoehen: number[] = [],
+): void {
+  const hoechsteErkannte = raumhoehen.length > 0 ? Math.max(...raumhoehen) : 0
   // Robuster Höhen-Parser (fängt "2 Meter 60" = 2,60 m korrekt, nicht 60 m!)
-  const raumHoehe = extrahiereRaumhoehe(lower) ?? 0
+  const raumHoehe = Math.max(hoechsteErkannte, extrahiereRaumhoehe(lower) ?? 0)
   const hatHohesRaum = raumHoehe > 3.0
     || lower.includes('hohe decke') || lower.includes('hohen decken')
   if (hatHohesRaum && !hat(ergaenzt, 'erschwerniszuschlag höhe', 'höhe zuschlag', 'gerüst')) {

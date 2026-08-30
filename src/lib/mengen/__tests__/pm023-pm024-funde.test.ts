@@ -1,7 +1,7 @@
 // PM-023 und PM-024 (Sandys Live-Tests, 25.–30.08.2026)
 import { describe, expect, it } from 'vitest'
 import { pruefeUndErgaenzeVollstaendigkeit } from '@/lib/vollstaendigkeit'
-import { ergaenzeNachkommaAusText } from '@/lib/extraktion-masse'
+import { ergaenzeNachkommaAusText, extrahiereRaumhoehe } from '@/lib/extraktion-masse'
 import { malerEngine } from '../gewerke/maler'
 import type { BerechnetePosition } from '../types'
 
@@ -86,5 +86,71 @@ describe('PM-026 — Anstrichzahl gilt je Fläche, nicht für den ganzen Raum', 
     const t = titel('Küche 4,20 x 3,60, Höhe 2,50, alles zweimal streichen.')
     expect(t).toContain('Wandflächen streichen 2x — Küche')
     expect(t).toContain('Deckenfläche streichen 2x — Küche')
+  })
+})
+
+// ── Nachtest-Runde 2 (Sandy, 2026-08-30 abends) ────────────────────────────
+describe('PM-024-Nachtest — Erschwerniszuschlag Höhe hängt nicht mehr an einer Regex', () => {
+  it('kennt jetzt auch die häufigste Sprechweise „Höhe 3,20 m"', () => {
+    expect(extrahiereRaumhoehe('büro, 5m x 4m, höhe 3,20m, wände zweimal streichen')).toBe(3.2)
+  })
+
+  it('löst den Zuschlag über die erkannte Raumhöhe aus, nicht über den Rohtext', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [{ beschreibung: 'Wandflächen streichen 2x — Büro', menge: 57.6, einheit: 'm²', konfidenz: 'high', berechnungsweg: '18 × 3,2', annahmen: [] }],
+      // Transkript ohne jedes Höhen-Stichwort, das eine Regex finden könnte
+      'Büro streichen.',
+      { raumhoehen: [3.2] },
+    )
+    expect(positionen.some(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))).toBe(true)
+  })
+
+  it('löst ihn nicht aus, wenn kein Raum über 3 m ist', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'maler',
+      [{ beschreibung: 'Wandflächen streichen 2x — Küche', menge: 39, einheit: 'm²', konfidenz: 'high', berechnungsweg: '15,6 × 2,5', annahmen: [] }],
+      'Küche streichen.',
+      { raumhoehen: [2.5] },
+    )
+    expect(positionen.some(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))).toBe(false)
+  })
+})
+
+describe('PM-026-Nachtest — Anstrichzahl auch bei zwei Räumen im Angebot', () => {
+  const raeume = [
+    { name: 'Büro', laenge: 5, breite: 4, hoehe: 3.2, flaeche: 20, umfang: 18,
+      tueren: [{ anzahl: 1 }], fenster: [{ anzahl: 2 }], arbeiten: ['wände streichen', 'decke streichen'] },
+    { name: 'Küche', laenge: 4.2, breite: 3.6, hoehe: 2.5, flaeche: 15.12, umfang: 15.6,
+      tueren: [{ anzahl: 1 }], fenster: [{ anzahl: 2 }], arbeiten: ['wände streichen', 'decke streichen'] },
+  ]
+  const T = 'Büro, 5m x 4m, Höhe 3,20m, Wände zweimal streichen. Küche, 4,20 m x 3,60 m, Höhe 2,50 m, Wände zweimal streichen, Decke reicht einmal.'
+
+  it('liest „Decke reicht einmal" aus dem Abschnitt der Küche, nicht aus dem ganzen Text', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const titel = malerEngine({ gewerk: 'maler', raeume, transkript: T } as any).positionen.map(p => p.beschreibung)
+    expect(titel).toContain('Deckenfläche streichen 1x — Küche')
+    // Das Büro hat keine eigene Decken-Angabe → bleibt beim Standard 2×.
+    expect(titel).toContain('Deckenfläche streichen 2x — Büro')
+    // Und die Wand-Angabe des einen Raums färbt nicht auf den anderen ab.
+    expect(titel).toContain('Wandflächen streichen 2x — Küche')
+    expect(titel).toContain('Wandflächen streichen 2x — Büro')
+  })
+})
+
+describe('PM-023-Nachtest — Trittschalldämmung nimmt die eigene Raumfläche', () => {
+  it('nimmt nicht die Fläche des anderen Raums im selben Angebot', () => {
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+      'boden_parkett',
+      [
+        { beschreibung: 'Laminat verlegen inkl. 5% Verschnitt — Flur', menge: 11.34, einheit: 'm²', konfidenz: 'high', berechnungsweg: '10.8 m² × 1.05', annahmen: [] },
+        { beschreibung: 'Sockelleisten montieren — Flur', menge: 14.7, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: '15.6 − 0.9', annahmen: [] },
+      ],
+      // Im selben Angebot steht auch das Gästezimmer mit 4 mal 3,50 m = 14 m².
+      'Flur, sechs Meter mal eins Meter achtzig, Laminat mit Trittschalldämmung drunter. Gästezimmer, vier Meter mal drei Meter fünfzig, Vinyl im Fischgrätmuster.',
+    )
+    const daemmung = positionen.find(p => /trittschall/i.test(p.beschreibung))
+    expect(daemmung?.menge).toBe(10.8)
+    expect(daemmung?.beschreibung).toBe('Trittschalldämmung — Flur')
   })
 })

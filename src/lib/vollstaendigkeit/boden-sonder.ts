@@ -252,7 +252,15 @@ export function pruefeTrittschalldaemmung(
   if (!hatDaemmung) return
   if (hat(ergaenzt, 'trittschall', 'pur-schaum')) return
 
-  const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+  // PM-023-Nachtest (2026-08-30): Die Menge kam aus dem GESAMTEN Transkript und
+  // war damit die Grundfläche des ANDEREN Raums im selben Angebot (14 m² vom
+  // Gästezimmer statt 10,80 m² vom Flur). Die Reihenfolge war schlicht falsch
+  // herum: erst Rohtext, dann die berechnete Fläche. Jetzt zuerst die Fläche
+  // des Bodens, unter dem die Dämmung liegt — die ist raumgenau berechnet.
+  const verlegePosition = ergaenzt.find(p =>
+    /(?:vinyl|laminat|parkett|bodenbelag|teppich|kork|linoleum).*(?:verlegen|verkleben)/i.test(p.beschreibung))
+  const m2 = bodenNettoflaecheAusPositionen(verlegePosition ? [verlegePosition] : [])
+    ?? extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
     ?? bodenNettoflaecheAusPositionen(ergaenzt)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
   const istHochwertig = lower.includes('hochwertig') || lower.includes('pur') || lower.includes('alufolie') || lower.includes('alukaschiert') || lower.includes('gehschall')
@@ -262,9 +270,7 @@ export function pruefeTrittschalldaemmung(
   // Raum an den Titel kam. Die Gruppierung liest den Raum aus dem Titel-Suffix,
   // also gibt es ohne Suffix keinen Raum. Suffix vom Verlegen übernehmen: die
   // Dämmung liegt zwangsläufig unter genau diesem Boden.
-  const raumSuffix = ergaenzt
-    .find(p => /(?:vinyl|laminat|parkett|bodenbelag|teppich|kork|linoleum).*(?:verlegen|verkleben)/i.test(p.beschreibung))
-    ?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
+  const raumSuffix = verlegePosition?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
   const beschreibung = (istHochwertig ? 'Trittschalldämmung hochwertig (PUR-Schaum, alukaschiert)' : 'Trittschalldämmung')
     + (raumSuffix ? ` — ${raumSuffix}` : '')
 
