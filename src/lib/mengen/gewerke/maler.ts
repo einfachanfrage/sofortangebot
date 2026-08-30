@@ -242,11 +242,22 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall), nurWaende oder nurBoden
     const anDecke = !nurWaende && !nurBoden && !hatBodenStreichen && (hatDeckenSignal || (!hatExpliziteFlaeche && hatStreichen))
     const bodenStreichen = hatBodenStreichen && bodenflaecheM2 !== null
-    // Boden schützen: immer wenn Wände ODER Decke gestrichen wird (Farbe tropft)
-    const bodenSchutz = !bodenStreichen && /schutz|abdeck|vlies/.test(arbeitenStr)
-    // Sockelleisten: nicht in Kellern (kein Sockelleisten-Standard im Keller)
+    // Boden schützen: immer wenn Wände ODER Decke gestrichen wird (Farbe tropft).
+    //
+    // Sandys Live-Fund (2026-08-30): Genau das stand hier schon als Kommentar —
+    // die Bedingung darunter verlangte aber, dass der Handwerker "abdecken",
+    // "Schutz" oder "Vlies" AUSSPRICHT. Kommentar und Code sagten also
+    // Verschiedenes, und gemerkt hat es niemand, weil GPT die Nebenarbeiten
+    // meistens von sich aus mitliefert. Bei "in der ganzen Wohnung 120 m²
+    // streichen" tat es das nicht — und die Position fehlte im Angebot.
+    const bodenSchutzGenannt = /schutz|abdeck|vlies/.test(arbeitenStr)
+    const bodenSchutz = !bodenStreichen && (bodenSchutzGenannt || anWaenden || anDecke)
+    // Sockelleisten abkleben: gehört bei Wandanstrich genauso zum Handwerk wie
+    // das Abdecken des Bodens — auch das musste bisher ausgesprochen werden.
+    // Nicht in Kellern (kein Sockelleisten-Standard im Keller).
+    const sockelGenannt = sockel || arbeitenStr.includes('sockel')
+      || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben')
     const hatSockel = anWaenden && wandflaecheNettoM2 !== null && !istKellerRaum
-      && (sockel || arbeitenStr.includes('sockel') || arbeitenStr.includes('leiste') || arbeitenStr.includes('abkleben'))
 
     const fensterStandard = fenster.some((f: any) => (f.anzahl ?? 1) > 0 && (!f.breite || !f.hoehe))
     const annahmenFenster = fensterStandard ? ['Fensterfläche mit Standardmaß 1,20 × 1,00 m je Fenster angenommen — bitte prüfen'] : []
@@ -433,11 +444,11 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })
       }
       if (bodenSchutz && bodenflaecheM2 !== null) {
-        positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })
+        positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [], automatisch_ergaenzt: !bodenSchutzGenannt })
       }
       if (hatSockel && umfangM !== null) {
         const sockelM = berechneSockelleistenLaenge(umfangM, effTueren)
-        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(umfangM - sockelM)} m)`, annahmen: [] })
+        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(umfangM - sockelM)} m)`, annahmen: [], automatisch_ergaenzt: !sockelGenannt })
       }
     }
   }
