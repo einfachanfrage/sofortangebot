@@ -6,16 +6,24 @@ import { Search } from 'lucide-react'
 
 interface DashboardFiltersProps {
   entwurfCount: number
+  bereitCount: number
   openCount: number
   acceptedCount: number
   rejectedCount: number
   archivCount?: number
 }
 
+// DC-042 (2026-08-30, Sandys Go): "Bereit"-Reiter ergänzt (fehlte komplett,
+// eine der drei strukturellen Lücken aus der Bestandsaufnahme) und "Offen"
+// auf "Beim Kunden" umbenannt (sagt explizit, wer dran ist). Der interne
+// `key` bleibt bewusst "offen" (nur der Anzeige-Text ändert sich) — der
+// Query-Param wird an mehreren Stellen verlinkt (z. B. Dashboard-Hero),
+// eine Umbenennung des Keys hätte keinen echten Vorteil, nur Risiko.
 const PILLS = [
   { key: '',           label: 'Alle',           hasCount: false },
   { key: 'entwurf',    label: 'Entwurf',        hasCount: true  },
-  { key: 'offen',      label: 'Offen',          hasCount: true  },
+  { key: 'bereit',     label: 'Bereit',         hasCount: true  },
+  { key: 'offen',      label: 'Beim Kunden',    hasCount: true  },
   { key: 'beauftragt', label: 'Beauftragt',     hasCount: true  },
   { key: 'abgelehnt',  label: 'Abgelehnt',      hasCount: true  },
   { key: 'archived',   label: 'Archiv',         hasCount: true  },
@@ -23,6 +31,7 @@ const PILLS = [
 
 export default function DashboardFilters({
   entwurfCount,
+  bereitCount,
   openCount,
   acceptedCount,
   rejectedCount,
@@ -43,6 +52,7 @@ export default function DashboardFilters({
 
   const getCount = (key: string): number | null => {
     if (key === 'entwurf')    return entwurfCount
+    if (key === 'bereit')     return bereitCount
     if (key === 'offen')      return openCount
     if (key === 'beauftragt') return acceptedCount
     if (key === 'abgelehnt')  return rejectedCount

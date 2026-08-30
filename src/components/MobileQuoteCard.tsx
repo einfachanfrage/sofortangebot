@@ -62,6 +62,16 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props
 
   const status = getStatusInfo(quote.status)
 
+  // DC-042 (2026-08-30, Sandys Go): "Beim Kunden seit X Tagen" macht
+  // "wartet auf Antwort" konkret statt vage — Grundlage ist `created_at`
+  // (kein neues Feld, dafür leicht ungenau, falls "Bereit" länger vor dem
+  // eigentlichen Versand lag). Ein exaktes `sent_at`-Feld wäre eine
+  // Datenbank-Änderung und bewusst NICHT Teil dieser Änderung, siehe
+  // design-check.md DC-042.
+  const tageSeitVersand = quote.status === 'sent'
+    ? Math.max(0, Math.floor((Date.now() - new Date(quote.created_at).getTime()) / 86400000))
+    : null
+
   const kundenname = quote.customer?.name?.trim()
   const nummer = quote.quote_number
   const primaryTitle = kundenname ?? 'Kunde offen'
@@ -89,6 +99,11 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block ${status.bg} ${status.text}`}>
                     {status.label}
                   </span>
+                  {tageSeitVersand !== null && (
+                    <div className="text-[9.5px] font-bold text-anthracite/40 mt-1">
+                      seit {tageSeitVersand === 1 ? '1 Tag' : `${tageSeitVersand} Tagen`}
+                    </div>
+                  )}
                 </div>
                 {/* 3-Punkte-Button */}
                 <button

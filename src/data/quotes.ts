@@ -34,8 +34,13 @@ function extrahiereGewerk(extraktion: unknown): string | null {
   return typeof gewerk === 'string' ? gewerk : null
 }
 
+// DC-042 (2026-08-30, Sandys Go): "bereit" fehlte hier komplett — ein
+// fertiggestelltes, aber noch nicht verschicktes Angebot hatte dadurch
+// KEINEN eigenen Filter-Reiter, nur über "Alle" zu finden (eine der drei
+// strukturellen Lücken aus der Bestandsaufnahme, siehe design-check.md).
 const STATUS_FILTERS: Record<string, string[]> = {
   entwurf: ['draft', 'in_bearbeitung'],
+  bereit: ['bereit'],
   offen: ['sent', 'viewed'],
   beauftragt: ['accepted'],
   abgelehnt: ['rejected'],
@@ -74,6 +79,7 @@ export async function getQuotesOverview(status?: string) {
     counts: {
       drafts: (draftsResult.data ?? []).length,
       archive: (archiveResult.data ?? []).length,
+      bereit: month.filter(q => q.status === 'bereit').length,
       open: month.filter(q => q.status === 'sent' || q.status === 'viewed').length,
       accepted: month.filter(q => q.status === 'accepted').length,
       rejected: month.filter(q => q.status === 'rejected').length,

@@ -5,7 +5,6 @@ import BottomNav from '@/components/BottomNav'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
 import AvatarSheet from '@/components/AvatarSheet'
-import { Mic } from 'lucide-react'
 import { Toast } from '@/components/Toast'
 import { getDashboardData } from '@/data/dashboard'
 
@@ -37,6 +36,7 @@ export default async function DashboardPage({
   if (data.needsOnboarding) redirect('/onboarding')
   const {
     company, recentQuotes, monthRevenue: monatUmsatz,
+    monthRevenueDeltaPct: monatUmsatzDeltaPct,
     monthAccepted: monatBeauftragt, priceListEmpty: preislisteIstLeer,
     openCount: offeneGesamtCount,
   } = data
@@ -66,53 +66,70 @@ export default async function DashboardPage({
           <AvatarSheet initial={initial} name={firstName} plan={plan} />
         </div>
 
-        <div className="md:flex md:items-end md:justify-between md:gap-10">
-          <div className="md:flex-1">
-            {/* Begrüßung */}
-            <div className="font-syne font-black text-white text-[22px] md:text-[28px] leading-snug mb-2">
-              {getGreeting(firstName)}
-            </div>
-
-            {/* Dynamischer Status */}
-            {heroStatusLink ? (
-              <Link href={heroStatusLink} className="inline-block text-yellow text-[13px] font-black mb-6 md:mb-0">
-                {heroStatusText}
-              </Link>
-            ) : (
-              <div className="text-white/40 text-[13px] font-semibold mb-6 md:mb-0">{heroStatusText}</div>
-            )}
-          </div>
-
-          {/* Großer Aufmaß-Button */}
-          <Link
-            href="/angebot/neu"
-            className="flex items-center gap-4 w-full md:w-auto md:shrink-0 bg-yellow rounded-xl px-5 md:pr-8 h-16 active:opacity-90 hover:opacity-90 transition-opacity"
-          >
-            <div className="w-10 h-10 rounded-lg bg-anthracite/15 flex items-center justify-center shrink-0">
-              <Mic size={22} className="text-anthracite" strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="font-syne font-black text-anthracite text-[17px] leading-tight">Aufmaß starten</div>
-              <div className="text-anthracite/55 text-[12px] font-semibold">Einsprechen → Angebot fertig</div>
-            </div>
-          </Link>
+        {/* Begrüßung */}
+        <div className="font-syne font-black text-white text-[22px] md:text-[28px] leading-snug mb-2">
+          {getGreeting(firstName)}
         </div>
+
+        {/* Dynamischer Status */}
+        {/* DC-043 (2026-08-30, Sandys Go): der frühere große "Aufmaß
+            starten"-Button hier führte zur exakt selben Aktion wie der
+            gelbe Mikrofon-FAB in der BottomNav — zwei gleich auffällige
+            CTAs für dieselbe Sache gleichzeitig sichtbar. Sandy: "das
+            gelbe mikro muss IMMER da bleiben unten in der leiste" — der
+            FAB bleibt, der Hero-Button entfällt dafür. Auf Desktop bleibt
+            weiterhin die "Neues Angebot"-CTA in der SideNav bestehen,
+            keine Lücke. */}
+        {heroStatusLink ? (
+          <Link href={heroStatusLink} className="inline-block text-yellow text-[13px] font-black">
+            {heroStatusText}
+          </Link>
+        ) : (
+          <div className="text-white/40 text-[13px] font-semibold">{heroStatusText}</div>
+        )}
       </div>
 
-      {/* ── STATS ────────────────────────────────────────────────────── */}
+      {/* ── UMSATZ-KACHEL + STATS ────────────────────────────────────── */}
+      {/* DC-043 (2026-08-30, Sandys Go, Richtung "Warm & persönlich"):
+          Umsatz war vorher eine von drei gleich gewichteten Kacheln, ohne
+          Sonderstellung, ohne Vergleich zum Vormonat — für einen
+          Handwerker aber die emotional wichtigste Zahl. Bekommt jetzt eine
+          eigene, hervorgehobene Kachel mit Vormonatsvergleich; Beauftragt/
+          Offen werden sekundär. */}
       <div className="px-5 pt-5 md:px-0 md:pt-6">
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { value: fmt(monatUmsatz), label: 'Umsatz · Monat', href: '/angebote?status=beauftragt' },
-            { value: String(monatBeauftragt), label: 'Beauftragt · Monat', href: '/angebote?status=beauftragt' },
-            { value: String(offeneGesamtCount), label: 'Offen', href: '/angebote?status=offen' },
-          ].map(stat => (
-            <Link key={stat.label} href={stat.href}
-              className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
-              <div className="font-syne font-black text-anthracite text-lg leading-none truncate">{stat.value}</div>
-              <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide truncate">{stat.label}</div>
-            </Link>
-          ))}
+        <Link
+          href="/angebote?status=beauftragt"
+          className="block bg-gradient-to-br from-yellow/25 to-yellow/10 border border-yellow/40 rounded-2xl px-5 py-4 active:opacity-80 transition-opacity"
+        >
+          <div className="flex items-baseline justify-between gap-2 flex-wrap">
+            <div className="font-syne font-black text-anthracite text-[26px] leading-none">{fmt(monatUmsatz)}</div>
+            {monatUmsatzDeltaPct !== null && (
+              <span className={`text-[11px] font-extrabold px-2.5 py-1 rounded-full whitespace-nowrap ${
+                monatUmsatzDeltaPct >= 0 ? 'bg-green-100 text-green-700' : 'bg-anthracite/8 text-anthracite/50'
+              }`}>
+                {monatUmsatzDeltaPct >= 0 ? '+' : ''}{monatUmsatzDeltaPct}% ggü. letzten Monat
+              </span>
+            )}
+          </div>
+          <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide">Umsatz · Monat</div>
+          {monatBeauftragt > 0 && (
+            <div className="text-[11px] font-bold text-[#8B7000] mt-2">
+              🎉 {monatBeauftragt === 1 ? '1 Angebot' : `${monatBeauftragt} Angebote`} diesen Monat angenommen
+            </div>
+          )}
+        </Link>
+
+        <div className="grid grid-cols-2 gap-3 mt-3">
+          <Link href="/angebote?status=beauftragt"
+            className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
+            <div className="font-syne font-black text-anthracite text-lg leading-none truncate">{monatBeauftragt}</div>
+            <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide truncate">Beauftragt · Monat</div>
+          </Link>
+          <Link href="/angebote?status=offen"
+            className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
+            <div className="font-syne font-black text-anthracite text-lg leading-none truncate">{offeneGesamtCount}</div>
+            <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide truncate">Beim Kunden</div>
+          </Link>
         </div>
       </div>
 
@@ -167,7 +184,10 @@ export default async function DashboardPage({
         <div className="px-5 mt-6 pb-32 md:px-0 md:mt-8 md:pb-4">
           <div className="bg-white rounded-2xl border border-black/5 p-8 text-center">
             <div className="font-black text-anthracite text-base">Noch keine Angebote.</div>
-            <div className="text-anthracite/50 text-sm font-semibold mt-1">Tippe oben auf „Aufmaß starten".</div>
+            {/* DC-043: verwies vorher auf den jetzt entfernten Hero-Button
+                ("Tippe oben auf „Aufmaß starten"") — der einzige Weg dorthin
+                ist jetzt der Mikrofon-FAB unten. */}
+            <div className="text-anthracite/50 text-sm font-semibold mt-1">Tippe unten auf das Mikrofon, um loszulegen.</div>
           </div>
         </div>
       )}

@@ -18,7 +18,8 @@ const GEWERK_BADGE: Record<string, string> = {
 
 const EMPTY_STATE_TEXT: Record<string, { title: string; sub: string; showCta?: boolean }> = {
   entwurf:    { title: 'Nichts in Bearbeitung.',     sub: 'Starte ein neues Aufmaß.',                      showCta: true  },
-  offen:      { title: 'Keine offenen Angebote.',    sub: 'Schick dein nächstes Angebot raus.',            showCta: false },
+  bereit:     { title: 'Nichts bereit.',             sub: 'Fertig kalkulierte Angebote, die noch nicht beim Kunden sind, landen hier.', showCta: false },
+  offen:      { title: 'Nichts beim Kunden.',        sub: 'Schick dein nächstes Angebot raus.',            showCta: false },
   beauftragt: { title: 'Noch kein Auftrag.',         sub: 'Der erste kommt.',                              showCta: false },
   abgelehnt:  { title: 'Kein Angebot abgelehnt.',   sub: 'Gut so. 💪',                                    showCta: false },
   archived:   { title: 'Archiv ist leer.',           sub: 'Abgeschlossene Angebote landen hier.',          showCta: false },
@@ -41,6 +42,7 @@ export default async function AngebotePage({
   const { quotes, counts } = await getQuotesOverview(status)
   const entwurfCount = counts.drafts
   const archivCount = counts.archive
+  const bereitCount = counts.bereit
   const openCount = counts.open
   const acceptedCount = counts.accepted
   const rejectedCount = counts.rejected
@@ -71,6 +73,7 @@ export default async function AngebotePage({
         <Suspense>
           <DashboardFilters
             entwurfCount={entwurfCount}
+            bereitCount={bereitCount}
             openCount={openCount}
             acceptedCount={acceptedCount}
             rejectedCount={rejectedCount}

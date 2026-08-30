@@ -4,9 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, FileText, Users, Settings, Mic } from 'lucide-react'
 
+// DC-043 (2026-08-30, Sandys Go): hieß hier "Start", die Desktop-SideNav
+// nennt denselben Ort "Dashboard" — kleine Wort-Inkonsistenz zwischen
+// Mobile und Desktop, jetzt vereinheitlicht.
 const LEFT_NAV  = [
-  { href: '/dashboard', icon: Home,     label: 'Start'    },
-  { href: '/angebote',  icon: FileText, label: 'Angebote' },
+  { href: '/dashboard', icon: Home,     label: 'Dashboard' },
+  { href: '/angebote',  icon: FileText, label: 'Angebote'  },
 ]
 const RIGHT_NAV = [
   { href: '/kunden',        icon: Users,    label: 'Kunden'        },

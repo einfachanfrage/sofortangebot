@@ -11,8 +11,15 @@ export async function getDashboardData() {
   const { supabase, company } = await requireCompany()
   if (!company.name) return { needsOnboarding: true as const }
 
-  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
-  const [recentResult, monthResult, priceResult, openResult] = await Promise.all([
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+  // DC-043 (2026-08-30, Sandys Go, Richtung "Warm & persönlich"): Umsatz
+  // bekommt eine große, hervorgehobene Kachel mit Vergleich zum Vormonat
+  // statt einer nüchternen Zahl unter drei gleich gewichteten Kacheln —
+  // dafür zusätzlich der Vormonats-Umsatz mit derselben Filterlogik wie
+  // der aktuelle Monat, nur einen Monat zurück.
+  const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString()
+  const [recentResult, monthResult, prevMonthResult, priceResult, openResult] = await Promise.all([
     supabase.from('quotes')
       .select('id, status, total_gross, created_at, quote_number, customer:customers(name), quote_items(title, position)')
       .eq('company_id', company.id).not('status', 'eq', 'archived')
@@ -20,11 +27,17 @@ export async function getDashboardData() {
     supabase.from('quotes').select('status, total_gross')
       .eq('company_id', company.id).gte('created_at', monthStart)
       .not('status', 'in', '("draft","in_bearbeitung","archived")'),
+    supabase.from('quotes').select('status, total_gross')
+      .eq('company_id', company.id).gte('created_at', prevMonthStart).lt('created_at', monthStart)
+      .not('status', 'in', '("draft","in_bearbeitung","archived")'),
     supabase.from('price_items').select('id', { count: 'exact', head: true }).eq('company_id', company.id),
     supabase.from('quotes').select('id').eq('company_id', company.id).in('status', ['sent', 'viewed']),
   ])
 
   const monthQuotes = monthResult.data ?? []
+  const prevMonthQuotes = prevMonthResult.data ?? []
+  const monthRevenue = monthQuotes.filter(q => q.status === 'accepted').reduce((sum, q) => sum + (q.total_gross ?? 0), 0)
+  const prevMonthRevenue = prevMonthQuotes.filter(q => q.status === 'accepted').reduce((sum, q) => sum + (q.total_gross ?? 0), 0)
   return {
     needsOnboarding: false as const,
     company: { name: company.name, plan: company.plan ?? 'starter' },
@@ -37,7 +50,11 @@ export async function getDashboardData() {
       customer: normalizeCustomer(row.customer),
       quote_items: row.quote_items ?? [],
     })),
-    monthRevenue: monthQuotes.filter(q => q.status === 'accepted').reduce((sum, q) => sum + (q.total_gross ?? 0), 0),
+    monthRevenue,
+    // null wenn es im Vormonat schlicht keine Vergleichsbasis gibt (0 €
+    // Vormonatsumsatz, z. B. ganz neue Firma) — dann lieber gar kein
+    // Vergleich als eine bedeutungslose "+100%"/"+∞%"-Angabe.
+    monthRevenueDeltaPct: prevMonthRevenue > 0 ? Math.round(((monthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100) : null,
     monthAccepted: monthQuotes.filter(q => q.status === 'accepted').length,
     priceListEmpty: (priceResult.count ?? 0) === 0,
     openCount: (openResult.data ?? []).length,
