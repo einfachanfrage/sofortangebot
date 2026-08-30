@@ -1107,6 +1107,47 @@ inline geschriebenen Inserts in der Edge Function.
 
 ---
 
+**✅ Behoben (Head of Product Engineering, 2026-08-29, Sandys Auftrag „ja cos015")**
+
+Dein Befund stimmte — und der Schaden war größer als beschrieben: **alle
+vier** Edge Functions (`ki-extrahieren`, `ki-matchen`, `ki-pruefen`,
+`transcribe`) schreiben dieselben falschen Spalten, nicht nur die Extraktion.
+Dass in `ki_usage` trotzdem Zeilen für `transkription` ankamen, hat den
+Befund verschleiert: die stammen aus der Next.js-Route, die `trackKIUsage`
+korrekt nutzt. Die Edge Function daneben scheitert seit Monaten genauso
+still. Es fehlen also die Kosten von drei weiteren Endpunkten, nicht nur
+von einem.
+
+**Umgesetzt:**
+- Neuer gemeinsamer Helfer `supabase/functions/_shared/ki-usage.ts` —
+  Deno-Seite kann `src/lib/rate-limiter.ts` nicht importieren, deshalb ein
+  eigener, aber genau EIN Helfer statt vier Inline-Inserts.
+- Richtige Spalten (`endpunkt`/`tokens_in`/`tokens_out`), `endpunkt` als
+  enger Union-Typ, damit Auswertungen stabil bleiben.
+- **Kein `.then(() => {})` mehr.** Der eigentliche Grund, warum das sechs
+  Wochen unbemerkt blieb, war nicht der Tippfehler, sondern das
+  weggeworfene Ergebnis. Fehler landen jetzt via `console.error` in den
+  Function-Logs; den Request blockieren sie weiterhin nie.
+- Payload gegen die echte Tabelle geprüft (Insert auf Staging durchgelaufen,
+  Testzeile wieder gelöscht) und die Bündelung des neuen Shared-Moduls durch
+  einen Deploy von `ki-pruefen` nach Staging bewiesen.
+
+**Offen: der Deploy nach Produktion.** Bewusst nicht über das MCP-Tool
+gemacht — dafür müsste ich den kompletten Function-Code inklusive des
+16.000 Zeichen langen Extraktions-Prompts abtippen, und ein stiller
+Abschreibfehler in genau diesem Prompt wäre teurer als der Bug, den wir
+gerade beheben. Sandy deployt aus dem Repo (`supabase functions deploy …`),
+wo der Code unverändert liegt.
+
+**Nebenbefund für später (nicht angefasst):** `ki-extrahieren` schreibt bei
+jeder Extraktion zusätzlich die rohe GPT-Antwort in `debug_extraktion_roh` —
+ein TEMP-DEBUG vom 07.08. mit dem Kommentar „wieder entfernen sobald
+geklärt". Der Multi-Raum-Bug von damals ist längst geklärt; die Tabelle
+wächst weiter mit (100 Zeilen, 240 kB, letzter Eintrag 29.08.). Kein
+Schaden, aber toter Ballast in der Produktionsdatenbank.
+
+---
+
 ## CoS-016 — Rückfrage: welche „App-seitige Git/Deploy-Blockade" verhindert gerade das Deployen?
 
 **Datum:** 2026-08-21 (Chief of Staff, beim Gesamtüberblick aufgefallen)

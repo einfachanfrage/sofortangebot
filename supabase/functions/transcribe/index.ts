@@ -1,4 +1,5 @@
 import { corsHeaders } from '../_shared/cors.ts'
+import { trackKIUsage } from '../_shared/ki-usage.ts'
 import { getUser } from '../_shared/auth.ts'
 import { mitTimeout } from '../_shared/timeout.ts'
 import { createOpenAIClient } from '../_shared/openai.ts'
@@ -88,14 +89,16 @@ Deno.serve(async (req: Request) => {
 
     // KI-Kosten loggen (feuern und vergessen)
     const dauerSek = audioFile.size / (16000 * 2)
-    supabase.from('ki_usage').insert({
-      user_id: user.id,
-      angebot_id: angebotId || null,
-      prompt_typ: 'transkription',
-      input_tokens: Math.ceil(dauerSek),
-      output_tokens: rohText.length,
-      kosten_eur: (dauerSek / 60) * 0.006,
-    }).then(() => {})
+    // Whisper rechnet nach Minuten, nicht nach Tokens — `tokens_in` trägt hier
+    // die Sekunden, `tokens_out` die Zeichenzahl des Transkripts (unverändert
+    // zur bisherigen Absicht, nur jetzt in den richtigen Spalten).
+    trackKIUsage(supabase, {
+      userId: user.id,
+      endpunkt: 'transkription',
+      tokensIn: Math.ceil(dauerSek),
+      tokensOut: rohText.length,
+      kostenEur: (dauerSek / 60) * 0.006,
+    })
 
     return new Response(
       JSON.stringify({

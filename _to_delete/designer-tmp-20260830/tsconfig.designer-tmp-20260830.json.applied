@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "src/lib/status.ts",
+    "src/lib/types.ts",
+    "src/data/quotes.ts",
+    "src/data/dashboard.ts",
+    "src/components/DashboardFilters.tsx",
+    "src/components/MobileQuoteCard.tsx",
+    "src/components/BottomNav.tsx",
+    "src/app/(app)/angebote/page.tsx",
+    "src/app/(app)/dashboard/page.tsx"
+  ]
+}

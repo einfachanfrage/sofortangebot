@@ -1,13 +1,23 @@
 import { DEFAULT_PRICES } from '@/lib/default-prices'
+import { GEWERK_KATEGORIE_PREFIXE } from '@/lib/gewerke-config'
 
+// Dieselbe Zuordnung stand bisher zweimal im Code — hier und als
+// `GEWERK_KATEGORIE_PREFIXE` in `gewerke-config.ts`. Die beiden waren
+// auseinandergelaufen: Diese Liste kannte `fliesen` und `sanitaer_heizung`
+// NICHT, also genau zwei der sechs Gewerke, die die Extraktion überhaupt
+// vergeben darf. Folge: bei einem Fliesen- oder SHK-Auftrag griff der
+// Gewerke-Filter vor dem Preis-Matcher gar nicht (`praefixe?.length` leer →
+// "passt zu allem"), und bei Positionen, die in mehreren Gewerken denselben
+// Titel tragen (Anfahrt, Kleinstauftrag, Möbel rücken …), gewann der
+// alphabetisch erste Katalogeintrag — praktisch immer "Abbruch".
+// Jetzt ist die kanonische Liste die Basis; hier stehen nur noch die
+// zusätzlichen Alt-/Onboarding-IDs, die es dort nicht gibt.
 const KATEGORIE_PRAEFIXE: Record<string, string[]> = {
-  maler: ['Maler'],
+  ...GEWERK_KATEGORIE_PREFIXE,
   malerarbeiten: ['Maler'],
   maler_fassade: ['Maler'],
-  trockenbau: ['Trockenbau'],
   fliesenleger: ['Fliesen'],
   'bodenbeläge': ['Boden'],
-  boden_parkett: ['Boden'],
   putz_stuck: ['Putz'],
   estrich: ['Estrich'],
   elektro: ['Elektro'],

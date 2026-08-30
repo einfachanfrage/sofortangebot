@@ -1,4 +1,5 @@
 import { corsHeaders } from '../_shared/cors.ts'
+import { trackKIUsage } from '../_shared/ki-usage.ts'
 import { getUser } from '../_shared/auth.ts'
 import { mitTimeout } from '../_shared/timeout.ts'
 import { createOpenAIClient, openaiRequest } from '../_shared/openai.ts'
@@ -190,15 +191,14 @@ Deno.serve(async (req: Request) => {
 
         if (data.usage) {
           const { prompt_tokens: pIn, completion_tokens: pOut } = data.usage
-          supabase.from('ki_usage').insert({
-            user_id: user.id,
-            angebot_id: angebot_id || null,
-            prompt_typ: 'extraktion',
-            input_tokens: pIn,
-            output_tokens: pOut,
-            // gpt-4o-Preise: $2.50 / $10.00 pro 1M Tokens (Stand 2026)
-            kosten_eur: ((pIn * 0.0025 + pOut * 0.01) / 1000) * 0.92,
-          }).then(() => {})
+          // gpt-4o-Preise: $2.50 / $10.00 pro 1M Tokens (Stand 2026)
+          trackKIUsage(supabase, {
+            userId: user.id,
+            endpunkt: 'extraktion',
+            tokensIn: pIn,
+            tokensOut: pOut,
+            kostenEur: ((pIn * 0.0025 + pOut * 0.01) / 1000) * 0.92,
+          })
         }
 
         const raw = data.choices[0].message.content
