@@ -88,6 +88,21 @@ export interface RaumScope {
   nurWaende: boolean
   nurDecke: boolean
   nurBoden: boolean
+  /**
+   * Woher die Einschränkung kommt — entscheidet, wie stark sie wiegt.
+   *
+   * 'explizit'   — „nur die Wände", „ausschließlich die Decke"
+   * 'negation'   — „Wände streichen, ohne Decke"
+   * 'ausschluss' — „die Decke lassen wir", „Decke nicht mitrechnen"
+   * 'erwaehnung' — SCHWACH: niemand hat etwas ausgeschlossen, es wurde nur
+   *                eine Fläche genannt und die andere nicht. Diese Regel liest
+   *                den Rohtext — und ein Verhörer von Whisper („Bände" statt
+   *                „Wände", PM-026) kippt sie und löscht damit die
+   *                Hauptposition. Aufrufer dürfen sie deshalb übergehen, wenn
+   *                die strukturierte Erkennung etwas anderes sagt.
+   * 'keine'      — keine Einschränkung erkannt
+   */
+  quelle: 'explizit' | 'negation' | 'ausschluss' | 'erwaehnung' | 'keine'
 }
 
 // Einschränkungs-Wörter: nur, bloß, lediglich, ausschließlich, einzig, allein
@@ -158,17 +173,18 @@ export function erkenneScope(text: string): RaumScope {
   let nurWaende = NUR_WAENDE.test(t) && !NUR_DECKE.test(t) && !NUR_BODEN.test(t)
   let nurDecke = NUR_DECKE.test(t) && !NUR_WAENDE.test(t) && !NUR_BODEN.test(t)
   const nurBoden = NUR_BODEN.test(t) && !NUR_WAENDE.test(t) && !NUR_DECKE.test(t)
+  let quelle: RaumScope['quelle'] = (nurWaende || nurDecke || nurBoden) ? 'explizit' : 'keine'
 
   // Negation: "Wände streichen, ohne Decke" → nur Wände
   if (!nurWaende && !nurDecke && !nurBoden) {
-    if (OHNE_DECKE.test(t) && FLAECHE.waende && new RegExp(FLAECHE.waende, 'i').test(t)) nurWaende = true
-    else if (OHNE_WAENDE.test(t) && new RegExp(FLAECHE.decke, 'i').test(t)) nurDecke = true
+    if (OHNE_DECKE.test(t) && FLAECHE.waende && new RegExp(FLAECHE.waende, 'i').test(t)) { nurWaende = true; quelle = 'negation' }
+    else if (OHNE_WAENDE.test(t) && new RegExp(FLAECHE.decke, 'i').test(t)) { nurDecke = true; quelle = 'negation' }
   }
 
   // Ausschluss-Phrasen ("lassen wir" / "nicht mitrechnen") — PM-001.
   if (!nurWaende && !nurDecke && !nurBoden) {
-    if (AUSSCHLUSS_DECKE.test(t)) nurWaende = true
-    else if (AUSSCHLUSS_WAENDE.test(t)) nurDecke = true
+    if (AUSSCHLUSS_DECKE.test(t)) { nurWaende = true; quelle = 'ausschluss' }
+    else if (AUSSCHLUSS_WAENDE.test(t)) { nurDecke = true; quelle = 'ausschluss' }
   }
 
   // Eine ausdrücklich benannte Fläche begrenzt den Auftrag ebenfalls. Der Nutzer
@@ -192,11 +208,11 @@ export function erkenneScope(text: string): RaumScope {
   if (!nurWaende && !nurDecke && !nurBoden) {
     const erwaehntWaende = new RegExp(FLAECHE.waende, 'i').test(t)
     const erwaehntDecke = new RegExp(FLAECHE.decke, 'i').test(tOhneDeckenhoehe)
-    if (erwaehntWaende && !erwaehntDecke) nurWaende = true
-    else if (erwaehntDecke && !erwaehntWaende) nurDecke = true
+    if (erwaehntWaende && !erwaehntDecke) { nurWaende = true; quelle = 'erwaehnung' }
+    else if (erwaehntDecke && !erwaehntWaende) { nurDecke = true; quelle = 'erwaehnung' }
   }
 
-  return { nurWaende, nurDecke, nurBoden }
+  return { nurWaende, nurDecke, nurBoden, quelle }
 }
 
 // ── Raumkontext: Keller / Garage / Dachschräge / Fassade ────────────────────

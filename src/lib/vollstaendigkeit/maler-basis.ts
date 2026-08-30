@@ -25,8 +25,8 @@ export function wendeNurXFilterAn(ergaenzt: BerechnetePosition[], v: AuftragsVer
   nurBoden: boolean
 } {
   // Scope aus dem typisierten Vertrag — deckt Flexionen + Synonyme + "ohne Decke" ab
-  const { nurWaende, nurDecke, nurBoden } = v.scope
-  const globalScope: RaumScope = { nurWaende, nurDecke, nurBoden }
+  const { nurWaende, nurDecke, nurBoden, quelle } = v.scope
+  const globalScope: RaumScope = { nurWaende, nurDecke, nurBoden, quelle }
 
   filtereArray(ergaenzt, p => {
     const raum = raumAusBeschreibung(p.beschreibung)

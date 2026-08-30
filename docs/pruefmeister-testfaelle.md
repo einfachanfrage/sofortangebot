@@ -82,11 +82,11 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ✅ Details im Archiv. Raummaß-Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 live bestätigt (2026-08-25) — liefert jetzt die korrekten 2×1,5 m |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
-| PM-022 | Schlafzimmer, Baseline-Malerfall | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Laminat/Sockelleisten exakt korrekt; Trittschalldämmung falsch unter „Allgemein" statt „Flur" gruppiert und fälschlich als „Vorschlag" markiert, trotz explizitem Diktat |
+| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ❌ Raumhöhe 3,20 m wird zu 3 m abgeschnitten (dadurch fehlt der Erschwerniszuschlag Höhe), plus komplett erfundene, bepreiste „Deckenfläche streichen"-Position (220 €) |
+| PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ beide Positionen live bestätigt exakt Soll |
+| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ❌ Zwei Bugs: Decke fälschlich 2× statt 1×; Wände streichen UND Sockelleisten abkleben fehlen komplett im Entwurf, obwohl auf der Karte angekündigt |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
@@ -430,7 +430,48 @@ abgesichert.
 verdächtig quadratischen Räumen und liefert danach die tatsächlich richtige Fläche, nicht nur eine
 Warnmeldung. Sandys Forderung „es muss immer die korrekte Fläche rauskommen" ist damit erfüllt.
 
-**Details für abgeschlossene Fälle (PM-001, PM-002, PM-003, PM-004, PM-005, PM-006, PM-007, PM-009, PM-011, PM-013, PM-019, PM-020, PM-021):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen. (PM-007 war am 2026-08-21 kurz zurückgeholt wegen eines Blocker-Bugs, ist seit dessen Fix und Live-Nachtest am 2026-08-25 wieder abgeschlossen und zurück im Archiv.)
+**7. NEU (2026-08-25): Zwei getrennte Aufnahmen in einem Angebot wirken möglicherweise fehleranfälliger als
+ein Angebot aus einer einzigen, kombinierten Aufnahme.** Im „Vertrauens-Batch" (PM-022 bis PM-031, gedacht
+als Fälle ohne bekannte Fallen) wurden bewusst je zwei Fälle zusammen in EIN Angebot gesprochen, aber als
+zwei getrennte Aufnahmen (PM-022+023, dann PM-024+025).
+
+**Korrektur (Prüfmeister, 2026-08-30):** Ursprünglich hatte ich hier als drittes Indiz noch die Anzeige
+„📐 Unregelmäßig" bei beiden Räumen aufgeführt. Das war falsch — Sandy hat mich korrigiert, und der
+Abgleich mit `design-check.md` (DC-036, 2026-08-29) bestätigt es: das ist ein ganz normaler, vom Product
+Designer umbenannter Tab („Raumform" → „📐 Unregelmäßig"), der bei jedem Raum erscheint, unabhängig von
+dessen tatsächlicher Form und unabhängig davon, ob ein oder mehrere Aufnahmen zum Angebot geführt haben.
+Kein Anzeige-Fund, kein Zusammenhang mit dieser Hypothese. Ich habe diesen Punkt entfernt; es bleiben zwei
+echte, unabhängig bestätigte Funde als Indizien:
+- PM-023: die Trittschalldämmung landet als eigene Position unter „Allgemein" statt beim Raum „Flur",
+  obwohl im selben Satz wie die korrekt zugeordneten Laminat-/Sockelleisten-Positionen verlangt.
+- PM-024: eine komplett erfundene, bepreiste „Deckenfläche streichen"-Position (220 €) im Büro-Raum, die
+  nie erwähnt wurde und nicht auf der Karte stand, zusätzlich zur separat gemeldeten Raumhöhen-Kürzung.
+PM-025 im selben Angebot lief dagegen fehlerfrei — es ist also nicht so, dass jede Position in einem
+Mehrfach-Aufnahme-Angebot betroffen ist, sondern es sieht nach vereinzelten, aber wiederkehrenden
+Aussetzern in genau diesem Ablauf aus. Mit nur noch zwei statt drei Indizien ist die Hypothese schwächer
+belegt als zuerst angenommen, aber immer noch bemerkenswert: zwei unterschiedliche Fehlerbilder
+(Gruppierung, erfundene Position) traten beide ausgerechnet im Zwei-Aufnahmen-Pfad auf. Bitte trotzdem
+prüfen, ob der Code-Pfad für „mehrere Aufnahmen in ein bestehendes Angebot nachträglich hinzufügen"
+denselben Grad an Testabdeckung hat wie der Standardfall „alles in einer Aufnahme" — aber ohne die
+Unregelmäßig-Beobachtung als Beleg dafür zu werten.
+
+**8. NEU, DRINGEND (2026-08-30): Eine auf der Karte angekündigte Position kann im fertigen Entwurf
+komplett verschwinden — nicht nur ohne Preis, sondern ganz weg.** Bei PM-026 zeigte die Karte „4
+Positionen" inklusive „Wände streichen (30 m²)". Im fertigen Entwurf waren nur noch 2 Positionen da
+(Deckenfläche streichen, Boden schützen) — „Wände streichen" und „Sockelleisten abkleben" fehlten
+vollständig, von Sandy ausdrücklich bestätigt („war beides einfach nicht da!"). Das ist ein anderes
+Fehlerbild als die bisherigen zwei verwandten Funde:
+- Punkt 1/5 (fehlende Standardpreise): die Position blieb sichtbar, nur der Preis fehlte.
+- Phantom-Positionen (PM-010, PM-013/PM-020, PM-024): das Gegenteil — komplett erfundene Positionen, die
+  es gar nicht geben sollte, tauchen zusätzlich auf.
+- **Hier: eine echte, korrekt erkannte Position (auf der Karte schon mit einer, wenn auch falschen, Menge
+  gelistet) verschwindet zwischen Karte und Entwurf spurlos — samt Menge und Preis.**
+Besonders schwer wiegt, dass es ausgerechnet die Hauptposition „Wandflächen streichen" traf — bei einem
+reinen Malerfall die Position, um die es dem Handwerker überhaupt geht. Bitte als eigene, hohe Priorität
+behandeln: den Übergang von Karte zu Entwurf darauf prüfen, ob/wie Positionen dabei verloren gehen können,
+unabhängig von der separaten Anstrichzahl-Frage (Wand 2×/Decke 1×) im selben Testfall.
+
+**Details für abgeschlossene Fälle (PM-001, PM-002, PM-003, PM-004, PM-005, PM-006, PM-007, PM-009, PM-011, PM-013, PM-019, PM-020, PM-021, PM-022):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen. (PM-007 war am 2026-08-21 kurz zurückgeholt wegen eines Blocker-Bugs, ist seit dessen Fix und Live-Nachtest am 2026-08-25 wieder abgeschlossen und zurück im Archiv.)
 
 ---
 
@@ -765,23 +806,6 @@ Status alle zehn: ⏳ noch nicht eingesprochen.
 
 ---
 
-### PM-022 — Schlafzimmer, Baseline-Malerfall
-
-**Zum Einsprechen:**
-„Schlafzimmer, vier Meter fünfzig mal drei Meter achtzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke
-einmal mit. Ein Fenster, Standardmaß, eine Tür, normal.“
-
-**Soll-Lösung:**
-- Umfang: 2×(4,50+3,80)=16,60 lfm; Wandbrutto: 16,60×2,50=**41,50 m²**
-- Fenster (Standard, 1,20 m²) und Tür (Standard, 1,89 m²) beide ≤2,5 m² → VOB: **kein Abzug**
-- Wandflächen streichen 2×: **41,50 m²**
-- Deckenfläche: 4,50×3,80=**17,10 m²**, streichen 1×
-- Boden schützen: 17,10 m²
-- Sockelleisten abkleben: 16,60−0,90 (Türbreite)=**15,70 lfdm**
-- Keine Extras (kein Altbau, keine Erschwernis, keine Spachtel-/Grundierungssignale)
-
----
-
 ### PM-023 — Flur, reiner Bodenfall (Laminat gerade + Trittschalldämmung + neue Sockelleisten)
 
 **Zum Einsprechen:**
@@ -795,6 +819,48 @@ Trittschalldämmung drunter. Sockelleisten neu montieren rundrum.“
 - Sockelleisten montieren (echtes Signal, kein Phantom): Umfang 2×(6,00+1,80)=15,60 lfm − 0,90 Türbreite =
   **14,70 lfdm**
 - **Keine** Maler-Position (keine Wand-/Deckenarbeit erwähnt)
+
+**Ist-Ergebnis (Sandy, 2026-08-25, zusammen mit PM-022 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen):** Karte „🚪Flur 2 Positionen" — Laminat verlegen inkl. 5% Verschnitt (11,34 m²), Sockelleisten
+montieren (14,7 lfdm). Zusätzlich eine dritte Karte „📋Allgemein 1 Position" — Trittschalldämmung
+(10,8 m²). Entwurf Flur (284,97 €), Raummaße 1,8×6 m:
+
+- Laminat verlegen inkl. 5% Verschnitt: 11,34 m² × 18,00 € = 204,12 € — ✅ exakt Soll
+- Sockelleisten montieren: 14,7 lfdm × 5,50 € = 80,85 € — ✅ exakt Soll
+- Trittschalldämmung: 10,8 m² × 4,50 € = 48,60 € — ✅ Menge exakt Soll (reine Rohfläche, kein Verschnitt),
+  **aber landet als eigene Karte unter „📋 Allgemein" statt unter „🚪 Flur", UND ist als „Vorschlag"
+  markiert.**
+
+Sandy dazu direkt: „trittschalldämung gehört zu flur!!! nicht zu allgemein und kein vorschlag! ich habs ja
+gesagt" — zu Recht: Trittschalldämmung wurde im selben Satz wie Laminat ausdrücklich verlangt („mit
+Trittschalldämmung drunter"), genau wie die beiden anderen, korrekt zugeordneten Flur-Positionen. Es gibt
+also keinen fachlichen Grund, warum sie in einer anderen Raum-Gruppe landet als der Rest desselben
+Diktats — und keinen Grund für die „Vorschlag"-Kennzeichnung, die laut PD-008 für automatisch ERGÄNZTE,
+nicht ausdrücklich gesagte Positionen gedacht ist.
+
+**Neue Funde:**
+1. **Trittschalldämmung wird nicht dem Raum zugeordnet, obwohl Laminat und Sockelleisten aus demselben
+   Satz korrekt bei „Flur" landen.** Das ist kein Fall von „Flur" als Raumname nicht erkannt (wie bei
+   PM-019/„Gästeklo") — der Raum wird ja korrekt erkannt, nur diese eine Position fällt raus. Vermutlich
+   eine eigene Code-Stelle für Trittschalldämmung, die (anders als Laminat/Sockelleisten) keinen
+   Raumbezug mitführt.
+2. **Trittschalldämmung fälschlich als „Vorschlag" markiert**, obwohl explizit gesagt — dieselbe
+   Fehlkategorie wie bei PM-011 (dort nur als Designer-Denkanstoß PD-008 vermerkt, hier aber eindeutiger:
+   die Position wurde wortwörtlich verlangt, nicht vom Tool ergänzt).
+
+**Korrektur (Prüfmeister, 2026-08-30):** Die „📐 Unregelmäßig"-Anzeige, die ich hier zuerst als dritten,
+verwandten Fund mitgezählt hatte, ist kein Bug — das ist nur der neue Name des früheren „Raumform"-Tabs
+(DC-036, Product Designer), gilt für jeden Raum gleichermaßen. Siehe Korrektur bei PM-022. Bleiben also
+zwei echte Funde, nicht drei.
+
+**Für Head of Product Engineering:** (1)+(2) vermutlich dieselbe Ursache — Trittschalldämmung braucht
+denselben Raum-Zuordnungs- und „explizit gesagt"-Mechanismus, den Laminat/Sockelleisten in diesem Fall
+schon richtig anwenden. Bitte gezielt in der Trittschalldämmungs-Erzeugung (`boden.ts`/`vollstaendigkeit`)
+nachsehen, warum sie unabhängig von den anderen beiden Positionen im selben Satz behandelt wird.
+
+**Status:** 🟡 Kernmengen (Laminat, Sockelleisten) exakt korrekt. Zwei neue Funde: Trittschalldämmung
+falsch gruppiert („Allgemein" statt „Flur") und fälschlich als „Vorschlag" markiert, obwohl explizit
+verlangt.
 
 ---
 
@@ -812,6 +878,52 @@ Standardmaß, eine Tür, normal.“
 - Boden schützen: 5,00×4,00=**20,00 m²**
 - Sockelleisten abkleben: 18,00−0,90=**17,10 lfdm**
 
+**Ist-Ergebnis (Sandy, 2026-08-25, zusammen mit PM-025 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen):** Karte „💼Büro 3 Positionen" — Wandflächen streichen 2x (54 m²), Boden schützen (20 m²),
+Sockelleisten abkleben (17,1 lfdm). **Kein Erschwerniszuschlag Höhe auf der Karte.** Entwurf (770,68 €),
+Raummaße 4×5 m, **Raumhöhe 3 m** (nicht 3,20 m!), 1 Tür, 2 Fenster:
+
+- Wandflächen streichen 2×: 54 m² × 9,50 € = 513,00 € — **nicht Soll.** 54 m² = 18,00 lfm × **3,00 m**,
+  nicht wie diktiert 3,20 m. Soll wäre 57,60 m².
+- **Deckenfläche streichen 2×: 20 m² × 11,00 € = 220,00 €** — **komplett unverlangt.** Stand nicht auf der
+  Karte (die zeigte nur 3 Positionen), im Transkript kein einziges Wort zur Decke, trotzdem eine volle,
+  bepreiste Position über die komplette Raumfläche (5×4=20 m²), mit im Gesamtbetrag von 770,68 €.
+- Boden schützen: 20 m² × 1,20 € = 24,00 € — exakt Soll
+- Sockelleisten abkleben: 17,1 lfdm × 0,80 € = 13,68 € — exakt Soll (18,00−0,90, unabhängig von der
+  falschen Höhe, da Höhe hier nicht eingeht)
+- **Erschwerniszuschlag Höhe fehlt komplett** — weder Karte noch Entwurf noch Rückfrage.
+
+**Zwei neue, ernste Funde, einer davon mit echtem Geld:**
+
+1. **Raumhöhe wird von 3,20 m auf 3 m abgeschnitten — die Nachkommastelle geht verloren.** Das ist eine
+   NEUE Variante desselben Grundproblems wie „Systemischer Fund" Punkt 6 (verschluckte Maßangaben), aber
+   ein anderer Auslöser: dort ging es um zwei Maße, die zu einem quadratischen Raum verschmelzen; hier
+   geht es um eine EINZELNE Maßangabe mit Nachkommastelle („drei Meter zwanzig"), die auf die ganze Zahl
+   rundet. Der bestehende Sicherheitsnetz-Mechanismus (Rückfrage bei verdächtig quadratischem Raum) greift
+   hier nicht, weil keine zwei Maße verwechselt werden — nur eine einzelne Zahl verliert ihre
+   Nachkommastelle. **Direkte Konsequenz:** Weil die (falsche) Höhe genau bei 3,00 m liegt, nicht darüber,
+   greift die „> 3 m"-Schwelle für den Erschwerniszuschlag Höhe nicht mehr — der Zuschlag verschwindet
+   komplett, obwohl der Raum in Wirklichkeit mit 3,20 m klar über der Schwelle liegt. Das ist damit nicht
+   nur eine kosmetische Ungenauigkeit, sondern kostet den Handwerker direkt eine berechtigte
+   Zusatzposition.
+2. **Phantom-„Deckenfläche streichen", 220,00 € — nie erwähnt, nie auf der Karte, aber im Gesamtbetrag.**
+   Anders als die bisherigen Preis-fehlt-Phantome (Dehnungsfuge, Sockelleisten) ist das hier eine ECHTE,
+   voll bepreiste Position, die den Angebotspreis um 220 € erhöht, ohne dass der Kunde je Deckenarbeiten
+   verlangt hat. Schwerster Einzelfund dieses gesamten Vertrauens-Batches.
+
+**Für Head of Product Engineering:** (1) Bitte prüfen, wo Höhenangaben mit Nachkommastelle geparst werden
+(vermutlich GPT-Extraktion, ähnlich gelagert wie „Systemischer Fund" Punkt 6, aber eine eigene Code-Stelle
+— dort ging es um Länge/Breite, hier um Höhe) — „drei Meter zwanzig" darf nicht zu „3 m" werden. (2) Bitte
+dringend die Quelle der „Deckenfläche streichen"-Position finden — kein Wandflächen-2x-Auslöser sollte je
+automatisch eine Deckenposition mit Preis erzeugen, das war in keinem bisherigen Testfall so. Beide Funde
+traten zusammen mit PM-025 in einem Angebot mit zwei getrennten Aufnahmen auf — siehe auch die
+Trittschalldämmung-Fehlgruppierung bei PM-023 (Details unter „Systemischer Fund" Punkt 7): möglicherweise
+ist der Zwei-Aufnahmen-ein-Angebot-Pfad insgesamt weniger robust getestet als der Ein-Satz-ein-Angebot-Pfad,
+den die meisten bisherigen Fälle genutzt haben.
+
+**Status:** ❌ Zwei neue, ernste Bugs — Höhe verliert Nachkommastelle (dadurch fehlt der berechtigte
+Erschwerniszuschlag Höhe), plus eine komplett erfundene, bepreiste Deckenposition (220 €).
+
 ---
 
 ### PM-025 — Gästezimmer, Vinyl im Fischgrätmuster + explizit neue Sockelleisten
@@ -825,6 +937,20 @@ verlegen. Sockelleisten werden auch neu montiert, passend zum Fischgrätmuster.�
 - Verschnitt Fischgrät 15%: 14,00×1,15=**16,10 m²**
 - Sockelleisten montieren (echtes Signal): Umfang 2×(4,00+3,50)=15,00 lfm − 0,90 Türbreite = **14,10 lfdm**
 - **Keine** Maler-Position
+
+**Ist-Ergebnis (Sandy, 2026-08-25, zusammen mit PM-024 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen):** Karte „🏠Gästezimmer 2 Positionen" — Vinyl-Boden verlegen inkl. 15% Verschnitt (16,1 m²),
+Sockelleisten montieren (14,1 lfdm). Entwurf (431,75 €), Raummaße 3,5×4 m:
+
+- Vinyl-Boden verlegen inkl. 15% Verschnitt: 16,1 m² × 22,00 € = 354,20 € — ✅ exakt Soll
+- Sockelleisten montieren: 14,1 lfdm × 5,50 € = 77,55 € — ✅ exakt Soll
+- Summe 431,75 € rechnerisch konsistent
+- Keine Maler-Position — korrekt, wie erwartet
+
+**Ergebnis:** Dieser Fall lief vollständig sauber — beide Mengen exakt Soll, keine Phantome, keine
+fehlenden Positionen.
+
+**Status:** ✅ Beide Positionen live bestätigt exakt Soll.
 
 ---
 
@@ -841,6 +967,74 @@ einmal. Zwei Fenster, Standardmaß, eine Tür, normal.“
 - Deckenfläche: 4,20×3,60=**15,12 m²**, streichen 1× (nicht 2×!)
 - Boden schützen: 15,12 m²
 - Sockelleisten abkleben: 15,60−0,90=**14,70 lfdm**
+
+**Ist-Ergebnis (Sandy, 2026-08-30):** Karte „🍳Küche 4 Positionen" — Wände streichen (30 m²), Decke
+streichen (15,12 m²), Boden schützen (0 m²), vierte Position (vermutlich Sockelleisten abkleben) im Paste
+nicht sichtbar. Entwurf, Raummaße 3,6×4,2 m, Höhe 2,5 m, 1 Tür, 2 Fenster — **enthält nur noch 2
+Positionen:**
+
+- **Deckenfläche streichen 2×: 15,12 m² × 11,00 € = 166,32 €** — **nicht Soll.** Die Fläche selbst stimmt
+  (15,12 m² = 4,20×3,60), aber sie wird als **2×** statt **1×** berechnet und bepreist, obwohl im selben
+  Satz ausdrücklich „Decke reicht einmal" gesagt wurde.
+- Boden schützen: 15,12 m² × 1,20 € = 18,14 € — ✅ exakt Soll.
+- **Wände streichen und Sockelleisten abkleben fehlen — bestätigt (Sandy, 2026-08-30): „war beides
+  einfach nicht da!"** Das war kein Paste-Ausschnitt, sondern eine echte Bestätigung: beide Positionen
+  sind im fertigen Entwurf schlicht nicht vorhanden, obwohl die Karte „Wände streichen (30 m²)" und
+  „4 Positionen" ausdrücklich angekündigt hatte.
+
+**Auffälligkeit, jetzt Teil des Hauptbefunds:** Die Karte zeigte „Wände streichen 30 m²" (weicht ohnehin
+schon von Soll 39,00 m² ab) und „Boden schützen 0 m²" (Boden hat sich im Entwurf korrekt auf 15,12 m²
+aufgelöst — Wände dagegen ist im Entwurf komplett verschwunden, nicht nur falsch berechnet). Das ist also
+kein Zwischenstand-Darstellungsproblem der Karte, sondern eine echte Position, die zwischen Karte und
+fertigem Entwurf verloren geht.
+
+**Ergebnis: zwei ernste, unabhängige Bugs, einer davon der bisher schwerwiegendste im ganzen
+Vertrauens-Batch.**
+
+1. Die Decke wird trotz explizitem „reicht einmal" mit 2× berechnet und bepreist (Details oben) — genau
+   die Unterscheidung, die dieser Testfall gezielt prüfen sollte.
+2. **Wandflächen streichen — die Hauptposition des gesamten Malerfalls, Soll 39,00 m² — fehlt komplett im
+   fertigen Entwurf, ebenso die Sockelleisten abkleben (Soll 14,70 lfdm).** Beide waren auf der Karte noch
+   angekündigt („4 Positionen" inkl. „Wände streichen 30 m²"), sind im Entwurf aber schlicht nicht mehr
+   da. Ein Kunde würde hier ein Angebot fürs Streichen einer Küche bekommen, das die eigentliche
+   Wandstreichung — die Position, um die es dem Handwerker überhaupt geht — gar nicht berechnet. Das ist
+   damit potenziell noch schwerwiegender als der bekannte „fehlende Preise"-Bug (Punkt 1/5 oben), weil
+   dort die Position wenigstens noch sichtbar war, nur ohne Preis — hier verschwindet sie komplett aus
+   dem Angebot.
+
+**Für Head of Product Engineering:** (1) Anstrichzahl-Bug siehe oben (Wand-„zweimal" wird offenbar
+pauschal auf die Decke übertragen). (2) **Dringend:** bitte nachvollziehen, wie Positionen zwischen Karte
+und Entwurf verloren gehen können — hier waren „Wände streichen" und „Sockelleisten abkleben" auf der
+Karte noch da (Karte kannte sogar schon eine, wenn auch falsche, Wandflächen-Zahl von 30 m²), sind im
+Entwurf aber beide spurlos verschwunden. Das ist ein neues Fehlerbild, unterscheidet sich sowohl von den
+bisherigen Phantom-Positionen (erfundene Positionen, die es nicht geben sollte) als auch vom bekannten
+„fehlender Preis"-Bug (Punkt 1/5, wo die Position sichtbar blieb) — hier verschwindet eine echte,
+korrekt erkannte Position vollständig samt Menge und Preis. Siehe auch neuen „Systemischer Fund" Punkt 8
+unten.
+
+**Ursache zu (2) gefunden und behoben (Head of Product Engineering, 2026-08-30):** Whisper hat den Satz
+als „**Bände** zweimal streichen" transkribiert — im gespeicherten Transkript nachgelesen, nicht vermutet.
+Die schwächste Scope-Regel in `arbeiten-normalisierer.ts` („eine Fläche wurde genannt, die andere nicht")
+liest den ROHTEXT: sie fand dort kein Wandwort, wohl aber „Decke", und schloss daraus „nur Decke". Das
+schaltet in `maler.ts` sowohl `anWaenden` als auch die davon abhängigen Sockelleisten ab — beide
+Positionen verschwanden. Die strukturierte Extraktion hatte es richtig (`arbeiten: ["wände streichen", …]`)
+und wurde von der Rohtext-Regel überstimmt.
+
+**Fix:** `RaumScope` trägt jetzt mit, WOHER die Einschränkung kommt (explizit / negation / ausschluss /
+erwaehnung). Eine Einschränkung, die nur auf dem Nicht-Erwähnen beruht, darf die strukturierte
+Arbeiten-Liste nicht mehr überstimmen. Ausdrückliche Einschränkungen („nur die Decke", „ohne Decke", „die
+Wände lassen wir") wiegen unverändert schwerer — PM-001/PM-005 bleiben damit gültig und sind durch eigene
+Tests abgesichert. Mit dem ECHTEN Transkript kommen jetzt alle vier Positionen: Wandflächen streichen
+39,00 m² (exakt Soll), Deckenfläche 15,12 m², Boden schützen 15,12 m², Sockelleisten abkleben 14,70 lfdm
+(exakt Soll). 5 neue Tests, Suite grün (53 Dateien / 899 Tests).
+
+**Grundsätzliches daraus:** Solange Regeln auf dem Rohtranskript über POSITIONEN entscheiden, kann ein
+Verhörer von Whisper eine Hauptposition löschen. Diese eine Stelle ist entschärft — es lohnt sich, die
+übrigen Rohtext-Regeln daraufhin durchzusehen, bevor echte Nutzer kommen.
+
+**Status:** 🟡 Bug (2) behoben (Wände + Sockelleisten sind wieder da, Live-Nachtest steht aus). Bug (1)
+offen: Decke wird trotz „reicht einmal" 2× statt 1× berechnet — die Anstrichzahl gilt offenbar global
+statt je Fläche.
 
 ---
 

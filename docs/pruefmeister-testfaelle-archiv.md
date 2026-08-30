@@ -3368,3 +3368,43 @@ abkleben (19,1 lfdm). **Kein „Balkonboden streichen" mehr.** Entwurf, Raummaß
 **Ergebnis:** Beide offenen Punkte (Phantom-Balkonboden, VOB-Regel-Anwendung) sind jetzt live bestätigt —
 der eine als behobener Bug, der andere als korrekt angewendete, bewusst getroffene Entscheidung. PM-021
 ist damit fachlich vollständig abgeschlossen, keine offenen Funde mehr.
+
+---
+
+## PM-022 — Schlafzimmer, Baseline-Malerfall
+
+**Zum Einsprechen:**
+„Schlafzimmer, vier Meter fünfzig mal drei Meter achtzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke
+einmal mit. Ein Fenster, Standardmaß, eine Tür, normal.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,50+3,80)=16,60 lfm; Wandbrutto: 16,60×2,50=**41,50 m²**
+- Fenster (Standard, 1,20 m²) und Tür (Standard, 1,89 m²) beide ≤2,5 m² → VOB: **kein Abzug**
+- Wandflächen streichen 2×: **41,50 m²**
+- Deckenfläche: 4,50×3,80=**17,10 m²**, streichen 1×
+- Boden schützen: 17,10 m²
+- Sockelleisten abkleben: 16,60−0,90 (Türbreite)=**15,70 lfdm**
+- Keine Extras (kein Altbau, keine Erschwernis, keine Spachtel-/Grundierungssignale)
+
+**Ist-Ergebnis (Sandy, 2026-08-25, zusammen mit PM-023 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen):** Karte „4 Positionen erkannt" — Wandflächen streichen 2x (41,5 m²), Deckenfläche streichen 2x
+(17,1 m²), Boden schützen (17,1 m²), Sockelleisten abkleben (15,7 lfdm). Entwurf (615,43 €), Raummaße
+3,8×4,5 m, Höhe 2,5 m, 1 Tür, 1 Fenster:
+
+- Wandflächen streichen 2×: 41,5 m² × 9,50 € = 394,25 € — ✅ exakt Soll
+- Deckenfläche streichen 2×: 17,1 m² × 11,00 € = 188,10 € — ✅ exakt Soll
+- Boden schützen: 17,1 m² × 1,20 € = 20,52 € — ✅ exakt Soll
+- Sockelleisten abkleben: 15,7 lfdm × 0,80 € = 12,56 € — ✅ exakt Soll
+- Summe 615,43 € rechnerisch konsistent
+
+**Korrektur (Prüfmeister, 2026-08-30):** Ich hatte hier zuerst „📐 Unregelmäßig" als neuen Anzeige-Bug
+eingetragen — das war falsch, Sandy hat zu Recht nachgehakt. Das ist kein Fehlerkennzeichen, sondern
+schlicht der neue Name des früheren „Raumform"-Tabs (DC-036, Product Designer, 2026-08-29): der Tab hieß
+vorher „Raummaße/Flächen eingeben/Raumform" und wurde in „📐 Unregelmäßig" umbenannt, weil Nutzer beim
+alten Namen nicht erkannten, dass man dort zu einem unförmigen Raum mit Nischen/Erker kommt. Der Tab
+existiert unverändert bei JEDEM Raum, ob rechteckig oder nicht — die Umbenennung lag einfach zeitlich
+zwischen meinen letzten Tests (noch „Raumform") und diesem Batch (schon „📐 Unregelmäßig"), keine
+Nebenwirkung der zwei-Aufnahmen-ein-Angebot-Konstellation. Alle Zahlen waren immer schon exakt korrekt.
+
+**Status:** ✅ Alle vier Positionen live bestätigt exakt Soll. „📐 Unregelmäßig" ist kein Bug, siehe
+Korrektur oben.

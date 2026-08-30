@@ -203,9 +203,32 @@ export function malerEngine(daten: any): MengenErgebnis {
       : { nurWaende: false, nurDecke: false, nurBoden: false }
     // Globale Formulierungen wie „im Arbeitszimmer nur die Decke“ dürfen bei
     // mehreren Räumen nicht auf Wohnzimmer/Flur übertragen werden.
-    const scopeTxt = (daten.raeume?.length ?? 0) === 1
+    const scopeTxtRoh = (daten.raeume?.length ?? 0) === 1
       ? vGesamt.scope
-      : { nurWaende: false, nurDecke: false, nurBoden: false }
+      : { nurWaende: false, nurDecke: false, nurBoden: false, quelle: 'keine' as const }
+
+    // PM-026 (Sandys Live-Fund, 2026-08-30): Whisper hat „Wände zweimal
+    // streichen" als „BÄNDE zweimal streichen" transkribiert. Die schwächste
+    // Scope-Regel — „eine Fläche wurde genannt, die andere nicht" — fand im
+    // Rohtext also kein Wandwort, wohl aber „Decke", und schloss daraus „nur
+    // Decke". Ergebnis: „Wandflächen streichen" UND „Sockelleisten abkleben"
+    // fielen aus dem fertigen Angebot, obwohl die strukturierte Extraktion
+    // „wände streichen" sauber erkannt hatte. Ein Buchstabe im Transkript
+    // löschte die Hauptposition.
+    //
+    // Deshalb: Eine Einschränkung, die NUR auf dem Nicht-Erwähnen beruht, darf
+    // die strukturierte Erkennung nicht überstimmen. Ausdrückliche
+    // Einschränkungen („nur die Decke", „ohne Decke", „die Wände lassen wir")
+    // wiegen weiterhin schwerer als arbeiten[] — die hat der Handwerker so
+    // gesagt, und genau darauf beruhen PM-001/PM-005.
+    const arbeitenNenntWaende = /w[äa]nd/.test(arbeitenStr)
+    const arbeitenNenntDecke = /(?<!ab)decke/.test(arbeitenStr)
+    const nurErwaehnung = scopeTxtRoh.quelle === 'erwaehnung'
+    const scopeTxt = {
+      nurWaende: scopeTxtRoh.nurWaende && !(nurErwaehnung && arbeitenNenntDecke),
+      nurDecke: scopeTxtRoh.nurDecke && !(nurErwaehnung && arbeitenNenntWaende),
+      nurBoden: scopeTxtRoh.nurBoden && !(nurErwaehnung && (arbeitenNenntWaende || arbeitenNenntDecke)),
+    }
     const nurWaende = scopeArb.nurWaende || scopeTxt.nurWaende
     const nurDecke = scopeArb.nurDecke || scopeTxt.nurDecke
     const nurBoden = scopeArb.nurBoden || scopeTxt.nurBoden
