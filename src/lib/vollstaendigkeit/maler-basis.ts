@@ -26,7 +26,17 @@ export function wendeNurXFilterAn(ergaenzt: BerechnetePosition[], v: AuftragsVer
 } {
   // Scope aus dem typisierten Vertrag — deckt Flexionen + Synonyme + "ohne Decke" ab
   const { nurWaende, nurDecke, nurBoden, quelle } = v.scope
-  const globalScope: RaumScope = { nurWaende, nurDecke, nurBoden, quelle }
+  // Rohtext-Audit (2026-08-30, Auftrag nach PM-026): Der globale Scope kommt
+  // aus dem GESAMTEN Transkript — also aus dem, was Whisper verstanden hat.
+  // Beruht er nur darauf, dass eine Fläche nicht erwähnt wurde ('erwaehnung'),
+  // darf er keine Positionen löschen, solange es strukturierte Raumangaben
+  // gibt: die stammen aus der KI-Extraktion und sind die bessere Quelle.
+  // Ohne strukturierte Räume (scopeProRaum leer) bleibt er wie bisher der
+  // einzige Anhaltspunkt und gilt weiter.
+  const schwachUndUeberstimmbar = quelle === 'erwaehnung' && v.scopeProRaum.size > 0
+  const globalScope: RaumScope = schwachUndUeberstimmbar
+    ? { nurWaende: false, nurDecke: false, nurBoden: false, quelle: 'keine' }
+    : { nurWaende, nurDecke, nurBoden, quelle }
 
   filtereArray(ergaenzt, p => {
     const raum = raumAusBeschreibung(p.beschreibung)

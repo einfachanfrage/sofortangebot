@@ -83,10 +83,10 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
-| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Laminat/Sockelleisten exakt korrekt; Trittschalldämmung falsch unter „Allgemein" statt „Flur" gruppiert und fälschlich als „Vorschlag" markiert, trotz explizitem Diktat |
-| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ❌ Raumhöhe 3,20 m wird zu 3 m abgeschnitten (dadurch fehlt der Erschwerniszuschlag Höhe), plus komplett erfundene, bepreiste „Deckenfläche streichen"-Position (220 €) |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Laminat/Sockelleisten exakt korrekt. Beide Funde behoben (Head of Product Engineering, 30.08.): Trittschalldämmung war die einzige Boden-Position ohne Raum im Titel — die Gruppierung liest den Raum genau dort, deshalb „Allgemein". Übernimmt jetzt den Raum vom Verlegen. Vorschlag-Etikett nur noch, wenn WIR die Dämmung ergänzen (Klick-Vinyl), nicht wenn sie verlangt wurde. Live-Nachtest steht aus |
+| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Beide Funde behoben (Head of Product Engineering, 30.08.): (1) „Höhe 3 Meter, 20" wird wieder als 3,20 m gelesen — Prompt-Regel PLUS Sicherheitsnetz im Code, das die Nachkommastelle aus dem Transkript zurückholt; damit greift auch der Erschwerniszuschlag Höhe wieder. (2) Phantom-Decke kam aus unserer eigenen Prompt-Regel „Zimmer streichen = Wände + Decke" — gilt jetzt nur noch, wenn KEINE Fläche genannt wurde. Live-Nachtest steht aus |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ beide Positionen live bestätigt exakt Soll |
-| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ❌ Zwei Bugs: Decke fälschlich 2× statt 1×; Wände streichen UND Sockelleisten abkleben fehlen komplett im Entwurf, obwohl auf der Karte angekündigt |
+| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | 🟡 Beide Bugs behoben (Head of Product Engineering, 30.08.): (1) Anstrichzahl gilt jetzt je Fläche statt für den ganzen Raum. (2) Ursache der verschwundenen Wandfläche gefunden — Whisper schrieb „Bände" statt „Wände", die Rohtext-Scope-Regel schloss daraus „nur Decke" und löschte Wandfläche + Sockelleisten. Rohtext darf die strukturierte Erkennung nicht mehr überstimmen. Mit dem echten Transkript jetzt alle vier Positionen exakt Soll. Live-Nachtest steht aus |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
@@ -455,6 +455,53 @@ prüfen, ob der Code-Pfad für „mehrere Aufnahmen in ein bestehendes Angebot n
 denselben Grad an Testabdeckung hat wie der Standardfall „alles in einer Aufnahme" — aber ohne die
 Unregelmäßig-Beobachtung als Beleg dafür zu werten.
 
+**✅ Geprüft (Head of Product Engineering, 2026-08-30): Hypothese entkräftet.** Beide verbliebenen Indizien
+haben inzwischen eine gefundene Ursache, und keine davon hat mit dem Zwei-Aufnahmen-Pfad zu tun:
+- Die Trittschalldämmung landete unter „Allgemein", weil sie als einzige Boden-Position ohne Raum im Titel
+  erzeugt wurde. Das passiert in einer Ein-Aufnahme-Angebot genauso.
+- Die erfundene Deckenfläche kam aus unserer eigenen Prompt-Regel „Zimmer streichen = Wände + Decke",
+  ebenfalls unabhängig von der Anzahl der Aufnahmen.
+Damit bleibt kein Beleg für eine besondere Fehleranfälligkeit des Zwei-Aufnahmen-Pfades. Der Punkt ist
+nicht widerlegt, aber unbelegt — falls neue Auffälligkeiten auftreten, gerne wieder aufmachen.
+
+**9. NEU (2026-08-30): Regeln, die auf dem ROHTRANSKRIPT arbeiten, können Positionen löschen.** Die
+eigentliche Lehre aus PM-026. Whisper verhört sich zwangsläufig; solange eine Regex auf dem Rohtext
+darüber entscheidet, OB eine Position entsteht, kann ein einzelner Buchstabe die Hauptposition eines
+Angebots kosten. Die eine Stelle, an der das nachweislich passiert ist, ist entschärft — die strukturierte
+Erkennung schlägt dort jetzt den Rohtext. Es gibt weitere Rohtext-Regeln (Scope, Kontext, Öffnungs-
+Negation, Erschwernisse). Vorschlag an Sandy: diese vor dem ersten echten Testnutzer einmal systematisch
+durchgehen und überall dieselbe Rangordnung herstellen — eigener Auftrag, kein Nebenbei.
+
+**✅ Audit durchgeführt (Head of Product Engineering, 2026-08-30, Sandys Auftrag „mach das").**
+Alle Regeln durchgesehen, die aus dem rohen Transkript ableiten, OB eine Position entsteht. Die Rangordnung
+lautet ab jetzt überall gleich: **ausdrückliche Ansage des Nutzers > strukturierte KI-Erkennung > Rohtext-Regex.**
+
+*Behoben:*
+1. **Scope in der Maler-Engine** (der PM-026-Fall): Eine Einschränkung, die nur darauf beruht, dass eine
+   Fläche im Rohtext nicht vorkam, überstimmt die strukturierte `arbeiten[]`-Liste nicht mehr.
+2. **Scope-Filter in der Vollständigkeitsprüfung** (`wendeNurXFilterAn`): Dieselbe Lücke eine Ebene höher —
+   der GLOBALE Scope aus dem Gesamttranskript konnte Positionen ohne Raumbezug löschen. Beruht er nur auf
+   dem Nicht-Erwähnen und gibt es strukturierte Räume, gilt er nicht mehr.
+3. **Raumkontext blutete zwischen Räumen** (neu gefunden, nicht aus einem Testfall): `istKeller`,
+   `istGarage`, `istDachschraege` und `istFassade` wurden aus dem GESAMTEN Transkript gelesen und auf JEDEN
+   Raum angewandt. Ein Keller im selben Angebot nahm damit auch Wohnzimmer und Flur die Sockelleisten;
+   fiel irgendwo das Wort „Garage", verloren alle Räume ihr Standardfenster. Dieselbe Fehlerklasse wie
+   PM-005, nur an einer anderen Stelle. Bei mehreren Räumen zählt jetzt der Raum-eigene Kontext; bei einem
+   einzigen Raum bleibt der Gesamttext wie bisher ein zulässiger Zusatz.
+
+*Geprüft und in Ordnung:* Die Öffnungs-Negation („kein Fenster", „keine Tür") wird bereits von
+strukturierten Angaben geschlagen — liefert die Extraktion `fenster: [{anzahl: 2}]`, gewinnt das.
+
+*Bewusst NICHT geändert (bekannte Grenze):* Die Öffnungs-Negation wird weiterhin transkriptweit gelesen.
+Sagt bei mehreren Räumen ein Raum „kein Fenster", entfällt die Standard-Fensterannahme auch in den anderen
+Räumen — und die zugehörige Rückfrage wird dort ebenfalls unterdrückt. Finanziell ist das heute neutral,
+weil kleine Öffnungen nach der VOB-Übermessungsregel ohnehin nicht abgezogen werden (PM-021). Eine
+raumgenaue Zuordnung wäre möglich, würde aber an der Rückfragen-Mechanik drehen, die nach PM-007 gerade
+stabil ist — deshalb hier nur dokumentiert, nicht angefasst. Bitte im Blick behalten, falls die
+VOB-Regel je gelockert wird.
+
+5 neue Tests (`rohtext-rangordnung.test.ts`), Suite grün (55 Dateien / 914 Tests).
+
 **8. NEU, DRINGEND (2026-08-30): Eine auf der Karte angekündigte Position kann im fertigen Entwurf
 komplett verschwinden — nicht nur ohne Preis, sondern ganz weg.** Bei PM-026 zeigte die Karte „4
 Positionen" inklusive „Wände streichen (30 m²)". Im fertigen Entwurf waren nur noch 2 Positionen da
@@ -467,9 +514,15 @@ Fehlerbild als die bisherigen zwei verwandten Funde:
 - **Hier: eine echte, korrekt erkannte Position (auf der Karte schon mit einer, wenn auch falschen, Menge
   gelistet) verschwindet zwischen Karte und Entwurf spurlos — samt Menge und Preis.**
 Besonders schwer wiegt, dass es ausgerechnet die Hauptposition „Wandflächen streichen" traf — bei einem
-reinen Malerfall die Position, um die es dem Handwerker überhaupt geht. Bitte als eigene, hohe Priorität
-behandeln: den Übergang von Karte zu Entwurf darauf prüfen, ob/wie Positionen dabei verloren gehen können,
-unabhängig von der separaten Anstrichzahl-Frage (Wand 2×/Decke 1×) im selben Testfall.
+reinen Malerfall die Position, um die es dem Handwerker überhaupt geht.
+
+**✅ Aufgeklärt (Head of Product Engineering, 2026-08-30): kein eigenes Fehlerbild.** Es geht beim Übergang
+von Karte zu Entwurf nichts verloren — die beiden Wege rechnen nur unterschiedlich. Die Karte kommt aus der
+schnellen Vorschau, der Entwurf aus der vollen Pipeline; und genau dort griff die Scope-Regel, die im
+Rohtext kein Wandwort fand („Bände" statt „Wände") und daraus „nur Decke" schloss. Die Karte kannte die
+Position deshalb noch, die Berechnung hat sie verworfen. Behoben mit demselben Fix wie PM-026: eine
+Einschränkung, die nur auf dem Nicht-Erwähnen beruht, überstimmt die strukturierte Erkennung nicht mehr.
+Punkt 8 braucht damit keine eigene Untersuchung — was bleibt, ist die allgemeine Lehre unter Punkt 9.
 
 **Details für abgeschlossene Fälle (PM-001, PM-002, PM-003, PM-004, PM-005, PM-006, PM-007, PM-009, PM-011, PM-013, PM-019, PM-020, PM-021, PM-022):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen. (PM-007 war am 2026-08-21 kurz zurückgeholt wegen eines Blocker-Bugs, ist seit dessen Fix und Live-Nachtest am 2026-08-25 wieder abgeschlossen und zurück im Archiv.)
 

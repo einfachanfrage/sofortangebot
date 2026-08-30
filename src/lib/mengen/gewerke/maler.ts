@@ -91,11 +91,19 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Kontext (Keller/Garage/Schräge/Fassade) = Union aus Transkript-Ebene und
     // Raum-Arbeiten. Öffnungs-Negation gilt transkriptweit. Beides jetzt aus dem
     // typisierten Vertrag statt aus direkten Normalisierer-/Rohtext-Aufrufen.
+    // Rohtext-Audit (2026-08-30, Auftrag nach PM-026): Der Gesamt-Kontext wird
+    // aus dem ganzen Transkript gelesen. Bei MEHREREN Räumen blutet er sonst
+    // von einem Raum in alle anderen — steht in einem Satz "Keller", verlieren
+    // auch Wohnzimmer und Flur ihre Sockelleisten; fällt irgendwo "Garage",
+    // verlieren alle Räume ihr Standardfenster. Dieselbe Fehlerklasse wie
+    // PM-005 (dort beim Scope). Bei einem einzigen Raum bleibt der Gesamttext
+    // ein sicherer Zusatz, weil er sich nur auf diesen Raum beziehen kann.
+    const einRaum = (daten.raeume?.length ?? 0) === 1
     const kontext = {
-      istKeller: vGesamt.kontext.istKeller || vRaum.kontext.istKeller,
-      istGarage: vGesamt.kontext.istGarage || vRaum.kontext.istGarage,
-      istDachschraege: vGesamt.kontext.istDachschraege || vRaum.kontext.istDachschraege,
-      istFassade: vGesamt.kontext.istFassade || vRaum.kontext.istFassade,
+      istKeller: (einRaum && vGesamt.kontext.istKeller) || vRaum.kontext.istKeller,
+      istGarage: (einRaum && vGesamt.kontext.istGarage) || vRaum.kontext.istGarage,
+      istDachschraege: (einRaum && vGesamt.kontext.istDachschraege) || vRaum.kontext.istDachschraege,
+      istFassade: (einRaum && vGesamt.kontext.istFassade) || vRaum.kontext.istFassade,
     }
     const oeffnungen = vGesamt.oeffnungen
     // Früh deklarieren — wird in flaeche_angegeben-Branch benötigt.
