@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-043 — Dashboard + Menüleiste neu gedacht</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@500;600;700;800&display=swap');
+
+  :root {
+    --yellow: #F5C400;
+    --anthracite: #2C2C2C;
+    --bg: #F7F7F5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #EDEDE9;
+    color: var(--anthracite);
+  }
+  .syne { font-family: 'Syne', sans-serif; }
+
+  header.page {
+    background: var(--anthracite);
+    color: white;
+    padding: 28px 20px 24px;
+    text-align: center;
+  }
+  header.page h1 { font-size: 20px; margin: 0 0 6px; }
+  header.page p { margin: 0; color: rgba(255,255,255,.55); font-size: 13px; font-weight: 600; max-width: 640px; margin: 0 auto; }
+
+  .toggle-bar {
+    max-width: 1080px;
+    margin: -18px auto 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .toggle {
+    background: white;
+    border-radius: 999px;
+    padding: 4px;
+    display: flex;
+    gap: 2px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    flex-wrap: wrap;
+  }
+  .toggle button {
+    border: none;
+    background: transparent;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: rgba(44,44,44,.5);
+    white-space: nowrap;
+  }
+  .toggle button.active { background: var(--anthracite); color: white; }
+
+  .sub-toggle-bar {
+    max-width: 1080px; margin: 16px auto 0; padding: 0 20px;
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+  }
+  .sub-toggle-bar .lbl { font-size: 11.5px; font-weight: 700; color: rgba(44,44,44,.5); }
+  .sub-toggle { background: white; border-radius: 999px; padding: 3px; display: flex; gap: 2px; border: 1px solid rgba(44,44,44,.1); }
+  .sub-toggle button {
+    border: none; background: transparent; padding: 7px 14px; border-radius: 999px;
+    font-weight: 800; font-size: 11.5px; cursor: pointer; color: rgba(44,44,44,.5);
+  }
+  .sub-toggle button.active { background: #3B82F6; color: white; }
+  .sub-toggle button:disabled { cursor: default; opacity: .35; }
+
+  main {
+    max-width: 1080px;
+    margin: 30px auto 10px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  /* ---- phone frame ---- */
+  .phone {
+    width: 356px;
+    border-radius: 38px;
+    background: #111;
+    padding: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.28);
+    flex-shrink: 0;
+  }
+  .phone .notch {
+    height: 20px; display: flex; align-items: center; justify-content: center;
+  }
+  .phone .notch .pill { width: 90px; height: 6px; border-radius: 999px; background: #000; }
+  .phone .screen {
+    background: var(--bg);
+    border-radius: 26px;
+    overflow: hidden;
+    position: relative;
+    height: 686px;
+  }
+  .phone .scroll {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 90px;
+  }
+
+  /* ---- dashboard content ---- */
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding: 16px 18px 4px; }
+  .wordmark { color: rgba(255,255,255,.5); font-weight: 900; font-size: 12px; letter-spacing:.02em; }
+  .avatar { width:30px; height:30px; border-radius:999px; background: var(--yellow); color: var(--anthracite); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
+
+  .hero { background: var(--anthracite); padding: 0 0 20px; margin: 0 0 0; }
+  .hero-body { padding: 10px 18px 0; }
+  .greeting { font-family:'Syne',sans-serif; font-weight:800; color:white; font-size:18px; margin-bottom:4px; }
+  .greeting-sub { color: rgba(255,255,255,.5); font-size: 11.5px; font-weight:600; margin-bottom: 10px; }
+  .status-line { color: var(--yellow); font-size:12.5px; font-weight:800; margin-bottom: 12px; display:inline-block; text-decoration: none; }
+  .status-line.calm { color: rgba(255,255,255,.55); font-weight:700; }
+  .cta {
+    display:flex; align-items:center; gap:10px; background: var(--yellow); border-radius: 14px;
+    padding: 12px 14px; margin-top: 4px;
+  }
+  .cta .ic { width:32px; height:32px; border-radius:9px; background: rgba(44,44,44,.15); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+  .cta .t1 { font-family:'Syne',sans-serif; font-weight:800; font-size:13.5px; color: var(--anthracite); line-height:1.15; }
+  .cta .t2 { font-size:10.5px; font-weight:700; color: rgba(44,44,44,.55); margin-top:1px; }
+
+  /* attention nudge card (variant A) */
+  .nudge {
+    margin: 12px 14px 0; background: white; border: 1.5px solid #F5C400; border-radius: 14px;
+    padding: 11px 13px; display:flex; align-items:center; gap:10px;
+  }
+  .nudge .ic { font-size:17px; flex-shrink:0; }
+  .nudge .name { font-weight:800; font-size:12.5px; }
+  .nudge .sub { font-size:10.5px; font-weight:700; color:#B45309; margin-top:1px; }
+  .nudge .amt { font-weight:800; font-size:12.5px; margin-left:auto; flex-shrink:0; }
+  .nudge .go { color: rgba(44,44,44,.3); font-weight:900; margin-left:2px; }
+
+  /* revenue highlight card (variant A + B) */
+  .revenue-card {
+    margin: 12px 14px 0; border-radius: 16px; padding: 14px 16px;
+  }
+  .revenue-card.style-a { background: white; border: 1px solid rgba(44,44,44,.08); }
+  .revenue-card.style-b { background: linear-gradient(135deg, #FFF6CC, #FFEFA8); border: 1px solid rgba(245,196,0,.5); }
+  .revenue-card .top { display:flex; align-items:baseline; justify-content:space-between; }
+  .revenue-card .v { font-family:'Syne',sans-serif; font-weight:800; font-size: 26px; }
+  .revenue-card .delta { font-size:10.5px; font-weight:800; background:#DCFCE7; color:#15803D; padding:3px 8px; border-radius:999px; }
+  .revenue-card .l { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color: rgba(44,44,44,.5); margin-top:4px; }
+  .revenue-card .warm-note { font-size:11px; font-weight:700; color:#8B7000; margin-top:8px; }
+  .bar-track { height:6px; border-radius:999px; background: rgba(44,44,44,.08); margin-top:10px; overflow:hidden; }
+  .bar-fill { height:100%; background: var(--yellow); border-radius:999px; }
+
+  .stats-row { display:grid; grid-template-columns: repeat(3,1fr); gap:8px; padding: 12px 14px 0; }
+  .stats-row.secondary { grid-template-columns: repeat(2,1fr); }
+  .stat-tile { background:white; border:1px solid rgba(44,44,44,.08); border-radius:14px; padding:10px 12px; }
+  .stat-tile .v { font-family:'Syne',sans-serif; font-weight:800; font-size:15px; }
+  .stat-tile .l { font-size:9px; font-weight:800; text-transform:uppercase; color:rgba(44,44,44,.5); margin-top:3px; letter-spacing:.04em; }
+
+  .section-label { display:flex; align-items:center; justify-content:space-between; padding: 18px 14px 8px; }
+  .section-label .t { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; color: rgba(44,44,44,.45); }
+  .section-label .a { font-size:11px; font-weight:800; color: rgba(44,44,44,.35); }
+
+  .quotes { padding: 0 14px; display:flex; flex-direction:column; gap:8px; }
+  .qc { background:white; border:1px solid rgba(44,44,44,.08); border-radius:14px; padding:11px 13px; position:relative; overflow:hidden; }
+  .qc .stripe { position:absolute; left:0; top:0; bottom:0; width:4px; }
+  .qc .row { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding-left:6px; }
+  .qc .name { font-weight:800; font-size:12.5px; }
+  .qc .name.muted { font-style:italic; color: rgba(44,44,44,.4); }
+  .qc .date { font-size:10.5px; color: rgba(44,44,44,.4); font-weight:600; margin-top:1px; }
+  .qc .amt { font-weight:800; font-size:12.5px; text-align:right; }
+  .qc .badge { display:inline-block; font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:999px; margin-top:4px; }
+  .qc .aging { font-size:9.5px; font-weight:800; margin-top:3px; }
+  .qc .aging.urgent { color:#B45309; }
+  .qc .aging.soft { color: rgba(44,44,44,.4); }
+
+  /* ---- bottom nav ---- */
+  .bnav {
+    position:absolute; left:0; right:0; bottom:0; height: 76px;
+  }
+  .bnav .fab {
+    position:absolute; left:50%; transform: translateX(-50%); top:-20px;
+    width:52px; height:52px; border-radius:999px; background: var(--yellow);
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+    box-shadow: 0 4px 14px rgba(245,196,0,.5);
+  }
+  .bnav .bar {
+    background:white; height:64px; display:flex; align-items:stretch;
+    border-top:1px solid #EEEEEE; box-shadow: 0 -2px 12px rgba(0,0,0,.06);
+  }
+  .bnav .item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; position:relative; }
+  .bnav .item .ic { font-size:17px; opacity:.35; }
+  .bnav .item .ic.active { opacity: 1; filter: sepia(1) saturate(6) hue-rotate(-10deg); }
+  .bnav .item .lb { font-size:9px; font-weight:800; color:#AAAAAA; }
+  .bnav .item .lb.active { color: var(--yellow-text, #B8960A); }
+  .bnav .item .dot {
+    position:absolute; top:6px; right: 28%; min-width:14px; height:14px; padding:0 3px; border-radius:999px;
+    background:#EF4444; color:white; font-size:8px; font-weight:900; display:flex; align-items:center; justify-content:center;
+  }
+  .bnav .gap { flex:1; }
+
+  .note { max-width: 1080px; margin: 26px auto 50px; padding: 0 20px; }
+  .note .box {
+    background: #FEF9C3; border: 1px solid #F5C400; border-radius: 14px; padding: 14px 18px;
+    font-size: 13px; line-height: 1.6; font-weight: 600; color: #6b5500;
+  }
+  .note .box b { color: var(--anthracite); }
+  .note .box ul { margin: 6px 0 0; padding-left: 18px; }
+
+  .phone-caption { text-align:center; font-size:11px; font-weight:800; color: rgba(44,44,44,.4); margin-top:10px; text-transform:uppercase; letter-spacing:.06em; }
+</style>
+</head>
+<body>
+
+<header class="page">
+  <h1 class="syne">DC-043 — Dashboard + Menüleiste: zwei Richtungen zum Ausprobieren</h1>
+  <p>Kein Bug, sondern ein Gefühl — "holt mich nicht ab". Zwei bewusst unterschiedliche Richtungen (A/B) plus zwei unstrittige Fixes, die in beiden stecken. Zum Reagieren, nicht zum sofortigen Abnicken der Pixel.</p>
+</header>
+
+<div class="toggle-bar">
+  <div class="toggle">
+    <button id="btn-heute" class="active" onclick="setMode('heute')">Heute</button>
+    <button id="btn-a" onclick="setMode('a')">A — Fokus &amp; Dringlichkeit</button>
+    <button id="btn-b" onclick="setMode('b')">B — Warm &amp; persönlich</button>
+  </div>
+</div>
+
+<div class="sub-toggle-bar">
+  <span class="lbl">Ein-CTA-Fix:</span>
+  <div class="sub-toggle">
+    <button id="cta-hero" class="active" onclick="setCta('hero')">Hero-Button behalten</button>
+    <button id="cta-fab" onclick="setCta('fab')">FAB behalten</button>
+  </div>
+</div>
+
+<main>
+  <div>
+    <div class="phone">
+      <div class="notch"><div class="pill"></div></div>
+      <div class="screen">
+        <div class="scroll" id="scroll-content"></div>
+        <div class="bnav" id="bnav"></div>
+      </div>
+    </div>
+    <div class="phone-caption" id="phone-caption">Heute</div>
+  </div>
+</main>
+
+<div class="note" id="explain-note"></div>
+
+<script>
+let mode = 'heute';
+let cta = 'hero'; // hero | fab — nur relevant wenn mode !== 'heute'
+
+const QUOTES = [
+  { name: 'Kunde offen', date: '29.08.26', amount: '598 €', status: 'entwurf', draftItalic: true, dot: '#9CA3AF' },
+  { name: 'Lina Meier', date: '27.08.26', amount: '2.032 €', status: 'offen', dot: '#3B82F6', days: 3 },
+  { name: 'Fischer GmbH', date: '25.08.26', amount: '180 €', status: 'offen', dot: '#3B82F6', days: 5 },
+  { name: 'Fischer GmbH', date: '25.08.26', amount: '2.599 €', status: 'offen', dot: '#3B82F6', days: 5 },
+  { name: 'Dieter Flegel', date: '25.08.26', amount: '171 €', status: 'beauftragt', dot: '#22C55E' },
+];
+const STATUS_LABEL = { entwurf: 'Entwurf', offen: 'Offen', beauftragt: 'Beauftragt' };
+
+function quoteCardHtml(q, warm, showAging) {
+  const agingCls = warm ? 'soft' : 'urgent';
+  const agingHtml = (showAging && q.days) ? `<div class="aging ${agingCls}">${warm ? '🙂 seit ' + q.days + ' Tagen — vielleicht kurz nachfassen?' : 'seit ' + q.days + ' Tagen'}</div>` : '';
+  return `
+    <div class="qc">
+      <div class="stripe" style="background:${q.dot}"></div>
+      <div class="row">
+        <div>
+          <div class="name ${q.draftItalic ? 'muted' : ''}">${q.name}</div>
+          <div class="date">${q.date}</div>
+          <span class="badge" style="background:${q.dot}22;color:${q.dot}">${STATUS_LABEL[q.status]}</span>
+          ${agingHtml}
+        </div>
+        <div class="amt">${q.amount}</div>
+      </div>
+    </div>
+  `;
+}
+
+function render() {
+  document.getElementById('btn-heute').classList.toggle('active', mode === 'heute');
+  document.getElementById('btn-a').classList.toggle('active', mode === 'a');
+  document.getElementById('btn-b').classList.toggle('active', mode === 'b');
+  document.getElementById('cta-hero').classList.toggle('active', cta === 'hero');
+  document.getElementById('cta-fab').classList.toggle('active', cta === 'fab');
+  document.getElementById('cta-hero').disabled = (mode === 'heute');
+  document.getElementById('cta-fab').disabled = (mode === 'heute');
+  document.getElementById('phone-caption').textContent =
+    mode === 'heute' ? 'Heute' : (mode === 'a' ? 'A — Fokus & Dringlichkeit' : 'B — Warm & persönlich');
+
+  const showHeroCta = (mode === 'heute') || (cta === 'hero');
+  const showFab = (mode === 'heute') || (cta === 'fab');
+
+  let hero, extra, statsHtml;
+
+  if (mode === 'heute') {
+    hero = `
+      <div class="greeting">Guten Tag, Lisa.</div>
+      <a class="status-line" href="#">● 4 Angebote warten auf Antwort</a>
+    `;
+    extra = '';
+    statsHtml = `
+      <div class="stats-row">
+        <div class="stat-tile"><div class="v">981 €</div><div class="l">Umsatz · Monat</div></div>
+        <div class="stat-tile"><div class="v">2</div><div class="l">Beauftragt · Monat</div></div>
+        <div class="stat-tile"><div class="v">4</div><div class="l">Offen</div></div>
+      </div>
+    `;
+  } else if (mode === 'a') {
+    hero = `
+      <div class="greeting">Guten Tag, Lisa.</div>
+      <a class="status-line" href="#">● 4 Angebote warten auf Antwort</a>
+    `;
+    extra = `
+      <div class="nudge">
+        <div class="ic">⏳</div>
+        <div>
+          <div class="name">Fischer GmbH</div>
+          <div class="sub">wartet seit 5 Tagen auf eine Antwort</div>
+        </div>
+        <div class="amt">2.599 €</div>
+        <div class="go">›</div>
+      </div>
+      <div class="revenue-card style-a">
+        <div class="top">
+          <div class="v">981 €</div>
+          <div class="delta">+12% ggü. Juli</div>
+        </div>
+        <div class="l">Umsatz diesen Monat</div>
+      </div>
+    `;
+    statsHtml = `
+      <div class="stats-row secondary">
+        <div class="stat-tile"><div class="v">2</div><div class="l">Beauftragt · Monat</div></div>
+        <div class="stat-tile"><div class="v">4</div><div class="l">Offen</div></div>
+      </div>
+    `;
+  } else {
+    hero = `
+      <div class="greeting">Schönen Nachmittag, Lisa! 👋</div>
+      <div class="greeting-sub">Diese Woche lief's gut — weiter so.</div>
+      <a class="status-line calm" href="#">Beim Kunden: 4 Angebote warten auf eine Antwort</a>
+    `;
+    extra = `
+      <div class="revenue-card style-b">
+        <div class="top">
+          <div class="v">981 €</div>
+          <div class="delta">+12% ggü. Juli</div>
+        </div>
+        <div class="l">Umsatz diesen Monat</div>
+        <div class="bar-track"><div class="bar-fill" style="width:68%"></div></div>
+        <div class="warm-note">🎉 Bestes Monatsstart seit April</div>
+      </div>
+    `;
+    statsHtml = `
+      <div class="stats-row secondary">
+        <div class="stat-tile"><div class="v">2</div><div class="l">Beauftragt · Monat</div></div>
+        <div class="stat-tile"><div class="v">4</div><div class="l">Offen</div></div>
+      </div>
+    `;
+  }
+
+  const ctaHtml = showHeroCta ? `
+    <div class="cta">
+      <div class="ic">🎙</div>
+      <div>
+        <div class="t1">Aufmaß starten</div>
+        <div class="t2">Einsprechen → Angebot fertig</div>
+      </div>
+    </div>
+  ` : '';
+
+  const warm = mode === 'b';
+  const showAging = mode !== 'heute';
+  const quotesHtml = QUOTES.map(q => quoteCardHtml(q, warm, showAging)).join('');
+
+  const listLabel = mode === 'b' ? 'Deine letzten Angebote' : 'Zuletzt erstellt';
+
+  document.getElementById('scroll-content').innerHTML = `
+    <div class="hero">
+      <div class="topbar">
+        <span class="wordmark">sofortangebot</span>
+        <div class="avatar">L</div>
+      </div>
+      <div class="hero-body">
+        ${hero}
+        ${ctaHtml}
+      </div>
+    </div>
+    ${extra}
+    ${statsHtml}
+    <div class="section-label"><span class="t">${listLabel}</span><span class="a">Alle →</span></div>
+    <div class="quotes">${quotesHtml}</div>
+  `;
+
+  // bottom nav
+  const navLabel = mode === 'heute' ? 'Start' : 'Dashboard';
+  const showBadge = mode === 'a';
+  document.getElementById('bnav').innerHTML = `
+    ${showFab ? `<div class="fab">🎙</div>` : ''}
+    <div class="bar">
+      <div class="item"><span class="ic active">🏠</span><span class="lb" style="color:#B8960A">${navLabel}</span></div>
+      <div class="item">
+        ${showBadge ? '<span class="dot">4</span>' : ''}
+        <span class="ic">📄</span><span class="lb">Angebote</span>
+      </div>
+      <div class="gap"></div>
+      <div class="item"><span class="ic">👥</span><span class="lb">Kunden</span></div>
+      <div class="item"><span class="ic">⚙️</span><span class="lb">Einstellungen</span></div>
+    </div>
+  `;
+
+  const note = document.getElementById('explain-note');
+  if (mode === 'heute') {
+    note.innerHTML = `<div class="box"><b>Heute:</b> Hero-Button UND FAB führen beide zu „Aufmaß starten" — zwei gelbe CTAs gleichzeitig sichtbar. Alle drei Kennzahlen gleich groß, kein Vergleich zum Vormonat. Kein Hinweis, welches Angebot am längsten wartet. Menüleiste sagt „Start", die Desktop-Seitenleiste zum selben Ort „Dashboard".</div>`;
+  } else if (mode === 'a') {
+    note.innerHTML = `<div class="box"><b>A — Fokus &amp; Dringlichkeit:</b> Direkt unter dem Hero steht, WELCHES Angebot am längsten wartet (Fischer GmbH, 5 Tage) — mit direktem Sprung dorthin. Umsatz bekommt eine große Kachel mit Vergleich zum Vormonat, die restlichen Zahlen werden sekundär. Auf der Liste zeigt die wartende Karte zusätzlich „seit 5 Tagen". Der „Angebote"-Tab in der Menüleiste bekommt einen kleinen Zähler, wenn etwas wartet. Oben rechts: nur noch EIN Weg zu „Aufmaß starten" — probier beide Varianten (Hero-Button/FAB) aus. Label vereinheitlicht auf „Dashboard".</div>`;
+  } else {
+    note.innerHTML = `<div class="box"><b>B — Warm &amp; persönlich:</b> Begrüßung mit kleinem Erfolgssatz, „Offen" heißt jetzt „Beim Kunden" (sagt, wer dran ist — Vorschlag aus DC-042). Umsatz als große, freundlich gerahmte Fortschritts-Kachel mit Balken und einer positiven Einordnung statt einer nüchternen Zahl. Wartende Angebote werden sanft erinnert („vielleicht kurz nachfassen?") statt mit einer roten Zahl gedrängt. Menüleiste bleibt ruhig, kein zusätzlicher Badge. Auch hier: nur noch EIN Weg zu „Aufmaß starten", ausprobierbar oben rechts.</div>`;
+  }
+}
+
+function setMode(m) { mode = m; render(); }
+function setCta(c) { if (mode === 'heute') return; cta = c; render(); }
+render();
+</script>
+
+</body>
+</html>
