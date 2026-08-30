@@ -24,6 +24,33 @@ export function extrahiereDeckenflaeche(text: string): number | null {
 }
 
 /**
+ * Repariert eine Maßangabe, deren Nachkommastelle Whisper hinter ein Komma
+ * geschrieben hat: "Höhe 3 Meter, 20" meint 3,20 m, nicht 3 m.
+ *
+ * PM-024 (Sandys Live-Test, 2026-08-30): Genau so kam die Raumhöhe an, die
+ * Extraktion machte daraus 3 m. Weil der Erschwerniszuschlag erst ÜBER 3 m
+ * greift, verschwand er damit still aus dem Angebot — die verlorene
+ * Nachkommastelle kostete den Handwerker eine berechtigte Position.
+ *
+ * Bewusst eng: Es wird nur repariert, wenn die ganze Zahl im Text exakt dem
+ * bereits erkannten Wert entspricht und dahinter eine ZWEIstellige
+ * Zahl steht ("3 Meter, 20"); eine einzelne Ziffer ist zu mehrdeutig. Ohne diesen Abgleich würde die Regel bei "5 Meter, 3 Türen"
+ * fröhlich 5,3 m erfinden.
+ */
+export function ergaenzeNachkommaAusText(wert: number, text: string): number {
+  if (!Number.isInteger(wert) || wert <= 0) return wert
+  const treffer = (text ?? '').match(
+    new RegExp(`\\b${wert}\\s*m(?:eter)?\\s*,\\s*(\\d{2})\\b(?!\\s*(?:m|meter|cm|qm|m²|t[üu]r|fenster|zimmer|r[äa]ume?))`, 'i'),
+  )
+  if (!treffer) return wert
+  const nachkomma = treffer[1]
+  const ergaenzt = parseFloat(`${wert}.${nachkomma}`)
+  // Plausibilität: eine Raumhöhe/Länge springt durch die Nachkommastelle nie
+  // um mehr als 1 m — sonst war die Zahl dahinter etwas anderes.
+  return ergaenzt > wert && ergaenzt < wert + 1 ? ergaenzt : wert
+}
+
+/**
  * Fläche, die ausdrücklich GESTRICHEN werden soll — auch ohne das Wort
  * "Wandfläche": "im Wohnzimmer müssen 35 m² gestrichen werden".
  *

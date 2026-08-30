@@ -63,6 +63,11 @@ Das × / "mal" / "auf" Zeichen trennt IMMER zwei separate Maße. Komma in Zahlen
 NIEMALS Maße berechnen oder in flaeche umrechnen — immer als laenge+breite eintragen, flaeche: null!
 - "2×2,50m" → laenge: 2.0, breite: 2.5, flaeche: null
 - "Bad 2×2,50m, 2,60 hoch" → laenge: 2.0, breite: 2.5, hoehe: 2.6, flaeche: null
+NACHKOMMASTELLEN BEI EINZELMASSEN (PM-024) — KRITISCH:
+Whisper schreibt gesprochene Nachkommastellen oft als eigene Zahl hinter ein Komma. "Höhe 3 Meter, 20" bedeutet 3,20 m — NICHT 3 m.
+- "Höhe 3 Meter, 20" → hoehe: 3.2   |   "drei Meter zwanzig" → hoehe: 3.2   |   "2 Meter, 60" → hoehe: 2.6
+- Gilt genauso für Längen und Breiten: "5 Meter, 50 mal 4 Meter" → laenge: 5.5, breite: 4
+- Faustregel: eine zwei­stellige Zahl direkt hinter "X Meter," ist die Nachkommastelle von X, kein eigenes Maß.
 - "4×3,50" → laenge: 4.0, breite: 3.5
 - flaeche NUR setzen wenn User explizit m² nennt ohne Länge×Breite: "ca. 25 m²" → flaeche: 25
 
@@ -127,7 +132,11 @@ WC und Bad sind IMMER separate Räume mit EIGENEN Maßen.
 KORREKTUREN: Wenn der Nutzer sich verbessert ("ach nein", "doch nicht", "warte", "eigentlich nur", "stimmt nicht", "vergiss die", "lieber nicht"), gilt die LETZTE Aussage. Entferne die ursprüngliche Angabe aus arbeiten[], fenster[], tueren[] oder passe Maße an. Beispiel: "Decke auch... ach nein, die Decke doch nicht" → arbeiten[] enthält KEINE Decke. "warte, nicht 6 sondern 5 Meter" → laenge: 5, nicht 6.
 
 GEWERK-SPEZIFISCHES WISSEN:
-MALER: "Zimmer streichen" = Wände + Decke. Wandfläche = Umfang × Höhe − Öffnungen. Abdecken/Abkleben immer wenn Streichen.
+MALER: Wandfläche = Umfang × Höhe − Öffnungen. Abdecken/Abkleben immer wenn Streichen.
+  WELCHE FLÄCHEN — NICHT RATEN (PM-024): "Zimmer streichen" / "komplett streichen" OHNE genannte Fläche = Wände + Decke.
+  Sobald der Nutzer eine Fläche AUSDRÜCKLICH nennt, gilt nur diese: "Wände zweimal streichen" → arbeiten: ["wände streichen"], KEINE Decke ergänzen. "Decke streichen" → nur Decke.
+  Eine nicht genannte Fläche NIEMALS zusätzlich in arbeiten[] schreiben — daraus entsteht sonst eine bepreiste Position, die der Handwerker nie verlangt hat.
+  ANSTRICHZAHL JE FLÄCHE: "Wände zweimal streichen, Decke reicht einmal" → beide Angaben gelten getrennt; die Zahl der einen Fläche NIEMALS auf die andere übertragen.
   FENSTER/TÜREN: Wenn "2 Fenster" → fenster: [{anzahl:2, breite:1.2, hoehe:1.0, annahme:true}]. Anzahl IMMER im anzahl-Feld setzen, nicht als separate Einträge!
 FLIESEN: Nassbereich → immer Abdichtung. "Bad fliesen" = Boden + Wände. Altfliesen entfernen = eigene Position.
 TROCKENBAU: Ständerwand = immer doppelte Beplankung prüfen. Dämmung separat. Spachtel Q2 Standard.

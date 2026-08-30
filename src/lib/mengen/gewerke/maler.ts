@@ -69,6 +69,25 @@ export function malerEngine(daten: any): MengenErgebnis {
     const anstrichAnnahmen = explizitEinAnstrich || explizitZweiAnstriche
       ? []
       : ['Zweifacher Anstrich als Standard angenommen — bitte prüfen']
+    // PM-026 (Sandys Live-Fund, 2026-08-30): „Wände zweimal streichen, Decke
+    // reicht einmal" ergab 2× für BEIDE Flächen. Die Anstrichzahl galt für den
+    // ganzen Raum — sobald irgendwo „zweimal" fiel, gewann die 2, auch für eine
+    // Fläche, für die im selben Satz ausdrücklich „einmal" gesagt wurde.
+    // Jetzt wird je Fläche im zugehörigen Satzteil nachgesehen; findet sich
+    // dort nichts, bleibt es beim Raum-Wert oben.
+    const anstricheFuerFlaeche = (muster: RegExp): number => {
+      const teile = anstrichText.split(/[,.;]|\bund\b/)
+      const passend = teile.filter(teil => muster.test(teil))
+      if (passend.length === 0) return anstriche
+      const text = passend.join(' ')
+      const ein = /(?:einmal|1\s*[x×]|ein(?:en)?\s+anstrich|eine\s+lage|reicht\s+ein)/i.test(text)
+      const zwei = /(?:zweimal|2\s*[x×]|zwei\s+anstrich|zwei\s+lagen|2-fach)/i.test(text)
+      if (ein && !zwei) return 1
+      if (zwei && !ein) return 2
+      return anstriche
+    }
+    const anstricheWand = anstricheFuerFlaeche(/w[äa]nd/i)
+    const anstricheDecke = anstricheFuerFlaeche(/(?<!ab)decke/i)
     // Kontext (Keller/Garage/Schräge/Fassade) = Union aus Transkript-Ebene und
     // Raum-Arbeiten. Öffnungs-Negation gilt transkriptweit. Beides jetzt aus dem
     // typisierten Vertrag statt aus direkten Normalisierer-/Rohtext-Aufrufen.
@@ -351,7 +370,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       if (knH && laenge && breite && anWaenden) {
         const kniestockM2 = round2(2 * (laenge + breite) * knH)
         positionen.push({
-          beschreibung: `Kniestockwände streichen ${anstriche}x — ${name}`,
+          beschreibung: `Kniestockwände streichen ${anstricheWand}x — ${name}`,
           menge: kniestockM2, einheit: 'm²', konfidenz: 'high',
           berechnungsweg: `Umfang ${round2(2*(laenge+breite))} lfm × ${knH} m = ${kniestockM2} m²`,
           annahmen: [],
@@ -423,7 +442,7 @@ export function malerEngine(daten: any): MengenErgebnis {
           positionen.push({ beschreibung: `Akzentwand Vliestapete — ${name}`, menge: akzentWandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`, annahmen: ['Kürzere Raumseite als Akzentwand angenommen — bitte prüfen, welche Wand gemeint war'] })
           if (restwandFlaeche > 0) positionen.push({ beschreibung: `Restwände streichen — ${name}`, menge: restwandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`, annahmen: annahmenFenster })
         } else {
-          const wandLabel = istDachschraege ? `Dachschräge streichen ${anstriche}x — ${name}` : `Wandflächen streichen ${anstriche}x — ${name}`
+          const wandLabel = istDachschraege ? `Dachschräge streichen ${anstricheWand}x — ${name}` : `Wandflächen streichen ${anstricheWand}x — ${name}`
           const wandBrutto2 = round2((umfangM ?? 0) * (hoehe ?? 0))
           const fensterAnzahl2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1), 0)
           const tuerAnzahl2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1), 0)
@@ -461,7 +480,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({ beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`, menge: dgUserFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Dachschrägenfläche ${dgUserFlaeche} m²`, annahmen: [...anstrichAnnahmen] })
       }
       if (anDecke && deckenflaecheM2 !== null) {
-        positionen.push({ beschreibung: `Deckenfläche streichen ${anstriche}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [...anstrichAnnahmen] })
+        positionen.push({ beschreibung: `Deckenfläche streichen ${anstricheDecke}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [...anstrichAnnahmen] })
       }
       if (bodenStreichen && bodenflaecheM2 !== null) {
         positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })

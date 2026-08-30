@@ -62,8 +62,14 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   // nacheinander laeuft: bereits gesetzte Flags bleiben erhalten, weil die
   // Ergebnisse des ersten Laufs beim zweiten als Originale hereinkommen.
   const originale = new Set<BerechnetePosition>(positionen)
+  // PM-023 (Sandy, 2026-08-30: „kein vorschlag! ich habs ja gesagt"): Eine
+  // Regel, die auf ein AUSGESPROCHENES Wort reagiert, ergänzt nichts — sie
+  // holt nur nach, was der Handwerker verlangt hat. Solche Regeln setzen
+  // `automatisch_ergaenzt: false` selbst; das gilt jetzt und wird hier nicht
+  // mehr überschrieben. Ohne gesetztes Feld bleibt es beim bisherigen
+  // Verhalten (= vom Tool ergänzt).
   const markiert = ergaenzt.map(p =>
-    originale.has(p) || p.automatisch_ergaenzt ? p : { ...p, automatisch_ergaenzt: true },
+    originale.has(p) || p.automatisch_ergaenzt !== undefined ? p : { ...p, automatisch_ergaenzt: true },
   )
 
   return { fehlende, positionen: markiert }

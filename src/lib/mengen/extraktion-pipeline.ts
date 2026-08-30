@@ -11,6 +11,7 @@ import { normalisiereExtraktion } from './extraktion-normalisierer'
 import { repariereDuplikatMasse, repariereDuplikatNamen } from './mehrraum-reparatur'
 import {
   extrahiereWandflaeche, extrahiereDeckenflaeche, extrahiereBodenflaeche, extrahiereAbzug,
+  ergaenzeNachkommaAusText,
   extrahiereTorMasse, zaehleFenster, zaehleTueren,
 } from '@/lib/extraktion-masse'
 import { bereiteRueckfragenVor } from './rueckfragen-flow'
@@ -145,6 +146,18 @@ export function verarbeiteExtraktion(
   // mit denen einen Moment später ohnehin gerechnet wurde. Jetzt in der
   // richtigen Reihenfolge: Hausaufgaben zuerst, gefragt wird nur noch, was
   // dann wirklich offen ist. Inhaltlich ist an den Blöcken nichts geändert.
+
+  // PM-024: Verlorene Nachkommastelle zurückholen. Whisper schreibt
+  // gesprochene Nachkommastellen oft hinter ein Komma ("Höhe 3 Meter, 20"),
+  // die Extraktion macht daraus glatte 3 m. Bei der Höhe kostet das direkt
+  // Geld: der Erschwerniszuschlag greift erst ÜBER 3 m und fiel deshalb still
+  // weg. Läuft je Raum über den GANZEN Text — die Prüfung „die ganze Zahl muss
+  // im Text stehen" macht die Zuordnung eindeutig genug.
+  for (const raum of extraktion.raeume ?? []) {
+    if (raum.hoehe != null) raum.hoehe = ergaenzeNachkommaAusText(raum.hoehe, textMitZahlen)
+    if (raum.laenge != null) raum.laenge = ergaenzeNachkommaAusText(raum.laenge, textMitZahlen)
+    if (raum.breite != null) raum.breite = ergaenzeNachkommaAusText(raum.breite, textMitZahlen)
+  }
 
   // Direkte Flächenangaben aus Transkript patchen wenn GPT sie nicht extrahiert hat
   // Greift für Single-Raum — bei Multi-Raum zu riskant (Zuordnung unklar)

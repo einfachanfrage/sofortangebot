@@ -238,12 +238,17 @@ export function pruefeTrittschalldaemmung(
   fehlende: string[],
   lower: string,
 ): void {
-  const hatDaemmung =
+  // Ausdrücklich verlangt vs. von uns mitgedacht — das entscheidet später über
+  // das „Vorschlag"-Etikett (PM-023). Bei Klick-Vinyl ergänzen WIR die Dämmung,
+  // weil sie fachlich dazugehört; „mit Trittschalldämmung drunter" hat der
+  // Handwerker dagegen selbst gesagt.
+  const ausdruecklichGenannt =
     lower.includes('trittschalldämmung') ||
     lower.includes('trittschalldaemmung') ||
     lower.includes('gehschall') ||
-    (lower.includes('pur-schaum') || lower.includes('pur schaum')) ||
-    lower.includes('klickvinyl') || lower.includes('klick-vinyl')
+    lower.includes('pur-schaum') || lower.includes('pur schaum')
+  const hatDaemmung = ausdruecklichGenannt
+    || lower.includes('klickvinyl') || lower.includes('klick-vinyl')
   if (!hatDaemmung) return
   if (hat(ergaenzt, 'trittschall', 'pur-schaum')) return
 
@@ -251,10 +256,24 @@ export function pruefeTrittschalldaemmung(
     ?? bodenNettoflaecheAusPositionen(ergaenzt)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
   const istHochwertig = lower.includes('hochwertig') || lower.includes('pur') || lower.includes('alufolie') || lower.includes('alukaschiert') || lower.includes('gehschall')
-  const beschreibung = istHochwertig ? 'Trittschalldämmung hochwertig (PUR-Schaum, alukaschiert)' : 'Trittschalldämmung'
+  // PM-023 (Sandys Live-Test, 2026-08-30): Die Dämmung landete als eigene
+  // Karte unter „Allgemein", während Laminat und Sockelleisten aus demselben
+  // Satz korrekt beim Flur standen — weil hier als einzige Boden-Position kein
+  // Raum an den Titel kam. Die Gruppierung liest den Raum aus dem Titel-Suffix,
+  // also gibt es ohne Suffix keinen Raum. Suffix vom Verlegen übernehmen: die
+  // Dämmung liegt zwangsläufig unter genau diesem Boden.
+  const raumSuffix = ergaenzt
+    .find(p => /(?:vinyl|laminat|parkett|bodenbelag|teppich|kork|linoleum).*(?:verlegen|verkleben)/i.test(p.beschreibung))
+    ?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
+  const beschreibung = (istHochwertig ? 'Trittschalldämmung hochwertig (PUR-Schaum, alukaschiert)' : 'Trittschalldämmung')
+    + (raumSuffix ? ` — ${raumSuffix}` : '')
 
   if (m2) {
-    ergaenzt.push({ beschreibung, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    ergaenzt.push({
+      beschreibung, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`,
+      ...(ausdruecklichGenannt ? { automatisch_ergaenzt: false } : {}),
+      ...mk,
+    })
   } else {
     fehlende.push(beschreibung)
   }
