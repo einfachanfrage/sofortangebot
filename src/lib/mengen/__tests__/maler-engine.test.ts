@@ -93,7 +93,12 @@ describe('Maler-Engine – 10 Integrationstests', () => {
       ],
     })
 
-    const wand = find(positionen, 'wandflächen')
+    // Trockenlauf PM-031 (2026-08-30): Eine Fassade heißt jetzt auch dann
+    // „Fassadenfläche streichen", wenn sie als Raum ankommt — vorher stand da
+    // der Innenraum-Titel „Wandflächen streichen", was den falschen
+    // Katalogpreis zog und die Fassaden-Regel eine zweite, doppelte Position
+    // draufsetzen ließ.
+    const wand = find(positionen, 'fassadenfläche')
     expect(wand?.menge).toBe(96)
 
     const geruest = find(positionen, 'gerüst')

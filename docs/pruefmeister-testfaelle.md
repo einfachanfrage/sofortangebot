@@ -83,8 +83,8 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
-| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Live-Nachtest: beide ursprünglichen Funde bestätigt behoben (Gruppierung, Vorschlag-Etikett). Neuer Fund dabei: Trittschalldämmungs-Menge übernimmt fälschlich die Grundfläche des zweiten Raums im selben Zwei-Aufnahmen-Angebot (14 statt 10,8 m²) |
-| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ❌ Live-Nachtest: Höhen-Nachkommastelle jetzt korrekt (3,2 m). Aber Erschwerniszuschlag Höhe fehlt TROTZDEM weiterhin, und Phantom-Deckenfläche (220 €) ist entgegen der Fix-Notiz weiterhin da |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (zweifach bestätigt). Zweiter Nachtest (mit PM-024) komplett sauber, aber die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist offen und situativ — nicht bei jeder Raum-Paarung reproduzierbar, aber nicht behoben |
+| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ❌ Zweiter Nachtest: Phantom-Deckenfläche weg, Erschwerniszuschlag Höhe erscheint jetzt — aber NEUER, schwerer Fund: „Boden schützen" hat plötzlich keinen Preis mehr in der Preisdatenbank (Regression, betrifft praktisch jeden Malerfall) |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
 | PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | 🟡 Live-Nachtest: verschwundene Wandfläche/Sockelleisten jetzt behoben. Aber Decke wird im Entwurf weiterhin 2× statt 1× berechnet, obwohl die Karte schon korrekt „1x" zeigt |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
@@ -551,6 +551,25 @@ dringend prüfen, ob Karten-Vorschau und Entwurfs-Berechnung tatsächlich zwei g
 und wenn ja, sicherstellen, dass Fixes in beiden ankommen — oder, besser, dass es nur einen einzigen
 Berechnungspfad für beide gibt.
 
+**Update (Prüfmeister, 2026-08-30, zweiter Nachtest):** Bei PM-024 sind inzwischen beide hier gemeldeten
+Funde auch im Entwurf angekommen — die Phantom-Deckenfläche ist weg, der Erschwerniszuschlag Höhe
+erscheint jetzt tatsächlich. Die Karte-vs-Entwurf-Theorie war also entweder nur vorübergehend (ein
+Deployment, das zwischen den beiden Nachtests nachgezogen ist) oder nicht die vollständige Erklärung. Bei
+PM-026 hält die Beobachtung dagegen weiterhin unverändert (Decke 2x/1x). Punkt 10 bleibt damit als
+Beobachtung stehen, sollte aber nicht mehr als durchgängiges Gesetz behandelt werden — eher als Hinweis,
+dass Fixes manchmal verzögert oder nur teilweise ankommen.
+
+**11. NEU, DRINGEND (2026-08-30): „Boden schützen" hat plötzlich keinen Preis mehr — eine der
+grundlegendsten Positionen überhaupt.** Bei PM-024 (zweiter Nachtest) erschien „Boden schützen" (20 m²)
+mit 0,00 € und rotem „Preis fehlt in deiner Preisdatenbank"-Hinweis. Sandy dazu: „SEIT WANN KENNT ER DIE
+POSITION BODEN SCHÜTZEN NICHT MEHR?? ALS OB DAFÜR KEIN PREIS HINTERLEGT? ABSOLUT STANDARD?!" — zu Recht:
+„Boden schützen" (1,20 €/m²) lief seit dem großen Preisdatenbank-Fix vom 2026-08-20 (siehe Punkt 1 oben,
+50 geschlossene Katalog-Lücken) in JEDEM einzelnen Testfall seither fehlerfrei durch, u. a. PM-011,
+PM-019 bis PM-026. Das hier sieht nicht nach einer übersehenen Katalog-Lücke aus, sondern nach einer
+echten Regression an einer vorher nachweislich funktionierenden Stelle — möglicherweise eine
+unbeabsichtigte Nebenwirkung der heutigen Fixes (Rohtext-Rangordnung-Audit, Raumkontext-Fix). Bitte mit
+höchster Priorität behandeln: betrifft praktisch jeden Malerfall, nicht nur PM-024.
+
 **Details für abgeschlossene Fälle (PM-001, PM-002, PM-003, PM-004, PM-005, PM-006, PM-007, PM-009, PM-011, PM-013, PM-019, PM-020, PM-021, PM-022):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen. (PM-007 war am 2026-08-21 kurz zurückgeholt wegen eines Blocker-Bugs, ist seit dessen Fix und Live-Nachtest am 2026-08-25 wieder abgeschlossen und zurück im Archiv.)
 
 ---
@@ -978,6 +997,29 @@ Neuer Fund: Trittschalldämmungs-Menge übernimmt fälschlich die Grundfläche d
 Zwei-Aufnahmen-Angebot (14 m² statt 10,80 m²) — möglicherweise dieselbe Fehlerklasse wie Punkt 9, aber an
 einer dort nicht erfassten Stelle.
 
+**Zweiter Nachtest (Sandy, 2026-08-30, diesmal zusammen mit PM-024 in EIN Angebot gesprochen, zwei
+getrennte Aufnahmen):** Karte „🚪Flur 3 Positionen" — Laminat verlegen inkl. 5% Verschnitt (11,34 m²),
+Sockelleisten montieren (14,7 lfdm), Trittschalldämmung (10,8 m²), korrekt unter „Flur" gruppiert.
+Rückfrage „Nein, bleibt". Entwurf Flur (333,57 €), Raummaße 1,8×6 m:
+
+- Laminat verlegen inkl. 5% Verschnitt: 11,34 m² × 18,00 € = 204,12 € — ✅ exakt Soll
+- Sockelleisten montieren: 14,7 lfdm × 5,50 € = 80,85 € — ✅ exakt Soll
+- **Trittschalldämmung: 10,8 m² × 4,50 € = 48,60 € — ✅ exakt Soll, diesmal ohne Verwechslung.** Korrekt
+  bei „Flur" gruppiert, kein „Vorschlag"-Etikett, und diesmal auch die richtige eigene Fläche (nicht die
+  des zweiten Raums).
+
+**Ergebnis:** Mit dieser Raum-Paarung (Flur + Büro statt Flur + Gästezimmer) lief PM-023 komplett sauber —
+alle drei Positionen exakt Soll, keiner der drei ursprünglichen Funde trat auf. Das spricht dafür, dass
+die Raumflächen-Verwechslung aus dem vorherigen Nachtest kein durchgängiges, jedes Mal reproduzierbares
+Verhalten ist, sondern eher situativ (abhängig von der konkreten Raum-Kombination oder -Reihenfolge)
+auftritt — was zur „Raumkontext blutet zwischen Räumen"-Fehlerklasse aus Punkt 9 passt (dort trat das
+Problem ja auch nur bei bestimmten Feldern/Situationen auf, nicht überall). Kein Entwarnung für den
+vorherigen Fund, aber ein Hinweis, dass er nicht bei jeder Zwei-Aufnahmen-Kombination auftritt.
+
+**Status:** ✅ In dieser Paarung (mit PM-024) alle drei Positionen live bestätigt exakt Soll. Der frühere
+Fund (Trittschalldämmungs-Flächenverwechslung mit PM-025) bleibt als eigenständiger, situativer Bug
+bestehen und ist nicht widerlegt — nur diesmal nicht aufgetreten.
+
 ---
 
 ### PM-024 — Büro, Erschwerniszuschlag Höhe in normalem Raum (nicht Fassade)
@@ -1077,6 +1119,51 @@ tatsächlichen Entwurf berechnet.
 **Status:** 🟡→❌ Ein Fund live bestätigt behoben (Höhen-Nachkommastelle). Zwei Funde bestehen weiter fort:
 Erschwerniszuschlag Höhe fehlt trotzdem, Phantom-Deckenfläche (220 €) weiterhin da — Letzteres trotz
 gegenteiliger Angabe in der Fix-Notiz oben.
+
+**Zweiter Nachtest (Sandy, 2026-08-30, zusammen mit PM-023 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen):** Karte „💼Büro 3 Positionen" — Wandflächen streichen 2x (57,6 m²), Boden schützen (20 m²),
+Sockelleisten abkleben (17,1 lfdm), zusätzlich eine eigene Karte „📋Allgemein 1 Position" —
+Erschwerniszuschlag Raumhöhe > 3m (1 Pauschale). Entwurf Büro (560,88 €), Raummaße 4×5 m, **Raumhöhe
+korrekt 3,2 m**, 1 Tür, 2 Fenster:
+
+- Wandflächen streichen 2×: 57,6 m² × 9,50 € = 547,20 € — ✅ exakt Soll
+- **Endlich gut: die Phantom-Deckenfläche ist diesmal weg — keine „Deckenfläche streichen" im Entwurf.**
+- **Endlich gut: Erschwerniszuschlag Raumhöhe > 3m taucht diesmal tatsächlich auf** (1 Pauschale, 0,00 €
+  „Preis fehlt" — das ist bei Erschwerniszuschlägen normal, siehe PM-011/PM-019, der Nutzer legt den Preis
+  selbst fest, kein Bug). Als „Vorschlag" markiert, ebenfalls wie bei anderen Erschwerniszuschlägen üblich
+  und kein Fund für sich. Landet allerdings unter einer eigenen „📋 Allgemein"-Karte statt unter „💼 Büro"
+  — ob das so gewollt ist oder derselben Gruppierungs-Lücke wie bei der Trittschalldämmung folgt, wäre
+  einen kurzen Blick wert, ist aber ein kleiner, kosmetischer Punkt verglichen mit dem nächsten.
+- Sockelleisten abkleben: 17,1 lfdm × 0,80 € = 13,68 € — ✅ exakt Soll
+- **NEU, SCHWERWIEGEND: Boden schützen: 20 m² × 0,00 € — „Preis fehlt in deiner Preisdatenbank"!** Das ist
+  keine Randposition — „Boden schützen" hatte in buchstäblich JEDEM bisherigen Testfall dieser gesamten
+  Test-Historie einen festen, korrekten Preis von 1,20 €/m². Sandy dazu direkt und zu Recht sehr
+  aufgebracht: „SEIT WANN KENNT ER DIE POSITION BODEN SCHÜTZEN NICHT MEHR?? ALS OB DAFÜR KEIN PREIS
+  HINTERLEGT? ABSOLUT STANDARD?!" Es gab zwar historisch (vor dem großen Preisdatenbank-Fix am
+  2026-08-20) schon einmal einen Fall mit „Boden schützen ... Preis fehlt" — aber das war ausdrücklich
+  Teil der 50 damals gefundenen und geschlossenen Katalog-Lücken, seither lief „Boden schützen" in jedem
+  einzigen Test (PM-011, PM-019 bis PM-026, u.v.m.) fehlerfrei mit 1,20 €/m². Das hier sieht nach einer
+  echten Regression aus, keiner bekannten Lücke.
+
+**Ergebnis:** Gemischtes, aber insgesamt besorgniserregendes Bild. Zwei gute Nachrichten: die
+Phantom-Deckenfläche ist weg, und der Erschwerniszuschlag Höhe erscheint jetzt tatsächlich (beides war
+beim letzten Nachtest noch kaputt). Aber eine schwere neue Nachricht: „Boden schützen" — eine der
+allergrundlegendsten, in praktisch jedem Testfall vorkommenden Positionen — hat plötzlich keinen Preis
+mehr in der Preisdatenbank. Wenn das kein Einzelfall ist, sondern eine echte Regression am Katalogeintrag,
+betrifft das potenziell JEDES zukünftige Angebot, das eine Bodenfläche schützt — praktisch jeder Malerfall.
+
+**Für Head of Product Engineering:** **Bitte dringend prüfen, ob der Preiskatalog-Eintrag für „Boden
+schützen" (1,20 €/m²) noch existiert und korrekt zugeordnet wird** — das war seit dem großen
+Preisdatenbank-Fix vom 20.08. durchgängig stabil, jetzt plötzlich nicht mehr. Bitte auch klären, ob das mit
+den Änderungen von heute (Rohtext-Rangordnung-Fixes, Raumkontext-Audit) zusammenhängt — möglicherweise eine
+unbeabsichtigte Nebenwirkung eines der heutigen Fixes. Zusätzlich, kleinerer Punkt: bitte kurz bestätigen,
+ob Erschwerniszuschlag-Positionen bei mehreren Räumen im selben Angebot absichtlich unter „Allgemein" statt
+beim jeweiligen Raum gruppiert werden, oder ob das dieselbe Raum-Zuordnungslücke ist wie bei der
+Trittschalldämmung (PM-023).
+
+**Status:** ❌ Zwei Funde live bestätigt behoben (Phantom-Deckenfläche weg, Erschwerniszuschlag Höhe
+erscheint jetzt). Aber neuer, schwerwiegender Fund: „Boden schützen" hat plötzlich keinen Preis mehr in
+der Preisdatenbank — eine der am häufigsten verwendeten Positionen überhaupt. Dringend.
 
 ---
 

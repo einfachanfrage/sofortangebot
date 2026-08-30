@@ -164,6 +164,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Auch den (ggf. abgeleiteten) Raumnamen prüfen, nicht nur das Transkript.
     const nameKontext = baueVerstaendnis(name).kontext
     const istGarageRaum = kontext.istGarage || nameKontext.istGarage
+    const istFassadeRaum = kontext.istFassade || nameKontext.istFassade || /fassade|au[sß]enwand/i.test(name)
     const istKellerRaum = kontext.istKeller || nameKontext.istKeller
     // "kein Fenster" / "ohne Fenster" → Standard-Fenster-Fallback unterdrücken
     const keinFenster = oeffnungen.keinFenster
@@ -481,7 +482,18 @@ export function malerEngine(daten: any): MengenErgebnis {
           positionen.push({ beschreibung: `Akzentwand Vliestapete — ${name}`, menge: akzentWandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`, annahmen: ['Kürzere Raumseite als Akzentwand angenommen — bitte prüfen, welche Wand gemeint war'] })
           if (restwandFlaeche > 0) positionen.push({ beschreibung: `Restwände streichen — ${name}`, menge: restwandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`, annahmen: annahmenFenster })
         } else {
-          const wandLabel = istDachschraege ? `Dachschräge streichen ${anstricheWand}x — ${name}` : `Wandflächen streichen ${anstricheWand}x — ${name}`
+          // Trockenlauf PM-031 (2026-08-30): Eine Fassade kommt laut unserem
+          // eigenen Prompt als RAUM an ("FASSADE IN RAEUME") — bekam hier aber
+          // den Innenraum-Titel "Wandflächen streichen". Zwei Folgen: der
+          // Preis-Matcher fand den Innenpreis statt des Fassadenpreises, und
+          // die Fassaden-Vollständigkeitsregel erkannte die Position nicht als
+          // vorhanden und setzte "Fassadenfarbe 2× Anstrich" NOCH EINMAL
+          // obendrauf — dieselbe Fläche zweimal im Angebot.
+          const wandLabel = istDachschraege
+            ? `Dachschräge streichen ${anstricheWand}x — ${name}`
+            : istFassadeRaum
+              ? `Fassadenfläche streichen ${anstricheWand}x — ${name}`
+              : `Wandflächen streichen ${anstricheWand}x — ${name}`
           const wandBrutto2 = round2((umfangM ?? 0) * (hoehe ?? 0))
           const fensterAnzahl2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1), 0)
           const tuerAnzahl2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1), 0)

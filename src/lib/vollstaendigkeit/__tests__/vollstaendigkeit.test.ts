@@ -252,12 +252,22 @@ describe('maler – schimmel', () => {
 // ─── MALER FASSADE ──────────────────────────────────────────────────────────
 
 describe('maler – fassade', () => {
-  it('ergänzt Grundierung + Farbe bei Fassadenauftrag', () => {
+  it('ergänzt die Fassadenfarbe, aber keine ungefragte Grundierung', () => {
+    // Trockenlauf PM-031 (2026-08-30): Die Grundierung kam bedingungslos,
+    // allein weil das Wort „Fassade" fiel — bei „einmal Fassadenfarbe drauf"
+    // also eine volle, bepreiste Position, die niemand verlangt hat. Gleiches
+    // Muster wie „Fassade reinigen" im Test darunter, nur eine Zeile weiter.
     const eingabe = [pos('Fassade streichen', 200)]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Fassade streichen, 200 qm.')
     const beschr = positionen.map(p => p.beschreibung)
-    expect(beschr.some(b => b.includes('Grundierung'))).toBe(true)
     expect(beschr.some(b => b.includes('Fassadenfarbe'))).toBe(true)
+    expect(beschr.some(b => b.includes('Grundierung'))).toBe(false)
+  })
+
+  it('ergänzt die Grundierung sehr wohl, wenn sie verlangt wird', () => {
+    const eingabe = [pos('Fassade streichen', 200)]
+    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Fassade grundieren und streichen, 200 qm.')
+    expect(positionen.some(p => p.beschreibung.includes('Grundierung'))).toBe(true)
   })
 
   // PM-008-Nachtest: "Fassade reinigen" kam bisher ungefragt bei JEDEM

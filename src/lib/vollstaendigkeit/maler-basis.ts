@@ -165,6 +165,7 @@ export function pruefeGrundierung(
       konfidenz: 'high',
       berechnungsweg: `Gleiche Fläche wie Deckenfläche (${deckePos.menge} m²)`,
       annahmen: [...deckePos.annahmen],
+      automatisch_ergaenzt: false,
     })
   }
 
@@ -175,13 +176,20 @@ export function pruefeGrundierung(
 
   const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
   if (wandPos) {
+    // Trockenlauf PM-028 (2026-08-30): Die Position kam ohne Raum im Titel und
+    // landete damit unter „Allgemein" statt beim Arbeitszimmer — dieselbe
+    // Ursache wie bei der Trittschalldämmung (PM-023). Und sie trug das
+    // „Vorschlag"-Etikett, obwohl „Wände bitte grundieren" ausdrücklich gesagt
+    // wurde. Beides hängt an derselben Zeile.
+    const raumSuffix = wandPos.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
     ergaenzt.unshift({
-      beschreibung: 'Voranstrich / Grundierung',
+      beschreibung: `Voranstrich / Grundierung${raumSuffix ? ` — ${raumSuffix}` : ''}`,
       menge: wandPos.menge,
       einheit: 'm²',
       konfidenz: 'high',
       berechnungsweg: `Gleiche Fläche wie Wandflächen (${wandPos.menge} m²)`,
       annahmen: [...wandPos.annahmen],
+      ...(explizitVollflaechig ? { automatisch_ergaenzt: false } : {}),
     })
   } else {
     add(ergaenzt, fehlende, 'Voranstrich / Grundierung')

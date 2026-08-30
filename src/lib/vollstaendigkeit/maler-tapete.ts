@@ -323,7 +323,13 @@ export function pruefeFassade(ergaenzt: BerechnetePosition[], lower: string, tra
   const fassadeFarbTyp = lower.includes('silikat') ? 'Silikatfarbe' : lower.includes('dispersion') ? 'Dispersionsfarbe' : 'Fassadenfarbe'
 
   if (hatReinigenSignal && !hatReinigen) ergaenzt.push({ beschreibung: 'Fassade reinigen / Untergrundvorbereitung', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
-  if (!hatGrundierung) ergaenzt.push({ beschreibung: 'Grundierung / Tiefengrund Fassade', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
+  // Trockenlauf PM-031 (2026-08-30): Die Grundierung kam BEDINGUNGSLOS, allein
+  // weil das Wort „Fassade" fiel — bei „einmal Fassadenfarbe drauf" also eine
+  // volle, bepreiste Position, die niemand verlangt hat. Exakt das Muster, das
+  // im Kommentar oben für „Fassade reinigen" schon als falsch erkannt wurde;
+  // die Zeile daneben blieb es. Jetzt auch hier: nur bei echtem Signal.
+  const hatGrundierSignal = /grundier|voranstrich|tiefengrund|primer|neubau|erstanstrich|rohbau|kreidet|saugend|sandet/i.test(lower) || hatRisse
+  if (hatGrundierSignal && !hatGrundierung) ergaenzt.push({ beschreibung: 'Grundierung / Tiefengrund Fassade', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   if (!hatFarbe) ergaenzt.push({ beschreibung: `${fassadeFarbTyp} 2× Anstrich`, menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   if (hatRisse && !hatRissfix) ergaenzt.push({ beschreibung: 'Rissverschluss / Spachtelarbeiten Außen', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Pauschale bei Rissen/Schäden', annahmen: [] })
 }
