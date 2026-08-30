@@ -1132,12 +1132,22 @@ von einem.
   Testzeile wieder gelöscht) und die Bündelung des neuen Shared-Moduls durch
   einen Deploy von `ki-pruefen` nach Staging bewiesen.
 
-**Offen: der Deploy nach Produktion.** Bewusst nicht über das MCP-Tool
-gemacht — dafür müsste ich den kompletten Function-Code inklusive des
-16.000 Zeichen langen Extraktions-Prompts abtippen, und ein stiller
-Abschreibfehler in genau diesem Prompt wäre teurer als der Bug, den wir
-gerade beheben. Sandy deployt aus dem Repo (`supabase functions deploy …`),
-wo der Code unverändert liegt.
+**Deploy nach Produktion erledigt (Sandy, 2026-08-29).** Bewusst nicht über
+das MCP-Tool gemacht — dafür hätte ich den kompletten Function-Code inklusive
+des 16.000 Zeichen langen Extraktions-Prompts abtippen müssen, und ein
+stiller Abschreibfehler in genau diesem Prompt wäre teurer als der Bug, den
+wir gerade beheben. Stattdessen aus dem Repo deployt, wo der Code unverändert
+liegt: `npx supabase functions deploy ki-extrahieren ki-matchen ki-pruefen
+transcribe`. Erster Versuch scheiterte mit 401 (CLI nicht angemeldet) —
+dabei wurde nachweislich NICHTS veröffentlicht, alle Versionen blieben
+unverändert; nach `npx supabase login` lief es durch. Live-Stand jetzt:
+ki-extrahieren v22, ki-matchen v6, ki-pruefen v4, transcribe v4.
+
+**Beweis steht noch aus:** Der Ticket-Status geht erst auf ✅, wenn nach
+einer echten Aufnahme ein neuer `ki_usage`-Eintrag mit
+`endpunkt = 'extraktion'` ankommt. Bis dahin ist es „deployt", nicht
+„bewiesen" — genau die Unterscheidung, an der PM-010 fünfmal gescheitert
+ist. Letzter Extraktions-Eintrag vor dem Fix: 20.07.2026.
 
 **Nebenbefund für später (nicht angefasst):** `ki-extrahieren` schreibt bei
 jeder Extraktion zusätzlich die rohe GPT-Antwort in `debug_extraktion_roh` —

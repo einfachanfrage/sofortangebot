@@ -9,8 +9,17 @@ import { verarbeiteAntworten } from '../antworten-verarbeiter'
 import { malerEngine } from '../gewerke/maler'
 import { analysiereKontext } from '@/lib/kontext-analyzer'
 import { extrahiereBodenflaeche, extrahiereStreichflaeche } from '@/lib/extraktion-masse'
-import { PROMPT_EXTRAKTION } from '../prompt-extraktion'
 import type { ExtrahierteDaten } from '../types'
+import { readFileSync } from 'node:fs'
+
+/**
+ * Der Prompt, der WIRKLICH läuft — er liegt in der Edge Function, nicht in
+ * `src/`. Bewusst von der Platte gelesen statt importiert: so kann kein
+ * zweiter, ungenutzter Prompt entstehen, gegen den Tests grün laufen, während
+ * live etwas anderes passiert (genau das ist am 30.08.2026 passiert).
+ */
+const PROMPT_LIVE = readFileSync('supabase/functions/_shared/prompt-extraktion-v4.ts', 'utf8')
+
 
 function basis(overrides: Partial<ExtrahierteDaten> = {}): ExtrahierteDaten {
   return {
@@ -97,13 +106,19 @@ describe('DC-040-Nachtrag — "35 m² gestrichen" ist eine Wandfläche, keine Ra
 })
 
 describe('DC-040 — Prompt behandelt die Wohnung als Pseudo-Raum', () => {
-  it('nennt "die ganze Wohnung" nur noch mit Einschränkung als vage', () => {
-    expect(PROMPT_EXTRAKTION).toMatch(/WOHNUNG \/ HAUS ALS GANZES/)
-    expect(PROMPT_EXTRAKTION).toMatch(/"die ganze Wohnung" — ABER NUR wenn keine Flächen- oder Maßangabe/)
+  it('kennt die Wohnung als eigenen Pseudo-Raum', () => {
+    expect(PROMPT_LIVE).toMatch(/WOHNUNG \/ HAUS ALS GANZES/)
+    expect(PROMPT_LIVE).toMatch(/wandflaeche_direkt/)
   })
 
-  it('nimmt Gesamtflächen von der 200-m²-Plausibilitätsgrenze aus', () => {
-    expect(PROMPT_EXTRAKTION).toMatch(/AUSNAHME: Pseudo-Räume/)
+  it('nimmt Gesamtflächen ausdrücklich von den m²-Obergrenzen aus', () => {
+    expect(PROMPT_LIVE).toMatch(/Obergrenzen für einzelne Räume gelten hier NICHT/)
+  })
+
+  it('sagt ausdrücklich, dass die Angabe nicht in waende\[\] gehört', () => {
+    // Genau das ist im Live-Test passiert: raeume war leer, die Arbeiten
+    // landeten in einer waende[]-Wand ohne Maße — und damit im Nichts.
+    expect(PROMPT_LIVE).toMatch(/NIEMALS in waende\[\] ablegen|niemals in waende\[\]/i)
   })
 })
 

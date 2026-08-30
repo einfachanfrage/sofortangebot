@@ -5,12 +5,44 @@ import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 // Re-Export, damit bestehende Importe aus './boden-basis' unverändert bleiben.
 import type { BelagTyp } from '../boden-normalisierer'
 import { erkenneBelag, belagBezeichnung, erkenneBelagName } from '../boden-normalisierer'
+import { extrahiereBodenflaeche, extrahiereStreichflaeche } from '@/lib/extraktion-masse'
 export type { BelagTyp }
 export { erkenneBelag, belagBezeichnung, erkenneBelagName }
 
+/**
+ * Bodenfläche aus dem Rohtext — die Grundlage für ALLE hier ergänzten
+ * Bodenpositionen.
+ *
+ * Live-Fund (Sandy, 2026-08-30): Die Regel nahm die ERSTE m²-Zahl im ganzen
+ * Transkript. Bei „120 Quadratmeter Wandfläche gestrichen und 55 Quadratmeter
+ * Laminat verlegt" war das die WANDfläche — im Angebot standen 132 m² Laminat
+ * (120 + 10 % Verschnitt) statt 60,5 m². Mehr als das Doppelte, ohne Warnung.
+ *
+ * Jetzt in dieser Reihenfolge:
+ *   1. Eine Zahl, die ausdrücklich zum Boden gehört ("55 m² Laminat").
+ *   2. Sonst die erste m²-Zahl, die NICHT als Wand-/Deckenfläche ausgewiesen
+ *      ist — so bleiben die vielen Fälle ohne Belagswort ("Zimmer, 20 qm")
+ *      unverändert.
+ *   3. Sonst nichts. Lieber keine Menge als eine falsche: eine fehlende
+ *      Position fällt beim Prüfen auf, eine doppelt so hohe nicht.
+ */
 export function extrahiereFlaeche(lower: string): number | null {
-  const m = lower.match(/(\d+[\.,]?\d*)\s*(?:m²|qm|quadratmeter)/)
-  if (m) return parseFloat(m[1].replace(',', '.'))
+  const boden = extrahiereBodenflaeche(lower)
+  if (boden !== null) return boden
+
+  // Eine Zahl, die am Streichen hängt ("35 m² gestrichen"), ist eine
+  // Wandfläche, auch ohne das Wort "Wand" — siehe DC-040.
+  const streichflaeche = extrahiereStreichflaeche(lower)
+  const WAND_ODER_DECKE = /\b(wand|wände|waende|wandfl|decke|deckenfl)/
+  const treffer = [...lower.matchAll(/(\d+[\.,]?\d*)\s*(?:m²|qm|quadratmeter)/g)]
+  for (const m of treffer) {
+    const start = m.index ?? 0
+    const umfeld = lower.slice(Math.max(0, start - 30), start + m[0].length + 30)
+    if (WAND_ODER_DECKE.test(umfeld)) continue
+    const wert = parseFloat(m[1].replace(',', '.'))
+    if (streichflaeche !== null && wert === streichflaeche) continue
+    return wert
+  }
   return null
 }
 

@@ -12,7 +12,16 @@ import { describe, expect, it } from 'vitest'
 import { preisKategoriePasstZuGewerk } from '../default-price-selection'
 import { GEWERK_KATEGORIE_PREFIXE } from '../gewerke-config'
 import { findePreisposition } from '../preis-matcher'
-import { PROMPT_EXTRAKTION } from '../mengen/prompt-extraktion'
+import { readFileSync } from 'node:fs'
+
+/**
+ * Der Prompt, der WIRKLICH läuft — er liegt in der Edge Function, nicht in
+ * `src/`. Bewusst von der Platte gelesen statt importiert: so kann kein
+ * zweiter, ungenutzter Prompt entstehen, gegen den Tests grün laufen, während
+ * live etwas anderes passiert (genau das ist am 30.08.2026 passiert).
+ */
+const PROMPT_LIVE = readFileSync('supabase/functions/_shared/prompt-extraktion-v4.ts', 'utf8')
+
 
 /** Die Gewerke, die der Extraktions-Prompt als einzige vergeben darf. */
 const EXTRAKTIONS_GEWERKE = ['maler', 'fliesen', 'trockenbau', 'boden_parkett', 'sanitaer_heizung', 'elektro']
@@ -37,7 +46,7 @@ describe('Gewerke-Filter vor dem Preis-Matcher', () => {
     // für das niemand ein Rubrik-Präfix hinterlegt — der Filter fällt dann
     // still auf "passt zu allem" zurück.
     for (const gewerk of EXTRAKTIONS_GEWERKE) {
-      expect(PROMPT_EXTRAKTION).toContain(gewerk)
+      expect(PROMPT_LIVE).toContain(gewerk)
       expect(GEWERK_KATEGORIE_PREFIXE[gewerk]?.length ?? 0).toBeGreaterThan(0)
     }
   })
