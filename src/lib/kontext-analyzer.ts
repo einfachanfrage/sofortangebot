@@ -1,4 +1,5 @@
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
+import { extrahiereStreichflaeche } from '@/lib/extraktion-masse'
 import { erkenneOeffnungen } from '@/lib/arbeiten-normalisierer'
 import { BODEN_VERLEGEN_SIGNAL } from '@/lib/mengen/gewerke/boden'
 
@@ -75,7 +76,13 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
           .filter(index => index > start)
           .sort((a, b) => a - b)[0]
         const abschnitt = text.slice(start, naechsterRaum ?? text.length)
-        if (/wandfl[äa]che/.test(abschnitt)) {
+        // DC-040-Nachtrag: Nicht nur das Wort "Wandfläche" zählt. Handwerker
+        // sagen genauso oft "im Wohnzimmer müssen 35 m² gestrichen werden" —
+        // die Zahl ist dann die zu streichende Fläche, nicht die Raumgröße.
+        // Ohne diese Zeile rechnet die Engine daraus über die Quadrat-Annahme
+        // eine Wandfläche und landet bei 61,5 m² statt 35 m².
+        const streichflaeche = extrahiereStreichflaeche(abschnitt)
+        if (/wandfl[äa]che/.test(abschnitt) || streichflaeche === raum.flaeche) {
           raum.wandflaeche_direkt = raum.flaeche
           raum.flaeche = null
         }

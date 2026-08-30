@@ -24,6 +24,32 @@ export function extrahiereDeckenflaeche(text: string): number | null {
 }
 
 /**
+ * Fläche, die ausdrücklich GESTRICHEN werden soll — auch ohne das Wort
+ * "Wandfläche": "im Wohnzimmer müssen 35 m² gestrichen werden".
+ *
+ * DC-040-Nachtrag (Sandy, 29.08.: „das kommt safe vor"). Ohne diese Erkennung
+ * landet die Zahl als RAUMGRÖSSE in `flaeche`, und die Engine rechnet daraus
+ * über die Quadrat-Annahme eine Wandfläche — aus 35 m² werden 61,5 m².
+ *
+ * Bewusst eng: nur Partizip/„zu streichen"-Formen, bei denen die Zahl
+ * grammatisch am Streichen hängt. Eine reine Aufzählung („Wohnzimmer 35 m²,
+ * streichen") bleibt die Raumgröße — dort IST die Zahl die Raumgröße, und
+ * die bisherige Rechnung stimmt. Boden- und Deckenwörter direkt an der Zahl
+ * schließen den Treffer aus, die haben ihre eigenen Erkenner.
+ */
+export function extrahiereStreichflaeche(text: string): number | null {
+  const t = text ?? ''
+  const VERB = '(?:gestrichen|angestrichen|zu\\s+streichen|anzustreichen|gespachtelt|zu\\s+spachteln|tapeziert|zu\\s+tapezieren|lackiert|zu\\s+lackieren)'
+  const treffer = t.match(new RegExp(
+    `(\\d+(?:[.,]\\d+)?)\\s*(?:m²|qm|quadratmeter)((?:\\s+\\S+){0,3}?\\s+${VERB})`, 'i',
+  ))
+  if (!treffer) return null
+  // "35 m² Decke streichen" / "35 m² Boden" gehören nicht hierher.
+  if (/\b(decke|boden|laminat|parkett|vinyl|teppich|estrich|fußboden|fussboden)/i.test(treffer[2])) return null
+  return parseFloat(treffer[1].replace(',', '.'))
+}
+
+/**
  * Direkte Bodenfläche in m² ("55 m² Laminat", "Bodenfläche 40 qm").
  *
  * DC-040: Gegenstück zu `extrahiereWandflaeche`. Ein Handwerker, der die

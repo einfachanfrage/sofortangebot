@@ -7,7 +7,8 @@ import { describe, expect, it } from 'vitest'
 import { bereiteRueckfragenVor } from '../rueckfragen-flow'
 import { verarbeiteAntworten } from '../antworten-verarbeiter'
 import { malerEngine } from '../gewerke/maler'
-import { extrahiereBodenflaeche } from '@/lib/extraktion-masse'
+import { analysiereKontext } from '@/lib/kontext-analyzer'
+import { extrahiereBodenflaeche, extrahiereStreichflaeche } from '@/lib/extraktion-masse'
 import { PROMPT_EXTRAKTION } from '../prompt-extraktion'
 import type { ExtrahierteDaten } from '../types'
 
@@ -52,6 +53,46 @@ describe('DC-040 — Bodenfläche aus dem Transkript lesen', () => {
   it('hält eine reine Wandflächen-Angabe für keine Bodenfläche', () => {
     expect(extrahiereBodenflaeche('120 m² Wandfläche streichen')).toBeNull()
     expect(extrahiereBodenflaeche('Wohnzimmer 5 mal 4 Meter')).toBeNull()
+  })
+})
+
+describe('DC-040-Nachtrag — "35 m² gestrichen" ist eine Wandfläche, keine Raumgröße', () => {
+  it('erkennt die Fläche, wenn die Zahl grammatisch am Streichen hängt', () => {
+    expect(extrahiereStreichflaeche('Im Wohnzimmer müssen 35 m² gestrichen werden.')).toBe(35)
+    expect(extrahiereStreichflaeche('Im Wohnzimmer sind 35 Quadratmeter zu streichen.')).toBe(35)
+    expect(extrahiereStreichflaeche('Im Wohnzimmer müssen 35 m² tapeziert werden.')).toBe(35)
+  })
+
+  it('lässt eine reine Raumgröße in Ruhe — dort IST die Zahl die Raumgröße', () => {
+    expect(extrahiereStreichflaeche('Wohnzimmer 35 m², streichen')).toBeNull()
+    expect(extrahiereStreichflaeche('Wohnzimmer 35 m², Wände streichen')).toBeNull()
+  })
+
+  it('greift nicht bei Decken- und Bodenflächen (die haben eigene Erkenner)', () => {
+    expect(extrahiereStreichflaeche('Im Bad 12 m² Decke streichen')).toBeNull()
+    expect(extrahiereStreichflaeche('Im Flur 20 m² Laminat verlegen')).toBeNull()
+  })
+
+  it('rechnet danach mit 35 m² statt mit 61,52 m² (Quadrat-Annahme)', () => {
+    const gesprochen = (satz: string, flaeche: number) => {
+      const daten = basis({
+        transkript: satz,
+        raeume: [{
+          name: 'Wohnzimmer', laenge: null, breite: null, hoehe: 2.6, flaeche,
+          fenster: [], tueren: [], arbeiten: ['waende_streichen'],
+          altbelag_entfernen: false, sockelleisten: false, nassbereich: false,
+        }],
+      })
+      const angereichert = analysiereKontext(JSON.parse(JSON.stringify(daten))).extraktion_angereichert
+      const position = malerEngine(angereichert).positionen.find(p => /wandfl/i.test(p.beschreibung))
+      return { menge: position?.menge, direkt: angereichert.raeume[0].wandflaeche_direkt }
+    }
+
+    expect(gesprochen('Im Wohnzimmer müssen 35 m² gestrichen werden.', 35))
+      .toEqual({ menge: 35, direkt: 35 })
+    // Gegenprobe: die Aufzählung bleibt Raumgröße, die Wandfläche wird wie
+    // bisher über den geschätzten Umfang gerechnet.
+    expect(gesprochen('Wohnzimmer 35 m², Wände streichen', 35).menge).toBe(61.52)
   })
 })
 

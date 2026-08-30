@@ -3216,6 +3216,34 @@ keine Endlosschleife nach der Antwort, Berechnung mit und ohne Abzug
 inklusive Terrassentür). `tsc --noEmit` sauber, Suite grün
 (49 Dateien / 875 Tests).
 
+### Nachtrag: „im Wohnzimmer müssen 35 m² gestrichen werden" (Sandys Einwand, 29.08.)
+
+Sandy hat widersprochen, als ich abraten wollte, den Fall auch für einzelne
+Räume zu behandeln: „viele Handwerker sagen im Wohnzimmer müssen 35 m²
+gestrichen werden, das kommt safe vor". Sie hatte recht — und der Fund ist
+größer als die ursprüngliche Frage.
+
+Dieser Satz erzeugte bis eben **61,52 m² statt 35 m²**. Grund: ohne das Wort
+„Wandfläche" landet die Zahl als RAUMGRÖSSE in `flaeche`. Die Engine hält
+das für die Bodenfläche, schätzt daraus über die Quadrat-Annahme einen
+Umfang (4·√35 ≈ 23,7 lfm) und rechnet Umfang × Höhe. Aus einer klaren
+Ansage des Handwerkers wurde also eine um 76 % zu hohe Hauptposition —
+stillschweigend, ohne Warnung.
+
+**Behoben:** neuer Erkenner `extrahiereStreichflaeche()` plus eine Zeile im
+Kontext-Analyzer, der die Zahl demselben raumbezogenen Textabschnitt
+zuordnet wie bisher schon beim Wort „Wandfläche".
+
+Bewusst eng gehalten, weil die Gegenrichtung genauso teuer wäre: Es zählt
+nur, wenn die Zahl grammatisch am Streichen hängt („35 m² gestrichen",
+„35 m² zu streichen", „35 m² tapeziert"). Eine Aufzählung wie „Wohnzimmer
+35 m², Wände streichen" bleibt die Raumgröße — dort IST die Zahl die
+Raumgröße, und die bisherige Rechnung stimmt. Decken- und Bodenwörter
+direkt an der Zahl schließen den Treffer aus, die haben eigene Erkenner.
+
+4 zusätzliche Tests (jetzt 17 in der DC-040-Datei), Suite grün
+(49 Dateien / 879 Tests).
+
 **Wichtig für den Live-Test:** Punkt 1 ist eine Prompt-Änderung, also das
 Verhalten eines Sprachmodells — Tests können hier nur die Regel prüfen, nicht
 das Ergebnis. Der Satz von Clemens muss einmal echt eingesprochen werden,
