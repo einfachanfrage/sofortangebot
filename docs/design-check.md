@@ -47,7 +47,7 @@ zusammen, vor allem dort, wo CI und Produkt-Design-System sich berühren —
 gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 `docs/team-organigramm.md`, Abschnitt „Head of Marketing".
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-30 — DC-043 NEU: "Dashboard + Menüleiste holt mich nicht ab" (Sandy, direkt im Anschluss an DC-042) — Diagnose ergab u. a. zwei gelbe CTAs für dieselbe Aktion (Hero-Button + Mikrofon-FAB), ungewichtete Statistik-Kacheln, keine Dringlichkeits-Anzeige und eine Wort-Inkonsistenz "Start"/"Dashboard" zwischen Mobile und Desktop. Zwei Richtungen im interaktiven Prototyp (A: Fokus & Dringlichkeit, B: Warm & persönlich) plus zwei unstrittige Fixes, wartet auf Sandys Reaktion; DC-042: Sandys Frage zum Dashboard-Header ("4 Angebote warten auf Antwort") plus offener Unmut über die gesamte Status-Logik ("nicht klar und clean genug") — auf Rückfrage explizit "Komplettes Status-Modell neu denken" gewählt. Komplette Code-Bestandsaufnahme des 6-Status-Modells ergab drei echte strukturelle Lücken (kein Filter-Reiter für "Fertiggestellt", Archivieren überschreibt den echten Ausgang, "Abgelehnt" ist reine Selbstauskunft ohne Kunden-Weg) plus einen toten `viewed`-Wert. Konzept + interaktiver Vorher/Nachher-Prototyp fertig (nur zwei Umbenennungen, Archiviert als Flag statt Status, eigener "Bereit"-Reiter, "seit X Tagen"-Anzeige), vier offene Entscheidungen explizit an Sandy delegiert. Wartet auf ihr Go, bevor echter Code angefasst wird. DC-041: Raum-Platzhalter ("Raum hinzufügen") zeigte im Titelfeld wörtlich "— Schlafzimmer" statt einer leeren, normal beschreibbaren Position (Sandy, Screenshot) — Eingabefeld zeigt/bearbeitet jetzt nur noch den sichtbaren Basistitel, Raum-Zuordnung bleibt beim Speichern automatisch erhalten (auch beim Übernehmen eines Preisdatenbank-Vorschlags); DC-040: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Extraktion, Bodenflächen-Erkennung und Tür-/Fensterabzug per Rückfrage ("nachfragen statt raten", Sandys Entscheidung) umgesetzt; mitgefunden und behoben: die 200-m²-Plausibilitätsgrenze im Prompt hätte eine Wohnungs-Wandfläche verworfen. Mein Anzeige-Teil dazu: "Wohnung" fehlte in der Raum-Erkennung der Anzeige (dieselbe Fehlerkategorie wie PM-005/PM-019) — jetzt nachgezogen, eigenes Symbol 🏡. Live-Test mit echter Sprachaufnahme steht aus; DC-039: "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank (Product Designer), dazu ein von Sandy live gefundener Bug behoben (Vorschlag antippen blieb wirkungslos — Tap schloss die Tastatur und die Liste rutschte weg, bevor der Klick ankam; jetzt `onMouseDown`+`preventDefault`), und eine abgesicherte Schreib-Seite (Head of Product Engineering: eigener Endpunkt `POST /api/preise`, serverseitige Prüfung, Dubletten-Schutz, Rubrik-Regel entdoppelt, `price_item_id` wird endlich mitgespeichert) — wartet jetzt auf Sandys Retest; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-30 — DC-043 + DC-042-Wording-Teil jetzt LIVE: Sandy wählte Richtung "Warm & persönlich" + FAB als einzige bleibende CTA ("das gelbe mikro muss IMMER da bleiben unten in der leiste") und gab direkt danach das Go für DC-042 ("dc042 deinen vorschklag auch live stellen"). Umgesetzt: Hero-"Aufmaß starten"-Button entfernt (FAB bleibt einzige CTA), Umsatz-Kachel mit echtem Vormonatsvergleich, "Bereit"/"Beim Kunden"-Umbenennung + eigener "Bereit"-Filter-Reiter, "seit X Tagen" auf wartenden Angeboten, "Start"→"Dashboard" vereinheitlicht — alles committet (`b1e32b5`), `tsc` sauber, Live-Test steht aus. Weiterhin offen (Head of Product Engineering): Archivieren als Flag statt überschreibendem Status + eigenes `sent_at`-Feld, beides braucht eine DB-Migration. DC-042 ursprüngliche Diagnose: Sandys Frage zum Dashboard-Header ("4 Angebote warten auf Antwort") plus offener Unmut über die gesamte Status-Logik ("nicht klar und clean genug") — auf Rückfrage explizit "Komplettes Status-Modell neu denken" gewählt. Komplette Code-Bestandsaufnahme des 6-Status-Modells ergab drei echte strukturelle Lücken (kein Filter-Reiter für "Fertiggestellt", Archivieren überschreibt den echten Ausgang, "Abgelehnt" ist reine Selbstauskunft ohne Kunden-Weg) plus einen toten `viewed`-Wert. Konzept + interaktiver Vorher/Nachher-Prototyp fertig (nur zwei Umbenennungen, Archiviert als Flag statt Status, eigener "Bereit"-Reiter, "seit X Tagen"-Anzeige), vier offene Entscheidungen explizit an Sandy delegiert. Wartet auf ihr Go, bevor echter Code angefasst wird. DC-041: Raum-Platzhalter ("Raum hinzufügen") zeigte im Titelfeld wörtlich "— Schlafzimmer" statt einer leeren, normal beschreibbaren Position (Sandy, Screenshot) — Eingabefeld zeigt/bearbeitet jetzt nur noch den sichtbaren Basistitel, Raum-Zuordnung bleibt beim Speichern automatisch erhalten (auch beim Übernehmen eines Preisdatenbank-Vorschlags); DC-040: "Wohnung als Ganzes" statt zwingend pro Raum (Sandy/Clemens) — Extraktion, Bodenflächen-Erkennung und Tür-/Fensterabzug per Rückfrage ("nachfragen statt raten", Sandys Entscheidung) umgesetzt; mitgefunden und behoben: die 200-m²-Plausibilitätsgrenze im Prompt hätte eine Wohnungs-Wandfläche verworfen. Mein Anzeige-Teil dazu: "Wohnung" fehlte in der Raum-Erkennung der Anzeige (dieselbe Fehlerkategorie wie PM-005/PM-019) — jetzt nachgezogen, eigenes Symbol 🏡. Live-Test mit echter Sprachaufnahme steht aus; DC-039: "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank (Product Designer), dazu ein von Sandy live gefundener Bug behoben (Vorschlag antippen blieb wirkungslos — Tap schloss die Tastatur und die Liste rutschte weg, bevor der Klick ankam; jetzt `onMouseDown`+`preventDefault`), und eine abgesicherte Schreib-Seite (Head of Product Engineering: eigener Endpunkt `POST /api/preise`, serverseitige Prüfung, Dubletten-Schutz, Rubrik-Regel entdoppelt, `price_item_id` wird endlich mitgespeichert) — wartet jetzt auf Sandys Retest; DC-038 fertig: Sandys Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) — Wandnummern gefixt UND "frei zeichnen" (Finger → RDP-vereinfacht → 90°-eingerastet → nummerierte Wände) nach Sandys Go ("bau den zecihner") fertig gebaut, committet; DC-037: Sandys Folgeidee zu DC-036 (Grundriss-Zeichner schon während der Aufnahme anbieten) geprüft und als fertige Spec an Head of Product Engineering übergeben; DC-036: "Raumform"-Reiter zu "📐 Unregelmäßig" umbenannt + Erklärtext, Grundriss-Zeichner für Nischen/Erker existierte schon, war nur schlecht auffindbar; DC-035: Hinweistext "Flächen vorläufig" umgesetzt, Datenweg + Eingabe-Oberfläche für die individuelle Öffnungsgröße (Terrassentür) jetzt komplett fertig. Alles noch nicht live nachgeprüft)
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
@@ -92,8 +92,8 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-039 | "+ Position" im Entwurf legt heute eine komplett leere Zeile an, keine Verbindung zur Preisdatenbank; zusätzlich Frage, ob die Aktionsleiste Aufnahme/Position/Raum selbsterklärend ist (Sandy, 2026-08-29, Screenshot) | ✅ Umgesetzt: Aktionsleiste geprüft (größtenteils selbsterklärend, kein Umbau nötig). "+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank direkt im Titelfeld — Vorschlag antippen übernimmt Titel/Einheit/Preis sofort, kein Treffer → "Neue Position anlegen" (Einheit+Preis inline) legt sofort einen echten Eintrag in der Preisdatenbank an (mit Dubletten-Check) und übernimmt ihn in die Position. Komplett Frontend + direkter Supabase-Insert (kein neuer Backend-Endpunkt nötig — price_items-Schreibzugriff existiert im selben Muster schon an anderen Stellen dieser Datei). Committet (`510c977`), scoped `tsc` sauber. **Bugfix (Product Designer, Sandys Live-Test):** Vorschlag antippen blieb wirkungslos — Ursache: Tap auf den Vorschlag ließ das Titelfeld zuerst den Fokus verlieren (Tastatur schließt, Seite rutscht), bevor der Klick registriert wurde, klassischer Mobile-Combobox-Bug. Fix: alle drei interaktiven Elemente der Suche (Vorschlag, „Neue Position anlegen", „Anlegen & übernehmen") von `onClick` auf `onMouseDown`+`preventDefault()` umgestellt, damit das Feld den Fokus gar nicht erst verliert. Committet (`a22d3f3`), scoped `tsc` sauber. Live-Test der Suche + des Bugfix steht aus. **Nachtrag Head of Product Engineering (Sandys Auftrag „dc039"):** Schreib-Seite auf einen eigenen Endpunkt `POST /api/preise` umgestellt — serverseitige Prüfung (Titel-Länge, Einheit, Tippfehler-Grenze beim Preis), robusterer Dubletten-Schutz (`.maybeSingle()` wäre bei historischen Dubletten im Katalog fehlgeschlagen) und die Rubrik-Regel jetzt in EINER Datei statt doppelt (CoS-019-Lehre). Mitgefixt: `price_item_id` wurde beim Speichern nie gesetzt. 9 neue Tests, Suite grün | Product Designer (UI, ✅) / Head of Product Engineering (Schreib-Seite, ✅) |
 | DC-040 | "Wohnung als Ganzes" statt zwingend pro Raum — Handwerker sprechen oft nicht raumweise ("die ganze Wohnung: 120 m² Wandfläche, 55 m² Laminat"), trotzdem Rückfrage zu Tür-/Fensterabzug gewünscht (Sandy, weitergegeben von Clemens, Maler, 2026-08-29) | 🔵 Root-Cause gefunden: `prompt-extraktion.ts` stuft "die ganze Wohnung" bedingungslos als vage/unklar ein, selbst mit echter m²-Angabe dabei — Fix nach dem Vorbild "Fassade in raeume" (existiert im selben Prompt bereits als Pseudo-Raum-Muster). Braucht zusätzlich einen `bodenflaeche_direkt`-Gegenpart zur bestehenden `wandflaeche_direkt`-Extraktion sowie eine Entscheidung zum Tür-/Fensterabzug bei direkter m²-Eingabe (aktuell wird der bei `modus: 'flaeche'` gar nicht abgezogen). **Umgesetzt (Head of Product Engineering, 2026-08-29):** Prompt-Abschnitt "WOHNUNG / HAUS ALS GANZES" nach Fassaden-Vorbild, `extrahiereBodenflaeche()` als Gegenstück zur Wandflächen-Erkennung (statt eines neuen Feldes ins bestehende `flaeche`), und der Tür-/Fensterabzug per Ja/Nein-Rückfrage ("Sind die 120 m² inklusive Türen und Fenster?", Sandys Entscheidung "nachfragen statt raten") — bei "ja" folgen die vorhandenen Stückzahlfragen, Abzug nach derselben VOB-Regel wie überall. Zusätzlich gefunden und behoben: die Prompt-Regel "flaeche > 200 → null" hätte eine Wohnungs-Wandfläche stillschweigend verworfen. Bewusst nur für Gesamtflächen-Räume, Einzelräume unverändert. 13 neue Tests, `tsc` sauber, Suite grün. **Anzeige-Teil umgesetzt (Product Designer, 2026-08-29):** "Wohnung" (und Geschwister Haus/Etage/Geschoss/Stockwerk) fehlten in der Raum-Erkennung der Anzeige (`angebot-gruppierung.ts`) — dieselbe Fehlerkategorie wie PM-005 (Speisekammer)/PM-019 (Gästeklo): trotz korrekter Berechnung wäre die Position ohne Raumkarte/Maße-Header im Allgemein-Topf gelandet. Schlüsselwörter ergänzt (deckungsgleich mit Engineerings `istGesamtflaechenRaum()`), "Wohnung" bekommt ein eigenes Symbol (🏡) statt sich das generische 🏠 mit Fassade zu teilen; Haus/Etage/Geschoss/Stockwerk bewusst ohne eigenes Symbol (Kollisionsrisiko mit "Treppenhaus", per Test abgesichert). Committet (`3149406`), `tsc` sauber. OFFEN: Live-Test mit echter Sprachaufnahme (Prompt-Änderung — Tests prüfen die Regel, nicht das Modellverhalten) | Head of Product Engineering (Extraktion/Berechnung, ✅) / Product Designer (Anzeige, ✅) |
 | DC-041 | Raum-Platzhalter ("Raum hinzufügen" → neue leere Position im Raum) zeigte im Titel-Eingabefeld wörtlich "— Schlafzimmer" statt einer leeren, normal beschreibbaren Position — "sieht kacke aus und dumm" (Sandy, Screenshot, 2026-08-29) | ✅ Root-Cause: der interne " — Raumname"-Suffix, mit dem eine Position ihrem Raum zugeordnet wird (`angebot-gruppierung.ts`), steckt komplett im `title`-Feld selbst; die Anzeige blendet ihn beim Lesen zwar aus (`titleOverride`), das EDIT-Eingabefeld band aber direkt an den Rohtitel statt an den bereits vorhandenen Anzeige-Wert. Fix: Eingabefeld zeigt/bearbeitet nur noch den sichtbaren Basistitel, der Raum-Suffix wird beim Speichern automatisch wieder drangehängt (auch beim Übernehmen eines Preisdatenbank-Vorschlags, sonst wäre die Position aus ihrem Raum herausgefallen). Komplett Frontend, keine Backend-Änderung. Committet (`6a1fa0d`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
-| DC-042 | Dashboard-Frage "was soll das im Header heißen '4 Angebote warten auf Antwort'?" plus offener Unmut: "ich mag generell die Statuslogik der Angebote irgendwie immer noch nicht, mir ist das nicht klar und clean genug" (Sandy, zwei Screenshots, 2026-08-30) — auf Rückfrage zum Umfang explizit **"Komplettes Status-Modell neu denken"** gewählt | 🔵 Komplette Bestandsaufnahme des 6-Status-Modells (Code geprüft, nicht spekuliert): drei echte strukturelle Lücken gefunden — (1) "Fertiggestellt" hat gar keinen eigenen Filter-Reiter in `STATUS_FILTERS`/`DashboardFilters.tsx`, nur über "Alle" auffindbar; (2) Archivieren überschreibt den echten Ausgang (angenommen/abgelehnt/…) ersatzlos, da `status` ein einziges Feld ist; (3) "Abgelehnt" ist reine Selbstauskunft des Handwerkers, es gibt keinen Kunden-Weg zum Ablehnen, dazu ein toter `viewed`-Wert, der nirgends geschrieben wird. Dazu Wording-Probleme ("Offen" sagt nicht wer dran ist, "Fertiggestellt" kollidiert mit "abgeschlossen", kein Alters-Hinweis). Direkte Antwort auf die Header-Frage: sie zeigt dieselbe Zahl wie die "OFFEN"-Kachel darunter, nur anders formuliert. **Vorschlag:** nur zwei Umbenennungen (Fertiggestellt→Bereit, Offen→Beim Kunden), Archiviert wird ein Tag/Flag statt eines überschreibenden Status, eigener "Bereit"-Filter-Reiter, "Beim Kunden seit X Tagen"-Anzeige, ein einheitlicher Dashboard-Header statt zwei Formulierungen. Vier offene Entscheidungen explizit an Sandy delegiert (toter `viewed`-Status streichen oder zu echtem Feature ausbauen; Wording-Feinschliff; ob "Abgelehnt" intern differenzieren soll; `sent_at` als neues Feld oder `created_at` weiterverwenden). Konzept (`dc-042-status-modell-neu-denken.md`) + interaktiver Vorher/Nachher-Prototyp (`dc-042-status-modell-prototyp.html`, Playwright-verifiziert) fertig, wartet auf Sandys Feedback/Go — bewusst noch KEIN echter Code angefasst, da Archivieren-als-Flag + `sent_at` nicht-triviale Datenmodell-Änderungen wären | Product Designer (Konzept + Prototyp fertig, wartet auf Go) / Head of Product Engineering (Datenmodell-Teil, sobald Sandy entschieden hat) |
-| DC-043 | "kannst du bitte auch das dashboard und die menüleiste unten neu denken?? irgendwie holt mich das nicht ab...." (Sandy, direkt im Anschluss an DC-042, 2026-08-30) — kein konkreter Bug, ein Bauchgefühl | 🔵 Code von `dashboard/page.tsx`, `BottomNav.tsx`, `SideNav.tsx`, `data/dashboard.ts` durchgesehen, um das Gefühl an konkreten Ursachen festzumachen: (1) Hero-Button "Aufmaß starten" UND der Mikrofon-FAB in der `BottomNav` führen beide zu `/angebot/neu` — zwei gelbe CTAs für dieselbe Aktion gleichzeitig sichtbar; (2) alle drei Statistik-Kacheln gleich gewichtet, kein Vergleich zum Vormonat, obwohl Umsatz die emotional wichtigste Zahl wäre; (3) "4 Angebote warten auf Antwort" ist nur ein Link ohne Dringlichkeits-Info, welches Angebot am längsten wartet (Berührungspunkt mit DC-042); (4) `BottomNav` nennt den Ort "Start", `SideNav` (Desktop) nennt ihn "Dashboard" — Wort-Inkonsistenz Mobile/Desktop; (5) Menüleiste rein statisch, kein Badge/Zustand. **Zwei Richtungen zum Reagieren** (bewusst kein einzelner "richtiger" Vorschlag, da Geschmacksfrage): A "Fokus & Dringlichkeit" (am längsten wartendes Angebot namentlich herausgestellt, Umsatz groß mit Vormonatsvergleich, Badge auf Angebote-Tab) und B "Warm & persönlich" (variablere Begrüßung, Umsatz als freundliche Fortschritts-Kachel, sanfte statt drängende Nachfass-Hinweise). Zwei unstrittige Fixes in beiden Richtungen: nur noch ein Weg zu "Aufmaß starten", "Start"/"Dashboard" vereinheitlicht. Konzept (`dc-043-dashboard-und-nav-neu-gedacht.md`) + interaktiver Prototyp mit Drei-Wege-Umschalter (`dc-043-dashboard-nav-prototyp.html`, Playwright-verifiziert, zwei Darstellungsfehler beim Review gefunden und behoben) fertig, wartet auf Sandys Reaktion — reine Frontend-Änderung, kein Datenmodell-Einfluss, kann nach ihrem Go direkt umgesetzt werden | Product Designer (Konzept + Prototyp fertig, wartet auf Reaktion) |
+| DC-042 | Dashboard-Frage "was soll das im Header heißen '4 Angebote warten auf Antwort'?" plus offener Unmut: "ich mag generell die Statuslogik der Angebote irgendwie immer noch nicht, mir ist das nicht klar und clean genug" (Sandy, zwei Screenshots, 2026-08-30) — auf Rückfrage zum Umfang explizit **"Komplettes Status-Modell neu denken"** gewählt, dann "dc042 deinen vorschklag auch live stellen" | ✅ Wording/Filter-Teil live: "Fertiggestellt"→"Bereit", "Offen"→"Beim Kunden" (`status.ts`, einzige Quelle seit DC-003, kaskadiert automatisch überallhin), eigener "Bereit"-Filter-Reiter ergänzt (fehlte komplett — eine der drei strukturellen Lücken aus der Bestandsaufnahme), "seit X Tagen" auf wartenden Angeboten (`MobileQuoteCard`, auf `created_at`-Basis, keine Migration nötig). Committet (`b1e32b5`), scoped `tsc` sauber. 🔵 Bewusst NICHT live: Archivieren als Flag statt überschreibendem Status (überschreibt aktuell den echten Ausgang bei Angenommen/Abgelehnt) + ein eigenes `sent_at`-Feld — beides braucht eine Datenbank-Migration, liegt als fertige Spec bei **Head of Product Engineering** (siehe DC-042-Detailabschnitt unten). Ebenfalls noch offen: toter `viewed`-Status (streichen oder zu echtem Feature ausbauen — Sandys Entscheidung steht noch aus) | Product Designer (Wording/Filter ✅ live) / Head of Product Engineering (Archivieren-als-Flag + `sent_at`, noch offen) |
+| DC-043 | "kannst du bitte auch das dashboard und die menüleiste unten neu denken?? irgendwie holt mich das nicht ab...." (Sandy, direkt im Anschluss an DC-042, 2026-08-30), dann "UM GOTTES WILLEN!!!! das gelbe mikro muss IMMER da bleiben unten in der leiste, also safe FAB behalten!!! warm und persönlich" | ✅ Live: FAB bleibt die einzige, immer sichtbare CTA — der doppelte Hero-"Aufmaß starten"-Button (führte zur exakt selben Aktion wie der Mikrofon-FAB) entfernt (Desktop hat weiterhin die SideNav-CTA, keine Lücke). Richtung "Warm & persönlich" umgesetzt: Umsatz-Kachel hervorgehoben mit echtem Vormonatsvergleich (`data/dashboard.ts`, neue Vormonats-Abfrage) + Erfolgs-Hinweis bei angenommenen Angeboten, Beauftragt/Offen als sekundäre 2er-Reihe. `BottomNav`: "Start"→"Dashboard" (Wort-Inkonsistenz zur Desktop-SideNav behoben). Committet (`b1e32b5`), scoped `tsc` sauber, Live-Test steht aus | Product Designer (umgesetzt) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -3314,8 +3314,10 @@ Komplett Frontend, keine Backend-/Datenmodell-Änderung. Committet
 **Datum:** 2026-08-30 (Sandy, direkt im Anschluss an DC-041, zwei
 Dashboard-Screenshots)
 
-**Status:** 🔵 Konzept + interaktiver Prototyp fertig, wartet auf Sandys
-Feedback/Go — noch kein echter Code angefasst
+**Status:** ✅ Wording/Filter-Teil live (Sandys Go: "dc042 deinen vorschklag
+auch live stellen", committet `b1e32b5`) — 🔵 Archivieren-als-Flag +
+`sent_at` weiterhin offen, liegt bei Head of Product Engineering (siehe
+"Umgesetzt"-Abschnitt unten)
 
 **Auftrag:** "was soll das im Header heißen '4 Angebote warten auf Antwort'?
 das ist mir zu wischiwaschi ich mag generell die Statuslogik der Angebote
@@ -3396,8 +3398,44 @@ zeigt, "seit X Tagen"-Anzeige, "Status ändern"-Sheet mit Archivieren als
 eigenem Schalter) plus Wortwahl-Umschalter zum Ausprobieren. Playwright-
 verifiziert (drei Darstellungsfehler beim Review gefunden und behoben).
 
-Bewusst noch KEIN echter Code angefasst — Archivieren-als-Flag und
-`sent_at` sind nicht-triviale Datenmodell-Änderungen.
+### ✅ Umgesetzt (Product Designer, 2026-08-30, Sandys Go)
+
+Reiner Wording/Filter-Teil, ohne Datenmodell-Änderung:
+
+- `status.ts`: "Fertiggestellt" → "Bereit", "Offen" → "Beim Kunden" —
+  einzige Quelle seit DC-003, die Umbenennung kaskadiert automatisch in
+  `MobileQuoteCard`, Angebote-Liste (Desktop-Tabelle + Mobile), Kundendetail
+  und das "Status ändern"-Sheet, ohne dass dort etwas geändert werden musste.
+- `STATUS_FILTERS` (`src/data/quotes.ts`) + `DashboardFilters.tsx` +
+  `angebote/page.tsx`: eigener "Bereit"-Filter-Reiter ergänzt (Lücke 1 aus
+  der Bestandsaufnahme) inkl. eigenem Empty-State-Text. Der interne
+  `key` für "Beim Kunden" bleibt bewusst `offen` (nur der Anzeige-Text
+  ändert sich) — der Query-Param ist an mehreren Stellen verlinkt (z. B.
+  Dashboard-Hero), eine Umbenennung des Keys hätte nur Risiko ohne Vorteil
+  gebracht.
+- `MobileQuoteCard.tsx`: "seit X Tagen" bei Status `sent`, auf `created_at`-
+  Basis (offene Entscheidung 4 — die einfache, sofort umsetzbare Variante
+  ohne DB-Änderung; ein exaktes `sent_at`-Feld bliebe als spätere,
+  genauere Option).
+
+Committet (`b1e32b5`), scoped `tsc --noEmit` sauber. Live-Test steht aus.
+
+**Bewusst NICHT umgesetzt — bei Head of Product Engineering:**
+
+- **Archivieren als Flag statt überschreibendem Status** (Lücke 2) —
+  braucht eine Datenbank-Migration (neue Spalte `archived_at`) und
+  Anpassung an allen Schreibstellen (`/api/email`, `/api/sign`,
+  "Status ändern"-Sheet). Spec liegt in
+  `dc-042-status-modell-neu-denken.md` bereit.
+- Ein eigenes `sent_at`-Feld für eine exaktere "seit X Tagen"-Anzeige
+  (fällt weg, sobald die `created_at`-Variante oben nicht mehr genau genug
+  ist).
+
+**Weiterhin offene Entscheidung — bei Sandy:** der tote `viewed`-Status
+(ersatzlos streichen oder zu einem echten "Kunde hat geöffnet"-Feature
+ausbauen) sowie ob "Abgelehnt" intern zwischen "aktives Nein" und "nichts
+mehr gehört" unterscheiden soll — beides unverändert gelassen, bis Sandy
+sich entscheidet.
 
 ---
 
@@ -3405,8 +3443,9 @@ Bewusst noch KEIN echter Code angefasst — Archivieren-als-Flag und
 
 **Datum:** 2026-08-30 (Sandy, direkt im Anschluss an DC-042)
 
-**Status:** 🔵 Konzept + interaktiver Prototyp fertig, wartet auf Sandys
-Reaktion — noch kein echter Code angefasst
+**Status:** ✅ Live (Sandys Go: "das gelbe mikro muss IMMER da bleiben unten
+in der leiste, also safe FAB behalten!!! warm und persönlich" — Richtung B
++ FAB-Fix gewählt, committet `b1e32b5`)
 
 **Auftrag:** "kannst du bitte auch das dashboard und die menüleiste unten
 neu denken?? irgendwie holt mich das nicht ab...." Kein konkreter Bug,
@@ -3465,8 +3504,34 @@ behoben (Alters-Hinweis erschien fälschlich schon im "Heute"-Zustand;
 Kopfzeile mit App-Namen war auf hellem statt dunklem Hintergrund kaum
 lesbar).
 
-Reine Frontend-Änderung, kein Datenmodell-Einfluss — kann nach Sandys Go
-direkt umgesetzt werden, kein Warten auf Head of Product Engineering nötig.
+Reine Frontend-Änderung, kein Datenmodell-Einfluss.
+
+### ✅ Umgesetzt (Product Designer, 2026-08-30, Sandys Go)
+
+Sandy hat sich für Richtung **B — Warm & persönlich** entschieden, dazu
+explizit für den FAB als der eine bleibende CTA (nicht den Hero-Button):
+
+- **CTA-Fix:** der Hero-"Aufmaß starten"-Button entfällt — der
+  Mikrofon-FAB in der `BottomNav` bleibt die einzige, immer sichtbare
+  Aktion (auf jeder Seite erreichbar, nicht nur auf dem Dashboard).
+  Desktop verliert dadurch keine Möglichkeit: die SideNav hat weiterhin
+  ihre eigene "Neues Angebot"-CTA. Der Empty-State-Text ("Tippe oben auf
+  „Aufmaß starten"") verwies auf den jetzt entfernten Button — auf "Tippe
+  unten auf das Mikrofon" umgestellt.
+- **Umsatz-Kachel (Richtung B):** eigene, hervorgehobene Kachel statt einer
+  von drei gleichrangigen — mit echtem Vergleich zum Vormonat (`+X% ggü.
+  letzten Monat`, `data/dashboard.ts` fragt jetzt zusätzlich den
+  Vormonatsumsatz mit derselben Filterlogik ab) und einem Erfolgs-Hinweis
+  ("🎉 X Angebote diesen Monat angenommen"), wenn diesen Monat etwas
+  angenommen wurde — bewusst nur bei echter Grundlage, keine erfundene
+  Behauptung. Kein Vergleich angezeigt, wenn der Vormonat 0 € Umsatz hatte
+  (sonst bedeutungslose "+100%"/"+∞%"-Angabe). Beauftragt/Offen("Beim
+  Kunden") rutschen als sekundäre 2er-Reihe darunter.
+- **Menüleiste bleibt ruhig** (Richtung B, kein Badge) — nur die
+  Wort-Inkonsistenz behoben: `BottomNav` nennt den Ort jetzt auch
+  "Dashboard" statt "Start".
+
+Committet (`b1e32b5`), scoped `tsc --noEmit` sauber. Live-Test steht aus.
 
 ---
 
