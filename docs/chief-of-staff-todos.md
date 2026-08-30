@@ -1480,6 +1480,14 @@ einen eigenen Rückgabewert laufen. Übrig bleibt ein Filter, der faktisch nur
 noch die paar „implizit_"-Fragen trifft. Dieselbe Fehlerklasse wie PM-010
 (toter Code, der aussieht, als würde er etwas tun).
 
+**✅ Entschieden (Sandy, 29.08.2026): löschen, nicht wiederbeleben.** Der
+Filter ist ersatzlos entfernt (`extraktion-pipeline.ts`), an seiner Stelle
+steht eine Notiz, warum. Es wird also weiter gefragt statt still mit
+1 Fenster / 1 Tür gerechnet. `tsc` sauber, Suite grün (49 Dateien / 875
+Tests). Nebeneffekt der Entscheidung: hätte er weitergelebt, hätte er auch
+die neue DC-040-Rückfrage („Sind die 120 m² inklusive Türen und Fenster?")
+mit unterdrückt — sie enthält beide Reizwörter.
+
 Ich habe ihn **bewusst nicht wiederbelebt**: Das wäre eine inhaltliche
 Entscheidung, keine Reparatur. Er würde Fragen unterdrücken, deren Antwort
 NICHT im Text steht — das Tool würde dann still mit Standard-Annahmen rechnen
@@ -1807,6 +1815,47 @@ eigene Aufgabe, ähnlich wie ihr CoS-002-Retest.
 „X ist unverändert offen" aktiv in der aktuellen Heimat-Datei nachsehen,
 nicht aus dem Gedächtnis wiederholen — genau der Fehler, der hier passiert
 ist.
+
+## CoS-024 — Sammel-Nachtrag DC-036 bis DC-041 (Product Designer, 29.08.)
+
+**Datum:** 2026-08-29 (Chief of Staff, nach Sandys „schau dir ALLES an nicht
+wieder den Fehler machen und iwas übersehen")
+
+**Status:** 🟡 fünf von sechs Punkten code-fertig, alle Live-Tests offen; einer (DC-037) noch nicht begonnen
+
+**Anlass:** Vollständiger Audit von `design-check.md` auf Sandys
+ausdrücklichen Wunsch, nachdem zweimal hintereinander Fortschritt übersehen
+wurde (CoS-002/DC-021-Retest, dann CoS-P-003/004-Fixes). Sechs neue Punkte
+gefunden, die weder hier noch in `launch-readiness.md` verzeichnet waren —
+alle vom 29.08., alle von Sandys eigenem Feedback/Testen ausgelöst.
+
+| DC | Kurzbeschreibung | Status | Owner |
+|---|---|---|---|
+| DC-036 | Reiter „Raumform" → „📐 Unregelmäßig" umbenannt, Grundriss-Zeichner für Nischen war nur schlecht auffindbar | ✅ committet, Live-Test aus | Product Designer |
+| DC-037 | Sandys Folgeidee: Grundriss-Zeichner schon während der Aufnahme anbieten | 🔵 nur Spec fertig, Backend-Teil noch nicht begonnen (Merge-Konflikt mit KI-Extraktion muss gelöst werden) | Head of Product Engineering |
+| DC-038 | Kritik am Grundriss-Zeichner (keine Wandnummern, nur 3 Vorlagen) | ✅ Wandnummern + neues „frei zeichnen" (Finger→90°-eingerastet→nummeriert) umgesetzt, Live-Test aus | Product Designer |
+| DC-039 | „+ Position" Live-Suche gegen Preisdatenbank + abgesicherter Schreib-Endpunkt | ✅ beide Teile umgesetzt, dabei Tap-Bug UND einen alten `price_item_id`-Speicherbug gefunden+gefixt, Live-Retest aus | Product Designer (UI) / Head of Product Engineering (Endpunkt) |
+| DC-040 | „Wohnung als Ganzes" statt zwingend pro Raum (Clemens' Rückmeldung über Sandy) | ✅ Extraktion + Anzeige umgesetzt, **Prompt-Änderung — braucht echten Live-Test mit echter Sprachaufnahme**, nicht nur Unit-Tests | Head of Product Engineering (Extraktion) / Product Designer (Anzeige) |
+| DC-041 | Raum-Platzhalter zeigte literales „— Schlafzimmer" im Titelfeld | ✅ committet, reiner Frontend-Fix, Live-Test aus | Product Designer |
+
+**In `launch-readiness.md` eingerechnet:** 1.2 (+3, DC-038/040), 1.6 (+10,
+DC-039), 5.2 (+8, DC-036/038/039/041). Gate 1 bleibt bei 34 % (Bewegung zu
+klein für die gerundete Gesamtzahl über 46 Punkte).
+
+**Neue offene Entscheidung aus DC-040 (bereits in
+`entscheidungen-fuer-sandy.md`):** soll die „schon ohne Fenster/Türen?"-
+Rückfrage auch bei einzelnen Räumen kommen, nicht nur bei ganzen Wohnungen?
+Hängt mit CoS-020 zusammen.
+
+**Zwei Kleinigkeiten, nicht selbst korrigiert (nicht meine Heimat-Datei):**
+DC-033s eigene Kopfzeile widerspricht ihrem eigenen Fix-Update (siehe
+Governance-Hinweis in `launch-readiness.md`); ein leeres Test-Angebot
+(Nr. 2026-493C) wartet in der Produktions-Datenbank auf manuelle Löschung
+durch Sandy.
+
+**Nächster Schritt:** kein Auftrag an Kollegen nötig — alles außer DC-037
+ist bereits in Arbeit/fertig. Live-Tests sammeln sich mit den übrigen
+offenen Nachtests (siehe Dashboard).
 
 ---
 

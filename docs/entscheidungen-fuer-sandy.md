@@ -20,17 +20,7 @@ löschen — Verlauf ist wertvoll).
 
 ## Offen
 
-**🔵 DC-026-Nebenbefund (Head of Product Engineering, 24.08.):** Beim Fixen
-der „fragt nach Sachen, die ich schon gesagt habe"-Rückfragen ist ein toter
-Filter aufgefallen, der Fenster-/Türanzahl-Fragen unterdrücken sollte, wenn
-die Raummaße schon bekannt sind — der Filter greift technisch nicht mehr
-(er prüft ein Feld, das inzwischen vorher geleert wird), Head of Product
-Engineering hat ihn bewusst nicht repariert, weil das eine inhaltliche
-Entscheidung ist, keine Reparatur: **Soll das Tool bei bekannten Raummaßen
-weiterhin nach Fenster-/Türanzahl fragen, oder stillschweigend mit
-Standard-Annahmen (1 Fenster, 1 Tür) rechnen und gar nicht erst fragen?**
-Beides ist vertretbar — weniger Fragen vs. keine stille Annahme. Quelle:
-`docs/chief-of-staff-todos.md` CoS-020.
+**✅ ENTSCHIEDEN (Sandy, 29.08.): Der tote Filter wird gelöscht, nicht wiederbelebt — es wird gefragt statt still mit 1 Fenster / 1 Tür gerechnet. Umgesetzt am selben Tag, siehe Verlauf unten.**
 
 **🔵 Zwei kleine Katalog-Fragen (Head of Product Engineering, 24.08., aus
 CoS-019):** (1) In „Abbruch" stehen jetzt „Erschwerniszuschlag Handabbruch"
@@ -66,12 +56,12 @@ andere Nummer wäre schlimmer als die jetzige Ersatzbezeichnung. Beide Wege
 sind in einer Minute umgesetzt, sobald du dich entschieden hast. Quelle:
 `docs/chief-of-staff-todos.md` CoS-022.
 
-Stand 24.08.2026: CoS-002 Schritt 3 ist entschieden (siehe unten) — Sandys
+Stand 29.08.2026: CoS-002 Schritt 3 ist entschieden (siehe unten) — Sandys
 Antwort auf die Rückfrage war eindeutig, keine weitere Klärung nötig. Die
 weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage,
 sondern die Gate-1-Gesamtfrage „ist das Tool reif für erste echte
-Testnutzer?" — die läuft über `docs/launch-readiness.md` (aktuell 31 %
-gegen den vollen Scope, Stand 24.08.).
+Testnutzer?" — die läuft über `docs/launch-readiness.md` (aktuell 34 %
+gegen den vollen Scope, Stand 29.08.).
 
 ---
 
@@ -79,6 +69,7 @@ gegen den vollen Scope, Stand 24.08.).
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-08-29 | CoS-020: toten Filter für Tür-/Fensterfragen wiederbeleben (weniger Fragen, stille Standard-Annahme) oder löschen (weiter fragen)? | **Löschen — es wird gefragt.** Ersatzlos entfernt, `tsc` sauber, Suite grün (49 Dateien / 875 Tests). Der Filter erreichte die echten Fragen ohnehin nicht mehr; wiederbeleben hätte auch die neue DC-040-Rückfrage mit unterdrückt | `docs/chief-of-staff-todos.md` CoS-020 |
 | 2026-08-16 | DC-001: Preismodell + Gewerke-Versprechen | 22 €/Monat Standard, 17 €/Monat Jahresabo, 3 Angebote/Monat kostenlos; „Maler & Bodenleger" statt „18 Gewerke" | `docs/design-check.md` DC-001 |
 | 2026-08-17 | CoS-009: Head-of-IT-Rolle splitten? | Ja — aufgeteilt in Head of Product Engineering + Platform & Integrations Engineer | `docs/chief-of-staff-todos.md` CoS-009 |
 | 2026-08-18 | CoS-M-001: neue CI-Richtung „Gerechnet, nicht geschätzt" | Bestätigt (direkt mit Sandy über mehrere Feedback-Runden verfeinert): Gelb-Nuance `#D9A400` testen, Überschriften Bricolage Grotesque, Mono-Zahlenschrift nur für berechnete Maße (nicht Preise), Emoji auf Landingpage durch eigenes Werkzeug-Icon-Set ersetzt (Marketing-Scope, Produkt-UI bleibt bei Lucide), neues Logomark (Maßband-Symbol, finale Version von Sandy selbst geliefert), warmes Off-White auch als Text-/Symbolfarbe auf Dunkel. Umsetzung folgt in Schritt 5 (Umsetzungsplan) | `docs/marketing-ci.md`, `docs/moodboard.html`, `docs/chief-of-staff-marketing-todos.md` CoS-M-001 |

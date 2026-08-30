@@ -98,6 +98,66 @@ neuer Design-Fund (DC-035), CoS-022/DC-033 als „behoben" bestätigt.**
   Umsetzungs-Spec an Head of Product Engineering übergeben. Fließt noch
   nicht in eine eigene Prozentzahl ein, siehe `design-check.md` DC-035.
 
+**Update 29.08.2026, Teil 2 — vollständiger Nachtrag nach Sandys „schau dir
+ALLES an": sechs weitere neue Design-Punkte (DC-036–DC-041) gefunden, die
+weder hier noch in `chief-of-staff-todos.md` verzeichnet waren.** Sandy
+hatte nach der PKCE-Korrektur ausdrücklich einen vollständigen Sync
+angefordert. Ergebnis (volle Details in `design-check.md`, neue Sammel-
+Ticket **CoS-024** in `chief-of-staff-todos.md`):
+
+- **DC-036** (Reiter „Raumform" → „📐 Unregelmäßig" umbenannt, Grundriss-
+  Zeichner für Nischen war nur schlecht auffindbar): ✅ committet, Live-Test
+  aus. Kosmetisch, keine eigene Prozentzahl.
+- **DC-037** (Sandys Folgeidee: Grundriss-Zeichner schon während der
+  Aufnahme anbieten): **einziges der sechs Items, das noch NICHT gebaut
+  ist** — fertige Spec an Head of Product Engineering übergeben, Backend-
+  Teil (Merge-Konflikt mit der bestehenden KI-Extraktion, die `raum_details`
+  sonst überschreiben würde) noch nicht begonnen.
+- **DC-038** (Kritik am Grundriss-Zeichner: keine Wandnummern, nur 3
+  Vorlagen): ✅ beide Teile umgesetzt (Wandnummern + neues „frei zeichnen"),
+  → **1.2 (+3), 5.2 (siehe dort)**.
+- **DC-039** („+ Position" Live-Suche gegen Preisdatenbank + abgesicherter
+  Schreib-Endpunkt, dabei Tap-Bug und einen alten `price_item_id`-Bug
+  gefunden+gefixt): ✅ beide Teile umgesetzt → **1.6 (+10), 5.2**.
+- **DC-040** („Wohnung als Ganzes" statt zwingend pro Raum, Clemens'
+  Rückmeldung über Sandy): ✅ Extraktion + Anzeige umgesetzt, **aber
+  Prompt-Änderung — automatisierte Tests prüfen nur die Regel, kein Ersatz
+  für einen echten Live-Test mit echter Sprachaufnahme** → **1.2 (+3,
+  gemeinsam mit DC-038 gewertet)**. Nebenbei einen echten Bug gefunden+
+  gefixt: die 200-m²-Plausibilitätsgrenze hätte eine echte
+  Wohnungs-Wandfläche verworfen.
+- **DC-041** (Raum-Platzhalter zeigte den literalen Text „— Schlafzimmer"
+  im Titelfeld statt eines leeren Felds): ✅ committet, reiner Frontend-Fix
+  → **5.2**.
+- **Neue offene Entscheidung (DC-040-Folgefrage, bereits in
+  `entscheidungen-fuer-sandy.md`):** soll die „schon ohne Fenster/Türen?"-
+  Rückfrage auch bei EINZELNEN Räumen kommen, nicht nur bei ganzen
+  Wohnungen? Hängt mit der offenen CoS-020-Frage zusammen, am besten
+  zusammen entschieden.
+
+> ⚠ **Governance-Hinweis (Chief of Staff, 29.08.):** Zwei Kleinigkeiten aus
+> `design-check.md`, nicht selbst korrigiert (nicht meine Heimat-Datei):
+> (1) DC-033s eigene Abschnitts-Kopfzeile sagt noch „❌ offen", obwohl der
+> darunterstehende Fix-Update-Text und die Zusammenfassungstabelle „🟡
+> behoben" sagen — für die Bewertung wurde wie immer der neuere Inhalt
+> verwendet, nicht die veraltete Kopfzeile. (2) Bei DC-035 Teil 2 und
+> DC-038 Teil 1 ist laut Formulierung nicht ganz eindeutig, ob der Commit
+> schon durch ist oder noch an einem Git-Lock hängt („sobald der Lock
+> freigegeben ist") — für Gate 1 hier als „code-fertig" gewertet, aber
+> beim Live-Test-Termin lohnt sich ein kurzer Blick, ob der Commit
+> tatsächlich gelandet ist.
+>
+> Zusätzlich: ein Wegwerf-Testangebot (Nr. 2026-493C, leer, 0 €, Status
+> „Fertiggestellt") steht laut Product Designer weiterhin in der
+> Produktions-Datenbank und wartet auf manuelle Löschung durch Sandy —
+> kein Kollege räumt das automatisch weg.
+>
+> **Effekt auf Gate 1:** trotz sechs neuer, echter Fortschritte bleibt die
+> Gate-1-Zahl bei **34 %** — die Einzelbewegungen (1.2 +3, 1.6 +10, 5.2 +8)
+> sind über 46 Punkte verteilt zu klein, um die gerundete Gesamtzahl zu
+> bewegen. Echter Fortschritt, der in der einen großen Zahl nicht sichtbar
+> wird — deshalb stehen die Einzelheiten hier ausführlich.
+
 **Update 25.08.2026, Abend — Tagesabschluss: großer QA-Meilenstein (praktisch
 der komplette Testfall-Rückstand live bestätigt) plus zwei abgeschlossene
 Tickets (CoS-021, CoS-022), UND CoS-002 endgültig geschlossen.**
@@ -397,11 +457,11 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 38 % — weiter 21 von ~100 Fällen (PM-001–021), aber **25.08.: ALLE 21 live durchgetestet**, keiner mehr „code-fertig, Nachtest offen" außer PM-014 (Gleichzeitigkeitstest) und PM-015 (praktisch erledigt). Zusätzlich neuer, gewerk-übergreifender Sicherheitsmechanismus gegen falsch-quadratische Räume live bestätigt. Breite bleibt der limitierende Faktor (21 von ~100), deshalb nicht höher. Quelle: `docs/pruefmeister-testfaelle.md` |
-| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 65 % — **25.08.:** neuer Sicherheitsmechanismus gegen Whisper-Verhörer bei quadratischen Räumen gewerk-unabhängig (Maler UND Bodenleger) live bestätigt, dazu bereits: isolierter Erschwerniszuschlag, Altbelag-Verneinung, zugespitzte VOB-Übermessungsfrage |
+| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 68 % — **25.08.:** neuer Sicherheitsmechanismus gegen Whisper-Verhörer bei quadratischen Räumen gewerk-unabhängig (Maler UND Bodenleger) live bestätigt, dazu bereits: isolierter Erschwerniszuschlag, Altbelag-Verneinung, zugespitzte VOB-Übermessungsfrage. **29.08.: zwei neue Sonderfälle abgedeckt** — DC-040 „Wohnung als Ganzes" (Extraktion für ganze Wohnung/Haus statt zwingend pro Raum) und DC-038 „frei zeichnen" (unregelmäßige Räume/Nischen per Freihandzeichnen). Beide code-fertig, aber **DC-040 ist eine Prompt-Änderung — automatisierte Tests prüfen nur die Regel, kein Ersatz für einen echten Live-Test mit echter Sprachaufnahme**, der noch aussteht. Deshalb nur moderater Sprung |
 | 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 95 % — **25.08.: CoS-002 endgültig abgeschlossen.** Zusätzlich zum Realtime-Fix bereits echter Schutz gegen stilles Überschreiben manueller Positions-Änderungen, inkl. Löschfall (CoS-014). **Sandys Bestätigungs-Retest ist bestanden** — zweifach dokumentiert: Product Designer hatte es schon am 23.08. in `design-check.md` (DC-021) festgehalten (dort korrekt, hier durch einen eigenen Sync-Fehler nicht übernommen), und Sandy hat heute unabhängig denselben Test live wiederholt („Boden schützen 12 m²" korrekt) und bestätigt. Nicht auf 100 %, weil nur gezielte Testfälle bestätigt sind, keine breite Testserie. Quelle: CoS-002/CoS-014, `docs/cos-002-architektur-vorschlag.md`, DC-021 |
 | 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟢 92 % — **24.08.: CoS-018 abgeschlossen**, alle vier vorbestehenden Fehlschläge als veralteter Testcode aufgeklärt (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix. **25.08.:** Suite weiter gewachsen auf 842/842, u. a. durch CoS-021- und PM-019/020-Sicherheitstests, weiterhin kein Fund einer Regression. Kein direkter CI-Dashboard-Zugriff |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
-| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 55 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.), Live-Nachtest dafür steht noch aus |
+| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 65 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.). **29.08. (DC-039):** „+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank plus einen eigenen, serverseitig abgesicherten Schreib-Endpunkt (Dubletten-Schutz, Rubrik-Regel entdoppelt) — dabei nebenbei einen echten Altbug gefunden und gefixt (`price_item_id` wurde beim Speichern nie mitgeschrieben, weder bei Neuanlage noch beim Ändern). Live-Nachtest weiterhin für alles offen |
 | 1.7 | KI-Grenzen/Fehlerrate den Nutzern gegenüber transparent kommuniziert (kein 100 %-Versprechen) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.8 | Lasttest: mehrere gleichzeitige Aufnahmen/Nutzer ohne Fehler | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.9 | Bekannte Sprach-/Dialekt-/Störgeräusch-Grenzen dokumentiert | G3 | ⚪ offen — nicht erhoben (neu) |
@@ -446,7 +506,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 5.1 | Man kommt von überall leicht zurück/zur Startseite — keine Sackgassen | G1 | ⚪ offen — nicht erhoben |
-| 5.2 | Jeder Button an sinnvoller Stelle, nichts Wichtiges fehlt/kaputt | G1 | 🟡 62 % — **DC-011 behoben + live bestätigt** (fertiges Angebot verschwand aus der Liste). **24.08.: DC-002** (fehlender „Angebote"-Nav-Punkt) behoben. **25.08. (CoS-021/DC-034):** ein echter, bisher unbekannter kaputter Button gefunden — der „ins PDF"-Schalter bei Fotos hat noch nie etwas bewirkt (kein PDF-Code-Pfad las das Flag), jetzt echt gebaut. Weiterhin offen: DC-009/010 (Erfolgs-Anzeige/Guardrail), Live-Nachtest für alle drei Fixe |
+| 5.2 | Jeder Button an sinnvoller Stelle, nichts Wichtiges fehlt/kaputt | G1 | 🟡 70 % — **DC-011 behoben + live bestätigt** (fertiges Angebot verschwand aus der Liste). **24.08.: DC-002** (fehlender „Angebote"-Nav-Punkt) behoben. **25.08. (CoS-021/DC-034):** kaputter „ins PDF"-Schalter bei Fotos gefunden und gebaut. **29.08., gebündelter Nachtrag (DC-036/038/039/041):** vier weitere UI-Punkte abgearbeitet — Reiter „Raumform" umbenannt + auffindbar gemacht (DC-036); Grundriss-Zeichner bekam Wandnummern + neue „frei zeichnen"-Funktion (DC-038); „+ Position"-Suche gebaut, dabei ein von Sandy live gefundener Tap-Bug behoben (Vorschlag antippen blieb wirkungslos, jetzt `onMouseDown`+`preventDefault`) (DC-039); Raum-Titelfeld zeigte den literalen Platzhalter „— Schlafzimmer" statt eines leeren Felds, gefixt (DC-041). Alle vier code-fertig/committet, **keines davon live nachgetestet** — deshalb spürbarer, aber kein voller Sprung. Weiterhin offen: DC-009/010 (Erfolgs-Anzeige/Guardrail) |
 | 5.3 | Funktioniert auf Handy UND Desktop | G1 | ⚪ offen — nicht erhoben |
 | 5.4 | Leere/Fehler-/Ladezustände überall sinnvoll gestaltet | G2 | 🔴 20 % — DC-009/010: widersprüchliche Fehler-/Erfolgs-Banner code-seitig gefixt (20.08., Root Cause war GPT-Nichtdeterminismus, nicht Race Condition), Live-Nachtest steht aus; die fehlende Guardrail beim Fertigstellen leerer Angebote (zweiter Teil von DC-010) bleibt offen |
 | 5.5 | Statusfarben & Design-Tokens konsistent | G2 | 🟡 50 % — DC-003 vereinheitlicht Status-Farben auf eine Quelle an allen 5 Stellen, plus zweite DC-006-Migrationsrunde; Großteil der >1.900 Fundstellen weiterhin offen; siehe auch DC-007 |

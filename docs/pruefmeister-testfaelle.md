@@ -82,6 +82,16 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ✅ Details im Archiv. Raummaß-Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 live bestätigt (2026-08-25) — liefert jetzt die korrekten 2×1,5 m |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
+| PM-022 | Schlafzimmer, Baseline-Malerfall | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-031 | Fassade Nordseite, einfacher Fall | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -734,6 +744,181 @@ Anpassungen sind reine Bestätigung der neuen, korrekten Rechnung, kein Hinweis 
 grün (267/267), `tsc --noEmit` sauber für alle geänderten Dateien. Wie immer: noch OHNE Live-Nachtest im
 echten Tool — bitte bei Gelegenheit einmal ein Malerangebot mit normalgroßen Fenstern/Türen live prüfen und
 schauen, ob der neue Hinweistext in den Annahmen erscheint und die Wandfläche wie erwartet größer ausfällt.
+
+---
+
+## PM-022 bis PM-031 — Vertrauens-Batch: zehn neue Fälle, die sauber durchlaufen sollten (2026-08-25)
+
+**Warum dieser Batch anders ist als die bisherigen:** Alle bisherigen Testfälle waren gezielt auf einen
+bekannten Verdachtspunkt zugeschnitten (Ausschluss-Formulierung X, Trigger-Wort Y, Randfall Z) — das ist
+weiterhin richtig für die Fehlersuche, gibt aber kein Bild davon, wie robust die ganz normalen,
+alltäglichen Fälle laufen. Diese zehn sind bewusst das Gegenteil: gewöhnliche Handwerker-Diktate ohne
+Ausschlüsse, ohne bekannte Trigger-Wörter (kein „Terrassentür", kein „tapezieren", keine „nicht nur X
+sondern Y"-Verneinung), mit klar getrennt gesprochenen Maßangaben. Jeder Fall nutzt ausschließlich
+Mechanismen, die einzeln schon bestätigt behoben sind (VOB-Übermessung, Verschnittsätze, Erschwerniszuschlag
+Höhe/Altbau, explizite Sockelleisten-Montage, Dachgeschoss-Engine, Fassaden-Engine) — nur in neuen
+Zahlen-/Raumkombinationen, die so noch nicht gelaufen sind. Meine Einschätzung: sollten alle direkt grün
+laufen. Falls nicht, ist das ein guter, klarer Hinweis auf eine noch unentdeckte Lücke, weil hier bewusst
+keine bekannte Falle eingebaut wurde.
+
+Status alle zehn: ⏳ noch nicht eingesprochen.
+
+---
+
+### PM-022 — Schlafzimmer, Baseline-Malerfall
+
+**Zum Einsprechen:**
+„Schlafzimmer, vier Meter fünfzig mal drei Meter achtzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke
+einmal mit. Ein Fenster, Standardmaß, eine Tür, normal.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,50+3,80)=16,60 lfm; Wandbrutto: 16,60×2,50=**41,50 m²**
+- Fenster (Standard, 1,20 m²) und Tür (Standard, 1,89 m²) beide ≤2,5 m² → VOB: **kein Abzug**
+- Wandflächen streichen 2×: **41,50 m²**
+- Deckenfläche: 4,50×3,80=**17,10 m²**, streichen 1×
+- Boden schützen: 17,10 m²
+- Sockelleisten abkleben: 16,60−0,90 (Türbreite)=**15,70 lfdm**
+- Keine Extras (kein Altbau, keine Erschwernis, keine Spachtel-/Grundierungssignale)
+
+---
+
+### PM-023 — Flur, reiner Bodenfall (Laminat gerade + Trittschalldämmung + neue Sockelleisten)
+
+**Zum Einsprechen:**
+„Flur, sechs Meter mal eins Meter achtzig, eine Tür normal Maß. Laminat, ganz normal gerade verlegt, mit
+Trittschalldämmung drunter. Sockelleisten neu montieren rundrum.“
+
+**Soll-Lösung:**
+- Fläche: 6,00×1,80=**10,80 m²**
+- Laminat verlegen, Verschnitt gerade 5%: 10,80×1,05=**11,34 m²**
+- Trittschalldämmung: 10,80 m² (keine Verschnittzugabe)
+- Sockelleisten montieren (echtes Signal, kein Phantom): Umfang 2×(6,00+1,80)=15,60 lfm − 0,90 Türbreite =
+  **14,70 lfdm**
+- **Keine** Maler-Position (keine Wand-/Deckenarbeit erwähnt)
+
+---
+
+### PM-024 — Büro, Erschwerniszuschlag Höhe in normalem Raum (nicht Fassade)
+
+**Zum Einsprechen:**
+„Büro, fünf Meter mal vier Meter, Höhe drei Meter zwanzig. Wände zweimal streichen. Zwei Fenster,
+Standardmaß, eine Tür, normal.“
+
+**Soll-Lösung:**
+- Umfang: 2×(5,00+4,00)=18,00 lfm; Wandbrutto: 18,00×3,20=**57,60 m²**
+- 2 Fenster (je 1,20 m²) + 1 Tür (1,89 m²), alle ≤2,5 m² → VOB: kein Abzug
+- Wandflächen streichen 2×: **57,60 m²**
+- Erschwerniszuschlag Höhe: 1 Pauschale (Raumhöhe 3,20 m > 3-m-Schwelle)
+- Boden schützen: 5,00×4,00=**20,00 m²**
+- Sockelleisten abkleben: 18,00−0,90=**17,10 lfdm**
+
+---
+
+### PM-025 — Gästezimmer, Vinyl im Fischgrätmuster + explizit neue Sockelleisten
+
+**Zum Einsprechen:**
+„Gästezimmer, vier Meter mal drei Meter fünfzig, eine Tür normal Maß. Vinylboden im Fischgrätmuster
+verlegen. Sockelleisten werden auch neu montiert, passend zum Fischgrätmuster.“
+
+**Soll-Lösung:**
+- Fläche: 4,00×3,50=**14,00 m²**
+- Verschnitt Fischgrät 15%: 14,00×1,15=**16,10 m²**
+- Sockelleisten montieren (echtes Signal): Umfang 2×(4,00+3,50)=15,00 lfm − 0,90 Türbreite = **14,10 lfdm**
+- **Keine** Maler-Position
+
+---
+
+### PM-026 — Küche, Wand und Decke mit unterschiedlicher Anstrichzahl
+
+**Zum Einsprechen:**
+„Küche, vier Meter zwanzig mal drei Meter sechzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke reicht
+einmal. Zwei Fenster, Standardmaß, eine Tür, normal.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,20+3,60)=15,60 lfm; Wandbrutto: 15,60×2,50=**39,00 m²**
+- 2 Fenster + 1 Tür, alle ≤2,5 m² → VOB: kein Abzug
+- Wandflächen streichen 2×: **39,00 m²**
+- Deckenfläche: 4,20×3,60=**15,12 m²**, streichen 1× (nicht 2×!)
+- Boden schützen: 15,12 m²
+- Sockelleisten abkleben: 15,60−0,90=**14,70 lfdm**
+
+---
+
+### PM-027 — Kellerraum, Parkett gerade + explizite Altbelag-Entfernung
+
+**Zum Einsprechen:**
+„Kellerraum, fünf Meter mal drei Meter, eine Tür normal Maß. Der alte Teppich muss komplett raus, danach
+Parkett verlegen, ganz normal gerade, kein Muster.“
+
+**Soll-Lösung:**
+- Fläche: 5,00×3,00=**15,00 m²**
+- Altbelag entfernen (ausdrücklich verlangt, kein Ausschluss diesmal): **15,00 m²**
+- Parkett verlegen, Verschnitt gerade 5%: 15,00×1,05=**15,75 m²**
+- **Keine** Sockelleisten-Position (nicht erwähnt)
+
+---
+
+### PM-028 — Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel
+
+**Zum Einsprechen:**
+„Arbeitszimmer, vier Meter mal drei Meter fünfzig, Höhe zwo fünfzig, ist ein Altbau. Wände bitte
+grundieren und dann zweimal streichen. Ein Fenster, Standardmaß, eine Tür, normal.“
+
+**Soll-Lösung:**
+- Umfang: 2×(4,00+3,50)=15,00 lfm; Wandbrutto: 15,00×2,50=**37,50 m²**
+- Fenster + Tür, beide ≤2,5 m² → VOB: kein Abzug
+- Wandflächen streichen 2×: **37,50 m²**
+- Voranstrich/Grundierung: **37,50 m²** (ausdrücklich verlangt, unabhängig von Spachtel-Kontext)
+- Erschwerniszuschlag Altbau: 1 Pauschale
+- Boden schützen: 4,00×3,50=**14,00 m²**
+- Sockelleisten abkleben: 15,00−0,90=**14,10 lfdm**
+- **Keine** Spachtel-Position (nicht erwähnt)
+
+---
+
+### PM-029 — Abstellraum, Mini-Raum ohne jede Öffnung
+
+**Zum Einsprechen:**
+„Abstellraum, zwei Meter mal eins Meter achtzig, Höhe zwo vierzig. Wände einmal streichen reicht völlig.
+Kein Fenster, keine Tür.“
+
+**Soll-Lösung:**
+- Umfang: 2×(2,00+1,80)=7,60 lfm; Wandbrutto: 7,60×2,40=**18,24 m²**
+- Kein Fenster, keine Tür → nichts abzuziehen, mit oder ohne VOB
+- Wandflächen streichen 1×: **18,24 m²**
+- Boden schützen: 2,00×1,80=**3,60 m²**
+- Sockelleisten abkleben: **7,60 lfdm** (kein Türabzug, da keine Tür)
+
+---
+
+### PM-030 — Dachzimmer 2, frischer Dachgeschoss-Fall
+
+**Zum Einsprechen:**
+„Dachzimmer, vier Meter fünfzig mal vier Meter. Kniestock ist eins Meter hoch. Die Dachschrägen zusammen
+ergeben achtzehn Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles
+zweimal streichen.“
+
+**Soll-Lösung:**
+- Kniestock-Umfang: 2×(4,50+4,00)=17,00 lfm; Kniestockwände: 17,00×1,00=**17,00 m²**
+- Dachschrägen: 18,00 m² minus Dachfenster-Standard (0,78×1,18=0,92 m²) = **17,08 m²**
+- Kniestockwände streichen 2×: 17,00 m²; Dachschrägen streichen 2×: 17,08 m²
+- Boden schützen: 4,50×4,00=**18,00 m²** (Grundfläche)
+- Sockelleisten abkleben: nicht erwähnt — falls automatisch als Nebenleistung ergänzt (wie bei PM-007
+  beobachtet), kein hartes Soll für die genaue Länge, nur plausibilisieren
+
+---
+
+### PM-031 — Fassade Nordseite, einfacher Fall
+
+**Zum Einsprechen:**
+„Fassade an der Nordseite, zehn Meter lang, Wandhöhe fünf Meter. Zwei Fenster drin, jeweils eins zwanzig
+mal eins vierzig. Einmal Fassadenfarbe drauf.“
+
+**Soll-Lösung:**
+- Wandbrutto: 10,00×5,00=**50,00 m²**
+- 2 Fenster à 1,20×1,40=1,68 m², jedes einzeln ≤2,5 m² → VOB: kein Abzug
+- Fassadenfläche streichen 1×: **50,00 m²**
+- **Keine** Grundierung (nicht verlangt), keine Boden-/Deckenposition (Fassade)
 
 ---
 

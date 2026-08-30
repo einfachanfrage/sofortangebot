@@ -248,20 +248,15 @@ export function verarbeiteExtraktion(
     extraktion.rueckfragen = [...(extraktion.rueckfragen ?? []), ...neueRueckfragen]
   }
 
-  // Rückfragen filtern: "Wie viele Fenster/Türen?" supprimieren wenn Raummaße bekannt (Standard-Annahmen)
-  const hatRaumMasse = (extraktion.raeume ?? []).some(r => r.laenge && (r.breite || r.hoehe))
-    || (extraktion.raeume ?? []).some(r => r.flaeche)
-    || textMitZahlen.toLowerCase().includes('dachschräge') || textMitZahlen.toLowerCase().includes('schräge')
-  const textLower = textMitZahlen.toLowerCase()
-  const istFensterAuftrag = textLower.includes('fenster') &&
-    (textLower.includes('lackier') || textLower.includes('streich') || textLower.includes('holzfenster') || textLower.includes('anstrich'))
-  const istHeizkörperAuftrag = textLower.includes('heizkörper') || textLower.includes('heizkoerper') || textLower.includes('heizung')
-  if (hatRaumMasse || istFensterAuftrag || istHeizkörperAuftrag) {
-    extraktion.rueckfragen = (extraktion.rueckfragen ?? []).filter(r => {
-      const frage = (r.frage ?? '').toLowerCase()
-      return !(frage.includes('fenster') || frage.includes('türen') || frage.includes('türmaß') || frage.includes('fenstermaß') || frage.includes('fenstergrö'))
-    })
-  }
+  // CoS-020, Sandys Entscheidung 29.08.: Hier stand ein Filter, der
+  // "Wie viele Fenster/Türen?"-Fragen unterdrücken sollte, sobald Raummaße
+  // bekannt sind — das Tool hätte dann still mit 1 Fenster / 1 Tür gerechnet.
+  // Er hat die echten Fragen ohnehin nicht mehr erreicht (er arbeitete auf
+  // `extraktion.rueckfragen`, das `bereiteRueckfragenVor` leert; die Fragen
+  // entstehen inzwischen erst danach im Kontext-Analyzer). Statt ihn
+  // wiederzubeleben ist er ersatzlos gelöscht: gefragt wird, nicht still
+  // angenommen. Ein Filter, der aussieht als würde er etwas tun, ist
+  // schlimmer als keiner (dieselbe Fehlerklasse wie PM-010).
 
   // Raw-Text überschreibt GPT-Transkript — GPT normalisiert und verliert "nur X"-Angaben
   extraktion.transkript = text
