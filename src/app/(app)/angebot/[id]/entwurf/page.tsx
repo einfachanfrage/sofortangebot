@@ -576,8 +576,25 @@ export default function EntwurfPage() {
   // voll_extraktion wartet (verarbeitung_status schon 'fertig', aber noch
   // keine geprüfte Extraktion da) — Basis für den 30s-Timeout-Fallback und
   // den "prüft genau"-Hinweis nach 5s, siehe kartenAnsicht()/VOLL_EXTRAKTION_*.
-  const vollExtraktionWartetSeitRef = useRef<Map<string, number>>(new Map())
-  const [, setVollExtraktionTick] = useState(0)
+  // Sandy, 2026-08-31 („mach das direkt"): Das war bis heute ein useRef und
+  // wurde WÄHREND DES RENDERNS gelesen — sechs Stellen, sechs Lint-Fehler
+  // („Cannot access refs during render"). React weiß von einer Ref-Änderung
+  // nichts und rendert deshalb nicht neu: Der Effekt unten trug den
+  // Wartebeginn ein, NACHDEM der Render bereits mit der alten, leeren Map
+  // gerechnet hatte. Bis zum nächsten Render aus anderem Grund (im besten
+  // Fall der 1s-Tick, im schlechtesten gar keiner) zeigte die Karte einen
+  // Zustand, der nicht mehr stimmte. Genau die Fehlerklasse, die als
+  // „Karte zeigt etwas anderes als der Entwurf" mehrfach in den
+  // Prüfmeister-Notizen steht (Systemischer Fund Punkt 8/10). Als State
+  // löst jede Änderung einen Render aus, und die Anzeige kann gar nicht
+  // mehr hinterherhinken.
+  const [vollExtraktionWartetSeit, setVollExtraktionWartetSeit] = useState<Map<string, number>>(() => new Map())
+  // Aus demselben Grund gehört auch „jetzt" in den State: `Date.now()` mitten
+  // im Render ist unrein — zwei Renders desselben Zustands können
+  // unterschiedliche Ergebnisse liefern. Der Sekundentakt unten schreibt die
+  // Zeit fort; für den 5s-Hinweis und den 30s-Timeout ist Sekundengenauigkeit
+  // genau richtig.
+  const [jetztFuerWarten, setJetztFuerWarten] = useState<number>(() => Date.now())
   // CoS-002 Schritt 3, Mehrfach-Aufnahmen-Fall (2026-08-21, Sandys Auftrag
   // "mach komplett rund, das auch noch schließen"): merkt sich die zuletzt
   // spekulativ angestoßene Aufnahmen-Menge (als sortierter ID-String), damit
@@ -615,14 +632,21 @@ export default function EntwurfPage() {
   // der Eintrag bleibt dann einfach ungenutzt stehen (harmlos).
   useEffect(() => {
     const jetzt = Date.now()
-    for (const a of aufnahmen) {
-      if (a.typ !== 'sprache' || a.verarbeitung_status !== 'fertig') continue
-      const voll = a.voll_extraktion as VollExtraktionCache | null | undefined
-      const bereit = !!(voll && (voll.positionen || voll.__fehlgeschlagen))
-      if (!bereit && !vollExtraktionWartetSeitRef.current.has(a.id)) {
-        vollExtraktionWartetSeitRef.current.set(a.id, jetzt)
+    setVollExtraktionWartetSeit(bisher => {
+      let naechste: Map<string, number> | null = null
+      for (const a of aufnahmen) {
+        if (a.typ !== 'sprache' || a.verarbeitung_status !== 'fertig') continue
+        const voll = a.voll_extraktion as VollExtraktionCache | null | undefined
+        const bereit = !!(voll && (voll.positionen || voll.__fehlgeschlagen))
+        if (!bereit && !bisher.has(a.id)) {
+          naechste = naechste ?? new Map(bisher)
+          naechste.set(a.id, jetzt)
+        }
       }
-    }
+      // Unverändert = dieselbe Instanz zurückgeben. Sonst würde dieser Effekt
+      // sich über seine eigene Zustandsänderung endlos selbst auslösen.
+      return naechste ?? bisher
+    })
   }, [aufnahmen])
 
   // Erzwingt alle 1s einen Re-Render, SOLANGE mindestens eine Aufnahme auf
@@ -635,7 +659,10 @@ export default function EntwurfPage() {
       return !(voll && (voll.positionen || voll.__fehlgeschlagen))
     })
     if (!wartendGerade) return
-    const interval = setInterval(() => setVollExtraktionTick(t => t + 1), 1000)
+    // Sofort einmal setzen, damit die erste Anzeige nach Wartebeginn nicht
+    // noch mit der Zeit vom Seitenaufbau rechnet.
+    setJetztFuerWarten(Date.now())
+    const interval = setInterval(() => setJetztFuerWarten(Date.now()), 1000)
     return () => clearInterval(interval)
   }, [aufnahmen])
 
@@ -1019,16 +1046,15 @@ export default function EntwurfPage() {
   // voll_extraktion da ist, und würde ein ZWEITES, separates Warten am
   // Button erleben statt nur des einen auf der Karte (Sandys Rückfrage,
   // von der Designerin als harte Anforderung bestätigt).
-  const jetztFuerWarten = Date.now()
   const nochVollExtraktion = neueAufnahmen.some(a =>
-    kartenAnsicht(a, vollExtraktionWartetSeitRef.current.get(a.id), jetztFuerWarten).status === 'wartet_pruefung')
+    kartenAnsicht(a, vollExtraktionWartetSeit.get(a.id), jetztFuerWarten).status === 'wartet_pruefung')
   // erkannteAnzahl zählt jetzt aus derselben Quelle wie die Karten-Anzeige
   // (kartenAnsicht) statt direkt aus der schnellen Chip-Vorschau — während
   // nochVollExtraktion ist das pro wartender Aufnahme 0 (siehe Banner unten,
   // das dafür einen eigenen, ehrlichen Zwischenzustand zeigt statt einer
   // möglicherweise falschen Zahl).
   const erkannteAnzahl = neueAufnahmen.reduce((sum, aufnahme) =>
-    sum + kartenAnsicht(aufnahme, vollExtraktionWartetSeitRef.current.get(aufnahme.id), jetztFuerWarten).positionen.filter(p => p.erkannt).length, 0)
+    sum + kartenAnsicht(aufnahme, vollExtraktionWartetSeit.get(aufnahme.id), jetztFuerWarten).positionen.filter(p => p.erkannt).length, 0)
   const bearbeitungszeit = geschaetzteSekunden(erkannteAnzahl)
   // DC-009: 0 erkannte Positionen ist kein "bereit für den Entwurf" — vorher
   // stand hier trotzdem "✓ 0 Positionen erkannt", grün, mit aktivem Button.
@@ -1065,7 +1091,7 @@ export default function EntwurfPage() {
   // frischer, noch nicht "fertiggestellter" Aufnahmen (vorläufig) — dieselbe
   // Gruppierungsfunktion wie im fertigen Angebot, damit diese Ansicht
   // strukturell nie von der finalen Darstellung abweichen kann.
-  const sammelPool = baueSammelPool(quoteInfo?.quote_items ?? [], neueAufnahmen, vollExtraktionWartetSeitRef.current, jetztFuerWarten)
+  const sammelPool = baueSammelPool(quoteInfo?.quote_items ?? [], neueAufnahmen, vollExtraktionWartetSeit, jetztFuerWarten)
   const pendingById = new Map(sammelPool.map(item => [item.id, item.pending]))
   const mengeOffenById = new Map(sammelPool.map(item => [item.id, item.mengeOffen]))
   const gruppen = gruppiereNachRaum(sammelPool)
@@ -1303,7 +1329,7 @@ export default function EntwurfPage() {
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
                 {aufnahmen.map(a => (
-                  <AufnahmeChip key={a.id} aufnahme={a} wartetSeit={vollExtraktionWartetSeitRef.current.get(a.id)} onOpen={() => setAufnahmeDetail(a.id)} />
+                  <AufnahmeChip key={a.id} aufnahme={a} wartetSeit={vollExtraktionWartetSeit.get(a.id)} onOpen={() => setAufnahmeDetail(a.id)} />
                 ))}
               </div>
             </div>
@@ -1324,7 +1350,7 @@ export default function EntwurfPage() {
               </div>
             )}
             {aufnahmen.map(a => (
-              <AufnahmeCard key={a.id} aufnahme={a} wartetSeit={vollExtraktionWartetSeitRef.current.get(a.id)} onDelete={() => setDeleteBestaetigen(a.id)} onRetry={() => retryAufnahme(a.id)} />
+              <AufnahmeCard key={a.id} aufnahme={a} wartetSeit={vollExtraktionWartetSeit.get(a.id)} onDelete={() => setDeleteBestaetigen(a.id)} onRetry={() => retryAufnahme(a.id)} />
             ))}
           </div>
         )}
@@ -1489,7 +1515,7 @@ export default function EntwurfPage() {
               </div>
               <AufnahmeCard
                 aufnahme={a}
-                wartetSeit={vollExtraktionWartetSeitRef.current.get(a.id)}
+                wartetSeit={vollExtraktionWartetSeit.get(a.id)}
                 onDelete={() => { setAufnahmeDetail(null); setDeleteBestaetigen(a.id) }}
                 onRetry={() => retryAufnahme(a.id)}
               />

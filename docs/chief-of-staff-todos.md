@@ -2221,5 +2221,53 @@ als Frage vorgelegt statt es ungefragt einzurichten.
 
 ---
 
+## CoS-027 — Entwurfs-Seite las während des Renderns aus einer Ref (6 Lint-Fehler)
+
+**Datum:** 2026-08-31
+**Auftrag:** Sandy, direkt („mach das direkt") — auf meinen eigenen Nebenbefund
+beim PM-024-Fix.
+**Status:** ✅ umgesetzt, Suite grün (58 Dateien / 975 Tests), `tsc` sauber,
+Lint für diese Datei jetzt **0 Fehler** (vorher 6), Live-Nachtest steht aus
+
+**Der Fund:** `src/app/(app)/angebot/[id]/entwurf/page.tsx` hielt in
+`vollExtraktionWartetSeitRef` fest, seit wann eine Aufnahme auf die geprüfte
+Extraktion wartet — als `useRef`, gelesen an sechs Stellen mitten im Rendern.
+React weiß von einer Ref-Änderung nichts und rendert deshalb nicht neu. Die
+Reihenfolge war also: rendern (mit noch leerer Merkliste) → Effekt trägt den
+Wartebeginn ein → **kein** neuer Render. Bis zufällig ein anderer Render kam
+(im besten Fall der Sekundentakt, im schlechtesten gar keiner) zeigte die
+Karte einen Zustand, der nicht mehr stimmte.
+
+Das ist keine Kosmetik, sondern genau die Fehlerklasse, die in dieser Datei
+mehrfach als „die Karte zeigt etwas anderes als der Entwurf" dokumentiert ist
+(Systemischer Fund Punkt 8/10). Aufgefallen ist es mir nur, weil ich beim
+PM-024-Fix ohnehin in dieser Datei war.
+
+**Umgesetzt:**
+1. Aus der Ref wurde State. Jede Änderung löst jetzt einen Render aus, die
+   Anzeige kann gar nicht mehr hinterherhinken. Der Effekt gibt bei
+   unveränderter Lage dieselbe Map-Instanz zurück — sonst würde er sich über
+   seine eigene Zustandsänderung endlos selbst auslösen.
+2. Gleich mitgenommen: `const jetztFuerWarten = Date.now()` stand ebenfalls
+   mitten im Render. Zwei Renders desselben Zustands konnten damit
+   unterschiedliche Ergebnisse liefern. Die Zeit kommt jetzt aus dem
+   vorhandenen Sekundentakt (der bisher nur einen ungenutzten Zähler
+   hochzählte, um überhaupt einen Render zu erzwingen) — für den 5s-Hinweis
+   und den 30s-Timeout ist Sekundengenauigkeit genau richtig, und beim
+   Wartebeginn wird die Zeit sofort einmal gesetzt, damit die erste Anzeige
+   nicht mit der Zeit vom Seitenaufbau rechnet.
+
+**Ehrlich zum Rest:** Es bleiben 7 Lint-**Warnungen** in der Datei (keine
+Fehler). Zwei davon habe ich neu erzeugt („setState synchron im Effekt") —
+beide sind bewusst und abgesichert: die eine gibt bei unveränderter Lage
+denselben Wert zurück und kaskadiert dadurch nicht, die andere ist eine Uhr
+und lässt sich nicht anders bauen. Die übrigen fünf sind vorbestehend und
+gehören nicht zu diesem Ticket.
+
+**Nicht verifiziert:** dass die Karte im echten Betrieb schneller korrekt wird
+— das zeigt erst ein Live-Nachtest mit einer wartenden Aufnahme.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
