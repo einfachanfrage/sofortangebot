@@ -46,6 +46,9 @@ CoS-013 in `chief-of-staff-todos.md`.
 |---|---|---|---|
 | CoS-M-001 | CI-Bestandsaufnahme + Richtungsvorschlag | ✅ komplett — Sandy hat mit „ok leg die CI fest" final bestätigt, Umsetzungsplan (Schritt 5) steht, Handoff an Product Designer über EX-M-005 | Sandys Ankündigung, 2026-08-17 |
 | CoS-M-002 | Social-Media-Strategie Pre-Launch (Instagram/TikTok) | 🟡 Strategie + erster Content-Kalender fertig, Sandy hat Richtung bestätigt — Umsetzung (Dreh mit Clemens) läuft bei Sandy, eine Abhängigkeit offen (Warteliste-Landingpage) | Sandys Anfrage im Chat, 2026-08-19 |
+| CoS-M-003 | Verbindliche Gestaltungsvorgabe für Instagram/TikTok-Posts, nach Sandys Kritik an ersten fertigen Posts | 🟡 Vorgabe umgesetzt, v1-Posts + zwei v2-Entwürfe in `docs/` gesichert; Sandy hat zusätzlich 9 neue Entwürfe im Chat gezeigt und Chief-of-Staff-Go bekommen — Abgleich mit `social-drafts-v2/` bei Head of Marketing offen | Sandy direkt im Chat, 2026-08-31 |
+| CoS-M-004 | Design System — zwei Freigaben nötig (Sie/du, Funktionsfarben) | 🟡 Sie/du entschieden („immer du"), Funktionsfarben weiterhin 🔵 offen | Sandys Übergabe des PDFs, 2026-08-31 |
+| CoS-M-005 | DER Slogan für Sofortangebot final festgelegt | ✅ entschieden — „Aufmaß fertig. Angebot fertig." | Sandy direkt im Chat, 2026-08-31 |
 
 ---
 
@@ -268,6 +271,234 @@ machbar ist, damit der Kalender nicht auf eine fehlende Seite zuläuft.
 **Noch offen:** Rückmeldung, ob/wann die Warteliste-Seite kommt; danach
 laufende Beobachtung, welche Formate performen, um Woche 2/3 ggf.
 anzupassen, bevor gedreht wird.
+
+---
+
+## CoS-M-003 — Klare Anweisung: Instagram/TikTok-Postgestaltung entspricht nicht dem Anspruch
+
+**Datum:** 2026-08-31 (Sandy direkt im Chat, nach den ersten fertig
+erstellten Posts)
+
+**Status:** ❌ offen — verbindliche neue Vorgabe, gilt ab sofort für jeden
+weiteren Post
+
+**Sandys Rückmeldung, unverändert wiedergegeben:** Die gerade erstellten
+Posts sehen **katastrophal** aus. Nicht nur die Optik — auch das Wording
+trifft nicht. Es fehlte bisher eine konkrete Anweisung dazu, wie ein
+Instagram-/TikTok-Post auszusehen hat; das wird hiermit nachgeholt, gilt ab
+sofort für alles Weitere (Instagram jetzt, TikTok in gleichem Maß, sobald
+es losgeht).
+
+**Woran es bisher gefehlt hat:** `docs/marketing-ci.md` und
+`docs/marketing-social-media.md` legen die Marke und die Content-Strategie
+fest, aber es gab nie eine eigene, konkrete Gestaltungsvorgabe für das
+fertige visuelle Post-Ergebnis selbst (Layout, Bildaufbau, Text-Overlay-
+Regeln) — nur den Rahmen drumherum (Farben/Fonts abstrakt, Skript-Ideen
+ohne visuelle Umsetzung). Diese Lücke hat jetzt sichtbar zu Ergebnissen
+geführt, die nicht dem Marken-Anspruch entsprechen. Diese Vorgabe schließt
+genau diese Lücke.
+
+**Verbindliche Anforderungen an jeden Post ab sofort:**
+
+1. **Marke zuerst, ohne Ausnahme.** Nur die in `docs/marketing-ci.md`
+   final festgelegten Werte verwenden — Gelb `#D9A400` (nicht das alte
+   `#F5C400` oder irgendein anderes Gelb), Anthrazit + warmes Off-White
+   `#F7F7F5`, Überschriften in Bricolage Grotesque, das Maßband-Logomark
+   (Icon-only-Variante, klein, meist unten platziert) in jedem Post
+   sichtbar, aber nie aufdringlich. Kein Emoji als Icon-Ersatz — dafür gibt
+   es das eigene Werkzeug-Icon-Set. Kein Font, keine Farbe, kein Icon, das
+   nicht aus der CI-Datei stammt.
+2. **Hook in der ersten Sekunde, nicht erst im Text.** Instagram/TikTok
+   entscheiden in Sekundenbruchteilen. Die größte, klarste Aussage steht
+   groß im Bild selbst (nicht nur in der Caption) — bei Video: die erste
+   Einstellung MUSS die Aufmerksamkeit halten, bei Grafik: eine einzige,
+   große Kernaussage pro Bild, keine drei Botschaften gleichzeitig.
+3. **Wie eine echte, aktuelle Social-Media-Marke aussehen, nicht wie eine
+   Powerpoint-Folie mit Firmenfarben drauf.** Konkret: vertikales 9:16-
+   Format, großzügig Weißraum/Luft statt vollgestopfter Fläche, maximal
+   2–3 kurze Textzeilen pro Bild/Frame (keine Fließtext-Blöcke), ein klarer
+   visueller Fokuspunkt statt gleichrangiger Elemente, Kontrast so stark,
+   dass der Post auch als Daumennagel-Vorschau in einem schnell
+   scrollenden Feed sofort lesbar ist. Bewusst roh/authentisch bei Video
+   (siehe `marketing-social-media.md`) — das ist kein Widerspruch zu
+   professionellem Look, sondern die aktuelle Instagram-Ästhetik selbst:
+   kein Hochglanz-Stockfoto-Gefühl, keine generische Startup-Slide.
+4. **Zielgruppe zuerst formuliert, nicht Marketing-Sprache.** Zielgruppe
+   ist der Maler/Bodenleger/Innenausbauer aus `marketing-social-media.md`,
+   nicht ein SaaS-Publikum. Wording direkt, konkret, auf Augenhöhe wie ein
+   Kollege redet — kein „innovative Lösung", „revolutionär",
+   „digitalisieren Sie Ihren Workflow" oder ähnliche Buzzwords. Die bereits
+   vorhandenen Caption-Entwürfe im Content-Kalender
+   (`sofortangebot-content-kalender.xlsx`) treffen diesen Ton bereits gut
+   („Der Teil vom Job, den keiner mag. Kennt ihr das?") — genau dieses
+   Register für JEDEN Post halten, auch wenn er nicht aus dem Kalender
+   stammt.
+5. **Ein Template-System bauen, nicht zwölf Einzeldesigns.** Bevor der
+   nächste Post entsteht: 2–3 wiederverwendbare Vorlagen pro Content-Säule
+   (Pain-Point, Fach-Autorität, Build-in-Public, Countdown) entwerfen, in
+   denen sich nur Text/Bild austauschen lässt. Das sichert Konsistenz über
+   alle Posts hinweg und ist schneller als jeden Post von null zu gestalten
+   — genau das fehlt aktuell sichtbar.
+
+**Neuer Prozess-Schritt, ab sofort verbindlich:** Bevor ein ganzer Batch
+Posts final produziert wird, **erst 1–2 Beispiel-Posts als Entwurf zeigen**
+(Sandy direkt oder über Chief of Staff) und Go einholen — nicht wie
+diesmal direkt fertig produzieren und erst danach zeigen. Das verhindert,
+dass ein grundlegendes Problem sich über mehrere Posts wiederholt, bevor es
+auffällt.
+
+**Für Chief of Staff, offen:** Die tatsächlichen kritisierten Posts wurden
+bei diesem Audit nicht als Datei in `docs/` gefunden (nur Skript-Ideen im
+Content-Kalender, keine fertigen Grafiken/Videos) — vermutlich in einem
+separaten Tool entstanden. Bitte von Head of Marketing verlinken/anhängen
+lassen, sobald verfügbar, damit Sandys Feedback beim nächsten Entwurf
+konkret an den tatsächlichen Bildern nachvollzogen werden kann, statt nur
+an dieser allgemeinen Vorgabe.
+
+**Update (Sandy, 31.08.):** Vollständiges Design-System-PDF geliefert
+(„hier vollständige neue ci") — jetzt abgelegt unter
+`docs/sofortangebot-ci-guide.pdf` (19 Seiten, Stand 19.08.2026, Sandys
+Freigabe 18.08.2026). Deutlich präziser als die bisherige Kurzfassung in
+`marketing-ci.md`: exakte Hex-Werte, Typografie-Skala, Icon-Stilregeln
+(monoline, Strichstärke 1.6, 24×24-Raster, „kein eigenes Icon-Gelb"),
+präzise Ton-Regeln mit So/Nicht-so-Beispielen (Sie-Form, Sentence Case,
+keine Ausrufezeichen, keine Emoji, deutsche Zahlenformatierung), Logo-
+Nutzungsregeln, sowie Bestätigung, dass die Token-Aufräumung (DC-006)
+inzwischen zu einem echten, codierten Design System mit 25 Komponenten
+geführt hat (Governance-Tabelle: CI-Konzept/Pflege bleibt bei Head of
+Marketing über `marketing-ci.md`, technische Umsetzung bei Product
+Designer/Engineering über `design-check.md`). Anweisung oben (CoS-M-003)
+ist bereits mit den präzisen Werten aus diesem PDF geschärft.
+
+**Zwei Lücken, die das PDF selbst offenlegt und die Head of Marketing
+kennen sollte, bevor er weiterarbeitet:** Das eigene Marketing-Icon-Set
+existiert noch nicht als echte SVG-Dateien (im PDF nur durch Lucide-Icons
+ersetzt, als Platzhalter markiert) — falls er das eigene Icon-Set aus
+CoS-M-001 tatsächlich für Posts einsetzen will, muss er es selbst zeichnen
+oder anfragen, es liegt nicht fertig vor. Das Logo liegt bisher nur als
+Raster-Bild vor, keine Vektor-/SVG-Version — für Social Media in der Regel
+ausreichend, für andere Einsatzzwecke (Favicon, Druck) nicht.
+
+**Fix-Update (Head of Marketing, 2026-08-31):** Danke für die Ablage —
+kleiner Dopplungs-Hinweis: Ich hatte dieselbe Datei (identisch, Sandy hat
+sie mir zeitgleich direkt geschickt) parallel unter `docs/design-system.pdf`
+gesichert, bevor ich diese Fassung hier unter `docs/sofortangebot-ci-guide.pdf`
+gesehen habe — beide Dateien sind bytegleich, keine Widersprüche, einfach
+zweimal hochgeladen. Ich referenziere ab jetzt `sofortangebot-ci-guide.pdf`.
+
+Zu den kritisierten Posts: Die 8 Original-Posts sind jetzt unter
+`docs/social-drafts-v1-kritisiert/` abgelegt. Rückblickend nachvollziehbar,
+woran es lag: 4:5-Feed-Format statt der eigentlich priorisierten 9:16-Reels/
+Stories, dekorative Radial-Verläufe (widerspricht der im PDF dokumentierten
+Regel „keine Verläufe, keine Texturen"), zu viel Fläche/Text statt einem
+Fokuspunkt pro Bild. Zwei neue Entwürfe nach den neuen Vorgaben gebaut
+(9:16, ein Claim, viel Weißraum, kleines unaufdringliches Logomark, keine
+Verläufe) liegen unter `docs/social-drafts-v2/` — wie im neuen
+Prozess vorgesehen zeige ich diese zwei zuerst und hole ein Go ein, bevor
+ich das Template-System auf alle vier Content-Säulen ausrolle.
+
+Zu den zwei offenen Lücken: genau richtig erkannt, beide sind Schritt 2/3
+aus meinem Umsetzungsplan (`docs/marketing-ci.md`, Teil 3) und jetzt
+priorisiert, da Product Designer sichtbar darauf wartet.
+
+**Eine zusätzliche Sache, die mir beim genauen Lesen aufgefallen ist und
+die noch niemand angesprochen hat:** Das PDF legt unter „Mechanik"
+(Tonalität) fest: „Sprache Deutsch, förmliches Sie — nie du." Das
+widerspricht der tatsächlichen, im Produkt bereits verwendeten Sprache
+(`design-check.md` zeigt durchgehend „du"-Ansprache im Onboarding: „Was
+machst du", „Wie heißt dein Betrieb?") und allen Social-Media-Texten, die
+ich bisher mit Sandy abgestimmt habe. Das ist eine Positionierungsfrage,
+die nur Sandy entscheiden kann — Details und eine zweite offene Frage
+(Freigabe der neuen Funktionsfarben `--state-success`/`--state-danger`,
+im PDF selbst als ungeklärt markiert) stehen unter CoS-M-004 unten. Bitte
+zusätzlich in `docs/entscheidungen-fuer-sandy.md` aufnehmen, falls Sandy
+das nicht direkt im Chat beantwortet.
+
+**Chief-of-Staff-Update (2026-08-31):** Beide offenen Punkte (Sie/du,
+Funktionsfarben) als CoS-M-004 in `docs/entscheidungen-fuer-sandy.md`
+aufgenommen — Sandy hat sie noch nicht beantwortet.
+
+Sandy hat mir direkt im Chat 9 neue Post-Entwürfe geschickt und gefragt, ob
+die Richtung jetzt stimmt. Meine Einschätzung: ja, klar richtige Richtung —
+Farben/Logo/Bricolage-Grotesque-Überschriften mit Punkt, Mono-Schrift nur
+bei berechneten Maßen, deutsche Zahlenformatierung, keine Ausrufezeichen/
+Emoji, großzügiger Weißraum, ein Fokuspunkt pro Bild, Verb+Objekt-CTA —
+alles sauber nach der neuen Vorgabe. Zwei kleine Punkte mitgegeben: gerade
+Anführungszeichen in Dialog-Posts statt „..." (deutsche Form), und eine
+Rückfrage, ob 4:5 bei manchen Posts bewusst so gewählt ist oder überall
+9:16 sein soll.
+
+**Wichtig — Abgleich mit den hier abgelegten Dateien:** Diese 9 Bilder sind
+NICHT dieselben wie die zwei Entwürfe unter `docs/social-drafts-v2/`
+(„Angebot raus. Noch auf der Baustelle." / „Ein Angebot. Jede Position
+erklärt.") — ich habe beide v2-Dateien und zum Vergleich einen der acht
+`social-drafts-v1-kritisiert/`-Posts („Gerechnet, nicht geschätzt.", mit
+sichtbarem Radial-Verlauf und wirkt eher 4:5 als 9:16) geöffnet und direkt
+verglichen. Die zwei offiziellen v2-Entwürfe sind ebenfalls stark und
+CI-konform, aber andere Motive/Texte als die 9, die Sandy mir gezeigt hat.
+Für mich sieht das nach einer dritten, bisher nirgends in `docs/`
+dokumentierten Charge aus. Zwei Fragen, die Head of Marketing bitte kurz
+einordnet: (1) Sind die 9 eine Erweiterung von `social-drafts-v2/` über die
+im neuen Prozess vorgesehenen „erst 2 zeigen" hinaus, oder ein separates
+Set? (2) Bitte die 9 (falls noch nicht geschehen) ebenfalls unter
+`docs/social-drafts-v2/` oder einem eigenen Ordner ablegen, damit hier eine
+einzige, vollständige Quelle für alle aktuellen Entwürfe existiert statt
+verstreuter Chat-Anhänge.
+
+---
+
+## CoS-M-004 — Design System: zwei offene Freigaben an Sandy
+
+**Datum:** 2026-08-31
+**Status:** 🟡 Punkt 1 entschieden, Punkt 2 weiterhin 🔵 offen
+
+1. ~~**Tonalität „Sie" statt „du"?**~~ **Entschieden von Sandy, 2026-08-31:
+   immer „du"** — „imer per du!!!!!!!!!" Eindeutig. Die PDF-Vorgabe
+   „förmliches Sie — nie du" war ein Fehler und ist damit korrigiert; das
+   Produkt bleibt wie bisher durchgehend beim „du" (Onboarding, Social-
+   Media-Texte), keine Umstellung nötig. Bitte im Design-System-PDF
+   (`docs/sofortangebot-ci-guide.pdf`, Abschnitt Mechanik/Tonalität) intern
+   vermerken, dass „Sie" nicht gilt — eine Korrektur der PDF-Datei selbst
+   ist nicht nötig/möglich, aber `docs/marketing-ci.md` sollte das „du"
+   explizit als verbindlich festhalten, damit es nicht erneut zur
+   Fehlannahme kommt.
+2. **Freigabe neue Funktionsfarben** (`--state-success` / `--state-danger`)
+   — weiterhin offen, im PDF selbst als „Ergänzung ohne CI-Grundlage —
+   Freigabe durch Sandy offen" markiert.
+
+---
+
+## CoS-M-005 — DER Slogan für Sofortangebot: final festgelegt
+
+**Datum:** 2026-08-31
+**Status:** ✅ entschieden — Positionierungs-Entscheidung von Sandy, direkt im
+Chat
+
+**Sandys finale Entscheidung:** „Aufmaß fertig. Angebot fertig."
+
+**Hintergrund/Begründung, damit die Wahl nachvollziehbar bleibt:** Ein
+erster Vorschlag von Chief of Staff („Gerechnet, nicht geschätzt.") war ein
+reiner Differenzierungs-Slogan — er funktioniert nur, wenn jemand das
+Produkt schon kennt, nicht beim allerersten Kontakt. Sandys eigener
+Einwand dazu: „wenn man sofortangebot noch gar nicht kennt... weiß man
+doch null worum es bei sofortangebot geht, man denkt iwie ein kalkulator
+oderso" — zu Recht. „Aufmaß fertig. Angebot fertig." behebt das: zwei
+parallele Kurzsätze, die den kompletten Produkt-Ablauf in vier Wörtern
+zeigen (Aufmaß nehmen → Angebot ist fertig), verständlich auch ganz ohne
+Vorwissen.
+
+**Für die Umsetzung:**
+- Das ist jetzt DER Haupt-Slogan — Landingpage-Hero, Social-Media-Bio,
+  überall wo ein neuer, kalter Kontakt zuerst landet.
+- Format passt bereits 1:1 in die bestehende CI (Bricolage-Grotesque-
+  Statement-Stil, Punkt am Satzende, sentence case, keine Ausrufezeichen) —
+  keine Sonderbehandlung nötig.
+- „Gerechnet, nicht geschätzt." muss nicht verschwinden — kann als
+  sekundäre Differenzierungs-Zeile weiterleben (z. B. Subline unter dem
+  Haupt-Slogan, oder in einzelnen Posts), aber nicht mehr als das, was ein
+  völlig neuer Betrachter zuerst liest.
+- Bitte in `docs/marketing-ci.md` als finalen Slogan festhalten, damit er
+  an einer Stelle verbindlich steht.
 
 ---
 

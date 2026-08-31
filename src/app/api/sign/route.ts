@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import * as Sentry from '@sentry/nextjs'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -64,13 +65,25 @@ export async function POST(req: NextRequest) {
   }
 
   // Angebot aktualisieren — mit IP für rechtlichen Nachweis
-  await supabaseAdmin.from('quotes').update({
+  // Audit 2026-08-31: Dieser Schreibvorgang lief ohne Fehlerprüfung. Schlug er
+  // fehl, sah der Kunde trotzdem "Danke, unterschrieben", das Angebot stand
+  // aber weiter auf "Beim Kunden" — die Zusage wäre spurlos verloren gewesen.
+  // Der Fehler MUSS hier sichtbar werden, nicht später beim Nachfragen.
+  const { error: signError } = await supabaseAdmin.from('quotes').update({
     status: 'accepted',
     signed_at: new Date().toISOString(),
     signed_by: signedBy.trim(),
     signer_ip: ip,
     ...(signaturePath && { signature_url: signaturePath }),
   }).eq('id', quote.id)
+  if (signError) {
+    console.error('[sign] Unterschrift konnte nicht gespeichert werden')
+    Sentry.captureException(new Error(signError.message), { tags: { feature: 'angebot_unterschrift' } })
+    return NextResponse.json(
+      { error: 'Die Unterschrift konnte nicht gespeichert werden. Bitte versuche es noch einmal.' },
+      { status: 500 },
+    )
+  }
 
   // Handwerker + Kunde benachrichtigen (intern, mit Secret gesichert)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'

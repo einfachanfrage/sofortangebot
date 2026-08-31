@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 // Datei — vorher stand dieselbe Regel hier und im Browser, was genau die
 // doppelten Rubriken erzeugt, die CoS-019 aufgeräumt hat.
 import { kategorieFuerTitel, titelFuerPreisdatenbank } from '@/lib/preis-kategorie'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(
   req: NextRequest,
@@ -108,11 +109,19 @@ export async function POST(
     : Number(quote.discount_amount ?? 0)
   const netAfterExtras = totalNet - discountAmount + Number(quote.surcharge_amount ?? 0)
   const totalVat = netAfterExtras * Number(company.vat_rate ?? 19) / 100
-  await supabase.from('quotes').update({
+  // Audit 2026-08-31: Ohne Fehlerprüfung hätte die Position ihren neuen Preis
+  // bekommen, die Angebotssumme aber nicht — Positionsliste und Endbetrag
+  // wären auseinandergelaufen, ohne dass es jemand merkt.
+  const { error: summeError } = await supabase.from('quotes').update({
     total_net: totalNet,
     total_vat: totalVat,
     total_gross: netAfterExtras + totalVat,
   }).eq('id', quoteId).eq('company_id', company.id)
+  if (summeError) {
+    console.error('[items/preis] Angebotssumme konnte nicht aktualisiert werden')
+    Sentry.captureException(new Error(summeError.message), { tags: { feature: 'position_preis_summe' } })
+    return NextResponse.json({ error: 'Der Preis wurde gespeichert, die Angebotssumme aber nicht. Bitte Seite neu laden.' }, { status: 500 })
+  }
 
   return NextResponse.json({
     ok: true,

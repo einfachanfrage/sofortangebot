@@ -732,6 +732,9 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Parkett Aufarbeitung', title: 'Lose Parkettstäbe nachkleben', unit: 'Stück', unit_price: 22.00 },
   { category: 'Boden – Parkett Aufarbeitung', title: 'Kleine Parkettschäden ausbessern / Hartwachsreparatur', unit: 'Stück', unit_price: 28.00 },
   { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett partiell nachschleifen und nachölen', unit: 'm²', unit_price: 32.00 },
+  { category: 'Boden – Parkett Aufarbeitung', title: 'Versiegelung 1. Gang', unit: 'm²', unit_price: 9.00 },
+  { category: 'Boden – Parkett Aufarbeitung', title: 'Versiegelung 2. Gang', unit: 'm²', unit_price: 9.00 },
+  { category: 'Boden – Parkett Aufarbeitung', title: 'Versiegelung 3. Gang', unit: 'm²', unit_price: 9.00 },
   { category: 'Boden – Abschlussarbeiten', title: 'Bodentank / Revisionsdeckel passgenau ausschneiden', unit: 'Stück', unit_price: 35.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -3507,6 +3510,28 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Außen', title: 'Grundierung Fassade nach Graffiti', unit: 'm²', unit_price: 6.00 },
   { category: 'Maler – Anstrich Außen', title: 'Fassadenfarbe 2× Anstrich', unit: 'm²', unit_price: 14.00 },
   { category: 'Maler – Anstrich Außen', title: 'Rissverschluss / Spachtelarbeiten Außen', unit: 'Pauschale', unit_price: 90.00 },
+
+  // Katalog-Deckungsaudit (2026-08-31): Diese fünf Teilschritte erzeugt die
+  // Vollständigkeitsprüfung bei jedem Lackier-Auftrag, im Katalog hatten sie
+  // nie einen Gegen-Eintrag — sie standen also in JEDEM solchen Angebot mit
+  // 0,00 € und „Preis fehlt". Die Sätze sind an vorhandene Katalogzeilen
+  // angelehnt, nicht frei gewählt: Schleifen 20 € wie „Türrahmen schleifen",
+  // Türen lackieren 90 € wie „Innentürblatt lackieren beidseitig",
+  // Grundieren 25 € zwischen „Türrahmen schleifen" (20 €) und „Türrahmen
+  // streichen" (35 €). Sandy kann sie wie jeden anderen Preis ändern.
+  { category: 'Maler – Lackierarbeiten', title: 'Türen abschleifen', unit: 'Stück', unit_price: 20.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Türen grundieren', unit: 'Stück', unit_price: 25.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren (2× Anstrich)', unit: 'Stück', unit_price: 90.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Heizkörper abschleifen', unit: 'Stück', unit_price: 20.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Heizkörper grundieren', unit: 'Stück', unit_price: 25.00 },
+  // Zweite Runde desselben Audits — dieselbe Kette für Fenster und
+  // Dachschrägen. Anker: „Fenster streichen innen" (55 €) für das Lackieren,
+  // Schleifen/Grundieren wie bei den Türen, „Fläche spachteln
+  // (Flächenspachtel)" (9 €/m²) für die Schrägen.
+  { category: 'Maler – Lackierarbeiten', title: 'Fenster abschleifen', unit: 'Stück', unit_price: 20.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Fenster grundieren', unit: 'Stück', unit_price: 25.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Fenster lackieren (2× Anstrich)', unit: 'Stück', unit_price: 55.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Dachschrägen spachteln', unit: 'm²', unit_price: 9.00 },
 
   // BODENBELÄGE & PARKETT — fehlende Standardpreise + Handwerker-Vollständigkeitsprüfung (2026-08-20)
   { category: 'Boden – Altbelag entfernen', title: 'Altbelag entfernen', unit: 'm²', unit_price: 7.00 },

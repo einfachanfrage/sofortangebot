@@ -9,7 +9,7 @@ describe('Boden-Standardpreiskatalog', () => {
   // Boden-Positionen. Keine Dopplung, Dopplungs-Test unten war durchgehend
   // grün.
   it('enthält den vollständigen kuratierten Boden-Katalog', () => {
-    expect(boden).toHaveLength(186)
+    expect(boden).toHaveLength(189)
   })
 
   it('enthält keine doppelten Kombinationen aus Bezeichnung und Einheit', () => {

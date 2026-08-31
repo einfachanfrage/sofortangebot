@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -92,7 +93,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   }[]
 
   if (items.length > 0) {
-    await supabase.from('quote_items').insert(
+    // Audit 2026-08-31: ohne Fehlerprüfung entstand eine leere neue Version,
+    // während die Oberfläche "Überarbeitung erstellt" meldete.
+    const { error: itemsError } = await supabase.from('quote_items').insert(
       items.map(item => ({
         quote_id: neueQuote.id,
         position: item.position,
@@ -106,6 +109,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         din_normen: item.din_normen ?? null,
       }))
     )
+    if (itemsError) {
+      console.error('[quotes/revise] Positionen der neuen Version nicht gespeichert')
+      Sentry.captureException(new Error(itemsError.message), { tags: { feature: 'quote_revise_items' } })
+      return NextResponse.json(
+        { error: 'Die Überarbeitung konnte nicht vollständig angelegt werden. Bitte versuche es noch einmal.' },
+        { status: 500 },
+      )
+    }
   }
 
   return NextResponse.json({ id: neueQuote.id, revision: neueRevision, angebotsnummer: neueNummer })

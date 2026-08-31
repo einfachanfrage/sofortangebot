@@ -228,7 +228,10 @@ export async function POST(req: NextRequest) {
   const { error: itemsError } = await supabase.from('quote_items').insert(itemRows)
   if (itemsError) {
     // Fallback: ohne optionale Normspalten (Migration noch nicht ausgeführt)
-    await supabase.from('quote_items').insert(
+    // Audit 2026-08-31: Dieser zweite Versuch lief bisher ohne Fehlerprüfung.
+    // Scheiterte er auch, entstand ein Angebot GANZ OHNE Positionen — und
+    // niemand erfuhr davon. Dieselbe Fehlerklasse wie PM-016.
+    const { error: fallbackError } = await supabase.from('quote_items').insert(
       itemRows.map(item => ({
         quote_id: item.quote_id,
         position: item.position,
@@ -240,6 +243,16 @@ export async function POST(req: NextRequest) {
         total_price: item.total_price,
       }))
     )
+    if (fallbackError) {
+      console.error('[quotes/create] Positionen konnten nicht gespeichert werden')
+      Sentry.captureException(new Error(fallbackError.message), { tags: { feature: 'quote_items_insert' } })
+      // Ein Angebot ohne Positionen ist kein Angebot. Lieber ein sichtbarer
+      // Fehler als eine leere Hülle, die erst beim Verschicken auffällt.
+      return NextResponse.json(
+        { error: 'Die Positionen konnten nicht gespeichert werden. Bitte versuche es noch einmal.' },
+        { status: 500 },
+      )
+    }
   }
 
   return NextResponse.json({ id: quote.id, share_token: quote.share_token, angebotsnummer })

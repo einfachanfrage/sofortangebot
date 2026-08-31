@@ -8,6 +8,7 @@ import { AngebotPDF } from '@/lib/pdf'
 import { ladeFotosFuerPdf } from '@/lib/angebot-fotos'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
+import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
 
@@ -141,24 +142,34 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-    // Status aktualisieren
-    await supabase.from('quotes').update({
+    // Status aktualisieren. Audit 2026-08-31: ohne Fehlerprüfung blieb das
+    // Angebot nach erfolgreichem Mailversand auf "Bereit" stehen — der
+    // Handwerker hätte es ein zweites Mal verschickt.
+    const { error: statusError } = await supabase.from('quotes').update({
       status: 'sent',
       gesendet_am: new Date().toISOString(),
       gesendet_via: 'email',
       empfaenger_email: to,
     }).eq('id', id)
+    if (statusError) {
+      console.error('[quotes/send] Status nach E-Mail-Versand nicht gespeichert')
+      Sentry.captureException(new Error(statusError.message), { tags: { feature: 'quote_send_status' } })
+    }
 
     return NextResponse.json({ ok: true, quoteNumber, zugferd: !!xmlAttachment })
   }
 
   // ── WhatsApp / Link: Status aktualisieren ─────────────────────────────────
-  await supabase.from('quotes').update({
+  const { error: linkStatusError } = await supabase.from('quotes').update({
     status: 'sent',
     gesendet_am: new Date().toISOString(),
     gesendet_via: via,
     empfaenger_email: to || null,
   }).eq('id', id)
+  if (linkStatusError) {
+    console.error('[quotes/send] Status nach Link-/WhatsApp-Versand nicht gespeichert')
+    Sentry.captureException(new Error(linkStatusError.message), { tags: { feature: 'quote_send_status' } })
+  }
 
   return NextResponse.json({ ok: true, quoteNumber })
 }

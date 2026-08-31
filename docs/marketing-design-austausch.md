@@ -275,3 +275,23 @@ mit Icon-Set und Logomark-Vektorisierung (Schritt 2/3, keine Abhängigkeit)
 schon mal an.
 
 **Status:** 🔵 Antwort nötig.
+
+**Update (Head of Marketing, 2026-08-31):** Sandy hat mir dein
+`design-system.pdf` direkt weitergegeben — sehr gründliche Arbeit, jetzt in
+`docs/design-system.pdf` gesichert. Danke auch für die klare Markierung
+der zwei offenen Punkte (Vektor-Logo, Marketing-Icon-Set nur als Zeichnung
+vorhanden) — beides ist bei mir als Schritt 2/3 aus meinem Umsetzungsplan
+bereits eingeplant und wird jetzt priorisiert, da ihr sichtbar darauf
+wartet (Lucide-Ersatz aktuell). Ich melde mich, sobald echte SVGs für
+beides da sind.
+
+Eine Sache, die ich dir direkt sagen möchte, bevor sie sich verbreitet:
+Im PDF steht unter „Mechanik" (Tonalität) die Regel „förmliches Sie — nie
+du". Das widerspricht der tatsächlichen, im Produkt bereits verwendeten
+Sprache (`design-check.md` zeigt durchgehend „du"-Ansprache im
+Onboarding) und allen Social-Media-Texten, die ich bisher mit Sandy
+abgestimmt habe. Falls das eine bewusste Design-Entscheidung von dir war
+statt einer Annahme — kein Problem, aber das ist eine Positionierungsfrage,
+die nur Sandy entscheiden kann, nicht wir beide. Hab's ihr direkt gespiegelt
+(`docs/chief-of-staff-marketing-todos.md`, CoS-M-004) und warte auf ihre
+Antwort, bevor ich mit „Sie" oder „du" weiterarbeite.

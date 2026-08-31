@@ -20,15 +20,23 @@ löschen — Verlauf ist wertvoll).
 
 ## Offen
 
-Stand 31.08.2026: Alle vorgelegten Punkte sind entschieden — siehe Verlauf
-unten (inkl. der Buchhaltungs-Gate-Frage, siehe neueste Zeile). Die
-weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage, sondern
-die Gate-1-Gesamtfrage „ist das Tool reif für erste echte Testnutzer?" — die
-läuft über `docs/launch-readiness.md` (Stand 31.08.: ≈ 33 % gegen den vollen
-Scope, nach der Hochstufung von 11.5 auf G1; volle Neuberechnung nach dem
-heutigen Sync steht noch aus). Die Wettbewerbslandschafts-Frage aus
-`vision-strategie.md` ist im strategischen Check-in vom 31.08. beantwortet
-worden (siehe dort, „Geklärt 31.08.2026") — kein offener Punkt mehr.
+**🔵 CoS-M-004 (Rest) — eine Design-System-Freigabe, Head of Marketing
+wartet darauf, bevor er weiterbaut:**
+
+**Freigabe neue Funktionsfarben** `--state-success` (#4F6B45) /
+`--state-danger` (#A33A2A) — im PDF selbst als „Ergänzung ohne
+CI-Grundlage, Freigabe durch Sandy offen" markiert.
+
+Stand 31.08.2026 sonst: Alle übrigen vorgelegten Punkte sind entschieden —
+siehe Verlauf unten (inkl. der Buchhaltungs-Gate-Frage, siehe neueste
+Zeile). Die weiterhin große, laufende Abwägung ist keine einzelne
+Ja/Nein-Frage, sondern die Gate-1-Gesamtfrage „ist das Tool reif für erste
+echte Testnutzer?" — die läuft über `docs/launch-readiness.md` (Stand
+31.08.: ≈ 33 % gegen den vollen Scope, nach der Hochstufung von 11.5 auf
+G1; volle Neuberechnung nach dem heutigen Sync steht noch aus). Die
+Wettbewerbslandschafts-Frage aus `vision-strategie.md` ist im
+strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
+31.08.2026") — kein offener Punkt mehr.
 
 ---
 
@@ -36,6 +44,8 @@ worden (siehe dort, „Geklärt 31.08.2026") — kein offener Punkt mehr.
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-08-31 | CoS-M-005: DER Slogan für Sofortangebot — kurz, knapp, sofort verständlich auch ohne Vorwissen über das Produkt | **„Aufmaß fertig. Angebot fertig."** Sandys finale Entscheidung. Beschreibt den kompletten Ablauf in zwei parallelen Kurzsätzen (Bricolage-Grotesque-Statement-Stil, Punkt, sentence case) — für jeden sofort verständlich, auch ohne Vorwissen: Aufmaß nehmen, Angebot ist fertig. Löst „Gerechnet, nicht geschätzt." als Haupt-Slogan ab, die als sekundäre Differenzierungs-Zeile weiterleben kann, sobald das Produkt schon bekannt ist | Sandy direkt im Chat, `docs/chief-of-staff-marketing-todos.md` CoS-M-005 |
+| 2026-08-31 | CoS-M-004, Punkt 1: Tonalität „Sie" oder „du"? Das neue Design-System-PDF hatte „förmliches Sie — nie du" festgelegt, im Widerspruch zum tatsächlich im Produkt gelebten „du" | **Immer per „du"** — „imer per du!!!!!!!!!" Klare, eindeutige Entscheidung. PDF-Vorgabe war ein Fehler und wird korrigiert; Produkt und Social-Media-Texte bleiben wie bisher konsequent beim „du". Head of Marketing kann ab sofort auf „du" weiterbauen | Sandy direkt im Chat, `docs/chief-of-staff-marketing-todos.md` CoS-M-004 |
 | 2026-08-31 | Buchhaltungssoftware-Anbindung (11.5, Lexware/sevDesk): G2 (nach dem Launch) oder G1 (Teil des ersten Launches)? Frage entstand aus dem wöchentlichen Strategie-Check-in — Sandy positioniert Sofortangebot bewusst über die einfache Anbindung an bestehende Buchhaltungstools kleiner Betriebe, nicht über ein eigenes CRM | **G1** — „ja ist gate 1!" Kein Nice-to-have, sondern Teil des Kern-Differenzierungsversprechens für die Zielgruppe (kleine Betriebe, 1–10 MA, die z. B. Lexware/sevDesk nutzen). Ziel bleibt eine Anbindung in 2–3 einfachen Klicks | `docs/launch-readiness.md` 11.5, `docs/vision-strategie.md` (Geklärt 31.08.2026) |
 | 2026-08-31 | CoS-019 (Teil 1): „Erschwerniszuschlag Handabbruch" (25 %) und „Zuschlag schwierige Zufahrt" (40 %) — zusammenlegen zu einem Posten, oder getrennt lassen (beide können gleichzeitig auf ein Angebot kommen)? | **Getrennt lassen — „ja beides".** Beide Posten bleiben eigenständig im Katalog, können bei Bedarf auch gleichzeitig auf ein Angebot kommen (z. B. wenn ein Auftrag sowohl von Hand abgebrochen werden muss als auch schlecht mit Fahrzeug erreichbar ist). Keine Katalog-Änderung nötig, Ticket damit vollständig geschlossen. | `docs/chief-of-staff-todos.md` CoS-019 |
 | 2026-08-31 | CoS-019 (Teil 2): Rubriken „Anfahrt & Organisation"/„Anfahrt & Planung"/„Anfahrt & Vorbereitung" vereinheitlichen? | **Ja, vereinheitlichen.** | `docs/chief-of-staff-todos.md` CoS-019 |

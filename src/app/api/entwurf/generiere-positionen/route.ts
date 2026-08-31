@@ -258,7 +258,11 @@ export async function POST(req: NextRequest) {
   // Rohschnappschuss aus der ersten Runde darf das nicht überschreiben.
   const rohUpdate: Record<string, unknown> = { extraktion_final: extData.extraktion ?? null }
   if (extData.extraktion_roh != null) rohUpdate.extraktion_roh = extData.extraktion_roh
-  await supabase.from('quotes').update(rohUpdate).eq('id', angebot_id)
+  const { error: rohError } = await supabase.from('quotes').update(rohUpdate).eq('id', angebot_id)
+  if (rohError) {
+    console.error('[positionen-generieren] Extraktion konnte nicht gespeichert werden')
+    Sentry.captureException(new Error(rohError.message), { tags: { feature: 'positionen_generieren_extraktion' } })
+  }
 
   // Phase 1 endet hier: Noch nichts speichern oder bepreisen, solange wichtige
   // Angaben fehlen. Nach den Antworten wird dieselbe Pipeline neu berechnet.
@@ -646,12 +650,19 @@ export async function POST(req: NextRequest) {
   const vatRate = (companyData2 as { vat_rate?: number } | null)?.vat_rate ?? 19
   const total_gross = total_net * (1 + vatRate / 100)
 
-  await supabase.from('quotes').update({
+  // Audit 2026-08-31: Ohne Fehlerprüfung wären die Positionen gespeichert, die
+  // Angebotssumme aber nicht — der Entwurf hätte Positionen und 0,00 € gezeigt.
+  const { error: summenError } = await supabase.from('quotes').update({
     total_net,
     total_gross,
     notes: genData.notizen ?? null,
     entwurf_gespeichert_am: new Date().toISOString(),
   }).eq('id', angebot_id)
+  if (summenError) {
+    console.error('[positionen-generieren] Angebotssumme konnte nicht gespeichert werden')
+    Sentry.captureException(new Error(summenError.message), { tags: { feature: 'positionen_generieren_summe' } })
+    return NextResponse.json({ error: 'Die Angebotssumme konnte nicht gespeichert werden' }, { status: 500 })
+  }
 
   return NextResponse.json({
     ok: true,

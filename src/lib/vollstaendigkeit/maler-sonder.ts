@@ -134,15 +134,21 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
   // echten Signal für Ausbesserungsbedarf.
   const explizitSpachteln = /spachtel\w*|ausbesser\w*|reparier\w*|riss\w*|löcher|loch\b|uneben\w*|beschädigt\w*|untergrundvorbereitung/i.test(lower)
 
+  // Katalog-Deckungsaudit 2026-08-31: Hier stand die DRITTE Schreibweise
+  // derselben Leistung — „Dachschräge streichen — 2× Anstrich" neben dem
+  // „Dachschrägen streichen 2x" der Engine und des Katalogs. Zwei Folgen:
+  // kein Katalogpreis (0,00 €), und der Teil nach dem „ — " wurde von der
+  // Raum-Gruppierung als Raumname gelesen, sodass die Position unter
+  // „Allgemein" statt beim Raum landete. Jetzt überall dieselbe Bezeichnung.
   if (dsm2 !== null && dsm2 > 0) {
-    if (explizitSpachteln && !hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschräge spachteln / Untergrundvorbereitung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² Dachschrägenfläche`, annahmen: [] })
+    if (explizitSpachteln && !hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschrägen spachteln', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² Dachschrägenfläche`, annahmen: [] })
     if (explizitGrundierung && !hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Dachschräge Grundierung', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
-    if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschräge streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
+    if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschrägen streichen 2x', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
     if (!hat(ergaenzt, 'boden schütz', 'abdecken')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: ['Bodenfläche geschätzt'] })
   } else {
-    if (explizitSpachteln && !hat(ergaenzt, 'spachtel')) add(ergaenzt, fehlende, 'Dachschräge spachteln / Untergrundvorbereitung')
+    if (explizitSpachteln && !hat(ergaenzt, 'spachtel')) add(ergaenzt, fehlende, 'Dachschrägen spachteln')
     if (explizitGrundierung && !hat(ergaenzt, 'grundier')) add(ergaenzt, fehlende, 'Dachschräge Grundierung')
-    if (!hat(ergaenzt, 'dachschräg streich', 'schräge streich')) add(ergaenzt, fehlende, 'Dachschräge streichen')
+    if (!hat(ergaenzt, 'dachschräg streich', 'schräge streich')) add(ergaenzt, fehlende, 'Dachschrägen streichen 2x')
     if (!hat(ergaenzt, 'boden schütz')) add(ergaenzt, fehlende, 'Boden schützen / Abdeckfolie')
   }
 }

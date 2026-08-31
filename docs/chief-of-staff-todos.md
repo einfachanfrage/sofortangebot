@@ -2269,5 +2269,161 @@ gehören nicht zu diesem Ticket.
 
 ---
 
+## CoS-028 — Katalog-Deckungsaudit: 21 Positionen standen strukturell auf 0,00 €
+
+**Datum:** 2026-08-31
+**Auftrag:** Sandy, direkt („du kennst mittlerweile die fehler die immer wieder
+aufgetreten sind. checke ALLES und mach alles rund").
+**Status:** ✅ umgesetzt und live nachgezogen, Suite 59 Dateien / 977 Tests
+grün, `tsc` sauber, Lint für `src/` **0 Fehler**. Live-Nachtest steht aus.
+
+**Die Fehlerklasse:** „Preis fehlt / 0,00 €" ist in dieser Datei über Wochen
+immer wieder als Einzelfall aufgetaucht (PM-007 Kniestock, PM-008 Fassade,
+PM-011 Erschwernis, PM-024 Raumhöhe, zuletzt „Boden schützen"). Jedes Mal
+haben wir den Einzelfall gefixt. Diesmal habe ich die KLASSE gesucht statt den
+nächsten Fall — und sie hat zwei getrennte Ursachen:
+
+**Ursache 1 — der Katalog im Code und die echten Preisdatenbanken waren
+auseinandergelaufen.** `default-prices.ts` kennt 2.365 Positionen; Sandys
+Hauptkonto hatte 2.159, und die Lücke war kein Zufall: Positionen kamen über
+Monate im Code dazu, ohne dass eine Migration sie in BESTEHENDE Konten
+nachzog. Neue Konten bekamen sie beim Onboarding, alte nie. Im Maler-Bereich
+allein fehlten 46 Positionen, darunter **„Dachschrägen streichen 1x/2x/3x"** und
+**„Kniestockwände streichen 1x/2x/3x"** — also genau die Positionen aus PM-007.
+Bei Boden fehlten weitere. Ein reiner Code-Fix hätte daran nie etwas geändert;
+das war auch der zweite, bis heute unbekannte Grund für den 0,00 €
+Erschwerniszuschlag von heute Morgen.
+
+Umgesetzt: neues Skript `scripts/katalog-abgleich-migration.mjs` erzeugt aus
+`default-prices.ts` eine idempotente Migration
+(`20260831093000_katalog_abgleich.sql`), die je Gewerk nur einfügt, was fehlt —
+und nur in Betriebe, die dieses Gewerk schon führen. Der Dubletten-Schutz
+vergleicht Gewerk + Bezeichnung + Einheit statt der vollständigen Rubrik, weil
+Rubriken über die Zeit umbenannt wurden und ein Vergleich auf die volle Rubrik
+dieselbe Leistung ein zweites Mal angelegt hätte. Maler, Boden und Allgemein
+sind live nachgezogen (Hauptkonto jetzt 223 Maler- und 190 Boden-Positionen,
+zweites Konto 221/189). Die übrigen Gewerke stehen in der Migrationsdatei —
+sie sind nicht Teil des Launch-Scopes „Maler & Bodenleger".
+
+**Ursache 2 — die Pipeline erzeugt Positionen, die es im Katalog gar nicht
+gibt.** Neuer Test `src/lib/__tests__/katalog-deckung.test.ts` fährt 25 echte
+Fälle durch die vollständige Kette (Engine → Vollständigkeit →
+`gewerkFuerPosition` → Gewerk-Filter → `findePreisposition`) und prüft, ob
+JEDE erzeugte Position einen Preis findet. Beim ersten Lauf fielen 15 Positionen
+durch — jede davon hätte im echten Angebot mit 0,00 € dagestanden:
+
+- **Drei Schreibweisen für dieselbe Dachschräge.** Die Vollständigkeitsprüfung
+  sagte „Dachschräge streichen — 2× Anstrich", Engine und Katalog sagen
+  „Dachschrägen streichen 2x". Zusätzlich las die Raum-Gruppierung den Teil
+  hinter dem „ — " als Raumnamen, die Position landete also unter „Allgemein"
+  statt beim Raum. Beides behoben. (Am 30.08. war dieselbe Sache schon einmal
+  an einer anderen Stelle gefixt worden — die dritte Fundstelle blieb stehen.)
+- **„Türzargen lackieren" (Plural) fand „Türzarge lackieren" nicht.** Umbenannt;
+  wie viele es sind, sagt ohnehin die Menge.
+- **„Sockelleisten abkleben" mit Einheit „Stück"** im Türen-Lackier-Pfad —
+  Sockelleisten werden in laufenden Metern abgeklebt, einen Umfang gab es dort
+  gar nicht. Gemeint war das Abkleben rund um die Tür; heißt jetzt
+  „Türrahmen abkleben" und trifft den vorhandenen Katalogeintrag
+  „Abkleben Fenster-/Türrahmen" (8 €/Stück).
+- **„Kork verlegen" fand „Korkboden verlegen …" nicht** — Synonym ergänzt,
+  wie schon bei Fertigparkett/Vinyl.
+- **„Fenster Lack (2× Anstrich)"** — weder gutes Deutsch noch im Katalog.
+  Heißt jetzt „Fenster lackieren (Lack, 2× Anstrich)".
+- **Zehn Positionen ohne jeden Katalogzwilling**: Türen/Fenster/Heizkörper
+  abschleifen und grundieren, Türen und Fenster lackieren, Dachschrägen
+  spachteln, Versiegelung 1./2./3. Gang. Als Katalogzeilen ergänzt.
+
+**Für Sandy — die neuen Preise:** Ich habe zwölf Katalogzeilen angelegt und
+jeden Satz an eine vorhandene Zeile angelehnt statt ihn zu erfinden: Schleifen
+20 € wie „Türrahmen schleifen", Grundieren 25 € (zwischen 20 € Schleifen und
+35 € Streichen), Türen lackieren 90 € wie „Innentürblatt lackieren beidseitig",
+Fenster lackieren 55 € wie „Fenster streichen innen", Dachschrägen spachteln
+9 €/m² wie „Fläche spachteln", Versiegelung 9 €/m² je Gang — zwei Gänge ergeben
+damit exakt die 18 €/m² des vorhandenen Eintrags „Parkett versiegeln (Lack,
+2-lagig)", der Gesamtpreis ändert sich also nicht. **Das sind Preise, und
+Preise gehören dir** — sag Bescheid, wenn andere Zahlen richtiger sind.
+
+**Was der Test ab jetzt verhindert:** Jede neue Position, die die Pipeline
+erzeugen kann und für die es keinen Katalogpreis gibt, lässt den Test rot
+werden — mit Fallname und Positionsbezeichnung. Diese Fehlerklasse kann nicht
+mehr still in ein Angebot rutschen.
+
+---
+
+## CoS-029 — Stumme Schreibfehler: sieben Stellen, an denen Datenverlust unbemerkt blieb
+
+**Datum:** 2026-08-31
+**Auftrag:** Teil desselben „checke ALLES"-Auftrags von Sandy.
+**Status:** ✅ umgesetzt, Live-Nachtest steht aus
+
+**Hintergrund:** PM-016 hat uns Tage gekostet, weil ein Datenbank-Insert seinen
+Fehler nicht geprüft hat (`await supabase.from(...).insert(...)` ohne
+`error`-Auswertung) und dadurch für jedes neue Konto lautlos ins Leere lief.
+Ich habe das Repo systematisch nach derselben Form durchsucht: **über 30
+Schreibzugriffe ohne Fehlerprüfung.** Die sieben, bei denen ein stiller
+Fehlschlag Geld oder Kundenzusagen kostet, sind jetzt abgesichert (Log +
+Sentry, und dort wo es nötig ist ein echter Fehler statt eines falschen
+Erfolgs):
+
+1. **`/api/sign` — die Unterschrift des Kunden.** Schlug der Schreibvorgang
+   fehl, sah der Kunde trotzdem „Danke, unterschrieben", das Angebot stand aber
+   weiter auf „Beim Kunden". Die Zusage wäre spurlos verloren gewesen. Jetzt
+   bekommt der Kunde einen ehrlichen Fehler und kann es erneut versuchen.
+2. **`/api/quotes/create` — der Fallback-Insert der Positionen.** Scheiterte
+   auch der zweite Versuch, entstand ein Angebot ganz ohne Positionen, ohne
+   dass jemand davon erfuhr.
+3. **`/api/quotes/[id]/revise`** — dieselbe Lücke bei der neuen Version: leere
+   Überarbeitung, Oberfläche meldete Erfolg.
+4. **`/api/quotes/[id]/send`** (beide Wege) — nach erfolgreichem Versand wäre
+   das Angebot auf „Bereit" stehen geblieben; der Handwerker hätte es ein
+   zweites Mal verschickt.
+5. **`/api/quotes/[id]/items/[itemId]/preis`** — die Position hätte ihren neuen
+   Preis bekommen, die Angebotssumme nicht. Positionsliste und Endbetrag wären
+   auseinandergelaufen.
+6. **`/api/stripe/webhook`** — der Kunde hätte bezahlt, ohne seinen Tarif zu
+   bekommen. Jetzt 500, damit Stripe den Webhook erneut zustellt, statt ihn als
+   erledigt abzuhaken.
+7. **`/api/entwurf/generiere-positionen`** (Extraktion + Angebotssumme) — der
+   Entwurf hätte Positionen und 0,00 € gezeigt.
+
+**Bewusst offen gelassen:** die übrigen ~25 Fundstellen (Einstellungen,
+Briefpapier, Logo-Upload, Löschen aus Listen). Dort ist die Folge eines stillen
+Fehlschlags eine nicht gespeicherte Einstellung, kein verlorener Auftrag und
+kein falscher Betrag. Das gehört aufgeräumt, aber nicht in denselben Schritt —
+sonst wird aus einem prüfbaren Fix ein unüberschaubarer Diff.
+
+---
+
+## CoS-030 — Zehn tote Dateien, die Fixes verschlucken konnten
+
+**Datum:** 2026-08-31
+**Status:** ✅ zur Löschung vorbereitet (im Commit-Befehl an Sandy enthalten)
+
+**Warum das kein Aufräumen um des Aufräumens willen ist:** Am 29.08. habe ich
+einen DC-040-Fix in `src/lib/mengen/prompt-extraktion.ts` geschrieben, alle
+Tests wurden grün — und live änderte sich nichts, weil die Datei von keinem
+Produktionspfad benutzt wird. Der einzige echte Prompt lebt in
+`supabase/functions/_shared/prompt-extraktion-v4.ts`. Eine tote Datei ist keine
+Kosmetik, sie ist eine Falle: Sie nimmt Änderungen an, meldet Erfolg und ändert
+nichts.
+
+Ein Import-Audit über `src/` findet zehn solcher Dateien — von keiner einzigen
+Produktions- oder Testdatei importiert:
+
+`ki-fehlerbehandlung.ts`, `typography.ts`, `angebot-titel.ts`,
+`transkript-normalisierer.ts`, `gewerke.ts`, `mengen/vollstaendigkeits-check.ts`,
+`ki-flow.ts`, `stille-erkennung.ts`, `angebot-validierung.ts`,
+`mengen/prompt-extraktion.ts` — zusammen rund 1.300 Zeilen.
+
+Zwei davon sind besonders heikel, weil sie wie aktive Logik aussehen:
+`angebot-validierung.ts` (prüft Mengen und Preise — man würde annehmen, das
+läuft) und `transkript-normalisierer.ts` (341 Zeilen Sprachverarbeitung).
+Beides läuft nirgends.
+
+Gelöscht werden sie über Sandys Commit-Befehl (`git rm`), weil mein Zugang auf
+ihrem Rechner nicht löschen darf.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

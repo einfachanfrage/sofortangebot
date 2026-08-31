@@ -25,9 +25,19 @@ export function pruefeTuerenLackieren(
   ergaenzt.push({ beschreibung: `Türen abschleifen${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) aus Transkript`, annahmen: tuerAnnahme })
   ergaenzt.push({ beschreibung: `Türen grundieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
   ergaenzt.push({ beschreibung: `Türen lackieren (2× Anstrich)${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
-  ergaenzt.push({ beschreibung: `Türzargen lackieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: tuerAnnahme })
-  if (!hat(ergaenzt, 'sockelleisten abkl', 'sockel abkl')) {
-    ergaenzt.push({ beschreibung: `Sockelleisten abkleben${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) → je 1 Sockelleistenbereich`, annahmen: tuerAnnahme })
+  // Katalog-Deckungsaudit 2026-08-31: hieß hier „Türzargen lackieren" (Plural),
+  // der Katalogeintrag heißt „Türzarge lackieren" — der Preis-Matcher kam über
+  // die Schwelle nicht drüber und die Position stand mit 0,00 € da. Die Menge
+  // sagt ohnehin, wie viele es sind.
+  ergaenzt.push({ beschreibung: `Türzarge lackieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Zarge(n)`, annahmen: tuerAnnahme })
+  if (!hat(ergaenzt, 'türrahmen abkl', 'sockelleisten abkl', 'sockel abkl')) {
+    // Vorher: „Sockelleisten abkleben" mit Einheit „Stück". Sockelleisten
+    // werden aber in laufenden Metern abgeklebt (so steht es im Katalog und so
+    // erzeugt es jeder andere Pfad) — hier gab es gar keinen Umfang, nur eine
+    // Türanzahl. Ergebnis: falsche Einheit UND kein Preis. Gemeint war das
+    // Abkleben rund um die Tür; genau dafür gibt es „Abkleben
+    // Fenster-/Türrahmen" je Stück im Katalog.
+    ergaenzt.push({ beschreibung: `Türrahmen abkleben${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) → je 1 Rahmen`, annahmen: tuerAnnahme })
   }
 }
 
@@ -59,7 +69,10 @@ export function pruefeFensterLackieren(
 
   ergaenzt.push({ beschreibung: `Fenster abschleifen${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster aus Transkript`, annahmen: [] })
   ergaenzt.push({ beschreibung: `Fenster grundieren${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
-  ergaenzt.push({ beschreibung: `Fenster ${farbTyp} (2× Anstrich${zweiSeitigHinweis})${sfx}`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
+  // Katalog-Deckungsaudit 2026-08-31: hieß „Fenster Lack (2× Anstrich)" —
+  // kein Katalogtreffer und holpriges Deutsch auf dem Angebot. Der Farbtyp
+  // steht jetzt in der Klammer, wo er die Preiszuordnung nicht mehr stört.
+  ergaenzt.push({ beschreibung: `Fenster lackieren (${farbTyp}, 2× Anstrich${zweiSeitigHinweis})${sfx}`, menge: anzAnstrich, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster${istZweiSeitig ? ' × 2 Seiten' : ''}`, annahmen: [] })
   if (istAußen && !hat(ergaenzt, 'abdecken umgebung', 'umgebung abdecken')) {
     ergaenzt.push({ beschreibung: 'Abdecken Umgebung', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Außenarbeiten — Umgebung abdecken', annahmen: [] })
   }

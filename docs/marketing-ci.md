@@ -423,6 +423,39 @@ die laufende Abstimmung.
 
 ---
 
+## CoS-M-001 — Design System (technisches Pendant, Stand: 2026-08-31)
+
+Product Designer hat auf Basis von `docs/ci-guide.html` ein vollständiges
+technisches Design System gebaut (Tokens, Typo-Skala, Spacing/Radien/
+Schatten, Bewegung, 25 Komponenten, zwei UI-Kit-Vorschläge) und Sandy hat
+es mir direkt zugeschickt: „das soll deine Basis für alles Zukünftige
+sein". Gesichert unter `docs/design-system.pdf`.
+
+**Verhältnis zu `ci-guide.html`:** `ci-guide.html` bleibt die
+markennahe, geschäftliche Zusammenfassung (Business, Positionierung,
+Tonalität-Beispiele, Logo/Farbe/Typo auf Konzept-Ebene). `design-system.pdf`
+ist die technische Vertiefung darauf — exakte Token-Werte, Skalen,
+Komponenten-Zustände, UI-Kits. Für alles, was ich ab jetzt baue (Social
+Posts, Landingpage-Feedback, künftige Marketing-Assets), gilt: Farben/
+Typo/Spacing aus `design-system.pdf` exakt übernehmen statt aus dem
+Gedächtnis nachzubauen.
+
+**Zwei offene Punkte, die nur Sandy entscheiden kann** (Details in
+`docs/chief-of-staff-marketing-todos.md`, CoS-M-004): ob die im PDF neu
+festgelegte Regel „förmliches Sie, nie du" tatsächlich gewollt ist (steht
+im Widerspruch zum bisherigen, durchgehend geduzten Produkt und allen
+bisherigen Social-Texten), und die Freigabe der neuen Funktionsfarben
+(`--state-success`/`--state-danger`), die im PDF selbst als ungeklärt
+markiert sind. Bis zur Klärung baue ich nichts Neues auf „Sie" auf.
+
+**Bestätigt, kein Klärungsbedarf:** Farb-Token-Aufräumung (DC-006) ist für
+Farbe abgeschlossen — `#F5C400` ist offiziell `--legacy-yellow`, `#D9A400`
+ist der einzig gültige Wert. Vektor-Logo und Marketing-Icon-Set als echte
+SVGs sind jetzt priorisiert (Product Designer nutzt aktuell Lucide/Raster
+als Platzhalter und wartet sichtbar darauf).
+
+---
+
 *Nächster Schritt: Handoff an Product Designer über
 `docs/marketing-design-austausch.md` (EX-M-005) — Umsetzungsplan mit
 Reihenfolge und Zuständigkeiten übergeben, damit Schritt 1 (läuft) und

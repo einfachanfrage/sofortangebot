@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { sendPaymentFailedEmail, sendCancellationEmail } from '@/lib/email'
+import * as Sentry from '@sentry/nextjs'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2026-05-27.dahlia' })
 
@@ -70,11 +71,20 @@ export async function POST(req: NextRequest) {
       const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null
 
       if (userId && customerId) {
-        await supabase.from('companies').update({
+        // Audit 2026-08-31: Ohne Fehlerprüfung hätte der Kunde bezahlt, ohne
+        // seinen Tarif zu bekommen — und niemand hätte davon erfahren.
+        const { error: planError } = await supabase.from('companies').update({
           plan,
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
         }).eq('user_id', userId)
+        if (planError) {
+          console.error('[stripe] Tarif nach Zahlung nicht gespeichert')
+          Sentry.captureException(new Error(planError.message), { tags: { feature: 'stripe_plan_update' } })
+          // 500 → Stripe stellt den Webhook erneut zu, statt ihn als erledigt
+          // abzuhaken. Genau dafür sind die Wiederholungen da.
+          return NextResponse.json({ error: 'Tarif konnte nicht gespeichert werden' }, { status: 500 })
+        }
       }
       break
     }
