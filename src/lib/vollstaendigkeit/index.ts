@@ -20,7 +20,7 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   gewerk: string,
   positionen: BerechnetePosition[],
   transkript: string,
-  meta?: { fensterAnzahl?: number; tuerenAnzahl?: number; raumhoehen?: number[] },
+  meta?: { fensterAnzahl?: number; tuerenAnzahl?: number; raeume?: Array<{ name?: string; hoehe?: number | null }> },
   signale?: ExtraktionSignale,
 ): CheckErgebnis {
   const lower = transkript.toLowerCase()

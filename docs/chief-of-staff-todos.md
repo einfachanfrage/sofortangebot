@@ -914,8 +914,10 @@ als Live-Nachtest aus, sobald ein Testkunde angelegt wird.
 ## CoS-013 — Strukturelle Lösung für den wiederholten Datei-Speicherfehler
 
 **Datum:** 2026-08-20
-**Status:** ❌ offen — Sofortmaßnahme umgesetzt, eigentlicher Lösungsvorschlag
-braucht Sandys Go
+**Status:** 🟡 Go erteilt (Sandy, 31.08.) — Sofortmaßnahme läuft bereits,
+echter Git-Workflow für `docs/` jetzt an Head of Product Engineering und
+Platform & Integrations Engineer weitergegeben, Umsetzung/Bestätigung steht
+aus
 
 **Hintergrund:** Der Speicherfehler bei gleichzeitiger Bearbeitung
 gemeinsamer Doku-Dateien ist jetzt zum 6. Mal aufgetreten (zuletzt in dieser
@@ -970,6 +972,13 @@ nicht nur behandeln.
 **Für Sandy:** Die Sofortmaßnahme läuft bereits. Bei der Git-Lösung sag mir
 kurz, ob ich das Head of Product Engineering und Platform & Integrations
 Engineer als neue, feste Regel für `docs/`-Änderungen mitgeben soll.
+
+**Update (Sandy, 31.08.):** „ja hast mein go!" — Go erteilt. Wird an Head
+of Product Engineering und Platform & Integrations Engineer als neue feste
+Regel für `docs/`-Änderungen weitergegeben: künftig `docs/`-Änderungen über
+echte Git-Commits (pull → bearbeiten → commit → push) statt direktem
+Überschreiben. Status wechselt auf 🟡, bis beide bestätigt haben, dass sie
+die neue Regel anwenden.
 
 ---
 
@@ -1492,12 +1501,24 @@ genug, dass ich einen der beiden Preise eigenmächtig aus einem Katalog
 lösche. Betrifft live niemanden (nur Maler und Bodenleger sind
 ausgeliefert). Sag Bescheid, wenn ich zusammenlegen soll.
 
+**Update (Sandy, 31.08.):** „ja beides" — getrennt lassen, beide Posten
+bleiben eigenständig im Katalog und können bei Bedarf auch gleichzeitig auf
+ein Angebot kommen. Keine Katalog-Änderung nötig, dieser Teil ist damit
+erledigt, ohne dass jemand etwas umsetzen muss.
+
 **Ebenfalls bewusst nicht angefasst:** Die Rubriken „Anfahrt & Organisation"
 (12 Gewerke), „Anfahrt & Planung" (5) und „Anfahrt & Vorbereitung" (1,
 Abbruch) heißen zwar uneinheitlich, aber **kein Gewerk hat zwei davon
 gleichzeitig** — es gibt also nirgends zwei Töpfe für dasselbe. Eine
 Umbenennung wäre reine Kosmetik mit Migrationsaufwand auf Bestandsdaten.
 Auch hier: sag Bescheid, wenn du es trotzdem einheitlich willst.
+
+**Update (Sandy, 31.08.):** Anfahrt-Rubriken vereinheitlichen — „ja
+vereinheitlichen". Umsetzung an Head of Product Engineering (Migration auf
+Bestandsdaten, analog zur bereits gelaufenen Erschwernisse-Vereinheitlichung
+oben). Die Handabbruch-/Zufahrt-Zuschlag-Frage ist noch offen — Sandy hat am
+31.08. nach der genauen fachlichen Bedeutung gefragt (Rückmeldung folgt im
+Chat), siehe `entscheidungen-fuer-sandy.md`.
 
 ---
 
@@ -1734,7 +1755,7 @@ lassen, damit ihr sie selbst committet.
 **Datum:** 2026-08-25 (Chief of Staff, nach Sandys Nachfrage „hat HoPE das
 nicht heute schon gefixt?")
 
-**Status:** 🟡 fast fertig — Fix committet, `design-check.md` DC-033 steht auf „behoben". Offen: Push/Deploy-Verifikation, Live-Nachtest, Sandys Entscheidung zu Punkt 3 (siehe `entscheidungen-fuer-sandy.md`)
+**Status:** 🟡 fast fertig — Fix committet, `design-check.md` DC-033 steht auf „behoben", Sandys Entscheidung zu Punkt 3 liegt jetzt vor (31.08.: so lassen). Offen nur noch: Push/Deploy-Verifikation, Live-Nachtest
 
 **Ausgangslage:** DC-033 (`design-check.md`) ist ein echter, in Produktion
 bestätigter Bug — das Nummernkreis-RPC (`vergib_naechste_nummer`) schlägt
@@ -1838,6 +1859,13 @@ DC-033 als „🟡 behoben" — passt zur Rückmeldung oben. Noch offen: Push/
 Deploy-Verifikation, Live-Nachtest, und Sandys Entscheidung zu Punkt 3
 (unverändert offen in `entscheidungen-fuer-sandy.md`).
 
+**Update (Sandy, 31.08.), Punkt 3 entschieden:** „so lassen, bisher ja
+keine echte nutzer, alle angebote die erstellt wurden wurden bisher nur von
+mir erstellt" — die 4 betroffenen Angebote bekommen KEINE nachträgliche
+Nummer. Punkt 3 damit erledigt. Offen bleibt nur noch die
+Push/Deploy-Verifikation + der Live-Nachtest (Angebot fertigstellen, echte
+Nummer statt ID-Fragment sehen), dann kann DC-033/CoS-022 komplett auf grün.
+
 ---
 
 ## CoS-023 — Governance: eigener Sync-Fehler bei CoS-P-003/CoS-P-004 (PKCE-/Mail-Fix)
@@ -1907,6 +1935,157 @@ durch Sandy.
 **Nächster Schritt:** kein Auftrag an Kollegen nötig — alles außer DC-037
 ist bereits in Arbeit/fertig. Live-Tests sammeln sich mit den übrigen
 offenen Nachtests (siehe Dashboard).
+
+---
+
+## CoS-025 — Sammel-Entscheidungen von Sandy, 31.08. (vollständiger Abgleich auf „ALLE Punkte")
+
+**Datum:** 2026-08-31 (Chief of Staff, nach Sandys „sag mir ganz konkret wo
+es von MIR eine antwort braucht, ALLE punkte")
+
+**Status:** ✅ alle 16 vorgelegten Punkte entschieden (CoS-019
+Handabbruch/Zufahrt zuletzt, 31.08.: getrennt lassen), alle Entscheidungen
+zusätzlich in `entscheidungen-fuer-sandy.md` protokolliert.
+
+**Anlass:** Zweiter vollständiger Audit-Durchgang nach dem 29.08.-Audit
+(CoS-024) — diesmal gezielt auf offene Entscheidungspunkte statt auf
+Status-Fortschritt. Dabei zwei neue, bisher nirgends erfasste Dateien
+gefunden: `dc-042-status-modell-neu-denken.md` und
+`dc-043-dashboard-und-nav-neu-gedacht.md` (beide 2026-08-30, Product
+Designer, direkt von Sandy beauftragt — „was soll das im header heißen...
+mir ist das nicht klar und clean genug" bzw. „kannst du bitte auch das
+dashboard und die menüleiste unten neu denken"), plus drei ältere,
+liegengebliebene Fachfragen aus `pruefmeister-testfaelle.md` (PM-008/015,
+PM-011, PM-024/neu).
+
+**Entscheidungen (Kurzfassung, volle Begründung in
+`entscheidungen-fuer-sandy.md`):**
+
+- CoS-019: Anfahrt-Rubriken vereinheitlichen (ja) — Handabbruch/Zufahrt-
+  Zuschlag getrennt lassen, beide können gleichzeitig auf ein Angebot
+  kommen. Beide Teile jetzt vollständig geschlossen, kein Umsetzungsaufwand.
+- PM-008/PM-015: Erschwerniszuschlag-Einheit = Prozent (Katalog ist
+  Referenz). **Handoff: Head of Product Engineering** (generierte
+  Positionen anpassen).
+- PM-024 (neues Ticket nötig): Höhenzuschlag bei mehreren Räumen = pro Raum
+  einzeln, nicht pauschal fürs ganze Angebot. **Handoff: Head of Product
+  Engineering.**
+- PM-011: „schwieriger Untergrund" + „Altbau" dürfen gleichzeitig neben
+  Q2-Spachtelung stehen. **Handoff: Prüfmeister** (Soll-Lösung entsprechend
+  führen), Head of Product Engineering falls Code das aktuell verhindert.
+- DC-033/CoS-022: 4 Alt-Angebote bekommen keine nachträgliche Nummer (siehe
+  CoS-022 oben, bereits eingetragen).
+- DC-042 (alle 4 Punkte entschieden): `viewed`-Status streichen · Wortwahl
+  „Beim Kunden" · „Abgelehnt" unterscheidet aktiv/nie-gehört · `sent_at`-Feld
+  mit Migration. **Handoff: Product Designer** (Wording/UI) + **Head of
+  Product Engineering** (Migration `sent_at`, Archivieren-Flag, Backend für
+  Abgelehnt-Unterscheidung).
+- DC-040-Folgefrage: „Türen/Fenster schon raus?" künftig auch bei einzelnen
+  Räumen fragen — inkl. wenn der Nutzer direkt Wand-/Deckenfläche nennt.
+  **Handoff: Head of Product Engineering.**
+- DC-043 (alle 3 Punkte): Richtung B „warm & persönlich" · FAB bleibt ·
+  „Start" einheitlich. **Handoff: Product Designer**, kann direkt
+  umgesetzt werden (reine Frontend-Änderung laut eigener Einschätzung im
+  Konzept).
+- CoS-013: Go für echten Git-Workflow bei `docs/`-Dateien (siehe CoS-013
+  oben, bereits eingetragen). **Handoff: Head of Product Engineering +
+  Platform & Integrations Engineer.**
+
+**Noch offen, nicht Teil dieser Runde:** die Wettbewerbslandschafts-Frage
+aus `vision-strategie.md` (zweimal gestellt, 24.08. und 31.08., weiterhin
+unbeantwortet) — strategische Frage, keine operative Blockade, bleibt beim
+wöchentlichen Check-in verankert.
+
+---
+
+## CoS-025 — Erledigung der Engineering-Handoffs (Head of Product Engineering, 2026-08-31)
+
+**Auftrag von Sandy:** „schau dir alle von mir entschiedenen offenen fragen an!"
+Ich habe alle 16 Entscheidungen aus `entscheidungen-fuer-sandy.md` durchgesehen
+und die fünf mit Engineering-Handoff umgesetzt. Suite danach: 58 Dateien /
+968 Tests grün, `tsc --noEmit` sauber.
+
+**PM-008/PM-015 — Erschwerniszuschlag = Prozent.** Hier waren ZWEI Dinge kaputt,
+nicht eins. (a) Der bekannte Einheiten-Konflikt: generierte Positionen trugen
+„Pauschale", der Katalog „%", der Preis-Matcher besteht auf exakter
+Einheiten-Übereinstimmung. (b) Neu gefunden beim Nachsehen in der echten
+Datenbank: die vier Ersatz-Einträge mit Einheit „Pauschale", die am 2026-08-20
+in `default-prices.ts` angelegt wurden, sind in KEINER echten
+Betriebs-Preisdatenbank gelandet — es gab nie eine Migration dazu, beide
+bestehenden Konten sind älter. Ein reiner Code-Fix hätte an den 0,00 € also
+nichts geändert. Umgesetzt: Generierung auf „%" (`vollstaendigkeit/
+maler-extras.ts`), Katalog-Einträge auf „%" mit vollständigen VOB-Metadaten,
+neue Migration `20260831092000_erschwerniszuschlaege_prozent.sql` (angewandt,
+beide Konten haben die fünf Einträge jetzt), und ein Prozentsatz wird zu echtem
+Geld: neue Datei `src/lib/zuschlag-basis.ts` bildet die Bemessungsgrundlage
+(Leistungen genau des Raums, sonst des Angebots; nie ein Zuschlag auf einen
+Zuschlag) und rechnet in `angebot-generieren` daraus Menge × Einzelpreis =
+Gesamtpreis — ohne Sonderfall in PDF, Entwurfsansicht oder Summenbildung.
+Nebenbefund mitgefixt: `gewerkFuerPosition()` ordnete Zuschläge im GEMISCHTEN
+Angebot dem falschen Gewerk zu (kein einziges Maler-Wort im Titel — exakt
+dieselbe Falle wie bei „Boden schützen").
+**Für Sandy offen:** die fünf Prozentsätze (Höhe 15 %, Altbau 20 %,
+Denkmalschutz 30 %, bewohnt 10 %, schwieriger Untergrund 10 %) habe ich an die
+schon vorhandenen VOB-Einträge desselben Katalogs angelehnt, nicht frei
+gewählt. Andere Sätze sind eine Preisentscheidung und gehören ihr.
+
+**PM-024 — Höhenzuschlag je Raum:** war bereits am 30.08. umgesetzt
+(`Erschwerniszuschlag Raumhöhe > 3m — <Raum>`, eine Position je hohem Raum),
+Sandys Entscheidung bestätigt das nachträglich. Kein weiterer Aufwand.
+
+**PM-011 — „schwieriger Untergrund" + „Altbau" gleichzeitig:** der Code
+verhindert das nicht (zwei unabhängige Prüfungen). Mit einem Test festgehalten,
+damit es das auch nicht wieder tut. Kein Fix nötig.
+
+**DC-040-Folgefrage — auch bei einzelnen Räumen fragen:** die Bedingung
+„nur Wohnung/Haus/Etage" ist raus, die Frage kommt jetzt bei jedem Raum, sobald
+eine Wandfläche direkt genannt wurde. Roh-Maße (L × B × H) lösen sie
+ausdrücklich NICHT aus — daraus rechnet die Engine selbst und zieht die
+Öffnungen ohnehin nach VOB ab. Eine Ausnahme habe ich zusätzlich eingezogen:
+im Dachgeschoss legt die KI die Schrägenfläche erfahrungsgemäß im Feld für die
+Wandfläche ab (PM-007, Sandys echter Dachzimmer-Fall). Eine Schräge hat keine
+Türen — dort wird nicht gefragt.
+**Hinweis zur Auslegung:** Sandy sagte „Wand- oder Deckenfläche". Umgesetzt ist
+nur die Wandfläche, weil eine Decke keine Türen und Fenster hat, von denen
+etwas abzuziehen wäre.
+
+**DC-042 — Status-Modell (alle vier Punkte):**
+- Punkt 1, toter `viewed`-Status: ersatzlos raus aus `data/quotes.ts` und
+  `data/dashboard.ts` (die letzten beiden Stellen), Test hält das fest.
+- Punkt 2, Wortwahl „Beim Kunden": lag beim Product Designer und ist in
+  `lib/status.ts` bereits live.
+- Punkt 3, „Abgelehnt" unterscheiden: neue Spalte `abgelehnt_grund`
+  ('aktiv' | 'keine_rueckmeldung'), Datenpfad in `lib/status-uebergang.ts`,
+  Statuswechsel schreibt sie mit. Ohne Angabe bleibt sie leer — geraten wird
+  nicht. Die Abfrage „warum abgelehnt?" baut der Product Designer.
+- Punkt 4, `sent_at`: KEIN neues Feld nötig — die Spalte existiert seit dem
+  13.06. als `gesendet_am`, sie wurde nur von einem der beiden Versandwege
+  geschrieben und von niemandem gelesen. `/api/email` schreibt sie jetzt
+  ebenfalls, die Angebotsliste liefert sie mit aus, `tageBeimKunden()` rechnet
+  daraus die Tage. Die genaue Variante ist damit da, ohne ein zweites Feld
+  neben ein vorhandenes zu setzen.
+- Archivieren bewahrt jetzt den echten Ausgang (`archiviert_am`,
+  `status_vor_archiv`) statt ihn zu überschreiben. Bewusst additiv: der Status
+  bleibt unverändert 'archived', keine bestehende Liste oder Zählung reagiert
+  anders als bisher. Für schon archivierte Alt-Angebote lässt sich der Ausgang
+  nicht rekonstruieren — dort bleibt das Feld ehrlich leer statt geraten.
+- Migration `20260831090000_dc042_status_modell.sql`, angewandt.
+
+**CoS-019 Teil 2 — Anfahrt-Rubriken vereinheitlichen:** hier stimmte der
+Vermerk „kein Umsetzungsaufwand" nur für Teil 1. Der Katalog führte dieselbe
+Sache in drei Schreibweisen („Anfahrt & Organisation" in 12 Gewerken,
+„Anfahrt & Planung" in 5, „Anfahrt & Vorbereitung" in 1). Alle auf
+„Anfahrt & Organisation" vereinheitlicht (`default-prices.ts`,
+`preise-vorlagen.ts`) plus Migration
+`20260831091000_vereinheitliche_anfahrt_rubriken.sql` für die bestehenden
+Konten, gleiche Bauart wie die Erschwernis-Rubriken-Migration vom 24.08.
+Teil 1 (Handabbruch/Zufahrt getrennt lassen) im Katalog gegengeprüft: beide
+Posten stehen eigenständig da, nichts zu tun.
+
+**CoS-013 — Git-Workflow für `docs/`:** angenommen. Ab sofort gehen meine
+`docs/`-Änderungen über einen echten Commit statt über direktes Überschreiben;
+dieser Eintrag hier ist der erste, der so entsteht. Neue Einträge hänge ich
+ans Dateiende vor die Endmarkierung.
 
 ---
 

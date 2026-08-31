@@ -20,8 +20,7 @@ const DASH = /\s+[-–—]\s+/
 // "Klo" und ähnliche Kurzformen ab).
 //
 // DC-040 (2026-08-29): dieselbe Fehlerkategorie erneut — "Wohnung" (und die
-// Geschwister "Haus"/"Etage"/"Geschoss"/"Stockwerk", siehe
-// `istGesamtflaechenRaum()` in kontext-analyzer.ts, gleiche Wortliste) sind
+// Geschwister "Haus"/"Etage"/"Geschoss"/"Stockwerk") sind
 // jetzt gültige raeume-Namen (Wohnung-als-Ganzes-Aufnahme), enthielten aber
 // keins der bisherigen Schlüsselwörter. Ohne diesen Eintrag wäre eine
 // "Wohnung"-Position hier fälschlich in den Allgemein-Topf gefallen, obwohl

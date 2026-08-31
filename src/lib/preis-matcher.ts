@@ -42,6 +42,12 @@ const SYNONYME: Array<[RegExp, string]> = [
   [/ausgleichsmasse|nivellieren|spachtelmasse/g, 'ausgleich'],
   [/voranstrich|grundierung/g, 'grundieren'],
   [/spachtelarbeiten?/g, 'spachteln'],
+  // Trockenlauf 2026-08-30: „Dehnungsfuge einbauen" (Engine) fand den
+  // Katalogeintrag „Dehnungsfuge mit Bewegungsprofil herstellen" nicht — im
+  // Handwerkskatalog heißt dieselbe Leistung je nach Quelle einbauen,
+  // herstellen oder anlegen. Für den Abgleich dasselbe Wort.
+  [/\bherstellen\b|\banlegen\b|\bsetzen\b/g, 'einbauen'],
+  [/bewegungsprofil|bewegungsfuge/g, 'dehnungsfuge'],
   [/glatten|glaetten/g, 'spachteln'],
   [/malervlies|renoviervlies|glattvlies/g, 'renoviervlies'],
   [/rauhfaser|raufasertapete/g, 'raufaser'],

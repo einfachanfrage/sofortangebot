@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { waehleUntertitel } from '@/lib/positions-untertitel'
 import { findePreisposition, type PreisPosition } from '@/lib/preis-matcher'
 import { preisKategoriePasstZuGewerk } from '@/lib/default-price-selection'
+import { wendeProzentZuschlaegeAn } from '@/lib/zuschlag-basis'
 
 export const maxDuration = 60
 
@@ -22,12 +23,30 @@ interface BerechnetePositionInput {
   }
 }
 
-function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): string | undefined {
+export function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): string | undefined {
   const text = beschreibung.toLocaleLowerCase('de-DE')
   const istBoden = /vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleisten montier|boden (?:verleg|entfern|schleif)|untergrund schleifen.*kleberreste|kleberreste.*schleifen/i.test(text)
   if (istBoden) return 'boden_parkett'
+  // PM-024/PM-026-Nachtest (Sandy, 2026-08-30): „Boden schützen" enthält kein
+  // einziges Maler-Wort — kein „streichen", kein „abdecken". In einem reinen
+  // Malerauftrag fiel das nie auf, weil dann ohnehin auf 'maler' gefiltert
+  // wurde. In einem GEMISCHTEN Angebot (Laminat + Streichen) landet die
+  // Position dagegen beim Hauptgewerk 'boden_parkett' — und der Katalogeintrag
+  // „Boden abdecken (Abdeckvlies)" steht unter „Maler – Vorbereitung & Schutz".
+  // Ergebnis: kein Kandidat, 0,00 €, „Preis fehlt" bei einer der häufigsten
+  // Positionen überhaupt. Bodenschutz ist Vorbereitung des Malers, auch wenn
+  // das Wort „Boden" darin vorkommt.
+  const istMalerVorbereitung = /boden\s*sch[üu]tz|bodenschutz|abdeckvlies|abdeckfolie|m[öo]bel\s*abdeck/i.test(text)
+  if (istMalerVorbereitung) return 'maler'
   const istMaler = /wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleifen|grundier|abdeck|abkleb/i.test(text)
   if (istMaler) return 'maler'
+  // Dieselbe Falle wie bei „Boden schützen": „Erschwerniszuschlag Raumhöhe
+  // > 3m — Büro" enthält kein einziges Maler-Wort. In einem reinen
+  // Malerauftrag fiel das nie auf, in einem gemischten Angebot landete der
+  // Zuschlag beim Hauptgewerk „boden_parkett" und fand seinen Katalogeintrag
+  // unter „Maler – Erschwernisse & Zuschläge" nicht mehr. Alle Zuschläge,
+  // die die Vollständigkeitsprüfung erzeugt, sind Maler-Zuschläge.
+  if (/^\s*erschwerniszuschlag\b/i.test(text)) return 'maler'
   return hauptgewerk
 }
 
@@ -110,6 +129,12 @@ export async function POST(req: NextRequest) {
     automatisch_ergaenzt: position.automatisch_ergaenzt ?? false,
     ...(position.flaechen_parameter ? { flaechen_parameter: position.flaechen_parameter } : {}),
   }))
+
+  // PM-008/PM-015 (Sandy, 2026-08-31): Zuschlagspositionen tragen jetzt die
+  // Einheit „%". Ein Prozentsatz allein ist aber kein Betrag — erst hier
+  // stehen alle anderen Preise fest, also wird hier die Bemessungsgrundlage
+  // gebildet und der Zuschlag zu echtem Geld gerechnet.
+  wendeProzentZuschlaegeAn(items, index => Boolean(zuordnungen[index].treffer))
 
   return NextResponse.json({
     items,

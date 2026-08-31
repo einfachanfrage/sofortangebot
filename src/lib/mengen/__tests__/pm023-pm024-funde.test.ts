@@ -101,9 +101,11 @@ describe('PM-024-Nachtest — Erschwerniszuschlag Höhe hängt nicht mehr an ein
       [{ beschreibung: 'Wandflächen streichen 2x — Büro', menge: 57.6, einheit: 'm²', konfidenz: 'high', berechnungsweg: '18 × 3,2', annahmen: [] }],
       // Transkript ohne jedes Höhen-Stichwort, das eine Regex finden könnte
       'Büro streichen.',
-      { raumhoehen: [3.2] },
+      { raeume: [{ name: 'Büro', hoehe: 3.2 }] },
     )
-    expect(positionen.some(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))).toBe(true)
+    // Sandys Entscheidung (30.08.): der Zuschlag gehört zum Raum, nicht in
+    // eine Sammelkarte „Allgemein".
+    expect(positionen.some(p => p.beschreibung === 'Erschwerniszuschlag Raumhöhe > 3m — Büro')).toBe(true)
   })
 
   it('löst ihn nicht aus, wenn kein Raum über 3 m ist', () => {
@@ -111,7 +113,7 @@ describe('PM-024-Nachtest — Erschwerniszuschlag Höhe hängt nicht mehr an ein
       'maler',
       [{ beschreibung: 'Wandflächen streichen 2x — Küche', menge: 39, einheit: 'm²', konfidenz: 'high', berechnungsweg: '15,6 × 2,5', annahmen: [] }],
       'Küche streichen.',
-      { raumhoehen: [2.5] },
+      { raeume: [{ name: 'Küche', hoehe: 2.5 }] },
     )
     expect(positionen.some(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))).toBe(false)
   })

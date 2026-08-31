@@ -8,6 +8,13 @@ export interface QuoteListDTO {
   status: string
   total_gross: number
   created_at: string
+  // DC-042 Punkt 4: echtes Versanddatum statt created_at — Grundlage für
+  // „Beim Kunden seit X Tagen" (Anzeige baut der Product Designer).
+  gesendet_am: string | null
+  // DC-042: echter Ausgang trotz Archivierung, und der Unterschied zwischen
+  // „Kunde hat Nein gesagt" und „nie wieder gehört".
+  status_vor_archiv: string | null
+  abgelehnt_grund: string | null
   gewerk: string | null
   customer: { name: string } | null
   quote_items: Array<{ title: string; position: number }>
@@ -41,7 +48,7 @@ function extrahiereGewerk(extraktion: unknown): string | null {
 const STATUS_FILTERS: Record<string, string[]> = {
   entwurf: ['draft', 'in_bearbeitung'],
   bereit: ['bereit'],
-  offen: ['sent', 'viewed'],
+  offen: ['sent'],
   beauftragt: ['accepted'],
   abgelehnt: ['rejected'],
   archived: ['archived'],
@@ -51,7 +58,7 @@ export async function getQuotesOverview(status?: string) {
   const { supabase, company } = await requireCompany()
   const statusValues = status ? STATUS_FILTERS[status] : undefined
   let query = supabase.from('quotes')
-    .select('id, status, total_gross, created_at, extraktion_final, customer:customers(name), quote_items(title, position)')
+    .select('id, status, total_gross, created_at, gesendet_am, status_vor_archiv, abgelehnt_grund, extraktion_final, customer:customers(name), quote_items(title, position)')
     .eq('company_id', company.id)
     .order('created_at', { ascending: false })
   if (statusValues) query = query.in('status', statusValues)
@@ -72,6 +79,9 @@ export async function getQuotesOverview(status?: string) {
       status: row.status,
       total_gross: row.total_gross,
       created_at: row.created_at,
+      gesendet_am: row.gesendet_am ?? null,
+      status_vor_archiv: row.status_vor_archiv ?? null,
+      abgelehnt_grund: row.abgelehnt_grund ?? null,
       gewerk: extrahiereGewerk(row.extraktion_final),
       customer: normalizeCustomer(row.customer),
       quote_items: row.quote_items ?? [],
@@ -80,7 +90,7 @@ export async function getQuotesOverview(status?: string) {
       drafts: (draftsResult.data ?? []).length,
       archive: (archiveResult.data ?? []).length,
       bereit: month.filter(q => q.status === 'bereit').length,
-      open: month.filter(q => q.status === 'sent' || q.status === 'viewed').length,
+      open: month.filter(q => q.status === 'sent').length,
       accepted: month.filter(q => q.status === 'accepted').length,
       rejected: month.filter(q => q.status === 'rejected').length,
     },

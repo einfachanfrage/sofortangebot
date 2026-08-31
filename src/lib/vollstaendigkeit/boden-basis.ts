@@ -4,7 +4,7 @@ import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 // Belag-Erkennung zentral im boden-normalisierer (eine Quelle, getestet).
 // Re-Export, damit bestehende Importe aus './boden-basis' unverändert bleiben.
 import type { BelagTyp } from '../boden-normalisierer'
-import { erkenneBelag, belagBezeichnung, erkenneBelagName } from '../boden-normalisierer'
+import { erkenneBelag, belagBezeichnung, erkenneBelagName, verschnittFuerVerlegung } from '../boden-normalisierer'
 import { extrahiereBodenflaeche, extrahiereStreichflaeche } from '@/lib/extraktion-masse'
 export type { BelagTyp }
 export { erkenneBelag, belagBezeichnung, erkenneBelagName }
@@ -67,10 +67,7 @@ export function extrahiereVerschnitt(lower: string): number | null {
 }
 
 // Standard-Verschnitt je Belagstyp (0 = kein Standard)
-function standardVerschnitt(belag: BelagTyp): number {
-  if (belag === 'laminat' || belag === 'vinyl' || belag === 'linoleum') return 0.10
-  return 0
-}
+
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -159,7 +156,7 @@ export function pruefeBodenBasis(
   if (hatVollflaechigeVerklebung) return { nurOhneSockel }
 
   const explizitVerschnitt = extrahiereVerschnitt(lower)
-  const verschnitt = explizitVerschnitt ?? standardVerschnitt(belag)
+  const verschnitt = explizitVerschnitt ?? verschnittFuerVerlegung(belag, lower)
 
   if (m2) {
     const mengeMitVerschnitt = verschnitt > 0 ? round2(m2 * (1 + verschnitt)) : m2

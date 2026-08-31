@@ -34,16 +34,26 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 29.08.2026)
+## Gate-Fortschritt (Stand 31.08.2026)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **34 %** (siehe Korrektur-Hinweis + Update unten) | 46 |
-| **Gate 2** — öffentlicher Launch | **13 %** (unverändert, einzige Bewegung 5.5 liegt unter der Rundungsschwelle) | 37 |
+| **Gate 1** — erste Testnutzer | **≈ 33 %** (siehe Korrektur-Hinweis + Update unten) | 47 |
+| **Gate 2** — öffentlicher Launch | **≈ 13 %** (unverändert) | 36 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+> ⚠ **Punkte-Verschiebung (Chief of Staff, 31.08.2026):** Sandy hat 11.5
+> (Buchhaltungssystem-Anbindung Lexware/sevDesk) von G2 auf G1 hochgestuft
+> — Details siehe Zeile 11.5 unten und `entscheidungen-fuer-sandy.md`. Der
+> Punkt selbst steht bei 0 % (offen), verschiebt sich also nur zwischen den
+> Nennern: Gate 1 47 statt 46 Punkte, Gate 2 36 statt 37. Die neuen
+> Prozentzahlen (≈ 33 % / ≈ 13 %) sind aus den zuletzt gerundeten Werten
+> hochgerechnet (34 %×46÷47 bzw. 13 %×37÷36), **keine frische
+> Einzelpunkt-Neuberechnung** — nächste vollständige Neuberechnung sollte
+> das auf die exakte Zahl trüben.
 
 > ⚠ **Korrektur-Hinweis (Chief of Staff, 25.08.2026):** Der zuletzt hier
 > gezeigte Stand „25 %" war stehengeblieben — mein eigenes Update vom
@@ -591,7 +601,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 11.2 | Separate EÜR für Sofortangebot-Einnahmen | G2 | ⚪ offen — Sandys Bereich |
 | 11.3 | Gewerbeanmeldung | — | ✅ erledigt (Sandy) |
 | 11.4 | Geschäftskonto getrennt von privat | G1 | ⚪ offen — nicht erhoben, Sandys Bereich (neu) |
-| 11.5 | Buchhaltungssystem angebunden (Lexware/sevDesk) | G2 | ⚪ offen — nicht erhoben, jetzt Platform-Engineer-Scope. Erste Machbarkeits-Prüfung (CoS-P/DC-029): kein natives Projekt-/Lieferadressfeld in der Lexware-API, Workaround als Freitext identifiziert, kein Blocker |
+| 11.5 | Buchhaltungssystem angebunden (Lexware/sevDesk), Ziel: Anbindung in 2–3 einfachen Klicks | G1 | ⚪ offen — nicht erhoben, Platform-Engineer-Scope. Erste Machbarkeits-Prüfung (CoS-P/DC-029): kein natives Projekt-/Lieferadressfeld in der Lexware-API, Workaround als Freitext identifiziert, kein Blocker. **Von G2 auf G1 hochgestuft (Sandy, 31.08.2026):** kein Nice-to-have, sondern Teil des Kern-Differenzierungsversprechens für die Zielgruppe kleiner Betriebe (siehe `vision-strategie.md`, Geklärt 31.08.) |
 | 11.6 | Laufende Kostenübersicht als Grundlage für Preis-/Runway-Entscheidungen | G2 | 🟡 75 % — **21.08.2026:** zwei von vier Auffälligkeiten von Sandy geklärt (Kleinunternehmer-Status §19 UStG bestätigt, OpenAI-Konto ist echt Sandys eigenes). Offen bleiben: steigende Supabase-Kosten/Projektanzahl, zwei getrennte Claude-Kostenströme (geschäftlich/privat), plus fehlende Belege (Resend/Domain/Sentry/GitHub) |
 
 ## 12. Go-to-Market (nach der Entwicklungsphase)

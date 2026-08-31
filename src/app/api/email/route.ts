@@ -157,7 +157,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'E-Mail konnte nicht gesendet werden' }, { status: 500 })
   }
 
-  await supabase.from('quotes').update({ status: 'sent' }).eq('id', quoteId)
+  // DC-042 Punkt 4 (Sandy, 2026-08-31): „Beim Kunden seit X Tagen" braucht ein
+  // echtes Versanddatum. Die Spalte gibt es seit Juni, geschrieben hat sie
+  // bisher aber nur der zweite Versandweg (/api/quotes/[id]/send) — über
+  // diesen hier ging der Status auf 'sent', ohne dass jemals ein Datum
+  // dazu entstand. Genau die Lücke, wegen der created_at als Notbehelf im
+  // Raum stand.
+  await supabase.from('quotes')
+    .update({ status: 'sent', gesendet_am: new Date().toISOString() })
+    .eq('id', quoteId)
 
   return NextResponse.json({ ok: true, zugferd: isZugferd })
 }

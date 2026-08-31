@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import type { Quote, QuoteItem, Company, Customer, Baustelle, EntwurfAufnahme } from '@/lib/types'
 import { DRAFT_STATUSES, SENT_STATUSES, waehlbareStatus, getStatusInfo } from '@/lib/status'
+import { statusPatch, type AblehnungsGrund } from '@/lib/status-uebergang'
 import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon,
@@ -1368,10 +1369,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     fetch(`/api/quotes/${quote.id}/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ via }) }).catch(() => {})
   }
 
-  async function changeStatus(newStatus: string) {
+  // DC-042 (Sandy, 2026-08-31): Der Statuswechsel schreibt jetzt mehr als nur
+  // den Status — Archivieren bewahrt den echten Ausgang, „Abgelehnt" kann
+  // einen Grund tragen. Was genau geschrieben wird, steht als reine Funktion
+  // in `status-uebergang.ts` und ist dort getestet; hier bleibt nur der
+  // Aufruf. Den Grund fragt später die Oberfläche ab (Product Designer) —
+  // solange sie das nicht tut, bleibt das Feld ehrlich leer statt geraten.
+  async function changeStatus(newStatus: string, grund?: AblehnungsGrund) {
     setCurrentStatus(newStatus as typeof currentStatus)
     setShowStatusPicker(false)
-    await supabase.from('quotes').update({ status: newStatus }).eq('id', quote.id)
+    await supabase.from('quotes').update(statusPatch(currentStatus, newStatus, { grund })).eq('id', quote.id)
     showToast(`Status: ${getStatusInfo(newStatus).label} ✓`)
   }
 

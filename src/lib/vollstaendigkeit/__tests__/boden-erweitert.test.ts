@@ -1,3 +1,9 @@
+// Verschnitt-Angleich (Sandys Entscheidung 2026-08-30, PM-027): Die
+// Vollständigkeitsprüfung rechnete hier 10 % Verschnitt, die Mengen-Engine
+// dagegen 5 % — dieselbe Leistung ergab je nach Weg eine andere Menge im
+// Angebot. Maßgeblich ist PM-004 (gerade Verlegung ≈ 5 %); die Regel steht
+// jetzt einmal in `boden-normalisierer.ts`. Erwartungswerte unten deshalb von
+// ×1,10 auf ×1,05 gezogen. Muster-/Diagonalverlegung bleibt bei 15 %.
 import { describe, it, expect } from 'vitest'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../index'
 import type { BerechnetePosition } from '../../mengen/types'
@@ -71,7 +77,7 @@ describe('Boden – 10 Integrationstests', () => {
     expect(teppich?.beschreibung.toLowerCase()).toContain('öko')
   })
 
-  it('Test 4: Verklebter Teppich entfernen + Kleberreste abschleifen + Designboden 18×1,10=19,80 m²', () => {
+  it('Test 4: Verklebter Teppich entfernen + Kleberreste abschleifen + Designboden 18×1,05=18,90 m²', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Alter vollflächig verklebter Teppichboden auf Anhydritestrich, 18 Quadratmeter. Mühsam mit dem Stripper rausreißen und Kleberreste komplett abschleifen. Danach Designboden verlegen.'
     )
@@ -86,10 +92,10 @@ describe('Boden – 10 Integrationstests', () => {
 
     const design = find(positionen, 'designboden')
     expect(design).toBeDefined()
-    expect(design?.menge).toBeCloseTo(19.8, 1)
+    expect(design?.menge).toBeCloseTo(18.9, 1)   // 18 × 1,05
   })
 
-  it('Test 5: Epoxidharz-Feuchtigkeitssperre + Quarzsand + Laminat 28×1,10=30,80 m²', () => {
+  it('Test 5: Epoxidharz-Feuchtigkeitssperre + Quarzsand + Laminat 28×1,05=29,40 m²', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Souterrain, Estrich hat zu viel Restfeuchte. Fläche 28 Quadratmeter. Epoxidharz-Feuchtigkeitssperre aufwalzen und Quarzsand absanden. Erst dann Laminat drauf.'
     )
@@ -104,7 +110,7 @@ describe('Boden – 10 Integrationstests', () => {
 
     const laminat = find(positionen, 'laminat')
     expect(laminat).toBeDefined()
-    expect(laminat?.menge).toBeCloseTo(30.8, 1)
+    expect(laminat?.menge).toBeCloseTo(29.4, 1)  // 28 × 1,05
   })
 
   it('Test 6: Vinyl 12 m² + Hamburger Profilleiste 16 lfdm + Alu-Übergangsprofil 2 Stück', () => {
@@ -114,7 +120,7 @@ describe('Boden – 10 Integrationstests', () => {
 
     const vinyl = find(positionen, 'vinyl')
     expect(vinyl).toBeDefined()
-    expect(vinyl?.menge).toBeCloseTo(13.2, 1)
+    expect(vinyl?.menge).toBeCloseTo(12.6, 1)    // 12 × 1,05
 
     const leiste = find(positionen, 'hamburger profilleiste')
     expect(leiste).toBeDefined()
@@ -150,7 +156,7 @@ describe('Boden – 10 Integrationstests', () => {
     expect(kante?.beschreibung.toLowerCase()).toContain('alu')
   })
 
-  it('Test 8: Linoleum 65 m² + Untergrundvorbereitung + Verschnitt 71,50 m² + Fugen fräsen + verschweißen 50 lfdm', () => {
+  it('Test 8: Linoleum 65 m² + Untergrundvorbereitung + Verschnitt 68,25 m² + Fugen fräsen + verschweißen 50 lfdm', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Arztpraxis: 65 Quadratmeter Linoleum verlegen. Thermisches Verschweißen der Fugen mit passendem Schweißdraht. Schätzungsweise 50 laufende Meter Fuge, die gefräst und verschweißt werden müssen.'
     )
@@ -159,7 +165,7 @@ describe('Boden – 10 Integrationstests', () => {
 
     const lino = find(positionen, 'linoleum')
     expect(lino).toBeDefined()
-    expect(lino?.menge).toBeCloseTo(71.5, 1)
+    expect(lino?.menge).toBeCloseTo(68.25, 1)    // 65 × 1,05
 
     const fraesen = find(positionen, 'fugen fräsen')
     expect(fraesen).toBeDefined()
@@ -172,7 +178,7 @@ describe('Boden – 10 Integrationstests', () => {
     expect(schweissen?.einheit).toBe('lfdm')
   })
 
-  it('Test 9: Laminat 55 m² + Trittschalldämmung hochwertig PUR + Stoßkanten + Verschnitt 60,50 m²', () => {
+  it('Test 9: Laminat 55 m² + Trittschalldämmung hochwertig PUR + Stoßkanten + Verschnitt 57,75 m²', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Laminat im Obergeschoss, 55 Quadratmeter. Hochwertige Trittschalldämmung, 3 Millimeter PUR-Schaum mit Alufolie kaschiert, inklusive Stoßkanten verkleben.'
     )
@@ -188,7 +194,7 @@ describe('Boden – 10 Integrationstests', () => {
 
     const laminat = find(positionen, 'laminat')
     expect(laminat).toBeDefined()
-    expect(laminat?.menge).toBeCloseTo(60.5, 1)
+    expect(laminat?.menge).toBeCloseTo(57.75, 1) // 55 × 1,05
   })
 
   it('Test 10: Fertigparkett Fischgrät 50 m² + 15% Verschnitt = 57,50 m²', () => {

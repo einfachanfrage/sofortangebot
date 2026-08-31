@@ -490,7 +490,11 @@ export function malerEngine(daten: any): MengenErgebnis {
           // vorhanden und setzte "Fassadenfarbe 2× Anstrich" NOCH EINMAL
           // obendrauf — dieselbe Fläche zweimal im Angebot.
           const wandLabel = istDachschraege
-            ? `Dachschräge streichen ${anstricheWand}x — ${name}`
+            // Trockenlauf 2026-08-30: Singular „Dachschräge streichen" fand
+            // keinen Katalogpreis, der Eintrag heißt „Dachschrägen streichen"
+            // (11 €/m²). Der Dachgeschoss-Zweig weiter unten benutzt längst
+            // den Plural — jetzt beide gleich.
+            ? `Dachschrägen streichen ${anstricheWand}x — ${name}`
             : istFassadeRaum
               ? `Fassadenfläche streichen ${anstricheWand}x — ${name}`
               : `Wandflächen streichen ${anstricheWand}x — ${name}`

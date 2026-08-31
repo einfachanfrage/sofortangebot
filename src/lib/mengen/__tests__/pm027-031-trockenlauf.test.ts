@@ -28,8 +28,7 @@ function rechne(gewerk: string, transkript: string, raeume: any[]) {
     belagText: raeume.find((r: { belag?: string }) => r.belag)?.belag ?? null,
   }
   const meta = {
-    raumhoehen: ext.raeume.map((r: { hoehe?: number }) => r.hoehe)
-      .filter((h: unknown): h is number => typeof h === 'number' && h > 0),
+    raeume: ext.raeume.map((r: { name?: string; hoehe?: number | null }) => ({ name: r.name, hoehe: r.hoehe })),
   }
   const { positionen } = berechneUndPruefeAlleGewerke(ext, transkript, meta, signale)
   return {
@@ -38,6 +37,53 @@ function rechne(gewerk: string, transkript: string, raeume: any[]) {
     position: (suche: RegExp) => positionen.find(p => suche.test(p.beschreibung)),
   }
 }
+
+describe('PM-027 — Kellerraum, Parkett gerade + Altbelag raus', () => {
+  const ergebnis = rechne('boden_parkett',
+    'Kellerraum, fünf Meter mal drei Meter, eine Tür normal Maß. Der alte Teppich muss komplett raus, danach Parkett verlegen, ganz normal gerade, kein Muster.',
+    [{
+      name: 'Kellerraum', laenge: 5, breite: 3, hoehe: null, flaeche: null, umfang: null,
+      tueren: [{ anzahl: 1, breite: 0.9, hoehe: 2.1, annahme: true }], fenster: [],
+      arbeiten: ['parkett verlegen', 'altbelag entfernen'], belag: 'parkett', verlegerichtung: 'standard',
+      altbelag_entfernen: true, altbelag_vorhanden: true, sockelleisten: false, nassbereich: false,
+    }])
+
+  it('rechnet 5 % Verschnitt auf gerade verlegtes Parkett (Sandy, 30.08.)', () => {
+    // Vorher 0 % — die Konvention „Parkett ist keine Plattenware" entsprach
+    // nicht der Praxis. 15,00 × 1,05 = 15,75 m².
+    expect(ergebnis.menge(/parkett verlegen/i)).toBe(15.75)
+  })
+
+  it('entfernt den Altbelag ohne Verschnitt', () => {
+    expect(ergebnis.menge(/altbelag entfernen/i)).toBe(15)
+  })
+
+  it('erfindet keine Sockelleisten — die wurden nicht erwähnt', () => {
+    expect(ergebnis.titel.some(t => /sockelleiste/i.test(t))).toBe(false)
+  })
+})
+
+describe('Erschwerniszuschlag Raumhöhe gehört zum Raum (Sandy, 30.08.)', () => {
+  const ergebnis = rechne('maler',
+    'Büro, 5m x 4m, Höhe 3,20m, Wände zweimal streichen. Küche, 4,20 m x 3,60 m, Höhe 2,50 m, Wände zweimal streichen.',
+    [
+      { name: 'Büro', laenge: 5, breite: 4, hoehe: 3.2, flaeche: 20, umfang: 18,
+        tueren: [{ anzahl: 1 }], fenster: [{ anzahl: 2 }], arbeiten: ['wände streichen'],
+        altbelag_entfernen: false, sockelleisten: false, nassbereich: false },
+      { name: 'Küche', laenge: 4.2, breite: 3.6, hoehe: 2.5, flaeche: 15.12, umfang: 15.6,
+        tueren: [{ anzahl: 1 }], fenster: [{ anzahl: 2 }], arbeiten: ['wände streichen'],
+        altbelag_entfernen: false, sockelleisten: false, nassbereich: false },
+    ])
+
+  it('hängt den Zuschlag an den hohen Raum, nicht an „Allgemein"', () => {
+    expect(ergebnis.titel).toContain('Erschwerniszuschlag Raumhöhe > 3m — Büro')
+  })
+
+  it('erzeugt ihn nicht für den normal hohen Raum', () => {
+    expect(ergebnis.titel.some(t => /erschwerniszuschlag raumhöhe.*küche/i.test(t))).toBe(false)
+    expect(ergebnis.titel.filter(t => /erschwerniszuschlag raumhöhe/i.test(t))).toHaveLength(1)
+  })
+})
 
 describe('PM-028 — Arbeitszimmer, Altbau + ausdrücklich verlangte Grundierung', () => {
   const ergebnis = rechne('maler',

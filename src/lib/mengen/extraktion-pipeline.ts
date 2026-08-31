@@ -298,11 +298,10 @@ export function verarbeiteExtraktion(
     {
       fensterAnzahl: fensterAnzahlText || undefined,
       tuerenAnzahl: tuerenAnzahlText || undefined,
-      // PM-024: die erkannten Raumhöhen mitgeben, damit der Erschwerniszuschlag
-      // nicht davon abhängt, ob eine Regex die Sprechweise kennt.
-      raumhoehen: (extraktion.raeume ?? [])
-        .map(r => r.hoehe)
-        .filter((h): h is number => typeof h === 'number' && h > 0),
+      // PM-024: die erkannten Räume mit ihren Höhen mitgeben — damit der
+      // Erschwerniszuschlag nicht davon abhängt, ob eine Regex die Sprechweise
+      // kennt, UND damit er beim richtigen Raum landet (Sandy, 2026-08-30).
+      raeume: (extraktion.raeume ?? []).map(r => ({ name: r.name, hoehe: r.hoehe })),
     },
     kiSignale,
   )

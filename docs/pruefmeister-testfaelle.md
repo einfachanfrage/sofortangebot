@@ -83,10 +83,10 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
-| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (zweifach bestätigt). Zweiter Nachtest (mit PM-024) komplett sauber, aber die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist offen und situativ — nicht bei jeder Raum-Paarung reproduzierbar, aber nicht behoben |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, aber die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) bleibt offen und situativ — nicht bei jeder Raum-Paarung reproduzierbar, aber nicht behoben |
 | PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ❌ Zweiter Nachtest: Phantom-Deckenfläche weg, Erschwerniszuschlag Höhe erscheint jetzt — aber NEUER, schwerer Fund: „Boden schützen" hat plötzlich keinen Preis mehr in der Preisdatenbank (Regression, betrifft praktisch jeden Malerfall) |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
-| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | 🟡 Live-Nachtest: verschwundene Wandfläche/Sockelleisten jetzt behoben. Aber Decke wird im Entwurf weiterhin 2× statt 1× berechnet, obwohl die Karte schon korrekt „1x" zeigt |
+| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Beide ursprünglichen Bugs live bestätigt behoben (Decke jetzt korrekt 1×). Neuer, bestätigter Fund: „Boden schützen" fehlt der Preis — zweite unabhängige Bestätigung der Preisdatenbank-Regression (Punkt 11) |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
@@ -271,6 +271,13 @@ unabhängige GPT-Aufrufe auf demselben Text.
   Zeile 361). **Noch KEIN Live-Nachtest** — bitte gezielt nochmal den PD-006-Fassaden-Fall (oder einen
   ähnlichen Grenzfall) nachstellen, um zu bestätigen, dass der Widerspruch jetzt wirklich nicht mehr
   auftritt. Punkt 3 damit code-seitig geschlossen, Live-Bestätigung steht aus.
+
+**Live-Nachtest (Sandy, 2026-08-30, PM-024+PM-025): Widerspruch reproduziert sich, Fix greift nicht.**
+Karte zeigte „6 Positionen erkannt — bereit für den Entwurf", gleichzeitig eine „keine Positionen
+erkannt"-Meldung weiter oben, und Sandy kam diesmal nicht zur Entwurfsansicht durch (nicht nur ein
+kurzes Anzeigeproblem wie beim ursprünglichen PM-008-Fund, sondern ein echter Blocker). Der
+2026-08-20-Fix (`bannerZustand` gibt sofort `null` zurück bei `fehler`) hält hier also nicht — Details
+und neue Einordnung siehe „Systemischer Fund" Punkt 12 unten.
 
 **4. Struktureller Fund (2026-08-18): Nicht-Raum-Objekte (Fassaden) werden technisch wie Räume
 behandelt, sind es aber nicht.** Sandy hat beim fünften PM-008-Nachtest selbst die vermutliche
@@ -569,6 +576,28 @@ PM-019 bis PM-026. Das hier sieht nicht nach einer übersehenen Katalog-Lücke a
 echten Regression an einer vorher nachweislich funktionierenden Stelle — möglicherweise eine
 unbeabsichtigte Nebenwirkung der heutigen Fixes (Rohtext-Rangordnung-Audit, Raumkontext-Fix). Bitte mit
 höchster Priorität behandeln: betrifft praktisch jeden Malerfall, nicht nur PM-024.
+
+**Zweite, unabhängige Bestätigung (Sandy, 2026-08-30, PM-026-Nachtest 3):** Derselbe Fund, diesmal in der
+Küche statt im Büro — „Boden schützen" (15,12 m²) wieder mit 0,00 € und „Preis fehlt in deiner
+Preisdatenbank". Zwei unabhängige Räume, zwei unabhängige Angebote, derselbe Ausfall — das ist damit kein
+Zufallstreffer mehr, sondern eine bestätigte, reproduzierbare Regression. Bitte weiterhin höchste
+Priorität.
+
+**12. NEU, DRINGEND (2026-08-30): Widersprüchliche Meldung „Keine Positionen erkannt" reproduziert sich
+live — UND blockiert diesmal tatsächlich.** Beim Diktieren von PM-024+PM-025 (zwei Aufnahmen, ein
+Angebot) zeigte die Karte „6 Positionen erkannt — bereit für den Entwurf", gleichzeitig aber (laut Sandy)
+weiter oben auf demselben Screen eine Meldung „keine Positionen erkannt". Sandy: „HÄÄÄ? oben dann meldung
+keine positionen erkannt?! kann nicht weiter klicken obwohl er da schreibt 6 positionen erkannt?!?!" —
+sie kam NICHT zur Entwurfsansicht durch. Das ist derselbe Widerspruch wie der ursprüngliche Punkt 3
+(damals bei PM-008/PD-006), für den es bereits einen Fix gab (`bannerZustand` gibt sofort `null` zurück,
+sobald `fehler` gesetzt ist) — aber Punkt 3 stand ausdrücklich noch als „code-seitig geschlossen,
+Live-Bestätigung steht aus". **Diese Live-Bestätigung ist jetzt da, und sie ist negativ**, dazu diesmal
+mit einer neuen, schwereren Konsequenz: nicht nur ein kurz sichtbarer Widerspruch auf dem Bildschirm wie
+beim ursprünglichen PM-008-Fund, sondern ein tatsächlicher Blocker — Sandy kam nicht weiter, obwohl
+Positionen längst erkannt waren. Bitte dringend erneut untersuchen, ob der 2026-08-20-Fix wirklich
+überall greift (evtl. betrifft es speziell den Zwei-Aufnahmen-Pfad, siehe Punkt 7/9/10 zu weiteren
+Auffälligkeiten genau in diesem Pfad), und ob „kann nicht weiter klicken" eine separate, eigene Ursache
+neben der reinen Anzeige hat.
 
 **Details für abgeschlossene Fälle (PM-001, PM-002, PM-003, PM-004, PM-005, PM-006, PM-007, PM-009, PM-011, PM-013, PM-019, PM-020, PM-021, PM-022):** siehe `pruefmeister-testfaelle-archiv.md` — Status hier in der Tabelle bleibt als Kurzfassung stehen. (PM-007 war am 2026-08-21 kurz zurückgeholt wegen eines Blocker-Bugs, ist seit dessen Fix und Live-Nachtest am 2026-08-25 wieder abgeschlossen und zurück im Archiv.)
 
@@ -1020,6 +1049,23 @@ vorherigen Fund, aber ein Hinweis, dass er nicht bei jeder Zwei-Aufnahmen-Kombin
 Fund (Trittschalldämmungs-Flächenverwechslung mit PM-025) bleibt als eigenständiger, situativer Bug
 bestehen und ist nicht widerlegt — nur diesmal nicht aufgetreten.
 
+**Dritter Nachtest (Sandy, 2026-08-30, diesmal zusammen mit PM-026 in EIN Angebot gesprochen, zwei
+getrennte Aufnahmen):** Karte „🚪Flur 3 Positionen" — Laminat verlegen inkl. 5% Verschnitt (11,34 m²),
+Sockelleisten montieren (14,7 lfdm), Trittschalldämmung (10,8 m²). Rückfrage „Nein, bleibt". Entwurf Flur
+(333,57 €), Raummaße 1,8×6 m:
+
+- Laminat verlegen inkl. 5% Verschnitt: 11,34 m² × 18,00 € = 204,12 € — ✅ exakt Soll
+- Sockelleisten montieren: 14,7 lfdm × 5,50 € = 80,85 € — ✅ exakt Soll
+- Trittschalldämmung: 10,8 m² × 4,50 € = 48,60 € — ✅ exakt Soll, wieder ohne Verwechslung.
+
+**Ergebnis:** Drittes Mal in Folge (mit PM-026 statt PM-025) komplett sauber. Erhärtet weiter die
+Einschätzung: die Flächenverwechslung ist offenbar spezifisch an der Paarung mit „Gästezimmer" (PM-025)
+oder einer bestimmten Reihenfolge/Konstellation aufgetreten, nicht an der Zwei-Aufnahmen-Mechanik an
+sich. Bleibt trotzdem als offener, situativer Fund bestehen, bis geklärt ist, was genau den einen
+auslösenden Fall von diesen drei sauberen unterscheidet.
+
+**Status:** ✅ Drittes Mal in Folge alle drei Positionen live bestätigt exakt Soll.
+
 ---
 
 ### PM-024 — Büro, Erschwerniszuschlag Höhe in normalem Raum (nicht Fassade)
@@ -1161,9 +1207,44 @@ ob Erschwerniszuschlag-Positionen bei mehreren Räumen im selben Angebot absicht
 beim jeweiligen Raum gruppiert werden, oder ob das dieselbe Raum-Zuordnungslücke ist wie bei der
 Trittschalldämmung (PM-023).
 
-**Status:** ❌ Zwei Funde live bestätigt behoben (Phantom-Deckenfläche weg, Erschwerniszuschlag Höhe
-erscheint jetzt). Aber neuer, schwerwiegender Fund: „Boden schützen" hat plötzlich keinen Preis mehr in
-der Preisdatenbank — eine der am häufigsten verwendeten Positionen überhaupt. Dringend.
+**Ursache gefunden und behoben (Head of Product Engineering, 2026-08-30):** Der Katalog ist unversehrt —
+„Boden abdecken (Abdeckvlies)", 1,20 €/m², steht unverändert unter „Maler – Vorbereitung & Schutz"
+(in der Produktionsdatenbank nachgesehen, nicht vermutet). Auch der Text-Matcher findet ihn einwandfrei
+(Score 1,00). Der Fehler saß eine Stufe davor: Vor dem Preisvergleich wird nach Gewerk gefiltert, und
+dafür wird jede Position anhand ihres TITELS einsortiert. „Boden schützen" enthält kein einziges
+Maler-Wort — kein „streichen", kein „abdecken", kein „abkleben". Sie fiel deshalb auf das Hauptgewerk des
+Angebots zurück. In einem reinen Malerauftrag ist das „maler" und alles passt (deshalb lief es monatelang
+fehlerfrei). Beide Nachtests waren aber GEMISCHTE Angebote (Laminat + Streichen) mit Hauptgewerk
+„boden_parkett" — und unter den Boden-Rubriken gibt es keinen Bodenschutz. Kein Kandidat, 0,00 €.
+
+Keine Regression am Katalog also, sondern eine alte Lücke in der Einsortierung, die durch den Fix von
+heute sichtbar wurde: Seit „Boden schützen" bei jedem Wandanstrich automatisch entsteht, kommt es auch in
+jedem gemischten Angebot vor. Bodenschutz zählt jetzt ausdrücklich zur Maler-Vorbereitung, unabhängig vom
+Hauptgewerk.
+
+**Ganzheitliche Nachprüfung (Sandys Ansage „mach es beim ersten Mal richtig"):** Anschließend ALLE
+Positionen, die die Engines erzeugen können, gegen den echten Katalog geprüft — vor dem nächsten
+Einsprechen, nicht danach. Zwei weitere Lücken gefunden und geschlossen:
+- „Dachschräge streichen" (Einzahl) fand nichts; der Katalogeintrag heißt „Dachschrägen streichen"
+  (11 €/m²). Zwei Code-Stellen, eine im Plural, eine im Singular — hätte PM-030 getroffen.
+- „Dehnungsfuge einbauen" fand nichts; im Katalog heißt dieselbe Leistung „Dehnungsfuge mit
+  Bewegungsprofil herstellen" (18 €/lfdm). Für den Abgleich sind einbauen/herstellen/anlegen jetzt
+  dasselbe Wort.
+Zusätzlich die Historie ausgewertet: alle übrigen je preislosen Positionen stammen aus dem Juli, vor dem
+Katalog-Fix vom 20.08., und laufen heute sauber.
+
+13 neue Tests sichern ab, dass Positions-Titel und Katalog zusammenfinden. Suite grün (57 Dateien /
+942 Tests).
+
+**Zur zweiten Frage (Erschwerniszuschlag unter „Allgemein"):** Ja, das ist dieselbe Gruppierungs-Lücke wie
+bei der Trittschalldämmung — die Position trägt keinen Raum im Titel, und die Gruppierung liest den Raum
+genau dort. Bei einem Zuschlag, der sich auf einen bestimmten Raum bezieht, gehört er auch dorthin.
+Bewusst noch nicht geändert: bei MEHREREN hohen Räumen wäre eine Pauschale je Raum womöglich falsch
+gerechnet — das ist eine Fachfrage an Sandy, keine reine Reparatur.
+
+**Status:** 🟡 Vier Funde live bestätigt behoben (Phantom-Deckenfläche, Erschwerniszuschlag Höhe erscheint,
+Höhen-Nachkommastelle, verschwundene Wandfläche). „Boden schützen" ohne Preis: Ursache gefunden und
+behoben, Live-Nachtest steht aus. Offen als Fachfrage: Gruppierung der Erschwerniszuschläge.
 
 ---
 
@@ -1327,6 +1408,31 @@ verwenden Karte und Entwurf zwei getrennte Code-Pfade, von denen nur einer den n
 **Status:** 🟡 Bug (2, verschwundene Wandfläche/Sockelleisten) live bestätigt behoben. Bug (1, Decke 2×
 statt 1×) weiterhin offen — Karte zeigt korrekt „1x", Entwurf berechnet trotzdem „2x".
 
+**Dritter Nachtest (Sandy, 2026-08-30, zusammen mit PM-023 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen):** Karte „🍳Küche 4 Positionen" — Wandflächen streichen 2x (39 m²), Deckenfläche streichen 1x
+(15,12 m²), Boden schützen (15,12 m²), Sockelleisten abkleben (14,7 lfdm). Entwurf (488,10 €), Raummaße
+3,6×4,2 m, Höhe 2,5 m, 1 Tür, 2 Fenster:
+
+- Wandflächen streichen 2×: 39 m² × 9,50 € = 370,50 € — ✅ exakt Soll
+- **Deckenfläche streichen 1×: 15,12 m² × 7,00 € = 105,84 € — ✅ endlich Soll!** Der Entwurf zeigt jetzt
+  tatsächlich „1x", mit einem eigenen, niedrigeren Einmal-Preis (7,00 €/m² statt der bisherigen
+  2x-Rate 11,00 €/m²) statt weiterhin auf „2x" zurückzufallen. **Bug (1) ist jetzt live bestätigt
+  behoben** — im dritten Anlauf.
+- Sockelleisten abkleben: 14,7 lfdm × 0,80 € = 11,76 € — ✅ exakt Soll
+- **Aber: Boden schützen: 15,12 m² × 0,00 € — „Preis fehlt in deiner Preisdatenbank"!** Dieselbe
+  Preisdatenbank-Regression wie bei PM-024 (siehe „Systemischer Fund" Punkt 11) — diesmal in der Küche,
+  nicht im Büro. Bestätigt: das ist kein Einzelfall, sondern reproduziert sich in einem völlig anderen
+  Raum/Testfall. „Boden schützen" ist damit aktuell nicht mehr zuverlässig bepreist, unabhängig vom
+  konkreten Raum.
+
+**Ergebnis:** Sehr gemischt. Die gute Nachricht: Bug (1) — die Anstrichzahl der Decke — ist jetzt
+tatsächlich behoben, mit einer sauberen eigenen 1x-Preiszeile. Die schlechte Nachricht: „Boden schützen"
+fehlt hier erneut der Preis, exakt wie bei PM-024 im letzten Nachtest — das ist jetzt zweimal
+unabhängig voneinander aufgetreten und bestätigt Punkt 11 als echte, reproduzierbare Regression.
+
+**Status:** ✅ Bug (1, Decke 2×/1×) jetzt live bestätigt behoben. Neuer, bestätigter Fund: „Boden
+schützen" fehlt der Preis — zweite unabhängige Bestätigung von Punkt 11 (Preisdatenbank-Regression).
+
 ---
 
 ### PM-027 — Kellerraum, Parkett gerade + explizite Altbelag-Entfernung
@@ -1404,6 +1510,42 @@ mal eins vierzig. Einmal Fassadenfarbe drauf.“
 - 2 Fenster à 1,20×1,40=1,68 m², jedes einzeln ≤2,5 m² → VOB: kein Abzug
 - Fassadenfläche streichen 1×: **50,00 m²**
 - **Keine** Grundierung (nicht verlangt), keine Boden-/Deckenposition (Fassade)
+
+---
+
+## Erledigung PM-008/PM-015 und PM-011 (Head of Product Engineering, 2026-08-31)
+
+**PM-008/PM-015 — Einheitenfrage entschieden und umgesetzt.** Sandys
+Entscheidung: Prozent, der Katalog ist die Referenz. Umgesetzt, und dabei ein
+zweiter, bis dahin unbekannter Grund für die 0,00 € gefunden: die vier
+Ersatz-Katalogeinträge mit Einheit „Pauschale" (angelegt am 20.08. in
+`default-prices.ts`) sind nie in eine echte Betriebs-Preisdatenbank gelangt —
+es gab keine Migration dazu, und beide bestehenden Konten sind älter. Die
+Position hätte also auch mit passender Einheit keinen Preis gefunden. Beides
+ist jetzt behoben; beide Konten führen die fünf Maler-Zuschläge mit Einheit
+„%".
+
+Wie der Prozentsatz zu Geld wird: Bemessungsgrundlage sind die Leistungen
+genau des Raums, auf den sich der Zuschlag bezieht (bei
+„Erschwerniszuschlag Raumhöhe > 3m — Büro" also die Büro-Positionen), sonst
+die des ganzen Angebots. Ein Zuschlag zählt nie in die Grundlage eines
+anderen. Im Angebot steht die Position als Menge = Prozentsatz, Einheit = %,
+Einzelpreis = Euro je Prozentpunkt, Gesamt = beides multipliziert; der
+Rechenweg nennt die Grundlage im Klartext („15 % auf 547,20 € (Leistungen
+Büro)"). Ohne Katalogpreis bleibt es wie bei jeder anderen Position beim
+sichtbaren „Preis fehlt" — ein Satz wird nie erfunden.
+
+**Bitte an den Prüfmeister:** eigene Soll-Lösungen ab sofort mit Prozent statt
+Pauschale führen. Sätze im Standardkatalog: Raumhöhe > 3m 15 %, Altbau 20 %,
+Denkmalschutz 30 %, bewohnt 10 %, schwieriger Untergrund 10 % (an die
+vorhandenen VOB-Einträge angelehnt; die Zahlen selbst kann Sandy jederzeit
+ändern, sie stehen wie jeder andere Preis im Konto).
+
+**PM-011 — Doppel-Erschwernis geklärt.** Sandy: „Ja, können gleichzeitig
+kommen." Der Code hat das ohnehin nie verhindert (zwei unabhängige
+Prüfungen); jetzt hält ein Test fest, dass „schwieriger Untergrund" und
+„Altbau" nebeneinander neben einer Q2-Spachtelung stehen dürfen. Kein Fix
+nötig, Frage geschlossen.
 
 ---
 

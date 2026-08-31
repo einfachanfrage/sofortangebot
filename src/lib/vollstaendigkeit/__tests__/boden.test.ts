@@ -44,11 +44,11 @@ describe('boden – basis', () => {
     expect(fehlende).not.toContain('Sockelleisten montieren')
   })
 
-  it('Fläche aus Text wird extrahiert (Laminat inkl. 10% Verschnitt)', () => {
+  it('Fläche aus Text wird extrahiert (Laminat inkl. 5% Verschnitt)', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Laminat verlegen, 48 qm.')
     const laminatPos = positionen.find(p => p.beschreibung.toLowerCase().includes('laminat'))
-    // Laminat bekommt Standard-10%-Verschnitt: 48 × 1.10 = 52.8
-    expect(laminatPos?.menge).toBeCloseTo(52.8, 1)
+    // Gerade Verlegung = 5 % (PM-004, jetzt in beiden Wegen gleich): 48 × 1,05
+    expect(laminatPos?.menge).toBeCloseTo(50.4, 1)
   })
 
   it('kein Trigger → keine Boden-Positionen', () => {
@@ -103,9 +103,17 @@ describe('boden – vorarbeiten', () => {
 })
 
 describe('boden – sonder', () => {
-  it('Diagonalverlegung → Verschnitt 15 % in fehlende', () => {
-    const { fehlende } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett diagonal verlegen, 30 qm')
-    expect(fehlende).toContain('Verschnitt 15 % (Diagonalverlegung)')
+  it('Diagonalverlegung → 15 % Verschnitt in der Menge', () => {
+    // Früher erzeugte diese Prüfung nur einen Hinweis in `fehlende`, weil die
+    // Position für Parkett gar keinen Verschnitt trug (0 %). Seit Parkett bei
+    // gerader Verlegung 5 % bekommt (Sandy, 2026-08-30), muss auch die
+    // Diagonalverlegung hier ihre 15 % tatsächlich rechnen — sonst stünde im
+    // Angebot zu wenig Material.
+    const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett diagonal verlegen, 30 qm')
+    const parkett = positionen.find(p => /parkett/i.test(p.beschreibung))
+    expect(parkett?.menge).toBeCloseTo(34.5, 1)   // 30 × 1,15
+    expect(parkett?.beschreibung).toMatch(/15\s*% Verschnitt/)
+    expect(fehlende).not.toContain('Verschnitt 15 % (Diagonalverlegung)')
   })
 
   it('FBH-Hinweis wenn Fußbodenheizung erwähnt', () => {

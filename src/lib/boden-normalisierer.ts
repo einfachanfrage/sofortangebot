@@ -114,3 +114,40 @@ export function erkenneBodenArbeiten(text: string): Set<BodenArbeit> {
 export function hatBodenArbeit(text: string, kategorie: BodenArbeit): boolean {
   return erkenneBodenArbeiten(text).has(kategorie)
 }
+
+/**
+ * Verschnittsatz bei GERADER Verlegung — eine Quelle für Engine und
+ * Vollständigkeitsprüfung.
+ *
+ * Vorher stand die Regel zweimal im Code und die beiden waren auseinander-
+ * gelaufen: die Engine rechnete 5 %, die Vollständigkeitsprüfung 10 % — je
+ * nachdem, welcher Weg eine Position erzeugte, kam eine andere Menge heraus.
+ *
+ * Sandys Entscheidung (2026-08-30, PM-027): Parkett bekommt bei gerader
+ * Verlegung ebenfalls 5 %. Vorher stand hier 0 %, weil Parkett in der alten
+ * Konvention nicht als Plattenware galt — das entsprach nicht der Praxis.
+ * Muster-/Winkelverlegung (diagonal, Fischgrät) hat weiterhin ihren eigenen,
+ * höheren Satz beim Aufrufer (15 %).
+ *
+ * Kork und Teppich stehen bewusst weiterhin auf 0 % — dazu gibt es keine
+ * Entscheidung; wer sie ändert, sollte sie mit Sandy klären, nicht raten.
+ */
+export function standardVerschnitt(belag: BelagTyp | string | undefined): number {
+  if (!belag) return 0.05
+  const b = String(belag).toLocaleLowerCase('de-DE')
+  if (/laminat|vinyl|linoleum|parkett|diele/.test(b)) return 0.05
+  return 0
+}
+
+/** Muster-/Winkelverlegung braucht mehr Zuschnitt als gerade Verlegung. */
+export const MUSTER_VERLEGUNG = /diagonal|fischgr[äa]t|schr[äa]g\s*verlegt|45\s*grad|45°/i
+
+/**
+ * Verschnittsatz inklusive Verlegeart — die Form, die BEIDE Wege benutzen
+ * sollten. Ohne sie rechnete die Vollständigkeitsprüfung bei einer diagonalen
+ * Verlegung mit dem Satz für gerade Verlegung, während die Engine 15 % nahm
+ * (aufgefallen 2026-08-30 beim Angleich der Verschnitt-Regeln).
+ */
+export function verschnittFuerVerlegung(belag: BelagTyp | string | undefined, text: string): number {
+  return MUSTER_VERLEGUNG.test(text ?? '') ? 0.15 : standardVerschnitt(belag)
+}

@@ -27,7 +27,7 @@ const PROMPT_LIVE = readFileSync('supabase/functions/_shared/prompt-extraktion-v
 const EXTRAKTIONS_GEWERKE = ['maler', 'fliesen', 'trockenbau', 'boden_parkett', 'sanitaer_heizung', 'elektro']
 
 const ANFAHRT_IM_KATALOG: Array<[string, number]> = [
-  ['Abbruch – Anfahrt & Vorbereitung', 65],
+  ['Abbruch – Anfahrt & Organisation', 65],
   ['Boden – Anfahrt & Organisation', 45],
   ['Elektro – Anfahrt & Organisation', 45],
   ['Fliesen – Anfahrt & Organisation', 45],
@@ -73,7 +73,7 @@ describe('Gewerke-Filter vor dem Preis-Matcher', () => {
   })
 
   it('bleibt ohne bekanntes Gewerk beim bisherigen Verhalten (kein Filter)', () => {
-    expect(preisKategoriePasstZuGewerk('Abbruch – Anfahrt & Vorbereitung', undefined)).toBe(true)
-    expect(preisKategoriePasstZuGewerk('Abbruch – Anfahrt & Vorbereitung', 'allrounder')).toBe(true)
+    expect(preisKategoriePasstZuGewerk('Abbruch – Anfahrt & Organisation', undefined)).toBe(true)
+    expect(preisKategoriePasstZuGewerk('Abbruch – Anfahrt & Organisation', 'allrounder')).toBe(true)
   })
 })

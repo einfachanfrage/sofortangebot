@@ -20,48 +20,15 @@ löschen — Verlauf ist wertvoll).
 
 ## Offen
 
-**✅ ENTSCHIEDEN (Sandy, 29.08.): Der tote Filter wird gelöscht, nicht wiederbelebt — es wird gefragt statt still mit 1 Fenster / 1 Tür gerechnet. Umgesetzt am selben Tag, siehe Verlauf unten.**
-
-**🔵 Zwei kleine Katalog-Fragen (Head of Product Engineering, 24.08., aus
-CoS-019):** (1) In „Abbruch" stehen jetzt „Erschwerniszuschlag Handabbruch"
-(25 %) und „Zuschlag schwierige Zufahrt" (40 %) nebeneinander — fachlich
-sehr ähnlich, aber nicht identisch. Zusammenlegen oder getrennt lassen? (2)
-Die Rubriken „Anfahrt & Organisation"/„Anfahrt & Planung"/„Anfahrt &
-Vorbereitung" heißen uneinheitlich, aber kein Gewerk hat zwei davon
-gleichzeitig — nur Kosmetik. Vereinheitlichen? Beide betreffen aktuell
-niemanden live (nur Maler/Bodenleger ausgeliefert), niedrige Priorität.
-Quelle: `docs/chief-of-staff-todos.md` CoS-019.
-
-**🔵 DC-040-Folgefrage (Head of Product Engineering, 29.08.):** Deine
-Entscheidung „nachfragen statt raten" ist umgesetzt — aber bewusst nur für
-den Fall „ganze Wohnung/Haus/Etage". Bei einem EINZELNEN Raum („im Flur
-sind es 18 Quadratmeter Wandfläche") gilt weiterhin die alte Festlegung:
-eine direkt genannte Fläche ist schon die zu streichende, es wird nichts
-abgezogen und nicht gefragt. Die Unsicherheit ist dort aber dieselbe — auch
-ein einzelner Handwerker kann Umfang × Höhe gerechnet und die Türen noch
-drin haben. **Soll die Frage „sind Türen und Fenster da noch drin?" auch
-bei einzelnen Räumen kommen?** Dagegen spricht: eine Rückfrage mehr in
-Abläufen, die heute schon laufen (nach PM-007 fasse ich die Zahl der Fragen
-nicht ohne deinen Auftrag an). Dafür spricht: es geht um bares Geld, und
-raten tun wir dort aktuell genauso. Hängt inhaltlich mit der offenen
-CoS-020-Frage oben zusammen — am besten zusammen entscheiden.
-
-**🔵 DC-033/CoS-022 (Head of Product Engineering, 25.08.):** 4 bestehende
-Angebote (3 fertiggestellt, 1 versendet) haben nie eine echte Angebots-
-nummer bekommen, zeigen stattdessen ein UUID-Fragment. Sollen sie
-nachträglich eine echte Nummer bekommen? Bei den 3 fertiggestellten
-unkritisch, beim versendeten Angebot riskant: die falsche/keine Nummer
-könnte beim Kunden bereits auf Papier liegen, eine nachträglich vergebene
-andere Nummer wäre schlimmer als die jetzige Ersatzbezeichnung. Beide Wege
-sind in einer Minute umgesetzt, sobald du dich entschieden hast. Quelle:
-`docs/chief-of-staff-todos.md` CoS-022.
-
-Stand 29.08.2026: CoS-002 Schritt 3 ist entschieden (siehe unten) — Sandys
-Antwort auf die Rückfrage war eindeutig, keine weitere Klärung nötig. Die
-weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage,
-sondern die Gate-1-Gesamtfrage „ist das Tool reif für erste echte
-Testnutzer?" — die läuft über `docs/launch-readiness.md` (aktuell 34 %
-gegen den vollen Scope, Stand 29.08.).
+Stand 31.08.2026: Alle vorgelegten Punkte sind entschieden — siehe Verlauf
+unten (inkl. der Buchhaltungs-Gate-Frage, siehe neueste Zeile). Die
+weiterhin große, laufende Abwägung ist keine einzelne Ja/Nein-Frage, sondern
+die Gate-1-Gesamtfrage „ist das Tool reif für erste echte Testnutzer?" — die
+läuft über `docs/launch-readiness.md` (Stand 31.08.: ≈ 33 % gegen den vollen
+Scope, nach der Hochstufung von 11.5 auf G1; volle Neuberechnung nach dem
+heutigen Sync steht noch aus). Die Wettbewerbslandschafts-Frage aus
+`vision-strategie.md` ist im strategischen Check-in vom 31.08. beantwortet
+worden (siehe dort, „Geklärt 31.08.2026") — kein offener Punkt mehr.
 
 ---
 
@@ -69,6 +36,22 @@ gegen den vollen Scope, Stand 29.08.).
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-08-31 | Buchhaltungssoftware-Anbindung (11.5, Lexware/sevDesk): G2 (nach dem Launch) oder G1 (Teil des ersten Launches)? Frage entstand aus dem wöchentlichen Strategie-Check-in — Sandy positioniert Sofortangebot bewusst über die einfache Anbindung an bestehende Buchhaltungstools kleiner Betriebe, nicht über ein eigenes CRM | **G1** — „ja ist gate 1!" Kein Nice-to-have, sondern Teil des Kern-Differenzierungsversprechens für die Zielgruppe (kleine Betriebe, 1–10 MA, die z. B. Lexware/sevDesk nutzen). Ziel bleibt eine Anbindung in 2–3 einfachen Klicks | `docs/launch-readiness.md` 11.5, `docs/vision-strategie.md` (Geklärt 31.08.2026) |
+| 2026-08-31 | CoS-019 (Teil 1): „Erschwerniszuschlag Handabbruch" (25 %) und „Zuschlag schwierige Zufahrt" (40 %) — zusammenlegen zu einem Posten, oder getrennt lassen (beide können gleichzeitig auf ein Angebot kommen)? | **Getrennt lassen — „ja beides".** Beide Posten bleiben eigenständig im Katalog, können bei Bedarf auch gleichzeitig auf ein Angebot kommen (z. B. wenn ein Auftrag sowohl von Hand abgebrochen werden muss als auch schlecht mit Fahrzeug erreichbar ist). Keine Katalog-Änderung nötig, Ticket damit vollständig geschlossen. | `docs/chief-of-staff-todos.md` CoS-019 |
+| 2026-08-31 | CoS-019 (Teil 2): Rubriken „Anfahrt & Organisation"/„Anfahrt & Planung"/„Anfahrt & Vorbereitung" vereinheitlichen? | **Ja, vereinheitlichen.** | `docs/chief-of-staff-todos.md` CoS-019 |
+| 2026-08-31 | PM-008/PM-015: Erschwerniszuschlag-Einheit — generierte Positionen nutzen „Pauschale", Katalog nutzt „%", deshalb blockierter Preisabgleich. Welche Einheit soll gelten? | **Prozent.** Katalog ist die Referenz, die Generierung wird angepasst. | `docs/pruefmeister-testfaelle.md` PM-008/PM-015 |
+| 2026-08-31 | PM-024 (neu, 30.08., noch ohne eigenes Ticket): bei MEHREREN hohen Räumen (>3m) im selben Angebot — Höhenzuschlag je Raum einzeln oder einmal fürs ganze Angebot? | **Jeder Raum einzeln.** Sandys Begründung: einzelne Räume können den Zuschlag zu Recht nicht bekommen, z. B. wegen abgehängter Decke — eine Pauschale fürs Ganze würde das verschlucken. | `docs/pruefmeister-testfaelle.md` (PM-024) |
+| 2026-08-31 | PM-011: dürfen „schwieriger Untergrund" und „Altbau" gleichzeitig neben einer Q2-Spachtel-Position berechnet werden, oder schließt sich das aus? | **Ja, können gleichzeitig kommen.** | `docs/pruefmeister-testfaelle.md` PM-011 |
+| 2026-08-31 | DC-033/CoS-022: sollen die 4 Alt-Angebote ohne echte Nummer nachträglich eine bekommen? | **Nein, so lassen.** Begründung: bisher gab es keine echten Nutzer, alle betroffenen Angebote wurden bislang ausschließlich von Sandy selbst angelegt. | `docs/chief-of-staff-todos.md` CoS-022 |
+| 2026-08-31 | DC-042, Punkt 1: toter `viewed`-Status — ersatzlos streichen oder als echtes „Kunde hat geöffnet"-Feature bauen? | **Streichen.** | `docs/dc-042-status-modell-neu-denken.md` |
+| 2026-08-31 | DC-042, Punkt 2: Wortwahl für den heutigen Status „Offen" — Vorschlag „Beim Kunden" oder Alternative? | **„Beim Kunden".** | `docs/dc-042-status-modell-neu-denken.md` |
+| 2026-08-31 | DC-042, Punkt 3: soll „Abgelehnt" zwischen „Kunde hat aktiv Nein gesagt" und „nie wieder gehört" unterscheiden, oder ein Status bleiben? | **Ja, unterscheiden.** | `docs/dc-042-status-modell-neu-denken.md` |
+| 2026-08-31 | DC-042, Punkt 4: „Beim Kunden seit X Tagen" auf Basis des vorhandenen `created_at` (ungenau, kein DB-Aufwand) oder neues `sent_at`-Feld (genau, Migration nötig)? | **Neues `sent_at`-Feld — genaue Variante, Migration freigegeben.** | `docs/dc-042-status-modell-neu-denken.md` |
+| 2026-08-31 | DC-040-Folgefrage: soll „sind Türen/Fenster schon raus?" auch bei EINZELNEN Räumen gefragt werden (bisher nur bei „ganze Wohnung")? | **Ja, auch bei einzelnen Räumen fragen** — gezielt dann, wenn der Nutzer direkt eine Wand- oder Deckenfläche nennt (nicht nur bei Roh-Maßen, aus denen die Fläche erst berechnet wird). Auslegung von Sandy im Chat ausdrücklich bestätigt. | Head of Product Engineering, vormals in dieser Datei unter „Offen" |
+| 2026-08-31 | DC-043, Punkt 1: Dashboard-Neugestaltung — Richtung A „Fokus & Dringlichkeit" oder B „Warm & persönlich" oder Mischung? | **B — warm und persönlich.** (War laut Sandy bereits vorher direkt entschieden, hier zur Vollständigkeit nachgetragen.) | `docs/dc-043-dashboard-und-nav-neu-gedacht.md` |
+| 2026-08-31 | DC-043, Punkt 2: Hero-Button oder FAB (schwebendes Mikrofon-Symbol) als einziger Weg zu „Aufmaß starten"? | **FAB bleibt.** (Ebenfalls bereits vorher direkt entschieden.) | `docs/dc-043-dashboard-und-nav-neu-gedacht.md` |
+| 2026-08-31 | DC-043, Punkt 3: „Start" (Mobile) oder „Dashboard" (Desktop) als einheitlicher Name? | **„Start", einheitlich für Mobile und Desktop.** | `docs/dc-043-dashboard-und-nav-neu-gedacht.md` |
+| 2026-08-31 | CoS-013: Go für einen echten Git-Workflow bei `docs/`-Dateien, nach dem sechsten Datei-Korruptionsvorfall? | **Ja, Go erteilt.** | `docs/chief-of-staff-todos.md` CoS-013 |
 | 2026-08-29 | CoS-020: toten Filter für Tür-/Fensterfragen wiederbeleben (weniger Fragen, stille Standard-Annahme) oder löschen (weiter fragen)? | **Löschen — es wird gefragt.** Ersatzlos entfernt, `tsc` sauber, Suite grün (49 Dateien / 875 Tests). Der Filter erreichte die echten Fragen ohnehin nicht mehr; wiederbeleben hätte auch die neue DC-040-Rückfrage mit unterdrückt | `docs/chief-of-staff-todos.md` CoS-020 |
 | 2026-08-16 | DC-001: Preismodell + Gewerke-Versprechen | 22 €/Monat Standard, 17 €/Monat Jahresabo, 3 Angebote/Monat kostenlos; „Maler & Bodenleger" statt „18 Gewerke" | `docs/design-check.md` DC-001 |
 | 2026-08-17 | CoS-009: Head-of-IT-Rolle splitten? | Ja — aufgeteilt in Head of Product Engineering + Platform & Integrations Engineer | `docs/chief-of-staff-todos.md` CoS-009 |

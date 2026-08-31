@@ -103,7 +103,7 @@ function reichereBodenAn<E extends { raeume?: RaumLike[]; bereiche?: RaumLike[] 
   }
 }
 
-interface Meta { fensterAnzahl?: number; tuerenAnzahl?: number; raumhoehen?: number[] }
+interface Meta { fensterAnzahl?: number; tuerenAnzahl?: number; raeume?: Array<{ name?: string; hoehe?: number | null }> }
 
 /**
  * Berechnet Mengen + Vollständigkeit über ALLE beteiligten Gewerke und merged.

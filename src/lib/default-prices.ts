@@ -2257,13 +2257,13 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // ABBRUCH & RÜCKBAU
   // ═══════════════════════════════════════════════════════════════════════════
-  // Anfahrt & Vorbereitung
-  { category: 'Abbruch – Anfahrt & Vorbereitung', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', unit_price: 65.00 },
-  { category: 'Abbruch – Anfahrt & Vorbereitung', title: 'Anfahrt je Kilometer (ab 20 km)', unit: 'km', unit_price: 0.90 },
-  { category: 'Abbruch – Anfahrt & Vorbereitung', title: 'Besichtigungstermin / Bestandsaufnahme vor Ort', unit: 'Stunde', unit_price: 95.00 },
-  { category: 'Abbruch – Anfahrt & Vorbereitung', title: 'Schadstoffuntersuchung (Asbest, KMF, PCB) inkl. Gutachten', unit: 'Pauschale', unit_price: 380.00 },
-  { category: 'Abbruch – Anfahrt & Vorbereitung', title: 'Abbruchanzeige / Abbruchgenehmigung beantragen (Koordination)', unit: 'Pauschale', unit_price: 180.00 },
-  { category: 'Abbruch – Anfahrt & Vorbereitung', title: 'Statische Beurteilung (Fremdleistung, Weiterberechnung)', unit: 'Pauschale', unit_price: 0.00 },
+  // Anfahrt & Organisation
+  { category: 'Abbruch – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', unit_price: 65.00 },
+  { category: 'Abbruch – Anfahrt & Organisation', title: 'Anfahrt je Kilometer (ab 20 km)', unit: 'km', unit_price: 0.90 },
+  { category: 'Abbruch – Anfahrt & Organisation', title: 'Besichtigungstermin / Bestandsaufnahme vor Ort', unit: 'Stunde', unit_price: 95.00 },
+  { category: 'Abbruch – Anfahrt & Organisation', title: 'Schadstoffuntersuchung (Asbest, KMF, PCB) inkl. Gutachten', unit: 'Pauschale', unit_price: 380.00 },
+  { category: 'Abbruch – Anfahrt & Organisation', title: 'Abbruchanzeige / Abbruchgenehmigung beantragen (Koordination)', unit: 'Pauschale', unit_price: 180.00 },
+  { category: 'Abbruch – Anfahrt & Organisation', title: 'Statische Beurteilung (Fremdleistung, Weiterberechnung)', unit: 'Pauschale', unit_price: 0.00 },
   // Baustelleneinrichtung & Sicherung
   { category: 'Abbruch – Baustelleneinrichtung', title: 'Baustellenabsperrung / Bauzaun aufstellen (je lfdm, 4 Wochen)', unit: 'lfdm', unit_price: 8.00 },
   { category: 'Abbruch – Baustelleneinrichtung', title: 'Staubschutzwand / Trennwand zu angrenzenden Bereichen', unit: 'm²', unit_price: 14.00 },
@@ -2398,14 +2398,14 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // GARTEN & LANDSCHAFT (GaLaBau)
   // ═══════════════════════════════════════════════════════════════════════════
-  // Anfahrt & Planung
-  { category: 'Garten – Anfahrt & Planung', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', unit_price: 35.00 },
-  { category: 'Garten – Anfahrt & Planung', title: 'Anfahrt je Kilometer (ab 15 km)', unit: 'km', unit_price: 0.80 },
-  { category: 'Garten – Anfahrt & Planung', title: 'Aufmaß / Vermessung vor Ort', unit: 'Stunde', unit_price: 75.00 },
-  { category: 'Garten – Anfahrt & Planung', title: 'Gartenplanung / Bepflanzungsplan einfach', unit: 'Pauschale', unit_price: 250.00 },
-  { category: 'Garten – Anfahrt & Planung', title: 'Gartenplanung komplett mit Freiflächenplanung', unit: 'Pauschale', unit_price: 650.00 },
-  { category: 'Garten – Anfahrt & Planung', title: 'Beratung vor Ort (je Stunde, verrechenbar)', unit: 'Stunde', unit_price: 85.00 },
-  { category: 'Garten – Anfahrt & Planung', title: 'Kleinstauftrag Mindestanfahrt (Anfahrt + 1h Arbeit)', unit: 'Pauschale', unit_price: 120.00 },
+  // Anfahrt & Organisation
+  { category: 'Garten – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', unit_price: 35.00 },
+  { category: 'Garten – Anfahrt & Organisation', title: 'Anfahrt je Kilometer (ab 15 km)', unit: 'km', unit_price: 0.80 },
+  { category: 'Garten – Anfahrt & Organisation', title: 'Aufmaß / Vermessung vor Ort', unit: 'Stunde', unit_price: 75.00 },
+  { category: 'Garten – Anfahrt & Organisation', title: 'Gartenplanung / Bepflanzungsplan einfach', unit: 'Pauschale', unit_price: 250.00 },
+  { category: 'Garten – Anfahrt & Organisation', title: 'Gartenplanung komplett mit Freiflächenplanung', unit: 'Pauschale', unit_price: 650.00 },
+  { category: 'Garten – Anfahrt & Organisation', title: 'Beratung vor Ort (je Stunde, verrechenbar)', unit: 'Stunde', unit_price: 85.00 },
+  { category: 'Garten – Anfahrt & Organisation', title: 'Kleinstauftrag Mindestanfahrt (Anfahrt + 1h Arbeit)', unit: 'Pauschale', unit_price: 120.00 },
   // Erdarbeiten & Bodenvorbereitung
   { category: 'Garten – Erdarbeiten', title: 'Boden abtragen / Oberboden abschälen (bis 20cm)', unit: 'm²', unit_price: 8.00 },
   { category: 'Garten – Erdarbeiten', title: 'Erdaushub Bagger (ohne Abtransport)', unit: 'm³', unit_price: 22.00 },
@@ -2717,13 +2717,13 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // FASSADE & AUSSENARBEITEN
   // ═══════════════════════════════════════════════════════════════════════════
-  // Anfahrt & Planung
-  { category: 'Fassade – Anfahrt & Planung', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', unit_price: 65.00 },
-  { category: 'Fassade – Anfahrt & Planung', title: 'Anfahrt je Kilometer (ab 20 km)', unit: 'km', unit_price: 0.90 },
-  { category: 'Fassade – Anfahrt & Planung', title: 'Besichtigung / Aufmaß Fassade vor Ort', unit: 'Stunde', unit_price: 90.00 },
-  { category: 'Fassade – Anfahrt & Planung', title: 'Fassadenplanung / Farbberatung', unit: 'Pauschale', unit_price: 180.00 },
-  { category: 'Fassade – Anfahrt & Planung', title: 'Energieberater / U-Wert-Nachweis (Fremdleistung)', unit: 'Pauschale', unit_price: 0.00 },
-  { category: 'Fassade – Anfahrt & Planung', title: 'Baugenehmigung / Farbabstimmung Denkmalschutz (Koordination)', unit: 'Pauschale', unit_price: 180.00 },
+  // Anfahrt & Organisation
+  { category: 'Fassade – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', unit_price: 65.00 },
+  { category: 'Fassade – Anfahrt & Organisation', title: 'Anfahrt je Kilometer (ab 20 km)', unit: 'km', unit_price: 0.90 },
+  { category: 'Fassade – Anfahrt & Organisation', title: 'Besichtigung / Aufmaß Fassade vor Ort', unit: 'Stunde', unit_price: 90.00 },
+  { category: 'Fassade – Anfahrt & Organisation', title: 'Fassadenplanung / Farbberatung', unit: 'Pauschale', unit_price: 180.00 },
+  { category: 'Fassade – Anfahrt & Organisation', title: 'Energieberater / U-Wert-Nachweis (Fremdleistung)', unit: 'Pauschale', unit_price: 0.00 },
+  { category: 'Fassade – Anfahrt & Organisation', title: 'Baugenehmigung / Farbabstimmung Denkmalschutz (Koordination)', unit: 'Pauschale', unit_price: 180.00 },
   // Gerüst & Absturzsicherung
   { category: 'Fassade – Gerüst', title: 'Fassadengerüst stellen + vorhalten (4 Wochen, je m² Fassadenfläche)', unit: 'm²', unit_price: 14.00 },
   { category: 'Fassade – Gerüst', title: 'Gerüst Aufpreis je weitere Woche Standzeit', unit: 'm²/Woche', unit_price: 2.50 },
@@ -2852,13 +2852,13 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // ROHBAU & MAURER
   // ═══════════════════════════════════════════════════════════════════════════
-  // Anfahrt & Planung
-  { category: 'Rohbau – Anfahrt & Planung', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', unit_price: 45.00 },
-  { category: 'Rohbau – Anfahrt & Planung', title: 'Anfahrt je Kilometer (ab 15 km)', unit: 'km', unit_price: 0.90 },
-  { category: 'Rohbau – Anfahrt & Planung', title: 'Aufmaß / Bestandsaufnahme vor Ort', unit: 'Stunde', unit_price: 85.00 },
-  { category: 'Rohbau – Anfahrt & Planung', title: 'Statische Beurteilung (Fremdleistung, Weiterberechnung)', unit: 'Pauschale', unit_price: 0.00 },
-  { category: 'Rohbau – Anfahrt & Planung', title: 'Bauleitung / Bauleitungskoordination (je Stunde)', unit: 'Stunde', unit_price: 95.00 },
-  { category: 'Rohbau – Anfahrt & Planung', title: 'Baustelleneinrichtung pauschal', unit: 'Pauschale', unit_price: 350.00 },
+  // Anfahrt & Organisation
+  { category: 'Rohbau – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', unit_price: 45.00 },
+  { category: 'Rohbau – Anfahrt & Organisation', title: 'Anfahrt je Kilometer (ab 15 km)', unit: 'km', unit_price: 0.90 },
+  { category: 'Rohbau – Anfahrt & Organisation', title: 'Aufmaß / Bestandsaufnahme vor Ort', unit: 'Stunde', unit_price: 85.00 },
+  { category: 'Rohbau – Anfahrt & Organisation', title: 'Statische Beurteilung (Fremdleistung, Weiterberechnung)', unit: 'Pauschale', unit_price: 0.00 },
+  { category: 'Rohbau – Anfahrt & Organisation', title: 'Bauleitung / Bauleitungskoordination (je Stunde)', unit: 'Stunde', unit_price: 95.00 },
+  { category: 'Rohbau – Anfahrt & Organisation', title: 'Baustelleneinrichtung pauschal', unit: 'Pauschale', unit_price: 350.00 },
   // Erdarbeiten & Aushub
   { category: 'Rohbau – Erdarbeiten & Aushub', title: 'Erdaushub Bagger (ohne Abtransport)', unit: 'm³', unit_price: 25.00 },
   { category: 'Rohbau – Erdarbeiten & Aushub', title: 'Erdabtransport + Deponiegebühr', unit: 'm³', unit_price: 48.00 },
@@ -2987,12 +2987,12 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // BRANDSCHUTZ, AUFZUGSTECHNIK & LUFTDICHTIGKEIT
   // ═══════════════════════════════════════════════════════════════════════════
-  // Brandschutz – Anfahrt & Planung
-  { category: 'Brandschutz – Anfahrt & Planung', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', unit_price: 65.00 },
-  { category: 'Brandschutz – Anfahrt & Planung', title: 'Brandschutzbegehung / -beratung vor Ort', unit: 'Stunde', unit_price: 110.00 },
-  { category: 'Brandschutz – Anfahrt & Planung', title: 'Brandschutzkonzept erstellen (Fremdleistung Sachverständiger)', unit: 'Pauschale', unit_price: 0.00 },
-  { category: 'Brandschutz – Anfahrt & Planung', title: 'Brandschutznachweis / Dokumentation erstellen', unit: 'Pauschale', unit_price: 280.00 },
-  { category: 'Brandschutz – Anfahrt & Planung', title: 'Abnahme durch Brandschutzsachverständigen (Fremdleistung)', unit: 'Pauschale', unit_price: 0.00 },
+  // Brandschutz – Anfahrt & Organisation
+  { category: 'Brandschutz – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', unit_price: 65.00 },
+  { category: 'Brandschutz – Anfahrt & Organisation', title: 'Brandschutzbegehung / -beratung vor Ort', unit: 'Stunde', unit_price: 110.00 },
+  { category: 'Brandschutz – Anfahrt & Organisation', title: 'Brandschutzkonzept erstellen (Fremdleistung Sachverständiger)', unit: 'Pauschale', unit_price: 0.00 },
+  { category: 'Brandschutz – Anfahrt & Organisation', title: 'Brandschutznachweis / Dokumentation erstellen', unit: 'Pauschale', unit_price: 280.00 },
+  { category: 'Brandschutz – Anfahrt & Organisation', title: 'Abnahme durch Brandschutzsachverständigen (Fremdleistung)', unit: 'Pauschale', unit_price: 0.00 },
   // Brandschutz – Türen & Tore
   { category: 'Brandschutz – Türen & Tore', title: 'Brandschutztür T30 (EI230) einbauen inkl. Zarge + Selbstschließer', unit: 'Stück', unit_price: 1800.00 },
   { category: 'Brandschutz – Türen & Tore', title: 'Brandschutztür T60 (EI260) einbauen inkl. Zarge', unit: 'Stück', unit_price: 2400.00 },
@@ -3029,11 +3029,11 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Brandschutz – Melder & Löschung', title: 'Wandhydrant einbauen (Typ F, inkl. Schrank)', unit: 'Stück', unit_price: 850.00 },
   { category: 'Brandschutz – Melder & Löschung', title: 'Notbeleuchtung / Sicherheitsleuchte einbauen', unit: 'Stück', unit_price: 120.00 },
   { category: 'Brandschutz – Melder & Löschung', title: 'Flucht- und Rettungszeichenleuchte montieren', unit: 'Stück', unit_price: 85.00 },
-  // Aufzugstechnik – Anfahrt & Planung
-  { category: 'Aufzugstechnik – Anfahrt & Planung', title: 'Anfahrt / Begehung Aufzugsschacht vor Ort', unit: 'Stunde', unit_price: 110.00 },
-  { category: 'Aufzugstechnik – Anfahrt & Planung', title: 'Aufzugsplanung / Anlagenplanung (Fremdleistung, Weiterberechnung)', unit: 'Pauschale', unit_price: 0.00 },
-  { category: 'Aufzugstechnik – Anfahrt & Planung', title: 'TÜV-Abnahme / Erst-/Wiederholungsprüfung (Fremdleistung)', unit: 'Pauschale', unit_price: 0.00 },
-  { category: 'Aufzugstechnik – Anfahrt & Planung', title: 'Baugenehmigung Aufzugseinbau (Koordination)', unit: 'Pauschale', unit_price: 180.00 },
+  // Aufzugstechnik – Anfahrt & Organisation
+  { category: 'Aufzugstechnik – Anfahrt & Organisation', title: 'Anfahrt / Begehung Aufzugsschacht vor Ort', unit: 'Stunde', unit_price: 110.00 },
+  { category: 'Aufzugstechnik – Anfahrt & Organisation', title: 'Aufzugsplanung / Anlagenplanung (Fremdleistung, Weiterberechnung)', unit: 'Pauschale', unit_price: 0.00 },
+  { category: 'Aufzugstechnik – Anfahrt & Organisation', title: 'TÜV-Abnahme / Erst-/Wiederholungsprüfung (Fremdleistung)', unit: 'Pauschale', unit_price: 0.00 },
+  { category: 'Aufzugstechnik – Anfahrt & Organisation', title: 'Baugenehmigung Aufzugseinbau (Koordination)', unit: 'Pauschale', unit_price: 180.00 },
   // Aufzugstechnik – Einbau
   { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (2–4 Haltestellen, maschinenraumlos, komplett)', unit: 'Pauschale', unit_price: 28000.00 },
   { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (5–8 Haltestellen, maschinenraumlos)', unit: 'Pauschale', unit_price: 38000.00 },
@@ -3424,10 +3424,60 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Bodenbeschichtung', title: 'Boden streichen', unit: 'm²', unit_price: 12.00 },
   { category: 'Maler – Anstrich Innen', title: 'Fensterbänke streichen', unit: 'm²', unit_price: 45.00 },
   { category: 'Maler – Anstrich Innen', title: 'Fußleisten schleifen und lackieren', unit: 'lfdm', unit_price: 6.50 },
-  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Raumhöhe > 3m', unit: 'Pauschale', unit_price: 90.00 },
-  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Altbau', unit: 'Pauschale', unit_price: 70.00 },
-  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Denkmalschutz', unit: 'Pauschale', unit_price: 120.00 },
-  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag bewohnt', unit: 'Pauschale', unit_price: 80.00 },
+  // PM-008/PM-015 — Sandys Entscheidung 2026-08-31: Erschwerniszuschläge
+  // laufen in PROZENT, nicht als Pauschale. Diese vier Einträge waren am
+  // 2026-08-20 nur deshalb als „Pauschale" angelegt worden, damit die
+  // generierten Positionen überhaupt einen Treffer finden — der VOB-Teil
+  // desselben Katalogs (oben, „ERSCHWERNISZUSCHLÄGE — Maler") führte sie
+  // schon immer unter „%". Jetzt gilt im ganzen Katalog eine Einheit.
+  // Die Sätze sind an die vorhandenen VOB-Einträge angelehnt, nicht frei
+  // gewählt: Höhe 15 % wie „Höhe (Leitern/Gerüst über 4 m)", bewohnt 10 %
+  // wie „bewohnter Bereich (Schutzmaßnahmen)", Altbau 20 % und
+  // Denkmalschutz 30 % wie die gleichnamigen Fassaden-Zuschläge,
+  // schwieriger Untergrund 10 % wie „Untergrundvorbehandlung (Altputz)".
+  {
+    category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Raumhöhe > 3m',
+    unit: '%', unit_price: 15,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Anstricharbeiten in Räumen über 3 m Höhe',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.1',
+    din_normen: ['DIN 18363'],
+  },
+  {
+    category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Altbau',
+    unit: '%', unit_price: 20,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Anstricharbeiten im Altbau',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.2',
+    din_normen: ['DIN 18363'],
+  },
+  {
+    category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag Denkmalschutz',
+    unit: '%', unit_price: 30,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Anstricharbeiten unter Denkmalschutzauflagen',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.2',
+    din_normen: ['DIN 18363'],
+  },
+  {
+    category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag bewohnt',
+    unit: '%', unit_price: 10,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Anstricharbeiten in bewohnten Räumen',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.3',
+    din_normen: ['DIN 18363'],
+  },
+  {
+    // Wurde von der Vollständigkeitsprüfung seit PM-019 erzeugt, hatte aber
+    // im ganzen Maler-Katalog nie einen Gegen-Eintrag — deshalb stand die
+    // Position in jedem Angebot mit 0,00 € da.
+    category: 'Maler – Erschwernisse & Zuschläge', title: 'Erschwerniszuschlag schwieriger Untergrund',
+    unit: '%', unit_price: 10,
+    ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Anstricharbeiten auf schwierigem Untergrund',
+    zuschlag_typ: 'prozent',
+    vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.2',
+    din_normen: ['DIN 18363'],
+  },
   { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q2', unit: 'm²', unit_price: 5.50 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q3', unit: 'm²', unit_price: 7.50 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q4', unit: 'm²', unit_price: 9.50 },

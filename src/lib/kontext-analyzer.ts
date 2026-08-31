@@ -32,21 +32,6 @@ function addRueckfrage(ext: ExtMitExtra, rq: KIRueckfrageRaw) {
   }
 }
 
-/**
- * DC-040: „Wohnung", „Haus", „Etage" sind keine Räume, sondern eine ganze
- * Einheit in einem Eintrag — der Handwerker hat die Wohnung als Ganzes
- * aufgenommen statt Raum für Raum.
- *
- * Bewusst eng gehalten: Bei einem EINZELNEN Raum („im Flur sind es 18 m²
- * Wandfläche") gilt weiterhin die bestehende Festlegung, dass eine direkt
- * genannte Fläche schon die zu streichende ist — dort wird nicht gefragt.
- * Ob das auch für Einzelräume gelten soll, ist eine Produktentscheidung und
- * liegt bei Sandy, nicht bei diesem Ticket.
- */
-function istGesamtflaechenRaum(name: string | null | undefined): boolean {
-  return /\b(wohnung|haus|etage|geschoss|stockwerk)\b/i.test(name ?? '')
-}
-
 function situationIncludes(ext: ExtMitExtra, ...begriffe: string[]): boolean {
   const text = (ext.situation ?? ext.anmerkungen ?? '').toLowerCase()
   return begriffe.some(b => text.includes(b))
@@ -201,7 +186,26 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
     // Annahme über bares Geld. Also einmal kurz fragen, statt zu raten.
     // Hat er den Abzug selbst genannt („minus 5 m²"), ist die Frage
     // beantwortet und entfällt.
-    if (hatStreichen && istGesamtflaechenRaum(raum.name) && raum.wandflaeche_direkt
+    //
+    // DC-040-Folgefrage, Sandys Entscheidung 2026-08-31: Die Frage galt
+    // zuerst nur für „Wohnung"/„Haus"/„Etage". Sie gilt jetzt für JEDEN Raum,
+    // sobald der Handwerker eine Wandfläche direkt nennt („im Flur sind es
+    // 18 m² Wandfläche") — die stille Annahme über bares Geld ist dort
+    // dieselbe. Ausdrücklich NICHT betroffen sind Roh-Maße (Länge × Breite ×
+    // Höhe): daraus rechnet die Engine die Fläche selbst und zieht die
+    // Öffnungen ohnehin nach VOB ab, da gibt es nichts zu raten.
+    // `wandflaeche_direkt` wird ausschließlich aus einer genannten Zahl
+    // gesetzt, nie aus einer Berechnung — genau die Grenze, die Sandy gezogen
+    // hat. Deckenflächen bleiben außen vor: eine Decke hat keine Türen.
+    //
+    // Ausgenommen bleibt das Dachgeschoss (`istDachgeschossRaum`, wortgleich
+    // zur Engine): dort rechnet maler.ts über Kniestockhöhe × Umfang plus
+    // Dachschrägen-Quadratmeter, und GPT legt die Schrägenfläche erfahrungs-
+    // gemäß im Feld `wandflaeche_direkt` ab (PM-007, Sandys echter
+    // Dachzimmer-Fall: 12 m² Schräge landeten dort). Eine Schräge hat keine
+    // Türen und Fenster — die Frage wäre nicht nur überflüssig, sie würde
+    // nach einer Zahl fragen, die gar keine Wandfläche ist.
+    if (hatStreichen && raum.wandflaeche_direkt && !istDachgeschossRaum
         && raum.wandflaeche_brutto == null && raum.wandflaeche_abzug_m2 == null) {
       const flaecheText = String(raum.wandflaeche_direkt).replace('.', ',')
       addRueckfrage(ext, {

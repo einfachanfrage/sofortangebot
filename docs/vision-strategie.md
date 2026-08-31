@@ -65,13 +65,12 @@ Diese Datei ist ein Anfang, kein vollständiges Bild. Folgendes ist aktuell
 NICHT belastbar dokumentiert und sollte in den nächsten wöchentlichen
 Check-ins Stück für Stück ergänzt werden, statt es zu erfinden:
 
-- Wettbewerbslandschaft — Sandy hat einen groben Überblick, aber keine
-  systematische Einschätzung; was macht Sofortangebot anders/besser, bleibt
-  noch zu schärfen
 - Wann welche neue Team-Rolle wirklich gebraucht wird (über Marketing
   hinaus)
-- Konkretes Zielbild für die nächsten 3–12 Monate nach Gate 1 (welche
-  Gewerke als Nächstes, in welcher Reihenfolge)
+- Konkretes Zielbild für die nächsten 3–12 Monate nach Gate 1 — welche
+  neuen Gewerke als Nächstes und in welcher Reihenfolge ist weiterhin offen,
+  auch wenn seit 31.08. klar ist, dass Gewerke-Erweiterung grundsätzlich
+  fest eingeplant ist (siehe unten)
 
 **Geklärt (18.08.2026):**
 
@@ -83,6 +82,31 @@ Check-ins Stück für Stück ergänzt werden, statt es zu erfinden:
 - **Native App:** fest eingeplant, Zielzeitraum Mitte 2027 — kein
   „irgendwann vielleicht", sondern ein realer nächster Meilenstein nach
   Gate 2, den der Chief of Staff im Blick behalten sollte.
+
+**Geklärt (31.08.2026):**
+
+- **Wettbewerbslandschaft:** Es gibt bereits andere Sprache-zu-Angebot-
+  Anbieter für Handwerker, u. a. Hero und Plankraft (beide groß) sowie
+  Profiangebot. Sofortangebot grenzt sich bewusst nicht über mehr Funktionen
+  ab, sondern über weniger: kein CRM-Anspruch, kein Rundum-System — reiner,
+  scharfer Fokus auf Angebotserstellung, mit dem Ziel, das schnellste und
+  unkomplizierteste Angebots-Tool der Handwerksbranche zu sein.
+- **Zielkunde/Segment:** bewusst kleine Betriebe (ca. 1–10 Mitarbeitende),
+  nicht größere Malerbetriebe mit z. B. 30 Mitarbeitenden — kein Anspruch
+  auf Vollautomatisierung/Enterprise-Tiefe, sondern einfache Bedienung für
+  Betriebe, die z. B. Lexware oder sevDesk zur Buchhaltung nutzen. Betrifft
+  Priorisierung: die geplante Buchhaltungssoftware-Anbindung (Lexware/
+  sevDesk) ist Teil dieser Positionierung, nicht nur ein Feature — Ziel ist
+  eine Anbindung in 2–3 einfachen Klicks.
+- **Wachstumsweg, Ergänzung:** Social Media ist ein bewusster
+  Go-to-Market-Kanal, nicht nur Content/SEO — Begründung: eine jüngere
+  Handwerker-Generation (Nachfolge in altersbedingt frei werdenden
+  Betrieben) ist auf Social Media aktiv, dafür ist ein eigener, hochwertiger
+  Social-Media-Auftritt geplant. Ergänzt, ersetzt nicht die 18.08-Festlegung
+  „kein bezahltes Werbebudget zum Start".
+- **Gewerke-Erweiterung:** über Maler/Bodenleger hinaus grundsätzlich fest
+  eingeplant (weitere Gewerke sollen folgen) — konkrete Reihenfolge/Timing
+  bleibt offen, siehe „Was hier noch fehlt" oben.
 
 ## Wöchentlicher strategischer Check-in
 
@@ -114,3 +138,16 @@ offen). Frage aus „Was hier noch fehlt" an Sandy weitergegeben:
 Wettbewerbslandschaft — was macht Sofortangebot aus ihrer Sicht anders/
 besser als bestehende Alternativen? Antwort steht noch aus, daher unten
 unverändert gelassen.
+
+**31.08.2026 (dritter Check-in):** Stand Richtung Launch: weiter auf Kurs zu
+Gate 1 (aktuell 34 %), aber die Zahl bewegt sich kaum, obwohl in der letzten
+Woche mehrere echte Fortschritte passiert sind (u. a. Login/Registrierung
+und die Pflicht-Mails technisch fertig, mehrere neue Design-/UX-Funde
+größtenteils schon umgesetzt) — die Einzelbewegungen sind über zu viele
+kleine Punkte verteilt, um die große Zahl sichtbar zu heben. Keine akute
+strategische Entscheidung diese Woche (`entscheidungen-fuer-sandy.md`:
+offene Punkte sind operativer Natur, keine Weichenstellung fürs große
+Bild). Frage aus „Was hier noch fehlt" erneut an Sandy weitergegeben, da die
+Frage vom 24.08. weiterhin unbeantwortet ist: Wettbewerbslandschaft — was
+macht Sofortangebot aus ihrer Sicht anders/besser als bestehende
+Alternativen? Antwort steht weiter aus, daher unten unverändert gelassen.

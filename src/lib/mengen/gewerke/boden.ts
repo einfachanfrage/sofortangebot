@@ -1,5 +1,6 @@
 import type { MengenErgebnis, BerechnetePosition } from '../types'
 import type { BelagTyp } from '../../boden-normalisierer'
+import { standardVerschnitt } from '../../boden-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge } from './sockelleisten'
 
@@ -36,13 +37,7 @@ function belagLabel(belag: string | undefined, typ: BelagTyp): string {
 // PM-004: pauschal 10% war für JEDE gerade Verlegung zu hoch (Fachwissen-
 // Standard bei gerader Verlegung: ca. 5%) — nur bei Diagonalverlegung
 // (siehe Aufrufer unten) braucht es wirklich 15% mehr Verschnitt.
-function standardVerschnitt(belag: string | undefined, typ: BelagTyp): number {
-  if (!belag) return 0.05
-  // Plattenware (Laminat/Vinyl/Linoleum) hat Schneidverschnitt; Parkett/Kork/
-  // Teppich in dieser Konvention nicht.
-  if (typ === 'laminat' || typ === 'vinyl' || typ === 'linoleum') return 0.05
-  return 0
-}
+
 
 // PM-013 (2026-08-19): "verlegerichtung" prüfte bisher NUR auf den exakten
 // String 'diagonal' — GPT liefert für Fischgrät-Verlegung aber wörtlich
@@ -93,7 +88,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
     // Transkript → kein Cross-Room-Bleed bei mehreren Räumen.
     const belagTyp: BelagTyp = baueVerstaendnis(belag ?? '', { belagText: belag }).belag
     const hatMusterverlegung = typeof verlegerichtung === 'string' && MUSTER_MIT_MEHR_VERSCHNITT.test(verlegerichtung)
-    const verschnitt = hatMusterverlegung ? 0.15 : standardVerschnitt(belag, belagTyp)
+    const verschnitt = hatMusterverlegung ? 0.15 : standardVerschnitt(belagTyp ?? belag)
     const label = belagLabel(belag, belagTyp)
     const pct = Math.round(verschnitt * 100)
     const verschnittSuffix = verschnitt > 0 ? ` inkl. ${pct}% Verschnitt` : ''

@@ -31,7 +31,7 @@ export async function getDashboardData() {
       .eq('company_id', company.id).gte('created_at', prevMonthStart).lt('created_at', monthStart)
       .not('status', 'in', '("draft","in_bearbeitung","archived")'),
     supabase.from('price_items').select('id', { count: 'exact', head: true }).eq('company_id', company.id),
-    supabase.from('quotes').select('id').eq('company_id', company.id).in('status', ['sent', 'viewed']),
+    supabase.from('quotes').select('id').eq('company_id', company.id).eq('status', 'sent'),
   ])
 
   const monthQuotes = monthResult.data ?? []

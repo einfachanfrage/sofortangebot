@@ -2,6 +2,7 @@ import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, anzahlAus, filtereArray } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import { extrahiereRaumhoehe } from '../extraktion-masse'
+import { ZUSCHLAG_EINHEIT } from '../zuschlag-basis'
 
 export function pruefeErschwerniszuschlagHoehe(
   ergaenzt: BerechnetePosition[],
@@ -11,15 +12,36 @@ export function pruefeErschwerniszuschlagHoehe(
   // (3,2 m stand korrekt in den Raummaßen). Fehlte dem Parser die Sprechweise
   // („Höhe 3,20 m" kannte er nicht), fiel der Zuschlag lautlos aus. Jetzt gilt
   // dieselbe Rangordnung wie überall: erkannte Struktur vor Rohtext-Regex.
-  raumhoehen: number[] = [],
+  raeume: Array<{ name?: string; hoehe?: number | null }> = [],
 ): void {
-  const hoechsteErkannte = raumhoehen.length > 0 ? Math.max(...raumhoehen) : 0
-  // Robuster Höhen-Parser (fängt "2 Meter 60" = 2,60 m korrekt, nicht 60 m!)
-  const raumHoehe = Math.max(hoechsteErkannte, extrahiereRaumhoehe(lower) ?? 0)
-  const hatHohesRaum = raumHoehe > 3.0
+  const SCHWELLE = 3.0
+  if (hat(ergaenzt, 'erschwerniszuschlag höhe', 'höhe zuschlag', 'gerüst')) return
+
+  // Sandys Entscheidung (2026-08-30): Der Zuschlag gehört ZUM RAUM, nicht in
+  // eine Sammelkarte „Allgemein" — er entsteht ja durch genau diesen einen
+  // hohen Raum. Bei mehreren hohen Räumen entsteht er entsprechend mehrfach:
+  // der Mehraufwand (Leiter, Gerüst, Aufbau) fällt in jedem Raum erneut an.
+  const hoheRaeume = raeume.filter(r => typeof r.hoehe === 'number' && (r.hoehe ?? 0) > SCHWELLE)
+  if (hoheRaeume.length > 0) {
+    for (const raum of hoheRaeume) {
+      const suffix = raum.name ? ` — ${raum.name}` : ''
+      if (hat(ergaenzt, `erschwerniszuschlag raumhöhe > 3m${suffix}`.toLowerCase())) continue
+      ergaenzt.push({
+        beschreibung: `Erschwerniszuschlag Raumhöhe > 3m${suffix}`,
+        menge: 1, einheit: ZUSCHLAG_EINHEIT, konfidenz: 'high',
+        berechnungsweg: `Raumhöhe ${raum.hoehe}m > ${SCHWELLE}m`, annahmen: [],
+      })
+    }
+    return
+  }
+
+  // Kein strukturiertes Maß über der Schwelle: wie bisher der Rohtext als
+  // Rückfallebene — dann aber ohne Raumbezug, weil keiner bekannt ist.
+  const ausText = extrahiereRaumhoehe(lower) ?? 0
+  const hatHohesRaum = ausText > SCHWELLE
     || lower.includes('hohe decke') || lower.includes('hohen decken')
-  if (hatHohesRaum && !hat(ergaenzt, 'erschwerniszuschlag höhe', 'höhe zuschlag', 'gerüst')) {
-    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Raumhöhe > 3m', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: `Raumhöhe ${raumHoehe > 0 ? raumHoehe + 'm' : 'erkannt'} > 3m`, annahmen: [] })
+  if (hatHohesRaum) {
+    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Raumhöhe > 3m', menge: 1, einheit: ZUSCHLAG_EINHEIT, konfidenz: 'high', berechnungsweg: `Raumhöhe ${ausText > 0 ? ausText + 'm' : 'erkannt'} > ${SCHWELLE}m`, annahmen: [] })
   }
 }
 
@@ -41,7 +63,7 @@ export function pruefeErschwerniszuschlagUntergrund(ergaenzt: BerechnetePosition
     ergaenzt.push({
       beschreibung: 'Erschwerniszuschlag schwieriger Untergrund',
       menge: 1,
-      einheit: 'Pauschale',
+      einheit: ZUSCHLAG_EINHEIT,
       konfidenz: 'high',
       berechnungsweg: 'Schwieriger/unebener Untergrund im Transkript erkannt',
       annahmen: [],
@@ -69,14 +91,14 @@ export function pruefeGraffiti(ergaenzt: BerechnetePosition[], fehlende: string[
 export function pruefeAltbau(ergaenzt: BerechnetePosition[], lower: string): void {
   const hatAltbau = lower.includes('altbau') || lower.includes('altgebäude') || lower.includes('altbestand')
   if (hatAltbau && !hat(ergaenzt, 'erschwerniszuschlag altbau', 'altbau pauschale')) {
-    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Altbau', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Altbau im Transkript erkannt', annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Altbau', menge: 1, einheit: ZUSCHLAG_EINHEIT, konfidenz: 'high', berechnungsweg: 'Altbau im Transkript erkannt', annahmen: [] })
   }
 }
 
 export function pruefeDenkmalschutz(ergaenzt: BerechnetePosition[], lower: string): void {
   const hatDenkmal = lower.includes('denkmal') || lower.includes('denkmalschutz') || lower.includes('denkmalgeschütz')
   if (hatDenkmal && !hat(ergaenzt, 'erschwerniszuschlag denkmal', 'denkmal pauschale')) {
-    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Denkmalschutz', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Denkmalschutz im Transkript erkannt', annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Denkmalschutz', menge: 1, einheit: ZUSCHLAG_EINHEIT, konfidenz: 'high', berechnungsweg: 'Denkmalschutz im Transkript erkannt', annahmen: [] })
   }
 }
 
@@ -243,7 +265,7 @@ export function pruefeBewohnt(ergaenzt: BerechnetePosition[], fehlende: string[]
     }
   }
   if (!hat(ergaenzt, 'erschwerniszuschlag bewohnt')) {
-    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag bewohnt', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Bewohnter Zustand im Transkript erkannt', annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Erschwerniszuschlag bewohnt', menge: 1, einheit: ZUSCHLAG_EINHEIT, konfidenz: 'high', berechnungsweg: 'Bewohnter Zustand im Transkript erkannt', annahmen: [] })
   }
 }
 

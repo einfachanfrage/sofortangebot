@@ -696,9 +696,9 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
   ],
 
   garten: [
-    // Anfahrt & Planung
-    { category: 'Garten – Anfahrt & Planung', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', hint: '27–43 €', defaultPrice: 35.00 },
-    { category: 'Garten – Anfahrt & Planung', title: 'Gartenplanung / Bepflanzungsplan einfach', unit: 'Pauschale', hint: '190–310 €', defaultPrice: 250.00 },
+    // Anfahrt & Organisation
+    { category: 'Garten – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', hint: '27–43 €', defaultPrice: 35.00 },
+    { category: 'Garten – Anfahrt & Organisation', title: 'Gartenplanung / Bepflanzungsplan einfach', unit: 'Pauschale', hint: '190–310 €', defaultPrice: 250.00 },
     // Erdarbeiten
     { category: 'Garten – Erdarbeiten', title: 'Boden abtragen / Oberboden abschälen (bis 20cm)', unit: 'm²', hint: '6–10 €', defaultPrice: 8.00 },
     { category: 'Garten – Erdarbeiten', title: 'Erdaushub Bagger (ohne Abtransport)', unit: 'm³', hint: '17–27 €', defaultPrice: 22.00 },
@@ -777,9 +777,9 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
   ],
 
   rohbau: [
-    // Anfahrt & Planung
-    { category: 'Rohbau – Anfahrt & Planung', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', hint: '35–55 €', defaultPrice: 45.00 },
-    { category: 'Rohbau – Anfahrt & Planung', title: 'Baustelleneinrichtung pauschal', unit: 'Pauschale', hint: '270–430 €', defaultPrice: 350.00 },
+    // Anfahrt & Organisation
+    { category: 'Rohbau – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 15 km)', unit: 'Pauschale', hint: '35–55 €', defaultPrice: 45.00 },
+    { category: 'Rohbau – Anfahrt & Organisation', title: 'Baustelleneinrichtung pauschal', unit: 'Pauschale', hint: '270–430 €', defaultPrice: 350.00 },
     // Erdarbeiten & Aushub
     { category: 'Rohbau – Erdarbeiten & Aushub', title: 'Erdaushub Bagger (ohne Abtransport)', unit: 'm³', hint: '19–31 €', defaultPrice: 25.00 },
     { category: 'Rohbau – Erdarbeiten & Aushub', title: 'Kellersohle / Baugrube ausheben', unit: 'm³', hint: '25–39 €', defaultPrice: 32.00 },
@@ -923,7 +923,7 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
 
   abbruch: [
     // Vorbereitung
-    { category: 'Abbruch – Anfahrt & Vorbereitung', title: 'Schadstoffuntersuchung (Asbest, KMF, PCB) inkl. Gutachten', unit: 'Pauschale', hint: '300–460 €', defaultPrice: 380.00 },
+    { category: 'Abbruch – Anfahrt & Organisation', title: 'Schadstoffuntersuchung (Asbest, KMF, PCB) inkl. Gutachten', unit: 'Pauschale', hint: '300–460 €', defaultPrice: 380.00 },
     { category: 'Abbruch – Baustelleneinrichtung', title: 'Baustellenabsperrung / Bauzaun aufstellen (je lfdm, 4 Wochen)', unit: 'lfdm', hint: '6–10 €', defaultPrice: 8.00 },
     { category: 'Abbruch – Baustelleneinrichtung', title: 'Staubschutzwand / Trennwand zu angrenzenden Bereichen', unit: 'm²', hint: '11–17 €', defaultPrice: 14.00 },
     // Entkernung
@@ -1042,10 +1042,10 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
   ],
 
   brandschutz: [
-    // Anfahrt & Planung
-    { category: 'Brandschutz – Anfahrt & Planung', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', hint: '50–80 €', defaultPrice: 65.00 },
-    { category: 'Brandschutz – Anfahrt & Planung', title: 'Brandschutzbegehung / -beratung vor Ort', unit: 'Stunde', hint: '85–135 €', defaultPrice: 110.00 },
-    { category: 'Brandschutz – Anfahrt & Planung', title: 'Brandschutznachweis / Dokumentation erstellen', unit: 'Pauschale', hint: '220–340 €', defaultPrice: 280.00 },
+    // Anfahrt & Organisation
+    { category: 'Brandschutz – Anfahrt & Organisation', title: 'Anfahrt pauschal (bis 20 km)', unit: 'Pauschale', hint: '50–80 €', defaultPrice: 65.00 },
+    { category: 'Brandschutz – Anfahrt & Organisation', title: 'Brandschutzbegehung / -beratung vor Ort', unit: 'Stunde', hint: '85–135 €', defaultPrice: 110.00 },
+    { category: 'Brandschutz – Anfahrt & Organisation', title: 'Brandschutznachweis / Dokumentation erstellen', unit: 'Pauschale', hint: '220–340 €', defaultPrice: 280.00 },
     // Türen & Tore
     { category: 'Brandschutz – Türen & Tore', title: 'Brandschutztür T30 (EI230) einbauen inkl. Zarge + Selbstschließer', unit: 'Stück', hint: '1.400–2.200 €', defaultPrice: 1800.00 },
     { category: 'Brandschutz – Türen & Tore', title: 'Brandschutztür T60 (EI260) einbauen inkl. Zarge', unit: 'Stück', hint: '1.900–2.900 €', defaultPrice: 2400.00 },
@@ -1073,9 +1073,9 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
   ],
 
   aufzug: [
-    // Anfahrt & Planung
-    { category: 'Aufzugstechnik – Anfahrt & Planung', title: 'Anfahrt / Begehung Aufzugsschacht vor Ort', unit: 'Stunde', hint: '85–135 €', defaultPrice: 110.00 },
-    { category: 'Aufzugstechnik – Anfahrt & Planung', title: 'Baugenehmigung Aufzugseinbau (Koordination)', unit: 'Pauschale', hint: '140–220 €', defaultPrice: 180.00 },
+    // Anfahrt & Organisation
+    { category: 'Aufzugstechnik – Anfahrt & Organisation', title: 'Anfahrt / Begehung Aufzugsschacht vor Ort', unit: 'Stunde', hint: '85–135 €', defaultPrice: 110.00 },
+    { category: 'Aufzugstechnik – Anfahrt & Organisation', title: 'Baugenehmigung Aufzugseinbau (Koordination)', unit: 'Pauschale', hint: '140–220 €', defaultPrice: 180.00 },
     // Einbau
     { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (2–4 Haltestellen, maschinenraumlos)', unit: 'Pauschale', hint: '22.000–34.000 €', defaultPrice: 28000.00 },
     { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (5–8 Haltestellen)', unit: 'Pauschale', hint: '30.000–46.000 €', defaultPrice: 38000.00 },

@@ -33,6 +33,9 @@ describe('geschlossener Rückfragen-Flow', () => {
     expect(analyse.rueckfragen.map(frage => frage.id)).toEqual([
       'tueren_anzahl_wohnzimmer', 'fenster_anzahl_wohnzimmer',
       'tueren_anzahl_schlafzimmer', 'fenster_anzahl_schlafzimmer',
+      // DC-040-Folgefrage (Sandy, 31.08.): der Flur nennt eine Wandfläche
+      // direkt — seither wird auch dort nach Türen/Fenstern gefragt.
+      'oeffnungen_brutto_flur',
       'masse_boden_flur',
     ])
     expect(analyse.extraktion.raeume[2].wandflaeche_direkt).toBe(18)

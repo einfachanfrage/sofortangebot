@@ -132,10 +132,11 @@ describe('DC-040 — nachfragen statt raten', () => {
     expect(rueckfragen.some(f => /^(tueren|fenster)_anzahl_/.test(f.id))).toBe(false)
   })
 
-  it('fragt bei einem einzelnen Raum NICHT — dort bleibt eine genannte Fläche netto', () => {
-    // Bewusste Grenze: „im Flur sind es 18 m² Wandfläche" verhält sich
-    // unverändert wie bisher. Ob das auch dort gefragt werden soll, ist eine
-    // offene Produktentscheidung für Sandy, kein Teil von DC-040.
+  it('fragt seit Sandys Entscheidung vom 31.08. AUCH beim einzelnen Raum', () => {
+    // Vorher bewusst offen gelassen und Sandy vorgelegt: „im Flur sind es
+    // 18 m² Wandfläche" galt als fertige Netto-Fläche. Ihre Entscheidung:
+    // auch dort fragen — die stille Annahme über bares Geld ist dieselbe wie
+    // bei der ganzen Wohnung.
     const flur = basis({
       raeume: [{
         name: 'Flur', laenge: null, breite: null, hoehe: null, flaeche: null,
@@ -144,7 +145,7 @@ describe('DC-040 — nachfragen statt raten', () => {
       }],
     })
     const { rueckfragen } = bereiteRueckfragenVor(flur)
-    expect(rueckfragen.some(f => f.id === 'oeffnungen_brutto_flur')).toBe(false)
+    expect(rueckfragen.some(f => f.id === 'oeffnungen_brutto_flur')).toBe(true)
   })
 
   it('fragt nicht, wenn der Handwerker den Abzug selbst genannt hat', () => {
