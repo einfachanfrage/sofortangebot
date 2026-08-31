@@ -7,6 +7,7 @@ import Link from 'next/link'
 import type { Quote, QuoteItem, Company, Customer, Baustelle, EntwurfAufnahme } from '@/lib/types'
 import { DRAFT_STATUSES, SENT_STATUSES, waehlbareStatus, getStatusInfo } from '@/lib/status'
 import { statusPatch, type AblehnungsGrund } from '@/lib/status-uebergang'
+import { aktualisiereProzentZuschlaege, istProzentZuschlag } from '@/lib/zuschlag-basis'
 import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon,
@@ -982,15 +983,36 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   // ── Edit-Modus ─────────────────────────────────────────────────────────────
+  // CoS-026: Prozent-Zuschläge, die der Handwerker hier SELBST angefasst hat,
+  // rechnet danach niemand mehr um — dieselbe Regel wie in CoS-014, nur für
+  // die Dauer dieser Bearbeitung. Ohne das würde der Effekt unten seine
+  // gerade eingetippte Zahl im nächsten Render wieder überschreiben.
+  const handZuschlaege = useRef<Set<string>>(new Set())
+
   function updateEditItem(id: string, field: keyof EditItem, value: string | number) {
     setEditItems(prev => prev.map(item => {
       if (item.id !== id) return item
       const updated = { ...item, [field]: (field === 'quantity' || field === 'unit_price') ? Number(value) : value }
       updated.total_price = updated.quantity * updated.unit_price
+      if (istProzentZuschlag(updated.unit) || istProzentZuschlag(item.unit)) handZuschlaege.current.add(id)
       return updated
     }))
     setHasChanges(true)
   }
+
+  // CoS-026: Ein Zuschlag steht auf einer Bemessungsgrundlage — ändert sich
+  // die Grundlage (Menge korrigiert, Position gelöscht, neue dazugestellt),
+  // muss der Betrag mitgehen. Vorher blieb er auf der alten Zahl stehen und
+  // das Angebot zeigte still einen falschen Gesamtpreis. Bewusst hier und
+  // nicht erst beim Speichern: der Handwerker soll die Summe wandern sehen,
+  // während er tippt, nicht erst hinterher.
+  useEffect(() => {
+    if (!editMode) return
+    const naechste = aktualisiereProzentZuschlaege(editItems, item => handZuschlaege.current.has(item.id))
+    // Gleiche Instanz = nichts zu tun. Genau darauf ist die Funktion gebaut,
+    // sonst würde dieser Effekt sich selbst endlos neu auslösen.
+    if (naechste !== editItems) setEditItems(naechste)
+  }, [editItems, editMode])
 
   function removeEditItem(id: string) {
     setEditItems(prev => prev.filter(item => item.id !== id))
@@ -1411,6 +1433,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     if (SENT_STATUSES.includes(currentStatus)) {
       setShowRevisionDialog(true)
     } else {
+      handZuschlaege.current = new Set()
       setEditItems(quote.items)
       setEditMode(true)
       if (currentStatus === 'bereit') {

@@ -62,8 +62,12 @@ export interface ZuschlagsZeile {
  */
 export function bemessungsgrundlage(zeilen: ZuschlagsZeile[], raum: string | null): number {
   const echteLeistungen = zeilen.filter(z => !istZuschlagsPosition(z.title, z.unit))
-  const imRaum = raum ? echteLeistungen.filter(z => raumAusTitel(z.title) === raum) : []
-  const basis = imRaum.length > 0 ? imRaum : echteLeistungen
+  // Nennt der Zuschlag einen Raum, zählt AUSSCHLIESSLICH dieser Raum — auch
+  // wenn dort (nicht mehr) eine einzige Leistung steht. Ein Rückfall auf das
+  // ganze Angebot wäre in dem Fall ein stiller Rechenfehler nach oben: der
+  // Zuschlag für einen leeren Raum stünde plötzlich auf der Summe aller
+  // anderen Räume. Lieber sichtbar 0,00 € als unbemerkt zu viel.
+  const basis = raum ? echteLeistungen.filter(z => raumAusTitel(z.title) === raum) : echteLeistungen
   return basis.reduce((summe, z) => summe + z.quantity * z.unit_price, 0)
 }
 
@@ -114,4 +118,44 @@ export function wendeProzentZuschlaegeAn(
     const weg = zuschlagBerechnungsweg(prozent, basis, raum)
     item.berechnungsweg = item.berechnungsweg ? `${item.berechnungsweg} · ${weg}` : weg
   })
+}
+
+export interface ZuschlagsAngebotsPosition extends ZuschlagsZeile {
+  total_price: number
+}
+
+/**
+ * CoS-026: Zuschläge in einem BEREITS bepreisten Angebot nachziehen, wenn der
+ * Handwerker die Grundlage im Editor geändert hat (Menge korrigiert, Position
+ * gelöscht, neue dazugestellt).
+ *
+ * Unterschied zu `wendeProzentZuschlaegeAn`: dort kommt der Prozentsatz frisch
+ * aus dem Katalog und steht noch im Einzelpreis. Hier steht er längst da, wo
+ * er hingehört — in der Menge —, und nur der Einzelpreis (Euro je
+ * Prozentpunkt) muss der neuen Grundlage folgen.
+ *
+ * Gibt bei unveränderter Lage EXAKT dieselbe Array-Instanz zurück. Darauf
+ * verlässt sich der Aufrufer in der Bearbeiten-Ansicht: so lässt sich das
+ * Ergebnis gefahrlos in einem Effekt zurückschreiben, ohne eine Schleife zu
+ * bauen.
+ *
+ * `istGeschuetzt` hält CoS-014 ein: einen Zuschlag, den der Handwerker selbst
+ * angefasst hat, rechnet niemand mehr um. Seine Zahl gewinnt.
+ */
+export function aktualisiereProzentZuschlaege<T extends ZuschlagsAngebotsPosition>(
+  items: T[],
+  istGeschuetzt: (item: T) => boolean = () => false,
+): T[] {
+  const zeilen = items.map(i => ({ title: i.title, quantity: i.quantity, unit: i.unit, unit_price: i.unit_price }))
+  let geaendert = false
+  const naechste = items.map(item => {
+    if (!istProzentZuschlag(item.unit) || istGeschuetzt(item)) return item
+    const basis = bemessungsgrundlage(zeilen, raumAusTitel(item.title))
+    const einzelpreis = euroJeProzentpunkt(basis)
+    const gesamt = Math.round(item.quantity * einzelpreis * 100) / 100
+    if (einzelpreis === item.unit_price && gesamt === item.total_price) return item
+    geaendert = true
+    return { ...item, unit_price: einzelpreis, total_price: gesamt }
+  })
+  return geaendert ? naechste : items
 }

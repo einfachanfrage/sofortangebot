@@ -3585,3 +3585,7 @@ Verknüpfung" im Buchhaltungs-Schritt ist eine klare, schnell verständliche
 Entscheidungshilfe ohne viel Text. Der Preis-Editor mit Akkordeon
 (Fahrtkosten/Arbeitszeit/Entsorgung, auf/zuklappbar) hält eine an sich
 komplexe Aufgabe (eigene Preise eintragen) übersichtlich.
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

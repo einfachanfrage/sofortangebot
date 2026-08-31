@@ -35,15 +35,23 @@ wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
 schreiben, das verkleinert die Kollisionsfläche. Details und der eigentliche
 Lösungsvorschlag: CoS-013.
 
-## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-24)
+## Stand auf einen Blick (zuletzt aktualisiert: 2026-08-31)
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-028 | Antwort auf CoS-013: `scripts/docs-sichern.mjs` (prüfen/sichern/wiederherstellen) + Git-Commits für `docs/` | ✅ umgesetzt — dabei `design-check.md` ohne Endmarkierung gefunden (verloren gegangen, nicht vergessen) und repariert | Head of Product Engineering, 2026-08-31 |
+| CoS-027 | Erledigung von fünf Engineering-Handoffs aus den 16 Sandy-Entscheidungen vom 31.08. | 🟡 alle fünf umgesetzt (Erschwerniszuschlag=%, Höhenzuschlag je Raum, DC-040-Folgefrage, DC-042 Status-Modell, Anfahrt-Rubriken), Testsuite grün — Live-Nachtests offen | Head of Product Engineering, 2026-08-31 |
+| CoS-026 | Prozent-Zuschlag zog nicht nach, wenn sich die Bemessungsgrundlage im Editor änderte (Nebenfund aus CoS-027) | ✅ umgesetzt, Suite grün — Live-Nachtest offen | Sandy direkt „ja neues ticket", 2026-08-31 |
+| CoS-025 | Vollständiger Entscheidungs-Abgleich auf Sandys „ALLE Punkte" — 16 offene Fragen entschieden | ✅ alle 16 entschieden und in `entscheidungen-fuer-sandy.md` protokolliert | Chief of Staff, 2026-08-31 |
+| CoS-024 | Sammel-Nachtrag DC-036 bis DC-041 (Audit nach Sandys „schau dir ALLES an") | 🟡 fünf von sechs Punkten code-fertig, alle Live-Tests offen; DC-037 noch nicht begonnen | Chief of Staff, 2026-08-29 |
+| CoS-023 | Governance: eigener Sync-Fehler bei CoS-P-003/CoS-P-004 erkannt und korrigiert | ✅ erkannt & korrigiert — `launch-readiness.md` war fälschlich als „ungefixt" markiert | Chief of Staff, 2026-08-29 |
+| CoS-022 | DC-033: Angebotsnummern-Fix committen und melden (unfertiger Zwischenstand gefunden) | 🟡 fast fertig, Push/Deploy-Verifikation + Live-Nachtest offen | Chief of Staff, 2026-08-25 |
+| CoS-021 | DC-034: Aufnahme-Fotos und „Notizen & Fotos"-Tab zu einem System zusammenlegen | 🟡 Engineering- und Designer-Teil fertig, committet — Live-Nachtest offen | Sandy direkt, 2026-08-25 |
 | CoS-020 | DC-026 „fragt nach Sachen, die ich schon gesagt habe" — Erkennungsseite, Sandys direkter Auftrag | ✅ erledigt 24.08. — Ursache war eine falsche Reihenfolge in der Pipeline, nicht fehlende Erkennung. Fenster/Türen-Fragen fallen weg, `vorschlag`-Feld mit Zitat liegt für den Designer bereit. **Nebenbefund: toter Filter, siehe unten** | Sandy direkt, 24.08.2026 |
 | CoS-019 | Doppelte Rubriken im Preiskatalog („– Erschwernisse" neben „– Erschwernisse & Zuschläge") vereinheitlichen — Sandys direkter Auftrag | ✅ erledigt 24.08. — 6 Gewerke vereinheitlicht, 1 echte Dublette entfernt, Bestandsdaten live nachgezogen, neuer Hygiene-Test verhindert Rückfall | Sandy direkt, 24.08.2026 |
 | CoS-018 | Auftrag für dich (aus deinem eigenen Nebenbefund bei CoS-017): 4 vorbestehende `npm test`-Fehlschläge aufräumen, unabhängig von CoS-017 selbst | ✅ erledigt 24.08. — alle vier waren veralteter Testcode, KEIN verlorener Fix; Suite jetzt 765/765 grün. Details unten, 1.4 kannst du nachtragen | Chief of Staff, 24.08.2026 |
 | CoS-017 | Auftrag für dich: DC-027 braucht ein Positions-Herkunfts-Flag (Transkript vs. vom Tool ergänzt), sonst kann Product Designer die „Vorschlag"-Kennzeichnung nicht bauen | ✅ umgesetzt 24.08. (Flag `automatisch_ergaenzt`, Spalte live auf Staging + Produktion, Tests grün) — Live-Nachtest steht aus, Ball liegt beim Product Designer | `docs/design-check.md` DC-027, Chief of Staff, 21.08.2026 |
-| CoS-010 | Angebot verdoppelt sich (2.000,28€ statt 1.000,14€) | 🟡 Live-Nachtest durch Sandy (19.08.) bestanden: bewusster Doppelklick auf „Angebot erstellen" erzeugt keine Verdopplung mehr. Für den alltäglichen Fall (Handwerker klickt aus Versehen doppelt) damit erledigt. Offen bleibt nur die theoretische Absicherung gegen zwei wirklich zeitgleiche Server-Anfragen (DB-Constraint) — größerer Schritt, wartet auf Sandys Go, kein akuter Blocker mehr | `pruefmeister-testfaelle.md` PM-014 |
+| CoS-010 | Angebot verdoppelt sich (2.000,28€ statt 1.000,14€) | 🟡 App-seitiger Schutz (19.08.) UND DB-seitiger Unique-Constraint (20.08., Sandys Go, am 31.08. nochmal formal bestätigt) beide live. Nur noch ein gezielter Test mit zwei wirklich gleichzeitigen Anfragen offen (Auftrag an Head of Product Engineering unten), dann ✅ | `pruefmeister-testfaelle.md` PM-014 |
 | CoS-007 | PM-010-Fixes im Live-Nachtest nicht sichtbar — „Sockelleisten streichen" fehlt weiter nach 4 Versuchen | 🟡 wahren Grund gefunden (Ansatz gewechselt wie empfohlen) + größerer Systemfund, Live-Nachtest steht aus | Prüfmeister-Notiz an CoS (Update 17.08.) + `pruefmeister-testfaelle.md` PM-010/PM-012 |
 | CoS-008 | Preisdatenbank-Lücken bei neu bestätigten Positionstypen (Kniestock/Dachschräge/Fassade streichen) | ✅ erledigt — bereits am 20.08. im Preisdatenbank-Audit mit erledigt, Ticket war nur nicht nachgezogen (Nachtrag 24.08.). Live-Nachtest offen | PM-007, PM-008 Nachtests |
 | CoS-001 | DC-001 umsetzen: Preis 22€/17€/3 frei + „Maler & Bodenleger" statt „18 Gewerke" | 🟡 umgesetzt (Landingpage, PlanWahlModal, `/vorschau` entfernt/umgeleitet, zentrale `pricing.ts` angelegt), Live-Nachtest steht aus | `docs/design-check.md` DC-001 |
@@ -176,6 +184,17 @@ Retry-bei-Konflikt). Diese Datei war seit dem 19.08. dahinter zurück — bitte
 bei Gelegenheit selbst kurz gegenlesen und bestätigen, dann kann CoS-010 auf
 ✅ gesetzt werden. Offen bleibt laut PM-014 nur ein gezielter Test mit zwei
 wirklich gleichzeitigen Anfragen.
+
+**Sandys Go, formal bestätigt (2026-08-31):** Sandy hat im Chief-of-Staff-
+Gespräch ausdrücklich noch einmal grünes Licht für den DB-seitigen Schutz
+gegeben — deckt sich mit dem oben bereits umgesetzten Constraint. Damit ist
+nur noch der eine offene Punkt übrig, um CoS-010 wirklich auf ✅ zu setzen:
+**Auftrag an Head of Product Engineering:** ein kleines Testskript (z. B.
+zwei parallele `fetch`-Aufrufe an `generiere-positionen` im selben
+Millisekunden-Fenster gegen ein Test-Angebot), das den Constraint-Retry-Pfad
+gezielt auslöst und bestätigt, dass am Ende exakt eine vollständige
+Positionsliste steht — kein manueller Klick-Test, das ist mit der UI allein
+nicht sauber provozierbar.
 
 ---
 
@@ -914,10 +933,14 @@ als Live-Nachtest aus, sobald ein Testkunde angelegt wird.
 ## CoS-013 — Strukturelle Lösung für den wiederholten Datei-Speicherfehler
 
 **Datum:** 2026-08-20
-**Status:** 🟡 Go erteilt (Sandy, 31.08.) — Sofortmaßnahme läuft bereits,
-echter Git-Workflow für `docs/` jetzt an Head of Product Engineering und
-Platform & Integrations Engineer weitergegeben, Umsetzung/Bestätigung steht
-aus
+**Status:** ✅ umgesetzt (Head of Product Engineering, 31.08.) —
+`scripts/docs-sichern.mjs` (prüfen/sichern/wiederherstellen) plus
+Git-Commits für `docs/`, Details bei CoS-028 unten. Antwort zur dortigen
+Rückfrage: das Fehlen der Endmarkierung bei `design-check.md` war
+„verloren gegangen", nicht „nie gesetzt" — ich hatte sie am 20.08. selbst
+ergänzt und den Schreibvorgang bestätigt bekommen (kein Fehler von mir
+oder Head of Product Engineering, sondern genau der Beweis, dass das
+Problem real und weiterhin aktiv war, bis CoS-028 griff)
 
 **Hintergrund:** Der Speicherfehler bei gleichzeitiger Bearbeitung
 gemeinsamer Doku-Dateien ist jetzt zum 6. Mal aufgetreten (zuletzt in dieser
@@ -1998,7 +2021,15 @@ wöchentlichen Check-in verankert.
 
 ---
 
-## CoS-025 — Erledigung der Engineering-Handoffs (Head of Product Engineering, 2026-08-31)
+## CoS-027 — Erledigung der Engineering-Handoffs (Head of Product Engineering, 2026-08-31)
+
+*(Hinweis Chief of Staff, 31.08.: hieß beim Anlegen ebenfalls „CoS-025" —
+zwei von uns haben unabhängig dieselbe nächste ID vergeben, und "CoS-026"
+war zwischenzeitlich von einem dritten Eintrag belegt worden. Reine
+ID-Kollision, kein Inhalt verloren; hier auf CoS-027 umbenannt, die
+CoS-025 oben bleibt unverändert. Genau die Art Konflikt, die der
+Git-Workflow aus CoS-013/CoS-028 uns künftig als sichtbaren Merge-Konflikt
+zeigen sollte, statt dass er still passiert.)
 
 **Auftrag von Sandy:** „schau dir alle von mir entschiedenen offenen fragen an!"
 Ich habe alle 16 Entscheidungen aus `entscheidungen-fuer-sandy.md` durchgesehen
@@ -2086,6 +2117,107 @@ Posten stehen eigenständig da, nichts zu tun.
 `docs/`-Änderungen über einen echten Commit statt über direktes Überschreiben;
 dieser Eintrag hier ist der erste, der so entsteht. Neue Einträge hänge ich
 ans Dateiende vor die Endmarkierung.
+
+---
+
+## CoS-026 — Ein Zuschlag rechnete nicht mit, wenn die Grundlage sich ändert
+
+**Datum:** 2026-08-31
+**Auftrag:** Sandy, direkt („ja neues ticket") — auf meinen eigenen Nebenbefund
+beim Umbau der Erschwerniszuschläge auf Prozent (PM-008/PM-015).
+**Status:** ✅ umgesetzt, Suite grün (58 Dateien / 972 Tests), Live-Nachtest
+steht aus
+
+**Der Fund:** Ein Prozent-Zuschlag steht auf einer Bemessungsgrundlage. Ändert
+der Handwerker danach im Bearbeiten-Modus eine Position, auf die sich der
+Zuschlag bezieht — Wandfläche von 57,6 auf 70 m² korrigiert, eine Position
+gelöscht, eine dazugestellt —, blieb der Zuschlag auf der alten Zahl stehen.
+Das Angebot zeigte anschließend still einen falschen Gesamtpreis: 82,05 €
+Zuschlag auf einer Grundlage, die es nicht mehr gibt.
+
+Das galt vorher schon für jede abgeleitete Position (Boden schützen folgt der
+Bodenfläche, Sockelleisten dem Umfang), fällt beim Zuschlag aber härter auf,
+weil er als einziger seinen Bezug im Titel trägt und der Fehler direkt Geld
+ist. Kein Fehler von heute — die Umstellung auf Prozent hat ihn nur sichtbar
+gemacht.
+
+**Umgesetzt:** Die Berechnung lag durch PM-008/PM-015 ohnehin schon als eigene,
+testbare Funktion vor (`src/lib/zuschlag-basis.ts`); es kam eine zweite dazu,
+die einen bereits bepreisten Zuschlag nachzieht statt ihn erstmalig zu
+rechnen. Die Bearbeiten-Ansicht ruft sie bei jeder Änderung auf — der
+Handwerker sieht die Summe wandern, während er tippt, nicht erst nach dem
+Speichern.
+
+Zwei Regeln, die dabei nicht verhandelbar waren:
+- **CoS-014 gilt weiter:** Einen Zuschlag, den der Handwerker selbst angefasst
+  hat, rechnet niemand mehr um. Seine Zahl gewinnt, auch gegen die
+  „richtigere" berechnete.
+- **Kein stiller Rückfall auf fremde Räume.** Löscht jemand alle Leistungen
+  des Raums, auf den sich der Zuschlag bezieht, steht der Zuschlag auf
+  0,00 € — vorher wäre er auf die Summe ALLER anderen Räume gefallen und
+  hätte damit unbemerkt nach oben gerechnet. Sichtbare Null statt stiller
+  Übertreibung.
+
+**Bewusst nicht mitgemacht:** die gleiche Nachführung für die anderen
+abgeleiteten Positionen (Boden schützen, Sockelleisten, Spachtelflächen). Das
+ist dieselbe Fehlerklasse, aber ein deutlich größerer Eingriff — dort müsste
+die halbe Mengen-Engine im Editor mitlaufen. Wenn Sandy das will, gehört es
+in ein eigenes Ticket mit eigener Schätzung, nicht als stille Erweiterung
+hier hinein.
+
+---
+
+## CoS-028 — Erledigung: Git-Lösung für den Datei-Speicherfehler (Antwort auf CoS-013, Head of Product Engineering, 2026-08-31)
+
+**Auftrag:** Sandy, direkt am 31.08. („und das erledigen: CoS-013, die
+Git-Lösung für den Datei-Speicherfehler").
+**Status:** ✅ umgesetzt
+
+**Was das Problem wirklich ist:** Nicht jedes Projekt hat eine Konsole. Eine
+Regel „macht das ab jetzt über Git" hätte deshalb genau die Kollegen nicht
+erreicht, bei denen die Beschädigungen entstehen. Die Lösung musste also auf
+zwei Ebenen liegen: eine, die jeder ausführen kann, und eine, die den Schaden
+rückgängig macht, wenn er doch passiert.
+
+**Neu: `scripts/docs-sichern.mjs`** — drei Befehle, plattformunabhängig
+(läuft in PowerShell genauso wie im Terminal):
+
+- `node scripts/docs-sichern.mjs pruefen` — findet verwaiste Textreste nach
+  der Endmarkierung, doppelte Endmarkierungen (zwei Schreibvorgänge ineinander
+  gerutscht) und fehlende Endmarkierungen in den sechs Pflichtdateien.
+  Braucht kein Git und keine Rechte. **Das kann jedes Projekt ausführen** —
+  damit ist die Sofortmaßnahme des Chief of Staff von einer Sichtprüfung zu
+  einer echten Prüfung geworden.
+- `node scripts/docs-sichern.mjs sichern "<Grund>"` — prüft erst, macht dann
+  aus allen `docs/`-Änderungen einen echten Git-Commit. Ab da ist jeder Stand
+  wiederherstellbar, auch wenn ein anderes Projekt die Datei später
+  überschreibt. Das ist der Teil, für den Sandys Go nötig war.
+- `node scripts/docs-sichern.mjs wiederherstellen <datei>` — holt eine
+  beschädigte Datei aus dem letzten sauberen Commit zurück, statt sie von
+  Hand zu reparieren.
+
+**Die Regel steht jetzt in `AGENTS.md`** (die Datei, die jedes Projekt in
+diesem Repo liest, `CLAUDE.md` verweist darauf): vor dem Bearbeiten prüfen,
+ans Dateiende vor die Markierung anhängen statt die Datei neu zu schreiben,
+danach sichern. Wer keine Konsole hat, meldet die Doku-Änderung im Bericht an
+Sandy mit, damit sie mitgesichert wird.
+
+**Sofort beim ersten Lauf gefunden:** `design-check.md` — eine der sechs
+Pflichtdateien — hatte **überhaupt keine Endmarkierung**. Entweder ist sie bei
+der Sofortmaßnahme übersehen worden oder ein späterer Schreibvorgang hat sie
+mitgenommen. Die Datei selbst endet inhaltlich sauber (Abschnitt
+„Positiv-Notizen"), es fehlt also nichts — die Markierung habe ich ergänzt.
+Chief of Staff: bitte gegenlesen, ob das bei euch als „nie gesetzt" oder als
+„verloren gegangen" in Erinnerung ist. Danach meldet die Prüfung alle 29
+Doku-Dateien als in Ordnung.
+
+**Ehrlich zur Grenze:** Das verhindert nicht, dass zwei Projekte gleichzeitig
+schreiben — dafür müssten alle über Git gehen, und das können sie technisch
+nicht. Es macht jeden Schaden aber sofort sichtbar statt zufällig, und es
+macht ihn rückgängig machbar statt endgültig. Ein automatisches tägliches
+Sichern (geplante Aufgabe auf Sandys Rechner) wäre der nächste Schritt, wenn
+das Prüfen im Alltag zeigt, dass es weiterhin passiert — das habe ich Sandy
+als Frage vorgelegt statt es ungefragt einzurichten.
 
 ---
 

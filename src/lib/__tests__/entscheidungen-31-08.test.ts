@@ -6,7 +6,8 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
   bemessungsgrundlage, euroJeProzentpunkt, istProzentZuschlag, istZuschlagsPosition,
-  raumAusTitel, zuschlagBerechnungsweg, wendeProzentZuschlaegeAn, ZUSCHLAG_EINHEIT,
+  raumAusTitel, zuschlagBerechnungsweg, wendeProzentZuschlaegeAn,
+  aktualisiereProzentZuschlaege, ZUSCHLAG_EINHEIT,
 } from '../zuschlag-basis'
 import { statusPatch, echterAusgang, tageBeimKunden } from '../status-uebergang'
 import { findePreisposition } from '../preis-matcher'
@@ -222,5 +223,46 @@ describe('CoS-019 Teil 2 — eine Schreibweise für die Anfahrt-Rubrik', () => {
     const rubriken = new Set(DEFAULT_PRICES.map(p => p.category).filter(c => c.includes('Anfahrt')))
     for (const rubrik of rubriken) expect(rubrik).toMatch(/– Anfahrt & Organisation$/)
     expect(rubriken.size).toBeGreaterThan(5)
+  })
+})
+
+// ── CoS-026: Zuschlag folgt seiner Bemessungsgrundlage ─────────────────────
+
+describe('CoS-026 — ändert der Handwerker die Grundlage, geht der Zuschlag mit', () => {
+  const angebot = () => [
+    { title: 'Wandflächen streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, total_price: 547.2 },
+    { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 15, unit: '%', unit_price: 5.47, total_price: 82.05 },
+  ]
+
+  it('zieht Einzelpreis und Gesamtpreis nach, wenn die Menge korrigiert wird', () => {
+    const items = angebot()
+    items[0] = { ...items[0], quantity: 70, total_price: 665 }
+    const neu = aktualisiereProzentZuschlaege(items)
+    expect(neu[1].unit_price).toBe(6.65)      // 665,00 € / 100
+    expect(neu[1].total_price).toBe(99.75)    // 15 × 6,65
+  })
+
+  it('gibt bei unveränderter Lage EXAKT dieselbe Instanz zurück (kein Render-Kreisel)', () => {
+    const items = angebot()
+    expect(aktualisiereProzentZuschlaege(items)).toBe(items)
+  })
+
+  it('lässt einen von Hand geänderten Zuschlag in Ruhe (CoS-014-Regel)', () => {
+    const items = angebot()
+    items[0] = { ...items[0], quantity: 70, total_price: 665 }
+    items[1] = { ...items[1], unit_price: 9, total_price: 135 }
+    const neu = aktualisiereProzentZuschlaege(items, i => i.unit === '%')
+    expect(neu[1].unit_price).toBe(9)
+    expect(neu).toBe(items)
+  })
+
+  it('fällt bei gelöschter Grundlage auf 0,00 € statt still auf fremde Räume', () => {
+    const items = [
+      { title: 'Wandflächen streichen 2x — Küche', quantity: 100, unit: 'm²', unit_price: 10, total_price: 1000 },
+      { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 15, unit: '%', unit_price: 5.47, total_price: 82.05 },
+    ]
+    const neu = aktualisiereProzentZuschlaege(items)
+    expect(neu[1].unit_price).toBe(0)
+    expect(neu[1].total_price).toBe(0)
   })
 })
