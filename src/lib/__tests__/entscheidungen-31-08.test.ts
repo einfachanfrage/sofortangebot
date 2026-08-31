@@ -266,3 +266,43 @@ describe('CoS-026 — ändert der Handwerker die Grundlage, geht der Zuschlag mi
     expect(neu[1].total_price).toBe(0)
   })
 })
+
+// ── PM-024, vierter Nachtest (Sandy, 2026-08-31) ───────────────────────────
+
+describe('PM-024 — Büro mit 3,20 m Raumhöhe, Zuschlag als Prozent', () => {
+  // Sandys echte Zahlen aus dem vierten Nachtest, 1:1 aus
+  // pruefmeister-testfaelle.md übernommen.
+  const buero = () => [
+    { title: 'Wandflächen streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, berechnungsweg: null as string | null },
+    { title: 'Boden schützen / Abdecken — Büro', quantity: 20, unit: 'm²', unit_price: 1.2, berechnungsweg: null as string | null },
+    { title: 'Sockelleisten abkleben — Büro', quantity: 17.1, unit: 'lfdm', unit_price: 0.8, berechnungsweg: null as string | null },
+    { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 1, unit: '%', unit_price: 15, berechnungsweg: 'Raumhöhe 3.2m > 3m' as string | null },
+  ]
+
+  it('trifft die Soll-Lösung des Prüfmeisters auf den Cent', () => {
+    const items = buero()
+    wendeProzentZuschlaegeAn(items, () => true)
+    const zuschlag = items[3]
+    // 547,20 + 24,00 + 13,68 = 584,88 € · 1 % gerundet = 5,85 € · × 15 = 87,75 €
+    expect(zuschlag.quantity).toBe(15)
+    expect(zuschlag.unit_price).toBe(5.85)
+    expect(zuschlag.quantity * zuschlag.unit_price).toBeCloseTo(87.75, 2)
+  })
+
+  it('ersetzt den Platzhalter „1" — er darf nie im fertigen Entwurf stehen', () => {
+    const items = buero()
+    wendeProzentZuschlaegeAn(items, () => true)
+    expect(items[3].quantity).not.toBe(1)
+  })
+
+  it('Vorschau-Karte: ein Prozent-Zuschlag ist als „Menge steht noch nicht fest" erkennbar', () => {
+    // Der Prozentsatz kommt aus der Preisliste des Betriebs, nicht aus dem
+    // Transkript — die Karte kann ihn vor der Bepreisung nicht kennen und
+    // zeigt deshalb keine Zahl statt der Platzhalter-1 (Sandys Fund).
+    expect(istProzentZuschlag('%')).toBe(true)
+    expect(istProzentZuschlag('m²')).toBe(false)
+    const seite = readFileSync(join(__dirname, '..', '..', 'app/(app)/angebot/[id]/entwurf/page.tsx'), 'utf-8')
+    expect(seite).toContain('mengeOffen: istProzentZuschlag(p.einheit)')
+    expect(seite).toContain('Satz aus Preisliste')
+  })
+})

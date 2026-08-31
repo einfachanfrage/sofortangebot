@@ -17,6 +17,7 @@ import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahm
 // und in der Entwurfsansicht — gleicher Code-Pfad, damit diese Sammelansicht
 // strukturell nie von der finalen Darstellung abweichen kann.
 import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
+import { istProzentZuschlag } from '@/lib/zuschlag-basis'
 
 // Bereits berechnete quote_items — vollständig geladen (nicht nur die Anzahl),
 // damit sie sich zusammen mit frischen Vorschau-Positionen raum-gruppieren
@@ -46,6 +47,16 @@ interface SammelPoolItem {
   total_price: number
   position: number
   pending: boolean
+  /**
+   * PM-024 (Sandys vierter Nachtest, 2026-08-31): Bei einem Prozent-Zuschlag
+   * ist die „Menge" der Prozentsatz — und der steht in der Preisliste des
+   * Betriebs, nicht im Transkript. Die Vorschau kann ihn also gar nicht
+   * kennen; sie trug bis dahin eine 1 als Platzhalter und die Karte zeigte
+   * „1 %", während der fertige Entwurf korrekt 15 % rechnete. Statt einer
+   * erfundenen Zahl sagt die Karte jetzt, woher der Satz kommt — dieselbe
+   * Linie wie bei den Maßen: lieber nichts als Falsches.
+   */
+  mengeOffen: boolean
 }
 
 function baueSammelPool(
@@ -54,7 +65,7 @@ function baueSammelPool(
   wartetSeitMap: Map<string, number>,
   jetzt: number,
 ): SammelPoolItem[] {
-  const pool: SammelPoolItem[] = bestehende.map(item => ({ ...item, pending: false }))
+  const pool: SammelPoolItem[] = bestehende.map(item => ({ ...item, pending: false, mengeOffen: false }))
   // Pending-Markierung nur, wenn es schon einen echten, berechneten Bestand
   // gibt, an dem "neu" erkennbar ist — beim allerersten Aufnehmen (noch nichts
   // berechnet) wäre "wird berechnet" auf jeder Position nur Lärm, keine
@@ -81,6 +92,7 @@ function baueSammelPool(
         total_price: p.gesamtpreis,
         position: laufendePosition,
         pending: markierePending,
+        mengeOffen: istProzentZuschlag(p.einheit),
       })
       laufendePosition++
     }
@@ -418,12 +430,13 @@ function AufnahmeChip({ aufnahme, wartetSeit, onOpen }: { aufnahme: AufnahmeWith
 // und bekommen eine "Wird berechnet"-Markierung statt eines Preises.
 
 function RaumKarte({
-  raumName, emoji, items, pendingById,
+  raumName, emoji, items, pendingById, mengeOffenById,
 }: {
   raumName: string
   emoji: string
   items: { id: string; titleDisplay: string; quantity: number; unit: string }[]
   pendingById: Map<string, boolean>
+  mengeOffenById: Map<string, boolean>
 }) {
   return (
     <div className="bg-white rounded-2xl border border-[#2C2C2C]/6 px-4 py-3.5">
@@ -437,6 +450,7 @@ function RaumKarte({
       <div className="flex flex-col">
         {items.map(item => {
           const pending = pendingById.get(item.id) ?? false
+          const mengeOffen = mengeOffenById.get(item.id) ?? false
           return (
             <div
               key={item.id}
@@ -448,6 +462,10 @@ function RaumKarte({
               {pending ? (
                 <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-[#8B7000] bg-[#F5C400]/20 px-2 py-0.5 rounded-full">
                   Wird berechnet
+                </span>
+              ) : mengeOffen ? (
+                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-[#2C2C2C]/45 bg-[#2C2C2C]/6 px-2 py-0.5 rounded-full">
+                  Satz aus Preisliste
                 </span>
               ) : (
                 <span className="shrink-0 text-[12px] font-bold text-[#2C2C2C]/45">{item.quantity} {item.unit}</span>
@@ -1049,6 +1067,7 @@ export default function EntwurfPage() {
   // strukturell nie von der finalen Darstellung abweichen kann.
   const sammelPool = baueSammelPool(quoteInfo?.quote_items ?? [], neueAufnahmen, vollExtraktionWartetSeitRef.current, jetztFuerWarten)
   const pendingById = new Map(sammelPool.map(item => [item.id, item.pending]))
+  const mengeOffenById = new Map(sammelPool.map(item => [item.id, item.mengeOffen]))
   const gruppen = gruppiereNachRaum(sammelPool)
   const gesamtPositionen = sammelPool.length
 
@@ -1269,10 +1288,10 @@ export default function EntwurfPage() {
           <>
             <div className="flex flex-col gap-3">
               {gruppen.raeume.map(raum => (
-                <RaumKarte key={raum.raumName} raumName={raum.raumName} emoji={raum.emoji} items={raum.items} pendingById={pendingById} />
+                <RaumKarte key={raum.raumName} raumName={raum.raumName} emoji={raum.emoji} items={raum.items} pendingById={pendingById} mengeOffenById={mengeOffenById} />
               ))}
               {gruppen.allgemein.length > 0 && (
-                <RaumKarte raumName="Allgemein" emoji="📋" items={gruppen.allgemein} pendingById={pendingById} />
+                <RaumKarte raumName="Allgemein" emoji="📋" items={gruppen.allgemein} pendingById={pendingById} mengeOffenById={mengeOffenById} />
               )}
             </div>
 

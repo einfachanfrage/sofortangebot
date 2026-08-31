@@ -45,6 +45,7 @@ CoS-013 in `chief-of-staff-todos.md`.
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
 | CoS-M-001 | CI-Bestandsaufnahme + Richtungsvorschlag | ✅ komplett — Sandy hat mit „ok leg die CI fest" final bestätigt, Umsetzungsplan (Schritt 5) steht, Handoff an Product Designer über EX-M-005 | Sandys Ankündigung, 2026-08-17 |
+| CoS-M-002 | Social-Media-Strategie Pre-Launch (Instagram/TikTok) | 🟡 Strategie + erster Content-Kalender fertig, Sandy hat Richtung bestätigt — Umsetzung (Dreh mit Clemens) läuft bei Sandy, eine Abhängigkeit offen (Warteliste-Landingpage) | Sandys Anfrage im Chat, 2026-08-19 |
 
 ---
 
@@ -227,6 +228,46 @@ und die jeweiligen Punkte in `docs/design-check.md` nachverfolgt, nicht
 mehr über diese Datei. CoS-M-001 als Vorschlags-/Freigabe-Auftrag ist
 damit inhaltlich, planerisch und mit Sandys expliziter Bestätigung
 abgeschlossen.
+
+---
+
+## CoS-M-002 — Social-Media-Strategie Pre-Launch (Instagram/TikTok)
+
+**Datum:** 2026-08-19
+**Status:** 🟡 Strategie + erster Kalender fertig, Umsetzung läuft bei Sandy/Clemens
+
+**Hintergrund:** Sandy will vor dem Launch (01.11. oder 01.12., noch nicht
+final) schon organisch Traffic auf Instagram und ggf. TikTok aufbauen und
+hat direkt im Chat gefragt, ob dafür eine neue Rolle nötig ist oder Head of
+Marketing das übernehmen kann. Passt zu `vision-strategie.md`, die Social
+Media bereits als bewussten, rein organischen Go-to-Market-Kanal festhält
+(kein bezahltes Werbebudget zum Start).
+
+**Rollenentscheidung (mit Sandy im Chat geklärt, keine neue Einstellung
+nötig):** Head of Marketing übernimmt Strategie/Kalender/Skripte/Schnitt.
+Clemens (Sandys Partner, selbst Handwerker, laut `design-check.md` DC-029
+ohnehin als erster echter Testnutzer nach Gate 1 vorgesehen) wird das
+Gesicht vor der Kamera. Sandy filmt/fotografiert ihn auf der Baustelle.
+Eine dedizierte Social-Rolle wird erst relevant, wenn Kadenz/Community-
+Antworten mehr als nebenbei zu stemmen sind — nicht jetzt.
+
+**Fix-Update (Head of Marketing, 2026-08-19):** Vollständige Strategie in
+`docs/marketing-social-media.md` (vier Content-Säulen: Pain-Point,
+Fach-Autorität, Build-in-Public, Countdown/Waitlist; TikTok zuerst, IG
+Reels als Zweitverwertung; 3–4 Posts/Woche zum Start). Dazu ein erster
+Content-Kalender mit zwölf konkreten, ausformulierten Post-Ideen (Hook,
+Skript, Caption-Entwurf, CTA, Dreh-Bedarf) für die ersten drei Wochen:
+`docs/sofortangebot-content-kalender.xlsx`.
+
+**Offene Abhängigkeit für Chief of Staff:** Für Post #8 (erste
+Countdown-/Waitlist-Erwähnung, spätestens Woche 2) wird eine
+Warteliste-Landingpage gebraucht, die nach aktuellem Stand noch nicht
+existiert. Bitte mit Head of Product Engineering klären, ob/wann das
+machbar ist, damit der Kalender nicht auf eine fehlende Seite zuläuft.
+
+**Noch offen:** Rückmeldung, ob/wann die Warteliste-Seite kommt; danach
+laufende Beobachtung, welche Formate performen, um Woche 2/3 ggf.
+anzupassen, bevor gedreht wird.
 
 ---
 

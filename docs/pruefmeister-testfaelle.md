@@ -84,9 +84,9 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
 | PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, aber die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) bleibt offen und situativ — nicht bei jeder Raum-Paarung reproduzierbar, aber nicht behoben |
-| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | ❌ Zweiter Nachtest: Phantom-Deckenfläche weg, Erschwerniszuschlag Höhe erscheint jetzt — aber NEUER, schwerer Fund: „Boden schützen" hat plötzlich keinen Preis mehr in der Preisdatenbank (Regression, betrifft praktisch jeden Malerfall) |
+| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
-| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Beide ursprünglichen Bugs live bestätigt behoben (Decke jetzt korrekt 1×). Neuer, bestätigter Fund: „Boden schützen" fehlt der Preis — zweite unabhängige Bestätigung der Preisdatenbank-Regression (Punkt 11) |
+| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Vierter Nachtest komplett sauber: alle vier Positionen exakt Soll, „Boden schützen" wieder korrekt bepreist, keine offenen Funde mehr |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
@@ -583,6 +583,17 @@ Preisdatenbank". Zwei unabhängige Räume, zwei unabhängige Angebote, derselbe 
 Zufallstreffer mehr, sondern eine bestätigte, reproduzierbare Regression. Bitte weiterhin höchste
 Priorität.
 
+**Ursache gefunden und behoben (Head of Product Engineering, 2026-08-30):** Keine Katalog-Regression,
+sondern eine Gewerk-Zuordnungslücke: „Boden schützen" enthält kein Maler-Schlüsselwort und fiel in
+gemischten Angeboten (Laminat + Streichen, Hauptgewerk „boden_parkett") auf das falsche Gewerk zurück —
+dort gibt es keinen Bodenschutz-Preis. In reinen Malerangeboten lief es deshalb monatelang unbemerkt
+korrekt. Bodenschutz zählt jetzt ausdrücklich zur Maler-Vorbereitung, unabhängig vom Hauptgewerk des
+Angebots. Details siehe die vollständige Fix-Notiz bei PM-024.
+
+**✅ Live bestätigt (Sandy, 2026-08-31, vierter Nachtest von PM-024 UND PM-026, je unabhängig):** In
+beiden Angeboten ist „Boden schützen" jetzt wieder korrekt mit 1,20 €/m² bepreist. Punkt 11 gilt damit
+als behoben.
+
 **12. NEU, DRINGEND (2026-08-30): Widersprüchliche Meldung „Keine Positionen erkannt" reproduziert sich
 live — UND blockiert diesmal tatsächlich.** Beim Diktieren von PM-024+PM-025 (zwei Aufnahmen, ein
 Angebot) zeigte die Karte „6 Positionen erkannt — bereit für den Entwurf", gleichzeitig aber (laut Sandy)
@@ -1078,7 +1089,8 @@ Standardmaß, eine Tür, normal.“
 - Umfang: 2×(5,00+4,00)=18,00 lfm; Wandbrutto: 18,00×3,20=**57,60 m²**
 - 2 Fenster (je 1,20 m²) + 1 Tür (1,89 m²), alle ≤2,5 m² → VOB: kein Abzug
 - Wandflächen streichen 2×: **57,60 m²**
-- Erschwerniszuschlag Höhe: 1 Pauschale (Raumhöhe 3,20 m > 3-m-Schwelle)
+- Erschwerniszuschlag Höhe (Raumhöhe 3,20 m > 3-m-Schwelle): **15 %** auf die Leistungen des Büros selbst
+  (Standardsatz seit 2026-08-31, siehe Update unten — vorher als „1 Pauschale" geführt)
 - Boden schützen: 5,00×4,00=**20,00 m²**
 - Sockelleisten abkleben: 18,00−0,90=**17,10 lfdm**
 
@@ -1245,6 +1257,45 @@ gerechnet — das ist eine Fachfrage an Sandy, keine reine Reparatur.
 **Status:** 🟡 Vier Funde live bestätigt behoben (Phantom-Deckenfläche, Erschwerniszuschlag Höhe erscheint,
 Höhen-Nachkommastelle, verschwundene Wandfläche). „Boden schützen" ohne Preis: Ursache gefunden und
 behoben, Live-Nachtest steht aus. Offen als Fachfrage: Gruppierung der Erschwerniszuschläge.
+
+**Vierter Nachtest (Sandy, 2026-08-31, zusammen mit PM-026 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen; Sandy weist ausdrücklich darauf hin, dass der Erschwerniszuschlag jetzt als % statt als
+Pauschale läuft — passt, wie von Head of Product Engineering oben angekündigt):** Karte „💼Büro
+4 Positionen" — Wandflächen streichen 2x (57,6 m²), Boden schützen (20 m²), Sockelleisten abkleben
+(17,1 lfdm), Erschwerniszuschlag Raumhöhe > 3m (**„1 %"** auf der Karte). Raummaße 4×5 m, Höhe 3,2 m,
+1 Tür, 2 Fenster:
+
+- Wandflächen streichen 2×: 57,6 m² × 9,50 € = 547,20 € — ✅ exakt Soll
+- **Boden schützen: 20 m² × 1,20 € = 24,00 € — ✅ endlich wieder Soll!** Der Preis ist zurück. **Live
+  bestätigt: die Preisdatenbank-Regression aus Punkt 11 ist behoben** (Gewerk-Zuordnung, siehe Fix-Notiz
+  oben).
+- Sockelleisten abkleben: 17,1 lfdm × 0,80 € = 13,68 € — ✅ exakt Soll
+- **Erschwerniszuschlag Raumhöhe > 3m: 15 % × 5,85 € = 87,75 €.** Rechnerisch passt das exakt zur neuen
+  Fix-Notiz oben: Bemessungsgrundlage sind die Büro-eigenen Leistungen (547,20+24,00+13,68=584,88 €),
+  1 % davon gerundet = 5,85 €, ×15 (Standardsatz „Raumhöhe > 3m") = 87,75 €. **Rechnung im Entwurf ist
+  korrekt und exakt Soll (15 %).**
+- **Aber: die KARTE zeigt „1 %", nicht „15 %".** Das ist ein neuer, eigenständiger Fund — Karte und
+  Entwurf zeigen unterschiedliche Prozentsätze für dieselbe Position. Passt zum bekannten Muster aus
+  „Systemischer Fund" Punkt 10 (Karte und Entwurf rechnen manchmal unterschiedlich/unterschiedlich
+  aktuell) — nur diesmal nicht bei einer Fläche, sondern beim Prozentsatz eines Zuschlags. Da die
+  Karten-Vorschau eine schnellere, unabhängige Berechnung ist (siehe Punkt 8), tippe ich darauf, dass sie
+  den neuen %-Satz (15 %) noch nicht kennt und stattdessen einen alten Platzhalter- oder Default-Wert
+  (1 %) anzeigt — aber das ist eine Vermutung, keine bestätigte Ursache.
+
+**Ergebnis:** Sehr gute Nachrichten insgesamt — „Boden schützen" ist jetzt live bestätigt wieder korrekt
+bepreist (Punkt 11 kann damit als behoben gelten), und die neue %-Berechnung für den Erschwerniszuschlag
+Höhe ist im Entwurf rechnerisch exakt richtig (15 %, passend zum neuen Standardsatz). Einziger offener
+Punkt: die Karte zeigt „1 %" statt „15 %" für denselben Zuschlag — bevor ich das grün stelle, sollte das
+noch geklärt sein, auch wenn es „nur" die Vorschau betrifft und nicht den tatsächlichen Entwurfspreis.
+
+**Für Head of Product Engineering:** Bitte prüfen, warum die Karten-Vorschau für den Erschwerniszuschlag
+Höhe „1 %" statt „15 %" zeigt, obwohl der Entwurf korrekt mit 15 % rechnet — vermutlich ein alter
+Default-/Platzhalterwert in der schnellen Karten-Berechnung, der beim Umstieg von Pauschale auf % nicht
+mitaktualisiert wurde.
+
+**Status:** 🟡 Boden schützen (Punkt 11) live bestätigt behoben. Erschwerniszuschlag Höhe im Entwurf
+rechnerisch korrekt (15 %, exakt Soll). Neuer, kleiner Fund: Karte zeigt „1 %" statt „15 %" für denselben
+Zuschlag — noch nicht grün, bis das geklärt ist.
 
 ---
 
@@ -1433,6 +1484,24 @@ unabhängig voneinander aufgetreten und bestätigt Punkt 11 als echte, reproduzi
 **Status:** ✅ Bug (1, Decke 2×/1×) jetzt live bestätigt behoben. Neuer, bestätigter Fund: „Boden
 schützen" fehlt der Preis — zweite unabhängige Bestätigung von Punkt 11 (Preisdatenbank-Regression).
 
+**Vierter Nachtest (Sandy, 2026-08-31, zusammen mit PM-024 in EIN Angebot gesprochen, zwei getrennte
+Aufnahmen):** Karte „🍳Küche 4 Positionen" — Wandflächen streichen 2x (39 m²), Deckenfläche streichen 1x
+(15,12 m²), Boden schützen (15,12 m²), Sockelleisten abkleben (14,7 lfdm). Entwurf (506,24 €), Raummaße
+3,6×4,2 m, Höhe 2,5 m, 1 Tür, 2 Fenster:
+
+- Wandflächen streichen 2×: 39 m² × 9,50 € = 370,50 € — ✅ exakt Soll
+- Deckenfläche streichen 1×: 15,12 m² × 7,00 € = 105,84 € — ✅ exakt Soll
+- **Boden schützen: 15,12 m² × 1,20 € = 18,14 € — ✅ endlich wieder Soll!** Live bestätigt: derselbe Fix
+  wie bei PM-024 (Gewerk-Zuordnung, siehe „Systemischer Fund" Punkt 11) hält auch hier.
+- Sockelleisten abkleben: 14,7 lfdm × 0,80 € = 11,76 € — ✅ exakt Soll
+
+**Ergebnis: alle vier Positionen exakt Soll, keine offenen Funde mehr.** Beide ursprünglichen Bugs (Decke
+2×/1×, verschwundene Wandfläche) bleiben behoben, und die Preisdatenbank-Regression bei „Boden schützen"
+ist jetzt ein zweites Mal unabhängig als behoben bestätigt (siehe auch PM-024 im selben Angebot).
+PM-026 ist damit fachlich vollständig abgeschlossen.
+
+**Status:** ✅ Alle vier Positionen live bestätigt exakt Soll, keine offenen Funde mehr.
+
 ---
 
 ### PM-027 — Kellerraum, Parkett gerade + explizite Altbelag-Entfernung
@@ -1546,6 +1615,62 @@ kommen." Der Code hat das ohnehin nie verhindert (zwei unabhängige
 Prüfungen); jetzt hält ein Test fest, dass „schwieriger Untergrund" und
 „Altbau" nebeneinander neben einer Q2-Spachtelung stehen dürfen. Kein Fix
 nötig, Frage geschlossen.
+
+---
+
+## Fix-Notiz PM-024 — Karte zeigte „1 %" statt „15 %" (Head of Product Engineering, 2026-08-31)
+
+**Auftrag:** Sandy, direkt („pm024 fixen") — auf deinen Fund aus dem vierten
+Nachtest.
+
+**Deine Vermutung war nah dran, aber die Ursache ist eine andere.** Es ist
+kein alter Default-Wert und keine zweite, veraltete Berechnung in der
+Karten-Vorschau. Der Grund ist grundsätzlicher: Bei einem Prozent-Zuschlag ist
+die „Menge" der **Prozentsatz** — und der steht in der Preisliste des
+Betriebs, nicht im Transkript. Die Karten-Vorschau läuft aber VOR der
+Bepreisung; sie kennt die Preisliste zu dem Zeitpunkt überhaupt nicht. Sie
+konnte den Satz also nicht kennen, sondern trug eine 1 als Platzhalter, den
+erst die Bepreisung durch den echten Katalogwert ersetzt. Der Entwurf hatte
+damit nie einen falschen Wert — die Karte hatte einen erfundenen.
+
+**Fix:** Die Karte zeigt für Prozent-Zuschläge keine Zahl mehr, sondern
+„Satz aus Preisliste". Damit steht dort, was stimmt: die Position ist erkannt,
+der Prozentsatz kommt aus dem eigenen Katalog des Betriebs. Dieselbe Linie wie
+bei den Fassadenmaßen im PM-008-Fix („zeigt ehrlich GAR KEINE Maße statt
+falscher; besser nichts als Falsches") — statt eine Zahl zu zeigen, die nur
+zufällig manchmal stimmt.
+
+**Bewusst NICHT gemacht:** die Preisliste in die Vorschau nachladen, damit dort
+schon „15 %" steht. Das würde die schnelle Karte von einer Datenbankabfrage
+abhängig machen und genau das Muster wiederholen, das in „Systemischer Fund"
+Punkt 8/10 steht (Karte und Entwurf rechnen unabhängig und laufen auseinander).
+Solange die Karte nichts behauptet, kann sie dem Entwurf auch nicht
+widersprechen.
+
+**Mit gegengerechnet:** deine Soll-Zahlen aus dem vierten Nachtest stehen jetzt
+als Test im Code — 547,20 + 24,00 + 13,68 = 584,88 € Bemessungsgrundlage,
+1 % gerundet 5,85 €, × 15 = **87,75 €**. Ein Test hält zusätzlich fest, dass
+die Platzhalter-1 den fertigen Entwurf nie erreichen darf.
+
+**Ein Restfall, den ich offen lasse und benenne:** Hat ein Betrieb den Zuschlag
+aus seiner eigenen Preisliste gelöscht, findet die Bepreisung keinen Satz —
+dann bleibt die Platzhalter-1 stehen und die Position steht als „1 % · 0,00 €"
+mit dem üblichen Hinweis „Preis fehlt in deiner Preisdatenbank" da. Das ist der
+gleiche sichtbare Zustand wie bei jeder anderen Position ohne Preis, und beide
+echten Konten haben den Eintrag seit heute. Eine 0 statt der 1 wäre keine
+Verbesserung: die Angebotsprüfung meldet dann „Menge ist 0 — bitte prüfen" bei
+einer Position, an der nichts zu prüfen ist.
+
+**Bitte um fünften Nachtest:** derselbe PM-024-Text. Erwartung auf der Karte:
+„Erschwerniszuschlag Raumhöhe > 3m" mit dem Hinweis „Satz aus Preisliste"
+statt einer Zahl; im Entwurf unverändert 15 % × 5,85 € = 87,75 €.
+
+**Nebenbefund, nicht Teil dieses Fixes:** Die Entwurfs-Seite hat sechs
+vorbestehende Lint-Fehler „Cannot access refs during render" (React liest dort
+einen Ref während des Renderns). Nicht von diesem Fix verursacht, aber eine
+echte Fehlerquelle für genau die Art von „Karte zeigt was anderes als der
+Entwurf"-Effekte. Ich melde das dem Chief of Staff als eigenen Punkt, statt es
+hier stillschweigend mitzuändern.
 
 ---
 
