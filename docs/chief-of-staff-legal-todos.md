@@ -382,4 +382,82 @@ nüchtern zu formulieren.
 
 ---
 
+## Nachtrag (2026-09-01) — Compliance-Check „alles"
+
+Auf Sandys Anforderung („check alles"):
+**`docs/legal-003-compliance-check.md`**. Geprüft wurde diesmal nicht, ob die
+richtigen Texte auf der Website stehen (das war CoS-L-001), sondern ob die
+**Prozesse dahinter existieren** und ob das, was unsere Texte versprechen,
+tatsächlich passiert. Genau dort liegen die neuen Funde.
+
+**Ergebnis: weitere Prüfung erforderlich — wegen eines Punktes.**
+
+**CC-01 ist der schwerwiegendste Fund des gesamten Projekts, und er hat eine
+abgelaufene Frist.** Die Tabelle `debug_extraktion_roh` war vom 07.08. bis
+17.08.2026 in Produktion ohne jede Zugriffsbeschränkung erreichbar — jeder mit
+dem öffentlichen Website-Schlüssel konnte sämtliche Sprach-Transkripte und
+KI-Rohdaten aller Nutzer auslesen (CoS-P-001, Fix-Update vom 17.08.). Technisch
+wurde das mustergültig behandelt. **Als Ereignis nach Art. 33 DSGVO wurde es nie
+bewertet.** Die Pflicht, jede solche Verletzung zu dokumentieren, besteht nach
+Art. 33 Abs. 5 unabhängig davon, ob eine Meldung nötig war — und sie ist seit
+fünfzehn Tagen unerfüllt.
+
+Ob eine Meldung an die Berliner Aufsichtsbehörde fällig gewesen wäre, kann ich
+ohne drei Angaben nicht beantworten (Dateninhalt, Zugriffslogs, betroffene
+Konten). Anfrage dazu ist in `chief-of-staff-platform-todos.md` angehängt.
+**Meine Vermutung nach Aktenlage: nicht meldepflichtig**, weil zu dem Zeitpunkt
+vermutlich nur zwei interne bzw. Testkonten existierten. Das entlastet aber
+nicht — die Bewertung selbst ist Pflicht. **Bitte nichts vorschnell melden:**
+erst Fakten, dann Bewertung, dann Entscheidung.
+
+**CC-02 — die Kontolöschung löscht nichts.** `api/account/delete` setzt nur
+`companies.deleted_at`; einen Löschjob gibt es nicht (`vercel.json` kennt genau
+einen Cronjob, und das ist der Reminder). Damit sagen Datenschutzerklärung § 8,
+AGB § 6.5, AVV § 3 und die Bestätigungs-E-Mail an jeden Nutzer etwas
+Unzutreffendes. Art. 17 und Art. 5 Abs. 1 lit. a DSGVO.
+
+**CC-03 — die Meldefrist im AVV ist falsch herum.** § 5 verspricht dem
+Verantwortlichen Benachrichtigung „innerhalb von 72 Stunden". Die 72 Stunden
+sind das Budget, das **er** gegenüber der Aufsichtsbehörde hat; wir als
+Auftragsverarbeiter schulden nach Art. 33 Abs. 2 „unverzüglich". Nehmen wir uns
+72 Stunden, ist sein Budget aufgebraucht, bevor er überhaupt Bescheid weiß —
+wegen einer Klausel, die wir ihm gestellt haben. Marktüblich sind 24 bis 48
+Stunden.
+
+**Weitere Funde:** CC-04 (AVV § 3 verlangt vorherige Genehmigung für
+Unterauftragnehmer, § 4 erteilt zwei Absätze später eine Generalgenehmigung —
+ohne das dann zwingende Informations- und Einspruchsrecht), CC-05 (Datenexport
+unvollständig für Art. 15; und es gibt keinen Prozess für Anfragen von
+Endkunden der Handwerker, für die wir Auftragsverarbeiter sind), CC-06
+(Transkripte und KI-Rohdaten werden dauerhaft gespeichert, die
+Datenschutzerklärung erwähnt nur das Löschen der Audiodateien), CC-07
+(Art.-30-Verzeichnis und dokumentierte Schwellwertanalyse nach Art. 35 fehlen —
+eine DSFA selbst ist nach meiner Prüfung **nicht** erforderlich), CC-08
+(**KI-Kompetenzpflicht nach Art. 4 AI Act, in Kraft seit 02.02.2025** — wird
+fast immer übersehen, für uns zwei Stunden Dokumentation, und zugleich der
+beste Beleg für den Sorgfaltsmaßstab bei der Haftungsfrage aus A5).
+
+**Geprüft und in Ordnung** (damit niemand daran arbeitet): kein
+Datenschutzbeauftragter erforderlich · keine DSFA erforderlich ·
+Cookie-Einwilligung nach § 25 TDDDG korrekt gelöst · PAngV erfüllt · BFSG nicht
+anwendbar · CCPA, LGPD, PIPL und UK GDPR mangels Marktbezug nicht anwendbar ·
+E-Rechnung: XRechnung und ZUGFeRD sind gebaut, bevor sie Pflicht werden, und
+gegenüber Privatkunden wird sie es nie.
+
+**Für Gate 1 zwingend** aus diesem Check: CC-01 und CC-02, dazu G1 aus dem
+Erstbericht. CC-07 sollte fertig sein, **bevor** der erste echte Nutzerdatensatz
+entsteht — rückwirkend ist ein Verarbeitungsverzeichnis mühsamer.
+
+**Freigaben von Sandy nötig:** Bewertungsergebnis zu CC-01 und ggf. Entscheidung
+über eine verspätete Meldung (vordringlich) · neue AVV-Formulierungen (CC-03,
+CC-04) · korrigierte Passagen in Datenschutzerklärung und AGB (CC-02, CC-06).
+
+**Externe Beratung:** nur für den Fall, dass CC-01 eine Meldepflicht ergibt —
+eine verspätete Behördenmeldung formuliert man nicht ohne Anwalt, weil die
+Begründung der Verzögerung mitbewertet wird. Ansonsten würde ich die
+AVV-Neufassung mit der AGB-Überarbeitung (L1) und der AI-Act-Einordnung (S-3)
+in **einem** Mandat bündeln statt drei Einzelfragen zu stellen.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

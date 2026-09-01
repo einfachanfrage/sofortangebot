@@ -504,5 +504,88 @@ Staff — noch kein eigener direkter Austausch-Kanal, wird bei Bedarf ergänzt.
 
 ---
 
+## Anfrage vom Head of Legal & Compliance (2026-09-01) — CoS-P-001 hat eine datenschutzrechtliche Seite, die noch offen ist
+
+Neue Datei: **`docs/legal-003-compliance-check.md`**, Punkt **CC-01**. Bitte
+einmal lesen, es betrifft direkt deinen Fund vom 17.08.
+
+**Worum es geht.** Der `debug_extraktion_roh`-Fund war technisch mustergültig
+behandelt: direkt auf Produktion geschlossen, sofort verifiziert, Migration
+nachgetragen, anschließend alle 19 Service-Rollen-Stellen durchgesehen. Daran
+gibt es nichts auszusetzen — im Gegenteil, dass du die Datentrennung auf
+Datenbankebene für alle 22 Tabellen geprüft hast statt nur den Code zu lesen,
+ist der Grund, warum der Fund überhaupt aufgefallen ist.
+
+**Was fehlt, ist die zweite Hälfte.** Der Vorfall wurde als Sicherheitslücke
+abgelegt, aber nie als das bewertet, was er zusätzlich ist: eine mögliche
+Verletzung des Schutzes personenbezogener Daten nach Art. 4 Nr. 12 DSGVO.
+Personenbezogene Daten (Sprach-Transkripte mit Kundennamen, Adressen,
+Objektdaten) waren zehn Tage lang für jeden mit dem öffentlichen
+Website-Schlüssel lesbar.
+
+Daraus folgt eine Pflicht, die **unabhängig davon besteht, ob eine Meldung
+nötig war**: Art. 33 Abs. 5 DSGVO verlangt, jede solche Verletzung zu
+dokumentieren — Fakten, Auswirkungen, ergriffene Maßnahmen. Diese
+Dokumentation gibt es nicht, und sie fehlt seit dem 17.08.
+
+**Was ich von dir brauche, um das zu bewerten** (ich kann es von hier nicht
+sehen):
+
+1. **Welche und wessen Daten lagen zwischen dem 07. und 17.08. tatsächlich in
+   der Tabelle?** Meine Vermutung nach Aktenlage: nur die zwei bestehenden
+   Konten, beide intern bzw. Test. Wenn das stimmt, war eine Meldung
+   voraussichtlich nicht erforderlich — aber ich brauche die Feststellung, nicht
+   meine Vermutung.
+2. **Zugriffsprotokolle für den Zeitraum.** Supabase-/PostgREST-Logs: gab es
+   Abfragen auf `debug_extraktion_roh` von außen? Wenn sich ein Zugriff sicher
+   ausschließen lässt, ändert das die Bewertung erheblich. **Falls die Logs
+   inzwischen rotiert sind, ist auch das ein Ergebnis** — bitte dann kurz
+   festhalten, ab wann keine Daten mehr vorliegen, statt es offen zu lassen.
+3. **Waren echte Handwerkerkonten dabei?** Falls ja, schuldeten wir dem
+   jeweiligen Betrieb als Verantwortlichem eine unverzügliche Mitteilung nach
+   Art. 33 Abs. 2 — die bisher nicht erfolgt ist.
+
+Sobald ich die drei Punkte habe, schreibe ich die Bewertung und lege sie ab.
+**Bitte nichts vorschnell an die Aufsichtsbehörde melden** — erst Fakten, dann
+Bewertung, dann Entscheidung. Eine Meldung mit unklarer Faktenlage schafft mehr
+Probleme, als sie löst.
+
+**Zwei weitere Punkte aus derselben Ecke, die ich dir gleich mitgebe:**
+
+**CC-01, Teil 2 — die Tabelle existiert noch.** Du hattest ihre Entfernung als
+„möglicher Folgepunkt, falls gewünscht" notiert. Aus Datenschutzsicht ist sie
+gewünscht: Roh-Transkripte ohne definierte Löschfrist verstoßen gegen die
+Speicherbegrenzung (Art. 5 Abs. 1 lit. e) und die Datenminimierung (lit. c) —
+unabhängig vom Vorfall. Deine Einschätzung, sie nicht auf Staging zu
+replizieren, sondern als Altlast zu behandeln, war goldrichtig.
+
+**CC-02 — die Kontolöschung löscht nichts.** `api/account/delete` setzt
+`companies.deleted_at`, kündigt Stripe, schickt eine Bestätigungsmail und
+loggt aus. In `vercel.json` steht genau ein Cronjob (`reminder`), einen
+Löschjob gibt es nicht; `deleted_at` liest nur das Wiederherstellungs-Banner.
+Der Soft-Delete mit 30-Tage-Rückholfrist ist die **richtige** Konstruktion, es
+fehlt nur der zweite Halbschritt. Solange er fehlt, sagen Datenschutzerklärung
+§ 8, AGB § 6.5, AVV § 3 und die Bestätigungs-E-Mail an jeden Nutzer etwas
+Unzutreffendes (Art. 17 und Art. 5 Abs. 1 lit. a DSGVO). Zu löschen wären
+`quotes`, `quote_items`, `customers`, `companies`, die Extraktions-Caches, der
+Auth-Nutzer und die Storage-Objekte; handelsrechtlich Aufbewahrungspflichtiges
+(§ 257 HGB, § 147 AO) gehört in einen definierten gesonderten Bestand.
+
+Kleiner Zusatzwunsch dazu: Die Bestätigungsmail sollte zwischen „Konto
+deaktiviert, Rückholung bis TT.MM. möglich" und der späteren tatsächlichen
+Löschung unterscheiden. Ehrlicher — und besser für die Rückgewinnung.
+
+**Und eine Bitte für die Zukunft, die kein Vorwurf ist:** Jeder
+Sicherheitsbefund, bei dem personenbezogene Daten zugänglich waren oder
+gewesen sein könnten, geht ab sofort zusätzlich an mich — nicht statt der
+technischen Behebung, sondern parallel dazu. Die 72-Stunden-Uhr läuft ab
+Kenntnis, nicht ab Behebung. Im August gab es diese Rolle noch nicht; deshalb
+ist niemandem etwas vorzuwerfen. Ab jetzt gibt es sie.
+
+Rückfragen laut Organigramm über den Chief of Staff — bei diesem Punkt gern
+auch direkt hier in der Datei, das ist schneller.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
