@@ -241,8 +241,14 @@ export function pruefeUebergangsprofil(
   // Umlaut-Falle wie bei den Flächen-Mustern; hier deshalb ausgeschrieben.
   const WORTZEICHEN = 'A-Za-zÄÖÜäöüß0-9_-'
   const NOMEN = new RegExp(`[${WORTZEICHEN}]*(?:profil|schiene)n?`, 'i')
+  // Code-Review 2026-08-31 (eigener Fund): Zuerst wurde auch am KOMMA
+  // getrennt — dann stand in „an den zwei Zimmertüren, Alu-Übergangsprofil"
+  // die Zahl im vorherigen Stück und die Anzahl fiel auf 1 zurück. Im
+  // Deutschen gehört ein Komma zum selben Satz; getrennt wird deshalb nur am
+  // Satzende. Die Raummaße aus „Flur, vier mal eins achtzig." bleiben trotzdem
+  // draußen — die stehen in einem eigenen Satz.
   const abschnitt = lower
-    .split(/[.!?;,]/)
+    .split(/[.!?;]/)
     .map(s => s.trim())
     .find(s => UEBERGANG_SATZ.test(s)) ?? ''
   let anzahl = 0
@@ -252,11 +258,16 @@ export function pruefeUebergangsprofil(
     anzahl = parseInt(numMatch[1])
   } else {
     const wortMatch = abschnitt.match(
-      new RegExp(`\\b(eine|ein|zwei|drei|vier|fünf|sechs)\\s+(?:[${WORTZEICHEN}]+\\s+){0,3}?${NOMEN.source}`, 'i'),
+      // Zwischen Zahlwort und Nomen darf auch ein Komma stehen
+      // („an den zwei Zimmertüren, Alu-Übergangsprofil").
+      new RegExp(`\\b(eine|ein|zwei|drei|vier|fünf|sechs)\\s+(?:[${WORTZEICHEN}]+[,;:]?\\s+){0,3}?${NOMEN.source}`, 'i'),
     )
     if (wortMatch) anzahl = zahlwoerter[wortMatch[1]] ?? 0
     // „ne Schiene", „eine Übergangsschiene", „die Übergangsschiene" — Singular.
-    else if (abschnitt && !/\b(?:profile|schienen)\b/i.test(abschnitt)) anzahl = 1
+    // Plural erkennen — auch in Zusammensetzungen: „Übergangsprofile" hat
+    // vorne keine Wortgrenze, `\bprofile\b` traf es deshalb nicht und eine
+    // unbezifferte Mehrzahl wurde stillschweigend zu genau einem Stück.
+    else if (abschnitt && !/(?:profile|schienen)\b/i.test(abschnitt)) anzahl = 1
   }
 
   // Bezeichnung — Wortwahl aus dem Transkript übernehmen (Profil vs. Schiene),

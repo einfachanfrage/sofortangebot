@@ -115,10 +115,6 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
     || lower.includes('kniestock') || lower.includes('deckenspiegel')
   if (!hatDachschraege) return
 
-  const dachPos = ergaenzt.find(p => {
-    const d = (p.beschreibung ?? '').toLowerCase()
-    return d.includes('dachschräg') || d.includes('schräg') || d.includes('kniestock') || d.includes('deckenspiegel')
-  })
   const schraegenPos = ergaenzt.find(p => (p.beschreibung ?? '').toLowerCase().includes('dachschrägen streich'))
   // Soll-Audit 2026-08-31: Der Rückfall auf `dachPos` nahm die Menge der
   // ERSTBESTEN Dachgeschoss-Position — im Zweifel die des Kniestocks. Daraus

@@ -78,6 +78,19 @@ export function malerEngine(daten: any): MengenErgebnis {
     let tuerAbzugVob: OeffnungsabzugErgebnis | null = null
 
     const arbeitenStr = arbeiten.join(' ').toLowerCase()
+    // Code-Review 2026-08-31 (eigener Fund beim Umlaut-Fix): „wände abkleben"
+    // ist KEIN Auftrag, die Wände zu streichen — abkleben ist Schutzarbeit.
+    // Das Wand-/Decken-Signal unten prüft aber nur das Substantiv. Solange
+    // „waende_abkleben" nicht als Wandwort erkannt wurde, fiel das nicht auf;
+    // seit der umlautlosen Schreibweise würde daraus eine erfundene Position
+    // „Wandflächen streichen" über die ganze Wandfläche. Schutz-Einträge
+    // zählen deshalb nicht als Bearbeitungs-Signal — als eigene Zeile, damit
+    // der Rest von `arbeitenStr` (Scope, Belag, Dachschräge) unverändert
+    // bleibt.
+    const arbeitenOhneSchutz = (arbeiten as string[])
+      .filter(a => !/abkleb|abdeck|sch[üu]tz|folie|vlies/i.test(String(a)))
+      .join(' ')
+      .toLowerCase()
     const transkriptLower = (daten.transkript ?? '').toLowerCase()
     // Raum-Ebene des typisierten Vertrags: NUR aus den (KI-verstandenen)
     // Raum-Arbeiten gebaut — so bluten Signale eines Raums nicht in andere
@@ -313,7 +326,7 @@ export function malerEngine(daten: any): MengenErgebnis {
     // beim Tapezieren (ohne Anstrich) gar kein Wand-Signal erkannt wurde und
     // die komplette Wandfläche verlorenging. "tapete" jetzt zusätzlich als
     // eigenes Signal.
-    const hatWandSignal = /wand|wände|waende|tapete|tapez|spachtel|grundier/.test(arbeitenStr)
+    const hatWandSignal = /wand|wände|waende|tapete|tapez|spachtel|grundier/.test(arbeitenOhneSchutz)
       || (einzelraum && /(?:wand|wände|waende).{0,35}(?:streich|anstrich|maler)/.test(transkriptLower))
     // "Deckenhöhe drei zwanzig" ist eine Maßangabe, kein Arbeits-Signal — sonst
     // liest "decke.{0,35}streich" das "Decke" aus "Deckenhöhe" fälschlich als
@@ -325,9 +338,9 @@ export function malerEngine(daten: any): MengenErgebnis {
     // daraus fälschlich ein Signal für "Decke wird gestrichen", was wiederum
     // (über hatExpliziteFlaeche) das echte Wand-Signal blockieren konnte.
     // Gleiche Fehlerklasse wie schon in maler-basis.ts (istBodenSchutz).
-    const hatDeckenSignal = /(?<!ab)decke/.test(arbeitenStr)
+    const hatDeckenSignal = /(?<!ab)decke/.test(arbeitenOhneSchutz)
       || (einzelraum && /(?<!ab)decke.{0,35}(?:streich|anstrich|maler)|(?:streich|anstrich).{0,35}(?<!ab)decke/.test(transkriptOhneDeckenhoehe))
-    const hatExpliziteFlaeche = hatWandSignal || hatDeckenSignal || /boden/.test(arbeitenStr)
+    const hatExpliziteFlaeche = hatWandSignal || hatDeckenSignal || /boden/.test(arbeitenOhneSchutz)
     const anWaenden = !nurDecke && !nurBoden && (hatWandSignal || (!hatExpliziteFlaeche && hatStreichen))
     // Decke: nicht wenn explizit Boden gestrichen wird (Keller-Fall), nurWaende oder nurBoden
     const anDecke = !nurWaende && !nurBoden && !hatBodenStreichen && (hatDeckenSignal || (!hatExpliziteFlaeche && hatStreichen))

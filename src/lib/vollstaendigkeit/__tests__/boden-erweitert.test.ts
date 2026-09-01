@@ -210,3 +210,28 @@ describe('Boden – 10 Integrationstests', () => {
     expect(fischgraet?.beschreibung.toLowerCase()).toContain('vollflächig')
   })
 })
+
+// Stückzahl der Übergangsprofile — Funde aus dem Code-Review vom 2026-08-31.
+// Die Zahl muss aus DEM Satz kommen, in dem der Übergang steht, und darf weder
+// ein Raummaß aus einem anderen Satz einsammeln noch an einem Komma verloren
+// gehen. Alle drei Fälle haben echtes Geld auf der Rechnung.
+describe('Übergangsprofil — Stückzahl', () => {
+  const anzahlFuer = (text: string) => {
+    const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('boden', [], text)
+    const p = positionen.find(x => /übergangs(?:profil|schiene)|alu-übergangsprofil/i.test(x.beschreibung))
+    return p ? p.menge : (fehlende.some(f => /überg/i.test(f)) ? 'nachfragen' : null)
+  }
+
+  it('nimmt kein Raummaß aus einem anderen Satz als Stückzahl (PM-009)', () => {
+    // „Flur, vier mal eins achtzig." → früher vier Schienen statt einer.
+    expect(anzahlFuer('Vinylboden im Flur, vier mal eins achtzig. Am Übergang zum Wohnzimmer brauchen wir noch ne Übergangsschiene.')).toBe(1)
+  })
+
+  it('verliert die Stückzahl nicht am Komma', () => {
+    expect(anzahlFuer('Vinylboden im Flur, 12 Quadratmeter. An den zwei Zimmertüren, Alu-Übergangsprofil in Silber.')).toBe(2)
+  })
+
+  it('rät bei unbezifferter Mehrzahl nicht auf eins, sondern fragt nach', () => {
+    expect(anzahlFuer('Vinylboden im Flur, 12 Quadratmeter. An allen Türübergängen Übergangsprofile.')).toBe('nachfragen')
+  })
+})

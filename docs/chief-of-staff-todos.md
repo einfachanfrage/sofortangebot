@@ -2498,5 +2498,55 @@ diese Unterscheidung war bisher nicht möglich.
 
 ---
 
+## CoS-032 — Code-Review des Soll-Audits: vier Funde in meiner eigenen Arbeit
+
+**Datum:** 2026-08-31
+**Auftrag:** Sandy, `/code-review` auf die noch nicht committeten Änderungen.
+**Status:** ✅ alle vier behoben, Suite **60 Dateien / 1.090 Tests grün**,
+`tsc` sauber, Lint 0 Fehler.
+
+Geprüft wurden die neun Dateien aus CoS-031 (Soll-Ist-Audit). Vier Funde, drei
+davon in Code, den ich am selben Tag geschrieben habe:
+
+1. **Kritisch — mein Umlaut-Fix hat eine neue Phantom-Position ermöglicht.**
+   Das Wand-Signal prüft nur das Substantiv, nicht das Verb: „Wände abkleben"
+   galt damit als Auftrag, die Wände zu STREICHEN. Solange die umlautlose
+   Schreibweise gar nicht erkannt wurde, fiel das nicht auf — seit dem Fix
+   hätte `waende_abkleben` eine erfundene Position „Wandflächen streichen"
+   über die volle Wandfläche erzeugt (im Testfall 25 m², die mit Abstand
+   teuerste Zeile des Angebots). Schutzarbeiten (abkleben, abdecken, schützen,
+   Folie, Vlies) zählen jetzt nicht mehr als Bearbeitungs-Signal. Merke: ein
+   Fix, der ein Muster großzügiger macht, muss immer auch gegen die Richtung
+   geprüft werden, in der es dann ZU VIEL trifft.
+2. **Die Stückzahl der Übergangsprofile ging am Komma verloren.** Mein
+   Satz-Zuschnitt trennte auch am Komma — „an den zwei Zimmertüren,
+   Alu-Übergangsprofil" verlor damit die Zwei und fiel auf ein Stück zurück.
+   Im Deutschen gehört das Komma zum Satz; getrennt wird jetzt nur am
+   Satzende. Die Raummaße aus einem anderen Satz bleiben trotzdem draußen —
+   der Fund aus CoS-031 bleibt behoben.
+3. **Unbezifferte Mehrzahl wurde stillschweigend zu einem Stück.** „An allen
+   Türübergängen Übergangsprofile" — meine Plural-Prüfung suchte
+   `\bprofile\b` und traf die Zusammensetzung „Übergangsprofile" nicht. Statt
+   zu raten wird jetzt nachgefragt.
+4. **Tote Variable.** `dachPos` in `maler-sonder.ts` wurde nach meiner
+   Änderung nur noch berechnet, nie gelesen. Entfernt — genau die Sorte Rest,
+   aus der später wieder eine Falle wird (siehe CoS-030).
+
+Alle drei Übergangsprofil-Fälle stehen jetzt als Tests in
+`boden-erweitert.test.ts`.
+
+**Ehrlich zur Abdeckung:** Der Soll-Ist-Test aus CoS-031 deckt 22 der 28
+dokumentierten Fälle ab. **Nicht enthalten sind PM-002, PM-006, PM-010,
+PM-011, PM-013 und PM-018** — bei diesen ist die Soll-Lösung im Dokument
+mehrdeutig (PM-002: Akzentwand-Seite nicht festgelegt; PM-006: widerspricht
+der VOB-Entscheidung vom 21.08.; PM-022 war ähnlich unklar und ist nur drin,
+weil das Transkript eindeutig ist) oder der Fall braucht Raumdaten, die ich
+ohne Rückfrage nur raten könnte. Ich habe sie bewusst weggelassen statt eine
+Soll-Zahl zu erfinden — ein Test mit ausgedachtem Soll ist schlimmer als
+keiner. **Für den Prüfmeister:** Wenn diese sechs Fälle eine eindeutige
+Soll-Lösung bekommen, nehme ich sie sofort mit auf.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
