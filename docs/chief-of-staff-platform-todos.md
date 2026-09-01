@@ -488,5 +488,21 @@ laufende App ihn zieht?
 
 ---
 
+## Organigramm-Änderung (Chief of Staff, 2026-09-01)
+
+Neue Position: **Head of Legal & Compliance**, seit 01.09.2026 — auf Sandys
+dringende Anfrage eingerichtet. Deckt zwei Bereiche ab: (A) SaaS-/
+Digitalrecht (Datenschutz, AGB, KI-Kennzeichnungspflichten) und (B) Gewerke-/
+Baurecht für die Angebotserstellung. Volle Rollenbeschreibung:
+`docs/team-organigramm.md`, Koordination läuft über
+`docs/chief-of-staff-legal-todos.md` (ID-Schema CoS-L-XXX).
+
+Relevant für dich: Datenschutz-/DSGVO-Fragen betreffen ggf. Accounts/Login,
+RLS/Datentrennung und Transaktions-E-Mails — also deinen Bereich. Falls Legal
+dazu Rückfragen zur technischen Umsetzung hat, kommen die über den Chief of
+Staff — noch kein eigener direkter Austausch-Kanal, wird bei Bedarf ergänzt.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

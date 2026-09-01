@@ -439,10 +439,28 @@ das eigentliche rechtliche Problem, offen ausgewiesene sind es nie.
 Katalogeinträge tragen einen Prozentsatz im Titel, aber eine Euro-Pauschale im
 Preis:
 
-| Eintrag | `unit` | `unit_price` | Problem |
-|---|---|---|---|
-| `Zuschlag Wochenend- / Feiertagsarbeit (25%)` (in 6 Gewerken) | `Pauschale` | `25.00` | 25 % ≠ 25,00 € |
-| `Zuschlag Denkmalschutz / besondere Sorgfalt (30%)` | `Pauschale` | `30.00` | 30 % ≠ 30,00 € |
+Ich habe `default-prices.ts` systematisch nach Einträgen durchsucht, deren Titel
+einen Prozentsatz nennt: **14 Treffer, bei denen die Einheit nicht `%` ist.**
+Und zwar nach einem durchgehenden Muster — der `unit_price` ist jedes Mal exakt
+die Zahl aus dem Titel, nur als Euro:
+
+| Eintrag (Auswahl) | Gewerke | `unit` | `unit_price` | Problem |
+|---|---|---|---|---|
+| `Zuschlag Wochenend- / Feiertagsarbeit (25%)` | Maler, Trockenbau, Fliesen, Boden, Putz, Estrich | `Pauschale` | `25.00` | 25 % ≠ 25,00 € |
+| `Zuschlag Wochenend- / Feiertagsarbeit (50%)` | Elektro | `Pauschale` | `50.00` | 50 % ≠ 50,00 € |
+| `Zuschlag Notdienst … (100%)` | SHK, Elektro | `Pauschale` | `100.00` | 100 % ≠ 100,00 € |
+| `Zuschlag Denkmalschutz … (30%)` | Putz, Schreiner | `Pauschale` | `30.00` | 30 % ≠ 30,00 € |
+| `Zuschlag Denkmalschutz / historische Eindeckung (35%)` | Dach | `Pauschale` | `35.00` | 35 % ≠ 35,00 € |
+| `Zuschlag Sondermaße / Sonderform (20%)` | Schreiner | `Pauschale` | `20.00` | 20 % ≠ 20,00 € |
+| `Aufpreis exotische Holzart … (40%)` | Schreiner | `Pauschale` | `40.00` | 40 % ≠ 40,00 € |
+
+(Die zwei weiteren Treffer, `Gefälleestrich … (2% Gefälle)` und
+`(1–2% Gefälle)`, sind in Ordnung — dort beschreibt der Prozentwert ein Gefälle,
+keinen Zuschlag.)
+
+Am deutlichsten wird der Fehler beim SHK-Notdienst: der Titel verspricht einen
+Aufschlag von 100 % — also Verdopplung — berechnet wird eine Pauschale von
+100,00 €.
 
 Auf einem Angebot steht dann „Zuschlag Wochenend-/Feiertagsarbeit (25%) ·
 1 Pauschale · 25,00 €". Der Titel verspricht einen Aufschlag von 25 % auf die
@@ -455,11 +473,16 @@ auch andersherum: rechnet der Betrieb den Titel wörtlich als Prozentsatz, ist
 er 725 € über dem, was seine eigene Preisliste hergibt.
 
 Das ist derselbe Einheiten-Bug, den Head of Product Engineering am 31.08. für
-die fünf Maler-Zuschläge bereits gelöst hat (Umstellung auf `%`). Die
-verbleibenden Einträge in den anderen Gewerken sind offenbar bei der Migration
-übrig geblieben. Entweder auf `unit: '%'` umstellen oder den Prozentsatz aus
-dem Titel entfernen — beides ist vertretbar, aber die Mischung ist es nicht.
-→ an Head of Product Engineering.
+die fünf Maler-Erschwerniszuschläge bereits gelöst hat (Umstellung auf `%`) —
+er ist nur breiter als damals angenommen und zieht sich durch neun Gewerke.
+Dass es daneben Zuschläge mit korrekter Einheit `%` gibt (Garten, Rohbau,
+Reinigung, Fassade), macht es nicht besser, sondern zeigt nur, dass der Katalog
+in diesem Punkt uneinheitlich ist.
+
+Entweder auf `unit: '%'` umstellen oder den Prozentsatz aus dem Titel entfernen
+— beides ist vertretbar, die Mischung ist es nicht. Weil das Muster so
+regelmäßig ist (`unit_price` == Zahl im Titel), sollte sich das in einer
+Migration erledigen lassen. → an Head of Product Engineering.
 
 ### B3. Pflichtangaben auf dem Angebot — Abgleich mit dem PDF
 
@@ -504,16 +527,26 @@ Wichtig: als **freiwilliges, separates** Feld — nicht vorangekreuzt und nicht
 mit der Auftragsunterschrift verbunden, sonst ist es unwirksam. Formulierung
 braucht Sandys Freigabe (→ S-2).
 
-**Zweiter Punkt zum Widerruf.** `braucheWiderrufsbelehrung()` hängt die
-Belehrung an **jedes** Verbraucherangebot, wenn der Betrieb sie aktiviert hat.
-Gesetzlich nötig ist sie aber nur bei Verträgen außerhalb von Geschäftsräumen
-(§ 312b) oder im Fernabsatz (§ 312c). Belehrt man ohne Not, kann daraus ein
-**vertraglich eingeräumtes** Widerrufsrecht werden, das der Handwerker
-gesetzlich nicht schuldete. In der Praxis ist der Aufmaßtermin beim Kunden fast
-immer ein Haustürgeschäft, die Voreinstellung ist also meistens richtig — aber
-der Betrieb sollte es pro Angebot abwählen können (das kann er bereits,
-`quote.widerruf_beilegen`). Ich würde die Bezeichnung im UI schärfen, damit
-klar ist, wann man abwählen darf. Kein Blocker.
+**Zweiter Punkt zum Widerruf.** `braucheWiderrufsbelehrung()` lautet
+`widerrufAktiv !== false && kundeIstUnternehmen !== true`. Die Belehrung wird
+also **standardmäßig angehängt**, solange nichts ausdrücklich dagegen gesetzt
+ist — insbesondere auch dann, wenn der **Kundentyp gar nicht gesetzt ist**
+(`null`). Ein Geschäftskunde, bei dem das Häkchen „ist Unternehmen" schlicht
+niemand gesetzt hat, bekommt damit eine Widerrufsbelehrung, die ihm gesetzlich
+nicht zusteht.
+
+Gesetzlich nötig ist sie nur bei Verträgen außerhalb von Geschäftsräumen
+(§ 312b BGB) oder im Fernabsatz (§ 312c BGB). Belehrt man ohne Not, kann daraus
+ein **vertraglich eingeräumtes** Widerrufsrecht werden, das der Handwerker
+gesetzlich nicht schuldete — er verschenkt es dann versehentlich.
+
+Ich halte die Voreinstellung trotzdem für die richtige: der Aufmaßtermin beim
+Kunden ist in der Praxis fast immer ein Haustürgeschäft, und zu viel belehren
+ist das kleinere Übel gegenüber der Frist von 12 Monaten + 14 Tagen bei
+fehlender Belehrung. Abwählbar ist es bereits pro Angebot
+(`quote.widerruf_beilegen`). Zwei kleine Verbesserungen: den Kundentyp im
+Kundenformular zur Pflichtangabe machen, und im UI erklären, wann man die
+Belehrung guten Gewissens abwählen darf. Kein Blocker.
 
 **Was fehlt, aber bewusst fehlen darf: Gewährleistung.** Auf dem PDF steht
 nichts zu Mängelansprüchen. Das ist **kein Fehler** — schweigt der Vertrag,
@@ -564,7 +597,7 @@ Engineering.
 | **L3** | Verarbeitungsverzeichnis (Art. 30 DSGVO), TOM-Dokument, Löschkonzept — bei Prüfung sofort vorzulegen, existiert aktuell nicht |
 | **L4** | **Rechtsform** (UG/GmbH) und **Vermögensschaden-Haftpflicht** — Sandy haftet derzeit persönlich unbeschränkt |
 | **L5** | AI-Act-Positionierung festlegen und als Vermerk dokumentieren; KI-Hinweis im Produkt an der Freigabestelle |
-| **L6** | Zuschlagskatalog: Prozent-im-Titel/Euro-im-Preis in den übrigen Gewerken bereinigen |
+| **L6** | Zuschlagskatalog: Prozent-im-Titel/Euro-im-Preis bereinigen — **14 Einträge über neun Gewerke** |
 | **L7** | Kündigungsmöglichkeit im Produkt prüfen — FAQ verspricht sie, ich habe sie im Code nicht gefunden |
 | **L8** | Optionaler Gewährleistungs-Baustein; „zusichern" im Schlusstext ersetzen |
 
@@ -601,8 +634,11 @@ trägt sie ein). Meine Empfehlung steht jeweils dabei, die Entscheidung nicht.
   `annahmen` (nur `AngebotDetail.tsx`) statt im PDF. `pdf.tsx` rendert als
   Untertitel nur `item.description`.
 - G6 — Wertersatz-Ankreuzfeld auf der Widerrufsseite des PDF.
-- L6 — Prozent-im-Titel/Euro-im-Preis in `default-prices.ts` (Wochenend-/
-  Feiertagszuschlag in sechs Gewerken, Denkmalschutz bei Putz).
+- L6 — Prozent-im-Titel/Euro-im-Preis in `default-prices.ts`: **14 Einträge
+  über neun Gewerke**, Muster durchgehend `unit_price` == Zahl im Titel
+  (Wochenend-/Feiertagszuschlag 25 % in sechs Gewerken, Elektro 50 %,
+  Notdienst 100 % bei SHK und Elektro, Denkmalschutz 30/35 % bei Putz,
+  Schreiner und Dach, Sondermaße 20 %, exotische Holzart 40 %).
 - L7 — gibt es eine Kündigungsmöglichkeit im Produkt? Die FAQ verspricht sie.
 - **R2 (wichtigste Einzelmaßnahme):** Freigabe-Ereignis mit Zeitstempel,
   Nutzer-ID und Angebotsstand protokollieren, wenn der Nutzer ein Angebot

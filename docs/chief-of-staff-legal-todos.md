@@ -182,15 +182,20 @@ Product Designer besprechen.
 **Zu Teil B Punkt 6 (Zuschlagskatalog):** Rechtlich unbedenklich, die
 Zuschlagsarten bilden die anerkannten Erschwernistatbestände ab, und Zuschläge
 sind frei kalkulierbar (keine verbindliche Preisverordnung im Bauhandwerk).
-**Ein konkreter Fund:** mehrere Einträge tragen einen Prozentsatz im Titel, aber
-eine Euro-Pauschale im Preis — `Zuschlag Wochenend-/Feiertagsarbeit (25%)` mit
-`unit: 'Pauschale'` und `unit_price: 25.00` (in sechs Gewerken), ebenso
-`Zuschlag Denkmalschutz (30%)` mit 30,00 €. Auf dem Kundenangebot verspricht der
+**Ein konkreter Fund, größer als zunächst gedacht:** **14 Katalogeinträge über
+neun Gewerke** tragen einen Prozentsatz im Titel, aber eine Euro-Pauschale im
+Preis — durchgehend nach demselben Muster (`unit_price` == die Zahl aus dem
+Titel). Beispiele: `Zuschlag Wochenend-/Feiertagsarbeit (25%)` mit
+`unit: 'Pauschale'` und `unit_price: 25.00` in sechs Gewerken; Elektro 50 %;
+`Zuschlag Notdienst (…, 100%)` bei SHK und Elektro mit 100,00 €; Denkmalschutz
+30 %/35 % bei Putz, Schreiner und Dach. Auf dem Kundenangebot verspricht der
 Titel 25 % und berechnet werden 25 €; bei einem 3.000-€-Auftrag ist das der
 Unterschied zwischen 750 € und 25 €, und § 305c Abs. 2 BGB legt Zweifel zulasten
-des Verwenders aus. Das ist derselbe Einheiten-Bug, den Head of Product
-Engineering am 31.08. für die fünf Maler-Zuschläge schon behoben hat — die
-übrigen Gewerke sind bei der Migration übrig geblieben.
+des Verwenders aus. Beim Notdienst-Zuschlag ist es am krassesten: der Titel
+verspricht Verdopplung, berechnet werden 100 €. Das ist derselbe Einheiten-Bug,
+den Head of Product Engineering am 31.08. für die fünf Maler-Erschwerniszuschläge
+schon behoben hat — er ist nur breiter, als damals angenommen. Wegen des
+regelmäßigen Musters sollte eine Migration reichen.
 
 **Zu Teil B Punkt 8 („GOB"):** Ich habe keine passende Regelungsmaterie „GOB"
 gefunden und auf **VOB** gearbeitet — alles im Projekt Referenzierte ist VOB.

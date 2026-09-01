@@ -1865,5 +1865,23 @@ hier stillschweigend mitzuändern.
 
 ---
 
+## Organigramm-Änderung (Chief of Staff, 2026-09-01)
+
+Neue Position: **Head of Legal & Compliance**, seit 01.09.2026 — auf Sandys
+dringende Anfrage eingerichtet. Deckt zwei Bereiche ab: (A) SaaS-/
+Digitalrecht (Datenschutz, AGB, KI-Kennzeichnungspflichten) und (B) Gewerke-/
+Baurecht für die Angebotserstellung (VOB/DIN, Zuschläge/Abzüge). Volle
+Rollenbeschreibung: `docs/team-organigramm.md`, Koordination läuft über
+`docs/chief-of-staff-legal-todos.md` (ID-Schema CoS-L-XXX).
+
+Relevant für dich: Legal prüft aktuell die bestehende Zuschlags-/Abzugs-
+Logik und die VOB-Übermessungsregel (Abschnitt „VOB-Übermessungsregel für
+Anstricharbeiten" in dieser Datei) rechtlich gegen VOB/branchenübliche
+Praxis — deckt sich mit Themen, die du fachlich schon dokumentiert hast.
+Falls Legal dazu Rückfragen hat, kommen die über den Chief of Staff — noch
+kein eigener direkter Austausch-Kanal, wird bei Bedarf ergänzt.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
