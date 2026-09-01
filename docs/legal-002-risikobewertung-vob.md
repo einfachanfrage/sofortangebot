@@ -74,7 +74,7 @@ Ich gebe deshalb bei jedem Risiko an, auf welcher Ebene es zuerst wirkt.
 | **LR-09** | Zuschlagstitel nennt Prozent, Preis ist Euro (14 Einträge) | A | Vertrag / § 305c BGB | 3 | 3 | **9** | 🟡 YELLOW | Head of Product Eng. |
 | **LR-10** | Nebenleistungen nach DIN 18363 als eigene Positionen berechnet | A | Vertrag | 2 | 2 | **4** | 🟢 GREEN | Prüfmeister |
 | **LR-11** | Türbreiten von Sockelleistenlänge abgezogen | A | Produktqualität | 2 | 2 | **4** | 🟢 GREEN | Head of Product Eng. |
-| **LR-12** | Höhenzuschlag unterhalb der Norm-Nebenleistungsgrenze | A | Vertrag | 2 | 2 | **4** | 🟢 GREEN | Prüfmeister |
+| **LR-12** | Drei verschiedene Höhenschwellen im Produkt (Konsistenz) | A | Produktqualität | 2 | 2 | **4** | 🟢 GREEN | Head of Product Eng. |
 
 **Gesamtbild:** ein rotes, fünf orange, drei gelbe, drei grüne Risiken.
 Bemerkenswert daran ist weniger die Verteilung als die Ursachenstruktur: **acht
@@ -427,7 +427,7 @@ ist heute schon da. Fix ohne Entscheidung möglich.
 
 **LR-08 (9 🟡) — Die „Normgrundlagen"-Zeile.** 7 pt, `#BBBBBB`. Als Einbeziehung
 nach § 305 Abs. 2 BGB untauglich, und in der Sache nicht durchgängig zutreffend
-(LR-02, LR-10, LR-12 weichen ab). Eine Normangabe, die man punktuell nicht
+(LR-02 und LR-10 weichen ab, dazu die fehlende Einbeziehung). Eine Normangabe, die man punktuell nicht
 einhält, ist schlechter als keine — sie liefert dem Endkunden den Maßstab.
 Lösung in VOB-007: sachliche Erklärung an der Position, Einbeziehung als
 optionaler Fußtext, pauschale Zeile weg.
@@ -451,10 +451,23 @@ fehlen ihm 2,7 lfdm. Niemand verklagt uns, weil er zu wenig berechnet hat —
 deshalb grün. Fixen sollte man es trotzdem, weil es dieselbe Inkonsistenz ist
 wie LR-01, nur in die andere Richtung.
 
-**LR-12 (4 🟢) — Höhenzuschlag ab 2,80 bzw. 3,00 m.** DIN 18363 4.1.1 zieht die
-Nebenleistungsgrenze bei 3,50 m. Preise sind frei kalkulierbar, das ist keine
-Rechtsfrage — es widerspricht nur der Zeile „Normgrundlagen" auf demselben
-Blatt (→ LR-08). Wartet auf die Praxis-Einschätzung des Prüfmeisters.
+**LR-12 (4 🟢) — Drei verschiedene Höhenschwellen.** *Begründung am 2026-09-01
+nach Rückmeldung des Prüfmeisters korrigiert.* Ursprünglich hatte ich hier die
+Gerüst-Nebenleistungsgrenze der DIN 18363 (3,50 m) gegen den
+Erschwerniszuschlag für hohe Räume gestellt. Das waren zwei verschiedene
+Fragen: Die Norm sagt, das **Gerüst** darf bis 3,50 m nicht separat abgerechnet
+werden — sie sagt nichts darüber, ob ein Betrieb für hohe Räume einen Zuschlag
+verlangen darf. Laut Prüfmeister ist ein Zuschlag ab drei Metern völlig üblich,
+weil man dort Böcke statt Leiter braucht. Die Schwelle ist also fachlich
+richtig.
+
+Was bleibt, ist keine Normabweichung, sondern eine Inkonsistenz: 2,80 m im
+Katalog, 3,00 m in der Engine, 4,00 m für die nächste Stufe, dazu €/m² gegen %.
+Derselbe Raum bekommt je nach Weg 2,50 €/m² oder 15 %. Rechtlich harmlos —
+unangenehm wird es erst, wenn zwei Angebote desselben Betriebs denselben Fall
+unterschiedlich berechnen und ein Kunde beide sieht. Bleibt grün, aber die
+Zuordnung zu LR-08 entfällt: die Höhenschwelle ist kein Argument gegen die
+Zeile „Normgrundlagen", die drei anderen sind es.
 
 ---
 
@@ -534,7 +547,7 @@ alles, was ich hier geschätzt habe.
 | 3 | LR-04 — Wertersatz-Feld (nach Freigabe S-2) | Head of Product Engineering | vor erstem Testnutzer |
 | 4 | LR-07, LR-09 — Konsistenzfixes, keine Entscheidung nötig | Head of Product Engineering | sofort möglich |
 | 5 | LR-03 — Normen bestellen (S-5) | Sandy | vor Umsetzung LR-02/LR-06 |
-| 6 | LR-02, LR-10, LR-11, LR-12 — sieben Praxis-Fragen | Prüfmeister | vor Entscheidung Sandy |
+| 6 | LR-02, LR-10, LR-11 — sechs verbleibende Praxis-Fragen (LR-12 am 01.09. beantwortet) | Prüfmeister | vor Entscheidung Sandy |
 | 7 | LR-08 — Konzept „Normgrundlagen"-Zeile | Product Designer | vor Launch |
 | 8 | LR-06 — auflösen, sobald Normtext vorliegt | Head of Legal & Compliance | nach Schritt 5 |
 

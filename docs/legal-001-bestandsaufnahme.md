@@ -603,13 +603,39 @@ Engineering.
 
 ### Kann warten
 
-VOB-Leibungsregel für übermessene Öffnungen (bereits bewusst zurückgestellt,
-korrekt so) · Barrierefreiheit nach BFSG (bei B2B nicht anwendbar, Ausnahme für
+~~VOB-Leibungsregel für übermessene Öffnungen (bereits bewusst zurückgestellt,
+korrekt so)~~ — **korrigiert am 2026-09-01, siehe Kasten unter dieser Liste** ·
+Barrierefreiheit nach BFSG (bei B2B nicht anwendbar, Ausnahme für
 Kleinstunternehmen greift zusätzlich) · Verbraucher-Streitschlichtung
 (Teilnahme bereits zutreffend abgelehnt) · Vollständige DIN-18365-Prüfung für
 den Bodenleger-Teil (habe ich noch nicht im Detail gegen den Code geprüft —
 kommt als eigener Punkt, sobald das Bodenleger-Gewerk auf demselben Stand ist
 wie Maler).
+
+> **⚠️ Korrektur vom 2026-09-01 (Head of Legal & Compliance)**
+>
+> Der durchgestrichene Satz oben ist **falsch** und wäre gefährlich geworden,
+> wenn ihn jemand als Freigabe gelesen hätte. Er stammt aus diesem Bericht,
+> geschrieben **bevor** ich die DIN 18363 recherchiert hatte, und sagte
+> sinngemäß: die zurückgestellte Leibungsregel ist in Ordnung so und kann
+> später umgesetzt werden.
+>
+> **Das Gegenteil ist der Fall.** DIN 18363 Abschnitt 5.2.3 (Fassung 2019)
+> sagt, dass Leibungen und beschichtete Rückflächen von Nischen „unabhängig
+> von ihrer Einzelgröße gesondert gerechnet" werden — also gerade auch dann,
+> wenn die zugehörige Öffnung übermessen wurde. `maler.ts` macht das heute
+> schon so und liegt damit richtig; die zurückgestellte „Verfeinerung" würde
+> korrektes Verhalten zerstören und dem Handwerker Geld wegnehmen.
+>
+> Maßgeblich ist ab sofort **VOB-003** in
+> `docs/vob-angebot-abstimmung.md`: **bitte nicht bauen**, bis der Normtext
+> vorliegt (VOB-011). Risikobewertung dazu: LR-06 in
+> `docs/legal-002-risikobewertung-vob.md`.
+>
+> Der Fund geht auf den Prüfmeister zurück, der den Widerspruch zwischen
+> beiden Dokumenten bemerkt hat. Er hatte recht: zwei Dateien in `docs/`, die
+> sich widersprechen, sind schlimmer als eine unvollständige — irgendwer liest
+> die falsche.
 
 ---
 

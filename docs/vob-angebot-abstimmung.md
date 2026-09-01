@@ -137,7 +137,7 @@ Details in `docs/legal-001-bestandsaufnahme.md`, Abschnitt B1. [Einschätzung]
 | VOB-003 | Geplante „VOB-Feinheit" zu Leibungen zeigt vermutlich in die **falsche Richtung** — bitte nicht bauen | Head of Product Engineering | ❌ |
 | VOB-004 | Übermessungshinweis erreicht das Kunden-PDF nicht (= G5 aus CoS-L-001) | Head of Product Engineering + Product Designer | ❌ |
 | VOB-005 | **Nebenleistungen** werden als eigene Positionen berechnet (Boden/Möbel abdecken) | Prüfmeister → dann Sandy | 🟠 |
-| VOB-006 | Höhenzuschlag: drei verschiedene Schwellen im Produkt (2,80 / 3,00 / 4,00 m), Norm sagt 3,50 m | Prüfmeister + Head of Product Engineering | 🟠 |
+| VOB-006 | Höhenzuschlag: drei verschiedene Schwellen im Produkt (2,80 / 3,00 / 4,00 m) — Normbegründung war falsch, Konsistenzfrage bleibt | Head of Product Engineering | ❌ |
 | VOB-007 | Die Zeile „Normgrundlagen" behauptet VOB-Konformität, die an mehreren Stellen nicht gegeben ist | Product Designer + Legal | ❌ |
 | VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen ungeklärt | Legal (nach VOB-011) | ⏳ |
 | VOB-009 | Türen/Fenster nach Stück statt nach Fläche | Prüfmeister | 🟠 |
@@ -223,7 +223,7 @@ steht an vier Stellen und hat drei verschiedene Werte:
 
 | Ort | Satz | Wirkung |
 |---|---|---|
-| `boden-normalisierer.ts` → `standardVerschnitt()` | **5 %** für Laminat, Vinyl, Linoleum, Parkett, Diele; **0 %** für Kork und Teppich | rechnet die Menge |
+| `src/lib/boden-normalisierer.ts` → `standardVerschnitt()` (**nicht** unter `mengen/` — dort sucht man es zuerst) | **5 %** für Laminat, Vinyl, Linoleum, Parkett, Diele; **0 %** für Kork und Teppich | rechnet die Menge |
 | `mengen/bewertung.ts` Zeile 94 | **„Belagverschnitt: 10 % (bei Diagonalverlegung 15 %)"** | steht als Annahme im Angebot |
 | `api/angebot-verfeinern/route.ts` | **12 %** Fliesen (Z. 34), **10 %** GK-Platten (Z. 42), **10 %** Vinyl im Beispiel-JSON (Z. 85) | Anweisung an GPT |
 | `mengen/aufnahme-hinweise.ts` Zeile 13 | rechnet `menge / 1.1` zurück, sucht dafür `/10\s*%\s*verschnitt/i` | greift nicht mehr, weil die Engine „5% Verschnitt" schreibt |
@@ -238,7 +238,8 @@ Die Rückrechnung in `aufnahme-hinweise.ts` ist derzeit harmlos, weil vorher der
 `berechnungsweg` gematcht wird. Sie ist aber eine Falle für den Nächsten, der
 dort etwas ändert.
 
-**Bitte:** einen Wert, eine Stelle. `standardVerschnitt()` ist die richtige —
+**Bitte:** einen Wert, eine Stelle. `standardVerschnitt()` in
+`src/lib/boden-normalisierer.ts` ist die richtige —
 den Text in `bewertung.ts` und den GPT-Prompt daraus speisen statt sie
 danebenzuschreiben. Der Fischgrät-/Diagonal-Aufschlag (15 %) darf bleiben, wo
 er ist, solange er auch nur aus einer Quelle kommt.
@@ -417,22 +418,40 @@ VOB-007). Sag mir, was du kennst.
 | `default-prices.ts` | `Zuschlag hohe Räume (>4 m)` | 5,00 €/m² |
 | `vollstaendigkeit/maler-extras.ts` (`SCHWELLE`) | `Erschwerniszuschlag Raumhöhe > 3m` | 15 % |
 | `default-prices.ts` Zeile 3442 | `Erschwerniszuschlag Raumhöhe > 3m` | % |
-| DIN 18363 4.1.1 / 4.2.5 | Gerüst ist Nebenleistung **bis 3,50 m**, Besondere Leistung darüber | — |
+| DIN 18363 4.1.1 / 4.2.5 | *Gerüst* ist Nebenleistung **bis 3,50 m**, Besondere Leistung darüber | — |
 
 Drei Schwellen (2,80 / 3,00 / 4,00 m) und zwei Einheitensysteme (€/m² und %)
 für dieselbe Erschwernis. Welcher Zuschlag greift, hängt davon ab, welcher Weg
 die Position erzeugt hat.
 
-**Der normbezogene Teil:** Zwischen 2,80 m und 3,50 m berechnet das Produkt
-einen Zuschlag für etwas, das DIN 18363 ausdrücklich als Nebenleistung führt.
-Wieder keine Preisfrage — aber wieder ein Widerspruch zur Zeile
-„Normgrundlagen" auf demselben Blatt. [Einschätzung]
+> **Korrektur vom 2026-09-01 nach Rückmeldung des Prüfmeisters.** Ursprünglich
+> stand hier, das Produkt berechne zwischen 2,80 m und 3,50 m „einen Zuschlag
+> für etwas, das die Norm als Nebenleistung führt". **Das war schief, und der
+> Prüfmeister hat es zu Recht auseinandergenommen:** DIN 18363 4.1.1 sagt, dass
+> das **Gerüst** bis 3,50 m im Einheitspreis enthalten ist und nicht als eigene
+> Position abgerechnet werden darf. Das ist keine Aussage darüber, ob ein
+> Betrieb für hohe Räume einen **Erschwerniszuschlag** verlangen darf. Zwei
+> verschiedene Fragen.
+>
+> Seine Praxis-Antwort dazu ist gleich mitgeliefert: Ein Zuschlag ab drei
+> Metern ist auf dem Bau völlig üblich, weil man dort nicht mehr von der Leiter
+> aus arbeitet, sondern Böcke stellt — und das kostet Zeit. Die 3-m-Schwelle
+> ist damit **fachlich richtig**, nicht norm-widrig. Frage 4 unten ist damit
+> beantwortet.
 
-**An den Prüfmeister:** Ab welcher Raumhöhe fängt ein Maler in der Praxis
-tatsächlich an, einen Zuschlag zu rechnen? Ich vermute, die Norm-Grenze von
-3,50 m ist praxisfern, weil man ab etwa 3 m nicht mehr von der Leiter aus
-sinnvoll arbeitet. Wenn das so ist, ist die 3-m-Schwelle die richtige und die
-Norm die falsche Referenz — dann gehört sie nur nicht als „VOB/C" verkauft.
+**Was bleibt — und das ist unverändert ein Befund:** nicht die Höhe der
+Schwelle, sondern dass es **drei** davon gibt. 2,80 m im Katalog, 3,00 m in
+der Engine, 4,00 m für die nächste Stufe, dazu €/m² gegen %. Derselbe Raum
+bekommt je nach Weg 2,50 €/m² oder 15 %. Das ist eine reine
+Konsistenzfrage — rechtlich harmlos, für den Nutzer aber nicht erklärbar, und
+im Streit mit einem Endkunden schlecht zu verteidigen, wenn zwei Angebote
+desselben Betriebs denselben Fall unterschiedlich berechnen.
+
+**Was NICHT bleibt:** die Normbegründung. Der Zuschlag als solcher ist
+zulässig und üblich; ich hatte ihn fälschlich gegen die Gerüst-Regel gestellt.
+Für VOB-007 ändert das nichts — die Zeile „Normgrundlagen" gehört trotzdem
+weg, nur eben aus den anderen Gründen (Verschnitt als Menge, Nebenleistungen
+als eigene Positionen, fehlende Einbeziehung), nicht wegen der Höhenschwelle.
 
 **An Head of Product Engineering:** Unabhängig davon, welche Schwelle gewinnt —
 eine reicht. Aktuell kann derselbe Raum je nach Weg 2,50 €/m² oder 15 %
@@ -651,6 +670,40 @@ Frage 7 in der Liste unten.
 
 ---
 
+## Rückmeldungen
+
+*(Neue Rückmeldungen hier oben anfügen, mit Datum und von wem.)*
+
+### 2026-09-01 — Prüfmeister, drei Punkte
+
+1. **Widerspruch zwischen zwei Legal-Dokumenten aufgedeckt.** In
+   `legal-001-bestandsaufnahme.md` stand unter „Kann warten", die
+   zurückgestellte Leibungsregel sei „korrekt so" — direkt gegenläufig zu
+   VOB-003 („bitte nicht bauen"). Beide Dateien lagen nebeneinander in `docs/`.
+   **Berechtigt und wichtig:** Der Bericht entstand vor der DIN-Recherche und
+   wurde danach nicht nachgezogen. Korrigiert am 2026-09-01 mit einem
+   Korrekturkasten an der Stelle; maßgeblich ist VOB-003. Mein Fehler, nicht
+   seiner — und genau die Sorte Fehler, die in einer Dokumentenlandschaft
+   Schaden anrichtet, weil jemand die falsche Datei liest.
+2. **VOB-006 fachlich richtiggestellt.** Ich hatte die Gerüst-Nebenleistung
+   (DIN 18363 4.1.1, bis 3,50 m) gegen den Erschwerniszuschlag für hohe Räume
+   gestellt — zwei verschiedene Fragen. Der Zuschlag ist ab drei Metern
+   branchenüblich, weil man dort Böcke statt Leiter braucht. Begründung in
+   VOB-006 ersetzt, Frage 4 damit beantwortet. Sein Hinweis, dass die
+   **Schlussfolgerung** (Zeile „Normgrundlagen" gehört weg) trotzdem trägt,
+   stimmt — sie trägt aus den anderen drei Gründen.
+3. **Pfadangabe präzisiert.** `standardVerschnitt()` liegt in
+   `src/lib/boden-normalisierer.ts`, nicht unter `mengen/`. In VOB-002 jetzt
+   ausgeschrieben. (Nebenbei: in `pruefmeister-testfaelle-archiv.md`, Zeilen
+   341 und 355, steht noch der alte Pfad `mengen/gewerke/boden.ts` — dort war
+   die Funktion vermutlich mal. Nur zur Kenntnis, das Archiv fasse ich nicht
+   an.)
+
+**Offen aus dieser Rückmeldung:** nichts. Die Fragen 1, 2, 3, 5, 6 und 7 warten
+weiterhin auf ihn.
+
+---
+
 ## Offene Fragen an den Prüfmeister — gesammelt
 
 Damit du sie in einem Durchgang beantworten kannst, ohne die Datei zu
@@ -666,8 +719,11 @@ Entscheidung, und die kann man nur treffen, wenn man beide Seiten kennt.
 3. **VOB-005** — Ist „Boden abdecken" / „Möbel abdecken" als eigene Position
    auf dem Angebot branchenüblich? Und wenn ja: ist der m²-Preis fürs
    Streichen dann entsprechend knapper?
-4. **VOB-006** — Ab welcher Raumhöhe rechnet ein Maler in der Praxis einen
-   Zuschlag? 2,80 m, 3 m, oder erst wenn wirklich ein Gerüst nötig wird?
+4. ~~**VOB-006** — Ab welcher Raumhöhe rechnet ein Maler in der Praxis einen
+   Zuschlag?~~ **✅ beantwortet am 2026-09-01:** Ab drei Metern ist ein Zuschlag
+   völlig üblich — dort arbeitet man nicht mehr von der Leiter, sondern stellt
+   Böcke, und das kostet Zeit. Die 3-m-Schwelle bleibt. Offen bleibt allein die
+   Konsistenz (drei Schwellen, zwei Einheiten).
 5. **VOB-009** — Türen und Fenster nach Stück: branchenüblich, oder siehst du
    Flächenabrechnung?
 6. **VOB-012** — Zieht ihr bei Sockelleisten die Türbreiten ab, oder messt ihr
