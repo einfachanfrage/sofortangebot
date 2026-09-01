@@ -707,4 +707,65 @@ Damit die Liste nicht als Generalkritik gelesen wird — sie ist es nicht:
 Rückmeldung Prüfmeister zu den sieben Fragen, parallel VOB-002 und VOB-010
 (reine Konsistenzfixes, keine Entscheidung nötig)*
 
+## Nachtrag (2026-09-01) — Risikobewertung zu diesen Befunden liegt vor
+
+Sandy hat im Anschluss eine formale Risikobewertung angefordert. Ergebnis:
+**`docs/legal-002-risikobewertung-vob.md`** — zwölf Risiken (LR-01 bis LR-12)
+nach Severity × Likelihood, mit Optionentabellen und Restrisiko je Punkt.
+
+**Zuordnung VOB-ID → Risiko-ID**, damit man nicht suchen muss:
+
+| VOB | LR | Score | Level |
+|---|---|---|---|
+| VOB-004 Übermessungshinweis fehlt im PDF | LR-01 | 16 | 🔴 RED |
+| VOB-001 Verschnitt als Mengenaufschlag | LR-02 | 12 | 🟠 ORANGE |
+| VOB-011 Normtexte kaufen | LR-03 | 12 | 🟠 ORANGE |
+| VOB-003 Leibungs-„Fix" | LR-06 | 12 → 3 | 🟠 → 🟢 |
+| VOB-002 drei Verschnittsätze | LR-07 | 9 | 🟡 YELLOW |
+| VOB-007 „Normgrundlagen"-Zeile | LR-08 | 9 | 🟡 YELLOW |
+| VOB-010 Prozent im Titel, Euro im Preis | LR-09 | 9 | 🟡 YELLOW |
+| VOB-005 Nebenleistungen als eigene Positionen | LR-10 | 4 | 🟢 GREEN |
+| VOB-012 Türabzug bei Sockelleisten | LR-11 | 4 | 🟢 GREEN |
+| VOB-006 Höhenzuschlag-Schwellen | LR-12 | 4 | 🟢 GREEN |
+| VOB-009 Türen/Fenster nach Stück | — | — | bewusst kein Risiko |
+| VOB-008 DIN-18365-Schwellenwert | — | — | in LR-03 enthalten |
+
+**Drei Dinge daraus, die für die Arbeit an dieser Datei zählen:**
+
+**1. VOB-004 ist das einzige rote Risiko** — und zwar wegen der
+Eintrittswahrscheinlichkeit, nicht wegen der Schadenshöhe. Wandflächen
+nachzumessen ist die klassischste Handwerker-Streitigkeit überhaupt, dafür
+braucht der Kunde einen Zollstock. Mit dem Satz auf dem PDF fällt es von 16 auf
+6. Zwei Stunden Arbeit, rot wird gelb — das beste Aufwand-Wirkung-Verhältnis im
+ganzen Register.
+
+**2. VOB-003 ist durch das Aufschreiben allein von orange auf grün gefallen.**
+Solange „nicht bauen" in der Datei steht, ist die Eintrittswahrscheinlichkeit 1
+statt 4. Das ist das einzige Risiko, das sich so verhält — bitte die Markierung
+deshalb nicht kommentarlos entfernen, sondern erst, wenn ich VOB-003 nach dem
+Normkauf aufgelöst habe.
+
+**3. VOB-012 bleibt grün, aber aus einem unbefriedigenden Grund:** Niemand
+verklagt uns dafür, dass ein Handwerker zu wenig berechnet hat. Rechtlich ist
+das Risiko klein, fachlich ist es derselbe Fehler wie VOB-004, nur in die
+andere Richtung. Ich würde ihn trotzdem fixen — nicht wegen der Haftung,
+sondern weil ein Werkzeug, das die Übermessung an der Wand großzügig anwendet
+und an der Sockelleiste gar nicht, für den Nutzer nicht erklärbar ist.
+
+**Was ich ausdrücklich NICHT als Risiko führe**, damit hier niemand daran
+arbeitet: die Übermessungsregel als solche (korrekt und branchenüblich), die
+Stückpreise für Türen und Fenster (VOB-009 — Pauschalpreise sind zulässig und
+für Verbraucher verständlicher), und die Höhe der Zuschläge (frei kalkulierbar,
+es gibt keine Preisverordnung im Bauhandwerk).
+
+**Die Kernbeobachtung aus der Bewertung:** In keinem der zwölf Risiken wird
+falsch gerechnet. Die Übermessung stimmt, die Zuschläge sind branchenüblich,
+die Leibungen sind richtig. Was fehlt, ist durchgehend die Erklärung auf dem
+Papier, das beim Endkunden landet — plus an zwei Stellen die Konsistenz
+zwischen dem, was die Engine rechnet, und dem, was sie darüber schreibt. Das
+ist die gute Ausgangslage: Eine richtige Rechnung zu dokumentieren ist Arbeit
+von Stunden.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

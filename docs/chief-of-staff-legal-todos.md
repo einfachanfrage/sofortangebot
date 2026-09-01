@@ -321,4 +321,65 @@ in `pruefmeister-testfaelle.md` und `design-check.md`, Nachtrag hier. Alles mit
 
 ---
 
+## Nachtrag (2026-09-01) — formale Risikobewertung zum VOB-/Angebots-Komplex
+
+Auf Sandys Anforderung: **`docs/legal-002-risikobewertung-vob.md`** — zwölf
+Risiken (LR-01 bis LR-12) nach dem Severity-×-Likelihood-Rahmenwerk, mit
+Optionentabellen, Restrisiko und Überwachungsplan.
+
+**Ergebnis:** ein rotes, fünf orange, drei gelbe, drei grüne Risiken.
+
+**Die zwei Anpassungen am Standard-Rahmenwerk**, die man kennen muss, um die
+Zahlen zu lesen:
+
+1. Die Standard-Severity-Skala misst in Prozent des Vertragswerts. Hier gibt es
+   zwei Verträge — unser Abo mit dem Handwerker (ein paar hundert Euro im Jahr)
+   und sein Werkvertrag mit dem Endkunden (ein paar tausend je Auftrag). Ich
+   bewerte im jeweils betroffenen Verhältnis und nenne die absolute
+   Größenordnung dazu.
+2. **Zwei Risikoebenen.** Fast alle VOB-Befunde treffen zuerst den Handwerker
+   (Ebene A), nicht uns (Ebene B). Uns erreichen sie über drei Wege: § 280 BGB
+   durch den Handwerker, UWG durch Mitbewerber, und Reputation. Der Fehler
+   wäre, Ebene A als „nicht unser Problem" abzuhaken — das Produktversprechen
+   ist ein belastbares Angebot, und ein Werkzeug, das systematisch angreifbare
+   Angebote erzeugt, verfehlt genau die Pflicht, die es verkauft. Damit ist man
+   wieder bei der Kardinalpflicht-Frage aus A5 des Erstberichts.
+
+**Für die Bündelung Richtung Sandy:**
+
+- **LR-01 (16, rot)** — Übermessungshinweis fehlt im Kunden-PDF. Hoch wegen der
+  Eintrittswahrscheinlichkeit, nicht wegen der Schadenshöhe. Fällt mit zwei
+  Stunden Arbeit auf 6 (gelb).
+- **LR-05 (12, orange)** — fehlende Unternehmer-Prüfung bei der Registrierung.
+  **Das einzige Risiko im Register, das direkt Sandys Geld betrifft:** Ohne
+  Button-Lösung kommt der Vertrag mit einem Verbraucher nach § 312j Abs. 3 BGB
+  gar nicht zustande. Eine Stunde Arbeit, danach grün.
+- **LR-04 (12, orange)** — fehlende Wertersatz-Erklärung. Trifft den
+  Handwerker, aber hart: Totalverlust des Auftragswerts im Widerrufsfall.
+- **LR-03 (12, orange)** — die Normlage steht nur auf Sekundärquellen. Das ist
+  der Punkt hinter **S-5** (Normtexte kaufen, ~150 €). Meine Empfehlung in der
+  Bewertung ist ausdrücklich: erst die Normen, dann der Anwalt — einen
+  Baurechtler dafür zu bezahlen, dass er uns vorliest, was in einer Norm für
+  75 € steht, wäre die falsche Reihenfolge.
+
+**Externe Beratung: noch nicht erforderlich.** Kein Punkt erfüllt die Kriterien
+für zwingende Mandatierung — keine Klage, keine Behördenanfrage, keine
+strafrechtliche Exposition. Empfohlen nach dem Normkauf und vor dem Launch:
+einmaliges Kurzgutachten eines Baurechtlers zur wirksamen Einbeziehung der
+VOB/C gegenüber Verbrauchern (1.500–3.000 €), getrennt davon die AGB-Haftung
+und die AI-Act-Einordnung durch einen IT-/Vertragsrechtler.
+
+**Ein Auslöser, den ich gesondert nennen möchte:** Sobald sich ein Endkunde
+erstmals über eine Menge beschwert, ist das kein Supportfall, sondern ein
+Anlass zur Neubewertung — bitte unabhängig vom Ausgang an mich weiterleiten.
+Der erste echte Fall sagt mehr über die tatsächliche Eintrittswahrscheinlichkeit
+als alles, was ich hier geschätzt habe.
+
+**Hinweis zur Privilegierung:** Die Bewertung ist nicht anwaltlich privilegiert
+und im Streitfall im Zweifel vorlagepflichtig. Das ändert nichts daran, dass
+wir Funde offen dokumentieren — es ist nur ein Grund, in solchen Dokumenten
+nüchtern zu formulieren.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
