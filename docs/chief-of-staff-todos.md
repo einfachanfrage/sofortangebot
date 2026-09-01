@@ -2425,5 +2425,78 @@ ihrem Rechner nicht löschen darf.
 
 ---
 
+## CoS-031 — Soll-Ist-Abgleich für ALLE Prüfmeister-Fälle: fünf Rechenfehler, eine gemeinsame Ursache
+
+**Datum:** 2026-08-31
+**Auftrag:** Sandy, direkt: „ich will zukünftig JEDEN testfall einsprechen
+können und er muss komplett fehlerfrei rauskommen … es müssen alle positionen
+immer zu 100 % stimmen."
+**Status:** ✅ umgesetzt, Suite **60 Dateien / 1.087 Tests grün**, `tsc`
+sauber, Lint für `src/` 0 Fehler. Live-Nachtest steht aus.
+
+**Was neu ist:** `src/lib/__tests__/pruefmeister-soll.test.ts` — die
+Soll-Lösungen aus `pruefmeister-testfaelle.md` und `-archiv.md` stehen jetzt
+als Code. 22 Fälle, 110 Prüfungen: für jeden Fall jede erwartete Position mit
+ihrer exakten Menge, jede ausdrücklich verbotene Position, und für JEDE
+erzeugte Position ein Katalogpreis. Angewandt sind dabei die seither
+getroffenen Entscheidungen (VOB-Übermessung, Verschnitt 5/15 %,
+Erschwerniszuschlag in Prozent), nicht die überholten Ursprungszahlen.
+
+**Beim ersten Lauf fielen fünf Fälle durch — alle fünf sind echte Fehler, die
+im Angebot Geld gekostet hätten:**
+
+1. **PM-005: die komplette Wandfläche eines Raums verschwand.** „Küche: Wände
+   und Decke streichen. Speisekammer: nur die Decke." — die Engine rechnete
+   beides richtig, die Vollständigkeitsprüfung löschte danach
+   „Wandflächen streichen — Küche" UND „Sockelleisten abkleben — Küche"
+   wieder heraus. Ursache: das Muster für „Wand" traf die umlautlose
+   Schreibweise `waende_streichen` nicht — also galt die Wand als „nicht
+   erwähnt", die schwache Erwähnungs-Regel schloss daraus „nur Decke", und der
+   Filter räumte auf. Die teuerste Position des Auftrags, still entfernt,
+   ohne Fehlermeldung. Dieselbe Fehlerklasse wie PM-026, nur eine Ebene tiefer.
+2. **PM-009: „Übergangsschiene 4 Stück" statt 1.** Die Stückzahl-Suche lief
+   über das ganze Transkript und nahm die erste Zahl, die sie fand — im Satz
+   „Flur, VIER mal eins achtzig … noch ne Übergangsschiene" also das Raummaß.
+   Vierfacher Preis. Zahlen zählen jetzt nur noch im Satzteil, in dem der
+   Übergang selbst vorkommt, und müssen unmittelbar davorstehen; „ne
+   Übergangsschiene" ist eine.
+3. **PM-025: Fischgrät bekam nur 5 % Verschnitt statt 15 %.** Das Muster
+   `fischgr[äa]t` traf `fischgraet` nicht — 14,7 m² statt 16,10 m².
+4. **PM-030: gar keine Dachschrägen-Position, dafür eine erfundene.** Der
+   Dachgeschoss-Zweig las nur die seitenweisen Felder. Nennt der Handwerker
+   die Schrägen als EINE Zahl („zusammen achtzehn Quadratmeter"), landet sie
+   in einem anderen Feld — das dort nie gelesen wurde. Die
+   Vollständigkeitsprüfung füllte die Lücke anschließend mit der Fläche des
+   **Kniestocks** (17 m² statt 17,08 m²): eine erfundene Zahl, die aussieht
+   wie ein Messwert. Beide Formulierungen führen jetzt zum selben Ergebnis,
+   und ohne echte Schrägenfläche wird nichts mehr gerechnet, sondern erinnert.
+5. **Zwei Wege für dieselbe Dachschrägenfläche zogen das Dachfenster
+   unterschiedlich ab** — je nachdem, welches Feld die Extraktion gefüllt
+   hatte. Jetzt beide gleich.
+
+**Die gemeinsame Ursache von drei der fünf Fehler: Umlaute.** Muster, die
+`wänd`, `fischgrät` oder `\w` verwenden, treffen die Schreibweise ohne Umlaut
+nicht — und `\w` ist in JavaScript `[A-Za-z0-9_]`, enthält also weder ä noch ö
+noch ü. Whisper, GPT und unsere eigenen Datenfelder schreiben aber mal so, mal
+so. Deshalb steht jetzt zusätzlich ein **Umlaut-Invarianz-Test** in derselben
+Datei: derselbe Auftrag, einmal mit und einmal ohne Umlaut, muss Position für
+Position dasselbe ergeben. Das prüft die Regel statt der drei Einzelfälle.
+
+**Eine Lehre über den Testaufbau selbst:** Mein erster Testlauf meldete
+zusätzlich drei Fehler, die es live gar nicht gibt — weil mein Aufbau ein
+Signal nicht durchreichte, das die echte Pipeline sehr wohl durchreicht
+(`signale.raeume`, Grundlage für die Scope-Prüfung je Raum). Ein Test, der die
+Produktionssignale nicht spiegelt, erfindet Fehler und verdeckt echte. Steht
+als Kommentar in der Datei, damit der nächste nicht darauf hereinfällt.
+
+**Ehrlich zur Grenze:** Dieser Test deckt alles ab der geprüften Extraktion ab
+— Mengen, Vollständigkeit, Gewerk- und Preiszuordnung. Den Schritt davor (aus
+Sprache wird Struktur) kann er nicht abdecken; die Raumdaten sind so gesetzt,
+wie die Extraktion sie bei korrekter Arbeit liefern muss. Weicht sie live
+davon ab, ist das ein Extraktions-Befund und kein Rechenfehler — und genau
+diese Unterscheidung war bisher nicht möglich.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

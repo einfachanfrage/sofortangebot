@@ -119,10 +119,25 @@ const NUR = String.raw`(?:nur|blo[sß]{1,2}|lediglich|ausschlie[sß]{1,2}lich|ei
 // vorher lokal in maler-basis.ts (istBodenSchutz) und maler.ts
 // (hatDeckenSignal) umschifft — hier jetzt an der gemeinsamen Quelle
 // behoben, die von beiden mitbenutzt wird.
+//
+// Katalog-/Soll-Audit 2026-08-31 (Sandy: „es müssen alle positionen immer zu
+// 100 % stimmen"): Dieselbe Umlaut-Falle, vor der der Kommentar oben warnt,
+// steckte noch im Muster selbst. `wänd\w*|wand` traf die UMLAUTLOSE
+// Schreibweise nicht — und genau die schreibt unsere eigene Extraktion:
+// `waende_streichen`. Folge im Alltagsfall „Wände und Decke streichen":
+// „Wände" wurde nicht als erwähnt erkannt, „Decke" schon, die schwache
+// Erwähnungs-Regel schloss daraus „nur Decke" — und die
+// Vollständigkeitsprüfung löschte anschließend „Wandflächen streichen" UND
+// „Sockelleisten abkleben" aus dem fertigen Angebot. Die teuerste Position
+// des Auftrags, still entfernt, ohne dass irgendwo ein Fehler auftauchte.
+// Dieselbe Fehlerklasse wie PM-026, nur eine Ebene tiefer.
+//
+// Deshalb decken die Muster ab jetzt beide Schreibweisen ab: mit Umlaut
+// (Mensch/Whisper) und in der ae/oe-Form (unsere Datenfelder).
 const FLAECHE = {
-  waende: String.raw`(?:wänd\w*|wand)`,
+  waende: String.raw`(?:w(?:ä|ae)nd\w*|wand)`,
   decke: String.raw`(?:(?<!ab)decke\w*)`,
-  boden: String.raw`(?:b[oö]den|boden)`,
+  boden: String.raw`(?:b(?:ö|oe)den|boden)`,
 }
 // Optionaler Artikel/Präposition zwischen Einschränkung und Fläche: "die", "an den", …
 const LUECKE = String.raw`(?:\s+(?:die|den|der|das|an|am|auf|nur)\b)*\s+`

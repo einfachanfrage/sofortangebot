@@ -140,7 +140,7 @@ export function standardVerschnitt(belag: BelagTyp | string | undefined): number
 }
 
 /** Muster-/Winkelverlegung braucht mehr Zuschnitt als gerade Verlegung. */
-export const MUSTER_VERLEGUNG = /diagonal|fischgr[äa]t|schr[äa]g\s*verlegt|45\s*grad|45°/i
+export const MUSTER_VERLEGUNG = /diagonal|fischgr(?:ä|ae|a)t|schr(?:ä|ae|a)g\s*verlegt|45\s*grad|45°/i
 
 /**
  * Verschnittsatz inklusive Verlegeart — die Form, die BEIDE Wege benutzen

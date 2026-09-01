@@ -49,7 +49,10 @@ function belagLabel(belag: string | undefined, typ: BelagTyp): string {
 // diesen Treffer fiel Fischgrät-Parkett auf `standardVerschnitt()` zurück,
 // die für Parkett 0% liefert (siehe oben) — schlechter als sogar der falsche
 // Standard für gerade Verlegung (dort wären es bei Laminat/Vinyl 5%).
-const MUSTER_MIT_MEHR_VERSCHNITT = /diagonal|fischgr[äa]t/i
+// Soll-Audit 2026-08-31: umlautlose Schreibweise („fischgraet") ergänzt —
+// dieselbe Falle wie bei den Flächen-Mustern. Trifft das Muster nicht, fällt
+// Fischgrät auf den Standard-Verschnitt zurück und das Angebot ist zu klein.
+const MUSTER_MIT_MEHR_VERSCHNITT = /diagonal|fischgr(?:ä|ae|a)t/i
 
 export function bodenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []

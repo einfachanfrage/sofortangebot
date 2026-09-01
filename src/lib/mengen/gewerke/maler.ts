@@ -144,7 +144,15 @@ export function malerEngine(daten: any): MengenErgebnis {
     // bekommen eine eigene Fläche (dachschraege_flaeche_m2) und eine eigene Position.
     const dgUserFlaeche = (dachschraege_flaeche_raw as number | null)
     const hatDachschraegeArbeit = kontext.istDachschraege || /dachschr/i.test(arbeitenStr)
-    const hatEchteWandArbeit = /w[aä]nde?\b|wandfl|decke/i.test(arbeitenStr)
+    // Soll-Audit 2026-08-31: `w[aä]nde?\b` traf unser eigenes Feldformat NICHT.
+    // In „waende_streichen" folgt auf „waende" ein Unterstrich — und der zählt
+    // als Wortzeichen, also gibt es dort keine Wortgrenze. Folge im
+    // Dachgeschoss: ein Raum mit Wänden UND Schrägen galt als reiner
+    // Schrägen-Raum, die Schrägenfläche aus dem Feld wurde nie zu einer
+    // Position, und die Vollständigkeitsprüfung erfand stattdessen eine mit
+    // der Fläche des Kniestocks. Ohne Wortgrenze, dafür mit beiden
+    // Schreibweisen.
+    const hatEchteWandArbeit = /w(?:ä|ae)nde?|wandfl|decke/i.test(arbeitenStr)
     const istDachschraege = hatDachschraegeArbeit && !hatEchteWandArbeit
     const dachschraegeSeparat = hatDachschraegeArbeit && hatEchteWandArbeit
     const dgLinksM2: number | null = (dgLinks as number | null) ?? (dgJeSeite as number | null)
@@ -416,8 +424,19 @@ export function malerEngine(daten: any): MengenErgebnis {
           annahmen: [],
         })
       }
-      if (dgLinksM2 !== null || dgRechtsM2 !== null) {
-        const brutto = round2((dgLinksM2 ?? 0) + (dgRechtsM2 ?? 0))
+      // Soll-Audit 2026-08-31 (PM-030): Der Dachgeschoss-Zweig kannte NUR die
+      // seitenweisen Felder (links/rechts/je Seite). Sagt der Handwerker die
+      // Schrägen als EINE Zahl („die Dachschrägen zusammen achtzehn
+      // Quadratmeter"), landet sie in `dachschraege_flaeche_m2` — und dieses
+      // Feld wurde hier nie gelesen. Ergebnis: gar keine Dachschrägen-Position,
+      // obwohl die Fläche sauber erkannt war. Die Vollständigkeitsprüfung hat
+      // die Lücke dann mit der Kniestockfläche „gefüllt", also mit einer
+      // falschen Zahl. Beide Formulierungen führen jetzt zum selben Ergebnis.
+      const dgGesamtM2 = (dgLinksM2 !== null || dgRechtsM2 !== null)
+        ? round2((dgLinksM2 ?? 0) + (dgRechtsM2 ?? 0))
+        : (dgUserFlaeche != null && dgUserFlaeche > 0 ? dgUserFlaeche : null)
+      if (dgGesamtM2 !== null) {
+        const brutto = dgGesamtM2
         // PM-007: bei "normale Größe" (keine Maße genannt) rät GPT selbst
         // eine Fenstergröße und markiert das ehrlich mit `annahme: true` —
         // dabei greift GPT auf sein generisches "normales Fenster" zurück
@@ -437,9 +456,12 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({
           beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`,
           menge: Math.max(0, netto), einheit: 'm²', konfidenz: 'high',
-          berechnungsweg: dgFensterFl > 0
-            ? `Links ${dgLinksM2 ?? 0} m² + Rechts ${dgRechtsM2 ?? 0} m² = ${brutto} m² − Dachfenster ${dgFensterFl} m²`
-            : `Links ${dgLinksM2 ?? 0} m² + Rechts ${dgRechtsM2 ?? 0} m² = ${brutto} m²`,
+          berechnungsweg: (() => {
+            const basis = (dgLinksM2 !== null || dgRechtsM2 !== null)
+              ? `Links ${dgLinksM2 ?? 0} m² + Rechts ${dgRechtsM2 ?? 0} m² = ${brutto} m²`
+              : `Dachschrägenfläche ${brutto} m²`
+            return dgFensterFl > 0 ? `${basis} − Dachfenster ${dgFensterFl} m²` : basis
+          })(),
           annahmen: [],
         })
       }
@@ -532,7 +554,25 @@ export function malerEngine(daten: any): MengenErgebnis {
       // Dachschrägen im selben Raum wie normale Wände: eigene Position mit eigener
       // Fläche — kapert NICHT die Wandfläche (siehe dachschraegeSeparat/dgUserFlaeche).
       if (dachschraegeSeparat && dgUserFlaeche != null && dgUserFlaeche > 0) {
-        positionen.push({ beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`, menge: dgUserFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Dachschrägenfläche ${dgUserFlaeche} m²`, annahmen: [...anstrichAnnahmen] })
+        // Soll-Audit 2026-08-31: Dieser Zweig zog das Dachfenster nicht ab, der
+        // Links/Rechts-Zweig weiter oben schon — dieselbe Leistung, zwei
+        // Ergebnisse, je nachdem welches Feld die Extraktion gefüllt hat.
+        // Jetzt beide gleich (unser Dachfenster-Standard 0,78 × 1,18 m, siehe
+        // Kommentar oben).
+        const dgFensterFlSep = round2(dgFenster.reduce((s: number, f: any) => {
+          const breite = f.annahme ? 0.78 : (f.breite ?? 0.78)
+          const hoehe = f.annahme ? 1.18 : (f.hoehe ?? 1.18)
+          return s + (f.anzahl ?? 1) * breite * hoehe
+        }, 0))
+        const dgNettoSep = Math.max(0, round2(dgUserFlaeche - dgFensterFlSep))
+        positionen.push({
+          beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`,
+          menge: dgNettoSep, einheit: 'm²', konfidenz: 'high',
+          berechnungsweg: dgFensterFlSep > 0
+            ? `Dachschrägenfläche ${dgUserFlaeche} m² − Dachfenster ${dgFensterFlSep} m²`
+            : `Dachschrägenfläche ${dgUserFlaeche} m²`,
+          annahmen: [...anstrichAnnahmen],
+        })
       }
       if (anDecke && deckenflaecheM2 !== null) {
         positionen.push({ beschreibung: `Deckenfläche streichen ${anstricheDecke}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [...anstrichAnnahmen] })

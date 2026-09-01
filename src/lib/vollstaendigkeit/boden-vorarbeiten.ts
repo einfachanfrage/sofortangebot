@@ -220,17 +220,43 @@ export function pruefeUebergangsprofil(
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
 
   // Stückzahl: direkte Zahl oder "zwei", "drei" etc.
-  const zahlwoerter: Record<string, number> = { ein: 1, zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6 }
+  //
+  // Soll-Audit 2026-08-31 (PM-009): Die Zahlwort-Suche lief über das GANZE
+  // Transkript. Im Satz „Flur, VIER mal eins achtzig … noch ne
+  // Übergangsschiene" wurde damit das Raummaß zur Stückzahl — vier Schienen
+  // statt einer, viermal berechnet. Deshalb: Zahlen zählen nur noch in dem
+  // Satzabschnitt, in dem der Übergang selbst vorkommt, und ein Zahlwort muss
+  // unmittelbar davorstehen. Steht dort gar keine Zahl, entscheidet der
+  // Artikel: „ne/eine Übergangsschiene" ist eine.
+  const zahlwoerter: Record<string, number> = { ein: 1, eine: 1, zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6 }
+  // Zwei verschiedene Muster, mit Absicht:
+  //   UEBERGANG_SATZ — findet den Satzteil, in dem es wirklich um den Übergang
+  //     geht. Eng gehalten, sonst gewinnt ein früherer Satzteil über
+  //     „Profilleisten" (Sockelleisten!) und die Stückzahl wird dort gesucht.
+  //   NOMEN — erlaubt beim Zählen Zusammensetzungen mit Bindestrich
+  //     („Alu-Übergangsprofil"); `\w` allein deckt den Bindestrich nicht ab.
+  const UEBERGANG_SATZ = /überg[aä]ng|uebergang|anschlussprofil|alu-?profil/i
+  // `\w` ist in JavaScript [A-Za-z0-9_] — OHNE Umlaute. „Alu-Übergangsprofil"
+  // wäre daran zerbrochen (das „Ü" beendet die Zeichenklasse). Genau dieselbe
+  // Umlaut-Falle wie bei den Flächen-Mustern; hier deshalb ausgeschrieben.
+  const WORTZEICHEN = 'A-Za-zÄÖÜäöüß0-9_-'
+  const NOMEN = new RegExp(`[${WORTZEICHEN}]*(?:profil|schiene)n?`, 'i')
+  const abschnitt = lower
+    .split(/[.!?;,]/)
+    .map(s => s.trim())
+    .find(s => UEBERGANG_SATZ.test(s)) ?? ''
   let anzahl = 0
-  const numMatch = lower.match(/(\d+)\s*(?:stück\s*)?(?:alu-?)?(?:übergangs|anschluss)?profil/i)
-    ?? lower.match(/(\d+)\s*(?:tür|türe|zimmer|raum)?überg[aä]ng/i)   // "2 Türübergängen"
-    ?? lower.match(/(?:an|bei)\s+(?:den\s+|der\s+)?(\d+)\s*(?:zimmer|raum|tür|überg)/i)
+  const numMatch = abschnitt.match(/(\d+)\s*(?:stück\s*)?(?:alu-?)?(?:übergangs|uebergangs|anschluss)?(?:profil|schiene)/i)
+    ?? abschnitt.match(/(\d+)\s*(?:tür|türe|zimmer|raum)?überg[aä]ng/i)
   if (numMatch) {
     anzahl = parseInt(numMatch[1])
   } else {
-    for (const [wort, val] of Object.entries(zahlwoerter)) {
-      if (lower.includes(wort + ' ') || lower.includes(wort + 'e')) { anzahl = val; break }
-    }
+    const wortMatch = abschnitt.match(
+      new RegExp(`\\b(eine|ein|zwei|drei|vier|fünf|sechs)\\s+(?:[${WORTZEICHEN}]+\\s+){0,3}?${NOMEN.source}`, 'i'),
+    )
+    if (wortMatch) anzahl = zahlwoerter[wortMatch[1]] ?? 0
+    // „ne Schiene", „eine Übergangsschiene", „die Übergangsschiene" — Singular.
+    else if (abschnitt && !/\b(?:profile|schienen)\b/i.test(abschnitt)) anzahl = 1
   }
 
   // Bezeichnung — Wortwahl aus dem Transkript übernehmen (Profil vs. Schiene),

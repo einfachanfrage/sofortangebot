@@ -120,7 +120,12 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
     return d.includes('dachschräg') || d.includes('schräg') || d.includes('kniestock') || d.includes('deckenspiegel')
   })
   const schraegenPos = ergaenzt.find(p => (p.beschreibung ?? '').toLowerCase().includes('dachschrägen streich'))
-  const dsm2 = schraegenPos?.menge ?? dachPos?.menge ?? null
+  // Soll-Audit 2026-08-31: Der Rückfall auf `dachPos` nahm die Menge der
+  // ERSTBESTEN Dachgeschoss-Position — im Zweifel die des Kniestocks. Daraus
+  // entstand eine „Dachschrägen streichen"-Position mit der Kniestockfläche:
+  // eine erfundene Zahl, die aussieht wie ein Messwert. Ohne echte
+  // Schrägenfläche wird deshalb nichts mehr gerechnet, sondern erinnert.
+  const dsm2 = schraegenPos?.menge ?? null
 
   // PM-007: "Dachschräge Grundierung" wurde HIER unconditional draufgesetzt,
   // sobald irgendwo "Dachschräge"/"Kniestock" fiel — ganz ohne Prüfung, ob der
