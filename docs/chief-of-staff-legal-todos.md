@@ -255,4 +255,70 @@ sofort laufen (unter zwei Stunden Textarbeit, keine Entscheidung nötig).
 
 ---
 
+## Nachtrag zu CoS-L-001 (2026-09-01) — neue Abstimmungsdatei zum VOB-Thema
+
+Sandy hat direkt im Anschluss an den CoS-L-001-Bericht gebeten, das VOB-Thema
+und die Angebotserstellung vertieft zu prüfen — es soll fachlich und rechtlich
+lückenlos passen. Dafür gibt es jetzt eine eigene Datei:
+
+**`docs/vob-angebot-abstimmung.md`** — Legal ↔ Prüfmeister ↔ Head of Product
+Engineering ↔ Product Designer, ID-Schema **VOB-XXX**, zwölf Befunde.
+
+**Abgrenzung:** `pruefmeister-testfaelle.md` prüft, ob das Tool rechnet, was
+der Handwerker gesagt hat (Ist gegen Soll). Die neue Datei prüft, ob das
+**Soll selbst** der Abrechnungsnorm entspricht. Zeiger auf die neue Datei sind
+in `pruefmeister-testfaelle.md` und `design-check.md` angehängt.
+
+**Die vier Punkte, die der Chief of Staff kennen sollte:**
+
+1. **VOB-001 — Verschnitt landet in der abgerechneten Menge.** `boden.ts`
+   rechnet `menge = flaeche × (1 + verschnitt)`; bei 20 m² stehen 21 m² auf dem
+   Angebot. Verschnitt ist nach Fachkonsens Kalkulationssache und gehört in den
+   Einheitspreis, nicht als Mengenaufschlag auf die Aufmaßfläche. Rechtlich
+   dieselbe Konstruktion wie die Übermessung, aber ohne Norm im Rücken.
+   Entschärfend: er steht im Positionstitel und erreicht damit tatsächlich das
+   PDF. Der Umbau kostet den Betrieb nichts (gleicher Endbetrag, andere
+   Aufteilung). Wartet auf die Praxis-Einschätzung des Prüfmeisters, danach
+   Entscheidung Sandy.
+2. **VOB-003 — bitte einen geplanten Fix stoppen.** Im Kommentarkopf von
+   `vob-uebermessung.ts` und in `pruefmeister-testfaelle.md` steht als
+   zurückgestellte „VOB-Feinheit", dass Leibungen übermessener Öffnungen nicht
+   separat vergütet werden dürften. Nach meiner Recherche ist die Regel genau
+   umgekehrt (DIN 18363 Abschnitt 5.2.3: Leibungen werden „unabhängig von
+   ihrer Einzelgröße gesondert gerechnet"). `maler.ts` macht es heute schon
+   richtig; die geplante Verfeinerung würde korrektes Verhalten kaputtmachen.
+   Bitte nicht umsetzen, bis der Normtext vorliegt.
+3. **VOB-011 — kleine Ausgabe, große Wirkung, braucht Sandys Freigabe.** Ich
+   arbeite bei allem VOB-Bezogenen mit Sekundärquellen; der Originaltext von
+   DIN 18363 und DIN 18365 ist kostenpflichtig. Rund **150 € für beide Normen**
+   (DIN Media). Diese zwei Dokumente bestimmen, wie jedes Angebot im Produkt
+   gerechnet wird — bei VOB-003 hängt an einem einzigen Satz, ob eine geplante
+   Änderung Schaden anrichtet, und bei VOB-008 nennen zwei Quellen Werte, die
+   um den Faktor 25 auseinanderliegen. Bitte als **S-5** in
+   `entscheidungen-fuer-sandy.md` aufnehmen. *Meine Empfehlung: kaufen, vor der
+   Umsetzung von VOB-001 und VOB-003.*
+4. **VOB-012 — der einzige Befund zulasten des Handwerkers.** `maler.ts` und
+   `sockelleisten.ts` ziehen die Türbreiten (Standard 0,9 m) von der
+   Sockelleistenlänge ab. Beide Normen übermessen bei Längenmaß
+   Unterbrechungen unter 1 m, ziehen also gerade nicht ab. Dem Betrieb fehlen
+   bei drei Türen rund 2,7 lfdm. Möglicherweise dieselbe Codestelle wie der
+   PM-007-Fund.
+
+**Sonst offen, ohne Entscheidungsbedarf:** VOB-002 (drei verschiedene
+Verschnittsätze im Code — 5 %, 10 %, 12 %; der Handwerker liest 10 % als
+Annahme, während die Engine 5 % rechnet), VOB-005 (Nebenleistungen nach
+DIN 18363 als eigene Positionen berechnet), VOB-006 (drei Höhenschwellen),
+VOB-007 (die 7-pt-Zeile „Normgrundlagen" ist weder eine wirksame Einbeziehung
+noch sachlich durchgängig zutreffend), VOB-010 (= L6 aus dem Bericht).
+
+**Nächster Schritt:** sieben Praxis-Fragen an den Prüfmeister stehen am Ende
+der neuen Datei. VOB-002 und VOB-010 sind reine Konsistenzfixes und können
+sofort laufen.
+
+**Datei-Sicherung:** Neu ist `docs/vob-angebot-abstimmung.md`; Zeiger angehängt
+in `pruefmeister-testfaelle.md` und `design-check.md`, Nachtrag hier. Alles mit
+`docs-sichern.mjs` committet.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

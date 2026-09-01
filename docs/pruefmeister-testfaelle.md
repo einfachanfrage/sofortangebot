@@ -1883,5 +1883,60 @@ kein eigener direkter Austausch-Kanal, wird bei Bedarf ergänzt.
 
 ---
 
+## Hinweis vom Head of Legal & Compliance (2026-09-01) — neue Datei `docs/vob-angebot-abstimmung.md`
+
+Sandy hat gebeten, das VOB-Thema und die Angebotserstellung lückenlos
+durchzuprüfen. Dafür gibt es jetzt eine eigene Abstimmungsdatei:
+**`docs/vob-angebot-abstimmung.md`** (Legal ↔ Prüfmeister ↔ Head of Product
+Engineering ↔ Product Designer, ID-Schema VOB-XXX).
+
+**Abgrenzung zu dieser Datei hier:** Du prüfst, ob das Tool rechnet, was du
+gesagt hast (Ist gegen Soll). Die neue Datei prüft eine Ebene darunter, ob das
+**Soll selbst** der Abrechnungsnorm entspricht. Ein Fall kann hier grün sein
+und dort trotzdem rot.
+
+**Zwei Dinge, die dich unmittelbar betreffen:**
+
+**1. Bitte den Leibungs-Punkt NICHT umsetzen (VOB-003).** Unter
+„VOB-Übermessungsregel für Anstricharbeiten — Entscheidung & Umsetzung
+(2026-08-21)", Abschnitt „Was bewusst NICHT angefasst wurde", Punkt 3, steht
+als zurückgestellte Verfeinerung, dass Leibungen übermessener Öffnungen nicht
+separat vergütet werden dürften. Nach meiner Recherche ist die Regel **genau
+umgekehrt**: DIN 18363 Abschnitt 5.2.3 (Fassung 2019) sagt, dass Leibungen und
+beschichtete Rückflächen von Nischen „unabhängig von ihrer Einzelgröße
+gesondert gerechnet" werden — also gerade auch dann, wenn die Öffnung
+übermessen wurde. `maler.ts` macht das heute schon so und liegt damit
+vermutlich richtig; die geplante Verfeinerung würde korrektes Verhalten
+kaputtmachen und dem Handwerker Geld wegnehmen.
+
+Mein Vorbehalt dazu steht in der neuen Datei: ich arbeite mit Sekundärquellen,
+nicht mit dem Originaltext. Deshalb: nicht umsetzen, als „strittig, siehe
+VOB-003" markieren, ich löse es auf, sobald wir die Norm haben (VOB-011).
+
+**2. Sieben Fragen an dich**, gesammelt am Ende der neuen Datei unter „Offene
+Fragen an den Prüfmeister". Kurz zusammengefasst: Verschnitt als sichtbare
+Menge üblich? Fensterleibungen mit abgerechnet? „Boden abdecken" als eigene
+Position üblich? Ab welcher Raumhöhe Zuschlag? Türen/Fenster nach Stück? Bei
+Sockelleisten Türbreiten abziehen oder durchmessen? Und: fehlt dem Produkt eine
+Abrechnungsregel, die du aus der Praxis kennst?
+
+Ich brauche für jede davon deine **Praxis**-Sicht, nicht die Norm — die habe
+ich. Wo Praxis und Norm auseinandergehen, ist das eine bewusste Entscheidung,
+und die kann man nur treffen, wenn beide Seiten auf dem Tisch liegen.
+
+**Unterstützung für zwei deiner Funde:** PM-031 („So gerechnet"-Zeile zeigt
+eine VOB-widrige Rechnung, die der abgerechneten Position widerspricht) hast du
+als kosmetisch eingeordnet — für die Abrechnung stimmt das, rechtlich nicht:
+zwei widersprüchliche Zahlen für dieselbe Fläche sind im Streitfall der Beleg
+dafür, dass die höhere nicht plausibel erklärt ist. Und PM-007
+(„Sockelleisten-Türabzug trotz ‚Türen: 0'") könnte dieselbe Codestelle
+betreffen wie VOB-012 — wer das eine anfasst, sollte das andere mitnehmen.
+
+Danke im Übrigen für `pruefmeister-testfaelle.md`. Ohne die dokumentierten
+Soll-Lösungen hätte ich nicht unterscheiden können, was Absicht ist und was
+Zufall — die halbe Prüfung wäre nicht möglich gewesen.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

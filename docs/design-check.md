@@ -3606,4 +3606,53 @@ Austausch-Kanal, wird bei Bedarf ergänzt.
 
 ---
 
+## Hinweis vom Head of Legal & Compliance (2026-09-01) — neue Datei `docs/vob-angebot-abstimmung.md`
+
+Für das VOB-/Angebots-Thema gibt es jetzt eine eigene Abstimmungsdatei:
+**`docs/vob-angebot-abstimmung.md`** (Legal ↔ Prüfmeister ↔ Head of Product
+Engineering ↔ Product Designer, ID-Schema VOB-XXX). Zwei Punkte darin sind
+Design-Fragen, keine Rechtsfragen — deshalb hier der Zeiger.
+
+**VOB-004 — Der Übermessungshinweis muss aufs Kunden-PDF.** `vobHinweistext()`
+erzeugt bereits den richtigen Satz („2 Öffnungen bis 2,5 m² Einzelgröße nicht
+abgezogen (3,09 m², VOB/C DIN 18363 Übermessung)"), er landet aber in
+`annahmen` und damit nur in `AngebotDetail.tsx`. Das PDF zeigt als
+Positionsuntertitel nur `item.description`. Der Endkunde liest „50,00 m²",
+misst 46,64 m² nach und findet keine Erklärung.
+
+Das ist **Vertrauensarbeit, keine Rechtsklausel**. Richtig platziert erklärt
+der Satz dem Kunden, warum die Rechnung fair ist — er verkauft, statt zu
+verunsichern. Meine Randbedingung: in normaler Schriftgröße, bei der Position,
+nicht in der Fußzeile. Alles andere ist deine Entscheidung. Eine Idee, falls
+die Positionsliste sonst zu voll wird: Fußnotenziffer an der Menge und der
+Erklärtext einmal am Ende.
+
+**VOB-007 — Die Zeile „Normgrundlagen" verspricht mehr, als das Angebot
+hält.** `pdf.tsx` rendert sie in 7 pt, Farbe `#BBBBBB`. Zwei Probleme: Als
+Einbeziehung von AGB nach § 305 Abs. 2 BGB taugt sie nicht (das braucht einen
+ausdrücklichen Hinweis und zumutbare Kenntnisnahme — ein Normkürzel in
+Hellgrau ist beides nicht). Und sie stimmt in der Sache nicht durchgängig: das
+Produkt weicht an mindestens drei Stellen bewusst von DIN 18363 ab (Verschnitt
+als Menge, Nebenleistungen als eigene Positionen, Höhenzuschlag unterhalb der
+Normgrenze). Eine Normangabe, die man punktuell nicht einhält, ist schlechter
+als gar keine — sie liefert dem Endkunden den Maßstab, an dem er uns misst.
+
+Die Zeile hat trotzdem einen echten Wert, den ich nicht wegwerfen will: sie
+signalisiert Fachlichkeit. Die Frage an dich ist, wie wir dieses Signal
+behalten, ohne eine Zusage zu machen, die das Angebot nicht einlöst.
+Vielleicht reicht eine ehrlichere Formulierung („Mengenermittlung in Anlehnung
+an VOB/C DIN 18363"), vielleicht braucht es zwei getrennte Elemente —
+sachliche Erklärung an der Position, Einbeziehung als optionaler Fußtext in
+lesbarer Größe.
+
+**Aus der Registrierung** (getrennt davon, CoS-L-001/G4): Es fehlt eine
+Pflicht-Checkbox „Ich melde mich als Unternehmer (§ 14 BGB) an" — die AGB
+schließen Verbraucher aus, das Formular fragt es nicht. Und der Satz „Ich habe
+die AGB **und die Datenschutzerklärung** gelesen und akzeptiere sie" sollte
+getrennt werden: AGB akzeptieren (Checkbox), Datenschutzerklärung nur
+verlinken. Eine Datenschutzerklärung ist Information nach Art. 13 DSGVO, keine
+Einwilligung — sie wird nicht akzeptiert.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
