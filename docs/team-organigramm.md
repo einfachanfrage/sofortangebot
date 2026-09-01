@@ -22,13 +22,13 @@ der Einzige mit Überblick über alle Fäden gleichzeitig.
                     (Koordination, Überblick, Go/No-Go —
                      entscheidet nie fachlich für andere)
                                     │
-    ┌───────────────┬──────────┬───┴────────┬───────────────┬───────────────┬───────────────┐
-    │               │          │             │               │               │
-Head of Product  Platform &  Prüfmeister  Product        Head of         Head of
-Engineering      Integrations  (QA)       Designer       Marketing       Finance
-                  Engineer                (UI/UX)        (CI/Marke)      (Kosten/
-                                                              │            Einnahmen)
-                                                    [geplant, laut Sandy:
+    ┌───────────────┬──────────┬───┴────────┬───────────────┬───────────────┬───────────────┬───────────────┐
+    │               │          │             │               │               │               │
+Head of Product  Platform &  Prüfmeister  Product        Head of         Head of         Head of
+Engineering      Integrations  (QA)       Designer       Marketing       Finance         Legal &
+                  Engineer                (UI/UX)        (CI/Marke)      (Kosten/        Compliance
+                                                              │            Einnahmen)     (Recht/Gewerke-
+                                                    [geplant, laut Sandy:                  Konformität)
                                                      Social Media, Blog/
                                                      Content, weitere ...]
 ```
@@ -239,6 +239,53 @@ möglicher Ausbau um Einnahmen-Tracking und Prognosen — evtl. als eigene
 zweite Position, falls sich das als zu viel für eine Rolle herausstellt.
 
 **Seit:** 19.08.2026.
+
+---
+
+## Head of Legal & Compliance
+
+*(NEU seit 01.09.2026 — auf Sandys dringende Anfrage direkt im Chat
+eingerichtet. War hier bereits als absehbare künftige Position vorgemerkt,
+siehe Anleitung unten.)*
+
+**Rolle:** Zwei Bereiche, beide bei dieser einen Position, weil sie beide
+juristisches Fachwissen brauchen, das sonst niemand im Team hat:
+
+1. **SaaS-/Digitalrecht:** Datenschutz (DSGVO/TTDSG), AGB/Nutzungsbedingungen,
+   Impressum, Haftungsausschlüsse, sowie Kennzeichnungs-/Transparenzpflichten
+   für den KI-Einsatz (u. a. EU AI Act) — sowohl auf der Landingpage als auch
+   im Produkt selbst.
+2. **Gewerke-/Baurecht für die Angebotserstellung:** VOB (insbesondere Teil
+   C, z. B. DIN 18363 Maler-/Lackierarbeiten, DIN 18365 Bodenbelagarbeiten),
+   Pflichtangaben auf einem rechtssicheren Angebot, rechtliche Prüfung der
+   bestehenden Zuschlags-/Abzugs-Logik und der Übermessungsregel (bisher nur
+   fachlich-praktisch entstanden, nicht juristisch geprüft — siehe
+   `docs/pruefmeister-testfaelle.md`, Abschnitt „VOB-Übermessungsregel für
+   Anstricharbeiten").
+
+**Governance:** Wie bei allen Positionen — eigene fachliche Einschätzungen
+und Vorschläge ja, aber Formulierungen mit echtem rechtlichem Risiko (AGB-
+Text, Datenschutzerklärung, Positionierungsfragen wie „müssen wir KI-Nutzung
+gegenüber Endkunden offenlegen") gehen über den Chief of Staff an Sandy zur
+Freigabe, bevor sie live gehen.
+
+**Koordination:**
+- `docs/chief-of-staff-legal-todos.md` (mit Chief of Staff, ID-Schema
+  CoS-L-XXX)
+- Bei Überschneidungen mit dem Produkt (z. B. Pflichtangaben im Angebots-PDF)
+  direkter Austausch mit Head of Product Engineering/Product Designer —
+  Austausch-Datei wird bei Bedarf ergänzt, sobald der erste konkrete Punkt
+  ansteht.
+
+**Erster Auftrag:** siehe CoS-L-001 in `docs/chief-of-staff-legal-todos.md`.
+
+**Offene Klärung:** Sandy erwähnte „GOB-Regelungen" als Beispiel — im
+Projekt bisher an mehreren Stellen VOB/DIN referenziert (z. B. PM-021-
+Folgefrage, Übermessungsregel). Chief of Staff hat das vorerst als VOB
+interpretiert; falls tatsächlich etwas anderes gemeint war, bitte mit Sandy
+klären.
+
+**Seit:** 01.09.2026.
 
 ---
 

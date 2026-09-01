@@ -87,11 +87,11 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
 | PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Vierter Nachtest komplett sauber: alle vier Positionen exakt Soll, „Boden schützen" wieder korrekt bepreist, keine offenen Funde mehr |
-| PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
-| PM-031 | Fassade Nordseite, einfacher Fall | ⏳ noch nicht eingesprochen (Vertrauens-Batch, siehe Dateiende) |
+| PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ✅ Beide Positionen live bestätigt exakt Soll |
+| PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | 🟡 Mengen exakt Soll. Zwei Funde: Wandflächen-Grundpreis weicht ab (11,50 € statt 9,50 €/m²); Erschwerniszuschlag-Bemessungsgrundlage zieht fälschlich den Abstellraum mit ein |
+| PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
+| PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
+| PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -1516,6 +1516,18 @@ Parkett verlegen, ganz normal gerade, kein Muster.“
 - Parkett verlegen, Verschnitt gerade 5%: 15,00×1,05=**15,75 m²**
 - **Keine** Sockelleisten-Position (nicht erwähnt)
 
+**Ist-Ergebnis (Sandy, 2026-08-31):** Karte „📦Kellerraum 2 Positionen" — Fertigparkett verlegen inkl. 5%
+Verschnitt (15,75 m²), Altbelag entfernen (15 m²). Entwurf, Raummaße 3×5 m:
+
+- Fertigparkett verlegen inkl. 5% Verschnitt: 15,75 m² × 42,00 € = 661,50 € — ✅ exakt Soll
+- Altbelag entfernen: 15 m² × 12,00 € = 180,00 € — ✅ exakt Soll
+- Keine Sockelleisten-Position — ✅ korrekt, wie erwartet (nicht erwähnt)
+
+**Ergebnis:** Komplett sauber — beide Mengen exakt Soll, keine Phantome, keine fehlenden Positionen, keine
+unerwartete Sockelleisten-Position.
+
+**Status:** ✅ Beide Positionen live bestätigt exakt Soll.
+
 ---
 
 ### PM-028 — Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel
@@ -1534,6 +1546,64 @@ grundieren und dann zweimal streichen. Ein Fenster, Standardmaß, eine Tür, nor
 - Sockelleisten abkleben: 15,00−0,90=**14,10 lfdm**
 - **Keine** Spachtel-Position (nicht erwähnt)
 
+**Ist-Ergebnis (Sandy, 2026-08-31, zusammen mit PM-029 nacheinander in EIN Angebot gesprochen, zwei
+getrennte Aufnahmen):** Karte „💼Arbeitszimmer 4 Positionen" — Voranstrich/Grundierung (37,5 m²),
+Wandflächen streichen 2x (37,5 m²), Boden schützen (14 m²), Sockelleisten abkleben (14,1 lfdm).
+Zusätzlich „📋Allgemein 1 Position" — Erschwerniszuschlag Altbau. Entwurf Arbeitszimmer (684,33 €),
+Raummaße 3,5×4 m, Höhe 2,5 m, 1 Tür, 1 Fenster:
+
+- Voranstrich/Grundierung: 37,5 m² × 6,00 € = 225,00 € — ✅ exakt Soll
+- **Wandflächen streichen 2×: 37,5 m² × 11,50 € = 431,25 €.** Menge exakt Soll (37,50 m²), **aber der
+  Einzelpreis (11,50 €/m²) ist neu und weicht vom Standard ab.** In jedem bisherigen Test dieser gesamten
+  Reihe — auch bei anderen Altbau-Fällen wie PM-011 (36 m² × 9,50 € = 342,00 €) — lag „Wandflächen
+  streichen 2x" durchgängig bei **9,50 €/m²**. Auch im selben Angebot bzw. derselben Sitzung (PM-026,
+  wenige Nachtests zuvor) war es noch 9,50 €/m². Kein ersichtlicher fachlicher Grund, warum Altbau den
+  Grund-Anstrichpreis selbst verändern sollte — dafür gibt es ja gerade den separaten
+  Erschwerniszuschlag Altbau. Sieht nach einem eigenständigen, neuen Preisfund aus, nicht nach Absicht.
+- Boden schützen: 14 m² × 1,20 € = 16,80 € — ✅ exakt Soll
+- Sockelleisten abkleben: 14,1 lfdm × 0,80 € = 11,28 € — ✅ exakt Soll
+- Keine Spachtel-Position — ✅ korrekt, wie erwartet (nicht erwähnt)
+
+**Erschwerniszuschlag Altbau (📋Allgemein): 20 % × 8,32 € = 166,40 €.** Der Satz selbst (20 %) ist exakt
+der neue Standardsatz für Altbau. Die Bemessungsgrundlage passt aber nicht zu „nur Arbeitszimmer"
+(684,33 €, davon 20 % wären 136,87 €) — sie passt stattdessen exakt zum GESAMTEN Angebot inklusive
+Abstellraum (684,33 + 147,20 = 831,53 €; 1 % gerundet 8,32 €; × 20 = 166,40 €). Nur das Arbeitszimmer
+wurde als Altbau beschrieben, der Abstellraum gar nicht erwähnt — trotzdem fließt seine Fläche mit in die
+Bemessungsgrundlage ein. Das passt zu der bereits dokumentierten, bewusst offenen Fachfrage bei PM-024
+(Erschwerniszuschläge landen ohne Raumbezug unter „Allgemein" und greifen dann auf die
+Gesamt-Angebots-Grundlage zurück, statt auf den einen Raum, auf den sich der Zuschlag eigentlich bezieht)
+— hier zum ersten Mal mit echter, spürbarer finanzieller Auswirkung, weil zwei unterschiedlich große
+Räume im selben Angebot stecken.
+
+**Ergebnis:** Alle vier eigenen Positionen des Arbeitszimmers sind mengenmäßig exakt Soll, aber zwei
+Funde: (1) ein neuer, unbegründeter Preisunterschied bei „Wandflächen streichen 2x" (11,50 € statt der
+sonst durchgängigen 9,50 €/m²), und (2) eine weitere, konkrete Bestätigung der offenen Fachfrage zur
+Erschwerniszuschlag-Bemessungsgrundlage — hier zieht sie fälschlich (oder zumindest fachlich fragwürdig)
+den nicht-Altbau-Abstellraum mit hinein.
+
+**Für Head of Product Engineering:** (1) Bitte prüfen, woher der 11,50-€-Preis für „Wandflächen streichen
+2x" in diesem Fall kommt — jeder andere Test, auch andere Altbau-Fälle, nutzt 9,50 €/m². (2) Die
+Altbau-Bemessungsgrundlage betrifft dieselbe offene Fachfrage wie bei PM-024 — hier aber mit einem
+konkreten Zahlenbeispiel, das zeigt, wie groß der Unterschied ausfallen kann (136,87 € bei raumgenauer
+Zuordnung vs. 166,40 € bei Gesamt-Angebot). Vielleicht hilft das, die Fachfrage an Sandy zu konkretisieren.
+
+**Nachtrag (Prüfmeister, nach PM-030):** Konkreter Verdacht zum 11,50-€-Rätsel gefunden. PM-030
+(Dachzimmer, gleiche Sitzung) zeigt „Kniestockwände/Dachschrägen streichen 2x" ebenfalls zu **11,50 €/m²**
+— und das ist eine eigene, separate Preiszeile, seit dem Matcher-Fix vom 20.08. bewusst getrennt von
+„Wandflächen streichen" geführt (siehe „Systemischer Fund" oben). Im PM-007-Archiv-Nachtest vom 25.08. lag
+genau diese Kniestock/Dachschräge-Zeile noch bei 11,00 €/m² — der Sprung auf 11,50 € seither ist also
+vermutlich eine ganz normale, von Sandy selbst vorgenommene Preisänderung an DIESER Zeile, keine Störung.
+Der eigentliche Verdacht: „Wandflächen streichen 2x" beim Arbeitszimmer hier greift versehentlich auf genau
+diese Kniestock/Dachschräge-Zeile zu, statt auf die korrekte Wandflächen-Zeile (9,50 €/m²) — zwei
+unterschiedliche Positionsarten, die denselben falschen Preis liefern, exakt zur selben Zeit, ist als Zufall
+unwahrscheinlich. Bitte den Preis-Matcher für „Wandflächen streichen 2x" im Altbau-Zweig genau darauf prüfen,
+ob er hier fälschlich in die Kniestock/Dachschräge-Kategorie rutscht.
+
+**Status:** 🟡 Mengen exakt Soll. Zwei Funde: (1) Wandflächen-Grundpreis weicht ohne ersichtlichen Grund
+vom Standard ab (11,50 € statt 9,50 €/m²) — konkreter Verdacht: Verwechslung mit der Kniestock/Dachschräge-
+Preiszeile, siehe Nachtrag. (2) Erschwerniszuschlag-Bemessungsgrundlage zieht fälschlich den nicht
+betroffenen Abstellraum mit ein — konkretes Beispiel für die offene Fachfrage aus PM-024.
+
 ---
 
 ### PM-029 — Abstellraum, Mini-Raum ohne jede Öffnung
@@ -1549,6 +1619,26 @@ Kein Fenster, keine Tür.“
 - Boden schützen: 2,00×1,80=**3,60 m²**
 - Sockelleisten abkleben: **7,60 lfdm** (kein Türabzug, da keine Tür)
 
+**Ist-Ergebnis (Sandy, 2026-08-31, zusammen mit PM-028 nacheinander in EIN Angebot gesprochen):** Karte
+„📦Abstellraum 3 Positionen" — Wandflächen streichen 1x (18,24 m²), Boden schützen (3,6 m²), Sockelleisten
+abkleben (7,6 lfdm). Entwurf (147,20 €), Raummaße 1,8×2 m, Höhe 2,4 m, 0 Türen, 0 Fenster:
+
+- **Wandflächen streichen 1×: 18,24 m² × 7,50 € = 136,80 € — ✅ Menge exakt Soll.** Erstmaliger Test von
+  „Wandflächen 1x" in dieser gesamten Reihe (bisher immer „zweimal" diktiert) — eigener, niedrigerer
+  Einzelpreis (7,50 €/m²) als die 2x-Variante (9,50 €/m²), ähnlich wie bei „Deckenfläche 1x" (7,00 €/m²)
+  vs. „Deckenfläche 2x" (11,00 €/m²) schon gesehen. Kein Vergleichswert aus früheren Tests vorhanden,
+  aber plausibel und rechnerisch korrekt.
+- Boden schützen: 3,6 m² × 1,20 € = 4,32 € — ✅ exakt Soll
+- Sockelleisten abkleben: 7,6 lfdm × 0,80 € = 6,08 € — ✅ exakt Soll, korrekt ohne Türabzug (kein
+  Fenster/keine Tür wurden auch sonst richtig mit 0 übernommen)
+
+**Ergebnis:** Komplett sauber — alle drei Mengen exakt Soll, korrekter Umgang mit dem öffnungslosen
+Mini-Raum (0 Türen, 0 Fenster), und die neue „1x"-Wandanstrich-Variante liefert einen eigenen, sinnvollen
+Einzelpreis. Kein Zusammenhang mit den beiden Funden bei PM-028 im selben Angebot — dieser Raum selbst ist
+sauber.
+
+**Status:** ✅ Alle drei Positionen live bestätigt exakt Soll.
+
 ---
 
 ### PM-030 — Dachzimmer 2, frischer Dachgeschoss-Fall
@@ -1558,13 +1648,76 @@ Kein Fenster, keine Tür.“
 ergeben achtzehn Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles
 zweimal streichen.“
 
-**Soll-Lösung:**
+**Soll-Lösung (korrigiert, siehe Korrektur-Hinweis unten):**
 - Kniestock-Umfang: 2×(4,50+4,00)=17,00 lfm; Kniestockwände: 17,00×1,00=**17,00 m²**
-- Dachschrägen: 18,00 m² minus Dachfenster-Standard (0,78×1,18=0,92 m²) = **17,08 m²**
-- Kniestockwände streichen 2×: 17,00 m²; Dachschrägen streichen 2×: 17,08 m²
+- Dachschrägen: **18,00 m²** — Dachfenster (0,78×1,18=0,92 m²) liegt unter der VOB-Übermessungsschwelle
+  (2,5 m²) und wird deshalb NICHT abgezogen, genau wie jedes andere Fenster/Tür ≤2,5 m² auch nicht
+  abgezogen wird (siehe Korrektur-Hinweis unten — ursprünglich hatte ich hier fälschlich 17,08 m² als Soll
+  angesetzt)
+- Kniestockwände streichen 2×: 17,00 m²; Dachschrägen streichen 2×: 18,00 m²
 - Boden schützen: 4,50×4,00=**18,00 m²** (Grundfläche)
 - Sockelleisten abkleben: nicht erwähnt — falls automatisch als Nebenleistung ergänzt (wie bei PM-007
   beobachtet), kein hartes Soll für die genaue Länge, nur plausibilisieren
+
+**Korrektur (Prüfmeister, nach Sandys Nachfrage und VOB-Recherche):** Meine ursprüngliche Soll-Lösung war
+falsch. Ich hatte die Dachfenster-Standard-Deduktion (0,92 m²) unhinterfragt aus PM-007 übernommen — die
+stammt aber von VOR der VOB-Übermessungsregel-Entscheidung (21.08.) und wurde bei genau dieser Entscheidung
+als „eigene, andere Ausmessungs-Konvention" bewusst außen vor gelassen, statt geprüft, ob sie noch Sinn
+ergibt. Sandy hat zu Recht nachgefragt, ob das nicht der VOB-Regel widerspricht.
+
+**Recherche-Ergebnis:** DIN 18363 (Maler- und Lackierarbeiten, die einschlägige ATV für genau diese
+Leistung — Dachschrägen streichen ist eine ganz normale Malerleistung, keine Dachdecker-/Zimmerer-Arbeit)
+regelt die Übermessung generisch für „Öffnungen"/„Aussparungen" bis 2,5 m² Einzelgröße, unabhängig davon,
+ob eine Leibung mitbehandelt wird — ohne Sonderregel für Dachflächenfenster oder geneigte Flächen. Ein
+Dachfenster mit 0,92 m² liegt weit unter dieser Schwelle. Rechtlich/normativ gilt also dieselbe Regel wie
+bei jedem Wandfenster: **kein Abzug.**
+
+**Damit ist PM-030s tatsächliches Ergebnis (Dachschrägen = 18,00 m², kein Abzug) korrekt — kein Bug.**
+Umgekehrt war die alte PM-007-Soll-Lösung (24,00 → 23,08 m², Dachfenster abgezogen) nach heutigem Stand
+der VOB-Entscheidung fachlich überholt; das damalige Ergebnis war zum Zeitpunkt des Tests (vor der
+VOB-Entscheidung) konsistent mit der damaligen Sonderregel, ist aber nach der 21.08.-Entscheidung nicht
+mehr die korrekte Zielrechnung. Empfehlung an Head of Product Engineering unten.
+
+**Ist-Ergebnis (Sandy, 2026-08-31):** Karte „🏠Dachzimmer 4 Positionen". Entwurf, Raummaße 4×4,5 m,
+**Raumhöhe „!"**, 0 Türen, 1 Fenster:
+
+- Kniestockwände streichen 2×: 17 m² × 11,50 € = 195,50 € — ✅ Menge exakt Soll (17,00 m²)
+- **Dachschrägen streichen 2×: 18 m² × 11,50 € = 207,00 € — ✅ korrekt, kein Bug** (siehe Korrektur oben:
+  kein Dachfenster-Abzug nötig, VOB-Regel greift genau wie bei jedem anderen Fenster ≤2,5 m²)
+- Boden schützen: 18 m² × 1,20 € = 21,60 € — ✅ exakt Soll (4,50×4,00=18,00 m²)
+- Sockelleisten abkleben: 16,1 lfdm × 0,80 € = 12,88 € — Menge entspricht 17,00 lfm Kniestock-Umfang minus
+  0,90 m Türbreite, **obwohl direkt daneben „Türen: 0" steht.** Das ist keine neue Entdeckung: exakt dasselbe
+  Zahlenbild (16,1 lfdm bei „Türen: 0") ist schon bei PM-007 dokumentiert und dort als offener, nicht-
+  blockierender Fund ins Archiv gewandert. Hier lediglich eine dritte Live-Bestätigung, dass der Fund noch
+  nicht behoben ist.
+- **Raumhöhe zeigt „!"** statt einer Zahl — ebenfalls keine neue Entdeckung, sondern derselbe, bereits bei
+  PM-007 dokumentierte Anzeige-Fund (seit die überflüssige Höhenfrage im Dachgeschoss-Zweig entfällt, hat
+  der Raum keinen Höhenwert mehr, aber die Kopfzeile zeigt dafür einen rohen Platzhalter statt z. B. „–").
+
+**Ergebnis:** Kniestockwände, Dachschrägen (nach Korrektur) und Boden schützen sind alle drei exakt/korrekt.
+Kein neuer Rechen-Bug bei den Flächen. Es bleibt aber ein echter Handlungsbedarf: der Code trägt vermutlich
+noch die alte, separate Dachfenster-Standard-Deduktion (0,92 m²) als eigene Sonderregel, die hier zufällig
+nicht mehr gegriffen hat (oder zwischenzeitlich schon entfernt wurde — beides würde zum beobachteten
+Ergebnis passen, ich kann von außen nicht unterscheiden, welches der Fall ist). Zusätzlich zwei bereits
+bekannte, unveränderte Kleinfunde aus dem PM-007-Archiv (Sockelleisten rechnet mit einer nicht vorhandenen
+Tür; Raumhöhe zeigt „!"), hier zum dritten Mal bestätigt, weiterhin offen.
+
+**Für Head of Product Engineering:** (1) Bitte prüfen und ggf. aufräumen: existiert im Code noch die alte
+Dachfenster-Standard-Deduktion (0,92 m², aus dem PM-007-Fix vom 16.–17.08., separat von
+`berechneOeffnungsabzugVob()`)? Falls ja, bitte entfernen bzw. das Dachfenster in dieselbe zentrale
+VOB-Funktion einreihen wie alle anderen Öffnungen — laut DIN 18363 gibt es keine Sonderregel für
+Dachflächenfenster, die 2,5-m²-Schwelle gilt generisch. Falls die Sonderregel schon entfernt wurde: bitte
+kurz bestätigen, dann ist das hier einfach nur eine schöne, saubere Live-Bestätigung. (2) Bereits bekannt
+aus PM-007-Archiv, hier erneut bestätigt: Sockelleisten zieht trotz „Türen: 0" eine Türbreite ab;
+Raumhöhe-Anzeige zeigt „!" statt Wert oder „–". (3) Siehe auch den Nachtrag bei PM-028 oben — der
+11,50-€/m²-Preis hier für Kniestock/Dachschräge 2x stützt den Verdacht, dass PM-028s „Wandflächen streichen
+2x" versehentlich genau diese Preiszeile trifft.
+
+**Status:** 🟡 Flächen (Kniestockwände, Dachschrägen, Boden schützen) alle korrekt — Dachschrägen-Ergebnis
+nach Korrektur der Soll-Lösung (Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, siehe oben)
+jetzt auch als richtig bestätigt. Zwei bereits bekannte, unveränderte Kleinfunde aus dem PM-007-Archiv
+erneut bestätigt
+(Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe zeigt „!").
 
 ---
 
@@ -1579,6 +1732,44 @@ mal eins vierzig. Einmal Fassadenfarbe drauf.“
 - 2 Fenster à 1,20×1,40=1,68 m², jedes einzeln ≤2,5 m² → VOB: kein Abzug
 - Fassadenfläche streichen 1×: **50,00 m²**
 - **Keine** Grundierung (nicht verlangt), keine Boden-/Deckenposition (Fassade)
+- Nachtrag: Wandhöhe 5 m liegt über 3 m — nach dem neuen Standardsatz (siehe „Erledigung PM-008/PM-015 und
+  PM-011") ist ein automatischer „Erschwerniszuschlag Raumhöhe > 3m" (15 %, Vorschlag) hier plausibel, auch
+  wenn in der ursprünglichen Soll-Lösung nicht mit aufgeführt
+
+**Ist-Ergebnis (Sandy, 2026-08-31):** Karte „🏠Fassade 2 Positionen". Chip „Wand / Fassade", Wandlänge
+10 m, Wandhöhe 5 m, 0 Türen, 2 Fenster. „So gerechnet: 10,00 m × 5,00 m − 2 Fenster (3,36 m²) = 46,64 m²".
+
+- **Fassadenfläche streichen 1×: 50 m² × 9,00 € = 450,00 € — ✅ Menge exakt Soll.** Die tatsächlich
+  abgerechnete Fläche ist korrekt die vollen 50,00 m² (kein Fensterabzug, VOB-Regel korrekt angewendet: 2
+  Fenster à 1,68 m², jedes ≤2,5 m²).
+- **Aber die „So gerechnet"-Zeile direkt daneben zeigt eine andere, falsche Rechnung: „10,00 m × 5,00 m −
+  2 Fenster (3,36 m²) = 46,64 m²".** Diese Erklärzeile zieht die beiden Fenster ab (VOB-widrig) UND
+  widerspricht der tatsächlich berechneten und berechneten Position direkt darüber (50,00 m² vs. hier
+  behauptete 46,64 m²). Zwei verschiedene Zahlen für dieselbe Fläche im selben Bildschirm — die Abrechnung
+  selbst ist richtig, nur der erklärende Text daneben ist es nicht.
+- Erschwerniszuschlag Raumhöhe > 3m (Vorschlag), Karte zeigt „Satz aus Preisliste": 15 % × 4,50 € =
+  67,50 € — ✅ rechnerisch korrekt (Bemessungsgrundlage = die einzige andere Fassade-Position, 450,00 €;
+  1 % davon gerundet 4,50 €; 15 × 4,50 = 67,50 €). Zusätzlich eine schöne, positive Bestätigung: die Karte
+  zeigt hier korrekt „Satz aus Preisliste" statt einer erfundenen Zahl — der Fix aus der „Fix-Notiz PM-024"
+  (Karte kann den %-Satz vor der Bepreisung noch nicht kennen) wirkt nachweislich auch bei einem
+  Fassaden-Objekt, nicht nur bei normalen Räumen.
+
+**Ergebnis:** Die tatsächlich berechnete und bepreiste Fassadenfläche ist exakt Soll (50,00 m², VOB-Regel
+korrekt angewendet, kein Fensterabzug), und der neue Erschwerniszuschlag (Wandhöhe > 3m) rechnet richtig
+und zeigt jetzt korrekt „Satz aus Preisliste" statt einer falschen Zahl. Ein eigenständiger, neuer Fund:
+die „So gerechnet"-Erklärzeile unter dem Chip zeigt eine andere, VOB-widrige Rechnung, die weder zur
+tatsächlichen Abrechnung noch zur VOB-Regel passt — rein kosmetisch/erklärend, ohne finanzielle Auswirkung,
+aber verwirrend, weil zwei widersprüchliche Zahlen nebeneinanderstehen.
+
+**Für Head of Product Engineering:** (1) NEU: Die „So gerechnet"-Erklärzeile im Fassaden-Chip rechnet den
+Fensterabzug fälschlich mit rein (46,64 m² statt der korrekt abgerechneten 50,00 m²) — widerspricht sowohl
+der VOB-Regel als auch der Position direkt darüber. Bitte die Erklärzeile an die tatsächliche (korrekte)
+Berechnung angleichen. (2) Positiv: „Satz aus Preisliste" statt einer Zahl funktioniert hier auch bei
+Fassaden-Objekten — die PM-024-Fix-Notiz greift also breiter als nur beim ursprünglich gemeldeten Fall.
+
+**Status:** 🟡 Fassadenfläche + Erschwerniszuschlag beide rechnerisch/preislich exakt Soll. Ein neuer,
+rein kosmetischer Fund: „So gerechnet"-Erklärzeile zeigt eine falsche, VOB-widrige Rechnung, die der
+tatsächlichen (korrekten) Abrechnung widerspricht.
 
 ---
 

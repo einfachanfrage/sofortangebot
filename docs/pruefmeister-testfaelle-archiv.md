@@ -873,6 +873,17 @@ Funde von eben (Türen-Anzeige-Widerspruch bei Sockelleisten, ca. 72 Cent Differ
 statt Wert) — beide dokumentiert, beide nicht blockierend. **Wandert damit ins Archiv, offene Kleinfunde
 bleiben in der Historie sichtbar.**
 
+**Nachtrag (Prüfmeister, 2026-08-31, nach PM-030 + Sandys Nachfrage + VOB-Recherche):** Die hier
+dokumentierte Dachfenster-Deduktion (24,00 → 23,08 m², minus 0,92 m² Standard) war zum damaligen Zeitpunkt
+(16.–17.08., vor der VOB-Übermessungsregel-Entscheidung vom 21.08.) korrekt umgesetzt gemäß der damaligen
+Soll-Lösung. Nach heutigem Stand ist diese Soll-Lösung aber fachlich überholt: DIN 18363 kennt keine
+Sonderregel für Dachflächenfenster, die generische 2,5-m²-Übermessungsschwelle gilt auch hier — ein
+0,92-m²-Dachfenster dürfte demnach NICHT abgezogen werden, genau wie jedes andere Fenster ≤2,5 m² auch
+nicht abgezogen wird. Die korrekte Zielrechnung wäre also 24,00 m² (kein Abzug), nicht 23,08 m². Details
+und Empfehlung an Head of Product Engineering bei PM-030. Ändert nichts an der historischen Bewertung
+dieses Tests (der Code hat damals genau das getan, was die damalige Soll-Lösung verlangte) — dient nur
+als Fundstelle für die spätere Korrektur.
+
 ---
 
 ## PM-008 — Fassade (kein Raum, kein Boden, keine Decke)
