@@ -63,7 +63,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | ✅ vollständig behoben + live bestätigt (2026-09-02) | Head of Product Engineering (Banner-Widerspruch) / Product Designer (Guardrail) |
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
 | DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / Product Designer (Text, 25.08. zugewiesen) |
 | DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
 | DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
@@ -851,7 +851,7 @@ vollständig funktionsfähig, es fehlte nur die Verlinkung. Scoped `tsc
 ## DC-013 — AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen
 
 **Datum:** 2026-08-17 (live bestätigt, Screenshot vorhanden)
-**Status:** ❌ offen — live bestätigt
+**Status:** ✅ behoben
 
 **Befund:** Auf `/angebot/[id]/entwurf` (der bewusst reduzierte,
 fokussierte Aufnahme-Screen ohne Bottom-Nav) erscheint trotzdem der globale
@@ -864,6 +864,18 @@ ist (BottomNav wurde ja korrekt ausgeblendet, der Footer nicht).
 **Empfehlung:** Footer in `(app)/layout.tsx` über eine Pathname-Prüfung
 (oder ein Layout-Flag) auf Fokus-Screens wie `/entwurf` ausblenden, analog
 dazu wie BottomNav bereits pro Seite gesteuert wird.
+
+**Fix-Update (2026-09-02, Product Designer):** Footer aus `(app)/layout.tsx`
+in eine eigene Client-Komponente `src/components/AppFooter.tsx` extrahiert,
+die per `usePathname()` prüft und auf Fokus-Screens `null` rendert statt
+des Footers — aktuell eine Route-Liste mit `/entwurf` (dem in diesem
+Befund dokumentierten Fall). `layout.tsx` selbst bleibt unverändert simpel
+(`<AppFooter />` statt der Inline-`<footer>`-Markup), die Steuerung ist
+zentral an einer Stelle statt über die App verstreut. Weitere Fokus-Screens
+lassen sich bei Bedarf durch einen Eintrag in `HIDDEN_ON` ergänzen — für
+diesen Befund war ausschließlich `/entwurf` mit Screenshot belegt, daher
+bewusst nicht auf ungeprüfte andere Screens (z. B. Onboarding-Schritte)
+ausgeweitet. Scoped `tsc --noEmit` lief clean, Commit `f451052`.
 
 ---
 
