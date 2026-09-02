@@ -142,7 +142,7 @@ Details in `docs/legal-001-bestandsaufnahme.md`, Abschnitt B1. [Einschätzung]
 | VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen ungeklärt | Legal (nach VOB-011) | ⏳ |
 | VOB-009 | Türen/Fenster nach Stück statt nach Fläche | Prüfmeister | 🟠 |
 | VOB-010 | Zuschlags-Einheiten: Prozent im Titel, Euro im Preis (14 Einträge) | Head of Product Engineering | ❌ |
-| VOB-011 | **Normtexte kaufen** — Grundlage für VOB-001, -003, -008 | Sandy (Freigabe ~150 €) | 🔵 |
+| VOB-011 | Normtexte: Sandy will nicht kaufen — freie Recherche hat zwei von sechs Fragen geklärt, zwei bleiben offen. Drei Optionen (10 € ZLB / 54 € Gesamtausgabe / nichts) | Sandy | 🔵 |
 | VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Head of Product Engineering | ❌ |
 | VOB-013 | **Leibungsfläche wird rundherum statt dreiseitig gerechnet, Fensterbank doppelt** — Fund des Prüfmeisters | Head of Product Engineering | ❌ |
 
@@ -296,6 +296,22 @@ nach Bauart. Für die Frage „gesondert oder nicht" sind beide eindeutig, für 
 Frage „wie gemessen" nicht. Der Code rechnet nach Fläche
 (`anz × Umfang × Tiefe`). Ob das die richtige Einheit ist, kann ich ohne den
 Normtext nicht sagen.
+
+> **Wichtige Abstufung, 2026-09-02:** Ich habe hier gestern geschrieben, die
+> Regel im Backlog sei „genau umgekehrt". Nach vertiefter Recherche ist das zu
+> bestimmt formuliert. Es gibt Gegenstimmen — Praktiker, die vertreten, bei
+> übermessenen Öffnungen sei die Leibung in der Fläche enthalten und werde erst
+> bei abgezogenen Öffnungen separat gerechnet. Diese Stimmen sind schwach
+> (Foren, ohne Normzitat, meist zu anderen Gewerken), aber sie sind nicht
+> widerlegt, und sie entsprechen genau dem, was im Backlog steht. **Richtig
+> ist: die Regel ist ungeklärt, meine Lesart ist die plausiblere.** An „bitte
+> nicht bauen" ändert das nichts — bei einer strittigen Regel ist eine
+> Änderung, die Geld bewegt, erst recht nicht auf Verdacht zu bauen. Details
+> im Update unter VOB-011.
+>
+> **Geklärt ist dagegen die Einheitenfrage:** Die Längenmaß-Variante, die mich
+> irritiert hatte, stammt aus DIN 18350 (Putzarbeiten), nicht aus DIN 18363.
+> `maler.ts` rechnet nach Fläche und liegt damit richtig.
 
 > **Ergänzung 2026-09-02:** Der Prüfmeister hat beim Nachrechnen einen
 > Folgefehler gefunden — die Leibungs**fläche** wird zu groß berechnet (vier
@@ -620,6 +636,149 @@ aber:
 VOB-003. Es ist der günstigste Posten mit dem größten Hebel, den ich im
 Projekt sehe — und wenn wir das VOB-Thema wirklich lückenlos haben wollen,
 wie Sandy es sich wünscht, führt kein Weg daran vorbei.
+
+---
+
+### Update 2026-09-02: Sandy will nicht kaufen — was online geht und was nicht
+
+Sandys Ansage: die Normtexte werden nicht gekauft, ich soll es online
+herausbekommen. Ich habe daraufhin zweigleisig recherchiert: einmal die
+Wortlaut-Fragen selbst über frei zugängliche Quellen, einmal die Frage, ob es
+einen legalen kostenlosen Zugang zum Volltext gibt. Ergebnis unten, ehrlich
+sortiert nach dem, was es gebracht hat.
+
+**Zuerst eine Korrektur an mir selbst: meine Preisangabe war falsch.** Ich hatte
+„rund 150 € für beide Normen" geschrieben. Richtig ist:
+
+| Was | Preis |
+|---|---|
+| DIN 18363 einzeln (PDF) | 60,10 € |
+| DIN 18365 einzeln (PDF) | 44,70 € |
+| beide einzeln | ~105 € |
+| **VOB Gesamtausgabe 2019 (Teil A+B+C, enthält beide Normen und alle übrigen ATV)** | **54 €** |
+
+Die Gesamtausgabe kostet also **halb so viel wie die zwei Einzelnormen** und
+enthält zusätzlich jede ATV, die wir für künftige Gewerke brauchen werden
+(Fliesen, Trockenbau, Putz, Estrich). Ich habe zwei Positionen einzeln
+kalkuliert, statt nach dem Sammelband zu schauen — das war schlicht schlecht
+recherchiert.
+
+**Und es gibt einen legalen kostenlosen Weg, hier in Berlin.** Die
+Zentral- und Landesbibliothek betreibt einen Volltext-Zugang zu aktuellen
+DIN-Normen an Vor-Ort-Arbeitsplätzen (`din-normen.zlb.de`). Voraussetzung ist
+ein VÖBB-Bibliotheksausweis: **10 € Jahreskarte**, Anmeldung mit Personalausweis
+in jeder Berliner Stadtbibliothek. Lesen ja, Kopieren und Drucken nein — das ist
+lizenzrechtlich ausgeschlossen. Für unsere sechs offenen Fragen reicht Lesen und
+Mitschreiben aber vollkommen; es geht um einzelne Sätze, nicht um ganze
+Kapitel. Realistisch ein Vormittag.
+
+Die Alternative über eine Uni-Bibliothek (TU Berlin, Normen-Infopoint) gibt es
+auch, ist aber umständlicher: Gastausweis nötig, und ob er die
+Datenbanknutzung einschließt, war nicht eindeutig zu klären.
+
+**Was ausdrücklich NICHT geht:** Der VOB/C-Volltext ist nirgends amtlich frei
+veröffentlicht. Die VOB/A und VOB/B werden im Bundesanzeiger bekanntgemacht,
+Teil C **nicht** — er besteht aus regulären, urheberrechtlich geschützten
+DIN-Normen und wird in der Bekanntmachung nur referenziert. Es gibt also keine
+offizielle Fundstelle, die ich übersehen hätte. Raubkopien schließe ich aus,
+und zwar nicht aus Prinzipienreiterei: Ein Rechtsdokument, dessen Grundlage aus
+einer illegalen Quelle stammt, ist im Streitfall wertlos.
+
+### Was die freie Recherche gebracht hat — und was sie verschlechtert hat
+
+**Aufgeklärt (gut):** Der scheinbare Widerspruch zwischen „Leibungen nach
+Flächenmaß" und „Leibungen nach Längenmaß getrennt nach Bauart" ist keiner. Die
+Längenmaß-Regel stammt aus **DIN 18350 (Putz- und Stuckarbeiten)**, nicht aus
+DIN 18363 — dort wird bei schmalen Leibungen nach Länge und Bauart gerechnet,
+weil der Aufwand von der Konstruktion abhängt. Für Anstricharbeiten gilt das
+Flächenmaß. Zwei verschiedene Gewerke, zwei verschiedene ATV; meine beiden
+Quellen hatten unbemerkt aus verschiedenen Normen zitiert. Damit ist die
+Einheitenfrage aus VOB-003 erledigt: `maler.ts` rechnet nach Fläche, und das ist
+richtig.
+
+**Bestätigt:** Die Nummerierungsverschiebung 5.2.4 (2016) → 5.2.3 (2019) ist
+durch eine Verbandspublikation des Bundesverbands Farbe belegt — die belastbarste
+Quelle in diesem ganzen Komplex. Der Leibungs-Wortlaut selbst findet sich
+gleichlautend auf drei Betriebsseiten; sie gehen aber vermutlich alle auf
+dieselbe Abschrift zurück, sind also eher eine Quelle in drei Kopien.
+
+**Und jetzt der Teil, der mir nicht gefällt: die entscheidende Frage ist
+offener als gestern, nicht geschlossener.**
+
+Ich habe gezielt nach Gegenstimmen gesucht — und welche gefunden. Zur Frage, ob
+die Leibung auch dann gesondert gerechnet wird, wenn die zugehörige Öffnung
+**übermessen** wurde, gibt es Stimmen in beide Richtungen. Mehrere Praktiker
+vertreten in Foren genau die Gegenposition: bei Öffnungen bis 2,5 m² sei die
+Leibung „in der Fläche enthalten", erst bei abgezogenen Öffnungen werde sie
+separat berechnet — „nicht in beiden Fällen gleichzeitig". Diese Stimmen sind
+schwach (Foren, ohne Normzitat, überwiegend zu anderen Gewerken), aber sie
+existieren, und **das ist genau die Position, die in unserem Backlog-Punkt
+steht.**
+
+Meine Auslegung halte ich weiterhin für die bessere: „unabhängig von ihrer
+Einzelgröße" bezieht sich grammatikalisch auf die Größe der Leibung selbst, nicht
+auf das Schicksal der Öffnung. Und sachlich ist die Leibung eine andere Fläche
+als die Wand — sie wird tatsächlich beschichtet. Aber ich habe **keine einzige
+Quelle gefunden, die das für DIN 18363 ausdrücklich klärt.**
+
+**Konsequenz für VOB-003, und ich formuliere das bewusst deutlich:** Gestern
+habe ich geschrieben, die Regel im Backlog sei „falsch herum". Diese Aussage war
+zu bestimmt. Richtig ist: **Die Regel ist ungeklärt, meine Lesart ist die
+plausiblere, und die Gegenposition ist nicht widerlegt.** An der Handlungs-
+empfehlung ändert das nichts — im Gegenteil, sie wird stärker: Wenn eine Regel
+strittig ist, ist eine Änderung, die Geld bewegt, erst recht nicht auf
+Verdacht zu bauen.
+
+**DIN 18365, Schwellenwert (VOB-008):** Mein Verdacht hat sich bestätigt. Der
+0,5-m²-Wert für „Aussparungen in Böden" ist ein Wert aus **DIN 18363** (die Norm
+erfasst auch Bodenbeschichtungen) — zwei unabhängige Quellen ordnen ihn dort
+zu. Ob DIN 18365 zufällig denselben Wert führt oder den von bauprofessor.de
+genannten 0,1 m², ist weiterhin offen; beide „Lager" sind bei näherem Hinsehen
+je eine Quelle mit Kopien. **Ungeklärt.**
+
+### Was das praktisch heißt
+
+| Frage | Stand nach freier Recherche | Braucht den Normtext? |
+|---|---|---|
+| Leibungen nach Fläche oder Länge | **geklärt** — Fläche, die Längenregel war DIN 18350 | nein |
+| Nummerierung 5.2.3 / 5.2.4 | **geklärt** | nein |
+| Leibungs-Wortlaut | mittel-hoch belegt | für Gewissheit ja |
+| **Leibung auch bei übermessener Öffnung** | **offen, Gegenstimmen vorhanden** | **ja** |
+| Leibungsfläche drei- oder vierseitig | **nicht belegbar**, keine Quelle | siehe unten |
+| DIN 18365 Schwellenwert | **offen** | **ja** |
+
+**Zwei Punkte kommen ohne den Normtext nicht weiter** — VOB-003 und VOB-008.
+Beide bewegen Geld in beide Richtungen, und beide bleiben deshalb bis auf
+Weiteres liegen. Das ist kein Drama: VOB-003 ist genau deshalb schon jetzt als
+„nicht bauen" markiert, und VOB-008 ist bislang ohnehin nur eine Frage, kein
+Befund im Code.
+
+**Ein Punkt braucht ihn ausdrücklich NICHT: VOB-013.** Dass die Leibungsfläche
+dreiseitig statt vierseitig zu rechnen ist, folgt nicht aus der Norm, sondern
+daraus, dass unten am Fenster die Fensterbank sitzt. Dazu habe ich keine Quelle
+gefunden und brauche auch keine — es ist keine Auslegungsfrage. Ebenso die
+Doppelberechnung der Fensterbank. **VOB-013 kann und sollte unabhängig vom
+Normkauf umgesetzt werden.**
+
+### Mein Vorschlag an Sandy
+
+Drei Optionen, keine davon sind die 150 €, die ich fälschlich genannt hatte:
+
+1. **10 € und ein Vormittag:** ZLB-Ausweis holen, die sechs Sätze vor Ort
+   nachlesen und mitschreiben. Kostet fast nichts außer Zeit.
+2. **54 €:** VOB Gesamtausgabe 2019. Dauerhaft verfügbar, enthält jede ATV, die
+   wir für die nächsten Gewerke brauchen. Wenn ich rein wirtschaftlich denke,
+   ist das die richtige Wahl — beim ersten Streitfall über eine Wandfläche ist
+   es hereingeholt.
+3. **Nichts kaufen und damit leben:** VOB-003 und VOB-008 bleiben dauerhaft
+   offen, der Leibungs-Backlogpunkt bleibt dauerhaft „nicht bauen". Das ist
+   vertretbar, solange niemand vergisst, warum. Alles andere in dieser Datei
+   läuft weiter.
+
+Ich empfehle 2, weil es billiger ist als das, was ich ursprünglich verlangt
+habe, und den Punkt endgültig schließt. Aber 3 ist eine legitime Entscheidung
+und ich baue keinen Druck auf — meine Aufgabe ist, dass die Folgen benannt
+sind, nicht dass ich mich durchsetze.
 
 **Wichtig zur Lizenz:** DIN-Normen sind urheberrechtlich geschützt. Wir dürfen
 danach rechnen und auf sie verweisen, aber den **Normtext nicht ins Produkt
