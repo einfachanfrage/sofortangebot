@@ -56,7 +56,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | 🟡 behoben (Product Designer, 2026-08-24): eine gemeinsame Quelle, alle 5 Stellen migriert, Status-Sheet neu — plus Nachtrag nach Sandys Live-Test (Status-Button war „kein Schwein kommt drauf"), Button aus der Icon-Reihe raus, eigene erkennbare Zeile mit Rahmen — `tsc` sauber, noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
 | DC-005 | Kein gemeinsamer Button-Baustein | 🟡 `active:scale-98`-Bug behoben, `Button.tsx` erstellt — Migration bestehender Stellen offen | Product Designer |
-| DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | 🟡 läuft schrittweise weiter, jetzt 11 Komponenten migriert (3 Runden, zuletzt 2026-09-02: `onboarding/[step]/page.tsx`), verbleibende Brocken `AngebotDetail.tsx`, `einstellungen`, `preise` | Product Designer |
+| DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | 🟡 alle 4 großen Brocken durch (4 Runden, zuletzt 2026-09-02: `AngebotDetail.tsx`+`einstellungen`+`preise` in einem Rutsch), Rest sind >1.900 kleinere Fundstellen über ~25-30 Dateien, weiter schrittweise bei Gelegenheit | Product Designer |
 | DC-007 | Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb | 🟡 behoben, noch nicht live nachgeprüft | Product Designer |
 | DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ❌ offen | Product Designer (25.08. zugewiesen) |
 | DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | 🟡 mit DC-028 mitgefixt (2026-08-19): `kannFertigstellen` verlangt jetzt `erkannteAnzahl > 0`, 0 Positionen zeigt neutralen Hinweis statt grünem Erfolg — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
@@ -440,6 +440,34 @@ Tailwind-Klassen). Bewusst unverändert: `#666666`, `#AAAAAA`, `#16a34a`,
 **Verbleibend:** `AngebotDetail.tsx`, `einstellungen/page.tsx`,
 `preise/page.tsx` — die größten Brocken, weiterhin für eigene Runden
 vorgemerkt statt riskant querbeet.
+
+**Fix-Update (Product Designer, 2026-09-02):** Vierte Runde, `DC-006` auf
+Sandys Zuruf ("na los") — die letzten drei großen Brocken in einem Rutsch.
+Vorher jede der drei Dateien einzeln geprüft: `git status`/`git log` sauber,
+keine parallele Arbeit einer anderen Rolle drauf — `AngebotDetail.tsx` war
+im August noch parallel von Head of Product Engineering in Bearbeitung, das
+ist jetzt vorbei. Gleiches Muster wie Runde 3, dieses Mal zusätzlich mit
+`AngebotDetail.tsx`s eigener Gewerke-Icon-Farbpalette (`#003DA5`, `#0066CC`,
+`#E84B3C`, `#FF6B00`, `#4CAF50`, `#795548`, `#009688`, `#D4A800`,
+`#EEEEEE`) — bewusst komplett unangetastet gelassen, das sind keine der 3
+Kern-Tokens.
+
+**Ehrlicher Nebenfund beim Bauen:** Mein erster Ersetzungslauf über
+`preise/page.tsx` hat versehentlich die CRLF-Zeilenenden der ganzen Datei
+auf LF vereinheitlicht (Standardverhalten von Pythons Textmodus beim
+Lesen/Schreiben) — dadurch wären alle ~880 Zeilen als geändert
+aufgetaucht, nicht nur die ~120 echten Farb-Änderungen. Beim eigenen
+Diff-Check vor dem Commit bemerkt (Zeile 1 des Diffs begann bei der
+`'use client'`-Zeile, die gar keine Farbe enthält — das Warnsignal), noch
+vor jedem Schreibvorgang korrigiert: binärsicher aus der sauberen
+HEAD-Version neu ersetzt, CRLF bewusst erhalten. Committeter Diff zeigt
+jetzt nur die tatsächlichen 104 Zeilen.
+
+`tsc --noEmit` sauber (scoped, alle drei Dateien + Abhängigkeiten),
+Commit `63aa9cf`. Damit sind alle 4 großen DC-006-Brocken durch. Rest:
+die restlichen >1.900 kleineren Fundstellen über ~25-30 Dateien (siehe
+Aufwandsschätzung in `docs/marketing-design-austausch.md`, EX-M-002) —
+weiter schrittweise bei Gelegenheit, kein eigener Sprint.
 
 ---
 
