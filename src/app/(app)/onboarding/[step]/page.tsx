@@ -86,6 +86,29 @@ export default function OnboardingStep() {
     })
   }, [step]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // DC-032 (2026-09-02, Punkt 2 des Vorschlags "Später fertigstellen"):
+  // setzt einmalig companies.onboarding_started_at, sobald Schritt 2 erreicht
+  // wird. Unterscheidet ab jetzt "nie angefangen" von "angefangen, aber
+  // ausgestiegen" — vorher sah das Dashboard (needsOnboarding) beides
+  // identisch (company.name IS NULL) und hat jeden unvollständigen Nutzer
+  // zwangsweise zurück auf Schritt 1 geworfen. Idempotenz liegt in der Query
+  // selbst (.is('onboarding_started_at', null)), nicht in Client-State —
+  // ein Reload oder Zurück-Navigieren auf Schritt 2 darf beliebig oft
+  // feuern, ohne einen bereits gesetzten Zeitpunkt zu überschreiben.
+  useEffect(() => {
+    if (step !== 2) return
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      supabase.from('companies')
+        .update({ onboarding_started_at: new Date().toISOString() })
+        .eq('user_id', user.id)
+        .is('onboarding_started_at', null)
+        .then(({ error }) => {
+          if (error) console.error('onboarding_started_at: Update fehlgeschlagen', error)
+        })
+    })
+  }, [step]) // eslint-disable-line react-hooks/exhaustive-deps
+
   function update(patch: Partial<ObState>) {
     setState(prev => {
       const next = { ...prev, ...patch }
@@ -253,7 +276,21 @@ export default function OnboardingStep() {
       {/* Header: logo + progress (steps 2–7) */}
       {step >= 2 && step <= 7 && (
         <div className="mb-2">
-          <Logo variant="light" className="text-xl mb-5 block" />
+          <div className="flex items-center justify-between mb-5">
+            <Logo variant="light" className="text-xl block" />
+            {/* DC-032 (2026-09-02, Punkt 4): "Ab Schritt 2 einen sichtbaren,
+                dezenten „Später fertigstellen"-Ausstieg (Text-Link, kein
+                Alarm-Rot)." Fortschritt liegt bereits durchgängig in
+                localStorage (jedes update() ruft saveState()), daher genügt
+                hier ein einfacher Zurück-zum-Dashboard-Link ohne eigene
+                Speicherlogik. */}
+            <button
+              onClick={() => { saveState(state); router.push('/dashboard') }}
+              className="text-[#2C2C2C]/40 font-semibold text-[13px] active:opacity-60 transition-opacity"
+            >
+              Später fertigstellen
+            </button>
+          </div>
           <ProgressBar step={step} />
         </div>
       )}

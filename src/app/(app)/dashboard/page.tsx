@@ -43,6 +43,11 @@ export default async function DashboardPage({
   const firstName = company.name?.split(' ')[0] ?? 'Hallo'
   const initial = company.name?.[0]?.toUpperCase() ?? 'A'
   const plan = company.plan
+  // DC-032: "Guten Tag, Hallo." klang kaputt, sobald diese Seite dank der
+  // Onboarding-Ausstiegsmöglichkeit tatsächlich mit leerem company.name
+  // aufgerufen werden kann (vorher unmöglich, da needsOnboarding() vorher
+  // gegriffen hätte). Ohne Namen daher eine namenlose Begrüßung.
+  const greeting = company.name ? getGreeting(firstName) : 'Schön, dass du da bist.'
 
   const heroStatusText = offeneGesamtCount > 0
     ? `● ${offeneGesamtCount} ${offeneGesamtCount === 1 ? 'Angebot wartet' : 'Angebote warten'} auf Antwort`
@@ -68,7 +73,7 @@ export default async function DashboardPage({
 
         {/* Begrüßung */}
         <div className="font-syne font-black text-white text-[22px] md:text-[28px] leading-snug mb-2">
-          {getGreeting(firstName)}
+          {greeting}
         </div>
 
         {/* Dynamischer Status */}
@@ -133,8 +138,31 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* ── PREISLISTE LEER NUDGE ────────────────────────────────────── */}
-      {preislisteIstLeer && (
+      {/* ── ONBOARDING UNVOLLSTÄNDIG NUDGE ──────────────────────────────
+          DC-032 (2026-09-02, Punkt 4 des Vorschlags "Später fertigstellen"):
+          company.name fehlt nur, wenn der Nutzer über den neuen Ausstieg
+          (Schritt 2+) vorzeitig gegangen ist — vorher landete niemand mit
+          leerem Namen hier, weil getDashboardData() ihn sonst zurück ins
+          Onboarding schickte. Ersetzt in diesem Fall die Preisliste-Nudge
+          darunter bewusst (die wäre ohnehin redundant: ohne fertiges
+          Onboarding gibt's noch keine eigenen Preise einzutragen). */}
+      {!company.name ? (
+        <div className="px-5 mt-4 md:px-0">
+          <Link
+            href="/onboarding"
+            className="flex items-center gap-3 bg-yellow/10 border border-yellow/40 rounded-2xl px-4 py-3.5 active:opacity-80 transition-opacity"
+          >
+            <span className="text-xl shrink-0">🏗️</span>
+            <div className="flex-1 min-w-0">
+              <div className="font-extrabold text-anthracite text-[14px]">Einrichtung fertigstellen</div>
+              <div className="text-anthracite/50 font-semibold text-[12px] leading-snug mt-0.5">
+                Noch ein paar Angaben, dann sind deine Angebote startklar.
+              </div>
+            </div>
+            <span className="text-anthracite/30 font-black text-lg shrink-0">›</span>
+          </Link>
+        </div>
+      ) : preislisteIstLeer && (
         <div className="px-5 mt-4 md:px-0">
           <Link
             href="/preise"
