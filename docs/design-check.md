@@ -67,7 +67,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / Product Designer (Text, 25.08. zugewiesen) |
 | DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen, hängt inhaltlich mit DC-006 zusammen) |
+| DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
 | DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen — falls der fachliche Unterschied selbst unklar ist, bitte kurz bei Head of Product Engineering nachfragen, bevor Text geschrieben wird) |
 | DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | 🔵 Prüfen, ob nur Screenshot-Ausschnitt | — |
@@ -1010,7 +1010,7 @@ Scoped `tsc --noEmit` lief clean, Commit `d3be888`.
 ## DC-017 — Drei verschiedene Icon-Sprachen im Produkt
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen — live bestätigt
+**Status:** ✅ behoben
 
 **Befund:** Im Produkt existieren aktuell drei unterschiedliche
 Icon-Stile nebeneinander: (1) Lucide-Linien-Icons in der gesamten Haupt-App
@@ -1029,6 +1029,29 @@ Lucide für die App, ein bewusst gewähltes Illustrations-Set nur für
 große, seltene Momente wie Onboarding-Start/-Ende), und Emoji als
 Platzhalter durch eigene Icons/Illustrationen ersetzen, bevor mehr Screens
 im Emoji-Stil dazukommen.
+
+**Fix-Update (2026-09-02, Product Designer):** Entscheidung getroffen und
+umgesetzt, genau nach dem in der Empfehlung skizzierten Muster: Lucide
+ist jetzt der Standard für alle funktionalen Onboarding-Screens, Emoji
+bleiben bewusst nur an zwei Stellen — den beiden „großen Momenten"
+Onboarding-Start (👋) und -Ende (🎉/🚀), sowie als leichte Deko in
+Fließtext-Copy (💡🧾🔗 etc. — das sind keine Icon-Ersatzsymbole, sondern
+casual Textschmuck, wie er auch sonst in der App vorkommt). Der
+Sketch-Mikrofon-Icon auf dem Aufmaß-Start-Screen bleibt unverändert —
+kein Emoji-Platzhalter, sondern bereits ein bewusst gestaltetes Element
+für genau den „seltenen Moment", den die Empfehlung selbst als legitime
+Ausnahme nennt.
+
+Ersetzt: die 6 großen Schritt-Icons (🏗️🔨💶💰🎨📊 → `Building2`,
+`Hammer`, `Receipt`, `Coins`, `Palette`, `Calculator`, jeweils in
+Marken-Gelb) sowie die 2 Auswahlkarten-Icons bei der Preise-Auswahl in
+Schritt 5 (📊✏️ → `BarChart3`, `Pencil`, im bestehenden Badge-Stil
+dunkel-auf-gelb / weiß-auf-anthrazit). Reiner Symbol-Austausch, keine
+Layout-/Größenänderung der Icon-Slots nötig. Neue eigene Illustrationen
+konnte ich nicht liefern (dafür bräuchte es Grafik-Assets) — die
+gewählte Lösung deckt sich aber mit der in der Empfehlung selbst
+genannten Alternative. Scoped `tsc --noEmit` lief clean, Commit
+`5fc7894`.
 
 ---
 
