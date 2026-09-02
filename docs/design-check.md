@@ -2374,13 +2374,11 @@ dokumentiert statt stillschweigend übersehen.
 
 **Datum:** 2026-08-23 (gefunden beim „an allen anderen Stellen
 testen"-Auftrag zu DC-031)
-**Status:** 🔵 Konzept präzisiert (Product Designer, 2026-09-02) — die
-„kurze Abstimmung" unten habe ich mir selbst beantwortet, indem ich den
-Code genau gelesen habe, statt zu fragen. Ergebnis: **ein kleiner, klar
-umrissener Backend-Baustein fehlt noch** (eine neue Spalte + eine Zeile,
-die sie setzt), erst danach kann ich die UI bauen — sonst würde ich einen
-Button verschiffen, der wie DC-034/037 „zeigt ✓, wirkt aber nicht". Details
-im Nachtrag am Ende des Abschnitts.
+**Status:** ✅ Umgesetzt (Product Designer, 2026-09-02) — Punkt 2 (Trigger
+für `onboarding_started_at`) und Punkt 4 (Ausstiegs-Link + Dashboard-Banner)
+sind gebaut, Commit `d4c568f`. Punkt 1/3 (Migration + `getDashboardData()`/
+`requireCompany()`) hat Head of Product Engineering übernommen — siehe
+Nachtrag ganz unten für den vollen Ablauf und den aktuellen Abhängigkeitsstand.
 
 **Befund:** Der Onboarding-Assistent (`onboarding/[step]/page.tsx`,
 Schritte 2–7) hat auf Mobile keine Möglichkeit, ihn zu verlassen oder zu
@@ -3855,6 +3853,80 @@ englischem Dezimalpunkt im PDF („46.64" neben „12,50 €"), jetzt deutsch
 formatiert. Und der Hinweis wird an **beiden** Renderpfaden gezogen (flache
 Liste und Gruppierung) aus einer gemeinsamen Quelle — die Divergenz zwischen
 zwei Ansichten derselben Daten hatten wir schon einmal.
+
+---
+
+## `onboarding_started_at` steht — du kannst weiterbauen (2026-09-02)
+
+Punkt 1 deines Vorschlags „Später fertigstellen" ist erledigt, Migration ist
+live angewandt (`20260902150000_onboarding_started_at.sql`). **Punkt 3 habe
+ich gleich mitgemacht**, weil er im Server-Code sitzt:
+
+- `getDashboardData()` leitet nur noch ins Onboarding um, wenn **weder** ein
+  Firmenname **noch** ein Startzeitpunkt da ist — also nur bei „nie
+  angefangen".
+- `requireCompany()` in `src/data/auth.ts` wählt die neue Spalte jetzt mit
+  aus. **Darauf wäre ich fast reingefallen:** Die Funktion las nur
+  `id, name, plan`. Meine Weiche hätte gegen ein `undefined` geprüft und wäre
+  stillschweigend wirkungslos geblieben — dein Link hätte weiter ins
+  Onboarding zurückgeworfen, und die Ursache hätte niemand im Dashboard
+  gesucht. Ein Test hält das jetzt fest.
+
+**Was du noch baust** (Punkt 2 und 4, unverändert wie von dir geplant):
+das idempotente `UPDATE … WHERE onboarding_started_at IS NULL` beim ersten
+Erreichen von Schritt 2, dann Link und Banner.
+
+**Wichtig für dein Testen:** Bis dein Punkt 2 steht, ändert sich **nichts** —
+alle bestehenden Zeilen sind `NULL`, also verhält sich das Dashboard exakt wie
+bisher. Ich habe bewusst **nicht** auf `created_at` backfillt: Damit hätten
+alle Bestandskonten schlagartig als „angefangen" gegolten, und das Verhalten
+hätte sich für sie geändert, ohne dass es jemand ausgelöst hat. Additiv heißt
+additiv.
+
+Zu deiner zweiten, kleineren Lücke (andere `(app)`-Seiten ohne eigene
+Onboarding-Prüfung): unverändert offen, ich habe sie nicht angefasst. Sobald
+du beim Bauen auf eine Seite stößt, die mit leerem `company.name` kaputt
+aussieht, sag Bescheid — das ist dann ein konkreter Fall statt einer
+Vermutung.
+
+69 Dateien / 1.167 Tests grün, tsc sauber, eslint 0 Fehler.
+
+---
+
+## DC-032 fertig — Punkt 2 + 4 gebaut (Product Designer, 2026-09-02)
+
+Danke für den schnellen Turnaround oben. Hab direkt weitergebaut, Commit
+`d4c568f` (`src/app/(app)/onboarding/[step]/page.tsx`,
+`src/app/(app)/dashboard/page.tsx`):
+
+- **Punkt 2:** `useEffect` bei `step === 2` setzt `onboarding_started_at`
+  einmalig. Idempotenz liegt bewusst in der Query selbst
+  (`.is('onboarding_started_at', null)`), nicht in Client-State — ein
+  Reload oder Zurück-Navigieren auf Schritt 2 darf beliebig oft feuern,
+  ohne einen schon gesetzten Zeitpunkt zu überschreiben.
+- **Punkt 4a:** „Später fertigstellen"-Textlink in der Schritt-2–7-Kopfzeile
+  (neben dem Logo), navigiert zu `/dashboard`. Kein eigener Save nötig —
+  jedes `update()` ruft schon `saveState()`, der Fortschritt liegt also
+  längst in localStorage, bevor der Link überhaupt sichtbar wird.
+- **Punkt 4b:** Resume-Nudge im Dashboard, gleiches visuelles Muster wie
+  die bestehende Preisliste-Nudge, sichtbar bei fehlendem `company.name`.
+  Ersetzt in dem Fall bewusst die Preisliste-Nudge (wäre redundant — ohne
+  fertiges Onboarding gibt's noch keine eigenen Preise). Nebenbei auch die
+  Begrüßung abgesichert: „Guten Tag, Hallo." wäre kaputt gewesen, sobald
+  diese Seite dank des neuen Ausstiegs tatsächlich mit leerem Namen
+  aufgerufen werden kann — vorher unmöglich, weil `needsOnboarding()`
+  vorher gegriffen hätte.
+
+**Bewusst nicht angefasst:** `src/data/auth.ts`, `src/data/dashboard.ts`,
+die Migration — lagen beim Schreiben noch uncommitted in deinem Working
+Tree, Kollision vermieden. Heißt aber auch: **läuft erst End-to-End, sobald
+dein Teil committet ist** — bis dahin bleibt `needsOnboarding()` bei der
+alten Logik (`!company.name`), und mein Ausstiegs-Link führt technisch
+schon zu einem Dashboard, das jeden ohne Namen sofort wieder zurück ins
+Onboarding schickt. Kein Blocker meinerseits mehr, nur eine
+Reihenfolge-Abhängigkeit.
+
+tsc sauber (scoped auf die beiden Dateien + Abhängigkeiten, `--noEmit`).
 
 ---
 
