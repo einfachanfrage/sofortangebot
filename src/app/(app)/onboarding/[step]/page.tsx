@@ -483,7 +483,7 @@ export default function OnboardingStep() {
               }}
               className={`${btnPrimary} flex-[2]`}
             >
-              Weiter {state.gewerke.length > 0 && `(${state.gewerke.length})`} →
+              Weiter →
             </button>
           </div>
         </div>
@@ -644,7 +644,7 @@ export default function OnboardingStep() {
                   onClick={() => goTo(6)}
                   className="flex-[2] py-4 text-anthracite/40 font-semibold text-sm text-center"
                 >
-                  Erstmal überspringen →
+                  Überspringen →
                 </button>
               </div>
             </div>
@@ -713,7 +713,7 @@ export default function OnboardingStep() {
               <div className="flex gap-3 pt-3 border-t border-anthracite/10">
                 <button onClick={() => update({ preisMode: null })} className={btnBack}>Zurück</button>
                 <button onClick={() => goTo(6)} className={`${btnPrimary} flex-[2]`}>
-                  Weiter ({state.preisEntries.filter(e => parseFloat(e.unit_price) > 0).length}) →
+                  Weiter →
                 </button>
               </div>
             </div>
