@@ -42,10 +42,10 @@ export default function DraftQuotes({ drafts }: { drafts: DraftQuote[] }) {
         onClick={() => setOpen(o => !o)}
         className="flex items-center justify-between w-full py-2"
       >
-        <span className="text-sm font-bold text-[#2C2C2C]/40">
+        <span className="text-sm font-bold text-anthracite/40">
           {drafts.length} Entwurf{drafts.length > 1 ? 'e' : ''}
         </span>
-        {open ? <ChevronUp size={16} className="text-[#2C2C2C]/30" /> : <ChevronDown size={16} className="text-[#2C2C2C]/30" />}
+        {open ? <ChevronUp size={16} className="text-anthracite/30" /> : <ChevronDown size={16} className="text-anthracite/30" />}
       </button>
 
       {open && (
@@ -54,15 +54,15 @@ export default function DraftQuotes({ drafts }: { drafts: DraftQuote[] }) {
             <Link
               key={d.id}
               href={`/angebot/${d.id}`}
-              className="bg-white/60 rounded-2xl p-4 border border-[#2C2C2C]/5 flex items-center justify-between gap-2"
+              className="bg-white/60 rounded-2xl p-4 border border-anthracite/5 flex items-center justify-between gap-2"
             >
               <div className="min-w-0">
-                <div className="font-bold text-[#2C2C2C]/60 truncate text-sm">
+                <div className="font-bold text-anthracite/60 truncate text-sm">
                   {d.customer?.name || 'Kein Kunde'}
                 </div>
-                <div className="text-xs text-[#2C2C2C]/30 font-semibold mt-0.5">{fmtDate(d.created_at)}</div>
+                <div className="text-xs text-anthracite/30 font-semibold mt-0.5">{fmtDate(d.created_at)}</div>
               </div>
-              <div className="text-sm font-black text-[#2C2C2C]/40 shrink-0">{fmt(d.total_gross)}</div>
+              <div className="text-sm font-black text-anthracite/40 shrink-0">{fmt(d.total_gross)}</div>
             </Link>
           ))}
           <button

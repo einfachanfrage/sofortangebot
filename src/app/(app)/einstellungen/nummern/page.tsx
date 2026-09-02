@@ -170,9 +170,9 @@ export default function NummernPage() {
   const preview = buildPreview(previewKreis)
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-24">
+    <div className="min-h-dvh bg-bg pb-24">
       {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+      <div className="bg-anthracite px-5 pt-12 pb-6">
         <Link href="/einstellungen" className="text-white/50 text-sm font-semibold">← Einstellungen</Link>
         <h1 className="text-xl font-syne font-black text-white mt-1">Angebotsnummern</h1>
       </div>
@@ -180,12 +180,12 @@ export default function NummernPage() {
       <div className="max-w-xl mx-auto px-5 pt-5 space-y-4">
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-white rounded-2xl p-1 shadow-sm border border-[#2C2C2C]/5">
+        <div className="flex gap-1 bg-white rounded-2xl p-1 shadow-sm border border-anthracite/5">
           {(['angebot', 'rechnung'] as Typ[]).map(t => (
             <button
               key={t}
               onClick={() => { setTab(t); setSaved(false); setWarning('') }}
-              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors ${tab === t ? 'bg-[#2C2C2C] text-white' : 'text-[#2C2C2C]/40'}`}
+              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors ${tab === t ? 'bg-anthracite text-white' : 'text-anthracite/40'}`}
             >
               {t === 'angebot' ? 'Angebote' : 'Rechnungen'}
             </button>
@@ -193,35 +193,35 @@ export default function NummernPage() {
         </div>
 
         {/* Vorschau */}
-        <div className="bg-[#FFF9E6] border border-[#F5C400]/40 rounded-2xl px-6 py-5 text-center">
+        <div className="bg-[#FFF9E6] border border-yellow/40 rounded-2xl px-6 py-5 text-center">
           <div className="text-xs font-semibold text-[#92400E]/60 mb-1">Nächste Nummer</div>
-          <div className="text-3xl font-black text-[#2C2C2C] tracking-wide">{preview}</div>
+          <div className="text-3xl font-black text-anthracite tracking-wide">{preview}</div>
         </div>
 
         {/* Formular */}
-        <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 divide-y divide-[#2C2C2C]/5">
+        <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 divide-y divide-anthracite/5">
 
           {/* Kürzel */}
           <div className="px-5 py-4">
-            <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5">Kürzel (Präfix)</label>
+            <label className="block text-xs font-bold text-anthracite/50 mb-1.5">Kürzel (Präfix)</label>
             <Input
               value={f.prefix ?? ''}
               onChange={e => setField('prefix', e.target.value.slice(0, 5).toUpperCase())}
               placeholder="AG"
               maxLength={5}
             />
-            <p className="text-[10px] text-[#2C2C2C]/30 mt-1">Leer lassen wenn kein Kürzel gewünscht</p>
+            <p className="text-[10px] text-anthracite/30 mt-1">Leer lassen wenn kein Kürzel gewünscht</p>
           </div>
 
           {/* Jahreszahl */}
           <div className="px-5 py-4 flex items-center justify-between">
             <div>
-              <div className="text-sm font-bold text-[#2C2C2C]">Jahreszahl in Nummer</div>
-              <div className="text-[10px] text-[#2C2C2C]/40 mt-0.5">Empfohlen — erleichtert die Ablage</div>
+              <div className="text-sm font-bold text-anthracite">Jahreszahl in Nummer</div>
+              <div className="text-[10px] text-anthracite/40 mt-0.5">Empfohlen — erleichtert die Ablage</div>
             </div>
             <button
               onClick={() => setField('jahr_aktiv', f.jahr_aktiv ? null : new Date().getFullYear())}
-              className={`w-11 h-6 rounded-full transition-colors ${f.jahr_aktiv ? 'bg-[#F5C400]' : 'bg-[#2C2C2C]/15'}`}
+              className={`w-11 h-6 rounded-full transition-colors ${f.jahr_aktiv ? 'bg-yellow' : 'bg-anthracite/15'}`}
             >
               <span className={`block w-5 h-5 bg-white rounded-full shadow transition-transform mx-0.5 ${f.jahr_aktiv ? 'translate-x-5' : 'translate-x-0'}`} />
             </button>
@@ -229,13 +229,13 @@ export default function NummernPage() {
 
           {/* Trennzeichen */}
           <div className="px-5 py-4">
-            <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-2">Trennzeichen</label>
+            <label className="block text-xs font-bold text-anthracite/50 mb-2">Trennzeichen</label>
             <div className="flex gap-2">
               {['-', '/', ''].map(t => (
                 <button
                   key={t === '' ? 'none' : t}
                   onClick={() => setField('trennzeichen', t)}
-                  className={`flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-colors ${f.trennzeichen === t ? 'border-[#F5C400] bg-[#FFF9E6] text-[#2C2C2C]' : 'border-[#2C2C2C]/10 text-[#2C2C2C]/40'}`}
+                  className={`flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-colors ${f.trennzeichen === t ? 'border-yellow bg-[#FFF9E6] text-anthracite' : 'border-anthracite/10 text-anthracite/40'}`}
                 >
                   {t === '' ? 'Keins' : t}
                 </button>
@@ -245,31 +245,31 @@ export default function NummernPage() {
 
           {/* Mindeststellen */}
           <div className="px-5 py-4">
-            <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-2">Mindest-Stellen</label>
+            <label className="block text-xs font-bold text-anthracite/50 mb-2">Mindest-Stellen</label>
             <div className="flex gap-2">
               {[2, 3, 4, 5].map(n => (
                 <button
                   key={n}
                   onClick={() => setField('min_stellen', n)}
-                  className={`flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-colors ${f.min_stellen === n ? 'border-[#F5C400] bg-[#FFF9E6] text-[#2C2C2C]' : 'border-[#2C2C2C]/10 text-[#2C2C2C]/40'}`}
+                  className={`flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-colors ${f.min_stellen === n ? 'border-yellow bg-[#FFF9E6] text-anthracite' : 'border-anthracite/10 text-anthracite/40'}`}
                 >
                   {String(1).padStart(n, '0')}
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-[#2C2C2C]/30 mt-1">Bestimmt führende Nullen (001 oder 0001)</p>
+            <p className="text-[10px] text-anthracite/30 mt-1">Bestimmt führende Nullen (001 oder 0001)</p>
           </div>
 
           {/* Startnummer */}
           <div className="px-5 py-4">
-            <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5">Nächste Nummer</label>
+            <label className="block text-xs font-bold text-anthracite/50 mb-1.5">Nächste Nummer</label>
             <Input
               type="number"
               min={1}
               value={f.naechste_nummer ?? 1}
               onChange={e => setField('naechste_nummer', parseInt(e.target.value) || 1)}
             />
-            <p className="text-[10px] text-[#2C2C2C]/30 mt-1">Nur ändern wenn du vorherige Angebote übernehmen willst</p>
+            <p className="text-[10px] text-anthracite/30 mt-1">Nur ändern wenn du vorherige Angebote übernehmen willst</p>
             {warning && (
               <div className="flex items-start gap-2 mt-2 bg-orange-50 border border-orange-200 rounded-xl px-3 py-2">
                 <Info size={13} className="text-orange-500 mt-0.5 shrink-0" />
@@ -283,49 +283,49 @@ export default function NummernPage() {
         <button
           onClick={save}
           disabled={saving}
-          className="w-full bg-[#2C2C2C] text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50"
+          className="w-full bg-anthracite text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50"
         >
           {saving ? 'Speichert…' : saved ? `✓ Nächste Nummer: ${preview}` : 'Einstellungen speichern'}
         </button>
 
         {/* Audit-Trail */}
-        <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 overflow-hidden">
           <button
             onClick={() => showAudit ? setShowAudit(false) : loadAudit()}
             className="w-full px-5 py-4 flex items-center justify-between text-left"
           >
-            <span className="text-sm font-bold text-[#2C2C2C]">Alle Nummern anzeigen</span>
-            <span className="text-[#2C2C2C]/30 text-xs">{showAudit ? '▲' : '▼'}</span>
+            <span className="text-sm font-bold text-anthracite">Alle Nummern anzeigen</span>
+            <span className="text-anthracite/30 text-xs">{showAudit ? '▲' : '▼'}</span>
           </button>
 
           {showAudit && (
             <div>
               <div className="flex justify-end px-4 pb-3">
-                <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs font-semibold text-[#2C2C2C]/50 border border-[#2C2C2C]/10 rounded-xl px-3 py-1.5">
+                <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs font-semibold text-anthracite/50 border border-anthracite/10 rounded-xl px-3 py-1.5">
                   <Download size={12} /> CSV exportieren
                 </button>
               </div>
               {auditLoading ? (
-                <div className="text-center py-6 text-sm text-[#2C2C2C]/30">Lädt…</div>
+                <div className="text-center py-6 text-sm text-anthracite/30">Lädt…</div>
               ) : auditRows.length === 0 ? (
-                <div className="text-center py-6 text-sm text-[#2C2C2C]/30">Noch keine Nummern vergeben</div>
+                <div className="text-center py-6 text-sm text-anthracite/30">Noch keine Nummern vergeben</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
-                    <thead className="bg-[#F7F7F5]">
+                    <thead className="bg-bg">
                       <tr>
                         {['Nummer', 'Typ', 'Vergeben am', 'Kunde', 'Status'].map(h => (
-                          <th key={h} className="px-3 py-2 text-left font-bold text-[#2C2C2C]/40">{h}</th>
+                          <th key={h} className="px-3 py-2 text-left font-bold text-anthracite/40">{h}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#2C2C2C]/5">
+                    <tbody className="divide-y divide-anthracite/5">
                       {auditRows.map(r => (
                         <tr key={r.id}>
-                          <td className="px-3 py-2 font-mono font-bold text-[#2C2C2C]">{r.nummer}</td>
-                          <td className="px-3 py-2 capitalize text-[#2C2C2C]/60">{r.typ}</td>
-                          <td className="px-3 py-2 text-[#2C2C2C]/60">{new Date(r.vergeben_am).toLocaleDateString('de-DE')}</td>
-                          <td className="px-3 py-2 text-[#2C2C2C]/60">{r.kunde}</td>
+                          <td className="px-3 py-2 font-mono font-bold text-anthracite">{r.nummer}</td>
+                          <td className="px-3 py-2 capitalize text-anthracite/60">{r.typ}</td>
+                          <td className="px-3 py-2 text-anthracite/60">{new Date(r.vergeben_am).toLocaleDateString('de-DE')}</td>
+                          <td className="px-3 py-2 text-anthracite/60">{r.kunde}</td>
                           <td className="px-3 py-2">
                             {r.storniert
                               ? <span className="bg-red-100 text-red-600 rounded-full px-2 py-0.5 text-[10px] font-bold">Storniert</span>

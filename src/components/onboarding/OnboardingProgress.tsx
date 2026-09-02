@@ -5,7 +5,7 @@ export function OnboardingProgress({ step }: { step: number }) {
       {Array.from({ length: 6 }, (_, index) => (
         <div
           key={index}
-          className={`h-1 flex-1 rounded-full transition-all duration-300 ${index < filled ? 'bg-[#F5C400]' : 'bg-[#2C2C2C]/12'}`}
+          className={`h-1 flex-1 rounded-full transition-all duration-300 ${index < filled ? 'bg-yellow' : 'bg-anthracite/12'}`}
         />
       ))}
     </div>

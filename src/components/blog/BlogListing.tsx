@@ -13,7 +13,7 @@ function BlogCard({ post }: { post: BlogPost }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group bg-white rounded-lg overflow-hidden border border-[#2C2C2C]/5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
+      className="group bg-white rounded-lg overflow-hidden border border-anthracite/5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
     >
       {/* Gradient placeholder */}
       <div
@@ -32,14 +32,14 @@ function BlogCard({ post }: { post: BlogPost }) {
           >
             {post.kategorie}
           </span>
-          <span className="text-[#2C2C2C]/30">·</span>
-          <span className="text-[#2C2C2C]/40">{post.lesezeit}</span>
-          <span className="text-[#2C2C2C]/30">·</span>
-          <span className="text-[#2C2C2C]/40">{formatDate(post.date)}</span>
+          <span className="text-anthracite/30">·</span>
+          <span className="text-anthracite/40">{post.lesezeit}</span>
+          <span className="text-anthracite/30">·</span>
+          <span className="text-anthracite/40">{formatDate(post.date)}</span>
         </div>
 
         {/* Title */}
-        <h2 className="font-extrabold text-[#2C2C2C] text-[17px] leading-snug mb-2 group-hover:text-[#F5C400] transition-colors">
+        <h2 className="font-extrabold text-anthracite text-[17px] leading-snug mb-2 group-hover:text-yellow transition-colors">
           {post.title}
         </h2>
 
@@ -48,7 +48,7 @@ function BlogCard({ post }: { post: BlogPost }) {
           {post.excerpt}
         </p>
 
-        <span className="text-[#2C2C2C] font-bold text-sm group-hover:text-[#F5C400] transition-colors">
+        <span className="text-anthracite font-bold text-sm group-hover:text-yellow transition-colors">
           Weiterlesen →
         </span>
       </div>
@@ -70,7 +70,7 @@ export function BlogListing({ posts }: { posts: BlogPost[] }) {
   }
 
   return (
-    <div className="bg-[#F7F7F5] min-h-screen">
+    <div className="bg-bg min-h-screen">
       {/* Filter chips */}
       <div className="max-w-6xl mx-auto px-5 md:px-10 pt-10 pb-6">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
@@ -80,8 +80,8 @@ export function BlogListing({ posts }: { posts: BlogPost[] }) {
               onClick={() => selectKat(k)}
               className={`shrink-0 text-sm font-bold px-4 py-2 rounded-full border transition-colors ${
                 activeKat === k
-                  ? 'bg-[#F5C400] border-[#F5C400] text-[#2C2C2C]'
-                  : 'border-white text-[#2C2C2C]/50 bg-white hover:border-[#2C2C2C]/20 hover:text-[#2C2C2C]'
+                  ? 'bg-yellow border-yellow text-anthracite'
+                  : 'border-white text-anthracite/50 bg-white hover:border-anthracite/20 hover:text-anthracite'
               }`}
             >
               {k}
@@ -93,7 +93,7 @@ export function BlogListing({ posts }: { posts: BlogPost[] }) {
       {/* Article grid */}
       <div className="max-w-6xl mx-auto px-5 md:px-10 pb-16">
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-[#2C2C2C]/40 font-semibold">
+          <div className="text-center py-20 text-anthracite/40 font-semibold">
             Keine Artikel in dieser Kategorie.
           </div>
         ) : (
@@ -106,7 +106,7 @@ export function BlogListing({ posts }: { posts: BlogPost[] }) {
               <div className="text-center mt-10">
                 <button
                   onClick={() => setPage(p => p + 1)}
-                  className="bg-white border border-[#2C2C2C]/10 text-[#2C2C2C] font-bold px-8 py-3 rounded-lg hover:border-[#2C2C2C]/30 transition-colors"
+                  className="bg-white border border-anthracite/10 text-anthracite font-bold px-8 py-3 rounded-lg hover:border-anthracite/30 transition-colors"
                 >
                   Mehr laden
                 </button>

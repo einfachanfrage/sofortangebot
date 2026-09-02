@@ -31,7 +31,7 @@ export default function PwaBanner() {
   if (!show) return null
 
   return (
-    <div className="mx-5 mt-4 bg-[#2C2C2C] rounded-2xl p-4 relative">
+    <div className="mx-5 mt-4 bg-anthracite rounded-2xl p-4 relative">
       <button onClick={dismiss} className="absolute top-3 right-3 p-1">
         <X size={16} color="white" className="opacity-40" />
       </button>
@@ -78,7 +78,7 @@ export default function PwaBanner() {
 function Step({ n, color, children }: { n: number; color: string; children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-2">
-      <div className="w-5 h-5 rounded-full bg-[#F5C400] flex items-center justify-center shrink-0 font-black text-[#2C2C2C] text-[10px] mt-0.5">
+      <div className="w-5 h-5 rounded-full bg-yellow flex items-center justify-center shrink-0 font-black text-anthracite text-[10px] mt-0.5">
         {n}
       </div>
       <span className={`text-xs font-semibold leading-relaxed text-${color}/70`}>{children}</span>

@@ -41,14 +41,14 @@ export class ErrorBoundary extends React.Component<Props, State> {
       return (
         <div className="flex flex-col items-center justify-center p-8 text-center">
           <div className="text-4xl mb-3">⚠️</div>
-          <div className="font-bold text-[#2C2C2C] mb-1">Etwas ist schiefgelaufen</div>
-          <div className="text-sm text-[#2C2C2C]/50 mb-4">Der Fehler wurde automatisch gemeldet.</div>
+          <div className="font-bold text-anthracite mb-1">Etwas ist schiefgelaufen</div>
+          <div className="text-sm text-anthracite/50 mb-4">Der Fehler wurde automatisch gemeldet.</div>
           <button
             onClick={() => {
               this.setState({ hasError: false, eventId: null })
               window.location.reload()
             }}
-            className="bg-[#2C2C2C] text-white font-bold text-sm px-5 py-2.5 rounded-xl"
+            className="bg-anthracite text-white font-bold text-sm px-5 py-2.5 rounded-xl"
           >
             Neu laden
           </button>

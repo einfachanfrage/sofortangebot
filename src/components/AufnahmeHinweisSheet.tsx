@@ -86,7 +86,7 @@ export default function AufnahmeHinweisSheet({ open, onClose, schliessbar, gewer
       <div className="absolute inset-0 bg-black/40" onClick={schliessbar ? onClose : undefined} />
 
       {/* Sheet */}
-      <div className="relative bg-[#2C2C2C] rounded-t-3xl flex flex-col" style={{ height: '60vh', maxHeight: 600 }}>
+      <div className="relative bg-anthracite rounded-t-3xl flex flex-col" style={{ height: '60vh', maxHeight: 600 }}>
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 bg-white/20 rounded-full" />
@@ -122,15 +122,15 @@ export default function AufnahmeHinweisSheet({ open, onClose, schliessbar, gewer
               style={{
                 width: 260,
                 scrollSnapAlign: 'start',
-                background: i === activeIdx ? '#F5C400' : 'rgba(255,255,255,0.08)',
+                background: i === activeIdx ? 'var(--color-yellow)' : 'rgba(255,255,255,0.08)',
               }}
             >
-              <div className={`font-black text-sm mb-2 ${i === activeIdx ? 'text-[#2C2C2C]' : 'text-white'}`}>
+              <div className={`font-black text-sm mb-2 ${i === activeIdx ? 'text-anthracite' : 'text-white'}`}>
                 {card.emoji} {card.label}
               </div>
               <p
                 className="text-sm leading-relaxed italic"
-                style={{ color: i === activeIdx ? '#2C2C2C' : 'rgba(255,255,255,0.6)', fontSize: 13 }}
+                style={{ color: i === activeIdx ? 'var(--color-anthracite)' : 'rgba(255,255,255,0.6)', fontSize: 13 }}
               >
                 &ldquo;{card.text}&rdquo;
               </p>
@@ -148,7 +148,7 @@ export default function AufnahmeHinweisSheet({ open, onClose, schliessbar, gewer
               style={{
                 width: i === activeIdx ? 16 : 6,
                 height: 6,
-                background: i === activeIdx ? '#F5C400' : 'rgba(255,255,255,0.25)',
+                background: i === activeIdx ? 'var(--color-yellow)' : 'rgba(255,255,255,0.25)',
               }}
             />
           ))}
@@ -167,7 +167,7 @@ export default function AufnahmeHinweisSheet({ open, onClose, schliessbar, gewer
           <button
             onClick={schliessbar ? onClose : undefined}
             disabled={!schliessbar}
-            className="w-full bg-[#F5C400] text-[#2C2C2C] font-black rounded-2xl py-4 text-base disabled:opacity-50"
+            className="w-full bg-yellow text-anthracite font-black rounded-2xl py-4 text-base disabled:opacity-50"
           >
             Verstanden — los geht&apos;s 🎙
           </button>

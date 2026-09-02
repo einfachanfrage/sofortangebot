@@ -47,17 +47,17 @@ export default function NeuerKundePage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5]">
-      <div className="bg-[#2C2C2C] px-5 md:px-8 pt-12 pb-6">
+    <div className="min-h-dvh bg-bg">
+      <div className="bg-anthracite px-5 md:px-8 pt-12 pb-6">
         <Link href="/kunden" className="text-white/50 text-sm font-semibold">← Kunden</Link>
         <div className="text-white font-syne font-black text-xl mt-1">Neuer Kunde</div>
       </div>
 
       <div className="px-5 md:px-8 pt-5 flex flex-col gap-4 max-w-xl mx-auto">
 
-        <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 flex flex-col gap-3">
+        <div className="bg-white rounded-2xl p-4 border border-anthracite/5 flex flex-col gap-3">
           <div>
-            <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Name *</label>
+            <label className="text-xs font-bold text-anthracite/40 uppercase tracking-wide block mb-1.5">Name *</label>
             <Input
               autoFocus
               value={name}
@@ -66,11 +66,11 @@ export default function NeuerKundePage() {
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Adresse</label>
+            <label className="text-xs font-bold text-anthracite/40 uppercase tracking-wide block mb-1.5">Adresse</label>
             <AddressFields value={adresse} onChange={setAdresse} />
           </div>
           <div>
-            <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">Telefon</label>
+            <label className="text-xs font-bold text-anthracite/40 uppercase tracking-wide block mb-1.5">Telefon</label>
             <Input
               type="tel"
               value={phone}
@@ -79,7 +79,7 @@ export default function NeuerKundePage() {
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">E-Mail</label>
+            <label className="text-xs font-bold text-anthracite/40 uppercase tracking-wide block mb-1.5">E-Mail</label>
             <Input
               type="email"
               value={email}
@@ -89,19 +89,19 @@ export default function NeuerKundePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 flex flex-col gap-3">
+        <div className="bg-white rounded-2xl p-4 border border-anthracite/5 flex flex-col gap-3">
           <button
             onClick={() => setIstUnternehmen(v => !v)}
             className="flex items-center gap-3 text-left"
           >
-            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${istUnternehmen ? 'bg-[#F5C400] border-[#F5C400]' : 'border-[#2C2C2C]/20'}`}>
-              {istUnternehmen && <Check size={12} strokeWidth={3} color="#2C2C2C" />}
+            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${istUnternehmen ? 'bg-yellow border-yellow' : 'border-anthracite/20'}`}>
+              {istUnternehmen && <Check size={12} strokeWidth={3} color="var(--color-anthracite)" />}
             </div>
-            <span className="text-sm font-bold text-[#2C2C2C]">Gewerblicher Kunde (Unternehmen)</span>
+            <span className="text-sm font-bold text-anthracite">Gewerblicher Kunde (Unternehmen)</span>
           </button>
           {istUnternehmen && (
             <div>
-              <label className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide block mb-1.5">USt-IdNr.</label>
+              <label className="text-xs font-bold text-anthracite/40 uppercase tracking-wide block mb-1.5">USt-IdNr.</label>
               <Input
                 value={ustid}
                 onChange={e => setUstid(e.target.value)}
@@ -116,7 +116,7 @@ export default function NeuerKundePage() {
         <button
           onClick={handleSave}
           disabled={saving || !name.trim()}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 disabled:opacity-40 transition-opacity"
+          className="w-full bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 disabled:opacity-40 transition-opacity"
         >
           {saving ? 'Speichert…' : 'Kunde anlegen'}
         </button>

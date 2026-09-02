@@ -46,7 +46,7 @@ const killer = [
 
 export function FeaturesSection() {
   return (
-    <section className="bg-[#F7F7F5] py-20 md:py-28">
+    <section className="bg-bg py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-5 md:px-10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -55,10 +55,10 @@ export function FeaturesSection() {
           transition={{ duration: 0.4 }}
           className="mb-12 md:mb-14"
         >
-          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-3">
+          <h2 className="font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-3">
             Vom Aufmaß bis zur Unterschrift.
           </h2>
-          <p className="text-[#2C2C2C]/40 text-base">Gebaut für den Maler-Alltag — nicht für alle ein bisschen.</p>
+          <p className="text-anthracite/40 text-base">Gebaut für den Maler-Alltag — nicht für alle ein bisschen.</p>
         </motion.div>
 
         {/* Workflow Features */}
@@ -72,12 +72,12 @@ export function FeaturesSection() {
               transition={{ duration: 0.4, delay: i * 0.06 }}
               className="bg-white rounded-3xl p-6 md:p-7 flex items-start gap-4 shadow-sm"
             >
-              <div className="w-11 h-11 rounded-2xl bg-[#F5C400]/15 flex items-center justify-center text-[20px] shrink-0">
+              <div className="w-11 h-11 rounded-2xl bg-yellow/15 flex items-center justify-center text-[20px] shrink-0">
                 {f.emoji}
               </div>
               <div>
-                <p className="font-syne font-extrabold text-[#2C2C2C] text-[16px] md:text-[17px] tracking-tight leading-snug mb-2">{f.name}</p>
-                <p className="text-[#2C2C2C]/50 text-sm leading-relaxed">{f.desc}</p>
+                <p className="font-syne font-extrabold text-anthracite text-[16px] md:text-[17px] tracking-tight leading-snug mb-2">{f.name}</p>
+                <p className="text-anthracite/50 text-sm leading-relaxed">{f.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -90,14 +90,14 @@ export function FeaturesSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <p className="font-syne font-extrabold text-[#2C2C2C]/40 text-[12px] tracking-widest uppercase mb-6">Und noch mehr</p>
+          <p className="font-syne font-extrabold text-anthracite/40 text-[12px] tracking-widest uppercase mb-6">Und noch mehr</p>
           <div className="grid md:grid-cols-2 gap-3">
             {killer.map((k) => (
-              <div key={k.label} className="flex items-start gap-3 bg-white border border-[#2C2C2C]/8 rounded-2xl px-5 py-4">
-                <span className="w-2 h-2 rounded-full bg-[#F5C400] mt-1.5 shrink-0" />
+              <div key={k.label} className="flex items-start gap-3 bg-white border border-anthracite/8 rounded-2xl px-5 py-4">
+                <span className="w-2 h-2 rounded-full bg-yellow mt-1.5 shrink-0" />
                 <div>
-                  <p className="font-syne font-extrabold text-[#2C2C2C] text-[15px] mb-1">{k.label}</p>
-                  <p className="text-[#2C2C2C]/45 text-sm leading-relaxed">{k.desc}</p>
+                  <p className="font-syne font-extrabold text-anthracite text-[15px] mb-1">{k.label}</p>
+                  <p className="text-anthracite/45 text-sm leading-relaxed">{k.desc}</p>
                 </div>
               </div>
             ))}

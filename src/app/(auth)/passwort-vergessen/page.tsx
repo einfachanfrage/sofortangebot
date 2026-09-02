@@ -31,19 +31,19 @@ export default function PasswortVergessenPage() {
 
   if (sent) {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col justify-center px-5">
+      <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
         <div className="text-5xl mb-5">📬</div>
-        <h1 className="text-2xl font-black text-[#2C2C2C] mb-3">E-Mail gesendet!</h1>
-        <p className="text-[#2C2C2C]/60 font-semibold leading-relaxed mb-2">
+        <h1 className="text-2xl font-black text-anthracite mb-3">E-Mail gesendet!</h1>
+        <p className="text-anthracite/60 font-semibold leading-relaxed mb-2">
           Wir haben einen Link zum Zurücksetzen deines Passworts an <strong>{email}</strong> geschickt.
         </p>
-        <p className="text-[#2C2C2C]/40 font-semibold text-sm leading-relaxed mb-8">
+        <p className="text-anthracite/40 font-semibold text-sm leading-relaxed mb-8">
           Schau auch im Spam-Ordner nach. Der Link ist 1 Stunde gültig.
         </p>
-        <Link href="/login" className="text-center text-[#2C2C2C]/50 font-semibold text-sm">
+        <Link href="/login" className="text-center text-anthracite/50 font-semibold text-sm">
           ← Zurück zum Login
         </Link>
       </div>
@@ -51,11 +51,11 @@ export default function PasswortVergessenPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] flex flex-col justify-center px-5">
+    <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
-        <div className="text-[#2C2C2C] text-xl font-bold mt-1">Passwort vergessen</div>
-        <p className="text-[#2C2C2C]/50 font-semibold text-sm mt-1">
+        <div className="text-anthracite text-xl font-bold mt-1">Passwort vergessen</div>
+        <p className="text-anthracite/50 font-semibold text-sm mt-1">
           Wir schicken dir einen Reset-Link per E-Mail.
         </p>
       </div>
@@ -68,7 +68,7 @@ export default function PasswortVergessenPage() {
           onChange={e => setEmail(e.target.value)}
           required
           autoFocus
-          className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+          className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
         />
 
         {error && (
@@ -80,14 +80,14 @@ export default function PasswortVergessenPage() {
         <button
           type="submit"
           disabled={loading || !email.trim()}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 mt-2 active:scale-95 transition-transform disabled:opacity-50"
+          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:scale-95 transition-transform disabled:opacity-50"
         >
           {loading ? 'Sende...' : 'Reset-Link senden'}
         </button>
       </form>
 
       <p className="text-center mt-8">
-        <Link href="/login" className="text-[#2C2C2C]/40 font-semibold text-sm hover:text-[#2C2C2C] transition-colors">
+        <Link href="/login" className="text-anthracite/40 font-semibold text-sm hover:text-anthracite transition-colors">
           ← Zurück zum Login
         </Link>
       </p>

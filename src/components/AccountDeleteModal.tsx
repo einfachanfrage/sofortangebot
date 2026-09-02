@@ -41,13 +41,13 @@ export function AccountDeleteModal() {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-          <div className="bg-white rounded-2xl border-2 border-[#2C2C2C] max-w-sm w-full p-8 shadow-xl">
+          <div className="bg-white rounded-2xl border-2 border-anthracite max-w-sm w-full p-8 shadow-xl">
             <div className="text-3xl mb-4">⚠️</div>
-            <h2 className="font-black text-xl text-[#2C2C2C] mb-3">Bist du sicher?</h2>
-            <p className="text-sm font-semibold text-[#2C2C2C]/60 mb-4 leading-relaxed">
+            <h2 className="font-black text-xl text-anthracite mb-3">Bist du sicher?</h2>
+            <p className="text-sm font-semibold text-anthracite/60 mb-4 leading-relaxed">
               Diese Aktion löscht:
             </p>
-            <ul className="text-sm font-semibold text-[#2C2C2C]/70 space-y-1.5 mb-5">
+            <ul className="text-sm font-semibold text-anthracite/70 space-y-1.5 mb-5">
               {[
                 'Alle deine Angebote und Rechnungen',
                 'Alle Kundendaten',
@@ -64,7 +64,7 @@ export function AccountDeleteModal() {
               Diese Aktion kann nicht rückgängig gemacht werden.
             </p>
 
-            <label className="block text-xs font-black text-[#2C2C2C]/40 mb-1.5 uppercase tracking-wide">
+            <label className="block text-xs font-black text-anthracite/40 mb-1.5 uppercase tracking-wide">
               Gib LÖSCHEN ein um zu bestätigen
             </label>
             <input
@@ -72,7 +72,7 @@ export function AccountDeleteModal() {
               value={confirm}
               onChange={e => setConfirm(e.target.value)}
               placeholder="LÖSCHEN"
-              className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-red-400 mb-4"
+              className="w-full bg-bg border-2 border-anthracite/10 rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-red-400 mb-4"
             />
 
             {error && (
@@ -83,7 +83,7 @@ export function AccountDeleteModal() {
               <button
                 type="button"
                 onClick={() => { setOpen(false); setConfirm(''); setError('') }}
-                className="flex-1 bg-[#F7F7F5] text-[#2C2C2C] font-black rounded-xl py-3 active:scale-95 transition-transform"
+                className="flex-1 bg-bg text-anthracite font-black rounded-xl py-3 active:scale-95 transition-transform"
               >
                 Abbrechen
               </button>

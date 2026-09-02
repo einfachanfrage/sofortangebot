@@ -58,14 +58,14 @@ export function NeueBaustelleButton({ customerId, variant = 'primary' }: NeueBau
       {variant === 'primary' ? (
         <button
           onClick={() => setOpen(true)}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black rounded-2xl py-3 text-sm active:scale-[0.98] transition-transform"
+          className="w-full bg-yellow text-anthracite font-black rounded-2xl py-3 text-sm active:scale-[0.98] transition-transform"
         >
           + Neue Baustelle
         </button>
       ) : (
         <button
           onClick={() => setOpen(true)}
-          className="mx-auto block text-xs font-bold text-[#2C2C2C]/35 hover:text-[#2C2C2C]/60 underline underline-offset-2 mt-2"
+          className="mx-auto block text-xs font-bold text-anthracite/35 hover:text-anthracite/60 underline underline-offset-2 mt-2"
         >
           + Weitere Baustelle für diesen Kunden
         </button>
@@ -75,32 +75,32 @@ export function NeueBaustelleButton({ customerId, variant = 'primary' }: NeueBau
         <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <div className="relative w-full md:max-w-sm bg-white rounded-t-3xl md:rounded-3xl px-5 pt-4 pb-8 md:pb-6 shadow-2xl">
-            <div className="flex justify-center mb-4 md:hidden"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-            <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-4">Neue Baustelle</h2>
+            <div className="flex justify-center mb-4 md:hidden"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+            <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-4">Neue Baustelle</h2>
             <input
               autoFocus
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Name (z. B. Bad OG links)"
-              className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-sm font-semibold mb-2 focus:outline-none focus:border-[#F5C400]"
+              className="w-full border border-anthracite/10 rounded-xl px-3 py-2.5 text-sm font-semibold mb-2 focus:outline-none focus:border-yellow"
             />
             <input
               type="text"
               value={adresse}
               onChange={e => setAdresse(e.target.value)}
               placeholder="Adresse (optional)"
-              className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-sm font-semibold mb-2 focus:outline-none focus:border-[#F5C400]"
+              className="w-full border border-anthracite/10 rounded-xl px-3 py-2.5 text-sm font-semibold mb-2 focus:outline-none focus:border-yellow"
             />
             {error && <p className="text-red-500 text-xs font-semibold mb-2">{error}</p>}
             <button
               onClick={anlegen}
               disabled={!name.trim() || saving}
-              className="w-full bg-[#2C2C2C] text-white font-black rounded-2xl py-3.5 text-sm disabled:opacity-50 mb-2 mt-2"
+              className="w-full bg-anthracite text-white font-black rounded-2xl py-3.5 text-sm disabled:opacity-50 mb-2 mt-2"
             >
               {saving ? 'Wird angelegt…' : '+ Baustelle anlegen'}
             </button>
-            <button onClick={() => setOpen(false)} className="w-full text-center text-xs font-bold text-[#2C2C2C]/40 py-2">
+            <button onClick={() => setOpen(false)} className="w-full text-center text-xs font-bold text-anthracite/40 py-2">
               Abbrechen
             </button>
           </div>

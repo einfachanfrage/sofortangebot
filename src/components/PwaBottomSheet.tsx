@@ -50,12 +50,12 @@ export function PwaBottomSheet({ onClose }: Props) {
       >
         {/* Drag Handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" />
+          <div className="w-10 h-1 rounded-full bg-anthracite/20" />
         </div>
 
         <button
           onClick={close}
-          className="absolute top-4 right-4 p-2 rounded-full bg-[#F7F7F5] text-[#2C2C2C]/40 hover:text-[#2C2C2C]"
+          className="absolute top-4 right-4 p-2 rounded-full bg-bg text-anthracite/40 hover:text-anthracite"
         >
           <X size={18} />
         </button>
@@ -63,13 +63,13 @@ export function PwaBottomSheet({ onClose }: Props) {
         <div className="px-6 pt-4 pb-8 overflow-y-auto h-full">
           {/* Header */}
           <div className="mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-[#2C2C2C] flex items-center justify-center mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-anthracite flex items-center justify-center mb-4">
               <span className="text-2xl">⚡</span>
             </div>
-            <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[26px] leading-tight mb-2">
+            <h2 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
               App auf Homescreen
             </h2>
-            <p className="text-[#2C2C2C]/50 font-semibold text-[15px]">
+            <p className="text-anthracite/50 font-semibold text-[15px]">
               Schneller starten, besser arbeiten — ohne App Store.
             </p>
           </div>
@@ -117,15 +117,15 @@ export function PwaBottomSheet({ onClose }: Props) {
             </div>
           )}
 
-          <div className="mt-8 p-4 bg-[#F7F7F5] rounded-2xl">
-            <p className="text-[#2C2C2C]/50 text-[13px] font-semibold text-center">
+          <div className="mt-8 p-4 bg-bg rounded-2xl">
+            <p className="text-anthracite/50 text-[13px] font-semibold text-center">
               Kein App Store nötig · Immer aktuell · Funktioniert offline
             </p>
           </div>
 
           <button
             onClick={close}
-            className="mt-6 w-full bg-[#2C2C2C] text-white font-extrabold text-[15px] py-4 rounded-2xl active:scale-95 transition-transform"
+            className="mt-6 w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:scale-95 transition-transform"
           >
             Verstanden
           </button>
@@ -143,15 +143,15 @@ function Step({ number, icon, title, children }: {
 }) {
   return (
     <div className="flex gap-4">
-      <div className="shrink-0 w-10 h-10 rounded-xl bg-[#2C2C2C] text-white flex items-center justify-center font-extrabold text-[15px]">
+      <div className="shrink-0 w-10 h-10 rounded-xl bg-anthracite text-white flex items-center justify-center font-extrabold text-[15px]">
         {number}
       </div>
       <div>
         <div className="flex items-center gap-2 mb-0.5">
-          <span className="text-[#2C2C2C]/40">{icon}</span>
-          <span className="font-extrabold text-[#2C2C2C] text-[15px]">{title}</span>
+          <span className="text-anthracite/40">{icon}</span>
+          <span className="font-extrabold text-anthracite text-[15px]">{title}</span>
         </div>
-        <p className="text-[#2C2C2C]/50 font-semibold text-[13px]">{children}</p>
+        <p className="text-anthracite/50 font-semibold text-[13px]">{children}</p>
       </div>
     </div>
   )

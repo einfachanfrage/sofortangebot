@@ -45,8 +45,8 @@ export function RestoreBanner() {
   if (!show) return null
 
   return (
-    <div className="fixed inset-x-0 top-0 z-50 bg-[#F5C400] px-5 py-4 shadow-lg">
-      <p className="font-bold text-[#2C2C2C] text-sm mb-3 leading-snug">
+    <div className="fixed inset-x-0 top-0 z-50 bg-yellow px-5 py-4 shadow-lg">
+      <p className="font-bold text-anthracite text-sm mb-3 leading-snug">
         Dein Account wurde gelöscht, kann aber noch wiederhergestellt werden.
         Wiederherstellen?
       </p>
@@ -54,13 +54,13 @@ export function RestoreBanner() {
         <button
           onClick={restore}
           disabled={loading}
-          className="bg-[#2C2C2C] text-white font-black text-sm px-5 py-2.5 rounded-xl active:scale-95 transition-transform disabled:opacity-50"
+          className="bg-anthracite text-white font-black text-sm px-5 py-2.5 rounded-xl active:scale-95 transition-transform disabled:opacity-50"
         >
           {loading ? '...' : 'Ja, wiederherstellen'}
         </button>
         <button
           onClick={dismiss}
-          className="text-[#2C2C2C]/60 font-bold text-sm px-4 py-2.5"
+          className="text-anthracite/60 font-bold text-sm px-4 py-2.5"
         >
           Nein, neu starten
         </button>

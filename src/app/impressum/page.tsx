@@ -7,18 +7,18 @@ export const metadata = {
 
 export default function ImpressumPage() {
   return (
-    <div className="min-h-dvh bg-[#F7F7F5]">
-      <nav className="flex items-center justify-between px-6 py-5 border-b border-[#2C2C2C]/8 bg-white">
+    <div className="min-h-dvh bg-bg">
+      <nav className="flex items-center justify-between px-6 py-5 border-b border-anthracite/8 bg-white">
         <Link href="/"><Logo variant="light" className="text-xl" /></Link>
       </nav>
 
       <div className="px-6 py-12 max-w-2xl mx-auto">
-        <h1 className="text-3xl font-black text-[#2C2C2C] mb-8">Impressum</h1>
+        <h1 className="text-3xl font-black text-anthracite mb-8">Impressum</h1>
 
-        <div className="prose prose-sm text-[#2C2C2C]/80 space-y-6">
+        <div className="prose prose-sm text-anthracite/80 space-y-6">
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Angaben gemäß § 5 DDG</h2>
+            <h2 className="font-black text-anthracite text-lg mb-2">Angaben gemäß § 5 DDG</h2>
             <p className="font-semibold leading-relaxed">
               Sandra Holm<br />
               Wielandstr. 11<br />
@@ -28,22 +28,22 @@ export default function ImpressumPage() {
           </section>
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Kontakt</h2>
+            <h2 className="font-black text-anthracite text-lg mb-2">Kontakt</h2>
             <p className="font-semibold leading-relaxed">
               Telefon: +49 151 20791652<br />
-              E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a>
+              E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-yellow underline">hallo@sofortangebot.app</a>
             </p>
           </section>
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Umsatzsteuer-Identifikationsnummer</h2>
-            <p className="font-semibold leading-relaxed text-[#2C2C2C]/60">
+            <h2 className="font-black text-anthracite text-lg mb-2">Umsatzsteuer-Identifikationsnummer</h2>
+            <p className="font-semibold leading-relaxed text-anthracite/60">
               Wird nach steuerlicher Registrierung ergänzt.
             </p>
           </section>
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+            <h2 className="font-black text-anthracite text-lg mb-2">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
             <p className="font-semibold leading-relaxed">
               Sandra Holm<br />
               Wielandstr. 11<br />
@@ -59,7 +59,7 @@ export default function ImpressumPage() {
               keine Pflichterfüllung, sondern eine falsche Angabe. Die
               VSBG-Erklärung bleibt: § 36 VSBG verlangt sie unverändert. */}
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Verbraucherstreitbeilegung</h2>
+            <h2 className="font-black text-anthracite text-lg mb-2">Verbraucherstreitbeilegung</h2>
             <p className="font-semibold leading-relaxed">
               Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer
               Verbraucherschlichtungsstelle teilzunehmen (§ 36 VSBG).
@@ -67,7 +67,7 @@ export default function ImpressumPage() {
           </section>
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Haftung für Inhalte</h2>
+            <h2 className="font-black text-anthracite text-lg mb-2">Haftung für Inhalte</h2>
             <p className="font-semibold leading-relaxed">
               Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den
               allgemeinen Gesetzen verantwortlich. Nach § 7 Abs. 2 DDG in Verbindung mit Art. 8 der Verordnung (EU)
@@ -78,7 +78,7 @@ export default function ImpressumPage() {
           </section>
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Haftung für Links</h2>
+            <h2 className="font-black text-anthracite text-lg mb-2">Haftung für Links</h2>
             <p className="font-semibold leading-relaxed">
               Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben.
               Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der
@@ -87,7 +87,7 @@ export default function ImpressumPage() {
           </section>
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Urheberrecht</h2>
+            <h2 className="font-black text-anthracite text-lg mb-2">Urheberrecht</h2>
             <p className="font-semibold leading-relaxed">
               Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen
               Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der
@@ -98,10 +98,10 @@ export default function ImpressumPage() {
         </div>
       </div>
 
-      <footer className="border-t border-[#2C2C2C]/8 px-6 py-6 flex items-center justify-between">
+      <footer className="border-t border-anthracite/8 px-6 py-6 flex items-center justify-between">
         <Logo variant="light" className="text-sm" />
-        <div className="flex gap-4 text-[#2C2C2C]/30 text-xs font-semibold">
-          <Link href="/impressum" className="text-[#2C2C2C]">Impressum</Link>
+        <div className="flex gap-4 text-anthracite/30 text-xs font-semibold">
+          <Link href="/impressum" className="text-anthracite">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
           <Link href="/agb">AGB</Link>
         </div>

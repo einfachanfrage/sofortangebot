@@ -113,24 +113,24 @@ const sections = [
 
 export default function AgbPage() {
   return (
-    <div className="min-h-dvh bg-[#F7F7F5]">
-      <nav className="flex items-center justify-between px-6 py-5 border-b border-[#2C2C2C]/8 bg-white">
+    <div className="min-h-dvh bg-bg">
+      <nav className="flex items-center justify-between px-6 py-5 border-b border-anthracite/8 bg-white">
         <Link href="/"><Logo variant="light" className="text-xl" /></Link>
       </nav>
 
       <div className="px-6 py-12 max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-black text-[#2C2C2C]">Allgemeine Geschäftsbedingungen</h1>
-          <p className="text-[#2C2C2C]/50 text-sm font-semibold mt-2">Stand: Juni 2026 · Version 2026-06</p>
-          <p className="text-[#2C2C2C]/60 text-sm font-semibold mt-1">
+          <h1 className="text-3xl font-black text-anthracite">Allgemeine Geschäftsbedingungen</h1>
+          <p className="text-anthracite/50 text-sm font-semibold mt-2">Stand: Juni 2026 · Version 2026-06</p>
+          <p className="text-anthracite/60 text-sm font-semibold mt-1">
             Sandy Holm · Sofortangebot · Wielandstr. 11, 12159 Berlin · hallo@sofortangebot.app
           </p>
         </div>
 
         {sections.map(section => (
-          <section key={section.title} className="bg-white rounded-2xl p-6 border border-[#2C2C2C]/5">
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-4">{section.title}</h2>
-            <div className="space-y-3 text-[#2C2C2C]/70 font-semibold text-sm leading-relaxed">
+          <section key={section.title} className="bg-white rounded-2xl p-6 border border-anthracite/5">
+            <h2 className="font-black text-anthracite text-lg mb-4">{section.title}</h2>
+            <div className="space-y-3 text-anthracite/70 font-semibold text-sm leading-relaxed">
               {section.paragraphs.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
@@ -139,13 +139,13 @@ export default function AgbPage() {
         ))}
       </div>
 
-      <footer className="border-t border-[#2C2C2C]/8 px-6 py-6 flex items-center justify-between">
+      <footer className="border-t border-anthracite/8 px-6 py-6 flex items-center justify-between">
         <Logo variant="light" className="text-sm" />
-        <div className="flex gap-4 text-[#2C2C2C]/30 text-xs font-semibold">
+        <div className="flex gap-4 text-anthracite/30 text-xs font-semibold">
           <Link href="/impressum">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
           <Link href="/avv">AVV</Link>
-          <Link href="/agb" className="text-[#2C2C2C]">AGB</Link>
+          <Link href="/agb" className="text-anthracite">AGB</Link>
         </div>
       </footer>
     </div>

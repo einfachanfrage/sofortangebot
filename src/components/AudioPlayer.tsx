@@ -65,12 +65,12 @@ export function AudioPlayer({ src, dauer }: Props) {
   const progress = duration > 0 ? (current / duration) * 100 : 0
 
   return (
-    <div className="flex items-center gap-3 bg-[#F7F7F5] rounded-xl px-3 py-2.5">
+    <div className="flex items-center gap-3 bg-bg rounded-xl px-3 py-2.5">
       <audio ref={audioRef} src={src} preload="metadata" />
 
       <button
         onClick={toggle}
-        className="w-8 h-8 rounded-full bg-[#2C2C2C] flex items-center justify-center shrink-0 active:scale-95 transition-transform"
+        className="w-8 h-8 rounded-full bg-anthracite flex items-center justify-center shrink-0 active:scale-95 transition-transform"
       >
         {playing
           ? <Pause size={14} fill="white" color="white" />
@@ -80,22 +80,22 @@ export function AudioPlayer({ src, dauer }: Props) {
 
       {/* Fortschrittsbalken */}
       <div
-        className="flex-1 h-1.5 bg-[#2C2C2C]/15 rounded-full cursor-pointer relative"
+        className="flex-1 h-1.5 bg-anthracite/15 rounded-full cursor-pointer relative"
         onClick={seek}
       >
         <div
-          className="h-full bg-[#2C2C2C] rounded-full transition-all duration-100"
+          className="h-full bg-anthracite rounded-full transition-all duration-100"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      <span className="text-[#2C2C2C]/50 font-semibold text-[12px] tabular-nums shrink-0">
+      <span className="text-anthracite/50 font-semibold text-[12px] tabular-nums shrink-0">
         {fmt(current)}&nbsp;/&nbsp;{fmt(duration)}
       </span>
 
       <button
         onClick={cycleSpeed}
-        className="text-[11px] font-extrabold text-[#2C2C2C]/40 hover:text-[#2C2C2C] transition-colors shrink-0 w-7 text-center"
+        className="text-[11px] font-extrabold text-anthracite/40 hover:text-anthracite transition-colors shrink-0 w-7 text-center"
       >
         {speed}×
       </button>

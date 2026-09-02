@@ -36,7 +36,7 @@ function AngebotNeuInner() {
   }, [router, searchParams])
 
   return (
-    <div className="min-h-dvh bg-[#2C2C2C] flex flex-col items-center justify-center gap-4 px-5">
+    <div className="min-h-dvh bg-anthracite flex flex-col items-center justify-center gap-4 px-5">
       {error ? (
         <div className="text-center">
           <p className="text-red-400 font-semibold mb-4">{error}</p>
@@ -49,7 +49,7 @@ function AngebotNeuInner() {
         </div>
       ) : (
         <>
-          <Loader2 size={32} color="#F5C400" className="animate-spin" />
+          <Loader2 size={32} color="var(--color-yellow)" className="animate-spin" />
           <p className="text-white/60 font-semibold text-base">Aufmaß wird angelegt…</p>
         </>
       )}
@@ -60,8 +60,8 @@ function AngebotNeuInner() {
 export default function AngebotNeuPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-dvh bg-[#2C2C2C] flex flex-col items-center justify-center gap-4 px-5">
-        <Loader2 size={32} color="#F5C400" className="animate-spin" />
+      <div className="min-h-dvh bg-anthracite flex flex-col items-center justify-center gap-4 px-5">
+        <Loader2 size={32} color="var(--color-yellow)" className="animate-spin" />
       </div>
     }>
       <AngebotNeuInner />

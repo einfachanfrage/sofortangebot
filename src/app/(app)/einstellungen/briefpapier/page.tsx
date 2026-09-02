@@ -105,15 +105,15 @@ export default function BriefpapierUebersicht() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-24">
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+    <div className="min-h-dvh bg-bg pb-24">
+      <div className="bg-anthracite px-5 pt-12 pb-6">
         <Link href="/einstellungen" className="text-white/50 text-sm font-semibold">← Einstellungen</Link>
         <h1 className="text-xl font-syne font-black text-white mt-1">Briefpapier & Design</h1>
       </div>
 
       <div className="max-w-xl mx-auto px-5 pt-5 space-y-3">
         {loading ? (
-          <div className="text-center py-12 text-[#2C2C2C]/30 text-sm">Lädt…</div>
+          <div className="text-center py-12 text-anthracite/30 text-sm">Lädt…</div>
         ) : dbError ? (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
             <div className="text-2xl mb-3">⚠️</div>
@@ -133,14 +133,14 @@ export default function BriefpapierUebersicht() {
         ) : (
           <>
             {briefpapiere.map(bp => (
-              <div key={bp.id} className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4">
+              <div key={bp.id} className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      {bp.ist_standard && <Star size={13} className="text-[#F5C400] fill-[#F5C400]" />}
-                      <span className="font-black text-[#2C2C2C] text-sm">{bp.name}</span>
+                      {bp.ist_standard && <Star size={13} className="text-yellow fill-yellow" />}
+                      <span className="font-black text-anthracite text-sm">{bp.name}</span>
                     </div>
-                    <div className="flex gap-3 mt-1.5 text-[10px] text-[#2C2C2C]/30">
+                    <div className="flex gap-3 mt-1.5 text-[10px] text-anthracite/30">
                       <span>Logo: {bp.logo_url ? '✓' : '—'}</span>
                       <span>Fußzeile: {(bp.fusszeile_links || bp.fusszeile_mitte || bp.fusszeile_rechts) ? '✓' : '—'}</span>
                       <span style={{ color: bp.akzentfarbe }}>■ {bp.akzentfarbe}</span>
@@ -150,14 +150,14 @@ export default function BriefpapierUebersicht() {
                 <div className="flex gap-2 mt-3">
                   <Link
                     href={`/einstellungen/briefpapier/${bp.id}`}
-                    className="flex items-center gap-1.5 text-xs font-semibold bg-[#F7F7F5] rounded-xl px-3 py-2 text-[#2C2C2C]"
+                    className="flex items-center gap-1.5 text-xs font-semibold bg-bg rounded-xl px-3 py-2 text-anthracite"
                   >
                     <Pencil size={11} /> Bearbeiten
                   </Link>
                   <button
                     onClick={() => duplizieren(bp)}
                     disabled={briefpapiere.length >= 5}
-                    className="flex items-center gap-1.5 text-xs font-semibold bg-[#F7F7F5] rounded-xl px-3 py-2 text-[#2C2C2C] disabled:opacity-40"
+                    className="flex items-center gap-1.5 text-xs font-semibold bg-bg rounded-xl px-3 py-2 text-anthracite disabled:opacity-40"
                   >
                     <Copy size={11} /> Duplizieren
                   </button>
@@ -184,13 +184,13 @@ export default function BriefpapierUebersicht() {
             {briefpapiere.length < 5 && (
               <button
                 onClick={neu}
-                className="w-full border-2 border-dashed border-[#2C2C2C]/15 rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-semibold text-[#2C2C2C]/30 hover:border-[#F5C400]/50 transition-colors"
+                className="w-full border-2 border-dashed border-anthracite/15 rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-semibold text-anthracite/30 hover:border-yellow/50 transition-colors"
               >
                 <Plus size={16} /> Neue Variante erstellen
               </button>
             )}
             {briefpapiere.length >= 5 && (
-              <p className="text-center text-xs text-[#2C2C2C]/30">Max. 5 Varianten erreicht</p>
+              <p className="text-center text-xs text-anthracite/30">Max. 5 Varianten erreicht</p>
             )}
           </>
         )}

@@ -148,13 +148,13 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
         <div className="flex border-b border-gray-100 mx-4 flex-shrink-0">
           <button
             onClick={() => setMainTab('vorschau')}
-            className={`flex-1 py-2.5 text-sm font-semibold border-b-2 transition-colors ${mainTab === 'vorschau' ? 'border-[#F5C400] text-[#2C2C2C]' : 'border-transparent text-gray-400'}`}
+            className={`flex-1 py-2.5 text-sm font-semibold border-b-2 transition-colors ${mainTab === 'vorschau' ? 'border-yellow text-anthracite' : 'border-transparent text-gray-400'}`}
           >
             Vorschau
           </button>
           <button
             onClick={() => setMainTab('senden')}
-            className={`flex-1 py-2.5 text-sm font-semibold border-b-2 transition-colors ${mainTab === 'senden' ? 'border-[#F5C400] text-[#2C2C2C]' : 'border-transparent text-gray-400'}`}
+            className={`flex-1 py-2.5 text-sm font-semibold border-b-2 transition-colors ${mainTab === 'senden' ? 'border-yellow text-anthracite' : 'border-transparent text-gray-400'}`}
           >
             Senden →
           </button>
@@ -169,13 +169,13 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
               <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
                 <button
                   onClick={() => setModus('angebot')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${modus === 'angebot' ? 'bg-white shadow text-[#2C2C2C]' : 'text-gray-500'}`}
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${modus === 'angebot' ? 'bg-white shadow text-anthracite' : 'text-gray-500'}`}
                 >
                   Angebot
                 </button>
                 <button
                   onClick={() => setModus('rechnung')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${modus === 'rechnung' ? 'bg-white shadow text-[#2C2C2C]' : 'text-gray-500'}`}
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${modus === 'rechnung' ? 'bg-white shadow text-anthracite' : 'text-gray-500'}`}
                 >
                   Rechnung
                 </button>
@@ -185,7 +185,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
 
             {/* Banner */}
             {showBanner && (
-              <div className="mx-4 mt-3 bg-[#FFF9E6] border border-[#F5C400]/40 rounded-xl px-4 py-3 text-xs text-[#92400E] font-medium text-center transition-opacity">
+              <div className="mx-4 mt-3 bg-[#FFF9E6] border border-yellow/40 rounded-xl px-4 py-3 text-xs text-[#92400E] font-medium text-center transition-opacity">
                 So sieht dein Angebot für den Kunden aus
               </div>
             )}
@@ -203,7 +203,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
             <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 flex gap-2">
               <button
                 onClick={() => { setMainTab('senden'); setSendTab('email') }}
-                className="flex-1 bg-[#2C2C2C] text-white py-3 rounded-xl font-semibold text-sm"
+                className="flex-1 bg-anthracite text-white py-3 rounded-xl font-semibold text-sm"
               >
                 Senden →
               </button>
@@ -220,7 +220,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                 <button
                   key={tab}
                   onClick={() => setSendTab(tab)}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${sendTab === tab ? 'bg-white shadow text-[#2C2C2C]' : 'text-gray-500'}`}
+                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${sendTab === tab ? 'bg-white shadow text-anthracite' : 'text-gray-500'}`}
                 >
                   {tab === 'email' ? '✉️ E-Mail' : tab === 'whatsapp' ? '💬 WhatsApp' : '🔗 Link'}
                 </button>
@@ -261,7 +261,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                           value={to}
                           onChange={e => setTo(e.target.value)}
                           placeholder="kunde@beispiel.de"
-                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#F5C400]"
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-yellow"
                         />
                       </div>
                       <div>
@@ -269,7 +269,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                         <input
                           value={betreff}
                           onChange={e => setBetreff(e.target.value)}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#F5C400]"
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-yellow"
                         />
                       </div>
                       <div>
@@ -278,7 +278,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                           value={nachricht}
                           onChange={e => setNachricht(e.target.value)}
                           rows={8}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#F5C400] resize-none"
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-yellow resize-none"
                         />
                         <div className="text-[10px] text-gray-400 mt-0.5">PDF-Anhang wird automatisch beigefügt</div>
                       </div>
@@ -297,7 +297,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                 <div className="space-y-4">
                   {urlLoading ? (
                     <div className="flex flex-col items-center py-10 gap-3">
-                      <div className="w-8 h-8 border-2 border-[#F5C400] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-8 h-8 border-2 border-yellow border-t-transparent rounded-full animate-spin" />
                       <span className="text-sm text-gray-500">PDF wird vorbereitet…</span>
                     </div>
                   ) : publicUrl ? (
@@ -324,7 +324,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                 <div className="space-y-4">
                   {urlLoading ? (
                     <div className="flex flex-col items-center py-10 gap-3">
-                      <div className="w-8 h-8 border-2 border-[#F5C400] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-8 h-8 border-2 border-yellow border-t-transparent rounded-full animate-spin" />
                       <span className="text-sm text-gray-500">PDF wird vorbereitet…</span>
                     </div>
                   ) : publicUrl ? (
@@ -344,7 +344,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                         </div>
                         <button
                           onClick={copyLink}
-                          className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-[#2C2C2C] text-white'}`}
+                          className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-anthracite text-white'}`}
                         >
                           {copied ? '✓ Kopiert' : 'Kopieren'}
                         </button>
@@ -363,7 +363,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                 <button
                   onClick={handleSend}
                   disabled={!to || sending}
-                  className="w-full bg-[#2C2C2C] text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-anthracite text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {sending ? (
                     <>

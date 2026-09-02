@@ -20,7 +20,7 @@ interface ApiVersion {
 function StatusBadge({ status }: { status: string }) {
   if (status === 'ok') return <span className="inline-flex items-center gap-1 text-xs font-bold text-green-700 bg-green-50 px-2 py-1 rounded-full">🟢 OK</span>
   if (status === 'fehler') return <span className="inline-flex items-center gap-1 text-xs font-bold text-red-700 bg-red-50 px-2 py-1 rounded-full">🔴 Fehler</span>
-  return <span className="inline-flex items-center gap-1 text-xs font-bold text-[#2C2C2C]/40 bg-[#F7F7F5] px-2 py-1 rounded-full">⚪ Unbekannt</span>
+  return <span className="inline-flex items-center gap-1 text-xs font-bold text-anthracite/40 bg-bg px-2 py-1 rounded-full">⚪ Unbekannt</span>
 }
 
 function fmt(iso: string | null) {
@@ -61,14 +61,14 @@ export default function ApiStatusPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-24">
-      <div className="bg-white border-b border-[#2C2C2C]/8 px-4 pt-10 pb-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-[#2C2C2C]/40"><ArrowLeft size={20} /></Link>
-        <h1 className="text-lg font-black text-[#2C2C2C] flex-1">API-Status</h1>
+    <div className="min-h-dvh bg-bg pb-24">
+      <div className="bg-white border-b border-anthracite/8 px-4 pt-10 pb-4 flex items-center gap-3">
+        <Link href="/dashboard" className="text-anthracite/40"><ArrowLeft size={20} /></Link>
+        <h1 className="text-lg font-black text-anthracite flex-1">API-Status</h1>
         <button
           onClick={runTest}
           disabled={testing}
-          className="flex items-center gap-1.5 text-xs font-bold bg-[#2C2C2C] text-white rounded-xl px-3 py-2 disabled:opacity-50"
+          className="flex items-center gap-1.5 text-xs font-bold bg-anthracite text-white rounded-xl px-3 py-2 disabled:opacity-50"
         >
           <RefreshCw size={12} className={testing ? 'animate-spin' : ''} />
           Jetzt testen
@@ -77,22 +77,22 @@ export default function ApiStatusPage() {
 
       <div className="max-w-xl mx-auto px-4 pt-5 space-y-3">
         {testResult && (
-          <div className="bg-[#FFF9E6] border border-[#F5C400]/40 rounded-xl px-4 py-3 text-sm font-semibold text-[#92400E]">
+          <div className="bg-[#FFF9E6] border border-yellow/40 rounded-xl px-4 py-3 text-sm font-semibold text-[#92400E]">
             Test abgeschlossen: {testResult}
           </div>
         )}
 
         {loading ? (
-          <div className="text-center py-12 text-[#2C2C2C]/30 text-sm">Lädt…</div>
+          <div className="text-center py-12 text-anthracite/30 text-sm">Lädt…</div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 divide-y divide-[#2C2C2C]/5">
+          <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 divide-y divide-anthracite/5">
             {rows.map(row => (
               <div key={row.id} className={`px-5 py-4 ${row.status === 'fehler' ? 'bg-red-50/50' : ''}`}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-black text-[#2C2C2C] capitalize">{row.anbieter}</span>
+                  <span className="font-black text-anthracite capitalize">{row.anbieter}</span>
                   <StatusBadge status={row.status} />
                 </div>
-                <div className="text-[11px] text-[#2C2C2C]/40 space-y-0.5">
+                <div className="text-[11px] text-anthracite/40 space-y-0.5">
                   <div>Version: {row.aktuelle_version ?? '—'}</div>
                   <div>Letzter Test: {fmt(row.letzter_test)}</div>
                   {row.letzter_fehler && (
@@ -104,7 +104,7 @@ export default function ApiStatusPage() {
           </div>
         )}
 
-        <p className="text-center text-xs text-[#2C2C2C]/30 pt-2">
+        <p className="text-center text-xs text-anthracite/30 pt-2">
           Automatisch jeden Montag 08:00 Uhr getestet
         </p>
       </div>

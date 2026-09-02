@@ -14,9 +14,9 @@ export default function BlogPage() {
   return (
     <div className="min-h-dvh">
       {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 md:px-10 py-20">
+      <div className="bg-anthracite px-5 md:px-10 py-20">
         <div className="max-w-6xl mx-auto">
-          <div className="text-[#F5C400] text-xs font-extrabold uppercase tracking-widest mb-4">
+          <div className="text-yellow text-xs font-extrabold uppercase tracking-widest mb-4">
             Praxiswissen für Handwerker
           </div>
           <h1 className="font-extrabold text-white text-[36px] md:text-[48px] leading-tight tracking-tight mb-4">

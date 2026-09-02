@@ -225,7 +225,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
   const istZettel = aufnahme.typ === 'foto' && (aufnahme.transkript != null || aufnahme.foto_beschreibung === 'Aufmaß-Zettel')
 
   return (
-    <div className="bg-white rounded-2xl border border-[#2C2C2C]/6 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-anthracite/6 overflow-hidden">
 
       {/* Sprach-Aufnahme oder Zettel-Scan */}
       {(aufnahme.typ === 'sprache' || istZettel) && (
@@ -233,12 +233,12 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
           {/* Kopfzeile: Zeit + Status + Löschen */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <span className="text-[#2C2C2C]/30 font-semibold text-[12px]">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
-              {istZettel && <span className="text-[11px] font-extrabold text-[#2C2C2C]/40 bg-[#2C2C2C]/5 px-2 py-0.5 rounded-full">📷 Zettel</span>}
+              <span className="text-anthracite/30 font-semibold text-[12px]">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
+              {istZettel && <span className="text-[11px] font-extrabold text-anthracite/40 bg-anthracite/5 px-2 py-0.5 rounded-full">📷 Zettel</span>}
               <StatusBadge status={badgeStatus} />
             </div>
             {onDelete && (
-              <button onClick={onDelete} className="p-1 text-[#2C2C2C]/20 hover:text-red-400 transition-colors">
+              <button onClick={onDelete} className="p-1 text-anthracite/20 hover:text-red-400 transition-colors">
                 <X size={14} />
               </button>
             )}
@@ -247,7 +247,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
           {/* Status: lädt / Fehler */}
           {badgeStatus === 'verarbeitung' && (
             <div className="flex flex-col gap-1 mb-3">
-              <div className="flex items-center gap-2 text-[#2C2C2C]/40 text-[13px] font-semibold">
+              <div className="flex items-center gap-2 text-anthracite/40 text-[13px] font-semibold">
                 <Loader2 size={14} className="animate-spin" />
                 Wird ausgewertet…
               </div>
@@ -256,7 +256,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
                   Zeitangabe wäre dasselbe Vertrauensproblem nur eine Ebene
                   tiefer (siehe DC-022). */}
               {zeigePruefHinweis && (
-                <div className="text-[#2C2C2C]/35 text-[12px] font-semibold pl-[22px]">prüft genau, dauert kurz</div>
+                <div className="text-anthracite/35 text-[12px] font-semibold pl-[22px]">prüft genau, dauert kurz</div>
               )}
             </div>
           )}
@@ -269,7 +269,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
               {onRetry && aufnahme.typ === 'sprache' && (
                 <button
                   onClick={onRetry}
-                  className="ml-auto flex items-center gap-1.5 bg-[#2C2C2C] text-white text-[12px] font-extrabold px-3 py-1.5 rounded-xl active:scale-95 transition-all"
+                  className="ml-auto flex items-center gap-1.5 bg-anthracite text-white text-[12px] font-extrabold px-3 py-1.5 rounded-xl active:scale-95 transition-all"
                 >
                   <RefreshCw size={12} strokeWidth={2.5} />
                   Nochmal versuchen
@@ -283,20 +283,20 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
             <div className="mb-3 space-y-3">
               {einzelraum && (
                 <div>
-                  <div className="font-syne font-extrabold text-[16px] text-[#2C2C2C]">{einzelraum}</div>
+                  <div className="font-syne font-extrabold text-[16px] text-anthracite">{einzelraum}</div>
                   <div className="flex items-center gap-1.5 mt-1 text-[12px] font-bold text-[#1A7A38]"><Check size={13} strokeWidth={3} /> Raum erkannt</div>
                 </div>
               )}
               {raumdaten.laenge && raumdaten.breite && (
                 <div>
-                  <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35 mb-1">Maße</div>
-                  <div className="text-[14px] font-bold text-[#2C2C2C]">
+                  <div className="text-[10px] font-extrabold uppercase tracking-widest text-anthracite/35 mb-1">Maße</div>
+                  <div className="text-[14px] font-bold text-anthracite">
                     {formatMass(raumdaten.laenge)} × {formatMass(raumdaten.breite)}{raumdaten.hoehe ? ` × ${formatMass(raumdaten.hoehe)}` : ''} m
                   </div>
                 </div>
               )}
               <div>
-                <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35 mb-1.5">Leistungen</div>
+                <div className="text-[10px] font-extrabold uppercase tracking-widest text-anthracite/35 mb-1.5">Leistungen</div>
                 <div className="flex flex-col gap-1.5">
                   {erkannte.map((p, i) => {
                     const treffer = p.titel?.match(TITEL_TRENNER)
@@ -304,16 +304,16 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
                     return (
                       <div key={i} className="flex items-center gap-2">
                         <Check size={13} strokeWidth={3} className="text-[#1A7A38] shrink-0" />
-                        <span className="text-[13px] font-semibold text-[#2C2C2C]">{titelDisplay}</span>
+                        <span className="text-[13px] font-semibold text-anthracite">{titelDisplay}</span>
                       </div>
                     )
                   })}
                 </div>
               </div>
               {(raumdaten.fenster > 0 || raumdaten.tueren > 0) && (
-                <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-[#2C2C2C]/6 pt-2.5 text-[12px] font-semibold text-[#2C2C2C]/65">
-                  {raumdaten.fenster > 0 && <span>Fenster: <b className="text-[#2C2C2C]">{raumdaten.fenster}</b></span>}
-                  {raumdaten.tueren > 0 && <span>{raumdaten.tueren === 1 ? 'Tür' : 'Türen'}: <b className="text-[#2C2C2C]">{raumdaten.tueren}</b></span>}
+                <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-anthracite/6 pt-2.5 text-[12px] font-semibold text-anthracite/65">
+                  {raumdaten.fenster > 0 && <span>Fenster: <b className="text-anthracite">{raumdaten.fenster}</b></span>}
+                  {raumdaten.tueren > 0 && <span>{raumdaten.tueren === 1 ? 'Tür' : 'Türen'}: <b className="text-anthracite">{raumdaten.tueren}</b></span>}
                 </div>
               )}
             </div>
@@ -330,7 +330,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
             <img
               src={aufnahme.foto_signed_url}
               alt="Aufmaß-Zettel"
-              className="w-full max-h-32 object-cover rounded-xl cursor-pointer border border-[#2C2C2C]/8"
+              className="w-full max-h-32 object-cover rounded-xl cursor-pointer border border-anthracite/8"
               onClick={() => setFotoGross(true)}
             />
           )}
@@ -341,11 +341,11 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
       {aufnahme.typ === 'notiz' && (
         <div className="px-4 pt-3.5 pb-4">
           <div className="flex items-start justify-between gap-2">
-            <p className="text-[#2C2C2C] font-semibold text-[14px] leading-relaxed flex-1">
+            <p className="text-anthracite font-semibold text-[14px] leading-relaxed flex-1">
               {aufnahme.notiz_text}
             </p>
             {onDelete && (
-              <button onClick={onDelete} className="p-1 text-[#2C2C2C]/20 hover:text-red-400 transition-colors shrink-0">
+              <button onClick={onDelete} className="p-1 text-anthracite/20 hover:text-red-400 transition-colors shrink-0">
                 <X size={14} />
               </button>
             )}
@@ -371,7 +371,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
             )}
           </div>
           {aufnahme.foto_beschreibung && (
-            <p className="px-4 py-2.5 text-[#2C2C2C]/60 font-semibold text-[13px]">{aufnahme.foto_beschreibung}</p>
+            <p className="px-4 py-2.5 text-anthracite/60 font-semibold text-[13px]">{aufnahme.foto_beschreibung}</p>
           )}
         </>
       )}
@@ -395,7 +395,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
 function chipStatusFarbe(status: string): string {
   if (status === 'fertig') return 'bg-[#1A7A38]'
   if (status === 'fehler') return 'bg-red-500'
-  return 'bg-[#F5C400]'
+  return 'bg-yellow'
 }
 
 function AufnahmeChip({ aufnahme, wartetSeit, onOpen }: { aufnahme: AufnahmeWithUrl; wartetSeit?: number; onOpen: () => void }) {
@@ -416,13 +416,13 @@ function AufnahmeChip({ aufnahme, wartetSeit, onOpen }: { aufnahme: AufnahmeWith
       className={`shrink-0 flex items-center gap-2 rounded-full border px-3.5 py-2 transition-colors ${
         aufnahme.verarbeitung_status === 'fehler'
           ? 'border-red-200 bg-red-50'
-          : 'border-[#2C2C2C]/8 bg-white hover:border-[#2C2C2C]/20'
+          : 'border-anthracite/8 bg-white hover:border-anthracite/20'
       }`}
     >
       <span className={`w-2 h-2 rounded-full shrink-0 ${chipStatusFarbe(badgeStatus)} ${badgeStatus === 'verarbeitung' ? 'animate-pulse' : ''}`} />
-      <span className="font-bold text-[12px] text-[#2C2C2C] whitespace-nowrap">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
+      <span className="font-bold text-[12px] text-anthracite whitespace-nowrap">{fmtZeit(aufnahme.erstellt_am)} Uhr</span>
       {label && (
-        <span className="font-semibold text-[12px] text-[#2C2C2C]/45 whitespace-nowrap">· {label}</span>
+        <span className="font-semibold text-[12px] text-anthracite/45 whitespace-nowrap">· {label}</span>
       )}
     </button>
   )
@@ -448,11 +448,11 @@ function RaumKarte({
   onFormZeichnen?: () => void
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-[#2C2C2C]/6 px-4 py-3.5">
+    <div className="bg-white rounded-2xl border border-anthracite/6 px-4 py-3.5">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-[17px]">{emoji}</span>
-        <span className="font-syne font-extrabold text-[15px] text-[#2C2C2C]">{raumName}</span>
-        <span className="ml-auto text-[11px] font-bold text-[#2C2C2C]/35">
+        <span className="font-syne font-extrabold text-[15px] text-anthracite">{raumName}</span>
+        <span className="ml-auto text-[11px] font-bold text-anthracite/35">
           {items.length} {items.length === 1 ? 'Position' : 'Positionen'}
         </span>
       </div>
@@ -466,7 +466,7 @@ function RaumKarte({
         <button
           onClick={onFormZeichnen}
           className={`mb-2 flex items-center gap-1.5 text-[11px] font-bold ${
-            hatGrundriss ? 'text-[#1A7A38]' : 'text-[#2C2C2C]/35'
+            hatGrundriss ? 'text-[#1A7A38]' : 'text-anthracite/35'
           }`}
         >
           <span>📐</span>
@@ -480,21 +480,21 @@ function RaumKarte({
           return (
             <div
               key={item.id}
-              className="flex items-center justify-between gap-2 py-2 border-t border-[#2C2C2C]/6 first:border-t-0"
+              className="flex items-center justify-between gap-2 py-2 border-t border-anthracite/6 first:border-t-0"
             >
-              <span className={`text-[13px] font-semibold ${pending ? 'italic text-[#2C2C2C]/55' : 'text-[#2C2C2C]'}`}>
+              <span className={`text-[13px] font-semibold ${pending ? 'italic text-anthracite/55' : 'text-anthracite'}`}>
                 {item.titleDisplay}
               </span>
               {pending ? (
-                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-[#8B7000] bg-[#F5C400]/20 px-2 py-0.5 rounded-full">
+                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-[#8B7000] bg-yellow/20 px-2 py-0.5 rounded-full">
                   Wird berechnet
                 </span>
               ) : mengeOffen ? (
-                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-[#2C2C2C]/45 bg-[#2C2C2C]/6 px-2 py-0.5 rounded-full">
+                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-anthracite/45 bg-anthracite/6 px-2 py-0.5 rounded-full">
                   Satz aus Preisliste
                 </span>
               ) : (
-                <span className="shrink-0 text-[12px] font-bold text-[#2C2C2C]/45">{item.quantity} {item.unit}</span>
+                <span className="shrink-0 text-[12px] font-bold text-anthracite/45">{item.quantity} {item.unit}</span>
               )}
             </div>
           )
@@ -509,7 +509,7 @@ function StatusBadge({ status }: { status: string }) {
     <span className="text-[11px] font-extrabold text-[#1A7A38] bg-[#EDFAF0] px-2 py-0.5 rounded-full">✓ Fertig</span>
   )
   if (status === 'verarbeitung') return (
-    <span className="text-[11px] font-extrabold text-[#8B7000] bg-[#F5C400]/15 px-2 py-0.5 rounded-full">Verarbeitung…</span>
+    <span className="text-[11px] font-extrabold text-[#8B7000] bg-yellow/15 px-2 py-0.5 rounded-full">Verarbeitung…</span>
   )
   if (status === 'fehler') return (
     <span className="text-[11px] font-extrabold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Fehler</span>
@@ -525,17 +525,17 @@ function NotizModal({ onSave, onClose }: { onSave: (text: string) => void; onClo
     <div className="fixed inset-0 z-40 flex items-end">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-8 shadow-2xl">
-        <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-        <h3 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-3">Notiz hinzufügen</h3>
+        <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+        <h3 className="font-syne font-extrabold text-anthracite text-[20px] mb-3">Notiz hinzufügen</h3>
         <textarea
           autoFocus value={text} onChange={e => setText(e.target.value)} rows={3}
           placeholder="Schnell was festhalten…"
-          className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-[15px] resize-none focus:outline-none focus:ring-2 focus:ring-[#F5C400] mb-4"
+          className="w-full bg-bg rounded-xl px-4 py-3 text-anthracite font-semibold text-[15px] resize-none focus:outline-none focus:ring-2 focus:ring-yellow mb-4"
         />
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 border-2 border-[#2C2C2C]/15 rounded-xl py-3 font-extrabold text-[#2C2C2C] text-[15px]">Abbrechen</button>
+          <button onClick={onClose} className="flex-1 border-2 border-anthracite/15 rounded-xl py-3 font-extrabold text-anthracite text-[15px]">Abbrechen</button>
           <button onClick={() => { if (text.trim()) { onSave(text.trim()); onClose() } }} disabled={!text.trim()}
-            className="flex-1 bg-[#2C2C2C] text-white rounded-xl py-3 font-extrabold text-[15px] disabled:opacity-40">
+            className="flex-1 bg-anthracite text-white rounded-xl py-3 font-extrabold text-[15px] disabled:opacity-40">
             Speichern ✓
           </button>
         </div>
@@ -1201,21 +1201,21 @@ export default function EntwurfPage() {
       <div className="fixed inset-0 z-40 flex items-end">
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setScreen('timeline')} />
         <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl">
-          <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-2">Aufnahmen noch nicht ausgewertet</h2>
-          <p className="text-[#2C2C2C]/50 font-semibold text-[14px] mb-6 leading-relaxed">
+          <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+          <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-2">Aufnahmen noch nicht ausgewertet</h2>
+          <p className="text-anthracite/50 font-semibold text-[14px] mb-6 leading-relaxed">
             Du hast {sprachen.length} {sprachen.length === 1 ? 'Aufnahme' : 'Aufnahmen'} — aber noch keine Positionen berechnet. Jetzt auswerten?
           </p>
           <div className="flex flex-col gap-3">
             <button
               onClick={() => { setScreen('timeline'); fertigstellen() }}
-              className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px]"
+              className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
             >
               Positionen berechnen →
             </button>
             <button
               onClick={() => router.push(zielZurueck)}
-              className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+              className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
             >
               Trotzdem zurück ohne Berechnen
             </button>
@@ -1242,11 +1242,11 @@ export default function EntwurfPage() {
 
   if (screen === 'fertigstellen_loading') {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center gap-4 px-5">
-        <Loader2 size={36} color="#F5C400" className="animate-spin" />
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center gap-4 px-5">
+        <Loader2 size={36} color="var(--color-yellow)" className="animate-spin" />
         <div className="text-center">
-          <p className="font-extrabold text-[#2C2C2C] text-[18px] mb-1">Angebot wird erstellt</p>
-          <p className="text-[#2C2C2C]/50 font-semibold text-[14px]">{loadingMsg}</p>
+          <p className="font-extrabold text-anthracite text-[18px] mb-1">Angebot wird erstellt</p>
+          <p className="text-anthracite/50 font-semibold text-[14px]">{loadingMsg}</p>
         </div>
       </div>
     )
@@ -1255,21 +1255,21 @@ export default function EntwurfPage() {
   // ── Timeline Screen ───────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] flex flex-col">
+    <div className="min-h-dvh bg-bg flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#2C2C2C]/8 px-4 pt-safe-top">
+      <div className="sticky top-0 z-30 bg-white border-b border-anthracite/8 px-4 pt-safe-top">
         <div className="flex items-center justify-between h-14">
-          <button onClick={handleBackClick} className="flex items-center gap-1.5 text-[#2C2C2C]/60">
+          <button onClick={handleBackClick} className="flex items-center gap-1.5 text-anthracite/60">
             <ArrowLeft size={18} />
             <span className="font-semibold text-[14px]">Zurück</span>
           </button>
 
           <div className="text-center">
-            <div className="font-extrabold text-[#2C2C2C] text-[14px]">
+            <div className="font-extrabold text-anthracite text-[14px]">
               {kundenname ?? 'Aufmaß'}
             </div>
             {aufnahmen.length > 0 && (
-              <div className="text-[11px] text-[#2C2C2C]/40 font-semibold">
+              <div className="text-[11px] text-anthracite/40 font-semibold">
                 {gruppen
                   ? `${gruppen.raeume.length} ${gruppen.raeume.length === 1 ? 'Raum' : 'Räume'} · ${gesamtPositionen} ${gesamtPositionen === 1 ? 'Position' : 'Positionen'}`
                   : `${aufnahmen.length} ${aufnahmen.length === 1 ? 'Aufnahme' : 'Aufnahmen'}`}
@@ -1285,10 +1285,10 @@ export default function EntwurfPage() {
       {!loading && aufnahmen.length === 0 && (
         <div className="flex flex-col items-center justify-center pt-16 px-6 text-center">
           <div className="text-5xl mb-4">🎙</div>
-          <div className="font-syne font-extrabold text-[#2C2C2C] text-[22px] mb-2">
+          <div className="font-syne font-extrabold text-anthracite text-[22px] mb-2">
             Einfach lossprechen
           </div>
-          <div className="text-[#2C2C2C]/40 font-semibold text-[15px] leading-relaxed max-w-xs">
+          <div className="text-anthracite/40 font-semibold text-[15px] leading-relaxed max-w-xs">
             Beschreib die Baustelle — Räume, Maße, was gemacht werden soll. Oder fotografier einfach deinen Aufmaß-Zettel. 📷
           </div>
           <div className="mt-6 flex flex-col gap-2 text-left w-full max-w-xs">
@@ -1297,9 +1297,9 @@ export default function EntwurfPage() {
               '"Bad komplett neu fliesen, ca. 8 Quadratmeter"',
               '"Flur Laminat verlegen, 12 qm, alte Fliesen raus"',
             ].map((hint, i) => (
-              <div key={i} className="flex items-start gap-2 bg-white rounded-xl px-3 py-2.5 border border-[#2C2C2C]/5">
-                <span className="text-[#F5C400] font-black shrink-0">→</span>
-                <span className="text-[#2C2C2C]/60 font-semibold text-[13px] italic">{hint}</span>
+              <div key={i} className="flex items-start gap-2 bg-white rounded-xl px-3 py-2.5 border border-anthracite/5">
+                <span className="text-yellow font-black shrink-0">→</span>
+                <span className="text-anthracite/60 font-semibold text-[13px] italic">{hint}</span>
               </div>
             ))}
           </div>
@@ -1340,7 +1340,7 @@ export default function EntwurfPage() {
       <div className="flex-1 px-4 py-4 pb-36">
         {loading && (
           <div className="flex justify-center pt-12">
-            <Loader2 size={24} className="animate-spin text-[#2C2C2C]/30" />
+            <Loader2 size={24} className="animate-spin text-anthracite/30" />
           </div>
         )}
 
@@ -1371,7 +1371,7 @@ export default function EntwurfPage() {
             {/* Einzelne Aufnahmen — schlanke Chip-Leiste statt großer Kästen.
                 Antippen öffnet die Details (Transkript, Audio, Löschen, Retry). */}
             <div className="mt-5">
-              <div className="text-[11px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35 mb-2">
+              <div className="text-[11px] font-extrabold uppercase tracking-widest text-anthracite/35 mb-2">
                 Aufnahmen ({aufnahmen.length})
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
@@ -1384,8 +1384,8 @@ export default function EntwurfPage() {
         ) : (
           <div className="flex flex-col gap-3">
             {hatBestehendPositionen && (
-              <div className="bg-[#2C2C2C] rounded-2xl px-4 py-3 flex items-center gap-3">
-                <Check size={16} className="text-[#F5C400] shrink-0" strokeWidth={2.5} />
+              <div className="bg-anthracite rounded-2xl px-4 py-3 flex items-center gap-3">
+                <Check size={16} className="text-yellow shrink-0" strokeWidth={2.5} />
                 <div>
                   <p className="text-white font-extrabold text-[13px]">
                     {quoteInfo?.quote_items?.length} Positionen bereits berechnet
@@ -1404,12 +1404,12 @@ export default function EntwurfPage() {
 
         {/* Aufnahme-Indikator */}
         {recording && (
-          <div className="mt-3 bg-white rounded-2xl border border-[#2C2C2C]/5 px-4 py-3 flex items-center gap-3">
+          <div className="mt-3 bg-white rounded-2xl border border-anthracite/5 px-4 py-3 flex items-center gap-3">
             <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
-            <span className="font-extrabold text-[#2C2C2C] text-[14px]">
+            <span className="font-extrabold text-anthracite text-[14px]">
               Aufnahme läuft — {recordingDauer}s
             </span>
-            <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Nochmal tippen zum Stoppen</span>
+            <span className="text-anthracite/40 font-semibold text-[12px]">Nochmal tippen zum Stoppen</span>
           </div>
         )}
 
@@ -1420,14 +1420,14 @@ export default function EntwurfPage() {
         {bannerZustand && (
           <div className={`mt-3 rounded-2xl border px-4 py-3 flex items-center gap-2 ${
             bannerZustand.ton === 'success' ? 'bg-[#EDFAF0] border-[#1A7A38]/20'
-            : bannerZustand.ton === 'mixed' ? 'bg-[#F5C400]/10 border-[#F5C400]/40'
-            : 'bg-[#2C2C2C]/5 border-[#2C2C2C]/10'
+            : bannerZustand.ton === 'mixed' ? 'bg-yellow/10 border-yellow/40'
+            : 'bg-anthracite/5 border-anthracite/10'
           }`}>
             {bannerZustand.ton === 'neutral'
-              ? <AlertCircle size={14} className="text-[#2C2C2C]/40 shrink-0" />
+              ? <AlertCircle size={14} className="text-anthracite/40 shrink-0" />
               : <Check size={14} className={`shrink-0 ${bannerZustand.ton === 'mixed' ? 'text-[#8B7000]' : 'text-[#1A7A38]'}`} />}
             <span className={`text-[13px] font-semibold ${
-              bannerZustand.ton === 'success' ? 'text-[#1A7A38]' : bannerZustand.ton === 'mixed' ? 'text-[#8B7000]' : 'text-[#2C2C2C]/60'
+              bannerZustand.ton === 'success' ? 'text-[#1A7A38]' : bannerZustand.ton === 'mixed' ? 'text-[#8B7000]' : 'text-anthracite/60'
             }`}>{bannerZustand.text}</span>
           </div>
         )}
@@ -1449,12 +1449,12 @@ export default function EntwurfPage() {
                 Rückfragen dazu kommen können. Bewusst als "ggf."/"falls" statt
                 einer festen Zusage: die Rückfrage kommt nur, wenn wirklich
                 etwas fehlt (kontext-analyzer.ts), nicht immer. */}
-            <p className="text-center text-[11px] font-semibold text-[#2C2C2C]/40 px-6 -mt-1">
+            <p className="text-center text-[11px] font-semibold text-anthracite/40 px-6 -mt-1">
               Flächen sind vorläufig — falls Fenster oder Türen noch nicht genannt wurden, fragen wir im nächsten Schritt kurz nach.
             </p>
             <button
               onClick={() => fertigstellen()}
-              className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-[#F5C400]/30"
+              className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-yellow/30"
             >
               <span className="flex flex-col items-center leading-tight">
                 <span>✓ {erkannteAnzahl} {hatBestehendPositionen ? 'neue ' : ''}{erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
@@ -1474,7 +1474,7 @@ export default function EntwurfPage() {
             <button
               onClick={cancelRecording}
               aria-label="Aufnahme abbrechen"
-              className="shrink-0 w-14 h-[60px] flex items-center justify-center rounded-2xl bg-white border-2 border-[#2C2C2C]/10 text-[#2C2C2C]/50 active:scale-95 transition-all"
+              className="shrink-0 w-14 h-[60px] flex items-center justify-center rounded-2xl bg-white border-2 border-anthracite/10 text-anthracite/50 active:scale-95 transition-all"
             >
               <X size={22} strokeWidth={2.5} />
             </button>
@@ -1493,13 +1493,13 @@ export default function EntwurfPage() {
               <button
                 onClick={() => zettelInputRef.current?.click()}
                 disabled={zettelUploading}
-                className="w-14 h-14 rounded-full bg-white border-2 border-[#2C2C2C]/10 flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-50"
+                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-50"
               >
                 {zettelUploading
-                  ? <Loader2 size={22} className="animate-spin text-[#2C2C2C]/40" />
-                  : <Camera size={22} strokeWidth={2} className="text-[#2C2C2C]" />}
+                  ? <Loader2 size={22} className="animate-spin text-anthracite/40" />
+                  : <Camera size={22} strokeWidth={2} className="text-anthracite" />}
               </button>
-              <span className="text-[#2C2C2C]/40 font-semibold text-[12px]">Zettel</span>
+              <span className="text-anthracite/40 font-semibold text-[12px]">Zettel</span>
             </div>
 
             {/* Aufnehmen */}
@@ -1507,11 +1507,11 @@ export default function EntwurfPage() {
               <button
                 onClick={startRecording}
                 
-                className="w-20 h-20 rounded-full bg-[#2C2C2C] flex items-center justify-center shadow-2xl shadow-black/30 active:scale-95 transition-all disabled:opacity-50"
+                className="w-20 h-20 rounded-full bg-anthracite flex items-center justify-center shadow-2xl shadow-black/30 active:scale-95 transition-all disabled:opacity-50"
               >
                 <Mic size={32} strokeWidth={2} className="text-white" />
               </button>
-              <span className="text-[#2C2C2C]/40 font-semibold text-[13px]">
+              <span className="text-anthracite/40 font-semibold text-[13px]">
                 {nichtsErkannt ? 'Nochmal aufnehmen' : aufnahmen.length > 0 ? 'Weitere Aufnahme' : 'Aufnehmen'}
               </span>
             </div>
@@ -1558,7 +1558,7 @@ export default function EntwurfPage() {
         return (
           <div className="fixed inset-0 z-40 flex items-end">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAufnahmeDetail(null)} />
-            <div className="relative w-full max-h-[85dvh] overflow-y-auto bg-[#F7F7F5] rounded-t-3xl px-4 pt-4 pb-8 shadow-2xl">
+            <div className="relative w-full max-h-[85dvh] overflow-y-auto bg-bg rounded-t-3xl px-4 pt-4 pb-8 shadow-2xl">
               {/* DC-031: eigener, eindeutiger Schließen-Button — die einzige
                   vorherige Möglichkeit, dieses Sheet zu schließen, ohne die
                   Aufnahme zu löschen, war ein Tap auf den dunklen Hintergrund
@@ -1569,10 +1569,10 @@ export default function EntwurfPage() {
                   Falle gewesen. */}
               <div className="flex items-center justify-between mb-3">
                 <div className="w-16" />
-                <div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" />
+                <div className="w-10 h-1 rounded-full bg-anthracite/20" />
                 <button
                   onClick={() => setAufnahmeDetail(null)}
-                  className="w-16 text-right text-[#2C2C2C]/40 font-semibold text-[13px]"
+                  className="w-16 text-right text-anthracite/40 font-semibold text-[13px]"
                 >
                   Schließen
                 </button>
@@ -1593,9 +1593,9 @@ export default function EntwurfPage() {
         <div className="fixed inset-0 z-40 flex items-end">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteBestaetigen(null)} />
           <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl">
-            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-            <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-2">Aufnahme löschen?</h2>
-            <p className="text-[#2C2C2C]/50 font-semibold text-[14px] mb-6 leading-relaxed">
+            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+            <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-2">Aufnahme löschen?</h2>
+            <p className="text-anthracite/50 font-semibold text-[14px] mb-6 leading-relaxed">
               Die Aufnahme wird endgültig gelöscht. Bereits berechnete Positionen im Angebot bleiben erhalten.
             </p>
             <div className="flex flex-col gap-3">
@@ -1607,7 +1607,7 @@ export default function EntwurfPage() {
               </button>
               <button
                 onClick={() => setDeleteBestaetigen(null)}
-                className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
               >
                 Abbrechen
               </button>

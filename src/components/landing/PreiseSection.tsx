@@ -30,7 +30,7 @@ export function PreiseSection() {
           transition={{ duration: 0.4 }}
           className="mb-14"
         >
-          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-2">
+          <h2 className="font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-2">
             Was kostet das.
           </h2>
           <p className="text-[#888] text-base">Monatlich kündbar. Keine versteckten Kosten.</p>
@@ -44,12 +44,12 @@ export function PreiseSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-[#F7F7F5] rounded-3xl p-8 md:p-10 flex flex-col"
+            className="bg-bg rounded-3xl p-8 md:p-10 flex flex-col"
           >
-            <div className="font-syne font-extrabold text-[#2C2C2C] text-[18px] tracking-tight mb-1">Reinschnuppern</div>
+            <div className="font-syne font-extrabold text-anthracite text-[18px] tracking-tight mb-1">Reinschnuppern</div>
             <div className="text-[#AAA] text-sm mb-8">Zum Ausprobieren</div>
             <div className="mb-8">
-              <span className="font-syne font-extrabold text-[#2C2C2C] text-[52px] tracking-tight leading-none">0€</span>
+              <span className="font-syne font-extrabold text-anthracite text-[52px] tracking-tight leading-none">0€</span>
             </div>
             <ul className="flex flex-col gap-3 mb-10 flex-1">
               {freeFeatures.map(f => (
@@ -61,7 +61,7 @@ export function PreiseSection() {
             </ul>
             <Link
               href="/register"
-              className="block w-full text-center border-2 border-[#2C2C2C]/20 rounded-2xl text-[#2C2C2C] font-black text-sm py-4 hover:border-[#2C2C2C]/50 transition-colors"
+              className="block w-full text-center border-2 border-anthracite/20 rounded-2xl text-anthracite font-black text-sm py-4 hover:border-anthracite/50 transition-colors"
             >
               Kostenlos starten →
             </Link>
@@ -73,10 +73,10 @@ export function PreiseSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-[#2C2C2C] rounded-3xl p-8 md:p-10 flex flex-col relative"
+            className="bg-anthracite rounded-3xl p-8 md:p-10 flex flex-col relative"
           >
             <div
-              className="absolute -top-3.5 right-6 bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-1 rounded-full tracking-wide"
+              className="absolute -top-3.5 right-6 bg-yellow text-anthracite font-black text-xs px-3 py-1 rounded-full tracking-wide"
             >
               Beliebteste Wahl
             </div>
@@ -92,14 +92,14 @@ export function PreiseSection() {
             <ul className="flex flex-col gap-3 mb-10 flex-1">
               {proFeatures.map(f => (
                 <li key={f} className="flex items-start gap-3 text-sm text-white/60">
-                  <span className="text-[#F5C400] mt-0.5 shrink-0 font-bold">✓</span>
+                  <span className="text-yellow mt-0.5 shrink-0 font-bold">✓</span>
                   {f}
                 </li>
               ))}
             </ul>
             <Link
               href="/register"
-              className="block w-full text-center bg-[#F5C400] rounded-2xl text-[#2C2C2C] font-black text-sm py-4 hover:bg-[#e6b800] transition-colors"
+              className="block w-full text-center bg-yellow rounded-2xl text-anthracite font-black text-sm py-4 hover:bg-[#e6b800] transition-colors"
             >
               30 Tage gratis testen →
             </Link>

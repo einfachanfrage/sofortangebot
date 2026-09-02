@@ -29,7 +29,7 @@ export function TableOfContentsSidebar({ headings }: { headings: Heading[] }) {
 
   return (
     <div className="sticky top-6">
-      <div className="text-[10px] font-extrabold text-[#2C2C2C]/30 uppercase tracking-widest mb-3">Inhalt</div>
+      <div className="text-[10px] font-extrabold text-anthracite/30 uppercase tracking-widest mb-3">Inhalt</div>
       <nav className="flex flex-col gap-1">
         {headings.map(h => (
           <a
@@ -41,8 +41,8 @@ export function TableOfContentsSidebar({ headings }: { headings: Heading[] }) {
             }}
             className={`text-sm leading-snug py-1 pl-3 border-l-2 transition-colors ${
               activeId === h.id
-                ? 'border-[#F5C400] text-[#F5C400] font-bold'
-                : 'border-transparent text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:border-[#2C2C2C]/20'
+                ? 'border-yellow text-yellow font-bold'
+                : 'border-transparent text-anthracite/40 hover:text-anthracite/70 hover:border-anthracite/20'
             }`}
           >
             {h.text}
@@ -51,7 +51,7 @@ export function TableOfContentsSidebar({ headings }: { headings: Heading[] }) {
       </nav>
 
       {/* Mini CTA */}
-      <div className="mt-10 bg-[#2C2C2C] rounded-xl p-5">
+      <div className="mt-10 bg-anthracite rounded-xl p-5">
         <div className="font-extrabold text-white text-base mb-1 leading-tight">
           2 Min. Angebot
         </div>
@@ -60,7 +60,7 @@ export function TableOfContentsSidebar({ headings }: { headings: Heading[] }) {
         </p>
         <a
           href="/register"
-          className="block w-full text-center bg-[#F5C400] text-[#2C2C2C] font-extrabold text-sm py-2.5 rounded-lg hover:bg-[#e6b800] transition-colors"
+          className="block w-full text-center bg-yellow text-anthracite font-extrabold text-sm py-2.5 rounded-lg hover:bg-[#e6b800] transition-colors"
         >
           Kostenlos testen →
         </a>
@@ -75,15 +75,15 @@ export function TableOfContentsMobile({ headings }: { headings: Heading[] }) {
   if (!headings.length) return null
 
   return (
-    <div className="border border-[#2C2C2C]/10 rounded-xl mb-8 overflow-hidden">
+    <div className="border border-anthracite/10 rounded-xl mb-8 overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-[#F7F7F5]"
+        className="w-full flex items-center justify-between px-4 py-3 bg-bg"
       >
-        <span className="text-[10px] font-extrabold text-[#2C2C2C]/40 uppercase tracking-widest">Inhalt</span>
+        <span className="text-[10px] font-extrabold text-anthracite/40 uppercase tracking-widest">Inhalt</span>
         <ChevronDown
           size={14}
-          className="text-[#2C2C2C]/30 transition-transform"
+          className="text-anthracite/30 transition-transform"
           style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         />
       </button>
@@ -94,7 +94,7 @@ export function TableOfContentsMobile({ headings }: { headings: Heading[] }) {
               key={h.id}
               href={`#${h.id}`}
               onClick={() => setOpen(false)}
-              className="text-sm text-[#2C2C2C]/60 hover:text-[#2C2C2C] font-medium"
+              className="text-sm text-anthracite/60 hover:text-anthracite font-medium"
             >
               → {h.text}
             </a>

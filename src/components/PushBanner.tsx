@@ -80,12 +80,12 @@ export function PushBanner({ onClose, onGranted }: Props) {
         }}
       >
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" />
+          <div className="w-10 h-1 rounded-full bg-anthracite/20" />
         </div>
 
         <button
           onClick={close}
-          className="absolute top-4 right-4 p-2 rounded-full bg-[#F7F7F5] text-[#2C2C2C]/40"
+          className="absolute top-4 right-4 p-2 rounded-full bg-bg text-anthracite/40"
         >
           <X size={18} />
         </button>
@@ -94,24 +94,24 @@ export function PushBanner({ onClose, onGranted }: Props) {
           {status === 'granted' ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center">
               <div className="text-5xl mb-4">🔔</div>
-              <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[24px] mb-2">
+              <h2 className="font-syne font-extrabold text-anthracite text-[24px] mb-2">
                 Super, du bekommst Bescheid!
               </h2>
-              <p className="text-[#2C2C2C]/50 font-semibold text-[15px]">
+              <p className="text-anthracite/50 font-semibold text-[15px]">
                 Wir informieren dich bei wichtigen Ereignissen.
               </p>
             </div>
           ) : (
             <>
               <div className="flex items-start gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-[#F5C400] flex items-center justify-center shrink-0">
-                  <Bell size={24} color="#2C2C2C" />
+                <div className="w-14 h-14 rounded-2xl bg-yellow flex items-center justify-center shrink-0">
+                  <Bell size={24} color="var(--color-anthracite)" />
                 </div>
                 <div>
-                  <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[22px] leading-tight mb-1">
+                  <h2 className="font-syne font-extrabold text-anthracite text-[22px] leading-tight mb-1">
                     Verpasse keine Angebots-Updates
                   </h2>
-                  <p className="text-[#2C2C2C]/50 font-semibold text-[14px]">
+                  <p className="text-anthracite/50 font-semibold text-[14px]">
                     Wenn ein Kunde unterschrieben hat oder du erinnert werden willst — wir schicken dir Bescheid.
                   </p>
                 </div>
@@ -123,18 +123,18 @@ export function PushBanner({ onClose, onGranted }: Props) {
                   '⏰ Angebot läuft bald ab',
                   '📄 Neues Angebot bereit',
                 ].map(item => (
-                  <div key={item} className="flex items-center gap-3 bg-[#F7F7F5] rounded-xl px-4 py-3">
-                    <span className="font-semibold text-[#2C2C2C] text-[13px]">{item}</span>
+                  <div key={item} className="flex items-center gap-3 bg-bg rounded-xl px-4 py-3">
+                    <span className="font-semibold text-anthracite text-[13px]">{item}</span>
                   </div>
                 ))}
               </div>
 
               {status === 'denied' ? (
                 <div className="text-center">
-                  <p className="text-[#2C2C2C]/40 font-semibold text-[13px] mb-3">
+                  <p className="text-anthracite/40 font-semibold text-[13px] mb-3">
                     Benachrichtigungen blockiert. Du kannst sie in den Browser-Einstellungen aktivieren.
                   </p>
-                  <button onClick={close} className="text-[#2C2C2C] font-extrabold text-[14px] underline underline-offset-2">
+                  <button onClick={close} className="text-anthracite font-extrabold text-[14px] underline underline-offset-2">
                     Schließen
                   </button>
                 </div>
@@ -142,13 +142,13 @@ export function PushBanner({ onClose, onGranted }: Props) {
                 <button
                   onClick={requestPermission}
                   disabled={status === 'requesting'}
-                  className="w-full bg-[#2C2C2C] text-white font-extrabold text-[15px] py-4 rounded-2xl active:scale-95 transition-transform disabled:opacity-60 mt-auto"
+                  className="w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:scale-95 transition-transform disabled:opacity-60 mt-auto"
                 >
                   {status === 'requesting' ? 'Wird aktiviert...' : 'Benachrichtigungen erlauben →'}
                 </button>
               )}
 
-              <button onClick={close} className="mt-3 text-center text-[#2C2C2C]/30 font-semibold text-[13px] w-full">
+              <button onClick={close} className="mt-3 text-center text-anthracite/30 font-semibold text-[13px] w-full">
                 Vielleicht später
               </button>
             </>

@@ -13,27 +13,27 @@ export default async function KundenPage() {
   const customers = await getCustomersOverview()
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-24 md:pb-12">
+    <div className="min-h-dvh bg-bg pb-24 md:pb-12">
       <div className="md:max-w-5xl md:mx-auto">
-      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
+      <div className="bg-anthracite md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
         <div>
-          <div className="text-white md:text-[#2C2C2C] font-syne font-black text-2xl">Kunden</div>
-          <div className="text-white/40 md:text-[#2C2C2C]/40 text-sm font-semibold mt-0.5">
+          <div className="text-white md:text-anthracite font-syne font-black text-2xl">Kunden</div>
+          <div className="text-white/40 md:text-anthracite/40 text-sm font-semibold mt-0.5">
             {customers.length} Kunden gesamt
           </div>
         </div>
         <Link href="/kunden/neu"
-          className="bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-4 py-2 mt-1">
+          className="bg-yellow text-anthracite font-black text-sm rounded-xl px-4 py-2 mt-1">
           + Neu
         </Link>
       </div>
 
       <div className="px-5 md:px-8 mt-5 md:grid md:grid-cols-2 md:gap-3 flex flex-col gap-3">
         {!customers.length && (
-          <div className="bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
+          <div className="bg-white rounded-2xl p-8 text-center border border-anthracite/5">
             <div className="text-4xl mb-3">👷</div>
-            <div className="font-black text-[#2C2C2C] mb-1">Noch keine Kunden</div>
-            <div className="text-sm text-[#2C2C2C]/50 font-semibold">Kunden werden automatisch angelegt wenn du ein Angebot erstellst.</div>
+            <div className="font-black text-anthracite mb-1">Noch keine Kunden</div>
+            <div className="text-sm text-anthracite/50 font-semibold">Kunden werden automatisch angelegt wenn du ein Angebot erstellst.</div>
           </div>
         )}
 
@@ -49,27 +49,27 @@ export default async function KundenPage() {
             <Link
               key={customer.id}
               href={`/kunden/${customer.id}`}
-              className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 active:scale-[0.98] transition-transform"
+              className="bg-white rounded-2xl p-4 border border-anthracite/5 active:scale-[0.98] transition-transform"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <div className="font-black text-[#2C2C2C] truncate">{customer.name}</div>
+                  <div className="font-black text-anthracite truncate">{customer.name}</div>
                   {customer.address && (
-                    <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5 truncate">{customer.address}</div>
+                    <div className="text-xs text-anthracite/40 font-semibold mt-0.5 truncate">{customer.address}</div>
                   )}
                   <div className="flex items-center gap-3 mt-2">
-                    <span className="text-xs font-bold text-[#2C2C2C]/50">{quotes.length} Angebot{quotes.length !== 1 ? 'e' : ''}</span>
+                    <span className="text-xs font-bold text-anthracite/50">{quotes.length} Angebot{quotes.length !== 1 ? 'e' : ''}</span>
                     {acceptedCount > 0 && (
                       <span className="text-xs font-bold text-green-600">{acceptedCount} angenommen</span>
                     )}
                     {lastQuote && (
-                      <span className="text-xs text-[#2C2C2C]/30 font-semibold">Zuletzt {formatDate(lastQuote.created_at)}</span>
+                      <span className="text-xs text-anthracite/30 font-semibold">Zuletzt {formatDate(lastQuote.created_at)}</span>
                     )}
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="font-black text-[#2C2C2C]">{formatCurrency(totalValue)}</div>
-                  <div className="text-xs text-[#2C2C2C]/30 font-semibold mt-0.5">Gesamt</div>
+                  <div className="font-black text-anthracite">{formatCurrency(totalValue)}</div>
+                  <div className="text-xs text-anthracite/30 font-semibold mt-0.5">Gesamt</div>
                 </div>
               </div>
             </Link>

@@ -39,7 +39,7 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
               // eslint-disable-next-line @next/next/no-img-element
               <img src={bp.logo_url} alt="" className="max-h-8 max-w-[80px] object-contain mb-1" />
             ) : (
-              <div className="font-black text-[10px] text-[#2C2C2C]">{firmenname}</div>
+              <div className="font-black text-[10px] text-anthracite">{firmenname}</div>
             )}
             {adresse && <div className="text-[6px] text-gray-400 whitespace-pre-line">{adresse}</div>}
           </div>
@@ -187,9 +187,9 @@ function BriefpapierEditorInner() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-24">
+    <div className="min-h-dvh bg-bg pb-24">
       {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+      <div className="bg-anthracite px-5 pt-12 pb-6">
         <button onClick={handleBack} className="text-white/50 text-sm font-semibold">← Briefpapier</button>
         <h1 className="text-xl font-syne font-black text-white mt-1">
           {bp.name || 'Briefpapier bearbeiten'}
@@ -199,14 +199,14 @@ function BriefpapierEditorInner() {
       <div className="max-w-2xl mx-auto px-5 pt-5">
         {/* Live-Vorschau */}
         <div className="mb-5">
-          <div className="text-[10px] font-bold text-[#2C2C2C]/30 mb-2 uppercase tracking-wider">Live-Vorschau</div>
+          <div className="text-[10px] font-bold text-anthracite/30 mb-2 uppercase tracking-wider">Live-Vorschau</div>
           <BriefpapierVorschau bp={bp} company={company} />
         </div>
 
         <div className="space-y-4">
           {/* Name */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4">
-            <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5">Name dieser Variante</label>
+          <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4">
+            <label className="block text-xs font-bold text-anthracite/50 mb-1.5">Name dieser Variante</label>
             <Input
               value={bp.name ?? ''}
               onChange={e => setField('name', e.target.value)}
@@ -214,36 +214,36 @@ function BriefpapierEditorInner() {
           </div>
 
           {/* Firmeninfo — zentral aus dem Betrieb */}
-          <Link href="/einstellungen" className="block bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 hover:border-[#F5C400]/50 transition-colors">
+          <Link href="/einstellungen" className="block bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 hover:border-yellow/50 transition-colors">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wider mb-1">Firmenangaben</div>
-                <div className="font-bold text-[#2C2C2C] text-sm truncate">{company?.name || 'Noch kein Firmenname'}</div>
+                <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider mb-1">Firmenangaben</div>
+                <div className="font-bold text-anthracite text-sm truncate">{company?.name || 'Noch kein Firmenname'}</div>
                 {company?.address && (
-                  <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{company.address.replace('\n', ' · ')}</div>
+                  <div className="text-xs text-anthracite/40 font-semibold mt-0.5">{company.address.replace('\n', ' · ')}</div>
                 )}
               </div>
-              <span className="text-xs font-black text-[#F5C400] shrink-0 ml-3">Ändern →</span>
+              <span className="text-xs font-black text-yellow shrink-0 ml-3">Ändern →</span>
             </div>
-            <p className="text-[11px] text-[#2C2C2C]/30 font-semibold mt-2 leading-relaxed">
+            <p className="text-[11px] text-anthracite/30 font-semibold mt-2 leading-relaxed">
               Name, Adresse & Kontakt werden zentral unter Einstellungen → Betrieb gepflegt und erscheinen automatisch auf jedem Angebot.
             </p>
           </Link>
 
           {/* Logo */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 space-y-3">
-            <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wider">Logo</div>
+          <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 space-y-3">
+            <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider">Logo</div>
             {bp.logo_url ? (
               <div className="flex items-center gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={bp.logo_url} alt="Logo" className="h-14 max-w-[140px] object-contain rounded-lg border border-[#2C2C2C]/10" />
+                <img src={bp.logo_url} alt="Logo" className="h-14 max-w-[140px] object-contain rounded-lg border border-anthracite/10" />
                 <button onClick={() => setField('logo_url', null)} className="text-xs text-red-500 font-semibold">Entfernen</button>
               </div>
             ) : (
               <button
                 onClick={() => logoRef.current?.click()}
                 disabled={logoUploading}
-                className="w-full border-2 border-dashed border-[#2C2C2C]/15 rounded-xl py-5 flex flex-col items-center gap-2 text-[#2C2C2C]/30 hover:border-[#F5C400]/50 transition-colors"
+                className="w-full border-2 border-dashed border-anthracite/15 rounded-xl py-5 flex flex-col items-center gap-2 text-anthracite/30 hover:border-yellow/50 transition-colors"
               >
                 <Upload size={20} strokeWidth={1.5} />
                 <span className="text-xs font-semibold">{logoUploading ? 'Lädt…' : 'Logo hochladen'}</span>
@@ -257,22 +257,22 @@ function BriefpapierEditorInner() {
             )}
 
             <div>
-              <label className="block text-[10px] font-bold text-[#2C2C2C]/40 mb-1.5">Position</label>
+              <label className="block text-[10px] font-bold text-anthracite/40 mb-1.5">Position</label>
               <div className="flex gap-2">
                 {(['links', 'mitte', 'rechts'] as const).map(pos => (
                   <button key={pos} onClick={() => setField('logo_position', pos)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 capitalize transition-colors ${bp.logo_position === pos ? 'border-[#F5C400] bg-[#FFF9E6] text-[#2C2C2C]' : 'border-[#2C2C2C]/10 text-[#2C2C2C]/40'}`}>
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 capitalize transition-colors ${bp.logo_position === pos ? 'border-yellow bg-[#FFF9E6] text-anthracite' : 'border-anthracite/10 text-anthracite/40'}`}>
                     {pos}
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-[#2C2C2C]/40 mb-1.5">Größe</label>
+              <label className="block text-[10px] font-bold text-anthracite/40 mb-1.5">Größe</label>
               <div className="flex gap-2">
                 {[{ v: 'klein', l: 'Klein' }, { v: 'mittel', l: 'Mittel' }, { v: 'gross', l: 'Groß' }].map(({ v, l }) => (
                   <button key={v} onClick={() => setField('logo_groesse', v as Briefpapier['logo_groesse'])}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 transition-colors ${bp.logo_groesse === v ? 'border-[#F5C400] bg-[#FFF9E6] text-[#2C2C2C]' : 'border-[#2C2C2C]/10 text-[#2C2C2C]/40'}`}>
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 transition-colors ${bp.logo_groesse === v ? 'border-yellow bg-[#FFF9E6] text-anthracite' : 'border-anthracite/10 text-anthracite/40'}`}>
                     {l}
                   </button>
                 ))}
@@ -281,33 +281,33 @@ function BriefpapierEditorInner() {
           </div>
 
           {/* Akzentfarbe */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 space-y-3">
-            <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wider">Akzentfarbe</div>
+          <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 space-y-3">
+            <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider">Akzentfarbe</div>
             <div className="flex gap-2">
               {FARB_CHIPS.map(c => (
                 <button
                   key={c}
                   onClick={() => setField('akzentfarbe', c)}
                   style={{ background: c }}
-                  className={`w-9 h-9 rounded-full border-2 transition-transform ${bp.akzentfarbe === c ? 'border-[#2C2C2C] scale-110' : 'border-transparent'}`}
+                  className={`w-9 h-9 rounded-full border-2 transition-transform ${bp.akzentfarbe === c ? 'border-anthracite scale-110' : 'border-transparent'}`}
                 />
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-[#2C2C2C]/40">#</span>
+              <span className="text-xs text-anthracite/40">#</span>
               <input
                 value={(bp.akzentfarbe ?? '#F5C400').replace('#', '')}
                 onChange={e => setField('akzentfarbe', '#' + e.target.value.replace('#', '').slice(0, 6))}
                 maxLength={6}
-                className="flex-1 bg-[#F7F7F5] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#F5C400]/50"
+                className="flex-1 bg-bg rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow/50"
               />
-              <div className="w-8 h-8 rounded-lg border border-[#2C2C2C]/10" style={{ background: bp.akzentfarbe }} />
+              <div className="w-8 h-8 rounded-lg border border-anthracite/10" style={{ background: bp.akzentfarbe }} />
             </div>
           </div>
 
           {/* Fußzeile */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 space-y-3">
-            <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wider">Fußzeile</div>
+          <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 space-y-3">
+            <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider">Fußzeile</div>
             <div className="flex flex-wrap gap-1.5">
               {FUSSZEILE_CHIPS.map(chip => (
                 <button
@@ -317,7 +317,7 @@ function BriefpapierEditorInner() {
                     const empty = fields.find(f => !bp[f])
                     if (empty) setField(empty, chip)
                   }}
-                  className="text-[10px] font-semibold bg-[#F7F7F5] border border-[#2C2C2C]/10 rounded-full px-2.5 py-1 text-[#2C2C2C]/60"
+                  className="text-[10px] font-semibold bg-bg border border-anthracite/10 rounded-full px-2.5 py-1 text-anthracite/60"
                 >
                   + {chip}
                 </button>
@@ -329,7 +329,7 @@ function BriefpapierEditorInner() {
               { label: 'Rechts', field: 'fusszeile_rechts' as const },
             ].map(({ label, field }) => (
               <div key={field}>
-                <label className="block text-[10px] font-bold text-[#2C2C2C]/40 mb-1">{label}</label>
+                <label className="block text-[10px] font-bold text-anthracite/40 mb-1">{label}</label>
                 <Input
                   value={(bp[field] as string) ?? ''}
                   onChange={e => setField(field, e.target.value)}
@@ -340,15 +340,15 @@ function BriefpapierEditorInner() {
           </div>
 
           {/* Schrift */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#2C2C2C]/5 px-5 py-4 space-y-3">
-            <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wider">Schrift</div>
+          <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 space-y-3">
+            <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider">Schrift</div>
             <div className="flex gap-2">
               {SCHRIFTEN.map(s => (
                 <button
                   key={s.value}
                   onClick={() => setField('schrift', s.value as Briefpapier['schrift'])}
                   style={{ fontFamily: s.value === 'inter' ? 'Inter' : s.value === 'roboto' ? 'Roboto' : 'Open Sans' }}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors ${bp.schrift === s.value ? 'border-[#F5C400] bg-[#FFF9E6] text-[#2C2C2C]' : 'border-[#2C2C2C]/10 text-[#2C2C2C]/40'}`}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors ${bp.schrift === s.value ? 'border-yellow bg-[#FFF9E6] text-anthracite' : 'border-anthracite/10 text-anthracite/40'}`}
                 >
                   {s.label}
                 </button>
@@ -360,7 +360,7 @@ function BriefpapierEditorInner() {
           <button
             onClick={save}
             disabled={saving}
-            className="w-full bg-[#2C2C2C] text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50"
+            className="w-full bg-anthracite text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50"
           >
             {saving ? 'Speichert…' : 'Änderungen speichern'}
           </button>
@@ -375,7 +375,7 @@ function BriefpapierEditorInner() {
 // der Build fehl. Gleiches Muster wie in angebot/neu/page.tsx.
 export default function BriefpapierEditor() {
   return (
-    <Suspense fallback={<div className="min-h-dvh bg-[#F7F7F5]" />}>
+    <Suspense fallback={<div className="min-h-dvh bg-bg" />}>
       <BriefpapierEditorInner />
     </Suspense>
   )

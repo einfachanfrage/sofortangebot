@@ -39,15 +39,15 @@ export function KundeTypToggle({ kundeId, istUnternehmen, ustid, leitwegId }: Pr
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 flex flex-col gap-3">
-      <div className="text-xs font-black text-[#2C2C2C]/40 uppercase tracking-wide">Kundentyp & E-Rechnung</div>
+    <div className="bg-white rounded-2xl p-4 border border-anthracite/5 flex flex-col gap-3">
+      <div className="text-xs font-black text-anthracite/40 uppercase tracking-wide">Kundentyp & E-Rechnung</div>
 
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="font-bold text-sm text-[#2C2C2C]">
+          <div className="font-bold text-sm text-anthracite">
             {isUnternehmen ? 'Geschäftskunde' : 'Privatkunde'}
           </div>
-          <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">
+          <div className="text-xs text-anthracite/40 font-semibold mt-0.5">
             {isUnternehmen
               ? 'ZUGFeRD-PDFs werden automatisch erstellt'
               : 'Kein ZUGFeRD — kein E-Rechnungspflicht'}
@@ -55,7 +55,7 @@ export function KundeTypToggle({ kundeId, istUnternehmen, ustid, leitwegId }: Pr
         </div>
         <button type="button" onClick={toggleTyp} disabled={saving}
           className={`relative inline-flex h-7 w-12 items-center rounded-full border-2 transition-colors flex-shrink-0 ${
-            isUnternehmen ? 'bg-[#F5C400] border-[#F5C400]' : 'bg-[#2C2C2C]/10 border-transparent'
+            isUnternehmen ? 'bg-yellow border-yellow' : 'bg-anthracite/10 border-transparent'
           }`}>
           <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
             isUnternehmen ? 'translate-x-6' : 'translate-x-1'
@@ -64,9 +64,9 @@ export function KundeTypToggle({ kundeId, istUnternehmen, ustid, leitwegId }: Pr
       </div>
 
       {isUnternehmen && (
-        <div className="flex flex-col gap-2 pt-2 border-t border-[#2C2C2C]/5">
+        <div className="flex flex-col gap-2 pt-2 border-t border-anthracite/5">
           <div>
-            <label className="block text-xs font-black text-[#2C2C2C]/40 mb-1 uppercase tracking-wide">
+            <label className="block text-xs font-black text-anthracite/40 mb-1 uppercase tracking-wide">
               USt-IdNr. (optional)
             </label>
             <Input
@@ -77,7 +77,7 @@ export function KundeTypToggle({ kundeId, istUnternehmen, ustid, leitwegId }: Pr
             />
           </div>
           <div>
-            <label className="block text-xs font-black text-[#2C2C2C]/40 mb-1 uppercase tracking-wide">
+            <label className="block text-xs font-black text-anthracite/40 mb-1 uppercase tracking-wide">
               Leitweg-ID (nur öffentliche Auftraggeber)
             </label>
             <Input

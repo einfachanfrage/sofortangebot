@@ -5,7 +5,7 @@ import { RestoreBanner } from '@/components/RestoreBanner'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-dvh bg-[#F7F7F5]">
+    <div className="min-h-dvh bg-bg">
       <SideNav />
       <AgbUpdateModal />
       <RestoreBanner />
@@ -13,14 +13,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <main className="flex-1">
           {children}
         </main>
-        <footer className="md:px-8 px-5 py-4 flex items-center justify-center gap-4 text-[#2C2C2C]/25 text-xs font-semibold border-t border-[#2C2C2C]/5">
+        <footer className="md:px-8 px-5 py-4 flex items-center justify-center gap-4 text-anthracite/25 text-xs font-semibold border-t border-anthracite/5">
           <span>© 2026 Sofortangebot</span>
           <span>·</span>
-          <Link href="/agb" className="hover:text-[#2C2C2C]/50 transition-colors">AGB</Link>
+          <Link href="/agb" className="hover:text-anthracite/50 transition-colors">AGB</Link>
           <span>·</span>
-          <Link href="/datenschutz" className="hover:text-[#2C2C2C]/50 transition-colors">Datenschutz</Link>
+          <Link href="/datenschutz" className="hover:text-anthracite/50 transition-colors">Datenschutz</Link>
           <span>·</span>
-          <Link href="/impressum" className="hover:text-[#2C2C2C]/50 transition-colors">Impressum</Link>
+          <Link href="/impressum" className="hover:text-anthracite/50 transition-colors">Impressum</Link>
         </footer>
       </div>
     </div>

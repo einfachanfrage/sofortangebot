@@ -53,7 +53,7 @@ export function FAQSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-12"
+          className="font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-12"
         >
           Noch Fragen?
         </motion.h2>
@@ -72,7 +72,7 @@ export function FAQSection() {
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center justify-between py-5 text-left gap-6"
               >
-                <span className="font-syne font-extrabold text-[#2C2C2C] text-[15px] md:text-[16px] leading-snug">
+                <span className="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">
                   {faq.q}
                 </span>
                 <span
@@ -105,13 +105,13 @@ export function FAQSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="border-l-2 border-[#F5C400] pl-5"
+          className="border-l-2 border-yellow pl-5"
         >
-          <p className="font-syne font-extrabold text-[#2C2C2C] text-[15px] mb-1">Nicht dabei?</p>
+          <p className="font-syne font-extrabold text-anthracite text-[15px] mb-1">Nicht dabei?</p>
           <p className="text-[#888] text-sm mb-2">Schreib uns einfach. Antwort innerhalb eines Werktages.</p>
           <a
             href="mailto:support@sofortangebot.app"
-            className="text-[#2C2C2C] text-sm font-semibold hover:text-[#F5C400] transition-colors"
+            className="text-anthracite text-sm font-semibold hover:text-yellow transition-colors"
           >
             support@sofortangebot.app
           </a>

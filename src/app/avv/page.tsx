@@ -7,21 +7,21 @@ export const metadata = {
 
 export default function AvvPage() {
   return (
-    <div className="min-h-dvh bg-[#F7F7F5]">
-      <nav className="flex items-center justify-between px-6 py-5 border-b border-[#2C2C2C]/8 bg-white">
+    <div className="min-h-dvh bg-bg">
+      <nav className="flex items-center justify-between px-6 py-5 border-b border-anthracite/8 bg-white">
         <Link href="/"><Logo variant="light" className="text-xl" /></Link>
       </nav>
 
       <div className="px-6 py-12 max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-black text-[#2C2C2C]">Auftragsverarbeitungsvertrag (AVV)</h1>
-          <p className="text-[#2C2C2C]/50 text-sm font-semibold mt-2">gemäß Art. 28 DSGVO · Stand: Juni 2026</p>
+          <h1 className="text-3xl font-black text-anthracite">Auftragsverarbeitungsvertrag (AVV)</h1>
+          <p className="text-anthracite/50 text-sm font-semibold mt-2">gemäß Art. 28 DSGVO · Stand: Juni 2026</p>
         </div>
 
-        <section className="bg-white rounded-2xl p-6 border border-[#2C2C2C]/5">
-          <div className="text-[#2C2C2C]/70 font-semibold text-sm leading-relaxed space-y-2">
+        <section className="bg-white rounded-2xl p-6 border border-anthracite/5">
+          <div className="text-anthracite/70 font-semibold text-sm leading-relaxed space-y-2">
             <p>Zwischen dem Nutzer von Sofortangebot (nachfolgend „Verantwortlicher") und</p>
-            <p className="pl-4 border-l-2 border-[#F5C400]">
+            <p className="pl-4 border-l-2 border-yellow">
               Sandy Holm, Sofortangebot<br />
               Wielandstr. 11, 12159 Berlin<br />
               hallo@sofortangebot.app
@@ -29,7 +29,7 @@ export default function AvvPage() {
             <p>(nachfolgend „Auftragsverarbeiter")</p>
             <p className="pt-2">
               Dieser Vertrag gilt gemäß § 8.2 der{' '}
-              <Link href="/agb" className="underline text-[#2C2C2C]">AGB</Link>{' '}
+              <Link href="/agb" className="underline text-anthracite">AGB</Link>{' '}
               mit Beginn der Nutzung von sofortangebot.app als abgeschlossen.
               Eine gesonderte Unterzeichnung ist nicht erforderlich.
             </p>
@@ -96,15 +96,15 @@ export default function AvvPage() {
             content: 'Dieser AVV unterliegt dem Recht der Bundesrepublik Deutschland. Gerichtsstand ist Berlin.',
           },
         ].map(s => (
-          <section key={s.title} className="bg-white rounded-2xl p-6 border border-[#2C2C2C]/5">
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-4">{s.title}</h2>
-            <div className="text-[#2C2C2C]/70 font-semibold text-sm leading-relaxed space-y-2">
+          <section key={s.title} className="bg-white rounded-2xl p-6 border border-anthracite/5">
+            <h2 className="font-black text-anthracite text-lg mb-4">{s.title}</h2>
+            <div className="text-anthracite/70 font-semibold text-sm leading-relaxed space-y-2">
               {s.content && <p>{s.content}</p>}
               {s.list && (
                 <ul className="space-y-1.5 pl-1">
                   {s.list.map((item, i) => (
                     <li key={i} className="flex gap-2">
-                      <span className="text-[#F5C400] font-black mt-0.5">·</span>
+                      <span className="text-yellow font-black mt-0.5">·</span>
                       <span>{item}</span>
                     </li>
                   ))}
@@ -115,13 +115,13 @@ export default function AvvPage() {
         ))}
       </div>
 
-      <footer className="border-t border-[#2C2C2C]/8 px-6 py-6 flex items-center justify-between">
+      <footer className="border-t border-anthracite/8 px-6 py-6 flex items-center justify-between">
         <Logo variant="light" className="text-sm" />
-        <div className="flex gap-4 text-[#2C2C2C]/30 text-xs font-semibold">
+        <div className="flex gap-4 text-anthracite/30 text-xs font-semibold">
           <Link href="/impressum">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
           <Link href="/agb">AGB</Link>
-          <Link href="/avv" className="text-[#2C2C2C]">AVV</Link>
+          <Link href="/avv" className="text-anthracite">AVV</Link>
         </div>
       </footer>
     </div>

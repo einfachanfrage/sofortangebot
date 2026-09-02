@@ -31,10 +31,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] flex flex-col justify-center px-5">
+    <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
-        <div className="text-[#2C2C2C] text-xl font-bold mt-1">Einloggen</div>
+        <div className="text-anthracite text-xl font-bold mt-1">Einloggen</div>
       </div>
 
       <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -44,7 +44,7 @@ export default function LoginPage() {
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+          className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
         />
         <div>
           <input
@@ -53,10 +53,10 @@ export default function LoginPage() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+            className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
           />
           <div className="text-right mt-1.5">
-            <Link href="/passwort-vergessen" className="text-sm font-semibold text-[#2C2C2C]/40 hover:text-[#2C2C2C] transition-colors">
+            <Link href="/passwort-vergessen" className="text-sm font-semibold text-anthracite/40 hover:text-anthracite transition-colors">
               Passwort vergessen?
             </Link>
           </div>
@@ -71,15 +71,15 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 mt-2 active:scale-95 transition-transform disabled:opacity-50"
+          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:scale-95 transition-transform disabled:opacity-50"
         >
           {loading ? 'Einen Moment...' : 'Einloggen'}
         </button>
       </form>
 
-      <p className="text-center text-[#2C2C2C] mt-8 font-semibold">
+      <p className="text-center text-anthracite mt-8 font-semibold">
         Noch kein Konto?{' '}
-        <Link href="/register" className="text-[#F5C400] underline">
+        <Link href="/register" className="text-yellow underline">
           Jetzt registrieren
         </Link>
       </p>

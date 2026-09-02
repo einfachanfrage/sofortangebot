@@ -221,8 +221,8 @@ export default function IntegrationenPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-16">
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-6">
+    <div className="min-h-dvh bg-bg pb-16">
+      <div className="bg-anthracite px-5 pt-12 pb-6">
         <Link href="/einstellungen" className="text-white/50 text-sm font-semibold">← Einstellungen</Link>
         <div className="text-white font-syne font-black text-xl mt-1">Buchhaltung verbinden</div>
         <div className="text-white/40 text-sm font-semibold mt-1">Einmal einrichten — danach per Knopfdruck übertragen</div>
@@ -234,7 +234,7 @@ export default function IntegrationenPage() {
           const connected = isConnected(sw)
           const open = expanded === sw.id
           return (
-            <div key={sw.id} className={`bg-white rounded-2xl border-2 overflow-hidden transition-colors ${connected ? 'border-green-200' : 'border-[#2C2C2C]/5'}`}>
+            <div key={sw.id} className={`bg-white rounded-2xl border-2 overflow-hidden transition-colors ${connected ? 'border-green-200' : 'border-anthracite/5'}`}>
 
               {/* Header */}
               <button
@@ -248,21 +248,21 @@ export default function IntegrationenPage() {
                   {sw.short}
                 </div>
                 <div className="flex-1">
-                  <div className="font-black text-[#2C2C2C]">{sw.name}</div>
-                  <div className={`text-xs font-bold mt-0.5 ${connected ? 'text-green-600' : 'text-[#2C2C2C]/30'}`}>
+                  <div className="font-black text-anthracite">{sw.name}</div>
+                  <div className={`text-xs font-bold mt-0.5 ${connected ? 'text-green-600' : 'text-anthracite/30'}`}>
                     {connected ? '● Verbunden' : '○ Nicht verbunden'}
                   </div>
                 </div>
-                {open ? <ChevronUp size={18} color="#2C2C2C" className="opacity-30" /> : <ChevronDown size={18} color="#2C2C2C" className="opacity-30" />}
+                {open ? <ChevronUp size={18} color="var(--color-anthracite)" className="opacity-30" /> : <ChevronDown size={18} color="var(--color-anthracite)" className="opacity-30" />}
               </button>
 
               {/* Expanded content */}
               {open && (
-                <div className="px-4 pb-4 border-t border-[#2C2C2C]/5 pt-4">
+                <div className="px-4 pb-4 border-t border-anthracite/5 pt-4">
 
                   {/* Anleitung */}
-                  <div className="bg-[#F7F7F5] rounded-xl p-3 mb-4">
-                    <div className="text-xs font-black text-[#2C2C2C]/50 uppercase tracking-wide mb-2">So findest du deinen Key</div>
+                  <div className="bg-bg rounded-xl p-3 mb-4">
+                    <div className="text-xs font-black text-anthracite/50 uppercase tracking-wide mb-2">So findest du deinen Key</div>
                     <div className="flex flex-col gap-2">
                       {sw.steps.map((step, i) => (
                         <div key={i} className="flex items-start gap-2.5">
@@ -272,7 +272,7 @@ export default function IntegrationenPage() {
                           >
                             {i + 1}
                           </div>
-                          <span className="text-xs font-semibold text-[#2C2C2C]/70 leading-relaxed">{step}</span>
+                          <span className="text-xs font-semibold text-anthracite/70 leading-relaxed">{step}</span>
                         </div>
                       ))}
                     </div>
@@ -282,7 +282,7 @@ export default function IntegrationenPage() {
                   <div className="flex flex-col gap-3">
                     {sw.fields.map(field => (
                       <div key={field.key}>
-                        <label className="block text-xs font-bold text-[#2C2C2C]/50 mb-1.5 uppercase tracking-wide">{field.label}</label>
+                        <label className="block text-xs font-bold text-anthracite/50 mb-1.5 uppercase tracking-wide">{field.label}</label>
 
                         <div className="relative">
                           <Input
@@ -298,8 +298,8 @@ export default function IntegrationenPage() {
                             className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
                           >
                             {showKey[field.key]
-                              ? <EyeOff size={15} color="#2C2C2C" className="opacity-30" />
-                              : <Eye size={15} color="#2C2C2C" className="opacity-30" />}
+                              ? <EyeOff size={15} color="var(--color-anthracite)" className="opacity-30" />
+                              : <Eye size={15} color="var(--color-anthracite)" className="opacity-30" />}
                           </button>
                         </div>
                       </div>
@@ -310,7 +310,7 @@ export default function IntegrationenPage() {
                           type="button"
                           onClick={() => testVerbindung(sw.id, keys[sw.fields[0].key])}
                           disabled={testStatus[sw.id] === 'testing'}
-                          className="text-xs font-bold text-[#2C2C2C]/50 bg-[#F7F7F5] rounded-xl px-3 py-2 disabled:opacity-50"
+                          className="text-xs font-bold text-anthracite/50 bg-bg rounded-xl px-3 py-2 disabled:opacity-50"
                         >
                           {testStatus[sw.id] === 'testing' ? 'Teste...' : 'Verbindung testen'}
                         </button>
@@ -331,7 +331,7 @@ export default function IntegrationenPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-2xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+          className="w-full bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
         >
           {saved ? <><Check size={20} strokeWidth={3} /> Gespeichert</> : saving ? 'Speichert…' : 'Speichern'}
         </button>

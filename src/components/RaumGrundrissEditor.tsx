@@ -137,21 +137,21 @@ export function RaumGrundrissEditor({
     <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full md:max-w-md bg-white rounded-t-3xl md:rounded-3xl px-5 pt-4 pb-8 shadow-2xl max-h-[92dvh] overflow-y-auto">
-        <div className="flex justify-center mb-3 md:hidden"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-        <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[19px] mb-1">Grundriss · {raumName}</h2>
-        <p className="text-[#2C2C2C]/50 font-semibold text-[13px] mb-3 leading-relaxed">
+        <div className="flex justify-center mb-3 md:hidden"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+        <h2 className="font-syne font-extrabold text-anthracite text-[19px] mb-1">Grundriss · {raumName}</h2>
+        <p className="text-anthracite/50 font-semibold text-[13px] mb-3 leading-relaxed">
           Für Räume mit Nische, Erker oder Vorsprung: Wähle eine Form, zeichne
           grob mit dem Finger, oder baue frei Wand für Wand.
         </p>
 
         {/* Vorlagen */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-[11px] font-black text-[#2C2C2C]/30 uppercase tracking-wide shrink-0">Vorlage</span>
+          <span className="text-[11px] font-black text-anthracite/30 uppercase tracking-wide shrink-0">Vorlage</span>
           {VORLAGEN.map(v => (
             <button
               key={v.id}
               onClick={() => { setWaende(v.waende.map(w => ({ ...w }))); setZeichenModus(false) }}
-              className="flex-1 text-[12px] font-extrabold text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 rounded-lg py-1.5 transition-colors"
+              className="flex-1 text-[12px] font-extrabold text-anthracite bg-anthracite/6 hover:bg-yellow/20 rounded-lg py-1.5 transition-colors"
             >
               {v.label}
             </button>
@@ -160,7 +160,7 @@ export function RaumGrundrissEditor({
             onClick={() => setZeichenModus(true)}
             title="Raumform mit dem Finger zeichnen"
             className={`flex-1 flex items-center justify-center gap-1 text-[12px] font-extrabold rounded-lg py-1.5 transition-colors ${
-              zeichenModus ? 'bg-[#F5C400] text-[#2C2C2C]' : 'text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20'
+              zeichenModus ? 'bg-yellow text-anthracite' : 'text-anthracite bg-anthracite/6 hover:bg-yellow/20'
             }`}
           >
             <Pencil size={12} strokeWidth={2.5} /> Zeichnen
@@ -191,20 +191,20 @@ export function RaumGrundrissEditor({
             <div className="flex flex-col gap-2 mb-3">
               {waende.map((wand, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="text-[11px] font-black text-[#2C2C2C]/30 w-12 shrink-0">Wand {i + 1}</span>
+                  <span className="text-[11px] font-black text-anthracite/30 w-12 shrink-0">Wand {i + 1}</span>
                   {i > 0 ? (
-                    <div className="flex gap-0.5 bg-[#2C2C2C]/5 rounded-lg p-0.5 shrink-0">
+                    <div className="flex gap-0.5 bg-anthracite/5 rounded-lg p-0.5 shrink-0">
                       <button onClick={() => setTurn(i, 'L')} title="nach links"
-                        className={`p-1.5 rounded-md ${wand.turn === 'L' ? 'bg-white text-[#2C2C2C] shadow-sm' : 'text-[#2C2C2C]/40'}`}>
+                        className={`p-1.5 rounded-md ${wand.turn === 'L' ? 'bg-white text-anthracite shadow-sm' : 'text-anthracite/40'}`}>
                         <RotateCcw size={13} />
                       </button>
                       <button onClick={() => setTurn(i, 'R')} title="nach rechts"
-                        className={`p-1.5 rounded-md ${wand.turn === 'R' ? 'bg-white text-[#2C2C2C] shadow-sm' : 'text-[#2C2C2C]/40'}`}>
+                        className={`p-1.5 rounded-md ${wand.turn === 'R' ? 'bg-white text-anthracite shadow-sm' : 'text-anthracite/40'}`}>
                         <RotateCw size={13} />
                       </button>
                     </div>
                   ) : (
-                    <span className="text-[10px] font-bold text-[#2C2C2C]/25 shrink-0 w-[52px] text-center">Start →</span>
+                    <span className="text-[10px] font-bold text-anthracite/25 shrink-0 w-[52px] text-center">Start →</span>
                   )}
                   <div className="flex items-center gap-1 flex-1">
                     <input
@@ -212,12 +212,12 @@ export function RaumGrundrissEditor({
                       value={wand.laenge || ''}
                       onChange={e => setLaenge(i, e.target.value)}
                       placeholder="Länge"
-                      className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-[#2C2C2C] font-bold text-base focus:outline-none focus:border-[#F5C400]"
+                      className="w-full bg-bg border-2 border-anthracite/10 rounded-xl px-3 py-2 text-anthracite font-bold text-base focus:outline-none focus:border-yellow"
                     />
-                    <span className="text-[13px] font-semibold text-[#2C2C2C]/40 shrink-0">m</span>
+                    <span className="text-[13px] font-semibold text-anthracite/40 shrink-0">m</span>
                   </div>
                   <button onClick={() => removeWand(i)} disabled={waende.length <= 1}
-                    className="p-1.5 text-[#2C2C2C]/20 hover:text-red-400 disabled:opacity-30 shrink-0">
+                    className="p-1.5 text-anthracite/20 hover:text-red-400 disabled:opacity-30 shrink-0">
                     <Trash2 size={15} />
                   </button>
                 </div>
@@ -225,7 +225,7 @@ export function RaumGrundrissEditor({
             </div>
 
             <button onClick={addWand}
-              className="flex items-center justify-center gap-1.5 w-full border-2 border-dashed border-[#2C2C2C]/15 rounded-xl py-2.5 text-[13px] font-extrabold text-[#2C2C2C]/50 hover:border-[#F5C400] hover:text-[#2C2C2C] transition-colors mb-5">
+              className="flex items-center justify-center gap-1.5 w-full border-2 border-dashed border-anthracite/15 rounded-xl py-2.5 text-[13px] font-extrabold text-anthracite/50 hover:border-yellow hover:text-anthracite transition-colors mb-5">
               <Plus size={15} /> Wand hinzufügen
             </button>
           </>
@@ -236,11 +236,11 @@ export function RaumGrundrissEditor({
             <button
               onClick={() => onSave(waende.filter(w => w.laenge > 0))}
               disabled={!g.geschlossen}
-              className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40"
+              className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40"
             >
               <Check size={17} strokeWidth={3} /> Übernehmen
             </button>
-            <button onClick={onClose} className="w-full border-2 border-[#2C2C2C]/15 text-[#2C2C2C]/60 rounded-2xl py-3 font-extrabold text-[13px]">
+            <button onClick={onClose} className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3 font-extrabold text-[13px]">
               Abbrechen
             </button>
           </div>
@@ -254,7 +254,7 @@ export function RaumGrundrissEditor({
 function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; y: number }[]; geschlossen: boolean; laengen: number[] }) {
   const W = 260, H = 170, PAD = 30
   if (pfad.length < 2) {
-    return <div className="bg-[#F7F7F5] rounded-2xl h-[170px] mb-3 flex items-center justify-center text-[#2C2C2C]/30 text-sm font-semibold">Wände eingeben…</div>
+    return <div className="bg-bg rounded-2xl h-[170px] mb-3 flex items-center justify-center text-anthracite/30 text-sm font-semibold">Wände eingeben…</div>
   }
   const xs = pfad.map(p => p.x), ys = pfad.map(p => p.y)
   const minX = Math.min(...xs), maxX = Math.max(...xs)
@@ -269,7 +269,7 @@ function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; 
   const start = pfad[0], ende = pfad[pfad.length - 1]
 
   return (
-    <div className="bg-[#F7F7F5] rounded-2xl mb-3 flex items-center justify-center">
+    <div className="bg-bg rounded-2xl mb-3 flex items-center justify-center">
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         {geschlossen ? (
           <polygon points={punkteStr} fill="#F5C40022" stroke={stroke} strokeWidth={2.5} strokeLinejoin="round" />
@@ -298,7 +298,7 @@ function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; 
               x={mx} y={my}
               dx={horizontal ? 0 : 7} dy={horizontal ? -3 : 3}
               textAnchor="middle"
-              className="fill-[#2C2C2C]"
+              className="fill-anthracite"
               style={{ fontSize: 9, fontWeight: 800 }}
             >
               {`W${i + 1} · ${String(len).replace('.', ',')}`}
@@ -369,7 +369,7 @@ function FreihandFlaeche({
 
   return (
     <div className="mb-3">
-      <div className="bg-[#F7F7F5] rounded-2xl overflow-hidden mb-2" style={{ touchAction: 'none' }}>
+      <div className="bg-bg rounded-2xl overflow-hidden mb-2" style={{ touchAction: 'none' }}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${ZEICHEN_W} ${ZEICHEN_H}`}
@@ -383,7 +383,7 @@ function FreihandFlaeche({
             <polyline points={pfadStr} fill="none" stroke="#D97706" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
           )}
           {punkte.length === 0 && (
-            <text x={ZEICHEN_W / 2} y={ZEICHEN_H / 2} textAnchor="middle" className="fill-[#2C2C2C]/35" style={{ fontSize: 12, fontWeight: 700 }}>
+            <text x={ZEICHEN_W / 2} y={ZEICHEN_H / 2} textAnchor="middle" className="fill-anthracite/35" style={{ fontSize: 12, fontWeight: 700 }}>
               Mit dem Finger die Raumform umranden
             </text>
           )}
@@ -394,7 +394,7 @@ function FreihandFlaeche({
           Nicht genug Ecken erkannt — nochmal etwas deutlicher zeichnen.
         </div>
       )}
-      <button onClick={onAbbrechen} className="w-full text-[12px] font-bold text-[#2C2C2C]/40 hover:text-[#2C2C2C]/60 py-1">
+      <button onClick={onAbbrechen} className="w-full text-[12px] font-bold text-anthracite/40 hover:text-anthracite/60 py-1">
         Zurück zu Vorlagen
       </button>
     </div>

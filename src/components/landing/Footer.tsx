@@ -2,13 +2,13 @@ import Link from 'next/link'
 
 export function Footer() {
   return (
-    <footer className="bg-[#2C2C2C] py-12 md:py-16">
+    <footer className="bg-anthracite py-12 md:py-16">
       <div className="max-w-6xl mx-auto px-5 md:px-10">
         <div className="grid md:grid-cols-3 gap-8 md:gap-12 mb-10">
           {/* Left */}
           <div>
             <div className="font-syne font-black text-white text-xl mb-2">
-              sofort<span className="text-[#F5C400]">angebot</span>
+              sofort<span className="text-yellow">angebot</span>
             </div>
             <p className="text-[#888] text-sm font-medium leading-relaxed">
               Das schnellste Angebot im Handwerk.
@@ -17,15 +17,15 @@ export function Footer() {
 
           {/* Center */}
           <div className="hidden md:flex items-center justify-center">
-            <span className="font-syne font-black text-[#F5C400] text-3xl opacity-20">sofortangebot</span>
+            <span className="font-syne font-black text-yellow text-3xl opacity-20">sofortangebot</span>
           </div>
 
           {/* Right */}
           <div className="flex md:justify-end items-start">
             <div className="flex gap-5 text-[#888] text-sm font-medium">
-              <Link href="/impressum" className="hover:text-[#F5C400] transition-colors">Impressum</Link>
-              <Link href="/datenschutz" className="hover:text-[#F5C400] transition-colors">Datenschutz</Link>
-              <Link href="/agb" className="hover:text-[#F5C400] transition-colors">AGB</Link>
+              <Link href="/impressum" className="hover:text-yellow transition-colors">Impressum</Link>
+              <Link href="/datenschutz" className="hover:text-yellow transition-colors">Datenschutz</Link>
+              <Link href="/agb" className="hover:text-yellow transition-colors">AGB</Link>
             </div>
           </div>
         </div>

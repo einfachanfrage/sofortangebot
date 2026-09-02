@@ -22,7 +22,7 @@ export function IntegrationenSection() {
           transition={{ duration: 0.4 }}
           className="mb-14"
         >
-          <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[28px] md:text-[36px] tracking-tight mb-3">
+          <h2 className="font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-3">
             Läuft mit dem, was du schon nutzt.
           </h2>
           <p className="text-[#888] text-base max-w-xl leading-relaxed">
@@ -53,9 +53,9 @@ export function IntegrationenSection() {
           {hauptIntegrationen.map((integration) => (
             <div
               key={integration.name}
-              className="flex items-center gap-4 border border-[#E8E8E8] px-7 py-6 hover:border-[#2C2C2C]/30 transition-colors"
+              className="flex items-center gap-4 border border-[#E8E8E8] px-7 py-6 hover:border-anthracite/30 transition-colors"
             >
-              <span className="font-semibold text-[#2C2C2C] text-[17px]">{integration.name}</span>
+              <span className="font-semibold text-anthracite text-[17px]">{integration.name}</span>
             </div>
           ))}
         </motion.div>

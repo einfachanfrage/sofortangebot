@@ -77,17 +77,17 @@ export default function PasswortResetPage() {
 
   if (!ready && linkInvalid) {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col justify-center px-5">
+      <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
-        <h1 className="text-xl font-black text-[#2C2C2C] mb-3 text-center">Link ungültig oder abgelaufen</h1>
-        <p className="text-[#2C2C2C]/60 font-semibold text-sm text-center mb-8">
+        <h1 className="text-xl font-black text-anthracite mb-3 text-center">Link ungültig oder abgelaufen</h1>
+        <p className="text-anthracite/60 font-semibold text-sm text-center mb-8">
           Dieser Reset-Link funktioniert nicht mehr. Fordere einfach einen neuen an.
         </p>
         <Link
           href="/passwort-vergessen"
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 text-center active:scale-95 transition-transform"
+          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 text-center active:scale-95 transition-transform"
         >
           Neuen Link anfordern
         </Link>
@@ -97,21 +97,21 @@ export default function PasswortResetPage() {
 
   if (!ready) {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col justify-center px-5">
+      <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
-        <div className="text-[#2C2C2C]/40 font-semibold text-center">Link wird geprüft...</div>
+        <div className="text-anthracite/40 font-semibold text-center">Link wird geprüft...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] flex flex-col justify-center px-5">
+    <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
-        <div className="text-[#2C2C2C] text-xl font-bold mt-1">Neues Passwort</div>
-        <p className="text-[#2C2C2C]/50 font-semibold text-sm mt-1">
+        <div className="text-anthracite text-xl font-bold mt-1">Neues Passwort</div>
+        <p className="text-anthracite/50 font-semibold text-sm mt-1">
           Wähle ein sicheres Passwort mit mindestens 8 Zeichen.
         </p>
       </div>
@@ -125,7 +125,7 @@ export default function PasswortResetPage() {
           required
           autoFocus
           minLength={8}
-          className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+          className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
         />
         <input
           type="password"
@@ -134,7 +134,7 @@ export default function PasswortResetPage() {
           onChange={e => setPasswordConfirm(e.target.value)}
           required
           minLength={8}
-          className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
+          className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
         />
 
         {error && (
@@ -146,7 +146,7 @@ export default function PasswortResetPage() {
         <button
           type="submit"
           disabled={loading || !password || !passwordConfirm}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-lg rounded-xl py-4 mt-2 active:scale-95 transition-transform disabled:opacity-50"
+          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:scale-95 transition-transform disabled:opacity-50"
         >
           {loading ? 'Speichere...' : 'Passwort speichern'}
         </button>

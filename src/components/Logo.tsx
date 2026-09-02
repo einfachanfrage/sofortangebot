@@ -10,8 +10,8 @@ interface LogoProps {
 export function Logo({ variant = 'dark', className = '' }: LogoProps) {
   return (
     <span className={`font-black tracking-tight ${className}`}>
-      <span className={variant === 'dark' ? 'text-[#F5C400]' : 'text-[#2C2C2C]'}>sofort</span>
-      <span className={variant === 'dark' ? 'text-white' : 'text-[#F5C400]'}>angebot</span>
+      <span className={variant === 'dark' ? 'text-yellow' : 'text-anthracite'}>sofort</span>
+      <span className={variant === 'dark' ? 'text-white' : 'text-yellow'}>angebot</span>
     </span>
   )
 }

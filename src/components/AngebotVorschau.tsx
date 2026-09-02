@@ -42,7 +42,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
   const co = company as Company & { ust_id?: string }
 
   return (
-    <div className="bg-white font-sans text-[#2C2C2C] text-[10px] leading-normal min-h-full">
+    <div className="bg-white font-sans text-anthracite text-[10px] leading-normal min-h-full">
       {/* A4-artiges Paper-Layout */}
       <div className="px-12 py-10">
 
@@ -53,7 +53,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
               // eslint-disable-next-line @next/next/no-img-element
               <img src={company.logo_url} alt={company.name} className="max-h-16 max-w-[200px] object-contain mb-2" />
             ) : (
-              <div className="text-[20px] font-black text-[#2C2C2C] leading-tight mb-1">{company.name}</div>
+              <div className="text-[20px] font-black text-anthracite leading-tight mb-1">{company.name}</div>
             )}
             <div className="text-[#666] text-[9px] leading-relaxed whitespace-pre-line">{company.address}</div>
             {co.ust_id && <div className="text-[#666] text-[9px] mt-1">USt-IdNr.: {co.ust_id}</div>}
@@ -61,7 +61,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
             {company.iban && <div className="text-[#666] text-[9px]">IBAN: {company.iban}</div>}
           </div>
           <div>
-            <span className="bg-[#F5C400] text-[#2C2C2C] font-black text-[11px] px-4 py-1.5 rounded">{dokumentTitel}</span>
+            <span className="bg-yellow text-anthracite font-black text-[11px] px-4 py-1.5 rounded">{dokumentTitel}</span>
           </div>
         </div>
 
@@ -109,7 +109,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
         {/* POSITIONEN-TABELLE */}
         <div>
           {/* Tabellenkopf */}
-          <div className="bg-[#2C2C2C] text-white flex rounded text-[9px] font-bold py-2 px-2.5 mb-0.5">
+          <div className="bg-anthracite text-white flex rounded text-[9px] font-bold py-2 px-2.5 mb-0.5">
             <span style={{ width: '6%' }}>#</span>
             <span style={{ width: '40%' }}>Bezeichnung</span>
             <span style={{ width: '12%', textAlign: 'right' }}>Menge</span>
@@ -139,13 +139,13 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
 
         {/* SUMMENBLOCK */}
         <div className="flex justify-end mt-4">
-          <div className="bg-[#F7F7F5] rounded-lg p-4 w-[45%] text-[9px]">
+          <div className="bg-bg rounded-lg p-4 w-[45%] text-[9px]">
             <div className="flex justify-between mb-1">
               <span className="text-[#666]">Nettobetrag</span>
               <span>{fmt(baseNet)}</span>
             </div>
             {discountValue > 0 && (
-              <div className="flex justify-between mb-1 text-[#F5C400]">
+              <div className="flex justify-between mb-1 text-yellow">
                 <span className="font-semibold">Rabatt {discountPct > 0 ? `${discountPct}%` : ''}</span>
                 <span>−{fmt(discountValue)}</span>
               </div>
@@ -168,7 +168,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
                 <span>{fmt(totalVat)}</span>
               </div>
             )}
-            <div className="flex justify-between border-t-2 border-[#2C2C2C] mt-1.5 pt-1.5 font-black text-[12px]">
+            <div className="flex justify-between border-t-2 border-anthracite mt-1.5 pt-1.5 font-black text-[12px]">
               <span>Gesamtbetrag</span>
               <span>{fmt(totalGross)}</span>
             </div>
@@ -177,7 +177,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
 
         {/* §19 UStG */}
         {isKleinunternehmer && (
-          <div className="mt-3 bg-[#F7F7F5] rounded px-3 py-2 text-[8px] text-[#666]">
+          <div className="mt-3 bg-bg rounded px-3 py-2 text-[8px] text-[#666]">
             Kein Ausweis von Umsatzsteuer gemäß § 19 UStG.
           </div>
         )}
@@ -204,10 +204,10 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
 
         {/* Unterschriftszeilen */}
         <div className="flex gap-16 mt-10">
-          <div className="flex-1 border-t border-[#2C2C2C] pt-1.5">
+          <div className="flex-1 border-t border-anthracite pt-1.5">
             <span className="text-[8px] text-[#666]">Datum, Unterschrift Auftraggeber</span>
           </div>
-          <div className="flex-1 border-t border-[#2C2C2C] pt-1.5">
+          <div className="flex-1 border-t border-anthracite pt-1.5">
             <span className="text-[8px] text-[#666]">{company.name}</span>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
       </div>
 
       {/* KI-Hinweis — nur in Web-Vorschau, nicht im PDF */}
-      <div className="mt-3 px-2 text-[10px] text-[#2C2C2C]/30 font-medium text-center">
+      <div className="mt-3 px-2 text-[10px] text-anthracite/30 font-medium text-center">
         Bitte Angebot vor dem Versand prüfen. Sofortangebot haftet nicht für fehlerhafte Berechnungen.
       </div>
 

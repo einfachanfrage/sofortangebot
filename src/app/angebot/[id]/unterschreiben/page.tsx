@@ -147,28 +147,28 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
 
   if (loading) {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex items-center justify-center">
-        <div className="text-[#2C2C2C]/40 font-semibold">Lädt...</div>
+      <div className="min-h-dvh bg-bg flex items-center justify-center">
+        <div className="text-anthracite/40 font-semibold">Lädt...</div>
       </div>
     )
   }
 
   if (!quote) {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center px-5 text-center">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-5 text-center">
         <div className="text-5xl mb-4">🔍</div>
-        <div className="font-black text-[#2C2C2C] text-xl">Angebot nicht gefunden</div>
-        <div className="text-[#2C2C2C]/50 font-semibold mt-2">Der Link ist ungültig oder das Angebot wurde zurückgezogen.</div>
+        <div className="font-black text-anthracite text-xl">Angebot nicht gefunden</div>
+        <div className="text-anthracite/50 font-semibold mt-2">Der Link ist ungültig oder das Angebot wurde zurückgezogen.</div>
       </div>
     )
   }
 
   if ((quote as Quote & { status: string }).status === 'expired') {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center px-5 text-center">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-5 text-center">
         <div className="text-5xl mb-4">⏰</div>
-        <div className="font-black text-[#2C2C2C] text-xl">Angebot abgelaufen</div>
-        <div className="text-[#2C2C2C]/50 font-semibold mt-2 max-w-sm">
+        <div className="font-black text-anthracite text-xl">Angebot abgelaufen</div>
+        <div className="text-anthracite/50 font-semibold mt-2 max-w-sm">
           Die Gültigkeitsdauer dieses Angebots ist leider abgelaufen.<br />
           Bitte wenden Sie sich direkt an <strong>{company?.name}</strong>.
         </div>
@@ -178,15 +178,15 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
 
   if (done || quote.status === 'accepted') {
     return (
-      <div className="min-h-dvh bg-[#F7F7F5] flex flex-col items-center justify-center px-5 text-center gap-4">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-5 text-center gap-4">
         <div className="text-6xl">✅</div>
-        <div className="font-black text-[#2C2C2C] text-2xl">Angebot angenommen!</div>
-        <div className="text-[#2C2C2C]/60 font-semibold">{company?.name} wurde benachrichtigt.</div>
-        <div className="bg-white rounded-2xl px-6 py-4 border border-[#2C2C2C]/5 mt-2">
-          <div className="font-black text-3xl text-[#2C2C2C]">{fmt(quote.total_gross)}</div>
-          <div className="text-sm text-[#2C2C2C]/50 font-semibold mt-1">Angebot {quoteNumber}</div>
+        <div className="font-black text-anthracite text-2xl">Angebot angenommen!</div>
+        <div className="text-anthracite/60 font-semibold">{company?.name} wurde benachrichtigt.</div>
+        <div className="bg-white rounded-2xl px-6 py-4 border border-anthracite/5 mt-2">
+          <div className="font-black text-3xl text-anthracite">{fmt(quote.total_gross)}</div>
+          <div className="text-sm text-anthracite/50 font-semibold mt-1">Angebot {quoteNumber}</div>
         </div>
-        <p className="text-xs text-[#2C2C2C]/30 font-semibold max-w-xs">
+        <p className="text-xs text-anthracite/30 font-semibold max-w-xs">
           Eine Bestätigung wurde an Ihre E-Mail-Adresse gesendet (sofern hinterlegt). Bitte heben Sie diese E-Mail auf.
         </p>
       </div>
@@ -194,10 +194,10 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-10">
+    <div className="min-h-dvh bg-bg pb-10">
       {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 pt-10 pb-5">
-        <div className="text-[#F5C400] font-black text-lg">{company?.name}</div>
+      <div className="bg-anthracite px-5 pt-10 pb-5">
+        <div className="text-yellow font-black text-lg">{company?.name}</div>
         <div className="text-white/60 text-sm font-semibold">Angebot {quoteNumber}</div>
         {quote.valid_until && (
           <div className="text-white/30 text-xs font-semibold mt-1">Gültig bis {fmtDate(quote.valid_until)}</div>
@@ -207,54 +207,54 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
       <div className="px-5 pt-5 flex flex-col gap-4 max-w-xl mx-auto">
         {/* Absender */}
         {company && (
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Von</div>
-            <div className="font-black text-[#2C2C2C]">{company.name}</div>
+          <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+            <div className="text-xs font-bold text-anthracite/40 uppercase tracking-wide mb-2">Von</div>
+            <div className="font-black text-anthracite">{company.name}</div>
             {company.address && (
-              <div className="text-sm text-[#2C2C2C]/60 font-semibold mt-0.5 whitespace-pre-line">{company.address}</div>
+              <div className="text-sm text-anthracite/60 font-semibold mt-0.5 whitespace-pre-line">{company.address}</div>
             )}
           </div>
         )}
 
         {/* Positionen */}
-        <div className="bg-white rounded-2xl border border-[#2C2C2C]/5">
-          <div className="px-4 pt-4 pb-2 font-black text-[#2C2C2C]">Positionen</div>
+        <div className="bg-white rounded-2xl border border-anthracite/5">
+          <div className="px-4 pt-4 pb-2 font-black text-anthracite">Positionen</div>
           {quote.items.map(item => (
-            <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3 flex justify-between gap-2">
+            <div key={item.id} className="border-t border-anthracite/5 px-4 py-3 flex justify-between gap-2">
               <div className="min-w-0">
-                <div className="font-bold text-[#2C2C2C] text-sm">{item.title}</div>
+                <div className="font-bold text-anthracite text-sm">{item.title}</div>
                 {item.description && (
-                  <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>
+                  <div className="text-xs text-anthracite/50 font-semibold mt-0.5">{item.description}</div>
                 )}
-                <div className="text-xs text-[#2C2C2C]/40 font-semibold">{item.quantity} {item.unit} × {fmt(item.unit_price)}</div>
+                <div className="text-xs text-anthracite/40 font-semibold">{item.quantity} {item.unit} × {fmt(item.unit_price)}</div>
               </div>
-              <div className="font-black text-[#2C2C2C] shrink-0 text-sm">{fmt(item.total_price)}</div>
+              <div className="font-black text-anthracite shrink-0 text-sm">{fmt(item.total_price)}</div>
             </div>
           ))}
 
           {/* Summen */}
-          <div className="border-t border-[#2C2C2C]/10 px-4 py-3 bg-[#F7F7F5] rounded-b-2xl">
+          <div className="border-t border-anthracite/10 px-4 py-3 bg-bg rounded-b-2xl">
             {company && company.vat_rate > 0 && (
               <>
-                <div className="flex justify-between text-sm text-[#2C2C2C]/60 font-semibold mb-1">
+                <div className="flex justify-between text-sm text-anthracite/60 font-semibold mb-1">
                   <span>Nettobetrag</span><span>{fmt(quote.total_net)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-[#2C2C2C]/60 font-semibold mb-2">
+                <div className="flex justify-between text-sm text-anthracite/60 font-semibold mb-2">
                   <span>MwSt. {company.vat_rate} %</span><span>{fmt(quote.total_vat)}</span>
                 </div>
               </>
             )}
             <div className="flex justify-between">
-              <span className="font-black text-[#2C2C2C]">Gesamtbetrag</span>
-              <span className="font-black text-[#2C2C2C]">{fmt(quote.total_gross)}</span>
+              <span className="font-black text-anthracite">Gesamtbetrag</span>
+              <span className="font-black text-anthracite">{fmt(quote.total_gross)}</span>
             </div>
             {company?.vat_rate === 0 && (
-              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">
+              <div className="text-xs text-anthracite/40 font-semibold mt-1">
                 Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
               </div>
             )}
             {company?.payment_days && (
-              <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1">
+              <div className="text-xs text-anthracite/40 font-semibold mt-1">
                 Zahlbar innerhalb von {company.payment_days} Tagen.
               </div>
             )}
@@ -263,24 +263,24 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
 
         {/* Notizen */}
         {quote.notes && (
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-            <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Anmerkungen</div>
-            <div className="text-sm text-[#2C2C2C]/70 font-semibold">{quote.notes}</div>
+          <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+            <div className="text-xs font-bold text-anthracite/40 uppercase tracking-wide mb-2">Anmerkungen</div>
+            <div className="text-sm text-anthracite/70 font-semibold">{quote.notes}</div>
           </div>
         )}
 
         {/* Unterschrift */}
-        <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-          <div className="font-black text-[#2C2C2C] mb-1">Ihr Name</div>
+        <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+          <div className="font-black text-anthracite mb-1">Ihr Name</div>
           <input
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder={quote.customer?.name ?? 'Vor- und Nachname'}
-            className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] mb-4"
+            className="w-full bg-bg border-2 border-anthracite/10 rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow mb-4"
           />
 
-          <div className="font-black text-[#2C2C2C] mb-2">Unterschrift</div>
-          <div className="relative border-2 border-[#2C2C2C]/10 rounded-xl overflow-hidden bg-[#F7F7F5]" style={{ touchAction: 'none' }}>
+          <div className="font-black text-anthracite mb-2">Unterschrift</div>
+          <div className="relative border-2 border-anthracite/10 rounded-xl overflow-hidden bg-bg" style={{ touchAction: 'none' }}>
             <canvas
               ref={canvasRef}
               width={700}
@@ -293,12 +293,12 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
             />
             {!hasSig && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-[#2C2C2C]/20 font-semibold text-sm">Hier unterschreiben</span>
+                <span className="text-anthracite/20 font-semibold text-sm">Hier unterschreiben</span>
               </div>
             )}
           </div>
           {hasSig && (
-            <button onClick={clearCanvas} className="text-sm font-bold text-[#2C2C2C]/40 mt-2">
+            <button onClick={clearCanvas} className="text-sm font-bold text-anthracite/40 mt-2">
               Zurücksetzen
             </button>
           )}
@@ -306,17 +306,17 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
 
         {/* AGB-Checkbox (nur wenn Betrieb eine AGB-URL hinterlegt hat) */}
         {company?.agb_url && (
-          <label className="flex items-start gap-3 bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 cursor-pointer">
+          <label className="flex items-start gap-3 bg-white rounded-2xl p-4 border border-anthracite/5 cursor-pointer">
             <input
               type="checkbox"
               checked={agbChecked}
               onChange={e => setAgbChecked(e.target.checked)}
-              className="mt-0.5 w-5 h-5 accent-[#F5C400] shrink-0"
+              className="mt-0.5 w-5 h-5 accent-yellow shrink-0"
             />
-            <span className="text-sm text-[#2C2C2C]/70 font-semibold leading-relaxed">
+            <span className="text-sm text-anthracite/70 font-semibold leading-relaxed">
               Ich habe die{' '}
               <a href={company.agb_url} target="_blank" rel="noopener noreferrer"
-                className="text-[#2C2C2C] underline font-bold">
+                className="text-anthracite underline font-bold">
                 Allgemeinen Geschäftsbedingungen
               </a>{' '}
               von {company.name} gelesen und stimme ihnen zu.
@@ -328,24 +328,24 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
         <button
           onClick={handleSubmit}
           disabled={!canSubmit || submitting}
-          className="w-full bg-[#F5C400] text-[#2C2C2C] font-black text-xl rounded-2xl py-5 active:scale-95 transition-transform disabled:opacity-40"
+          className="w-full bg-yellow text-anthracite font-black text-xl rounded-2xl py-5 active:scale-95 transition-transform disabled:opacity-40"
         >
           {submitting ? 'Wird gespeichert...' : 'Angebot annehmen & unterschreiben'}
         </button>
 
         {/* DSGVO-Hinweis (Punkt 6) */}
-        <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-          <div className="text-xs text-[#2C2C2C]/50 font-semibold leading-relaxed">
-            <strong className="text-[#2C2C2C]/70">Rechtlicher Hinweis:</strong> Mit Ihrer Unterschrift nehmen Sie dieses Angebot verbindlich an und erteilen {company?.name} einen Auftrag im Sinne des BGB. Diese elektronische Unterschrift gilt als einfache elektronische Signatur gemäß eIDAS-Verordnung.
+        <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+          <div className="text-xs text-anthracite/50 font-semibold leading-relaxed">
+            <strong className="text-anthracite/70">Rechtlicher Hinweis:</strong> Mit Ihrer Unterschrift nehmen Sie dieses Angebot verbindlich an und erteilen {company?.name} einen Auftrag im Sinne des BGB. Diese elektronische Unterschrift gilt als einfache elektronische Signatur gemäß eIDAS-Verordnung.
           </div>
-          <div className="text-xs text-[#2C2C2C]/40 font-semibold leading-relaxed mt-2">
+          <div className="text-xs text-anthracite/40 font-semibold leading-relaxed mt-2">
             <strong>Datenschutz:</strong> Ihr Name, Ihre Unterschrift sowie technische Daten (Zeitstempel, IP-Adresse) werden zur Dokumentation der Auftragserteilung gespeichert. Verantwortlicher für die Datenverarbeitung ist {company?.name}. Dieses System wird bereitgestellt durch sofortangebot.app.{' '}
             <Link href="/datenschutz" className="underline" target="_blank">Datenschutzerklärung</Link>
           </div>
         </div>
 
         {/* Powered by */}
-        <div className="text-center text-xs text-[#2C2C2C]/20 font-semibold pb-2">
+        <div className="text-center text-xs text-anthracite/20 font-semibold pb-2">
           Versendet über sofortangebot.app im Auftrag von {company?.name}
         </div>
       </div>
