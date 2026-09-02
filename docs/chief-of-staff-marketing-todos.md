@@ -520,5 +520,35 @@ noch kein eigener direkter Austausch-Kanal, wird bei Bedarf ergänzt.
 
 ---
 
+## CoS-M-006 — Zwei FAQ-Korrekturen von Head of Legal (wartet auf Sandys Textfreigabe)
+
+**Datum:** 2026-09-01
+**Status:** 🟡 Sandys Antwort da — geht in den Landingpage-Rebuild ein, kein
+Patch der alten Seite
+
+Head of Legal hat zwei Widersprüche auf der Landingpage-FAQ gefunden, beide
+mit echtem Abmahnrisiko (§5 UWG), weil der Gegenbeweis auf der eigenen
+Website liegt:
+
+- **G2** — „Alles liegt auf Servern in Deutschland … kein Teilen mit
+  Dritten. DSGVO-konform." widerspricht der eigenen AVV-Seite (6
+  Unterauftragnehmer, teils USA).
+- **G3** — „Fenster und Türen abgezogen" beschreibt das Produkt seit der
+  Übermessungs-Entscheidung vom 21.08. falsch.
+
+**Update (Sandy, 01.09.):** „egal — werde komplette Landingpage noch neu
+machen." Kein Patch der bestehenden FAQ-Sätze nötig — bitte stattdessen die
+korrekten Fakten direkt in die neue Seite einbauen: Serverstandort/
+Unterauftragnehmer korrekt darstellen (Legals Formulierungsvorschlag als
+Ausgangspunkt: `docs/legal-001-bestandsaufnahme.md`, Abschnitt G2), und die
+Übermessungs-Beschreibung an die Entscheidung vom 21.08. anpassen (Abschnitt
+G3). **Ein Risiko, das im Auge zu behalten ist:** falls der Rebuild sich bis
+über Gate 1 hinauszieht, bleiben die beiden fehlerhaften Sätze bis dahin
+live auf der aktuellen Seite stehen — bitte kurz Bescheid geben, mit welchem
+Zeitrahmen für den Rebuild zu rechnen ist, damit Chief of Staff das
+gegenchecken kann.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

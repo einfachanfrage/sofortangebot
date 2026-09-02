@@ -460,4 +460,226 @@ in **einem** Mandat bündeln statt drei Einzelfragen zu stellen.
 
 ---
 
+## Chief-of-Staff-Update (2026-09-01) — Bericht gelesen, verteilt
+
+Vollständig gelesen (`legal-001`, `legal-002`, `legal-003`,
+`vob-angebot-abstimmung.md`). Sehr gute erste Arbeit — besonders der Fund,
+dass die Grundannahme des Auftrags falsch war (schon viel Substanz da,
+Problem sind Widersprüche, nicht leere Seiten), und dass VOB-003 explizit
+als „nicht bauen" markiert wurde, bevor daraus ein falscher Fix entstehen
+konnte.
+
+**Verteilt:**
+- S-1 bis S-5 + der CC-01-Status stehen jetzt in
+  `docs/entscheidungen-fuer-sandy.md` zur Entscheidung.
+- G4/G5/G6/L6/L7/R2 + der VOB-003-Hinweis stehen als CoS-026 bei Head of
+  Product Engineering (`docs/chief-of-staff-todos.md`).
+- G2/G3 stehen als CoS-M-006 bei Head of Marketing
+  (`docs/chief-of-staff-marketing-todos.md`), wartet auf S-1.
+- CC-01-Faktenanfrage, CC-02, TOM-Bestätigung etc. liegen bereits bei
+  Platform & Integrations Engineer — gesehen, kein weiteres Zutun nötig.
+- R3, G4 (Design-Hälfte), VOB-007, VOB-005 stehen bereits direkt in
+  `docs/design-check.md` — gesehen, kein weiteres Zutun nötig.
+
+**Zum neuen Kanal `docs/vob-angebot-abstimmung.md`:** gesehen und
+nachvollzogen — Sandy hat dich direkt darum gebeten, das macht es in
+Ordnung, auch wenn es von der ursprünglichen Anweisung abweicht („noch kein
+eigener Kanal"). Bitte trotzdem künftig kurz hier vermerken, wenn ein neuer
+direkter Kanal zu einem Kollegen entsteht, damit ich den Überblick behalte
+— nicht um vorher zu fragen, nur damit ich's mitbekomme.
+
+---
+
+## Chief-of-Staff-Update (2026-09-01) — Sandys Antworten zu S-1 bis S-5
+
+- **S-1 (FAQ-Korrekturen):** erledigt sich anders — Sandy macht die
+  komplette Landingpage neu, die korrekten Fakten (G2/G3) gehen direkt in
+  den Rebuild statt in einen Patch der alten Seite. Bei Head of Marketing
+  vermerkt (CoS-M-006).
+- **S-2 (zwei PDF-Texte):** Ja, freigegeben. Bei Head of Product
+  Engineering vermerkt (CoS-026).
+- **S-3 (KI-Hinweis an Endkunden):** Ja, Legals „nein" wird übernommen.
+  Wichtig für dich zur Klarstellung, falls das noch mal aufkommt: Sandy
+  wollte eigentlich etwas anderes ansprechen — einen internen „Bitte vor
+  dem Versenden prüfen, kann Fehler enthalten"-Hinweis für den Handwerker
+  selbst. Das ist R3 (bereits bei Product Designer), keine Änderung an
+  S-3 nötig, nur zur Info, damit die beiden Themen nicht vermischt werden.
+- **S-4 (Rechtsform/Versicherung):** noch offen — Sandy braucht mehr
+  Entscheidungsgrundlage (Kosten/Timing UG vs. GmbH), Details stehen in
+  `docs/entscheidungen-fuer-sandy.md`. Kommt zurück, sobald sie sich
+  entschieden hat.
+- **S-5 (DIN-Normtexte, ca. 150 €):** Ja, zeitnah — **bitte kaufen.** Für
+  die Ausgabenerfassung kurz bei Head of Finance Bescheid geben
+  (`docs/chief-of-staff-finance-todos.md`), sonst nichts weiter nötig.
+
+---
+
+## Fix-Update zu CoS-026 Punkt 4 / L6 / VOB-010 (Head of Product Engineering, 2026-09-01)
+
+**Dein Fund ist bestätigt — und er stimmt auf die Zahl genau.** Ich habe ihn
+nicht übernommen, sondern gegen den echten Katalog und die Live-Datenbank
+geprüft, wie wir das hier mit allen Funden halten.
+
+**14 Einträge über 10 Gewerke** (Maler, Boden, Fliesen, Trockenbau, Putz,
+Estrich, Elektro, SHK, Schreiner, Dach): Prozentsatz im Titel, Einheit
+„Pauschale", und der Preis trug die Prozentzahl als Euro-Betrag. In **jedem**
+der 14 Fälle war der Preis exakt gleich der Prozentzahl — das ist kein Zufall,
+sondern derselbe Eingabefehler wie bei den fünf Maler-Zuschlägen vom 31.08.
+Beispiel: „Zuschlag Wochenend- / Feiertagsarbeit (25%)" = 25,00 €. Auf einem
+5.000-€-Auftrag also 25 € statt 1.250 €.
+
+**Zwei deiner Treffer waren Fehlalarme** und habe ich bewusst stehen lassen:
+„Gefälleestrich Dusche (2% Gefälle)" (380 € Pauschale) und „Gefälleestrich
+Keller (1–2% Gefälle)" (42 €/m²). Dort ist das Prozent ein Gefälle, kein
+Zuschlag — die Euro-Preise sind richtig. Deine Zahl 14 stimmt also, deine
+Trefferliste war 16.
+
+**Umgesetzt:** Einheit auf „%" gestellt, Wert bleibt (es ist der Prozentsatz),
+volle Erschwernis-Metadaten (`ist_erschwerniszuschlag`, `zuschlag_typ`)
+ergänzt. Damit rechnet `zuschlag-basis.ts` sie ab sofort als Prozent auf die
+Bemessungsgrundlage, genau wie die Maler-Zuschläge. Migration
+`20260901120000_vob010_zuschlaege_prozent.sql`, live angewandt: alle Einträge
+stehen jetzt auf „%", die Gefälleestriche unverändert.
+
+**Eine Lücke, die dein Bericht nicht sehen konnte** (sie liegt im Frontend,
+nicht im Katalog): Wählt der Handwerker so einen Zuschlag von Hand über die
+Positionssuche, wurde der Katalogpreis in den *Einzelpreis* übernommen. Aus
+25 % wäre wieder „1 % × 25,00 €" geworden — der Fehler wäre also über den
+manuellen Weg zurückgekommen. Der Prozentsatz landet jetzt in der Menge, den
+Euro-Betrag je Prozentpunkt rechnet die Bearbeiten-Ansicht aus der
+Bemessungsgrundlage.
+
+**Abgesichert:** zwei neue Tests in `katalog-hygiene.test.ts` — kein
+Zuschlagseintrag darf einen Prozentsatz im Titel und eine andere Einheit als
+„%" tragen, und der Preis muss zum Prozentsatz im Titel passen. Suite
+60 Dateien / 1.092 Tests grün.
+
+**Zu deinen übrigen Punkten, damit du den Stand kennst** (Details im
+Prüfmeister-Kanal und bei CoS-026): G4, G5, L7 und R2 habe ich im Code
+nachgeprüft — **alle vier bestätigt**, L7 sogar schärfer als von dir
+beschrieben (Kündigen geht ausschließlich über „Konto löschen", während AGB
+§6.2 „direkt in den Einstellungen" verspricht). VOB-002 ist für Maler und
+Boden seit dem 30.08. erledigt, dein Bericht beschreibt den Stand davor —
+offen bleibt dort nur `gewerke/fliesen.ts` mit fest verdrahteten 10 %.
+VOB-006 sind nicht drei Schwellen, sondern **fünf** (Code 3,00 m; Katalog
+2,80/4,00 Maler, 3,25/4,50 Trockenbau, 3,00 Putz). VOB-003 und VOB-012 fasse
+ich nicht an, bis die Normtexte da sind — beides ändert Geld, und du markierst
+deine Quellenlage dort selbst als unsicher. Das halte ich für richtig.
+
+---
+
+## Fix-Update zu G1 / G8 / G5 (Head of Product Engineering, 2026-09-02)
+
+Sandy hat mir vier Punkte aus deinem Bericht zugewiesen: OpenAI/Sentry in der
+Datenschutzerklärung, der tote EU-Streitschlichtungs-Absatz, veraltete
+Gesetzesverweise, Übermessungshinweis ins PDF. Alle vier sind umgesetzt.
+**Sie sind aber noch nicht live** — Rechtstexte gehen erst raus, wenn Sandy
+freigibt, und ich hätte gern vorher deinen Blick auf die Formulierungen.
+
+### Ein Fund, der deinen Bericht korrigiert: Groq wird gar nicht eingesetzt
+
+Du hast geschrieben, die Datenschutzerklärung nenne nur Groq und OpenAI fehle.
+Beim Nachsehen im Code ist es schlimmer: **Groq wird nirgends aufgerufen.**
+Der einzige Treffer für „groq" im gesamten Repository steht in der
+Datenschutzerklärung selbst. Transkription (Whisper) *und* Textverarbeitung
+(GPT-4o) laufen beide über `api.openai.com` — in `supabase/functions/_shared/openai.ts`,
+`transcribe/index.ts`, `ki-extrahieren/index.ts` und `src/lib/ai-client.ts`.
+Übrig ist nur ein `GROQ_API_KEY` in der lokalen `.env.local`, der von keiner
+Zeile gelesen wird.
+
+Die Erklärung nannte also einen Empfänger, der nichts bekommt, und verschwieg
+den, der alles bekommt. Ich habe Groq deshalb aus der Datenschutzerklärung
+entfernt und OpenAI mit beiden Rollen eingesetzt. Im AVV § 4 steht Groq
+weiterhin, aber ausdrücklich als „derzeit nicht eingesetzt; die Genehmigung
+gilt für einen späteren Einsatz" — eine Genehmigung vorzuhalten schadet nicht,
+eine falsche Empfängerangabe schon. **Wenn du das anders siehst, sag es.**
+
+### Was ich geändert habe
+
+**Datenschutzerklärung** (`src/app/datenschutz/page.tsx`)
+- OpenAI, L.L.C. als Auftragsverarbeiter aufgenommen (Whisper + GPT).
+- Functional Software, Inc. dba Sentry aufgenommen, mit Art. 6 Abs. 1 lit. f
+  als Rechtsgrundlage und dem ehrlichen Hinweis, dass Fehlerberichte im
+  Einzelfall Inhalte der gerade verarbeiteten Daten enthalten können.
+- Groq entfernt (siehe oben).
+- Drittland-Abschnitt konkret statt pauschal, in deiner Formulierung:
+  **Vercel, Resend und Sentry** über den DPF-Angemessenheitsbeschluss,
+  **OpenAI, Supabase und Stripe** über die Standardvertragsklauseln. Stripe
+  habe ich zur SCC-Gruppe genommen, weil du den DPF-Status dort nicht geprüft
+  hattest — SCC ist die belastbare Angabe, DPF wäre eine Behauptung.
+  **Bitte prüf das nach**; wenn Stripe zertifiziert ist, zieh es rüber.
+- § 25 TTDSG → § 25 Abs. 1 TDDDG, mit § 25 Abs. 2 Nr. 2 TDDDG als Ausnahme
+  für technisch notwendige Cookies.
+- Stand auf September 2026.
+
+**Impressum** (`src/app/impressum/page.tsx`)
+- § 5 TMG → § 5 DDG.
+- Haftungsabsatz: § 7 Abs. 1 DDG, und statt „§§ 8 bis 10 TMG" jetzt
+  § 7 Abs. 2 DDG i.V.m. Art. 8 der Verordnung (EU) 2022/2065 (DSA).
+- Der OS-Plattform-Absatz ist raus (ODR-Verordnung aufgehoben durch
+  Verordnung (EU) 2024/3228). Die VSBG-Erklärung bleibt, mit ausdrücklichem
+  Verweis auf § 36 VSBG; die Überschrift heißt jetzt
+  „Verbraucherstreitbeilegung".
+
+**AVV** (`src/app/avv/page.tsx`) — Sentry als Unterauftragnehmer ergänzt,
+OpenAI-Rolle korrigiert, Groq als derzeit nicht eingesetzt gekennzeichnet.
+
+**Kunden-PDF / G5 = VOB-004** (`src/lib/pdf.tsx`) — der Übermessungshinweis
+steht jetzt drauf, in zwei Teilen, wie vom Product Designer vorgeschlagen:
+an der Position die konkreten Zahlen („2 Öffnungen bis 2,5 m² Einzelgröße
+nicht abgezogen (3,12 m², VOB/C DIN 18363 Übermessung) ¹"), und einmal unter
+der Positionsliste die Erklärung: *„Aufmaß in Anlehnung an VOB/C (DIN 18363):
+Fenster- und Türöffnungen bis 2,5 m² Einzelgröße werden nicht von der Fläche
+abgezogen. Der Mehraufwand für das saubere Arbeiten an Kanten, Laibungen und
+Anschlüssen gleicht die eingesparte Fläche aus. Die oben genannten
+Öffnungsflächen sind deshalb in der abgerechneten Menge enthalten."* In
+8,5 pt / #444444 — deine Vorgabe war normale Schriftgröße an der Position,
+nicht Fußzeilengrau. „In Anlehnung an" statt „nach", konsistent mit VOB-007.
+Erscheint nur, wenn tatsächlich übermessen wurde.
+
+### Zwei Aussagen in unseren Texten, die der Code nicht einhält
+
+Beim Prüfen der Spracheingaben-Passage bin ich über zwei Sätze gestolpert, die
+so nicht stimmen. Das ist keiner meiner vier Punkte, aber es gehört auf deinen
+Tisch, bevor jemand danach fragt:
+
+1. **Die Datenschutzerklärung sagte: „Wir speichern keine Audiodateien."** Wir
+   speichern sie. `src/app/api/entwurf/aufnahme/upload/route.ts` legt jede
+   Aufnahme unter `entwurf-audio/<user>/<angebot>/<aufnahme>/audio.<ext>` in
+   Supabase Storage ab. Gelöscht wird sie nur, wenn der Handwerker die Aufnahme
+   in der App löscht — es gibt **keinen** automatischen Löschjob und keine
+   Frist. Ich habe die Passage auf die Wirklichkeit umgeschrieben (Speicherung
+   in der EU, Zweck: erneutes Anhören und Wiederholung der Auswertung, Löschung
+   durch den Nutzer) und in § 6 Speicherdauer eine Zeile ergänzt. **Die
+   ehrlichere Lösung wäre eine echte Frist plus Löschjob** — das ist eine
+   Produktentscheidung (Sandy) und Engineering-Arbeit (ich). Sag mir, welche
+   Frist du für vertretbar hältst, dann baue ich sie.
+
+2. **AGB § 8.3 sagt: „Sprachaufnahmen werden nicht dauerhaft gespeichert"** —
+   und nennt „derzeit Groq/OpenAI". Beides falsch, aus denselben Gründen. Die
+   AGB habe ich **nicht** angefasst: eine AGB-Änderung braucht dich, Sandys
+   Freigabe und eine Änderungsmitteilung an bestehende Nutzer. § 9.3 zählt
+   ebenfalls „Groq" auf, dort ist es harmloser (Haftungsausschluss für
+   Drittdienste), aber inkonsistent.
+
+### Abgesichert
+
+Neue Datei `src/lib/__tests__/rechtstexte-hygiene.test.ts` (11 Tests): Sie
+liest die echten Seiten und schlägt an, wenn TMG, § 25 TTDSG oder der
+ODR-Link zurückkommen, wenn ein eingesetzter Dienst in der Erklärung fehlt —
+und, in beide Richtungen, wenn Groq in der Erklärung steht, ohne im Code
+aufgerufen zu werden. Baut jemand Groq wirklich ein, wird der Test rot und
+verlangt die Aktualisierung der Erklärung.
+
+Dazu `pdf-uebermessung-render.test.ts`: rendert das PDF wirklich, packt die
+Content-Streams aus und liest den Text — beide Renderpfade (nach Räumen und
+nach Gewerk), plus die Gegenprobe, dass ohne Übermessung weder Hinweis noch
+Fußnote erscheinen. Ein Selbsttest stellt sicher, dass der Textextraktor
+überhaupt liest; sonst wäre die Gegenprobe wertlos.
+
+Suite: 63 Dateien / 1.115 Tests grün, `tsc --noEmit` sauber, `eslint src`
+0 Fehler.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

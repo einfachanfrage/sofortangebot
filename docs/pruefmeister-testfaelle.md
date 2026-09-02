@@ -1938,5 +1938,122 @@ Zufall — die halbe Prüfung wäre nicht möglich gewesen.
 
 ---
 
+## Sammel-Information an den Prüfmeister (Head of Product Engineering, 2026-09-01)
+
+Sandys Auftrag: „informiere den Prüfmeister über alles." Seit deinem letzten
+Nachtest (31.08.) hat sich genug geändert, dass mehrere deiner Soll-Lösungen
+nicht mehr stimmen. Bitte einmal ganz lesen, bevor du den nächsten Fall
+rechnest.
+
+### 1. Erschwerniszuschläge rechnen in PROZENT, nicht mehr als Pauschale
+
+Sandys Entscheidung vom 31.08. (PM-008/PM-015). Bemessungsgrundlage sind die
+Leistungen **genau des Raums**, auf den sich der Zuschlag bezieht; ohne
+Raumbezug die des ganzen Angebots. Ein Zuschlag zählt nie in die Grundlage
+eines anderen. Darstellung im Angebot: Menge = Prozentsatz, Einheit = %,
+Einzelpreis = Euro je Prozentpunkt, Gesamt = beides multipliziert.
+
+Standardsätze im Katalog: Raumhöhe > 3m **15 %**, Altbau **20 %**,
+Denkmalschutz **30 %**, bewohnt **10 %**, schwieriger Untergrund **10 %**.
+
+**Neu seit heute (VOB-010, Fund von Head of Legal):** Dieselbe Umstellung für
+**14 weitere Katalogeinträge über 10 Gewerke**, bei denen der Prozentsatz im
+Titel stand, die Einheit aber „Pauschale" war und der Preis die Prozentzahl
+als Euro trug — z. B. „Zuschlag Wochenend- / Feiertagsarbeit (25%)" = 25,00 €
+statt 25 % der Leistung. Falls du solche Zuschläge in einem Soll führst:
+ab jetzt Prozent.
+
+### 2. Die Preisdatenbank war nicht der Katalog, den der Code kennt
+
+Beim Deckungsaudit am 31.08. kam heraus: Positionen sind über Monate in den
+Code-Katalog gewandert, ohne dass eine Migration sie in die BESTEHENDEN Konten
+nachgezogen hätte. Im Maler-Bereich fehlten 46 Positionen, bei Boden weitere —
+darunter **„Dachschrägen streichen 1x/2x/3x"** und **„Kniestockwände streichen
+1x/2x/3x"**, also genau die Positionen aus PM-007.
+
+**Für dich heißt das:** Jedes „Preis fehlt / 0,00 €" aus deinen Nachtests vor
+dem 31.08. ist als Befund überholt, solange es nicht erneut auftritt. Maler,
+Boden und Allgemein sind live nachgezogen.
+
+### 3. Bezeichnungen, die sich geändert haben — bitte im Soll mitziehen
+
+| bisher | ab jetzt | Grund |
+|---|---|---|
+| „Dachschräge streichen — 2× Anstrich" | **Dachschrägen streichen 2x** | dritte Schreibweise derselben Leistung, fand keinen Katalogpreis; der Teil nach dem „ — " wurde außerdem als Raumname gelesen |
+| „Türzargen lackieren" | **Türzarge lackieren** | Katalogeintrag steht im Singular, Plural fand ihn nicht |
+| „Sockelleisten abkleben" (Stück, im Türen-Lackier-Pfad) | **Türrahmen abkleben** (Stück) | Sockelleisten werden in lfdm abgeklebt; gemeint war das Abkleben um die Tür |
+| „Fenster Lack (2× Anstrich)" | **Fenster lackieren (Lack, 2× Anstrich)** | kein Katalogtreffer, holpriges Deutsch im Angebot |
+| „Dachschräge spachteln / Untergrundvorbereitung" | **Dachschrägen spachteln** | kein Katalogzwilling |
+
+**Neu im Katalog** (vorher standen diese Positionen immer auf 0,00 €):
+Türen/Fenster/Heizkörper abschleifen und grundieren, Türen lackieren
+(2× Anstrich), Fenster lackieren (2× Anstrich), Dachschrägen spachteln,
+Versiegelung 1./2./3. Gang. Die Sätze sind an vorhandene Katalogzeilen
+angelehnt; zwei Versiegelungs-Gänge ergeben zusammen exakt die 18 €/m² des
+bestehenden Eintrags „Parkett versiegeln (Lack, 2-lagig)".
+
+### 4. Fünf Rechenfehler behoben — diese Fälle bitte neu einsprechen
+
+Ich habe deine Soll-Lösungen als Test hinterlegt und alles durchgerechnet.
+Fünf Fälle fielen durch:
+
+- **PM-005:** Die komplette **Wandfläche der Küche verschwand**. „Speisekammer
+  nur die Decke" wurde auf die Küche mitangewendet — Wandflächen UND
+  Sockelleisten fielen aus dem Angebot. Ursache: ein Muster traf die
+  umlautlose Schreibweise nicht.
+- **PM-009:** „Übergangsschiene **4 Stück**" statt 1 — die Stückzahl-Suche
+  nahm das Raummaß aus „Flur, vier mal eins achtzig".
+- **PM-025:** Fischgrät bekam **5 % statt 15 %** Verschnitt (14,7 statt
+  16,10 m²).
+- **PM-030:** **Gar keine Dachschrägen-Position** — und die
+  Vollständigkeitsprüfung füllte die Lücke mit der Fläche des Kniestocks
+  (17 statt 17,08 m²).
+- **Dachfenster-Abzug:** Zwei Wege durch denselben Dachgeschoss-Fall zogen das
+  Dachfenster unterschiedlich ab.
+
+**PM-024:** Dein letzter offener Punkt („Karte zeigt 1 % statt 15 %") ist
+behoben. Die Karte zeigt für Prozent-Zuschläge jetzt **„Satz aus Preisliste"**
+statt einer Zahl — der Prozentsatz steht in der Preisliste des Betriebs, die
+Vorschau kennt sie vor der Bepreisung nicht und soll deshalb nichts
+behaupten. Im Entwurf unverändert 15 % × 5,85 € = 87,75 €.
+
+### 5. Was ich von dir brauche: sechs Soll-Lösungen sind mehrdeutig
+
+Der neue Test deckt **22 deiner 28 Fälle** ab. Sechs fehlen, weil ich das Soll
+nicht eindeutig ablesen kann und nichts erfinden wollte:
+
+- **PM-002** — Akzentwand: kurze (9,10 m²) oder lange Seite (10,40 m²)? Ohne
+  Festlegung ist auch „Restwände streichen" nicht bestimmt.
+- **PM-006** — Soll sagt 26,91 m² (nur Tür abgezogen). Nach Sandys
+  VOB-Entscheidung vom 21.08. ist die Tür mit 1,89 m² ≤ 2,5 m² aber ebenfalls
+  nicht abzuziehen → 28,80 m². PM-006 fehlt in deiner Liste der acht
+  nachkorrigierten Fälle. Welche Zahl gilt?
+- **PM-010** — „Sockelleisten streichen": 13,00 lfm oder mit Türabzug
+  12,10 lfdm? Im Soll ausdrücklich offen gelassen.
+- **PM-011, PM-013, PM-018** — hier brauche ich die Raumdaten so, wie die
+  Extraktion sie liefern muss (Öffnungen, Höhen); aus dem Soll allein kann ich
+  sie nur raten.
+
+Sobald diese sechs eindeutig sind, nehme ich sie in denselben Test auf. Dann
+sind alle 28 Fälle maschinell abgesichert.
+
+### 6. Bitte NICHT weiterverfolgen: der Leibungs-Punkt (VOB-003)
+
+Dein Backlog-Punkt „Leibungen bei übermessenen Öffnungen nicht separat
+berechnen" ist laut der DIN-Recherche von Head of Legal **falsch herum** — die
+Norm verlangt das Gegenteil, und der Code macht es bereits richtig. Bitte
+liegen lassen, bis die Normtexte gekauft sind (Sandy hat den Kauf freigegeben).
+Dasselbe gilt für **VOB-012** (Türbreiten von der Sockelleistenlänge
+abziehen): Der Code zieht ab, die Norm sagt möglicherweise „bis 1 m
+durchmessen". Beides ändert Geld — ich baue da nichts auf unsicherer
+Quellenlage.
+
+**Offen bei Sandy, betrifft deine Soll-Lösungen:** die Höhenschwelle für den
+Zuschlag. Es gibt derzeit **fünf** verschiedene im Produkt (Code 3,00 m;
+Katalog 2,80 und 4,00 bei Maler, 3,25 und 4,50 bei Trockenbau, 3,00 bei Putz).
+Bis das entschieden ist, gilt für deine Rechnungen die Code-Schwelle: **> 3,00 m**.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

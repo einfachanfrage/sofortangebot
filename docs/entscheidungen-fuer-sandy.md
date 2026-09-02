@@ -27,6 +27,65 @@ wartet darauf, bevor er weiterbaut:**
 `--state-danger` (#A33A2A) — im PDF selbst als „Ergänzung ohne
 CI-Grundlage, Freigabe durch Sandy offen" markiert.
 
+**🔵 CoS-L-001 (Rest) — eine offene Entscheidung aus dem ersten Bericht von
+Head of Legal & Compliance** (S-1, S-2, S-3, S-5 sind entschieden, siehe
+Verlauf unten):
+
+**S-4 — Rechtsform/Versicherung, noch offen.** Du haftest aktuell als
+Einzelunternehmerin persönlich und unbegrenzt — auch mit Privatvermögen,
+auch für einen KI-Rechenfehler, der einem Kunden schadet. Legal empfiehlt,
+das vor dem ersten zahlenden Kunden zu klären, nicht erst ein Jahr nach
+Launch — genau in dem Zeitraum dazwischen läuft das Risiko live, sobald
+echtes Geld fließt.
+
+Zur Einordnung (Fakten, keine Rechts-/Steuerberatung — bitte bei der
+tatsächlichen Gründung einen Steuerberater/Notar hinzuziehen):
+- **UG (haftungsbeschränkt)** ist die „GmbH light" genau für deine
+  Situation: ab 1 € Stammkapital gründbar (praktisch sind ein paar hundert
+  Euro üblich), Notar- und Handelsregisterkosten liegen bei einer
+  Einzelgründung mit Musterprotokoll grob im niedrigen dreistelligen
+  Bereich, Haftungsschutz gilt ab Eintragung. Muss jährlich 25 % des
+  Gewinns zurücklegen, bis 25.000 € Kapital erreicht sind (dann automatisch
+  GmbH-fähig).
+- **GmbH** braucht 25.000 € Stammkapital (mind. 12.500 € sofort
+  eingezahlt) — bei deiner aktuellen Lage unrealistisch als Startpunkt.
+- Die übliche Reihenfolge für genau diesen Fall ist deshalb: **UG jetzt,
+  GmbH später**, nicht „warten, bis genug Geld für eine GmbH da ist".
+
+Deine Sorge um die Kosten ist berechtigt, aber die UG ist im Vergleich zum
+Risiko, das sie abdeckt, eine der günstigsten Positionen im ganzen Projekt.
+**Deine Entscheidung:** UG jetzt (vor dem ersten zahlenden Kunden) oder
+bewusst später — und falls später, wie du das Zwischenrisiko einschätzt.
+
+**🔵 L7 — Kündigungs-Button, den es technisch noch nicht gibt.** In den AGB
+(§6.2) steht, Kunden können „direkt in den Einstellungen" kündigen. Aktuell
+funktioniert das aber nur über die komplette Konto-Löschung — es gibt
+keinen separaten „Abo kündigen"-Weg. Das ist ein Widerspruch zwischen dem,
+was den Kunden versprochen wird, und dem, was das Tool tatsächlich kann.
+**Deine Entscheidung:** Vor Gate 1 einen echten Kündigen-Button bauen
+(kleiner Aufwand laut Head of Product Engineering, reine Umsetzungsfrage —
+aber der Startschuss dafür ist eine Prioritäts-Entscheidung von dir, da es
+in keinem bisherigen Scope stand), oder die AGB-Formulierung erstmal auf
+das anpassen, was heute tatsächlich geht (Löschung).
+
+**🔵 VOB-006 — fünf widersprüchliche Werte für „ab wann gilt ein Raum als
+hoch" (Höhenzuschlag).** Im System stehen aktuell nebeneinander: Code 3,00 m
+· Katalog Maler 2,80 m/4,00 m · Katalog Trockenbau 3,25 m/4,50 m · Katalog
+Putz 3,00 m. Head of Product Engineering hat bestätigt, das ist kein
+Darstellungsfehler, sondern wirklich fünf verschiedene Schwellen im Code
+und in den Katalogen. Das ist eine Preis-Entscheidung, keine technische —
+nur du kannst festlegen, welcher Wert (oder welche Werte je Gewerk) korrekt
+sind. **Deine Entscheidung:** einen einheitlichen Wert je Gewerk festlegen
+(am einfachsten mit Legal/Prüfmeister kurz abstimmen, was VOB-üblich ist),
+danach setzt Head of Product Engineering das im Code um.
+
+**Noch nicht entscheidungsreif, nur zur Info:** Ein Datenleck-Altfall
+(öffentlich lesbare Debug-Tabelle, 07.–17.08., technisch schon behoben)
+wurde nie als DSGVO-Vorfall bewertet — Meldepflicht-Frist läuft. Legal
+braucht dafür erst Fakten von Platform & Integrations Engineer (bereits
+angefragt), bevor überhaupt eine Entscheidung ansteht. Kommt zurück, sobald
+das geklärt ist.
+
 Stand 31.08.2026 sonst: Alle übrigen vorgelegten Punkte sind entschieden —
 siehe Verlauf unten (inkl. der Buchhaltungs-Gate-Frage, siehe neueste
 Zeile). Die weiterhin große, laufende Abwägung ist keine einzelne
@@ -44,6 +103,10 @@ strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-09-01 | S-1: FAQ-Korrekturen (G2/G3) auf der Landingpage freigeben? | **Erledigt sich anders — komplette Landingpage wird neu gemacht.** Statt die alten FAQ-Sätze zu patchen, bekommt die neue Seite von Anfang an die korrekten Fakten (Server-Standort/Unterauftragnehmer, Übermessungs-Beschreibung). Chief of Staff hat Head of Marketing entsprechend informiert. Einziges Risiko: falls der Rebuild sich über Gate 1 hinauszieht, bleiben die fehlerhaften Sätze bis dahin live — im Auge behalten | `docs/chief-of-staff-marketing-todos.md` CoS-M-006 |
+| 2026-09-01 | S-2: zwei neue PDF-Texte freigeben (Übermessungshinweis im Kunden-PDF, Widerrufs-Checkbox für vorzeitigen Arbeitsbeginn)? | **Ja, beide freigegeben.** Head of Product Engineering kann umsetzen (CoS-026, Punkte G5/G6) | `docs/legal-001-bestandsaufnahme.md`, `docs/chief-of-staff-todos.md` CoS-026 |
+| 2026-09-01 | S-3: Müssen Endkunden über KI-Einsatz informiert werden? | **Nein — Legals Einschätzung übernommen**, keine Rechtsgrundlage dafür. Wichtig zur Klarstellung: das ist eine andere Frage als der interne „Bitte vor dem Versenden prüfen"-Hinweis für den Handwerker selbst (das ist R3, läuft bereits separat bei Product Designer, siehe `design-check.md` — genau der von Sandy gewünschte „wurde von KI erstellt, kann Fehler enthalten"-Reminder). AI-Act-Teilaspekt (Art. 50 Abs. 2) später extern bestätigen lassen | `docs/legal-001-bestandsaufnahme.md` §A4, `docs/design-check.md` |
+| 2026-09-01 | S-5: ca. 150 € für echte DIN-Normtexte (18363/18365) freigeben? | **Ja, zeitnah.** Head of Legal kauft, Head of Finance erfasst die Ausgabe | `docs/vob-angebot-abstimmung.md` VOB-011, `docs/chief-of-staff-finance-todos.md` |
 | 2026-08-31 | CoS-M-005: DER Slogan für Sofortangebot — kurz, knapp, sofort verständlich auch ohne Vorwissen über das Produkt | **„Aufmaß fertig. Angebot fertig."** Sandys finale Entscheidung. Beschreibt den kompletten Ablauf in zwei parallelen Kurzsätzen (Bricolage-Grotesque-Statement-Stil, Punkt, sentence case) — für jeden sofort verständlich, auch ohne Vorwissen: Aufmaß nehmen, Angebot ist fertig. Löst „Gerechnet, nicht geschätzt." als Haupt-Slogan ab, die als sekundäre Differenzierungs-Zeile weiterleben kann, sobald das Produkt schon bekannt ist | Sandy direkt im Chat, `docs/chief-of-staff-marketing-todos.md` CoS-M-005 |
 | 2026-08-31 | CoS-M-004, Punkt 1: Tonalität „Sie" oder „du"? Das neue Design-System-PDF hatte „förmliches Sie — nie du" festgelegt, im Widerspruch zum tatsächlich im Produkt gelebten „du" | **Immer per „du"** — „imer per du!!!!!!!!!" Klare, eindeutige Entscheidung. PDF-Vorgabe war ein Fehler und wird korrigiert; Produkt und Social-Media-Texte bleiben wie bisher konsequent beim „du". Head of Marketing kann ab sofort auf „du" weiterbauen | Sandy direkt im Chat, `docs/chief-of-staff-marketing-todos.md` CoS-M-004 |
 | 2026-08-31 | Buchhaltungssoftware-Anbindung (11.5, Lexware/sevDesk): G2 (nach dem Launch) oder G1 (Teil des ersten Launches)? Frage entstand aus dem wöchentlichen Strategie-Check-in — Sandy positioniert Sofortangebot bewusst über die einfache Anbindung an bestehende Buchhaltungstools kleiner Betriebe, nicht über ein eigenes CRM | **G1** — „ja ist gate 1!" Kein Nice-to-have, sondern Teil des Kern-Differenzierungsversprechens für die Zielgruppe (kleine Betriebe, 1–10 MA, die z. B. Lexware/sevDesk nutzen). Ziel bleibt eine Anbindung in 2–3 einfachen Klicks | `docs/launch-readiness.md` 11.5, `docs/vision-strategie.md` (Geklärt 31.08.2026) |

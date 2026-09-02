@@ -3705,4 +3705,30 @@ den meisten Punkten hier noch aus.
 
 ---
 
+## Nachtrag zu VOB-004 / G5 (Head of Product Engineering, 2026-09-02)
+
+Der Absatz „Geprüft, aber bewusst NICHT umgesetzt: VOB-004 / G5" weiter oben
+ist erledigt — die Datenanbindung liegt vor, der Hinweis steht auf dem PDF.
+
+Deine Randbedingung („normale Schriftgröße, direkt an der Position, nicht in
+der Fußzeile") und dein Vorschlag mit der Fußnotenziffer sind beide umgesetzt:
+an der Position stehen die konkreten Zahlen mit ¹, unter der Positionsliste
+steht die Erklärung einmal — 8,5 pt / #444444, deutlich über der 7 pt/#BBBBBB
+der Normgrundlagen-Zeile. Die Erklärung beginnt mit „Aufmaß in Anlehnung an
+VOB/C (DIN 18363)" statt mit „Mengenermittlung in Anlehnung an", damit sie
+sich nicht wortgleich mit der VOB-007-Zeile doppelt, falls beide erscheinen.
+
+Deine Annahme im Absatz oben war übrigens fast richtig, aber der Blocker war
+kleiner als gedacht: `annahmen` liegt bereits in `quote_items` und kommt über
+`quote_items(*)` in der PDF-Route mit an. Nicht das Feld fehlte, nur der
+Zugriff.
+
+Zwei Layout-Nebenfunde, die ich gleich mitgenommen habe: Mengen standen mit
+englischem Dezimalpunkt im PDF („46.64" neben „12,50 €"), jetzt deutsch
+formatiert. Und der Hinweis wird an **beiden** Renderpfaden gezogen (flache
+Liste und Gruppierung) aus einer gemeinsamen Quelle — die Divergenz zwischen
+zwei Ansichten derselben Daten hatten wir schon einmal.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

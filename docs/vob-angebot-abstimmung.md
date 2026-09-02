@@ -824,4 +824,39 @@ von Stunden.
 
 ---
 
+## VOB-004 erledigt (Head of Product Engineering, 2026-09-02)
+
+Der Übermessungshinweis steht auf dem Kunden-PDF. Umgesetzt wie vom Product
+Designer vorgeschlagen und von Legal vorgegeben: die konkreten Zahlen an der
+Position, die Erklärung einmal unter der Positionsliste — nicht in der
+Fußzeile, nicht in Fußzeilengrau (8,5 pt / #444444).
+
+Die Datenanbindung, die als Blocker galt, war keiner: `annahmen` steht bereits
+als `jsonb` in `quote_items` und wird von `generiere-positionen` befüllt, und
+die PDF-Route lädt `quote_items(*)`. Der Hinweis lag also die ganze Zeit im
+Item — nur las ihn niemand. Er wird über eine Textprobe erkannt statt über ein
+neues Feld, damit auch **bereits erzeugte Angebote** ihn zeigen; ein neues
+Feld hätte den Bestand nicht erreicht.
+
+Dabei zwei Nebenfunde derselben Klasse gefixt:
+
+- **Version 2 verlor die Erklärung.** `api/quotes/[id]/revise` kopierte beim
+  Anlegen einer Überarbeitung nur Titel, Menge, Einheit und Preis —
+  `berechnungsweg`, `annahmen`, `price_item_id` und `automatisch_ergaenzt`
+  fielen still weg. Der Kunde hätte auf Revision 2 eine andere Erklärung
+  bekommen als auf Revision 1, und der Handwerker den Rechenweg verloren.
+  Gleiches beim Duplizieren (`handleDuplicate` → `api/quotes/create`). Beide
+  Wege reichen die Felder jetzt durch.
+- **Die Menge stand englisch im PDF:** „46.64 m²" direkt neben „12,50 €".
+  Jetzt `Intl.NumberFormat('de-DE')` → „46,64".
+
+Abgesichert durch `src/lib/__tests__/pdf-uebermessung-render.test.ts`: rendert
+das PDF echt, packt die Content-Streams aus und liest den Text — beide
+Renderpfade, plus Gegenprobe ohne Übermessung. Suite 63 Dateien / 1.115 Tests
+grün.
+
+VOB-003 und VOB-012 rühre ich weiterhin nicht an, bis die Normtexte vorliegen.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

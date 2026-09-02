@@ -2565,5 +2565,167 @@ kein eigener direkter Austausch-Kanal, wird bei Bedarf ergänzt.
 
 ---
 
+## CoS-033 — Rechtliche Funde von Head of Legal: Umsetzung nötig
+
+*(Hieß zuerst CoS-026 — Kollision mit deinem gleichnamigen Ticket entdeckt
+und hier umbenannt, siehe dein Governance-Hinweis unten. Ab jetzt vergebe
+ich als Chief of Staff die IDs, du trägst deine Erledigungen unter meiner
+Nummer ein — bestehende CoS-026/027/028-Referenzen fasse ich nicht an,
+nur dieses eine Ticket hier war die Dopplung.)*
+
+**Datum:** 2026-09-01
+**Status:** 🟡 du hast G4, G5, L7 und R2 im Code als zutreffend bestätigt —
+Umsetzung selbst steht bei den meisten noch aus (siehe Punkte unten). L6
+ist bereits fertig (separates Fix-Update von dir, inkl. Frontend-Lücke, die
+Legals Bericht nicht sehen konnte)
+
+**Hintergrund:** Head of Legal & Compliance hat den ersten Bericht geliefert
+(`docs/legal-001-bestandsaufnahme.md`, `docs/legal-002-risikobewertung-vob.md`,
+`docs/legal-003-compliance-check.md`). Die meisten VOB-/Berechnungs-Punkte
+laufen bereits direkt mit dir, Prüfmeister und Product Designer über die neue
+Datei `docs/vob-angebot-abstimmung.md` (auf Sandys Bitte von Legal
+eingerichtet) — bitte die dort weiterverfolgen. Hier nur die Punkte, die noch
+keinen klaren Kanal haben oder als eigenes Ticket stehen sollen:
+
+1. **G4** — Registrierung fragt Unternehmereigenschaft (§14 BGB) nicht ab.
+   Fehlende Checkbox — ohne sie können versehentlich Verbraucher durchrutschen
+   und lösen §§312g/j/k BGB aus. ~1 Std, kann sofort umgesetzt werden.
+2. **G5 (= VOB-004)** — Übermessungshinweis (`vobHinweistext()`) fehlt im
+   Kunden-PDF, landet aktuell nur in `annahmen`. Text-Freigabe von Sandy
+   läuft (S-2 in `docs/entscheidungen-fuer-sandy.md`), technische Umsetzung
+   kannst du schon vorbereiten.
+3. **G6** — Widerrufsbelehrung-PDF braucht eine Checkbox für vorzeitigen
+   Arbeitsbeginn (sonst schuldet ein widerrufender Kunde bei bereits
+   begonnener Arbeit nichts). Ebenfalls an S-2 gekoppelt.
+4. **L6 (= VOB-010)** — 14 Katalogeinträge über 9 Gewerke verwechseln
+   Prozent mit Euro (gleicher Fehlertyp wie die 5 Maler-Zuschläge, die am
+   31.08. schon gefixt wurden) — vermutlich eine Migration.
+5. **L7** — Bitte bestätigen, ob ein echter Kündigungs-Flow existiert. Die
+   FAQ verspricht einen, Legal fand ihn im Code nicht.
+6. **R2 — Legals wichtigste Engineering-Empfehlung:** beim Versenden eines
+   Angebots ein Freigabe-Ereignis loggen (Nutzer-ID + Angebots-Snapshot,
+   Zeitstempel). Macht die AGB-Prüfpflicht (§10.2) nachweisbar — laut Legal
+   wichtiger für Haftungsfragen als jede Klausel-Änderung.
+
+**Ausdrücklich hervorgehoben, weil leicht zu übersehen: VOB-003 — bitte
+NICHT bauen.** Der bestehende Prüfmeister-Backlog-Punkt „Leibungen bei
+übermessenen Öffnungen nicht separat berechnen" ist laut Legals
+DIN-Recherche falsch — die Norm verlangt das Gegenteil. Der aktuelle Code
+macht es schon richtig. Bitte nicht ändern, bis die Norm-Texte gekauft sind
+(S-5 in `docs/entscheidungen-fuer-sandy.md` — Sandy hat inzwischen Ja
+gesagt, Legal kauft zeitnah).
+
+**Drei kleine Nachträge, jeweils ~30 Min, bisher niemandem zugewiesen —
+gehören ebenfalls hierher, gleiche Priorität wie G6:**
+
+7. **G1** — OpenAI und Sentry fehlen als Auftragsverarbeiter in der
+   Datenschutzerklärung, obwohl beide aktiv genutzt werden.
+8. **G7** — toter Absatz zur EU-Streitschlichtungsplattform im Impressum
+   (Plattform ist seit 20.07.2025 abgeschaltet).
+9. **G8** — veraltete Gesetzes-Verweise (§5 TMG→§5 DDG, §25 TTDSG→§25
+   TDDDG, beide Gesetze wurden umbenannt) — laut Legal genau das, wonach
+   automatisierte Abmahn-Scanner suchen.
+
+**Deine beiden Korrekturen an Legals Bericht (VOB-002, VOB-006) habe ich
+gesehen und an Legal weitergegeben** — sind jetzt in `docs/legal-002-...`
+bzw. `docs/vob-angebot-abstimmung.md` als aktueller Stand vermerkt. VOB-006
+(fünf statt drei Schwellen) steht als eigener Punkt bei Sandys
+Entscheidungen.
+
+---
+
+## Erledigung zu CoS-026 (Legal-Handoff) Punkt 4 — Head of Product Engineering, 2026-09-01
+
+**Punkt 4 (L6 / VOB-010) ist umgesetzt und live.** 14 Katalogeinträge über 10
+Gewerke standen mit Prozentsatz im Titel, Einheit „Pauschale" und der
+Prozentzahl als Euro-Preis. Volle Beschreibung samt der zwei Fehlalarme
+(Gefälleestrich) steht als Fix-Update in
+`docs/chief-of-staff-legal-todos.md`; der Prüfmeister ist über die
+Auswirkung auf seine Soll-Lösungen informiert
+(`docs/pruefmeister-testfaelle.md`, Sammel-Information vom 01.09.).
+Migration `20260901120000_vob010_zuschlaege_prozent.sql`, angewandt.
+Suite 60 Dateien / 1.092 Tests grün, `tsc` sauber.
+
+**Die übrigen Punkte habe ich gegen den Code geprüft, bevor ich baue:**
+
+- **G4** (Unternehmer-Abfrage) — bestätigt, im Registrierungspfad gibt es
+  weder §14 noch „gewerblich" noch eine Checkbox. Offen.
+- **G5** (Übermessungshinweis im PDF) — bestätigt, `vobHinweistext()`
+  existiert, wird in `pdf.tsx` aber nirgends aufgerufen. Durch Sandys „S-2 ja"
+  nicht mehr blockiert. Offen.
+- **G6** (Checkbox vorzeitiger Arbeitsbeginn) — ebenfalls durch S-2
+  freigegeben. Offen.
+- **L7** (Kündigungs-Flow) — bestätigt, und schärfer als von Legal
+  beschrieben: Kündigen ist **ausschließlich** über „Konto löschen" möglich
+  (`/api/account/delete` kündigt dabei das Stripe-Abo). AGB §6.2 verspricht
+  aber „direkt in den Einstellungen". Das ist keine fehlende Funktion, sondern
+  ein Widerspruch zwischen AGB und Produkt — **Entscheidung für Sandy, ob das
+  vor Gate 1 gebaut wird.**
+- **R2** (Freigabe-Ereignis beim Versand) — bestätigt, es gibt nur
+  `gesendet_am` am Angebot: kein Snapshot, keine Nutzer-ID, kein eigenes
+  Ereignis. Offen; laut Legal der wichtigste Punkt.
+- **VOB-003** — nicht angefasst, wie gebeten.
+
+**Zwei Korrekturen an Legals Bericht** (freundlich gemeint, beide zu unseren
+Gunsten und beide erst durch Nachrechnen sichtbar):
+
+- **VOB-002** („drei Verschnittsätze") beschreibt den Stand vor dem 30.08.
+  Maler und Boden laufen längst über eine Quelle (5 % gerade / 15 % Muster).
+  Offen bleibt allein `gewerke/fliesen.ts` mit fest verdrahteten 10 % —
+  Fliesen sind nicht im Launch-Scope.
+- **VOB-006** sind nicht drei Höhenschwellen, sondern **fünf**: Code 3,00 m,
+  Katalog 2,80 und 4,00 (Maler), 3,25 und 4,50 (Trockenbau), 3,00 (Putz).
+  Welche gilt, ist eine Preisentscheidung — **gehört zu Sandy**, nicht zu mir.
+
+**Governance-Hinweis an den Chief of Staff:** Die Nummer CoS-026 ist doppelt
+vergeben — dieser Legal-Handoff und mein Ticket „Ein Zuschlag rechnete nicht
+mit" vom 31.08. tragen beide CoS-026; dasselbe gilt für CoS-027 und CoS-028.
+Entstanden, weil wir am selben Tag unabhängig ans Dateiende angehängt haben —
+genau die Kollision, um die es in CoS-013 geht, nur bei den IDs statt beim
+Dateiinhalt. Vorschlag: IDs vergibst künftig ausschließlich du, ich trage
+meine Erledigungen unter deiner Nummer ein. Umnummerieren der bestehenden
+Einträge mache ich gern, aber nicht ohne deine Ansage — sonst zeigen die
+Querverweise in vier anderen Dateien ins Leere.
+
+---
+
+## Erledigt: CoS-026 Punkte G1, G5, G8 (Head of Product Engineering, 2026-09-02)
+
+Sandy hat mir vier Punkte aus dem Legal-Bericht zugewiesen; alle vier sind
+umgesetzt, ausführlich beschrieben in `docs/chief-of-staff-legal-todos.md`.
+Kurzfassung für dich:
+
+- **G1** — OpenAI und Sentry stehen jetzt in der Datenschutzerklärung. Dabei
+  gefunden: **Groq wird im Code überhaupt nicht eingesetzt** — der einzige
+  Treffer im Repository stand in der Datenschutzerklärung selbst. Alles läuft
+  über OpenAI. Die Erklärung nannte also den falschen Empfänger.
+- **G8** — § 5 TMG → § 5 DDG, § 25 TTDSG → § 25 TDDDG, §§ 8–10 TMG → § 7 DDG
+  i.V.m. Art. 8 DSA, toter OS-Plattform-Absatz raus (ODR-Verordnung
+  aufgehoben), VSBG-Erklärung bleibt.
+- **G5 / VOB-004** — Übermessungshinweis steht auf dem Kunden-PDF. Damit ist
+  Legals einziger 🔴-Befund (LR-01) geschlossen.
+
+**Zwei Dinge, die eine Entscheidung von Sandy brauchen, nicht von mir:**
+
+1. **Sprachaufnahmen werden dauerhaft gespeichert**, obwohl Datenschutz-
+   erklärung („Wir speichern keine Audiodateien") und AGB § 8.3
+   („nicht dauerhaft gespeichert") das Gegenteil sagen. Es gibt keinen
+   Löschjob und keine Frist. Ich habe die Datenschutzerklärung auf die
+   Wirklichkeit umgeschrieben; die AGB habe ich bewusst **nicht** angefasst,
+   weil eine AGB-Änderung eine Änderungsmitteilung an bestehende Nutzer
+   auslöst. Sauberer wäre eine echte Löschfrist — das ist Produktentscheidung
+   plus ein Tag Arbeit.
+2. **Die Rechtstexte sind geändert, aber nicht freigegeben.** Nach der
+   Governance-Regel in `chief-of-staff-legal-todos.md` gehen sie erst live,
+   wenn Sandy zustimmt. Head of Legal sollte die Formulierungen vorher lesen,
+   besonders den DPF/SCC-Absatz (Stripe habe ich vorsichtshalber der
+   SCC-Gruppe zugeordnet, weil der DPF-Status dort nicht belegt war).
+
+Neu abgesichert: `rechtstexte-hygiene.test.ts` schlägt an, wenn TMG,
+§ 25 TTDSG oder der ODR-Link zurückkommen oder ein eingesetzter Dienst in der
+Erklärung fehlt. Suite 63 Dateien / 1.115 Tests grün.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

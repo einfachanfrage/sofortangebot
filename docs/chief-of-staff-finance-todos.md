@@ -222,5 +222,15 @@ Claude-Doppel-Abo geschäftlich/privat).
 
 ---
 
+## CoS-F-Info (2026-09-01) — kleine Ausgabe kommt: DIN-Normtexte
+
+Head of Legal & Compliance kauft in Kürze die offiziellen DIN-Normtexte
+18363/18365 (ca. 150 €, von Sandy freigegeben — S-5 in
+`docs/entscheidungen-fuer-sandy.md`). Kein eigenständiges Ticket nötig, nur
+zur Info, damit die Ausgabe nicht als unbekannter Posten auftaucht, wenn sie
+in der Kostenübersicht landet.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
