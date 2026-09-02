@@ -24,6 +24,7 @@ import { loescheKontoHart, loeschreifVor, LOESCH_FRIST_TAGE } from '@/lib/konto-
 import { loescheAlteAufnahmen, AUFNAHME_FRIST_TAGE } from '@/lib/aufnahmen-aufraeumen'
 import { protokolliereLauf } from '@/lib/system-laeufe'
 import { raeumeSpeicherAuf } from '@/lib/speicher-aufraeumen'
+import { meldeUeberfaelligeJobs } from '@/lib/job-wachhund'
 
 // Viele Konten × Storage-Auflistung — kann dauern.
 export const maxDuration = 300
@@ -116,7 +117,15 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // ── 4. Das Protokoll selbst ────────────────────────────────────────────
+    // ── 4. Läuft der andere Job noch? ──────────────────────────────────────
+    // Die beiden täglichen Jobs überwachen sich gegenseitig. Vorher hing die
+    // Warnung an der Admin-Seite, die niemand von sich aus öffnet.
+    const jobs = await meldeUeberfaelligeJobs(supabase, {
+      ausser: 'aufraeumen',
+      empfaenger: process.env.ADMIN_ALERT_EMAIL ?? 'sandraholm95@gmail.com',
+    })
+
+    // ── 5. Das Protokoll selbst ────────────────────────────────────────────
     // Ein Jahr reicht, um „lief der Job?" zu beantworten. Best effort — ein
     // volles Protokoll ist kein Grund, den Lauf als gescheitert zu melden.
     const vorEinemJahr = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
@@ -143,8 +152,8 @@ export async function GET(req: NextRequest) {
 
     return {
       ok: konten.unvollstaendig === 0 && aufnahmen.fehler.length === 0 && speicherFehler.length === 0,
-      details: { konten, aufnahmen: aufnahmenBericht, speicher: speicherBericht },
-      ergebnis: NextResponse.json({ konten, aufnahmen: aufnahmenBericht, speicher: speicherBericht }),
+      details: { konten, aufnahmen: aufnahmenBericht, speicher: speicherBericht, jobs },
+      ergebnis: NextResponse.json({ konten, aufnahmen: aufnahmenBericht, speicher: speicherBericht, jobs }),
     }
   })
 }

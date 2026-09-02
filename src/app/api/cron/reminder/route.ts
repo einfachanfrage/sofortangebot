@@ -3,6 +3,7 @@ import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 import * as Sentry from '@sentry/nextjs'
 import { protokolliereLauf } from '@/lib/system-laeufe'
+import { meldeUeberfaelligeJobs } from '@/lib/job-wachhund'
 
 // Cron kann bei vielen Nutzern lange laufen
 export const maxDuration = 300
@@ -63,10 +64,17 @@ export async function GET(req: NextRequest) {
     const sent = results.reduce((sum, r) => sum + (r.status === 'fulfilled' ? r.value : 0), 0)
     const errors = results.filter(r => r.status === 'rejected').length
 
+    // Gegenstück zum Aufräum-Job: Die beiden täglichen Jobs überwachen sich
+    // gegenseitig, damit ein toter Job auffällt, ohne dass jemand nachsieht.
+    const jobs = await meldeUeberfaelligeJobs(supabase, {
+      ausser: 'reminder',
+      empfaenger: process.env.ADMIN_ALERT_EMAIL ?? 'sandraholm95@gmail.com',
+    })
+
     return {
       ok: errors === 0,
-      details: { sent, errors, companies: companies.length },
-      ergebnis: NextResponse.json({ sent, errors, companies: companies.length }),
+      details: { sent, errors, companies: companies.length, jobs },
+      ergebnis: NextResponse.json({ sent, errors, companies: companies.length, jobs }),
     }
   })
 }

@@ -1651,10 +1651,15 @@ gruppierte Sammelansicht im Browser bestätigt korrekt.
 **Datum:** 2026-08-19 (von Sandy eingebracht, Quelle: Clemens — ihr Partner,
 selbst Handwerker, wird nach Gate 1 bei 100 % erster Testnutzer)
 
-**Status:** 🔵 Wording-Konzept steht (mein Teil) — Datenmodell und
-Lexware/Lexoffice-Anbindung offen, bevor UI/Umsetzung sinnvoll möglich ist.
-Bewusst noch KEIN Prototyp/Mockup — Sandy hat Menü/UI-Umsetzung selbst
-explizit auf „nächster Schritt" gelegt, das hier ist der Denk-Vorlauf dafür.
+**Status:** 🟡 Umgesetzt (Product Designer, 2026-08-19, Sandys „Top
+umsetzen") — Datenmodell live, Konzept + Prototyp geliefert, sechs Dateien
+in echtem Code umgesetzt, `tsc --noEmit` sauber. Nur noch **Live-Nachtest
+mit echten Kundendaten** offen (Produktions-DB hatte am 19.08. noch 0 echte
+Kunden). **Korrektur (Product Designer, 2026-09-02):** Dieser Status hier
+oben war veraltet stehen geblieben — der Verlauf unten zeigt, dass Konzept,
+Prototyp UND Umsetzung längst passiert sind. Ich hatte das selbst übersehen
+und Sandy am 02.09. fälschlich gesagt, die Baustellen-UI müsse „noch gebaut"
+werden. Volle Details im Verlauf unten.
 
 **Der Bedarf (Clemens' Praxis):** Bei größeren Aufträgen (z. B. kompletter
 Innenausbau) macht ein Handwerker nicht ein einziges großes Angebot,

@@ -1210,4 +1210,57 @@ klein genug für eine Police und zu groß für ein Privatvermögen.
 
 ---
 
+## G6 erledigt — Wertersatz-Erklärung im Widerrufs-PDF (2026-09-02)
+
+Damit ist die zweite Hälfte von Sandys S-2-Freigabe gebaut. G5 (Übermessung)
+kam heute Vormittag, G6 jetzt.
+
+**Umgesetzt genau nach deinem Vorschlag:** ein eigener, umrahmter Block unter
+der Widerrufsbelehrung, mit leerem Kästchen, deinem Wortlaut und einer
+**eigenen** Datums- und Unterschriftszeile.
+
+> ☐ Ich verlange ausdrücklich, dass Sie vor Ablauf der Widerrufsfrist mit den
+> Arbeiten beginnen. Mir ist bekannt, dass ich bei Widerruf Wertersatz für die
+> bis dahin erbrachten Leistungen schulde.
+
+Ergänzt habe ich eine Zeile, die du nicht vorgegeben hattest — bitte
+gegenlesen: *„Dieses Feld ist freiwillig. Ohne Ihre Erklärung beginnen wir
+erst nach Ablauf der vierzehntägigen Widerrufsfrist — Ihr Widerrufsrecht
+bleibt in beiden Fällen unberührt."* Grund: Deine drei Bedingungen (freiwillig,
+separat, nicht vorangekreuzt) stehen sonst nur in der Konstruktion, nicht im
+Text. Ein Kunde, der das Kästchen für Pflicht hält, hat es nicht freiwillig
+angekreuzt. **Wenn dir die Formulierung zu weit geht oder du sie schärfer
+willst, sag es — sie steht in einer Konstante und ist in einer Minute
+geändert** (`WERTERSATZ_HINWEIS` in `src/lib/widerrufsbelehrung.ts`).
+
+**Abgesichert** (`wertersatz-g6.test.ts`, 7 Tests) — bewusst an deinen drei
+Wirksamkeitsbedingungen entlang, nicht am Layout:
+
+- Das Feld steht auf dem PDF eines Privatkunden.
+- „Unterschrift Auftraggeber" kommt im Dokument **zweimal** vor — die
+  Erklärung hat eine eigene Zeile, ist also nicht mit der
+  Auftragsunterschrift zusammengelegt.
+- Der Text beginnt mit „Ich verlange" und enthält kein gesetztes Häkchen —
+  nicht vorangekreuzt.
+- Das Wort „freiwillig" steht auf dem Blatt.
+- Bei einem **Geschäftskunden** fehlt die ganze Seite (kein Widerrufsrecht),
+  ebenso wenn der Betrieb die Belehrung abgeschaltet hat.
+- Das Feld hängt an derselben Bedingung wie die Belehrung — es kann nie ohne
+  sie erscheinen.
+
+Die Tests rendern das PDF wirklich und lesen den Text aus den
+Content-Streams; sie prüfen nicht bloß, dass eine Funktion existiert.
+
+**Dein zweiter Punkt zum Widerruf ist damit NICHT erledigt:**
+`braucheWiderrufsbelehrung()` hängt weiter an `kundeIstUnternehmen !== true` —
+ein Geschäftskunde, bei dem das Häkchen niemand gesetzt hat (`null`), bekommt
+also weiterhin eine Belehrung, die ihm nicht zusteht. Das ist G4 (die
+Unternehmer-Abfrage bei der Registrierung bzw. am Kunden) und liegt noch bei
+dir und Sandy. Solange G4 offen ist, ist der jetzige Zustand die sichere
+Richtung: lieber eine Belehrung zu viel als eine zu wenig.
+
+Suite: 68 Dateien / 1.161 Tests grün, tsc sauber, eslint 0 Fehler.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

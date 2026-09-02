@@ -69,6 +69,40 @@ Datum: __________________
 (*) Unzutreffendes streichen.`
 }
 
+// ── Wertersatz beim vorzeitigen Beginn (G6, Head of Legal & Compliance) ────
+//
+// Die Belehrung oben enthält den Standardsatz „Haben Sie verlangt, dass die
+// Arbeiten während der Widerrufsfrist beginnen sollen…". Auf dem PDF gab es
+// bis zum 02.09.2026 aber KEIN Feld, in dem der Kunde genau das erklären
+// konnte.
+//
+// Die Folge ist unangenehm konkret: Nach § 357a Abs. 2 BGB schuldet der
+// Verbraucher Wertersatz für vor dem Widerruf erbrachte Leistungen nur, wenn
+// er den vorzeitigen Beginn AUSDRÜCKLICH verlangt hat — bei Verträgen
+// außerhalb von Geschäftsräumen zusätzlich auf einem dauerhaften Datenträger —
+// und vorher über die Wertersatzpflicht informiert wurde. Fehlt das, gibt es
+// gar keinen Wertersatz: Der Handwerker streicht drei Tage, der Kunde
+// widerruft am zehnten, der Handwerker bekommt nichts.
+//
+// Drei Bedingungen, die das Feld erfüllen MUSS, damit es wirkt (Legal):
+//   1. freiwillig — nicht vorangekreuzt,
+//   2. separat — eigene Unterschrift, nicht mit der Auftragsunterschrift
+//      zusammengelegt,
+//   3. vor dem Beginn erklärt — deshalb steht es auf dem Angebot, nicht auf
+//      der Rechnung.
+// Formulierung von Sandy freigegeben (S-2, 01.09.2026).
+
+export const WERTERSATZ_UEBERSCHRIFT = 'Vorzeitiger Beginn der Arbeiten (freiwillig)'
+
+export const WERTERSATZ_ERKLAERUNG =
+  'Ich verlange ausdrücklich, dass Sie vor Ablauf der Widerrufsfrist mit den Arbeiten ' +
+  'beginnen. Mir ist bekannt, dass ich bei Widerruf Wertersatz für die bis dahin ' +
+  'erbrachten Leistungen schulde.'
+
+export const WERTERSATZ_HINWEIS =
+  'Dieses Feld ist freiwillig. Ohne Ihre Erklärung beginnen wir erst nach Ablauf der ' +
+  'vierzehntägigen Widerrufsfrist — Ihr Widerrufsrecht bleibt in beiden Fällen unberührt.'
+
 /**
  * Soll die Belehrung ans Angebot? Nur bei Privatkunden (Verbraucher) und wenn
  * der Betrieb es aktiviert hat. Geschäftskunden haben kein Widerrufsrecht.

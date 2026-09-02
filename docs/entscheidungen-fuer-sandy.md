@@ -178,12 +178,14 @@ Wettbewerbslandschafts-Frage aus `vision-strategie.md` ist im
 strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
 31.08.2026") — kein offener Punkt mehr.
 
+
 ---
 
 ## Entschieden (Verlauf)
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-09-02 | Lernendes Wörterbuch: ausbauen oder abschalten? Die Wörterbuch-Ansicht in den Einstellungen zeigte Begriffe an, die das Tool gelernt haben sollte — gelernt hat es nie (ein Eintrag seit dem 16.06., bei hunderten Aufnahmen), weil die Abfrage beim Erkennen und das Speichern von Bestätigungen keinen Aufrufer hatten | **Abschalten.** Ansicht aus den Einstellungen entfernt, die beiden Routen und `nutzer-learning.ts` gelöscht (211 Zeilen ohne Aufrufer). Die Tabelle `nutzer_begriffe` bleibt — die Funktion ist zurückgestellt, nicht gestrichen; die Umsetzung steht in der Git-Historie | Head of Product Engineering, `docs/chief-of-staff-todos.md` |
 | 2026-09-01 | S-1: FAQ-Korrekturen (G2/G3) auf der Landingpage freigeben? | **Erledigt sich anders — komplette Landingpage wird neu gemacht.** Statt die alten FAQ-Sätze zu patchen, bekommt die neue Seite von Anfang an die korrekten Fakten (Server-Standort/Unterauftragnehmer, Übermessungs-Beschreibung). Chief of Staff hat Head of Marketing entsprechend informiert. Einziges Risiko: falls der Rebuild sich über Gate 1 hinauszieht, bleiben die fehlerhaften Sätze bis dahin live — im Auge behalten | `docs/chief-of-staff-marketing-todos.md` CoS-M-006 |
 | 2026-09-01 | S-2: zwei neue PDF-Texte freigeben (Übermessungshinweis im Kunden-PDF, Widerrufs-Checkbox für vorzeitigen Arbeitsbeginn)? | **Ja, beide freigegeben.** Head of Product Engineering kann umsetzen (CoS-026, Punkte G5/G6) | `docs/legal-001-bestandsaufnahme.md`, `docs/chief-of-staff-todos.md` CoS-026 |
 | 2026-09-01 | S-3: Müssen Endkunden über KI-Einsatz informiert werden? | **Nein — Legals Einschätzung übernommen**, keine Rechtsgrundlage dafür. Wichtig zur Klarstellung: das ist eine andere Frage als der interne „Bitte vor dem Versenden prüfen"-Hinweis für den Handwerker selbst (das ist R3, läuft bereits separat bei Product Designer, siehe `design-check.md` — genau der von Sandy gewünschte „wurde von KI erstellt, kann Fehler enthalten"-Reminder). AI-Act-Teilaspekt (Art. 50 Abs. 2) später extern bestätigen lassen | `docs/legal-001-bestandsaufnahme.md` §A4, `docs/design-check.md` |

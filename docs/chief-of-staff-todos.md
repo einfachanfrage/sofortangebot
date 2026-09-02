@@ -2952,5 +2952,112 @@ liegen — die beiden Punkte hängen zusammen. Nachtrag steht auch in
 
 ---
 
+## /engineering:debug — „hast du wirklich nichts mehr offen?" (2026-09-02, abends)
+
+Sandy hat nachgehakt. Zu Recht: Der Durchgang hat fünf Sachen gefunden, eine
+davon in dem, was ich heute Vormittag selbst gebaut habe.
+
+**Methode:** Nicht im Code nach Fehlern suchen, sondern in der Datenbank nach
+Stille. Eine Tabelle, die leer ist, obwohl die Funktion seit Monaten läuft,
+ist ein toter Pfad — so ist heute früh schon der Erinnerungs-Job aufgefallen.
+
+### 1. Meine eigene Warnung war unerreichbar (behoben)
+
+Die Meldung „Hintergrundjob läuft nicht" habe ich heute früh in
+`api/admin/api-health-check` gebaut — eine Route, die **nur** die Admin-Seite
+von Hand aufruft. Beleg: `api_versionen.letzter_test` ist bei allen fünf
+Einträgen leer, die Route lief noch nie. Eine Warnung, die nur sieht, wer
+ohnehin nachschaut, ist keine Warnung.
+
+**Jetzt:** Die beiden täglichen Jobs prüfen sich gegenseitig
+(`src/lib/job-wachhund.ts`). Der Aufräum-Job meldet einen toten
+Erinnerungs-Job und umgekehrt. **Ehrliche Grenze, die ich nicht wegbauen
+kann:** Sind beide tot — der wahrscheinlichste Fall, beide hängen am selben
+`CRON_SECRET` —, meldet keiner den anderen. Dann bleibt nur der Blick in
+`system_laeufe`: leer heißt, es lief nichts.
+
+### 2. Unterschrift ohne Benachrichtigung (behoben)
+
+`api/sign` benachrichtigt den Handwerker über eine Kundenunterschrift — aber
+nur `if (cronSecret)`. Fehlt die Variable, wird der Block stumm übersprungen;
+der Fehlerfall war zusätzlich mit `.catch(() => {})` abgedeckt. Der Kunde
+unterschreibt, der Handwerker erfährt nichts. **Das ist die teuerste stille
+Störung im ganzen Produkt** — es geht um einen angenommenen Auftrag. Beides
+meldet sich jetzt (Sentry, Stufe `fatal`, Tag `cron_konfiguration`).
+
+### 3. Das lernende Wörterbuch lernt nichts (nur gemeldet)
+
+`nutzer_begriffe`: **1 Zeile, letzte vom 16.06.** — bei hunderten Extraktionen
+seither. Ursache: `pruefeWoerterbuch()` in `src/lib/nutzer-learning.ts` wird
+**nirgends aufgerufen**, und die Route `/api/ki/lernend`, die Bestätigungen
+speichern soll, ruft **kein einziger** Client auf. Was funktioniert, ist nur
+die Anzeige: Die Einstellungen lesen und löschen Einträge über
+`/api/ki/woerterbuch`.
+
+Der Nutzer sieht also eine Wörterbuch-Funktion, die sich nie füllen kann. Das
+zu verdrahten ändert das Verhalten der Extraktion — das ist eine
+Produktentscheidung, keine stille Reparatur. **Bitte an Sandy und den Product
+Designer geben.**
+
+### 4. Zwei Tabellen ohne einen einzigen Schreibzugriff (nur gemeldet)
+
+`angebot_views` (0 Zeilen) und `angebot_eingaben` (0 Zeilen) werden von
+**keiner Stelle im Code** beschrieben. Dazu die Spalten `quotes.geoeffnet_am`
+und `quotes.geoeffnet_count` — nie gefüllt, nirgends gelesen. Das ist der
+„Kunde hat das Angebot geöffnet"-Pfad, den Sandy in DC-042 bereits ersatzlos
+streichen wollte. Der Beschluss ist da, die Schemareste stehen noch.
+
+Ich habe sie **nicht** eigenmächtig entfernt — anders als bei der
+Debug-Tabelle ist hier nichts gespeichert und nichts gefährdet, es ist reine
+Aufräumarbeit. Vorschlag: eine Migration, die beide Tabellen und die zwei
+Spalten entfernt, sobald der Chief of Staff das unter DC-042 einordnet.
+
+### 5. Vier tote Komponenten (zum Löschen vorbereitet)
+
+`KalkulationsBewertungCard.tsx`, `DraftQuotes.tsx`, `AufnahmeHinweisSheet.tsx`,
+`NeuerEntwurfButton.tsx` — zusammen 435 Zeilen, **null Referenzen**. Dieselbe
+Klasse wie CoS-030: Dateien, die aussehen, als liefen sie, und in denen ein
+Fix spurlos verschwindet. `git rm` liegt in Sandys Block.
+
+### Eine Lehre über mein eigenes Werkzeug
+
+Mein erster Suchlauf nach toten Dateien meldete **zwölf** Treffer. Acht davon
+waren falsch: Ich hatte im Container-Abzug des Projekts gesucht, und der war
+älter als das Gerät — die acht Dateien hatte CoS-030 längst gelöscht. Erst die
+Gegenprobe direkt auf dem Gerät ergab die echten vier. Merke: Der
+Container-Abzug ist zum Testen da, nicht als Wahrheit über den Dateibestand.
+
+67 Dateien / 1.154 Tests grün, tsc sauber, eslint 0 Fehler.
+
+---
+
+## Erledigt: Lernendes Wörterbuch abgeschaltet (Sandy, 02.09.2026)
+
+Sandys Entscheidung auf meinen Fund von heute Abend: **abschalten**, nicht
+ausbauen. Umgesetzt:
+
+- Die Ansicht „Mein Wörterbuch" ist aus den Einstellungen raus. An ihrer
+  Stelle steht ein Kommentar, der erklärt, was dort stand, warum es nie
+  funktioniert hat und dass die Funktion zurückgestellt, nicht gestrichen ist.
+- `src/lib/nutzer-learning.ts` sowie die Routen `/api/ki/woerterbuch` und
+  `/api/ki/lernend` gelöscht — 211 Zeilen, nach dem Entfernen der Ansicht ohne
+  jeden Aufrufer. Sie stehen zu lassen wäre genau die Falle, die wir heute
+  zweimal aufgeräumt haben: Code, der aussieht, als liefe er.
+- Die Tabelle `nutzer_begriffe` bleibt bestehen (ein Eintrag von Sandy vom
+  16.06.). Anders als beim toten Öffnungs-Pfad ist das hier keine gestrichene
+  Funktion, sondern eine verschobene — und `konto_hart_loeschen()` räumt die
+  Tabelle bei einer Konto-Löschung mit ab, es bleibt also nichts pro Nutzer
+  liegen.
+
+**Wenn die Funktion später gebaut wird**, ist der alte Stand über die
+Git-Historie erreichbar (Commit „Lernendes Woerterbuch abgeschaltet"). Was
+damals fehlte, war nicht der Code, sondern die Verdrahtung: `pruefeWoerterbuch()`
+muss im Erkennungspfad aufgerufen werden, und eine Bestätigung muss beim
+Korrigieren einer Position tatsächlich gespeichert werden.
+
+67 Dateien / 1.154 Tests grün, tsc sauber, eslint 0 Fehler.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

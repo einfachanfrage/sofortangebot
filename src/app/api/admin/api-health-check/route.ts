@@ -6,7 +6,7 @@ import { testSevdeskAPI } from '@/lib/api-health/sevdesk'
 import { testOpenAIAPI } from '@/lib/api-health/openai'
 import type { ApiHealthResult } from '@/lib/api-health/lexoffice'
 import { createClient } from '@/lib/supabase/server'
-import { letzterErfolgreicherLauf, istUeberfaellig } from '@/lib/system-laeufe'
+import { jobStatus } from '@/lib/job-wachhund'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = process.env.ADMIN_ALERT_EMAIL ?? 'sandraholm95@gmail.com'
@@ -84,38 +84,11 @@ export async function POST(req: NextRequest) {
   await saveAndAlert('openai', await testOpenAIAPI())
 
   // ── Laufen die Hintergrundjobs überhaupt? ────────────────────────────────
-  // 2026-09-02: Der Erinnerungs-Job war seit Bestehen tot, ohne dass es
-  // irgendwo sichtbar gewesen wäre — 75 Angebote, keine einzige Erinnerung.
-  // Eine externe API, die ausfällt, meldet sich; ein Cron-Job, der gar nicht
-  // erst startet, schweigt. Deshalb steht er hier jetzt neben den APIs.
-  const jobs: { job: string; letzter_lauf: string | null; ueberfaellig: boolean }[] = []
-  for (const job of ['aufraeumen', 'reminder']) {
-    const letzter = await letzterErfolgreicherLauf(service, job)
-    const ueberfaellig = istUeberfaellig(letzter)
-    jobs.push({ job, letzter_lauf: letzter?.toISOString() ?? null, ueberfaellig })
-
-    if (ueberfaellig) {
-      await resend.emails.send({
-        from: 'Sofortangebot <alert@sofortangebot.app>',
-        to: [ADMIN_EMAIL],
-        subject: `Hintergrundjob "${job}" läuft nicht`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px;">
-            <p><strong>Der Job "${job}" hat seit ${letzter ? letzter.toLocaleString('de-DE') : 'jeher'} keinen erfolgreichen Lauf gemeldet.</strong></p>
-            <p>Übliche Ursachen, in dieser Reihenfolge prüfen:</p>
-            <ol>
-              <li><code>CRON_SECRET</code> in den Vercel-Projekteinstellungen gesetzt (Production)? Ohne das antwortet der Job jeden Tag mit 401.</li>
-              <li>Steht der Job unter Vercel → Settings → Cron Jobs überhaupt drin?</li>
-              <li>Fehler in Sentry unter dem Tag <code>cron_konfiguration</code>?</li>
-            </ol>
-            <p>Solange der Job "aufraeumen" nicht läuft, werden gelöschte Konten und alte Sprachaufnahmen <strong>nicht</strong> gelöscht — entgegen Datenschutzerklärung und AGB.</p>
-          </div>
-        `,
-      }).catch(() => {
-        console.error('[api-health-check] Warn-E-Mail zu Hintergrundjob fehlgeschlagen')
-      })
-    }
-  }
+  // Dieselbe Prüfung, die auch die beiden Cron-Jobs gegenseitig ausführen
+  // (src/lib/job-wachhund.ts). Hier nur zur Anzeige auf der Admin-Seite —
+  // verlassen darf man sich darauf nicht, diese Route ruft niemand
+  // regelmäßig auf.
+  const jobs = await jobStatus(service)
 
   return NextResponse.json({ ergebnisse, jobs, getestet_am: now })
 }

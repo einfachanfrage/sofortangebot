@@ -2,7 +2,10 @@ import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/render
 import type { AngebotsFoto } from '@/lib/angebot-fotos'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
-import { widerrufsbelehrungText, musterWiderrufsformular } from './widerrufsbelehrung'
+import {
+  widerrufsbelehrungText, musterWiderrufsformular,
+  WERTERSATZ_UEBERSCHRIFT, WERTERSATZ_ERKLAERUNG, WERTERSATZ_HINWEIS,
+} from './widerrufsbelehrung'
 import { effektiveOptionen, skontoText, DOKUMENT_TYP_LABEL } from './angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './mengen/gewerke/vob-uebermessung'
 
@@ -530,6 +533,36 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
           <Page size="A4" style={S.page} wrap>
             <Text style={{ fontSize: 14, fontFamily: 'Helvetica-Bold', marginBottom: 10 }}>Widerrufsbelehrung</Text>
             <Text style={{ fontSize: 9, lineHeight: 1.6, color: '#333333' }}>{text}</Text>
+
+            {/* G6 (Legal, freigegeben von Sandy als S-2 am 01.09.2026):
+                Ohne dieses Feld gibt es nach § 357a Abs. 2 BGB KEINEN
+                Wertersatz — der Betrieb arbeitet im Widerrufsfall umsonst.
+                Bewusst als eigener, freiwilliger Block mit EIGENER
+                Unterschrift: mit der Auftragsunterschrift zusammengelegt oder
+                vorangekreuzt wäre die Erklärung unwirksam. */}
+            <View style={{ marginTop: 22, padding: 12, border: '1 solid #2C2C2C' }} wrap={false}>
+              <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', marginBottom: 8 }}>
+                {WERTERSATZ_UEBERSCHRIFT}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                {/* Leeres Kästchen — wird vom Kunden von Hand angekreuzt. */}
+                <View style={{ width: 11, height: 11, border: '1 solid #2C2C2C', marginRight: 8, marginTop: 1 }} />
+                <Text style={{ fontSize: 9.5, lineHeight: 1.5, color: '#111111', flex: 1 }}>
+                  {WERTERSATZ_ERKLAERUNG}
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 22 }}>
+                <View style={{ flex: 1, borderTop: '0.5 solid #999999', marginRight: 18, paddingTop: 4 }}>
+                  <Text style={{ fontSize: 7.5, color: '#888888' }}>Datum</Text>
+                </View>
+                <View style={{ flex: 1.6, borderTop: '0.5 solid #999999', paddingTop: 4 }}>
+                  <Text style={{ fontSize: 7.5, color: '#888888' }}>Unterschrift Auftraggeber</Text>
+                </View>
+              </View>
+              <Text style={{ fontSize: 8, lineHeight: 1.5, color: '#666666', marginTop: 10 }}>
+                {WERTERSATZ_HINWEIS}
+              </Text>
+            </View>
 
             <Text style={{ fontSize: 12, fontFamily: 'Helvetica-Bold', marginTop: 20, marginBottom: 8 }}>
               Muster-Widerrufsformular

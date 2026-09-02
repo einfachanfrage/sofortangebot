@@ -88,7 +88,20 @@ export async function POST(req: NextRequest) {
   // Handwerker + Kunde benachrichtigen (intern, mit Secret gesichert)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
   const cronSecret = process.env.CRON_SECRET
-  if (cronSecret) {
+
+  // 2026-09-02: Fehlt CRON_SECRET, wurde dieser Block bisher einfach
+  // übersprungen — der Kunde unterschrieb, und der Handwerker erfuhr nie
+  // davon. Kein Fehler, keine Spur, nur eine Benachrichtigung, die es nie
+  // gab. Dieselbe fehlende Konfiguration legt auch die beiden Cron-Jobs
+  // still. Eine ausgefallene Benachrichtigung über einen ANGENOMMENEN
+  // Auftrag ist das Teuerste, was hier lautlos schiefgehen kann.
+  if (!cronSecret) {
+    console.error('[sign] CRON_SECRET fehlt — Handwerker wird über die Unterschrift NICHT benachrichtigt')
+    Sentry.captureException(
+      new Error('CRON_SECRET nicht gesetzt: Benachrichtigung über Unterschrift entfällt'),
+      { level: 'fatal', tags: { feature: 'cron_konfiguration' } },
+    )
+  } else {
     fetch(`${appUrl}/api/notifications/unterschrift`, {
       method: 'POST',
       headers: {
@@ -96,7 +109,13 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${cronSecret}`,
       },
       body: JSON.stringify({ quoteId: quote.id, signedBy: signedBy.trim() }),
-    }).catch(() => {})
+    }).catch(fehler => {
+      // Auch der Fehlschlag war bisher stumm.
+      console.error('[sign] Benachrichtigung über Unterschrift fehlgeschlagen')
+      Sentry.captureException(fehler instanceof Error ? fehler : new Error(String(fehler)), {
+        tags: { feature: 'unterschrift_benachrichtigung' },
+      })
+    })
   }
 
   return NextResponse.json({ ok: true })
