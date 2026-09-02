@@ -572,6 +572,50 @@ function JaNeinInput({
   )
 }
 
+// ── Vorschlagskarte (DC-025 + DC-026) ────────────────────────────────────────
+// Der Rückfragen-Generator (Head of Product Engineering, 2026-08-24) liefert
+// pro Frage optional `vorschlag`, wenn der Wert schon im Transkript stand,
+// aber nicht strukturiert erkannt wurde. Statt die Frage stillschweigend
+// nochmal zu stellen, zeigen wir das Zitat und bieten „Stimmt ✓" (übernimmt
+// sofort) oder „Korrigieren" (öffnet die normale Eingabe) an — siehe
+// docs/dc-025-konzept-rueckfragen.md.
+function VorschlagKarte({
+  vorschlag,
+  onStimmt,
+  onKorrigieren,
+}: {
+  vorschlag: NonNullable<RueckfrageItem['vorschlag']>
+  onStimmt: () => void
+  onKorrigieren: () => void
+}) {
+  return (
+    <div className="bg-yellow/10 border-2 border-yellow/40 rounded-2xl p-4">
+      <div className="text-[11px] font-black text-anthracite/40 uppercase tracking-wide mb-1.5">Du hast gesagt</div>
+      {/* Bewusst SEINE Worte (roher Satz aus dem Transkript), nicht unsere
+          normalisierte Fassung — sonst prüft der Handwerker einen Satz, den
+          er so nie gesagt hat. */}
+      <p className="text-anthracite/70 font-semibold text-sm italic leading-relaxed mb-2">„{vorschlag.zitat}“</p>
+      <div className="flex items-center gap-1.5 font-black text-anthracite text-base mb-3">
+        <span className="text-anthracite/30">→</span> {vorschlag.anzeige}
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={onStimmt}
+          className="flex-1 bg-yellow text-anthracite font-extrabold text-sm rounded-xl py-2.5 active:scale-95 transition-transform"
+        >
+          Stimmt ✓
+        </button>
+        <button
+          onClick={onKorrigieren}
+          className="flex-1 bg-white border-2 border-anthracite/15 text-anthracite/60 font-extrabold text-sm rounded-xl py-2.5 active:scale-95 transition-transform"
+        >
+          Korrigieren
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function renderEingabe(frage: RueckfrageItem, antwort: RueckfragenAntwort | null, onChange: (a: RueckfragenAntwort) => void) {
   switch (frage.typ) {
     case 'masse_einzel':
@@ -663,6 +707,9 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
   const [roomIdx, setRoomIdx] = useState(0)
   const [antworten, setAntworten] = useState<Record<string, RueckfragenAntwort>>({})
   const [uebersprungen, setUebersprungen] = useState<Set<string>>(new Set())
+  // DC-026: Nach "Korrigieren" auf der Vorschlagskarte bleibt die normale
+  // Eingabe offen, auch wenn `frage.vorschlag` weiterhin gesetzt ist.
+  const [korrigieren, setKorrigieren] = useState<Set<string>>(new Set())
   const [offeneKonsequenz, setOffeneKonsequenz] = useState<string | null>(null)
   const [ansicht, setAnsicht] = useState<'flow' | 'zusammenfassung'>('flow')
   const [fertig, setFertig] = useState(false)
@@ -707,6 +754,13 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
       return rest
     })
     setUebersprungen(prev => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
+    // Zurück auf Anfang: falls es einen Vorschlag gab, wieder anzeigen statt
+    // direkt in der zuletzt offenen manuellen Eingabe zu landen.
+    setKorrigieren(prev => {
       const next = new Set(prev)
       next.delete(id)
       return next
@@ -822,6 +876,7 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
       && !frage.id.startsWith('masse_boden_')
       && !/fenster|tür|tuer/i.test(frage.frage)
     const titel = istMasseFrage ? `Welche Maße kennst du für „${frage.kontext}“?` : frage.frage
+    const zeigeVorschlag = !geloest && !!frage.vorschlag && !korrigieren.has(frage.id)
 
     return (
       <div
@@ -830,7 +885,14 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
       >
         <div className="font-black text-anthracite text-[15px] mb-3 leading-snug">{titel}</div>
 
-        {!geloest && renderEingabe(frage, antwort, a => setAntwortFuer(frage.id, a))}
+        {zeigeVorschlag && (
+          <VorschlagKarte
+            vorschlag={frage.vorschlag!}
+            onStimmt={() => setAntwortFuer(frage.id, { wert: frage.vorschlag!.wert, einheit: frage.vorschlag!.einheit })}
+            onKorrigieren={() => setKorrigieren(prev => new Set(prev).add(frage.id))}
+          />
+        )}
+        {!geloest && !zeigeVorschlag && renderEingabe(frage, antwort, a => setAntwortFuer(frage.id, a))}
 
         {geloest && !wurdeUebersprungen && antwort && (
           <div className="flex items-center gap-1.5 text-anthracite font-extrabold text-sm">
