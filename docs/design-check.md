@@ -58,7 +58,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-005 | Kein gemeinsamer Button-Baustein | 🟡 `active:scale-98`-Bug behoben, `Button.tsx` erstellt — Migration bestehender Stellen offen | Product Designer |
 | DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | ✅ vollständig abgeschlossen (Sandy, 2026-09-02: "einmal richtig, haken dran") — alle 66 Dateien mit Tailwind-Fundstellen migriert, 16 bewusst ausgeschlossene Dateien (PDF/E-Mail/Icons/Manifest/eigene Paletten) einzeln begründet | Product Designer |
 | DC-007 | Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb | 🟡 behoben, noch nicht live nachgeprüft | Product Designer |
-| DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ❌ offen | Product Designer (25.08. zugewiesen) |
+| DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ✅ vollständig behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | 🟡 mit DC-028 mitgefixt (2026-08-19): `kannFertigstellen` verlangt jetzt `erkannteAnzahl > 0`, 0 Positionen zeigt neutralen Hinweis statt grünem Erfolg — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | 🟡 Widerspruchs-Banner behoben (Head of Product Engineering, 2026-08-20). Guardrail jetzt umgesetzt (Product Designer, 2026-08-23): `AngebotDetail.tsx`, „Fertigstellen" ist deaktiviert ohne mindestens 1 Position oder ohne zugewiesenen Kunden, plus sichtbarer Hinweistext + serverseitiger Sicherheitsnetz-Check — noch nicht live nachgeprüft | Head of Product Engineering (Banner-Widerspruch, live bestätigt ausstehend) / Product Designer (Guardrail, live bestätigt ausstehend) |
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
@@ -564,7 +564,7 @@ gegenprüfen (war beim ursprünglichen Befund per Screenshot bestätigt).
 ## DC-008 — Kleine Sprach-/Textpolitur
 
 **Datum:** 2026-08-17 (live im Browser geprüft)
-**Status:** ❌ offen
+**Status:** ✅ vollständig behoben (Product Designer, 2026-09-02)
 
 **Befund:**
 - Kunden-Übersicht zeigt bei genau einem Kunden „1 Kunden gesamt" —
@@ -578,6 +578,24 @@ gegenprüfen (war beim ursprünglichen Befund per Screenshot bestätigt).
 (vgl. `quotes.length !== 1 ? 'e' : ''` in `kunden/page.tsx`) auch für
 „Kunde/Kunden" anwenden. Umlaut-Normalisierung im Wörterbuch-Speicherpfad
 prüfen (KI-Transkript vermutlich vor dem Speichern ASCII-normalisiert).
+
+**Fix-Update (Product Designer, 2026-09-02):** Beide Punkte erledigt.
+
+1. „1 Kunden gesamt" → „1 Kunde gesamt" in `kunden/page.tsx`, gleiches
+   `=== 1 ? Singular : Plural`-Muster wie überall sonst im Code. Per
+   `grep` bestätigt: einzige Fundstelle dieser Art im gesamten Code.
+   `tsc` sauber, Commit `097cf6d`.
+2. Der Umlaut-Fund war beim Nachschauen bereits gegenstandslos: Head of
+   Product Engineering hat das ganze „Mein Wörterbuch"-Feld am 02.09.
+   aus `einstellungen/page.tsx` entfernt (Sandys Entscheidung, siehe
+   Code-Kommentar dort) — die Funktion hatte nie tatsächlich etwas
+   gelernt, Anzeige und Speicherpfad waren unverbunden, ein einziger
+   Eintrag seit dem 16.06. bei hunderten Aufnahmen. „Abschalten statt
+   ausbauen — vor Gate 1 darf nichts im Produkt etwas versprechen, das
+   es nicht hält." Tabelle `nutzer_begriffe` bleibt bestehen, Funktion
+   zurückgestellt statt gestrichen. Per `git log` verifiziert, dass das
+   bereits committet ist — nichts mehr für mich zu tun hier, nur zur
+   Kenntnis genommen und dokumentiert.
 
 ---
 
