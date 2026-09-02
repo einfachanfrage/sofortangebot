@@ -317,11 +317,11 @@ export default function PreisePage() {
           <button
             key={g.key}
             onClick={() => { setSelectedGewerk(g.key); setSelectedUnit('Alle') }}
-            className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5 text-left active:scale-95 transition-transform"
+            className="bg-white rounded-2xl p-4 border border-anthracite/5 text-left active:scale-95 transition-transform"
           >
             <div className="text-3xl mb-2">{g.emoji}</div>
-            <div className="font-black text-[#2C2C2C] text-sm leading-tight">{g.label}</div>
-            <div className="text-[#2C2C2C]/35 font-semibold text-xs mt-1">{g.count} Positionen</div>
+            <div className="font-black text-anthracite text-sm leading-tight">{g.label}</div>
+            <div className="text-anthracite/35 font-semibold text-xs mt-1">{g.count} Positionen</div>
           </button>
         ))}
         {/* PM-008-Nachtest (2026-08-18): Bedingung war `items.length === 0` —
@@ -333,10 +333,10 @@ export default function PreisePage() {
             gefunden). Jetzt an `gewerke.length` geprüft — das trifft genau
             den Fall "nichts in einer der hier verwalteten Kategorien". */}
         {gewerke.length === 0 && !loading && (
-          <div className="col-span-2 bg-white rounded-2xl p-8 text-center border border-[#2C2C2C]/5">
+          <div className="col-span-2 bg-white rounded-2xl p-8 text-center border border-anthracite/5">
             <div className="text-4xl mb-3">💰</div>
-            <div className="font-black text-[#2C2C2C] mb-1">Keine Preise hinterlegt</div>
-            <div className="text-sm text-[#2C2C2C]/50 font-semibold mb-5">
+            <div className="font-black text-anthracite mb-1">Keine Preise hinterlegt</div>
+            <div className="text-sm text-anthracite/50 font-semibold mb-5">
               {items.length > 0
                 ? 'Es gibt Positionen in anderen Kategorien — für Maler & Boden lade marktübliche Preise als Startpunkt.'
                 : 'Lade marktübliche Preise als Startpunkt.'}
@@ -344,7 +344,7 @@ export default function PreisePage() {
             <button
               onClick={handleImport}
               disabled={importing}
-              className="bg-[#F5C400] text-[#2C2C2C] font-black rounded-xl px-6 py-3 w-full disabled:opacity-50"
+              className="bg-yellow text-anthracite font-black rounded-xl px-6 py-3 w-full disabled:opacity-50"
             >
               {importing ? 'Importiere...' : 'Standardpreise importieren'}
             </button>
@@ -358,12 +358,12 @@ export default function PreisePage() {
     const isEditing = editingId === item.id
     if (isEditing) {
       return (
-        <div className="border-b border-[#2C2C2C]/5 bg-[#F5C400]/5 px-4 py-3">
+        <div className="border-b border-anthracite/5 bg-yellow/5 px-4 py-3">
           <input
             value={editState.title}
             onChange={e => setEditState(s => ({ ...s, title: e.target.value }))}
             autoFocus
-            className="w-full bg-white border-2 border-[#F5C400] rounded-xl px-3 py-2 text-sm font-bold text-[#2C2C2C] focus:outline-none mb-2"
+            className="w-full bg-white border-2 border-yellow rounded-xl px-3 py-2 text-sm font-bold text-anthracite focus:outline-none mb-2"
           />
           <div className="flex gap-2 mb-2">
             <div className="relative flex-1">
@@ -371,14 +371,14 @@ export default function PreisePage() {
                 type="number" step="0.01" min="0"
                 value={editState.unit_price}
                 onChange={e => setEditState(s => ({ ...s, unit_price: e.target.value }))}
-                className="w-full bg-white border-2 border-[#F5C400] rounded-xl px-3 py-2 text-sm font-black focus:outline-none pr-6"
+                className="w-full bg-white border-2 border-yellow rounded-xl px-3 py-2 text-sm font-black focus:outline-none pr-6"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#2C2C2C]/40 font-bold">€</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-anthracite/40 font-bold">€</span>
             </div>
             <select
               value={editState.unit}
               onChange={e => setEditState(s => ({ ...s, unit: e.target.value }))}
-              className="bg-white border-2 border-[#F5C400] rounded-xl px-3 py-2 text-sm font-bold text-[#2C2C2C] focus:outline-none"
+              className="bg-white border-2 border-yellow rounded-xl px-3 py-2 text-sm font-bold text-anthracite focus:outline-none"
             >
               {['m²', 'lfdm', 'Stück', 'Pauschale', 'Stunde', 'm³', 'kg', 'to', 'Stk', 'Std', 'Tag', 'Fahrt', 'km', 'Leerung', '%'].map(u => (
                 <option key={u}>{u}</option>
@@ -386,10 +386,10 @@ export default function PreisePage() {
             </select>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => saveEdit(item.id)} className="flex-1 bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl py-2">
+            <button onClick={() => saveEdit(item.id)} className="flex-1 bg-yellow text-anthracite font-black text-sm rounded-xl py-2">
               <Check size={14} className="inline mr-1" strokeWidth={3} />Speichern
             </button>
-            <button onClick={() => setEditingId(null)} className="flex-1 bg-white border-2 border-[#2C2C2C]/10 text-[#2C2C2C] font-bold text-sm rounded-xl py-2">
+            <button onClick={() => setEditingId(null)} className="flex-1 bg-white border-2 border-anthracite/10 text-anthracite font-bold text-sm rounded-xl py-2">
               <X size={14} className="inline mr-1" />Abbrechen
             </button>
           </div>
@@ -397,22 +397,22 @@ export default function PreisePage() {
       )
     }
     return (
-      <div className={`flex items-center justify-between border-b border-[#2C2C2C]/5 last:border-0 px-4 py-3 ${item.ist_erschwerniszuschlag ? 'bg-amber-50/40' : ''}`}>
+      <div className={`flex items-center justify-between border-b border-anthracite/5 last:border-0 px-4 py-3 ${item.ist_erschwerniszuschlag ? 'bg-amber-50/40' : ''}`}>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             {item.ist_erschwerniszuschlag && <span className="text-xs">⚡</span>}
-            <span className="font-semibold text-[#2C2C2C] text-sm truncate">{item.title}</span>
+            <span className="font-semibold text-anthracite text-sm truncate">{item.title}</span>
           </div>
-          <div className="text-xs text-[#2C2C2C]/45 font-semibold mt-0.5">
+          <div className="text-xs text-anthracite/45 font-semibold mt-0.5">
             {item.zuschlag_typ === 'prozent'
               ? `+${item.unit_price}%`
               : `${item.unit_price.toFixed(2).replace('.', ',')} € / ${item.unit}`}
-            {item.erschwerniszuschlag_fuer && <span className="ml-1 text-[#2C2C2C]/30">auf {item.erschwerniszuschlag_fuer}</span>}
+            {item.erschwerniszuschlag_fuer && <span className="ml-1 text-anthracite/30">auf {item.erschwerniszuschlag_fuer}</span>}
           </div>
         </div>
         <div className="flex items-center gap-0.5 ml-3 shrink-0">
-          <button onClick={() => startEdit(item)} className="p-2 rounded-lg hover:bg-[#F5C400]/20 transition-colors">
-            <Pencil size={15} color="#2C2C2C" strokeWidth={2} className="opacity-40" />
+          <button onClick={() => startEdit(item)} className="p-2 rounded-lg hover:bg-yellow/20 transition-colors">
+            <Pencil size={15} color="var(--color-anthracite)" strokeWidth={2} className="opacity-40" />
           </button>
           <button onClick={() => handleDelete(item.id)} className="p-2 rounded-lg hover:bg-red-50 transition-colors">
             <Trash2 size={15} color="#ef4444" strokeWidth={2} />
@@ -428,12 +428,12 @@ export default function PreisePage() {
         {searchResults.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-3xl mb-3">🔍</div>
-            <div className="font-black text-[#2C2C2C]">Nichts gefunden</div>
-            <div className="text-sm text-[#2C2C2C]/45 font-semibold mt-1 mb-4">"{searchQuery}" ist in keiner Position</div>
+            <div className="font-black text-anthracite">Nichts gefunden</div>
+            <div className="text-sm text-anthracite/45 font-semibold mt-1 mb-4">"{searchQuery}" ist in keiner Position</div>
             {selectedGewerk && (
               <button
                 onClick={() => { setAdding(true); setNewItem(p => ({ ...p, title: searchQuery })) }}
-                className="bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-5 py-2.5"
+                className="bg-yellow text-anthracite font-black text-sm rounded-xl px-5 py-2.5"
               >
                 + Eigene Position erstellen
               </button>
@@ -441,14 +441,14 @@ export default function PreisePage() {
           </div>
         ) : (
           <>
-            <div className="text-xs font-black text-[#2C2C2C]/35 uppercase tracking-widest mb-3">
+            <div className="text-xs font-black text-anthracite/35 uppercase tracking-widest mb-3">
               {searchResults.length} Ergebnisse
             </div>
-            <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
+            <div className="bg-white rounded-2xl border border-anthracite/5 overflow-hidden">
               {searchResults.map(item => (
                 <div key={item.id}>
                   <div className="px-4 pt-2">
-                    <span className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-wider">
+                    <span className="text-[10px] font-black text-anthracite/30 uppercase tracking-wider">
                       {GEWERK_META[getGewerkKey(item.category)]?.emoji} {getGewerkKey(item.category)}
                     </span>
                   </div>
@@ -465,17 +465,17 @@ export default function PreisePage() {
   // ─── MOBILE RENDER ────────────────────────────────────────────────────────
 
   const MobileLayout = (
-    <div className="md:hidden min-h-dvh bg-[#F7F7F5] pb-20">
+    <div className="md:hidden min-h-dvh bg-bg pb-20">
       {/* Header */}
-      <div className="bg-[#2C2C2C] px-5 pt-12 pb-4">
+      <div className="bg-anthracite px-5 pt-12 pb-4">
         {selectedGewerk ? (
           <div className="flex items-center justify-between">
             <button onClick={() => { setSelectedGewerk(null); setSelectedUnit('Alle'); setSearchQuery('') }} className="flex items-center gap-1 text-white/50 text-sm font-bold">
               <ArrowLeft size={16} />
               {GEWERK_META[selectedGewerk]?.label ?? selectedGewerk}
             </button>
-            <button onClick={() => setAdding(true)} className="bg-[#F5C400] rounded-xl p-2">
-              <Plus size={18} color="#2C2C2C" strokeWidth={3} />
+            <button onClick={() => setAdding(true)} className="bg-yellow rounded-xl p-2">
+              <Plus size={18} color="var(--color-anthracite)" strokeWidth={3} />
             </button>
           </div>
         ) : (
@@ -490,7 +490,7 @@ export default function PreisePage() {
         </div>
         {/* Search */}
         <div className="relative">
-          <Search size={15} color="#2C2C2C" className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-30" />
+          <Search size={15} color="var(--color-anthracite)" className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-30" />
           <input
             ref={searchRef}
             value={searchQuery}
@@ -508,8 +508,8 @@ export default function PreisePage() {
 
       {/* Neues Item Formular */}
       {adding && (
-        <form onSubmit={handleAdd} className="mx-5 mt-4 bg-white rounded-2xl p-4 border-2 border-[#F5C400]">
-          <div className="font-black text-[#2C2C2C] mb-3">Neue Position</div>
+        <form onSubmit={handleAdd} className="mx-5 mt-4 bg-white rounded-2xl p-4 border-2 border-yellow">
+          <div className="font-black text-anthracite mb-3">Neue Position</div>
           <div className="flex flex-col gap-2.5">
             <input
               placeholder="Bezeichnung"
@@ -539,8 +539,8 @@ export default function PreisePage() {
               </select>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setAdding(false)} className="flex-1 border-2 border-[#2C2C2C]/15 rounded-xl py-3 font-bold text-[#2C2C2C] text-sm">Abbrechen</button>
-              <button type="submit" className="flex-[2] bg-[#F5C400] rounded-xl py-3 font-black text-[#2C2C2C] text-sm">Speichern</button>
+              <button type="button" onClick={() => setAdding(false)} className="flex-1 border-2 border-anthracite/15 rounded-xl py-3 font-bold text-anthracite text-sm">Abbrechen</button>
+              <button type="submit" className="flex-[2] bg-yellow rounded-xl py-3 font-black text-anthracite text-sm">Speichern</button>
             </div>
           </div>
         </form>
@@ -548,7 +548,7 @@ export default function PreisePage() {
 
       {/* Content */}
       {loading ? (
-        <div className="text-center text-[#2C2C2C]/40 font-semibold py-16">Lädt...</div>
+        <div className="text-center text-anthracite/40 font-semibold py-16">Lädt...</div>
       ) : isSearching ? (
         <SearchResults />
       ) : !selectedGewerk ? (
@@ -569,13 +569,13 @@ export default function PreisePage() {
           {/* Positions List */}
           <div className="px-5 pt-2">
             {visibleItems.length === 0 ? (
-              <div className="text-center py-12 text-[#2C2C2C]/40 font-semibold">Keine Positionen</div>
+              <div className="text-center py-12 text-anthracite/40 font-semibold">Keine Positionen</div>
             ) : (
-              <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
+              <div className="bg-white rounded-2xl border border-anthracite/5 overflow-hidden">
                 {visibleItems.map(item => <PositionRow key={item.id} item={item} />)}
               </div>
             )}
-            <div className="mt-3 text-xs text-[#2C2C2C]/30 font-semibold text-center">
+            <div className="mt-3 text-xs text-anthracite/30 font-semibold text-center">
               {visibleItems.length} {visibleItems.length === 1 ? 'Position' : 'Positionen'}
             </div>
           </div>
@@ -587,24 +587,24 @@ export default function PreisePage() {
   // ─── DESKTOP RENDER ───────────────────────────────────────────────────────
 
   const DesktopLayout = (
-    <div className="hidden md:flex h-screen bg-[#F7F7F5] overflow-hidden">
+    <div className="hidden md:flex h-screen bg-bg overflow-hidden">
 
       {/* COL 1 — GEWERKE (220px) */}
-      <div className="w-[220px] shrink-0 flex flex-col border-r border-[#2C2C2C]/8 bg-white">
+      <div className="w-[220px] shrink-0 flex flex-col border-r border-anthracite/8 bg-white">
         {/* Header */}
-        <div className="px-4 pt-5 pb-3 border-b border-[#2C2C2C]/8">
-          <Link href="/einstellungen" className="text-xs font-bold text-[#2C2C2C]/35 hover:text-[#2C2C2C]/60">← Einstellungen</Link>
-          <div className="font-syne font-black text-[#2C2C2C] text-base mt-1">Preisdatenbank</div>
+        <div className="px-4 pt-5 pb-3 border-b border-anthracite/8">
+          <Link href="/einstellungen" className="text-xs font-bold text-anthracite/35 hover:text-anthracite/60">← Einstellungen</Link>
+          <div className="font-syne font-black text-anthracite text-base mt-1">Preisdatenbank</div>
         </div>
         {/* Search */}
-        <div className="px-3 py-2.5 border-b border-[#2C2C2C]/8">
+        <div className="px-3 py-2.5 border-b border-anthracite/8">
           <div className="relative">
-            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#2C2C2C]/30" />
+            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-anthracite/30" />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Suchen..."
-              className="w-full bg-[#F7F7F5] text-[#2C2C2C] text-xs font-semibold rounded-lg pl-7 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#F5C400]"
+              className="w-full bg-bg text-anthracite text-xs font-semibold rounded-lg pl-7 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow"
             />
           </div>
         </div>
@@ -616,30 +616,30 @@ export default function PreisePage() {
               onClick={() => { setSelectedGewerk(g.key); setSelectedUnit('Alle'); setSearchQuery('') }}
               className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors group
                 ${selectedGewerk === g.key
-                  ? 'bg-[#F5C400]/15 border-l-[3px] border-[#F5C400]'
-                  : 'border-l-[3px] border-transparent hover:bg-[#F7F7F5]'}`}
+                  ? 'bg-yellow/15 border-l-[3px] border-yellow'
+                  : 'border-l-[3px] border-transparent hover:bg-bg'}`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <span className="text-base shrink-0">{g.emoji}</span>
-                <span className={`text-sm font-black truncate ${selectedGewerk === g.key ? 'text-[#2C2C2C]' : 'text-[#2C2C2C]/60'}`}>
+                <span className={`text-sm font-black truncate ${selectedGewerk === g.key ? 'text-anthracite' : 'text-anthracite/60'}`}>
                   {g.label}
                 </span>
               </div>
               <div className="flex items-center gap-1 shrink-0">
-                <span className={`text-xs font-semibold ${selectedGewerk === g.key ? 'text-[#2C2C2C]/45' : 'text-[#2C2C2C]/25'}`}>
+                <span className={`text-xs font-semibold ${selectedGewerk === g.key ? 'text-anthracite/45' : 'text-anthracite/25'}`}>
                   {g.count}
                 </span>
-                <ChevronRight size={12} className={`${selectedGewerk === g.key ? 'text-[#2C2C2C]/40' : 'text-[#2C2C2C]/20'}`} />
+                <ChevronRight size={12} className={`${selectedGewerk === g.key ? 'text-anthracite/40' : 'text-anthracite/20'}`} />
               </div>
             </button>
           ))}
         </div>
         {/* Import Button */}
-        <div className="p-3 border-t border-[#2C2C2C]/8">
+        <div className="p-3 border-t border-anthracite/8">
           <button
             onClick={handleImport}
             disabled={importing}
-            className="w-full text-xs font-black text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 bg-[#F7F7F5] rounded-xl py-2 transition-colors disabled:opacity-50"
+            className="w-full text-xs font-black text-anthracite/40 hover:text-anthracite/70 bg-bg rounded-xl py-2 transition-colors disabled:opacity-50"
           >
             {importing ? '...' : '↻ Standardpreise'}
           </button>
@@ -649,14 +649,14 @@ export default function PreisePage() {
       {/* POSITIONEN (flex grow) */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Toolbar */}
-        <div className="px-6 py-3.5 border-b border-[#2C2C2C]/8 bg-white flex items-center justify-between">
-          <div className="text-sm font-black text-[#2C2C2C]">
+        <div className="px-6 py-3.5 border-b border-anthracite/8 bg-white flex items-center justify-between">
+          <div className="text-sm font-black text-anthracite">
             {isSearching
               ? `${searchResults.length} Suchergebnisse für „${searchQuery}"`
               : selectedGewerk
                 ? GEWERK_META[selectedGewerk]?.label
                 : 'Alle Positionen'}
-            {!isSearching && <span className="ml-2 text-[#2C2C2C]/30 font-semibold text-xs">{visibleItems.length}</span>}
+            {!isSearching && <span className="ml-2 text-anthracite/30 font-semibold text-xs">{visibleItems.length}</span>}
           </div>
           <div className="flex items-center gap-2">
             {selectedGewerk && (
@@ -664,14 +664,14 @@ export default function PreisePage() {
                 <select
                   value={selectedUnit}
                   onChange={e => setSelectedUnit(e.target.value)}
-                  className="bg-[#F7F7F5] rounded-xl px-3 py-2 text-xs font-bold text-[#2C2C2C] outline-none"
+                  className="bg-bg rounded-xl px-3 py-2 text-xs font-bold text-anthracite outline-none"
                 >
                   {availableUnits.map(unit => <option key={unit} value={unit}>{unit === 'Alle' ? 'Alle Einheiten' : unit}</option>)}
                 </select>
                 <select
                   value={sortMode}
                   onChange={e => setSortMode(e.target.value as typeof sortMode)}
-                  className="bg-[#F7F7F5] rounded-xl px-3 py-2 text-xs font-bold text-[#2C2C2C] outline-none"
+                  className="bg-bg rounded-xl px-3 py-2 text-xs font-bold text-anthracite outline-none"
                 >
                   <option value="name">A–Z</option>
                   <option value="price-asc">Preis ↑</option>
@@ -682,7 +682,7 @@ export default function PreisePage() {
             {selectedGewerk && (
               <button
                 onClick={() => { setAdding(true); setNewItem(p => ({ ...p, category: selectedGewerk })) }}
-                className="flex items-center gap-1.5 bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-2 rounded-xl"
+                className="flex items-center gap-1.5 bg-yellow text-anthracite font-black text-xs px-3 py-2 rounded-xl"
               >
                 <Plus size={13} strokeWidth={3} />
                 Position
@@ -693,33 +693,33 @@ export default function PreisePage() {
 
         {/* New Item Form (inline) */}
         {adding && (
-          <form onSubmit={handleAdd} className="mx-6 mt-4 bg-white rounded-2xl p-4 border-2 border-[#F5C400] shrink-0">
+          <form onSubmit={handleAdd} className="mx-6 mt-4 bg-white rounded-2xl p-4 border-2 border-yellow shrink-0">
             <div className="flex gap-3 items-end">
               <div className="flex-[3]">
-                <label className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-wide">Bezeichnung</label>
+                <label className="text-[10px] font-black text-anthracite/40 uppercase tracking-wide">Bezeichnung</label>
                 <input
                   value={newItem.title}
                   onChange={e => setNewItem(p => ({ ...p, title: e.target.value }))}
                   autoFocus required
                   placeholder="z.B. Wand streichen 2× Anstrich"
-                  className="w-full mt-1 bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold text-[#2C2C2C] focus:outline-none focus:border-[#F5C400]"
+                  className="w-full mt-1 bg-bg border-2 border-anthracite/10 rounded-xl px-3 py-2 text-sm font-semibold text-anthracite focus:outline-none focus:border-yellow"
                 />
               </div>
               <div className="w-24">
-                <label className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-wide">Preis €</label>
+                <label className="text-[10px] font-black text-anthracite/40 uppercase tracking-wide">Preis €</label>
                 <input
                   type="number" step="0.01" min="0" required
                   value={newItem.unit_price}
                   onChange={e => setNewItem(p => ({ ...p, unit_price: e.target.value }))}
-                  className="w-full mt-1 bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-bold text-[#2C2C2C] focus:outline-none focus:border-[#F5C400]"
+                  className="w-full mt-1 bg-bg border-2 border-anthracite/10 rounded-xl px-3 py-2 text-sm font-bold text-anthracite focus:outline-none focus:border-yellow"
                 />
               </div>
               <div className="w-24">
-                <label className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-wide">Einheit</label>
+                <label className="text-[10px] font-black text-anthracite/40 uppercase tracking-wide">Einheit</label>
                 <select
                   value={newItem.unit}
                   onChange={e => setNewItem(p => ({ ...p, unit: e.target.value }))}
-                  className="w-full mt-1 bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-bold text-[#2C2C2C] focus:outline-none focus:border-[#F5C400]"
+                  className="w-full mt-1 bg-bg border-2 border-anthracite/10 rounded-xl px-3 py-2 text-sm font-bold text-anthracite focus:outline-none focus:border-yellow"
                 >
                   {['m²', 'lfdm', 'Stück', 'Pauschale', 'Stunde', 'm³', 'kg', 'Stk', 'Std', 'Tag', 'Fahrt', 'km', '%'].map(u => (
                     <option key={u}>{u}</option>
@@ -727,10 +727,10 @@ export default function PreisePage() {
                 </select>
               </div>
               <div className="flex gap-2 shrink-0">
-                <button type="submit" className="bg-[#F5C400] text-[#2C2C2C] font-black text-sm rounded-xl px-4 py-2">
+                <button type="submit" className="bg-yellow text-anthracite font-black text-sm rounded-xl px-4 py-2">
                   <Check size={15} strokeWidth={3} />
                 </button>
-                <button type="button" onClick={() => setAdding(false)} className="border-2 border-[#2C2C2C]/10 text-[#2C2C2C] font-bold text-sm rounded-xl px-3 py-2">
+                <button type="button" onClick={() => setAdding(false)} className="border-2 border-anthracite/10 text-anthracite font-bold text-sm rounded-xl px-3 py-2">
                   <X size={15} />
                 </button>
               </div>
@@ -741,23 +741,23 @@ export default function PreisePage() {
         {/* Positions Table */}
         <div className="flex-1 overflow-y-auto">
           {loading ? (
-            <div className="text-center py-16 text-[#2C2C2C]/30 font-semibold">Lädt...</div>
+            <div className="text-center py-16 text-anthracite/30 font-semibold">Lädt...</div>
           ) : isSearching ? (
             <div className="p-6">
               {searchResults.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-3xl mb-3">🔍</div>
-                  <div className="font-black text-[#2C2C2C]">Nichts gefunden</div>
-                  <div className="text-sm text-[#2C2C2C]/45 font-semibold mt-1">„{searchQuery}" in keiner Position</div>
+                  <div className="font-black text-anthracite">Nichts gefunden</div>
+                  <div className="text-sm text-anthracite/45 font-semibold mt-1">„{searchQuery}" in keiner Position</div>
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
+                <div className="bg-white rounded-2xl border border-anthracite/5 overflow-hidden">
                   {/* Table Header */}
-                  <div className="grid grid-cols-[1fr_140px_100px_80px] gap-0 px-4 py-2.5 bg-[#F7F7F5] border-b border-[#2C2C2C]/8">
-                    <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide">Bezeichnung</span>
-                    <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide">Gewerk</span>
-                    <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide text-right">Preis</span>
-                    <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide text-center">Einheit</span>
+                  <div className="grid grid-cols-[1fr_140px_100px_80px] gap-0 px-4 py-2.5 bg-bg border-b border-anthracite/8">
+                    <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide">Bezeichnung</span>
+                    <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide">Gewerk</span>
+                    <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide text-right">Preis</span>
+                    <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide text-center">Einheit</span>
                   </div>
                   {searchResults.map(item => (
                     <DesktopRow key={item.id} item={item} showGewerk />
@@ -768,20 +768,20 @@ export default function PreisePage() {
           ) : !selectedGewerk ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <div className="text-4xl mb-3">👈</div>
-              <div className="font-black text-[#2C2C2C]/30">Gewerk wählen</div>
-              <div className="text-sm text-[#2C2C2C]/20 font-semibold mt-1">oder oben suchen</div>
+              <div className="font-black text-anthracite/30">Gewerk wählen</div>
+              <div className="text-sm text-anthracite/20 font-semibold mt-1">oder oben suchen</div>
             </div>
           ) : visibleItems.length === 0 ? (
-            <div className="text-center py-12 text-[#2C2C2C]/30 font-semibold">Keine Positionen für diesen Filter</div>
+            <div className="text-center py-12 text-anthracite/30 font-semibold">Keine Positionen für diesen Filter</div>
           ) : (
             <div className="p-6 pt-4">
-              <div className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
+              <div className="bg-white rounded-2xl border border-anthracite/5 overflow-hidden">
                 {/* Table Header */}
-                <div className="grid grid-cols-[1fr_120px_80px_80px] gap-0 px-4 py-2.5 bg-[#F7F7F5] border-b border-[#2C2C2C]/8">
-                  <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide">Bezeichnung</span>
-                  <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide text-right">Preis</span>
-                  <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide text-center">Einheit</span>
-                  <span className="text-[10px] font-black text-[#2C2C2C]/35 uppercase tracking-wide text-right">Aktionen</span>
+                <div className="grid grid-cols-[1fr_120px_80px_80px] gap-0 px-4 py-2.5 bg-bg border-b border-anthracite/8">
+                  <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide">Bezeichnung</span>
+                  <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide text-right">Preis</span>
+                  <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide text-center">Einheit</span>
+                  <span className="text-[10px] font-black text-anthracite/35 uppercase tracking-wide text-right">Aktionen</span>
                 </div>
                 {visibleItems.map(item => <DesktopRow key={item.id} item={item} />)}
               </div>
@@ -796,20 +796,20 @@ export default function PreisePage() {
     const isEditing = editingId === item.id
     if (isEditing) {
       return (
-        <div className={`grid ${showGewerk ? 'grid-cols-[1fr_140px_100px_80px]' : 'grid-cols-[1fr_120px_80px_80px]'} gap-0 px-4 py-2 border-b border-[#2C2C2C]/5 bg-[#F5C400]/5 items-center`}>
+        <div className={`grid ${showGewerk ? 'grid-cols-[1fr_140px_100px_80px]' : 'grid-cols-[1fr_120px_80px_80px]'} gap-0 px-4 py-2 border-b border-anthracite/5 bg-yellow/5 items-center`}>
           <input
             value={editState.title}
             onChange={e => setEditState(s => ({ ...s, title: e.target.value }))}
             autoFocus
-            className="bg-white border-2 border-[#F5C400] rounded-lg px-2 py-1 text-sm font-semibold text-[#2C2C2C] focus:outline-none mr-2"
+            className="bg-white border-2 border-yellow rounded-lg px-2 py-1 text-sm font-semibold text-anthracite focus:outline-none mr-2"
           />
-          {showGewerk && <span className="text-xs text-[#2C2C2C]/40 font-semibold truncate">{getGewerkKey(item.category)}</span>}
+          {showGewerk && <span className="text-xs text-anthracite/40 font-semibold truncate">{getGewerkKey(item.category)}</span>}
           <div className="flex justify-end">
             <input
               type="number" step="0.01" min="0"
               value={editState.unit_price}
               onChange={e => setEditState(s => ({ ...s, unit_price: e.target.value }))}
-              className="w-20 bg-white border-2 border-[#F5C400] rounded-lg px-2 py-1 text-sm font-black text-right text-[#2C2C2C] focus:outline-none"
+              className="w-20 bg-white border-2 border-yellow rounded-lg px-2 py-1 text-sm font-black text-right text-anthracite focus:outline-none"
               onKeyDown={e => { if (e.key === 'Enter') saveEdit(item.id); if (e.key === 'Escape') setEditingId(null) }}
             />
           </div>
@@ -817,7 +817,7 @@ export default function PreisePage() {
             <select
               value={editState.unit}
               onChange={e => setEditState(s => ({ ...s, unit: e.target.value }))}
-              className="w-full bg-white border-2 border-[#F5C400] rounded-lg px-1 py-1 text-xs font-bold text-[#2C2C2C] focus:outline-none"
+              className="w-full bg-white border-2 border-yellow rounded-lg px-1 py-1 text-xs font-bold text-anthracite focus:outline-none"
             >
               {['m²', 'lfdm', 'Stück', 'Pauschale', 'Stunde', 'm³', 'kg', 'Stk', 'Std', 'Tag', 'Fahrt', 'km', '%'].map(u => (
                 <option key={u}>{u}</option>
@@ -825,11 +825,11 @@ export default function PreisePage() {
             </select>
           </div>
           <div className="flex justify-end gap-1">
-            <button onClick={() => saveEdit(item.id)} className="p-1.5 bg-[#F5C400] rounded-lg">
-              <Check size={12} color="#2C2C2C" strokeWidth={3} />
+            <button onClick={() => saveEdit(item.id)} className="p-1.5 bg-yellow rounded-lg">
+              <Check size={12} color="var(--color-anthracite)" strokeWidth={3} />
             </button>
-            <button onClick={() => setEditingId(null)} className="p-1.5 border border-[#2C2C2C]/15 rounded-lg">
-              <X size={12} color="#2C2C2C" />
+            <button onClick={() => setEditingId(null)} className="p-1.5 border border-anthracite/15 rounded-lg">
+              <X size={12} color="var(--color-anthracite)" />
             </button>
           </div>
         </div>
@@ -837,29 +837,29 @@ export default function PreisePage() {
     }
     return (
       <div
-        className={`grid ${showGewerk ? 'grid-cols-[1fr_140px_100px_80px]' : 'grid-cols-[1fr_120px_80px_80px]'} gap-0 px-4 py-2.5 border-b border-[#2C2C2C]/5 last:border-0 items-center hover:bg-[#F7F7F5] group ${item.ist_erschwerniszuschlag ? 'bg-amber-50/30' : ''}`}
+        className={`grid ${showGewerk ? 'grid-cols-[1fr_140px_100px_80px]' : 'grid-cols-[1fr_120px_80px_80px]'} gap-0 px-4 py-2.5 border-b border-anthracite/5 last:border-0 items-center hover:bg-bg group ${item.ist_erschwerniszuschlag ? 'bg-amber-50/30' : ''}`}
       >
         <div className="flex items-center gap-1.5 min-w-0 pr-2">
           {item.ist_erschwerniszuschlag && <span className="text-xs shrink-0">⚡</span>}
           {(item.nutzungshaeufigkeit ?? 0) >= 5 && <span className="text-xs shrink-0">🔥</span>}
-          <span className="text-sm font-semibold text-[#2C2C2C] truncate">{item.title}</span>
+          <span className="text-sm font-semibold text-anthracite truncate">{item.title}</span>
         </div>
         {showGewerk && (
-          <span className="text-xs text-[#2C2C2C]/35 font-semibold truncate">
+          <span className="text-xs text-anthracite/35 font-semibold truncate">
             {GEWERK_META[getGewerkKey(item.category)]?.emoji} {getGewerkKey(item.category)}
           </span>
         )}
         <div className="text-right">
-          <span className="text-sm font-black text-[#2C2C2C]">
+          <span className="text-sm font-black text-anthracite">
             {item.zuschlag_typ === 'prozent' ? `+${item.unit_price}%` : `${item.unit_price.toFixed(2).replace('.', ',')} €`}
           </span>
         </div>
         <div className="text-center">
-          <span className="text-xs font-semibold text-[#2C2C2C]/45">{item.unit}</span>
+          <span className="text-xs font-semibold text-anthracite/45">{item.unit}</span>
         </div>
         <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={() => startEdit(item)} className="p-1.5 hover:bg-[#F5C400]/20 rounded-lg transition-colors">
-            <Pencil size={13} color="#2C2C2C" strokeWidth={2} className="opacity-50" />
+          <button onClick={() => startEdit(item)} className="p-1.5 hover:bg-yellow/20 rounded-lg transition-colors">
+            <Pencil size={13} color="var(--color-anthracite)" strokeWidth={2} className="opacity-50" />
           </button>
           <button onClick={() => handleDelete(item.id)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors">
             <Trash2 size={13} color="#ef4444" strokeWidth={2} />
@@ -883,4 +883,4 @@ export default function PreisePage() {
   )
 }
 
-const inputCls = 'w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-xl px-3 py-2.5 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:border-[#F5C400]'
+const inputCls = 'w-full bg-bg border-2 border-anthracite/10 rounded-xl px-3 py-2.5 text-anthracite font-semibold text-sm focus:outline-none focus:border-yellow'

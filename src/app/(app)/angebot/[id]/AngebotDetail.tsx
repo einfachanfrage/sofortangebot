@@ -98,7 +98,7 @@ function InlineNum({ value, label, suffix, onCommit }: { value: number | undefin
         onBlur={commit}
         onKeyDown={e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') setEditing(false) }}
         autoFocus
-        className="w-12 text-center bg-[#F5C400]/20 border border-[#F5C400] rounded text-[12px] font-extrabold text-[#2C2C2C] outline-none px-1 py-0.5"
+        className="w-12 text-center bg-yellow/20 border border-yellow rounded text-[12px] font-extrabold text-anthracite outline-none px-1 py-0.5"
       />
     )
   }
@@ -107,7 +107,7 @@ function InlineNum({ value, label, suffix, onCommit }: { value: number | undefin
     <button
       onClick={() => { setDraft(String(value ?? '')); setEditing(true) }}
       className={`text-[12px] font-extrabold rounded px-1.5 py-0.5 transition-colors ${
-        missing ? 'bg-red-50 text-red-500 hover:bg-red-100 border border-red-200' : 'text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20'
+        missing ? 'bg-red-50 text-red-500 hover:bg-red-100 border border-red-200' : 'text-anthracite bg-anthracite/6 hover:bg-yellow/20'
       }`}
       title={missing ? `${label} fehlt — tippen zum Eintragen` : label}
     >
@@ -166,16 +166,16 @@ function RaumDimensionenZeile({
           den Fall, dass die Erkennung danebenlag. */}
       {istWand ? (
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#2C2C2C]/35">Wand / Fassade</span>
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-anthracite/35">Wand / Fassade</span>
           <button
             onClick={() => onChange({ modus: 'rechteck' })}
-            className="text-[10px] font-bold text-[#2C2C2C]/35 hover:text-[#2C2C2C]/60 underline decoration-dotted transition-colors"
+            className="text-[10px] font-bold text-anthracite/35 hover:text-anthracite/60 underline decoration-dotted transition-colors"
           >
             Kein Wand-Objekt? Als Raum bearbeiten
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-1 self-start bg-[#2C2C2C]/5 rounded-lg p-0.5">
+        <div className="flex items-center gap-1 self-start bg-anthracite/5 rounded-lg p-0.5">
           {/* DC-036 (Sandy, 2026-08-29): "Raumform" hat den Grundriss-Zeichner
               (Vorlagen L-/U-Form + freies Wand-für-Wand, siehe
               RaumGrundrissEditor) dahinter versteckt, ohne dass der Name das
@@ -191,7 +191,7 @@ function RaumDimensionenZeile({
               key={m.id}
               onClick={() => m.id === 'grundriss' ? onGrundriss() : onChange({ modus: m.id })}
               className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md transition-colors ${
-                modus === m.id ? 'bg-white text-[#2C2C2C] shadow-sm' : 'text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70'
+                modus === m.id ? 'bg-white text-anthracite shadow-sm' : 'text-anthracite/40 hover:text-anthracite/70'
               }`}
             >
               {m.label}
@@ -205,9 +205,9 @@ function RaumDimensionenZeile({
         {modus === 'rechteck' && (
           <>
             <InlineNum value={dim.breite} label="Breite" onCommit={v => onChange({ breite: v })} />
-            <span className="text-[11px] text-[#2C2C2C]/30 font-bold">×</span>
+            <span className="text-[11px] text-anthracite/30 font-bold">×</span>
             <InlineNum value={dim.laenge} label="Länge" onCommit={v => onChange({ laenge: v })} />
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">m</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">m</span>
           </>
         )}
 
@@ -215,18 +215,18 @@ function RaumDimensionenZeile({
           <>
             {wandRelevant && (
               <>
-                <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandfläche fertig</span>
+                <span className="text-[11px] text-anthracite/40 font-semibold">Wandfläche fertig</span>
                 <InlineNum value={dim.wandflaeche} label="Wandfläche (fertig, ohne Fenster/Türen)" suffix=" m²" onCommit={v => onChange({ wandflaeche: v })} />
-                <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
+                <span className="text-anthracite/20 mx-0.5">·</span>
               </>
             )}
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Boden-/Deckenfläche</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Boden-/Deckenfläche</span>
             <InlineNum value={dim.bodenflaeche} label="Bodenfläche" suffix=" m²" onCommit={v => onChange({ bodenflaeche: v })} />
           </>
         )}
 
         {modus === 'grundriss' && (
-          <button onClick={onGrundriss} className="flex items-center gap-1.5 text-[12px] font-extrabold text-[#2C2C2C] bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 rounded px-2 py-0.5 transition-colors">
+          <button onClick={onGrundriss} className="flex items-center gap-1.5 text-[12px] font-extrabold text-anthracite bg-anthracite/6 hover:bg-yellow/20 rounded px-2 py-0.5 transition-colors">
             📐 {dim.grundriss?.length ? `${dim.grundriss.filter(w => w.laenge > 0).length} Wände · ${masse.bodenflaeche ?? '?'} m²` : 'Grundriss zeichnen'}
           </button>
         )}
@@ -236,13 +236,13 @@ function RaumDimensionenZeile({
             also auch kein „!" mehr dafür). Türen/Fenster wie gehabt. */}
         {istWand && (
           <>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandlänge</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Wandlänge</span>
             <InlineNum value={dim.laenge} label="Wandlänge" suffix=" m" onCommit={v => onChange({ laenge: v })} />
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Wandhöhe</span>
+            <span className="text-anthracite/20 mx-0.5">·</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Wandhöhe</span>
             <InlineNum value={dim.hoehe} label="Wandhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Türen</span>
+            <span className="text-anthracite/20 mx-0.5">·</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Türen</span>
             {/* waende[]-Extraktion kennt gar kein Türen-Feld (siehe
                 generiere-positionen/route.ts) — fehlend heißt hier "wurde nie
                 gefragt", nicht "echte Lücke", und die allermeisten Fassaden
@@ -250,8 +250,8 @@ function RaumDimensionenZeile({
                 Art Fehlanzeige nicht zurückkommt, die DC-024 beheben soll.
                 Tippen zum Eintragen bleibt möglich, falls doch eine Tür da ist. */}
             <InlineNum value={dim.tueren ?? 0} label="Türen" onCommit={v => onChange({ tueren: v })} />
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Fenster</span>
+            <span className="text-anthracite/20 mx-0.5">·</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Fenster</span>
             <InlineNum value={dim.fenster} label="Fenster" onCommit={v => onChange({ fenster: v })} />
           </>
         )}
@@ -261,14 +261,14 @@ function RaumDimensionenZeile({
             Für 'wand' oben bereits als eigener Block gerendert. */}
         {!istWand && wandRelevant && !(modus === 'flaeche' && (dim.wandflaeche ?? 0) > 0) && (
           <>
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Raumhöhe</span>
+            <span className="text-anthracite/20 mx-0.5">·</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Raumhöhe</span>
             <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Türen</span>
+            <span className="text-anthracite/20 mx-0.5">·</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Türen</span>
             <InlineNum value={dim.tueren} label="Türen" onCommit={v => onChange({ tueren: v })} />
-            <span className="text-[#2C2C2C]/20 mx-0.5">·</span>
-            <span className="text-[11px] text-[#2C2C2C]/40 font-semibold">Fenster</span>
+            <span className="text-anthracite/20 mx-0.5">·</span>
+            <span className="text-[11px] text-anthracite/40 font-semibold">Fenster</span>
             <InlineNum value={dim.fenster} label="Fenster" onCommit={v => onChange({ fenster: v })} />
           </>
         )}
@@ -278,8 +278,8 @@ function RaumDimensionenZeile({
           das in der Positionsansicht schon gut funktioniert (DC-023-Nebenfund),
           jetzt eine Stufe früher statt erst dort. */}
       {wandRechnungText && (
-        <div className="text-[11px] font-bold text-[#2C2C2C]/60 bg-[#F5C400]/10 border border-[#F5C400]/25 rounded-lg px-2.5 py-1.5 w-fit">
-          So gerechnet: <span className="text-[#2C2C2C] font-extrabold">{wandRechnungText}</span>
+        <div className="text-[11px] font-bold text-anthracite/60 bg-yellow/10 border border-yellow/25 rounded-lg px-2.5 py-1.5 w-fit">
+          So gerechnet: <span className="text-anthracite font-extrabold">{wandRechnungText}</span>
         </div>
       )}
     </div>
@@ -370,13 +370,13 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
     <div
       ref={setNodeRef}
       style={style}
-      className={`border-t border-[#2C2C2C]/5 px-4 py-3 relative ${isUnsure ? 'border-l-4 border-l-[#F5C400]' : ''}`}
+      className={`border-t border-anthracite/5 px-4 py-3 relative ${isUnsure ? 'border-l-4 border-l-yellow' : ''}`}
       onClick={() => !isEditing && setEditingId(item.id)}
     >
       {isUnsure && (
         <div className="flex items-center gap-1 mb-1">
-          <AlertTriangle size={11} className="text-[#F5C400]" strokeWidth={3} />
-          <span className="text-[10px] font-black text-[#F5C400]">KI unsicher — bitte prüfen</span>
+          <AlertTriangle size={11} className="text-yellow" strokeWidth={3} />
+          <span className="text-[10px] font-black text-yellow">KI unsicher — bitte prüfen</span>
         </div>
       )}
 
@@ -389,7 +389,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
               onFocus={() => istNeueSuchePosition && setSucheOffen(true)}
               onBlur={() => setTimeout(() => setSucheOffen(false), 150)}
               placeholder={istNeueSuchePosition ? 'Was wurde gemacht? z. B. Wand streichen…' : undefined}
-              className="w-full font-bold text-[#2C2C2C] bg-transparent focus:outline-none text-sm border-b border-[#F5C400] pb-0.5 mb-2"
+              className="w-full font-bold text-anthracite bg-transparent focus:outline-none text-sm border-b border-yellow pb-0.5 mb-2"
               autoFocus
             />
 
@@ -398,7 +398,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 Preis sofort, sonst inline "neu anlegen". */}
             {istNeueSuchePosition && sucheOffen && !neuAnlegenModus && basisTitel.trim() && (
               <div
-                className="absolute left-0 right-0 top-full z-20 -mt-1 bg-white rounded-xl shadow-lg border border-[#2C2C2C]/10 max-h-64 overflow-y-auto"
+                className="absolute left-0 right-0 top-full z-20 -mt-1 bg-white rounded-xl shadow-lg border border-anthracite/10 max-h-64 overflow-y-auto"
                 onClick={e => e.stopPropagation()}
               >
                 {vorschlaege.map(v => (
@@ -413,13 +413,13 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                     // "wird angezeigt, aber Klick tut nichts"). preventDefault
                     // beim mousedown verhindert den Fokusverlust komplett.
                     onMouseDown={e => { e.preventDefault(); onPreisVorschlag(item.id, { title: v.title, unit: v.unit, unit_price: v.unit_price, price_item_id: v.id }); setSucheOffen(false) }}
-                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-[#F5C400]/10 border-b border-[#2C2C2C]/5 last:border-b-0"
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-yellow/10 border-b border-anthracite/5 last:border-b-0"
                   >
                     <div className="min-w-0">
-                      <div className="text-[12.5px] font-bold text-[#2C2C2C] truncate">{v.title}</div>
-                      <div className="text-[10px] font-semibold text-[#2C2C2C]/40">{v.unit}</div>
+                      <div className="text-[12.5px] font-bold text-anthracite truncate">{v.title}</div>
+                      <div className="text-[10px] font-semibold text-anthracite/40">{v.unit}</div>
                     </div>
-                    <div className="text-[12.5px] font-black text-[#2C2C2C] shrink-0">
+                    <div className="text-[12.5px] font-black text-anthracite shrink-0">
                       {v.unit_price.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                     </div>
                   </button>
@@ -427,22 +427,22 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 <button
                   type="button"
                   onMouseDown={e => { e.preventDefault(); setNeuEinheit('m²'); setNeuPreisText(''); setNeuAnlegenModus(true) }}
-                  className="w-full flex items-center gap-2 px-3 py-2.5 text-left bg-[#F7F7F5] hover:bg-[#F5C400]/15"
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-left bg-bg hover:bg-yellow/15"
                 >
-                  <span className="w-5 h-5 rounded-full bg-[#F5C400] flex items-center justify-center text-[12px] font-black shrink-0">+</span>
-                  <span className="text-[11.5px] font-bold text-[#2C2C2C]">Neue Position „{basisTitel.trim()}" anlegen</span>
+                  <span className="w-5 h-5 rounded-full bg-yellow flex items-center justify-center text-[12px] font-black shrink-0">+</span>
+                  <span className="text-[11.5px] font-bold text-anthracite">Neue Position „{basisTitel.trim()}" anlegen</span>
                 </button>
               </div>
             )}
 
             {istNeueSuchePosition && neuAnlegenModus && (
-              <div className="bg-[#F7F7F5] rounded-xl p-3 mb-2" onClick={e => e.stopPropagation()}>
-                <div className="text-[11.5px] font-bold text-[#2C2C2C] mb-2">„{basisTitel.trim()}" neu anlegen</div>
+              <div className="bg-bg rounded-xl p-3 mb-2" onClick={e => e.stopPropagation()}>
+                <div className="text-[11.5px] font-bold text-anthracite mb-2">„{basisTitel.trim()}" neu anlegen</div>
                 <div className="flex gap-2 mb-2">
                   <select
                     value={neuEinheit}
                     onChange={e => setNeuEinheit(e.target.value)}
-                    className="bg-white rounded-lg px-2 py-2 text-[12px] font-bold flex-1 focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
+                    className="bg-white rounded-lg px-2 py-2 text-[12px] font-bold flex-1 focus:outline-none focus:ring-2 focus:ring-yellow"
                   >
                     <option value="m²">m²</option>
                     <option value="lfdm">lfdm</option>
@@ -456,7 +456,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                     placeholder="Preis pro Einheit"
                     value={neuPreisText}
                     onChange={e => setNeuPreisText(e.target.value)}
-                    className="bg-white rounded-lg px-2 py-2 text-[12px] font-bold flex-1 focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
+                    className="bg-white rounded-lg px-2 py-2 text-[12px] font-bold flex-1 focus:outline-none focus:ring-2 focus:ring-yellow"
                   />
                 </div>
                 <button
@@ -468,11 +468,11 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                     setNeuAnlegenModus(false)
                     setSucheOffen(false)
                   }}
-                  className="w-full bg-[#2C2C2C] text-white rounded-lg py-2 text-[12px] font-black disabled:opacity-30"
+                  className="w-full bg-anthracite text-white rounded-lg py-2 text-[12px] font-black disabled:opacity-30"
                 >
                   ✓ Anlegen &amp; übernehmen
                 </button>
-                <div className="text-[10px] font-semibold text-[#2C2C2C]/40 mt-1.5 text-center">
+                <div className="text-[10px] font-semibold text-anthracite/40 mt-1.5 text-center">
                   Wird direkt in deiner Preisdatenbank gespeichert.
                 </div>
               </div>
@@ -484,7 +484,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
               onClick={e => e.stopPropagation()}
               placeholder="Untertitel (z.B. Farbe, Material, Detail) — leer lassen zum Ausblenden"
               rows={1}
-              className="w-full text-xs font-semibold text-[#2C2C2C]/60 bg-[#F7F7F5] rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:ring-1 focus:ring-[#F5C400] resize-none"
+              className="w-full text-xs font-semibold text-anthracite/60 bg-bg rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:ring-1 focus:ring-yellow resize-none"
             />
             <div className="flex gap-2 items-center flex-wrap">
               <input
@@ -492,13 +492,13 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 inputMode="decimal"
                 value={item.quantity}
                 onChange={e => updateEditItem(item.id, 'quantity', e.target.value)}
-                className="w-16 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 focus:outline-none"
+                className="w-16 text-sm font-semibold text-anthracite bg-bg rounded-lg px-2 py-1 focus:outline-none"
                 min={0} step="0.01"
               />
               <button
                 type="button"
                 onClick={e => { e.stopPropagation(); onUnitPick(item.id) }}
-                className="text-sm font-black text-[#2C2C2C] bg-[#F5C400]/20 rounded-lg px-2 py-1 focus:outline-none"
+                className="text-sm font-black text-anthracite bg-yellow/20 rounded-lg px-2 py-1 focus:outline-none"
               >
                 {item.unit || 'Einheit'} ▾
               </button>
@@ -508,16 +508,16 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                   inputMode="decimal"
                   value={item.unit_price}
                   onChange={e => updateEditItem(item.id, 'unit_price', e.target.value)}
-                  className="w-20 text-sm font-semibold text-[#2C2C2C] bg-[#F7F7F5] rounded-lg px-2 py-1 text-right focus:outline-none"
+                  className="w-20 text-sm font-semibold text-anthracite bg-bg rounded-lg px-2 py-1 text-right focus:outline-none"
                   min={0} step="0.01"
                 />
-                <span className="text-xs text-[#2C2C2C]/40 font-bold">€</span>
+                <span className="text-xs text-anthracite/40 font-bold">€</span>
               </div>
             </div>
-            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 text-right">
+            <div className="text-xs text-anthracite/40 font-semibold mt-1 text-right">
               = {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €
               {vatRate > 0 && (
-                <span className="ml-2 text-[#2C2C2C]/25">
+                <span className="ml-2 text-anthracite/25">
                   (brutto {((item.quantity * item.unit_price) * (1 + vatRate / 100)).toFixed(2).replace('.', ',')} €)
                 </span>
               )}
@@ -531,25 +531,25 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <div className="font-bold text-[#2C2C2C] text-sm">{titleOverride ?? item.title}</div>
+              <div className="font-bold text-anthracite text-sm">{titleOverride ?? item.title}</div>
               {/* DC-027: dezent statt Alarm-Rot/-Gelb wie "KI unsicher" oben —
                   eine vom Tool mitgedachte Position ist meistens fachlich
                   richtig, soll neugierig machen ("kurz checken"), nicht wie
                   ein Fehler wirken. */}
               {item.automatisch_ergaenzt && (
-                <span className="text-[10px] font-bold bg-[#2C2C2C]/5 text-[#2C2C2C]/40 rounded-full px-2 py-0.5 shrink-0">
+                <span className="text-[10px] font-bold bg-anthracite/5 text-anthracite/40 rounded-full px-2 py-0.5 shrink-0">
                   Vorschlag
                 </span>
               )}
             </div>
-            {item.description && <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>}
-            <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 flex items-center gap-1">
+            {item.description && <div className="text-xs text-anthracite/50 font-semibold mt-0.5">{item.description}</div>}
+            <div className="text-xs text-anthracite/40 font-semibold mt-1 flex items-center gap-1">
               <span>{item.quantity} {item.unit} × {fmt(item.unit_price)}</span>
               {item.berechnungsweg && (
                 <button
                   onClick={e => { e.stopPropagation(); onInfo(item.id) }}
                   title="Rechenweg anzeigen"
-                  className="w-4 h-4 rounded-full bg-[#2C2C2C]/8 hover:bg-[#F5C400]/40 text-[#2C2C2C]/60 font-black text-[10px] leading-none flex items-center justify-center transition-colors"
+                  className="w-4 h-4 rounded-full bg-anthracite/8 hover:bg-yellow/40 text-anthracite/60 font-black text-[10px] leading-none flex items-center justify-center transition-colors"
                 >
                   i
                 </button>
@@ -562,7 +562,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 <button
                   type="button"
                   onClick={e => { e.stopPropagation(); onAddPrice(item) }}
-                  className="shrink-0 rounded-lg bg-[#2C2C2C] px-2.5 py-1.5 text-[11px] font-black text-white"
+                  className="shrink-0 rounded-lg bg-anthracite px-2.5 py-1.5 text-[11px] font-black text-white"
                 >
                   Preis anlegen
                 </button>
@@ -571,21 +571,21 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
             {materialVorschlag && (
               <button
                 onClick={e => { e.stopPropagation(); onAddMaterial(item) }}
-                className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-extrabold text-[#2C2C2C]/60 bg-[#2C2C2C]/5 hover:bg-[#F5C400]/25 rounded-full px-2 py-0.5 transition-colors"
+                className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-extrabold text-anthracite/60 bg-anthracite/5 hover:bg-yellow/25 rounded-full px-2 py-0.5 transition-colors"
               >
                 ＋ {materialVorschlag.name}
               </button>
             )}
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
-            <div className="font-black text-[#2C2C2C]">{fmt(item.quantity * item.unit_price)}</div>
+            <div className="font-black text-anthracite">{fmt(item.quantity * item.unit_price)}</div>
             <button
               onClick={e => { e.stopPropagation(); removeEditItem(item.id) }}
-              className="p-1.5 text-[#2C2C2C]/20 hover:text-red-400 transition-colors"
+              className="p-1.5 text-anthracite/20 hover:text-red-400 transition-colors"
             >
               <Trash2 size={14} />
             </button>
-            <div className="cursor-grab touch-none text-[#2C2C2C]/20 active:cursor-grabbing" {...attributes} {...listeners} onClick={e => e.stopPropagation()}>
+            <div className="cursor-grab touch-none text-anthracite/20 active:cursor-grabbing" {...attributes} {...listeners} onClick={e => e.stopPropagation()}>
               <GripVertical size={16} />
             </div>
           </div>
@@ -1592,7 +1592,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-dvh bg-[#F7F7F5] pb-10" onClick={() => setEditingItemId(null)}>
+    <div className="min-h-dvh bg-bg pb-10" onClick={() => setEditingItemId(null)}>
 
       {/* Toast */}
       <Toast message={toast} />
@@ -1603,55 +1603,55 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center" onClick={e => e.stopPropagation()}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowBaustelleSheet(false)} />
           <div className="relative w-full md:max-w-sm bg-white rounded-t-3xl md:rounded-3xl px-5 pt-4 pb-8 md:pb-6 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <div className="flex justify-center mb-4 md:hidden"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-            <h2 className="font-syne font-extrabold text-[#2C2C2C] text-[20px] mb-4">Baustelle wählen</h2>
+            <div className="flex justify-center mb-4 md:hidden"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+            <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-4">Baustelle wählen</h2>
             <div className="flex flex-col gap-2 mb-4">
               {kundenBaustellen.map(b => (
                 <button
                   key={b.id}
                   onClick={() => handleBaustelleWaehlen(b.id)}
                   className={`flex items-center gap-3 text-left px-3 py-3 rounded-2xl border-2 transition-colors ${
-                    b.id === currentBaustelleId ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/10'
+                    b.id === currentBaustelleId ? 'border-yellow bg-yellow/10' : 'border-anthracite/10'
                   }`}
                 >
                   <div className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    b.id === currentBaustelleId ? 'border-[#F5C400]' : 'border-[#2C2C2C]/25'
+                    b.id === currentBaustelleId ? 'border-yellow' : 'border-anthracite/25'
                   }`}>
-                    {b.id === currentBaustelleId && <div className="w-[9px] h-[9px] rounded-full bg-[#F5C400]" />}
+                    {b.id === currentBaustelleId && <div className="w-[9px] h-[9px] rounded-full bg-yellow" />}
                   </div>
                   <div>
-                    <div className="font-bold text-sm text-[#2C2C2C]">{b.name}</div>
-                    <div className="text-xs text-[#2C2C2C]/45 font-semibold mt-0.5">
+                    <div className="font-bold text-sm text-anthracite">{b.name}</div>
+                    <div className="text-xs text-anthracite/45 font-semibold mt-0.5">
                       {b.angebote_anzahl === 0 ? 'Noch kein Angebot' : `${b.angebote_anzahl} ${b.angebote_anzahl === 1 ? 'Angebot' : 'Angebote'}`}
                     </div>
                   </div>
                 </button>
               ))}
             </div>
-            <div className="border border-dashed border-[#2C2C2C]/20 rounded-2xl p-3">
+            <div className="border border-dashed border-anthracite/20 rounded-2xl p-3">
               <input
                 type="text"
                 value={neueBaustelleName}
                 onChange={e => setNeueBaustelleName(e.target.value)}
                 placeholder="Name (z. B. Bad OG links)"
-                className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold mb-2 focus:outline-none focus:border-[#F5C400]"
+                className="w-full border border-anthracite/10 rounded-xl px-3 py-2 text-sm font-semibold mb-2 focus:outline-none focus:border-yellow"
               />
               <input
                 type="text"
                 value={neueBaustelleAdresse}
                 onChange={e => setNeueBaustelleAdresse(e.target.value)}
                 placeholder="Adresse (optional)"
-                className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold mb-2 focus:outline-none focus:border-[#F5C400]"
+                className="w-full border border-anthracite/10 rounded-xl px-3 py-2 text-sm font-semibold mb-2 focus:outline-none focus:border-yellow"
               />
               <button
                 onClick={handleNeueBaustelleAnlegen}
                 disabled={!neueBaustelleName.trim() || savingBaustelle}
-                className="w-full bg-[#2C2C2C] text-white font-black rounded-xl py-2.5 text-sm disabled:opacity-50"
+                className="w-full bg-anthracite text-white font-black rounded-xl py-2.5 text-sm disabled:opacity-50"
               >
                 {savingBaustelle ? 'Wird angelegt…' : '+ Baustelle anlegen & zuweisen'}
               </button>
             </div>
-            <button onClick={() => setShowBaustelleSheet(false)} className="mt-3 w-full text-center text-xs font-bold text-[#2C2C2C]/40 py-2">
+            <button onClick={() => setShowBaustelleSheet(false)} className="mt-3 w-full text-center text-xs font-bold text-anthracite/40 py-2">
               Schließen
             </button>
           </div>
@@ -1664,9 +1664,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-3">
               <div className="bg-amber-100 rounded-xl p-2"><AlertTriangle size={20} className="text-amber-600" /></div>
-              <div className="font-black text-[#2C2C2C] text-base">Angebot wurde versendet</div>
+              <div className="font-black text-anthracite text-base">Angebot wurde versendet</div>
             </div>
-            <p className="text-sm text-[#2C2C2C]/60 font-semibold mb-5 leading-relaxed">
+            <p className="text-sm text-anthracite/60 font-semibold mb-5 leading-relaxed">
               Dieses Angebot wurde bereits an den Kunden geschickt. Eine Überarbeitung erstellt eine neue Version
               ({quoteNumber}-R{(quote.revision ?? 1) + 1}) als Entwurf — das Original bleibt erhalten.
             </p>
@@ -1674,14 +1674,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               <button
                 onClick={handleRevisionErstellen}
                 disabled={creatingRevision}
-                className="flex items-center justify-center gap-2 bg-[#2C2C2C] text-white font-black rounded-xl py-3 text-sm disabled:opacity-50"
+                className="flex items-center justify-center gap-2 bg-anthracite text-white font-black rounded-xl py-3 text-sm disabled:opacity-50"
               >
                 {creatingRevision ? <Loader2 size={15} className="animate-spin" /> : <Copy size={15} />}
                 Überarbeitung erstellen (Rev. {(quote.revision ?? 1) + 1})
               </button>
               <button
                 onClick={() => { setShowRevisionDialog(false); setEditItems(quote.items); setEditMode(true) }}
-                className="text-[#2C2C2C]/50 font-bold text-sm py-2"
+                className="text-anthracite/50 font-bold text-sm py-2"
               >
                 Trotzdem direkt bearbeiten
               </button>
@@ -1701,7 +1701,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="flex gap-4 mt-4" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => togglePhotoInPdf(lightboxPhoto)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${lightboxPhoto.in_pdf ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/10 text-white'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${lightboxPhoto.in_pdf ? 'bg-yellow text-anthracite' : 'bg-white/10 text-white'}`}
             >
               <FileText size={15} /> {lightboxPhoto.in_pdf ? 'Im PDF ✓' : 'Ins PDF'}
             </button>
@@ -1716,21 +1716,21 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       )}
 
       {/* Header */}
-      <div className="bg-[#2C2C2C] md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-0">
-        <Link href="/angebote" className="text-white/50 md:text-[#2C2C2C]/40 text-sm font-semibold">← Angebote</Link>
+      <div className="bg-anthracite md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-0">
+        <Link href="/angebote" className="text-white/50 md:text-anthracite/40 text-sm font-semibold">← Angebote</Link>
         <div className="flex items-start justify-between mt-1 pb-4">
           <div>
-            <div className="text-white md:text-[#2C2C2C] font-syne font-black text-xl flex items-center gap-2 flex-wrap">
+            <div className="text-white md:text-anthracite font-syne font-black text-xl flex items-center gap-2 flex-wrap">
               Angebot {quoteNumber}
               {(quote.revision ?? 1) > 1 && (
-                <span className="text-xs font-bold bg-amber-400 text-[#2C2C2C] rounded-full px-2 py-0.5">
+                <span className="text-xs font-bold bg-amber-400 text-anthracite rounded-full px-2 py-0.5">
                   Rev. {quote.revision}
                 </span>
               )}
               {quote.customer && <span className="font-semibold opacity-50"> · {quote.customer.name}</span>}
             </div>
             {/* Echtzeit-Gesamtsumme */}
-            <div className="text-[#F5C400] font-black text-2xl mt-1">{fmt(totalGross)}</div>
+            <div className="text-yellow font-black text-2xl mt-1">{fmt(totalGross)}</div>
             {/* DC-003-Nachtrag (Sandy, 2026-08-24, live getestet): Status-Button
                 stand vorher in der schmalen Icon-Reihe rechts, zwischen Zahnrad
                 und Bearbeiten/Speichern — dort sah er wie ein drittes Icon aus
@@ -1755,7 +1755,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowOptionen(true)} title="Einstellungen für dieses Angebot"
-              className="bg-white/10 md:bg-[#2C2C2C]/5 text-white md:text-[#2C2C2C]/60 rounded-xl p-2 hover:bg-[#F5C400]/30 transition-colors">
+              className="bg-white/10 md:bg-anthracite/5 text-white md:text-anthracite/60 rounded-xl p-2 hover:bg-yellow/30 transition-colors">
               <Settings size={16} />
             </button>
             {!editMode ? (
@@ -1765,7 +1765,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               </button>
             ) : (
               <button onClick={() => saveEdits()} disabled={saving}
-                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/10 text-white/40'} disabled:opacity-50`}>
+                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-yellow text-anthracite' : 'bg-white/10 text-white/40'} disabled:opacity-50`}>
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                 Speichern
               </button>
@@ -1777,13 +1777,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         <div className="flex border-t border-white/10">
           <button
             onClick={() => setActiveTab('positionen')}
-            className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors ${activeTab === 'positionen' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}
+            className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors ${activeTab === 'positionen' ? 'border-yellow text-yellow' : 'border-transparent text-white/40'}`}
           >
             Positionen
           </button>
           <button
             onClick={() => setActiveTab('notizen')}
-            className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'notizen' ? 'border-[#F5C400] text-[#F5C400]' : 'border-transparent text-white/40'}`}
+            className={`flex-1 py-3 font-black text-sm border-b-2 transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'notizen' ? 'border-yellow text-yellow' : 'border-transparent text-white/40'}`}
           >
             {/* CoS-021/DC-034: "Notizen & Fotos" war die konkrete
                 Verwirrungsquelle aus Sandys Feedback — klang nach einem
@@ -1795,7 +1795,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <Camera size={14} strokeWidth={2.5} />
             Fotos & Notiz
             {photos.length > 0 && (
-              <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${activeTab === 'notizen' ? 'bg-[#F5C400] text-[#2C2C2C]' : 'bg-white/20 text-white'}`}>{photos.length}</span>
+              <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${activeTab === 'notizen' ? 'bg-yellow text-anthracite' : 'bg-white/20 text-white'}`}>{photos.length}</span>
             )}
           </button>
         </div>
@@ -1805,8 +1805,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {showRaumPicker && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowRaumPicker(false)}>
           <div className="bg-white w-full rounded-t-3xl px-5 pt-4 pb-10" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-            <div className="font-syne font-black text-[#2C2C2C] text-[18px] mb-4">Raum hinzufügen</div>
+            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+            <div className="font-syne font-black text-anthracite text-[18px] mb-4">Raum hinzufügen</div>
             <div className="grid grid-cols-2 gap-2 mb-4">
               {[
                 { name: 'Wohnzimmer', emoji: '🛋' },
@@ -1823,9 +1823,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 { name: 'Esszimmer', emoji: '🍽' },
               ].map(r => (
                 <button key={r.name} onClick={() => addRaumPosition(r.name)}
-                  className="flex items-center gap-2.5 bg-[#F7F7F5] hover:bg-[#F5C400]/15 rounded-2xl px-4 py-3 text-left transition-colors">
+                  className="flex items-center gap-2.5 bg-bg hover:bg-yellow/15 rounded-2xl px-4 py-3 text-left transition-colors">
                   <span className="text-xl">{r.emoji}</span>
-                  <span className="font-extrabold text-[#2C2C2C] text-[14px]">{r.name}</span>
+                  <span className="font-extrabold text-anthracite text-[14px]">{r.name}</span>
                 </button>
               ))}
             </div>
@@ -1833,7 +1833,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               <input
                 type="text"
                 placeholder="Anderer Raum…"
-                className="flex-1 bg-[#F7F7F5] rounded-xl px-4 py-3 font-semibold text-[14px] text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#F5C400]"
+                className="flex-1 bg-bg rounded-xl px-4 py-3 font-semibold text-[14px] text-anthracite focus:outline-none focus:ring-2 focus:ring-yellow"
                 onKeyDown={e => { if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) addRaumPosition((e.target as HTMLInputElement).value.trim()) }}
               />
               <button
@@ -1841,7 +1841,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   const input = (e.currentTarget.previousSibling as HTMLInputElement)
                   if (input.value.trim()) addRaumPosition(input.value.trim())
                 }}
-                className="bg-[#2C2C2C] text-white rounded-xl px-4 font-extrabold text-[14px]"
+                className="bg-anthracite text-white rounded-xl px-4 font-extrabold text-[14px]"
               >
                 +
               </button>
@@ -1853,14 +1853,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {unitPickerItemId && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setUnitPickerItemId(null)}>
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
-            <div className="font-black text-[#2C2C2C] text-lg mb-4">Einheit ändern</div>
+            <div className="font-black text-anthracite text-lg mb-4">Einheit ändern</div>
             <div className="grid grid-cols-3 gap-2">
               {UNITS.map(u => (
                 <button key={u} onClick={() => quickUnitChange(unitPickerItemId, u)}
                   className={`py-3 rounded-2xl border-2 font-black text-sm transition-colors ${
                     displayItems.find(i => i.id === unitPickerItemId)?.unit === u
-                      ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]'
-                      : 'border-[#2C2C2C]/8 text-[#2C2C2C]/60'
+                      ? 'border-yellow bg-yellow/10 text-anthracite'
+                      : 'border-anthracite/8 text-anthracite/60'
                   }`}>
                   {u}
                 </button>
@@ -1874,7 +1874,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {showStatusPicker && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowStatusPicker(false)}>
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
-            <div className="font-black text-[#2C2C2C] text-lg mb-4">Status ändern</div>
+            <div className="font-black text-anthracite text-lg mb-4">Status ändern</div>
             <div className="flex flex-col gap-2">
               {/* DC-003: vorher fix ['bereit','sent','accepted','rejected','archived']
                   ohne Weg zurück zu 'draft' — waehlbareStatus() bietet den, aber
@@ -1883,17 +1883,17 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 const cfg = getStatusInfo(key)
                 return (
                   <button key={key} onClick={() => changeStatus(key)}
-                    className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 ${currentStatus === key ? 'border-[#F5C400] bg-[#F5C400]/10' : 'border-[#2C2C2C]/8'}`}>
+                    className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 border-2 ${currentStatus === key ? 'border-yellow bg-yellow/10' : 'border-anthracite/8'}`}>
                     <span className="flex items-center gap-2.5">
                       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: cfg.dot }} />
                       <span className="flex flex-col items-start">
-                        <span className="font-bold text-[#2C2C2C]">{cfg.label}</span>
+                        <span className="font-bold text-anthracite">{cfg.label}</span>
                         {key === 'draft' && (
-                          <span className="text-[11px] font-semibold text-[#2C2C2C]/40">zurück zum Bearbeiten</span>
+                          <span className="text-[11px] font-semibold text-anthracite/40">zurück zum Bearbeiten</span>
                         )}
                       </span>
                     </span>
-                    {currentStatus === key && <Check size={18} color="#2C2C2C" strokeWidth={3} />}
+                    {currentStatus === key && <Check size={18} color="var(--color-anthracite)" strokeWidth={3} />}
                   </button>
                 )
               })}
@@ -1906,20 +1906,20 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {activeHints.length > 0 && activeTab === 'positionen' && (
         <div className="px-5 pt-4 flex flex-col gap-2">
           {activeHints.map(hint => (
-            <div key={hint.empfehlung_title} className="flex items-center gap-3 bg-[#F5C400]/15 border border-[#F5C400]/40 rounded-2xl px-4 py-3">
+            <div key={hint.empfehlung_title} className="flex items-center gap-3 bg-yellow/15 border border-yellow/40 rounded-2xl px-4 py-3">
               <span className="text-lg">💡</span>
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-bold text-[#2C2C2C]">{hint.empfehlung_title} fehlt</span>
+                <span className="text-sm font-bold text-anthracite">{hint.empfehlung_title} fehlt</span>
                 {hint.empfehlung_unit_price > 0 && (
-                  <span className="text-xs text-[#2C2C2C]/50 font-semibold ml-2">{fmt(hint.empfehlung_unit_price)}/{hint.empfehlung_unit}</span>
+                  <span className="text-xs text-anthracite/50 font-semibold ml-2">{fmt(hint.empfehlung_unit_price)}/{hint.empfehlung_unit}</span>
                 )}
               </div>
               <button onClick={() => addHintItem(hint)}
-                className="bg-[#F5C400] text-[#2C2C2C] font-black text-xs px-3 py-1.5 rounded-xl shrink-0">
+                className="bg-yellow text-anthracite font-black text-xs px-3 py-1.5 rounded-xl shrink-0">
                 + Hinzufügen
               </button>
               <button onClick={() => setDismissedHints(prev => new Set([...prev, hint.empfehlung_title]))}
-                className="text-[#2C2C2C]/30 shrink-0">
+                className="text-anthracite/30 shrink-0">
                 <X size={16} />
               </button>
             </div>
@@ -1937,7 +1937,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             {sentVia.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {sentVia.map(via => (
-                  <span key={via} className="text-xs font-bold bg-white border border-[#2C2C2C]/10 text-[#2C2C2C]/60 px-2.5 py-1 rounded-full">
+                  <span key={via} className="text-xs font-bold bg-white border border-anthracite/10 text-anthracite/60 px-2.5 py-1 rounded-full">
                     {VIA_LABELS[via] ?? via}
                   </span>
                 ))}
@@ -1945,10 +1945,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             )}
 
             {/* Kunde */}
-            <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+            <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
               <div className="flex items-center justify-between mb-2">
-                <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide">Kunde</div>
-                <button onClick={() => setShowKundenSuche(v => !v)} className={`text-xs font-bold px-2.5 py-1 rounded-full transition-colors ${currentCustomer ? 'text-[#F5C400]' : 'bg-[#F5C400] text-[#2C2C2C] hover:bg-[#D4A800]'}`}>
+                <div className="text-xs font-bold text-anthracite/40 uppercase tracking-wide">Kunde</div>
+                <button onClick={() => setShowKundenSuche(v => !v)} className={`text-xs font-bold px-2.5 py-1 rounded-full transition-colors ${currentCustomer ? 'text-yellow' : 'bg-yellow text-anthracite hover:bg-[#D4A800]'}`}>
                   {currentCustomer ? 'Ändern' : '+ Kunde'}
                 </button>
               </div>
@@ -1960,18 +1960,18 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     value={kundenSucheQuery}
                     onChange={e => handleKundenSuche(e.target.value)}
                     placeholder="Kundenname suchen..."
-                    className="w-full border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#F5C400]"
+                    className="w-full border border-anthracite/10 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-yellow"
                   />
                   {(kundenListe.length > 0 || lexwareKontakte.length > 0) && (
-                    <div className="mt-1 border border-[#2C2C2C]/10 rounded-xl overflow-hidden">
+                    <div className="mt-1 border border-anthracite/10 rounded-xl overflow-hidden">
                       {kundenListe.length > 0 && (
                         <>
-                          <div className="px-3 py-1.5 text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-wide bg-[#F7F7F5]">Meine Kunden</div>
+                          <div className="px-3 py-1.5 text-[10px] font-black text-anthracite/30 uppercase tracking-wide bg-bg">Meine Kunden</div>
                           {kundenListe.map(k => (
                             <button key={k.id} onClick={() => handleKundeZuweisen(k)}
-                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-[#F7F7F5] border-b border-[#2C2C2C]/5 last:border-0">
-                              <div className="font-bold text-[#2C2C2C]">{k.name}</div>
-                              {k.address && <div className="text-xs text-[#2C2C2C]/40 truncate">{k.address.split('\n')[0]}</div>}
+                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-bg border-b border-anthracite/5 last:border-0">
+                              <div className="font-bold text-anthracite">{k.name}</div>
+                              {k.address && <div className="text-xs text-anthracite/40 truncate">{k.address.split('\n')[0]}</div>}
                             </button>
                           ))}
                         </>
@@ -1981,9 +1981,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           <div className="px-3 py-1.5 text-[10px] font-black text-[#003DA5]/60 uppercase tracking-wide bg-[#003DA5]/5">Lexware Office</div>
                           {lexwareKontakte.map(k => (
                             <button key={k.id} onClick={() => handleLexwareKontaktImportieren(k)}
-                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-[#F7F7F5] border-b border-[#2C2C2C]/5 last:border-0">
-                              <div className="font-bold text-[#2C2C2C]">{k.name}</div>
-                              {k.address && <div className="text-xs text-[#2C2C2C]/40 truncate">{k.address.split('\n')[0]}</div>}
+                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-bg border-b border-anthracite/5 last:border-0">
+                              <div className="font-bold text-anthracite">{k.name}</div>
+                              {k.address && <div className="text-xs text-anthracite/40 truncate">{k.address.split('\n')[0]}</div>}
                               <div className="text-[10px] text-[#003DA5]/60 font-bold mt-0.5">Importieren & zuweisen</div>
                             </button>
                           ))}
@@ -2000,11 +2000,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               )}
               {currentCustomer ? (
                 <>
-                  <div className="font-black text-[#2C2C2C]">{currentCustomer.name}</div>
-                  {currentCustomer.address && <div className="text-sm text-[#2C2C2C]/60 font-semibold">{currentCustomer.address}</div>}
+                  <div className="font-black text-anthracite">{currentCustomer.name}</div>
+                  {currentCustomer.address && <div className="text-sm text-anthracite/60 font-semibold">{currentCustomer.address}</div>}
                   {currentCustomer.phone && (
-                    <a href={`tel:${currentCustomer.phone}`} className="flex items-center gap-2 text-sm text-[#2C2C2C] font-semibold mt-1">
-                      <Phone size={14} className="text-[#F5C400]" />{currentCustomer.phone}
+                    <a href={`tel:${currentCustomer.phone}`} className="flex items-center gap-2 text-sm text-anthracite font-semibold mt-1">
+                      <Phone size={14} className="text-yellow" />{currentCustomer.phone}
                     </a>
                   )}
                   {/* DC-029, korrigiert 2026-09-02 (Sandys Auftrag "IMMER
@@ -2017,29 +2017,29 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     return (
                       <button
                         onClick={() => setShowBaustelleSheet(true)}
-                        className="mt-2 w-full flex items-center gap-1.5 bg-[#F7F7F5] border border-[#2C2C2C]/10 rounded-xl px-3 py-2 text-xs font-bold text-[#2C2C2C] text-left"
+                        className="mt-2 w-full flex items-center gap-1.5 bg-bg border border-anthracite/10 rounded-xl px-3 py-2 text-xs font-bold text-anthracite text-left"
                       >
                         <span>🏗️</span>
                         <span>{aktuelle?.name ?? 'Baustelle wählen'}</span>
                         {aktuelle && (
-                          <span className="text-[#2C2C2C]/40 font-semibold">
+                          <span className="text-anthracite/40 font-semibold">
                             · {aktuelle.angebote_anzahl} {aktuelle.angebote_anzahl === 1 ? 'Angebot' : 'Angebote'}
                           </span>
                         )}
-                        <span className="ml-auto text-[#2C2C2C]/30">›</span>
+                        <span className="ml-auto text-anthracite/30">›</span>
                       </button>
                     )
                   })()}
                 </>
               ) : (
-                <div className="text-sm text-[#2C2C2C]/30 font-semibold">Kein Kunde zugewiesen</div>
+                <div className="text-sm text-anthracite/30 font-semibold">Kein Kunde zugewiesen</div>
               )}
             </div>
 
             {/* Positionen */}
-            <div className="bg-white rounded-2xl border border-[#2C2C2C]/5" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl border border-anthracite/5" onClick={e => e.stopPropagation()}>
               <div className="px-4 pt-4 pb-2">
-                <div className="font-black text-[#2C2C2C]">Positionen</div>
+                <div className="font-black text-anthracite">Positionen</div>
               </div>
 
               {editItems.some(item => !item.price_item_id && item.unit_price <= 0) && (
@@ -2060,24 +2060,24 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
               {/* Action-Row oben — immer sichtbar */}
               {editMode && (
-                <div className="border-t border-b border-[#2C2C2C]/5 grid grid-cols-3">
+                <div className="border-t border-b border-anthracite/5 grid grid-cols-3">
                   <Link
                     href={`/angebot/${quote.id}/entwurf`}
-                    className="flex flex-col items-center gap-1 py-3 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors"
+                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-bg transition-colors"
                   >
                     <Mic size={16} strokeWidth={2.5} />
                     <span className="text-[11px] font-black">Aufnahme</span>
                   </Link>
                   <button
                     onClick={addEditItem}
-                    className="flex flex-col items-center gap-1 py-3 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors border-x border-[#2C2C2C]/5"
+                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-bg transition-colors border-x border-anthracite/5"
                   >
                     <Plus size={16} strokeWidth={2.5} />
                     <span className="text-[11px] font-black">Position</span>
                   </button>
                   <button
                     onClick={() => setShowRaumPicker(true)}
-                    className="flex flex-col items-center gap-1 py-3 text-[#2C2C2C]/40 hover:text-[#2C2C2C]/70 hover:bg-[#F7F7F5] transition-colors"
+                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-bg transition-colors"
                   >
                     <span className="text-[15px] leading-none">🏠</span>
                     <span className="text-[11px] font-black">Raum</span>
@@ -2110,12 +2110,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                         )
                         return (
                         <div key={raum.raumName}>
-                          <div className={`border-t border-[#2C2C2C]/5 px-4 py-2.5 flex items-center justify-between ${hatMehrereRaeume ? 'bg-[#F7F7F5]' : 'bg-[#F5C400]/8'}`}>
+                          <div className={`border-t border-anthracite/5 px-4 py-2.5 flex items-center justify-between ${hatMehrereRaeume ? 'bg-bg' : 'bg-yellow/8'}`}>
                             <div className="flex items-center gap-1.5">
                               <span>{raum.emoji}</span>
-                              <span className={`font-black uppercase tracking-widest ${hatMehrereRaeume ? 'text-[10px] text-[#2C2C2C]/50' : 'text-xs text-[#2C2C2C]'}`}>{raum.raumName}</span>
+                              <span className={`font-black uppercase tracking-widest ${hatMehrereRaeume ? 'text-[10px] text-anthracite/50' : 'text-xs text-anthracite'}`}>{raum.raumName}</span>
                             </div>
-                            {hatMehrereRaeume && <span className="text-[11px] font-black text-[#2C2C2C]/40">{fmt(raum.summe)}</span>}
+                            {hatMehrereRaeume && <span className="text-[11px] font-black text-anthracite/40">{fmt(raum.summe)}</span>}
                           </div>
                           <RaumDimensionenZeile
                             raumName={raum.raumName}
@@ -2133,8 +2133,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                       })}
                       {allgemein.length > 0 && (
                         <div>
-                          <div className="border-t border-[#2C2C2C]/5 px-4 py-2 bg-[#F7F7F5]">
-                            <span className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">📋 Allgemein</span>
+                          <div className="border-t border-anthracite/5 px-4 py-2 bg-bg">
+                            <span className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest">📋 Allgemein</span>
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
@@ -2149,16 +2149,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 const gruppen = gruppiereNachStruktur(displayItems, (optStruktur || company?.angebot_struktur || 'raeume'))
 
                 const renderItem = (title: string, item: EditItem) => (
-                  <div key={item.id} className="border-t border-[#2C2C2C]/5 px-4 py-3">
+                  <div key={item.id} className="border-t border-anthracite/5 px-4 py-3">
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="font-bold text-[#2C2C2C] text-sm">{title}</div>
-                        {item.description && <div className="text-xs text-[#2C2C2C]/50 font-semibold mt-0.5">{item.description}</div>}
-                        <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-1 flex items-center gap-1 flex-wrap">
+                        <div className="font-bold text-anthracite text-sm">{title}</div>
+                        {item.description && <div className="text-xs text-anthracite/50 font-semibold mt-0.5">{item.description}</div>}
+                        <div className="text-xs text-anthracite/40 font-semibold mt-1 flex items-center gap-1 flex-wrap">
                           <span>{item.quantity}</span>
                           <button
                             onClick={() => setUnitPickerItemId(item.id)}
-                            className="bg-[#2C2C2C]/6 hover:bg-[#F5C400]/20 text-[#2C2C2C]/60 font-black text-[10px] px-1.5 py-0.5 rounded-md transition-colors"
+                            className="bg-anthracite/6 hover:bg-yellow/20 text-anthracite/60 font-black text-[10px] px-1.5 py-0.5 rounded-md transition-colors"
                           >
                             {item.unit}
                           </button>
@@ -2167,14 +2167,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                             <button
                               onClick={() => setInfoItemId(item.id)}
                               title="Rechenweg anzeigen"
-                              className="ml-0.5 w-4 h-4 rounded-full bg-[#2C2C2C]/8 hover:bg-[#F5C400]/40 text-[#2C2C2C]/60 font-black text-[10px] leading-none flex items-center justify-center transition-colors"
+                              className="ml-0.5 w-4 h-4 rounded-full bg-anthracite/8 hover:bg-yellow/40 text-anthracite/60 font-black text-[10px] leading-none flex items-center justify-center transition-colors"
                             >
                               i
                             </button>
                           )}
                         </div>
                       </div>
-                      <div className="font-black text-[#2C2C2C] shrink-0">{fmt(item.total_price)}</div>
+                      <div className="font-black text-anthracite shrink-0">{fmt(item.total_price)}</div>
                     </div>
                   </div>
                 )
@@ -2190,19 +2190,19 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     {raeume.map(raum => (
                       <div key={raum.raumName}>
                         {/* Raum-Header */}
-                        <div className={`border-t border-[#2C2C2C]/5 px-4 py-2.5 flex items-center justify-between ${
-                          hatMehrereRaeume ? 'bg-[#F7F7F5]' : 'bg-[#F5C400]/8'
+                        <div className={`border-t border-anthracite/5 px-4 py-2.5 flex items-center justify-between ${
+                          hatMehrereRaeume ? 'bg-bg' : 'bg-yellow/8'
                         }`}>
                           <div className="flex items-center gap-1.5">
                             <span>{raum.emoji}</span>
                             <span className={`font-black uppercase tracking-widest ${
                               hatMehrereRaeume
-                                ? 'text-[10px] text-[#2C2C2C]/50'
-                                : 'text-xs text-[#2C2C2C]'
+                                ? 'text-[10px] text-anthracite/50'
+                                : 'text-xs text-anthracite'
                             }`}>{raum.raumName}</span>
                           </div>
                           {hatMehrereRaeume && (
-                            <span className="text-[11px] font-black text-[#2C2C2C]/40">{fmt(raum.summe)}</span>
+                            <span className="text-[11px] font-black text-anthracite/40">{fmt(raum.summe)}</span>
                           )}
                         </div>
 
@@ -2222,9 +2222,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
                         {/* Zwischensumme je Raum */}
                         {hatMehrereRaeume && (
-                          <div className="border-t border-dashed border-[#2C2C2C]/8 px-4 py-2 flex justify-between">
-                            <span className="text-xs text-[#2C2C2C]/40 font-semibold">Summe {raum.raumName}</span>
-                            <span className="text-xs font-black text-[#2C2C2C]/60">{fmt(raum.summe)}</span>
+                          <div className="border-t border-dashed border-anthracite/8 px-4 py-2 flex justify-between">
+                            <span className="text-xs text-anthracite/40 font-semibold">Summe {raum.raumName}</span>
+                            <span className="text-xs font-black text-anthracite/60">{fmt(raum.summe)}</span>
                           </div>
                         )}
                       </div>
@@ -2233,8 +2233,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     {/* Allgemeine Positionen ohne Raum */}
                     {allgemein.length > 0 && (
                       <div>
-                        <div className="border-t border-[#2C2C2C]/5 px-4 py-2 bg-[#F7F7F5]">
-                          <span className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest">📋 Allgemein</span>
+                        <div className="border-t border-anthracite/5 px-4 py-2 bg-bg">
+                          <span className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest">📋 Allgemein</span>
                         </div>
                         {allgemein.map(gi => {
                           const orig = displayItems.find(i => i.id === gi.id)!
@@ -2250,59 +2250,59 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
             {/* Öffentliche Notizen (erscheinen im PDF) */}
             {!editMode && quote.notes && (
-              <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
-                <div className="text-xs font-bold text-[#2C2C2C]/40 uppercase tracking-wide mb-2">Anmerkungen</div>
-                <div className="text-sm text-[#2C2C2C]/70 font-semibold">{quote.notes}</div>
+              <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+                <div className="text-xs font-bold text-anthracite/40 uppercase tracking-wide mb-2">Anmerkungen</div>
+                <div className="text-sm text-anthracite/70 font-semibold">{quote.notes}</div>
               </div>
             )}
 
             {/* Edit: Rabatt & Zuschläge */}
             {editMode && (
-              <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+              <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
                 <button
                   onClick={() => setShowExtras(v => !v)}
                   className="flex items-center justify-between w-full"
                 >
-                  <div className="flex items-center gap-2 text-sm font-black text-[#2C2C2C]/60">
+                  <div className="flex items-center gap-2 text-sm font-black text-anthracite/60">
                     <MoreHorizontal size={16} />
                     Rabatt & Zuschläge
                   </div>
-                  <ChevronDown size={16} className={`text-[#2C2C2C]/40 transition-transform ${showExtras ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={16} className={`text-anthracite/40 transition-transform ${showExtras ? 'rotate-180' : ''}`} />
                 </button>
 
                 {showExtras && (
                   <div className="mt-3 flex flex-col gap-3">
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <label className="text-xs font-bold text-[#2C2C2C]/40 mb-1 block">Rabatt %</label>
-                        <div className="flex items-center gap-1 bg-[#F7F7F5] rounded-xl px-3 py-2">
-                          <Percent size={14} className="text-[#2C2C2C]/30" />
+                        <label className="text-xs font-bold text-anthracite/40 mb-1 block">Rabatt %</label>
+                        <div className="flex items-center gap-1 bg-bg rounded-xl px-3 py-2">
+                          <Percent size={14} className="text-anthracite/30" />
                           <input type="number" inputMode="decimal" min={0} max={100} value={discountPercent || ''}
                             onChange={e => { setDiscountPercent(Number(e.target.value)); setDiscountAmount(0) }}
-                            placeholder="0" className="flex-1 bg-transparent font-bold text-[#2C2C2C] text-sm focus:outline-none w-full" />
+                            placeholder="0" className="flex-1 bg-transparent font-bold text-anthracite text-sm focus:outline-none w-full" />
                         </div>
                       </div>
                       <div className="flex-1">
-                        <label className="text-xs font-bold text-[#2C2C2C]/40 mb-1 block">oder absolut €</label>
-                        <div className="flex items-center gap-1 bg-[#F7F7F5] rounded-xl px-3 py-2">
-                          <Tag size={14} className="text-[#2C2C2C]/30" />
+                        <label className="text-xs font-bold text-anthracite/40 mb-1 block">oder absolut €</label>
+                        <div className="flex items-center gap-1 bg-bg rounded-xl px-3 py-2">
+                          <Tag size={14} className="text-anthracite/30" />
                           <input type="number" inputMode="decimal" min={0} value={discountAmount || ''}
                             onChange={e => { setDiscountAmount(Number(e.target.value)); setDiscountPercent(0) }}
-                            placeholder="0" className="flex-1 bg-transparent font-bold text-[#2C2C2C] text-sm focus:outline-none w-full" />
+                            placeholder="0" className="flex-1 bg-transparent font-bold text-anthracite text-sm focus:outline-none w-full" />
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-[#2C2C2C]/40 mb-1 block">Zuschlag Bezeichnung</label>
+                      <label className="text-xs font-bold text-anthracite/40 mb-1 block">Zuschlag Bezeichnung</label>
                       <input value={surchargeLabel} onChange={e => setSurchargeLabel(e.target.value)}
-                        className="w-full bg-[#F7F7F5] rounded-xl px-3 py-2 font-bold text-[#2C2C2C] text-sm focus:outline-none mb-2" />
-                      <div className="flex items-center gap-1 bg-[#F7F7F5] rounded-xl px-3 py-2">
-                        <Tag size={14} className="text-[#2C2C2C]/30" />
+                        className="w-full bg-bg rounded-xl px-3 py-2 font-bold text-anthracite text-sm focus:outline-none mb-2" />
+                      <div className="flex items-center gap-1 bg-bg rounded-xl px-3 py-2">
+                        <Tag size={14} className="text-anthracite/30" />
                         <input type="number" inputMode="decimal" min={0} value={surchargeAmount || ''}
                           onChange={e => setSurchargeAmount(Number(e.target.value))}
-                          placeholder="0" className="flex-1 bg-transparent font-bold text-[#2C2C2C] text-sm focus:outline-none w-full" />
-                        <span className="text-xs text-[#2C2C2C]/40 font-bold">€</span>
+                          placeholder="0" className="flex-1 bg-transparent font-bold text-anthracite text-sm focus:outline-none w-full" />
+                        <span className="text-xs text-anthracite/40 font-bold">€</span>
                       </div>
                     </div>
                   </div>
@@ -2316,12 +2316,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           {/* Rechte Spalte: Summen + Aktionen */}
           <div className="flex flex-col gap-3">
             {/* Summenblock */}
-            <div className="bg-[#2C2C2C] rounded-2xl p-4">
+            <div className="bg-anthracite rounded-2xl p-4">
               <div className="flex justify-between text-white/60 font-semibold text-sm mb-1">
                 <span>Nettosumme</span><span>{fmt(baseNet)}</span>
               </div>
               {discountValue > 0 && (
-                <div className="flex justify-between text-[#F5C400] font-semibold text-sm mb-1">
+                <div className="flex justify-between text-yellow font-semibold text-sm mb-1">
                   <span>Rabatt {discountPercent > 0 ? `${discountPercent}%` : ''}</span>
                   <span>−{fmt(discountValue)}</span>
                 </div>
@@ -2383,18 +2383,18 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         <div className="px-5 md:px-8 pt-5 flex flex-col gap-4 pb-10">
 
           {/* Fotos */}
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+          <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <div className="font-black text-[#2C2C2C]">Fotos vom Aufmaß</div>
-                <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">
+                <div className="font-black text-anthracite">Fotos vom Aufmaß</div>
+                <div className="text-xs text-anthracite/40 font-semibold mt-0.5">
                   {photos.length === 0 ? 'Noch keine Fotos' : `${photos.length} Foto${photos.length !== 1 ? 's' : ''}`} · Tippen zum Vergrößern
                 </div>
               </div>
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={photoUploading}
-                className="flex items-center gap-2 bg-[#F5C400] text-[#2C2C2C] font-black text-sm px-4 py-2 rounded-xl disabled:opacity-50"
+                className="flex items-center gap-2 bg-yellow text-anthracite font-black text-sm px-4 py-2 rounded-xl disabled:opacity-50"
               >
                 {photoUploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} strokeWidth={2.5} />}
                 {photoUploading ? 'Lädt...' : 'Foto hinzufügen'}
@@ -2414,7 +2414,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             </div>
 
             {photosLoading && (
-              <div className="flex items-center justify-center py-8 text-[#2C2C2C]/30">
+              <div className="flex items-center justify-center py-8 text-anthracite/30">
                 <Loader2 size={24} className="animate-spin" />
               </div>
             )}
@@ -2422,7 +2422,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             {!photosLoading && photos.length === 0 && (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-[#2C2C2C]/15 rounded-2xl py-10 flex flex-col items-center gap-3 text-[#2C2C2C]/30 hover:border-[#F5C400]/50 transition-colors"
+                className="w-full border-2 border-dashed border-anthracite/15 rounded-2xl py-10 flex flex-col items-center gap-3 text-anthracite/30 hover:border-yellow/50 transition-colors"
               >
                 <ImageIcon size={32} strokeWidth={1.5} />
                 <span className="font-bold text-sm">Fotos vom Aufmaß hinzufügen</span>
@@ -2435,7 +2435,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 {photos.map(photo => (
                   <div
                     key={photo.id}
-                    className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group bg-[#F7F7F5]"
+                    className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group bg-bg"
                     onClick={() => setLightboxPhoto(photo)}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -2445,8 +2445,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                       className="w-full h-full object-cover"
                     />
                     {photo.in_pdf && (
-                      <div className="absolute bottom-1 right-1 bg-[#F5C400] rounded-md px-1.5 py-0.5">
-                        <span className="text-[9px] font-black text-[#2C2C2C]">PDF</span>
+                      <div className="absolute bottom-1 right-1 bg-yellow rounded-md px-1.5 py-0.5">
+                        <span className="text-[9px] font-black text-anthracite">PDF</span>
                       </div>
                     )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
@@ -2454,7 +2454,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 ))}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="aspect-square rounded-xl border-2 border-dashed border-[#2C2C2C]/15 flex items-center justify-center text-[#2C2C2C]/20 hover:border-[#F5C400]/50 transition-colors"
+                  className="aspect-square rounded-xl border-2 border-dashed border-anthracite/15 flex items-center justify-center text-anthracite/20 hover:border-yellow/50 transition-colors"
                 >
                   <Plus size={24} strokeWidth={1.5} />
                 </button>
@@ -2462,7 +2462,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             )}
 
             {photos.some(p => p.in_pdf) && (
-              <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#2C2C2C]/40 bg-[#F7F7F5] rounded-xl px-3 py-2">
+              <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-anthracite/40 bg-bg rounded-xl px-3 py-2">
                 <FileText size={13} />
                 {photos.filter(p => p.in_pdf).length} Foto{photos.filter(p => p.in_pdf).length !== 1 ? 's' : ''} werden ins PDF übernommen
               </div>
@@ -2473,20 +2473,20 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               den Fotos oben: anderer Zweck (privater Vermerk für einen
               selbst, nie fürs PDF/den Kunden gedacht) als die Foto-
               Dokumentation, siehe CoS-021 Punkt 2. */}
-          <div className="bg-white rounded-2xl p-4 border border-[#2C2C2C]/5">
+          <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
             <div className="flex items-center justify-between mb-1">
-              <div className="font-black text-[#2C2C2C]">Interne Notiz</div>
-              <span className="text-xs font-semibold text-[#2C2C2C]/30 bg-[#2C2C2C]/5 px-2.5 py-1 rounded-full">Nicht im PDF</span>
+              <div className="font-black text-anthracite">Interne Notiz</div>
+              <span className="text-xs font-semibold text-anthracite/30 bg-anthracite/5 px-2.5 py-1 rounded-full">Nicht im PDF</span>
             </div>
-            <div className="text-xs text-[#2C2C2C]/40 font-semibold mb-3">Nur für dich — der Kunde sieht das nie.</div>
+            <div className="text-xs text-anthracite/40 font-semibold mb-3">Nur für dich — der Kunde sieht das nie.</div>
             <textarea
               value={internalNotes}
               onChange={e => scheduleAutosaveNotes(e.target.value)}
               placeholder="Aufmaß-Notizen, Besonderheiten, Hinweise für später..."
               rows={5}
-              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C400]/40 resize-none"
+              className="w-full bg-bg rounded-xl px-4 py-3 text-anthracite font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-yellow/40 resize-none"
             />
-            {autosaveLabel && <div className="text-xs text-[#2C2C2C]/30 font-semibold mt-1">{autosaveLabel}</div>}
+            {autosaveLabel && <div className="text-xs text-anthracite/30 font-semibold mt-1">{autosaveLabel}</div>}
           </div>
         </div>
       )}
@@ -2499,8 +2499,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {pendingPhotoFile && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setPendingPhotoFile(null)}>
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-[#2C2C2C]/20" /></div>
-            <div className="font-syne font-black text-[#2C2C2C] text-[18px] mb-4">Foto hinzufügen</div>
+            <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+            <div className="font-syne font-black text-anthracite text-[18px] mb-4">Foto hinzufügen</div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {pendingPhotoPreviewUrl && (
               <img src={pendingPhotoPreviewUrl} alt="" className="w-full max-h-64 object-cover rounded-2xl mb-4" />
@@ -2510,12 +2510,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               value={pendingPhotoCaption}
               onChange={e => setPendingPhotoCaption(e.target.value)}
               placeholder="Beschreibung (optional) — z.B. „Wasserschaden Decke Bad“"
-              className="w-full bg-[#F7F7F5] rounded-xl px-4 py-3 font-semibold text-[14px] text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#F5C400] mb-4"
+              className="w-full bg-bg rounded-xl px-4 py-3 font-semibold text-[14px] text-anthracite focus:outline-none focus:ring-2 focus:ring-yellow mb-4"
             />
             <div className="flex gap-2">
               <button
                 onClick={() => setPendingPhotoFile(null)}
-                className="flex-1 py-3 rounded-xl bg-[#F7F7F5] text-[#2C2C2C]/60 font-semibold text-sm"
+                className="flex-1 py-3 rounded-xl bg-bg text-anthracite/60 font-semibold text-sm"
               >
                 Abbrechen
               </button>
@@ -2526,7 +2526,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   setPendingPhotoFile(null)
                   if (file) handlePhotoUpload(file, caption)
                 }}
-                className="flex-1 py-3 rounded-xl bg-[#2C2C2C] text-white font-black text-sm"
+                className="flex-1 py-3 rounded-xl bg-anthracite text-white font-black text-sm"
               >
                 Hinzufügen
               </button>
@@ -2543,14 +2543,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="flex gap-2">
               <button
                 onClick={() => { setEditMode(false); setEditItems(quote.items); setEditingItemId(null); setHasChanges(false) }}
-                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white text-[#2C2C2C]/60 font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white text-anthracite/60 font-semibold text-sm border border-anthracite/10 shrink-0"
               >
                 Abbrechen
               </button>
               <button
                 onClick={() => saveEdits()}
                 disabled={saving || !hasChanges}
-                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 disabled:opacity-40"
+                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg text-anthracite font-semibold text-sm border border-anthracite/10 disabled:opacity-40"
               >
                 {saving ? <Loader2 size={14} className="animate-spin" /> : null}
                 Speichern
@@ -2559,7 +2559,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 onClick={fertigstellen}
                 disabled={saving || editItems.length === 0 || !currentCustomer}
                 title={editItems.length === 0 ? 'Mindestens eine Position nötig' : !currentCustomer ? 'Bitte zuerst einen Kunden zuweisen' : undefined}
-                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-anthracite text-white font-bold text-sm disabled:opacity-50"
               >
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={15} strokeWidth={2.5} />}
                 Fertigstellen
@@ -2567,7 +2567,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             </div>
             {/* DC-010: Guardrail sichtbar erklären statt nur den Button stumm zu deaktivieren */}
             {!saving && (editItems.length === 0 || !currentCustomer) && (
-              <div className="text-xs text-[#2C2C2C]/40 font-semibold text-center mt-2">
+              <div className="text-xs text-anthracite/40 font-semibold text-center mt-2">
                 {editItems.length === 0
                   ? 'Noch keine Position — füge mindestens eine hinzu, um fertigzustellen.'
                   : 'Noch kein Kunde zugewiesen — weise oben einen Kunden zu, um fertigzustellen.'}
@@ -2580,20 +2580,20 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             {DRAFT_STATUSES.includes(currentStatus) || currentStatus === 'bereit' ? (
               <button
                 onClick={handleEditClick}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10 shrink-0"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg text-anthracite font-semibold text-sm border border-anthracite/10 shrink-0"
               >
                 <Pencil size={14} strokeWidth={2.5} /> Bearbeiten
               </button>
             ) : null}
             <button
               onClick={() => { setVorschauInitialTab('vorschau'); setShowVorschau(true) }}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C] font-semibold text-sm border border-[#2C2C2C]/10"
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg text-anthracite font-semibold text-sm border border-anthracite/10"
             >
               <FileText size={15} strokeWidth={2} /> Vorschau
             </button>
             <button
               onClick={() => { setVorschauInitialTab('senden'); setShowVorschau(true) }}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2C2C2C] text-white font-bold text-sm"
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-anthracite text-white font-bold text-sm"
             >
               <Share2 size={15} strokeWidth={2.5} /> Senden →
             </button>
@@ -2601,7 +2601,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <button
               onClick={() => setShowAktionen(true)}
               title="Weitere Aktionen"
-              className="flex items-center justify-center px-3 py-2.5 rounded-xl bg-[#F7F7F5] text-[#2C2C2C]/60 border border-[#2C2C2C]/10 shrink-0"
+              className="flex items-center justify-center px-3 py-2.5 rounded-xl bg-bg text-anthracite/60 border border-anthracite/10 shrink-0"
             >
               <MoreHorizontal size={16} />
             </button>
@@ -2650,20 +2650,20 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setInfoItemId(null)}>
             <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
               <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="font-black text-[#2C2C2C] text-lg leading-tight">{it.title}</div>
-                <button onClick={() => setInfoItemId(null)} className="text-[#2C2C2C]/40 font-black text-xl leading-none shrink-0">×</button>
+                <div className="font-black text-anthracite text-lg leading-tight">{it.title}</div>
+                <button onClick={() => setInfoItemId(null)} className="text-anthracite/40 font-black text-xl leading-none shrink-0">×</button>
               </div>
-              <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1">🧮 So gerechnet</div>
-              <div className="bg-[#F7F7F5] rounded-2xl p-4 text-sm font-semibold text-[#2C2C2C] leading-relaxed">
+              <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1">🧮 So gerechnet</div>
+              <div className="bg-bg rounded-2xl p-4 text-sm font-semibold text-anthracite leading-relaxed">
                 {it.berechnungsweg || 'Kein Rechenweg hinterlegt.'}
-                <div className="mt-2 pt-2 border-t border-[#2C2C2C]/8 text-[#2C2C2C]/60 font-bold">
+                <div className="mt-2 pt-2 border-t border-anthracite/8 text-anthracite/60 font-bold">
                   = {it.quantity} {it.unit} × {fmt(it.unit_price)} = {fmt(it.total_price)}
                 </div>
               </div>
               {(it.annahmen?.length ?? 0) > 0 && (
                 <>
-                  <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mt-4 mb-1">📌 Annahmen</div>
-                  <ul className="text-sm font-semibold text-[#2C2C2C]/70 list-disc pl-5 space-y-0.5">
+                  <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mt-4 mb-1">📌 Annahmen</div>
+                  <ul className="text-sm font-semibold text-anthracite/70 list-disc pl-5 space-y-0.5">
                     {it.annahmen!.map((a, i) => <li key={i}>{a}</li>)}
                   </ul>
                 </>
@@ -2679,9 +2679,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           icon: React.ReactNode; label: string; onClick?: () => void; href?: string; danger?: boolean
         }) => {
           const cls = `flex items-center gap-3 w-full text-left rounded-xl px-4 py-3.5 font-bold text-sm transition-colors ${
-            danger ? 'text-red-500 hover:bg-red-50' : 'text-[#2C2C2C] hover:bg-[#F7F7F5]'
+            danger ? 'text-red-500 hover:bg-red-50' : 'text-anthracite hover:bg-bg'
           }`
-          const inhalt = <><span className={danger ? 'text-red-400' : 'text-[#2C2C2C]/35'}>{icon}</span>{label}</>
+          const inhalt = <><span className={danger ? 'text-red-400' : 'text-anthracite/35'}>{icon}</span>{label}</>
           return href
             ? <a href={href} target="_blank" className={cls} onClick={() => setShowAktionen(false)}>{inhalt}</a>
             : <button onClick={() => { setShowAktionen(false); onClick?.() }} className={cls}>{inhalt}</button>
@@ -2690,8 +2690,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowAktionen(false)}>
             <div className="bg-white w-full rounded-t-3xl p-4 pb-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between px-2 mb-2">
-                <div className="font-black text-[#2C2C2C] text-lg">Aktionen</div>
-                <button onClick={() => setShowAktionen(false)} className="text-[#2C2C2C]/40 font-black text-xl leading-none">×</button>
+                <div className="font-black text-anthracite text-lg">Aktionen</div>
+                <button onClick={() => setShowAktionen(false)} className="text-anthracite/40 font-black text-xl leading-none">×</button>
               </div>
 
               {/* Sandy, 2026-08-25: Der "Aufnahme"-Link (Sprache/Foto/Notiz vom
@@ -2721,12 +2721,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               {activeIntegrations.length > 0 && (
                 <>
                   <div className="border-t border-[#EEEEEE] my-2" />
-                  <div className="text-[10px] font-black text-[#2C2C2C]/30 uppercase tracking-widest px-4 py-1.5">Buchhaltung</div>
+                  <div className="text-[10px] font-black text-anthracite/30 uppercase tracking-widest px-4 py-1.5">Buchhaltung</div>
                   {activeIntegrations.map(int => (
                     <button key={int.id} onClick={() => { setShowAktionen(false); handleExport(int.id, int.label) }}
                       disabled={exporting === int.id}
-                      className="flex items-center gap-3 w-full text-left rounded-xl px-4 py-3.5 font-bold text-sm text-[#2C2C2C] hover:bg-[#F7F7F5] disabled:opacity-50">
-                      <span className="font-black text-[#2C2C2C]/35 text-xs w-[17px] text-center">{int.short}</span>
+                      className="flex items-center gap-3 w-full text-left rounded-xl px-4 py-3.5 font-bold text-sm text-anthracite hover:bg-bg disabled:opacity-50">
+                      <span className="font-black text-anthracite/35 text-xs w-[17px] text-center">{int.short}</span>
                       {exporting === int.id ? 'Übertrage…' : `Zu ${int.label} übertragen`}
                     </button>
                   ))}
@@ -2745,56 +2745,56 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setShowOptionen(false)}>
           <div className="bg-white w-full rounded-t-3xl p-5 max-h-[88vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between gap-3 mb-1">
-              <div className="font-black text-[#2C2C2C] text-lg">Einstellungen für dieses Angebot</div>
-              <button onClick={() => setShowOptionen(false)} className="text-[#2C2C2C]/40 font-black text-xl leading-none shrink-0">×</button>
+              <div className="font-black text-anthracite text-lg">Einstellungen für dieses Angebot</div>
+              <button onClick={() => setShowOptionen(false)} className="text-anthracite/40 font-black text-xl leading-none shrink-0">×</button>
             </div>
-            <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-4">
+            <p className="text-xs text-anthracite/40 font-semibold mb-4">
               Leer = aus den allgemeinen Einstellungen übernehmen. Gilt nur für dieses Angebot.
             </p>
 
             {/* Dokumenttyp */}
-            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Dokumenttyp</div>
+            <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Dokumenttyp</div>
             <div className="flex gap-2 mb-4">
               {([['angebot', 'Angebot'], ['kostenvoranschlag', 'Kostenvoranschlag']] as const).map(([v, l]) => (
                 <button key={v} onClick={() => setOptDokumentTyp(v)}
                   className={`flex-1 py-2.5 rounded-xl border-2 font-black text-xs transition-colors ${
-                    optDokumentTyp === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                    optDokumentTyp === v ? 'border-yellow bg-yellow/10 text-anthracite' : 'border-anthracite/10 bg-bg text-anthracite/50'
                   }`}>{l}</button>
               ))}
             </div>
             {optDokumentTyp === 'kostenvoranschlag' && (
-              <p className="text-xs text-[#2C2C2C]/40 font-semibold -mt-3 mb-4">
+              <p className="text-xs text-anthracite/40 font-semibold -mt-3 mb-4">
                 Unverbindlich — wesentliche Überschreitungen musst du vorab anzeigen (§ 650 BGB). Steht dann auch im PDF.
               </p>
             )}
 
             {/* Gliederung */}
-            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Gliederung</div>
+            <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Gliederung</div>
             <div className="flex flex-wrap gap-2 mb-4">
               {([['', 'Wie eingestellt'], ['raeume', '🏠 Räume'], ['arbeitsablauf', '🧹 Ablauf'], ['gewerk', '🎨 Gewerk']] as const).map(([v, l]) => (
                 <button key={v} onClick={() => setOptStruktur(v as '')}
                   className={`px-3 py-2 rounded-xl border-2 font-black text-xs transition-colors ${
-                    optStruktur === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                    optStruktur === v ? 'border-yellow bg-yellow/10 text-anthracite' : 'border-anthracite/10 bg-bg text-anthracite/50'
                   }`}>{l}</button>
               ))}
             </div>
 
             {/* Kopf-/Fußtext */}
-            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Kopftext (Anschreiben)</div>
+            <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Kopftext (Anschreiben)</div>
             <textarea value={optKopftext} onChange={e => setOptKopftext(e.target.value)} rows={2}
               placeholder="Leer = „Gerne unterbreiten wir Ihnen folgendes Angebot:“"
-              className="w-full text-xs font-semibold text-[#2C2C2C]/70 bg-[#F7F7F5] rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-1 focus:ring-[#F5C400] resize-y" />
-            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Fußtext (Schlusstext)</div>
+              className="w-full text-xs font-semibold text-anthracite/70 bg-bg rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-1 focus:ring-yellow resize-y" />
+            <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Fußtext (Schlusstext)</div>
             <textarea value={optFusstext} onChange={e => setOptFusstext(e.target.value)} rows={2}
               placeholder="Leer = Standard-Schlusstext"
-              className="w-full text-xs font-semibold text-[#2C2C2C]/70 bg-[#F7F7F5] rounded-xl px-3 py-2 mb-4 focus:outline-none focus:ring-1 focus:ring-[#F5C400] resize-y" />
+              className="w-full text-xs font-semibold text-anthracite/70 bg-bg rounded-xl px-3 py-2 mb-4 focus:outline-none focus:ring-1 focus:ring-yellow resize-y" />
 
             {/* Briefpapier */}
             {briefpapiere.length > 0 && (
               <>
-                <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Briefpapier</div>
+                <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Briefpapier</div>
                 <select value={optBriefpapierId} onChange={e => setOptBriefpapierId(e.target.value)}
-                  className="w-full text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 mb-4 focus:outline-none">
+                  className="w-full text-sm font-bold text-anthracite bg-bg rounded-xl px-3 py-2.5 mb-4 focus:outline-none">
                   <option value="">Standard</option>
                   {briefpapiere.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                 </select>
@@ -2804,59 +2804,59 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             {/* Gültigkeit + Zahlungsziel */}
             <div className="flex gap-3 mb-4">
               <div className="flex-1">
-                <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Gültig bis</div>
+                <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Gültig bis</div>
                 <input type="date" value={optGueltigBis} onChange={e => setOptGueltigBis(e.target.value)}
-                  className="w-full text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
+                  className="w-full text-sm font-bold text-anthracite bg-bg rounded-xl px-3 py-2.5 focus:outline-none" />
               </div>
               <div className="flex-1">
-                <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Zahlungsziel (Tage)</div>
+                <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Zahlungsziel (Tage)</div>
                 <input type="number" inputMode="numeric" value={optZahlungsziel} onChange={e => setOptZahlungsziel(e.target.value)}
                   placeholder={String(company?.payment_days ?? 14)}
-                  className="w-full text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
+                  className="w-full text-sm font-bold text-anthracite bg-bg rounded-xl px-3 py-2.5 focus:outline-none" />
               </div>
             </div>
 
             {/* Skonto */}
-            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Skonto</div>
+            <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Skonto</div>
             <div className="flex gap-3 items-center mb-4">
               <input type="number" inputMode="decimal" value={optSkontoProzent} onChange={e => setOptSkontoProzent(e.target.value)}
-                placeholder="z.B. 2" className="w-20 text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
-              <span className="text-xs font-bold text-[#2C2C2C]/50">% bei Zahlung in</span>
+                placeholder="z.B. 2" className="w-20 text-sm font-bold text-anthracite bg-bg rounded-xl px-3 py-2.5 focus:outline-none" />
+              <span className="text-xs font-bold text-anthracite/50">% bei Zahlung in</span>
               <input type="number" inputMode="numeric" value={optSkontoTage} onChange={e => setOptSkontoTage(e.target.value)}
-                placeholder="z.B. 10" className="w-20 text-sm font-bold text-[#2C2C2C] bg-[#F7F7F5] rounded-xl px-3 py-2.5 focus:outline-none" />
-              <span className="text-xs font-bold text-[#2C2C2C]/50">Tagen</span>
+                placeholder="z.B. 10" className="w-20 text-sm font-bold text-anthracite bg-bg rounded-xl px-3 py-2.5 focus:outline-none" />
+              <span className="text-xs font-bold text-anthracite/50">Tagen</span>
             </div>
 
             {/* Preisdarstellung */}
-            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Preisdarstellung</div>
+            <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Preisdarstellung</div>
             <div className="flex gap-2 mb-1">
               {([['', 'Automatisch'], ['brutto', 'Brutto (Endpreise)'], ['netto', 'Netto']] as const).map(([v, l]) => (
                 <button key={v} onClick={() => setOptPreis(v as '')}
                   className={`flex-1 py-2.5 rounded-xl border-2 font-black text-[11px] transition-colors ${
-                    optPreis === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                    optPreis === v ? 'border-yellow bg-yellow/10 text-anthracite' : 'border-anthracite/10 bg-bg text-anthracite/50'
                   }`}>{l}</button>
               ))}
             </div>
-            <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-4">
+            <p className="text-xs text-anthracite/40 font-semibold mb-4">
               Automatisch: Privatkunden sehen Endpreise (brutto), Geschäftskunden netto.
             </p>
 
             {/* Widerrufsbelehrung */}
-            <div className="text-[10px] font-black text-[#2C2C2C]/40 uppercase tracking-widest mb-1.5">Widerrufsbelehrung anhängen</div>
+            <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1.5">Widerrufsbelehrung anhängen</div>
             <div className="flex gap-2 mb-1">
               {([['', 'Automatisch'], ['ja', 'Ja'], ['nein', 'Nein']] as const).map(([v, l]) => (
                 <button key={v} onClick={() => setOptWiderruf(v as '')}
                   className={`flex-1 py-2.5 rounded-xl border-2 font-black text-xs transition-colors ${
-                    optWiderruf === v ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]' : 'border-[#2C2C2C]/10 bg-[#F7F7F5] text-[#2C2C2C]/50'
+                    optWiderruf === v ? 'border-yellow bg-yellow/10 text-anthracite' : 'border-anthracite/10 bg-bg text-anthracite/50'
                   }`}>{l}</button>
               ))}
             </div>
-            <p className="text-xs text-[#2C2C2C]/40 font-semibold mb-5">
+            <p className="text-xs text-anthracite/40 font-semibold mb-5">
               Automatisch: nur bei Privatkunden (Geschäftskunden haben kein Widerrufsrecht).
             </p>
 
             <button onClick={speichereOptionen} disabled={optSaving}
-              className="w-full bg-[#F5C400] text-[#2C2C2C] rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 disabled:opacity-50">
+              className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 disabled:opacity-50">
               {optSaving ? <><Loader2 size={16} className="animate-spin" /> Speichert…</> : <><Check size={16} strokeWidth={3} /> Speichern</>}
             </button>
           </div>
@@ -2880,23 +2880,23 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl" onClick={event => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Fehlenden Preis anlegen</div>
-                <div className="mt-1 text-base font-black text-[#2C2C2C]">{priceItemToAdd.title.replace(/\s+—\s+.+$/, '')}</div>
-                <div className="mt-0.5 text-xs font-semibold text-[#2C2C2C]/50">
+                <div className="text-[10px] font-black uppercase tracking-widest text-anthracite/40">Fehlenden Preis anlegen</div>
+                <div className="mt-1 text-base font-black text-anthracite">{priceItemToAdd.title.replace(/\s+—\s+.+$/, '')}</div>
+                <div className="mt-0.5 text-xs font-semibold text-anthracite/50">
                   Wird in deiner Preisdatenbank gespeichert und sofort in dieses Angebot übernommen.
                 </div>
               </div>
-              <button type="button" onClick={() => setPriceItemToAdd(null)} disabled={addingDatabasePrice} className="p-1 text-[#2C2C2C]/40">
+              <button type="button" onClick={() => setPriceItemToAdd(null)} disabled={addingDatabasePrice} className="p-1 text-anthracite/40">
                 <X size={19} />
               </button>
             </div>
 
             <div className="mt-5 grid grid-cols-[1fr_120px] gap-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Preis</label>
-              <label className="block text-[10px] font-black uppercase tracking-widest text-[#2C2C2C]/40">Einheit</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-anthracite/40">Preis</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-anthracite/40">Einheit</label>
             </div>
             <div className="mt-1.5 grid grid-cols-[1fr_120px] gap-2">
-              <div className="flex items-center rounded-xl border-2 border-[#F5C400] bg-[#F7F7F5] px-3">
+              <div className="flex items-center rounded-xl border-2 border-yellow bg-bg px-3">
               <input
                 autoFocus
                 type="number"
@@ -2907,14 +2907,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 onChange={event => { setNewDatabasePrice(event.target.value); setDatabasePriceError('') }}
                 onKeyDown={event => { if (event.key === 'Enter') void addMissingDatabasePrice() }}
                 placeholder="z. B. 12,50"
-                className="min-w-0 flex-1 bg-transparent py-3 text-lg font-black text-[#2C2C2C] outline-none"
+                className="min-w-0 flex-1 bg-transparent py-3 text-lg font-black text-anthracite outline-none"
               />
-                <span className="text-sm font-black text-[#2C2C2C]/50">€</span>
+                <span className="text-sm font-black text-anthracite/50">€</span>
               </div>
               <select
                 value={newDatabaseUnit}
                 onChange={event => { setNewDatabaseUnit(event.target.value); setDatabasePriceError('') }}
-                className="rounded-xl border-2 border-[#2C2C2C]/10 bg-[#F7F7F5] px-2 text-sm font-black text-[#2C2C2C] outline-none focus:border-[#F5C400]"
+                className="rounded-xl border-2 border-anthracite/10 bg-bg px-2 text-sm font-black text-anthracite outline-none focus:border-yellow"
               >
                 {UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
               </select>
@@ -2925,7 +2925,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               type="button"
               onClick={() => void addMissingDatabasePrice()}
               disabled={addingDatabasePrice}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#F5C400] py-3 font-black text-[#2C2C2C] disabled:opacity-50"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-yellow py-3 font-black text-anthracite disabled:opacity-50"
             >
               {addingDatabasePrice ? <><Loader2 size={17} className="animate-spin" /> Speichert…</> : <><Check size={17} strokeWidth={3} /> Preis anlegen & übernehmen</>}
             </button>
