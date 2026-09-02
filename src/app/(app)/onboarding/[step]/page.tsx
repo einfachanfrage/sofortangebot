@@ -30,10 +30,10 @@ import { OnboardingProgress as ProgressBar } from '@/components/onboarding/Onboa
 // ─── Storage ───────────────────────────────────────────────────────────────
 
 // ─── Shared styles ─────────────────────────────────────────────────────────
-const inputCls = 'w-full bg-white border-2 border-[#2C2C2C]/10 rounded-xl px-4 py-3.5 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400] transition-colors'
-const labelCls = 'block text-[11px] font-extrabold text-[#2C2C2C]/40 mb-1.5 uppercase tracking-widest'
-const btnPrimary = 'w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-lg rounded-2xl py-4 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
-const btnBack = 'flex-1 bg-white border-2 border-[#2C2C2C]/15 text-[#2C2C2C] font-extrabold text-base rounded-xl py-4 active:scale-95 transition-transform'
+const inputCls = 'w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-3.5 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow transition-colors'
+const labelCls = 'block text-[11px] font-extrabold text-anthracite/40 mb-1.5 uppercase tracking-widest'
+const btnPrimary = 'w-full bg-yellow text-anthracite font-extrabold text-lg rounded-2xl py-4 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+const btnBack = 'flex-1 bg-white border-2 border-anthracite/15 text-anthracite font-extrabold text-base rounded-xl py-4 active:scale-95 transition-transform'
 
 // ─── Progress Bar ──────────────────────────────────────────────────────────
 // ─── Accounting label helper ────────────────────────────────────────────────
@@ -271,7 +271,7 @@ export default function OnboardingStep() {
       initial={{ x: 30, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className={`min-h-dvh flex flex-col px-5 pt-10 pb-10 ${darkBg ? 'bg-[#2C2C2C]' : 'bg-[#F7F7F5]'}`}
+      className={`min-h-dvh flex flex-col px-5 pt-10 pb-10 ${darkBg ? 'bg-anthracite' : 'bg-bg'}`}
     >
       {/* Header: logo + progress (steps 2–7) */}
       {step >= 2 && step <= 7 && (
@@ -286,7 +286,7 @@ export default function OnboardingStep() {
                 Speicherlogik. */}
             <button
               onClick={() => { saveState(state); router.push('/dashboard') }}
-              className="text-[#2C2C2C]/40 font-semibold text-[13px] active:opacity-60 transition-opacity"
+              className="text-anthracite/40 font-semibold text-[13px] active:opacity-60 transition-opacity"
             >
               Später fertigstellen
             </button>
@@ -311,7 +311,7 @@ export default function OnboardingStep() {
           </p>
           <button
             onClick={() => goTo(2)}
-            className="w-full max-w-xs bg-[#F5C400] text-[#2C2C2C] font-extrabold text-xl rounded-2xl py-[18px] active:scale-95 transition-transform flex items-center justify-center gap-3"
+            className="w-full max-w-xs bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:scale-95 transition-transform flex items-center justify-center gap-3"
           >
             Einrichten <ArrowRight size={22} strokeWidth={2.5} />
           </button>
@@ -323,10 +323,10 @@ export default function OnboardingStep() {
       {step === 2 && (
         <div className="flex flex-col flex-1">
           <div className="text-[40px] leading-none mb-4">🏗️</div>
-          <h1 className="font-syne font-extrabold text-[#2C2C2C] text-[26px] leading-tight mb-2">
+          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Wie heißt dein Betrieb?
           </h1>
-          <p className="text-[#2C2C2C]/50 font-semibold text-[15px] leading-relaxed mb-6">
+          <p className="text-anthracite/50 font-semibold text-[15px] leading-relaxed mb-6">
             Das erscheint auf jedem Angebot das du rausschickst.
           </p>
 
@@ -369,7 +369,7 @@ export default function OnboardingStep() {
                   />
                 </div>
               </div>
-              <p className="text-[13px] text-[#2C2C2C]/30 font-semibold mt-1.5">
+              <p className="text-[13px] text-anthracite/30 font-semibold mt-1.5">
                 Wird auf dem Angebot als Absender angezeigt.
               </p>
               {addrError && <p className="text-[12px] text-red-500 font-semibold mt-1">Bitte vollständige Adresse eingeben.</p>}
@@ -378,14 +378,14 @@ export default function OnboardingStep() {
             {/* Optional contact */}
             <button
               onClick={() => update({ showContact: !state.showContact })}
-              className="flex items-center gap-2 text-[#2C2C2C]/40 font-semibold text-sm text-left"
+              className="flex items-center gap-2 text-anthracite/40 font-semibold text-sm text-left"
             >
-              <span className="text-[#F5C400] font-extrabold text-base">{state.showContact ? '−' : '+'}</span>
+              <span className="text-yellow font-extrabold text-base">{state.showContact ? '−' : '+'}</span>
               Telefon & E-Mail ergänzen (optional)
             </button>
 
             {state.showContact && (
-              <div className="flex flex-col gap-4 pl-4 border-l-2 border-[#F5C400]/40">
+              <div className="flex flex-col gap-4 pl-4 border-l-2 border-yellow/40">
                 <div>
                   <label className={labelCls}>Telefon</label>
                   <input type="tel" placeholder="+49 30 123456" value={state.phone}
@@ -396,7 +396,7 @@ export default function OnboardingStep() {
                   <input type="email" placeholder="kontakt@meinbetrieb.de" value={state.email}
                     onChange={e => update({ email: e.target.value })} className={inputCls} />
                 </div>
-                <p className="text-[13px] text-[#2C2C2C]/30 font-semibold">Erscheint ebenfalls auf dem Angebot.</p>
+                <p className="text-[13px] text-anthracite/30 font-semibold">Erscheint ebenfalls auf dem Angebot.</p>
               </div>
             )}
           </div>
@@ -421,10 +421,10 @@ export default function OnboardingStep() {
       {step === 3 && (
         <div className="flex flex-col flex-1 min-h-0">
           <div className="text-[40px] leading-none mb-4">🔨</div>
-          <h1 className="font-syne font-extrabold text-[#2C2C2C] text-[26px] leading-tight mb-2">
+          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Was machst du?
           </h1>
-          <p className="text-[#2C2C2C]/50 font-semibold text-[15px] leading-relaxed mb-4">
+          <p className="text-anthracite/50 font-semibold text-[15px] leading-relaxed mb-4">
             Die KI kennt dann die typischen Leistungen und Einheiten für dein Handwerk — und fragt beim Aufmaß genau die richtigen Dinge nach.
           </p>
 
@@ -442,25 +442,25 @@ export default function OnboardingStep() {
                     update({ gewerke: next })
                   }}
                   className={`flex items-center gap-4 w-full rounded-2xl px-4 py-[14px] text-left transition-colors border-2 ${
-                    active ? 'border-[#F5C400] bg-[#F5C400]/5' : 'border-[#2C2C2C]/10 bg-white'
+                    active ? 'border-yellow bg-yellow/5' : 'border-anthracite/10 bg-white'
                   }`}
                 >
                   <span className="text-2xl">{g.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    <div className="font-extrabold text-[#2C2C2C]">{g.name}</div>
-                    <div className="text-xs text-[#2C2C2C]/50 font-semibold">{g.beschreibung}</div>
+                    <div className="font-extrabold text-anthracite">{g.name}</div>
+                    <div className="text-xs text-anthracite/50 font-semibold">{g.beschreibung}</div>
                   </div>
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                    active ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/20'
+                    active ? 'border-yellow bg-yellow' : 'border-anthracite/20'
                   }`}>
-                    {active && <Check size={14} color="#2C2C2C" strokeWidth={3} />}
+                    {active && <Check size={14} color="var(--color-anthracite)" strokeWidth={3} />}
                   </div>
                 </button>
               )
             })}
           </div>
 
-          <p className="text-[13px] text-[#2C2C2C]/25 font-semibold text-center mt-3">
+          <p className="text-[13px] text-anthracite/25 font-semibold text-center mt-3">
             Mehr Gewerke kommen bald — Dachdecker, Schreiner, GaLaBau & mehr.
           </p>
           {gewerkError && <p className="text-[12px] text-red-500 font-semibold text-center mt-1">Bitte mindestens ein Gewerk wählen.</p>}
@@ -484,7 +484,7 @@ export default function OnboardingStep() {
       {step === 4 && (
         <div className="flex flex-col flex-1">
           <div className="text-[40px] leading-none mb-4">💶</div>
-          <h1 className="font-syne font-extrabold text-[#2C2C2C] text-[26px] leading-tight mb-6">
+          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-6">
             Wie stellst du Rechnungen?
           </h1>
 
@@ -499,8 +499,8 @@ export default function OnboardingStep() {
                     onClick={() => update({ vatRate: opt.v })}
                     className={`flex-1 py-[14px] rounded-xl border-2 font-extrabold text-[13px] transition-colors ${
                       state.vatRate === opt.v
-                        ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]'
-                        : 'border-[#2C2C2C]/10 bg-white text-[#2C2C2C]/60'
+                        ? 'border-yellow bg-yellow/10 text-anthracite'
+                        : 'border-anthracite/10 bg-white text-anthracite/60'
                     }`}
                   >
                     {opt.l}
@@ -508,12 +508,12 @@ export default function OnboardingStep() {
                 ))}
               </div>
               {state.vatRate === 0 && (
-                <p className="text-[13px] text-[#2C2C2C]/40 font-semibold mt-2">
+                <p className="text-[13px] text-anthracite/40 font-semibold mt-2">
                   Kein MwSt-Ausweis. Hinweis nach §19 UStG wird automatisch ergänzt.
                 </p>
               )}
               {state.vatRate !== null && state.vatRate > 0 && (
-                <p className="text-[13px] text-[#2C2C2C]/40 font-semibold mt-2">
+                <p className="text-[13px] text-anthracite/40 font-semibold mt-2">
                   {state.vatRate}% MwSt. wird auf Angeboten ausgewiesen.
                 </p>
               )}
@@ -529,15 +529,15 @@ export default function OnboardingStep() {
                     onClick={() => update({ paymentDays: days })}
                     className={`flex-1 py-[14px] rounded-xl border-2 font-extrabold text-sm transition-colors ${
                       state.paymentDays === days
-                        ? 'border-[#F5C400] bg-[#F5C400]/10 text-[#2C2C2C]'
-                        : 'border-[#2C2C2C]/10 bg-white text-[#2C2C2C]/60'
+                        ? 'border-yellow bg-yellow/10 text-anthracite'
+                        : 'border-anthracite/10 bg-white text-anthracite/60'
                     }`}
                   >
                     {days} Tage
                   </button>
                 ))}
               </div>
-              <p className="text-[13px] text-[#2C2C2C]/30 font-semibold mt-2">
+              <p className="text-[13px] text-anthracite/30 font-semibold mt-2">
                 Steht als Zahlungsfrist auf jedem Angebot.
               </p>
             </div>
@@ -552,13 +552,13 @@ export default function OnboardingStep() {
                 onChange={e => update({ agbUrl: e.target.value })}
                 className={inputCls}
               />
-              <p className="text-[13px] text-[#2C2C2C]/30 font-semibold mt-2">
+              <p className="text-[13px] text-anthracite/30 font-semibold mt-2">
                 Wenn hinterlegt, müssen Kunden beim Unterschreiben deinen AGB zustimmen — rechtlich sauberer.
               </p>
             </div>
           </div>
 
-          <p className="text-[13px] text-[#2C2C2C]/20 font-semibold mt-6">
+          <p className="text-[13px] text-anthracite/20 font-semibold mt-6">
             Alles kann später in den Einstellungen geändert werden.
           </p>
 
@@ -579,10 +579,10 @@ export default function OnboardingStep() {
       {step === 5 && (
         <div className="flex flex-col flex-1 min-h-0">
           <div className="text-[40px] leading-none mb-4">💰</div>
-          <h1 className="font-syne font-extrabold text-[#2C2C2C] text-[26px] leading-tight mb-2">
+          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Deine Preise
           </h1>
-          <p className="text-[#2C2C2C]/50 font-semibold text-[15px] leading-relaxed mb-5">
+          <p className="text-anthracite/50 font-semibold text-[15px] leading-relaxed mb-5">
             Die KI rechnet damit, wenn du ein Angebot sprichst. Je genauer deine Preise, desto besser das Ergebnis.
           </p>
 
@@ -591,40 +591,40 @@ export default function OnboardingStep() {
             <div className="flex flex-col gap-3 flex-1">
               <button
                 onClick={() => selectPreisMode('markt')}
-                className="relative bg-white border-l-4 border-l-[#F5C400] border border-[#2C2C2C]/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform shadow-sm"
+                className="relative bg-white border-l-4 border-l-yellow border border-anthracite/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform shadow-sm"
               >
-                <span className="absolute top-3 right-3 bg-[#F5C400] text-[#2C2C2C] text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                <span className="absolute top-3 right-3 bg-yellow text-anthracite text-[10px] font-extrabold px-2 py-0.5 rounded-full">
                   Empfohlen
                 </span>
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-[#F5C400] rounded-xl flex items-center justify-center shrink-0 text-lg">📊</div>
+                  <div className="w-10 h-10 bg-yellow rounded-xl flex items-center justify-center shrink-0 text-lg">📊</div>
                   <div>
-                    <div className="font-extrabold text-[#2C2C2C]">Marktpreise laden</div>
-                    <div className="text-sm text-[#2C2C2C]/50 font-semibold mt-1 leading-relaxed">
+                    <div className="font-extrabold text-anthracite">Marktpreise laden</div>
+                    <div className="text-sm text-anthracite/50 font-semibold mt-1 leading-relaxed">
                       Ich lade dir aktuelle Durchschnittspreise für dein Gewerk. Du kannst sie jederzeit anpassen.
                     </div>
-                    <div className="mt-2 text-xs font-extrabold text-[#F5C400]">Sofort loslegen →</div>
+                    <div className="mt-2 text-xs font-extrabold text-yellow">Sofort loslegen →</div>
                   </div>
                 </div>
               </button>
 
               <button
                 onClick={() => selectPreisMode('manuell')}
-                className="bg-[#F7F7F5] border border-[#2C2C2C]/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
+                className="bg-bg border border-anthracite/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-[#2C2C2C] rounded-xl flex items-center justify-center shrink-0 text-lg">✏️</div>
+                  <div className="w-10 h-10 bg-anthracite rounded-xl flex items-center justify-center shrink-0 text-lg">✏️</div>
                   <div>
-                    <div className="font-extrabold text-[#2C2C2C]">Eigene Preise eingeben</div>
-                    <div className="text-sm text-[#2C2C2C]/50 font-semibold mt-1 leading-relaxed">
+                    <div className="font-extrabold text-anthracite">Eigene Preise eingeben</div>
+                    <div className="text-sm text-anthracite/50 font-semibold mt-1 leading-relaxed">
                       Trag deine echten Stunden- und Einheitspreise ein. Die KI rechnet dann mit deinen Zahlen.
                     </div>
-                    <div className="mt-2 text-xs font-semibold text-[#2C2C2C]/40">~3 Minuten</div>
+                    <div className="mt-2 text-xs font-semibold text-anthracite/40">~3 Minuten</div>
                   </div>
                 </div>
               </button>
 
-              <p className="text-[13px] text-[#2C2C2C]/25 font-semibold text-center">
+              <p className="text-[13px] text-anthracite/25 font-semibold text-center">
                 Kannst du jederzeit in den Einstellungen → Preise anpassen.
               </p>
 
@@ -632,7 +632,7 @@ export default function OnboardingStep() {
                 <button onClick={() => goTo(4)} className={btnBack}>← Zurück</button>
                 <button
                   onClick={() => goTo(6)}
-                  className="flex-[2] py-4 text-[#2C2C2C]/40 font-semibold text-sm text-center"
+                  className="flex-[2] py-4 text-anthracite/40 font-semibold text-sm text-center"
                 >
                   Erstmal überspringen →
                 </button>
@@ -643,11 +643,11 @@ export default function OnboardingStep() {
           {/* Marktpreise bestätigt */}
           {state.preisMode === 'markt' && (
             <div className="flex-1 flex flex-col">
-              <div className="bg-[#F5C400]/10 border-2 border-[#F5C400] rounded-2xl p-5 mb-4">
-                <div className="font-extrabold text-[#2C2C2C] mb-2 flex items-center gap-2">
+              <div className="bg-yellow/10 border-2 border-yellow rounded-2xl p-5 mb-4">
+                <div className="font-extrabold text-anthracite mb-2 flex items-center gap-2">
                   <Check size={18} strokeWidth={3} /> Marktpreise werden geladen
                 </div>
-                <div className="text-sm text-[#2C2C2C]/60 font-semibold leading-relaxed">
+                <div className="text-sm text-anthracite/60 font-semibold leading-relaxed">
                   Basierend auf deinem Gewerk lade ich aktuelle Durchschnittspreise. Du kannst alle Preise jederzeit in den Einstellungen anpassen.
                 </div>
               </div>
@@ -661,33 +661,33 @@ export default function OnboardingStep() {
           {/* Manuell: Preisliste */}
           {state.preisMode === 'manuell' && state.preisEntries.length > 0 && (
             <div className="flex-1 flex flex-col min-h-0">
-              <div className="text-xs font-extrabold text-[#2C2C2C]/40 mb-3 uppercase tracking-wide">
+              <div className="text-xs font-extrabold text-anthracite/40 mb-3 uppercase tracking-wide">
                 {state.preisEntries.length} Positionen — passe an oder lass leer
               </div>
               <div className="flex-1 overflow-y-auto flex flex-col gap-3 pb-4">
                 {Object.entries(grouped).map(([cat, entries]) => (
-                  <div key={cat} className="bg-white rounded-2xl border border-[#2C2C2C]/5 overflow-hidden">
+                  <div key={cat} className="bg-white rounded-2xl border border-anthracite/5 overflow-hidden">
                     <button onClick={() => toggleCat(cat)} className="w-full flex items-center justify-between px-4 py-3">
-                      <span className="font-extrabold text-[#2C2C2C] text-sm">{cat}</span>
+                      <span className="font-extrabold text-anthracite text-sm">{cat}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-[#2C2C2C]/40 font-bold">{entries.length}</span>
+                        <span className="text-xs text-anthracite/40 font-bold">{entries.length}</span>
                         {expandedCats.has(cat) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </div>
                     </button>
                     {expandedCats.has(cat) && (
-                      <div className="border-t border-[#2C2C2C]/5">
+                      <div className="border-t border-anthracite/5">
                         {entries.map(({ e, idx }) => (
-                          <div key={idx} className="flex items-center gap-2 px-4 py-3 border-b border-[#2C2C2C]/5 last:border-0">
+                          <div key={idx} className="flex items-center gap-2 px-4 py-3 border-b border-anthracite/5 last:border-0">
                             <div className="flex-1 min-w-0">
-                              <div className="text-xs text-[#2C2C2C]/60 font-semibold mb-1">{e.title}</div>
+                              <div className="text-xs text-anthracite/60 font-semibold mb-1">{e.title}</div>
                               <div className="flex gap-2 items-center">
                                 <div className="relative max-w-[100px]">
                                   <input type="number" step="0.01" min="0" value={e.unit_price}
                                     onChange={ev => updateEntry(idx, 'unit_price', ev.target.value)}
-                                    className="w-full bg-[#F7F7F5] border-2 border-[#2C2C2C]/10 rounded-lg px-3 py-2 text-[#2C2C2C] font-extrabold text-sm focus:outline-none focus:border-[#F5C400] pr-6" />
-                                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#2C2C2C]/40 font-bold">€</span>
+                                    className="w-full bg-bg border-2 border-anthracite/10 rounded-lg px-3 py-2 text-anthracite font-extrabold text-sm focus:outline-none focus:border-yellow pr-6" />
+                                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-anthracite/40 font-bold">€</span>
                                 </div>
-                                <span className="text-xs text-[#2C2C2C]/50 font-semibold">/ {e.unit}</span>
+                                <span className="text-xs text-anthracite/50 font-semibold">/ {e.unit}</span>
                               </div>
                             </div>
                             <button onClick={() => removeEntry(idx)} className="p-1.5 shrink-0">
@@ -700,7 +700,7 @@ export default function OnboardingStep() {
                   </div>
                 ))}
               </div>
-              <div className="flex gap-3 pt-3 border-t border-[#2C2C2C]/10">
+              <div className="flex gap-3 pt-3 border-t border-anthracite/10">
                 <button onClick={() => update({ preisMode: null })} className={btnBack}>Zurück</button>
                 <button onClick={() => goTo(6)} className={`${btnPrimary} flex-[2]`}>
                   Weiter ({state.preisEntries.filter(e => parseFloat(e.unit_price) > 0).length}) →
@@ -716,10 +716,10 @@ export default function OnboardingStep() {
       {step === 6 && (
         <div className="flex flex-col flex-1">
           <div className="text-[40px] leading-none mb-4">🎨</div>
-          <h1 className="font-syne font-extrabold text-[#2C2C2C] text-[26px] leading-tight mb-2">
+          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Dein Logo
           </h1>
-          <p className="text-[#2C2C2C]/50 font-semibold text-[15px] leading-relaxed mb-6">
+          <p className="text-anthracite/50 font-semibold text-[15px] leading-relaxed mb-6">
             Angebote mit Logo wirken professioneller — und werden häufiger unterschrieben.
           </p>
 
@@ -736,12 +736,12 @@ export default function OnboardingStep() {
               <div className="flex flex-col items-center gap-4 w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={state.logoUrl} alt="Logo"
-                  className="max-h-28 max-w-xs object-contain rounded-2xl border-2 border-[#2C2C2C]/10 p-3 bg-white" />
+                  className="max-h-28 max-w-xs object-contain rounded-2xl border-2 border-anthracite/10 p-3 bg-white" />
                 <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2">
                   <Check size={16} color="#16a34a" strokeWidth={2.5} />
                   <span className="text-green-700 font-extrabold text-sm">Logo hochgeladen</span>
                 </div>
-                <button onClick={() => logoInputRef.current?.click()} className="text-xs font-semibold text-[#2C2C2C]/40">
+                <button onClick={() => logoInputRef.current?.click()} className="text-xs font-semibold text-anthracite/40">
                   Anderes Logo wählen
                 </button>
               </div>
@@ -749,17 +749,17 @@ export default function OnboardingStep() {
               <button
                 onClick={() => logoInputRef.current?.click()}
                 disabled={logoUploading}
-                className="w-full border-2 border-dashed border-[#2C2C2C]/20 rounded-2xl p-10 flex flex-col items-center gap-3 active:scale-[0.98] transition-transform disabled:opacity-50 bg-white"
+                className="w-full border-2 border-dashed border-anthracite/20 rounded-2xl p-10 flex flex-col items-center gap-3 active:scale-[0.98] transition-transform disabled:opacity-50 bg-white"
               >
                 {logoUploading
-                  ? <Loader2 size={32} color="#F5C400" className="animate-spin" />
-                  : <Upload size={32} color="#2C2C2C" strokeWidth={1.5} className="opacity-30" />
+                  ? <Loader2 size={32} color="var(--color-yellow)" className="animate-spin" />
+                  : <Upload size={32} color="var(--color-anthracite)" strokeWidth={1.5} className="opacity-30" />
                 }
-                <div className="font-extrabold text-[#2C2C2C]">
+                <div className="font-extrabold text-anthracite">
                   {logoUploading ? 'Wird hochgeladen...' : 'Logo hochladen'}
                 </div>
                 {!logoUploading && (
-                  <div className="text-sm text-[#2C2C2C]/40 font-semibold">Tippe hier um eine Datei auszuwählen</div>
+                  <div className="text-sm text-anthracite/40 font-semibold">Tippe hier um eine Datei auszuwählen</div>
                 )}
               </button>
             )}
@@ -768,7 +768,7 @@ export default function OnboardingStep() {
                 {logoError}
               </div>
             )}
-            <p className="text-[13px] text-[#2C2C2C]/25 font-semibold text-center">
+            <p className="text-[13px] text-anthracite/25 font-semibold text-center">
               PNG, JPG, WebP oder SVG · max. 5 MB · empfohlen 400×200 px
             </p>
           </div>
@@ -779,7 +779,7 @@ export default function OnboardingStep() {
               {state.logoUrl ? 'Weiter →' : 'Überspringen →'}
             </button>
           </div>
-          <p className="text-[13px] text-[#2C2C2C]/25 font-semibold text-center mt-2">
+          <p className="text-[13px] text-anthracite/25 font-semibold text-center mt-2">
             Kann jederzeit in den Einstellungen hochgeladen werden.
           </p>
         </div>
@@ -789,12 +789,12 @@ export default function OnboardingStep() {
       {step === 7 && (
         <div className="flex flex-col flex-1">
           <div className="text-[40px] leading-none mb-4">📊</div>
-          <h1 className="font-syne font-extrabold text-[#2C2C2C] text-[26px] leading-tight mb-4">
+          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-4">
             Nutzt du eine Buchhaltungssoftware?
           </h1>
 
-          <div className="bg-[#2C2C2C] rounded-2xl p-4 mb-5">
-            <div className="text-[#F5C400] font-extrabold text-sm mb-2">💡 Warum das sinnvoll ist</div>
+          <div className="bg-anthracite rounded-2xl p-4 mb-5">
+            <div className="text-yellow font-extrabold text-sm mb-2">💡 Warum das sinnvoll ist</div>
             <p className="text-white/70 text-sm font-semibold leading-relaxed">
               Wenn du z.B. sevDesk oder Lexoffice nutzt, kannst du fertige Angebote mit einem einzigen Tap direkt rüberschieben — kein Abtippen, kein Copy-Paste, keine Doppeleingabe.
             </p>
@@ -803,8 +803,8 @@ export default function OnboardingStep() {
                 <div className="text-white font-extrabold text-xs mb-1">Ohne Verknüpfung</div>
                 <div className="text-white/40 text-xs font-semibold leading-relaxed">Erstellen → Abtippen → In Software eintragen</div>
               </div>
-              <div className="flex-1 bg-[#F5C400]/10 rounded-xl p-3 border border-[#F5C400]/30">
-                <div className="text-[#F5C400] font-extrabold text-xs mb-1">Mit Verknüpfung ✓</div>
+              <div className="flex-1 bg-yellow/10 rounded-xl p-3 border border-yellow/30">
+                <div className="text-yellow font-extrabold text-xs mb-1">Mit Verknüpfung ✓</div>
                 <div className="text-white/70 text-xs font-semibold leading-relaxed">Erstellen → 1x tippen → Fertig ✓</div>
               </div>
             </div>
@@ -813,7 +813,7 @@ export default function OnboardingStep() {
             </p>
           </div>
 
-          <p className="text-[13px] text-[#2C2C2C]/40 font-semibold mb-3 leading-relaxed">
+          <p className="text-[13px] text-anthracite/40 font-semibold mb-3 leading-relaxed">
             {state.accounting === 'none'
               ? '🧾 Ohne Tool: Rechnungen & Zahlungserinnerungen laufen direkt über sofortangebot.'
               : '🔗 Mit Verknüpfung: Rechnungen & Mahnungen laufen in deiner Buchhaltung — sofortangebot schickt keine doppelten Erinnerungen.'}
@@ -825,27 +825,27 @@ export default function OnboardingStep() {
                 key={opt.value}
                 onClick={() => { update({ accounting: opt.value as AccountingSoftware, apiKey: '' }); setConnStatus('idle') }}
                 className={`flex items-center justify-between w-full bg-white border-2 rounded-2xl px-4 py-3.5 text-left transition-colors ${
-                  state.accounting === opt.value ? 'border-[#F5C400] bg-[#F5C400]/5' : 'border-[#2C2C2C]/10'
+                  state.accounting === opt.value ? 'border-yellow bg-yellow/5' : 'border-anthracite/10'
                 }`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-extrabold text-[#2C2C2C] text-sm">{opt.label}</span>
+                    <span className="font-extrabold text-anthracite text-sm">{opt.label}</span>
                     {opt.tier !== 'manual' && (
                       <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${opt.tier === 'oauth' ? 'bg-green-100 text-green-700' : 'bg-blue-50 text-blue-600'}`}>
                         {TIER_LABEL[opt.tier]}
                       </span>
                     )}
                     {opt.popular && (
-                      <span className="text-[10px] font-extrabold bg-[#F5C400]/30 text-[#2C2C2C] px-1.5 py-0.5 rounded">Beliebt</span>
+                      <span className="text-[10px] font-extrabold bg-yellow/30 text-anthracite px-1.5 py-0.5 rounded">Beliebt</span>
                     )}
                   </div>
-                  <div className="text-xs text-[#2C2C2C]/40 font-semibold mt-0.5">{opt.desc}</div>
+                  <div className="text-xs text-anthracite/40 font-semibold mt-0.5">{opt.desc}</div>
                 </div>
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ml-3 transition-colors ${
-                  state.accounting === opt.value ? 'border-[#F5C400] bg-[#F5C400]' : 'border-[#2C2C2C]/30'
+                  state.accounting === opt.value ? 'border-yellow bg-yellow' : 'border-anthracite/30'
                 }`}>
-                  {state.accounting === opt.value && <div className="w-2 h-2 rounded-full bg-[#2C2C2C]" />}
+                  {state.accounting === opt.value && <div className="w-2 h-2 rounded-full bg-anthracite" />}
                 </div>
               </button>
             ))}
@@ -853,7 +853,7 @@ export default function OnboardingStep() {
 
           {/* API Key */}
           {API_KEY_SOFTWARES.includes(state.accounting) && (
-            <div className="mt-4 bg-white rounded-2xl border border-[#2C2C2C]/10 p-4 shrink-0">
+            <div className="mt-4 bg-white rounded-2xl border border-anthracite/10 p-4 shrink-0">
               <label className={labelCls}>API-Key eingeben</label>
               <input
                 type="text"
@@ -862,14 +862,14 @@ export default function OnboardingStep() {
                 onChange={e => { update({ apiKey: e.target.value }); setConnStatus('idle') }}
                 className={inputCls}
               />
-              <p className="text-[12px] text-[#2C2C2C]/30 font-semibold mt-1.5">
+              <p className="text-[12px] text-anthracite/30 font-semibold mt-1.5">
                 {softwareLabel(state.accounting)} → Einstellungen → API → Key kopieren
               </p>
               {state.apiKey && connStatus !== 'ok' && (
                 <button
                   onClick={testConnection}
                   disabled={connStatus === 'testing'}
-                  className="mt-3 w-full border border-[#2C2C2C]/10 rounded-xl py-2.5 text-sm font-extrabold text-[#2C2C2C] hover:border-[#F5C400] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="mt-3 w-full border border-anthracite/10 rounded-xl py-2.5 text-sm font-extrabold text-anthracite hover:border-yellow transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {connStatus === 'testing' && <Loader2 size={14} className="animate-spin" />}
                   {connStatus === 'idle' && 'Verbindung testen'}
@@ -937,7 +937,7 @@ export default function OnboardingStep() {
           >
             <button
               onClick={() => router.push('/dashboard?welcome=new')}
-              className="w-full bg-[#F5C400] text-[#2C2C2C] font-extrabold text-xl rounded-2xl py-[18px] active:scale-95 transition-transform flex items-center justify-center gap-3"
+              className="w-full bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:scale-95 transition-transform flex items-center justify-center gap-3"
             >
               🎙 Erstes Angebot erstellen →
             </button>
