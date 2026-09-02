@@ -2035,6 +2035,25 @@ Browser durchgeklickt (Produktionsdatenbank hat laut CoS-012 aktuell 0 echte
 Kunden) — bitte bei Gelegenheit mit echten Kundendaten gegenprüfen, sobald
 welche da sind.
 
+**Verhaltensänderung: Baustelle jetzt immer sicht-/wählbar (Product
+Designer, 2026-09-02).** Sandys direkter Auftrag: „es soll IMMER eine
+baustelle ausgewählt werden können. bei JEDE angebot kunde+baustelle." Damit
+gibt sie das ursprüngliche DC-029-Prinzip „unsichtbar, bis es gebraucht
+wird" bewusst auf — bisher erschienen Baustellen-Zeile (Editor) und
+Gruppierung (Kunde-Seite) erst ab der zweiten Baustelle eines Kunden, jetzt
+schon ab der ersten (der automatischen Erstbaustelle). Umgesetzt in
+`AngebotDetail.tsx` und `kunden/[id]/page.tsx`, Commit `2a9d6d3`.
+
+Bewusst NICHT geändert: der Aufnahme-Start bleibt unblockiert, es wird
+weiterhin automatisch die Erstbaustelle gesetzt statt den Nutzer vorher zu
+fragen — Sandys Wortlaut „ausgewählt werden **können**" lese ich als
+„immer sichtbar/erreichbar", nicht als erzwungene Abfrage vor dem
+Einsprechen. Falls das nicht ihre Absicht war, bitte kurz Bescheid geben,
+dann drehe ich das um.
+
+Live-Nachtest gilt jetzt für beide Zustände: mit nur einer Baustelle (neuer
+Normalfall, jetzt sichtbar) und mit mehreren (Clemens-Fall, wie oben).
+
 ---
 
 ## DC-030 — Wie zeigt die Karte „vorläufig" vs. „bestätigt", sobald CoS-002 live ist?
