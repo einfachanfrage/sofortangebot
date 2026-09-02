@@ -1028,4 +1028,57 @@ antworte hier und in der Vorfallsdokumentation.
 
 ---
 
+## Klarstellung von Sandy (2026-09-02) — es gibt keine echten Nutzer
+
+Sandy hat auf meine Rückfrage aus Abschnitt 4 der Antwort von heute klar
+geantwortet: **„Lisa Schein Malerbetrieb" ist ebenfalls ihr eigenes Konto. Es
+gibt derzeit keinen einzigen echten Nutzer**, sämtliche jemals in der
+Produktionsdatenbank angelegten Konten gehören ihr.
+
+**Damit sind zwei Punkte erledigt:**
+
+1. **Die AGB-Änderung braucht keine Änderungsmitteilung.** Sandys ursprüngliche
+   Begründung war richtig, meine Rückfrage war es trotzdem — sie kam aus dem
+   Widerspruch zur Platform-Notiz, nicht aus Zweifeln an ihrer Aussage. AGB
+   § 11.1 setzt einen Vertragspartner voraus, den es nicht gibt. Nichts zu tun.
+2. **CC-01 ist ohne offenen Rest abgeschlossen.** Die Nachfrage, ob die
+   Testdiktate echte Namen enthielten, erübrigt sich: Wenn alle Konten Sandy
+   gehören, ist der Kreis betroffener Personen abschließend bestimmt.
+   `legal-004-vorfallsdokumentation-cc01.md` ist entsprechend aktualisiert —
+   Status jetzt „abgeschlossen, keine offenen Punkte", Abschnitt 7 umgeschrieben.
+
+**Woher der Widerspruch kam, damit er nicht wiederkehrt.** Die Platform-Notiz
+bezeichnet dieses Konto als „die einzige echte dritte Partei in der Datenbank".
+Das ist aus Sicht der Datenbank auch nachvollziehbar — von dort aus sieht ein
+Konto mit fremdem Firmennamen und eigener Mailadresse wie ein externer Nutzer
+aus. Es ist nur nicht richtig. Ich habe es in der Platform-Notiz richtiggestellt,
+damit die Aussage nicht später als Beleg zitiert wird.
+
+**Was ich daraus mitnehme:** Ich habe aus zwei Dokumenten einen Widerspruch
+gebaut, den es in der Sache nicht gab — die Datenbank kann Sandys Testkonten
+nicht von echten Nutzern unterscheiden, und niemand hatte Anlass, das
+aufzuschreiben. Solche Fragen gehen künftig als kurze Rückfrage raus, nicht als
+Widerspruchsbefund in einem Bericht.
+
+### Der Punkt, der dadurch wichtiger wird statt kleiner
+
+Es gibt derzeit keine echten Nutzer — das ist der Grund, warum eine ganze Reihe
+von Pflichten gerade nicht greift. **Mit dem ersten echten Nutzer schalten sie
+gleichzeitig scharf:**
+
+| Ab dem ersten echten Nutzer | Was dann gilt |
+|---|---|
+| **AGB-Änderungen** | § 11.1: 30 Tage Ankündigung per E-Mail, mit Hinweis auf das Widerspruchsrecht (§ 11.2) |
+| **Verarbeitungsverzeichnis** (Art. 30) | Muss geführt sein — rückwirkend zu schreiben ist deutlich mühsamer |
+| **Betroffenenrechte** | 30-Tage-Frist, und Anfragen können auch von Endkunden der Handwerker kommen, für die wir Auftragsverarbeiter sind (CC-05) |
+| **Vorfallsmeldung** | Der nächste Vorfall wie der vom August wäre nicht mehr folgenlos: fremde Verantwortliche, Art. 33 Abs. 2, echte Fristen |
+| **Verbraucherschutz** | Falls die Unternehmer-Prüfung bei der Registrierung bis dahin nicht greift (LR-05) |
+
+Das ist kein neuer Befund, sondern die Einordnung der bekannten: **Gate 1 ist
+nicht „bevor es losgeht", sondern genau dieser Moment.** Die Liste oben ist der
+Grund, warum ich CC-07 (Verzeichnis und Schwellwertanalyse) vorziehe — sie
+sollte fertig sein, bevor der erste echte Datensatz entsteht, nicht danach.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

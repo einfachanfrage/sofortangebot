@@ -137,7 +137,23 @@ Testkonten echte Namen realer Personen enthielten oder erfundene Kundendaten).
 Am Ergebnis ändert das nichts; es ersetzt in Abschnitt 4 nur eine Annahme durch
 eine Feststellung.
 
-### Ein Nebenbefund aus deiner Notiz, der woanders hingehört
+### Richtigstellung zu „die einzige echte dritte Partei" (2026-09-02, nach Sandys Klarstellung)
+
+**Bitte diesen einen Punkt deiner Notiz nicht weiterverwenden:** „Lisa Schein
+Malerbetrieb" ist **kein** externer Nutzer, sondern ebenfalls ein Konto von
+Sandy. Sie hat das am 02.09.2026 ausdrücklich bestätigt: es gibt derzeit
+**keinen einzigen echten Nutzer**, sämtliche jemals angelegten Konten sind ihre
+eigenen.
+
+Für CC-01 ändert das nichts — das Konto entstand ohnehin erst 3,5 Stunden nach
+der Schließung. Für alles andere ändert es einiges, weil an der Frage „gibt es
+schon echte Nutzer" mehrere Pflichten hängen (siehe unten). Ich habe es in
+`legal-004-vorfallsdokumentation-cc01.md` richtiggestellt und vermerke es hier,
+damit die Notiz nicht als Beleg für einen externen Nutzer zitiert wird.
+
+Der Abschnitt unten ist damit erledigt und steht nur noch als Verlauf.
+
+### Erledigt: Nebenbefund aus deiner Notiz (Stand vor der Klarstellung)
 
 Du schreibst, „Lisa Schein Malerbetrieb" sei „die einzige echte dritte Partei
 in der Datenbank". Im Nachtrag von Head of Product Engineering steht am selben

@@ -9,7 +9,7 @@
 | **Verweise** | CC-01 in `docs/legal-003-compliance-check.md` · CoS-P-001 in `docs/chief-of-staff-platform-todos.md` · `docs/platform-notiz-fuer-head-of-legal.md` |
 | **Erstellt** | 2026-09-02, Head of Legal & Compliance |
 | **Ergebnis** | **Keine Meldepflicht nach Art. 33 Abs. 1. Keine Benachrichtigung nach Art. 34.** Begründung unter Abschnitt 5 |
-| **Status** | abgeschlossen — Ursachen beseitigt, eine Nachfrage an Sandy offen (Abschnitt 7) |
+| **Status** | **abgeschlossen** — Ursachen beseitigt, Faktenlage vollständig, keine offenen Punkte |
 
 > Diese Datei erfüllt die Dokumentationspflicht aus Art. 33 Abs. 5 DSGVO. Sie
 > ist auf Verlangen der Aufsichtsbehörde vorzulegen und deshalb bewusst
@@ -110,20 +110,27 @@ geschrieben:
 | Konto `301245f9…` | Eigenes Testkonto der Verantwortlichen; am 02.09.2026 von ihr bestätigt; inzwischen gelöscht |
 | Konto `2bca059b…` | ebenso |
 
-**Kein unabhängiges Drittkonto war betroffen.** Das einzige externe Konto in
-der Datenbank („Lisa Schein Malerbetrieb") wurde am 17.08.2026 um 15:44 Uhr
-angelegt — **drei Stunden und dreißig Minuten nach der Schließung der Lücke**
-um 12:14 Uhr. Für dieses Konto wurden nachweislich keine Daten in die Tabelle
-geschrieben.
+**Kein unabhängiges Drittkonto war betroffen — und es existiert auch keines.**
+Das zweite heute vorhandene Konto („Lisa Schein Malerbetrieb") ist ebenfalls ein
+Konto der Verantwortlichen; sie hat das am 02.09.2026 ausdrücklich bestätigt.
+Die Platform-Notiz vom selben Tag bezeichnet es als „die einzige echte dritte
+Partei in der Datenbank" — das ist nach Sandys Klarstellung **unzutreffend** und
+hier richtiggestellt, damit spätere Leser nicht davon ausgehen.
+
+Unabhängig davon war dieses Konto ohnehin nicht betroffen: Es wurde am
+17.08.2026 um 15:44 Uhr angelegt — **drei Stunden und dreißig Minuten nach der
+Schließung der Lücke** um 12:14 Uhr — und es wurden nachweislich keine Daten für
+es in die Tabelle geschrieben.
+
+**Zum Stichtag dieser Dokumentation gibt es keinen einzigen echten Nutzer des
+Produkts.** Sämtliche jemals angelegten Konten gehören der Verantwortlichen.
 
 **Betroffene Kategorien personenbezogener Daten:** Sprach-Transkripte und
 KI-Zwischenstrukturen aus Aufmaß-Diktaten der drei genannten Konten. Da alle
 drei Konten der Verantwortlichen selbst zuzurechnen sind, handelt es sich um
 Daten aus ihrer eigenen Nutzung und Erprobung des Systems.
 
-**Ungefähre Zahl betroffener Personen:** eine (die Verantwortliche selbst),
-zuzüglich etwaiger in den Testdiktaten genannter Personen — siehe die offene
-Nachfrage in Abschnitt 7.
+**Ungefähre Zahl betroffener Personen:** eine — die Verantwortliche selbst.
 
 ---
 
@@ -189,17 +196,15 @@ diesen Weg abschneidet, ist die wirksamste Einzelmaßnahme aus diesem Vorfall.
 
 ---
 
-## 7. Offene Nachfrage
+## 7. Keine offenen Punkte
 
-**An Sandy, eine Frage, eine Zeile Antwort:** Haben die Diktate in den beiden
-gelöschten Testkonten echte Namen und Adressen realer Personen enthalten
-(etwa die eines Bekannten, dessen Wohnung als Beispiel diente), oder waren die
-Kundendaten dort erfunden?
+Die Faktenlage ist vollständig. Sandra Holm hat am 02.09.2026 bestätigt, dass
+**alle** jemals in der Produktionsdatenbank angelegten Konten ihre eigenen sind
+— die drei im fraglichen Zeitraum schreibenden ebenso wie das später angelegte
+Konto „Lisa Schein Malerbetrieb". Echte Nutzer gibt es zum Stichtag nicht.
 
-Das ändert am Ergebnis dieser Bewertung nichts — bei fehlendem Zugriff und
-einem so kleinen Kreis bleibt es bei „keine Meldepflicht". Es gehört nur der
-Vollständigkeit halber in die Akte, weil Abschnitt 4 sonst eine Annahme statt
-einer Feststellung enthält.
+Damit ist der Kreis betroffener Personen abschließend bestimmt und die
+Bewertung in Abschnitt 5 stützt sich auf Feststellungen, nicht auf Annahmen.
 
 ---
 
@@ -222,6 +227,7 @@ Migration nachzuziehen, mit Vermerk hier.
 
 *Erstellt am 2026-09-02 durch Head of Legal & Compliance auf Grundlage von
 `docs/platform-notiz-fuer-head-of-legal.md` (Platform & Integrations Engineer,
-02.09.2026), CoS-P-001 und der Bestätigung durch Sandra Holm vom 02.09.2026.*
+02.09.2026), CoS-P-001 und den Bestätigungen durch Sandra Holm vom 02.09.2026 (eigene Testkonten;
+sämtliche Konten der Datenbank sind ihre eigenen, es gibt keine echten Nutzer).*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
