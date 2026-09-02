@@ -1,20 +1,64 @@
-# Entscheidungen, die auf Sandy warten
+# Entscheidungen & Aktionen, die auf Sandy warten
 
-Gebündelte Liste für genau eine Sache: Punkte, die NUR Sandy entscheiden
-kann (Preis, Positionierung, Personal, Risikobereitschaft — nicht fachliche
-Umsetzung, die bleibt bei den Spezialisten). Bisher lagen solche Punkte
-verstreut in `design-check.md`, `chief-of-staff-todos.md` etc. — hier stehen
-sie gebündelt, damit nichts im Alltag untergeht. Eine Wahrheit pro Sache
-gilt weiter: hier steht nur ein kurzer Verweis + der Stand, die volle
-Diskussion bleibt in der jeweiligen Heimat-Datei (verlinkt über die ID).
+Gebündelte Liste für genau eine Sache: alles, was NUR Sandy machen kann —
+Entscheidungen (Preis, Positionierung, Personal, Risikobereitschaft — nicht
+fachliche Umsetzung, die bleibt bei den Spezialisten) UND Aktionen, für die
+es Sandys eigene Zugänge/Hände braucht (Konto-Einstellungen, ein echter
+Live-Test in der App). Bisher lagen solche Punkte verstreut in
+`design-check.md`, `chief-of-staff-todos.md` etc. — hier stehen sie
+gebündelt, damit nichts im Alltag untergeht. Eine Wahrheit pro Sache gilt
+weiter: hier steht nur ein kurzer Verweis + der Stand, die volle Diskussion
+bleibt in der jeweiligen Heimat-Datei (verlinkt über die ID).
 
 **Ablauf:** Sobald der Chief of Staff in einer Heimat-Datei einen Punkt auf
-🔵 „Entscheidung nötig" setzt (oder eine neue Entscheidung sonst wie
-entsteht), kommt sofort eine Zeile hier rein. Nach Sandys Entscheidung
-wandert die Zeile von „Offen" nach „Entschieden" (bleibt stehen, nicht
-löschen — Verlauf ist wertvoll).
+🔵 „Entscheidung nötig" setzt (oder eine neue Entscheidung/Aktion sonst wie
+entsteht), kommt sofort eine Zeile hier rein — **und nur hier**, nirgendwo
+sonst. Nach Erledigung wandert die Zeile von „Offen"/„Aktionen" nach
+„Entschieden" (bleibt stehen, nicht löschen — Verlauf ist wertvoll).
 
-**Status-Zeichen:** 🔵 offen, wartet auf Sandy · ✅ entschieden.
+**Status-Zeichen:** 🔵 offen, wartet auf Sandy · 🔴 dringend · ✅ entschieden.
+
+> **Prozess-Notiz (Chief of Staff, 02.09.2026):** Head of Product
+> Engineering hatte kurzzeitig eine eigene Datei `docs/sandy-todos.md`
+> direkt an Sandy geführt, parallel zu dieser hier. Auf Sandys Anweisung
+> („alles in eine datei zsmfassen") ist der Inhalt jetzt komplett hier
+> eingepflegt, `sandy-todos.md` verweist nur noch hierher. Diese Datei
+> bleibt der einzige Kanal — auch für dringende/sicherheitsrelevante
+> Punkte, nicht nur klassische Entscheidungen.
+
+---
+
+## Dringende Aktionen (nur du kannst das)
+
+**🔵 1. Groq — vollständig entfernt, Key-Widerruf optional.** Bestätigt:
+Groq wird nirgends im Produkt verwendet und ist aus Code, AGB, AVV und
+Datenschutzerklärung entfernt (Head of Product Engineering, 02.09.) — dieser
+Teil ist erledigt, kein offener Punkt mehr. Der eine Rest: der alte
+API-Schlüssel selbst stand kurz im Klartext im Chat. Ob euer Groq-Konto
+überhaupt eine Zahlungsmethode hinterlegt hat, weißt nur du — falls nein,
+ist das reine Formsache und du kannst es ignorieren; falls ja, ist der
+Widerruf unter [console.groq.com/keys](https://console.groq.com/keys)
+(Papierkorb-Symbol beim Schlüssel → Revoke Key) eine 30-Sekunden-Sache, die
+den Punkt endgültig schließt. Deine Entscheidung, keine Dringlichkeit mehr.
+
+**🔴 2. Vercel: `CRON_SECRET` prüfen, Cron-Jobs kontrollieren.** Der
+Erinnerungs-Job hat noch nie eine E-Mail verschickt (75 Angebote, keine
+einzige Erinnerung, obwohl mehrere seit Ende August fällig sind) —
+vermutlich fehlt `CRON_SECRET` in der Produktionsumgebung. Genau derselbe
+Mechanismus soll jetzt auch die neue 30-Tage-Konto-Löschung ausführen: läuft
+er nicht, löschen wir nichts, obwohl Datenschutzerklärung und AGB das
+versprechen. **So geht's** (Vercel → Projekt `sofortangebot` → Settings):
+Environment Variables prüfen, ob `CRON_SECRET` für Production existiert
+(sonst anlegen, Wert selbst erzeugen statt im Chat zu teilen); unter Cron
+Jobs prüfen, ob `/api/cron/reminder` und `/api/cron/aufraeumen` beide
+eingetragen sind; bei einem testweise „Run now" klicken. **Danach kurz
+Head of Product Engineering Bescheid geben** — er kann in `system_laeufe`
+verifizieren, ob der Lauf wirklich durchging.
+
+**🟠 3. Live nachtesten, was seit dem 31.08. gebaut wurde.** Zuschläge in
+Prozent, Übermessungshinweis im Kunden-PDF, neues Statusmodell, Konto
+löschen — alles über Tests abgesichert, aber noch niemand hat es in der
+laufenden App gesehen.
 
 ---
 
@@ -78,6 +122,21 @@ nur du kannst festlegen, welcher Wert (oder welche Werte je Gewerk) korrekt
 sind. **Deine Entscheidung:** einen einheitlichen Wert je Gewerk festlegen
 (am einfachsten mit Legal/Prüfmeister kurz abstimmen, was VOB-üblich ist),
 danach setzt Head of Product Engineering das im Code um.
+
+**🔵 Fünf Zuschlagssätze bestätigen.** Raumhöhe 15 %, Altbau 20 %,
+Denkmalschutz 30 %, bewohnt 10 %, schwieriger Untergrund 10 %. Die Zahlen
+stehen bisher auf Head of Product Engineerings eigener Einschätzung, nicht
+auf deiner Freigabe. **Deine Entscheidung:** so bestätigen oder anpassen.
+
+**🔵 Fliesen-Verschnitt (10 %) — fest im Code oder in den Katalog?** Maler
+und Bodenleger holen ihren Verschnitt-Wert aus dem Katalog (also
+anpassbar), Fliesen haben den Wert stattdessen fest im Code stehen.
+**Deine Entscheidung:** so lassen, oder in den Katalog verschieben, damit
+er genauso änderbar ist wie bei den anderen Gewerken.
+
+**🔵 Kork und Teppich: 0 % Verschnitt.** Bewusst so gebaut (kein Verschnitt
+bei diesen Belägen), aber nie ausdrücklich von dir abgesegnet.
+**Deine Entscheidung:** bestätigen oder korrigieren.
 
 **🔵 VOB-011 — ca. 10–54 € für echte DIN/VOB-Normtexte, drei Optionen.**
 Legal braucht die echten Normtexte (18363/18365 u. a.), um mehrere offene
@@ -290,6 +349,163 @@ fehlt. Das stimmt. Deshalb empfehle ich nicht „heute gründen", sondern „vor
 ersten zahlenden Kunden" — das ist derselbe Moment, an dem auch
 Verarbeitungsverzeichnis, Unternehmer-Checkbox und AGB-Mitteilungspflicht scharf
 schalten. **Gate 1 ist dieser Moment, nicht ein Datum.**
+
+---
+
+---
+
+## S-4, Teil 2 — Konkreter Versicherungsvorschlag (Head of Legal & Compliance, 2026-09-02)
+
+Sandy wollte einen konkreten Anbieter, keine Liste. Hier ist er, mit der
+Begründung und mit den vier Fragen, die vor der Unterschrift geklärt sein
+müssen.
+
+**Vorbehalt, kurz:** Ich bin keine Versicherungsmaklerin. Beiträge werden
+individuell kalkuliert, und die Bedingungen ändern sich. Was ich beitragen
+kann, ist die Frage, welches Risiko wir eigentlich versichern und welche
+Klauseln darüber entscheiden — und da gibt es einen Punkt, der die Auswahl
+komplett dreht.
+
+### Empfehlung
+
+**exali IT-Haftpflicht, Risikoträger Markel Insurance SE. Deckungssumme
+1.000.000 €.**
+
+Warum dieser Anbieter:
+
+- **Als einziger nennt die Berufsbilddeckung ausdrücklich „Software as a
+  Service (SaaS)"** und den „Betrieb von Internetplattformen und Apps". Die
+  meisten IT-Haftpflichten sind auf Dienstleister und Freelancer zugeschnitten
+  — auf jemanden, der im Kundenauftrag programmiert, nicht auf jemanden, der
+  ein eigenes Produkt an viele Kunden verkauft. Das ist ein Unterschied, der im
+  Schadenfall zählt.
+- **Deckungssummen von 150.000 € bis 10 Mio. €** in neun Stufen, also fein genug
+  wählbar.
+- **Dreifache Maximierung** pro Versicherungsjahr.
+- **Unbegrenzte Rückwärtsdeckung** — dazu unten mehr, das ist für uns wichtiger
+  als es klingt.
+- **Fünf Jahre Nachmeldefrist** nach Vertragsende.
+- **Verletzung von Datenschutzgesetzen ist in der Grunddeckung enthalten**, nicht
+  erst im Zusatzbaustein.
+- Selbstbeteiligung standardmäßig 250 € je Fall, online wählbar.
+- Abschluss online möglich, ohne Maklertermin.
+
+**Zwei Vergleichsangebote zum Gegenrechnen:** Markel Pro IT direkt (derselbe
+Risikoträger, anderer Vertriebsweg, Einstieg ab 170 €/Jahr) und Hiscox
+IT-Haftpflicht. Drei Angebote sind bei dieser Größenordnung genug.
+
+### Der Punkt, der die Deckungssumme entscheidet: Serienschaden
+
+**Das ist die wichtigste Erkenntnis dieser Recherche, und sie widerspricht dem
+Branchenrichtwert.**
+
+Üblich empfohlen werden für eine Vermögensschadenhaftpflicht 250.000 €. Für uns
+ist das zu wenig, und zwar aus einem strukturellen Grund: der
+**Serienschadenklausel**. Sie besagt, dass mehrere Schäden, die auf **derselben
+Ursache** beruhen, als **ein einziger Versicherungsfall** gelten — mit **einer**
+Deckungssumme und **einer** Selbstbeteiligung, egal wie viele Geschädigte es
+gibt.
+
+Genau das ist unser Szenario. Ein systematischer Rechenfehler in der Engine ist
+eine Ursache. Wenn er bei 200 Handwerksbetrieben gleichzeitig zu falschen
+Angeboten führt, sind das nicht 200 Versicherungsfälle à 250.000 €, sondern
+**ein** Fall mit **einmal** 250.000 €. Und die dreifache Jahresmaximierung hilft
+dabei nicht — die greift nur bei mehreren *unabhängigen* Fällen, nicht innerhalb
+einer Serie.
+
+Dazu kommt: Alle Schäden der Serie werden dem **ersten** Schadenereignis
+zugerechnet. Eine später erhöhte Deckungssumme rettet eine bereits laufende
+Serie nicht mehr. **Man kann nicht nachbessern, wenn es passiert ist.**
+
+**Was das rechnerisch heißt.** Angenommen, ein Fehler bleibt zwei Monate
+unentdeckt, 50 Betriebe sind betroffen und verlieren im Schnitt 2.000 € an
+ihren eigenen Aufträgen — das sind 100.000 €, plus Abwehrkosten. Bei 200
+Betrieben und mehr betroffenen Angeboten je Betrieb ist die halbe Million
+schnell erreicht. Deshalb 1 Mio. € und nicht 250.000 €. Der Beitragsunterschied
+zwischen den Stufen ist gering; der Unterschied im Ernstfall ist der ganze
+Betrieb.
+
+### Der Zeitpunkt: jetzt ist der beste, den es je geben wird
+
+Die exali-Deckung läuft nach dem **Anspruchserhebungsprinzip** — versichert ist,
+wenn ein Kunde den Anspruch **während der Vertragslaufzeit** geltend macht, nicht
+wann der fehlerhafte Code entstand. Die **Rückwärtsdeckung** schließt Fehler ein,
+deren Ursache vor Vertragsbeginn liegt — **aber nur, solange bei Vertragsschluss
+kein Verstoß und keine drohende Inanspruchnahme bekannt war.**
+
+Daraus folgt etwas Praktisches:
+
+**Solange es keine echten Nutzer gibt, kann niemand einen Anspruch haben.** Es
+ist nichts passiert, es droht nichts, und die Antragsfragen lassen sich mit
+gutem Gewissen verneinen. Der Code seit Juni ist damit sauber mitversichert.
+Das ist die beste Ausgangslage, die dieser Vertrag je haben wird — und sie wird
+mit jedem Nutzer schlechter.
+
+**Aber Vorsicht mit den bekannten Funden.** Wir haben dokumentierte, noch nicht
+behobene Rechenfehler — VOB-013 (Leibungen vierseitig statt dreiseitig,
+Fensterbank doppelt) ist der klarste. Solange daraus kein Schaden entstanden ist
+und niemand etwas fordert, ist das kein „bekannter Verstoß" im
+versicherungsrechtlichen Sinn. Aber es ist nah dran, und es trifft sich mit dem
+zweiten Ausschluss: **wissentliche Pflichtverletzung ist nie versichert.** Ein
+Fehler, der dokumentiert ist, nicht behoben wird und trotzdem live geht, ist
+genau der Fall, in dem ein Versicherer die Leistung verweigert.
+
+**Deshalb die Reihenfolge: bekannte Funde schließen → Vertrag abschließen →
+Nutzer aufschalten.** Nicht andersherum.
+
+### Was die Versicherung NICHT leistet
+
+- **Erfüllungsschäden und Nacherfüllung sind ausgeschlossen** (AVB E.1.2/E.1.3).
+  Den Bug zu fixen zahlen wir selbst. Versichert ist der Vermögensschaden **beim
+  Handwerker** — und das ist bei uns der teure Teil, also passt es.
+- **Wissentliche Pflichtverletzung** — siehe oben.
+- **DSGVO-Bußgelder selbst.** Ob sie überhaupt versicherbar sind, ist rechtlich
+  ungeklärt; die herrschende Meinung sagt nein, weil das den Strafzweck
+  unterlaufen würde. Gedeckt sind **Abwehr- und Beratungskosten**. Wir sollten
+  das Bußgeldrisiko nicht als versichert einplanen.
+- **KI-spezifische Klauseln gibt es am Markt praktisch noch nicht** — weder
+  Einschluss noch Ausschluss. Die AVBs sind technologieneutral formuliert, ein
+  Rechenfehler bleibt also ein Vermögensschaden, egal ob er aus einer
+  KI-Extraktion oder einer if-Abfrage stammt. Das ist die gute Nachricht.
+  Trotzdem gehört es gefragt, siehe unten.
+
+### Vier Fragen, die vor der Unterschrift schriftlich beantwortet sein müssen
+
+Diese vier waren öffentlich nicht vollständig einsehbar. Bitte per E-Mail
+stellen, damit die Antwort dokumentiert ist:
+
+1. **Wie lautet die Serienschadenklausel im Wortlaut?** Gilt ein Softwarefehler,
+   der bei vielen Kunden gleichzeitig wirkt, als ein Versicherungsfall — und
+   greift die dreifache Maximierung innerhalb einer Serie oder nicht?
+2. **Berührt der Einsatz von OpenAI (Whisper, GPT) als Drittanbieter die
+   Deckung?** Gilt das als eingesetzte Fremdsoftware, als Subunternehmer, oder
+   spielt es keine Rolle?
+3. **Was genau deckt der Zusatzbaustein „KI-bedingter Eigenschaden"?** Der Name
+   deutet auf Eigenschäden hin — unser Kernrisiko sind aber Drittschäden beim
+   Kunden. Vermutlich brauchen wir ihn nicht; ich will es aber schwarz auf weiß.
+4. **Was passiert beim Wechsel Einzelunternehmen → UG?** Kann der Vertrag auf die
+   UG umgeschrieben werden, und bleibt dabei die Rückwärtsdeckung für die Zeit
+   als Einzelunternehmerin erhalten? Das ist wichtig, weil sonst bei der
+   Umwandlung eine Deckungslücke entsteht — genau in dem Zeitraum, für den
+   Sandy nach § 26 HGB ohnehin noch fünf Jahre persönlich haftet.
+
+Frage 4 ist die, die am ehesten übersehen wird und am teuersten werden kann.
+
+### Nächster Schritt
+
+Online-Rechner bei exali für **1 Mio. € Deckungssumme** durchspielen, Angebot
+per E-Mail anfordern und dabei die vier Fragen mitschicken. Parallel je ein
+Angebot bei Markel Pro IT und Hiscox. Existenzgründerrabatt bis 15 % ist bei
+mehreren Anbietern üblich — danach fragen.
+
+**Erst nach Abschluss den ersten echten Testnutzer aufschalten**, und vorher die
+bekannten Rechenfehler schließen.
+
+Kosten: Für 1 Mio. € Deckung habe ich keinen belastbaren Beitrag gefunden — die
+öffentlichen Beispiele (ab 170 €/Jahr, oder 12,50–88,50 € im Monat bei 25.000 €
+Umsatz) beziehen sich auf kleinere Deckungen. Realistisch würde ich mit einem
+niedrigen bis mittleren dreistelligen Jahresbeitrag rechnen, aber das ist eine
+Schätzung, keine Recherche.
 
 ---
 

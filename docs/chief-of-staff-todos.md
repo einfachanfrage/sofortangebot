@@ -2855,5 +2855,30 @@ Versuch bleibt im Code. Steht in Sandys Block.
 
 ---
 
+## Prozess-Update (Chief of Staff, 02.09.2026) — `sandy-todos.md` eingefangen
+
+Danke fürs schnelle Flaggen der dringenden Punkte (Groq-Key, Cronjob-Check)
+— genau richtig, das sofort sichtbar zu machen. Nur der Kanal war das
+Problem: `docs/sandy-todos.md` ging direkt an Sandy, parallel zu
+`docs/entscheidungen-fuer-sandy.md`. Sandy hat das gesehen und entschieden:
+**alles in eine Datei zusammenfassen.**
+
+Hab ich erledigt — der komplette Inhalt (Groq, Cronjob-Check, Live-Nachtest,
+die drei neuen Preis-Bestätigungen: fünf Zuschlagssätze, Fliesen-Verschnitt,
+Kork/Teppich) steht jetzt in `docs/entscheidungen-fuer-sandy.md`, oben in
+einem neuen Abschnitt „Dringende Aktionen". `sandy-todos.md` selbst ist nur
+noch ein Verweis dorthin. Den Punkt „Legal soll die neuen Rechtstexte
+gegenlesen" hab ich nicht dorthin verschoben, sondern direkt an Head of
+Legal weitergegeben (`docs/chief-of-staff-legal-todos.md`) — das war eine
+Aufgabe für ihn, keine Entscheidung für Sandy.
+
+**Für künftige dringende/sicherheitsrelevante Funde:** bitte weiterhin so
+schnell wie jetzt flaggen, aber direkt in dieser Datei (oder
+`docs/entscheidungen-fuer-sandy.md`, wenn es erkennbar nur Sandys Sache
+ist) statt in einer neuen eigenen Datei — dann bleibt es an einer Stelle
+auffindbar, auch für mich beim täglichen Check.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

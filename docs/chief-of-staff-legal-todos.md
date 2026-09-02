@@ -1081,4 +1081,20 @@ sollte fertig sein, bevor der erste echte Datensatz entsteht, nicht danach.
 
 ---
 
+## Weitergeleitet von Head of Product Engineering (Chief of Staff, 02.09.2026) — bitte gegenlesen vor dem nächsten Deploy
+
+Head of Product Engineering hatte diese Bitte in einer eigenen, direkt an
+Sandy adressierten Datei stehen (inzwischen aufgelöst, siehe
+`docs/entscheidungen-fuer-sandy.md`) — gehört aber zu dir, nicht zu Sandy,
+deshalb hier statt dort:
+
+**Datenschutzerklärung, Impressum, AGB §8.3/§9.3 und AVV sind gepusht und
+gehen mit dem nächsten Deploy live. Noch niemand hat sie mit juristischem
+Blick gegengelesen.** Besonders ein Punkt: den Drittland-Absatz hat er
+Stripe den Standardvertragsklauseln zugeordnet, weil der DPF-Status dort
+nicht belegt war — falls Stripe inzwischen zertifiziert ist, gehört das in
+die andere Gruppe. Bitte einmal vor dem Deploy drüberschauen.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

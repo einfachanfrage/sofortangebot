@@ -34,16 +34,41 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 31.08.2026)
+## Gate-Fortschritt (Stand 02.09.2026)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **≈ 33 %** (siehe Korrektur-Hinweis + Update unten) | 47 |
-| **Gate 2** — öffentlicher Launch | **≈ 13 %** (unverändert) | 36 |
-| **Gate 3** — danach/Skalierung | **17 %** (unverändert) | 11 |
+| **Gate 1** — erste Testnutzer | **≈ 35 %** (echte Neuberechnung, siehe Update unten) | 47 |
+| **Gate 2** — öffentlicher Launch | **≈ 15 %** (echte Neuberechnung, neuer Nenner 36→37) | 37 |
+| **Gate 3** — danach/Skalierung | **17 %** (unverändert, keine neue G3-Bewegung) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+> ✅ **Echte Neuberechnung (Chief of Staff, 02.09.2026), keine Schätzung.**
+> Alle 94 Einzelpunkte gegen den aktuellen Stand aller Heimat-Dateien
+> abgeglichen (Sandys Wunsch: „berechne neu", nachdem die letzte vollständige
+> Neuberechnung vom 20.08. stammte und die 33 %/13 %/17 % seit dem 31.08. nur
+> hochgerechnet, nicht neu gerechnet waren). Acht G1-Punkte und vier
+> G2-Punkte bewegt, ein neuer G2-Punkt ergänzt (**7.15**, AI-Act-
+> Kompetenzpflicht, von Legal neu identifiziert). Größte Einzelbewegungen:
+> **7.10 EU-AI-Act-Transparenzpflicht (0→65)** — der in-App-KI-Hinweis (R3)
+> ist gebaut, das war der bisher schwerwiegendste offene Rechtsfund im
+> ganzen Projekt; **1.6 Standardpreise (65→78)** — 21-Positionen-
+> Katalog-Lücke geschlossen (CoS-028); **1.1 Fallbasis (38→42)** und **1.2
+> Abdeckung (68→72)** — Prüfmeister hat jetzt für alle 28 Testfälle eine
+> eindeutige Soll-Lösung, dabei aber einen neuen echten Rechenfehler
+> gefunden (VOB-013, Fensterlaibung ~33 % zu groß, noch nicht gefixt — siehe
+> Warnhinweis bei 1.1). Zwei Punkte bewusst nach unten korrigiert, weil sie
+> vorher „nicht erhoben" waren und jetzt echt (negativ) geprüft sind, nicht
+> weil etwas kaputtging: **6.2 Secrets-Hygiene (0→15)** — ein Groq-API-Key
+> wurde ungefiltert im Chat ausgegeben, muss widerrufen werden; **7.14
+> KI-Haftungsklausel (0→20)** — Legal hat die bestehende AGB-Klausel §9.3
+> geprüft und für nach §307 BGB wahrscheinlich vollständig unwirksam
+> befunden. Details je Punkt unten in den Tabellen. Trotz der sichtbaren
+> Bewegung bleibt der Grundsatz: „code-fertig" zählt weiterhin nicht wie
+> „live bestätigt" — die meisten der oben genannten Fixes warten noch auf
+> einen echten Nachtest.
 
 > ⚠ **Punkte-Verschiebung (Chief of Staff, 31.08.2026):** Sandy hat 11.5
 > (Buchhaltungssystem-Anbindung Lexware/sevDesk) von G2 auf G1 hochgestuft
@@ -466,12 +491,12 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 38 % — weiter 21 von ~100 Fällen (PM-001–021), aber **25.08.: ALLE 21 live durchgetestet**, keiner mehr „code-fertig, Nachtest offen" außer PM-014 (Gleichzeitigkeitstest) und PM-015 (praktisch erledigt). Zusätzlich neuer, gewerk-übergreifender Sicherheitsmechanismus gegen falsch-quadratische Räume live bestätigt. Breite bleibt der limitierende Faktor (21 von ~100), deshalb nicht höher. Quelle: `docs/pruefmeister-testfaelle.md` |
-| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 68 % — **25.08.:** neuer Sicherheitsmechanismus gegen Whisper-Verhörer bei quadratischen Räumen gewerk-unabhängig (Maler UND Bodenleger) live bestätigt, dazu bereits: isolierter Erschwerniszuschlag, Altbelag-Verneinung, zugespitzte VOB-Übermessungsfrage. **29.08.: zwei neue Sonderfälle abgedeckt** — DC-040 „Wohnung als Ganzes" (Extraktion für ganze Wohnung/Haus statt zwingend pro Raum) und DC-038 „frei zeichnen" (unregelmäßige Räume/Nischen per Freihandzeichnen). Beide code-fertig, aber **DC-040 ist eine Prompt-Änderung — automatisierte Tests prüfen nur die Regel, kein Ersatz für einen echten Live-Test mit echter Sprachaufnahme**, der noch aussteht. Deshalb nur moderater Sprung |
+| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 42 % — **02.09.: alle 28 Testfälle haben jetzt eine eindeutige Soll-Lösung** (vorher 21), Prüfmeister hat dabei aber einen neuen, echten, systematischen Rechenfehler gefunden: **VOB-013** — Fensterlaibung wird ca. 33 % zu groß berechnet, Fensterbank zusätzlich doppelt gezählt, betrifft jedes Angebot mit Fenstern/Türen, noch nicht gefixt. Breite (28 von ~100) bleibt der limitierende Faktor, der neue Fund dämpft den Sprung zusätzlich. Quelle: `docs/pruefmeister-testfaelle.md`, `docs/vob-angebot-abstimmung.md` VOB-013 |
+| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 72 % — **02.09.:** alle 28 Testfälle inzwischen konsistent nach der VOB-Übermessungsregel bewertet; dazu drei von Legals Funden bereits durch Product Designer umgesetzt (G4-Checkbox, VOB-007-Textkorrektur). Weiterhin größtenteils code-fertig statt breit live nachgetestet, deshalb nur moderater Sprung |
 | 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 95 % — **25.08.: CoS-002 endgültig abgeschlossen.** Zusätzlich zum Realtime-Fix bereits echter Schutz gegen stilles Überschreiben manueller Positions-Änderungen, inkl. Löschfall (CoS-014). **Sandys Bestätigungs-Retest ist bestanden** — zweifach dokumentiert: Product Designer hatte es schon am 23.08. in `design-check.md` (DC-021) festgehalten (dort korrekt, hier durch einen eigenen Sync-Fehler nicht übernommen), und Sandy hat heute unabhängig denselben Test live wiederholt („Boden schützen 12 m²" korrekt) und bestätigt. Nicht auf 100 %, weil nur gezielte Testfälle bestätigt sind, keine breite Testserie. Quelle: CoS-002/CoS-014, `docs/cos-002-architektur-vorschlag.md`, DC-021 |
-| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟢 92 % — **24.08.: CoS-018 abgeschlossen**, alle vier vorbestehenden Fehlschläge als veralteter Testcode aufgeklärt (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix. **25.08.:** Suite weiter gewachsen auf 842/842, u. a. durch CoS-021- und PM-019/020-Sicherheitstests, weiterhin kein Fund einer Regression. Kein direkter CI-Dashboard-Zugriff |
+| 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟢 92 % — **24.08.: CoS-018 abgeschlossen**, alle vier vorbestehenden Fehlschläge als veralteter Testcode aufgeklärt (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix. **25.08.:** Suite weiter gewachsen auf 842/842, u. a. durch CoS-021- und PM-019/020-Sicherheitstests, weiterhin kein Fund einer Regression. **02.09.: vermutlich weiter gewachsen** (mehrere neue Fixes diese Woche, typischerweise mit eigenen Tests), aber keine harte aktuelle Zahl vorliegend — bewusst nicht in die Prozentzahl eingerechnet, um nicht zu schätzen. Kein direkter CI-Dashboard-Zugriff |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
-| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 65 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.). **29.08. (DC-039):** „+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank plus einen eigenen, serverseitig abgesicherten Schreib-Endpunkt (Dubletten-Schutz, Rubrik-Regel entdoppelt) — dabei nebenbei einen echten Altbug gefunden und gefixt (`price_item_id` wurde beim Speichern nie mitgeschrieben, weder bei Neuanlage noch beim Ändern). Live-Nachtest weiterhin für alles offen |
+| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 78 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.). **29.08. (DC-039):** „+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank plus einen eigenen, serverseitig abgesicherten Schreib-Endpunkt. **02.09.: eine 21-Positionen-Katalog-Lücke geschlossen** (CoS-028) — deutlich breitere Preisabdeckung. Live-Nachtest weiterhin für alles offen |
 | 1.7 | KI-Grenzen/Fehlerrate den Nutzern gegenüber transparent kommuniziert (kein 100 %-Versprechen) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.8 | Lasttest: mehrere gleichzeitige Aufnahmen/Nutzer ohne Fehler | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.9 | Bekannte Sprach-/Dialekt-/Störgeräusch-Grenzen dokumentiert | G3 | ⚪ offen — nicht erhoben (neu) |
@@ -484,7 +509,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟡 55 % — **korrigiert, 29.08.:** auf Sandys Freigabe „004 bitte b)" läuft die Verifizierungs-Mail jetzt über die eigene Resend-Anbindung statt Supabase (CoS-P-004, neue Route `api/auth/register`). Code fertig, **echter Zustellungs-Test mit echtem Postfach steht aus** — das kann nur Sandy selbst machen |
 | 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🟡 60 % — **korrigiert, 29.08.: Bug ist bereits gefixt, nicht mehr offen.** Auf Sandys Freigabe „003 ja bitte direkt reparieren" läuft der Reset-Link jetzt über `/auth/callback` (korrekter PKCE-Tausch, wie bei der Registrierung), plus aktive Session-Prüfung und eine „Link abgelaufen"-Seite statt Endlos-Laden (CoS-P-003). Diese Zeile stand hier fälschlich seit mehreren Tagen auf „weiterhin ungefixt" — eigener Sync-Fehler des Chief of Staff, der Fix war schon am 25.08. dokumentiert. **Einziger verbleibender Schritt: ein echter Klick-Durchlauf mit echtem Postfach**, aus keiner Session heraus möglich — Sandys Aufgabe |
 | 2.4 | Kompletter erster Durchlauf (erste Anmeldung → erstes Angebot) end-to-end | G1 | ⚪ offen — nicht erhoben |
-| 2.5 | Account-Löschung möglich | G2 | 🟡 vermutlich vorhanden (Code existiert), kein QA-Test |
+| 2.5 | Account-Löschung möglich | G2 | 🟡 55 % — **02.09., neu bewertet:** echte, DSGVO-konforme harte Löschung jetzt tatsächlich gebaut (vorher lief „Löschung" nur über ein `deleted_at`-Flag, es wurde nichts wirklich entfernt). Code fertig, aber bewusst nicht höher: dieselbe Cronjob-Infrastruktur, die den 30-Tage-Löschlauf ausführen soll, hat bei den bisherigen Erinnerungs-Mails nie funktioniert (vermutlich fehlendes `CRON_SECRET` in Vercel) — ob die Löschung wirklich automatisch läuft, ist unbestätigt, Sandy muss das in Vercel prüfen |
 | 2.6 | Schutz vor automatisierten Massen-Registrierungen (Captcha/Rate-Limit) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 2.7 | Session-Sicherheit: Token-Ablauf sinnvoll, Logout wirklich überall wirksam | G1 | ⚪ offen — nicht erhoben (neu) |
 | 2.8 | Erster Eindruck für brandneue Nutzer durchdacht (leere Zustände) | G1 | 🔴 30 % — DC-009 (leere Aufnahme als Erfolg) jetzt über DC-028 code-seitig mitgefixt, Live-Nachtest steht aus; PM-015-Fix behebt zusätzlich einen konkreten Fall: „manuell"-Onboarding landete bisher mit fast leerer Preisdatenbank |
@@ -527,8 +552,8 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 6.1 | Nutzer sehen ausschließlich eigene Daten (Supabase RLS greift überall) | G1 | 🟢 95 % — **erledigt und geprüft, CoS-P-001**: 22 Tabellen + ~19 Umgehungsstellen direkt in Produktion geprüft, eine akute Lücke (`debug_extraktion_roh`, öffentlich ohne RLS) gefunden und sofort gefixt |
-| 6.2 | Keine Secrets/Keys im Frontend oder in Logs sichtbar | G1 | ⚪ offen — nicht erhoben |
-| 6.3 | Daten-Export und -Löschung für DSGVO-Anfragen umsetzbar | G2 | 🟡 vermutlich vorhanden (Code existiert), kein QA-Test |
+| 6.2 | Keine Secrets/Keys im Frontend oder in Logs sichtbar | G1 | 🔴 15 % — **02.09., erstmals echt geprüft statt ungeprüft:** ein Groq-API-Key wurde ungefiltert (unmaskiert) im Chat-Verlauf ausgegeben, statt wie sonst mit maskierten Werten. Muss unter console.groq.com widerrufen werden — noch offen. Kein systematischer Scan der übrigen Secrets, nur dieser eine konkrete Fund |
+| 6.3 | Daten-Export und -Löschung für DSGVO-Anfragen umsetzbar | G2 | 🟡 55 % — **02.09.:** echte harte Löschung jetzt gebaut (siehe 2.5, gleiche Einschränkung zur Cronjob-Zuverlässigkeit). Export weiterhin ungeprüft |
 | 6.4 | Supabase-Security-Advisor regelmäßig geprüft (nicht nur einmalig) | G1 | 🟡 60 % — seit 17.08. Teil des täglichen automatischen Chief-of-Staff-Checks, aber erst seit heute (neu) |
 | 6.5 | Passwort-Sicherheit: „Leaked Password Protection" (HaveIBeenPwned-Abgleich) aktiv | G1 | 🔴 0 % — laut Supabase-Advisor aktuell **aus** (neu, bestätigter Fund) |
 | 6.6 | Rate-Limiting/Brute-Force-Schutz auf dem Login | G1 | ⚪ offen — nicht erhoben (neu) |
@@ -539,8 +564,8 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 7.1 | Impressum vorhanden und korrekt | G1 | 🟢 90 % — verifiziert per Code-Einsicht (§5 TMG, Kontakt, Streitschlichtung, Haftung). Einzige Lücke: USt-ID hängt an Abschnitt 11 |
-| 7.2 | Datenschutzerklärung vorhanden (inkl. eingesetzter Dienste) | G1 | 🟢 85 % — verifiziert per Code-Einsicht: vollständige Auftragsverarbeiter-Liste, Drittlandtransfer-Klausel (SCC + DPF) |
+| 7.1 | Impressum vorhanden und korrekt | G1 | 🟢 84 % — **02.09., zwei Funde von Head of Legal, je ~30 Min Fix, noch offen:** toter Absatz zur EU-Streitschlichtungsplattform (seit 20.07.2025 abgeschaltet); veraltete Gesetzes-Verweise (§5 TMG→§5 DDG, §25 TTDSG→§25 TDDDG, beide Gesetze wurden umbenannt) — laut Legal genau das, wonach automatisierte Abmahn-Scanner suchen. USt-ID hängt weiterhin an Abschnitt 11 |
+| 7.2 | Datenschutzerklärung vorhanden (inkl. eingesetzter Dienste) | G1 | 🟢 78 % — **02.09., Fund von Head of Legal, ~30 Min Fix, noch offen:** OpenAI und Sentry fehlen als Auftragsverarbeiter, obwohl beide aktiv genutzt werden. Sonst weiterhin vollständige Liste, Drittlandtransfer-Klausel (SCC + DPF) |
 | 7.3 | AGB mit klarem B2B-Ausschluss vom Fernabsatzrecht | G1 | 🟢 90 % — verifiziert: expliziter § 14 BGB-B2B-Ausschluss |
 | 7.4 | DSGVO-Verzeichnis von Verarbeitungstätigkeiten (intern) | G2 | ⚪ offen — nicht erhoben |
 | 7.5 | AVV/DPAs mit Subprozessoren geklärt (OpenAI, Supabase, Stripe, Vercel) | G2 | 🟡 40 % — Datenschutzerklärung nennt AVV-Abdeckung, Details nicht einzeln geprüft |
@@ -548,17 +573,18 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 7.7 | Berufshaftpflicht für Softwareanbieter | G2 | ⚪ offen — nicht erhoben, Sandys Bereich |
 | 7.8 | Marke „Sofortangebot" beim DPMA anmelden | G3 | ⚪ offen |
 | 7.9 | ZUGFeRD-Pflicht ab 2027 für eigene Rechnungen | G3 | ⚪ offen |
-| 7.10 | **EU AI Act Art. 50 — Transparenzpflicht KI-Interaktion (seit 2.8.2026 in Kraft, JETZT schon geltendes Recht)** | G1 | 🔴 0 % — offen, neu entdeckt. Nutzer müssen erkennen, dass Spracheingabe/-Extraktion durch KI läuft; günstig umsetzbar (Hinweistext). Bußgeldrahmen bis 15 Mio. €/3 % Jahresumsatz, praktisches Risiko für ein Startup dieser Größe eher gering, aber Pflicht ist aktiv. Quelle: [re.think Consulting](https://rethink.consulting/transparenzpflichten-nach-artikel-50-des-eu-ai-acts-alles-zur-kennzeichnungspflicht-fur-ki-inhalte-ab-august-2026/) |
+| 7.10 | **EU AI Act Art. 50 — Transparenzpflicht KI-Interaktion (seit 2.8.2026 in Kraft, JETZT schon geltendes Recht)** | G1 | 🟡 65 % — **02.09.: größte Einzelbewegung dieser Neuberechnung.** Product Designer hat den von Legal geforderten in-App-KI-Hinweis gebaut (R3: „wurde von KI erstellt, kann Fehler enthalten", zeigt sich dem Handwerker vor dem Versenden). Legal hat zusätzlich geklärt (S-3), dass eine separate Information der Endkunden des Handwerkers rechtlich NICHT nötig ist — der Scope war also kleiner als zunächst befürchtet. Nicht höher, weil der R3-Hinweis noch nicht live nachgetestet ist. Bußgeldrahmen weiterhin bis 15 Mio. €/3 % Jahresumsatz, praktisches Risiko eher gering. Quelle: `docs/design-check.md` R3, `docs/legal-001-bestandsaufnahme.md` S-3, [re.think Consulting](https://rethink.consulting/transparenzpflichten-nach-artikel-50-des-eu-ai-acts-alles-zur-kennzeichnungspflicht-fur-ki-inhalte-ab-august-2026/) |
 | 7.11 | NIS2-Cybersicherheitspflichten geprüft | G3 | 🟢 85 % — **geprüft, aktuell nicht einschlägig** (Schwelle 50 Mitarbeitende/10 Mio. € Jahresumsatz in einem von 18 Sektoren, Sofortangebot deutlich darunter). Bei Wachstum erneut prüfen. Quelle: [secjur.com, NIS2 Umsetzung](https://www.secjur.com/blog/nis2-umsetzung) |
 | 7.12 | Barrierefreiheitsstärkungsgesetz (BFSG) geprüft | G3 | 🟡 40 % — wahrscheinlich nicht einschlägig (B2B), nicht abschließend anwaltlich bestätigt, siehe 5.6 |
 | 7.13 | KI-Anbieter-Nutzungsbedingungen eingehalten (OpenAI/Whisper), Kundendaten nicht ungewollt fürs KI-Training freigegeben | G1 | ⚪ offen — nicht erhoben (neu) |
-| 7.14 | Haftungsregelung für KI-generierte Angebotsfehler in AGB explizit abgedeckt | G2 | ⚪ offen — nicht erhoben (neu) |
+| 7.14 | Haftungsregelung für KI-generierte Angebotsfehler in AGB explizit abgedeckt | G2 | 🔴 20 % — **02.09., jetzt echt geprüft statt unerhoben, Ergebnis negativ:** Head of Legal hat die bestehende Klausel §9.3 (Haftungsausschluss für KI-Fehler) geprüft und für nach §307 BGB wahrscheinlich vollständig unwirksam befunden — deutsches AGB-Recht kennt keine „geltungserhaltende Reduktion", eine ganze Klausel fällt weg, nicht nur der überzogene Teil. Der vermeintliche Haftungsschutz ist damit unzuverlässiger als angenommen; macht die Rechtsform-Frage (S-4, UG) wichtiger als Rückfallebene. Neue Klausel noch nicht entworfen |
+| 7.15 | **KI-Anbieter-Kompetenzpflicht nach Art. 4 EU AI Act (Sorgfaltspflicht für den Einsatz von KI-Systemen)** | G2 | ⚪ 0 % — **neu, 02.09.2026, von Head of Legal identifiziert (CC-08)** — andere Pflicht als 7.10 (dort: Nutzer informieren; hier: eigene Sorgfalt beim KI-Einsatz). Noch nicht begonnen, als nächstes in Legals Warteschlange |
 
 ## 8. Technik, Betrieb & Zuverlässigkeit
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 8.1 | Observability: jede Pipeline-Stufe nachvollziehbar geloggt | G1 | 🟡 30 % — erster Schritt umgesetzt (CoS-P-002: Sentry meldet jetzt 8 Fehlerstellen im Kernpfad), Rest (Edge-Functions, ~27 weitere Stellen, 2 tote Logging-Spalten) noch offen |
+| 8.1 | Observability: jede Pipeline-Stufe nachvollziehbar geloggt | G1 | 🟡 38 % — erster Schritt umgesetzt (CoS-P-002: Sentry meldet jetzt 8 Fehlerstellen im Kernpfad). **02.09.: sieben zuvor still fehlschlagende Datenbank-Schreibvorgänge** (u. a. Signatur-Erfassung, Angebotserstellung, Stripe-Webhook) **jetzt sichtbar/abgesichert** (CoS-029) — verwandtes Zuverlässigkeits-Update, kein direkter Observability-Ausbau, deshalb moderater statt großer Sprung. Rest (Edge-Functions, ~27 weitere Stellen, 2 tote Logging-Spalten) weiterhin offen |
 | 8.2 | Race Condition ausgeschlossen (Summe stabil ohne Nutzeraktion) | G1 | 🟡 65 % — App-seitiger Doppel-Tap-Schutz UND (neu, 20.08., laut PM-014) ein DB-seitiges Unique-Constraint (`unique(quote_id, position)`, Migration `20260820103931`) mit Retry-bei-Konflikt sind jetzt beide live, 706/706 Tests grün. Bewusst nicht auf höher gesetzt: ein gezielter Gleichzeitigkeits-Test (zwei echte parallele Anfragen) ist noch nicht gefahren. Siehe Governance-Hinweis oben zu CoS-010 vs. PM-014 |
 | 8.3 | Backups eingerichtet und einmal ein Restore getestet | G2 | 🟡 65 % — tägliches verschlüsseltes Backup läuft produktiv, Restore-Prozess definiert, aber kein protokollierter Restore-Test-Durchlauf sichtbar |
 | 8.4 | Fehler-Monitoring: du merkst, wenn im Betrieb etwas bricht | G2 | 🔴 20 % — Health-Checks (`/api/health*`) und Kosten-Alarm existieren und funktionieren, aber Sentry deckt bisher nur den Kernpfad ab |
@@ -581,7 +607,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 9.4 | Preisseite verständlich | G2 | ⚪ offen — nicht erhoben |
 | 9.5 | SEO-Grundlagen (Meta-Tags, Sitemap, robots.txt, Ladezeit) | G3 | ⚪ offen — nicht erhoben (neu) |
 | 9.6 | Social-Media-Vorschaubilder (Open-Graph) | G3 | ⚪ offen — nicht erhoben (neu) |
-| 9.7 | Eigene Marke/CI final festgelegt (Farbe, Typografie, Logo, Icon-Sprache) | G2 | 🟡 35 % — **neu, 20.08.2026, ergänzt vom Chief of Staff** (Lücke aufgefallen: eine komplette neue Team-Rolle + fertige CI-Entscheidung hatten noch keinen Platz in dieser Datei). Richtung von Sandy final bestätigt („ok leg die CI fest", CoS-M-001), Referenz-Guide fertig (`docs/ci-guide.html`). Umsetzung im Produkt-Code läuft erst an (Schritt 1 von 10, Token-Aufräumung DC-006, in Arbeit; Farbe/Typografie/Mono-Zahlen/Icon-Set/Logomark-Vektorisierung noch offen) |
+| 9.7 | Eigene Marke/CI final festgelegt (Farbe, Typografie, Logo, Icon-Sprache) | G2 | 🟡 40 % — Richtung von Sandy final bestätigt („ok leg die CI fest", CoS-M-001), Referenz-Guide fertig (`docs/ci-guide.html`). **31.08.: finaler Slogan „Aufmaß fertig. Angebot fertig." entschieden** — eine weitere offene Teilentscheidung geschlossen. Umsetzung im Produkt-Code läuft erst an (Token-Aufräumung DC-006 in Arbeit; Farbe/Typografie/Mono-Zahlen/Icon-Set/Logomark-Vektorisierung noch offen) |
 
 ## 10. Support & Notfall
 
