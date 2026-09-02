@@ -65,7 +65,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / Product Designer (Text, 25.08. zugewiesen) |
-| DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
 | DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen, hängt inhaltlich mit DC-006 zusammen) |
 | DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
@@ -930,7 +930,7 @@ noch offenes Thema für dich.
 ## DC-015 — Onboarding: viel ungenutzter Leerraum zwischen Formular und Button-Leiste
 
 **Datum:** 2026-08-17 (aus Screenshots von Sandy)
-**Status:** ❌ offen — live bestätigt
+**Status:** ✅ behoben
 
 **Befund:** In mehreren Onboarding-Schritten (Firmenname, Was machst du,
 Rechnungen, Logo) sitzt der Inhalt oben zusammengedrängt, darunter folgt
@@ -948,6 +948,29 @@ nutzt.
 anzudocken, oder ein kleines Illustrations-/Grafikelement ergänzen, das zum
 jeweiligen Schritt passt (analog zum Icon, aber größer/bewusster
 platziert).
+
+**Fix-Update (2026-09-02, Product Designer):** Erste Empfehlung
+umgesetzt (vertikale Zentrierung) — kein neues Illustrations-Element, da
+dafür Grafik-Assets nötig wären. Betroffen waren die 4 im Befund
+genannten Schritte (Betrieb, Gewerk, Rechnungen, Logo):
+Schritt-Wrapper zentrieren ihren Inhalt jetzt als Gruppe
+(`justify-center`) statt ihn oben anzudocken. Bei Schritt 2 + 4 dafür
+das `mt-auto` am Button-Block entfernt (kollidiert sonst mit
+`justify-center`, da Auto-Margins den Freiraum zuerst beanspruchen). Bei
+Schritt 3 die Gewerk-Liste von `flex-1` (füllt immer die volle Höhe) auf
+`max-h-[50vh]` + Scroll umgestellt, damit sie bei aktuell 5 Einträgen
+nicht künstlich auseinandergezogen wird, aber bei künftig mehr Gewerken
+weiterhin scrollbar bleibt. Bei Schritt 6 die Upload-Box von `flex-1`
+auf normale Höhe mit etwas Innenabstand umgestellt, damit sie Teil der
+zentrierten Gruppe wird statt einsam in der Bildschirmmitte zu
+schweben. Schritt 1/8 (Welcome/Fertig) waren schon zentriert, Schritt
+5/7 füllen die Fläche bereits sinnvoll mit Inhalt (Preisliste bzw.
+Buchhaltungs-Optionen) — beide nicht im Befund genannt, daher bewusst
+unverändert gelassen. Scoped `tsc --noEmit` lief clean, Commit
+`b3e649b`. Rein CSS-seitige Änderung ohne visuelle Live-Vorschau
+möglich (kein Dev-Server in dieser Umgebung) — bitte kurz gegenchecken,
+ob sich der neue `max-h-[50vh]`-Wert für die Gewerk-Liste am Handy gut
+anfühlt.
 
 ---
 
