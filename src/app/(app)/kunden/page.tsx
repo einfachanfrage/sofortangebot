@@ -19,7 +19,7 @@ export default async function KundenPage() {
         <div>
           <div className="text-white md:text-anthracite font-syne font-black text-2xl">Kunden</div>
           <div className="text-white/40 md:text-anthracite/40 text-sm font-semibold mt-0.5">
-            {customers.length} Kunden gesamt
+            {customers.length} {customers.length === 1 ? 'Kunde' : 'Kunden'} gesamt
           </div>
         </div>
         <Link href="/kunden/neu"
