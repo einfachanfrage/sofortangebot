@@ -2831,8 +2831,9 @@ eigenständiger Auftrag von Sandy dafür.
 **Datum:** 2026-08-29 (Sandys Reaktion auf die DC-036-Idee: „das find ich
 gut mach das")
 
-**Status:** 🔵 Spec fertig, Backend-Teil an Head of Product Engineering
-übergeben, UI-Teil folgt sobald der Weg steht
+**Status:** ✅ Umgesetzt (Product Designer, 2026-09-02) — Backend war
+bereits fertig, UI-Teil jetzt live. Details am Ende des Abschnitts.
+Live-Test auf echtem Gerät steht aus.
 
 **Warum nicht einfach sofort ein Button in der Aufnahme-Karte?**
 
@@ -2908,6 +2909,43 @@ Sandy nötig, bitte im Dokument vermerken):**
 - Kleiner visueller Hinweis in der Karte, wenn für diesen Raum schon eine
   Form gezeichnet wurde (z. B. „📐 Form gezeichnet" statt der L×B-Zeile),
   damit klar ist, dass die gezeichnete Form die Standardmaße ersetzt.
+
+**Umsetzung (Product Designer, 2026-09-02).** Backend-Teil war beim
+Nachschauen im Code bereits fertig: `generiere-positionen/route.ts` nimmt
+`grundrisse?: Record<string, Wand[]>` entgegen und merged es per
+`findeTitelName()` in `raumDetails` (`modus: 'grundriss'`) — genau nach
+Spec. UI-Teil jetzt gebaut, mit einer bewussten Abweichung von der
+eigenen Spec oben:
+
+Die Spec zielte auf `AufnahmeCard` (die „Maße"-Anzeige einer einzelnen
+Aufnahme). Seit DC-028 ist `AufnahmeCard` aber nur noch die Detail-Ansicht
+EINER Aufnahme (per Chip-Antippen geöffnet), nicht mehr die primäre Ansicht
+— die ist jetzt `RaumKarte`, gruppiert über ALLE Aufnahmen desselben
+Raums. `RaumKarte` trägt schon den kanonischen `raumName`, exakt den
+String, den die Route zum Abgleich braucht — zuverlässiger als ein zweites
+Mal in `AufnahmeCard` zu raten, welcher Raum gemeint ist. Button sitzt
+deshalb dort statt in `AufnahmeCard`.
+
+- `RaumKarte`: neuer, dezenter Text-Button „📐 Unförmig? Form zeichnen"
+  bzw. „Form gezeichnet · antippen zum Ändern", sobald ein Grundriss für
+  diesen Raum existiert.
+- `EntwurfPage`: neuer State `grundrisse` (`Record<string, Wand[]>`),
+  `RaumGrundrissEditor`-Modal (dieselbe Komponente wie in
+  `AngebotDetail.tsx`, unverändert wiederverwendet), Ergebnis geht in
+  `fertigstellen()` mit in den Request an `generiere-positionen`, nur wenn
+  wirklich etwas gezeichnet wurde.
+- Bewusst NICHT im Fallback-Pfad (ungruppierte `AufnahmeCard`-Liste, wenn
+  gar keine Raum-Gruppierung möglich war) — dort gibt es keinen
+  verlässlichen `raumName` zum Abgleich, also richtig weggelassen, nicht
+  nur aus Zeitgründen.
+
+**Eigener Fehler dabei gefunden und korrigiert:** Der erste Commit dieser
+Änderung hat aus einer veralteten lokalen Kopie geschrieben und dabei
+versehentlich zwei fremde, bereits committete Änderungen entfernt (PM-024
+Mengenanzeige, CoS-027 Ref-Fix). Beim eigenen Gegenlesen des Commits
+aufgefallen, nicht von jemandem gemeldet — mit einem zweiten Commit
+korrigiert (Diff gegen den Stand davor zeigt jetzt nur noch die
+beabsichtigten DC-037-Änderungen). Verifiziert per scoped `tsc --noEmit`.
 
 ---
 
