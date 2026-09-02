@@ -66,7 +66,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / Product Designer (Text, 25.08. zugewiesen) |
 | DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen, hängt inhaltlich mit DC-006 zusammen) |
 | DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
 | DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen — falls der fachliche Unterschied selbst unklar ist, bitte kurz bei Head of Product Engineering nachfragen, bevor Text geschrieben wird) |
@@ -977,7 +977,7 @@ anfühlt.
 ## DC-016 — Onboarding: „Weiter"-Button uneinheitlich beschriftet
 
 **Datum:** 2026-08-17 (aus Screenshots von Sandy)
-**Status:** ❌ offen — live bestätigt
+**Status:** ✅ behoben
 
 **Befund:** Für dieselbe Aktion („zum nächsten Schritt") gibt es über die
 6 Onboarding-Schritte hinweg mindestens fünf verschiedene
@@ -994,6 +994,16 @@ geht, muss darüber kurz nachdenken statt intuitiv weiterzuklicken.
 Varianten), „Fertig 🚀" nur für den letzten Schritt. Zahl in Klammern nur
 zeigen, wenn ein kurzer Zusatztext erklärt, wofür sie steht — sonst
 weglassen.
+
+**Fix-Update (2026-09-02, Product Designer):** Genau wie empfohlen
+umgesetzt, jeweils die einfachere der beiden angebotenen Varianten
+gewählt. „Weiter →" jetzt einheitlich für alle Pflichtschritte — die
+Klammer-Zahl bei Gewerk-Auswahl (Schritt 3) und manueller Preisliste
+(Schritt 5) entfernt statt mit Zusatztext zu erklären. „Überspringen →"
+konsistent für beide optionalen Schritte (Preise in Schritt 5, Logo in
+Schritt 6) — „Erstmal überspringen" auf „Überspringen" vereinheitlicht.
+„Fertig 🚀" war schon exklusiv am letzten Schritt, keine Änderung nötig.
+Scoped `tsc --noEmit` lief clean, Commit `d3be888`.
 
 ---
 
