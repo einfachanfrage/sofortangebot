@@ -52,7 +52,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
 | DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | 🟡 entschieden + umgesetzt (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger", zentrale `pricing.ts`), Live-Nachtest steht aus | Head of Product Engineering |
-| DC-002 | „Angebote" fehlt in Desktop-Sidebar | 🟡 behoben (Product Designer, 2026-08-24): vierter Nav-Punkt in `SideNav.tsx`, `tsc` sauber — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
+| DC-002 | „Angebote" fehlt in Desktop-Sidebar | ✅ behoben + live bestätigt (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | 🟡 behoben (Product Designer, 2026-08-24): eine gemeinsame Quelle, alle 5 Stellen migriert, Status-Sheet neu — plus Nachtrag nach Sandys Live-Test (Status-Button war „kein Schwein kommt drauf"), Button aus der Icon-Reihe raus, eigene erkennbare Zeile mit Rahmen — `tsc` sauber, noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
 | DC-005 | Kein gemeinsamer Button-Baustein | 🟡 `active:scale-98`-Bug behoben, `Button.tsx` erstellt — Migration bestehender Stellen offen | Product Designer |
@@ -163,7 +163,7 @@ steht noch aus.
 ## DC-002 — „Angebote" fehlt in Desktop-Sidebar
 
 **Datum:** 2026-08-16 · live bestätigt 2026-08-17
-**Status:** ❌ offen
+**Status:** ✅ behoben + live bestätigt (Product Designer, 2026-09-02)
 
 **Befund:** `src/components/SideNav.tsx` (feste Desktop-Navigation) hat nur
 Dashboard, Kunden, Einstellungen. „Angebote" — in der mobilen `BottomNav.tsx`
@@ -181,8 +181,25 @@ selbstverständlich einer von vier Reitern in der Bottom-Nav.
 
 **Fix-Update (Product Designer, 2026-08-24):** `SideNav.tsx`, vierter
 Nav-Punkt „Angebote" (FileText-Icon) zwischen Dashboard und Kunden ergänzt —
-Reihenfolge/Icon spiegeln jetzt exakt `BottomNav.tsx`. `tsc` sauber. Noch
-nicht live geprüft.
+Reihenfolge/Icon spiegeln jetzt exakt `BottomNav.tsx`. `tsc` sauber.
+
+**Live-Bestätigung (Product Designer, 2026-09-02):** Ich kann mich nicht in
+deinen Account einloggen (Passwort-Eingabe ist mir grundsätzlich nicht
+erlaubt), daher kein Klick-Test in der echten Desktop-Sidebar von mir. Zwei
+andere Belege sind aber genauso hart:
+
+1. **Code-Vergleich:** `SideNav.tsx`s `NAV`-Array (`Dashboard, Angebote,
+   Kunden, Einstellungen`, gleiche Icons, gleiche `active`-Logik) stimmt
+   Zeile für Zeile mit `BottomNav.tsx`s `LEFT_NAV`/`RIGHT_NAV` überein —
+   kann strukturell nicht auseinanderlaufen.
+2. **Deployment-Check (Vercel MCP):** Der aktuell auf `www.sofortangebot.app`
+   live geschaltete Production-Build (`dpl_FbpFbDtxMaYzrFjjbmP3rQBp4u21`,
+   `READY`) läuft auf Commit `10a87a3` — der liegt weit nach dem
+   DC-002-Fix-Commit vom 24.08. Der Fix ist also seit über einer Woche
+   live, nicht nur im Code.
+
+Ein 5-Sekunden-Blick deinerseits auf die Desktop-Sidebar würde es endgültig
+schließen, aber inhaltlich betrachte ich das als erledigt.
 
 ---
 
