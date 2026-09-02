@@ -7,6 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import {
   Check, Upload, ChevronDown, ChevronUp,
   Loader2, X, ArrowRight,
+  Building2, Hammer, Receipt, Coins, Palette, Calculator,
+  BarChart3, Pencil,
 } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { AKTIVE_GEWERKE } from '@/lib/gewerke-config'
@@ -326,7 +328,7 @@ export default function OnboardingStep() {
         // auf größeren Screens (Tablet/Laptop) sonst eine große leere
         // Fläche mittendrin.
         <div className="flex flex-col flex-1 justify-center">
-          <div className="text-[40px] leading-none mb-4">🏗️</div>
+          <Building2 size={40} strokeWidth={1.5} className="text-yellow mb-4" />
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Wie heißt dein Betrieb?
           </h1>
@@ -429,7 +431,7 @@ export default function OnboardingStep() {
         // auseinandergezogen werden, aber bei künftig mehr Gewerken
         // weiterhin scrollbar bleiben.
         <div className="flex flex-col flex-1 min-h-0 justify-center">
-          <div className="text-[40px] leading-none mb-4">🔨</div>
+          <Hammer size={40} strokeWidth={1.5} className="text-yellow mb-4" />
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Was machst du?
           </h1>
@@ -493,7 +495,7 @@ export default function OnboardingStep() {
       {step === 4 && (
         // DC-015: siehe Kommentar bei Schritt 2.
         <div className="flex flex-col flex-1 justify-center">
-          <div className="text-[40px] leading-none mb-4">💶</div>
+          <Receipt size={40} strokeWidth={1.5} className="text-yellow mb-4" />
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-6">
             Wie stellst du Rechnungen?
           </h1>
@@ -588,7 +590,7 @@ export default function OnboardingStep() {
       {/* ── STEP 5: Preise ──────────────────────────────────────────────── */}
       {step === 5 && (
         <div className="flex flex-col flex-1 min-h-0">
-          <div className="text-[40px] leading-none mb-4">💰</div>
+          <Coins size={40} strokeWidth={1.5} className="text-yellow mb-4" />
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Deine Preise
           </h1>
@@ -607,7 +609,9 @@ export default function OnboardingStep() {
                   Empfohlen
                 </span>
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-yellow rounded-xl flex items-center justify-center shrink-0 text-lg">📊</div>
+                  <div className="w-10 h-10 bg-yellow rounded-xl flex items-center justify-center shrink-0">
+                    <BarChart3 size={20} strokeWidth={2} className="text-anthracite" />
+                  </div>
                   <div>
                     <div className="font-extrabold text-anthracite">Marktpreise laden</div>
                     <div className="text-sm text-anthracite/50 font-semibold mt-1 leading-relaxed">
@@ -623,7 +627,9 @@ export default function OnboardingStep() {
                 className="bg-bg border border-anthracite/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-anthracite rounded-xl flex items-center justify-center shrink-0 text-lg">✏️</div>
+                  <div className="w-10 h-10 bg-anthracite rounded-xl flex items-center justify-center shrink-0">
+                    <Pencil size={18} strokeWidth={2} className="text-white" />
+                  </div>
                   <div>
                     <div className="font-extrabold text-anthracite">Eigene Preise eingeben</div>
                     <div className="text-sm text-anthracite/50 font-semibold mt-1 leading-relaxed">
@@ -730,7 +736,7 @@ export default function OnboardingStep() {
         // damit sie Teil der zentrierten Gruppe wird statt einsam in der
         // Bildschirmmitte zu schweben.
         <div className="flex flex-col flex-1 justify-center">
-          <div className="text-[40px] leading-none mb-4">🎨</div>
+          <Palette size={40} strokeWidth={1.5} className="text-yellow mb-4" />
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Dein Logo
           </h1>
@@ -803,7 +809,7 @@ export default function OnboardingStep() {
       {/* ── STEP 7: Buchhaltung ─────────────────────────────────────────── */}
       {step === 7 && (
         <div className="flex flex-col flex-1">
-          <div className="text-[40px] leading-none mb-4">📊</div>
+          <Calculator size={40} strokeWidth={1.5} className="text-yellow mb-4" />
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-4">
             Nutzt du eine Buchhaltungssoftware?
           </h1>
