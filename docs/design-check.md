@@ -68,7 +68,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
+| DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ✅ behoben (Nebeneffekt von DC-017, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen — falls der fachliche Unterschied selbst unklar ist, bitte kurz bei Head of Product Engineering nachfragen, bevor Text geschrieben wird) |
 | DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | 🔵 Prüfen, ob nur Screenshot-Ausschnitt | — |
 | DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — CoS-002 komplett (alle 3 Schritte inkl. Mehrfach-Aufnahmen-Fall), Realtime-Bug gefunden+gefixt, Retest danach „passt" | Head of Product Engineering |
@@ -1058,7 +1058,7 @@ genannten Alternative. Scoped `tsc --noEmit` lief clean, Commit
 ## DC-018 — Emoji-Auswahl pro Onboarding-Schritt wirkt zufällig
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen — live bestätigt
+**Status:** ✅ behoben (Nebeneffekt von DC-017)
 
 **Befund:** Die Emoji-Wahl pro Schritt passt teils nicht zum Thema: Eine
 Stehleiter (🪜) für „Wie heißt dein Betrieb?" (Firmenname/Adresse) hat
@@ -1070,6 +1070,17 @@ Quittung (🧾) oder ein Euro-Schein (💶) läge näher.
 **Empfehlung:** Emoji pro Schritt kurz gegenprüfen (Firmenname → z. B.
 🏢/📋, Rechnungen → 🧾), unabhängig von der grundsätzlicheren Frage aus
 DC-017.
+
+**Fix-Update (2026-09-02, Product Designer):** Hat sich mit dem DC-017-Fix
+(Emoji → Lucide-Icons in der gesamten Onboarding-Funktionsstrecke) von
+selbst erledigt — kein zusätzlicher Code nötig. „Wie heißt dein Betrieb?"
+zeigt jetzt `Building2` (ein Gebäude-Icon, trifft genau die hier
+vorgeschlagene Richtung 🏢), „Wie stellst du Rechnungen?" zeigt jetzt
+`Receipt` (ein Beleg-Icon, trifft genau die hier vorgeschlagene Richtung
+🧾). Die inhaltliche Frage aus diesem Befund (welches Symbol passt
+fachlich zum Schritt) und die aus DC-017 (welche Icon-Sprache insgesamt)
+liefen am Ende auf dieselbe Umsetzung hinaus. Commit `5fc7894` (siehe
+DC-017).
 
 ---
 
