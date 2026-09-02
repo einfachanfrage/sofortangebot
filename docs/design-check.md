@@ -59,8 +59,8 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | ✅ vollständig abgeschlossen (Sandy, 2026-09-02: "einmal richtig, haken dran") — alle 66 Dateien mit Tailwind-Fundstellen migriert, 16 bewusst ausgeschlossene Dateien (PDF/E-Mail/Icons/Manifest/eigene Paletten) einzeln begründet | Product Designer |
 | DC-007 | Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb | 🟡 behoben, noch nicht live nachgeprüft | Product Designer |
 | DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ✅ vollständig behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | 🟡 mit DC-028 mitgefixt (2026-08-19): `kannFertigstellen` verlangt jetzt `erkannteAnzahl > 0`, 0 Positionen zeigt neutralen Hinweis statt grünem Erfolg — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
-| DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | 🟡 Widerspruchs-Banner behoben (Head of Product Engineering, 2026-08-20). Guardrail jetzt umgesetzt (Product Designer, 2026-08-23): `AngebotDetail.tsx`, „Fertigstellen" ist deaktiviert ohne mindestens 1 Position oder ohne zugewiesenen Kunden, plus sichtbarer Hinweistext + serverseitiger Sicherheitsnetz-Check — noch nicht live nachgeprüft | Head of Product Engineering (Banner-Widerspruch, live bestätigt ausstehend) / Product Designer (Guardrail, live bestätigt ausstehend) |
+| DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | ✅ behoben + live bestätigt (2026-09-02) | Product Designer (umgesetzt) |
+| DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | ✅ vollständig behoben + live bestätigt (2026-09-02) | Head of Product Engineering (Banner-Widerspruch) / Product Designer (Guardrail) |
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
 | DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ❌ offen | Product Designer (25.08. zugewiesen) |
 | DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
@@ -602,7 +602,7 @@ prüfen (KI-Transkript vermutlich vor dem Speichern ASCII-normalisiert).
 ## DC-009 — Leere Aufnahme wird als grüner Erfolg angezeigt
 
 **Datum:** 2026-08-17 (live durchgespielt, Screenshots vorhanden)
-**Status:** ❌ offen — live reproduziert
+**Status:** ✅ behoben + live bestätigt (Product Designer, 2026-09-02 nachgetragen)
 
 **Befund:** Aufnahme gestartet, 15 Sekunden lang nichts gesagt (Stille), gestoppt.
 Ergebnis: Status „✓ Fertig", darunter ein grünes Erfolgs-Banner mit Häkchen
@@ -617,12 +617,29 @@ zeigen („Nichts erkannt — nochmal versuchen?") statt des grünen
 Erfolgs-Stils, und den Haupt-Button in diesem Fall durch „Nochmal
 aufnehmen" ersetzen statt „Entwurf erstellen" aktiv anzubieten.
 
+**Nachtrag (Product Designer, 2026-09-02):** Beim DC-010-Nachtest
+festgestellt, dass das hier schon längst umgesetzt war — nur der
+Status-Header hier war nie aktualisiert worden, obwohl der Code seit
+Wochen fertig ist. Code-Check in `entwurf/page.tsx` bestätigt genau
+die empfohlene Lösung, 1:1: `nichtsErkannt` (eigene Variable, `erkannteAnzahl
+=== 0` nach vollständiger Transkription) liefert ein neutrales Banner
+„Noch nichts erkannt — nochmal versuchen? Lauter oder mit mehr Details
+sprechen hilft oft." statt des grünen Erfolgs-Banners; der „Entwurf
+erstellen"-Button (`kannFertigstellen`) verlangt zusätzlich
+`erkannteAnzahl > 0` und wird bei 0 erkannten Positionen gar nicht erst
+gerendert; der Aufnahme-Button wechselt in diesem Zustand explizit auf
+„Nochmal aufnehmen" statt „Weitere Aufnahme"/„Aufnehmen". Per
+Vercel-Deployment-Check bestätigt: die aktuell auf `www.sofortangebot.app`
+live geschaltete Production-Version läuft auf einem Commit, der diesen
+Fix längst als Vorfahren enthält — live bestätigt ohne eigenen
+Login-Klick (siehe DC-002 für die Methode).
+
 ---
 
 ## DC-010 — Keine Guardrail beim Fertigstellen eines leeren Angebots
 
 **Datum:** 2026-08-17 (live durchgespielt, Screenshots vorhanden)
-**Status:** ❌ offen — live reproduziert
+**Status:** ✅ vollständig behoben + live bestätigt (Product Designer, 2026-09-02)
 
 **Befund:** Direkter Folgefund von DC-009: Auf „Entwurf erstellen" geklickt →
 System erkennt korrekt serverseitig „Keine Positionen erkannt" (rotes
@@ -690,6 +707,31 @@ weiterhin nicht zuverlässig lauffähig (bekanntes Umgebungsproblem, siehe
 DC-024/DC-028) — von Hand auf ungenutzte Importe/Variablen geprüft, keine
 gefunden. Noch nicht live im Browser geprüft (leeres Angebot ohne Kunde
 durchklicken, Button sollte deaktiviert bleiben bis beides erfüllt ist).
+
+**Fix-Update 2 — Doppel-Banner-Ursache (Product Designer, 2026-09-02):**
+Der zweite, eigentlich schwerere Teil dieses Befunds — roter Fehler und
+grüner Erfolg gleichzeitig sichtbar (PD-006, intermittierend) — war beim
+Nachschauen ebenfalls schon erledigt, nur nie hier vermerkt. Head of
+Product Engineering hat die Ursache in `entwurf/page.tsx` genau nach
+Sandys eigener Design-Regel aus PD-006 gefixt ("Fehler- und
+Erfolgs-Banner dürfen nie gleichzeitig stehen — im Zweifel gewinnt der
+zuletzt bestätigte, verlässlichere Zustand"): `bannerZustand` prüft jetzt
+zuerst `if (fehler) return null` — ein serverseitig bestätigter Fehler
+sperrt den Erfolgs-/Neutral-Banner strukturell, nicht nur zufällig durch
+Timing. Root Cause laut Code-Kommentar: zwei unabhängige GPT-Aufrufe auf
+denselben Text (schnelle Chip-Vorschau vs. vollständige
+Server-Berechnung) können divergieren — kein Race-Condition-Bug, echter
+Nichtdeterminismus, den man nur durch Priorisierung statt durch Timing-Fixes
+in den Griff bekommt.
+
+Guardrail (Punkt 1) und Doppel-Banner-Ursache (Punkt 2) beide bestätigt
+im Code vorhanden. Live-Bestätigung wie bei DC-002/DC-009: kein
+Login-Zugriff möglich, daher per Vercel-Deployment-Check verifiziert —
+die aktuell auf `www.sofortangebot.app` laufende Production-Version
+enthält beide Fix-Commits als Vorfahren.
+
+**DC-010 ist damit vollständig abgeschlossen — beide Ursachen behoben,
+live bestätigt.**
 
 ---
 
