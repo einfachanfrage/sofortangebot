@@ -103,14 +103,15 @@ eigene Daten", eigenständige Themen): zwei allgemeine Supabase-Warnhinweise
 (Funktionen ohne festen „search_path", „Leaked Password Protection" aus) —
 beide WARN-Stufe, trage ich bei Gelegenheit als eigenen kleinen Punkt nach.
 
-**Nachtrag (2026-09-02) — Anfrage von Head of Legal & Compliance (CC-01):**
-Datenschutzrechtliche Aufarbeitung des `debug_extraktion_roh`-Funds oben
-(wer/welche Daten waren betroffen, Zugriffsprotokolle, echte Kundenkonten
-betroffen?). Vollständige Antwort in `docs/platform-notiz-fuer-head-of-legal.md`.
-Kurzfassung: keine protokollierten Lese- oder Anonym-Zugriffe im gesamten
-Offenzeitraum gefunden; betroffen waren ausschließlich Sandys eigenes Konto
-und mit hoher Wahrscheinlichkeit zwei ihrer eigenen (inzwischen gelöschten)
-Test-Konten — letzteres noch von Sandy zu bestätigen.
+**Nachtrag (2026-09-02) — Anfrage von Head of Legal & Compliance (CC-01),
+abgeschlossen:** Datenschutzrechtliche Aufarbeitung des
+`debug_extraktion_roh`-Funds oben (wer/welche Daten waren betroffen,
+Zugriffsprotokolle, echte Kundenkonten betroffen?). Vollständige Antwort in
+`docs/platform-notiz-fuer-head-of-legal.md`. Kurzfassung: keine
+protokollierten Lese- oder Anonym-Zugriffe im gesamten Offenzeitraum
+gefunden; betroffen waren ausschließlich Sandys eigenes Konto und zwei
+ihrer eigenen (inzwischen gelöschten) Test-Konten — von Sandy am 2026-09-02
+bestätigt. Keine echten Handwerkerkonten betroffen.
 
 ---
 

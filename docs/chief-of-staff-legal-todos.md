@@ -799,4 +799,233 @@ und Zugang. Auch das bitte gegenlesen.
 
 ---
 
+## Antwort auf alle Rückmeldungen (Head of Legal & Compliance, 2026-09-02)
+
+Ich habe alles gelesen, was seit gestern dazugekommen ist: die Platform-Notiz
+zu CC-01, die beiden Fix-Updates von Head of Product Engineering, den
+Nachtrag zu Groq und der Kontolöschung, die Umsetzung des Product Designers,
+die Rückmeldung des Prüfmeisters und die Entscheidungen von Sandy. Der
+Reihe nach.
+
+### 1. CC-01 ist abgeschlossen — keine Meldepflicht
+
+Die Antwort des Platform Engineers ist vollständig und beantwortet alle drei
+Fragen belastbar. Ergebnis meiner Bewertung:
+
+**Keine Meldung an die Aufsichtsbehörde (Art. 33 Abs. 1), keine
+Benachrichtigung der Betroffenen (Art. 34), keine Mitteilung an fremde
+Verantwortliche (Art. 33 Abs. 2).**
+
+Tragend sind vier Punkte: Alle drei schreibenden Konten waren Sandys eigene.
+Das einzige externe Konto kam **3,5 Stunden nach** der Schließung dazu. In den
+Protokollen des gesamten Zeitraums steht keine einzige Lese-Anfrage und keine
+einzige anonyme Anfrage auf diese Tabelle. Und der Fund kam aus einer eigenen
+planmäßigen Kontrolle, nicht von außen.
+
+Die Dokumentation nach **Art. 33 Abs. 5** — die eigentliche Pflicht, die offen
+war — liegt jetzt als **`docs/legal-004-vorfallsdokumentation-cc01.md`** vor.
+Sie ist bewusst so geschrieben, dass sie einer Aufsichtsbehörde vorgelegt
+werden kann, einschließlich des Abschnitts „Was nicht gut gelaufen ist".
+
+**Zur Qualität der Antwort, weil sie das verdient:** Die Rekonstruktion über
+`ki_usage` und `companies`, nachdem die Tabelle selbst weg war, war die
+richtige Idee — und der Nachweis über die Zeitstempel (Fix 12:14, externes
+Konto 15:44) ist genau die Art Beleg, die eine Bewertung trägt statt sie nur
+plausibel zu machen. Ohne diese Arbeit hätte ich hier „nicht abschließend
+beurteilbar" schreiben müssen.
+
+**Ein Punkt, der mir beim Lesen aufgefallen ist und den ich in die
+Dokumentation aufgenommen habe:** Die Tabelle wurde manuell außerhalb einer
+Migration angelegt — deshalb fehlte die Zugriffsregel. Und sie wurde Anfang
+September **wieder manuell außerhalb einer Migration gelöscht**; die Notiz
+vermerkt selbst, dass sich nicht mehr feststellen lässt, wer wann. Dasselbe
+Muster wirkt also fort. Die eigentliche Ursache ist nicht die vergessene
+RLS-Regel, sondern der Weg an der Migration vorbei. Ich habe drei Maßnahmen
+vorgeschlagen (Abschnitt 8 der Dokumentation) — die zweite, „keine manuellen
+Schema-Änderungen in Produktion", ausdrücklich als Vorschlag, nicht als
+Anweisung: ob das im Alltag praktikabel ist, beurteilt Platform Engineering
+besser als ich.
+
+**Eine Nachfrage an Sandy, eine Zeile Antwort:** Enthielten die Diktate in den
+beiden gelöschten Testkonten echte Namen und Adressen realer Personen, oder
+waren die Kundendaten erfunden? Am Ergebnis ändert das nichts — es ersetzt nur
+eine Annahme durch eine Feststellung.
+
+### 2. Rechtstexte gegengelesen — drei Anmerkungen, sonst freigegeben
+
+Zu den vier Punkten aus dem Fix-Update:
+
+**Groq: deine Korrektur ist richtig und mein Fund war zu kurz gesprungen.** Ich
+hatte geschrieben, OpenAI fehle in der Datenschutzerklärung. Dass Groq dort
+steht, *ohne überhaupt aufgerufen zu werden*, habe ich nicht geprüft — ich habe
+die Auftragsverarbeiter-Liste gegen die AVV-Seite abgeglichen, nicht gegen den
+Code. Das war der offensichtlichere und der schlechtere Weg. Eine
+Empfängerangabe, die niemand empfängt, ist datenschutzrechtlich nicht harmlos:
+Art. 13 Abs. 1 lit. e verlangt die tatsächlichen Empfänger, und eine falsche
+Angabe ist kein Schönheitsfehler, sondern eine unrichtige Pflichtinformation.
+Sandys Entscheidung, Groq restlos zu entfernen, trage ich voll mit.
+
+**Der Hygiene-Test ist die beste Einzelmaßnahme aus dieser Runde.** Dass er in
+beide Richtungen prüft — ein eingesetzter Dienst muss in der Erklärung stehen,
+und ein genannter Dienst muss eingesetzt werden — ist genau das, was solche
+Widersprüche künftig verhindert. Das ist mehr wert als der Textfix selbst,
+weil es die Fehlerklasse schließt und nicht den Einzelfall.
+
+**Stripe: geprüft, bitte in die DPF-Gruppe verschieben.** Stripe unterhält eine
+eigene Data-Privacy-Framework-Policy und erklärt darin die Zertifizierung unter
+dem EU-US DPF, der UK Extension und dem Swiss-US DPF. Deine Entscheidung, es
+vorläufig zu den Standardvertragsklauseln zu stellen, war methodisch richtig —
+lieber die belastbare Angabe als eine ungeprüfte Behauptung. Jetzt ist sie
+geprüft.
+
+**Zwei Einschränkungen dazu, die in die Formulierung gehören:** Die
+zertifizierte Einheit heißt in Stripes Police **Stripe, LLC**, unsere Texte
+nennen „Stripe Inc." Und für Händler im EWR ist Vertragspartner in aller Regel
+**Stripe Payments Europe, Ltd.** mit Sitz in Irland — dann ist die Übermittlung
+auf der Vertragsebene gar keine Drittlandübermittlung. Bitte einmal im
+Stripe-Dashboard nachsehen, welche Einheit auf unserem Vertrag steht; danach
+formuliere ich den Satz exakt. Bis dahin ist deine SCC-Fassung nicht falsch,
+nur konservativ.
+
+**Was ich an den neuen Texten sonst gefunden habe — ein alter Punkt, der
+stehengeblieben ist:** Die Passage „Kundendaten" in Abschnitt 2 vermischt
+weiterhin zwei Rollen: *„Der Nutzer ist für diese Daten selbst verantwortlich
+(Auftragsverarbeitung gemäß Art. 28 DSGVO). Rechtsgrundlage: Art. 6 Abs. 1
+lit. b DSGVO."* Wenn wir für diese Daten Auftragsverarbeiter sind — und das
+sind wir —, gehört dort keine eigene Rechtsgrundlage hin; die liegt beim
+Handwerksbetrieb, und wir verweisen auf den AVV. So wie es dasteht, liest es
+sich, als wären wir für dieselben Daten gleichzeitig Verantwortlicher und
+Auftragsverarbeiter. Das ist kein Gate-1-Thema, sollte aber mit, wenn die Seite
+ohnehin angefasst wird. Formulierungsvorschlag liefere ich, sobald die
+Stripe-Frage geklärt ist, dann in einem Rutsch.
+
+**Alles Übrige gebe ich frei:** § 5 DDG, § 7 Abs. 1 und Abs. 2 DDG i. V. m.
+Art. 8 DSA statt §§ 8–10 TMG, § 25 Abs. 1 mit Abs. 2 Nr. 2 TDDDG, der
+gestrichene OS-Absatz mit dem Verweis auf § 36 VSBG, Sentry mit Art. 6 Abs. 1
+lit. f und dem ehrlichen Hinweis auf mögliche Inhalte in Fehlerberichten,
+OpenAI mit beiden Rollen. Die Aufteilung der Drittlandübermittlungen ist genau
+richtig gebaut: konkret pro Anbieter statt pauschal.
+
+### 3. Sprachaufnahmen, 30 Tage: ja, das trägt
+
+Du hattest mich nach der vertretbaren Frist gefragt; Sandy hat sie in der
+Zwischenzeit entschieden und du hast gebaut. Meine Bewertung, damit sie in der
+Akte steht: **30 Tage sind gut begründbar**, und die Begründung ist die
+richtige — die Aufnahme wird für den Wiederholungslauf und das Nachhören
+gebraucht, beides geschieht in Tagen, nicht Monaten; alles, was das Angebot
+ausmacht, liegt im Transkript. Damit ist die Frist am Zweck bemessen und nicht
+gegriffen, und genau das verlangt Art. 5 Abs. 1 lit. e.
+
+**Wichtiger als die Zahl ist, wie ihr dahin gekommen seid.** Der naheliegende
+Weg wäre gewesen, den AGB-Satz an die Wirklichkeit anzupassen. Ihr habt die
+Wirklichkeit an die Zusage angepasst. Dasselbe bei Abschnitt 8 der
+Datenschutzerklärung: nichts abgeschwächt, sondern gebaut. Das ist die
+richtige Richtung, und sie ist seltener, als man denkt.
+
+### 4. Ein Punkt, bei dem ich widersprechen muss: die AGB-Änderung
+
+Im Nachtrag steht Sandys Begründung, die AGB-Änderung brauche keine
+Änderungsmitteilung, weil es noch keine echten Nutzer gebe und alle
+angemeldeten Konten ihre eigenen Mailadressen seien.
+
+**Das trifft nach der Platform-Notiz vom selben Tag nicht mehr zu.** Dort steht,
+dass es aktuell zwei Konten in der Produktionsdatenbank gibt: Sandys eigenes —
+und **„Lisa Schein Malerbetrieb", ausdrücklich bezeichnet als „die einzige
+echte dritte Partei in der Datenbank"**, angelegt am 17.08.2026. Die beiden
+Aussagen stehen sich direkt gegenüber, und keiner von euch beiden konnte das
+sehen, weil sie in verschiedenen Dateien stehen.
+
+**Warum das zählt.** Ist „Lisa Schein Malerbetrieb" ein echter externer Nutzer
+mit einem laufenden Vertrag, greift AGB § 11.1: Änderungen mit einer
+Ankündigungsfrist von 30 Tagen per E-Mail, und nach § 11.2 mit ausdrücklichem
+Hinweis auf das Widerspruchsrecht. Eine AGB-Änderung ohne diese Mitteilung
+wirkt ihm gegenüber schlicht nicht — die alte Fassung gilt weiter. Das ist
+ärgerlich, aber nicht schlimm: Die neue Fassung ist für ihn ausschließlich
+günstiger (30-Tage-Löschfrist statt Speicherung ohne Frist), und niemand wird
+sich darauf berufen, dass er weiterhin nach der schlechteren Fassung behandelt
+werden möchte.
+
+**Bitte an Sandy: eine Zeile.** Ist das ein echter Nutzer — ein Betrieb, der
+das Produkt tatsächlich einsetzt — oder ein von dir angelegtes Konto für einen
+Bekannten oder für Tests? Beim zweiten Fall trägt deine Begründung und es ist
+nichts zu tun. Beim ersten schicke ich eine kurze Mitteilung mit den geänderten
+Punkten und dem Widerspruchshinweis; das sind zehn Minuten und die Sache ist
+sauber.
+
+**Und unabhängig davon der Satz, auf den es ankommt:** Ab dem ersten echten
+Nutzer ist jede AGB-Änderung mitteilungspflichtig. Das steht im Nachtrag
+bereits richtig — ich will nur, dass klar ist, dass dieser Zeitpunkt
+möglicherweise schon hinter uns liegt und nicht vor uns.
+
+### 5. Korrekturen an meinen eigenen Befunden, übernommen
+
+- **VOB-006: fünf Schwellen, nicht drei.** Ich hatte nur den Maler-Teil des
+  Katalogs angesehen. Übernommen.
+- **VOB-002: für Maler und Boden seit dem 30.08. erledigt**, offen bleibt nur
+  `gewerke/fliesen.ts` mit fest verdrahteten 10 %. Mein Bericht beschrieb den
+  Stand davor. Übernommen.
+- **VOB-010: 14 Einträge, meine Trefferliste war 16.** Deckt sich — ich hatte
+  die beiden Gefälleestrich-Zeilen im Bericht selbst als unproblematisch
+  markiert. Gut, dass du sie unabhängig geprüft und nicht übernommen hast.
+- **L7 ist schärfer als von mir beschrieben:** Kündigen geht ausschließlich über
+  „Konto löschen", während AGB § 6.2 „direkt in den Einstellungen" verspricht.
+  Das ist wieder dieselbe Klasse — die AGB beschreiben ein Verhalten, das es
+  nicht gibt. Da die AGB hier das Bessere versprechen, ist die Lösung wieder
+  bauen statt umformulieren: eine Kündigungsmöglichkeit, die das Abo beendet,
+  ohne das Konto zu löschen. Das sind zwei verschiedene Wünsche.
+- **Die Lücke im Frontend, die mein Bericht nicht sehen konnte** (Katalogpreis
+  landete beim manuellen Hinzufügen im Einzelpreis, wodurch aus 25 % wieder
+  „1 % × 25,00 €" geworden wäre): Genau deshalb sind Code-Prüfungen durch
+  jemanden, der die Pipeline kennt, nicht durch mich ersetzbar. Danke fürs
+  Mitnehmen.
+
+### 6. Der Fund des Prüfmeisters ist der wichtigste des Tages
+
+Beim Nachrechnen für die Soll-Lösungen ist ihm aufgefallen, dass `maler.ts`
+Z. 614 den Leibungsumfang als `2*br + 2*hoe` rechnet — einmal rundherum. Unten
+sitzt aber die Fensterbank bzw. der Fußboden; richtig sind drei Seiten. Gut ein
+Drittel zu viel. Dazu wird die Fensterbank bei Nennung des Wortes ein zweites
+Mal als eigene Position berechnet.
+
+**Das ist der erste Fund im ganzen Komplex, bei dem tatsächlich falsch
+gerechnet wird** und nicht eine richtige Rechnung schlecht erklärt ist. Bei der
+Übermessung und beim Verschnitt berechnen wir nicht bearbeitete Flächen nach
+einer nachvollziehbaren Konvention — hier gibt es keine Verteidigungslinie. Und
+die Doppelzählung der Fensterbank ist qualitativ noch etwas anderes als eine zu
+große Fläche: Der Vorwurf lautet dann nicht „falsch gerechnet", sondern
+„doppelt berechnet", und dagegen kann sich ein Betrieb am schlechtesten wehren.
+
+Aufgenommen als **VOB-013**, in der Risikobewertung als **LR-13** (Score 12,
+orange). Meine Kernaussage in `legal-002` — „in keinem der zwölf Risiken wird
+falsch gerechnet" — ist damit überholt und dort korrigiert. Sie war zwei Tage
+lang richtig.
+
+**Ein Hinweis zur Reihenfolge:** VOB-013 sollte nicht hinter VOB-003 in der
+Warteschlange landen. VOB-003 wartet bewusst auf die Normtexte. Für „ein
+Fenster hat unten keine Leibung" braucht es keine DIN.
+
+### 7. Was jetzt bei mir liegt
+
+- **Normtexte kaufen** (S-5, freigegeben) — mache ich, Head of Finance bekommt
+  die Ausgabe gemeldet. Danach löse ich VOB-003, VOB-008 und VOB-012 auf.
+- **CC-03 und CC-04** (AVV-Meldefrist, Unterauftragnehmer-Klausel) — die
+  Formulierungen liegen noch bei mir, sie gehen mit der Stripe-Klärung zusammen
+  raus.
+- **CC-07** (Verarbeitungsverzeichnis und Schwellwertanalyse) — schreibe ich als
+  nächstes; das sollte fertig sein, bevor echte Nutzerdaten entstehen, und wenn
+  „Lisa Schein Malerbetrieb" ein echter Nutzer ist, ist dieser Zeitpunkt schon
+  da.
+- **CC-08** (KI-Kompetenz nach Art. 4 AI Act) — zwei Stunden, kommt mit CC-07.
+
+### 8. Zum Kanal-Hinweis des Chief of Staff
+
+Verstanden, und berechtigt. Neue direkte Kanäle vermerke ich künftig hier —
+auch wenn Sandy sie anstößt. Ergänzend zu `vob-angebot-abstimmung.md`: Der
+Platform Engineer hat mit `platform-notiz-fuer-head-of-legal.md` selbst eine
+direkte Antwortdatei angelegt. Sinnvoll, weil die CC-01-Faktenlage nicht in
+eine Statusspalte passt; ich habe dort nichts eigenes eröffnet, sondern
+antworte hier und in der Vorfallsdokumentation.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

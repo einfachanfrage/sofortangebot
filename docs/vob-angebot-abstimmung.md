@@ -137,13 +137,14 @@ Details in `docs/legal-001-bestandsaufnahme.md`, Abschnitt B1. [Einschätzung]
 | VOB-003 | Geplante „VOB-Feinheit" zu Leibungen zeigt vermutlich in die **falsche Richtung** — bitte nicht bauen | Head of Product Engineering | ❌ |
 | VOB-004 | Übermessungshinweis erreicht das Kunden-PDF nicht (= G5 aus CoS-L-001) | Head of Product Engineering + Product Designer | ❌ |
 | VOB-005 | **Nebenleistungen** werden als eigene Positionen berechnet (Boden/Möbel abdecken) | Prüfmeister → dann Sandy | 🟠 |
-| VOB-006 | Höhenzuschlag: drei verschiedene Schwellen im Produkt (2,80 / 3,00 / 4,00 m) — Normbegründung war falsch, Konsistenzfrage bleibt | Head of Product Engineering | ❌ |
+| VOB-006 | Höhenzuschlag: **fünf** verschiedene Schwellen im Produkt — Normbegründung war falsch, Konsistenzfrage bleibt | Head of Product Engineering + Sandy | ❌ |
 | VOB-007 | Die Zeile „Normgrundlagen" behauptet VOB-Konformität, die an mehreren Stellen nicht gegeben ist | Product Designer + Legal | ❌ |
 | VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen ungeklärt | Legal (nach VOB-011) | ⏳ |
 | VOB-009 | Türen/Fenster nach Stück statt nach Fläche | Prüfmeister | 🟠 |
 | VOB-010 | Zuschlags-Einheiten: Prozent im Titel, Euro im Preis (14 Einträge) | Head of Product Engineering | ❌ |
 | VOB-011 | **Normtexte kaufen** — Grundlage für VOB-001, -003, -008 | Sandy (Freigabe ~150 €) | 🔵 |
 | VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Head of Product Engineering | ❌ |
+| VOB-013 | **Leibungsfläche wird rundherum statt dreiseitig gerechnet, Fensterbank doppelt** — Fund des Prüfmeisters | Head of Product Engineering | ❌ |
 
 ---
 
@@ -296,6 +297,13 @@ Frage „wie gemessen" nicht. Der Code rechnet nach Fläche
 (`anz × Umfang × Tiefe`). Ob das die richtige Einheit ist, kann ich ohne den
 Normtext nicht sagen.
 
+> **Ergänzung 2026-09-02:** Der Prüfmeister hat beim Nachrechnen einen
+> Folgefehler gefunden — die Leibungs**fläche** wird zu groß berechnet (vier
+> Seiten statt drei) und die Fensterbank doppelt. Das ist **VOB-013** und
+> ändert nichts an dem, was hier steht: Leibungen dürfen separat gerechnet
+> werden (das „Ob"), nur die Menge stimmt nicht (das „Wie viel"). Wer aus
+> VOB-003 abliest, an den Leibungen sei alles in Ordnung, liest zu schnell.
+
 **Konkrete Bitte:**
 1. Den Backlog-Punkt aus dem Kommentarkopf und aus `pruefmeister-testfaelle.md`
    **nicht umsetzen**, sondern zunächst als „strittig, siehe VOB-003" markieren.
@@ -423,6 +431,11 @@ VOB-007). Sag mir, was du kennst.
 Drei Schwellen (2,80 / 3,00 / 4,00 m) und zwei Einheitensysteme (€/m² und %)
 für dieselbe Erschwernis. Welcher Zuschlag greift, hängt davon ab, welcher Weg
 die Position erzeugt hat.
+
+> **Korrektur 2026-09-02, Head of Product Engineering:** Es sind nicht drei
+> Schwellen, sondern **fünf** — Code 3,00 m; Katalog 2,80 und 4,00 bei Maler,
+> 3,25 und 4,50 bei Trockenbau, 3,00 bei Putz. Ich hatte nur den Maler-Teil
+> angesehen. Übernommen; am Befund ändert es nichts außer seiner Größe.
 
 > **Korrektur vom 2026-09-01 nach Rückmeldung des Prüfmeisters.** Ursprünglich
 > stand hier, das Produkt berechne zwischen 2,80 m und 3,50 m „einen Zuschlag
@@ -667,6 +680,71 @@ Codestelle betreffen. Wer VOB-012 anfasst, sollte PM-007 gleich mitnehmen.
 
 **An den Prüfmeister:** Zieht ihr Türbreiten ab oder messt ihr durch? Das ist
 Frage 7 in der Liste unten.
+
+---
+
+## VOB-013 — Leibungen werden zu groß gerechnet, Fensterbank doppelt
+
+**Status:** ❌ offen — Head of Product Engineering
+**Fund:** Prüfmeister, 2026-09-02 (`pruefmeister-testfaelle.md`, „Neuer Fund
+nebenbei"). Ich bewerte ihn hier nur rechtlich; fachlich ist er seiner.
+
+`maler.ts` Zeile 614 rechnet den Leibungsumfang als
+
+```js
+const leibungsUmfang = round2(2 * br + 2 * hoe)
+```
+
+also einmal komplett rundherum. Der Prüfmeister weist darauf hin, dass das
+fachlich nicht sein kann: unten am Fenster sitzt die Fensterbank, unten an der
+Tür der Fußboden — dort gibt es keine Leibung. Richtig sind drei Seiten,
+`br + 2 × hoe`. Bei einem Standardfenster 1,20 × 1,00 m und 25 cm Tiefe
+ergibt das **1,10 m² statt 0,80 m², also gut ein Drittel zu viel.** Dazu
+kommt bei Nennung des Wortes „Fensterbank" zwei Zeilen weiter nochmal
+`br × tiefe` als eigene Position — die Fensterbank wird damit doppelt
+berechnet, einmal versteckt im Leibungsumfang und einmal offen.
+
+**Rechtlich ist das die schwerste Einzelposition in dieser Datei**, obwohl der
+Betrag klein ist. Der Grund liegt in der Art des Fehlers, nicht in seiner Höhe:
+
+- **Es gibt keine Verteidigungslinie.** Bei der Übermessung (VOB-004) und beim
+  Verschnitt (VOB-001) berechnen wir Flächen, die nicht bearbeitet wurden, aber
+  nach einer nachvollziehbaren Konvention — die eine steht in der Norm, die
+  andere ist Branchenpraxis. Hier ist schlicht falsch gerechnet. Auf die Frage
+  „wie kommen Sie auf 1,10 m²?" gibt es keine Antwort, die trägt.
+- **Die Doppelberechnung der Fensterbank ist qualitativ etwas anderes als eine
+  zu große Fläche.** Dieselbe Leistung erscheint zweimal, einmal sichtbar und
+  einmal verdeckt. Wenn ein Endkunde das findet, ist der Vorwurf nicht mehr
+  „falsch gerechnet", sondern „doppelt berechnet" — und das ist der Vorwurf,
+  gegen den sich ein Handwerksbetrieb am schlechtesten wehren kann.
+- **Er wirkt zulasten des Endkunden und ist systematisch**, also auf jedem
+  Angebot mit Leibungen gleich.
+
+**Zusammenhang mit VOB-003, damit nichts vermischt wird.** Die beiden Punkte
+betreffen dieselbe Position, aber verschiedene Fragen:
+
+| Frage | Antwort | Fundstelle |
+|---|---|---|
+| **Ob** Leibungen separat berechnet werden dürfen | Ja — DIN 18363 5.2.3, „unabhängig von ihrer Einzelgröße gesondert gerechnet". Der Code liegt richtig, der geplante Rückbau wäre falsch | VOB-003 |
+| **Wie viel** dabei herauskommt | Zu viel — vier Seiten statt drei, plus Doppelzählung der Fensterbank | VOB-013 |
+
+**Das ändert meine Einschätzung zu VOB-003 nicht**, sondern schärft sie: Es
+bleibt richtig, Leibungen zu berechnen; die Menge ist der Fehler. Wer VOB-003
+liest und daraus „an den Leibungen ist alles in Ordnung" ableitet, liest zu
+schnell — deshalb steht der Hinweis auch dort.
+
+**Warum ich das trotzdem nicht als Sofort-Fix einfordere:** Es ändert Geld,
+und der Prüfmeister hat den Fall selbst noch nicht live nachgesprochen. Sein
+Vorgehen — erst nachsprechen, dann als eigenen Fall anlegen — ist richtig.
+Meine Bitte ist nur, dass er nicht in der Warteschlange hinter VOB-003 landet:
+VOB-003 wartet bewusst auf die Normtexte, VOB-013 nicht. Für „ein Fenster hat
+unten keine Leibung" braucht es keine DIN.
+
+**Wichtig für die Risikobewertung:** Dieser Fund ist der erste, bei dem im
+Produkt tatsächlich **falsch gerechnet** wird und nicht nur eine richtige
+Rechnung schlecht erklärt ist. Die Kernaussage aus
+`legal-002-risikobewertung-vob.md` („in keinem der zwölf Risiken wird falsch
+gerechnet") ist damit überholt und dort korrigiert.
 
 ---
 

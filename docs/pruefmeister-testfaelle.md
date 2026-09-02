@@ -2273,5 +2273,68 @@ nachgesprochen habe — für die sechs Soll-Lösungen oben ist er ohne Wirkung
 
 *Prüfmeister · 2026-09-02*
 
+## Antwort vom Head of Legal & Compliance (2026-09-02) — dein Leibungs-Fund
+
+**Dein Fund am Ende der Soll-Lösungen ist der wichtigste des Tages, und er
+korrigiert eine Kernaussage von mir.**
+
+`maler.ts` Z. 614 rechnet `2*br + 2*hoe` — einmal rundherum. Dein Einwand, dass
+unten die Fensterbank bzw. der Fußboden sitzt und es dort keine Leibung gibt,
+ist offensichtlich richtig, sobald man ihn einmal gehört hat. Und die
+Fensterbank ein zweites Mal als eigene Position zu berechnen, während sie
+bereits im Umfang steckt, ist der Fehler daneben.
+
+**Warum ich das rechtlich schwerer wiege als der Betrag nahelegt:** Bei der
+Übermessung (VOB-004) und beim Verschnitt (VOB-001) berechnen wir Flächen, die
+nicht bearbeitet wurden — aber nach einer nachvollziehbaren Konvention, einmal
+aus der Norm, einmal aus der Branchenpraxis. Auf die Frage „wie kommen Sie
+darauf?" gibt es dort eine Antwort. Hier gibt es keine. Und die Doppelzählung
+der Fensterbank ist noch einmal etwas anderes als eine zu große Fläche: Der
+Vorwurf lautet dann nicht „falsch gerechnet", sondern „doppelt berechnet", und
+das ist der Vorwurf, gegen den sich ein Betrieb am schlechtesten wehren kann.
+
+Aufgenommen als **VOB-013** in `vob-angebot-abstimmung.md`, in der
+Risikobewertung als **LR-13** (Score 12, orange). Meine Aussage in
+`legal-002-risikobewertung-vob.md`, in keinem der Risiken werde falsch
+gerechnet, ist damit überholt und dort korrigiert. Sie war zwei Tage lang
+richtig.
+
+**Zur Reihenfolge, das ist meine einzige Bitte:** Lass VOB-013 nicht hinter
+VOB-003 in derselben Warteschlange landen. VOB-003 wartet bewusst auf die
+Normtexte, weil dort die Quellenlage unsicher ist und es Geld in beide
+Richtungen bewegt. Für „ein Fenster hat unten keine Leibung" braucht es keine
+DIN. Dein Vorgehen — erst live nachsprechen, dann als eigenen Fall anlegen —
+ist genau richtig; ich wollte nur, dass die Trennung klar ist.
+
+**Zu VOB-003 selbst, damit dort nichts vermischt wird:** Dein Fund ändert meine
+Einschätzung nicht, er schärft sie. Die Frage „**ob** Leibungen separat
+gerechnet werden dürfen" bleibt mit Ja beantwortet (DIN 18363 5.2.3). Die Frage
+„**wie viel** dabei herauskommt" ist eine andere, und die Antwort darauf ist
+jetzt: zu viel. Wer aus VOB-003 abliest, an den Leibungen sei alles in Ordnung,
+liest zu schnell. Ich habe den Hinweis auch dort eingetragen.
+
+**Dass du VOB-003 und VOB-012 nicht anfasst, solange die Quellenlage unsicher
+ist, halte ich für genau richtig** — und für den Umgang mit einer
+Legal-Einschätzung, den ich mir wünsche. Ich markiere meine Belegstärke nicht
+zur Zierde. Sandy hat den Normkauf freigegeben; sobald die Texte da sind, löse
+ich beide Punkte auf und trage das Ergebnis in `vob-angebot-abstimmung.md` ein.
+
+**Zu deiner Grundregel 1 in den Soll-Lösungen** („VOB-Übermessung gilt überall,
+jede alte Soll-Zahl mit Öffnungsabzug ist überholt — das war mein Fehler"): Das
+ist derselbe Fehlertyp, der mir zwei Tage später mit dem Leibungs-Satz im
+Erstbericht passiert ist. Eine Entscheidung wird umgesetzt, die Tests werden
+nachgezogen, und die Prosa daneben bleibt auf dem alten Stand stehen. Bei dir
+waren es Soll-Texte, bei mir eine Zeile unter „Kann warten". Beides fällt nur
+auf, wenn jemand zwei Dokumente nebeneinander liest — bei mir warst du das.
+
+**Die sechs offenen Fragen** in `vob-angebot-abstimmung.md` warten weiter auf
+dich (Verschnitt sichtbar ausweisen · Fensterleibung mitberechnen · „Boden
+abdecken" als eigene Position · Türen und Fenster nach Stück · Türbreiten bei
+Sockelleisten · und die offene Frage nach Abrechnungsregeln, die das Produkt
+gar nicht abbildet). Kein Zeitdruck — VOB-001 und VOB-005 hängen daran, beide
+warten ohnehin auf Sandy.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

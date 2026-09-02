@@ -74,9 +74,10 @@ Ich gebe deshalb bei jedem Risiko an, auf welcher Ebene es zuerst wirkt.
 | **LR-09** | Zuschlagstitel nennt Prozent, Preis ist Euro (14 Einträge) | A | Vertrag / § 305c BGB | 3 | 3 | **9** | 🟡 YELLOW | Head of Product Eng. |
 | **LR-10** | Nebenleistungen nach DIN 18363 als eigene Positionen berechnet | A | Vertrag | 2 | 2 | **4** | 🟢 GREEN | Prüfmeister |
 | **LR-11** | Türbreiten von Sockelleistenlänge abgezogen | A | Produktqualität | 2 | 2 | **4** | 🟢 GREEN | Head of Product Eng. |
-| **LR-12** | Drei verschiedene Höhenschwellen im Produkt (Konsistenz) | A | Produktqualität | 2 | 2 | **4** | 🟢 GREEN | Head of Product Eng. |
+| **LR-12** | **Fünf** verschiedene Höhenschwellen im Produkt (Konsistenz) | A | Produktqualität | 2 | 2 | **4** | 🟢 GREEN | Head of Product Eng. |
+| **LR-13** | Leibungsfläche vierseitig statt dreiseitig, Fensterbank doppelt (VOB-013) | A → B | Vertrag / Produktqualität | 3 | 4 | **12** | 🟠 ORANGE | Head of Product Eng. |
 
-**Gesamtbild:** ein rotes, fünf orange, drei gelbe, drei grüne Risiken.
+**Gesamtbild:** ein rotes, **sechs** orange, drei gelbe, drei grüne Risiken (LR-13 am 02.09. ergänzt).
 Bemerkenswert daran ist weniger die Verteilung als die Ursachenstruktur: **acht
 der zwölf Risiken haben dieselbe Wurzel** — die Rechenmethode ist im Werkzeug
 dokumentiert, aber nicht auf dem Dokument, das der Endkunde bekommt. Das ist
@@ -556,12 +557,24 @@ alles, was ich hier geschätzt habe.
 ## Einordnung zum Schluss
 
 Für ein Produkt in dieser Phase ist ein rotes Risiko wenig, und dieses eine ist
-für zwei Stunden Arbeit gelb zu machen. Der Grund dafür ist bemerkenswert: **Es
-gibt in diesem Register keinen einzigen Fall, in dem falsch gerechnet wird.**
-Die Übermessung stimmt, die Zuschläge sind branchenüblich, die Leibungen sind
-richtig. Was fehlt, ist durchgehend die Erklärung auf dem Papier, das beim
-Kunden landet — und an zwei Stellen die Konsistenz zwischen dem, was das
-Werkzeug rechnet, und dem, was es darüber schreibt.
+für zwei Stunden Arbeit gelb zu machen. Der Grund dafür war bemerkenswert: In
+keinem der zwölf Risiken wurde falsch gerechnet. Die Übermessung stimmt, die
+Zuschläge sind branchenüblich, die Leibungen werden zu Recht separat berechnet.
+Was fehlte, war durchgehend die Erklärung auf dem Papier, das beim Kunden
+landet — und an zwei Stellen die Konsistenz zwischen dem, was das Werkzeug
+rechnet, und dem, was es darüber schreibt.
+
+> **Korrektur vom 2026-09-02.** Der Satz oben stand ursprünglich absolut („es
+> gibt keinen einzigen Fall, in dem falsch gerechnet wird") und stimmt so nicht
+> mehr. Der Prüfmeister hat am 02.09. einen echten Rechenfehler gefunden: Die
+> Leibungsfläche wird rundherum statt dreiseitig gerechnet (`maler.ts` Z. 614),
+> gut ein Drittel zu viel, und die Fensterbank wird zusätzlich doppelt
+> berechnet. Aufgenommen als **VOB-013**. Es ist der erste Fund im ganzen
+> Komplex, bei dem es keine Verteidigungslinie gibt — bei Übermessung und
+> Verschnitt berechnen wir nicht bearbeitete Flächen nach einer
+> nachvollziehbaren Konvention, hier ist schlicht falsch gerechnet, und die
+> Doppelzählung der Fensterbank ist qualitativ noch etwas anderes. Der Betrag
+> ist klein, die Angreifbarkeit nicht. Neue Zeile im Register unten.
 
 Das ist die deutlich bessere Ausgangslage als umgekehrt. Eine richtige Rechnung
 zu dokumentieren ist Arbeit von Stunden. Eine falsche Rechnung zu reparieren,
