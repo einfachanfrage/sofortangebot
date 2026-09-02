@@ -56,7 +56,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | 🟡 behoben (Product Designer, 2026-08-24): eine gemeinsame Quelle, alle 5 Stellen migriert, Status-Sheet neu — plus Nachtrag nach Sandys Live-Test (Status-Button war „kein Schwein kommt drauf"), Button aus der Icon-Reihe raus, eigene erkennbare Zeile mit Rahmen — `tsc` sauber, noch nicht live nachgeprüft | Product Designer (umgesetzt) |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
 | DC-005 | Kein gemeinsamer Button-Baustein | 🟡 `active:scale-98`-Bug behoben, `Button.tsx` erstellt — Migration bestehender Stellen offen | Product Designer |
-| DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | 🟡 läuft schrittweise weiter, jetzt 10 Komponenten migriert (2 Runden, zuletzt 2026-08-24), größte verbleibende Brocken (`AngebotDetail.tsx`, `einstellungen`, `preise`, `onboarding`) bewusst vorgemerkt statt riskant nebenbei angefasst | Product Designer |
+| DC-006 | `typography.ts` + Farb-Tokens (`@theme inline`) werden nirgends genutzt | 🟡 läuft schrittweise weiter, jetzt 11 Komponenten migriert (3 Runden, zuletzt 2026-09-02: `onboarding/[step]/page.tsx`), verbleibende Brocken `AngebotDetail.tsx`, `einstellungen`, `preise` | Product Designer |
 | DC-007 | Mobile-Seitentitel: „Angebote"/„Kunden" weiß, „Einstellungen" gelb | 🟡 behoben, noch nicht live nachgeprüft | Product Designer |
 | DC-008 | Kleine Sprach-/Textpolitur (Singular/Plural, Umlaut in KI-Wörterbuch) | ❌ offen | Product Designer (25.08. zugewiesen) |
 | DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | 🟡 mit DC-028 mitgefixt (2026-08-19): `kannFertigstellen` verlangt jetzt `erkannteAnzahl > 0`, 0 Positionen zeigt neutralen Hinweis statt grünem Erfolg — noch nicht live nachgeprüft | Product Designer (umgesetzt) |
@@ -423,6 +423,23 @@ Farbwerte, die keinem der 4 Tokens exakt entsprechen (Grau-/Grüntöne,
 Status-Punktfarben in `status.ts`), bewusst unverändert gelassen — das ist
 eine Design-Entscheidung (welche Nuance wird kanonisch?), kein reines
 Aufräumen.
+
+**Fix-Update (Product Designer, 2026-09-02):** Dritte Runde, `dc006` auf
+Sandys Zuruf. `onboarding/[step]/page.tsx` genommen — die hatte ich
+sowieso gerade für DC-032 frisch bearbeitet und `tsc`-verifiziert
+(geringstes Risiko, gleiche Logik wie bei den ersten beiden Runden). 120
+Fundstellen in Tailwind-Klassen mechanisch ersetzt
+(`[#2C2C2C]`→`anthracite`, `[#F5C400]`→`yellow`, `[#F7F7F5]`→`bg`). Neu
+diese Runde: auch 3 Lucide-Icon-`color`-Props im selben Geist mitgezogen
+(`color="#2C2C2C"` ist kein Tailwind-Klassenname, sondern ein echter
+CSS-Farbwert als Prop — dafür `color="var(--color-anthracite)"` bzw.
+`var(--color-yellow)`, die `@theme inline`-Custom-Properties aus
+`globals.css` sind global gültig, funktionieren also genauso wie die
+Tailwind-Klassen). Bewusst unverändert: `#666666`, `#AAAAAA`, `#16a34a`,
+`#ef4444` — keine 1:1-Token-Entsprechung. `tsc` sauber, Commit `a4e64ed`.
+**Verbleibend:** `AngebotDetail.tsx`, `einstellungen/page.tsx`,
+`preise/page.tsx` — die größten Brocken, weiterhin für eigene Runden
+vorgemerkt statt riskant querbeet.
 
 ---
 
