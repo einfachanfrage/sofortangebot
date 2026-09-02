@@ -42,7 +42,7 @@ export default function DatenschutzPage() {
                 </div>
                 <div>
                   <strong className="font-black">Spracheingaben</strong>
-                  <p className="mt-1">Aufgenommene Spracheingaben werden zur Transkription an Groq übermittelt und unmittelbar danach gelöscht. Wir speichern keine Audiodateien. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
+                  <p className="mt-1">Aufgenommene Spracheingaben werden zur Transkription an OpenAI (Whisper) übermittelt. Die Audiodatei wird zusätzlich auf unseren Servern in der EU (Supabase, Frankfurt) gespeichert, damit Sie die Aufnahme erneut anhören und die Auswertung wiederholen können. Sie können jede Aufnahme in der App löschen; die Audiodatei wird dann unwiderruflich entfernt. Spätestens 30 Tage nach der Aufnahme löschen wir die Audiodatei automatisch. Transkript und die daraus erzeugten Positionen bleiben als Teil des Angebots erhalten. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
                 </div>
                 <div>
                   <strong className="font-black">Kundendaten</strong>
@@ -65,8 +65,8 @@ export default function DatenschutzPage() {
                   <p className="mt-1">Datenbankhosting auf Servern in der EU (Frankfurt). Supabase verarbeitet alle gespeicherten Nutzerdaten. Datenschutzrichtlinie: <a href="https://supabase.com/privacy" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a></p>
                 </div>
                 <div>
-                  <strong className="font-black">Groq Inc. (KI-Analyse &amp; Spracherkennung)</strong>
-                  <p className="mt-1">Spracheingaben und Textinhalte werden zur KI-gestützten Angebotserstellung an Groq übermittelt. Groq nutzt diese Daten nicht zum Training seiner Modelle. Datenschutzrichtlinie: <a href="https://groq.com/privacy-policy" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">groq.com/privacy-policy</a></p>
+                  <strong className="font-black">OpenAI, L.L.C. (Spracherkennung &amp; KI-Textverarbeitung)</strong>
+                  <p className="mt-1">Spracheingaben werden zur Transkription (Whisper) und die daraus entstandenen Texte zur KI-gestützten Angebotserstellung (GPT) an OpenAI übermittelt. OpenAI verwendet über die Programmierschnittstelle übermittelte Daten nach eigener Zusage nicht zum Training seiner Modelle. Datenschutzrichtlinie: <a href="https://openai.com/policies/privacy-policy" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">openai.com/policies/privacy-policy</a></p>
                 </div>
                 <div>
                   <strong className="font-black">Resend Inc. (E-Mail-Versand)</strong>
@@ -80,6 +80,10 @@ export default function DatenschutzPage() {
                   <strong className="font-black">Vercel Inc. (Hosting)</strong>
                   <p className="mt-1">Die Webanwendung wird auf Servern von Vercel gehostet. Datenschutzrichtlinie: <a href="https://vercel.com/legal/privacy-policy" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">vercel.com/legal/privacy-policy</a></p>
                 </div>
+                <div>
+                  <strong className="font-black">Functional Software, Inc. dba Sentry (Fehlerprotokollierung)</strong>
+                  <p className="mt-1">Zur Erkennung und Behebung technischer Fehler übermitteln wir Fehlerberichte an Sentry. Diese enthalten technische Angaben zum Fehler (Zeitpunkt, aufgerufene Funktion, Browser- und Geräteangaben, IP-Adresse) und können im Einzelfall Inhalte der gerade verarbeiteten Daten enthalten. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem lauffähigen und sicheren Dienst). Datenschutzrichtlinie: <a href="https://sentry.io/privacy/" className="text-[#F5C400] underline" target="_blank" rel="noopener noreferrer">sentry.io/privacy</a></p>
+                </div>
               </div>
             ),
           },
@@ -87,7 +91,9 @@ export default function DatenschutzPage() {
             title: '4. Drittland-Übermittlungen',
             content: (
               <p>
-                Groq, Resend, Stripe und Vercel sind US-amerikanische Unternehmen. Die Übermittlung personenbezogener Daten in die USA erfolgt auf Basis der EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO sowie – sofern anwendbar – auf Basis des EU-US Data Privacy Framework (Art. 45 DSGVO). Alle genannten Anbieter sind im Data Privacy Framework zertifiziert oder haben entsprechende Garantien getroffen.
+                OpenAI, Resend, Sentry, Stripe und Vercel sind US-amerikanische Unternehmen; auch Supabase Inc. hat seinen Sitz in den USA, betreibt unsere Datenbank aber in der EU (Frankfurt). Wir unterscheiden ausdrücklich:<br /><br />
+                <strong className="font-black">Vercel, Resend und Sentry</strong> sind unter dem EU-US Data Privacy Framework zertifiziert; die Übermittlung stützt sich auf den Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO).<br /><br />
+                <strong className="font-black">OpenAI, Supabase und Stripe</strong>: Die Übermittlung stützt sich auf die EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO, ergänzt um vertragliche und technische Schutzmaßnahmen.
               </p>
             ),
           },
@@ -95,7 +101,7 @@ export default function DatenschutzPage() {
             title: '5. Cookies und lokale Speicherung',
             content: (
               <p>
-                Wir verwenden ausschließlich technisch notwendige Cookies für die Authentifizierung (Session-Token). Diese Cookies sind für den Betrieb des Dienstes erforderlich und können nicht deaktiviert werden. Es werden keine Tracking-, Analyse- oder Werbe-Cookies eingesetzt. Eine Einwilligung nach § 25 TTDSG ist für technisch notwendige Cookies nicht erforderlich.
+                Wir verwenden ausschließlich technisch notwendige Cookies für die Authentifizierung (Session-Token). Diese Cookies sind für den Betrieb des Dienstes erforderlich und können nicht deaktiviert werden. Es werden keine Tracking-, Analyse- oder Werbe-Cookies eingesetzt. Eine Einwilligung nach § 25 Abs. 1 TDDDG ist für technisch notwendige Cookies nicht erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Das TDDDG ist die seit dem 14.05.2024 geltende Bezeichnung des früheren TTDSG.
               </p>
             ),
           },
@@ -106,6 +112,7 @@ export default function DatenschutzPage() {
                 <p><strong className="font-black">Nutzerdaten:</strong> Bis zur Löschung des Accounts oder auf Anfrage.</p>
                 <p><strong className="font-black">Angebote und Kundendaten:</strong> Bis zur Löschung durch den Nutzer oder Löschung des Accounts. Handelsrechtlich relevante Daten können bis zu 10 Jahre aufbewahrt werden (§ 257 HGB, § 147 AO).</p>
                 <p><strong className="font-black">Zahlungsdaten bei Stripe:</strong> Gemäß gesetzlicher Aufbewahrungspflichten (bis zu 10 Jahre).</p>
+                <p><strong className="font-black">Sprachaufnahmen (Audiodateien):</strong> Automatisch 30 Tage nach der Aufnahme, auf Wunsch des Nutzers jederzeit früher.</p>
                 <p><strong className="font-black">Server-Logs:</strong> 7 Tage.</p>
               </div>
             ),
@@ -132,7 +139,7 @@ export default function DatenschutzPage() {
             title: '8. Accountlöschung',
             content: (
               <p>
-                Sie können Ihren Account jederzeit löschen. Alle mit Ihrem Account verbundenen Daten werden dann vollständig und unwiderruflich gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Die Löschung können Sie über die Einstellungen in der App oder per E-Mail an <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a> beantragen.
+                Sie können Ihren Account jederzeit über die Einstellungen in der App oder per E-Mail löschen. Der Account wird sofort deaktiviert. Anschließend halten wir Ihre Daten noch 30 Tage vor, damit Sie sie exportieren oder den Account wiederherstellen können; danach werden alle mit Ihrem Account verbundenen Daten vollständig und unwiderruflich gelöscht — Angebote, Kundendaten, Sprachaufnahmen, Fotos und Ihr Zugang. Ausgenommen sind ausschließlich Daten, für die gesetzliche Aufbewahrungspflichten bestehen. Die Löschung können Sie über die Einstellungen in der App oder per E-Mail an <a href="mailto:hallo@sofortangebot.app" className="text-[#F5C400] underline">hallo@sofortangebot.app</a> beantragen.
               </p>
             ),
           },
@@ -140,7 +147,7 @@ export default function DatenschutzPage() {
             title: '9. Aktualität dieser Datenschutzerklärung',
             content: (
               <p>
-                Diese Datenschutzerklärung ist aktuell gültig und hat den Stand Juni 2026. Durch die Weiterentwicklung unserer Dienste oder aufgrund geänderter gesetzlicher bzw. behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung anzupassen. Die jeweils aktuelle Datenschutzerklärung ist unter dieser Adresse abrufbar.
+                Diese Datenschutzerklärung ist aktuell gültig und hat den Stand September 2026. Durch die Weiterentwicklung unserer Dienste oder aufgrund geänderter gesetzlicher bzw. behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung anzupassen. Die jeweils aktuelle Datenschutzerklärung ist unter dieser Adresse abrufbar.
               </p>
             ),
           },

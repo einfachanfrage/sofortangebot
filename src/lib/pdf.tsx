@@ -4,10 +4,18 @@ import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
 import { widerrufsbelehrungText, musterWiderrufsformular } from './widerrufsbelehrung'
 import { effektiveOptionen, skontoText, DOKUMENT_TYP_LABEL } from './angebot-optionen'
+import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './mengen/gewerke/vob-uebermessung'
 
 // ── Hilfsfunktionen ────────────────────────────────────────────────────────
 function fmtEuro(n: number) {
   return n.toFixed(2).replace('.', ',') + ' €'
+}
+// 2026-09-02: Die Menge stand als rohe JS-Zahl im PDF — „46.64 m²" mit
+// englischem Dezimalpunkt auf einem deutschen Kundendokument, direkt neben
+// „12,50 €". Kein Rechenfehler, aber es sieht nach einem aus.
+const MENGE_FORMAT = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 3 })
+function fmtMenge(n: number) {
+  return MENGE_FORMAT.format(n)
 }
 function fmtDatum(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -96,6 +104,11 @@ const S = StyleSheet.create({
   posText: { fontSize: 8, color: '#BBBBBB', paddingTop: 1 },
   titelText: { fontSize: 9, color: '#111111' },
   beschreibungText: { fontSize: 8, color: '#888888', marginTop: 2, lineHeight: 1.4 },
+  // VOB-004/G5: bewusst NICHT in Fußzeilen-Grau (7pt/#BBBBBB) — Legals
+  // Vorgabe ist normale Schriftgröße direkt an der Position. Der Hinweis
+  // erklärt eine Zahl, die der Kunde nachmisst; er muss lesbar sein.
+  uebermessungText: { fontSize: 8.5, color: '#444444', marginTop: 3, lineHeight: 1.4 },
+  uebermessungFussnote: { fontSize: 8.5, color: '#444444', lineHeight: 1.5 },
   mengeText: { fontSize: 9, color: '#333333', textAlign: 'right' },
   einheitText: { fontSize: 9, color: '#555555', textAlign: 'center' },
   einzelText: { fontSize: 9, color: '#333333', textAlign: 'right' },
@@ -217,6 +230,13 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   const footerMitte  = [ustId && `USt-IdNr.: ${ustId}`, steuernummer && `St.-Nr.: ${steuernummer}`].filter(Boolean).join('  ·  ')
   const footerRechts = iban ? `IBAN: ${iban}` : ''
 
+  // VOB-004 / Legal G5: Der Übermessungs-Hinweis steckt im annahmen-Array der
+  // Position. Die Gruppierung (gruppiereNachStruktur) reicht `annahmen` nicht
+  // durch — deshalb hier einmal nach id auflösen, statt den Gruppen-Typ und
+  // seine Tests für ein reines Anzeigefeld zu erweitern.
+  const hinweisJeItem = uebermessungsHinweiseJePosition(quote.items)
+  const zeigeUebermessungsFussnote = hinweisJeItem.size > 0
+
   const ersterRaum = quote.items[0]?.title?.split(' — ')[1] ?? ''
   const gewerkName = company.gewerke?.[0]
     ? company.gewerke[0].charAt(0).toUpperCase() + company.gewerke[0].slice(1) + 'arbeiten'
@@ -310,8 +330,11 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                 <View style={S.cBez}>
                   <Text style={S.titelText}>{item.title}</Text>
                   {item.description && <Text style={S.beschreibungText}>{item.description}</Text>}
+                  {hinweisJeItem.get(item.id) && (
+                    <Text style={S.uebermessungText}>{hinweisJeItem.get(item.id)} ¹</Text>
+                  )}
                 </View>
-                <Text style={{ ...S.mengeText, ...S.cMenge }}>{item.quantity}</Text>
+                <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(item.quantity)}</Text>
                 <Text style={{ ...S.einheitText, ...S.cEinh }}>{item.unit}</Text>
                 <Text style={{ ...S.einzelText, ...S.cEinzel }}>{fmtEuro(item.unit_price)}</Text>
                 <Text style={{ ...S.gesamtText, ...S.cGes }}>{fmtEuro(item.total_price)}</Text>
@@ -339,8 +362,11 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                   <View style={S.cBez}>
                     <Text style={S.titelText}>{gi.titleDisplay}</Text>
                     {gi.description && <Text style={S.beschreibungText}>{gi.description}</Text>}
+                    {hinweisJeItem.get(gi.id) && (
+                      <Text style={S.uebermessungText}>{hinweisJeItem.get(gi.id)} ¹</Text>
+                    )}
                   </View>
-                  <Text style={{ ...S.mengeText, ...S.cMenge }}>{gi.quantity}</Text>
+                  <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(gi.quantity)}</Text>
                   <Text style={{ ...S.einheitText, ...S.cEinh }}>{gi.unit}</Text>
                   <Text style={{ ...S.einzelText, ...S.cEinzel }}>{fmtEuro(gi.unit_price)}</Text>
                   <Text style={{ ...S.gesamtText, ...S.cGes }}>{fmtEuro(gi.total_price)}</Text>
@@ -356,6 +382,17 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
             </View>
           ))
         })()}
+
+        {/* VOB-004 / Legal G5 (freigegeben S-2, Sandy 01.09.2026): einmalige
+            Erklärung zur Übermessung, direkt unter den Positionen. Die
+            konkreten Zahlen stehen an der Position selbst — hier steht das
+            Warum, damit die Positionsliste nicht bei jeder Wandfläche denselben
+            Absatz wiederholt (Vorschlag Product Designer, VOB-004). */}
+        {zeigeUebermessungsFussnote && (
+          <View style={{ marginTop: 12, paddingTop: 8, borderTop: '0.5 solid #E5E5E5' }} wrap={false}>
+            <Text style={S.uebermessungFussnote}>{'\u00b9 '}{UEBERMESSUNG_ERKLAERUNG}</Text>
+          </View>
+        )}
 
         {/* Anmerkungen */}
         {quote.notes && (

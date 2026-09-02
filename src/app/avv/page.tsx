@@ -66,11 +66,11 @@ export default function AvvPage() {
             content: 'Der Verantwortliche erteilt hiermit seine generelle Genehmigung zur Beauftragung folgender Unterauftragnehmer:',
             list: [
               'Supabase Inc. (USA/EU) — Datenbankhosting, Serverstandort: Frankfurt/EU',
-              'Groq Inc. (USA) — KI-Sprachverarbeitung (Transkription), Übermittlung auf Basis von EU-Standardvertragsklauseln',
-              'OpenAI LLC (USA) — KI-Textverarbeitung, Übermittlung auf Basis von EU-Standardvertragsklauseln',
+              'OpenAI, L.L.C. (USA) — Transkription der Sprachaufnahmen (Whisper) und KI-Textverarbeitung (GPT), Übermittlung auf Basis von EU-Standardvertragsklauseln',
               'Vercel Inc. (USA) — Hosting der Webanwendung, Übermittlung auf Basis von EU-Standardvertragsklauseln',
               'Resend Inc. (USA) — E-Mail-Versand, Übermittlung auf Basis von EU-Standardvertragsklauseln',
               'Stripe Inc. (USA/EU) — Zahlungsabwicklung, Übermittlung auf Basis von EU-Standardvertragsklauseln',
+              'Functional Software, Inc. dba Sentry (USA) — Fehlerprotokollierung des Dienstes, zertifiziert unter dem EU-US Data Privacy Framework',
             ],
           },
           {

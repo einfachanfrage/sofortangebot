@@ -142,17 +142,23 @@ export async function sendCancellationEmail(to: string, ablaufdatum: string): Pr
 }
 
 // ── 5. Account gelöscht ────────────────────────────────────────────────────
-export async function sendAccountDeletedEmail(to: string): Promise<SendResult> {
+// 2026-09-02: Der Text sagte „dein Account und alle Daten wurden gelöscht"
+// und verwies aufs Antworten auf die Mail. Beides stimmte nicht: gelöscht
+// wird erst nach 30 Tagen (AGB § 6.5), und zurückholen kann man das Konto
+// über den Hinweis in der App, nicht per Mailantwort. Jetzt steht das Datum
+// drin, ab dem es wirklich weg ist.
+export async function sendAccountDeletedEmail(to: string, loeschungAm: Date): Promise<SendResult> {
+  const datum = loeschungAm.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
   const { error } = await resend.emails.send({
     from: FROM,
     to: [to],
-    subject: 'Dein Account wurde gelöscht',
-    text: `Hallo,\n\ndein Account und alle Daten wurden gelöscht. Danke dass du Sofortangebot genutzt hast.\n\nFalls das ein Versehen war — antworte auf diese Mail innerhalb von 30 Tagen.\n\nSandra`,
+    subject: 'Dein Account ist deaktiviert',
+    text: `Hallo,\n\ndein Account ist deaktiviert. Deine Daten halten wir noch bis zum ${datum} vor — bis dahin kannst du sie exportieren oder den Account wiederherstellen: einfach einloggen, der Hinweis dazu erscheint oben auf der Startseite.\n\nAm ${datum} werden alle Daten unwiderruflich gelöscht.\n\nDanke, dass du Sofortangebot genutzt hast.\n\nSandra`,
     html: wrap(`
-      <p style="font-size:16px;font-weight:900;margin-top:0;">Dein Account wurde gelöscht</p>
-      <p>Dein Account und alle Daten wurden gelöscht.</p>
-      <p>Danke dass du Sofortangebot genutzt hast.</p>
-      <p style="margin-bottom:0;color:#666;">Falls das ein Versehen war — antworte auf diese Mail innerhalb von 30 Tagen.<br><br>Sandra</p>
+      <p style="font-size:16px;font-weight:900;margin-top:0;">Dein Account ist deaktiviert</p>
+      <p>Deine Daten halten wir noch bis zum <strong>${datum}</strong> vor. Bis dahin kannst du sie exportieren oder den Account wiederherstellen — einfach einloggen, der Hinweis dazu erscheint oben auf der Startseite.</p>
+      <p>Am ${datum} werden alle Daten unwiderruflich gelöscht.</p>
+      <p style="margin-bottom:0;color:#666;">Danke, dass du Sofortangebot genutzt hast.<br><br>Sandra</p>
     `),
   })
   return error ? { ok: false, error: error.message } : { ok: true }

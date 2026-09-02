@@ -72,7 +72,7 @@ const sections = [
     paragraphs: [
       '8.1 Der Anbieter verarbeitet personenbezogene Daten gemäß der Datenschutzerklärung unter sofortangebot.app/datenschutz.',
       '8.2 Für die Verarbeitung personenbezogener Daten Dritter (z. B. Kundendaten des Nutzers) durch die Plattform wird ein Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO geschlossen. Dieser ist unter sofortangebot.app/avv abrufbar und gilt mit Nutzungsbeginn als abgeschlossen.',
-      '8.3 Sprachaufnahmen werden zur Verarbeitung an KI-Dienste übermittelt (derzeit Groq/OpenAI). Sprachaufnahmen werden nicht dauerhaft gespeichert — nur das Transkript und die daraus erzeugten Positionen werden in der Datenbank abgelegt.',
+      '8.3 Sprachaufnahmen werden zur Transkription an OpenAI übermittelt. Die Aufnahme wird auf unseren Servern in der EU gespeichert, damit sie erneut angehört und die Auswertung wiederholt werden kann, und spätestens 30 Tage nach der Aufnahme automatisch gelöscht — vorher jederzeit auf Wunsch des Nutzers. Transkript und die daraus erzeugten Positionen bleiben als Teil des Angebots erhalten.',
       '8.4 Der Anbieter speichert Daten auf Servern der Supabase Inc. innerhalb der EU (Rechenzentrum Frankfurt).',
     ],
   },
@@ -81,7 +81,7 @@ const sections = [
     paragraphs: [
       '9.1 Der Anbieter haftet unbeschränkt für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit sowie für Schäden, die auf Vorsatz oder grober Fahrlässigkeit beruhen.',
       '9.2 Bei leichter Fahrlässigkeit haftet der Anbieter nur bei Verletzung wesentlicher Vertragspflichten (Kardinalpflichten) und nur in Höhe des vertragstypisch vorhersehbaren Schadens, maximal jedoch in Höhe der vom Nutzer in den letzten 12 Monaten gezahlten Vergütung.',
-      '9.3 Der Anbieter haftet nicht für: inhaltliche Fehler in KI-generierten Angeboten oder Preisen; steuerrechtliche oder rechtliche Richtigkeit von Rechnungen und Angeboten; Datenverlust durch höhere Gewalt oder Angriffe Dritter; Ausfälle von Drittdiensten (Groq, OpenAI, Supabase, Stripe).',
+      '9.3 Der Anbieter haftet nicht für: inhaltliche Fehler in KI-generierten Angeboten oder Preisen; steuerrechtliche oder rechtliche Richtigkeit von Rechnungen und Angeboten; Datenverlust durch höhere Gewalt oder Angriffe Dritter; Ausfälle von Drittdiensten (OpenAI, Supabase, Vercel, Stripe).',
       '9.4 Die Haftungsbeschränkungen gelten nicht, soweit der Anbieter einen Mangel arglistig verschwiegen oder eine Garantie übernommen hat.',
     ],
   },

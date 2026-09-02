@@ -18,7 +18,7 @@ export default function ImpressumPage() {
         <div className="prose prose-sm text-[#2C2C2C]/80 space-y-6">
 
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Angaben gemäß § 5 TMG</h2>
+            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Angaben gemäß § 5 DDG</h2>
             <p className="font-semibold leading-relaxed">
               Sandra Holm<br />
               Wielandstr. 11<br />
@@ -51,27 +51,29 @@ export default function ImpressumPage() {
             </p>
           </section>
 
+          {/* Head of Legal & Compliance, 2026-09-02: Der Verweis auf die
+              OS-Plattform der EU-Kommission stand hier als Pflichtangabe —
+              die Plattform ist eingestellt und die zugrunde liegende
+              ODR-Verordnung aufgehoben (Verordnung (EU) 2024/3228). Ein
+              toter Link auf eine nicht mehr existierende Pflichtstelle ist
+              keine Pflichterfüllung, sondern eine falsche Angabe. Die
+              VSBG-Erklärung bleibt: § 36 VSBG verlangt sie unverändert. */}
           <section>
-            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Streitschlichtung</h2>
+            <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Verbraucherstreitbeilegung</h2>
             <p className="font-semibold leading-relaxed">
-              Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{' '}
-              <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="text-[#F5C400] underline">
-                https://ec.europa.eu/consumers/odr/
-              </a>
-            </p>
-            <p className="font-semibold leading-relaxed mt-2">
-              Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-              Verbraucherschlichtungsstelle teilzunehmen.
+              Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer
+              Verbraucherschlichtungsstelle teilzunehmen (§ 36 VSBG).
             </p>
           </section>
 
           <section>
             <h2 className="font-black text-[#2C2C2C] text-lg mb-2">Haftung für Inhalte</h2>
             <p className="font-semibold leading-relaxed">
-              Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den
-              allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht
-              verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu
-              forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+              Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den
+              allgemeinen Gesetzen verantwortlich. Nach § 7 Abs. 2 DDG in Verbindung mit Art. 8 der Verordnung (EU)
+              2022/2065 (Digital Services Act) sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte
+              oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine
+              rechtswidrige Tätigkeit hinweisen.
             </p>
           </section>
 

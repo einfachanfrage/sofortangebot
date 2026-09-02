@@ -208,7 +208,14 @@ export async function POST(req: NextRequest) {
   )
 
   // Positionen einfügen — Fallback ohne vob_norm/din_normen falls Migration noch nicht ausgeführt
-  const itemRows = (items as Array<{ title: string; description?: string; quantity: number; unit: string; unit_price: number }>)
+  // 2026-09-02 (VOB-004): berechnungsweg/annahmen/price_item_id werden
+  // durchgereicht, wenn der Aufrufer sie mitschickt (Duplizieren). Ohne das
+  // verlor eine Kopie den Rechenweg und den Übermessungshinweis fürs PDF.
+  const itemRows = (items as Array<{
+    title: string; description?: string; quantity: number; unit: string; unit_price: number
+    berechnungsweg?: string | null; annahmen?: string[] | null
+    price_item_id?: string | null; automatisch_ergaenzt?: boolean | null
+  }>)
     .map((item, idx) => {
       const norm = normByTitle.get(item.title.toLowerCase().trim())
       return {
@@ -222,6 +229,10 @@ export async function POST(req: NextRequest) {
         total_price: item.quantity * item.unit_price,
         vob_norm: norm?.vob_norm ?? null,
         din_normen: norm?.din_normen ?? null,
+        berechnungsweg: item.berechnungsweg ?? null,
+        annahmen: item.annahmen ?? [],
+        price_item_id: item.price_item_id ?? null,
+        automatisch_ergaenzt: item.automatisch_ergaenzt ?? false,
       }
     })
 

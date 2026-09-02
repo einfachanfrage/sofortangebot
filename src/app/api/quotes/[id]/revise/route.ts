@@ -90,6 +90,13 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     position: number; title: string; description: string | null
     quantity: number; unit: string; unit_price: number; total_price: number
     vob_norm?: string | null; din_normen?: string[] | null
+    // 2026-09-02 (VOB-004): Diese vier Felder wurden beim Kopieren still
+    // fallengelassen. Folge: Version 2 eines Angebots verlor Rechenweg,
+    // Annahmen (und damit den Übermessungshinweis auf dem Kunden-PDF), die
+    // Bindung an den Preiskatalog und die „Vorschlag"-Kennzeichnung — der
+    // Kunde bekam für dieselbe Leistung eine andere Erklärung als in V1.
+    berechnungsweg?: string | null; annahmen?: string[] | null
+    price_item_id?: string | null; automatisch_ergaenzt?: boolean | null
   }[]
 
   if (items.length > 0) {
@@ -107,6 +114,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         total_price: item.total_price,
         vob_norm: item.vob_norm ?? null,
         din_normen: item.din_normen ?? null,
+        berechnungsweg: item.berechnungsweg ?? null,
+        annahmen: item.annahmen ?? [],
+        price_item_id: item.price_item_id ?? null,
+        automatisch_ergaenzt: item.automatisch_ergaenzt ?? false,
       }))
     )
     if (itemsError) {

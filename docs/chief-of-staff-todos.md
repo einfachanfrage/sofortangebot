@@ -2715,7 +2715,15 @@ Kurzfassung für dich:
    weil eine AGB-Änderung eine Änderungsmitteilung an bestehende Nutzer
    auslöst. Sauberer wäre eine echte Löschfrist — das ist Produktentscheidung
    plus ein Tag Arbeit.
-2. **Die Rechtstexte sind geändert, aber nicht freigegeben.** Nach der
+2. **„Konto löschen" löscht nichts.** `api/account/delete` setzt nur
+   `companies.deleted_at` — Auth-Nutzer, Angebote, Kundendaten, Audiodateien
+   und Fotos bleiben vollständig liegen. Datenschutzerklärung Abschnitt 8 und
+   AGB § 6.5 versprechen beide die unwiderrufliche Löschung. Das ist die
+   größte offene Lücke, die ich heute gefunden habe, und sie lässt sich nicht
+   durch besseren Text schließen. Aufwand: ein bis zwei Tage. Ich habe den
+   Text bewusst **nicht** abgeschwächt — die AGB beschreiben schon das
+   richtige Verhalten, es fehlt der Code.
+3. **Die Rechtstexte sind geändert, aber nicht freigegeben.** Nach der
    Governance-Regel in `chief-of-staff-legal-todos.md` gehen sie erst live,
    wenn Sandy zustimmt. Head of Legal sollte die Formulierungen vorher lesen,
    besonders den DPF/SCC-Absatz (Stripe habe ich vorsichtshalber der
@@ -2724,6 +2732,31 @@ Kurzfassung für dich:
 Neu abgesichert: `rechtstexte-hygiene.test.ts` schlägt an, wenn TMG,
 § 25 TTDSG oder der ODR-Link zurückkommen oder ein eingesetzter Dienst in der
 Erklärung fehlt. Suite 63 Dateien / 1.115 Tests grün.
+
+---
+
+## Nachtrag: Sandys Entscheidungen vom 02.09.2026 sind umgesetzt
+
+Die beiden Punkte, die ich oben als „braucht eine Entscheidung von Sandy"
+aufgeführt habe, sind entschieden und gebaut. Details im Legal-Kanal.
+
+- **Groq restlos entfernt** (Sandy: „habe nirgendwo groq. komplett
+  rauslöschen. habe nur openai."). AVV, AGB § 8.3 und § 9.3, ein toter
+  Provider-Schalter in `next.config.ts`, ein irreführender Kommentar und der
+  ungenutzte Schlüssel in der lokalen Konfiguration. Der Hygiene-Test prüft
+  jetzt, dass „groq" nirgends zurückkommt.
+- **Sprachaufnahmen:** Nein, sie müssen nicht dauerhaft gespeichert werden.
+  Statt die AGB abzuschwächen, habe ich das zugesagte Verhalten gebaut —
+  Audiodatei 30 Tage, Transkript bleibt. AGB § 8.3 ist jetzt präzise statt
+  ungefähr.
+- **Konto-Löschung:** gebaut, Ablauf genau wie AGB § 6.5 (sofort deaktiviert,
+  30 Tage Frist, dann unwiderruflich). An einem synthetischen Konto
+  durchgespielt, keine verwaisten Zeilen.
+
+**Für dich als Governance-Punkt:** Sandys Begründung, die AGB ohne
+Änderungsmitteilung ändern zu können, trägt nur, solange es keine echten
+Nutzer gibt. Ab dem ersten echten Betrieb ist jede AGB-Änderung
+mitteilungspflichtig — das gehört in die Gate-1-Checkliste.
 
 ---
 

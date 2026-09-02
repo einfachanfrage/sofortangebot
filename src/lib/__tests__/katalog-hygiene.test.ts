@@ -77,3 +77,32 @@ describe('Katalog-Hygiene', () => {
     expect([...zaehler.entries()].filter(([, n]) => n > 1).map(([k]) => k)).toEqual([])
   })
 })
+
+// VOB-010 / L6 — Fund von Head of Legal & Compliance (2026-09-01):
+// 14 Einträge trugen den Prozentsatz im Titel, die Einheit „Pauschale" und
+// den Prozentwert als EURO-Preis. „Zuschlag Wochenend- / Feiertagsarbeit
+// (25%)" kam damit als 25,00 € ins Angebot statt als 25 % der Leistung.
+// Dieser Test verhindert die Rückkehr — für alle Gewerke, nicht nur die
+// gefundenen.
+describe('VOB-010 — Prozent im Titel heißt Prozent in der Einheit', () => {
+  // Ausnahme mit Grund: „(2% Gefälle)" ist ein Gefälle, kein Zuschlag.
+  const istGefaelle = (titel: string) => /gef[äa]lle/i.test(titel)
+
+  it('kein Zuschlagseintrag trägt einen Prozentsatz im Titel und Euro als Einheit', () => {
+    const falsch = DEFAULT_PRICES
+      .filter(p => /[0-9]+%\)/.test(p.title) && !istGefaelle(p.title) && p.unit !== '%')
+      .map(p => `${p.category} | ${p.title} [${p.unit}] ${p.unit_price}`)
+    expect(falsch).toEqual([])
+  })
+
+  it('bei Prozent-Zuschlägen stimmt der Preis mit dem Prozentsatz im Titel überein', () => {
+    // Fällt das auseinander, hat jemand den Satz an einer Stelle geändert und
+    // an der anderen vergessen — der Titel würde dann etwas anderes
+    // versprechen als gerechnet wird.
+    const abweichend = DEFAULT_PRICES
+      .filter(p => p.unit === '%' && /[0-9]+%\)/.test(p.title))
+      .filter(p => Number(/([0-9]+)%\)/.exec(p.title)![1]) !== p.unit_price)
+      .map(p => `${p.title} → Preis ${p.unit_price}`)
+    expect(abweichend).toEqual([])
+  })
+})

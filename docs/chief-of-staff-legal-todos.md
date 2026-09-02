@@ -662,6 +662,33 @@ Tisch, bevor jemand danach fragt:
    ebenfalls „Groq" auf, dort ist es harmloser (Haftungsausschluss für
    Drittdienste), aber inkonsistent.
 
+3. **Und der schwerste Fund, dem ich beim Prüfen von Punkt 1 begegnet bin:
+   „Konto löschen" löscht nichts.** `src/app/api/account/delete/route.ts`
+   kündigt das Stripe-Abo, setzt `companies.deleted_at`, verschickt eine
+   Bestätigungsmail und loggt aus. Das war's. Der Auth-Nutzer bleibt, alle
+   Zeilen in `quotes`, `quote_items`, `customers`, `aufnahmen` bleiben, die
+   Audiodateien im Storage bleiben. Ein Soft-Delete, keine Löschung.
+
+   Dem stehen drei eigene Zusagen gegenüber: Datenschutzerklärung Abschnitt 8
+   („Alle mit Ihrem Account verbundenen Daten werden dann **vollständig und
+   unwiderruflich gelöscht**"), Abschnitt 6 („Nutzerdaten: bis zur Löschung
+   des Accounts") und AGB § 6.5 („Nach Vertragsende werden die Daten für
+   30 Tage vorgehalten … danach unwiderruflich gelöscht"). Gegenüber einem
+   Betroffenen, der sich auf Art. 17 DSGVO beruft, ist das die unangenehmste
+   Lücke in der ganzen Liste — und sie ist nicht durch besseren Text zu
+   heilen, sondern nur durch Code.
+
+   Ich habe deshalb **nichts** an Abschnitt 8 geändert: den Text an die
+   Wirklichkeit anzupassen hieße, die Zusage zurückzunehmen, statt sie
+   einzulösen. Die AGB beschreiben ohnehin bereits das richtige Verhalten
+   (30 Tage Frist, dann harte Löschung) — es fehlt nur die Umsetzung. Das ist
+   ein bis zwei Tage Arbeit (harte Löschung über alle Tabellen, Storage-Purge
+   für `entwurf-audio`, `entwurf-fotos`, `quote-photos`, Löschung des
+   Auth-Nutzers, Aufräumjob für die 30-Tage-Frist, plus die
+   Aufbewahrungspflicht aus § 257 HGB / § 147 AO sauber davon getrennt).
+   **Sag mir, ob das vor Gate 1 muss** — ich halte es für ein Ja, und dann
+   erledigt sich Punkt 1 gleich mit.
+
 ### Abgesichert
 
 Neue Datei `src/lib/__tests__/rechtstexte-hygiene.test.ts` (11 Tests): Sie
@@ -679,6 +706,96 @@ Fußnote erscheinen. Ein Selbsttest stellt sicher, dass der Textextraktor
 
 Suite: 63 Dateien / 1.115 Tests grün, `tsc --noEmit` sauber, `eslint src`
 0 Fehler.
+
+---
+
+## Nachtrag vom selben Tag: Sandy hat entschieden, ich habe gebaut (2026-09-02)
+
+Zwei Punkte aus meinem Fix-Update oben sind überholt. Sandy hat beide binnen
+einer Stunde entschieden — hier der neue Stand, damit du nicht auf die alte
+Fassung hin prüfst.
+
+### 1. Groq ist restlos entfernt, nicht nur aus der Datenschutzerklärung
+
+Sandys Ansage: *„habe nirgendwo groq. komplett rauslöschen. habe nur openai."*
+Damit fällt meine Zwischenlösung („Genehmigung im AVV vorhalten") weg. Groq
+kommt jetzt an **keiner** Stelle mehr vor:
+
+- **AVV § 4** — Zeile gestrichen. Die Liste der Unterauftragnehmer ist jetzt:
+  Supabase, OpenAI, Vercel, Resend, Stripe, Sentry.
+- **AGB § 8.3** — „derzeit Groq/OpenAI" → „an OpenAI".
+- **AGB § 9.3** — „(Groq, OpenAI, Supabase, Stripe)" → „(OpenAI, Supabase,
+  Vercel, Stripe)".
+- **Code** — `next.config.ts` hatte einen toten Schalter
+  (`AI_PROVIDER !== 'groq'`), der die Bilderkennung abgeschaltet hätte, wenn
+  jemand den Provider je umgestellt hätte. Raus. Dazu ein irreführender
+  Kommentar in der API-Überwachung und der ungenutzte `GROQ_API_KEY` aus der
+  lokalen Konfiguration.
+- **Test** — `rechtstexte-hygiene.test.ts` prüft jetzt in die harte Richtung:
+  „groq" darf weder im Code noch in Datenschutzerklärung, Impressum, AVV oder
+  AGB vorkommen. Wer den Dienst je einbaut, wird vom Test gezwungen, die
+  Rechtstexte vorher anzupassen.
+
+In deinen eigenen Berichten (`legal-001`, `legal-003`) steht Groq noch — die
+lasse ich als Aufzeichnung unverändert, aber ihre Aussage zu Groq ist damit
+überholt.
+
+### 2. Sprachaufnahmen: nein, sie müssen nicht dauerhaft gespeichert werden
+
+Sandys Frage war die richtige. Die Antwort ist nein, und deshalb habe ich die
+AGB **nicht** abgeschwächt, sondern das Verhalten gebaut, das sie zusagen.
+
+Die Audiodatei wird nach der Aufnahme nur noch für zwei Dinge gebraucht: den
+Wiederholungslauf, falls die Transkription beim ersten Versuch scheitert, und
+das Nachhören im Entwurf. Beides passiert in den Stunden und Tagen danach, nie
+Monate später. Alles, was das Angebot ausmacht — Transkript, erkannte
+Positionen, Mengen — liegt in der Datenbank. Eine Aufnahme in einer fremden
+Wohnung ist dagegen das Sensibelste, was dieses Produkt anfasst: Kundenname,
+Adresse, Nebengespräche. Sie ohne Zweck und ohne Frist zu behalten, ist das
+Gegenteil von Datenminimierung (Art. 5 Abs. 1 lit. c DSGVO).
+
+**Gebaut:** 30 Tage nach der Aufnahme wird die Audiodatei automatisch
+gelöscht, das Transkript bleibt (`src/lib/aufnahmen-aufraeumen.ts`, täglicher
+Lauf in `api/cron/aufraeumen`). Löschen durch den Nutzer geht wie bisher
+jederzeit sofort.
+
+**AGB § 8.3 neu:** *„Sprachaufnahmen werden zur Transkription an OpenAI
+übermittelt. Die Aufnahme wird auf unseren Servern in der EU gespeichert,
+damit sie erneut angehört und die Auswertung wiederholt werden kann, und
+spätestens 30 Tage nach der Aufnahme automatisch gelöscht — vorher jederzeit
+auf Wunsch des Nutzers. Transkript und die daraus erzeugten Positionen bleiben
+als Teil des Angebots erhalten."* Bitte gegenlesen.
+
+Sandys Begründung dafür, dass die AGB-Änderung ohne Änderungsmitteilung geht:
+es gibt noch keine echten Nutzer, alle angemeldeten Konten sind ihre eigenen
+Mailadressen. Das trifft zu, solange es so bleibt — nach dem ersten echten
+Nutzer ist jede AGB-Änderung mitteilungspflichtig.
+
+### 3. „Konto löschen" löscht jetzt wirklich
+
+Der dritte Punkt aus meinem Fix-Update oben („nur durch Code zu heilen") ist
+erledigt. Der Ablauf entspricht jetzt AGB § 6.5 wörtlich:
+
+1. **Sofort:** Konto deaktiviert, `deleted_at` gesetzt, Stripe-Abo gekündigt,
+   Bestätigungsmail mit dem konkreten Löschdatum. Die Mail sagte bisher „dein
+   Account und alle Daten wurden gelöscht" und verwies aufs Antworten auf die
+   Mail — beides falsch; jetzt steht das Datum drin und der Weg zur
+   Wiederherstellung.
+2. **30 Tage:** Export und Wiederherstellung möglich (war schon gebaut:
+   `api/account/restore` + RestoreBanner).
+3. **Danach:** unwiderrufliche Löschung durch `api/cron/aufraeumen` —
+   Dateien in allen sechs Buckets mit Personenbezug, alle Datenbanktabellen,
+   Auth-Zugang.
+
+Die Datenbank-Löschung läuft als eine Transaktion
+(`konto_hart_loeschen()`, nur für die Service-Rolle ausführbar). Sie ist an
+einem synthetischen Konto durchgespielt: 11 Tabellen befüllt, Funktion
+aufgerufen, danach null Zeilen und **null verwaiste Kindzeilen**.
+
+**Datenschutzerklärung Abschnitt 8** habe ich entsprechend präzisiert: sofort
+deaktiviert, 30 Tage Frist für Export und Wiederherstellung, danach
+unwiderrufliche Löschung von Angeboten, Kundendaten, Sprachaufnahmen, Fotos
+und Zugang. Auch das bitte gegenlesen.
 
 ---
 

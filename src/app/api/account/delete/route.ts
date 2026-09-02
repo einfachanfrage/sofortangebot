@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
+import * as Sentry from '@sentry/nextjs'
 import { sendAccountDeletedEmail } from '@/lib/email'
+import { loeschungFaelligAm, LOESCH_FRIST_TAGE } from '@/lib/konto-loeschung'
 
 export const maxDuration = 30
 
@@ -37,17 +39,41 @@ export async function POST() {
     }
   }
 
-  // Soft-Delete: companies.deleted_at setzen
-  await service
+  // Schritt 1 von 2: `deleted_at` setzen — das startet die 30-Tage-Frist aus
+  // AGB § 6.5 (Daten vorhalten, Export, Wiederherstellung). Die eigentliche,
+  // unwiderrufliche Löschung macht danach `api/cron/konto-purge`. Bis zum
+  // 02.09.2026 gab es diesen zweiten Schritt nicht: das Konto blieb hier
+  // stehen und ist nie gelöscht worden, obwohl die Bestätigungsmail und die
+  // Datenschutzerklärung genau das zugesagt haben.
+  const geloeschtAm = new Date()
+  const { error: softDeleteFehler } = await service
     .from('companies')
-    .update({ deleted_at: new Date().toISOString() })
+    .update({ deleted_at: geloeschtAm.toISOString() })
     .eq('user_id', user.id)
 
-  // Bestätigungs-E-Mail senden
-  await sendAccountDeletedEmail(user.email!)
+  // Dieser Fehler lief bisher ungeprüft durch: schlug das Update fehl,
+  // bekam der Nutzer trotzdem „ok" und eine Bestätigungsmail — und sein
+  // Konto lief unverändert weiter. Ohne gesetztes `deleted_at` findet der
+  // Aufräumjob es nie.
+  if (softDeleteFehler) {
+    console.error('[account-delete] Konto konnte nicht zur Löschung vorgemerkt werden')
+    Sentry.captureException(new Error(softDeleteFehler.message), { tags: { feature: 'account_delete_soft' } })
+    return NextResponse.json(
+      { error: 'Dein Konto konnte gerade nicht gelöscht werden. Bitte versuch es noch einmal.' },
+      { status: 500 },
+    )
+  }
+
+  // Bestätigungs-E-Mail mit dem Datum, ab dem die Daten wirklich weg sind
+  const loeschungAm = loeschungFaelligAm(geloeschtAm)
+  await sendAccountDeletedEmail(user.email!, loeschungAm)
 
   // Nutzer ausloggen (Cookie löschen)
   await supabase.auth.signOut()
 
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({
+    ok: true,
+    frist_tage: LOESCH_FRIST_TAGE,
+    loeschung_am: loeschungAm.toISOString(),
+  })
 }

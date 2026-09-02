@@ -5,7 +5,10 @@ import createMDX from '@next/mdx'
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   env: {
-    NEXT_PUBLIC_VISION_ENABLED: process.env.AI_PROVIDER !== 'groq' ? 'true' : 'false',
+    // Vision läuft über OpenAI. Der Schalter hing früher an AI_PROVIDER, weil
+    // ein Groq-Betrieb vorgesehen war — Groq wird nirgends mehr aufgerufen
+    // (2026-09-02), der Zweig war tot.
+    NEXT_PUBLIC_VISION_ENABLED: 'true',
   },
 }
 

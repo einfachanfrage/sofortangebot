@@ -1,3 +1,15 @@
+// VOB-010 / L6 — Fund von Head of Legal & Compliance (2026-09-01), von mir
+// gegen den echten Katalog geprüft und bestätigt: In diesen 14 Einträgen über
+// 10 Gewerke steht der Prozentsatz im Titel, die Einheit war aber „Pauschale"
+// und der Preis trug die Prozentzahl als EURO-Betrag. Ein
+// Wochenend-Zuschlag von 25 % kam damit als 25,00 € ins Angebot — auf einem
+// 5.000-€-Auftrag also 25 € statt 1.250 €. In jedem der 14 Fälle war der Preis
+// exakt gleich der Prozentzahl; das ist kein Zufall, sondern derselbe
+// Eingabefehler wie bei den fünf Maler-Zuschlägen vom 31.08.
+//
+// Bewusst NICHT geändert: „Gefälleestrich … (2% Gefälle)" und „(1–2%
+// Gefälle)". Dort ist das Prozent ein Gefälle, kein Zuschlag — die
+// Euro-Preise sind richtig. (Legal hatte sie als Treffer mitgezählt.)
 export const DEFAULT_PRICES: Array<{
   category: string
   title: string
@@ -179,7 +191,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Erschwernisse & Zuschläge', title: 'Zuschlag bewohnte Wohnung (eingeschränkt)', unit: 'Pauschale', unit_price: 80.00 },
   { category: 'Maler – Erschwernisse & Zuschläge', title: 'Zuschlag stark verschmutzter Untergrund', unit: 'm²', unit_price: 3.00 },
   { category: 'Maler – Erschwernisse & Zuschläge', title: 'Zuschlag enge Räume / Treppenhäuser', unit: 'Pauschale', unit_price: 60.00 },
-  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: 'Pauschale', unit_price: 25.00 },
+  { category: 'Maler – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: '%', unit_price: 25.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Maler – Erschwernisse & Zuschläge', title: 'Bleihaltiger Altanstrich (Sicherheitsaufpreis)', unit: 'Pauschale', unit_price: 150.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -322,7 +334,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Trockenbau – Erschwernisse & Zuschläge', title: 'Zuschlag Feuchtraum (Bad, Keller)', unit: 'm²', unit_price: 8.00 },
   { category: 'Trockenbau – Erschwernisse & Zuschläge', title: 'Zuschlag erhöhter Brandschutz (F60/F90)', unit: 'm²', unit_price: 18.00 },
   { category: 'Trockenbau – Erschwernisse & Zuschläge', title: 'Zuschlag erhöhter Schallschutz (>55dB)', unit: 'm²', unit_price: 22.00 },
-  { category: 'Trockenbau – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: 'Pauschale', unit_price: 25.00 },
+  { category: 'Trockenbau – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: '%', unit_price: 25.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Trockenbau – Erschwernisse & Zuschläge', title: 'Zuschlag Bestandsbau (unebene Untergründe, Anpassungsarbeiten)', unit: 'Pauschale', unit_price: 90.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -468,7 +480,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Fliesen – Erschwernisse & Zuschläge', title: 'Zuschlag schlechter Untergrund (uneben, instabil)', unit: 'm²', unit_price: 8.00 },
   { category: 'Fliesen – Erschwernisse & Zuschläge', title: 'Zuschlag Nassbereich / Feuchtraum (erhöhter Abdichtungsaufwand)', unit: 'm²', unit_price: 12.00 },
   { category: 'Fliesen – Erschwernisse & Zuschläge', title: 'Zuschlag Wandhöhe >2,50m (Gerüst / Bühne erforderlich)', unit: 'm²', unit_price: 10.00 },
-  { category: 'Fliesen – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: 'Pauschale', unit_price: 25.00 },
+  { category: 'Fliesen – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: '%', unit_price: 25.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // FLIESEN & NATURSTEIN — Reinigung & Entsorgung
@@ -651,7 +663,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Erschwernisse & Zuschläge', title: 'Zuschlag sehr schlechter Untergrund (aufwändige Vorbereitung)', unit: 'm²', unit_price: 8.00 },
   { category: 'Boden – Erschwernisse & Zuschläge', title: 'Zuschlag Fußbodenheizung (CM-Messung, erhöhte Sorgfalt)', unit: 'Pauschale', unit_price: 55.00 },
   { category: 'Boden – Erschwernisse & Zuschläge', title: 'Zuschlag Treppenstufen (aufwändig, viele Zuschnitte)', unit: 'Pauschale', unit_price: 80.00 },
-  { category: 'Boden – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: 'Pauschale', unit_price: 25.00 },
+  { category: 'Boden – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: '%', unit_price: 25.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // BODENBELÄGE & PARKETT — Reinigung & Entsorgung
@@ -895,10 +907,10 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag hohe Räume / Deckenhöhe >3m', unit: 'm²', unit_price: 6.00 },
   { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag Deckenhöhe >4,5m', unit: 'm²', unit_price: 14.00 },
   { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag bewohnte Wohnung / eingeschränkter Zugang', unit: 'Pauschale', unit_price: 80.00 },
-  { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag Denkmalschutz / besondere Sorgfalt (30%)', unit: 'Pauschale', unit_price: 30.00 },
+  { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag Denkmalschutz / besondere Sorgfalt (30%)', unit: '%', unit_price: 30.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag stark feuchte / salzbelastete Wände', unit: 'm²', unit_price: 12.00 },
   { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag Treppenhaus / enge Verhältnisse', unit: 'Pauschale', unit_price: 90.00 },
-  { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: 'Pauschale', unit_price: 25.00 },
+  { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: '%', unit_price: 25.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Putz – Erschwernisse & Zuschläge', title: 'Zuschlag Winterbetrieb / Frostschutzmaßnahmen', unit: 'Pauschale', unit_price: 120.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1087,7 +1099,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Estrich – Erschwernisse & Zuschläge', title: 'Zuschlag Pumpenweg >30m (Schlauchverlängerung)', unit: 'Pauschale', unit_price: 80.00 },
   { category: 'Estrich – Erschwernisse & Zuschläge', title: 'Zuschlag obere Stockwerke (kein Aufzug, je Etage)', unit: 'Etage', unit_price: 60.00 },
   { category: 'Estrich – Erschwernisse & Zuschläge', title: 'Zuschlag Winterbetrieb / Frostschutz', unit: 'Pauschale', unit_price: 120.00 },
-  { category: 'Estrich – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: 'Pauschale', unit_price: 25.00 },
+  { category: 'Estrich – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', unit: '%', unit_price: 25.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Estrich – Erschwernisse & Zuschläge', title: 'Zuschlag Industriefläche / erhöhte Nutzlast (>3 kN/m²)', unit: 'm²', unit_price: 10.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1354,8 +1366,8 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag bewohnte Wohnung / eingeschränkter Zugang', unit: 'Pauschale', unit_price: 80.00 },
   { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag Betonwände / Stahlbeton stemmen', unit: 'lfdm', unit_price: 18.00 },
   { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag obere Stockwerke (kein Aufzug, ab 3. OG)', unit: 'Etage', unit_price: 55.00 },
-  { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag Notdienst / Soforthilfe (außerhalb Geschäftszeiten, 100%)', unit: 'Pauschale', unit_price: 100.00 },
-  { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (50%)', unit: 'Pauschale', unit_price: 50.00 },
+  { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag Notdienst / Soforthilfe (außerhalb Geschäftszeiten, 100%)', unit: '%', unit_price: 100.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
+  { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag Wochenend- / Feiertagsarbeit (50%)', unit: '%', unit_price: 50.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Elektro – Erschwernisse & Zuschläge', title: 'Zuschlag Arbeiten unter Spannung', unit: 'Pauschale', unit_price: 150.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1613,7 +1625,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'SHK – Erschwernisse & Zuschläge', title: 'Zuschlag bewohnte Wohnung / eingeschränkter Zugang', unit: 'Pauschale', unit_price: 90.00 },
   { category: 'SHK – Erschwernisse & Zuschläge', title: 'Kernbohrung (für Rohrdurchführung, bis DN 150)', unit: 'Stück', unit_price: 180.00 },
   { category: 'SHK – Erschwernisse & Zuschläge', title: 'Zuschlag obere Stockwerke (kein Aufzug, Materialtransport)', unit: 'Etage', unit_price: 65.00 },
-  { category: 'SHK – Erschwernisse & Zuschläge', title: 'Zuschlag Notdienst (Wochenende / Nacht / Feiertag, 100%)', unit: 'Pauschale', unit_price: 100.00 },
+  { category: 'SHK – Erschwernisse & Zuschläge', title: 'Zuschlag Notdienst (Wochenende / Nacht / Feiertag, 100%)', unit: '%', unit_price: 100.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'SHK – Erschwernisse & Zuschläge', title: 'Zuschlag Gasarbeiten (nur Meister zugelassen)', unit: 'Pauschale', unit_price: 80.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1825,10 +1837,10 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Zuschlag enge Treppenhäuser / schwieriger Zugang', unit: 'Pauschale', unit_price: 120.00 },
   { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Zuschlag bewohnte Wohnung / laufender Betrieb', unit: 'Pauschale', unit_price: 90.00 },
-  { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Zuschlag Denkmalschutz / historische Substanz (30%)', unit: 'Pauschale', unit_price: 30.00 },
-  { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Zuschlag Sondermaße / Sonderform (20%)', unit: 'Pauschale', unit_price: 20.00 },
+  { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Zuschlag Denkmalschutz / historische Substanz (30%)', unit: '%', unit_price: 30.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
+  { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Zuschlag Sondermaße / Sonderform (20%)', unit: '%', unit_price: 20.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Zuschlag obere Etagen (kein Aufzug, je Etage)', unit: 'Etage', unit_price: 75.00 },
-  { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Aufpreis exotische Holzart (Teak, Wenge, Nussbaum) ggü. Eiche (40%)', unit: 'Pauschale', unit_price: 40.00 },
+  { category: 'Schreiner – Erschwernisse & Zuschläge', title: 'Aufpreis exotische Holzart (Teak, Wenge, Nussbaum) ggü. Eiche (40%)', unit: '%', unit_price: 40.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // SCHREINER & TISCHLER — Stundenleistungen
@@ -2020,7 +2032,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Dach – Erschwernisse & Zuschläge', title: 'Zuschlag Dachneigung >50° (sehr steiles Dach)', unit: 'm²', unit_price: 18.00 },
   { category: 'Dach – Erschwernisse & Zuschläge', title: 'Zuschlag Innenstadtlage / schwieriger Gerüstaufbau', unit: 'Pauschale', unit_price: 250.00 },
   { category: 'Dach – Erschwernisse & Zuschläge', title: 'Zuschlag Winterbetrieb / Wetterschutz (Zelt / Plane)', unit: 'Pauschale', unit_price: 380.00 },
-  { category: 'Dach – Erschwernisse & Zuschläge', title: 'Zuschlag Denkmalschutz / historische Eindeckung (35%)', unit: 'Pauschale', unit_price: 35.00 },
+  { category: 'Dach – Erschwernisse & Zuschläge', title: 'Zuschlag Denkmalschutz / historische Eindeckung (35%)', unit: '%', unit_price: 35.00, ist_erschwerniszuschlag: true, erschwerniszuschlag_fuer: 'Leistungen dieses Gewerks', zuschlag_typ: 'prozent' },
   { category: 'Dach – Erschwernisse & Zuschläge', title: 'Zuschlag Notfalleinsatz / Sturmschaden (außerhalb GZ)', unit: 'Pauschale', unit_price: 80.00 },
   { category: 'Dach – Erschwernisse & Zuschläge', title: 'Asbesthaltige Materialien Sonderentsorgung (je m²)', unit: 'm²', unit_price: 65.00 },
   { category: 'Dach – Erschwernisse & Zuschläge', title: 'Zuschlag schwierige Zufahrt / eingeschränkte Anlieferung', unit: 'Pauschale', unit_price: 150.00 },

@@ -1084,7 +1084,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       // herausfallen und unter "Allgemein" landen.
       const dashMatch = item.title.match(/\s+[-–—]\s+.+$/)
       const raumSuffix = dashMatch ? dashMatch[0] : ''
-      const updated = { ...item, title: vorschlag.title + raumSuffix, unit: vorschlag.unit, unit_price: vorschlag.unit_price, price_item_id: vorschlag.price_item_id }
+      // VOB-010 (2026-09-01): Bei einem Prozent-Zuschlag aus dem Katalog IST
+      // der „Preis" der Prozentsatz — er gehört in die Menge, nicht in den
+      // Einzelpreis. Sonst stünde „1 % × 25,00 € = 25,00 €" im Angebot, also
+      // wieder genau der Euro-Betrag, den dieser Fix beseitigen soll. Den
+      // Einzelpreis (Euro je Prozentpunkt) rechnet der Effekt weiter unten
+      // aus der Bemessungsgrundlage — dieselbe Regel wie bei den automatisch
+      // erzeugten Zuschlägen.
+      const updated = istProzentZuschlag(vorschlag.unit)
+        ? { ...item, title: vorschlag.title + raumSuffix, unit: vorschlag.unit, quantity: vorschlag.unit_price, unit_price: 0, price_item_id: vorschlag.price_item_id }
+        : { ...item, title: vorschlag.title + raumSuffix, unit: vorschlag.unit, unit_price: vorschlag.unit_price, price_item_id: vorschlag.price_item_id }
       updated.total_price = updated.quantity * updated.unit_price
       return updated
     }))
@@ -1405,7 +1414,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   async function handleDuplicate() {
-    const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: quote.items.map(i => ({ title: i.title, description: i.description, quantity: i.quantity, unit: i.unit, unit_price: i.unit_price })), notes: quote.notes, customerName: quote.customer?.name ?? '', customerEmail: quote.customer?.email ?? '', customerPhone: quote.customer?.phone ?? '', customerAddress: quote.customer?.address ?? '' }) })
+    const r = await fetch('/api/quotes/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: quote.items.map(i => ({ title: i.title, description: i.description, quantity: i.quantity, unit: i.unit, unit_price: i.unit_price, berechnungsweg: i.berechnungsweg ?? null, annahmen: i.annahmen ?? [], price_item_id: i.price_item_id ?? null, automatisch_ergaenzt: i.automatisch_ergaenzt ?? false })), notes: quote.notes, customerName: quote.customer?.name ?? '', customerEmail: quote.customer?.email ?? '', customerPhone: quote.customer?.phone ?? '', customerAddress: quote.customer?.address ?? '' }) })
     if (r.ok) { const { id } = await r.json(); showToast('Dupliziert ✓'); router.push(`/angebot/${id}`) }
     else showToast('Duplizieren fehlgeschlagen')
   }

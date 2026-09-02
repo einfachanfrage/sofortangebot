@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
     await saveAndAlert('sevdesk', await testSevdeskAPI(sevdeskKey))
   }
 
-  // OpenAI / Groq immer testen
+  // OpenAI immer testen
   await saveAndAlert('openai', await testOpenAIAPI())
 
   return NextResponse.json({ ergebnisse, getestet_am: now })
