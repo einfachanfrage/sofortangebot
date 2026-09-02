@@ -69,7 +69,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ✅ behoben (Nebeneffekt von DC-017, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen — falls der fachliche Unterschied selbst unklar ist, bitte kurz bei Head of Product Engineering nachfragen, bevor Text geschrieben wird) |
+| DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | 🔵 Prüfen, ob nur Screenshot-Ausschnitt | — |
 | DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — CoS-002 komplett (alle 3 Schritte inkl. Mehrfach-Aufnahmen-Fall), Realtime-Bug gefunden+gefixt, Retest danach „passt" | Head of Product Engineering |
 | DC-022 | „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein (PD-004) | ✅ behoben + live bestätigt — strukturell mitgelöst mit DC-021/CoS-002, siehe dort | Head of Product Engineering |
@@ -1087,7 +1087,7 @@ DC-017).
 ## DC-019 — Zwei sehr ähnliche Buchhaltungs-Optionen ohne Erklärung des Unterschieds
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen — live bestätigt
+**Status:** ✅ behoben
 
 **Befund:** Im letzten Onboarding-Schritt stehen „Lexware Office" und
 „Lexoffice (Legacy)" als zwei separate, gleichrangige Auswahlkarten
@@ -1100,6 +1100,21 @@ Karten die richtige ist bzw. was „Legacy" hier bedeutet.
 neue Lexware-Office-Oberfläche oder noch den alten Lexoffice-Zugang? Im
 Zweifel: Lexware Office.") oder die beiden Optionen zu einer
 zusammenführen, falls das technisch möglich ist.
+
+**Fix-Update (2026-09-02, Product Designer):** Erst geprüft, ob ein Merge
+technisch überhaupt sauber wäre: nein — `lexware` und `lexoffice` haben
+in `src/lib/types.ts` getrennte API-Key-Spalten
+(`lexware_api_key`/`lexoffice_api_key`), sind also zwei echte, getrennte
+Integrationen und kein reines UI-Duplikat. Ein Merge wäre eine
+Backend-Entscheidung außerhalb meines Bereichs, daher die als
+Alternative vorgesehene, rein textliche Lösung umgesetzt: In
+`src/lib/accounting-options.ts` bekommt „Lexware Office" jetzt „Direkte
+Verbindung — die aktuelle Oberfläche. Im Zweifel die richtige Wahl.",
+„Lexoffice (Legacy)" bekommt „Direkte Verbindung — nur falls du noch den
+alten Lexoffice-Zugang nutzt." Keine Rückfrage bei Head of Product
+Engineering nötig, da der fachliche Unterschied (neu vs. alt/Legacy)
+schon aus dem „(Legacy)"-Label selbst und der Code-Struktur eindeutig
+hervorging. Scoped `tsc --noEmit` lief clean, Commit `5065355`.
 
 ---
 
