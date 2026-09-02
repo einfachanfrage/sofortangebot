@@ -8,6 +8,17 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [agbAkzeptiert, setAgbAkzeptiert] = useState(false)
+  // G4 (2026-09-02, Head of Legal & Compliance, CoS-L-001 → design-check.md
+  // "Design-Hälfte"): die Registrierung fragte die Unternehmereigenschaft
+  // (§ 14 BGB) bisher gar nicht ab — die AGB schließen Verbraucher zwar per
+  // Klausel aus (§ 1.2), das ist aber objektiv zu bestimmen, nicht per
+  // Klausel herbeizuschreiben. Rutscht ein Verbraucher durch, greifen
+  // §§ 312g/312j/312k BGB (Widerruf, Button-Lösung, Kündigungsbutton) voll.
+  // Serverseitige Prüfung/Persistierung (analog `agbAkzeptiert` unten) ist
+  // bewusst NICHT Teil dieser Änderung — offenes Ticket bei Head of Product
+  // Engineering (CoS-026 Punkt 1), um keine parallele Arbeit an derselben
+  // Route zu riskieren.
+  const [unternehmerBestaetigt, setUnternehmerBestaetigt] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -21,6 +32,11 @@ export default function RegisterPage() {
       return
     }
 
+    if (!unternehmerBestaetigt) {
+      setError('Bitte bestätige, dass du dich als Unternehmer anmeldest.')
+      return
+    }
+
     if (!agbAkzeptiert) {
       setError('Bitte akzeptiere die AGB um fortzufahren.')
       return
@@ -31,7 +47,7 @@ export default function RegisterPage() {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, agbAkzeptiert }),
+      body: JSON.stringify({ email, password, agbAkzeptiert, unternehmerBestaetigt }),
     })
     const result = await res.json()
 
@@ -84,6 +100,40 @@ export default function RegisterPage() {
           className="w-full bg-white border-2 border-[#2C2C2C] rounded-xl px-4 py-3 text-[#2C2C2C] font-semibold text-base focus:outline-none focus:border-[#F5C400]"
         />
 
+        {/* G4: eigene Pflicht-Checkbox für die Unternehmereigenschaft —
+            bisher fragte die Registrierung das gar nicht ab. */}
+        <label className="flex items-start gap-3 cursor-pointer select-none">
+          <div className="relative flex-shrink-0 mt-0.5">
+            <input
+              type="checkbox"
+              checked={unternehmerBestaetigt}
+              onChange={e => setUnternehmerBestaetigt(e.target.checked)}
+              className="sr-only"
+            />
+            <div
+              className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                unternehmerBestaetigt
+                  ? 'bg-[#F5C400] border-[#F5C400]'
+                  : 'bg-white border-[#2C2C2C]/30'
+              }`}
+            >
+              {unternehmerBestaetigt && (
+                <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+                  <path d="M1 4L4.5 7.5L11 1" stroke="#2C2C2C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+          </div>
+          <span className="text-sm font-semibold text-[#2C2C2C]/70 leading-snug">
+            Ich melde mich als Unternehmer an (§ 14 BGB) — sofortangebot ist
+            für den gewerblichen Einsatz gemacht, nicht für Verbraucher.
+          </span>
+        </label>
+
+        {/* G4: AGB-Zustimmung (Checkbox — eine Einwilligung) und
+            Datenschutzerklärung (nur Info-Link nach Art. 13 DSGVO, keine
+            Einwilligung) waren vorher fälschlich in einer Checkbox
+            zusammengefasst. */}
         <label className="flex items-start gap-3 cursor-pointer select-none">
           <div className="relative flex-shrink-0 mt-0.5">
             <input
@@ -111,13 +161,16 @@ export default function RegisterPage() {
             <Link href="/agb" target="_blank" className="text-[#2C2C2C] underline underline-offset-2">
               AGB
             </Link>{' '}
-            und die{' '}
-            <Link href="/datenschutz" target="_blank" className="text-[#2C2C2C] underline underline-offset-2">
-              Datenschutzerklärung
-            </Link>{' '}
             gelesen und akzeptiere sie.
           </span>
         </label>
+
+        <p className="text-xs font-semibold text-[#2C2C2C]/50 leading-snug -mt-1">
+          Informationen zur Verarbeitung deiner Daten findest du in unserer{' '}
+          <Link href="/datenschutz" target="_blank" className="text-[#2C2C2C]/70 underline underline-offset-2">
+            Datenschutzerklärung
+          </Link>.
+        </p>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-semibold">

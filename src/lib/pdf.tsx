@@ -402,14 +402,27 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
         )}
 
         {/* Normverweise */}
+        {/* VOB-007 (2026-09-02, Head of Legal & Compliance): "Normgrundlagen:
+            …" klang nach einer vollständigen Zusicherung, taugt aber weder
+            als wirksame Einbeziehung nach § 305 Abs. 2 BGB (ein Normkürzel
+            in 7pt/#BBBBBB ist keine zumutbare Kenntnisnahme) noch stimmt sie
+            durchgängig — das Produkt weicht bewusst an mehreren Stellen von
+            DIN 18363 ab (Verschnitt als Menge, Nebenleistungen als eigene
+            Positionen, Höhenzuschlag unterhalb der Normgrenze). Eine Norm,
+            die man punktuell nicht einhält, ist schlechter als gar keine.
+            "In Anlehnung an" behält den fachlichen Signalwert, ohne eine
+            Zusage zu machen, die das Angebot nicht durchgängig einlöst —
+            eine echte Einbeziehung (falls ein Betrieb VOB/B vereinbaren
+            will) bleibt ein separater, optionaler Fußtext-Baustein (L8,
+            noch nicht gebaut). */}
         {(() => {
           const vobNormen = [...new Set(quote.items.map(i => i.vob_norm).filter(Boolean))] as string[]
           const dinNormen = [...new Set(quote.items.flatMap(i => i.din_normen ?? []))]
           if (vobNormen.length === 0 && dinNormen.length === 0) return null
           return (
             <View style={{ marginTop: 6 }}>
-              <Text style={{ fontSize: 7, color: '#BBBBBB', lineHeight: 1.5 }}>
-                Normgrundlagen: {[...vobNormen, ...dinNormen].join(' · ')}
+              <Text style={{ fontSize: 7.5, color: '#999999', lineHeight: 1.5 }}>
+                Mengenermittlung in Anlehnung an: {[...vobNormen, ...dinNormen].join(' · ')}
               </Text>
             </View>
           )

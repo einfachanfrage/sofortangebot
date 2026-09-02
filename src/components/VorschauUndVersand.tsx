@@ -227,6 +227,20 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
               ))}
             </div>
 
+            {/* R3 (2026-09-02, Head of Legal & Compliance, CoS-L-001): der
+                KI-Hinweis war zwar in AGB §2.1/§10.2 und der Kommunikation
+                enthalten, aber nirgends an der Stelle sichtbar, wo er wirkt
+                — hier, unmittelbar vor dem Versenden. Bewusst kein
+                Warnbanner, ein ruhiger Satz an der Freigabestelle. Stützt
+                gleichzeitig die Prüfpflicht aus AGB §10.2 und, im
+                Streitfall, ein Mitverschuldens-Argument. Gilt für alle drei
+                Versandwege (E-Mail/WhatsApp/Link), deshalb hier über den
+                Tabs statt dreifach je Tab. */}
+            <div className="mx-4 mt-3 px-3.5 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-500 flex items-start gap-2 flex-shrink-0">
+              <span className="shrink-0">✓</span>
+              <span>Aus deinem Diktat erstellt — bitte einmal prüfen, bevor es rausgeht.</span>
+            </div>
+
             <div className="flex-1 overflow-y-auto px-4 pt-4 pb-2">
 
               {/* ── E-Mail Tab ─────────────────────────────────────────── */}
