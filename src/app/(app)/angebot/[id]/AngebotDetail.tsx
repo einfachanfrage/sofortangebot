@@ -670,9 +670,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showKundenSuche, setShowKundenSuche] = useState(false)
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
   const [kundenListe, setKundenListe] = useState<Customer[]>([])
-  // DC-029: Baustelle dieses Angebots — Zeile/Sheet erscheint erst, sobald
-  // der Kunde wirklich mehr als eine Baustelle hat ("unsichtbar, bis es
-  // gebraucht wird"). Bis dahin bleibt die Adresszeile unten unverändert.
+  // DC-029, korrigiert 2026-09-02 (Sandys Auftrag "IMMER eine Baustelle
+  // auswählbar, bei JEDEM Angebot Kunde+Baustelle"): Zeile/Sheet ist jetzt
+  // immer sichtbar, sobald ein Kunde zugewiesen ist — auch mit nur einer
+  // (automatischen Erst-)Baustelle. Ursprünglich ("unsichtbar, bis es
+  // gebraucht wird") erst ab der zweiten Baustelle sichtbar; das war
+  // DC-029s eigenes Prinzip, Sandy will es hier bewusst nicht.
   const [currentBaustelleId, setCurrentBaustelleId] = useState<string | null>(quote.baustelle_id ?? null)
   const [kundenBaustellen, setKundenBaustellen] = useState<(Baustelle & { angebote_anzahl: number })[]>([])
   const [showBaustelleSheet, setShowBaustelleSheet] = useState(false)
@@ -1594,8 +1597,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
       {/* Toast */}
       <Toast message={toast} />
 
-      {/* DC-029: Baustelle-Wahl-Sheet — nur relevant, wenn die Zeile oben
-          überhaupt sichtbar ist (kundenBaustellen.length > 1). */}
+      {/* DC-029: Baustelle-Wahl-Sheet — relevant, sobald die Zeile oben
+          sichtbar ist (kundenBaustellen.length > 0, seit 2026-09-02). */}
       {showBaustelleSheet && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center" onClick={e => e.stopPropagation()}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowBaustelleSheet(false)} />
@@ -2004,9 +2007,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                       <Phone size={14} className="text-[#F5C400]" />{currentCustomer.phone}
                     </a>
                   )}
-                  {/* DC-029: erst sichtbar, sobald dieser Kunde wirklich mehr
-                      als eine Baustelle hat — vorher unverändert wie oben. */}
-                  {kundenBaustellen.length > 1 && (() => {
+                  {/* DC-029, korrigiert 2026-09-02 (Sandys Auftrag "IMMER
+                      Baustelle wählbar, bei JEDEM Angebot Kunde+Baustelle"):
+                      sichtbar, sobald der Kunde mindestens eine Baustelle
+                      hat — also praktisch immer, auch mit nur der
+                      automatischen Erstbaustelle. */}
+                  {kundenBaustellen.length > 0 && (() => {
                     const aktuelle = kundenBaustellen.find(b => b.id === currentBaustelleId)
                     return (
                       <button

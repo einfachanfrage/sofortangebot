@@ -48,11 +48,14 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
 
   const acceptedValue = quotes.filter(q => q.status === 'accepted').reduce((s, q) => s + (q.total_gross ?? 0), 0)
 
-  // DC-029: "unsichtbar, bis es gebraucht wird" — bei höchstens einer
-  // Baustelle bringt eine Gruppierung keinen Mehrwert, nur eine leere
-  // Gruppen-Überschrift. Erst ab der zweiten wird nach Baustelle gruppiert
-  // (der Clemens-Fall: mehrere Angebote für dieselbe Baustelle über Zeit).
-  const gruppiert = baustellen.length > 1
+  // DC-029, korrigiert 2026-09-02 (Sandys Auftrag "IMMER eine Baustelle
+  // auswählbar, bei JEDEM Angebot Kunde+Baustelle"): jetzt immer nach
+  // Baustelle gruppiert, sobald mindestens eine existiert — auch mit nur
+  // der automatischen Erstbaustelle. Ursprünglich ("unsichtbar, bis es
+  // gebraucht wird") erst ab der zweiten Baustelle gruppiert; Sandy will
+  // Baustelle jetzt als durchgängig sichtbares Konzept, nicht erst ab dem
+  // Clemens-Fall (mehrere Baustellen für denselben Kunden).
+  const gruppiert = baustellen.length > 0
   const baustellenMitAngeboten = gruppiert
     ? baustellen.map(b => ({ baustelle: b, angebote: quotes.filter(q => q.baustelle_id === b.id) }))
     : []
