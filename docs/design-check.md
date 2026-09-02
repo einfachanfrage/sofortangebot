@@ -76,7 +76,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-023 | Fassade: Aufnahmekarte zeigt Fenstermaße statt Fassadenmaße (PD-007) | 🟡 Extraktions-Fix von Head of Product Engineering lokal verifiziert (zeigt jetzt lieber nichts als Falsches) — noch nicht auf sofortangebot.app deployt | Head of Product Engineering |
 | DC-024 | Raummaße-Chip zeigt lauter rote „Fehler" bei Nicht-Raum-Objekten (z. B. Fassade) (PD-003) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — Wand-Chip (`AngebotDetail.tsx`) | Product Designer (umgesetzt) |
 | DC-025 | Rückfragen-UI: von Sandy selbst als „hässlich" bewertet, komplettes Neudenken gewünscht (PD-002) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — neue `RueckfragenScreen.tsx`; CoS-011-Aufwandsschätzung dadurch überholt | Product Designer (umgesetzt) |
-| DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | 🟡 Ursache gefunden und behoben (Head of Product Engineering, 2026-08-24): falsche Reihenfolge in der Pipeline — gefragt wurde nach Werten, die drei Blöcke später aus dem Text gelesen wurden. Fenster/Türen fallen jetzt ganz weg, für den Rest liegt das `vorschlag`-Feld samt Zitat bereit. Live-Nachtest steht aus. Rest ist UI von Head of Product Engineering | Head of Product Engineering |
+| DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | ✅ vollständig behoben (Product Designer, 2026-09-02) — Pipeline-Fix von Head of Product Engineering (2026-08-24) + „Du hast gesagt"-Vorschlagskarte in `RueckfragenScreen.tsx`. Live-Nachtest steht aus | Head of Product Engineering (Pipeline) / Product Designer (Karte) |
 | DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | 🟡 Badge gebaut (Product Designer, 2026-08-24), gegen die eigene Spec, direkt nachdem das Backend-Flag live ging — `tsc` sauber, Live-Nachtest steht aus | Head of Product Engineering (Flag, ✅) / Product Designer (Badge, umgesetzt) |
 | DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — raum-gruppiert (`entwurf/page.tsx`) | Product Designer (umgesetzt) |
 | DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🟡 Umgesetzt (Datenmodell + UI) — Sandy hat nach Konzept/Prototyp „Top umsetzen" gesagt. Sechs Dateien geändert/neu, scoped `tsc` sauber, `eslint` in dieser Umgebung nicht lauffähig (siehe Detail), noch nicht live mit echten Kundendaten geprüft (Produktion hat aktuell 0 Kunden) | Product Designer (umgesetzt, wartet auf Live-Check) |
@@ -1533,6 +1533,10 @@ Konzept (DC-026) — dafür gibt es aktuell keine Datenquelle, das UI dafür
 zu bauen wäre totes Gerüst ohne echten Inhalt. Kommt, sobald Head of
 Product Engineering das Erkennungs-Flag liefert.
 
+**Nachtrag (Product Designer, 2026-09-02):** Das Erkennungs-Flag ist da
+(Head of Product Engineering, 2026-08-24) — die Vorschlagskarte ist jetzt
+gebaut, siehe DC-026.
+
 Außerdem auf Farb-Tokens statt Hex-Literalen umgestellt (DC-006,
 `bg-yellow`/`text-anthracite`/`bg-bg`) und die neue `Button.tsx` (DC-005)
 für die Haupt-Aktionen verwendet — beides passend zum laufenden Aufräumen,
@@ -1657,6 +1661,33 @@ Abgesichert mit 20 neuen Tests (`gesagte-werte.test.ts` +
 `rueckfragen-flow.test.ts`), Suite 807/807 grün. Live-Nachtest steht aus.
 Damit ist die Erkennungsseite von DC-026 fertig — der Rest ist die Karte aus
 deinem DC-025-Konzept.
+
+---
+
+**Umsetzung — die Karte (Product Designer, 2026-09-02): DC-026 vollständig
+abgeschlossen.**
+
+Das `vorschlag`-Feld von Head of Product Engineering (`{ wert, einheit,
+anzeige, zitat }`) lag bereit, wurde aber von `RueckfragenScreen.tsx`
+nirgends gelesen — die Rückfrage sah für den Nutzer weiterhin wie eine ganz
+normale offene Frage aus. Neue `VorschlagKarte`-Komponente ersetzt jetzt die
+normale Eingabe, solange eine Frage unbeantwortet ist UND einen Vorschlag
+trägt: zeigt das wörtliche Zitat aus dem Transkript („Du hast gesagt: …" —
+bewusst seine Worte, nicht die normalisierte Fassung, sonst prüft er einen
+Satz, den er so nie gesagt hat) plus den geparsten Wert, mit zwei Aktionen:
+„Stimmt ✓" übernimmt den Vorschlag direkt als Antwort (läuft durch denselben
+Antwort-State wie jede manuelle Eingabe, inkl. der DC-035-Ausnahme-Maße-Zeile
+bei Fenster-/Türenanzahl), „Korrigieren" blendet stattdessen die normale
+Eingabe ein. „Ändern" auf einer bereits gelösten Frage setzt den
+Korrigieren-Status zurück, damit ein erneut geöffnetes Feld wieder mit dem
+Vorschlag startet statt in der zuletzt offenen manuellen Eingabe zu landen.
+
+Scoped `tsc` gegen Komponente + die drei DC-026-Pipeline-Dateien sauber,
+zusätzlich vollen Projekt-`tsc` gegengeprüft — sauber. Commit `19575e7`.
+**Noch offen, wichtig:** Nicht live im Browser durchgeklickt (keine
+Möglichkeit dazu von hier aus) — bitte vor dem Live-Schalten einmal mit
+einem echten Transkript durchspielen, das eine bereits genannte
+Fenster-/Türanzahl oder Höhe enthält.
 
 ---
 
