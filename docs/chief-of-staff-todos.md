@@ -3059,5 +3059,41 @@ Korrigieren einer Position tatsächlich gespeichert werden.
 
 ---
 
+## CoS-034 — Kleiner Auftrag für Head of Product Engineering: eine Spalte für DC-032 (Onboarding-Ausstieg)
+
+**Datum:** 2026-09-02 (Product Designer)
+**Status:** ❌ offen — kleine, additive Migration, sonst nichts
+
+**Kontext:** DC-032 (`design-check.md`) — der Onboarding-Assistent hat auf
+Mobile keinen Ausstieg. Ich wollte das nicht ungeprüft bauen, weil ein
+Exit-Button ins Leere laufen würde: `onboarding/[step]/page.tsx` schreibt
+den gesamten Fortschritt nur in `localStorage`, die Datenbank bekommt erst
+in Schritt 7 (`handleFinish()`) alles auf einmal. `getDashboardData()`
+prüft `needsOnboarding` über `!company.name`, und `dashboard/page.tsx`
+erzwingt daraufhin hart `redirect('/onboarding')` — es gibt aktuell keine
+Möglichkeit, „nie angefangen" von „mittendrin ausgestiegen" zu
+unterscheiden. Ein Exit-Link würde also sofort wieder zurück nach
+`/onboarding` geschickt.
+
+**Die Bitte, sonst nichts:**
+
+```sql
+ALTER TABLE companies ADD COLUMN onboarding_started_at TIMESTAMPTZ;
+```
+
+Rein additiv, nullable, kein Bestandscode betroffen, kein Backfill nötig
+(bestehende Nutzer haben entweder `onboarding_completed` oder sind eh
+schon durch). Ich setze die Spalte selbst in `onboarding/[step]/page.tsx`
+(Schritt 2, einmalig, idempotent) und passe `getDashboardData()` an
+(`needsOnboarding` nur noch `true`, wenn WEDER `name` NOCH
+`onboarding_started_at` gesetzt sind) — dafür brauche ich nur die Spalte,
+keine weitere Abstimmung. Danach baue ich den Exit-Link + ein
+Dashboard-Resume-Banner, komplett mein Teil.
+
+Volle Herleitung inkl. Code-Fundstellen steht im DC-032-Nachtrag in
+`design-check.md`.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
