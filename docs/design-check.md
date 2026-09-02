@@ -77,7 +77,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-024 | Raummaße-Chip zeigt lauter rote „Fehler" bei Nicht-Raum-Objekten (z. B. Fassade) (PD-003) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — Wand-Chip (`AngebotDetail.tsx`) | Product Designer (umgesetzt) |
 | DC-025 | Rückfragen-UI: von Sandy selbst als „hässlich" bewertet, komplettes Neudenken gewünscht (PD-002) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — neue `RueckfragenScreen.tsx`; CoS-011-Aufwandsschätzung dadurch überholt | Product Designer (umgesetzt) |
 | DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | ✅ vollständig behoben (Product Designer, 2026-09-02) — Pipeline-Fix von Head of Product Engineering (2026-08-24) + „Du hast gesagt"-Vorschlagskarte in `RueckfragenScreen.tsx`. Live-Nachtest steht aus | Head of Product Engineering (Pipeline) / Product Designer (Karte) |
-| DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | 🟡 Badge gebaut (Product Designer, 2026-08-24), gegen die eigene Spec, direkt nachdem das Backend-Flag live ging — `tsc` sauber, Live-Nachtest steht aus | Head of Product Engineering (Flag, ✅) / Product Designer (Badge, umgesetzt) |
+| DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | ✅ Code live bestätigt (Product Designer, 2026-09-02) — Badge-Commit `a8ac87a` ist Vorfahre des aktuell deployten `ccbd667`. Visuelle Prüfung an einem frischen Angebot mit Vollständigkeitsregel (z. B. „Boden schützen") noch offen — kann ich ohne Login nicht selbst machen | Head of Product Engineering (Flag, ✅) / Product Designer (Badge, ✅ Code live) |
 | DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — raum-gruppiert (`entwurf/page.tsx`) | Product Designer (umgesetzt) |
 | DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | 🟡 Umgesetzt (Datenmodell + UI) — Sandy hat nach Konzept/Prototyp „Top umsetzen" gesagt. Sechs Dateien geändert/neu, scoped `tsc` sauber, `eslint` in dieser Umgebung nicht lauffähig (siehe Detail), noch nicht live mit echten Kundendaten geprüft (Produktion hat aktuell 0 Kunden) | Product Designer (umgesetzt, wartet auf Live-Check) |
 | DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | ✅ Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21) — Karte, DC-028-Raum-Karten und „Entwurf erstellen"-Gate alle wie entschieden gebaut. Regressionsgeprüft (236 Tests grün), noch KEIN Live-Nachtest | Product Designer (Entscheidung) / Head of Product Engineering (Umsetzung) |
@@ -1824,6 +1824,18 @@ entsprechend kein Badge — erst neu berechnete/ergänzte Angebote sollten
 welche zeigen. Noch nicht live geprüft (brauche ein frisches Angebot mit
 einer der Vollständigkeitsregeln, z. B. „Boden schützen" bei Maler, um das
 Badge tatsächlich zu sehen).
+
+**Live-Bestätigung — Code (Product Designer, 2026-09-02):** Kein Login
+möglich, also kann ich das Badge nicht selbst an einem echten Angebot
+sehen — aber über die Vercel-Deployment-Kette lässt sich verlässlich
+zeigen, dass der Badge-Code (Commit `a8ac87a`, „CoS-014, CoS-017,
+CoS-018, CoS-019, DC-026") ein Vorfahre des aktuell auf
+www.sofortangebot.app live deployten Commits `ccbd667` ist
+(`git merge-base --is-ancestor a8ac87a ccbd667` → wahr). Der Code ist
+also live. **Noch offen, nur von dir zu machen:** ein frisches Angebot
+mit einer Vollständigkeitsregel (z. B. „Boden schützen" bei Maler)
+durchspielen und schauen, ob das „Vorschlag"-Pill tatsächlich neben der
+ergänzten Position erscheint wie in der Spec beschrieben.
 
 ---
 
