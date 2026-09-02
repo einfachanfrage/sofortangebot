@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   ArrowLeft, Mic, Camera, X, Check, ChevronRight,
-  Loader2, AlertCircle, RefreshCw,
+  Loader2, AlertCircle, RefreshCw, NotebookPen,
 } from 'lucide-react'
 import { AudioPlayer } from '@/components/AudioPlayer'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
@@ -1516,8 +1516,16 @@ export default function EntwurfPage() {
               </span>
             </div>
 
-            {/* Platzhalter für Symmetrie */}
-            <div className="w-14 pb-[3px]" />
+            {/* Text-Notiz */}
+            <div className="flex flex-col items-center gap-2 pb-[3px]">
+              <button
+                onClick={() => setShowNotiz(true)}
+                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:scale-95 transition-all"
+              >
+                <NotebookPen size={22} strokeWidth={2} className="text-anthracite" />
+              </button>
+              <span className="text-anthracite/40 font-semibold text-[12px]">Notiz</span>
+            </div>
           </div>
         )}
         <input
