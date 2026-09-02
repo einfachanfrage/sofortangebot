@@ -147,3 +147,149 @@ strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
 | 2026-08-21 | CoS-002 Schritt 3: reicht die Umsetzung nur für den Einzelaufnahme-Fall für Gate 1, oder soll auch der Mehrfach-Aufnahmen-Fall geschlossen werden? | **„mach komplett rund also das auch noch schließen"** — auch der Mehrfach-Aufnahmen-Fall soll denselben doppelten KI-Aufruf vermeiden. Head of Product Engineering hat das über einen spekulativen Vorab-Kombi-Aufruf umgesetzt (kein Merge einzelner Caches — Korrektheits-Risiko —, sondern derselbe kombinierte Aufruf nur vorgezogen). Damit ist Schritt 3 in beiden Fällen fertig | `docs/chief-of-staff-todos.md` CoS-002 |
 | 2026-08-21 | PM-021-Folgefrage: soll die VOB-Übermessungsregel für Maler-Wandflächen (kleine Fenster/Türen bis 2,5 m² nicht abziehen) automatisch für alle gelten, oder per Onboarding-Frage + Einstellungen-Schalter? | „wenn du sagst es ist gängig, dann machs für alle direkt so" — automatisch für ALLE Malerangebote, kein Einstellungen-Schalter, kein Onboarding-Schritt, dafür sichtbarer Hinweistext in den Positions-Annahmen. Ändert die berechnete Wandfläche (tendenziell nach oben) für praktisch jedes künftige Malerangebot mit normalgroßen Öffnungen — gewollte Konsequenz, kein Fehler. Prüfmeister ausdrücklich informiert: eigene Soll-Lösungen müssen die Regel ab sofort mitrechnen | `docs/pruefmeister-testfaelle.md`, Abschnitt „VOB-Übermessungsregel für Anstricharbeiten" (Dateiende) |
 | 2026-08-25 | DC-034: Zwei getrennte Foto-/Notiz-Systeme im Angebot (Aufnahme-Fotos vs. „Notizen & Fotos"-Tab) — beibehalten, entfernen, oder zusammenlegen? Product Designer hatte bewusst neutral nur den Ist-Zustand dokumentiert, keine eigene Empfehlung | „ja so machen wie von dir vorgeschlagen" — nicht ersatzlos streichen (echter Bedarf: Vorher-Zustand-Dokumentation im Gewerbe), aber zu einem System zusammenlegen: Aufnahme-Fotos bekommen denselben „ins PDF"-Schalter wie der heutige Tab, der separate zweite Upload-Weg entfällt. Interne Notiz bleibt als eigene, klar benannte Mini-Funktion (nie im PDF) — anderer Zweck als Fotos. Umsetzung an Head of Product Engineering (Datenmodell/PDF) + Product Designer (UI) übergeben | `docs/design-check.md` DC-034, `docs/chief-of-staff-todos.md` CoS-021 |
+
+---
+
+## S-4 — Rechtsform und Versicherung: Empfehlung des Head of Legal & Compliance (2026-09-02)
+
+Sandy hat direkt gefragt: Einzelunternehmen oder UG? Hier meine Empfehlung mit
+den Zahlen dahinter. **Vorbehalt vorweg:** Die Haftungsseite ist meine; die
+Steuerseite gehört einer Steuerberaterin. Die Zahlen unten sind recherchiert,
+aber keine Steuerberatung.
+
+### Kurzfassung
+
+**Beides ja — aber nicht gleichzeitig und nicht in der Reihenfolge, die man
+erwartet.**
+
+1. **Vermögensschaden-Haftpflicht: sofort**, noch vor dem ersten echten
+   Testnutzer. Kostet wenig, wirkt sofort, deckt genau unseren Hauptfall.
+2. **UG: ja — und der richtige Zeitpunkt ist vor dem ersten *zahlenden*
+   Kunden.** Nicht heute, nicht später. Der Grund steht unter „Der Punkt, auf
+   den es ankommt".
+3. Bis dahin ist das Einzelunternehmen in Ordnung, weil ohne Nutzer keine
+   Verbindlichkeiten entstehen.
+
+### Warum das Risiko hier untypisch ist
+
+Bei einer normalen Solo-Selbständigkeit ist das Haftungsrisiko ungefähr so groß
+wie der Auftrag: ein Kunde, ein Projekt, ein begrenzter Schaden. **Hier nicht.**
+Ein systematischer Rechenfehler in der Engine wirkt auf alle Nutzer
+gleichzeitig, und der Schaden entsteht nicht bei uns, sondern in deren eigenen
+Werkverträgen — Beträge, mit denen unser Abo-Preis nichts zu tun hat.
+
+Bei 200 Betrieben mit durchschnittlich 5.000-€-Aufträgen ist ein Fehler, der
+zwei Monate unentdeckt bleibt, sechsstellig, während der Umsatz vierstellig ist.
+**Diese Asymmetrie ist das ganze Argument.** Sie ist nicht theoretisch: In
+`pruefmeister-testfaelle.md` stehen mehrere Fehler genau dieser Bauart, und
+VOB-013 ist einer, der heute im Code steckt.
+
+### Was die UG leistet und was nicht
+
+| | |
+|---|---|
+| **Gedeckt** | Vertragshaftung gegenüber Nutzern — also genau unser Fall. Schadensersatz wegen fehlerhafter Software richtet sich gegen das Gesellschaftsvermögen, nicht gegen das Privatvermögen |
+| **Gedeckt** | DSGVO-Bußgelder gehen nach Art. 83 gegen die Gesellschaft |
+| **Nicht gedeckt** | Eigenes deliktisches Handeln (§ 823 BGB) — trifft die handelnde Person immer |
+| **Nicht gedeckt** | Persönlich übernommene Bürgschaften und Garantien. Banken und Vermieter verlangen sie bei dünner Kapitaldecke regelmäßig |
+| **Nicht gedeckt** | Innenhaftung als Geschäftsführerin (§ 43 GmbHG), etwa bei verspäteter Insolvenzanmeldung |
+| **Fällt weg bei** | Vermischung von Privat- und Firmenvermögen |
+
+Für unser Szenario ist die erste Zeile die entscheidende, und sie greift voll.
+
+### Der Punkt, auf den es ankommt — § 26 HGB
+
+Das ist das Argument, das die Zeitfrage entscheidet, und es wird meistens
+übersehen:
+
+**Die Haftungsbeschränkung wirkt nur nach vorne.** Wechselt man später von
+Einzelunternehmen zu UG, haftet die frühere Inhaberin für alles, was **vor** dem
+Wechsel entstanden ist, nach § 26 HGB noch **fünf Jahre persönlich weiter** —
+und die neue UG haftet nach § 25 HGB bei Firmenfortführung zusätzlich als
+Gesamtschuldnerin mit.
+
+Praktisch heißt das: Ein Rechenfehler, der heute im Code steckt und in acht
+Monaten bei einem Kunden auffliegt, ist eine Verbindlichkeit aus der
+Einzelunternehmer-Zeit. Eine UG, die es dann längst gibt, hilft dagegen nicht.
+**Wer die Rechtsform erst wechselt, wenn es weh tut, wechselt zu spät.**
+
+Deshalb: vor dem ersten zahlenden Kunden. Nicht danach.
+
+### Was es kostet
+
+**Gründung:** Notar mit Musterprotokoll und Handelsregister zusammen rund
+300–480 €. Stammkapital gesetzlich ab 1 €, praktisch mindestens **1.000 €** —
+sonst ist die UG nach Abzug der Gründungskosten sofort bilanziell leer.
+
+**Laufend, das Mehr gegenüber heute:**
+
+| Posten | Einzelunternehmen | UG |
+|---|---|---|
+| Buchführung | EÜR | doppelte Buchführung, Bilanz, Anhang |
+| Steuerberater | ~1.000–2.100 €/Jahr | deutlich mehr; die Bilanzerstellung allein wird mit 1.500–4.000 €/Jahr angegeben |
+| Offenlegung | keine | Unternehmensregister, 12 Monate nach Stichtag, 35–100 €. Bei Versäumnis Ordnungsgeld ab 500 € (§ 335 HGB) |
+| IHK | 30–75 €/Jahr, bei geringem Ertrag befreibar | 150–300 €/Jahr, keine Befreiung |
+| Gewerbesteuer | Freibetrag **24.500 €** | **kein** Freibetrag |
+| Entnahmen | frei | 25 % des Jahresüberschusses müssen als Rücklage stehenbleiben, bis 25.000 € erreicht sind (§ 5a Abs. 3 GmbHG) |
+
+**Realistisch: rund 2.000 € Mehrkosten im ersten Jahr, danach etwa
+1.500–2.000 € jährlich.** Steuerlich ist die UG bei kleinem Gewinn schlechter —
+der Kipppunkt wird üblicherweise irgendwo zwischen 60.000 und 100.000 € Gewinn
+angesetzt, hängt aber stark vom Einzelfall ab. **Das ist der Punkt, an dem eine
+Steuerberaterin gefragt werden sollte, nicht ich.**
+
+### Warum die Versicherung zuerst kommt
+
+Die beiden Maßnahmen tun verschiedene Dinge, und das wird oft verwechselt:
+
+- **Die UG begrenzt den Schaden auf das Gesellschaftsvermögen.** Im Ernstfall
+  ist die Firma weg, das Privatvermögen bleibt. Sie rettet dich, nicht das
+  Unternehmen.
+- **Die Versicherung zahlt.** Sie rettet das Unternehmen.
+
+Eine IT-Vermögensschadenhaftpflicht deckt genau unseren Fall: reine
+Vermögensschäden beim Kunden durch einen Programmierfehler — also der Handwerker,
+der wegen einer falschen Fläche auf seinem eigenen Auftrag Geld verliert.
+Einstiegstarife für IT-Betriebe beginnen bei etwa 150 € im Jahr; für ein SaaS
+mit sinnvoller Deckungssumme realistisch im mittleren dreistelligen Bereich.
+Anbieter mit IT-Schwerpunkt: exali, Hiscox.
+
+**Zwei Ausschlüsse, die man kennen muss:**
+
+1. **Erfüllungsschäden sind nicht gedeckt.** Die Kosten, den Fehler selbst zu
+   beheben und die Software vertragsgemäß zum Laufen zu bringen, trägt der
+   Betrieb. Versichert sind die Folgeschäden beim Kunden — und das ist bei uns
+   der teure Teil.
+2. **Wissentliche Pflichtverletzung ist nie gedeckt.** Das schließt an das an,
+   was in `legal-001-bestandsaufnahme.md` unter A5 steht: Ein bekannter,
+   dokumentierter, nicht behobener Fehler, der trotzdem live geht, ist keine
+   leichte Fahrlässigkeit mehr. Dort hilft **weder der Disclaimer noch die
+   Versicherung.**
+
+Damit wird aus einer Versicherungsfrage ein Argument für etwas anderes: Die
+offenen Prüfmeister-Funde vor dem Launch zu schließen, ist nicht nur
+Produktqualität — es ist die Voraussetzung dafür, dass der
+Versicherungsschutz im Ernstfall überhaupt greift. Das ist mir bei dieser
+Recherche zum ersten Mal so klar geworden.
+
+### Empfehlung
+
+| Wann | Was | Kosten |
+|---|---|---|
+| **Jetzt, vor dem ersten Testnutzer** | Vermögensschaden-Haftpflicht abschließen. Drei Angebote einholen, auf Deckungssumme und den Ausschluss bekannter Mängel achten | ~150–600 €/Jahr |
+| **Vor dem ersten zahlenden Kunden** | UG gründen, Musterprotokoll, 1.000 € Stammkapital | ~1.500 € einmalig inkl. Kapital, dann ~1.500–2.000 €/Jahr |
+| **Parallel** | Steuerberaterin zur Steuerseite fragen — die gehört nicht mir | — |
+| **Nicht** | Warten, bis es sich lohnt. § 26 HGB lässt das nicht zu | — |
+
+**Wenn nur eines geht: die Versicherung.** Sie kostet ein Zehntel und wirkt
+sofort. Die UG ist die richtige Entscheidung, aber sie ist die zweite.
+
+**Ein Gegenargument, das ich ernst nehme:** Solange es keine Nutzer gibt, gibt
+es kein Risiko, und jeder Euro, der jetzt in Buchhaltung statt ins Produkt geht,
+fehlt. Das stimmt. Deshalb empfehle ich nicht „heute gründen", sondern „vor dem
+ersten zahlenden Kunden" — das ist derselbe Moment, an dem auch
+Verarbeitungsverzeichnis, Unternehmer-Checkbox und AGB-Mitteilungspflicht scharf
+schalten. **Gate 1 ist dieser Moment, nicht ein Datum.**
+
+---
+
