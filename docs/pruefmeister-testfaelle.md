@@ -2055,5 +2055,223 @@ Bis das entschieden ist, gilt für deine Rechnungen die Code-Schwelle: **> 3,00 
 
 ---
 
+---
+
+## Soll-Lösungen für die sechs offenen Fälle (Prüfmeister, 2026-09-02)
+
+Antwort auf Punkt 5 deiner Liste. Damit sind alle 28 Fälle eindeutig. Vier
+Grundregeln vorweg, sie gelten für alle sechs — und sie überschreiben, wo nötig,
+Zahlen, die ich selbst früher geschrieben habe:
+
+1. **VOB-Übermessung gilt überall.** Standardfenster 1,20 m² (1,20 × 1,00) und
+   Standardtür 1,89 m² (0,90 × 2,10) liegen beide unter 2,5 m² und werden
+   **nicht** abgezogen. Jede alte Soll-Zahl mit Öffnungsabzug ist überholt —
+   nicht nur bei PM-006, sondern auch bei PM-002, PM-010, PM-011, PM-013 (Flur)
+   und PM-018. Das war mein Fehler, nicht deiner: ich habe am 21.08. nur die
+   Golden-Tests nachziehen lassen und nicht meine eigenen Soll-Texte.
+2. **Sockelleisten:** Türbreite 0,90 m wird abgezogen — Stand heute, so wie der
+   Code es macht. **VOB-012 stellt genau das infrage.** Jede davon betroffene
+   Zeile ist unten mit `[VOB-012]` markiert. Entscheidet Sandy dort auf
+   „durchmessen", ändern sich ausschließlich diese Zeilen auf den vollen Umfang
+   — sonst nichts. Bis dahin ist die abgezogene Zahl das Soll.
+3. **Erschwerniszuschläge in Prozent.** Ich lege im Soll nur Prozentsatz und
+   Bemessungsgrundlage fest, **keinen Euro-Betrag** — der hängt an der
+   Preisliste des Betriebs. Menge = Prozentsatz, Einheit = %, Grundlage = Summe
+   der echten Leistungen desselben Raums.
+4. **Höhenschwelle > 3,00 m**, wie von dir vorgegeben, bis Sandy entscheidet.
+
+---
+
+### PM-002 — Akzentwand: **kurze Seite, 9,10 m²**
+
+Raumdaten: 4,00 × 3,50 m, Höhe 2,60 m, 1 Fenster (1,20 × 1,00), 1 Tür
+(0,90 × 2,10).
+
+**Die Festlegung:** Akzentwand = **kürzere Raumseite, 3,50 m × 2,60 m =
+9,10 m².** Begründung: Aus „die Wand hinterm Bett" kommt kein Signal, welche
+Wand gemeint ist — das Tool rät. Wenn es rät, dann zur kleineren Fläche, weil
+der Annahme-Text es ansagt und der Handwerker es in zwei Sekunden korrigiert;
+zu viel Tapete auf dem Angebot fällt ihm dagegen erst beim Kunden auf. Der
+Golden-Test PM-002a rechnet mit 29,90 m² Restwand, das ist genau diese Variante
+— gelebter Stand und Soll stimmen also schon überein.
+
+| Position | Soll-Menge |
+|---|---|
+| Wandbrutto (Zwischenwert) | 15,00 lfm × 2,60 = **39,00 m²**, keine Öffnungsabzüge |
+| Akzentwand Vliestapete | **9,10 m²** |
+| Restwände streichen 2× | 39,00 − 9,10 = **29,90 m²** |
+| Deckenfläche streichen 2× | **14,00 m²** |
+| Klick-Vinyl verlegen, diagonal | 14,00 × 1,15 = **16,10 m²** |
+| Trittschalldämmung | **14,00 m²** — Raumfläche ohne Verschnitt, die Dämmung wird stumpf gestoßen |
+| Sockelleisten montieren (Boden) | 15,00 − 0,90 = **14,10 lfdm** `[VOB-012]` |
+
+**Was NICHT kommen darf:** „Sockelleisten streichen" (ausdrücklich „nicht
+gestrichen, nur montiert"), „Sockelleisten abkleben" (die Leisten sind beim
+Streichen noch gar nicht dran), „Boden schützen" (der Boden fliegt im selben
+Auftrag raus — Abdecken wäre bezahlter Unsinn).
+
+---
+
+### PM-006 — es gilt **28,80 m²**
+
+Raumdaten: 3,00 × 3,00 m, Höhe 2,40 m, Altbau, 1 Fenster 0,50 × 0,60 = 0,30 m²,
+1 Tür Standardannahme (0,90 × 2,10).
+
+Beide Öffnungen liegen unter 2,5 m², also wird **keine** abgezogen. 26,91 m²
+(nur Tür abgezogen) war die Zahl vor Sandys Entscheidung, 26,61 m² war der
+damalige Ist-Fehler. Beide sind tot.
+
+| Position | Soll-Menge |
+|---|---|
+| Wandflächen streichen 2× | 12,00 lfm × 2,40 = **28,80 m²** |
+| Deckenfläche streichen 2× | **9,00 m²** |
+| Boden schützen | **9,00 m²** |
+| Sockelleisten abkleben | 12,00 − 0,90 = **11,10 lfdm** `[VOB-012]` |
+| Erschwerniszuschlag Altbau | **20 %**, Grundlage = die vier Positionen oben |
+
+In den Annahmen der Wandposition muss der Übermessungshinweis stehen:
+**2 Öffnungen (2,19 m²) nicht abgezogen.** Kein zweiter Erschwerniszuschlag —
+im Text steht „sonst nix Besonderes".
+
+---
+
+### PM-010 — „Sockelleisten streichen": **12,10 lfdm**
+
+Raumdaten: 3,50 × 3,00 m, Höhe 2,60 m, Standardannahme 1 Tür, 1 Fenster.
+(Der „350 m"-Extraktionsfehler ist ein eigener Fund und darf im Test nicht
+mitgeprüft werden — der Test startet mit den bereinigten Maßen.)
+
+Die Antwort auf deine Frage: **dieselbe Länge wie die montierte Leiste.** Man
+streicht genau die Leisten, die man vorher angeschraubt hat — zwei
+verschiedene Längen für dasselbe Bauteil im selben Angebot wären der Fehler,
+den ein Kunde als Erstes findet. Solange der Türabzug gilt, gilt er für alle
+drei Sockelleisten-Zeilen gemeinsam.
+
+| Position | Soll-Menge |
+|---|---|
+| Wandflächen streichen 2× | 13,00 lfm × 2,60 = **33,80 m²** |
+| Deckenfläche streichen 2× | **10,50 m²** |
+| Boden schützen | **10,50 m²** (Boden bleibt liegen, Schutz ist hier richtig) |
+| Sockelleisten entfernen (Boden) | **12,10 lfdm** `[VOB-012]` |
+| Sockelleisten montieren (Boden) | **12,10 lfdm** `[VOB-012]` |
+| Sockelleisten streichen (Maler) | **12,10 lfdm** `[VOB-012]` |
+
+**Was NICHT kommen darf:** „Sockelleisten abkleben" — man klebt keine Leiste
+ab, die man selbst streicht. Und weiterhin keine Bodenbelag- oder
+Altbelag-Position (der alte Phantom-Fund).
+
+---
+
+### PM-011 — Raumdaten und die Doppel-Erschwernis
+
+**So muss die Extraktion den Raum liefern:** `laenge: 4.00`, `breite: 3.20`,
+`hoehe: 2.50`, `fenster: 1` (1,20 × 1,00), `tueren: 1` (0,90 × 2,10),
+Altbau erkannt, Spachtelqualität **Q2**, Sockelleisten nur abkleben.
+
+| Position | Soll-Menge |
+|---|---|
+| Wandfläche (Zwischenwert) | 14,40 lfm × 2,50 = **36,00 m²**, keine Abzüge |
+| Vollflächenspachtelung **Q2** | **36,00 m²** — m²-Position, nie Stückzahl |
+| Wandflächen streichen 2× | **36,00 m²** |
+| Sockelleisten abkleben | 14,40 − 0,90 = **13,50 lfdm** `[VOB-012]` |
+| Boden schützen | **12,80 m²** |
+| Erschwerniszuschlag Altbau | **20 %**, Grundlage = die Positionen dieses Raums |
+
+**Und hier die Entscheidung zur offenen Doppel-Erschwernis-Frage aus dem
+Nachtest vom 25.08.:** Der „Erschwerniszuschlag schwieriger Untergrund" darf
+**nicht** kommen. Die Unebenheit ist die Q2-Vollflächenspachtelung — sie steht
+schon als eigene, bepreiste Position im Angebot. Ein Untergrund-Zuschlag
+daneben kassiert dieselbe Erschwernis zweimal, und das ist genau der Punkt, an
+dem ein Kunde zu Recht laut wird.
+
+**Als allgemeine Regel, nicht nur für diesen Fall:** *Steht im selben Raum eine
+Vollflächenspachtelung (Q2 bis Q4), wird „Erschwerniszuschlag schwieriger
+Untergrund" nicht automatisch gesetzt.* Der Altbau-Zuschlag bleibt — der zahlt
+nicht die Wand, sondern die Baustelle drumherum (enge Treppe, Schutz, Bestand).
+
+Keine Grundierung, keine Deckenposition.
+
+---
+
+### PM-013 — Fischgrät **15 %**, kein Korridor mehr
+
+Mein alter Soll ließ 10–15 % offen. Für einen Test taugt das nicht, und seit
+dem PM-025-Fix rechnet die Engine bei Musterverlegung fest 15 %. Also:
+
+**Wohnzimmer — nur Boden.** Extraktion: `laenge: 8.00`, `breite: 4.50`,
+Belag Eichenparkett, Verlegemuster Fischgrät, Dehnungsfuge verlangt, keine
+Öffnungen, keine Höhe nötig.
+
+| Position | Soll-Menge |
+|---|---|
+| Parkett Fischgrät verlegen | 36,00 × 1,15 = **41,40 m²** |
+| Dehnungsfuge | **1** (eigene Position, Preis darf fehlen) |
+
+Keine Trittschalldämmung, keine Sockelleisten, **keine** Wand- oder
+Deckenposition.
+
+**Flur — nur Maler.** Extraktion: `laenge: 5.00`, `breite: 1.80`,
+`hoehe: 2.60`, `fenster: 0`, `tueren: 1` (0,90 × 2,10).
+
+| Position | Soll-Menge |
+|---|---|
+| Wandflächen streichen 2× | 13,60 lfm × 2,60 = **35,36 m²** (Tür 1,89 m² nicht abgezogen) |
+| Deckenfläche streichen 2× | **9,00 m²** |
+| Boden schützen | **9,00 m²** |
+| Sockelleisten abkleben | 13,60 − 0,90 = **12,70 lfdm** `[VOB-012]` |
+
+Übermessungshinweis: **1 Öffnung (1,89 m²) nicht abgezogen.** Und weiterhin
+**keine** Boden-Position im Flur, obwohl das Wort „Boden" im Satz steht.
+
+---
+
+### PM-018 — Raumdaten und acht Positionen
+
+**So muss die Extraktion den Raum liefern:** `laenge: 4.00`, `breite: 3.50`,
+`hoehe: 2.60`, `fenster: 1` (1,20 × 1,00), `tueren: 1` (0,90 × 2,10),
+Spachtelqualität **Q3**, Grundierung 1×, Anstrich 2×, Wand **und** Decke.
+
+| Position | Soll-Menge |
+|---|---|
+| Spachtelarbeiten **Q3** Wand | **39,00 m²** |
+| Spachtelarbeiten **Q3** Decke | **14,00 m²** |
+| Grundierung Wand (1×) | **39,00 m²** |
+| Grundierung Decke (1×) | **14,00 m²** |
+| Wandflächen streichen 2× | **39,00 m²** |
+| Deckenfläche streichen 2× | **14,00 m²** |
+| Boden schützen | **14,00 m²** |
+| Sockelleisten abkleben | 15,00 − 0,90 = **14,10 lfdm** `[VOB-012]` |
+
+Wandbrutto ist 15,00 lfm × 2,60 = 39,00 m², ohne Abzüge — die 35,91 m² aus dem
+alten Soll und dem Live-Nachtest vom 21.08. sind die Zahl von vor der
+Übermessungs-Entscheidung. Die Qualitätsstufe muss in beiden Spachtelzeilen
+**Q3** heißen, nicht Q2.
+
+---
+
+### Neuer Fund nebenbei: Leibungen werden einmal zu viel gerechnet
+
+Beim Nachsehen für diese Soll-Lösungen aufgefallen, `maler.ts` Zeile 614:
+
+```js
+const leibungsUmfang = round2(2 * br + 2 * hoe)
+```
+
+Das ist einmal **rundherum**. An einem Fenster sitzt unten aber die
+Fensterbank, an einer Tür der Fußboden — dort ist keine Leibung. Richtig sind
+drei Seiten: `br + 2 × hoe`. Bei Standardfenster 1,20 × 1,00 und 25 cm Tiefe
+rechnet das Tool **1,10 m² statt 0,80 m²**, also gut ein Drittel zu viel.
+
+Und zwei Zeilen weiter kommt bei Nennung des Worts „Fensterbank" nochmal
+`br × tiefe` als eigene Position dazu — **die Fensterbank wird damit doppelt
+berechnet**, einmal versteckt im Leibungsumfang und einmal offen.
+
+Das ist ein Rechenfehler zulasten des Endkunden, in derselben Familie wie die
+Funde von Legal. Ich lege ihn als eigenen Fall an, sobald ich ihn live
+nachgesprochen habe — für die sechs Soll-Lösungen oben ist er ohne Wirkung
+(in keinem der Fälle kommen Leibungen vor).
+
+*Prüfmeister · 2026-09-02*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
