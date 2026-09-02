@@ -15,14 +15,18 @@ export const ACCOUNTING_OPTIONS: AccountingOption[] = [
   {
     value: 'lexware',
     label: 'Lexware Office',
-    desc: 'Direkte Verbindung — Angebot landet automatisch drin',
+    // DC-019: "Lexware Office" und "Lexoffice (Legacy)" waren mit
+    // identischer Beschreibung nicht unterscheidbar. Beide sind echte,
+    // getrennte Integrationen (eigene API-Key-Spalten, s. types.ts) —
+    // keine reine UI-Dopplung, daher Klarstellungs-Satz statt Merge.
+    desc: 'Direkte Verbindung — die aktuelle Oberfläche. Im Zweifel die richtige Wahl.',
     tier: 'oauth',
     popular: true,
   },
   {
     value: 'lexoffice',
     label: 'Lexoffice (Legacy)',
-    desc: 'Direkte Verbindung — Angebot landet automatisch drin',
+    desc: 'Direkte Verbindung — nur falls du noch den alten Lexoffice-Zugang nutzt.',
     tier: 'oauth',
   },
   {
