@@ -19,6 +19,7 @@ import {
   aufnahmenFristVor,
   tageBisAudioLoeschung,
 } from '../aufnahmen-aufraeumen'
+import { istUeberfaellig } from '../system-laeufe'
 
 const TAG = 24 * 60 * 60 * 1000
 const JETZT = new Date('2026-09-02T12:00:00.000Z')
@@ -157,5 +158,21 @@ describe('Sprachaufnahmen-Frist', () => {
   it('eine 31 Tage alte Aufnahme fällt unter die Grenze', () => {
     expect(vorTagen(31) < aufnahmenFristVor(JETZT)).toBe(true)
     expect(tageBisAudioLoeschung(vorTagen(31), JETZT)).toBe(0)
+  })
+})
+
+describe('Überfälligkeit von Hintergrundjobs', () => {
+  it('ein Job, der nie gelaufen ist, gilt sofort als überfällig', () => {
+    // Genau der Fall, der beim Erinnerungs-Job monatelang unbemerkt blieb.
+    expect(istUeberfaellig(null, JETZT)).toBe(true)
+  })
+
+  it('ein Lauf von gestern ist in Ordnung', () => {
+    expect(istUeberfaellig(new Date(JETZT.getTime() - 20 * 60 * 60 * 1000), JETZT)).toBe(false)
+  })
+
+  it('zwei Tage Puffer — ein einzelner Ausfall (Deploy) löst keinen Alarm aus', () => {
+    expect(istUeberfaellig(new Date(JETZT.getTime() - 47 * 60 * 60 * 1000), JETZT)).toBe(false)
+    expect(istUeberfaellig(new Date(JETZT.getTime() - 49 * 60 * 60 * 1000), JETZT)).toBe(true)
   })
 })

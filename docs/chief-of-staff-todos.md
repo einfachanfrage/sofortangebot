@@ -2760,5 +2760,55 @@ mitteilungspflichtig — das gehört in die Gate-1-Checkliste.
 
 ---
 
+## Fund: Der Erinnerungs-Job hat noch nie eine E-Mail verschickt (2026-09-02)
+
+Sandy hat mich gebeten nachzusehen, ob `CRON_SECRET` bei Vercel gesetzt ist —
+sonst antwortet der neue Aufräum-Job jeden Tag mit 401 und löscht nie etwas.
+Die Vercel-Oberfläche kann ich nicht einsehen (im Browser ist kein Konto
+angemeldet, und Zugangsdaten gebe ich grundsätzlich nicht ein). Die Datenbank
+beantwortet die Frage aber indirekt — und die Antwort ist schlechter als die
+Frage:
+
+- **75 Angebote, kein einziges mit `reminder_sent_at`.** Der tägliche
+  Erinnerungs-Job hat seit Bestehen nicht eine einzige E-Mail verschickt.
+- **Zwei Angebote waren seit dem 25.08. und 27.08. fällig** (Status `sent`,
+  Kunden-E-Mail vorhanden, Betrieb mit `reminder_days = 3`). Der Job hätte
+  längst senden müssen.
+
+Das ist kein Beweis für ein fehlendes `CRON_SECRET` — es kann auch sein, dass
+der Cron-Eintrag bei Vercel gar nicht läuft. Es ist aber der Beweis, dass
+mindestens einer der beiden täglichen Jobs seit Monaten tot ist, ohne dass es
+irgendwo aufgefallen wäre. Und derselbe Mechanismus trägt jetzt die
+Konto-Löschung.
+
+**Die eigentliche Lehre ist nicht das Secret, sondern die Stille.** Ein
+Hintergrundjob, der nie startet, sieht von außen exakt aus wie einer, der
+nichts zu tun hatte. Dagegen habe ich drei Dinge gebaut:
+
+1. **`system_laeufe`** — jeder Lauf beider Jobs schreibt eine Zeile (Start,
+   Ende, Erfolg, Ergebnis). „Lief der Job gestern?" ist ab sofort eine
+   Datenbankabfrage statt einer Vermutung, und zwar ohne Zugriff auf die
+   Hosting-Oberfläche.
+2. **Fehlendes Secret ist laut.** Bisher war „Secret fehlt" von „Secret
+   falsch" nicht zu unterscheiden — beides stilles 401. Fehlt die
+   Konfiguration, ist das unser eigener Fehler und geht jetzt als
+   `fatal` an Sentry (Tag `cron_konfiguration`).
+3. **Der Admin-Health-Check meldet tote Jobs per E-Mail** — genau wie bei
+   einer ausgefallenen Fremd-API, mit der Prüfreihenfolge im Text. 48 Stunden
+   Puffer, damit ein Deploy keinen Fehlalarm auslöst.
+
+**Was Sandy tun muss** (kann ich nicht für sie): in den Vercel-Projekt-
+einstellungen unter Environment Variables prüfen, ob `CRON_SECRET` für
+Production gesetzt ist, und unter Settings → Cron Jobs, ob beide Einträge
+gelistet sind. Danach beantwortet ein Blick in `system_laeufe`, ob es
+tatsächlich wirkt.
+
+**Nebenbefund für die Gate-1-Liste:** Wenn der Erinnerungs-Job seit Monaten
+nicht läuft, ist die Funktion „Automatische Erinnerung nach X Tagen" in den
+Einstellungen ein Versprechen an den Handwerker, das das Produkt nicht
+einlöst. Das gehört in die Launch-Readiness, nicht nur in dieses Ticket.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

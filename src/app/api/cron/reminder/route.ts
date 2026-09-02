@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
+import * as Sentry from '@sentry/nextjs'
+import { protokolliereLauf } from '@/lib/system-laeufe'
 
 // Cron kann bei vielen Nutzern lange laufen
 export const maxDuration = 300
@@ -21,30 +23,52 @@ export async function GET(req: NextRequest) {
   // gegen "Bearer undefined" laufen und wäre von außen erratbar
   // (gleiche Härtung wie in notifications/unterschrift).
   const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+
+  // 2026-09-02: Dieser Job hat seit Bestehen keine einzige Erinnerung
+  // verschickt — 75 Angebote, kein einziges mit `reminder_sent_at`, während
+  // mindestens zwei seit Tagen fällig waren. Ein fehlendes Secret sah dabei
+  // exakt aus wie „nichts zu tun". Eine fehlende Konfiguration ist unser
+  // eigener Fehler, kein Angriffsversuch, und muss laut sein.
+  if (!cronSecret) {
+    console.error('[cron-reminder] CRON_SECRET ist nicht gesetzt — der Job kann nie laufen')
+    Sentry.captureException(new Error('CRON_SECRET nicht gesetzt: Erinnerungs-Job läuft nie'), {
+      level: 'fatal',
+      tags: { feature: 'cron_konfiguration' },
+    })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const supabase = getSupabase()
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
 
-  // Alle Firmen mit aktiviertem Reminder in einer Query holen
-  const { data: companies } = await supabase
-    .from('companies')
-    .select('id, name, reminder_days')
-    .gt('reminder_days', 0) // reminder_days = 0 → deaktiviert, direkt filtern
+  return protokolliereLauf<NextResponse>(supabase, 'reminder', async () => {
+    // Alle Firmen mit aktiviertem Reminder in einer Query holen
+    const { data: companies } = await supabase
+      .from('companies')
+      .select('id, name, reminder_days')
+      .gt('reminder_days', 0) // reminder_days = 0 → deaktiviert, direkt filtern
 
-  if (!companies?.length) return NextResponse.json({ sent: 0 })
+    if (!companies?.length) {
+      return { ok: true, details: { sent: 0, companies: 0 }, ergebnis: NextResponse.json({ sent: 0 }) }
+    }
 
-  // Für jede Firma parallel die fälligen Angebote laden und E-Mails senden
-  const results = await Promise.allSettled(
-    companies.map(company => processCompany(supabase, company, appUrl))
-  )
+    // Für jede Firma parallel die fälligen Angebote laden und E-Mails senden
+    const results = await Promise.allSettled(
+      companies.map(company => processCompany(supabase, company, appUrl))
+    )
 
-  const sent = results.reduce((sum, r) => sum + (r.status === 'fulfilled' ? r.value : 0), 0)
-  const errors = results.filter(r => r.status === 'rejected').length
+    const sent = results.reduce((sum, r) => sum + (r.status === 'fulfilled' ? r.value : 0), 0)
+    const errors = results.filter(r => r.status === 'rejected').length
 
-  return NextResponse.json({ sent, errors, companies: companies.length })
+    return {
+      ok: errors === 0,
+      details: { sent, errors, companies: companies.length },
+      ergebnis: NextResponse.json({ sent, errors, companies: companies.length }),
+    }
+  })
 }
 
 async function processCompany(
