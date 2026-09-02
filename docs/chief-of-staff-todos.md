@@ -2810,5 +2810,50 @@ einlöst. Das gehört in die Launch-Readiness, nicht nur in dieses Ticket.
 
 ---
 
+## Erledigt: TEMP-DEBUG-Tabelle entfernt (2026-09-02)
+
+Sandys Auftrag, direkt nach der To-do-Liste. Der Insert in `ki-extrahieren`
+stammte vom 07.08. und trug seinen eigenen Vorsatz im Kommentar: „Wieder
+entfernen sobald geklärt." Der Multi-Raum-Bug war nach Tagen geklärt, der
+Schreibvorgang lief fast einen Monat weiter.
+
+**Was drin lag:** 137 Zeilen, 4 Konten, 07.08. bis 01.09. — je Zeile das
+vollständige Transkript und die vollständige rohe KI-Antwort. Also
+Kundennamen, Adressen und Gesprächsinhalte aus fremden Wohnungen, gespeichert
+ohne Zweck, ohne Frist und ohne Erwähnung in der Datenschutzerklärung. Vom
+07. bis 17.08. zusätzlich ohne Zugriffsschutz — das ist der bekannte
+Datenleck-Altfall.
+
+**Was ich gemacht habe:**
+
+- Insert aus `supabase/functions/ki-extrahieren/index.ts` entfernt. An seiner
+  Stelle steht jetzt ein Kommentar, der erklärt, was dort stand und unter
+  welchen Bedingungen so etwas wiederkommen darf: befristet, mit Löschjob,
+  nur für den eigenen Testaccount.
+- Tabelle samt Inhalt gelöscht (Migration `20260902120000`). Vorher in
+  derselben Migration `konto_hart_loeschen()` angepasst — die Funktion löschte
+  aus dieser Tabelle und wäre sonst beim nächsten Konto an einer fehlenden
+  Tabelle gescheitert. Nachgeprüft: Tabelle weg, keine Policy übrig, Funktion
+  referenziert sie nicht mehr.
+- `check_migrationen.sql` Prüfung #52 umgedreht: Die Tabelle darf jetzt
+  **nicht** mehr existieren.
+- Neuer Test `datenminimierung.test.ts`: kein Schreibzugriff auf eine Tabelle,
+  deren Name mit `debug_` beginnt, kein Zugriff auf `debug_extraktion_roh`,
+  kein Insert mit `raw_result`. Gegengeprobt — mit wieder eingefügtem Insert
+  schlagen alle drei fehl.
+
+**Wissen ist nicht verloren:** Was aus diesen Rohdaten gelernt wurde, steht
+als echte Testfälle in `maler-engine.test.ts` und in den Kommentaren von
+`kontext-analyzer.ts` und `extraktion-normalisierer.ts`. Die Kommentare nennen
+die Tabelle weiterhin als Herkunft — das ist Absicht, sie erklären, warum wir
+bestimmte Fälle für echt halten.
+
+**Offen bis zum Deploy:** Die Edge Function muss noch ausgerollt werden
+(`npx supabase functions deploy ki-extrahieren`), sonst schreibt die live
+laufende Fassung weiter — ins Leere, weil die Tabelle weg ist, aber der
+Versuch bleibt im Code. Steht in Sandys Block.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

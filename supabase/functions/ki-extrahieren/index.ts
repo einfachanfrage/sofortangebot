@@ -70,15 +70,17 @@ Deno.serve(async (req: Request) => {
 
         const raw = data.choices[0].message.content
         const parsed = JSON.parse(raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim())
-        // TEMP-DEBUG (Sandy + Claude, 2026-08-07): rohe GPT-Antwort in eigene
-        // Tabelle schreiben, um den Multi-Raum-Bug zu finden, ohne Next.js-
-        // Deploy zu brauchen. Wieder entfernen sobald geklärt.
-        supabase.from('debug_extraktion_roh').insert({
-          user_id: user.id,
-          transkript,
-          raw_result: parsed,
-          model: 'gpt-4o',
-        }).then(() => {})
+        // Hier stand von 2026-08-07 bis 2026-09-02 ein TEMP-DEBUG-Insert, der
+        // JEDES Transkript und die rohe GPT-Antwort in die Tabelle
+        // `debug_extraktion_roh` geschrieben hat — angelegt für die Suche nach
+        // dem Multi-Raum-Bug, danach nie wieder entfernt. Das war das
+        // Sensibelste, was durch dieses System läuft (Kundennamen, Adressen,
+        // Gesprächsinhalte aus fremden Wohnungen), gespeichert ohne Zweck und
+        // ohne Frist, in genau der Tabelle des Datenleck-Altfalls vom August.
+        //
+        // Entfernt samt Tabelle (Migration 20260902120000). Wer für eine
+        // Fehlersuche wieder Rohdaten braucht: bitte befristet, mit
+        // Löschjob und nur für den eigenen Testaccount — nicht für alle.
         return parsed
       },
       25000,

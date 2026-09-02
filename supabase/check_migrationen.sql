@@ -138,14 +138,12 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
     ) < 177
   )),
   (51, '20260807054617_add_extraktion_logging', 'quotes.extraktion_roh',    EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quotes' AND column_name='extraktion_roh')),
-  -- Hinweis zu #52: debug_extraktion_roh ist eine am 07.08. manuell (nicht
-  -- per Migration) direkt in Produktion angelegte Debug-Tabelle. Existiert
-  -- sie auf einer Umgebung nicht, zeigt dieser Check "FEHLT" — das ist dann
-  -- korrekt und kein Grund, die Tabelle dort extra anzulegen.
-  (52, '20260817180000_secure_debug_extraktion_roh', 'Policy "debug_extraktion_roh_own"', EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE schemaname = 'public' AND tablename = 'debug_extraktion_roh'
-      AND policyname = 'debug_extraktion_roh_own'
+  -- #52 hat die Debug-Tabelle abgesichert; am 02.09.2026 ist sie samt Inhalt
+  -- entfernt worden (Migration 20260902120000). Der Check dreht sich deshalb
+  -- um: Die Tabelle darf NICHT mehr existieren.
+  (52, '20260902120000_debug_tabelle_entfernen', 'Tabelle debug_extraktion_roh entfernt', NOT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'debug_extraktion_roh'
   )),
   (53, '20260817180100_drop_duplicate_briefpapiere_policy', 'Duplikat-Policy entfernt', NOT EXISTS (
     SELECT 1 FROM pg_policies
