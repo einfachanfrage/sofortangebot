@@ -321,7 +321,11 @@ export default function OnboardingStep() {
 
       {/* ── STEP 2: Betrieb ─────────────────────────────────────────────── */}
       {step === 2 && (
-        <div className="flex flex-col flex-1">
+        // DC-015: Inhalt als Gruppe vertikal zentrieren statt oben
+        // anzudocken + Buttons per mt-auto ganz nach unten zu schieben —
+        // auf größeren Screens (Tablet/Laptop) sonst eine große leere
+        // Fläche mittendrin.
+        <div className="flex flex-col flex-1 justify-center">
           <div className="text-[40px] leading-none mb-4">🏗️</div>
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Wie heißt dein Betrieb?
@@ -401,7 +405,7 @@ export default function OnboardingStep() {
             )}
           </div>
 
-          <div className="mt-auto pt-8">
+          <div className="pt-8">
             <button
               onClick={() => {
                 const noName = !state.name.trim()
@@ -419,7 +423,12 @@ export default function OnboardingStep() {
 
       {/* ── STEP 3: Gewerk ──────────────────────────────────────────────── */}
       {step === 3 && (
-        <div className="flex flex-col flex-1 min-h-0">
+        // DC-015: siehe Kommentar bei Schritt 2 — hier zusätzlich die
+        // Gewerk-Liste unten von flex-1 (füllt immer die volle Höhe) auf
+        // max-h umgestellt, damit die aktuell 5 Einträge nicht künstlich
+        // auseinandergezogen werden, aber bei künftig mehr Gewerken
+        // weiterhin scrollbar bleiben.
+        <div className="flex flex-col flex-1 min-h-0 justify-center">
           <div className="text-[40px] leading-none mb-4">🔨</div>
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Was machst du?
@@ -428,7 +437,7 @@ export default function OnboardingStep() {
             Die KI kennt dann die typischen Leistungen und Einheiten für dein Handwerk — und fragt beim Aufmaß genau die richtigen Dinge nach.
           </p>
 
-          <div className="flex flex-col gap-2 overflow-y-auto flex-1">
+          <div className="flex flex-col gap-2 overflow-y-auto max-h-[50vh]">
             {AKTIVE_GEWERKE.map(g => {
               const active = state.gewerke.includes(g.id)
               return (
@@ -482,7 +491,8 @@ export default function OnboardingStep() {
 
       {/* ── STEP 4: MwSt + Zahlungsziel ────────────────────────────────── */}
       {step === 4 && (
-        <div className="flex flex-col flex-1">
+        // DC-015: siehe Kommentar bei Schritt 2.
+        <div className="flex flex-col flex-1 justify-center">
           <div className="text-[40px] leading-none mb-4">💶</div>
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-6">
             Wie stellst du Rechnungen?
@@ -562,7 +572,7 @@ export default function OnboardingStep() {
             Alles kann später in den Einstellungen geändert werden.
           </p>
 
-          <div className="mt-auto pt-6 flex gap-3">
+          <div className="pt-6 flex gap-3">
             <button onClick={() => goTo(3)} className={btnBack}>← Zurück</button>
             <button
               onClick={() => { if (state.vatRate === null) return; goTo(5) }}
@@ -714,7 +724,12 @@ export default function OnboardingStep() {
 
       {/* ── STEP 6: Logo ────────────────────────────────────────────────── */}
       {step === 6 && (
-        <div className="flex flex-col flex-1">
+        // DC-015: siehe Kommentar bei Schritt 2 — zusätzlich die
+        // Upload-Box unten von flex-1 (zentriert sich selbst in einer
+        // künstlich riesigen Restfläche) auf normale Höhe umgestellt,
+        // damit sie Teil der zentrierten Gruppe wird statt einsam in der
+        // Bildschirmmitte zu schweben.
+        <div className="flex flex-col flex-1 justify-center">
           <div className="text-[40px] leading-none mb-4">🎨</div>
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
             Dein Logo
@@ -731,7 +746,7 @@ export default function OnboardingStep() {
             onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f) }}
           />
 
-          <div className="flex-1 flex flex-col items-center justify-center gap-4">
+          <div className="flex flex-col items-center gap-4 py-8">
             {state.logoUrl ? (
               <div className="flex flex-col items-center gap-4 w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
