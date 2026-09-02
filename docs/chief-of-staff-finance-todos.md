@@ -232,5 +232,84 @@ in der Kostenübersicht landet.
 
 ---
 
+**Update (Head of Finance, 2026-09-02, Teil 7):** Sandy hat 14 neue Dateien
+im `Rechnungen`-Ordner bereitgestellt. Davon waren 7 tatsächlich neue Belege
+(IONOS ×5, Supabase MVGOOM-00007, Vercel TT0BDQ8S-0005), die restlichen 7
+waren Zahlungsbestätigungen zu bereits erfassten Rechnungen (3× Vercel-Receipt
+mit Kartendaten, 3× Supabase-Receipt). `docs/kostenuebersicht-finance.xlsx`
+ist entsprechend aktualisiert, neu berechnet (0 Formelfehler) und ins Repo
+zurückgeschrieben. Journal jetzt 17 Belege (2026-001 bis 2026-017).
+
+Zwei Ergebnisse aus den Zahlungsbestätigungen, nichts Kritisches: Vercel wird
+laut allen vier Zahlungsbelegen durchgängig mit **Visa •••3991** bezahlt —
+bei den bestehenden Journal-Zeilen 2026-002/005/007 nachgetragen (vorher
+„unbekannt"). Und im August-Supabase-Beleg taucht die fünfte, bisher nicht
+dokumentierte Projekt-Referenz erstmals nicht mehr auf (nur noch 4 statt 5) —
+könnte heißen, dass sich der offene Punkt „5 vs. 2 dokumentierte
+Supabase-Projekte" von selbst entschärft. Bitte trotzdem noch bestätigen statt
+sich darauf zu verlassen.
+
+**🔵 Neuer, wichtigerer Fund — bitte lesen:** Die IONOS-Rechnungen (alle 5,
+April–August, gleiche Vertragsnummer 111811442) bündeln **mehrere Domains in
+einer Rechnung**, nicht nur sofortangebot.app. Konkret laufen darüber auch
+`einfach-anfrage.com`, `einfachanfrage.com`,
+`einfachanfrage-hochzeitsfotografie.de` und `einfachanfrage-tattoo.de` — das
+sind erkennbar andere/ältere Projekte, keine Sofortangebot-Kosten. Ich habe
+sie deshalb **nicht** mitgezählt. Um das sauber abzubilden, habe ich dem
+Rechnungsjournal eine neue Spalte **„Sofortangebot-Anteil (Brutto)"**
+hinzugefügt: „Brutto-Betrag" bleibt weiterhin die volle Original-
+Rechnungssumme (GoBD-Vollständigkeit/Nachvollziehbarkeit), aber
+„Sofortangebot-Anteil" zeigt nur den Teil, der wirklich zu Sofortangebot
+gehört. Der Monatsverlauf rechnet jetzt mit dieser neuen Spalte, nicht mehr
+mit dem vollen Brutto-Betrag — sonst wären fremde Domainkosten mit in die
+Sofortangebot-Kostenübersicht gerutscht.
+
+Sofortangebot.app selbst wurde am 08.06.2026 registriert (12,00 € brutto,
+Juni-Rechnung) — das ist jetzt sauber im Journal (2026-013) und in der
+Kostenübersicht verbucht. Zwei Positionen bleiben bewusst ungeklärt, bitte
+von Sandy bestätigen: „Domain Guard" (Privatsphärenschutz, 1,00 €, exakt
+gleicher Vertragszeitraum wie die Domain-Registrierung — spricht dafür, dass
+es dazugehört, ist aus dem Beleg allein aber nicht sicher) und „IONOS Mail
+Basic 5" (Postfach, 2,50 €/Monat, läuft seit Juni durch). Beides ist aktuell
+mit 0,00 € Sofortangebot-Anteil verbucht, bis das bestätigt ist — ich wollte
+hier nichts schätzen oder selbst entscheiden.
+
+**🔵 Neues Thema von Sandy: UG-Überlegung.** Sandy erwägt, statt/neben dem
+geplanten Kleingewerbe eine UG (haftungsbeschränkt) anzumelden. Das ist eine
+Entscheidung, die über meinen Auftrag hinausgeht (Rechtsform-/
+Gründungsfrage) und die Sandy explizit als CoS-Thema markiert hat, weil sie
+mehrere Rollen betrifft (z. B. Impressum/Branding beim Marketing,
+Zahlungsanbieter-Setup beim Platform Engineer). Ich habe Sandy im Chat
+sachlich erklärt, was eine UG buchhalterisch bedeuten würde (u. a. Pflicht
+zur doppelten Buchführung/Bilanzierung statt einfacher EÜR, Körperschaft-
+und Gewerbesteuer ohne Freibetrag, 25 %-Rücklagepflicht bis 25.000 €
+Stammkapital) — ohne eine Empfehlung abzugeben, das ist Sache von Sandy und
+einem Notar/Steuerberater. Bitte als offenen Punkt für dich vormerken, falls
+andere Rollen betroffen sind.
+
+**Update (Head of Finance, 2026-09-02):** Zur Info gesehen — CoS-F-Info
+(DIN-Normtexte, ca. 150 €, oben). Sobald der Beleg im `Rechnungen`-Ordner
+liegt, wird er wie gewohnt ins Journal aufgenommen.
+
+Stand jetzt: von den ursprünglich vier Auffälligkeiten sind zwei geklärt
+(Kleinunternehmer-Status, OpenAI-Konto), zwei bleiben offen
+(Supabase-Projektanzahl/-trend, Claude-Doppel-Abo). Neu dazugekommen: die
+IONOS-Domain-Zuordnung (Domain Guard/Mail Basic) und die UG-Überlegung.
+Status bleibt 🔵.
+
+---
+
+**Update (Head of Finance, 2026-09-02, Teil 8):** Sandy hat die offene
+IONOS-Frage aus Teil 7 direkt beantwortet: „Domain Guard" UND „IONOS Mail
+Basic 5" gehören beide zu sofortangebot.app. Damit ist die Juni-Rechnung
+(2026-013) jetzt vollständig als Sofortangebot-Kosten verbucht (15,50 €
+statt vorher 12,00 €), und die laufenden monatlichen 2,50 € für das
+Postfach (Juli/August, 2026-014/017) sind ebenfalls drin. Datei erneut
+aktualisiert, neu berechnet (0 Formelfehler) und zurückgeschrieben. Damit
+sind von den in Teil 7 neu aufgeworfenen Punkten alle geklärt bis auf die
+UG-Überlegung, die ohnehin eine eigenständige Entscheidung ist.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

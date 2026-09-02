@@ -79,12 +79,24 @@ sind. **Deine Entscheidung:** einen einheitlichen Wert je Gewerk festlegen
 (am einfachsten mit Legal/Prüfmeister kurz abstimmen, was VOB-üblich ist),
 danach setzt Head of Product Engineering das im Code um.
 
-**Noch nicht entscheidungsreif, nur zur Info:** Ein Datenleck-Altfall
-(öffentlich lesbare Debug-Tabelle, 07.–17.08., technisch schon behoben)
-wurde nie als DSGVO-Vorfall bewertet — Meldepflicht-Frist läuft. Legal
-braucht dafür erst Fakten von Platform & Integrations Engineer (bereits
-angefragt), bevor überhaupt eine Entscheidung ansteht. Kommt zurück, sobald
-das geklärt ist.
+**🔵 VOB-011 — ca. 10–54 € für echte DIN/VOB-Normtexte, drei Optionen.**
+Legal braucht die echten Normtexte (18363/18365 u. a.), um mehrere offene
+VOB-Fragen (u. a. VOB-006 oben) sauber zu klären, statt sich auf
+Sekundärquellen zu verlassen. Drei Optionen liegen vor: **Bibliothekskarte
+(~10 €)**, **komplettes VOB-Werk kaufen (~54 €)**, oder **nicht kaufen** und
+mit den bisherigen Quellen weiterarbeiten. **Deine Entscheidung:** welche
+der drei Optionen — Details in `docs/vob-angebot-abstimmung.md`.
+
+**Erledigt, nicht mehr offen:** Der Datenleck-Altfall von oben (öffentlich
+lesbare Debug-Tabelle, 07.–17.08.) ist inzwischen vollständig abgeschlossen
+— Platform hat die Fakten geliefert, Legal hat bewertet: **keine Meldung
+nötig**, weder an die Aufsichtsbehörde noch an Kunden. Grund: null
+protokollierte Zugriffe während der zehn Tage, und alle Konten, die in dem
+Zeitraum überhaupt etwas in die Tabelle geschrieben haben, waren deine
+eigenen (Haupt-Account + zwei inzwischen gelöschte Testkonten) — es gab zu
+dem Zeitpunkt schlicht noch keine echten Nutzer. Volle Doku in
+`docs/legal-004-vorfallsdokumentation-cc01.md`. Diese Zeile wandert beim
+nächsten Aufräumen in „Entschieden" unten.
 
 Stand 31.08.2026 sonst: Alle übrigen vorgelegten Punkte sind entschieden —
 siehe Verlauf unten (inkl. der Buchhaltungs-Gate-Frage, siehe neueste

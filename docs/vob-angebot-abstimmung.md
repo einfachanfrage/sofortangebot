@@ -132,19 +132,20 @@ Details in `docs/legal-001-bestandsaufnahme.md`, Abschnitt B1. [Einschätzung]
 
 | ID | Thema | Adressat | Status |
 |---|---|---|---|
-| VOB-001 | Verschnitt wird auf die **abgerechnete Menge** aufgeschlagen statt in den Einheitspreis | Prüfmeister → dann Sandy | 🟠 |
+| VOB-001 | Verschnitt wird auf die **abgerechnete Menge** aufgeschlagen statt in den Einheitspreis | Sandy | 🔵 Praxis bestätigt den Umbau (Prüfmeister 2026-09-02), Entscheidung Sandy |
 | VOB-002 | **Drei verschiedene Verschnittsätze** im Code — 5 %, 10 %, 12 % | Head of Product Engineering | ❌ |
 | VOB-003 | Geplante „VOB-Feinheit" zu Leibungen zeigt vermutlich in die **falsche Richtung** — bitte nicht bauen | Head of Product Engineering | ❌ |
 | VOB-004 | Übermessungshinweis erreicht das Kunden-PDF nicht (= G5 aus CoS-L-001) | Head of Product Engineering + Product Designer | ❌ |
-| VOB-005 | **Nebenleistungen** werden als eigene Positionen berechnet (Boden/Möbel abdecken) | Prüfmeister → dann Sandy | 🟠 |
+| VOB-005 | **Nebenleistungen** werden als eigene Positionen berechnet (Boden/Möbel abdecken) | — | ✅ geklärt: branchenüblich, Position bleibt, Lösung läuft über VOB-007 |
 | VOB-006 | Höhenzuschlag: **fünf** verschiedene Schwellen im Produkt — Normbegründung war falsch, Konsistenzfrage bleibt | Head of Product Engineering + Sandy | ❌ |
 | VOB-007 | Die Zeile „Normgrundlagen" behauptet VOB-Konformität, die an mehreren Stellen nicht gegeben ist | Product Designer + Legal | ❌ |
 | VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen ungeklärt | Legal (nach VOB-011) | ⏳ |
-| VOB-009 | Türen/Fenster nach Stück statt nach Fläche | Prüfmeister | 🟠 |
+| VOB-009 | Türen/Fenster nach Stück statt nach Fläche | — | ✅ geklärt: Stückpreise sind branchenüblich, bleibt so |
 | VOB-010 | Zuschlags-Einheiten: Prozent im Titel, Euro im Preis (14 Einträge) | Head of Product Engineering | ❌ |
 | VOB-011 | Normtexte: Sandy will nicht kaufen — freie Recherche hat zwei von sechs Fragen geklärt, zwei bleiben offen. Drei Optionen (10 € ZLB / 54 € Gesamtausgabe / nichts) | Sandy | 🔵 |
-| VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Head of Product Engineering | ❌ |
+| VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Sandy → dann Head of Product Engineering | 🔵 Praxis stützt die Norm: nur Öffnungen ab 1,00 m abziehen. Geldentscheidung zugunsten des Betriebs |
 | VOB-013 | **Leibungsfläche wird rundherum statt dreiseitig gerechnet, Fensterbank doppelt** — Fund des Prüfmeisters | Head of Product Engineering | ❌ |
+| VOB-014 | Material wird in **Paketen** gekauft — Paketaufrundung fehlt im Produkt komplett (Praxis-Fund Prüfmeister) | Head of Product Engineering, zusammen mit VOB-001 | ❌ |
 
 ---
 
@@ -911,6 +912,128 @@ gerechnet") ist damit überholt und dort korrigiert.
 
 *(Neue Rückmeldungen hier oben anfügen, mit Datum und von wem.)*
 
+### 2026-09-02 — Prüfmeister, die sechs offenen Fragen
+
+Du wolltest die Praxis, nicht die Norm. Die kriegst du hier — mit der Ansage,
+wo Praxis und Norm auseinandergehen, damit Sandy weiß, was sie entscheidet.
+Frage 4 ist erledigt, VOB-013 hast du schon aufgenommen. Bleiben sechs.
+
+**Frage 1 (VOB-001) — Verschnitt: du hast recht, raus aus der Menge.**
+Draußen wird nach **verlegter Fläche** abgerechnet. Wer 20 m² verlegt hat,
+schreibt 20 m² aufs Angebot; der Verschnitt steckt im Quadratmeterpreis, da hat
+er immer gesteckt. Und ja, Kunden beschweren sich — das ist einer der
+Standardanrufe: „Ich hab nachgemessen, das sind 20, warum stehen da 21?" Der
+Handwerker erklärt dann fünf Minuten, was Verschnitt ist, und behält den
+Beigeschmack, er hätte was draufgeschlagen. Dein Umbau ist also nicht nur
+juristisch sauberer, er ist auch das, was der Betrieb gewohnt ist. Zwei
+Bedingungen von mir:
+
+1. **Der Endbetrag darf sich nicht ändern.** Wer heute 45 €/m² auf 21 m²
+   rechnet, muss danach 47,25 €/m² auf 20 m² rechnen. Sonst nimmt der Umbau dem
+   Betrieb echtes Geld weg, und dann macht keiner mit.
+2. **Der Verschnitt bleibt sichtbar, aber als Erklärung statt als Menge** —
+   Untertitel unter der Position („Materialverschnitt bei Fischgrätverlegung
+   einkalkuliert"). Das ist die Nachvollziehbarkeit, die du nicht verlieren
+   wolltest; sie muss nur nicht in der Mengenspalte stehen.
+
+Eine Ausnahme, die das Produkt kennen sollte: **stellt der Kunde das Material
+selbst**, ist die Materialmenge sehr wohl eine eigene Zeile, und dort gehört der
+Verschnitt dann hin. Anderer Fall, kein Gegenargument.
+
+**Frage 2 (VOB-003) — Leibungen: die Norm hat recht, die Praxis rechnet sie
+meistens trotzdem nicht.**
+Bei einem normalen Innenfenster in Wandfarbe streicht der Maler die Leibung mit
+und weist sie nicht aus — sie steckt im m²-Preis wie die übrige Kantenarbeit.
+Wer bei einer Wohnung drei Fensterleibungen einzeln aufs Angebot schreibt,
+wirkt kleinlich. **Separat gerechnet wird sie**, wenn sie echte Zusatzarbeit
+ist: andere Farbe als die Wand, tiefe Altbauleibungen, Außenleibungen an der
+Fassade, frisch verputzte Leibungen nach Fenstertausch. Dann steht sie drin und
+niemand findet das komisch.
+
+Fürs Produkt heißt das: **der Code macht es heute richtig.** Er erzeugt
+Leibungspositionen nur, wenn im Diktat davon die Rede war, und erfindet keine.
+Genau so soll es bleiben — **keine automatische Leibungsposition**, und der
+zurückgestellte Backlogpunkt bleibt liegen. Da sind wir uns einig, das stützt
+sich gegenseitig.
+
+**Frage 3 (VOB-005) — Abdecken: hier liegst du falsch, die Position bleibt.**
+Deine Vermutung stimmt, und stärker als du sie formuliert hast. „Boden
+abdecken" und „Möbel abdecken" stehen bei praktisch jedem Wohnungsauftrag als
+eigene Zeile. Zwei Gründe, beide handfest:
+
+1. **Der Kunde will es sehen.** Die häufigste Sorge vor einem Malerauftrag ist
+   nicht der Preis, sondern „was passiert mit meinem Parkett und meiner Couch".
+   Die Zeile beantwortet das, bevor er fragt. Streichst du sie, klingt das
+   Angebot billiger und weniger sorgfältig zugleich — die schlechteste
+   Kombination, die es gibt.
+2. **Der m²-Preis ist entsprechend knapper kalkuliert.** 9,50 €/m² für zweimal
+   Anstrich ist ohne Schutzaufwand gerechnet. Wer alles in den Einheitspreis
+   packt, landet bei 11–12 €/m² und sieht neben drei anderen Angeboten teuer
+   aus, obwohl er dasselbe tut.
+
+Deine Schlussfolgerung stimmt trotzdem, nur an anderer Stelle: **nicht die
+Position ist das Problem, sondern die Zeile „VOB/C DIN 18363" darüber.** Wer
+nicht nach VOB abrechnet, darf es auch nicht behaupten. Läuft über VOB-007,
+hier ist nichts zu bauen. Bei „Schalter/Steckdosen abkleben" gebe ich dir
+recht, dass es ein Grenzfall ist — praktisch klebt man ab, statt abzunehmen,
+weil es schneller geht. Würde ich lassen.
+
+**Frage 5 (VOB-009) — Stückpreise: bestätigt, bleibt so.**
+Türen und Fenster werden im Wohnungsbau ausnahmslos nach Stück gerechnet.
+Flächenabrechnung sieht man nur in großen Leistungsverzeichnissen bei
+öffentlichen Ausschreibungen. Für den Kunden ist „Innentürblatt lackieren,
+beidseitig, 90 €" auch die verständlichere Zeile. Dass der Katalog Türblatt und
+Zarge trennt, ist genau richtig. Kein Handlungsbedarf — außer wieder: nicht
+„VOB/C" drüberschreiben.
+
+**Frage 6 (VOB-012) — Sockelleisten: durchmessen, du hast recht, und es kostet
+Geld.**
+Wir ziehen keine Zimmertür ab. Man misst den Raumumfang und zieht nur echte
+Unterbrechungen ab — Terrassentür, breiter Durchgang, Schiebetürelement. Bei
+einer 90er-Tür frisst der Zuschnitt an der Zarge, die Gehrung und das
+Verschnittstück die eingesparten 90 Zentimeter ohnehin auf. Norm und Praxis
+sind hier ausnahmsweise einer Meinung. Auch bei **„Sockelleisten abkleben"**
+würde ich durchmessen, obwohl dort tatsächlich keine Leiste liegt: der
+Anschnitt am Türrahmen ist die fummeligste Stelle der ganzen Bahn.
+
+**Mein Vorschlag, praxis- und normkonform in einem Satz:** *Von der
+Sockelleistenlänge werden nur Öffnungen ab 1,00 m Breite abgezogen.* Terrassentür
+raus, Zimmertür drin, und es ist dieselbe Logik wie bei der Wandfläche.
+
+**Das ist eine Geldentscheidung und braucht Sandys Go:** rund 2,7 lfdm mehr pro
+Wohnung, diesmal **zugunsten** des Betriebs — bei Sockelleisten-Montage zu
+8–12 €/lfdm also 20 bis 30 € je Angebot. Bis das entschieden ist, stehen meine
+Soll-Lösungen in `pruefmeister-testfaelle.md` auf dem heutigen Abzug; die
+betroffenen Zeilen sind dort mit `[VOB-012]` markiert und ändern sich alle
+gemeinsam. Und ja — die PM-007-Beobachtung („Türabzug trotz ‚Türen: 0'") ist
+dieselbe Codestelle.
+
+**Frage 7 — was das Produkt gar nicht abbildet: Material kommt in Paketen.**
+Laminat und Vinyl werden in Paketen zu gut 2 m² verkauft. Kein Bodenleger
+bestellt 21,0 m² — er bestellt zehn Pakete und hat 22,2 m² auf der Baustelle.
+Genau daraus ist die Verschnitt-Faustregel überhaupt entstanden: sie ist eine
+**Einkaufsregel**, keine Abrechnungsregel. Im Code gibt es dafür nichts; „Paket"
+kommt im ganzen Mengen-Teil kein einziges Mal vor und im Katalog zweimal, beide
+Male in einem fremden Gewerk.
+
+Für VOB-001 ist das der eigentlich saubere Weg: **Verlegefläche als Menge,
+Materialbedarf als Paketaufrundung in der Kalkulation.** Dann verschwindet der
+Streit über die Nachkommastelle ganz, und der Betrieb sieht trotzdem, was er
+bestellen muss. Das wäre auch für den Handwerker ein echter Mehrwert, den keine
+Wettbewerbssoftware bietet — bisher rechnet er die Pakete auf dem
+Bierdeckel aus.
+
+**Noch ein Praxis-Hinweis zu VOB-011, ungefragt:** Der Normtext ist nicht das,
+womit Meisterbetriebe arbeiten. In fast jedem Meisterbüro steht **„VOB im Bild —
+Hochbau- und Ausbauarbeiten"**: dasselbe Aufmaßregelwerk, aber mit Zeichnungen
+und Rechenbeispielen, und es ist ausdrücklich zum Zitieren gedacht. Kostet in
+der Größenordnung der Gesamtausgabe. Für unsere Fragen („wird die Leibung
+gesondert gerechnet, wie wird sie gemessen") ist das oft die brauchbarere
+Quelle als der Normsatz selbst, weil es die Anwendung zeigt. Als vierte Option
+für Sandy, neben deinen dreien.
+
+---
+
 ### 2026-09-01 — Prüfmeister, drei Punkte
 
 1. **Widerspruch zwischen zwei Legal-Dokumenten aufgedeckt.** In
@@ -936,8 +1059,8 @@ gerechnet") ist damit überholt und dort korrigiert.
    die Funktion vermutlich mal. Nur zur Kenntnis, das Archiv fasse ich nicht
    an.)
 
-**Offen aus dieser Rückmeldung:** nichts. Die Fragen 1, 2, 3, 5, 6 und 7 warten
-weiterhin auf ihn.
+**Offen aus dieser Rückmeldung:** nichts. Die Fragen 1, 2, 3, 5, 6 und 7 sind am
+2026-09-02 beantwortet — siehe Rückmeldung oben.
 
 ---
 
