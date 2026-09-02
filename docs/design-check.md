@@ -62,7 +62,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-009 | Leere Aufnahme (0 Positionen) wird als grüner Erfolg angezeigt | ✅ behoben + live bestätigt (2026-09-02) | Product Designer (umgesetzt) |
 | DC-010 | Keine Guardrail: leeres Angebot (0 €, kein Kunde) lässt sich „fertigstellen" und versandfertig machen; Widerspruchs-Banner (rot „Keine Positionen erkannt" + grün „X erkannt") | ✅ vollständig behoben + live bestätigt (2026-09-02) | Head of Product Engineering (Banner-Widerspruch) / Product Designer (Guardrail) |
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
-| DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ❌ offen | Product Designer (25.08. zugewiesen) |
+| DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
 | DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / Product Designer (Text, 25.08. zugewiesen) |
 | DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ❌ offen — live bestätigt | Product Designer (25.08. zugewiesen) |
@@ -817,7 +817,7 @@ abgeschlossen.
 ## DC-012 — Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt
 
 **Datum:** 2026-08-17
-**Status:** ❌ offen
+**Status:** ✅ behoben
 
 **Befund:** In `src/app/(app)/angebot/[id]/entwurf/page.tsx` existiert eine
 vollständige `NotizModal`-Komponente („Notiz hinzufügen", Textfeld,
@@ -833,6 +833,18 @@ ist nicht erreichbar, obwohl die Funktion technisch fertig ist.
 **Empfehlung:** Kleinen dritten Button/Icon neben „Zettel" und „Aufnehmen"
 ergänzen, der `setShowNotiz(true)` aufruft — die Funktion ist bereits
 fertig, es fehlt nur die Verlinkung.
+
+**Fix-Update (2026-09-02, Product Designer):** Genau wie empfohlen
+umgesetzt. Der bisherige leere „Platzhalter für Symmetrie" (`<div
+className="w-14 pb-[3px]" />`) neben „Zettel" und „Aufnehmen" wurde durch
+einen echten dritten Button ersetzt — gleicher visueller Stil wie der
+„Zettel"-Button (56px weißer Kreis, `border-2 border-anthracite/10`),
+Icon `NotebookPen` aus `lucide-react`, Label „Notiz" darunter,
+`onClick={() => setShowNotiz(true)}`. Die Drei-Button-Symmetrie der
+Bottom Bar bleibt erhalten (Zettel / Aufnehmen / Notiz). Keine weiteren
+Codeänderungen nötig — `NotizModal` und `saveNotiz()` waren bereits
+vollständig funktionsfähig, es fehlte nur die Verlinkung. Scoped `tsc
+--noEmit` lief clean, Commit `99b6fc2`.
 
 ---
 
