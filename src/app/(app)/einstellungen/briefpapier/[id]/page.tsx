@@ -105,6 +105,7 @@ function BriefpapierEditorInner() {
   const [company, setCompany] = useState<Company | null>(null)
   const [saving, setSaving] = useState(false)
   const [logoUploading, setLogoUploading] = useState(false)
+  const [logoFehler, setLogoFehler] = useState<string | null>(null)
   const logoRef = useRef<HTMLInputElement>(null)
   const searchParams = useSearchParams()
   // DC-031: kommt von "+ Neue Variante erstellen" (siehe briefpapier/page.tsx),
@@ -147,13 +148,28 @@ function BriefpapierEditorInner() {
     if (!bp.betrieb_id) return
     setLogoUploading(true)
     const ext = file.name.split('.').pop()
-    const path = `${bp.betrieb_id}/briefpapiere/${id}/logo.${ext}`
+    // 2026-09-02: Der Pfad begann bisher mit der BETRIEBS-ID. Die
+    // Zugriffsregel auf dem Bucket verlangt aber im ersten Ordner die
+    // NUTZER-ID (`storage.foldername(name)[1] = auth.uid()`), so wie es
+    // `api/upload-logo` macht. Ergebnis: Jeder Upload eines
+    // Briefpapier-Logos wurde abgelehnt — seit es die Funktion gibt, ohne
+    // dass es jemandem auffiel (der Fehler setzte nur still keine URL).
+    // Nachgezählt: null Dateien im gesamten Bucket.
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setLogoUploading(false); return }
+    const path = `${user.id}/briefpapiere/${id}/logo.${ext}`
 
     // Alte Datei löschen
     await supabase.storage.from('company-logos').remove([path])
 
     const { error } = await supabase.storage.from('company-logos').upload(path, file, { upsert: true })
-    if (!error) {
+    if (error) {
+      // Nicht mehr stillschweigend nichts tun: Wer ein Logo hochlädt und
+      // danach kein Logo sieht, sucht den Fehler bei sich.
+      console.error('[briefpapier] Logo-Upload fehlgeschlagen')
+      setLogoFehler('Das Logo konnte nicht hochgeladen werden. Bitte noch einmal versuchen.')
+    } else {
+      setLogoFehler(null)
       const { data } = supabase.storage.from('company-logos').getPublicUrl(path)
       setField('logo_url', data.publicUrl)
     }
@@ -236,6 +252,9 @@ function BriefpapierEditorInner() {
             )}
             <input ref={logoRef} type="file" accept="image/*" className="hidden"
               onChange={e => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
+            {logoFehler && (
+              <p className="text-xs font-semibold text-red-500 mt-2">{logoFehler}</p>
+            )}
 
             <div>
               <label className="block text-[10px] font-bold text-[#2C2C2C]/40 mb-1.5">Position</label>

@@ -7,6 +7,9 @@
 //    AGB § 6.5 zusagen.
 // 2. Audiodateien von Aufnahmen, die älter als 30 Tage sind, löschen.
 //    Transkript und Positionen bleiben — siehe `aufnahmen-aufraeumen.ts`.
+// 3. Dateien, deren Datenbankzeile es nicht mehr gibt, und abgelaufene
+//    öffentliche PDFs löschen — siehe `speicher-aufraeumen.ts`. Punkt 2
+//    arbeitet über die Datenbankzeilen und erreicht diese Dateien nie.
 //
 // Bewusst EIN Job statt zwei: dieselbe Frist, dieselbe Uhrzeit, und ein
 // Cron-Eintrag weniger, um den man sich kümmern muss.
@@ -20,6 +23,7 @@ import * as Sentry from '@sentry/nextjs'
 import { loescheKontoHart, loeschreifVor, LOESCH_FRIST_TAGE } from '@/lib/konto-loeschung'
 import { loescheAlteAufnahmen, AUFNAHME_FRIST_TAGE } from '@/lib/aufnahmen-aufraeumen'
 import { protokolliereLauf } from '@/lib/system-laeufe'
+import { raeumeSpeicherAuf } from '@/lib/speicher-aufraeumen'
 
 // Viele Konten × Storage-Auflistung — kann dauern.
 export const maxDuration = 300
@@ -99,7 +103,20 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // ── 3. Das Protokoll selbst ────────────────────────────────────────────
+    // ── 3. Verwaiste und abgelaufene Dateien ───────────────────────────────
+    // Läuft auch dann, wenn oben etwas schiefging: Diese Dateien haben keine
+    // Datenbankzeile mehr, die sie beim nächsten Mal wiederfindet.
+    const speicher = await raeumeSpeicherAuf(supabase)
+    const speicherFehler = speicher.flatMap(b => b.fehler)
+    if (speicherFehler.length > 0) {
+      console.error('[aufraeumen] Verwaiste Dateien konnten nicht vollständig gelöscht werden')
+      Sentry.captureException(
+        new Error(`Speicher-Aufräumen unvollständig: ${speicherFehler.join(' | ')}`),
+        { tags: { feature: 'speicher_aufraeumen' } },
+      )
+    }
+
+    // ── 4. Das Protokoll selbst ────────────────────────────────────────────
     // Ein Jahr reicht, um „lief der Job?" zu beantworten. Best effort — ein
     // volles Protokoll ist kein Grund, den Lauf als gescheitert zu melden.
     const vorEinemJahr = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
@@ -119,10 +136,15 @@ export async function GET(req: NextRequest) {
       fehler: aufnahmen.fehler.length,
     }
 
+    const speicherBericht = speicher.map(b => ({
+      bucket: b.bucket, gesamt: b.gesamt, verwaist: b.verwaist,
+      geloescht: b.geloescht, uebersprungen: b.uebersprungen,
+    }))
+
     return {
-      ok: konten.unvollstaendig === 0 && aufnahmen.fehler.length === 0,
-      details: { konten, aufnahmen: aufnahmenBericht },
-      ergebnis: NextResponse.json({ konten, aufnahmen: aufnahmenBericht }),
+      ok: konten.unvollstaendig === 0 && aufnahmen.fehler.length === 0 && speicherFehler.length === 0,
+      details: { konten, aufnahmen: aufnahmenBericht, speicher: speicherBericht },
+      ergebnis: NextResponse.json({ konten, aufnahmen: aufnahmenBericht, speicher: speicherBericht }),
     }
   })
 }

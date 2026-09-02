@@ -55,6 +55,16 @@ eingetragen sind; bei einem testweise „Run now" klicken. **Danach kurz
 Head of Product Engineering Bescheid geben** — er kann in `system_laeufe`
 verifizieren, ob der Lauf wirklich durchging.
 
+*Nachtrag Head of Product Engineering, 02.09. nachmittags:* An diesem einen
+Punkt hängt inzwischen mehr als die Konto-Löschung. Beim Durchsehen der
+Speicher-Buckets sind **182 verwaiste Sprachaufnahmen** aufgetaucht — Dateien
+aus gelöschten Entwürfen und Angeboten, die seit Juli liegen bleiben, weil
+der Objektspeicher beim Löschen nicht mitkaskadiert. Dazu 22 Aufnahmen, die
+über die neue 30-Tage-Frist gelaufen sind, und ein Baustellenfoto ohne
+Angebot. Das Aufräumen dafür ist gebaut und getestet, es läuft aber erst mit
+dem ersten erfolgreichen Cron-Lauf. Solange `CRON_SECRET` fehlt, bleibt alles
+liegen.
+
 **🟠 3. Live nachtesten, was seit dem 31.08. gebaut wurde.** Zuschläge in
 Prozent, Übermessungshinweis im Kunden-PDF, neues Statusmodell, Konto
 löschen — alles über Tests abgesichert, aber noch niemand hat es in der

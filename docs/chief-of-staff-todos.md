@@ -2880,5 +2880,77 @@ auffindbar, auch für mich beim täglichen Check.
 
 ---
 
+## Drei Funde beim Durchgehen der eigenen offenen Punkte (2026-09-02)
+
+Sandys Auftrag war knapp: „schau dir deine todos an". Der eine Punkt, den ich
+darin als „nie geprüft" geführt hatte — die Zugriffsregeln auf den
+Speicher-Buckets — hat drei Dinge zutage gefördert.
+
+### 1. 182 verwaiste Sprachaufnahmen (das Schwerste)
+
+Im Bucket `entwurf-audio` liegen **263 Dateien**, aber nur **81** Aufnahmen in
+der Datenbank nennen eine davon. Die übrigen **182 gehören zu gelöschten
+Entwürfen und Angeboten** — Sprachaufnahmen aus fremden Wohnungen, die
+niemand mehr findet, die älteste vom 02.07.
+
+Bitter daran: Der 30-Tage-Job von heute Vormittag hätte sie **nie** erwischt.
+Er arbeitet über die Datenbankzeilen, und die gibt es nicht mehr. Ich hatte
+diese Fehlerklasse im Kommentar von `konto-loeschung.ts` selbst beschrieben
+(„eine Datei ohne DB-Zeile ist unauffindbarer Müll") und beim Bauen des
+Aufnahmen-Jobs trotzdem nur den Weg über die Zeilen genommen. Ursache ist
+immer dieselbe: Die Datenbank kaskadiert beim Löschen, der Objektspeicher
+kennt keine Kaskade.
+
+**Gebaut:** `verwaiste_speicherdateien(bucket)` in der Datenbank findet
+Dateien ohne zugehörige Zeile — für `entwurf-audio`, `entwurf-fotos`,
+`quote-photos` und `public-pdfs`. `src/lib/speicher-aufraeumen.ts` löscht sie
+über die Storage-API (nie direkt in `storage.objects`, sonst bliebe die Datei
+im Objektspeicher und nur ihr Eintrag wäre weg). Läuft im täglichen
+Aufräum-Job mit.
+
+**Mit Sicherung:** Meldet die Datenbank ALLE Dateien eines Buckets mit mehr
+als 20 Dateien als verwaist, ist wahrscheinlich die Verknüpfung kaputt und
+nicht der Bucket zu leeren — dann wird nichts gelöscht und der Lauf meldet
+sich. Ein unbekannter Bucket liefert immer eine leere Liste, nie „alles".
+Höchstens 500 Dateien je Bucket und Lauf.
+
+### 2. Der Foto-Bucket war öffentlich
+
+`quote-photos` stand auf `public: true`, obwohl der Code Zugriffe über
+signierte URLs mit einer Stunde Laufzeit absichert. Ein öffentlicher Bucket
+hängt genau das aus: Wer die URL hat, sieht das Bild — ohne Login, ohne
+Ablauf. Inhalt sind Baustellenfotos aus Wohnungen von Endkunden, aufgenommen
+zur Dokumentation von Vorschäden.
+
+Alle Zugriffe im Code laufen über die Service-Rolle, der Bucket braucht das
+Public-Flag also gar nicht. Auf privat gestellt.
+
+Nebenbei: Beim öffentlichen PDF-Bucket steht ein Gültigkeitsdatum in der
+Datenbank (`pdf_url_gueltig_bis`, 30 Tage), die Datei lief aber unbegrenzt
+weiter — der Kundenlink lief nie wirklich ab. Der Aufräum-Job löscht
+abgelaufene PDFs jetzt mit.
+
+### 3. Das Briefpapier-Logo konnte nie hochgeladen werden
+
+Der Upload-Pfad begann mit der **Betriebs**-ID, die Zugriffsregel auf dem
+Bucket verlangt im ersten Ordner aber die **Nutzer**-ID. Jeder Upload wurde
+abgelehnt, und der Code setzte im Fehlerfall still keine URL — der Nutzer sah
+einfach kein Logo und suchte den Fehler bei sich. Nachgezählt: **null Dateien
+im gesamten Bucket**, die Funktion hat noch nie funktioniert. Pfad korrigiert,
+Fehlermeldung wird jetzt angezeigt.
+
+### Abgesichert
+
+`speicher-aufraeumen.test.ts` (9 Tests) prüft beide Richtungen — dass gelöscht
+wird, was weg kann, und dass bei „alles verwaist" nichts passiert. Suite:
+66 Dateien / 1.148 Tests grün, tsc sauber, eslint 0 Fehler. Migrationen live.
+
+**Hängt an Sandys Vercel-Punkt:** Die 182 Dateien verschwinden beim ersten
+erfolgreichen Lauf des Aufräum-Jobs. Ohne gesetztes `CRON_SECRET` bleibt alles
+liegen — die beiden Punkte hängen zusammen. Nachtrag steht auch in
+`docs/entscheidungen-fuer-sandy.md` bei Punkt 2.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
