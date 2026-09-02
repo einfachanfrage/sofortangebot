@@ -2374,8 +2374,13 @@ dokumentiert statt stillschweigend übersehen.
 
 **Datum:** 2026-08-23 (gefunden beim „an allen anderen Stellen
 testen"-Auftrag zu DC-031)
-**Status:** 🔵 Konzept, noch nicht umgesetzt — braucht kurze Abstimmung
-mit Head of Product Engineering vor dem Bauen
+**Status:** 🔵 Konzept präzisiert (Product Designer, 2026-09-02) — die
+„kurze Abstimmung" unten habe ich mir selbst beantwortet, indem ich den
+Code genau gelesen habe, statt zu fragen. Ergebnis: **ein kleiner, klar
+umrissener Backend-Baustein fehlt noch** (eine neue Spalte + eine Zeile,
+die sie setzt), erst danach kann ich die UI bauen — sonst würde ich einen
+Button verschiffen, der wie DC-034/037 „zeigt ✓, wirkt aber nicht". Details
+im Nachtrag am Ende des Abschnitts.
 
 **Befund:** Der Onboarding-Assistent (`onboarding/[step]/page.tsx`,
 Schritte 2–7) hat auf Mobile keine Möglichkeit, ihn zu verlassen oder zu
@@ -2405,6 +2410,66 @@ hinterlässt, den das Dashboard nicht sauber abfängt.
 Fortschritt sichert und zum Dashboard führt; das Dashboard müsste dann
 tolerant mit unvollständigem Onboarding umgehen (z. B. ein Hinweis-Banner
 „Onboarding fortsetzen" statt eines gesperrten Zustands).
+
+**Nachtrag (Product Designer, 2026-09-02) — die offene Frage beantwortet,
+Code statt Nachfragen:**
+
+`onboarding/[step]/page.tsx` speichert JEDEN Zwischenstand ausschließlich
+in `localStorage` (`saveState()` bei jedem `update()`). In die Datenbank
+geschrieben wird **nur ein einziges Mal, ganz am Ende** — `handleFinish()`
+(Schritt 7 → 8): ein großes `companies`-Update (Name, Adresse, Gewerke,
+Steuersatz, Buchhaltungssoftware, `onboarding_completed: true`) plus die
+Inserts für `price_items`/`positions_empfehlungen`. Zwischen Schritt 2 und
+dem Klick auf „Fertigstellen" in Schritt 7 landet **nichts** in der
+Datenbank — auch nicht teilweise.
+
+**Das ist der eigentliche Grund, warum das keine reine UI-Frage ist:**
+`getDashboardData()` (`src/data/dashboard.ts:12`) prüft
+`if (!company.name) return { needsOnboarding: true }`, und
+`dashboard/page.tsx:36` erzwingt darauf `redirect('/onboarding')` — hart,
+ohne Ausnahme. Weil `company.name` bis zum allerletzten Schritt NULL
+bleibt, gibt es aktuell **keine** Datenbank-Unterscheidung zwischen „hat
+Onboarding nie angefangen" und „ist bei Schritt 5 ausgestiegen, hat aber
+schon vieles ausgefüllt" — aus Sicht der Datenbank sind beide Fälle
+identisch. Ein „Später fertigstellen"-Link, der einfach zu `/dashboard`
+navigiert, würde also sofort wieder zurück zu `/onboarding` geschickt —
+genau die Art Button, „zeigt ✓, wirkt aber nicht" (DC-034/037-Prinzip),
+die ich bewusst nicht bauen will.
+
+**Konkreter, kleiner Vorschlag statt „kurze Abstimmung":**
+
+1. Eine neue, nullable Spalte `companies.onboarding_started_at
+   TIMESTAMPTZ` (Migration, Head of Product Engineering — reine
+   Additiv-Migration, kein Datenverlust-Risiko, kein Bestandscode
+   betroffen).
+2. `onboarding/[step]/page.tsx`, Schritt 2: beim ersten Erreichen einmalig
+   ein kleines `UPDATE companies SET onboarding_started_at = NOW() WHERE
+   user_id = ... AND onboarding_started_at IS NULL` (idempotent, kein
+   Race-Risiko, kein Blocker für den Rest des Flows — feuert nebenbei,
+   Nutzer merkt nichts).
+3. `getDashboardData()`: `needsOnboarding` wird `true` nur noch, wenn
+   `!company.name && !company.onboarding_started_at` (nie angefangen) —
+   ist `onboarding_started_at` gesetzt, aber `name` noch leer, zeigt das
+   Dashboard sich selbst mit einem Hinweis-Banner „Onboarding noch nicht
+   abgeschlossen — jetzt fortsetzen" statt zu blockieren.
+4. Erst dann baue ich den „Später fertigstellen"-Link (Schritt 2+) und das
+   Banner — beides reines Frontend, sobald Punkt 1–3 stehen.
+
+**Bewusst noch nicht selbst gebaut:** Punkt 1 ist eine Schema-Migration
+(neue Spalte), das bleibt bei Head of Product Engineering, genau wie bei
+DC-029 (`baustellen`-Tabelle). Punkt 2 sitzt zwar in „meiner" Datei, ist
+aber nur sinnvoll zusammen mit der neuen Spalte — baue ich im selben
+Aufwasch, sobald sie existiert, nicht vorher ins Leere.
+
+**Eine zweite, kleinere Lücke am Rand gefunden:** Sollte ein Nutzer trotz
+`needsOnboarding: false` (weil `onboarding_started_at` künftig reicht) auf
+andere `(app)`-Seiten navigieren (`/kunden`, `/einstellungen` …) — die
+haben aktuell KEINE eigene Prüfung auf unvollständiges Onboarding, nur
+`dashboard/page.tsx` selbst. Vermutlich unkritisch (leere Listen statt
+Absturz), aber nicht einzeln durchgeprüft — falls beim Bauen oben ein
+Nutzer mit leerem `company.name` auf einer anderen Seite tatsächlich
+etwas Kaputtes sieht, bitte melden, dann schaue ich mir diese Seite gezielt
+an.
 
 ---
 
