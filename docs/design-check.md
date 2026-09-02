@@ -3655,4 +3655,54 @@ Einwilligung — sie wird nicht akzeptiert.
 
 ---
 
+## ✅ Umgesetzt (Product Designer, 2026-09-02) — Reaktion auf Sandys „checke punkte vom head of legal"
+
+Commit `353f5dd`. Drei Punkte aus dem Legal-Hinweis oben, die reine
+Design-/Frontend-Änderungen ohne Datenbank-Migration waren:
+
+**G4 (Design-Hälfte).** `register/page.tsx`: eigene Pflicht-Checkbox „Ich
+melde mich als Unternehmer an (§ 14 BGB) — sofortangebot ist für den
+gewerblichen Einsatz gemacht, nicht für Verbraucher." vor der AGB-Checkbox,
+mit Client-Validierung und `unternehmerBestaetigt` im Request-Body. AGB-
+Zustimmung (Checkbox) und Datenschutzerklärung (reiner Info-Link, Art. 13
+DSGVO) sind jetzt getrennt.
+**Bewusst NICHT enthalten:** serverseitige Prüfung/Persistierung von
+`unternehmerBestaetigt` in `src/app/api/auth/register/route.ts` — dort
+existiert bereits die analoge Logik für `agbAkzeptiert`, aber das ist
+Head of Product Engineerings Fundstelle (in ihrer „Erledigung zu CoS-026"
+selbst als „G4 — Offen" bestätigt), also bewusst nicht angefasst, um nicht
+an derselben Route parallel zu arbeiten.
+
+**R3.** `VorschauUndVersand.tsx`: ruhiger Hinweis „Aus deinem Diktat
+erstellt — bitte einmal prüfen, bevor es rausgeht." über den Versand-Tabs
+(E-Mail/WhatsApp/Link), unabhängig vom gewählten Kanal sichtbar. War in
+dieser Datei noch nirgends dokumentiert, obwohl der Chief-of-Staff-Kanal
+das schon als „gesehen" markiert hatte — beim Nachprüfen im Code tatsächlich
+nicht vorhanden gewesen, also als eigener Punkt umgesetzt statt übersprungen.
+
+**VOB-007.** `pdf.tsx`: „Normgrundlagen: …" → „Mengenermittlung in Anlehnung
+an: …", 7,5 pt / `#999999` (dezent dunkler, bleibt aber Fußnoten-Charakter).
+Genau die von Legal selbst vorgeschlagene ehrlichere Formulierung — keine
+Norm-Konformität mehr behauptet, wo das Produkt an mind. drei Stellen
+bewusst abweicht (Verschnitt als Menge/VOB-001, Nebenleistungen als eigene
+Positionen/VOB-005, Höhenzuschlag unter Normschwelle/VOB-006).
+
+**Geprüft, aber bewusst NICHT umgesetzt: VOB-004 / G5.** Das ist der einzige
+🔴-RED-Befund in Legals Risikobewertung (LR-01) und explizit an mich UND Head
+of Product Engineering adressiert — trotzdem noch offen, und zwar aus einem
+konkreten Grund: `pdf.tsx` bekommt den Übermessungshinweis-Text
+(`vobHinweistext()`) heute gar nicht erst übergeben. Das Feld existiert nur
+im `annahmen`-Array, das in `AngebotDetail.tsx` landet, nicht im
+PDF-Item-Typ. Es gibt für mich also (noch) nichts zu platzieren — die
+Datenanbindung ist echte Pipeline-Arbeit (`quote_items`/PDF-Props), nicht
+Layout, und liegt bei Head of Product Engineering. Sandys Text-Freigabe
+(S-2) liegt bereits vor, das ist also kein Blocker mehr. Sobald das Feld im
+PDF-Item ankommt, übernehme ich die Platzierung — Legals Vorgabe: normale
+Schriftgröße, direkt an der Position, nicht in der Fußzeile.
+
+Verifiziert per scoped `tsc --noEmit` (exit 0). Live-Nachtest steht wie bei
+den meisten Punkten hier noch aus.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
