@@ -1097,4 +1097,117 @@ die andere Gruppe. Bitte einmal vor dem Deploy drüberschauen.
 
 ---
 
+## Grundsatzfrage von Sandy (2026-09-02): „Wenn die App falsch rechnet und der Handwerker ungeprüft rausschickt — sein Pech, oder?"
+
+Sandy hat gefragt, ob sich das Haftungsrisiko nicht durch AGB plus einen
+KI-Hinweis vor dem Versenden erledigen lässt, so wie ChatGPT und Claude ihn
+zeigen. Die Frage ist berechtigt und die Antwort ist zum größten Teil ja. Hier
+die Einordnung, weil die Stelle, an der es *nicht* trägt, für das Produkt
+wichtig ist.
+
+### Wo Sandy recht hat, und das ist der größere Teil
+
+**Die Prüfpflicht ist die stärkste Verteidigung, die wir haben** — stärker als
+jede Haftungsklausel. § 254 BGB (Mitverschulden) kann einen Anspruch bis auf
+null reduzieren, wenn der Nutzer eine zumutbare Kontrolle unterlassen hat. AGB
+§ 10.2 begründet diese Pflicht bereits. Der Hinweis im Versand-Screen (R3, vom
+Product Designer gebaut: „Aus deinem Diktat erstellt — bitte einmal prüfen,
+bevor es rausgeht") macht sie im entscheidenden Moment sichtbar. Das ist genau
+richtig und war meine eigene Empfehlung.
+
+**Für die Mehrzahl der denkbaren Fehler trägt das vollständig.** Ein Handwerker,
+der ein Angebot ohne Blick versendet, in dem eine Deckenposition steht, die er
+ausgeschlossen hat, hat sein Problem selbst gemacht. Da braucht es keine
+Diskussion.
+
+### Wo der ChatGPT-Vergleich nicht trägt
+
+Drei Unterschiede, der zweite ist der entscheidende.
+
+**1. Anderer Vertragsgegenstand.** ChatGPT verkauft ein Gespräch mit einem
+Sprachmodell — die Antwort *ist* erklärtermaßen ein Entwurf, und niemandes
+Geschäft hängt daran, dass eine einzelne Ausgabe rechnerisch exakt ist.
+Sofortangebot verkauft **richtig gerechnete Angebote**. Das ist das
+Produktversprechen, das steht in der Werbung („berechnet, nicht geschätzt"), und
+das ist der Grund, warum jemand zahlt. Wer Richtigkeit verkauft, kann die
+Haftung für Richtigkeit nicht ausschließen — das höhlt den Vertragszweck aus
+(§ 307 Abs. 2 Nr. 2 BGB) und die Klausel fällt weg. Ein
+Allzweck-Chatbot hat dieses Problem nicht, weil er die Richtigkeit einer
+einzelnen Antwort nie versprochen hat.
+
+**2. Der Hinweis verschiebt die Verantwortung nur für das, was man auch finden
+kann.** Das ist die eigentliche Trennlinie, und sie verläuft mitten durch
+unsere eigenen Fundlisten:
+
+| Fehlerart | Kann der Handwerker das beim Prüfen finden? | Hinweis hilft? |
+|---|---|---|
+| Deckenposition erscheint, obwohl ausgeschlossen (PM-001) | Ja, ein Blick auf die Positionsliste | **Ja, vollständig** |
+| Phantom-Raum, falscher Raumname als Position | Ja | **Ja** |
+| Erschwerniszuschlag fehlt | Ja, wenn er ihn erwartet hat | **Ja** |
+| Wandflächen-Grundpreis 11,50 statt 9,50 €/m² (PM-028) | Ja, wenn er seine Preisliste kennt | **Ja** |
+| **Leibungsfläche vierseitig statt dreiseitig (VOB-013)** | **Nein** | **Nein** |
+| **Fensterbank doppelt berechnet (VOB-013)** | **Nein** | **Nein** |
+| **Verschnittsatz 5 % statt 10 % (VOB-002)** | **Nein** | **Nein** |
+
+Bei den unteren drei sieht die Zahl plausibel aus, liegt in der richtigen
+Größenordnung, und um den Fehler zu bemerken, müsste der Handwerker die
+Geometrie von Hand nachrechnen — also genau die Arbeit machen, für die er das
+Werkzeug gekauft hat. **„Du hättest es prüfen müssen" ist keine Verteidigung,
+wenn der Fehler durch Prüfen nicht auffindbar ist.**
+
+Genau deshalb steht in AGB § 2.3 und § 10.2 „Richtwerte" und „prüfen" — und
+genau deshalb reicht das für diese Klasse nicht.
+
+**3. Bekannte Fehler sind ein eigener Fall.** Ein dokumentierter, nicht
+behobener Fehler, der trotzdem live geht, verlässt den Bereich der leichten
+Fahrlässigkeit. Dort hilft **weder die AGB-Klausel noch der Hinweis noch die
+Versicherung** (wissentliche Pflichtverletzung ist in jeder Police
+ausgeschlossen). VOB-013 ist seit gestern dokumentiert. Das ist kein Vorwurf —
+es ist der Grund, warum die Funde vor dem ersten echten Nutzer geschlossen sein
+sollten.
+
+### Was daraus folgt — drei Dinge, alle klein
+
+**1. Den Hinweis bauen, aber konkreter formulieren.** Ein Hinweis, der sagt
+*worauf* zu achten ist, wird eher befolgt und verschiebt juristisch mehr als
+ein allgemeiner. Vorschlag als Ergänzung zum bestehenden Text:
+
+> **Aus deinem Diktat erstellt — bitte vor dem Senden prüfen.**
+> Besonders: Raummaße, Mengen und ob alle Leistungen stimmen.
+
+Bewusst **nicht** „KI kann Fehler machen". Der Satz klingt vertraut, sagt dem
+Handwerker aber nichts, was er tun kann, und er relativiert das Produkt an der
+Stelle, an der Vertrauen entsteht. „Bitte prüfen, besonders X" ist stärker —
+juristisch wie praktisch.
+
+**2. Die Freigabe protokollieren (R2).** Das ist der Punkt mit dem mit Abstand
+besten Verhältnis von Aufwand zu Wirkung. Ein Ereignis beim Versenden mit
+Zeitstempel, Nutzer-ID und Angebotsstand macht aus der Prüfpflicht einen
+**Beweis**. Ohne das ist § 254 eine Behauptung; mit dem Protokoll ist es ein
+Argument, das im Zweifel den ganzen Anspruch trägt. Eine zusätzliche Checkbox
+braucht es nicht — der Hinweis steht sichtbar über dem Senden-Knopf, das
+Absenden ist die Bestätigung.
+
+**3. AGB § 9.3 enger fassen.** Die Klausel schließt Haftung für „inhaltliche
+Fehler in KI-generierten Angeboten" pauschal aus. Weil sie damit auch Vorsatz
+und grobe Fahrlässigkeit erfasst, fällt sie nach § 307 BGB im Zweifel **ganz**
+weg — eine geltungserhaltende Reduktion auf den zulässigen Kern gibt es nicht.
+**Eine engere Klausel schützt mehr als diese weite.** Details in
+`legal-001-bestandsaufnahme.md`, Abschnitt A5.
+
+### Und deshalb trotzdem die Versicherung
+
+Nicht weil Sandy für alles haftet — sie haftet für das Wenigste. Sondern weil
+für die drei unsichtbaren Fehlerarten oben weder Hinweis noch Klausel greifen,
+und weil genau diese Klasse systematisch wirkt: derselbe Fehler bei allen
+Nutzern gleichzeitig. Die Versicherung deckt den schmalen Rest, der nach
+Prüfpflicht, Hinweis und Protokoll übrig bleibt — und dieser Rest ist der
+einzige, der existenzgefährdend werden kann.
+
+**Zusammengefasst:** Sandys Instinkt spart den größten Teil des Risikos. Die
+drei Maßnahmen oben kosten zusammen einen Tag Arbeit. Was danach bleibt, ist
+klein genug für eine Police und zu groß für ein Privatvermögen.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
