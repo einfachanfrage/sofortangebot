@@ -94,7 +94,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs) |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen |
-| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 
@@ -2765,6 +2765,134 @@ hängt ab, ob PM-032 wirklich grün ist. Ich habe den Punkt dort vermerkt.
 **Status PM-033:** ❌ drei Befunde. Verschnittlogik grün, Zuordnungslogik rot —
 alle drei Fehler entstehen dadurch, dass eine Position ohne Raumbezug erzeugt
 und dann irgendeinem Raum zugeschlagen wird.
+
+---
+
+### PM-034 — Ist-Ergebnis (Sandy, 2026-09-02) — **schwerster Fall des Batches**
+
+Angebotssumme **91.085,10 € netto** für zwei Räume von zusammen 24,80 m². Der
+Fall ist an mehreren Stellen gleichzeitig gescheitert; ich sortiere nach
+Schwere, nicht nach Reihenfolge.
+
+**Befund 1 — Der normale Weiter-Button führt nicht zum Entwurf (Blocker)**
+
+Sandy kam über den regulären Button unten nicht in die Entwurfsansicht. Es
+funktionierte **ausschließlich** über „Trotzdem weiter zum Angebot" im gelben
+Warnhinweis oben.
+
+- Das ist ein Blocker derselben Art wie der PM-007-Rückfragen-Stau: Der Nutzer
+  klickt, nichts passiert, und der einzige funktionierende Weg ist ein Link in
+  einem Warnkasten, den man erst finden muss.
+- Besonders unangenehm ist die Kombination: Wer die Warnung **nicht** hat
+  (also im Normalfall), bekommt vermutlich den funktionierenden Button — wer
+  eine Warnung hat, steckt fest. Getestet wurde bisher offenbar nur der
+  Normalfall.
+- **Für Head of Product Engineering:** bitte zuerst prüfen, ob der Button bei
+  aktiver Plausibilitätswarnung deaktiviert ist oder ins Leere läuft. Für den
+  Nutzer ist beides dasselbe: das Tool reagiert nicht.
+
+**Befund 2 — „drei sechzig" wird 360, „drei fünfzig" wird 350 — zweimal in
+einem einzigen Diktat**
+
+| Gesagt | Erkannt | Fläche |
+|---|---|---|
+| Küche „drei sechzig mal drei" | **360 × 3 m** | 1.080 m² statt 10,80 m² |
+| Esszimmer „vier mal drei fünfzig" | **350 × 4 m** | 1.400 m² statt 14,00 m² |
+
+Das ist der 350-Bug aus PM-010, der damals als „akzeptierte Design-Entscheidung
+— Warnung statt Korrektur" geschlossen wurde. **Diese Einordnung halte ich nach
+diesem Testfall nicht mehr für tragfähig**, und zwar aus einem einzigen Grund:
+„drei fünfzig" ist nicht der Sonderfall, sondern **die normale Sprechweise auf
+dem Bau**. Kein Handwerker sagt „drei Komma fünf null Meter". Ein Werkzeug, das
+Sprache aufnimmt, muss die Sprache können, die gesprochen wird — sonst trifft
+der Fehler nicht einen Nutzer gelegentlich, sondern fast jeden Nutzer fast
+immer. In diesem Diktat hat es zwei von drei Maßangaben zerlegt.
+
+**Was gut ist, und das rechne ich hoch an:** Die Plausibilitätswarnung hat
+gegriffen, beide Male, mit exakt der richtigen Vermutung im Text („wurde ‚drei
+fünfzig' als Ziffer 350 verstanden"). Der Sicherheitsmechanismus funktioniert.
+Er ist nur die zweitbeste Lösung.
+
+**Mein Vorschlag zur Neubewertung:** Bei Innenraum-Maßen über etwa 20 m wird
+der Wert automatisch als Kommazahl gelesen (360 → 3,60), die Korrektur wird als
+**sichtbare Annahme** an den Raum geschrieben und bleibt änderbar. Nicht stumm
+korrigieren — aber auch nicht dem Nutzer die Rechenarbeit überlassen. Das ist
+eine Entscheidung für Sandy, weil es die Grundhaltung „lieber fragen als raten"
+an einer Stelle aufweicht.
+
+**Befund 3 — Der Ausschlusssatz wird zu einem Raum**
+
+Mein Satz „Im Flur machen wir nichts am Boden, der bleibt wie er ist" erscheint
+als **Raumname**:
+
+> „Keine Arbeiten am Boden im Flur."
+> Welche Maße kennst du für „Keine Arbeiten am Boden im Flur."?
+
+Das Tool fragt also nach den Maßen eines Raums, dessen Name der Satz ist, mit
+dem ich ihn abbestellt habe. Sandy hat „später ergänzen" gewählt, deshalb ist
+keine Position entstanden — ein Nutzer, der brav Maße einträgt, bekommt
+Positionen für einen ausdrücklich ausgeschlossenen Raum.
+
+Das ist eine Steigerung der PM-013-Familie: Dort wurde ein Ausschluss ignoriert,
+hier wird er in sein Gegenteil verwandelt. Verwandt mit dem alten Fund
+„Raumname steht als eigener Eintrag in der Leistungen-Liste" (PM-004-Nachtest),
+nur in die andere Richtung.
+
+**Für den Product Designer (PD):** Die Rückfrage lautet zusätzlich „Wie groß ist
+**den** Flur?" — Grammatikfehler in einer Nutzerfrage.
+
+**Befund 4 — Drei Maler-Spachtelpositionen in einem reinen Bodenauftrag**
+
+Unter „Allgemein" stehen: „Wände spachteln Q2" (0 Stück, Preis fehlt), „Wände
+schleifen nach Q2" (0 Stück, Preis fehlt), „Spachtelarbeiten Q2" (0 Stück,
+3,00 €).
+
+Auslöser war offensichtlich mein Satz „der Boden muss gespachtelt werden,
+Ausgleichsmasse". Aus einer **Boden**spachtelung werden drei **Wand**positionen
+— in einem Auftrag, in dem ich kein einziges Mal von Wänden gesprochen habe.
+
+- Das ist die PM-011-Verwechslung (Kleinreparatur vs. Vollflächenspachtelung),
+  hier aber gewerksübergreifend: Boden → Maler.
+- Verschärfend: zwei der drei tragen „Preis fehlt in deiner Preisdatenbank" mit
+  einem „Preis anlegen"-Knopf. Das verleitet den Handwerker dazu, Preise für
+  eine Leistung anzulegen, die er nie anbieten wollte.
+- Und es sind **drei Varianten derselben Sache** nebeneinander — „Wände
+  spachteln Q2" und „Spachtelarbeiten Q2" sind dasselbe.
+- Die richtige Position, **„Untergrundvorbereitung / Ausgleich"**, steht
+  daneben korrekt in der Küche. Die drei Wandpositionen sind also nicht einmal
+  ein Ersatz für etwas Fehlendes, sondern reine Dopplung im falschen Gewerk.
+
+**Befund 5 — Die Grundierung im Esszimmer fehlt**
+
+„Der Untergrund ist in Ordnung, da reicht Grundierung" — im Esszimmer steht
+keine Grundierungsposition. Der Raum hat nur Belag und Sockelleisten. Die
+Untergrund-Trennung funktioniert also **halb**: das Aufwendige (Altbelag,
+Ausgleichsmasse) landet korrekt nur in der Küche, das Einfache (Grundierung)
+fällt im Esszimmer ganz weg.
+
+**Was trotz allem funktioniert hat:**
+
+1. **Die Raumtrennung bei der Untergrundvorbereitung — der Kerntest dieses
+   Falls — stimmt.** „Altbelag entfernen" und „Untergrundvorbereitung /
+   Ausgleich" stehen ausschließlich in der Küche, nicht im Esszimmer. Gemessen
+   an den Flächen ist das (auf der falschen Basis) exakt richtig zugeordnet.
+2. **Die Abbruch- und Ausgleichsfläche trägt keinen Verschnitt** (1.080 statt
+   1.134) — dieselbe saubere Trennung wie in PM-032.
+3. **Sockelleisten je Raum mit Türabzug**, rechnerisch konsistent:
+   2 × (360 + 3) − 0,90 = 725,10 und 2 × (350 + 4) − 0,90 = 707,10. Die Formel
+   stimmt, nur die Basis ist Müll.
+4. Die Plausibilitätswarnung, siehe Befund 2.
+
+**Beobachtung ohne Fehlerstatus:** Die Trittschalldämmung fehlt hier komplett,
+obwohl Klick-Vinyl verlegt wird — in PM-032 und PM-033 wurde sie (falsch)
+ergänzt. Im Soll dieses Falls hatte ich sie als „darf, muss nicht"
+gekennzeichnet, deshalb kein Befund. Auffällig ist die Inkonsistenz: dreimal
+Klick-Vinyl, dreimal ein anderes Verhalten. Der Belag heißt in den Positionen
+„Vinyl-Boden", nicht „Klick-Vinyl" — möglicher Zusammenhang mit dem
+Trigger-Wort, bitte beim Fix zu PM-032 mitprüfen.
+
+**Status PM-034:** ❌ fünf Befunde, davon einer Blocker (Weiter-Button) und
+einer mit Grundsatzfrage an Sandy (Zahlenerkennung „drei fünfzig").
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
