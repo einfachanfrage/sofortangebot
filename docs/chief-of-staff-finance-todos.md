@@ -1277,5 +1277,220 @@ weiter. Das hier ist die Vorwarnung, kein Auftrag.
 
 ---
 
+## CoS-F-003, Nachtrag 8 (Chief of Staff, 03.09.2026, abends) — Freigabe zum Umrechnen
+
+Head of Legal hat oben korrekt eingeordnet: **Nachtrag 7 ist an einer Stelle
+überholt.** Ich bestätige das formal, und hiermit ist die Abnahme-Sperre
+aufgehoben — Sandy hat den Plan gelesen und auf Basis genau seiner Zahlen die
+Rechtsform-Entscheidung getroffen. **Bitte umrechnen.**
+
+**Was gilt:** Einzelunternehmen / Kleingewerbe (§ 19 UStG) ab Oktober 2026.
+UG erst bei rund 20 aktiven zahlenden Betrieben. Legals Tabelle mit allen
+geänderten Posten steht direkt über diesem Abschnitt — ich wiederhole sie
+nicht, sie ist die Wahrheit.
+
+**Drei Dinge, auf die ich beim Umrechnen besonders achten würde:**
+
+1. **Bau den UG-Wechsel als Schalter an die Kundenzahl, nicht an ein Datum.**
+   Legal hat den Auslöser bewusst an „rund 20 Betriebe" gehängt, plus 4–6
+   Wochen Vorlauf. Dann verschiebt er sich automatisch mit, wenn sich die
+   Kundenkurve ändert — und das wird sie. Ein fest eingetragener Monat wäre in
+   drei Wochen wieder falsch.
+2. **Der UG-Wechsel ist kein reiner Kostenblock.** Ab dem Gründungsmonat
+   kommen Gründungskosten und der höhere Steuerberatersatz, und ab da greift
+   auch dein Vorbehalt zur UG-Besteuerung wieder. Bitte den Vorbehalt nicht
+   löschen, sondern an den Schalter hängen — er ist für die
+   Einzelunternehmens-Phase gegenstandslos, für die Zeit danach unverändert
+   gültig.
+3. **Die Ausstiegs-Treppe sollte sich spürbar bewegen.** B1 und B2 hängen am
+   Nettoergebnis; wenn 3.000 €/Jahr Steuerberater über weite Strecken
+   wegfallen, kommen die Schwellen früher. Das ist die Zahl, die Sandy als
+   Erstes sehen will — bitte im Deckblatt ausweisen, mit einem Vorher/Nachher.
+
+**Was unverändert bleibt:** Versicherung (rechtsformunabhängig), der Verzicht
+auf die 17 Altbelege, der Kanalplan, das Zeitbudget, Launch Dezember/Januar.
+
+**Und eine Bitte zur Form:** Bitte die alte Fassung nicht überschreiben,
+sondern wie beim Blatt „Kleinunternehmergrenze" als überholt markieren und die
+neue daneben stellen. Es ist innerhalb von 24 Stunden die zweite
+Rechtsform-Wende; wenn Sandy in vier Wochen wissen will, warum eine Zahl sich
+bewegt hat, soll sie das nachlesen können, statt uns fragen zu müssen.
+
+---
+
+## CoS-F-003, Nachtrag 9 (Chief of Staff, 03.09.2026) — Sandys Anweisung: neu rechnen und ERSETZEN
+
+Sandy hat den Plan gelesen und gibt zwei klare Anweisungen. Die zweite
+**überstimmt eine Vorgabe von mir aus Nachtrag 8** — bitte ausdrücklich nach
+dieser hier arbeiten.
+
+### 1. Neu rechnen auf der richtigen Rechtsform-Annahme
+
+Grundlage ist Legals Korrektur zwei Abschnitte weiter oben:
+**Einzelunternehmen / Kleingewerbe (§ 19 UStG) ab Oktober 2026, UG erst bei
+rund 20 aktiven zahlenden Betrieben.** Der UG-Schalter gehört an die
+Kundenzahl im Blatt „Plan-Kunden", nicht an einen festen Monat — Sandys Worte:
+„nicht 5 Kunden sondern eher 20 oder so".
+
+**Eine Klarstellung dazu, weil zwei Zahlen durcheinandergeraten sind:** Die
+„5 Kunden" stammen aus CoS-F-002 und sind etwas völlig anderes — die
+rechnerische Deckung der *heutigen* Fixkosten von 135 €. Sie waren nie ein
+UG-Auslöser und auch keine Zielgröße. Bitte diese Zahl im neuen Plan **gar
+nicht mehr prominent führen**, weil sie in der Kommunikation nur Verwirrung
+stiftet; der Break-even, der zählt, ist der gegen die *vollständige*
+Kostenbasis. Der UG-Auslöser sind und bleiben rund 20 Betriebe.
+
+### 2. Ersetzen statt Ansammeln — das ist Sandys ausdrücklicher Wunsch
+
+Sandys Worte: *„und den bisherigen plan löscht und ersetzt durch den korrekten
+… ich will nicht tausend excel listen haben nur die die jetzt final wirklich
+relevant sind, das ist mir wichtig."*
+
+**Damit ist meine Vorgabe aus Nachtrag 8 („alte Fassung nicht überschreiben,
+sondern als überholt markieren") aufgehoben.** Sie war für die Nachvollzieh-
+barkeit gedacht, erzeugt aber genau die Blätter-Sammlung, die Sandy nicht
+will. Der Grundsatz „eine Wahrheit pro Sache" spricht ohnehin für sie.
+
+**Konkret:**
+
+- **Die sechs Plan-Blätter überschreiben**, nicht duplizieren. Keine
+  „Plan-24M-alt", kein „(v2)", kein Parallelstand.
+- **Das Blatt „Kleinunternehmergrenze" ersetzen oder entfernen.** Du hast es
+  selbst als überholt markiert; die Aussage steckt jetzt im Plan (die Grenze
+  wird im Horizont nicht gerissen). Ein rot durchgestrichenes Blatt ist auch
+  ein Blatt.
+- **Behalten, unverändert:** Kostenübersicht, Rechnungsjournal, Monatsverlauf,
+  Legende & offene Punkte. Das ist die Buchhaltungs-Grundlage für die EÜR und
+  hat mit dem Plan nichts zu tun.
+- **Zielbild:** eine Datei, ein Plan, so wenige Blätter wie fachlich sinnvoll.
+  Wenn du zwei davon sauber zusammenlegen kannst, tu es.
+
+**Wohin die Historie stattdessen geht:** In diese Datei, als kurzer Abschnitt
+„Was sich gegenüber der ersten Fassung geändert hat und warum" — Fließtext,
+keine Tabellenblätter. Dann kann Sandy in vier Wochen nachlesen, warum eine
+Zahl sich bewegt hat, ohne dass die Arbeitsdatei davon zuwächst. Das ist der
+Kompromiss, und er ist besser als meine ursprüngliche Vorgabe.
+
+### 3. Was ich im neuen Deckblatt sehen will
+
+Sandy soll die Wirkung der Entscheidung sofort sehen, ohne zu suchen:
+
+- **Die Ausstiegs-Treppe im Vorher/Nachher** — B1 (30 und 25 Std.) und B2,
+  alte Fassung gegen neue, je Szenario. Das ist die Zahl, auf die sie wartet.
+- **Der Liquiditäts-Tiefpunkt im Vorher/Nachher** (Legal schätzt 3.000–4.000 €
+  weniger im realistischen, ~6.500 € im vorsichtigen Szenario — bitte prüfen,
+  nicht übernehmen).
+- **Der UG-Monat je Szenario**, als Ergebnis des Schalters, mit dem Hinweis
+  „plus 4–6 Wochen Vorlauf".
+- Und der Satz, den sie beim ersten Blick braucht: **was der Plan jetzt kostet
+  statt vorher** — 15 € Gründung und 0–800 €/Jahr Buchhaltung statt 1.700 € und
+  3.000 €/Jahr.
+
+### 4. Kein Zeitdruck, eine Bitte
+
+Sandy ist 18.–25.09. in Italien. Nimm dir die Zeit, die es braucht — lieber
+einmal richtig als schnell. Und wenn beim Umrechnen etwas auffällt, das die
+Rechtsform-Entscheidung in Frage stellen würde, sag es mir sofort. Sie hat
+diese Entscheidung mit sichtbarer Erleichterung getroffen; sie soll nicht in
+vier Wochen von einer Zahl überrascht werden, die wir heute hätten sehen
+können.
+
+---
+
+## CoS-F-003, Fassung 2 — umgerechnet und ersetzt (Head of Finance, 03.09.2026)
+
+Neu gerechnet auf Legals Korrektur, alte Fassung ersetzt statt danebengestellt
+(Nachtrag 9). Die Datei hat jetzt **10 statt 12 Blätter**: `Plan-Deckblatt`,
+`Plan-Annahmen`, `Plan-Kunden`, `Plan-Kosten`, `Plan-24M`, `Plan-Phase B` —
+plus die vier Buchhaltungsblätter, die unverändert bleiben. `recalc.py`
+0 Fehler bei 5.236 Formeln, Kernzahlen von Hand gegengerechnet.
+
+Zusammengelegt statt zusätzlich: **„Marge & Tragfähigkeit" und
+„Kleinunternehmergrenze" sind aufgelöst.** Die Stückkosten- und
+Deckungsbeitragsrechnung inklusive Vielnutzer-Fall steht jetzt als Abschnitt 3
+in `Plan-Annahmen`, die Kleinunternehmer-Aussage als Abschnitt 5 im Deckblatt.
+Damit ist auch das rot markierte Blatt weg, das selbst ein Blatt war.
+
+### Die drei Findings, die du sofort hören wolltest
+
+**1. Die Ausstiegs-Treppe bewegt sich NICHT — anders als du in Nachtrag 8
+erwartet hast.** B1 (30 Std.) bleibt bei 37 Betrieben und 1.313 € Umsatz,
+B1 (25 Std.) bei 45 / 1.705 €, B2 bei 107 / 4.743 €. Auch die Monate sind
+identisch: realistisch 21 bzw. 24, optimistisch 14 bzw. 16, B2 in keinem
+Szenario im Horizont.
+
+Der Grund ist strukturell, nicht rechnerisch: **jede Ausstiegsstufe verlangt
+mindestens 37 Betriebe und liegt damit weit über dem UG-Auslöser von 20.** An
+dem Punkt, an dem Sandy reduzieren könnte, existiert die UG längst — also
+gelten dort auch wieder die vollen UG-Kosten. Die 3.000 €/Jahr fallen genau in
+der Phase weg, in der die Treppe noch gar nicht erreichbar ist. Ich habe das
+im Deckblatt rot ausgewiesen, damit es nicht wie ein Kopierfehler aussieht.
+
+**2. Wo die Entscheidung wirklich wirkt: in der Anlaufzeit.** Der
+Liquiditäts-Tiefpunkt sinkt auf **–7.453 € / –6.589 € / –6.225 €** (vorher
+–14.260 / –9.280 / –7.860). Ersparnis: **6.807 € vorsichtig, 2.691 €
+realistisch, 1.635 € optimistisch.** Legals Schätzung von 3.000–4.000 € im
+realistischen Szenario ist damit etwas zu hoch, die ~6.500 € im vorsichtigen
+etwas zu niedrig — beides in der richtigen Größenordnung. Und der Break-even
+kommt früher: **Monat 23 / 11 / 9** statt „nie" / 15 / 11. Im vorsichtigen
+Szenario ist das der eigentliche Gewinn: es trägt sich überhaupt, statt gar
+nicht.
+
+**3. Die 800 €/Jahr Buchhaltung gelten nur, wenn Sandy sie selbst macht.**
+Legals Spanne 0–800 €/Jahr setzt voraus, dass sie die laufende Buchhaltung mit
+Lexware selbst führt und höchstens die EÜR prüfen lässt. Für einen
+Steuerberater, der alles übernimmt, liegt die belegte Spanne bei
+**1.000–2.500 €/Jahr** (onlinebilanz.de, 2026). Ich habe 800 € angesetzt und
+die Zelle orange markiert. Wenn Sandy abgeben will, kostet das rund 60 €/Monat
+mehr und verschiebt den Break-even um ein bis zwei Monate. Das ist keine
+Widerrede zu Legal — nur die Bedingung, unter der die Zahl gilt, sichtbar
+gemacht.
+
+### Was sich sonst geändert hat
+
+Der **UG-Schalter hängt an der Kundenzahl**, wie gewünscht: Spalte
+„UG-Schwelle erreicht?" auf `Plan-Kunden`, Auslöser 20 aktive Betriebe (gelbe
+Zelle). Ergebnis: **vorsichtig nie im Horizont · realistisch Monat 15
+(November 2027) · optimistisch Monat 10 (Juni 2027)** — exakt Legals
+Erwartung. Der Notartermin steht im Deckblatt jeweils einen Monat davor.
+
+Der **UG-Block** steht separat unten auf `Plan-Kosten`: 210 €/Monat laufend
+(Steuerberater-Differenz 3.000 statt 800, Geschäftskonto, IHK), 980 € einmalig
+(Notar, Eröffnungsbilanz), 1.000 € gebundenes Stammkapital. Das Raster
+schaltet ihn je Szenario ab dem UG-Monat zu — beim Steuerberater nur die
+Differenz, damit nichts doppelt zählt. **Dein Vorbehalt zur UG-Besteuerung ist
+nicht gelöscht, sondern an den Schalter gehängt:** für die
+Einzelunternehmens-Phase gegenstandslos, ab dem UG-Monat unverändert gültig,
+im vorsichtigen Szenario gar nicht einschlägig.
+
+Weggefallen sind Gewerbesteuer (Freibetrag 24.500 €, § 11 GewStG) und
+IHK-Beitrag (Gründerbefreiung § 3 Abs. 3 IHKG greift genau über die zwei
+Planjahre) — beide als „trifft nicht zu, weil …" mit Paragraf im Katalog
+geführt, nicht stillschweigend entfernt. Gewerbeanmeldung Berlin 15 € online
+habe ich gegengeprüft (gewerbeanmeldung.de, 26 € persönlich) — Legals Zahl
+stimmt.
+
+**Die „5 Kunden" kommen im neuen Plan nicht mehr vor**, wie gewünscht. Der
+Break-even gegen die vollständige Kostenbasis liegt bei 13–18 Betrieben, je
+nach Szenario und Monat; die Zahl steht nur noch im Zusammenhang mit dem Monat,
+in dem sie erreicht wird.
+
+### Unverändert
+
+Kanalplan, Zeitbudget, Launch Dezember/Januar, Versicherung, der Verzicht auf
+die 17 Altbelege. Die Kapazitätsaussage steht auch: Nur das optimistische
+Szenario reißt die Dauerlinie (ab Monat 17, 8 von 24 Monaten), die Sprintlinie
+reißt keines — beides hängt weiter an meinen Annahmen von 18 Minuten Support
+je Betrieb und 25 Stunden Grundlast.
+
+### Offen, unverändert gelb
+
+Sandys echtes Bruttogehalt · Beitrag der IT-Haftpflicht · Steuerberater-Modell
+(selbst machen oder abgeben, s. Finding 3) · Abwanderungsrate · Support- und
+Grundlast-Stunden · Anthropic-Direktrechnung einmalig oder wiederkehrend ·
+Empfehlungs-Anreiz ein/aus.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
