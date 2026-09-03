@@ -3138,5 +3138,127 @@ Ausschlüsse werden respektiert. Rechnen kann das Ding.
 sichtbarer Annahme statt nur warnen — siehe PM-034, Befund 2) und VOB-012, an
 dem die Türanzahl mit hängt.
 
+## Fix 1 von 5 aus dem Boden-Batch: Trittschalldämmung (2026-09-03)
+
+Head of Product Engineering. Ich habe mit dem Befund angefangen, den du aus
+**drei** Richtungen belegt hast — PM-032, PM-033 Befund 1 und PM-035 Befund 4
+sind derselbe Fehler an derselben Stelle.
+
+**Deine Fundstelle war exakt richtig.** `pruefeTrittschalldaemmung()` nahm mit
+`ergaenzt.find(...)` die **erste** Verlegeposition und baute daraus **eine**
+Dämmung. In PM-032 war die erste zufällig die richtige — deshalb sah der Fall
+grün aus, obwohl in zwei von drei Räumen die Dämmung fehlte.
+
+**Neue Regel, in dieser Reihenfolge:**
+
+1. Nennt der Satz mit der Dämmung einen Raum, gilt **ausschließlich** dieser
+   Raum. Gelesen wird satzweise, nicht über das ganze Transkript — sonst zieht
+   ein Raumname zwei Sätze weiter die Dämmung wieder in den falschen Raum.
+   Das ist deine Rangordnung „Ansage vor Struktur vor Rohtext".
+2. Sonst: **jeder** verlegte Boden, der Trittschall bekommt — je Raum eine
+   eigene Position mit Raumbezug im Titel.
+
+Fläche immer **ohne Verschnitt**, wie von dir vorgegeben: PM-032 ergibt jetzt
+7,20 + 20,00 + 8,40 = **35,60 m²** in drei Positionen, nicht 37,38 und nicht
+7,20.
+
+**Eine Entscheidung, die ich nicht allein treffen wollte:** Teppich und
+Nadelvlies habe ich von der Dämmung ausgenommen (Bahnenware wird geklebt).
+Eine längere Ausschlussliste — geklebtes Parkett, Linoleum — wäre fachlich
+diskutabel, und die erfinde ich nicht. **Sag mir, welche Beläge in der Praxis
+keine Trittschalldämmung bekommen**, dann trage ich es nach.
+
+**Und eine Rückfrage zu deinem Wortlaut:** Du protokollierst „Trittschall nur
+unterm Laminat im Flur". Ausgelöst wird die Position aber nur vom vollen Wort
+„Trittschalldämmung" — dein Diktat muss es also enthalten haben, sonst wäre gar
+keine entstanden. **Soll die Kurzform „Trittschall" ebenfalls auslösen?** Ich
+habe es NICHT geändert: „ohne Trittschall" würde dann genauso auslösen, denn
+eine Verneinung wertet die Prüfung heute nicht aus. Das ist dieselbe Familie
+wie dein Befund 2 (Sockelleisten gegen Ausschluss) und gehört zusammen gelöst,
+nicht einzeln.
+
+**Abgesichert:** `pm032-036-trittschall.test.ts`, 10 Tests — die drei Räume aus
+PM-032 mit der Summe 35,60, der Flur-Fall aus PM-033 samt Gegenprobe, dass das
+Wohnzimmer leer bleibt, Teppich ohne Dämmung, und die Satz-Trennung selbst.
+Suite 73 Dateien / 1.197 Tests grün.
+
+### Was aus dem Batch NICHT gefixt ist
+
+Ehrlich und nach meiner Einschätzung der Dringlichkeit sortiert:
+
+1. **PM-034: „Weiter" führt nicht zum Entwurf.** Ein Blocker schlägt jeden
+   Rechenfehler — solange der Weg nicht funktioniert, ist der Rest egal.
+2. **PM-036: Teilfläche wird ignoriert, das Raummaß gewinnt.** 21 m² statt
+   6,30 m², 785,40 € zu viel. Der teuerste Einzelfehler im Batch.
+3. **PM-033/034: „drei sechzig" → 360, „drei fünfzig" → 350, „sechs Meter mal
+   eins zwanzig" → 6 × 1.** Zahlwort-Erkennung, drei Belege in zwei Fällen.
+4. **Sockelleisten gegen ausdrücklichen Ausschluss** (PM-033), plus falscher
+   Umfang und 1 von 3 Türen (PM-035).
+5. **Übergangsschiene: 1 pauschal statt gezählt.** Dein Verdacht stimmt
+   vermutlich — bis das geprüft ist, gilt PM-032 in diesem Punkt als
+   ungeklärt, nicht als bestanden. Danke für den Hinweis, dass dein eigenes
+   „bestanden" ein Glückstreffer gewesen sein könnte; genau so eine Meldung
+   ist mehr wert als ein grüner Haken.
+6. **PM-034: Ausschlusssatz wird zum Raumnamen, Maler-Spachtelpositionen im
+   Bodenauftrag, fehlende Grundierung.**
+
+---
+
+## PM-034 Befund 1 behoben — der Blocker (2026-09-03)
+
+Head of Product Engineering, direkt im Anschluss. Sandys Beobachtung stimmt bis
+ins Detail, die Erklärung ist aber eine andere als vermutet: **Der Knopf war
+weder deaktiviert noch lief er ins Leere. Er war in einer Schleife.**
+
+**Was passiert ist**
+
+1. Erster Druck auf „Entwurf erstellen" → die Positionen werden berechnet, die
+   Antwort enthält Plausibilitätswarnungen → Warnung anzeigen, zurück zur
+   Timeline. **Das ist richtig und bleibt so** — es ist genau die Regel aus
+   PM-010: „nicht sofort weiterleiten, sonst sieht sie die Warnung nie."
+2. Zweiter Druck auf denselben Knopf → dieselbe Berechnung, dieselben
+   Warnungen, dieselbe Anzeige, wieder Timeline.
+3. Und so weiter, beliebig oft.
+
+Der Kommentar über der Warnung sagt „blockiert nie, nur ein Hinweis". In
+Wirklichkeit blockierte sie dauerhaft — der einzige Ausweg war der Link
+„Trotzdem weiter zum Angebot", also ausgerechnet die Stelle, die als Notausgang
+gedacht war. Für den Nutzer ist „Knopf tut nichts" nicht von „Knopf ist tot" zu
+unterscheiden; deine Einordnung als Blocker war goldrichtig.
+
+**Was jetzt gilt**
+
+- **Einmal zeigen, dann durchlassen.** Wer den Knopf nach der Warnung erneut
+  drückt, hat sie gelesen und will weiter.
+- **Der Knopf sagt es auch:** Solange die Warnung steht, heißt die Unterzeile
+  „Trotzdem weiter zum Entwurf" — dieselbe Wortwahl wie der Link im gelben
+  Kasten, damit erkennbar ist, dass beide dasselbe tun.
+- **Eine neue Aufnahme setzt den Merker zurück.** Neue Zahlen, neue Warnung,
+  die soll wieder einmal gesehen werden.
+
+Gemerkt wird das in einem Ref, nicht in einem State: Die Entscheidung fällt
+mitten in einem asynchronen Ablauf, und genau dort war heute schon einmal ein
+eingefrorener State die Ursache eines Fehlers (die nie gespeicherte
+Aufnahmedauer).
+
+**Abgesichert:** `pm034-warnung-blocker.test.ts`, 5 Tests — erster Durchgang
+zeigt, zweiter leitet weiter, auch bei geändertem Wortlaut; ohne Warnung geht
+es sofort weiter; eine neue Aufnahme macht die Warnung wieder sichtbar.
+Suite 74 Dateien / 1.202 Tests grün.
+
+**Bitte im Nachtest ausdrücklich prüfen:** dass die Warnung beim ersten Mal
+noch kommt. Der Fix darf sie nicht wegräumen — sie hat in PM-034 zweimal
+korrekt angeschlagen und mit der richtigen Vermutung im Text. Das ist der
+wertvollste Teil dieses Falls und soll bleiben.
+
+**Weiterhin offen aus PM-034:** „drei sechzig" → 360 und „drei fünfzig" → 350
+(dein Punkt, dass das die normale Sprechweise auf dem Bau ist und die
+PM-010-Einordnung damit nicht mehr trägt, überzeugt mich — das ist der nächste
+Fall, den ich nehme, wenn Sandy nichts anderes sagt), der Ausschlusssatz als
+Raumname, die drei Maler-Spachtelpositionen im Bodenauftrag und die fehlende
+Grundierung im Esszimmer.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

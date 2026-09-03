@@ -253,36 +253,108 @@ export function pruefeTrittschalldaemmung(
   if (hat(ergaenzt, 'trittschall', 'pur-schaum')) return
 
   // PM-023-Nachtest (2026-08-30): Die Menge kam aus dem GESAMTEN Transkript und
-  // war damit die Grundfläche des ANDEREN Raums im selben Angebot (14 m² vom
-  // Gästezimmer statt 10,80 m² vom Flur). Die Reihenfolge war schlicht falsch
-  // herum: erst Rohtext, dann die berechnete Fläche. Jetzt zuerst die Fläche
-  // des Bodens, unter dem die Dämmung liegt — die ist raumgenau berechnet.
-  const verlegePosition = ergaenzt.find(p =>
+  // war damit die Grundfläche des ANDEREN Raums im selben Angebot. Deshalb
+  // zuerst die berechnete Bodenfläche, dann erst der Rohtext.
+  //
+  // PM-032/033/035 (Prüfmeister, 02.09.2026) — derselbe Fund aus drei
+  // Richtungen: Hier stand `ergaenzt.find(...)`, also die ERSTE
+  // Verlegeposition, und daraus wurde EINE Dämmungsposition gebaut.
+  //   * PM-032: ein Belag über drei Räume → Dämmung nur im ersten Raum,
+  //     28,40 m² (127,80 €) fehlten zulasten des Betriebs.
+  //   * PM-033: „Trittschall nur unterm Laminat im Flur" → die Dämmung landete
+  //     im Wohnzimmer. 121,50 € zulasten des Kunden, 33,75 € zulasten des
+  //     Betriebs, und ohne „Vorschlag"-Etikett, weil das Wort ja gefallen war.
+  //   * PM-035: dritter Beleg, gleiche Ursache.
+  // In PM-032 war die erste Position zufällig die richtige — deshalb sah der
+  // Fall lange grün aus.
+  //
+  // Neue Regel, in dieser Reihenfolge:
+  //   1. Nennt der Dämmungs-Satz einen Raum, gilt AUSSCHLIESSLICH dieser Raum.
+  //      (Rangordnung „Ansage vor Struktur vor Rohtext".)
+  //   2. Sonst: jeder verlegte Boden, der Trittschall überhaupt bekommt.
+  // Je Raum eine eigene Position — sonst steht die Dämmung wieder ohne
+  // Raumbezug unter „Allgemein" (der ursprüngliche PM-023-Fund).
+  const verlegePositionen = ergaenzt.filter(p =>
     /(?:vinyl|laminat|parkett|bodenbelag|teppich|kork|linoleum).*(?:verlegen|verkleben)/i.test(p.beschreibung))
-  const m2 = bodenNettoflaecheAusPositionen(verlegePosition ? [verlegePosition] : [])
-    ?? extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
-    ?? bodenNettoflaecheAusPositionen(ergaenzt)
-  const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
-  const istHochwertig = lower.includes('hochwertig') || lower.includes('pur') || lower.includes('alufolie') || lower.includes('alukaschiert') || lower.includes('gehschall')
-  // PM-023 (Sandys Live-Test, 2026-08-30): Die Dämmung landete als eigene
-  // Karte unter „Allgemein", während Laminat und Sockelleisten aus demselben
-  // Satz korrekt beim Flur standen — weil hier als einzige Boden-Position kein
-  // Raum an den Titel kam. Die Gruppierung liest den Raum aus dem Titel-Suffix,
-  // also gibt es ohne Suffix keinen Raum. Suffix vom Verlegen übernehmen: die
-  // Dämmung liegt zwangsläufig unter genau diesem Boden.
-  const raumSuffix = verlegePosition?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
-  const beschreibung = (istHochwertig ? 'Trittschalldämmung hochwertig (PUR-Schaum, alukaschiert)' : 'Trittschalldämmung')
-    + (raumSuffix ? ` — ${raumSuffix}` : '')
 
+  // Teppich/Nadelvlies bekommt keine Trittschalldämmung — Bahnenware wird auf
+  // den Untergrund geklebt. Bewusst eng gehalten: eine längere Ausschlussliste
+  // (Linoleum, geklebtes Parkett) wäre fachlich diskutabel, und diese Liste
+  // erfinde ich nicht selbst. Beim Prüfmeister zur Bestätigung gemeldet.
+  const OHNE_TRITTSCHALL = /teppich|nadelvlies/i
+
+  const genannterRaum = raumAusDaemmungsSatz(lower, verlegePositionen)
+  const ziele = (genannterRaum
+    ? verlegePositionen.filter(p => raumAusPositionsTitel(p.beschreibung) === genannterRaum)
+    : verlegePositionen.filter(p => !OHNE_TRITTSCHALL.test(p.beschreibung))
+  )
+
+  const istHochwertig = lower.includes('hochwertig') || lower.includes('pur') || lower.includes('alufolie') || lower.includes('alukaschiert') || lower.includes('gehschall')
+  const basisName = istHochwertig ? 'Trittschalldämmung hochwertig (PUR-Schaum, alukaschiert)' : 'Trittschalldämmung'
+  const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
+
+  if (ziele.length > 0) {
+    for (const ziel of ziele) {
+      // Raumfläche OHNE Verschnitt — die Dämmung wird stumpf gestoßen
+      // (PM-032 ausdrücklich: 35,60 m², nicht 37,38 m²).
+      const m2 = bodenNettoflaecheAusPositionen([ziel])
+      if (!m2) continue
+      const raumSuffix = raumAusPositionsTitel(ziel.beschreibung)
+      ergaenzt.push({
+        beschreibung: basisName + (raumSuffix ? ` — ${raumSuffix}` : ''),
+        menge: m2, einheit: 'm²', berechnungsweg: `${m2} m² (Raumfläche ohne Verschnitt)`,
+        ...(ausdruecklichGenannt ? { automatisch_ergaenzt: false } : {}),
+        ...mk,
+      })
+    }
+    return
+  }
+
+  // Kein verlegter Boden gefunden (z. B. reiner Dämmungs-Auftrag): wie bisher
+  // aus dem Rohtext, aber ohne Raumbezug.
+  const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+    ?? bodenNettoflaecheAusPositionen(ergaenzt)
   if (m2) {
     ergaenzt.push({
-      beschreibung, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`,
+      beschreibung: basisName, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`,
       ...(ausdruecklichGenannt ? { automatisch_ergaenzt: false } : {}),
       ...mk,
     })
   } else {
-    fehlende.push(beschreibung)
+    fehlende.push(basisName)
   }
+}
+
+/** Raum aus dem Titel-Suffix einer Position („… — Flur" → „Flur"). */
+export function raumAusPositionsTitel(titel: string): string | null {
+  return titel.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim() ?? null
+}
+
+/**
+ * Nennt der Satz, in dem die Dämmung vorkommt, einen der Räume des Angebots?
+ *
+ * Bewusst satzweise statt über das ganze Transkript: „Trittschall nur unterm
+ * Laminat im Flur" darf nicht deshalb im Wohnzimmer landen, weil das
+ * Wohnzimmer zwei Sätze weiter vorkommt. Verglichen wird nur gegen Räume, die
+ * es im Angebot wirklich gibt — ein Raumname, den die Engine nicht kennt,
+ * würde die Dämmung sonst ganz verschwinden lassen.
+ */
+export function raumAusDaemmungsSatz(
+  lower: string,
+  verlegePositionen: BerechnetePosition[],
+): string | null {
+  const raeume = verlegePositionen
+    .map(p => raumAusPositionsTitel(p.beschreibung))
+    .filter((r): r is string => !!r)
+  if (raeume.length === 0) return null
+
+  const satz = lower
+    .split(/[.!?;]/)
+    .map(t => t.trim())
+    .find(t => /trittschall|gehschall|pur-?\s?schaum/i.test(t))
+  if (!satz) return null
+
+  return raeume.find(r => satz.includes(r.toLowerCase())) ?? null
 }
 
 export function pruefeStosskanten(

@@ -593,6 +593,33 @@ export default function EntwurfPage() {
   // prüft das und überspringt dann handleAudioStop()/den Upload.
   const skipUploadRef = useRef(false)
   const dauerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  // Die Aufnahmedauer zusätzlich in einem Ref: `startRecording` ist ein
+  // useCallback mit leerer Abhängigkeitsliste, sein `onstop`-Handler hat also
+  // die Fassung von `handleAudioStop` aus dem ERSTEN Render eingefroren — und
+  // damit `recordingDauer` mit dem Wert 0. Gesendet wurde deshalb immer
+  // `dauer_sekunden=0`, und `0 || null` landete als NULL in der Datenbank:
+  // alle 81 Aufnahmen ohne Dauer. Folgen: der Abspieler bekam keine Länge,
+  // und die Whisper-Kosten (`dauerSek / 60 × $0.006`) waren rechnerisch immer
+  // exakt 0 — der größte Einzelposten pro Angebot wurde nie gemessen.
+  // Gefunden beim Zusammenstellen der Kostendaten für CoS-F-002 (03.09.2026).
+  const recordingDauerRef = useRef(0)
+
+  // PM-034 Befund 1 (Prüfmeister/Sandy, 02.09.2026) — der Blocker:
+  // `fertigstellen()` zeigt bei einer Plausibilitätswarnung die Warnung und
+  // kehrt zur Timeline zurück, statt weiterzuleiten. Das ist beim ERSTEN Mal
+  // richtig (PM-010: „sonst sieht sie die Warnung nie"). Nur: Der zweite Klick
+  // auf denselben Knopf ruft dieselbe Berechnung auf, bekommt dieselbe Warnung
+  // und landet wieder auf der Timeline. Der Nutzer kann beliebig oft tippen und
+  // kommt nie zum Entwurf — der einzige Ausweg war der Link „Trotzdem weiter
+  // zum Angebot" im gelben Kasten, den man erst finden muss.
+  //
+  // Für den Nutzer sind „Knopf tut nichts" und „Knopf ist tot" dasselbe.
+  //
+  // Ein Ref, kein State: `fertigstellen()` liest den Wert in einem
+  // asynchronen Ablauf, und genau dort war schon einmal ein eingefrorener
+  // State die Ursache (siehe recordingDauerRef).
+  const warnungGezeigtRef = useRef(false)
+  const [warnungGezeigt, setWarnungGezeigt] = useState(false)
   const geraet = useRef('')
   const zettelInputRef = useRef<HTMLInputElement>(null)
   // CoS-010: Schutz gegen Doppel-Tap/Doppel-Klick auf "Positionen berechnen".
@@ -815,9 +842,14 @@ export default function EntwurfPage() {
         setBasisExtraktion(data.basis_extraktion ?? null)
         setRueckfragen(offeneRueckfragen)
         setScreen('rueckfragen')
-      } else if (data.warnungen && data.warnungen.length > 0) {
+      } else if (data.warnungen && data.warnungen.length > 0 && !warnungGezeigtRef.current) {
         // PM-010: nicht sofort weiterleiten, sonst sieht sie die Warnung nie —
         // erst zeigen, sie entscheidet selbst, ob sie trotzdem weiter will.
+        // PM-034: Das gilt für den ERSTEN Durchgang. Wer den Knopf danach
+        // erneut drückt, hat die Warnung gelesen und will weiter — sonst
+        // blockiert ein „Hinweis, der nie blockiert" dauerhaft.
+        warnungGezeigtRef.current = true
+        setWarnungGezeigt(true)
         setMassWarnungen(data.warnungen)
         setScreen('timeline')
       } else {
@@ -855,7 +887,11 @@ export default function EntwurfPage() {
       mediaRef.current = mr
       setRecording(true)
       setRecordingDauer(0)
-      dauerTimerRef.current = setInterval(() => setRecordingDauer(d => d + 1), 1000)
+      recordingDauerRef.current = 0
+      dauerTimerRef.current = setInterval(() => {
+        recordingDauerRef.current += 1
+        setRecordingDauer(recordingDauerRef.current)
+      }, 1000)
     } catch {
       setFehler('Mikrofon-Zugriff nicht möglich. Bitte in den Browser-Einstellungen erlauben.')
     }
@@ -894,10 +930,14 @@ export default function EntwurfPage() {
   }
 
   async function handleAudioStop(blob: Blob) {
+    // Neue Aufnahme = neue Zahlen: eine Warnung dazu soll wieder gezeigt
+    // werden, bevor es weitergeht (PM-034).
+    warnungGezeigtRef.current = false
+    setWarnungGezeigt(false)
     const tempId = `temp-${Date.now()}`
     const tempEntry: AufnahmeWithUrl = {
       id: tempId, angebot_id: angebotId, typ: 'sprache',
-      audio_url: null, audio_dauer_sekunden: recordingDauer,
+      audio_url: null, audio_dauer_sekunden: recordingDauerRef.current,
       transkript: null, erkannte_positionen: [], verarbeitung_status: 'verarbeitung',
       notiz_text: null, foto_url: null, foto_beschreibung: null,
       in_pdf: false, erstellt_am: new Date().toISOString(), geraet: geraet.current, sortierung: 0,
@@ -908,7 +948,9 @@ export default function EntwurfPage() {
     fd.append('angebot_id', angebotId)
     const ext = blob.type.includes('mp4') || blob.type.includes('m4a') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'webm'
     fd.append('audio', blob, `aufnahme.${ext}`)
-    fd.append('dauer_sekunden', String(recordingDauer))
+    // Ref statt State: siehe Kommentar bei recordingDauerRef — der State ist
+    // in diesem Aufrufpfad eingefroren.
+    fd.append('dauer_sekunden', String(recordingDauerRef.current))
     fd.append('geraet', geraet.current)
 
     // Ein Request macht alles (Upload + Whisper + Chips parallel im Backend).
@@ -1458,7 +1500,14 @@ export default function EntwurfPage() {
             >
               <span className="flex flex-col items-center leading-tight">
                 <span>✓ {erkannteAnzahl} {hatBestehendPositionen ? 'neue ' : ''}{erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
-                <span className="text-[12px] font-bold opacity-65 mt-1">{hatBestehendPositionen ? 'Entwurf aktualisieren' : 'Entwurf erstellen'} · ca. {bearbeitungszeit} Sekunden</span>
+                <span className="text-[12px] font-bold opacity-65 mt-1">
+                  {/* PM-034: Wenn die Warnung oben steht, sagt der Knopf, dass
+                      er trotzdem weitergeht — gleiche Wortwahl wie der Link im
+                      gelben Kasten, damit klar ist, dass beide dasselbe tun. */}
+                  {warnungGezeigt
+                    ? 'Trotzdem weiter zum Entwurf'
+                    : `${hatBestehendPositionen ? 'Entwurf aktualisieren' : 'Entwurf erstellen'} · ca. ${bearbeitungszeit} Sekunden`}
+                </span>
               </span>
               <ChevronRight size={18} strokeWidth={3} />
             </button>
