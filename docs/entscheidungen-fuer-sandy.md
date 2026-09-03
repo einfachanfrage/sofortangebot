@@ -55,6 +55,17 @@ eingetragen sind; bei einem testweise „Run now" klicken. **Danach kurz
 Head of Product Engineering Bescheid geben** — er kann in `system_laeufe`
 verifizieren, ob der Lauf wirklich durchging.
 
+**Nachtrag Chief of Staff, 03.09.2026 — jetzt ist es belegt, nicht mehr
+vermutet.** Platform hat beim Skalierungs-Kostenmodell (CoS-P-008) direkt in
+die Produktionsdaten geschaut: Die Job-Protokoll-Tabelle `system_laeufe` führt
+den Aufräum-Job selbst mit `"letzterLauf": null` und `"ueberfaellig": true` —
+**er ist buchstäblich noch nie gelaufen und weiß das selbst.** Im
+Sprachaufnahmen-Speicher liegen inzwischen 263 Dateien, davon **125 älter als
+30 Tage**, die älteste vom 02.07. Das ist kein Kostenproblem (86 MB), sondern
+ein Versprechen aus Datenschutzerklärung und AGB, das seit über zwei Monaten
+nicht eingehalten wird. Es hängt weiterhin an genau diesem einen Punkt, den
+nur du in Vercel prüfen kannst.
+
 *Nachtrag Head of Product Engineering, 02.09. nachmittags:* An diesem einen
 Punkt hängt inzwischen mehr als die Konto-Löschung. Beim Durchsehen der
 Speicher-Buckets sind **182 verwaiste Sprachaufnahmen** aufgetaucht — Dateien
@@ -70,9 +81,84 @@ Prozent, Übermessungshinweis im Kunden-PDF, neues Statusmodell, Konto
 löschen — alles über Tests abgesichert, aber noch niemand hat es in der
 laufenden App gesehen.
 
+**🔵 4. Stripe-Konto aktivieren (neu, 03.09.2026).** Nebenfund von Head of
+Legal beim Prüfen der Vertragspartner-Frage, vom Chief of Staff per direkter
+Stripe-Kontoabfrage bestätigt: euer Stripe-Konto ist noch nicht
+vollständig eingerichtet — `charges_enabled: false`, `payouts_enabled:
+false`, `details_submitted: false`. Es fehlen konkret eine hinterlegte
+Bankverbindung und die Bestätigung der Stripe-AGB. Ohne das kann selbst ein
+technisch fertiger Checkout kein echtes Geld entgegennehmen. Das geht nur
+über dein eigenes Stripe-Dashboard (dashboard.stripe.com → Konto
+vervollständigen). Kein Gate-1-Blocker (betrifft nur zahlende Kunden, die
+erst mit Gate 2 kommen), aber je früher erledigt, desto weniger Überraschung
+kurz vor dem ersten echten Kunden. Dokumentiert unter 4.6 in
+`docs/launch-readiness.md`.
+
 ---
 
 ## Offen
+
+**🔵 DEPLOY — zwei fertige Datenschutz-Korrekturen freigeben (neu,
+03.09.2026).** Du hattest gefragt, ob Stufe 3 (Impressum/Datenschutz-Fixes)
+schon durch ist — ist sie: beide ursprünglichen Fixes (7.1, 7.2) sind live.
+Beim Gegenchecken hat Head of Legal aber zwei weitere kleine Ungenauigkeiten
+in der Datenschutzerklärung gefunden und bereits korrigiert und getestet
+(`rechtstexte-hygiene.test.ts` 11/11 grün): (1) der Vertragspartner für
+Stripe stand als „Stripe Inc." drin, korrekt ist „Stripe Payments Europe,
+Limited" (Irland) — eure Stripe-Kontoabfrage zeigt `country: DE`, damit
+entfällt sogar die Drittland-Klausel für Stripe; (2) im Kundendaten-Abschnitt
+stand ein inhaltlicher Widerspruch (gleichzeitig „Auftragsverarbeitung" und
+eine eigene Rechtsgrundlage für dieselben Daten), jetzt korrekt als reine
+Auftragsverarbeitung (Verweis auf die AVV) formuliert. Beide Fixes sind
+absichtlich noch nicht live — Rechtstexte gehen laut Team-Regel nur mit
+deiner Freigabe raus. **Deine Entscheidung:** einfaches Ja, dann geht der
+nächste Deploy von Head of Product Engineering raus (zusammen mit den
+übrigen anstehenden Änderungen). Details in
+`docs/chief-of-staff-legal-todos.md`, Abschnitt „Stufe 3".
+
+**🔵 Steuerberater suchen — zwei Dinge hängen daran.** Head of Finance
+kann den Finanzplan (CoS-F-003) rechnen, aber zwei Posten darin bleiben leer,
+bis du einen Steuerberater hast: **was er kosten wird** (laufende Buchhaltung
+und Jahresabschluss sind ein dauerhafter Posten im Plan, und der Unterschied
+zwischen EÜR und UG-Bilanz ist erheblich), und die beiden Fragen, die schon
+länger auf ihn warten — Verzicht auf die Kleinunternehmerregelung ja/nein, und
+die Behandlung der Supabase-Reverse-Charge-Rechnungen (§13b trotz §19).
+**Deine Aktion:** einen Steuerberater suchen und einen Termin machen. Head of
+Finance hat mit dem Rechnungsjournal genau die Vorarbeit geleistet, mit der so
+ein Erstgespräch kurz und günstig wird.
+
+**🔴 Gewerbeanmeldung — noch nicht passiert, und das hat jetzt Folgen.**
+Du hast am 03.09. bestätigt, dass das Claude-Pro-Abo geschäftlich ist, „aber
+kein Gewerbe angemeldet". Damit ist ein Punkt aktiv, der bisher nur nebenbei
+in den Finance-Notizen stand: **es gibt bis heute kein angemeldetes Gewerbe.**
+Zwei Dinge hängen daran:
+
+1. **Alle bisherigen Kosten** (17 erfasste Belege, Mai–August) sind
+   vorweggenommene Betriebsausgaben. Die lassen sich in der Regel nachträglich
+   geltend machen, wenn der Beleg-Nachweis sauber ist — genau dafür führt Head
+   of Finance das Rechnungsjournal. Je länger die Anmeldung her ist, desto
+   erklärungsbedürftiger wird die Abgrenzung.
+2. **Reihenfolge-Frage, die Geld spart:** Legal empfiehlt die UG **vor dem
+   ersten zahlenden Kunden** (S-4, §26 HGB). Wenn ohnehin eine UG kommt,
+   braucht die eine eigene Gewerbeanmeldung. Es wäre unnötig, dich jetzt erst
+   als Einzelunternehmerin anzumelden und wenige Wochen später nochmal für die
+   UG — oder umgekehrt zu spät dran zu sein. **Ich habe Head of Legal &
+   Compliance unter CoS-L-003 gebeten, dir genau diese Reihenfolge
+   auszuarbeiten** (jetzt Einzelunternehmen anmelden und später umwandeln, oder
+   direkt UG). **Deine Entscheidung fällt, sobald seine Antwort da ist** — bitte
+   bis dahin nichts anmelden.
+
+**🔵 Rundung — kaufmännisch runden, ja oder nein?** Head of Product
+Engineering hat das beim VOB-013-Fix (03.09.) als Nebenbefund gemeldet und
+ausdrücklich **nicht** nebenbei mitgefixt, weil es Geld betrifft: Die
+Rundungsfunktion `round2()` rundet Mengen, die exakt auf einer halben
+Nachkommastelle landen, wegen eines Gleitkomma-Effekts nach unten statt nach
+oben (eine Tür ergibt 1,275 m², heraus kommt 1,27 statt 1,28). Wirkung pro
+Fall 0,01 in der Menge — winzig, aber es ist Geld, und die Funktion existiert
+in **neun** eigenen Kopien im Projekt. **Deine Entscheidung:** kaufmännisch
+runden (also 1,28) — ja oder nein? Danach braucht es einen eigenen sauberen
+Durchgang über alle neun Stellen plus Nachtest durch den Prüfmeister.
+Details: `docs/chief-of-staff-todos.md`, Abschnitt „CoS-036 erledigt".
 
 **🔵 CoS-M-004 (Rest) — eine Design-System-Freigabe, Head of Marketing
 wartet darauf, bevor er weiterbaut:**
@@ -197,6 +283,10 @@ strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-09-03 | Finanzplan CoS-F-003: Welchen Netto-Bedarf pro Monat soll Head of Finance für die Frage „ab wann kann ich die Anstellung loslassen“ ansetzen? | **Mindestens 2.500 € netto** (Sandys aktuelles Nettogehalt). Als **Untergrenze** in den Plan gegeben, nicht als Zielgröße — Head of Finance rechnet zusätzlich eine realistische Schwelle mit Puffer und Rücklagen, weil in der Selbstständigkeit der Arbeitgeberanteil zur Sozialversicherung wegfällt | `docs/chief-of-staff-finance-todos.md` CoS-F-003 |
+| 2026-09-03 | Head of Finance, offen seit 19.08.: Ist das Claude-Pro-Abo über Apple (22 €/Monat) geschäftlich oder privat? | **Geschäftlich.** Wandert damit in die Betriebskosten. Zusatzhinweis von Sandy: es gibt bis heute **kein angemeldetes Gewerbe** — die Ausgabe ist also eine vorweggenommene Betriebsausgabe, siehe eigener offener Punkt „Gewerbeanmeldung“ | `docs/chief-of-staff-finance-todos.md` CoS-F-001 |
+| 2026-09-03 | Head of Finance, offen seit 19.08.: Laufen bei Supabase ungenutzte Projekte mit (5 Referenzen bei 2 dokumentierten)? | **Erledigt — Sandy hat die übrigen Projekte selbst gekündigt.** Kein Platform-Ticket nötig. Offen bleibt nur noch die andere Hälfte der Frage: wie stark die Betriebskosten mit steigender Nutzerzahl wachsen — das ist keine Sandy-Frage, sondern an Platform geroutet (CoS-P-008) | `docs/chief-of-staff-finance-todos.md` CoS-F-001 |
+| 2026-09-03 | **Preismodell komplett neu** — bisherige Preise (22 €/17 €/3 Angebote frei, DC-001) von Sandy verworfen, Chief of Staff hat auf Basis von Zielgruppe, Mehrwert und Wettbewerb neu hergeleitet | **Freigegeben („ja steht“), vollständig:** 49 € netto/Monat pro Betrieb, unbegrenzt Angebote, monatlich kündbar · kein Dauer-Gratis-Tarif, stattdessen 14 Tage voller Test ohne Kreditkarte · Gründerpreis 29 €/Monat **dauerhaft** für die ersten 25 zahlenden Betriebe gegen Feedback-Zusage · **keine** Staffelung nach Nutzer-/Mitarbeiterzahl · Jahresabo (490 €) erst ab Gate 2 · Stufe 2 „Betrieb“ ca. 89 € erst mit Buchhaltungsanbindung + Mehrbenutzer. Umsetzung geroutet: CoS-038 (Produkt), CoS-P-007 (Stripe), CoS-L-002 (AGB/Preisangaben/Steuer), CoS-F-002 (Marge) | `docs/preismodell.md` |
 | 2026-09-03 | 10.2-Folgefrage: WhatsApp Business (Abwesenheits-Antwort möglich) oder private Nummer für den Feedback-Kanal (10.1)? | **Private Nummer.** Damit fällt eine technische Abwesenheits-Antwort weg. Ersatz: eine einmalige Willkommensnachricht pro neuem Testnutzer deckt Notfallplan (10.2) und Reaktionszeit-Erwartung (10.4) gemeinsam ab, Text fertig formuliert in `launch-readiness.md` 10.2 | `docs/launch-readiness.md` 10.2/10.4 |
 | 2026-09-03 | 8.9-Folgefrage: Liest Sandy ihr Sentry-Postfach (`einfachanfrage@outlook.com`) aktiv mit? | **Noch nicht, aber ab Gate 1 (erster echter Testnutzer) ausdrücklich zugesagt** — genau der Zeitraum, in dem der Punkt zählt | `docs/launch-readiness.md` 8.9 |
 | 2026-09-03 | 10.1: Über welchen Kanal sollen Testnutzer Feedback/Bugs melden? | **WhatsApp direkt an Sandy.** Niedrigste Hürde für Handwerker, sofort sichtbar. Noch niemandem kommuniziert — es gibt noch keine Testnutzer | `docs/launch-readiness.md` 10.1 |

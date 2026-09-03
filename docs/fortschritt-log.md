@@ -191,3 +191,39 @@ gefixt worden. Größte offene Fäden: PM-010 (zwei ungefixte, teils schwere
 Bugs), fehlende Live-Bestätigung für die meisten heutigen Fixes,
 Dokumentationslücken bei PM-008/PM-009, und die strukturelle
 Karte-vs-Berechnung-Frage (CoS-002).
+
+---
+
+## 2026-09-03 — Preisentscheidung
+
+Sandy hat alle bisher angedachten Preise verworfen („Vergiss bitte die Preise
+die bisher angedacht waren") und einen neu hergeleiteten Vorschlag angefordert.
+Ich habe den Wettbewerb frisch recherchiert statt aus dem Gedächtnis zu
+argumentieren — direkte Sprache-zu-Angebot-Anbieter (Meistio, Angebotsmeister,
+AngebotFIX, Profiangebot, MEISTA) und die Voll-Handwerkersoftware, die im Kopf
+des Kunden den Preisanker setzt (plancraft, HERO, ToolTime, adtrimo).
+
+**Sandys Entscheidung, noch am selben Tag, vollständig freigegeben („ja
+steht"):** 49 € netto/Monat pro Betrieb, unbegrenzt Angebote, monatlich
+kündbar · kein Dauer-Gratis-Tarif, stattdessen 14 Tage voller Test ohne
+Kreditkarte · Gründerpreis 29 €/Monat dauerhaft für die ersten 25 zahlenden
+Betriebe · keine Staffelung nach Nutzerzahl · Jahresabo erst ab Gate 2.
+
+**Neue Heimat-Datei:** `docs/preismodell.md`. Der Preis lag vorher als
+Nebenprodukt in `design-check.md` DC-001 — DC-001 ist jetzt sichtbar als
+abgelöst markiert (nur der Gewerke-Teil gilt dort weiter). Damit gibt es
+wieder genau eine Wahrheit pro Sache.
+
+**Geroutet:** CoS-038 (Produkt), CoS-P-007 (Stripe), CoS-L-002 (AGB,
+Preisangaben, Kleinunternehmer-Einordnung), CoS-F-002 (Marge, echte Kosten pro
+Angebot). Nebenbei eingesammelt: die Rundungs-Entscheidung (kaufmännisch
+runden ja/nein) aus dem VOB-013-Fix stand in keiner Sandy-Liste — jetzt in
+`entscheidungen-fuer-sandy.md`.
+
+**Was der Preis jetzt terminiert:** UG-Gründung vor dem ersten *zahlenden*
+Kunden (S-4, §26 HGB) ist damit kein abstrakter Punkt mehr. Ebenso der
+Kündigen-Button (L7) und der Prüfmeister-Nachtest zu VOB-013.
+
+**Ehrlicher blinder Fleck, festgehalten:** Der Preis ist aus Wettbewerb,
+Stundensätzen und Struktur abgeleitet — kein einziger echter Handwerker wurde
+bisher danach gefragt. Nachholen bei den ersten Gate-1-Nutzern.

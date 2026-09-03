@@ -43,7 +43,7 @@ mitten in bestehende Abschnitte zu schreiben. Voller Hintergrund: CoS-013 in
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
 | CoS-F-003 | Finanzplan aufstellen: 24 Monate, drei Szenarien — Break-even, Einkommensersatz, Liquidität/Runway | ❌ offen, Auftrag steht | Sandy direkt, 2026-09-03 |
-| CoS-F-002 | Marge und Tragfähigkeit des neuen Preises (49 €/29 €) durchrechnen — inkl. echter Kosten pro Angebot | ❌ offen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
+| CoS-F-002 | Marge und Tragfähigkeit des neuen Preises (49 €/29 €) durchrechnen — inkl. echter Kosten pro Angebot | ✅ erledigt & geprüft (03.09.) — DB 47,89 € bzw. 28,19 € je Kunde, Vielnutzer unkritisch, Fixkosten heute 135,10 €/Monat, Kleinunternehmergrenze je nach Szenario ab Monat 35/21/12 | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-F-001 | Bestandsaufnahme laufende Kosten + Grundgerüst für monatliche Übersicht | 🔵 echte Zahlen drin, 4 Punkte brauchen Sandys Klärung | Sandys Auftrag, 2026-08-19 |
 
 ---
@@ -780,6 +780,148 @@ dem Ticket-Schluss (Vorfinanzierungsbedarf, Umsatzschwelle für den Ausstieg
 aus der Anstellung) — die gehören zu CoS-F-003 mit dem vollständigen
 24-Monats-Modell und Sandys 2.500-€-Netto-Vorgabe (Nachtrag 2), nicht zu den
 vier Kernzahlen hier. Bereit für CoS-F-003, sobald du grünes Licht gibst.
+
+---
+
+## CoS-F-003 — grünes Licht (Chief of Staff, 2026-09-03)
+
+CoS-F-002 durchgesehen, sauber: konservativ gerechnet wie vorgegeben, jede
+Annahme mit Quelle, Stripe korrekt mit dem EU-Tarif statt dem US-Wert, und der
+Vielnutzer-Fall ist beantwortet statt umgangen. **Leg mit CoS-F-003 los.**
+
+**Drei Dinge, die du aus F-002 in den Plan mitnehmen solltest:**
+
+1. **Die Fixkosten-Baseline von 135,10 €/Monat ist die von heute — nicht die
+   des Geschäfts, das wir planen.** Versicherung, Steuerberater, UG-Kosten,
+   Buchhaltungstool und Marke fehlen darin naturgemäß, weil es sie noch nicht
+   gibt. Im Plan müssen sie drin sein. Bitte den Unterschied ausdrücklich
+   sichtbar machen — sonst liest Sandy „5 Kunden reichen" und das stimmt für
+   die echte Kostenbasis nicht.
+2. **Der Break-even und der Ausstieg aus der Anstellung sind zwei völlig
+   verschiedene Schwellen** und liegen um mehr als eine Größenordnung
+   auseinander. Bitte im Plan nie nebeneinander ohne Einordnung zeigen.
+3. **Deine Szenario-Bandbreite (2/4/8 Neukunden pro Monat) ist deine eigene
+   Modellierung**, wie du selbst geschrieben hast — behalte sie in F-003 bei,
+   damit die beiden Rechnungen vergleichbar bleiben, und markiere sie
+   weiterhin klar als Annahme und nicht als Prognose. Ein Hinweis dazu: es ist
+   bis heute **kein bezahltes Werbebudget** eingeplant und es gibt **keinen
+   einzigen Nutzer**; 8 Neukunden im Monat allein über Mundpropaganda und
+   Social Media ist ein sehr optimistisches obere Ende. Das darf es sein,
+   solange es so benannt ist.
+
+**Deinen Dokumentations-Befund habe ich geprüft und bestätigt:**
+`docs/ki-kosten-messung.md` existiert tatsächlich nirgends — auch nicht in der
+Git-Historie. Du hast richtig gehandelt, die Zahlen aus dem Koordinations-
+dokument zu nehmen und es zu melden, statt zu warten. Ich habe daraus
+**CoS-039** für Head of Product Engineering gemacht und meinen eigenen falschen
+Verweis in `launch-readiness.md` 8.5 korrigiert — der stammte von mir.
+
+---
+
+## CoS-F-003, Nachtrag 3 (Chief of Staff, 2026-09-03) — das Kundenmodell
+
+Sandy hat deine Szenarien hinterfragt, und die Frage ist berechtigt: **„warum
+immer gleichbleibend 2, 4 bzw. 8? steigt das nicht irgendwann? gerade wenn ich
+mit social media richtig anfange?"**
+
+Ich habe ihr geantwortet, was du selbst geschrieben hast: die Bandbreite ist
+**deine Modellierungs-Annahme, keine Prognose** — für CoS-F-002 war das genau
+richtig, weil es dort nur um die Größenordnung ging, wann die
+Kleinunternehmergrenze fällt. **Für den 24-Monats-Plan reicht es nicht mehr.**
+Eine konstante Neukundenzahl unterstellt implizit, dass Vertrieb ein Wasserhahn
+ist, der immer gleich stark läuft. Das ist er nicht.
+
+**Wie das Kundenmodell in CoS-F-003 aussehen sollte** (das Was, nicht das Wie —
+die Umsetzung ist deine):
+
+1. **Neukunden nicht als eine Zahl setzen, sondern aus Kanälen aufbauen.**
+   Jeder Kanal hat einen eigenen Verlauf: Content/SEO läuft monatelang gegen
+   Null und erreicht dann ein Niveau; Social Media hat eine Anlaufkurve;
+   Flyer/Fachhandel und Innungskontakte sind Sprünge mit Abklingen, keine
+   Dauerquelle. Die Summe daraus ergibt die Kurve — dann steigt sie, wo sie
+   wirklich steigt, statt überall gleich.
+2. **Mundpropaganda als einzigen echten Selbstverstärker abbilden**, und zwar
+   als Funktion der **aktiven Kundenbasis** (z. B. „x % der aktiven Betriebe
+   bringen pro Jahr eine Empfehlung"), mit **Verzögerung** — ein Handwerker
+   empfiehlt nichts nach zwei Wochen, sondern wenn es sich bewährt hat. Das ist
+   der Teil, der wirklich wächst, und er ist von Natur aus gedeckelt.
+3. **Abwanderung fehlt bisher komplett.** In der ganzen Datei kommt kein
+   einziger Kündigungsfall vor. Ein 24-Monats-Plan ohne Abwanderung ist keine
+   Planung, sondern eine Hoffnung — und bei einem monatlich kündbaren Abo,
+   verkauft an Betriebe, die saisonal unterschiedlich viel zu tun haben, ist
+   sie garantiert nicht null. Bitte als eigene Annahme führen, sichtbar und
+   pro Szenario unterschiedlich.
+4. **Der Preissprung bei Kunde 26.** Die ersten 25 zahlen dauerhaft 29 €.
+   Die Umsatzkurve hat dort einen Knick, und in den schnellen Szenarien liegt
+   der früh. Bitte explizit modellieren, nicht mit einem Mischpreis glätten.
+5. **Sandys Zeit als harte Nebenbedingung.** Das ist der Punkt, den
+   Finanzpläne fast immer übersehen: Sie hat einen Vollzeitjob. Jeder Kanal
+   kostet Stunden, die sie nicht beliebig hat, und **die Wachstumsgrenze ist
+   fast sicher ihre Kapazität, nicht die Nachfrage.** Bitte je Kanal einen
+   Stundenaufwand pro Monat führen und die Summe gegen ein Stundenbudget
+   laufen lassen. Wenn ein Szenario mehr Stunden verlangt, als sie hat, ist es
+   kein optimistisches Szenario, sondern ein unmögliches — und genau das soll
+   der Plan zeigen können.
+
+**Die Kanal-Annahmen kommen nicht von dir und nicht von mir.** Ich habe **Head
+of Marketing** unter **CoS-M-007** gebeten, einen Kanalplan zu liefern:
+welche Kanäle, in welcher Reihenfolge, mit welchem Aufwand in Stunden, welchen
+Sachkosten und welcher realistischen Erwartung. Du bekommst das als Zulieferung
+und rechnest es durch — so bleibt die Bewertung des Vertriebs bei Marketing und
+die Rechnung bei dir.
+
+**Bis das da ist:** bau die Struktur (Kanäle als eigene Zeilen, Abwanderung,
+Stundenbudget, Preisknick) und lass die Kanalwerte als offene Annahmen stehen.
+Sandy hat ausdrücklich gesagt, dass Flyer im Malerfachhandel und eine
+Social-Media-Strategie mit in den Plan sollen — die Struktur muss also so etwas
+aufnehmen können, auch wenn die Zahlen noch fehlen.
+
+---
+
+## CoS-F-003, Nachtrag 4 (Chief of Staff, 2026-09-03) — Sandys Zeitbudget
+
+Ich habe die Zahl nachgefragt, die für das Kundenmodell aus Nachtrag 3 fehlte.
+
+**Sandy hat 15–20 Stunden pro Woche für Sofortangebot** — neben einem
+Vollzeitjob, und zwar **seit rund zwei Monaten tatsächlich so gelebt**, nicht
+geschätzt. Also grob **65–86 Stunden im Monat für alles zusammen**: Produkt,
+Support, Verwaltung, Vertrieb.
+*(Korrektur vom 03.09.2026 — ich hatte hier zuerst 5–10 Stunden stehen, das war
+meine zu grob gestellte Frage. Bitte ausschließlich mit 15–20 rechnen.)*
+
+**Bitte als harte Obergrenze in den Plan einbauen, nicht als Fußnote.** Konkret:
+
+- Jedes Szenario braucht eine Zeile „benötigte Stunden pro Monat" (Vertrieb +
+  Support je Kunde + laufende Arbeit). **Ein Szenario, das mehr als rund 86
+  Stunden im Monat verlangt, ist nicht optimistisch, sondern unmöglich** — und
+  der Plan soll genau das anzeigen können, statt es zu verstecken.
+- **Bitte zwei Kapazitätslinien führen, nicht eine:** die heutige
+  Sprint-Kapazität (15–20 Std./Woche, seit zwei Monaten gehalten) und eine
+  konservative Dauerlinie für den Fall, dass sich dieses Tempo über 24 Monate
+  neben einer Vollzeitstelle nicht halten lässt. Was heute geht, ist nicht
+  automatisch die Planungsgröße für zwei Jahre — und der Unterschied zwischen
+  beiden Linien ist eine Information, die Sandy sehen sollte, statt dass der
+  Plan sich stillschweigend für eine entscheidet.
+- **Support skaliert mit der Kundenzahl und ist ihre Zeit, nicht Geld.** Bei
+  49 € pro Kunde ist die Marge exzellent (47,89 €), aber die
+  Kapazitätsgrenze kommt lange vor der Rentabilitätsgrenze. Genau darin liegt
+  der Unterschied zwischen „trägt sich" und „geht".
+- **Für die Frage nach dem Ausstieg aus der Anstellung ist das der Kern:**
+  Der Plan sollte zeigen, ab wann die Kundenzahl mehr Stunden verlangt, als
+  neben dem Job möglich sind. **Dieser Punkt kommt sehr wahrscheinlich vor
+  dem Punkt, an dem 2.500 € netto übrig bleiben** — das ist die eigentliche
+  Klemme in Sandys Situation, und sie sollte sie im Plan sehen, nicht später
+  merken. Wenn deine Rechnung das bestätigt, sag es deutlich; wenn nicht,
+  sag auch das.
+
+**Zwei weitere Randbedingungen aus derselben Nachfrage**, relevant für die
+Anlaufkurve: Sandy und Clemens kennen **0 bis 2 Handwerker persönlich** — es
+gibt kein Netzwerk als Startrampe. Und der Malerfachhandel Dessau ist ein
+**warmer** Kontakt (Bekannter von Clemens, hat von sich aus angeboten, kennt
+die Stammkunden persönlich). Head of Marketing bewertet beides im Kanalplan
+(CoS-M-007); für dich heißt es: die ersten Monate sind vermutlich sehr flach
+und stark von diesem einen Kanal abhängig — ein **Klumpenrisiko**, das im
+vorsichtigen Szenario sichtbar sein sollte.
 
 ---
 

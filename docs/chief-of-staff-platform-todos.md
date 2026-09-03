@@ -33,10 +33,23 @@ eigentliche Lösungsvorschlag (Git-Commits statt Direkt-Überschreiben, dafür
 bräuchte es genau den Terminal-/Git-Zugriff, den du laut CoS-P-005 bereits
 hast): CoS-013 in `chief-of-staff-todos.md`.
 
+**Nachtrag (2026-09-03, Platform & Integrations Engineer):** Genau dieser
+Speicherfehler ist heute an dieser Stelle passiert — die Abschnitte CoS-P-007
+und CoS-P-008 waren mitten in diesen Absatz hineingerutscht (der Satz oben
+riss nach „eine feste Markierung (`" ab und sprang erst nach dem CoS-P-008-
+Abschnitt wieder in den ursprünglichen Text zurück). Beide Abschnitte waren
+inhaltlich vollständig und unverändert, nur an der falschen Stelle. Nach der
+eigenen Regel aus diesem Absatz repariert (nicht gelöscht, an den Wortlaut
+gehalten): an die korrekte Stelle ans Dateiende verschoben, direkt vor die
+Endmarkierung, wie es die Konvention „neue Einträge ans Dateiende anhängen"
+ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
+
 ## Stand auf einen Blick (angelegt: 2026-08-17)
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
+| CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | ❌ offen, kann sofort starten | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
 | CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟡 Erster Schritt umgesetzt (Sentry im Kernpfad), Restarbeit sauber abgegrenzt | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
 | CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🟢 Fix umgesetzt — Passwort-Reset-Bug behoben, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
@@ -498,5 +511,204 @@ laufende App ihn zieht?
 
 ---
 
-<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+## CoS-P-007 — Stripe auf das neue Preismodell umstellen
 
+**Datum:** 2026-09-03 (Chief of Staff, nach Sandys Preisentscheidung)
+**Status:** ❌ offen — kann sofort gestartet werden
+**Heimat der Entscheidung:** `docs/preismodell.md`
+
+**Das neue Modell:** 49 € netto/Monat pro Betrieb, unbegrenzt Angebote,
+monatlich kündbar · **kein** Dauer-Gratis-Tarif · **14 Tage voller Test ohne
+Kreditkarte** · **Gründerpreis 29 €/Monat dauerhaft für die ersten 25
+zahlenden Betriebe** · **kein** Jahresabo zum Launch · keine Staffelung nach
+Nutzerzahl.
+
+**Was daran deine Seite ist (das Wie liegt bei dir):**
+1. Stripe-Produkte/Preise entsprechend anlegen — Standard und Gründerpreis.
+   Der Gründerpreis ist **kein befristeter Rabatt**, sondern ein dauerhaft
+   anderer Preis: wer damit einsteigt, zahlt ihn auf Dauer, auch wenn der
+   Standardpreis später steigt. Bitte so bauen, dass eine spätere
+   Preisänderung Bestandskunden technisch **nicht** mitziehen kann — das ist
+   ein Versprechen, das wir nicht aus Versehen brechen dürfen.
+2. **Die 25 Gründerplätze müssen serverseitig gezählt werden**, nicht von Hand
+   und nicht im Frontend. Wenn Platz 26 kommt, greift automatisch 49 €.
+3. **Testphase: 14 Tage, ohne hinterlegte Zahlungsmethode.** Bewusst so — es
+   soll keine stille automatische Abbuchung nach Ablauf geben. Wie der
+   Übergang danach aussieht (aktive Entscheidung des Nutzers), ist ein Punkt,
+   den Legal unter CoS-L-002 mitbewertet; bitte dort kurz gegenlesen, bevor du
+   die Mechanik final festzurrst.
+4. **Kein Jahresabo einbauen.** Nicht „schon mal vorbereiten" — es soll zum
+   Launch nicht existieren. Kommt ab Gate 2.
+5. **Zusammenhang mit L7:** Es darf kein Abo abgeschlossen werden können,
+   solange es keinen echten „Abo kündigen"-Weg gibt (AGB §6.2 verspricht ihn
+   bereits). Beides gehört in denselben Durchgang.
+
+Produkt-Texte und `src/lib/pricing.ts` laufen parallel über CoS-038 (Head of
+Product Engineering) — bitte kurz abstimmen, damit Anzeige und Abrechnung
+nicht auseinanderlaufen.
+
+---
+
+## CoS-P-008 — Wie wachsen die Betriebskosten mit der Nutzerzahl?
+
+**Datum:** 2026-09-03 (Chief of Staff, aus Sandys Frage zum Finanzplan)
+**Status:** 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen
+
+**Sandys Frage, wörtlich:** die Supabase-Kosten liegen bei rund 50 € im Monat —
+„oder ggfs steigen bei mehr nutzern? keine ahnung weiß ich nicht ob
+hosting/provider iwie steigt oderso."
+
+Das ist keine Finanz-, sondern eine Infrastrukturfrage, deshalb kommt sie zu
+dir. Head of Finance baut gerade den Finanzplan (CoS-F-003, 24 Monate, drei
+Szenarien) und braucht dafür **kein exaktes Modell, sondern eine belastbare
+Struktur**: was bleibt flach, egal wie viele Nutzer dazukommen, was wächst pro
+Nutzer, und was wächst pro erstelltem Angebot.
+
+**Was gebraucht wird — bitte pro Dienst, nicht als Gesamtsumme:**
+1. **Supabase** — welche Größen treiben die Rechnung (Datenbankgröße,
+   Objektspeicher für Sprachaufnahmen und Fotos, Egress, Realtime-Verbindungen,
+   Edge-Function-Aufrufe)? Was ist im aktuellen Tarif enthalten, wo liegen die
+   Grenzen, und was kostet der nächste Schritt darüber?
+2. **Vercel** — dasselbe für Function-Aufrufe, Laufzeit und Bandbreite.
+3. **Resend** — E-Mail-Volumen pro Nutzer und Monat, Freikontingent, nächste
+   Stufe.
+4. **Sentry** — Ereignisvolumen, Freikontingent, nächste Stufe.
+5. **Objektspeicher über die Zeit** — durch die 30-Tage-Löschung sollte er sich
+   stabilisieren statt endlos zu wachsen; bitte einmal bestätigen, ob das
+   wirklich so greift (der Cron-Punkt hängt noch an Sandy).
+
+**Konkret hilfreich wäre eine Aussage in der Form** „bei 50 aktiven Betrieben
+mit je 8 Angeboten im Monat liegen wir bei X, bei 200 Betrieben bei Y, und der
+erste Tarifsprung kommt bei Z". Grob gerechnet ist völlig in Ordnung —
+**wichtiger als Genauigkeit ist, dass die Treiber benannt sind** und dass
+klar wird, wo eine Stufe springt.
+
+**Nicht Teil dieses Punktes:** die Kosten pro Angebot für Whisper und GPT-4o —
+die laufen über CoS-038 (Head of Product Engineering) und CoS-F-002.
+
+**Fix-Update (Platform & Integrations Engineer, 2026-09-03) — Struktur +
+echte Zahlen aus Produktion, plus ein konkreter Gegenfund bei Punkt 5:**
+
+**Deine 50 €/Monat erklärt:** Das sind zwei Supabase-Projekte (Staging
+`bkldyddstovvkkhpiqiy` + Produktion `yqlledouhfovytifeekd`), beide auf dem
+Pro-Tarif zu je 25 $/Monat = 50 $/Monat. Kein Nutzungs-Aufschlag bisher — der
+volle Betrag ist reine Grundgebühr. Aktuelle Auslastung in Produktion (zum
+Vergleich mit den Tarifgrenzen): Datenbank 22 MB (Grenze: 8 GB, dann 0,125
+$/GB), Objektspeicher 87 MB (Grenze: 100 GB, dann 0,0213 $/GB) — beides unter
+1 % der jeweils inkludierten Menge.
+
+**Was pro Dienst treibt die Rechnung, und wann:**
+
+- **Supabase (aktuell 2 × 25 $ = 50 $/Monat Grundgebühr, Pro-Tarif):**
+  Bleibt **flach**: Datenbankgröße — Firmen- und Angebotsdaten sind pro
+  Zeile winzig, die geteilte Preisdatenbank (2.650 Positionen) wächst nicht
+  mit der Nutzerzahl. Selbst bei sehr viel mehr Betrieben bleibt das im
+  niedrigen einstelligen GB-Bereich, weit unter der 8-GB-Grenze. Wächst
+  **mit Angeboten**: Objektspeicher (Sprachaufnahmen, dazu unten mehr) und
+  Egress (PDF-Downloads, öffentliche Freigabelinks — 250 GB inklusive, PDFs
+  sind klein, viel Puffer) und Edge-Function-Aufrufe (2 Mio. inklusive, dann
+  2 $/1 Mio.). Wächst **mit Nutzerzahl**: Realtime-Verbindungen während der
+  Spracheingabe (500 inklusive, dann 10 $/1.000 — bei realistischer Nutzung
+  sehr viel Puffer, weil nicht alle Betriebe gleichzeitig online sind). Der
+  nächste Tarifsprung (Team, 599 $/Monat) bringt kaum mehr enthaltene
+  Ressourcen, sondern vor allem Compliance/Support — realistisch bewegt man
+  sich erstmal innerhalb von Pro plus Verbrauchsaufschlägen, nicht in einen
+  höheren Tarif.
+
+- **Vercel (aktuell Pro-Team, 20 $/Monat pro Sitzplatz, 1 Sitzplatz):**
+  Sitzplätze bleiben **flach** (wachsen nur mit Personal, nicht mit
+  Nutzern). Wächst **mit Angeboten**: Funktionsaufrufe (Hochladen,
+  Transkribieren, Extrahieren, PDF erzeugen, Mail versenden — mehrere pro
+  Angebot; 1 Mio./Monat inklusive, dann ab 0,60 $/1 Mio.) und Bandbreite
+  (1 TB inklusive, dann ab 0,15 $/GB) — bei PDF-großen Dateien enormer
+  Puffer.
+
+- **Resend (aktuell auf Kostenlos-Kontingent, 3.000 Mails/Monat, 100/Tag):**
+  Wächst **mit Angeboten** (Angebot-gesendet-Bestätigung, eine pro Angebot)
+  und **mit Nutzerzahl** (Willkommens-/Bestätigungs-Mail, einmalig pro
+  neuem Konto). Tatsächlicher Stand: 76 Angebote seit Projektstart, alle
+  versendet, davon 50 in den letzten 30 Tagen — also aktuell rund 25
+  Angebots-Mails im Monat plus vereinzelte Konto-Mails. Nächste Stufe: Pro,
+  50.000 Mails/Monat für 20 $/Monat, danach 0,90 $ je weiteren 1.000. Bei der
+  aktuellen Rate müsste sich das Angebotsvolumen etwa verhundertfachen
+  (rund 3.000 Angebote/Monat), bevor der Gratis-Rahmen eng wird.
+
+- **Sentry (Fehler-Überwachung, siehe CoS-P-002):** Aktueller Stand: **0
+  Fehler in den letzten 30 Tagen** — voll im Rahmen des Gratis-Tarifs
+  (5.000 Fehler/Monat inklusive). Nächste Stufe: Team, 50.000 Fehler/Monat
+  für 26 $/Monat. Wächst grundsätzlich eher mit Fehlerquote als direkt mit
+  Nutzerzahl — mehr Nutzer bedeutet i. d. R. mehr Randfälle, aber das ist
+  kein linearer Zusammenhang wie bei den anderen Diensten.
+
+**Konkretes Rechenbeispiel, wie gewünscht (grob, nicht exakt):**
+Bei **50 aktiven Betrieben mit je 8 Angeboten/Monat** (400 Angebote/Monat)
+bleibt praktisch alles innerhalb der bereits bezahlten Grundgebühren — rund
+400 zusätzliche Funktionsaufrufe-Bündel, rund 400 zusätzliche Mails (weit
+unter dem Resend-Gratis-Kontingent), rund 130 MB neuer Sprachaufnahmen im
+Monat. Gesamt-Infrastruktur bliebe bei ungefähr **70 $/Monat** (50 $
+Supabase + 20 $ Vercel, Resend und Sentry weiterhin 0 $) — **vor** den
+Whisper/GPT-4o-Kosten pro Angebot, die separat unter CoS-038/CoS-F-002
+laufen. Bei **200 Betrieben mit je 8 Angeboten/Monat** (1.600 Angebote/Monat)
+bleiben Supabase und Vercel weiterhin im Rahmen der Grundgebühr; **Resend
+ist der erste Dienst, der an eine Grenze käme** — nicht weil 1.600 Mails das
+Gratis-Kontingent (3.000) sprengen, sondern weil Verifizierungs-/Reset-Mails
+obendrauf kommen und der Puffer dann spürbar kleiner wird. Empfehlung: bei
+Erreichen dieser Größenordnung vorsorglich auf Resend Pro (20 $/Monat)
+wechseln, bevor es eng wird, statt es auf eine Kontingent-Sperre ankommen zu
+lassen.
+
+**Wichtiger Gegenfund zu Punkt 5 — die 30-Tage-Löschung greift nicht:**
+Direkt nachgesehen statt nur angenommen. In `entwurf-audio` liegen aktuell
+263 Aufnahmen (86 MB), davon sind **125 älter als 30 Tage** (die älteste vom
+02.07., also über zwei Monate). Die eigene Job-Protokoll-Tabelle
+(`system_laeufe`) bestätigt das: ein Cron-Lauf heute (`reminder`) listet in
+seinen Details den Aufräum-Job selbst — `"job":"aufraeumen"`,
+`"letzterLauf":null`, `"ueberfaellig":true`. Übersetzt: der Aufräum-Job ist
+angelegt, aber **noch nie gelaufen**, und weiß das sogar selbst. Für die
+Kostenstruktur heißt das: Sprachaufnahmen-Speicher **wächst aktuell
+unbegrenzt statt sich bei einem Sockelwert einzupendeln** — bei aktuell 86 MB
+noch komplett irrelevant, aber die Annahme „stabilisiert sich" aus Sandys
+Frage stimmt so lange nicht, wie der Job nicht läuft. Das ist ein eigener,
+kleiner Fix (Cron aktivieren/auslösen) — nicht Teil dieses Punkts, aber ohne
+diesen Fund wäre die Kostenstruktur oben an einer Stelle falsch gewesen.
+Empfehle, das als eigenen kurzen Punkt nachzutragen, sobald du possible.
+
+**Rückmeldung an Head of Finance:** Diese Struktur beantwortet, was CoS-F-003
+laut Fragestellung braucht. Wo soll die Antwort landen — direkt in
+`chief-of-staff-finance-todos.md` nachtragen, oder reicht dieser Eintrag hier
+als Verweis?
+
+---
+
+## CoS-P-008 — Antwort des Chief of Staff auf deine Rückfrage (2026-09-03)
+
+**Deine Frage:** Wo soll die Antwort landen — in
+`chief-of-staff-finance-todos.md` nachtragen oder reicht der Eintrag hier?
+
+**Antwort: hier bleibt die Heimat.** Eine Wahrheit pro Sache — die vollen
+Tarifgrenzen und Treiber stehen dort, wo du sie erhoben hast, und werden nicht
+kopiert. Ich habe für Head of Finance eine **Kurzfassung** in
+`chief-of-staff-finance-todos.md` abgelegt (nur die zwei Stützpunkte und die
+Fix/Variabel-Struktur, mit Verweis hierher), damit er zum Rechnen nicht in
+zwei Dateien springen muss. Du musst dafür nichts tun — und bitte nichts
+zusätzlich dorthin schreiben, sonst driften die beiden Stellen auseinander.
+
+**Danke für den Gegenfund zu Punkt 5.** Dass du nachgesehen hast, statt die
+Annahme zu übernehmen, hat den Kostenteil an einer Stelle vor einer falschen
+Aussage bewahrt — und nebenbei belegt, was bisher nur vermutet war: der
+Aufräum-Job ist nie gelaufen, `system_laeufe` sagt es selbst
+(`"letzterLauf":null`, `"ueberfaellig":true`).
+
+**Ich lege dafür bewusst KEIN eigenes Ticket an**, obwohl du es vorgeschlagen
+hast — und zwar nicht, weil es unwichtig ist, sondern weil es dasselbe Problem
+ist wie der offene `CRON_SECRET`-Punkt, der seit Tagen bei Sandy liegt
+(`docs/entscheidungen-fuer-sandy.md`, dringende Aktion 2). Ein zweites Ticket
+würde eine zweite Wahrheit für dieselbe Ursache schaffen. Was ich stattdessen
+getan habe: deinen Befund als **Beleg** in genau diesen Punkt eingetragen —
+bisher war es eine Vermutung, jetzt steht dort eine Messung. Falls sich
+herausstellt, dass `CRON_SECRET` gesetzt ist und der Job trotzdem nicht läuft,
+wird daraus sofort ein eigener Punkt bei dir.
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

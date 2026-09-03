@@ -38,6 +38,8 @@ schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-L-003 | Reihenfolge Gewerbeanmeldung / UG-Gründung — kein Gewerbe angemeldet, erster zahlender Kunde rückt näher | 🟡 Reihenfolge geliefert (Fix-Update am Dateiende): erst Einzelunternehmen anmelden, dann UG, 6–8 Wochen bis erster Kunde; drei Steuerberater-Fragen formuliert | Sandy direkt, 2026-09-03 |
+| CoS-L-002 | Neues Preismodell rechtlich absichern: Preisangaben B2B, Umsatzsteuer/Kleinunternehmer, AGB-Preis- und Kündigungspassagen, Bestandsschutz Gründerpreis | ❌ offen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-L-001 | Erstauftrag: Bestandsaufnahme + Lückenanalyse (Datenschutz, AGB, KI-Kennzeichnung, Gewerke-Recht) | 🟡 Bericht liegt vor (`docs/legal-001-bestandsaufnahme.md`), 8 Gate-1-Punkte + 4 Entscheidungen für Sandy (S-1 bis S-4) — noch nichts umgesetzt | Sandy direkt im Chat, 2026-09-01 |
 
 ---
@@ -1355,6 +1357,267 @@ richtig, weil die Anbindung im Code existiert und mit der Aktivierung greift.
 Aber es heißt, dass vor dem ersten zahlenden Kunden noch ein Schritt fehlt, der
 nicht im Code liegt. Gehört zu Platform & Integrations Engineering bzw. Finance,
 nicht zu mir — ich melde es nur, weil ich zufällig draufgeschaut habe.
+
+---
+
+## CoS-L-002 — Neues Preismodell rechtlich absichern
+
+**Datum:** 2026-09-03 (Chief of Staff, nach Sandys Preisentscheidung)
+**Status:** ❌ offen
+**Heimat der Entscheidung:** `docs/preismodell.md`
+
+**Sandy hat am 03.09.2026 entschieden:** 49 € netto/Monat pro Betrieb,
+unbegrenzt Angebote, monatlich kündbar · kein Dauer-Gratis-Tarif, stattdessen
+14 Tage voller Test ohne Kreditkarte · **Gründerpreis 29 €/Monat dauerhaft für
+die ersten 25 zahlenden Betriebe** · kein Jahresabo zum Launch · keine
+Staffelung nach Nutzerzahl.
+
+**Vier Fragen, bei denen ich deine fachliche Einschätzung brauche** (ich
+formuliere bewusst nur die Fragen, nicht die Antworten):
+
+1. **Preisdarstellung.** Sandy ist aktuell Kleinunternehmerin, die Kunden sind
+   ausschließlich Unternehmer (die separate Unternehmer-Checkbox nach §14 BGB
+   ist live). Wie werden 49 € auf Landingpage, im Onboarding-Plan-Fenster und
+   auf der Rechnung korrekt ausgewiesen, solange die Kleinunternehmerregelung
+   gilt — und was ändert sich in dem Moment, in dem sie nicht mehr gilt?
+   Head of Product Engineering wartet unter CoS-038 auf genau diese
+   Formulierung und soll sie ausdrücklich nicht selbst erfinden.
+2. **Kleinunternehmerregelung — Rahmen einordnen, nicht entscheiden.** Seit
+   2025 gilt: 25.000 € Vorjahr / 100.000 € laufendes Jahr, jeweils netto. Bei
+   49 € reichen rund **43 zahlende Betriebe im Jahresdurchschnitt**, um die
+   25.000 € zu reißen. Meine Überlegung war, von Anfang an auf die
+   Kleinunternehmerregelung zu verzichten, weil die Kunden ohnehin
+   vorsteuerabzugsberechtigt sind und man sich damit einen späteren
+   Preissprung und eine AGB-Änderung spart. **Das ist am Ende eine
+   Steuerberater-Entscheidung** — ich brauche von dir nur die rechtliche
+   Einordnung, was das für AGB, Rechnungsstellung und Preisangaben jeweils
+   bedeutet, damit Sandy mit einer sauberen Frage zum Steuerberater geht.
+3. **AGB.** Die Preis- und Kündigungspassagen bilden das alte Modell ab
+   (u. a. §6.2, siehe auch L7 — der versprochene Kündigen-Button existiert
+   technisch noch nicht). Was muss angepasst werden für: monatliche
+   Kündbarkeit, Wegfall des Gratis-Tarifs, 14-tägige Testphase ohne
+   Kreditkarte, **dauerhafter Bestandsschutz des Gründerpreises**, und eine
+   Preisanpassungsklausel für künftige Erhöhungen bei Neukunden?
+4. **Testphase.** 14 Tage voller Funktionsumfang ohne hinterlegte
+   Zahlungsmethode, bewusst **ohne** stille automatische Umwandlung in ein
+   bezahltes Abo. Was muss dazu wo kommuniziert werden, und gibt es dabei
+   etwas, das im B2B anders zu behandeln ist als im B2C? Platform baut die
+   Mechanik unter CoS-P-007 und liest hier gegen.
+
+---
+
+## CoS-L-003 — Reihenfolge Gewerbeanmeldung / UG-Gründung
+
+**Datum:** 2026-09-03 (Chief of Staff)
+**Status:** 🟡 Reihenfolge geliefert (Head of Legal, 03.09.) — Fix-Update am Dateiende
+
+**Neue Information von Sandy (03.09.2026):** Es ist **bis heute kein Gewerbe
+angemeldet.** In den Finance-Unterlagen stand das seit dem 19.08. als
+Randnotiz; durch die Preisentscheidung vom selben Tag ist es jetzt ein
+zeitkritischer Punkt geworden.
+
+**Warum es dringend wird:** Der Preis steht (`docs/preismodell.md`), damit
+rückt der erste zahlende Kunde näher. Deine eigene Empfehlung aus S-4 lautet,
+die UG **vor dem ersten zahlenden Kunden** zu gründen (§26 HGB, sonst haftet
+sie fünf Jahre lang privat für Altverbindlichkeiten weiter).
+
+**Meine Frage an dich — bewusst als Reihenfolge-Frage, nicht als
+Kostenfrage:** Was ist der saubere Weg von „kein Gewerbe" zu „UG mit erstem
+zahlendem Kunden"?
+
+1. Jetzt als Einzelunternehmerin anmelden und später in die UG überführen —
+   oder direkt die UG gründen und nur deren Gewerbe anmelden?
+2. Was bedeutet die jeweilige Variante für die bereits angefallenen Kosten
+   (17 erfasste Belege seit Mai, aktuell als vorweggenommene Betriebsausgaben
+   geführt)? Gehen die bei einer direkten UG-Gründung verloren oder lassen sie
+   sich einbringen?
+3. Gibt es einen Punkt, ab dem eine Anmeldung überfällig ist — sie arbeitet
+   seit Juni an dem Produkt und hat laufende Kosten, aber noch keine Einnahmen?
+4. Welche Schritte müssen **vor** dem ersten zahlenden Kunden abgeschlossen
+   sein, und welche dürfen danach kommen?
+
+**Bitte als Reihenfolge mit Zeitpunkten liefern**, nicht als Aufzählung von
+Optionen — Sandy soll daraus eine Entscheidung treffen können, ohne selbst
+abwägen zu müssen, was zuerst kommt. Wo es eine Steuerberater-Frage ist, sag
+das ausdrücklich; sie hat noch keinen, und ein Termin steht ohnehin an.
+
+**Für den Finanzplan (CoS-F-003) relevant:** Head of Finance braucht deine
+Antwort, um die Rechtsform-abhängigen Kosten überhaupt einordnen zu können —
+eine UG bilanziert, ein Einzelunternehmen macht eine EÜR, das ist beim
+Steuerberater ein dauerhafter Unterschied. Solange deine Antwort fehlt, führt
+er beides als Variante.
+
+---
+
+## Fix-Update CoS-L-003 — Reihenfolge Gewerbeanmeldung / UG-Gründung (Head of Legal & Compliance, 2026-09-03)
+
+Antwort als Reihenfolge mit Zeitpunkten, wie gewünscht. Steuerberater-Fragen
+sind ausdrücklich markiert — es sind drei, und sie sind konkret genug, dass
+der Termin damit produktiv wird.
+
+**Vorbehalt:** Die Reihenfolge ist Recht, die Behandlung der bisherigen Kosten
+ist Steuer. Für Letzteres gebe ich meine Einschätzung, aber die Entscheidung
+gehört der Steuerberaterin.
+
+### Die Reihenfolge
+
+| Wann | Was | Wer |
+|---|---|---|
+| **Diese Woche** | Gewerbe als Einzelunternehmerin anmelden (online, Berlin, ~26 €) | Sandy, 20 Minuten |
+| **Diese Woche** | Steuerberater-Termin buchen, mit den drei Fragen unten | Sandy |
+| **Binnen 4 Wochen ab Anmeldung** | Fragebogen zur steuerlichen Erfassung über ELSTER (§ 138 AO), Kleinunternehmerregelung ankreuzen | Sandy, ggf. mit Steuerberaterin |
+| **Nach dem Steuerberater-Termin** | UG gründen: Musterprotokoll, 1.000 € Stammkapital, Notar | Sandy |
+| **Zwischen Notar und HR-Eintragung** | Geschäftskonto für die UG eröffnen, Stammkapital einzahlen — **muss vor der Handelsregister-Anmeldung passiert sein** | Sandy |
+| **Ab HR-Eintragung** (2–4 Wochen nach Notar) | Gewerbe für die UG anmelden, Fragebogen Finanzamt für die UG, IHK | Sandy |
+| **Ab HR-Eintragung** | Alles auf die UG umstellen — Liste unten | Legal + Platform + Product Engineering |
+| **Danach** | Einzelunternehmen abmelden | Sandy, 10 Minuten |
+| **Erst dann** | erster zahlender Kunde — er schließt mit der UG | — |
+
+**Realistische Gesamtdauer: 6–8 Wochen** vom heutigen Tag bis zum ersten
+Kunden, wenn der Steuerberater-Termin in zwei Wochen liegt. Das ist der
+Zeitrahmen, den Head of Finance für CoS-F-003 braucht.
+
+### Frage 1 — Erst Einzelunternehmen, dann UG? Oder direkt UG?
+
+**Erst Einzelunternehmen anmelden, dann UG gründen.** Drei Gründe, in dieser
+Gewichtung:
+
+1. **Es entspricht dem, was tatsächlich der Fall ist.** Sandy betreibt seit
+   Juni faktisch ein Gewerbe — sie entwickelt, sie hat laufende Kosten, es gibt
+   eine Landingpage mit Angebot. Das Steuerrecht schaut auf die Tatsachen, nicht
+   auf die Anmeldung. Das Einzelunternehmen existiert bereits; die Anmeldung
+   holt nur die Formalie nach. Sie **nicht** anzumelden, weil in sechs Wochen
+   eine UG kommt, verlängert den überfälligen Zustand um genau diese sechs
+   Wochen.
+2. **Es sichert die 17 Belege.** Dazu Frage 2.
+3. **Es kostet fast nichts.** 26 € und 20 Minuten online. Die spätere Abmeldung
+   ist ein Formular. Die IHK-Mitgliedschaft, die dadurch ausgelöst wird, ist für
+   Existenzgründer und bei geringem Gewerbeertrag regelmäßig beitragsfrei.
+
+**Was das mit meiner S-4-Empfehlung macht:** Nichts — sie bleibt. Meine
+Warnung vor § 26 HGB betraf **Verbindlichkeiten**, die vor einem
+Rechtsformwechsel entstehen. Ohne Kunden gibt es keine. Solange der erste
+zahlende Kunde mit der UG abschließt, entsteht durch die Zwischenzeit als
+angemeldete Einzelunternehmerin kein Nachhaftungsproblem. (§ 25 HGB greift
+ohnehin nicht: Ein nicht im Handelsregister eingetragenes Kleingewerbe ist kein
+Handelsgeschäft unter einer Firma.)
+
+**Das Gegenargument, ehrlich:** Zwei Anmeldungen, zwei Fragebögen beim
+Finanzamt, eine Abmeldung — das ist Bürokratie für sechs Wochen
+Einzelunternehmen. Ein Steuerberater könnte sagen, das sei überflüssig. Dann
+ist das eine vertretbare Abweichung. Mein Grund, es trotzdem zu empfehlen,
+ist Frage 2.
+
+### Frage 2 — Was passiert mit den 17 Belegen seit Mai?
+
+**Sie gehen nicht verloren — aber sie gehören zum Einzelunternehmen, nicht zur
+UG.** Das ist der Kern, und es ist der Grund für die Reihenfolge oben.
+
+Eine UG ist ein eigener Steuerpflichtiger. Kosten, die Sandy persönlich vor
+der Gründung getragen hat, sind **nicht** Betriebsausgaben der UG. Das
+Musterprotokoll erlaubt der UG sogar nur, Gründungskosten bis **300 €** zu
+übernehmen — alles andere bleibt bei der Gründerin.
+
+Beim Einzelunternehmen dagegen sind es **vorweggenommene Betriebsausgaben**:
+Kosten vor der ersten Einnahme, mit klarem Bezug zum künftigen Betrieb. Die
+sind abzugsfähig und erzeugen einen Verlust, der mit anderen Einkünften
+verrechnet oder vorgetragen werden kann. Deshalb ist die Anmeldung als
+Einzelunternehmerin **rückwirkend auf den tatsächlichen Beginn** (Juni) der
+Weg, die Belege dort zu verankern, wo sie steuerlich am besten stehen.
+
+**➜ Steuerberater-Frage 1, die wichtigste:** *„Ich habe seit Mai rund 17
+Belege als vorweggenommene Betriebsausgaben eines Einzelunternehmens, das nie
+Einnahmen haben wird, weil die UG den Betrieb übernimmt. Wie stelle ich
+sicher, dass der Verlust anerkannt wird — als Aufgabeverlust, als Einbringung,
+oder anders?"* Das Risiko, das dahintersteht: Ein Einzelunternehmen, das nur
+Verluste hatte und nie Einnahmen, kann vom Finanzamt als ohne
+Gewinnerzielungsabsicht eingestuft werden. Die Steuerberaterin weiß, wie man
+das sauber löst — aber sie muss es **vor** der UG-Gründung wissen, nicht
+danach.
+
+**➜ Steuerberater-Frage 2:** *„Die Software ist selbst entwickelt und steht in
+keiner Bilanz (§ 5 Abs. 2 EStG). Muss sie förmlich in die UG eingebracht
+werden, oder kann die UG sie einfach nutzen?"* Hier hängt etwas Praktisches
+dran: Wenn die Antwort „förmlich einbringen" lautet, ist das eine
+**Sachgründung** — und die geht nicht per Musterprotokoll, sondern braucht
+Sachgründungsbericht und Bewertung, was teurer und langsamer ist. Meine
+Einschätzung: Bei einem Produkt ohne Umsatz ist eine Bargründung per
+Musterprotokoll die übliche und vertretbare Lösung, die Software wandert
+faktisch mit. Aber das ist genau die Frage, die man vorher stellt.
+
+### Frage 3 — Ist die Anmeldung überfällig?
+
+**Ja, vermutlich seit dem Sommer — und es ist nicht dramatisch.**
+
+§ 14 GewO verlangt die Anzeige **gleichzeitig mit dem Beginn** des Gewerbes.
+Reine Entwicklung ohne Außenauftritt ist noch Vorbereitung. Sobald man am
+Markt auftritt — Landingpage mit Angebot, Registrierungsmöglichkeit — hat das
+Gewerbe begonnen. Das dürfte spätestens der Fall gewesen sein, seit die
+Landingpage mit Preisen online ist. Parallel verlangt § 138 AO die Anzeige beim
+Finanzamt binnen eines Monats.
+
+**Folgen:** Eine verspätete Anmeldung ist eine Ordnungswidrigkeit (§ 146 GewO),
+theoretisch mit Bußgeld. Bei einer selbst nachgeholten Anmeldung eines
+Betriebs, der noch keinen Euro eingenommen hat, wird in der Praxis
+üblicherweise nichts verhängt. **Entscheidend ist, dass es jetzt nachgeholt
+wird und nicht erst, wenn Einnahmen fließen.** Dann sieht es nach etwas anderem
+aus.
+
+**Bei der Anmeldung das tatsächliche Beginndatum angeben** — Juni 2026, nicht
+das heutige Datum. Das ist ehrlich, und es ist zugleich das Datum, das die
+Belege als Betriebsausgaben verankert. Eine rückdatierte Anmeldung ist nichts
+Ungewöhnliches; das Formular fragt ausdrücklich nach dem Beginn.
+
+### Frage 4 — Was muss vor dem ersten zahlenden Kunden fertig sein?
+
+**Muss vorher — weil der Kunde mit der UG abschließen soll:**
+
+| # | Was | Warum |
+|---|---|---|
+| 1 | UG im Handelsregister eingetragen | Vorher existiert sie nicht als Vertragspartnerin |
+| 2 | **Impressum**: Firma mit Zusatz „UG (haftungsbeschränkt)", Sitz, Registergericht, HRB-Nummer, Geschäftsführerin | § 5 DDG |
+| 3 | **AGB § 1.1**: Vertragspartner von „Sandy Holm, Inhaberin" auf die UG umstellen — neue Version | Sonst schließt der Kunde mit ihr persönlich, und die UG hat keinen Vertrag |
+| 4 | **AVV und Datenschutzerklärung**: Verantwortlicher bzw. Auftragsverarbeiter ist die UG | Art. 13 und 28 DSGVO |
+| 5 | **Stripe-Konto auf die UG** | Das bestehende Konto ist `business_type: individual` und ohnehin noch nicht aktiviert (siehe Nachtrag zu Stufe 3). **Nicht jetzt aktivieren** — erst für die UG, sonst muss es migriert werden |
+| 6 | **Geschäftsbriefe** (§ 35a GmbHG): Firma, Sitz, Registergericht, HRB, Geschäftsführerin auf **allen** Geschäftsbriefen — das schließt E-Mails ein, die das Produkt versendet, und jedes PDF, das Sofortangebot selbst ausstellt | Pflichtangabe, gilt ab Eintragung |
+| 7 | **Versicherung auf die UG** | Sonst Deckungslücke, siehe S-4 Teil 2, Frage 4 an exali |
+| 8 | Kleinunternehmerregelung für die UG **neu** beantragen | Die UG ist ein neuer Steuerpflichtiger — der Status vererbt sich nicht |
+
+**Darf danach kommen:** Abmeldung des Einzelunternehmens (sofort möglich, aber
+nicht kritisch) · Wechsel der Domain-Registrierung und sonstiger Verträge auf
+die UG (Vercel, Supabase, OpenAI — sinnvoll, nicht zwingend, weil das
+Innenverhältnis ist) · Verarbeitungsverzeichnis auf die UG umschreiben (CC-07
+läuft ohnehin).
+
+**Eine Falle, die ich ausdrücklich nennen will — Punkt 2 und 6:** Der Zusatz
+„haftungsbeschränkt" ist keine Formalie. Tritt die UG irgendwo ohne ihn auf —
+in einer E-Mail-Signatur, auf einem Angebot, im Impressum — kann daraus nach
+der Rechtsprechung eine **persönliche Haftung der Handelnden** entstehen
+(Rechtsscheinhaftung). Das wäre genau das, was die UG verhindern soll, an der
+Stelle ausgehebelt, an der man am wenigsten hinschaut. Der Hygiene-Test für
+Rechtstexte sollte nach der Gründung eine Zeile bekommen, die den Zusatz in
+Impressum, AGB, AVV und Datenschutzerklärung prüft.
+
+**➜ Steuerberater-Frage 3:** *„Kleinunternehmerregelung für die UG — sinnvoll,
+oder ist der Verzicht bei B2B-Kunden besser, die Vorsteuer ziehen wollen?"* Das
+hängt mit CoS-L-002 zusammen (Preismodell: 49 € netto) und ist keine
+Rechtsfrage. Ich merke es hier nur an, weil es beim selben Termin gehört.
+
+### Was ich daraus für die anderen Rollen mitnehme
+
+- **Head of Finance (CoS-F-003):** Die UG kommt. Beide Varianten müssen nicht
+  weitergeführt werden. Bilanzierung ab Gründung, EÜR nur für das kurze
+  Einzelunternehmen. Zeitrahmen 6–8 Wochen.
+- **Platform & Integrations Engineering:** Stripe-Konto nicht für das
+  Einzelunternehmen aktivieren — warten, bis die UG steht (CoS-P-007).
+- **Head of Product Engineering:** Nach HR-Eintragung eine Runde Rechtstexte
+  (Punkte 2–4, 6), analog zur G1/G8-Runde. Ich liefere die Formulierungen.
+- **Chief of Staff:** CoS-L-002 (Preismodell) hängt an Steuerberater-Frage 3;
+  ich fange es an, aber die USt-Frage bleibt bis zum Termin offen.
+
+**Status:** 🟡 Reihenfolge geliefert. Umsetzung bei Sandy (Anmeldung,
+Steuerberater-Termin). Rechtstexte für die UG bereite ich vor, sobald der
+Notartermin steht.
 
 ---
 

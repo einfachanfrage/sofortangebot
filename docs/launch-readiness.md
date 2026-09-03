@@ -38,7 +38,7 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **≈ 48,1 %** (Neuberechnung 03.09., Stufe 1 des Fahrplans komplett abgearbeitet) | 47 |
+| **Gate 1** — erste Testnutzer | **≈ 48,5 %** (Neuberechnung 03.09. Abend, Stufe 1 UND Stufe 3 des Fahrplans komplett abgearbeitet) | 47 |
 | **Gate 2** — öffentlicher Launch | **≈ 15 %** (unverändert seit 02.09. Mittag) | 37 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert, keine neue G3-Bewegung) | 11 |
 
@@ -110,6 +110,24 @@ fertig formuliert:
 
 **Damit ist Stufe 1 komplett** — kein offener Punkt mehr in dieser Stufe.
 
+> ✅ **Update 03.09.2026, Abend (Chief of Staff) — Stufe 3 abgeschlossen,
+> live gegengeprüft.** Sandy fragte direkt nach, ob 7.1/7.2 schon durch
+> sind. Ergebnis: ja, beide waren es bereits — Head of Product Engineering
+> hatte sie am 02.09. umgesetzt, Head of Legal hatte sie freigegeben, ich
+> habe zusätzlich beide Live-Seiten direkt abgerufen (`/impressum` und
+> `/datenschutz`) statt der Erledigt-Meldung blind zu vertrauen. **7.1
+> (84→96):** vollständig live, einziger Rest ist die USt-ID (hängt an
+> 11.1, nicht an Legal). **7.2 (78→85):** der ursprünglich gescopte Fix ist
+> live; zwei zusätzliche Funde von Head of Legal (Stripe-Vertragspartner,
+> Kundendaten-Formulierung) sind code-fertig und getestet, aber bewusst
+> noch nicht deployed — Rechtstexte gehen laut Team-Regel nur mit Sandys
+> Freigabe raus. Gate 1 damit von 48,1 % auf 48,5 % (Δ = (12+7)/47 Punkte).
+> **Neuer Nebenfund, bisher nirgends dokumentiert:** Head of Legal ist beim
+> Stripe-Check zufällig aufgefallen, dass das Stripe-Konto noch nicht
+> aktiviert ist (`charges_enabled: false` u. a.) — von mir per direkter
+> Kontoabfrage bestätigt und jetzt unter 4.6 (G2, kein Gate-1-Blocker)
+> dokumentiert.
+
 **Stufe 2 — ein Nachmittag „wirklich benutzen", vieles ist längst gebaut,
 nur nicht live bestätigt:** Sandy: echte Registrierung + Bestätigungsmail
 abwarten (2.2), Passwort-Reset komplett durchklicken (2.3), Zustellung der
@@ -121,9 +139,17 @@ plus den ohnehin fälligen VOB-013-Nachtest (1.1, kleinerer Bump, da die
 Fallbasis der eigentliche Flaschenhals bleibt).
 
 **Stufe 3 — zwei kleine, fertig gescopte Legal-Fixes, je ~30 Min (Head of
-Legal):** Impressum — toten EU-Streitschlichtungs-Absatz raus, veraltete
-Gesetzesverweise aktualisieren (7.1); Datenschutzerklärung — OpenAI und
-Sentry als Auftragsverarbeiter ergänzen (7.2).
+Legal):** ~~Impressum — toten EU-Streitschlichtungs-Absatz raus, veraltete
+Gesetzesverweise aktualisieren (7.1)~~ **✅ erledigt UND live, 02.09./
+bestätigt 03.09.**; ~~Datenschutzerklärung — OpenAI und Sentry als
+Auftragsverarbeiter ergänzen (7.2)~~ **✅ erledigt UND live, 02.09./bestätigt
+03.09.** — beide waren tatsächlich schon vor Sandys Nachfrage fertig, Head
+of Product Engineering hatte sie am 02.09. umgesetzt. **Damit ist Stufe 3
+komplett.** Nebenbei hat Head of Legal beim Gegenchecken zwei weitere,
+kleinere Ungenauigkeiten in der Datenschutzerklärung gefunden und
+korrigiert (Stripe-Vertragspartner, Kundendaten-Formulierung) — die sind
+code-fertig und getestet, aber noch nicht deployed, siehe 7.2 oben und
+`entscheidungen-fuer-sandy.md`.
 
 **Bewusst NICHT auf dieser Liste, weil kein Quick-Win:** 1.1 bleibt trotz
 VOB-013-Fix strukturell begrenzt (28 von angestrebten ~100 Testfällen,
@@ -656,7 +682,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 4.3 | Rechnungen werden erzeugt und sind korrekt | G2 | ⚪ offen — nicht erhoben |
 | 4.4 | Fehlgeschlagene Zahlung und Kündigung sauber behandelt | G2 | ⚪ offen — nicht erhoben |
 | 4.5 | Kündigungsbutton nach § 312k BGB leicht auffindbar und funktionsfähig (gesetzlich seit Juli 2022 Pflicht für Online-Verträge mit Verbrauchern; bei reinem B2B nicht zwingend, aber gute Praxis und ggf. bei Grenzfällen relevant) | G2 | ⚪ offen — nicht erhoben (neu) |
-| 4.6 | Stripe live-scharf konfiguriert, kein Test-Modus-Rest, Webhook-Secret produktionsecht | G2 | ⚪ offen — nicht erhoben (neu) |
+| 4.6 | Stripe live-scharf konfiguriert, kein Test-Modus-Rest, Webhook-Secret produktionsecht | G2 | 🔴 15 % — **neu, 03.09.2026, Nebenfund von Head of Legal (bei der Prüfung der Vertragspartner-Frage entdeckt), vom Chief of Staff per direkter Stripe-Kontoabfrage bestätigt:** `charges_enabled: false`, `payouts_enabled: false`, `details_submitted: false`, `requirements.past_due` listet fehlende Bankverbindung (`external_account`) sowie ausstehende AGB-Bestätigung (`tos_acceptance.date`/`.ip`). Das Stripe-Konto kann aktuell keine echten Zahlungen annehmen. Kein Gate-1-Blocker (betrifft nur echte, bezahlte Nutzer), aber ohne diesen Schritt ist auch bei sonst fertigem Checkout kein Geld einnehmbar — gehört zu Platform & Integrations Engineering bzw. Finance, siehe `chief-of-staff-finance-todos.md` |
 | 4.7 | Eigene Buchhaltung kann E-Rechnungen empfangen (seit 1.1.2025 Pflicht für alle inländischen Unternehmen, ohne Übergangsfrist für den Empfang) | G1 | ⚪ offen — nicht erhoben (neu). Quelle: [IHK Stuttgart, E-Rechnungspflicht B2B](https://www.ihk.de/stuttgart/fuer-unternehmen/recht-und-steuern/steuerrecht/steuermeldungen/e-rechnungen-5864496) |
 | 4.8 | Missbrauchsschutz beim Free-Kontingent (Mehrfachkonten für Gratisnutzung) | G2 | ⚪ offen — nicht erhoben (neu) |
 
@@ -688,8 +714,8 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 7.1 | Impressum vorhanden und korrekt | G1 | 🟢 84 % — **02.09., zwei Funde von Head of Legal, je ~30 Min Fix, noch offen:** toter Absatz zur EU-Streitschlichtungsplattform (seit 20.07.2025 abgeschaltet); veraltete Gesetzes-Verweise (§5 TMG→§5 DDG, §25 TTDSG→§25 TDDDG, beide Gesetze wurden umbenannt) — laut Legal genau das, wonach automatisierte Abmahn-Scanner suchen. USt-ID hängt weiterhin an Abschnitt 11 |
-| 7.2 | Datenschutzerklärung vorhanden (inkl. eingesetzter Dienste) | G1 | 🟢 78 % — **02.09., Fund von Head of Legal, ~30 Min Fix, noch offen:** OpenAI und Sentry fehlen als Auftragsverarbeiter, obwohl beide aktiv genutzt werden. Sonst weiterhin vollständige Liste, Drittlandtransfer-Klausel (SCC + DPF) |
+| 7.1 | Impressum vorhanden und korrekt | G1 | 🟢 96 % — **Update 03.09.2026 (Chief of Staff, live gegengeprüft):** beide Funde vom 02.09. sind umgesetzt UND live (`www.sofortangebot.app/impressum` direkt abgerufen) — toter EU-Streitschlichtungs-Absatz weg, §5 DDG/§7 DDG/Art. 8 DSA-Verweis korrekt, Überschrift „Verbraucherstreitbeilegung" mit §36 VSBG. Einziger offener Rest: USt-ID-Platzhalter in Abschnitt 11, hängt an der noch nicht abgeschlossenen Gewerbeanmeldung (siehe 11.1), kein Legal-Defekt mehr |
+| 7.2 | Datenschutzerklärung vorhanden (inkl. eingesetzter Dienste) | G1 | 🟢 85 % — **Update 03.09.2026 (Chief of Staff, live gegengeprüft):** der ursprüngliche Fund vom 02.09. ist live — OpenAI und Sentry stehen als Auftragsverarbeiter drin, §25 TDDDG vorhanden, Groq komplett raus. **Zwei Nachfunde von Head of Legal sind code-fertig und getestet (`rechtstexte-hygiene.test.ts` 11/11 grün), aber NICHT live:** (1) Stripe-Vertragspartner korrigiert von „Stripe Inc." auf „Stripe Payments Europe, Limited" (Irland) — live steht noch „Stripe Inc.", Abschnitt 4 gruppiert Stripe noch fälschlich unter die Drittland-SCC-Klausel; (2) Kundendaten-Abschnitt (2) enthielt einen inhaltlichen Widerspruch (gleichzeitig „Auftragsverarbeitung nach Art. 28 DSGVO" UND eine eigene „Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO" für dieselben Daten) — Head of Legal hat das korrigiert, live steht aber noch die alte, widersprüchliche Formulierung. Beide Fixes warten auf Sandys Freigabe für den nächsten Deploy, siehe `entscheidungen-fuer-sandy.md` |
 | 7.3 | AGB mit klarem B2B-Ausschluss vom Fernabsatzrecht | G1 | 🟢 90 % — verifiziert: expliziter § 14 BGB-B2B-Ausschluss |
 | 7.4 | DSGVO-Verzeichnis von Verarbeitungstätigkeiten (intern) | G2 | ⚪ offen — nicht erhoben |
 | 7.5 | AVV/DPAs mit Subprozessoren geklärt (OpenAI, Supabase, Stripe, Vercel) | G2 | 🟡 40 % — Datenschutzerklärung nennt AVV-Abdeckung, Details nicht einzeln geprüft |
@@ -712,7 +738,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 8.2 | Race Condition ausgeschlossen (Summe stabil ohne Nutzeraktion) | G1 | 🟡 65 % — App-seitiger Doppel-Tap-Schutz UND (neu, 20.08., laut PM-014) ein DB-seitiges Unique-Constraint (`unique(quote_id, position)`, Migration `20260820103931`) mit Retry-bei-Konflikt sind jetzt beide live, 706/706 Tests grün. Bewusst nicht auf höher gesetzt: ein gezielter Gleichzeitigkeits-Test (zwei echte parallele Anfragen) ist noch nicht gefahren. Siehe Governance-Hinweis oben zu CoS-010 vs. PM-014 |
 | 8.3 | Backups eingerichtet und einmal ein Restore getestet | G2 | 🟡 65 % — tägliches verschlüsseltes Backup läuft produktiv, Restore-Prozess definiert, aber kein protokollierter Restore-Test-Durchlauf sichtbar |
 | 8.4 | Fehler-Monitoring: du merkst, wenn im Betrieb etwas bricht | G2 | 🔴 20 % — Health-Checks (`/api/health*`) und Kosten-Alarm existieren und funktionieren, aber Sentry deckt bisher nur den Kernpfad ab |
-| 8.5 | OpenAI-Kosten pro Angebot bekannt und tragbar; Rate-Limits bedacht | G2 | ⚪ offen — nicht erhoben |
+| 8.5 | OpenAI-Kosten pro Angebot bekannt und tragbar; Rate-Limits bedacht | G2 | 🟢 85 % — **erhoben am 03.09.2026** (Zuarbeit aus CoS-038, Herleitung im Abschnitt „Rohdaten für CoS-F-002" in `docs/chief-of-staff-finance-todos.md`; die dort genannte Datei `docs/ki-kosten-messung.md` existiert nicht — siehe CoS-039): rund **2,2 Cent netto je Angebot** (Whisper 0,0060 $ + GPT-4o-mini 0,0002 $ + GPT-4o 0,0172 $), konservativ 2,5 Cent. Vielnutzer mit 40 Angeboten/Monat ≈ 0,86 € — bei 49 €/29 € klar tragbar. Infrastruktur separat erhoben (CoS-P-008): bei 50 Betrieben ~70 $/Monat, praktisch reine Fixkosten. Rest bis 100 %: Whisper-Anteil ist geschätzt statt gemessen (Aufnahmedauer wurde nie gespeichert, Fehler behoben — eine Nachmessung mit echten Dauern schließt den Punkt), und **Rate-Limits sind weiterhin nicht geprüft** |
 | 8.6 | Domain, SSL, Hosting-Konfiguration sauber | G2 | 🟡 50 % — läuft auf `www.sofortangebot.app` über Vercel, kein separater Sicherheitscheck dokumentiert |
 | 8.7 | Verlässliche Kette Code-Fix → Deploy → tatsächlich live | G1 | 🟢 80 % — **21.08.2026 Abend: CoS-016 geklärt, kein offener Blocker mehr.** War kein System-/Architekturproblem, sondern ein technisches Detail von Head of Product Engineerings Fernzugriff (Git-Lock-Dateien nicht löschbar, nur verschiebbar) — inzwischen selbst gelöst, Sandy hat beide CoS-002-Commits gepusht, `main`/`origin/main` gleichauf. Nicht auf 100 %, weil der anschließende Live-Test zeigte, dass „deployt" allein nicht „korrekt live" garantiert (siehe 1.3) |
 | 8.8 | Status-Seite für Nutzer (zeigt Verfügbarkeit) | G2 | ⚪ offen — nicht erhoben (neu) |

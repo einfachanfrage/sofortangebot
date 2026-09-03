@@ -51,7 +51,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
-| DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | 🟡 entschieden + umgesetzt (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger", zentrale `pricing.ts`) — `/vorschau`-Redirect live bestätigt (Product Designer, 2026-09-03), Landingpage-`PreiseSection` und Onboarding-Plan-Wahl-Fenster aktuell nicht live testbar, siehe Detailabschnitt | Head of Product Engineering |
+| DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | ⚫ **ABGELÖST (2026-09-03)** — die Preisfestlegung dieses Punktes (22 €/17 €/3 frei) gilt nicht mehr. Neue Heimat für alles zum Preis: **`docs/preismodell.md`** (Sandys Entscheidung 03.09.: 49 €/Monat, kein Gratis-Tarif, 14 Tage Test, Gründerpreis 29 € für die ersten 25). Der zweite Teil des Befundes — „Maler & Bodenleger" statt „18 Gewerke" — bleibt gültig und unverändert. Umsetzung der neuen Preise: CoS-038 | Head of Product Engineering |
 | DC-002 | „Angebote" fehlt in Desktop-Sidebar | ✅ behoben + live bestätigt (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | ✅ behoben + live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Status-Sheet auf `sofortangebot.app` live geprüft (Angebot AG-2026-003) — eigene erkennbare Zeile mit Rahmen + Häkchen bei aktivem Status, sauber statt „kein Schwein kommt drauf" | Product Designer (umgesetzt) |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
@@ -143,8 +143,17 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 
 ## DC-001 — Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen
 
-**Datum:** 2026-08-16 · entschieden 2026-08-16
-**Status:** 🟡 entschieden + umgesetzt (2026-08-18) — Live-Nachtest steht aus
+> **⚫ ABGELÖST am 03.09.2026 — bitte hier nicht mehr nachschlagen, wenn es um den Preis geht.**
+> Sandy hat das Preismodell komplett neu entschieden (49 € netto/Monat, kein
+> Dauer-Gratis-Tarif, 14 Tage Test, Gründerpreis 29 € für die ersten 25 Betriebe,
+> keine Staffelung nach Nutzerzahl). **Einzige Heimat dafür ist ab sofort
+> `docs/preismodell.md`** — dort steht Herleitung, Wettbewerbsvergleich und Verlauf.
+> Alles unterhalb dieser Zeile ist historischer Stand vom August 2026.
+> **Weiter gültig ist nur der zweite Teil des Befundes:** ehrlich mit „Maler &
+> Bodenleger" werben statt mit „Alle 18 Gewerke".
+
+**Datum:** 2026-08-16 · entschieden 2026-08-16 · **abgelöst 2026-09-03**
+**Status:** ⚫ abgelöst (Preisteil) / 🟡 Gewerke-Teil unverändert gültig
 
 **Befund:** Der Pro-Plan hat drei unterschiedliche Preise live im Code:
 - Landingpage (`src/components/landing/PreiseSection.tsx`): 29 €/Monat, Free = „5 Angebote kostenlos"

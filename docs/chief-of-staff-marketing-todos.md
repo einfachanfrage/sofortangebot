@@ -44,6 +44,7 @@ CoS-013 in `chief-of-staff-todos.md`.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-M-007 | Go-to-Market-Kanalplan (Kanäle, Anlauf, Stundenaufwand, Sachkosten, Erwartung) als Zulieferung für den Finanzplan | ❌ offen | Chief of Staff / Sandys Rückfrage zu den Szenarien, 2026-09-03 |
 | CoS-M-001 | CI-Bestandsaufnahme + Richtungsvorschlag | ✅ komplett — Sandy hat mit „ok leg die CI fest" final bestätigt, Umsetzungsplan (Schritt 5) steht, Handoff an Product Designer über EX-M-005 | Sandys Ankündigung, 2026-08-17 |
 | CoS-M-002 | Social-Media-Strategie Pre-Launch (Instagram/TikTok) | 🟡 Strategie + erster Content-Kalender fertig, Sandy hat Richtung bestätigt — Umsetzung (Dreh mit Clemens) läuft bei Sandy, eine Abhängigkeit offen (Warteliste-Landingpage) | Sandys Anfrage im Chat, 2026-08-19 |
 | CoS-M-003 | Verbindliche Gestaltungsvorgabe für Instagram/TikTok-Posts, nach Sandys Kritik an ersten fertigen Posts | 🟡 Vorgabe umgesetzt, v1-Posts + zwei v2-Entwürfe in `docs/` gesichert; Sandy hat zusätzlich 9 neue Entwürfe im Chat gezeigt und Chief-of-Staff-Go bekommen — Abgleich mit `social-drafts-v2/` bei Head of Marketing offen | Sandy direkt im Chat, 2026-08-31 |
@@ -547,6 +548,111 @@ G3). **Ein Risiko, das im Auge zu behalten ist:** falls der Rebuild sich bis
 live auf der aktuellen Seite stehen — bitte kurz Bescheid geben, mit welchem
 Zeitrahmen für den Rebuild zu rechnen ist, damit Chief of Staff das
 gegenchecken kann.
+
+---
+
+## CoS-M-007 — Go-to-Market-Kanalplan als Zulieferung für den Finanzplan
+
+**Datum:** 2026-09-03 (Chief of Staff)
+**Status:** ❌ offen
+
+**Anlass:** Head of Finance baut den 24-Monats-Finanzplan (CoS-F-003, drei
+Szenarien). Für die Neukunden-Kurve hat er bisher eine eigene Annahme gesetzt
+(konstant 2/4/8 pro Monat) und das auch so gekennzeichnet. Sandy hat das
+hinterfragt — zu Recht: eine konstante Zahl unterstellt, dass Vertrieb immer
+gleich stark läuft. **Die Kanal-Annahmen gehören zu dir, nicht zu Finance und
+nicht zu mir.**
+
+**Was gebraucht wird — pro Kanal, nicht als Gesamtsumme:**
+
+1. **Welche Kanäle**, in welcher Reihenfolge, und ab wann jeweils. Sandy nennt
+   ausdrücklich zwei, die noch nirgends geplant sind: **Flyer im
+   Malerfachhandel auslegen** (sie nannte Dessau als Beispiel) und ein
+   ernsthafter **Social-Media-Auftritt** (dafür gibt es bereits CoS-M-002 —
+   bitte darauf aufsetzen statt neu anzufangen). Dazu kommt, was aus der
+   Strategie ohnehin gesetzt ist: Content/SEO und Mundpropaganda. Wenn du
+   weitere siehst — Innungen, Fachhandels-Partnerschaften, Handwerkskammer,
+   Fachgruppen — nimm sie auf.
+2. **Verlaufsform je Kanal.** Läuft er sofort oder erst nach Monaten an? Ist es
+   eine Dauerquelle oder ein einmaliger Sprung mit Abklingen? Gibt es eine
+   Obergrenze? Finance braucht das, um daraus eine Kurve statt einer Konstanten
+   zu bauen.
+3. **Aufwand in Stunden pro Monat je Kanal.** Das ist der wichtigste Wert und
+   der, der am ehesten vergessen wird. **Sandy hat einen Vollzeitjob** — die
+   Wachstumsgrenze ist mit hoher Wahrscheinlichkeit ihre Zeit und nicht die
+   Nachfrage. Ein Kanal, der 20 Stunden im Monat kostet, ist keine Option,
+   auch wenn er gut wäre.
+4. **Sachkosten je Kanal.** Flyerdruck, Fotos/Video, Tools, Fahrtkosten,
+   Standgebühren. Es gibt **kein bezahltes Werbebudget** (Festlegung vom
+   18.08., `docs/vision-strategie.md`) — Sachkosten für organische Kanäle sind
+   davon nicht betroffen, aber bitte nichts unterstellen, was einem Werbebudget
+   gleichkäme, ohne es als solches zu benennen.
+5. **Eine ehrliche Erwartung je Kanal**, als Bandbreite: wie viele Betriebe
+   erreicht man realistisch, und wie viele davon werden zahlende Kunden.
+   **Lieber vorsichtig und begründet als optimistisch und rund.** Wenn du für
+   einen Kanal keine belastbare Erwartung hast, schreib das hin — eine
+   ausgewiesene Unsicherheit ist für den Plan mehr wert als eine erfundene
+   Zahl.
+
+**Wichtige Randbedingung:** Es gibt bis heute **keinen einzigen Nutzer** und
+keine Referenz. Der erste Kanal muss ohne Bewertungen, ohne Fallbeispiele und
+ohne Bekanntheit funktionieren. Bitte in der Reihenfolge berücksichtigen —
+was zuerst kommt, ist vermutlich das, was am wenigsten Vertrauen von Fremden
+verlangt.
+
+**Format:** Eine Tabelle reicht völlig, dazu ein paar Sätze Begründung je
+Kanal. Bitte hier eintragen, nicht in einer neuen Datei — Head of Finance holt
+es sich von hier ab (CoS-F-003, Nachtrag 3).
+
+---
+
+## CoS-M-007, Nachtrag — drei Antworten von Sandy (03.09.2026)
+
+Ich habe direkt bei Sandy nachgefragt, bevor du anfängst. Die Antworten ändern
+den Zuschnitt spürbar — bitte den Kanalplan darauf aufbauen, nicht auf
+allgemeinen Annahmen.
+
+**1. Zeitbudget — korrigiert von Sandy am 03.09.2026: 15–20 Stunden pro
+Woche**, neben einem Vollzeitjob, und zwar so **seit rund zwei Monaten
+tatsächlich gelebt**, nicht geschätzt. Das sind grob **65–86 Stunden im Monat
+für alles zusammen** — Produkt, Support, Verwaltung, Vertrieb.
+*(Ich hatte hier zuerst 5–10 Stunden stehen; das war meine Frage, die zu grob
+gestellt war. Bitte ausschließlich mit den 15–20 rechnen.)*
+
+Damit ist deutlich mehr möglich als zunächst angenommen — ein Kanal mit
+regelmäßiger Produktion ist realistisch. **Trotzdem bleibt Zeit die knappste
+Ressource**, aus zwei Gründen: Der größte Teil dieser Stunden fließt heute ins
+Produkt, und nach dem Launch kommt Support obendrauf, der mit jedem Kunden
+wächst. Bitte je Kanal weiterhin den Stundenaufwand ausweisen und lieber zwei
+Kanäle vorschlagen, die durchgehalten werden, als fünf, die nach sechs Wochen
+einschlafen.
+
+**2. Der Malerfachhandel in Dessau ist ein warmer Kontakt** — und deutlich mehr
+als „Flyer auslegen". Sandys Worte: ein guter Bekannter von Clemens arbeitet
+dort, hat **von sich aus angeboten**, Flyer auszulegen, und **kennt die immer
+wiederkehrenden Kunden** — Dessau, nicht Berlin, es sind oft dieselben
+Gesichter.
+
+Meine Einschätzung dazu, die du gern verwerfen kannst, weil Kanalbewertung dein
+Fach ist und nicht meins: **Das ist kein Flyer-Kanal, das ist ein
+Empfehlungskanal mit einem Menschen als Multiplikator.** Der Unterschied ist
+riesig — ein Flyer im Ständer wird überblättert, „der Kollege am Tresen sagt,
+das taugt was" wird ausprobiert. Wenn das stimmt, gehört Dessau nicht als
+Nebenkanal in den Plan, sondern als **erster Kanal überhaupt**, und die Frage
+ist nicht „wie viele Flyer", sondern „was braucht dieser eine Mensch, um es gut
+weiterempfehlen zu können" (etwas zum Zeigen, eine Erklärung in einem Satz, ein
+Grund, warum es ihm selbst nützt). Bitte prüf das und entscheide.
+
+**3. Sandy und Clemens kennen 0 bis 2 Handwerker persönlich**, die als
+Testnutzer in Frage kämen. Es gibt also **kein eigenes Netzwerk**, aus dem die
+ersten Gate-1-Nutzer kommen könnten — außer über Dessau. Das verschärft Punkt 2
+zusätzlich: der warme Kontakt ist nicht einer von mehreren Wegen, er ist
+aktuell der einzige.
+
+**Was ich mir vom Kanalplan erhoffe:** eine ehrliche Reihenfolge unter diesen
+Bedingungen. Nicht „diese acht Kanäle wären gut", sondern „mit 5–10 Stunden die
+Woche und einem warmen Kontakt fängt man hier an, dann kommt das, und das hier
+lohnt sich erst ab X Kunden".
 
 ---
 

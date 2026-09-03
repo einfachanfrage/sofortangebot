@@ -108,6 +108,37 @@ Check-ins Stück für Stück ergänzt werden, statt es zu erfinden:
   eingeplant (weitere Gewerke sollen folgen) — konkrete Reihenfolge/Timing
   bleibt offen, siehe „Was hier noch fehlt" oben.
 
+## Go-to-Market — was wir tatsächlich haben (Stand 03.09.2026)
+
+Ergänzt vom Chief of Staff nach direkter Nachfrage bei Sandy. Diese drei
+Punkte sind Randbedingungen für jede Wachstumsplanung und stehen deshalb hier
+in der Leitplanke, nicht nur in einer Todo-Datei:
+
+- **Zeitbudget: 15–20 Stunden pro Woche** (von Sandy korrigiert am 03.09.2026;
+  eine erste Angabe von 5–10 beruhte auf einer zu grob gestellten Frage des
+  Chief of Staff). Neben einem Vollzeitjob, **seit rund zwei Monaten
+  tatsächlich so gelebt** — also grob 65–86 Stunden im Monat für Produkt,
+  Support, Verwaltung und Vertrieb zusammen. Zeit bleibt die knappste
+  Ressource im Vorhaben — nicht die Nachfrage, nicht das Geld, nicht die
+  Technik —, aber der Spielraum ist deutlich größer als zunächst angenommen.
+  Offen und bewusst nicht beantwortet: ob sich dieses Tempo über 24 Monate
+  halten lässt. Der Finanzplan führt deshalb zwei Kapazitätslinien.
+- **Kein eigenes Handwerker-Netzwerk.** Sandy und Clemens kennen 0 bis 2
+  Handwerker persönlich, die als Testnutzer in Frage kämen.
+- **Ein warmer Kanal, und der ist gut:** Ein guter Bekannter von Clemens
+  arbeitet im Malerfachhandel Dessau, hat von sich aus angeboten, Flyer
+  auszulegen, und kennt die wiederkehrenden Kunden persönlich (Dessau, nicht
+  Berlin — es sind oft dieselben Gesichter). Damit ist das kein Flyer-Kanal,
+  sondern ein Empfehlungskanal mit einem Menschen als Multiplikator.
+
+**Folgerung für die Priorisierung:** Der erste Kanal ist aller Voraussicht nach
+Dessau, nicht Social Media — Social Media bleibt richtig und geplant
+(CoS-M-002), braucht aber Zeit und Reichweiteaufbau, die es beides noch nicht
+gibt. Bewertung und Reihenfolge liegen bei Head of Marketing (CoS-M-007), nicht
+beim Chief of Staff. Gleichzeitig ist die Abhängigkeit von diesem einen Kontakt
+ein **Klumpenrisiko**, das im Finanzplan im vorsichtigen Szenario sichtbar sein
+muss.
+
 ## Wöchentlicher strategischer Check-in
 
 Eingerichtet 18.08.2026: einmal pro Woche ein kurzer Termin NUR auf dieser
