@@ -95,7 +95,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs) |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt |
-| PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
@@ -2893,6 +2893,114 @@ Trigger-Wort, bitte beim Fix zu PM-032 mitprüfen.
 
 **Status PM-034:** ❌ fünf Befunde, davon einer Blocker (Weiter-Button) und
 einer mit Grundsatzfrage an Sandy (Zahlenerkennung „drei fünfzig").
+
+---
+
+### PM-035 — Ist-Ergebnis (Sandy, 2026-09-02)
+
+**Entwurf (netto 1.990,37 €):**
+
+| Raum | Position | Ist | Soll |
+|---|---|---|---|
+| Wohnzimmer | Raummaße | 4,1 × 5,2 m | ✅ exakt |
+| Wohnzimmer | Fertigparkett inkl. 5 % | 22,39 m² | ✅ 22,39 |
+| Wohnzimmer | Trittschalldämmung | 21,32 m² | ✅ Fläche korrekt, aber siehe Befund 4 |
+| Arbeitszimmer | Raummaße | **Boden-/Deckenfläche 14 m²** | ✅ als Fläche geführt, nicht als Kantenlänge |
+| Arbeitszimmer | Fertigparkett inkl. 5 % | 14,70 m² | ✅ 14,70 |
+| Arbeitszimmer | Trittschalldämmung | **fehlt** | ❌ 14,00 m² |
+| Flur | Raummaße | **6 × 1 m** | ❌ 6,00 × 1,20 **plus** 2,00 × 1,20 |
+| Flur | Fertigparkett inkl. 5 % | **6,30 m²** | ❌ 10,08 m² |
+| Flur | Sockelleisten montieren | **13,10 lfdm** | ❌ 15,70 lfdm |
+| Flur | Trittschalldämmung | **fehlt** | ❌ 9,60 m² |
+
+**Befund 1 — Die L-Form verschwindet stumm**
+
+Gesagt: „Der Flur ist L-förmig, einmal sechs Meter mal eins zwanzig und der
+kurze Schenkel zwo Meter mal eins zwanzig." Angekommen: ein rechteckiger Flur.
+**Der zweite Schenkel taucht nirgends auf** — nicht als Fläche, nicht als
+Rückfrage, nicht als Hinweis.
+
+- Das Wort „L-förmig" steht wörtlich im Transkript, und es gibt im Produkt sogar
+  einen Knopf „📐 Unförmig? Form zeichnen". Der Auslöser wird nicht genutzt: Wer
+  „L-förmig" sagt, müsste genau dorthin geführt werden.
+- **Stiller Verlust:** 2,40 m² Boden. Anders als bei einem Rechenfehler sieht
+  der Handwerker hier gar nichts — es fehlt keine Position, es fehlt ein Stück
+  Raum. Das ist dieselbe Fehlerkategorie wie „5 Positionen erkannt, 4
+  geliefert", nur eine Ebene tiefer.
+- **Mindestanforderung:** Wenn das Tool eine zweite Maßangabe zum selben Raum
+  hört, darf sie nicht verschwinden. Entweder addieren oder nachfragen.
+
+**Befund 2 — „sechs Meter mal eins zwanzig" wird 6 × 1, und ich habe den
+Gegenbeweis im selben Diktat**
+
+Die Breite 1,20 m kommt als **1 m** an. Das ist wieder die Zahlensprechweise,
+diesmal in die andere Richtung als in PM-034: dort wurde „drei sechzig" zu 360,
+hier fällt bei „eins zwanzig" die Nachkommastelle einfach weg.
+
+**Und jetzt der interessante Teil:** Im selben Diktat wurden „fünf zwanzig" →
+5,20 und „vier zehn" → 4,10 **fehlerfrei** erkannt. Es liegt also nicht an der
+Sprechweise als solcher.
+
+**Meine Hypothese, prüfbar:** Es liegt am Wort **„Meter" mitten in der
+Maßangabe.** Vergleich der beiden Formulierungen:
+
+| Fall | Wortlaut | Ergebnis |
+|---|---|---|
+| PM-032 | „Flur, sechs mal eins zwanzig" | ✅ 1,20 m |
+| PM-035 | „einmal sechs **Meter** mal eins zwanzig" | ❌ 1 m |
+
+Gleicher Raum, gleiche Zahl, gleiches Projekt — einmal richtig, einmal falsch.
+Der einzige Unterschied ist die Einheit zwischen den beiden Werten. Für Head of
+Product Engineering ist das eine konkrete, billig testbare Spur: eine Handvoll
+Varianten mit und ohne „Meter" in der Mitte durchspielen.
+
+**Befund 3 — Sockelleisten: falscher Umfang und nur eine von drei Türen**
+
+13,10 lfdm entsprechen 2 × (6,00 + 1,00) − 0,90. Zwei Fehler in einer Zahl:
+
+1. Der Umfang stammt aus dem falschen, rechteckigen Flur (Folge von Befund 1
+   und 2). Richtig wäre der Umfang der L-Form: 18,40 lfm.
+2. **Abgezogen wurde eine Türbreite, obwohl ich „drei Türen gehen da ab"
+   ausdrücklich gesagt habe.** Die Türanzahl aus dem Transkript kommt nicht an;
+   es wird die Standardannahme „eine Tür" benutzt, ohne das als Annahme
+   auszuweisen. Bei einem Flur ist das der unwahrscheinlichste aller Fälle —
+   Flure haben per Definition viele Türen.
+
+Zur Einordnung: Nach heutiger Regel wäre das Soll 15,70 lfdm. Wird VOB-012
+entschieden („nur Öffnungen ab 1,00 m abziehen"), sind es 18,40 lfdm. Beide
+Zahlen liegen weit über den berechneten 13,10.
+
+**Befund 4 — Trittschalldämmung zum dritten Mal nur im ersten Raum**
+
+Wohnzimmer 21,32 m² ✅, Arbeitszimmer und Flur ohne. Damit ist der Befund aus
+PM-032 und PM-033 dreifach belegt und in allen drei Ausprägungen gesehen:
+
+| Fall | Verhalten |
+|---|---|
+| PM-032 | nur erster Raum, dort zufällig richtig — zwei Räume ohne |
+| PM-033 | nur erster Raum, dort **falsch** (Ansage „nur im Flur" ignoriert) |
+| PM-035 | nur erster Raum, dort richtig gerechnet — zwei Räume ohne |
+
+Fehlbetrag hier: 23,60 m² × 4,50 € = 106,20 €. Die Fläche im Wohnzimmer ist
+mit 21,32 m² korrekt ohne Verschnitt gerechnet — die Formel stimmt, sie läuft
+nur genau einmal.
+
+**Was gut lief — und einer davon war mein Hauptverdacht:**
+
+1. **„Das Arbeitszimmer hat vierzehn Quadratmeter" wird als Fläche geführt**,
+   sauber ausgewiesen als „Boden-/Deckenfläche 14 m²", nicht als Kantenlänge.
+   Genau das hatte ich als wahrscheinlichsten Fehler erwartet. Bestanden.
+2. **Zwei von drei Angabearten in einem Diktat korrekt** — Maßpaar und reine
+   Flächenangabe. Nur die zusammengesetzte Form scheitert.
+3. **Sockelleisten nur im Flur**, keine in Wohnzimmer und Arbeitszimmer. Der
+   Ausschluss „in den Zimmern bleiben die alten" wird respektiert — im
+   Gegensatz zu PM-033, wo Sockelleisten gegen eine ausdrückliche Absage
+   erfunden wurden. Der Unterschied zwischen beiden Formulierungen ist einen
+   eigenen Blick wert.
+4. Altbelag-Rückfragen wieder sauber je Raum, alle drei Räume einzeln.
+
+**Status PM-035:** ❌ vier Befunde. Die Flächenangabe-Vielfalt ist zu zwei
+Dritteln bestanden, die L-Form komplett gescheitert.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
