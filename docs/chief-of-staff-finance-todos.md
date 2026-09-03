@@ -42,6 +42,8 @@ mitten in bestehende Abschnitte zu schreiben. Voller Hintergrund: CoS-013 in
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-F-003 | Finanzplan aufstellen: 24 Monate, drei Szenarien — Break-even, Einkommensersatz, Liquidität/Runway | ❌ offen, Auftrag steht | Sandy direkt, 2026-09-03 |
+| CoS-F-002 | Marge und Tragfähigkeit des neuen Preises (49 €/29 €) durchrechnen — inkl. echter Kosten pro Angebot | ❌ offen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-F-001 | Bestandsaufnahme laufende Kosten + Grundgerüst für monatliche Übersicht | 🔵 echte Zahlen drin, 4 Punkte brauchen Sandys Klärung | Sandys Auftrag, 2026-08-19 |
 
 ---
@@ -308,6 +310,476 @@ Postfach (Juli/August, 2026-014/017) sind ebenfalls drin. Datei erneut
 aktualisiert, neu berechnet (0 Formelfehler) und zurückgeschrieben. Damit
 sind von den in Teil 7 neu aufgeworfenen Punkten alle geklärt bis auf die
 UG-Überlegung, die ohnehin eine eigenständige Entscheidung ist.
+
+---
+
+## Rohdaten für CoS-F-002 liegen vor — KI-Kosten je Angebot (2026-09-03)
+
+Head of Product Engineering, Zuarbeit aus CoS-038. Die volle Erhebung steht in
+**`docs/ki-kosten-messung.md`** — hier nur, was du zum Weiterrechnen brauchst.
+
+**Die Zahl: rund 2,2 Cent netto je Angebot.** Zusammensetzung (USD):
+Whisper 0,0060 · Chip-Vorschau (GPT-4o-mini) 0,0002 · volle Extraktion
+(GPT-4o) 0,0172. Ein Angebot besteht im Median aus **einer** Aufnahme und
+**einer** Extraktion (59 Aufnahmen seit August, Mittelwert 1,23 je Angebot).
+
+**Für deinen Vielnutzer-Fall:** 40 Angebote/Monat ≈ **0,86 €**. Selbst ein
+Betrieb, der jede Aufnahme dreimal einspricht (120 Extraktionen), liegt bei
+rund 2,60 € — etwa 5 % des Gründerpreises. **„Unbegrenzt Angebote" scheitert
+nicht an den KI-Kosten.** Ob es an Supabase/Vercel scheitert, ist deine
+Rechnung, nicht meine.
+
+**Drei Warnungen, ohne die die Zahl in die Irre führt:**
+
+1. **Nimm nicht die Spalte `ki_usage.kosten_eur`.** Sie wurde bis Ende Juli
+   mit den Preisen von GPT-4o-mini berechnet, während GPT-4o lief —
+   **15-fach zu niedrig**. Ab August stimmt sie. Alles oben ist aus den
+   Token-Zahlen neu gerechnet, die sind durchgehend verlässlich.
+2. **Der Whisper-Anteil ist geschätzt, nicht gemessen.** Die Aufnahmedauer
+   wurde durch einen Fehler in der Aufnahme-Oberfläche nie gespeichert (alle
+   81 Aufnahmen ohne Dauer), damit war der Whisper-Posten rechnerisch immer
+   exakt 0. Fehler ist gefunden und behoben; die Schätzung stützt sich
+   solange auf die Dateigrößen im Speicher (263 Dateien, Median 291 KB, Opus)
+   und ist mit offengelegter Annahme in der Messdatei hergeleitet. **Wenn du
+   konservativ rechnen willst: 1,5 Minuten statt 1,0 → 2,5 statt 2,2 Cent.**
+3. **Kein versteckter Kostenblock.** Für `matching` und `plausibilitaet` gibt
+   es null Zeilen — die beiden KI-Endpunkte werden von der Anwendung gar nicht
+   aufgerufen. Das Preis-Matching läuft lokal ohne KI.
+
+**Was ich NICHT geliefert habe**, weil es nicht meine Rolle ist: Bewertung,
+Deckungsbeitrag, Break-even. Nur die Messung.
+
+---
+
+## CoS-F-002 — Marge und Tragfähigkeit des neuen Preises durchrechnen
+
+**Datum:** 2026-09-03
+**Status:** ❌ offen
+
+**Hintergrund:** Sandy hat am 03.09.2026 das Preismodell entschieden — 49 €
+netto/Monat pro Betrieb, unbegrenzt Angebote; für die ersten 25 zahlenden
+Betriebe dauerhaft 29 €. Volle Herleitung: `docs/preismodell.md`. Damit hat
+deine Phase-2-Arbeit (Kennzahlen, nicht nur Kosten) zum ersten Mal eine
+belastbare Einnahmenseite.
+
+**Auftrag:**
+1. **Kosten pro Angebot.** Das ist Punkt 8.5 in `docs/launch-readiness.md`
+   („OpenAI-Kosten pro Angebot bekannt und tragbar") und steht dort seit jeher
+   auf „nicht erhoben". Jede Zahl, die bisher irgendwo kursiert, ist geschätzt
+   — auch meine. Die Rohdaten (Whisper + GPT-4o über die volle Pipeline)
+   kommen von Head of Product Engineering, ich habe ihn unter CoS-038 darum
+   gebeten; die Auswertung liegt bei dir.
+2. **Deckungsbeitrag je Kunde** bei 49 € und bei 29 €, gegen die laufenden
+   Fixkosten aus `kostenuebersicht-finance.xlsx`. Achte dabei besonders auf
+   den **Vielnutzer-Fall** (ein Betrieb mit ~40 Angeboten/Monat) — dort
+   entscheidet sich, ob „unbegrenzt Angebote" wirklich tragfähig ist oder ob
+   es irgendwann eine faire Obergrenze braucht.
+3. **Ab wann trägt sich der Betrieb?** Ab welcher Kundenzahl decken die
+   Einnahmen die laufenden Kosten (Supabase steigt spürbar: Mai 25 $ → Juli
+   54 $, dazu Vercel, OpenAI, Anthropic, Resend, Sentry, Domain)?
+4. **Kleinunternehmergrenze.** Seit 2025 gilt 25.000 € Vorjahr / 100.000 €
+   laufendes Jahr (netto). Bei 49 € reichen rund 43 zahlende Betriebe im
+   Jahresdurchschnitt. Bitte rechne durch, ab welchem Monat das bei
+   verschiedenen Wachstumsverläufen realistisch eintritt — Sandy braucht das
+   als Grundlage für ein Steuerberater-Gespräch, das noch vor dem Launch
+   stattfinden soll. Die rechtliche Einordnung dazu läuft parallel über
+   CoS-L-002, die steuerliche Entscheidung trifft der Steuerberater, nicht wir.
+
+**Nicht Teil dieses Auftrags:** Preisempfehlungen. Der Preis ist entschieden.
+Wenn die Rechnung zeigt, dass er nicht trägt, ist das ein Befund an mich —
+dann bringe ich das als neue Entscheidung zu Sandy zurück.
+
+---
+
+## CoS-F-003 — Finanzplan aufstellen
+
+**Datum:** 2026-09-03 (Chief of Staff, direkter Auftrag von Sandy)
+**Status:** ❌ offen — Auftrag steht, siehe Vorbedingungen unten
+
+Sandy möchte einen sauberen Finanzplan. Das ist deine Rolle, nicht meine — ich
+liefere hier nur den Auftrag und die Randbedingungen, damit du nicht das
+Falsche baust. Das Wie liegt bei dir.
+
+### Was der Plan beantworten soll (Sandys Auswahl, drei Fragen)
+
+1. **Wann trägt es sich?** Ab wie vielen zahlenden Betrieben decken die
+   Einnahmen die laufenden Kosten — inklusive Deckungsbeitrag pro Kunde bei
+   49 € und bei 29 €.
+2. **Wann kann Sandy ihre Festanstellung loslassen?** Welcher Umsatz ist
+   nötig, damit sie von Sofortangebot leben kann — nach Steuern, Sozialabgaben
+   und Rücklagen. **Das ist die eigentliche Kernfrage**, siehe die Warnung zur
+   Steuerprogression unten.
+3. **Liquidität & Runway.** Monat für Monat rein/raus: wie viel muss sie bis
+   zum Break-even aus eigener Tasche vorstrecken, und wann wird es eng.
+
+**Nicht Teil des Auftrags:** ein Businessplan-Finanzteil in Bankform. Sandy
+hat das bewusst abgewählt. Wenn du beim Bauen merkst, dass es mit wenig
+Zusatzaufwand mit abfällt, sag Bescheid — aber bau es nicht ungefragt.
+
+### Rahmen
+
+- **Horizont: 24 Monate** (September 2026 bis August 2028). Jahr 1 monatlich,
+  Jahr 2 darf gröber werden.
+- **Drei Szenarien** beim Kundenwachstum: vorsichtig / realistisch /
+  optimistisch. Bitte die Annahme hinter jedem Szenario ausschreiben, damit
+  Sandy sie beurteilen kann, statt einer Zahl vertrauen zu müssen.
+
+### Feste Vorgaben, die du NICHT selbst setzen sollst
+
+- **Der Preis ist entschieden** (Sandy, 03.09.2026, `docs/preismodell.md`):
+  49 € netto/Monat pro Betrieb, unbegrenzt Angebote, monatlich kündbar;
+  **Gründerpreis 29 €/Monat dauerhaft für die ersten 25 zahlenden Betriebe**;
+  14 Tage Test ohne Kreditkarte; **kein Gratis-Tarif**; **kein Jahresabo vor
+  Gate 2**. Du rechnest den Preis durch, du planst ihn nicht. Wenn die
+  Rechnung zeigt, dass er nicht trägt, ist das ein Befund an mich.
+- **Kein bezahltes Werbebudget zum Start** (`docs/vision-strategie.md`,
+  18.08.). Wachstum organisch: Mundpropaganda, Content/SEO, Social Media. Das
+  begrenzt die realistische Wachstumskurve — bitte nicht stillschweigend ein
+  Marketingbudget unterstellen, um die Kurve schöner zu machen.
+- **Keine Personalkosten**, aber ein Kostentreiber, den man leicht übersieht:
+  das Team besteht aus KI-Rollen. Jede neue Rolle erhöht die Anthropic-Kosten,
+  nicht die Lohnkosten. Bei geplantem Team-Ausbau nach Gate 1 gehört das in
+  den Plan.
+
+### Kostenbasis — bitte ziehen, nicht abtippen
+
+Die Fixkosten stehen bereits belastbar in `docs/kostenuebersicht-finance.xlsx`
+(Rechnungsjournal, 17 Belege). Der Plan soll darauf aufsetzen, damit es keine
+zweite, driftende Zahlenwelt gibt — **eine Wahrheit pro Sache.** Ob als
+zusätzliche Blätter in derselben Datei oder als eigene Datei, entscheidest du;
+mein Vorschlag wäre dieselbe Datei, weil das Journal dort liegt.
+
+**Was zusätzlich rein muss und heute noch nirgends steht:**
+
+- **Einmalkosten, absehbar:** UG-Gründung (grob 300–480 € Notar/Handelsregister
+  + praktisch mindestens 1.000 € Stammkapital + ca. 2.000 € Zusatzkosten im
+  ersten Jahr, danach 1.500–2.000 €/Jahr laufend) · IT-Vermögensschaden-
+  Haftpflicht (exali/Markel, 1 Mio. € Deckung — Beitrag noch nicht bekannt,
+  Größenordnung 200–400 €/Jahr war Sandys früherer Stand, bitte als offene
+  Zahl markieren statt zu raten) · DIN-Normtexte ca. 150 € (freigegeben) ·
+  Markenanmeldung DPMA ca. 300 € · Steuerberater · Buchhaltungstool.
+  Quelle für UG und Versicherung: `docs/entscheidungen-fuer-sandy.md`, S-4.
+- **Variable Kosten pro Angebot:** hängt an **CoS-F-002**. Solange die Zahl
+  nicht gemessen ist, bitte als klar markierte Annahme führen, nicht als Fakt —
+  und im Vielnutzer-Fall durchspielen, weil dort „unbegrenzt Angebote" auf die
+  Probe gestellt wird.
+- **Zahlungsgebühren Stripe**, bei 49 € pro Kunde und Monat nicht trivial.
+
+### Zwei Punkte, bei denen ich dich ausdrücklich warne
+
+1. **Steuerprogression.** Sandy ist parallel fest angestellt. Der Gewinn aus
+   Sofortangebot wird oben auf ihr Angestelltengehalt gerechnet und mit dem
+   Grenzsteuersatz besteuert, nicht ab Null. Ein Plan, der den Gewinn wie ein
+   Erstes Einkommen versteuert, zeigt „reicht zum Leben" deutlich zu früh an.
+   Das ist genau die Frage 2 oben — bitte sauber trennen: Phase A (parallel zur
+   Anstellung) und Phase B (Anstellung fällt weg).
+2. **Krankenversicherung.** In Phase B fällt der Arbeitgeberanteil weg und die
+   Beiträge kommen als eigener Posten dazu. Das ist erfahrungsgemäß der größte
+   einzelne Sprung in genau dieser Rechnung und darf nicht fehlen.
+
+**Eine Eingabegröße brauchst du von Sandy selbst:** wie viel Netto sie pro
+Monat braucht, um zu leben. Bitte direkt bei ihr abfragen bzw. ihr eine Zelle
+dafür bauen, in die sie den Wert selbst einträgt — ich habe die Zahl nicht und
+frage sie auch nicht für dich ab.
+
+### Vorbedingungen, die noch offen sind
+
+Zwei Punkte aus CoS-F-001 warten seit dem 19.08. auf Sandy und sind bis heute
+nicht beantwortet — mein Fehler, sie standen nie in
+`docs/entscheidungen-fuer-sandy.md`, das habe ich am 03.09. nachgeholt:
+
+1. Supabase: 5 Projekt-Referenzen in den Rechnungen bei 2 dokumentierten
+   Projekten, Kosten Mai 25 $ → Juli 54 $. Im August-Beleg nur noch 4.
+2. Claude-Pro-Abo über Apple (22 €/Monat): geschäftlich oder privat?
+
+**Fang trotzdem an.** Beides betrifft die Fixkosten in einer Größenordnung von
+wenigen Dutzend Euro im Monat — das verschiebt den Break-even, aber es
+blockiert die Struktur des Plans nicht. Bitte die betroffenen Zellen sichtbar
+als Annahme markieren und nachziehen, sobald die Antworten da sind.
+
+### Wenn du fertig bist
+
+Kurze Rückmeldung hier, plus die **drei Zahlen, die Sandy wirklich braucht**:
+ab wie vielen Kunden trägt es sich · wie viel muss sie bis dahin vorstrecken ·
+ab welchem Umsatz kann sie die Anstellung loslassen. Der Rest ist Beleg.
+
+---
+
+## CoS-F-001 — zwei offene Punkte beantwortet (Sandy, 2026-09-03)
+
+1. **Claude-Pro-Abo über Apple (22 €/Monat): geschäftlich.** Bitte als
+   Betriebskosten führen. Wichtiger Zusatz von Sandy im selben Atemzug: **es
+   ist bis heute kein Gewerbe angemeldet.** Damit sind alle bisherigen Belege
+   vorweggenommene Betriebsausgaben — deine Einordnung vom 19.08. bleibt also
+   richtig, sie gilt jetzt nur für einen längeren Zeitraum als gedacht. Der
+   Anmeldezeitpunkt selbst ist ein offener Punkt bei Sandy (siehe
+   `entscheidungen-fuer-sandy.md`, „Gewerbeanmeldung"); Legal arbeitet unter
+   CoS-L-003 die Reihenfolge Einzelunternehmen/UG aus.
+2. **Supabase-Projekte: erledigt.** Sandy hat die übrigen Projekte selbst
+   gekündigt. Kein Platform-Ticket nötig. Ihre Erwartung für die Zukunft:
+   „bleibt wohl bei ca. 50 € im Monat, oder steigt bei mehr Nutzern?" — genau
+   das ist die zweite Hälfte der Frage und **keine Sandy-Frage**. Ich habe sie
+   an Platform geroutet (**CoS-P-008**, Skalierungs-Kostenmodell). Bitte deren
+   Ergebnis abwarten, bevor du die Betriebskosten im Plan fortschreibst, und
+   bis dahin sichtbar als Annahme führen.
+
+---
+
+## CoS-F-003, Nachtrag 1 (Chief of Staff, 2026-09-03) — Vollständigkeit
+
+Sandy hat nachgeschärft: **„beim Finanzplan soll natürlich ALLES
+mitberücksichtigt werden. auch kosten für anwalt, notar, UG gründung,
+versicherung, kein plan was noch alles?! … deshalb will ich den plan. damit
+alles mit einbezogen wird."**
+
+Das ist die eigentliche Erwartung an diesen Plan: **er soll die Angst nehmen,
+etwas übersehen zu haben.** Ein Plan, der nur die bekannten Tool-Abos
+fortschreibt, erfüllt sie nicht.
+
+Unten steht deshalb mein **Vollständigkeits-Katalog**. Das ist ausdrücklich
+**keine Bewertung und keine Zahlenvorgabe** — die Beträge, die Einordnung und
+was davon überhaupt relevant ist, sind deine Arbeit, nicht meine. Ich liefere
+nur die Liste der Kästchen, damit keins leer bleibt, weil niemand daran
+gedacht hat. **Wo ein Posten für Sofortangebot nicht zutrifft, bitte ihn nicht
+weglassen, sondern mit einer Zeile „trifft nicht zu, weil …" führen** — genau
+das ist es, was Sandy Sicherheit gibt.
+
+### A — Gründung & Rechtsform (einmalig)
+- Gewerbeanmeldung (Berlin)
+- UG: notarielle Beurkundung, Handelsregister-Anmeldung und -Eintragung,
+  Stammkapital, Musterprotokoll vs. individuelle Satzung
+- Anwaltskosten für Satzung/Gesellschaftsvertrag, falls kein Musterprotokoll
+- Eröffnungsbilanz der UG (Steuerberater — UG ist bilanzierungspflichtig,
+  nicht EÜR; das ist ein dauerhaft höherer Posten als heute)
+- Geschäftskonto (bei einer UG zwingend, laufende Kontoführung)
+- IHK-Beitrag (Pflichtmitgliedschaft; Kleingewerbe oft unter Freigrenze
+  befreit, eine UG in der Regel nicht)
+
+### B — Recht & Compliance
+- Anwaltliche Prüfung von AGB, Datenschutzerklärung, AVV vor dem Launch
+  (bisher gibt es dazu nur die interne Legal-Rolle — die ersetzt keine
+  Haftung übernehmende Kanzlei; ob Sandy das will, ist ihre Entscheidung,
+  aber die Kostenposition gehört in den Plan)
+- Markenanmeldung DPMA (ca. 300 €, eine Klasse), optional Recherche und
+  Anwalt, Verlängerungsgebühr nach 10 Jahren
+- DIN-Normtexte 18363/18365 (ca. 150 €, freigegeben) und weitere Normen bei
+  jedem neuen Gewerk
+- Rechtstexte-Abo als Alternative zur Einzelprüfung
+- Rücklage für Abmahnungen/Rechtsstreit
+
+### C — Versicherungen (betrieblich)
+- IT-Vermögensschaden-Haftpflicht (exali/Markel, 1 Mio. € — Beitrag noch nicht
+  bekannt, bitte als offene Zahl führen statt zu raten)
+- Betriebshaftpflicht
+- Cyber-Deckung, sofern nicht im selben Paket enthalten
+
+### D — Steuern & Buchhaltung
+- Steuerberater: laufende Buchhaltung, Jahresabschluss, Steuererklärungen.
+  **Der Sprung Einzelunternehmen → UG ist hier erheblich** (EÜR vs. Bilanz)
+- Buchhaltungssoftware (Lexoffice/sevDesk)
+- Steuerart je nach Rechtsform: Einkommensteuer auf den Gewinn beim
+  Einzelunternehmen vs. Körperschaft- und Gewerbesteuer bei der UG, dazu
+  Solidaritätszuschlag und die Besteuerung von Ausschüttungen
+- Umsatzsteuer ab dem Wegfall der Kleinunternehmerregelung
+- **Rücklage für Steuernachzahlungen** — der Klassiker, der Selbstständige im
+  zweiten Jahr umhaut, wenn Nachzahlung und Vorauszahlung zusammenfallen
+
+### E — Technik, laufender Betrieb
+Supabase · Vercel · OpenAI (Whisper + GPT-4o) · Anthropic/Claude · Resend ·
+Sentry · IONOS (nur der Sofortangebot-Anteil) · GitHub-Plan wegen der
+Backup-Artefakte · **Stripe-Transaktionsgebühren** (fallen bei jedem Abo an
+und wachsen mit dem Umsatz — bisher nirgends geplant) · Objektspeicher für
+Sprachaufnahmen und Fotos.
+**Zwei Posten, die im 24-Monats-Horizont neu dazukommen:** die native App ist
+für Mitte 2027 fest eingeplant (`docs/vision-strategie.md`) — dazu gehören
+Apple- und Google-Entwicklerkonten mit eigenen Gebühren.
+**Und ein Risiko, das leicht übersehen wird:** Supabase, Vercel, OpenAI und
+Anthropic rechnen in **US-Dollar** ab. Der Plan sollte den Wechselkurs
+sichtbar als Annahme führen, nicht stillschweigend 1:1 umrechnen.
+
+### F — Marketing & Vertrieb
+Kein bezahltes Werbebudget (bewusste Festlegung, `vision-strategie.md`) —
+aber Social-Media-Produktion, Tools, Domain- und Markenvarianten, Fahrt- und
+Materialkosten für Innungs-/Messekontakte, und Zeit ist hier der eigentliche
+Einsatz.
+
+### G — Kunden- und Betriebsrisiken
+Zahlungsausfälle und Lastschrift-Rückläufer · Kulanz-/Erstattungsrücklage ·
+der Gründerpreis von 29 € für die ersten 25 Betriebe ist **dauerhaft** und
+darf im Plan nicht nach einem Jahr auf 49 € hochlaufen.
+
+### H — Sandys Privatseite (nur für Phase B, wenn die Anstellung wegfällt)
+Netto-Bedarf · Krankenversicherung ohne Arbeitgeberanteil · Altersvorsorge ·
+ein Puffer für die Übergangszeit zwischen Kündigung und stabilem Einkommen.
+
+### Zum Vorgehen
+Wenn du beim Bauen Posten findest, die hier fehlen, **nimm sie auf und sag mir
+Bescheid** — dann ergänze ich den Katalog, statt dass er still veraltet.
+Und falls sich zeigt, dass diese Vollständigkeit den Plan unübersichtlich
+macht: lieber ein sauberes Deckblatt mit den drei Kernzahlen und die Details
+dahinter, als eine Tabelle, die keiner mehr liest.
+
+---
+
+## CoS-F-003, Nachtrag 2 (Chief of Staff, 2026-09-03) — die fehlende Eingabegröße
+
+Sandy hat die Zahl geliefert, die für Frage 2 („ab wann kann ich meine
+Anstellung loslassen") gefehlt hat:
+
+**Netto-Bedarf: mindestens 2.500 € pro Monat** — ihr aktuelles Nettogehalt.
+Ihre Formulierung: „mein aktuelles netto gehalt … brauch ich mindestens".
+
+**Bitte behandle das als Untergrenze, nicht als Zielgröße.** Zwei Gründe:
+
+1. **2.500 € netto als Angestellte und 2.500 € netto als Selbstständige sind
+   nicht dasselbe.** In der Anstellung ist der Arbeitgeberanteil zur
+   Sozialversicherung bereits gezahlt; in der Selbstständigkeit kommt er als
+   eigener Posten dazu, allen voran die Krankenversicherung. Der Umsatz, der
+   nötig ist, um 2.500 € netto übrig zu lassen, liegt deutlich über dem, was
+   ein einfacher Dreisatz ergibt.
+2. **Es fehlt jeder Puffer.** „Mindestens" heißt: kein Urlaub, keine
+   Steuernachzahlung, kein schwacher Monat, keine Rücklage. Bitte rechne
+   **zwei Schwellen**: die reine Untergrenze mit 2.500 € netto, und eine
+   realistische Schwelle mit Puffer und Rücklagen. Sandy soll den Abstand
+   zwischen beiden sehen — das ist die eigentlich entscheidende Information,
+   nicht die einzelne Zahl.
+
+Damit sind alle Eingabegrößen für den Plan beisammen, die nur Sandy liefern
+konnte. Die verbleibenden offenen Punkte sind fachlicher Natur (CoS-P-008
+Skalierung, CoS-F-002 Kosten pro Angebot, CoS-L-003 Rechtsform) und blockieren
+den Aufbau des Plans nicht.
+
+---
+
+## Zuarbeit CoS-P-008 — Infrastruktur-Skalierung, Kurzfassung für den Finanzplan
+
+**Chief of Staff, 2026-09-03.** Platform hat CoS-P-008 beantwortet. Die volle
+Antwort mit allen Tarifgrenzen bleibt dort — **Heimat ist
+`docs/chief-of-staff-platform-todos.md`, CoS-P-008**, hier steht nur, was du
+zum Rechnen brauchst, damit du nicht in zwei Dateien nachschlagen musst.
+
+**Sandys 50 € sind vollständig erklärt und rein fix:** zwei Supabase-Projekte
+(Staging + Produktion) auf dem Pro-Tarif zu je 25 $ = 50 $/Monat Grundgebühr.
+**Null Nutzungsaufschlag bisher.** Auslastung in Produktion: Datenbank 22 MB
+von 8 GB, Objektspeicher 87 MB von 100 GB — beides unter 1 % des Inklusiv-
+Volumens.
+
+**Die Struktur, die du für den Plan brauchst:**
+- **Flach, unabhängig von der Nutzerzahl:** Supabase-Grundgebühr (2 × 25 $),
+  Vercel-Sitzplatz (20 $, wächst mit Personal, nicht mit Kunden).
+- **Wächst mit der Zahl der Angebote:** Objektspeicher, Egress,
+  Edge-Function-Aufrufe, Vercel-Funktionsaufrufe, Bestätigungs-Mails.
+- **Wächst mit der Nutzerzahl:** Realtime-Verbindungen während der
+  Spracheingabe, Konto-Mails.
+
+**Zwei Stützpunkte, direkt verwendbar:**
+- **50 Betriebe × 8 Angeboten/Monat (400 Angebote): rund 70 $/Monat gesamt**
+  (50 $ Supabase + 20 $ Vercel; Resend und Sentry weiterhin 0 $) — **ohne** die
+  KI-Kosten je Angebot.
+- **200 Betriebe × 8 Angeboten (1.600 Angebote):** Supabase und Vercel bleiben
+  im Rahmen der Grundgebühr. **Resend ist der erste Dienst, der an eine Grenze
+  kommt** — Platform empfiehlt, dort vorsorglich auf Pro (20 $/Monat) zu
+  wechseln, bevor es eng wird.
+
+**Für den Plan heißt das strukturell:** Die Infrastruktur ist bis in eine
+Größenordnung, die weit über dem 24-Monats-Horizont liegt, **fast reine
+Fixkosten**. Der einzige echte variable Posten je Angebot sind die KI-Kosten
+(2,2 Cent, siehe eigener Abschnitt) plus die Stripe-Gebühr je Zahlung. Bitte
+diese Aussage im Plan explizit machen — sie beantwortet Sandys Ausgangsfrage
+(„steigt Hosting mit mehr Nutzern?") mit einem klaren, belegten Nein für die
+relevante Größenordnung.
+
+**Ein Vorbehalt, den Platform selbst mitgeliefert hat:** Die Annahme, dass sich
+der Sprachaufnahmen-Speicher durch die 30-Tage-Löschung bei einem Sockelwert
+einpendelt, **stimmt aktuell nicht** — der Aufräum-Job ist noch nie gelaufen
+(263 Aufnahmen, davon 125 älter als 30 Tage). Für die Kosten ist das bei 86 MB
+irrelevant, für den Plan aber eine Annahme mit Sternchen: Speicher wächst
+solange linear weiter. Der Grund dafür ist der offene `CRON_SECRET`-Punkt bei
+Sandy, kein Modellierungsproblem.
+
+---
+
+## CoS-F-002 — Status-Klarstellung (Chief of Staff, 2026-09-03)
+
+Sandy hat gefragt, ob CoS-F-002 erledigt ist. **Erledigt ist die Zuarbeit,
+nicht der Punkt.** Head of Product Engineering hat gemessen (2,2 Cent je
+Angebot, siehe eigener Abschnitt oben), Platform hat die Infrastruktur
+strukturiert — **die eigentliche Auswertung, also Deckungsbeitrag, Break-even
+und der Zeitpunkt der Kleinunternehmergrenze, liegt weiterhin bei dir und ist
+noch offen.** Beides ist damit nicht mehr blockiert.
+
+**Bitte in dieser Reihenfolge:** erst CoS-F-002 (die vier Kernzahlen), dann
+CoS-F-003 (der volle Plan) — F-002 ist im Grunde das Rechenfundament von F-003,
+und wenn dabei etwas nicht aufgeht, will ich das wissen, bevor 24 Monate
+darauf aufgebaut werden.
+
+**Konservativ rechnen, wo es angebracht ist:** Head of Product Engineering hat
+selbst offengelegt, dass der Whisper-Anteil geschätzt ist (die Aufnahmedauer
+wurde durch einen inzwischen behobenen Fehler nie gespeichert) und nennt
+**2,5 Cent** als konservative Variante. Nimm die für den Plan, nicht die 2,2 —
+der Unterschied ist im Ergebnis egal und die Zahl hält später jeder Nachfrage
+stand. Und **die Spalte `ki_usage.kosten_eur` bitte nicht verwenden**: sie war
+bis Ende Juli 15-fach zu niedrig berechnet.
+
+---
+
+## CoS-F-002 — erledigt (Head of Finance, 03.09.2026)
+
+Die vier Kernzahlen stehen. Umgesetzt in `docs/kostenuebersicht-finance.xlsx`,
+zwei neue Blätter: **„Marge & Tragfähigkeit"** (Punkte 1–3) und
+**„Kleinunternehmergrenze"** (Punkt 4). Alle Zahlen formelbasiert, mit
+Quellenangabe je Annahme, `recalc.py` zeigt 0 Fehler bei 993 Formeln. Wie
+vorgegeben mit dem **konservativen KI-Kosten-Wert (2,5 Cent/Angebot)**
+gerechnet, nicht mit den gemessenen 2,2 Cent.
+
+**1) Kosten pro Angebot:** KI-Kosten 2,5 Cent (Vorgabe) + Stripe-Gebühr
+(1,5 % + 0,25 € pro Zahlung, EU-Karten, Quelle kosten.org — stripe.com/pricing
+zeigte beim ersten Abruf einen US-Wert und wurde verworfen). Bei einem
+typischen Kunden (5 Angebote/Monat) macht die KI allein 0,125 € aus — die
+Stripe-Fixgebühr dominiert die variablen Kosten bei diesen Preisen deutlich
+stärker als die KI.
+
+**2) Deckungsbeitrag je Kunde:** bei 5 Angeboten/Monat 28,19 € (Gründerpreis
+29 €) bzw. 47,89 € (Standardpreis 49 €). **Vielnutzer-Fall (40 Angebote/Monat,
+„unbegrenzt Angebote" ausgereizt)** bleibt weiterhin klar positiv: 27,32 € bzw.
+47,02 € — die KI-Kosten steigen bei 40 Angeboten nur auf 1,00 €/Monat. **Fazit:
+„unbegrenzt Angebote" ist bei diesen Preisen finanziell unkritisch, auch für
+Power-User.** Fixkosten-Baseline (Supabase, Vercel, Anthropic-direkt, Claude
+Pro, Domain — OpenAI bewusst ausgeschlossen, da schon in den KI-Kosten je
+Angebot enthalten, sonst Doppelzählung): **135,10 €/Monat**, aktuell mit
+0,86 EUR/USD umgerechnet (exchange-rates.org, Anfang September 2026).
+
+**3) Break-even-Kundenzahl:** **25 Kunden** — die 25 fest reservierten
+Gründerpreis-Plätze allein decken die Fixkosten bereits um mehr als das
+Fünffache (704,75 € Deckungsbeitrag gegen 135,10 € Fixkosten). Rein rechnerisch
+(unabhängig von der 25er-Struktur) würden bei typischer Nutzung sogar **5
+Kunden** reichen — nur zur Einordnung der Größenordnung, nicht als Zielgröße
+unterhalb der Gründerpreis-Plätze gedacht.
+
+**4) Kleinunternehmergrenze:** vereinfachtes 36-Monats-Modell, drei Szenarien
+(2/4/8 Neukunden/Monat — eigene Modellierungs-Bandbreite, keine Prognose von
+Sandy oder dir; 3/Monat wurde testweise verworfen, da im Horizont nicht
+informativ). Kalenderjahres-Umsatz überschreitet 25.000 € je nach Szenario ab
+Monat **35 (vorsichtig) / 21 (realistisch) / 12 (optimistisch)**. Die
+100.000-€-Grenze wird im 36-Monats-Horizont nur im optimistischen Szenario
+erreicht (Monat 34), sonst gar nicht.
+
+**Ein Dokumentations-Befund, der nicht blockiert hat, aber gemeldet gehört:**
+`docs/ki-kosten-messung.md` wird an drei Stellen (hier und in
+`chief-of-staff-todos.md`) als fertige Messung referenziert, existiert aber
+nirgends im Repository — weder committed noch unversioniert. Ich habe die
+Kernzahlen stattdessen direkt aus diesem Koordinationsdokument übernommen
+(dort wortgleich hinterlegt), das hat die Auswertung nicht aufgehalten. Bitte
+bei Head of Product Engineering nachfassen, ob die Datei noch nachgereicht
+wird oder ob die Quellenangabe in `chief-of-staff-todos.md` korrigiert werden
+sollte.
+
+**Nicht Teil dieses Tickets, absichtlich:** keine Preisempfehlung (Preis ist
+entschieden) und nicht die drei „was Sandy wirklich wissen will"-Zahlen aus
+dem Ticket-Schluss (Vorfinanzierungsbedarf, Umsatzschwelle für den Ausstieg
+aus der Anstellung) — die gehören zu CoS-F-003 mit dem vollständigen
+24-Monats-Modell und Sandys 2.500-€-Netto-Vorgabe (Nachtrag 2), nicht zu den
+vier Kernzahlen hier. Bereit für CoS-F-003, sobald du grünes Licht gibst.
 
 ---
 
