@@ -215,7 +215,10 @@ CI-Grundlage, Freigabe durch Sandy offen" markiert.
 Head of Legal & Compliance** (S-1, S-2, S-3, S-5 sind entschieden, siehe
 Verlauf unten):
 
-**S-4 — Rechtsform/Versicherung, noch offen. Legal hat jetzt eine konkrete
+**S-4 — Rechtsform ENTSCHIEDEN am 03.09.2026: Einzelunternehmen jetzt, UG bei
+rund 20 zahlenden Betrieben (Begründung in „S-4, Teil 4" am Dateiende).
+Versicherung weiterhin offen. Der folgende Absatz ist der Stand vom 02.09. und
+in Punkt (2) überholt.** Legal hat jetzt eine konkrete
 Doppel-Empfehlung nachgereicht (02.09., zwei Abschnitte weiter unten in
 dieser Datei, „S-4" und „S-4, Teil 2").** Kurzfassung davon: **(1)
 Vermögensschaden-Haftpflicht sofort abschließen**, noch vor dem ersten
@@ -223,12 +226,14 @@ echten Testnutzer — konkreter Anbieter-Vorschlag: **exali IT-Haftpflicht,
 Risikoträger Markel Insurance SE, 1.000.000 € Deckungssumme** (statt der
 üblichen 250.000 €, wegen der Serienschadenklausel: ein systematischer
 Rechenfehler bei z. B. 200 Betrieben gleichzeitig zählt als EIN
-Versicherungsfall mit EINER Deckungssumme, nicht 200 einzelne). **(2) Danach
+Versicherungsfall mit EINER Deckungssumme, nicht 200 einzelne). ~~**(2) Danach
 die UG gründen — und zwar vor dem ersten *zahlenden* Kunden, nicht davor
 und nicht danach** (§26 HGB: wer erst als Einzelunternehmerin Kunden
 gewinnt und danach in eine UG umwandelt, haftet trotzdem noch 5 Jahre lang
 mit Privatvermögen für die Altverbindlichkeiten — die Umwandlung schützt
-dann nicht mehr rückwirkend). Kosten grob: UG ~300–480 € Notar/Handelsregister
+dann nicht mehr rückwirkend).~~ **Punkt (2) ist zurückgenommen, und die
+§-26-HGB-Begründung war zusätzlich falsch — siehe „S-4, Teil 4" am
+Dateiende.** Kosten grob: UG ~300–480 € Notar/Handelsregister
 + praktisch mindestens 1.000 € Stammkapital, dazu ~2.000 € Zusatzkosten im
 ersten Jahr, danach ~1.500–2.000 €/Jahr. **Wichtiger Zusatzpunkt von
 Legal:** VOB-013 (bekannter, noch nicht gefixter Rechenfehler, siehe unten)
@@ -236,9 +241,10 @@ offen zu lassen UND zu wissen, dass er da ist, kann laut Legal den
 Versicherungsschutz gefährden (Obliegenheitsverletzung) — ein Grund mehr,
 VOB-013 vor Gate 1 zu fixen statt danach.
 
-**Deine Entscheidung:** Anbieter/Deckungssumme für die Versicherung
-freigeben (oder Alternativangebote einholen), UG-Zeitpunkt festlegen (vor
-dem ersten zahlenden Kunden ist Legals klare Empfehlung). Volle Details,
+**Deine Entscheidung:** Anbieter und Deckungssumme für die Versicherung
+freigeben (oder Alternativangebote einholen) — das ist der Teil, der noch
+offen ist. Der UG-Zeitpunkt ist am 03.09.2026 entschieden: bei rund 20
+zahlenden Betrieben. Volle Details,
 Vergleichsangebote und die genaue Serienschaden-Begründung stehen in den
 beiden „S-4"-Abschnitten weiter unten in dieser Datei.
 
@@ -725,5 +731,81 @@ die Schwelle von 20 nicht deutlich zu überschreiten.
 vollständig gültig, falls Sandy die UG trotzdem sofort will. Das ist keine
 falsche Entscheidung — sie kostet nur Geld und Aufwand, der jetzt nicht nötig
 ist.
+
+---
+
+## S-4, Teil 4 — ENTSCHIEDEN (Sandy, 2026-09-03)
+
+**Sandys Entscheidung, wörtlich:** *„ich glaube ich fühl mich besser erstmal
+mit einzelunternehmen zu starten. ich merke dass sich bei UG zum jetzigen
+zeitpunkt ohne auch nur einen kunden etwas in mir zusammenzieht. und ich werde
+noch 2 monate extrem weiter am code pfeilen und noch 100 testfälle durchgehen
+um grobe fehler die dem user geld kosten auszuschließen. also ja, UG zu einem
+späteren zeitpunkt."*
+
+**Damit gilt ab sofort:**
+
+| | |
+|---|---|
+| **Rechtsform jetzt** | Einzelunternehmen / Kleingewerbe, Kleinunternehmerregelung § 19 UStG |
+| **Gewerbeanmeldung** | KW 41 (05.–09.10.2026), online, Berlin, 15 € |
+| **Versicherung** | exali/Markel, 1 Mio. €, Abschluss bis Ende Oktober — **noch offen, braucht Sandys Freigabe** |
+| **UG** | bei rund 20 zahlenden Betrieben · oder wenn Sandy nicht mehr jeden Kunden persönlich prüft · spätestens beim Teilzeitantrag. Frühestens Frühjahr 2027 |
+| **Markenanmeldung** | nein — nur eine 10-Minuten-Recherche im DPMAregister |
+
+Terminplan mit allen Schritten: **`legal-007-plan-fuer-sandy.md`**.
+`legal-006-ug-zeitplan-fuer-sandy.md` ist zurückgestellt, bleibt aber gültig
+und wird wieder aktiv, wenn die Schwelle erreicht ist.
+
+### Zwei Korrekturen an meiner eigenen Empfehlung
+
+**Erstens, der Zeitpunkt.** S-4 (02.09.) sagte „UG vor dem ersten zahlenden
+Kunden". Das ist zurückgenommen — die Begründung steht in Teil 3: Mein
+Serienschaden-Argument war auf 200 Betriebe gerechnet, der Finanzplan zeigt
+1 Betrieb im Januar 2027 und 3–5 nach sechs Monaten.
+
+**Zweitens, ein echter Fehler in der Begründung, den ich beim Nachlesen des
+eigenen Textes gefunden habe.** Oben in dieser Datei steht, wer erst als
+Einzelunternehmerin Kunden gewinnt und danach in eine UG umwandelt, hafte
+„nach § 26 HGB noch 5 Jahre lang" mit Privatvermögen. **Das ist so nicht
+richtig, und es hat in die falsche Richtung gewirkt.**
+
+- §§ 25/26 HGB setzen ein **Handelsgeschäft mit einer Firma** voraus. Eine
+  Kleingewerbetreibende, die nicht im Handelsregister steht, ist keine
+  Kauffrau und hat keine Firma im Sinne des HGB — die Vorschriften greifen bei
+  Sandy gar nicht.
+- § 26 HGB ist außerdem eine **Haftungs*begrenzung*** auf fünf Jahre, keine
+  Haftungs*begründung*. Ich habe eine Schutzvorschrift als Risiko zitiert.
+- **Richtig ist der einfachere und härtere Satz:** Verbindlichkeiten, die Sandy
+  als Einzelunternehmerin eingeht, bleiben ihre — unbefristet, nicht fünf
+  Jahre, und eine spätere UG übernimmt sie nur bei ausdrücklicher
+  Vertragsübernahme mit Zustimmung des Kunden. Eine UG wirkt nie rückwirkend.
+
+Das Argument fällt damit nicht weg, es wandert nur an die richtige Stelle:
+**Nicht die Rechtsform schützt die Anfangsphase, sondern die Police mit
+unbegrenzter Rückwärtsdeckung.** Ich sage das ausdrücklich dazu, weil die
+Korrektur zufällig in Richtung meiner neuen Empfehlung zeigt — gefunden habe
+ich sie beim Nachlesen, nicht beim Suchen nach Argumenten.
+
+### Was Sandys zwei Monate Testarbeit rechtlich bedeuten
+
+Sie hat angekündigt, vor Gate 1 noch rund 100 Testfälle durchzugehen, um
+Fehler auszuschließen, die den Nutzer Geld kosten. Das ist aus Legal-Sicht der
+wirksamste einzelne Beitrag zur Risikolage, den es hier gibt — wirksamer als
+jede Rechtsform:
+
+- Es senkt die Eintrittswahrscheinlichkeit im Risikoregister (`legal-002`)
+  direkt, statt nur die Schadenshöhe zu deckeln.
+- **Es räumt die Obliegenheitsverletzung aus.** Bekannte, nicht behobene
+  Rechenfehler bei Vertragsschluss können den Versicherungsschutz gefährden
+  (wissentliche Pflichtverletzung). VOB-013 und die offenen Punkte aus
+  `pruefmeister-testfaelle.md` gehören deshalb **vor** den Versicherungsantrag
+  bzw. spätestens vor Gate 1 geschlossen — nicht danach.
+- Dokumentierte Testläufe sind gleichzeitig der Nachweis nach Art. 4 AI Act
+  (CC-08) und entlasten im Streitfall bei § 254 BGB.
+
+**Konkrete Bitte an Sandy:** Die Testläufe irgendwo festhalten, auch grob —
+Datum, was geprüft, was gefunden, was gefixt. Das ist später Gold wert und
+kostet jetzt fünf Minuten pro Sitzung.
 
 ---

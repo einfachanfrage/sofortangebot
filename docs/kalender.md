@@ -23,8 +23,7 @@ terminieren.
    Diese Daten sind Planungsgrößen, keine Zusage — Gate 1 steht bei 36 %, und
    die Gates entscheiden, nicht der Kalender.
 2. **Alles mit Präsenzpflicht gehört in die Fenster dazwischen:** 26.09.–01.11.
-   (fünf Wochen) und ab 04.12. Konkret: Notartermin UG, Erstgespräch
-   Steuerberater, Besuch im Malerfachhandel Dessau, Drehtage mit Clemens für
+   (fünf Wochen) und ab 04.12. Konkret: Erstgespräch Steuerberater, Besuch im Malerfachhandel Dessau, Drehtage mit Clemens für
    Social Media.
 3. **Social-Media-Material muss vor Reisen auf Vorrat produziert werden.**
    Sandy filmt Clemens — im Thailand-Monat fällt das aus, es sei denn, Clemens
@@ -52,8 +51,10 @@ terminieren.
 |---|---|---|
 | Teilzeitantrag beim Arbeitgeber | **mindestens 3 Monate** vor Beginn, schriftlich (§8/§9a TzBfG) | `chief-of-staff-finance-todos.md`, CoS-F-003 Nachtrag 5 |
 | Brückenteilzeit | Dauer 1–5 Jahre, danach automatische Rückkehr | ebd. |
-| UG-Gründung | **vor dem ersten zahlenden Kunden** (§26 HGB) | `entscheidungen-fuer-sandy.md`, S-4 |
-| Gewerbeanmeldung | Reihenfolge Einzelunternehmen/UG offen — bis dahin nichts anmelden | CoS-L-003 |
+| **Gewerbeanmeldung** | **KW 41 (05.–09.10.2026)** — Einzelunternehmen/Kleingewerbe, online, 15 € | `legal-007-plan-fuer-sandy.md` |
+| **IT-Haftpflicht abschließen** | **bis Ende Oktober 2026**, vor dem ersten Testnutzer | `legal-007-plan-fuer-sandy.md` |
+| ELSTER-Fragebogen zur steuerlichen Erfassung | 1 Monat nach Gewerbeanmeldung (§ 138 AO) | ebd. |
+| UG-Gründung | **erst bei rund 20 zahlenden Betrieben** — Entscheidung Sandy 03.09.2026; Vorlauf 4–6 Wochen. Frühestens Frühjahr 2027 | `entscheidungen-fuer-sandy.md`, S-4 Teil 4 |
 | Kleinunternehmergrenze | 25.000 € Vorjahr / 100.000 € laufendes Jahr, netto | `preismodell.md` |
 | Testphase im Produkt | 14 Tage ohne Kreditkarte | `preismodell.md` |
 | E-Rechnungspflicht (ZUGFeRD) für eigene Rechnungen | ab 2027 | `/areas/sofortangebot` (Sandys Notiz) |

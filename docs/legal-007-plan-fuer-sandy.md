@@ -5,6 +5,10 @@
 Diese Datei ersetzt `legal-006-ug-zeitplan-fuer-sandy.md`. Der Grund steht
 unten unter „Was ich geändert habe und warum".
 
+> **Entschieden am 03.09.2026:** Sandy startet als Einzelunternehmen. Die UG
+> kommt später, ausgelöst durch rund 20 zahlende Betriebe. Dieser Plan ist
+> damit nicht mehr ein Vorschlag, sondern der Fahrplan.
+
 **Kurz vorweg: Der Oktober ist ein Nachmittag Arbeit. Danach ist bis Sommer
 2027 nichts.** Keine UG, kein Notar, kein Stammkapital, kein Geschäftskonto.
 
@@ -293,11 +297,22 @@ UG später kommt, müssen die laufenden Kundenverträge auf sie übergehen —
 bei einer Handvoll Kunden ist das eine E-Mail, bei fünfzig wäre es Arbeit.
 Das ist ein weiteres Argument dafür, die 20 nicht zu weit zu überschreiten.
 
-**Und falls du es trotzdem anders willst:** Wenn dich der Gedanke an die
-persönliche Haftung nachts wachhält, dann gründe die UG. Das ist keine
-falsche Entscheidung, sie kostet nur Geld und Aufwand, den du im Moment nicht
-aufwenden musst. `legal-006-ug-zeitplan-fuer-sandy.md` ist dafür weiterhin
-gültig und vollständig. Ruhig schlafen ist ein legitimer Grund.
+**Deine Entscheidung vom 03.09.2026:** Einzelunternehmen jetzt, UG später.
+Damit ist die Frage zu, und ich fange sie nicht von allein wieder an. Falls du
+später doch früher gründen willst — weil dich der Gedanke an die persönliche
+Haftung stört —, ist `legal-006-ug-zeitplan-fuer-sandy.md` weiterhin
+vollständig und Schritt für Schritt benutzbar. Ruhig schlafen ist ein
+legitimer Grund für eine Rechtsform, und das meine ich ohne Ironie.
+
+**Zu deinen zwei Monaten Testarbeit:** Die 100 Testfälle sind aus meiner Sicht
+der wirksamste Beitrag zur Haftungslage, den es hier überhaupt gibt — mehr als
+jede Rechtsform. Sie senken die Wahrscheinlichkeit, statt nur den Schaden zu
+deckeln, und sie räumen ein konkretes Versicherungsproblem aus: Bekannte, nicht
+behobene Rechenfehler bei Vertragsschluss können den Schutz gefährden. **Bitte
+halte die Testläufe grob fest** — Datum, was geprüft, was gefunden, was gefixt.
+Fünf Minuten pro Sitzung, und du hast später den Nachweis, den sonst niemand
+mehr rekonstruieren kann. Das ist gleichzeitig die Dokumentation, die der
+AI Act (Art. 4) verlangt.
 
 ---
 

@@ -2,14 +2,17 @@
 
 **Für Sandy · Stand 03.09.2026 · Head of Legal & Compliance**
 
-> **⚠️ Überholt (03.09.2026, nachmittags).** Nach Durchsicht des Finanzplans
-> (CoS-F-003) habe ich meine Empfehlung geändert: **Einzelunternehmen jetzt,
-> UG bei rund 20 zahlenden Betrieben.** Der aktuelle Plan steht in
-> **`legal-007-plan-fuer-sandy.md`**. Diese Datei bleibt gültig und
-> vollständig für den Fall, dass Sandy sich trotzdem für die sofortige
-> UG-Gründung entscheidet — sie ist dann Schritt für Schritt weiter
-> benutzbar. Begründung des Wechsels: `legal-007`, Abschnitt „Was ich
-> geändert habe und warum".
+> **⏸️ Zurückgestellt (Sandys Entscheidung, 03.09.2026).** Die UG kommt
+> später — Auslöser: rund 20 zahlende Betriebe, frühestens Frühjahr 2027.
+> Der jetzt geltende Plan steht in **`legal-007-plan-fuer-sandy.md`**
+> (Einzelunternehmen, Gewerbeanmeldung Oktober 2026).
+>
+> **Diese Datei ist nicht falsch, sondern nur noch nicht dran.** Sie bleibt
+> vollständig gültig und wird Schritt für Schritt wieder benutzbar, sobald die
+> Schwelle erreicht ist. Vor dem Wiederaufgreifen bitte Notarkosten,
+> Musterprotokoll und die Angaben zum Stammkapital gegen den dann aktuellen
+> Stand prüfen. Begründung der Verschiebung: `entscheidungen-fuer-sandy.md`,
+> „S-4, Teil 3" und „S-4, Teil 4".
 
 Diese Datei ist die einzige, die du zum Gründen brauchst. Alles andere zum
 Thema ist Hintergrund und kann warten.

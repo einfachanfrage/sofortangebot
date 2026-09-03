@@ -38,7 +38,7 @@ schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-L-003 | Reihenfolge Gewerbeanmeldung / UG-Gründung — kein Gewerbe angemeldet, erster zahlender Kunde rückt näher | 🟡 Plan steht, auf Sandys Entscheidung geändert: **direkt UG**, kein Einzelunternehmen, 4–6 Wochen bis erster Kunde; zwei Steuerberater-Fragen, nicht mehr blockierend | Sandy direkt, 2026-09-03 |
+| CoS-L-003 | Reihenfolge Gewerbeanmeldung / UG-Gründung — kein Gewerbe angemeldet, erster zahlender Kunde rückt näher | ✅ **entschieden (03.09.2026, abends): Einzelunternehmen jetzt, UG bei rund 20 zahlenden Betrieben.** Plan mit Terminen in `legal-007-plan-fuer-sandy.md`; Begründung und meine zurückgenommene Empfehlung in `entscheidungen-fuer-sandy.md`, S-4 Teil 3 + 4 | Sandy direkt, 2026-09-03 |
 | CoS-L-002 | Neues Preismodell rechtlich absichern: Preisangaben B2B, Umsatzsteuer/Kleinunternehmer, AGB-Preis- und Kündigungspassagen, Bestandsschutz Gründerpreis | ❌ offen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-L-001 | Erstauftrag: Bestandsaufnahme + Lückenanalyse (Datenschutz, AGB, KI-Kennzeichnung, Gewerke-Recht) | 🟡 Bericht liegt vor (`docs/legal-001-bestandsaufnahme.md`), 8 Gate-1-Punkte + 4 Entscheidungen für Sandy (S-1 bis S-4) — noch nichts umgesetzt | Sandy direkt im Chat, 2026-09-01 |
 
@@ -506,10 +506,12 @@ direkter Kanal zu einem Kollegen entsteht, damit ich den Überblick behalte
   dem Versenden prüfen, kann Fehler enthalten"-Hinweis für den Handwerker
   selbst. Das ist R3 (bereits bei Product Designer), keine Änderung an
   S-3 nötig, nur zur Info, damit die beiden Themen nicht vermischt werden.
-- **S-4 (Rechtsform/Versicherung):** noch offen — Sandy braucht mehr
-  Entscheidungsgrundlage (Kosten/Timing UG vs. GmbH), Details stehen in
-  `docs/entscheidungen-fuer-sandy.md`. Kommt zurück, sobald sie sich
-  entschieden hat.
+- **S-4 (Rechtsform/Versicherung):** **Rechtsform am 03.09.2026 entschieden —
+  Einzelunternehmen jetzt, UG bei rund 20 zahlenden Betrieben** (S-4 Teil 3
+  und Teil 4 in `docs/entscheidungen-fuer-sandy.md`, Terminplan in
+  `docs/legal-007-plan-fuer-sandy.md`). **Versicherung weiter offen:** Sandy
+  muss Anbieter und Deckungssumme freigeben — exali/Markel, 1 Mio. €, Abschluss
+  bis Ende Oktober.
 - **S-5 (DIN-Normtexte, ca. 150 €):** Ja, zeitnah — **bitte kaufen.** Für
   die Ausgabenerfassung kurz bei Head of Finance Bescheid geben
   (`docs/chief-of-staff-finance-todos.md`), sonst nichts weiter nötig.

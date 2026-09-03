@@ -1224,5 +1224,58 @@ ab jetzt die Grundlage für den wöchentlichen Strategie-Check-in
 
 ---
 
+## CoS-F-003, Korrektur der Rechtsform-Annahme (Head of Legal & Compliance, 2026-09-03, abends)
+
+*Eingetragen von Head of Legal, weil Nachtrag 7 eine Aussage über Sandys
+Entscheidung enthält, die nicht mehr stimmt, und der Plan darauf aufbaut.
+Chief of Staff: bitte formal einordnen — ich wollte die falsche Grundlage nicht
+über Nacht stehen lassen.*
+
+**Nachtrag 7 sagt: „Sandy hat entschieden: direkt UG, keine
+Einzelunternehmen-Phase." Das ist überholt.** Sandy hat am Abend des 03.09.
+anders entschieden:
+
+**Einzelunternehmen (Kleingewerbe, § 19 UStG) ab Oktober 2026. UG erst bei
+rund 20 zahlenden Betrieben.** Belegt in `entscheidungen-fuer-sandy.md`,
+„S-4, Teil 4"; Terminplan in `legal-007-plan-fuer-sandy.md`.
+
+**Was sich an der Kostenbasis ändert:**
+
+| Posten | Nachtrag 7 (UG ab Monat 1) | Neu |
+|---|---|---|
+| Gründungskosten einmalig | ~1.700 € inkl. 1.000 € Stammkapital | **15 €** (Gewerbeanmeldung Berlin online) |
+| Steuerberater laufend | 3.000 €/Jahr (Bilanz, Offenlegung) | **0–800 €/Jahr** (EÜR), UG-Satz erst ab Gründungsmonat |
+| Geschäftskonto | zwingend | nicht zwingend |
+| Gebundene Reserve Stammkapital | 1.000 € | entfällt bis zur Gründung |
+| Belege Mai–August | Privatausgaben, nicht in der Kostenbasis | **unverändert** — Sandy nimmt den Anmeldetag als Startdatum, nicht rückwirkend |
+| Versicherung | 1 Mio. €, exali/Markel | **unverändert**, rechtsformunabhängig |
+
+**Der UG-Schalter gehört an die Kundenzahl, nicht an Monat 1.** Ab dem Monat,
+in dem 20 aktive zahlende Betriebe erreicht sind (Blatt „Plan-Kunden"), fallen
+Gründungskosten und der UG-Steuerberatersatz an. Nach dem heutigen Plan ist
+das: **vorsichtig nie im Horizont · realistisch November 2027 (Monat 15) ·
+optimistisch Juni 2027 (Monat 10)** — mit 4–6 Wochen Vorlauf davor.
+
+**Grobe Wirkung auf Frage 2 (Vorstreckung):** realistisch rund 3.000–4.000 €
+weniger, vorsichtig rund 6.500 €, weil die UG dort im Horizont nicht kommt.
+
+**Zwei Nebeneffekte, die dem Head of Finance entgegenkommen:**
+
+1. **Der markierte Vorbehalt „UG-Besteuerung nicht gerechnet" entfällt für die
+   gesamte Einzelunternehmens-Phase** — das Raster rechnet den Gewinn dort
+   korrekt als gewerbliche Einkünfte oben auf Sandys Gehalt. Der Vorbehalt
+   greift erst ab dem UG-Monat, also frühestens Monat 10, im vorsichtigen
+   Szenario gar nicht. Die Steuerberater-Frage bleibt richtig, wird aber
+   deutlich weniger dringlich.
+2. **Gewerbesteuer 0 € im ganzen Horizont** (Freibetrag 24.500 € für
+   natürliche Personen, § 11 GewStG) und **IHK 0 €** in den ersten zwei Jahren
+   (§ 3 Abs. 3 IHKG, Gewerbeertrag unter 25.000 €, nicht im Handelsregister).
+
+**Bitte nichts umrechnen, bevor der Chief of Staff das freigibt** — die
+Abnahme-Regel „nichts weiter ändern, bis Sandy den Plan gelesen hat" gilt
+weiter. Das hier ist die Vorwarnung, kein Auftrag.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

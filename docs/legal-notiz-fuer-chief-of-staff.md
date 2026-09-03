@@ -1,6 +1,13 @@
 # Notiz des Head of Legal & Compliance an den Chief of Staff
 
-**03.09.2026 — Rechtsform-Entscheidung geändert, drei Folgeaufgaben**
+**03.09.2026 — Rechtsform ist entschieden, vier Folgeaufgaben**
+
+> **Update vom selben Abend: Sandy hat entschieden.** Einzelunternehmen jetzt,
+> UG bei rund 20 zahlenden Betrieben. Ihre Begründung: *„bei UG zum jetzigen
+> zeitpunkt ohne auch nur einen kunden zieht sich etwas in mir zusammen."*
+> Dazu hat sie angekündigt, vor Gate 1 noch rund 100 Testfälle durchzugehen,
+> um Fehler auszuschließen, die den Nutzer Geld kosten. Das Folgende gilt
+> damit nicht mehr als Vorschlag, sondern als Beschluss. CoS-L-003 ist zu.
 
 ---
 
@@ -95,7 +102,34 @@ Anschrift feststeht — das ist ein 20-Minuten-Ticket, kein Projekt.
 
 ---
 
-## 4. Was bei mir offen bleibt
+## 4. Sandys 100 Testfälle — bitte nicht als reine Produktarbeit einsortieren
+
+Das ist aus Legal-Sicht der wirksamste einzelne Beitrag zur Risikolage, den es
+in diesem Projekt gibt, und er wirkt an einer Stelle, an der keine Rechtsform
+und keine Klausel hilft: an der Eintrittswahrscheinlichkeit.
+
+Drei Punkte, die daran hängen und die ich beim Chief of Staff platzieren
+möchte, weil sie Terminwirkung haben:
+
+1. **VOB-013 und die offenen Punkte aus `pruefmeister-testfaelle.md` gehören
+   vor den Versicherungsantrag**, spätestens vor Gate 1. Bekannte, nicht
+   behobene Rechenfehler bei Vertragsschluss können den Versicherungsschutz
+   gefährden (wissentliche Pflichtverletzung / Obliegenheit). Das steht schon
+   als Warnung in `entscheidungen-fuer-sandy.md`, wird aber jetzt terminlich
+   scharf, weil die Police im Oktober abgeschlossen werden soll.
+2. **Die Testläufe sollten dokumentiert werden** — Datum, Prüfgegenstand,
+   Befund, Fix. Grob reicht. Das ist gleichzeitig der Nachweis nach Art. 4
+   AI Act (CC-08) und die Entlastung im Streitfall. Ich habe Sandy direkt
+   darum gebeten; falls es ein Format dafür geben soll, wäre das eine
+   sinnvolle Kleinigkeit für den Prüfmeister.
+3. **Die AGB-Klausel § 9.3 (L1) wird dadurch nicht überflüssig, sondern
+   dringender.** Sie ist nach § 307 BGB wahrscheinlich unwirksam
+   (`launch-readiness.md` 7.14), und die UG als Rückfallebene fällt für die
+   erste Phase weg. Die Neufassung steht bei mir, ich ziehe sie vor.
+
+---
+
+## 5. Was bei mir offen bleibt
 
 Unverändert und unabhängig von der Rechtsform: CC-03/CC-04 (AVV-Formulierungen),
 CC-06, CC-07 (Verarbeitungsverzeichnis + Schwellwertanalyse), CC-08 (AI Act
