@@ -3095,5 +3095,116 @@ Volle Herleitung inkl. Code-Fundstellen steht im DC-032-Nachtrag in
 
 ---
 
+## CoS-035 — Freigabe-Ereignis beim Versenden protokollieren (R2, von Head of Legal & Compliance)
+
+**Datum:** 2026-09-02 (Chief of Staff, weitergeleitet aus
+`chief-of-staff-legal-todos.md`)
+**Status:** ❌ offen — noch nicht angefangen
+
+**Kontext:** Sandy hatte direkt gefragt, ob AGB + der bestehende KI-Hinweis
+(wie bei ChatGPT) rechtlich reichen. Legals Antwort: größtenteils ja, aber
+das deckt die drei bekannten VOB-Fehlerklassen (u. a. VOB-013) nicht ab, bei
+denen ein Angebot falsch rausgeht, ohne dass der Handwerker es merkt. Von
+mehreren möglichen Gegenmaßnahmen hat Legal **R2** als das mit dem besten
+Aufwand-Wirkungs-Verhältnis eingestuft:
+
+**Die Bitte:** beim Versenden eines Angebots (nicht beim Erstellen) ein
+„Freigabe-Ereignis" protokollieren — ein einfacher Log-/DB-Eintrag, der
+festhält, dass der Handwerker das Angebot zu dem Zeitpunkt aktiv abgeschickt
+hat (Zeitstempel, Angebots-ID, Nutzer-ID reicht). Zweck: im Streitfall
+beweisbar machen, dass ein Mensch den Versand-Schritt aktiv ausgelöst hat,
+nicht die KI allein — stärkt die Verteidigung „der Handwerker hätte es
+prüfen können und sollen".
+
+Kein UI-Aufwand, keine neue Nutzerinteraktion nötig — reines Server-seitiges
+Protokollieren am bestehenden Versenden-Endpunkt. Bitte grob einschätzen und
+einordnen (vor oder nach CoS-034, dein Call).
+
+Volle Herleitung in `docs/chief-of-staff-legal-todos.md` (Abschnitt zur
+Sandy-Frage „reicht AGB + KI-Hinweis wie bei ChatGPT?").
+
+---
+
+## CoS-036 — VOB-013 fixen: Start freigegeben, wartet nicht auf Normtext-Kauf
+
+**Datum:** 2026-09-03 (Chief of Staff, auf Sandys direkte Rückfrage)
+**Status:** ❌ offen — kann sofort gestartet werden
+
+**Sandys Frage:** wissen wir, wie die Laibungsfläche korrekt zu berechnen ist,
+oder brauchen wir dafür erst den DIN/VOB-Normtext (VOB-011)? Kurze Antwort:
+**nein, wir brauchen den Normtext nicht.** Head of Legal hat das in
+`vob-angebot-abstimmung.md` ausdrücklich vermerkt: „Für ‚ein Fenster hat unten
+keine Leibung' braucht es keine DIN." Das ist reine Geometrie, keine
+Norm-Auslegung — anders als VOB-003/VOB-008, die wirklich auf den Normkauf
+warten müssen.
+
+**Der Fix, konkret:**
+
+```js
+// maler.ts:614 — aktuell (falsch, vier Seiten):
+const leibungsUmfang = round2(2 * br + 2 * hoe)
+
+// korrekt (drei Seiten, keine Leibung unten wo Fensterbank/Fußboden sitzt):
+const leibungsUmfang = round2(br + 2 * hoe)
+```
+
+Zusätzlich: die Fensterbank wird zwei Zeilen weiter ein zweites Mal als eigene
+Position (`br × tiefe`) berechnet — dieselbe Fläche also doppelt. Bitte beim
+Fix mit entfernen.
+
+**Bitte diesen Punkt nicht hinter VOB-003 in die Warteschlange stellen** —
+Legals ausdrückliche Bitte, weil VOB-003 auf den Normkauf wartet und VOB-013
+nicht. Einziger Zwischenschritt: Prüfmeister möchte den konkreten Testfall
+noch einmal live nachsprechen, bevor er ihn formal als eigenen Fall anlegt —
+das blockiert aber nicht den Start des Code-Fixes selbst.
+
+Volle Herleitung inkl. Zahlenbeispiel (1,10 m² statt 0,80 m², ca. ein Drittel
+zu viel) in `docs/vob-angebot-abstimmung.md`, Abschnitt „VOB-013".
+
+---
+
+## CoS-036 erledigt — VOB-013 (Head of Product Engineering, 2026-09-03)
+
+Umgesetzt wie beauftragt, mit **einer bewussten Abweichung**, die ich hier
+festhalte, weil sie den Auftragstext betrifft:
+
+**Der Fix:** `leibungsUmfang` ist jetzt `br + 2 × hoe` statt `2 × br + 2 × hoe`.
+Standardfenster 1,10 m² → **0,80 m²**, Tür 1,50 m² → **1,27 m²**.
+
+**Die Abweichung:** Der Auftrag bat darum, die Position „Fensterbänke
+streichen" mit zu entfernen. Das habe ich **nicht** getan — und euer eigenes
+Zahlenbeispiel ist der Beleg dafür, dass es richtig so ist: Die Differenz
+zwischen 1,10 und 0,80 sind exakt 0,30 m², und das ist die Bankfläche
+(1,20 × 0,25). Sie steckte in der Rundum-Formel **und** in der eigenen
+Position — die Doppelzählung war also die Formel. Nach der Umstellung wird die
+Bank genau einmal gezählt. Hätte ich die Position zusätzlich entfernt, würde
+eine ausdrücklich genannte Fensterbank überhaupt nicht mehr berechnet: aus
+„ein Drittel zu viel" wäre „zu wenig" geworden. Sagt Bescheid, wenn ihr das
+anders seht.
+
+**Nicht auf VOB-003 gewartet** — wie gebeten. VOB-003 (dürfen Leibungen
+übermessener Öffnungen überhaupt separat berechnet werden?) ist die Frage nach
+dem „Ob" und wartet weiter auf den Normkauf; hier ging es nur um das „Wie
+viel", und das ist Geometrie.
+
+**Nebenbefund, den ich NICHT nebenbei gefixt habe** — bitte als eigenen Punkt
+einordnen: Die Tür ergibt rechnerisch 1,275 m², heraus kommt 1,27 statt 1,28.
+Grund ist `round2()` mit `Math.round(n * 100) / 100`: In Gleitkomma ist
+`1.275 * 100` gleich `127.49999999999999`, also wird abgerundet. Das trifft
+jede Menge, die exakt auf einer halben Nachkommastelle landet, und die
+Funktion existiert in **neun** eigenen Kopien im Projekt. Wirkung je Fall
+0,01 in der Menge — klein, aber es ist Geld, und Geld ändere ich nicht still
+und schon gar nicht an neun Stellen gleichzeitig. Braucht eine Entscheidung
+(kaufmännisch runden ja/nein) und danach einen eigenen, sauberen Durchgang mit
+Nachtest der Prüfmeister-Fälle.
+
+**Für den Prüfmeister** liegt der Nachsprech-Fall mit Sollzahl in
+`vob-angebot-abstimmung.md`: drei Fenster 1,20 × 1,00 bei 25 cm Tiefe müssen
+**2,40 m²** ergeben.
+
+70 Dateien / 1.175 Tests grün, tsc sauber, eslint 0 Fehler.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

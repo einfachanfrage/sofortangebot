@@ -140,6 +140,8 @@ export interface Company {
   materialpreis_hinweis_aktiv: boolean
   mindestauftragswert: number
   e_rechnung_aktiv: boolean
+  /** Wann das Onboarding erstmals erreicht wurde. NULL = nie angefangen. */
+  onboarding_started_at?: string | null
   onboarding_completed: boolean
   onboarding_step: number
   kleinmaterial_config: {

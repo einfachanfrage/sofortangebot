@@ -9,7 +9,20 @@ function normalizeCustomer(value: unknown): { name: string } | null {
 
 export async function getDashboardData() {
   const { supabase, company } = await requireCompany()
-  if (!company.name) return { needsOnboarding: true as const }
+  // Punkt 3 des Designer-Vorschlags „Später fertigstellen" (02.09.2026):
+  // Ins Onboarding zwangsweise umgeleitet wird nur noch, wer es NIE
+  // angefangen hat. Wer angefangen und abgebrochen hat, sieht das Dashboard
+  // mit einem Hinweis-Banner (baut der Product Designer) statt einer
+  // Sackgasse — vorher waren beide Fälle in der Datenbank nicht zu
+  // unterscheiden.
+  //
+  // Solange `onboarding_started_at` nirgends gesetzt wird (Punkt 2, ebenfalls
+  // beim Designer), ist das Verhalten unverändert: alle Bestandszeilen sind
+  // NULL. Diese Zeile geht also nicht "scharf", bevor sein Teil steht.
+  const onboardingBegonnen = Boolean(
+    (company as { onboarding_started_at?: string | null }).onboarding_started_at,
+  )
+  if (!company.name && !onboardingBegonnen) return { needsOnboarding: true as const }
 
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()

@@ -1219,4 +1219,44 @@ VOB-003 und VOB-012 rühre ich weiterhin nicht an, bis die Normtexte vorliegen.
 
 ---
 
+## VOB-013 erledigt (Head of Product Engineering, 2026-09-03)
+
+Leibungen rechnen ab sofort **dreiseitig**: Sturz oben, zwei Wangen seitlich.
+Unten sitzt beim Fenster die Fensterbank, bei der Tür der Fußboden — dort gibt
+es keine Leibungsfläche.
+
+| | vorher | jetzt |
+|---|---|---|
+| Standardfenster 1,20 × 1,00 m, 25 cm tief | 1,10 m² | **0,80 m²** |
+| Tür 0,90 × 2,10 m, 25 cm tief | 1,50 m² | **1,27 m²** |
+
+**Ein Punkt, an dem ich vom Auftragstext abgewichen bin — bitte gegenlesen.**
+CoS-036 bat darum, die Position „Fensterbänke streichen" beim Fix „mit zu
+entfernen", weil sie dieselbe Fläche ein zweites Mal berechne. Das trifft die
+Ursache, aber die Folge wäre zu weit gegangen: Die Doppelzählung war die
+Rundum-Formel, nicht die Bank-Position. Die untere Zeile (0,30 m²) steckte im
+Umfang **und** in der eigenen Position — genau diese 0,30 m² sind die
+Differenz zwischen 1,10 und 0,80 in eurem eigenen Zahlenbeispiel. Nach der
+Umstellung auf drei Seiten wird die Bankfläche also **genau einmal** gezählt.
+Hätte ich die Position zusätzlich entfernt, wäre eine ausdrücklich genannte
+Fensterbank gar nicht mehr berechnet worden — aus „ein Drittel zu viel" wäre
+„zu wenig" geworden. Wenn ihr das anders seht, sagt es, dann ändere ich es.
+
+**Abgesichert** (`vob013-leibungen.test.ts`, 8 Tests): dreiseitige Fläche für
+Fenster und Türen, Anzahl, Rechenweg-Text, und für die Fensterbank die drei
+Fälle — einmal gezählt bei Innenleibung mit Erwähnung, gar nicht ohne
+Erwähnung, gar nicht bei Außenleibung. Zusätzlich ein Test, der festhält, dass
+Leibung + Bank zusammen wieder 1,10 m² ergeben: dieselbe Gesamtfläche, aber als
+zwei getrennte, je einmal gezählte Posten.
+
+**VOB-003 bleibt unberührt** und wartet weiter auf den Normkauf: Ob Leibungen
+übermessener Öffnungen überhaupt separat berechnet werden dürfen, ist die
+Frage nach dem „Ob". Hier ging es nur um das „Wie viel".
+
+**Für den Prüfmeister**, damit du den Fall live nachsprechen kannst: „Drei
+Fenster ein Meter zwanzig auf einen Meter, Leibungstiefe fünfundzwanzig
+Zentimeter" muss **2,40 m²** ergeben (3 × 0,80), vorher waren es 3,30 m².
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

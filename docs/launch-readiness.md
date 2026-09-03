@@ -34,16 +34,44 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 02.09.2026)
+## Gate-Fortschritt (Stand 02.09.2026, Abend)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **≈ 35 %** (echte Neuberechnung, siehe Update unten) | 47 |
-| **Gate 2** — öffentlicher Launch | **≈ 15 %** (echte Neuberechnung, neuer Nenner 36→37) | 37 |
+| **Gate 1** — erste Testnutzer | **≈ 36 %** (zweite Neuberechnung heute, siehe Update unten) | 47 |
+| **Gate 2** — öffentlicher Launch | **≈ 15 %** (unverändert seit heute Mittag) | 37 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert, keine neue G3-Bewegung) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+> ✅ **Zweite Neuberechnung heute (Chief of Staff, 02.09.2026, Abend).** Seit
+> der Neuberechnung heute Mittag ist an einem Tag ungewöhnlich viel passiert
+> — vier weitere G1-Punkte bewegt: **7.10 EU-AI-Act-Hinweis (65→72)** — der
+> R3-Hinweis war vormittags nur als „gesehen, gilt als gebaut" im
+> Chief-of-Staff-Kanal vermerkt, jetzt per echtem Code-Commit (`353f5dd`)
+> bestätigt; **1.2 Abdeckung (72→76)** — der Übermessungshinweis steht jetzt
+> wirklich live im Kunden-PDF (Fußnote + Sammelerklärung), nicht mehr nur
+> code-fertig — damit ist Legals einziger 🔴-Befund aus der Risikobewertung
+> (LR-01) geschlossen; **2.1 Registrierung (55→62)** — eine eigene
+> Pflicht-Checkbox „Ich melde mich als Unternehmer an (§14 BGB)", getrennt
+> von der AGB-Zustimmung, ist jetzt sowohl im Frontend als auch serverseitig
+> bestätigt (G4, komplett); **6.2 Secrets-Hygiene (15→25)** — Sandy hat
+> bestätigt, dass Groq im Produkt nirgends verwendet wird (nur OpenAI ist im
+> Einsatz), damit ist das praktische Risiko kleiner als zunächst angenommen;
+> ob am Groq-Konto selbst eine Zahlungsmethode hinterlegt ist, ist weiterhin
+> nicht verifiziert, und der Schlüssel ist weiterhin nicht widerrufen
+> (optionale Formsache, deshalb nicht höher bewertet).
+> **Wichtig, unverändert:** VOB-013 (Fensterlaibung/Fensterbank-Rechenfehler)
+> ist weiterhin NICHT gefixt — die genaue Ursache ist jetzt lokalisiert
+> (`maler.ts` Zeile 614), Legal stuft es als schwerwiegendsten offenen
+> Einzelfund im ganzen Projekt ein (Risikobewertung LR-13) und bittet
+> ausdrücklich, es nicht hinter die Normtext-Beschaffung zu stellen. **Neu
+> entdeckt, noch nicht in eine Prozentzahl gefasst:** VOB-012
+> (Türbreiten-Abzug bei Sockelleisten) taucht inzwischen in praktisch jeder
+> Prüfmeister-Soll-Lösung als offene Variable auf — eine weitere
+> Preis-Entscheidung, die nur Sandy treffen kann, siehe
+> `entscheidungen-fuer-sandy.md`.
 
 > ✅ **Echte Neuberechnung (Chief of Staff, 02.09.2026), keine Schätzung.**
 > Alle 94 Einzelpunkte gegen den aktuellen Stand aller Heimat-Dateien
@@ -492,7 +520,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 42 % — **02.09.: alle 28 Testfälle haben jetzt eine eindeutige Soll-Lösung** (vorher 21), Prüfmeister hat dabei aber einen neuen, echten, systematischen Rechenfehler gefunden: **VOB-013** — Fensterlaibung wird ca. 33 % zu groß berechnet, Fensterbank zusätzlich doppelt gezählt, betrifft jedes Angebot mit Fenstern/Türen, noch nicht gefixt. Breite (28 von ~100) bleibt der limitierende Faktor, der neue Fund dämpft den Sprung zusätzlich. Quelle: `docs/pruefmeister-testfaelle.md`, `docs/vob-angebot-abstimmung.md` VOB-013 |
-| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 72 % — **02.09.:** alle 28 Testfälle inzwischen konsistent nach der VOB-Übermessungsregel bewertet; dazu drei von Legals Funden bereits durch Product Designer umgesetzt (G4-Checkbox, VOB-007-Textkorrektur). Weiterhin größtenteils code-fertig statt breit live nachgetestet, deshalb nur moderater Sprung |
+| 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 76 % — **02.09., Abend:** der Übermessungshinweis (VOB-004/G5) steht jetzt wirklich live im Kunden-PDF (Fußnote an der Position + Sammelerklärung am Ende, konsistent über beide Renderpfade) — vorher nur code-fertig. Damit ist Legals einziger 🔴-Befund aus der Risikobewertung (LR-01) geschlossen. Alle 28 Testfälle weiterhin konsistent nach der VOB-Übermessungsregel bewertet. Weiterhin größtenteils ohne breiten Live-Nachtest |
 | 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 95 % — **25.08.: CoS-002 endgültig abgeschlossen.** Zusätzlich zum Realtime-Fix bereits echter Schutz gegen stilles Überschreiben manueller Positions-Änderungen, inkl. Löschfall (CoS-014). **Sandys Bestätigungs-Retest ist bestanden** — zweifach dokumentiert: Product Designer hatte es schon am 23.08. in `design-check.md` (DC-021) festgehalten (dort korrekt, hier durch einen eigenen Sync-Fehler nicht übernommen), und Sandy hat heute unabhängig denselben Test live wiederholt („Boden schützen 12 m²" korrekt) und bestätigt. Nicht auf 100 %, weil nur gezielte Testfälle bestätigt sind, keine breite Testserie. Quelle: CoS-002/CoS-014, `docs/cos-002-architektur-vorschlag.md`, DC-021 |
 | 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟢 92 % — **24.08.: CoS-018 abgeschlossen**, alle vier vorbestehenden Fehlschläge als veralteter Testcode aufgeklärt (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix. **25.08.:** Suite weiter gewachsen auf 842/842, u. a. durch CoS-021- und PM-019/020-Sicherheitstests, weiterhin kein Fund einer Regression. **02.09.: vermutlich weiter gewachsen** (mehrere neue Fixes diese Woche, typischerweise mit eigenen Tests), aber keine harte aktuelle Zahl vorliegend — bewusst nicht in die Prozentzahl eingerechnet, um nicht zu schätzen. Kein direkter CI-Dashboard-Zugriff |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
@@ -505,7 +533,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 2.1 | Registrierung, Login, Logout laufen sauber durch — komplett | G1 | 🟡 55 % — per Code-Review geprüft (CoS-P-003): strukturell sauber, Account-Enumeration-Schutz, generische Fehlermeldungen. Live-Nachtest steht aus |
+| 2.1 | Registrierung, Login, Logout laufen sauber durch — komplett | G1 | 🟡 62 % — per Code-Review geprüft (CoS-P-003): strukturell sauber, Account-Enumeration-Schutz, generische Fehlermeldungen. **02.09.: G4 komplett** — eigene Pflicht-Checkbox „Ich melde mich als Unternehmer an (§14 BGB)", getrennt von der AGB-Zustimmung, jetzt im Frontend UND serverseitig bestätigt (Commit `353f5dd`). Live-Nachtest weiterhin aus |
 | 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟡 55 % — **korrigiert, 29.08.:** auf Sandys Freigabe „004 bitte b)" läuft die Verifizierungs-Mail jetzt über die eigene Resend-Anbindung statt Supabase (CoS-P-004, neue Route `api/auth/register`). Code fertig, **echter Zustellungs-Test mit echtem Postfach steht aus** — das kann nur Sandy selbst machen |
 | 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🟡 60 % — **korrigiert, 29.08.: Bug ist bereits gefixt, nicht mehr offen.** Auf Sandys Freigabe „003 ja bitte direkt reparieren" läuft der Reset-Link jetzt über `/auth/callback` (korrekter PKCE-Tausch, wie bei der Registrierung), plus aktive Session-Prüfung und eine „Link abgelaufen"-Seite statt Endlos-Laden (CoS-P-003). Diese Zeile stand hier fälschlich seit mehreren Tagen auf „weiterhin ungefixt" — eigener Sync-Fehler des Chief of Staff, der Fix war schon am 25.08. dokumentiert. **Einziger verbleibender Schritt: ein echter Klick-Durchlauf mit echtem Postfach**, aus keiner Session heraus möglich — Sandys Aufgabe |
 | 2.4 | Kompletter erster Durchlauf (erste Anmeldung → erstes Angebot) end-to-end | G1 | ⚪ offen — nicht erhoben |
@@ -552,7 +580,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | # | Punkt | Gate | Status |
 |---|---|---|---|
 | 6.1 | Nutzer sehen ausschließlich eigene Daten (Supabase RLS greift überall) | G1 | 🟢 95 % — **erledigt und geprüft, CoS-P-001**: 22 Tabellen + ~19 Umgehungsstellen direkt in Produktion geprüft, eine akute Lücke (`debug_extraktion_roh`, öffentlich ohne RLS) gefunden und sofort gefixt |
-| 6.2 | Keine Secrets/Keys im Frontend oder in Logs sichtbar | G1 | 🔴 15 % — **02.09., erstmals echt geprüft statt ungeprüft:** ein Groq-API-Key wurde ungefiltert (unmaskiert) im Chat-Verlauf ausgegeben, statt wie sonst mit maskierten Werten. Muss unter console.groq.com widerrufen werden — noch offen. Kein systematischer Scan der übrigen Secrets, nur dieser eine konkrete Fund |
+| 6.2 | Keine Secrets/Keys im Frontend oder in Logs sichtbar | G1 | 🔴 25 % — **02.09.:** ein Groq-API-Key wurde ungefiltert (unmaskiert) im Chat-Verlauf ausgegeben. Sandy hat bestätigt: Groq wird im Produkt nirgends genutzt (nur OpenAI im Einsatz), das praktische Risiko ist damit kleiner als zunächst angenommen. Ob am Groq-Konto eine Zahlungsmethode hinterlegt ist, ist weiterhin nicht verifiziert; der Schlüssel selbst ist weiterhin nicht widerrufen (optionale Formsache, keine Dringlichkeit mehr). Kein systematischer Scan der übrigen Secrets, nur dieser eine konkrete Fund |
 | 6.3 | Daten-Export und -Löschung für DSGVO-Anfragen umsetzbar | G2 | 🟡 55 % — **02.09.:** echte harte Löschung jetzt gebaut (siehe 2.5, gleiche Einschränkung zur Cronjob-Zuverlässigkeit). Export weiterhin ungeprüft |
 | 6.4 | Supabase-Security-Advisor regelmäßig geprüft (nicht nur einmalig) | G1 | 🟡 60 % — seit 17.08. Teil des täglichen automatischen Chief-of-Staff-Checks, aber erst seit heute (neu) |
 | 6.5 | Passwort-Sicherheit: „Leaked Password Protection" (HaveIBeenPwned-Abgleich) aktiv | G1 | 🔴 0 % — laut Supabase-Advisor aktuell **aus** (neu, bestätigter Fund) |
@@ -573,7 +601,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 7.7 | Berufshaftpflicht für Softwareanbieter | G2 | ⚪ offen — nicht erhoben, Sandys Bereich |
 | 7.8 | Marke „Sofortangebot" beim DPMA anmelden | G3 | ⚪ offen |
 | 7.9 | ZUGFeRD-Pflicht ab 2027 für eigene Rechnungen | G3 | ⚪ offen |
-| 7.10 | **EU AI Act Art. 50 — Transparenzpflicht KI-Interaktion (seit 2.8.2026 in Kraft, JETZT schon geltendes Recht)** | G1 | 🟡 65 % — **02.09.: größte Einzelbewegung dieser Neuberechnung.** Product Designer hat den von Legal geforderten in-App-KI-Hinweis gebaut (R3: „wurde von KI erstellt, kann Fehler enthalten", zeigt sich dem Handwerker vor dem Versenden). Legal hat zusätzlich geklärt (S-3), dass eine separate Information der Endkunden des Handwerkers rechtlich NICHT nötig ist — der Scope war also kleiner als zunächst befürchtet. Nicht höher, weil der R3-Hinweis noch nicht live nachgetestet ist. Bußgeldrahmen weiterhin bis 15 Mio. €/3 % Jahresumsatz, praktisches Risiko eher gering. Quelle: `docs/design-check.md` R3, `docs/legal-001-bestandsaufnahme.md` S-3, [re.think Consulting](https://rethink.consulting/transparenzpflichten-nach-artikel-50-des-eu-ai-acts-alles-zur-kennzeichnungspflicht-fur-ki-inhalte-ab-august-2026/) |
+| 7.10 | **EU AI Act Art. 50 — Transparenzpflicht KI-Interaktion (seit 2.8.2026 in Kraft, JETZT schon geltendes Recht)** | G1 | 🟡 72 % — **02.09., Abend: per echtem Code-Commit bestätigt (`353f5dd`)**, vormittags stand der R3-Hinweis nur als „gesehen, gilt als gebaut" im Chief-of-Staff-Kanal, jetzt real verifiziert. Product Designer hat den von Legal geforderten in-App-KI-Hinweis gebaut (R3: „Aus deinem Diktat erstellt — bitte einmal prüfen, bevor es rausgeht.", zeigt sich dem Handwerker vor dem Versenden). Legal hat zusätzlich geklärt (S-3), dass eine separate Information der Endkunden des Handwerkers rechtlich NICHT nötig ist — der Scope war also kleiner als zunächst befürchtet. Nicht höher, weil der R3-Hinweis noch nicht live nachgetestet ist. Bußgeldrahmen weiterhin bis 15 Mio. €/3 % Jahresumsatz, praktisches Risiko eher gering. Quelle: `docs/design-check.md` R3, `docs/legal-001-bestandsaufnahme.md` S-3, [re.think Consulting](https://rethink.consulting/transparenzpflichten-nach-artikel-50-des-eu-ai-acts-alles-zur-kennzeichnungspflicht-fur-ki-inhalte-ab-august-2026/) |
 | 7.11 | NIS2-Cybersicherheitspflichten geprüft | G3 | 🟢 85 % — **geprüft, aktuell nicht einschlägig** (Schwelle 50 Mitarbeitende/10 Mio. € Jahresumsatz in einem von 18 Sektoren, Sofortangebot deutlich darunter). Bei Wachstum erneut prüfen. Quelle: [secjur.com, NIS2 Umsetzung](https://www.secjur.com/blog/nis2-umsetzung) |
 | 7.12 | Barrierefreiheitsstärkungsgesetz (BFSG) geprüft | G3 | 🟡 40 % — wahrscheinlich nicht einschlägig (B2B), nicht abschließend anwaltlich bestätigt, siehe 5.6 |
 | 7.13 | KI-Anbieter-Nutzungsbedingungen eingehalten (OpenAI/Whisper), Kundendaten nicht ungewollt fürs KI-Training freigegeben | G1 | ⚪ offen — nicht erhoben (neu) |

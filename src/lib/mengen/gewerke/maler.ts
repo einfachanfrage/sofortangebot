@@ -611,7 +611,28 @@ export function malerEngine(daten: any): MengenErgebnis {
     const hoe = l.hoehe ?? 1.0
     const tiefe = l.tiefe ?? 0.25
     const istAnnahme = !l.tiefe
-    const leibungsUmfang = round2(2 * br + 2 * hoe)
+    // VOB-013 (Fund des Prüfmeisters, CoS-036, 03.09.2026): Die Leibung
+    // läuft DREISEITIG um die Öffnung — Sturz oben, zwei Wangen seitlich.
+    // Unten sitzt beim Fenster die Fensterbank und bei der Tür der Fußboden;
+    // dort gibt es keine Leibungsfläche zu streichen. Gerechnet wurde bisher
+    // `2×br + 2×hoe`, also einmal rundherum: Bei einem Standardfenster
+    // (1,20 × 1,00 m, 25 cm tief) sind das 1,10 m² statt 0,80 m² — ein
+    // Drittel zu viel, und zwar in jedem einzelnen Angebot mit Leibungen.
+    //
+    // Damit erledigt sich zugleich die Doppelberechnung der Fensterbank: Die
+    // untere Zeile (br × tiefe = 0,30 m²) steckte in der Rundum-Formel UND
+    // noch einmal in der eigenen Position „Fensterbänke streichen". Genau
+    // diese 0,30 m² sind die Differenz zwischen 1,10 und 0,80. Die
+    // Fensterbank-Position bleibt deshalb stehen — sie ist jetzt die einzige
+    // Stelle, an der die Fläche gezählt wird. Sie zusätzlich zu entfernen
+    // würde die Bank gar nicht mehr berechnen, obwohl der Handwerker sie
+    // ausdrücklich genannt hat.
+    //
+    // Kein Normtext nötig (Head of Legal ausdrücklich): reine Geometrie,
+    // keine Auslegungsfrage. VOB-003 (dürfen Leibungen übermessener
+    // Öffnungen überhaupt separat berechnet werden?) bleibt davon unberührt
+    // und wartet weiter auf den Normkauf.
+    const leibungsUmfang = round2(br + 2 * hoe)
     const flaecheM2 = round2(anz * leibungsUmfang * tiefe)
     const posTyp = (l.typ ?? '').includes('innen') ? 'Fenster Innenleibungen streichen'
       : l.typ === 'tuer' ? 'Türleibungen streichen'
@@ -619,11 +640,13 @@ export function malerEngine(daten: any): MengenErgebnis {
     positionen.push({
       beschreibung: posTyp,
       menge: flaecheM2, einheit: 'm²', konfidenz: 'high',
-      berechnungsweg: `${anz} × (2×${br} + 2×${hoe}) × ${tiefe}m = ${anz} × ${leibungsUmfang} × ${tiefe} = ${flaecheM2} m²`,
+      berechnungsweg: `${anz} × (${br} + 2×${hoe}) × ${tiefe}m = ${anz} × ${leibungsUmfang} × ${tiefe} = ${flaecheM2} m² (dreiseitig: Sturz + 2 Wangen, unten Fensterbank/Boden)`,
       annahmen: istAnnahme ? ['Leibungstiefe 25cm Standard (nicht angegeben)'] : [],
     })
     // Fensterbänke bei Innenleibung + Erwähnung
     if ((l.typ ?? '').includes('innen') && transkriptAll.includes('fensterbank')) {
+      // Seit VOB-013 die einzige Stelle, an der die Bankfläche gezählt wird
+      // — vorher steckte sie zusätzlich im Rundum-Leibungsumfang.
       const bankFl = round2(anz * br * tiefe)
       positionen.push({ beschreibung: 'Fensterbänke streichen', menge: bankFl, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${anz} × ${br}m × ${tiefe}m = ${bankFl} m²`, annahmen: [] })
     }

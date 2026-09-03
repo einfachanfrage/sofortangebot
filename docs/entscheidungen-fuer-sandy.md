@@ -85,31 +85,32 @@ CI-Grundlage, Freigabe durch Sandy offen" markiert.
 Head of Legal & Compliance** (S-1, S-2, S-3, S-5 sind entschieden, siehe
 Verlauf unten):
 
-**S-4 — Rechtsform/Versicherung, noch offen.** Du haftest aktuell als
-Einzelunternehmerin persönlich und unbegrenzt — auch mit Privatvermögen,
-auch für einen KI-Rechenfehler, der einem Kunden schadet. Legal empfiehlt,
-das vor dem ersten zahlenden Kunden zu klären, nicht erst ein Jahr nach
-Launch — genau in dem Zeitraum dazwischen läuft das Risiko live, sobald
-echtes Geld fließt.
+**S-4 — Rechtsform/Versicherung, noch offen. Legal hat jetzt eine konkrete
+Doppel-Empfehlung nachgereicht (02.09., zwei Abschnitte weiter unten in
+dieser Datei, „S-4" und „S-4, Teil 2").** Kurzfassung davon: **(1)
+Vermögensschaden-Haftpflicht sofort abschließen**, noch vor dem ersten
+echten Testnutzer — konkreter Anbieter-Vorschlag: **exali IT-Haftpflicht,
+Risikoträger Markel Insurance SE, 1.000.000 € Deckungssumme** (statt der
+üblichen 250.000 €, wegen der Serienschadenklausel: ein systematischer
+Rechenfehler bei z. B. 200 Betrieben gleichzeitig zählt als EIN
+Versicherungsfall mit EINER Deckungssumme, nicht 200 einzelne). **(2) Danach
+die UG gründen — und zwar vor dem ersten *zahlenden* Kunden, nicht davor
+und nicht danach** (§26 HGB: wer erst als Einzelunternehmerin Kunden
+gewinnt und danach in eine UG umwandelt, haftet trotzdem noch 5 Jahre lang
+mit Privatvermögen für die Altverbindlichkeiten — die Umwandlung schützt
+dann nicht mehr rückwirkend). Kosten grob: UG ~300–480 € Notar/Handelsregister
++ praktisch mindestens 1.000 € Stammkapital, dazu ~2.000 € Zusatzkosten im
+ersten Jahr, danach ~1.500–2.000 €/Jahr. **Wichtiger Zusatzpunkt von
+Legal:** VOB-013 (bekannter, noch nicht gefixter Rechenfehler, siehe unten)
+offen zu lassen UND zu wissen, dass er da ist, kann laut Legal den
+Versicherungsschutz gefährden (Obliegenheitsverletzung) — ein Grund mehr,
+VOB-013 vor Gate 1 zu fixen statt danach.
 
-Zur Einordnung (Fakten, keine Rechts-/Steuerberatung — bitte bei der
-tatsächlichen Gründung einen Steuerberater/Notar hinzuziehen):
-- **UG (haftungsbeschränkt)** ist die „GmbH light" genau für deine
-  Situation: ab 1 € Stammkapital gründbar (praktisch sind ein paar hundert
-  Euro üblich), Notar- und Handelsregisterkosten liegen bei einer
-  Einzelgründung mit Musterprotokoll grob im niedrigen dreistelligen
-  Bereich, Haftungsschutz gilt ab Eintragung. Muss jährlich 25 % des
-  Gewinns zurücklegen, bis 25.000 € Kapital erreicht sind (dann automatisch
-  GmbH-fähig).
-- **GmbH** braucht 25.000 € Stammkapital (mind. 12.500 € sofort
-  eingezahlt) — bei deiner aktuellen Lage unrealistisch als Startpunkt.
-- Die übliche Reihenfolge für genau diesen Fall ist deshalb: **UG jetzt,
-  GmbH später**, nicht „warten, bis genug Geld für eine GmbH da ist".
-
-Deine Sorge um die Kosten ist berechtigt, aber die UG ist im Vergleich zum
-Risiko, das sie abdeckt, eine der günstigsten Positionen im ganzen Projekt.
-**Deine Entscheidung:** UG jetzt (vor dem ersten zahlenden Kunden) oder
-bewusst später — und falls später, wie du das Zwischenrisiko einschätzt.
+**Deine Entscheidung:** Anbieter/Deckungssumme für die Versicherung
+freigeben (oder Alternativangebote einholen), UG-Zeitpunkt festlegen (vor
+dem ersten zahlenden Kunden ist Legals klare Empfehlung). Volle Details,
+Vergleichsangebote und die genaue Serienschaden-Begründung stehen in den
+beiden „S-4"-Abschnitten weiter unten in dieser Datei.
 
 **🔵 L7 — Kündigungs-Button, den es technisch noch nicht gibt.** In den AGB
 (§6.2) steht, Kunden können „direkt in den Einstellungen" kündigen. Aktuell
@@ -155,6 +156,17 @@ Sekundärquellen zu verlassen. Drei Optionen liegen vor: **Bibliothekskarte
 (~10 €)**, **komplettes VOB-Werk kaufen (~54 €)**, oder **nicht kaufen** und
 mit den bisherigen Quellen weiterarbeiten. **Deine Entscheidung:** welche
 der drei Optionen — Details in `docs/vob-angebot-abstimmung.md`.
+
+**🔵 VOB-012 (neu, 02.09.) — Türbreiten-Abzug bei Sockelleisten.** Prüfmeister
+hat beim Durchrechnen der 28 Testfälle festgestellt, dass diese Frage bisher
+in praktisch jeder neuen Soll-Lösung als offene Variable auftaucht: wird die
+Breite von Türöffnungen bei der Sockelleisten-Längenberechnung abgezogen
+(wie bei anderen Öffnungen üblich) oder nicht? Aktuell nicht konsistent
+geklärt. **Deine Entscheidung:** abziehen oder nicht — Details in
+`docs/pruefmeister-testfaelle.md`. (Nicht zu verwechseln mit VOB-013 weiter
+unten im Dringend-Bereich des Dashboards — das ist ein echter Rechenfehler,
+keine Preis-Entscheidung, und liegt bei Head of Product Engineering, nicht
+bei dir.)
 
 **Erledigt, nicht mehr offen:** Der Datenleck-Altfall von oben (öffentlich
 lesbare Debug-Tabelle, 07.–17.08.) ist inzwischen vollständig abgeschlossen
