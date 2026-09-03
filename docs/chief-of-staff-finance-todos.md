@@ -1065,5 +1065,128 @@ glättest. Das wäre dann eine Entscheidung für Sandy, kein Modellierungsproble
 
 ---
 
+## CoS-F-003 — erledigt (Head of Finance, 03.09.2026)
+
+Der Plan steht, mit allen sieben Nachträgen eingearbeitet. Sechs neue Blätter in
+`docs/kostenuebersicht-finance.xlsx`: **Plan-Deckblatt**, **Plan-Annahmen**,
+**Plan-Kunden**, **Plan-Kosten**, **Plan-24M**, **Plan-Phase B**. Gleiche Datei
+wie das Journal — keine zweite Zahlenwelt. 5.942 Formeln, `recalc.py` 0 Fehler,
+Kernzahlen händisch gegengerechnet, Jahressummen gegen die 24-Monats-Summen
+abgeglichen.
+
+Hinweis vorweg: Ich hatte den Plan mit meiner alten Pauschalannahme (2/4/8
+Neukunden ab Monat 1) schon fertig, als deine Nachträge 3–7 kamen. Er ist
+komplett neu gerechnet — Kanalplan statt Pauschalrate, Zeitbudget als harte
+Grenze, Ausstieg als Treppe, UG statt Rechtsform-Schalter, Launch im Dezember.
+
+### Die drei Zahlen (Szenarien = die von Marketing, nicht mehr meine)
+
+**1. Wann trägt es sich?** Erstes positives Monatsergebnis: **vorsichtig gar
+nicht innerhalb von 24 Monaten · realistisch Monat 15 (November 2027) ·
+optimistisch Monat 11 (Juli 2027)** — bei 21 bzw. 26 zahlenden Betrieben.
+Zahlende Betriebe am Ende (Monat 24, nach Abwanderung): **14 / 47 / 99.**
+
+**2. Wie viel muss Sandy vorstrecken?** Tiefpunkt der Liquidität
+**–14.260 € / –9.280 € / –7.860 €**, erreicht in Monat 24 / 14 / 10. Darin
+jeweils 2.000 € gebundene Reserven (Stammkapital + Rücklage Rechtsstreit), die
+Vermögen bleiben — der tatsächlich verbrauchte Betrag liegt also rund 2.000 €
+niedriger. Dauerhaft positive Liquidität erreicht im Horizont nur das
+optimistische Szenario (Monat 20).
+
+**3. Ab wann kann die Anstellung reduziert werden?** Hier zahlt sich deine
+Treppe aus Nachtrag 5 aus — die Stufen liegen weit auseinander:
+
+| Stufe | Zu schließende Lücke | Nötige Betriebe | Nötiger Umsatz/Monat |
+|---|---|---|---|
+| B1 — 30 Std. | 409 € netto | **37** | 1.313 € |
+| B1 — 25 Std. | 701 € netto | **45** | 1.705 € |
+| B2 — Anstellung weg | 2.500 € netto | **107** | 4.743 € |
+
+Erreicht wird: **B1 (30 Std.) realistisch in Monat 21, optimistisch in Monat
+14** · **B1 (25 Std.) realistisch Monat 24, optimistisch Monat 16** · **B2 in
+keinem Szenario innerhalb von 24 Monaten** · vorsichtig gar keine Stufe.
+Mit den drei Monaten Vorlauf nach §8/§9a TzBfG müsste der Teilzeitantrag
+realistisch in Monat 18 (Februar 2028) gestellt werden, optimistisch in Monat 11.
+
+Der Unterschied zwischen B1 und B2 ist genau der Punkt, den du gemacht hast:
+37 statt 107 Betriebe, weil das Teilzeitgehalt weiterläuft und die
+Krankenversicherung beim Arbeitgeber bleibt. **B1 ist erreichbar, B2 im
+24-Monats-Horizont nicht** — der Zwischenschritt ist damit nicht nur netter,
+sondern der einzige Weg, der im Plan überhaupt vorkommt.
+
+### Deine Vermutung aus Nachtrag 4 — teils bestätigt, teils nicht
+
+Du hast vermutet, die Kapazitätsgrenze komme vor der Rentabilitätsgrenze.
+**Gegen die konservative Dauerlinie (65 Std.) stimmt das:** das optimistische
+Szenario reißt sie ab Monat 17 und in 8 von 24 Monaten — lange bevor B2
+erreichbar wäre (nämlich nie). **Gegen die Sprintlinie (86 Std.) stimmt es
+nicht:** kein Szenario überschreitet sie im Horizont; im Monat 24 liegt der
+Bedarf bei 50 / 62 / 83 Stunden.
+
+Das hängt aber stark an zwei Annahmen, die von mir stammen und nicht belegt
+sind: 18 Minuten Support je Betrieb und Monat und 25 Stunden Grundlast für
+Produkt und Verwaltung. Bei 30 Minuten Support statt 18 kippt das
+optimistische Szenario auch über die Sprintlinie. Beide Zellen sind gelb und in
+einer Minute geändert — wenn Sandy die Grundlast besser einschätzen kann, ist
+das die wirksamste Korrektur am ganzen Modell.
+
+### Ein Befund, der die CoS-F-002-Antwort überholt
+
+**Die Kleinunternehmergrenze wird viel später erreicht als im September
+gerechnet.** Mit dem Kanalplan und dem Dezember-Launch kommt kein Kalenderjahr
+über 25.000 €, außer dem optimistischen Szenario im angeschnittenen Jahr 2028
+(26.700 € von Januar bis August). Zum Vergleich die alte CoS-F-002-Antwort:
+Monat 35 / 21 / 12. Ich habe das Blatt „Kleinunternehmergrenze" nicht
+überschrieben, sondern oben rot als überholt markiert und auf Abschnitt 4 des
+Deckblatts verwiesen — die alte Rechnung bleibt so nachvollziehbar. Praktisch
+heißt das: **die Kleinunternehmerregelung trägt im ganzen Planhorizont**, und
+die Frage an den Steuerberater ist nicht „wann fällt sie weg", sondern „lohnt
+sich der freiwillige Verzicht wegen des Vorsteuerabzugs". Der Schalter dafür
+ist eingebaut, beide Varianten sind rechenbar.
+
+### Zum Vollständigkeits-Katalog
+
+Alle Posten aus A–H sind als Zeile geführt, 46 Zeilen, davon 11 als „trifft
+nicht zu, weil …". **Ergänzt** (bitte in den Katalog aufnehmen):
+Google-Play-Registrierung neben der Apple-Gebühr · Kontoführung des bei der UG
+zwingenden Geschäftskontos · die Marketing-Sachkosten aus dem Kanalplan als
+eigener Monatsvektor (1.430 € über 24 Monate) · eine schaltbare Vorsteuer-Zeile
+für die Regelbesteuerungs-Variante.
+
+Aus Nachtrag 7 übernommen: **keine EÜR-Variante mehr**, nur UG mit Bilanzierung
+(Steuerberater 3.000 €/Jahr als markierte Annahme, gegenüber 1.000–2.500 € beim
+Einzelunternehmen — der größte laufende Einzelposten der Rechtsformwahl). Und
+die **17 Belege aus Mai bis August sind nicht in der Kostenbasis**: sie bleiben
+als Historie im Rechnungsjournal, der Plan fängt bei null an und übernimmt nur
+die laufenden Dienste, die weiterlaufen. Der Empfehlungs-Anreiz steht als
+Schalter, standardmäßig aus, weil Sandy entscheidet — den Uplift auf die
+Empfehlungsquote habe ich bewusst auf 0 gelassen, weil Marketing „spürbar"
+schreibt, aber keine Zahl nennt, und ich sie nicht erfinde.
+
+### Was ich weiterhin NICHT gerechnet habe
+
+**Die Besteuerung der UG.** Die UG-Kosten sind vollständig drin, die
+UG-Besteuerung nicht: Das Raster rechnet die Steuer wie beim Einzelunternehmen
+(Gewinn oben auf Sandys Gehalt, Grenzsteuersatz 31 %). Körperschaftsteuer plus
+Soli plus Gewerbesteuer auf Gesellschaftsebene und danach Geschäftsführergehalt
+oder Ausschüttung ist eine andere Rechnung, und sie verändert Frage 3 spürbar.
+Das ist der eine Punkt, an dem der Plan einen Steuerberater braucht, bevor
+Sandy Entscheidungen daran hängt — der Termin läuft ja ohnehin parallel. Ich
+habe es an drei Stellen sichtbar markiert statt es still zu überspielen.
+
+**Den Ausstiegsmonat als Prognose** und **einen Businessplan in Bankform** —
+beides wie vereinbart nicht.
+
+### Offene Zahlen, die den Plan verschieben (alle gelb)
+
+Sandys echtes Bruttogehalt (bestimmt den Grenzsteuersatz; ich rechne mit 48.000 €
+aus den 2.500 € netto zurückgerechnet) · Beitrag der IT-Haftpflicht · das
+Steuerberater-Honorar · **die Abwanderungsrate** (meine Annahme 5/4/3 % nach
+Marketings Hinweis, ohne einen einzigen Erfahrungswert — die wichtigste Zahl im
+Modell) · Support- und Grundlast-Stunden · Anthropic-Direktrechnung einmalig
+oder wiederkehrend.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
