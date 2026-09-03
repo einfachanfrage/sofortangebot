@@ -79,7 +79,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-026 | Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht (PD-005) | ✅ vollständig behoben (Product Designer, 2026-09-02) — Pipeline-Fix von Head of Product Engineering (2026-08-24) + „Du hast gesagt"-Vorschlagskarte in `RueckfragenScreen.tsx`. Live-Nachtest steht aus | Head of Product Engineering (Pipeline) / Product Designer (Karte) |
 | DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | ✅ Vollständig live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Angebot 2026-15E8 auf `sofortangebot.app`, Position „Erschwerniszuschlag Raumhöhe > 3m" trägt live den „Vorschlag"-Badge neben dem Titel | Head of Product Engineering (Flag, ✅) / Product Designer (Badge, ✅ live bestätigt) |
 | DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — raum-gruppiert (`entwurf/page.tsx`) | Product Designer (umgesetzt) |
-| DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | ✅ Code live bestätigt (Product Designer, 2026-09-02) — Datenmodell, Sechs-Dateien-Umsetzung UND die Verhaltensänderung „Baustelle immer sicht-/wählbar" (`2a9d6d3`) sind Vorfahre des aktuell deployten `ccbd667`. Live-Klick-Test mit echten Kundendaten noch offen — kann ich ohne Login nicht selbst machen | Product Designer (umgesetzt, Code live) |
+| DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | ✅ Vollständig live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt mit Sandys Erlaubnis) — kompletter Flow auf `sofortangebot.app` mit einem klar markierten Test-Kunden geprüft: Kunde zuweisen erzeugt automatisch die Erstbaustelle (Fallback-Name „Baustelle bei {Kundenname}", da keine Adresse gesetzt), Baustellen-Zeile im Editor sofort sichtbar, „Baustelle wählen"-Sheet + zweite Baustelle live anlegbar, Kunde-Seite gruppiert beide Baustellen korrekt inkl. „+ Neues Angebot für diese Baustelle". Keine Abweichung zur Spec gefunden. Test-Kunde „TEST – bitte löschen" bewusst stehen gelassen, Sandy kann ihn selbst löschen | Product Designer (umgesetzt, live bestätigt) |
 | DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | ✅ Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21) — Karte, DC-028-Raum-Karten und „Entwurf erstellen"-Gate alle wie entschieden gebaut. Regressionsgeprüft (236 Tests grün), noch KEIN Live-Nachtest | Product Designer (Entscheidung) / Head of Product Engineering (Umsetzung) |
 | DC-031 | Navigations-Sackgassen: laufende Aufnahme nicht abbrechbar (Mikro bleibt offen), Aufnahme-Detail-Sheet nur per unsichtbarem Backdrop-Tap schließbar (sichtbares „X" löscht stattdessen), „Zurück" aus dem frischen 0€-Entwurf landet auf der leeren Angebotsseite statt am Dashboard (von Sandy gemeldet, 2026-08-23) | ✅ Alle drei umgesetzt (Product Designer, 2026-08-23): Abbrechen-Button während Aufnahme (verwirft, lädt nicht hoch) + Mikro wird beim Verlassen der Seite automatisch freigegeben; Sheet hat jetzt einen eigenen „Schließen"-Text-Button getrennt vom Lösch-„X"; „Zurück"/„Trotzdem zurück ohne Berechnen" gehen zum Dashboard, wenn das Angebot noch keinen Kunden und keine Positionen hat, sonst weiterhin zur Angebotsseite. Beim Nachtesten „an allen anderen Stellen" (Sandys Auftrag) zusätzlich dieselbe Baustelle bei „+ Neue Variante erstellen" in Briefpapier & Design gefunden und gleich mitgefixt: leere Variante wird beim Zurückgehen ohne Änderung automatisch wieder gelöscht, mit ungespeicherten echten Änderungen kommt jetzt eine Rückfrage statt stillem Datenverlust. Scoped tsc sauber, noch kein Live-Test | Product Designer (umgesetzt) |
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
@@ -1990,18 +1990,19 @@ gruppierte Sammelansicht im Browser bestätigt korrekt.
 **Datum:** 2026-08-19 (von Sandy eingebracht, Quelle: Clemens — ihr Partner,
 selbst Handwerker, wird nach Gate 1 bei 100 % erster Testnutzer)
 
-**Status:** ✅ Code live bestätigt (Product Designer, 2026-09-02) —
+**Status:** ✅ Vollständig live bestätigt (Product Designer, 2026-09-03) —
 Datenmodell live, Konzept + Prototyp geliefert, sechs Dateien in echtem Code
-umgesetzt, `tsc --noEmit` sauber, UND die Verhaltensänderung „Baustelle
-immer sicht-/wählbar" (`2a9d6d3`) sind alle Vorfahre des aktuell in
-Produktion deployten Commits — siehe „Live-Bestätigung — Code" am Ende
-dieses Abschnitts. Nur noch der **Live-Klick-Test mit echten Kundendaten**
-bleibt offen — das kann ich ohne Login nicht selbst machen. **Korrektur
-(Product Designer, 2026-09-02):** Der Status hier oben war zwischenzeitlich
-veraltet stehen geblieben — der Verlauf unten zeigt, dass Konzept, Prototyp
-UND Umsetzung längst passiert waren. Ich hatte das selbst übersehen und
-Sandy am 02.09. fälschlich gesagt, die Baustellen-UI müsse „noch gebaut"
-werden. Volle Details im Verlauf unten.
+umgesetzt, `tsc --noEmit` sauber, die Verhaltensänderung „Baustelle immer
+sicht-/wählbar" (`2a9d6d3`) live deployt — UND am 2026-09-03 mit Sandys
+Erlaubnis selbst per Browser-Zugriff auf `sofortangebot.app` eingeloggt und
+den kompletten Flow mit einem Test-Kunden durchgeklickt (Details siehe
+„Live-Bestätigung — Klick-Test" am Ende dieses Abschnitts). Keine
+Abweichung zur Spec gefunden, nichts mehr offen. **Korrektur (Product
+Designer, 2026-09-02):** Der Status hier oben war zwischenzeitlich veraltet
+stehen geblieben — der Verlauf unten zeigt, dass Konzept, Prototyp UND
+Umsetzung längst passiert waren. Ich hatte das selbst übersehen und Sandy
+am 02.09. fälschlich gesagt, die Baustellen-UI müsse „noch gebaut" werden.
+Volle Details im Verlauf unten.
 
 **Der Bedarf (Clemens' Praxis):** Bei größeren Aufträgen (z. B. kompletter
 Innenausbau) macht ein Handwerker nicht ein einziges großes Angebot,
@@ -2417,6 +2418,32 @@ Kunde-Seite, der neue Bootstrap-Link für die zweite Baustelle) — dafür
 bräuchte ich entweder Login-Zugang oder Sandy müsste kurz selbst
 durchklicken, idealerweise sobald es echte Kunden in Produktion gibt
 (Stand 19.08. waren es noch 0, aktueller Stand ist mir nicht bekannt).
+
+**Live-Bestätigung — Klick-Test (Product Designer, 2026-09-03).** Sandy hat
+mir Browser-Zugriff auf ihr Gerät gegeben und sich selbst auf
+`sofortangebot.app` eingeloggt (ihr Passwort habe ich nicht gesehen/
+eingegeben). Produktion hatte weiterhin 0 echte Kunden — mit Sandys
+ausdrücklicher Erlaubnis („ja darfst du") einen klar markierten Test-Kunden
+„TEST – bitte löschen" angelegt und komplett durchgeklickt:
+
+- Kunde per „+ Kunde" einem bestehenden Test-Entwurf zugewiesen → die
+  Baustellen-Zeile erscheint sofort, auch mit nur einer (der
+  automatischen) Erstbaustelle — genau wie in der „immer sichtbar"-Änderung
+  vorgesehen.
+- Fallback-Namensregel bestätigt: da der Test-Kunde keine Adresse hat,
+  heißt die Erstbaustelle korrekt „Baustelle bei TEST – bitte löschen".
+- Baustellen-Zeile antippen öffnet das „Baustelle wählen"-Sheet mit der
+  bestehenden Baustelle + einem Formular für eine neue. Zweite Baustelle
+  „Ausbau OG (TEST)" live angelegt und zugewiesen — genau der
+  Clemens-Anwendungsfall (mehrere Baustellen pro Kunde).
+- Kunde-Seite gruppiert danach korrekt: beide Baustellen erscheinen als
+  eigene Blöcke, die leere Erstbaustelle zeigt „Noch kein Angebot" +
+  „+ Neues Angebot für diese Baustelle", die zweite zeigt das
+  umgehängte Angebot mit Betrag/Status/Datum.
+
+Keine einzige Abweichung zur Spec gefunden. Der Test-Kunde bleibt bewusst
+in der Datenbank stehen (klar als Test markiert) — Sandy kann ihn jederzeit
+selbst löschen, das mache ich nicht eigenmächtig.
 
 ---
 
