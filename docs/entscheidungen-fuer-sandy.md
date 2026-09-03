@@ -116,37 +116,56 @@ nächste Deploy von Head of Product Engineering raus (zusammen mit den
 übrigen anstehenden Änderungen). Details in
 `docs/chief-of-staff-legal-todos.md`, Abschnitt „Stufe 3".
 
-**🔵 Steuerberater suchen — zwei Dinge hängen daran.** Head of Finance
-kann den Finanzplan (CoS-F-003) rechnen, aber zwei Posten darin bleiben leer,
-bis du einen Steuerberater hast: **was er kosten wird** (laufende Buchhaltung
-und Jahresabschluss sind ein dauerhafter Posten im Plan, und der Unterschied
-zwischen EÜR und UG-Bilanz ist erheblich), und die beiden Fragen, die schon
-länger auf ihn warten — Verzicht auf die Kleinunternehmerregelung ja/nein, und
-die Behandlung der Supabase-Reverse-Charge-Rechnungen (§13b trotz §19).
-**Deine Aktion:** einen Steuerberater suchen und einen Termin machen. Head of
-Finance hat mit dem Rechnungsjournal genau die Vorarbeit geleistet, mit der so
-ein Erstgespräch kurz und günstig wird.
+**🔵 Steuerberater suchen — jetzt parallel zur Gründung, nicht mehr davor.**
+Durch deine Entscheidung „direkt UG, Verzicht auf die Altbelege" (CoS-L-003)
+blockiert der Steuerberater die Gründung nicht mehr — Bargründung per
+Musterprotokoll hängt an keiner Steuerfrage. Trotzdem gehört der Termin in
+die nächsten zwei Wochen, weil danach der Fragebogen fürs Finanzamt kommt.
+**Zwei Fragen bleiben** (Legal hat sie vorformuliert): (1) darf die UG die
+selbst entwickelte Software einfach nutzen oder muss sie förmlich eingebracht
+werden, (2) Kleinunternehmerregelung für die UG ja/nein — bei ausschließlich
+B2B-Kunden mit Vorsteuerabzug spricht viel für den Verzicht. Und für den
+Finanzplan braucht Head of Finance seine Kosten (Buchführung + Jahresabschluss
+einer UG, dauerhaft). **Deine Aktion:** Termin machen. Kalenderfenster:
+vor dem 18.09. oder 26.09.–01.11.
 
-**🔴 Gewerbeanmeldung — noch nicht passiert, und das hat jetzt Folgen.**
-Du hast am 03.09. bestätigt, dass das Claude-Pro-Abo geschäftlich ist, „aber
-kein Gewerbe angemeldet". Damit ist ein Punkt aktiv, der bisher nur nebenbei
-in den Finance-Notizen stand: **es gibt bis heute kein angemeldetes Gewerbe.**
-Zwei Dinge hängen daran:
+**🔴 UG gründen — Notartermin ist dein nächster Schritt.** Entschieden
+(03.09., mit Head of Legal): **direkt UG, kein Umweg über ein
+Einzelunternehmen, Verzicht auf die 17 Altbelege seit Mai** (bleiben
+Privatausgaben — ohne andere Einkünfte, gegen die man einen Verlust verrechnen
+könnte, war das ohnehin fast nichts wert). Legals Plan dazu, Gesamtdauer
+4–6 Wochen, dein eigener Aufwand zwei Termine, eine Kontoeröffnung, zwei
+Online-Formulare:
 
-1. **Alle bisherigen Kosten** (17 erfasste Belege, Mai–August) sind
-   vorweggenommene Betriebsausgaben. Die lassen sich in der Regel nachträglich
-   geltend machen, wenn der Beleg-Nachweis sauber ist — genau dafür führt Head
-   of Finance das Rechnungsjournal. Je länger die Anmeldung her ist, desto
-   erklärungsbedürftiger wird die Abgrenzung.
-2. **Reihenfolge-Frage, die Geld spart:** Legal empfiehlt die UG **vor dem
-   ersten zahlenden Kunden** (S-4, §26 HGB). Wenn ohnehin eine UG kommt,
-   braucht die eine eigene Gewerbeanmeldung. Es wäre unnötig, dich jetzt erst
-   als Einzelunternehmerin anzumelden und wenige Wochen später nochmal für die
-   UG — oder umgekehrt zu spät dran zu sein. **Ich habe Head of Legal &
-   Compliance unter CoS-L-003 gebeten, dir genau diese Reihenfolge
-   auszuarbeiten** (jetzt Einzelunternehmen anmelden und später umwandeln, oder
-   direkt UG). **Deine Entscheidung fällt, sobald seine Antwort da ist** — bitte
-   bis dahin nichts anmelden.
+1. **Notartermin** — Musterprotokoll, 1.000 € Stammkapital. **Kalenderfenster:
+   vor dem 18.09. oder 26.09.–01.11.** (Italien dazwischen). Je früher, desto
+   mehr Luft bis Gate 1 im Dezember.
+2. Parallel: Geschäftskonto für die „UG i. G." beantragen.
+3. Nach dem Notar: Stammkapital einzahlen, Beleg an den Notar — erst dann
+   meldet er beim Handelsregister an.
+4. Nach der HR-Eintragung (Woche 3–5): Gewerbe der UG online anmelden (~26 €),
+   Fragebogen Finanzamt mit Steuerberater, IHK meldet sich von selbst.
+5. Dann Rechtstexte/Stripe/Versicherung auf die UG — Legal liefert die
+   Formulierungen, Engineering baut ein, Platform aktiviert Stripe erst als UG.
+
+Details und die Liste „was vor dem ersten Kunden fertig sein muss":
+`docs/chief-of-staff-legal-todos.md`, Abschnitt „CoS-L-003, geänderter Plan".
+
+**🔵 Drei Fragen von Head of Marketing** (Kanalplan CoS-M-007 liegt vor —
+sehr konkret, lohnt sich zu lesen, Abschnitt 0 bis 5):
+
+1. **Empfehlungs-Anreiz — ja oder nein?** Vorschlag: „Ein Kollege, ein Monat
+   geschenkt" — wer einen Kollegen bringt, der zahlend wird, bekommt einen
+   Monat frei. Kostet 49 € Umsatz pro Empfehlung, hebt Mundpropaganda spürbar.
+   Es ist eine Preisentscheidung, deshalb nicht eingerechnet — Finance führt
+   es als Option im Plan.
+2. **Dankeschön für den Dessau-Kontakt:** Marketing rät von Provision ab (er
+   macht es als Freund von Clemens, Geld würde das kaputtmachen) und schlägt
+   ein sichtbares Dankeschön nach den ersten drei Testnutzern vor (Abendessen
+   o. ä.). Bestätigen oder ändern.
+3. **Drehtage im Oktober:** Vorschlag drei Samstage, **10., 17., 24.10.**, je
+   ~2 Stunden mit Clemens auf der Baustelle, 8–10 Hooks pro Tag — das ist der
+   Vorrat für November und Dezember. Passt das mit Clemens' Baustellen?
 
 **🔵 Rundung — kaufmännisch runden, ja oder nein?** Head of Product
 Engineering hat das beim VOB-013-Fix (03.09.) als Nebenbefund gemeldet und
@@ -283,6 +302,9 @@ strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-09-03 | CoS-L-003: Erst Einzelunternehmen anmelden und später in die UG überführen, oder direkt UG? | **Direkt UG, so wenig Aufwand wie möglich, Verzicht auf die 17 Altbelege seit Mai** (bleiben Privatausgaben). Legal hat den Plan darauf umgestellt: Bargründung per Musterprotokoll, 4–6 Wochen, Steuerberater parallel statt davor. Nächster Schritt: Notartermin (nur Sandy) | `docs/chief-of-staff-legal-todos.md` CoS-L-003, „geänderter Plan“ |
+| 2026-09-03 | Launch-Zeitplan: Thailand (02.11.–03.12.) kollidiert mit dem bisher angedachten Fenster „01.11./01.12.“ — Oktober anpeilen oder nach Thailand planen? | **Nach Thailand.** Gate 1 (begleitete Testnutzer) ab **Anfang Dezember**, öffentlicher Launch (Gate 2) **Januar 2027**. Oktober wird für Produkt, Content-Vorrat und Vorbereitung genutzt. Clemens ist im November ebenfalls in Thailand — alle Drehtage und der Dessau-Kontakt müssen vor dem 01.11. laufen | `docs/kalender.md` |
+| 2026-09-03 | Startseite zeigt nur die Warteliste, volle Landingpage verborgen — gewollt? | **Ja, bewusst — aber offen, wann die Website online geht:** „vermutlich erst wenn Gewerbe angemeldet etc., oder nicht“. Damit hängt der Zeitpunkt an der Rechtsform-Reihenfolge; Head of Legal beantwortet unter CoS-L-003 zusätzlich, ab wann die volle Landingpage mit Preisen rechtlich live sein darf | `docs/chief-of-staff-legal-todos.md` CoS-L-003 |
 | 2026-09-03 | Finanzplan CoS-F-003: Welchen Netto-Bedarf pro Monat soll Head of Finance für die Frage „ab wann kann ich die Anstellung loslassen“ ansetzen? | **Mindestens 2.500 € netto** (Sandys aktuelles Nettogehalt). Als **Untergrenze** in den Plan gegeben, nicht als Zielgröße — Head of Finance rechnet zusätzlich eine realistische Schwelle mit Puffer und Rücklagen, weil in der Selbstständigkeit der Arbeitgeberanteil zur Sozialversicherung wegfällt | `docs/chief-of-staff-finance-todos.md` CoS-F-003 |
 | 2026-09-03 | Head of Finance, offen seit 19.08.: Ist das Claude-Pro-Abo über Apple (22 €/Monat) geschäftlich oder privat? | **Geschäftlich.** Wandert damit in die Betriebskosten. Zusatzhinweis von Sandy: es gibt bis heute **kein angemeldetes Gewerbe** — die Ausgabe ist also eine vorweggenommene Betriebsausgabe, siehe eigener offener Punkt „Gewerbeanmeldung“ | `docs/chief-of-staff-finance-todos.md` CoS-F-001 |
 | 2026-09-03 | Head of Finance, offen seit 19.08.: Laufen bei Supabase ungenutzte Projekte mit (5 Referenzen bei 2 dokumentierten)? | **Erledigt — Sandy hat die übrigen Projekte selbst gekündigt.** Kein Platform-Ticket nötig. Offen bleibt nur noch die andere Hälfte der Frage: wie stark die Betriebskosten mit steigender Nutzerzahl wachsen — das ist keine Sandy-Frage, sondern an Platform geroutet (CoS-P-008) | `docs/chief-of-staff-finance-todos.md` CoS-F-001 |

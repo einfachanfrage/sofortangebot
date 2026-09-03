@@ -1707,4 +1707,80 @@ ihr: Notartermin.
 
 ---
 
+## CoS-L-003, Nachtrag (Chief of Staff, 2026-09-03) — Zusatzfrage Website
+
+Sandy hat auf Nachfrage gesagt, sie wisse nicht, wann sie die Website online
+stellt — „vermutlich erst wenn Gewerbe angemeldet etc., oder nicht". Aktuell
+zeigt `sofortangebot.app` nur die Warteliste-Seite (E-Mail-Sammlung), die
+volle Landingpage mit Preisen (49 €/Monat, 14 Tage Test, Gründerpreis) ist per
+Umgebungsschalter verborgen.
+
+**Bitte als fünfte Frage in deine Reihenfolge aufnehmen:** Ab welchem Punkt
+der Reihenfolge darf die volle Landingpage mit Preisen und Testphase
+rechtlich live sein — schon vor der Gewerbeanmeldung (mit welchem Impressum,
+welcher Rechtsform im Impressum), erst nach Gewerbeanmeldung, oder erst mit
+der UG? Und ist die reine Warteliste-Seite, die jetzt schon läuft, in ihrem
+jetzigen Zustand (Impressum, Datenschutz, Einwilligung beim Eintragen) in
+Ordnung?
+
+**Zeitlicher Rahmen dazu:** Sandy hat den Launch heute auf **Gate 1 ab Anfang
+Dezember, öffentlich Januar 2027** gelegt und ist 02.11.–03.12. nicht im Land.
+Notar- und Behördentermine passen also nur in das Fenster 26.09.–01.11. oder
+ab 04.12. Bitte deine Reihenfolge mit Blick auf diese Fenster machen —
+`docs/kalender.md` hat alle Daten.
+
+---
+
+## Nachtrag CoS-L-003 (2026-09-03) — Notar-Checkliste und Stammkapital-Frage
+
+Sandy hat gefragt, wie sie den Notar findet, wie sie sich vorbereitet, und ob
+sie mit 400 € starten und im Januar 600–800 € nachzahlen kann. Antwort als
+eigene Handreichung: **`docs/legal-005-ug-gruendung-checkliste.md`**.
+
+**Die drei Kernpunkte:**
+
+1. **Notarkosten sind gesetzlich fix (GNotKG) — kein Preisvergleich möglich.**
+   Auswahl nach Termin-Verfügbarkeit, nicht nach Angebot. Online-Beurkundung
+   per Video ist für die UG-Bargründung möglich (seit 01.08.2022, System der
+   Bundesnotarkammer, braucht aktivierte eID). Anfrage-Text und Suchlinks in
+   der Checkliste.
+2. **Stammkapital in Raten ist bei der UG ausgeschlossen** — § 5a Abs. 2 GmbHG
+   verlangt Volleinzahlung vor der HR-Anmeldung, anders als bei der GmbH. Das
+   Ziel geht trotzdem: die 600–800 € im Januar als **Einzahlung in die
+   Kapitalrücklage** (§ 272 Abs. 2 Nr. 4 HGB) — notarfrei, per Überweisung,
+   und es ist Eigenkapital. Kapitalerhöhung wäre notariell und teurer als der
+   Betrag, Gesellschafterdarlehen wäre Fremdkapital mit Nachrang in der
+   Insolvenz.
+3. **400 € Stammkapital sind zu wenig, und der Grund ist eine Rechnung:** Die
+   Notarkosten sinken nicht mit dem Stammkapital (Mindestgeschäftswert 30.000 €
+   nach § 105 Abs. 4 GNotKG, Gründung kostet in jedem Fall ~430–440 €), und das
+   Musterprotokoll lässt die UG davon nur bis zu 300 € selbst tragen. Bei 400 €
+   Stammkapital bleiben nach Gründung **100 € Eigenkapital** — die 50-%-Schwelle
+   des § 49 Abs. 3 GmbHG ist nach zwei Rechnungen erreicht, und die
+   Fachliteratur warnt ausdrücklich vor bilanzieller Überschuldung am ersten
+   Tag. **Empfehlung: 1.000 €, notfalls 500 € mit vollständig privat getragenen
+   Gründungskosten.**
+
+**Ein Missverständnis, das ich in der Checkliste ausräume:** Das Stammkapital
+ist keine Gebühr. Es ist Betriebsvermögen und wird für Vercel, OpenAI,
+Versicherung und Steuerberater ausgegeben — nur nicht an die Gesellschafterin
+zurückgezahlt (§ 30 GmbHG). Die Frage ist also nicht „1.000 € ausgeben oder
+nicht", sondern „von welchem Konto werden die laufenden Kosten bezahlt".
+
+**Zwei neue Punkte, die dabei aufgefallen sind:**
+
+- **§ 11 Abs. 2 GmbHG:** Zwischen Beurkundung und HR-Eintragung (2–3 Wochen)
+  haftet die Handelnde persönlich für alles, was im Namen der UG geschieht. In
+  diesem Fenster **keine Kundenverträge**. Der Plan sieht den ersten zahlenden
+  Kunden ohnehin erst nach Eintragung vor — jetzt ist auch dokumentiert, warum.
+- **Markenrecherche „Sofortangebot" beim DPMA fehlt.** Das hätte vor der
+  Festlegung des Firmennamens passieren müssen, und es ist eine Lücke in meiner
+  eigenen Bestandsaufnahme — ich habe Markenrecht in CoS-L-001 gar nicht
+  betrachtet. Ich prüfe es und melde das Ergebnis, bevor der Notartermin
+  stattfindet. Falls dort eine kollidierende Marke in Klasse 42 liegt, ist das
+  ein Problem für Firmenname **und** Produktnamen, unabhängig vom
+  Registergericht.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

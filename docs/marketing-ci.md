@@ -448,6 +448,16 @@ bisherigen Social-Texten), und die Freigabe der neuen Funktionsfarben
 (`--state-success`/`--state-danger`), die im PDF selbst als ungeklärt
 markiert sind. Bis zur Klärung baue ich nichts Neues auf „Sie" auf.
 
+**Entschieden (Sandy, 2026-08-31, CoS-M-004): Ansprache ist immer „du".**
+Die Regel „förmliches Sie — nie du" im Design-System-PDF war ein Fehler und
+gilt nicht — Produkt, Landingpage, Social Media, E-Mails: durchgehend „du".
+Verbindlich, damit die Fehlannahme nicht wieder auftaucht.
+
+**Entschieden (Sandy, 2026-08-31, CoS-M-005): Haupt-Slogan ist „Aufmaß
+fertig. Angebot fertig."** — überall, wo ein kalter Kontakt zuerst landet
+(Hero, Bio, Flyer). „Gerechnet, nicht geschätzt." bleibt als sekundäre
+Differenzierungszeile (Subline, einzelne Posts), nicht mehr als Erstkontakt.
+
 **Bestätigt, kein Klärungsbedarf:** Farb-Token-Aufräumung (DC-006) ist für
 Farbe abgeschlossen — `#F5C400` ist offiziell `--legacy-yellow`, `#D9A400`
 ist der einzig gültige Wert. Vektor-Logo und Marketing-Icon-Set als echte

@@ -39,6 +39,7 @@ Lösungsvorschlag: CoS-013.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-040 | Warteliste: Herkunftsfeld je Anmeldung + von Hand gepflegter Gründerplatz-Zähler auf der Landingpage | ❌ offen — vor dem Oktober-Druckmaterial | Kanalplan CoS-M-007, 2026-09-03 |
 | CoS-038 | Neues Preismodell im Produkt umsetzen (49 € statt 22 €, Gratis-Tarif raus, 14-Tage-Test rein) | ❌ offen, kann sofort starten | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-039 | `docs/ki-kosten-messung.md` wird an vier Stellen referenziert, existiert aber nicht (auch nicht in der Git-Historie) | ❌ offen | Fund von Head of Finance, bestätigt vom Chief of Staff, 2026-09-03 |
 | CoS-028 | Antwort auf CoS-013: `scripts/docs-sichern.mjs` (prüfen/sichern/wiederherstellen) + Git-Commits für `docs/` | ✅ umgesetzt — dabei `design-check.md` ohne Endmarkierung gefunden (verloren gegangen, nicht vergessen) und repariert | Head of Product Engineering, 2026-08-31 |
@@ -3407,6 +3408,41 @@ in einen Finanzplan eingeht, eine auffindbare Herleitung braucht.
 
 Kein Vorwurf, das passiert. Ich melde es nur, weil eine Quellenangabe, die ins
 Leere zeigt, in einem halben Jahr niemand mehr aufklären kann.
+
+---
+
+## CoS-040 — Warteliste: Herkunftsfeld + Gründerplatz-Zähler
+
+**Datum:** 2026-09-03 (Chief of Staff, aus dem Kanalplan CoS-M-007)
+**Status:** ❌ offen — klein, aber vor dem ersten Dessau-Material (Oktober)
+
+Head of Marketing hat den Go-to-Market-Plan geliefert. Zwei kleine Dinge
+daraus brauchen dich; beides hängt an der Warteliste-Seite, die live ist
+(`ComingSoon.tsx`, `/api/waitlist`, Tabelle `waitlist` mit `id`, `email`,
+`created_at` — aktuell **ein** Eintrag vom 02.08., vermutlich ein Test).
+
+1. **Herkunft je Anmeldung.** Ohne Herkunft lässt sich kein Kanal bewerten —
+   das ist die Grundlage der vier Messgrößen im Kanalplan. Gebraucht wird
+   eine Zuordnung zu *Dessau / Instagram / TikTok / Empfehlung / Suche /
+   sonstiges*. Wie du das löst, ist deine Sache — ein Auswahlfeld beim
+   Eintragen, oder getrennte Einstiegs-Links/QR-Ziele je Kanal, die die
+   Herkunft still mitschreiben (Marketing würde das zweite bevorzugen, weil
+   der Meister 45+ keine Formulare mag). Wichtig ist nur: **bevor der erste
+   Dessau-Aufsteller mit QR-Code gedruckt wird**, muss klar sein, wohin der
+   QR zeigt und was er mitschreibt. Marketing liefert das Druckmaterial im
+   Oktober — bitte kurz mit ihm abstimmen, welche Link-Form er einplanen soll.
+2. **Gründerplatz-Zähler** („Gründerplatz 7 von 25 vergeben") auf der
+   Landingpage, später auch in der Instagram-Bio. **Ein von Hand gepflegter
+   Wert reicht** — bewusst kein Live-Zähler, Marketing will ihn wöchentlich
+   und ehrlich aktualisieren, nicht stündlich springen lassen. Gehört in
+   denselben Durchgang wie die Preisumstellung (CoS-038), weil beide auf der
+   Preisseite landen.
+
+Beides sind Marketing-Anforderungen, keine Preis- oder Rechtsentscheidungen —
+kann also ohne Rückfrage an Sandy gebaut werden. Datenschutz-Hinweis: Eine
+Herkunftsangabe ist personenbezogen, sobald sie an der E-Mail hängt; Legal
+prüft die Warteliste ohnehin gerade (CoS-L-003, Zusatzfrage Website) — bitte
+die gewählte Lösung dort kurz sichtbar machen.
 
 ---
 

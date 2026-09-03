@@ -925,5 +925,145 @@ vorsichtigen Szenario sichtbar sein sollte.
 
 ---
 
+## CoS-F-003, Nachtrag 5 (Chief of Staff, 2026-09-03) — der Ausstieg ist eine Treppe, kein Sprung
+
+Sandy hat nachgelegt, und das ändert die Struktur von Frage 2 grundlegend:
+**Sie will bei ihrem Arbeitgeber nicht von 40 Stunden auf null kündigen,
+sondern zu gegebener Zeit von 40 auf 30 oder 25 Stunden reduzieren — und erst
+später auf null.**
+
+**Bitte Phase B deshalb nicht als einen Schnitt modellieren, sondern als drei
+Stufen:**
+
+| Stufe | Anstellung | Was Sofortangebot leisten muss |
+|---|---|---|
+| A | 40 Std. (heute) | nichts — Gehalt deckt den Bedarf, alles ist Aufbau |
+| B1 | 30 bzw. 25 Std. | **die Lücke** zwischen dem reduzierten Nettogehalt und 2.500 € netto |
+| B2 | 0 Std. | die vollen 2.500 € netto plus alles, was der Arbeitgeber bisher trug |
+
+**Warum das für den Plan so viel besser ist als ein Sprung:**
+
+1. **Die Schwelle für Stufe B1 liegt um ein Vielfaches niedriger** als die für
+   B2. Sofortangebot muss dort nicht 2.500 € netto ersetzen, sondern nur die
+   Differenz zum Teilzeitgehalt. Bitte beide Varianten (30 und 25 Stunden)
+   rechnen — Sandy hat sich noch nicht festgelegt, und der Unterschied
+   zwischen den beiden ist selbst eine Entscheidungsgrundlage.
+2. **Die Krankenversicherung bleibt in B1 beim Arbeitgeber.** Der größte
+   Einzelsprung aus meiner Warnung in Nachtrag 2 fällt damit erst bei B2 an,
+   nicht bei der ersten Reduzierung. Das verschiebt den kritischsten Posten
+   nach hinten und macht B1 deutlich erreichbarer.
+3. **Jede Stufe setzt Zeit frei.** 40 → 30 sind rund 10 Stunden pro Woche mehr
+   für Sofortangebot, 40 → 25 rund 15. Das Zeitbudget aus Nachtrag 4 ist damit
+   **keine Konstante, sondern stufenabhängig**: heute 15–20 Std./Woche, in B1
+   grob 25–35, in B2 Vollzeit. Bitte die Kapazitätslinien entsprechend mit den
+   Stufen mitziehen — das ist der Mechanismus, über den der Plan überhaupt
+   wachsen kann, ohne dass Sandy sich überarbeitet.
+4. **Steuerprogression bleibt**, wird aber milder: Der Sofortangebot-Gewinn
+   liegt in B1 auf einem kleineren Gehalt.
+
+**Die Frage, die der Plan am Ende beantworten soll, lautet damit nicht mehr
+„ab wann kann ich kündigen", sondern zweimal „ab wann":** ab wann ist B1
+tragfähig (bei 30 und bei 25 Stunden), und ab wann B2. Beides bitte als Monat
+je Szenario, mit der Zahl an zahlenden Betrieben daneben.
+
+**Zwei Zeitpunkte, die in den Plan gehören, weil sie den Übergang steuern
+(Stand der Rechtslage, von mir nachgesehen — keine Rechtsberatung, Sandy
+sollte das für ihren konkreten Vertrag prüfen lassen):**
+
+- Ein Teilzeitantrag muss beim Arbeitgeber **mindestens drei Monate vorher**
+  schriftlich gestellt werden (§8 bzw. §9a TzBfG). Der Plan sollte den
+  Antragszeitpunkt also drei Monate **vor** dem Monat ausweisen, in dem B1
+  finanziell tragfähig ist — nicht in demselben Monat.
+- Es gibt zwei Wege: **unbefristete Teilzeit** (§8 TzBfG — kein Rückkehrrecht
+  auf Vollzeit) und **Brückenteilzeit** (§9a TzBfG, bei Arbeitgebern mit mehr
+  als 45 Beschäftigten, Dauer 1–5 Jahre, danach **automatische Rückkehr** zur
+  alten Stundenzahl). Für Sandys Situation ist der zweite Weg eine echte
+  Absicherung: Wenn Sofortangebot in B1 nicht so trägt wie geplant, ist die
+  Vollzeitstelle nicht verloren. **Welchen Weg sie wählt, ist ihre
+  Entscheidung** und gehört nicht in deinen Plan — aber beide sollten als
+  Varianten sichtbar sein, weil die Brückenteilzeit ein Mindestjahr hat und
+  damit den frühesten B2-Zeitpunkt beeinflusst.
+
+---
+
+## CoS-F-003, Nachtrag 6 (Chief of Staff, 2026-09-03) — der Zeitplan steht
+
+Sandy hat den Launch entschieden: **Gate 1 (begleitete Testnutzer) ab Anfang
+Dezember 2026, öffentlicher Launch Januar 2027.** Sie und Clemens sind
+02.11.–03.12. in Thailand; der Oktober ist Vorbereitung (`docs/kalender.md`).
+
+**Für den Plan heißt das:** Die ersten Einnahmen fallen realistisch nicht vor
+Dezember an, eher Januar — die ersten Gate-1-Nutzer werden ohnehin eher unter
+Testphase als unter zahlend laufen. Die Gründerkohorte (25 × 29 €) baut sich
+also frühestens Dezember bis Februar/März auf. Bitte die Monate September bis
+November als reine Kosten-Monate führen, nicht mit Einnahmen glätten. Und die
+Kanalannahmen aus CoS-M-007 werden darauf datiert sein — Head of Marketing
+hat den Zeitplan bereits.
+
+---
+
+## CoS-F-003, Nachtrag 7 (Chief of Staff, 2026-09-03) — alles da, bitte starten
+
+Die beiden Zulieferungen, auf die der Plan gewartet hat, liegen vor. Damit
+ist **nichts mehr offen, was den Aufbau blockiert.** Was du wo findest:
+
+**1. Kanalplan von Head of Marketing (CoS-M-007)** —
+`docs/chief-of-staff-marketing-todos.md`, Abschnitt „Der Kanalplan", und die
+Zahlen in **`docs/gtm-kanalplan.xlsx`**, Blatt „Kanal x Monat": Neukunden je
+Kanal je Monat, drei Szenarien, 24 Monate, Stunden getrennt nach Sandy /
+Clemens / Head of Marketing, Sachkosten (~1.430 € über 24 Monate, kein
+Werbebudget), Kapazitätsabgleich gegen deine beiden Linien. Dazu Blatt
+„Mundpropaganda" als **Parameter** (10 / 20 / 35 % der aktiven Betriebe
+empfehlen pro Jahr, davon die Hälfte zahlend, 3 Monate Verzögerung) — die
+aktive Basis liegt bei dir, also wendest du es an. **Summe ohne
+Mundpropaganda und ohne Abwanderung: vorsichtig ~17, realistisch ~52,
+optimistisch ~104 zahlende Betriebe in 24 Monaten.** Marketing nennt als
+Abwanderungs-Hinweis 3–5 % pro Monat im ersten Jahr, Gründerkunden deutlich
+darunter — das ist ein Hinweis aus seinem Fach, die Annahme setzt du.
+Bitte das vorsichtige Szenario mit dem Dessau-Klumpenrisiko **genau so
+stehen lassen**, wie Marketing es gebaut hat (Dessau 4 statt 9).
+
+**2. Rechtsform von Head of Legal (CoS-L-003) — mit einer Änderung, die
+deine Kostenbasis betrifft:** Sandy hat entschieden: **direkt UG**, keine
+Einzelunternehmen-Phase, **und Verzicht auf die 17 Altbelege seit Mai.**
+Für den Plan heißt das:
+- **Keine EÜR-Variante mehr.** Nur UG, Bilanzierung ab Gründung. Der
+  Steuerberater-Posten ist damit der UG-Posten (Buchführung, Jahresabschluss,
+  Offenlegung — dauerhaft).
+- **Die Belege Mai–August sind Privatausgaben und keine Betriebsausgaben der
+  UG.** Sie bleiben im Rechnungsjournal als Historie, gehören aber nicht in
+  die Kostenbasis des geplanten Geschäfts. Die UG fängt bei null an;
+  Gründungskosten bis 300 € trägt sie per Musterprotokoll selbst.
+- **Zeitrahmen 4–6 Wochen ab Notartermin**, Stammkapital 1.000 €. Der
+  Notartermin ist Sandys nächster Schritt, Fenster vor dem 18.09. oder
+  26.09.–01.11.
+- Der Steuerberater-Termin läuft **parallel**, nicht mehr davor.
+
+**3. Was als markierte Annahme bleibt — nicht warten, sondern kennzeichnen:**
+- Versicherungsbeitrag (exali/Markel, 1 Mio. €) — S-4 wartet auf Sandy.
+- Steuerberater-Kosten — Sandy hat noch keinen; Termin ist als Aktion bei
+  ihr. Bis dahin eine typische Bandbreite für eine kleine UG ansetzen und als
+  Annahme markieren.
+- Umsatzsteuer der UG (Kleinunternehmer ja/nein) — Steuerberater-Frage. Bitte
+  beide Varianten, die Wirkung ist bei reinen B2B-Kunden ohnehin klein.
+- **Empfehlungs-Anreiz** („ein Kollege, ein Monat geschenkt", 49 € Umsatz je
+  Empfehlung) — Marketing hat es vorgeschlagen, Sandy entscheidet. Bitte als
+  Option mit Ein/Aus-Schalter führen, nicht fest einbauen.
+
+**4. Zwei Zahlen aus der Produktion, die du sonst nirgends findest:** Die
+Warteliste enthält heute **genau einen Eintrag** (02.08.2026, vermutlich ein
+Test). Es gibt also keine Vorlauf-Nachfrage, die der Plan einrechnen könnte —
+Monat 1 der Warteliste ist der Oktober, nicht der August. Und die Tabelle hat
+kein Herkunftsfeld (CoS-040, Product Engineering) — die Kanal-Attribution, auf
+der Marketings Messgrößen beruhen, gibt es erst nach diesem Umbau.
+
+**Reihenfolge bleibt wie in Nachtrag 3 und 4:** Struktur zuerst, dann die
+Kanalzahlen aus dem Sheet, dann die Stufen A/B1/B2 mit beiden Kapazitätslinien.
+Wenn beim Rechnen etwas nicht aufgeht — Kanalplan und Kapazität widersprechen
+sich, oder B1 liegt jenseits des Horizonts — sag es mir zuerst, bevor du es
+glättest. Das wäre dann eine Entscheidung für Sandy, kein Modellierungsproblem.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
