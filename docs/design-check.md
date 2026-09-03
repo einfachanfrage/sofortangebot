@@ -100,7 +100,7 @@ den „Bearbeiten"-Link statt den „+ Neue Variante erstellen"-Button) —
 kein Bug, nur Testrückstand. Sandy kann die zwei „Neue Variante"-Zeilen
 selbst löschen | Product Designer (umgesetzt, teilweise live bestätigt) |
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
-| DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | 🟡 behoben (Head of Product Engineering, 2026-08-25): Deine Analyse stimmte, die Hauptursache lag aber noch tiefer — der heutige Erstellungsweg (Aufnahme-Flow) hat **nie** eine Nummer angefordert, die Vergabe stand nur in der alten Route. Nummer wird jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind sichtbar. Live-Nachtest steht aus | Head of Product Engineering |
+| DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | ✅ behoben + live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt mit Sandys Go „dc033"): Test-Angebot 2026-15E8 (Kunde „TEST – bitte löschen") auf `sofortangebot.app` fertiggestellt — trägt danach live die echte Nummer **AG-2026-004**, genau wie im Fix-Update vorhergesagt (Holm GmbHs Nummernkreis stand bei „nächste Nummer 4"). Kein UUID-Fragment mehr | Head of Product Engineering |
 | DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 UI-Teil live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Tab auf `sofortangebot.app` heißt live „Fotos & Notiz", zeigt einen einzigen Foto-Pool „Fotos vom Aufmaß" (kein zweiter Upload-Weg mehr sichtbar) und „Interne Notiz" mit eigener Zeile „Nur für dich — der Kunde sieht das nie." + „Nicht im PDF"-Badge. Tatsächlichen Foto-Upload (Bildunterschrift, 8-Fotos-Warnung) nicht getestet — bräuchte eine echte Datei-Auswahl. Datenmodell/PDF-Teil (Engineering) weiterhin ungeprüft | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅ live bestätigt) — CoS-021 |
 | DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | ✅ Beide Teile umgesetzt: Teil 1 (Hinweistext) committet (`e463360`); Teil 2, Datenweg von Head of Product Engineering gebaut + getestet (`b421ac9`), Eingabe-Oberfläche (Zusatz-Chip nach der Stückzahl-Frage, öffnet Breite/Höhe-Felder) vom Product Designer nachgezogen — committet, sobald ein gerade aktiver, gleichzeitiger Commit einer anderen Rolle den Git-Lock freigibt. `tsc` sauber, Live-Test steht für beide Teile noch aus | Product Designer / Head of Product Engineering — beide fertig |
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Tab heißt live "📐 Unregelmäßig" mit dem Erklärsatz „Für Räume mit Nische, Erker oder Vorsprung…" | Product Designer (umgesetzt) |
@@ -2929,7 +2929,7 @@ an.
 
 **Datum:** 2026-08-25 (Sandy, live beobachtet: „Angebot 2026-5EC9",
 „Angebot 2026-4732", „Angebot 2026-B381" — „ich erkenne keine logik?!")
-**Status:** ❌ offen — Root Cause gefunden, Fix ist Backend-Arbeit
+**Status:** ✅ behoben + live bestätigt (siehe Live-Bestätigung ganz unten) — Root Cause gefunden, Fix von Head of Product Engineering
 
 **Auftrag:** „schau dir das ganze system an, auch in den einstellungen wie
 der user das da einstellt. wenns nicht dein thema ist gibs weiter." — habe
@@ -3046,6 +3046,21 @@ damit — ohne den Eintrag scheitert `tsc`. Ist ergänzt, ohne Folgefehler.
 
 **Einstellungsseite:** unverändert, deine Einschätzung war richtig — dort war
 nichts zu tun.
+
+---
+
+**Live-Bestätigung (Product Designer, 2026-09-03, selbst durchgeklickt,
+Sandys Go „dc033"):** Test-Angebot 2026-15E8 (Kunde „TEST – bitte löschen",
+DC-029/DC-027-Testdaten) auf `sofortangebot.app` über den normalen
+„Fertigstellen"-Button abgeschlossen — Toast „Angebot fertiggestellt ✓",
+Status auf „Bereit" gewechselt. Nach Neuladen der Detailseite zeigt der
+Titel live **„Angebot AG-2026-004"** statt der vorherigen
+UUID-Fragment-Nummer „2026-15E8" — exakt die Nummer, die das Fix-Update
+für „Holm GmbH" vorhergesagt hatte (Nummernkreis stand bei „nächste
+Nummer 4"). Damit live bestätigt: echte, fortlaufende Nummer wird beim
+Fertigstellen vergeben, kein stiller Fehlschlag. Bestandsangebote weiterhin
+bewusst nicht nachnummeriert (siehe oben, Sandys Entscheidung steht noch
+aus).
 
 ---
 
