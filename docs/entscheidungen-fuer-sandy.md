@@ -152,6 +152,28 @@ ist eine einzige, und die hat Zeit: ob sich der freiwillige Verzicht auf die
 Kleinunternehmerregelung wegen des Vorsteuerabzugs lohnt — Legal schätzt die
 Wirkung auf grob 25 € im Monat.
 
+**🔴 Wann geht die Website online? — die Frage hat jetzt einen Preis.**
+Bisher stand sie als „keine Ahnung, vermutlich wenn das Gewerbe angemeldet ist"
+im Raum. Durch deinen SEO-Plan ist sie terminlich geworden: `sofortangebot.app`
+zeigt aktuell nur die Warteliste, die eigentliche Seite liegt hinter einem
+Schalter. **Solange sie dunkel ist, läuft die SEO-Uhr nicht** — und SEO braucht
+nach Marketings eigener Einschätzung sechs bis zwölf Monate, bis überhaupt
+etwas ankommt. Jeder Monat Verzögerung ist ein Monat später Wirkung, und zwar
+am hinteren Ende, wo es weh tut.
+
+**Was dafür spricht, früh online zu gehen:** die SEO-Uhr, und dass Blogartikel
+ohne sichtbare Seite nichts bringen. **Was dagegen spricht:** Impressum und
+Rechtstexte müssen stimmen, und dafür braucht es das Gewerbe (KW 41) — plus
+die Preisumstellung auf 49 € (CoS-038), die noch nicht live ist.
+
+**Mein Vorschlag zur Prüfung:** Zweistufig statt ganz oder gar nicht. Ab
+Gewerbeanmeldung im Oktober die Seite mit korrektem Impressum und dem Blog
+online nehmen, **ohne** die Anmeldung freizuschalten — dann läuft die SEO-Uhr,
+während das Produkt weiter im geschlossenen Test bleibt. Ob das rechtlich und
+technisch so geht, klärt Legal (CoS-L-003, Zusatzfrage Website) bzw. Product
+Engineering. **Deine Entscheidung, sobald deren Antworten da sind** — ich sage
+dir Bescheid.
+
 **🔵 Buchhaltung: selbst machen oder abgeben?** Head of Finance hat beim
 Umrechnen eine Bedingung sichtbar gemacht, die vorher in einer Zahl versteckt
 war. Legals „0–800 €/Jahr" gilt nur, wenn du die laufende Buchhaltung selbst

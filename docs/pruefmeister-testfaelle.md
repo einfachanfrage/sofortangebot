@@ -92,7 +92,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
-| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs) |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
@@ -2599,6 +2599,79 @@ Ich spreche sie in einem Durchgang ein, sobald ich am Tool bin, und trage die
 Ist-Ergebnisse hier direkt unter den jeweiligen Fall.
 
 *Prüfmeister · 2026-09-02*
+
+---
+
+### PM-032 — Ist-Ergebnis (Sandy, 2026-09-02)
+
+**Aufnahme-Karte:** Flur 3 Positionen, Wohnzimmer 2, Küche 2, Allgemein 1.
+Raummaße alle exakt erkannt (1,2 × 6 m · 4 × 5 m · 2,8 × 3 m). Drei getrennte
+Altbelag-Rückfragen, eine je Raum — beantwortet mit Flur „bleibt", Wohnzimmer
+„bleibt", Küche „raus".
+
+**Entwurf (netto 973,43 €):**
+
+| Raum | Position | Ist | Soll |
+|---|---|---|---|
+| Flur | Klick-Vinyl inkl. 5 % Verschnitt | 7,56 m² | ✅ 7,56 |
+| Flur | Sockelleisten montieren | 13,50 lfdm | ✅ 13,50 |
+| Flur | Trittschalldämmung | 7,20 m² | ✅ Fläche korrekt |
+| Wohnzimmer | Klick-Vinyl inkl. 5 % Verschnitt | 21,00 m² | ✅ 21,00 |
+| Wohnzimmer | Sockelleisten montieren | 17,10 lfdm | ✅ 17,10 |
+| Wohnzimmer | **Trittschalldämmung** | **fehlt** | ❌ 20,00 m² |
+| Küche | Klick-Vinyl inkl. 5 % Verschnitt | 8,82 m² | ✅ 8,82 |
+| Küche | Altbelag entfernen | 8,40 m² | ✅ Raumfläche ohne Verschnitt, nur Küche |
+| Küche | Sockelleisten montieren | 10,70 lfdm | ✅ 10,70 |
+| Küche | **Trittschalldämmung** | **fehlt** | ❌ 8,40 m² |
+| Allgemein | Übergangsschiene, als „Vorschlag" markiert | 1 Stück | ✅ **1**, nicht 3 |
+
+Belag 37,38 m², Sockelleisten 41,30 lfdm — beides exakt Soll. Alle drei
+Raumsummen rechnen sauber auf.
+
+**Befund 1 — Trittschalldämmung nur im ersten Raum, in zwei von drei Räumen
+fehlt sie komplett**
+
+- **Fundort:** `src/lib/vollstaendigkeit/boden-sonder.ts`,
+  `pruefeTrittschalldaemmung()`. Zwei Stellen, dieselbe Annahme „ein Angebot =
+  ein Raum": `if (hat(ergaenzt, 'trittschall', 'pur-schaum')) return` steigt
+  aus, sobald **irgendeine** Dämmungsposition existiert, und
+  `ergaenzt.find(...)` nimmt die **erste** Verlegeposition als Bezugsfläche.
+  Beides zusammen ergibt genau eine Dämmung je Angebot, hängend am ersten Raum.
+- **Erwartet:** Dämmung unter jedem Boden, unter dem sie liegt — Flur 7,20 +
+  Wohnzimmer 20,00 + Küche 8,40 = 35,60 m².
+- **Tatsächlich:** 7,20 m². Es fehlen **28,40 m²**, bei 4,50 €/m² also
+  **127,80 €** auf einem Angebot von 973,43 € — gut 13 %.
+- **Warum das schwerer wiegt als die Zahl:** Der Handwerker verlegt die Dämmung
+  in allen drei Räumen, sie ist Voraussetzung für die Verlegung. Er berechnet
+  sie nur in einem. Das ist kein Rechenfehler zulasten des Kunden, sondern
+  einer zulasten des Betriebs — und der fällt nicht auf, weil auf dem Angebot ja
+  eine Trittschall-Zeile steht. Fehlt eine Position ganz, sucht man sie; steht
+  sie einmal da, hakt man sie ab.
+- **Verwandtschaft:** Das ist die dritte Runde derselben Familie. PM-004 (fehlte
+  ganz), PM-023 (falsche Fläche, dann falsche Gruppe) — beide Male wurde für
+  **einen** Raum repariert. Der Kommentarkopf der Funktion dokumentiert genau
+  das. Bei mehreren Räumen greift keiner der beiden Fixes.
+- **Fix-Richtung:** Schleife über alle Verlegepositionen statt `find`, eine
+  Dämmung je Verlegeposition, Raumsuffix wie bisher vom Boden übernehmen. Die
+  Prüfung „gibt es schon eine Dämmung" muss dann raumbezogen sein, nicht global.
+
+**Was ausdrücklich gut lief — und das ist der Kern dieses Testfalls:**
+
+1. **Genau eine Übergangsschiene**, nicht drei. Das Tool hat verstanden, dass
+   der Belag durchgehend ist und Schwellen nur dort gehören, wo er wechselt.
+   Zusätzlich korrekt als „Vorschlag" gekennzeichnet, weil ich sie zwar genannt,
+   aber keine Stückzahl gesagt habe.
+2. **Die Altbelag-Rückfrage kommt jetzt je Raum**, nicht einmal für den ganzen
+   Auftrag — und die Antwort bleibt in dem Raum, für den sie gegeben wurde.
+   „Ja, raus" in der Küche erzeugt genau dort eine Position mit 8,40 m², die
+   beiden anderen Räume bleiben unberührt. Das war in PM-013 noch ein
+   struktureller Fund („ein Feld für den ganzen Auftrag"), hier ist es sauber.
+3. **Altbelag entfernen mit 8,40 m², nicht 8,82** — die Verschnittmenge ist
+   nicht in die Abbruchfläche gerutscht. Beim Aufnehmen gibt es keinen
+   Verschnitt, das ist genau richtig gerechnet.
+4. Drei Räume, drei saubere Gruppen, keine Vermischung, kein Bad.
+
+**Status PM-032:** ❌ ein Befund, sonst exakt Soll. Nachtest nach dem Fix.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

@@ -44,6 +44,7 @@ CoS-013 in `chief-of-staff-todos.md`.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-M-008 | Sandys drei Beschleuniger: wöchentlicher Blog/SEO, Micro-Influencer im Handwerk, Tempo insgesamt | ❌ offen — Gespräch mit Sandy | Sandy direkt, 2026-09-03 |
 | CoS-M-007 | Go-to-Market-Kanalplan (Kanäle, Anlauf, Stundenaufwand, Sachkosten, Erwartung) als Zulieferung für den Finanzplan | 🟡 geliefert (Plan unten, Zahlen in `docs/gtm-kanalplan.xlsx`) — 3 Rückfragen an Sandy, 4 an Chief of Staff offen | Chief of Staff / Sandys Rückfrage zu den Szenarien, 2026-09-03 |
 | CoS-M-001 | CI-Bestandsaufnahme + Richtungsvorschlag | ✅ komplett — Sandy hat mit „ok leg die CI fest" final bestätigt, Umsetzungsplan (Schritt 5) steht, Handoff an Product Designer über EX-M-005 | Sandys Ankündigung, 2026-08-17 |
 | CoS-M-002 | Social-Media-Strategie Pre-Launch (Instagram/TikTok) | 🟡 Strategie + erster Content-Kalender fertig, Sandy hat Richtung bestätigt — Umsetzung (Dreh mit Clemens) läuft bei Sandy, eine Abhängigkeit offen (Warteliste-Landingpage) | Sandys Anfrage im Chat, 2026-08-19 |
@@ -1249,6 +1250,119 @@ Größenordnung trägt die Versicherung das Risiko, nicht die Rechtsform.
 Entschuldige die Rolle rückwärts. Es war innerhalb von 24 Stunden die zweite
 Wende in der Rechtsform-Frage, und ich habe dir die mittlere Fassung als
 gesichert verkauft, obwohl sie es nicht war.
+
+---
+
+## CoS-M-008 — Sandys drei Beschleuniger: Blog/SEO, Micro-Influencer, Tempo
+
+**Datum:** 2026-09-03 (Chief of Staff)
+**Status:** ❌ offen — Sandy will das direkt mit dir besprechen; das hier ist
+die Vorbereitung, damit ihr nicht bei null anfangt.
+
+**Sandys Ausgangspunkt, wörtlich:** *„ehrlicherweise ist mir das in der Liste
+zu langsam."* Sie meint deinen Kanalplan, und sie hat recht: 47 Betriebe nach
+24 Monaten im realistischen Szenario ist solide, aber es ist nicht das Tempo,
+das zu ihrer Ambition passt. Sie kommt mit drei eigenen Ideen. **Bitte
+bewerte sie als Kanäle — das ist dein Fach, nicht meins.** Ich liefere nur den
+Rahmen und die Punkte, die außerhalb deines Zuständigkeitsbereichs liegen.
+
+### Idee 1 — Wöchentlich ein Blogartikel für SEO, ab dem Tag, an dem die Website online ist
+
+**Was ich dazu beisteuere, ohne dir vorzugreifen:**
+
+- **Der Kanal ist in deinem Plan der langsamste** (6–12 Monate gegen Null, dann
+  kleines Niveau, 0/3/8 Betriebe über 24 Monate) und **verlangt den größten
+  laufenden Zeiteinsatz von Sandy**. Ein Artikel pro Woche ist bei ehrlicher
+  Rechnung ein bis drei Stunden — das ist die Hälfte bis das Ganze ihres
+  Marketing-Budgets von rund vier Stunden. Wenn dieser Kanal kommt, geht ein
+  anderer, oder die Ausführung leidet überall. Das ist die Frage, die ihr
+  klären müsst, bevor ihr über Themen redet.
+- **Sie hat aber einen echten Vorteil, den generische Content-Strategien nicht
+  haben:** Dieses Projekt hat seit Monaten fachliche Substanz aufgebaut, die
+  im Netz kaum jemand sauber erklärt — Übermessungsregeln nach VOB,
+  Fensterlaibungen richtig abrechnen, Verschnittsätze, Zuschlagssätze,
+  Türbreiten bei Sockelleisten. Das sind Fragen, die Maler und Bodenleger
+  tatsächlich suchen, und die Antworten liegen bereits in
+  `vob-angebot-abstimmung.md` und `pruefmeister-testfaelle.md`. **Das ist kein
+  Content-Marketing, das ist ein Nebenprodukt der Produktarbeit.** Wenn ein
+  Artikel daraus in einer Stunde statt in drei entsteht, sieht die Rechnung
+  völlig anders aus.
+- **Mein Vorschlag zur Prüfung: ein Thema, zwei Ausspielungen.** Derselbe
+  Fachinhalt wird ein Artikel *und* zwei bis drei Hooks für Clemens vor der
+  Kamera. Dann ist es eine Arbeit statt zwei, und die Content-Säule
+  „Fach-Autorität" aus CoS-M-002 speist sich aus derselben Quelle.
+- **Sichtbarkeit heute heißt nicht nur Google.** Handwerker fragen inzwischen
+  auch KI-Assistenten nach genau solchen Rechenfragen. Ob und wie man dafür
+  schreibt, ist deine Einschätzung — ich flagge nur, dass „SEO" 2026 nicht
+  mehr dasselbe ist wie 2020.
+- **Harte Abhängigkeit, die niemand auf dem Schirm hatte:** `sofortangebot.app`
+  zeigt derzeit nur die Warteliste, die eigentliche Seite liegt hinter dem
+  Schalter `NEXT_PUBLIC_COMING_SOON`. **Solange die Seite dunkel ist, läuft die
+  SEO-Uhr nicht.** Bei sechs bis zwölf Monaten Anlaufzeit ist jeder Monat
+  Verzögerung ein Monat später Wirkung. Ich habe das als Entscheidung zu Sandy
+  gelegt — bitte sag mir, ab wann du die Seite fachlich brauchst, dann kann sie
+  das gegen Legals Zeitplan abwägen.
+
+### Idee 2 — Micro-Influencer im Handwerk ansprechen
+
+Sandys Idee: kleine Accounts von Malern und Bodenlegern (Größenordnung 2.000
+Follower), die sich bei der Arbeit filmen. Deren Follower sind selbst
+Handwerker. Angebot: Tool gratis nutzen, dafür Feedback — und wenn es gefällt,
+vielleicht eine Story.
+
+**Meine Einschätzung, und ich sage sie deutlich: Das ist die stärkste der drei
+Ideen, und sie ist strukturell dasselbe wie Dessau.** Vertrauen wird von
+jemandem geliehen, dem die Zielgruppe schon vertraut. Der Unterschied: Dessau
+ist ein Mensch an einem Ort, das hier skaliert — viele Accounts, keine
+Anfahrt, und es löst nebenbei Sandys größtes Startproblem, nämlich dass sie
+und Clemens nur null bis zwei Handwerker persönlich kennen. **Es erzeugt warme
+Kontakte, statt auf sie zu warten.** Bitte prüf, ob du das als eigenen Kanal
+in den Plan aufnimmst — ich würde es erwarten.
+
+**Vier Randbedingungen, die nicht in dein Fach fallen, aber gelten:**
+
+1. **Werbekennzeichnung.** Gratis-Nutzung gegen Story ist eine
+   Gegenleistung — das ist gekennzeichnete Werbung, und zwar auf Seiten des
+   Handwerkers. Ich habe Head of Legal unter **CoS-L-004** gebeten, die Regeln
+   und einen Textbaustein zu liefern, den Sandy den Leuten mitgeben kann.
+   Bitte keine Ansprache verschicken, bevor das da ist.
+2. **Gratis-Accounts widersprechen der Preisentscheidung**, wenn sie
+   unbegrenzt sind. Sandy hat am 03.09. den Dauer-Gratis-Tarif abgeschafft.
+   Eine bewusste Ausnahme für eine handvoll Testpartner ist etwas anderes als
+   ein stiller Free-Tier — sie braucht eine Regel (wie viele, wie lange, was
+   danach). Das ist eine Preisentscheidung, sie liegt bei Sandy und gehört in
+   `docs/preismodell.md`; ich habe sie dort als offenen Punkt vermerkt.
+3. **Jeder dieser Accounts ist eine Support-Beziehung.** Gate 1 ist auf fünf
+   bis acht begleitete Nutzer ausgelegt, und das ist Sandys Zeit. Bitte im
+   Kanalplan mit Stunden führen wie jeden anderen Kanal.
+4. **Reichweite verstärkt Qualität — in beide Richtungen.** Jemand mit 2.000
+   Handwerker-Followern, der ein falsch gerechnetes Angebot zeigt, ist der
+   teuerste Weg, den es gibt, um einen Rechenfehler öffentlich zu machen.
+   **Deshalb gehört dieser Kanal hinter den Prüfmeister-Nachtest zu VOB-013 und
+   hinter Sandys 100 Testfälle**, nicht davor. Terminlich heißt das:
+   Ansprache frühestens im Dezember, Ausspielung ab Januar.
+
+### Idee 3 — das Tempo insgesamt
+
+Sandy findet den Plan zu langsam. Meine Einordnung für euer Gespräch: **Die
+Langsamkeit kommt nicht aus schlechter Kanalwahl, sondern aus zwei Zahlen** —
+ein einziger warmer Kanal, und rund vier Stunden Marketing pro Woche. Ihre
+Ideen greifen die erste Zahl an, die zweite nicht. Jeder neue Kanal braucht
+Stunden, die es nicht gibt.
+
+**Was ich davon für den wirksamsten Hebel halte** (deine Bewertung geht vor):
+Von Sandys drei Ideen ist die Influencer-Ansprache die einzige, die **du
+weitgehend übernehmen kannst** — Accounts recherchieren, Ansprache
+formulieren, Nachfassen vorbereiten. Sandy müsste nur freigeben und die
+Beziehung führen. Das ist der höchste Ertrag pro Sandy-Stunde von allem, was
+gerade auf dem Tisch liegt. Der Blog ist das Gegenteil: fachlich muss sie
+liefern, weil das Wissen bei ihr und im Produkt liegt.
+
+**Bitte bring in euer Gespräch eine ehrliche Antwort auf die Frage mit: Was
+fällt weg, wenn Blog und Influencer dazukommen?** Nicht „alles geht", sondern
+eine Reihenfolge. Und wenn deine Antwort lautet, dass das Tempo ohne mehr
+Stunden oder Geld nicht steigt, sag genau das — das ist eine strategische
+Information und keine schlechte Nachricht.
 
 ---
 

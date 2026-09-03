@@ -38,6 +38,7 @@ schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-L-004 | Influencer-Kooperationen: Werbekennzeichnung, Textbaustein für die Ansprache, Gratis-Accounts und AGB | ❌ offen, vor der ersten Ansprache (frühestens Dez.) | Sandys Plan, 2026-09-03 |
 | CoS-L-003 | Reihenfolge Gewerbeanmeldung / UG-Gründung — kein Gewerbe angemeldet, erster zahlender Kunde rückt näher | ✅ **entschieden (03.09.2026, abends): Einzelunternehmen jetzt, UG bei rund 20 zahlenden Betrieben.** Plan mit Terminen in `legal-007-plan-fuer-sandy.md`; Begründung und meine zurückgenommene Empfehlung in `entscheidungen-fuer-sandy.md`, S-4 Teil 3 + 4 | Sandy direkt, 2026-09-03 |
 | CoS-L-002 | Neues Preismodell rechtlich absichern: Preisangaben B2B, Umsatzsteuer/Kleinunternehmer, AGB-Preis- und Kündigungspassagen, Bestandsschutz Gründerpreis | ❌ offen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-L-001 | Erstauftrag: Bestandsaufnahme + Lückenanalyse (Datenschutz, AGB, KI-Kennzeichnung, Gewerke-Recht) | 🟡 Bericht liegt vor (`docs/legal-001-bestandsaufnahme.md`), 8 Gate-1-Punkte + 4 Entscheidungen für Sandy (S-1 bis S-4) — noch nichts umgesetzt | Sandy direkt im Chat, 2026-09-01 |
@@ -1782,6 +1783,47 @@ nicht", sondern „von welchem Konto werden die laufenden Kosten bezahlt".
   stattfindet. Falls dort eine kollidierende Marke in Klasse 42 liegt, ist das
   ein Problem für Firmenname **und** Produktnamen, unabhängig vom
   Registergericht.
+
+---
+
+## CoS-L-004 — Influencer-Kooperationen: Kennzeichnung und Gratis-Nutzung
+
+**Datum:** 2026-09-03 (Chief of Staff)
+**Status:** ❌ offen — nicht dringend, aber vor der ersten Ansprache nötig
+(frühestens Dezember)
+
+**Was Sandy plant:** Kleine Handwerker-Accounts auf Social Media (Größenordnung
+2.000 Follower, Maler und Bodenleger, die sich bei der Arbeit filmen) ansprechen
+und ihnen anbieten, Sofortangebot **kostenlos zu nutzen** — im Gegenzug für
+Feedback und, wenn es ihnen gefällt, eine Erwähnung in ihrer Story.
+
+**Meine Fragen an dich:**
+
+1. **Kennzeichnungspflicht.** Kostenlose Nutzung gegen Erwähnung ist eine
+   Gegenleistung. Was muss der Handwerker kennzeichnen, in welcher Form, und
+   ändert es etwas, wenn die Erwähnung ausdrücklich freiwillig ist („nur wenn
+   es dir gefällt")? Praktisch am hilfreichsten wäre ein **kurzer Textbaustein**,
+   den Sandy der Ansprache beilegen kann — ein, zwei Sätze, die dem Handwerker
+   sagen, wie er es kennzeichnet. Dann muss sie es nicht selbst erklären.
+2. **Ihr eigenes Risiko.** Haftet Sandy mit, wenn ein Kooperationspartner nicht
+   kennzeichnet? Und was muss auf ihrer Seite dokumentiert sein — reicht die
+   Ansprache-Nachricht als Nachweis der Vereinbarung?
+3. **Aussagen Dritter über das Produkt.** Wenn ein Handwerker in einer Story
+   sagt „das rechnet alles richtig", ist das eine Werbeaussage über ein
+   KI-gestütztes Produkt. Gibt es etwas, das Sandy in der Ansprache
+   ausschließen oder klarstellen sollte — mit Blick auf die
+   KI-Kennzeichnung (CC-08) und darauf, dass das Tool ein Entwurfsgenerator
+   mit Mensch in der Schleife ist?
+4. **Gratis-Accounts und AGB.** Die Nutzer bekämen Zugang ohne Vertrag über ein
+   Entgelt. Braucht das eine eigene kurze Vereinbarung, oder laufen sie unter
+   den normalen AGB mit einem Vermerk? Berührt auch das Widerrufsrecht und die
+   Frage, was passiert, wenn die Gratis-Phase endet.
+
+**Kein Zeitdruck:** Die Ansprache soll frühestens im Dezember laufen, nach dem
+VOB-013-Nachtest und Sandys 100 Testfällen — Reichweite verstärkt Qualität in
+beide Richtungen, und ein öffentlich gezeigter Rechenfehler wäre der teuerste
+Weg, einen zu haben. Bitte einordnen, wann du das machst; es soll die
+Oktober-Themen nicht verdrängen.
 
 ---
 

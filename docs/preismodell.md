@@ -237,6 +237,30 @@ Vorschau, PDF erst nach Registrierung.
 
 ---
 
+## Offener Punkt (03.09.2026): Gratis-Accounts für Testpartner
+
+Sandy plant, kleine Handwerker-Accounts auf Social Media anzusprechen und ihnen
+**kostenlose Nutzung** anzubieten — gegen Feedback und eine mögliche Erwähnung
+(CoS-M-008, rechtliche Seite CoS-L-004).
+
+**Das berührt diese Datei, deshalb steht es hier und nicht nur bei Marketing.**
+Am 03.09. wurde der Dauer-Gratis-Tarif bewusst abgeschafft. Eine begrenzte,
+bewusste Ausnahme für Testpartner ist etwas anderes — aber nur, solange sie
+eine Regel hat. Ohne Regel entsteht durch die Hintertür genau der Free-Tier,
+den die Preisentscheidung gerade beseitigt hat.
+
+**Sandy-Entscheidung, offen — drei Fragen:**
+1. **Wie viele** solcher Gratis-Zugänge insgesamt? (Vorschlag zur Diskussion:
+   eine feste kleine Zahl, nicht „nach Bedarf".)
+2. **Wie lange** gratis — dauerhaft, oder befristet mit anschließendem Wechsel
+   auf den Gründerpreis?
+3. **Zählen sie gegen die 25 Gründerplätze** oder laufen sie daneben? Meine
+   Empfehlung: daneben, sonst verwässert die ehrliche Verknappung der
+   25-Plätze-Kampagne.
+
+**Nicht entschieden, nicht umgesetzt** — bis dahin gilt das Preismodell oben
+unverändert.
+
 ## Verlauf
 
 - **2026-08-16 (DC-001):** 22 €/Monat, 17 € Jahresabo, 3 Angebote frei.
