@@ -42,7 +42,7 @@ mitten in bestehende Abschnitte zu schreiben. Voller Hintergrund: CoS-013 in
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-F-003 | Finanzplan aufstellen: 24 Monate, drei Szenarien — Break-even, Einkommensersatz, Liquidität/Runway | ❌ offen, Auftrag steht | Sandy direkt, 2026-09-03 |
+| CoS-F-003 | Finanzplan aufstellen: 24 Monate, drei Szenarien — Break-even, Einkommensersatz, Liquidität/Runway | ✅ geliefert & vom Chief of Staff abgenommen (03.09.) — sechs Plan-Blätter in `kostenuebersicht-finance.xlsx`. Kernergebnis: B1 (30 Std.) realistisch Monat 21, B2 in keinem Szenario innerhalb von 24 Monaten; Vorstrecken bis –9.280 € (realistisch). Offen: UG-Besteuerung (Steuerberater), Abwanderung und Support-/Grundlast-Stunden als wichtigste ungeprüfte Annahmen | Sandy direkt, 2026-09-03 |
 | CoS-F-002 | Marge und Tragfähigkeit des neuen Preises (49 €/29 €) durchrechnen — inkl. echter Kosten pro Angebot | ✅ erledigt & geprüft (03.09.) — DB 47,89 € bzw. 28,19 € je Kunde, Vielnutzer unkritisch, Fixkosten heute 135,10 €/Monat, Kleinunternehmergrenze je nach Szenario ab Monat 35/21/12 | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-F-001 | Bestandsaufnahme laufende Kosten + Grundgerüst für monatliche Übersicht | 🔵 echte Zahlen drin, 4 Punkte brauchen Sandys Klärung | Sandys Auftrag, 2026-08-19 |
 
@@ -584,6 +584,10 @@ das ist es, was Sandy Sicherheit gibt.
 - **Rücklage für Steuernachzahlungen** — der Klassiker, der Selbstständige im
   zweiten Jahr umhaut, wenn Nachzahlung und Vorauszahlung zusammenfallen
 
+### D2 — Ergänzt am 03.09. nach Head of Finance' Rückmeldung
+- Kontoführung des Geschäftskontos (bei einer UG zwingend)
+- schaltbare Vorsteuer-Zeile für die Variante Regelbesteuerung
+
 ### E — Technik, laufender Betrieb
 Supabase · Vercel · OpenAI (Whisper + GPT-4o) · Anthropic/Claude · Resend ·
 Sentry · IONOS (nur der Sofortangebot-Anteil) · GitHub-Plan wegen der
@@ -592,7 +596,8 @@ und wachsen mit dem Umsatz — bisher nirgends geplant) · Objektspeicher für
 Sprachaufnahmen und Fotos.
 **Zwei Posten, die im 24-Monats-Horizont neu dazukommen:** die native App ist
 für Mitte 2027 fest eingeplant (`docs/vision-strategie.md`) — dazu gehören
-Apple- und Google-Entwicklerkonten mit eigenen Gebühren.
+Apple- und Google-Entwicklerkonten mit eigenen Gebühren (beide, ergänzt
+03.09.: Google-Play-Registrierung neben der Apple-Jahresgebühr).
 **Und ein Risiko, das leicht übersehen wird:** Supabase, Vercel, OpenAI und
 Anthropic rechnen in **US-Dollar** ab. Der Plan sollte den Wechselkurs
 sichtbar als Annahme führen, nicht stillschweigend 1:1 umrechnen.
@@ -601,7 +606,8 @@ sichtbar als Annahme führen, nicht stillschweigend 1:1 umrechnen.
 Kein bezahltes Werbebudget (bewusste Festlegung, `vision-strategie.md`) —
 aber Social-Media-Produktion, Tools, Domain- und Markenvarianten, Fahrt- und
 Materialkosten für Innungs-/Messekontakte, und Zeit ist hier der eigentliche
-Einsatz.
+Einsatz. *Ergänzt 03.09.:* die Sachkosten aus dem Kanalplan (CoS-M-007,
+~1.430 € über 24 Monate) als eigener Monatsvektor, nicht als Pauschale.
 
 ### G — Kunden- und Betriebsrisiken
 Zahlungsausfälle und Lastschrift-Rückläufer · Kulanz-/Erstattungsrücklage ·
@@ -1185,6 +1191,36 @@ Steuerberater-Honorar · **die Abwanderungsrate** (meine Annahme 5/4/3 % nach
 Marketings Hinweis, ohne einen einzigen Erfahrungswert — die wichtigste Zahl im
 Modell) · Support- und Grundlast-Stunden · Anthropic-Direktrechnung einmalig
 oder wiederkehrend.
+
+---
+
+## CoS-F-003 — Abnahme (Chief of Staff, 03.09.2026)
+
+Durchgesehen, abgenommen. Was mich überzeugt: Du hast den fertigen Plan
+weggeworfen und neu gerechnet, als die Nachträge kamen, statt sie
+draufzukleben. Du hast die alte Kleinunternehmer-Rechnung als überholt markiert
+statt sie zu überschreiben. Und du hast an drei Stellen gesagt, was du *nicht*
+gerechnet hast, bevor jemand es merken musste. Genau so soll das laufen.
+
+**Drei Punkte zur Weiterführung:**
+
+1. **Die UG-Besteuerung ist der eine Punkt, an dem der Plan noch nicht
+   entscheidungsreif ist** — und du hast das korrekt benannt. Ich habe sie als
+   dritte Steuerberater-Frage zu Sandy gelegt. Sobald die Antwort da ist,
+   bitte Frage 3 (B1/B2) neu rechnen; ich erwarte, dass die Stufen sich
+   verschieben, aber nicht das Bild.
+2. **Die beiden Annahmen, die du selbst als die wirksamsten bezeichnest —
+   Abwanderung und Grundlast-Stunden — habe ich Sandy als Eingaben
+   vorgelegt.** Grundlast kann sie aus zwei Monaten Erfahrung besser schätzen
+   als jeder von uns; Abwanderung kann niemand, bis es Kunden gibt — die Zelle
+   bleibt gelb bis mindestens März.
+3. **Bitte nichts weiter am Plan ändern, bis Sandy ihn gelesen hat.** Sie soll
+   die Version sehen, die du abgegeben hast, nicht eine, die sich unter ihr
+   bewegt. Änderungen danach als Nachträge mit Datum, wie bisher.
+
+Deine vier Katalog-Ergänzungen sind in Nachtrag 1 eingearbeitet. Der Plan ist
+ab jetzt die Grundlage für den wöchentlichen Strategie-Check-in
+(`vision-strategie.md`) — dort steht auch, was er strategisch bedeutet.
 
 ---
 

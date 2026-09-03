@@ -116,18 +116,43 @@ nächste Deploy von Head of Product Engineering raus (zusammen mit den
 übrigen anstehenden Änderungen). Details in
 `docs/chief-of-staff-legal-todos.md`, Abschnitt „Stufe 3".
 
-**🔵 Steuerberater suchen — jetzt parallel zur Gründung, nicht mehr davor.**
-Durch deine Entscheidung „direkt UG, Verzicht auf die Altbelege" (CoS-L-003)
-blockiert der Steuerberater die Gründung nicht mehr — Bargründung per
-Musterprotokoll hängt an keiner Steuerfrage. Trotzdem gehört der Termin in
-die nächsten zwei Wochen, weil danach der Fragebogen fürs Finanzamt kommt.
-**Zwei Fragen bleiben** (Legal hat sie vorformuliert): (1) darf die UG die
-selbst entwickelte Software einfach nutzen oder muss sie förmlich eingebracht
-werden, (2) Kleinunternehmerregelung für die UG ja/nein — bei ausschließlich
-B2B-Kunden mit Vorsteuerabzug spricht viel für den Verzicht. Und für den
-Finanzplan braucht Head of Finance seine Kosten (Buchführung + Jahresabschluss
-einer UG, dauerhaft). **Deine Aktion:** Termin machen. Kalenderfenster:
-vor dem 18.09. oder 26.09.–01.11.
+**🔴 Steuerberater — jetzt drei Fragen, und eine davon entscheidet über
+den Finanzplan.** Termin in den nächsten zwei Wochen (parallel zur Gründung,
+nicht mehr davor). Kalenderfenster: vor dem 18.09. oder 26.09.–01.11.
+
+1. **Wie wird die UG besteuert, und was kommt bei dir netto an?** Head of
+   Finance hat den Finanzplan (CoS-F-003) mit der Steuerlogik eines
+   Einzelunternehmens gerechnet (Gewinn oben auf dein Gehalt). Bei einer UG
+   ist es anders: Körperschaftsteuer + Soli + Gewerbesteuer auf
+   Gesellschaftsebene, danach entweder Geschäftsführergehalt (mit
+   Sozialabgaben) oder Ausschüttung. **Das verändert die Frage „ab wann kann
+   ich reduzieren" spürbar** — in welche Richtung, weiß nur der
+   Steuerberater. Bis dahin sind die B1/B2-Zahlen im Plan eine Näherung.
+2. **Kleinunternehmerregelung für die UG — freiwillig verzichten?** Neuer
+   Befund aus dem Finanzplan: Die 25.000-€-Grenze wird im ganzen
+   24-Monats-Horizont in keinem Szenario gerissen (außer optimistisch im
+   angeschnittenen Jahr 2028). Die Frage ist also nicht mehr „wann fällt sie
+   weg", sondern „lohnt sich der Verzicht wegen des Vorsteuerabzugs bei
+   ausschließlich B2B-Kunden". Beide Varianten sind im Plan rechenbar.
+3. **Darf die UG die selbst entwickelte Software einfach nutzen** oder muss
+   sie förmlich eingebracht werden? (Legals Erwartung: einfach nutzen.)
+
+Dazu braucht Head of Finance sein **Honorar** als Planzahl (aktuell 3.000 €/Jahr
+als Annahme — der größte laufende Einzelposten der Rechtsformwahl).
+
+**🔵 Zwei Eingaben, mit denen du den Finanzplan am stärksten schärfst**
+(direkt an Head of Finance, beide Zellen sind gelb und in einer Minute
+geändert):
+
+1. **Deine Grundlast in Stunden pro Monat** für Produkt und Verwaltung —
+   Head of Finance nimmt 25 an. Du hast zwei Monate Erfahrung mit 15–20
+   Stunden die Woche; du weißt besser als jeder von uns, wie viel davon
+   *nicht* Vertrieb und Support ist. Diese eine Zahl entscheidet, ob das
+   optimistische Szenario an deiner Kapazität scheitert oder nicht.
+2. **Dein Bruttogehalt** — Head of Finance rechnet aus den 2.500 € netto auf
+   48.000 € zurück, um den Grenzsteuersatz zu bestimmen. Wenn das deutlich
+   daneben liegt, verschieben sich die B1-Schwellen. Die Zahl geht nur an ihn,
+   nirgends sonst hin.
 
 **🔴 UG gründen — Notartermin ist dein nächster Schritt.** Entschieden
 (03.09., mit Head of Legal): **direkt UG, kein Umweg über ein
@@ -652,3 +677,53 @@ Schätzung, keine Recherche.
 
 ---
 
+## S-4, Teil 3 — Korrektur meiner Empfehlung (Head of Legal & Compliance, 2026-09-03)
+
+**Ich nehme den Kernsatz aus S-4 zurück.** Dort steht: „UG: ja — und der
+richtige Zeitpunkt ist vor dem ersten *zahlenden* Kunden." Das war zu absolut.
+
+**Neue Empfehlung:**
+
+1. **Vermögensschaden-/IT-Haftpflicht sofort** — unverändert, und in der neuen
+   Rangfolge sogar wichtiger als vorher. 1 Mio. € Deckung, exali/Markel. Teil 2
+   dieser Reihe gilt unverändert, ergänzt um eine fünfte Frage an den
+   Versicherer: Umschreibbarkeit auf eine spätere UG unter Erhalt von
+   Vertragsbeginn und Rückwärtsdeckung.
+2. **Einzelunternehmen (Kleingewerbe) jetzt** — Gewerbeanmeldung im Oktober
+   2026, Kleinunternehmerregelung § 19 UStG.
+3. **UG später**, ausgelöst durch den ersten der drei Punkte: rund 20 zahlende
+   Betriebe · der Moment, in dem Sandy nicht mehr jeden Kunden persönlich prüft ·
+   spätestens der Teilzeitantrag.
+
+**Was sich geändert hat — die Sachlage, nicht meine Meinung über das Risiko:**
+Als ich S-4 geschrieben habe, kannte ich die Kundenkurve nicht. CoS-F-003 liegt
+seit heute vor. Mein Serienschaden-Argument ist auf 200 Betriebe gerechnet; der
+Plan zeigt **1 Betrieb im Januar 2027, 3–5 nach sechs Monaten, 15 frühestens im
+August 2027** (realistisches Szenario; im vorsichtigen 14,3 nach 24 Monaten).
+Ein Serienschaden über fünf Betriebe liegt weit innerhalb einer
+Millionen-Deckung. Das Risiko, das die UG abfängt, entsteht in dieser Zeit
+schlicht noch nicht — die Police fängt es vollständig ab. Die Rechtsform-Frage
+verschiebt sich damit ins Frühjahr 2027.
+
+**Was das kostet und spart:** Der UG-Weg wäre rund 1.700 € sofort und
+3.000 €/Jahr Steuerberater (Bilanzierung, Offenlegung). Der
+Einzelunternehmens-Weg kostet 15 € und braucht keine Bilanz. Über zwei Jahre
+grob 4.000 € Unterschied in der Liquiditätsrechnung — gemeldet an Head of
+Finance, weil CoS-F-003 auf der UG-Basis gerechnet ist.
+
+**Was Sandy dafür in Kauf nimmt, offen gesagt:** Fehler, die in der
+Einzelunternehmens-Phase entstehen, bleiben dauerhaft in ihrer persönlichen
+Haftung — auch nach einer späteren UG-Gründung. Eine UG wirkt nicht rückwirkend.
+Deshalb ist die unbegrenzte Rückwärtsdeckung der Police in dieser Variante keine
+Nebensache, sondern der tragende Teil. Zweitens müssen die laufenden
+Kundenverträge beim späteren Wechsel auf die UG übergehen; bei einer Handvoll
+Kunden ist das eine E-Mail, bei fünfzig wäre es Arbeit — ein weiteres Argument,
+die Schwelle von 20 nicht deutlich zu überschreiten.
+
+**Der ausführliche Plan mit Terminen steht in `legal-007-plan-fuer-sandy.md`.**
+`legal-006-ug-zeitplan-fuer-sandy.md` ist als überholt markiert, bleibt aber
+vollständig gültig, falls Sandy die UG trotzdem sofort will. Das ist keine
+falsche Entscheidung — sie kostet nur Geld und Aufwand, der jetzt nicht nötig
+ist.
+
+---

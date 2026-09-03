@@ -2,6 +2,15 @@
 
 **Für Sandy · Stand 03.09.2026 · Head of Legal & Compliance**
 
+> **⚠️ Überholt (03.09.2026, nachmittags).** Nach Durchsicht des Finanzplans
+> (CoS-F-003) habe ich meine Empfehlung geändert: **Einzelunternehmen jetzt,
+> UG bei rund 20 zahlenden Betrieben.** Der aktuelle Plan steht in
+> **`legal-007-plan-fuer-sandy.md`**. Diese Datei bleibt gültig und
+> vollständig für den Fall, dass Sandy sich trotzdem für die sofortige
+> UG-Gründung entscheidet — sie ist dann Schritt für Schritt weiter
+> benutzbar. Begründung des Wechsels: `legal-007`, Abschnitt „Was ich
+> geändert habe und warum".
+
 Diese Datei ist die einzige, die du zum Gründen brauchst. Alles andere zum
 Thema ist Hintergrund und kann warten.
 

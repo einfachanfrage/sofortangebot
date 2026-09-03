@@ -139,6 +139,44 @@ beim Chief of Staff. Gleichzeitig ist die Abhängigkeit von diesem einen Kontakt
 ein **Klumpenrisiko**, das im Finanzplan im vorsichtigen Szenario sichtbar sein
 muss.
 
+## Was der Finanzplan strategisch sagt (Chief of Staff, 03.09.2026)
+
+Der erste vollständige Finanzplan (CoS-F-003, Head of Finance) liegt vor —
+24 Monate, drei Szenarien, aufgebaut auf dem Kanalplan von Marketing
+(CoS-M-007). Er ist das Ergebnis der **aktuellen Strategie**: rein organisch,
+kein Werbebudget, ein warmer Kanal, 15–20 Stunden die Woche neben dem Job.
+Die Zahlen:
+
+- **Erstes positives Monatsergebnis:** realistisch November 2027, optimistisch
+  Juli 2027, vorsichtig nicht innerhalb von 24 Monaten.
+- **Vorstrecken:** bis –9.280 € (realistisch), davon 2.000 € gebundene Reserven.
+- **Anstellung auf 30 Stunden reduzieren (B1):** braucht 37 zahlende Betriebe —
+  realistisch **Monat 21 (Mai 2028)**, optimistisch Monat 14 (Oktober 2027).
+- **Anstellung ganz aufgeben (B2):** braucht 107 Betriebe — **in keinem
+  Szenario innerhalb von 24 Monaten.**
+- Zahlende Betriebe nach 24 Monaten: 14 / 47 / 99.
+
+**Die strategische Folgerung, für den nächsten Check-in:** Die Ambition in
+dieser Datei lautet „Wachstum mit Team und Kapital, kein Lifestyle-Business".
+Der Plan zeigt, was die *heutige* Strategie dazu hergibt: einen soliden, aber
+langsamen Weg, auf dem die volle Selbstständigkeit erst jenseits des
+Horizonts liegt. Das ist kein Fehler im Plan — es ist die ehrliche Rechnung
+für „organisch, allein, nebenher". Wenn das Tempo nicht reicht, gibt es genau
+vier Hebel, und keiner davon ist „mehr Stunden": (1) ein zweiter warmer Kanal
+wie Dessau — ein Mensch, nicht ein Flyer; (2) ein bezahlter Reichweiten-Test,
+sobald ein Reel nachweislich zieht (Marketing hat den Rahmen: 150 €, einmal,
+mit Auswertung); (3) das Klumpenrisiko Dessau früh mit einem zweiten Laden
+absichern; (4) Kapital, um Stufe B1 vorzuziehen statt sie zu erwarten — das
+wäre der Moment für den Businessplan. Die Frage für den Check-in ist nicht
+„stimmt der Plan", sondern **„ist der Weg, den er zeigt, der, den du gehen
+willst"**.
+
+**Nicht entscheidungsreif, bewusst:** Die Besteuerung der UG ist noch nicht
+gerechnet (Steuerberater-Frage 1), und Abwanderung sowie Support-/
+Grundlast-Stunden sind Annahmen ohne Erfahrungswert. Die Stufen können sich
+verschieben. Das Bild — B1 erreichbar, B2 nicht im Horizont — hält das
+vermutlich aus.
+
 ## Wöchentlicher strategischer Check-in
 
 Eingerichtet 18.08.2026: einmal pro Woche ein kurzer Termin NUR auf dieser
