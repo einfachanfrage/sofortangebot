@@ -93,7 +93,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs) |
-| PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
@@ -2623,7 +2623,7 @@ Altbelag-Rückfragen, eine je Raum — beantwortet mit Flur „bleibt", Wohnzimm
 | Küche | Altbelag entfernen | 8,40 m² | ✅ Raumfläche ohne Verschnitt, nur Küche |
 | Küche | Sockelleisten montieren | 10,70 lfdm | ✅ 10,70 |
 | Küche | **Trittschalldämmung** | **fehlt** | ❌ 8,40 m² |
-| Allgemein | Übergangsschiene, als „Vorschlag" markiert | 1 Stück | ✅ **1**, nicht 3 |
+| Allgemein | Übergangsschiene, als „Vorschlag" markiert | 1 Stück | ⚠️ **1**, nicht 3 — siehe Nachtrag unter PM-033, Befund 3: möglicherweise Zufallstreffer |
 
 Belag 37,38 m², Sockelleisten 41,30 lfdm — beides exakt Soll. Alle drei
 Raumsummen rechnen sauber auf.
@@ -2672,6 +2672,99 @@ fehlt sie komplett**
 4. Drei Räume, drei saubere Gruppen, keine Vermischung, kein Bad.
 
 **Status PM-032:** ❌ ein Befund, sonst exakt Soll. Nachtest nach dem Fix.
+
+---
+
+### PM-033 — Ist-Ergebnis (Sandy, 2026-09-02)
+
+**Aufnahme-Karte:** Wohnzimmer 1 Position, Schlafzimmer 1, Flur 1, Allgemein 2.
+Raummaße alle exakt (4,5 × 6 · 3,6 × 4 · 1,5 × 5). Drei Altbelag-Rückfragen, je
+Raum, alle „bleibt".
+
+**Entwurf (netto 1.905,04 €):**
+
+| Raum | Position | Ist | Soll |
+|---|---|---|---|
+| Wohnzimmer | Fertigparkett inkl. **15 %** Verschnitt | 31,05 m² | ✅ 31,05 |
+| Wohnzimmer | **Trittschalldämmung** | **27,00 m²** | ❌ gehört gar nicht in diesen Raum |
+| Schlafzimmer | Teppichboden verlegen, **kein** Verschnitt | 14,40 m² | ✅ 14,40 |
+| Flur | Laminat inkl. **5 %** Verschnitt | 7,88 m² | ✅ 7,88 |
+| Flur | **Trittschalldämmung** | **fehlt** | ❌ 7,50 m² |
+| Allgemein | **Sockelleisten montieren** (als „Vorschlag") | **22,00 lfdm** | ❌ ausdrücklich ausgeschlossen |
+| Allgemein | Übergangsschiene (als „Vorschlag") | **1 Stück** | ❌ 2 |
+
+**Der Kerntest ist bestanden:** Drei Beläge, drei Verschnittsätze, in einem
+Diktat — 15 % beim Fischgrät-Parkett, 0 % beim Teppich, 5 % beim Laminat. Kein
+Satz schwappt in einen Nachbarraum. Das ist genau die Trennung, für die dieser
+Fall gebaut war, und sie sitzt.
+
+**Befund 1 — Trittschalldämmung im falschen Raum, und die Ansage wird
+ignoriert**
+
+Ich habe gesagt: „Trittschall **nur unterm Laminat im Flur**." Die Dämmung
+landet im **Wohnzimmer**, mit der Wohnzimmerfläche von 27,00 m², und im Flur
+fehlt sie.
+
+- **Fundort:** dieselbe Stelle wie PM-032 — `pruefeTrittschalldaemmung()` in
+  `src/lib/vollstaendigkeit/boden-sonder.ts`, `ergaenzt.find(...)` nimmt die
+  **erste** Verlegeposition. In PM-032 war das zufällig der Raum, in dem die
+  Dämmung hingehörte; hier ist es der falsche. Damit ist die Ursache aus PM-032
+  aus einer zweiten Richtung bestätigt.
+- **Verschärfung gegenüber PM-032:** Hier stand im Transkript nicht nur *dass*
+  Dämmung kommt, sondern **wo**. Die Raumangabe wird komplett ignoriert. Das
+  verletzt die Rangordnung „Ansage vor Struktur vor Rohtext", die für die
+  Extraktion schon einmal festgezurrt wurde.
+- **Geld, in beide Richtungen:** 121,50 € stehen im Angebot, die niemand
+  verlangt hat — das geht zulasten des Kunden. Gleichzeitig fehlen im Flur
+  7,50 m² = 33,75 €, die der Betrieb verlegt und nicht berechnet.
+- Und sie trägt **kein „Vorschlag"-Etikett**, weil das Wort im Transkript
+  vorkam. Das Tool behauptet also mit voller Sicherheit etwas, das ich so nie
+  gesagt habe.
+
+**Befund 2 — Sockelleisten erfunden, gegen einen ausdrücklichen Ausschluss**
+
+Mein Satz war: „Sockelleisten bleiben überall, wie sie sind." Im Angebot steht
+„Sockelleisten montieren, 22 lfdm, 121,00 €".
+
+- Das ist die Familie PM-010 / PM-013 / PM-017: eine Leistung entsteht aus einem
+  **Wortauslöser**, obwohl der Satz sie ausdrücklich abbestellt. Dass sie als
+  „Vorschlag" markiert ist, mildert es — ein Vorschlag gegen eine ausdrückliche
+  Absage bleibt trotzdem falsch. Man widerspricht dem Kunden nicht in seinem
+  eigenen Angebot.
+- **Die 22,00 lfdm lassen sich aus keinem Raum herleiten.** Die Umfänge sind
+  Wohnzimmer 21,00, Schlafzimmer 15,20, Flur 13,00 — einzeln, in Summe (49,20)
+  oder in irgendeiner Teilsumme kommt 22,00 nicht vor. **Verdacht:** 2 × (6,00 +
+  5,00) = 22,00, also die Länge des Wohnzimmers mit der Länge des Flurs
+  kombiniert. Das wäre ein Umfang aus zwei verschiedenen Räumen, passend dazu,
+  dass die Position unter „Allgemein" ohne Raumbezug steht. Bitte am Code
+  nachsehen, meine Herleitung ist eine Vermutung.
+- Ein Türabzug fehlt ohnehin — passt zu VOB-012, ist hier aber zweitrangig, weil
+  die Position gar nicht existieren dürfte.
+
+**Befund 3 — nur eine Übergangsschiene, verlangt waren zwei**
+
+„An den beiden Türen zum Wohnzimmer und zum Schlafzimmer **jeweils eine**
+Übergangsschiene" — es kommt eine. Drei verschiedene Beläge stoßen an zwei
+Türen aneinander, also braucht es zwei Schienen.
+
+**Wichtig für PM-032:** Dort war „genau eine Schiene" das gewünschte Ergebnis
+und ich habe es als bestanden abgehakt. Hier zeigt sich, dass das Tool
+möglicherweise **immer genau eine** ergänzt, unabhängig davon, wie viele
+Belagwechsel es gibt. Dann war PM-032 kein Treffer, sondern Glück. Bitte im
+Code klären, ob die Schiene gezählt oder pauschal einmal gesetzt wird — davon
+hängt ab, ob PM-032 wirklich grün ist. Ich habe den Punkt dort vermerkt.
+
+**Was sonst gut lief:**
+
+- Teppichboden ohne Verschnitt-Suffix und mit glatten 14,40 m² — die
+  Sonderbehandlung für Bahnenware greift.
+- Der Fischgrät-Satz von 15 % bleibt im Wohnzimmer und läuft nicht in den Flur,
+  wo gerade verlegt wird. Das war nach dem PM-025-Fix die offene Frage.
+- Altbelag-Rückfragen wieder sauber je Raum.
+
+**Status PM-033:** ❌ drei Befunde. Verschnittlogik grün, Zuordnungslogik rot —
+alle drei Fehler entstehen dadurch, dass eine Position ohne Raumbezug erzeugt
+und dann irgendeinem Raum zugeschlagen wird.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
