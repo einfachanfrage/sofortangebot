@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "src/app/(app)/onboarding/[step]/page.tsx",
+    "src/app/(app)/dashboard/page.tsx",
+    "src/components/onboarding/state.ts",
+    "src/components/onboarding/OnboardingProgress.tsx",
+    "src/components/Logo.tsx",
+    "src/lib/supabase/client.ts",
+    "src/lib/types.ts",
+    "src/data/dashboard.ts",
+    "src/components/PwaBannerManager.tsx",
+    "src/components/BottomNav.tsx",
+    "src/components/MobileQuoteCard.tsx",
+    "src/components/WelcomeModalWrapper.tsx",
+    "src/components/AvatarSheet.tsx",
+    "src/components/Toast.tsx"
+  ]
+}

@@ -18,7 +18,9 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
   (10, '20260613135123_add_agb_consent',             'companies.agb_akzeptiert_am',       EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='agb_akzeptiert_am')),
   (11, '20260613135124_add_zugferd_fields',          'customers.leitweg_id',              EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='customers' AND column_name='leitweg_id')),
   (12, '20260613135944_add_soft_delete',             'companies.deleted_at',              EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='companies' AND column_name='deleted_at')),
-  (13, '20260613142431_add_angebot_eingaben',        'Tabelle angebot_eingaben',          EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='angebot_eingaben')),
+  -- #13 hat angebot_eingaben angelegt; am 02.09.2026 mit dem toten
+  -- Oeffnungs-Pfad entfernt (DC-042). Der Check dreht sich um:
+  (13, '20260902140000_toten_oeffnungs_pfad_entfernen', 'Tabelle angebot_eingaben entfernt', NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='angebot_eingaben')),
   (14, '20260613142432_add_quote_photos',            'quotes.internal_notes',             EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quotes' AND column_name='internal_notes')),
   (15, '20260613144614_add_quote_send',              'quotes.gesendet_am',                EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='quotes' AND column_name='gesendet_am')),
   (16, '20260613150138_add_nummernkreise',           'Tabelle nummernkreise',             EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='nummernkreise')),

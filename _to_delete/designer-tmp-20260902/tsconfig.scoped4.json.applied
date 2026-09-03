@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/app/(app)/angebot/[id]/entwurf/page.tsx",
+    "src/components/RaumGrundrissEditor.tsx",
+    "src/lib/raum-geometrie.ts",
+    "src/lib/zuschlag-basis.ts",
+    "src/app/api/entwurf/generiere-positionen/route.ts"
+  ]
+}

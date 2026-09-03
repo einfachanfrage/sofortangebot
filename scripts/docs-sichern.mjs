@@ -27,9 +27,9 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
+import { endmarkierungsZeilen } from './endmarkierung.mjs'
 
 const DOCS = 'docs'
-const MARKE = '<!-- ENDE DER DATEI'
 
 // Die sechs Dateien, an denen der Fehler aufgetreten ist. Verliert eine davon
 // ihre Endmarkierung, ist das selbst schon ein Warnzeichen — dann hat jemand
@@ -51,12 +51,11 @@ function pruefen() {
   const funde = []
   for (const name of markdownDateien()) {
     const zeilen = readFileSync(join(DOCS, name), 'utf-8').split(/\r?\n/)
-    // Nur eine Zeile, die MIT der Markierung beginnt, zählt als echte
-    // Endmarkierung. In mehreren Dateien wird sie zusätzlich im Fließtext
-    // erwähnt (in Backticks) — das ist keine zweite Markierung.
-    const treffer = zeilen
-      .map((zeile, index) => (zeile.trimStart().startsWith(MARKE) ? index : -1))
-      .filter(index => index >= 0)
+    // Nur die VOLLSTÄNDIGE Markierung zählt (siehe endmarkierung.mjs).
+    // Mehrere Dateien erklären sie im Fließtext und zitieren sie dabei — beim
+    // Umbrechen landet so ein Zitat leicht am Zeilenanfang und wurde früher
+    // als zweite Markierung gezählt.
+    const treffer = endmarkierungsZeilen(zeilen)
     const pflicht = PFLICHT_MARKE.includes(name)
 
     if (treffer.length === 0) {

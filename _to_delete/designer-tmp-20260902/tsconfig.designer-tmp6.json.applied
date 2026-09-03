@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["next-env.d.ts", "src/lib/accounting-options.ts", "src/app/(app)/onboarding/[step]/page.tsx"]
+}

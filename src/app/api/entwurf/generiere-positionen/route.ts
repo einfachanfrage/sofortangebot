@@ -8,7 +8,7 @@ import type { VollExtraktionCache, KombinierteExtraktionCache } from '@/lib/type
 import type { Wand } from '@/lib/raum-geometrie'
 import { uebernehmeGrundrisse, type RaumDetail } from '@/lib/mengen/raum-details'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
-import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
+import { pruefeMassPlausibilitaet, korrigiereRaumMasse } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
 import * as Sentry from '@sentry/nextjs'
@@ -249,7 +249,15 @@ export async function POST(req: NextRequest) {
   // hier schon strukturiert als Zahl verfügbar — deterministisch prüfbar,
   // bevor irgendetwas gerechnet oder gespeichert wird. Blockiert nichts,
   // wird nur an beide möglichen Antworten unten drangehängt.
-  const massWarnungen = pruefeMassPlausibilitaet(extData.extraktion?.raeume ?? [])
+  // PM-034: erst korrigieren, was eindeutig verschriftlichte Sprechweise ist
+  // („360" als Raumseite = 3,60 m), dann prüfen, was danach noch unplausibel
+  // ist. Beides landet in derselben Anzeige — der Nutzer sieht also, was
+  // geändert wurde, und was er sich zusätzlich ansehen soll.
+  const { hinweise: massKorrekturen } = korrigiereRaumMasse(extData.extraktion?.raeume ?? [])
+  const massWarnungen = [
+    ...massKorrekturen,
+    ...pruefeMassPlausibilitaet(extData.extraktion?.raeume ?? []),
+  ]
 
   // Sichtbarkeit: roh (direkt von GPT) + final (nach allen Nachbearbeitungs-
   // Modulen) speichern. Bei Rückfragen ruft das Frontend diese Route für

@@ -3260,5 +3260,67 @@ Grundierung im Esszimmer.
 
 ---
 
+## PM-034 Befund 2 behoben — „drei sechzig" wird nicht mehr 360 (2026-09-03)
+
+Du hattest recht, und zwar aus einem anderen Grund, als die alte Einordnung
+annahm.
+
+**Zuerst der Beleg, weil er die Ursache verschiebt.** Ich habe die echten
+Transkripte vom 02./03.09. angesehen. Whisper schreibt im **selben** Batch:
+
+| Diktat | Transkript |
+|---|---|
+| „Wohnzimmer sechs mal vier fünfzig" | `6 x 4,50` ✅ |
+| „Küche drei mal zwo achtzig" | `3 x 2,80` ✅ |
+| **„Küche drei sechzig mal drei"** | **`360 x 3`** ❌ |
+| **„Esszimmer vier mal drei fünfzig"** | **`4 x 350`** ❌ |
+
+Der Fehler entsteht also **in der Spracherkennung**, nicht bei uns — und er ist
+unzuverlässig, mal so, mal so. Damit ist auch klar, warum die Reparatur über
+Zahlwörter nie greifen konnte: Im Text stehen längst keine Wörter mehr, sondern
+`360`. Der Kommentar in `mass-plausibilitaet.ts` („mit Text-Nachbearbeitung
+grundsätzlich nicht zuverlässig zu fangen") beschrieb den Zustand richtig — er
+zog nur den falschen Schluss daraus.
+
+**Was jetzt passiert:** Eine Raumseite, die als Meterangabe unmöglich ist, wird
+korrigiert, statt nur bemängelt. Küche 360 → **3,60 m**, Esszimmer 350 →
+**3,50 m**.
+
+**Die Grenzen sind bewusst eng gezogen:**
+
+- nur **Raumseiten** — ein 120 m langer Zaun ist keine Raumseite und bleibt,
+- nur **ganze Zahlen mit drei oder vier Ziffern** — `350,5` hat Whisper
+  offensichtlich verstanden und wird nicht angefasst,
+- nur wenn das Ergebnis danach **plausibel** ist (0,5 bis 15 m); `20` wird
+  nicht zu `0,20`,
+- **niemals still**: jede Korrektur erzeugt einen Hinweis im selben gelben
+  Kasten wie bisher, im Wortlaut „Küche: Länge ‚360' als 3,60 m gelesen — so
+  wird ‚3 60' auf dem Bau gesprochen. Stimmt das nicht, bitte hier
+  korrigieren."
+
+**Deine Warnung bleibt erhalten**, für alles, was sich nicht eindeutig
+korrigieren lässt: Eine Halle mit 40 m Seitenlänge wird weiterhin nur
+bemängelt, nicht umgerechnet — dort ist keine Sprechweise erkennbar. Genau
+diese Trennung prüft ein eigener Test.
+
+**Abgesichert:** `pm034-massrepratur.test.ts`, 10 Tests — beide PM-034-Fälle,
+weitere Sprechweisen (`120`, `280`, `1250`), und vor allem die Gegenrichtung:
+was nicht angefasst werden darf. Suite 75 Dateien / 1.212 Tests grün.
+
+**Was ich NICHT geändert habe und wo ich deine Einschätzung brauche:**
+
+1. **Raumhöhen.** Dieselbe Sprechweise gilt für „zwei sechzig" als Höhe. Die
+   Prüfung kennt heute nur Länge und Breite. Bei Höhen ist die plausible
+   Spanne enger (etwa 2,00 bis 4,00 m) — soll ich sie mit denselben Regeln
+   aufnehmen?
+2. **Der Whisper-Prompt.** Er sagt heute nur „Dezimaltrennzeichen ist Komma".
+   Man könnte Beispiele ergänzen („drei sechzig → 3,60"). Das würde die
+   Fehlerquelle verkleinern statt nur die Folge zu reparieren — aber
+   Prompt-Änderungen wirken nie zuverlässig, und ich möchte die Korrektur
+   oben nicht dadurch schwächen, dass sie seltener gebraucht wird und damit
+   seltener auffällt, wenn sie falsch liegt. Deine Meinung?
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

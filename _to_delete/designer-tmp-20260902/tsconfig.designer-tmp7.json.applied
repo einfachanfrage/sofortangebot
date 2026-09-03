@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["next-env.d.ts", "src/components/aufnahme/RueckfragenScreen.tsx", "src/lib/mengen/rueckfragen-generator.ts", "src/lib/mengen/rueckfragen-flow.ts", "src/lib/mengen/gesagte-werte.ts"]
+}
