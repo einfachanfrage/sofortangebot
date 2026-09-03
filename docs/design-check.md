@@ -51,7 +51,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 
 | ID | Thema | Status | Zuständig |
 |---|---|---|---|
-| DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | 🟡 entschieden + umgesetzt (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger", zentrale `pricing.ts`), Live-Nachtest steht aus | Head of Product Engineering |
+| DC-001 | Drei widersprüchliche Preismodelle + „18 Gewerke"-Versprechen | 🟡 entschieden + umgesetzt (22€/17€ Jahresabo, 3 frei, „Maler & Bodenleger", zentrale `pricing.ts`) — `/vorschau`-Redirect live bestätigt (Product Designer, 2026-09-03), Landingpage-`PreiseSection` und Onboarding-Plan-Wahl-Fenster aktuell nicht live testbar, siehe Detailabschnitt | Head of Product Engineering |
 | DC-002 | „Angebote" fehlt in Desktop-Sidebar | ✅ behoben + live bestätigt (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-003 | Statusfarben für Angebote — eigentlich 5 inkonsistente Quellen, 1 verworfene Prop, dazu Status-Änderung selbst „umständlich/nicht intuitiv" (Sandy) | ✅ behoben + live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Status-Sheet auf `sofortangebot.app` live geprüft (Angebot AG-2026-003) — eigene erkennbare Zeile mit Rahmen + Häkchen bei aktivem Status, sauber statt „kein Schwein kommt drauf" | Product Designer (umgesetzt) |
 | DC-004 | `pb-safe` / `pt-safe-top` nicht definiert (Safe-Area auf iPhone) | 🟡 behoben, noch nicht auf echtem iPhone nachgeprüft | Product Designer |
@@ -101,7 +101,7 @@ kein Bug, nur Testrückstand. Sandy kann die zwei „Neue Variante"-Zeilen
 selbst löschen | Product Designer (umgesetzt, teilweise live bestätigt) |
 | DC-032 | Onboarding-Assistent (Schritte 2–7) hat auf Mobile KEINE Möglichkeit, die App zu verlassen/zu unterbrechen — kein X, kein „Später fertigstellen", `SideNav` ist bewusst nur ab Desktop-Breite sichtbar (`hidden md:flex`) und `BottomNav` fehlt auf diesen Seiten komplett. Gefunden beim „an allen anderen Stellen testen"-Auftrag (Sandy, 2026-08-23) | 🔵 Nicht blind umgesetzt — Onboarding ist der erste Eindruck der App, ein Ausstieg braucht eine bewusste Entscheidung, was mit dem angefangenen Zustand passiert (Firma/Account teilweise angelegt?), nicht nur einen Button. Vorschlag: sichtbarer „Später fertigstellen"-Ausstieg ab Schritt 2, der den Fortschritt sichert und zum Dashboard führt, das dann tolerant mit unvollständigem Onboarding umgeht. Braucht kurze Abstimmung mit Head of Product Engineering (was genau ist beim Abbruch schon in der DB, was nur im vom Code schon unterstützten `localStorage`-Zwischenstand) bevor ich das baue | Product Designer (Konzept) |
 | DC-033 | Angebotsnummern sehen zufällig aus („2026-5EC9", „2026-4732", „2026-B381"), keine erkennbare Logik (Sandy, 2026-08-25) | 🟡 behoben (Head of Product Engineering, 2026-08-25): Deine Analyse stimmte, die Hauptursache lag aber noch tiefer — der heutige Erstellungsweg (Aufnahme-Flow) hat **nie** eine Nummer angefordert, die Vergabe stand nur in der alten Route. Nummer wird jetzt beim Fertigstellen vergeben, verschluckte RPC-Fehler sind sichtbar. Live-Nachtest steht aus | Head of Product Engineering |
-| DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 Zusammengelegt (CoS-021): Engineering-Teil (Datenmodell/PDF) UND Product-Designer-Teil (UI, „Notizen & Fotos" → „Fotos & Notiz") fertig umgesetzt, committet, `tsc` sauber. Live-Nachtest steht für beide Teile noch aus | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅) — CoS-021 |
+| DC-034 | Zwei komplett getrennte Notiz-/Foto-Systeme im Angebot ("Aufnahme" vom Aufmaß vs. eigenständiger "Notizen & Fotos"-Tab) — sind nach fertiggestelltem Angebot nicht mehr leicht zusammen zu finden, macht das als Ganzes überhaupt Sinn? (Sandy, 2026-08-25) | 🟡 UI-Teil live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Tab auf `sofortangebot.app` heißt live „Fotos & Notiz", zeigt einen einzigen Foto-Pool „Fotos vom Aufmaß" (kein zweiter Upload-Weg mehr sichtbar) und „Interne Notiz" mit eigener Zeile „Nur für dich — der Kunde sieht das nie." + „Nicht im PDF"-Badge. Tatsächlichen Foto-Upload (Bildunterschrift, 8-Fotos-Warnung) nicht getestet — bräuchte eine echte Datei-Auswahl. Datenmodell/PDF-Teil (Engineering) weiterhin ungeprüft | Head of Product Engineering (Datenmodell/PDF, ✅) / Product Designer (UI, ✅ live bestätigt) — CoS-021 |
 | DC-035 | Zwei verwandte Funde beim Einsprechen (Sandy, 2026-08-29): (1) die Karten-Ansicht nach der Aufnahme zeigt Mengen, bevor feststeht, ob noch Fenster/Türen fehlen — wirkt wie das fertige Ergebnis; (2) die Rückfrage zu Türen/Fenstern fragt nur nach Stückzahl, nie nach individueller Größe — bei einer großen Terrassentür (z.B. 2×3m) fehlt die Möglichkeit, das abweichend von der Standardgröße anzugeben | ✅ Beide Teile umgesetzt: Teil 1 (Hinweistext) committet (`e463360`); Teil 2, Datenweg von Head of Product Engineering gebaut + getestet (`b421ac9`), Eingabe-Oberfläche (Zusatz-Chip nach der Stückzahl-Frage, öffnet Breite/Höhe-Felder) vom Product Designer nachgezogen — committet, sobald ein gerade aktiver, gleichzeitiger Commit einer anderen Rolle den Git-Lock freigibt. `tsc` sauber, Live-Test steht für beide Teile noch aus | Product Designer / Head of Product Engineering — beide fertig |
 | DC-036 | Versteht der User "Raummaße/Flächen eingeben/Raumform" bei einem unförmigen Raum mit Nischen — wie kommt er da einfach an die richtige Fläche? Braucht's den Reiter überhaupt? (Sandy, 2026-08-29, Screenshot) | ✅ Geprüft: die Fähigkeit dafür existiert schon und ist gut gebaut (`RaumGrundrissEditor` — Vorlagen Rechteck/L-/U-Form + freies Wand-für-Wand, Live-Vorschau, deckt Nischen/Erker ab). Die Lücke war nur die Auffindbarkeit — "Raumform" verrät das nicht. Tab in "📐 Unregelmäßig" umbenannt + Erklärsatz im Editor ergänzt. Committet (`2e9b826`), `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Tab heißt live "📐 Unregelmäßig" mit dem Erklärsatz „Für Räume mit Nische, Erker oder Vorsprung…" | Product Designer (umgesetzt) |
 | DC-037 | Folgeidee aus DC-036 (Sandy, 2026-08-29, "das find ich gut mach das"): den Grundriss-Zeichner schon während der Aufnahme (Sprachaufnahme-Karte) anbieten, nicht erst nachträglich im fertigen Angebot | 🔵 Recherche zeigt: eine reine Client-Oberfläche würde die gezeichnete Form beim nächsten "Entwurf erstellen" stillschweigend verlieren, weil `generiere-positionen/route.ts` `raum_details` bei jedem Lauf komplett aus der KI-Extraktion neu aufbaut und überschreibt. Braucht also zwingend eine kleine Backend-Änderung, bevor die Oberfläche sicher etwas bewirkt. Fertige Spec für beide Seiten geschrieben, Backend-Teil an Head of Product Engineering übergeben, UI-Teil baue ich selbst sobald der Weg steht | Head of Product Engineering (Backend-Merge) / Product Designer (UI, folgt) |
@@ -183,6 +183,21 @@ statt „Alle 18 Gewerke"; `/vorschau` leitet direkt auf die Landingpage um,
 keine eigenen Preise mehr; die hier empfohlene `lib/pricing.ts` ist angelegt
 und wird von Landingpage + PlanWahlModal gelesen. Live-Nachtest im Browser
 steht noch aus.
+
+**Live-Test-Versuch (Product Designer, 2026-09-03, selbst durchgeklickt):**
+`/vorschau` leitet live tatsächlich direkt auf `sofortangebot.app` um,
+keine eigene Preis-Seite mehr — dieser Teil bestätigt. Die beiden anderen
+Stellen konnte ich gerade NICHT live sehen: `src/app/page.tsx` zeigt statt
+der eigentlichen Landingpage (inkl. `PreiseSection`) aktuell eine
+„Früher Zugang / Zugang sichern"-Wartelisten-Seite, gesteuert über
+`process.env.NEXT_PUBLIC_COMING_SOON === 'true'` — reine Beobachtung,
+keine Bewertung, ob das gerade so gewollt ist (Soft-Launch vor dem
+öffentlichen Start?) oder nicht. Das Plan-Wahl-Fenster (`PlanWahlModal`)
+wird laut Code nur einmal direkt nach einem frisch abgeschlossenen
+Onboarding gezeigt (`WelcomeModalWrapper`) — das käme nur mit einem
+kompletten neuen Test-Onboarding zu sehen, das hab ich nicht ohne
+Rückfrage gestartet. Preisdatenbank-Vergleich (24 Std vorher: „Bodenbeläge"
+177 Positionen, „Maler" 164) nicht erneut geprüft, keine Änderung erwartet.
 
 ---
 
@@ -3127,6 +3142,19 @@ Hochladen abfragbar (landet automatisch im PDF) und eine Vorab-Warnung ab
 dieselbe Zusage-ohne-Einlösung wie beim alten Schalter passiert. Volle
 Details siehe CoS-021-Erledigungsvermerk in `chief-of-staff-todos.md`.
 Committet (`fde462c`), scoped `tsc` sauber, noch nicht live geprüft.
+
+**Live-Bestätigung — Klick-Test (Product Designer, 2026-09-03, selbst
+durchgeklickt):** Angebot 2026-9813 auf `sofortangebot.app` geöffnet, Tab
+heißt live „Fotos & Notiz" (Singular, wie umgesetzt). Darunter EIN
+Foto-Bereich „Fotos vom Aufmaß" mit „Foto hinzufügen"-Button und
+Drag-Fläche — kein zweiter, getrennter Upload-Weg mehr sichtbar. Darunter
+„Interne Notiz" mit eigener Erklärzeile „Nur für dich — der Kunde sieht
+das nie." und „Nicht im PDF"-Badge, klar von den Fotos getrennt, genau wie
+in CoS-021 entschieden. Nicht getestet: tatsächlicher Foto-Upload
+(Bildunterschrift-Feld, 8-Fotos-Warnschwelle) — bräuchte eine echte
+Datei-Auswahl im Browser, die ich hier nicht sinnvoll simulieren kann.
+Engineering-Teil (Datenmodell/PDF-Aufnahme) bleibt ebenfalls offen für
+einen echten Nachtest.
 
 ---
 
