@@ -38,22 +38,47 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **≈ 38,9 %** (Neuberechnung 03.09., nach 6.5- und 6.8-Fix) | 47 |
+| **Gate 1** — erste Testnutzer | **≈ 48,1 %** (Neuberechnung 03.09., Stufe 1 des Fahrplans komplett abgearbeitet) | 47 |
 | **Gate 2** — öffentlicher Launch | **≈ 15 %** (unverändert seit 02.09. Mittag) | 37 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert, keine neue G3-Bewegung) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
 
-> ✅ **Neuberechnung 03.09.2026 (Chief of Staff).** Zwei Punkte bewegt: **6.5
+> ✅ **Neuberechnung 03.09.2026 (Chief of Staff).** Sechs Punkte bewegt: **6.5
 > Leaked Password Protection (0→95)** — Sandy hat den Toggle in Supabase
 > aktiviert, per Screenshot bestätigt und zusätzlich unabhängig über den
 > Supabase-Security-Advisor gegengecheckt (Warnung ist weg); **6.8
-> HTTPS/HSTS (50→90)** — vom Chief of Staff selbst live gegen
-> `sofortangebot.app`/`www.sofortangebot.app` verifiziert (308-Redirect +
-> `Strict-Transport-Security`-Header auf beiden Domains), ohne dass Sandy
-> etwas tun musste. Beide sind die ersten zwei abgehakten Punkte aus dem
-> „Fahrplan zu 50 %" unten. Durchschnitt: 36,0 % → 38,9 %.
+> HTTPS/HSTS (50→97)** — CoS-037: Header lief erst live ohne
+> `includeSubDomains`/`preload` (→90 %), Head of Product Engineering hat
+> beides direkt per `next.config.ts`-Fix nachgezogen, Chief of Staff hat den
+> neuen Header live gegen `www.sofortangebot.app` bestätigt; die Eintragung
+> bei `hstspreload.org` selbst bleibt auf Sandys Entscheidung zurückgestellt
+> (siehe `entscheidungen-fuer-sandy.md`), bewusst kein offener Rest. Dazu vier
+> der fünf Doku-/Entscheidungspunkte aus Stufe 1 des Fahrplans, alle heute per
+> `AskUserQuestion` mit Sandy geklärt: **10.1 Feedback-Kanal (0→85)** —
+> WhatsApp direkt an Sandy; **10.4 Reaktionszeit (0→80)** — „meist binnen
+> 24 Stunden"; **8.9 Eskalationsweg (0→85)** und **8.11 Rollback-Plan
+> (0→85)** — beide zusammen entschieden (Sentry-Alert + manuelles Rollback),
+> und beide Mechanismen liefen bei näherer Prüfung schon: Sentrys
+> Standard-Regel „Send a notification for high priority issues" mailt aktive
+> Mitglieder bereits automatisch, Vercels `rollback`/„Promote to Production"
+> ist eine eingebaute Pro-Plan-Funktion. **10.2 Notfallplan (0→45)** bewegt
+> sich schwächer — die gewählte automatische WhatsApp-Antwort ist noch nicht
+> eingerichtet, Aktion an Sandy in `entscheidungen-fuer-sandy.md`.
+> Durchschnitt: 36,0 % → 47,1 %.
+
+> ✅ **Zweites Update, selber Tag (Chief of Staff).** Sandys Antworten auf die
+> beiden offenen Rückfragen: **10.2 Notfallplan (45→80)** — Feedback-Kanal
+> ist ihre private WhatsApp-Nummer, keine WhatsApp Business, also fällt eine
+> technische Abwesenheits-Antwort weg. Plan angepasst: eine einmalige
+> Willkommensnachricht an jeden neuen Testnutzer deckt 10.2 und 10.4
+> gemeinsam ab, fertiger Text unten in Stufe 1. **8.9 Eskalationsweg
+> (85→90)** — Sandy checkt ihr Sentry-Postfach aktuell noch nicht, hat aber
+> zugesagt, das ab Gate 1 zu tun; genau der Zeitraum, in dem der Punkt zählt.
+> **10.4 (80→85)**, da der Reaktionszeit-Text jetzt fertig formuliert vorliegt,
+> nicht mehr nur entschieden. Durchschnitt: 47,1 % → 48,1 %. Damit ist Stufe 1
+> des Fahrplans (unten) komplett abgearbeitet.
 
 ## Fahrplan zu 50 % Gate 1 (Chief of Staff, 03.09.2026)
 
@@ -67,11 +92,23 @@ rechnerisch drüber (Ziel-Szenario unten: ≈ 51 %).
 ~~„Leaked Password Protection" in Supabase einschalten (6.5, ein Klick,
 0→~95 %, größter Einzelhebel im Gate)~~ **✅ erledigt, 03.09.**; ~~HTTPS/HSTS
 kurz verifizieren (6.8)~~ **✅ erledigt, 03.09. (vom Chief of Staff selbst
-geprüft)**; vier reine Entscheidungs-/Doku-Punkte, die nur eine kurze
-schriftliche Antwort brauchen: Feedback-Kanal für Testnutzer festlegen
-(10.1), Notfallplan falls Sandy nicht erreichbar ist (10.2),
-Reaktionszeit-Erwartung kommunizieren (10.4), Eskalationsweg bei Ausfall
-(8.9), kurzer Rollback-Plan (8.11).
+geprüft)**; ~~Feedback-Kanal für Testnutzer festlegen (10.1)~~ **✅
+entschieden, 03.09. (WhatsApp direkt an Sandy)**; ~~Reaktionszeit-Erwartung
+kommunizieren (10.4)~~ **✅ entschieden, 03.09. (meist binnen 24h)**;
+~~Eskalationsweg bei Ausfall (8.9)~~ **✅ entschieden, 03.09. (Sentry-Alert,
+läuft bereits automatisch, Sandy checkt aktiv ab Gate 1)**; ~~kurzer
+Rollback-Plan (8.11)~~ **✅ entschieden, 03.09. (Vercel-Rollback, eingebaute
+Funktion)**; ~~Notfallplan falls Sandy nicht erreichbar ist (10.2)~~ **✅
+erledigt, 03.09.** — Sandy nutzt privates WhatsApp statt WhatsApp Business,
+technische Abwesenheits-Antwort fällt damit weg. Stattdessen: eine einmalige
+Willkommensnachricht pro neuem Testnutzer, deckt 10.2 und 10.4 zusammen ab,
+fertig formuliert:
+
+> *„Hey! Danke, dass du sofortangebot testest. Bei Fragen, Bugs oder Ideen
+> meld dich einfach direkt hier. Ich antworte meist innerhalb von 24 Stunden
+> — falls's mal länger dauert, bin ich trotzdem dran und lese alles."*
+
+**Damit ist Stufe 1 komplett** — kein offener Punkt mehr in dieser Stufe.
 
 **Stufe 2 — ein Nachmittag „wirklich benutzen", vieles ist längst gebaut,
 nur nicht live bestätigt:** Sandy: echte Registrierung + Bestätigungsmail
@@ -645,7 +682,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 6.5 | Passwort-Sicherheit: „Leaked Password Protection" (HaveIBeenPwned-Abgleich) aktiv | G1 | 🟢 95 % — **03.09.: erledigt.** Sandy hat den Toggle in Supabase (Authentication → Sign In / Providers → Email → „Prevent use of leaked passwords") aktiviert und gespeichert. Per Screenshot bestätigt (Toggle grün) UND unabhängig gegengecheckt: der Supabase-Security-Advisor listet die Warnung „Leaked Password Protection aus" nicht mehr. Nicht auf 100 %, weil die verwandten Felder (Minimum-Passwortlänge 6 Zeichen, „Password requirements" auf „No required characters") bewusst nicht mit angefasst wurden — eigenes, kleineres Thema |
 | 6.6 | Rate-Limiting/Brute-Force-Schutz auf dem Login | G1 | ⚪ offen — nicht erhoben (neu) |
 | 6.7 | Externer Sicherheits-Review/Penetrationstest vor öffentlichem Launch | G2 | ⚪ offen — nicht erhoben (neu) |
-| 6.8 | HTTPS/TLS überall erzwungen (inkl. HSTS) | G1 | 🟢 90 % — **03.09.: live verifiziert** (Chief of Staff, direkter Abruf gegen `sofortangebot.app` und `www.sofortangebot.app` über Vercel). HTTP→HTTPS erzwungen (308 Redirect auf beiden Domains), Antwort-Header trägt `Strict-Transport-Security: max-age=63072000` (2 Jahre) auf beiden. Nicht auf 100 %, weil der Header kein `includeSubDomains` und kein `preload` setzt (Vercel-Standard für Custom Domains kann beides, ist hier aber nicht aktiv) — kleine, echte Lücke, kein Blocker für Gate 1 |
+| 6.8 | HTTPS/TLS überall erzwungen (inkl. HSTS) | G1 | 🟢 97 % — **03.09.: CoS-037 umgesetzt und live verifiziert.** Head of Product Engineering hat `next.config.ts` um einen `headers()`-Block erweitert, Header trägt jetzt `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` (per Vercel-Direktabruf bestätigt, `www.sofortangebot.app`). Nicht auf 100 %, bewusst: die Domain ist noch nicht bei `hstspreload.org` eingetragen — Sandys Entscheidung, siehe `docs/entscheidungen-fuer-sandy.md` (03.09.) und `docs/chief-of-staff-todos.md` CoS-037. Kein offener Rest, sondern eine begründet zurückgestellte Entscheidung |
 
 ## 7. Rechtstexte & Compliance
 
@@ -679,9 +716,9 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 8.6 | Domain, SSL, Hosting-Konfiguration sauber | G2 | 🟡 50 % — läuft auf `www.sofortangebot.app` über Vercel, kein separater Sicherheitscheck dokumentiert |
 | 8.7 | Verlässliche Kette Code-Fix → Deploy → tatsächlich live | G1 | 🟢 80 % — **21.08.2026 Abend: CoS-016 geklärt, kein offener Blocker mehr.** War kein System-/Architekturproblem, sondern ein technisches Detail von Head of Product Engineerings Fernzugriff (Git-Lock-Dateien nicht löschbar, nur verschiebbar) — inzwischen selbst gelöst, Sandy hat beide CoS-002-Commits gepusht, `main`/`origin/main` gleichauf. Nicht auf 100 %, weil der anschließende Live-Test zeigte, dass „deployt" allein nicht „korrekt live" garantiert (siehe 1.3) |
 | 8.8 | Status-Seite für Nutzer (zeigt Verfügbarkeit) | G2 | ⚪ offen — nicht erhoben (neu) |
-| 8.9 | Eskalationsweg bei Ausfall definiert (wer wird wann wie alarmiert) | G1 | ⚪ offen — nicht erhoben (neu) |
+| 8.9 | Eskalationsweg bei Ausfall definiert (wer wird wann wie alarmiert) | G1 | 🟢 90 % — **03.09.: entschieden + größtenteils schon live.** Sandys Entscheidung: Sentry-Alert an sie, Rollback manuell bei Bedarf. Per Sentry-API geprüft: die Standard-Regel „Send a notification for high priority issues" ist bereits aktiv und mailt alle aktiven Projektmitglieder bei jedem neuen/bestehenden High-Priority-Fehler — das läuft schon, nicht erst neu gebaut. Sandy checkt das Postfach (`einfachanfrage@outlook.com`) aktuell noch nicht aktiv, hat aber ausdrücklich zugesagt, das **ab Gate 1** (erster echter Testnutzer) zu tun — genau der Zeitraum, in dem der Punkt zählt. Nicht auf 100 %, weil das erst ab dann gilt, nicht schon jetzt |
 | 8.10 | Kostenbudget-Alarme (OpenAI/Vercel/Supabase) gegen Kostenexplosion | G1 | 🟡 40 % — Kostenalarm bei ungewöhnlich hohen KI-Kosten eines Nutzers existiert bereits (CoS-P-002), projektweite Budget-Alarme offen |
-| 8.11 | Rollback-Plan bei fehlerhaftem Deployment | G1 | ⚪ offen — nicht erhoben (neu) |
+| 8.11 | Rollback-Plan bei fehlerhaftem Deployment | G1 | 🟢 85 % — **03.09.: entschieden + Mechanismus bereits vorhanden.** Sandys Entscheidung: manuelles Rollback bei Bedarf (siehe 8.9). Per Vercel-Doku bestätigt: `vercel rollback` bzw. „Promote to Production" ist eine eingebaute Pro-Plan-Funktion (Vercel-Team ist auf Pro) — jede frühere Production-Deployment ist mit einem Befehl sofort wieder live, kein eigener Aufbau nötig. Nicht auf 100 %, weil noch nirgendwo schriftlich steht, WER im Ernstfall den Rollback ausführt (Sandy selbst oder Head of Product Engineering) |
 | 8.12 | Automatisierte Abhängigkeits-/Sicherheitslücken-Scans (z. B. Dependabot) | G2 | ⚪ offen — nicht erhoben (neu) |
 
 ## 9. Inhalte & Landingpage
@@ -700,10 +737,10 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 10.1 | Klarer Kanal für Testnutzer-Feedback/Bugs | G1 | ⚪ offen — nicht erhoben |
-| 10.2 | Notfallplan, wenn Sandy nicht verfügbar ist | G1 | ⚪ offen — nicht erhoben |
+| 10.1 | Klarer Kanal für Testnutzer-Feedback/Bugs | G1 | 🟢 85 % — **03.09.: entschieden.** WhatsApp direkt an Sandy (private Nummer, kein WhatsApp Business) — niedrigste Hürde für Handwerker, sofort sichtbar für sie. Nicht auf 100 %, weil das noch niemandem kommuniziert wurde (es gibt noch keine Testnutzer) — reine Formsache, sobald der erste Testnutzer startet |
+| 10.2 | Notfallplan, wenn Sandy nicht verfügbar ist | G1 | 🟢 80 % — **03.09.: Plan angepasst, jetzt konkret umsetzbar.** Sandy nutzt für 10.1 ihre private WhatsApp-Nummer, keine WhatsApp Business — eine technische Abwesenheits-Antwort fällt damit weg. Statt eines eigenen Notfallplans deckt eine einmalige Willkommensnachricht an jeden neuen Testnutzer beides ab (10.2 + 10.4 zusammen, fertiger Text unten). Nicht auf 100 %, weil der Text noch niemandem geschickt wurde — es gibt noch keinen Testnutzer |
 | 10.3 | Kurze Hilfe/FAQ für häufigste Fragen | G2 | ⚪ offen — nicht erhoben |
-| 10.4 | Reaktionszeit-Erwartung an Testnutzer kommuniziert (auch informell reicht) | G1 | ⚪ offen — nicht erhoben (neu) |
+| 10.4 | Reaktionszeit-Erwartung an Testnutzer kommuniziert (auch informell reicht) | G1 | 🟢 85 % — **03.09.: entschieden, Text fertig formuliert** (siehe 10.2): „Meist binnen 24 Stunden." Nicht auf 100 %, weil das noch nirgendwo tatsächlich an einen Testnutzer kommuniziert wurde — es gibt noch keinen |
 | 10.5 | Bekannte-Probleme-Liste für Testnutzer einsehbar (Transparenz schafft Vertrauen) | G2 | ⚪ offen — nicht erhoben (neu) |
 
 ## 11. Business & Steuer

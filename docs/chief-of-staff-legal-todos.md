@@ -1263,4 +1263,99 @@ Suite: 68 Dateien / 1.161 Tests grün, tsc sauber, eslint 0 Fehler.
 
 ---
 
+## Stufe 3 (7.1 / 7.2) — waren schon erledigt; stattdessen zwei offene Punkte nachgeliefert (2026-09-02)
+
+**Beide zugewiesenen Punkte hat Head of Product Engineering bereits am 02.09.
+umgesetzt.** Ich habe den Ist-Stand geprüft, bevor ich etwas doppelt mache:
+
+**7.1 Impressum — ✅ vollständig erledigt.** § 5 DDG statt § 5 TMG, § 7 Abs. 1
+DDG und § 7 Abs. 2 DDG i.V.m. Art. 8 der Verordnung (EU) 2022/2065 (DSA) statt
+§§ 8–10 TMG, der OS-Plattform-Absatz ist raus, die VSBG-Erklärung ist mit
+ausdrücklichem Verweis auf § 36 VSBG geblieben und die Überschrift heißt jetzt
+„Verbraucherstreitbeilegung". Korrekt, ich habe nichts zu ergänzen.
+
+**7.2 Datenschutzerklärung — ✅ erledigt.** OpenAI, L.L.C. mit beiden Rollen
+(Whisper + GPT) und Functional Software, Inc. dba Sentry sind aufgenommen, Groq
+ist restlos raus, § 25 TTDSG → § 25 Abs. 1 mit Abs. 2 Nr. 2 TDDDG, Stand auf
+September 2026. Der Hygiene-Test `rechtstexte-hygiene.test.ts` sichert beides in
+beide Richtungen ab.
+
+Statt Doppelarbeit habe ich die zwei Punkte fertiggemacht, die ich zu genau
+diesen Dateien noch offen hatte.
+
+### 1. Stripe: Vertragsentität geklärt und korrigiert
+
+Head of Product Engineering hatte Stripe vorsorglich zur SCC-Gruppe gestellt und
+mich gebeten, den DPF-Status zu prüfen. **Erledigt — und die Antwort ist eine
+andere als erwartet.**
+
+Ich habe das Stripe-Konto direkt abgefragt: `country: "DE"`, Standard-Konto,
+Sitz Berlin. Für ein Konto im EWR ist Vertragspartner nach dem Stripe Services
+Agreement **Stripe Payments Europe, Limited mit Sitz in Irland** — nicht
+„Stripe Inc.", wie es bisher in der Erklärung stand.
+
+Das ändert die Einordnung grundlegend: **Auf Vertragsebene findet gar keine
+Drittlandübermittlung statt.** Stripe war damit weder in der SCC-Gruppe noch in
+der DPF-Gruppe richtig aufgehoben; es gehört in einen eigenen Absatz.
+
+Geändert:
+- Abschnitt 3: „Stripe Inc." → **„Stripe Payments Europe, Limited"**.
+- Abschnitt 4: Stripe aus der Aufzählung der US-Unternehmen herausgenommen und
+  ein eigener Absatz ergänzt — Vertragspartner in Irland, keine
+  Drittlandübermittlung auf dieser Ebene; soweit Stripe konzernintern in die USA
+  weitergibt, gestützt auf die DPF-Zertifizierung und ergänzend die
+  Standardvertragsklauseln.
+
+Die vorsorgliche Einordnung als SCC war methodisch richtig — lieber die
+belastbare Angabe als eine ungeprüfte Behauptung. Sie war nur eben aus dem
+falschen Grund vorsichtig.
+
+### 2. Kundendaten: die Rollenvermischung ist raus
+
+Der Punkt stand seit dem Erstbericht offen. Die Passage lautete:
+
+> „Der Nutzer ist für diese Daten selbst verantwortlich (Auftragsverarbeitung
+> gemäß Art. 28 DSGVO). **Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.**"
+
+Beides zusammen geht nicht. Wenn wir für die Kundendaten Auftragsverarbeiter
+sind — und das sind wir —, dann gehört dort **keine eigene Rechtsgrundlage**
+hin; die bestimmt der Handwerksbetrieb als Verantwortlicher. So wie es dastand,
+las es sich, als wären wir für dieselben Daten gleichzeitig Verantwortlicher und
+Auftragsverarbeiter.
+
+Neu formuliert: klare Aussage, dass wir insoweit Auftragsverarbeiter sind, dass
+der Betrieb über Zwecke, Mittel und Rechtsgrundlage entscheidet, und Verweis auf
+den AVV statt auf eine eigene Rechtsgrundlage.
+
+**Dabei gleich CC-05 mit erledigt.** Ich hatte im Compliance-Check bemängelt,
+dass es keinen Weg für Betroffenenanfragen von Endkunden der Handwerker gibt —
+Menschen, die bei uns kein Konto haben und für deren Daten wir nur
+Auftragsverarbeiter sind. Der neue Absatz sagt ihnen jetzt, wohin sie sich
+wenden müssen, und sagt zu, dass wir Anfragen unverzüglich an den
+verantwortlichen Betrieb weiterleiten (Art. 28 Abs. 3 lit. e DSGVO). Damit steht
+der Prozess wenigstens im Text; die tatsächliche Weiterleitung bleibt eine
+Handarbeit, für die es bei einem Ein-Personen-Betrieb keinen Automatismus
+braucht — nur das Wissen, dass die 30-Tage-Frist des Verantwortlichen läuft.
+
+**Geprüft:** `rechtstexte-hygiene.test.ts` 11/11 grün, `tsc --noEmit` sauber.
+**Nicht live** — Rechtstexte gehen erst mit Sandys Freigabe raus, zusammen mit
+den übrigen Änderungen von Head of Product Engineering.
+
+### Nebenbefund aus der Stripe-Abfrage — nicht meiner, aber jemand sollte es wissen
+
+Beim Abfragen des Kontos ist mir aufgefallen: `charges_enabled: false`,
+`payouts_enabled: false`, `details_submitted: false`, und unter
+`requirements.past_due` stehen `external_account`, `tos_acceptance.date` und
+`tos_acceptance.ip`. **Das Stripe-Konto ist noch nicht aktiviert** — die
+Nutzungsbedingungen sind nicht angenommen, es ist keine Bankverbindung
+hinterlegt, und es können aktuell keine Zahlungen entgegengenommen werden.
+
+Für meinen Teil ändert das nichts: Die Nennung in der Datenschutzerklärung ist
+richtig, weil die Anbindung im Code existiert und mit der Aktivierung greift.
+Aber es heißt, dass vor dem ersten zahlenden Kunden noch ein Schritt fehlt, der
+nicht im Code liegt. Gehört zu Platform & Integrations Engineering bzw. Finance,
+nicht zu mir — ich melde es nur, weil ich zufällig draufgeschaut habe.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

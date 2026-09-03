@@ -46,7 +46,7 @@ export default function DatenschutzPage() {
                 </div>
                 <div>
                   <strong className="font-black">Kundendaten</strong>
-                  <p className="mt-1">Name, Adresse, E-Mail und Telefon von Kunden der Handwerksbetriebe werden ausschließlich zur Angebotserstellung verwendet. Der Nutzer ist für diese Daten selbst verantwortlich (Auftragsverarbeitung gemäß Art. 28 DSGVO). Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
+                  <p className="mt-1">Für Name, Adresse, E-Mail und Telefon der Kunden eines Handwerksbetriebs sind wir <strong className="font-black">nicht Verantwortlicher, sondern Auftragsverarbeiter</strong>. Verantwortlich ist der jeweilige Handwerksbetrieb: Er entscheidet über Zwecke und Mittel der Verarbeitung und über die Rechtsgrundlage. Wir verarbeiten diese Daten ausschließlich auf seine Weisung zur Angebotserstellung. Grundlage ist der <a href="/avv" className="text-signal-yellow underline">Auftragsverarbeitungsvertrag nach Art.&nbsp;28 DSGVO</a>. Wenn Sie Kunde eines Handwerksbetriebs sind und Auskunft oder Löschung Ihrer Daten wünschen, wenden Sie sich bitte an diesen Betrieb; erreicht uns eine solche Anfrage direkt, leiten wir sie unverzüglich dorthin weiter.</p>
                 </div>
                 <div>
                   <strong className="font-black">Server-Logs</strong>
@@ -73,7 +73,7 @@ export default function DatenschutzPage() {
                   <p className="mt-1">Beim Versand von Angeboten per E-Mail werden E-Mail-Adresse des Empfängers sowie der Angebotsinhalt an Resend übermittelt. Datenschutzrichtlinie: <a href="https://resend.com/privacy" className="text-yellow underline" target="_blank" rel="noopener noreferrer">resend.com/privacy</a></p>
                 </div>
                 <div>
-                  <strong className="font-black">Stripe Inc. (Zahlungsabwicklung)</strong>
+                  <strong className="font-black">Stripe Payments Europe, Limited (Zahlungsabwicklung)</strong>
                   <p className="mt-1">Für Abonnement-Zahlungen nutzen wir Stripe. Zahlungsdaten werden direkt bei Stripe eingegeben und nicht von uns gespeichert. Datenschutzrichtlinie: <a href="https://stripe.com/privacy" className="text-yellow underline" target="_blank" rel="noopener noreferrer">stripe.com/privacy</a></p>
                 </div>
                 <div>
@@ -91,9 +91,10 @@ export default function DatenschutzPage() {
             title: '4. Drittland-Übermittlungen',
             content: (
               <p>
-                OpenAI, Resend, Sentry, Stripe und Vercel sind US-amerikanische Unternehmen; auch Supabase Inc. hat seinen Sitz in den USA, betreibt unsere Datenbank aber in der EU (Frankfurt). Wir unterscheiden ausdrücklich:<br /><br />
+                OpenAI, Resend, Sentry und Vercel sind US-amerikanische Unternehmen; auch Supabase Inc. hat seinen Sitz in den USA, betreibt unsere Datenbank aber in der EU (Frankfurt). Wir unterscheiden ausdrücklich:<br /><br />
                 <strong className="font-black">Vercel, Resend und Sentry</strong> sind unter dem EU-US Data Privacy Framework zertifiziert; die Übermittlung stützt sich auf den Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO).<br /><br />
-                <strong className="font-black">OpenAI, Supabase und Stripe</strong>: Die Übermittlung stützt sich auf die EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO, ergänzt um vertragliche und technische Schutzmaßnahmen.
+                <strong className="font-black">OpenAI und Supabase</strong>: Die Übermittlung stützt sich auf die EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO, ergänzt um vertragliche und technische Schutzmaßnahmen.<br /><br />
+                <strong className="font-black">Stripe</strong>: Unser Vertragspartner ist Stripe Payments Europe, Limited mit Sitz in Irland — insoweit findet keine Drittlandübermittlung statt. Soweit Stripe Daten innerhalb der Unternehmensgruppe in die USA weitergibt, stützt sich dies auf die Zertifizierung unter dem EU-US Data Privacy Framework sowie ergänzend auf die EU-Standardvertragsklauseln.
               </p>
             ),
           },
