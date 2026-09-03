@@ -80,7 +80,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-027 | Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein (PD-008) | ✅ Vollständig live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Angebot 2026-15E8 auf `sofortangebot.app`, Position „Erschwerniszuschlag Raumhöhe > 3m" trägt live den „Vorschlag"-Badge neben dem Titel | Head of Product Engineering (Flag, ✅) / Product Designer (Badge, ✅ live bestätigt) |
 | DC-028 | Aufmaß-Sammelansicht („Timeline"): falsche Maße bei mehreren Räumen, wirkt wie Duplikat, viel Weißraum, Positionen stimmen nicht mit Entwurf überein | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — raum-gruppiert (`entwurf/page.tsx`) | Product Designer (umgesetzt) |
 | DC-029 | Angebote brauchen eine „Baustelle"/Projekt-Zuordnung zusätzlich zum Kunden (mehrere Angebote pro Baustelle über Zeit, z. B. erst Entrümpelung, dann Ausbau) — von Sandy über Clemens (künftiger Testnutzer) eingebracht | ✅ Vollständig live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt mit Sandys Erlaubnis) — kompletter Flow auf `sofortangebot.app` mit einem klar markierten Test-Kunden geprüft: Kunde zuweisen erzeugt automatisch die Erstbaustelle (Fallback-Name „Baustelle bei {Kundenname}", da keine Adresse gesetzt), Baustellen-Zeile im Editor sofort sichtbar, „Baustelle wählen"-Sheet + zweite Baustelle live anlegbar, Kunde-Seite gruppiert beide Baustellen korrekt inkl. „+ Neues Angebot für diese Baustelle". Keine Abweichung zur Spec gefunden. Test-Kunde „TEST – bitte löschen" bewusst stehen gelassen, Sandy kann ihn selbst löschen | Product Designer (umgesetzt, live bestätigt) |
-| DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | ✅ Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21) — Karte, DC-028-Raum-Karten und „Entwurf erstellen"-Gate alle wie entschieden gebaut. Regressionsgeprüft (236 Tests grün), noch KEIN Live-Nachtest | Product Designer (Entscheidung) / Head of Product Engineering (Umsetzung) |
+| DC-030 | Wie soll die Aufnahmekarte den kurzen Zwischenzustand „vorläufig" (schnelle Vorschau) vs. „bestätigt" (vollständig geprüft) zeigen, sobald CoS-002 Schritt 2/3 live sind? | 🟡 Entschieden (Option 3) + umgesetzt (Head of Product Engineering, 2026-08-21), Code-Nachprüfung bestätigt korrekte Umsetzung (Product Designer, 2026-09-03) — aber nicht live testbar ohne echtes Mikrofon: Zettel/Notiz laufen nachweislich NICHT durch diese Logik (kein `voll_extraktion`), nur eine echte gesprochene Aufnahme tut das. Regressionsgeprüft (236 Tests grün), Sandy müsste einmal selbst sprechen, um es live zu sehen | Product Designer (Entscheidung, Code geprüft) / Head of Product Engineering (Umsetzung) |
 | DC-031 | Navigations-Sackgassen: laufende Aufnahme nicht abbrechbar (Mikro bleibt offen), Aufnahme-Detail-Sheet nur per unsichtbarem Backdrop-Tap schließbar (sichtbares „X" löscht stattdessen), „Zurück" aus dem frischen 0€-Entwurf landet auf der leeren Angebotsseite statt am Dashboard (von Sandy gemeldet, 2026-08-23) | ✅ Alle drei umgesetzt (Product Designer, 2026-08-23): Abbrechen-Button während Aufnahme (verwirft, lädt nicht hoch) + Mikro wird beim Verlassen der Seite automatisch freigegeben; Sheet hat jetzt einen eigenen „Schließen"-Text-Button getrennt vom Lösch-„X"; „Zurück"/„Trotzdem zurück ohne Berechnen" gehen zum Dashboard, wenn das Angebot noch keinen Kunden und keine Positionen hat, sonst weiterhin zur Angebotsseite. Beim Nachtesten „an allen anderen Stellen" (Sandys Auftrag) zusätzlich dieselbe Baustelle bei „+ Neue Variante erstellen" in Briefpapier & Design gefunden und gleich mitgefixt: leere Variante wird beim Zurückgehen ohne Änderung automatisch wieder gelöscht, mit ungespeicherten echten Änderungen kommt jetzt eine Rückfrage statt stillem Datenverlust. Scoped tsc sauber. 🟡 Teilweise live bestätigt (Product Designer,
 2026-09-03, selbst durchgeklickt): „Zurück" aus einem echten frischen
 0€/kein-Kunde-Entwurf landet live auf dem Dashboard, nicht der leeren
@@ -2671,6 +2671,28 @@ entschieden umgesetzt, `entwurf/page.tsx` + `volle-extraktion-cache.ts` +
   tatsächliche Wartezeit anfühlt (deine eigene Einschätzung war ja schon,
   dass „bis zu 25s" ein Budget ist, keine typische Dauer — werde das beim
   ersten echten Test protokollieren).
+
+**Versuch Live-Test + Code-Nachprüfung (Product Designer, 2026-09-03):**
+Mit Sandys Erlaubnis versucht, das Badge-Verhalten ohne echtes Mikrofon zu
+triggern — über den Zettel- oder Notiz-Weg, die beide kein `voll_extraktion`-
+Gegenstück haben (Code-Kommentar in `entwurf/page.tsx` Zeile 189 bestätigt
+das ausdrücklich: „Foto (Zettel-Scan) und Notiz haben kein
+voll_extraktion-Gegenstück"). Beide Wege legen die Aufnahme sofort mit
+`verarbeitung_status: 'fertig'` an (`api/entwurf/notiz/route.ts`) — sie
+laufen nie durch die hier entschiedene Logik. **Ergebnis: DC-030 lässt
+sich nur mit einer echten, gesprochenen Sprachaufnahme live testen** — das
+kann ich aus dieser Umgebung heraus nicht (kein Mikrofon).
+
+Stattdessen den Code noch einmal gezielt gegen die Entscheidung
+gegengelesen (`entwurf/page.tsx`): der „prüft genau, dauert kurz"-Hinweis,
+der Ein-Schritt-Wechsel auf „✓ Fertig" und vor allem `kannFertigstellen =
+neueAufnahmen.length > 0 && !nochVerarbeitung && !nochVollExtraktion &&
+erkannteAnzahl > 0` (Zeile 1100) sind exakt wie entschieden vorhanden —
+`nochVollExtraktion` ist wirklich Teil der Bedingung, nicht nur behauptet.
+Damit ist die Umsetzung nach bestem Wissen korrekt, aber das ersetzt kein
+echtes Erlebnis mit echter Wartezeit. Bitte einmal selbst eine kurze
+Aufnahme sprechen und beobachten, ob sich das Warten gut anfühlt — genau
+das hatte Head of Product Engineering oben auch schon offen gelassen.
 
 ---
 
