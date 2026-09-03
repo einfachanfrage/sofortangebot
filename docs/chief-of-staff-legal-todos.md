@@ -38,7 +38,7 @@ schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-L-003 | Reihenfolge Gewerbeanmeldung / UG-Gründung — kein Gewerbe angemeldet, erster zahlender Kunde rückt näher | 🟡 Reihenfolge geliefert (Fix-Update am Dateiende): erst Einzelunternehmen anmelden, dann UG, 6–8 Wochen bis erster Kunde; drei Steuerberater-Fragen formuliert | Sandy direkt, 2026-09-03 |
+| CoS-L-003 | Reihenfolge Gewerbeanmeldung / UG-Gründung — kein Gewerbe angemeldet, erster zahlender Kunde rückt näher | 🟡 Plan steht, auf Sandys Entscheidung geändert: **direkt UG**, kein Einzelunternehmen, 4–6 Wochen bis erster Kunde; zwei Steuerberater-Fragen, nicht mehr blockierend | Sandy direkt, 2026-09-03 |
 | CoS-L-002 | Neues Preismodell rechtlich absichern: Preisangaben B2B, Umsatzsteuer/Kleinunternehmer, AGB-Preis- und Kündigungspassagen, Bestandsschutz Gründerpreis | ❌ offen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-L-001 | Erstauftrag: Bestandsaufnahme + Lückenanalyse (Datenschutz, AGB, KI-Kennzeichnung, Gewerke-Recht) | 🟡 Bericht liegt vor (`docs/legal-001-bestandsaufnahme.md`), 8 Gate-1-Punkte + 4 Entscheidungen für Sandy (S-1 bis S-4) — noch nichts umgesetzt | Sandy direkt im Chat, 2026-09-01 |
 
@@ -1618,6 +1618,92 @@ Rechtsfrage. Ich merke es hier nur an, weil es beim selben Termin gehört.
 **Status:** 🟡 Reihenfolge geliefert. Umsetzung bei Sandy (Anmeldung,
 Steuerberater-Termin). Rechtstexte für die UG bereite ich vor, sobald der
 Notartermin steht.
+
+---
+
+## CoS-L-003, geänderter Plan — direkt UG (Head of Legal & Compliance, 2026-09-03)
+
+Sandys Entscheidung: **so wenig Aufwand wie möglich, auf die bisherigen Belege
+kann verzichtet werden.** Damit fällt der Grund für den Umweg über das
+Einzelunternehmen weg, und der Plan wird kürzer. **Der Fix-Update oben ist
+damit überholt; es gilt dieser Abschnitt.**
+
+### Warum direkt UG geht
+
+Der einzige Grund, das Einzelunternehmen erst anzumelden, war die steuerliche
+Verankerung der 17 Belege. Wer darauf verzichtet, braucht den Zwischenschritt
+nicht. Was dann entfällt:
+
+- Gewerbeanmeldung Einzelunternehmen, Fragebogen dafür, spätere Abmeldung
+- die schwierigste Steuerberater-Frage (Verlust eines Einzelunternehmens ohne
+  Einnahmen) — die gibt es nicht mehr
+- die Abhängigkeit „erst Steuerberater, dann Gründung": Bei einer Bargründung
+  per Musterprotokoll hängt die Gründung an keiner Steuerfrage. Der
+  Steuerberater-Termin kann **parallel** laufen statt davor
+
+**Was es kostet:** Die Belege seit Mai bleiben Privatausgaben. Wie viel das
+steuerlich wert gewesen wäre, hängt von Sandys sonstigen Einkünften ab — ohne
+andere Einkünfte, gegen die ein Verlust verrechnet werden könnte, ist der
+Verzicht ohnehin fast nichts wert. Ab dem Notartermin zahlt die UG ihre Kosten
+selbst; das Musterprotokoll lässt sie Gründungskosten bis 300 € tragen.
+
+**Zur überfälligen Anmeldung:** Der Zustand „kein Gewerbe" läuft damit noch
+vier bis sechs Wochen weiter. Ich halte das für vertretbar — die Vorlaufphase
+eines Betriebs ohne Einnahmen interessiert in der Praxis niemanden, und mit der
+UG-Eintragung gibt es einen sauberen, dokumentierten Beginn. Es ist eine
+bewusste Entscheidung, keine vergessene.
+
+### Der neue Plan
+
+| Wann | Was | Aufwand |
+|---|---|---|
+| **Woche 1** | Notartermin vereinbaren, Musterprotokoll, 1.000 € Stammkapital | 1 Termin |
+| **Woche 1, parallel** | Geschäftskonto für die „UG i. G." beantragen — die meisten Direktbanken nehmen das notariell beurkundete Musterprotokoll | online |
+| **Nach Notar** | Stammkapital einzahlen, Einzahlungsbeleg an den Notar — **erst dann** meldet er beim Handelsregister an | 10 Minuten |
+| **Woche 1–2, parallel** | Steuerberater-Termin — nicht mehr blockierend, aber vor dem Fragebogen sinnvoll | 1 Termin |
+| **Woche 3–5** | Handelsregister-Eintragung. Danach: Gewerbe der UG anmelden (online, ~26 €), Fragebogen Finanzamt für die UG (ELSTER, mit Steuerberaterin), IHK meldet sich von selbst | 1 Stunde |
+| **Woche 3–5** | Rechtstexte, Stripe, Versicherung auf die UG — Liste unten. Ich liefere die Formulierungen, Engineering baut ein | ~1 Tag Engineering |
+| **Ab Woche 5–6** | erster zahlender Kunde, mit der UG | — |
+
+**Gesamtdauer 4–6 Wochen** statt 6–8. Sandys eigener Aufwand: zwei Termine
+(Notar, Steuerberater), eine Kontoeröffnung, zwei Online-Formulare.
+
+### Was vor dem ersten Kunden fertig sein muss — unverändert
+
+1. HR-Eintragung
+2. Impressum: Firma mit Zusatz **„UG (haftungsbeschränkt)"**, Sitz,
+   Registergericht, HRB, Geschäftsführerin
+3. AGB § 1.1: Vertragspartner ist die UG — sonst schließt der Kunde mit Sandy
+   persönlich
+4. AVV und Datenschutzerklärung auf die UG
+5. Stripe-Konto als UG — das bestehende `individual`-Konto **nicht aktivieren**
+6. § 35a GmbHG auf allen Geschäftsbriefen, E-Mails des Produkts eingeschlossen
+7. Versicherung auf die UG (Frage 4 an exali)
+8. Kleinunternehmerregelung für die UG neu
+
+Die Rechtsschein-Falle bleibt: „haftungsbeschränkt" darf nirgends fehlen.
+
+### Steuerberater-Fragen, jetzt nur noch zwei
+
+1. **Software:** Kann die UG die selbst entwickelte, nicht bilanzierte Software
+   einfach nutzen, oder muss sie förmlich eingebracht werden? *(Meine Erwartung:
+   einfach nutzen — Bargründung per Musterprotokoll ist bei einem Produkt ohne
+   Umsatz der Normalfall. Nur zur Bestätigung.)*
+2. **Kleinunternehmerregelung für die UG:** ja, oder Verzicht wegen
+   B2B-Kunden mit Vorsteuerabzug? Hängt an CoS-L-002.
+
+### Der eine Satz zum Aufwand, der bleibt
+
+Der Umweg fällt weg, die UG selbst nicht: doppelte Buchführung, Jahresabschluss,
+Offenlegung — dauerhaft, jedes Jahr. Das ist der Aufwand, den die
+Haftungsbeschränkung kostet. Er steht in S-4 und ändert sich durch diesen Plan
+nicht.
+
+**An Head of Finance:** Keine EÜR-Variante mehr. Nur UG, Bilanzierung ab
+Gründung, Zeitrahmen 4–6 Wochen.
+
+**Status:** 🟡 Plan geändert auf Sandys Entscheidung. Nächster Schritt liegt bei
+ihr: Notartermin.
 
 ---
 
