@@ -34,16 +34,66 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 ---
 
-## Gate-Fortschritt (Stand 02.09.2026, Abend)
+## Gate-Fortschritt (Stand 03.09.2026)
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **≈ 36 %** (zweite Neuberechnung heute, siehe Update unten) | 47 |
-| **Gate 2** — öffentlicher Launch | **≈ 15 %** (unverändert seit heute Mittag) | 37 |
+| **Gate 1** — erste Testnutzer | **≈ 38,9 %** (Neuberechnung 03.09., nach 6.5- und 6.8-Fix) | 47 |
+| **Gate 2** — öffentlicher Launch | **≈ 15 %** (unverändert seit 02.09. Mittag) | 37 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert, keine neue G3-Bewegung) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+> ✅ **Neuberechnung 03.09.2026 (Chief of Staff).** Zwei Punkte bewegt: **6.5
+> Leaked Password Protection (0→95)** — Sandy hat den Toggle in Supabase
+> aktiviert, per Screenshot bestätigt und zusätzlich unabhängig über den
+> Supabase-Security-Advisor gegengecheckt (Warnung ist weg); **6.8
+> HTTPS/HSTS (50→90)** — vom Chief of Staff selbst live gegen
+> `sofortangebot.app`/`www.sofortangebot.app` verifiziert (308-Redirect +
+> `Strict-Transport-Security`-Header auf beiden Domains), ohne dass Sandy
+> etwas tun musste. Beide sind die ersten zwei abgehakten Punkte aus dem
+> „Fahrplan zu 50 %" unten. Durchschnitt: 36,0 % → 38,9 %.
+
+## Fahrplan zu 50 % Gate 1 (Chief of Staff, 03.09.2026)
+
+Sandy hat gefragt, was konkret zu tun ist, um über die 50-%-Marke zu kommen.
+Durchgerechnet: aktuell 36,0 % im Schnitt über 47 Punkte, für 50 % müsste der
+Durchschnitt um 14 Prozentpunkte steigen — kein einzelner Fix schafft das,
+aber ein konkreter Stapel aus größtenteils günstigen Einzelpunkten kommt
+rechnerisch drüber (Ziel-Szenario unten: ≈ 51 %).
+
+**Stufe 1 — quasi ohne Aufwand, reine Konfiguration/Doku, kein Code:**
+~~„Leaked Password Protection" in Supabase einschalten (6.5, ein Klick,
+0→~95 %, größter Einzelhebel im Gate)~~ **✅ erledigt, 03.09.**; ~~HTTPS/HSTS
+kurz verifizieren (6.8)~~ **✅ erledigt, 03.09. (vom Chief of Staff selbst
+geprüft)**; vier reine Entscheidungs-/Doku-Punkte, die nur eine kurze
+schriftliche Antwort brauchen: Feedback-Kanal für Testnutzer festlegen
+(10.1), Notfallplan falls Sandy nicht erreichbar ist (10.2),
+Reaktionszeit-Erwartung kommunizieren (10.4), Eskalationsweg bei Ausfall
+(8.9), kurzer Rollback-Plan (8.11).
+
+**Stufe 2 — ein Nachmittag „wirklich benutzen", vieles ist längst gebaut,
+nur nicht live bestätigt:** Sandy: echte Registrierung + Bestätigungsmail
+abwarten (2.2), Passwort-Reset komplett durchklicken (2.3), Zustellung der
+drei Pflicht-Mails prüfen inkl. Spam-Ordner (3.1/3.2/3.4). Prüfmeister:
+mehrere Angebote live durchsprechen für neue Preise (1.6),
+Registrierung/Login (2.1), die vier UI-Fixes vom 29.08 (5.2), den
+KI-Hinweis vor dem Versenden (7.10), die Übermessungsregel im PDF (1.2) —
+plus den ohnehin fälligen VOB-013-Nachtest (1.1, kleinerer Bump, da die
+Fallbasis der eigentliche Flaschenhals bleibt).
+
+**Stufe 3 — zwei kleine, fertig gescopte Legal-Fixes, je ~30 Min (Head of
+Legal):** Impressum — toten EU-Streitschlichtungs-Absatz raus, veraltete
+Gesetzesverweise aktualisieren (7.1); Datenschutzerklärung — OpenAI und
+Sentry als Auftragsverarbeiter ergänzen (7.2).
+
+**Bewusst NICHT auf dieser Liste, weil kein Quick-Win:** 1.1 bleibt trotz
+VOB-013-Fix strukturell begrenzt (28 von angestrebten ~100 Testfällen,
+Prüfmeisters langsamste Baustelle); 11.4 (Geschäftskonto trennen) und 11.5
+(Buchhaltungsanbindung) sind eigene, echte Aufgaben; 6.6 (Rate-Limiting
+Login), 7.13 (KI-Nutzungsbedingungen-Check) und 9.1 (Landingpage) brauchen
+echte Arbeit, keine Formsache.
 
 > ✅ **Zweite Neuberechnung heute (Chief of Staff, 02.09.2026, Abend).** Seit
 > der Neuberechnung heute Mittag ist an einem Tag ungewöhnlich viel passiert
@@ -62,11 +112,20 @@ Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 > ob am Groq-Konto selbst eine Zahlungsmethode hinterlegt ist, ist weiterhin
 > nicht verifiziert, und der Schlüssel ist weiterhin nicht widerrufen
 > (optionale Formsache, deshalb nicht höher bewertet).
-> **Wichtig, unverändert:** VOB-013 (Fensterlaibung/Fensterbank-Rechenfehler)
-> ist weiterhin NICHT gefixt — die genaue Ursache ist jetzt lokalisiert
-> (`maler.ts` Zeile 614), Legal stuft es als schwerwiegendsten offenen
-> Einzelfund im ganzen Projekt ein (Risikobewertung LR-13) und bittet
-> ausdrücklich, es nicht hinter die Normtext-Beschaffung zu stellen. **Neu
+> **Update 03.09.2026 (Chief of Staff, per Code-Prüfung bestätigt):** VOB-013
+> ist gefixt. Head of Product Engineering hat `leibungsUmfang` von
+> `2×br + 2×hoe` auf `br + 2×hoe` korrigiert (Commit `330743f`), die
+> Fensterbank-Doppelzählung ist als Nebeneffekt mitgelöst (Bank wird jetzt
+> genau einmal gezählt, nicht mehr versteckt im Umfang UND als eigene
+> Position). Abgesichert durch 8 dedizierte Unit-Tests
+> (`vob013-leibungen.test.ts`) — von mir per Hand nachgerechnet, Zahlen
+> stimmen (Standardfenster 1,10→0,80 m², Tür 1,50→1,27 m²). **Noch nicht
+> „live bestätigt" im Sinne dieser Datei:** Prüfmeister hat den konkreten
+> Nachtest (3 Fenster 1,20×1,00 m, 25 cm tief → muss 2,40 m² ergeben) noch
+> nicht live gegen das Tool gesprochen — bis das steht, zählt der Punkt als
+> code-fertig, nicht als voll verifiziert. Legal stuft es weiterhin als den
+> schwerwiegendsten Einzelfund im Projekt ein (Risikobewertung LR-13); mit
+> dem Fix ist das Risiko jetzt behoben, nicht mehr nur benannt. **Neu
 > entdeckt, noch nicht in eine Prozentzahl gefasst:** VOB-012
 > (Türbreiten-Abzug bei Sockelleisten) taucht inzwischen in praktisch jeder
 > Prüfmeister-Soll-Lösung als offene Variable auf — eine weitere
@@ -519,7 +578,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 
 | # | Punkt | Gate | Status |
 |---|---|---|---|
-| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 42 % — **02.09.: alle 28 Testfälle haben jetzt eine eindeutige Soll-Lösung** (vorher 21), Prüfmeister hat dabei aber einen neuen, echten, systematischen Rechenfehler gefunden: **VOB-013** — Fensterlaibung wird ca. 33 % zu groß berechnet, Fensterbank zusätzlich doppelt gezählt, betrifft jedes Angebot mit Fenstern/Türen, noch nicht gefixt. Breite (28 von ~100) bleibt der limitierende Faktor, der neue Fund dämpft den Sprung zusätzlich. Quelle: `docs/pruefmeister-testfaelle.md`, `docs/vob-angebot-abstimmung.md` VOB-013 |
+| 1.1 | Kernrechnungen tragen über breite Fallbasis (Richtwert ~100 statt 14) | G1 | 🔴 42 % — **02.09.: alle 28 Testfälle haben jetzt eine eindeutige Soll-Lösung** (vorher 21), Prüfmeister hat dabei aber einen neuen, echten, systematischen Rechenfehler gefunden: **VOB-013** — Fensterlaibung wurde ca. 33 % zu groß berechnet, Fensterbank zusätzlich doppelt gezählt, betraf jedes Angebot mit Fenstern/Türen. **03.09.: Code gefixt** (Commit `330743f`, 8 eigene Tests, per Hand nachgerechnet — stimmt), Live-Nachtest durch Prüfmeister steht noch aus, deshalb noch nicht als voll verifiziert gezählt (Prozentzahl unverändert, bis das steht). Breite (28 von ~100) bleibt der limitierende Faktor. Quelle: `docs/pruefmeister-testfaelle.md`, `docs/vob-angebot-abstimmung.md` VOB-013, `docs/chief-of-staff-todos.md` CoS-036 |
 | 1.2 | Abdeckung über beide Gewerke, Raumtypen, Sonderfälle, Verneinungen, Selbstkorrekturen | G1 | 🟡 76 % — **02.09., Abend:** der Übermessungshinweis (VOB-004/G5) steht jetzt wirklich live im Kunden-PDF (Fußnote an der Position + Sammelerklärung am Ende, konsistent über beide Renderpfade) — vorher nur code-fertig. Damit ist Legals einziger 🔴-Befund aus der Risikobewertung (LR-01) geschlossen. Alle 28 Testfälle weiterhin konsistent nach der VOB-Übermessungsregel bewertet. Weiterhin größtenteils ohne breiten Live-Nachtest |
 | 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 95 % — **25.08.: CoS-002 endgültig abgeschlossen.** Zusätzlich zum Realtime-Fix bereits echter Schutz gegen stilles Überschreiben manueller Positions-Änderungen, inkl. Löschfall (CoS-014). **Sandys Bestätigungs-Retest ist bestanden** — zweifach dokumentiert: Product Designer hatte es schon am 23.08. in `design-check.md` (DC-021) festgehalten (dort korrekt, hier durch einen eigenen Sync-Fehler nicht übernommen), und Sandy hat heute unabhängig denselben Test live wiederholt („Boden schützen 12 m²" korrekt) und bestätigt. Nicht auf 100 %, weil nur gezielte Testfälle bestätigt sind, keine breite Testserie. Quelle: CoS-002/CoS-014, `docs/cos-002-architektur-vorschlag.md`, DC-021 |
 | 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟢 92 % — **24.08.: CoS-018 abgeschlossen**, alle vier vorbestehenden Fehlschläge als veralteter Testcode aufgeklärt (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix. **25.08.:** Suite weiter gewachsen auf 842/842, u. a. durch CoS-021- und PM-019/020-Sicherheitstests, weiterhin kein Fund einer Regression. **02.09.: vermutlich weiter gewachsen** (mehrere neue Fixes diese Woche, typischerweise mit eigenen Tests), aber keine harte aktuelle Zahl vorliegend — bewusst nicht in die Prozentzahl eingerechnet, um nicht zu schätzen. Kein direkter CI-Dashboard-Zugriff |
@@ -583,10 +642,10 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 6.2 | Keine Secrets/Keys im Frontend oder in Logs sichtbar | G1 | 🔴 25 % — **02.09.:** ein Groq-API-Key wurde ungefiltert (unmaskiert) im Chat-Verlauf ausgegeben. Sandy hat bestätigt: Groq wird im Produkt nirgends genutzt (nur OpenAI im Einsatz), das praktische Risiko ist damit kleiner als zunächst angenommen. Ob am Groq-Konto eine Zahlungsmethode hinterlegt ist, ist weiterhin nicht verifiziert; der Schlüssel selbst ist weiterhin nicht widerrufen (optionale Formsache, keine Dringlichkeit mehr). Kein systematischer Scan der übrigen Secrets, nur dieser eine konkrete Fund |
 | 6.3 | Daten-Export und -Löschung für DSGVO-Anfragen umsetzbar | G2 | 🟡 55 % — **02.09.:** echte harte Löschung jetzt gebaut (siehe 2.5, gleiche Einschränkung zur Cronjob-Zuverlässigkeit). Export weiterhin ungeprüft |
 | 6.4 | Supabase-Security-Advisor regelmäßig geprüft (nicht nur einmalig) | G1 | 🟡 60 % — seit 17.08. Teil des täglichen automatischen Chief-of-Staff-Checks, aber erst seit heute (neu) |
-| 6.5 | Passwort-Sicherheit: „Leaked Password Protection" (HaveIBeenPwned-Abgleich) aktiv | G1 | 🔴 0 % — laut Supabase-Advisor aktuell **aus** (neu, bestätigter Fund) |
+| 6.5 | Passwort-Sicherheit: „Leaked Password Protection" (HaveIBeenPwned-Abgleich) aktiv | G1 | 🟢 95 % — **03.09.: erledigt.** Sandy hat den Toggle in Supabase (Authentication → Sign In / Providers → Email → „Prevent use of leaked passwords") aktiviert und gespeichert. Per Screenshot bestätigt (Toggle grün) UND unabhängig gegengecheckt: der Supabase-Security-Advisor listet die Warnung „Leaked Password Protection aus" nicht mehr. Nicht auf 100 %, weil die verwandten Felder (Minimum-Passwortlänge 6 Zeichen, „Password requirements" auf „No required characters") bewusst nicht mit angefasst wurden — eigenes, kleineres Thema |
 | 6.6 | Rate-Limiting/Brute-Force-Schutz auf dem Login | G1 | ⚪ offen — nicht erhoben (neu) |
 | 6.7 | Externer Sicherheits-Review/Penetrationstest vor öffentlichem Launch | G2 | ⚪ offen — nicht erhoben (neu) |
-| 6.8 | HTTPS/TLS überall erzwungen (inkl. HSTS) | G1 | 🟡 50 % — vermutlich durch Vercel-Standardkonfiguration gegeben, nicht explizit verifiziert (neu) |
+| 6.8 | HTTPS/TLS überall erzwungen (inkl. HSTS) | G1 | 🟢 90 % — **03.09.: live verifiziert** (Chief of Staff, direkter Abruf gegen `sofortangebot.app` und `www.sofortangebot.app` über Vercel). HTTP→HTTPS erzwungen (308 Redirect auf beiden Domains), Antwort-Header trägt `Strict-Transport-Security: max-age=63072000` (2 Jahre) auf beiden. Nicht auf 100 %, weil der Header kein `includeSubDomains` und kein `preload` setzt (Vercel-Standard für Custom Domains kann beides, ist hier aber nicht aktiv) — kleine, echte Lücke, kein Blocker für Gate 1 |
 
 ## 7. Rechtstexte & Compliance
 

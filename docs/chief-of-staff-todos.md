@@ -3206,5 +3206,80 @@ Nachtest der Prüfmeister-Fälle.
 
 ---
 
+## CoS-037 — 6.8 HTTPS/HSTS auf 100 %: fehlender Header-Zusatz, Start freigegeben
+
+**Datum:** 2026-09-03 (Chief of Staff, auf Sandys direkte Rückfrage „was fehlt
+damit's KOMPLETT ist")
+
+**Status:** ❌ offen — kann sofort gestartet werden, kein Normkauf, keine
+Abhängigkeit
+
+**Befund:** Live-Check gegen `sofortangebot.app` zeigt `Strict-Transport-
+Security: max-age=63072000` — korrekt, aber ohne `includeSubDomains` und ohne
+`preload`. `next.config.ts` und `vercel.json` (beide geprüft) setzen aktuell
+gar keinen eigenen `headers()`-Block — das ist reines Vercel-Standardverhalten
+für Custom Domains, kein bewusster Entscheid.
+
+**Der Fix, konkret** — `next.config.ts`, `headers()` ergänzen:
+
+```ts
+const nextConfig: NextConfig = {
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  env: {
+    NEXT_PUBLIC_VISION_ENABLED: 'true',
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+        ],
+      },
+    ]
+  },
+}
+```
+
+Kein weiterer Code betroffen, keine Migration, kein Deploy-Risiko über das
+übliche Maß hinaus. Nach Deploy bitte kurz gegenchecken (`curl -I
+https://sofortangebot.app`), dann melde ich den Live-Stand in
+`launch-readiness.md` nach.
+
+**Wichtiger Hinweis, bitte nicht überlesen — das ist KEIN reiner
+Konfigurationsschalter, sondern zwei getrennte Schritte:**
+
+1. **Header erweitern (oben)** — sicher, sofort reversibel per erneutem
+   Deploy, kein Risiko.
+2. **Tatsächliche Eintragung auf `hstspreload.org`** — das ist ein ganz
+   anderer Schritt und **Sandys Entscheidung, nicht Engineerings**. Einmal
+   auf der Preload-Liste, cachen Chrome/Firefox/Safari das über Monate bis
+   Jahre fest ein — ein Zurück ist sehr langsam. Die Zusage gilt dann für
+   **jede jetzige und jede zukünftige Subdomain** von sofortangebot.app
+   (z. B. eine spätere `api.` oder `staging.`-Subdomain müsste ab dem Moment
+   ihrer Existenz zwingend valides HTTPS sprechen, sonst ist sie für alle
+   Nutzer mit modernem Browser schlicht unerreichbar — kein Fallback,
+   keine Warnung). Für ein Produkt vor dem ersten Testnutzer ist das eine
+   Festlegung auf Vorrat, die ich **nicht** ungefragt mit erledige.
+
+**Meine Empfehlung:** Schritt 1 jetzt umsetzen (bringt real messbare
+Sicherheit, ohne Nachteil). Schritt 2 bewusst zurückstellen, bis klar ist,
+welche Subdomains das Projekt je bekommt — das ist keine halbe Sache, sondern
+eine begründete Reihenfolge. Wenn Sandy Schritt 2 trotzdem sofort will, sagt
+sie kurz Bescheid, dann übernehme ich die Submission selbst (reine
+Formular-Einreichung, kein Code).
+
+**Update 03.09.2026 — Sandys Entscheidung:** Schritt 2 (Preload-Liste)
+zurückgestellt, siehe `docs/entscheidungen-fuer-sandy.md`. **Head of Product
+Engineering: bitte nur Schritt 1 umsetzen** (Header-Diff oben,
+`includeSubDomains` + `preload` im Header, OHNE die tatsächliche
+Domain-Einreichung bei `hstspreload.org`). 6.8 landet danach bewusst bei
+~97 %, nicht 100 % — das ist gewollt, kein offener Rest.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
