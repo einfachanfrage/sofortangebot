@@ -63,6 +63,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
       name = 'Raum',
       laenge, breite,
       flaeche: f,
+      teilflaeche,
       belag,
       verlegerichtung,
       tueren = [],
@@ -85,6 +86,25 @@ export function bodenEngine(daten: any): MengenErgebnis {
     }
 
     if (!flaeche) continue
+
+    // PM-036 (Prüfmeister, 02.09.2026): Wird ausdrücklich nur ein Teil des
+    // Raums bearbeitet („nur eine Ecke, ungefähr sechs Quadratmeter, der Rest
+    // bleibt liegen"), ist DAS die Arbeitsfläche — das Raummaß steht im Diktat
+    // nur als Kontext. Vorher gewann immer Länge × Breite: 21,00 m² statt
+    // 6,30 m², 785,40 € zu viel auf einem 734-€-Angebot.
+    //
+    // Der Umfang bleibt bewusst der des GANZEN Raums: Sockelleisten laufen an
+    // allen vier Wänden entlang, auch wenn nur eine Ecke neu verlegt wird.
+    // Erkennung + Herkunft der Zahl: src/lib/teilflaeche.ts.
+    const raumflaeche = flaeche
+    const istTeilflaeche = typeof teilflaeche === 'number'
+      && isFinite(teilflaeche)
+      && teilflaeche > 0
+      && teilflaeche < raumflaeche
+    if (istTeilflaeche) flaeche = round2(teilflaeche as number)
+    const teilflaechenAnnahme = istTeilflaeche
+      ? [`Nur Teilfläche ${flaeche.toLocaleString('de-DE')} m² statt der vollen Raumfläche ${raumflaeche.toLocaleString('de-DE')} m² (so im Aufmaß gesagt)`]
+      : []
 
     // Typisierter Auftrags-Vertrag: der Belag-Feldwert wird EINMAL zentral über
     // erkenneBelag klassifiziert (belagText-Signal, Etappe 2). Kein Rohtext vom
@@ -119,6 +139,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
         konfidenz: 'high',
         berechnungsweg: `${flaeche} m² + ${pct}% Verschnitt`,
         annahmen: [
+          ...teilflaechenAnnahme,
           `${pct}% Verschnitt${hatMusterverlegung ? ` (${verlegerichtung === 'diagonal' ? 'Diagonalverlegung' : 'Fischgrät-/Musterverlegung'})` : ' (Standard)'}`,
         ],
       })
@@ -130,8 +151,8 @@ export function bodenEngine(daten: any): MengenErgebnis {
         menge: flaeche,
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Bodenfläche: ${flaeche} m²`,
-        annahmen: [],
+        berechnungsweg: istTeilflaeche ? `Teilfläche: ${flaeche} m²` : `Bodenfläche: ${flaeche} m²`,
+        annahmen: [...teilflaechenAnnahme],
       })
     }
 
@@ -179,8 +200,8 @@ export function bodenEngine(daten: any): MengenErgebnis {
         menge: flaeche,
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Bodenfläche: ${flaeche} m²`,
-        annahmen: [],
+        berechnungsweg: istTeilflaeche ? `Teilfläche: ${flaeche} m²` : `Bodenfläche: ${flaeche} m²`,
+        annahmen: [...teilflaechenAnnahme],
       })
     } else if (ausgleich) {
       positionen.push({
@@ -188,8 +209,8 @@ export function bodenEngine(daten: any): MengenErgebnis {
         menge: flaeche,
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Bodenfläche: ${flaeche} m²`,
-        annahmen: [],
+        berechnungsweg: istTeilflaeche ? `Teilfläche: ${flaeche} m²` : `Bodenfläche: ${flaeche} m²`,
+        annahmen: [...teilflaechenAnnahme],
       })
     }
 
@@ -199,8 +220,8 @@ export function bodenEngine(daten: any): MengenErgebnis {
         menge: flaeche,
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Bodenfläche: ${flaeche} m²`,
-        annahmen: [],
+        berechnungsweg: istTeilflaeche ? `Teilfläche: ${flaeche} m²` : `Bodenfläche: ${flaeche} m²`,
+        annahmen: [...teilflaechenAnnahme],
       })
     }
   }

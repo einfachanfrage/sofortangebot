@@ -8,7 +8,7 @@ import type { VollExtraktionCache, KombinierteExtraktionCache } from '@/lib/type
 import type { Wand } from '@/lib/raum-geometrie'
 import { uebernehmeGrundrisse, type RaumDetail } from '@/lib/mengen/raum-details'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
-import { pruefeMassPlausibilitaet, korrigiereRaumMasse } from '@/lib/mass-plausibilitaet'
+import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
 import * as Sentry from '@sentry/nextjs'
@@ -198,6 +198,9 @@ export async function POST(req: NextRequest) {
     hat_rueckfragen?: boolean
     rueckfragen?: RueckfrageItem[]
     extraktion_roh?: unknown
+    // PM-034/PM-036: was die Pipeline an den Maßen repariert hat, bevor
+    // gerechnet wurde (korrigierte Raumseiten, erkannte Teilflächen).
+    mass_hinweise?: string[]
     extraktion?: {
       gewerk?: string
       raeume?: Array<{
@@ -249,13 +252,14 @@ export async function POST(req: NextRequest) {
   // hier schon strukturiert als Zahl verfügbar — deterministisch prüfbar,
   // bevor irgendetwas gerechnet oder gespeichert wird. Blockiert nichts,
   // wird nur an beide möglichen Antworten unten drangehängt.
-  // PM-034: erst korrigieren, was eindeutig verschriftlichte Sprechweise ist
-  // („360" als Raumseite = 3,60 m), dann prüfen, was danach noch unplausibel
-  // ist. Beides landet in derselben Anzeige — der Nutzer sieht also, was
-  // geändert wurde, und was er sich zusätzlich ansehen soll.
-  const { hinweise: massKorrekturen } = korrigiereRaumMasse(extData.extraktion?.raeume ?? [])
+  // PM-034/PM-036: Korrigiert wird NICHT mehr hier, sondern in der Pipeline
+  // (src/lib/mengen/extraktion-pipeline.ts) — dort passiert es VOR der
+  // Mengenberechnung, hier wäre es zu spät gewesen: die Positionen oben sind
+  // an dieser Stelle längst gerechnet. Was ankommt, sind nur noch die
+  // Hinweistexte. Die Plausibilitätsprüfung läuft danach auf den bereits
+  // korrigierten Maßen und meldet nur, was auch danach noch unrealistisch ist.
   const massWarnungen = [
-    ...massKorrekturen,
+    ...(extData.mass_hinweise ?? []),
     ...pruefeMassPlausibilitaet(extData.extraktion?.raeume ?? []),
   ]
 

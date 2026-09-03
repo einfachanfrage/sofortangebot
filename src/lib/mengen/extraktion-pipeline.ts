@@ -18,6 +18,9 @@ import { bereiteRueckfragenVor } from './rueckfragen-flow'
 import type { KalkulationsAntworten } from './antworten-verarbeiter'
 import type { RueckfrageItem } from './rueckfragen-generator'
 import { konsolidierePlatzhalterRaum } from './raum-konsolidierung'
+import { korrigiereRaumMasse } from '@/lib/mass-plausibilitaet'
+import { erkenneTeilflaechen } from '@/lib/teilflaeche'
+import { BODEN_VERLEGEN_SIGNAL } from '@/lib/mengen/gewerke/boden'
 
 export interface ExtraktionResponse {
   extraktion: ExtrahierteDaten
@@ -29,6 +32,13 @@ export interface ExtraktionResponse {
   implizit_flags: Record<string, unknown>
   korrekturen_erkannt: number
   rueckfragen: RueckfrageItem[]
+  /**
+   * PM-034/PM-036: Was an den gesprochenen Maßen vor der Berechnung repariert
+   * wurde — korrigierte Raumseiten („360" → 3,60 m) und erkannte Teilflächen.
+   * Gehört in dieselbe Anzeige wie die Plausibilitäts-Warnungen; der Nutzer
+   * muss sehen, mit welcher Zahl gerechnet wurde und warum.
+   */
+  mass_hinweise: string[]
 }
 
 // CoS-002 Option 1, Schritt 2 (Head of Product Engineering, 2026-08-20,
@@ -157,6 +167,30 @@ export function verarbeiteExtraktion(
     if (raum.hoehe != null) raum.hoehe = ergaenzeNachkommaAusText(raum.hoehe, textMitZahlen)
     if (raum.laenge != null) raum.laenge = ergaenzeNachkommaAusText(raum.laenge, textMitZahlen)
     if (raum.breite != null) raum.breite = ergaenzeNachkommaAusText(raum.breite, textMitZahlen)
+  }
+
+  // ── PM-034 / PM-036: Maße reparieren, BEVOR gerechnet wird ───────────────
+  //
+  // Beide Schritte standen zuerst in generiere-positionen/route.ts — also
+  // NACH dem Aufruf dieser Pipeline. Damit korrigierten sie zwar die
+  // gespeicherte Extraktion (und die Maße in der Bearbeiten-Ansicht), aber
+  // die Positionen waren zu diesem Zeitpunkt längst mit den kaputten Zahlen
+  // gerechnet. Ein Fix, der aussieht als würde er wirken — genau die
+  // Fehlerklasse, die PM-010 überhaupt erst ausgelöst hat. Deshalb hier, an
+  // der einen Stelle, durch die JEDER Weg zur Mengenberechnung läuft.
+  const massHinweise: string[] = []
+  massHinweise.push(...korrigiereRaumMasse(extraktion.raeume ?? []).hinweise)
+
+  // Teilflächen nur dort suchen, wo überhaupt ein Bodenauftrag im Raum steckt:
+  // „nur die Decke streichen" ist auch eine Einschränkung, aber keine
+  // Teil-BODEN-fläche — und nur die Boden-Engine wertet das Feld aus.
+  const raeumeMitBoden = (extraktion.raeume ?? []).filter(r =>
+    (typeof r.belag === 'string' && r.belag.trim() !== '')
+    || r.altbelag_entfernen
+    || (r.arbeiten ?? []).some(a => BODEN_VERLEGEN_SIGNAL.test(a)),
+  )
+  if (raeumeMitBoden.length > 0) {
+    massHinweise.push(...erkenneTeilflaechen(textMitZahlen, raeumeMitBoden).hinweise)
   }
 
   // Direkte Flächenangaben aus Transkript patchen wenn GPT sie nicht extrahiert hat
@@ -318,5 +352,6 @@ export function verarbeiteExtraktion(
     implizit_positionen: implizitResultat.neue_positionen,
     implizit_flags: implizitResultat.neue_flags,
     korrekturen_erkannt: korrekturen.length,
+    mass_hinweise: massHinweise,
   }
 }

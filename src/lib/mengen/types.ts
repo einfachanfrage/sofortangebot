@@ -153,6 +153,13 @@ export interface ExtrahierteDaten {
     ausgleich?: boolean
     feuchtigkeitssperre?: boolean
     parkett_schleifen?: boolean
+    /**
+     * PM-036: Nur ein Teil des Raums wird bearbeitet (Wasserschaden-Ecke,
+     * Ausbesserung). Ist dieser Wert gesetzt, rechnet die Boden-Engine mit
+     * ihm statt mit Länge × Breite — der Umfang (Sockelleisten) bleibt
+     * weiterhin der des ganzen Raums. Siehe src/lib/teilflaeche.ts.
+     */
+    teilflaeche?: number | null
   }>
   waende: Array<{
     laenge: number | null

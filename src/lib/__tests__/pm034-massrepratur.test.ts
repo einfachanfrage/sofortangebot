@@ -11,6 +11,7 @@
 // Grenze fest — korrigieren, wo es eindeutig ist, sonst Finger weg.
 import { describe, it, expect } from 'vitest'
 import { korrigiereSeitenlaenge, korrigiereRaumMasse, pruefeMassPlausibilitaet } from '../mass-plausibilitaet'
+import { verarbeiteExtraktion } from '../mengen/extraktion-pipeline'
 
 describe('Was korrigiert wird', () => {
   it('die beiden Fälle aus PM-034', () => {
@@ -79,5 +80,50 @@ describe('Räume korrigieren und dabei sagen, was passiert ist', () => {
     expect(korrigiereRaumMasse(raeume).hinweise).toEqual([])
     expect(raeume[0].laenge).toBe(40)
     expect(pruefeMassPlausibilitaet(raeume)).toHaveLength(1)
+  })
+})
+
+// ── Nachtrag 03.09.2026: die Korrektur muss VOR der Berechnung greifen ─────
+//
+// Beim Umsetzen von PM-036 aufgefallen und hier festgenagelt: Die Korrektur
+// oben hing zuerst in generiere-positionen/route.ts — also NACH dem Aufruf
+// der Pipeline. Sie hat damit die gespeicherten Raummaße korrigiert und den
+// Hinweis erzeugt, aber die Positionen waren zu dem Zeitpunkt längst mit
+// „360 m" gerechnet. Ein Fix, der aussieht als würde er wirken. Seit dem
+// Umzug in extraktion-pipeline.ts läuft sie vor der Mengenberechnung — und
+// genau das prüfen diese beiden Tests, nicht mehr nur die Hilfsfunktion.
+describe('Die Korrektur erreicht die Positionen, nicht nur die Anzeige', () => {
+  function pipelineMit(raum: Record<string, unknown>, text: string) {
+    const result = {
+      gewerk: 'boden_parkett',
+      raeume: [raum],
+      bereiche: [], waende: [], decken: [], objekte: [],
+      annahmen: [], transkript: text,
+    }
+    return verarbeiteExtraktion(text, { result } as never)
+  }
+
+  it('„360 mal 3" ergibt 11,34 m² Vinyl — nicht 1.134 m²', () => {
+    const antwort = pipelineMit({
+      name: 'Küche', laenge: 360, breite: 3, hoehe: null, flaeche: null,
+      belag: 'klick-vinyl', verlegerichtung: 'standard', arbeiten: ['vinyl verlegen'],
+      fenster: [], tueren: [], altbelag_entfernen: false, sockelleisten: false, nassbereich: false,
+    }, 'In der Küche 360 mal 3 Klick-Vinyl verlegen.')
+
+    const verlegen = antwort.mengen.positionen.find(p => p.beschreibung.includes('verlegen'))
+    expect(verlegen?.menge).toBe(11.34) // 3,60 × 3,00 = 10,80 m² + 5 % Verschnitt
+    expect(antwort.mass_hinweise.join(' ')).toContain('Küche')
+  })
+
+  it('die Sekundenzahl im Hinweis passt zur gerechneten Zahl (kein Auseinanderdriften)', () => {
+    const antwort = pipelineMit({
+      name: 'Esszimmer', laenge: 4, breite: 350, hoehe: null, flaeche: null,
+      belag: 'laminat', verlegerichtung: 'standard', arbeiten: ['laminat verlegen'],
+      fenster: [], tueren: [], altbelag_entfernen: false, sockelleisten: false, nassbereich: false,
+    }, 'Esszimmer 4 mal 350, Laminat verlegen.')
+
+    const verlegen = antwort.mengen.positionen.find(p => p.beschreibung.includes('verlegen'))
+    expect(verlegen?.menge).toBe(14.7) // 4,00 × 3,50 = 14,00 m² + 5 %
+    expect(antwort.mass_hinweise[0]).toContain('3,50 m')
   })
 })

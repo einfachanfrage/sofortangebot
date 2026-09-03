@@ -96,7 +96,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum |
-| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert |
+| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -3095,6 +3095,112 @@ dieselbe Codestelle.
 
 **Status PM-036:** ❌ zwei Befunde plus ein Muster-Befund. Wie erwartet der
 teuerste Fehler des Batches.
+
+---
+
+#### Fix PM-036, Befund 1 (Head of Product Engineering, 03.09.2026)
+
+**Behoben. Die Soll-Liste des Prüfmeisters steht jetzt 1:1 so im Angebot.**
+
+| Position | Soll | vorher | jetzt |
+|---|---|---|---|
+| Fertigparkett verlegen — Wohnzimmer (Teilfläche) | 6,30 m² | 21,00 m² | **6,30 m²** |
+| Altbelag entfernen — Wohnzimmer | 6,00 m² | 20,00 m² | **6,00 m²** |
+| Fertigparkett verlegen — Flur | 6,30 m² | 6,00 m² | **6,30 m²** |
+| Altbelag entfernen — Flur | 6,00 m² | 6,00 m² | **6,00 m²** |
+| Sockelleisten montieren — Flur | (11,00 ohne genannte Tür) | 11,00 lfdm | **11,00 lfdm** |
+
+**Die Ursache war eine andere als vermutet — das ist der wichtigste Teil
+dieser Notiz.** Die Einordnung im Befund lautete: „Bei Konkurrenz gewinnt das
+Raummaß, der Flächenwert verliert immer gegen Länge × Breite." Nachgesehen an
+den echten Produktionsdaten der Aufnahme (`entwurf_aufnahmen`, Diktat vom
+03.09.) sieht die Extraktion so aus:
+
+```
+Wohnzimmer: { laenge: 5, breite: 4, flaeche: null }
+Flur:       { laenge: 4, breite: 1.5, flaeche: null }
+```
+
+**Die sechs Quadratmeter kommen überhaupt nicht an.** Es gibt also keine
+Konkurrenz und keinen Verlierer — der Wert existiert an der Stelle nicht mehr,
+an der die Rangfolge greifen würde. Grund: Der Extraktions-Prompt weist die KI
+ausdrücklich an, `flaeche` NUR zu setzen, wenn keine Länge × Breite genannt
+wurde. Werden beide gesagt, wirft sie die Teilfläche weg. Eine Rangfolge in der
+Mengen-Engine hätte diesen Fall deshalb **nicht** gelöst — sie hätte nur so
+ausgesehen, als hätte sie ihn gelöst. (Die Beobachtung aus PM-035, dass
+„vierzehn Quadratmeter" dort korrekt übernommen wird, stimmt und passt genau
+dazu: dort gab es kein Maßpaar, also durfte die KI die Fläche behalten.)
+
+**Was jetzt passiert** (`src/lib/teilflaeche.ts`, neu): Die Teilfläche wird
+deterministisch aus dem Transkript zurückgeholt, ohne zweiten KI-Aufruf. Jeder
+Satz wird dem zuletzt genannten Raum zugeordnet — auch Sätze ohne Raumnamen
+(„Ungefähr sechs Quadratmeter") und auch, wenn die Ansage zwischen Räumen hin-
+und herspringt, wie in diesem Diktat. Übernommen wird eine Teilfläche nur,
+wenn alle vier Bedingungen erfüllt sind:
+
+1. im Abschnitt des Raums steht ein ausdrückliches Einschränkungs-Signal
+   („nur", „eine Ecke", „der Rest bleibt liegen", „Teilfläche", „ausbessern",
+   „Wasserschaden", „teilweise"),
+2. der Raum hat echte Maße (ohne Länge × Breite ist die genannte Fläche
+   ohnehin schon die Arbeitsfläche),
+3. es gibt **genau einen** Flächenwert, der kleiner ist als der Raum —
+   bei zwei Kandidaten wird nicht geraten, sondern gemeldet,
+4. der Wert liegt mindestens 0,5 m² unter der Raumfläche.
+
+Die Teilfläche gilt für Verlegen, Altbelag entfernen, Ausgleich, Sperre und
+Schleifen. **Der Umfang bleibt bewusst der des ganzen Raums** — Sockelleisten
+laufen an allen vier Wänden entlang, auch wenn nur eine Ecke neu verlegt wird.
+
+**Und es passiert nicht still.** Wie bei PM-034 steht die Annahme an der
+Position („Nur Teilfläche 6 m² statt der vollen Raumfläche 20 m²") und ein
+Hinweis über dem Entwurf, der den gesprochenen Satz wörtlich zitiert und sagt,
+wie man es zurückdreht. Beim Zwei-Kandidaten-Fall wird weiterhin mit der vollen
+Raumfläche gerechnet und ausdrücklich zum Prüfen aufgefordert — lieber ein
+sichtbar zu großes Angebot als ein unsichtbar zu kleines.
+
+**Nebenbefund, den ich beim Umsetzen gefunden habe und der schwerer wiegt als
+PM-036 selbst:** Die PM-034-Maßkorrektur („360" → 3,60 m) vom 02.09. hing in
+`generiere-positionen/route.ts` — also **hinter** der Mengenberechnung. Sie hat
+die gespeicherten Raummaße korrigiert und den Hinweis erzeugt, aber die
+Positionen waren zu dem Zeitpunkt längst mit „360 m" gerechnet. Ein Fix, der
+aussieht als würde er wirken, und damit exakt die Fehlerklasse, wegen der
+PM-010 überhaupt aufgemacht wurde. Beide Reparaturen laufen jetzt in
+`extraktion-pipeline.ts`, an der einen Stelle, durch die jeder Weg zur
+Mengenberechnung geht (Karte **und** Entwurf). Zwei neue Tests prüfen nicht
+mehr die Hilfsfunktion, sondern die Menge, die am Ende im Angebot steht:
+„360 mal 3" ergibt 11,34 m², nicht 1.134 m².
+
+**Tests:** `src/lib/__tests__/pm036-teilflaeche.test.ts` (23 Fälle) — darunter
+der komplette Weg durch die Pipeline mit den gesprochenen Zahlwörtern
+(„sechs Quadratmeter", „fünf mal vier"), und die Gegenrichtung: ohne
+Einschränkungs-Signal wird nichts gekürzt, „die Decke hat 6 Quadratmeter Stuck"
+löst nichts aus, eine Fläche in Raumgröße zählt nicht als Teilfläche, zwei
+Kandidaten führen zur Meldung statt zur Kürzung. Gesamtstand: 76 Testdateien,
+1.239 Tests grün, `tsc` sauber, eslint 0 Fehler.
+
+**Was offen bleibt und wofür ich eine Entscheidung brauche:**
+
+1. **Nur Boden.** Die Teilflächen-Erkennung läuft ausschließlich für Räume mit
+   Bodenauftrag. Beim Maler wäre dieselbe Sprechweise („nur die eine Wand,
+   ungefähr 8 m²") eine Teil-WANDfläche und braucht eine eigene Grenze —
+   bewusst nicht mit erledigt, weil ich es nicht an echten Maler-Diktaten
+   geprüft habe.
+2. **Der Extraktions-Prompt.** Die Wurzel liegt in der Anweisung „`flaeche` NUR
+   setzen wenn keine Länge×Breite" (`prompt-extraktion-v4.ts`). Man könnte der
+   KI ein eigenes Feld für die Teilfläche geben. Ich habe es NICHT gemacht:
+   eine Prompt-Änderung kann ich hier nicht deterministisch testen, und dann
+   wäre der Prüfmeister die Regressionsprüfung. Der jetzige Weg braucht die
+   KI dafür nicht.
+
+**Befund 2 (Karte 6,3 / Entwurf 6,0) konnte ich an den Daten vom 03.09. nicht
+nachstellen** — dort zeigt die Karte für den Flur 6,3 m², also den richtigen
+Wert. Karte und Entwurf laufen inzwischen ohnehin durch dieselbe Funktion.
+Bitte beim Nachtest gezielt darauf schauen; wenn es wieder auftritt, brauche
+ich die Angebotsnummer, dann ist es an den gespeicherten Rohdaten
+nachvollziehbar.
+
+**Nicht angefasst:** Befund 3 (Türanzahl) — der hängt an VOB-012 und wird dort
+gemeinsam erledigt, wie vom Prüfmeister vorgeschlagen.
 
 ---
 
