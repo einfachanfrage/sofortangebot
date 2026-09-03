@@ -96,7 +96,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum |
-| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -3001,6 +3001,142 @@ nur genau einmal.
 
 **Status PM-035:** ❌ vier Befunde. Die Flächenangabe-Vielfalt ist zu zwei
 Dritteln bestanden, die L-Form komplett gescheitert.
+
+---
+
+### PM-036 — Ist-Ergebnis (Sandy, 2026-09-02)
+
+**Entwurf (netto 1.506,50 €, Soll rund 734 €):**
+
+| Raum | Position | Ist | Soll |
+|---|---|---|---|
+| Wohnzimmer | Fertigparkett inkl. 5 % | **21,00 m²** | ❌ 6,30 m² |
+| Wohnzimmer | Altbelag entfernen | **20,00 m²** | ❌ 6,00 m² |
+| Flur | Fertigparkett inkl. 5 % | **6,00 m²** | ❌ 6,30 m² (Karte zeigte 6,3) |
+| Flur | Altbelag entfernen | 6,00 m² | ✅ |
+| Flur | Sockelleisten montieren | 11,00 lfdm | ⚠️ vertretbar, siehe unten |
+| Wohnzimmer | Sockelleisten | keine | ✅ korrekt ausgeschlossen |
+
+**Befund 1 — Die Teilfläche wird ignoriert, das Raummaß gewinnt**
+
+Gesagt: „Im Wohnzimmer muss nur eine Ecke neu, ungefähr **sechs Quadratmeter**,
+der Rest vom Parkett bleibt liegen. Das Zimmer selbst ist fünf mal vier."
+Gerechnet: 20,00 m² × 1,05 = 21,00 m², dazu Altbelag entfernen über die vollen
+20,00 m².
+
+- **785,40 € zu viel** auf einem Angebot, das rund 734 € betragen müsste — das
+  Angebot ist mehr als doppelt so teuer wie der Auftrag.
+- **Die genaue Mechanik, und die ist wichtig für den Fix:** Beide Zahlen standen
+  im Diktat, eine Teilfläche *und* ein Raummaß. Bei Konkurrenz gewinnt das
+  Raummaß. In PM-035 wurde „das Arbeitszimmer hat vierzehn Quadratmeter"
+  dagegen **korrekt** als Fläche übernommen — dort gab es kein konkurrierendes
+  Maßpaar. Der Flächenwert wird also verstanden, er verliert nur immer gegen
+  Länge × Breite.
+- **Fachlich ist die Rangordnung genau umgekehrt.** Wer eine Teilfläche nennt,
+  hat den Raum absichtlich dazugesagt — als Kontext, nicht als Auftrag. Das ist
+  dieselbe Rangordnung „Ansage vor Struktur", die für den Rohtext schon einmal
+  festgezurrt wurde, hier auf der Mengenebene.
+- **Und der Ausschluss wurde zusätzlich überfahren:** „der Rest vom Parkett
+  bleibt liegen" ist eine ausdrückliche Ansage. Das Tool reißt den ganzen Boden
+  raus.
+- **Praxisgewicht:** Das ist der häufigste Reparaturauftrag im Bodenbereich
+  überhaupt — Wasserschaden, Versicherungsfall, Teilfläche. Und es ist der
+  Auftragstyp, bei dem am genauesten hingeschaut wird, weil eine Versicherung
+  mitliest. Ein Angebot über 20 m², wo 6 m² beauftragt sind, geht nicht als
+  Flüchtigkeitsfehler durch.
+
+**Befund 2 — Aufnahme-Karte und Entwurf zeigen verschiedene Mengen (Flur)**
+
+Auf der Karte stand „Fertigparkett verlegen inkl. 5 % Verschnitt **6.3 m²**", im
+Entwurf steht dieselbe Position mit **6,00 m²**. Der Titel verspricht weiterhin
+5 % Verschnitt, gerechnet wird ohne.
+
+- Im Wohnzimmer stimmen Karte und Entwurf überein (21 = 21), im Flur nicht. Die
+  Menge ändert sich also **zwischen** den beiden Schritten, und nur in einem
+  Raum.
+- Geldmäßig sind es 12,60 €. Als Fehlerklasse ist es das, was mich stört: Eine
+  Position, deren Titel eine Rechnung behauptet, die die Menge nicht enthält.
+  Das ist der gleiche Widerspruchstyp wie die „So gerechnet"-Zeile aus PM-031,
+  und Legal hat zu genau dieser Sorte gesagt, warum sie im Streitfall teuer
+  wird: zwei Zahlen für dieselbe Sache im selben Werkzeug.
+- Verdacht: Die nachträglich beantwortete Altbelag-Rückfrage löst eine
+  Neuberechnung aus, die den Verschnitt verliert. Bitte in dieser Richtung
+  suchen — die Rückfrage kam nach der Karte.
+
+**Befund 3 — Türanzahl: drei Fälle, drei verschiedene Verhaltensweisen**
+
+| Fall | Im Diktat gesagt | Abgezogen |
+|---|---|---|
+| PM-032 | „jeder Raum hat eine normale Tür" | 1 Tür ✅ |
+| PM-035 | „drei Türen gehen da ab" | 1 Tür ❌ |
+| PM-036 | keine Tür erwähnt | 0 Türen |
+
+Für sich genommen ist die 11,00 lfdm hier **vertretbar** — ich habe keine Tür
+genannt, und unter VOB-012 („nur Öffnungen ab 1,00 m abziehen") wäre es sogar
+die richtige Zahl. Kein Befund an dieser Position. Der Befund ist das Muster:
+**Die gesprochene Türanzahl kommt nirgends korrekt an.** Mal greift eine
+Standardannahme, mal nicht, und wenn drei Türen gesagt werden, wird eine
+abgezogen. Wer VOB-012 umsetzt, sollte das gleich mit erledigen, es ist
+dieselbe Codestelle.
+
+**Was gut lief:**
+
+1. **Die Sockelleisten bleiben im Wohnzimmer aus** — „im Wohnzimmer bleiben
+   sie" wird respektiert. Zweiter Fall in Folge, in dem ein Sockelleisten-
+   Ausschluss sitzt.
+2. **Der Flur ist vollständig und richtig zugeordnet:** Belag, Altbelag,
+   Sockelleisten, alle beim Raum, keine „Allgemein"-Position.
+3. **Keine Trittschalldämmung** — bei Parkett und ohne Nennung im Diktat ist
+   das genau richtig. Im Vergleich mit PM-035 (dort ausdrücklich genannt, dort
+   ergänzt) verhält sich der Auslöser konsistent; das Problem dieser Funktion
+   ist ausschließlich, dass sie nur einmal je Angebot läuft.
+4. Raummaße beider Räume exakt erkannt (4 × 5 und 1,5 × 4) — hier hat die
+   Zahlensprechweise („vier mal eins fünfzig") funktioniert.
+
+**Status PM-036:** ❌ zwei Befunde plus ein Muster-Befund. Wie erwartet der
+teuerste Fehler des Batches.
+
+---
+
+## Fazit Boden-Batch PM-032 bis PM-036 (Prüfmeister, 2026-09-02)
+
+**Fünf Fälle eingesprochen, kein einziger grün. 14 Befunde.** Das klingt
+schlimmer, als es ist — deshalb die Einordnung, die ich für wichtiger halte als
+die Zahl:
+
+**Was durchgehend solide ist:** Jede Mengenformel, die einen Raum kennt,
+stimmt auf den Cent. Verschnittsätze (15 / 5 / 0 %) sitzen und schwappen nicht
+zwischen Räumen über. Abbruch- und Ausgleichsflächen tragen korrekt keinen
+Verschnitt. Die Raumtrennung bei Untergrundarbeiten funktioniert. Die
+Altbelag-Rückfrage kommt je Raum und bleibt in ihrem Raum. Sockelleisten-
+Ausschlüsse werden respektiert. Rechnen kann das Ding.
+
+**Wo es reihenweise bricht, sind die zwei Schritte davor und danach:**
+
+1. **Sprache → Zahl.** „drei sechzig" → 360, „drei fünfzig" → 350, „sechs Meter
+   mal eins zwanzig" → 6 × 1, „sechs Quadratmeter Teilfläche" → 20 m²,
+   L-Form → Rechteck, „drei Türen" → eine. Fünf verschiedene Muster, alle in
+   derselben Stufe. Das ist die teuerste Baustelle: In PM-034 stand ein Angebot
+   über 91.085 € statt 900 €, in PM-036 eines über das Doppelte.
+2. **Position → Raum.** Trittschall nur im ersten Raum (dreimal belegt),
+   Sockelleisten unter „Allgemein" mit einem Umfang aus zwei Räumen,
+   Maler-Spachtelpositionen in einem Bodenauftrag, ein Ausschlusssatz als
+   Raumname. Immer dann, wenn eine Position ohne Raumbezug erzeugt und
+   nachträglich zugeordnet wird, geht es schief.
+
+**Meine Priorisierung für Head of Product Engineering:**
+
+| # | Was | Warum zuerst |
+|---|---|---|
+| 1 | **Weiter-Button bei aktiver Warnung** (PM-034) | Blocker. Ohne den Umweg über den gelben Kasten kommt niemand zum Entwurf |
+| 2 | **Teilfläche schlägt Raummaß** (PM-036) | Häufigster Reparaturauftrag, Faktor 2 auf dem Angebot, Versicherung liest mit |
+| 3 | **Zahlenerkennung** (PM-034/035) | Betrifft jeden Fall mit Maßen; die „Meter-in-der-Mitte"-Spur ist billig zu prüfen |
+| 4 | **Trittschall-Schleife statt `find`** (PM-032/033/035) | Dreifach belegt, eine Zeile Code, Geld in beide Richtungen |
+| 5 | Rest (Ausschlusssatz als Raum, Q2-Phantompositionen, L-Form, Grundierung, Türanzahl, Karte ≠ Entwurf) | einzeln kleiner, alle gut lokalisiert |
+
+**Was Sandy entscheiden muss:** die Zahlenerkennung (automatisch korrigieren mit
+sichtbarer Annahme statt nur warnen — siehe PM-034, Befund 2) und VOB-012, an
+dem die Türanzahl mit hängt.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
