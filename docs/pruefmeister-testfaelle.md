@@ -92,6 +92,11 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
+| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
+| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ neu angelegt 2026-09-02, noch nicht eingesprochen |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -2356,6 +2361,242 @@ Fälle rot werden, ist das richtig so. Die neuen Zahlen stehen im Abschnitt
 „Soll-Lösungen für die sechs offenen Fälle" weiter oben. Rot bleiben dürfen
 sie, bis ich jeden der vier live nachgesprochen habe — das mache ich, sobald
 ich wieder am Tool bin.
+
+*Prüfmeister · 2026-09-02*
+
+---
+
+## PM-032 bis PM-036 — Boden-Batch: fünf Mehrraum-Fälle (2026-09-02)
+
+**Warum dieser Batch:** Das Bodenleger-Gewerk ist bisher fast nur mit
+Einzelräumen getestet. Der einzige echte Mehrraum-Fall (PM-013) hatte zwei
+Räume mit *getrennten Gewerken* — also gerade nicht die Situation, die draußen
+der Normalfall ist: **eine Wohnung, mehrere Räume, alle Boden.** Genau da
+entstehen die Fehler, die teuer werden — Verschnittsätze, die zwischen Räumen
+überschwappen, Übergangsschienen an Türen, wo gar keine hingehört, und
+Untergrundarbeiten, die auf alle Räume angewendet werden statt auf den einen.
+
+Alle fünf sind reine Bodenaufträge, kein Maler. Es darf also in keinem der
+Fälle eine Wand-, Decken- oder „Boden schützen"-Position auftauchen.
+
+**Zur Verschnitt-Notation:** Die Mengen unten stehen so, wie die Engine heute
+rechnet (Verschnitt in der Menge). Wird VOB-001 umgesetzt, ist die Menge die
+reine Verlegefläche und der Verschnitt wandert in den Einheitspreis — die
+betroffenen Zeilen sind mit `[VOB-001]` markiert und ändern sich dann alle
+gemeinsam. Sockelleisten-Zeilen tragen wie gehabt `[VOB-012]`.
+
+---
+
+### PM-032 — Durchgehende Verlegung über drei Räume, ein Belag, eine Schwelle
+
+**Warum:** Der häufigste Bodenauftrag überhaupt — Wohnung, ein Belag,
+durchgehend ohne Schwellen. Die Falle ist die Übergangsschiene: Das Tool darf
+**nicht** an jeder Zimmertür eine erfinden, sondern nur dort, wo der Belag
+tatsächlich wechselt. Bei drei Räumen sind das drei falsche Schienen à 25–35 €,
+die dem Kunden auffallen und die der Handwerker erklären muss.
+
+**Zum Einsprechen:**
+„Erdgeschosswohnung. Flur, sechs mal eins zwanzig. Wohnzimmer, fünf mal vier.
+Küche, drei mal zwo achtzig. Überall dasselbe Klick-Vinyl, gerade verlegt,
+durchgehend ohne Schwellen — das läuft von der Küche durch den Flur ins
+Wohnzimmer. Trittschalldämmung drunter. Nur zum Bad hin kommt eine
+Übergangsschiene, im Bad selbst machen wir nichts. Sockelleisten überall neu,
+weiße MDF. Jeder Raum hat eine normale Tür."
+
+**Soll-Lösung:**
+
+| Position | Soll-Menge |
+|---|---|
+| Flächen (Zwischenwerte) | Flur 7,20 · Wohnzimmer 20,00 · Küche 8,40 = **35,60 m²** |
+| Klick-Vinyl verlegen, 5 % Verschnitt | Flur 7,56 · Wohnzimmer 21,00 · Küche 8,82 → **Summe 37,38 m²** `[VOB-001]` |
+| Trittschalldämmung | **35,60 m²** — Raumfläche, **ohne** Verschnitt |
+| Übergangsschiene | **1 Stück** |
+| Sockelleisten montieren | Flur 13,50 · Wohnzimmer 17,10 · Küche 10,70 → **41,30 lfdm** `[VOB-012]` |
+
+Ob der Belag als drei Raumpositionen oder als eine Gesamtposition erscheint,
+ist mir gleich — die Summe muss stimmen. Drei Positionen sind mir lieber, weil
+der Kunde dann sieht, wo was liegt.
+
+**Worauf achten:**
+- **Genau eine Übergangsschiene.** Drei oder vier wären der Fehler, auf den
+  dieser Fall gebaut ist.
+- Trittschall mit 35,60 m² und nicht mit 37,38 — die Dämmung wird stumpf
+  gestoßen, da ist kein Verschnitt drin. (Verwandt mit dem offenen
+  PM-023-Fund zur Trittschall-Fläche.)
+- Kein Bad in irgendeiner Form im Angebot.
+- Sockelleisten je Raum, nicht einmal über alles — sonst ist nicht
+  nachvollziehbar, wo sie hingehören.
+
+---
+
+### PM-033 — Drei Räume, drei Beläge, drei Verschnittsätze
+
+**Warum:** Der Verschnitt hängt am Belag und an der Verlegeart, nicht am
+Auftrag. Fischgrät 15 %, Laminat gerade 5 %, Teppich Bahnenware 0 % — alle drei
+in einem Diktat. Wenn ein Satz auf die anderen Räume überschwappt, ist das
+derselbe Fehlertyp wie „Raumkontext blutet zwischen Räumen", nur diesmal beim
+Material.
+
+**Zum Einsprechen:**
+„Wohnzimmer, sechs mal vier fünfzig, da kommt Eichenparkett rein, Fischgrät
+verlegt. Schlafzimmer, vier mal drei sechzig, da wollen die Teppich,
+Bahnenware. Flur, fünf mal eins fünfzig, da kommt Laminat, ganz normal gerade.
+An den beiden Türen zum Wohnzimmer und zum Schlafzimmer jeweils eine
+Übergangsschiene, weil ja unterschiedliche Beläge. Trittschall nur unterm
+Laminat im Flur. Sockelleisten bleiben überall, wie sie sind."
+
+**Soll-Lösung:**
+
+| Position | Soll-Menge |
+|---|---|
+| Eichenparkett Fischgrät — Wohnzimmer | 27,00 × 1,15 = **31,05 m²** `[VOB-001]` |
+| Teppich Bahnenware — Schlafzimmer | **14,40 m²**, 0 % Verschnitt |
+| Laminat gerade — Flur | 7,50 × 1,05 = **7,88 m²** `[VOB-001]` |
+| Trittschalldämmung — Flur | **7,50 m²** |
+| Übergangsschiene | **2 Stück** |
+
+**Worauf achten:**
+- Drei verschiedene Sätze in einem Angebot. Ein einheitlicher Satz über alle
+  drei Räume ist ein Fehler, egal welcher.
+- **Teppich mit 0 %** — der Katalog führt das so, und fachlich stimmt es:
+  Bahnenware wird aus der Rolle geschnitten, der Verschnitt steckt im
+  Rollenmaß, nicht in einem Prozentaufschlag.
+- Trittschall **nur im Flur**, mit der Flurfläche. Genau die Verwechslung,
+  die bei PM-023 noch offen ist — hier mit drei Räumen zugespitzt.
+- **Keine Sockelleisten-Position**, in keinem Raum. Ausdrücklich ausgeschlossen.
+- Keine Altbelag-Position, solange nicht danach gefragt wurde.
+
+---
+
+### PM-034 — Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen
+
+**Warum:** Untergrundarbeiten sind der Teil, bei dem die Räume auseinanderlaufen
+— in der Küche muss alles raus und gespachtelt werden, im Esszimmer reicht
+Grundierung, im Flur passiert gar nichts. Das ist die PM-005-Fehlerfamilie
+(„Scope eines Raums wird auf den anderen angewendet"), nur im Boden-Gewerk, wo
+sie noch nie getestet wurde.
+
+**Zum Einsprechen:**
+„Küche, drei sechzig mal drei. Da liegen alte Fliesen, die müssen raus, und
+danach muss der Boden gespachtelt werden, Ausgleichsmasse, der ist ziemlich
+uneben. Dann Klick-Vinyl drauf, gerade verlegt. Esszimmer daneben, vier mal
+drei fünfzig, der Untergrund ist in Ordnung, da reicht Grundierung, dann
+dasselbe Vinyl. Im Flur machen wir nichts am Boden, der bleibt wie er ist.
+Sockelleisten in Küche und Esszimmer neu, je eine Tür."
+
+**Soll-Lösung:**
+
+| Position | Soll-Menge |
+|---|---|
+| Alten Belag (Fliesen) entfernen — **nur Küche** | **10,80 m²** |
+| Ausgleichsmasse / Boden spachteln — **nur Küche** | **10,80 m²** |
+| Grundierung — **nur Esszimmer** | **14,00 m²** |
+| Klick-Vinyl verlegen — Küche | 10,80 × 1,05 = **11,34 m²** `[VOB-001]` |
+| Klick-Vinyl verlegen — Esszimmer | 14,00 × 1,05 = **14,70 m²** `[VOB-001]` |
+| Trittschalldämmung | Küche 10,80 · Esszimmer 14,00 — darf ergänzt werden, dann je Raum korrekt |
+| Sockelleisten montieren | Küche 12,30 · Esszimmer 14,10 → **26,40 lfdm** `[VOB-012]` |
+
+**Worauf achten:**
+- **Ausgleichsmasse und Fliesenabbruch dürfen nicht im Esszimmer landen**, und
+  die Grundierung nicht in der Küche. Jede Untergrundleistung gehört exakt in
+  den Raum, in dem sie gesagt wurde.
+- **Der Flur bleibt komplett leer** — keine Position, obwohl er im Diktat
+  vorkommt. Gleicher Mechanismus wie beim PM-013-Flur.
+- Trittschall ist nicht genannt, bei Klick-Vinyl aber fachlich Standard. Wenn
+  das Tool sie ergänzt: gut, dann aber mit den richtigen Raumflächen und als
+  Vorschlag gekennzeichnet. Wenn sie fehlt: kein Fehler in diesem Fall.
+- Eine Übergangsschiene zum Flur wäre fachlich richtig, wurde aber nicht
+  verlangt — als Hinweis in „fehlende Positionen" in Ordnung, als bepreiste
+  Position ohne Rückfrage nicht.
+
+---
+
+### PM-035 — Drei Arten, eine Fläche anzugeben, plus L-förmiger Flur
+
+**Warum:** So redet der Handwerker wirklich. Ein Raum mit Maßen, einer nur mit
+Quadratmetern („die Maße hab ich nicht im Kopf"), und ein Flur, der um die Ecke
+geht. Bisher hat jeder Testfall brav Länge × Breite geliefert. Der L-Flur ist
+zusätzlich der erste Test für den Sockelleisten-Umfang bei nicht-rechteckigen
+Räumen.
+
+**Zum Einsprechen:**
+„Wohnzimmer, fünf zwanzig mal vier zehn. Das Arbeitszimmer hat vierzehn
+Quadratmeter, die Maße hab ich nicht im Kopf. Der Flur ist L-förmig, einmal
+sechs Meter mal eins zwanzig und der kurze Schenkel zwo Meter mal eins zwanzig,
+drei Türen gehen da ab. Überall Landhausdiele, gerade verlegt.
+Trittschalldämmung überall drunter. Sockelleisten nur im Flur neu, in den
+Zimmern bleiben die alten."
+
+**Soll-Lösung:**
+
+| Position | Soll-Menge |
+|---|---|
+| Flächen (Zwischenwerte) | Wohnzimmer 21,32 · Arbeitszimmer 14,00 · Flur 7,20 + 2,40 = 9,60 → **44,92 m²** |
+| Landhausdiele verlegen, 5 % | Wohnzimmer 22,39 · Arbeitszimmer 14,70 · Flur 10,08 → **Summe 47,17 m²** `[VOB-001]` |
+| Trittschalldämmung | **44,92 m²** |
+| Sockelleisten montieren — nur Flur | Umfang L-Form **18,40 lfm** − 3 Türen (2,70) = **15,70 lfdm** `[VOB-012]` |
+
+Zum Umfang der L-Form, damit es nachvollziehbar ist: Bei einem L entspricht der
+Umfang dem des umschließenden Rechtecks — hier 6,00 × 3,20, also
+2 × (6,00 + 3,20) = 18,40 lfm. Die Fläche natürlich nicht, die ist 9,60 m².
+
+**Worauf achten:**
+- **Werden alle drei Angabearten verstanden?** „Vierzehn Quadratmeter" ist eine
+  Fläche, keine Kantenlänge — wenn daraus 14 × irgendwas wird, ist der Fall
+  sofort rot.
+- Kommt der Flur als **ein** Raum mit 9,60 m² an, oder wird er in zwei Räume
+  zerlegt? Zwei Positionen wären verschmerzbar, solange die Summe stimmt und
+  die Sockelleiste nicht doppelt gerechnet wird.
+- **Der Sockelleisten-Umfang ist der eigentliche Test.** Meine Erwartung: das
+  Tool rechnet 2 × (Länge + Breite) auf eines der beiden Teilstücke und liegt
+  deutlich daneben. Wenn es stattdessen nachfragt, ist das die bessere Antwort
+  als eine erfundene Zahl.
+- Keine Sockelleisten in Wohnzimmer und Arbeitszimmer.
+
+---
+
+### PM-036 — Teilfläche nach Wasserschaden neben einem kompletten Raum
+
+**Warum:** Der häufigste Reparaturauftrag im Bodenbereich, und der schärfste
+Test der fünf. Bei einem Wasserschaden wird **nicht der Raum** neu gemacht,
+sondern eine Teilfläche. Wenn das Tool stattdessen die Raumfläche nimmt, steht
+ein Angebot über 20 m² im Raum, wo 6 m² beauftragt sind — das Dreifache, und
+bei einem Versicherungsfall fällt das sofort jemandem auf.
+
+**Zum Einsprechen:**
+„Wasserschaden. Im Wohnzimmer muss nur eine Ecke neu, ungefähr sechs
+Quadratmeter, der Rest vom Parkett bleibt liegen. Das Zimmer selbst ist fünf
+mal vier. Im Flur daneben, vier mal eins fünfzig, kommt der Boden komplett neu,
+gleiches Parkett. Im Flur muss der alte Belag raus, im Wohnzimmer nur die Ecke
+ausbauen. Sockelleisten im Flur neu, im Wohnzimmer bleiben sie."
+
+**Soll-Lösung:**
+
+| Position | Soll-Menge |
+|---|---|
+| Parkett verlegen — Wohnzimmer (**Teilfläche**) | 6,00 × 1,05 = **6,30 m²** `[VOB-001]` |
+| Parkett verlegen — Flur | 6,00 × 1,05 = **6,30 m²** `[VOB-001]` |
+| Alten Belag entfernen — Wohnzimmer | **6,00 m²** |
+| Alten Belag entfernen — Flur | **6,00 m²** |
+| Sockelleisten montieren — nur Flur | 11,00 − 0,90 = **10,10 lfdm** `[VOB-012]` |
+
+**Worauf achten:**
+- **Die 20,00 m² Raumfläche des Wohnzimmers dürfen nirgends auftauchen.**
+  Maßgeblich ist die genannte Teilfläche von 6 m². Die Raummaße stehen im
+  Diktat nur, damit klar ist, dass das Tool sie hört und trotzdem nicht
+  benutzt.
+- Trittschall ist bei einer Parkett-Teilfläche nicht zu erwarten (der
+  vorhandene Aufbau bleibt) — wenn sie kommt, dann höchstens als Rückfrage.
+- Keine Sockelleisten im Wohnzimmer.
+- Ehrliche Erwartung von mir: **dieser Fall geht durch.** Wenn er es tut, ist
+  „Teilfläche" ein Fall für die Rückfrage-Logik und keine Kleinigkeit — der
+  Betrieb bekommt sonst ein Angebot, das er nicht abschicken kann.
+
+---
+
+**Status aller fünf:** ❌ neu angelegt am 2026-09-02, noch nicht eingesprochen.
+Ich spreche sie in einem Durchgang ein, sobald ich am Tool bin, und trage die
+Ist-Ergebnisse hier direkt unter den jeweiligen Fall.
 
 *Prüfmeister · 2026-09-02*
 

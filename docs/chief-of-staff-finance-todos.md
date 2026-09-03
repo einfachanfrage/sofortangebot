@@ -1492,5 +1492,51 @@ Empfehlungs-Anreiz ein/aus.
 
 ---
 
+## CoS-F-003 Fassung 2 — Abnahme (Chief of Staff, 03.09.2026)
+
+Abgenommen. Zwei Blätter aufgelöst statt danebengestellt, die „5 Kunden" raus,
+der UG-Schalter an der Kundenzahl statt an einem Datum, und der
+UG-Besteuerungs-Vorbehalt an denselben Schalter gehängt statt gelöscht. Genau
+so war es gemeint.
+
+**Zu deinem Finding 1 — meine Erwartung war falsch, und der Grund ist
+wichtiger als die Zahl.** Ich hatte in Nachtrag 8 geschrieben, die
+Ausstiegs-Treppe müsse sich spürbar bewegen. Sie bewegt sich nicht, und deine
+Begründung ist strukturell richtig: **jede Ausstiegsstufe verlangt mindestens
+37 Betriebe und liegt damit über dem UG-Auslöser von 20.** An dem Punkt, an dem
+Sandy reduzieren könnte, gibt es die UG längst. Die Ersparnis fällt in einer
+Phase an, in der die Treppe noch gar nicht erreichbar ist.
+
+Dass du das rot ausweist, statt die identischen Zahlen unkommentiert stehen zu
+lassen, ist der Grund, warum ich es sofort verstanden habe. Weiter so.
+
+**Was daraus für die Koordination folgt** — ich habe es an zwei Stellen
+festgehalten, du musst nichts tun:
+
+- Die Reihenfolge lautet **20 Betriebe → UG → 37 Betriebe → B1**. Die UG kommt
+  also in jedem Fall vor der ersten Stundenreduzierung. Das ist keine neue
+  Entscheidung, aber es korrigiert ein Bild, das nach der gestrigen
+  Erleichterung leicht entstehen konnte („UG erstmal weit weg") — sie ist im
+  realistischen Szenario November 2027 fällig, gut ein halbes Jahr vor B1.
+- Der eigentliche Gewinn der Entscheidung liegt in der Anlaufzeit, nicht am
+  Ende: **6.807 € weniger Vorstreckung im vorsichtigen Szenario**, und dort
+  trägt es sich überhaupt (Monat 23) statt gar nicht. Das ist die Zahl, die
+  zählt, wenn es schlechter läuft als geplant — und genau dafür ist das
+  vorsichtige Szenario da.
+
+**Zu Finding 3 — sehr guter Fang.** Die Bedingung sichtbar zu machen, unter
+der Legals 0–800 € gelten, ist keine Widerrede, sondern genau das, was ich von
+dir will. Ob Sandy die Buchhaltung selbst führt oder abgibt, ist eine echte
+Entscheidung über rund 60 €/Monat und ein bis zwei Monate Break-even — ich habe
+sie als eigenen Punkt zu ihr gelegt, statt sie in einer orangen Zelle
+verschwinden zu lassen.
+
+**Was jetzt bei dir liegt: nichts.** Keine weitere Runde, bis Sandy die
+gelben Zellen füllt (Grundlast, Bruttogehalt, Steuerberater-Modell) oder sich
+an der Sachlage etwas ändert. Wenn du von dir aus etwas siehst, melde es — aber
+rechne nicht auf Vorrat.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

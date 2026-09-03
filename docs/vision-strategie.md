@@ -139,31 +139,42 @@ beim Chief of Staff. Gleichzeitig ist die Abhängigkeit von diesem einen Kontakt
 ein **Klumpenrisiko**, das im Finanzplan im vorsichtigen Szenario sichtbar sein
 muss.
 
-## Was der Finanzplan strategisch sagt (Chief of Staff, 03.09.2026)
+## Was der Finanzplan strategisch sagt (Chief of Staff, 03.09.2026, Fassung 2)
 
-Der erste vollständige Finanzplan (CoS-F-003, Head of Finance) liegt vor —
+Der Finanzplan (CoS-F-003, Head of Finance) liegt in **Fassung 2** vor —
 24 Monate, drei Szenarien, aufgebaut auf dem Kanalplan von Marketing
-(CoS-M-007). Er ist das Ergebnis der **aktuellen Strategie**: rein organisch,
-kein Werbebudget, ein warmer Kanal, 15–20 Stunden die Woche neben dem Job.
-Die Zahlen:
+(CoS-M-007) und der Rechtsform-Entscheidung vom selben Tag
+(Einzelunternehmen jetzt, UG ab rund 20 Betrieben). Er ist das Ergebnis der
+**aktuellen Strategie**: rein organisch, kein Werbebudget, ein warmer Kanal,
+15–20 Stunden die Woche neben dem Job.
 
-- **Erstes positives Monatsergebnis:** realistisch November 2027, optimistisch
-  Juli 2027, vorsichtig nicht innerhalb von 24 Monaten.
-- **Vorstrecken:** bis –9.280 € (realistisch), davon 2.000 € gebundene Reserven.
-- **Anstellung auf 30 Stunden reduzieren (B1):** braucht 37 zahlende Betriebe —
-  realistisch **Monat 21 (Mai 2028)**, optimistisch Monat 14 (Oktober 2027).
-- **Anstellung ganz aufgeben (B2):** braucht 107 Betriebe — **in keinem
+- **Break-even (volle Kostenbasis):** Monat 23 / 11 / 9 — bei 13 bis 18
+  zahlenden Betrieben.
+- **Vorstrecken (Liquiditäts-Tiefpunkt):** –7.453 € / –6.589 € / –6.225 €.
+- **UG fällig (Auslöser 20 Betriebe):** nie / November 2027 / Juni 2027,
+  Notartermin je einen Monat davor.
+- **B1 — auf 30 Std. reduzieren:** braucht 37 Betriebe → realistisch Monat 21
+  (Mai 2028), optimistisch Monat 14. Auf 25 Std.: 45 Betriebe.
+- **B2 — Anstellung ganz aufgeben:** braucht 107 Betriebe → **in keinem
   Szenario innerhalb von 24 Monaten.**
 - Zahlende Betriebe nach 24 Monaten: 14 / 47 / 99.
+
+**Eine Reihenfolge, die man kennen muss:** 20 Betriebe → UG → 37 Betriebe →
+B1. **Die UG kommt in jedem Fall vor der ersten Stundenreduzierung**, im
+realistischen Szenario gut ein halbes Jahr davor. Die Rechtsform-Entscheidung
+vom 03.09. verschiebt sie, sie schafft sie nicht ab — und genau deshalb bewegt
+sich die Ausstiegs-Treppe durch diese Entscheidung auch nicht. Der Gewinn liegt
+in der Anlaufzeit: rund 6.800 € weniger Vorstreckung im vorsichtigen Szenario,
+und dort trägt es sich überhaupt statt gar nicht.
 
 **Die strategische Folgerung, für den nächsten Check-in:** Die Ambition in
 dieser Datei lautet „Wachstum mit Team und Kapital, kein Lifestyle-Business".
 Der Plan zeigt, was die *heutige* Strategie dazu hergibt: einen soliden, aber
-langsamen Weg, auf dem die volle Selbstständigkeit erst jenseits des
-Horizonts liegt. Das ist kein Fehler im Plan — es ist die ehrliche Rechnung
-für „organisch, allein, nebenher". Wenn das Tempo nicht reicht, gibt es genau
-vier Hebel, und keiner davon ist „mehr Stunden": (1) ein zweiter warmer Kanal
-wie Dessau — ein Mensch, nicht ein Flyer; (2) ein bezahlter Reichweiten-Test,
+langsamen Weg, auf dem die volle Selbstständigkeit erst jenseits des Horizonts
+liegt. Das ist kein Fehler im Plan — es ist die ehrliche Rechnung für
+„organisch, allein, nebenher". Wenn das Tempo nicht reicht, gibt es genau vier
+Hebel, und keiner davon ist „mehr Stunden": (1) ein zweiter warmer Kanal wie
+Dessau — ein Mensch, nicht ein Flyer; (2) ein bezahlter Reichweiten-Test,
 sobald ein Reel nachweislich zieht (Marketing hat den Rahmen: 150 €, einmal,
 mit Auswertung); (3) das Klumpenrisiko Dessau früh mit einem zweiten Laden
 absichern; (4) Kapital, um Stufe B1 vorzuziehen statt sie zu erwarten — das
@@ -171,11 +182,94 @@ wäre der Moment für den Businessplan. Die Frage für den Check-in ist nicht
 „stimmt der Plan", sondern **„ist der Weg, den er zeigt, der, den du gehen
 willst"**.
 
-**Nicht entscheidungsreif, bewusst:** Die Besteuerung der UG ist noch nicht
-gerechnet (Steuerberater-Frage 1), und Abwanderung sowie Support-/
-Grundlast-Stunden sind Annahmen ohne Erfahrungswert. Die Stufen können sich
-verschieben. Das Bild — B1 erreichbar, B2 nicht im Horizont — hält das
-vermutlich aus.
+**Nicht entscheidungsreif, bewusst:** Abwanderung sowie Support- und
+Grundlast-Stunden sind Annahmen ohne Erfahrungswert; der Vorbehalt zur
+UG-Besteuerung gilt ab dem UG-Monat weiter. Die Stufen können sich verschieben.
+Das Bild — B1 erreichbar, B2 nicht im Horizont — hält das vermutlich aus.
+
+## Linear oder exponentiell? Und was passiert, wenn es gut läuft
+*(Chief of Staff, 03.09.2026 — auf Sandys Frage, ob ihre Erwartung von
+exponentiellem Wachstum naiv ist)*
+
+**Was im Plan tatsächlich steht** (Blatt `Plan-Kunden`, neue Kunden pro Monat,
+realistisches Szenario): M4 1,0 · M6 2,5 · M12 2,1 · M18 2,9 · M24 3,8. Die
+Kurve steigt, aber flach — sie verdoppelt sich in achtzehn Monaten. Der
+Selbstverstärker Mundpropaganda liefert dabei **0,11 Neukunden im Monat 14 und
+0,32 im Monat 24**, also **rund 8 % der Neukunden am Ende von zwei Jahren**.
+Im optimistischen Szenario sind es 1,5 von 8,5 — knapp 18 %. Der Rest kommt aus
+den Kanälen, die Marketing anlaufen lässt.
+
+**Damit ist die Sache klar benannt: Der Plan enthält kein exponentielles
+Wachstum.** Nicht aus Pessimismus, sondern aus Arithmetik. Ein Selbstverstärker
+braucht eine Basis: 20 % Empfehlungsquote auf 15 aktive Betriebe sind drei
+Empfehlungen im Jahr, also 0,25 im Monat. Die Kurve *kann* auf dieser Basis
+nicht knicken, egal wie gut das Produkt ist. Sichtbar wird Verstärkung
+erfahrungsgemäß erst, wenn Empfehlungen ein Viertel bis ein Drittel der
+Neukunden ausmachen — im Plan wird das im Zwei-Jahres-Horizont in keinem
+Szenario erreicht.
+
+**Sandys Erwartung ist deshalb trotzdem nicht naiv.** Sie beschreibt die
+S-Kurve, und für dieses Produkt in dieser Branche spricht mehr dafür als
+dagegen: Handwerker einer Region kennen sich, treffen sich im selben
+Fachhandel, reden über Werkzeug. Der Nutzen ist in dreißig Sekunden
+vorführbar — das ist die Voraussetzung dafür, dass jemand ihn weitererzählt.
+Und mit jedem Referenzkunden öffnen sich Kanäle, die heute verschlossen sind
+(kalter Fachhandel, Innungen). **Der Plan ist ein Boden, keine Prognose.**
+
+**Was daraus als Aufgabe folgt — und das ist der eigentliche Punkt:** Der Plan
+hat Abbruchkriterien für Kanäle, die nicht funktionieren. Er hat **kein
+Spielbuch für den Fall, dass es besser läuft als erwartet** — und genau der
+Fall ist in Sandys Lage der gefährliche, weil Wachstum ihre Zeit frisst und sie
+einen Vollzeitjob hat. Im optimistischen Szenario braucht sie im Monat 24
+bereits 82,8 Stunden im Monat, praktisch die Sprintlinie. **Wäre das Wachstum
+wirklich exponentiell, träfe sie ihre Kapazitätsgrenze, bevor die Nachfrage
+endet.**
+
+**Deshalb ein Aufwärts-Auslöser, gleichrangig neben den Abbruchkriterien:**
+
+- **Signal:** Der Anteil der Empfehlungen an den Neukunden. Head of Marketing
+  misst das ohnehin (Messgröße 4, „Empfehlungen pro aktivem Kunden"); der Plan
+  rechnet mit 8–18 % am Ende. **Liegt der Anteil zwei Quartale in Folge über
+  25 %, ist die Verstärkung real** und der Plan zu vorsichtig.
+- **Die Antwort darauf ist nicht „weiter so", sondern Kapazität schaffen**,
+  und zwar in dieser Reihenfolge: Support entlasten (Onboarding-Material,
+  Selbsthilfe statt WhatsApp je Fall) · den Teilzeitantrag vorziehen, statt auf
+  die 37 Betriebe zu warten · erst dann über Geld oder Hilfe nachdenken.
+- **Beim wöchentlichen Check-in mitprüfen**, sobald es zahlende Kunden gibt.
+  Vorher ist die Zahl bedeutungslos.
+
+Kurz: Die Frage ist nicht, ob die Kurve knickt, sondern ob wir es merken —
+und ob dann etwas anderes passiert als noch mehr Stunden.
+
+## Rechtsform-Entscheidung 03.09.2026 — und was sie über die Arbeitsweise sagt
+
+**Entschieden:** Einzelunternehmen / Kleingewerbe jetzt (Gewerbeanmeldung
+KW 41), UG erst bei rund 20 zahlenden Betrieben. Versicherung sofort,
+1 Mio. € Deckung. Details: `legal-007-plan-fuer-sandy.md`, Begründung in
+`entscheidungen-fuer-sandy.md` unter „S-4, Teil 3 und Teil 4".
+
+**Der Vorgang ist strategisch bemerkenswert und gehört deshalb hier
+festgehalten, nicht nur in der Legal-Datei:** Head of Legal hat seine eigene
+Empfehlung vom Vortag zurückgenommen, nachdem der Finanzplan vorlag — sein
+Serienschaden-Argument war auf 200 Betriebe gerechnet, der Plan zeigt einen
+Betrieb im Januar und drei bis fünf nach sechs Monaten. Dabei hat er
+außerdem einen sachlichen Fehler in seiner eigenen früheren Begründung
+gefunden und offengelegt (§ 26 HGB greift bei einer Kleingewerbetreibenden
+gar nicht und ist zudem eine Haftungsbegrenzung, keine -begründung), obwohl
+die Korrektur zufällig für seine neue Empfehlung sprach.
+
+**Was daraus folgt, über diesen Fall hinaus:** Fachliche Empfehlungen, die
+ohne die Zahlen des Gesamtbilds entstanden sind, sollten nach Vorliegen des
+Finanzplans einmal gegengeprüft werden — nicht weil die Spezialisten schlecht
+arbeiten, sondern weil jede Rolle nur ihren Ausschnitt sieht. Das ist genau
+die Aufgabe des Chief of Staff, und in diesem Fall hat Sandy sie selbst
+angestoßen, indem sie den Plan gegen die To-do-Liste halten ließ.
+
+**Und die inhaltliche Kernaussage, die bleibt:** In dieser Phase schützt nicht
+die Rechtsform, sondern die Police mit unbegrenzter Rückwärtsdeckung — Fehler
+aus der Einzelunternehmens-Phase bleiben dauerhaft persönliche Haftung, auch
+nach einer späteren UG. Deshalb ist die Versicherung der einzige Punkt im
+Oktober-Plan, der keine Verzögerung verträgt.
 
 ## Wöchentlicher strategischer Check-in
 

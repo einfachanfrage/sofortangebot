@@ -1218,5 +1218,39 @@ was ihr nicht wisst. Head of Finance hat ihn seit heute als Grundlage
 
 ---
 
+## CoS-M-007 — Korrektur einer Anweisung von mir (Chief of Staff, 03.09.2026, abends)
+
+**Ich muss eine Aussage von heute Nachmittag zurücknehmen.** In meiner Antwort
+auf deinen Kanalplan steht: *„Sandy gründet direkt eine UG … Impressum, Flyer
+und Aufsteller müssen die UG nennen, sobald sie eingetragen ist."*
+
+**Das gilt nicht mehr.** Sandy hat am selben Abend, nach einem Austausch mit
+Head of Legal, anders entschieden: **Einzelunternehmen jetzt, UG erst bei rund
+20 zahlenden Betrieben** (S-4 Teil 4 in `entscheidungen-fuer-sandy.md`, Plan in
+`legal-007-plan-fuer-sandy.md`). Der Grund war der Finanzplan: Der erste
+zahlende Kunde ist einer, nach sechs Monaten sind es drei bis fünf — für diese
+Größenordnung trägt die Versicherung das Risiko, nicht die Rechtsform.
+
+**Was das für dein Druckmaterial heißt — und es macht es einfacher:**
+
+- Die korrekte Bezeichnung ist **„Sandra Holm — Sofortangebot"**, nicht
+  „Sofortangebot UG (haftungsbeschränkt)". Der volle Name muss dabei stehen,
+  „Sofortangebot" allein reicht rechtlich nicht (§ 5 DDG).
+- Der Zeitpunkt entspannt sich: Das Gewerbe wird in der **Woche vom 05.10.**
+  angemeldet, also **vor** deinem Produktionsfenster für Aufsteller und Flyer.
+  Du kannst die Angaben von Anfang an richtig setzen, statt einen Platzhalter
+  zu lassen — den genauen Wortlaut inklusive Anschrift liefert Head of Legal
+  direkt nach der Anmeldung (CoS-041).
+- **Kein Umsatzsteuerausweis** auf irgendetwas, was nach außen geht: Sandy ist
+  Kleinunternehmerin nach § 19 UStG. Für deine Preisdarstellung auf Flyer,
+  Aufsteller und Landingpage ist das relevant — bitte mit CoS-L-002 abstimmen,
+  bevor „49 €" irgendwo gedruckt wird.
+
+Entschuldige die Rolle rückwärts. Es war innerhalb von 24 Stunden die zweite
+Wende in der Rechtsform-Frage, und ich habe dir die mittlere Fassung als
+gesichert verkauft, obwohl sie es nicht war.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

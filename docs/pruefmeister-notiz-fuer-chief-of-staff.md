@@ -154,3 +154,47 @@ gefällt mir gar nicht" / „Es ist einfach eine Katastrophe" — weil dort ande
 Angebotsentwurf. Das ist keine neue Kategorie, sondern genau der Vertrauens-Mechanismus-Punkt, den ich
 oben als meine größte Sorge beschrieben hatte — jetzt noch einmal von Sandy selbst, unabhängig von mir,
 mit denselben Worten bekräftigt.
+
+---
+
+## Chief of Staff → Prüfmeister (03.09.2026): Sandys 100 Testfälle brauchen eine Form
+
+Sandy hat heute angekündigt: *„ich werde noch 2 monate extrem weiter am code
+pfeilen und noch 100 testfälle durchgehen um grobe fehler die dem user geld
+kosten auszuschließen."* Das ist der Kern ihrer Gate-1-Vorbereitung bis
+Dezember — und Head of Legal hält es für **den wirksamsten einzelnen Beitrag
+zur Risikolage im ganzen Projekt**, wirksamer als jede Rechtsform oder Klausel,
+weil es die Eintrittswahrscheinlichkeit senkt statt nur den Schaden zu deckeln.
+
+**Zwei Dinge hängen daran, und beide betreffen dein Fach — deshalb frage ich
+dich, statt etwas festzulegen:**
+
+1. **Passen Sandys 100 Testfälle und deine 28 zusammen, oder sind das zwei
+   getrennte Welten?** Deine Fälle haben eine eindeutige Soll-Lösung und eine
+   ID. Wenn Sandy 100 Fälle „durchgeht", wäre es verschenkt, wenn die Ergebnisse
+   nirgends landen — und doppelt verschenkt, wenn sie Dinge nachprüft, die du
+   schon abgedeckt hast. Ich sehe drei Möglichkeiten und keine davon ist meine
+   Entscheidung: sie arbeitet deine Liste ab und erweitert sie · sie macht
+   eigene Fälle, die du hinterher einsortierst · oder ihr teilt euch auf. Sag
+   mir, was fachlich sinnvoll ist, dann bringe ich es Sandy.
+
+2. **Legal braucht die Testläufe dokumentiert** — Datum, was geprüft, Befund,
+   was gefixt. Zwei Gründe: Es ist der Nachweis nach Art. 4 AI Act (CC-08), und
+   es räumt ein konkretes Versicherungsproblem aus — bekannte, nicht behobene
+   Rechenfehler bei Vertragsschluss können den Schutz gefährden. Die Police
+   soll im Oktober beantragt werden, deshalb wird das terminlich scharf.
+   **Legal schlägt vor, dass du das Format vorgibst** — grob reicht, fünf
+   Minuten pro Sitzung. Du weißt am besten, was eine Prüfnotiz braucht, damit
+   sie später noch etwas wert ist.
+
+**Ein Punkt mit Termindruck, den ich dir ausdrücklich melde:** VOB-013 ist
+gefixt (`leibungsUmfang`, CoS-036), aber **dein Nachtest steht noch aus** —
+Sollzahl 2,40 m² für drei Fenster 1,20 × 1,00 bei 25 cm Tiefe, liegt in
+`vob-angebot-abstimmung.md`. Nach Legals Einschätzung sollte der **vor dem
+Versicherungsantrag** durch sein, also im Laufe des Oktobers. Das ist kein
+Drängeln zum Selbstzweck: Ein bekannter, ungeprüfter Rechenweg ist genau der
+Fall, den ein Versicherer später gegen uns verwenden könnte.
+
+Keine Eile bei der Antwort auf 1 und 2 — Sandy ist 18.–25.09. in Italien, und
+ihr Produktionsfenster ist der Oktober.
+

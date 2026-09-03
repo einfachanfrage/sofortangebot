@@ -39,6 +39,7 @@ Lösungsvorschlag: CoS-013.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-041 | Impressum + Rechnungsangaben auf „Sandra Holm — Sofortangebot", § 19-Hinweis statt USt-Ausweis | ⏳ wartet auf Gewerbeanmeldung (KW 41) | Head of Legal, Rechtsformwechsel 2026-09-03 |
 | CoS-040 | Warteliste: Herkunftsfeld je Anmeldung + von Hand gepflegter Gründerplatz-Zähler auf der Landingpage | ❌ offen — vor dem Oktober-Druckmaterial | Kanalplan CoS-M-007, 2026-09-03 |
 | CoS-038 | Neues Preismodell im Produkt umsetzen (49 € statt 22 €, Gratis-Tarif raus, 14-Tage-Test rein) | ❌ offen, kann sofort starten | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-039 | `docs/ki-kosten-messung.md` wird an vier Stellen referenziert, existiert aber nicht (auch nicht in der Git-Historie) | ❌ offen | Fund von Head of Finance, bestätigt vom Chief of Staff, 2026-09-03 |
@@ -3443,6 +3444,35 @@ kann also ohne Rückfrage an Sandy gebaut werden. Datenschutz-Hinweis: Eine
 Herkunftsangabe ist personenbezogen, sobald sie an der E-Mail hängt; Legal
 prüft die Warteliste ohnehin gerade (CoS-L-003, Zusatzfrage Website) — bitte
 die gewählte Lösung dort kurz sichtbar machen.
+
+---
+
+## CoS-041 — Impressum und Rechnungsangaben auf die Einzelunternehmerin
+
+**Datum:** 2026-09-03 (Chief of Staff, aus Head of Legals Notiz)
+**Status:** ⏳ wartet auf Vorbedingung — **nicht vorher umsetzen**
+
+**Vorbedingung:** Sandy meldet in der Woche vom 05.10.2026 ein Einzelunternehmen
+(Kleingewerbe) an. **Erst danach** ist diese Änderung richtig; vorher wäre sie
+falsch, weil es das Gewerbe noch nicht gibt. Ich löse den Punkt aus, sobald die
+Anmeldung durch ist — bitte bis dahin liegen lassen.
+
+**Hintergrund:** Sandy hat am 03.09. entschieden, als Einzelunternehmen zu
+starten statt als UG (S-4 Teil 4 in `entscheidungen-fuer-sandy.md`). Als nicht
+im Handelsregister eingetragene Einzelunternehmerin darf sie keinen reinen
+Fantasienamen als Firma führen — „Sofortangebot" ist nur **neben** dem Namen
+zulässig (§ 5 DDG).
+
+**Was zu ändern ist:**
+1. **Impressum:** voller Vor- und Nachname plus Anschrift, in der Form
+   `Sandra Holm — Sofortangebot`, nicht nur „Sofortangebot".
+2. **Rechnungen an Kunden** (falls die Erzeugung schon gebaut ist): dieselbe
+   Bezeichnung, **kein Umsatzsteuerausweis**, stattdessen der Hinweissatz auf
+   die Kleinunternehmerregelung nach § 19 UStG.
+
+**Den genauen Wortlaut liefert Head of Legal**, sobald die Anmeldung durch ist
+und die Anschrift feststeht — bitte nicht selbst formulieren. Legal schätzt es
+auf ein 20-Minuten-Ticket.
 
 ---
 

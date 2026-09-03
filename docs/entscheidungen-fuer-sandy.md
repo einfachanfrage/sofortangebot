@@ -116,29 +116,52 @@ nächste Deploy von Head of Product Engineering raus (zusammen mit den
 übrigen anstehenden Änderungen). Details in
 `docs/chief-of-staff-legal-todos.md`, Abschnitt „Stufe 3".
 
-**🔴 Steuerberater — jetzt drei Fragen, und eine davon entscheidet über
-den Finanzplan.** Termin in den nächsten zwei Wochen (parallel zur Gründung,
-nicht mehr davor). Kalenderfenster: vor dem 18.09. oder 26.09.–01.11.
+**🔴 Oktober-Nachmittag: Gewerbe, Versicherung, Marken-Check.** Ersetzt
+die beiden Punkte, die hier bis heute Abend standen („UG gründen —
+Notartermin" und „Steuerberater — drei Fragen"). **Beide sind hinfällig**,
+seit du dich am 03.09. für Einzelunternehmen jetzt / UG bei rund 20 Betrieben
+entschieden hast (S-4 Teil 4, unten im Verlauf). Kein Notar, kein
+Stammkapital, kein Geschäftskonto. Voller Plan mit Formulierungen und Links:
+**`docs/legal-007-plan-fuer-sandy.md`**.
 
-1. **Wie wird die UG besteuert, und was kommt bei dir netto an?** Head of
-   Finance hat den Finanzplan (CoS-F-003) mit der Steuerlogik eines
-   Einzelunternehmens gerechnet (Gewinn oben auf dein Gehalt). Bei einer UG
-   ist es anders: Körperschaftsteuer + Soli + Gewerbesteuer auf
-   Gesellschaftsebene, danach entweder Geschäftsführergehalt (mit
-   Sozialabgaben) oder Ausschüttung. **Das verändert die Frage „ab wann kann
-   ich reduzieren" spürbar** — in welche Richtung, weiß nur der
-   Steuerberater. Bis dahin sind die B1/B2-Zahlen im Plan eine Näherung.
-2. **Kleinunternehmerregelung für die UG — freiwillig verzichten?** Neuer
-   Befund aus dem Finanzplan: Die 25.000-€-Grenze wird im ganzen
-   24-Monats-Horizont in keinem Szenario gerissen (außer optimistisch im
-   angeschnittenen Jahr 2028). Die Frage ist also nicht mehr „wann fällt sie
-   weg", sondern „lohnt sich der Verzicht wegen des Vorsteuerabzugs bei
-   ausschließlich B2B-Kunden". Beide Varianten sind im Plan rechenbar.
-3. **Darf die UG die selbst entwickelte Software einfach nutzen** oder muss
-   sie förmlich eingebracht werden? (Legals Erwartung: einfach nutzen.)
+**Woche vom 05.10. — nach Legals Zeitplan zusammen ein Nachmittag:**
 
-Dazu braucht Head of Finance sein **Honorar** als Planzahl (aktuell 3.000 €/Jahr
-als Annahme — der größte laufende Einzelposten der Rechtsformwahl).
+1. **Gewerbe anmelden**, online über das Berliner eMeldung-Portal, 15 €,
+   20 Minuten. Tätigkeitstext hat Legal wörtlich vorformuliert (wichtig, damit
+   keine Rückfrage zur Handwerksrolle kommt). Startdatum = Anmeldetag.
+2. **ELSTER-Fragebogen**, kommt automatisch, Frist ein Monat. Das eine Kreuz,
+   auf das es ankommt: **Kleinunternehmerregelung § 19 UStG — ja.**
+3. **Versicherung beantragen** — exali/Markel, 1 Mio. €, ausgestellt auf dich
+   als Einzelunternehmerin. **Das ist der wichtigste Punkt des ganzen Plans**,
+   nicht die Rechtsform: Fehler aus dieser Phase bleiben dauerhaft deine
+   persönliche Haftung, auch nach einer späteren UG. Die Police mit
+   unbegrenzter Rückwärtsdeckung ist das, was das auffängt. Legal hat fünf
+   Fragen für die Anfrage vorbereitet, darunter neu: ob die Police später auf
+   eine UG umgeschrieben werden kann, ohne Vertragsbeginn und Rückwärtsdeckung
+   zu verlieren. **Das ist die einzige Freigabe, die noch aussteht** — sag
+   Bescheid, dann läuft es.
+4. **Marken-Check, 10 Minuten:** einmal im DPMAregister und bei TMview
+   nachschauen, ob jemand *anderes* „Sofortangebot" eingetragen hat. **Selbst
+   anmelden: nein** — Legal rät ab (beschreibender Begriff, 290 € futsch bei
+   Zurückweisung).
+
+**Ein Steuerberater ist damit kein dringender Punkt mehr**, sondern optional:
+für eine EÜR als Kleinunternehmerin brauchst du keinen. Die drei Fragen, die
+hier standen, waren UG-Fragen und sind vorerst gegenstandslos. Was bleibt,
+ist eine einzige, und die hat Zeit: ob sich der freiwillige Verzicht auf die
+Kleinunternehmerregelung wegen des Vorsteuerabzugs lohnt — Legal schätzt die
+Wirkung auf grob 25 € im Monat.
+
+**🔵 Buchhaltung: selbst machen oder abgeben?** Head of Finance hat beim
+Umrechnen eine Bedingung sichtbar gemacht, die vorher in einer Zahl versteckt
+war. Legals „0–800 €/Jahr" gilt nur, wenn du die laufende Buchhaltung selbst
+führst (z. B. mit Lexware) und höchstens die EÜR prüfen lässt. Gibst du alles
+an einen Steuerberater ab, liegt die belegte Spanne bei **1.000–2.500 €/Jahr**
+— rund 60 € im Monat mehr, und der Break-even verschiebt sich um ein bis zwei
+Monate. **Keine Eile:** Als Kleinunternehmerin mit einer EÜR ist das gut
+selbst machbar, und du kannst jederzeit wechseln. Aber der Plan rechnet
+aktuell mit 800 € — sag Bescheid, wenn du eher abgeben willst, dann zieht
+Head of Finance die Zelle nach.
 
 **🔵 Zwei Eingaben, mit denen du den Finanzplan am stärksten schärfst**
 (direkt an Head of Finance, beide Zellen sind gelb und in einer Minute
@@ -153,28 +176,6 @@ geändert):
    48.000 € zurück, um den Grenzsteuersatz zu bestimmen. Wenn das deutlich
    daneben liegt, verschieben sich die B1-Schwellen. Die Zahl geht nur an ihn,
    nirgends sonst hin.
-
-**🔴 UG gründen — Notartermin ist dein nächster Schritt.** Entschieden
-(03.09., mit Head of Legal): **direkt UG, kein Umweg über ein
-Einzelunternehmen, Verzicht auf die 17 Altbelege seit Mai** (bleiben
-Privatausgaben — ohne andere Einkünfte, gegen die man einen Verlust verrechnen
-könnte, war das ohnehin fast nichts wert). Legals Plan dazu, Gesamtdauer
-4–6 Wochen, dein eigener Aufwand zwei Termine, eine Kontoeröffnung, zwei
-Online-Formulare:
-
-1. **Notartermin** — Musterprotokoll, 1.000 € Stammkapital. **Kalenderfenster:
-   vor dem 18.09. oder 26.09.–01.11.** (Italien dazwischen). Je früher, desto
-   mehr Luft bis Gate 1 im Dezember.
-2. Parallel: Geschäftskonto für die „UG i. G." beantragen.
-3. Nach dem Notar: Stammkapital einzahlen, Beleg an den Notar — erst dann
-   meldet er beim Handelsregister an.
-4. Nach der HR-Eintragung (Woche 3–5): Gewerbe der UG online anmelden (~26 €),
-   Fragebogen Finanzamt mit Steuerberater, IHK meldet sich von selbst.
-5. Dann Rechtstexte/Stripe/Versicherung auf die UG — Legal liefert die
-   Formulierungen, Engineering baut ein, Platform aktiviert Stripe erst als UG.
-
-Details und die Liste „was vor dem ersten Kunden fertig sein muss":
-`docs/chief-of-staff-legal-todos.md`, Abschnitt „CoS-L-003, geänderter Plan".
 
 **🔵 Drei Fragen von Head of Marketing** (Kanalplan CoS-M-007 liegt vor —
 sehr konkret, lohnt sich zu lesen, Abschnitt 0 bis 5):
