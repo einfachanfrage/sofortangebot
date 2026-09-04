@@ -92,7 +92,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
-| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 Offen: Karte meldet 10 Positionen, im Entwurf sind 9 — Übergangsschiene fehlt dort, Rückfall in die PD-004-Familie oder Kopierfehler, wird geprüft |
+| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. ✅ **Vollständig grün (Nachtest 03.09.):** alle 10 Positionen im Entwurf, Übergangsschiene inklusive. Kein offener Punkt mehr |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus |
@@ -3882,28 +3882,24 @@ Damit ist der Befund aus PM-032 bestätigt behoben, und die Ursache für PM-033
 und PM-035 gleich mit — die Funktion läuft jetzt je Raum statt einmal je
 Angebot.
 
-**Neuer offener Punkt: Karte zeigt 10 Positionen, im Entwurf sind 9**
+**Übergangsschiene: geklärt, kein Befund.**
 
-Die Aufnahme-Karte listet unter „Allgemein" die **Übergangsschiene (1 Stück)**
-und meldet „10 Positionen erkannt — bereit für den Entwurf". Im Entwurf, den
-Sandy geschickt hat, stehen Flur (3), Wohnzimmer (3) und Küche (3) — die
-Schiene taucht nicht auf.
+Die Karte meldet 10 Positionen, der Entwurf enthält alle 10 — die Schiene steht
+unter „Allgemein" mit 1 Stück × 15,00 €, wie beim ersten Durchlauf. Mein
+Zwischenverdacht auf einen Rückfall in die PD-004-Familie („X Positionen
+erkannt" ≠ geliefert) war ein Lesefehler auf meiner Seite: Im ersten
+weitergegebenen Auszug fehlte der letzte Block. Festgehalten, weil die
+Vermutung im Protokoll stand und nicht unkommentiert stehenbleiben soll.
 
-- **Beim ersten Durchlauf am 02.09. war sie im Entwurf** (Allgemein, 1 Stück ×
-  15,00 €). Wenn sie jetzt fehlt, ist das ein **Rückfall** und gehört zur
-  PD-004-Familie („X Positionen erkannt" ≠ geliefert), die bei PM-010 und
-  PM-013 schon einmal Thema war.
-- Mögliche Verbindung zum Umbau: Wenn die Vollständigkeitsprüfung jetzt **je
-  Raum** läuft, hat eine Position ohne Raumbezug — und genau das ist die
-  Schiene unter „Allgemein" — vielleicht keinen Platz mehr. Das wäre die
-  typische Nebenwirkung einer sonst richtigen Umstellung.
-- **Noch nicht bestätigt:** Es kann auch sein, dass beim Kopieren der letzte
-  Block gefehlt hat. Sandy prüft das nach. Bis dahin kein Befund, sondern eine
-  offene Frage.
+Damit ist auch die Frage von letzter Woche beantwortet, ob die eine Schiene in
+PM-032 nur ein Zufallstreffer war: Sie ist es nicht. Der Engineer hat die
+Zählung inzwischen belegt, und dieser Durchlauf bestätigt sie an einem Angebot
+mit drei Räumen und genau einem Belagwechsel.
 
-**Status PM-032:** 🟡 Hauptbefund (Trittschalldämmung) bestätigt behoben, alle
-Mengen exakt Soll. Offen ist allein, ob die Übergangsschiene den Weg von der
-Karte in den Entwurf schafft.
+**Status PM-032:** ✅ **vollständig grün.** Trittschalldämmung in allen drei
+Räumen (35,60 m²), Belag 37,38 m², Sockelleisten 41,30 lfdm, genau eine
+Übergangsschiene, kein Bad, keine Fremdpositionen. Jede Zahl exakt Soll,
+Gesamtsumme 1.000,43 € netto. Erster grüner Fall des Boden-Batches.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
