@@ -90,10 +90,12 @@ const KORPUS: Fall[] = [
       // 2,5-m²-Schwelle → werden NICHT mehr abgezogen. Netto = Brutto = 46,50 m²
       // (vorher, ohne VOB-Regel: 42,21 m²).
       { enthaelt: 'wandflächen streichen', menge: 46.50 },
-      // Sockelleisten abkleben: Umfang 18,60 − 1 Türbreite (0,90) = 17,70 lfm
+      // Sockelleisten abkleben: Umfang 18,60 lfm — VOB-012 (CoS-042,
+      // 04.09.2026): Unterbrechungen bis 1 m Einzellänge werden nach
+      // DIN 18363/18365 (5.3.2) NICHT abgezogen, eine Standardtür also nie.
       // — unverändert durch VOB (die Tür unterbricht die Leiste physisch,
       // unabhängig von der Ausmess-Konvention für Wandfläche).
-      { enthaelt: 'sockelleisten abkleben', menge: 17.70 },
+      { enthaelt: 'sockelleisten abkleben', menge: 18.60 },
     ],
     // Größter Fehler laut Sandy: Decke taucht trotz ausdrücklichem
     // Ausschluss doch auf. Zweitgrößter: Sockelleisten landet als
@@ -192,9 +194,9 @@ const KORPUS: Fall[] = [
     exakteMengen: [
       // Vinyl diagonal: 4×3,5=14,00 m² + 15% Verschnitt = 16,10 m²
       { enthaelt: 'vinyl verlegen', menge: 16.10 },
-      // Sockelleisten: Umfang 15,00 − 1 Türbreite (0,90) = 14,10 lfm
+      // Sockelleisten: Umfang 15,00 lfm ungekürzt (VOB-012, Tür 0,90 m < 1 m)
       // (vorher, ohne Fix: 15,00 lfm — kompletter Türabzug hat gefehlt)
-      { enthaelt: 'sockelleisten montieren', menge: 14.10 },
+      { enthaelt: 'sockelleisten montieren', menge: 15.00 },
     ],
     verboten: ['estrich'],
   },
@@ -444,9 +446,9 @@ const KORPUS: Fall[] = [
       // und Tür (1,89 m²) sind beide Standardgröße ≤2,5 m² → VOB-Übermessung
       // greift, kein Abzug (VOB/C DIN 18363)
       { enthaelt: 'wandflächen streichen', menge: 38.25 },
-      // Sockelleisten streichen: Umfang 15,00 − 1 Türbreite (0,90) = 14,10 lfdm
+      // Sockelleisten streichen: Umfang 15,00 lfdm ungekürzt (VOB-012)
       // — übernommen von "Sockelleisten abkleben", keine eigene Meterangabe im Transkript.
-      { enthaelt: 'sockelleisten streichen', menge: 14.10 },
+      { enthaelt: 'sockelleisten streichen', menge: 15.00 },
     ],
     // Kernpunkt: kein Boden-Phantom trotz dreifacher Sockelleisten-Erwähnung,
     // UND "Sockelleisten montieren" darf nicht als Maler-Position auftauchen.
@@ -569,7 +571,7 @@ const KORPUS: Fall[] = [
       // kein Abzug. Nur die breite Terrassentür (2×2,1=4,20 m²) liegt über der
       // 2,5 m²-Schwelle und wird weiterhin abgezogen: 57,20 − 4,20 = 53,00 m²
       { enthaelt: 'wandflächen streichen 1x', menge: 53.00 },
-      { enthaelt: 'sockelleisten abkleben', menge: 19.10 },
+      { enthaelt: 'sockelleisten abkleben', menge: 20.00 },
     ],
     // Kernpunkt: keine Balkon-/Terrassen-Position — im Transkript kommt nur
     // eine Türbezeichnung vor, kein eigener Ort.

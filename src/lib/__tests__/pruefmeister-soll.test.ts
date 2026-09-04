@@ -21,6 +21,13 @@
 //   • Verschnitt (Sandy, 2026-08-30): 5 % für Laminat/Vinyl/Parkett/Diele
 //     gerade, 15 % für Fischgrät/Diagonal.
 //   • Erschwerniszuschläge laufen in Prozent (Sandy, 2026-08-31).
+//   • VOB-012 (CoS-042, 2026-09-04, aus dem gekauften Normtext): DIN 18363
+//     und DIN 18365, jeweils 5.3.2 — Unterbrechungen bis 1 m Einzellänge
+//     werden bei der Sockelleisten-Länge NICHT abgezogen. Eine Standardtür
+//     (0,90 m) fällt darunter. Alle Sockelleisten-Sollwerte unten sind
+//     deshalb um 0,90 lfdm je Tür GRÖSSER als in der ursprünglichen
+//     Soll-Lösung des Prüfmeisters — zugunsten des Betriebs, der die Leiste
+//     ja durchgehend verlegt.
 import { describe, expect, it } from 'vitest'
 import { berechneMengen } from '../mengen/engine'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../vollstaendigkeit/index'
@@ -102,7 +109,7 @@ const FAELLE: Fall[] = [
     raeume: [basisRaum('Wohnzimmer', { laenge: 5.2, breite: 4.1, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER(2)], arbeiten: ['waende_streichen'] })],
     soll: [
       { muster: /wandflächen streichen 2x/i, menge: 46.5 },
-      { muster: /sockelleisten abkleben/i, menge: 17.7 },
+      { muster: /sockelleisten abkleben/i, menge: 18.6 },
     ],
     verboten: [/deckenfläche streichen/i],
   },
@@ -225,7 +232,7 @@ const FAELLE: Fall[] = [
       { muster: /wandflächen streichen 2x/i, menge: 41.5 },
       { muster: /deckenfläche streichen 1x/i, menge: 17.1 },
       { muster: /boden schützen/i, menge: 17.1 },
-      { muster: /sockelleisten abkleben/i, menge: 15.7 },
+      { muster: /sockelleisten abkleben/i, menge: 16.6 },
     ],
     verboten: [/erschwerniszuschlag/i, /spachtel/i, /grundierung|voranstrich/i],
   },
@@ -236,7 +243,7 @@ const FAELLE: Fall[] = [
     soll: [
       { muster: /laminat verlegen/i, menge: 11.34 },
       { muster: /trittschall/i, menge: 10.8 },
-      { muster: /sockelleisten montieren/i, menge: 14.7 },
+      { muster: /sockelleisten montieren/i, menge: 15.6 },
     ],
     verboten: [/wandflächen streichen/i, /deckenfläche streichen/i],
   },
@@ -248,7 +255,7 @@ const FAELLE: Fall[] = [
       { muster: /wandflächen streichen 2x/i, menge: 57.6 },
       { muster: /erschwerniszuschlag raumhöhe > 3m — büro/i },
       { muster: /boden schützen/i, menge: 20 },
-      { muster: /sockelleisten abkleben/i, menge: 17.1 },
+      { muster: /sockelleisten abkleben/i, menge: 18 },
     ],
     verboten: [/deckenfläche streichen/i],
   },
@@ -258,7 +265,7 @@ const FAELLE: Fall[] = [
     raeume: [basisRaum('Gästezimmer', { laenge: 4, breite: 3.5, tueren: [TUER], belag: 'vinyl', verlegerichtung: 'fischgraet', sockelleisten: true, arbeiten: ['vinyl verlegen'] })],
     soll: [
       { muster: /vinyl.*verlegen/i, menge: 16.1 },
-      { muster: /sockelleisten montieren/i, menge: 14.1 },
+      { muster: /sockelleisten montieren/i, menge: 15 },
     ],
     verboten: [/streichen/i],
   },
@@ -270,7 +277,7 @@ const FAELLE: Fall[] = [
       { muster: /wandflächen streichen 2x/i, menge: 39 },
       { muster: /deckenfläche streichen 1x/i, menge: 15.12 },
       { muster: /boden schützen/i, menge: 15.12 },
-      { muster: /sockelleisten abkleben/i, menge: 14.7 },
+      { muster: /sockelleisten abkleben/i, menge: 15.6 },
     ],
     verboten: [/deckenfläche streichen 2x/i],
   },
@@ -293,7 +300,7 @@ const FAELLE: Fall[] = [
       { muster: /grundierung|voranstrich|grundieren/i, menge: 37.5 },
       { muster: /erschwerniszuschlag altbau/i },
       { muster: /boden schützen/i, menge: 14 },
-      { muster: /sockelleisten abkleben/i, menge: 14.1 },
+      { muster: /sockelleisten abkleben/i, menge: 15 },
     ],
     verboten: [/spachtel/i],
   },

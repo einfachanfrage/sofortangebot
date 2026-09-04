@@ -10,13 +10,26 @@
 // gehalten, siehe Fix-Update). NUR Öffnungen ÜBER 2,5 m² (z.B. eine breite
 // Terrassentür) werden weiterhin einzeln abgezogen.
 //
-// Bewusst NICHT Teil dieser Funktion: die VOB-Regel besagt zusätzlich, dass
-// Leibungen übermessener (nicht abgezogener) Öffnungen nicht separat
-// vergütet werden. `daten.leibungen[]` hat aktuell keine Verknüpfung zu
-// einzelnen Fenster-/Tür-Objekten (siehe maler.ts) — diese Verfeinerung ist
-// bewusst zurückgestellt, nicht Teil des aktuellen Fixes.
-
+// VOB-003, erledigt (CoS-042, 04.09.2026): Hier stand bis heute der Hinweis,
+// Leibungen übermessener Öffnungen dürften womöglich nicht separat vergütet
+// werden. Head of Legal hat das am gekauften Normtext geprüft — DIN
+// 18363:2019-09, Abschnitt 5.2.3 sagt das Gegenteil: Leibungen werden
+// ZUSÄTZLICH zur übermessenen Öffnung gerechnet, ohne Ausnahme für kleine
+// Öffnungen. Der Punkt ist damit nicht offen, sondern erledigt, und der
+// Kommentar ersatzlos gestrichen, damit ihn niemand in ein paar Monaten neu
+// aufgreift.
+//
+// VOB-008 (CoS-042): Diese Schwelle gilt AUSSCHLIESSLICH für Anstricharbeiten
+// (DIN 18363). Für Bodenbelagarbeiten liegt sie nach DIN 18365:2019-09,
+// Abschnitt 5.3.1 bei 0,1 m² — Faktor 25 kleiner. Nachgesehen: Die
+// Boden-Engine (gewerke/boden.ts) zieht überhaupt keine Öffnungen von der
+// Bodenfläche ab und ruft diese Datei nirgends auf, benutzt die Malerschwelle
+// also NICHT. Damit das so bleibt, steht die Bodenschwelle hier benannt
+// daneben — wer sie eines Tages braucht, findet sie, statt die falsche zu
+// erben. Ein Test hält fest, dass die Boden-Engine keine Öffnung abzieht.
 export const VOB_UEBERMESSUNG_SCHWELLE_M2 = 2.5
+/** DIN 18365:2019-09, 5.3.1 — Bodenbelagarbeiten. Noch ohne Aufrufer. */
+export const VOB_UEBERMESSUNG_SCHWELLE_BODEN_M2 = 0.1
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100

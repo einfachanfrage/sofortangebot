@@ -99,10 +99,15 @@ describe('PM-035 — lieber fragen als raten', () => {
 
 describe('PM-035, Befund 3 — drei Türen sind drei Türen', () => {
   it('die Stückzahl je Tür-Eintrag zählt mit', () => {
-    expect(berechneSockelleistenLaenge(18.4, [{ anzahl: 3, breite: 0.9 }])).toBe(15.7)
-    // Ohne Stückzahl bleibt es beim bisherigen Verhalten.
-    expect(berechneSockelleistenLaenge(18.4, [{ breite: 0.9 }])).toBe(17.5)
-    expect(berechneSockelleistenLaenge(18.4, [{ breite: 0.9 }, { breite: 0.9 }, { breite: 0.9 }])).toBe(15.7)
+    // VOB-012 (CoS-042, 04.09.2026): Unterbrechungen bis 1 m werden nach
+    // DIN 18363/18365 (jeweils 5.3.2) NICHT abgezogen — eine Standardtür
+    // (0,90 m) also nie. Die Stückzahl zählt trotzdem, sie entscheidet nur
+    // bei Öffnungen ÜBER 1 m.
+    expect(berechneSockelleistenLaenge(18.4, [{ anzahl: 3, breite: 0.9 }])).toBe(18.4)
+    expect(berechneSockelleistenLaenge(18.4, [{ anzahl: 3, breite: 1.2 }])).toBe(14.8)
+    // Ohne Stückzahl dasselbe Bild: 0,90 m bleibt unter der Schwelle.
+    expect(berechneSockelleistenLaenge(18.4, [{ breite: 0.9 }])).toBe(18.4)
+    expect(berechneSockelleistenLaenge(18.4, [{ breite: 1.2 }, { breite: 1.2 }])).toBe(16)
   })
 })
 
@@ -122,7 +127,7 @@ describe('PM-035 — der ganze Fall durch die Pipeline', () => {
     expect(menge(p, 'verlegen', 'Wohnzimmer')).toBe(22.39)
     expect(menge(p, 'verlegen', 'Arbeitszimmer')).toBe(14.7)
     expect(menge(p, 'verlegen', 'Flur')).toBe(10.08)
-    expect(menge(p, 'Sockelleisten montieren', 'Flur')).toBe(15.7)
+    expect(menge(p, 'Sockelleisten montieren', 'Flur')).toBe(18.4) // VOB-012: 3 Türen à 0,90 m werden nicht abgezogen
   })
 
   it('Trittschalldämmung in allen drei Räumen, Summe 44,92 m²', () => {

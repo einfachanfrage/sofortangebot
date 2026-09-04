@@ -23,15 +23,39 @@ export interface TuerFuerSockelleisten {
   anzahl?: number
 }
 
+// ── VOB-012 (CoS-042, 04.09.2026): Normtext ausgewertet ──────────────────
+//
+// DIN 18363 und DIN 18365, jeweils Abschnitt 5.3.2: Unterbrechungen bis 1 m
+// Einzellänge werden bei der Sockelleisten-Länge NICHT abgezogen. Eine
+// Standard-Zimmertür ist 0,90 m breit — sie fällt darunter.
+//
+// Das war vorher als Preis-Entscheidung für Sandy offen; mit dem gekauften
+// Normtext ist es keine Entscheidung mehr, sondern eine Tatsache. Bisher zog
+// das Tool jede Türbreite voll ab, also 1,80 lfdm bei zwei Türen im Raum, die
+// der Betrieb verlegt und nicht bezahlt bekommt.
+//
+// Dieselbe Schwelle für Maler (Abkleben) und Boden (Montage): Es ist dieselbe
+// Leiste am selben Raum, nur ein anderes Gewerk fasst sie an.
+export const VOB_SOCKEL_ABZUG_AB_M = 1.0
+
 /**
- * Sockelleisten-Länge = Umfang − Summe der Türbreiten (jede Tür unterbricht
- * die Leiste). Türbreite ohne Angabe: Standard 0,90 m (wie überall sonst in
- * der Pipeline).
+ * Sockelleisten-Länge = Umfang − Summe der Unterbrechungen ÜBER 1 m
+ * Einzellänge (VOB-012, siehe oben). Breite ohne Angabe: Standard 0,90 m
+ * (wie überall sonst in der Pipeline) — die wird damit nie abgezogen.
  */
 export function berechneSockelleistenLaenge(
   umfang: number,
   tueren: TuerFuerSockelleisten[],
 ): number {
-  const tuerBreiten = tueren.reduce((sum, t) => sum + (t.anzahl ?? 1) * (t.breite ?? 0.9), 0)
-  return round2(umfang - tuerBreiten)
+  return round2(umfang - sockelAbzug(tueren))
+}
+
+/** Der tatsächlich abgezogene Anteil — getrennt, damit der Rechenweg stimmt. */
+export function sockelAbzug(tueren: TuerFuerSockelleisten[]): number {
+  const summe = (tueren ?? []).reduce((sum, t) => {
+    const breite = t.breite ?? 0.9
+    if (breite <= VOB_SOCKEL_ABZUG_AB_M) return sum
+    return sum + (t.anzahl ?? 1) * breite
+  }, 0)
+  return round2(summe)
 }

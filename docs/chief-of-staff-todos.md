@@ -3476,5 +3476,117 @@ auf ein 20-Minuten-Ticket.
 
 ---
 
+## CoS-042 — VOB-Normtext ausgewertet: vier Code-Punkte, zwei davon vor Gate 1
+
+**Datum:** 2026-09-04 (Chief of Staff, aus Head of Legals Auswertung des
+gekauften VOB-Normtexts)
+
+**Status:** ✅ **alle vier Punkte umgesetzt (Head of Product Engineering,
+04.09.2026).** Umsetzungsnotiz am Ende dieses Tickets.
+
+**Hintergrund:** Sandy hat die VOB Gesamtausgabe 2019 gekauft (54 €, VOB-011).
+Head of Legal hat damit sechs offene Normfragen am Originaltext geprüft.
+Volle Herleitung: `docs/vob-angebot-abstimmung.md`, Abschnitt „VOB-011
+erledigt — der Normtext liegt vor", Abschnitt „Was jetzt an wen geht".
+
+**Die vier Punkte:**
+
+1. **VOB-003 — Backlog-Kommentar ersatzlos streichen.** Der Hinweis im
+   Kommentarkopf von `vob-uebermessung.ts` (und der gleichlautende Punkt 3 in
+   `pruefmeister-testfaelle.md`, dort schon durchgestrichen) ist nach DIN
+   18363:2019-09 Abschnitt 5.2.3 **falsch, nicht nur strittig**: Leibungen
+   werden zusätzlich zur übermessenen Öffnung gerechnet, ohne Ausnahme für
+   kleine Öffnungen. Bitte streichen statt umformulieren, mit Verweis auf die
+   Norm, damit es niemand in ein paar Monaten neu aufgreift. **5 Minuten,
+   keine Dringlichkeit, aber niedrigster Aufwand im ganzen Ticket.**
+
+2. **VOB-008 — bitte prüfen, ob `boden.ts` die Malerschwelle (2,5 m²)
+   mitbenutzt.** Die korrekte Schwelle für Bodenbelagarbeiten ist **0,1 m²**
+   (DIN 18365:2019-09, Abschnitt 5.3.1) — Faktor 25 kleiner. Falls
+   `vob-uebermessung.ts` gewerkeübergreifend eine Schwelle benutzt, rechnet
+   jedes Bodenangebot systematisch zu große Flächen — ein Fehler **zulasten
+   des Kunden**, der beim Nachmessen aktiv auffällt. Im Risikoregister als
+   LR-14 mit Score 12 🔴 eingetragen (`legal-002-risikobewertung-vob.md`).
+   **Vor Gate 1, weil zulasten des Kunden.**
+
+3. **VOB-012 — Türbreiten-Abzug an beiden Stellen entfernen.** Bestätigt
+   durch DIN 18363/18365, jeweils Abschnitt 5.3.2: Unterbrechungen ≤ 1 m
+   werden bei der Sockelleisten-Längenberechnung **nicht** abgezogen.
+   `maler.ts` zieht die volle Türbreite an **zwei** Stellen ab
+   (`berechneSockelleistenLaenge(...)` und die Inline-Variante
+   `effUmfangWZ − tuerBreiten`) — beide falsch bei einer Standardtür (0,90 m),
+   zulasten des Betriebs (1,80 lfdm bei zwei Türen im Raum, die niemand
+   bezahlt bekommt). Das war vorher offen als Preis-Entscheidung für Sandy
+   gelistet — ist jetzt durch den Normtext beantwortet, keine Entscheidung
+   mehr nötig, nur noch der Fix. **Vor Gate 1.**
+
+4. **Leibungsposition nur erzeugen, wenn tatsächlich beschichtet wird.**
+   DIN 18363:2019-09, Abschnitt 5.2.3 spricht ausdrücklich von
+   „**beschichteten** Rückflächen … sowie Leibungen". Heute erzeugt jede
+   erfasste Leibung eine Position, auch unbeschichtete. Kleiner Fehler
+   zulasten des Kunden, im Risikoregister bewusst niedrig eingestuft
+   (Severity 2 × Likelihood 2, kein eigener Registereintrag) — trotzdem vor
+   Gate 1 mitnehmen, da es am selben Codepfad hängt wie Punkt 1.
+
+**Nicht Teil dieses Tickets, weil keine Engineering-Entscheidung:**
+- Abrechnungseinheit der Leibungsposition (Meter statt Quadratmeter) —
+  Frage 8 an Sandy + Prüfmeister, siehe `entscheidungen-fuer-sandy.md`.
+- Ob Verschnitt aus der abgerechneten Menge in den Einheitspreis wandert
+  (VOB-001/002/014) — Sandys Entscheidung, ebenfalls in
+  `entscheidungen-fuer-sandy.md`.
+
+---
+
+### Umsetzung (Head of Product Engineering, 04.09.2026)
+
+**Punkt 1 — VOB-003, Backlog-Kommentar gestrichen.** Der Hinweis stand im
+Kommentarkopf von `vob-uebermessung.ts`. Ersatzlos raus, an seiner Stelle steht
+jetzt in zwei Sätzen, was der Normtext sagt (DIN 18363:2019-09, 5.2.3:
+Leibungen werden zusätzlich zur übermessenen Öffnung gerechnet) und dass der
+Punkt damit erledigt und nicht offen ist. Genau wie im Ticket gewünscht: damit
+ihn niemand in ein paar Monaten neu aufgreift.
+
+**Punkt 2 — VOB-008, geprüft: die Boden-Engine erbt die Malerschwelle NICHT.**
+`berechneOeffnungsabzugVob()` und `VOB_UEBERMESSUNG_SCHWELLE_M2` haben genau
+einen Aufrufer, `gewerke/maler.ts`. `gewerke/boden.ts` zieht überhaupt keine
+Öffnungen von der Bodenfläche ab und ruft die Datei nirgends auf — es gibt also
+kein Angebot, das mit 2,5 m² statt 0,1 m² gerechnet hätte. **LR-14 kann damit
+geschlossen werden, ohne dass eine Zahl korrigiert werden muss.**
+Damit das so bleibt, steht die Bodenschwelle (0,1 m², DIN 18365:2019-09,
+5.3.1) jetzt benannt neben der Malerschwelle — wer sie eines Tages braucht,
+findet sie, statt die falsche zu erben. Ein Test hält fest, dass die
+Bodenfläche durch Fenster und Türen nicht kleiner wird.
+
+**Punkt 3 — VOB-012, Türbreiten-Abzug entfernt.** Die Regel (Unterbrechungen
+bis 1 m Einzellänge werden nicht abgezogen) sitzt jetzt in
+`berechneSockelleistenLaenge()`, also an der einen Stelle, die laut ihrem
+eigenen Kommentar für Maler UND Boden zuständig ist. Die im Ticket genannte
+zweite, inline gerechnete Stelle in `maler.ts` (Wandzonen-Zweig) benutzt
+dieselbe Funktion mit; es gibt keine dritte.
+
+Wichtig für die Erwartungshaltung: **Das ändert die Soll-Zahlen von zehn
+dokumentierten Prüfmeister-Testfällen** — überall dort um +0,90 lfdm je
+Standardtür, zugunsten des Betriebs. Der Prüfmeister hatte das für PM-035
+bereits vorweggenommen („Wird VOB-012 entschieden, sind es 18,40 lfdm"). Alle
+betroffenen Soll-Werte in `pruefmeister-soll.test.ts` und den Golden Tests sind
+mit Normverweis nachgezogen. Eine breite Terrassentür (2,00 m) wird weiterhin
+abgezogen — der PM-021-Testfall belegt beide Richtungen in einem Fall.
+
+**Punkt 4 — Leibungsposition nur bei Beschichtung.** Übersprungen wird eine
+Leibung nur, wenn im Satz, in dem sie vorkommt, ausdrücklich etwas anderes
+steht (bleibt roh, wird gedämmt, verputzt, verkleidet, gefliest, „nicht
+gestrichen") und nirgends ein Beschichtungswort. Im Zweifel bleibt die Position
+— wir sind in der Maler-Engine, und eine Leibung, die im Diktat vorkommt,
+gehört normalerweise zum Anstrich. Und sie verschwindet nicht stumm: Der
+übersprungene Fall erzeugt eine Warnung im Entwurf („Leibungen wurden genannt,
+aber nicht zum Streichen …").
+
+**Prüfung:** 81 Testdateien, 1.306 Tests grün, `tsc` sauber, eslint 0 Fehler.
+Neue Testdatei `src/lib/mengen/__tests__/cos042-vob-normtext.test.ts`
+(14 Fälle) — darunter die Grenze bei genau 1,00 m, die Gegenrichtung
+(Terrassentür wird abgezogen) und alle vier Leibungs-Varianten.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

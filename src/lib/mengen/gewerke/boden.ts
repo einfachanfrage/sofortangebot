@@ -212,9 +212,9 @@ export function bodenEngine(daten: any): MengenErgebnis {
         menge: sockelM,
         einheit: 'lfdm',
         konfidenz: 'high',
-        berechnungsweg: effTueren.length > 0
-          ? `Umfang: ${umfang} lfm − Türbreiten: ${round2(umfang - sockelM)} m`
-          : `Umfang: ${umfang} lfm`,
+        berechnungsweg: umfang > sockelM
+          ? `Umfang: ${umfang} lfm − Öffnungen über 1 m: ${round2(umfang - sockelM)} m`
+          : `Umfang: ${umfang} lfm (Öffnungen bis 1 m werden nach VOB nicht abgezogen)`,
         annahmen: [],
       })
     }

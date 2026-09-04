@@ -2544,7 +2544,7 @@ Zimmern bleiben die alten."
 | Flächen (Zwischenwerte) | Wohnzimmer 21,32 · Arbeitszimmer 14,00 · Flur 7,20 + 2,40 = 9,60 → **44,92 m²** |
 | Landhausdiele verlegen, 5 % | Wohnzimmer 22,39 · Arbeitszimmer 14,70 · Flur 10,08 → **Summe 47,17 m²** `[VOB-001]` |
 | Trittschalldämmung | **44,92 m²** |
-| Sockelleisten montieren — nur Flur | Umfang L-Form **18,40 lfm** − 3 Türen (2,70) = **15,70 lfdm** `[VOB-012]` |
+| Sockelleisten montieren — nur Flur | Umfang L-Form **18,40 lfm** (seit VOB-012 ohne Türabzug — Öffnungen bis 1 m werden nicht abgezogen; vor dem 04.09. lautete das Soll 15,70 lfdm) |
 
 Zum Umfang der L-Form, damit es nachvollziehbar ist: Bei einem L entspricht der
 Umfang dem des umschließenden Rechtecks — hier 6,00 × 3,20, also
@@ -3471,6 +3471,35 @@ nachvollziehbar.
 
 **Nicht angefasst:** Befund 3 (Türanzahl) — der hängt an VOB-012 und wird dort
 gemeinsam erledigt, wie vom Prüfmeister vorgeschlagen.
+
+---
+
+## VOB-012 umgesetzt: die Sockelleisten-Sollwerte haben sich geändert (04.09.2026)
+
+**Bitte vor dem nächsten Nachtest lesen.** Mit CoS-042 ist der gekaufte
+Normtext ausgewertet, und DIN 18363/18365 (jeweils Abschnitt 5.3.2) sagen:
+**Unterbrechungen bis 1 m Einzellänge werden bei der Sockelleisten-Länge nicht
+abgezogen.** Eine Standard-Zimmertür ist 0,90 m breit und fällt darunter.
+
+Das Tool zog bisher jede Türbreite voll ab. Ab jetzt nicht mehr — die Folge ist,
+dass **jeder Sockelleisten-Sollwert in dieser Datei um 0,90 lfdm je Standardtür
+größer ist als bisher dokumentiert**, zugunsten des Betriebs, der die Leiste ja
+durchgehend verlegt. Betroffen sind PM-001, PM-002b, PM-012, PM-021, PM-022,
+PM-023, PM-024, PM-025, PM-026, PM-028, PM-032 und PM-035.
+
+Zwei Dinge zur Einordnung:
+
+- **Das ist keine Auslegung mehr, sondern Normtext.** Der Punkt war bis zum
+  03.09. als Preis-Entscheidung für Sandy gelistet; mit der gekauften VOB ist
+  er beantwortet. Der Prüfmeister hatte es für PM-035 bereits vorweggenommen:
+  „Wird VOB-012 entschieden, sind es 18,40 lfdm."
+- **Breite Öffnungen werden weiterhin abgezogen.** PM-021 belegt beide
+  Richtungen in einem Fall: Die Normaltür (0,90 m) bleibt jetzt drin, die
+  Breitterrassentür (2,00 m) wird abgezogen — 22,00 → 20,00 lfdm.
+
+Die Soll-Werte im Code (`pruefmeister-soll.test.ts`, Golden Tests) sind mit
+Normverweis nachgezogen; die einzelnen Fall-Abschnitte weiter unten tragen
+noch die alten Zahlen und werden beim jeweiligen Nachtest aktualisiert.
 
 ---
 

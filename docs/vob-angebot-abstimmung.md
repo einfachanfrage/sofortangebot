@@ -142,16 +142,16 @@ Details in `docs/legal-001-bestandsaufnahme.md`, Abschnitt B1. [Einschätzung]
 |---|---|---|---|
 | VOB-001 | Verschnitt wird auf die **abgerechnete Menge** aufgeschlagen statt in den Einheitspreis | Sandy | 🔵 Praxis bestätigt den Umbau (Prüfmeister 2026-09-02), Entscheidung Sandy |
 | VOB-002 | **Drei verschiedene Verschnittsätze** im Code — 5 %, 10 %, 12 % | Head of Product Engineering | ❌ |
-| VOB-003 | Geplante „VOB-Feinheit" zu Leibungen zeigt in die **falsche Richtung** — Backlog-Punkt ersatzlos streichen | Head of Product Engineering | ✅ **am Normtext entschieden (04.09.):** DIN 18363 5.2.3 wörtlich bestätigt. Offen bleibt nur die Einheit (m vs. m²) — Entscheidung Sandy |
+| VOB-003 | Geplante „VOB-Feinheit" zu Leibungen zeigt in die **falsche Richtung** — Backlog-Punkt ersatzlos streichen | Head of Product Engineering | ✅ **erledigt (04.09.):** am Normtext entschieden (DIN 18363 5.2.3) UND im Code umgesetzt — Kommentar gestrichen, CoS-042 Punkt 1. Offen bleibt nur die Einheit (m vs. m²) — Entscheidung Sandy |
 | VOB-004 | Übermessungshinweis erreicht das Kunden-PDF nicht (= G5 aus CoS-L-001) | Head of Product Engineering + Product Designer | ❌ |
 | VOB-005 | **Nebenleistungen** werden als eigene Positionen berechnet (Boden/Möbel abdecken) | — | ✅ geklärt: branchenüblich, Position bleibt, Lösung läuft über VOB-007 |
 | VOB-006 | Höhenzuschlag: **fünf** verschiedene Schwellen im Produkt — Normbegründung war falsch, Konsistenzfrage bleibt | Head of Product Engineering + Sandy | ❌ |
 | VOB-007 | Die Zeile „Normgrundlagen" behauptet VOB-Konformität, die an mehreren Stellen nicht gegeben ist | Product Designer + Legal | ❌ |
-| VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen | Head of Product Engineering | ✅ **geklärt (04.09.): 0,1 m²** — weder 0,5 noch 2,5. Bitte `boden.ts` prüfen, Fehler zulasten des Kunden |
+| VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen | Head of Product Engineering | ✅ **erledigt (04.09.): 0,1 m²** — weder 0,5 noch 2,5. `boden.ts` geprüft: zieht überhaupt keine Öffnungen ab und ruft `vob-uebermessung.ts` nie auf, hat die Malerschwelle also nie geerbt. Kein Angebot betroffen, LR-14 kann geschlossen werden. Bodenschwelle steht jetzt benannt im Code, Test hält es fest (CoS-042 Punkt 2) |
 | VOB-009 | Türen/Fenster nach Stück statt nach Fläche | — | ✅ geklärt: Stückpreise sind branchenüblich, bleibt so |
 | VOB-010 | Zuschlags-Einheiten: Prozent im Titel, Euro im Preis (14 Einträge) | Head of Product Engineering | ❌ |
 | VOB-011 | Normtexte beschaffen | Sandy | ✅ **erledigt (04.09.):** VOB Gesamtausgabe 2019 liegt vor, alle sechs Fragen beantwortet |
-| VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Head of Product Engineering | ✅ **am Normtext bestätigt (04.09.):** DIN 18363 5.3.2. **Zwei** Codestellen betroffen, nicht eine |
+| VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Head of Product Engineering | ✅ **erledigt (04.09.):** DIN 18363/18365 jeweils 5.3.2, umgesetzt in `berechneSockelleistenLaenge()` (der einen Stelle für Maler und Boden). Ändert die Soll-Zahlen von zehn Testfällen um +0,90 lfdm je Standardtür, zugunsten des Betriebs; eine Terrassentür (2,00 m) wird weiterhin abgezogen (CoS-042 Punkt 3) |
 | VOB-013 | **Leibungsfläche wird rundherum statt dreiseitig gerechnet, Fensterbank doppelt** — Fund des Prüfmeisters | Head of Product Engineering | ❌ |
 | VOB-014 | Material wird in **Paketen** gekauft — Paketaufrundung fehlt im Produkt komplett (Praxis-Fund Prüfmeister) | Head of Product Engineering, zusammen mit VOB-001 | ❌ |
 

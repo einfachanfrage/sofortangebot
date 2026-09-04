@@ -100,7 +100,7 @@ describe('PM-028 — Arbeitszimmer, Altbau + ausdrücklich verlangte Grundierung
     expect(ergebnis.menge(/wandfläch/i)).toBe(37.5)
     expect(ergebnis.menge(/grundierung/i)).toBe(37.5)
     expect(ergebnis.menge(/boden schützen/i)).toBe(14)
-    expect(ergebnis.menge(/sockelleisten abkleben/i)).toBe(14.1)
+    expect(ergebnis.menge(/sockelleisten abkleben/i)).toBe(15) // VOB-012 (CoS-042): Tür 0,90 m nicht abgezogen
     expect(ergebnis.titel.some(t => /erschwerniszuschlag altbau/i.test(t))).toBe(true)
   })
 

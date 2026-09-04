@@ -62,7 +62,7 @@ describe('PM-032 — ein Belag über drei Räume', () => {
     expect([menge(p, 'verlegen', 'Flur'), menge(p, 'verlegen', 'Wohnzimmer'), menge(p, 'verlegen', 'Küche')])
       .toEqual([7.56, 21, 8.82])
     expect([menge(p, 'Sockelleisten montieren', 'Flur'), menge(p, 'Sockelleisten montieren', 'Wohnzimmer'), menge(p, 'Sockelleisten montieren', 'Küche')])
-      .toEqual([13.5, 17.1, 10.7])
+      .toEqual([14.4, 18, 11.6]) // VOB-012: Türen à 0,90 m nicht abgezogen
   })
 
   it('kein Bad in irgendeiner Form', () => {

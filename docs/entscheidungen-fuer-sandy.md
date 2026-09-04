@@ -293,24 +293,36 @@ er genauso änderbar ist wie bei den anderen Gewerken.
 bei diesen Belägen), aber nie ausdrücklich von dir abgesegnet.
 **Deine Entscheidung:** bestätigen oder korrigieren.
 
-**🔵 VOB-011 — ca. 10–54 € für echte DIN/VOB-Normtexte, drei Optionen.**
-Legal braucht die echten Normtexte (18363/18365 u. a.), um mehrere offene
-VOB-Fragen (u. a. VOB-006 oben) sauber zu klären, statt sich auf
-Sekundärquellen zu verlassen. Drei Optionen liegen vor: **Bibliothekskarte
-(~10 €)**, **komplettes VOB-Werk kaufen (~54 €)**, oder **nicht kaufen** und
-mit den bisherigen Quellen weiterarbeiten. **Deine Entscheidung:** welche
-der drei Optionen — Details in `docs/vob-angebot-abstimmung.md`.
+**🔵 VOB-011, Frage 8 (neu, 04.09.) — Leibungsposition in Metern oder in
+Quadratmetern?** Der gekaufte Normtext hat eine Überraschung gebracht: DIN
+18363 führt Leibungen unter **Längenmaß**, nicht Flächenmaß — Head of Legal
+hatte das am 02.09. fälschlich als „geklärt: Quadratmeter" bezeichnet, das
+war ein Fehler (Sekundärquelle falsch zugeordnet). Wichtig: **die
+Menge ist deshalb nicht falsch** — Abschnitt 0 der Norm, wo die
+Abrechnungseinheiten stehen, wird nach Norm-eigener Aussage „nicht
+Vertragsbestandteil". `maler.ts` rechnet also nicht regelwidrig, nur
+unüblich im Vergleich zu einem klassischen VOB-Leistungsverzeichnis. Der
+Umbau (Menge `anz × Umfang`, Tiefe wandert in die Positionsbezeichnung)
+wäre klein, würde aber Preise verändern, weil der Einheitspreis pro Meter
+ein anderer ist als pro Quadratmeter. **Deine Entscheidung, zusammen mit
+dem Prüfmeister:** so lassen (Quadratmeter, praxisnäher für Privatkunden)
+oder auf Meter umstellen (näher an einem klassischen VOB-Leistungsverzeichnis)?
+Details in `docs/vob-angebot-abstimmung.md`, Abschnitt „VOB-011 erledigt".
 
-**🔵 VOB-012 (neu, 02.09.) — Türbreiten-Abzug bei Sockelleisten.** Prüfmeister
-hat beim Durchrechnen der 28 Testfälle festgestellt, dass diese Frage bisher
-in praktisch jeder neuen Soll-Lösung als offene Variable auftaucht: wird die
-Breite von Türöffnungen bei der Sockelleisten-Längenberechnung abgezogen
-(wie bei anderen Öffnungen üblich) oder nicht? Aktuell nicht konsistent
-geklärt. **Deine Entscheidung:** abziehen oder nicht — Details in
-`docs/pruefmeister-testfaelle.md`. (Nicht zu verwechseln mit VOB-013 weiter
-unten im Dringend-Bereich des Dashboards — das ist ein echter Rechenfehler,
-keine Preis-Entscheidung, und liegt bei Head of Product Engineering, nicht
-bei dir.)
+**🔵 VOB-001/002/014 — Verschnitt aus der Menge in den Preis?** Ebenfalls
+neu aus dem Normtext: „Verschnitt" kommt in DIN 18365 gar nicht vor, bei
+Bodenbelägen zählt nur „die Maße der belegten Fläche". Der aktuelle
+Prozent-Aufschlag auf die abgerechnete Menge hat damit **keine
+Normgrundlage** — kein Verbot (bei Privatkunden gilt VOB/C ohnehin nur,
+wenn vereinbart), aber ein Widerspruch zur PDF-Zeile „nach VOB berechnet"
+(VOB-007), die VOB-Konformität verspricht. Gehört inhaltlich zu VOB-014
+(Paketaufrundung: laut Legal auch eine Material-, keine Mengenfrage) und zu
+den bereits offenen Verschnitt-Punkten oben (Fliesen, Kork/Teppich).
+**Deine Entscheidung:** Verschnitt weiterhin in die abgerechnete Menge
+einrechnen (einfacher für den Nutzer, aber nicht VOB-konform), oder in den
+Einheitspreis/eine eigene Materialposition verschieben (VOB-konform, mehr
+Umbau)? Details in `docs/vob-angebot-abstimmung.md`, Abschnitte VOB-001 und
+„VOB-011 erledigt".
 
 **Erledigt, nicht mehr offen:** Der Datenleck-Altfall von oben (öffentlich
 lesbare Debug-Tabelle, 07.–17.08.) ist inzwischen vollständig abgeschlossen
@@ -341,6 +353,8 @@ strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-09-04 | VOB-011 — ca. 10–54 € für echte DIN/VOB-Normtexte, drei Optionen | **Erledigt — Sandy hat die VOB Gesamtausgabe 2019 gekauft (54 €, die von Legal empfohlene günstige Variante).** Damit sind alle sechs offenen Normfragen am Originaltext geprüft: VOB-003 bestätigt (Backlog-Punkt war falsch), VOB-008 geklärt (0,1 m² statt 2,5 m², neuer 🔴-Fund LR-14), VOB-012 bestätigt (Türbreiten-Abzug falsch). Vier Punkte gehen an Head of Product Engineering (CoS-042, zwei davon vor Gate 1), zwei neue Entscheidungen kommen oben dazu (Leibungseinheit, Verschnitt-in-Preis) | `docs/vob-angebot-abstimmung.md` „VOB-011 erledigt", `docs/chief-of-staff-todos.md` CoS-042 |
+| 2026-09-04 | VOB-012 (02.09.) — Türbreiten-Abzug bei Sockelleisten: abziehen oder nicht? | **War fälschlich als Preis-Entscheidung gelistet — ist gar keine.** Der VOB-Normtext beantwortet es eindeutig: Öffnungen ≤ 1 m werden nicht abgezogen (DIN 18363/18365, je Abschnitt 5.3.2). `maler.ts` zieht an zwei Stellen trotzdem ab, zulasten des Betriebs. Reiner Fix, keine Entscheidung mehr nötig — geht an Head of Product Engineering, vor Gate 1 | `docs/vob-angebot-abstimmung.md` „VOB-011 erledigt", `docs/chief-of-staff-todos.md` CoS-042 |
 | 2026-09-04 | 🔴 2. „CRON_SECRET prüfen, Cron-Jobs kontrollieren" — Sandy fragte direkt nach: „ist cron secret heute nacht durchgelaufen?" | **Ja, beide Jobs laufen — mit echten Zahlen aus der Datenbank belegt, nicht nur „200 OK":** `reminder` lief gestern 08:01 Uhr (2 Erinnerungen verschickt, 0 Fehler), `aufraeumen` lief heute Nacht 03:30 Uhr zum **allerersten Mal erfolgreich** — und hat den seit Juli liegen gebliebenen Rückstand direkt mit abgeräumt: **182 von 182 verwaisten Sprachaufnahmen gelöscht**, dazu 1 verwaistes Baustellenfoto. Konto-Löschungen: 0 geprüft/gelöscht, weil noch kein Konto die 30-Tage-Frist erreicht hat — dieser Teil bleibt bis zum ersten echten Fall unbestätigt, ist aber jetzt technisch bewiesen lauffähig. **Punkt vollständig erledigt**, `CRON_SECRET` ist korrekt gesetzt | Chief of Staff, direkte Prüfung via Vercel-Runtime-Logs + `system_laeufe`-Tabelle in Supabase, `docs/launch-readiness.md` 2.5/6.3 |
 | 2026-09-03 | CoS-L-003: Erst Einzelunternehmen anmelden und später in die UG überführen, oder direkt UG? | **Direkt UG, so wenig Aufwand wie möglich, Verzicht auf die 17 Altbelege seit Mai** (bleiben Privatausgaben). Legal hat den Plan darauf umgestellt: Bargründung per Musterprotokoll, 4–6 Wochen, Steuerberater parallel statt davor. Nächster Schritt: Notartermin (nur Sandy) | `docs/chief-of-staff-legal-todos.md` CoS-L-003, „geänderter Plan“ |
 | 2026-09-03 | Launch-Zeitplan: Thailand (02.11.–03.12.) kollidiert mit dem bisher angedachten Fenster „01.11./01.12.“ — Oktober anpeilen oder nach Thailand planen? | **Nach Thailand.** Gate 1 (begleitete Testnutzer) ab **Anfang Dezember**, öffentlicher Launch (Gate 2) **Januar 2027**. Oktober wird für Produkt, Content-Vorrat und Vorbereitung genutzt. Clemens ist im November ebenfalls in Thailand — alle Drehtage und der Dessau-Kontakt müssen vor dem 01.11. laufen | `docs/kalender.md` |

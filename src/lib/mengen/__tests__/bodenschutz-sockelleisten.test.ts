@@ -37,7 +37,7 @@ describe('Bodenschutz und Sockelleisten abkleben beim Wandanstrich', () => {
   it('klebt die Sockelleisten ab, sobald der Umfang bekannt ist', () => {
     const sockel = finde(engine([ZIMMER], 'wohnzimmer 5 mal 4 meter, 2,60 hoch, wände streichen'), 'sockelleisten abkleben')
     // Umfang 18 lfm − 0,9 m Türbreite
-    expect(sockel?.menge).toBe(17.1)
+    expect(sockel?.menge).toBe(18) // VOB-012 (CoS-042): Tür 0,90 m wird nicht mehr abgezogen
     expect(sockel?.einheit).toBe('lfdm')
     expect(sockel?.automatisch_ergaenzt).toBe(true)
   })

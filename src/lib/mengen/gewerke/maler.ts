@@ -1,7 +1,7 @@
 import type { MengenErgebnis, BerechnetePosition } from '../types'
 import { erkenneScope } from '../../arbeiten-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
-import { berechneSockelleistenLaenge } from './sockelleisten'
+import { berechneSockelleistenLaenge, sockelAbzug } from './sockelleisten'
 import { berechneOeffnungsabzugVob, vobHinweistext, type OeffnungsabzugErgebnis } from './vob-uebermessung'
 
 function round2(n: number): number {
@@ -422,8 +422,10 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenflaecheM2} m²`, annahmen: [] })
       }
       if (hatSockel && effUmfangWZ !== null) {
-        const tuerBreiten = effTueren.reduce((s: number, t: any) => s + (t.breite ?? 0.9), 0)
-        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: round2(effUmfangWZ - tuerBreiten), einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang ${effUmfangWZ} − Türen ${round2(tuerBreiten)}`, annahmen: [] })
+        // VOB-012 (CoS-042): dieselbe Rechnung wie überall sonst — hier stand
+        // bis 04.09. eine eigene Inline-Variante, die jede Türbreite abzog.
+        const tuerBreiten = sockelAbzug(effTueren)
+        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: round2(effUmfangWZ - tuerBreiten), einheit: 'lfdm', konfidenz: 'high', berechnungsweg: tuerBreiten > 0 ? `Umfang ${effUmfangWZ} − Öffnungen über 1 m: ${tuerBreiten}` : `Umfang ${effUmfangWZ} lfm (Öffnungen bis 1 m werden nach VOB nicht abgezogen)`, annahmen: [] })
       }
     } else if (istDachgeschoss) {
       // DG-Branch: Kniestockwände + Dachschrägen + Deckenspiegel separat
@@ -598,14 +600,46 @@ export function malerEngine(daten: any): MengenErgebnis {
       }
       if (hatSockel && umfangM !== null) {
         const sockelM = berechneSockelleistenLaenge(umfangM, effTueren)
-        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `Umfang (${umfangM} lfm) − Türbreiten (${round2(umfangM - sockelM)} m)`, annahmen: [], automatisch_ergaenzt: !sockelGenannt })
+        positionen.push({ beschreibung: `Sockelleisten abkleben — ${name}`, menge: sockelM, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: umfangM > sockelM ? `Umfang (${umfangM} lfm) − Öffnungen über 1 m (${round2(umfangM - sockelM)} m)` : `Umfang ${umfangM} lfm (Öffnungen bis 1 m werden nach VOB nicht abgezogen)`, annahmen: [], automatisch_ergaenzt: !sockelGenannt })
       }
     }
   }
 
   // Leibungen (Top-Level-Feld im GPT-Output — außerhalb der Raum-Schleife)
   const transkriptAll = (daten.transkript ?? '').toLowerCase()
-  for (const l of ((daten.leibungen ?? []) as any[])) {
+
+  // ── CoS-042, Punkt 4: nur BESCHICHTETE Leibungen ────────────────────────
+  //
+  // DIN 18363:2019-09, Abschnitt 5.2.3 spricht ausdrücklich von
+  // „beschichteten Rückflächen … sowie Leibungen". Bisher erzeugte jede
+  // erfasste Leibung eine „… streichen"-Position, auch eine, die gar nicht
+  // gestrichen wird — ein Fehler zulasten des Kunden.
+  //
+  // Bewusst eng und in diese Richtung: Eine Leibung, die im Diktat vorkommt,
+  // gehört im Zweifel zum Anstrich (wir sind in der Maler-Engine, und die
+  // Position heißt „streichen"). Übersprungen wird nur, wenn im Satz zur
+  // Leibung ausdrücklich etwas anderes steht — sie bleibt, wird nur gedämmt,
+  // verputzt, verkleidet oder gefliest. Und dann still verschwinden darf sie
+  // erst recht nicht: Der Fall landet als Warnung im Entwurf.
+  const LEIBUNG_SATZ = /leibung|laibung/i
+  const LEIBUNG_NICHT_STREICHEN =
+    // Kein \b vor „dämm": „geDÄMMt" hat davor ein Wortzeichen, die Grenze
+    // trifft nie — dieselbe Falle wie bei „überall" (siehe satz-raum.ts).
+    /\bnicht\s+(?:mit\s*)?(?:gestrichen|streichen|beschicht)|\bohne\b|bleiben?\s+(?:wie|so|unber|roh)|d[äa]mm|verputz|verkleid|flies|\broh\b|unbeschichtet/i
+  const LEIBUNG_DOCH_STREICHEN = /streich|anstrich|beschicht|lackier|malervlies/i
+
+  const leibungsSaetze: string[] = String(transkriptAll).split(/[.!?;\n]+/).filter((t: string) => LEIBUNG_SATZ.test(t))
+  const leibungAusgeschlossen = leibungsSaetze.length > 0
+    && leibungsSaetze.every((t: string) => LEIBUNG_NICHT_STREICHEN.test(t) && !LEIBUNG_DOCH_STREICHEN.test(t))
+
+  if (leibungAusgeschlossen && (daten.leibungen ?? []).length > 0) {
+    warnungen.push(
+      'Leibungen wurden genannt, aber nicht zum Streichen — es wurde keine Leibungsposition angelegt. '
+      + 'Sollen sie doch beschichtet werden, bitte hier ergänzen.',
+    )
+  }
+
+  for (const l of (leibungAusgeschlossen ? [] : ((daten.leibungen ?? []) as any[]))) {
     const anz = l.anzahl ?? 1
     const br = l.breite ?? 1.2
     const hoe = l.hoehe ?? 1.0

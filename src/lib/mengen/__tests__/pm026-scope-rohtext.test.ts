@@ -1,5 +1,5 @@
 // PM-026 (Sandys Live-Test, 2026-08-30): Im fertigen Angebot fehlten
-// „Wandflächen streichen" (39 m²) und „Sockelleisten abkleben" (14,7 lfdm)
+// „Wandflächen streichen" (39 m²) und „Sockelleisten abkleben" (15,6 lfdm, VOB-012)
 // komplett — die Hauptpositionen eines Malerauftrags.
 //
 // Ursache: Whisper transkribierte „Wände zweimal streichen" als „BÄNDE zweimal
@@ -41,7 +41,7 @@ describe('PM-026 — ein Verhörer im Transkript darf keine Position löschen', 
     // Umfang 15,60 lfm × 2,50 m = 39,00 m² (Öffnungen ≤ 2,5 m² → VOB-Übermessung)
     expect(pos.find(p => /wandfl/i.test(p.beschreibung))?.menge).toBe(39)
     // 15,60 lfm − 0,90 m Türbreite
-    expect(pos.find(p => /sockelleisten abkleben/i.test(p.beschreibung))?.menge).toBe(14.7)
+    expect(pos.find(p => /sockelleisten abkleben/i.test(p.beschreibung))?.menge).toBe(15.6) // VOB-012 (CoS-042): Tür 0,90 m nicht abgezogen
   })
 
   it('respektiert weiterhin ein ausdrückliches „nur die Decke"', () => {
