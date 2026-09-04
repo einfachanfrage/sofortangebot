@@ -93,7 +93,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs) |
-| PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen |
+| PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus |
@@ -2765,6 +2765,82 @@ hängt ab, ob PM-032 wirklich grün ist. Ich habe den Punkt dort vermerkt.
 **Status PM-033:** ❌ drei Befunde. Verschnittlogik grün, Zuordnungslogik rot —
 alle drei Fehler entstehen dadurch, dass eine Position ohne Raumbezug erzeugt
 und dann irgendeinem Raum zugeschlagen wird.
+
+---
+
+#### Fix PM-033, Befund 2 (Head of Product Engineering, 03.09.2026)
+
+**Behoben. „Sockelleisten bleiben überall, wie sie sind" erzeugt keine
+Sockelleisten-Position mehr — in keinem Raum, auch nicht als Vorschlag.**
+
+**Woher die 22,00 lfdm wirklich kamen.** Die Vermutung im Befund war
+2 × (6,00 + 5,00), also ein Umfang aus zwei Räumen. Am Code nachgerechnet ist
+es etwas anderes: Der Vollständigkeits-Fallback in `boden-vorarbeiten.ts`
+schätzt bei fehlender Meterangabe einen **quadratischen Raum** —
+4 × √31,05 m² = 22,29 → 22. Die 31,05 m² sind die Wohnzimmer-Verlegefläche
+**inklusive 15 % Fischgrät-Verschnitt**. Es war also der Umfang eines
+gedachten Quadrats über einer Fläche, die es in der Wohnung gar nicht gibt.
+Dass die Zahl aus keinem Raum herzuleiten war, hat der Prüfmeister damit genau
+richtig gesehen — sie stammt aus keinem.
+
+**Der eigentliche Fehler liegt eine Stufe davor.** Ausgelöst hat den Fallback
+die Bedingung `lower.includes('sockelleist')` — das Wort steht im Satz, also
+wurde eine Position gebaut. Dass derselbe Satz sie **abbestellt**, hat niemand
+gelesen. Es gab zwar eine Ausschluss-Prüfung, die kannte aber genau drei
+Formulierungen: „ohne sockelleisten", „keine sockelleisten", „nur boden ohne".
+Die normale Sprechweise — *„die bleiben, wie sie sind"* — war nicht dabei.
+Das ist dieselbe Familie wie PM-011 („keine Kleinreparatur trotz Verneinung"):
+ein Wortauslöser gewinnt gegen einen ganzen Satz.
+
+**Was jetzt passiert** (`src/lib/sockelleisten-ausschluss.ts`, neu): Der
+Ausschluss wird satzweise gelesen, mit Raumbezug, über denselben Satz-/Raum-
+Helfer wie die Teilflächen-Erkennung aus PM-036 (`src/lib/satz-raum.ts` — eine
+Stelle, nicht zwei Nachbauten). Erkannt werden unter anderem:
+
+- „Sockelleisten bleiben überall, wie sie sind" → gilt für den ganzen Auftrag
+- „An den Sockelleisten machen wir nichts" · „Sockelleisten bleiben dran"
+- „Die Sockelleisten sollen nicht erneuert werden" · „Keine neuen Sockelleisten"
+- „Sockelleisten im Flur neu. **Im Wohnzimmer bleiben sie.**" → Rückbezug per
+  „sie" auf die frühere Ansage, Ausschluss **nur** für das Wohnzimmer
+
+Der Ausschluss wirkt an **allen drei** Stellen, die eine solche Position
+anlegen können: in der Mengen-Engine (`gewerke/boden.ts`, je Raum), in der
+globalen Prüfung (`boden-basis.ts`) und als Sicherheitsnetz ganz am Ende der
+Vollständigkeitsprüfung (`vollstaendigkeit/boden.ts`) — bewusst dort und nicht
+in der Mitte, weil ein Ausschluss, der mitten in der Kette steht, von der
+nächsten Regel wieder überholt wird. Dieselbe Lehre wie bei der zu spät
+laufenden Maßkorrektur aus PM-034.
+
+**Die Gegenrichtung ist mitgetestet, und die war mir wichtiger als der Fix
+selbst** — ein zu scharfer Ausschluss löscht stillschweigend Geld aus dem
+Angebot des Betriebs:
+
+- „Sockelleisten überall neu, weiße MDF" → drei Positionen, 21,00 / 15,20 /
+  13,00 lfdm, unverändert
+- „Die Sockelleisten bleiben **nicht**, die kommen raus" → kein Ausschluss
+- „Die alten Sockelleisten müssen raus" → Abbruch-Auftrag, kein Ausschluss
+- „Sockelleisten im Flur neu. **Die Türen** werden nicht gestrichen." → der
+  Rückbezugs-Zweig greift ausdrücklich **nicht**, obwohl „die" und „nicht" im
+  Satz stehen
+- „Sockelleisten neu, sonst nichts" → der Auftrag gewinnt
+
+**Ein Fund am eigenen Fix, der hier hingehört:** Die erste Fassung hat den
+Ausschluss als *raumbezogen* statt *global* gelesen — `\büberall\b` trifft in
+JavaScript nie, weil der Umlaut ohne u-Flag nicht als Wortzeichen gilt. Der
+Test hat es gefangen, bevor es irgendwo hinkam; die Stelle ist jetzt im Code
+kommentiert, weil dieselbe Falle in jeder deutschen Regex lauert (sie hat
+schon einmal zugeschlagen, siehe „fischgraet" in `boden.ts`).
+
+**Tests:** `src/lib/__tests__/pm033-sockelleisten-ausschluss.test.ts`
+(13 Fälle) — Erkennung, Gegenrichtung, Engine, und der komplette Weg durch die
+Pipeline mit dem Original-Diktat aus PM-033. Zusätzlich geprüft, dass die drei
+Verschnittsätze (15 / 0 / 5 %) davon unberührt bleiben. Gesamtstand: 77
+Testdateien, 1.252 Tests grün, `tsc` sauber, eslint 0 Fehler.
+
+**Nicht angefasst:** Befund 1 (Trittschall im falschen Raum) ist bereits mit
+dem PM-032/033/035-Fix erledigt, Befund 3 (nur eine Übergangsschiene statt
+zwei) ist noch offen — dort ist zuerst zu klären, ob die Schiene gezählt oder
+pauschal einmal gesetzt wird, weil davon abhängt, ob PM-032 wirklich grün ist.
 
 ---
 

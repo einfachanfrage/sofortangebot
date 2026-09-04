@@ -32,6 +32,10 @@
 // Und wie bei PM-034 gilt: nichts still. Jede erkannte Teilfläche erzeugt
 // einen sichtbaren Hinweis und eine Annahme an der Position.
 
+import { saetzeJeRaum } from './satz-raum'
+
+export { saetzeJeRaum }
+
 export interface RaumFuerTeilflaeche {
   name?: string | null
   laenge?: number | null
@@ -64,52 +68,6 @@ const FLAECHEN_ANGABE = /(\d+(?:[.,]\d+)?)\s*(?:m²|m2|qm|quadratmeter)/gi
 // Mindestabstand zur Raumfläche, damit „20 m²" im 20-m²-Raum nicht als
 // Teilfläche durchgeht (Rundung, Umformulierung derselben Zahl).
 const MIN_ABSTAND_M2 = 0.5
-
-function saetze(text: string): string[] {
-  return text
-    .split(/[.!?;\n]+/)
-    .map(s => s.trim())
-    .filter(Boolean)
-}
-
-/**
- * Ordnet jeden Satz dem zuletzt genannten Raum zu und sammelt je Raum ALLE
- * ihm zugeordneten Sätze — nicht nur den zusammenhängenden Block. Im echten
- * PM-036-Diktat springt die Ansage zwischen Flur und Wohnzimmer hin und her
- * („Im Flur muss der alte Belag raus. Im Wohnzimmer nur die Ecke ausbauen.").
- */
-export function saetzeJeRaum(text: string, raumNamen: string[]): Map<string, string[]> {
-  const namen = raumNamen
-    .map(n => (n ?? '').trim())
-    .filter(n => n.length >= 3)
-    .map(n => ({ original: n, lower: n.toLocaleLowerCase('de-DE') }))
-    // Längere Namen zuerst: „Wohnzimmer" darf nicht von „Zimmer" geschlagen werden.
-    .sort((a, b) => b.lower.length - a.lower.length)
-
-  const zuordnung = new Map<string, string[]>()
-  let aktuell: string | null = null
-
-  for (const satz of saetze(text)) {
-    const lower = satz.toLocaleLowerCase('de-DE')
-    // Der im Satz zuletzt genannte Raum bestimmt den weiteren Verlauf.
-    let bestName: string | null = null
-    let bestPos = -1
-    for (const n of namen) {
-      const pos = lower.lastIndexOf(n.lower)
-      if (pos > bestPos) {
-        bestPos = pos
-        bestName = n.original
-      }
-    }
-    if (bestName !== null && bestPos >= 0) aktuell = bestName
-    if (aktuell === null) continue
-    const bisher = zuordnung.get(aktuell)
-    if (bisher) bisher.push(satz)
-    else zuordnung.set(aktuell, [satz])
-  }
-
-  return zuordnung
-}
 
 export function erkenneTeilflaechen(
   text: string,

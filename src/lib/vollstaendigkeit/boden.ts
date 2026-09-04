@@ -2,6 +2,8 @@ import type { BerechnetePosition } from '../mengen/types'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import { bodenNettoflaecheAusPositionen, pruefeBodenBasis } from './boden-basis'
 import { pruefeAltbelag, pruefeFeuchtigkeitssperre, pruefeSockelleisten, pruefeUebergangsprofil } from './boden-vorarbeiten'
+import { erkenneSockelleistenAusschluss } from '../sockelleisten-ausschluss'
+import { filtereArray, raumNamenAus } from './helpers'
 import {
   pruefeDiagonalBoden, pruefeFBHBoden, pruefeParkettSchleifen, pruefeTreppenBoden,
   pruefeFugenVerschweissen, pruefeTrittschalldaemmung, pruefeStosskanten,
@@ -38,6 +40,24 @@ export function pruefeBoden(
     pruefeSockelleisten(ergaenzt, fehlende, lower, nurOhneSockel)
   }
   pruefeUebergangsprofil(ergaenzt, fehlende, lower)
+
+  // PM-033, Befund 2 — Sicherheitsnetz je Raum. Der Ausschluss oben deckt den
+  // ganzen Auftrag ab („bleiben überall"). Wird er nur für EINEN Raum
+  // ausgesprochen („Sockelleisten im Flur neu. Im Wohnzimmer bleiben sie."),
+  // darf trotzdem keine Regel oben eine Montage für diesen Raum anlegen.
+  // Bewusst hier am Ende, nachdem alle Ergänzungsregeln gelaufen sind — ein
+  // Ausschluss, der irgendwo in der Mitte steht, wird von der nächsten Regel
+  // wieder überholt (dieselbe Lehre wie bei der zu spät laufenden
+  // Maßkorrektur in PM-034).
+  const sockelAusschluss = erkenneSockelleistenAusschluss(lower, raumNamenAus(ergaenzt))
+  if (sockelAusschluss.global || sockelAusschluss.raeume.size > 0) {
+    filtereArray(ergaenzt, p => {
+      if (!/sockelleisten (?:montieren|entfernen)/i.test(p.beschreibung)) return true
+      if (sockelAusschluss.global) return false
+      const raum = p.beschreibung.match(/\s+[-–—]\s+(.+)$/)?.[1]?.trim()
+      return !(raum && sockelAusschluss.raeume.has(raum))
+    })
+  }
   pruefeDiagonalBoden(ergaenzt, fehlende, lower)
   pruefeFBHBoden(ergaenzt, fehlende, lower)
   pruefeParkettSchleifen(ergaenzt, fehlende, lower, v)

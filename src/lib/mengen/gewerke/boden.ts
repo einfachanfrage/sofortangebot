@@ -3,6 +3,7 @@ import type { BelagTyp } from '../../boden-normalisierer'
 import { standardVerschnitt } from '../../boden-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge } from './sockelleisten'
+import { erkenneSockelleistenAusschluss } from '../../sockelleisten-ausschluss'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -57,6 +58,12 @@ const MUSTER_MIT_MEHR_VERSCHNITT = /diagonal|fischgr(?:ä|ae|a)t/i
 export function bodenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
   const warnungen: string[] = []
+
+  // PM-033: einmal für den ganzen Auftrag lesen, nicht je Raum neu.
+  const sockelAusschluss = erkenneSockelleistenAusschluss(
+    daten.transkript ?? '',
+    (daten.raeume ?? []).map((r: { name?: string }) => r?.name ?? '').filter(Boolean),
+  )
 
   for (const raum of (daten.raeume ?? [])) {
     const {
@@ -175,7 +182,15 @@ export function bodenEngine(daten: any): MengenErgebnis {
     // fälschlich mitgestrichen. Kein perfektes Pro-Raum-Signal bei mehreren
     // Räumen, aber strikt besser als das bisherige blinde Vertrauen auf ein
     // unbelegtes Boolean.
+    //
+    // PM-033 (03.09.2026): Das Textsignal allein reicht nicht — das Wort steht
+    // auch in dem Satz, der die Sockelleisten ABBESTELLT („Sockelleisten
+    // bleiben überall, wie sie sind"). Deshalb zusätzlich der satzweise
+    // Ausschluss, mit Raumbezug: „Sockelleisten im Flur neu. Im Wohnzimmer
+    // bleiben sie." legt sie im Flur an und im Wohnzimmer nicht.
     const hatSockelleistenSignal = /sockelleist/i.test(daten.transkript ?? '')
+      && !sockelAusschluss.global
+      && !sockelAusschluss.raeume.has(name)
     if (sockelleisten && hatSockelleistenSignal && umfang) {
       // PM-002: Türen unterbrechen die Sockelleiste — genau wie beim Maler
       // (maler.ts), nur bisher hier nie abgezogen worden. Gleiche Funktion

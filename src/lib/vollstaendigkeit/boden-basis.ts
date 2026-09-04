@@ -6,6 +6,7 @@ import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import type { BelagTyp } from '../boden-normalisierer'
 import { erkenneBelag, belagBezeichnung, erkenneBelagName, verschnittFuerVerlegung } from '../boden-normalisierer'
 import { extrahiereBodenflaeche, extrahiereStreichflaeche } from '@/lib/extraktion-masse'
+import { erkenneSockelleistenAusschluss } from '../sockelleisten-ausschluss'
 export type { BelagTyp }
 export { erkenneBelag, belagBezeichnung, erkenneBelagName }
 
@@ -90,10 +91,15 @@ export function pruefeBodenBasis(
   belag: BelagTyp,
   v: AuftragsVerstaendnis,
 ): { nurOhneSockel: boolean } {
+  // PM-033, Befund 2 (03.09.2026): Diese Prüfung kannte genau drei
+  // Formulierungen. „Sockelleisten bleiben überall, wie sie sind" war nicht
+  // dabei — und genau daran ist eine erfundene 22-lfdm-Position vorbeigelaufen.
+  // Die Sprechweise liest jetzt sockelleisten-ausschluss.ts, satzweise.
   const nurOhneSockel =
     lower.includes('ohne sockelleisten') ||
     lower.includes('nur boden ohne') ||
-    lower.includes('keine sockelleisten')
+    lower.includes('keine sockelleisten') ||
+    erkenneSockelleistenAusschluss(lower).global
 
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
