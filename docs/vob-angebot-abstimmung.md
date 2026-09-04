@@ -44,6 +44,14 @@ Endmarkierung. Nicht die ganze Datei neu schreiben. Hintergrund: CoS-013 in
 
 ## Wichtiger Vorbehalt zur Quellenlage — bitte einmal lesen
 
+> **Weitgehend erledigt (04.09.2026):** Sandy hat die VOB Gesamtausgabe 2019
+> beschafft. DIN 18363 und DIN 18365 liegen im Original vor; VOB-003, VOB-008,
+> VOB-012 und die Nebenleistungs-Zuordnung sind am Normtext geprüft — siehe den
+> Abschnitt „VOB-011 erledigt" am Dateiende. **Der Vorbehalt unten gilt nur noch
+> für Aussagen zu Normen, die dort nicht behandelt sind**, und für die eine
+> Stelle, an der ich mich mit der Sekundärquelle geirrt habe (Abrechnungseinheit
+> der Leibungen — dort stand „geklärt", und es war falsch).
+
 Der Originaltext von DIN 18363 und DIN 18365 ist kostenpflichtig (DIN Media /
 Beuth) und war für mich nicht abrufbar. **Alles unten steht auf
 Sekundärquellen** — Fachpresse, Innungs-PDFs, Betriebe, die den Normtext für
@@ -134,16 +142,16 @@ Details in `docs/legal-001-bestandsaufnahme.md`, Abschnitt B1. [Einschätzung]
 |---|---|---|---|
 | VOB-001 | Verschnitt wird auf die **abgerechnete Menge** aufgeschlagen statt in den Einheitspreis | Sandy | 🔵 Praxis bestätigt den Umbau (Prüfmeister 2026-09-02), Entscheidung Sandy |
 | VOB-002 | **Drei verschiedene Verschnittsätze** im Code — 5 %, 10 %, 12 % | Head of Product Engineering | ❌ |
-| VOB-003 | Geplante „VOB-Feinheit" zu Leibungen zeigt vermutlich in die **falsche Richtung** — bitte nicht bauen | Head of Product Engineering | ❌ |
+| VOB-003 | Geplante „VOB-Feinheit" zu Leibungen zeigt in die **falsche Richtung** — Backlog-Punkt ersatzlos streichen | Head of Product Engineering | ✅ **am Normtext entschieden (04.09.):** DIN 18363 5.2.3 wörtlich bestätigt. Offen bleibt nur die Einheit (m vs. m²) — Entscheidung Sandy |
 | VOB-004 | Übermessungshinweis erreicht das Kunden-PDF nicht (= G5 aus CoS-L-001) | Head of Product Engineering + Product Designer | ❌ |
 | VOB-005 | **Nebenleistungen** werden als eigene Positionen berechnet (Boden/Möbel abdecken) | — | ✅ geklärt: branchenüblich, Position bleibt, Lösung läuft über VOB-007 |
 | VOB-006 | Höhenzuschlag: **fünf** verschiedene Schwellen im Produkt — Normbegründung war falsch, Konsistenzfrage bleibt | Head of Product Engineering + Sandy | ❌ |
 | VOB-007 | Die Zeile „Normgrundlagen" behauptet VOB-Konformität, die an mehreren Stellen nicht gegeben ist | Product Designer + Legal | ❌ |
-| VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen ungeklärt | Legal (nach VOB-011) | ⏳ |
+| VOB-008 | DIN-18365-Schwellenwert für Bodenöffnungen | Head of Product Engineering | ✅ **geklärt (04.09.): 0,1 m²** — weder 0,5 noch 2,5. Bitte `boden.ts` prüfen, Fehler zulasten des Kunden |
 | VOB-009 | Türen/Fenster nach Stück statt nach Fläche | — | ✅ geklärt: Stückpreise sind branchenüblich, bleibt so |
 | VOB-010 | Zuschlags-Einheiten: Prozent im Titel, Euro im Preis (14 Einträge) | Head of Product Engineering | ❌ |
-| VOB-011 | Normtexte: Sandy will nicht kaufen — freie Recherche hat zwei von sechs Fragen geklärt, zwei bleiben offen. Drei Optionen (10 € ZLB / 54 € Gesamtausgabe / nichts) | Sandy | 🔵 |
-| VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Sandy → dann Head of Product Engineering | 🔵 Praxis stützt die Norm: nur Öffnungen ab 1,00 m abziehen. Geldentscheidung zugunsten des Betriebs |
+| VOB-011 | Normtexte beschaffen | Sandy | ✅ **erledigt (04.09.):** VOB Gesamtausgabe 2019 liegt vor, alle sechs Fragen beantwortet |
+| VOB-012 | Türbreiten werden von der Sockelleistenlänge abgezogen — Norm sagt: bis 1 m durchmessen | Head of Product Engineering | ✅ **am Normtext bestätigt (04.09.):** DIN 18363 5.3.2. **Zwei** Codestellen betroffen, nicht eine |
 | VOB-013 | **Leibungsfläche wird rundherum statt dreiseitig gerechnet, Fensterbank doppelt** — Fund des Prüfmeisters | Head of Product Engineering | ❌ |
 | VOB-014 | Material wird in **Paketen** gekauft — Paketaufrundung fehlt im Produkt komplett (Praxis-Fund Prüfmeister) | Head of Product Engineering, zusammen mit VOB-001 | ❌ |
 
@@ -1092,6 +1100,13 @@ Entscheidung, und die kann man nur treffen, wenn man beide Seiten kennt.
    und die das Produkt gar nicht abbildet? Ich habe hier von der Norm her
    gesucht. Der umgekehrte Blick fehlt mir.
 
+8. **Leibungen, Einheit (neu, 04.09.)** — Rechnest du Fensterleibungen in
+   **laufenden Metern** oder in **Quadratmetern** ab? Die Norm listet Leibungen
+   unter Längenmaß (DIN 18363, 0.5.2), unser Produkt rechnet Quadratmeter. Der
+   Abschnitt ist ausdrücklich kein Vertragsbestandteil, also ist beides
+   zulässig — mich interessiert, was ein Privatkunde erwartet, wenn er die
+   Position liest.
+
 ---
 
 ## Was ich ausdrücklich gut finde
@@ -1256,6 +1271,235 @@ Frage nach dem „Ob". Hier ging es nur um das „Wie viel".
 **Für den Prüfmeister**, damit du den Fall live nachsprechen kannst: „Drei
 Fenster ein Meter zwanzig auf einen Meter, Leibungstiefe fünfundzwanzig
 Zentimeter" muss **2,40 m²** ergeben (3 × 0,80), vorher waren es 3,30 m².
+
+---
+
+## VOB-011 erledigt — der Normtext liegt vor (Head of Legal & Compliance, 2026-09-04)
+
+Sandy hat die **VOB Gesamtausgabe 2019** (Beuth Verlag, ISBN 978-3-410-61299-5)
+beschafft — also die Variante, die ich als die günstige empfohlen hatte. Damit
+sind **ATV DIN 18363:2019-09** und **ATV DIN 18365:2019-09** im Original
+verfügbar, und alle sechs Fragen aus VOB-011 sind beantwortet.
+
+**Zum Umgang mit dem Text:** Ich zitiere hier nur die Sätze, die zur Klärung
+nötig sind. Der Volltext kommt nicht in unsere Dateien und nicht ins Repository
+— das Werk ist urheberrechtlich geschützt, die Lizenz ist eine personenbezogene
+Einzelplatzlizenz auf Sandra Holm.
+
+**Der Vorbehalt aus dem Abschnitt „Wichtiger Vorbehalt zur Quellenlage" ist für
+die hier behandelten Punkte damit aufgehoben.** Was unten steht, ist am
+Originaltext geprüft, nicht aus Sekundärquellen abgeleitet.
+
+---
+
+### VOB-003 — geklärt. Meine Lesart war richtig, wörtlich.
+
+DIN 18363:2019-09, Abschnitt 5.2.3, im Original:
+
+> „Beschichtete Rückflächen von Nischen sowie Leibungen werden unabhängig von
+> ihrer Einzelgröße mit ihren Maßen gesondert gerechnet."
+
+Das ist Wort für Wort der Satz, den ich aus zwei Sekundärquellen zitiert hatte.
+Die Gegenstimmen aus der freien Recherche — Leibungen seien bei übermessenen
+Öffnungen in der Wandfläche enthalten — sind damit **widerlegt**, nicht nur
+schwach belegt.
+
+Dazu passt Abschnitt 5.3.1: Übermessen werden „Aussparungen mit einer
+Einzelgröße ≤ 2,5 m², z. B. Öffnungen (auch raumhoch), Nischen". Die Öffnung
+wird übermessen, **und** die beschichtete Leibung derselben Öffnung wird
+zusätzlich gerechnet. Beides gleichzeitig, ohne Ausnahme für kleine Öffnungen.
+
+**Eine Einschränkung, die im Wortlaut steckt und die wir beachten müssen:** Es
+heißt „**beschichtete** Rückflächen … sowie Leibungen". Gerechnet wird nur, was
+tatsächlich gestrichen wird. Eine nicht gestrichene Fensterleibung ergibt keine
+Position. Ob das Produkt das unterscheidet, sollte Engineering prüfen — heute
+erzeugt jede erfasste Leibung eine Position.
+
+**Auftrag an Head of Product Engineering:** Der Backlog-Punkt im Kommentarkopf
+von `vob-uebermessung.ts` und der gleichlautende Punkt 3 in
+`pruefmeister-testfaelle.md` sind **nicht „strittig", sondern falsch**. Bitte
+ersatzlos streichen statt umformulieren, mit Verweis auf DIN 18363:2019-09
+Abschnitt 5.2.3, damit ihn niemand in einem halben Jahr wieder aufgreift.
+
+---
+
+### Korrektur an mir selbst: die Einheitenfrage war NICHT geklärt
+
+Am 02.09. habe ich hier geschrieben:
+
+> „**Geklärt ist dagegen die Einheitenfrage:** Die Längenmaß-Variante, die mich
+> irritiert hatte, stammt aus DIN 18350 (Putzarbeiten), nicht aus DIN 18363.
+> `maler.ts` rechnet nach Fläche und liegt damit richtig."
+
+**Das ist falsch.** Die Längenmaß-Variante steht in DIN 18363 selbst. Abschnitt
+0.5.2 („Abrechnungseinheiten") führt unter **Längenmaß (m), getrennt nach
+Bauart und Maßen** als ersten Spiegelstrich auf: **„Leibungen"**. Im
+Flächenmaß-Katalog 0.5.1 tauchen Leibungen nicht auf.
+
+Ich habe eine Sekundärquelle einer anderen Norm zugeordnet, weil das zu meiner
+These passte, und das Ergebnis dann als „geklärt" bezeichnet. Das war derselbe
+Fehler wie bei der Groq-Sache: eine Aussage über den Code, die ich nicht am
+Original geprüft hatte.
+
+**Was daraus folgt — und hier bitte ich um Vorsicht statt um einen schnellen
+Umbau:**
+
+Abschnitt 0 der ATV heißt „Hinweise für das Aufstellen der
+Leistungsbeschreibung" und sagt über sich selbst ausdrücklich: **„Die Hinweise
+werden nicht Vertragsbestandteil."** Die Abrechnungseinheit aus 0.5.2 ist also
+**keine Abrechnungsregel, die man verletzen kann** — sie ist die Vorgabe dafür,
+wie ein VOB-konformes Leistungsverzeichnis aufgebaut sein soll. Wer nach m²
+abrechnet, rechnet nicht falsch; er weicht von der branchenüblichen
+Positionsstruktur ab.
+
+Praktisch heißt das:
+
+- **Die Menge ist nicht falsch.** `anz × Umfang × Tiefe` ergibt die tatsächlich
+  gestrichene Fläche, und nach VOB-013 mit dem richtigen dreiseitigen Umfang.
+- **Die Position ist unüblich.** Ein Handwerker, der unser Angebot neben ein
+  LV nach VOB legt, findet dort „Leibungen … m", bei uns „Leibungen … m².
+  Vergleichbar sind die beiden Zahlen nicht.
+- **Der Umbau wäre klein** (Menge `anz × Umfang`, Tiefe wandert in die
+  Positionsbezeichnung und damit in den Einheitspreis), **aber er ändert
+  Preise**, weil der Einheitspreis pro laufendem Meter ein anderer ist als pro
+  Quadratmeter.
+
+**Das ist deshalb keine Engineering-Entscheidung, sondern eine für Sandy und
+den Prüfmeister** — und sie gehört zu VOB-001 und VOB-014, weil es dieselbe
+Frage ist: Wie nah wollen wir an der VOB-Positionsstruktur liegen, wenn die
+meisten Angebote unserer Nutzer gar keine VOB-Verträge werden?
+
+**Frage an den Prüfmeister (neu, Nr. 8):** Rechnest du Fensterleibungen in
+laufenden Metern oder in Quadratmetern ab, und was erwartet ein Privatkunde,
+wenn er die Position liest?
+
+---
+
+### VOB-008 — geklärt: 0,1 m². Beide bisher genannten Werte waren falsch.
+
+DIN 18365:2019-09, Abschnitt 5.3.1:
+
+> „Übermessen werden: Bei Abrechnung nach Flächenmaß — Aussparungen ≤ 0,1 m²
+> Einzelgröße, in Bodenbeläge eingearbeitete Teile, z. B. Intarsien,
+> Markierungen, Fugen und Profile."
+
+**0,1 m²**, nicht 0,5 und nicht 2,5. Das ist der Faktor 25 gegenüber der
+Malerregel, und es ist die strengste Übermessungsschwelle, die mir in der
+ganzen VOB/C begegnet ist.
+
+**Woher die 0,5 m² kamen, die uns verwirrt haben:** Der Wert existiert
+tatsächlich — aber in **DIN 18363** (Maler), Abschnitt 5.3.1, letzter Halbsatz:
+„Aussparungen in Böden mit einer Einzelgröße ≤ 0,5 m²". Das gilt für das
+**Beschichten** eines Bodens, nicht für das **Belegen**. Zwei Gewerke, zwei
+Zahlen, und die Sekundärquellen haben sie vermischt.
+
+**Was das für das Produkt heißt:** Bei Bodenbelagarbeiten muss praktisch alles
+abgezogen werden — eine Türöffnung, ein Kaminsockel, eine Rohrdurchführung
+größer als etwa 32 cm × 32 cm. Wenn `boden.ts` die 2,5-m²-Schwelle aus
+`vob-uebermessung.ts` mitbenutzt, rechnet es die Fläche systematisch zu groß.
+**Bitte prüfen, Head of Product Engineering** — das ist ein Fehler zugunsten
+des Betriebs und damit einer, der beim Kunden auffällt.
+
+Nebenbefund aus 5.1: Bei Sockelleisten, Fugen und Profilen ist die
+Abrechnungsgröße die **Länge**, nicht die Fläche — das deckt sich mit dem, was
+das Produkt tut.
+
+---
+
+### VOB-012 — bestätigt: Öffnungen unter 1,00 m werden durchgemessen
+
+DIN 18363:2019-09, Abschnitt 5.3.2:
+
+> „Bei Abrechnung nach Längenmaß: Unterbrechungen mit einer Einzellänge ≤ 1 m."
+
+Dieselbe Regel wortgleich in DIN 18365, Abschnitt 5.3.2. Die Praxisantwort des
+Prüfmeisters und die Norm sagen dasselbe.
+
+`maler.ts` zieht an **zwei** Stellen die vollen Türbreiten von der
+Sockelleistenlänge ab (`berechneSockelleistenLaenge(...)` und die Inline-Variante
+`effUmfangWZ − tuerBreiten`). Beide sind bei einer Standardtür von 0,90 m
+falsch, und zwar zulasten des Betriebs. **Bitte beide Stellen anfassen**, nicht
+nur die Hilfsfunktion — bei einem Zimmer mit zwei Türen sind das 1,80 lfdm, die
+niemand bezahlt bekommt.
+
+---
+
+### VOB-001 / VOB-002 — der Verschnitt hat in der Norm keine Grundlage
+
+Ich habe die gesamte VOB/C nach „Verschnitt" durchsucht. Der Begriff kommt vor,
+aber nur bei **Betonstahl** (dort ausdrücklich mit einer 10-%-Regel) und bei
+**Leitungen** (dort ausdrücklich „Verschnitt wird dabei nicht berücksichtigt").
+**In DIN 18365 kommt er nicht vor.** Dort heißt es in Abschnitt 5.1 schlicht,
+zugrunde zu legen seien „die Maße der belegten Fläche, oder der hergestellten
+Beläge".
+
+Verschnitt ist keine belegte Fläche. Wo der Normgeber wollte, dass Verschnitt in
+die Menge eingeht, hat er es hingeschrieben; bei Bodenbelägen hat er es nicht.
+**Der Aufschlag auf die abgerechnete Menge hat damit keine Normgrundlage** — er
+gehört in den Einheitspreis oder in eine klar bezeichnete Materialposition.
+Das stützt VOB-001 und ist zugleich die Antwort auf VOB-014: Paketaufrundung ist
+eine **Material**frage, keine **Mengen**frage.
+
+Das ist kein Verbot. Bei einem BGB-Vertrag mit einem Privatkunden gilt die VOB/C
+ohnehin nur, wenn sie vereinbart wurde. Aber solange die Zeile „Normgrundlagen"
+im PDF VOB-Konformität behauptet (VOB-007), ist ein stiller 5-%-Aufschlag auf
+die Quadratmeter genau die Art von Detail, die ein Prüfmeister findet.
+
+---
+
+### VOB-005 / VOB-006 — meine Zuordnung der Nebenleistungen war richtig
+
+Am Original geprüft und bestätigt: 4.1.1 (Gerüste bis 3,50 m = Nebenleistung),
+4.1.3 (loses Abdecken), 4.1.6 (Reinigen des Untergrundes), 4.2.5 (Gerüste über
+3,50 m = Besondere Leistung), 4.2.10 (grobe Verschmutzung), 4.2.11 (Abkleben).
+Alles wie in „Normlage kompakt" beschrieben.
+
+**Ein Detail, das wir noch nicht hatten und das ins Produkt gehört:** Nach 4.1.4
+ist das Entfernen und Wiederanbringen von **bis zu fünf** Schalter- und
+Steckdosenabdeckungen **je Raum** eine Nebenleistung. Alles darüber ist nach
+4.2.30 eine Besondere Leistung und damit gesondert vergütungsfähig. Eine sehr
+konkrete, gut prüfbare Zahl — und ein plausibler Kandidat für eine Rückfrage im
+Aufmaß.
+
+---
+
+### VOB-009 — die Antwort „bleibt so" stimmt, die Begründung war unvollständig
+
+VOB-009 steht als „✅ geklärt: Stückpreise sind branchenüblich". Der Normtext
+sagt etwas anderes, und das gehört dazu:
+
+- 5.2.6: „Fenster, Türen, Trennwände, Bekleidungen und dergleichen werden je
+  beschichtete Seite nach Fläche gerechnet."
+- 0.5.1 führt Türen, Tore, Zargen, Fenster, Rollläden und Fensterläden unter
+  **Flächenmaß** auf.
+- 5.4.2 setzt voraus, dass auch nach Anzahl gerechnet werden **kann**, und
+  regelt dafür eine Toleranz: „Werden Türen, Fenster, Rollläden und dergleichen
+  nach Anzahl gerechnet, bleiben Abweichungen von den vorgeschriebenen Maßen
+  bis jeweils 5 cm in der Höhe und Breite sowie bis 3 cm in der Tiefe
+  unberücksichtigt."
+
+Der Regelfall der Norm ist also die Fläche; die Stückabrechnung ist zulässig,
+aber die Ausnahme. **Am Ergebnis ändert das nichts** — Stückpreise bleiben, weil
+die Praxis das so macht und die Norm es zulässt. Aber die Zeile „Normgrundlagen"
+(VOB-007) sollte das nicht als VOB-Regelfall ausgeben.
+
+---
+
+### Was jetzt an wen geht
+
+| Was | An wen | Dringlichkeit |
+|---|---|---|
+| Backlog-Punkt Leibungen ersatzlos streichen (VOB-003) | Head of Product Engineering | sofort, 5 Minuten |
+| Türbreiten-Abzug an **beiden** Stellen entfernen (VOB-012) | Head of Product Engineering | vor Gate 1 |
+| Prüfen, ob `boden.ts` mit 2,5 m² statt 0,1 m² rechnet (VOB-008) | Head of Product Engineering | vor Gate 1 — Fehler zulasten des Kunden |
+| Leibungen: nur rechnen, wenn tatsächlich beschichtet | Head of Product Engineering | vor Gate 1 |
+| Einheit der Leibungsposition (m vs. m²) | Sandy + Prüfmeister, Frage 8 | Entscheidung, kein Fix |
+| Verschnitt aus der Menge in den Preis (VOB-001/002/014) | Sandy | Entscheidung steht weiter aus |
+| Zeile „Normgrundlagen" (VOB-007) | Product Designer + Legal | hängt an allem oben |
+
+**Was ich als Nächstes tue:** Die sechs Antworten des Prüfmeisters vom 02.09.
+und VOB-014 habe ich weiterhin nicht durchgesehen — das kommt als Nächstes, jetzt
+mit dem Normtext daneben.
 
 ---
 
