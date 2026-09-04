@@ -644,7 +644,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
   const [infoItemId, setInfoItemId] = useState<string | null>(null)
-  const [priceItems, setPriceItems] = useState<{ id: string; title: string; unit_price: number; unit: string }[]>([])
+  // CoS-043: `category` gehoert mit dazu — an ihr haengt, auf welche
+  // Leistungen ein objektbezogener Zuschlag (Denkmalschutz, Sondermasse,
+  // exotische Holzart) gerechnet wird. Ohne sie wuerde er still auf das
+  // ganze Angebot laufen.
+  const [priceItems, setPriceItems] = useState<{ id: string; title: string; unit_price: number; unit: string; category?: string | null }[]>([])
   const [priceItemToAdd, setPriceItemToAdd] = useState<EditItem | null>(null)
   const [newDatabasePrice, setNewDatabasePrice] = useState('')
   const [newDatabaseUnit, setNewDatabaseUnit] = useState('m²')
@@ -763,17 +767,17 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     if (!user) return
     const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
     if (!co) return
-    const allPriceItems: { id: string; title: string; unit_price: number; unit: string }[] = []
+    const allPriceItems: { id: string; title: string; unit_price: number; unit: string; category?: string | null }[] = []
     const pageSize = 1000
     for (let from = 0; ; from += pageSize) {
       const { data, error } = await supabase
         .from('price_items')
-        .select('id, title, unit_price, unit')
+        .select('id, title, unit_price, unit, category')
         .eq('company_id', co.id)
         .order('title')
         .range(from, from + pageSize - 1)
       if (error) break
-      allPriceItems.push(...((data ?? []) as { id: string; title: string; unit_price: number; unit: string }[]))
+      allPriceItems.push(...((data ?? []) as { id: string; title: string; unit_price: number; unit: string; category?: string | null }[]))
       if (!data || data.length < pageSize) break
     }
     setPriceItems(allPriceItems)
@@ -1011,11 +1015,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   // während er tippt, nicht erst hinterher.
   useEffect(() => {
     if (!editMode) return
-    const naechste = aktualisiereProzentZuschlaege(editItems, item => handZuschlaege.current.has(item.id))
+    // CoS-043: Die Kategorie kommt aus der Preisdatenbank ueber price_item_id.
+    // Nur damit kann ein objektbezogener Zuschlag auf sein eigenes Gewerk
+    // eingegrenzt werden statt auf alles.
+    const kategorieVon = (item: EditItem) =>
+      item.price_item_id ? (priceItems.find(p => p.id === item.price_item_id)?.category ?? null) : null
+    const naechste = aktualisiereProzentZuschlaege(editItems, item => handZuschlaege.current.has(item.id), kategorieVon)
     // Gleiche Instanz = nichts zu tun. Genau darauf ist die Funktion gebaut,
     // sonst würde dieser Effekt sich selbst endlos neu auslösen.
     if (naechste !== editItems) setEditItems(naechste)
-  }, [editItems, editMode])
+  }, [editItems, editMode, priceItems])
 
   function removeEditItem(id: string) {
     setEditItems(prev => prev.filter(item => item.id !== id))

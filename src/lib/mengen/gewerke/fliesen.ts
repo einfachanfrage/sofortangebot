@@ -4,6 +4,18 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
 
+// VOB-002 (Head of Legal, 04.09.2026): Der Verschnittsatz stand im Produkt an
+// vier Stellen mit drei verschiedenen Werten — die Engine rechnete das eine,
+// die Annahme im Angebot behauptete das andere. Ab hier gilt: EIN Wert, EINE
+// Stelle. Diese beiden Konstanten sind für Fliesen die Quelle; wer den Satz
+// irgendwo hinschreibt, liest ihn von hier.
+export const FLIESEN_VERSCHNITT_BODEN = 0.10
+export const FLIESEN_VERSCHNITT_WAND = 0.05
+/** „10 %" / „5 %" — damit Rechnung und Text nie auseinanderlaufen. */
+export function verschnittText(satz: number): string {
+  return `${Math.round(satz * 100)} %`
+}
+
 export function fliesenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
   const warnungen: string[] = []
@@ -25,11 +37,11 @@ export function fliesenEngine(daten: any): MengenErgebnis {
       bodenNetto = round2(laenge * breite)
       positionen.push({
         beschreibung: `Bodenfliesen verlegen — ${name}`,
-        menge: round2(bodenNetto * 1.1),
+        menge: round2(bodenNetto * (1 + FLIESEN_VERSCHNITT_BODEN)),
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `${laenge} × ${breite} = ${bodenNetto} m² + 10% Verschnitt`,
-        annahmen: ['10% Verschnitt angesetzt'],
+        berechnungsweg: `${laenge} × ${breite} = ${bodenNetto} m² + ${verschnittText(FLIESEN_VERSCHNITT_BODEN)} Verschnitt`,
+        annahmen: [`${verschnittText(FLIESEN_VERSCHNITT_BODEN)} Verschnitt angesetzt`],
       })
       if (nassbereich) {
         positionen.push({
@@ -45,11 +57,11 @@ export function fliesenEngine(daten: any): MengenErgebnis {
       bodenNetto = flaeche_angegeben
       positionen.push({
         beschreibung: `Bodenfliesen verlegen — ${name}`,
-        menge: round2(flaeche_angegeben * 1.1),
+        menge: round2(flaeche_angegeben * (1 + FLIESEN_VERSCHNITT_BODEN)),
         einheit: 'm²',
         konfidenz: 'medium',
-        berechnungsweg: `${flaeche_angegeben} m² + 10% Verschnitt`,
-        annahmen: ['10% Verschnitt angesetzt', 'Nur Bodenfläche angegeben — keine Raummaße vorhanden'],
+        berechnungsweg: `${flaeche_angegeben} m² + ${verschnittText(FLIESEN_VERSCHNITT_BODEN)} Verschnitt`,
+        annahmen: [`${verschnittText(FLIESEN_VERSCHNITT_BODEN)} Verschnitt angesetzt`, 'Nur Bodenfläche angegeben — keine Raummaße vorhanden'],
       })
     }
     // Verfugung Boden — immer wenn Bodenfliesen
@@ -69,11 +81,11 @@ export function fliesenEngine(daten: any): MengenErgebnis {
       const wandNetto = round2(umfang * flieshoehe)
       positionen.push({
         beschreibung: `Wandfliesen verlegen — ${name}`,
-        menge: round2(wandNetto * 1.05),
+        menge: round2(wandNetto * (1 + FLIESEN_VERSCHNITT_WAND)),
         einheit: 'm²',
         konfidenz: 'high',
-        berechnungsweg: `Umfang ${umfang} lfm × Fliesenhöhe ${flieshoehe} m = ${wandNetto} m² + 5% Verschnitt`,
-        annahmen: ['5% Verschnitt für Wandfliesen'],
+        berechnungsweg: `Umfang ${umfang} lfm × Fliesenhöhe ${flieshoehe} m = ${wandNetto} m² + ${verschnittText(FLIESEN_VERSCHNITT_WAND)} Verschnitt`,
+        annahmen: [`${verschnittText(FLIESEN_VERSCHNITT_WAND)} Verschnitt für Wandfliesen`],
       })
       // Verfugung Wand — immer wenn Wandfliesen
       positionen.push({

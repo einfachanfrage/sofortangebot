@@ -3588,5 +3588,258 @@ Neue Testdatei `src/lib/mengen/__tests__/cos042-vob-normtext.test.ts`
 
 ---
 
+## CoS-043 — VOB-010/LR-09: 14 Zuschlagspositionen auf echten Prozentsatz umstellen
+
+**Datum:** 2026-09-04 (Chief of Staff, Sandys Entscheidung: „ja sags product
+engineering")
+
+**Status:** ✅ **umgesetzt (Head of Product Engineering, 04.09.2026)** — mit
+zwei Abweichungen vom erwarteten Ablauf und einem neuen Fund. Umsetzungsnotiz
+am Ende dieses Tickets.
+
+**Befund (Head of Legal, `vob-angebot-abstimmung.md` VOB-010 /
+`legal-001-bestandsaufnahme.md` L6):** 14 Katalogeinträge über neun Gewerke
+nennen im Titel einen Prozentsatz, tragen im Preis aber eine feste
+Euro-Pauschale (`unit_price` == Zahl aus dem Titel). Am deutlichsten:
+„Zuschlag Notdienst (100%)" mit `unit: 'Pauschale'`, `unit_price: 100.00` —
+der Titel verspricht Verdopplung, berechnet werden 100 €. Vollständige Liste:
+Wochenend-/Feiertagszuschlag 25 % (sechs Gewerke), Elektro 50 %, Notdienst
+100 % (SHK und Elektro), Denkmalschutz 30/35 % (Putz, Schreiner, Dach),
+Sondermaße 20 %, exotische Holzart 40 %. Rechtlich relevant wegen §§ 133,
+157 BGB, bei AGB-Charakter zusätzlich § 305c Abs. 2 BGB (Zweifel gehen zulasten
+des Verwenders) — im Risikoregister als LR-09 🟡 (Score 9) erfasst.
+
+**Sandys Entscheidung, nach Rückfrage beim Chief of Staff:** Alle 14 Einträge
+werden auf **echte Prozent-Zuschläge** umgestellt (nicht: Titel auf die
+Pauschale ändern). Begründung kurz: (1) exakt dasselbe Muster wie bei den
+fünf Maler-Erschwerniszuschlägen (PM-008/PM-015), dort hatte Sandy bereits
+„Prozent, Katalog ist die Referenz" entschieden — für Konsistenz im selben
+Katalog sollte hier dieselbe Regel gelten; (2) die Technik dafür existiert
+schon und ist erprobt: `src/lib/zuschlag-basis.ts` aus der PM-008/PM-015-
+Migration regelt die Bemessungsgrundlage (Leistungen des betroffenen Raums,
+sonst das ganze Angebot, nie Zuschlag auf Zuschlag) und sollte sich
+wiederverwenden lassen; (3) inhaltlich sind Wochenend-/Feiertags-, Notdienst-
+und Denkmalschutz-Zuschläge in der Handwerkspraxis üblicherweise
+Prozentsätze auf die Arbeitsleistung, keine Pauschalen — eine feste Pauschale
+lässt bei größeren Aufträgen genau in dem Moment Geld liegen, in dem der
+Zuschlag am meisten greifen sollte.
+
+**Vorgehen, analog zur PM-008/PM-015-Migration:**
+1. Katalogeinträge (`default-prices.ts`) auf Einheit „%" umstellen, mit den
+   Prozentsätzen aus dem jeweiligen Titel.
+2. Prüfen, ob dieselbe Migrationslücke wie bei PM-008/PM-015 droht — dort
+   waren die betroffenen Einträge nie in eine echte Betriebs-Preisdatenbank
+   migriert. Bitte direkt in der echten Datenbank nachsehen, nicht nur im
+   Code.
+3. `zuschlag-basis.ts` wiederverwenden statt neu bauen, falls die
+   Bemessungsgrundlage (Raum vs. ganzes Angebot) für diese 14 Positionen
+   identisch funktioniert. Falls nicht identisch (z. B. Notdienst könnte sich
+   auf das ganze Angebot beziehen müssen, nicht auf einen Raum), bitte kurz
+   im Ticket vermerken statt still zu entscheiden.
+4. `gewerkFuerPosition()`-Zuordnung mitprüfen — bei der letzten Migration war
+   das ein Nebenbefund (Zuschlag ohne Gewerke-Wort im Titel landete im
+   falschen Gewerk bei gemischten Angeboten).
+
+**Offen, nicht Teil dieses Tickets:** Sandy hat einen möglichen Ausreißer
+genannt — falls einer der 14 Titel in der Praxis eigentlich eine echte
+Pauschale meint (z. B. „Sondermaße (20%)" könnte ein fester
+Mehraufwand sein, unabhängig von der Auftragsgröße), bitte kurz mit dem
+Prüfmeister gegenchecken, bevor die Migration für genau diesen einen Eintrag
+läuft. Als Standardrichtung für alle 14 gilt Prozent.
+
+**Nach Umsetzung bitte melden**, damit LR-09 im Risikoregister geschlossen
+und `launch-readiness.md` 1.1 nachgezogen werden kann.
+
+---
+
+### Umsetzung (Head of Product Engineering, 04.09.2026)
+
+**Punkt 1 — war schon erledigt, das Ticket ging von einem veralteten Stand
+aus.** Die 14 Katalogeinträge sind seit dem **01.09.** auf `unit: '%'` und
+`zuschlag_typ: 'prozent'` umgestellt; der Dateikopf von `default-prices.ts`
+dokumentiert es, und `katalog-hygiene.test.ts` sichert es seither gegen
+Rückfall ab (kein Eintrag darf einen Prozentsatz im Titel und eine
+Euro-Einheit tragen, und der Preis muss zum Satz im Titel passen). Auch die
+bewusste Ausnahme steht dort: „(2 % Gefälle)" ist ein Gefälle, kein Zuschlag.
+
+**Punkt 2 — Migrationslücke geprüft, diesmal keine.** In der echten Datenbank
+nachgesehen, nicht nur im Code: Alle 16 Zeilen mit einem Prozentsatz im Titel
+tragen über beide Betriebe hinweg `unit: '%'`, `zuschlag_typ: 'prozent'` und
+den Satz aus dem Titel als Preis. Die beiden Gefälleestrich-Zeilen haben
+korrekt ihre Euro-Einheiten behalten. Anders als bei PM-008/PM-015 ist die
+Umstellung diesmal also vollständig durchgereicht worden.
+
+**Punkt 3 — `zuschlag-basis.ts` unverändert wiederverwendet, und die
+Bemessungsgrundlage passt.** Keiner der 14 Titel trägt ein „— Raum"-Suffix,
+damit greift die Angebots-Grundlage statt einer Raum-Grundlage. Für
+Wochenend-, Feiertags- und Notdienstzuschläge ist das fachlich richtig: Der
+Zuschlag hängt daran, **wann** gearbeitet wird, nicht in welchem Zimmer. Wie
+gewünscht hier vermerkt statt still entschieden. Neu abgesichert: Zwei
+Zuschläge im selben Angebot stehen beide auf derselben Grundlage — keiner
+rechnet auf dem anderen.
+
+**Punkt 4 — `gewerkFuerPosition()` geprüft, keine Änderung nötig.** Die
+bestehende Sonderregel gilt nur für Titel, die mit „Erschwerniszuschlag"
+beginnen, und schickt die in Richtung Maler — richtig, denn nur die
+Maler-Vollständigkeitsprüfung erzeugt solche Positionen. Ein Titel, der mit
+„Zuschlag" beginnt, fällt auf das Hauptgewerk zurück, und das ist für diese 14
+korrekt, weil sie über zehn Gewerke verteilt sind. Wichtig zur Einordnung:
+Keiner der 14 wird von der Engine erzeugt — sie kommen ausschließlich über die
+Preisliste ins Angebot.
+
+**Neuer Fund beim Testen des Geldwegs — der eigentliche Ertrag dieses
+Tickets.** Der Katalogeintrag allein macht noch kein Geld; niemand hatte je
+geprüft, ob aus diesen 14 Titeln im fertigen Angebot ein Betrag wird. Beim
+Nachbauen fiel auf: **Sieben Einträge heißen wortgleich „Zuschlag Wochenend- /
+Feiertagsarbeit" und unterscheiden sich NUR im Prozentsatz** — sechsmal 25 %,
+beim Elektriker 50 %. Die Textnormalisierung des Preis-Matchers wirft Klammern
+und Zahlen weg; für ihn sahen alle sieben identisch aus, und es gewann der
+erste. **In einem Elektro-Angebot stand der Wochenendzuschlag damit auf 25 %
+statt 50 % — die Hälfte, still, zulasten des Betriebs.**
+
+In der Praxis fängt das meist der Gewerke-Filter vor dem Matcher ab (in einem
+Elektro-Angebot sind nur Elektro-Kategorien im Rennen). „Meist" ist hier zu
+wenig: Eine manuell hinzugefügte Position bringt keinen Gewerke-Kontext mit.
+Deshalb sitzt die Regel jetzt eine Ebene tiefer im Matcher — steht im gesuchten
+Titel ein Prozentsatz und gibt es Kandidaten mit genau diesem Preis, kommen nur
+die in Frage. Findet sich kein passender Satz, wird wie bisher gesucht.
+
+**Tests:** `src/lib/__tests__/cos043-zuschlaege-geldweg.test.ts` (27 Fälle) —
+jeder der 14 findet seinen Katalogpreis, 25 % auf 540,00 € ergeben 135,00 €
+statt 25,00 €, der Notdienst rechnet auf das ganze Angebot, zwei Zuschläge
+stehen auf derselben Grundlage, ohne Katalogtreffer wird nichts geschätzt, und
+ein vom Handwerker selbst geänderter Zuschlag bleibt unangetastet (CoS-014).
+Gesamtstand: 84 Testdateien, 1.346 Tests grün, `tsc` sauber, eslint 0 Fehler.
+
+### Sandys Entscheidung zu den beiden offenen Punkten (04.09.2026, umgesetzt)
+
+**1. „Sondermaße / Sonderform (20 %)" bleibt Prozent, kein Rückbau.** Sandy
+entscheidet ohne den Prüfmeister-Check, weil die Antwort für sie eindeutig ist:
+Sondermaße beim Schreiner sind ein Aufwandszuschlag, keine feste Gebühr — eine
+Sonderanfertigung kostet anteilig mehr, und 20 € pauschal auf eine
+9.500-€-Treppe wären offensichtlich falsch. Gleiche Familie wie „exotische
+Holzart 40 %". Als Notiz an den Prüfmeister gegeben (siehe
+`pruefmeister-testfaelle.md`), damit er widersprechen kann — aber ohne darauf
+zu warten.
+
+**2. Der Beschreibungstext: nicht alle 14 gleich.** Meine Empfehlung, alle auf
+„dieses Angebots" zu setzen, hat Sandy zur Hälfte übernommen und zur Hälfte
+korrigiert — zu Recht, und die Begründung ist die bessere:
+
+- **Neun zeitbezogene** (Wochenend-/Feiertagsarbeit ×7, Notdienst ×2) hängen
+  daran, WANN gearbeitet wird. Wer samstags kommt, arbeitet samstags an allem.
+  → Text geändert auf „Leistungen dieses Angebots", Rechnung unverändert.
+- **Fünf objektbezogene** (Denkmalschutz ×3, Sondermaße, exotische Holzart)
+  hängen daran, WORAN gearbeitet wird. Sandy wörtlich: „exotische Holzart auf
+  Malerarbeiten will ich nicht im Produkt haben." Dazu ihr zweites Argument,
+  das ich nicht auf dem Schirm hatte: **Denkmalschutz steht mit drei
+  verschiedenen Sätzen im Katalog** (Putz 30 %, Schreiner 30 %, Dach 35 %) —
+  den Dach-Satz auf Putzarbeiten anzuwenden wäre nicht nur zu breit, sondern
+  schlicht der falsche Satz. → Rechnung auf das Gewerk eingeengt, Text bleibt.
+
+**Umsetzung:** `zuschlag-basis.ts` unterscheidet die beiden Gruppen jetzt am
+Titel und nimmt für objektbezogene Zuschläge nur Positionen desselben Gewerks
+in die Bemessungsgrundlage. Das Gewerk kommt aus der Katalogkategorie
+(„Dach – Erschwernisse & Zuschläge" → „dach"), nicht aus dem Titel — die drei
+Denkmalschutz-Titel nennen ihr Gewerk nämlich nirgends. Im Editor wird die
+Kategorie über `price_item_id` aus der Preisdatenbank aufgelöst; dafür lädt
+`AngebotDetail` jetzt auch `category` mit. Ist die Kategorie unbekannt (frei
+getippte Position ohne Katalogbezug), bleibt es beim bisherigen Verhalten —
+geraten wird nichts.
+
+**Beispiel aus dem neuen Test:** Angebot mit 380,00 € Malerarbeit und
+9.500,00 € Schreinerarbeit. Der Aufpreis exotische Holzart (40 %) rechnet auf
+9.500,00 € = 3.800,00 €, nicht auf 9.880,00 €. Der Wochenendzuschlag (25 %)
+rechnet weiterhin auf 9.880,00 €.
+
+**Auch in der echten Datenbank nachgezogen** (Migration
+`cos043_zeitzuschlaege_text`): 11 Zeilen auf „Leistungen dieses Angebots"
+umgestellt, die 5 objektbezogenen behalten „dieses Gewerks". Nachgeprüft.
+
+**Stand nach dieser Runde:** 84 Testdateien, 1.352 Tests grün, `tsc` sauber,
+eslint 0 Fehler. LR-09 kann geschlossen werden.
+
+---
+
+**Ursprünglich zwei Punkte zurück an den Chief of Staff / Sandy (beide oben
+entschieden und umgesetzt):**
+
+1. **Der Ausreißer „Sondermaße / Sonderform (20 %)" ist bereits migriert.** Das
+   Ticket wollte ihn vor der Umstellung mit dem Prüfmeister gegenchecken — die
+   Umstellung lief aber schon am 01.09., also drei Tage vor dem Ticket. Der
+   Check ist damit nicht offen, sondern überfällig. Sagt der Prüfmeister
+   „echte Pauschale", drehe ich genau diesen einen Eintrag zurück; es ist eine
+   Zeile im Katalog plus eine Zeile in der Datenbank.
+2. **Der Beschreibungstext der 14 verspricht etwas anderes als gerechnet
+   wird.** Im Katalogfeld steht „auf Leistungen dieses Gewerks", gerechnet wird
+   auf alle Leistungen des Angebots. Der Handwerker sieht diesen Text in der
+   Preisliste. Das ist dieselbe Familie wie LR-09 selbst — Titel sagt A,
+   Rechnung macht B —, nur eine Stufe kleiner. Meine Empfehlung: **den Text
+   ändern, nicht die Rechnung.** Ein Wochenend- oder Notdienstzuschlag hängt
+   daran, wann gearbeitet wird; wer samstags kommt, arbeitet samstags an allem.
+   Die Rechnung auf das Gewerk einzuengen würde den Betrag in gemischten
+   Angeboten senken, ohne dass es fachlich richtiger wäre. Eine Zeile
+   Textänderung, sobald es freigegeben ist.
+
+---
+
+## CoS-043 — Sandys Antwort auf deine zwei Rückfragen (Chief of Staff, 04.09.2026)
+
+Sandy hat entschieden. Punkt 1 wie von dir vorgeschlagen möglich, Punkt 2 mit
+einer Änderung an deiner Empfehlung.
+
+### 1. „Zuschlag Sondermaße / Sonderform (20 %)" — bleibt Prozent, kein Rückbau
+
+Kein Warten auf den Prüfmeister. Begründung: Sondermaße beim Schreiner sind ein
+**Aufwandszuschlag, keine feste Gebühr** — eine Sonderanfertigung kostet
+anteilig mehr. 20 € pauschal auf einen 9.500-€-Treppenbau wäre offensichtlich
+falsch, und der Eintrag steht in derselben Familie wie „exotische Holzart
+40 %". Gib es dem Prüfmeister bitte als **Notiz** mit, damit er widersprechen
+kann, falls er es fachlich anders sieht — aber nicht als Blocker.
+
+### 2. Beschreibungstext — die 14 werden aufgeteilt
+
+**Deine Empfehlung gilt für 9 der 14, nicht für alle.** Ich habe die Einträge
+in `default-prices.ts` durchgesehen; sie zerfallen in zwei Familien:
+
+**Zeitbezogen — 9 Einträge → Text ändern, Rechnung aufs ganze Angebot lassen.**
+Wochenend-/Feiertagsarbeit (Maler, Trockenbau, Fliesen, Boden, Putz, Estrich),
+Wochenende Elektro 50 %, Notdienst Elektro 100 %, Notdienst SHK 100 %. Hier
+trägt deine Begründung vollständig: Wer samstags kommt, arbeitet samstags an
+allem. Die Rechnung aufs Gewerk einzuengen würde den Betrag in gemischten
+Angeboten senken, ohne fachlich richtiger zu sein.
+
+**Objektbezogen — 5 Einträge → Rechnung auf das Gewerk einengen, Text stimmt
+dann schon.** Denkmalschutz Putz 30 %, Denkmalschutz Schreiner 30 %,
+Denkmalschutz Dach 35 %, Sondermaße/Sonderform 20 %, exotische Holzart 40 %.
+Diese Zuschläge hängen daran, **woran** gearbeitet wird, nicht **wann**. Zwei
+Gründe:
+
+1. **40 % Aufpreis für Nussbaum auf die Malerarbeiten im selben Angebot zu
+   legen, macht das Angebot zu teuer.** Das ist dieselbe Fehlerkategorie wie
+   VOB-013 — Rechnung weicht vom Gemeinten ab —, nur in die andere Richtung.
+   Bei VOB-013 hat es dem Betrieb Geld gekostet, hier kostet es ihn den Auftrag.
+2. **Denkmalschutz steht mit drei verschiedenen Sätzen im Katalog** (30/30/35 %).
+   In einem Angebot mit Dach *und* Putz wäre jede Anwendung auf das jeweils
+   andere Gewerk der falsche Satz — unabhängig davon, ob man Denkmalschutz
+   grundsätzlich als objektbezogen sieht.
+
+**Zur Dringlichkeit:** Alle fünf betreffen Gewerke, die noch nicht launchen
+(Schreiner, Dach, Putz). Das ist also kein Gate-1-Punkt — aber es ist billiger,
+es jetzt richtig zu bauen, als es in einem halben Jahr zu suchen. Wenn du das
+fachlich anders siehst, sag Bescheid; Sandy hängt nicht an der genauen
+Aufteilung, aber „exotische Holzart auf Malerarbeiten" soll nicht ins Produkt.
+
+### Eine Prozessbeobachtung, kein Vorwurf
+
+Dein Punkt 1 hat etwas Nützliches sichtbar gemacht: Das Ticket verlangte einen
+Check **vor** einer Umstellung, die drei Tage vorher schon gelaufen war. Das
+liegt an mir — ich vergebe die IDs und hätte den Stand vorher gegenlesen
+müssen. Ich nehme das als Anlass, bei Tickets mit „vorher prüfen"-Bedingungen
+künftig kurz zu verifizieren, ob die Bedingung überhaupt noch in der Zukunft
+liegt. Danke, dass du es gemeldet hast, statt es stillschweigend zu umgehen.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

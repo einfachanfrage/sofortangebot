@@ -30,8 +30,14 @@ VINYL/LAMINAT — Material-Positionen:
 - Kleinmaterial/Befestigung: Pauschale 20-35€
 Kategorie: "Material"
 
+(VOB-002, 04.09.2026: Die Verschnittsätze hier MÜSSEN zu denen der Mengen-Engine
+passen — 5 % für gerade verlegtes Laminat/Vinyl/Parkett, 10 % Fliesen Boden,
+5 % Fliesen Wand. Quelle im Code: standardVerschnitt() in boden-normalisierer.ts
+und FLIESEN_VERSCHNITT_* in mengen/gewerke/fliesen.ts. Zwei verschiedene Zahlen
+im selben Angebot kosten Glaubwürdigkeit, nicht Material.)
+
 FLIESEN — Material-Positionen:
-- Fliesen inkl. 12% Verschnitt: Fläche × 1,12 × Preis (Badezimmer ca. 30-55€/m²)
+- Fliesen inkl. 10% Verschnitt: Fläche × 1,10 × Preis (Badezimmer ca. 30-55€/m²)
 - Fliesenkleber: Fläche × 5€/m²
 - Fugenmörtel: Fläche × 1,50€/m²
 - Silikon für Ecken/Anschlüsse: Pauschale 28€
@@ -82,7 +88,7 @@ Antworte NUR mit JSON:
 {
   "items": [
     {
-      "title": "Bodenbelag Vinyl liefern (inkl. 10% Verschnitt)",
+      "title": "Bodenbelag Vinyl liefern (inkl. 5% Verschnitt)",
       "description": "Klick-Vinyl ca. 8mm, mittelpreisig",
       "quantity": 88,
       "unit": "m²",

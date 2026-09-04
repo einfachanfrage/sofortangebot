@@ -10,7 +10,16 @@ function nettoBodenflaeche(position: BerechnetePosition | undefined): number | n
   if (!position) return null
   const ausRechenweg = position.berechnungsweg?.match(/(\d+(?:[.,]\d+)?)\s*m²/i)
   if (ausRechenweg) return Number(ausRechenweg[1].replace(',', '.'))
-  if (/10\s*%\s*verschnitt/i.test(position.beschreibung)) return Math.round(position.menge / 1.1 * 100) / 100
+  // VOB-002: Hier stand fest „10 % Verschnitt" — ein Wert, den die Engine seit
+  // dem Angleich der Verschnittsätze gar nicht mehr schreibt (sie schreibt 5 %,
+  // 15 % oder gar keinen). Die Rückrechnung lief damit ins Leere und war eine
+  // Falle für den Nächsten, der hier etwas ändert. Jetzt wird der Prozentsatz
+  // aus dem Titel gelesen, egal welcher dort steht.
+  const ausTitel = position.beschreibung?.match(/(\d+(?:[.,]\d+)?)\s*%\s*verschnitt/i)
+  if (ausTitel) {
+    const satz = Number(ausTitel[1].replace(',', '.')) / 100
+    if (satz > 0 && satz < 1) return Math.round(position.menge / (1 + satz) * 100) / 100
+  }
   return position.menge
 }
 

@@ -1,4 +1,33 @@
 import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, Vertrauensstufe } from './types'
+import { verschnittFuerVerlegung } from '../boden-normalisierer'
+import { FLIESEN_VERSCHNITT_BODEN, FLIESEN_VERSCHNITT_WAND, verschnittText } from './gewerke/fliesen'
+
+// ── VOB-002 (Head of Legal, 04.09.2026) ──────────────────────────────────
+//
+// Hier standen die Verschnittsätze als fester Text: „Belagverschnitt: 10 %
+// (bei Diagonalverlegung 15 %)". Die Engine rechnet aber 5 % für gerade
+// verlegtes Laminat/Vinyl/Parkett und 0 % für Teppich und Kork. In denselben
+// Angebotsdaten stand also eine Annahme, die die Rechnung widerlegt — der
+// Handwerker liest eine Zahl, gerechnet wurde eine andere.
+//
+// Head of Legal dazu: Wenn ein Endkunde das nachrechnet, geht es nicht mehr um
+// 5 % Material, sondern um die Glaubwürdigkeit des ganzen Angebots. Der Text
+// wird deshalb nicht mehr geschrieben, sondern aus derselben Funktion
+// abgeleitet, mit der die Menge gerechnet wird.
+function belagVerschnittAnnahme(extraktion: ExtrahierteDaten): string | null {
+  const text = extraktion.transkript ?? ''
+  const saetze = new Set<number>()
+  for (const raum of extraktion.raeume ?? []) {
+    const belag = (raum as { belag?: string | null }).belag
+    const richtung = (raum as { verlegerichtung?: string | null }).verlegerichtung ?? ''
+    if (!belag) continue
+    saetze.add(verschnittFuerVerlegung(belag, `${richtung} ${text}`))
+  }
+  if (saetze.size === 0) return null
+  const sortiert = [...saetze].sort((a, b) => a - b)
+  const liste = sortiert.map(verschnittText).join(' bzw. ')
+  return `Belagverschnitt: ${liste} — je Belag und Verlegeart, so wie oben gerechnet`
+}
 
 export function berechneBewertung(
   extraktion: ExtrahierteDaten,
@@ -66,7 +95,10 @@ export function berechneBewertung(
       }
       if (b.nassbereich) erkannte_angaben.push(`✓ ${b.name}: Nassbereich (Abdichtung geplant)`)
     }
-    annahmen.push('Fliesenverschnitt: 10 % auf Bodenfläche, 5 % auf Wandfläche')
+    annahmen.push(
+      `Fliesenverschnitt: ${verschnittText(FLIESEN_VERSCHNITT_BODEN)} auf Bodenfläche, `
+      + `${verschnittText(FLIESEN_VERSCHNITT_WAND)} auf Wandfläche`,
+    )
   }
 
   if (gewerk === 'trockenbau') {
@@ -91,7 +123,8 @@ export function berechneBewertung(
         erkannte_angaben.push(`✓ ${raum.name}: ${fl} m²`)
       }
     }
-    annahmen.push('Belagverschnitt: 10 % (bei Diagonalverlegung 15 %)')
+    const belagAnnahme = belagVerschnittAnnahme(extraktion)
+    if (belagAnnahme) annahmen.push(belagAnnahme)
   }
 
   // Warnungen aus Mengenengine übernehmen

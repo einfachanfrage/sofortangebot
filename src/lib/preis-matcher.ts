@@ -135,11 +135,33 @@ export function findePreisposition(
   // matchte. Diese Asymmetrie war kein Vorsatz, sondern ein Fehler. Jetzt
   // wirkt Regel 2 dort, wo sie hingehört: zwischen den Kandidaten dieser
   // einen Suche, nicht über den ganzen Katalog.
+  // ── CoS-043 (04.09.2026): Prozentsatz im Titel unterscheidet die Kandidaten
+  //
+  // Sieben Katalogeinträge heißen wortgleich „Zuschlag Wochenend- /
+  // Feiertagsarbeit" und unterscheiden sich NUR im Prozentsatz — sechs mal
+  // 25 %, beim Elektriker 50 %. Die Textnormalisierung wirft Klammern und
+  // Zahlen weg, für den Matcher sahen alle sieben identisch aus, und es gewann
+  // schlicht der erste. In einem Elektro-Angebot stand der Wochenendzuschlag
+  // damit auf 25 % statt 50 % — die Hälfte, still, zulasten des Betriebs.
+  //
+  // In der Praxis fängt das meist der Gewerke-Filter vor dieser Funktion ab
+  // (nur Elektro-Kategorien im Rennen). „Meist" ist hier aber zu wenig: Eine
+  // manuell hinzugefügte Position bringt keinen Gewerke-Kontext mit. Deshalb
+  // die Regel eine Ebene tiefer: Steht im gesuchten Titel ein Prozentsatz und
+  // gibt es Kandidaten mit genau diesem Preis, kommen nur die in Frage.
+  const gesuchterProzentsatz = einheitNorm === '%'
+    ? Number(/\(?\s*(\d+(?:[.,]\d+)?)\s*%\s*\)/.exec(beschreibung)?.[1]?.replace(',', '.') ?? NaN)
+    : NaN
+  const passendeProzentKandidaten = Number.isFinite(gesuchterProzentsatz)
+    ? preise.filter(p => normalisiereEinheit(p.unit) === einheitNorm && p.unit_price === gesuchterProzentsatz)
+    : []
+  const kandidatenListe = passendeProzentKandidaten.length > 0 ? passendeProzentKandidaten : preise
+
   const SCHWELLE = 0.62
   let besteMitVariante: Zuordnung | null = null
   let besteOhneVariante: Zuordnung | null = null
 
-  for (const position of preise) {
+  for (const position of kandidatenListe) {
     if (normalisiereEinheit(position.unit) !== einheitNorm) continue
     const kandidat = normalisierePreistext(position.title)
     const kandidatAnstriche = kandidat.match(/\b([123])x\b/)?.[1]

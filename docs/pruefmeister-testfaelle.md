@@ -3474,6 +3474,32 @@ gemeinsam erledigt, wie vom Prüfmeister vorgeschlagen.
 
 ---
 
+## Notiz an den Prüfmeister: „Sondermaße / Sonderform (20 %)" (04.09.2026)
+
+**Keine Frage, die auf eine Antwort wartet — eine Entscheidung, der du
+widersprechen kannst.** CoS-043 hatte vorgesehen, diesen einen Katalogeintrag
+vor der Umstellung auf einen echten Prozentsatz mit dir gegenzuchecken. Die
+Umstellung lief allerdings schon am 01.09., also drei Tage vor dem Ticket.
+
+Sandy hat entschieden, es **bei Prozent zu belassen**, mit dieser Begründung:
+Sondermaße beim Schreiner sind ein Aufwandszuschlag, keine feste Gebühr. Eine
+Sonderanfertigung kostet anteilig mehr; 20 € pauschal auf eine 9.500-€-Treppe
+wären offensichtlich falsch. Dieselbe Familie wie „Aufpreis exotische Holzart
+40 %".
+
+Wenn du das fachlich anders siehst — etwa weil „Sondermaß" in der Praxis ein
+fester Rüst-/Einrichtaufwand an der Maschine ist, unabhängig von der Größe des
+Stücks —, sag Bescheid. Es ist eine Zeile im Katalog und eine in der
+Datenbank, zurückgedreht in fünf Minuten.
+
+Mitentschieden und ebenfalls ohne Rückfrage umgesetzt: Dieser Zuschlag rechnet
+seit heute nur noch auf **Leistungen desselben Gewerks**, nicht mehr auf das
+ganze Angebot — genau wie Denkmalschutz und die exotische Holzart. Die
+zeitbezogenen Zuschläge (Wochenende, Feiertag, Notdienst) rechnen weiterhin auf
+alles, weil sie daran hängen, wann gearbeitet wird, nicht woran.
+
+---
+
 ## VOB-012 umgesetzt: die Sockelleisten-Sollwerte haben sich geändert (04.09.2026)
 
 **Bitte vor dem nächsten Nachtest lesen.** Mit CoS-042 ist der gekaufte

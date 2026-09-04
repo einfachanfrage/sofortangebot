@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { sendVerificationEmail } from '@/lib/email'
+import { pruefeRegistrierungsdaten, type RegistrierungsEingabe } from '@/lib/registrierung'
 
 // Ersetzt den bisherigen Client-seitigen `supabase.auth.signUp()`-Aufruf.
 // Grund (CoS-P-004): signUp() löst Supabases eigene, aus dieser Session
@@ -16,29 +17,24 @@ import { sendVerificationEmail } from '@/lib/email'
 // aufgerufen — das vermeidet jede Unklarheit darüber, ob das versehentlich
 // ein bestehendes Passwort überschreiben könnte.
 
-const AGB_VERSION = '2026-06'
+// LR-05 / G4 (04.09.2026): Die Eingangsprüfung liegt jetzt in
+// src/lib/registrierung.ts — inklusive der Unternehmer-Bestätigung, die hier
+// bis heute überhaupt nicht gelesen wurde (weder geprüft noch gespeichert),
+// obwohl das Formular sie als Pflichtfeld abfragt und mitschickt.
 
 export async function POST(req: NextRequest) {
-  let body: { email?: unknown; password?: unknown; agbAkzeptiert?: unknown }
+  let body: RegistrierungsEingabe
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 })
   }
 
-  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
-  const password = typeof body.password === 'string' ? body.password : ''
-  const agbAkzeptiert = body.agbAkzeptiert === true
-
-  if (!email || !email.includes('@')) {
-    return NextResponse.json({ error: 'Bitte gib eine gültige E-Mail-Adresse ein.' }, { status: 400 })
+  const pruefung = pruefeRegistrierungsdaten(body)
+  if (!pruefung.ok) {
+    return NextResponse.json({ error: pruefung.fehler }, { status: pruefung.status })
   }
-  if (password.length < 8) {
-    return NextResponse.json({ error: 'Passwort muss mindestens 8 Zeichen lang sein.' }, { status: 400 })
-  }
-  if (!agbAkzeptiert) {
-    return NextResponse.json({ error: 'Bitte akzeptiere die AGB um fortzufahren.' }, { status: 400 })
-  }
+  const { email, password } = pruefung
 
   const service = createServiceClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -49,10 +45,7 @@ export async function POST(req: NextRequest) {
     email,
     password,
     email_confirm: false,
-    user_metadata: {
-      agb_akzeptiert_am: new Date().toISOString(),
-      agb_version: AGB_VERSION,
-    },
+    user_metadata: pruefung.metadata,
   })
 
   if (createError) {
