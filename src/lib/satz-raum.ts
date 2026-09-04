@@ -14,10 +14,24 @@ export interface SatzMitRaum {
   raum: string | null
 }
 
+// Teuer gelernt (03.09.2026, beim Durchgehen der offenen Testfälle):
+// Ein Punkt ZWISCHEN ZIFFERN ist ein Dezimaltrennzeichen, kein Satzende.
+// Unsere eigene Zahlen-Vorverarbeitung erzeugt genau das — „vier mal
+// dreieinhalb" wird zu „4 mal 3.5", und die Produktionstranskripte enthalten
+// es auch direkt („Im Flur daneben 4 mal 1.50 kommt der Boden komplett neu").
+// Ein naives split(/[.!?;]/) zerlegt so mitten in der Maßangabe: Aus
+// „Flur, 4 mal 3.5, Laminat, Trittschalldämmung drunter" werden zwei Stücke,
+// und das Stück mit der Dämmung enthält den Raumnamen nicht mehr. Die
+// Trittschalldämmung landete dadurch wieder in allen Räumen statt im
+// genannten — der Fehler, der schon dreimal repariert wurde, durch die
+// Hintertür. Deshalb: Ziffer.Ziffer wird vor dem Trennen geschützt.
+const DEZIMAL_SCHUTZ = '\u0000'
+
 export function saetze(text: string): string[] {
   return text
+    .replace(/(\d)\.(\d)/g, `$1${DEZIMAL_SCHUTZ}$2`)
     .split(/[.!?;\n]+/)
-    .map(s => s.trim())
+    .map(s => s.split(DEZIMAL_SCHUTZ).join('.').trim())
     .filter(Boolean)
 }
 

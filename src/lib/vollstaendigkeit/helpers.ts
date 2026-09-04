@@ -1,3 +1,4 @@
+import { saetze } from '../satz-raum'
 import type { BerechnetePosition } from '../mengen/types'
 
 export function hat(positionen: BerechnetePosition[], ...begriffe: string[]): boolean {
@@ -18,7 +19,7 @@ export function add(ergaenzt: BerechnetePosition[], fehlende: string[], beschrei
  */
 export function findeRaumImSatz(begriff: RegExp, lower: string, raumNamen: string[]): string | null {
   if (raumNamen.length === 0) return null
-  for (const satz of (lower ?? '').split(/[.!?\n;]+/)) {
+  for (const satz of saetze(lower ?? '')) {
     if (!begriff.test(satz)) continue
     const treffer = raumNamen.find(r => satz.includes(r.toLowerCase()))
     if (treffer) return treffer

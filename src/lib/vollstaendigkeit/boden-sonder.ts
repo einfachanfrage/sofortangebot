@@ -1,3 +1,4 @@
+import { saetze } from '../satz-raum'
 import type { BerechnetePosition } from '../mengen/types'
 import { hat } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
@@ -348,10 +349,9 @@ export function raumAusDaemmungsSatz(
     .filter((r): r is string => !!r)
   if (raeume.length === 0) return null
 
-  const satz = lower
-    .split(/[.!?;]/)
-    .map(t => t.trim())
-    .find(t => /trittschall|gehschall|pur-?\s?schaum/i.test(t))
+  // Gemeinsamer Satz-Splitter (schützt Dezimalpunkte — siehe satz-raum.ts):
+  // „Flur, 4 mal 3.5, … Trittschalldämmung drunter" ist EIN Satz.
+  const satz = saetze(lower).find(t => /trittschall|gehschall|pur-?\s?schaum/i.test(t))
   if (!satz) return null
 
   return raeume.find(r => satz.includes(r.toLowerCase())) ?? null

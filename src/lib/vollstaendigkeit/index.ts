@@ -46,7 +46,9 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   // WICHTIG: normalisiereGewerk liefert 'boden_parkett' (nicht 'boden') — beide abdecken,
   // sonst läuft die Boden-Vollständigkeit im echten Betrieb nie.
   if (gewerk === 'boden' || gewerk === 'boden_parkett') {
-    pruefeBoden(ergaenzt, fehlende, lower, verstaendnis)
+    // signale wird durchgereicht, damit die Boden-Prüfung bei mehreren
+    // Räumen je Raum ein eigenes Auftrags-Verständnis bauen kann (siehe boden.ts).
+    pruefeBoden(ergaenzt, fehlende, lower, verstaendnis, signale)
   }
   if (gewerk === 'elektro') {
     pruefeElektro(ergaenzt, fehlende, lower)

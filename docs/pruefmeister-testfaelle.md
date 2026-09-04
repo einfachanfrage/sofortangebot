@@ -83,7 +83,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
-| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, aber die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) bleibt offen und situativ — nicht bei jeder Raum-Paarung reproduzierbar, aber nicht behoben |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist **behoben 03.09.** — Ursache war zuletzt der Dezimalpunkt in der Satztrennung, siehe „Nachtrag am selben Tag“. Dämmung steht jetzt genau einmal, im Flur, mit dessen Fläche. Live-Nachtest steht aus |
 | PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
 | PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Vierter Nachtest komplett sauber: alle vier Positionen exakt Soll, „Boden schützen" wieder korrekt bepreist, keine offenen Funde mehr |
@@ -92,9 +92,9 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
-| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs) |
+| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
-| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, Befund 4+5 Ursache gefunden (Wortmuster in `mehrgewerk.ts`), Fix wartet auf Freigabe. Live-Nachtest steht aus |
+| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus |
 
@@ -3363,6 +3363,169 @@ nachvollziehbar.
 
 **Nicht angefasst:** Befund 3 (Türanzahl) — der hängt an VOB-012 und wird dort
 gemeinsam erledigt, wie vom Prüfmeister vorgeschlagen.
+
+---
+
+## Umbau statt sechster Einzelreparatur (Head of Product Engineering, 03.09.2026)
+
+**Sandys Auftrag:** „Befund 4 jetzt als kleinen Einzelfix, danach die
+Vollständigkeitsprüfung raumweise umbauen statt weiter Fälle einzeln
+abzuarbeiten." Beides ist umgesetzt. Was damit erledigt ist, steht unten je
+Fall; hier die gemeinsame Ursache, weil sie das Eigentliche ist.
+
+### Die gemeinsame Ursache
+
+Die Boden-Vollständigkeitsprüfung besteht aus dreizehn Regeln. Bis heute
+bekamen **zwölf davon keinerlei Rauminformation**: Sie liefen einmal über das
+gesamte Transkript und die gesamte Positionsliste und hängten ihr Ergebnis
+hinterher irgendeinem Raum an. Für einen Einzelraum ist das richtig — dafür
+sind sie geschrieben und getestet. Bei mehreren Räumen ist es die gemeinsame
+Ursache von fünf Befunden dieses Batches:
+
+| Befund | Erscheinungsform |
+|---|---|
+| PM-032/033/035 | Trittschalldämmung nur im ersten Raum, dreimal belegt |
+| PM-033 | Sockelleisten unter „Allgemein" mit einem Umfang, den es in keinem Raum gibt |
+| PM-034 Befund 5 | Grundierung im Esszimmer fehlt |
+| PM-033/036 | offene Punkte („fehlende") ohne Raumbezug, deshalb nur einmal statt je Raum |
+
+Die Trittschalldämmung wurde deshalb **dreimal** repariert (PM-004, PM-023,
+PM-032) — jedes Mal für *einen* Raum, jedes Mal kam sie beim nächsten
+Mehrraum-Fall zurück. Der Prüfmeister hat das im Fazit als Muster benannt
+(„Position → Raum"), und er hat recht: Weiter einzeln zu flicken hätte Runde
+vier erzeugt.
+
+### Was geändert wurde
+
+Bei **mehreren Räumen** wird jeder Raum jetzt als eigene, kleine Welt geprüft:
+seine Sätze aus dem Diktat, seine Positionen, sein eigenes Auftrags-
+Verständnis (Belag und Altbelag aus *seinem* Abschnitt, nicht aus dem global
+zusammengefassten Signal). Bei einem Raum bleibt alles wie bisher.
+
+**Die dreizehn Regeln selbst sind unverändert.** Sie waren nie falsch; sie
+haben nur eine Mehrraum-Welt vorgesetzt bekommen, für die sie nicht gebaut
+sind. Der Umbau ist deshalb ein Verteiler und keine Neufassung — jede Regel
+behält ihr Verhalten und ihre Tests.
+
+**Drei Prüfungen laufen bewusst weiterhin über den ganzen Auftrag**, weil sie
+von Natur aus zwischen Räumen stattfinden, und das ist im Code benannt:
+
+- **Übergangsschiene** — sie sitzt an der Grenze zweier Räume. Je Raum geprüft
+  hieße: an jeder Zimmertür eine erfinden. Genau die Falle aus PM-032.
+- **Trittschalldämmung** — die Ansage fällt einmal für den ganzen Auftrag
+  („überall dasselbe Klick-Vinyl … Trittschalldämmung drunter") und verteilt
+  sich dann auf alle Räume. Die Funktion kann das seit dem PM-032/033-Fix
+  selbst; je Raum aufgerufen landete die eine Ansage wieder in genau einem
+  Raum — also der alte Fehler in neuem Gewand. (Beim Umbau genau so passiert
+  und vom Test gefangen.)
+- **Fußbodenheizung und Treppe** — Gegenstände des Auftrags, nicht eines Raums.
+
+Ein zweiter Fund beim Umbau, der zeigt, wie dünn das Eis war: Der Flur eines
+Maler-Auftrags („nur Wände und Decke streichen, da wird nix am Boden gemacht")
+war bisher **aus Versehen** geschützt — die Verlege-Position des
+Nachbarzimmers ließ die Regel früh aussteigen. Mit der Raumtrennung fällt
+dieser Zufallsschutz weg, und der Flur bekam eine erfundene „Bodenbelag
+verlegen 9 m²". Deshalb prüft der Verteiler jetzt je Raum dasselbe Signal, das
+auch die Mengen-Engine für einen echten Belagauftrag verlangt (importiert,
+nicht nachgebaut). Der PM-013-Test hat den Fehler sofort gefangen.
+
+### Was damit im Batch grün wird
+
+**PM-032 — vollständig grün.** Trittschalldämmung jetzt in allen drei Räumen
+(Flur 7,20 + Wohnzimmer 20,00 + Küche 8,40 = **35,60 m²**, vorher 7,20), genau
+**eine** Übergangsschiene, Belag 37,38 m² und Sockelleisten 41,30 lfdm
+unverändert exakt Soll, kein Bad.
+
+**PM-033 — Befund 2 und 3 erledigt.** Keine erfundenen Sockelleisten mehr
+(siehe Fix oben), und die Übergangsschienen sind **2 statt 1**.
+Dazu die Antwort auf die Frage des Prüfmeisters, ob PM-032 nur ein
+Zufallstreffer war: **war es nicht.** Die Anzahl wird aus dem Satz gelesen, in
+dem der Übergang vorkommt — sie ist nicht pauschal 1. Gefehlt hat allein die
+Sprechweise „an den **beiden** Türen … **jeweils eine**": Das „eine" wurde
+richtig gelesen, ist aber die Zahl *pro Tür*. Bei einem „jeweils/je" zählt
+jetzt die Zahl der Türen davor.
+
+**PM-034 — Befund 4 und 5 erledigt.**
+*Befund 4:* Die drei Maler-Spachtelpositionen sind weg. Ursache war die
+Gewerke-Erkennung: Die Küche trägt „boden spachteln", das Esszimmer
+„grundierung" — beide trafen das Maler-Wortmuster, also lief die komplette
+Maler-Prüfung über einen reinen Bodenauftrag. Gegen alle gespeicherten
+Extraktionen geprüft: Von sechs Einträgen, die das alte Muster treffen, nennen
+vier ihr Objekt selbst („wände grundieren", „decke spachteln q3" …) — die
+bleiben unverändert Malerarbeit. Nur die beiden anderen ändern ihr Verhalten.
+Die Richtung ist bewusst asymmetrisch: Eine fälschlich **weggelassene**
+Maler-Position kostet den Betrieb Geld und fällt niemandem auf, deshalb bleibt
+jedes eindeutige Maler-Wort ohne Bedingung stehen; nur die mehrdeutigen Wörter
+(spachteln, glätten, grundieren) brauchen ein Objekt.
+*Befund 5:* „Estrich grundieren — Esszimmer" steht jetzt mit **14,00 m²** im
+Angebot. Es waren zwei unabhängige Ursachen: Der Untergrund-Block las seine
+Fläche ausschließlich aus dem Text (wo die gesprochene Form nicht als Maßpaar
+ankam), und er lief global. Seit er je Raum läuft, ist die Verlegefläche
+dieses Raums eindeutig — sie steht bereits berechnet in seiner eigenen
+Position, mit korrekt herausgerechnetem Verschnitt.
+
+**Gesamtstand:** 79 Testdateien, 1.277 Tests grün, `tsc` sauber, eslint 0
+Fehler. Neue Testdatei
+`src/lib/vollstaendigkeit/__tests__/raumweise-vollstaendigkeit.test.ts`
+(16 Fälle) mit den Original-Diktaten des Prüfmeisters und der Gegenrichtung.
+
+### Nachtrag am selben Tag: der Dezimalpunkt (gefunden beim Durchgehen der offenen Fälle)
+
+Beim Prüfen, ob der PM-023-Fund („Trittschalldämmungs-Flächenverwechslung,
+situativ") durch den Umbau erledigt ist, ist ein Fehler aufgefallen, der die
+ganze Arbeit dieser Woche unterlaufen hat:
+
+**Ein Punkt zwischen Ziffern ist ein Dezimaltrennzeichen, kein Satzende.**
+Unsere eigene Zahlen-Vorverarbeitung macht aus „vier mal dreieinhalb" ein
+„4 mal 3.5", und die echten Produktionstranskripte enthalten denselben Punkt
+direkt — im PM-036-Diktat steht wörtlich „Im Flur daneben **4 mal 1.50** kommt
+der Boden komplett neu". Jedes naive Trennen an „." zerlegt damit **mitten in
+der Maßangabe**, und alles, was danach im Satz steht, verliert seinen
+Raumbezug.
+
+Konkret: „Flur, 4 mal 3.5, Laminat gerade verlegt, Trittschalldämmung drunter"
+zerfiel in „Flur, 4 mal 3" und „5, laminat gerade verlegt, trittschalldämmung
+drunter". Im zweiten Stück steht der Raumname nicht mehr — also galt die
+Ansage als raumlos und die Dämmung ging wieder in **alle** Räume statt in den
+genannten. Der Fehler, der schon dreimal repariert wurde, durch die Hintertür,
+und zwar in genau der Funktion, die ihn beheben sollte.
+
+Betroffen war jede Auswertung, die satzweise liest — also auch die
+Teilflächen-Erkennung (PM-036), der Sockelleisten-Ausschluss (PM-033), die
+Erkennung abbestellter Räume (PM-034) und die Zählung der Übergangsschienen.
+Dass die genannten Fälle trotzdem grün waren, lag am Zufall: Dort stand
+entweder ein Komma („4 mal 1,50" im Rohtext) oder die entscheidende Aussage
+vor der Maßangabe.
+
+Behoben in `src/lib/satz-raum.ts`: Ziffer-Punkt-Ziffer wird vor dem Trennen
+geschützt. Alle vier Stellen, die vorher eigene `split(/[.!?;]/)`-Aufrufe
+hatten, benutzen jetzt diesen einen Splitter — `raumAusDaemmungsSatz`,
+`pruefeUebergangsprofil`, `findeRaumImSatz` und die satzweise Raumzuordnung
+selbst. Drei zusätzliche Tests halten es fest.
+
+**Damit ist auch der offene PM-023-Fund erledigt:** Bei der Paarung Flur
+(Laminat + Trittschall) und Gästezimmer (Vinyl Fischgrät) steht die Dämmung
+jetzt genau einmal, im Flur, mit 14,00 m² — der Fläche dieses Raums.
+
+---
+
+### Was der Umbau NICHT erledigt — und warum
+
+Ich hatte gegenüber Sandy gesagt, der Umbau schließe „auch den L-Form-Rest".
+**Das war zu weit gegriffen, und ich korrigiere es hier:**
+
+- **PM-035, L-förmiger Flur.** Der zweite Schenkel verschwindet stumm. Das ist
+  keine Frage der Raumtrennung, sondern eine fehlende Geometrie: Ein Raum kann
+  im Datenmodell nur ein Rechteck sein. Dafür gibt es einen eigenen Weg
+  (Grundriss-Editor, `raum-geometrie.ts`), an den „L-förmig" angeschlossen
+  werden müsste. Eigenes Stück Arbeit, unangetastet.
+- **PM-033, Trittschall-Kurzform.** „Trittschall nur unterm Laminat im Flur"
+  löst weiterhin nichts aus, weil der Auslöser das ganze Wort
+  „Trittschalldämmung" verlangt. Das ist die offene Frage an den Prüfmeister
+  von letzter Woche (soll die Kurzform auslösen, und welche Beläge bekommen
+  gar keine Dämmung) — ich beantworte sie nicht selbst.
+- **PM-035, Türanzahl und Sockelleisten-Umfang.** Hängt an VOB-012, dort
+  gemeinsam zu erledigen.
 
 ---
 

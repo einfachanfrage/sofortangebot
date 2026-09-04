@@ -1,3 +1,4 @@
+import { saetze } from '../satz-raum'
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, addMitMenge } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen } from './boden-basis'
@@ -228,7 +229,9 @@ export function pruefeUebergangsprofil(
   // Satzabschnitt, in dem der Übergang selbst vorkommt, und ein Zahlwort muss
   // unmittelbar davorstehen. Steht dort gar keine Zahl, entscheidet der
   // Artikel: „ne/eine Übergangsschiene" ist eine.
-  const zahlwoerter: Record<string, number> = { ein: 1, eine: 1, zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6 }
+  const zahlwoerter: Record<string, number> = {
+    ein: 1, eine: 1, zwei: 2, beide: 2, beiden: 2, drei: 3, vier: 4, fünf: 5, sechs: 6,
+  }
   // Zwei verschiedene Muster, mit Absicht:
   //   UEBERGANG_SATZ — findet den Satzteil, in dem es wirklich um den Übergang
   //     geht. Eng gehalten, sonst gewinnt ein früherer Satzteil über
@@ -247,16 +250,32 @@ export function pruefeUebergangsprofil(
   // Deutschen gehört ein Komma zum selben Satz; getrennt wird deshalb nur am
   // Satzende. Die Raummaße aus „Flur, vier mal eins achtzig." bleiben trotzdem
   // draußen — die stehen in einem eigenen Satz.
-  const abschnitt = lower
-    .split(/[.!?;]/)
-    .map(s => s.trim())
-    .find(s => UEBERGANG_SATZ.test(s)) ?? ''
+  // Gemeinsamer Satz-Splitter — er schützt Dezimalpunkte, sonst zerfiele
+  // „Flur, 4 mal 1.50, dazu eine Übergangsschiene" mitten im Maß.
+  const abschnitt = saetze(lower).find(s => UEBERGANG_SATZ.test(s)) ?? ''
   let anzahl = 0
-  const numMatch = abschnitt.match(/(\d+)\s*(?:stück\s*)?(?:alu-?)?(?:übergangs|uebergangs|anschluss)?(?:profil|schiene)/i)
+
+  // PM-033, Befund 3 (Prüfmeister, 02.09.2026): „An den **beiden** Türen zum
+  // Wohnzimmer und zum Schlafzimmer **jeweils eine** Übergangsschiene" ergab
+  // eine statt zwei. Die Stückzahl-Suche unten fand das „eine" — richtig
+  // gelesen, aber es ist die Zahl PRO Tür, nicht die Gesamtzahl. Bei einem
+  // „jeweils/je" zählt deshalb die Zahl der Türen bzw. Übergänge davor.
+  //
+  // Der Prüfmeister hatte den Verdacht, das Tool setze immer pauschal genau
+  // eine Schiene, und PM-032 sei deshalb nur ein Zufallstreffer gewesen.
+  // Am Code geprüft stimmt das nicht: Die Anzahl wird aus dem Satz gelesen,
+  // in dem der Übergang vorkommt. Gefehlt hat allein diese eine Sprechweise.
+  const JEWEILS = /\bje(?:weils|de[rnm]?)?\b/i
+  const proStueckMatch = JEWEILS.test(abschnitt)
+    ? abschnitt.match(/\b(beiden|beide|zwei|drei|vier|fünf|sechs)\s+(?:[a-zäöüß-]+\s+){0,2}?(?:t[üu]r|zimmert[üu]r|durchg|überg[aä]ng|uebergäng|schwellen)/i)
+    : null
+  if (proStueckMatch) anzahl = zahlwoerter[proStueckMatch[1]] ?? 0
+
+  const numMatch = anzahl > 0 ? null : abschnitt.match(/(\d+)\s*(?:stück\s*)?(?:alu-?)?(?:übergangs|uebergangs|anschluss)?(?:profil|schiene)/i)
     ?? abschnitt.match(/(\d+)\s*(?:tür|türe|zimmer|raum)?überg[aä]ng/i)
   if (numMatch) {
     anzahl = parseInt(numMatch[1])
-  } else {
+  } else if (anzahl === 0) {
     const wortMatch = abschnitt.match(
       // Zwischen Zahlwort und Nomen darf auch ein Komma stehen
       // („an den zwei Zimmertüren, Alu-Übergangsprofil").

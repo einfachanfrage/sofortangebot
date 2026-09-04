@@ -101,7 +101,15 @@ export function pruefeBodenBasis(
     lower.includes('keine sockelleisten') ||
     erkenneSockelleistenAusschluss(lower).global
 
-  const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+  // PM-034, Befund 5: Die Grundierung im Esszimmer fehlte, weil dieser Block
+  // seine Fläche ausschließlich aus dem TEXT las — und die gesprochene Form
+  // („vier mal drei fünfzig") dort nicht als Maßpaar ankam. Seit die Prüfung
+  // je Raum läuft (siehe boden.ts), ist die Verlegefläche DIESES Raums
+  // eindeutig und die bessere Quelle: sie steht schon berechnet in seiner
+  // eigenen Position, inklusive korrekt herausgerechnetem Verschnitt.
+  const m2 = extrahiereFlaeche(lower)
+    ?? extrahiereFlaecheAusAbmessungen(lower)
+    ?? bodenNettoflaecheAusPositionen(ergaenzt)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
 
   // ── Untergrundvorbereitung ───────────────────────────────────────────────

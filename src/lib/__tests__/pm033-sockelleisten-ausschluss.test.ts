@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { erkenneSockelleistenAusschluss } from '../sockelleisten-ausschluss'
 import { bodenEngine } from '../mengen/gewerke/boden'
 import { verarbeiteExtraktion } from '../mengen/extraktion-pipeline'
+import { saetze } from '../satz-raum'
+import { raumAusDaemmungsSatz } from '../vollstaendigkeit/boden-sonder'
 
 // PM-033, Befund 2 (Prüfmeister, 02.09.2026)
 //
@@ -134,5 +136,37 @@ describe('PM-033 — im Angebot kommt keine Sockelleisten-Position mehr an', () 
     const positionen = bodenEngine({ raeume, transkript: text }).positionen
     const sockel = positionen.filter(p => /sockelleisten montieren/i.test(p.beschreibung))
     expect(sockel.map(p => p.beschreibung)).toEqual(['Sockelleisten montieren — Flur'])
+  })
+})
+
+// ── Dezimalpunkt-Falle (gefunden 03.09.2026 beim Durchgehen der offenen Fälle)
+//
+// Unsere Zahlen-Vorverarbeitung macht aus „vier mal dreieinhalb" ein
+// „4 mal 3.5", und die echten Produktionstranskripte enthalten denselben Punkt
+// direkt („Im Flur daneben 4 mal 1.50 kommt der Boden komplett neu"). Ein
+// naives Trennen an „." zerlegt damit MITTEN in der Maßangabe — und alles, was
+// danach im Satz steht, verliert seinen Raumbezug. Genau daran ist die
+// Trittschall-Zuordnung wieder durchgerutscht.
+describe('Satztrennung — ein Punkt zwischen Ziffern ist kein Satzende', () => {
+  it('„4 mal 3.5" zerreißt den Satz nicht mehr', () => {
+    expect(saetze('Flur, 4 mal 3.5, Laminat verlegt, Trittschalldämmung drunter. Bad bleibt.'))
+      .toEqual(['Flur, 4 mal 3.5, Laminat verlegt, Trittschalldämmung drunter', 'Bad bleibt'])
+  })
+
+  it('die Dämmung bleibt im genannten Raum, auch mit Dezimalpunkt im Satz', () => {
+    const positionen = [
+      { beschreibung: 'Laminat verlegen inkl. 5% Verschnitt — Flur', menge: 14.7, einheit: 'm²', konfidenz: 'high' as const, berechnungsweg: '14 m² + 5% Verschnitt', annahmen: [] },
+      { beschreibung: 'Vinyl-Boden verlegen inkl. 15% Verschnitt — Gästezimmer', menge: 16.1, einheit: 'm²', konfidenz: 'high' as const, berechnungsweg: '14 m² + 15% Verschnitt', annahmen: [] },
+    ]
+    const text = 'flur, 4 mal 3.5, laminat gerade verlegt, trittschalldämmung drunter, sockelleisten neu. gästezimmer, 4 mal 3.5, vinyl im fischgrätmuster.'
+    expect(raumAusDaemmungsSatz(text, positionen)).toBe('Flur')
+  })
+
+  it('der Ausschluss-Satz überlebt eine Maßangabe davor', () => {
+    const a = erkenneSockelleistenAusschluss(
+      'Wohnzimmer 5 mal 4.5, Parkett. Sockelleisten bleiben überall, wie sie sind.',
+      ['Wohnzimmer'],
+    )
+    expect(a.global).toBe(true)
   })
 })

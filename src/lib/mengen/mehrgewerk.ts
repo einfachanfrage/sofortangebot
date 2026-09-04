@@ -14,11 +14,72 @@ import { BODEN_VERLEGEN_SIGNAL } from './gewerke/boden'
 
 type RaumLike = { arbeiten?: string[]; belag?: string | null; altbelag_entfernen?: boolean; sockelleisten?: boolean }
 
-const MALER_ARBEIT = /streich|anstrich|tapete|tapezier|raufaser|spachtel|glätt|lackier|grundier|voranstrich/i
+// ── PM-034, Befund 4 (Prüfmeister, 02.09.2026) ───────────────────────────
+//
+// In einem reinen Bodenauftrag standen drei Maler-Positionen („Wände
+// spachteln Q2", „Wände schleifen nach Q2", „Spachtelarbeiten Q2"), alle mit
+// 0 Stück und „Preis fehlt in deiner Preisdatenbank" — was den Handwerker
+// dazu verleitet, Preise für eine Leistung anzulegen, die er nie anbieten
+// wollte. Auslöser: Die Küche trägt in ihrer arbeiten[]-Liste „boden
+// spachteln", das Esszimmer „grundierung". Beide trafen das alte
+// MALER_ARBEIT-Muster, also lief die komplette Maler-Vollständigkeitsprüfung
+// über einen Auftrag, in dem nie von Wänden die Rede war.
+//
+// Es ist dieselbe Familie wie PM-033/Befund 2: ein Wort gewinnt gegen den
+// Satz, in dem es steht — „Boden" direkt daneben wird nicht gelesen.
+//
+// Gegen die echten Produktionsdaten geprüft (alle gespeicherten
+// Extraktionen): Von sechs Einträgen, die das alte Muster treffen, nennen
+// vier ihr Objekt selbst („wände grundieren", „wände spachteln q3", „decke
+// spachteln q3", „decke grundieren") — die bleiben unverändert Maler. Einer
+// nennt ausdrücklich den Boden („boden spachteln"), einer nennt gar nichts
+// („grundierung"). Genau diese beiden werden jetzt anders behandelt.
+//
+// Die Richtung ist bewusst asymmetrisch: Eine fälschlich WEGGELASSENE
+// Maler-Position kostet den Betrieb Geld und fällt niemandem auf. Deshalb
+// bleibt jedes eindeutige Maler-Wort ohne jede Bedingung stehen; nur die
+// mehrdeutigen Wörter brauchen ein Objekt.
+
+/** Eindeutig Maler, egal woran — braucht kein Objekt im Satz. */
+const MALER_EINDEUTIG = /streich|anstrich|tapete|tapezier|raufaser|lackier|voranstrich/i
+/** Mehrdeutig: gibt es genauso am Boden (Estrich spachteln, Estrich grundieren). */
+const MALER_MEHRDEUTIG = /spachtel|glätt|grundier/i
+/** Objekte, die die mehrdeutigen Wörter eindeutig zum Maler machen. */
+const MALER_OBJEKT = /w[äa]nd|waende|decke|tapete|leibung|zarge|heizk[öo]rper|fassade|t[üu]rblatt/i
+/** Objekte, die sie eindeutig zum Boden machen. */
+const BODEN_OBJEKT = /\bboden|fu(?:ß|ss)boden|estrich|untergrund/i
+
 const BODEN_ARBEIT = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|altbelag|trittschall|estrich/i
 // Im Rohtext: distinktive Boden-Signale (NICHT bloßes "boden" — "Boden schützen" ist Maler)
 const BODEN_TEXT = /vinyl|laminat|parkett|diele|kork|linoleum|nadelvlies|designboden|teppich|bodenbelag|\bverleg|trittschall/i
-const MALER_TEXT = /streich|anstrich|tapete|tapezier|raufaser|spachtel|glätt|lackier|grundier/i
+
+/**
+ * Ist dieser einzelne arbeiten[]-Eintrag Malerarbeit?
+ * `raumHatEindeutigMaler` entscheidet den Fall ohne Objekt („grundierung"):
+ * dann folgt der Eintrag dem Raum, in dem er steht.
+ */
+export function istMalerArbeit(arbeit: string, raumHatEindeutigMaler: boolean): boolean {
+  if (MALER_EINDEUTIG.test(arbeit)) return true
+  if (!MALER_MEHRDEUTIG.test(arbeit)) return false
+  if (BODEN_OBJEKT.test(arbeit)) return false
+  if (MALER_OBJEKT.test(arbeit)) return true
+  return raumHatEindeutigMaler
+}
+
+/**
+ * Maler-Signal im Rohtext (Fallback, wenn die KI die Malerarbeiten gar nicht
+ * in die Struktur gelegt hat). Mehrdeutige Wörter zählen nur, wenn im selben
+ * SATZ ein Maler-Objekt steht und kein Boden-Objekt — „danach muss der Boden
+ * gespachtelt werden" ist keine Malerarbeit.
+ */
+export function malerImRohtext(text: string): boolean {
+  if (MALER_EINDEUTIG.test(text)) return true
+  return text
+    .split(/[.!?;\n]+/)
+    .some(satz =>
+      MALER_MEHRDEUTIG.test(satz) && MALER_OBJEKT.test(satz) && !BODEN_OBJEKT.test(satz),
+    )
+}
 
 function raeumeAllerArt(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }): RaumLike[] {
   return [...(extraktion.raeume ?? []), ...(extraktion.bereiche ?? [])]
@@ -38,8 +99,14 @@ function hatBodenAnteil(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[]
 }
 
 function hatMalerAnteil(extraktion: { raeume?: RaumLike[]; bereiche?: RaumLike[] }, transkript: string): boolean {
-  const inStruktur = raeumeAllerArt(extraktion).some(r => (r.arbeiten ?? []).some(a => MALER_ARBEIT.test(a)))
-  return inStruktur || MALER_TEXT.test(transkript)
+  const inStruktur = raeumeAllerArt(extraktion).some(raum => {
+    const arbeiten = raum.arbeiten ?? []
+    // Der Raum entscheidet den Fall ohne Objekt: Steht in DIESEM Raum sonst
+    // eindeutige Malerarbeit, ist auch das bloße „grundierung" darin Maler.
+    const raumHatEindeutigMaler = arbeiten.some(a => MALER_EINDEUTIG.test(a))
+    return arbeiten.some(a => istMalerArbeit(a, raumHatEindeutigMaler))
+  })
+  return inStruktur || malerImRohtext(transkript)
 }
 
 /**
@@ -62,7 +129,7 @@ export function sekundaerGewerk(primaer: string, extraktion: { raeume?: RaumLike
  * aktuell unterstützten Gewerke), gibt sonst null zurück.
  */
 export function erkenneHauptgewerkAusText(transkript: string): 'maler' | 'boden_parkett' | null {
-  if (MALER_TEXT.test(transkript)) return 'maler'
+  if (malerImRohtext(transkript)) return 'maler'
   if (BODEN_TEXT.test(transkript)) return 'boden_parkett'
   return null
 }
