@@ -129,7 +129,31 @@ möchte, weil sie Terminwirkung haben:
 
 ---
 
-## 5. Was bei mir offen bleibt
+## 5. Nachtrag 04.09. — der VOB-Normtext liegt vor
+
+Sandy hat die VOB Gesamtausgabe 2019 gekauft. **VOB-011 ist zu, alle sechs
+Normfragen sind beantwortet**, und damit fällt auch die Blockade auf VOB-003,
+VOB-008 und VOB-012 weg. Die vollständige Auswertung steht in
+`vob-angebot-abstimmung.md`; die Zuweisungstabelle für dich in
+`chief-of-staff-legal-todos.md`, Abschnitt „VOB-011 erledigt".
+
+**Das Wichtigste in drei Sätzen:** VOB-003 ist am Originaltext bestätigt — der
+Backlog-Punkt ist falsch und ist in der Prüfmeister-Datei durchgestrichen.
+VOB-008 hat einen neuen Wert, **0,1 m² statt 2,5 m²**, und das könnte in
+`boden.ts` ein Rechenfehler zulasten des Kunden sein (neu im Risikoregister als
+LR-14, 🔴 Score 12, bitte vor Gate 1 prüfen lassen). Und ich hatte in einem
+Punkt unrecht: Die Abrechnungseinheit für Leibungen ist Längenmaß, nicht
+Flächenmaß — ich hatte das am 02.09. voreilig als „geklärt" bezeichnet.
+
+**Was ich dir dazu ausdrücklich sage:** Ich habe in alle betroffenen Dateien
+geschrieben, aber ich kann niemanden anstoßen. Head of Product Engineering,
+Prüfmeister und Product Designer erfahren davon erst, wenn sie wieder in die
+Dateien schauen oder du sie einbestellst. **Die zwei Punkte vor Gate 1 (VOB-008
+und VOB-012) sollten nicht darauf warten.**
+
+---
+
+## 6. Was bei mir offen bleibt
 
 Unverändert und unabhängig von der Rechtsform: CC-03/CC-04 (AVV-Formulierungen),
 CC-06, CC-07 (Verarbeitungsverzeichnis + Schwellwertanalyse), CC-08 (AI Act

@@ -585,4 +585,56 @@ nachdem sie in dreihundert Angeboten steht, wäre etwas anderes.
 *Head of Legal & Compliance · 2026-09-01 · Bewertung nach Severity × Likelihood
 · nächste Überprüfung: beim ersten echten Testnutzer*
 
+## Nachtrag 2026-09-04 — Normtext liegt vor, zwei Bewertungen ändern sich
+
+Sandy hat die VOB Gesamtausgabe 2019 beschafft. **LR-03 (Normtext-Zugang) ist
+damit erledigt**, und zwei Einträge dieses Registers sind neu zu bewerten.
+
+### LR-06 — endgültig geschlossen, 🟢
+
+Die Bedingung aus dem Restrisiko („endgültig erledigt erst nach LR-03") ist
+erfüllt. DIN 18363:2019-09, Abschnitt 5.2.3 bestätigt meine Lesart **wörtlich**;
+der Backlog-Punkt ist nicht strittig, sondern falsch. Er ist in
+`pruefmeister-testfaelle.md` durchgestrichen und in `vob-uebermessung.ts` noch
+zu streichen (Auftrag an Head of Product Engineering). Danach ist LR-06 kein
+Risiko mehr, sondern Historie.
+
+**Eine Restschraube bleibt:** Gerechnet wird nach dem Wortlaut nur die
+*beschichtete* Leibung. Das Produkt erzeugt heute für jede erfasste Leibung eine
+Position. Das ist ein Fehler zulasten des Kunden, aber ein kleiner und ein
+seltener — **Severity 2, Likelihood 2, Score 4 🟢**, kein eigener Registereintrag.
+
+### LR-14 🔴 NEU — Übermessungsschwelle bei Bodenbelagarbeiten
+
+**Score 12 (Severity 4 × Likelihood 3) · VOB-008**
+
+**Risikobeschreibung:** DIN 18365:2019-09, Abschnitt 5.3.1 übermisst
+Aussparungen nur **≤ 0,1 m²**. Die Malerregel aus `vob-uebermessung.ts` liegt bei
+2,5 m² — Faktor 25. Wird dieselbe Funktion auch für Bodenbelagarbeiten benutzt,
+werden Türöffnungen, Kaminsockel und Nischen nicht abgezogen, und die
+abgerechnete Fläche ist systematisch zu groß.
+
+**Severity 4 — Major:** Der Fehler geht **zulasten des Endkunden** und ist von
+außen nachrechenbar. Genau die Konstellation aus LR-01: ein Angebot, das mit
+„nach VOB berechnet" beworben wird und beim Nachmessen zu hoch ist. Bei einem
+Raum mit einer Türöffnung von 0,9 × 0,25 m und einem Kaminsockel sind das
+schnell 1–2 m² zu viel je Raum, wiederkehrend in jedem Bodenangebot.
+
+**Likelihood 3:** Ob `boden.ts` die Malerschwelle tatsächlich mitbenutzt, habe
+ich **nicht verifiziert** — das ist eine Codeprüfung, die bei Head of Product
+Engineering liegt. Wenn Bodenflächen ohne Öffnungsabzug gerechnet werden, ist
+die Likelihood 5.
+
+**Mitigation:** Codeprüfung vor Gate 1. Wenn die Schwelle geteilt wird:
+gewerkespezifisch trennen (18363 → 2,5 m² Wand / 0,5 m² Boden-*Beschichtung*;
+18365 → 0,1 m² Boden-*belag*). Aufwand gering, Wirkung hoch.
+
+### Was sich an der Gesamtlage nicht ändert
+
+LR-01 (Übermessungshinweis fehlt im PDF) bleibt der Spitzenreiter. Der Normtext
+verschärft ihn eher: Jetzt sind drei verschiedene Übermessungsschwellen im Spiel
+(2,5 / 0,5 / 0,1 m²), und der Kunde sieht keine davon.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

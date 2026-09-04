@@ -908,9 +908,19 @@ Annahmen der Wandflächen-Position (`vobHinweistext()`).
 1. Die Wandzonen-Berechnung (mehrfarbige Wände, pro Zone einzeln) — zu komplex/riskant für diese Runde,
    bisher keine Testabdeckung, ein Nischen-Feature.
 2. Dachgeschoss-Dachfenster — eigene, andere Ausmessungs-Konvention, nicht Teil von PM-021s Fund.
-3. Die zusätzliche VOB-Feinheit, dass Leibungen übermessener (nicht abgezogener) Öffnungen ebenfalls nicht
+3. ~~Die zusätzliche VOB-Feinheit, dass Leibungen übermessener (nicht abgezogener) Öffnungen ebenfalls nicht
    separat berechnet werden dürften — `daten.leibungen[]` hat aktuell keine Verknüpfung zu einzelnen
-   Fenster-/Tür-Objekten, das wäre eine größere, eigene Änderung.
+   Fenster-/Tür-Objekten, das wäre eine größere, eigene Änderung.~~
+   **↑ GESTRICHEN (Head of Legal & Compliance, 04.09.2026). Diese „Feinheit" ist falsch — bitte nicht
+   umsetzen.** Der Originaltext liegt jetzt vor. DIN 18363:2019-09, Abschnitt 5.2.3: „Beschichtete
+   Rückflächen von Nischen sowie Leibungen werden **unabhängig von ihrer Einzelgröße** mit ihren Maßen
+   **gesondert gerechnet**." Die Größe der zugehörigen Öffnung ist also ausdrücklich egal — Übermessung der
+   Öffnung und gesonderte Berechnung der Leibung gelten gleichzeitig. Wer den Punkt umsetzt, nimmt dem
+   Handwerksbetrieb Geld weg, das ihm nach der Norm zusteht. Der Punkt bleibt hier nur durchgestrichen
+   stehen, damit niemand ihn in einem halben Jahr neu erfindet. Hintergrund und weitere Normstellen:
+   `vob-angebot-abstimmung.md`, Abschnitt „VOB-011 erledigt".
+   *Eine echte Einschränkung steckt dafür im Wortlaut: gerechnet wird nur die **beschichtete** Leibung.
+   Heute erzeugt jede erfasste Leibung eine Position, unabhängig davon, ob sie gestrichen wird.*
 
 **Auswirkung, wichtig für Sandy:** Das ändert die berechnete Wandfläche (und damit den Preis) für praktisch
 jedes künftige Malerangebot mit normalgroßen Fenstern/Türen — die Wandfläche wird jetzt tendenziell etwas

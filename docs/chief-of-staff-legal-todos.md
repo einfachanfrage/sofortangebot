@@ -1827,4 +1827,53 @@ Oktober-Themen nicht verdrängen.
 
 ---
 
+## VOB-011 erledigt — Normtext liegt vor (Head of Legal & Compliance, 2026-09-04)
+
+Sandy hat die **VOB Gesamtausgabe 2019** beschafft (54 €, die günstige Variante,
+die ich empfohlen hatte). Damit sind **alle sechs offenen Normfragen beantwortet**.
+Vollständige Auswertung: `vob-angebot-abstimmung.md`, Abschnitt „VOB-011 erledigt".
+
+**Was du für die Zuweisung brauchst — vier Punkte an Head of Product
+Engineering, davon zwei vor Gate 1:**
+
+| Was | Wirkung | Dringlichkeit |
+|---|---|---|
+| Backlog-Punkt Leibungen in `vob-uebermessung.ts` ersatzlos streichen (VOB-003) | verhindert einen Umbau, der dem Betrieb Geld wegnimmt | 5 Minuten, sofort |
+| **Prüfen, ob `boden.ts` mit 2,5 m² statt 0,1 m² rechnet (VOB-008)** | Fehler **zulasten des Kunden**, in jedem Bodenangebot | **vor Gate 1** |
+| Türbreiten-Abzug bei Sockelleisten an **zwei** Codestellen entfernen (VOB-012) | Fehler zulasten des Betriebs, ca. 0,9 lfdm je Tür | **vor Gate 1** |
+| Leibungsposition nur erzeugen, wenn die Leibung beschichtet wird | kleiner Fehler zulasten des Kunden | vor Gate 1 |
+
+**Zwei Entscheidungen, die nicht Engineering gehören:**
+
+1. **Abrechnungseinheit der Leibungen (m vs. m²).** Frage 8 an den Prüfmeister
+   steht in der Abstimmungsdatei. Gehört sachlich zu VOB-001 und VOB-014 — es
+   ist dieselbe Frage: wie nah an der VOB-Positionsstruktur wollen wir liegen.
+2. **Verschnitt in der Menge (VOB-001).** Der Normtext gibt dafür keine
+   Grundlage her — in DIN 18365 kommt „Verschnitt" nicht vor. Das ist kein
+   Verbot, aber es macht Sandys ausstehende Entscheidung eindeutiger.
+
+**Ein Fehler von mir, den ich hier nenne, weil er in der Abstimmungsdatei sonst
+untergeht:** Ich hatte am 02.09. geschrieben, die Abrechnungseinheit für
+Leibungen sei „geklärt" und `maler.ts` liege mit Quadratmetern richtig. Falsch —
+DIN 18363 führt Leibungen in 0.5.2 unter Längenmaß. Ich hatte eine
+Sekundärquelle einer anderen Norm zugeordnet, weil es zu meiner These passte.
+Entwarnung nur insoweit, als Abschnitt 0 der ATV ausdrücklich nicht
+Vertragsbestandteil wird — die Menge ist nicht falsch, die Positionsstruktur ist
+unüblich.
+
+**Risikoregister nachgezogen:** LR-03 erledigt, LR-06 geschlossen, **LR-14 neu
+(🔴 Score 12)** für die Bodenschwelle — `legal-002-risikobewertung-vob.md`,
+Nachtrag 04.09.
+
+**Prüfmeister-Datei korrigiert:** Der falsche Backlog-Punkt in
+`pruefmeister-testfaelle.md` („Was bewusst NICHT angefasst wurde", Punkt 3) ist
+durchgestrichen und mit dem Normzitat versehen — stehen gelassen, damit ihn
+niemand neu erfindet.
+
+**Zum Normtext selbst:** Ich zitiere in unseren Dateien nur die Sätze, die zur
+Klärung nötig sind. Der Volltext kommt nicht ins Repository; die Lizenz ist eine
+personenbezogene Einzelplatzlizenz auf Sandra Holm.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
