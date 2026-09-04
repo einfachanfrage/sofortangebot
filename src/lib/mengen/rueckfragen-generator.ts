@@ -1,3 +1,5 @@
+import { ausgeschlosseneRaeume } from '@/lib/raum-ausschluss'
+
 export type RueckfrageTyp =
   | 'masse_einzel'
   | 'flaeche_einzel'
@@ -52,13 +54,23 @@ export interface RueckfrageItem {
   }
 }
 
+// PM-034, Befund 3 (Nebenfund des Prüfmeisters): Die Frage lautete „Wie groß
+// ist DEN Flur?" — der Rückfall-Artikel stand im Akkusativ, gebraucht wird
+// hier aber der Nominativ („Wie groß ist DER Flur?"). Ein Grammatikfehler in
+// einer Frage, die der Handwerker vor dem Kunden liest.
 function artikel(name: string): string {
-  const weiblich = ['küche', 'toilette', 'dusche', 'treppe', 'garage', 'terrasse']
-  const sachlich = ['bad', 'zimmer', 'wohnzimmer', 'schlafzimmer', 'badezimmer', 'esszimmer', 'arbeitszimmer', 'kinderzimmer']
+  const weiblich = [
+    'küche', 'toilette', 'dusche', 'treppe', 'garage', 'terrasse',
+    'diele', 'wohnung', 'kammer', 'waschküche', 'speisekammer', 'werkstatt', 'halle', 'sauna',
+  ]
+  const sachlich = [
+    'bad', 'zimmer', 'wohnzimmer', 'schlafzimmer', 'badezimmer', 'esszimmer', 'arbeitszimmer', 'kinderzimmer',
+    'büro', 'wc', 'treppenhaus', 'geschoss', 'dachgeschoss', 'obergeschoss', 'erdgeschoss', 'souterrain',
+  ]
   const lower = name.toLowerCase()
   if (weiblich.some(w => lower.includes(w))) return 'die'
   if (sachlich.some(s => lower.includes(s))) return 'das'
-  return 'den'
+  return 'der'
 }
 
 function extraiereAnzahl(text: string): number {
@@ -93,6 +105,7 @@ const SCHNELL_ANZAHL: SchnellAntwort[] = [
 ]
 
 export function generiereRueckfragen(extraktion: {
+  transkript?: string | null
   raeume?: Array<{
     name?: string
     laenge?: number | null
@@ -102,12 +115,27 @@ export function generiereRueckfragen(extraktion: {
     vage?: boolean
     vage_typ?: string | null
     vage_beschreibung?: string | null
+    belag?: string | null
+    arbeiten?: string[]
+    altbelag_entfernen?: boolean
+    sockelleisten?: boolean
+    ausgleich?: boolean
+    feuchtigkeitssperre?: boolean
+    parkett_schleifen?: boolean
   }>
 }): RueckfrageItem[] {
   const fragen: RueckfrageItem[] = []
 
+  // PM-034, Befund 3: Räume, die im Diktat ausdrücklich abbestellt wurden
+  // („Im Flur machen wir nichts am Boden, der bleibt, wie er ist"), bekommen
+  // KEINE Maßfrage. Sie tauchen im Angebot nicht auf — nach ihren Maßen zu
+  // fragen ist nicht nur überflüssig, es verleitet dazu, Maße einzutragen und
+  // damit Positionen für einen ausgeschlossenen Raum zu erzeugen.
+  const abbestellt = ausgeschlosseneRaeume(extraktion.raeume ?? [], extraktion.transkript ?? null)
+
   for (const raum of extraktion.raeume ?? []) {
     if (!raum.vage) continue
+    if (abbestellt.has((raum.name ?? '').trim())) continue
 
     const name = raum.name || 'Raum'
     const beschreibung = raum.vage_beschreibung || name

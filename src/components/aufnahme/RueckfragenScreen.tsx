@@ -875,7 +875,19 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
     const istMasseFrage = frage.typ === 'masse_einzel'
       && !frage.id.startsWith('masse_boden_')
       && !/fenster|tür|tuer/i.test(frage.frage)
-    const titel = istMasseFrage ? `Welche Maße kennst du für „${frage.kontext}“?` : frage.frage
+    // PM-034, Befund 3: `kontext` ist bei vagen Räumen die KI-Beschreibung und
+    // kann ein ganzer Satz sein („Keine Arbeiten am Boden im Flur."). Als
+    // Überschrift eingesetzt wurde daraus: „Welche Maße kennst du für ‚Keine
+    // Arbeiten am Boden im Flur.'?" — das Tool fragt nach den Maßen eines
+    // Raums, dessen Name der Absage-Satz ist. Als Überschrift taugt der
+    // Kontext nur, wenn er ein kurzer Name ist; sonst ist die fertig
+    // formulierte Frage die bessere (und grammatikalisch richtige) Anzeige.
+    const kontextIstName = !!frage.kontext
+      && frage.kontext.trim().split(/\s+/).length <= 3
+      && !/[.!?]$/.test(frage.kontext.trim())
+    const titel = istMasseFrage && kontextIstName
+      ? `Welche Maße kennst du für „${frage.kontext}“?`
+      : frage.frage
     const zeigeVorschlag = !geloest && !!frage.vorschlag && !korrigieren.has(frage.id)
 
     return (

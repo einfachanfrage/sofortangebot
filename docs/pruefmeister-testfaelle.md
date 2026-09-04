@@ -94,7 +94,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs) |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
-| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt |
+| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, Befund 4+5 Ursache gefunden (Wortmuster in `mehrgewerk.ts`), Fix wartet auf Freigabe. Live-Nachtest steht aus |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus |
 
@@ -2917,6 +2917,75 @@ nur in die andere Richtung.
 **Für den Product Designer (PD):** Die Rückfrage lautet zusätzlich „Wie groß ist
 **den** Flur?" — Grammatikfehler in einer Nutzerfrage.
 
+#### Fix PM-034, Befund 3 (Head of Product Engineering, 03.09.2026)
+
+**Behoben. Für den Flur wird gar nicht mehr gefragt.**
+
+**Erst die Entlastung: die KI-Extraktion ist an dieser Stelle richtig.** An den
+Produktionsdaten der Aufnahme nachgesehen (`entwurf_aufnahmen`, Diktat vom
+03.09.) steht dort:
+
+```
+{ name: "Flur", vage: true, vage_typ: "raum_ohne_masse",
+  vage_beschreibung: "Keine Arbeiten am Boden im Flur.",
+  arbeiten: [], belag: null, laenge: null, breite: null }
+```
+
+Der Raum heißt „Flur". Die Beschreibung steht sauber im dafür vorgesehenen
+Feld, und sie gibt den Satz inhaltlich korrekt wieder. Aus dieser richtigen
+Extraktion hat **unser Code** die falsche Frage gebaut — an zwei Stellen
+gleichzeitig:
+
+1. **Es wurde überhaupt gefragt.** Ein Raum ohne jede Arbeit, dessen eigene
+   Beschreibung „Keine Arbeiten" lautet, braucht keine Maße — er kommt im
+   Angebot nicht vor. Genau die Befürchtung des Prüfmeisters („ein Nutzer, der
+   brav Maße einträgt, bekommt Positionen für einen ausgeschlossenen Raum") war
+   der eigentliche Schaden, nicht der schiefe Text.
+2. **Die Oberfläche hat die Beschreibung als Überschrift benutzt** statt der
+   fertig formulierten Frage. In `RueckfragenScreen.tsx` stand für Maßfragen
+   fest verdrahtet „Welche Maße kennst du für „{kontext}“?" — und `kontext` ist
+   bei vagen Räumen genau diese KI-Beschreibung. Ist sie ein kurzer Name
+   („beide Schlafzimmer"), liest sich das gut; ist sie ein Satz, kommt der Satz
+   in die Überschrift.
+
+**Was jetzt passiert** (`src/lib/raum-ausschluss.ts`, neu): Ein Raum gilt als
+abbestellt, wenn er **beides** ist — ohne jede Arbeit (keine `arbeiten`, kein
+Belag, keins der stillen Flags wie `ausgleich`/`altbelag_entfernen`) **und**
+ausdrücklich abgesagt, entweder in der KI-Beschreibung oder in seinen eigenen
+Sätzen im Transkript („machen wir nichts", „bleibt, wie er ist", „wird nicht
+gemacht", „nix"). Bewusst beides und nicht eines von beiden: Ein Raum ohne
+zugeordnete Arbeiten kann auch schlicht ein Raum sein, bei dem die KI die
+Arbeiten nicht zugeordnet hat — **da ist die Rückfrage richtig und wichtig**,
+und sie bleibt. Für abbestellte Räume entfällt die Maßfrage ersatzlos.
+
+Die Oberfläche nimmt den Kontext nur noch als Überschrift, wenn er ein kurzer
+Name ist (höchstens drei Wörter, kein Satzzeichen am Ende); sonst zeigt sie die
+formulierte Frage.
+
+**Nebenfund des Prüfmeisters mit erledigt:** „Wie groß ist **den** Flur?" — der
+Rückfall-Artikel stand im Akkusativ statt im Nominativ. Jetzt „der Flur", plus
+eine erweiterte Liste (die Diele, das Büro, das Treppenhaus, die Waschküche …),
+weil bisher alles, was nicht „Küche" oder „…zimmer" hieß, denselben falschen
+Artikel bekam.
+
+**Zum Vergleich, derselbe Fall komplett durch die Pipeline, mit den heutigen
+Fixes:**
+
+| | vorher | jetzt |
+|---|---|---|
+| Rückfragen | Maße für „Keine Arbeiten am Boden im Flur." | nur noch „Muss der alte Bodenbelag im Esszimmer entfernt werden?" |
+| Küche verlegen | 1.134 m² | **11,34 m²** |
+| Esszimmer verlegen | 1.400 m² | **14,70 m²** |
+| Flur | Maßfrage + drohende Positionen | **kommt nicht vor** |
+
+**Tests:** `src/lib/__tests__/pm034-ausschlusssatz-raum.test.ts` (9 Fälle),
+darunter die Gegenrichtung: ein vager Raum **ohne** Absage wird weiterhin
+gefragt, und eine Absage für eine einzelne Leistung („Sockelleisten bleiben")
+macht aus einem Raum mit Auftrag keinen abbestellten Raum. Gesamtstand: 78
+Testdateien, 1.261 Tests grün, `tsc` sauber, eslint 0 Fehler.
+
+---
+
 **Befund 4 — Drei Maler-Spachtelpositionen in einem reinen Bodenauftrag**
 
 Unter „Allgemein" stehen: „Wände spachteln Q2" (0 Stück, Preis fehlt), „Wände
@@ -2937,6 +3006,23 @@ Ausgleichsmasse". Aus einer **Boden**spachtelung werden drei **Wand**positionen
 - Die richtige Position, **„Untergrundvorbereitung / Ausgleich"**, steht
   daneben korrekt in der Küche. Die drei Wandpositionen sind also nicht einmal
   ein Ersatz für etwas Fehlendes, sondern reine Dopplung im falschen Gewerk.
+
+**Ursache von Befund 4, am Code gefunden (Head of Product Engineering,
+03.09.2026) — noch nicht behoben, weil sie eine Entscheidung braucht:**
+`mehrgewerk.ts` entscheidet über ein Wortmuster, ob zusätzlich zum Boden auch
+das Maler-Gewerk geprüft wird:
+`MALER_ARBEIT = /streich|anstrich|tapete|…|spachtel|glätt|lackier|grundier|…/`.
+Die Küche trägt in `arbeiten` den Eintrag **„boden spachteln"**, das Esszimmer
+**„grundierung"** — beide treffen dieses Muster. Damit läuft die komplette
+Maler-Vollständigkeitsprüfung über einen reinen Bodenauftrag und meldet drei
+Wandpositionen als „fehlend" (deshalb 0 Stück und „Preis fehlt"). Es ist
+dieselbe Familie wie PM-033/Befund 2: **ein Wort gewinnt gegen den Satz, in dem
+es steht** — „Boden" direkt daneben wird nicht gelesen.
+Der naheliegende Fix ist klein (ausdrücklich boden-bezogenes Spachteln/
+Grundieren nicht mehr als Maler-Signal werten), berührt aber die Gewerke-
+Erkennung für **alle** gemischten Aufträge. Deshalb erst nach Freigabe.
+Befund 5 hängt an derselben Stelle: „Grundierung" wird als Maler-Grundierung
+verbucht und geht dem Boden verloren.
 
 **Befund 5 — Die Grundierung im Esszimmer fehlt**
 
