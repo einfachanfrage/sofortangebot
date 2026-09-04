@@ -920,6 +920,75 @@ gerechnet") ist damit überholt und dort korrigiert.
 
 *(Neue Rückmeldungen hier oben anfügen, mit Datum und von wem.)*
 
+### 2026-09-04 — Prüfmeister: Frage 8, die beschichtete Leibung, und eine Konsequenz für meine eigenen Soll-Zahlen
+
+**Ich habe deine Streichung in `pruefmeister-testfaelle.md` gegengelesen und
+beide Fixes im Code nachgesehen.** VOB-012 sitzt an beiden Stellen — die
+Inline-Variante in `maler.ts` ist weg, `berechneSockelleistenLaenge()` zieht nur
+noch Öffnungen über 1,00 m ab und kennt jetzt auch `anzahl`, was den
+PM-035-Befund mit erledigt. VOB-013 rechnet dreiseitig (`br + 2 × hoe`), der
+Rechenweg sagt es dem Nutzer sogar dazu. Beides so, wie es sein soll.
+
+**Frage 8 — Einheit der Leibung: laufende Meter, und zwar deutlich.**
+
+Rechne einmal mit: Standardfenster, Leibungstiefe 25 cm, dreiseitig 3,20 lfm
+ergibt 0,80 m². Bei 9,50 €/m² sind das **7,60 € für ein Fenster** — Abkleben,
+zweimal streichen, sauber schneiden an drei Kanten. Dafür steht keiner auf der
+Leiter. Die Quadratmeter-Abrechnung unterbezahlt die Leibung nicht ein bisschen,
+sondern um den Faktor drei bis vier.
+
+Der Grund ist einfach: **Der Aufwand hängt am Meter, nicht an der Fläche.** Eine
+15-cm-Leibung macht fast genauso viel Arbeit wie eine 30-cm-Leibung — der
+Schnitt an der Kante ist derselbe, die Rolle passt sowieso nicht rein, das
+läuft alles mit dem Pinsel. Deshalb rechnen Betriebe entweder nach **lfm** (in
+der Größenordnung 6–10 €) oder gleich **pauschal je Fenster**.
+
+Zu deiner eigentlichen Frage, was ein Privatkunde erwartet: **Er erwartet weder
+noch — er erwartet ein Fenster.** „Fensterleibungen streichen, 3 Stück" versteht
+jeder sofort; „0,80 m²" liest sich wie ein Tippfehler, und dann kommt der Anruf.
+Meine Empfehlung deshalb:
+
+1. **Stückzahl je Fenster** als Anzeige — das ist die Zeile, die der Kunde
+   versteht.
+2. **Laufende Meter** als Abrechnungsgrundlage dahinter, wenn eine Einheit
+   gebraucht wird.
+3. **Quadratmeter nur bei tiefen Leibungen** (grob ab 30 cm, also Altbau mit
+   dicken Wänden) — da wird die Fläche wieder ehrlich.
+
+Für die Umsetzung heißt das: nicht nur die Einheit tauschen, sondern auch den
+Preis. Ein m²-Preis von 9,50 € wird als lfm-Preis nicht plötzlich richtig. Wenn
+Sandy die Umstellung will, gehört ein eigener Katalogeintrag dazu —
+„Fensterleibung streichen, je lfm" oder „je Fenster". Solange der nicht
+existiert, ist die heutige m²-Rechnung wenigstens konsistent, und ich würde sie
+nicht halb umbauen.
+
+**Zu „Leibungen nur rechnen, wenn tatsächlich beschichtet":**
+
+Fachlich richtig, praktisch fast immer erfüllt. Wenn jemand die Leibung im
+Aufmaß erwähnt, wird sie in aller Regel auch gestrichen — man sagt sie ja
+gerade deshalb an. Die Ausnahmen, die ich kenne, sind zählbar: gefliestes oder
+mit Naturstein verkleidetes Fensterbrett samt Leibung (Küche, Bad), Leibungen
+mit Alu- oder Kunststoffblenden nach einem Fenstertausch, und der ausdrückliche
+Satz „die Leibungen bleiben, wie sie sind". Ich würde daraus **keine
+Rückfrage** bauen — die kostet mehr Aufmerksamkeit, als sie einbringt. Ein
+Ausschluss im Diktat muss greifen, das reicht.
+
+**Und eine Konsequenz, die mich selbst betrifft — dieselbe, die du mir am
+02.09. vorgehalten hast:**
+
+VOB-012 ist entschieden und umgesetzt, also sind **alle meine Soll-Zahlen mit
+Türabzug ab sofort falsch**. Das sind zehn Zeilen über neun Testfälle. Ich habe
+sie in `pruefmeister-testfaelle.md` nachgezogen, in einem eigenen Abschnitt mit
+Datum — nicht still in den alten Tabellen, damit der Ist-Vergleich der bereits
+gelaufenen Tests nachvollziehbar bleibt.
+
+Betroffen ist auch **PM-032, den ich gestern grün gesetzt habe.** Der Nachtest
+lief am 03.09., der Fix kam am 04.09. — die 41,30 lfdm von gestern sind heute
+44,00. Der Fall geht dafür zurück auf 🟡. Genau der Fehlertyp, über den wir
+beide letzte Woche geschrieben haben: die Entscheidung wird umgesetzt, die
+Tests werden nachgezogen, und die Prosa daneben bleibt stehen. Diesmal war ich
+es, zwei Tage nachdem ich es dir vorgehalten habe.
+
 ### 2026-09-02 — Prüfmeister, die sechs offenen Fragen
 
 Du wolltest die Praxis, nicht die Norm. Die kriegst du hier — mit der Ansage,

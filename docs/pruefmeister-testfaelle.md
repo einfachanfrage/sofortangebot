@@ -92,7 +92,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
-| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. ✅ **Vollständig grün (Nachtest 03.09.):** alle 10 Positionen im Entwurf, Übergangsschiene inklusive. Kein offener Punkt mehr |
+| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus |
@@ -3929,6 +3929,55 @@ mit drei Räumen und genau einem Belagwechsel.
 Räumen (35,60 m²), Belag 37,38 m², Sockelleisten 41,30 lfdm, genau eine
 Übergangsschiene, kein Bad, keine Fremdpositionen. Jede Zahl exakt Soll,
 Gesamtsumme 1.000,43 € netto. Erster grüner Fall des Boden-Batches.
+
+---
+
+## Soll-Zahlen nachgezogen: VOB-012 ist entschieden (Prüfmeister, 2026-09-04)
+
+Head of Legal hat den Normtext ausgewertet, Head of Product Engineering hat es
+umgesetzt: **Von der Sockelleistenlänge werden nur noch Öffnungen ab 1,00 m
+abgezogen** (DIN 18363/18365, jeweils 5.3.2). Eine Standard-Zimmertür mit
+0,90 m fällt darunter und wird durchgemessen. Ich habe beide Codestellen
+nachgesehen — die Inline-Variante in `maler.ts` ist weg, alles läuft über
+`berechneSockelleistenLaenge()`, und die Funktion kennt jetzt auch `anzahl`.
+
+**Damit sind alle meine Soll-Zahlen mit `[VOB-012]` überholt.** Hier stehen die
+neuen. Die alten Werte bleiben in den jeweiligen Fällen stehen, damit der
+Ist-Vergleich der bereits gelaufenen Tests nachvollziehbar bleibt — **maßgeblich
+ist ab sofort diese Tabelle.**
+
+| Fall | Position | alt (mit Türabzug) | **neu (durchgemessen)** |
+|---|---|---|---|
+| PM-002 | Sockelleisten montieren | 14,10 lfdm | **15,00 lfdm** |
+| PM-006 | Sockelleisten abkleben | 11,10 lfdm | **12,00 lfdm** |
+| PM-010 | Sockelleisten entfernen / montieren / streichen (je) | 12,10 lfdm | **13,00 lfdm** |
+| PM-011 | Sockelleisten abkleben | 13,50 lfdm | **14,40 lfdm** |
+| PM-013 Flur | Sockelleisten abkleben | 12,70 lfdm | **13,60 lfdm** |
+| PM-018 | Sockelleisten abkleben | 14,10 lfdm | **15,00 lfdm** |
+| PM-032 | Sockelleisten montieren, Flur / Wohnzimmer / Küche | 13,50 / 17,10 / 10,70 = 41,30 | **14,40 / 18,00 / 11,60 = 44,00 lfdm** |
+| PM-034 | Sockelleisten montieren, Küche / Esszimmer | 12,30 / 14,10 = 26,40 | **13,20 / 15,00 = 28,20 lfdm** |
+| PM-035 | Sockelleisten montieren, Flur (L-Form) | 15,70 lfdm | **18,40 lfdm** |
+| PM-036 | Sockelleisten montieren, Flur | 10,10 lfdm | **11,00 lfdm** — war schon richtig, weil keine Tür genannt war |
+
+PM-033 ist nicht betroffen (dort darf gar keine Sockelleisten-Position
+entstehen).
+
+**PM-032 geht zurück auf 🟡.** Der Nachtest lief am 03.09., der Fix kam am
+04.09. — die dort bestätigten 41,30 lfdm sind seit heute nicht mehr das Soll.
+Alles andere an dem Fall bleibt bestätigt (Trittschall in allen drei Räumen,
+Belag, Übergangsschiene). Zu prüfen ist genau eine Zahl: **44,00 lfdm über die
+drei Räume.**
+
+Das ist derselbe Fehlertyp, den ich am 02.09. an meinen eigenen Soll-Texten
+festgestellt und Legal zwei Tage später an seinem Bericht vorgehalten habe:
+Eine Entscheidung wird umgesetzt, die Tests werden nachgezogen, und die Prosa
+daneben bleibt auf dem alten Stand. Ein grüner Haken auf einer überholten Zahl
+ist schlimmer als gar keiner — deshalb steht der Fall lieber wieder offen.
+
+**Für Head of Product Engineering:** Der PM-035-Befund „drei Türen gesagt, eine
+abgezogen" ist mit derselben Änderung erledigt, weil `anzahl` jetzt gelesen
+wird. Nachzuweisen ist er trotzdem erst im Nachtest — bei PM-035 hängt die
+Sockelleistenzahl zusätzlich an der L-Form, die unangetastet ist.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
