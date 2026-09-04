@@ -41,40 +41,25 @@ Widerruf unter [console.groq.com/keys](https://console.groq.com/keys)
 (Papierkorb-Symbol beim Schlüssel → Revoke Key) eine 30-Sekunden-Sache, die
 den Punkt endgültig schließt. Deine Entscheidung, keine Dringlichkeit mehr.
 
-**🔴 2. Vercel: `CRON_SECRET` prüfen, Cron-Jobs kontrollieren.** Der
-Erinnerungs-Job hat noch nie eine E-Mail verschickt (75 Angebote, keine
-einzige Erinnerung, obwohl mehrere seit Ende August fällig sind) —
-vermutlich fehlt `CRON_SECRET` in der Produktionsumgebung. Genau derselbe
-Mechanismus soll jetzt auch die neue 30-Tage-Konto-Löschung ausführen: läuft
-er nicht, löschen wir nichts, obwohl Datenschutzerklärung und AGB das
-versprechen. **So geht's** (Vercel → Projekt `sofortangebot` → Settings):
-Environment Variables prüfen, ob `CRON_SECRET` für Production existiert
-(sonst anlegen, Wert selbst erzeugen statt im Chat zu teilen); unter Cron
-Jobs prüfen, ob `/api/cron/reminder` und `/api/cron/aufraeumen` beide
-eingetragen sind; bei einem testweise „Run now" klicken. **Danach kurz
-Head of Product Engineering Bescheid geben** — er kann in `system_laeufe`
-verifizieren, ob der Lauf wirklich durchging.
+**✅ 2. Vercel: `CRON_SECRET` — erledigt, 04.09.2026, siehe „Entschieden"
+oben.** Beide Cron-Jobs laufen nachweislich (Datenbank-Beleg, nicht nur ein
+grüner Status): `reminder` gestern 08:01 Uhr (2 Erinnerungen verschickt),
+`aufraeumen` heute Nacht 03:30 Uhr zum ersten Mal erfolgreich — 182
+verwaiste Sprachaufnahmen und 1 verwaistes Foto direkt mit aufgeräumt. Wer
+wissen will, wie es dazu kam: der ursprüngliche Verdacht (03.09., unten
+kursiv) hat sich bestätigt, der Fix — vermutlich das nachträgliche Setzen
+von `CRON_SECRET` durch Head of Product Engineering — hat gegriffen, bevor
+hier explizit nachgefragt wurde.
 
-**Nachtrag Chief of Staff, 03.09.2026 — jetzt ist es belegt, nicht mehr
-vermutet.** Platform hat beim Skalierungs-Kostenmodell (CoS-P-008) direkt in
-die Produktionsdaten geschaut: Die Job-Protokoll-Tabelle `system_laeufe` führt
-den Aufräum-Job selbst mit `"letzterLauf": null` und `"ueberfaellig": true` —
-**er ist buchstäblich noch nie gelaufen und weiß das selbst.** Im
-Sprachaufnahmen-Speicher liegen inzwischen 263 Dateien, davon **125 älter als
-30 Tage**, die älteste vom 02.07. Das ist kein Kostenproblem (86 MB), sondern
-ein Versprechen aus Datenschutzerklärung und AGB, das seit über zwei Monaten
-nicht eingehalten wird. Es hängt weiterhin an genau diesem einen Punkt, den
-nur du in Vercel prüfen kannst.
-
-*Nachtrag Head of Product Engineering, 02.09. nachmittags:* An diesem einen
-Punkt hängt inzwischen mehr als die Konto-Löschung. Beim Durchsehen der
-Speicher-Buckets sind **182 verwaiste Sprachaufnahmen** aufgetaucht — Dateien
-aus gelöschten Entwürfen und Angeboten, die seit Juli liegen bleiben, weil
-der Objektspeicher beim Löschen nicht mitkaskadiert. Dazu 22 Aufnahmen, die
-über die neue 30-Tage-Frist gelaufen sind, und ein Baustellenfoto ohne
-Angebot. Das Aufräumen dafür ist gebaut und getestet, es läuft aber erst mit
-dem ersten erfolgreichen Cron-Lauf. Solange `CRON_SECRET` fehlt, bleibt alles
-liegen.
+*Ursprünglicher Befund, 02.–03.09.2026 (zur Nachvollziehbarkeit stehen
+gelassen):* Der Erinnerungs-Job hatte noch nie eine E-Mail verschickt (75
+Angebote, keine einzige Erinnerung, obwohl mehrere seit Ende August fällig
+waren), die Job-Protokoll-Tabelle `system_laeufe` führte den Aufräum-Job mit
+`"letzterLauf": null` — er war buchstäblich noch nie gelaufen. Im
+Sprachaufnahmen-Speicher lagen 263 Dateien, davon 125 älter als 30 Tage,
+dazu 182 verwaiste Aufnahmen aus gelöschten Entwürfen (Objektspeicher
+kaskadierte beim Löschen nicht mit). Vermuteter Grund: fehlendes
+`CRON_SECRET` in der Produktionsumgebung.
 
 **🟠 3. Live nachtesten, was seit dem 31.08. gebaut wurde.** Zuschläge in
 Prozent, Übermessungshinweis im Kunden-PDF, neues Statusmodell, Konto
@@ -356,6 +341,7 @@ strategischen Check-in vom 31.08. beantwortet worden (siehe dort, „Geklärt
 
 | Datum | Entscheidung | Ergebnis | Quelle |
 |---|---|---|---|
+| 2026-09-04 | 🔴 2. „CRON_SECRET prüfen, Cron-Jobs kontrollieren" — Sandy fragte direkt nach: „ist cron secret heute nacht durchgelaufen?" | **Ja, beide Jobs laufen — mit echten Zahlen aus der Datenbank belegt, nicht nur „200 OK":** `reminder` lief gestern 08:01 Uhr (2 Erinnerungen verschickt, 0 Fehler), `aufraeumen` lief heute Nacht 03:30 Uhr zum **allerersten Mal erfolgreich** — und hat den seit Juli liegen gebliebenen Rückstand direkt mit abgeräumt: **182 von 182 verwaisten Sprachaufnahmen gelöscht**, dazu 1 verwaistes Baustellenfoto. Konto-Löschungen: 0 geprüft/gelöscht, weil noch kein Konto die 30-Tage-Frist erreicht hat — dieser Teil bleibt bis zum ersten echten Fall unbestätigt, ist aber jetzt technisch bewiesen lauffähig. **Punkt vollständig erledigt**, `CRON_SECRET` ist korrekt gesetzt | Chief of Staff, direkte Prüfung via Vercel-Runtime-Logs + `system_laeufe`-Tabelle in Supabase, `docs/launch-readiness.md` 2.5/6.3 |
 | 2026-09-03 | CoS-L-003: Erst Einzelunternehmen anmelden und später in die UG überführen, oder direkt UG? | **Direkt UG, so wenig Aufwand wie möglich, Verzicht auf die 17 Altbelege seit Mai** (bleiben Privatausgaben). Legal hat den Plan darauf umgestellt: Bargründung per Musterprotokoll, 4–6 Wochen, Steuerberater parallel statt davor. Nächster Schritt: Notartermin (nur Sandy) | `docs/chief-of-staff-legal-todos.md` CoS-L-003, „geänderter Plan“ |
 | 2026-09-03 | Launch-Zeitplan: Thailand (02.11.–03.12.) kollidiert mit dem bisher angedachten Fenster „01.11./01.12.“ — Oktober anpeilen oder nach Thailand planen? | **Nach Thailand.** Gate 1 (begleitete Testnutzer) ab **Anfang Dezember**, öffentlicher Launch (Gate 2) **Januar 2027**. Oktober wird für Produkt, Content-Vorrat und Vorbereitung genutzt. Clemens ist im November ebenfalls in Thailand — alle Drehtage und der Dessau-Kontakt müssen vor dem 01.11. laufen | `docs/kalender.md` |
 | 2026-09-03 | Startseite zeigt nur die Warteliste, volle Landingpage verborgen — gewollt? | **Ja, bewusst — aber offen, wann die Website online geht:** „vermutlich erst wenn Gewerbe angemeldet etc., oder nicht“. Damit hängt der Zeitpunkt an der Rechtsform-Reihenfolge; Head of Legal beantwortet unter CoS-L-003 zusätzlich, ab wann die volle Landingpage mit Preisen rechtlich live sein darf | `docs/chief-of-staff-legal-todos.md` CoS-L-003 |

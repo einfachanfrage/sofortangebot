@@ -12,6 +12,12 @@ export interface SatzMitRaum {
   satz: string
   /** Zuletzt genannter Raum — null, solange im Diktat noch keiner gefallen ist. */
   raum: string | null
+  /**
+   * Wurde der Raum in DIESEM Satz genannt, oder wird er nur weitergetragen?
+   * Der Unterschied entscheidet, ob ein Satz wie „in den Zimmern bleiben die
+   * alten" wirklich den zuletzt genannten Raum meint — oder etwas anderes.
+   */
+  raumImSatz: boolean
 }
 
 // Teuer gelernt (03.09.2026, beim Durchgehen der offenen Testfälle):
@@ -61,8 +67,9 @@ export function saetzeMitRaum(text: string, raumNamen: string[]): SatzMitRaum[] 
         bestName = n.original
       }
     }
-    if (bestName !== null && bestPos >= 0) aktuell = bestName
-    ergebnis.push({ satz, raum: aktuell })
+    const raumImSatz = bestName !== null && bestPos >= 0
+    if (raumImSatz) aktuell = bestName
+    ergebnis.push({ satz, raum: aktuell, raumImSatz })
   }
 
   return ergebnis

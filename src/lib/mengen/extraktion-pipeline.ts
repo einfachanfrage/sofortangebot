@@ -20,6 +20,7 @@ import type { RueckfrageItem } from './rueckfragen-generator'
 import { konsolidierePlatzhalterRaum } from './raum-konsolidierung'
 import { korrigiereRaumMasse } from '@/lib/mass-plausibilitaet'
 import { erkenneTeilflaechen } from '@/lib/teilflaeche'
+import { erkenneLFormen } from '@/lib/l-form'
 import { BODEN_VERLEGEN_SIGNAL } from '@/lib/mengen/gewerke/boden'
 
 export interface ExtraktionResponse {
@@ -180,6 +181,11 @@ export function verarbeiteExtraktion(
   // der einen Stelle, durch die JEDER Weg zur Mengenberechnung läuft.
   const massHinweise: string[] = []
   massHinweise.push(...korrigiereRaumMasse(extraktion.raeume ?? []).hinweise)
+
+  // PM-035: L-förmige Räume, BEVOR irgendetwas mit Länge × Breite rechnet.
+  // Ohne diesen Schritt verschwindet der zweite Schenkel lautlos; die Fläche
+  // fehlt dann im Angebot, ohne dass eine Position fehlt.
+  massHinweise.push(...erkenneLFormen(textMitZahlen, extraktion.raeume ?? []).hinweise)
 
   // Teilflächen nur dort suchen, wo überhaupt ein Bodenauftrag im Raum steckt:
   // „nur die Decke streichen" ist auch eine Einschränkung, aber keine

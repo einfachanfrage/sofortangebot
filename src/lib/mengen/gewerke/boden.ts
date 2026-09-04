@@ -70,6 +70,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
       name = 'Raum',
       laenge, breite,
       flaeche: f,
+      umfang: umfangAusRaum,
       teilflaeche,
       belag,
       verlegerichtung,
@@ -90,6 +91,15 @@ export function bodenEngine(daten: any): MengenErgebnis {
       umfang = round2(2 * laenge + 2 * breite)
     } else if (f) {
       flaeche = f
+    }
+
+    // PM-035: Ein L-förmiger Raum hat eine Fläche, aber kein Länge × Breite.
+    // Sein Umfang steht dann direkt am Raum (siehe l-form.ts) — ohne ihn gäbe
+    // es für einen solchen Flur keine Sockelleisten-Position, obwohl sie
+    // ausdrücklich beauftragt ist. Ein ausdrücklich gesetzter Umfang schlägt
+    // den aus Länge × Breite berechneten.
+    if (typeof umfangAusRaum === 'number' && isFinite(umfangAusRaum) && umfangAusRaum > 0) {
+      umfang = round2(umfangAusRaum)
     }
 
     if (!flaeche) continue
@@ -195,7 +205,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
       // PM-002: Türen unterbrechen die Sockelleiste — genau wie beim Maler
       // (maler.ts), nur bisher hier nie abgezogen worden. Gleiche Funktion
       // wie dort, damit das nicht wieder auseinanderdriftet.
-      const effTueren = (tueren as Array<{ breite?: number }>).filter(Boolean)
+      const effTueren = (tueren as Array<{ breite?: number; anzahl?: number }>).filter(Boolean)
       const sockelM = effTueren.length > 0 ? berechneSockelleistenLaenge(umfang, effTueren) : umfang
       positionen.push({
         beschreibung: `Sockelleisten montieren — ${name}`,

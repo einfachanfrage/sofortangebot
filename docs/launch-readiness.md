@@ -39,11 +39,25 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 | Gate | Fortschritt | Punkte |
 |---|---|---|
 | **Gate 1** — erste Testnutzer | **≈ 48,5 %** (Neuberechnung 03.09. Abend, Stufe 1 UND Stufe 3 des Fahrplans komplett abgearbeitet) | 47 |
-| **Gate 2** — öffentlicher Launch | **≈ 15 %** (unverändert seit 02.09. Mittag) | 37 |
+| **Gate 2** — öffentlicher Launch | **≈ 16,2 %** (04.09.: 2.5 und 6.3 durch CRON_SECRET-Fix bewegt, siehe unten) | 37 |
 | **Gate 3** — danach/Skalierung | **17 %** (unverändert, keine neue G3-Bewegung) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+> ✅ **Update 04.09.2026, morgens (Chief of Staff) — CRON_SECRET-Fix live
+> bestätigt, auf Sandys direkte Nachfrage.** Zwei G2-Punkte bewegt: **2.5
+> Account-Löschung (55→85)** und **6.3 DSGVO-Export/-Löschung (55→70)** —
+> beide hingen an derselben Cronjob-Zuverlässigkeit, die seit 02./03.09. als
+> Verdacht („vermutlich fehlt CRON_SECRET") im Raum stand. Geprüft nicht nur
+> per HTTP-Status, sondern direkt in der `system_laeufe`-Tabelle: der
+> Aufräum-Job lief heute 03:30 Uhr zum ersten Mal überhaupt (`ok: true`) und
+> hat den seit Juli aufgelaufenen Rückstand sofort mitgeräumt (182 verwaiste
+> Sprachaufnahmen, 1 Foto). Der Erinnerungs-Job lief gestern 08:01 Uhr
+> ebenfalls sauber (2 Erinnerungen verschickt). Nicht auf 100 %, weil die
+> eigentliche 30-Tage-Konto-Löschung mangels fälliger Konten noch keinen
+> echten Testfall hatte — reine Wartezeit. Gate 2 damit von ≈15 % auf
+> ≈16,2 % (Δ = (30+15)/37 Punkte).
 
 > ✅ **Neuberechnung 03.09.2026 (Chief of Staff).** Sechs Punkte bewegt: **6.5
 > Leaked Password Protection (0→95)** — Sandy hat den Toggle in Supabase
@@ -659,7 +673,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 | 2.2 | E-Mail-Verifizierung wirklich zugestellt (nicht nur ausgelöst) | G1 | 🟡 55 % — **korrigiert, 29.08.:** auf Sandys Freigabe „004 bitte b)" läuft die Verifizierungs-Mail jetzt über die eigene Resend-Anbindung statt Supabase (CoS-P-004, neue Route `api/auth/register`). Code fertig, **echter Zustellungs-Test mit echtem Postfach steht aus** — das kann nur Sandy selbst machen |
 | 2.3 | Passwort-Zurücksetzen funktioniert | G1 | 🟡 60 % — **korrigiert, 29.08.: Bug ist bereits gefixt, nicht mehr offen.** Auf Sandys Freigabe „003 ja bitte direkt reparieren" läuft der Reset-Link jetzt über `/auth/callback` (korrekter PKCE-Tausch, wie bei der Registrierung), plus aktive Session-Prüfung und eine „Link abgelaufen"-Seite statt Endlos-Laden (CoS-P-003). Diese Zeile stand hier fälschlich seit mehreren Tagen auf „weiterhin ungefixt" — eigener Sync-Fehler des Chief of Staff, der Fix war schon am 25.08. dokumentiert. **Einziger verbleibender Schritt: ein echter Klick-Durchlauf mit echtem Postfach**, aus keiner Session heraus möglich — Sandys Aufgabe |
 | 2.4 | Kompletter erster Durchlauf (erste Anmeldung → erstes Angebot) end-to-end | G1 | ⚪ offen — nicht erhoben |
-| 2.5 | Account-Löschung möglich | G2 | 🟡 55 % — **02.09., neu bewertet:** echte, DSGVO-konforme harte Löschung jetzt tatsächlich gebaut (vorher lief „Löschung" nur über ein `deleted_at`-Flag, es wurde nichts wirklich entfernt). Code fertig, aber bewusst nicht höher: dieselbe Cronjob-Infrastruktur, die den 30-Tage-Löschlauf ausführen soll, hat bei den bisherigen Erinnerungs-Mails nie funktioniert (vermutlich fehlendes `CRON_SECRET` in Vercel) — ob die Löschung wirklich automatisch läuft, ist unbestätigt, Sandy muss das in Vercel prüfen |
+| 2.5 | Account-Löschung möglich | G2 | 🟢 85 % — **Update 04.09.2026 (Chief of Staff, direkt verifiziert):** Sandy fragte nach, ob der Cron heute Nacht durchgelaufen ist — Prüfung via Vercel-Runtime-Logs UND direkter Abfrage der `system_laeufe`-Tabelle in Supabase (nicht nur „200 OK" vertraut). Ergebnis: `CRON_SECRET`-Problem ist behoben, der Aufräum-Job lief heute 03:30 Uhr zum ersten Mal überhaupt erfolgreich (`ok: true`) und hat direkt 182 verwaiste Sprachaufnahmen + 1 Foto gelöscht. Die Lösch-Infrastruktur ist damit technisch bewiesen lauffähig. Bewusst nicht 100 %: die eigentliche 30-Tage-Konto-Löschung selbst hat noch keinen echten Testfall gehabt (`Konten: geprüft 0, gelöscht 0`, weil noch kein Konto die Frist erreicht hat) — reine Wartezeit, kein bekanntes Problem |
 | 2.6 | Schutz vor automatisierten Massen-Registrierungen (Captcha/Rate-Limit) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 2.7 | Session-Sicherheit: Token-Ablauf sinnvoll, Logout wirklich überall wirksam | G1 | ⚪ offen — nicht erhoben (neu) |
 | 2.8 | Erster Eindruck für brandneue Nutzer durchdacht (leere Zustände) | G1 | 🔴 30 % — DC-009 (leere Aufnahme als Erfolg) jetzt über DC-028 code-seitig mitgefixt, Live-Nachtest steht aus; PM-015-Fix behebt zusätzlich einen konkreten Fall: „manuell"-Onboarding landete bisher mit fast leerer Preisdatenbank |
@@ -703,7 +717,7 @@ umgesetzt (Sentry im Kernpfad, Punkt 8.1).
 |---|---|---|---|
 | 6.1 | Nutzer sehen ausschließlich eigene Daten (Supabase RLS greift überall) | G1 | 🟢 95 % — **erledigt und geprüft, CoS-P-001**: 22 Tabellen + ~19 Umgehungsstellen direkt in Produktion geprüft, eine akute Lücke (`debug_extraktion_roh`, öffentlich ohne RLS) gefunden und sofort gefixt |
 | 6.2 | Keine Secrets/Keys im Frontend oder in Logs sichtbar | G1 | 🔴 25 % — **02.09.:** ein Groq-API-Key wurde ungefiltert (unmaskiert) im Chat-Verlauf ausgegeben. Sandy hat bestätigt: Groq wird im Produkt nirgends genutzt (nur OpenAI im Einsatz), das praktische Risiko ist damit kleiner als zunächst angenommen. Ob am Groq-Konto eine Zahlungsmethode hinterlegt ist, ist weiterhin nicht verifiziert; der Schlüssel selbst ist weiterhin nicht widerrufen (optionale Formsache, keine Dringlichkeit mehr). Kein systematischer Scan der übrigen Secrets, nur dieser eine konkrete Fund |
-| 6.3 | Daten-Export und -Löschung für DSGVO-Anfragen umsetzbar | G2 | 🟡 55 % — **02.09.:** echte harte Löschung jetzt gebaut (siehe 2.5, gleiche Einschränkung zur Cronjob-Zuverlässigkeit). Export weiterhin ungeprüft |
+| 6.3 | Daten-Export und -Löschung für DSGVO-Anfragen umsetzbar | G2 | 🟢 70 % — **Update 04.09.2026:** die Cronjob-Zuverlässigkeit, die diesen Punkt bisher gedeckelt hat, ist jetzt live bestätigt (siehe 2.5). Export weiterhin ungeprüft, deshalb nicht höher |
 | 6.4 | Supabase-Security-Advisor regelmäßig geprüft (nicht nur einmalig) | G1 | 🟡 60 % — seit 17.08. Teil des täglichen automatischen Chief-of-Staff-Checks, aber erst seit heute (neu) |
 | 6.5 | Passwort-Sicherheit: „Leaked Password Protection" (HaveIBeenPwned-Abgleich) aktiv | G1 | 🟢 95 % — **03.09.: erledigt.** Sandy hat den Toggle in Supabase (Authentication → Sign In / Providers → Email → „Prevent use of leaked passwords") aktiviert und gespeichert. Per Screenshot bestätigt (Toggle grün) UND unabhängig gegengecheckt: der Supabase-Security-Advisor listet die Warnung „Leaked Password Protection aus" nicht mehr. Nicht auf 100 %, weil die verwandten Felder (Minimum-Passwortlänge 6 Zeichen, „Password requirements" auf „No required characters") bewusst nicht mit angefasst wurden — eigenes, kleineres Thema |
 | 6.6 | Rate-Limiting/Brute-Force-Schutz auf dem Login | G1 | ⚪ offen — nicht erhoben (neu) |

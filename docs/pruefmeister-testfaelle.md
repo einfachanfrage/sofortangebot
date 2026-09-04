@@ -95,7 +95,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus |
-| PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum |
+| PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
@@ -3131,6 +3131,104 @@ Varianten mit und ohne „Meter" in der Mitte durchspielen.
 Zur Einordnung: Nach heutiger Regel wäre das Soll 15,70 lfdm. Wird VOB-012
 entschieden („nur Öffnungen ab 1,00 m abziehen"), sind es 18,40 lfdm. Beide
 Zahlen liegen weit über den berechneten 13,10.
+
+#### Fix PM-035, Befund 1 + 3 + 4 (Head of Product Engineering, 03.09.2026)
+
+**Behoben. Der Fall liefert jetzt exakt die Soll-Liste.**
+
+| Position | Soll | vorher | jetzt |
+|---|---|---|---|
+| Wohnzimmer verlegen | 22,39 m² | 22,39 | **22,39** |
+| Arbeitszimmer verlegen | 14,70 m² | 14,70 | **14,70** |
+| Flur verlegen | 10,08 m² | 6,30 | **10,08** |
+| Trittschalldämmung gesamt | 44,92 m² | 21,32 | **44,92** (21,32 + 14,00 + 9,60) |
+| Sockelleisten — nur Flur | 15,70 lfdm | 13,10 | **15,70** |
+| Sockelleisten in den Zimmern | keine | keine | **keine** |
+
+**Zuerst die Ausgangslage, denn sie hat sich verschoben.** An den
+Produktionsdaten vom 03.09. kommt der Flur inzwischen so an:
+
+```
+{ name: "Flur", laenge: null, breite: null, flaeche: null,
+  tueren: [{ anzahl: 3, breite: 0.9 }] }
+```
+
+Die KI gibt bei der L-Beschreibung also **komplett auf** — es gibt keine
+falsche Zahl mehr, die man korrigieren könnte, sondern gar keine. Damit ist
+klar: Die Maße müssen deterministisch aus dem Text kommen, sonst gibt es sie
+nicht. (Gute Nachricht am Rande: Die drei Türen kommen inzwischen korrekt als
+`anzahl: 3` an — der Fehler lag danach.)
+
+**Befund 1, die L-Form** (`src/lib/l-form.ts`, neu). Fachlich ist der Fall
+lösbar, weil bei einem L der Umfang derselbe ist wie beim umschließenden
+Rechteck, und weil ein Flur überall gleich breit ist:
+
+```
+Fläche = Breite × (Schenkel 1 + Schenkel 2) = 1,20 × (6,00 + 2,00) = 9,60 m²
+Umfang = 2 × (Schenkel 1 + Schenkel 2 + Breite) = 2 × 9,20 = 18,40 lfm
+```
+
+Der heikle Teil ist die Zuordnung der Zahlen, nicht die Formel. Whisper macht
+aus „einmal" ein „1 x"; der Satz lautet wörtlich „L-förmig, **1 x 6 m x 1.20**
+und der kurze Schenkel 2 m x 1.20". Ein naiver Scan findet daraus auch das Paar
+(1 × 6) und rechnet Unsinn. Deshalb werden **alle** Maßpaare gesammelt, auch
+überlappende, und danach wird die Kombination gesucht, die geometrisch
+überhaupt ein L sein kann: Beide Schenkel teilen sich eine Seite, und diese
+geteilte Seite ist die Breite — also höchstens so lang wie die Schenkel, die
+von ihr abgehen. (1 × 6) und (6 × 1,20) teilen sich zwar die 6, aber eine 6 m
+breite Wand mit 1 m langen Schenkeln ist kein Flur. Es bleibt genau eine
+Kombination übrig.
+
+Bleiben **mehrere oder keine** übrig, wird nichts angenommen, sondern gesagt:
+„Der Raum wurde als L-förmig beschrieben, aber die beiden Schenkel sind aus dem
+Diktat nicht eindeutig herauszulesen … bitte die Form über ‚Unförmig? Form
+zeichnen' eintragen." Damit ist die Mindestanforderung des Prüfmeisters erfüllt
+— entweder addieren oder nachfragen, aber nie stumm verlieren. Und wenn
+gerechnet wird, steht die Rechnung sichtbar über dem Entwurf, wie bei der
+Maßkorrektur und der Teilfläche.
+
+Zusätzlich werden `laenge` und `breite` des Raums geleert: Ein L ist kein
+Rechteck. Sie stehen zu lassen hieße, die Rechteck-Formel weiterlaufen zu
+lassen — genau der stille Verlust. Die Boden-Engine nimmt einen ausdrücklich
+gesetzten Umfang jetzt entgegen (vorher konnte sie ihn nur aus Länge × Breite
+bilden, ein L-Raum hätte also gar keine Sockelleisten-Position bekommen).
+
+**Befund 3, die Türen.** Zwei Fehler in einer Zahl, beide weg:
+*Der Umfang* stammte aus dem falschen, rechteckigen Flur — mit der L-Form
+stimmt er. *Die Türanzahl* wurde ignoriert: Die Extraktion liefert
+`{ anzahl: 3, breite: 0.9 }`, und `berechneSockelleistenLaenge()` hat die
+Stückzahl schlicht nicht gelesen — sie summierte eine Türbreite je **Eintrag**
+statt je **Tür**. Eine Zeile, aber sie sitzt in der Funktion, die laut ihrem
+eigenen Kommentar „die einzige Stelle" für „Umfang minus Türbreiten" ist,
+also für Maler und Boden gleichermaßen.
+
+**Nebenfund, an dem der Fall sonst wieder gescheitert wäre:**
+„Sockelleisten nur im Flur neu. **In den Zimmern** bleiben die alten." Der
+zweite Satz nennt keinen konkreten Raum, sondern eine Gruppe — er wurde dem
+zuletzt genannten Raum zugeschlagen, also ausgerechnet dem **Flur**, der die
+Sockelleisten bekommen soll. Der Ausschluss traf damit exakt den falschen Raum
+(erst beim Nachrechnen dieses Falls aufgefallen, nicht vom Prüfmeister
+gemeldet). Eine Gruppenangabe wird jetzt auf die Räume aufgelöst, die sie
+meint, statt auf den letzten genannten.
+
+**Befund 4** (Trittschall nur im ersten Raum) ist mit dem raumweisen Umbau
+erledigt, siehe dort — hier stehen jetzt alle drei Räume mit ihrer eigenen
+Fläche.
+
+**Tests:** `src/lib/__tests__/pm035-l-form.test.ts` (12 Fälle) mit dem echten
+Transkript, der Gegenrichtung (nur ein Schenkel → kein Wert, sondern ein
+Hinweis; kein L-Signal → gar nichts; Paare ohne gemeinsame Seite → kein
+Ergebnis) und der Türanzahl. Gesamtstand: 80 Testdateien, 1.292 Tests grün,
+`tsc` sauber, eslint 0 Fehler.
+
+**Befund 2 („sechs Meter mal eins zwanzig" → 6 × 1) lässt sich an den heutigen
+Daten nicht mehr nachstellen:** Die KI liefert für den L-Flur gar keine Maße
+mehr, statt falscher. Die L-Erkennung deckt genau diesen Satz ab, weil sie die
+Einheit zwischen den Werten mitliest. Ob die Sprechweise in einem
+**rechteckigen** Raum noch danebengeht, muss der nächste Live-Test zeigen —
+ich baue dafür keine Reparatur auf Verdacht.
+
+---
 
 **Befund 4 — Trittschalldämmung zum dritten Mal nur im ersten Raum**
 

@@ -84,6 +84,16 @@ function istAusschlussSatz(satz: string, sockelSchonGenannt: boolean): boolean {
   return true
 }
 
+/**
+ * PM-035 (03.09.2026): „Sockelleisten nur im Flur neu. **In den Zimmern**
+ * bleiben die alten." Der zweite Satz nennt keinen konkreten Raum, sondern
+ * eine Gruppe. Ohne diese Behandlung wurde er dem zuletzt genannten Raum
+ * zugeschlagen — also ausgerechnet dem Flur, der die Sockelleisten bekommen
+ * soll. Der Ausschluss traf damit exakt den falschen Raum.
+ */
+const GENERISCH_ZIMMER = /\bzimmern?\b/i
+const GENERISCH_ALLE = /\br[äa]um(?:e|en)?\b|\bwohnung\b/i
+
 export function erkenneSockelleistenAusschluss(
   text: string,
   raumNamen: string[] = [],
@@ -96,10 +106,19 @@ export function erkenneSockelleistenAusschluss(
   const saetze = saetzeMitRaum(text, raumNamen)
   let sockelSchonGenannt = false
 
-  for (const { satz, raum } of saetze) {
+  for (const { satz, raum, raumImSatz } of saetze) {
     if (istAusschlussSatz(satz, sockelSchonGenannt)) {
       belege.push(satz.trim())
-      if (UEBERALL.test(satz) || raum === null) global = true
+      // „in den Zimmern", „in den anderen Räumen": eine Gruppe, nicht der
+      // zuletzt genannte Raum. Nur wenn in DIESEM Satz kein konkreter Raum
+      // steht — „im Wohnzimmer bleiben sie" bleibt raumgenau.
+      const gruppe = !raumImSatz && GENERISCH_ZIMMER.test(satz)
+        ? raumNamen.filter(n => /zimmer/i.test(n))
+        : null
+
+      if (UEBERALL.test(satz) || (!raumImSatz && GENERISCH_ALLE.test(satz))) global = true
+      else if (gruppe && gruppe.length > 0) for (const n of gruppe) raeume.add(n)
+      else if (raum === null) global = true
       else raeume.add(raum)
     }
     if (SOCKEL.test(satz)) sockelSchonGenannt = true
