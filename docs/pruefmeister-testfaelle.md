@@ -4005,5 +4005,96 @@ abgezogen" ist mit derselben Änderung erledigt, weil `anzahl` jetzt gelesen
 wird. Nachzuweisen ist er trotzdem erst im Nachtest — bei PM-035 hängt die
 Sockelleistenzahl zusätzlich an der L-Form, die unangetastet ist.
 
+---
+
+## Nachtest-Plan nach den Fixes vom 03./04.09. (Prüfmeister, 2026-09-04)
+
+Was seit den letzten Live-Tests geändert wurde und **welcher Fall deshalb neu
+eingesprochen werden muss**. Sortiert nach Nutzen, nicht nach Fallnummer.
+
+**Die Auslöser, damit nachvollziehbar ist, warum ein Fall in der Liste steht:**
+
+| Änderung | Datum | Wirkt auf |
+|---|---|---|
+| Raumweise Vollständigkeitsprüfung (Trittschall, Sockelleisten, Schienen, Grundierung, Gewerke-Erkennung) | 03.09. | jeden Mehrraum-Fall |
+| Dezimalpunkt beim Satztrennen (`satz-raum.ts`) | 03.09. | jede satzweise Auswertung: Teilfläche, Ausschlüsse, Raumzuordnung |
+| Blocker „Weiter" bei aktiver Warnung | 03.09. | PM-034 |
+| Zahlwort-Korrektur 360 → 3,60 | 03.09. | jeden Fall mit dreistelliger Fehlerkennung |
+| VOB-012: keine Türbreiten mehr abziehen | 04.09. | **jeden Fall mit Sockelleisten** |
+| VOB-013: Leibungen dreiseitig, Fensterbank nicht doppelt | 03.09. | **von keinem Testfall abgedeckt** |
+| CoS-043: objektbezogene Zuschläge nur noch aufs eigene Gewerk | 04.09. | Fälle mit Erschwerniszuschlägen |
+
+---
+
+### Stufe 1 — voll einsprechen, mehrere Fixes gleichzeitig (5 Fälle)
+
+| Fall | Was zu prüfen ist |
+|---|---|
+| **PM-033** | Zwei Übergangsschienen statt einer · keine erfundenen Sockelleisten · Verschnittsätze weiterhin 15/0/5 % · **offen bleibt** die Dämmung im Flur (Kurzform „Trittschall" löst nicht aus) |
+| **PM-034** | Kommt man jetzt mit dem normalen Button zum Entwurf? · Küche 3,60 statt 360, Esszimmer 3,50 statt 350 · keine Wandspachtel-Positionen mehr · Grundierung Esszimmer 14,00 m² · Sockelleisten **28,20 lfdm** · taucht „Im Flur machen wir nichts" noch als Raum auf? |
+| **PM-036** | **Teilfläche 6,30 m² statt 21,00** — der Dezimalpunkt-Fix betraf genau dieses Diktat („4 mal 1.50") · Altbelag Wohnzimmer 6,00 statt 20,00 · Sockelleisten 11,00 lfdm · Karte und Entwurf müssen dieselbe Menge zeigen |
+| **PM-035** | Sockelleisten **18,40 lfdm** (Türanzahl wird jetzt gelesen) · **L-Form bleibt offen**, der zweite Schenkel wird weiterhin fehlen — Kontrollprobe, dass nichts Neues kaputt ist |
+| **PM-032** | Nur eine Zahl: Sockelleisten **44,00 lfdm** statt 41,30. Alles andere war am 03.09. bestätigt |
+
+### Stufe 2 — grüne Haken auf überholten Zahlen, seit dem 02.09. offen (4 Fälle)
+
+Diese vier wurden vor der VOB-Übermessung abgenommen; jetzt kommt der
+Sockelleisten-Wert dazu.
+
+| Fall | Neue Sollwerte |
+|---|---|
+| **PM-002** | Wandbrutto 39,00 · Restwände 29,90 · Akzentwand 9,10 · Sockelleisten **15,00 lfdm** |
+| **PM-006** | Wandfläche **28,80 m²** · Sockelleisten **12,00 lfdm** · Altbau-Zuschlag 20 % |
+| **PM-010** | Wandfläche **33,80 m²** · alle drei Sockelleisten-Zeilen **13,00 lfdm** |
+| **PM-018** | Wand/Spachtel Q3/Grundierung/Anstrich je **39,00 m²** · Sockelleisten **15,00 lfdm** |
+
+### Stufe 3 — offene 🟡 mit eigenem Grund, der jetzt behoben sein müsste (5 Fälle)
+
+| Fall | Was der Fix erledigt haben soll |
+|---|---|
+| **PM-023** | Die Trittschall-Flächenverwechslung — laut Engineer durch den Dezimalpunkt-Fix erledigt. Der Fund war „situativ und nicht reproduzierbar"; genau deshalb braucht er einen sauberen Nachtest |
+| **PM-028** | Erschwerniszuschlag zog den Abstellraum in die Bemessungsgrundlage — CoS-043 rechnet objektbezogene Zuschläge jetzt nur noch aufs eigene Gewerk. Zweiter Fund (Grundpreis 11,50 statt 9,50 €) unabhängig davon prüfen |
+| **PM-030** | „Sockelleisten-Türabzug trotz Türen: 0" erledigt sich mit VOB-012 von selbst — nachweisen |
+| **PM-024** | Der fehlende fünfte Nachtest zum Karten-Fund, plus neuer Sockelleisten-Wert |
+| **PM-009** | Übergangsschienen-Preis nie live nachgeprüft, und die Zählung der Schienen hat sich geändert |
+
+### Stufe 4 — grün, aber eine Zahl hat sich geändert (8 Fälle)
+
+Hier ist **nur die Sockelleistenlänge** zu prüfen: je Standardtür 0,90 lfdm mehr
+als in der Falldokumentation steht. Kann man in einem Rutsch einsprechen und
+jeweils nur auf diese eine Zeile schauen.
+
+**PM-001 · PM-011 · PM-012 · PM-013 · PM-021 · PM-022 · PM-025 · PM-026**
+
+PM-021 ist der wertvollste davon, weil er beide Richtungen in einem Fall zeigt:
+Die Zimmertür (0,90 m) bleibt jetzt drin, die Terrassentür (2,00 m) wird
+weiterhin abgezogen — 22,00 auf 20,00 lfdm.
+
+### Stufe 5 — neuer Fall nötig
+
+**VOB-013 (Leibungen dreiseitig, Fensterbank nicht mehr doppelt) ist von keinem
+einzigen Testfall abgedeckt.** Der Fix ist ungetestet unterwegs. Ich lege dafür
+**PM-037** an: ein Raum mit zwei Fenstern, ausdrücklich genannten Leibungen und
+einer Fensterbank — die einzige Konstellation, in der sich der alte vom neuen
+Stand unterscheidet.
+
+---
+
+**Nicht auf der Liste, mit Absicht:**
+
+- **PM-014** (Race Condition) — kein Sprechfall, sondern ein Gleichzeitigkeits-
+  Klicktest. Bleibt offen, gehört aber nicht in diesen Plan.
+- **PM-031** (kosmetische „So gerechnet"-Zeile) — dafür gibt es noch keinen Fix,
+  ein Nachtest würde nur das Bekannte bestätigen.
+- **PM-003, PM-005, PM-007, PM-008, PM-017, PM-019, PM-020, PM-027, PM-029** —
+  keine Sockelleisten-Position und von keiner der Änderungen berührt.
+
+**Reihenfolge, wenn die Zeit knapp ist:** Stufe 1 zuerst (dort hängt der
+Blocker und der teuerste Rechenfehler), dann Stufe 3, dann Stufe 2. Stufe 4 ist
+Fleißarbeit und kann warten, solange niemand die alten Zahlen für bare Münze
+nimmt — deshalb steht die Korrekturtabelle weiter oben in dieser Datei.
+
+*Prüfmeister · 2026-09-04*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
