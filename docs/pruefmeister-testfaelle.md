@@ -4964,5 +4964,38 @@ nicht mit fünf Pflastern, sondern an der Wurzel.
 Wiederholbarkeit als eigene Prüfdimension aufnehmen. Beides gehört vor Gate 1
 entschieden, nicht danach.
 
+---
+
+### Zum Belag-Streuungsfund: warum ein vierter Lauf nichts entscheidet (Prüfmeister, 2026-09-04)
+
+Sandy fragt, ob PM-032 grün wird, wenn der nächste Lauf wieder „Klick-Vinyl"
+trifft. **Nein — und das ist keine Pedanterie, sondern Rechnen.**
+
+Wenn ungefähr jeder dritte Lauf danebengeht, ist die Wahrscheinlichkeit, dass
+drei Läufe hintereinander sauber sind, immer noch rund 30 %. Selbst fünf saubere
+Läufe schließen eine Quote von einem Drittel nicht aus. Ein grüner Haken, den
+man sich erwürfelt, ist schlechter als ein offener Punkt: Er beendet das
+Nachschauen.
+
+Was der Befund braucht, ist keine weitere Stichprobe, sondern eine **Ursache**.
+Die liegt nicht in der Mengen-Engine — `boden-normalisierer.ts` vergibt das
+Etikett „Klick-Vinyl" korrekt, sobald „klick" und „vinyl" im Belagfeld stehen.
+Instabil ist, was die Extraktion in dieses Feld schreibt.
+
+**Mein Vorschlag an Head of Product Engineering, klein und robust:** Wenn das
+Belagfeld nur „vinyl" hergibt, im **Rohtranskript** nachsehen. Steht dort
+„Klick-Vinyl", „Klickvinyl" oder „Klick", gilt das — der Handwerker hat es
+gesagt, es darf nicht davon abhängen, ob das Modell es ins strukturierte Feld
+übernommen hat. Dieselbe Rangordnung, die für den Rohtext-Scope schon gilt:
+Ansage vor Struktur.
+
+Das ist billiger als jede Prompt-Änderung und macht das Ergebnis unabhängig von
+der Tagesform des Modells. Und es ist prüfbar: Danach muss derselbe Fall
+zehnmal denselben Titel und denselben Preis liefern.
+
+**Für die Testreihe heißt das:** PM-032 bleibt offen, bis die Zuordnung nicht
+mehr geraten wird. Sandy soll ihn nicht noch einmal auf Verdacht einsprechen —
+das kostet sie Zeit und beweist nichts.
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
