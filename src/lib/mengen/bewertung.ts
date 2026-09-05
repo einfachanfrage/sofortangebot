@@ -46,7 +46,15 @@ export function berechneBewertung(
     } else if (raum.laenge && raum.breite) {
       erkannte_angaben.push(`✓ ${raum.name}: ${raum.laenge} × ${raum.breite} m`)
       // Raumhöhe fehlt — ist Annahme, nicht fehlende Angabe (Decke/Boden/Sockel sind trotzdem berechenbar)
-      annahmen.push(`${raum.name}: Raumhöhe nicht angegeben — Wandfläche nicht berechnet`)
+      //
+      // PM-034/PM-036, kleiner Befund (04.09.2026): In einem reinen
+      // Bodenauftrag stand auf der Raumkarte „Raumhöhe !", obwohl im ganzen
+      // Angebot keine Wandfläche vorkommt. Ein Ausrufezeichen, das nichts
+      // bedeutet, kostet Vertrauen wie eine falsche Zahl — die Meldung gilt
+      // nur, wo eine Wandfläche überhaupt gebraucht wird.
+      if (!/^boden/.test(gewerk ?? '')) {
+        annahmen.push(`${raum.name}: Raumhöhe nicht angegeben — Wandfläche nicht berechnet`)
+      }
     } else if (raum.flaeche) {
       erkannte_angaben.push(`✓ ${raum.name}: ${raum.flaeche} m² (Fläche)`)
       annahmen.push(`${raum.name}: Nur Gesamtfläche angegeben — Länge × Breite wären präziser`)

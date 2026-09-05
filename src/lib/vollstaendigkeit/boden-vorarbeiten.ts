@@ -1,4 +1,6 @@
 import { saetze } from '../satz-raum'
+import { SOCKEL_WORT } from '../sockelleisten-ausschluss'
+import { EINSCHRAENKUNG } from '../teilflaeche'
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, addMitMenge } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen } from './boden-basis'
@@ -187,10 +189,30 @@ export function pruefeSockelleisten(
   // Fallback hier kannte diese Bedingung nicht und hat den Phantom-Fund
   // munter erneut erzeugt, sobald die Engine (korrekt) nichts angelegt hatte.
   // Gleiches Prinzip wie dort: ohne ein eigenes Textsignal keine Erfindung.
-  if (!hat(ergaenzt, 'sockel') && lower.includes('sockelleist')) {
-    const flaeche = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
-      ?? ergaenzt.find(p => /altbelag entfernen|verlegen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
-      ?? null
+  if (!hat(ergaenzt, 'sockel') && SOCKEL_WORT.test(lower)) {
+    // PM-036 (04.09.2026): Die Schätzung 4 × √Fläche darf NIE auf einer
+    // Teilfläche stehen. Im Produktionsfall war die einzige m²-Position des
+    // Wohnzimmers die reparierte Ecke (6 m² von 20 m²) — daraus wurden
+    // 4 × √6 = 10 lfdm „Umfang". Sockelleisten laufen aber am ganzen Raum
+    // entlang, nicht um die Ecke herum. Die Engine markiert Teilflächen im
+    // Berechnungsweg; diese Positionen scheiden hier deshalb aus, und ohne
+    // andere Quelle wird lieber gefragt als geraten.
+    const istTeilflaeche = (p: BerechnetePosition) => /teilfl(?:ä|ae)che/i.test(p.berechnungsweg ?? '')
+    // Auch die Fläche AUS DEM TEXT kann eine Teilfläche sein („nur die Ecke,
+    // ungefähr 6 Quadratmeter"). Derselbe Marker wie in teilflaeche.ts —
+    // importiert, nicht nachgebaut.
+    // Auch die Fläche AUS DEM TEXT ist dann eine Teilfläche („nur die Ecke,
+    // ungefähr 6 Quadratmeter") — und jede daraus abgeleitete Position erbt
+    // den Fehler, ohne ihn im Berechnungsweg noch zu tragen („6 m² × 1.05").
+    // Deshalb sperrt der Marker die Schätzung als Ganzes: Beschreibt das
+    // Diktat für diesen Raum nur einen Ausschnitt, ist die Bodenfläche keine
+    // gültige Quelle für einen Umfang. Derselbe Marker wie in teilflaeche.ts
+    // — importiert, nicht nachgebaut.
+    const nurTeilflaecheImText = EINSCHRAENKUNG.test(lower)
+    const flaeche = nurTeilflaecheImText ? null : (
+      extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+      ?? ergaenzt.find(p => /altbelag entfernen|verlegen|boden/i.test(p.beschreibung) && p.einheit === 'm²' && !istTeilflaeche(p))?.menge
+      ?? null)
     if (flaeche && flaeche > 0) {
       const umfang = Math.round(4 * Math.sqrt(flaeche))
       ergaenzt.push({ beschreibung: 'Sockelleisten montieren', menge: umfang, einheit: 'lfdm', konfidenz: 'medium', berechnungsweg: `Umfang ≈ 4 × √${flaeche} m² = ${umfang} lfdm`, annahmen: ['Quadratischer Raum angenommen — Meter bitte prüfen'] })

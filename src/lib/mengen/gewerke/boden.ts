@@ -3,7 +3,7 @@ import type { BelagTyp } from '../../boden-normalisierer'
 import { standardVerschnitt } from '../../boden-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge } from './sockelleisten'
-import { erkenneSockelleistenAusschluss } from '../../sockelleisten-ausschluss'
+import { erkenneSockelleistenAusschluss, SOCKEL_WORT } from '../../sockelleisten-ausschluss'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -198,7 +198,10 @@ export function bodenEngine(daten: any): MengenErgebnis {
     // bleiben überall, wie sie sind"). Deshalb zusätzlich der satzweise
     // Ausschluss, mit Raumbezug: „Sockelleisten im Flur neu. Im Wohnzimmer
     // bleiben sie." legt sie im Flur an und im Wohnzimmer nicht.
-    const hatSockelleistenSignal = /sockelleist/i.test(daten.transkript ?? '')
+    // PM-034 (04.09.2026): stand hier als /sockelleist/i — und Whisper hatte
+    // „Zockelleisten" verstanden. Das Gate schlug zu, die Leistung fiel für
+    // beide Räume aus. Jetzt der gemeinsame, tolerante Ausdruck.
+    const hatSockelleistenSignal = SOCKEL_WORT.test(daten.transkript ?? '')
       && !sockelAusschluss.global
       && !sockelAusschluss.raeume.has(name)
     if (sockelleisten && hatSockelleistenSignal && umfang) {

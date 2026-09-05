@@ -3,7 +3,7 @@ import { baueVerstaendnis, type AuftragsVerstaendnis, type ExtraktionSignale } f
 import { erkenneBelag, hatBodenArbeit } from '../boden-normalisierer'
 import { bodenNettoflaecheAusPositionen, pruefeBodenBasis } from './boden-basis'
 import { pruefeAltbelag, pruefeFeuchtigkeitssperre, pruefeSockelleisten, pruefeUebergangsprofil } from './boden-vorarbeiten'
-import { erkenneSockelleistenAusschluss } from '../sockelleisten-ausschluss'
+import { erkenneSockelleistenAusschluss, SOCKEL_WORT } from '../sockelleisten-ausschluss'
 import { saetzeJeRaum } from '../satz-raum'
 import { BODEN_VERLEGEN_SIGNAL } from '../mengen/gewerke/boden'
 import { filtereArray, raumNamenAus } from './helpers'
@@ -70,7 +70,7 @@ function pruefeBodenRegeln(
   pruefeFischgraet(ergaenzt, fehlende, lower, v)
   pruefeVollflaechigeVerklebung(ergaenzt, fehlende, lower)
   // Bei Refinish nur Sockelleisten, wenn explizit genannt
-  if (!istRefinish || lower.includes('sockelleiste')) {
+  if (!istRefinish || SOCKEL_WORT.test(lower)) {
     pruefeSockelleisten(ergaenzt, fehlende, lower, nurOhneSockel)
   }
   pruefeDiagonalBoden(ergaenzt, fehlende, lower)

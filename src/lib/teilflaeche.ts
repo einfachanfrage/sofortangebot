@@ -60,7 +60,7 @@ export interface TeilflaechenErgebnis {
 
 // Ausdrückliche Einschränkung. Bewusst KEIN "stelle"/"bereich" allein — die
 // stehen zu oft harmlos im Satz ("an der Stelle liegt Vinyl").
-const EINSCHRAENKUNG = /(^|\W)nur(\W|$)|teilfl[äa]ch|teilbereich|teilst[üu]ck|(^|\W)ecke(\W|$)|ausbesser|schadstelle|wasserschaden|partiell|teilweise|(^|\W)rest(\W|$)|bleibt liegen|bleibt drin|bleibt bestehen|bleiben liegen/i
+export const EINSCHRAENKUNG = /(^|\W)nur(\W|$)|teilfl[äa]ch|teilbereich|teilst[üu]ck|(^|\W)ecke(\W|$)|ausbesser|schadstelle|wasserschaden|partiell|teilweise|(^|\W)rest(\W|$)|bleibt liegen|bleibt drin|bleibt bestehen|bleiben liegen/i
 
 // „6 Quadratmeter", „6,3 m²", „6.3 qm", „ca. 6 m2"
 const FLAECHEN_ANGABE = /(\d+(?:[.,]\d+)?)\s*(?:m²|m2|qm|quadratmeter)/gi
@@ -123,7 +123,7 @@ export function erkenneTeilflaechen(
     hinweise.push(
       `${name}: Es wird nur eine Teilfläche von ${flaeche.toLocaleString('de-DE')} m² berechnet, nicht der ganze Raum ` +
       `(${raumflaeche.toLocaleString('de-DE')} m²) — gesagt wurde „${belegSatz.trim()}". Soll doch der ganze Raum ` +
-      `gemacht werden, bitte die Menge hier korrigieren.`,
+      `gemacht werden, bitte die Menge unten auf der Raumkarte korrigieren.`,
     )
   }
 

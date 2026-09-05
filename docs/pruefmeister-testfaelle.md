@@ -48,7 +48,92 @@ Vollständiger Hintergrund: CoS-009 in `docs/chief-of-staff-todos.md`.
 
 **Datei-Sicherheit (aktualisiert 20.08.2026):** Der Speicherfehler bei gleichzeitiger Bearbeitung ist
 projektweit jetzt zum 6. Mal aufgetreten (hier zuletzt am 17.08.). Ganz am Ende dieser Datei steht jetzt
-eine feste Markierung (`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
+eine feste Markierung (`#### Fix PM-034 + PM-036 (Head of Product Engineering, 04.09.2026) — **eine Stelle, wie vermutet**
+
+Der Prüfmeister hatte recht: Es ist dieselbe Stelle. Beide Diktate aus der
+Produktionsdatenbank (`entwurf_aufnahmen`, 05.09.) nebeneinandergelegt:
+
+| Fall | Wortlaut |
+|---|---|
+| PM-036 | „… **Sockelleisten im Flur neu, im Wohnzimmer bleiben sie.**" |
+| PM-034 | „… im Flur machen wir nichts am Boden, der bleibt wie er ist, **Zockelleisten in Küche und Esszimmer neu, je 1 Tür.**" |
+
+**Wurzel 1 — der Satz endet nicht am Punkt, er endet am Komma.**
+Die Raumzuordnung (`src/lib/satz-raum.ts`) hat bis hierher am Punkt getrennt und
+jedem Satz den ZULETZT genannten Raum gegeben. Beide Ansagen stecken aber
+komplett in EINEM Satz und nennen darin zwei Räume:
+
+- PM-036: der ganze Satz landete im **Wohnzimmer**. Damit stand dort
+  „Sockelleisten … neu" im Raumtext → die Vollständigkeitsprüfung erfand eine
+  Position (10 lfdm), und der Ausschluss fiel gleichzeitig aus, weil „neu" im
+  selben Satz als ausdrücklicher Auftrag zählt. **Die Vermutung des
+  Prüfmeisters zu den 10,00 lfdm war exakt richtig:** 4 × √6 m² = 9,80 → 10 —
+  der Umfang eines gedachten Quadrats über der Teilfläche.
+- PM-034: alles landete im **Esszimmer**.
+
+Neu trennt `satz-raum.ts` zusätzlich am Komma in Teilsätze und setzt sie für
+den Raumtext satzgetreu wieder zusammen (der Einschränkungs-Marker und die
+Fläche der Teilflächen-Erkennung stehen im Diktat regelmäßig links und rechts
+eines Kommas — „nur eine Ecke neu, ungefähr 6 Quadratmeter"). Nennt ein
+Teilsatz mehrere Räume („in Küche und Esszimmer"), bekommt ihn **jeder**
+genannte Raum — das ist der Punkt, an dem eine Leistung für zwei Räume bisher
+für den erstgenannten ausfiel.
+
+Und dieselbe Lehre wie beim Dezimalpunkt eine Ebene tiefer: **„4 x 1,50" darf
+das Komma nicht spalten.** Zifferngrenzen sind jetzt für Punkt UND Komma
+geschützt.
+
+**Wurzel 2 — Whisper schreibt „Zockelleisten" mit Z.**
+Im PM-034-Transkript steht das wörtlich. Die Mengen-Engine verlangt seit PM-013
+vor der Sockelleisten-Position ein echtes Textsignal und suchte dafür
+`/sockelleist/i` — das griff nicht, und die komplette Leistung fiel für beide
+Räume aus. **Das allein waren 28,20 lfdm = 155,10 € in einem 1.084-€-Angebot.**
+Es gibt jetzt einen gemeinsamen, exportierten Ausdruck `SOCKEL_WORT`
+(Z-Hörfehler, getrennte Schreibung, Fußleisten, Scheuerleisten), den alle drei
+Prüfstellen benutzen — statt drei Stellen mit drei Schreibweisen.
+
+**Wurzel 3 — ein Umfang darf nie aus einer Teilfläche geschätzt werden.**
+Auch mit richtigem Raumbezug bliebe die Schätzung 4 × √Fläche falsch, sobald
+die Fläche nur ein Ausschnitt ist. Beschreibt das Diktat für einen Raum nur
+einen Ausschnitt (derselbe Marker wie in `teilflaeche.ts`), wird jetzt gar
+nicht mehr geschätzt, sondern gefragt.
+
+**Was die Trennung fast gekostet hätte — und warum es hier steht:**
+„Im Flur muss der alte Belag raus, im Wohnzimmer nur die Ecke ausbauen."
+Solange das ein Stück Text war, trug die erste Hälfte die zweite mit. Getrennt
+stand beim Wohnzimmer nur noch „nur die Ecke ausbauen" — und „ausbauen" war
+kein Altbelag-Signal. Die Position „Altbelag entfernen — Wohnzimmer, 6 m²" wäre
+still verschwunden. Gefunden in der Simulation vor der Auslieferung, nicht von
+Sandy. „Ausbauen" zählt jetzt als Demontage, wenn im selben Satz ein Belag oder
+ein Ausschnitt steht („die Küche ausbauen" weiterhin nicht).
+
+**Ergebnis der Simulation mit den echten Produktionsdiktaten:**
+
+| Fall | Position | Vorher | Jetzt |
+|---|---|---|---|
+| PM-034 | Sockelleisten Küche | fehlt | **13,20 lfdm** |
+| PM-034 | Sockelleisten Esszimmer | fehlt | **15,00 lfdm** |
+| PM-034 | Flur | unangetastet | unangetastet |
+| PM-036 | Sockelleisten Flur | 11,00 lfdm | 11,00 lfdm |
+| PM-036 | Sockelleisten Wohnzimmer | 10,00 lfdm erfunden | **keine Position** |
+| PM-036 | Altbelag Wohnzimmer | 6,00 m² | 6,00 m² |
+
+**Kleiner Punkt, mitgenommen:** „bitte die Menge **hier** korrigieren" zeigte
+auf ein Hinweisfeld ohne Eingabefeld — die Raummaße werden auf den Raumkarten
+direkt darunter geändert. Der Text sagt das jetzt. Ebenso weg: das „Raumhöhe !"
+auf der Raumkarte eines reinen Bodenauftrags, in dem gar keine Wandfläche
+vorkommt.
+
+**Tests:** 1.369 (vorher 1.352), `tsc` sauber, `eslint` 0 Fehler. Neu:
+`src/lib/__tests__/pm034-pm036-raum-im-teilsatz.test.ts` mit beiden
+Original-Transkripten.
+
+**Status PM-034:** ✅ Rückfall behoben — Sockelleisten 28,20 lfdm in beiden
+Räumen. Live-Nachtest steht aus.
+**Status PM-036:** ✅ Rückfall behoben — keine Sockelleisten im abbestellten
+Wohnzimmer. Live-Nachtest steht aus.
+
+<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
 zu schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
@@ -94,9 +179,9 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
-| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. **NEUER RÜCKFALL:** Sockelleisten fehlen komplett — „in Küche und Esszimmer neu" nennt zwei Räume in einem Satz, die Leistung fällt seit dem raumweisen Umbau ganz aus (28,20 lfdm = 155,10 €) |
+| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. ~~**NEUER RÜCKFALL:** Sockelleisten fehlen komplett~~ **behoben 04.09.** — zwei Wurzeln: Raumzuordnung trennt jetzt am Komma, und Whisper schrieb „Zockelleisten" mit Z (Textsignal-Gate lief vorbei). Küche 13,20 + Esszimmer 15,00 = 28,20 lfdm |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus |
-| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. 🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer trotz „im Wohnzimmer bleiben sie" (10 lfdm, Zahl nicht aus dem Raum herleitbar) |
+| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. ~~🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer~~ **behoben 04.09.** — gleiche Wurzel wie PM-034 (Satz mit zwei Räumen). Die 10 lfdm waren 4 × √6 m² über der Teilfläche, wie vom Prüfmeister vermutet; eine Teilfläche taugt jetzt nicht mehr als Umfangsquelle |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer

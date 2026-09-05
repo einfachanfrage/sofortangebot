@@ -166,7 +166,19 @@ export function erkenneLFormen(
 
     // Der Marker-Satz plus der nächste Satz desselben Raums — der zweite
     // Schenkel steht oft erst dahinter („… Der kurze Schenkel ist 2 × 1,20.").
-    const abschnitt = eigene.slice(markerIndex, markerIndex + 2).map(s => s.satz).join(' ')
+    //
+    // 04.09.2026: Bewusst nach SATZ-Nummer, nicht „die nächsten zwei Stücke".
+    // Seit satz-raum.ts am Komma trennt, ist „Der Flur ist L-förmig, 6 m x 1,20
+    // und der kurze Schenkel 2 m x 1,20" nicht mehr ein Stück, sondern zwei —
+    // und bei drei Kommas wären es drei. Ein Fenster über Stückzahl hätte
+    // genau den zweiten Schenkel wieder verschluckt, also den Befund, für den
+    // diese Datei geschrieben wurde.
+    const markerSatz = eigene[markerIndex].satzIndex
+    const folgeSatz = eigene.find(s => s.satzIndex > markerSatz)?.satzIndex ?? markerSatz
+    const abschnitt = eigene
+      .filter(s => s.satzIndex === markerSatz || s.satzIndex === folgeSatz)
+      .map(s => s.satz)
+      .join(' ')
     const geometrie = baueLForm(findeMassPaare(abschnitt))
 
     if (!geometrie) {

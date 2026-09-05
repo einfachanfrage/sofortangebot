@@ -80,7 +80,7 @@ export function korrigiereRaumMasse(raeume: RaumFuerPlausibilitaet[] | undefined
       const label = feld === 'laenge' ? 'Länge' : 'Breite'
       hinweise.push(
         `${name}: ${label} „${wert}" als ${korrigiert.toLocaleString('de-DE', { minimumFractionDigits: 2 })} m gelesen — ` +
-        `so wird „${String(wert)[0]} ${String(wert).slice(1)}" auf dem Bau gesprochen. Stimmt das nicht, bitte hier korrigieren.`,
+        `so wird „${String(wert)[0]} ${String(wert).slice(1)}" auf dem Bau gesprochen. Stimmt das nicht, bitte unten auf der Raumkarte korrigieren.`,
       )
     }
   }

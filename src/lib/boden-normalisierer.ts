@@ -81,6 +81,19 @@ const ENTFERNEN_EINDEUTIG = /entfern\w*|raus(?:reiß\w*|gerissen|geriss\w*)|hera
 const SCHWACHES_ENTFERNEN = /\bweg\b|\braus\b/i
 const BELAG_NOMEN_SATZ = /teppich\w*|belag|boden|parkett|laminat\w*|dielen|vinyl|linoleum|pvc/i
 
+// 4) „ausbauen" — PM-036, Nachtest 04.09.2026.
+//    Gesagt: „Im Flur muss der alte Belag raus, im Wohnzimmer nur die Ecke
+//    ausbauen." Solange beide Hälften EIN Satz waren, trug das „alte Belag
+//    raus" aus der ersten Hälfte die zweite mit. Seit die Raumzuordnung am
+//    Komma trennt (satz-raum.ts), steht beim Wohnzimmer nur noch „nur die
+//    Ecke ausbauen" — und der Ausbau des Altbelags fiel dort still aus.
+//    „Ausbauen" allein ist zu zweideutig für die eindeutige Liste („die Küche
+//    ausbauen" heißt das Gegenteil), deshalb dieselbe Mechanik wie bei
+//    „raus"/„weg": nur zusammen mit einem Belag-Nomen ODER einem Wort für
+//    einen Ausschnitt des Bodens im selben Satz.
+const AUSBAUEN = /ausbau\w*|ausgebaut/i
+const TEILBEREICH_NOMEN = /\becke[n]?\b|schadstelle|\bstelle[n]?\b|teilfl[äa]ch|teilbereich|teilst[üu]ck|quadratmeter|\bm²/i
+
 // PM-020 (2026-08-21): ALTBELAG_NOMEN allein erkennt nur die ERWÄHNUNG eines
 // alten Belags ("die alten Dielen …"), nicht ob er auch WEG soll — Live-Fund
 // "die alten Dielen bleiben einfach drunter liegen, die kommen nicht raus"
@@ -104,7 +117,9 @@ export function erkenneBodenArbeiten(text: string): Set<BodenArbeit> {
   const saetzeListe = saetze(text)
   const altbelagNomenOhneVerneinung = saetzeListe.some(s => ALTBELAG_NOMEN.test(s) && !ALTBELAG_VERNEINT.test(s))
   const schwachMitBelag = saetzeListe.some(s => SCHWACHES_ENTFERNEN.test(s) && BELAG_NOMEN_SATZ.test(s) && !ALTBELAG_VERNEINT.test(s))
-  if (altbelagNomenOhneVerneinung || ENTFERNEN_EINDEUTIG.test(text) || schwachMitBelag) {
+  const ausbauMitGegenstand = saetzeListe.some(s =>
+    AUSBAUEN.test(s) && (BELAG_NOMEN_SATZ.test(s) || TEILBEREICH_NOMEN.test(s)) && !ALTBELAG_VERNEINT.test(s))
+  if (altbelagNomenOhneVerneinung || ENTFERNEN_EINDEUTIG.test(text) || schwachMitBelag || ausbauMitGegenstand) {
     ergebnis.add('altbelag_entfernen')
   }
   return ergebnis

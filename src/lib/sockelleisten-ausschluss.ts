@@ -25,10 +25,31 @@
 
 import { saetzeMitRaum } from './satz-raum'
 
-const SOCKEL = /sockelleist|sockel\b/i
+// ── PM-034, Nachtest 04.09.2026: Whisper schreibt „Zockelleisten" ─────────
+//
+// Im Produktionsdiktat vom 05.09. steht wörtlich „Zockelleisten in Küche und
+// Esszimmer neu" — mit Z. Whisper verhört den stimmhaften Anlaut regelmäßig.
+// Jede Prüfung, die auf der exakten Schreibweise „sockelleist" stand, lief
+// damit still vorbei: Die Mengen-Engine verlangt vor der Position ein
+// Textsignal, fand keines, und die komplette Leistung fiel aus — 28,20 lfdm
+// bzw. 155,10 € in einem 1.084-€-Angebot.
+//
+// Deshalb EIN toleranter Ausdruck für das Wort, exportiert und überall
+// benutzt, statt drei Stellen mit drei Schreibweisen. Aufgenommen werden nur
+// Varianten, die es wirklich gibt: der Z-Hörfehler, die getrennte Schreibung
+// und die gängigen Synonyme aus dem Handwerk.
+export const SOCKEL_WORT = /[sz]ockel[\s-]?leist|fu(?:ß|ss)[\s-]?leist|scheuerleist|bodenleist/i
+
+const SOCKEL = /[sz]ockel[\s-]?leist|fu(?:ß|ss)[\s-]?leist|scheuerleist|bodenleist|sockel\b/i
 /** „sie"/„die" als Rückbezug auf die Sockelleisten im Satz davor. */
 const RUECKBEZUG = /\b(?:sie|die)\b/i
 const BLEIBT = /\bbleib(?:t|en|st)?\b/i
+/**
+ * Was nach dem Rückbezugs-Pronomen noch stehen darf. Alles andere ist ein
+ * eigenes Hauptwort — und dann handelt der Teilsatz nicht von den
+ * Sockelleisten, sondern von diesem Ding.
+ */
+const NACHLAUF_FREI = /\b(?:sie|die)\b(?:\s+(?:alten?|alte|so|erstmal|dran|drin|liegen|h(?:ä|a)ngen|stehen|wie\s+sie\s+sind?))*\s*$/i
 /** Verneint ausdrücklich — schlägt auch einen Auftrag im selben Satz. */
 const STARKE_NEGATION = /\bkein(?:e|en|er|em)?\b|\bohne\b|\bnicht\b/i
 /** Verneint schwächer („machen wir nichts") — reicht allein, hebt aber
@@ -68,8 +89,16 @@ function istAusschlussSatz(satz: string, sockelSchonGenannt: boolean): boolean {
     // streng, weil ein loses „sie" sonst alles Mögliche einfängt: nur mit
     // „bleiben", nur wenn kein anderer Gegenstand im Satz steht, und nur in
     // einem kurzen Satz — ein langer Satz handelt von etwas anderem.
+    // 04.09.2026: Seit die Zuordnung am Komma trennt (satz-raum.ts), sind die
+    // Stücke kürzer — „im Wohnzimmer bleiben sie" ist jetzt ein eigenes Stück
+    // statt Teil eines langen Satzes. Das ist der Grund, warum dieser Zweig
+    // überhaupt greift, macht ihn aber auch großzügiger. Gegengewicht:
+    // Nach dem Pronomen darf nichts mehr stehen außer einem kurzen, bekannten
+    // Nachlauf. „im Wohnzimmer bleiben sie" ✓, „in den Zimmern bleiben die
+    // alten" ✓ — „im Wohnzimmer bleiben die Möbel stehen" ✗.
     const kurz = satz.trim().split(/\s+/).length <= 8
     const rueckbezug = sockelSchonGenannt && kurz && RUECKBEZUG.test(satz)
+      && NACHLAUF_FREI.test(satz)
       && BLEIBT.test(satz) && !ANDERER_GEGENSTAND.test(satz)
     if (!rueckbezug) return false
     return !BLEIBT_NICHT.test(satz)
@@ -106,7 +135,7 @@ export function erkenneSockelleistenAusschluss(
   const saetze = saetzeMitRaum(text, raumNamen)
   let sockelSchonGenannt = false
 
-  for (const { satz, raum, raumImSatz } of saetze) {
+  for (const { satz, raum, raumImSatz, raeumeImSatz } of saetze) {
     if (istAusschlussSatz(satz, sockelSchonGenannt)) {
       belege.push(satz.trim())
       // „in den Zimmern", „in den anderen Räumen": eine Gruppe, nicht der
@@ -118,6 +147,9 @@ export function erkenneSockelleistenAusschluss(
 
       if (UEBERALL.test(satz) || (!raumImSatz && GENERISCH_ALLE.test(satz))) global = true
       else if (gruppe && gruppe.length > 0) for (const n of gruppe) raeume.add(n)
+      // Aufzählung: „In Küche und Esszimmer bleiben sie" meint beide Räume,
+      // nicht nur den zuletzt genannten (PM-034).
+      else if (raeumeImSatz.length > 1) for (const n of raeumeImSatz) raeume.add(n)
       else if (raum === null) global = true
       else raeume.add(raum)
     }

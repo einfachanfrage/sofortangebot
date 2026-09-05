@@ -37,8 +37,9 @@ Sockelleistenlänge abgezogen — damit ist **jeder** Sollwert mit Sockelleisten
 - Altbelag + Ausgleichsmasse **nur Küche**, je 10,80 m²
 - **Grundierung Esszimmer 14,00 m²** (fehlte komplett)
 - **Keine** Wände-spachteln-Positionen mehr
-- Sockelleisten **13,20 + 15,00 = 28,20 lfdm**
+- Sockelleisten **13,20 + 15,00 = 28,20 lfdm** ← *Rückfall vom 04.09., behoben. Zwei Wurzeln: Satz mit zwei Räumen, und Whisper schrieb „Zockelleisten" mit Z.*
 - Taucht „Im Flur machen wir nichts" noch als Raum auf?
+- Der Flur darf **keine** Sockelleisten bekommen
 
 ### PM-036 — Teilfläche nach Wasserschaden
 
@@ -47,7 +48,8 @@ Sockelleistenlänge abgezogen — damit ist **jeder** Sollwert mit Sockelleisten
 - Wohnzimmer **6,30 m²**, nicht 21,00 — die 20 m² Raumfläche darf nirgends auftauchen
 - Altbelag Wohnzimmer **6,00 m²**, nicht 20,00
 - Flur **6,30 m²** — Karte und Entwurf müssen dieselbe Zahl zeigen (letztes Mal 6,3 vs. 6,0)
-- Sockelleisten nur Flur, **11,00 lfdm**
+- Sockelleisten nur Flur, **11,00 lfdm** — im Wohnzimmer **keine** Position ← *Rückfall vom 04.09., behoben (gleiche Wurzel wie PM-034)*
+- Altbelag Wohnzimmer muss **weiterhin da sein** (6,00 m²) — die Teilsatz-Trennung hätte ihn fast verloren
 
 ### PM-033 — drei Räume, drei Beläge
 
