@@ -184,20 +184,34 @@ function kartenAnsicht(
   aufnahme: AufnahmeWithUrl,
   wartetSeit: number | undefined,
   jetzt: number,
-): { status: KartenAnsichtStatus; positionen: ErkanntPosition[] } {
+): { status: KartenAnsichtStatus; positionen: ErkanntPosition[]; quelle: 'voll' | 'vorschau' } {
   const schnelleVorschau = (aufnahme.erkannte_positionen as ErkanntPosition[] | undefined) ?? []
   // Foto (Zettel-Scan) und Notiz haben kein voll_extraktion-Gegenstück
   // (volle-extraktion-cache.ts läuft nur für typ 'sprache') — für sie bleibt
   // die schnelle Vorschau die einzige Quelle, wie schon vor CoS-002.
-  if (aufnahme.typ !== 'sprache') return { status: 'bereit', positionen: schnelleVorschau }
-  if (aufnahme.verarbeitung_status !== 'fertig') return { status: 'wartet_transkription', positionen: [] }
+  if (aufnahme.typ !== 'sprache') return { status: 'bereit', positionen: schnelleVorschau, quelle: 'vorschau' }
+  if (aufnahme.verarbeitung_status !== 'fertig') return { status: 'wartet_transkription', positionen: [], quelle: 'vorschau' }
   const voll = aufnahme.voll_extraktion as VollExtraktionCache | null | undefined
-  if (voll?.positionen) return { status: 'bereit', positionen: voll.positionen }
-  if (voll?.__fehlgeschlagen) return { status: 'bereit', positionen: schnelleVorschau } // Fail-open
+  if (voll?.positionen) return { status: 'bereit', positionen: voll.positionen, quelle: 'voll' }
+  // ── PM-010, Prüfmeister 04.09.2026 ──────────────────────────────────────
+  // „Die Karte meldet 5 Positionen, listet 4 und der Entwurf enthält 6."
+  //
+  // Die Zahlen stammen aus DREI verschiedenen Stufen: die schnelle Vorschau
+  // sind die Chip-Titel der KI („Wände streichen"), die volle Extraktion sind
+  // gerechnete Positionen mit Mengen („Wandflächen streichen 2x — Gästezimmer,
+  // 33,80 m²"), und das fertige Angebot enthält zusätzlich, was die
+  // Vollständigkeitsprüfung ergänzt. Ein Chip wird zu zwei Positionen (Wand
+  // und Decke) oder zu keiner. Die Zahlen gleich zu MACHEN wäre gelogen.
+  //
+  // Bis hierher sah man der Karte nicht an, welche der beiden Listen sie
+  // gerade zeigt — beide Zweige gaben denselben Status zurück. Deshalb sagt
+  // sie es jetzt, und der Text darüber verspricht nur noch, was er halten
+  // kann.
+  if (voll?.__fehlgeschlagen) return { status: 'bereit', positionen: schnelleVorschau, quelle: 'vorschau' } // Fail-open
   if (wartetSeit !== undefined && jetzt - wartetSeit > VOLL_EXTRAKTION_TIMEOUT_MS) {
-    return { status: 'bereit', positionen: schnelleVorschau } // Fail-open nach Timeout
+    return { status: 'bereit', positionen: schnelleVorschau, quelle: 'vorschau' } // Fail-open nach Timeout
   }
-  return { status: 'wartet_pruefung', positionen: [] }
+  return { status: 'wartet_pruefung', positionen: [], quelle: 'vorschau' }
 }
 
 // Anzeige-Status fürs bestehende StatusBadge/Chip-Farbschema: solange
@@ -1133,8 +1147,11 @@ export default function EntwurfPage() {
   // nochVollExtraktion ist das pro wartender Aufnahme 0 (siehe Banner unten,
   // das dafür einen eigenen, ehrlichen Zwischenzustand zeigt statt einer
   // möglicherweise falschen Zahl).
-  const erkannteAnzahl = neueAufnahmen.reduce((sum, aufnahme) =>
-    sum + kartenAnsicht(aufnahme, vollExtraktionWartetSeit.get(aufnahme.id), jetztFuerWarten).positionen.filter(p => p.erkannt).length, 0)
+  const kartenAnsichten = neueAufnahmen.map(a => kartenAnsicht(a, vollExtraktionWartetSeit.get(a.id), jetztFuerWarten))
+  const erkannteAnzahl = kartenAnsichten.reduce((sum, k) => sum + k.positionen.filter(p => p.erkannt).length, 0)
+  // Zeigt mindestens eine Karte nur die schnelle Vorschau, ist die Zahl eine
+  // Vorschau-Zahl — dann darf der Banner sie nicht als Ergebnis ausgeben.
+  const nurVorschau = kartenAnsichten.some(k => k.quelle === 'vorschau' && k.positionen.length > 0)
   const bearbeitungszeit = geschaetzteSekunden(erkannteAnzahl)
   // DC-009: 0 erkannte Positionen ist kein "bereit für den Entwurf" — vorher
   // stand hier trotzdem "✓ 0 Positionen erkannt", grün, mit aktivem Button.
@@ -1217,6 +1234,9 @@ export default function EntwurfPage() {
         ton: 'mixed',
         text: `${gesamtPositionen} ${gesamtPositionen === 1 ? 'Position' : 'Positionen'} — ${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'neu, wird berechnet.' : 'neu, werden berechnet.'}`,
       }
+    }
+    if (nurVorschau) {
+      return { ton: 'success', text: `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Leistung' : 'Leistungen'} erkannt — bereit für den Entwurf. Die endgültigen Positionen entstehen im nächsten Schritt, es können mehr werden.` }
     }
     return { ton: 'success', text: `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt — bereit für den Entwurf.` }
   })()

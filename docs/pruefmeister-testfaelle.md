@@ -515,6 +515,40 @@ im Commit begründet.
 gelistet, 6 im Entwurf — Familie PD-004). Eigener Fund, eigene Ursache,
 gehört nicht in diesen Commit.
 
+### PM-010, kleiner Fund — der Karten-Zähler (05.09.2026)
+
+„Die Karte meldet 5 Positionen, listet 4 und der Entwurf enthält 6."
+
+**Die drei Zahlen stammen aus drei Stufen**, und das ist keine Schlamperei,
+sondern der Aufbau:
+
+| Zahl | Woher |
+|---|---|
+| Karte | Chip-Titel der KI — „Wände streichen", ohne Menge |
+| Entwurf | gerechnete Positionen — „Wandflächen streichen 2x — Gästezimmer, 33,80 m²" |
+| Angebot | zusätzlich, was die Vollständigkeitsprüfung ergänzt |
+
+Ein Chip wird zu **zwei** Positionen (Wände und Decke) oder zu **keiner**. Die
+Zahlen gleich zu MACHEN wäre gelogen — man würde entweder Positionen
+verstecken oder Chips doppelt zählen.
+
+**Der echte Defekt lag eine Ebene tiefer:** Die Karte konnte beides zeigen —
+die volle Extraktion mit Mengen oder die schnelle Chip-Vorschau — und gab in
+**beiden** Fällen denselben Status zurück. Man sah ihr nicht an, welche der
+beiden Listen gerade dasteht. Der Banner darüber sagte trotzdem in beiden
+Fällen „5 Positionen erkannt — bereit für den Entwurf".
+
+**Jetzt:** Die Kartenansicht sagt, aus welcher Quelle sie kommt. Zeigt
+mindestens eine Karte nur die Vorschau, heißt der Banner
+
+> „5 **Leistungen** erkannt — bereit für den Entwurf. Die endgültigen
+> Positionen entstehen im nächsten Schritt, es können mehr werden."
+
+Liegt die volle Extraktion vor, bleibt es beim bisherigen Text mit
+„Positionen" — dann stimmt die Zahl auch mit dem Entwurf überein.
+
+Kein Zahlentrick, sondern ein Versprechen weniger.
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
