@@ -372,9 +372,9 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus **Nachtest 04.09.: Befund 2 + 3 behoben** (zwei Übergangsschienen, keine erfundenen Sockelleisten). ~~🟡 Befund 1 unverändert~~ **behoben 05.09.** — vier Ursachen gleichzeitig: Kurzform „Trittschall" wurde nicht erkannt, die Raumzuordnung der Dämmung trennte nur am Punkt und gab nur EINEN Raum zurück, und das Chip-Sicherheitsnetz in `aufnahme-hinweise.ts` hängte die Dämmung an die erste Verlegeposition. Jetzt 7,50 m², nur im Flur |
-| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. ~~**NEUER RÜCKFALL:** Sockelleisten fehlen komplett~~ **behoben 04.09.** — zwei Wurzeln: Raumzuordnung trennt jetzt am Komma, und Whisper schrieb „Zockelleisten" mit Z (Textsignal-Gate lief vorbei). Küche 13,20 + Esszimmer 15,00 = 28,20 lfdm |
+| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. ~~**NEUER RÜCKFALL:** Sockelleisten fehlen komplett~~ **behoben 04.09.** — zwei Wurzeln: Raumzuordnung trennt jetzt am Komma, und Whisper schrieb „Zockelleisten" mit Z (Textsignal-Gate lief vorbei). Küche 13,20 + Esszimmer 15,00 = 28,20 lfdm ✅ **Vollständig grün (2. Nachtest 04.09., 18:47):** alle fünf Befunde plus Rückfall behoben, Sockelleisten 28,20 lfdm in beiden Räumen, Trittschall je Raum, Angebot 1.026,54 € statt 91.085 € |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus **Nachtest 04.09.: drei von vier Befunden behoben** — **L-Form gelöst** (9,60 m² Fläche, 18,40 lfdm Umfang, mit erklärender Warnung), „eins zwanzig" kommt als 1,20 an, Sockelleisten 18,40 ohne Türabzug. 🟡 Offen: „Trittschalldämmung überall drunter" landet nur im Flur (158,94 € fehlen) |
-| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. ~~🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer~~ **behoben 04.09.** — gleiche Wurzel wie PM-034 (Satz mit zwei Räumen). Die 10 lfdm waren 4 × √6 m² über der Teilfläche, wie vom Prüfmeister vermutet; eine Teilfläche taugt jetzt nicht mehr als Umfangsquelle |
+| PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. ~~🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer~~ **behoben 04.09.** — gleiche Wurzel wie PM-034 (Satz mit zwei Räumen). Die 10 lfdm waren 4 × √6 m² über der Teilfläche, wie vom Prüfmeister vermutet; eine Teilfläche taugt jetzt nicht mehr als Umfangsquelle ✅ **Vollständig grün (2. Nachtest 04.09., 18:51):** Teilfläche 6,30 m², raumgebundener Sockelleisten-Ausschluss greift, Angebot 733,70 € — exakt die Soll-Summe |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -4684,6 +4684,80 @@ Empfehlung, die ich aus Stufe 1 mitgebe: nicht vier Einzelreparaturen, sondern
 die Raumzuordnung so bauen, dass sie eine **Menge von Räumen** kennt — alle,
 mehrere, alle außer. Genau das war schon beim Umbau am 03.09. die richtige
 Entscheidung, nur eine Ebene zu früh angesetzt.
+
+---
+
+### PM-034 und PM-036 — zweiter Nachtest (Sandy, 2026-09-04, 18:47/18:51): beide grün
+
+**PM-034 ist vollständig grün. Alle fünf ursprünglichen Befunde plus der
+Rückfall vom Nachmittag sind behoben.** Angebot **1.026,54 € netto** — der Fall
+startete am 02.09. mit 91.085,10 €.
+
+| Raum | Position | Ist | Soll |
+|---|---|---|---|
+| Küche | Klick-Vinyl inkl. 5 % | 11,34 m² | ✅ |
+| Küche | Altbelag entfernen | 10,80 m² | ✅ |
+| Küche | **Sockelleisten montieren** | **13,20 lfdm** | ✅ zurück, und mit dem VOB-012-Wert |
+| Küche | Untergrundvorbereitung / Ausgleich | 10,80 m² | ✅ nur hier |
+| Küche | Trittschalldämmung (Vorschlag) | 10,80 m² | ✅ |
+| Esszimmer | Klick-Vinyl inkl. 5 % | 14,70 m² | ✅ |
+| Esszimmer | **Sockelleisten montieren** | **15,00 lfdm** | ✅ |
+| Esszimmer | Estrich grundieren (Vorschlag) | 14,00 m² | ✅ |
+| Esszimmer | Trittschalldämmung (Vorschlag) | 14,00 m² | ✅ |
+
+Sockelleisten zusammen **28,20 lfdm** — exakt das Soll. Damit ist der Rückfall
+„Leistung für zwei Räume in einem Satz fällt aus" erledigt: **„Sockelleisten in
+Küche und Esszimmer neu" landet jetzt in beiden Räumen.**
+
+Weiter bestätigt: Maße 3,60 × 3,00 und 4,00 × 3,50, kein Flur als Raum, keine
+Wandspachtel-Positionen, Karte und Entwurf beide 9 Positionen. Der Altbelag im
+Esszimmer ist diesmal mit „Nein, bleibt" beantwortet und entsprechend nicht im
+Angebot — der Fall entspricht jetzt sauber dem Soll.
+
+**Zwei Nebenfunde von heute sind mitbehoben:**
+
+- Die Warnung sagt jetzt „bitte **unten auf der Raumkarte** korrigieren" statt
+  des vagen „hier". Sie verweist auf einen Ort, den es gibt.
+- Der Button trägt ohne Warnung „✓ 9 Positionen erkannt · **Entwurf
+  erstellen · ca. 20 Sekunden**", mit Warnung „Trotzdem weiter zum Entwurf".
+  Damit ist endgültig belegt, dass es nur **einen** Weiter-Weg gibt und der
+  Blocker vom 02.09. behoben ist.
+
+---
+
+**PM-036 ist vollständig grün.** Angebot **733,70 € netto** — auf den Euro die
+Summe, die ich am 02.09. als Soll gerechnet hatte.
+
+| Raum | Position | Ist |
+|---|---|---|
+| Wohnzimmer | Fertigparkett, **Teilfläche** | 6,30 m² ✅ |
+| Wohnzimmer | Altbelag entfernen | 6,00 m² ✅ |
+| Wohnzimmer | Sockelleisten | **keine** ✅ |
+| Flur | Fertigparkett | 6,30 m² ✅ |
+| Flur | Altbelag entfernen | 6,00 m² ✅ |
+| Flur | Sockelleisten montieren | 11,00 lfdm ✅ |
+
+**Der Rückfall vom Nachmittag ist weg:** „Sockelleisten im Flur neu, **im
+Wohnzimmer bleiben sie**" wird jetzt korrekt gelesen — der raumgebundene
+Ausschluss greift, und die erfundene 10-lfdm-Position ist verschwunden. Keine
+Trittschalldämmung, was bei Parkett ohne Nennung im Diktat richtig ist.
+
+---
+
+**Was das für die gemeinsame Ursache bedeutet**
+
+Von den vier offenen Befunden mit derselben Wurzel sind heute Abend **zwei
+gefallen**: „diese zwei Räume" (PM-034) und „alle außer diesem" (PM-036). Die
+Zuordnung kann jetzt mehr als „genau ein Raum".
+
+**Offen sind damit nur noch die beiden Trittschall-Fälle** — PM-033 („nur unterm
+Laminat im Flur" landet im ersten Raum) und PM-035 („überall drunter" landet im
+letzten Raum). Beide wurden **vor** diesem Fix eingesprochen (18:15 und früher),
+PM-034 und PM-036 danach. **Gut möglich, dass beide inzwischen mitgelöst sind** —
+das kostet zwei Diktate und wäre der sauberste Abschluss des Batches.
+
+**Stand Boden-Batch:** PM-034 ✅ · PM-036 ✅ · PM-032 offen nur bei der
+Sockelleistenzahl (44,00 lfdm) · PM-033 und PM-035 offen bei der Dämmung.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
