@@ -25,6 +25,14 @@ Sockelleistenlänge abgezogen — damit ist **jeder** Sollwert mit Sockelleisten
 
 ---
 
+**Neu ab 04.09.:** Bekannte Whisper-Hörfehler werden direkt nach der
+Transkription geradegerückt (`src/lib/hoerfehler.ts`) — u. a. „Zockelleisten",
+„Frischgrät", „Klickvenü", „Fertigpaket". Der **unveränderte** Whisper-Text
+steht weiterhin in `entwurf_aufnahmen.transkript_original`; betroffene
+Aufnahmen sind mit `hat_normalisierung = true` markiert. Wenn beim Einsprechen
+ein Wort im Angebot auftaucht, das du nicht gesagt hast: bitte beide Spalten
+nebeneinanderlegen, dann sieht man sofort, ob es Whisper oder wir waren.
+
 ## Stufe 1 — voll einsprechen, mehrere Fixes gleichzeitig
 
 ### PM-034 — Untergrund je Raum verschieden *(zuerst, hier hing der Blocker)*

@@ -5,6 +5,7 @@ import { pruefeKIZugriff } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
 import { ergaenzeChipsUmAutomatischeNebenpositionen } from '@/lib/chips-vervollstaendigung'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
+import { korrigiereHoerfehler } from '@/lib/hoerfehler'
 import { segmentiereRaeume } from '@/lib/raum-segmentierer'
 import { cacheVolleExtraktion } from '@/lib/volle-extraktion-cache'
 import * as Sentry from '@sentry/nextjs'
@@ -94,8 +95,15 @@ export async function POST(req: NextRequest) {
       .order('erstellt_am', { ascending: true })
       .limit(5)
 
-    const [transkriptRoh, { data: bisherige }] = await Promise.all([whisperKette, kontextQuery])
-    const transkript = transkriptRoh?.trim()
+    const [whisperText, { data: bisherige }] = await Promise.all([whisperKette, kontextQuery])
+    // Bekannte Hörfehler direkt nach Whisper geraderücken — siehe
+    // src/lib/hoerfehler.ts und die Begründung in upload/route.ts.
+    // Der Rohtext bleibt in `transkript_original` erhalten.
+    const transkriptRoh = whisperText?.trim() ?? ''
+    const { text: transkript, korrekturen: hoerfehler } = korrigiereHoerfehler(transkriptRoh)
+    if (hoerfehler.length > 0) {
+      console.log('[aufnahme-verarbeite] Hörfehler korrigiert:', hoerfehler.join(' | '))
+    }
 
     if (!transkript) {
       await supabase
@@ -131,8 +139,9 @@ export async function POST(req: NextRequest) {
         transkript,
         erkannte_positionen: positionen,
         verarbeitung_status: 'fertig',
-        transkript_original: transkript,
+        transkript_original: transkriptRoh,
         transkript_verarbeitet: transkriptVerarbeitet,
+        hat_normalisierung: hoerfehler.length > 0,
         hat_raumwechsel: segmente.length > 1,
         segment_anzahl: segmente.length,
         zahlen_ersetzt: zaehleErsetzteZahlen(transkript, transkriptVerarbeitet),

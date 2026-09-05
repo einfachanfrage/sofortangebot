@@ -133,6 +133,64 @@ Räumen. Live-Nachtest steht aus.
 **Status PM-036:** ✅ Rückfall behoben — keine Sockelleisten im abbestellten
 Wohnzimmer. Live-Nachtest steht aus.
 
+#### Nachtrag: das Hörfehler-Wörterbuch (Sandy freigegeben, 04.09.2026)
+
+Der Z in „Zockelleisten" war der Anlass, nicht der Einzelfall. Ich habe
+**alle 90 Aufnahmen aus der Produktionsdatenbank** (22.07.–05.09.2026) von
+Hand durchgesehen. Die Trefferliste war länger als erwartet:
+
+| Gemeint | Was Whisper geschrieben hat | Funde |
+|---|---|---|
+| Klick-Vinyl | Klickvanil, Klickvenyl, Clickvenyl, Klickvenü, Klickvenüboden | 6 Schreibweisen in 6 Wochen |
+| Trittschalldämmung | Rittschall-, Ritschall-, Ritzschalldämmung | 4× an einem Tag |
+| Sockelleisten | Sockenleisten, **Zockelleisten** | 2 |
+| Fischgrät | **Frischgrät** | 1 |
+| Fertigparkett | Fertigpaket (Eiche-, Eichen-) | 3 |
+| Rauhfasertapete | Rauffasertapete, „rauhe Fasertapete" | 5 |
+| Dispersionsfarbe | Displosionsfarbe | 1 |
+| „nix am Boden" | „nix am **Bogen**" | 1 |
+| „Boden lass mal weg" | „**Bodenlass** mal weg" | 1 |
+| „unterschiedliche Beläge" | „unterschiedliche **Belege**" | 1 |
+| „auch Wände streichen" | „**Aufwände** streichen" | 2 |
+| — | „Untertitel der Amara.org-Community", „Mehr Informationen auf www.…" | 3 (halluziniert, nie gesagt) |
+
+**Zwei davon kosten direkt Geld, ohne dass es jemand sieht:**
+
+- **Frischgrät → Fischgrät.** Ein verhörter Buchstabe entscheidet über
+  15 % statt 5 % Verschnitt. Bei den 36 m² Eichenparkett aus dem Diktat vom
+  19.08. sind das 41,40 m² statt 37,80 m² — **3,60 m² Parkett, die der
+  Handwerker kauft und nicht abrechnet.**
+- **Fertigpaket → Fertigparkett.** Ein „Paket" ist im Katalog keine
+  Bodenposition.
+
+**Wo es läuft:** `src/lib/hoerfehler.ts`, aufgerufen in beiden
+Transkriptionsrouten **direkt nach Whisper** — vor der KI, vor den Chips, vor
+allem anderen. Danach steht das Wort überall richtig: in der KI-Eingabe, in
+den Positionen, im PDF.
+
+**Zwei Regeln, an die sich diese Datei halten muss:**
+
+1. **Jeder Eintrag braucht einen echten Produktionsfund.** Kein „könnte ja mal
+   vorkommen". Der Beleg steht mit Datum an jeder Zeile im Code.
+2. **Nichts passiert stumm.** Der Rohtext von Whisper bleibt unverändert in
+   `transkript_original` stehen, `hat_normalisierung` markiert die betroffenen
+   Aufnahmen, und jede Ersetzung wird als lesbare Zeile protokolliert.
+
+Bewusst **nicht** gebaut: eine Ähnlichkeitssuche gegen den Preiskatalog. Die
+würde irgendwann ein Wort „korrigieren", das der Handwerker genau so gemeint
+hat — und das wäre schlimmer als der Hörfehler.
+
+**Offen für den Prüfmeister:** Drei Regeln greifen in die Wortbedeutung ein
+und nicht nur in die Schreibweise („Bogen"→„Boden", „Belege"→„Beläge",
+„Aufwände"→„auch Wände"). Alle drei sind eng an ihren Kontext gebunden (ein
+echter Bogen, echte Belege und echte Aufwände bleiben stehen, dafür gibt es
+Gegentests). Wenn eine davon fachlich nicht überzeugt: streichen, sie hängen
+an nichts.
+
+**Tests:** 1.399 (vorher 1.369), `tsc` sauber, `eslint` 0 Fehler. Jeder
+Testfall in `src/lib/__tests__/hoerfehler.test.ts` ist ein wörtlicher
+Produktionssatz — kein ausgedachter Text.
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte

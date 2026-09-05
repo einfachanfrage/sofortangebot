@@ -5,6 +5,7 @@ import { pruefeKIZugriff, trackKIUsage } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
 import { ergaenzeChipsUmAutomatischeNebenpositionen } from '@/lib/chips-vervollstaendigung'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
+import { korrigiereHoerfehler } from '@/lib/hoerfehler'
 import { segmentiereRaeume } from '@/lib/raum-segmentierer'
 import { cacheVolleExtraktion } from '@/lib/volle-extraktion-cache'
 import * as Sentry from '@sentry/nextjs'
@@ -128,7 +129,17 @@ export async function POST(req: NextRequest) {
   }
 
   // Whisper-Ergebnis
-  const transkript = whisperErgebnis.status === 'fulfilled' ? whisperErgebnis.value.text?.trim() : ''
+  //
+  // PM-034 (04.09.2026): Hier, direkt nach Whisper, werden bekannte Hörfehler
+  // geradegerückt — VOR der KI, vor den Chips, vor allem. „Zockelleisten" mit
+  // Z hat einmal 155,10 € gekostet, weil der Code weiter unten das Wort nicht
+  // wiedererkannt hat. Der Rohtext geht dabei nicht verloren: er landet
+  // unverändert in `transkript_original`. Siehe src/lib/hoerfehler.ts.
+  const transkriptRoh = whisperErgebnis.status === 'fulfilled' ? whisperErgebnis.value.text?.trim() : ''
+  const { text: transkript, korrekturen: hoerfehler } = korrigiereHoerfehler(transkriptRoh ?? '')
+  if (hoerfehler.length > 0) {
+    console.log('[aufnahme-upload] Hörfehler korrigiert:', hoerfehler.join(' | '))
+  }
   if (whisperErgebnis.status === 'rejected') {
     console.error('[aufnahme-upload] Transkription fehlgeschlagen')
     Sentry.captureException(whisperErgebnis.reason, { tags: { feature: 'aufnahme_upload_whisper' } })
@@ -184,8 +195,9 @@ export async function POST(req: NextRequest) {
     transkript,
     erkannte_positionen: positionen,
     verarbeitung_status: 'fertig',
-    transkript_original: transkript,
+    transkript_original: transkriptRoh ?? '',
     transkript_verarbeitet: transkriptVerarbeitet,
+    hat_normalisierung: hoerfehler.length > 0,
     hat_raumwechsel: segmente.length > 1,
     segment_anzahl: segmente.length,
     zahlen_ersetzt: zaehleErsetzteZahlen(transkript, transkriptVerarbeitet),
