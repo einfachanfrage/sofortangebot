@@ -474,7 +474,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-015 | Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | 🟡 Beide Ursachen gefunden und gefixt, geprüft live im Code korrekt. **Klargestellt (2026-08-19):** der PM-011-„alle Preise fehlen"-Fund war KEIN neuer, dritter Bug — derselbe Nachtest lief auf demselben, schon damals betroffenen Konto „Lisa Schein Malerbetrieb", das vor dem Fix (17.08.) angelegt wurde und dadurch nicht rückwirkend versorgt ist, siehe „Systemischer Fund" Punkt 5. Für alle NEU angelegten Konten ab 18.08. gilt der Fix nachweislich. **Korrektur (2026-08-19, siehe PM-016):** der 18.08.-Fix selbst war kaputt — der Onboarding-Insert scheiterte durch denselben Bug wie PM-016 komplett und unbemerkt (Fehler wurde nicht geprüft). „Lisa Schein" ist inzwischen live nachversorgt |
 | PM-016 | „Standardpreise importieren" auf `/preise` schlägt fehl: „Die Standardpreise konnten nicht vollständig ergänzt werden." (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | ✅ Root-Cause gefunden und gefixt (2026-08-19), Konto live nachversorgt (341 Positionen), gleicher Bug auch im Onboarding-Seeding gefixt |
 | PM-017 | Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: „Tapete tapezieren" jetzt mit exakt 31,91 m² und korrektem Preis, keine Phantom-Positionen mehr, keine Grundierung — Details im Archiv |
-| PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest vom 21.08. lief vor dem Ausrollen der VOB-Übermessung — Wandfläche, Spachtel Q3 Wand, Grundierung Wand und Wandanstrich stehen jetzt auf **39,00 m²** statt 35,91 m². Q3-Benennung und Deckengrundierung bleiben bestätigt. Bisheriger Stand: Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv |
+| PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest vom 21.08. lief vor dem Ausrollen der VOB-Übermessung — Wandfläche, Spachtel Q3 Wand, Grundierung Wand und Wandanstrich stehen jetzt auf **39,00 m²** statt 35,91 m². Q3-Benennung und Deckengrundierung bleiben bestätigt. Bisheriger Stand: Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv 🟡 **Nachtest 04.09.: alle acht Mengen exakt Soll** (Wand 39,00 · Decke 14,00 · Sockelleisten 15,00, Deckengrundierung vorhanden). **RÜCKFALL:** Spachtelpositionen heißen wieder „Q2" statt „Q3" — Katalog führt Q2 mit 9,00 und Q3 mit 14,00 €/m², also 265,00 € zulasten des Betriebs. Dazu: zwei gleichnamige Spachtelzeilen, Decken-Untertitel sagt „Wände", Vorschlag-Etikett trotz ausdrücklicher Ansage |
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ✅ Details im Archiv. Raummaß-Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 live bestätigt (2026-08-25) — liefert jetzt die korrekten 2×1,5 m |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
@@ -5183,6 +5183,105 @@ die Zahl, auf die der Nutzer vor dem Erstellen schaut.
 **Stand Stufe 2:** PM-002 ✅ · PM-006 ✅ (Mengen) · PM-010 ✅ (Mengen) · offen
 PM-018. Zwei fallübergreifende Funde: der doppelte Wandpreis und der
 Karten-Zähler.
+
+---
+
+### PM-018 — Nachtest (Sandy, 2026-09-04): alle acht Mengen exakt Soll, aber Q3 ist zurückgefallen
+
+**Die Mengen stimmen vollständig**, inklusive der beiden Werte, wegen derer der
+Fall überhaupt neu eingesprochen wurde:
+
+| Position | Ist | Soll |
+|---|---|---|
+| Spachtelarbeiten Wand | 39,00 m² | ✅ (Übermessung greift) |
+| Spachtelarbeiten Decke | 14,00 m² | ✅ eigene Fläche |
+| Voranstrich / Grundierung Wand | 39,00 m² | ✅ |
+| Voranstrich / Grundierung **Decke** | 14,00 m² | ✅ |
+| Wandflächen streichen 2x | 39,00 m² | ✅ |
+| Deckenfläche streichen 2x | 14,00 m² | ✅ |
+| Boden schützen | 14,00 m² | ✅ |
+| Sockelleisten abkleben | **15,00 lfdm** | ✅ VOB-012 |
+
+---
+
+**RÜCKFALL — die Spachtelpositionen heißen wieder „Q2", verlangt war „Q3"**
+
+Im Diktat steht ausdrücklich „Qualitätsstufe **Q3**, weil später Streiflicht
+draufscheint". Beide Positionen tragen „Spachtelarbeiten **Q2**".
+
+**Das war am 21.08. schon einmal behoben** und ist der ursprüngliche
+Hauptbefund dieses Falls. Jetzt ist er wieder da.
+
+**Und diesmal ist er teurer, als er aussieht.** Der Katalog führt beide Stufen
+getrennt:
+
+| Katalogeintrag | Preis |
+|---|---|
+| Spachtelung Q2 | 9,00 €/m² |
+| **Spachtelung Q3** | **14,00 €/m²** |
+
+Berechnet werden 53,00 m² × 9,00 € = 477,00 €. Richtig wären 53,00 m² ×
+14,00 € = 742,00 €. **265,00 € fehlen dem Betrieb** — und er macht die
+Q3-Arbeit trotzdem, denn der Kunde hat Streiflicht und wird es sehen. Q3 ist
+zusätzliches Feinspachteln über die gesamte Fläche, nicht nur an den Stößen.
+Wer das zum Q2-Preis anbietet, arbeitet einen halben Tag umsonst.
+
+**Fundort und wahrscheinliche Ursache:** `src/lib/vollstaendigkeit/maler-extras.ts`
+prüft die Qualitätsstufe an mehreren Stellen unterschiedlich. Zeile 109 sucht
+nach `' q3 '` — **mit Leerzeichen auf beiden Seiten**. Im Diktat steht
+„Qualitätsstufe Q3**,** weil später…" — nach dem Q3 kommt ein Komma, kein
+Leerzeichen, der Vergleich läuft ins Leere. Zeile 202 macht es im selben File
+bereits richtig mit `/\bq[1-4]\b/i`, also mit Wortgrenzen.
+
+**Vorschlag:** überall dieselbe Wortgrenzen-Prüfung verwenden. Dann ist es egal,
+ob nach dem Q3 ein Komma, ein Punkt oder ein Satzende folgt. Und ein Test mit
+genau diesem Satz — „Qualitätsstufe Q3, weil später Streiflicht draufscheint" —
+damit der Fall nicht ein drittes Mal zurückkommt.
+
+**Zwei Darstellungsfunde, die zum selben Thema gehören:**
+
+1. **Zwei Positionen heißen identisch „Spachtelarbeiten Q2"**, einmal mit 39,00
+   und einmal mit 14,00 m². Auf dem Kundenangebot steht damit zweimal dieselbe
+   Zeile mit verschiedenen Mengen, und niemand kann sagen, welche die Wand und
+   welche die Decke ist. Die Grundierung macht es zwei Zeilen weiter vor:
+   „Voranstrich / Grundierung" und „Voranstrich / Grundierung **Decke**".
+2. **Der Untertitel beider Positionen lautet „Wände für einen ebenen Untergrund
+   vollflächig spachteln"** — auch bei der Deckenposition. Der Text widerspricht
+   der Menge.
+3. Beide Spachtelpositionen tragen das Etikett **„Vorschlag"**, obwohl sie
+   ausdrücklich verlangt wurden. Ein Vorschlag ist etwas, das wir mitdenken;
+   „Wände UND Decke komplett spachteln" ist eine Ansage. Das Etikett gehört weg,
+   sonst verliert es überall seine Bedeutung.
+
+**Status PM-018:** 🟡 Alle Mengen exakt Soll, Sockelleisten und Übermessung
+bestätigt. Offen: Q3-Rückfall (265,00 €), Benennung der beiden Spachtelzeilen,
+falscher Untertitel bei der Decke, falsches Vorschlag-Etikett.
+
+---
+
+## Stufe 2 abgeschlossen (Prüfmeister, 2026-09-04)
+
+| Fall | Stand |
+|---|---|
+| PM-002 | ✅ grün (Soll um die Phantom-Decke korrigiert) |
+| PM-006 | ✅ Mengen grün · Fund: doppelter Wandpreis 9,50/11,50 |
+| PM-010 | ✅ grün · Fund: Karten-Zähler 5/4/6 |
+| PM-018 | 🟡 Mengen grün · **Q3-Rückfall** |
+
+**Alle vier zurückgezogenen Haken sind in den Mengen wieder belegt** — die
+VOB-Übermessung und VOB-012 stimmen jetzt an jeder geprüften Stelle.
+
+**Was aus Stufe 1 und 2 zusammen offen bleibt**, drei Punkte, alle vom selben
+Typ „richtige Menge, falscher Katalogtreffer oder falsche Bezeichnung":
+
+1. **PM-032** — Belagtreffer streut zwischen Klick-Vinyl (16 €) und Vinyl-Boden (22 €)
+2. **PM-006/PM-028** — zwei Katalogeinträge für denselben Wandanstrich, 9,50 gegen 11,50 €
+3. **PM-018** — Q3 wird als Q2 geführt, 9,00 statt 14,00 €
+
+Die Mengenrechnung ist damit durch. **Was jetzt noch Geld bewegt, ist
+ausschließlich die Zuordnung zwischen Position und Preisliste.** Das ist der
+nächste Prüfschwerpunkt, und es ist ein anderer als der, mit dem dieser Batch
+angefangen hat.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
