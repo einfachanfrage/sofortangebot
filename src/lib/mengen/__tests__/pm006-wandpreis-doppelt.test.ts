@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { malerEngine } from '../gewerke/maler'
 import { DEFAULT_PRICES } from '../../default-prices'
+import { findePreisposition } from '../../preis-matcher'
 
 // ── PM-006 / PM-028, Prüfmeister 04.09.2026 ───────────────────────────────
 //
@@ -29,7 +30,7 @@ describe('PM-006 — ein Arbeitsgang, ein Katalogtitel', () => {
       }],
     })
     const titel = e.positionen.map(p => p.beschreibung)
-    expect(titel).toContain('Wandflächen streichen 2x — Schlafzimmer')
+    expect(titel).toContain('Wandflächen streichen 2x (ohne Akzentwand) — Schlafzimmer')
     expect(titel.some(t => /Restwände/i.test(t))).toBe(false)
   })
 
@@ -50,6 +51,16 @@ describe('PM-006 — ein Arbeitsgang, ein Katalogtitel', () => {
     // nur eben im Rechenweg statt im Katalogtitel.
     expect(rest?.berechnungsweg).toMatch(/Akzentwand/)
     expect(rest?.menge).toBeLessThan(39)
+  })
+
+  it('der Klammerzusatz erklärt die Differenz, ohne den Preis zu verstellen', () => {
+    // Der Matcher entfernt Klammerinhalte — der Titel trifft weiterhin
+    // denselben Eintrag wie eine ganz normale Wandposition.
+    const katalog = [{ id: '1', title: 'Wand streichen 2x Anstrich', category: 'Maler – Anstrich Innen', unit: 'm²', unit_price: 11.50 }]
+    const mit = findePreisposition('Wandflächen streichen 2x (ohne Akzentwand) — Schlafzimmer', 'm²', katalog)
+    const ohne = findePreisposition('Wandflächen streichen 2x — Schlafzimmer', 'm²', katalog)
+    expect(mit?.position.unit_price).toBe(11.50)
+    expect(mit?.position.id).toBe(ohne?.position.id)
   })
 
   it('es gibt keinen zweiten Katalogeintrag „Restwände streichen" mehr', () => {

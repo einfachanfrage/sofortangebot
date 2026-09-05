@@ -529,8 +529,19 @@ export function malerEngine(daten: any): MengenErgebnis {
           // vermindert. Also derselbe Titel wie sonst, inklusive der Zahl
           // der Anstriche — die Einschränkung steht im Berechnungsweg, wo
           // sie hingehört, und nicht mehr im Katalogschlüssel.
+          // Prüfmeister, zweiter Durchgang 04.09.: Mit dem einheitlichen Titel
+          // steht auf dem Angebot „Wandflächen streichen 2x · 29,90 m²",
+          // obwohl der Raum 39,00 m² Wandfläche hat — die Akzentwand ist
+          // abgezogen. „Der Endkunde, der nachmisst, findet die Differenz
+          // nicht erklärt." Kein Rechenfehler, eine Erklärlücke.
+          //
+          // Der Zusatz steht in KLAMMERN, und das ist Absicht: Der
+          // Preis-Matcher entfernt Klammerinhalte, der Titel trifft also
+          // weiterhin denselben Katalogeintrag wie jede andere Wandposition.
+          // Der Kunde bekommt die Erklärung, die Preisliste bleibt bei einem
+          // Eintrag.
           if (restwandFlaeche > 0) positionen.push({
-            beschreibung: `Wandflächen streichen ${anstricheWand}x — ${name}`,
+            beschreibung: `Wandflächen streichen ${anstricheWand}x (ohne Akzentwand) — ${name}`,
             menge: restwandFlaeche,
             einheit: 'm²',
             konfidenz: 'high',

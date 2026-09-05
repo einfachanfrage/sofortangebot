@@ -79,6 +79,40 @@ export function normalisierePreistext(text: string): string {
   return wert.split(/\s+/).filter(w => w && !STOPP.has(w)).join(' ').trim()
 }
 
+/**
+ * Die Qualitäts-/Ausführungsstufe aus dem ROHTITEL — bewusst vor jeder
+ * Normalisierung.
+ *
+ * ── PM-018, Prüfmeister 04.09.2026 ────────────────────────────────────────
+ * „Spachtelarbeiten Q3" (39,00 m²) bekam 9,00 €/m² — den **Q2**-Preis. Die
+ * Decken-Zeile „Spachtelarbeiten Q3 Decke" bekam gar keinen Treffer. Der
+ * Widerspruch war der Beweis: Fehlt Q3 in der Preisliste, MÜSSTEN beide
+ * „Preis fehlt" zeigen. Dass eine 9,00 € bekam, heißt, sie ist auf den
+ * Q2-Eintrag ausgewichen. 195,00 € für Arbeit, die der Betrieb nachweislich
+ * macht.
+ *
+ * Zwei Ursachen, beide in der Normalisierung:
+ *   1. `STOPP` wirft q1–q4 weg — für den Vergleich sahen Q2 und Q3 gleich aus.
+ *   2. Im Katalog steht die Stufe in KLAMMERN („Fläche spachteln (Q2)"), und
+ *      Klammerinhalte werden ersatzlos entfernt. Selbst ohne (1) wäre die
+ *      Stufe auf der Katalogseite verschwunden.
+ * Deshalb wird sie hier am Rohtext gelesen und als FILTER benutzt, nicht als
+ * Textmerkmal — dann stört sie den Score nicht und kann trotzdem nicht
+ * übergangen werden.
+ *
+ * Die Regel des Prüfmeisters, wörtlich: „Trägt eine Position eine Qualitäts-
+ * oder Ausführungsstufe im Titel, darf der Preis-Matcher niemals auf einen
+ * Eintrag mit einer anderen Stufe ausweichen. Lieber sichtbar kein Preis als
+ * still der falsche." Ein Eintrag OHNE Stufe ist keine andere Stufe — er darf
+ * einspringen, genau wie bei den Anstrichzahlen (Regel 3).
+ */
+export function qStufeAusTitel(text: string): string | null {
+  return /\bq([1-4])\b/i.exec(text ?? '')?.[1] ?? null
+}
+
+/** Flächen-Suffix, das die Engine an den Titel hängt („… Q3 Decke"). */
+const FLAECHEN_SUFFIX = /\s+(decke|wand|w[äa]nde|boden)\s*$/i
+
 function normalisiereEinheit(einheit: string): string {
   const e = einheit.toLocaleLowerCase('de-DE').replace(/²/g, '2').replace(/\s/g, '')
   if (['m2', 'qm'].includes(e)) return 'm2'
@@ -109,6 +143,7 @@ export function findePreisposition(
   const gesucht = normalisierePreistext(beschreibung)
   const einheitNorm = normalisiereEinheit(einheit)
   const gesuchtAnstriche = gesucht.match(/\b([123])x\b/)?.[1]
+  const gesuchteQ = qStufeAusTitel(beschreibung.split(/\s+[—–-]\s+/)[0])
 
   // Anstrich-Varianten (1x/2x/3x) — die Regeln, festgeklopft am 2026-08-24
   // (Sandys „klopf fest"), nachdem PM-007 gezeigt hat, wie teuer eine
@@ -169,11 +204,17 @@ export function findePreisposition(
     // Regel 1: andere Anstrichzahl → nie ein Treffer.
     if (gesuchtAnstriche && kandidatAnstriche && gesuchtAnstriche !== kandidatAnstriche) continue
 
+    // Dieselbe Regel für die Qualitätsstufe: eine andere Stufe ist ein
+    // anderer Arbeitsgang. Q3 ist Feinspachteln über die ganze Fläche, nicht
+    // nur an den Stößen — wer das zum Q2-Preis anbietet, arbeitet umsonst.
+    const kandidatQ = qStufeAusTitel(position.title)
+    if (gesuchteQ && kandidatQ && gesuchteQ !== kandidatQ) continue
+
     const score = tokenScore(gesucht, kandidat)
 
     // Regel 2/3: variantenlose Kandidaten getrennt sammeln — sie kommen nur
     // zum Zug, wenn keine passende Variante über die Schwelle kommt.
-    if (gesuchtAnstriche && !kandidatAnstriche) {
+    if ((gesuchtAnstriche && !kandidatAnstriche) || (gesuchteQ && !kandidatQ)) {
       if (!besteOhneVariante || score > besteOhneVariante.score) besteOhneVariante = { position, score }
       continue
     }
@@ -183,5 +224,19 @@ export function findePreisposition(
 
   if (besteMitVariante && besteMitVariante.score >= SCHWELLE) return besteMitVariante
   if (besteOhneVariante && besteOhneVariante.score >= SCHWELLE) return besteOhneVariante
+
+  // PM-018, zweiter Teil des Fundes: „Spachtelarbeiten Q3 **Decke**" fand gar
+  // keinen Treffer, „Spachtelarbeiten Q3" schon. Das Flächen-Suffix ist ein
+  // zusätzliches Token und drückt die Übereinstimmung unter die Schwelle —
+  // die Wand-Zeile lag bei 0,67, die Decken-Zeile bei 0,50.
+  //
+  // Zweiter Anlauf ohne das Suffix. Bewusst NUR als Rückfall und mit
+  // unveränderter Stufen-Sperre: Die Decke bekommt damit denselben Preis wie
+  // die Wand, wenn der Katalog keinen eigenen Deckeneintrag führt — aber
+  // niemals den einer anderen Qualitätsstufe.
+  const ohneSuffix = beschreibung.split(/\s+[—–-]\s+/)[0].replace(FLAECHEN_SUFFIX, '')
+  if (ohneSuffix !== beschreibung.split(/\s+[—–-]\s+/)[0]) {
+    return findePreisposition(ohneSuffix, einheit, preise)
+  }
   return null
 }

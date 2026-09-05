@@ -549,6 +549,76 @@ Liegt die volle Extraktion vor, bleibt es beim bisherigen Text mit
 
 Kein Zahlentrick, sondern ein Versprechen weniger.
 
+---
+
+## PM-018 — die Preiszuordnung, letzter offener Punkt aus Stufe 2 (Engineering, 05.09.2026)
+
+Der Prüfmeister hat den Fund auf den Widerspruch zwischen zwei Zeilen gestellt,
+und genau der war der Beweis:
+
+> Wenn „Spachtelung Q3" in der Preisliste fehlt — und die Decken-Position sagt
+> das —, dann müsste die Wand-Position ebenfalls „Preis fehlt" zeigen. Dass sie
+> 9,00 € bekommt, heißt: Sie trifft den Q2-Eintrag.
+
+**Zwei Ursachen, beide in der Textnormalisierung des Matchers, beide in
+dieselbe Richtung:**
+
+1. `STOPP` enthielt `q1 q2 q3 q4` — die Qualitätsstufe wurde vor dem Vergleich
+   **weggeworfen**. Für den Matcher sahen „Spachtelarbeiten Q3" und
+   „Fläche spachteln (Q2)" identisch aus.
+2. Im Katalog steht die Stufe in **Klammern**, und Klammerinhalte werden
+   ersatzlos entfernt. Selbst ohne (1) wäre die Stufe auf der Katalogseite
+   verschwunden.
+
+Die Stufe wird jetzt am **Rohtitel** gelesen (`qStufeAusTitel`) und als
+**Filter** benutzt, nicht als Textmerkmal — so stört sie den Score nicht und
+kann trotzdem nicht übergangen werden.
+
+**Die Regel des Prüfmeisters, im Code:**
+
+| Fall | Verhalten |
+|---|---|
+| Q3-Titel, Katalog hat nur Q2 | **kein Preis** — sichtbar, nicht still falsch |
+| Q3-Titel, Katalog hat Q3 | Q3-Preis |
+| Q3-Titel, Katalog hat nur einen Eintrag **ohne** Stufe | dieser Eintrag — er ist der eigene Preis des Betriebs für diese Arbeit |
+| Q3-Titel, Katalog hat beides | die passende Stufe gewinnt |
+| Q2-Titel, Katalog hat Q2 und Q3 | Q2-Preis — die Sperre wirkt in beide Richtungen |
+
+Ein Eintrag **ohne** Stufe ist keine andere Stufe. Dieselbe Systematik, die für
+die Anstrichzahlen seit PM-007 festgeklopft ist — nur dass sie für die
+Qualitätsstufe schlicht fehlte.
+
+**Der zweite Teil des Fundes bestätigt sich ebenfalls.** Der Prüfmeister
+vermutete, das Suffix „ Decke" störe den Abgleich. Nachgerechnet: Die
+Wand-Zeile lag bei 0,67 Übereinstimmung, die Decken-Zeile bei 0,50 — die
+Schwelle ist 0,62. Ein zusätzliches Token hat sie unter die Grenze gedrückt.
+Es gibt jetzt einen zweiten Anlauf ohne das Flächen-Suffix, **mit unveränderter
+Stufen-Sperre**: Die Decke bekommt denselben Preis wie die Wand, wenn der
+Katalog keinen eigenen Deckeneintrag führt — aber niemals den einer anderen
+Stufe.
+
+**Was Sandy im Nachtest sehen wird:** Beide Spachtelzeilen zeigen „Preis fehlt
+in deiner Preisdatenbank", solange Q3 nicht angelegt ist. Das ist der gewollte
+Ausgang — sichtbar statt still. Legt sie Q3 an, stehen 39,00 × 14,00 = 546,00 €
+und 14,00 × 14,00 = 196,00 €.
+
+### Die Erklärlücke aus PM-002, mitgenommen
+
+> „Wandflächen streichen 2x · 29,90 m²", obwohl der Raum 39,00 m² hat — die
+> Akzentwand ist abgezogen. Der Endkunde, der nachmisst, findet die Differenz
+> nicht erklärt.
+
+Der Titel lautet jetzt **„Wandflächen streichen 2x (ohne Akzentwand)"**. Der
+Zusatz steht in Klammern, und das ist Absicht: Der Matcher entfernt
+Klammerinhalte, die Position trifft also weiterhin denselben Katalogeintrag wie
+jede andere Wandposition. Der Kunde bekommt die Erklärung, die Preisliste
+bleibt bei einem Eintrag. Mit Test belegt.
+
+**Tests:** 1.468 (vorher 1.456), `tsc` sauber, `eslint` 0 Fehler.
+
+**Status PM-018:** Mengen, Bezeichnungen und Preiszuordnung vollständig
+behandelt. Live-Nachtest steht aus.
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
