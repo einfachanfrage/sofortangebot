@@ -4997,5 +4997,61 @@ zehnmal denselben Titel und denselben Preis liefern.
 mehr geraten wird. Sandy soll ihn nicht noch einmal auf Verdacht einsprechen —
 das kostet sie Zeit und beweist nichts.
 
+---
+
+## Was Stufe 1 noch zum kompletten Grün fehlt (Prüfmeister, 2026-09-04)
+
+Sandy will Stufe 1 geschlossen haben, bevor Stufe 2 anfängt. Berechtigt — ein
+halb abgeschlossener Batch ist der Ort, an dem Funde versickern. Es fehlt genau
+**ein** Punkt: der Belagtreffer in PM-032. PM-033, PM-034, PM-035 und PM-036
+sind grün und bleiben es.
+
+### Der eine offene Punkt
+
+Dreimal dasselbe Diktat („Überall dasselbe **Klick-Vinyl**"), zweimal
+„Klick-Vinyl · 16,00 €/m²", einmal „Vinyl-Boden · 22,00 €/m²". Die Mengen waren
+in allen drei Läufen richtig — es geht ausschließlich um die Zuordnung zum
+Katalogeintrag.
+
+### Was zu tun ist, in dieser Reihenfolge
+
+**1. Head of Product Engineering — der Fix.** Wenn das Belagfeld aus der
+Extraktion nur „vinyl" hergibt, im **Rohtranskript** nachsehen: steht dort
+„Klick-Vinyl", „Klickvinyl" oder „Klick", gilt das. Ansage vor Struktur,
+dieselbe Rangordnung wie beim Rohtext-Scope. Betrifft
+`boden-normalisierer.ts` (Etikett) und die Stelle, die das Belagfeld füllt.
+
+**2. Head of Product Engineering — zwei Tests, die den Fund festhalten.**
+
+- Ein Test mit Belagfeld `'vinyl'` **und** Transkript „Klick-Vinyl" → Etikett
+  muss „Klick-Vinyl" sein. Das ist genau der Lauf, der danebenging.
+- Ein Test mit Belagfeld `'vinyl'` und einem Transkript **ohne** „klick" →
+  Etikett bleibt „Vinyl-Boden". Sonst kippt der Fix in die andere Richtung und
+  jeder Designboden wird zum Klick-System.
+
+**3. Prüfmeister — ein Live-Lauf, nicht drei.** Nach dem Fix spreche ich PM-032
+**einmal** ein. Mehr braucht es dann nicht: Die Reproduzierbarkeit beweist der
+Test aus Punkt 2, der Live-Lauf beweist nur noch, dass der Fix im echten Weg
+ankommt. Vorher einzusprechen ist Würfeln — siehe Abschnitt darüber.
+
+### Abnahmekriterien für PM-032 (grün nur, wenn alle vier stimmen)
+
+| # | Kriterium |
+|---|---|
+| 1 | Positionstitel **„Klick-Vinyl verlegen inkl. 5 % Verschnitt"** in allen drei Räumen |
+| 2 | Einheitspreis **16,00 €/m²**, Angebotssumme **1.015,28 €** |
+| 3 | Sockelleisten **14,40 + 18,00 + 11,60 = 44,00 lfdm** |
+| 4 | Dämmung **7,20 + 20,00 + 8,40 = 35,60 m²**, genau **eine** Übergangsschiene, kein Bad |
+
+Kriterien 3 und 4 sind bereits zweimal bestätigt und werden mitgeprüft, damit
+der Fix nichts anderes umwirft.
+
+### Aufwand, damit die Erwartung stimmt
+
+Der Fix ist eine Rückfallregel und zwei Tests — überschaubar. Der Live-Nachtest
+kostet mich fünf Minuten. Realistisch ist Stufe 1 damit **einen Arbeitsgang des
+Engineers** von grün entfernt, nicht mehr. Solange kein Fix da ist, hat es
+keinen Zweck, dass Sandy den Fall weiter einspricht.
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
