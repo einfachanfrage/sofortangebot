@@ -166,7 +166,7 @@ const KORPUS: Fall[] = [
       // hängt nicht von Fenster/Tür ab.
       { enthaelt: 'akzentwand', menge: 9.10 },
       // Restwände: 39,00 − 9,10 = 29,90 m² (vorher 26,81 m²)
-      { enthaelt: 'restwände streichen', menge: 29.90 },
+      { enthaelt: 'wandflächen streichen 2x', menge: 29.90 },
     ],
     verboten: [],
     annahmenPruefung: [

@@ -102,14 +102,32 @@ export function pruefeDenkmalschutz(ergaenzt: BerechnetePosition[], lower: strin
   }
 }
 
+/**
+ * Die genannte Qualitätsstufe — mit Wortgrenzen, damit „Q3," genauso zählt
+ * wie „Q3." und „Q3 ". Ohne Nennung gilt Q2 als Annahme (siehe unten).
+ */
+function qStufe(lower: string): 'Q2' | 'Q3' | 'Q4' {
+  if (/\bq4\b/i.test(lower)) return 'Q4'
+  if (/\bq3\b/i.test(lower)) return 'Q3'
+  return 'Q2'
+}
+
 export function pruefeSpachteln(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
   const hatStreichen = v.hatArbeit('streichen')
   const hatSpachteln = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3') || lower.includes('q4')
   const istNurSpachteln = hatSpachteln && !hatStreichen
-    && (lower.includes('spachtel') || lower.includes(' q2 ') || lower.includes(' q3 ') || lower.includes(' q4 '))
+    // PM-018 (Prüfmeister, 04.09.2026): Hier stand `includes(' q3 ')` — mit
+    // Leerzeichen auf BEIDEN Seiten. Im Diktat steht „Qualitätsstufe Q3,
+    // weil später Streiflicht draufscheint": nach dem Q3 kommt ein Komma,
+    // der Vergleich lief ins Leere. Zwei Zeilen weiter unten wurde es im
+    // selben File längst richtig mit Wortgrenzen gemacht. Jetzt überall
+    // dieselbe Prüfung — dann ist es egal, ob Komma, Punkt oder Satzende
+    // folgt. Dieselbe Familie wie \büberall\b und \bdämm: eine Prüfung, die
+    // an der Zeichensetzung scheitert und dabei still bleibt.
+    && (lower.includes('spachtel') || /\bq[2-4]\b/i.test(lower))
   if (!istNurSpachteln || hat(ergaenzt, 'spachteln', 'spachelarbeit')) return
 
-  const qLevel = lower.includes('q4') ? 'Q4' : lower.includes('q3') ? 'Q3' : 'Q2'
+  const qLevel = qStufe(lower)
   const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wand') && p.einheit === 'm²')
   const spachtelM2 = wandPos?.menge ?? null
   if (spachtelM2 !== null && spachtelM2 > 0) {
@@ -178,7 +196,7 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
   // Qualitätsstufe genannt wurde, existierte schon (für die "angenommen"-
   // Annahme unten), nur die tatsächlich genannte Stufe wurde nie in die
   // Beschreibung übernommen. Gleiche Lehre wie bei "Q2" in pruefeSpachteln().
-  const qLevel = lower.includes('q4') ? 'Q4' : lower.includes('q3') ? 'Q3' : 'Q2'
+  const qLevel = qStufe(lower)
   const spachtelnSchonVorhanden = hat(ergaenzt, 'spachtelarbeiten')
   const schleifenSchonVorhanden = ergaenzt.some(p => /\bschleifen\b/i.test(p.beschreibung))
 
@@ -191,8 +209,21 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
     for (const basisPos of basisPositionen) {
       const raumMatch = basisPos.beschreibung.match(/ — (.+)$/)
       const raumSuffix = raumMatch ? ` — ${raumMatch[1]}` : ''
+      // PM-018, Darstellungsfund 1: Wand- und Deckenposition hießen
+      // IDENTISCH „Spachtelarbeiten Q2", einmal mit 39 und einmal mit 14 m².
+      // Auf dem Kundenangebot standen zwei gleiche Zeilen mit verschiedenen
+      // Mengen, und niemand konnte sagen, welche die Decke ist. Die
+      // Grundierung macht es zwei Zeilen weiter richtig vor.
+      const istDecke = basisPos.beschreibung.toLowerCase().includes('deckenfläch')
+      const flaechenTeil = istDecke ? ' Decke' : ''
       if (hatSpachteln2 && !spachtelnSchonVorhanden) ergaenzt.push({
-        beschreibung: `Spachtelarbeiten ${qLevel}${raumSuffix}`,
+        beschreibung: `Spachtelarbeiten ${qLevel}${flaechenTeil}${raumSuffix}`,
+        // PM-018, Darstellungsfund 3: Beide Zeilen trugen das Etikett
+        // „Vorschlag", obwohl „Wände UND Decke komplett spachteln" eine
+        // Ansage ist. Ein Vorschlag ist etwas, das WIR mitdenken; wenn das
+        // Etikett auch an Gesagtem klebt, verliert es überall seine
+        // Bedeutung. Es bleibt nur dort, wo wir die Stufe geraten haben.
+        ...(lower.includes('spachtel') ? { automatisch_ergaenzt: false } : {}),
         menge: basisPos.menge,
         einheit: 'm²',
         konfidenz: 'high',

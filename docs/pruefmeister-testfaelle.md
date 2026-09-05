@@ -444,6 +444,77 @@ Sockelleisten montieren 5,50 €/lfdm, Trittschalldämmung (PE-Schaum/Filz)
 **An den Prüfmeister:** Der eine Live-Lauf kann laufen. Die Wiederholbarkeit
 hängt ab jetzt am Test, nicht am Würfel.
 
+---
+
+## Stufe 2 — die zwei offenen Preisfunde behoben (Head of Product Engineering, 05.09.2026)
+
+### PM-018 — Q3, und warum es diesmal wirklich das Komma war
+
+Der Fundort des Prüfmeisters stimmt: `maler-extras.ts` prüfte an einer Stelle
+`includes(' q3 ')` — **mit Leerzeichen auf beiden Seiten**. Im Diktat steht
+„Qualitätsstufe Q3**,** weil später Streiflicht draufscheint". Zwei Zeilen
+weiter unten stand im selben File längst die richtige Prüfung mit Wortgrenzen.
+
+Es gibt jetzt **eine** Funktion `qStufe()` mit `\bq[2-4]\b`, die überall
+benutzt wird. Ob nach dem Q3 ein Komma, ein Punkt, eine Klammer oder ein
+Satzende folgt, ist damit egal. Getestet mit fünf Zeichensetzungen, darunter
+wörtlich dem Satz aus dem Diktat.
+
+Dieselbe Familie wie `\büberall\b` (traf nie, weil ü kein Wortzeichen ist) und
+der Dezimalpunkt im Satz-Splitter: **eine Prüfung, die an der Zeichensetzung
+scheitert und dabei still bleibt.**
+
+**Ehrlich dazu:** In meiner Simulation kam schon vor dem Fix „Q3" heraus — die
+zweite, richtige Prüfung hat gegriffen. Welche der beiden im Live-Lauf
+entschieden hat, kann ich ohne die gespeicherten Daten dieses Laufs nicht
+sagen. Der Widerspruch im File war trotzdem real und ist weg; ob das den
+Live-Fund allein erklärt, zeigt erst der Nachtest.
+
+**Die drei Darstellungsfunde sind reproduziert und behoben** — die hat meine
+Simulation eins zu eins gezeigt:
+
+| Fund | Vorher | Jetzt |
+|---|---|---|
+| zwei gleichnamige Zeilen | 2 × „Spachtelarbeiten Q2", 39 und 14 m² | „Spachtelarbeiten Q3 — Raum" und „Spachtelarbeiten Q3 **Decke** — Raum" |
+| Untertitel der Deckenzeile | „**Wände** für einen ebenen Untergrund…" | „**Decke** für einen ebenen Untergrund…" |
+| Etikett | beide „Vorschlag" | kein Etikett — „Wände UND Decke komplett spachteln" ist eine Ansage |
+
+Das Vorschlag-Etikett bleibt genau dort, wo wir die Stufe geraten haben: Ohne
+genannte Qualitätsstufe steht weiterhin Q2 in der Position **und** die
+sichtbare Annahme „Qualitätsstufe Q2 angenommen — bitte prüfen".
+
+### PM-006 / PM-028 — der doppelte Wandpreis
+
+Der Prüfmeister hat die Sachfrage beantwortet, ich habe sie im Code
+nachvollzogen: **„Restwände streichen" war ein eigener Katalogeintrag**
+(`default-prices.ts`, 9,50 €/m²) neben „Wand streichen 2x Anstrich". Zwei
+Einträge, ein Arbeitsgang, und welcher trifft, entschied allein der
+Positionstitel.
+
+Fachlich sind Restwände Wandflächen, nur um die Akzentwand vermindert.
+Deshalb heißt die Position jetzt **wie jede andere Wandposition**, inklusive
+der Zahl der Anstriche: `Wandflächen streichen 2x — Raum`. Die Einschränkung
+steht im Berechnungsweg, wo der Kunde sie sieht und wo sie keinen
+Katalogschlüssel bildet:
+
+> Gesamtwandfläche 39,00 m² − Akzentwand 9,10 m² (Akzentwand wird tapeziert)
+
+Der Doppel-Eintrag ist aus dem Standardkatalog entfernt (218 → 217 Einträge).
+
+**Sandy, das bleibt deine Entscheidung (Preishoheit):** Ab jetzt zeigen beide
+Fälle auf **einen** Eintrag. Welcher Preis dort steht — 9,50 € oder 11,50 € —
+entscheidest du; der Code zwingt dich nicht mehr in zwei. Eine bereits in
+deiner Preisliste angelegte Zeile „Restwände streichen" wird dadurch nicht
+gelöscht, sie wird nur nicht mehr getroffen.
+
+**Tests:** 1.456 (vorher 1.442), `tsc` sauber, `eslint` 0 Fehler. Zwei
+Golden-Tests und die Katalog-Anzahl wurden mitgezogen — beide bewusst, beide
+im Commit begründet.
+
+**Offen aus Stufe 2, nicht angefasst:** der Karten-Zähler (5 gemeldet, 4
+gelistet, 6 im Entwurf — Familie PD-004). Eigener Fund, eigene Ursache,
+gehört nicht in diesen Commit.
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte

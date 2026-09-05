@@ -3431,7 +3431,6 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Innen', title: 'Deckenspiegel streichen', unit: 'm²', unit_price: 11.00 },
   { category: 'Maler – Anstrich Innen', title: 'Decke streichen 3x Anstrich', unit: 'm²', unit_price: 15.00 },
   { category: 'Maler – Tapezieren', title: 'Akzentwand Vliestapete', unit: 'm²', unit_price: 14.00 },
-  { category: 'Maler – Anstrich Innen', title: 'Restwände streichen', unit: 'm²', unit_price: 9.50 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Schimmelbehandlung / Grundierung', unit: 'm²', unit_price: 12.00 },
   { category: 'Maler – Stuck & Dekorative Techniken', title: 'Kalkputz aufbringen', unit: 'm²', unit_price: 35.00 },
   { category: 'Maler – Anstrich Innen', title: 'Silikatfarbe auftragen (2×)', unit: 'm²', unit_price: 13.00 },

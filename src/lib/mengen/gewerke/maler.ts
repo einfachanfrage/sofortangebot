@@ -517,7 +517,26 @@ export function malerEngine(daten: any): MengenErgebnis {
           const akzentWandFlaeche = round2(akzentWandBreite * hoehe)
           const restwandFlaeche = round2(wandflaecheNettoM2 - akzentWandFlaeche)
           positionen.push({ beschreibung: `Akzentwand Vliestapete — ${name}`, menge: akzentWandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${akzentWandBreite} m × ${hoehe} m = ${akzentWandFlaeche} m²`, annahmen: ['Kürzere Raumseite als Akzentwand angenommen — bitte prüfen, welche Wand gemeint war'] })
-          if (restwandFlaeche > 0) positionen.push({ beschreibung: `Restwände streichen — ${name}`, menge: restwandFlaeche, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gesamt ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m²`, annahmen: annahmenFenster })
+          // ── PM-006/PM-028, Prüfmeister 04.09.2026 ────────────────────
+          // Die Position hieß „Restwände streichen" und traf damit einen
+          // ZWEITEN Katalogeintrag für dieselbe Leistung: 9,50 €/m² statt
+          // 11,50 €/m² für „Wandflächen streichen 2x". Zwei Preise für
+          // denselben Arbeitsgang, im selben Konto, abhängig allein vom
+          // Titel — derselbe Fehlertyp wie Klick-Vinyl/Vinyl-Boden bei
+          // PM-032, nur systematisch statt zufällig.
+          //
+          // Fachlich sind Restwände Wandflächen, nur um die Akzentwand
+          // vermindert. Also derselbe Titel wie sonst, inklusive der Zahl
+          // der Anstriche — die Einschränkung steht im Berechnungsweg, wo
+          // sie hingehört, und nicht mehr im Katalogschlüssel.
+          if (restwandFlaeche > 0) positionen.push({
+            beschreibung: `Wandflächen streichen ${anstricheWand}x — ${name}`,
+            menge: restwandFlaeche,
+            einheit: 'm²',
+            konfidenz: 'high',
+            berechnungsweg: `Gesamtwandfläche ${wandflaecheNettoM2} m² − Akzentwand ${akzentWandFlaeche} m² (Akzentwand wird tapeziert)`,
+            annahmen: annahmenFenster,
+          })
         } else {
           // Trockenlauf PM-031 (2026-08-30): Eine Fassade kommt laut unserem
           // eigenen Prompt als RAUM an ("FASSADE IN RAEUME") — bekam hier aber

@@ -13,7 +13,7 @@ describe('Maler-Standardpreiskatalog', () => {
   // halber Rubriken auffällt — beim nächsten bewussten Katalog-Ausbau hier
   // mit anpassen.
   it('enthält den vollständigen kuratierten Maler-Katalog', () => {
-    expect(maler).toHaveLength(218)
+    expect(maler).toHaveLength(217)
     expect(tapezieren).toHaveLength(22)
   })
 

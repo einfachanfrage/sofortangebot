@@ -10,6 +10,13 @@ const REGELN: Regel[] = [
   // — Maler: Wand/Decke/Boden —
   { test: /wandfläche(n)?\s*streich|wände\s*streich/i, text: 'Deckender 2-fach-Anstrich, Kanten sauber abgeschnitten' },
   { test: /decken(fläche)?\s*streich|decke\s*streich/i, text: 'Deckenanstrich in 2 Lagen, gleichmäßig deckend' },
+  // PM-018, Darstellungsfund 2: Der Untertitel sagte „Wände" auch unter der
+  // DECKEN-Spachtelposition — der Text widersprach der Menge. Muss vor der
+  // allgemeinen Spachtel-Regel stehen, sonst greift die zuerst.
+  // Zwischen „Spachtelarbeiten" und „Decke" steht die Qualitätsstufe
+  // („Spachtelarbeiten Q3 Decke") — deshalb ein paar Wörter Abstand erlaubt,
+  // dieselbe Form wie `deckeExplizitSpachteln` in maler-extras.ts.
+  { test: /(?:spachtel|glätt)\w*(?:\s+\w+){0,3}\s+decke|decke\w*(?:\s+\w+){0,3}\s+(?:spachtel|glätt)/i, text: 'Decke für einen ebenen Untergrund vollflächig spachteln' },
   { test: /spachtel|glätt/i, text: 'Wände für einen ebenen Untergrund vollflächig spachteln' },
   { test: /grundier|voranstrich|tiefengrund/i, text: 'Grundierung für gleichmäßige Saugfähigkeit und Haftung' },
   { test: /tapete\s*(entfern|ablös|abnehm|abreiß)|raufaser\s*(entfern|ab)/i, text: 'Alte Tapete ablösen und fachgerecht entsorgen' },
