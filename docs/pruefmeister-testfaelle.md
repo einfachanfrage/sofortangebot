@@ -5485,5 +5485,52 @@ falscher Preis ist schlimmer als eine falsche Menge: Die Menge kann der
 Handwerker nachrechnen, weil er den Raum kennt. Den Preis prüft er nicht, den
 hat er ja selbst hinterlegt.
 
+---
+
+## Eine Anerkennung an Head of Product Engineering (Prüfmeister, 2026-09-04)
+
+Ich melde von Berufs wegen Fehler. Deshalb hier einmal ausdrücklich das andere,
+und zwar nicht als Höflichkeit, sondern als Prüfergebnis: **Diese drei Tage
+waren außergewöhnlich.**
+
+**Die Zahlen:** Aus dem Boden-Batch kamen fünfzehn Befunde plus zwei Rückfälle,
+aus Stufe 2 sieben weitere. Bis auf drei Katalogpunkte ist alles behoben.
+PM-034 stand am Montag bei **91.085 €** für 24,80 m² und heute bei **1.026,54 €**.
+PM-036 trifft die Soll-Summe auf den Euro.
+
+**Was mich fachlich mehr beeindruckt als das Tempo:**
+
+1. **Es wurde an der Wurzel repariert, nicht an fünf Symptomen.** Vier Befunde
+   — Dämmung im falschen Raum, Leistung für zwei Räume fällt aus, „überall"
+   greift nicht, raumgebundener Ausschluss wird übergangen — hatten dieselbe
+   Ursache. Statt vier Pflastern kam eine Fallunterscheidung, die jetzt alle
+   vier Formen kennt. Das erkennt man erst, wenn man es sucht.
+2. **Die L-Form.** Am 03.09. hieß es, das sei ein eigenes Stück Arbeit am
+   Datenmodell und bleibe liegen. Einen Tag später rechnet sie 9,60 m² und
+   18,40 lfm Umfang — auf die Nachkommastelle das, was ich von Hand gerechnet
+   hatte. Mit einer Warnung, die dem Handwerker die Zerlegung zeigt.
+3. **Widerspruch mit Belegen statt Rechtfertigung.** Beim 350-Bug hat er die
+   echten Whisper-Transkripte nebeneinandergelegt und gezeigt, dass der Fehler
+   in der Spracherkennung entsteht, nicht bei uns — und die alte Einordnung
+   trotzdem korrigiert, statt sich hinter ihr zu verstecken. Genau so soll das
+   laufen.
+4. **Er schreibt hin, was er NICHT gefixt hat.** Der Abschnitt „Was der Umbau
+   nicht erledigt" samt Selbstkorrektur („das war zu weit gegriffen") ist mehr
+   wert als jeder grüne Haken. Nur deshalb konnte ich gezielt nachtesten.
+5. **Die Warnungen sind besser geworden als das, was ich verlangt habe.**
+   „Länge 360 als 3,60 m gelesen — so wird ‚3 60' auf dem Bau gesprochen" und
+   der L-Form-Hinweis erklären die Annahme in der Sprache des Nutzers. Das ist
+   kein Entwicklertext, das ist Handwerkssprache.
+
+**Und die Reaktionszeit auf Kleinkram:** „Raumhöhe !" im reinen Bodenauftrag,
+das vage „bitte hier korrigieren", die zwei gleichnamigen Spachtelzeilen, der
+Karten-Zähler, der doppelte Wandpreis — alles am selben Tag gemeldet und am
+selben Tag weg.
+
+**Woran das nichts ändert:** Die drei offenen Katalogpunkte bleiben offen, und
+PM-032 bleibt gelb, bis er reproduzierbar ist. Ein Prüfmeister, der „läuft
+doch" sagt, macht seine Arbeit nicht. Aber der Stand nach drei Tagen ist der
+beste, den dieses Produkt je hatte — und das darf einmal geschrieben stehen.
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
