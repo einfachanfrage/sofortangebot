@@ -326,6 +326,59 @@ dieselbe Familie auftauchen wird. Für den Maler-Batch vormerken.
 
 **Status PM-033:** ✅ alle drei Befunde behoben. Live-Nachtest steht aus.
 
+#### Nachtrag Sandy, 05.09.2026: „Der Fund trifft jeden Bodenauftrag mit Klick-Vinyl"
+
+Sandys Korrektur an meiner Einordnung, und sie ist schärfer als mein Text
+darüber. Ich hatte das Chip-Sicherheitsnetz als PM-032/PM-033-Fund
+beschrieben. Der Auslöser dort lautet aber:
+
+```
+if (/trittschall/.test(hinweise) || /klick.?vinyl/.test(hinweise)) { … }
+```
+
+`hinweise` sind die **Chip-Titel**, und die schreibt die KI bei **jedem**
+Klick-Vinyl-Auftrag. Die Bedingung feuert also immer. Was ein Testfall-Befund
+aussah, war eine Bedingung ohne Bezug zum Diktat.
+
+**Die Kette, nachgestellt:** Der Chip sagt sauber „Klick-Vinyl verlegen" — die
+KI schreibt den Namen richtig. Das Diktat sagt „Klickvenü", weil Whisper ihn
+verhört hat (belegt: 05.09., 12:13 Uhr, Sandys eigene Aufnahme). Das Gate der
+Dämmungs-Prüfung stand auf `includes('klickvinyl') || includes('klick-vinyl')`
+und lief vorbei. Ergebnis vor dem Fix: die Dämmung landete über das Netz im
+**ersten Raum**. Ergebnis nach dem Fix von heute Nachmittag, der das blinde
+Raten abgestellt hat: sie fiel **komplett aus**. Beides falsch, in
+verschiedene Richtungen — genau das Muster aus Sandys Tabelle.
+
+| Diktat | vor 05.09. | nach dem Nachmittags-Fix | jetzt |
+|---|---|---|---|
+| „Klick-Vinyl" | erster Raum | beide Räume ✅ | beide Räume ✅ |
+| „Klickvenü" | erster Raum | **keine Dämmung** | beide Räume ✅ |
+| „Klickvanil" | erster Raum | **keine Dämmung** | beide Räume ✅ |
+
+**Was jetzt gilt:**
+
+- `KLICK_VINYL_WORT` in `hoerfehler.ts` — ein Ausdruck für alle
+  Schreibweisen, richtige wie verhörte, geteilt von allen Prüfstellen. Das
+  Gegenstück zu `SOCKEL_WORT`, aus demselben Anlass.
+- Das Hörfehler-Wörterbuch repariert **neue** Aufnahmen. Dieser Ausdruck
+  deckt die **bereits gespeicherten** mit ab, und jede Schreibweise, die noch
+  nicht im Wörterbuch steht. Zwei Netze, nicht eines.
+- Der Chip-Titel geht als **Auslöser** in `pruefeTrittschalldaemmung` hinein,
+  nicht mehr als eigene Position. Die Räume kommen weiterhin ausschließlich
+  aus den Positionen — Chip-Titel tragen keinen Raum, und genau diese
+  Vermischung war der PM-033-Fehler.
+- Geklebtes Vinyl ohne „Klick" löst weiterhin nicht aus (schwimmend verlegt
+  braucht die Dämmung, verklebt nicht).
+
+**Eine Testerwartung wurde bewusst gedreht.** „erfindet bei mehreren Räumen
+ohne Beleg im Diktat gar nichts" war heute Nachmittag richtig gedacht und
+falsch begründet: Der Chip-Titel IST der Beleg, die KI hat ihn aus dem Diktat
+geschrieben. Ihn zu ignorieren hieß, die Dämmung eines Auftrags wegzuwerfen,
+weil der Rohtext das Wort verhört enthält. Neue Erwartung: der Chip löst aus,
+die Räume kommen aus den Positionen, der Teppich bleibt außen vor.
+
+**Tests:** 1.435 (vorher 1.427), `tsc` sauber, `eslint` 0 Fehler.
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte

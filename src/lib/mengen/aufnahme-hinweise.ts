@@ -70,8 +70,15 @@ export function ergaenzeAusAufnahmeHinweisen(
   // bekommt). Nur wenn daraus nichts wird UND es genau einen verlegten Boden
   // gibt, greift der alte Notnagel — bei mehreren Räumen ohne Beleg im
   // Diktat lieber nichts als etwas aus dem Nachbarzimmer.
+  // Sandy, 05.09.2026: „Der Fund gehört nicht mehr zu PM-032 allein — er
+  // trifft jeden Bodenauftrag mit Klick-Vinyl." Stimmt: Der Auslöser hängt
+  // am CHIP-Titel, und den schreibt die KI bei jedem Klick-Vinyl-Auftrag.
+  // Die Bedingung feuert also immer — entschieden hat sich alles daran, was
+  // danach passierte. Deshalb geht der Chip-Titel jetzt als AUSLÖSER in die
+  // richtige Prüfung hinein, statt hier eine eigene Position zu bauen.
+  // Wichtig: nur als Auslöser. Die Räume kommen aus den Positionen.
   if ((/trittschall/.test(hinweise) || /klick.?vinyl/.test(hinweise)) && !hatPos(/trittschall/i)) {
-    pruefeTrittschalldaemmung(ergebnis, [], textMitZahlen)
+    pruefeTrittschalldaemmung(ergebnis, [], textMitZahlen, hinweise)
     const verlegeAnzahl = ergebnis.filter(p =>
       /(?:vinyl|laminat|parkett|bodenbelag|teppich|kork|linoleum).*(?:verlegen|verkleben)/i.test(p.beschreibung)).length
     if (!hatPos(/trittschall/i) && bodenM2 && verlegeAnzahl <= 1) {

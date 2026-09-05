@@ -1,4 +1,5 @@
 import { saetze, saetzeMitRaum } from '../satz-raum'
+import { KLICK_VINYL_WORT } from '../hoerfehler'
 import type { BerechnetePosition } from '../mengen/types'
 import { hat } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
@@ -238,6 +239,13 @@ export function pruefeTrittschalldaemmung(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
+  /**
+   * Zusätzliche AUSLÖSER-Quelle (Chip-Titel aus der Aufnahme). Zählt nur
+   * dafür, ob es überhaupt um eine Dämmung geht — NIE für die Frage, in
+   * welchen Raum sie gehört. Die Räume stehen in den Positionen, nicht in
+   * den Chip-Titeln; genau diese Vermischung war der PM-033-Fehler.
+   */
+  zusatzSignal = '',
 ): void {
   // Ausdrücklich verlangt vs. von uns mitgedacht — das entscheidet später über
   // das „Vorschlag"-Etikett (PM-023). Bei Klick-Vinyl ergänzen WIR die Dämmung,
@@ -253,8 +261,14 @@ export function pruefeTrittschalldaemmung(
     lower.includes('trittschall') ||
     lower.includes('gehschall') ||
     lower.includes('pur-schaum') || lower.includes('pur schaum')
+  // Klick-Vinyl bringt die Dämmung fachlich mit (schwimmend verlegt). Der
+  // Auslöser stand hier als `includes('klickvinyl')` — und lief damit an
+  // „Klickvenü", „Klickvanil", „Clickvenyl" vorbei. In einem Auftrag mit
+  // verhörtem Belagsnamen fiel die Dämmung KOMPLETT aus. Ein Ausdruck für
+  // alle Schreibweisen, geteilt mit dem Hörfehler-Wörterbuch.
   const hatDaemmung = ausdruecklichGenannt
-    || lower.includes('klickvinyl') || lower.includes('klick-vinyl')
+    || KLICK_VINYL_WORT.test(lower)
+    || (zusatzSignal !== '' && (/trittschall|gehschall/i.test(zusatzSignal) || KLICK_VINYL_WORT.test(zusatzSignal)))
   if (!hatDaemmung) return
   if (hat(ergaenzt, 'trittschall', 'pur-schaum')) return
 

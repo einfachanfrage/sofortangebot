@@ -28,6 +28,22 @@
 // \b greift dort NICHT — in JavaScript ist „ü" kein Wortzeichen. Dieselbe
 // Falle wie bei /\büberall\b/ in sockelleisten-ausschluss.ts.
 
+/**
+ * Klick-Vinyl, wie es GESPROCHEN ankommt — richtige und verhörte Formen.
+ *
+ * ── 05.09.2026, Sandys Fund ───────────────────────────────────────────────
+ * Zum Erkennen (Gates) braucht es das Gegenteil des Korrektur-Musters
+ * weiter unten: Dort dürfen die richtigen Schreibweisen NICHT treffen, hier
+ * müssen sie es. Der Anlass ist derselbe wie bei SOCKEL_WORT: Eine Prüfung,
+ * die auf `klickvinyl`/`klick-vinyl` stand, lief an „Klickvenü" vorbei — und
+ * damit fiel die Trittschalldämmung eines ganzen Auftrags aus.
+ *
+ * Das Wörterbuch repariert neue Aufnahmen; dieser Ausdruck deckt auch die
+ * bereits gespeicherten und jede Schreibweise, die noch nicht im Wörterbuch
+ * steht. Beide Netze, nicht eines.
+ */
+export const KLICK_VINYL_WORT = /\b[ck]lick[\s-]?v[aei]n(?:yl|il|[üu])?/i
+
 interface Regel {
   muster: RegExp
   ersetze: (treffer: string, ...gruppen: string[]) => string

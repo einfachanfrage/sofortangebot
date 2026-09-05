@@ -97,14 +97,66 @@ describe('aufnahme-hinweise: das Netz rät nicht mehr selbst', () => {
     expect(d[0].menge).toBe(7.5)
   })
 
-  it('erfindet bei mehreren Räumen ohne Beleg im Diktat gar nichts', () => {
+  // Diese Erwartung ist am 05.09. bewusst GEDREHT worden, nachdem Sandy den
+  // Auslöser richtig gelesen hat: Der Chip-Titel IST der Beleg — die KI hat
+  // ihn aus dem Diktat geschrieben. Ihn zu ignorieren hieß, die Dämmung eines
+  // Auftrags wegzuwerfen, nur weil der Rohtext das Wort verhört enthält.
+  // Richtig ist: Der Chip löst aus, die RÄUME kommen aus den Positionen.
+  it('nimmt den Chip-Titel als Beleg — und verteilt ihn auf alle verlegten Böden', () => {
     const p = ergaenzeAusAufnahmeHinweisen([...DREI], ['Trittschalldämmung'], 'drei räume, boden neu')
-    expect(p.some(x => /trittschall/i.test(x.beschreibung))).toBe(false)
+    const d = p.filter(x => /trittschall/i.test(x.beschreibung)).map(x => x.beschreibung)
+    expect(d).toEqual(['Trittschalldämmung — Wohnzimmer', 'Trittschalldämmung — Flur'])
+  })
+
+  it('… aber nie unter den Teppich, und nie nur in den ersten Raum', () => {
+    const p = ergaenzeAusAufnahmeHinweisen([...DREI], ['Trittschalldämmung'], 'drei räume, boden neu')
+    const d = p.filter(x => /trittschall/i.test(x.beschreibung))
+    expect(d.some(x => /Schlafzimmer/.test(x.beschreibung))).toBe(false)
+    expect(d.length).toBeGreaterThan(1)
   })
 
   it('das Netz greift weiter, wenn es nur EINEN verlegten Boden gibt', () => {
     const einer = [pos('Klick-Vinyl verlegen — Wohnzimmer', 21)]
     const p = ergaenzeAusAufnahmeHinweisen(einer, ['Trittschalldämmung'], 'wohnzimmer boden neu')
     expect(p.some(x => /trittschall/i.test(x.beschreibung))).toBe(true)
+  })
+})
+
+// ── Sandys Fund vom 05.09.: der Auslöser hängt am Belagsnamen ────────────
+// „Der Fund gehört nicht mehr zu PM-032 allein — er trifft jeden
+// Bodenauftrag mit Klick-Vinyl."
+//
+// Die Kette dahinter: Der Chip sagt „Klick-Vinyl verlegen" (die KI schreibt
+// den Namen sauber), das Diktat sagt „Klickvenü" (Whisper verhört ihn). Das
+// Gate der Dämmungs-Prüfung stand auf `includes('klick-vinyl')` und lief
+// vorbei — die Dämmung fiel für den GANZEN Auftrag aus. Das Hörfehler-
+// Wörterbuch repariert neue Aufnahmen; dieser Ausdruck deckt die schon
+// gespeicherten mit ab.
+describe('Klick-Vinyl in jeder Schreibweise löst die Dämmung aus', () => {
+  const ZWEI = [
+    pos('Klick-Vinyl verlegen — Wohnzimmer', 20),
+    pos('Klick-Vinyl verlegen — Flur', 7.2),
+  ]
+  for (const wort of ['klick-vinyl', 'klickvinyl', 'klickvenü', 'klickvanil', 'clickvenyl']) {
+    it(wort, () => {
+      const p = ergaenzeAusAufnahmeHinweisen([...ZWEI], ['Klick-Vinyl verlegen'],
+        `wohnzimmer 5 x 4, flur 1.80 x 4, überall ${wort} verlegen`)
+      const d = p.filter(x => /trittschall/i.test(x.beschreibung))
+      expect(d.map(x => x.menge)).toEqual([20, 7.2])
+    })
+  }
+
+  it('bleibt ein Vorschlag, nicht „gesagt" — niemand hat Trittschall genannt', () => {
+    const p = ergaenzeAusAufnahmeHinweisen([...ZWEI], ['Klick-Vinyl verlegen'],
+      'wohnzimmer 5 x 4, flur 1.80 x 4, überall klickvenü verlegen')
+    const d = p.find(x => /trittschall/i.test(x.beschreibung))
+    expect(d?.automatisch_ergaenzt).not.toBe(false)
+  })
+
+  it('geklebtes Vinyl ohne „Klick" löst NICHT aus', () => {
+    const p = ergaenzeAusAufnahmeHinweisen(
+      [pos('Vinyl-Boden verlegen — Wohnzimmer', 20)], ['Vinyl-Boden verlegen'],
+      'wohnzimmer 5 x 4, vinylboden vollflächig verkleben')
+    expect(p.some(x => /trittschall/i.test(x.beschreibung))).toBe(false)
   })
 })
