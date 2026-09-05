@@ -1,5 +1,6 @@
 import type { BerechnetePosition } from './types'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
+import { pruefeTrittschalldaemmung } from '../vollstaendigkeit/boden-sonder'
 
 function raumSuffix(position: BerechnetePosition | undefined): string {
   const raum = position?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
@@ -53,8 +54,29 @@ export function ergaenzeAusAufnahmeHinweisen(
     ergebnis.push({ beschreibung: `Altbelag entfernen${raumSuffix(boden)}`, menge: bodenM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${bodenM2} m² Bodenfläche`, annahmen: [] })
   }
 
-  if ((/trittschall/.test(hinweise) || /klick.?vinyl/.test(hinweise)) && bodenM2 && !hatPos(/trittschall/i)) {
-    ergebnis.push({ beschreibung: `Trittschalldämmung${raumSuffix(boden)}`, menge: bodenM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${bodenM2} m² Bodenfläche`, annahmen: [] })
+  // ── PM-033, Live-Nachtest 04.09.2026 ────────────────────────────────────
+  //
+  // Hier stand die vierte eigene Antwort auf die Frage „welcher Raum": die
+  // Dämmung wurde an `boden` gehängt — die ERSTE Verlegeposition der Liste.
+  // Bei „Trittschall nur unterm Laminat im Flur" war das das Wohnzimmer, wo
+  // Fischgrät-Parkett verklebt wird und gar keine Dämmung hingehört. Der
+  // Prüfmeister hat es genau so beschrieben: „sie löst aus und landet
+  // raumlos im ersten Raum."
+  //
+  // Diese Stelle ist ein Sicherheitsnetz für das, was der Chip gesehen und
+  // die Engine übersehen hat — sie darf nicht selbst raten. Sie fragt jetzt
+  // zuerst die Stelle, die es kann (pruefeTrittschalldaemmung liest das
+  // Diktat satzweise, kennt die Ansage und weiß, dass Teppich keine Dämmung
+  // bekommt). Nur wenn daraus nichts wird UND es genau einen verlegten Boden
+  // gibt, greift der alte Notnagel — bei mehreren Räumen ohne Beleg im
+  // Diktat lieber nichts als etwas aus dem Nachbarzimmer.
+  if ((/trittschall/.test(hinweise) || /klick.?vinyl/.test(hinweise)) && !hatPos(/trittschall/i)) {
+    pruefeTrittschalldaemmung(ergebnis, [], textMitZahlen)
+    const verlegeAnzahl = ergebnis.filter(p =>
+      /(?:vinyl|laminat|parkett|bodenbelag|teppich|kork|linoleum).*(?:verlegen|verkleben)/i.test(p.beschreibung)).length
+    if (!hatPos(/trittschall/i) && bodenM2 && verlegeAnzahl <= 1) {
+      ergebnis.push({ beschreibung: `Trittschalldämmung${raumSuffix(boden)}`, menge: bodenM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${bodenM2} m² Bodenfläche`, annahmen: [] })
+    }
   }
 
   // PM-010, Nachtest 5 (2026-08-19): Der Karten-Chip sagt "Sockelleisten

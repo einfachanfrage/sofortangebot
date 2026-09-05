@@ -1,4 +1,4 @@
-import { saetze } from '../satz-raum'
+import { saetze, saetzeMitRaum } from '../satz-raum'
 import type { BerechnetePosition } from '../mengen/types'
 import { hat } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
@@ -243,9 +243,14 @@ export function pruefeTrittschalldaemmung(
   // das „Vorschlag"-Etikett (PM-023). Bei Klick-Vinyl ergänzen WIR die Dämmung,
   // weil sie fachlich dazugehört; „mit Trittschalldämmung drunter" hat der
   // Handwerker dagegen selbst gesagt.
+  //
+  // PM-033 (Prüfmeister, 02.09., offen bis 05.09.): Gesagt wurde „Trittschall
+  // nur unterm Laminat im Flur" — die KURZFORM, ohne „-dämmung". Geprüft
+  // wurde auf das lange Wort, also fiel die Dämmung nicht in den falschen
+  // Raum, sondern komplett aus. Auf dem Bau sagt niemand jedes Mal
+  // „Trittschalldämmung"; „Trittschall drunter" ist dasselbe Gewerk.
   const ausdruecklichGenannt =
-    lower.includes('trittschalldämmung') ||
-    lower.includes('trittschalldaemmung') ||
+    lower.includes('trittschall') ||
     lower.includes('gehschall') ||
     lower.includes('pur-schaum') || lower.includes('pur schaum')
   const hatDaemmung = ausdruecklichGenannt
@@ -284,9 +289,12 @@ export function pruefeTrittschalldaemmung(
   // erfinde ich nicht selbst. Beim Prüfmeister zur Bestätigung gemeldet.
   const OHNE_TRITTSCHALL = /teppich|nadelvlies/i
 
-  const genannterRaum = raumAusDaemmungsSatz(lower, verlegePositionen)
-  const ziele = (genannterRaum
-    ? verlegePositionen.filter(p => raumAusPositionsTitel(p.beschreibung) === genannterRaum)
+  const genannteRaeume = raeumeAusDaemmungsSatz(lower, verlegePositionen)
+  const ziele = (genannteRaeume
+    ? verlegePositionen.filter(p => {
+        const r = raumAusPositionsTitel(p.beschreibung)
+        return r != null && genannteRaeume.includes(r)
+      })
     : verlegePositionen.filter(p => !OHNE_TRITTSCHALL.test(p.beschreibung))
   )
 
@@ -340,21 +348,83 @@ export function raumAusPositionsTitel(titel: string): string | null {
  * es im Angebot wirklich gibt — ein Raumname, den die Engine nicht kennt,
  * würde die Dämmung sonst ganz verschwinden lassen.
  */
-export function raumAusDaemmungsSatz(
+const DAEMMUNGS_WORT = /trittschall|gehschall|pur-?\s?schaum/i
+/** „überall", „generell", „in allen Räumen", „durchgehend" — gilt für alle. */
+const DAEMMUNG_UEBERALL = /[üu]berall|generell|in allen r[äa]umen|durchgehend|komplett|jedem raum/i
+
+/**
+ * Welche Räume meint die Dämmungs-Ansage? `null` = alle verlegten Böden.
+ *
+ * ── 05.09.2026, nach Sandys Vier-Fälle-Tabelle ───────────────────────────
+ * Diese Funktion war die ZWEITE, private Antwort auf die Frage „welchen Raum
+ * meint dieser Satz". Sie trennte nur am Punkt, nahm mit `.find()` den ERSTEN
+ * gefundenen Raum und konnte grundsätzlich nur EINEN zurückgeben. Genau die
+ * drei Eigenschaften, an denen PM-033 bis PM-036 gescheitert sind:
+ *
+ *   * nur am Punkt getrennt → „…Übergangsschiene, weil ja unterschiedliche
+ *     Beläge, Trittschall nur unterm Laminat im Flur, Sockelleisten…" ist EIN
+ *     Satz mit drei Räumen. Die Dämmung landete im Wohnzimmer (PM-033).
+ *   * `.find()` = erster Treffer → nie der gemeinte, wenn mehrere fallen.
+ *   * ein Raum als Rückgabewert → „in Küche und Esszimmer drunter" hätte
+ *     denselben Ausfall erzeugt wie PM-034, nur in diesem Modul.
+ *
+ * Sie benutzt jetzt dieselbe Zuordnung wie alle anderen (satz-raum.ts):
+ * teilsatzweise, mit allen im Teilsatz genannten Räumen. Damit gibt es die
+ * Frage „welcher Raum" nur noch an EINER Stelle im Code.
+ *
+ * Der weitergetragene Raum zählt bewusst mit: „Flur, 4 mal 3,5, Laminat,
+ * Trittschalldämmung drunter" nennt den Raum im ersten Teilsatz — das war
+ * der PM-023/PM-032-Fund und muss so bleiben. Ein ausdrückliches „überall"
+ * schlägt ihn (PM-035).
+ */
+export function raeumeAusDaemmungsSatz(
   lower: string,
   verlegePositionen: BerechnetePosition[],
-): string | null {
+): string[] | null {
   const raeume = verlegePositionen
     .map(p => raumAusPositionsTitel(p.beschreibung))
     .filter((r): r is string => !!r)
   if (raeume.length === 0) return null
 
-  // Gemeinsamer Satz-Splitter (schützt Dezimalpunkte — siehe satz-raum.ts):
-  // „Flur, 4 mal 3.5, … Trittschalldämmung drunter" ist EIN Satz.
-  const satz = saetze(lower).find(t => /trittschall|gehschall|pur-?\s?schaum/i.test(t))
-  if (!satz) return null
+  const teile = saetzeMitRaum(lower, raeume)
+  const treffer = teile.filter(t => DAEMMUNGS_WORT.test(t.satz))
+  if (treffer.length === 0) return null
+  if (treffer.some(t => DAEMMUNG_UEBERALL.test(t.satz))) return null
 
-  return raeume.find(r => satz.includes(r.toLowerCase())) ?? null
+  const gemeint = new Set<string>()
+  for (const t of treffer) {
+    if (t.raeumeImSatz.length > 0) {
+      for (const r of t.raeumeImSatz) gemeint.add(r)
+      continue
+    }
+    // Kein Raum im Teilsatz selbst: der Raum aus einem FRÜHEREN TEILSATZ
+    // DESSELBEN Satzes zählt — „Flur, 4 mal 3,5, Laminat, Trittschalldämmung
+    // drunter" meint den Flur (PM-023/PM-032, dreimal repariert).
+    //
+    // Über die Satzgrenze hinweg gilt er ausdrücklich NICHT. PM-032 ist der
+    // Beleg: „… das läuft von der Küche durch den Flur ins Wohnzimmer.
+    // Trittschalldämmung drunter." Der zuletzt genannte Raum wäre das
+    // Wohnzimmer — gemeint sind alle drei. Ein eigener Satz ohne Raum ist
+    // eine Ansage für den ganzen Auftrag, kein Nachtrag zum letzten Zimmer.
+    const index = teile.indexOf(t)
+    for (let i = index - 1; i >= 0 && teile[i].satzIndex === t.satzIndex; i--) {
+      if (teile[i].raeumeImSatz.length > 0) {
+        for (const r of teile[i].raeumeImSatz) gemeint.add(r)
+        break
+      }
+    }
+  }
+  const liste = raeume.filter(r => gemeint.has(r))
+  return liste.length > 0 ? liste : null
+}
+
+/** Einzelraum-Kurzform — für Aufrufer, die nur „welcher Raum" wissen wollen. */
+export function raumAusDaemmungsSatz(
+  lower: string,
+  verlegePositionen: BerechnetePosition[],
+): string | null {
+  const liste = raeumeAusDaemmungsSatz(lower, verlegePositionen)
+  return liste && liste.length === 1 ? liste[0] : null
 }
 
 export function pruefeStosskanten(
