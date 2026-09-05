@@ -94,7 +94,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
-| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus |
+| PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). **NEUER RÜCKFALL:** Sockelleisten fehlen komplett — „in Küche und Esszimmer neu" nennt zwei Räume in einem Satz, die Leistung fällt seit dem raumweisen Umbau ganz aus (28,20 lfdm = 155,10 €) |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus |
 
@@ -4095,6 +4095,82 @@ Fleißarbeit und kann warten, solange niemand die alten Zahlen für bare Münze
 nimmt — deshalb steht die Korrekturtabelle weiter oben in dieser Datei.
 
 *Prüfmeister · 2026-09-04*
+
+---
+
+### PM-034 — Nachtest (Sandy, 2026-09-04): vier von fünf Befunden behoben, ein Rückfall
+
+Angebot jetzt **1.084,08 € netto** statt 91.085,10 €.
+
+**Bestätigt behoben:**
+
+| Befund | Stand |
+|---|---|
+| **2 — Zahlwort** | Küche **3,60 × 3,00**, Esszimmer **4,00 × 3,50**. Der Hinweistext trifft genau den richtigen Ton: „Länge ‚360' als 3,60 m gelesen — so wird ‚3 60' auf dem Bau gesprochen." Erklärt die Annahme, ohne den Nutzer zu belehren |
+| **3 — Ausschlusssatz als Raum** | Der Flur taucht nirgends mehr auf: kein Raum, keine Rückfrage, keine Position. „Im Flur machen wir nichts am Boden" wird als Ausschluss gelesen, nicht als Raumname |
+| **4 — Maler-Spachtelpositionen** | Alle drei weg. Ein reiner Bodenauftrag enthält keine Wandarbeiten mehr |
+| **5 — Grundierung Esszimmer** | „Estrich grundieren — 14,00 m²", korrekt als Vorschlag markiert |
+| Untergrundtrennung | Altbelag und Ausgleich stehen weiterhin **nur** in der Küche, je 10,80 m² ohne Verschnitt |
+| Mengen | Belag 11,34 und 14,70 m², beide Raumsummen rechnen sauber auf |
+
+Zur Altbelag-Position im Esszimmer (14,00 m², 168 €): Die kommt aus Sandys
+Antwort „Ja, raus" auf die Rückfrage, nicht aus dem Diktat — dort war für das
+Esszimmer nur Grundierung verlangt. Kein Befund, aber beim nächsten Durchlauf
+mit „Nein, bleibt" antworten, sonst weicht der Fall vom Soll ab. Dass die
+Rückfrage **nur** fürs Esszimmer kam und nicht für die Küche, wo der
+Fliesenabbruch ausdrücklich gesagt war, ist genau richtig.
+
+**Befund 1 (Blocker) — vermutlich weg, eine Rückfrage offen.** Sandy: „gelber
+Button unten hat mich problemlos zum Angebot geführt". Der reguläre Weiter-
+Button ist in der CI gelb, insofern spricht alles dafür, dass der normale Weg
+wieder funktioniert. Ich lasse den Punkt bis zur Bestätigung offen, weil im
+gelben Warnkasten weiterhin „Trotzdem weiter zum Angebot" steht und beide
+Elemente gelb sind.
+
+---
+
+**NEUER BEFUND — die Sockelleisten fehlen komplett. Rückfall.**
+
+Im Diktat steht: „**Sockelleisten in Küche und Esszimmer neu**, je eine Tür."
+Im Angebot steht dazu **nichts**. Nicht im Entwurf, und schon nicht auf der
+Aufnahme-Karte: „5 Positionen erkannt" — Küche 3, Esszimmer 2, das ist alles.
+
+- **Am 02.09. war die Leistung da** (725,10 und 707,10 lfdm — falsche Basis
+  wegen der 360er-Maße, aber die Position existierte). Jetzt ist sie weg. Das
+  ist ein Rückfall, kein Altfund.
+- **Soll:** Küche 13,20 + Esszimmer 15,00 = **28,20 lfdm**, bei 5,50 €/lfdm
+  also **155,10 €**, die der Betrieb verlegt und nicht berechnet. In einem
+  Angebot von 1.084 € sind das 14 %.
+- **Meine Vermutung zur Ursache, prüfbar:** Der Satz nennt **zwei Räume
+  gleichzeitig** („in Küche und Esszimmer"). Seit dem Umbau ordnet die
+  satzweise Auswertung jede Leistung einem Raum zu — bei zwei Raumnamen im
+  selben Satz vermutlich keinem. Das passt dazu, dass die Position nicht etwa
+  im falschen Raum landet, sondern **ganz** verschwindet, und es passt zu den
+  Änderungen an `satz-raum.ts` vom 03.09.
+- Wenn das stimmt, ist der Fehler nicht auf Sockelleisten beschränkt: **Jede
+  Leistung, die für mehrere Räume in einem Satz genannt wird, fällt aus.** Das
+  ist die Sprechweise, die auf dem Bau die Regel ist — „in Küche und Bad
+  fliesen wir", „überall neue Leisten". Für mich ist das der schwerste offene
+  Punkt im Boden-Batch, schwerer als die Teilfläche, weil er still ist und
+  jeden Mehrraum-Auftrag treffen kann.
+- **Gegenprobe für den Fix:** PM-032 sagt „Sockelleisten überall neu" — ein
+  Satz ohne Raumnamen, und dort kamen sie korrekt in allen drei Räumen. Der
+  Unterschied liegt also nicht am Wort, sondern an der Aufzählung.
+
+**Kleinere Funde:**
+
+1. **Der gelbe Hinweis verspricht etwas, das es nicht gibt.** „Stimmt das
+   nicht, bitte hier korrigieren." — es gibt an dieser Stelle nichts zum
+   Klicken. Entweder die Korrekturmöglichkeit einbauen oder auf den Ort
+   verweisen, an dem man es tatsächlich ändern kann (Raummaße im Entwurf).
+2. **Die Raumkarte ist uneinheitlich.** Das Esszimmer zeigt
+   „3,5×4m · Raumhöhe! · Türen 1 · Fenster 0", die Küche nur „3×3,6m". In
+   einem reinen Bodenauftrag ist die Raumhöhe ohnehin ohne Bedeutung — ein
+   rotes „!" dafür ist eine Warnung ohne Folgen. Bekannter Verwandter des
+   PM-007-Fundes „Raumhöhe zeigt !".
+
+**Status PM-034:** ❌ Vier von fünf Befunden behoben, aber ein Rückfall mit
+eigener Schwere. Der Fall bleibt offen, bis die Sockelleisten wieder da sind.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
