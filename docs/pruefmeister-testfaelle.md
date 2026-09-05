@@ -379,6 +379,71 @@ die Räume kommen aus den Positionen, der Teppich bleibt außen vor.
 
 **Tests:** 1.435 (vorher 1.427), `tsc` sauber, `eslint` 0 Fehler.
 
+---
+
+## PM-032 — Auftrag ausgefuehrt (Head of Product Engineering, 05.09.2026)
+
+Die Ruecksfallregel steht, die zwei Tests stehen, der Rest ist Live-Lauf.
+
+### 1. Die Rückfallregel
+
+`belagLabel` in `src/lib/mengen/gewerke/boden.ts` bekommt einen dritten
+Eingang: **wurde „Klick" gesagt?** Gibt das Belagfeld nur „vinyl" her, wird im
+Rohtranskript nachgesehen — `\bklick` trifft „Klick-Vinyl", „Klickvinyl" und
+„Klick-System"; `KLICK_VINYL_WORT` deckt zusätzlich die verhörten Formen ab
+(„Klickvenü", „Klickvanil"). **Ansage vor Struktur**, wie beauftragt.
+
+### 2. Eine Abweichung vom Auftrag — bewusst, mit Begründung
+
+Vorgeschlagen war der Blick ins **ganze** Rohtranskript. Gebaut ist er
+**raumweise**, mit dem Gesamttext als Rückfall. Grund: „In der Küche wird
+Vinyl vollflächig verklebt, im Wohnzimmer kommt Klick-Vinyl rein" hätte sonst
+beide Räume zum Klick-System gemacht — genau die Fehlerfamilie, die diese
+Woche viermal aufgetaucht ist (PM-033 bis PM-036).
+
+Dabei ist die erste Fassung sofort zu streng geraten und hat den PM-032-Fall
+selbst gebrochen: „Flur 6 x 1,20" ist eigener Raumtext, sagt aber nichts über
+die Verlegeart — die steht im „Überall dasselbe Klick-Vinyl" davor. Deshalb
+gilt jetzt: Der eigene Raumtext sticht die Ansage nur, wenn er zur Verlegeart
+**auch etwas sagt** („vollflächig verklebt"). Sonst gewinnt die Ansage für den
+Auftrag. Beide Richtungen sind getestet.
+
+### 3. Die Tests
+
+`src/lib/mengen/__tests__/pm032-belagtreffer.test.ts`, sieben Stück:
+
+| Test | Erwartung |
+|---|---|
+| Belagfeld `'vinyl'` + „Klick-Vinyl" im Transkript | **Klick-Vinyl** — der Lauf, der danebenging |
+| Belagfeld `'vinyl'`, kein „klick" im Text | **bleibt Vinyl-Boden** — die Gegenrichtung |
+| Kurzform „Klick-System" | Klick-Vinyl |
+| verhörtes „Klickvenü" | Klick-Vinyl |
+| sauberes Belagfeld `'klick-vinyl'`, stummer Text | Klick-Vinyl (unverändert) |
+| Belagfeld `'eichenparkett'`, „Klick-Vinyl war mal geplant" | **Fertigparkett** — kein Übergriff auf andere Beläge |
+| Küche verklebt / Wohnzimmer Klick im selben Diktat | **je Raum verschieden** |
+
+### 4. Abnahmekriterien, am Code nachgerechnet
+
+Simuliert mit dem PM-032-Diktat und Belagfeld **nur „vinyl"** — also exakt
+der Konstellation, die den roten Lauf erzeugt hat:
+
+| # | Kriterium | Ergebnis |
+|---|---|---|
+| 1 | Titel „Klick-Vinyl verlegen inkl. 5 % Verschnitt" in allen drei Räumen | ✅ Flur, Wohnzimmer, Küche |
+| 2 | 16,00 €/m², Summe 1.015,28 € | ✅ 37,38 × 16,00 = 598,08 + 242,00 + 160,20 + 15,00 = **1.015,28 €** |
+| 3 | Sockelleisten 14,40 + 18,00 + 11,60 | ✅ **44,00 lfdm** |
+| 4 | Dämmung 7,20 + 20,00 + 8,40, genau eine Schiene, kein Bad | ✅ **35,60 m²**, 1 Schiene, kein Bad |
+
+Die Einheitspreise sind aus `preise-vorlagen.ts` gelesen, nicht aus der
+Zielsumme zurückgerechnet: Klick-Vinyl (LVT) schwimmend 16,00 €/m²,
+Sockelleisten montieren 5,50 €/lfdm, Trittschalldämmung (PE-Schaum/Filz)
+4,50 €/m², Übergangsprofil/Schwelle 15,00 €/Stück.
+
+**Tests:** 1.442 (vorher 1.435), `tsc` sauber, `eslint` 0 Fehler.
+
+**An den Prüfmeister:** Der eine Live-Lauf kann laufen. Die Wiederholbarkeit
+hängt ab jetzt am Test, nicht am Würfel.
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte

@@ -4,6 +4,8 @@ import { standardVerschnitt } from '../../boden-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge } from './sockelleisten'
 import { erkenneSockelleistenAusschluss, SOCKEL_WORT } from '../../sockelleisten-ausschluss'
+import { KLICK_VINYL_WORT } from '../../hoerfehler'
+import { saetzeJeRaum } from '../../satz-raum'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -20,12 +22,34 @@ export const BODEN_VERLEGEN_SIGNAL = /verleg|vinyl|laminat|parkett|dielen|kork|l
 // mit der dreifachen Belag-Erkennung. Die Label-Strings bleiben bewusst
 // unverändert, weil sie als Katalog-Schlüssel dienen (preis-matcher,
 // material-mapping erwarten exakt "Fertigparkett"/"Vinyl-Boden").
-function belagLabel(belag: string | undefined, typ: BelagTyp): string {
+/**
+ * „Klick" im Diktat — die Ansage, die im Belagfeld fehlen darf.
+ *
+ * ── PM-032, Auftrag des Prüfmeisters (04.09.2026) ────────────────────────
+ * Dreimal dasselbe Diktat („Überall dasselbe Klick-Vinyl"), zweimal
+ * „Klick-Vinyl · 16,00 €/m²", einmal „Vinyl-Boden · 22,00 €/m²". Die Mengen
+ * stimmten jedes Mal — instabil war allein, was das Modell ins strukturierte
+ * Belagfeld geschrieben hat: mal „klick-vinyl", mal nur „vinyl".
+ *
+ * Das Etikett darf nicht von der Tagesform des Modells abhängen. Gesagt hat
+ * es der Handwerker: **Ansage vor Struktur**, dieselbe Rangordnung wie beim
+ * Rohtext-Scope. Steht „Klick" im Diktat, ist es ein Klick-System — auch
+ * wenn im Feld nur „vinyl" steht.
+ *
+ * KLICK_VINYL_WORT deckt zusätzlich die verhörten Schreibweisen ab
+ * („Klickvenü", „Klickvanil") — dieselbe Lehre wie bei SOCKEL_WORT.
+ */
+const KLICK_GESAGT = /\bklick/i
+/** Ausdrücklich verklebt — das ist kein schwimmendes Klick-System. */
+const GEKLEBT = /verkleb|vollfl[äa]chig|geklebt/i
+
+function belagLabel(belag: string | undefined, typ: BelagTyp, klickGesagt = false): string {
   if (!belag) return 'Bodenbelag'
   const b = belag.toLowerCase()
   switch (typ) {
     case 'vinyl':
-      return b.includes('klick-vinyl') || (b.includes('klick') && /v[ie]nyl/.test(b)) ? 'Klick-Vinyl' : 'Vinyl-Boden'
+      return b.includes('klick-vinyl') || (b.includes('klick') && /v[ie]nyl/.test(b)) || klickGesagt
+        ? 'Klick-Vinyl' : 'Vinyl-Boden'
     case 'laminat':  return 'Laminat'
     case 'parkett':  return 'Fertigparkett'
     case 'kork':     return 'Kork'
@@ -58,6 +82,12 @@ const MUSTER_MIT_MEHR_VERSCHNITT = /diagonal|fischgr(?:ä|ae|a)t/i
 export function bodenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
   const warnungen: string[] = []
+
+  const gesamtText = daten.transkript ?? ''
+  const raumTexte = saetzeJeRaum(
+    gesamtText,
+    (daten.raeume ?? []).map((r: { name?: string }) => r?.name ?? '').filter(Boolean),
+  )
 
   // PM-033: einmal für den ganzen Auftrag lesen, nicht je Raum neu.
   const sockelAusschluss = erkenneSockelleistenAusschluss(
@@ -129,7 +159,23 @@ export function bodenEngine(daten: any): MengenErgebnis {
     const belagTyp: BelagTyp = baueVerstaendnis(belag ?? '', { belagText: belag }).belag
     const hatMusterverlegung = typeof verlegerichtung === 'string' && MUSTER_MIT_MEHR_VERSCHNITT.test(verlegerichtung)
     const verschnitt = hatMusterverlegung ? 0.15 : standardVerschnitt(belagTyp ?? belag)
-    const label = belagLabel(belag, belagTyp)
+    // Der Rückfall wird bewusst RAUMWEISE gefragt, nicht über das ganze
+    // Transkript: „In der Küche Vinyl vollflächig verklebt, im Wohnzimmer
+    // Klick-Vinyl" darf nicht beide Räume zum Klick-System machen. Nennt der
+    // Raum nichts Eigenes, gilt die Ansage für den Auftrag — dieselbe Regel
+    // wie überall sonst. (Der Prüfmeister hat die Rückfallregel global
+    // vorgeschlagen; raumweise ist dieselbe Regel, nur an der Stelle, an der
+    // wir diese Woche viermal danebengelegen haben.)
+    // Der eigene Raumtext gewinnt nur, wenn er zur Verlegeart AUCH etwas
+    // sagt. „Flur 6 x 1,20" ist eigener Text, aber keine Aussage über das
+    // Klick-System — die steht im „Überall dasselbe Klick-Vinyl" davor.
+    // Erst ein ausdrücklicher Gegen-Beleg im Raum („in der Küche vollflächig
+    // verklebt") sticht die Ansage für den Auftrag.
+    const eigenerText = (raumTexte.get(name) ?? []).join('. ')
+    const sagtKlick = (t: string) => KLICK_GESAGT.test(t) || KLICK_VINYL_WORT.test(t)
+    const klickGesagt = sagtKlick(eigenerText)
+      || (!GEKLEBT.test(eigenerText) && sagtKlick(gesamtText))
+    const label = belagLabel(belag, belagTyp, klickGesagt)
     const pct = Math.round(verschnitt * 100)
     const verschnittSuffix = verschnitt > 0 ? ` inkl. ${pct}% Verschnitt` : ''
 
