@@ -92,7 +92,7 @@ nebeneinanderlegen, dann sieht man sofort, ob es Whisper oder wir waren.
 > Schlafzimmer, vier mal dreieinhalb, Höhe zwo sechzig. Drei Wände weiß streichen, zweimal. Die Wand hinterm Bett kriegt Tapete, sozusagen Akzentwand, der Rest bleibt weiß. Ein Fenster, eine Tür, normal. Boden kriegt Klick-Vinyl, diagonal verlegt. Sockelleisten werden neu montiert, nicht gestrichen, nur montiert.
 
 - Wandbrutto **39,00 m²** (keine Öffnungsabzüge), Akzentwand **9,10 m²** (kurze Seite), Restwände **29,90 m²**
-- Decke 14,00 · Vinyl diagonal **16,10 m²** · Trittschall **14,00 m²**
+- Vinyl diagonal **16,10 m²** · Trittschall **14,00 m²** · **keine Deckenposition** (im Diktat nicht genannt — mein früherer Soll-Eintrag war falsch)
 - Sockelleisten montieren **15,00 lfdm**
 - Kein „Sockelleisten streichen", kein „Boden schützen"
 

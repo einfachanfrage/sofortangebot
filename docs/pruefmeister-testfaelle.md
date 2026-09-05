@@ -458,15 +458,15 @@ war der richtige nächste Schritt, nicht meiner.
 | ID | Thema | Status |
 |---|---|---|
 | PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: Ausschluss-Fix hält (keine Decke, Fenster-Zähler konsistent). Wandfläche jetzt 46,5 m² statt 42,21 m² — korrekt nach der neu eingeführten VOB-Übermessungsregel, kein Bug — Details im Archiv |
-| PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest ist vom 16.08. und lief damit VOR der VOB-Übermessung — Wandbrutto 39,00 m², Restwände 29,90 m² statt der damals abgenommenen 26,81 m². Muss neu eingesprochen werden. Die beiden ursprünglichen Bugs (Akzentwand-Seite, Sockelleisten-Türabzug) bleiben bestätigt behoben |
+| PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest ist vom 16.08. und lief damit VOR der VOB-Übermessung — Wandbrutto 39,00 m², Restwände 29,90 m² statt der damals abgenommenen 26,81 m². Muss neu eingesprochen werden. Die beiden ursprünglichen Bugs (Akzentwand-Seite, Sockelleisten-Türabzug) bleiben bestätigt behoben ✅ **Nachtest 04.09. grün:** Akzentwand 9,10 · Restwände 29,90 · Vinyl diagonal 16,10 · Sockelleisten **15,00 lfdm** · Trittschall 14,00. Korrektur an meinem eigenen Soll: **keine Deckenposition** — im Diktat steht keine Decke |
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
-| PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 16.08., vor der VOB-Übermessung. Soll ist jetzt **28,80 m²** (weder Fenster 0,30 m² noch Tür 1,89 m² werden abgezogen), gemessen wurden damals 26,61 m². Neu einzusprechen, diesmal mit dem Übermessungshinweis in den Annahmen |
+| PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 16.08., vor der VOB-Übermessung. Soll ist jetzt **28,80 m²** (weder Fenster 0,30 m² noch Tür 1,89 m² werden abgezogen), gemessen wurden damals 26,61 m². Neu einzusprechen, diesmal mit dem Übermessungshinweis in den Annahmen ✅ **Nachtest 04.09.: Mengen grün** — Wand **28,80 m²**, Sockelleisten **12,00 lfdm**, Altbau-Zuschlag rechnerisch korrekt (20 % auf 450,60 € = 90,20 €). Fund: Wandpreis 11,50 €/m² für „Wandflächen streichen 2x" gegen 9,50 € für „Restwände streichen" — zwei Katalogeinträge für dieselbe Leistung, erklärt PM-028 |
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Live-Nachtest (2026-08-25) bestätigt: Rückfragen-Blocker weg, Kniestock/Dachschrägen exakt Soll, jetzt auch beide bepreist (Preismatcher-Fix). Offen bleiben zwei kleine, nicht-blockierende Funde (Türen-Anzeige vs. Sockelleisten-Rechnung; „Raumhöhe" zeigt „!") — Details im Archiv |
 | PM-008 | Fassade | ✅ Nachtest 7 (2026-08-20): „So gerechnet"-Rechenbug live bestätigt behoben (66,96 m², kein Widerspruch mehr zur abgerechneten Position), Wand-Chip/PD-003 bleibt fehlerfrei. Fachlich/rechnerisch komplett grün, offen bleibt nur die Erschwerniszuschlag-Einheitenfrage (Pauschale vs. %, wartet auf Sandys Entscheidung, siehe PM-015) — Details im Archiv |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf); fehlender Standardpreis dafür jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus |
-| PM-010 | Sockelleisten-Doppel-Falle | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 20.08., vor der VOB-Übermessung — Wandfläche jetzt **33,80 m²** statt 30,71 m². Die vier Sockelleisten-Funde bleiben behoben, nur die Wandzahl ist überholt. Bisheriger Stand: Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv |
+| PM-010 | Sockelleisten-Doppel-Falle | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 20.08., vor der VOB-Übermessung — Wandfläche jetzt **33,80 m²** statt 30,71 m². Die vier Sockelleisten-Funde bleiben behoben, nur die Wandzahl ist überholt. Bisheriger Stand: Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv ✅ **Nachtest 04.09. grün:** Wand **33,80 m²**, alle drei Sockelleisten-Zeilen **13,00 lfdm** (montieren, streichen, entfernen), kein „abkleben", keine Phantompositionen. „drei fünfzig" korrekt als 3,50. Kleiner Fund: Karte meldet 5 Positionen, listet 4, Entwurf hat 6 |
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | ✅ Details im Archiv. Offene fachliche Frage zur möglichen Doppel-Erschwernis (Untergrund + Altbau neben Q2-Spachtelung) siehe dort |
 | PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ✅ Nachtest (2026-08-20): „Sockelleisten streichen" jetzt live bestätigt behoben (14,1 lfdm, exakt Soll), nach fünf gescheiterten Versuchen. Kein Boden-Phantom, Ausschluss weiterhin sauber respektiert — Details im Archiv |
 | PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ✅ Details im Archiv |
@@ -5117,6 +5117,72 @@ Der Fix ist eine Rückfallregel und zwei Tests — überschaubar. Der Live-Nacht
 kostet mich fünf Minuten. Realistisch ist Stufe 1 damit **einen Arbeitsgang des
 Engineers** von grün entfernt, nicht mehr. Solange kein Fix da ist, hat es
 keinen Zweck, dass Sandy den Fall weiter einspricht.
+
+---
+
+### Stufe 2, erster Durchgang: PM-002, PM-006, PM-010 (Sandy, 2026-09-04, 19:53 ff.)
+
+**Alle drei Fälle sind in den Mengen grün. Alle nachgezogenen
+Sockelleisten-Sollwerte stimmen** — PM-002 15,00 · PM-006 12,00 · PM-010 3 × 13,00.
+Damit ist VOB-012 an vier verschiedenen Positionsarten belegt (montieren,
+abkleben, streichen, entfernen).
+
+**PM-002 — grün, und ich muss meinen eigenen Soll-Eintrag korrigieren**
+
+Akzentwand 9,10 · Restwände 29,90 · Klick-Vinyl diagonal **15 %** = 16,10 ·
+Sockelleisten 15,00 · Trittschall 14,00. Kein „Boden schützen" (der Boden wird
+erneuert), kein „Sockelleisten abkleben" (die Leisten kommen erst danach).
+Belagtreffer korrekt „Klick-Vinyl · 16,00 €".
+
+**Die Deckenposition fehlt — und das ist richtig so.** Ich hatte in der
+Einsprechliste „Decke 14,00" als Soll geführt. Das war falsch: Im Diktat steht
+kein Wort von der Decke, nur „drei Wände weiß streichen". Die 14 m² Decke aus
+dem Lauf vom 16.08. waren eine ungefragte Ergänzung — also genau die
+Phantom-Position, die wir bei PM-003 und PM-017 abgestellt haben. Ich hatte die
+alte Ist-Beobachtung ungeprüft ins Soll übernommen. **Soll korrigiert: keine
+Deckenposition in PM-002.**
+
+**PM-006 — Mengen grün, ein Preis-Fund**
+
+28,80 m² Wand (keine Öffnungsabzüge) · Decke 9,00 · Boden schützen 9,00 ·
+Sockelleisten abkleben 12,00. Der Altbau-Zuschlag rechnet nachprüfbar korrekt:
+Grundlage 450,60 € → 4,51 € je Prozentpunkt → 20 % = 90,20 €. Erfreulich auch,
+dass jetzt **nach der Türanzahl gefragt** wird, statt still eine anzunehmen.
+
+**Der Fund: „Wandflächen streichen 2x" kostet 11,50 €/m², „Restwände streichen"
+in PM-002 kostet 9,50 €/m².** Zwei Preise für denselben Arbeitsgang, im selben
+Konto, abhängig davon, wie die Position heißt. Das ist derselbe Fehlertyp wie
+Klick-Vinyl/Vinyl-Boden bei PM-032 — nur diesmal nicht zufällig, sondern
+systematisch am Titel hängend.
+
+**Damit ist auch der offene PM-028-Fund erklärt** („Wandflächen-Grundpreis
+11,50 statt 9,50"). Es war nie ein Preisfehler, sondern ein zweiter
+Katalogeintrag für dieselbe Leistung. Zu klären ist eine Sachfrage, keine
+Rechenfrage: **Sind „Wandflächen streichen 2x" und „Restwände streichen"
+dieselbe Leistung?** Fachlich ja — Restwände sind Wandflächen, nur um die
+Akzentwand vermindert. Dann gehört ein Preis dahin, nicht zwei. → Head of
+Product Engineering, zusammen mit Sandy (Preishoheit).
+
+**PM-010 — Mengen grün, alle drei Sockelleisten-Zeilen korrekt**
+
+Wand 33,80 · Decke 10,50 · Boden schützen 10,50 · Sockelleisten **montieren,
+streichen und entfernen je 13,00 lfdm**. Kein „abkleben", keine
+Bodenbelag-Phantompositionen. Dass für „Sockelleisten entfernen (alt)" kein
+Preis hinterlegt ist, hat Sandy ausdrücklich als unkritisch eingeordnet —
+sichtbar fehlender Preis ist besser als ein erfundener.
+
+**Nebenbei bestanden:** „drei fünfzig mal drei" kommt als **3,50 × 3,00** an.
+Der 350-Bug tritt hier nicht auf; die Zahlwort-Korrektur greift auch in einem
+Fall, der nicht dafür gebaut wurde.
+
+**Kleiner Fund:** Die Aufnahme-Karte meldet „**5 Positionen erkannt**", listet
+darunter aber **4**, und der Entwurf enthält **6**. Drei verschiedene Zahlen für
+dieselbe Sache in einem Durchlauf. Familie PD-004; für sich harmlos, aber es ist
+die Zahl, auf die der Nutzer vor dem Erstellen schaut.
+
+**Stand Stufe 2:** PM-002 ✅ · PM-006 ✅ (Mengen) · PM-010 ✅ (Mengen) · offen
+PM-018. Zwei fallübergreifende Funde: der doppelte Wandpreis und der
+Karten-Zähler.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
