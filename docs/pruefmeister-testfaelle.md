@@ -129,7 +129,7 @@ vorkommt.
 Original-Transkripten.
 
 **Status PM-034:** ✅ Rückfall behoben — Sockelleisten 28,20 lfdm in beiden
-Räumen. Live-Nachtest steht aus.
+Räumen. **Live-Nachtest am 05.09. bestanden** (siehe unten).
 **Status PM-036:** ✅ Rückfall behoben — keine Sockelleisten im abbestellten
 Wohnzimmer. Live-Nachtest steht aus.
 
@@ -190,6 +190,62 @@ an nichts.
 **Tests:** 1.399 (vorher 1.369), `tsc` sauber, `eslint` 0 Fehler. Jeder
 Testfall in `src/lib/__tests__/hoerfehler.test.ts` ist ein wörtlicher
 Produktionssatz — kein ausgedachter Text.
+
+#### PM-034 — Live-Nachtest 05.09.2026 (Sandy): Rückfall zu, ein Rest offen
+
+**Der schwerste offene Punkt des Boden-Batches ist zu.**
+
+| Position | Soll | Live |
+|---|---|---|
+| Küche, Vinyl inkl. 5 % Verschnitt | 11,34 m² | 11,34 m² ✅ |
+| Küche, Altbelag entfernen | 10,80 m² | 10,80 m² ✅ |
+| Küche, **Sockelleisten** | 13,20 lfdm | **13,20 lfdm ✅** |
+| Küche, Untergrund/Ausgleich | 10,80 m² | 10,80 m² ✅ |
+| Esszimmer, Vinyl inkl. 5 % Verschnitt | 14,70 m² | 14,70 m² ✅ |
+| Esszimmer, **Sockelleisten** | 15,00 lfdm | **15,00 lfdm ✅** |
+| Esszimmer, Estrich grundieren | 14,00 m² | 14,00 m² ✅ |
+| Flur | keine Position | keine Position ✅ |
+
+Sockelleisten zusammen **28,20 lfdm**, Angebot 1.071,18 €. Alle acht
+Prüfpunkte der Einsprechliste erfüllt.
+
+**Und ein Befund, bei dem ich gestern die falsche Stelle repariert habe.**
+
+Das „Raumhöhe !" steht immer noch da — aber nur beim **Esszimmer**, nicht bei
+der Küche. Genau diese Asymmetrie war der Hinweis. Der Unterschied zwischen
+den beiden Räumen ist eine einzige Position:
+
+> Esszimmer: **„Estrich grundieren"**
+
+Die Anzeige entscheidet über eine Wortliste, ob ein Raum Wandarbeiten hat —
+und in dieser Liste stand `grundier`. **Estrich grundiert man am Boden.** Ein
+Wort, das in beiden Gewerken dasselbe heißt, hat den Raum zum Malerraum
+gemacht und ein rotes Ausrufezeichen an eine Angabe gehängt, die in diesem
+Angebot nirgends gebraucht wird.
+
+Mein Fix vom 04.09. saß in `mengen/bewertung.ts` — das ist die Annahmen-Liste,
+eine andere Oberfläche. Er war für sich richtig, hat aber den gemeldeten
+Befund nicht berührt. Ohne Sandys ausgedruckte Raumkarte wäre das als
+„behoben" durchgegangen. Merke für den nächsten Anzeige-Befund: **erst die
+Stelle finden, die der Prüfmeister wirklich sieht.**
+
+Jetzt: `src/lib/raum-anzeige.ts`. Die Regel steht in einer eigenen Datei mit
+Tests statt als Regex in einer 2.000-Zeilen-Komponente, und sie unterscheidet
+drei Sorten Wort:
+
+- **Wandgegenstände** (Wand, Decke, Tapete, Dachschräge, Kniestock, Leibung,
+  Fassade) → immer wandrelevant, auch neben Bodenpositionen.
+- **Mehrdeutige Tätigkeiten** (spachteln, grundieren, streichen, schleifen,
+  lackieren) → sagen für sich nichts; oben wie unten wird gespachtelt.
+- **Bodengegenstände** (Estrich, Boden, Untergrund, Parkett, Sockelleisten,
+  Trittschall, …) → stehen sie im selben Titel wie eine mehrdeutige
+  Tätigkeit, gewinnt der Boden.
+
+„Wandfliesen" bleibt damit wandrelevant, „Bodenfliesen" nicht.
+
+**Tests:** 1.415 (vorher 1.399), `tsc` sauber, `eslint` 0 Fehler.
+
+**Status PM-034:** ✅ alle Befunde behoben, Live-Nachtest bestanden.
 
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff

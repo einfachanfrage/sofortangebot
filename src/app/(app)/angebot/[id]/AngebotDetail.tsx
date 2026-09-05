@@ -35,6 +35,7 @@ import {
 } from '@/lib/raum-geometrie'
 import { materialFuerPosition } from '@/lib/material-mapping'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
+import { brauchtWandmasse } from '@/lib/raum-anzeige'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -2114,9 +2115,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                       {raeume.map(raum => {
                         // Wand-/Deckenarbeiten im Raum? Bei reinem Bodenauftrag nur Boden-Feld zeigen.
-                        const wandRelevant = raum.items.some(gi =>
-                          /wand|wände|decke|tapete|spachtel|glätt|stuck|grundier|voranstrich|streich|akzent|lackier/i.test(gi.titleDisplay ?? '')
-                        )
+                        //
+                        // PM-034, Live-Lauf 05.09.2026: Die Liste stand hier als
+                        // Regex und zählte `grundier` als Wandarbeit. „Estrich
+                        // grundieren" hat damit das Esszimmer eines reinen
+                        // Bodenauftrags zum Malerraum gemacht — und ein rotes
+                        // „Raumhöhe !" für eine Angabe erzeugt, die in diesem
+                        // Angebot nirgends gebraucht wird. Die Entscheidung liegt
+                        // jetzt in src/lib/raum-anzeige.ts, mit Tests.
+                        const wandRelevant = brauchtWandmasse(raum.items.map(gi => gi.titleDisplay))
                         return (
                         <div key={raum.raumName}>
                           <div className={`border-t border-anthracite/5 px-4 py-2.5 flex items-center justify-between ${hatMehrereRaeume ? 'bg-bg' : 'bg-yellow/8'}`}>
