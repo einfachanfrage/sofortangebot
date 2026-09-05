@@ -567,11 +567,11 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
-| PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 16.08., vor der VOB-Übermessung. Soll ist jetzt **28,80 m²** (weder Fenster 0,30 m² noch Tür 1,89 m² werden abgezogen), gemessen wurden damals 26,61 m². Neu einzusprechen, diesmal mit dem Übermessungshinweis in den Annahmen ✅ **Nachtest 04.09.: Mengen grün** — Wand **28,80 m²**, Sockelleisten **12,00 lfdm**, Altbau-Zuschlag rechnerisch korrekt (20 % auf 450,60 € = 90,20 €). Fund: Wandpreis 11,50 €/m² für „Wandflächen streichen 2x" gegen 9,50 € für „Restwände streichen" — zwei Katalogeinträge für dieselbe Leistung, erklärt PM-028 |
+| PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 16.08., vor der VOB-Übermessung. Soll ist jetzt **28,80 m²** (weder Fenster 0,30 m² noch Tür 1,89 m² werden abgezogen), gemessen wurden damals 26,61 m². Neu einzusprechen, diesmal mit dem Übermessungshinweis in den Annahmen ✅ **Nachtest 04.09.: Mengen grün** — Wand **28,80 m²**, Sockelleisten **12,00 lfdm**, Altbau-Zuschlag rechnerisch korrekt (20 % auf 450,60 € = 90,20 €). Fund: Wandpreis 11,50 €/m² für „Wandflächen streichen 2x" gegen 9,50 € für „Restwände streichen" — zwei Katalogeinträge für dieselbe Leistung, erklärt PM-028 ✅ **Zweiter Durchgang 04.09. grün** — Wandpreis jetzt konsistent 11,50 €/m² in beiden Fällen, doppelter Katalogeintrag beseitigt |
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Live-Nachtest (2026-08-25) bestätigt: Rückfragen-Blocker weg, Kniestock/Dachschrägen exakt Soll, jetzt auch beide bepreist (Preismatcher-Fix). Offen bleiben zwei kleine, nicht-blockierende Funde (Türen-Anzeige vs. Sockelleisten-Rechnung; „Raumhöhe" zeigt „!") — Details im Archiv |
 | PM-008 | Fassade | ✅ Nachtest 7 (2026-08-20): „So gerechnet"-Rechenbug live bestätigt behoben (66,96 m², kein Widerspruch mehr zur abgerechneten Position), Wand-Chip/PD-003 bleibt fehlerfrei. Fachlich/rechnerisch komplett grün, offen bleibt nur die Erschwerniszuschlag-Einheitenfrage (Pauschale vs. %, wartet auf Sandys Entscheidung, siehe PM-015) — Details im Archiv |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf); fehlender Standardpreis dafür jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus |
-| PM-010 | Sockelleisten-Doppel-Falle | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 20.08., vor der VOB-Übermessung — Wandfläche jetzt **33,80 m²** statt 30,71 m². Die vier Sockelleisten-Funde bleiben behoben, nur die Wandzahl ist überholt. Bisheriger Stand: Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv ✅ **Nachtest 04.09. grün:** Wand **33,80 m²**, alle drei Sockelleisten-Zeilen **13,00 lfdm** (montieren, streichen, entfernen), kein „abkleben", keine Phantompositionen. „drei fünfzig" korrekt als 3,50. Kleiner Fund: Karte meldet 5 Positionen, listet 4, Entwurf hat 6 |
+| PM-010 | Sockelleisten-Doppel-Falle | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 20.08., vor der VOB-Übermessung — Wandfläche jetzt **33,80 m²** statt 30,71 m². Die vier Sockelleisten-Funde bleiben behoben, nur die Wandzahl ist überholt. Bisheriger Stand: Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv ✅ **Nachtest 04.09. grün:** Wand **33,80 m²**, alle drei Sockelleisten-Zeilen **13,00 lfdm** (montieren, streichen, entfernen), kein „abkleben", keine Phantompositionen. „drei fünfzig" korrekt als 3,50. Kleiner Fund: Karte meldet 5 Positionen, listet 4, Entwurf hat 6 ✅ **Zweiter Durchgang 04.09. grün** — Karten-Zähler stimmt jetzt (5 gemeldet, 5 gelistet) |
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | ✅ Details im Archiv. Offene fachliche Frage zur möglichen Doppel-Erschwernis (Untergrund + Altbau neben Q2-Spachtelung) siehe dort |
 | PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ✅ Nachtest (2026-08-20): „Sockelleisten streichen" jetzt live bestätigt behoben (14,1 lfdm, exakt Soll), nach fünf gescheiterten Versuchen. Kein Boden-Phantom, Ausschluss weiterhin sauber respektiert — Details im Archiv |
 | PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ✅ Details im Archiv |
@@ -579,7 +579,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-015 | Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | 🟡 Beide Ursachen gefunden und gefixt, geprüft live im Code korrekt. **Klargestellt (2026-08-19):** der PM-011-„alle Preise fehlen"-Fund war KEIN neuer, dritter Bug — derselbe Nachtest lief auf demselben, schon damals betroffenen Konto „Lisa Schein Malerbetrieb", das vor dem Fix (17.08.) angelegt wurde und dadurch nicht rückwirkend versorgt ist, siehe „Systemischer Fund" Punkt 5. Für alle NEU angelegten Konten ab 18.08. gilt der Fix nachweislich. **Korrektur (2026-08-19, siehe PM-016):** der 18.08.-Fix selbst war kaputt — der Onboarding-Insert scheiterte durch denselben Bug wie PM-016 komplett und unbemerkt (Fehler wurde nicht geprüft). „Lisa Schein" ist inzwischen live nachversorgt |
 | PM-016 | „Standardpreise importieren" auf `/preise` schlägt fehl: „Die Standardpreise konnten nicht vollständig ergänzt werden." (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | ✅ Root-Cause gefunden und gefixt (2026-08-19), Konto live nachversorgt (341 Positionen), gleicher Bug auch im Onboarding-Seeding gefixt |
 | PM-017 | Tapete statt Streichen + Grundierung trotz Neuputz ausdrücklich abgelehnt (Kinderzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: „Tapete tapezieren" jetzt mit exakt 31,91 m² und korrektem Preis, keine Phantom-Positionen mehr, keine Grundierung — Details im Archiv |
-| PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest vom 21.08. lief vor dem Ausrollen der VOB-Übermessung — Wandfläche, Spachtel Q3 Wand, Grundierung Wand und Wandanstrich stehen jetzt auf **39,00 m²** statt 35,91 m². Q3-Benennung und Deckengrundierung bleiben bestätigt. Bisheriger Stand: Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv 🟡 **Nachtest 04.09.: alle acht Mengen exakt Soll** (Wand 39,00 · Decke 14,00 · Sockelleisten 15,00, Deckengrundierung vorhanden). **RÜCKFALL:** Spachtelpositionen heißen wieder „Q2" statt „Q3" — Katalog führt Q2 mit 9,00 und Q3 mit 14,00 €/m², also 265,00 € zulasten des Betriebs. Dazu: zwei gleichnamige Spachtelzeilen, Decken-Untertitel sagt „Wände", Vorschlag-Etikett trotz ausdrücklicher Ansage |
+| PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest vom 21.08. lief vor dem Ausrollen der VOB-Übermessung — Wandfläche, Spachtel Q3 Wand, Grundierung Wand und Wandanstrich stehen jetzt auf **39,00 m²** statt 35,91 m². Q3-Benennung und Deckengrundierung bleiben bestätigt. Bisheriger Stand: Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv 🟡 **Nachtest 04.09.: alle acht Mengen exakt Soll** (Wand 39,00 · Decke 14,00 · Sockelleisten 15,00, Deckengrundierung vorhanden). **RÜCKFALL:** Spachtelpositionen heißen wieder „Q2" statt „Q3" — Katalog führt Q2 mit 9,00 und Q3 mit 14,00 €/m², also 265,00 € zulasten des Betriebs. Dazu: zwei gleichnamige Spachtelzeilen, Decken-Untertitel sagt „Wände", Vorschlag-Etikett trotz ausdrücklicher Ansage 🟡 **Zweiter Durchgang 04.09.: alle vier Bezeichnungsfunde behoben** (Q3, eigene Deckenzeile, richtiger Untertitel, kein Vorschlag-Etikett). Offen nur noch die **Preiszuordnung**: Q3-Titel zieht den Q2-Preis (9,00 statt 14,00 €/m² = 195 €), Decken-Q3 findet gar keinen Treffer |
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ✅ Details im Archiv. Raummaß-Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 live bestätigt (2026-08-25) — liefert jetzt die korrekten 2×1,5 m |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
@@ -5387,6 +5387,103 @@ Die Mengenrechnung ist damit durch. **Was jetzt noch Geld bewegt, ist
 ausschließlich die Zuordnung zwischen Position und Preisliste.** Das ist der
 nächste Prüfschwerpunkt, und es ist ein anderer als der, mit dem dieser Batch
 angefangen hat.
+
+---
+
+### Zweiter Durchgang Stufe 2 (Sandy, 2026-09-04, ab 20:45): drei grün, ein halber Fix
+
+**PM-002 ✅ grün.** Akzentwand 9,10 · Wandflächen 29,90 · Klick-Vinyl 15 % =
+16,10 (Belagtreffer zum zweiten Mal in Folge korrekt) · Sockelleisten 15,00 ·
+Trittschall 14,00 · keine Deckenposition. **Der doppelte Wandpreis ist weg:**
+Die Position heißt jetzt auch hier „Wandflächen streichen 2x" und kostet 11,50
+€/m² — ein Eintrag, ein Preis, in beiden Fällen derselbe.
+
+*Kleiner Punkt zur Benennung:* Mit dem einheitlichen Titel steht auf dem
+Angebot „Wandflächen streichen 2x · 29,90 m²", obwohl die Wandfläche des Raums
+39,00 m² beträgt — die Akzentwand ist abgezogen. Der Endkunde, der nachmisst,
+findet die Differenz nicht erklärt. Ein Untertitel „ohne Akzentwand" oder der
+alte Titel „Restwände" würde das lösen. Kein Rechenfehler, eine Erklärlücke.
+
+**PM-006 ✅ grün.** Zahl für Zahl wie am Vormittag: 28,80 · 9,00 · 9,00 ·
+12,00 lfdm · Altbau 20 % auf 450,60 € = 90,20 €. Der Wandpreis ist jetzt
+konsistent mit PM-002.
+
+**PM-010 ✅ grün.** Alle Mengen bestätigt, alle drei Sockelleisten-Zeilen 13,00.
+**Der Karten-Zähler stimmt:** 5 gemeldet, 5 gelistet — vorher 5 gemeldet, 4
+gelistet. Rest: Der Entwurf enthält 6 Positionen, weil „Sockelleisten entfernen
+(alt)" erst dort dazukommt. Dass dafür kein Preis hinterlegt ist, hat Sandy
+bewusst so gelassen.
+
+---
+
+**PM-018 — die Bezeichnung ist repariert, die Preiszuordnung nicht**
+
+Alle vier Darstellungsfunde von heute Nachmittag sind behoben, und zwar sauber:
+
+| Fund | Stand |
+|---|---|
+| „Q2" statt „Q3" | ✅ beide Positionen heißen jetzt **Q3** |
+| zwei gleichnamige Spachtelzeilen | ✅ „Spachtelarbeiten Q3" und „Spachtelarbeiten Q3 **Decke**" |
+| Untertitel sagt „Wände" bei der Decke | ✅ „**Decke** für einen ebenen Untergrund vollflächig spachteln" |
+| „Vorschlag"-Etikett trotz Ansage | ✅ weg |
+
+**Aber das Geld stimmt weiterhin nicht, und jetzt sieht man auch, warum:**
+
+| Position | Menge | Preis | |
+|---|---|---|---|
+| Spachtelarbeiten Q3 (Wand) | 39,00 m² | **9,00 €/m²** | das ist der **Q2**-Preis |
+| Spachtelarbeiten Q3 Decke | 14,00 m² | **0,00 €** | „Preis fehlt in deiner Preisdatenbank" |
+
+Der Standardkatalog führt Spachtelung Q2 mit 9,00 € und **Q3 mit 14,00 €**.
+
+**Der eigentliche Fund steckt im Widerspruch zwischen den beiden Zeilen:**
+Wenn „Spachtelung Q3" in der Preisliste dieses Betriebs fehlt — und die
+Decken-Position sagt genau das —, dann **müsste die Wand-Position ebenfalls
+„Preis fehlt" zeigen.** Dass sie stattdessen 9,00 € bekommt, heißt: Sie trifft
+den **Q2**-Eintrag. Ein Q3-Titel zieht einen Q2-Preis.
+
+Das ist die gefährlichere der beiden Varianten. Ein fehlender Preis ist
+sichtbar, der Handwerker stolpert darüber und legt ihn an. Ein falscher Preis
+sieht richtig aus und wird verschickt: 39,00 m² × 5,00 € = **195,00 €**, die
+der Betrieb für Arbeit verliert, die er nachweislich macht.
+
+**Regel, die ich daraus ableite — und die über diesen Fall hinausgeht:**
+*Trägt eine Position eine Qualitäts- oder Ausführungsstufe im Titel (Q2/Q3/Q4,
+1x/2x/3x, schwimmend/verklebt), darf der Preis-Matcher niemals auf einen
+Eintrag mit einer **anderen** Stufe ausweichen. Lieber sichtbar kein Preis als
+still der falsche.* Das ist derselbe Gedanke wie beim Belagtreffer in PM-032
+(Klick-Vinyl gegen Vinyl-Boden) — die Stufe ist Teil der Leistung, nicht
+Beiwerk.
+
+Dass die Decken-Position gar keinen Treffer findet, während die Wand-Position
+einen findet, deutet zusätzlich darauf hin, dass das Suffix „ Decke" den
+Abgleich stört. Das gehört mitgeprüft.
+
+**Status PM-018:** 🟡 Mengen und Bezeichnungen vollständig korrekt. Offen ist
+nur noch die Preiszuordnung — ein Q3-Titel mit Q2-Preis, und ein Q3-Titel ohne
+Treffer.
+
+---
+
+## Stufe 2 abgeschlossen — und der Prüfschwerpunkt hat sich verschoben
+
+**PM-002 ✅ · PM-006 ✅ · PM-010 ✅ · PM-018 🟡** (nur noch Preiszuordnung).
+
+Von den drei Katalogfunden vom Nachmittag ist einer erledigt (doppelter
+Wandpreis), einer geschärft (Q3 trifft Q2), einer unverändert (Belagstreuung
+PM-032).
+
+**Damit ist die Mengenrechnung über zwei Stufen und neun Fälle sauber.** Jede
+Fläche, jeder laufende Meter, jede Übermessung, jeder Zuschlagssatz stimmt.
+Was noch Geld bewegt, ist ausschließlich die **Zuordnung zwischen
+Positionstitel und Preisliste** — und die trifft immer denselben Nerv: Eine
+Position, die eine bestimmte Ausführung benennt, bekommt den Preis einer
+anderen.
+
+Das ist der nächste Prüfschwerpunkt, und er gehört vor Gate 1 abgeräumt. Ein
+falscher Preis ist schlimmer als eine falsche Menge: Die Menge kann der
+Handwerker nachrechnen, weil er den Raum kennt. Den Preis prüft er nicht, den
+hat er ja selbst hinterlegt.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
