@@ -292,7 +292,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt |
-| PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus |
+| PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus **Nachtest 04.09.: Befund 2 + 3 behoben** (zwei Übergangsschienen, keine erfundenen Sockelleisten). 🟡 Befund 1 unverändert: Trittschall im Wohnzimmer statt im Flur — die Annahme „Kurzform löst nicht aus" ist widerlegt, sie löst aus und landet raumlos im ersten Raum. Fachlich dort ohnehin falsch (Fischgrät wird verklebt) |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. ~~**NEUER RÜCKFALL:** Sockelleisten fehlen komplett~~ **behoben 04.09.** — zwei Wurzeln: Raumzuordnung trennt jetzt am Komma, und Whisper schrieb „Zockelleisten" mit Z (Textsignal-Gate lief vorbei). Küche 13,20 + Esszimmer 15,00 = 28,20 lfdm |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. ~~🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer~~ **behoben 04.09.** — gleiche Wurzel wie PM-034 (Satz mit zwei Räumen). Die 10 lfdm waren 4 × √6 m² über der Teilfläche, wie vom Prüfmeister vermutet; eine Teilfläche taugt jetzt nicht mehr als Umfangsquelle |
@@ -4448,6 +4448,72 @@ gleichlautende Aufforderung ohne Funktion. Bitte einmal mitprüfen.
 
 **Status PM-036:** 🟡 Hauptbefund behoben, Karte/Entwurf-Widerspruch behoben,
 Blocker mitbewiesen. Offen ist die eine erfundene Sockelleisten-Position.
+
+---
+
+### PM-033 — Nachtest (Sandy, 2026-09-04): zwei von drei Befunden behoben
+
+Angebot **1.799,04 € netto**.
+
+**Befund 2 und 3 sind erledigt:**
+
+- **Zwei Übergangsschienen** statt einer, 30,00 €. Die Zählung liest jetzt „an
+  den beiden Türen … jeweils eine" richtig.
+- **Keine Sockelleisten-Position**, in keinem Raum. Der Ausschluss „Sockelleisten
+  bleiben überall, wie sie sind" wird respektiert.
+- Verschnittsätze unverändert exakt: 31,05 / 14,40 / 7,88 m².
+
+**Das bestätigt die Vermutung aus PM-036 von heute Morgen:** Der Ausschluss-Fix
+greift bei der **pauschalen** Formulierung („bleiben überall") und versagt bei
+der **raumgebundenen** („im Wohnzimmer bleiben sie"). Zwei Fälle, dieselbe
+Leistung, gegenläufiges Ergebnis — das grenzt die Codestelle enger ein als jede
+weitere Vermutung von mir.
+
+---
+
+**Befund 1 unverändert — und die Annahme dahinter stimmt nicht**
+
+Die Trittschalldämmung steht wieder im **Wohnzimmer**, mit 27,00 m², und im Flur
+fehlt sie. Zahl für Zahl identisch zum 02.09.
+
+Im Fix-Update vom 03.09. steht als Erwartung: *„PM-033, Trittschall-Kurzform —
+‚Trittschall nur unterm Laminat im Flur' löst weiterhin nichts aus, weil der
+Auslöser das ganze Wort ‚Trittschalldämmung' verlangt."*
+
+**Das ist widerlegt. Sie löst sehr wohl aus** — sie landet nur ohne Raumbezug
+beim ersten Raum. Damit ist „soll die Kurzform auslösen?" nicht der offene
+Punkt, sondern eine Ablenkung: Der Auslöser funktioniert, die **Raumzuordnung**
+nicht. Derselbe Kern wie bei PM-034 (Leistung für zwei Räume fällt aus) und
+PM-036 (Ausschluss für einen Raum wird übergangen): *ein Satz, der einen Raum
+nennt, wird nicht dem genannten Raum zugeordnet.*
+
+**Fachlich ist die Position doppelt falsch:** Im Wohnzimmer liegt
+**Fischgrät-Parkett**, und Fischgrät wird vollflächig verklebt — anders bekommt
+man das Muster nicht stabil. Unter einem verklebten Boden liegt keine
+Trittschalldämmung, das ist bauphysikalisch nicht vorgesehen. Die 121,50 € sind
+also nicht bloß im falschen Raum, sie sind eine Leistung, die es dort gar nicht
+geben kann. Im Flur, wo Laminat schwimmend liegt, fehlen dafür 7,50 m² =
+33,75 €.
+
+**Antwort auf die offene Frage, damit sie beantwortet ist:**
+
+1. **Ja, die Kurzform muss auslösen.** „Trittschall" ist das Wort, das auf dem
+   Bau benutzt wird; „Trittschalldämmung" sagt kaum jemand aus.
+2. **Nein, nicht bei jedem Belag.** Schwimmend verlegt (Laminat, Klick-Vinyl,
+   Fertigparkett schwimmend) — ja. **Vollflächig verklebt (Fischgrät, Stäbchen,
+   Massivparkett auf Estrich) — nein.** Teppichboden — nein, der dämmt selbst;
+   dort gibt es allenfalls eine Dämmunterlage, und die heißt auch so.
+3. **Und in dem Raum, der genannt wurde.** Steht ein Raum im Satz, gilt der.
+   Steht keiner drin, gilt Punkt 2 für jeden Raum einzeln.
+
+**Nebenbei, Familie PD-004:** Die Aufnahme-Karte zeigt für das Wohnzimmer
+**1 Position**, der Entwurf enthält **2**. Die Dämmung entsteht erst nach der
+Karte, in der Vollständigkeitsprüfung. Für den Nutzer heißt das: Was er vor dem
+Erstellen prüft, ist nicht das, was er danach bekommt.
+
+**Status PM-033:** 🟡 Zwei von drei Befunden behoben. Offen bleibt die
+Trittschalldämmung — falscher Raum, falscher Belag, und im richtigen Raum fehlt
+sie.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
