@@ -423,10 +423,10 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
-| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt **3. Durchlauf 04.09.:** Sockelleisten **44,00 lfdm** exakt Soll, Dämmung in allen drei Räumen. 🟡 **Neuer Fund:** derselbe Auftrag trifft mal „Klick-Vinyl" (16 €/m²), mal „Vinyl-Boden" (22 €/m²) — 224,28 € Streuung bei identischem Diktat |
+| PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt **3. Durchlauf 04.09.:** Sockelleisten **44,00 lfdm** exakt Soll, Dämmung in allen drei Räumen. 🟡 **Neuer Fund:** derselbe Auftrag trifft mal „Klick-Vinyl" (16 €/m²), mal „Vinyl-Boden" (22 €/m²) — 224,28 € Streuung bei identischem Diktat **3. Lauf: wieder „Klick-Vinyl" 16 €/m², Angebot 1.015,28 €.** Bleibt 🟡: drei Läufe, zweimal 16 €, einmal 22 € bei identischem Diktat — nicht falsch, sondern **nicht reproduzierbar** |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus **Nachtest 04.09.: Befund 2 + 3 behoben** (zwei Übergangsschienen, keine erfundenen Sockelleisten). ~~🟡 Befund 1 unverändert~~ **behoben 05.09.** — vier Ursachen gleichzeitig: Kurzform „Trittschall" wurde nicht erkannt, die Raumzuordnung der Dämmung trennte nur am Punkt und gab nur EINEN Raum zurück, und das Chip-Sicherheitsnetz in `aufnahme-hinweise.ts` hängte die Dämmung an die erste Verlegeposition. Jetzt 7,50 m², nur im Flur ✅ **Vollständig grün (3. Durchlauf 04.09.):** Trittschall jetzt belagabhängig und im genannten Raum — Flur 7,50 m², kein Fischgrät, kein Teppich. Zwei Schienen, keine Sockelleisten, Verschnittsätze exakt |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. ~~**NEUER RÜCKFALL:** Sockelleisten fehlen komplett~~ **behoben 04.09.** — zwei Wurzeln: Raumzuordnung trennt jetzt am Komma, und Whisper schrieb „Zockelleisten" mit Z (Textsignal-Gate lief vorbei). Küche 13,20 + Esszimmer 15,00 = 28,20 lfdm ✅ **Vollständig grün (2. Nachtest 04.09., 18:47):** alle fünf Befunde plus Rückfall behoben, Sockelleisten 28,20 lfdm in beiden Räumen, Trittschall je Raum, Angebot 1.026,54 € statt 91.085 € |
-| PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus **Nachtest 04.09.: drei von vier Befunden behoben** — **L-Form gelöst** (9,60 m² Fläche, 18,40 lfdm Umfang, mit erklärender Warnung), „eins zwanzig" kommt als 1,20 an, Sockelleisten 18,40 ohne Türabzug. 🟡 Offen: „Trittschalldämmung überall drunter" landet nur im Flur (158,94 € fehlen) |
+| PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus **Nachtest 04.09.: drei von vier Befunden behoben** — **L-Form gelöst** (9,60 m² Fläche, 18,40 lfdm Umfang, mit erklärender Warnung), „eins zwanzig" kommt als 1,20 an, Sockelleisten 18,40 ohne Türabzug. 🟡 Offen: „Trittschalldämmung überall drunter" landet nur im Flur (158,94 € fehlen) ✅ **Vollständig grün (04.09. spät):** Trittschall jetzt in allen drei Räumen (44,92 m²) — „überall drunter" wird als alle Räume gelesen. L-Form, Sockelleisten 18,40, Flächenangaben alle korrekt |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. ~~🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer~~ **behoben 04.09.** — gleiche Wurzel wie PM-034 (Satz mit zwei Räumen). Die 10 lfdm waren 4 × √6 m² über der Teilfläche, wie vom Prüfmeister vermutet; eine Teilfläche taugt jetzt nicht mehr als Umfangsquelle ✅ **Vollständig grün (2. Nachtest 04.09., 18:51):** Teilfläche 6,30 m², raumgebundener Sockelleisten-Ausschluss greift, Angebot 733,70 € — exakt die Soll-Summe |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
@@ -4889,6 +4889,80 @@ verlegt." Dieselbe Eingabe, zwei verschiedene Preise.
 **Status PM-032:** 🟡 Sockelleisten und Dämmung bestätigt, dafür ein neuer,
 eigenständiger Befund zur Belagbezeichnung. Der gehört nicht mehr zu diesem
 Fall allein — er trifft jeden Bodenauftrag mit Klick-Vinyl.
+
+---
+
+### PM-035 grün, PM-032 im dritten Lauf wieder richtig — und genau das ist das Problem (2026-09-04, spät)
+
+**PM-035 ist vollständig grün.** Angebot **2.284,48 € netto**.
+
+Die Trittschalldämmung steht jetzt in **allen drei Räumen**: Wohnzimmer 21,32 +
+Arbeitszimmer 14,00 + Flur 9,60 = **44,92 m²**, exakt das Soll. „Überall
+drunter" wird als „alle Räume" gelesen. Dazu unverändert: L-Form 9,60 m²,
+Sockelleisten 18,40 lfdm, Arbeitszimmer als reine Flächenangabe, Belag in allen
+drei Räumen.
+
+Damit ist der vierte und letzte Befund aus der Familie „Raumzuordnung kennt nur
+genau einen Raum" gefallen. Die Zuordnung beherrscht jetzt alle vier Formen:
+**ein Raum · zwei Räume · alle Räume · alle außer diesem.**
+
+---
+
+**PM-032 im dritten Lauf: „Klick-Vinyl … 16,00 €", also der richtige Treffer.**
+Angebot **1.015,28 €** — auf den Cent die Zahl, die ich heute Abend als
+„mit korrektem Katalogtreffer wären es" ausgerechnet hatte. Sockelleisten 44,00
+lfdm, Dämmung 35,60 m², eine Übergangsschiene.
+
+**Trotzdem setze ich den Fall nicht auf grün, und der Grund ist wichtiger als
+der Fall:**
+
+| Lauf | Positionstitel | Preis | Angebot |
+|---|---|---|---|
+| 03.09. | Klick-Vinyl verlegen | 16,00 €/m² | 1.000,43 € |
+| 04.09. abends | **Vinyl-Boden verlegen** | **22,00 €/m²** | 1.239,56 € |
+| 04.09. später | Klick-Vinyl verlegen | 16,00 €/m² | 1.015,28 € |
+
+Dreimal dasselbe Diktat, zweimal richtig, einmal falsch. **Das ist kein Fall,
+der grün ist, sondern einer, der zu zwei Dritteln grün ist** — und das ist keine
+Kategorie, die es auf einem Angebot geben darf. Ein Drittel der Angebote wäre
+22 % zu teuer, und keiner davon sieht falsch aus, wenn man ihn einzeln
+betrachtet.
+
+Genau deshalb bleibt der Befund offen und wird nicht als „war wohl ein
+Ausrutscher" abgelegt. Was einmal streut, streut wieder.
+
+**Vorschlag zur Prüfmethode, über diesen Fall hinaus:** Wir haben bisher immer
+geprüft, ob ein Ergebnis **richtig** ist. Wir haben nie geprüft, ob es
+**wiederholbar** ist. Der Belag-Fund und der alte PM-023-Fund
+(„situativ, nicht bei jeder Raum-Paarung reproduzierbar") sind dieselbe Klasse:
+Fehler, die nur manchmal auftreten und deshalb durch jede Einzelprüfung
+rutschen. Vor Gate 1 gehört deshalb eine eigene Runde: **drei identische
+Durchläufe je Fall, und verglichen wird nicht gegen das Soll, sondern gegen
+sich selbst.** Ich schlage das für die Fälle mit Katalogtreffern und
+abgeleiteten Positionen vor — Belag, Dämmung, Zuschläge.
+
+---
+
+## Boden-Batch PM-032 bis PM-036 — Abschluss (Prüfmeister, 2026-09-04)
+
+Drei Tage, fünf Fälle, **fünfzehn Befunde plus zwei Rückfälle**. Stand jetzt:
+
+| Fall | Stand |
+|---|---|
+| PM-033 | ✅ grün |
+| PM-034 | ✅ grün — von 91.085 € auf 1.026,54 € |
+| PM-035 | ✅ grün — L-Form gelöst |
+| PM-036 | ✅ grün — 733,70 €, exakt die Soll-Summe |
+| PM-032 | 🟡 alle Mengen richtig, aber der Belagtreffer streut zwischen den Läufen |
+
+**Was der Batch fachlich gebracht hat**, in einem Satz: Die Mengenrechnung war
+von Anfang an solide — gebrochen war die Übersetzung von Sprache in Zahlen und
+die Zuordnung einer Leistung zu Räumen. Beides ist jetzt repariert, und zwar
+nicht mit fünf Pflastern, sondern an der Wurzel.
+
+**Was offen bleibt:** der Belag-Streuungsfund (PM-032) und die Frage, ob wir
+Wiederholbarkeit als eigene Prüfdimension aufnehmen. Beides gehört vor Gate 1
+entschieden, nicht danach.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
