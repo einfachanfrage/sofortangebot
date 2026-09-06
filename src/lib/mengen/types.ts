@@ -173,6 +173,21 @@ export interface ExtrahierteDaten {
     arbeiten?: string[]
     name?: string
   }>
+  /**
+   * PM-037 (Prüfmeister, 04.09.2026): Die Maler-Engine rechnet Leibungen
+   * seit VOB-013 dreiseitig — sie las dafür `daten.leibungen[]`, und das
+   * Feld stand WEDER hier im Vertrag NOCH im Prompt. Ein fertiger Rechenweg
+   * hinter einer verschlossenen Tür; im Angebot fehlten Leibungen und
+   * Fensterbänke ersatzlos. Gefüllt wird es jetzt in der Pipeline aus
+   * Ansage + Öffnungsmaßen (siehe src/lib/leibungen.ts).
+   */
+  leibungen?: Array<{
+    anzahl?: number
+    breite?: number
+    hoehe?: number
+    tiefe?: number
+    typ?: string
+  }>
   decken: Array<{
     laenge: number | null
     breite: number | null

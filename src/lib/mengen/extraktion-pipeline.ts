@@ -21,6 +21,7 @@ import { konsolidierePlatzhalterRaum } from './raum-konsolidierung'
 import { korrigiereRaumMasse } from '@/lib/mass-plausibilitaet'
 import { erkenneTeilflaechen } from '@/lib/teilflaeche'
 import { erkenneLFormen } from '@/lib/l-form'
+import { erkenneLeibungen } from '../leibungen'
 import { BODEN_VERLEGEN_SIGNAL } from '@/lib/mengen/gewerke/boden'
 
 export interface ExtraktionResponse {
@@ -186,6 +187,16 @@ export function verarbeiteExtraktion(
   // Ohne diesen Schritt verschwindet der zweite Schenkel lautlos; die Fläche
   // fehlt dann im Angebot, ohne dass eine Position fehlt.
   massHinweise.push(...erkenneLFormen(textMitZahlen, extraktion.raeume ?? []).hinweise)
+
+  // PM-037: Leibungen und Fensterbänke. Die Engine kann beides rechnen, das
+  // Feld dafür wurde nur nie gefüllt — weder vom Prompt noch sonst irgendwo.
+  // Nur setzen, wenn die Extraktion selbst nichts geliefert hat: Sollte das
+  // Modell das Feld eines Tages füllen, gilt seine Angabe, nicht unsere.
+  if ((extraktion.leibungen ?? []).length === 0) {
+    const leib = erkenneLeibungen(textMitZahlen, extraktion.raeume ?? [], extraktion.waende ?? [])
+    if (leib.leibungen.length > 0) extraktion.leibungen = leib.leibungen
+    massHinweise.push(...leib.hinweise)
+  }
 
   // Teilflächen nur dort suchen, wo überhaupt ein Bodenauftrag im Raum steckt:
   // „nur die Decke streichen" ist auch eine Einschränkung, aber keine

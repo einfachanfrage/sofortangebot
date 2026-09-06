@@ -137,6 +137,20 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
     name: typeof w.name === 'string' ? w.name : undefined,
   }))
 
+  // PM-037, dritter Defekt derselben Kette: Dieser Normalisierer baut ein
+  // WEISSLISTEN-Objekt — was hier nicht steht, existiert danach nicht mehr.
+  // `leibungen` stand nicht drin. Selbst ein perfekt erweiterter Prompt hätte
+  // also nichts geändert: Das Modell hätte geliefert, und diese Zeile hätte
+  // es stillschweigend weggeworfen. Ein Prompt-Fix allein hätte ausgesehen,
+  // als funktioniere er.
+  const leibungen = arr<Record<string, unknown>>(raw.leibungen).map(l => ({
+    anzahl: num(l.anzahl) ?? 1,
+    breite: num(l.breite) ?? undefined,
+    hoehe: num(l.hoehe) ?? undefined,
+    tiefe: num(l.tiefe) ?? undefined,
+    typ: typeof l.typ === 'string' ? l.typ : undefined,
+  }))
+
   const decken = arr<Record<string, unknown>>(raw.decken).map(d => ({
     laenge: num(d.laenge),
     breite: num(d.breite),
@@ -156,6 +170,7 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
     rueckfragen: arr(raw.rueckfragen),
     raeume,
     waende,
+    leibungen,
     decken,
     bereiche,
     steckdosen: num(raw.steckdosen),

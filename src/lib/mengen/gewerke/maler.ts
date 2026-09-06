@@ -708,7 +708,17 @@ export function malerEngine(daten: any): MengenErgebnis {
       annahmen: istAnnahme ? ['Leibungstiefe 25cm Standard (nicht angegeben)'] : [],
     })
     // Fensterbänke bei Innenleibung + Erwähnung
-    if ((l.typ ?? '').includes('innen') && transkriptAll.includes('fensterbank')) {
+    // PM-037, zweiter Defekt im selben Befund: Hier stand
+    // `includes('fensterbank')`. Gesagt wurde „Die Fensterbänke werden auch
+    // gestrichen" — Plural mit Umlaut. „fensterbänke" enthält „fensterbank"
+    // NICHT (b-ä-n-k statt b-a-n-k), die Prüfung lief still vorbei. Selbst
+    // mit gefüllten Leibungen wäre die Bank ausgefallen; zwei Defekte, die
+    // sich gegenseitig verdeckt hätten. Dieselbe Familie wie \büberall\b
+    // und ' q3 ' — eine Prüfung, die an einem Zeichen scheitert und schweigt.
+    // Auch die ae-Umschrift zählt: Whisper schreibt Umlaute regelmäßig aus
+    // („Fensterbaenke"), belegt in den Produktionsaufnahmen bei Rauhfaser
+    // und Klick-Vinyl. Siehe hoerfehler.ts.
+    if ((l.typ ?? '').includes('innen') && /fensterb(?:ä|a|ae)nk/i.test(transkriptAll)) {
       // Seit VOB-013 die einzige Stelle, an der die Bankfläche gezählt wird
       // — vorher steckte sie zusätzlich im Rundum-Leibungsumfang.
       const bankFl = round2(anz * br * tiefe)

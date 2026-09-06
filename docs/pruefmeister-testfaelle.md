@@ -619,6 +619,80 @@ bleibt bei einem Eintrag. Mit Test belegt.
 **Status PM-018:** Mengen, Bezeichnungen und Preiszuordnung vollständig
 behandelt. Live-Nachtest steht aus.
 
+---
+
+## PM-037 — behoben, und es waren drei Türen hintereinander (Engineering, 06.09.2026)
+
+Der Prüfmeister hat die erste gefunden. Beim Aufmachen lagen zwei weitere
+dahinter — jede allein hätte den Fix wirkungslos gemacht.
+
+| # | Defekt | Wirkung allein |
+|---|---|---|
+| 1 | `leibungen[]` wurde **nie gefüllt** (weder Prompt noch Pipeline) | Engine-Zweig läuft nie |
+| 2 | `leibungen` fehlte in der **Weißliste des Normalisierers** | Ein Prompt-Fix wäre stillschweigend weggeworfen worden |
+| 3 | Fensterbank-Prüfung stand auf `includes('fensterbank')` | „Fensterb**ä**nke" trifft nicht — die Bank wäre auch mit gefüllten Leibungen ausgefallen |
+
+**Defekt 2 ist der unangenehmste.** `extraktion-normalisierer.ts` baut ein
+Weißlisten-Objekt: Was dort nicht steht, existiert danach nicht mehr. Hätte
+jemand nur den Prompt erweitert — die naheliegende Lösung —, hätte das Modell
+brav geliefert und der Normalisierer es weggeworfen. **Der Fix hätte
+ausgesehen, als funktioniere er.**
+
+**Defekt 3 ist die alte Bekannte:** „fensterbänke" enthält „fensterbank" nicht
+(b-ä-n-k statt b-a-n-k). Dieselbe Familie wie `\büberall\b`, `' q3 '` und der
+Dezimalpunkt im Satz-Splitter — eine Prüfung, die an einem Zeichen scheitert
+und dabei schweigt. Sie ist diese Woche zum vierten Mal aufgetreten.
+
+### Wie es jetzt läuft
+
+`src/lib/leibungen.ts` baut die Einträge aus **Ansage + Struktur**: Die
+Fensterzahl und -maße stehen bereits zuverlässig in der Extraktion, es fehlte
+allein die Ansage „die Leibungen werden mitgestrichen, 25 cm tief" — und die
+steht im Rohtext. Bewusst nicht nur im Prompt: Ob ein Modell ein Feld füllt,
+hat sich in PM-032 als tagesformabhängig erwiesen. Füllt es das Feld doch
+einmal, gewinnt seine Angabe — die Erkennung springt nur bei leerem Feld ein.
+
+**Das Urteil bleibt bei der Engine.** Ob eine genannte Leibung überhaupt
+gestrichen wird, entscheidet weiterhin allein `maler.ts` (CoS-042, Punkt 4:
+nur beschichtete Leibungen). Diese Datei liefert Maße, nicht Entscheidungen —
+zwei Stellen mit derselben Entscheidung waren diese Woche mehrfach die Ursache.
+
+### Nachgerechnet, Ende zu Ende mit dem Original-Diktat
+
+| Position | Ist | Soll |
+|---|---|---|
+| Wandflächen streichen 2x | 46,80 m² | ✅ |
+| Boden schützen | 20,00 m² | ✅ |
+| Sockelleisten abkleben | 18,00 lfdm | ✅ |
+| **Fenster Innenleibungen streichen** | **1,60 m²** | ✅ 2 × (1,20 + 2×1,00) × 0,25 |
+| **Fensterbänke streichen** | **0,60 m²** | ✅ 2 × 1,20 × 0,25 |
+
+**Fünf Positionen statt drei.** Damit ist der VOB-013-Fix vom 03.09. zum
+ersten Mal überhaupt erreichbar — und die dreiseitige Rechnung im Live-Weg
+belegt.
+
+### Was ausdrücklich NICHT passiert
+
+- **Ohne „Leibung" im Diktat** entsteht keine Position.
+- **Ohne Fenstermaße** wird nicht geraten, sondern ein sichtbarer Hinweis
+  gesetzt („Bitte Maße ergänzen — sonst fehlt die Leibungsposition").
+- **Ohne genannte Tiefe** gelten 25 cm, aber sichtbar: als Annahme an der
+  Position UND als Hinweis oben.
+- **„Die Leibungen bleiben, die werden nur gedämmt"** erzeugt weiterhin nichts.
+
+**17 Tests** halten den Fall fest, darunter die drei Schreibweisen der
+Fensterbank (ä, a, ae) und der Vorrang einer vom Modell gefüllten Extraktion.
+
+**Tests:** 1.501 (vorher 1.484), `tsc` sauber, `eslint` 0 Fehler.
+
+**Status PM-037:** ✅ Alle fünf Positionen exakt Soll. Live-Nachtest steht aus.
+
+**Offen, gehört Sandy:** Der Prompt (`ki-extrahieren`) füllt `leibungen[]`
+weiterhin nicht. Das ist jetzt kein Fehler mehr, sondern eine Doppelung, die
+fehlt — die Erkennung im Code trägt den Fall allein. Eine Prompt-Erweiterung
+wäre der zweite Gurt und braucht ein Edge-Function-Deployment; sag Bescheid,
+ob ich sie vorbereiten soll.
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
