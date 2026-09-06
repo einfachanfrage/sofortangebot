@@ -21,7 +21,11 @@ export async function POST(req: NextRequest) {
     mode: 'subscription',
     line_items: [{ price: PRICE_IDS[plan as keyof typeof PRICE_IDS], quantity: 1 }],
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?upgraded=1`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/preise`,
+    // DC-045, beim Bauen gefunden: `/preise` ist im eingeloggten Bereich die
+    // PREISDATENBANK des Handwerkers, nicht die Tarifseite. Wer den Kauf
+    // abbrach, landete also in seinen eigenen Einheitspreisen. Zurück dahin,
+    // wo er hergekommen ist.
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/einstellungen/abo`,
     customer_email: user.email ?? undefined,
     metadata: { user_id: user.id, plan },
     allow_promotion_codes: true,

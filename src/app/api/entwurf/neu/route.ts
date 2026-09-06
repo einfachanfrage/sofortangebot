@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
+import { pruefeAngebotsLimit, limitNachricht } from '@/lib/plan-limit'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -15,11 +16,26 @@ export async function POST(req: NextRequest) {
 
   const { data: company } = await supabase
     .from('companies')
-    .select('id')
+    .select('id, plan')
     .eq('user_id', user.id)
     .single()
 
   if (!company) return NextResponse.json({ error: 'Kein Unternehmen gefunden' }, { status: 404 })
+
+  // DC-045, Sandys Entscheidung „harte Grenze": Hier — und nur hier —
+  // entsteht ein NEUES Angebot. Die Prüfung sitzt vor dem Insert, damit
+  // niemand erst ein Diktat aufnimmt und danach die Sperre sieht.
+  // Bestehende Entwürfe bleiben unberührt: Diese Route legt an, sie
+  // bearbeitet nicht.
+  const limit = await pruefeAngebotsLimit(supabase, company.id, company.plan)
+  if (limit.erreicht && limit.limit !== null) {
+    return NextResponse.json({
+      error: 'limit_erreicht',
+      message: limitNachricht(limit.limit),
+      anzahl: limit.anzahl,
+      limit: limit.limit,
+    }, { status: 403 })
+  }
 
   let customerId: string | null = null
   let baustelleId: string | null = null

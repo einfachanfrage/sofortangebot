@@ -869,6 +869,18 @@ export default function EinstellungenPage() {
             ist zurückgestellt, nicht gestrichen. */}
 
         {/* Integrationen */}
+        {/* DC-045 (Product Designer, 06.09.2026): Das Plan-Fenster ging nur
+            aus `?welcome=new` auf — also einmalig nach dem Onboarding. Wer
+            den Moment verpasst hat, fand danach nichts mehr: kein
+            Plan-Wechsel, keine Rechnungen, keine Zahlungsart. */}
+        <Link href="/einstellungen/abo"
+          className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group mb-3">
+          <div>
+            <span className="font-bold text-anthracite">Abo & Rechnungen</span>
+            <div className="text-xs text-anthracite/40 font-semibold mt-0.5">Plan, Rechnungshistorie, Zahlungsart</div>
+          </div>
+          <ExternalLink size={16} className="text-anthracite/30 group-hover:text-anthracite/60" />
+        </Link>
         <Link href="/einstellungen/integrationen"
           className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
           <div>

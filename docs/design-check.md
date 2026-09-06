@@ -121,7 +121,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-042 | Dashboard-Frage "was soll das im Header heißen '4 Angebote warten auf Antwort'?" plus offener Unmut: "ich mag generell die Statuslogik der Angebote irgendwie immer noch nicht, mir ist das nicht klar und clean genug" (Sandy, zwei Screenshots, 2026-08-30) — auf Rückfrage zum Umfang explizit **"Komplettes Status-Modell neu denken"** gewählt, dann "dc042 deinen vorschklag auch live stellen" | ✅ Wording/Filter-Teil live: "Fertiggestellt"→"Bereit", "Offen"→"Beim Kunden" (`status.ts`, einzige Quelle seit DC-003, kaskadiert automatisch überallhin), eigener "Bereit"-Filter-Reiter ergänzt (fehlte komplett — eine der drei strukturellen Lücken aus der Bestandsaufnahme), "seit X Tagen" auf wartenden Angeboten (`MobileQuoteCard`, auf `created_at`-Basis, keine Migration nötig). Committet (`b1e32b5`), scoped `tsc` sauber. 🔵 Bewusst NICHT live: Archivieren als Flag statt überschreibendem Status (überschreibt aktuell den echten Ausgang bei Angenommen/Abgelehnt) + ein eigenes `sent_at`-Feld — beides braucht eine Datenbank-Migration, liegt als fertige Spec bei **Head of Product Engineering** (siehe DC-042-Detailabschnitt unten). Ebenfalls noch offen: toter `viewed`-Status (streichen oder zu echtem Feature ausbauen — Sandys Entscheidung steht noch aus) | Product Designer (Wording/Filter ✅ live) / Head of Product Engineering (Archivieren-als-Flag + `sent_at`, noch offen) |
 | DC-043 | "kannst du bitte auch das dashboard und die menüleiste unten neu denken?? irgendwie holt mich das nicht ab...." (Sandy, direkt im Anschluss an DC-042, 2026-08-30), dann "UM GOTTES WILLEN!!!! das gelbe mikro muss IMMER da bleiben unten in der leiste, also safe FAB behalten!!! warm und persönlich" | ✅ Live: FAB bleibt die einzige, immer sichtbare CTA — der doppelte Hero-"Aufmaß starten"-Button (führte zur exakt selben Aktion wie der Mikrofon-FAB) entfernt (Desktop hat weiterhin die SideNav-CTA, keine Lücke). Richtung "Warm & persönlich" umgesetzt: Umsatz-Kachel hervorgehoben mit echtem Vormonatsvergleich (`data/dashboard.ts`, neue Vormonats-Abfrage) + Erfolgs-Hinweis bei angenommenen Angeboten, Beauftragt/Offen als sekundäre 2er-Reihe. `BottomNav`: "Start"→"Dashboard" (Wort-Inkonsistenz zur Desktop-SideNav behoben). Committet (`b1e32b5`), scoped `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): BottomNav zeigt live "Dashboard", "seit 65 Tagen"-Anzeige live auf einem echten wartenden Angebot gesehen | Product Designer (umgesetzt) |
 | DC-044 | Kundendaten (Name, Adresse, Telefon, E-Mail) lassen sich nach dem Anlegen nirgends mehr bearbeiten — kein „Bearbeiten"-Button auf der Kunden-Detailseite, keine API-Route dafür (Product Designer, 2026-09-06, kompletter Klick-Test „check alles") | ✅ **behoben 06.09.** — „Bearbeiten" im Kopf der Kundenseite, eigene Seite `/kunden/[id]/bearbeiten`, gemeinsames Formular mit „Neuer Kunde" | Head of Product Engineering |
-| DC-045 | Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding — `PlanWahlModal` erscheint laut Code nur einmalig direkt nach frischem Onboarding, danach keine Einstellungsseite für Plan-Wechsel/Rechnungen/Zahlungsmethode. Zusätzlich: das beworbene „3 Angebote/Monat kostenlos"-Limit wird im Code nirgends geprüft oder durchgesetzt (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Head of Product Engineering |
+| DC-045 | Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding — `PlanWahlModal` erscheint laut Code nur einmalig direkt nach frischem Onboarding, danach keine Einstellungsseite für Plan-Wechsel/Rechnungen/Zahlungsmethode. Zusätzlich: das beworbene „3 Angebote/Monat kostenlos"-Limit wird im Code nirgends geprüft oder durchgesetzt (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Zugang über Einstellungen → Abo & Rechnungen (Stripe-Kundenportal); harte Grenze bei 3 Angeboten/Monat nach Sandys Entscheidung, Anlegen gesperrt, Bearbeiten und Revisionen frei | Head of Product Engineering |
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 
@@ -4529,6 +4529,90 @@ Upgrade-Weg fehlt aktuell die komplette monetarisierbare Schicht des
 Produkts — das ist über reines UI/UX hinaus eine Geschäftsentscheidung
 (Sandy/Head of Product Engineering), aber gehört meiner Meinung nach vor
 dem ersten zahlenden Nutzer geklärt.
+
+---
+
+### 🟡 Zur Hälfte behoben (Head of Product Engineering, 2026-09-06)
+
+Der Befund hat zwei Teile, und nur einer davon ist eine Ingenieursfrage.
+
+**Teil 1 — der fehlende Zugang: behoben.**
+
+- **Einstellungen → App → „Abo & Rechnungen"** ist der neue, dauerhafte Weg.
+- Die Seite zeigt den aktuellen Plan, bei Pro das Verlängerungsdatum, und die
+  in diesem Monat angelegten Angebote.
+- **Rechnungshistorie, Zahlungsart, Plan-Wechsel und Kündigung** laufen über
+  **Stripes eigenes Kundenportal** (`/api/stripe/portal`), auf Deutsch.
+  Bewusst kein eigener Kündigen-Knopf: Ein zweiter Weg, ein Abo zu beenden,
+  wäre ein zweiter Zustand, den wir mit Stripe synchron halten müssten. Der
+  Webhook bleibt die eine Quelle, das Portal der eine Weg.
+- Im Starter-Plan steht dort stattdessen **„Auf Pro upgraden"** (dieselbe
+  Checkout-Route wie im Willkommens-Fenster).
+
+**Beim Bauen mitgefunden:** Die Abbrechen-Adresse des Stripe-Checkouts zeigte
+auf `/preise` — das ist im eingeloggten Bereich aber die **Preisdatenbank**
+des Handwerkers, nicht die Tarifseite. Wer den Kauf abbrach, landete in seinen
+eigenen Einheitspreisen. Zeigt jetzt zurück auf die Abo-Seite.
+
+**Teil 2 — das nicht durchgesetzte Freikontingent: bewusst offen, Entscheidung
+Sandy.**
+
+Die Zahl wird jetzt **gezählt und angezeigt** („4 Angebote diesen Monat"),
+aber **nichts wird gesperrt**. Das ist Absicht: Eine Grenze einzubauen, die
+niemand beschlossen hat, kann echten Nutzern die Arbeit blockieren — und ein
+falsches Limit fällt erst auf, wenn jemand vor einem Kunden steht und nicht
+weiterkommt.
+
+Der Text auf der Abo-Seite ist entsprechend vorsichtig formuliert: „Im
+Starter-Plan sind 3 Angebote pro Monat **vorgesehen**" — er behauptet keine
+Grenze, die es im Produkt nicht gibt.
+
+**Sandys Entscheidung (06.09.2026): A — harte Grenze.** „Ab dem 4. Angebot
+geht es erst nach dem Upgrade weiter." Umgesetzt, siehe unten.
+
+---
+
+### ✅ Teil 2 ebenfalls behoben — harte Grenze (Head of Product Engineering, 2026-09-06)
+
+**Beim Einbau kam heraus, dass es die Grenze schon gab — zweimal falsch.**
+
+| Stelle | Zustand |
+|---|---|
+| `api/quotes/create` | `PLAN_LIMITS.starter = 5` — eine **dritte** Zahl neben den 3 aus der Werbung. Und die Route wird nur beim **Duplizieren** aufgerufen. |
+| `api/entwurf/neu` | Der Weg, den **jeder echte Nutzer** geht. **Gar keine Prüfung.** |
+
+Also genau die Streuung, gegen die `pricing.ts` angelegt wurde. Die Regel
+steht jetzt einmal in `src/lib/plan-limit.ts` und liest ihre Zahl von dort.
+Dieselbe Funktion sperrt und zeigt an — eine angezeigte und eine wirksame
+Grenze auseinanderlaufen zu lassen wäre der schlimmste Ausgang.
+
+**Zwei Festlegungen, die eine harte Grenze zwingend braucht:**
+
+1. **Gesperrt wird nur das ANLEGEN.** Ein begonnener Entwurf lässt sich immer
+   zu Ende bearbeiten, versenden und bezahlen. Wer beim Kunden steht, darf
+   nicht mitten in der Aufnahme hängenbleiben — eine Grenze, die das täte,
+   wäre schlimmer als gar keine.
+2. **Überarbeitungen zählen nicht mit.** Eine Revision ist eine neue Fassung
+   desselben Angebots, kein neuer Auftrag. Würden sie zählen, wäre der Monat
+   nach einem Kunden mit zwei Änderungswünschen aufgebraucht — der Handwerker
+   würde dafür bestraft, dass er sorgfältig arbeitet.
+
+Ein gelöschter Entwurf gibt seinen Platz wieder frei. Auch das ist gewollt:
+Ein Fehlversuch soll nicht den Monat kosten.
+
+**Was der Nutzer sieht:** kein roter Fehler, sondern ein eigener Bildschirm —
+„Dein Monat ist voll", der Satz aus `limitNachricht()` („Angefangene Angebote
+kannst du weiter bearbeiten und versenden — für ein neues brauchst du Pro."),
+ein Knopf „Auf Pro upgraden" und ein Weg zu den eigenen Angeboten. Auf der
+Abo-Seite steht „2 von 3", bei erreichter Grenze zusätzlich der Hinweiskasten.
+
+**Neun Tests** halten die Grenze und vor allem ihre Ausnahmen fest
+(`dc045-angebotslimit.test.ts`): drei erlaubt / vier gesperrt, Pro nie
+gesperrt, Vormonat zählt nicht, Revisionen zählen nicht, und die Grenze kommt
+nachweislich aus `PRICING.freeAngeboteProMonat` und nicht aus einer im Code
+eingetippten Zahl.
+
+**Tests:** 1.484 (vorher 1.475), `tsc` sauber, `eslint` 0 Fehler.
 
 ---
 

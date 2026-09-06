@@ -3,12 +3,7 @@ import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
-
-const PLAN_LIMITS = {
-  starter: 5,   // 5 Angebote/Monat
-  pro: Infinity,
-  enterprise: Infinity,
-}
+import { pruefeAngebotsLimit, limitNachricht } from '@/lib/plan-limit'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -28,32 +23,23 @@ export async function POST(req: NextRequest) {
 
   if (!company) return NextResponse.json({ error: 'Kein Betrieb gefunden' }, { status: 400 })
 
-  const plan = (company.plan ?? 'starter') as keyof typeof PLAN_LIMITS
+  const plan = company.plan ?? 'starter'
 
   const rlCheck = await checkUserRateLimit(user.id, 'angebot_erstellen', plan)
   if (!rlCheck.allowed) return rateLimitResponse(rlCheck)
-  const limit = PLAN_LIMITS[plan] ?? PLAN_LIMITS.starter
 
-  // Quotes diesen Monat zählen (nur für Starter relevant)
-  if (limit !== Infinity) {
-    const firstOfMonth = new Date()
-    firstOfMonth.setDate(1)
-    firstOfMonth.setHours(0, 0, 0, 0)
-
-    const { count } = await supabase
-      .from('quotes')
-      .select('id', { count: 'exact', head: true })
-      .eq('company_id', company.id)
-      .gte('created_at', firstOfMonth.toISOString())
-
-    if ((count ?? 0) >= limit) {
-      return NextResponse.json({
-        error: 'limit_reached',
-        message: `Im Starter-Plan sind ${limit} Angebote pro Monat enthalten. Upgrade auf Pro für unbegrenzte Angebote.`,
-        limit,
-        count,
-      }, { status: 403 })
-    }
+  // DC-045: Hier stand eine EIGENE Grenze mit 5 Angeboten — eine dritte Zahl
+  // neben den 3 aus der Werbung, auf einer Route, die nur beim Duplizieren
+  // aufgerufen wird. Jetzt dieselbe Regel wie beim Anlegen (plan-limit.ts).
+  // Ein Duplikat ist ein neues Angebot und zählt deshalb mit.
+  const limit = await pruefeAngebotsLimit(supabase, company.id, plan)
+  if (limit.erreicht && limit.limit !== null) {
+    return NextResponse.json({
+      error: 'limit_erreicht',
+      message: limitNachricht(limit.limit),
+      anzahl: limit.anzahl,
+      limit: limit.limit,
+    }, { status: 403 })
   }
 
   // Kunde anlegen/finden
