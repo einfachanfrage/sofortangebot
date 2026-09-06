@@ -120,6 +120,10 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-041 | Raum-Platzhalter ("Raum hinzufügen" → neue leere Position im Raum) zeigte im Titel-Eingabefeld wörtlich "— Schlafzimmer" statt einer leeren, normal beschreibbaren Position — "sieht kacke aus und dumm" (Sandy, Screenshot, 2026-08-29) | ✅ Root-Cause: der interne " — Raumname"-Suffix, mit dem eine Position ihrem Raum zugeordnet wird (`angebot-gruppierung.ts`), steckt komplett im `title`-Feld selbst; die Anzeige blendet ihn beim Lesen zwar aus (`titleOverride`), das EDIT-Eingabefeld band aber direkt an den Rohtitel statt an den bereits vorhandenen Anzeige-Wert. Fix: Eingabefeld zeigt/bearbeitet nur noch den sichtbaren Basistitel, der Raum-Suffix wird beim Speichern automatisch wieder drangehängt (auch beim Übernehmen eines Preisdatenbank-Vorschlags, sonst wäre die Position aus ihrem Raum herausgefallen). Komplett Frontend, keine Backend-Änderung. Committet (`6a1fa0d`), scoped `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Titel-Eingabefeld einer Position zeigt live nur den sauberen Basistitel, kein roher „— Raumname"-Suffix | Product Designer (umgesetzt) |
 | DC-042 | Dashboard-Frage "was soll das im Header heißen '4 Angebote warten auf Antwort'?" plus offener Unmut: "ich mag generell die Statuslogik der Angebote irgendwie immer noch nicht, mir ist das nicht klar und clean genug" (Sandy, zwei Screenshots, 2026-08-30) — auf Rückfrage zum Umfang explizit **"Komplettes Status-Modell neu denken"** gewählt, dann "dc042 deinen vorschklag auch live stellen" | ✅ Wording/Filter-Teil live: "Fertiggestellt"→"Bereit", "Offen"→"Beim Kunden" (`status.ts`, einzige Quelle seit DC-003, kaskadiert automatisch überallhin), eigener "Bereit"-Filter-Reiter ergänzt (fehlte komplett — eine der drei strukturellen Lücken aus der Bestandsaufnahme), "seit X Tagen" auf wartenden Angeboten (`MobileQuoteCard`, auf `created_at`-Basis, keine Migration nötig). Committet (`b1e32b5`), scoped `tsc` sauber. 🔵 Bewusst NICHT live: Archivieren als Flag statt überschreibendem Status (überschreibt aktuell den echten Ausgang bei Angenommen/Abgelehnt) + ein eigenes `sent_at`-Feld — beides braucht eine Datenbank-Migration, liegt als fertige Spec bei **Head of Product Engineering** (siehe DC-042-Detailabschnitt unten). Ebenfalls noch offen: toter `viewed`-Status (streichen oder zu echtem Feature ausbauen — Sandys Entscheidung steht noch aus) | Product Designer (Wording/Filter ✅ live) / Head of Product Engineering (Archivieren-als-Flag + `sent_at`, noch offen) |
 | DC-043 | "kannst du bitte auch das dashboard und die menüleiste unten neu denken?? irgendwie holt mich das nicht ab...." (Sandy, direkt im Anschluss an DC-042, 2026-08-30), dann "UM GOTTES WILLEN!!!! das gelbe mikro muss IMMER da bleiben unten in der leiste, also safe FAB behalten!!! warm und persönlich" | ✅ Live: FAB bleibt die einzige, immer sichtbare CTA — der doppelte Hero-"Aufmaß starten"-Button (führte zur exakt selben Aktion wie der Mikrofon-FAB) entfernt (Desktop hat weiterhin die SideNav-CTA, keine Lücke). Richtung "Warm & persönlich" umgesetzt: Umsatz-Kachel hervorgehoben mit echtem Vormonatsvergleich (`data/dashboard.ts`, neue Vormonats-Abfrage) + Erfolgs-Hinweis bei angenommenen Angeboten, Beauftragt/Offen als sekundäre 2er-Reihe. `BottomNav`: "Start"→"Dashboard" (Wort-Inkonsistenz zur Desktop-SideNav behoben). Committet (`b1e32b5`), scoped `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): BottomNav zeigt live "Dashboard", "seit 65 Tagen"-Anzeige live auf einem echten wartenden Angebot gesehen | Product Designer (umgesetzt) |
+| DC-044 | Kundendaten (Name, Adresse, Telefon, E-Mail) lassen sich nach dem Anlegen nirgends mehr bearbeiten — kein „Bearbeiten"-Button auf der Kunden-Detailseite, keine API-Route dafür (Product Designer, 2026-09-06, kompletter Klick-Test „check alles") | ❌ offen, bestätigter Befund | Head of Product Engineering / Product Designer |
+| DC-045 | Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding — `PlanWahlModal` erscheint laut Code nur einmalig direkt nach frischem Onboarding, danach keine Einstellungsseite für Plan-Wechsel/Rechnungen/Zahlungsmethode. Zusätzlich: das beworbene „3 Angebote/Monat kostenlos"-Limit wird im Code nirgends geprüft oder durchgesetzt (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Head of Product Engineering |
+| DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
+| DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -4418,6 +4422,110 @@ Onboarding schickt. Kein Blocker meinerseits mehr, nur eine
 Reihenfolge-Abhängigkeit.
 
 tsc sauber (scoped auf die beiden Dateien + Abhängigkeiten, `--noEmit`).
+
+---
+
+## DC-044 — Kundendaten lassen sich nach dem Anlegen nirgends bearbeiten
+
+**Datum:** 2026-09-06 (Product Designer, Sandys Auftrag „klick dich hier im
+Fenster durch alles durch... check alles auch das woran ich jetzt nicht
+gedacht habe")
+**Status:** ❌ offen, bestätigter Befund
+
+**Befund:** Beim Neuanlegen (`/kunden/neu`) lassen sich Name, Adresse,
+PLZ/Ort, Telefon, E-Mail und „Gewerblicher Kunde" vollständig erfassen.
+Danach gibt es aber keinen einzigen Weg mehr, diese Angaben zu ändern:
+`src/app/(app)/kunden/[id]/page.tsx` hat keinen „Bearbeiten"-Button und
+keine Lösch-Möglichkeit für den Kunden selbst — nur `KundeTypToggle.tsx`
+(Privat-/Geschäftskunde + USt-IdNr./Leitweg-ID). Auch die „Ändern"-Funktion
+beim Kunden-Zuweisen im Angebot (`AngebotDetail.tsx`) kann nur einen
+ANDEREN, bereits existierenden Kunden auswählen oder einen Lexware-Kontakt
+importieren — sie kann keinen bestehenden Kunden bearbeiten. Codeweite Suche
+nach einem Update-Pfad für `customers` (außer dem Typ-Toggle) ergab nichts.
+
+**Warum das zählt:** Ein Tippfehler in der Telefonnummer, eine neue Adresse,
+ein falsch geschriebener Name — aktuell gibt es keinen UI-Weg, das zu
+korrigieren, ohne den Kunden komplett neu anzulegen (und dabei die
+Angebots-/Baustellen-Historie zu verlieren, da neue Kunden-ID). Für ein
+Produkt, das gerade in die echte Nutzung geht, ist das ein Basis-Feature,
+das fehlt.
+
+**Vorschlag:** Einfacher Bearbeiten-Button auf der Kunden-Detailseite,
+öffnet dasselbe Formular wie „Neuer Kunde" (nur vorausgefüllt), schreibt
+per `update()` auf dieselbe `customers`-Zeile. Kein Datenmodell-Thema,
+reine fehlende Oberfläche.
+
+---
+
+## DC-045 — Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding
+
+**Datum:** 2026-09-06 (Product Designer, Klick-Test)
+**Status:** ❌ offen, bestätigter Befund
+
+**Befund:** `PlanWahlModal` (das Fenster mit „Vollgas — 17 €/Monat") wird
+laut Code ausschließlich von `WelcomeModalWrapper` aufgerufen, das wiederum
+nur rendert, wenn die Dashboard-Seite mit `?welcome=new` aufgerufen wird —
+also einmalig, direkt nach frischem Onboarding. Ich habe systematisch alle
+drei Einstellungen-Tabs (Betrieb/Angebote/App) sowie das „Hallo, Holm"-Sheet
+(Avatar oben rechts) durchsucht: nirgends existiert eine Seite oder ein Link
+für Plan-Wechsel, Rechnungshistorie oder Zahlungsmethode. Wer den
+Willkommens-Moment verpasst (z. B. weil er anfangs beim Free-Tier bleiben
+wollte) oder später upgraden/downgraden will, hat aktuell keinen
+auffindbaren Weg dahin.
+
+**Zusätzlich, beim Nachsehen entdeckt:** Das beworbene „3 Angebote/Monat
+kostenlos"-Limit (DC-001, `pricing.ts`) wird nirgends im Code geprüft —
+weder beim Anlegen eines Entwurfs noch beim Fertigstellen. Codeweite Suche
+nach einer Nutzungs-/Monats-Zählung ergab nichts. Das Limit existiert also
+aktuell nur als Text auf der Landingpage/im Modal, nicht als echte Grenze —
+ein Starter-Nutzer kann technisch unbegrenzt viele Angebote im Monat
+anlegen.
+
+**Warum das zählt:** Ohne durchgesetztes Limit UND ohne späteren
+Upgrade-Weg fehlt aktuell die komplette monetarisierbare Schicht des
+Produkts — das ist über reines UI/UX hinaus eine Geschäftsentscheidung
+(Sandy/Head of Product Engineering), aber gehört meiner Meinung nach vor
+dem ersten zahlenden Nutzer geklärt.
+
+---
+
+## DC-046 — Doppelte CTA auf der Angebote-Liste (Header-„Neu" vs. FAB)
+
+**Datum:** 2026-09-06 (Product Designer, Klick-Test)
+**Status:** ❌ offen, bestätigter Befund
+
+**Befund:** `src/app/(app)/angebote/page.tsx` hat einen eigenen
+„Neu"-Button (Mikro-Icon) im Header, der auf `/angebot/neu` verlinkt —
+exakt dasselbe Ziel wie der FAB in `BottomNav.tsx`, der laut DC-043
+bewusst „die einzige, immer sichtbare CTA" sein soll („das gelbe mikro
+muss IMMER da bleiben unten in der leiste"). DC-043 hat den doppelten
+Hero-Button auf dem Dashboard genau aus diesem Grund entfernt — dieselbe
+Dopplung existiert aber weiterhin auf der Angebote-Liste, nur nicht
+mitgeprüft, weil DC-043 sich nur auf das Dashboard bezog.
+
+**Vorschlag:** Header-„Neu"-Button auf der Angebote-Liste entfernen (FAB
+ist ohnehin auf jeder Seite mit `BottomNav` sichtbar), analog zu DC-043.
+
+---
+
+## DC-047 — Zwei gleichlautende, nicht erklärte Lexware-Integrationen
+
+**Datum:** 2026-09-06 (Product Designer, Klick-Test)
+**Status:** ❌ offen, bestätigter Befund
+
+**Befund:** `einstellungen/integrationen/page.tsx` listet „Lexware Office"
+und „Lexoffice (Legacy)" als zwei getrennte Karten mit eigenem API-Key-Feld
+— beide verweisen im Hilfetext auf dieselbe Adresse `app.lexoffice.de`.
+Für jemanden, der zum ersten Mal seine Buchhaltung verbinden will, ist
+nicht erkennbar, warum es zwei Einträge für dasselbe Produkt gibt oder
+welchen er nehmen soll (aktuelle API vs. alte/Legacy-API vermutlich —
+steht aber nirgends).
+
+**Vorschlag:** Mindestens einen kurzen Erklärtext ergänzen („Neuer
+API-Zugang? Nimm 'Lexware Office'. Hast du schon einen alten
+Lexoffice-API-Key? Nimm 'Legacy'."), oder falls die Legacy-Variante kaum
+noch gebraucht wird, unter einem eingeklappten „Erweitert"-Bereich
+verstecken statt gleichrangig oben zu zeigen.
 
 ---
 
