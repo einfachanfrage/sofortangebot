@@ -122,7 +122,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-043 | "kannst du bitte auch das dashboard und die menüleiste unten neu denken?? irgendwie holt mich das nicht ab...." (Sandy, direkt im Anschluss an DC-042, 2026-08-30), dann "UM GOTTES WILLEN!!!! das gelbe mikro muss IMMER da bleiben unten in der leiste, also safe FAB behalten!!! warm und persönlich" | ✅ Live: FAB bleibt die einzige, immer sichtbare CTA — der doppelte Hero-"Aufmaß starten"-Button (führte zur exakt selben Aktion wie der Mikrofon-FAB) entfernt (Desktop hat weiterhin die SideNav-CTA, keine Lücke). Richtung "Warm & persönlich" umgesetzt: Umsatz-Kachel hervorgehoben mit echtem Vormonatsvergleich (`data/dashboard.ts`, neue Vormonats-Abfrage) + Erfolgs-Hinweis bei angenommenen Angeboten, Beauftragt/Offen als sekundäre 2er-Reihe. `BottomNav`: "Start"→"Dashboard" (Wort-Inkonsistenz zur Desktop-SideNav behoben). Committet (`b1e32b5`), scoped `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): BottomNav zeigt live "Dashboard", "seit 65 Tagen"-Anzeige live auf einem echten wartenden Angebot gesehen | Product Designer (umgesetzt) |
 | DC-044 | Kundendaten (Name, Adresse, Telefon, E-Mail) lassen sich nach dem Anlegen nirgends mehr bearbeiten — kein „Bearbeiten"-Button auf der Kunden-Detailseite, keine API-Route dafür (Product Designer, 2026-09-06, kompletter Klick-Test „check alles") | ✅ **behoben 06.09.** — „Bearbeiten" im Kopf der Kundenseite, eigene Seite `/kunden/[id]/bearbeiten`, gemeinsames Formular mit „Neuer Kunde" | Head of Product Engineering |
 | DC-045 | Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding — `PlanWahlModal` erscheint laut Code nur einmalig direkt nach frischem Onboarding, danach keine Einstellungsseite für Plan-Wechsel/Rechnungen/Zahlungsmethode. Zusätzlich: das beworbene „3 Angebote/Monat kostenlos"-Limit wird im Code nirgends geprüft oder durchgesetzt (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Zugang über Einstellungen → Abo & Rechnungen (Stripe-Kundenportal); harte Grenze bei 3 Angeboten/Monat nach Sandys Entscheidung, Anlegen gesperrt, Bearbeiten und Revisionen frei | Head of Product Engineering |
-| DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
+| DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
@@ -4632,6 +4632,41 @@ mitgeprüft, weil DC-043 sich nur auf das Dashboard bezog.
 
 **Vorschlag:** Header-„Neu"-Button auf der Angebote-Liste entfernen (FAB
 ist ohnehin auf jeder Seite mit `BottomNav` sichtbar), analog zu DC-043.
+
+---
+
+### ✅ Behoben (Head of Product Engineering, 2026-09-06)
+
+Header-„Neu" auf der Angebote-Liste ist weg. Zwei Dinge sind dabei
+dazugekommen, beide aus dem Grundsatz von DC-043 selbst.
+
+**1. Der Empty-State-Knopf ging mit.** Auf derselben Seite stand ein zweiter
+gelber Knopf („Erstes Aufmaß starten") mit demselben Ziel. Nur den Header zu
+räumen und den daneben stehen zu lassen hätte den Befund verschoben, nicht
+behoben. Der leere Zustand macht es jetzt wie das leere Dashboard nach
+DC-043: Er **zeigt auf die eine CTA**, statt eine zweite anzubieten.
+
+**2. Der Hinweistext stimmt jetzt auch auf dem Desktop.** Beim Nachziehen
+gefunden: `BottomNav` ist `md:hidden` — auf dem großen Bildschirm gibt es
+unten **gar kein Mikrofon**, dort steht die CTA links in der Seitenleiste
+(`SideNav`). Der Satz aus DC-043 („Tippe unten auf das Mikrofon") zeigte auf
+dem Desktop also auf etwas, das es nicht gibt. Beide Stellen — Dashboard und
+Angebote-Liste — sagen jetzt je nach Bildschirmgröße das Richtige:
+
+| | Text |
+|---|---|
+| mobil | „Tippe unten auf das Mikrofon, um loszulegen." |
+| Desktop | „Links in der Leiste auf ‚Neues Angebot', um loszulegen." |
+
+**Nicht angefasst:** „+ Neues Angebot für diese Baustelle" auf der
+Kundenseite. Das ist keine Dopplung, sondern eine **kontextbezogene** Aktion —
+sie legt das Angebot mit Kunde und Baustelle vorbelegt an, was der FAB nicht
+kann.
+
+**Bestand:** Damit gibt es pro Bildschirmgröße genau **eine** dauerhafte CTA —
+mobil den Mikrofon-FAB, auf dem Desktop „Neues Angebot" in der Seitenleiste.
+
+**Tests:** unverändert 1.484 grün, `tsc` sauber, `eslint` 0 Fehler.
 
 ---
 

@@ -215,7 +215,14 @@ export default async function DashboardPage({
             {/* DC-043: verwies vorher auf den jetzt entfernten Hero-Button
                 ("Tippe oben auf „Aufmaß starten"") — der einzige Weg dorthin
                 ist jetzt der Mikrofon-FAB unten. */}
-            <div className="text-anthracite/50 text-sm font-semibold mt-1">Tippe unten auf das Mikrofon, um loszulegen.</div>
+            {/* DC-046, beim Nachziehen gefunden: Die BottomNav ist `md:hidden`
+                — auf dem Desktop gibt es unten gar kein Mikrofon, dort steht
+                die CTA links in der Seitenleiste. Der Satz zeigte also auf
+                dem großen Bildschirm auf etwas, das es nicht gibt. */}
+            <div className="text-anthracite/50 text-sm font-semibold mt-1">
+              <span className="md:hidden">Tippe unten auf das Mikrofon, um loszulegen.</span>
+              <span className="hidden md:inline">Links in der Leiste auf „Neues Angebot", um loszulegen.</span>
+            </div>
           </div>
         </div>
       )}

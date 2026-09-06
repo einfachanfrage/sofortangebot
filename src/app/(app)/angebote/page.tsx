@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import BottomNav from '@/components/BottomNav'
 import DashboardFilters from '@/components/DashboardFilters'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
-import { Mic } from 'lucide-react'
 import { getQuotesOverview } from '@/data/quotes'
 import { getStatusInfo } from '@/lib/status'
 
@@ -57,15 +56,15 @@ export default async function AngebotePage({
     <div className="min-h-dvh bg-bg pb-28">
       <div className="md:max-w-5xl md:mx-auto">
       {/* Header */}
-      <div className="bg-anthracite md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6 flex items-start justify-between">
+      {/* DC-046 (Product Designer, 06.09.2026): Hier stand ein zweiter
+          „Neu"-Knopf mit demselben Ziel wie der Mikrofon-FAB unten. DC-043
+          hat genau diese Dopplung auf dem Dashboard entfernt („das gelbe
+          Mikro muss IMMER da bleiben unten in der Leiste") — auf der
+          Angebote-Liste war sie geblieben, weil DC-043 sich nur aufs
+          Dashboard bezog. Die eine, immer sichtbare CTA ist der FAB
+          (mobil) bzw. „Neues Angebot" in der Seitenleiste (Desktop). */}
+      <div className="bg-anthracite md:bg-transparent px-5 md:px-8 pt-12 md:pt-8 pb-6">
         <div className="font-syne font-black text-2xl text-white md:text-anthracite">Angebote</div>
-        <Link
-          href="/angebot/neu"
-          className="flex items-center gap-1.5 bg-yellow text-anthracite font-black text-sm rounded-xl px-4 py-2 mt-1"
-        >
-          <Mic size={14} strokeWidth={2.5} />
-          Neu
-        </Link>
       </div>
 
       {/* Filters */}
@@ -88,14 +87,16 @@ export default async function AngebotePage({
           <div className="bg-white rounded-2xl border border-anthracite/5 px-6 py-10 text-center">
             <div className="font-black text-anthracite text-[16px]">{emptyText.title}</div>
             <div className="text-[13px] font-semibold mt-1 text-anthracite/50">{emptyText.sub}</div>
+            {/* Auch hier kein eigener Knopf mehr, sondern der Hinweis auf
+                die eine CTA — dieselbe Lösung wie im leeren Dashboard
+                (DC-043). Einen Duplikat-Knopf im Header zu entfernen und
+                den daneben stehen zu lassen, hätte den Befund nur
+                verschoben. */}
             {emptyText.showCta && (
-              <Link
-                href="/angebot/neu"
-                className="inline-flex items-center gap-2 bg-yellow text-anthracite font-black text-sm px-5 py-2.5 rounded-xl mt-5"
-              >
-                <Mic size={14} />
-                {status === 'entwurf' ? 'Aufmaß starten' : 'Erstes Aufmaß starten'}
-              </Link>
+              <div className="text-[13px] font-semibold mt-4 text-anthracite/50">
+                <span className="md:hidden">Tippe unten auf das Mikrofon, um loszulegen.</span>
+                <span className="hidden md:inline">Links in der Leiste auf „Neues Angebot", um loszulegen.</span>
+              </div>
             )}
           </div>
         </div>
