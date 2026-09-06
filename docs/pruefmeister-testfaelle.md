@@ -654,12 +654,12 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
-| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist **behoben 03.09.** — Ursache war zuletzt der Dezimalpunkt in der Satztrennung, siehe „Nachtrag am selben Tag“. Dämmung steht jetzt genau einmal, im Flur, mit dessen Fläche. Live-Nachtest steht aus |
+| PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist **behoben 03.09.** — Ursache war zuletzt der Dezimalpunkt in der Satztrennung, siehe „Nachtrag am selben Tag“. Dämmung steht jetzt genau einmal, im Flur, mit dessen Fläche. Live-Nachtest steht aus ✅ **Grün (Nachtest 04.09.):** Trittschalldämmung mit **10,80 m²** = Fläche dieses Raums, geprüft in genau der Raum-Paarung, die den situativen Fund erzeugt hatte. Sockelleisten 15,60 lfdm |
 | PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
 | PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Vierter Nachtest komplett sauber: alle vier Positionen exakt Soll, „Boden schützen" wieder korrekt bepreist, keine offenen Funde mehr |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ✅ Beide Positionen live bestätigt exakt Soll |
-| PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | 🟡 Mengen exakt Soll. Zwei Funde: Wandflächen-Grundpreis weicht ab (11,50 € statt 9,50 €/m²); Erschwerniszuschlag-Bemessungsgrundlage zieht fälschlich den Abstellraum mit ein |
+| PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | 🟡 Mengen exakt Soll. Zwei Funde: Wandflächen-Grundpreis weicht ab (11,50 € statt 9,50 €/m²); Erschwerniszuschlag-Bemessungsgrundlage zieht fälschlich den Abstellraum mit ein ✅ **Grün (Nachtest 04.09.):** Wand **37,50 m²**, Sockelleisten 15,00, Wandpreis vereinheitlicht. Altbau-Zuschlag rechnet gewerkeübergreifend (20 % auf 1.023,57 €) — von Sandy ausdrücklich als richtig eingeordnet, damit ist der alte Bemessungsgrundlagen-Fund gegenstandslos. Offener Vorschlag: Annahme ausweisen, wenn „Altbau" nur für einen Raum gesagt wurde |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
@@ -5709,6 +5709,67 @@ allein und ganz am Ende der Datei:
   stehen weiter oben im Abschnitt „Was Stufe 1 noch zum kompletten Grün fehlt".
 
 Das ist der letzte Punkt. Alles andere aus beiden Stufen ist grün.
+
+---
+
+### PM-023 und PM-028 — Nachtest (Sandy, 2026-09-04, in einem Angebot eingesprochen)
+
+Sandy hat beide Diktate in **einen** Auftrag gesprochen: Flur (Boden) plus
+Arbeitszimmer (Maler). Das war nicht geplant, ist aber ein Glücksfall — genau
+diese Raum-Paarung hatte den PM-023-Fund ausgelöst.
+
+**PM-023 ✅ grün — und der situative Fund ist damit erledigt.**
+
+| Position | Ist | Soll |
+|---|---|---|
+| Laminat inkl. 5 % | 11,34 m² | ✅ |
+| Sockelleisten montieren | **15,60 lfdm** | ✅ VOB-012, kein Türabzug |
+| **Trittschalldämmung** | **10,80 m²** | ✅ **die Fläche dieses Raums** |
+
+Die Dämmung trägt die Flurfläche, nicht die des Nachbarraums. Das war der
+Fund, der monatelang als „situativ, nicht bei jeder Raum-Paarung
+reproduzierbar" offen stand — und er ist in genau der Paarung geprüft, in der
+er damals auftrat. Sauber zu.
+
+**PM-028 ✅ in den Mengen grün.** Wandfläche **37,50 m²** (Umfang 15,00 × 2,50,
+keine Öffnungsabzüge), Grundierung dieselbe Fläche, Boden schützen 14,00,
+Sockelleisten abkleben **15,00 lfdm**. Keine Deckenposition — im Diktat nicht
+verlangt. Der alte Fund „Wandpreis 11,50 statt 9,50" ist mit dem
+vereinheitlichten Katalogeintrag erledigt.
+
+**Zum Altbau-Zuschlag — Sandys Einordnung ist fachlich richtig, mit einer
+Einschränkung, die ich festhalten will**
+
+Der Zuschlag steht unter „Allgemein" und rechnet auf **alles**:
+Bemessungsgrundlage 685,05 + 338,52 = 1.023,57 € → 10,24 € je Prozentpunkt →
+20 % = **204,80 €**. Die Rechnung selbst ist korrekt.
+
+Sandys Bewertung („normalerweise sind alle Räume Altbau, daher passt es") teile
+ich. Ein Altbau erschwert nicht nur die Malerarbeit: schiefe Wände, unebene
+Böden, enge Treppenhäuser, kein Aufzug — das trifft den Bodenleger genauso.
+Ein Zuschlag über beide Gewerke ist sachlich vertretbar. **Damit ist das eine
+Entscheidung, keine offene Frage mehr.**
+
+**Was ich trotzdem festhalte:** Das Wort „Altbau" fiel nur im
+Arbeitszimmer-Teil. Das Tool überträgt die Erschwernis auf einen Raum, für den
+sie nicht gesagt wurde — richtig geraten, aber geraten. Solange die Annahme
+nicht ausgewiesen ist, sieht der Handwerker nicht, dass sie getroffen wurde.
+
+**Vorschlag:** Wenn ein objektbezogener Zuschlag auf Räume angewendet wird, für
+die er nicht ausdrücklich genannt wurde, gehört ein Annahme-Hinweis dazu — im
+selben Ton wie die Maß-Warnungen: *„Altbau wurde für ‚Arbeitszimmer' genannt
+und für alle Räume dieses Angebots angenommen. Stimmt das nicht, hier
+korrigieren."* Dann steht die Entscheidung beim Betrieb statt bei uns.
+
+**Zur Einordnung des Testaufbaus:** Der ursprüngliche PM-028-Fund
+(„Bemessungsgrundlage zog den Abstellraum mit ein") lässt sich in dieser
+Kombination nicht abschließend prüfen — es gibt hier keinen zweiten
+Maler-Raum. Nachdem Sandy die gewerkeübergreifende Berechnung ausdrücklich als
+richtig eingeordnet hat, ist der Punkt aber gegenstandslos: Was damals als
+Fehler notiert war, ist nach dieser Entscheidung gewolltes Verhalten. Ich
+schließe ihn mit dieser Begründung.
+
+**Stand Stufe 3:** PM-023 ✅ · PM-028 ✅ · offen: PM-030, PM-024, PM-009.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

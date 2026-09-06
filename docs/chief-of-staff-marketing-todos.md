@@ -51,6 +51,7 @@ CoS-013 in `chief-of-staff-todos.md`.
 | CoS-M-003 | Verbindliche Gestaltungsvorgabe für Instagram/TikTok-Posts, nach Sandys Kritik an ersten fertigen Posts | 🟡 Vorgabe umgesetzt, v1-Posts + zwei v2-Entwürfe in `docs/` gesichert; Sandy hat zusätzlich 9 neue Entwürfe im Chat gezeigt und Chief-of-Staff-Go bekommen — Abgleich mit `social-drafts-v2/` bei Head of Marketing offen | Sandy direkt im Chat, 2026-08-31 |
 | CoS-M-004 | Design System — zwei Freigaben nötig (Sie/du, Funktionsfarben) | 🟡 Sie/du entschieden („immer du"), Funktionsfarben weiterhin 🔵 offen | Sandys Übergabe des PDFs, 2026-08-31 |
 | CoS-M-005 | DER Slogan für Sofortangebot final festgelegt | ✅ entschieden — „Aufmaß fertig. Angebot fertig." | Sandy direkt im Chat, 2026-08-31 |
+| CoS-M-009 | Positionierung: bewusst keine KI-Werbesprache, Ergebnis statt Technologie verkaufen | ✅ entschieden (Sandy) — als Prüf-Regel für alle Texte mitnehmen | Sandy direkt, 2026-09-06 |
 
 ---
 
@@ -1363,6 +1364,66 @@ fällt weg, wenn Blog und Influencer dazukommen?** Nicht „alles geht", sondern
 eine Reihenfolge. Und wenn deine Antwort lautet, dass das Tempo ohne mehr
 Stunden oder Geld nicht steigt, sag genau das — das ist eine strategische
 Information und keine schlechte Nachricht.
+
+---
+
+## CoS-M-009 — Positionierung: bewusst keine KI-Werbesprache
+
+**Datum:** 2026-09-06
+**Status:** ✅ entschieden (Sandy direkt) — gilt ab sofort als Leitplanke für
+alle Texte/Ansprache
+**Quelle:** Sandy direkt im Gespräch mit dem Chief of Staff, 2026-09-06,
+ausgelöst durch den Vergleich mit dem neuen Wettbewerber Kalkulai (siehe
+unten)
+
+Sandy will explizit nicht mit „KI" werben. Begründung in ihren eigenen
+Worten: die Zielgruppe interessiert sich nicht dafür, was technisch
+passiert — die App soll sich wie ein kleiner Helfer anfühlen, nicht wie ein
+Tech-Produkt. Ziel: null Einstiegshürde, Lust es zu nutzen, über Optik/
+Farben statt über die Technologie dahinter.
+
+**Warum das mehr ist als Geschmack:** Kalkulai (neuer, ernstzunehmender
+Wettbewerber, siehe unten) positioniert sich stark über „KI" — „Dein
+KI-Bürokollege fürs Handwerk". Sofortangebot grenzt sich damit jetzt nicht
+nur über den schärferen Funktionsumfang ab (siehe `vision-strategie.md`,
+Geklärt 31.08.), sondern zusätzlich über die Tonalität: Ergebnis verkaufen,
+nicht Technologie. Deckt sich mit dem bereits entschiedenen Slogan
+(CoS-M-005, „Aufmaß fertig. Angebot fertig.") — das war also schon die
+richtige Richtung, jetzt ist der Grund dafür explizit.
+
+**Für dich als Auftrag:** bitte alle Copy-Bausteine (Landingpage,
+Social-Media-Vorgabe CoS-M-003, künftige Ansprache-Texte für Idee 2/
+Micro-Influencer unter CoS-M-008) auf Tech-/KI-Vokabular durchsehen und
+gegen Handwerkervokabular tauschen, wo es sich eingeschlichen hat. Kein
+akuter Fix nötig, aber bitte als stehende Prüf-Regel für alles Neue
+mitnehmen.
+
+**Nebenbei, zur Einordnung (gleicher Anlass, kein eigener Punkt):**
+
+- **Neuer Wettbewerber: Kalkulai** (München, EXIST/TUM/UnternehmerTUM-
+  gefördert). Sprache/Text → Angebot in ca. 4 Minuten, arbeitet auch mit
+  VOB/C + DIN 18363. Zielgruppe Maler/Putz/Trockenbau, kein Bodenleger —
+  das bleibt eine unbesetzte Nische für uns. Bündelt zusätzlich E-Mail/
+  WhatsApp/Anrufe, ZUGFeRD/XRechnung, Personaleinsatzplanung, Mahnwesen,
+  Projektgedächtnis — deutlich breiter als Sofortangebot. Pilotpreis
+  19 €/Monat (1.9.–30.11.), danach offen. Volle Einordnung in
+  `docs/vision-strategie.md`.
+- **Reel-Feedback (zu CoS-M-002/Dreh mit Clemens):** erstes Reel („Vorher:
+  Zettel sortieren…" → „Nachher"-Demo mit Rechenweg → Outro) vom Chief of
+  Staff angeschaut. Konzept und Dramaturgie sitzen, der aufklappbare
+  Rechenweg ist der stärkste Moment im Video und sollte eher betont als
+  gekürzt werden. Zwei technische Punkte vor dem Posten: (1) die Datei hat
+  aktuell **keine Audiospur** — für Reels/TikTok ein reales
+  Reichweiten-Risiko, sollte vor Veröffentlichung noch Ton bekommen
+  (Trend-Sound oder Werkstatt-Atmo, offen); (2) der Einstieg ist zwei
+  Sekunden reiner Text, bevor sich etwas bewegt — ggf. mit dem visuellen
+  Vorher-Chaos direkt öffnen statt mit der Textkarte.
+- **Cold E-Mail als möglicher vierter Kanal** von Sandy angedacht, vom
+  Chief of Staff eingeordnet: für einzelne Handwerker vermutlich ein
+  schwacher Kanal (Geschäftspostfächer werden selten aktiv geprüft), eher
+  denkbar als Ansprache von Multiplikatoren (Innungen, Handwerkskammern)
+  statt einzelner Betriebe. Keine Entscheidung, nur als Gedanke
+  festgehalten.
 
 ---
 

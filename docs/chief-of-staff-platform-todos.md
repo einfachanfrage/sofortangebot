@@ -49,9 +49,9 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
-| CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | ❌ offen, kann sofort starten | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
+| CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
-| CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟡 Erster Schritt umgesetzt (Sentry im Kernpfad), Restarbeit sauber abgegrenzt | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
+| CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟢 Alle vertagten Punkte erledigt (Logging-Spalten, Sentry inkl. `SENTRY_DSN`, tote Functions stillgelegt, Staging-Nachzug) — nur noch ~27 Nebenpfade ohne Sentry offen, niedrige Priorität | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
 | CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🟢 Fix umgesetzt — Passwort-Reset-Bug behoben, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
 | CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟢 Fix umgesetzt — alle drei Mails laufen jetzt über unsere eigene Resend-Anbindung, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
@@ -710,5 +710,242 @@ herausstellt, dass `CRON_SECRET` gesetzt ist und der Job trotzdem nicht läuft,
 wird daraus sofort ein eigener Punkt bei dir.
 
 ---
+
+## Fix-Update CoS-P-007 — Stripe-Preismodell (Platform & Integrations Engineer, 2026-09-06)
+
+**Kurzfassung für Sandy:** Die Technik für das neue Preismodell (49 €
+Standard, 29 € Gründerpreis, 14 Tage ohne Kreditkarte) steht — bis auf einen
+Punkt, den nur du (bzw. wer Zugriff auf das Stripe-Dashboard hat) lösen
+kannst, weil mein Zugang dafür nicht die nötigen Rechte hat. Siehe „Was noch
+fehlt" unten.
+
+### Was bereits läuft (Staging + Produktion)
+
+1. **Datenbank.** `companies` hat drei neue Spalten: `trial_ends_at` (Ende
+   der 14-Tage-Testphase, wird beim Registrieren automatisch gesetzt),
+   `is_founder_price` (dauerhaftes Gründerpreis-Kennzeichen) und
+   `founder_slot` (fortlaufende Nummer 1–25, eindeutig). Für die beiden schon
+   bestehenden Firmen habe ich `trial_ends_at` bewusst leer gelassen —
+   Bestandskonten, keine künstliche Testphase, die sonst am 20.09. abgelaufen
+   wäre.
+2. **Gründerpreis-Vergabe, serverseitig, nicht von Hand.** Eine
+   Datenbankfunktion (`claim_founder_slot`) zählt atomar und vergibt einen
+   Slot erst, wenn eine Zahlung tatsächlich bestätigt ist (nicht schon beim
+   Öffnen des Checkouts) — ein abgebrochener Checkout verbraucht also keinen
+   der 25 Plätze. Slot 26 bekommt automatisch 49 €. Ein Betrieb, der den
+   Gründerpreis einmal hatte und später kündigt und neu abonniert, behält ihn
+   dauerhaft (Bestandsschutz gilt auch beim Wiedereinstieg).
+3. **Testphase ohne Kreditkarte.** Komplett ohne Stripe umgesetzt: Kein
+   Stripe-Kunde, keine Zahlungsmethode, nichts, solange die Testphase läuft.
+   Stripe kommt erst in dem Moment ins Spiel, in dem jemand aktiv auf „Jetzt
+   abonnieren" klickt — das ist die aktive Entscheidung, die verhindert, dass
+   irgendjemand still in ein bezahltes Abo rutscht.
+4. **Checkout-Route** (`src/app/api/stripe/route.ts`) neu geschrieben: nimmt
+   keinen Plan-Parameter vom Client mehr entgegen (es gibt nur noch einen
+   bezahlten Tarif), wählt automatisch Gründer- oder Standardpreis, keine
+   Promo-Codes mehr (bewusst, damit niemand den Preis unterläuft). Kein
+   Jahresabo ist damit nicht nur „nicht angeboten", sondern technisch gar
+   nicht anforderbar.
+5. **Webhook** (`src/app/api/stripe/webhook/route.ts`) erweitert um die
+   endgültige Slot-Vergabe nach bestätigter Zahlung, inklusive eines
+   abgesicherten Grenzfalls (Sentry-Meldung, falls zwei Checkouts sich exakt
+   überschneiden — bei der Größe des Geschäfts praktisch nie, aber sauber
+   abgefangen statt ignoriert).
+6. **L7 (Kündigen-Weg) — schon erledigt, nichts Neues nötig.** Geprüft:
+   `src/app/api/stripe/portal/route.ts` öffnet bereits Stripes eigenes
+   Kundenportal mit Kündigung, Zahlungsart und Rechnungen auf Deutsch (DC-045,
+   Product Designer, 06.09.). Die Bedingung aus `docs/preismodell.md` Punkt
+   7 — kein Abo ohne echten Kündigen-Weg — ist damit bereits erfüllt.
+
+### Was noch fehlt, und warum es bei dir liegt
+
+**Ich kann die beiden Stripe-Preise nicht selbst anlegen.** Mein
+Stripe-Zugang hat keine Schreibrechte für Produkte (`PostProducts` wurde mit
+„Ihr API-Schlüssel hat nicht die erforderlichen Berechtigungen" abgelehnt) —
+und da es nur den einen, echten (nicht simulierbaren) Stripe-Account gibt,
+wäre das ohnehin ein Punkt, den man einmal bewusst selbst im Dashboard macht,
+statt ihn einer Automatik zu überlassen. Bitte im Stripe-Dashboard anlegen:
+
+| Produkt | Preis | Abrechnung |
+|---|---|---|
+| Sofortangebot – Standard | 49,00 € | monatlich, EUR |
+| Sofortangebot – Gründerpreis | 29,00 € | monatlich, EUR |
+
+Danach die beiden Preis-IDs (`price_...`) als Vercel-Umgebungsvariablen
+`STRIPE_PRICE_STANDARD` und `STRIPE_PRICE_FOUNDER` eintragen (Production
+**und** Preview, gleiche Falle wie beim `RESEND_API_KEY`-Punkt aus
+CoS-P-006). Sag mir Bescheid, wenn das steht — dann kann ich den ersten
+echten Checkout gegenprüfen.
+
+### Offen bei Legal (CoS-L-002) — ich habe trotzdem entschieden, nicht blockiert
+
+Ich habe wie im Ticket verlangt bei Head of Legal unter CoS-L-002
+gegengelesen, bevor ich die Mechanik festgezurrt habe. Ergebnis: **CoS-L-002
+steht dort noch als „❌ offen"** — insbesondere Frage 4 (Testphase,
+B2B/B2C-Unterschiede, Kommunikation) ist von Legal noch nicht beantwortet.
+Ich habe die Technik trotzdem umgesetzt, weil die von dir entschiedenen
+Eckpunkte (14 Tage, keine Karte, keine stille Umwandlung) eindeutig sind und
+die App-seitige Lösung ohne jeden Stripe-Kontakt während der Testphase die
+wörtlich sicherste Umsetzung davon ist. Was noch fehlen kann, ist reine
+**Text-/Kommunikationsfrage** (was wo wie formuliert wird), keine
+Architekturfrage — falls Legal etwas findet, das die Mechanik selbst
+betrifft, sag mir Bescheid, das wäre dann eine echte Änderung.
+
+### Handoff an Head of Product Engineering (CoS-038) — bitte kurz abstimmen, nicht selbst überschrieben
+
+Ich habe `src/lib/pricing.ts`, `src/lib/plan-limit.ts`,
+`src/components/PlanWahlModal.tsx`, `src/data/abo.ts` und die Abo-Seite
+absichtlich **nicht angefasst** — das ist laut Ticket eure Baustelle. Damit
+ihr darauf aufbauen könnt, hier die neuen Datenfelder und was sich dadurch
+ändert:
+
+- `companies.trial_ends_at` (timestamptz, meist gesetzt) und
+  `companies.is_founder_price` (boolean) sind neu und per RLS für den
+  Eigentümer lesbar wie alle anderen Spalten der Tabelle.
+- `plan` bleibt unverändert `'starter' | 'pro'` — nichts an der bestehenden
+  Lese-Logik in `data/abo.ts` bricht dadurch.
+- **`plan-limit.ts`s `pruefeAngebotsLimit` (die Monats-Zählung der 3
+  Freiangebote) ist mit dem neuen Modell komplett obsolet** — es gibt keinen
+  Dauer-Gratis-Tarif mehr. Die neue Sperrlogik sollte stattdessen sein:
+  gesperrt (neues Angebot anlegen), wenn `plan === 'starter'` **und**
+  `trial_ends_at` gesetzt **und** `trial_ends_at < jetzt`. Firmen mit
+  `trial_ends_at = NULL` sind Bestandskonten und von der Sperre ausgenommen.
+- `pricing.ts` braucht die neuen Zahlen (49 / 29, kein Jahresabo, kein
+  Freikontingent mehr) — genau das, worauf CoS-038 wartet.
+- **Live-Fund dabei, sicherheitshalber gemeldet:** `PlanWahlModal.tsx`
+  verspricht aktuell „30 Tage gratis testen" auf der Pro-Karte und schickt
+  direkt in einen Stripe-Checkout ohne jede Testphasen-Logik — das war bisher
+  folgenlos, weil in Stripe noch nie ein gültiger Preis dahinter hing (0
+  Produkte im Account, Checkout wäre mit „Ungültiger Plan" fehlgeschlagen).
+  Sobald die echten Preise oben stehen, muss diese Oberfläche vor dem ersten
+  echten Klick ersetzt sein, sonst verspricht sie etwas, das die neue
+  Checkout-Route nicht mehr einlöst (sie kennt gar kein `trial_period_days`
+  mehr, weil die Testphase jetzt vorher und ohne Stripe passiert).
+
+---
+
+## Fix-Update 2 CoS-P-002 — Observability (Platform & Integrations Engineer, 2026-09-06)
+
+Die drei Restpunkte vom 17.08. („bewusst nicht in diesem Schritt") noch
+einmal angeschaut. Zwei sind erledigt, einer davon ganz anders als gedacht —
+und dabei kam ein Fund dazu, der so nicht im Ticket stand.
+
+**1. `hat_normalisierung` — war schon erledigt, nur die Doku wusste es
+noch nicht.** Beim Nachsehen: Product Engineering hat die Aufnahme-Pipeline
+zwischenzeitlich umgebaut (PM-034, Hörfehler-Korrektur) und dabei diese
+Spalte als Nebeneffekt mit befüllt — läuft bereits produktiv in
+`aufnahme/upload/route.ts` und `aufnahme/verarbeite/route.ts`. Die
+Einschätzung vom 17.08. („nirgendwo im Code beschrieben") war zu dem
+Zeitpunkt richtig, ist es jetzt nicht mehr. Kein Fix nötig, nur die Korrektur
+hier im Protokoll.
+
+**2. `konfidenz_whisper` — jetzt tatsächlich behoben.** Die Spalte war
+wirklich tot: Whisper liefert die Erkennungssicherheit nur, wenn man explizit
+danach fragt (`response_format: 'verbose_json'`), und genau das hat gefehlt,
+seit die alte Deno-Function `transcribe` durch einen direkten Aufruf in den
+beiden Next.js-Routen ersetzt wurde. Jetzt gesetzt in beiden Routen — der
+Wert, der eine unsichere Spracherkennung wie bei PM-010 anzeigen würde,
+*bevor* sie zu einem falschen Preis wird. Nur für neue Aufnahmen ab jetzt,
+keine Rückwirkung auf Altbestand.
+
+**3. Die „zwei KI-Edge-Functions ohne Sentry" — waren eigentlich fünf, und
+nur eine davon lebt noch.** Beim genaueren Hinsehen: es gibt fünf
+Deno-Functions (`transcribe`, `ki-extrahieren`, `ki-matchen`, `ki-pruefen`,
+`angebot-autosave`). Ich habe direkt in den Aufruf-Protokollen nachgesehen
+(nicht nur im Code) — heute UND stichprobenartig vor einer Woche: **nur
+`ki-extrahieren` bekommt echten Verkehr.** Die anderen vier: null Aufrufe in
+beiden Zeitfenstern. `transcribe` ist durch Punkt 2 oben erklärt (durch
+direkten Whisper-Aufruf ersetzt); wodurch `ki-matchen`/`ki-pruefen`/
+`angebot-autosave` ersetzt wurden, habe ich nicht im Detail nachverfolgt —
+vermutlich derselbe Umbau auf direkte OpenAI-Aufrufe in `src/lib/`.
+
+Deshalb: Sentry nur in `ki-extrahieren` eingebaut (neue Datei
+`supabase/functions/_shared/sentry.ts`, nach dem offiziellen
+Supabase-Beispiel für Deno). Die vier toten Functions zu instrumentieren
+hätte nichts gebracht — sie laufen ja nicht. **Empfehlung statt Instrumentierung:
+die vier toten Functions entfernen.** Sie sind live erreichbar (`verify_jwt:
+true`, also nicht komplett offen, aber jeder eingeloggte Nutzer könnte sie
+aufrufen), halten Zugriff auf den OpenAI-Key und kosten im schlimmsten Fall
+echtes Geld, wenn sie doch jemand aufruft — für nichts, was das Produkt
+noch benutzt. Das ist aber eine Aufräum-Entscheidung, keine, die ich allein
+treffen wollte — sag Bescheid, dann lösche ich sie.
+
+**Nebenfund, nicht Teil des Tickets:** Auf Staging (`bkldyddstovvkkhpiqiy`)
+ist von den fünf Functions nur `ki-pruefen` überhaupt deployt — `ki-extrahieren`
+fehlt dort komplett. Heißt: die Angebots-Extraktion würde auf Staging aktuell
+gar nicht funktionieren. Unabhängig vom heutigen Thema, aber beim Nachsehen
+aufgefallen — sag Bescheid, ob das für Staging-Tests relevant ist, dann
+deploye ich sie dort nach.
+
+**Was noch bei dir liegt:** `SENTRY_DSN` muss als Supabase-Secret gesetzt
+werden (`supabase secrets set SENTRY_DSN=... --project-ref
+yqlledouhfovytifeekd`) — dafür habe ich keinen Zugriff. Ohne das Secret
+bleibt `ki-extrahieren` weiterhin auf reines Konsolen-Logging, aber bricht
+nichts — das ist bewusst so gebaut.
+
+**Weiterhin bewusst nicht angefasst:** die ~27 Fehlerstellen außerhalb des
+Kernpfads ohne Sentry-Meldung — unverändert niedrige Priorität, kein
+Zeitdruck.
+
+---
+
+**Fix-Update 3 CoS-P-002 — vier tote Functions stillgelegt (Platform &
+Integrations Engineer, 2026-09-06, mit Sandys Freigabe "ok"):**
+
+Die vier toten Edge-Functions aus dem Fund oben (`transcribe`, `ki-matchen`,
+`ki-pruefen` in Produktion, `ki-pruefen` zusätzlich auf Staging;
+`angebot-autosave` nur in Produktion) sind jetzt stillgelegt: der komplette
+alte Code wurde durch eine Mini-Function ersetzt, die jeden Aufruf sofort mit
+Status 410 ("stillgelegt") beantwortet, ohne irgendetwas zu tun — kein
+OpenAI-Aufruf, kein Datenbankzugriff mehr möglich. Das Kostenrisiko, das der
+eigentliche Grund für die Bitte war, ist damit weg.
+
+**Ehrlicher Hinweis zur Umsetzung:** Mein Werkzeugkasten für Supabase kann
+Functions nur *deployen* (neuen Code hochladen), nicht *löschen* — es gibt
+kein "Function entfernen"-Werkzeug. Die vier Namen tauchen deshalb in der
+Supabase-Function-Liste weiterhin auf, aber wirkungslos (jeder Aufruf kommt
+sofort mit einer Fehlermeldung zurück, ohne dass etwas passiert). Falls du
+sie auch aus der Liste selbst verschwinden lassen willst (rein kosmetisch,
+kein Sicherheits-/Kostenthema mehr), geht das nur über das Supabase-Dashboard
+oder die Supabase-CLI (`supabase functions delete <name>`) — dafür bräuchtest
+du kurz selbst ran, ich komme technisch nicht weiter ran.
+
+---
+
+**Fix-Update 4 CoS-P-002 — Staging-Nachzug von `ki-extrahieren` (Platform &
+Integrations Engineer, 2026-09-06, auf Sandys "Staging-Nachzug"):**
+
+`ki-extrahieren` ist jetzt auch auf Staging (`bkldyddstovvkkhpiqiy`) deployt —
+identischer Code wie auf Produktion (Version 27), inklusive der Sentry-
+Anbindung aus Fix-Update 2. Damit funktioniert die Angebots-Extraktion aus
+der Sprachaufnahme jetzt auch auf Staging, nicht mehr nur in Produktion.
+
+**Ein Punkt, den ich aus dieser Session heraus nicht selbst prüfen kann:**
+Für einen echten Aufruf braucht die Function auf Staging denselben
+`OPENAI_API_KEY` als Supabase-Secret wie auf Produktion. Es gibt kein
+Werkzeug, mit dem ich vorhandene Secrets einsehen kann (nur setzen, und auch
+das nicht direkt aus dieser Session). Falls Staging bisher nur mit den toten
+Functions lief (die keinen echten OpenAI-Aufruf mehr machen), könnte der Key
+dort fehlen oder veraltet sein — bitte einmal kurz mit einer echten
+Test-Aufnahme auf Staging gegenprüfen. Falls „OPENAI_API_KEY nicht gesetzt"
+kommt: `supabase secrets set OPENAI_API_KEY=... --project-ref
+bkldyddstovvkkhpiqiy`.
+
+---
+
+**Fix-Update 5 CoS-P-002 — `SENTRY_DSN` gesetzt, Ticket damit inhaltlich
+abgeschlossen (Sandy, 2026-09-06):** Sandy hat den DSN-Wert selbst bei Sentry
+kopiert (Settings → Client Keys (DSN)) und per Supabase-CLI auf Produktion
+gesetzt (`supabase secrets set SENTRY_DSN=... --project-ref
+yqlledouhfovytifeekd`, nach einem kurzen `supabase login`, da die CLI
+zwischenzeitlich ausgeloggt war). Damit meldet `ki-extrahieren` Fehler ab
+sofort wirklich an Sentry, nicht mehr nur an die Konsole. Auf Staging
+(`bkldyddstovvkkhpiqiy`) bewusst nicht gesetzt — optional, keine echten
+Kunden dort, kann bei Bedarf jederzeit nachgezogen werden.
+
+Damit sind alle drei ursprünglich vertagten Punkte aus CoS-P-002 (Sentry für
+die Kern-Edge-Function, `konfidenz_whisper`, tote Functions) durch. Offen
+bleibt nur noch, unverändert niedrige Priorität: die ~27 Fehlerstellen
+außerhalb des Kernpfads ohne Sentry-Meldung.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

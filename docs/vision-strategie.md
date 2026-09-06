@@ -108,6 +108,33 @@ Check-ins Stück für Stück ergänzt werden, statt es zu erfinden:
   eingeplant (weitere Gewerke sollen folgen) — konkrete Reihenfolge/Timing
   bleibt offen, siehe „Was hier noch fehlt" oben.
 
+**Geklärt (06.09.2026):**
+
+- **Wettbewerbslandschaft, Ergänzung — neuer Anbieter Kalkulai.** München,
+  gefördert über EXIST/TUM/UnternehmerTUM. Sprache/Text zu Angebot in ca.
+  4 Minuten, arbeitet ebenfalls mit VOB/C und DIN 18363. Zielgruppe Maler,
+  Putz, Trockenbau — kein Bodenleger, das bleibt eine unbesetzte Nische für
+  Sofortangebot. Deutlich breiterer Anspruch als Sofortangebot: bündelt
+  zusätzlich E-Mail/WhatsApp/Anrufe, macht ZUGFeRD/XRechnung,
+  Personaleinsatzplanung, Mahnwesen, durchsuchbares Projektgedächtnis — ein
+  „Büro-Betriebssystem", kein reiner Angebots-Fokus. Pilotpreis 19 €/Monat
+  (1.9.–30.11., 20 Betriebe), danach offen. Ernstzunehmender, institutionell
+  unterstützter Wettbewerber, aber andere Kategorie (breit vs. scharf) —
+  ändert die 31.08.-Differenzierungsstrategie (weniger statt mehr Funktionen)
+  nicht, bestätigt sie eher.
+- **Die seit 24.08. offene Frage „was macht Sofortangebot anders/besser" ist
+  jetzt konkret beantwortet, direkt von Sandy:** bewusst KEINE
+  KI-Werbesprache. Begründung: die Zielgruppe ist überwiegend nicht
+  techaffin, teils digitalisierungsmüde von früheren komplizierten Tools —
+  „KI" vorne draufgeschrieben erzeugt eher Abwehr/Skepsis als Neugier.
+  Positionierung stattdessen über Gefühl: ein kleiner, freundlicher Helfer,
+  niedrige Einstiegshürde durch Optik/Farben, Handwerkervokabular statt
+  Techvokabular — deckt sich mit dem bereits entschiedenen Slogan „Aufmaß
+  fertig. Angebot fertig." (CoS-M-005). Verkauft wird das Ergebnis
+  (leichterer Feierabend), nicht die Technologie dahinter. Gilt ab sofort als
+  Leitplanke für alle künftigen Texte/Ansprache, als CoS-M-009 in
+  `chief-of-staff-marketing-todos.md` festgehalten.
+
 ## Go-to-Market — was wir tatsächlich haben (Stand 03.09.2026)
 
 Ergänzt vom Chief of Staff nach direkter Nachfrage bei Sandy. Diese drei
@@ -314,3 +341,18 @@ Bild). Frage aus „Was hier noch fehlt" erneut an Sandy weitergegeben, da die
 Frage vom 24.08. weiterhin unbeantwortet ist: Wettbewerbslandschaft — was
 macht Sofortangebot aus ihrer Sicht anders/besser als bestehende
 Alternativen? Antwort steht weiter aus, daher unten unverändert gelassen.
+
+**06.09.2026 (vierter Check-in, aus einem offenen Gespräch heraus, kein
+fester Termin):** Stand Richtung Launch: Gate 1 bei 49,1 % (echte
+Neuberechnung 05.09., siehe `launch-readiness.md`) — CoS-042 und CoS-043
+beide vollständig umgesetzt, dabei ein echter, bisher unbemerkter Geld-Bug
+im Preis-Matching gefunden und gefixt. Keine akute strategische
+Entscheidung, aber ein strategisch wichtiger Punkt endlich geklärt: die seit
+zwei Check-ins offene Frage nach der Differenzierung (siehe „Geklärt
+06.09." oben) — ausgelöst dadurch, dass Sandy einen neuen Wettbewerber
+(Kalkulai) gefunden und mit dem Chief of Staff durchgesprochen hat. Am
+Rande: Sandys eigene Zielgröße für den 30-Stunden-Schritt (37, mit Puffer
+eher 43 Betriebe — dieselbe Zahl wie B1 im Finanzplan oben, siehe „Was der
+Finanzplan strategisch sagt") fühlt sich für sie als konkrete Stückzahl
+greifbarer an als eine Zeitspanne in Monaten — keine neue Zahl, nur eine
+persönlich hilfreichere Rahmung derselben.
