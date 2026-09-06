@@ -120,7 +120,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-041 | Raum-Platzhalter ("Raum hinzufügen" → neue leere Position im Raum) zeigte im Titel-Eingabefeld wörtlich "— Schlafzimmer" statt einer leeren, normal beschreibbaren Position — "sieht kacke aus und dumm" (Sandy, Screenshot, 2026-08-29) | ✅ Root-Cause: der interne " — Raumname"-Suffix, mit dem eine Position ihrem Raum zugeordnet wird (`angebot-gruppierung.ts`), steckt komplett im `title`-Feld selbst; die Anzeige blendet ihn beim Lesen zwar aus (`titleOverride`), das EDIT-Eingabefeld band aber direkt an den Rohtitel statt an den bereits vorhandenen Anzeige-Wert. Fix: Eingabefeld zeigt/bearbeitet nur noch den sichtbaren Basistitel, der Raum-Suffix wird beim Speichern automatisch wieder drangehängt (auch beim Übernehmen eines Preisdatenbank-Vorschlags, sonst wäre die Position aus ihrem Raum herausgefallen). Komplett Frontend, keine Backend-Änderung. Committet (`6a1fa0d`), scoped `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): Titel-Eingabefeld einer Position zeigt live nur den sauberen Basistitel, kein roher „— Raumname"-Suffix | Product Designer (umgesetzt) |
 | DC-042 | Dashboard-Frage "was soll das im Header heißen '4 Angebote warten auf Antwort'?" plus offener Unmut: "ich mag generell die Statuslogik der Angebote irgendwie immer noch nicht, mir ist das nicht klar und clean genug" (Sandy, zwei Screenshots, 2026-08-30) — auf Rückfrage zum Umfang explizit **"Komplettes Status-Modell neu denken"** gewählt, dann "dc042 deinen vorschklag auch live stellen" | ✅ Wording/Filter-Teil live: "Fertiggestellt"→"Bereit", "Offen"→"Beim Kunden" (`status.ts`, einzige Quelle seit DC-003, kaskadiert automatisch überallhin), eigener "Bereit"-Filter-Reiter ergänzt (fehlte komplett — eine der drei strukturellen Lücken aus der Bestandsaufnahme), "seit X Tagen" auf wartenden Angeboten (`MobileQuoteCard`, auf `created_at`-Basis, keine Migration nötig). Committet (`b1e32b5`), scoped `tsc` sauber. 🔵 Bewusst NICHT live: Archivieren als Flag statt überschreibendem Status (überschreibt aktuell den echten Ausgang bei Angenommen/Abgelehnt) + ein eigenes `sent_at`-Feld — beides braucht eine Datenbank-Migration, liegt als fertige Spec bei **Head of Product Engineering** (siehe DC-042-Detailabschnitt unten). Ebenfalls noch offen: toter `viewed`-Status (streichen oder zu echtem Feature ausbauen — Sandys Entscheidung steht noch aus) | Product Designer (Wording/Filter ✅ live) / Head of Product Engineering (Archivieren-als-Flag + `sent_at`, noch offen) |
 | DC-043 | "kannst du bitte auch das dashboard und die menüleiste unten neu denken?? irgendwie holt mich das nicht ab...." (Sandy, direkt im Anschluss an DC-042, 2026-08-30), dann "UM GOTTES WILLEN!!!! das gelbe mikro muss IMMER da bleiben unten in der leiste, also safe FAB behalten!!! warm und persönlich" | ✅ Live: FAB bleibt die einzige, immer sichtbare CTA — der doppelte Hero-"Aufmaß starten"-Button (führte zur exakt selben Aktion wie der Mikrofon-FAB) entfernt (Desktop hat weiterhin die SideNav-CTA, keine Lücke). Richtung "Warm & persönlich" umgesetzt: Umsatz-Kachel hervorgehoben mit echtem Vormonatsvergleich (`data/dashboard.ts`, neue Vormonats-Abfrage) + Erfolgs-Hinweis bei angenommenen Angeboten, Beauftragt/Offen als sekundäre 2er-Reihe. `BottomNav`: "Start"→"Dashboard" (Wort-Inkonsistenz zur Desktop-SideNav behoben). Committet (`b1e32b5`), scoped `tsc` sauber. ✅ Live bestätigt (Product Designer, 2026-09-03, selbst durchgeklickt): BottomNav zeigt live "Dashboard", "seit 65 Tagen"-Anzeige live auf einem echten wartenden Angebot gesehen | Product Designer (umgesetzt) |
-| DC-044 | Kundendaten (Name, Adresse, Telefon, E-Mail) lassen sich nach dem Anlegen nirgends mehr bearbeiten — kein „Bearbeiten"-Button auf der Kunden-Detailseite, keine API-Route dafür (Product Designer, 2026-09-06, kompletter Klick-Test „check alles") | ❌ offen, bestätigter Befund | Head of Product Engineering / Product Designer |
+| DC-044 | Kundendaten (Name, Adresse, Telefon, E-Mail) lassen sich nach dem Anlegen nirgends mehr bearbeiten — kein „Bearbeiten"-Button auf der Kunden-Detailseite, keine API-Route dafür (Product Designer, 2026-09-06, kompletter Klick-Test „check alles") | ✅ **behoben 06.09.** — „Bearbeiten" im Kopf der Kundenseite, eigene Seite `/kunden/[id]/bearbeiten`, gemeinsames Formular mit „Neuer Kunde" | Head of Product Engineering |
 | DC-045 | Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding — `PlanWahlModal` erscheint laut Code nur einmalig direkt nach frischem Onboarding, danach keine Einstellungsseite für Plan-Wechsel/Rechnungen/Zahlungsmethode. Zusätzlich: das beworbene „3 Angebote/Monat kostenlos"-Limit wird im Code nirgends geprüft oder durchgesetzt (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Head of Product Engineering |
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
@@ -4454,6 +4454,49 @@ das fehlt.
 öffnet dasselbe Formular wie „Neuer Kunde" (nur vorausgefüllt), schreibt
 per `update()` auf dieselbe `customers`-Zeile. Kein Datenmodell-Thema,
 reine fehlende Oberfläche.
+
+---
+
+### ✅ Behoben (Head of Product Engineering, 2026-09-06)
+
+Umgesetzt wie vorgeschlagen, mit einer Ergänzung und einer bewussten
+Abgrenzung.
+
+**Was es jetzt gibt:**
+
+- **„Bearbeiten"** im Kopf der Kundenseite, direkt neben Name und Adresse.
+- **`/kunden/[id]/bearbeiten`** — dieselben Felder wie beim Anlegen,
+  vorausgefüllt, schreibt per `update()` auf dieselbe `customers`-Zeile. Die
+  Kunden-ID bleibt, also auch die Angebots- und Baustellen-Historie.
+
+**Ergänzung — die Felder stehen jetzt an EINER Stelle.** „Neuer Kunde" und
+„Kunde bearbeiten" benutzen gemeinsam `src/components/KundenKontaktFelder.tsx`.
+Zwei Formulare für dieselben Daten wären genau die Dopplung, die in diesem
+Projekt diese Woche schon zweimal Geld gekostet hat (zwei Katalogeinträge für
+einen Arbeitsgang bei PM-006, zwei Antworten auf „welcher Raum" bei PM-033).
+„Neuer Kunde" ist deshalb mit umgebaut, obwohl es funktioniert hat.
+
+**Bewusst NICHT im Bearbeiten-Formular:** Kundentyp, USt-IdNr. und
+Leitweg-ID. Die haben auf der Detailseite mit `KundeTypToggle` bereits ihre
+eigene, funktionierende Stelle. Sie hier ein zweites Mal zu schreiben hieße,
+zwei Schreibwege auf dieselben Spalten zu haben — dieselbe Falle in klein. Ein
+Hinweis unter dem Formular sagt, wo sie zu ändern sind.
+
+**Getestet:** Die einzige Stelle des Fixes, an der Daten umgeformt werden, ist
+die Adresse — sie wird aus einem String ins Formular zerlegt und danach wieder
+zusammengesetzt. Geht dabei etwas verloren, merkt es niemand: Der Nutzer
+korrigiert eine Telefonnummer und verliert still seine Hausnummer. Deshalb
+sieben Hin-und-Rück-Proben mit echten Adressformen
+(`src/lib/__tests__/dc044-kunde-bearbeiten.test.ts`), inklusive einzeiliger
+Adresse, fehlender PLZ und einer dritten Zeile („c/o").
+
+**Offen und bewusst nicht mitgemacht:** das im Befund erwähnte **Löschen**
+eines Kunden. Das ist keine fehlende Oberfläche, sondern eine
+Produktentscheidung: Was passiert mit seinen Angeboten, Baustellen und
+Rechnungen? Solange die Antwort nicht steht, ist ein Löschen-Knopf gefährlicher
+als sein Fehlen. → Sandy.
+
+**Tests:** 1.475 (vorher 1.468), `tsc` sauber, `eslint` 0 Fehler.
 
 ---
 

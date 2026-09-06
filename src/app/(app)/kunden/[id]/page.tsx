@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Pencil } from 'lucide-react'
 import BottomNav from '@/components/BottomNav'
 import { KundeTypToggle } from './KundeTypToggle'
 import { NeueBaustelleButton } from '@/components/NeueBaustelleButton'
@@ -67,10 +68,26 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
     <div className="min-h-dvh bg-bg pb-24">
       <div className="bg-anthracite px-5 pt-12 pb-6">
         <Link href="/kunden" className="text-white/50 text-sm font-semibold">← Kunden</Link>
-        <div className="text-white font-syne font-black text-xl mt-1">{customer.name}</div>
-        {customer.address && (
-          <div className="text-white/40 text-sm font-semibold mt-0.5">{customer.address}</div>
-        )}
+        {/* DC-044 (Product Designer, 06.09.2026): Hier fehlte der einzige Weg,
+            einen Tippfehler in Name, Adresse, Telefon oder E-Mail zu
+            korrigieren. Ohne ihn blieb nur „Kunde neu anlegen" — mit neuer
+            ID und damit ohne die Angebots- und Baustellen-Historie. */}
+        <div className="flex items-start justify-between gap-3 mt-1">
+          <div className="min-w-0">
+            <div className="text-white font-syne font-black text-xl">{customer.name}</div>
+            {customer.address && (
+              <div className="text-white/40 text-sm font-semibold mt-0.5 whitespace-pre-line">{customer.address}</div>
+            )}
+          </div>
+          <Link
+            href={`/kunden/${customer.id}/bearbeiten`}
+            aria-label="Kundendaten bearbeiten"
+            className="shrink-0 flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white font-bold text-xs rounded-xl px-3 py-2 transition-colors"
+          >
+            <Pencil size={13} strokeWidth={2.5} />
+            Bearbeiten
+          </Link>
+        </div>
       </div>
 
       <div className="px-5 md:px-8 mt-5 flex flex-col gap-4 max-w-xl mx-auto">
