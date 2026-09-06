@@ -640,7 +640,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-006 | Kleines Fenster + Altbau-Zuschlag (Büro) | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 16.08., vor der VOB-Übermessung. Soll ist jetzt **28,80 m²** (weder Fenster 0,30 m² noch Tür 1,89 m² werden abgezogen), gemessen wurden damals 26,61 m². Neu einzusprechen, diesmal mit dem Übermessungshinweis in den Annahmen ✅ **Nachtest 04.09.: Mengen grün** — Wand **28,80 m²**, Sockelleisten **12,00 lfdm**, Altbau-Zuschlag rechnerisch korrekt (20 % auf 450,60 € = 90,20 €). Fund: Wandpreis 11,50 €/m² für „Wandflächen streichen 2x" gegen 9,50 € für „Restwände streichen" — zwei Katalogeinträge für dieselbe Leistung, erklärt PM-028 ✅ **Zweiter Durchgang 04.09. grün** — Wandpreis jetzt konsistent 11,50 €/m² in beiden Fällen, doppelter Katalogeintrag beseitigt |
 | PM-007 | Dachgeschoss: Kniestock + Dachschrägen | ✅ Live-Nachtest (2026-08-25) bestätigt: Rückfragen-Blocker weg, Kniestock/Dachschrägen exakt Soll, jetzt auch beide bepreist (Preismatcher-Fix). Offen bleiben zwei kleine, nicht-blockierende Funde (Türen-Anzeige vs. Sockelleisten-Rechnung; „Raumhöhe" zeigt „!") — Details im Archiv |
 | PM-008 | Fassade | ✅ Nachtest 7 (2026-08-20): „So gerechnet"-Rechenbug live bestätigt behoben (66,96 m², kein Widerspruch mehr zur abgerechneten Position), Wand-Chip/PD-003 bleibt fehlerfrei. Fachlich/rechnerisch komplett grün, offen bleibt nur die Erschwerniszuschlag-Einheitenfrage (Pauschale vs. %, wartet auf Sandys Entscheidung, siehe PM-015) — Details im Archiv |
-| PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf); fehlender Standardpreis dafür jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus |
+| PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf); fehlender Standardpreis dafür jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus ✅ **Vollständig grün (Nachtest 04.09.):** alle fünf Positionen mit Menge und Preis, **Übergangsschiene jetzt mit 15,00 €** — der seit 20.08. offene Punkt ist erledigt. Sockelleisten 11,60 lfdm, Altbelag als „Teppichboden entfernen" benannt |
 | PM-010 | Sockelleisten-Doppel-Falle | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 20.08., vor der VOB-Übermessung — Wandfläche jetzt **33,80 m²** statt 30,71 m². Die vier Sockelleisten-Funde bleiben behoben, nur die Wandzahl ist überholt. Bisheriger Stand: Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv ✅ **Nachtest 04.09. grün:** Wand **33,80 m²**, alle drei Sockelleisten-Zeilen **13,00 lfdm** (montieren, streichen, entfernen), kein „abkleben", keine Phantompositionen. „drei fünfzig" korrekt als 3,50. Kleiner Fund: Karte meldet 5 Positionen, listet 4, Entwurf hat 6 ✅ **Zweiter Durchgang 04.09. grün** — Karten-Zähler stimmt jetzt (5 gemeldet, 5 gelistet) |
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | ✅ Details im Archiv. Offene fachliche Frage zur möglichen Doppel-Erschwernis (Untergrund + Altbau neben Q2-Spachtelung) siehe dort |
 | PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ✅ Nachtest (2026-08-20): „Sockelleisten streichen" jetzt live bestätigt behoben (14,1 lfdm, exakt Soll), nach fünf gescheiterten Versuchen. Kein Boden-Phantom, Ausschluss weiterhin sauber respektiert — Details im Archiv |
@@ -5840,6 +5840,73 @@ abgefragt wird.
 **Status:** PM-024 ✅ grün · PM-030 🟡 drei Befunde.
 
 **Stand Stufe 3:** PM-023 ✅ · PM-024 ✅ · PM-028 ✅ · PM-030 🟡 · offen: PM-009.
+
+---
+
+### PM-009 — Nachtest (Sandy, 2026-09-04, 19:15): vollständig grün
+
+Angebot **374,72 € netto**, fünf Positionen, jede mit korrekter Menge **und**
+korrektem Preis.
+
+| Position | Ist | Soll |
+|---|---|---|
+| Vinyl-Boden verlegen inkl. 5 % | 7,56 m² | ✅ |
+| Teppichboden entfernen und entsorgen | 7,20 m² | ✅ ohne Verschnitt |
+| Sockelleisten montieren | **11,60 lfdm** | ✅ VOB-012, keine Tür genannt |
+| Untergrundvorbereitung / Ausgleich | 7,20 m² | ✅ |
+| **Übergangsschiene** | **1 Stück × 15,00 €** | ✅ **mit Preis** |
+
+**Der offene Punkt ist erledigt:** Die Übergangsschiene hatte seit dem 20.08.
+keinen live geprüften Standardpreis — jetzt steht sie mit 15,00 € im Angebot.
+Karte und Entwurf zeigen beide fünf Positionen.
+
+**Zwei Dinge, die mir positiv auffallen:**
+
+1. **Der Altbelag heißt beim Namen.** Nicht generisch „Altbelag entfernen",
+   sondern „**Teppichboden** entfernen und entsorgen" — genau das, was im
+   Diktat stand. Für den Endkunden ist das der Unterschied zwischen einer
+   Standardzeile und einem Angebot, das seine Wohnung kennt.
+2. **Der Belagtreffer ist hier korrekt „Vinyl-Boden" (22,00 €/m²)** — und das
+   ist kein Widerspruch zum PM-032-Fund, sondern seine Bestätigung: Im Diktat
+   steht „Vinylboden", ohne „Klick". Der Matcher folgt also dem Gesagten, wenn
+   die Extraktion sauber liefert. Das stützt meine Diagnose, dass der Fehler
+   bei PM-032 in der Extraktion sitzt und nicht im Preisabgleich.
+
+**Status PM-009:** ✅ grün.
+
+---
+
+## Stufe 3 abgeschlossen — Zwischenstand über alle Nachtests (2026-09-04)
+
+| Stufe | Fälle | Stand |
+|---|---|---|
+| 1 | PM-032 · PM-033 · PM-034 · PM-035 · PM-036 | 4 ✅ · PM-032 🟡 |
+| 2 | PM-002 · PM-006 · PM-010 · PM-018 | 4 ✅ |
+| 3 | PM-009 · PM-023 · PM-024 · PM-028 · PM-030 | 4 ✅ · PM-030 🟡 |
+
+**Zwölf von vierzehn eingesprochenen Fällen sind grün.** Offen sind zwei:
+
+- **PM-032** — Belagbezeichnung streut (gemessen: 1 Ausfall auf 4 Läufe).
+  Wartet auf den Fix, nicht auf einen Testlauf.
+- **PM-030** — Dachgeschoss: Dachfenster wird abgezogen statt übermessen,
+  Sockelleisten verschwinden zwischen Karte und Entwurf, „Raumhöhe !".
+
+Beide sind sauber beschrieben, mit Fundort und Vorschlag. **Von mir aus kann
+gebaut werden.**
+
+**Was noch aussteht:**
+
+- **Stufe 4** — acht Fälle, bei denen nur die Sockelleistenzahl kippt
+  (PM-001, PM-011, PM-012, PM-013, PM-021, PM-022, PM-025, PM-026). Reine
+  Fleißarbeit, am Stück einzusprechen. PM-021 ist der wertvollste: Er zeigt
+  beide Richtungen der VOB-012-Regel in einem Angebot.
+- **Stufe 5** — PM-037, der neue Fall für VOB-013 (Leibungen dreiseitig,
+  Fensterbank nicht doppelt). Der Fix ist seit dem 03.09. unterwegs und von
+  keinem Testfall abgedeckt. Diktat und Soll stehen in der Einsprechliste.
+
+**Mein Vorschlag zur Reihenfolge:** PM-037 zuerst — ein ungeprüfter Fix, der auf
+jedem Malerangebot mit Fenstern wirkt, wiegt schwerer als acht bekannte
+Sockelleistenzahlen. Stufe 4 danach, sie läuft nicht weg.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
