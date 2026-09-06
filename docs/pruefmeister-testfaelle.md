@@ -668,6 +668,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. ~~**NEUER RÜCKFALL:** Sockelleisten fehlen komplett~~ **behoben 04.09.** — zwei Wurzeln: Raumzuordnung trennt jetzt am Komma, und Whisper schrieb „Zockelleisten" mit Z (Textsignal-Gate lief vorbei). Küche 13,20 + Esszimmer 15,00 = 28,20 lfdm ✅ **Vollständig grün (2. Nachtest 04.09., 18:47):** alle fünf Befunde plus Rückfall behoben, Sockelleisten 28,20 lfdm in beiden Räumen, Trittschall je Raum, Angebot 1.026,54 € statt 91.085 € |
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus **Nachtest 04.09.: drei von vier Befunden behoben** — **L-Form gelöst** (9,60 m² Fläche, 18,40 lfdm Umfang, mit erklärender Warnung), „eins zwanzig" kommt als 1,20 an, Sockelleisten 18,40 ohne Türabzug. 🟡 Offen: „Trittschalldämmung überall drunter" landet nur im Flur (158,94 € fehlen) ✅ **Vollständig grün (04.09. spät):** Trittschall jetzt in allen drei Räumen (44,92 m²) — „überall drunter" wird als alle Räume gelesen. L-Form, Sockelleisten 18,40, Flächenangaben alle korrekt |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. ~~🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer~~ **behoben 04.09.** — gleiche Wurzel wie PM-034 (Satz mit zwei Räumen). Die 10 lfdm waren 4 × √6 m² über der Teilfläche, wie vom Prüfmeister vermutet; eine Teilfläche taugt jetzt nicht mehr als Umfangsquelle ✅ **Vollständig grün (2. Nachtest 04.09., 18:51):** Teilfläche 6,30 m², raumgebundener Sockelleisten-Ausschluss greift, Angebot 733,70 € — exakt die Soll-Summe |
+| PM-037 | Leibungen dreiseitig + Fensterbank (Prüfung des VOB-013-Fixes) | ❌ **Erstlauf 04.09.: Leibungen und Fensterbänke entstehen gar nicht.** Ausdrücklich beauftragt („Leibungen werden mitgestrichen, 25 cm tief", „Fensterbänke werden auch gestrichen") — keine Position, keine Rückfrage, kein Hinweis. `daten.leibungen[]` kommt leer aus der Extraktion, damit ist der VOB-013-Fix **unerreichbar und weiterhin ungeprüft**. Die drei übrigen Positionen exakt Soll |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -5907,6 +5908,62 @@ gebaut werden.**
 **Mein Vorschlag zur Reihenfolge:** PM-037 zuerst — ein ungeprüfter Fix, der auf
 jedem Malerangebot mit Fenstern wirkt, wiegt schwerer als acht bekannte
 Sockelleistenzahlen. Stufe 4 danach, sie läuft nicht weg.
+
+---
+
+### PM-037 — Erstlauf (Sandy, 2026-09-04, 19:18): Leibungen und Fensterbänke entstehen gar nicht
+
+Drei Positionen statt fünf. Die drei vorhandenen sind exakt:
+
+| Position | Ist | Soll |
+|---|---|---|
+| Wandflächen streichen 2x | 46,80 m² | ✅ 18,00 lfm × 2,60, keine Öffnungsabzüge |
+| Boden schützen | 20,00 m² | ✅ |
+| Sockelleisten abkleben | 18,00 lfdm | ✅ VOB-012 |
+| **Fensterleibungen streichen** | **fehlt** | ❌ 1,60 m² |
+| **Fensterbänke streichen** | **fehlt** | ❌ 0,60 m² |
+
+**Gesagt wurde:** „Zwei Fenster, jeweils eins zwanzig mal einen Meter, **die
+Leibungen werden mitgestrichen, fünfundzwanzig Zentimeter tief**. **Die
+Fensterbänke werden auch gestrichen.**" Zwei ausdrücklich beauftragte
+Leistungen, mit Maß und Tiefe. Beide kommen nicht an — ohne Rückfrage, ohne
+Hinweis unter „fehlende Positionen", ohne irgendein Signal.
+
+**Damit ist der VOB-013-Fix nicht widerlegt, sondern unerreichbar.** Der Code
+in `maler.ts` rechnet die Leibung inzwischen richtig dreiseitig — aber die
+Schleife läuft über `daten.leibungen[]`, und dieses Feld kommt leer aus der
+Extraktion. Es gibt nichts zu rechnen. Der Fix vom 03.09. ist damit weiterhin
+**ungeprüft im Produkt unterwegs**, und zwar nicht, weil niemand getestet hat,
+sondern weil man ihn über die Sprache gar nicht erreicht.
+
+**Fundort:** Der GPT-Prompt füllt `leibungen[]` nicht. Das ist derselbe
+Fehlerbau wie bei PM-007 und PM-008 im August: Die Engine hat einen fertigen
+Zweig, die Aktivierungsbedingung hängt an einem Extraktionsfeld, und das Feld
+wird nie gesetzt. Damals war es `kniestockhoehe`, jetzt ist es `leibungen`.
+
+**Erwartet aus diesem Satz:**
+`leibungen: [{ anzahl: 2, breite: 1.20, hoehe: 1.00, tiefe: 0.25, typ: 'fenster_innen' }]`
+
+**Und die Fensterbank hängt mit dran:** Der Code erzeugt „Fensterbänke
+streichen" nur, wenn ein Leibungseintrag mit Innen-Typ existiert **und**
+„Fensterbank" im Transkript vorkommt. Kein Leibungseintrag heißt also
+automatisch auch keine Fensterbank — zwei Leistungen fallen an einem einzigen
+fehlenden Feld.
+
+**Warum das mehr ist als 45 Euro.** Rechnerisch sind es 1,60 m² Leibung und
+0,60 m² Fensterbank. Praktisch sind zwei Fensterleibungen mit Bank eine gute
+Stunde Arbeit: abkleben, drei Kanten schneiden, mit dem Pinsel arbeiten, weil
+keine Rolle hineinpasst. Steht es nicht im Angebot, macht der Betrieb es
+umsonst — oder er diskutiert mit dem Kunden über eine Leistung, die er selbst
+vergessen hat aufzuschreiben. Und der Handwerker hat es ausdrücklich gesagt.
+
+**Status PM-037:** ❌ Neuer Befund im ersten Lauf. Die drei erzeugten
+Positionen sind exakt Soll; die beiden, für die der Fall gebaut wurde, gibt es
+nicht.
+
+**Nachtrag zur Testauswahl:** Genau dafür war dieser Fall da. Ein Fix, den kein
+Testfall abdeckt, ist kein reparierter Fehler, sondern ein unbekannter Zustand
+— hier war es sogar ein reparierter Rechenweg hinter einer verschlossenen Tür.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
