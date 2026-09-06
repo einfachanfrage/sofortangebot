@@ -51,7 +51,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
 | CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
-| CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟢 Alle vertagten Punkte erledigt (Logging-Spalten, Sentry inkl. `SENTRY_DSN`, tote Functions stillgelegt, Staging-Nachzug) — nur noch ~27 Nebenpfade ohne Sentry offen, niedrige Priorität | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
+| CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟢 Vollständig erledigt — auch die restlichen Nebenpfade haben jetzt Sentry-Meldung. Neuer Fund dabei: 10 verwaiste API-Routen ohne Frontend-Aufrufer, Aufräum-Entscheidung liegt bei Sandy | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
 | CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🟢 Fix umgesetzt — Passwort-Reset-Bug behoben, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
 | CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟢 Fix umgesetzt — alle drei Mails laufen jetzt über unsere eigene Resend-Anbindung, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
@@ -947,5 +947,78 @@ Damit sind alle drei ursprünglich vertagten Punkte aus CoS-P-002 (Sentry für
 die Kern-Edge-Function, `konfidenz_whisper`, tote Functions) durch. Offen
 bleibt nur noch, unverändert niedrige Priorität: die ~27 Fehlerstellen
 außerhalb des Kernpfads ohne Sentry-Meldung.
+
+---
+
+**Fix-Update 6 CoS-P-002 — die restlichen Nebenpfade jetzt auch mit Sentry,
+plus ein neuer Fund (Platform & Integrations Engineer, 2026-09-06, auf
+Sandys "los"):**
+
+**Erste Korrektur, bevor es losging: die "~27" waren zu niedrig gegriffen.**
+Diese Schätzung stammte vom 17.08. Seitdem ist die App deutlich gewachsen
+(60+ statt der damals ~15 API-Routen). Direkt am aktuellen Code nachgesehen
+(nicht auf die alte Schätzung verlassen): tatsächlich 69 Stellen in 41
+Dateien, an denen ein Fehler nur in die Server-Konsole geschrieben wurde,
+ohne Sentry-Meldung.
+
+**Davon 10 Dateien beim genaueren Hinsehen als tot erkannt — keine
+Instrumentierung, sondern ein eigener Fund:**
+
+Jede der 41 Dateien einzeln geprüft, ob sie überhaupt noch von der
+Oberfläche aus aufgerufen wird (nicht nur nach dem Routennamen gesucht,
+sondern die Aufrufe in der Oberfläche selbst nachverfolgt — dabei zunächst
+versehentlich sieben Buchhaltungs-Anbindungen fälschlich für tot gehalten,
+weil sie über einen variablen Pfad aufgerufen werden; beim zweiten,
+genaueren Hinsehen korrigiert und mit Sentry versehen, siehe unten). Zehn
+Routen haben dagegen wirklich keinen Aufrufer mehr:
+
+- `api/ki/matchen`, `api/ki/pruefen`, `api/entwurf/autosave`,
+  `api/transkribieren` — riefen genau die vier Edge-Functions auf, die in
+  Fix-Update 3 oben schon als tot stillgelegt wurden. Damit sind diese vier
+  Next.js-Routen jetzt ebenfalls Sackgassen ohne Wirkung.
+- `api/angebot-ergänzen`, `api/foto-analyse`, `api/angebot-verfeinern`,
+  `api/preise-aus-pdf` — kein Aufrufer in der Oberfläche gefunden.
+- `api/quotes/[id]/photos` — laut eigenem Code-Kommentar bewusst durch den
+  neuen, gemeinsamen Foto-Pool ersetzt (CoS-021/DC-034 "ein Foto-Pool statt
+  zwei"); die Oberfläche nutzt inzwischen nachweislich den neuen Weg.
+- `api/quotes/[id]/signature` — das zugehörige Datenfeld wird nirgendwo in
+  der Oberfläche angezeigt.
+
+**Das ist wie beim Fund der vier toten Edge-Functions eine
+Aufräum-Entscheidung, keine, die ich allein treffen wollte — diese zehn
+Routen bleiben unangetastet liegen, bis du Bescheid sagst.** Sag einfach
+"aufräumen", dann kümmere ich mich genauso darum wie bei den vier
+Edge-Functions (stilllegen, da ein echtes Löschen aus dieser Session heraus
+technisch nicht möglich ist).
+
+**Die verbleibenden 19 echten Dateien haben jetzt Sentry-Meldung —
+Übersicht nach Bereich:**
+
+- **Admin/Alarme** (2): Kosten-Alarm-Mail, automatischer API-Gesundheits-Check
+  (dort zusätzlich die eigentliche Ursache gemeldet, nicht nur die Warn-Mail
+  darüber — sonst hätte nur die Admin-Seite selbst davon gewusst).
+- **Login/Registrierung** (2): Passwort-Reset-Mail, Registrierung (Konto
+  anlegen, Bestätigungslink, Bestätigungsmail).
+- **Kernpfad-Nebenwege** (3): Entwurf-Scan, die beiden Gesundheits-Checks
+  (`health/ai`, `health/pdf`).
+- **Buchhaltungs-Anbindungen** (7): Lexoffice, Lexware, sevDesk, FastBill,
+  Billomat, Papierkram, easybill — bei drei davon (FastBill, Billomat,
+  Papierkram) gab es bisher noch nicht einmal eine Konsolen-Meldung bei
+  einem Fehler, das ist jetzt nachgeholt.
+- **Sonstiges** (5): Push-Benachrichtigungen abonnieren, Preisdatenbank beim
+  Angebot-Generieren, Logo-Upload, sowie **die beiden Geld-Routen**
+  Stripe-Checkout und Stripe-Kundenportal — beide hatten bisher **gar kein
+  Fangnetz**: ein Stripe-Fehler dort hätte einen zahlungsbereiten Kunden
+  einfach mit einem 500er stehen gelassen, ohne dass wir es je bemerkt
+  hätten. Das ist jetzt beides abgesichert.
+
+**Geprüft, bevor ausgeliefert:** TypeScript-Check über das komplette Projekt
+lief fehlerfrei durch — keine Tippfehler durch die 19 Änderungen.
+
+**Weiterhin nicht Teil dieses Punkts:** Die zehn oben gefundenen toten
+Routen sind absichtlich unverändert geblieben, bis deine Entscheidung
+vorliegt.
+
+Damit ist CoS-P-002 inhaltlich vollständig abgeschlossen.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

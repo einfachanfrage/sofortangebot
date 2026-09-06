@@ -655,13 +655,13 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
 | PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist **behoben 03.09.** — Ursache war zuletzt der Dezimalpunkt in der Satztrennung, siehe „Nachtrag am selben Tag“. Dämmung steht jetzt genau einmal, im Flur, mit dessen Fläche. Live-Nachtest steht aus ✅ **Grün (Nachtest 04.09.):** Trittschalldämmung mit **10,80 m²** = Fläche dieses Raums, geprüft in genau der Raum-Paarung, die den situativen Fund erzeugt hatte. Sockelleisten 15,60 lfdm |
-| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung |
+| PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung ✅ **Vollständig grün (5. Nachtest 04.09.):** Wand 57,60 m², Sockelleisten 18,00 lfdm, Zuschlag 15 % × 7,01 € = 105,15 € nachgerechnet, Karte zeigt „Satz aus Preisliste" |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
 | PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Vierter Nachtest komplett sauber: alle vier Positionen exakt Soll, „Boden schützen" wieder korrekt bepreist, keine offenen Funde mehr |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ✅ Beide Positionen live bestätigt exakt Soll |
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | 🟡 Mengen exakt Soll. Zwei Funde: Wandflächen-Grundpreis weicht ab (11,50 € statt 9,50 €/m²); Erschwerniszuschlag-Bemessungsgrundlage zieht fälschlich den Abstellraum mit ein ✅ **Grün (Nachtest 04.09.):** Wand **37,50 m²**, Sockelleisten 15,00, Wandpreis vereinheitlicht. Altbau-Zuschlag rechnet gewerkeübergreifend (20 % auf 1.023,57 €) — von Sandy ausdrücklich als richtig eingeordnet, damit ist der alte Bemessungsgrundlagen-Fund gegenstandslos. Offener Vorschlag: Annahme ausweisen, wenn „Altbau" nur für einen Raum gesagt wurde |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
-| PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt |
+| PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt 🟡 **Nachtest 04.09.:** Kniestock 17,00 m² und Boden schützen 18,00 m² korrekt. Drei Befunde: **Dachfenster wird abgezogen** obwohl übermessen (Karte 16,80 / Entwurf 17,08 statt 18,00 — zwei verschiedene Abzüge in einem Lauf), **Sockelleisten abkleben verschwindet zwischen Karte und Entwurf**, „Raumhöhe !" im Dachgeschoss |
 | PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt **3. Durchlauf 04.09.:** Sockelleisten **44,00 lfdm** exakt Soll, Dämmung in allen drei Räumen. 🟡 **Neuer Fund:** derselbe Auftrag trifft mal „Klick-Vinyl" (16 €/m²), mal „Vinyl-Boden" (22 €/m²) — 224,28 € Streuung bei identischem Diktat **3. Lauf: wieder „Klick-Vinyl" 16 €/m², Angebot 1.015,28 €.** Bleibt 🟡: drei Läufe, zweimal 16 €, einmal 22 € bei identischem Diktat — nicht falsch, sondern **nicht reproduzierbar** **4. Lauf 04.09.: wieder korrekt (1.015,28 €).** Bleibt 🟡 — Belag-Fix ist laut Code nicht gebaut, damit ist der Lauf kein Nachweis. Gemessene Ausfallrate über vier Läufe: **1 von 4** |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus **Nachtest 04.09.: Befund 2 + 3 behoben** (zwei Übergangsschienen, keine erfundenen Sockelleisten). ~~🟡 Befund 1 unverändert~~ **behoben 05.09.** — vier Ursachen gleichzeitig: Kurzform „Trittschall" wurde nicht erkannt, die Raumzuordnung der Dämmung trennte nur am Punkt und gab nur EINEN Raum zurück, und das Chip-Sicherheitsnetz in `aufnahme-hinweise.ts` hängte die Dämmung an die erste Verlegeposition. Jetzt 7,50 m², nur im Flur ✅ **Vollständig grün (3. Durchlauf 04.09.):** Trittschall jetzt belagabhängig und im genannten Raum — Flur 7,50 m², kein Fischgrät, kein Teppich. Zwei Schienen, keine Sockelleisten, Verschnittsätze exakt |
@@ -5770,6 +5770,76 @@ Fehler notiert war, ist nach dieser Entscheidung gewolltes Verhalten. Ich
 schließe ihn mit dieser Begründung.
 
 **Stand Stufe 3:** PM-023 ✅ · PM-028 ✅ · offen: PM-030, PM-024, PM-009.
+
+---
+
+### PM-024 und PM-030 — Nachtest (Sandy, 2026-09-04, 19:05/19:06)
+
+**PM-024 ✅ vollständig grün — der fehlende fünfte Nachtest ist erbracht.**
+
+| Position | Ist | Soll |
+|---|---|---|
+| Wandflächen streichen 2x | **57,60 m²** | ✅ 18,00 lfm × 3,20 m, keine Öffnungsabzüge |
+| Boden schützen | 20,00 m² | ✅ |
+| Sockelleisten abkleben | **18,00 lfdm** | ✅ VOB-012 |
+| Erschwerniszuschlag Raumhöhe > 3m | **15 % × 7,01 € = 105,15 €** | ✅ |
+
+Der Zuschlag rechnet nachprüfbar: Grundlage 662,40 + 24,00 + 14,40 = 700,80 € →
+7,01 € je Prozentpunkt → 15 % = 105,15 €. Und die Karte zeigt **„Satz aus
+Preisliste"** statt der früheren „1 %" — der letzte offene Punkt dieses Falls.
+Keine Deckenposition, weil im Diktat keine verlangt wurde. Angebot 805,95 €.
+
+---
+
+**PM-030 — drei Befunde, einer davon alt und bestätigt**
+
+Kniestockwände **17,00 m²** ✅ (Umfang 17,00 lfm × 1,00 m) und Boden schützen
+18,00 m² ✅ stimmen.
+
+**Befund 1 — das Dachfenster wird abgezogen, obwohl es übermessen gehört.**
+
+Gesagt: „Die Dachschrägen zusammen ergeben 18 m², ein Dachfenster drin, normale
+Größe." Ein normales Dachfenster misst rund 0,92 m² und liegt damit weit unter
+der 2,5-m²-Schwelle — **nach der Übermessungsregel wird es nicht abgezogen.**
+Soll ist also **18,00 m²**.
+
+**Und es wird zweimal verschieden abgezogen:**
+
+| | Fläche | Abzug gegenüber 18,00 |
+|---|---|---|
+| Aufnahme-Karte | 16,80 m² | 1,20 m² (= Standardfenster) |
+| Entwurf | **17,08 m²** | 0,92 m² (= Dachfenster) |
+
+Zwei verschiedene Zahlen für dieselbe Fläche in einem Durchlauf, und beide
+falsch. Der Fund stammt aus dem August (Soll damals korrigiert, PM-007 war
+rückwirkend mitbetroffen) — er ist damit **bestätigt offen**, nicht neu.
+Wirkung hier: 0,92 m² × 11,50 € = 10,58 €. Klein im Betrag, aber es ist
+dieselbe Regel, die bei den Wandflächen längst greift; im Dachgeschoss-Zweig
+greift sie nicht.
+
+**Befund 2 — „Sockelleisten abkleben" verschwindet zwischen Karte und Entwurf.**
+
+Die Karte listet vier Positionen, darunter „Sockelleisten abkleben 17 lfdm".
+Der Entwurf enthält drei — die Sockelleisten fehlen. 13,60 €, und wieder die
+Kategorie „was ich vor dem Erstellen prüfe, ist nicht das, was ich danach
+bekomme". Im Dachgeschoss-Zweig, wo dieselbe Position bei normalen Räumen
+zuverlässig ankommt.
+
+**Befund 3 — „Raumhöhe !" im Dachgeschoss.** Bei einem Raum mit Kniestock und
+Dachschrägen gibt es keine sinnvolle einzelne Raumhöhe; die Flächen stehen
+bereits fest. Die Warnung ist also folgenlos und verunsichert nur. Für reine
+Bodenaufträge wurde sie am 04.09. schon entfernt — derselbe Gedanke gilt hier.
+
+**Ausdrücklich gut, und das ist neu:** Die Fenster-Rückfrage zitiert die Stelle
+aus dem Diktat — *„Du hast gesagt: ‚…1 Dachfenster drin, normale Größe…' → 1
+Fenster. Stimmt ✓ / Korrigieren"*. Der Handwerker sieht, **woher** die Zahl
+kommt, statt sie nur bestätigen zu sollen. Das ist die beste Rückfrage, die das
+Produkt bisher hat, und sie gehört überall dorthin, wo heute nur eine Zahl
+abgefragt wird.
+
+**Status:** PM-024 ✅ grün · PM-030 🟡 drei Befunde.
+
+**Stand Stufe 3:** PM-023 ✅ · PM-024 ✅ · PM-028 ✅ · PM-030 🟡 · offen: PM-009.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
