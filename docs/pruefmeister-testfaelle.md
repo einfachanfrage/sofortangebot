@@ -745,7 +745,7 @@ war der richtige nächste Schritt, nicht meiner.
 
 | ID | Thema | Status |
 |---|---|---|
-| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: Ausschluss-Fix hält (keine Decke, Fenster-Zähler konsistent). Wandfläche jetzt 46,5 m² statt 42,21 m² — korrekt nach der neu eingeführten VOB-Übermessungsregel, kein Bug — Details im Archiv |
+| PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: Ausschluss-Fix hält (keine Decke, Fenster-Zähler konsistent). Wandfläche jetzt 46,5 m² statt 42,21 m² — korrekt nach der neu eingeführten VOB-Übermessungsregel, kein Bug — Details im Archiv ✅ **Nachtest 05.09. grün:** Wand 46,50 m², Sockelleisten **18,60 lfdm** (VOB-012), keine Decke |
 | PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest ist vom 16.08. und lief damit VOR der VOB-Übermessung — Wandbrutto 39,00 m², Restwände 29,90 m² statt der damals abgenommenen 26,81 m². Muss neu eingesprochen werden. Die beiden ursprünglichen Bugs (Akzentwand-Seite, Sockelleisten-Türabzug) bleiben bestätigt behoben ✅ **Nachtest 04.09. grün:** Akzentwand 9,10 · Restwände 29,90 · Vinyl diagonal 16,10 · Sockelleisten **15,00 lfdm** · Trittschall 14,00. Korrektur an meinem eigenen Soll: **keine Deckenposition** — im Diktat steht keine Decke |
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
@@ -755,8 +755,8 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-008 | Fassade | ✅ Nachtest 7 (2026-08-20): „So gerechnet"-Rechenbug live bestätigt behoben (66,96 m², kein Widerspruch mehr zur abgerechneten Position), Wand-Chip/PD-003 bleibt fehlerfrei. Fachlich/rechnerisch komplett grün, offen bleibt nur die Erschwerniszuschlag-Einheitenfrage (Pauschale vs. %, wartet auf Sandys Entscheidung, siehe PM-015) — Details im Archiv |
 | PM-009 | Bodenleger-Komplettpaket | ✅ Übergangsschiene live bestätigt behoben (taucht jetzt auf); fehlender Standardpreis dafür jetzt ergänzt (2026-08-20, siehe „Systemischer Fund" Punkt 1), Live-Nachtest dafür steht aus ✅ **Vollständig grün (Nachtest 04.09.):** alle fünf Positionen mit Menge und Preis, **Übergangsschiene jetzt mit 15,00 €** — der seit 20.08. offene Punkt ist erledigt. Sockelleisten 11,60 lfdm, Altbelag als „Teppichboden entfernen" benannt |
 | PM-010 | Sockelleisten-Doppel-Falle | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 20.08., vor der VOB-Übermessung — Wandfläche jetzt **33,80 m²** statt 30,71 m². Die vier Sockelleisten-Funde bleiben behoben, nur die Wandzahl ist überholt. Bisheriger Stand: Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv ✅ **Nachtest 04.09. grün:** Wand **33,80 m²**, alle drei Sockelleisten-Zeilen **13,00 lfdm** (montieren, streichen, entfernen), kein „abkleben", keine Phantompositionen. „drei fünfzig" korrekt als 3,50. Kleiner Fund: Karte meldet 5 Positionen, listet 4, Entwurf hat 6 ✅ **Zweiter Durchgang 04.09. grün** — Karten-Zähler stimmt jetzt (5 gemeldet, 5 gelistet) |
-| PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | ✅ Details im Archiv. Offene fachliche Frage zur möglichen Doppel-Erschwernis (Untergrund + Altbau neben Q2-Spachtelung) siehe dort |
-| PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ✅ Nachtest (2026-08-20): „Sockelleisten streichen" jetzt live bestätigt behoben (14,1 lfdm, exakt Soll), nach fünf gescheiterten Versuchen. Kein Boden-Phantom, Ausschluss weiterhin sauber respektiert — Details im Archiv |
+| PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | ✅ Details im Archiv. Offene fachliche Frage zur möglichen Doppel-Erschwernis (Untergrund + Altbau neben Q2-Spachtelung) siehe dort 🟡 **Nachtest 05.09.:** Mengen exakt, Sockelleisten 14,40 lfdm. **Befund: „Erschwerniszuschlag schwieriger Untergrund" (10 %, 98,10 €) steht neben der Q2-Vollflächenspachtelung** — die am 02.09. entschiedene Regel ist nicht umgesetzt. Soll-Korrektur: die Grundierung ist nach Q2 fachlich geboten und als Vorschlag richtig gekennzeichnet |
+| PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ✅ Nachtest (2026-08-20): „Sockelleisten streichen" jetzt live bestätigt behoben (14,1 lfdm, exakt Soll), nach fünf gescheiterten Versuchen. Kein Boden-Phantom, Ausschluss weiterhin sauber respektiert — Details im Archiv 🟡 **Nachtest 05.09.:** Mengen exakt, Sockelleisten 15,00 lfdm. **Befund: „abkleben" und „streichen" stehen für dieselbe Leiste nebeneinander** — wer die Leiste streicht, klebt sie nicht ab. Dazu Karte 3 Positionen, Entwurf 4 |
 | PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ✅ Details im Archiv |
 | PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | 🟡 Dubletten-Fix bestätigt (Doppelklick-Test). Echte Race Condition jetzt mit DB-Constraint geschlossen (2026-08-20, Sandys Go, siehe Fix-Update 2) — Migration live, Code-Fix grün gegen Testsuite, gezielter Gleichzeitigkeits-Nachtest steht noch aus |
 | PM-015 | Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | 🟡 Beide Ursachen gefunden und gefixt, geprüft live im Code korrekt. **Klargestellt (2026-08-19):** der PM-011-„alle Preise fehlen"-Fund war KEIN neuer, dritter Bug — derselbe Nachtest lief auf demselben, schon damals betroffenen Konto „Lisa Schein Malerbetrieb", das vor dem Fix (17.08.) angelegt wurde und dadurch nicht rückwirkend versorgt ist, siehe „Systemischer Fund" Punkt 5. Für alle NEU angelegten Konten ab 18.08. gilt der Fix nachweislich. **Korrektur (2026-08-19, siehe PM-016):** der 18.08.-Fix selbst war kaputt — der Onboarding-Insert scheiterte durch denselben Bug wie PM-016 komplett und unbemerkt (Fehler wurde nicht geprüft). „Lisa Schein" ist inzwischen live nachversorgt |
@@ -6077,6 +6077,85 @@ nicht.
 **Nachtrag zur Testauswahl:** Genau dafür war dieser Fall da. Ein Fix, den kein
 Testfall abdeckt, ist kein reparierter Fehler, sondern ein unbekannter Zustand
 — hier war es sogar ein reparierter Rechenweg hinter einer verschlossenen Tür.
+
+---
+
+### Stufe 4, erster Block: PM-001, PM-011, PM-012 (Sandy, 2026-09-05, ab 08:42)
+
+**Alle drei Sockelleisten-Werte stimmen** — 18,60 · 14,40 · 15,00 lfdm, jeweils
+der volle Umfang ohne Türabzug. VOB-012 ist damit an dreizehn Positionen über
+zwölf Fälle belegt.
+
+**PM-001 ✅ grün.** Wand 46,50 m² (18,60 lfm × 2,50, keine Öffnungsabzüge),
+Boden schützen 21,32, Sockelleisten abkleben 18,60. **Keine Deckenposition** —
+der Ausschluss „die Decke bitte NICHT mitrechnen" hält, seit August unverändert.
+
+---
+
+**PM-011 🟡 — ein Befund: der Untergrund-Zuschlag steht neben der
+Vollflächenspachtelung**
+
+Mengen alle exakt: Wand 36,00 · Spachtelarbeiten Q2 36,00 · Boden schützen
+12,80 · Sockelleisten abkleben 14,40. Beide Zuschläge rechnen sauber auf
+derselben Grundlage (980,88 € → 9,81 € je Prozentpunkt).
+
+**Der Fund:** „Erschwerniszuschlag **schwieriger Untergrund** 10 % = 98,10 €"
+steht neben „Spachtelarbeiten Q2 · 36,00 m² · 324,00 €".
+
+Das ist die Doppelberechnung, die ich am 02.09. als Regel entschieden hatte:
+*Steht im selben Raum eine Vollflächenspachtelung (Q2 bis Q4), wird
+„Erschwerniszuschlag schwieriger Untergrund" nicht gesetzt.* Die Unebenheit
+**ist** die Spachtelung — sie steht schon als eigene, bepreiste Position im
+Angebot. Wer beides berechnet, kassiert dieselbe Erschwernis zweimal, und genau
+das ist der Punkt, an dem ein Kunde zu Recht laut wird.
+
+Der Altbau-Zuschlag daneben bleibt richtig: der zahlt nicht die Wand, sondern
+die Baustelle drumherum.
+
+**Korrektur an meinem eigenen Soll:** Ich hatte für PM-011 notiert, es dürfe
+keine automatische Grundierungsposition entstehen. Das war aus dem
+PM-003/007-Kontext übernommen und ist hier **fachlich falsch**: Nach einer
+Q2-Vollflächenspachtelung muss grundiert werden, sonst saugt die frische
+Spachtelfläche anders als der Altputz und der Anstrich schlägt fleckig durch.
+Die Position „Voranstrich / Grundierung, 36,00 m²" ist richtig, und dass sie als
+**Vorschlag** markiert ist, ist genau die passende Kennzeichnung — verlangt hat
+sie niemand, fachlich gehört sie dazu. Soll korrigiert.
+
+---
+
+**PM-012 🟡 — abkleben und streichen für dieselbe Leiste**
+
+Mengen exakt: Wand 38,25 m² (15,00 lfm × 2,55) · Boden schützen 13,50 ·
+Sockelleisten 15,00 lfdm.
+
+**Der Fund:** Im Angebot stehen **beide** Positionen nebeneinander —
+„Sockelleisten abkleben 15,00 lfdm" **und** „Sockelleisten streichen 15,00
+lfdm".
+
+Das schließt sich aus. Man klebt Sockelleisten ab, damit beim Streichen der
+**Wand** keine Farbe darauf kommt. Werden die Leisten selbst mitgestrichen —
+und genau das war die Ansage: „die sollen nur nochmal mitgestrichen werden" —
+dann klebt sie niemand ab. Kein Maler der Welt klebt eine Leiste ab, die er
+zwei Minuten später anstreicht.
+
+12,00 € zu viel ist nicht das Problem. Das Problem ist, dass auf dem
+Kundenangebot zwei Zeilen stehen, die sich gegenseitig widersprechen — und der
+erste, dem das auffällt, ist der Handwerker, der es verschicken soll.
+
+**Zum Vergleich, weil es die Regel schärft:** Bei PM-010 („alte Leisten raus,
+neue montiert, dann gestrichen") kommt korrekt **kein** Abkleben. Der Fall ist
+also nicht generell falsch gelöst — er greift nur nicht, wenn die vorhandenen
+Leisten bleiben und mitgestrichen werden. **Regel für den Fix:** Entsteht für
+einen Raum eine Position „Sockelleisten streichen", darf es dort kein
+„Sockelleisten abkleben" geben, unabhängig davon, ob die Leisten neu sind oder
+bleiben.
+
+**Kleiner Fund am Rande:** Die Aufnahme-Karte listet drei Positionen, der
+Entwurf enthält vier — „Sockelleisten streichen" kommt erst im Entwurf dazu.
+Dieselbe Familie wie bei PM-030 und PM-010.
+
+**Stand Stufe 4:** PM-001 ✅ · PM-011 🟡 · PM-012 🟡 · offen: PM-013, PM-021,
+PM-022, PM-025, PM-026.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
