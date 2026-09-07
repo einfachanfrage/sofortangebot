@@ -30,6 +30,7 @@ import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Toast } from '@/components/Toast'
 import { RaumGrundrissEditor } from '@/components/RaumGrundrissEditor'
 import {
+  bestimmeModus,
   type RaumDimension, type RaumModus,
   berechneQuantityFuerItem, berechneRaumMasse,
 } from '@/lib/raum-geometrie'
@@ -138,10 +139,12 @@ function RaumDimensionenZeile({
   // 'wand' kommt ausschließlich aus der Aufnahme (Fassade/Einzelwand, siehe
   // DC-024) — kein Fallback hierher, das entscheidet nie die Zeilen-Logik
   // selbst, nur ein explizit gesetztes dim.modus.
-  const modus: RaumModus = dim.modus
-    ?? (((dim.breite ?? 0) > 0 && (dim.laenge ?? 0) > 0)
-      ? 'rechteck'
-      : (((dim.wandflaeche ?? 0) > 0 || (dim.bodenflaeche ?? 0) > 0) ? 'flaeche' : 'rechteck'))
+  // PM-031 (07.09.2026): Hier stand dieselbe Ableitung ein zweites Mal — und
+  // sie kannte 'wand' nicht. Eine Fassade, die ihr gespeichertes `modus`
+  // unterwegs verliert, galt damit als Rechteck ohne Breite: „!" im Kopf,
+  // Türen und Raumhöhe verlangt, und die Menge nicht mehr rechenbar. Jetzt
+  // entscheidet dieselbe Funktion wie in der Berechnung.
+  const modus: RaumModus = bestimmeModus(dim)
   const masse = berechneRaumMasse(dim)
   const istWand = modus === 'wand'
 
@@ -373,7 +376,10 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   const raumSuffix = (titleOverride !== undefined && dashMatch && item.title.slice(0, dashMatch.index!).trim() === titleOverride)
     ? dashMatch[0]
     : ''
-  const materialVorschlag = materialFuerPosition(basisTitel)
+  // Der Untergrund entscheidet über das Material, und er steht nicht im
+  // Titel, sondern in den Annahmen der Position (lack-untergrund.ts setzt ihn
+  // dort, wo der Diktattext ist). Deshalb wandert er hier als Kontext mit.
+  const materialVorschlag = materialFuerPosition(basisTitel, [item.description, ...(item.annahmen ?? [])].join(' '))
   const preisFehlt = !item.price_item_id && item.unit_price <= 0
 
   // DC-039: nur eine frisch per "+ Position" angelegte, noch nicht mit der
@@ -1188,7 +1194,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   // Material-Position zu einer Arbeits-Position ergänzen (Preis aus DB, sonst 0)
   function addMaterialFor(laborItem: EditItem) {
-    const mat = materialFuerPosition(laborItem.title)
+    const mat = materialFuerPosition(laborItem.title, [laborItem.description, ...(laborItem.annahmen ?? [])].join(' '))
     if (!mat) return
     const suffixMatch = laborItem.title.match(/\s+(—\s+.+)$/)
     const suffix = suffixMatch ? ` ${suffixMatch[1]}` : ''

@@ -3,6 +3,7 @@ import { erkenneScope } from '../../arbeiten-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge, sockelAbzug } from './sockelleisten'
 import { berechneOeffnungsabzugVob, vobHinweistext, abgezogeneOeffnungen, type OeffnungsabzugErgebnis } from './vob-uebermessung'
+import { nichtStreichbarerWerkstoff, nichtStreichbarHinweis, brauchtVorlack } from '../../lack-untergrund'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -498,6 +499,42 @@ export function malerEngine(daten: any): MengenErgebnis {
           annahmen: [],
         })
       }
+      // ── PM-030-A (Prüfmeister, 07.09.2026) ──────────────────────────────
+      //
+      // Gesagt: „**Wände**, Schrägen und Kniestock alles zweimal streichen" —
+      // drei Bauteile. Im Angebot standen zwei. Ein Dachzimmer hat neben
+      // Kniestock und Schrägen noch die **Giebelwände**, und die waren weder
+      // gerechnet noch erfragt.
+      //
+      // Rechnen kann das Tool sie nicht: Dafür bräuchte es die Giebel- oder
+      // Firsthöhe, und die steht in keinem Diktat. Raten wäre falsch — eine
+      // Fläche, die niemand genannt hat, sähe im Angebot aus wie gemessen.
+      // Also derselbe Weg wie bei den Leibungen (PM-037): sichtbar fragen
+      // statt stillschweigend weglassen.
+      //
+      // Die Erkennung muss „Wände" von „Kniestockwände" unterscheiden — das
+      // Wort steckt im anderen drin. Genau die Falle, die diese Woche mehrfach
+      // Geld gekostet hat (\büberall\b, ' q3 ', „Fensterbänke"). Deshalb
+      // werden die zusammengesetzten Wörter zuerst entfernt und erst dann nach
+      // einem eigenständigen „Wände" gesucht.
+      if (anWaenden) {
+        const dgText = abschnittFuerRaum(daten.transkript ?? '', nameRaw, (daten.raeume ?? []).map((r: any) => r.name))
+        const ohneZusammensetzungen = dgText
+          .replace(/kniestock\w*/g, ' ')
+          .replace(/dachschr[äa]g\w*/g, ' ')
+          .replace(/giebelw[äa]nd\w*/g, ' giebel ')
+        const wandEigenstaendig = /\bw[äa]nde?n?\b/.test(ohneZusammensetzungen)
+        const giebelGerechnet = positionen.some(p =>
+          /giebel/i.test(p.beschreibung) && p.beschreibung.endsWith(`— ${name}`))
+        if (wandEigenstaendig && !giebelGerechnet) {
+          warnungen.push(
+            `${name}: „Wände" wurden mitbeauftragt, aber neben Kniestock und Dachschrägen `
+            + 'bleiben nur die Giebelwände — und deren Fläche lässt sich ohne Giebel- oder '
+            + 'Firsthöhe nicht berechnen. Bitte Höhe oder Fläche der Giebelwände ergänzen, '
+            + 'sonst fehlt diese Leistung im Angebot.',
+          )
+        }
+      }
       if ((dgDeckenspiegel as number | null) !== null && anDecke) {
         positionen.push({
           beschreibung: `Deckenspiegel streichen — ${name}`,
@@ -764,7 +801,30 @@ export function malerEngine(daten: any): MengenErgebnis {
       // Seit VOB-013 die einzige Stelle, an der die Bankfläche gezählt wird
       // — vorher steckte sie zusätzlich im Rundum-Leibungsumfang.
       const bankFl = round2(anz * br * tiefe)
-      positionen.push({ beschreibung: 'Fensterbänke streichen', menge: bankFl, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${anz} × ${br}m × ${tiefe}m = ${bankFl} m²`, annahmen: [] })
+      // Prüfmeister, 07.09.2026: „Der Untergrund bestimmt das Material."
+      // Naturstein-, PVC- und folierte Bänke werden gar nicht gestrichen.
+      // Die Position bleibt trotzdem stehen — eine bestellte Leistung
+      // stillschweigend zu entfernen ist der Fehler, den wir diese Woche
+      // viermal repariert haben (PM-030, PM-012, PM-037). Die Rückfrage
+      // steht sichtbar daneben.
+      const bankWerkstoff = nichtStreichbarerWerkstoff(transkriptAll)
+      const bankAnnahmen: string[] = []
+      if (bankWerkstoff) bankAnnahmen.push(nichtStreichbarHinweis(bankWerkstoff))
+      positionen.push({ beschreibung: 'Fensterbänke streichen', menge: bankFl, einheit: 'm²', konfidenz: bankWerkstoff ? 'low' : 'high', berechnungsweg: `${anz} × ${br}m × ${tiefe}m = ${bankFl} m²`, annahmen: bankAnnahmen })
+      // Auf rohem oder abgelaugtem Holz gehört ein Vorlack dazu, sonst
+      // schlägt der Deckanstrich fleckig an — dieselbe Fachlogik wie die
+      // Grundierung nach einer Q2-Vollflächenspachtelung, und wie dort als
+      // Vorschlag markiert. Einheit m², passend zum Katalogeintrag
+      // „Holzbauteil grundieren" (9,00 €/m²).
+      if (!bankWerkstoff && brauchtVorlack(transkriptAll)
+        && !positionen.some(p => /holzbauteil grundieren/i.test(p.beschreibung))) {
+        positionen.push({
+          beschreibung: 'Holzbauteil grundieren', menge: bankFl, einheit: 'm²', konfidenz: 'medium',
+          berechnungsweg: `Gleiche Fläche wie „Fensterbänke streichen" (${bankFl} m²)`,
+          annahmen: ['Rohes/abgelaugtes Holz im Diktat erkannt — Vorlack vor dem Deckanstrich'],
+          automatisch_ergaenzt: true,
+        })
+      }
     }
   }
 

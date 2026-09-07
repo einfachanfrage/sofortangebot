@@ -392,7 +392,20 @@ export async function POST(req: NextRequest) {
       // dahinter stimmte — derselbe Fund wie bei waende[], nur ein anderer
       // Eingang. Ohne modus 'wand' würde die Anzeige weiterhin "rechteck"
       // annehmen und eine nie vorhandene Breite verlangen.
-      const istWandOhneBreite = !hatMasse && !hatFlaeche && raum.laenge != null && raum.hoehe != null
+      // PM-031, Nachtest 07.09.: Diese Bedingung hing an `!hatFlaeche` — also
+      // daran, dass für den Raum zufällig KEINE Wandfläche vorbelegt wurde.
+      // Sobald eine da ist (aus `wandflaeche_direkt` oder einer passenden
+      // Position), fiel `modus: 'wand'` weg und die Fassade wurde beim
+      // nächsten Speichern zu einem Rechteck ohne Breite: „!" im Kopf, Türen
+      // und Raumhöhe verlangt, Menge nicht mehr rechenbar, 103,50 € zu wenig.
+      //
+      // Die Objektart hängt nicht davon ab, ob nebenbei eine Fläche bekannt
+      // ist. Sie steht in der Form: Länge und Höhe da, keine Breite, keine
+      // Bodenfläche — das ist eine Wand. Dieselbe Regel wie `bestimmeModus`
+      // in raum-geometrie.ts, damit Speichern und Anzeigen nicht auseinander-
+      // laufen können.
+      const istWandOhneBreite = raum.breite == null && raum.laenge != null
+        && raum.hoehe != null && bodenflaeche == null
       raumDetails[key] = {
         ...raumDetails[key],
         // Ohne L×B, aber mit Fläche → Flächen-Reiter direkt aktiv

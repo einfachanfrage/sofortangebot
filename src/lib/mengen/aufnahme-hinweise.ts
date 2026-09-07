@@ -192,6 +192,10 @@ function ergaenzeAusAufnahmeHinweisenRoh(
         konfidenz: expliziteSockelMenge ? 'high' : 'medium',
         berechnungsweg: expliziteSockelMenge ? `${menge} lfdm aus Aufnahme` : `Gleiche Länge wie „${quelle?.beschreibung}"`,
         annahmen: expliziteSockelMenge ? [] : ['Menge von vorhandener Sockelleisten-Position übernommen — bitte kurz prüfen'],
+        // PM-012-A: Dieses Netz löst nur aus, wenn die Karte „Sockelleisten
+        // streichen" meldet — also nachdem es jemand gesagt hat. Kein
+        // Vorschlag der Software, sondern eine bestellte Leistung.
+        automatisch_ergaenzt: false,
       })
     }
   }

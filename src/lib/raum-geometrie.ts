@@ -140,6 +140,51 @@ function shoelace(p: { x: number; y: number }[]): number {
   return Math.abs(sum) / 2
 }
 
+// ── PM-031, Nachtest nach dem Speichern (Prüfmeister, 07.09.2026) ────────
+//
+// Wandlänge 10 → 12 m korrigiert und gespeichert: Die Fassadenfläche blieb bei
+// 50,00 m² statt 60,00, der Zuschlag bei 67,50 statt 81,00 — **103,50 € zu
+// wenig**, wieder als Belohnung dafür, dass jemand sein Aufmaß nachbessert.
+// Und der Chip-Kopf zeigte plötzlich „! × 12 m · Raumhöhe 5 m · Türen !"
+// statt „Wandlänge 12 m · Wandhöhe 5 m".
+//
+// Seine Deutung trifft es: Das Objekt wird auf das Schema eines RAUMS
+// abgebildet. Eine Fassade ist aber ein eigener Objekttyp — sie hat keine
+// Breite, keine Türen und keine Raumhöhe. Fehlt `modus: 'wand'` auch nur an
+// einer Speicherstelle, gilt sie als Rechteck mit fehlender Breite. Und ein
+// Rechteck ohne Breite ist nicht rechenbar: `berechneRaumMasse` gibt null
+// zurück, `berechneQuantityFuerItem` ebenfalls, und die Menge bleibt stumm
+// stehen. Genau das hat der Prüfmeister gemessen — die Menge wurde nicht
+// falsch neu gerechnet, sie wurde GAR NICHT neu gerechnet.
+//
+// Die Lehre ist dieselbe wie bei PM-012 und PM-032, eine Ebene tiefer: Die
+// Objektart darf nicht an einem einzelnen gespeicherten Feld hängen, das
+// unterwegs verlorengehen kann. Sie ist an der FORM ablesbar — Länge und Höhe
+// da, Breite nicht, keine Fläche genannt: das ist eine Wand, kein Raum mit
+// einer Lücke. `bestimmeModus` ist ab jetzt die eine Stelle, die das
+// entscheidet; Anzeige und Berechnung fragen dieselbe Funktion.
+
+/**
+ * Der Modus dieses Objekts — aus `modus`, sonst aus seiner Form abgeleitet.
+ * Ein ausdrücklich gesetzter Modus gewinnt immer (der Nutzer darf eine Fassade
+ * über „Kein Wand-Objekt?" zum Raum erklären).
+ */
+export function bestimmeModus(dim: RaumDimension): RaumModus {
+  if (dim.modus) return dim.modus
+  const hatBreite = (dim.breite ?? 0) > 0
+  const hatLaenge = (dim.laenge ?? 0) > 0
+  const hatHoehe = (dim.hoehe ?? 0) > 0
+  const hatFlaeche = (dim.wandflaeche ?? 0) > 0 || (dim.bodenflaeche ?? 0) > 0
+  if (dim.grundriss?.some(w => w.laenge > 0)) return 'grundriss'
+  if (hatBreite && hatLaenge) return 'rechteck'
+  // Länge + Höhe, aber keine Breite und keine Fläche: eine einzelne Wand.
+  // Ohne diese Zeile verlangt die Anzeige eine Breite, die es bei einer
+  // Fassade gar nicht gibt, und die Neuberechnung fällt aus.
+  if (hatLaenge && hatHoehe && !hatBreite && !hatFlaeche) return 'wand'
+  if (hatFlaeche) return 'flaeche'
+  return 'rechteck'
+}
+
 export interface RaumMasse {
   wandflaeche: number | null   // Netto (nach Öffnungsabzug)
   bodenflaeche: number | null
@@ -162,7 +207,7 @@ export function berechneRaumMasse(dim: RaumDimension): RaumMasse {
   const tuerEinzel = t > 0 && dim.tuerFlaeche != null ? dim.tuerFlaeche / t : TUER_FLAECHE
   const fensterEinzel = f > 0 && dim.fensterFlaeche != null ? dim.fensterFlaeche / f : FENSTER_FLAECHE
   const oeffnungsabzug = abzugAusEinzelflaeche(tuerEinzel, t) + abzugAusEinzelflaeche(fensterEinzel, f)
-  const modus = dim.modus ?? 'rechteck'
+  const modus = bestimmeModus(dim)
 
   if (modus === 'flaeche') {
     return {

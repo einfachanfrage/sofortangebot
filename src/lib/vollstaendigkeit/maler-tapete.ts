@@ -1,4 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
+import { nichtStreichbarerWerkstoff, nichtStreichbarHinweis, brauchtVorlack, VORLACK_HINWEIS, farbtonWieWand, FARBTON_HINWEIS, sockelIstMineralisch, MINERALISCH_HINWEIS } from '../lack-untergrund'
 import { hat, add, filtereArray } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
@@ -80,6 +81,48 @@ function hatSockelleistenStreichenSignal(lower: string, arbeitenTexte: string[])
   return false
 }
 
+
+// ── PM-012-A (Prüfmeister, 07.09.2026) ────────────────────────────────────
+//
+// „Sockelleisten streichen 15,00 lfdm" trug das Etikett **„Vorschlag"**. Im
+// Diktat steht aber: „die sollen nur nochmal mitgestrichen werden, in der
+// gleichen Farbe wie die Wand" — ein ausdrücklicher Auftrag. Ein Vorschlag
+// lädt zum Wegklicken ein; hier wären das 52,50 €, die der Kunde bestellt hat.
+//
+// Der Weg dahin: `pruefeUndErgaenzeVollstaendigkeit` markiert alles, was nicht
+// aus der Engine kommt, als ergänzt — es sei denn, die Regel sagt selbst
+// etwas anderes. Diese hier hat geschwiegen, obwohl ihre EIGENE Bedingung
+// bereits „ausdrücklich genannt" prüft: Ohne
+// `hatSockelleistenStreichenSignal` entsteht die Position gar nicht.
+//
+// Unsicher ist hier nie das OB, sondern nur die MENGE, wenn sie von einer
+// Schwester-Position übernommen wird — und das steht bereits in `konfidenz`
+// und in den Annahmen. Deshalb: automatisch_ergaenzt: false auf beiden Wegen.
+const AUSDRUECKLICH_BESTELLT = { automatisch_ergaenzt: false } as const
+
+// ── Untergrund-Hinweise für die Sockelleiste (Prüfmeister, 07.09.2026) ────
+//
+// Zwei Fälle, beide fachlich entschieden, beide hier NUR als Annahme an der
+// Position — nicht als Löschung und nicht als eigene Zeile:
+//
+//   * Folierte Kunststoffleisten lassen sich nicht streichen. Die Position
+//     bleibt sichtbar mit der Rückfrage daneben; sie zu entfernen wäre bei
+//     einem falsch erkannten Werkstoff ein stiller Geldverlust.
+//   * Auf rohem Holz gehört ein Vorlack dazu. Als EIGENE Position geht das
+//     hier nicht: „Holzbauteil grundieren" steht im Katalog in m², die
+//     Sockelleiste rechnet in lfdm — eine Position in der falschen Einheit
+//     fände keinen Preis und stünde mit 0,00 € da (genau PM-037-A). Bis es
+//     einen lfdm-Eintrag gibt, steht der Vorlack als Hinweis an der Position.
+function untergrundAnnahmen(lower: string): { annahmen: string[]; unsicher: boolean } {
+  const werkstoff = nichtStreichbarerWerkstoff(lower)
+  const annahmen: string[] = []
+  if (werkstoff) annahmen.push(nichtStreichbarHinweis(werkstoff))
+  else if (sockelIstMineralisch(lower)) annahmen.push(MINERALISCH_HINWEIS)
+  else if (brauchtVorlack(lower)) annahmen.push(VORLACK_HINWEIS)
+  if (farbtonWieWand(lower)) annahmen.push(FARBTON_HINWEIS)
+  return { annahmen, unsicher: werkstoff !== null }
+}
+
 export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
   const hatSockelStreichenExplizit = hatSockelleistenStreichenSignal(lower, v.arbeitenTexte) && v.hatArbeit('streichen') && !v.hatArbeit('lackieren')
   if (!hatSockelStreichenExplizit || hat(ergaenzt, 'sockelleisten schleifen', 'sockelleisten streich')) return
@@ -89,9 +132,10 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
   if (lfdmStr !== null && lfdmStr > 0) {
     filtereArray(ergaenzt, p => !p.beschreibung.toLowerCase().includes('sockelleisten abkl'))
     if (lower.includes('schleifen') || lower.includes('schleif')) {
-      ergaenzt.push({ beschreibung: 'Sockelleisten schleifen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm aus Transkript`, annahmen: [] })
+      ergaenzt.push({ beschreibung: 'Sockelleisten schleifen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm aus Transkript`, annahmen: [], ...AUSDRUECKLICH_BESTELLT })
     }
-    ergaenzt.push({ beschreibung: 'Sockelleisten streichen', menge: lfdmStr, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: `${lfdmStr} lfm`, annahmen: [] })
+    const ug = untergrundAnnahmen(lower)
+    ergaenzt.push({ beschreibung: 'Sockelleisten streichen', menge: lfdmStr, einheit: 'lfdm', konfidenz: ug.unsicher ? 'low' : 'high', berechnungsweg: `${lfdmStr} lfm`, annahmen: ug.annahmen, ...AUSDRUECKLICH_BESTELLT })
     return
   }
 
@@ -138,7 +182,14 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
       einheit: quelle.einheit,
       konfidenz: 'medium',
       berechnungsweg: `Gleiche Länge wie „${quelle.beschreibung}" — im Transkript stand keine eigene Meterangabe fürs Streichen`,
-      annahmen: [`Menge von „${quelle.beschreibung}" übernommen (keine eigene Meterangabe fürs Streichen genannt) — bitte kurz prüfen`],
+      annahmen: [
+        `Menge von „${quelle.beschreibung}" übernommen (keine eigene Meterangabe fürs Streichen genannt) — bitte kurz prüfen`,
+        ...untergrundAnnahmen(lower).annahmen,
+      ],
+      // Unsicher ist die Menge, nicht der Auftrag: Das Streichen wurde gesagt,
+      // sonst stünde diese Regel gar nicht hier. Die offene Menge steht in
+      // `konfidenz: medium` und in der Annahme darüber.
+      ...AUSDRUECKLICH_BESTELLT,
     })
     return
   }

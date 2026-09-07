@@ -13,7 +13,11 @@ describe('Maler-Standardpreiskatalog', () => {
   // halber Rubriken auffällt — beim nächsten bewussten Katalog-Ausbau hier
   // mit anpassen.
   it('enthält den vollständigen kuratierten Maler-Katalog', () => {
-    expect(maler).toHaveLength(217)
+    // 07.09.2026 (PM-037-A): 217 → 220. Drei Leibungs-Einträge ergänzt
+    // (Fenster innen, Türen, Fenster außen), je 45,00 €/m². Vorher fand die
+    // Engine für „Fenster Innenleibungen streichen" keinen Preis und schrieb
+    // auf jedes Angebot mit mitgestrichenen Leibungen eine 0,00-€-Zeile.
+    expect(maler).toHaveLength(220)
     expect(tapezieren).toHaveLength(22)
   })
 

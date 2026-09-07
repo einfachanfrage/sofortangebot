@@ -3451,6 +3451,28 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche streichen 3x', unit: 'm²', unit_price: 19.00 },
   { category: 'Maler – Bodenbeschichtung', title: 'Boden streichen', unit: 'm²', unit_price: 12.00 },
   { category: 'Maler – Anstrich Innen', title: 'Fensterbänke streichen', unit: 'm²', unit_price: 45.00 },
+  // PM-037-A (Prüfmeister, 07.09.2026): Die Engine erzeugt seit dem 04.09.
+  // „Fenster Innenleibungen streichen" (VOB-013, dreiseitig) — im Katalog gab
+  // es dazu keinen einzigen Maler-Eintrag. Die 24 vorhandenen Laibungs-Zeilen
+  // gehören alle zu Putz, Fassade, Schreiner oder Fenstertausch. Damit stand
+  // auf JEDEM Malerangebot mit mitgestrichenen Leibungen eine Null-Euro-Zeile:
+  // Der Handwerker streicht sie und bekommt sie geschenkt (PM-037: 1,60 m²).
+  //
+  // 45,00 €/m² wie die Fensterbank daneben, vom Prüfmeister vorgeschlagen und
+  // fachlich begründet: dieselbe Art Kleinteilarbeit — viel Kante, wenig
+  // Fläche, jede Bewegung von Hand. Die Einheitenfrage (m² gegen lfm oder je
+  // Fenster) bleibt davon unberührt; solange die Engine m² liefert, muss der
+  // Katalog m² haben.
+  //
+  // Die Engine kennt DREI Leibungstitel (maler.ts, Zeile ~743) — je nachdem,
+  // ob innen, außen oder an einer Tür gestrichen wird. Alle drei hätten sonst
+  // keinen Preis gefunden; der gemeldete Fall war nur der erste, der auffiel.
+  { category: 'Maler – Anstrich Innen', title: 'Fenster Innenleibungen streichen', unit: 'm²', unit_price: 45.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Türleibungen streichen', unit: 'm²', unit_price: 45.00 },
+  // Die Außenvariante steht bewusst zum selben Satz: erfinden will ich hier
+  // keinen zweiten. Der Prüfmeister entscheidet, ob eine Fassadenleibung
+  // anders zu bewerten ist.
+  { category: 'Maler – Anstrich Außen', title: 'Fensterleibungen streichen', unit: 'm²', unit_price: 45.00 },
   { category: 'Maler – Anstrich Innen', title: 'Fußleisten schleifen und lackieren', unit: 'lfdm', unit_price: 6.50 },
   // PM-008/PM-015 — Sandys Entscheidung 2026-08-31: Erschwerniszuschläge
   // laufen in PROZENT, nicht als Pauschale. Diese vier Einträge waren am

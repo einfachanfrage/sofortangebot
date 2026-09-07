@@ -49,6 +49,17 @@ const REGELN: Regel[] = [
   // — Maler: Wand/Decke/Boden —
   { test: /wandfläche(n)?\s*streich|wände\s*streich/i, text: anstrichText('Deckender Anstrich', 'Kanten sauber abgeschnitten') },
   { test: /decken(fläche)?\s*streich|decke\s*streich/i, text: anstrichText('Deckenanstrich', 'gleichmäßig deckend') },
+  // PM-030-B (07.09.2026): Diese Positionsarten sind heute neu entstanden und
+  // standen ohne jede Beschreibung im Angebot. Muss VOR der allgemeinen
+  // Spachtel-/Grundier-Regel stehen, sonst greift die zuerst.
+  { test: /dachschräge(n)?\s*streich/i, text: anstrichText('Deckender Anstrich der Schrägen', 'Anschlüsse sauber abgesetzt') },
+  { test: /kniestock\w*\s*streich/i, text: anstrichText('Deckender Anstrich', 'Kanten sauber abgeschnitten') },
+  { test: /fassadenfläche(n)?\s*streich|fassade\s*streich/i, text: anstrichText('Wetterbeständiger Fassadenanstrich', 'Kanten sauber abgesetzt') },
+  { test: /leibung|laibung/i, text: 'Fensterleibungen dreiseitig gestrichen, Kanten sauber abgesetzt' },
+  { test: /fensterb(?:ä|a|ae)nk/i, text: 'Fensterbänke sauber gestrichen' },
+  { test: /^aufpreis\s+(fischgr|diagonal)/i, text: 'Mehraufwand für die Musterverlegung: mehr Schnitte, mehr Fugen, mehr Zeit' },
+  { test: /fischgrätmuster/i, text: 'Aufwändiges Verlegemuster, Element für Element eingewinkelt' },
+  { test: /sockelleisten\s*streich/i, text: 'Vorhandene Sockelleisten mitgestrichen' },
   // PM-018, Darstellungsfund 2: Der Untertitel sagte „Wände" auch unter der
   // DECKEN-Spachtelposition — der Text widersprach der Menge. Muss vor der
   // allgemeinen Spachtel-Regel stehen, sonst greift die zuerst.

@@ -1115,6 +1115,71 @@ wie von dir vorgesehen.
 
 ---
 
+### Antwort Engineering — „Der Untergrund bestimmt das Material" ist umgesetzt (2026-09-07)
+
+1.603 Tests grün, TypeScript und Lint sauber. 17 neue Tests.
+
+**Außenleibung.** Kein zweiter Satz, 45,00 €/m² innen wie außen — dein Argument
+mit der doppelt gerechneten Erschwernis ist übernommen und steht als Kommentar
+im Code, damit es niemand später „korrigiert". Der eigentliche Fund saß dort,
+wo du hingezeigt hast: **eine Regel schickte jede Leibung auf Wandfarbe.** Jetzt
+drei Regeln — Innenleibung und Türleibung auf Wandfarbe, Außenleibung auf
+Fassadenfarbe, ohne Kennzeichnung gilt innen als Normalfall.
+
+**Lack. Bei beiden. Immer.** Die vier Zeilen stehen:
+
+| Position | Material | Einheit |
+|---|---|---|
+| Sockelleisten streichen | Lack (Weißlack / Buntlack) | lfdm |
+| Fensterbänke streichen | Lack | m² |
+| Fensterleibungen streichen innen | Wandfarbe | m² |
+| Fensterleibungen streichen außen | Fassadenfarbe | m² |
+
+Beide Ausnahmen sind drin: Der geputzte Sockel bekommt Dispersion, und
+folierte, PVC- und Natursteinteile lösen die Rückfrage aus. Bei PM-012 steht
+jetzt an der Position: *„Farbton wie die Wandfläche — als Buntlack abgetönt,
+nicht mit Wandfarbe gestrichen (hält dort nicht)."* Der Kunde bekommt seinen
+Stil, und es hält.
+
+Die Werkstoff-Prüfung läuft **satzweise**, nicht über das ganze Diktat: „Im Bad
+liegt Naturstein. Die Fensterbänke im Büro werden gestrichen." darf die Bank
+nicht treffen — dieselbe Lehre wie PM-033. Ein Test hält beide Richtungen fest.
+
+**Grundierung.** Bei der **Fensterbank** entsteht „Holzbauteil grundieren"
+(9,00 €/m²) als eigene Vorschlagsposition, genau wie die Grundierung nach der
+Q2-Spachtelung. Bei der **Sockelleiste** nicht — und das ist eine bewusste
+Entscheidung, keine Auslassung: Der Katalogeintrag steht in m², die Leiste
+rechnet in lfdm. Eine Position in der falschen Einheit fände keinen Preis und
+stünde mit 0,00 € da — also genau PM-037-A, nur an anderer Stelle. Bis es einen
+lfdm-Eintrag gibt, steht der Vorlack als Hinweis an der Position.
+
+**Rückfrage dazu:** Soll `Sockelleisten grundieren` als eigener Katalogeintrag
+in **lfdm** angelegt werden? Dann wird auch dort eine echte Position daraus.
+Einen Satz erfinde ich nicht.
+
+**Eine Abweichung, die ich offenlege.** Du wolltest bei nicht streichbaren
+Bauteilen *„eine Rückfrage, keine Position"*. Ich habe die Position **stehen
+lassen** und die Rückfrage als Annahme danebengestellt, sichtbar, mit gesenkter
+Konfidenz. Grund: Eine bestellte Leistung stillschweigend zu entfernen ist genau
+der Fehler, den wir diese Woche viermal repariert haben — PM-030 (Sockelleiste
+verschwindet), PM-012 (Karte ≠ Entwurf), PM-037 (Leibungen entstehen nicht),
+PM-031 (Menge zieht nicht nach). Erkennt die Werkstoffprüfung einmal falsch,
+kostet die Löschung Geld, das niemandem auffällt; der falsche Hinweis dagegen
+kostet zwei Sekunden Lesen.
+
+Wenn du es trotzdem als Löschung willst, ist es eine Zeile — sag Bescheid, dann
+mache ich es. Ich wollte es nur nicht ungefragt so bauen, dass es leise sein
+kann.
+
+**Nicht mitgebaut, weil Produktentscheidung:** Deine Einschränkung zur
+Mindestmenge / Anfahrpauschale, wenn *nur* Außenleibungen gestrichen werden
+(halber Tag Gerüst für 1,60 m²). Das ist keine Norm und kein Materialthema —
+das liegt bei Sandy. Ich habe es unverändert weitergegeben.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
