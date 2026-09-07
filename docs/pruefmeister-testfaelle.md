@@ -817,8 +817,8 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-018 | Q3-Vollflächenspachtelung an Wand UND Decke getrennt (Arbeitszimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest vom 21.08. lief vor dem Ausrollen der VOB-Übermessung — Wandfläche, Spachtel Q3 Wand, Grundierung Wand und Wandanstrich stehen jetzt auf **39,00 m²** statt 35,91 m². Q3-Benennung und Deckengrundierung bleiben bestätigt. Bisheriger Stand: Live-Nachtest (2026-08-21) bestätigt: alle 8 Positionen exakt Soll, „Q3" korrekt an Wand und Decke, Deckengrundierung vorhanden — Details im Archiv 🟡 **Nachtest 04.09.: alle acht Mengen exakt Soll** (Wand 39,00 · Decke 14,00 · Sockelleisten 15,00, Deckengrundierung vorhanden). **RÜCKFALL:** Spachtelpositionen heißen wieder „Q2" statt „Q3" — Katalog führt Q2 mit 9,00 und Q3 mit 14,00 €/m², also 265,00 € zulasten des Betriebs. Dazu: zwei gleichnamige Spachtelzeilen, Decken-Untertitel sagt „Wände", Vorschlag-Etikett trotz ausdrücklicher Ansage 🟡 **Zweiter Durchgang 04.09.: alle vier Bezeichnungsfunde behoben** (Q3, eigene Deckenzeile, richtiger Untertitel, kein Vorschlag-Etikett). Offen nur noch die **Preiszuordnung**: Q3-Titel zieht den Q2-Preis (9,00 statt 14,00 €/m² = 195 €), Decken-Q3 findet gar keinen Treffer ✅ **Vollständig grün (3. Durchgang 04.09.):** Q3 mit 14,00 €/m² an Wand und Decke, alle acht Positionen mit korrekter Menge und korrektem Preis, Angebot 1.691,30 € |
 | PM-019 | Erschwerniszuschlag „schwieriger Untergrund" isoliert von Höhe/Altbau (Gäste-WC) | ✅ Details im Archiv. Raummaß-Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 live bestätigt (2026-08-25) — liefert jetzt die korrekten 2×1,5 m |
 | PM-020 | Teppich verlegen, alter Belag bleibt liegen (neue Ausschluss-Formulierung), Verschnittsatz unklar (Kinderzimmer 2) | ✅ Details im Archiv. Nachtest (2026-08-25) diesmal korrekt transkribiert (3×3,6 m), Sicherheits-Rückfrage aus „Systemischer Fund" Punkt 6 daher nicht ausgelöst — Mechanismus über PM-019 live bestätigt |
-| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv |
-| PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv |
+| PM-021 | Mehrere unterschiedlich große Öffnungen + expliziter Einfachanstrich, VOB-Übermessungsfrage zugespitzt (Wohnküche) | ✅ Details im Archiv 🟡 **Nachtest 05.09.: VOB-012 in beiden Richtungen bewiesen** — Sockelleisten **20,00 lfdm**, Zimmertür bleibt drin, Terrassentür abgezogen. Wandfläche 53,00 m² mit nachprüfbarem Rechenweg. Offen: Untertitel sagt „2-fach-Anstrich" bei „streichen 1x"; Rechenweg listet beide Türen, zieht nur eine ab |
+| PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv 🟡 **Nachtest 05.09.:** alle Mengen exakt, Sockelleisten **16,60 lfdm**. Offen: Untertitel „Deckenanstrich in 2 Lagen" bei „Deckenfläche streichen 1x" |
 | PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist **behoben 03.09.** — Ursache war zuletzt der Dezimalpunkt in der Satztrennung, siehe „Nachtrag am selben Tag“. Dämmung steht jetzt genau einmal, im Flur, mit dessen Fläche. Live-Nachtest steht aus ✅ **Grün (Nachtest 04.09.):** Trittschalldämmung mit **10,80 m²** = Fläche dieses Raums, geprüft in genau der Raum-Paarung, die den situativen Fund erzeugt hatte. Sockelleisten 15,60 lfdm |
 | PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung ✅ **Vollständig grün (5. Nachtest 04.09.):** Wand 57,60 m², Sockelleisten 18,00 lfdm, Zuschlag 15 % × 7,01 € = 105,15 € nachgerechnet, Karte zeigt „Satz aus Preisliste" |
 | PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
@@ -6271,6 +6271,69 @@ Lieber eine Zeile weniger versprechen als eine Liste zeigen, die nicht gilt.
 geliefert), die bei PM-010 und PM-013 schon im August auffiel. Sie ist nie
 verschwunden, sie ist nur seltener geworden — und mit dem raumweisen Umbau vom
 03.09. hat sich die Zahl der nachträglich ergänzten Positionen eher erhöht.
+
+---
+
+### PM-021 und PM-022 — Nachtest (Sandy, 2026-09-05, 09:49/09:53)
+
+**PM-021: die VOB-012-Regel ist in beiden Richtungen bewiesen.** Das war der
+wertvollste Fall der Stufe 4, und er sitzt:
+
+- Umfang 22,00 lfm, Sockelleisten abkleben **20,00 lfdm**
+- Die **Zimmertür (0,90 m) bleibt drin**, die **Terrassentür (2,00 m) wird
+  abgezogen** — genau die Schwelle aus DIN 18363/18365, Abschnitt 5.3.2, an
+  einem einzigen Angebot nachgewiesen.
+
+**Und die Übermessung rechnet nachprüfbar richtig:** 57,20 m² brutto − 4,20 m²
+(nur die Terrassentür) = **53,00 m²**. Der Annahme-Text nennt die Gegenprobe:
+*„3 Öffnungen bis 2,5 m² Einzelgröße nicht abgezogen (4,45 m²)"* — das sind
+Fenster 1,68 + Fenster 0,88 + Zimmertür 1,89 = 4,45 m². Auf zwei Nachkommastellen
+korrekt, und der Kunde kann es nachrechnen.
+
+**PM-022:** Wand 41,50 m² (16,60 × 2,50, keine Abzüge), Decke 17,10, Boden
+schützen 17,10, Sockelleisten abkleben **16,60 lfdm**. Alle Mengen exakt.
+
+---
+
+**NEUER FALLÜBERGREIFENDER BEFUND — der Untertitel widerspricht dem Titel**
+
+In beiden Fällen steht auf dem Kundenangebot ein Widerspruch:
+
+| Fall | Titel | Untertitel darunter |
+|---|---|---|
+| PM-021 | Wandflächen streichen **1x** | „Deckender **2-fach**-Anstrich, Kanten sauber abgeschnitten" |
+| PM-022 | Deckenfläche streichen **1x** | „Deckenanstrich **in 2 Lagen**, gleichmäßig deckend" |
+
+Der Preis ist jeweils richtig — 7,50 € bzw. 7,00 €, also die Einfach-Sätze. Es
+ist kein Rechenfehler. **Aber es ist der gefährlichere Fehlertyp:** Der Kunde
+liest den Untertitel, nicht das „1x" im Titel. Er erwartet zwei Anstriche und
+bezahlt einen.
+
+**Warum ich das nicht als Kosmetik durchgehen lasse:** Der Untertitel ist eine
+Leistungsbeschreibung. Wenn Titel und Beschreibung sich widersprechen, wird das
+im Zweifel zulasten dessen ausgelegt, der das Angebot gestellt hat — genau die
+Argumentation, die Legal bei den Prozent-Zuschlägen aufgemacht hat (§ 305c BGB,
+Zweifel gehen zulasten des Verwenders). Der Handwerker schuldet dann
+möglicherweise zwei Anstriche zum Preis von einem, und er hat den Satz nicht
+einmal selbst geschrieben.
+
+**Fix-Richtung:** Der Untertitel muss der Anstrichzahl folgen — „Deckender
+Anstrich, einlagig" bei 1x, „zweilagig" bei 2x, „dreilagig" bei 3x. Oder er
+lässt die Zahl ganz weg und beschreibt nur die Ausführung („Kanten sauber
+abgeschnitten"). Beides ist besser als eine feste Zahl, die zu zwei Dritteln der
+Fälle falsch ist.
+
+**Kleiner Fund im Rechenweg (PM-021):** Die Zeile lautet *„− Türen 4.2 m²
+[0.9×2.1, 2×2.1]"*. In der Klammer stehen **beide** Türen, abgezogen wurde nur
+die Terrassentür. Wer nachrechnet, kommt auf 1,89 + 4,20 = 6,09 und findet den
+Widerspruch. Die Klammer sollte nur die tatsächlich abgezogenen Öffnungen
+listen — die übermessenen stehen ja korrekt in der Annahme darunter.
+
+**Status:** PM-021 🟡 · PM-022 🟡 — beide nur wegen des Untertitels; alle Mengen,
+Preise und die Sockelleistenwerte sind exakt.
+
+**Stand Stufe 4:** PM-001 ✅ · PM-011 🟡 · PM-012 🟡 · PM-013 ✅ · PM-021 🟡 ·
+PM-022 🟡 · offen: PM-025, PM-026.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
