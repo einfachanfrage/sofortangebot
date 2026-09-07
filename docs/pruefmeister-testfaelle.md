@@ -1076,7 +1076,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | 🟡 Mengen exakt Soll. Zwei Funde: Wandflächen-Grundpreis weicht ab (11,50 € statt 9,50 €/m²); Erschwerniszuschlag-Bemessungsgrundlage zieht fälschlich den Abstellraum mit ein ✅ **Grün (Nachtest 04.09.):** Wand **37,50 m²**, Sockelleisten 15,00, Wandpreis vereinheitlicht. Altbau-Zuschlag rechnet gewerkeübergreifend (20 % auf 1.023,57 €) — von Sandy ausdrücklich als richtig eingeordnet, damit ist der alte Bemessungsgrundlagen-Fund gegenstandslos. Offener Vorschlag: Annahme ausweisen, wenn „Altbau" nur für einen Raum gesagt wurde |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
 | PM-030 | Dachzimmer 2, frischer Dachgeschoss-Fall | 🟡 Alle Flächen korrekt (Kniestockwände, Dachschrägen, Boden schützen) — Dachfenster ≤2,5 m² braucht laut VOB/DIN 18363 keinen Abzug, Soll-Lösung dazu korrigiert (auch PM-007 rückwirkend betroffen). Zwei bekannte PM-007-Kleinfunde (Sockelleisten-Türabzug trotz „Türen: 0"; Raumhöhe „!") erneut bestätigt 🟡 **Nachtest 04.09.:** Kniestock 17,00 m² und Boden schützen 18,00 m² korrekt. Drei Befunde: **Dachfenster wird abgezogen** obwohl übermessen (Karte 16,80 / Entwurf 17,08 statt 18,00 — zwei verschiedene Abzüge in einem Lauf), **Sockelleisten abkleben verschwindet zwischen Karte und Entwurf**, „Raumhöhe !" im Dachgeschoss |
-| PM-031 | Fassade Nordseite, einfacher Fall | 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
+| PM-031 | Fassade Nordseite, einfacher Fall | ❌ **Nachtest 07.09.:** „So gerechnet“ zeigt jetzt korrekt 50,00 m² mit VOB-Hinweis. **Aber der Bearbeiten-Test kippt:** Wandlänge auf 12 m geändert und gespeichert → Menge bleibt 50,00 m² (Soll 60,00), Chip wird zum Raum mit „!“ bei Wandlänge und Türen, 103,50 € zu wenig. Bisher: 🟡 Fassadenfläche + Erschwerniszuschlag exakt Soll, „Satz aus Preisliste"-Fix bestätigt auch bei Fassade. Neuer, rein kosmetischer Fund: „So gerechnet"-Zeile zeigt falsche, VOB-widrige Rechnung |
 | PM-032 | Drei Räume, ein Belag durchgehend ohne Schwellen (Flur/Wohnzimmer/Küche) | ❌ Eingesprochen 2026-09-02: Mengen, Sockelleisten und die **eine** Übergangsschiene exakt Soll. Ein Befund: **Trittschalldämmung nur im ersten Raum**, in zwei von drei Räumen fehlt sie ganz (28,40 m² = 127,80 € zulasten des Betriebs). **Alle Befunde behoben 03.09.** (Trittschall je Raum, 35,60 m² statt 7,20) — siehe „Umbau statt sechster Einzelreparatur". Live-Nachtest steht aus **Nachtest 03.09.: Trittschall-Fix bestätigt** — Dämmung jetzt in allen drei Räumen (7,20 + 20,00 + 8,40 = 35,60 m²), alle Mengen exakt Soll. 🟡 **Nachtest 03.09. bestätigt** (Trittschall in allen drei Räumen, alle 10 Positionen im Entwurf). **Seit VOB-012 am 04.09. wieder offen:** Sockelleisten sind jetzt 44,00 statt 41,30 lfdm — eine Zahl nachzuprüfen, sonst unverändert bestätigt **3. Durchlauf 04.09.:** Sockelleisten **44,00 lfdm** exakt Soll, Dämmung in allen drei Räumen. 🟡 **Neuer Fund:** derselbe Auftrag trifft mal „Klick-Vinyl" (16 €/m²), mal „Vinyl-Boden" (22 €/m²) — 224,28 € Streuung bei identischem Diktat **3. Lauf: wieder „Klick-Vinyl" 16 €/m², Angebot 1.015,28 €.** Bleibt 🟡: drei Läufe, zweimal 16 €, einmal 22 € bei identischem Diktat — nicht falsch, sondern **nicht reproduzierbar** **4. Lauf 04.09.: wieder korrekt (1.015,28 €).** Bleibt 🟡 — Belag-Fix ist laut Code nicht gebaut, damit ist der Lauf kein Nachweis. Gemessene Ausfallrate über vier Läufe: **1 von 4** ✅ **Grün (zwei Nachtests 07.09., identisch):** Belag 7,56 + 21,00 + 8,82 = 37,38 als „Klick-Vinyl" zu 16,00 €, Dämmung 7,20 + 20,00 + 8,40 = 35,60, Sockelleisten 14,40 + 18,00 + 11,60 = 44,00 lfdm, eine Schiene. Zwei Läufe Zeichen für Zeichen gleich — die Streuung ist weg |
 | PM-033 | Drei Räume, drei Beläge, drei Verschnittsätze (Fischgrät / Teppich / Laminat) | ❌ Eingesprochen 2026-09-02: **Verschnittsätze exakt Soll** (15/0/5 %, kein Überschwappen). Drei Befunde: Trittschall im falschen Raum trotz Ansage, Sockelleisten gegen ausdrücklichen Ausschluss erfunden (22 lfdm, nicht herleitbar), nur 1 statt 2 Übergangsschienen. **Befund 1 + 2 behoben 03.09.** (Trittschall je Raum; Ausschluss wird jetzt satzweise gelesen — siehe „Fix PM-033, Befund 2"), Befund 3 offen. Live-Nachtest steht aus **Nachtest 04.09.: Befund 2 + 3 behoben** (zwei Übergangsschienen, keine erfundenen Sockelleisten). ~~🟡 Befund 1 unverändert~~ **behoben 05.09.** — vier Ursachen gleichzeitig: Kurzform „Trittschall" wurde nicht erkannt, die Raumzuordnung der Dämmung trennte nur am Punkt und gab nur EINEN Raum zurück, und das Chip-Sicherheitsnetz in `aufnahme-hinweise.ts` hängte die Dämmung an die erste Verlegeposition. Jetzt 7,50 m², nur im Flur ✅ **Vollständig grün (3. Durchlauf 04.09.):** Trittschall jetzt belagabhängig und im genannten Raum — Flur 7,50 m², kein Fischgrät, kein Teppich. Zwei Schienen, keine Sockelleisten, Verschnittsätze exakt |
 | PM-034 | Untergrundvorbereitung je Raum verschieden, ein Raum ausgeschlossen (Küche/Esszimmer/Flur) | ❌ **Schwerster Fall des Batches.** Eingesprochen 2026-09-02, Angebot 91.085 € für 24,80 m². Fünf Befunde: Weiter-Button führt nicht zum Entwurf (Blocker), „drei sechzig"/„drei fünfzig" → 360/350 (zweimal in einem Diktat, 350-Bug neu zu bewerten), Ausschlusssatz wird zum Raumnamen, drei Maler-Spachtelpositionen im Bodenauftrag, Grundierung im Esszimmer fehlt. Raumtrennung der Untergrundarbeiten selbst ist korrekt. **Befund 1–3 behoben 02./03.09.**, **Befund 4+5 behoben 03.09.** (Gewerke-Erkennung objektbewusst, Untergrund-Block je Raum — Grundierung Esszimmer 14,00 m²). Live-Nachtest steht aus **Nachtest 04.09.: vier von fünf Befunden behoben** (Zahlwort 3,60/3,50, Ausschlusssatz, Wandspachtel weg, Grundierung da; Angebot 1.084 € statt 91.085 €). Blocker (Befund 1) über PM-036 als **behoben belegt**. ~~**NEUER RÜCKFALL:** Sockelleisten fehlen komplett~~ **behoben 04.09.** — zwei Wurzeln: Raumzuordnung trennt jetzt am Komma, und Whisper schrieb „Zockelleisten" mit Z (Textsignal-Gate lief vorbei). Küche 13,20 + Esszimmer 15,00 = 28,20 lfdm ✅ **Vollständig grün (2. Nachtest 04.09., 18:47):** alle fünf Befunde plus Rückfall behoben, Sockelleisten 28,20 lfdm in beiden Räumen, Trittschall je Raum, Angebot 1.026,54 € statt 91.085 € |
@@ -7172,6 +7172,69 @@ Positionsart braucht drei Dinge: eine Menge, einen Katalogpreis und ein
 Material.** Bisher ist nur das erste mitgewachsen.
 
 **Status:** PM-011 ✅ · PM-012 🟡 · PM-030 🟡 · PM-037 🟡 · PM-031 🟡
+
+*Prüfmeister · 2026-09-07*
+
+
+---
+
+## PM-031 — Nachtest nach dem Speichern: der Fund steht (2026-09-07)
+
+Sandy hat die Wandlänge auf 12 m gesetzt und **gespeichert**. Ergebnis
+unverändert:
+
+| | Soll nach der Korrektur | Ist |
+|---|---|---|
+| Fassadenfläche streichen 1x | **60,00 m²** = 540,00 € | 50,00 m² = 450,00 € |
+| Erschwerniszuschlag 15 % | 5,40 €/Prozentpunkt = 81,00 € | 4,50 € = 67,50 € |
+| Chip-Kopf | Wand / Fassade · Wandlänge 12 m · Wandhöhe 5 m | „**!** × 12 m · Raumhöhe 5 m · Türen **!** · Fenster 2" |
+
+**103,50 € zu wenig**, und zwar wieder als Belohnung dafür, dass jemand sein
+Aufmaß nachbessert. Damit ist der Punkt belegt, nicht mehr vermutet.
+
+### Was der Chip-Kopf verrät
+
+Vorher stand dort „Wandlänge 10 m · Wandhöhe 5 m". Jetzt steht „**!** × 12 m ·
+**Raumhöhe** 5 m · Türen **!**". Die 12 ist also gespeichert worden — aber in der
+**zweiten** Maßstelle, und die erste ist leer. Das sieht danach aus, als würde
+die Bearbeiten-Ansicht ein Wand-/Fassaden-Objekt auf das Schema eines Raums
+abbilden: Wandlänge und Wandhöhe werden zu Länge, Breite und Raumhöhe
+umgesteckt, dabei fällt eine Größe heraus, und Türen — die eine Fassade gar nicht
+hat — bleiben als Pflichtfeld mit „!" zurück.
+
+Wenn das stimmt, erklärt es beides in einem: Das Objekt hat nach dem Speichern
+**kein vollständiges Maßpaar** mehr, also kann `berechneQuantityFuerItem` nichts
+Neues rechnen und die alte Zahl bleibt stehen. Die Menge ist nicht falsch neu
+gerechnet worden — sie ist **gar nicht** nachgezogen worden, weil die Grundlage
+zerfallen ist.
+
+### Warum der neue Wächter das nicht gefangen hat
+
+Der Test aus dadf67b lässt Engine und Bearbeiten-Ansicht für **drei Räume**
+gegeneinander rechnen. Genau das ist die Lücke: Das Objekt, das hier kippt, ist
+**kein Raum, sondern eine Wand/Fassade**. Ein Wächter, der nur die Objektart
+prüft, die schon funktioniert, meldet nichts.
+
+Das ist inhaltlich dieselbe Lehre, die Product Engineering heute selbst
+formuliert hat („ein Test, der bei einer Normänderung nicht mitgezogen wird,
+wird vom Wächter zum Wärter") — hier eine Stufe früher: **Ein Wächter, der eine
+Objektart nicht kennt, bewacht sie auch nicht.** Der Fassaden-Fall gehört in
+denselben Test, mit derselben Gegenprobe.
+
+### Auftrag
+
+1. Wand-/Fassaden-Objekte müssen die Bearbeiten-Ansicht als das überleben, was
+   sie sind: Wandlänge und Wandhöhe, keine Türen, keine Raumhöhe.
+2. Nach dem Speichern muss die Menge der Korrektur folgen — 12,00 × 5,00 =
+   60,00 m².
+3. Der Wächtertest bekommt einen Fassaden-Fall, sonst fällt derselbe Fund beim
+   nächsten Mal wieder erst live auf.
+4. Und die „!"-Pflichtfelder gehören zur Familie „Raumhöhe !" aus PM-007/PM-030:
+   ein Feld, das es für dieses Objekt nicht gibt, darf nicht als fehlend
+   angemahnt werden.
+
+**Status PM-031:** ❌ — die „So gerechnet"-Zeile ist geheilt, das Bearbeiten
+nicht.
 
 *Prüfmeister · 2026-09-07*
 
