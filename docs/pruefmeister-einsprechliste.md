@@ -172,9 +172,14 @@ nebeneinanderlegen, dann sieht man sofort, ob es Whisper oder wir waren.
 
 ## Stufe 4 — grün, nur die Sockelleistenzahl kippt
 
-**Stand 07.09.:** PM-001 ✅ · PM-013 ✅ · PM-011 🟡 · PM-012 🟡 · PM-021 🟡 ·
-PM-022 🟡 (die vier Gelben nur wegen Befunden, die nicht an der Menge hängen).
-**Offen zum Einsprechen: PM-025 und PM-026 — die letzten beiden der ganzen Liste.**
+**Stand 07.09. — Stufe 4 ist komplett durchgesprochen, die Liste ist leer.**
+PM-001 ✅ · PM-013 ✅ · PM-011 🟡 · PM-012 🟡 · PM-021 🟡 · PM-022 🟡 · PM-025 🟡 ·
+PM-026 🟡. **Kein Mengenfehler mehr in Stufe 4.** Die Gelben hängen alle an
+Befunden, die nicht an der Rechnung hängen: Untertitel „2 Lagen" bei 1x-Anstrich
+(PM-021/022/026), Fischgrät ohne Fischgrätpreis (PM-025), Erschwerniszuschlag
+neben Vollflächenspachtelung (PM-011), Abkleben neben Streichen (PM-012).
+**Diese Datei kann gelöscht werden, sobald die offenen Punkte beim Product
+Engineer sind — sie hat ihren Zweck erfüllt.**
 
 
 Am Stück einsprechen, jeweils nur auf die eine Zeile schauen. Alles andere war

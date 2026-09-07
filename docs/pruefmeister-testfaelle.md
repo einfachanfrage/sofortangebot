@@ -821,8 +821,8 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-022 | Schlafzimmer, Baseline-Malerfall | ✅ Alle vier Positionen live bestätigt exakt Soll — Details im Archiv 🟡 **Nachtest 05.09.:** alle Mengen exakt, Sockelleisten **16,60 lfdm**. Offen: Untertitel „Deckenanstrich in 2 Lagen" bei „Deckenfläche streichen 1x" |
 | PM-023 | Flur, Laminat gerade + Trittschalldämmung + neue Sockelleisten | 🟡 Gruppierung + Vorschlag-Etikett behoben (dreifach bestätigt). Drei von vier Nachtests komplett sauber, die Trittschalldämmungs-Flächenverwechslung aus dem ersten Nachtest (mit PM-025) ist **behoben 03.09.** — Ursache war zuletzt der Dezimalpunkt in der Satztrennung, siehe „Nachtrag am selben Tag“. Dämmung steht jetzt genau einmal, im Flur, mit dessen Fläche. Live-Nachtest steht aus ✅ **Grün (Nachtest 04.09.):** Trittschalldämmung mit **10,80 m²** = Fläche dieses Raums, geprüft in genau der Raum-Paarung, die den situativen Fund erzeugt hatte. Sockelleisten 15,60 lfdm |
 | PM-024 | Büro, Erschwerniszuschlag Höhe in normalem Raum | 🟡 Vierter Nachtest: „Boden schützen" wieder korrekt bepreist, Erschwerniszuschlag Höhe im Entwurf rechnerisch exakt Soll (15 %). Der Karten-Fund („1 %") ist gefixt (31.08., Fix-Notiz am Dateiende) — fehlt nur noch der fünfte Nachtest zur Bestätigung ✅ **Vollständig grün (5. Nachtest 04.09.):** Wand 57,60 m², Sockelleisten 18,00 lfdm, Zuschlag 15 % × 7,01 € = 105,15 € nachgerechnet, Karte zeigt „Satz aus Preisliste" |
-| PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | ✅ alle drei Positionen live bestätigt exakt Soll, auch mit zusätzlicher Altbelag-Rückfrage |
-| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | ✅ Vierter Nachtest komplett sauber: alle vier Positionen exakt Soll, „Boden schützen" wieder korrekt bepreist, keine offenen Funde mehr |
+| PM-025 | Gästezimmer, Vinyl Fischgrätmuster + explizit neue Sockelleisten | 🟡 Mengen live exakt (16,10 m² · 15,00 lfdm, VOB-012 bestätigt). **Haken 07.09. zurückgezogen:** Fischgrät wirkt nur auf den Verschnitt, nicht auf den Preis — 22,00 € statt `Designbelag im Fischgrätmuster kleben` 36,00 € (Fund PM-025-A, 225,40 € zu wenig) |
+| PM-026 | Küche, Wand 2x / Decke 1x unterschiedliche Anstrichzahl | 🟡 Nachtest 07.09.: alle vier Mengen **und** alle vier Preise exakt (39,00 · 15,12 · 15,12 · 15,60; 11,50 / 7,00 / 1,20 / 0,80), Sockelleisten nach VOB-012 bestätigt. Offen nur der Untertitel „in 2 Lagen" bei 1x-Anstrich (Sammelfund mit PM-021/PM-022) |
 | PM-027 | Kellerraum, Parkett gerade + explizite Altbelag-Entfernung | ✅ Beide Positionen live bestätigt exakt Soll |
 | PM-028 | Arbeitszimmer, Altbau + explizite Grundierung ohne Spachtel | 🟡 Mengen exakt Soll. Zwei Funde: Wandflächen-Grundpreis weicht ab (11,50 € statt 9,50 €/m²); Erschwerniszuschlag-Bemessungsgrundlage zieht fälschlich den Abstellraum mit ein ✅ **Grün (Nachtest 04.09.):** Wand **37,50 m²**, Sockelleisten 15,00, Wandpreis vereinheitlicht. Altbau-Zuschlag rechnet gewerkeübergreifend (20 % auf 1.023,57 €) — von Sandy ausdrücklich als richtig eingeordnet, damit ist der alte Bemessungsgrundlagen-Fund gegenstandslos. Offener Vorschlag: Annahme ausweisen, wenn „Altbau" nur für einen Raum gesagt wurde |
 | PM-029 | Abstellraum, Mini-Raum ohne jede Öffnung | ✅ Alle drei Positionen live bestätigt exakt Soll |
@@ -6333,7 +6333,133 @@ listen — die übermessenen stehen ja korrekt in der Annahme darunter.
 Preise und die Sockelleistenwerte sind exakt.
 
 **Stand Stufe 4:** PM-001 ✅ · PM-011 🟡 · PM-012 🟡 · PM-013 ✅ · PM-021 🟡 ·
-PM-022 🟡 · offen: PM-025, PM-026.
+PM-022 🟡 · PM-025 🟡 · PM-026 🟡 — **Stufe 4 ist durchgesprochen.**
+
+
+---
+
+## PM-025 und PM-026 — Nachtest 07.09., Abschluss von Stufe 4
+
+### PM-025 — Mengen exakt, aber der falsche Katalogeintrag
+
+**Diktat:** „Gästezimmer, vier Meter mal drei Meter fünfzig, eine Tür normal Maß.
+Vinylboden im Fischgrätmuster verlegen. Sockelleisten werden auch neu montiert,
+passend zum Fischgrätmuster."
+
+**Was stimmt — und zwar vollständig:**
+
+| Position | Ist | Soll | |
+|---|---|---|---|
+| Vinyl-Boden verlegen inkl. 15 % Verschnitt | 16,10 m² | 16,10 m² | ✅ |
+| Sockelleisten montieren | 15,00 lfdm | 15,00 lfdm | ✅ |
+| Trittschalldämmung | keine Position | keine | ✅ |
+| Altbelag | Rückfrage gestellt, „bleibt" | Rückfrage | ✅ |
+
+Die 15,00 lfdm sind der **zweite unabhängige Beleg für VOB-012** an diesem Tag:
+Raumumfang 2 × (4,00 + 3,50) = 15,00, die 0,90 m Zimmertür wird nicht mehr
+abgezogen. Und die 15 % Verschnitt stehen sauber im Titel — das System **weiß
+also, dass hier Fischgrät verlegt wird.**
+
+**Neuer Fund (PM-025-A): Fischgrät wirkt auf den Verschnitt, aber nicht auf den
+Preis.**
+
+Der Entwurf setzt „Vinyl-Boden verlegen" mit **22,00 €/m²** an. Im Katalog steht
+aber ein Eintrag, der genau diese Leistung beschreibt:
+
+- `Designbelag im Fischgrätmuster kleben` — **36,00 €/m²** (`default-prices.ts:736`)
+
+Die 22,00 € sind zufällig getroffen: `boden-normalisierer.ts:44` macht aus jedem
+„vinyl" pauschal den Belag `Vinyl-Boden`, der Preis-Matcher findet dazu den
+nächstbesten Eintrag (`Klebe-Vinyl verlegen vollflächig (Dünnbett)`, 22,00). Die
+Musterverlegung fällt auf dem Weg raus. Belege dafür, dass das kein Einzelfall
+ist — der Katalog kennt für **jeden** Belag eine Fischgrät-Zeile:
+
+- `Stabparkett im Fischgrätmuster verlegen` 68,00 · `im französischen Fischgrät` 78,00
+- `Laminat im Fischgrätmuster verlegen` 24,00 · `Aufpreis Fischgrät / Muster Laminat` 12,00
+- `Aufpreis Fischgrät-Verlegemuster` (Parkett) 14,00
+
+**Was das kostet:** 16,10 m² × 14,00 € = **225,40 € zu wenig** in einem einzigen
+Gästezimmer. Auf einer 60-m²-Wohnung im Fischgrät sind das rund 840 €. Und zwar
+in die für den Handwerker teure Richtung — er verlegt Fischgrät und bekommt
+geraden Belag bezahlt. Fischgrät ist die aufwendigste Verlegeart überhaupt:
+jedes Element einzeln eingewinkelt, doppelt so viele Schnitte, doppelt so viele
+Fugen, die stimmen müssen. Wer das zum Preis der geraden Verlegung anbietet,
+arbeitet umsonst.
+
+**Das ist mein eigener Fehler in der Soll-Lösung, nicht nur einer der Engine.**
+PM-025 stand seit dem 25.08. auf ✅, weil ich als Soll nur die beiden Mengen
+(16,10 m² und 15,00 lfdm) hinterlegt hatte. Der Einheitspreis stand nie drin,
+also konnte er auch nie auffallen. Ich ziehe den Haken zurück und ergänze das
+Soll: **Titel `Designbelag im Fischgrätmuster kleben`, 36,00 €/m², Summe 579,60 €.**
+
+**Fix-Richtung:** Die Verlegeart muss die Belagsauswahl mitbestimmen, nicht nur
+den Verschnittsatz. Es gibt zwei saubere Wege — entweder der Muster-Eintrag wird
+direkt gewählt (Fischgrät + Vinyl → `Designbelag im Fischgrätmuster kleben`),
+oder es bleibt beim Grundbelag und der Katalog-Aufpreis kommt als eigene Position
+dazu. Ich habe keine Präferenz, solange am Ende dieselbe Summe steht; die zweite
+Variante ist für den Kunden lesbarer, weil sie den Mehraufwand ausweist.
+
+**Status PM-025:** 🟡 — Mengen exakt, Einheitspreis falsch.
+
+---
+
+### PM-026 — vier von vier Positionen exakt, Preise stimmen alle
+
+**Diktat:** „Küche, vier Meter zwanzig mal drei Meter sechzig, Höhe zwo fünfzig.
+Wände zweimal streichen, Decke reicht einmal. Zwei Fenster, Standardmaß, eine
+Tür, normal."
+
+| Position | Ist | Soll | Preis | |
+|---|---|---|---|---|
+| Wandflächen streichen 2x | 39,00 m² | 39,00 m² | 11,50 € | ✅ |
+| Deckenfläche streichen 1x | 15,12 m² | 15,12 m² | 7,00 € | ✅ |
+| Boden schützen | 15,12 m² | 15,12 m² | 1,20 € | ✅ |
+| Sockelleisten abkleben | 15,60 lfdm | 15,60 lfdm | 0,80 € | ✅ |
+
+Wandfläche: Umfang 2 × (4,20 + 3,60) = 15,60 × 2,50 = 39,00 m². Keine
+Öffnungsabzüge — zwei Fenster à 1,89 m² und eine Tür à 1,89 m² liegen alle unter
+2,5 m², werden also übermessen. Sockelleisten 15,60 lfdm = voller Umfang, Tür
+nicht abgezogen. **Dritter VOB-012-Beleg an einem Tag.**
+
+Bemerkenswert ist der Preisteil: Wand **11,50 €** ist der 2x-Satz, Decke
+**7,00 €** der 1x-Satz (`default-prices.ts:99`) — das System hält also zwei
+verschiedene Anstrichzahlen in **einem** Raum sauber auseinander. Genau daran ist
+PM-026 wochenlang gescheitert; die alte Beobachtung „Karte sagt 1x, Entwurf
+rechnet 2x" ist damit erledigt. Auch „Boden schützen" mit 1,20 €/m² sitzt.
+
+**Der einzige offene Punkt ist der von gestern — und er reproduziert sich exakt:**
+
+> Titel: **Deckenfläche streichen 1x** · Untertitel: „Deckenanstrich **in 2
+> Lagen**, gleichmäßig deckend"
+
+Damit steht der Fund aus PM-021/PM-022 jetzt in **drei** unabhängigen Fällen. Die
+Wandzeile ist hier übrigens stimmig („2x" / „2-fach-Anstrich") — was den Befund
+schärft: der Untertitel ist nicht zufällig falsch, er ist **fest verdrahtet auf
+zwei Lagen** und stimmt nur dann, wenn zufällig zweimal gestrichen wird. Bei
+jedem einlagigen Anstrich verspricht das Angebot dem Kunden schriftlich eine
+Leistung, die nicht bezahlt wird.
+
+**Status PM-026:** 🟡 — Mengen und Preise vollständig exakt, offen nur der
+Decken-Untertitel (Sammelfund mit PM-021/PM-022).
+
+---
+
+### Was Stufe 4 damit ergeben hat
+
+Sechs von acht Fällen ohne einen einzigen Mengenfehler, und die zwei
+verbleibenden Abweichungen sind beide **keine** Rechenfehler:
+
+- **PM-025-A** — Fischgrät wirkt auf den Verschnitt, nicht auf den Preis (Geld)
+- **Untertitel-Sammelfund** — feste „2 Lagen" bei 1x-Anstrich (Text, PM-021/022/026)
+
+Dazu kommen die bekannten 🟡 aus PM-011 (Erschwerniszuschlag neben
+Vollflächenspachtelung) und PM-012 (Abkleben neben Streichen derselben Leiste).
+
+**VOB-012 ist in Stufe 4 fünfmal live bestätigt worden** — PM-021 (in beide
+Richtungen: Terrassentür abgezogen, Zimmertür nicht), PM-022, PM-025, PM-026.
+Die Norm-Entscheidung vom 04.09. sitzt in der Engine und hält.
+
+*Prüfmeister · 2026-09-07*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
