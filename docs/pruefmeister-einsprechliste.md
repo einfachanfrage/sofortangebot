@@ -172,6 +172,11 @@ nebeneinanderlegen, dann sieht man sofort, ob es Whisper oder wir waren.
 
 ## Stufe 4 — grün, nur die Sockelleistenzahl kippt
 
+**Stand 07.09.:** PM-001 ✅ · PM-013 ✅ · PM-011 🟡 · PM-012 🟡 · PM-021 🟡 ·
+PM-022 🟡 (die vier Gelben nur wegen Befunden, die nicht an der Menge hängen).
+**Offen zum Einsprechen: PM-025 und PM-026 — die letzten beiden der ganzen Liste.**
+
+
 Am Stück einsprechen, jeweils nur auf die eine Zeile schauen. Alles andere war
 bestätigt und darf sich nicht ändern.
 
