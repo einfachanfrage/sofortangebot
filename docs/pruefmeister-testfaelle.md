@@ -784,6 +784,191 @@ ob die Karte und der Entwurf jetzt dieselbe Positionszahl zeigen.
 
 ---
 
+### Antwort Engineering — Stufe-4-Abschluss (2026-09-07)
+
+Alle drei Funde sind gefixt, 1.545 Tests grün, TypeScript und Lint sauber.
+
+**Untertitel-Sammelfund (PM-021 / PM-022 / PM-026) — erledigt.** Der Untertitel
+folgt jetzt der Zahl im Titel: „einlagig" bei 1x, „zweilagig" bei 2x,
+„dreilagig" bei 3x. Steht keine Zahl im Titel, nennt der Untertitel auch keine —
+lieber nichts versprechen als etwas Falsches. Deine Einordnung war richtig: die
+„2" war fest verdrahtet und stimmte nur, wenn zufällig zweimal gestrichen wurde.
+
+**PM-025-A — erledigt, mit einer Umkehr auf halbem Weg.** Der naheliegende Weg
+war, „im Fischgrätmuster" in den Titel zu schreiben und den Preis-Matcher machen
+zu lassen. Gegen den echten Katalog durchgespielt schlägt das fehl: „Vinyl-Boden
+im Fischgrätmuster verlegen" findet **Stabparkett, 68 €** — und „Teppichboden im
+Fischgrätmuster" ebenfalls. Das Wort „Fischgrät" wiegt im Matcher schwerer als
+der Belag. Ein Fehler, der teurer gewesen wäre als der, den er behebt; ein Test
+hält das jetzt fest, damit es niemand nochmal versucht.
+
+Stattdessen benennt eine Tabelle je Belag den Eintrag, den der **Katalog selbst**
+für Fischgrät vorsieht:
+
+| Belag | Katalog | Ergebnis |
+|---|---|---|
+| Vinyl | `Designbelag im Fischgrätmuster kleben` ersetzt den Titel | 36,00 €/m² |
+| Laminat | `Laminat im Fischgrätmuster verlegen` ersetzt den Titel | 24,00 €/m² |
+| Parkett | `Aufpreis Fischgrät-Verlegemuster` als eigene Zeile | 22,00 + 14,00 €/m² |
+
+Beim Parkett bewusst der Aufpreis und kein Titeltausch: **Fertigparkett ist kein
+Stabparkett.** Genau dafür hat der Katalog diesen Eintrag — und für den Kunden
+ist der ausgewiesene Mehraufwand ohnehin lesbarer, wie du vorgeschlagen hattest.
+Beläge ohne Fischgrät-Eintrag (Teppich, Kork, Linoleum) bleiben unverändert; es
+entsteht keine 0,00-€-Position. Ein Test prüft, dass jeder Titel aus der Tabelle
+im Katalog existiert.
+
+**Dein korrigiertes Soll für PM-025 sitzt:** `Designbelag im Fischgrätmuster
+kleben`, 16,10 m², 36,00 €/m² = 579,60 €.
+
+**PM-021, Klammer im Rechenweg — erledigt.** Es waren zwei Quellen für dieselbe
+Aussage: die Zahl kam aus dem VOB-Abzug, die Klammer direkt aus der
+Öffnungsliste. Jetzt kommt beides aus derselben Datei — was nicht abgezogen
+wird, steht auch nicht in der Klammer. Für PM-021 heißt das
+`− Türen 4.2 m² [2×2.1]`; die Zimmertür steht weiterhin korrekt im
+Übermessungs-Hinweis darunter.
+
+**Sammelbefund „Karte ≠ Entwurf" — halb erledigt.** Deine kleine Lösung ist
+umgesetzt: Die Zeile heißt jetzt *„X Positionen aus deiner Aufnahme — der
+Entwurf rechnet sie durch und ergänzt, was fachlich dazugehört."* Sie deckt
+bewusst **beide** Richtungen ab, denn bei PM-030 ist eine Position verschwunden,
+nicht dazugekommen. Die große Lösung — die Karte zeigt, was der Entwurf enthalten
+wird — liegt bei Sandy, weil die Karte die Raummaße noch gar nicht hat: Sie
+entstehen erst in der vollen Extraktion, und genau daraus rechnen sich
+Dehnungsfuge, Trittschall und Sockelleisten.
+
+**Eine Rückfrage an dich (Katalogfrage, keine Codefrage):** Die
+**Diagonalverlegung** hat dasselbe Problem wie Fischgrät — sie hebt seit PM-013
+den Verschnitt auf 15 %, wirkt aber auf keinen Preis. Der Katalog benennt sie nur
+mittelbar („Aufpreis Fischgrät / **Muster**"). Soll die Diagonale denselben
+Aufpreis bekommen wie Fischgrät, einen eigenen, oder gar keinen? Ich habe sie
+bewusst nicht mitgefixt, statt eine Zahl zu erfinden.
+
+**Und ein Hinweis, der aus deinem eigenen PM-025-Befund folgt:** Bei **PM-013**
+steht `Fertigparkett Fischgrät inkl. 15 %` — der Fall ist ✅, aber dort war auch
+nur die **Menge** im Soll. Nach diesem Fix bekommt er eine zweite Zeile
+(Aufpreis 14,00 €/m²). Er gehört nachgetestet, und sein Soll gehört um den
+Einheitspreis ergänzt — dieselbe Lücke, die du bei PM-025 an dir selbst gefunden
+hast.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
+### Entscheidung „Karte = Entwurf": kleine Lösung, und warum PM-030 nicht dazugehört (2026-09-07)
+
+**Sandys Entscheidung:** Die kleine Lösung (ehrliche Formulierung) gilt. Der
+Umbau der Extraktionsreihenfolge — damit die Karte schon zeigt, was der Entwurf
+enthalten wird — ist **bewusst zurückgestellt, nicht verworfen**. Begründung:
+Der historische Fehler aus CoS-002 war nie „die Karte zeigt eine vorläufige
+Zahl", sondern „die Karte behauptet, eine fertige Zahl zu zeigen". Ein
+gebrochenes Versprechen, keine Ungenauigkeit. Die Wahrheitsinstanz bleibt die
+Prüfen-Ansicht mit dem Rechenweg, nicht die Karte. Vor Gate 1 wird der Umbau
+nicht gebaut.
+
+**Ihre Rückfrage vor der Zusage:** War PM-030 ein echter Verlust oder der
+erwartbare Unterschied zwischen Karten-Zwischenstand und voller Extraktion? Denn
+im ersten Fall etikettiert die ehrliche Formulierung nur einen Bug freundlich um.
+
+**Antwort: echter Verlust. Nicht harmlos, nicht strukturell.**
+
+„Sockelleisten abkleben" hing im Dachgeschoss-Zweig an `wandflaecheNettoM2 !==
+null` — einer Größe, die nur der **Normal**-Zweig füllt. Ein Dachgeschossraum
+hat keine gewöhnliche Wandfläche; die Sockelleiste sitzt am Fuß des Kniestocks
+und hat mit ihr nichts zu tun. Die Bedingung war also an eine fremde Zahl
+gebunden, und sobald die null war, fiel die Position aus. **Nichts hat sie
+zusammengelegt, nichts hat sie ersetzt — sie war weg, 13,60 € ohne Spur.**
+
+Die Ursache ist seit dem 07.09. behoben (Bedingung jetzt: Kniestock + Maße +
+Wandarbeiten + kein Keller). Heute nachgemessen, beide Wege mit demselben
+Diktat:
+
+| | Karte | Entwurf |
+|---|---|---|
+| Kniestockwände streichen 2x | 17,00 m² | 17,00 m² |
+| Dachschrägen streichen 2x | 18,00 m² | 18,00 m² |
+| Boden schützen | 18,00 m² | 18,00 m² |
+| Sockelleisten abkleben | 17,00 lfdm | 17,00 lfdm |
+
+**Ehrlich dazu, unverändert:** Der Live-Auslöser ließ sich damals nicht
+nachstellen. Behoben ist ein nachweisbarer Logikfehler an genau dieser Stelle —
+nicht ein beobachtetes und danach verschwundenes Symptom. PM-030 braucht den
+Live-Nachtest, bevor der Haken kommt.
+
+**Damit steht die Tabelle des Sammelbefundes anders da:** Vier der fünf Belege
+(PM-010, PM-012, PM-013, PM-033) sind **Additionen** — Positionen, die erst in
+der Vollständigkeitsprüfung entstehen, weil der Karte die Raummaße fehlen. Das
+ist der strukturelle, harmlose Fall, den die neue Formulierung endlich korrekt
+erklärt. Die einzige Subtraktion war PM-030, und die war ein Bug, der separat
+gefixt wurde — nicht einer, den ein Satz zudeckt.
+
+**Nachtrag PM-012:** Seit dem Fix von heute ersetzt der Entwurf „Sockelleisten
+abkleben" durch „Sockelleisten streichen". Das ist wieder eine Subtraktion,
+diesmal aber eine gewollte — die Auflösung eines Widerspruchs. Genau deshalb
+deckt der neue Satz beide Richtungen ab und sagt nicht bloß „es können mehr
+werden".
+
+**Ein Wächter statt eines Versprechens:** `karte-gegen-entwurf.test.ts` hält für
+PM-030 fest, dass Karte und Entwurf dieselben Positionen zeigen, und dass die
+Sockelleiste nie wieder an einer Größe des Normal-Zweigs hängt. Fällt sie erneut
+aus, schlägt der Test an und nicht der Prüfmeister. Die Gegenrichtung ist
+mitgetestet: Der Entwurf **darf** mehr enthalten als die Karte.
+
+**Zurückgestellt, nicht fallen gelassen:** Karte zeigt den Entwurfsstand.
+Voraussetzung ist, dass die Raummaße vor der Karte vorliegen — heute entstehen
+sie erst in der vollen Extraktion. Nach Gate 1 erneut bewerten.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
+### Korrektur: Die Diagonal-Rückfrage war keine — sie ist zurückgezogen und erledigt (2026-09-07)
+
+Heute Vormittag ging eine Rückfrage an dich: Ob die **Diagonalverlegung**
+denselben Aufpreis bekommen soll wie Fischgrät, einen eigenen oder gar keinen —
+mit der Begründung, der Katalog benenne sie „nur mittelbar" über „Aufpreis
+Fischgrät / **Muster**".
+
+**Das war falsch nachgesehen, und der Fehler liegt bei mir.** Gesucht wurde nach
+„fischgrät", nicht nach „diagonal". Der Katalog beantwortet die Frage selbst —
+für jeden Belag steht eine eigene Zeile drin:
+
+| Belag | Katalogeintrag | Preis |
+|---|---|---|
+| Parkett | `Aufpreis Diagonalverlegung` | 10,00 €/m² |
+| Laminat | `Aufpreis Diagonalverlegung Laminat` | 8,00 €/m² |
+| Vinyl | `Aufpreis Diagonalverlegung Vinyl` | 8,00 €/m² |
+
+Es war also nie eine Entscheidung, sondern eine Zeile, die ich hätte finden
+müssen. Ich habe dir eine Frage geschickt, deren Antwort in unserer eigenen
+Preisliste stand — das kostet dich Zeit, die du nicht hast. Entschuldigung.
+
+**Damit ist es dieselbe Regel, nicht zwei.** Die Tabelle in `boden.ts` heißt
+jetzt `MUSTER_KATALOG` und sagt für jedes Paar aus Verlegemuster und Belag, wie
+der Katalog es bepreist. Fischgrät bekommt bei Vinyl und Laminat den
+vollständigen Eintrag, bei Parkett den Aufpreis; die Diagonale bekommt überall
+den Aufpreis. Beläge ohne Eintrag (Teppich, Kork, Linoleum) bleiben unverändert,
+und gerade Verlegung bekommt weiterhin gar nichts.
+
+**Mitgeprüft, weil es nah beieinanderliegt:** `Aufpreis Diagonalverlegung`
+(Parkett) und `Aufpreis Diagonalverlegung Boden` (Fliesen) dürfen im
+Preis-Matcher nicht verwechselt werden — sonst zahlt der Parkettleger den
+Fliesenaufpreis. Ein Test hält das fest, ebenso dass Fischgrät und Diagonale
+sich ausschließen und nie beide Aufpreise entstehen.
+
+**Damit ist die Diagonale kein offener Punkt mehr.** Sie hob seit PM-013 den
+Verschnitt auf 15 %, wirkte aber auf keinen Preis — genau das Problem aus
+PM-025-A, nur an der zweiten Verlegeart. Beide sind jetzt erledigt.
+
+**Ein Testfall wäre trotzdem gut:** Für die Diagonale gibt es keinen einzigen —
+sie ist von keinem der 37 Fälle abgedeckt. Nach demselben Muster wie PM-037
+(VOB-013) wäre das ein Kandidat für einen neuen Fall, wenn du wieder Kapazität
+hast.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
