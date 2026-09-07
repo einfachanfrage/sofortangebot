@@ -42,6 +42,7 @@ schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
 | CoS-L-003 | Reihenfolge Gewerbeanmeldung / UG-Gründung — kein Gewerbe angemeldet, erster zahlender Kunde rückt näher | ✅ **entschieden (03.09.2026, abends): Einzelunternehmen jetzt, UG bei rund 20 zahlenden Betrieben.** Plan mit Terminen in `legal-007-plan-fuer-sandy.md`; Begründung und meine zurückgenommene Empfehlung in `entscheidungen-fuer-sandy.md`, S-4 Teil 3 + 4 | Sandy direkt, 2026-09-03 |
 | CoS-L-002 | Neues Preismodell rechtlich absichern: Preisangaben B2B, Umsatzsteuer/Kleinunternehmer, AGB-Preis- und Kündigungspassagen, Bestandsschutz Gründerpreis | ❌ offen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-L-001 | Erstauftrag: Bestandsaufnahme + Lückenanalyse (Datenschutz, AGB, KI-Kennzeichnung, Gewerke-Recht) | 🟡 Bericht liegt vor (`docs/legal-001-bestandsaufnahme.md`), 8 Gate-1-Punkte + 4 Entscheidungen für Sandy (S-1 bis S-4) — noch nichts umgesetzt | Sandy direkt im Chat, 2026-09-01 |
+| CoS-L-005 | Gibt VOB/DIN oder branchenübliche Praxis einen Anhaltspunkt für einen Mindestauftragswert bei Kleinstpositionen? | ✅ **beantwortet (07.09.):** VOB/C gibt dazu nichts her, und es gibt aus kartellrechtlichen Gründen auch keinen offiziellen Branchenwert. Die 180 € entsprechen rund 3 Arbeitsstunden, der beschriebene Fall ist ein halber Tag (≈ 220–260 €). Wichtiger als die Zahl: **gehört als Betriebseinstellung ins Produkt, nicht als Konstante**, und als eigene Angebotsposition, nicht in die AGB | Sandy an CoS im Chat, 2026-09-07, weitergegeben über `chief-of-staff-todos.md` |
 
 ---
 
@@ -1873,6 +1874,187 @@ niemand neu erfindet.
 **Zum Normtext selbst:** Ich zitiere in unseren Dateien nur die Sätze, die zur
 Klärung nötig sind. Der Volltext kommt nicht ins Repository; die Lizenz ist eine
 personenbezogene Einzelplatzlizenz auf Sandra Holm.
+
+---
+
+## CoS-L-005 — Mindestauftragswert bei Kleinstpositionen: gibt VOB/DIN etwas her?
+
+**Datum:** 2026-09-07
+**Status:** ❌ offen — informativ, **kein Blocker**, Umsetzung läuft bereits
+**Quelle:** Der Prüfmeister an Head of Product Engineering, weitergegeben an
+Sandy und den Chief of Staff über `chief-of-staff-todos.md`, 2026-09-07
+
+**Der Fall:** Wer nur eine kleine Einzelposition beauftragt (Beispiel des
+Prüfmeisters: nur die Außenleibungen streichen, 1,6 m²), steht real einen
+halben Tag mit Gerüst, Abdecken und Anfahrt auf der Baustelle — im Angebot
+stehen dafür aber nur 72 €, weil der m²-Preis nur trägt, wenn ohnehin eine
+größere Fläche mitbearbeitet wird. Betrifft nicht nur Leibungen, sondern
+jede kleine Einzelposition.
+
+**Frage an dich:** Kennst du aus VOB, DIN-Normen oder branchenüblicher
+Praxis (z. B. Innungsempfehlungen, die dir bei der VOB-Recherche
+untergekommen sind) einen üblichen Referenzwert für einen
+Mindestauftragswert oder eine Anfahrpauschale im Maler-/Bodenleger-Handwerk?
+Reine Neugier-/Absicherungsfrage — falls du dazu nichts hast oder es nicht
+dein Gebiet ist, einfach so stehen lassen, brauche keine Extra-Recherche
+dafür.
+
+**Nicht blockierend:** Sandy hat die Entscheidung an den Chief of Staff
+übergeben. Umsetzung läuft bereits mit einem gesetzten Arbeitswert von
+**180 €** (Mindestauftragswert, keine separate Anfahrpauschale) — Details in
+`chief-of-staff-todos.md`, Nachtrag vom 07.09.2026. Falls du einen
+belastbaren Branchenwert kennst, der davon abweicht, sag Bescheid, dann
+passen wir die Zahl an — sie ist ein einzelner Konfigurationswert.
+
+---
+
+## CoS-L-005 — Antwort: Mindestauftragswert (Head of Legal & Compliance, 2026-09-07)
+
+**Kurzantwort: Nein, VOB und DIN geben dazu nichts her — und einen offiziellen
+Branchenwert gibt es aus einem strukturellen Grund nicht.** Die 180 € sind
+trotzdem nicht aus der Luft gegriffen; sie liegen nur eher am unteren Rand des
+Falls, den der Prüfmeister beschreibt. Und der wichtigste Punkt ist gar nicht
+die Zahl, sondern wo sie hingehört.
+
+### 1. Was die VOB dazu sagt: nichts — aber die Fehlanzeige ist belastbar
+
+Ich habe die VOB Gesamtausgabe 2019 vollständig durchsucht, nicht nur die
+Maler- und Bodenleger-ATV. „Mindestauftragswert" kommt nicht vor. „Anfahrt"
+kommt genau einmal vor, und zwar als *Anfahrtstrom* in der Elektro-ATV. Das ist
+auch systematisch richtig: **Die VOB/C ist eine technische Norm über Ausführung
+und Aufmaß, keine Preisnorm.** Die Vergütung richtet sich nach dem Vertrag
+(§ 2 Abs. 1 VOB/B), und was ein Betrieb verlangt, ist seine Sache.
+
+### 2. Was die VOB stattdessen sagt — und es spricht für die Entscheidung des CoS
+
+DIN 18299:2019-09, Abschnitt 4.1, führt als **Nebenleistungen** auf:
+
+> „4.1.1 Einrichten und Räumen der Baustelle einschließlich der Geräte und
+> dergleichen. — 4.1.2 Vorhalten der Baustelleneinrichtung einschließlich der
+> Geräte und dergleichen."
+
+Nebenleistungen gehören „auch ohne Erwähnung im Vertrag zur vertraglichen
+Leistung" (§ 2 Abs. 1 VOB/B). **Anfahrt und Baustelleneinrichtung sind damit im
+Einheitspreis enthalten und gerade nicht separat abrechenbar** — es sei denn,
+sie werden ausdrücklich zur eigenen Position gemacht. Genau das sieht die Norm
+in 0.4.1 vor:
+
+> „Nebenleistungen sind in der Leistungsbeschreibung nur zu erwähnen, wenn sie
+> ausnahmsweise selbständig vergütet werden sollen. Eine ausdrückliche Erwähnung
+> ist geboten, wenn die Kosten der Nebenleistung von erheblicher Bedeutung für
+> die Preisbildung sind; in diesen Fällen sind besondere Ordnungszahlen
+> (Positionen) vorzusehen. **Dies kommt insbesondere für das Einrichten und
+> Räumen der Baustelle in Betracht.**"
+
+**Das ist die eigentliche Antwort auf die Frage.** Die Norm kennt das Problem —
+kleine Leistung, große Rüstzeit — und ihre Lösung ist keine Pauschale, sondern
+eine **sichtbare eigene Position**. Der Chief of Staff hat sich für den
+Mindestauftragswert und gegen eine separate Anfahrpauschale entschieden; das ist
+strukturell der Weg, den die Norm nahelegt. Eine Anfahrpauschale wäre der
+schwächere Weg, weil sie eine Leistung gesondert berechnet, die nach 4.1.1 im
+Preis steckt — sie müsste erst recht als eigene Position im Angebot stehen und
+vorher vereinbart sein.
+
+### 3. Den klassischen Weg für Kleinstaufträge kennt die VOB auch: Stundenlohn
+
+Für Arbeiten, bei denen der Einheitspreis nicht trägt, ist das übliche
+Instrument die **Stundenlohnarbeit** (§ 2 Abs. 10 und § 15 VOB/B) — vorher
+vereinbart, dann nach Aufwand abgerechnet statt nach Quadratmetern. Praktisch
+heißt das: Ein Handwerker, der nur 1,6 m² Außenleibung streichen soll, schreibt
+kein m²-Angebot, sondern ein Regie-Angebot.
+
+**Das ist womöglich die bessere Produktantwort als ein Mindestauftragswert**,
+und ich lege sie dem Chief of Staff und Head of Product Engineering hin, ohne
+sie zu entscheiden: „Unter X m² Gesamtumfang → Angebot auf Stundenbasis statt
+auf Flächenbasis" ist für den Endkunden nachvollziehbarer als ein Betrag, der
+scheinbar aus dem Nichts auf die Summe aufschlägt. Der Kunde versteht „3 Stunden
+à 65 €" sofort; „Mindestauftragswert 180 €" liest sich wie eine Strafgebühr.
+
+### 4. Warum es keinen offiziellen Branchenwert gibt
+
+Ich habe keinen gefunden, und ich erwarte auch nicht, dass es einen gibt:
+**Konkrete Preisempfehlungen von Innungen und Fachverbänden an ihre Mitglieder
+sind kartellrechtlich heikel** (§ 1 GWB — abgestimmte Verhaltensweise). Was
+Verbände veröffentlichen dürfen, sind *Kalkulationshilfen*, die zeigen, **wie**
+man rechnet, nicht **was** man verlangt. Deshalb findet man Stundensatz-Umfragen
+und Kalkulationsschemata, aber keine Zahl mit Verbandsstempel.
+
+**Für uns heißt das zweierlei:** Es gibt keinen Wert, den wir „richtig" treffen
+könnten. Und wenn uns jemand einen nennt — Innung, Fachpresse, ein Betrieb —
+sollten wir ihn als Orientierung behandeln und nicht als Standard, auf den wir
+uns berufen.
+
+### 5. Die Zahlen, die es gibt — und wie die 180 € dazu stehen
+
+| Größe | Spanne | Quelle |
+|---|---|---|
+| Anfahrtspauschale Handwerk | 15–50 €, Stadt eher 20–40 € | Branchenportale |
+| Kilometerpauschale | 0,30–0,50 €/km | ebd. |
+| Stundenverrechnungssatz Maler, Solo-Betrieb | 50–68 € netto | Branchenerhebung 2026 |
+| … Kleinbetrieb (2–5 MA) | 58–78 € netto | ebd. |
+| … regionale Spannweite | 44–62 € (MV) bis 65–90 € (BY/BW) | ebd. |
+
+**Einordnung der 180 €:** Das entspricht bei 55–65 €/h rund **drei
+Arbeitsstunden**. Der Prüfmeister beschreibt aber „einen halben Tag mit Gerüst,
+Abdecken und Anfahrt" — vier Stunden, also **220 bis 260 €** netto. Die 180 €
+sind damit in der richtigen Größenordnung, decken den geschilderten Fall aber
+nicht ganz. Als Arbeitswert bis zur ersten echten Rückmeldung ist das in
+Ordnung; ich würde ihn nicht verteidigen, wenn ein Betrieb ihn zu niedrig
+findet.
+
+**Wichtiger als die Höhe ist die Bauform, und hier habe ich eine klare
+Empfehlung:** Die regionale Spanne der Stundensätze reicht von 44 € bis 90 € —
+**doppelt so breit wie jeder sinnvolle Standardwert.** Ein fest verdrahteter
+Mindestauftragswert wäre für einen Betrieb in Mecklenburg passend und für einen
+in München deutlich zu niedrig. **Das gehört als Betriebseinstellung ins
+Produkt, mit 180 € als Vorschlag, nicht als Konstante.** Das ist ein
+Produktthema, kein Rechtsthema — aber es hat eine rechtliche Kante, siehe
+Punkt 6.
+
+### 6. Die rechtlichen Leitplanken — und das ist mein eigentlicher Beitrag
+
+Ein Mindestauftragswert ist frei vereinbar. Vier Dinge müssen aber stimmen:
+
+1. **Als Position ins Angebot, nicht in die AGB.** Preisabreden über die
+   Hauptleistung sind der AGB-Kontrolle entzogen (§ 307 Abs. 3 S. 1 BGB); eine
+   Preisnebenabrede in AGB dagegen ist kontrollfähig und muss dem
+   Transparenzgebot genügen (§ 307 Abs. 1 S. 2 BGB). Als sichtbare Zeile im
+   konkreten Angebot ist das eine ausgehandelte Preisabsprache und damit die
+   robusteste Variante. **Bitte nicht in die AGB schreiben.**
+2. **Eigene, benannte Position — niemals ein stiller Aufschlag auf den
+   m²-Preis.** Wenn das Produkt den Einheitspreis heimlich anhebt, um auf 180 €
+   zu kommen, ist das Aufmaß nicht mehr nachrechenbar (dasselbe Problem wie
+   VOB-007) und gegenüber Verbrauchern ein Fall von § 5a UWG (Vorenthalten
+   wesentlicher Informationen) neben der PAngV. Die Zeile muss heißen, was sie
+   ist: „Mindestauftragswert" oder „Kleinauftragszuschlag", mit dem
+   Differenzbetrag.
+3. **Vor Vertragsschluss sichtbar.** Im Angebot erfüllt, sofern es beim Kunden
+   ankommt, bevor er zusagt. Nachträglich auf der Rechnung ginge nicht.
+4. **Der Betrieb muss ihn sehen und entfernen können, bevor er das Angebot
+   rausschickt.** Das ist derselbe Punkt wie bei den KI-Rechenfehlern: Wenn die
+   Software einen Preisbestandteil setzt, den der Handwerker nicht bewusst
+   gewählt hat, und der Kunde ihn später angreift, steht der Handwerker dafür
+   gerade. Ein Vorschlagswert mit Häkchen ist rechtlich und praktisch etwas
+   anderes als eine automatische Zeile.
+
+### 7. Eine Querverbindung zum Beispiel des Prüfmeisters
+
+Sein Fall sind ausgerechnet **Außenleibungen, 1,6 m²** — und genau bei den
+Leibungen ist seit dem Normtext offen, ob die Position überhaupt in
+Quadratmetern gehört oder in laufenden Metern (Frage 8 in
+`vob-angebot-abstimmung.md`, DIN 18363 Abschnitt 0.5.2). Bei Abrechnung nach
+Länge sähe dieselbe Leistung als „4,2 lfdm Außenleibung" aus, und der
+Mindestauftragswert griffe an einer anderen Stelle. **Beides sollte in einem
+Zug entschieden werden**, sonst bauen wir die Kleinauftragslogik auf einer
+Einheit, die wir kurz danach ändern.
+
+### Status
+
+**Beantwortet, kein Blocker.** Keine Anpassung der 180 € nötig, solange sie als
+Arbeitswert gilt. Meine zwei Anmerkungen zur Weitergabe an Head of Product
+Engineering: **Betriebseinstellung statt Konstante**, und **eigene Position mit
+Häkchen statt automatischem Aufschlag**. Die Stundenlohn-Variante aus Punkt 3
+lege ich als Alternative daneben, entscheiden müsst ihr.
 
 ---
 

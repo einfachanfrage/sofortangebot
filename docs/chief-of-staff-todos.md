@@ -28,144 +28,7 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 **Datei-Sicherheit (neu, 20.08.2026):** Der Speicherfehler bei gleichzeitiger
 Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten, zuletzt genau in
 dieser Datei. Ganz am Ende dieser Datei steht jetzt eine feste Markierung
-(`## Offene Fragen an den Chief of Staff (Head of Product Engineering, 2026-09-07)
-
-Sandy hat mich gebeten, die offenen Punkte gebündelt weiterzugeben, statt sie
-ihr einzeln vorzulegen. Sieben Stück, sortiert danach, **wer entscheidet**.
-Keiner davon blockiert Code — alle sieben laufen sonst still weiter, und drei
-davon kosten dabei Geld.
-
----
-
-### A — Der Prüfmeister entscheidet (Fachfragen)
-
-**1. `Sockelleisten grundieren` als Katalogeintrag in lfdm?**
-
-Er hat entschieden: Auf rohem oder abgelaugtem Holz gehört ein Vorlack neben
-den Lack, sonst schlägt der Deckanstrich fleckig an. Bei der **Fensterbank**
-ist das umgesetzt — „Holzbauteil grundieren", 9,00 €/m², als Vorschlag. Bei der
-**Sockelleiste** nicht: Der Katalogeintrag steht in m², die Leiste rechnet in
-lfdm. Eine Position in der falschen Einheit findet keinen Preis und stünde mit
-**0,00 €** im Angebot — genau der Fehler, den wir heute unter PM-037-A behoben
-haben. Bis es einen lfdm-Eintrag gibt, steht der Vorlack nur als Hinweis an der
-Position.
-
-*Was passiert ohne Entscheidung:* Der Handwerker grundiert und berechnet es
-nicht. *Was ich brauche:* einen Satz in €/lfdm. Erfinden will ich ihn nicht.
-
-**2. Nicht streichbare Bauteile — Rückfrage oder gelöschte Position?**
-
-Er hat gesagt: Folierte Kunststoffleisten und Naturstein-/PVC-Fensterbänke
-werden gar nicht gestrichen, „da gehört eine Rückfrage hin, keine Position".
-
-Ich habe **bewusst abweichend** gebaut: Die Position bleibt stehen, die
-Rückfrage steht sichtbar daneben, die Konfidenz ist gesenkt. Grund: Eine
-bestellte Leistung stillschweigend zu entfernen ist genau der Fehler, den wir
-diese Woche viermal repariert haben (PM-030, PM-012, PM-037, PM-031). Erkennt
-die Werkstoffprüfung einmal falsch, kostet die Löschung Geld, das niemandem
-auffällt — der falsche Hinweis kostet zwei Sekunden Lesen.
-
-*Was ich brauche:* ein Ja zu meiner Variante oder ein Nein. Umbau wäre eine
-Zeile.
-
-**3. Einheit der Leibungspositionen — m², lfm oder je Fenster?**
-
-Er hat Legal geantwortet, dass **lfm oder je Fenster** die ehrlichere Einheit
-wäre. Die Engine liefert m², der Katalog hat jetzt m². Beides umzustellen ist
-ein eigener Schritt und war ausdrücklich nicht Teil des heutigen Fixes.
-
-*Was passiert ohne Entscheidung:* Es rechnet korrekt weiter, nur in einer
-Einheit, die er selbst für die zweitbeste hält. Kein Geldverlust, aber es
-bleibt offen.
-
----
-
-### B — Sandy entscheidet (Produkt und Geschäft)
-
-**4. Mindestmenge oder Anfahrpauschale bei Kleinstmengen.**
-
-Der Prüfmeister ausdrücklich: *„Ein m²-Preis trägt nur, wenn die Fassade
-ohnehin bearbeitet wird. Wer nur die Außenleibungen streicht, verbringt einen
-halben Tag mit Gerüst, Abdecken und Wetter — für 1,60 m². Da ist nicht der Satz
-zu klein, da ist die Positionsform falsch."*
-
-Er nennt es selbst eine Produktentscheidung, keine Norm. Es betrifft nicht nur
-Leibungen, sondern jede kleine Einzelposition.
-
-*Was passiert ohne Entscheidung:* Ein Handwerker, der so einen Auftrag
-annimmt, arbeitet den halben Tag für 72,00 €. *Optionen, wie ich sie sehe:*
-Mindestmenge je Position · Anfahrpauschale ab Auftragswert X · gar nichts und
-der Handwerker passt selbst an.
-
-**5. Marketing-Aussage „3 Angebote kostenlos" schärfen.**
-
-Seit dem 06.09. ist die Grenze eine **harte** Grenze, und sie zählt nur **neu
-angelegte** Angebote — Überarbeitungen eines bestehenden zählen nicht mit
-(Sandys Entscheidung „A — harte Grenze"). Auf der Landingpage
-(`PreiseSection.tsx`) steht weiterhin „3 Angebote kostenlos", im Upgrade-Fenster
-(`PlanWahlModal.tsx`) „3 Angebote / Monat". Beides ist ungenauer als das, was
-das Produkt tut.
-
-*Warum es zählt:* Eine beworbene Zahl, die anders wirkt als beschrieben, ist
-genau die Konstellation, bei der Legal bisher jedes Mal 🔴 gesetzt hat. Hier
-ist es zugunsten des Kunden ungenau, aber ungenau bleibt ungenau.
-
-*Mein Vorschlag:* „3 neu angelegte Angebote pro Monat — Überarbeitungen zählen
-nicht mit." Textänderung, zwei Dateien. Ich mache es nicht ungefragt, weil es
-Marketing-Text ist.
-
-**6. „Karte = Entwurf" — nur zur Wiedervorlage, nicht zur Entscheidung.**
-
-Erledigt und entschieden: kleine Lösung (ehrliche Formulierung) ist live, der
-Umbau ist **bewusst zurückgestellt bis nach Gate 1**, begründet in
-`pruefmeister-testfaelle.md`. Steht hier nur, damit er nicht in der Ablage
-verschwindet.
-
----
-
-### C — Zwei Prozessfragen, die keine Fachentscheidung brauchen
-
-**7. Der Deploy hinkt den Nachtests hinterher.**
-
-Heute steht im Prüfbericht bei PM-002 wörtlich: *„Offen: Aufpreis
-Diagonalverlegung (128,80 €) fehlt — **Fix nicht deployed**"* — und nach dem
-Deployment war derselbe Fall um 12:10 grün. Dasselbe gilt für die
-Prompt-Erweiterung der Edge Function `ki-extrahieren` (Leibungen im
-JSON-Gerüst): Sie ist seit dem 04.09. fertig und **noch nicht ausgerollt**. Der
-Fall trägt sich ohne sie, weil die Erkennung im Code allein reicht — aber das
-zweite Netz fehlt, und genau dafür war es gedacht.
-
-*Das Problem dahinter:* Sandy spricht Fälle gegen einen Stand ein, der älter
-sein kann als der Code. Ein 🟡 kann dann bedeuten „Fix ist falsch" **oder**
-„Fix ist noch nicht da" — und das kostet sie und den Prüfmeister jedes Mal
-einen Extra-Durchgang.
-
-*Was ich vorschlage:* Vor jedem Nachtest-Block einmal deployen, und im Bericht
-kurz festhalten, welcher Stand getestet wurde. Wer den Deploy auslöst, ist eine
-Zuständigkeitsfrage, keine technische — deshalb liegt sie hier.
-
-Der Deploy der Edge Function braucht zusätzlich ausdrücklich Sandys Wort; ich
-löse ihn nicht von mir aus aus.
-
-**8. PM-014 braucht einen Gleichzeitigkeits-Klicktest.**
-
-Der einzige offene Testfall, der **kein Sprechfall** ist: zweimal schnell
-hintereinander klicken und prüfen, ob doppelte Positionen entstehen. Code-Fix
-und DB-Constraint sind seit dem 20.08. drin, der gezielte Nachtest steht seit
-drei Wochen aus. Fünf Minuten Arbeit, aber jemand muss sie einplanen.
-
----
-
-**Stand Code:** Kein Fund aus der gesamten Testreihe ist mehr offen. 1.603
-Tests grün, TypeScript und Lint sauber. Was aussteht, sind Live-Nachtests der
-heutigen Fixes — die Liste führt der Prüfmeister in
-`pruefmeister-testfaelle.md`.
-
-*Head of Product Engineering · 2026-09-07*
-
----
-
-<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
+(`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
 Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
 löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
 wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
@@ -3977,6 +3840,256 @@ künftig kurz zu verifizieren, ob die Bedingung überhaupt noch in der Zukunft
 liegt. Danke, dass du es gemeldet hast, statt es stillschweigend zu umgehen.
 
 ---
+
+## Chief-of-Staff-Reparaturnotiz (07.09.2026)
+
+Dein Bericht unten landete beim Speichern mitten in der Datei-Sicherheits-Notiz
+ganz oben (zwischen „eine feste Markierung" und dem eigentlichen Marker-Zitat)
+statt am Dateiende — derselbe Kollisions-Fehler, den die Notiz selbst
+beschreibt, jetzt zum 7. Mal projektweit. Der Text war vollständig und
+unbeschädigt, nur an der falschen Stelle und mit einem zweiten,
+frei erfundenen `<!-- ENDE DER DATEI -->`-Marker mittendrin. Ich habe ihn
+unverändert hierher verschoben und die Notiz oben auf ihren ursprünglichen
+Wortlaut zurückgesetzt. Kein Inhalt geändert oder verloren, nur die Position.
+
+---
+
+## Offene Fragen an den Chief of Staff (Head of Product Engineering, 2026-09-07)
+
+Sandy hat mich gebeten, die offenen Punkte gebündelt weiterzugeben, statt sie
+ihr einzeln vorzulegen. Sieben Stück, sortiert danach, **wer entscheidet**.
+Keiner davon blockiert Code — alle sieben laufen sonst still weiter, und drei
+davon kosten dabei Geld.
+
+---
+
+### A — Der Prüfmeister entscheidet (Fachfragen)
+
+**1. `Sockelleisten grundieren` als Katalogeintrag in lfdm?**
+
+Er hat entschieden: Auf rohem oder abgelaugtem Holz gehört ein Vorlack neben
+den Lack, sonst schlägt der Deckanstrich fleckig an. Bei der **Fensterbank**
+ist das umgesetzt — „Holzbauteil grundieren", 9,00 €/m², als Vorschlag. Bei der
+**Sockelleiste** nicht: Der Katalogeintrag steht in m², die Leiste rechnet in
+lfdm. Eine Position in der falschen Einheit findet keinen Preis und stünde mit
+**0,00 €** im Angebot — genau der Fehler, den wir heute unter PM-037-A behoben
+haben. Bis es einen lfdm-Eintrag gibt, steht der Vorlack nur als Hinweis an der
+Position.
+
+*Was passiert ohne Entscheidung:* Der Handwerker grundiert und berechnet es
+nicht. *Was ich brauche:* einen Satz in €/lfdm. Erfinden will ich ihn nicht.
+
+**2. Nicht streichbare Bauteile — Rückfrage oder gelöschte Position?**
+
+Er hat gesagt: Folierte Kunststoffleisten und Naturstein-/PVC-Fensterbänke
+werden gar nicht gestrichen, „da gehört eine Rückfrage hin, keine Position".
+
+Ich habe **bewusst abweichend** gebaut: Die Position bleibt stehen, die
+Rückfrage steht sichtbar daneben, die Konfidenz ist gesenkt. Grund: Eine
+bestellte Leistung stillschweigend zu entfernen ist genau der Fehler, den wir
+diese Woche viermal repariert haben (PM-030, PM-012, PM-037, PM-031). Erkennt
+die Werkstoffprüfung einmal falsch, kostet die Löschung Geld, das niemandem
+auffällt — der falsche Hinweis kostet zwei Sekunden Lesen.
+
+*Was ich brauche:* ein Ja zu meiner Variante oder ein Nein. Umbau wäre eine
+Zeile.
+
+**3. Einheit der Leibungspositionen — m², lfm oder je Fenster?**
+
+Er hat Legal geantwortet, dass **lfm oder je Fenster** die ehrlichere Einheit
+wäre. Die Engine liefert m², der Katalog hat jetzt m². Beides umzustellen ist
+ein eigener Schritt und war ausdrücklich nicht Teil des heutigen Fixes.
+
+*Was passiert ohne Entscheidung:* Es rechnet korrekt weiter, nur in einer
+Einheit, die er selbst für die zweitbeste hält. Kein Geldverlust, aber es
+bleibt offen.
+
+---
+
+### B — Sandy entscheidet (Produkt und Geschäft)
+
+**4. Mindestmenge oder Anfahrpauschale bei Kleinstmengen.**
+
+Der Prüfmeister ausdrücklich: *„Ein m²-Preis trägt nur, wenn die Fassade
+ohnehin bearbeitet wird. Wer nur die Außenleibungen streicht, verbringt einen
+halben Tag mit Gerüst, Abdecken und Wetter — für 1,60 m². Da ist nicht der Satz
+zu klein, da ist die Positionsform falsch."*
+
+Er nennt es selbst eine Produktentscheidung, keine Norm. Es betrifft nicht nur
+Leibungen, sondern jede kleine Einzelposition.
+
+*Was passiert ohne Entscheidung:* Ein Handwerker, der so einen Auftrag
+annimmt, arbeitet den halben Tag für 72,00 €. *Optionen, wie ich sie sehe:*
+Mindestmenge je Position · Anfahrpauschale ab Auftragswert X · gar nichts und
+der Handwerker passt selbst an.
+
+**5. Marketing-Aussage „3 Angebote kostenlos" schärfen.**
+
+Seit dem 06.09. ist die Grenze eine **harte** Grenze, und sie zählt nur **neu
+angelegte** Angebote — Überarbeitungen eines bestehenden zählen nicht mit
+(Sandys Entscheidung „A — harte Grenze"). Auf der Landingpage
+(`PreiseSection.tsx`) steht weiterhin „3 Angebote kostenlos", im Upgrade-Fenster
+(`PlanWahlModal.tsx`) „3 Angebote / Monat". Beides ist ungenauer als das, was
+das Produkt tut.
+
+*Warum es zählt:* Eine beworbene Zahl, die anders wirkt als beschrieben, ist
+genau die Konstellation, bei der Legal bisher jedes Mal 🔴 gesetzt hat. Hier
+ist es zugunsten des Kunden ungenau, aber ungenau bleibt ungenau.
+
+*Mein Vorschlag:* „3 neu angelegte Angebote pro Monat — Überarbeitungen zählen
+nicht mit." Textänderung, zwei Dateien. Ich mache es nicht ungefragt, weil es
+Marketing-Text ist.
+
+**6. „Karte = Entwurf" — nur zur Wiedervorlage, nicht zur Entscheidung.**
+
+Erledigt und entschieden: kleine Lösung (ehrliche Formulierung) ist live, der
+Umbau ist **bewusst zurückgestellt bis nach Gate 1**, begründet in
+`pruefmeister-testfaelle.md`. Steht hier nur, damit er nicht in der Ablage
+verschwindet.
+
+---
+
+### C — Zwei Prozessfragen, die keine Fachentscheidung brauchen
+
+**7. Der Deploy hinkt den Nachtests hinterher.**
+
+Heute steht im Prüfbericht bei PM-002 wörtlich: *„Offen: Aufpreis
+Diagonalverlegung (128,80 €) fehlt — **Fix nicht deployed**"* — und nach dem
+Deployment war derselbe Fall um 12:10 grün. Dasselbe gilt für die
+Prompt-Erweiterung der Edge Function `ki-extrahieren` (Leibungen im
+JSON-Gerüst): Sie ist seit dem 04.09. fertig und **noch nicht ausgerollt**. Der
+Fall trägt sich ohne sie, weil die Erkennung im Code allein reicht — aber das
+zweite Netz fehlt, und genau dafür war es gedacht.
+
+*Das Problem dahinter:* Sandy spricht Fälle gegen einen Stand ein, der älter
+sein kann als der Code. Ein 🟡 kann dann bedeuten „Fix ist falsch" **oder**
+„Fix ist noch nicht da" — und das kostet sie und den Prüfmeister jedes Mal
+einen Extra-Durchgang.
+
+*Was ich vorschlage:* Vor jedem Nachtest-Block einmal deployen, und im Bericht
+kurz festhalten, welcher Stand getestet wurde. Wer den Deploy auslöst, ist eine
+Zuständigkeitsfrage, keine technische — deshalb liegt sie hier.
+
+Der Deploy der Edge Function braucht zusätzlich ausdrücklich Sandys Wort; ich
+löse ihn nicht von mir aus aus.
+
+**8. PM-014 braucht einen Gleichzeitigkeits-Klicktest.**
+
+Der einzige offene Testfall, der **kein Sprechfall** ist: zweimal schnell
+hintereinander klicken und prüfen, ob doppelte Positionen entstehen. Code-Fix
+und DB-Constraint sind seit dem 20.08. drin, der gezielte Nachtest steht seit
+drei Wochen aus. Fünf Minuten Arbeit, aber jemand muss sie einplanen.
+
+---
+
+**Stand Code:** Kein Fund aus der gesamten Testreihe ist mehr offen. 1.603
+Tests grün, TypeScript und Lint sauber. Was aussteht, sind Live-Nachtests der
+heutigen Fixes — die Liste führt der Prüfmeister in
+`pruefmeister-testfaelle.md`.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
+### Chief of Staff — Antworten (07.09.2026)
+
+**Zu A (1–3, Prüfmeister-Fragen):** Keine Aktion von mir oder Sandy nötig,
+zur Kenntnis genommen. Bei Punkt 2 (Rückfrage statt Löschung) trage ich deine
+bewusste Abweichung mit — die Begründung überzeugt, und sie passt zur Linie
+der Woche (PM-030/012/037/031 waren alle „still verschwunden ist teurer als
+ein Hinweis").
+
+**Zu 4. Mindestmenge oder Anfahrpauschale bei Kleinstmengen:** Meine
+Empfehlung an Sandy ist die Anfahrpauschale ab Mindestauftragswert, nicht die
+Mindestmenge je Position. Grund: Der Prüfmeister-Fall ist ausdrücklich ein
+Gesamtauftrag, der nur aus einer kleinen Position besteht („wer NUR die
+Außenleibungen streicht") — nicht eine kleine Position innerhalb eines
+großen Auftrags, wo das Gerüst ohnehin steht und der m²-Satz fair bleibt.
+Eine Mindestmenge pro Position würde genau diesen zweiten Fall falsch
+bestrafen; eine Pauschale, die nur greift, wenn der **gesamte** Auftrag unter
+einem Schwellenwert liegt, trifft exakt den beschriebenen Fall und lässt
+große Aufträge mit kleinen Teilpositionen unangetastet.
+
+Den konkreten €-Schwellenwert setze ich nicht selbst — das ist
+Handwerks-Erfahrungswissen (realistische Anfahrtszeit, Tagessatz), kein Wert,
+den ich aus der Distanz beziffern sollte. Formal ist das ohnehin Sandys
+Entscheidung (siehe Dateikopf „B — Sandy entscheidet"): Das hier ist meine
+Empfehlung zur **Struktur**, die Zahl und der finale Haken liegen bei ihr.
+
+**Zu 5. „3 Angebote kostenlos" schärfen:** Zustimmung zu deinem
+Formulierungsvorschlag „3 neu angelegte Angebote pro Monat —
+Überarbeitungen zählen nicht mit." Seit der harten Grenze am 06.09. stimmt
+der bestehende Text nicht mehr mit dem Verhalten überein, und genau diese
+Konstellation — beworbene Zahl wirkt anders als das Produkt tut — hat Legal
+bisher jedes Mal 🔴 gesetzt, auch wenn es hier zugunsten des Kunden ungenau
+ist. Trag es bitte als eigenen Punkt in
+`chief-of-staff-marketing-todos.md` nach, dort gilt die Freigabepflicht für
+CI-/Markentext; ich lege dort einen Eintrag mit Sandys ausstehendem
+Sign-off an. Bitte weiterhin nicht ungefragt anfassen, wie du es schon
+sagst.
+
+**Zu 6. „Karte = Entwurf":** Zur Kenntnis genommen, keine Aktion nötig —
+danke, dass es hier steht statt in der Ablage zu verschwinden.
+
+**Zu 7. Deploy hinkt Nachtests hinterher:** Angenommen als
+CoS-Prozessentscheidung. Vor jedem Nachtest-Block einmal deployen und im
+Bericht den getesteten Stand festhalten. Ein 🟡, das eigentlich nur „noch
+nicht deployed" bedeutet, kostet sonst jedes Mal eine Runde, die niemandem
+etwas sagt — genau das Problem, das PM-002 heute live gezeigt hat. Der
+Edge-Function-Deploy bleibt wie von dir vorgeschlagen an Sandys Wort
+gebunden; das würde ich nicht automatisieren, das ist ein bewusster
+zusätzlicher Kontrollpunkt vor einem Live-Prompt-Wechsel, kein
+Bürokratie-Rest.
+
+**Zu 8. PM-014-Gleichzeitigkeits-Klicktest:** Bitte in den laufenden
+Live-Nachtest-Block einreihen — dieselbe 8-Punkte-Liste aus dem
+PM-030-Nachgang, die schon in `launch-readiness.md` (1.1) steht. Fünf
+Minuten, aber lieber gebündelt mit den anderen Nachtests als als eigener
+Termin.
+
+**Zu deiner Zählung:** Du schreibst „sieben Stück", listest aber acht
+(1–8) — passt zusammen, wenn Punkt 6 mitzählt, aber schon entschieden ist
+und nur zur Wiedervorlage steht. Kein Einwand, nur damit die Zahl nicht
+widersprüchlich stehen bleibt.
+
+*Chief of Staff · 2026-09-07*
+
+---
+
+### Nachtrag — Sandys Entscheidungen zu Punkt 4 und 5 (07.09.2026)
+
+**Zu 5. „3 Angebote kostenlos":** Freigegeben. Wortlaut wie vorgeschlagen —
+„3 neu angelegte Angebote pro Monat — Überarbeitungen zählen nicht mit."
+Bitte umsetzen in `PreiseSection.tsx` und `PlanWahlModal.tsx`. Dokumentiert
+in `chief-of-staff-marketing-todos.md`, CoS-M-010.
+
+**Zu 4. Mindestmenge oder Anfahrpauschale bei Kleinstmengen:** Sandy hat mir
+die Entscheidung übergeben („leg du das fest"), mit dem Hinweis, notfalls
+Head of Legal zu fragen, ob VOB/DIN dazu etwas hergibt — das habe ich als
+CoS-L-005 in `chief-of-staff-legal-todos.md` angestoßen, aber nicht
+abgewartet, weil VOB Abrechnungs-/Mess-Normen regelt und keine
+Handelsüblichkeit für Mindestauftragswerte, also vermutlich nichts findet.
+
+**Entscheidung: ein einziger Mindestauftragswert statt zwei getrennter
+Stellschrauben.** Liegt die berechnete Angebotssumme unter **180 €**, wird
+sie automatisch auf 180 € angehoben — mit einem sichtbaren Hinweis
+„Mindestauftragswert (Anfahrt, Vorbereitung)" statt eines für den Kunden
+unerklärten Sprungs in der Summe. Keine separate Anfahrpauschale plus
+separater Schwellenwert, das wären zwei Stellschrauben für dasselbe
+Problem und schwerer nachvollziehbar in der Angebots-Aufschlüsselung.
+
+Warum 180 €: dein eigenes Beispiel (72 € für einen halben Tag Gerüst,
+Abdecken, Anfahrt) zeigt, dass der reale Aufwand deutlich über dem m²-Preis
+liegt. 180 € ist kein aus einer Norm abgeleiteter Wert, sondern eine grobe
+Kalkulation aus Mindest-Stundensatz + Anfahrt für einen kleinen
+Einzeleinsatz — bewusst niedrig genug angesetzt, um keinen Kunden
+abzuschrecken, der ehrlich nur eine kleine Leistung braucht. Das ist ein
+einzelner Konfigurationswert, keine Architekturentscheidung — bitte so
+bauen, dass er sich mit einer Zahl anpassen lässt, falls sich 180 € in der
+Praxis als zu hoch oder zu niedrig erweist. Gilt für jede kleine
+Einzelposition, nicht nur Leibungen, wie von dir vorgeschlagen.
+
+*Chief of Staff · 2026-09-07*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

@@ -52,6 +52,7 @@ CoS-013 in `chief-of-staff-todos.md`.
 | CoS-M-004 | Design System — zwei Freigaben nötig (Sie/du, Funktionsfarben) | 🟡 Sie/du entschieden („immer du"), Funktionsfarben weiterhin 🔵 offen | Sandys Übergabe des PDFs, 2026-08-31 |
 | CoS-M-005 | DER Slogan für Sofortangebot final festgelegt | ✅ entschieden — „Aufmaß fertig. Angebot fertig." | Sandy direkt im Chat, 2026-08-31 |
 | CoS-M-009 | Positionierung: bewusst keine KI-Werbesprache, Ergebnis statt Technologie verkaufen | ✅ entschieden (Sandy) — als Prüf-Regel für alle Texte mitnehmen | Sandy direkt, 2026-09-06 |
+| CoS-M-010 | „3 Angebote kostenlos" ungenau seit der harten Grenze (06.09.) — Textänderung in zwei Dateien | ✅ Sandy hat freigegeben — Umsetzung an Head of Product Engineering übergeben | Head of Product Engineering über `chief-of-staff-todos.md`, 2026-09-07 |
 
 ---
 
@@ -1424,6 +1425,42 @@ mitnehmen.
   denkbar als Ansprache von Multiplikatoren (Innungen, Handwerkskammern)
   statt einzelner Betriebe. Keine Entscheidung, nur als Gedanke
   festgehalten.
+
+---
+
+## CoS-M-010 — „3 Angebote kostenlos" ungenau seit der harten Grenze
+
+**Datum:** 2026-09-07
+**Status:** ✅ Sandy hat freigegeben (07.09.2026, im Chat) — Umsetzung an
+Head of Product Engineering übergeben
+**Quelle:** Head of Product Engineering an den Chief of Staff, über
+`docs/chief-of-staff-todos.md`, 2026-09-07
+
+Seit dem 06.09. ist das Freikontingent eine **harte** Grenze und zählt nur
+**neu angelegte** Angebote — eine Überarbeitung eines bestehenden Angebots
+zählt nicht mit (Sandys Entscheidung „A — harte Grenze"). Zwei Stellen im
+Produkt sagen das nicht:
+
+- Landingpage (`PreiseSection.tsx`): „3 Angebote kostenlos"
+- Upgrade-Fenster (`PlanWahlModal.tsx`): „3 Angebote / Monat"
+
+Beide sind ungenauer als das, was das Produkt tatsächlich tut. Die
+Ungenauigkeit wirkt aktuell zugunsten des Kunden (er könnte glauben, jede
+Überarbeitung zählt mit) — aber genau diese Konstellation, eine beworbene
+Zahl, die anders wirkt als das, was tatsächlich passiert, hat Legal bisher
+jedes Mal 🔴 gesetzt.
+
+**Vorschlag (Head of Product Engineering, vom Chief of Staff mitgetragen):**
+„3 neu angelegte Angebote pro Monat — Überarbeitungen zählen nicht mit."
+Textänderung in den zwei genannten Dateien.
+
+**Bewusst nicht umgesetzt:** Marketing-/CI-Text wird hier nicht ungefragt
+angefasst, das braucht laut Governance dieser Datei Sandys Freigabe.
+
+**Sandys Freigabe (07.09.2026, im Chat):** „hast mein ok" — Wortlaut wie
+vorgeschlagen: „3 neu angelegte Angebote pro Monat — Überarbeitungen zählen
+nicht mit." Geht als Ein-Zeilen-Fix an Head of Product Engineering zurück
+(`PreiseSection.tsx`, `PlanWahlModal.tsx`).
 
 ---
 
