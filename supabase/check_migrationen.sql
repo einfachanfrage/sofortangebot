@@ -160,6 +160,11 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
   (55, '20260818000000_fix_function_search_path', 'get_vault_secret() search_path gesetzt', EXISTS (
     SELECT 1 FROM pg_proc
     WHERE proname = 'get_vault_secret' AND proconfig::text LIKE '%search_path%'
+  )),
+  (56, '20260907140000_mindestauftragswert_nullable', 'companies.mindestauftragswert ist nullable', EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'companies' AND column_name = 'mindestauftragswert'
+      AND is_nullable = 'YES'
   ))
 )
 SELECT

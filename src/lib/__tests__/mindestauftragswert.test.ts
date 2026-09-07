@@ -94,3 +94,28 @@ describe('Der Vorschlagswert', () => {
     expect(mindestauftragsPosition(72, 100)?.unit_price).toBe(28)
   })
 })
+
+// ── Migration 20260907140000: NULL = nie eingestellt ──────────────────────
+//
+// Sandys Freigabe vom 07.09.: Die Spalte unterscheidet jetzt „nie eingestellt"
+// (NULL, Formular schlägt 180 € vor) von „bewusst aus" (0). Vorher war beides
+// derselbe Zustand — ein Vorschlagswert hätte bestehenden Betrieben ungefragt
+// Geld in die Angebote gerechnet.
+//
+// Für die Berechnung bleiben beide gleich: kein Wert, keine Position. Das ist
+// die Sicherung, damit die Migration selbst nichts an bestehenden Angeboten
+// ändert.
+describe('NULL und 0 verhalten sich in der Rechnung identisch', () => {
+  it('beide erzeugen keine Position — die Migration ändert nichts an Bestandsangeboten', () => {
+    expect(mindestauftragsPosition(72, null)).toBeNull()
+    expect(mindestauftragsPosition(72, 0)).toBeNull()
+  })
+
+  // Der Unterschied liegt allein im Formular: Bei NULL steht 180 € im Feld,
+  // bei 0 bleibt es aus. Ein Test dafür gehört in die Einstellungsseite; hier
+  // wird nur festgehalten, dass die Rechenregel den Unterschied NICHT kennt —
+  // genau das macht die Umstellung ungefährlich.
+  it('der Vorschlagswert wirkt erst, wenn er gespeichert wurde', () => {
+    expect(mindestauftragsPosition(72, MINDESTAUFTRAGSWERT_VORSCHLAG)?.unit_price).toBe(108)
+  })
+})

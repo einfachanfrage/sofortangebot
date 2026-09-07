@@ -90,6 +90,46 @@ Danke fürs Gegenlesen.
 
 ---
 
+### Nachtrag — Migration geschrieben, wartet auf Sandys Ausführung (07.09.2026)
+
+Sandy hat die Migration freigegeben. Sie liegt als
+`supabase/migrations/20260907140000_mindestauftragswert_nullable.sql` im Repo
+und ist in `check_migrationen.sql` als Nr. 56 eingetragen.
+
+**Was sie tut:** `companies.mindestauftragswert` wird nullable, Default NULL.
+Damit sind drei Zustände unterscheidbar, die vorher zwei waren:
+
+| Wert | Bedeutung | Verhalten |
+|---|---|---|
+| NULL | nie eingestellt | keine Position, Formular schlägt 180 € vor |
+| 0 | bewusst aus | keine Position, kein Vorschlag |
+| > 0 | aktiv | „Anfahrt & Vorbereitung" mit dem Differenzbetrag |
+
+**Kein Backfill.** Alle bestehenden Betriebe stehen auf 0 und verhalten sich
+danach exakt wie vorher — niemandem wird rückwirkend etwas in seine Angebote
+gerechnet. Dieselbe Regel wie bei `onboarding_started_at` am 02.09.
+
+**Der Code kommt ohne die Migration aus.** `mindestauftragsPosition` behandelt
+NULL und 0 identisch als „aus"; ein Test hält genau das fest. Die Migration
+schaltet nur den Vorschlagswert im Formular frei. Wird sie nie ausgeführt,
+verhält sich alles wie heute — es fehlt lediglich die Vorbelegung.
+
+**Der Vorschlag ist sichtbar, nicht still:** Bei NULL steht 180 € im Feld, und
+darunter der Satz „Mit dem Speichern wird er aktiv … Trag 0 ein, wenn du das
+nicht willst." Der Handwerker sieht die Zahl, bevor er speichert — kein Betrag,
+der ohne sein Zutun in seinen Angeboten landet.
+
+**Ausführung:** Inhalt der Migrationsdatei im Supabase SQL-Editor ausführen
+(Produktion), wie im Workflow in `supabase/migrations/README.md` beschrieben.
+Danach `check_migrationen.sql` laufen lassen — Zeile 56 muss auf „✅ ausgeführt"
+stehen. Die Migration ist idempotent, doppeltes Ausführen schadet nicht.
+
+1.618 Tests grün, TypeScript und Lint sauber.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
 Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
 löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge

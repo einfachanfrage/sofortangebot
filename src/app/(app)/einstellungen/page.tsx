@@ -38,7 +38,11 @@ export default function EinstellungenPage() {
   const [regionalManual, setRegionalManual] = useState(false)
   const [angebotGueltigTage, setAngebotGueltigTage] = useState(30)
   const [materialpreisHinweis, setMaterialpreisHinweis] = useState(false)
-  const [mindestauftragswert, setMindestauftragswert] = useState(0)
+  // NULL = nie eingestellt (Migration 20260907140000). Das Formular schlägt
+  // dann 180 € vor; 0 bleibt „bewusst aus". Ohne diese Unterscheidung wären
+  // „nie angefasst" und „ausgeschaltet" derselbe Zustand, und ein Vorschlag
+  // hätte bestehenden Betrieben ungefragt Geld in die Angebote gerechnet.
+  const [mindestauftragswert, setMindestauftragswert] = useState<number | null>(null)
   const [kleinAktiv, setKleinAktiv] = useState(true)
   const [kleinBetrag, setKleinBetrag] = useState(25)
   const [kleinSchwelle, setKleinSchwelle] = useState(200)
@@ -93,7 +97,7 @@ export default function EinstellungenPage() {
         setRegionalManual(!presets.includes(faktor))
         setAngebotGueltigTage(data.angebot_gueltig_tage ?? 30)
         setMaterialpreisHinweis(data.materialpreis_hinweis_aktiv ?? false)
-        setMindestauftragswert(data.mindestauftragswert ?? 0)
+        setMindestauftragswert(data.mindestauftragswert ?? null)
         setERechnungAktiv(data.e_rechnung_aktiv !== false)
         setAbrechnungsModus((data.abrechnungs_modus ?? 'inapp') as 'inapp' | 'extern')
         setAngebotStruktur((data.angebot_struktur ?? 'raeume') as 'raeume' | 'arbeitsablauf' | 'gewerk')
@@ -140,7 +144,9 @@ export default function EinstellungenPage() {
       regionaler_preisfaktor_prozent: regionalFaktor,
       angebot_gueltig_tage: angebotGueltigTage,
       materialpreis_hinweis_aktiv: materialpreisHinweis,
-      mindestauftragswert: mindestauftragswert,
+      // Nie eingestellt: Der Vorschlagswert wird beim Speichern übernommen —
+      // er steht sichtbar im Feld, der Handwerker sieht ihn, bevor er speichert.
+      mindestauftragswert: mindestauftragswert ?? MINDESTAUFTRAGSWERT_VORSCHLAG,
       e_rechnung_aktiv: eRechnungAktiv,
       abrechnungs_modus: abrechnungsModus,
       angebot_struktur: angebotStruktur,
@@ -456,9 +462,9 @@ export default function EinstellungenPage() {
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
-                  value={mindestauftragswert || ''}
+                  value={mindestauftragswert ?? MINDESTAUFTRAGSWERT_VORSCHLAG}
                   onChange={e => setMindestauftragswert(Number(e.target.value) || 0)}
-                  placeholder="0"
+                  placeholder={String(MINDESTAUFTRAGSWERT_VORSCHLAG)}
                   min={0}
                   step={10}
                 />
@@ -468,12 +474,18 @@ export default function EinstellungenPage() {
                   mit Vorschlag zur Kleinstauftragspauschale" — passiert ist
                   nie etwas, die Einstellung wurde nirgends gelesen. Jetzt
                   beschreibt der Text, was das Produkt tatsächlich tut. */}
-              {mindestauftragswert > 0 ? (
+              {mindestauftragswert === null ? (
+                <p className="text-xs text-anthracite/40 font-semibold mt-1.5">
+                  Vorschlag: {MINDESTAUFTRAGSWERT_VORSCHLAG} € — rund drei Arbeitsstunden. Mit dem
+                  Speichern wird er aktiv: Bleibt ein Angebot darunter, kommt die Position
+                  „{MINDESTAUFTRAG_BEZEICHNUNG}" mit dem Differenzbetrag dazu. Du siehst sie im
+                  Entwurf und kannst sie entfernen. Trag 0 ein, wenn du das nicht willst.
+                </p>
+              ) : mindestauftragswert > 0 ? (
                 <p className="text-xs text-anthracite/40 font-semibold mt-1.5">
                   Bleibt ein Angebot unter {mindestauftragswert} € netto, kommt die Position
                   „{MINDESTAUFTRAG_BEZEICHNUNG}" mit dem Differenzbetrag dazu. Du siehst sie im
-                  Entwurf und kannst sie entfernen. Vorschlag: {MINDESTAUFTRAGSWERT_VORSCHLAG} € —
-                  das sind rund drei Arbeitsstunden.
+                  Entwurf und kannst sie entfernen.
                 </p>
               ) : (
                 <p className="text-xs text-anthracite/30 font-semibold mt-1.5">
