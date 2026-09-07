@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -50,7 +51,13 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify(body),
   })
 
-  if (!res.ok) return NextResponse.json({ error: 'Papierkram-Fehler: ' + res.status }, { status: 502 })
+  if (!res.ok) {
+    console.error('[papierkram] API-Anfrage fehlgeschlagen, Status:', res.status)
+    Sentry.captureMessage(`[papierkram] API-Anfrage fehlgeschlagen, Status ${res.status}`, {
+      level: 'error', tags: { feature: 'integration_papierkram' },
+    })
+    return NextResponse.json({ error: 'Papierkram-Fehler: ' + res.status }, { status: 502 })
+  }
   const result = await res.json()
   return NextResponse.json({ id: result.id })
 }

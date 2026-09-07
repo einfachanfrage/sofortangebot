@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -26,6 +27,7 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     console.error('[push-subscribe] Datenbankeintrag fehlgeschlagen')
+    Sentry.captureException(new Error(error.message), { tags: { feature: 'push_subscribe' } })
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 

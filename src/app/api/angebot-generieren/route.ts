@@ -4,6 +4,7 @@ import { waehleUntertitel } from '@/lib/positions-untertitel'
 import { findePreisposition, type PreisPosition } from '@/lib/preis-matcher'
 import { preisKategoriePasstZuGewerk } from '@/lib/default-price-selection'
 import { wendeProzentZuschlaegeAn } from '@/lib/zuschlag-basis'
+import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
 
@@ -91,7 +92,11 @@ export async function POST(req: NextRequest) {
       .order('category')
       .order('title')
       .range(von, von + pageSize - 1)
-    if (error) return NextResponse.json({ error: 'Preisdatenbank konnte nicht geladen werden' }, { status: 500 })
+    if (error) {
+      console.error('[angebot-generieren] Preisdatenbank konnte nicht geladen werden')
+      Sentry.captureException(new Error(error.message), { tags: { feature: 'angebot_generieren_preisdatenbank' } })
+      return NextResponse.json({ error: 'Preisdatenbank konnte nicht geladen werden' }, { status: 500 })
+    }
     priceItems.push(...((data ?? []) as PreisPosition[]))
     if ((data?.length ?? 0) < pageSize) break
   }

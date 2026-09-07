@@ -356,3 +356,21 @@ eher 43 Betriebe — dieselbe Zahl wie B1 im Finanzplan oben, siehe „Was der
 Finanzplan strategisch sagt") fühlt sich für sie als konkrete Stückzahl
 greifbarer an als eine Zeitspanne in Monaten — keine neue Zahl, nur eine
 persönlich hilfreichere Rahmung derselben.
+
+**07.09.2026 (fünfter Check-in, erster regulärer Termin nach dem
+Ad-hoc-Gespräch vom Vortag):** Stand Richtung Launch: weiter auf Kurs zu
+Gate 1 (49,1 %, unverändert seit der Neuberechnung vom 05.09., siehe
+`launch-readiness.md`) — kein neuer Rechenstand seit dem Vortag, daher hier
+keine neue Zahl. Keine akute strategische Entscheidung diese Woche im
+engeren Sinn, aber eine Weichenstellung wurde erneut hochgezogen: der Chief
+of Staff hat Sandy die offene Frage „wann geht die Website online?" aus
+`entscheidungen-fuer-sandy.md` als Vorstands-Thema vorgelegt (SEO-Uhr läuft
+erst ab einer sichtbaren Seite; Vorschlag: zweistufig — Seite mit Impressum/
+Blog schon ab der Gewerbeanmeldung im Oktober live, Anmeldung selbst bleibt
+vorerst zu), hängt aber noch an offenen Antworten von Legal/Engineering und
+ist damit noch nicht entscheidungsreif. Frage aus „Was hier noch fehlt" an
+Sandy weitergegeben: welches Gewerk nach Maler/Bodenleger als Nächstes
+drankommt — mit dem Hinweis, dass der neue Wettbewerber Kalkulai (gefunden
+06.09.) Bodenleger explizit ausspart, was die aktuelle Nische bestätigt,
+aber nichts über den übernächsten Schritt sagt. Antwort steht noch aus,
+daher unten unverändert gelassen.

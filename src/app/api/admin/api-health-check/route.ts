@@ -7,6 +7,7 @@ import { testOpenAIAPI } from '@/lib/api-health/openai'
 import type { ApiHealthResult } from '@/lib/api-health/lexoffice'
 import { createClient } from '@/lib/supabase/server'
 import { jobStatus } from '@/lib/job-wachhund'
+import * as Sentry from '@sentry/nextjs'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = process.env.ADMIN_ALERT_EMAIL ?? 'sandraholm95@gmail.com'
@@ -62,8 +63,17 @@ export async function POST(req: NextRequest) {
             <p>Alle Nutzer mit ${anbieter}-Integration sind betroffen.</p>
           </div>
         `,
-      }).catch(() => {
+      }).catch(fehler => {
         console.error('[api-health-check] Warn-E-Mail fehlgeschlagen')
+        Sentry.captureException(fehler instanceof Error ? fehler : new Error(String(fehler)), {
+          tags: { feature: 'api_health_check_alert' },
+        })
+      })
+      // Der eigentliche API-Ausfall selbst (nicht nur der Alarm-Mail-Versand)
+      // gehört ebenfalls nach Sentry — sonst weiß nur diese Admin-Seite davon.
+      Sentry.captureMessage(`[api-health-check] ${anbieter}-API antwortet nicht korrekt: ${result.fehler}`, {
+        level: 'error',
+        tags: { feature: 'api_health_check', anbieter },
       })
     }
   }

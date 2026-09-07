@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -52,9 +53,19 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify(body),
   })
 
-  if (!res.ok) return NextResponse.json({ error: 'FastBill-Fehler: ' + res.status }, { status: 502 })
+  if (!res.ok) {
+    console.error('[fastbill] API-Anfrage fehlgeschlagen, Status:', res.status)
+    Sentry.captureMessage(`[fastbill] API-Anfrage fehlgeschlagen, Status ${res.status}`, {
+      level: 'error', tags: { feature: 'integration_fastbill' },
+    })
+    return NextResponse.json({ error: 'FastBill-Fehler: ' + res.status }, { status: 502 })
+  }
   const result = await res.json()
   if (result.RESPONSE?.ERRORS?.length) {
+    console.error('[fastbill] API meldet Fehler:', result.RESPONSE.ERRORS[0])
+    Sentry.captureMessage(`[fastbill] API meldet Fehler: ${result.RESPONSE.ERRORS[0]}`, {
+      level: 'error', tags: { feature: 'integration_fastbill' },
+    })
     return NextResponse.json({ error: result.RESPONSE.ERRORS[0] }, { status: 502 })
   }
   return NextResponse.json({ id: result.RESPONSE?.ESTIMATE_ID })

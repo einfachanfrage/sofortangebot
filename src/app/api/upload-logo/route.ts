@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -30,6 +31,8 @@ export async function POST(req: NextRequest) {
     .upload(path, buffer, { upsert: true, contentType: file.type })
 
   if (uploadError) {
+    console.error('[upload-logo] Storage-Upload fehlgeschlagen')
+    Sentry.captureException(new Error(uploadError.message), { tags: { feature: 'logo_upload' } })
     return NextResponse.json({ error: 'Upload fehlgeschlagen: ' + uploadError.message }, { status: 500 })
   }
 

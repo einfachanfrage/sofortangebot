@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 // ── DC-045 (Product Designer, 06.09.2026) ─────────────────────────────────
 //
@@ -34,11 +35,17 @@ export async function POST() {
     return NextResponse.json({ error: 'Noch kein Abo vorhanden' }, { status: 404 })
   }
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: customerId,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/einstellungen/abo`,
-    locale: 'de',
-  })
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/einstellungen/abo`,
+      locale: 'de',
+    })
 
-  return NextResponse.json({ url: session.url })
+    return NextResponse.json({ url: session.url })
+  } catch (error) {
+    console.error('[stripe-portal] Portal-Session konnte nicht erstellt werden')
+    Sentry.captureException(error, { tags: { feature: 'stripe_portal' } })
+    return NextResponse.json({ error: 'Abo-Verwaltung ist gerade nicht erreichbar. Bitte später erneut versuchen.' }, { status: 500 })
+  }
 }

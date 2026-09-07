@@ -496,11 +496,13 @@ describe('Maler-Engine – PM-007 Dachgeschoss (Kniestock + Dachschrägen)', () 
     expect(kniestock!.beschreibung).toContain('2x')
   })
 
-  it('Dachschrägen: links 12 + rechts 12 = 24 m² minus 1 Dachfenster (0,78×1,18=0,92 m²) = 23,08 m²', () => {
+  // PM-030, Befund 1 (04.09.2026): Das Dachfenster misst 0,92 m² und wird
+  // nach VOB/DIN 18363 übermessen — kein Abzug. Vorher stand hier 23,08.
+  it('Dachschrägen: links 12 + rechts 12 = 24 m², Dachfenster übermessen', () => {
     const positionen = pipeline()
     const schraegen = find(positionen, 'dachschrägen')
     expect(schraegen).toBeDefined()
-    expect(schraegen!.menge).toBeCloseTo(23.08, 1)
+    expect(schraegen!.menge).toBeCloseTo(24, 1)
     expect(schraegen!.beschreibung).toContain('2x')
   })
 

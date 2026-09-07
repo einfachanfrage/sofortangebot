@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -78,6 +79,9 @@ export async function POST(req: NextRequest) {
 
   if (!res.ok) {
     console.error('[lexoffice] API-Anfrage fehlgeschlagen, Status:', res.status)
+    Sentry.captureMessage(`[lexoffice] API-Anfrage fehlgeschlagen, Status ${res.status}`, {
+      level: 'error', tags: { feature: 'integration_lexoffice' },
+    })
     return NextResponse.json({ error: 'Lexoffice-Fehler: ' + res.status }, { status: 502 })
   }
 

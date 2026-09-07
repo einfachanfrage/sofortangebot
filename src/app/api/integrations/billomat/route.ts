@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -35,10 +36,22 @@ export async function POST(req: NextRequest) {
   }
 
   const offerRes = await fetch(`${base}/offers`, { method: 'POST', headers, body: JSON.stringify(offerBody) })
-  if (!offerRes.ok) return NextResponse.json({ error: 'Billomat-Fehler beim Anlegen: ' + offerRes.status }, { status: 502 })
+  if (!offerRes.ok) {
+    console.error('[billomat] API-Anfrage fehlgeschlagen, Status:', offerRes.status)
+    Sentry.captureMessage(`[billomat] API-Anfrage fehlgeschlagen, Status ${offerRes.status}`, {
+      level: 'error', tags: { feature: 'integration_billomat' },
+    })
+    return NextResponse.json({ error: 'Billomat-Fehler beim Anlegen: ' + offerRes.status }, { status: 502 })
+  }
   const offerData = await offerRes.json()
   const offerId = offerData.offer?.id
-  if (!offerId) return NextResponse.json({ error: 'Billomat: keine Angebots-ID erhalten' }, { status: 502 })
+  if (!offerId) {
+    console.error('[billomat] keine Angebots-ID in der Antwort')
+    Sentry.captureMessage('[billomat] keine Angebots-ID in der Antwort erhalten', {
+      level: 'error', tags: { feature: 'integration_billomat' },
+    })
+    return NextResponse.json({ error: 'Billomat: keine Angebots-ID erhalten' }, { status: 502 })
+  }
 
   // Positionen hinzufügen
   for (const item of (quote.items ?? [])) {

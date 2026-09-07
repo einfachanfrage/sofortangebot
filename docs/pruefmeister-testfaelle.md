@@ -732,6 +732,58 @@ Erkennung im Code trägt ihn allein.
 
 **Tests:** 1.509 (vorher 1.501), `tsc` sauber, `eslint` 0 Fehler.
 
+### Antwort Engineering — PM-011 und PM-012 gefixt (2026-09-07)
+
+**PM-011 — der Untergrund-Zuschlag entfällt neben der Vollflächenspachtelung.**
+Deine Regel steht jetzt im Code: Steht eine Vollflächenspachtelung (Q2–Q4) im
+Angebot, wird „Erschwerniszuschlag schwieriger Untergrund" nicht gesetzt. Der
+Altbau-Zuschlag bleibt unberührt.
+
+Zwei Dinge, die beim Bauen aufgefallen sind und ohne die der Fix wirkungslos
+geblieben wäre:
+
+1. **Reihenfolge.** Die Prüfung lief VOR `pruefeSpachteln()` und
+   `pruefeSpachtelarbeiten()` — sie hätte also eine Liste abgefragt, in der die
+   Spachtelposition noch gar nicht steht, und still nie ausgelöst. Der Aufruf
+   ist ans Ende gewandert. Ein Test hält die Reihenfolge fest.
+2. **Punktuelles Spachteln zählt nicht.** „Dübellöcher spachteln" und „Risse /
+   Löcher spachteln" sind Kleinreparaturen und dürfen den Zuschlag nicht
+   schlucken — der wäre sonst lautlos verschwunden, und das ist der teurere
+   Fehler. Eigener Test dagegen.
+
+Deine Soll-Korrektur zur Grundierung ist übernommen: nach einer
+Q2-Vollflächenspachtelung ist „Voranstrich / Grundierung" richtig, als Vorschlag
+markiert bleibt sie.
+
+**PM-012 — abkleben und streichen für dieselbe Leiste.** Deine Regel gilt jetzt
+unabhängig davon, ob die Leisten neu sind oder bleiben.
+
+Der interessante Teil ist die Wurzel. Die Rechenpipeline war bereits sauber —
+sie liefert für dein Diktat drei Positionen mit „Sockelleisten streichen 15,00
+lfdm" und ohne Abkleben. Live standen trotzdem beide Zeilen im Entwurf, und dein
+Randfund erklärt warum: **„Sockelleisten streichen" entsteht an drei Stellen** —
+in der Maler-Vollständigkeitsprüfung, im Mehrgewerk-Durchlauf und in einem
+Sicherheitsnetz, das in der Entwurfs-Route läuft. Die ersten beiden räumen das
+Abkleben mit weg. Das Netz, im August gegen ein ganz anderes Symptom gebaut, hat
+es nie getan — und es läuft **nach** beiden anderen. Genau deshalb listete die
+Karte drei Positionen und der Entwurf vier.
+
+Dieselbe Familie wie PM-030 und PM-032: dieselbe Frage an mehreren privaten
+Stellen beantwortet. Jetzt hat eine Regel das letzte Wort, dieselbe Funktion auf
+allen drei Wegen.
+
+**Gegenrichtungen mitgeprüft:** PM-010 (raus, neu, gestrichen) bleibt unverändert
+richtig; ein Abkleben ohne jede Arbeit an der Leiste bleibt stehen; bei mehreren
+Räumen verliert nur der Raum sein Abkleben, in dem tatsächlich gestrichen wird.
+
+**Stand:** 1.526 Tests grün, TypeScript und Lint sauber. Zwölf neue Tests für
+diesen Block. PM-011 und PM-012 bitte nachtesten — für PM-012 zählt vor allem,
+ob die Karte und der Entwurf jetzt dieselbe Positionszahl zeigen.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte

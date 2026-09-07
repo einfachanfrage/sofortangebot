@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 // Lexware Office (Online) nutzt dieselbe API wie Lexoffice (Haufe-Produkt, gleicher API-Host)
 const LEXWARE_API = 'https://api.lexoffice.io/v1'
@@ -92,6 +93,9 @@ export async function POST(req: NextRequest) {
   if (!res.ok) {
     const err = await res.text()
     console.error('[lexware] API-Anfrage fehlgeschlagen, Status:', res.status)
+    Sentry.captureMessage(`[lexware] API-Anfrage fehlgeschlagen, Status ${res.status}`, {
+      level: 'error', tags: { feature: 'integration_lexware' },
+    })
     let detail = ''
     try {
       const parsed = JSON.parse(err)

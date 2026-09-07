@@ -1,6 +1,7 @@
 import type { BerechnetePosition } from './types'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { pruefeTrittschalldaemmung } from '../vollstaendigkeit/boden-sonder'
+import { entferneRedundantesSockelAbkleben } from './mehrgewerk'
 
 function raumSuffix(position: BerechnetePosition | undefined): string {
   const raum = position?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
@@ -30,7 +31,7 @@ function nettoBodenflaeche(position: BerechnetePosition | undefined): number | n
  * sondern ergänzen ausschließlich eindeutig fehlende Positionen mit Mengen, die
  * die eigentliche Engine bereits berechnet hat.
  */
-export function ergaenzeAusAufnahmeHinweisen(
+function ergaenzeAusAufnahmeHinweisenRoh(
   positionen: BerechnetePosition[],
   titel: string[],
   quelltext = '',
@@ -244,6 +245,36 @@ export function ergaenzeAusAufnahmeHinweisen(
     return ergebnis.filter(p => !/sockelleisten abkleben/i.test(p.beschreibung))
   }
   return ergebnis
+}
+
+// ── PM-012, die eigentliche Wurzel (Prüfmeister, 05.09.2026) ──────────────
+//
+// Im Entwurf standen „Sockelleisten abkleben 15,00 lfdm" UND „Sockelleisten
+// streichen 15,00 lfdm" nebeneinander. Die Aufnahme-Karte hatte drei
+// Positionen, der Entwurf vier — das Streichen kam erst hier dazu.
+//
+// Warum die beiden Fixe davor nicht reichen: „Sockelleisten streichen"
+// entsteht an DREI Stellen — in der Maler-Vollständigkeit
+// (`pruefeSockelleistenStreichen`), im Mehrgewerk-Durchlauf und hier in
+// diesem Sicherheitsnetz. Die ersten beiden räumen das Abkleben mit weg.
+// Dieses Netz, gebaut am 19.08. gegen ein ganz anderes Symptom, hat es nie
+// getan — und es läuft NACH beiden anderen, in der Route. Ein Fix in
+// `mehrgewerk.ts` konnte den Fall deshalb gar nicht erreichen.
+//
+// Es ist dieselbe Familie wie PM-030 und PM-032: dieselbe Frage („darf hier
+// abgeklebt werden?") an mehreren privaten Stellen beantwortet. Deshalb hat
+// jetzt EINE Regel das letzte Wort — `entferneRedundantesSockelAbkleben`,
+// dieselbe Funktion, die auch die anderen beiden Wege abschließt. Der
+// Zweig für „montieren" weiter oben bleibt bestehen; er ist damit nur noch
+// eine Vorstufe, kein zweites Urteil.
+export function ergaenzeAusAufnahmeHinweisen(
+  positionen: BerechnetePosition[],
+  titel: string[],
+  quelltext = '',
+): BerechnetePosition[] {
+  return entferneRedundantesSockelAbkleben(
+    ergaenzeAusAufnahmeHinweisenRoh(positionen, titel, quelltext),
+  )
 }
 
 /**

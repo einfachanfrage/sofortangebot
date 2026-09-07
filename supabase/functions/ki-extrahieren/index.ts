@@ -4,6 +4,7 @@ import { trackKIUsage } from '../_shared/ki-usage.ts'
 import { getUser } from '../_shared/auth.ts'
 import { mitTimeout } from '../_shared/timeout.ts'
 import { createOpenAIClient, openaiRequest } from '../_shared/openai.ts'
+import { meldeFehler } from '../_shared/sentry.ts'
 
 
 
@@ -94,6 +95,11 @@ Deno.serve(async (req: Request) => {
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unbekannt'
     console.error('[ki-extrahieren] Verarbeitung fehlgeschlagen')
+    // CoS-P-002: einzige der fünf Edge-Functions mit echtem Live-Verkehr
+    // (siehe Nachtrag in chief-of-staff-platform-todos.md) — bisher lief
+    // jeder Fehler hier nur in die Supabase-Konsole, ohne dass es irgendwo
+    // einen Alarm gab.
+    await meldeFehler(error, { feature: 'ki_extrahieren' })
 
     if (msg.includes('zu lange')) {
       return new Response(JSON.stringify({ error: msg, fallback: true, retry: true }), {

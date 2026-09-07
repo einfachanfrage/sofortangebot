@@ -3,6 +3,7 @@ import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
 import { AngebotPDF } from '@/lib/pdf'
 import type { Quote, QuoteItem, Company } from '@/lib/types'
+import * as Sentry from '@sentry/nextjs'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -97,8 +98,9 @@ export async function GET() {
     }))
 
     return NextResponse.json({ status: 'ok', size_bytes: buffer.length })
-  } catch {
+  } catch (error) {
     console.error('[health-pdf] Prüfung fehlgeschlagen')
+    Sentry.captureException(error, { level: 'error', tags: { feature: 'health_check_pdf' } })
     return NextResponse.json({ status: 'error' }, { status: 503 })
   }
 }

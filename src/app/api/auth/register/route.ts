@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { sendVerificationEmail } from '@/lib/email'
 import { pruefeRegistrierungsdaten, type RegistrierungsEingabe } from '@/lib/registrierung'
+import * as Sentry from '@sentry/nextjs'
 
 // Ersetzt den bisherigen Client-seitigen `supabase.auth.signUp()`-Aufruf.
 // Grund (CoS-P-004): signUp() löst Supabases eigene, aus dieser Session
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
     console.error('[register] createUser fehlgeschlagen:', createError.message)
+    Sentry.captureException(new Error(createError.message), { tags: { feature: 'registrierung_create_user' } })
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen. Versuche es nochmal.' }, { status: 500 })
   }
 
@@ -74,11 +76,17 @@ export async function POST(req: NextRequest) {
 
   if (linkError || !linkData?.properties?.action_link) {
     console.error('[register] generateLink fehlgeschlagen:', linkError?.message)
+    Sentry.captureException(new Error(linkError?.message ?? 'generateLink ohne action_link'), {
+      tags: { feature: 'registrierung_generate_link' },
+    })
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen. Versuche es nochmal.' }, { status: 500 })
   }
 
-  sendVerificationEmail(email, linkData.properties.action_link).catch(() => {
+  sendVerificationEmail(email, linkData.properties.action_link).catch(fehler => {
     console.error('[register] Bestätigungs-Mail fehlgeschlagen')
+    Sentry.captureException(fehler instanceof Error ? fehler : new Error(String(fehler)), {
+      tags: { feature: 'registrierung_bestaetigungsmail' },
+    })
   })
 
   return NextResponse.json({ ok: true })

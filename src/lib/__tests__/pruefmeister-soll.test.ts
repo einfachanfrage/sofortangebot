@@ -153,7 +153,9 @@ const FAELLE: Fall[] = [
     raeume: [basisRaum('Dachzimmer', { laenge: 5, breite: 3.5, hoehe: null, kniestockhoehe: 1.2, dachschraege_je_seite_m2: 12, dachfenster: [{ anzahl: 1, breite: 0.78, hoehe: 1.18, annahme: true }], arbeiten: ['waende_streichen'] })],
     soll: [
       { muster: /kniestockwände streichen 2x/i, menge: 20.4 },
-      { muster: /dachschrägen streichen 2x/i, menge: 23.08 },
+      // VOB/DIN 18363: Dachfenster 0,92 m² < 2,5 m² → übermessen,
+      // kein Abzug (PM-030, Befund 1 des Prüfmeisters).
+      { muster: /dachschrägen streichen 2x/i, menge: 24 },
     ],
     verboten: [/deckenspiegel/i],
   },
@@ -320,7 +322,9 @@ const FAELLE: Fall[] = [
     raeume: [basisRaum('Dachzimmer', { laenge: 4.5, breite: 4, hoehe: null, kniestockhoehe: 1.0, dachschraege_flaeche_m2: 18, dachfenster: [{ anzahl: 1, breite: 0.78, hoehe: 1.18, annahme: true }], arbeiten: ['waende_streichen'] })],
     soll: [
       { muster: /kniestockwände streichen 2x/i, menge: 17 },
-      { muster: /dachschrägen streichen 2x/i, menge: 17.08 },
+      // VOB/DIN 18363: Dachfenster 0,92 m² < 2,5 m² → übermessen,
+      // kein Abzug (PM-030, Befund 1 des Prüfmeisters).
+      { muster: /dachschrägen streichen 2x/i, menge: 18 },
       { muster: /boden schützen/i, menge: 18 },
     ],
   },

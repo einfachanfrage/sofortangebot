@@ -148,7 +148,8 @@ describe('PM-030 — Dachzimmer mit Kniestock und Schrägen', () => {
 
   it('rechnet Kniestock und Schrägen getrennt, Dachfenster abgezogen', () => {
     expect(ergebnis.menge(/kniestockwände/i)).toBe(17)
-    expect(ergebnis.menge(/dachschrägen streichen/i)).toBe(17.08)
+    // PM-030, Befund 1: Dachfenster 0,92 m² < 2,5 m² → übermessen.
+    expect(ergebnis.menge(/dachschrägen streichen/i)).toBe(18)
     expect(ergebnis.menge(/boden schützen/i)).toBe(18)
   })
 })

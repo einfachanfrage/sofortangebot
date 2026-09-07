@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -76,6 +77,9 @@ export async function POST(req: NextRequest) {
 
   if (!orderRes.ok) {
     console.error('[sevdesk] API-Anfrage fehlgeschlagen, Status:', orderRes.status)
+    Sentry.captureMessage(`[sevdesk] API-Anfrage fehlgeschlagen, Status ${orderRes.status}`, {
+      level: 'error', tags: { feature: 'integration_sevdesk' },
+    })
     return NextResponse.json({ error: 'sevDesk-Fehler beim Anlegen des Angebots' }, { status: 502 })
   }
 

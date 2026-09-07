@@ -29,6 +29,17 @@ function zaehleErsetzteZahlen(original: string, verarbeitet: string): number {
   return anzahl
 }
 
+// CoS-P-002 (Platform & Integrations Engineer, 2026-09-06): siehe
+// upload/route.ts für die volle Begründung (PM-010-Bezug). Bewusst hier
+// noch einmal dieselbe kleine Funktion statt eines gemeinsamen Imports —
+// gleiche Begründung wie bei zaehleErsetzteZahlen oben: beide Routen bleiben
+// unabhängig lesbar.
+function berechneWhisperKonfidenz(segments: Array<{ avg_logprob?: number }> | undefined): number | null {
+  if (!segments || segments.length === 0) return null
+  const summe = segments.reduce((s, seg) => s + (seg.avg_logprob ?? 0), 0)
+  return summe / segments.length
+}
+
 // Retry-Pfad: Whisper + Chips für eine bereits hochgeladene Aufnahme
 // (der normale Weg läuft direkt in /aufnahme/upload — dort reist das Audio
 // nur einmal. Hier wird es aus Storage geladen.)
@@ -64,15 +75,18 @@ export async function POST(req: NextRequest) {
 
   try {
     // ── Whisper-Kette und Kontext-Query PARALLEL ──────────────────────────
-    const whisperKette = (async (): Promise<string | null> => {
+    // CoS-P-002: gibt jetzt auch die Whisper-Konfidenz zurück (null, wenn
+    // `vorhandenes` gegriffen hat — dann lief in diesem Aufruf gar kein
+    // Whisper, es gibt also nichts zu messen).
+    const whisperKette = (async (): Promise<{ text: string | null; konfidenz: number | null }> => {
       const vorhandenes = aufnahme.transkript as string | null
-      if (vorhandenes) return vorhandenes
-      if (!aufnahme.audio_url) return null
+      if (vorhandenes) return { text: vorhandenes, konfidenz: null }
+      if (!aufnahme.audio_url) return { text: null, konfidenz: null }
 
       const { data: audioData } = await supabase.storage
         .from('entwurf-audio')
         .download(aufnahme.audio_url as string)
-      if (!audioData) return null
+      if (!audioData) return { text: null, konfidenz: null }
 
       const ext = (aufnahme.audio_url as string).split('.').pop() ?? 'webm'
       const audioFile = new File([await audioData.arrayBuffer()], `audio.${ext}`, {
@@ -83,8 +97,13 @@ export async function POST(req: NextRequest) {
         model: WHISPER_MODEL,
         language: 'de',
         prompt: 'Handwerker, Aufmaß, Angebot, Quadratmeter, Laufmeter, Stück, Malerarbeiten, Fliesen, Elektro, Sanitär',
+        // CoS-P-002: siehe berechneWhisperKonfidenz unten / upload/route.ts.
+        response_format: 'verbose_json',
       })
-      return result.text
+      const konfidenz = berechneWhisperKonfidenz(
+        (result as unknown as { segments?: Array<{ avg_logprob?: number }> }).segments
+      )
+      return { text: result.text, konfidenz }
     })()
 
     const kontextQuery = supabase
@@ -95,7 +114,7 @@ export async function POST(req: NextRequest) {
       .order('erstellt_am', { ascending: true })
       .limit(5)
 
-    const [whisperText, { data: bisherige }] = await Promise.all([whisperKette, kontextQuery])
+    const [{ text: whisperText, konfidenz: konfidenzWhisper }, { data: bisherige }] = await Promise.all([whisperKette, kontextQuery])
     // Bekannte Hörfehler direkt nach Whisper geraderücken — siehe
     // src/lib/hoerfehler.ts und die Begründung in upload/route.ts.
     // Der Rohtext bleibt in `transkript_original` erhalten.
@@ -145,6 +164,7 @@ export async function POST(req: NextRequest) {
         hat_raumwechsel: segmente.length > 1,
         segment_anzahl: segmente.length,
         zahlen_ersetzt: zaehleErsetzteZahlen(transkript, transkriptVerarbeitet),
+        ...(konfidenzWhisper !== null ? { konfidenz_whisper: konfidenzWhisper } : {}),
       })
       .eq('id', aufnahme_id)
 

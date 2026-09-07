@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getAIClient } from '@/lib/ai-client'
 import { pruefeKIZugriff, trackKIUsage } from '@/lib/rate-limiter'
 import { extrahiereChips } from '@/lib/chips-extraktion'
+import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
 
@@ -166,8 +167,9 @@ export async function POST(req: NextRequest) {
       positionen,
       foto_url: storageErr ? null : storagePath,
     })
-  } catch {
+  } catch (error) {
     console.error('[entwurf-scan] Verarbeitung fehlgeschlagen')
+    Sentry.captureException(error, { tags: { feature: 'entwurf_scan' } })
     await supabase.from('entwurf_aufnahmen')
       .update({ verarbeitung_status: 'fehler' }).eq('id', aufnahme.id)
     return NextResponse.json({ error: `${cfg.beschreibung} konnte nicht gelesen werden` }, { status: 500 })

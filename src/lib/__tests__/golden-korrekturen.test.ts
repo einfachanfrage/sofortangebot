@@ -336,7 +336,10 @@ const KORPUS: Fall[] = [
     }],
     exakteMengen: [
       { enthaelt: 'kniestockwände streichen', menge: 20.40 },
-      { enthaelt: 'dachschrägen streichen', menge: 23.08 },
+      // PM-030, Befund 1: Ein Dachfenster misst 0,92 m² und liegt unter der
+      // VOB-Schwelle von 2,5 m² — es wird übermessen, nicht abgezogen.
+      // Dieselbe Regel, die bei den Wandflächen seit dem 21.08. greift.
+      { enthaelt: 'dachschrägen streichen', menge: 24 },
     ],
     // Kernpunkt: keine erfundene Grundierung auf die volle Dachschrägenfläche (136,80 €)
     verboten: ['grundier', 'voranstrich'],
@@ -384,7 +387,10 @@ const KORPUS: Fall[] = [
     // ausgedacht (1,20×1,00m, sein generischer "normales Fenster"-Standard,
     // ehrlich mit annahme:true markiert) statt den kleineren, für Dachfenster
     // richtigen Standard (0,78×1,18m) zu verwenden, den unser Code kennt.
-    // Ergebnis vorher: 24,00 − 1,20 = 22,80 m² statt der korrekten 23,08 m².
+    // Ergebnis vorher: 24,00 − 1,20 = 22,80 m². Seit PM-030 wird gar nicht
+    // mehr abgezogen (Übermessung) — die Regel bleibt trotzdem wichtig: Sie
+    // entscheidet, mit WELCHER Größe gerechnet wird, sobald ein Dachfenster
+    // die 2,5-m²-Schwelle doch überschreitet.
     // Fix: bei GPTs eigener Annahme (annahme:true) gilt unser
     // Dachfenster-Standard, nicht GPTs generische Zahl.
     transkript:
@@ -401,8 +407,9 @@ const KORPUS: Fall[] = [
     }],
     exakteMengen: [
       { enthaelt: 'kniestockwände streichen', menge: 20.40 },
-      // 24,00 m² brutto − 0,92 m² (unser Dachfenster-Standard 0,78×1,18) = 23,08 m²
-      { enthaelt: 'dachschrägen streichen', menge: 23.08 },
+      // 24,00 m² brutto, kein Abzug: unser Dachfenster-Standard 0,78×1,18 =
+      // 0,92 m² liegt unter der VOB-Übermessungsschwelle (PM-030, Befund 1).
+      { enthaelt: 'dachschrägen streichen', menge: 24 },
     ],
     // Nebenfund im selben Nachtest: unverlangte "Dachschräge spachteln"-
     // Position — im Transkript nie ein Ausbesserungs-Signal (kein "spachteln",

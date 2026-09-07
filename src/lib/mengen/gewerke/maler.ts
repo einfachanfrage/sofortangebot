@@ -462,11 +462,25 @@ export function malerEngine(daten: any): MengenErgebnis {
         // Annahmen, die sich widersprechen. Bei GPTs eigener Annahme gilt
         // deshalb jetzt UNSER Dachfenster-Standard; nur bei echten, vom Nutzer
         // genannten Maßen zählt GPTs Zahl.
-        const dgFensterFl = round2(dgFenster.reduce((s: number, f: any) => {
-          const breite = f.annahme ? 0.78 : (f.breite ?? 0.78)
-          const hoehe = f.annahme ? 1.18 : (f.hoehe ?? 1.18)
-          return s + (f.anzahl ?? 1) * breite * hoehe
-        }, 0))
+        // PM-030, Befund 1 (Prüfmeister, 04.09.2026): Hier wurde das
+        // Dachfenster IMMER abgezogen. Die VOB-Übermessung (Öffnungen bis
+        // 2,5 m² Einzelgröße werden nicht abgezogen, DIN 18363) greift bei
+        // den Wandflächen längst — im Dachgeschoss-Zweig griff sie nicht.
+        // Ein normales Dachfenster misst 0,78 × 1,18 = 0,92 m² und liegt
+        // damit weit unter der Schwelle: Soll ist die volle Schrägenfläche.
+        //
+        // Die PM-007-Regel bleibt: Rät GPT die Größe selbst (`annahme`),
+        // gilt UNSER Dachfenster-Standard und nicht GPTs generisches
+        // Wandfenster — sonst stünden zwei widersprüchliche Annahmen
+        // nebeneinander. Sie entscheidet jetzt nur noch, mit WELCHER Größe
+        // gerechnet wird; ob abgezogen wird, entscheidet die VOB.
+        const dgFensterFuerVob = dgFenster.map((f: any) => ({
+          anzahl: f.anzahl ?? 1,
+          breite: f.annahme ? 0.78 : (f.breite ?? 0.78),
+          hoehe: f.annahme ? 1.18 : (f.hoehe ?? 1.18),
+        }))
+        const dgAbzug = berechneOeffnungsabzugVob(dgFensterFuerVob, 0.78, 1.18)
+        const dgFensterFl = round2(dgAbzug.abzugFlaeche)
         const netto = round2(brutto - dgFensterFl)
         positionen.push({
           beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`,
@@ -475,7 +489,11 @@ export function malerEngine(daten: any): MengenErgebnis {
             const basis = (dgLinksM2 !== null || dgRechtsM2 !== null)
               ? `Links ${dgLinksM2 ?? 0} m² + Rechts ${dgRechtsM2 ?? 0} m² = ${brutto} m²`
               : `Dachschrägenfläche ${brutto} m²`
-            return dgFensterFl > 0 ? `${basis} − Dachfenster ${dgFensterFl} m²` : basis
+            if (dgFensterFl > 0) return `${basis} − Dachfenster ${dgFensterFl} m²`
+            if (dgAbzug.uebermessenAnzahl > 0) {
+              return `${basis} (Dachfenster bis 2,5 m² werden nach VOB nicht abgezogen)`
+            }
+            return basis
           })(),
           annahmen: [],
         })
@@ -494,7 +512,23 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({ beschreibung: `Boden schützen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenflaecheM2} m²`, annahmen: [] })
       }
       // Sockelleisten am Kniestockumfang
-      if (knH && laenge && breite && hatSockel) {
+      //
+      // PM-030, Befund 2: Die Karte listete „Sockelleisten abkleben 17 lfdm",
+      // der Entwurf hatte sie nicht. Der Live-Auslöser ließ sich aus den
+      // Daten nicht nachstellen — im Code steht aber ein echter Logikfehler
+      // an genau dieser Stelle: `hatSockel` verlangt
+      // `wandflaecheNettoM2 !== null`, und das ist eine Größe des
+      // NORMAL-Zweigs. Im Dachgeschoss gibt es keine gewöhnliche Wandfläche;
+      // die Sockelleiste sitzt am Fuß des Kniestocks und hat mit ihr nichts
+      // zu tun. Hängt die Position an einer Zahl aus dem anderen Zweig,
+      // fällt sie aus, sobald die dort null ist — unabhängig davon, was der
+      // Nutzer gesagt hat.
+      //
+      // Deshalb hier die Bedingung, die fachlich gilt: Kniestock vorhanden,
+      // Maße vorhanden, Wandarbeiten im Raum, kein Keller. Was der Auslöser
+      // live war, ist damit egal.
+      const hatSockelDg = anWaenden && !istKellerRaum
+      if (knH && laenge && breite && hatSockelDg) {
         const knUmfang = round2(2 * (laenge + breite))
         const sockelKnM = berechneSockelleistenLaenge(knUmfang, effTueren)
         positionen.push({

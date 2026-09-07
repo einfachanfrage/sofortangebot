@@ -35,7 +35,7 @@ import {
 } from '@/lib/raum-geometrie'
 import { materialFuerPosition } from '@/lib/material-mapping'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
-import { brauchtWandmasse } from '@/lib/raum-anzeige'
+import { brauchtWandmasse, brauchtRaumhoehe } from '@/lib/raum-anzeige'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null; share_token?: string; sent_via?: string[] }
@@ -122,6 +122,7 @@ function RaumDimensionenZeile({
   onChange,
   onGrundriss,
   wandRelevant = true,
+  zeigeRaumhoehe = true,
 }: {
   raumName?: string
   dim: RaumDimension
@@ -129,6 +130,8 @@ function RaumDimensionenZeile({
   onGrundriss: () => void
   /** Hat der Raum Wand-/Deckenarbeiten? Bei reinem Boden nur das Boden-Feld zeigen. */
   wandRelevant?: boolean
+  /** Braucht der Raum eine Raumhöhe? Im Dachgeschoss nein (PM-030). */
+  zeigeRaumhoehe?: boolean
 }) {
   // Vorhandene Raummaße haben Vorrang. Der Flächenmodus ist nur für Fälle,
   // in denen wirklich ausschließlich fertige Flächen genannt wurden.
@@ -262,9 +265,13 @@ function RaumDimensionenZeile({
             Für 'wand' oben bereits als eigener Block gerendert. */}
         {!istWand && wandRelevant && !(modus === 'flaeche' && (dim.wandflaeche ?? 0) > 0) && (
           <>
-            <span className="text-anthracite/20 mx-0.5">·</span>
-            <span className="text-[11px] text-anthracite/40 font-semibold">Raumhöhe</span>
-            <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
+            {zeigeRaumhoehe && (
+              <>
+                <span className="text-anthracite/20 mx-0.5">·</span>
+                <span className="text-[11px] text-anthracite/40 font-semibold">Raumhöhe</span>
+                <InlineNum value={dim.hoehe} label="Deckenhöhe" suffix=" m" onCommit={v => onChange({ hoehe: v })} />
+              </>
+            )}
             <span className="text-anthracite/20 mx-0.5">·</span>
             <span className="text-[11px] text-anthracite/40 font-semibold">Türen</span>
             <InlineNum value={dim.tueren} label="Türen" onCommit={v => onChange({ tueren: v })} />
@@ -2124,6 +2131,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                         // Angebot nirgends gebraucht wird. Die Entscheidung liegt
                         // jetzt in src/lib/raum-anzeige.ts, mit Tests.
                         const wandRelevant = brauchtWandmasse(raum.items.map(gi => gi.titleDisplay))
+                        // PM-030, Befund 3: Im Dachgeschoss gibt es Türen und
+                        // (Dach-)Fenster, aber keine sinnvolle EINE Raumhöhe —
+                        // Kniestockhöhe und Schrägenflächen sind einzeln
+                        // genannt. Nur die Höhe verschwindet, der Rest bleibt.
+                        const zeigeRaumhoehe = brauchtRaumhoehe(raum.items.map(gi => gi.titleDisplay))
                         return (
                         <div key={raum.raumName}>
                           <div className={`border-t border-anthracite/5 px-4 py-2.5 flex items-center justify-between ${hatMehrereRaeume ? 'bg-bg' : 'bg-yellow/8'}`}>
@@ -2139,6 +2151,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                             onChange={patch => handleRaumDimChange(raum.raumName, patch)}
                             onGrundriss={() => setGrundrissRaum(raum.raumName)}
                             wandRelevant={wandRelevant}
+                            zeigeRaumhoehe={zeigeRaumhoehe}
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!

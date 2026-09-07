@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import * as Sentry from '@sentry/nextjs'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = process.env.ADMIN_ALERT_EMAIL ?? 'sandraholm95@gmail.com'
@@ -52,6 +53,7 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error('[admin-alert] E-Mail-Versand fehlgeschlagen')
+      Sentry.captureException(new Error(error.message), { tags: { feature: 'admin_kosten_alert' } })
       return NextResponse.json({ error: 'E-Mail konnte nicht gesendet werden' }, { status: 500 })
     }
   }

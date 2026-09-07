@@ -304,17 +304,44 @@ export function entferneRedundantenBodenschutz(positionen: BerechnetePosition[])
   })
 }
 
+// ── PM-012, Befund (Prüfmeister, 05.09.2026) ──────────────────────────────
+//
+// Im Angebot standen „Sockelleisten abkleben 15,00 lfdm" UND „Sockelleisten
+// streichen 15,00 lfdm" nebeneinander. Das schließt sich aus: Man klebt eine
+// Leiste ab, damit beim Streichen der WAND keine Farbe darauf kommt. Wird die
+// Leiste selbst mitgestrichen — und das war die Ansage —, klebt sie niemand
+// ab. „Kein Maler der Welt klebt eine Leiste ab, die er zwei Minuten später
+// anstreicht."
+//
+// Die 12,00 € sind nicht das Problem. Auf dem Kundenangebot stehen zwei
+// Zeilen, die sich gegenseitig widersprechen, und der erste, dem das
+// auffällt, ist der Handwerker, der es verschicken soll.
+//
+// Seine Regel, wörtlich: *Entsteht für einen Raum eine Position
+// „Sockelleisten streichen", darf es dort kein „Sockelleisten abkleben"
+// geben, unabhängig davon, ob die Leisten neu sind oder bleiben.* Bisher galt
+// das nur für „montieren" — der Fall PM-010 (raus, neu, gestrichen) war
+// deshalb korrekt, PM-012 (bleiben, gestrichen) nicht.
+const SOCKEL_ARBEIT_AN_DER_LEISTE = /sockelleisten (?:montieren|streichen|lackieren)/i
+
 export function entferneRedundantesSockelAbkleben(positionen: BerechnetePosition[]): BerechnetePosition[] {
-  const raeumeMitMontage = new Set(
+  const raeumeMitLeistenArbeit = new Set(
     positionen
-      .filter(p => /sockelleisten montieren/i.test(p.beschreibung))
+      .filter(p => SOCKEL_ARBEIT_AN_DER_LEISTE.test(p.beschreibung))
       .map(p => raumSuffix(p.beschreibung))
       .filter((raum): raum is string => raum !== null)
   )
+  // Auch ohne Raumsuffix: Steht im Angebot überhaupt eine Arbeit AN der
+  // Leiste und trägt weder sie noch das Abkleben einen Raum, ist es
+  // derselbe Einraum-Auftrag — dann gilt dasselbe.
+  const leistenArbeitOhneRaum = positionen.some(p =>
+    SOCKEL_ARBEIT_AN_DER_LEISTE.test(p.beschreibung) && raumSuffix(p.beschreibung) === null)
+
   return positionen.filter(position => {
     if (!/sockelleisten abkleben/i.test(position.beschreibung)) return true
     const raum = raumSuffix(position.beschreibung)
-    return !raum || !raeumeMitMontage.has(raum)
+    if (raum === null) return !leistenArbeitOhneRaum && raeumeMitLeistenArbeit.size === 0
+    return !raeumeMitLeistenArbeit.has(raum)
   })
 }
 

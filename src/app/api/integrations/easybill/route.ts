@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -54,7 +55,13 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify(body),
   })
 
-  if (!res.ok) return NextResponse.json({ error: 'Easybill-Fehler: ' + res.status }, { status: 502 })
+  if (!res.ok) {
+    console.error('[easybill] API-Anfrage fehlgeschlagen, Status:', res.status)
+    Sentry.captureMessage(`[easybill] API-Anfrage fehlgeschlagen, Status ${res.status}`, {
+      level: 'error', tags: { feature: 'integration_easybill' },
+    })
+    return NextResponse.json({ error: 'Easybill-Fehler: ' + res.status }, { status: 502 })
+  }
   const result = await res.json()
   return NextResponse.json({ id: result.id })
 }

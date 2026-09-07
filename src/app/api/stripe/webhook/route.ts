@@ -66,7 +66,12 @@ export async function POST(req: NextRequest) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session
       const userId = session.metadata?.user_id
-      const plan = session.metadata?.plan ?? 'pro'
+      const companyId = session.metadata?.company_id
+      // CoS-P-007: Es gibt nur noch einen bezahlten Zustand ('pro'). Der
+      // alte `session.metadata?.plan`-Fallback ist weg, weil die
+      // Checkout-Route seit CoS-P-007 kein `plan`-Feld mehr mitschickt.
+      const plan = 'pro'
+      const priceTier = session.metadata?.price_tier
       const customerId = typeof session.customer === 'string' ? session.customer : null
       const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null
 
@@ -84,6 +89,38 @@ export async function POST(req: NextRequest) {
           // 500 → Stripe stellt den Webhook erneut zu, statt ihn als erledigt
           // abzuhaken. Genau dafür sind die Wiederholungen da.
           return NextResponse.json({ error: 'Tarif konnte nicht gespeichert werden' }, { status: 500 })
+        }
+
+        // ── Gründerpreis endgültig vergeben (CoS-P-007) ─────────────────
+        //
+        // Erst HIER, nach bestätigter Zahlung — nicht schon beim Erzeugen
+        // der Checkout-Session. `claim_founder_slot` ist serverseitig,
+        // atomar (Advisory-Lock) und idempotent: ein wiederholter Webhook
+        // für dieselbe Firma (Stripe stellt bei Fehlern erneut zu) verbraucht
+        // keinen zweiten Slot.
+        if (priceTier === 'founder' && companyId) {
+          const { data: vergebenerTier, error: slotError } = await supabase
+            .rpc('claim_founder_slot', { p_company_id: companyId })
+
+          if (slotError) {
+            console.error('[stripe] Gründerpreis-Slot konnte nicht vergeben werden')
+            Sentry.captureException(new Error(slotError.message), { tags: { feature: 'stripe_founder_slot' } })
+          } else if (vergebenerTier !== 'founder') {
+            // Sehr seltener Grenzfall: Zwischen Checkout-Erstellung und
+            // Zahlungsbestätigung wurden alle 25 Plätze anderweitig vergeben.
+            // Stripe hat diesem Kunden aber bereits verbindlich 29 € berechnet
+            // (der Preis stand schon in der Checkout-Session fest) — der
+            // Kunde bekommt daher trotzdem den Gründerstatus, manuell markiert,
+            // mit Sentry-Meldung zur Sichtbarkeit statt stillem Weiterlaufen.
+            Sentry.captureMessage(
+              '[stripe] Gründerpreis bezahlt, aber alle 25 Slots bereits vergeben — Firma wird trotzdem als Gründerpreis markiert',
+              { level: 'warning', tags: { feature: 'stripe_founder_slot' }, extra: { companyId } }
+            )
+            // is_founder_price braucht laut Check-Constraint immer eine
+            // Slot-Nummer — force_claim_founder_slot vergibt eine (auch
+            // jenseits von 25), statt den Constraint zu verletzen.
+            await supabase.rpc('force_claim_founder_slot', { p_company_id: companyId })
+          }
         }
       }
       break

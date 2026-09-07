@@ -40,7 +40,6 @@ export function pruefeMaler(
   pruefeFliesenspiegel(ergaenzt, fehlende, lower)
   pruefeLampenAbkleben(ergaenzt, lower, verstaendnis)
   pruefeErschwerniszuschlagHoehe(ergaenzt, lower, meta?.raeume ?? [])
-  pruefeErschwerniszuschlagUntergrund(ergaenzt, lower)
   pruefeSockelleistenLackieren(ergaenzt, fehlende, lower, verstaendnis)
   pruefeDachschraege(ergaenzt, fehlende, lower)
   pruefeStuckleisten(ergaenzt, fehlende, lower, verstaendnis)
@@ -66,6 +65,10 @@ export function pruefeMaler(
   pruefeBrandschutzfarbe(ergaenzt, fehlende, lower)
   pruefeKalkputz(ergaenzt, fehlende, lower)
   pruefeSpachtelarbeiten(ergaenzt, fehlende, lower, verstaendnis)
+  // PM-011: MUSS hinter beiden Spachtel-Prüfungen stehen. Der Zuschlag
+  // entfällt, wenn eine Vollflächenspachtelung im Angebot steht — und die
+  // entsteht erst hier. Davor geprüft, hätte die Regel still nie gegriffen.
+  pruefeErschwerniszuschlagUntergrund(ergaenzt, lower)
   pruefeTuerrahmen(ergaenzt, lower)
   pruefeSockelleistenStreichen(ergaenzt, fehlende, lower, verstaendnis)
   const hatTapeteWegFlag = pruefeTapeteWegDannStreich(ergaenzt, fehlende, verstaendnis)

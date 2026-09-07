@@ -56,9 +56,44 @@ export function pruefeErschwerniszuschlagHoehe(
 // Rohtranskript-Text geprüft (nicht gegen das `erschwernisse`-Feld), damit
 // dieselbe robuste, deterministische Erkennung greift, egal ob GPTs
 // Struktur-Extraktion es diesmal sauber tagt oder nicht.
+// ── PM-011, Befund (Prüfmeister, 05.09.2026) ──────────────────────────────
+//
+// „Erschwerniszuschlag schwieriger Untergrund 10 % = 98,10 €" stand neben
+// „Spachtelarbeiten Q2 · 36,00 m² · 324,00 €". Das ist dieselbe Erschwernis
+// zweimal kassiert.
+//
+// Seine Regel, entschieden am 02.09.: *Steht im selben Raum eine
+// Vollflächenspachtelung (Q2 bis Q4), wird „Erschwerniszuschlag schwieriger
+// Untergrund" nicht gesetzt.* Die Unebenheit IST die Spachtelung — sie steht
+// bereits als eigene, bepreiste Position im Angebot. „Genau das ist der
+// Punkt, an dem ein Kunde zu Recht laut wird."
+//
+// Der Altbau-Zuschlag bleibt ausdrücklich davon unberührt: „der zahlt nicht
+// die Wand, sondern die Baustelle drumherum."
+//
+// ── Zwei Fallen, in die der erste Entwurf gelaufen wäre ───────────────────
+//
+// 1. REIHENFOLGE. Die Spachtel-Positionen entstehen zum größten Teil erst in
+//    `pruefeSpachteln()` und `pruefeSpachtelarbeiten()`. Der Zuschlag wurde
+//    aber VOR beiden geprüft — eine Abfrage auf eine Liste, in der die
+//    Spachtelung noch gar nicht steht, hätte still nie ausgelöst. Deshalb ist
+//    der Aufruf in `maler.ts` ans Ende gewandert, hinter beide. Genau die
+//    Sorte stiller Prüfung, die diese Woche schon viermal Geld gekostet hat.
+//
+// 2. PUNKTUELLES SPACHTELN ZÄHLT NICHT. „Dübellöcher spachteln" und
+//    „Risse / Löcher spachteln (kleine Schadstellen)" sind Kleinreparaturen,
+//    keine Vollflächenspachtelung — sie beantworten einen bröckeligen
+//    Untergrund NICHT und dürfen den Zuschlag nicht schlucken. Das Muster
+//    trifft deshalb nur die flächigen Positionen und schreibt „ä" nie als
+//    einzelne Schreibweise (\büberall\b lässt grüßen).
+const VOLLFLAECHENSPACHTELUNG = /spachtelarbeiten|(?:w(?:ä|ae|a)nde|decken?)\s+spachteln|vollfl[äa]chig.{0,20}spachtel|spachtel\w*.{0,20}vollfl[äa]chig/i
+
 export function pruefeErschwerniszuschlagUntergrund(ergaenzt: BerechnetePosition[], lower: string): void {
   const hatSchwierigenUntergrund =
     /schwierig\w*\s+untergrund|untergrund\w*\s+(?:ist\s+)?schwierig|br[öo]ckel|uneben\w*.{0,40}(?:putz|untergrund|wand|wände|waende)|(?:putz|untergrund|wand|wände|waende).{0,40}uneben\w*/i.test(lower)
+  // Die Spachtelung ist die bezahlte Antwort auf den unebenen Untergrund.
+  const hatSpachtelung = ergaenzt.some(p => VOLLFLAECHENSPACHTELUNG.test(p.beschreibung))
+  if (hatSpachtelung) return
   if (hatSchwierigenUntergrund && !hat(ergaenzt, 'erschwerniszuschlag untergrund', 'untergrund zuschlag')) {
     ergaenzt.push({
       beschreibung: 'Erschwerniszuschlag schwieriger Untergrund',

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { sendPasswordResetEmail } from '@/lib/email'
+import * as Sentry from '@sentry/nextjs'
 
 // Ersetzt den bisherigen Client-seitigen
 // `supabase.auth.resetPasswordForEmail()`-Aufruf. Zwei Gründe:
@@ -45,12 +46,17 @@ export async function POST(req: NextRequest) {
   })
 
   if (!error && data?.properties?.action_link) {
-    sendPasswordResetEmail(email, data.properties.action_link).catch(() => {
+    sendPasswordResetEmail(email, data.properties.action_link).catch(fehler => {
       console.error('[passwort-vergessen] Reset-Mail fehlgeschlagen')
+      Sentry.captureException(fehler instanceof Error ? fehler : new Error(String(fehler)), {
+        tags: { feature: 'passwort_reset_mail' },
+      })
     })
   } else if (error) {
     // Erwarteter Fall bei unbekannter E-Mail — bewusst nicht als Fehler
-    // an den Client durchreichen, siehe Kommentar oben.
+    // an den Client durchreichen, siehe Kommentar oben. Absichtlich AUCH
+    // nicht an Sentry gemeldet: das wäre kein echter Fehler, sondern der
+    // erwartete Normalfall bei jeder E-Mail, die nicht existiert.
     console.error('[passwort-vergessen] generateLink:', error.message)
   }
 

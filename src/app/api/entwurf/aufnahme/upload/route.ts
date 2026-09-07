@@ -29,6 +29,20 @@ function zaehleErsetzteZahlen(original: string, verarbeitet: string): number {
   return anzahl
 }
 
+// CoS-P-002 (Platform & Integrations Engineer, 2026-09-06): Whisper liefert
+// mit `response_format: 'verbose_json'` pro Segment ein `avg_logprob` (log-
+// Wahrscheinlichkeit, negativ, näher an 0 = sicherer). Der Mittelwert über
+// alle Segmente ist derselbe Wert, den die alte Deno-Edge-Function
+// `transcribe` schon immer berechnet hat (siehe supabase/functions/
+// transcribe/index.ts) — dort wurde er nur nie in die Datenbank geschrieben.
+// Genau der Wert, der eine unsichere Spracherkennung wie bei PM-010 ("drei
+// fünfzig" → 350) anzeigen würde, bevor sie zu einem falschen Preis wird.
+function berechneWhisperKonfidenz(segments: Array<{ avg_logprob?: number }> | undefined): number | null {
+  if (!segments || segments.length === 0) return null
+  const summe = segments.reduce((s, seg) => s + (seg.avg_logprob ?? 0), 0)
+  return summe / segments.length
+}
+
 // Aufnahme-Eingang: EIN Request macht alles — Storage-Upload, Whisper und
 // Kontext-Query laufen PARALLEL (das Audio reist nur einmal zum Server,
 // statt hoch → runter → zu OpenAI). Danach Chips-Extraktion.
@@ -108,6 +122,9 @@ export async function POST(req: NextRequest) {
       model: WHISPER_MODEL,
       language: 'de',
       prompt: 'Handwerker, Aufmaß, Angebot, Quadratmeter, Laufmeter, Stück, Malerarbeiten, Fliesen, Elektro, Sanitär',
+      // CoS-P-002: verbose_json statt Standardformat, nur damit wir die
+      // Segment-Konfidenz (avg_logprob) mitbekommen — `.text` bleibt gleich.
+      response_format: 'verbose_json',
     }),
     supabase
       .from('entwurf_aufnahmen')
@@ -144,6 +161,12 @@ export async function POST(req: NextRequest) {
     console.error('[aufnahme-upload] Transkription fehlgeschlagen')
     Sentry.captureException(whisperErgebnis.reason, { tags: { feature: 'aufnahme_upload_whisper' } })
   }
+  // CoS-P-002: `konfidenz_whisper` bisher nie befüllt — `segments` gibt es
+  // nur mit response_format 'verbose_json' (oben gesetzt), deshalb bei
+  // rejected/älterem Antwortformat einfach null statt zu werfen.
+  const konfidenzWhisper = whisperErgebnis.status === 'fulfilled'
+    ? berechneWhisperKonfidenz((whisperErgebnis.value as unknown as { segments?: Array<{ avg_logprob?: number }> }).segments)
+    : null
 
   if (!transkript) {
     await supabase.from('entwurf_aufnahmen').update({
@@ -201,6 +224,7 @@ export async function POST(req: NextRequest) {
     hat_raumwechsel: segmente.length > 1,
     segment_anzahl: segmente.length,
     zahlen_ersetzt: zaehleErsetzteZahlen(transkript, transkriptVerarbeitet),
+    konfidenz_whisper: konfidenzWhisper,
   }).eq('id', aufnahme.id)
 
   await trackKIUsage({
