@@ -969,6 +969,70 @@ hast.
 
 ---
 
+### PM-031 — gefixt, aber es war nicht kosmetisch (2026-09-07)
+
+Du hattest den Fund am 31.08. als „rein kosmetisch, ohne finanzielle Auswirkung"
+eingestuft: Die „So gerechnet"-Zeile am Fassaden-Chip zeigte 46,64 m², während
+darüber korrekt 50,00 m² abgerechnet wurden.
+
+**Der Erklärtext war das Symptom. Die Ursache steckt in `raum-geometrie.ts` —
+und die rechnet nicht nur Text, sondern die MENGE neu, sobald der Handwerker ein
+Raummaß korrigiert.** Nachgemessen heute:
+
+| Büro 5,20 × 4,10 × 2,70, zwei Fenster, eine Tür | Wandfläche | Sockelleisten |
+|---|---|---|
+| Engine beim Anlegen | 50,22 m² | 18,60 lfdm |
+| **nachdem der Handwerker sein Maß korrigiert** | **45,93 m²** | **17,70 lfdm** |
+
+4,29 m² sind bei 11,50 € rund **49 € je Raum** — und sie verschwinden
+ausgerechnet als Belohnung dafür, dass jemand sein eigenes Aufmaß nachbessert.
+Ohne Hinweis, ohne Spur. Dass es dir nicht aufgefallen ist, liegt nur daran,
+dass du beim Nachtest nichts bearbeitet hast.
+
+**Die Ursache:** Diese Datei kannte beide Normregeln nicht. VOB-Übermessung
+(Öffnungen bis 2,5 m², DIN 18363 5.2.3) kam am 21.08. in die Engine, VOB-012
+(Unterbrechungen bis 1 m, 5.3.2) am 04.09. — die Bearbeiten-Ansicht hat beide
+nie gesehen und zog stur jede Öffnung und jede Türbreite ab. Dieselbe Familie
+wie PM-012, PM-021 und PM-032: dieselbe Frage an zwei Stellen beantwortet.
+
+**Der Fix ruft die Regeln auf, statt sie nachzubauen** —
+`abzugAusEinzelflaeche()` und `berechneSockelleistenLaenge()`, dieselben
+Funktionen, die die Engine benutzt. Die Türbreite, die es hier nicht gibt, wird
+aus der Öffnungsfläche abgeleitet (1,89 m² / 2,10 m = 0,90 m; eine Terrassentür
+mit 4,20 m² ergibt 2,00 m und wird korrekt abgezogen).
+
+**Ein Wächter statt einer Konstante:** Ein Test lässt für drei Räume die Engine
+und die Bearbeiten-Ansicht gegeneinander rechnen. Weichen sie je wieder
+voneinander ab, schlägt er an.
+
+**Und eine unangenehme Beobachtung zum Testbestand:** Zwölf Tests in
+`raum-geometrie.test.ts` hielten den Stand von VOR den beiden Normregeln fest —
+45,93 · 40,71 · 17,10 · 66,96 standen dort als Soll. Sie haben den Fehler nicht
+gemeldet, sondern konserviert. Dieselbe Sorte Fund wie die sechs
+Dachfenster-Erwartungen bei PM-030 und wie deine eigene PM-025-Soll-Lücke: Ein
+Test, der bei einer Normänderung nicht mitgezogen wird, wird vom Wächter zum
+Wärter. Alle zwölf sind mit Normbezug nachgezogen, und die Gegenrichtung
+(Terrassentür, Schaufenster) ist jetzt mitgetestet — vorher fehlte sie ganz.
+
+**Damit ist PM-031 der letzte offene Code-Fund aus der gesamten Testreihe.** Was
+noch aussteht, sind Live-Nachtests, keine Fixes:
+
+| Fall | Grund |
+|---|---|
+| PM-002 · PM-006 · PM-010 · PM-018 | Haken vor der VOB-Übermessung zurückgezogen |
+| PM-011 · PM-012 · PM-013 | Fixes vom 07.09. |
+| PM-021 · PM-022 · PM-025 · PM-026 | Untertitel und Fischgrätpreis |
+| PM-030 | drei Befunde, Live-Auslöser nie nachgestellt |
+| PM-031 | jetzt neu — bitte einmal **mit Bearbeiten** |
+| PM-014 | Gleichzeitigkeits-Klicktest, kein Sprechfall |
+
+**Für PM-031 zählt beim Nachtest nicht die Karte, sondern die Bearbeiten-Ansicht:
+ein Raummaß anfassen und schauen, ob die Menge stehen bleibt.**
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
@@ -6643,6 +6707,73 @@ Vollflächenspachtelung) und PM-012 (Abkleben neben Streichen derselben Leiste).
 **VOB-012 ist in Stufe 4 fünfmal live bestätigt worden** — PM-021 (in beide
 Richtungen: Terrassentür abgezogen, Zimmertür nicht), PM-022, PM-025, PM-026.
 Die Norm-Entscheidung vom 04.09. sitzt in der Engine und hält.
+
+*Prüfmeister · 2026-09-07*
+
+
+---
+
+## Antwort an Product Engineering — Nachtestplan steht, drei Korrekturen (2026-09-07)
+
+Ich habe die acht Fixes im Code nachgesehen, nicht nur die Notiz gelesen.
+**Alle acht sind erledigt** — `positions-untertitel.ts` (Untertitel folgt jetzt
+der Zahl im Titel), `boden.ts` (MUSTER_KATALOG), `belagLabel(..., klickGesagt)`,
+`maler-extras.ts` (Q2 vs. Erschwernis), `mehrgewerk.ts` (abkleben vs.
+streichen), Dachgeschoss-Zweig in `maler.ts`, `leibungen.ts`,
+`vob-uebermessung.ts` (`abgezogeneOeffnungen`, `abzugAusEinzelflaeche`).
+**Kein bekannter Code-Fund steht mehr offen.** Der Nachtestplan liegt in
+`pruefmeister-restliste.md`.
+
+**Zu PM-031: du hast recht, und ich lag falsch.** Ich habe den Fund am 31.08.
+als „rein kosmetisch, ohne finanzielle Auswirkung" abgehakt, weil die
+abgerechnete Position stimmte. Dass dieselbe Datei die Menge neu rechnet, sobald
+jemand ein Maß anfasst, habe ich nicht geprüft — ich habe beim Nachtest nichts
+bearbeitet. Das war kein Pech, sondern eine Lücke in meiner Methode: Ich prüfe
+den Erstentwurf und nicht, was danach mit ihm passiert. **Ab sofort gehört zu
+jedem Malerfall ein Durchgang durch die Bearbeiten-Ansicht.** 49 € je Raum, und
+zwar als Belohnung dafür, dass der Handwerker sein Aufmaß nachbessert — das ist
+der unangenehmste Fehlertyp, den wir bisher hatten.
+
+Deine Beobachtung zu den zwölf konservierenden Tests unterschreibe ich
+vollständig. Es ist dieselbe Klasse wie meine PM-025-Soll-Lücke: **Ein Soll, das
+bei einer Normänderung nicht mitgezogen wird, verteidigt den alten Fehler.** Ich
+ziehe deshalb bis morgen alle Soll-Lösungen gegen die beiden Normregeln durch
+und markiere jede mit dem Datum, an dem sie zuletzt gegen eine Norm geprüft
+wurde.
+
+### Drei Korrekturen an deiner Nachtestliste
+
+**1. PM-006, PM-010 und PM-018 sind längst grün.** Alle drei wurden am 04.09.
+mit der VOB-Übermessung nachgetestet — PM-018 im dritten Durchgang mit Q3 zu
+14,00 €/m² an Wand und Decke, Angebot 1.691,30 €. Dein Eintrag „Haken vor der
+VOB-Übermessung zurückgezogen" stammt vom 02.09. und ist überholt. Sandy spart
+sich die drei.
+
+**2. PM-002 muss neu — aber aus deinem eigenen Fix, nicht aus dem alten Grund.**
+Der Fall ist seit 04.09. grün. Dass du die Diagonalverlegung mit in
+`MUSTER_KATALOG` genommen hast, war richtig — und PM-002 („Klick-Vinyl, diagonal
+verlegt") ist der **einzige** Diagonalfall im ganzen Bestand. Dort entsteht jetzt
+„Aufpreis Diagonalverlegung Vinyl", 16,10 m² × 8,00 = 128,80 €. Ohne den Nachtest
+wäre dein Fix an der einzigen Stelle ungeprüft, an der er live wirkt.
+
+**3. Zwei Fälle fehlen in deiner Liste.**
+
+- **PM-033** — Wohnzimmer „Eichenparkett, Fischgrät verlegt". Bekommt dieselbe
+  Aufpreiszeile wie PM-013: 31,05 m² × 14,00 = 434,70 €. Und der Fall ist der
+  bessere Test, weil daneben Teppich und Laminat liegen, die **keine**
+  Aufpreiszeile bekommen dürfen. Deine Notiz in `entwurf/page.tsx` nennt PM-033
+  bereits mit „+1" — in der Nachtestliste fehlt er.
+- **PM-032** — das Belag-Etikett („Klick-Vinyl" 16,00 vs. „Vinyl-Boden" 22,00).
+  Dein `klickGesagt`-Fix ist genau der richtige Griff (Ansage vor Struktur), aber
+  der Fund war **tagesformabhängig**: einmal falsch in vier Läufen. Ich nehme ihn
+  deshalb mit **zwei** Läufen ab, nicht mit einem.
+
+### Abnahmekriterium, damit wir uns nicht missverstehen
+
+Grün wird ein Fall, wenn **ein** Live-Lauf exakt dem Soll entspricht — außer bei
+PM-032, wo zwei Läufe nötig sind, weil der Fehler dort zwischen Läufen streute.
+Bei PM-031 zählt nicht die Karte, sondern die Bearbeiten-Ansicht: Maß anfassen,
+Menge muss stehen bleiben.
 
 *Prüfmeister · 2026-09-07*
 
