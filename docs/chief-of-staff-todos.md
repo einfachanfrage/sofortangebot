@@ -4070,24 +4070,82 @@ CoS-L-005 in `chief-of-staff-legal-todos.md` angestoßen, aber nicht
 abgewartet, weil VOB Abrechnungs-/Mess-Normen regelt und keine
 Handelsüblichkeit für Mindestauftragswerte, also vermutlich nichts findet.
 
-**Entscheidung: ein einziger Mindestauftragswert statt zwei getrennter
-Stellschrauben.** Liegt die berechnete Angebotssumme unter **180 €**, wird
-sie automatisch auf 180 € angehoben — mit einem sichtbaren Hinweis
-„Mindestauftragswert (Anfahrt, Vorbereitung)" statt eines für den Kunden
-unerklärten Sprungs in der Summe. Keine separate Anfahrpauschale plus
-separater Schwellenwert, das wären zwei Stellschrauben für dasselbe
-Problem und schwerer nachvollziehbar in der Angebots-Aufschlüsselung.
+**Entscheidung (Struktur): ein einziger Mindestauftragswert statt zwei
+getrennter Stellschrauben.** Keine separate Anfahrpauschale plus separater
+Schwellenwert, das wären zwei Stellschrauben für dasselbe Problem. Gilt für
+jede kleine Einzelposition, nicht nur Leibungen, wie von dir vorgeschlagen.
 
-Warum 180 €: dein eigenes Beispiel (72 € für einen halben Tag Gerüst,
-Abdecken, Anfahrt) zeigt, dass der reale Aufwand deutlich über dem m²-Preis
-liegt. 180 € ist kein aus einer Norm abgeleiteter Wert, sondern eine grobe
-Kalkulation aus Mindest-Stundensatz + Anfahrt für einen kleinen
-Einzeleinsatz — bewusst niedrig genug angesetzt, um keinen Kunden
-abzuschrecken, der ehrlich nur eine kleine Leistung braucht. Das ist ein
-einzelner Konfigurationswert, keine Architekturentscheidung — bitte so
-bauen, dass er sich mit einer Zahl anpassen lässt, falls sich 180 € in der
-Praxis als zu hoch oder zu niedrig erweist. Gilt für jede kleine
-Einzelposition, nicht nur Leibungen, wie von dir vorgeschlagen.
+### Korrektur (07.09.2026) — nach Head of Legals Antwort auf CoS-L-005
+
+Mein erster Entwurf oben („automatisch auf 180 € angehoben, mit sichtbarem
+Hinweis") war handwerklich falsch, und Legal hat es zu Recht korrigiert:
+das war strukturell genau der stille Aufschlag auf die Summe, den ich in
+meiner eigenen Antwort an dich als Risiko benannt hatte, nur mit einem Label
+versehen statt als echte Position gebaut. Zwei Punkte werden geändert, der
+Wert bleibt:
+
+1. **Eigene, benannte Position mit Häkchen — kein automatischer Sprung in
+   der Summe.** Zeile heißt „Mindestauftragswert" oder „Kleinauftragszuschlag"
+   mit dem Differenzbetrag, erscheint als eigene Zeile im Angebot, **nicht**
+   als stiller Aufschlag auf den m²-Preis (sonst Aufmaß nicht mehr
+   nachrechenbar, dasselbe Problem wie VOB-007, plus § 5a UWG-Risiko). Der
+   Handwerker sieht sie vor dem Versenden und kann sie abhaken/entfernen —
+   genau wie bei den KI-Rechenfehlern darf die Software nichts setzen, wofür
+   am Ende er geradestehen muss, ohne es bewusst gewählt zu haben.
+2. **Als Zeile im Angebot, nicht als Klausel in den AGB.** Eine Preisabrede
+   im konkreten Angebot ist der AGB-Kontrolle entzogen (§ 307 Abs. 3 S. 1
+   BGB), eine AGB-Klausel wäre kontrollfähig. Bitte nicht in die AGB
+   schreiben.
+
+**180 € bleibt der Arbeitswert, aber als Betriebseinstellung, nicht als
+Konstante.** Legal hat nachgerechnet: bei 55–65 €/h Stundenverrechnungssatz
+sind 180 € rund drei Arbeitsstunden, dein Beispiel (halber Tag) liegt eher
+bei 220–260 €. Regional ist die Spanne der Stundensätze 44 € (MV) bis 90 €
+(BY/BW) — mehr als doppelt so breit wie jeder Standardwert sinnvoll abdecken
+kann. Ein Betrieb in München braucht einen anderen Wert als einer in
+Mecklenburg. Bitte als **einstellbaren Wert pro Betrieb** bauen, 180 € als
+vorausgefüllter Vorschlag bei der Ersteinrichtung, kein globaler Fixwert im
+Code.
+
+**Sequenzierung:** Dein Beispiel waren ausgerechnet Außenleibungen, 1,6 m² —
+und genau bei Leibungen ist offen, ob die Position in m² oder lfdm läuft
+(Frage 8 an den Prüfmeister, Punkt 3 oben, noch nicht umgesetzt). Bitte
+beides zusammen einplanen, sonst wird die Kleinauftragslogik auf eine
+Einheit gebaut, die kurz danach wechselt.
+
+**Noch offen, geht an Sandy:** Legal legt eine Alternative daneben (Regie-
+/Stundenlohnarbeit statt Mindestauftragswert), die ich nicht selbst
+entscheide, weil sie Tonalität/Markenwirkung betrifft, nicht nur Struktur —
+siehe Chat.
+
+### Sandys Entscheidung zur Tonalität (07.09.2026) — Punkt 4 ist jetzt fertig zum Bauen
+
+Sandy bleibt bei der Mindestauftragswert-Position, nicht bei
+Stundenlohnarbeit — meine Begründung (Stundenlohn wäre ein größerer Umbau,
+eine Schätzung statt der bisherigen präzisen m²-Rechnung, verwässert einen
+Teil des Kernversprechens) hat sie mitgetragen. Sie übernimmt auch meinen
+Vorschlag zum Wortlaut, um Legals „liest sich wie eine Strafgebühr" zu
+entschärfen.
+
+**Endgültiger Zuschnitt, bitte so bauen:**
+
+- Zeilentext: **„Anfahrt & Vorbereitung"** (nicht „Mindestauftragswert" oder
+  „Kleinauftragszuschlag" — beschreibt den echten Aufwand statt eine
+  Bürokratie-/Strafgebühr-Anmutung zu erzeugen). Betrag als eigene Zeile im
+  Angebot mit dem Differenzbetrag, kein stiller Aufschlag auf den m²-Preis.
+- Auslöser, Betrag und Sichtbarkeit wie oben unter „Korrektur" spezifiziert:
+  eigene Position mit Häkchen, Handwerker sieht und kann entfernen, im
+  Angebot verankert statt in den AGB, Schwellenwert als Betriebseinstellung
+  mit 180 € als Vorschlagswert bei der Ersteinrichtung.
+- Sequenzierung mit der Leibungs-Einheit (Frage 8, Punkt 3 oben) weiterhin
+  beachten.
+
+**Damit ist Punkt 4 vollständig entschieden und geht an dich zur Umsetzung.**
+Falls dir beim Bauen aus rechtlicher Transparenzsicht (§ 5a UWG) Bedenken zum
+Wortlaut „Anfahrt & Vorbereitung" kommen — Legal wollte ursprünglich einen
+Begriff, der klarer sagt, was die Zeile ist —, kurz mit Head of Legal
+gegenchecken, das ist keine Bauverzögerung wert. Sonst: kein weiteres
+Freigabe-Gate mehr nötig, einfach bauen.
 
 *Chief of Staff · 2026-09-07*
 
