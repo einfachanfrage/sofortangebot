@@ -1047,7 +1047,7 @@ war der richtige nächste Schritt, nicht meiner.
 | ID | Thema | Status |
 |---|---|---|
 | PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: Ausschluss-Fix hält (keine Decke, Fenster-Zähler konsistent). Wandfläche jetzt 46,5 m² statt 42,21 m² — korrekt nach der neu eingeführten VOB-Übermessungsregel, kein Bug — Details im Archiv ✅ **Nachtest 05.09. grün:** Wand 46,50 m², Sockelleisten **18,60 lfdm** (VOB-012), keine Decke |
-| PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest ist vom 16.08. und lief damit VOR der VOB-Übermessung — Wandbrutto 39,00 m², Restwände 29,90 m² statt der damals abgenommenen 26,81 m². Muss neu eingesprochen werden. Die beiden ursprünglichen Bugs (Akzentwand-Seite, Sockelleisten-Türabzug) bleiben bestätigt behoben ✅ **Nachtest 04.09. grün:** Akzentwand 9,10 · Restwände 29,90 · Vinyl diagonal 16,10 · Sockelleisten **15,00 lfdm** · Trittschall 14,00. Korrektur an meinem eigenen Soll: **keine Deckenposition** — im Diktat steht keine Decke |
+| PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | 🟡 **Nachtest 07.09.:** alle Mengen exakt, Klick-Vinyl zu 16,00 € live bestätigt. Offen: Aufpreis Diagonalverlegung (128,80 €) fehlt — Fix nicht deployed | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest ist vom 16.08. und lief damit VOR der VOB-Übermessung — Wandbrutto 39,00 m², Restwände 29,90 m² statt der damals abgenommenen 26,81 m². Muss neu eingesprochen werden. Die beiden ursprünglichen Bugs (Akzentwand-Seite, Sockelleisten-Türabzug) bleiben bestätigt behoben ✅ **Nachtest 04.09. grün:** Akzentwand 9,10 · Restwände 29,90 · Vinyl diagonal 16,10 · Sockelleisten **15,00 lfdm** · Trittschall 14,00. Korrektur an meinem eigenen Soll: **keine Deckenposition** — im Diktat steht keine Decke |
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
@@ -6774,6 +6774,68 @@ Grün wird ein Fall, wenn **ein** Live-Lauf exakt dem Soll entspricht — außer
 PM-032, wo zwei Läufe nötig sind, weil der Fehler dort zwischen Läufen streute.
 Bei PM-031 zählt nicht die Karte, sondern die Bearbeiten-Ansicht: Maß anfassen,
 Menge muss stehen bleiben.
+
+*Prüfmeister · 2026-09-07*
+
+
+---
+
+## Block A abgebrochen — die Fixes von heute sind nicht live (2026-09-07)
+
+**Vier Fälle eingesprochen, vier Mal derselbe Befund: die Musterverlegung wirkt
+weiterhin nur auf den Verschnitt, nicht auf den Preis.** Der Fix dafür ist
+geschrieben und richtig — er läuft nur nicht auf dem Server, gegen den Sandy
+spricht.
+
+### Der Nachweis
+
+| Quelle | Stand |
+|---|---|
+| Produktions-Deployment (Vercel, `dpl_CQ7wyjzq9oYytkTw8vHnGREm7NzX`, READY) | Commit **c6b1f68** |
+| `origin/main` | Commit **c6b1f68** |
+| Lokaler Arbeitsbaum | `boden.ts`, `positions-untertitel.ts`, `raum-geometrie.ts`, `vob-uebermessung.ts` **geändert, nicht committet** |
+
+c6b1f68 ist mein eigener Doku-Commit zu PM-011/PM-012 von gestern Abend. Alles,
+was heute entstanden ist — MUSTER_KATALOG, der Untertitel-Fix, die
+Bearbeiten-Ansicht — liegt unversioniert im Arbeitsbaum. **Es kann live gar
+nicht wirken.**
+
+### Was die vier Läufe trotzdem gezeigt haben
+
+Die Mengen sind in allen vier Fällen **exakt**, ohne eine einzige Abweichung:
+
+| Fall | Mengen | offen |
+|---|---|---|
+| PM-025 | 16,10 m² · 15,00 lfdm | Titel „Vinyl-Boden“ 22,00 € statt `Designbelag im Fischgrätmuster kleben` 36,00 € → **225,40 €** |
+| PM-013 | Parkett 41,40 · Dehnungsfuge 45,00 € · Flur 35,36 / 9,00 / 9,00 / 13,60 | Aufpreiszeile Fischgrät fehlt → **579,60 €** |
+| PM-033 | 31,05 / 14,40 / 7,88 · Trittschall 7,50 nur im Flur · 2 Schienen · keine Sockelleisten | Aufpreiszeile Fischgrät fehlt → **434,70 €** |
+| PM-002 | Akzentwand 9,10 · Restwände 29,90 · **Klick-Vinyl 16,10 zu 16,00 €** · Sockel 15,00 · Trittschall 14,00 · keine Decke | Aufpreis Diagonalverlegung fehlt → **128,80 €** |
+
+Zusammen **1.368,50 €**, die in vier kleinen Aufträgen fehlen — und zwar in die
+für den Handwerker teure Richtung.
+
+**Ein Fix ist dabei live bestätigt worden:** PM-002 zeigt „Klick-Vinyl … 16,00 €“
+statt „Vinyl-Boden … 22,00 €“. `klickGesagt` sitzt im deployten Stand und
+funktioniert. PM-032 selbst braucht trotzdem seine zwei Läufe — dort geht es um
+die Stabilität über drei Räume, nicht um einen Raum.
+
+### Der eigentliche Befund ist der Prozess, nicht der Code
+
+Ich habe heute Vormittag im Arbeitsbaum nachgesehen, ob die acht Fixes da sind,
+sie gefunden, und daraufhin einen Nachtestplan geschrieben. **Ich habe nicht
+geprüft, ob sie auf dem Server liegen, gegen den getestet wird.** Dieselbe Klasse
+Fehler wie meine PM-025-Soll-Lücke und wie die zwölf konservierenden Tests: die
+richtige Frage an der falschen Stelle gestellt.
+
+**Ab sofort gilt vor jedem Nachtestblock:** Deployment-SHA gegen den Commit
+prüfen, der den Fix enthält. Ist der Fix nicht im Deployment, wird nicht
+gesprochen. Das kostet zwei Minuten und hat heute vier Läufe gekostet.
+
+**An Product Engineering:** committen und pushen, dann geht es weiter. Die vier
+Fälle stehen bereit, die Soll-Zahlen oben sind auf den Cent gerechnet.
+
+**Status:** PM-025 🟡 · PM-013 🟡 · PM-033 🟡 · PM-002 🟡 — alle vier mit exakten
+Mengen, alle vier blockiert durch dasselbe fehlende Deployment.
 
 *Prüfmeister · 2026-09-07*
 
