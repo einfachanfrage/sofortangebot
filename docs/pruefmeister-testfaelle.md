@@ -809,7 +809,7 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-010 | Sockelleisten-Doppel-Falle | 🟡 **Haken zurückgezogen (2026-09-02):** Nachtest vom 20.08., vor der VOB-Übermessung — Wandfläche jetzt **33,80 m²** statt 30,71 m². Die vier Sockelleisten-Funde bleiben behoben, nur die Wandzahl ist überholt. Bisheriger Stand: Nachtest (2026-08-20): „Sockelleisten entfernen" jetzt live bestätigt behoben (12,1 lfdm, exakt Soll) — damit alle vier ursprünglichen Funde geklärt (Bodenaustausch weg, Sockelleisten streichen behoben, 350-Bug akzeptierte Design-Entscheidung, Sockelleisten entfernen jetzt auch). Offen bleibt nur die fehlende Preishinterlegung dafür — Details im Archiv ✅ **Nachtest 04.09. grün:** Wand **33,80 m²**, alle drei Sockelleisten-Zeilen **13,00 lfdm** (montieren, streichen, entfernen), kein „abkleben", keine Phantompositionen. „drei fünfzig" korrekt als 3,50. Kleiner Fund: Karte meldet 5 Positionen, listet 4, Entwurf hat 6 ✅ **Zweiter Durchgang 04.09. grün** — Karten-Zähler stimmt jetzt (5 gemeldet, 5 gelistet) |
 | PM-011 | Vollflächenspachtelung Q2 vs. Kleinreparatur (Arbeitszimmer) | ✅ Details im Archiv. Offene fachliche Frage zur möglichen Doppel-Erschwernis (Untergrund + Altbau neben Q2-Spachtelung) siehe dort 🟡 **Nachtest 05.09.:** Mengen exakt, Sockelleisten 14,40 lfdm. **Befund: „Erschwerniszuschlag schwieriger Untergrund" (10 %, 98,10 €) steht neben der Q2-Vollflächenspachtelung** — die am 02.09. entschiedene Regel ist nicht umgesetzt. Soll-Korrektur: die Grundierung ist nach Q2 fachlich geboten und als Vorschlag richtig gekennzeichnet |
 | PM-012 | Sockelleisten-Falle umgekehrt: nur streichen, ausdrücklich nicht neu (Esszimmer) | ✅ Nachtest (2026-08-20): „Sockelleisten streichen" jetzt live bestätigt behoben (14,1 lfdm, exakt Soll), nach fünf gescheiterten Versuchen. Kein Boden-Phantom, Ausschluss weiterhin sauber respektiert — Details im Archiv 🟡 **Nachtest 05.09.:** Mengen exakt, Sockelleisten 15,00 lfdm. **Befund: „abkleben" und „streichen" stehen für dieselbe Leiste nebeneinander** — wer die Leiste streicht, klebt sie nicht ab. Dazu Karte 3 Positionen, Entwurf 4 |
-| PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ✅ Details im Archiv |
+| PM-013 | Zwei Räume, getrennte Gewerke + Fischgrät + Dehnungsfuge (Wohnzimmer/Flur) | ✅ Details im Archiv ✅ **Nachtest 05.09. grün:** Fischgrät 41,40 m², Dehnungsfuge mit Preis, Flur-Wand 35,36 m², Sockelleisten **13,60 lfdm**. Beide Ausschlüsse halten |
 | PM-014 | Doppelte Positionen + instabile Summen bei Angebot 2026-0016 (live entdeckt, kein geplanter Testfall) | 🟡 Dubletten-Fix bestätigt (Doppelklick-Test). Echte Race Condition jetzt mit DB-Constraint geschlossen (2026-08-20, Sandys Go, siehe Fix-Update 2) — Migration live, Code-Fix grün gegen Testsuite, gezielter Gleichzeitigkeits-Nachtest steht noch aus |
 | PM-015 | Preisdatenbank praktisch leer bei „manuell"-Onboarding + Anzeige-Bug versteckt Nachlade-Button (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | 🟡 Beide Ursachen gefunden und gefixt, geprüft live im Code korrekt. **Klargestellt (2026-08-19):** der PM-011-„alle Preise fehlen"-Fund war KEIN neuer, dritter Bug — derselbe Nachtest lief auf demselben, schon damals betroffenen Konto „Lisa Schein Malerbetrieb", das vor dem Fix (17.08.) angelegt wurde und dadurch nicht rückwirkend versorgt ist, siehe „Systemischer Fund" Punkt 5. Für alle NEU angelegten Konten ab 18.08. gilt der Fix nachweislich. **Korrektur (2026-08-19, siehe PM-016):** der 18.08.-Fix selbst war kaputt — der Onboarding-Insert scheiterte durch denselben Bug wie PM-016 komplett und unbemerkt (Fehler wurde nicht geprüft). „Lisa Schein" ist inzwischen live nachversorgt |
 | PM-016 | „Standardpreise importieren" auf `/preise` schlägt fehl: „Die Standardpreise konnten nicht vollständig ergänzt werden." (live entdeckt am Konto „Lisa Schein Malerbetrieb", kein geplanter Testfall) | ✅ Root-Cause gefunden und gefixt (2026-08-19), Konto live nachversorgt (341 Positionen), gleicher Bug auch im Onboarding-Seeding gefixt |
@@ -6208,6 +6208,69 @@ Dieselbe Familie wie bei PM-030 und PM-010.
 
 **Stand Stufe 4:** PM-001 ✅ · PM-011 🟡 · PM-012 🟡 · offen: PM-013, PM-021,
 PM-022, PM-025, PM-026.
+
+---
+
+### PM-013 — Nachtest (Sandy, 2026-09-05, 09:42): grün
+
+Angebot **2.311,12 € netto**.
+
+| Raum | Position | Ist |
+|---|---|---|
+| Wohnzimmer | Fertigparkett Fischgrät inkl. 15 % | 41,40 m² ✅ |
+| Wohnzimmer | **Dehnungsfuge einbauen** | 1 Stück × **45,00 €** ✅ jetzt mit Preis |
+| Flur | Wandflächen streichen 2x | 35,36 m² ✅ (Tür nicht abgezogen) |
+| Flur | Deckenfläche streichen 2x | 9,00 m² ✅ |
+| Flur | Boden schützen | 9,00 m² ✅ |
+| Flur | Sockelleisten abkleben | **13,60 lfdm** ✅ VOB-012 |
+
+Beide Kern-Tests dieses Falls halten: **keine Wand- oder Deckenposition im
+Wohnzimmer** („an den Wänden machen wir nix") und **keine Boden-Position im
+Flur** („da wird nix am Boden gemacht"), obwohl in beiden Sätzen das jeweils
+andere Gewerk vorkommt. Die Dehnungsfuge hat inzwischen einen hinterlegten
+Preis — früher stand sie mit 0,00 € da.
+
+**Stand Stufe 4:** PM-001 ✅ · PM-011 🟡 · PM-012 🟡 · PM-013 ✅ · offen:
+PM-021, PM-022, PM-025, PM-026.
+
+---
+
+## Sammelbefund: Die Aufnahme-Karte zeigt nicht, was im Entwurf landet
+
+Vier Belege in zwei Tagen, deshalb bündele ich das statt es weiter einzeln zu
+notieren:
+
+| Fall | Karte | Entwurf | Was erst im Entwurf dazukommt |
+|---|---|---|---|
+| PM-010 | 5 gemeldet, 4 gelistet | 6 | „Sockelleisten entfernen (alt)" |
+| PM-012 | 3 | 4 | „Sockelleisten streichen" |
+| PM-013 | 5 | 6 | „Dehnungsfuge einbauen" |
+| PM-030 | 4 | **3** | „Sockelleisten abkleben" **fällt weg** |
+| PM-033 | Wohnzimmer 1 | Wohnzimmer 2 | „Trittschalldämmung" |
+
+**Das Muster:** Die Karte zeigt das Ergebnis der Extraktion. Positionen, die
+erst in der Vollständigkeitsprüfung entstehen — Dehnungsfuge, Trittschall,
+Sockelleisten streichen und entfernen —, tauchen dort nicht auf. Der Nutzer
+prüft also auf der Karte **nicht dasselbe**, was er danach im Entwurf bekommt.
+
+**Warum das mehr ist als Kosmetik:** Die Karte ist der Moment, in dem das
+Produkt sagt „bereit für den Entwurf". Genau dort schaut der Handwerker hin,
+bevor er den Knopf drückt — wir haben ihn selbst dazu erzogen. Wenn dort etwas
+fehlt, das später berechnet wird, prüft er die falsche Liste. Und bei PM-030 ist
+es umgekehrt: Da **verschwindet** eine Position zwischen Karte und Entwurf, und
+das merkt niemand.
+
+**Mein Vorschlag:** Die Karte zeigt, was der Entwurf enthalten wird —
+einschließlich der ergänzten Positionen, erkennbar als Vorschlag markiert. Wenn
+das technisch nicht geht, weil die Ergänzung erst später läuft, dann muss die
+Zeile „X Positionen erkannt — bereit für den Entwurf" ehrlicher heißen: **„X
+Positionen aus deiner Aufnahme — dazu kommen ggf. Vorschläge im Entwurf."**
+Lieber eine Zeile weniger versprechen als eine Liste zeigen, die nicht gilt.
+
+**Verwandtschaft:** Das ist die alte PD-004-Familie („X Positionen erkannt" ≠
+geliefert), die bei PM-010 und PM-013 schon im August auffiel. Sie ist nie
+verschwunden, sie ist nur seltener geworden — und mit dem raumweisen Umbau vom
+03.09. hat sich die Zahl der nachträglich ergänzten Positionen eher erhöht.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
