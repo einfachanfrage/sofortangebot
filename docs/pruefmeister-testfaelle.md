@@ -7014,5 +7014,156 @@ er belegt war** — und er war der einzige offene Punkt mit rechtlicher Schärfe
 
 *Prüfmeister · 2026-09-07*
 
+
+---
+
+## Block B, zweite Hälfte — fünf Fälle, alle alten Funde behoben, vier neue (2026-09-07)
+
+**Jeder einzelne Fund, der in diese fünf Fälle hineinging, ist behoben.** Was
+unten steht, ist neu und in vier von fünf Fällen an derselben Wurzel: **Positionen
+entstehen jetzt richtig — aber die Katalog- und Etikettenschicht ist nicht
+mitgewachsen.**
+
+### ✅ PM-011 — grün, F4 bestätigt
+
+Wand 36,00 m² (14,40 × 2,50) · Boden schützen 12,80 · Sockelleisten abkleben
+14,40 lfdm · Spachtel Q2 36,00 × 9,00 € · Grundierung 36,00 × 6,00 € als
+Vorschlag — alles exakt.
+
+**Der Zuschlag steht jetzt genau einmal da:** „Erschwerniszuschlag Altbau, 20 % ×
+9,81 € = 196,20 €". Kein „schwieriger Untergrund" mehr neben der
+Vollflächenspachtelung. Nachgerechnet: Bemessungsgrundlage 216,00 + 414,00 +
+324,00 + 15,36 + 11,52 = 980,88 → 9,81 €/Prozentpunkt. Stimmt auf den Cent.
+
+### 🟡 PM-012 — der Fix sitzt, das Etikett nicht
+
+Wand 38,25 m² (15,00 × 2,55) · Boden schützen 13,50 · **„Sockelleisten
+streichen" 15,00 lfdm, und kein „abkleben" daneben.** Genau drei Positionen. F5
+ist bestätigt, nach fünf Anläufen.
+
+**Neuer Fund PM-012-A:** „Sockelleisten streichen" trägt das Etikett
+**„Vorschlag"**. Im Diktat steht aber: *„die sollen nur nochmal mitgestrichen
+werden, in der gleichen Farbe wie die Wand"* — das ist ein ausdrücklicher
+Auftrag, kein Vorschlag der Software. Ein Vorschlag lädt zum Wegklicken ein; hier
+wären das 52,50 €, die der Kunde bestellt hat. Die Engine kennt die
+Unterscheidung (`ausdruecklichGenannt` → `automatisch_ergaenzt: false`) — auf
+diesem Weg greift sie nicht.
+
+### 🟡 PM-030 — drei Funde behoben, ein vierter sichtbar geworden
+
+| | Ist | Soll | |
+|---|---|---|---|
+| Kniestockwände streichen 2x | 17,00 m² | 17,00 | ✅ |
+| Dachschrägen streichen 2x | **18,00 m²** | 18,00 | ✅ **kein Dachfensterabzug mehr** |
+| Boden schützen | 18,00 m² | 18,00 | ✅ |
+| Sockelleisten abkleben | **17,00 lfdm** | 17,00 | ✅ **verschwindet nicht mehr** |
+
+Und die Raumhöhe zeigt kein rotes „!" mehr — sie wird im Dachgeschoss gar nicht
+erst verlangt. Alle drei Befunde vom 04.09. sind zu.
+
+**Neuer Fund PM-030-A: „Wände" wurde beauftragt und ist nicht im Angebot.** Das
+Diktat sagt *„**Wände**, Schrägen und Kniestock alles zweimal streichen"* — drei
+Bauteile. Im Angebot stehen zwei. Ein Dachzimmer mit Kniestock hat neben den
+Kniestockwänden und den Schrägen noch die **Giebelwände**, und die sind hier
+weder gerechnet noch erfragt worden. Rechnen kann das Tool sie nicht, weil weder
+Firsthöhe noch Raumhöhe genannt sind — **also gehört eine Rückfrage hin.**
+Dieselbe Sorte Loch wie bei PM-037: ausdrücklich beauftragt, keine Position,
+keine Rückfrage, kein Hinweis.
+
+**Kleiner Fund PM-030-B:** „Dachschrägen streichen 2x" hat weder Untertitel noch
+Materialzeile, „Kniestockwände streichen 2x" hat beides (＋ Wandfarbe). Für 18 m²
+fehlt damit das Material.
+
+### 🟡 PM-037 — VOB-013 ist erstmals live bewiesen, aber die Position kostet 0,00 €
+
+| | Ist | Soll | |
+|---|---|---|---|
+| Wandflächen streichen 2x | 46,80 m² | 46,80 | ✅ |
+| **Fenster Innenleibungen streichen** | **1,60 m²** | 1,60 | ✅ dreiseitig, nicht rundherum |
+| **Fensterbänke streichen** | **0,60 m²** | 0,60 | ✅ einmal, nicht doppelt |
+| Boden schützen | 20,00 m² | 20,00 | ✅ |
+| Sockelleisten abkleben | 18,00 lfdm | 18,00 | ✅ |
+
+**Das ist der Beweis, auf den VOB-013 seit dem 04.09. gewartet hat.** Die Leibung
+wird dreiseitig gerechnet (2 × (1,20 + 2×1,00) × 0,25 = 1,60), die Fensterbank
+steckt nicht zusätzlich darin. Fachlich sauber nach DIN 18363 5.2.3.
+
+**Neuer Fund PM-037-A: „Fenster Innenleibungen streichen — Preis fehlt in deiner
+Preisdatenbank", 1,60 m² × 0,00 € = 0,00 €.** Das ist keine Lücke in Sandys
+Konto, sondern im **Standardkatalog**: `default-prices.ts` kennt „Fensterbänke
+streichen" (45,00 €/m², Zeile 3453), aber **keinen einzigen Maler-Eintrag für
+Leibungen streichen**. Die 24 Laibungs-Einträge, die es gibt, gehören alle zu
+Putz, Fassade, Schreiner oder Fenstertausch.
+
+Damit erzeugt die Engine ab sofort auf **jedem** Malerangebot mit
+mitgestrichenen Leibungen eine Null-Euro-Position. Der Handwerker streicht sie
+und bekommt sie geschenkt.
+
+**Mein Vorschlag:** `Fensterleibungen streichen`, Kategorie „Maler – Anstrich
+Innen", **45,00 €/m²** — dasselbe wie die Fensterbank, weil es dieselbe Art
+Kleinteilarbeit ist: viel Kante, wenig Fläche, jede Bewegung von Hand. Damit
+läge PM-037 bei 1,60 × 45,00 = 72,00 €.
+
+Die Einheitenfrage bleibt davon unberührt: Ich hatte Legal geantwortet, dass
+**lfm oder je Fenster** die ehrlichere Einheit wäre. Solange die Engine m²
+liefert, muss der Katalog m² haben — beides zu ändern ist ein eigener Schritt.
+
+### 🟡 PM-031 — der Erklärtext stimmt, das Bearbeiten kippt den Fassaden-Chip
+
+**Vorher, und das ist die gute Nachricht:**
+
+> „So gerechnet: 10,00 m × 5,00 m = 50,00 m² · 2 Fenster bis 2,5 m² nicht
+> abgezogen (VOB)"
+
+Erklärung und Position zeigen erstmals dieselbe Zahl. Der Widerspruch aus
+PM-008/PM-031 ist weg, die VOB-Regel steht sogar im Text. Fassadenfläche 50,00 ×
+9,00 = 450,00 €, Zuschlag Raumhöhe 15 % × 4,50 = 67,50 € — beides exakt.
+
+**Der Bearbeiten-Test (Wandlänge 10 → 12 m):**
+
+| | erwartet | tatsächlich |
+|---|---|---|
+| Fassadenfläche | **60,00 m²** (12,00 × 5,00) = 540,00 € | **50,00 m²** = 450,00 € |
+| Chip-Kopf | Wand / Fassade · Wandlänge 12 m · Wandhöhe 5 m | „Raummaße · **!** × 12 m · Raumhöhe 5 m · Türen **!** · Fenster 2" |
+
+Zwei Dinge auf einmal:
+
+1. **Die Menge folgt der Korrektur nicht.** Der alte Fehler war, dass die Menge
+   beim Bearbeiten *falsch* neu gerechnet wurde (49 € je Raum weg). Jetzt wird
+   sie *gar nicht* neu gerechnet. Die Richtung hat sich gedreht, das Ergebnis
+   bleibt falsch: Wer sein Aufmaß nachbessert, bekommt es nicht ins Angebot —
+   hier 90,00 € zu wenig.
+2. **Der Fassaden-Chip verliert seine Natur.** Aus „Wand / Fassade" wird ein
+   Raum, Wandlänge und Türen stehen auf „!". Eine Fassade hat keine Türen und
+   keine Raumhöhe — das ist derselbe Kategorienfehler wie „Raumhöhe !" im
+   Dachgeschoss (PM-030, Befund 3), nur an der Fassade und beim Bearbeiten.
+
+**Eine offene Frage an Sandy, bevor der Engineer sucht:** War das der Stand
+*direkt nach der Eingabe* oder *nach dem Speichern*? Wenn die Menge erst beim
+Speichern nachzieht, ist Punkt 1 halb so schlimm und nur die Anzeige irreführend.
+Punkt 2 bleibt so oder so.
+
+### Was diese fünf Läufe zusammen zeigen
+
+Alle sieben Altfunde sind zu. Die vier neuen liegen **hinter** der Rechnung, in
+der Schicht danach:
+
+| Fund | Art |
+|---|---|
+| PM-012-A „Vorschlag" auf einer bestellten Leistung | Etikett |
+| PM-030-A „Wände" ohne Position und ohne Rückfrage | Scope-Lücke |
+| PM-030-B / Aufpreiszeilen / PM-025 | Material-Mapping kennt neue Titel nicht |
+| PM-037-A Leibungen ohne Katalogeintrag | Standardkatalog |
+
+Das ist kein Zufall, sondern die Folge eines produktiven Tages: Heute sind sechs
+neue Positionsarten entstanden — Fischgrät, Diagonal-Aufpreis, Leibungen,
+Fensterbänke, Dachschrägen im neuen Zweig, Sockelleisten streichen. **Jede neue
+Positionsart braucht drei Dinge: eine Menge, einen Katalogpreis und ein
+Material.** Bisher ist nur das erste mitgewachsen.
+
+**Status:** PM-011 ✅ · PM-012 🟡 · PM-030 🟡 · PM-037 🟡 · PM-031 🟡
+
+*Prüfmeister · 2026-09-07*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
