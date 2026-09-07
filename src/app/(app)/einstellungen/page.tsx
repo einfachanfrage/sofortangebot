@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { MINDESTAUFTRAG_BEZEICHNUNG, MINDESTAUFTRAGSWERT_VORSCHLAG } from '@/lib/gewerke-config'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -463,9 +464,16 @@ export default function EinstellungenPage() {
                 />
                 <span className="font-bold text-anthracite/50 shrink-0">€ netto</span>
               </div>
+              {/* CoS + Sandy, 07.09.2026: Hier stand „erscheint eine Warnung
+                  mit Vorschlag zur Kleinstauftragspauschale" — passiert ist
+                  nie etwas, die Einstellung wurde nirgends gelesen. Jetzt
+                  beschreibt der Text, was das Produkt tatsächlich tut. */}
               {mindestauftragswert > 0 ? (
                 <p className="text-xs text-anthracite/40 font-semibold mt-1.5">
-                  Bei Angeboten unter {mindestauftragswert} € erscheint eine Warnung mit Vorschlag zur Kleinstauftragspauschale.
+                  Bleibt ein Angebot unter {mindestauftragswert} € netto, kommt die Position
+                  „{MINDESTAUFTRAG_BEZEICHNUNG}" mit dem Differenzbetrag dazu. Du siehst sie im
+                  Entwurf und kannst sie entfernen. Vorschlag: {MINDESTAUFTRAGSWERT_VORSCHLAG} € —
+                  das sind rund drei Arbeitsstunden.
                 </p>
               ) : (
                 <p className="text-xs text-anthracite/30 font-semibold mt-1.5">

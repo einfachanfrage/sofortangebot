@@ -28,7 +28,69 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 **Datei-Sicherheit (neu, 20.08.2026):** Der Speicherfehler bei gleichzeitiger
 Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten, zuletzt genau in
 dieser Datei. Ganz am Ende dieser Datei steht jetzt eine feste Markierung
-(`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
+(`### Umsetzung — Punkt 4 und 5 gebaut (Head of Product Engineering, 07.09.2026)
+
+1.616 Tests grün, TypeScript und Lint sauber. Beides ist drin, wie freigegeben.
+
+**Punkt 5 — Werbetext.** „3 neu angelegte Angebote pro Monat — Überarbeitungen
+zählen nicht mit." steht in `PreiseSection.tsx` und `PlanWahlModal.tsx`. Die
+**Zahl** kommt weiterhin aus `PRICING.freeAngeboteProMonat`, nicht aus dem Satz
+— sonst stünde sie wieder an zwei Stellen, und genau daran ist der Pro-Preis
+schon einmal auseinandergelaufen (CoS-001). Ein Test hält fest, dass der
+beworbene Wert und die wirksame Sperre dieselbe Zahl meinen.
+
+**Punkt 4 — „Anfahrt & Vorbereitung".** Gebaut wie spezifiziert: eigene
+benannte Zeile mit dem Differenzbetrag, kein stiller Aufschlag, im Angebot
+statt in den AGB, entfernbar, Schwellenwert als Betriebseinstellung mit 180 €
+als Vorschlag. Der Originalfall rechnet auf: 1,60 m² × 45,00 € = 72,00 €, bei
+180 € Schwelle kommt eine Zeile über **108,00 €** dazu.
+
+**Ein Fund beim Einbauen, den ich melden muss:** Die Einstellung
+`companies.mindestauftragswert` gibt es seit Langem — sie wurde **nirgends
+gelesen**. In den Einstellungen stand sogar: *„Bei Angeboten unter X €
+erscheint eine Warnung mit Vorschlag zur Kleinstauftragspauschale."* Passiert
+ist nie etwas. Wer den Wert gesetzt hat, hat sich auf etwas verlassen, das es
+nicht gab. Dieselbe Familie wie „X Positionen erkannt": Die Oberfläche
+verspricht, der Code schweigt. Der Text beschreibt jetzt, was tatsächlich
+passiert.
+
+**Zu deiner Sequenzierungs-Auflage (erst die Leibungs-Einheit klären):** Sie
+greift hier nicht, und das ist eine gute Nachricht. Die Regel rechnet
+ausschließlich in **Euro**. Ob eine Leibungsposition in m² oder lfdm geführt
+wird, ändert die Angebotssumme nicht — dieselbe Arbeit, derselbe Preis, nur
+anders ausgedrückt. Die Kleinauftragslogik ist einheitenblind und muss bei
+einem Einheitenwechsel nicht angefasst werden. Punkt 3 kann also unabhängig
+weiterlaufen.
+
+**Zwei Details, die ich selbst entschieden habe — bitte gegenlesen:**
+
+1. **0 heißt aus.** Ein Betrieb, der den Wert nie gesetzt hat, bekommt nichts
+   aufgeschlagen. Ungefragt Geld in fremde Angebote zu rechnen wäre genau der
+   stille Aufschlag, den Legal beanstandet hat — nur eine Ebene höher.
+2. **Die Zeile zieht nach.** Wächst der Auftrag über die Schwelle, verschwindet
+   sie; bleibt er darunter, wird die Differenz aktualisiert. Sie stehen zu
+   lassen hieße, dem Kunden etwas zu berechnen, das nicht mehr zutrifft. Und
+   sie zählt nicht in ihre eigene Bemessungsgrundlage, sonst höbe sie sich
+   selbst über die Schwelle.
+
+**Noch offen, weil es eine Migration braucht:** „180 € als vorausgefüllter
+Vorschlag bei der Ersteinrichtung" ist noch nicht umgesetzt. Der Wert steht
+heute als 180 € **im Hinweistext** der Einstellung, aber das Feld startet bei
+0. Echtes Vorbelegen ginge nur, wenn die Spalte zwischen „nie gesetzt" und
+„bewusst 0" unterscheiden kann — also `nullable` statt `0`, und das ist eine
+Datenbank-Migration. Die löse ich nicht ohne Sandys Wort aus. Es ist eine
+kleine Migration, aber sie gehört bewusst entschieden.
+
+**Zu deiner Anmerkung zur Zählung:** Du hast recht, ich habe „sieben Stück"
+geschrieben und acht gelistet. Punkt 6 stand nur zur Wiedervorlage und ist mir
+beim Zählen durchgerutscht — die Liste stimmt, die Zahl davor war falsch.
+Danke fürs Gegenlesen.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
+<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
 Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
 löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
 wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu

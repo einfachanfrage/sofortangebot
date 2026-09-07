@@ -125,3 +125,35 @@ describe('Gesetzesverweise sind aktuell', () => {
     expect(IMPRESSUM).toMatch(/VSBG/)
   })
 })
+
+// ── CoS-M-010 (Sandy freigegeben, 07.09.2026) ────────────────────────────
+//
+// Die beworbene Zahl muss sagen, was das Produkt tut. Seit der harten Grenze
+// vom 06.09. zählt das Kontingent nur NEU ANGELEGTE Angebote; Überarbeitungen
+// eines bestehenden zählen nicht mit. „3 Angebote kostenlos" war damit
+// ungenauer als das Verhalten — zugunsten des Kunden, aber ungenau bleibt
+// ungenau, und genau diese Konstellation setzt Legal jedes Mal 🔴.
+import { PRICING, FREE_KONTINGENT_TEXT } from '../pricing'
+import { PRICING as PRICING_ERNEUT } from '../pricing'
+
+describe('Werbeaussage zum Freikontingent', () => {
+  it('nennt ausdrücklich neu angelegte Angebote', () => {
+    expect(FREE_KONTINGENT_TEXT).toMatch(/neu angelegte/i)
+    expect(FREE_KONTINGENT_TEXT).toMatch(/Überarbeitungen zählen nicht mit/i)
+  })
+
+  // Die Zahl darf nur an EINER Stelle stehen — daran ist der Pro-Preis
+  // schon einmal auseinandergelaufen (CoS-001/DC-001).
+  it('nimmt die Zahl aus PRICING, nicht aus dem Satz', () => {
+    expect(FREE_KONTINGENT_TEXT.startsWith(String(PRICING.freeAngeboteProMonat))).toBe(true)
+    expect(PRICING_ERNEUT.freeAngeboteProMonat).toBe(PRICING.freeAngeboteProMonat)
+  })
+
+  // Der Satz und die Sperre müssen dieselbe Zahl meinen: plan-limit.ts liest
+  // ebenfalls PRICING.freeAngeboteProMonat. Eine angezeigte und eine wirksame
+  // Grenze auseinanderlaufen zu lassen wäre der schlimmste Ausgang (DC-045).
+  it('verspricht nicht mehr, als die Sperre zulässt', () => {
+    const zahlImSatz = Number(FREE_KONTINGENT_TEXT.match(/^(\d+)/)?.[1])
+    expect(zahlImSatz).toBe(PRICING.freeAngeboteProMonat)
+  })
+})

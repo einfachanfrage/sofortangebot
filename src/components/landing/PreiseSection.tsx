@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { PRICING } from '@/lib/pricing'
+import { PRICING, FREE_KONTINGENT_TEXT } from '@/lib/pricing'
 
 const freeFeatures = [
-  `${PRICING.freeAngeboteProMonat} Angebote kostenlos`,
+  FREE_KONTINGENT_TEXT,
   PRICING.unterstuetzteGewerke,
   'PDF mit Sofortangebot-Logo',
 ]

@@ -18,3 +18,18 @@ export const PRICING = {
   /** Bewusst nicht „Alle 18 Gewerke" — nur diese zwei sind auf dem nötigen Qualitätsniveau. */
   unterstuetzteGewerke: 'Maler & Bodenleger',
 } as const
+
+/**
+ * CoS-M-010 (Sandy freigegeben, 07.09.2026): Seit der harten Grenze vom 06.09.
+ * zählt das Kontingent nur NEU ANGELEGTE Angebote — Überarbeitungen eines
+ * bestehenden zählen nicht mit (`plan-limit.ts` filtert auf `original_id`).
+ * Die beworbene Zahl wirkte damit anders, als das Produkt rechnet; zugunsten
+ * des Kunden, aber ungenau bleibt ungenau, und genau diese Konstellation setzt
+ * Legal jedes Mal 🔴.
+ *
+ * Die ZAHL kommt weiterhin aus PRICING, nicht aus dem Satz — sonst stünde sie
+ * wieder an zwei Stellen, und genau daran ist der Pro-Preis schon einmal
+ * auseinandergelaufen (CoS-001/DC-001).
+ */
+export const FREE_KONTINGENT_TEXT =
+  `${PRICING.freeAngeboteProMonat} neu angelegte Angebote pro Monat — Überarbeitungen zählen nicht mit`

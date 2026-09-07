@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, X } from 'lucide-react'
-import { PRICING } from '@/lib/pricing'
+import { PRICING, FREE_KONTINGENT_TEXT } from '@/lib/pricing'
 
 interface Props {
   onClose: () => void
 }
 
 const FREE_FEATURES = [
-  `${PRICING.freeAngeboteProMonat} Angebote / Monat`,
+  FREE_KONTINGENT_TEXT,
   '1 Gewerk',
   'PDF mit Logo',
 ]

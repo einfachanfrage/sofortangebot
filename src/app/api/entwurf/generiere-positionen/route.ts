@@ -11,6 +11,7 @@ import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } 
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
+import { mindestauftragsPosition, MINDESTAUFTRAG_BEZEICHNUNG } from '@/lib/gewerke-config'
 import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 90
@@ -662,17 +663,72 @@ export async function POST(req: NextRequest) {
   // Totals neu berechnen (alle Positionen, nicht nur neue)
   const { data: alleItems } = await supabase
     .from('quote_items')
-    .select('total_price')
+    .select('id, title, total_price')
     .eq('quote_id', angebot_id)
-  const total_net = (alleItems ?? []).reduce((s, i) => s + (i.total_price ?? 0), 0)
 
-  // MwSt aus Company-Profil laden
+  // MwSt + Mindestauftragswert aus Company-Profil laden
   const { data: companyData2 } = await supabase
     .from('companies')
-    .select('vat_rate')
+    .select('vat_rate, mindestauftragswert')
     .eq('user_id', user.id)
     .single()
   const vatRate = (companyData2 as { vat_rate?: number } | null)?.vat_rate ?? 19
+
+  // ── Mindestauftragswert (CoS + Sandy, 07.09.2026) ────────────────────────
+  //
+  // Die Einstellung gab es seit Langem, gelesen hat sie niemand. Jetzt
+  // entsteht daraus eine eigene, benannte Zeile mit dem Differenzbetrag —
+  // kein stiller Aufschlag auf die m²-Preise (Head of Legal: sonst ist das
+  // Aufmaß nicht mehr nachrechenbar, § 5a UWG). Der Handwerker sieht sie vor
+  // dem Versenden und kann sie entfernen.
+  //
+  // Die Zeile zählt NICHT in ihre eigene Bemessungsgrundlage: gerechnet wird
+  // die Arbeitssumme ohne sie, sonst höbe sie sich selbst über die Schwelle
+  // und verschwände beim nächsten Durchlauf wieder.
+  const istMindestauftragsZeile = (titel: string | null | undefined) =>
+    (titel ?? '').trim().toLowerCase() === MINDESTAUFTRAG_BEZEICHNUNG.toLowerCase()
+  const arbeitsSumme = (alleItems ?? [])
+    .filter(i => !istMindestauftragsZeile(i.title as string | null))
+    .reduce((s, i) => s + (i.total_price ?? 0), 0)
+  const bestehendeZeile = (alleItems ?? []).find(i => istMindestauftragsZeile(i.title as string | null))
+  const mindestPos = mindestauftragsPosition(
+    arbeitsSumme,
+    (companyData2 as { mindestauftragswert?: number } | null)?.mindestauftragswert,
+  )
+
+  if (mindestPos && !bestehendeZeile) {
+    const { error } = await supabase.from('quote_items').insert({
+      quote_id: angebot_id,
+      position: 9000, // ans Ende, wie die anderen Pauschalen
+      title: mindestPos.title,
+      description: mindestPos.description,
+      quantity: mindestPos.quantity,
+      unit: mindestPos.unit,
+      unit_price: mindestPos.unit_price,
+      total_price: mindestPos.unit_price,
+      automatisch_ergaenzt: true,
+    })
+    if (error) {
+      // Nicht blockieren: Die Arbeitspositionen stehen längst sicher in der
+      // Datenbank — dieselbe Regel wie beim Karten-Abgleich weiter oben.
+      console.error('[positionen-generieren] Mindestauftrags-Position konnte nicht angelegt werden')
+      Sentry.captureException(new Error(error.message), { tags: { feature: 'mindestauftragswert' } })
+    }
+  } else if (mindestPos && bestehendeZeile && (bestehendeZeile.total_price ?? 0) !== mindestPos.unit_price) {
+    // Der Auftrag ist gewachsen oder geschrumpft — die Differenz nachziehen.
+    await supabase.from('quote_items')
+      .update({ unit_price: mindestPos.unit_price, total_price: mindestPos.unit_price })
+      .eq('id', bestehendeZeile.id)
+  } else if (!mindestPos && bestehendeZeile) {
+    // Die Schwelle ist erreicht: Die Zeile hat ihren Grund verloren. Sie
+    // stehen zu lassen hieße, dem Kunden etwas zu berechnen, das nicht mehr
+    // zutrifft.
+    await supabase.from('quote_items').delete().eq('id', bestehendeZeile.id)
+  }
+
+  const total_net = mindestPos
+    ? Math.round((arbeitsSumme + mindestPos.unit_price) * 100) / 100
+    : arbeitsSumme
   const total_gross = total_net * (1 + vatRate / 100)
 
   // Audit 2026-08-31: Ohne Fehlerprüfung wären die Positionen gespeichert, die

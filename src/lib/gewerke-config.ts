@@ -127,6 +127,93 @@ export function anfahrtPosition(
   }
 }
 
+// ── Mindestauftragswert (CoS + Sandy, 07.09.2026) ───────────────────────────
+//
+// Der Prüfmeister: *„Ein m²-Preis trägt nur, wenn die Fassade ohnehin bearbeitet
+// wird. Wer nur die Außenleibungen streicht, verbringt einen halben Tag mit
+// Gerüst, Abdecken und Wetter — für 1,60 m². Da ist nicht der Satz zu klein, da
+// ist die Positionsform falsch."*
+//
+// Die Einstellung `companies.mindestauftragswert` gab es schon — sie wurde nur
+// **nirgends gelesen**. In den Einstellungen stand sogar, bei Angeboten darunter
+// erscheine eine Warnung; passiert ist nie etwas. Dieselbe Familie wie „X
+// Positionen erkannt": Die Oberfläche verspricht, der Code schweigt.
+//
+// ── Was hier bewusst NICHT passiert ────────────────────────────────────────
+// Kein stiller Aufschlag auf die m²-Preise. Head of Legal hat den ersten
+// Entwurf des CoS genau daran korrigiert: Wird die Summe im Hintergrund
+// angehoben, ist das Aufmaß nicht mehr nachrechenbar (dasselbe Problem wie
+// VOB-007) und es entsteht ein § 5a-UWG-Risiko. Deshalb eine **eigene,
+// benannte Zeile mit dem Differenzbetrag**, die der Handwerker vor dem
+// Versenden sieht und entfernen kann — die Software setzt nichts, wofür am
+// Ende er geradesteht, ohne es bewusst gewählt zu haben.
+//
+// Der Zeilentext ist Sandys Entscheidung: **„Anfahrt & Vorbereitung"**, nicht
+// „Mindestauftragswert" oder „Kleinauftragszuschlag" — er beschreibt den
+// echten Aufwand, statt nach Strafgebühr zu klingen.
+//
+// Der Schwellenwert bleibt eine **Betriebseinstellung**: Legal hat
+// nachgerechnet, dass die Stundensätze regional zwischen 44 € (MV) und 90 €
+// (BY/BW) liegen — mehr als doppelt so breit, wie ein fester Wert im Code
+// sinnvoll abdecken kann. 180 € ≈ drei Arbeitsstunden ist der Vorschlagswert,
+// keine Konstante.
+//
+// 0 heißt AUS. Ein Betrieb, der den Wert nie gesetzt hat, bekommt nichts
+// aufgeschlagen — ungefragt Geld in fremde Angebote zu rechnen wäre genau der
+// stille Aufschlag, den wir hier vermeiden.
+//
+// Und die Sequenzierung, die der CoS zurecht angemahnt hat (erst die
+// Leibungs-Einheit klären): Sie greift hier nicht. Diese Regel rechnet
+// ausschließlich in EURO. Ob eine Leibungsposition in m² oder lfdm geführt
+// wird, ändert die Angebotssumme nicht — die Kleinauftragslogik ist
+// einheitenblind und muss bei einem Einheitenwechsel nicht angefasst werden.
+
+/** Vorschlagswert bei der Ersteinrichtung — rund drei Arbeitsstunden. */
+export const MINDESTAUFTRAGSWERT_VORSCHLAG = 180
+
+/** Der Zeilentext auf dem Kundenangebot (Sandys Wortlaut, 07.09.2026). */
+export const MINDESTAUFTRAG_BEZEICHNUNG = 'Anfahrt & Vorbereitung'
+
+export interface MindestauftragsPosition {
+  title: string
+  description: string
+  quantity: number
+  unit: string
+  unit_price: number
+  kategorie: string
+}
+
+/**
+ * Die Differenz zum Mindestauftragswert als eigene Position — oder null, wenn
+ * der Auftrag ihn ohnehin erreicht, kein Wert gesetzt ist oder noch gar nichts
+ * berechnet wurde.
+ *
+ * `arbeitsSummeNetto` ist die Summe OHNE eine eventuell schon vorhandene
+ * Mindestauftrags-Zeile. Sonst würde die Position sich selbst über die
+ * Schwelle heben und beim nächsten Durchlauf verschwinden.
+ */
+export function mindestauftragsPosition(
+  arbeitsSummeNetto: number,
+  mindestauftragswert: number | null | undefined,
+): MindestauftragsPosition | null {
+  const schwelle = mindestauftragswert ?? 0
+  if (!(schwelle > 0)) return null
+  // Ein leeres Angebot ist kein Kleinauftrag, sondern ein leeres Angebot.
+  if (!(arbeitsSummeNetto > 0)) return null
+  if (arbeitsSummeNetto >= schwelle) return null
+  const differenz = Math.round((schwelle - arbeitsSummeNetto) * 100) / 100
+  if (differenz <= 0) return null
+  return {
+    title: MINDESTAUFTRAG_BEZEICHNUNG,
+    description: `Anfahrt, Auf- und Abbau sowie Schutzmaßnahmen — bei kleinen Aufträgen fällt dieser `
+      + `Aufwand unabhängig von der Fläche an. Mindestauftragswert ${schwelle.toLocaleString('de-DE')} € netto.`,
+    quantity: 1,
+    unit: 'Pauschale',
+    unit_price: differenz,
+    kategorie: 'Anfahrt',
+  }
+}
+
 // ── Mapping von alten gewerke.ts IDs → neue Config-IDs
 // (Die Positionsdatenbank nutzt Kategorie-Präfixe wie "Maler –", "Boden –" etc.)
 export const GEWERK_KATEGORIE_PREFIXE: Record<string, string[]> = {
