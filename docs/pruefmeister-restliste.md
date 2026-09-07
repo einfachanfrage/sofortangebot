@@ -1,19 +1,15 @@
 # Nachtestplan — Stand 07.09., nachmittags
 
-> **STOPP für Block A.** Die Fixes von heute (Fischgrät/Diagonal, Untertitel,
-> Bearbeiten-Ansicht) liegen unversioniert im Arbeitsbaum. Produktion läuft auf
-> **c6b1f68** — dort können sie nicht wirken. PM-025, PM-013, PM-033 und PM-002
-> sind daraufhin am 07.09. gelaufen, alle vier mit **exakten Mengen** und alle
-> vier ohne die neue Preiszeile. Nicht nochmal einsprechen, bis gepusht ist.
+> **GRÜN FÜR ALLE DREIZEHN.** Commit **dadf67b** ist gepusht und seit 12:03 als
+> Produktions-Deployment `dpl_FoZKUk1Jo5zpxw3y5jnvHV37p1Ci` **READY**. Er
+> enthält alle heutigen Fixes: `boden.ts` (MUSTER_KATALOG),
+> `positions-untertitel.ts`, `raum-geometrie.ts`, `vob-uebermessung.ts`,
+> `maler.ts`. Der Arbeitsbaum ist sauber — es liegt nichts mehr unversioniert
+> herum.
 >
-> **Was jetzt geht** (Fixes sind in c6b1f68 oder älter, also live):
-> PM-011 · PM-012 · PM-030 · PM-037 · PM-032.
->
-> **Was auf den Push wartet:** PM-025 · PM-013 · PM-033 · PM-002 (Musterpreis) ·
-> PM-021 · PM-022 · PM-026 (Untertitel) · PM-031 (Bearbeiten-Ansicht).
-
-**Stand 07.09.2026, nach den Fixes des Product Engineers.** Ersetzt die
-Restliste von heute Vormittag.
+> Damit sind die vier Läufe von 11:51 bis 11:57 (PM-025, PM-013, PM-033,
+> PM-002) gegen den alten Stand gelaufen und müssen wiederholt werden. Alle
+> Soll-Zahlen unten gelten unverändert.
 
 ---
 
