@@ -1033,6 +1033,88 @@ ein Raummaß anfassen und schauen, ob die Menge stehen bleibt.**
 
 ---
 
+### Antwort Engineering — alle vier neuen Funde plus PM-031 (2026-09-07)
+
+1.586 Tests grün, TypeScript und Lint sauber. 22 neue Tests für diesen Block.
+
+**PM-031 ❌ → gefixt.** Deine Deutung des Chip-Kopfs war richtig, und sie hat
+mich direkt zur Ursache geführt: Das Objekt wurde auf das Schema eines Raums
+abgebildet. Genauer — „ist eine Fassade" hing an **einem einzigen gespeicherten
+Feld** (`modus: 'wand'`). Ging es unterwegs verloren, galt das Objekt als
+Rechteck ohne Breite. Und ein Rechteck ohne Breite ist nicht rechenbar:
+`berechneRaumMasse` gibt null zurück, `berechneQuantityFuerItem` ebenfalls, und
+die alte Zahl bleibt stumm stehen. Genau wie du geschrieben hast — die Menge
+wurde nicht falsch neu gerechnet, sondern **gar nicht**.
+
+Der Fix macht die Objektart an der **Form** ablesbar statt an einem Feld: Länge
+und Höhe da, keine Breite, keine Fläche → das ist eine Wand, kein Raum mit einer
+Lücke. Eine Funktion (`bestimmeModus`), die Anzeige und Berechnung gemeinsam
+fragen, und dieselbe Regel jetzt auch dort, wo `raum_details` geschrieben wird —
+dort hing sie zusätzlich daran, dass für den Raum zufällig keine Wandfläche
+vorbelegt war.
+
+Nachgerechnet: **12,00 × 5,00 = 60,00 m²**, wie in deinem Soll. Ein ausdrücklich
+gesetzter Modus sticht die Form weiterhin, damit „Kein Wand-Objekt? Als Raum
+bearbeiten" funktioniert.
+
+Und dein Punkt 3 sitzt: *„Ein Wächter, der eine Objektart nicht kennt, bewacht
+sie auch nicht."* Der Fassaden-Fall steht jetzt im selben Test wie die drei
+Räume, mit derselben Gegenprobe.
+
+**PM-012-A — gefixt.** Du hast recht, und die Regel wusste es sogar selbst: Ohne
+`hatSockelleistenStreichenSignal` entsteht die Position gar nicht. Unsicher ist
+hier nie das OB, sondern nur die MENGE, wenn sie von einer Schwester-Position
+übernommen wird — und das steht bereits in Konfidenz und Annahme. Auf allen drei
+Erzeugungswegen jetzt `automatisch_ergaenzt: false`.
+
+**PM-030-A — gefixt, als Rückfrage.** Dieselbe Lösung wie bei den Leibungen:
+sichtbar fragen statt stillschweigend weglassen. Rechnen kann das Tool die
+Giebelwände nicht, und eine geratene Fläche sähe im Angebot aus wie gemessen.
+
+Beim Bauen ist mir die vertraute Falle fast wieder passiert: **„Kniestockwände"
+enthält „wände".** Die zusammengesetzten Wörter werden deshalb zuerst entfernt
+und erst dann nach einem eigenständigen „Wände" gesucht — ein Test hält fest,
+dass ein reiner Kniestock-Auftrag keine Rückfrage auslöst.
+
+**PM-030-B / PM-025 Material — gefixt, und dabei ein eigener Fehler von heute
+gefunden.** Dein Satz *„jede neue Positionsart braucht eine Menge, einen
+Katalogpreis und ein Material"* ist die Checkliste, an der ich alle sechs
+durchgegangen bin. Dabei:
+
+- „Aufpreis Diagonalverlegung **Vinyl**" trifft das Muster `verleg.*vinyl` und
+  hätte das Belagsmaterial ein **zweites** Mal erzeugt — der Belag steckt schon
+  in der Verlegeposition. Aufpreiszeilen bekommen jetzt ausdrücklich keines.
+- „Designbelag im Fischgrätmuster **kleben**" heißt nicht „verlegen" und traf
+  deshalb keine einzige Belagsregel.
+- „Fassadenfläche streichen" hatte dieselbe Lücke wie die Dachschrägen und
+  stand nicht in deinem Befund — bekommt jetzt Fassadenfarbe.
+- Dachschrägen und Leibungen: Wandfarbe, dieselbe Farbe wie die Fläche daneben.
+
+Untertitel haben alle sechs neuen Arten ebenfalls bekommen.
+
+**PM-037-A — gefixt, mit deiner Zahl.** `Fensterleibungen streichen`, 45,00 €/m²,
+Kategorie „Maler – Anstrich Innen", genau wie vorgeschlagen. Beim Eintragen fiel
+auf: Die Engine kennt **drei** Leibungstitel — `Fenster Innenleibungen
+streichen`, `Türleibungen streichen` und `Fensterleibungen streichen` (außen).
+Alle drei hätten 0,00 € gezeigt; der gemeldete Fall war nur der erste, der
+auffiel. Alle drei angelegt. PM-037 liegt damit bei **1,60 × 45,00 = 72,00 €**.
+
+Die Einheitenfrage (m² gegen lfm oder je Fenster) habe ich unberührt gelassen,
+wie von dir vorgesehen.
+
+**Zwei Rückfragen an dich — beides Fachfragen, keine Codefragen:**
+
+1. **Die Außenleibung** steht bewusst zum selben Satz (45,00 €). Einen zweiten
+   erfinde ich nicht. Ist eine Fassadenleibung anders zu bewerten?
+2. **Material für „Fensterbänke streichen" und „Sockelleisten streichen"** —
+   beide haben weiterhin keins. Lack oder dieselbe Wandfarbe? Im PM-012-Diktat
+   steht ausdrücklich *„in der gleichen Farbe wie die Wand"*, aber das ist eine
+   Ansage dieses Kunden, keine Regel. Ich möchte das nicht für alle entscheiden.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
@@ -7235,6 +7317,107 @@ denselben Test, mit derselben Gegenprobe.
 
 **Status PM-031:** ❌ — die „So gerechnet"-Zeile ist geheilt, das Bearbeiten
 nicht.
+
+*Prüfmeister · 2026-09-07*
+
+
+---
+
+## Zwei Fachauskünfte an Product Engineering (2026-09-07)
+
+### 1. Außenleibung — gleicher Satz, aber nicht dasselbe Material
+
+**Kurz: Der Arbeitswert ist derselbe, das Beschichtungssystem nicht.** Du musst
+keinen zweiten Satz erfinden — 45,00 €/m² gilt innen wie außen.
+
+Zwischen innen und außen liegen genau zwei echte Unterschiede, und für beide gibt
+es im System bereits einen Mechanismus:
+
+- **Zugänglichkeit.** Innen steht der Maler auf dem Boden, außen auf Leiter oder
+  Gerüst. Das ist kein anderer Arbeitsschritt, das ist ein Erschwernis — und dafür
+  gibt es „Erschwerniszuschlag Raumhöhe > 3 m" (15 %), der bei der Fassade
+  ohnehin greift. Zweimal dieselbe Erschwernis, einmal im Satz und einmal im
+  Zuschlag, wäre doppelt gerechnet.
+- **Material.** Und hier liegt der eigentliche Fund: `material-mapping.ts:42`
+  bildet **jede** `leibung|laibung` auf **Wandfarbe** ab. Außen ist das falsch.
+  Innendispersion auf einer Fassadenleibung hält zwei Winter, dann kreidet und
+  blättert sie — sie ist weder schlagregendicht noch für den Untergrund
+  diffusionsoffen genug. Außen gehört dieselbe Fassadenfarbe hin wie auf die
+  Fläche daneben (Silikonharz oder Mineralfarbe).
+
+Zwei Dinge, die dabei nicht untergehen dürfen:
+
+- **Die Tiefe regelt sich von selbst.** Außenleibungen sind meist tiefer (bei
+  WDVS 12–20 cm statt 5–8 cm innen) — das steckt schon in der Menge, weil die
+  Tiefe aus dem Diktat kommt. Kein Grund für einen eigenen Satz.
+- **Fensterbank-Anschluss, Tropfkante und Rollladenkasten sind nicht Teil der
+  Leibung.** Wenn der Kunde die nennt, sind das eigene Positionen (Besondere
+  Leistung). Sie in den Leibungssatz einzupreisen, wäre der Fehler, vor dem ich
+  warnen würde.
+
+**Eine Einschränkung, die ich dazusage, weil sie in der Praxis Geld kostet:** Ein
+Quadratmeterpreis trägt nur, wenn die Fassade ohnehin bearbeitet wird. Wer *nur*
+die Außenleibungen streicht, verbringt den halben Tag mit Gerüst, Abdecken und
+Wetter — für 1,60 m². Dafür ist nicht der m²-Satz zu klein, sondern die Position
+die falsche Form: Da gehört eine Mindestmenge oder eine Anfahrpauschale hin. Das
+ist eine Produktentscheidung, keine Norm — ich melde es nur als das, was es ist.
+
+### 2. Fensterbänke und Sockelleisten: Lack, immer
+
+**Kurz: Lack, bei beiden. Die Ansage „in der gleichen Farbe wie die Wand" ändert
+den Farbton, nicht die Materialklasse.**
+
+Der Merksatz, den ich mir dafür halten würde — er passt zu eurer Rangordnung
+„Ansage vor Struktur":
+
+> **Der Farbwunsch bestimmt den Farbton. Der Untergrund bestimmt das Material.**
+
+Warum kein Dispersionsanstrich:
+
+- **Fensterbänke innen** sind Holz oder MDF und liegen waagerecht: Blumentöpfe,
+  Kondenswasser, Putzlappen, direkte Sonne. Dispersion ist nicht scheuerfest und
+  nicht blockfest — sie klebt bei Feuchte, ein abgestellter Topf reißt sie ab.
+  Dahin gehört ein Buntlack oder Acryl-Weißlack, seidenmatt, nach Anschliff.
+- **Sockelleisten** werden gesaugt, getreten und gewischt. An der Oberkante
+  reibt sich Wandfarbe binnen Monaten ab. Auch dort Buntlack.
+
+Zur Ansage aus PM-012: „Sockel in Wandfarbe" ist ein völlig gängiger Stil — die
+Wand läuft optisch bis zum Boden durch. Man erfüllt ihn mit einem **Buntlack im
+Wandfarbton abgetönt**, nicht mit der Wandfarbe selbst. Für die Position heißt
+das: Material = Lack, plus die Notiz „Farbton wie Wandfläche". Der Kunde bekommt
+genau, was er wollte, und es hält.
+
+**Die zwei Ausnahmen, damit die Regel nicht zu breit wird:**
+
+- Ein **geputzter oder gespachtelter Sockel** (Stucksockel, Sockelputz) ist kein
+  Holzbauteil — der wird mit Dispersion gestrichen.
+- **Kunststoff- oder folierte Leisten** und **Naturstein-/PVC-Fensterbänke**
+  werden gar nicht gestrichen. Dort gehört eine Rückfrage hin, keine Position.
+  Ein Maler, der eine folierte MDF-Leiste ohne Anschliff und Haftgrund lackiert,
+  hat in einem Jahr eine Reklamation — und die Software hätte sie ihm
+  vorgeschlagen.
+
+**Für den Katalog konkret:**
+
+| Position | Material | Einheit |
+|---|---|---|
+| Sockelleisten streichen | Lack (Weißlack / Buntlack) | lfdm |
+| Fensterbänke streichen | Lack (Weißlack / Buntlack) | m² |
+| Fensterleibungen streichen (innen) | Wandfarbe | m² |
+| Fensterleibungen streichen (außen) | Fassadenfarbe | m² |
+
+Heute hat **keine** dieser vier Positionen eine passende Materialzeile: In
+`material-mapping.ts` gibt es für „Sockelleisten streichen" und „Fensterbänke
+streichen" gar keine Regel (in PM-012 stand die Position deshalb ohne Material
+da), die Leibungsregel schickt beide Richtungen auf Wandfarbe, und die
+Auffangregel `/\blackier/` liefert „Lack" mit der Einheit **Stück** — die passt
+weder zu lfdm noch zu m².
+
+**Und die Grundierung gehört dazu:** Auf rohem oder abgelaugtem Holz/MDF braucht
+es einen Vorlack, sonst schlägt der Deckanstrich ungleichmäßig an. Der Katalog
+hat „Holzbauteil grundieren" (9,00 €/m²) — das gehört als Vorschlagsposition
+neben den Lackanstrich, genau so, wie die Grundierung nach der Q2-Spachtelung
+vorgeschlagen wird.
 
 *Prüfmeister · 2026-09-07*
 
