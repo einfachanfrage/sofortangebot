@@ -687,11 +687,50 @@ Fensterbank (ä, a, ae) und der Vorrang einer vom Modell gefüllten Extraktion.
 
 **Status PM-037:** ✅ Alle fünf Positionen exakt Soll. Live-Nachtest steht aus.
 
-**Offen, gehört Sandy:** Der Prompt (`ki-extrahieren`) füllt `leibungen[]`
-weiterhin nicht. Das ist jetzt kein Fehler mehr, sondern eine Doppelung, die
-fehlt — die Erkennung im Code trägt den Fall allein. Eine Prompt-Erweiterung
-wäre der zweite Gurt und braucht ein Edge-Function-Deployment; sag Bescheid,
-ob ich sie vorbereiten soll.
+### Nachtrag: der Prompt — und warum die Diagnose hier danebenlag
+
+**Der Prompt füllt `leibungen[]` sehr wohl.** Es gibt seit jeher einen eigenen
+Abschnitt mit Regel und Beispiel. Die Vermutung „Der GPT-Prompt füllt
+`leibungen[]` nicht" war naheliegend und falsch.
+
+**Der Grund lag eine Zeile tiefer — im JSON-Gerüst am Ende des Prompts.** Dort
+steht die Antwortform, an der sich das Modell entlanghangelt:
+
+```
+{"gewerk":…,"raeume":[],"waende":[],"decken":[],"bereiche":[], …}
+```
+
+**`leibungen` fehlte darin.** Ein Modell, das der Vorlage folgt, lässt das Feld
+weg — egal wie ausführlich die Regel darüber steht.
+
+Damit ist es **dieselbe Bauform wie die Weißliste im Normalisierer**: eine
+Vorlage, die ein dokumentiertes Feld stillschweigend verschluckt. **Zwei
+Siebe hintereinander, beide mit demselben fehlenden Schlüssel.** Wer nur eins
+erweitert hätte, hätte nichts geändert — und es hätte ausgesehen wie ein Fix.
+
+**Gemacht:**
+
+1. `"leibungen":[]` steht jetzt im JSON-Gerüst.
+2. Die Regel ist geschärft: Die Maße sind dieselben wie beim zugehörigen
+   Fenster (es muss keine eigene Leibungsgröße genannt sein), Innenräume →
+   `fenster_innen`, und ausdrücklich: **auch eine beiläufige Erwähnung zählt**
+   („die Leibungen werden mitgestrichen"). Ob gestrichen wird, entscheidet die
+   Kalkulation, nicht das Modell.
+3. Ein neuer Test (`pm037-prompt-geruest.test.ts`) prüft **beide Siebe gegen
+   dieselbe Liste**: Jedes Feld, das der Prompt als Top-Level verlangt, muss im
+   JSON-Gerüst stehen **und** aus dem Normalisierer wieder herauskommen. Er ist
+   billig und hätte diesen Fall in Sekunden gefunden.
+
+**Die Code-Erkennung bleibt.** Sie deckt die bereits gespeicherten Aufnahmen ab
+und die Tage, an denen das Modell die Vorlage trotzdem anders befüllt — das
+Muster aus PM-032. Zwei Netze, nicht eines; füllt das Modell das Feld, gewinnt
+seine Angabe.
+
+**Noch nicht ausgerollt:** Die Prompt-Änderung wirkt erst nach einem Deployment
+der Edge Function `ki-extrahieren`. Der Fall funktioniert auch ohne — die
+Erkennung im Code trägt ihn allein.
+
+**Tests:** 1.509 (vorher 1.501), `tsc` sauber, `eslint` 0 Fehler.
 
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff

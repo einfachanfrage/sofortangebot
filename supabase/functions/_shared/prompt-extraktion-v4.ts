@@ -80,11 +80,14 @@ Beispiel: "unten 2m Prallschutz, oben 5m weiß, Fenster nur oben" →
   fenster: [{anzahl:4,breite:1.5,hoehe:1.5,wandzone:"oben"}]
 Holzvertäfelung/Lambris abkleben → zone.aktion: "abkleben" (statt farbe)
 
-LEIBUNGEN — wenn Laibungen / Leibungen / Laibungstiefe erwähnt:
+LEIBUNGEN — PFLICHT, sobald Laibung / Leibung / Laibungstiefe fällt:
 Setze leibungen[] als Top-Level-Feld (nicht in raeume[]): [{typ:"fenster"|"tuer"|"fenster_innen", anzahl, breite, hoehe, tiefe}]
+Die Maße sind DIESELBEN wie beim zugehörigen Fenster bzw. der Tür — übernimm anzahl, breite und hoehe von dort. Es muss keine eigene Leibungsgröße genannt sein.
 tiefe = Leibungstiefe in Metern (z.B. 0.25 für 25cm). Wenn nicht genannt: weglassen (Standard 25cm wird angenommen).
 Beispiel: "3 Fenster 1,20×1m, Leibungstiefe 25cm" → leibungen: [{typ:"fenster",anzahl:3,breite:1.2,hoehe:1.0,tiefe:0.25}]
-Innenleibungen (Altbau dicke Wände) → typ: "fenster_innen"
+Beispiel: "Zwei Fenster, jeweils 1,20 mal 1 Meter, die Leibungen werden mitgestrichen, 25 Zentimeter tief" → leibungen: [{typ:"fenster_innen",anzahl:2,breite:1.2,hoehe:1.0,tiefe:0.25}]
+Innenräume → typ: "fenster_innen". Nur bei Fassade/Außenarbeiten → typ: "fenster".
+Auch wenn die Leibung NUR beiläufig vorkommt ("die Leibungen werden mitgestrichen"): Eintrag setzen. Ob gestrichen wird, entscheidet die Kalkulation, nicht du.
 
 DACHGESCHOSS / MANSARDE — KRITISCHE REGEL:
 Wenn ein Raum Kniestock, Dachschrägen oder Deckenspiegel hat → IMMER diese Felder setzen:
@@ -170,4 +173,4 @@ AUSGABE — EXAKTES FORMAT:
 Antworte NUR mit diesem JSON. Kein Text davor, kein Text danach.
 Das Feld "gewerk" muss GENAU EINEN der folgenden Werte enthalten: maler, fliesen, trockenbau, boden_parkett, sanitaer_heizung, elektro
 
-{"gewerk":"EINES_VON: maler / fliesen / trockenbau / boden_parkett / sanitaer_heizung / elektro","confidence_gewerk":0.95,"kunde":{"name":null,"adresse":null,"ort":null},"situation":"Kurze Beschreibung","raeume":[],"waende":[],"decken":[],"bereiche":[],"steckdosen":null,"schalter":null,"spots":null,"aussenlampen":null,"wandlampen":null,"herdanschluss":false,"wallbox":false,"unterverteilung":false,"hauptverteilung":false,"kabelmeter":null,"neu_verkabeln":false,"wc":null,"waschtisch":null,"dusche":null,"wanne":null,"urinal":null,"bidet":null,"armaturen":null,"rohrmeter":null,"leitungen_erneuern":false,"heizkoerper":null,"austausch":false,"erneuerung":false,"altbelag":[],"erschwernisse":[],"anmerkungen":null,"annahmen":[],"rueckfragen":[],"fehlende_angaben":[],"transkript":""}`
+{"gewerk":"EINES_VON: maler / fliesen / trockenbau / boden_parkett / sanitaer_heizung / elektro","confidence_gewerk":0.95,"kunde":{"name":null,"adresse":null,"ort":null},"situation":"Kurze Beschreibung","raeume":[],"waende":[],"leibungen":[],"decken":[],"bereiche":[],"steckdosen":null,"schalter":null,"spots":null,"aussenlampen":null,"wandlampen":null,"herdanschluss":false,"wallbox":false,"unterverteilung":false,"hauptverteilung":false,"kabelmeter":null,"neu_verkabeln":false,"wc":null,"waschtisch":null,"dusche":null,"wanne":null,"urinal":null,"bidet":null,"armaturen":null,"rohrmeter":null,"leitungen_erneuern":false,"heizkoerper":null,"austausch":false,"erneuerung":false,"altbelag":[],"erschwernisse":[],"anmerkungen":null,"annahmen":[],"rueckfragen":[],"fehlende_angaben":[],"transkript":""}`
