@@ -7138,10 +7138,20 @@ Zwei Dinge auf einmal:
    keine Raumhöhe — das ist derselbe Kategorienfehler wie „Raumhöhe !" im
    Dachgeschoss (PM-030, Befund 3), nur an der Fassade und beim Bearbeiten.
 
-**Eine offene Frage an Sandy, bevor der Engineer sucht:** War das der Stand
-*direkt nach der Eingabe* oder *nach dem Speichern*? Wenn die Menge erst beim
-Speichern nachzieht, ist Punkt 1 halb so schlimm und nur die Anzeige irreführend.
-Punkt 2 bleibt so oder so.
+**Nachgefragt (Sandy, 07.09.): der Stand war direkt nach der Eingabe, ohne
+Speichern.** Damit ist Punkt 1 **noch nicht belegt** — eine Menge, die erst beim
+Speichern nachzieht, ist normales Formularverhalten und kein Fehler. Ich lasse
+ihn deshalb ausdrücklich offen, statt ihn dem Engineer als Befund zu schicken:
+Ein Fund, der auf einem halben Test beruht, kostet ihn mehr Zeit als er mir
+spart. Der Nachtest ist eine Zeile: speichern und die Fassadenfläche ablesen —
+**60,00 m² = 540,00 €** wäre richtig, bleiben es 50,00 m², ist es ein echter Fund.
+
+**Punkt 2 steht unabhängig davon.** Dass der Chip beim Bearbeiten von „Wand /
+Fassade" auf „Raummaße" umspringt und Wandlänge und Türen auf „!" stehen, ist
+schon vor dem Speichern falsch — eine Fassade hat keine Türen und keine
+Raumhöhe. Und es ist mehr als Kosmetik: Wenn die Bearbeiten-Ansicht das Objekt
+als Raum behandelt, rechnet sie es beim Speichern womöglich auch als Raum. Der
+Nachtest oben klärt beides in einem Schritt.
 
 ### Was diese fünf Läufe zusammen zeigen
 
