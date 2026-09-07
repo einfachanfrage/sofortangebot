@@ -1047,7 +1047,7 @@ war der richtige nächste Schritt, nicht meiner.
 | ID | Thema | Status |
 |---|---|---|
 | PM-001 | Ausschluss + Selbstkorrektur (Wohnzimmer) | ✅ Live-Nachtest (2026-08-21) bestätigt: Ausschluss-Fix hält (keine Decke, Fenster-Zähler konsistent). Wandfläche jetzt 46,5 m² statt 42,21 m² — korrekt nach der neu eingeführten VOB-Übermessungsregel, kein Bug — Details im Archiv ✅ **Nachtest 05.09. grün:** Wand 46,50 m², Sockelleisten **18,60 lfdm** (VOB-012), keine Decke |
-| PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | 🟡 **Nachtest 07.09.:** alle Mengen exakt, Klick-Vinyl zu 16,00 € live bestätigt. Offen: Aufpreis Diagonalverlegung (128,80 €) fehlt — Fix nicht deployed | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest ist vom 16.08. und lief damit VOR der VOB-Übermessung — Wandbrutto 39,00 m², Restwände 29,90 m² statt der damals abgenommenen 26,81 m². Muss neu eingesprochen werden. Die beiden ursprünglichen Bugs (Akzentwand-Seite, Sockelleisten-Türabzug) bleiben bestätigt behoben ✅ **Nachtest 04.09. grün:** Akzentwand 9,10 · Restwände 29,90 · Vinyl diagonal 16,10 · Sockelleisten **15,00 lfdm** · Trittschall 14,00. Korrektur an meinem eigenen Soll: **keine Deckenposition** — im Diktat steht keine Decke |
+| PM-002 | Akzentwand + Boden diagonal (Schlafzimmer) | ✅ **Grün (Nachtest 07.09., 12:10):** alle Mengen exakt, Klick-Vinyl 16,00 €, Aufpreis Diagonalverlegung 128,80 €, Untertitel zweilagig. Vorher am selben Tag: 🟡 alle Mengen exakt, Klick-Vinyl zu 16,00 € live bestätigt. Offen: Aufpreis Diagonalverlegung (128,80 €) fehlt — Fix nicht deployed | 🟡 **Haken zurückgezogen (2026-09-02):** Der Live-Nachtest ist vom 16.08. und lief damit VOR der VOB-Übermessung — Wandbrutto 39,00 m², Restwände 29,90 m² statt der damals abgenommenen 26,81 m². Muss neu eingesprochen werden. Die beiden ursprünglichen Bugs (Akzentwand-Seite, Sockelleisten-Türabzug) bleiben bestätigt behoben ✅ **Nachtest 04.09. grün:** Akzentwand 9,10 · Restwände 29,90 · Vinyl diagonal 16,10 · Sockelleisten **15,00 lfdm** · Trittschall 14,00. Korrektur an meinem eigenen Soll: **keine Deckenposition** — im Diktat steht keine Decke |
 | PM-003 | Kleinreparatur + Höhenzuschlag (Flur) | ✅ alle drei Punkte live bestätigt behoben (Grundierung, Fenster-Rückfrage, rotes „!") |
 | PM-004 | Laminat gerade + Trittschalldämmung (Kinderzimmer) | ✅ Verschnitt-Bug live nachgetestet, bestätigt behoben |
 | PM-005 | Zwei Räume, Scope "nur Decke" (Küche/Speisekammer) | ✅ komplett behoben und live bestätigt — schwerster Fund der Testreihe, jetzt zu |
@@ -6836,6 +6836,122 @@ Fälle stehen bereit, die Soll-Zahlen oben sind auf den Cent gerechnet.
 
 **Status:** PM-025 🟡 · PM-013 🟡 · PM-033 🟡 · PM-002 🟡 — alle vier mit exakten
 Mengen, alle vier blockiert durch dasselbe fehlende Deployment.
+
+*Prüfmeister · 2026-09-07*
+
+
+---
+
+## Block A nach dem Deployment dadf67b — drei grün, einer gekippt (2026-09-07, 12:04–12:10)
+
+Geprüft gegen Deployment `dpl_FoZKUk1Jo5zpxw3y5jnvHV37p1Ci` (Commit dadf67b,
+READY). Diesmal vorher abgeglichen.
+
+### ✅ PM-025 — grün
+
+„Designbelag im Fischgrätmuster kleben inkl. 15 % Verschnitt", 16,10 m² ×
+**36,00 € = 579,60 €**. Sockelleisten 15,00 lfdm × 5,50 €. Genau der Sollwert,
+den ich am Vormittag gesetzt hatte. Der Fall ist seit dem 25.08. offen gewesen —
+mit einem falschen Haken, den ich selbst gesetzt hatte.
+
+### ✅ PM-013 — grün, und der Untertitel-Fix ist mitbestätigt
+
+Fertigparkett 41,40 m² · **Aufpreis Fischgrät-Verlegemuster 41,40 × 14,00 =
+579,60 €** · Dehnungsfuge 45,00 € · Flur 35,36 / 9,00 / 9,00 / 13,60 — alles
+exakt. Der Untertitel liest jetzt „Deckender Anstrich, **zweilagig**" und
+„Deckenanstrich, **zweilagig**" bei je 2x im Titel. F1 wirkt.
+
+Auch der Kartentext ist geheilt: „6 Positionen aus deiner Aufnahme — der Entwurf
+rechnet sie durch und ergänzt, was fachlich dazugehört." Damit ist der
+Sammelbefund „Karte zeigt nicht, was im Entwurf landet" an der Wurzel erledigt —
+die Karte behauptet nicht mehr, vollständig zu sein.
+
+### ✅ PM-002 — grün
+
+Akzentwand 9,10 · Restwände 29,90 · Klick-Vinyl 16,10 × 16,00 · **Aufpreis
+Diagonalverlegung Vinyl 16,10 × 8,00 = 128,80 €** · Sockelleisten 15,00 lfdm ·
+Trittschall 14,00 (Vorschlag) · keine Deckenposition. Untertitel zweilagig.
+
+### ❌ PM-033 — gekippt, die Trittschalldämmung steht in den falschen Räumen
+
+Diktat: *„Trittschall **nur unterm Laminat im Flur**."*
+
+| Raum | Belag | Dämmung Ist | Soll |
+|---|---|---|---|
+| Wohnzimmer | Parkett Fischgrät | **27,00 m² = 121,50 €** | keine |
+| Schlafzimmer | Teppich Bahnenware | **14,40 m² = 64,80 €** | keine |
+| Flur | Laminat | **fehlt** | 7,50 m² = 33,75 € |
+
+186,30 € zulasten des Kunden, 33,75 € zulasten des Betriebs — und die Dämmung
+steht genau in den zwei Räumen, in denen sie fachlich nicht hingehört, und fehlt
+in dem einen, in dem sie hingehört.
+
+**Das ist derselbe Fund wie am 02.09., an derselben Stelle.** Beim Lauf um 11:53
+war er noch behoben (7,50 m², nur Flur). Die Fischgrät-Position ist neu — und
+sie steht ausgerechnet im Wohnzimmer.
+
+**Was ich mit Sicherheit sagen kann (Code, ohne Rücksprache prüfbar):** In
+`boden-sonder.ts` greift der Teppich-Ausschluss `OHNE_TRITTSCHALL` **nur im
+Fallback-Zweig**. Sobald ein Raum im Dämmungs-Satz genannt wird, filtert der
+andere Zweig ausschließlich nach Raumnamen — Teppich-Bahnenware bekommt dann
+eine Dämmung, obwohl sie vollflächig geklebt wird. Der Schlafzimmer-Posten ist
+dafür der Beleg. Das ist unabhängig von der Raumzuordnung falsch.
+
+**Was ich nicht aus dem Ergebnis allein entscheiden kann:** warum die Zuordnung
+auf Wohnzimmer und Schlafzimmer fiel. Das sind genau die beiden Räume aus dem
+Satz davor („An den beiden Türen zum Wohnzimmer und zum Schlafzimmer jeweils
+eine Übergangsschiene"). Die Regel nimmt bei einem Teilsatz ohne Raum den Raum
+aus einem früheren Teilsatz **desselben** Satzes. Wenn im Transkript diesmal
+„im Flur" fehlt oder der Punkt vor „Trittschall" zu einem Komma wurde, erklärt
+das das Ergebnis vollständig — dann ist es kein Code-Rückfall, sondern der
+Grund, warum wir `transkript_original` überhaupt haben.
+
+**Nächster Schritt (Sandy):** In der Aufnahme `transkript_original` gegen den
+normalisierten Text legen und nachsehen, wie der Trittschall-Satz dort steht.
+Danach ist entschieden, ob der Fund an der Extraktion oder an der Regel hängt.
+
+### Ein Fund über alle drei grünen Fälle: die Aufpreiszeilen tragen Material
+
+| Position | Materialzeile |
+|---|---|
+| PM-013 „Aufpreis Fischgrät-Verlegemuster" | ＋ Bodenbelag (Material) |
+| PM-002 „Aufpreis Diagonalverlegung Vinyl" | ＋ Vinyl / Designboden (Material) |
+| PM-025 „Designbelag im Fischgrätmuster kleben" | **gar keine** — vorher stand dort ＋ Vinyl / Designboden |
+
+Ein Aufpreis ist reiner Mehraufwand: mehr Schnitte, mehr Zeit, mehr Verschnitt —
+aber **kein zweites Mal Belag**. Wenn an der Aufpreiszeile ein Material hängt,
+wird der Belag im selben Raum zweimal eingekauft. Umgekehrt hat PM-025 sein
+Material ganz verloren, weil der neue Titel im Material-Mapping nicht steht.
+
+Beides ist dieselbe Wurzel: Das Mapping kennt die neuen Titel nicht. Beide
+Richtungen kosten Geld, in entgegengesetzte Richtungen.
+
+Dazu kosmetisch: Der Untertitel der PM-002-Aufpreiszeile lautet „Fachgerecht
+verlegt inklusive Zuschnitt und Verschnitt" — das beschreibt die Verlegung, nicht
+den Aufpreis. Bei PM-013 steht gar keiner. Eine der beiden Zeilen soll gewinnen,
+nicht beide.
+
+### Antwort auf die Rückfrage im Code („Ausschlussliste bestätigen")
+
+In `boden-sonder.ts` steht: *„eine längere Ausschlussliste (Linoleum, geklebtes
+Parkett) wäre fachlich diskutabel, und diese Liste erfinde ich nicht selbst.
+Beim Prüfmeister zur Bestätigung gemeldet."* Hiermit beantwortet:
+
+**Die Dämmung folgt der Verlegeart, nicht dem Belag.** Trittschalldämmung gehört
+unter **schwimmend** verlegte Beläge — Klick-Laminat, Klick-Vinyl, schwimmend
+verlegtes Fertigparkett. Sie gehört **nicht** unter vollflächig verklebte
+Beläge: Fischgrät (wird immer geklebt), Klebe-Vinyl, Linoleum,
+Teppich-Bahnenware, geklebtes Parkett, geklebter Kork. Bei einer Verklebung
+liegt die Dämmung zwischen Kleber und Belag — sie kann nicht wirken und zerstört
+den Verbund.
+
+Praktisch heißt das für die Regel: Nicht der Belagstyp entscheidet, sondern ob
+verklebt wird. Steht im Auftrag „kleben", „verkleben", „vollflächig" oder
+„Fischgrät", gibt es keine Dämmung — auch dann nicht, wenn der Kunde sie nennt;
+dann gehört stattdessen ein Hinweis ins Angebot. **Damit ist die Dämmung im
+PM-033-Wohnzimmer auch dann falsch, wenn die Raumzuordnung stimmt.**
+
+**Status:** PM-025 ✅ · PM-013 ✅ · PM-002 ✅ · PM-033 ❌
 
 *Prüfmeister · 2026-09-07*
 
