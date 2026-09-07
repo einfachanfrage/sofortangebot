@@ -265,11 +265,15 @@ const FAELLE: Fall[] = [
     id: 'PM-025', titel: 'Gästezimmer, Vinyl Fischgrät + neue Sockelleisten', gewerk: 'boden_parkett',
     transkript: 'Gästezimmer, vier Meter mal drei Meter fünfzig, eine Tür normal Maß. Vinylboden im Fischgrätmuster verlegen. Sockelleisten werden auch neu montiert, passend zum Fischgrätmuster.',
     raeume: [basisRaum('Gästezimmer', { laenge: 4, breite: 3.5, tueren: [TUER], belag: 'vinyl', verlegerichtung: 'fischgraet', sockelleisten: true, arbeiten: ['vinyl verlegen'] })],
+    // Soll-Korrektur des Prüfmeisters vom 07.09.2026 (PM-025-A): Hier stand
+    // nur die Menge, deshalb konnte der falsche Einheitspreis nie auffallen.
+    // Sein neues Soll: Titel „Designbelag im Fischgrätmuster kleben",
+    // 36,00 €/m², Summe 579,60 €. Fischgrät wirkt jetzt auf beides.
     soll: [
-      { muster: /vinyl.*verlegen/i, menge: 16.1 },
+      { muster: /designbelag im fischgrätmuster kleben/i, menge: 16.1 },
       { muster: /sockelleisten montieren/i, menge: 15 },
     ],
-    verboten: [/streichen/i],
+    verboten: [/streichen/i, /^vinyl-boden verlegen/i],
   },
   {
     id: 'PM-026', titel: 'Küche, Wand 2x und Decke 1x', gewerk: 'maler',

@@ -12,6 +12,34 @@
 // Kernidee: Die WANDFLÄCHE braucht nur den Umfang (Summe der Wandlängen) × Höhe,
 // ist also formunabhängig. Die BODENFLÄCHE braucht die echte Form (Eckpunkte).
 
+import { abzugAusEinzelflaeche } from './mengen/gewerke/vob-uebermessung'
+import { berechneSockelleistenLaenge } from './mengen/gewerke/sockelleisten'
+
+// ── PM-031 (Prüfmeister, 31.08.2026) — und was dahinter lag ───────────────
+//
+// Gemeldet als kosmetisch: Die „So gerechnet"-Zeile am Fassaden-Chip zeigte
+// „10,00 m × 5,00 m − 2 Fenster (3,36 m²) = 46,64 m²", während direkt darüber
+// die richtigen 50,00 m² abgerechnet wurden. Zwei Zahlen für dieselbe Fläche
+// auf einem Bildschirm.
+//
+// Kosmetisch war daran nur, was zu SEHEN war. Diese Datei rechnet nicht nur
+// den Erklärtext, sondern über `berechneQuantityFuerItem` auch die MENGE neu,
+// sobald der Handwerker ein Raummaß korrigiert. Nachgemessen am 07.09.:
+//
+//   Büro 5,20 × 4,10 × 2,70, zwei Fenster, eine Tür
+//     Engine            Wand 50,22 m²  ·  Sockelleisten 18,60 lfdm
+//     nach dem Bearbeiten  45,93 m²    ·                17,70 lfdm
+//
+// Wer sein eigenes Maß korrigiert, verliert also 4,29 m² (rund 49 €) und
+// 0,90 lfdm — still, ohne Hinweis, und ausgerechnet als Belohnung für
+// Sorgfalt. Die Regeln fehlten hier schlicht: VOB-Übermessung (Öffnungen bis
+// 2,5 m², DIN 18363 5.2.3) und VOB-012 (Unterbrechungen bis 1 m, 5.3.2) sind
+// seit August in der Engine, diese Datei kannte beide nie.
+//
+// Behoben, indem sie beide Regeln nicht nachbaut, sondern die Funktionen
+// aufruft, die sie halten. Dieselbe Lehre wie bei PM-012, PM-021 und PM-032:
+// dieselbe Frage darf nicht an zwei Stellen beantwortet werden.
+
 export type RaumModus = 'rechteck' | 'flaeche' | 'grundriss' | 'wand'
 
 /** Eine Wand im Grundriss: Länge in Metern + Abbiegung an ihrer Startecke. */
@@ -54,7 +82,8 @@ const STANDARD_HOEHE = 2.5
 // würden beim Bearbeiten still andere Mengen und Angebotssummen erzeugen.
 const TUER_FLAECHE = 1.89   // 0,90 × 2,10 m
 const FENSTER_FLAECHE = 1.20 // 1,20 × 1,00 m
-const TUER_BREITE = 0.9    // lfdm Abzug Sockelleiste pro Tür
+const TUER_BREITE = 0.9    // Standard-Türbreite, wenn nichts anderes bekannt ist
+const TUER_HOEHE = 2.1
 
 export interface GrundrissErgebnis {
   umfang: number
@@ -126,9 +155,13 @@ export function berechneRaumMasse(dim: RaumDimension): RaumMasse {
   // PM-008-Nachtest 6: echte Fläche bevorzugen, falls bekannt (siehe
   // Kommentar bei tuerFlaeche/fensterFlaeche oben) — sonst wie bisher
   // Stückzahl × Standardmaß.
-  const tuerAbzug = dim.tuerFlaeche ?? (t * TUER_FLAECHE)
-  const fensterAbzug = dim.fensterFlaeche ?? (f * FENSTER_FLAECHE)
-  const oeffnungsabzug = tuerAbzug + fensterAbzug
+  // Einzelgröße statt Summe: Über die Übermessung entscheidet je Öffnung ihre
+  // eigene Fläche, nicht die Summe aller (DIN 18363 5.2.3). Sind mehrere
+  // Öffnungen als Gesamtfläche bekannt, gelten sie als gleich groß — dieselbe
+  // Annahme, die die Extraktion mit `anzahl` ohnehin trifft.
+  const tuerEinzel = t > 0 && dim.tuerFlaeche != null ? dim.tuerFlaeche / t : TUER_FLAECHE
+  const fensterEinzel = f > 0 && dim.fensterFlaeche != null ? dim.fensterFlaeche / f : FENSTER_FLAECHE
+  const oeffnungsabzug = abzugAusEinzelflaeche(tuerEinzel, t) + abzugAusEinzelflaeche(fensterEinzel, f)
   const modus = dim.modus ?? 'rechteck'
 
   if (modus === 'flaeche') {
@@ -207,7 +240,15 @@ export function berechneQuantityFuerItem(titleDisplay: string, unit: string, dim
     if (titel.includes('sockel') || titel.includes('leiste')) {
       if (m.umfang == null) return null
       const t = dim.tueren ?? 0
-      return Math.max(0, round2(m.umfang - t * TUER_BREITE))
+      // VOB-012: Unterbrechungen bis 1 m Einzellänge werden nicht abgezogen.
+      // Die Türbreite ist hier nicht direkt bekannt — sie wird aus der
+      // Öffnungsfläche und der Standard-Türhöhe abgeleitet (1,89 m² / 2,10 m =
+      // 0,90 m, eine Terrassentür mit 4,20 m² ergibt 2,00 m). Ohne Fläche gilt
+      // die Standardbreite, und die wird nach VOB-012 nie abgezogen.
+      const tuerBreite = t > 0 && dim.tuerFlaeche != null
+        ? round2(dim.tuerFlaeche / t / TUER_HOEHE)
+        : TUER_BREITE
+      return Math.max(0, berechneSockelleistenLaenge(m.umfang, [{ breite: tuerBreite, anzahl: t }]))
     }
   }
   return null

@@ -4,12 +4,51 @@
 //
 // Reihenfolge = Priorität: spezifischere Muster zuerst.
 
-interface Regel { test: RegExp; text: string }
+interface Regel { test: RegExp; text: string | ((titel: string) => string) }
+
+// ── Sammelfund PM-021 / PM-022 / PM-026 (Prüfmeister, 05.–07.09.2026) ─────
+//
+// Auf dem Kundenangebot stand:
+//   Titel „Wandflächen streichen 1x" · Untertitel „Deckender 2-fach-Anstrich"
+//   Titel „Deckenfläche streichen 1x" · Untertitel „Deckenanstrich in 2 Lagen"
+//
+// Der Preis war jeweils richtig — der Einfach-Satz. Es ist kein Rechenfehler,
+// aber der gefährlichere Fehlertyp: Der Kunde liest den Untertitel, nicht die
+// Zahl im Titel. Er erwartet zwei Anstriche und bezahlt einen. Der Untertitel
+// ist eine Leistungsbeschreibung; widersprechen sich Titel und Beschreibung,
+// geht der Zweifel nach § 305c BGB zulasten des Verwenders — und der ist der
+// Handwerker, der den Satz nicht einmal selbst geschrieben hat.
+//
+// Die „2" war fest verdrahtet und stimmte nur, wenn zufällig zweimal
+// gestrichen wurde. Dreimal unabhängig belegt (PM-021 Wand, PM-022 Decke,
+// PM-026 Decke — dort war die Wandzeile daneben korrekt, was den Befund
+// schärft: nicht zufällig falsch, sondern immer dieselbe Zahl).
+//
+// Jetzt folgt der Untertitel der Zahl im Titel. Steht dort keine, nennt er
+// gar keine — lieber nichts versprechen als etwas Falsches.
+
+/** Liest die Anstrichzahl aus dem Titel („Wandflächen streichen 2x"). */
+function anstrichZahl(titel: string): number | null {
+  const treffer = /\b([1-9])\s*(?:x|fach|-fach)\b/i.exec(titel ?? '')
+  if (!treffer) return null
+  const n = Number(treffer[1])
+  return n >= 1 && n <= 3 ? n : null
+}
+
+const LAGEN: Record<number, string> = { 1: 'einlagig', 2: 'zweilagig', 3: 'dreilagig' }
+
+/** „Deckender Anstrich, zweilagig, Kanten…" — ohne Zahl im Titel ohne Lagenangabe. */
+function anstrichText(vorne: string, hinten: string) {
+  return (titel: string) => {
+    const lagen = LAGEN[anstrichZahl(titel) ?? 0]
+    return lagen ? `${vorne}, ${lagen}, ${hinten}` : `${vorne}, ${hinten}`
+  }
+}
 
 const REGELN: Regel[] = [
   // — Maler: Wand/Decke/Boden —
-  { test: /wandfläche(n)?\s*streich|wände\s*streich/i, text: 'Deckender 2-fach-Anstrich, Kanten sauber abgeschnitten' },
-  { test: /decken(fläche)?\s*streich|decke\s*streich/i, text: 'Deckenanstrich in 2 Lagen, gleichmäßig deckend' },
+  { test: /wandfläche(n)?\s*streich|wände\s*streich/i, text: anstrichText('Deckender Anstrich', 'Kanten sauber abgeschnitten') },
+  { test: /decken(fläche)?\s*streich|decke\s*streich/i, text: anstrichText('Deckenanstrich', 'gleichmäßig deckend') },
   // PM-018, Darstellungsfund 2: Der Untertitel sagte „Wände" auch unter der
   // DECKEN-Spachtelposition — der Text widersprach der Menge. Muss vor der
   // allgemeinen Spachtel-Regel stehen, sonst greift die zuerst.
@@ -51,7 +90,7 @@ const REGELN: Regel[] = [
 export function positionsUntertitel(titel: string): string | null {
   const t = titel ?? ''
   for (const r of REGELN) {
-    if (r.test.test(t)) return r.text
+    if (r.test.test(t)) return typeof r.text === 'function' ? r.text(t) : r.text
   }
   return null
 }

@@ -61,12 +61,27 @@ describe('berechneGrundriss — rechtwinklige Polygone', () => {
 })
 
 describe('berechneRaumMasse — Modi', () => {
-  it('rechteck: Wand = Umfang×H − Öffnungen, Boden = b×l', () => {
+  // ── Soll korrigiert am 07.09.2026 (PM-031) ───────────────────────────
+  // Hier stand 42,51 m² — Umfang × Höhe minus JEDER Öffnung. Das war der
+  // Stand vor der VOB-Übermessung (21.08.). Tür 1,89 m² und Fenster je
+  // 1,20 m² liegen alle unter 2,5 m² und werden nach DIN 18363 5.2.3 nicht
+  // abgezogen. Die Engine rechnet seit August so; diese Datei nicht, und
+  // dieser Test hat den alten Stand festgehalten statt ihn zu melden.
+  it('rechteck: Öffnungen bis 2,5 m² werden übermessen (DIN 18363 5.2.3)', () => {
     const m = berechneRaumMasse({ modus: 'rechteck', breite: 5, laenge: 4, hoehe: 2.6, tueren: 1, fenster: 2 })
-    // Umfang 18, ×2.6 = 46.8, − (1×1.89 + 2×1.20=4.29) = 42.51
+    // Umfang 18 × 2,6 = 46,80 — kein Abzug, alle drei Öffnungen ≤ 2,5 m²
     expect(m.umfang).toBe(18)
-    expect(m.wandflaeche).toBe(42.51)
+    expect(m.wandflaeche).toBe(46.8)
     expect(m.bodenflaeche).toBe(20)
+  })
+
+  // Die Gegenrichtung: Eine Öffnung ÜBER der Schwelle wird weiterhin voll
+  // abgezogen. Ohne diesen Fall würde der Test nur „zieht nie ab" festhalten.
+  it('rechteck: eine Terrassentür über 2,5 m² wird voll abgezogen', () => {
+    const m = berechneRaumMasse({
+      modus: 'rechteck', breite: 5, laenge: 4, hoehe: 2.6, tueren: 1, fenster: 0, tuerFlaeche: 4.2,
+    })
+    expect(m.wandflaeche).toBe(42.6) // 46,80 − 4,20
   })
 
   it('rechteck ohne Höhe nutzt Standard 2,5 m', () => {
@@ -90,24 +105,29 @@ describe('berechneRaumMasse — Modi', () => {
         { laenge: 2, turn: 'L' }, { laenge: 3, turn: 'R' }, { laenge: 4, turn: 'R' },
       ],
     })
-    // Umfang 18 × 2.5 = 45, − (1.89 + 1.20) = 41.91
+    // Umfang 18 × 2,5 = 45,00 — Tür 1,89 und Fenster 1,20 beide übermessen
     expect(m.umfang).toBe(18)
-    expect(m.wandflaeche).toBe(41.91)
+    expect(m.wandflaeche).toBe(45)
     expect(m.bodenflaeche).toBe(16)
   })
 
-  it('wand (PM-008/PD-003): Länge × Höhe − Fenster, kein Boden, kein Umfang', () => {
+  it('wand (PM-008/PD-003): Länge × Höhe, kein Boden, kein Umfang', () => {
     const m = berechneRaumMasse({ modus: 'wand', laenge: 12, hoehe: 6, fenster: 3 })
-    // 12 × 6 = 72, − 3 × 1.20 = 68.4
-    expect(m.wandflaeche).toBe(68.4)
+    // 12 × 6 = 72 — drei Fenster à 1,20 m², alle übermessen
+    expect(m.wandflaeche).toBe(72)
     expect(m.bodenflaeche).toBeNull()
     expect(m.umfang).toBeNull()
   })
 
-  it('wand: eine Tür wird genauso abgezogen wie bei einem Raum', () => {
+  it('wand: eine Tür wird genauso behandelt wie bei einem Raum', () => {
     const m = berechneRaumMasse({ modus: 'wand', laenge: 10, hoehe: 3, tueren: 1 })
-    // 10 × 3 = 30, − 1.89 = 28.11
-    expect(m.wandflaeche).toBe(28.11)
+    expect(m.wandflaeche).toBe(30) // 1,89 m² ≤ 2,5 m², kein Abzug
+  })
+
+  // Der Originalfall des Prüfmeisters, Zahl für Zahl.
+  it('PM-031: Fassade 10 × 5 mit zwei Fenstern à 1,68 m² ergibt 50,00 m²', () => {
+    const m = berechneRaumMasse({ modus: 'wand', laenge: 10, hoehe: 5, fenster: 2, fensterFlaeche: 3.36 })
+    expect(m.wandflaeche).toBe(50)
   })
 
   it('wand ohne Länge → keine Fläche berechenbar (echte Lücke, kein Rechenfehler)', () => {
@@ -128,22 +148,31 @@ describe('berechneRaumMasse — Modi', () => {
   // bepreiste Position (Mengen-Engine, maler.ts) die echten Maße kannte.
   // fensterFlaeche/tuerFlaeche geben genau diese echte, schon aufsummierte
   // Fläche weiter und ersetzen dann den Stückzahl×Standard-Abzug.
-  it('wand mit echter fensterFlaeche (3× 1,20×1,40m): 66,96 m² statt 68,40 m² mit Standardmaß', () => {
-    const mStandard = berechneRaumMasse({ modus: 'wand', laenge: 12, hoehe: 6, fenster: 3 })
-    expect(mStandard.wandflaeche).toBe(68.4) // unverändertes Verhalten ohne echte Maße
-
+  // Die echten Maße entscheiden weiterhin — jetzt aber darüber, ob die
+  // Schwelle gerissen wird, nicht mehr nur über die Höhe des Abzugs.
+  it('wand mit echter fensterFlaeche: 3 × 1,68 m² bleiben unter der Schwelle', () => {
     const mEcht = berechneRaumMasse({
       modus: 'wand', laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 3 * 1.2 * 1.4,
     })
-    expect(mEcht.wandflaeche).toBe(66.96)
+    expect(mEcht.wandflaeche).toBe(72)
   })
 
-  it('rechteck mit echter tuerFlaeche überschreibt den Standard-Türabzug', () => {
+  it('wand mit drei Schaufenstern à 4,00 m²: über der Schwelle, voll abgezogen', () => {
+    const m = berechneRaumMasse({ modus: 'wand', laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 12 })
+    expect(m.wandflaeche).toBe(60) // 72 − 12
+  })
+
+  // Die Einzelgröße entscheidet, nicht die Summe (DIN 18363 5.2.3).
+  it('vier Fenster à 1,68 m² sind vier kleine Öffnungen, keine große von 6,72 m²', () => {
+    const m = berechneRaumMasse({ modus: 'wand', laenge: 12, hoehe: 6, fenster: 4, fensterFlaeche: 6.72 })
+    expect(m.wandflaeche).toBe(72)
+  })
+
+  it('rechteck mit echter tuerFlaeche unter der Schwelle: kein Abzug', () => {
     const m = berechneRaumMasse({
       modus: 'rechteck', breite: 5, laenge: 4, hoehe: 2.6, tueren: 1, fenster: 0, tuerFlaeche: 2.2,
     })
-    // Umfang 18 × 2.6 = 46.8, − 2.2 (echte Türfläche statt Standard 1.89) = 44.6
-    expect(m.wandflaeche).toBe(44.6)
+    expect(m.wandflaeche).toBe(46.8)
   })
 })
 
@@ -151,12 +180,16 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
   const rechteck = { modus: 'rechteck' as const, breite: 5, laenge: 4, hoehe: 2.5, tueren: 1, fenster: 2 }
 
   it('Wandflächen streichen → Wandfläche', () => {
-    expect(berechneQuantityFuerItem('Wandflächen streichen', 'm²', rechteck)).toBe(40.71) // 18×2.5=45 −4.29
+    expect(berechneQuantityFuerItem('Wandflächen streichen', 'm²', rechteck)).toBe(45) // 18 × 2,5
   })
 
-  it('nutzt für 5,20 × 4,10 × 2,70 mit zwei Fenstern und einer Tür exakt 45,93 m²', () => {
+  // PM-031, der teure Teil: Diese Funktion rechnet die MENGE neu, sobald der
+  // Handwerker ein Raummaß korrigiert. Vorher stand hier 45,93 m² — die
+  // Engine liefert für denselben Raum 50,22 m². Wer sein Maß nachbesserte,
+  // verlor 4,29 m² (rund 49 €) und merkte es nicht.
+  it('nach dem Bearbeiten steht dieselbe Menge da wie aus der Engine: 50,22 m²', () => {
     const dim = { modus: 'rechteck' as const, breite: 4.1, laenge: 5.2, hoehe: 2.7, tueren: 1, fenster: 2 }
-    expect(berechneRaumMasse(dim).wandflaeche).toBe(45.93)
+    expect(berechneRaumMasse(dim).wandflaeche).toBe(50.22)
     for (const titel of [
       'Wandflächen streichen 2x',
       'Spachtelarbeiten Q2',
@@ -164,14 +197,23 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
       'Voranstrich / Grundierung',
       'Tapete entfernen',
     ]) {
-      expect(berechneQuantityFuerItem(titel, 'm²', dim), titel).toBe(45.93)
+      expect(berechneQuantityFuerItem(titel, 'm²', dim), titel).toBe(50.22)
     }
   })
   it('Deckenfläche streichen → Bodenfläche', () => {
     expect(berechneQuantityFuerItem('Deckenfläche streichen', 'm²', rechteck)).toBe(20)
   })
-  it('Sockelleisten → Umfang − Türen', () => {
-    expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', rechteck)).toBe(17.1) // 18 − 0.9
+  // VOB-012 (DIN 18363/18365 5.3.2): Unterbrechungen bis 1 m Einzellänge
+  // werden nicht abgezogen. Eine Zimmertür ist 0,90 m breit. Vorher zog diese
+  // Datei jede Tür ab — 18,00 wurden beim Bearbeiten zu 17,10 lfdm.
+  it('Sockelleisten: die Zimmertür wird nicht abgezogen (VOB-012)', () => {
+    expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', rechteck)).toBe(18)
+  })
+
+  it('Sockelleisten: eine Terrassentür über 1 m wird abgezogen', () => {
+    // 4,20 m² / 2,10 m Standardhöhe = 2,00 m Breite
+    const dim = { ...rechteck, tueren: 1, tuerFlaeche: 4.2 }
+    expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', dim)).toBe(16)
   })
   it('flaeche-Modus: Sockelleisten nicht berechenbar (kein Umfang)', () => {
     expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', { modus: 'flaeche', wandflaeche: 40 })).toBeNull()
@@ -182,21 +224,63 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
 
   it('wand-Modus: "Fassadenfläche streichen" nimmt die Wandfläche', () => {
     const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3 }
-    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', dim)).toBe(68.4)
+    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', dim)).toBe(72)
   })
 
   it('wand-Modus: Grundierung folgt derselben Fläche wie die Fassade', () => {
     const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3 }
-    expect(berechneQuantityFuerItem('Grundierung — Südseite', 'm²', dim)).toBe(68.4)
+    expect(berechneQuantityFuerItem('Grundierung — Südseite', 'm²', dim)).toBe(72)
   })
 
-  it('wand-Modus: "Fassadenfläche streichen" nutzt die echte Fensterfläche, wenn bekannt (PM-008-Nachtest 6)', () => {
-    const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 3 * 1.2 * 1.4 }
-    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', dim)).toBe(66.96)
+  it('wand-Modus: die echte Fensterfläche entscheidet über die Schwelle (PM-008-Nachtest 6)', () => {
+    const klein = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 3 * 1.2 * 1.4 }
+    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', klein)).toBe(72)
+    const gross = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 12 }
+    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', gross)).toBe(60)
   })
 
   it('wand-Modus: Sockelleisten nicht berechenbar (kein Umfang an einer Fassade)', () => {
     const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6 }
     expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', dim)).toBeNull()
   })
+})
+
+// ── PM-031: die Bearbeiten-Ansicht darf nie wieder von der Engine abweichen ──
+//
+// Der eigentliche Schaden war nicht der Erklärtext, sondern dass
+// `berechneQuantityFuerItem` beim Korrigieren eines Raummaßes die MENGE ohne
+// die VOB-Regeln neu rechnete. Dieser Wächter vergleicht beide Wege direkt:
+// Was die Engine beim Anlegen rechnet, muss beim Bearbeiten wieder herauskommen.
+import { malerEngine } from '../mengen/gewerke/maler'
+
+describe('PM-031 — Engine und Bearbeiten-Ansicht rechnen dieselbe Menge', () => {
+  const faelle = [
+    { name: 'Büro', laenge: 5.2, breite: 4.1, hoehe: 2.7, fenster: 2, tueren: 1 },
+    { name: 'Küche', laenge: 4.2, breite: 3.6, hoehe: 2.5, fenster: 2, tueren: 1 },
+    { name: 'Abstellraum', laenge: 2, breite: 1.5, hoehe: 2.4, fenster: 0, tueren: 1 },
+  ]
+
+  for (const f of faelle) {
+    it(`${f.name}: Wandfläche und Sockelleisten stimmen auf beiden Wegen überein`, () => {
+      const positionen = malerEngine({
+        transkript: `${f.name} streichen.`,
+        raeume: [{
+          name: f.name, laenge: f.laenge, breite: f.breite, hoehe: f.hoehe,
+          fenster: f.fenster > 0 ? [{ breite: 1.2, hoehe: 1.0, anzahl: f.fenster }] : [],
+          tueren: f.tueren > 0 ? [{ breite: 0.9, hoehe: 2.1, anzahl: f.tueren }] : [],
+          arbeiten: ['wände streichen'],
+        }],
+      } as never).positionen
+
+      const dim = {
+        modus: 'rechteck' as const, breite: f.breite, laenge: f.laenge, hoehe: f.hoehe,
+        tueren: f.tueren, fenster: f.fenster,
+      }
+      const ausEngine = (m: RegExp) => positionen.find(p => m.test(p.beschreibung))?.menge
+      expect(berechneQuantityFuerItem('Wandflächen streichen 2x', 'm²', dim))
+        .toBe(ausEngine(/wandflächen streichen/i))
+      expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', dim))
+        .toBe(ausEngine(/sockelleisten abkleben/i))
+    })
+  }
 })

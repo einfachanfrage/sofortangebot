@@ -263,8 +263,22 @@ describe('PM-013, Nachtest 3 — Zwei Räume, Maler-primär + Boden-sekundär, k
     expect(parkett?.menge).toBe(41.4)
   })
 
+  // PM-025-A (07.09.2026): Seit Fischgrät auch auf den PREIS wirkt, gibt es
+  // hier eine zweite, gewollte Fischgrät-Zeile — den Katalog-Aufpreis für die
+  // Musterverlegung. Der Wächter bleibt, aber auf seiner ursprünglichen
+  // Absicht: keine RAUMLOSE und keine DOPPELTE Fischgrät-Position. Ein „gibt
+  // es gar nicht"-Test hätte hier nur noch das Falsche festgehalten.
   it('erzeugt keine doppelte, raumlose Fischgrät-Position', () => {
-    expect(namen.some(n => n.includes('fischgrät') || n.includes('fischgraet'))).toBe(false)
+    const fischgraet = positionen.filter(p => /fischgr(?:ä|ae)t/i.test(p.beschreibung))
+    expect(fischgraet.map(p => p.beschreibung)).toEqual(['Aufpreis Fischgrät-Verlegemuster — Wohnzimmer'])
+    expect(fischgraet.every(p => / [—–-] \w/.test(p.beschreibung))).toBe(true)
+  })
+
+  it('der Fischgrät-Aufpreis rechnet auf derselben Fläche wie die Verlegung', () => {
+    const parkett = positionen.find(p => /fertigparkett verlegen/i.test(p.beschreibung))
+    const aufpreis = positionen.find(p => /aufpreis fischgr/i.test(p.beschreibung))
+    expect(aufpreis?.menge).toBe(parkett?.menge)
+    expect(aufpreis?.einheit).toBe('m²')
   })
 })
 

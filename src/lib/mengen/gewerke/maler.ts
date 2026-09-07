@@ -2,7 +2,7 @@ import type { MengenErgebnis, BerechnetePosition } from '../types'
 import { erkenneScope } from '../../arbeiten-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge, sockelAbzug } from './sockelleisten'
-import { berechneOeffnungsabzugVob, vobHinweistext, type OeffnungsabzugErgebnis } from './vob-uebermessung'
+import { berechneOeffnungsabzugVob, vobHinweistext, abgezogeneOeffnungen, type OeffnungsabzugErgebnis } from './vob-uebermessung'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -613,10 +613,18 @@ export function malerEngine(daten: any): MengenErgebnis {
           // rohe Summe zurück (dort greift die VOB-Regel nicht, siehe oben).
           const fensterAbzugAnzeige = fensterAbzugVob?.abzugFlaeche ?? round2(fensterFlaeche2)
           const tuerAbzugAnzeige = tuerAbzugVob?.abzugFlaeche ?? round2(tuerFlaeche2)
+          // PM-021: Die Klammer listete BEIDE Türen, abgezogen wurde nur die
+          // über 2,5 m². 1,89 + 4,20 = 6,09 ≠ 4,20 — ein Widerspruch, den es
+          // nicht gibt. Die Maßliste kommt jetzt aus derselben Datei wie die
+          // Zahl davor; die übermessene Tür steht im Hinweis darunter.
+          const tuerMasse = tuerAbzugVob
+            ? abgezogeneOeffnungen(effTueren, 0.9, 2.1)
+            : effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`)
+          const tuerMasseAnzeige = tuerMasse.length > 0 ? ` [${tuerMasse.join(', ')}]` : ''
           const vobHinweis = fensterAbzugVob && tuerAbzugVob ? vobHinweistext(fensterAbzugVob, tuerAbzugVob) : null
           positionen.push({
             beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: annahmenUmfang.length > 0 ? 'medium' : 'high',
-            berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m² − Fenster ${fensterAbzugAnzeige} m² − Türen ${tuerAbzugAnzeige} m² [${effTueren.map((t: any) => `${t.breite ?? 0.9}×${t.hoehe ?? 2.1}`).join(', ')}]`,
+            berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m² − Fenster ${fensterAbzugAnzeige} m² − Türen ${tuerAbzugAnzeige} m²${tuerMasseAnzeige}`,
             annahmen: [...annahmenFenster, ...annahmenUmfang, ...anstrichAnnahmen, ...(vobHinweis ? [vobHinweis] : [])],
             ...(!istDachschraege && umfangM && hoehe ? {
               flaechen_parameter: {

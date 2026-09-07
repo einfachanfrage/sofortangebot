@@ -93,6 +93,46 @@ export function berechneOeffnungsabzugVob(
   }
 }
 
+// ── PM-021, Fund im Rechenweg (Prüfmeister, 05.09.2026) ──────────────────
+//
+// Der Rechenweg las: „− Türen 4.2 m² [0.9×2.1, 2×2.1]". In der Klammer standen
+// BEIDE Türen, abgezogen wurde nur die Terrassentür. Wer nachrechnet, kommt auf
+// 1,89 + 4,20 = 6,09 und findet einen Widerspruch, den es gar nicht gibt.
+//
+// Die Klammer wurde direkt aus der Öffnungsliste gebaut, die Zahl davor aus dem
+// VOB-Abzug — zwei Quellen für dieselbe Aussage. Jetzt kommen beide aus dieser
+// Datei: Was hier nicht abgezogen wird, steht auch nicht in der Klammer; es
+// steht korrekt im Übermessungs-Hinweis darunter.
+
+/**
+ * Öffnungsabzug, wenn nur die EINZELfläche und die Stückzahl bekannt sind —
+ * der Fall der Bearbeiten-Ansicht (PM-031), die je Raum nur „2 Fenster" kennt
+ * und nicht deren Maße. Dieselbe Schwelle, dieselbe Entscheidung; nur der
+ * Eingang ist ein anderer.
+ */
+export function abzugAusEinzelflaeche(einzelFlaeche: number, anzahl: number): number {
+  if (!(anzahl > 0) || !(einzelFlaeche > 0)) return 0
+  if (einzelFlaeche <= VOB_UEBERMESSUNG_SCHWELLE_M2) return 0
+  return round2(anzahl * einzelFlaeche)
+}
+
+/** Maßliste NUR der tatsächlich abgezogenen Öffnungen — passend zu `abzugFlaeche`. */
+export function abgezogeneOeffnungen(
+  oeffnungen: OeffnungFuerAbzug[],
+  standardBreite: number,
+  standardHoehe: number,
+): string[] {
+  const liste: string[] = []
+  for (const o of oeffnungen ?? []) {
+    const breite = o?.breite ?? standardBreite
+    const hoehe = o?.hoehe ?? standardHoehe
+    if (breite * hoehe <= VOB_UEBERMESSUNG_SCHWELLE_M2) continue
+    const anzahl = o?.anzahl ?? 1
+    for (let i = 0; i < anzahl; i++) liste.push(`${breite}×${hoehe}`)
+  }
+  return liste
+}
+
 /** Kurzer, lesbarer Hinweistext fürs `annahmen`-Array, wenn die Regel gegriffen hat. */
 export function vobHinweistext(fenster: OeffnungsabzugErgebnis, tueren: OeffnungsabzugErgebnis): string | null {
   const anzahl = fenster.uebermessenAnzahl + tueren.uebermessenAnzahl

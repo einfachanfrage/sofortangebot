@@ -1236,9 +1236,25 @@ export default function EntwurfPage() {
       }
     }
     if (nurVorschau) {
-      return { ton: 'success', text: `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Leistung' : 'Leistungen'} erkannt — bereit für den Entwurf. Die endgültigen Positionen entstehen im nächsten Schritt, es können mehr werden.` }
+      return { ton: 'success', text: `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Leistung' : 'Leistungen'} aus deiner Aufnahme — der Entwurf rechnet sie durch und ergänzt, was fachlich dazugehört.` }
     }
-    return { ton: 'success', text: `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt — bereit für den Entwurf.` }
+    // ── Sammelbefund „Karte ≠ Entwurf" (Prüfmeister, 05.09.2026) ───────────
+    //
+    // Hier stand „X Positionen erkannt — bereit für den Entwurf." Fünf Belege
+    // in zwei Tagen zeigen, dass das nicht stimmt: PM-010 (+1), PM-012 (+1),
+    // PM-013 (+1), PM-033 (+1) und PM-030 (−1, eine Position fällt weg).
+    // Positionen, die erst in der Vollständigkeitsprüfung entstehen —
+    // Dehnungsfuge, Trittschall, Sockelleisten streichen —, kann die Karte
+    // gar nicht kennen: Ihr fehlen die Raummaße, die erst die volle
+    // Extraktion liefert.
+    //
+    // „Bereit für den Entwurf" ist der Moment, in dem der Handwerker prüft,
+    // bevor er den Knopf drückt — dazu haben wir ihn selbst erzogen. Wenn die
+    // Liste dann nicht gilt, prüft er die falsche. Bis die Karte dasselbe
+    // zeigt wie der Entwurf (Sandys Entscheidung, siehe Bericht), verspricht
+    // dieser Satz nur noch, was er halten kann — und er deckt beide
+    // Richtungen ab, denn bei PM-030 ist eine Position VERSCHWUNDEN.
+    return { ton: 'success', text: `${erkannteAnzahl} ${erkannteAnzahl === 1 ? 'Position' : 'Positionen'} aus deiner Aufnahme — der Entwurf rechnet sie durch und ergänzt, was fachlich dazugehört.` }
   })()
 
   // ── Zurück-Bestätigung Screen ─────────────────────────────────────────────

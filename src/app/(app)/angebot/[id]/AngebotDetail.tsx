@@ -148,16 +148,29 @@ function RaumDimensionenZeile({
   // „So gerechnet"-Zeile für den Wand-Chip (DC-024-Konzept) — reine
   // Anzeige-Ableitung aus dem bereits berechneten Netto-Wert, dupliziert
   // keine Öffnungs-Konstanten aus raum-geometrie.ts.
+  //
+  // PM-031: Diese Zeile zeigte „10,00 m × 5,00 m − 2 Fenster (3,36 m²) =
+  // 46,64 m²", während darüber korrekt 50,00 m² abgerechnet wurden. Die
+  // Ursache saß nicht hier, sondern in raum-geometrie.ts — die kannte die
+  // VOB-Übermessung nicht. Mit der Regel dort stimmt diese Zeile von selbst,
+  // weil sie aus dem Netto-Wert ableitet. Neu ist nur der Nachsatz: Wer zwei
+  // Fenster eingibt und sieht, dass die Fläche sich nicht ändert, soll
+  // erfahren warum — sonst hält er es für einen Fehler und rechnet von Hand
+  // nach.
   const wandRechnungText = (() => {
     if (!istWand || !dim.laenge || dim.laenge <= 0 || masse.wandflaeche == null) return null
     const brutto = round2(dim.laenge * masse.hoehe)
     const abzug = round2(brutto - masse.wandflaeche)
+    const anzahlOeffnungen = (dim.tueren ?? 0) + (dim.fenster ?? 0)
     const oeffnungen: string[] = []
     if ((dim.tueren ?? 0) > 0) oeffnungen.push(`${dim.tueren} ${dim.tueren === 1 ? 'Tür' : 'Türen'}`)
     if ((dim.fenster ?? 0) > 0) oeffnungen.push(`${dim.fenster} Fenster`)
     const basis = `${fmtZahl(dim.laenge)} m × ${fmtZahl(masse.hoehe)} m`
     if (abzug > 0 && oeffnungen.length > 0) {
       return `${basis} − ${oeffnungen.join(', ')} (${fmtZahl(abzug)} m²) = ${fmtZahl(masse.wandflaeche)} m²`
+    }
+    if (anzahlOeffnungen > 0) {
+      return `${basis} = ${fmtZahl(masse.wandflaeche)} m² · ${oeffnungen.join(', ')} bis 2,5 m² nicht abgezogen (VOB)`
     }
     return `${basis} = ${fmtZahl(masse.wandflaeche)} m²`
   })()

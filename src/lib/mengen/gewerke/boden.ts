@@ -79,6 +79,83 @@ function belagLabel(belag: string | undefined, typ: BelagTyp, klickGesagt = fals
 // Fischgrät auf den Standard-Verschnitt zurück und das Angebot ist zu klein.
 const MUSTER_MIT_MEHR_VERSCHNITT = /diagonal|fischgr(?:ä|ae|a)t/i
 
+// ── PM-025-A (Prüfmeister, 07.09.2026) ────────────────────────────────────
+//
+// „Vinylboden im Fischgrätmuster verlegen" ergab „Vinyl-Boden verlegen" zu
+// 22,00 €/m². Im Katalog steht „Designbelag im Fischgrätmuster kleben" zu
+// 36,00 €/m². 16,10 m² × 14,00 € = **225,40 € zu wenig** in einem einzigen
+// Gästezimmer; auf einer 60-m²-Wohnung rund 840 €.
+//
+// Und zwar in die für den Handwerker teure Richtung: Er verlegt Fischgrät —
+// jedes Element einzeln eingewinkelt, doppelt so viele Schnitte — und bekommt
+// gerade Verlegung bezahlt.
+//
+// Die Wurzel ist eine halbe Regel: Seit PM-013 wirkt das Muster auf den
+// VERSCHNITT (15 % statt 5 %), aber nirgends auf die Leistung selbst. Das
+// System weiß also, dass Fischgrät verlegt wird, und schreibt es sogar in die
+// Annahmen — nur der Titel, an dem der Preis hängt, verschweigt es.
+//
+// ── Warum eine Tabelle und keine Regex im Titel ───────────────────────────
+// Der naheliegende Weg — „im Fischgrätmuster" in den Titel schreiben und den
+// Preis-Matcher machen lassen — ist gegen den echten Katalog durchgespielt
+// worden und **schlägt fehl**: „Vinyl-Boden im Fischgrätmuster verlegen"
+// findet „Stabparkett im Fischgrätmuster verlegen" (68 €), „Teppichboden im
+// Fischgrätmuster" ebenso. Das Wort „Fischgrät" wiegt im Matcher schwerer als
+// der Belag. Ein Fehler, der teurer wäre als der, den er behebt.
+//
+// Deshalb benennt diese Tabelle je Belag den Katalogeintrag, den der Katalog
+// selbst für Fischgrät vorsieht — und ein Test hält fest, dass es ihn gibt.
+//
+// Zwei Formen, weil der Katalog zwei Formen kennt, nicht weil wir zwei Regeln
+// wollten:
+//   * Vinyl und Laminat haben einen VOLLSTÄNDIGEN Fischgrät-Eintrag. Der
+//     ersetzt den Titel; die Summe stimmt dann exakt (PM-025-Soll: 36,00 €/m²).
+//   * Parkett hat einen AUFPREIS-Eintrag (14,00 €/m²) neben dem Grundeintrag.
+//     Genau dafür ist er da: „Fertigparkett" ist kein „Stabparkett", der Titel
+//     darf also nicht getauscht werden. Der Aufpreis kommt als eigene Zeile —
+//     für den Kunden sogar lesbarer, weil der Mehraufwand ausgewiesen ist.
+//
+// ── Korrektur am selben Tag: die Diagonalverlegung gehört dazu ────────────
+//
+// Im ersten Anlauf stand hier, der Katalog benenne die Diagonalverlegung „nur
+// mittelbar" (über „Aufpreis Fischgrät / Muster"), und die Frage ging als
+// Rückfrage an den Prüfmeister. Das war schlicht falsch nachgesehen: Es wurde
+// nach „fischgrät" gesucht, nicht nach „diagonal". Der Katalog beantwortet die
+// Frage selbst — für jeden Belag steht ein eigener Diagonal-Aufpreis drin
+// (Parkett 10,00 · Laminat 8,00 · Vinyl 8,00 €/m²).
+//
+// Damit ist es dieselbe Regel, nicht zwei: Für jedes Paar aus Verlegemuster und
+// Belag sagt der Katalog, wie er es bepreist. Die Diagonale hatte dasselbe
+// Problem wie Fischgrät — sie hebt seit PM-013 den Verschnitt auf 15 %, wirkte
+// aber auf keinen Preis — und wird hier mit derselben Bewegung erledigt.
+const FISCHGRAET = /fischgr(?:ä|ae|a)t/i
+const DIAGONAL = /diagonal/i
+
+interface MusterPreis {
+  /** Vollständiger Katalogeintrag — ersetzt den Positionstitel. */
+  ersatzTitel?: string
+  /** Aufpreis-Eintrag — kommt als eigene Position dazu. */
+  aufpreisTitel?: string
+}
+
+/**
+ * Je Verlegemuster und Belag: wie der Katalog es bepreist — Titel wörtlich.
+ * Exportiert, damit ein Test festhält, dass es jeden Eintrag wirklich gibt;
+ * ein Tippfehler hier wäre eine 0,00-€-Position im Kundenangebot.
+ */
+export const MUSTER_KATALOG: Record<string, Record<string, MusterPreis>> = {
+  fischgraet: {
+    vinyl: { ersatzTitel: 'Designbelag im Fischgrätmuster kleben' },
+    laminat: { ersatzTitel: 'Laminat im Fischgrätmuster verlegen' },
+    parkett: { aufpreisTitel: 'Aufpreis Fischgrät-Verlegemuster' },
+  },
+  diagonal: {
+    vinyl: { aufpreisTitel: 'Aufpreis Diagonalverlegung Vinyl' },
+    laminat: { aufpreisTitel: 'Aufpreis Diagonalverlegung Laminat' },
+    parkett: { aufpreisTitel: 'Aufpreis Diagonalverlegung' },
+  },
+}
+
 export function bodenEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
   const warnungen: string[] = []
@@ -195,9 +272,16 @@ export function bodenEngine(daten: any): MengenErgebnis {
     // neuen Boden, wenn der bestehende nur abgeschliffen + versiegelt wird) UND
     // nur wenn überhaupt ein echter Belag-Auftrag vorliegt.
     if (!parkett_schleifen && hatEchtenBelagAuftrag) {
+      // PM-025-A: Fischgrät wirkt jetzt auch auf die Leistung, nicht nur auf
+      // den Verschnitt. Der Belag entscheidet, welche Form der Katalog kennt.
+      const muster = typeof verlegerichtung !== 'string' ? null
+        : FISCHGRAET.test(verlegerichtung) ? 'fischgraet'
+          : DIAGONAL.test(verlegerichtung) ? 'diagonal' : null
+      const musterPreis = muster ? MUSTER_KATALOG[muster][belagTyp ?? ''] : undefined
+      const verlegeMenge = round2(flaeche * (1 + verschnitt))
       positionen.push({
-        beschreibung: `${label} verlegen${verschnittSuffix} — ${name}`,
-        menge: round2(flaeche * (1 + verschnitt)),
+        beschreibung: `${musterPreis?.ersatzTitel ?? `${label} verlegen`}${verschnittSuffix} — ${name}`,
+        menge: verlegeMenge,
         einheit: 'm²',
         konfidenz: 'high',
         berechnungsweg: `${flaeche} m² + ${pct}% Verschnitt`,
@@ -205,6 +289,16 @@ export function bodenEngine(daten: any): MengenErgebnis {
           ...teilflaechenAnnahme,
           `${pct}% Verschnitt${hatMusterverlegung ? ` (${verlegerichtung === 'diagonal' ? 'Diagonalverlegung' : 'Fischgrät-/Musterverlegung'})` : ' (Standard)'}`,
         ],
+      })
+      if (musterPreis?.aufpreisTitel) positionen.push({
+        beschreibung: `${musterPreis.aufpreisTitel} — ${name}`,
+        menge: verlegeMenge,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Gleiche Fläche wie „${label} verlegen" — Mehraufwand für die Musterverlegung`,
+        annahmen: [muster === 'diagonal'
+          ? 'Diagonalverlegung: jede Reihe angeschnitten, mehr Verschnitt und mehr Zeit als gerade Verlegung'
+          : 'Fischgrät wird Element für Element eingewinkelt: mehr Schnitte, mehr Fugen, mehr Zeit als gerade Verlegung'],
       })
     }
 
