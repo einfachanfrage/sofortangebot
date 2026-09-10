@@ -125,7 +125,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
-| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) Press-States/Ränder, (e) Logo — siehe Detailabschnitt | Product Designer (Konzept: Marketing, Governance S. 19) |
+| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) Logo — siehe Detailabschnitt | Product Designer (Konzept: Marketing, Governance S. 19) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -4935,6 +4935,55 @@ eigenes Font-Registrieren für IBM Plex Mono im PDF-Kontext, Layout-Frage
 auf einer bereits eng bemessenen Seite), den ich bewusst nicht
 mitgemacht habe, ohne das vorher mit Sandy zu klären. Vorschlag: eigener
 Schritt (c2), falls gewünscht.
+
+**Schritt (d) ✅ erledigt („Press-States/farbige Ränder", Sandys Freigabe
+2026-09-10):**
+
+**Teil 1 (`debae4a`):** Gelb-Skala in `globals.css` um die im Handbuch
+definierten Zwischenstufen ergänzt (`--color-yellow-50/100/300/500/600/
+700`, Basis 500 = `#D9A400`, Hover 600 = `#BF9000`, Press 700 =
+`#A67C00`) — Tailwind v4 generiert daraus automatisch `bg-yellow-600`
+usw., ohne dass Verbraucher-Dateien angefasst werden mussten.
+`src/components/Button.tsx`, die zentrale Button-Komponente, komplett
+auf die Handbuch-Vorgabe umgestellt: Press-State jetzt
+`active:translate-y-px` statt Scale-down, Hover/Press beim
+Primary-Button nutzen jetzt echte Gelb-600/700-Töne statt
+`hover:brightness-95`. Die Sekundär-/Destruktiv-Varianten (nicht
+Gelb-basiert) blieben unverändert — das Handbuch-Detail „Hover dunkler
+statt heller" bei Gelb betrifft sie nicht direkt, eigene Prüfung wäre
+ein separater Schritt.
+
+**Teil 2 (`94d8214`):** Die verbleibenden 29 Dateien mit eigenem,
+nicht über `Button.tsx` laufendem `active:scale-95`/`active:scale-
+[0.9X]` (Kunden-, Login-/Register-, Einstellungen-Seiten, diverse
+Modals/Buttons/Banner) mechanisch auf `active:translate-y-px`
+umgestellt — reine Bewegungskorrektur, **keine** neue Hover/Press-Farbe
+(die Gelb-600/700-Stufen aus Teil 1 gelten bislang nur für
+`Button.tsx`). `grep -r "active:scale" src` danach leer (bis auf einen
+historischen Code-Kommentar in `Button.tsx` selbst, der die alte
+Migration erklärt).
+
+Gleichzeitig das Card-Muster „nie ein farbiger linker Rand" an drei
+weiteren, beim ursprünglichen Grep nicht erfassten Stellen entfernt:
+- `onboarding/[step]/page.tsx`: redundanter Gelb-Rand an der
+  „Marktpreise laden"-Karte (Badge, Icon-Box und Akzenttext zeigen den
+  Empfehlungs-Status bereits eindeutig)
+- `AngebotDetail.tsx`: Gelb-Rand bei „KI unsicher, bitte prüfen"-
+  Positionen (eigener Badge darüber übernimmt die Kennzeichnung schon)
+- `MobileQuoteCard.tsx`: ein per **Inline-Style** (nicht Tailwind-
+  Klasse) gesetzter Status-Farbbalken, den der ursprüngliche
+  `border-l`-Grep gar nicht erfassen konnte — erst beim direkten Lesen
+  der Datei aufgefallen. Der Status-Badge in der Karte zeigt denselben
+  Status bereits an.
+
+**Bewusst NICHT Teil davon:** die volle Hover/Press-Farbskala
+(Gelb 500→600→700) für die 29 Legacy-Stellen aus Teil 2 — die haben
+jetzt die richtige Bewegung, aber weiterhin `hover:brightness-95` o. Ä.
+statt echter Farbtöne; nur `Button.tsx` ist komplett Handbuch-konform.
+Ebenfalls offen: die generelle Hover-Regel für neutrale Flächen
+(→ `--surface-sunken`) und Links (Anthrazit → `--text-accent`) wurde
+in diesem Schritt nicht angefasst. `tsc --noEmit` über alle 30
+Dateien sauber.
 
 ---
 
