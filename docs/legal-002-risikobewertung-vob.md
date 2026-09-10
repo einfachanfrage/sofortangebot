@@ -71,7 +71,7 @@ Ich gebe deshalb bei jedem Risiko an, auf welcher Ebene es zuerst wirkt.
 | **LR-06** | Geplanter Leibungs-„Fix" würde korrektes Verhalten zerstören | A | Produktqualität | 3 | 4→1 | **12→3** | 🟠→🟢 | Head of Product Eng. |
 | **LR-07** | Drei verschiedene Verschnittsätze — Angebot widerspricht sich selbst | A → B | Vertrag / UWG | 3 | 3 | **9** | 🟡 YELLOW | Head of Product Eng. |
 | **LR-08** | „Normgrundlagen"-Zeile behauptet nicht eingehaltene Konformität | A → B | UWG / Vertrag | 3 | 3 | **9** | 🟡 YELLOW | Product Designer |
-| **LR-09** | Zuschlagstitel nennt Prozent, Preis ist Euro (14 Einträge) | A | Vertrag / § 305c BGB | 3 | 3 | **9** | 🟡 YELLOW | Head of Product Eng. |
+| **LR-09** | Zuschlagstitel nennt Prozent, Preis ist Euro (14 Einträge) | A | Vertrag / § 305c BGB | 3 | 3→0 | **9→0** | ✅ **GESCHLOSSEN 10.09.** | erledigt (CoS-043) |
 | **LR-10** | Nebenleistungen nach DIN 18363 als eigene Positionen berechnet | A | Vertrag | 2 | 2 | **4** | 🟢 GREEN | Prüfmeister |
 | **LR-11** | Türbreiten von Sockelleistenlänge abgezogen | A | Produktqualität | 2 | 2 | **4** | 🟢 GREEN | Head of Product Eng. |
 | **LR-12** | **Fünf** verschiedene Höhenschwellen im Produkt (Konsistenz) | A | Produktqualität | 2 | 2 | **4** | 🟢 GREEN | Head of Product Eng. |
@@ -102,6 +102,12 @@ Low      (2)  |        | LR-10  |        |        |          |
 Negligible(1) |        |        |        |        |          |
 ```
 ▲ LR-06 nach der Dokumentation in `vob-angebot-abstimmung.md` — siehe Memo.
+
+**Matrix-Stand 10.09.:** LR-09 ist geschlossen und steht oben nur noch der
+Nachvollziehbarkeit halber; LR-06 ist endgültig erledigt; LR-14 (nach der
+Erstbewertung 🔴 12) steht heute bei 🟢 4 mit Bedingung. Details im Nachtrag am
+Dateiende. Die Matrix oben bildet den Stand vom 01.09. ab und wird bewusst
+nicht rückwirkend umgezeichnet.
 
 ---
 
@@ -433,11 +439,13 @@ einhält, ist schlechter als keine — sie liefert dem Endkunden den Maßstab.
 Lösung in VOB-007: sachliche Erklärung an der Position, Einbeziehung als
 optionaler Fußtext, pauschale Zeile weg.
 
-**LR-09 (9 🟡) — Prozent im Titel, Euro im Preis.** 14 Katalogeinträge über
-neun Gewerke. §§ 133, 157 BGB, bei AGB-Charakter § 305c Abs. 2 BGB — Zweifel
-zulasten des Verwenders, also des Handwerkers. Die betroffenen Maler- und
-Bodeneinträge (Wochenend-/Feiertagszuschlag 25 %) sind launchrelevant, die
-SHK-/Elektro-Einträge noch nicht. Migration, keine Entscheidung nötig.
+**LR-09 (9 🟡 → ✅ geschlossen 10.09.)** — Prozent im Titel, Euro im Preis.
+14 Katalogeinträge über neun Gewerke. §§ 133, 157 BGB, bei AGB-Charakter
+§ 305c Abs. 2 BGB — Zweifel zulasten des Verwenders, also des Handwerkers. Die
+betroffenen Maler- und Bodeneinträge (Wochenend-/Feiertagszuschlag 25 %) sind
+launchrelevant, die SHK-/Elektro-Einträge noch nicht. Migration, keine
+Entscheidung nötig. **Umgesetzt über CoS-043, von mir am 10.09. gegen die
+Produktions-Datenbank gegengeprüft — siehe Nachtrag am Dateiende.**
 
 **LR-10 (4 🟢) — Nebenleistungen als eigene Positionen.** „Boden abdecken"
 1,20 €/m², „Möbel abdecken" 1,50 €/m² sind nach DIN 18363 4.1.3 Nebenleistungen
@@ -546,7 +554,7 @@ alles, was ich hier geschätzt habe.
 | 1 | LR-01 — Übermessungssatz ins PDF (nach Freigabe S-2) | Head of Product Engineering | vor erstem Testnutzer |
 | 2 | LR-05 — Unternehmer-Checkbox | Head of Product Engineering | vor erstem Testnutzer |
 | 3 | LR-04 — Wertersatz-Feld (nach Freigabe S-2) | Head of Product Engineering | vor erstem Testnutzer |
-| 4 | LR-07, LR-09 — Konsistenzfixes, keine Entscheidung nötig | Head of Product Engineering | sofort möglich |
+| 4 | ~~LR-07, LR-09~~ — LR-09 erledigt (CoS-043, 04.09.), LR-07 offen | Head of Product Engineering | sofort möglich |
 | 5 | LR-03 — Normen bestellen (S-5) | Sandy | vor Umsetzung LR-02/LR-06 |
 | 6 | LR-02, LR-10, LR-11 — sechs verbleibende Praxis-Fragen (LR-12 am 01.09. beantwortet) | Prüfmeister | vor Entscheidung Sandy |
 | 7 | LR-08 — Konzept „Normgrundlagen"-Zeile | Product Designer | vor Launch |
@@ -606,6 +614,11 @@ seltener — **Severity 2, Likelihood 2, Score 4 🟢**, kein eigener Registerei
 
 ### LR-14 🔴 NEU — Übermessungsschwelle bei Bodenbelagarbeiten
 
+> **Neu bewertet am 10.09.: 🟢 4 statt 🔴 12, mit Bedingung.** Die Vermutung hat
+> sich nicht bestätigt — `boden.ts` hat die Malerschwelle nie geerbt. Der Eintrag
+> wird aber nicht gestrichen, weil die Normanforderung auch nicht umgesetzt ist.
+> Begründung im Nachtrag am Dateiende.
+
 **Score 12 (Severity 4 × Likelihood 3) · VOB-008**
 
 **Risikobeschreibung:** DIN 18365:2019-09, Abschnitt 5.3.1 übermisst
@@ -634,6 +647,106 @@ gewerkespezifisch trennen (18363 → 2,5 m² Wand / 0,5 m² Boden-*Beschichtung*
 LR-01 (Übermessungshinweis fehlt im PDF) bleibt der Spitzenreiter. Der Normtext
 verschärft ihn eher: Jetzt sind drei verschiedene Übermessungsschwellen im Spiel
 (2,5 / 0,5 / 0,1 m²), und der Kunde sieht keine davon.
+
+---
+
+## Nachtrag 2026-09-10 — LR-09 und LR-14 nachgezogen (Head of Legal & Compliance)
+
+**Der Chief of Staff hat zu Recht geflaggt** (`chief-of-staff-todos.md`,
+Governance-Hinweis vom 05.09.): Beide Risiken waren seit dem 04.09. inhaltlich
+geschlossen, standen hier aber weiter auf 🔴 12 und 🟡 9. Die Schließung war nur
+in Engineerings Ticket dokumentiert, nicht in der Risikobewertung selbst. **Das
+ist mein Versäumnis, nicht Engineerings.** Nachgezogen mit dieser Ergänzung.
+
+Ich habe beide vor dem Schließen selbst geprüft und nicht nur die
+Erledigungsmeldung übernommen. Bei einem hat die Prüfung das Ergebnis verändert.
+
+### LR-09 — geschlossen, in der Produktions-Datenbank verifiziert
+
+Ich habe `price_items` in der Produktions-Datenbank direkt abgefragt, statt mich
+auf CoS-043 zu verlassen:
+
+- **16 Einträge tragen einen Prozentsatz im Titel.** Davon sind **14 echte
+  Zuschläge** — alle mit `unit = '%'` **und** `zuschlag_typ = 'prozent'`.
+- Die **zwei** Einträge mit Prozentsatz im Titel und anderer Einheit sind
+  „Gefälleestrich Keller/Technikraum (1–2 % Gefälle)" (m²) und „Gefälleestrich
+  Dusche (2 % Gefälle)" (Pauschale). Das sind **Gefälleangaben, keine
+  Zuschlagssätze** — exakt die beiden Fehltreffer, die ich schon bei der
+  Ersterfassung von VOB-010 als solche markiert hatte. Kein Befund.
+
+Damit ist der Kern von LR-09 — der Widerspruch zwischen Titel und Preiseinheit,
+der nach § 305c Abs. 2 BGB zulasten des Handwerkers ausgelegt worden wäre —
+tatsächlich weg. **LR-09 geschlossen, Score 0.**
+
+**Ein Nebenbefund aus derselben Abfrage, den ich weitergebe, ohne ihn zu
+bewerten** (das ist eine Geld-, keine Rechtsfrage): Es gibt **21 weitere
+Einträge mit `unit = '%'`, bei denen `zuschlag_typ` NULL ist** — alle im Katalog
+**einer** Firma, keiner davon mit Prozentsatz im Titel. Darunter zeitbezogene
+Zuschläge wie „Zuschlag Feiertagsarbeit" (50 %) und „Zuschlag Nachtarbeit
+(22:00–06:00)" (25 %). CoS-043 hat die 14 klassifiziert; diese 21 waren nicht
+Teil der Menge. **Frage an Head of Product Engineering:** Bedeutet ein nicht
+gesetzter `zuschlag_typ`, dass der Prozentsatz gar nicht angewendet wird, oder
+greift eine Vorgabe? Beides wäre erklärbar — aber es ist dieselbe Bauform wie
+der Geld-Bug, den ihr bei CoS-043 selbst gefunden habt (sieben gleichnamige
+Positionen, falscher Treffer), und deshalb einen Blick wert.
+
+### LR-14 — Entwarnung bestätigt, Eintrag bleibt trotzdem stehen
+
+Engineerings Befund stimmt, ich habe ihn im Code nachgeprüft:
+
+- `src/lib/mengen/gewerke/boden.ts` importiert `vob-uebermessung` **nicht** —
+  einziger Aufrufer im Produktionscode ist `maler.ts` (dazu `pdf.tsx` und
+  `raum-geometrie.ts` für die Anzeige). Die 2,5-m²-Malerschwelle ist also nie
+  auf Bodenflächen angewendet worden. **Kein Angebot war je betroffen.**
+- Die Bodenfläche entsteht schlicht als `Länge × Breite`; in `boden.ts` gibt es
+  überhaupt keine Abzugslogik.
+
+**Warum ich den Eintrag trotzdem nicht streiche.** Genau derselbe Satz, der die
+Entwarnung trägt, sagt auch: **Die Normanforderung ist nicht umgesetzt.** DIN
+18365 Abschnitt 5.3.1 verlangt, Aussparungen über 0,1 m² abzuziehen. Heute kann
+das nicht schiefgehen, weil es im Datenmodell für Böden keine Aussparungen gibt
+— ein Kamin, eine Säule, ein Bodeneinbau werden gar nicht erfasst. Das Risiko
+ist nicht beseitigt, sondern **mangels Datenpfad nicht auslösbar**.
+
+Die neu angelegte Konstante `VOB_UEBERMESSUNG_SCHWELLE_BODEN_M2 = 0.1` ist
+dokumentiert und durch einen Test abgesichert — aber **kein Produktionscode
+benutzt sie**. Der Test hält den Wert fest, nicht das Verhalten.
+
+**Neue Bewertung: Severity 4 (unverändert — es wäre ein von außen nachrechenbarer
+Fehler zulasten des Kunden), Likelihood 1 (kein Datenpfad). Score 4 🟢, mit
+Bedingung.**
+
+**Die Bedingung, und sie gehört ins Produkt-Backlog, nicht ins Legal-Backlog:**
+Sobald Aussparungen in Bodenflächen erfassbar werden — Kamin, Säule,
+Bodeneinbau, Treppenöffnung —, muss die 0,1-m²-Schwelle mit angeschlossen
+werden. Wenn dieser Fall gebaut wird, ohne dass jemand an LR-14 denkt, entsteht
+der Fehler in dem Moment neu, und dann in jedem Bodenangebot. **Vorschlag an
+Head of Product Engineering:** einen Test, der fehlschlägt, sobald `boden.ts`
+Öffnungen verarbeitet, ohne die Bodenschwelle zu benutzen — das ist billiger als
+eine Notiz, die jemand lesen muss.
+
+### Und eine Sache über mein eigenes Arbeiten
+
+**Das ist das zweite Mal, dass meine eigene Datei hinterherhinkt.** Beim ersten
+Mal war es `legal-001` gegen VOB-003, gefunden vom Prüfmeister; jetzt
+`legal-002` gegen CoS-042/CoS-043, gefunden vom Chief of Staff. Das Muster ist
+in beiden Fällen dasselbe: Ich schreibe einen Befund auf, route den Fix nach
+draußen, und danach wird das Ticket zur Wahrheit, während meine Bewertung stehen
+bleibt. Bei einem Risikoregister ist das besonders unangenehm, weil sein ganzer
+Zweck ist, den Stand zu kennen.
+
+**Was ich ändere:** Jeder Eintrag, den ich nach draußen route, bekommt ab sofort
+eine Zeile „Schließung wird gemeldet in: …" mit der Zieldatei. Dann weiß ich,
+wo ich nachsehen muss, statt darauf zu warten, dass es jemand merkt. Für die
+bestehenden Einträge trage ich das nach, wenn ich das nächste Mal ohnehin in der
+Datei bin — nicht als eigene Aufgabe, das wäre Beschäftigung.
+
+**Offen im Register bleiben damit:** LR-01 (🔴, Übermessungshinweis im PDF),
+LR-02, LR-04, LR-05, LR-07, LR-08, LR-12. **Erledigt:** LR-03 (Normtext
+beschafft), LR-06, LR-09, LR-10 (als branchenüblich geklärt, VOB-005), LR-11
+(VOB-012 gefixt). **LR-13** hängt am Live-Nachtest des Prüfmeisters — der
+Testfall PM-037 existiert, ist aber noch nicht eingesprochen. **LR-14** steht
+grün mit der oben genannten Bedingung.
 
 ---
 

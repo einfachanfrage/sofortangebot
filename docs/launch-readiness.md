@@ -38,12 +38,46 @@ ehrlicherer Nenner ist besser als ein kleiner, falscher.
 
 | Gate | Fortschritt | Punkte |
 |---|---|---|
-| **Gate 1** — erste Testnutzer | **≈ 49,2 %** (06.09.: 1.1 durch zwei weitere PM-030-Nachgang-Fixes bewegt, 2.313 ÷ 47) | 47 |
+| **Gate 1** — erste Testnutzer | **≈ 49,3 %** (10.09.: 1.6 durch „Anfahrt & Vorbereitung"-Feature bewegt, 2.316 ÷ 47) | 47 |
 | **Gate 2** — öffentlicher Launch | **≈ 19,0 %** (echte Neuberechnung 05.09., alle 37 Punkte einzeln addiert: 703 ÷ 37 — siehe Drift-Hinweis unten) | 37 |
 | **Gate 3** — danach/Skalierung | **≈ 16,8 %** (echte Neuberechnung 05.09., alle 11 Punkte einzeln addiert: 185 ÷ 11, faktisch unverändert) | 11 |
 
 Rechenweg unverändert: jeder Punkt 0–100 nach der jeweiligen Heimat-Quelle,
 0 = „offen, nicht erhoben" ist ein legitimer Wert. Ungewichteter Durchschnitt.
+
+> ✅ **Update 10.09.2026 (Chief of Staff) — „Anfahrt & Vorbereitung" für
+> Kleinstaufträge gebaut, live geprüft, gegen die Produktions-DB verifiziert.**
+> Kam aus Head of Product Engineerings Routing (07.09.): die Mindestmenge/
+> Anfahrpauschale-Frage lag formal bei mir. Erster eigener Entwurf (180 €
+> automatisch als stiller Aufschlag) war handwerklich derselbe Fehler, vor
+> dem ich Engineering selbst gewarnt hatte — Head of Legal hat das über
+> VOB/DIN 18299 und § 5a UWG zu Recht korrigiert. Endgültige Spezifik: eigene,
+> entfernbare Position **„Anfahrt & Vorbereitung"** im Angebot (nicht in den
+> AGB versteckt), Schwellenwert als Betriebseinstellung statt fester Konstante,
+> 180 € nur als Vorschlag bei Ersteinrichtung. Engineering hat das am 07.09.
+> gebaut und die Migration geschrieben; ich habe die Migration heute direkt
+> gegen die Produktions-Datenbank geprüft (nicht nur die Doku glauben) —
+> `companies.mindestauftragswert` ist live nullable mit Default NULL, beide
+> Bestandsbetriebe stehen unverändert auf 0, kein rückwirkender Effekt.
+> Bewegt 1.6 von 85 auf 88 %, Gate 1 von 49,2 auf 49,3 %.
+>
+> **Governance-Hinweis, „Oberfläche verspricht, Code schweigt":** Engineering
+> hat dabei von sich aus gemeldet (nicht verschwiegen), dass die Spalte
+> `companies.mindestauftragswert` schon vor diesem Ticket existierte, aber nie
+> von irgendeinem Code gelesen wurde — die Einstellungs-Oberfläche versprach
+> ein Feature, das technisch nie gefeuert hat. Gehört in dieselbe Bug-Familie
+> wie frühere Fälle, in denen UI-Text etwas zusagt, das der Code nicht
+> einlöst. Kein Sofortrisiko (die Spalte stand bei allen Betrieben auf 0,
+> also ohnehin folgenlos), aber ein Muster, das eine eigene Durchsicht
+> verdient: welche anderen Einstellungen in der Oberfläche existieren, ohne
+> je gelesen zu werden?
+>
+> **Separat, nicht dieselbe Sache:** Beim Reparieren der gemeinsamen
+> Koordinationsdatei `chief-of-staff-todos.md` ist mir aufgefallen, dass der
+> Speicherfehler aus CoS-013 (dort mit eigener ID geführt) trotz der am
+> 31.08. angenommenen Git-Lösung erneut aufgetreten ist — zwei weitere Male,
+> in dieser Session. Details und mein Vorschlag dazu stehen bei CoS-013 selbst
+> (fremde Zuständigkeit dieser Datei hier), nicht hier dupliziert.
 
 > ✅ **Update 06.09.2026 (Chief of Staff) — zwei echte Bugs aus dem
 > PM-030-Nachgang gefunden und gefixt, beide testabgesichert.** Auf meine
@@ -755,7 +789,7 @@ sollten, bevor die Liste weiter wächst. Quelle: `docs/pruefmeister-testfaelle.m
 | 1.3 | Bestätigungskarte = Endberechnung (Karte-≠-Berechnung-Muster geschlossen) | G1 | 🟢 95 % — **25.08.: CoS-002 endgültig abgeschlossen.** Zusätzlich zum Realtime-Fix bereits echter Schutz gegen stilles Überschreiben manueller Positions-Änderungen, inkl. Löschfall (CoS-014). **Sandys Bestätigungs-Retest ist bestanden** — zweifach dokumentiert: Product Designer hatte es schon am 23.08. in `design-check.md` (DC-021) festgehalten (dort korrekt, hier durch einen eigenen Sync-Fehler nicht übernommen), und Sandy hat heute unabhängig denselben Test live wiederholt („Boden schützen 12 m²" korrekt) und bestätigt. Nicht auf 100 %, weil nur gezielte Testfälle bestätigt sind, keine breite Testserie. **05.09.: Prüfmeister-Serie hat eine echte PM-018-Regression (Q2/Q3) und einen PM-010-Kartenzähler-Bug gefunden UND gefixt** — zeigt, dass das Golden-Test-Netz Regressionen an genau dieser Stelle zuverlässig fängt, aber auch, dass die Karte selbst nicht perfekt stabil ist; Prozentzahl bewusst nicht höher, bis eine Weile nichts mehr auffällt. Quelle: CoS-002/CoS-014, `docs/cos-002-architektur-vorschlag.md`, DC-021, `docs/pruefmeister-testfaelle.md` |
 | 1.4 | Alle bestätigten Fälle als Golden Tests grün, kein Fix bricht still einen alten Fall | G1 | 🟢 95 % — **24.08.: CoS-018 abgeschlossen**, alle vier vorbestehenden Fehlschläge als veralteter Testcode aufgeklärt (VOB-/Sockelleisten-Regeländerungen), kein verlorener Fix. **25.08.:** Suite weiter gewachsen auf 842/842, u. a. durch CoS-021- und PM-019/020-Sicherheitstests, weiterhin kein Fund einer Regression. **05.09.: erstmals wieder eine harte, aktuelle Zahl vorliegend** (statt der bewusst nicht geschätzten Lücke seit 02.09.) — Suite bei 84 Testdateien / 1.352 Tests grün (Stand CoS-043-Abschluss 04.09.), Prüfmeister nennt parallel bis zu 1.468 (leicht abweichender späterer Zwischenstand, nicht widersprüchlich, nur unterschiedlicher Zeitpunkt). Das Netz hat in derselben Woche zwei echte Regressionen selbst gefangen (PM-018, PM-010, siehe 1.3) — funktioniert also wie gedacht. Kein direkter CI-Dashboard-Zugriff, deshalb weiterhin nicht 100 % |
 | 1.5 | Zahlen-/Größenordnungsfehler ausgeschlossen (siehe PM-010: „drei fünfzig" → 350) | G2 | 🟡 40 % — bleibt als bewusste Design-Entscheidung stehen (Whisper-Ebene, Rechnung selbst korrekt, Warnung statt stiller Korrektur) |
-| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 85 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.). **29.08. (DC-039):** „+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank plus einen eigenen, serverseitig abgesicherten Schreib-Endpunkt. **02.09.: eine 21-Positionen-Katalog-Lücke geschlossen** (CoS-028) — deutlich breitere Preisabdeckung. **05.09. (CoS-043):** die 14 VOB-010-Zuschlagspositionen laufen jetzt über echten Prozentaufschlag statt Euro-Pauschale, dabei ein echter Geld-Bug im Preis-Matching gefunden und gefixt (sieben gleichnamige Positionen, siehe 1.1) — direkt Preislogik-relevant. Live-Nachtest weiterhin für vieles offen |
+| 1.6 | Neu erkannte Positionstypen haben hinterlegte Standardpreise | G1 | 🟡 88 % — Kniestock, Dachschräge, Fassadenfläche streichen und Übergangsschiene jetzt alle mit Preis hinterlegt (20.08.). **29.08. (DC-039):** „+ Position" hat jetzt eine Live-Suche gegen die Preisdatenbank plus einen eigenen, serverseitig abgesicherten Schreib-Endpunkt. **02.09.: eine 21-Positionen-Katalog-Lücke geschlossen** (CoS-028) — deutlich breitere Preisabdeckung. **05.09. (CoS-043):** die 14 VOB-010-Zuschlagspositionen laufen jetzt über echten Prozentaufschlag statt Euro-Pauschale, dabei ein echter Geld-Bug im Preis-Matching gefunden und gefixt (sieben gleichnamige Positionen, siehe 1.1) — direkt Preislogik-relevant. **10.09.: „Anfahrt & Vorbereitung"-Position für Kleinstaufträge live** — eigene, entfernbare Zeile statt stillem Aufschlag, Schwellenwert als Betriebseinstellung (180 € Vorschlag), Legal-geprüft (Zeile im Angebot statt AGB, § 5a UWG beachtet). DB-Migration direkt gegen die Produktions-Datenbank verifiziert, nicht nur behauptet. Live-Nachtest weiterhin für vieles offen |
 | 1.7 | KI-Grenzen/Fehlerrate den Nutzern gegenüber transparent kommuniziert (kein 100 %-Versprechen) | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.8 | Lasttest: mehrere gleichzeitige Aufnahmen/Nutzer ohne Fehler | G2 | ⚪ offen — nicht erhoben (neu) |
 | 1.9 | Bekannte Sprach-/Dialekt-/Störgeräusch-Grenzen dokumentiert | G3 | ⚪ offen — nicht erhoben (neu) |

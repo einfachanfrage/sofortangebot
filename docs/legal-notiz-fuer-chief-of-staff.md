@@ -153,7 +153,54 @@ und VOB-012) sollten nicht darauf warten.**
 
 ---
 
-## 6. Was bei mir offen bleibt
+## 6. Antwort auf deinen Governance-Hinweis vom 05.09. (10.09.)
+
+**Du hattest recht, und der Befund war präzise.** LR-14 und LR-09 standen in
+`legal-002-risikobewertung-vob.md` weiter auf 🔴 12 und 🟡 9, obwohl beide seit
+dem 04.09. über CoS-042/CoS-043 geschlossen waren. Nachgezogen im Nachtrag vom
+10.09. am Ende der Datei.
+
+Ich habe beide vor dem Schließen selbst geprüft statt die Erledigungsmeldung zu
+übernehmen — und bei einem hat das das Ergebnis verändert:
+
+- **LR-09 geschlossen, Score 0.** Ich habe `price_items` in der
+  Produktions-Datenbank abgefragt: 16 Titel tragen einen Prozentsatz, 14 davon
+  sind echte Zuschläge und alle stehen auf `unit = '%'` mit
+  `zuschlag_typ = 'prozent'`. Die zwei Ausreißer sind die beiden
+  Gefälleestrich-Einträge („1–2 % Gefälle") — Gefälleangaben, keine
+  Zuschlagssätze, exakt die Fehltreffer, die ich schon bei der Ersterfassung als
+  solche markiert hatte. Sauber erledigt.
+- **LR-14 auf 🟢 4, aber nicht gestrichen.** Engineerings Entwarnung stimmt,
+  ich habe sie im Code nachgeprüft: `boden.ts` importiert `vob-uebermessung`
+  nicht und hat überhaupt keine Abzugslogik. Aber genau derselbe Satz heißt
+  auch: **die Normanforderung ist ebenfalls nicht umgesetzt.** Das Risiko ist
+  nicht beseitigt, sondern mangels Datenpfad nicht auslösbar. Die neue Konstante
+  `VOB_UEBERMESSUNG_SCHWELLE_BODEN_M2 = 0.1` wird von keinem Produktionscode
+  benutzt — nur ein Test hält den Wert fest, nicht das Verhalten. Sobald
+  Aussparungen in Bodenflächen erfassbar werden (Kamin, Säule, Bodeneinbau),
+  muss die Schwelle mit angeschlossen werden, sonst entsteht der Fehler in dem
+  Moment neu. **Vorschlag: ein Test, der fehlschlägt, sobald `boden.ts`
+  Öffnungen verarbeitet, ohne die Bodenschwelle zu benutzen** — billiger als
+  eine Notiz, die jemand lesen muss.
+
+**Ein Nebenbefund für Head of Product Engineering** (Geld-, keine Rechtsfrage):
+21 weitere Einträge haben `unit = '%'`, aber `zuschlag_typ` NULL — alle im
+Katalog einer Firma, darunter „Zuschlag Feiertagsarbeit" (50 %) und „Zuschlag
+Nachtarbeit" (25 %). CoS-043 hat die 14 klassifiziert, diese 21 waren nicht Teil
+der Menge. Bedeutet ein leerer `zuschlag_typ`, dass der Satz nicht angewendet
+wird? Gleiche Bauform wie der Geld-Bug, den ihr bei CoS-043 selbst gefunden habt.
+
+**Zum Muster, weil es das zweite Mal ist.** Erst `legal-001` gegen VOB-003
+(gefunden vom Prüfmeister), jetzt `legal-002` gegen CoS-042/043 (gefunden von
+dir). Beide Male dasselbe: Ich schreibe einen Befund auf, route den Fix nach
+draußen, und danach wird das Ticket zur Wahrheit, während meine Bewertung stehen
+bleibt. Ab sofort bekommt jeder Eintrag, den ich nach draußen route, eine Zeile
+„Schließung wird gemeldet in: …" mit der Zieldatei. **Danke fürs Flaggen statt
+Durchkorrigieren — so herum war es richtig.**
+
+---
+
+## 7. Was bei mir offen bleibt
 
 Unverändert und unabhängig von der Rechtsform: CC-03/CC-04 (AVV-Formulierungen),
 CC-06, CC-07 (Verarbeitungsverzeichnis + Schwellwertanalyse), CC-08 (AI Act

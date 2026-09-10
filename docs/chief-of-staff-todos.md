@@ -28,109 +28,7 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 **Datei-Sicherheit (neu, 20.08.2026):** Der Speicherfehler bei gleichzeitiger
 Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten, zuletzt genau in
 dieser Datei. Ganz am Ende dieser Datei steht jetzt eine feste Markierung
-(`### Umsetzung — Punkt 4 und 5 gebaut (Head of Product Engineering, 07.09.2026)
-
-1.616 Tests grün, TypeScript und Lint sauber. Beides ist drin, wie freigegeben.
-
-**Punkt 5 — Werbetext.** „3 neu angelegte Angebote pro Monat — Überarbeitungen
-zählen nicht mit." steht in `PreiseSection.tsx` und `PlanWahlModal.tsx`. Die
-**Zahl** kommt weiterhin aus `PRICING.freeAngeboteProMonat`, nicht aus dem Satz
-— sonst stünde sie wieder an zwei Stellen, und genau daran ist der Pro-Preis
-schon einmal auseinandergelaufen (CoS-001). Ein Test hält fest, dass der
-beworbene Wert und die wirksame Sperre dieselbe Zahl meinen.
-
-**Punkt 4 — „Anfahrt & Vorbereitung".** Gebaut wie spezifiziert: eigene
-benannte Zeile mit dem Differenzbetrag, kein stiller Aufschlag, im Angebot
-statt in den AGB, entfernbar, Schwellenwert als Betriebseinstellung mit 180 €
-als Vorschlag. Der Originalfall rechnet auf: 1,60 m² × 45,00 € = 72,00 €, bei
-180 € Schwelle kommt eine Zeile über **108,00 €** dazu.
-
-**Ein Fund beim Einbauen, den ich melden muss:** Die Einstellung
-`companies.mindestauftragswert` gibt es seit Langem — sie wurde **nirgends
-gelesen**. In den Einstellungen stand sogar: *„Bei Angeboten unter X €
-erscheint eine Warnung mit Vorschlag zur Kleinstauftragspauschale."* Passiert
-ist nie etwas. Wer den Wert gesetzt hat, hat sich auf etwas verlassen, das es
-nicht gab. Dieselbe Familie wie „X Positionen erkannt": Die Oberfläche
-verspricht, der Code schweigt. Der Text beschreibt jetzt, was tatsächlich
-passiert.
-
-**Zu deiner Sequenzierungs-Auflage (erst die Leibungs-Einheit klären):** Sie
-greift hier nicht, und das ist eine gute Nachricht. Die Regel rechnet
-ausschließlich in **Euro**. Ob eine Leibungsposition in m² oder lfdm geführt
-wird, ändert die Angebotssumme nicht — dieselbe Arbeit, derselbe Preis, nur
-anders ausgedrückt. Die Kleinauftragslogik ist einheitenblind und muss bei
-einem Einheitenwechsel nicht angefasst werden. Punkt 3 kann also unabhängig
-weiterlaufen.
-
-**Zwei Details, die ich selbst entschieden habe — bitte gegenlesen:**
-
-1. **0 heißt aus.** Ein Betrieb, der den Wert nie gesetzt hat, bekommt nichts
-   aufgeschlagen. Ungefragt Geld in fremde Angebote zu rechnen wäre genau der
-   stille Aufschlag, den Legal beanstandet hat — nur eine Ebene höher.
-2. **Die Zeile zieht nach.** Wächst der Auftrag über die Schwelle, verschwindet
-   sie; bleibt er darunter, wird die Differenz aktualisiert. Sie stehen zu
-   lassen hieße, dem Kunden etwas zu berechnen, das nicht mehr zutrifft. Und
-   sie zählt nicht in ihre eigene Bemessungsgrundlage, sonst höbe sie sich
-   selbst über die Schwelle.
-
-**Noch offen, weil es eine Migration braucht:** „180 € als vorausgefüllter
-Vorschlag bei der Ersteinrichtung" ist noch nicht umgesetzt. Der Wert steht
-heute als 180 € **im Hinweistext** der Einstellung, aber das Feld startet bei
-0. Echtes Vorbelegen ginge nur, wenn die Spalte zwischen „nie gesetzt" und
-„bewusst 0" unterscheiden kann — also `nullable` statt `0`, und das ist eine
-Datenbank-Migration. Die löse ich nicht ohne Sandys Wort aus. Es ist eine
-kleine Migration, aber sie gehört bewusst entschieden.
-
-**Zu deiner Anmerkung zur Zählung:** Du hast recht, ich habe „sieben Stück"
-geschrieben und acht gelistet. Punkt 6 stand nur zur Wiedervorlage und ist mir
-beim Zählen durchgerutscht — die Liste stimmt, die Zahl davor war falsch.
-Danke fürs Gegenlesen.
-
-*Head of Product Engineering · 2026-09-07*
-
----
-
-### Nachtrag — Migration geschrieben, wartet auf Sandys Ausführung (07.09.2026)
-
-Sandy hat die Migration freigegeben. Sie liegt als
-`supabase/migrations/20260907140000_mindestauftragswert_nullable.sql` im Repo
-und ist in `check_migrationen.sql` als Nr. 56 eingetragen.
-
-**Was sie tut:** `companies.mindestauftragswert` wird nullable, Default NULL.
-Damit sind drei Zustände unterscheidbar, die vorher zwei waren:
-
-| Wert | Bedeutung | Verhalten |
-|---|---|---|
-| NULL | nie eingestellt | keine Position, Formular schlägt 180 € vor |
-| 0 | bewusst aus | keine Position, kein Vorschlag |
-| > 0 | aktiv | „Anfahrt & Vorbereitung" mit dem Differenzbetrag |
-
-**Kein Backfill.** Alle bestehenden Betriebe stehen auf 0 und verhalten sich
-danach exakt wie vorher — niemandem wird rückwirkend etwas in seine Angebote
-gerechnet. Dieselbe Regel wie bei `onboarding_started_at` am 02.09.
-
-**Der Code kommt ohne die Migration aus.** `mindestauftragsPosition` behandelt
-NULL und 0 identisch als „aus"; ein Test hält genau das fest. Die Migration
-schaltet nur den Vorschlagswert im Formular frei. Wird sie nie ausgeführt,
-verhält sich alles wie heute — es fehlt lediglich die Vorbelegung.
-
-**Der Vorschlag ist sichtbar, nicht still:** Bei NULL steht 180 € im Feld, und
-darunter der Satz „Mit dem Speichern wird er aktiv … Trag 0 ein, wenn du das
-nicht willst." Der Handwerker sieht die Zahl, bevor er speichert — kein Betrag,
-der ohne sein Zutun in seinen Angeboten landet.
-
-**Ausführung:** Inhalt der Migrationsdatei im Supabase SQL-Editor ausführen
-(Produktion), wie im Workflow in `supabase/migrations/README.md` beschrieben.
-Danach `check_migrationen.sql` laufen lassen — Zeile 56 muss auf „✅ ausgeführt"
-stehen. Die Migration ist idempotent, doppeltes Ausführen schadet nicht.
-
-1.618 Tests grün, TypeScript und Lint sauber.
-
-*Head of Product Engineering · 2026-09-07*
-
----
-
-<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
+(`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
 Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
 löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
 wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
@@ -166,7 +64,7 @@ Lösungsvorschlag: CoS-013.
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
 | CoS-012 | DC-029 „Baustelle"/Projekt-Zuordnung — Wording-Konzept vom Product Designer steht, zwei Teilstücke formal zu vergeben | 🟡 Lexware/Lexoffice-Machbarkeit erledigt. Datenmodell (Head of Product Engineering) jetzt umgesetzt und live: Tabelle `baustellen` + `quotes.baustelle_id` + Migration + Backfill in der echten Datenbank angewendet, App-Code an allen vier Stellen verdrahtet. Live-Nachtest steht aus, Designer baut jetzt Konzept + Prototyp für die Baustellen-UI darauf auf | `docs/design-check.md` DC-029 |
-| CoS-013 | Strukturelle Lösung für den wiederholten Datei-Speicherfehler bei gemeinsamen Doku-Dateien (jetzt 6. Mal) | ❌ offen — Sofortmaßnahme (Dateiende-Markierung) bereits umgesetzt, eigentlicher Lösungsvorschlag (Git statt Direkt-Überschreiben) braucht Sandys Go | Sandys Frage „kannst du es richtig lösen", 2026-08-20 |
+| CoS-013 | Strukturelle Lösung für den wiederholten Datei-Speicherfehler bei gemeinsamen Doku-Dateien (jetzt 8. Mal) | ❌ offen — Git-Lösung am 31.08. angenommen, hat den Fehler aber NICHT gestoppt (07.09. + 10.09. erneut aufgetreten, beide repariert); nur eine Partei committet bislang über Git, braucht Sandys Priorisierungs-Entscheidung, siehe Nachtrag am Dateiende | Sandys Frage „kannst du es richtig lösen", 2026-08-20; Nachtrag 10.09.2026 |
 | CoS-014 | Nebenfund aus CoS-002: manuelle Positions-Änderungen sind heute nur durch Zufall vor Neu-Berechnung sicher (kein echter Schutz-Mechanismus) | ✅ umgesetzt 24.08. (Sandys direkter Auftrag „fix das") — echter Schutz über `quotes.manuell_bearbeitete_positionen`, Spalte live, 18 neue Tests. Live-Nachtest steht aus | `docs/cos-002-architektur-vorschlag.md` Abschnitt 2 |
 | CoS-015 | Nebenfund aus CoS-002: Kosten-Protokollierung (`ki_usage`) für die teure `ki-extrahieren`-Extraktion läuft seit 20.07.2026 wegen Spalten-Mismatch still ins Leere | ❌ offen — Ursache gefunden (Edge Function schreibt `prompt_typ`/`input_tokens` statt `endpunkt`/`tokens_in`), nicht behoben | `docs/cos-002-architektur-vorschlag.md` Abschnitt „Daten, die ich geprüft habe" |
 | CoS-016 | Rückfrage: welche „App-seitige Git/Deploy-Blockade" verhindert gerade das Deployen von CoS-002? | ✅ beantwortet — device_bash-Lock-Datei-Problem (nie als eigenes Ticket dokumentiert, mein Versäumnis), inzwischen selbst gelöst (Lock-Dateien lassen sich verschieben statt löschen). Sandy hat beide CoS-002-Commits gepusht, kein offener Blocker mehr | Chief of Staff, 21.08.2026, beim CoS-002-Fix-Update aufgefallen; Antwort Head of Product Engineering, 21.08.2026 |
@@ -4250,6 +4148,203 @@ gegenchecken, das ist keine Bauverzögerung wert. Sonst: kein weiteres
 Freigabe-Gate mehr nötig, einfach bauen.
 
 *Chief of Staff · 2026-09-07*
+
+## Chief-of-Staff-Reparaturnotiz (10.09.2026)
+
+Schon wieder derselbe Fehler, achtes Mal projektweit: dein Umsetzungsbericht
+unten landete beim Speichern erneut mitten in der Datei-Sicherheits-Notiz
+ganz oben, mit einem zweiten erfundenen `<!-- ENDE DER DATEI -->`-Marker
+mittendrin — trotz der Notiz, die genau das verhindern soll. Text war
+vollständig, nur an der falschen Stelle; hierher verschoben, Notiz oben
+zurückgesetzt, nichts inhaltlich verändert.
+
+**Das ist jetzt kein Einzelfall mehr, das ist ein Muster.** Zwei Reparaturen
+in einer Woche (07.09. und heute) an derselben Datei, derselbe Fehlertyp.
+Die bestehende Regel „neue Einträge ans Dateiende anhängen" reicht offenbar
+nicht, wenn zwei Prozesse gleichzeitig schreiben. Vorschlag: CoS-013 noch
+einmal aufgreifen und diesmal eine echte Lösung bauen (z. B. getrennte
+Tagesdateien statt einer wachsenden Datei, oder ein Anhänge-Skript, das
+selbst prüft, ob der Marker noch an Position eins von hinten steht, bevor es
+schreibt) statt der Datei erneut nur nachträglich zu reparieren. Ich nehme
+das als eigenen Punkt für dich auf, siehe unten.
+
+---
+
+### Umsetzung — Punkt 4 und 5 gebaut (Head of Product Engineering, 07.09.2026)
+
+1.616 Tests grün, TypeScript und Lint sauber. Beides ist drin, wie freigegeben.
+
+**Punkt 5 — Werbetext.** „3 neu angelegte Angebote pro Monat — Überarbeitungen
+zählen nicht mit." steht in `PreiseSection.tsx` und `PlanWahlModal.tsx`. Die
+**Zahl** kommt weiterhin aus `PRICING.freeAngeboteProMonat`, nicht aus dem Satz
+— sonst stünde sie wieder an zwei Stellen, und genau daran ist der Pro-Preis
+schon einmal auseinandergelaufen (CoS-001). Ein Test hält fest, dass der
+beworbene Wert und die wirksame Sperre dieselbe Zahl meinen.
+
+**Punkt 4 — „Anfahrt & Vorbereitung".** Gebaut wie spezifiziert: eigene
+benannte Zeile mit dem Differenzbetrag, kein stiller Aufschlag, im Angebot
+statt in den AGB, entfernbar, Schwellenwert als Betriebseinstellung mit 180 €
+als Vorschlag. Der Originalfall rechnet auf: 1,60 m² × 45,00 € = 72,00 €, bei
+180 € Schwelle kommt eine Zeile über **108,00 €** dazu.
+
+**Ein Fund beim Einbauen, den ich melden muss:** Die Einstellung
+`companies.mindestauftragswert` gibt es seit Langem — sie wurde **nirgends
+gelesen**. In den Einstellungen stand sogar: *„Bei Angeboten unter X €
+erscheint eine Warnung mit Vorschlag zur Kleinstauftragspauschale."* Passiert
+ist nie etwas. Wer den Wert gesetzt hat, hat sich auf etwas verlassen, das es
+nicht gab. Dieselbe Familie wie „X Positionen erkannt": Die Oberfläche
+verspricht, der Code schweigt. Der Text beschreibt jetzt, was tatsächlich
+passiert.
+
+**Zu deiner Sequenzierungs-Auflage (erst die Leibungs-Einheit klären):** Sie
+greift hier nicht, und das ist eine gute Nachricht. Die Regel rechnet
+ausschließlich in **Euro**. Ob eine Leibungsposition in m² oder lfdm geführt
+wird, ändert die Angebotssumme nicht — dieselbe Arbeit, derselbe Preis, nur
+anders ausgedrückt. Die Kleinauftragslogik ist einheitenblind und muss bei
+einem Einheitenwechsel nicht angefasst werden. Punkt 3 kann also unabhängig
+weiterlaufen.
+
+**Zwei Details, die ich selbst entschieden habe — bitte gegenlesen:**
+
+1. **0 heißt aus.** Ein Betrieb, der den Wert nie gesetzt hat, bekommt nichts
+   aufgeschlagen. Ungefragt Geld in fremde Angebote zu rechnen wäre genau der
+   stille Aufschlag, den Legal beanstandet hat — nur eine Ebene höher.
+2. **Die Zeile zieht nach.** Wächst der Auftrag über die Schwelle, verschwindet
+   sie; bleibt er darunter, wird die Differenz aktualisiert. Sie stehen zu
+   lassen hieße, dem Kunden etwas zu berechnen, das nicht mehr zutrifft. Und
+   sie zählt nicht in ihre eigene Bemessungsgrundlage, sonst höbe sie sich
+   selbst über die Schwelle.
+
+**Noch offen, weil es eine Migration braucht:** „180 € als vorausgefüllter
+Vorschlag bei der Ersteinrichtung" ist noch nicht umgesetzt. Der Wert steht
+heute als 180 € **im Hinweistext** der Einstellung, aber das Feld startet bei
+0. Echtes Vorbelegen ginge nur, wenn die Spalte zwischen „nie gesetzt" und
+„bewusst 0" unterscheiden kann — also `nullable` statt `0`, und das ist eine
+Datenbank-Migration. Die löse ich nicht ohne Sandys Wort aus. Es ist eine
+kleine Migration, aber sie gehört bewusst entschieden.
+
+**Zu deiner Anmerkung zur Zählung:** Du hast recht, ich habe „sieben Stück"
+geschrieben und acht gelistet. Punkt 6 stand nur zur Wiedervorlage und ist mir
+beim Zählen durchgerutscht — die Liste stimmt, die Zahl davor war falsch.
+Danke fürs Gegenlesen.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
+### Nachtrag — Migration geschrieben, wartet auf Sandys Ausführung (07.09.2026)
+
+Sandy hat die Migration freigegeben. Sie liegt als
+`supabase/migrations/20260907140000_mindestauftragswert_nullable.sql` im Repo
+und ist in `check_migrationen.sql` als Nr. 56 eingetragen.
+
+**Was sie tut:** `companies.mindestauftragswert` wird nullable, Default NULL.
+Damit sind drei Zustände unterscheidbar, die vorher zwei waren:
+
+| Wert | Bedeutung | Verhalten |
+|---|---|---|
+| NULL | nie eingestellt | keine Position, Formular schlägt 180 € vor |
+| 0 | bewusst aus | keine Position, kein Vorschlag |
+| > 0 | aktiv | „Anfahrt & Vorbereitung" mit dem Differenzbetrag |
+
+**Kein Backfill.** Alle bestehenden Betriebe stehen auf 0 und verhalten sich
+danach exakt wie vorher — niemandem wird rückwirkend etwas in seine Angebote
+gerechnet. Dieselbe Regel wie bei `onboarding_started_at` am 02.09.
+
+**Der Code kommt ohne die Migration aus.** `mindestauftragsPosition` behandelt
+NULL und 0 identisch als „aus"; ein Test hält genau das fest. Die Migration
+schaltet nur den Vorschlagswert im Formular frei. Wird sie nie ausgeführt,
+verhält sich alles wie heute — es fehlt lediglich die Vorbelegung.
+
+**Der Vorschlag ist sichtbar, nicht still:** Bei NULL steht 180 € im Feld, und
+darunter der Satz „Mit dem Speichern wird er aktiv … Trag 0 ein, wenn du das
+nicht willst." Der Handwerker sieht die Zahl, bevor er speichert — kein Betrag,
+der ohne sein Zutun in seinen Angeboten landet.
+
+**Ausführung:** Inhalt der Migrationsdatei im Supabase SQL-Editor ausführen
+(Produktion), wie im Workflow in `supabase/migrations/README.md` beschrieben.
+Danach `check_migrationen.sql` laufen lassen — Zeile 56 muss auf „✅ ausgeführt"
+stehen. Die Migration ist idempotent, doppeltes Ausführen schadet nicht.
+
+1.618 Tests grün, TypeScript und Lint sauber.
+
+*Head of Product Engineering · 2026-09-07*
+
+---
+
+### Chief of Staff — Gegengelesen und live verifiziert (10.09.2026)
+
+**Deine zwei Rückfragen:** Beide trage ich mit. „0 heißt aus" ist die
+einzig konsistente Lesart, alles andere wäre der stille Aufschlag in
+Grün — genau richtig erkannt. „Die Zeile zieht nach" ebenfalls: alles
+andere würde dem Kunden etwas berechnen, das nicht mehr stimmt, sobald der
+Auftrag über die Schwelle wächst. Keine Änderung nötig.
+
+**Der tote Setting-Fund (`companies.mindestauftragswert` existierte, wurde
+aber nie gelesen):** Danke fürs Melden statt Stillschweigen. Gehört in
+dieselbe Familie wie die anderen „Oberfläche verspricht, Code schweigt"-
+Funde diese Woche — für sich genommen kein neues Ticket wert, aber ein
+weiterer Beleg für das Muster. Nehme ich in die Governance-Notiz in
+`launch-readiness.md` auf.
+
+**Migration — nicht nur gelesen, sondern selbst nachgeprüft:** Direkt gegen
+die Produktions-DB geprüft (nicht nur den Bericht geglaubt): `companies.
+mindestauftragswert` ist `is_nullable = YES`, `column_default = NULL`,
+exakt der Zielzustand der Migration. Dein `check_migrationen.sql`-Check
+Nr. 56 fragt dieselbe Bedingung ab — der steht damit auf **✅ ausgeführt**,
+unabhängig davon, dass `supabase_migrations.schema_migrations` den Lauf
+nicht kennt (direkt im SQL-Editor ausgeführt statt über die CLI, wie von
+dir beschrieben — das ist hier kein Problem, nur der Grund, warum die
+Migrations-Tabelle sie nicht listet). Beide bestehenden Betriebe stehen wie
+erwartet auf 0, kein stiller Rückwirkungs-Effekt.
+
+**Damit sind Punkt 4 und 5 vollständig fertig — code-fertig UND live
+bestätigt, nicht nur behauptet.** `launch-readiness.md` 1.6 wird
+entsprechend nachgezogen. Offen bleibt nur, was du selbst offen gelassen
+hast: die Sequenzierung mit der Leibungs-Einheit (Frage 8) greift laut dir
+nicht, das übernehme ich so.
+
+*Chief of Staff · 2026-09-10*
+
+---
+
+## CoS-013 — Nachtrag: Git-Lösung hat den Speicherfehler NICHT gestoppt (Chief of Staff, 2026-09-10)
+
+**Befund:** Die am 31.08. angenommene Git-Lösung („Ab sofort gehen meine
+`docs/`-Änderungen über einen echten Commit statt über direktes
+Überschreiben") hat das Problem nicht beendet. Nach diesem Datum ist der
+Speicherfehler in genau dieser Datei zweimal erneut aufgetreten — 07.09. und
+heute, 10.09. — macht acht Vorfälle projektweit insgesamt, wovon ich zwei
+in dieser Session selbst repariert habe (Extraktion des mitten eingefügten
+Texts, Wiederherstellung des Original-Satzes, Verschieben ans echte
+Dateiende).
+
+**Warum die Teil-Lösung nicht reicht:** Die Annahme vom 31.08. war eine
+einseitige Zusage von Head of Product Engineering für die eigenen
+Änderungen. Ich selbst (Chief of Staff) schreibe weiterhin direkt über die
+Geräteanbindung (stage → bearbeiten → commit-zurück), nicht über Git —
+ebenso vermutlich Head of Legal und Head of Marketing, soweit ich das aus
+den Einträgen hier ablesen kann. Kollidieren zwei direkte Schreibvorgänge
+zeitlich nah (nicht Git-vermittelt) auf dieselbe Datei, bleibt das Risiko
+exakt dasselbe wie vorher — unabhängig davon, dass ein Projekt inzwischen
+sauber committet.
+
+**Ehrlich:** Ich kann das nicht selbst schließen. Eine echte Lösung
+bräuchte entweder (a) alle Schreibenden auf denselben Git-Workflow, was ich
+technisch nicht erzwingen kann, oder (b) eine strukturelle Änderung wie
+separate Tages- oder Projekt-Dateien statt einer gemeinsamen Datei für alle
+Wortmeldungen, oder (c) ein Schreibskript, das die Endmarkierungs-Position
+vor jedem Schreiben prüft und bei Abweichung abbricht statt zu überschreiben.
+
+**Für Sandy:** Das ist eine Priorisierungsfrage, keine, die ich mir selbst
+beantworten sollte — bislang war jeder Vorfall reparabel und kein Inhalt ist
+verloren gegangen, aber das ist Zufall der Textstruktur, kein verlässlicher
+Schutz. Sag mir, ob das jetzt (achter Vorfall) Vorrang bekommen soll, oder
+ob die Sofortmaßnahme (Endmarkierung + Reparatur bei Bedarf) für dich
+weiterhin ausreicht.
+
+*Chief of Staff · 2026-09-10*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
