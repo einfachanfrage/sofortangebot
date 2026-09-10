@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Logo } from '@/components/Logo'
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -19,10 +20,9 @@ export function Nav() {
         scrolled ? 'bg-white shadow-sm' : 'bg-transparent'
       }`}>
         <div className="max-w-6xl mx-auto px-5 md:px-10 flex items-center justify-between h-16">
-          {/* Logo */}
-          <span className="font-syne font-extrabold text-[20px] tracking-tight text-anthracite">
-            sofort<span className="text-yellow">angebot</span>
-          </span>
+          {/* Logo — DC-049 Schritt 5: zentrale Logo.tsx statt eigenem
+              Inline-Markup, bringt automatisch die Bildmarke mit. */}
+          <Logo variant="light" className="text-[20px]" />
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-3">

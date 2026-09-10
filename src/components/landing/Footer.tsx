@@ -1,15 +1,18 @@
 import Link from 'next/link'
+import { Logo } from '@/components/Logo'
 
 export function Footer() {
   return (
     <footer className="bg-anthracite py-12 md:py-16">
       <div className="max-w-6xl mx-auto px-5 md:px-10">
         <div className="grid md:grid-cols-3 gap-8 md:gap-12 mb-10">
-          {/* Left */}
+          {/* Left — DC-049 Schritt 5: zentrale Logo.tsx statt eigenem
+              Inline-Markup. Korrigiert nebenbei eine Farb-Abweichung von
+              der Logo.tsx-Konvention (hier stand "sofort" bisher in Weiß
+              statt Gelb wie im dunklen Header/Login) und bringt die
+              Bildmarke mit. */}
           <div>
-            <div className="font-syne font-black text-white text-xl mb-2">
-              sofort<span className="text-yellow">angebot</span>
-            </div>
+            <Logo variant="dark" className="text-xl mb-2" />
             <p className="text-[#888] text-sm font-medium leading-relaxed">
               Das schnellste Angebot im Handwerk.
             </p>
