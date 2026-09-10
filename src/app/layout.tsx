@@ -1,14 +1,22 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans, Inter } from 'next/font/google'
+import { Bricolage_Grotesque, Inter } from 'next/font/google'
 import './globals.css'
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
 import { CookieBanner } from '@/components/CookieBanner'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { StagingBanner } from '@/components/StagingBanner'
 
-const plusJakarta = Plus_Jakarta_Sans({
+// DC-049 Schritt 2 (2026-09-10, CI-Handbuch 19.08.2026): Überschriften-Schrift
+// von Plus Jakarta Sans auf Bricolage Grotesque umgestellt (600/700/800 statt
+// vorher nur 700/800 — 600 "Zwischenüberschrift" kam laut Handbuch neu dazu).
+// Die CSS-Variable heißt weiter `--font-syne` (nie tatsächlich Syne gewesen,
+// siehe DC-048/DC-049) — bewusst NICHT umbenannt, das würde 40 Dateien
+// anfassen, die nur die `.font-syne`-Klasse aus globals.css konsumieren, ohne
+// den eigentlichen Font-Wechsel zu betreffen. Umbenennung ist ein separates,
+// rein kosmetisches Aufräum-Ticket.
+const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ['latin'],
-  weight: ['700', '800'],
+  weight: ['600', '700', '800'],
   variable: '--font-syne',
   display: 'swap',
 })
@@ -41,7 +49,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" className={`h-full ${plusJakarta.variable} ${inter.variable}`}>
+    <html lang="de" className={`h-full ${bricolageGrotesque.variable} ${inter.variable}`}>
       <body className="min-h-dvh">
         <StagingBanner />
         <ServiceWorkerRegister />
