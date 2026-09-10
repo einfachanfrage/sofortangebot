@@ -7603,5 +7603,104 @@ setze ich hinter Gate 1.
 
 *Prüfmeister · 2026-09-10*
 
+
+---
+
+## Korrektur an mir selbst: Säulen gehören NICHT in Gruppe 1 (2026-09-10)
+
+Sandy hat nachgefragt: *„Wenn in einem Loft von 120 m² acht Säulen stehen — die
+müssen doch mitgestrichen werden?"* **Sie hat recht, und meine Einordnung von
+gestern war falsch.** Ich habe zwei Dinge zusammengeworfen, die die Norm
+auseinanderhält.
+
+### Der Denkfehler
+
+Die 2,5-m²-Übermessungsregel (DIN 18363, 5.2.3) sagt: **Eine Öffnung in einer
+Fläche** — Fenster, Tür, Nische — wird nicht abgezogen. Sie sagt **nicht**: „Ein
+Bauteil im Raum wird nicht gerechnet."
+
+Eine freistehende Säule ist keine Öffnung in einer Wand. Sie ist ein **eigenes
+Bauteil mit eigener Ansichtsfläche**, und die wird gesondert gerechnet — sie wird
+nirgends abgezogen, weil sie der Wand nichts wegnimmt. Die Wand hinter der Säule
+steht ja weiter da.
+
+Richtig war meine Einordnung nur für **Wandpfeiler und Vorsprünge**, also
+Bauteile, die Teil der Wandfläche sind und über die hinweggemessen wird. Ein
+frei im Raum stehender Stützpfeiler ist etwas anderes. Diese Unterscheidung habe
+ich unterschlagen.
+
+### Was das im Loft kostet
+
+Loft 120 m², Raumhöhe 3,20 m, acht Stützen 40 × 40 cm, Wände und Stützen zweimal
+streichen:
+
+| | Rechnung | Betrag |
+|---|---|---|
+| Ansichtsfläche je Stütze | (4 × 0,40) × 3,20 = 5,12 m² | |
+| **Acht Stützen** | 8 × 5,12 = **40,96 m²** | **471,04 €** bei 11,50 €/m² |
+| Zum Vergleich: Wandfläche des Lofts | ca. 44,00 lfm × 3,20 = 140,80 m² | 1.619,20 € |
+
+**Die Säulen sind knapp 30 % Mehrarbeit obendrauf** — kein Rundungsfehler,
+sondern ein Drittel des Auftrags. Bei runden Stützen Ø 30 cm sind es 24,13 m²
+(π × 0,30 × 3,20 × 8) und 277,50 €.
+
+Und der Aufwand ist sogar höher als die Fläche suggeriert: Eine Säule lässt sich
+nicht in einer Bahn rollen, sie wird oben und unten angeschnitten, rundum
+abgeklebt, und acht Stück in einem offenen Raum heißen achtmal umsetzen. Ein
+Maler würde das nie zum glatten Wandsatz anbieten — dafür gibt es einen eigenen
+Satz oder einen Stückpreis.
+
+### Und am Boden derselbe Raum
+
+| | |
+|---|---|
+| Abzug Grundfläche | 8 × 0,16 = **1,28 m²** (−53,76 € bei 42 €/m²) |
+| **Anschnitt um die Stützen** | 8 × 1,60 = **12,80 lfm** Handarbeit |
+| Sockelleisten umlaufend? | +12,80 lfdm — oder gar nicht: **Rückfrage** |
+
+Der Abzug ist Kleingeld, der Anschnitt ist ein halber Tag. Genau die Asymmetrie,
+auf die ich gestern schon hingewiesen hatte — nur eben in einem Fall, den ich
+selbst als „nichts zu tun" abgelegt hatte.
+
+### Korrigierte Regel
+
+| Bauteil | Maler | Boden |
+|---|---|---|
+| **Freistehende Säule / Stütze** | **eigene Position**, Umfang × Höhe × Anzahl, eigener Satz | Grundfläche **ab**, Anschnitt in lfm **dazu** |
+| Wandpfeiler / Vorsprung (in der Wand) | übermessen, kein Abzug, keine Zusatzposition | — |
+| Fenster, Tür, Nische ≤ 2,5 m² | übermessen | — |
+
+### Was das an der Priorisierung ändert
+
+Gestern hatte ich das Thema hinter Gate 1 geschoben, mit der Begründung, es gehe
+um einstellige Beträge. **Für den Boden stimmt das weiterhin. Für den Maler
+nicht.** 471 € in einem einzigen Angebot sind kein Restrisiko.
+
+Wie häufig das ist, hängt am Kundensegment: In Wohnungen und Einfamilienhäusern
+sind freistehende Stützen selten. In allem Gewerblichen — Ladenlokal, Büroetage,
+Gastronomie, Altbau-Fabriketage, Tiefgarage — sind sie normal. Wer Gewerbe
+anbietet, trifft sie regelmäßig.
+
+**Neue Empfehlung, gestaffelt:**
+
+1. **Vor Gate 1:** Fällt im Diktat „Säule", „Stütze" oder „Pfeiler", **muss eine
+   Rückfrage kommen** — Anzahl, Maß, Höhe, und ob sie mitgestrichen wird. Still
+   ignorieren darf die Software das nicht; 471 € verschwinden sonst wortlos.
+   Das ist derselbe Mechanismus wie bei den Leibungen, kein neuer.
+2. **Nach Gate 1:** die generische `aussparungen`-Struktur für den Boden, plus
+   die Säulenposition beim Maler als Gegenstück.
+3. **Testfall, sobald beides steht:** genau dieser Loft — 120 m², acht Stützen,
+   Maler **und** Boden im selben Angebot. Er prüft in einem Durchgang, dass
+   dieselbe Säule beim Maler **dazukommt** und beim Boden **abgeht**. Ich lege
+   ihn als **PM-038** an, sobald der Datenpfad existiert.
+
+**An Legal:** Der DIN-18365-Punkt (Abzug ab 0,1 m²) bleibt wie beschrieben
+zurückgestellt. Der Maler-Teil dieser Frage — DIN 18363, Bauteile gesondert
+rechnen — ist dagegen **nicht** zurückgestellt, sondern wird als Rückfrage
+vorgezogen. Meine gestrige Einordnung „Gruppe 1, nichts zu tun" gilt für Säulen
+nicht mehr.
+
+*Prüfmeister · 2026-09-10*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
