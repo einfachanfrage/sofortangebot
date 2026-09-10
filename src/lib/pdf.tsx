@@ -1,4 +1,5 @@
-import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer'
+import path from 'node:path'
 import type { AngebotsFoto } from '@/lib/angebot-fotos'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
@@ -8,6 +9,43 @@ import {
 } from './widerrufsbelehrung'
 import { effektiveOptionen, skontoText, DOKUMENT_TYP_LABEL } from './angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './mengen/gewerke/vob-uebermessung'
+
+// ── Marken-Schriften (CI-Handbuch, DC-049 "PDF-Schritt", 2026-09-10) ────────
+// react-pdf kennt von Haus aus nur die PDF-Standardschriften (Helvetica,
+// Times, Courier) — die drei Handbuch-Schriften müssen als TTF registriert
+// werden. Dateien liegen unter ./pdf-fonts, synchron per `fs`-Pfad geladen
+// (process.cwd()-relativ) — dasselbe, bereits produktiv laufende Muster wie
+// in src/lib/blog.ts für Content-Dateien außerhalb von public/.
+// Quellen: Bricolage Grotesque + Inter aus @expo-google-fonts (TTF-Export
+// fürs Formatn "als statische Datei pro Schriftschnitt", da beide Fonts bei
+// Google selbst nur als Variable-Font ausgeliefert werden). IBM Plex Mono
+// NICHT aus @expo-google-fonts — dessen Export hat einen kaputten
+// Leerzeichen-Glyph (bricht jeden Text mit Leerzeichen), stattdessen direkt
+// aus dem offiziellen google/fonts-Repo (statische Medium/SemiBold-Dateien).
+const FONT_DIR = path.join(process.cwd(), 'src/lib/pdf-fonts')
+Font.register({
+  family: 'Bricolage Grotesque',
+  fonts: [
+    { src: path.join(FONT_DIR, 'BricolageGrotesque_600SemiBold.ttf'), fontWeight: 600 },
+    { src: path.join(FONT_DIR, 'BricolageGrotesque_700Bold.ttf'), fontWeight: 700 },
+    { src: path.join(FONT_DIR, 'BricolageGrotesque_800ExtraBold.ttf'), fontWeight: 800 },
+  ],
+})
+Font.register({
+  family: 'Inter',
+  fonts: [
+    { src: path.join(FONT_DIR, 'Inter_400Regular.ttf'), fontWeight: 400 },
+    { src: path.join(FONT_DIR, 'Inter_500Medium.ttf'), fontWeight: 500 },
+    { src: path.join(FONT_DIR, 'Inter_600SemiBold.ttf'), fontWeight: 600 },
+  ],
+})
+Font.register({
+  family: 'IBM Plex Mono',
+  fonts: [
+    { src: path.join(FONT_DIR, 'IBMPlexMono_500Medium.ttf'), fontWeight: 500 },
+    { src: path.join(FONT_DIR, 'IBMPlexMono_600SemiBold.ttf'), fontWeight: 600 },
+  ],
+})
 
 // ── Hilfsfunktionen ────────────────────────────────────────────────────────
 function fmtEuro(n: number) {
@@ -27,7 +65,7 @@ function fmtDatum(d: string) {
 // ── Styles ─────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
   page: {
-    fontFamily: 'Helvetica',
+    fontFamily: 'Inter',
     fontSize: 9,
     color: '#1A1A1A',
     paddingTop: 52,
@@ -47,7 +85,8 @@ const S = StyleSheet.create({
   headerRight: { alignItems: 'flex-end' },
   logoImg: { width: 72, height: 36, objectFit: 'contain', marginBottom: 8 },
   firmennameH: {
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Bricolage Grotesque',
+    fontWeight: 700,
     fontSize: 16,
     color: '#111111',
     letterSpacing: 0.2,
@@ -79,7 +118,7 @@ const S = StyleSheet.create({
   empfaengerAdresse: { fontSize: 9, color: '#555555', lineHeight: 1.6 },
 
   // ── Betreff ──────────────────────────────────────────────────────────────
-  betreff: { fontSize: 11, fontFamily: 'Helvetica-Bold', color: '#111111', marginBottom: 3 },
+  betreff: { fontSize: 11, fontFamily: 'Bricolage Grotesque', fontWeight: 700, color: '#111111', marginBottom: 3 },
   anrede: { fontSize: 9, color: '#666666', marginBottom: 20 },
 
   // ── Tabelle: Header ──────────────────────────────────────────────────────
@@ -94,7 +133,8 @@ const S = StyleSheet.create({
     color: '#999999',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Inter',
+    fontWeight: 600,
   },
 
   // ── Tabelle: Zeile ───────────────────────────────────────────────────────
@@ -112,6 +152,13 @@ const S = StyleSheet.create({
   // erklärt eine Zahl, die der Kunde nachmisst; er muss lesbar sein.
   uebermessungText: { fontSize: 8.5, color: '#444444', marginTop: 3, lineHeight: 1.4 },
   uebermessungFussnote: { fontSize: 8.5, color: '#444444', lineHeight: 1.5 },
+  // DC-049 "PDF-Schritt" (2026-09-10): Rechenweg war im Kundenangebot bisher
+  // komplett unsichtbar — Handbuch: "nie versteckt... Beweisstück, nicht
+  // Feature-Liste". Gleiche Konvention wie in AngebotDetail.tsx (Schritt c):
+  // IBM Plex Mono, gedeckte Grautöne, "Pauschale" als Fallback-Text bei
+  // Positionen ohne echten Rechenweg.
+  rechenwegText: { fontFamily: 'IBM Plex Mono', fontWeight: 500, fontSize: 7.5, color: '#666666', marginTop: 3, lineHeight: 1.4 },
+  rechenwegAnnahmen: { fontFamily: 'IBM Plex Mono', fontWeight: 500, fontSize: 7, color: '#999999', marginTop: 1 },
   mengeText: { fontSize: 9, color: '#333333', textAlign: 'right' },
   einheitText: { fontSize: 9, color: '#555555', textAlign: 'center' },
   einzelText: { fontSize: 9, color: '#333333', textAlign: 'right' },
@@ -137,7 +184,8 @@ const S = StyleSheet.create({
     color: '#AAAAAA',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Inter',
+    fontWeight: 600,
   },
   raumSumme: {
     flexDirection: 'row',
@@ -171,8 +219,8 @@ const S = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 5,
   },
-  summenGesamtLabel: { fontSize: 11, fontFamily: 'Helvetica-Bold', color: '#111111' },
-  summenGesamtWert: { fontSize: 11, fontFamily: 'Helvetica-Bold', color: '#111111', textAlign: 'right' },
+  summenGesamtLabel: { fontSize: 11, fontFamily: 'Inter', fontWeight: 600, color: '#111111' },
+  summenGesamtWert: { fontSize: 11, fontFamily: 'Inter', fontWeight: 600, color: '#111111', textAlign: 'right' },
 
   // ── Schlussbereich ────────────────────────────────────────────────────────
   zahlungsziel: { fontSize: 8, color: '#888888', marginTop: 16, marginBottom: 4 },
@@ -239,6 +287,14 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   // seine Tests für ein reines Anzeigefeld zu erweitern.
   const hinweisJeItem = uebermessungsHinweiseJePosition(quote.items)
   const zeigeUebermessungsFussnote = hinweisJeItem.size > 0
+
+  // DC-049 "PDF-Schritt": `gruppiereNachStruktur`/`GruppenItem` reicht
+  // `berechnungsweg`/`annahmen` nicht durch (dieselbe Lücke wie beim
+  // Übermessungs-Hinweis oben) — deshalb dieselbe Lösung: einmal nach id
+  // auflösen statt den Gruppierungs-Typ dafür zu erweitern.
+  const rechenwegJeItem = new Map(
+    quote.items.map(i => [i.id, { berechnungsweg: i.berechnungsweg, annahmen: i.annahmen }])
+  )
 
   const ersterRaum = quote.items[0]?.title?.split(' — ')[1] ?? ''
   const gewerkName = company.gewerke?.[0]
@@ -336,6 +392,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                   {hinweisJeItem.get(item.id) && (
                     <Text style={S.uebermessungText}>{hinweisJeItem.get(item.id)} ¹</Text>
                   )}
+                  <Text style={S.rechenwegText}>{rechenwegJeItem.get(item.id)?.berechnungsweg || 'Pauschale'}</Text>
+                  {(rechenwegJeItem.get(item.id)?.annahmen?.length ?? 0) > 0 && (
+                    <Text style={S.rechenwegAnnahmen}>{rechenwegJeItem.get(item.id)!.annahmen!.join(' · ')}</Text>
+                  )}
                 </View>
                 <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(item.quantity)}</Text>
                 <Text style={{ ...S.einheitText, ...S.cEinh }}>{item.unit}</Text>
@@ -367,6 +427,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                     {gi.description && <Text style={S.beschreibungText}>{gi.description}</Text>}
                     {hinweisJeItem.get(gi.id) && (
                       <Text style={S.uebermessungText}>{hinweisJeItem.get(gi.id)} ¹</Text>
+                    )}
+                    <Text style={S.rechenwegText}>{rechenwegJeItem.get(gi.id)?.berechnungsweg || 'Pauschale'}</Text>
+                    {(rechenwegJeItem.get(gi.id)?.annahmen?.length ?? 0) > 0 && (
+                      <Text style={S.rechenwegAnnahmen}>{rechenwegJeItem.get(gi.id)!.annahmen!.join(' · ')}</Text>
                     )}
                   </View>
                   <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(gi.quantity)}</Text>
@@ -508,7 +572,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
           Vorschäden) und gehören deshalb dazu, aber nicht zwischen die Preise. */}
       {(fotos?.length ?? 0) > 0 && (
         <Page size="A4" style={S.page} wrap>
-          <Text style={{ fontSize: 14, fontFamily: 'Helvetica-Bold', marginBottom: 4 }}>
+          <Text style={{ fontSize: 14, fontFamily: 'Bricolage Grotesque', fontWeight: 700, marginBottom: 4 }}>
             Fotos zur Baustelle
           </Text>
           <Text style={{ fontSize: 9, color: '#666666', marginBottom: 14 }}>
@@ -531,7 +595,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
         const text = widerrufsbelehrungText(absender, (company as Company & { widerruf_text?: string | null }).widerruf_text)
         return (
           <Page size="A4" style={S.page} wrap>
-            <Text style={{ fontSize: 14, fontFamily: 'Helvetica-Bold', marginBottom: 10 }}>Widerrufsbelehrung</Text>
+            <Text style={{ fontSize: 14, fontFamily: 'Bricolage Grotesque', fontWeight: 700, marginBottom: 10 }}>Widerrufsbelehrung</Text>
             <Text style={{ fontSize: 9, lineHeight: 1.6, color: '#333333' }}>{text}</Text>
 
             {/* G6 (Legal, freigegeben von Sandy als S-2 am 01.09.2026):
@@ -541,7 +605,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                 Unterschrift: mit der Auftragsunterschrift zusammengelegt oder
                 vorangekreuzt wäre die Erklärung unwirksam. */}
             <View style={{ marginTop: 22, padding: 12, border: '1 solid #2C2C2C' }} wrap={false}>
-              <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', marginBottom: 8 }}>
+              <Text style={{ fontSize: 11, fontFamily: 'Bricolage Grotesque', fontWeight: 700, marginBottom: 8 }}>
                 {WERTERSATZ_UEBERSCHRIFT}
               </Text>
               <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
@@ -564,7 +628,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
               </Text>
             </View>
 
-            <Text style={{ fontSize: 12, fontFamily: 'Helvetica-Bold', marginTop: 20, marginBottom: 8 }}>
+            <Text style={{ fontSize: 12, fontFamily: 'Bricolage Grotesque', fontWeight: 700, marginTop: 20, marginBottom: 8 }}>
               Muster-Widerrufsformular
             </Text>
             <Text style={{ fontSize: 9, lineHeight: 1.6, color: '#333333' }}>

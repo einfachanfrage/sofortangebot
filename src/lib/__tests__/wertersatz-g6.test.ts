@@ -11,7 +11,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
-import { inflateSync } from 'node:zlib'
+import { PDFParse } from 'pdf-parse'
 import { AngebotPDF } from '@/lib/pdf'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
 import {
@@ -52,23 +52,19 @@ function angebot(istUnternehmen: boolean | null): Quote & { items: QuoteItem[]; 
   } as unknown as Quote & { items: QuoteItem[]; customer: Customer }
 }
 
+// DC-049 "PDF-Schritt" (2026-09-10): eingebettete Marken-Schriften kodieren
+// Text als Identity-H (2-Byte-Glyph-IDs) statt der 1-Byte-Codes der bisher
+// genutzten PDF-Standardschrift Helvetica — der alte Hex-Byte-zu-ASCII-
+// Dekoder passt nicht mehr. `pdf-parse` (bereits Projekt-Dependency,
+// v2-API mit PDFParse-Klasse) wertet die ToUnicode-CMaps korrekt aus,
+// siehe auch pdf-uebermessung-render.test.ts.
 async function pdfText(quote: Quote & { items: QuoteItem[] }, company: Company) {
   // @ts-expect-error react-pdf typing
   const buf: Buffer = await renderToBuffer(createElement(AngebotPDF, { quote, company, quoteNumber: '2026-0042' }))
-  const roh = buf.toString('latin1')
-  let streams = ''
-  const reStream = /stream\r?\n([\s\S]*?)endstream/g
-  let m: RegExpExecArray | null
-  while ((m = reStream.exec(roh)) !== null) {
-    try { streams += inflateSync(Buffer.from(m[1], 'latin1')).toString('latin1') } catch { /* Font */ }
-  }
-  let klartext = ''
-  const reHex = /<([0-9a-fA-F]+)>/g
-  let h: RegExpExecArray | null
-  while ((h = reHex.exec(streams)) !== null) {
-    if (h[1].length % 2 === 0) klartext += Buffer.from(h[1], 'hex').toString('latin1')
-  }
-  return klartext
+  const parser = new PDFParse({ data: buf })
+  const result = await parser.getText()
+  await parser.destroy()
+  return result.text
 }
 
 describe('Wertersatz-Feld auf dem Kunden-PDF', () => {

@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { createElement } from 'react'
-import { inflateSync } from 'node:zlib'
+import { PDFParse } from 'pdf-parse'
 import { AngebotPDF } from '@/lib/pdf'
 import type { Quote, QuoteItem, Company } from '@/lib/types'
 import { berechneOeffnungsabzugVob, vobHinweistext } from '@/lib/mengen/gewerke/vob-uebermessung'
@@ -41,29 +41,24 @@ function angebot(mitHinweis: boolean): Quote & { items: QuoteItem[] } {
   } as Quote & { items: QuoteItem[] }
 }
 
+// DC-049 "PDF-Schritt" (2026-09-10): Seit die Marken-Schriften (Bricolage
+// Grotesque/Inter/IBM Plex Mono) als eingebettete TTFs registriert sind,
+// kodiert react-pdf Text als Identity-H (2-Byte-Glyph-IDs aus der Font-
+// Subset-Tabelle) statt der bisherigen 1-Byte-Codes der PDF-Standardschrift
+// Helvetica — der alte Hex-Byte-zu-ASCII-Dekoder (<54><65>… = "Te…") passte
+// nur zu Standardschriften und läse jetzt für jede Textstelle Datenmüll.
+// `pdf-parse` (bereits Projekt-Dependency, v2-API mit PDFParse-Klasse)
+// wertet die eingebetteten ToUnicode-CMaps jeder Schrift korrekt aus und
+// liefert echten Text, unabhängig von der Font-Kodierung.
 async function text(quote: Quote & { items: QuoteItem[] }, struktur: 'raeume' | 'gewerk') {
   // @ts-expect-error react-pdf typing
   const buf: Buffer = await renderToBuffer(createElement(AngebotPDF, {
     quote, company: firma(struktur), quoteNumber: 'A-1',
   }))
-  // Content-Streams sind Flate-komprimiert; der Text steht darin als
-  // Hex-Glyphen in TJ-Arrays (<54><65>… = "Te…"). Beides auspacken, sonst
-  // prüft der Test nur, dass ein PDF entstanden ist — nicht, was drinsteht.
-  const roh = buf.toString('latin1')
-  let streams = ''
-  const reStream = /stream\r?\n([\s\S]*?)endstream/g
-  let m: RegExpExecArray | null
-  while ((m = reStream.exec(roh)) !== null) {
-    try { streams += inflateSync(Buffer.from(m[1], 'latin1')).toString('latin1') } catch { /* Font o.ä. */ }
-  }
-  let klartext = ''
-  const reHex = /<([0-9a-fA-F]+)>/g
-  let h: RegExpExecArray | null
-  while ((h = reHex.exec(streams)) !== null) {
-    if (h[1].length % 2 !== 0) continue
-    klartext += Buffer.from(h[1], 'hex').toString('latin1')
-  }
-  return klartext
+  const parser = new PDFParse({ data: buf })
+  const result = await parser.getText()
+  await parser.destroy()
+  return result.text
 }
 
 describe('PDF-Render: Übermessungshinweis', () => {
