@@ -125,7 +125,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
-| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | ❌ offen, Umfang-Analyse mit Sandy abzustimmen (siehe Detailabschnitt) | Product Designer (Konzept: Marketing, Governance S. 19) |
+| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) Rechenweg/Mono, (d) Press-States/Ränder, (e) Logo — siehe Detailabschnitt | Product Designer (Konzept: Marketing, Governance S. 19) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -4858,6 +4858,42 @@ Press-States/Card-Ränder (viele kleine Einzelstellen), (e) Logo-Lockup
 (wartet auf SVG von Marketing). Emails/PDF/Favicon-Hex-Stellen sind
 technisch Engineering-Territorium (eigene Dateien außerhalb der reinen
 UI), auch das braucht Abstimmung, wer sie anfasst.
+
+**Fortschritt (Sandy, 2026-09-10, „erst: Gelb-Token+Hex-Stellen", dann
+„dann Schrift"):**
+
+**Schritt (a) ✅ erledigt (`7eeecda`):** `--yellow`/`--color-yellow` in
+`globals.css` von `#F5C400` auf `#D9A400` — deckt automatisch alle 67
+Dateien mit `bg-yellow`/`text-yellow`/`border-yellow` ab. Zusätzlich
+alle 13 hartcodierten Hex-Stellen einzeln nachgezogen: Favicon +
+App-Icon (`icon.tsx`, `apple-icon.tsx`), drei transaktionale E-Mail-
+Routen (Angebot, Erinnerung, Unterschrift-Bestätigung), `lib/email.ts`
+(Willkommens-/Reset-/Kündigungs-Mails), Briefpapier-Editor (Farbchip +
+zwei Fallback-Defaults), Blog-Kategorie-Gradient, „Bereit"-Status-Punkt,
+Grundriss-Editor-Vorschau, Coming-Soon-Landingpage. `tsc` sauber, keine
+Reste (`grep -r F5C400 src` leer). Bewusst NICHT Teil davon: die volle
+Farbskala mit Hover/Press-Abstufungen (50/100/300/600/700) — Buttons
+nutzen weiter `hover:brightness-95` statt eines echten 600er-Tons; das
+„Bereit"-Badge in `status.ts` (`bg-[#FEF9C3]`/`text-[#8B7000]`) ist kein
+deprecated Hex, aber ein verwandter Gelb-Ton — separat zu entscheiden,
+sobald die Skala ansteht.
+
+**Schritt (b) ✅ erledigt (`99cd277`):** Überschriften-Schrift in
+`layout.tsx` von Plus Jakarta Sans auf **Bricolage Grotesque** (600/700/
+800, vorher nur 700/800) umgestellt. Weil im ganzen Produkt aus-
+schließlich die CSS-Klasse `.font-syne` konsumiert wird (40 Dateien,
+alle über dieselbe `--font-syne`-Variable in `globals.css`), reichte
+die Änderung an dieser einen Stelle, um den Font überall zu wechseln —
+kein Einzelstellen-Umbau nötig. Fließtext bleibt Inter (passte schon).
+Die Variable heißt bewusst weiter `--font-syne` (historisch: war mal
+echtes Syne, dann Plus Jakarta Sans, nie zutreffend benannt) —
+Umbenennung wäre ein rein kosmetischer Zusatz-Diff durch 40 Dateien und
+separat zu machen, falls gewünscht. `tsc` sauber. Noch offen aus dem
+Handbuch, nicht Teil dieses Schritts: negative Letter-Spacing
+(−0,02 bis −0,03em) bei großen Display-Größen ist nirgends gesetzt,
+IBM Plex Mono für Maße/Rechenwege fehlt weiterhin komplett (das ist
+Schritt (c), an dem die inhaltliche Rechenweg-Sichtbarkeits-Frage aus
+Punkt 4 oben hängt).
 
 ---
 
