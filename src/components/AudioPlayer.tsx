@@ -70,7 +70,7 @@ export function AudioPlayer({ src, dauer }: Props) {
 
       <button
         onClick={toggle}
-        className="w-8 h-8 rounded-full bg-anthracite flex items-center justify-center shrink-0 active:scale-95 transition-transform"
+        className="w-8 h-8 rounded-full bg-anthracite flex items-center justify-center shrink-0 active:translate-y-px transition-transform"
       >
         {playing
           ? <Pause size={14} fill="white" color="white" />

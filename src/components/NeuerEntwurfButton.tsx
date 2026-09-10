@@ -28,7 +28,7 @@ export function NeuerEntwurfButton() {
       <button
         onClick={start}
         disabled={loading}
-        className="flex items-center gap-2 bg-yellow text-anthracite font-extrabold text-[14px] px-5 py-3 rounded-2xl active:scale-95 transition-transform disabled:opacity-60 shadow-sm shadow-yellow/30"
+        className="flex items-center gap-2 bg-yellow text-anthracite font-extrabold text-[14px] px-5 py-3 rounded-2xl active:translate-y-px transition-transform disabled:opacity-60 shadow-sm shadow-yellow/30"
       >
         {loading
           ? <Loader2 size={16} className="animate-spin" />

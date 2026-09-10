@@ -125,7 +125,7 @@ export function PwaBottomSheet({ onClose }: Props) {
 
           <button
             onClick={close}
-            className="mt-6 w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:scale-95 transition-transform"
+            className="mt-6 w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:translate-y-px transition-transform"
           >
             Verstanden
           </button>

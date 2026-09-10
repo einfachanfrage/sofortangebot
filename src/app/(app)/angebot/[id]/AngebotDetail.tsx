@@ -397,7 +397,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
     <div
       ref={setNodeRef}
       style={style}
-      className={`border-t border-anthracite/5 px-4 py-3 relative ${isUnsure ? 'border-l-4 border-l-yellow' : ''}`}
+      className="border-t border-anthracite/5 px-4 py-3 relative"
       onClick={() => !isEditing && setEditingId(item.id)}
     >
       {isUnsure && (

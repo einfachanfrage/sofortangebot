@@ -12,7 +12,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/dashboard"
-        className="mt-4 bg-yellow text-anthracite rounded-2xl px-8 py-4 font-extrabold text-[16px] active:scale-95 transition-all"
+        className="mt-4 bg-yellow text-anthracite rounded-2xl px-8 py-4 font-extrabold text-[16px] active:translate-y-px transition-all"
       >
         Zum Dashboard
       </Link>

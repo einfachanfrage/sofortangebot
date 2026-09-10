@@ -81,11 +81,14 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props
     <div className="relative">
       <Link
         href={`/angebot/${quote.id}`}
-        className="block active:scale-[0.99] transition-transform"
+        className="block active:translate-y-px transition-transform"
       >
         <div className="relative overflow-hidden rounded-2xl bg-white border border-black/5">
-          <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: status.dot }} />
-          <div className="pl-4 pr-3 py-3.5">
+          {/* DC-049 Schritt 4 (2026-09-10): der farbige linke Balken ist weg —
+              "Nie das Muster Karte mit farbigem linken Rand" laut CI-Handbuch.
+              Der Status-Badge unten (status.bg/status.text) zeigt denselben
+              Status bereits eindeutig an, keine zweite Kennzeichnung nötig. */}
+          <div className="px-4 py-3.5">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <div className={`font-black text-sm truncate ${kundenname ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/40 italic'}`}>

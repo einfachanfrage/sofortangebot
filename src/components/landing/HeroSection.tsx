@@ -25,7 +25,7 @@ export function HeroSection() {
 
             <Link
               href="/register"
-              className="inline-block bg-yellow text-anthracite font-black text-base md:text-lg px-8 py-4 rounded-2xl hover:bg-[#e6b800] active:scale-95 transition-all mb-4 shadow-lg shadow-yellow/30"
+              className="inline-block bg-yellow text-anthracite font-black text-base md:text-lg px-8 py-4 rounded-2xl hover:bg-[#e6b800] active:translate-y-px transition-all mb-4 shadow-lg shadow-yellow/30"
             >
               Kostenlos testen →
             </Link>

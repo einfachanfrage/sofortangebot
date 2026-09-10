@@ -362,7 +362,7 @@ export default function EinstellungenPage() {
 
         {/* Save Button */}
         <button type="submit" disabled={saving}
-          className="w-full md:max-w-xs bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full md:max-w-xs bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
             : saving ? 'Speichert…' : 'Speichern'
@@ -818,7 +818,7 @@ export default function EinstellungenPage() {
         </div>
 
         <button type="submit" disabled={saving}
-          className="w-full md:max-w-xs bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full md:max-w-xs bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
             : saving ? 'Speichert…' : 'Speichern'

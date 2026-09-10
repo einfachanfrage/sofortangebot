@@ -34,8 +34,8 @@ import { OnboardingProgress as ProgressBar } from '@/components/onboarding/Onboa
 // ─── Shared styles ─────────────────────────────────────────────────────────
 const inputCls = 'w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-3.5 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow transition-colors'
 const labelCls = 'block text-[11px] font-extrabold text-anthracite/40 mb-1.5 uppercase tracking-widest'
-const btnPrimary = 'w-full bg-yellow text-anthracite font-extrabold text-lg rounded-2xl py-4 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
-const btnBack = 'flex-1 bg-white border-2 border-anthracite/15 text-anthracite font-extrabold text-base rounded-xl py-4 active:scale-95 transition-transform'
+const btnPrimary = 'w-full bg-yellow text-anthracite font-extrabold text-lg rounded-2xl py-4 active:translate-y-px transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+const btnBack = 'flex-1 bg-white border-2 border-anthracite/15 text-anthracite font-extrabold text-base rounded-xl py-4 active:translate-y-px transition-transform'
 
 // ─── Progress Bar ──────────────────────────────────────────────────────────
 // ─── Accounting label helper ────────────────────────────────────────────────
@@ -313,7 +313,7 @@ export default function OnboardingStep() {
           </p>
           <button
             onClick={() => goTo(2)}
-            className="w-full max-w-xs bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:scale-95 transition-transform flex items-center justify-center gap-3"
+            className="w-full max-w-xs bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:translate-y-px transition-transform flex items-center justify-center gap-3"
           >
             Einrichten <ArrowRight size={22} strokeWidth={2.5} />
           </button>
@@ -603,7 +603,7 @@ export default function OnboardingStep() {
             <div className="flex flex-col gap-3 flex-1">
               <button
                 onClick={() => selectPreisMode('markt')}
-                className="relative bg-white border-l-4 border-l-yellow border border-anthracite/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform shadow-sm"
+                className="relative bg-white border border-anthracite/5 rounded-2xl p-5 text-left active:translate-y-px transition-transform shadow-sm"
               >
                 <span className="absolute top-3 right-3 bg-yellow text-anthracite text-[10px] font-extrabold px-2 py-0.5 rounded-full">
                   Empfohlen
@@ -624,7 +624,7 @@ export default function OnboardingStep() {
 
               <button
                 onClick={() => selectPreisMode('manuell')}
-                className="bg-bg border border-anthracite/5 rounded-2xl p-5 text-left active:scale-[0.98] transition-transform"
+                className="bg-bg border border-anthracite/5 rounded-2xl p-5 text-left active:translate-y-px transition-transform"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-anthracite rounded-xl flex items-center justify-center shrink-0">
@@ -770,7 +770,7 @@ export default function OnboardingStep() {
               <button
                 onClick={() => logoInputRef.current?.click()}
                 disabled={logoUploading}
-                className="w-full border-2 border-dashed border-anthracite/20 rounded-2xl p-10 flex flex-col items-center gap-3 active:scale-[0.98] transition-transform disabled:opacity-50 bg-white"
+                className="w-full border-2 border-dashed border-anthracite/20 rounded-2xl p-10 flex flex-col items-center gap-3 active:translate-y-px transition-transform disabled:opacity-50 bg-white"
               >
                 {logoUploading
                   ? <Loader2 size={32} color="var(--color-yellow)" className="animate-spin" />
@@ -958,7 +958,7 @@ export default function OnboardingStep() {
           >
             <button
               onClick={() => router.push('/dashboard?welcome=new')}
-              className="w-full bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:scale-95 transition-transform flex items-center justify-center gap-3"
+              className="w-full bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:translate-y-px transition-transform flex items-center justify-center gap-3"
             >
               🎙 Erstes Angebot erstellen →
             </button>

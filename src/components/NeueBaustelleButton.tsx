@@ -58,7 +58,7 @@ export function NeueBaustelleButton({ customerId, variant = 'primary' }: NeueBau
       {variant === 'primary' ? (
         <button
           onClick={() => setOpen(true)}
-          className="w-full bg-yellow text-anthracite font-black rounded-2xl py-3 text-sm active:scale-[0.98] transition-transform"
+          className="w-full bg-yellow text-anthracite font-black rounded-2xl py-3 text-sm active:translate-y-px transition-transform"
         >
           + Neue Baustelle
         </button>

@@ -40,7 +40,7 @@ export function ConfirmSheet({
         <div className="flex flex-col gap-3">
           <button
             onClick={onConfirm}
-            className={`w-full rounded-2xl py-4 font-extrabold text-[16px] active:scale-[0.98] transition-all ${
+            className={`w-full rounded-2xl py-4 font-extrabold text-[16px] active:translate-y-px transition-all ${
               destructive ? 'bg-red-500 text-white' : 'bg-yellow text-anthracite'
             }`}
           >

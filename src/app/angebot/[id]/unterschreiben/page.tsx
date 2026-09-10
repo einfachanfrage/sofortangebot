@@ -328,7 +328,7 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
         <button
           onClick={handleSubmit}
           disabled={!canSubmit || submitting}
-          className="w-full bg-yellow text-anthracite font-black text-xl rounded-2xl py-5 active:scale-95 transition-transform disabled:opacity-40"
+          className="w-full bg-yellow text-anthracite font-black text-xl rounded-2xl py-5 active:translate-y-px transition-transform disabled:opacity-40"
         >
           {submitting ? 'Wird gespeichert...' : 'Angebot annehmen & unterschreiben'}
         </button>

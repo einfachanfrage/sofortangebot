@@ -32,7 +32,7 @@ function AngebotRow({ quote }: { quote: AngebotRowData }) {
   return (
     <Link
       href={`/angebot/${quote.id}`}
-      className="bg-white rounded-2xl px-4 py-3 border border-anthracite/5 flex items-center justify-between gap-2 active:scale-[0.98] transition-transform"
+      className="bg-white rounded-2xl px-4 py-3 border border-anthracite/5 flex items-center justify-between gap-2 active:translate-y-px transition-transform"
     >
       <div>
         <div className="font-black text-anthracite">{formatCurrency(quote.total_gross)}</div>

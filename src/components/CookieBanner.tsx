@@ -25,7 +25,7 @@ export function CookieBanner() {
       </p>
       <button
         onClick={dismiss}
-        className="flex-shrink-0 bg-yellow text-anthracite text-xs font-black px-4 py-2 rounded-lg active:scale-95 transition-transform"
+        className="flex-shrink-0 bg-yellow text-anthracite text-xs font-black px-4 py-2 rounded-lg active:translate-y-px transition-transform"
       >
         Verstanden
       </button>

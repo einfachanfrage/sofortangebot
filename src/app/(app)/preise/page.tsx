@@ -317,7 +317,7 @@ export default function PreisePage() {
           <button
             key={g.key}
             onClick={() => { setSelectedGewerk(g.key); setSelectedUnit('Alle') }}
-            className="bg-white rounded-2xl p-4 border border-anthracite/5 text-left active:scale-95 transition-transform"
+            className="bg-white rounded-2xl p-4 border border-anthracite/5 text-left active:translate-y-px transition-transform"
           >
             <div className="text-3xl mb-2">{g.emoji}</div>
             <div className="font-black text-anthracite text-sm leading-tight">{g.label}</div>

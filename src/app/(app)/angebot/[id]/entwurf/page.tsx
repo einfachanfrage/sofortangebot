@@ -283,7 +283,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
               {onRetry && aufnahme.typ === 'sprache' && (
                 <button
                   onClick={onRetry}
-                  className="ml-auto flex items-center gap-1.5 bg-anthracite text-white text-[12px] font-extrabold px-3 py-1.5 rounded-xl active:scale-95 transition-all"
+                  className="ml-auto flex items-center gap-1.5 bg-anthracite text-white text-[12px] font-extrabold px-3 py-1.5 rounded-xl active:translate-y-px transition-all"
                 >
                   <RefreshCw size={12} strokeWidth={2.5} />
                   Nochmal versuchen
@@ -1532,7 +1532,7 @@ export default function EntwurfPage() {
             </p>
             <button
               onClick={() => fertigstellen()}
-              className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-lg shadow-yellow/30"
+              className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:translate-y-px transition-transform shadow-lg shadow-yellow/30"
             >
               <span className="flex flex-col items-center leading-tight">
                 <span>✓ {erkannteAnzahl} {hatBestehendPositionen ? 'neue ' : ''}{erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
@@ -1559,7 +1559,7 @@ export default function EntwurfPage() {
             <button
               onClick={cancelRecording}
               aria-label="Aufnahme abbrechen"
-              className="shrink-0 w-14 h-[60px] flex items-center justify-center rounded-2xl bg-white border-2 border-anthracite/10 text-anthracite/50 active:scale-95 transition-all"
+              className="shrink-0 w-14 h-[60px] flex items-center justify-center rounded-2xl bg-white border-2 border-anthracite/10 text-anthracite/50 active:translate-y-px transition-all"
             >
               <X size={22} strokeWidth={2.5} />
             </button>
@@ -1578,7 +1578,7 @@ export default function EntwurfPage() {
               <button
                 onClick={() => zettelInputRef.current?.click()}
                 disabled={zettelUploading}
-                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-50"
+                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:translate-y-px transition-all disabled:opacity-50"
               >
                 {zettelUploading
                   ? <Loader2 size={22} className="animate-spin text-anthracite/40" />
@@ -1592,7 +1592,7 @@ export default function EntwurfPage() {
               <button
                 onClick={startRecording}
                 
-                className="w-20 h-20 rounded-full bg-anthracite flex items-center justify-center shadow-2xl shadow-black/30 active:scale-95 transition-all disabled:opacity-50"
+                className="w-20 h-20 rounded-full bg-anthracite flex items-center justify-center shadow-2xl shadow-black/30 active:translate-y-px transition-all disabled:opacity-50"
               >
                 <Mic size={32} strokeWidth={2} className="text-white" />
               </button>
@@ -1605,7 +1605,7 @@ export default function EntwurfPage() {
             <div className="flex flex-col items-center gap-2 pb-[3px]">
               <button
                 onClick={() => setShowNotiz(true)}
-                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:scale-95 transition-all"
+                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:translate-y-px transition-all"
               >
                 <NotebookPen size={22} strokeWidth={2} className="text-anthracite" />
               </button>
@@ -1694,7 +1694,7 @@ export default function EntwurfPage() {
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => deleteAufnahme(deleteBestaetigen)}
-                className="w-full bg-red-500 text-white rounded-2xl py-4 font-extrabold text-[16px] active:scale-[0.98] transition-all"
+                className="w-full bg-red-500 text-white rounded-2xl py-4 font-extrabold text-[16px] active:translate-y-px transition-all"
               >
                 Löschen
               </button>

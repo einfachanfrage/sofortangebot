@@ -83,7 +83,7 @@ export function AccountDeleteModal() {
               <button
                 type="button"
                 onClick={() => { setOpen(false); setConfirm(''); setError('') }}
-                className="flex-1 bg-bg text-anthracite font-black rounded-xl py-3 active:scale-95 transition-transform"
+                className="flex-1 bg-bg text-anthracite font-black rounded-xl py-3 active:translate-y-px transition-transform"
               >
                 Abbrechen
               </button>
@@ -91,7 +91,7 @@ export function AccountDeleteModal() {
                 type="button"
                 onClick={handleDelete}
                 disabled={loading || confirm !== 'LÖSCHEN'}
-                className="flex-1 bg-red-500 text-white font-black rounded-xl py-3 active:scale-95 transition-transform disabled:opacity-40"
+                className="flex-1 bg-red-500 text-white font-black rounded-xl py-3 active:translate-y-px transition-transform disabled:opacity-40"
               >
                 {loading ? 'Löschen...' : 'Account löschen'}
               </button>

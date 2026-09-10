@@ -128,7 +128,7 @@ export function PlanWahlModal({ onClose }: Props) {
             <button
               onClick={choosePro}
               disabled={loading !== null}
-              className="w-full bg-yellow text-anthracite font-extrabold text-sm rounded-xl py-3 active:scale-95 transition-transform disabled:opacity-50"
+              className="w-full bg-yellow text-anthracite font-extrabold text-sm rounded-xl py-3 active:translate-y-px transition-transform disabled:opacity-50"
             >
               {loading === 'pro' ? 'Weiterleitung...' : '30 Tage gratis testen →'}
             </button>

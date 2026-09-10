@@ -54,7 +54,7 @@ export function RestoreBanner() {
         <button
           onClick={restore}
           disabled={loading}
-          className="bg-anthracite text-white font-black text-sm px-5 py-2.5 rounded-xl active:scale-95 transition-transform disabled:opacity-50"
+          className="bg-anthracite text-white font-black text-sm px-5 py-2.5 rounded-xl active:translate-y-px transition-transform disabled:opacity-50"
         >
           {loading ? '...' : 'Ja, wiederherstellen'}
         </button>

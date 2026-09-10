@@ -236,7 +236,7 @@ export function RaumGrundrissEditor({
             <button
               onClick={() => onSave(waende.filter(w => w.laenge > 0))}
               disabled={!g.geschlossen}
-              className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40"
+              className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 active:translate-y-px transition-all disabled:opacity-40"
             >
               <Check size={17} strokeWidth={3} /> Übernehmen
             </button>

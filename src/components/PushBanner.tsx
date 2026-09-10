@@ -142,7 +142,7 @@ export function PushBanner({ onClose, onGranted }: Props) {
                 <button
                   onClick={requestPermission}
                   disabled={status === 'requesting'}
-                  className="w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:scale-95 transition-transform disabled:opacity-60 mt-auto"
+                  className="w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:translate-y-px transition-transform disabled:opacity-60 mt-auto"
                 >
                   {status === 'requesting' ? 'Wird aktiviert...' : 'Benachrichtigungen erlauben →'}
                 </button>
