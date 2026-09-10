@@ -7486,5 +7486,122 @@ vorgeschlagen wird.
 
 *Prüfmeister · 2026-09-07*
 
+
+---
+
+## Aussparungen, Säulen, abgehängte Decken — Antwort auf Legals DIN-18365-Fund (2026-09-10)
+
+Legal hat recht: DIN 18365 verlangt beim Bodenbelag den Abzug von Aussparungen
+über **0,1 m²**, und das Datenmodell kennt für Böden keine. Der Befund stimmt.
+Die Schlussfolgerung „dann muss jetzt alles abgedeckt werden" stimmt nicht.
+
+### Zuerst die Einordnung: wie groß ist der Schaden wirklich
+
+| Aussparung | Fläche | bei 42 €/m² Parkett |
+|---|---|---|
+| Säule 40 × 40 cm | 0,16 m² | 6,72 € |
+| Kaminsockel 1,20 × 0,80 m | 0,96 m² | 40,32 € |
+| Bodenluke / Tank | 0,25 m² | 10,50 € |
+
+**Und die Richtung ist die harmlose.** Wer nicht abzieht, rechnet dem Kunden ein
+paar Quadratmeter zu viel — das ist ärgerlich, aber es ist kein Angebot, das
+auseinanderfliegt. Verglichen mit den 91.085 € aus PM-034 oder den 785 € aus
+PM-036 ist das eine andere Liga.
+
+**Der fachlich wichtigere Punkt, den die Norm allein nicht hergibt:** Eine
+Aussparung zieht Fläche ab, macht aber **mehr** Arbeit. Um eine Säule herum wird
+jede Diele einzeln angerissen und angeschnitten, am Kaminsockel läuft ein
+Anschluss über zwei Meter. Wer nur den Abzug einbaut und den Mehraufwand nicht,
+macht das Angebot **doppelt falsch zulasten des Handwerkers** — weniger Fläche
+*und* kein Zuschlag für die Handarbeit. Deshalb gehört zu jeder Aussparung eine
+zweite Position: Anschnitt/Anarbeiten, in lfm.
+
+Solange es den Datenpfad nicht gibt, ist der jetzige Zustand also **zugunsten des
+Handwerkers konservativ**. Das ist kein Grund, es zu lassen — aber ein Grund, es
+nicht vor Gate 1 zu erzwingen.
+
+### Warum es nicht „alles" ist: die Norm ist genau dafür gemacht
+
+Der Grund, warum sich das gerade so unendlich anfühlt, ist ein echter
+Unterschied zwischen den zwei Gewerken:
+
+- **Maler, DIN 18363:** Alles bis **2,5 m² Einzelgröße** wird übermessen. Eine
+  Säule, eine Nische, ein Vorsprung, ein Rollladenkasten — fällt unter den Tisch,
+  völlig regelkonform. Die Norm sagt ausdrücklich: nicht jedes Detail messen.
+- **Bodenleger, DIN 18365:** Schwelle **0,1 m²**. Praktisch alles wird abgezogen.
+
+Zwei Gewerke, zwei Philosophien — deshalb wirkt es chaotisch. Es ist aber nur
+diese eine Unterscheidung, und sie ist auswendig lernbar.
+
+### Die Sonderfälle sind eine endliche Liste, und sie zerfällt in vier Gruppen
+
+**Gruppe 1 — von der Übermessung schon erledigt (Maler): nichts zu tun.**
+Säulen, Nischen, Vorsprünge, Rollladenkästen, Heizkörpernischen, Einbauschränke.
+Alles unter 2,5 m² Einzelgröße. Hier wäre eine Modellierung sogar **normwidrig**.
+
+**Gruppe 2 — ein Feld, das es fast schon gibt (Boden).** Säule, Kamin,
+Bodenluke, Bodentank, Treppenauge, nicht unterbaute Kücheninsel. Das sind sechs
+Namen für **eine** Sache: eine Fläche, die im Raum liegt und nicht belegt wird.
+
+Und der Datenpfad dafür existiert bereits zweimal:
+
+- `wandflaeche_abzug_m2` — der generische Wandabzug
+- `teilflaeche` — aus PM-036: nur ein Teil des Raums wird bearbeitet
+
+**Es fehlt genau ein drittes Feld derselben Bauart**, z. B. `aussparungen_m2`
+(oder eine Liste `{ bezeichnung, flaeche }`), plus die Anschnittposition. Nicht
+zehn Sonderfälle — ein Mechanismus, den zwei Geschwister im selben Modell schon
+vormachen.
+
+**Gruppe 3 — braucht keine Modellierung, sondern die richtige Zahl.**
+Die **abgehängte Decke** ist das Paradebeispiel: Für den Maler ist sie kein
+Sonderfall, sondern eine andere Raumhöhe. Er streicht bis zur Unterkante der
+Abhängung — Wandfläche = Umfang × **lichte Höhe darunter**. Die Deckenfläche
+bleibt dieselbe. Das Diktat kann diese Zahl längst tragen; es braucht nur die
+Rückfrage *„Ist die Decke abgehängt? Dann bitte die Höhe darunter."* Das
+Herstellen der abgehängten Decke selbst ist ohnehin Trockenbau und steht im
+Katalog (55,00 €/m², `default-prices.ts:279`), nicht Malerarbeit.
+
+Ebenso: Treppenhäuser (wechselnde Höhe → gemittelte Höhe oder Flächenangabe),
+Erker (Zusatzfläche statt Abzug).
+
+**Gruppe 4 — gehört in die Rückfrage, nicht in die Rechnung.**
+Alles, was der Handwerker vor Ort entscheiden muss: ob unter der Kücheninsel
+verlegt wird, ob der Kamin bleibt, ob die Säule mitgestrichen wird. Eine Software,
+die das errät, liegt in der Hälfte der Fälle falsch. Eine, die fragt, liegt nie
+falsch.
+
+### Ein Punkt, der oft übersehen wird: die Säule ist je Gewerk das Gegenteil
+
+Dieselbe Säule in demselben Raum:
+
+- **Boden:** Aussparung — Fläche **ab**, plus Anschnitt in lfm.
+- **Maler:** Zusatzfläche — die vier Seiten × Höhe kommen **dazu**, und die Wand
+  dahinter wird nicht kleiner.
+
+Wer „Säule" als einen Sonderfall behandelt, baut deshalb zwangsläufig für ein
+Gewerk das Falsche. Das ist das stärkste Argument für den generischen
+Mechanismus statt für eine Sonderfall-Liste.
+
+### Meine Empfehlung zur Reihenfolge
+
+1. **Jetzt:** die Rückfrage für die abgehängte Decke — kostet ein Feld nicht und
+   schließt Gruppe 3.
+2. **Nach Gate 1:** `aussparungen` als ein generisches Feld plus
+   Anschnittposition, mit drei bis vier Testfällen (Säule im Raum, Kaminsockel,
+   Kücheninsel, und eine Gegenprobe: dieselbe Säule im Malerangebot darf **nicht**
+   abgezogen werden).
+3. **Vorher wichtiger als beides:** Die Gewerke, die noch nie getestet wurden.
+   Bad/Fliesen, Treppen, Fenster und Türen lackieren, Abbruch und Entsorgung.
+   Dort ist die Fehlerrate nicht klein, sondern **unbekannt** — und eine
+   unbekannte Fehlerrate ist gefährlicher als ein bekannter 6,72-€-Fehler.
+
+**An Legal:** Der Fund ist richtig und bleibt offen — als geplante Lücke mit
+bekannter Richtung und bekannter Größenordnung, nicht als Risiko. Die
+Normanforderung selbst ist unstrittig; strittig ist nur der Zeitpunkt, und den
+setze ich hinter Gate 1.
+
+*Prüfmeister · 2026-09-10*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

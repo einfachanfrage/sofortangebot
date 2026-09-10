@@ -64,7 +64,7 @@ Lösungsvorschlag: CoS-013.
 | ~~CoS-003–006~~ | Accounts, Transaktions-E-Mails, RLS, Observability | → verschoben, jetzt CoS-P-001 bis CoS-P-004 | `docs/chief-of-staff-platform-todos.md` |
 | CoS-011 | Rückfragen-UI komplett neu gedacht — Konzept + klickbarer Prototyp vom Product Designer stehen, Sandy findet's „super" und will's in die Umsetzung geben | 🟡 überholt — Sandy hat Product Designer direkt „setz dc-025 um" angewiesen, noch vor der hier erbetenen Aufwandsschätzung. UI ist bereits gebaut (`RueckfragenScreen.tsx`), nur der Live-Test im Browser steht noch aus | `docs/design-check.md` DC-025/DC-026, `docs/dc-025-konzept-rueckfragen.md`, `docs/dc-025-rueckfragen-prototyp.html` |
 | CoS-012 | DC-029 „Baustelle"/Projekt-Zuordnung — Wording-Konzept vom Product Designer steht, zwei Teilstücke formal zu vergeben | 🟡 Lexware/Lexoffice-Machbarkeit erledigt. Datenmodell (Head of Product Engineering) jetzt umgesetzt und live: Tabelle `baustellen` + `quotes.baustelle_id` + Migration + Backfill in der echten Datenbank angewendet, App-Code an allen vier Stellen verdrahtet. Live-Nachtest steht aus, Designer baut jetzt Konzept + Prototyp für die Baustellen-UI darauf auf | `docs/design-check.md` DC-029 |
-| CoS-013 | Strukturelle Lösung für den wiederholten Datei-Speicherfehler bei gemeinsamen Doku-Dateien (jetzt 8. Mal) | ❌ offen — Git-Lösung am 31.08. angenommen, hat den Fehler aber NICHT gestoppt (07.09. + 10.09. erneut aufgetreten, beide repariert); nur eine Partei committet bislang über Git, braucht Sandys Priorisierungs-Entscheidung, siehe Nachtrag am Dateiende | Sandys Frage „kannst du es richtig lösen", 2026-08-20; Nachtrag 10.09.2026 |
+| CoS-013 | Strukturelle Lösung für den wiederholten Datei-Speicherfehler bei gemeinsamen Doku-Dateien (jetzt 8. Mal) | 🟡 Sandy hat „sofort fixen" angeordnet (10.09.) — Hauptkollisionsquelle (CoS↔Engineering in dieser Datei) durch neue `chief-of-staff-engineering-todos.md` entschärft, diese Datei wird ab jetzt als Archiv nicht mehr aktiv beschrieben. Restrisiko (Git-Workflow für alle Parteien) bleibt strukturell offen, siehe Nachtrag am Dateiende | Sandys Frage „kannst du es richtig lösen", 2026-08-20; Sandys Auftrag „sofort fixen", 10.09.2026 |
 | CoS-014 | Nebenfund aus CoS-002: manuelle Positions-Änderungen sind heute nur durch Zufall vor Neu-Berechnung sicher (kein echter Schutz-Mechanismus) | ✅ umgesetzt 24.08. (Sandys direkter Auftrag „fix das") — echter Schutz über `quotes.manuell_bearbeitete_positionen`, Spalte live, 18 neue Tests. Live-Nachtest steht aus | `docs/cos-002-architektur-vorschlag.md` Abschnitt 2 |
 | CoS-015 | Nebenfund aus CoS-002: Kosten-Protokollierung (`ki_usage`) für die teure `ki-extrahieren`-Extraktion läuft seit 20.07.2026 wegen Spalten-Mismatch still ins Leere | ❌ offen — Ursache gefunden (Edge Function schreibt `prompt_typ`/`input_tokens` statt `endpunkt`/`tokens_in`), nicht behoben | `docs/cos-002-architektur-vorschlag.md` Abschnitt „Daten, die ich geprüft habe" |
 | CoS-016 | Rückfrage: welche „App-seitige Git/Deploy-Blockade" verhindert gerade das Deployen von CoS-002? | ✅ beantwortet — device_bash-Lock-Datei-Problem (nie als eigenes Ticket dokumentiert, mein Versäumnis), inzwischen selbst gelöst (Lock-Dateien lassen sich verschieben statt löschen). Sandy hat beide CoS-002-Commits gepusht, kein offener Blocker mehr | Chief of Staff, 21.08.2026, beim CoS-002-Fix-Update aufgefallen; Antwort Head of Product Engineering, 21.08.2026 |
@@ -4342,6 +4342,36 @@ verloren gegangen, aber das ist Zufall der Textstruktur, kein verlässlicher
 Schutz. Sag mir, ob das jetzt (achter Vorfall) Vorrang bekommen soll, oder
 ob die Sofortmaßnahme (Endmarkierung + Reparatur bei Bedarf) für dich
 weiterhin ausreicht.
+
+*Chief of Staff · 2026-09-10*
+
+---
+
+## CoS-013 — Sandys Entscheidung: sofort fixen (10.09.2026, direkt im Anschluss)
+
+**Auftrag:** Sandy, direkt — „das soll sofort von wem auch immer gefixt
+werden." Keine weitere Rückfrage nötig, sofort umgesetzt.
+
+**Umgesetzt:** Die Hauptkollisionsquelle beseitigt — bisher teilten sich
+Chief of Staff und Head of Product Engineering diese eine Datei, und alle
+acht Vorfälle sind genau aus dieser Kollision entstanden (die anderen
+Fachrollen haben längst eigene Dateien und hatten nie diesen Fehler). Neue
+Datei `docs/chief-of-staff-engineering-todos.md` angelegt, exakt nach dem
+bewährten Muster von `chief-of-staff-platform-todos.md`. Ab sofort laufen
+alle neuen CoS↔Engineering-Themen dort statt hier. Diese Datei
+(`chief-of-staff-todos.md`) bleibt als Archiv der ~250 bisherigen Punkte
+stehen, wird aber nicht mehr aktiv von zwei Seiten gleichzeitig
+beschrieben — genau das war die Ursache.
+
+**Ehrlich, nicht schöngeredet:** Das senkt das Risiko strukturell (nur noch
+zwei statt vieler potenzieller Schreib-Kollisionen), macht es aber nicht
+auf null. Kollidieren CoS und Engineering künftig in der neuen Datei
+gleichzeitig, kann derselbe Fehler dort erneut auftreten — die
+vollständige Lösung (echter Git-Workflow für alle Parteien) bleibt ein
+offener, größerer Schritt, den ich nicht einseitig erzwingen kann.
+
+**Für Head of Product Engineering:** Bitte ab jetzt `chief-of-staff-
+engineering-todos.md` statt dieser Datei für neue Einträge.
 
 *Chief of Staff · 2026-09-10*
 
