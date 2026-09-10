@@ -343,7 +343,7 @@ function sucheVorschlaege(query: string, katalog: PreisKatalogEintrag[]): PreisK
 }
 
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, onInfo, onAddMaterial, onAddPrice, priceItems, onPreisVorschlag, onNeuePosition }: {
+function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, rechenwegSichtbar, onAddMaterial, onAddPrice, priceItems, onPreisVorschlag, onNeuePosition }: {
   item: EditItem
   titleOverride?: string
   editingId: string | null
@@ -352,7 +352,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   removeEditItem: (id: string) => void
   vatRate: number
   onUnitPick: (id: string) => void
-  onInfo: (id: string) => void
+  rechenwegSichtbar: boolean
   onAddMaterial: (item: EditItem) => void
   onAddPrice: (item: EditItem) => void
   priceItems: PreisKatalogEintrag[]
@@ -570,18 +570,21 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
               )}
             </div>
             {item.description && <div className="text-xs text-anthracite/50 font-semibold mt-0.5">{item.description}</div>}
-            <div className="text-xs text-anthracite/40 font-semibold mt-1 flex items-center gap-1">
-              <span>{item.quantity} {item.unit} × {fmt(item.unit_price)}</span>
-              {item.berechnungsweg && (
-                <button
-                  onClick={e => { e.stopPropagation(); onInfo(item.id) }}
-                  title="Rechenweg anzeigen"
-                  className="w-4 h-4 rounded-full bg-anthracite/8 hover:bg-yellow/40 text-anthracite/60 font-black text-[10px] leading-none flex items-center justify-center transition-colors"
-                >
-                  i
-                </button>
-              )}
+            <div className="text-xs text-anthracite/40 font-semibold mt-1">
+              {item.quantity} {item.unit} × {fmt(item.unit_price)}
             </div>
+            {rechenwegSichtbar && (
+              <div className="mt-1.5 pt-1.5 border-t border-anthracite/8">
+                <div className="font-mono text-[11px] text-anthracite/60 leading-relaxed">
+                  {item.berechnungsweg || 'Pauschale'}
+                </div>
+                {(item.annahmen?.length ?? 0) > 0 && (
+                  <div className="mt-1 text-[11px] font-semibold text-anthracite/40">
+                    {item.annahmen!.join(' · ')}
+                  </div>
+                )}
+              </div>
+            )}
             {preisFehlt && (
               <div className="mt-2 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-2.5 py-2">
                 <AlertTriangle size={14} className="shrink-0 text-red-500" />
@@ -670,7 +673,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showVorschau, setShowVorschau] = useState(false)
   const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
-  const [infoItemId, setInfoItemId] = useState<string | null>(null)
+  // DC-049 Schritt 3 (2026-09-10, CI-Handbuch: Rechenweg "nie versteckt, nie
+  // eingeklappt" — Sandys Entscheidung nach kurzer Abstimmung: standardmäßig
+  // überall sichtbar, EIN globaler Schalter statt der bisherigen Klick-pro-
+  // Position-Lösung, falls die Liste beim Kalkulieren zu voll wird). Ersetzt
+  // das alte infoItemId-Bottom-Sheet, das den Rechenweg hinter einem
+  // (i)-Button versteckt hat.
+  const [rechenwegSichtbar, setRechenwegSichtbar] = useState(true)
   // CoS-043: `category` gehoert mit dazu — an ihr haengt, auf welche
   // Leistungen ein objektbezogener Zuschlag (Denkmalschutz, Sondermasse,
   // exotische Holzart) gerechnet wird. Ohne sie wuerde er still auf das
@@ -2074,8 +2083,16 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
             {/* Positionen */}
             <div className="bg-white rounded-2xl border border-anthracite/5" onClick={e => e.stopPropagation()}>
-              <div className="px-4 pt-4 pb-2">
+              <div className="px-4 pt-4 pb-2 flex items-center justify-between">
                 <div className="font-black text-anthracite">Positionen</div>
+                {/* DC-049 Schritt 3: ein Schalter für die ganze Liste statt
+                    Klick pro Position — Rechenweg startet immer sichtbar. */}
+                <button
+                  onClick={() => setRechenwegSichtbar(v => !v)}
+                  className="text-[11px] font-bold text-anthracite/40 hover:text-anthracite/70 transition-colors"
+                >
+                  Rechenweg {rechenwegSichtbar ? 'ausblenden' : 'einblenden'}
+                </button>
               </div>
 
               {editItems.some(item => !item.price_item_id && item.unit_price <= 0) && (
@@ -2129,7 +2146,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                         {editItems.map(item => (
-                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegSichtbar={rechenwegSichtbar} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                         ))}
                       </SortableContext>
                     </DndContext>
@@ -2174,7 +2191,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegSichtbar={rechenwegSichtbar} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                         )
@@ -2186,7 +2203,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} onInfo={setInfoItemId} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegSichtbar={rechenwegSichtbar} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                       )}
@@ -2211,16 +2228,19 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                             {item.unit}
                           </button>
                           <span>× {fmt(item.unit_price)}</span>
-                          {item.berechnungsweg && (
-                            <button
-                              onClick={() => setInfoItemId(item.id)}
-                              title="Rechenweg anzeigen"
-                              className="ml-0.5 w-4 h-4 rounded-full bg-anthracite/8 hover:bg-yellow/40 text-anthracite/60 font-black text-[10px] leading-none flex items-center justify-center transition-colors"
-                            >
-                              i
-                            </button>
-                          )}
                         </div>
+                        {rechenwegSichtbar && (
+                          <div className="mt-1.5 pt-1.5 border-t border-anthracite/8">
+                            <div className="font-mono text-[11px] text-anthracite/60 leading-relaxed">
+                              {item.berechnungsweg || 'Pauschale'}
+                            </div>
+                            {(item.annahmen?.length ?? 0) > 0 && (
+                              <div className="mt-1 text-[11px] font-semibold text-anthracite/40">
+                                {item.annahmen!.join(' · ')}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <div className="font-black text-anthracite shrink-0">{fmt(item.total_price)}</div>
                     </div>
@@ -2691,35 +2711,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         onCancel={() => setShowDeleteSheet(false)}
       />
 
-      {infoItemId && (() => {
-        const it = displayItems.find(i => i.id === infoItemId)
-        if (!it) return null
-        return (
-          <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setInfoItemId(null)}>
-            <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="font-black text-anthracite text-lg leading-tight">{it.title}</div>
-                <button onClick={() => setInfoItemId(null)} className="text-anthracite/40 font-black text-xl leading-none shrink-0">×</button>
-              </div>
-              <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mb-1">🧮 So gerechnet</div>
-              <div className="bg-bg rounded-2xl p-4 text-sm font-semibold text-anthracite leading-relaxed">
-                {it.berechnungsweg || 'Kein Rechenweg hinterlegt.'}
-                <div className="mt-2 pt-2 border-t border-anthracite/8 text-anthracite/60 font-bold">
-                  = {it.quantity} {it.unit} × {fmt(it.unit_price)} = {fmt(it.total_price)}
-                </div>
-              </div>
-              {(it.annahmen?.length ?? 0) > 0 && (
-                <>
-                  <div className="text-[10px] font-black text-anthracite/40 uppercase tracking-widest mt-4 mb-1">📌 Annahmen</div>
-                  <ul className="text-sm font-semibold text-anthracite/70 list-disc pl-5 space-y-0.5">
-                    {it.annahmen!.map((a, i) => <li key={i}>{a}</li>)}
-                  </ul>
-                </>
-              )}
-            </div>
-          </div>
-        )
-      })()}
+      {/* DC-049 Schritt 3: das alte infoItemId-Bottom-Sheet ist weg — der
+          Rechenweg (inkl. Annahmen) steht jetzt inline unter jeder Position,
+          siehe SortableItem/renderItem oben + den rechenwegSichtbar-Schalter
+          neben der "Positionen"-Überschrift. */}
 
       {/* ── Aktionen-Sheet (⋯) — ALLE Neben-Aktionen an einer Stelle ─────── */}
       {showAktionen && (() => {

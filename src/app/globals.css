@@ -14,6 +14,11 @@
   --color-white: #FFFFFF;
   --color-background: var(--bg);
   --color-foreground: var(--anthracite);
+  /* DC-049 Schritt 3: überschreibt Tailwinds System-Mono-Stack — jede
+     bestehende Stelle mit der font-mono-Utility (Nummernkreise, Briefpapier-
+     Farbfeld, Blog-Codeblöcke) bekommt IBM Plex Mono automatisch mit, ohne
+     dass dort etwas geändert werden musste. */
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
 * {
