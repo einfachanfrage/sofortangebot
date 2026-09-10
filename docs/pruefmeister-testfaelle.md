@@ -7702,5 +7702,150 @@ nicht mehr.
 
 *Prüfmeister · 2026-09-10*
 
+
+---
+
+## Systematische Suche nach weiteren Löchern der Säulen-Art (2026-09-10)
+
+Sandy hat gefragt, ob es mehr solcher Löcher gibt. Ich habe diesmal gesucht statt
+geschätzt: `types.ts` (was das Modell überhaupt tragen kann) gegen
+`default-prices.ts` (was der Katalog kennt) gegen das, was in einem echten Raum
+steht. **Ja, es gibt mehr. Acht Stück, davon fünf ernst.**
+
+### Das Muster hinter allen
+
+Das Datenmodell kennt **Räume** (Länge, Breite, Höhe, Fläche) und **Öffnungen**
+(Fenster, Türen, Dachfenster). Es kennt **keine Bauteile im Raum**. Alles, was in
+einem Raum steht oder an ihm hängt und Arbeit macht, hat kein Feld: Säule,
+Heizkörper, Stuckprofil, Deckenbalken, Erker.
+
+Das ist **ein** fehlender Begriff, nicht acht. Und es erklärt auch, warum der
+Katalog nicht das Problem ist — der ist überraschend vollständig. Die Preise
+stehen längst da; es kommt nur nichts an, weil die Aufnahme das Bauteil nie
+erfasst.
+
+### Die Liste, nach Häufigkeit × Geld sortiert
+
+**1. Fußbodenheizung — das größte Loch, weil es nicht nur fehlt, sondern falsch
+rechnet.**
+
+Katalog: alles vorhanden (Aufpreis Vinyl/Laminat 4,00 €/m², Parkett 8,00 €/m²,
+Zuschlag CM-Messung 55,00 € Pauschale, Feuchtemessung 35,00 €/Messung).
+Modell: **kein Feld.** Diktat: „da ist Fußbodenheizung drunter" verschwindet.
+
+Und die Folge ist schlimmer als der fehlende Aufpreis: Über einer
+Fußbodenheizung wird **verklebt statt schwimmend**, und es kommt **keine
+normale Trittschalldämmung** darunter — die dämmt sonst genau das weg, was
+heizen soll. Die Engine schlägt heute Trittschall vor, sobald ein Klickbelag
+erkannt wird. **Bei einer Fußbodenheizung ist dieser Vorschlag fachlich falsch,
+und er sieht für den Kunden aus wie eine Empfehlung vom Fachmann.**
+
+40-m²-Wohnung: 160–320 € Aufpreis + 90 € Messungen fehlen, **plus** eine
+Position, die dort nicht hingehört. Das ist der einzige Punkt auf dieser Liste,
+den ich als fachlichen Fehler und nicht als Lücke führe.
+
+**2. Heizkörper — betrifft praktisch jeden Malerauftrag.**
+
+Katalog: „Heizkörper streichen / lackieren" 40,00 €/Stück, „Rohrleitungen
+lackieren" 9,00 €/lfdm. Modell: **kein Feld für die Anzahl.**
+
+Jeder Wohnraum hat einen, größere zwei. Eine 3-Zimmer-Wohnung: fünf bis sechs
+Heizkörper = **200–240 €**. Dazu kommt, dass Streichen *hinter* dem Heizkörper
+eigene Arbeit ist (Heizkörperpinsel, oder der Körper wird abgehängt) — das ist
+kein Sonderfall, das ist der Normalfall in jeder bewohnten Wohnung.
+
+**3. Möbel rücken und räumen — nach der Norm ausdrücklich eine Besondere
+Leistung.**
+
+Katalog: „Möbel rücken / ausräumen" 55,00 €/Stunde, „Möbel zurückrücken" 55,00 €.
+DIN 18363, Abschnitt 4.2: Räumen ist **Besondere Leistung**, also nicht im
+Quadratmeterpreis enthalten. Modell: kein Feld, keine Rückfrage.
+
+3-Zimmer-Wohnung bewohnt: drei bis vier Stunden je Richtung. **165–220 €**, die
+nicht im Angebot stehen — und der Handwerker steht am Montag vor einer vollen
+Wohnung, die er nicht eingepreist hat. Das ist der Fall, bei dem Kunden am
+häufigsten streiten, weil beide Seiten etwas anderes für selbstverständlich
+halten.
+
+**4. Altbau-Stuck, Zierprofile, Deckenbalken — in Berlin kein Randfall.**
+
+Modell: kein Feld. Und hier **fehlt sogar der Katalogeintrag**: Es gibt
+„Stuckleiste montieren" (14,00 €/lfdm), „Stuck spachteln und streichfertig
+schleifen" (6,00 €/lfdm), „Stuckprofil ergänzen / rekonstruieren"
+(120,00 €/lfdm) — aber **kein „Stuckprofil streichen"**.
+
+Ein Berliner Altbauzimmer 4 × 5 m hat rund 18 lfm Profil, oft plus Rosette.
+Stuck streichen ist Pinselarbeit, keine Rolle — realistisch 12–18 €/lfdm, also
+**220–320 € je Zimmer**. Bei mehrfach überstrichenem Altstuck kommt das
+Freilegen dazu, und das ist eine eigene Größenordnung.
+
+Wenn deine ersten Kunden Berliner Malerbetriebe sind, treffen sie das in jeder
+zweiten Wohnung.
+
+**5. Wechselnde Raumhöhe — Treppenhaus, Galerie, Luftraum.**
+
+Das Modell hat **ein** `hoehe`-Feld je Raum. Ein Treppenhaus hat unten 2,50 m
+und am Auge 6,00 m. Egal welche Zahl gesprochen wird, das Ergebnis ist falsch —
+zu wenig oder zu viel, ohne dass irgendwo ein Hinweis steht. Häufig im
+Einfamilienhaus und im Altbau-Treppenhaus.
+
+*Die restlichen drei, kleiner:*
+
+**6. Türzargen unterkürzen** — bei jedem schwimmenden Neubelag Standard
+(25,00 €/Stück im Katalog). Die Türanzahl liegt im Modell bereits vor, es wird
+nur nichts daraus gemacht. Vier Türen = 100 €.
+
+**7. Türen, Zargen und Fenster lackieren** — hier ist **nichts kaputt**: Felder
+da (Anzahl), Katalog da (Tür 45/75 €, Zarge 35 €, Fenster innen 55 €). Aber
+**kein einziger Testfall deckt es ab.** Das ist keine Lücke, sondern eine blinde
+Stelle — Fehlerrate unbekannt.
+
+**8. Erker, Nischen und Vorsprünge über 2,5 m²** — über der Übermessungsschwelle,
+also abzugs- bzw. zuschlagspflichtig. Selten, mittlere Beträge.
+
+### Warum meine 37 Testfälle das nicht gefunden haben
+
+Das ist der unangenehme Teil, und er gehört ins Protokoll.
+
+**Jeder einzelne meiner Fälle ist ein rechteckiger Raum mit Fenstern und Türen.**
+Ich habe die Diktate selbst erfunden — und dabei genau die Welt beschrieben, die
+das Datenmodell ohnehin kann. Kein einziges Mal habe ich „zwei Heizkörper",
+„Stuckprofil", „Fußbodenheizung" oder „die Möbel müssen noch raus" gesprochen,
+weil ich beim Erfinden an Flächen gedacht habe und nicht an Räume, in denen
+jemand wohnt.
+
+**Ich habe die Form meiner eigenen Annahmen getestet.** Deshalb war die Trefferquote
+so hoch, und deshalb ist sie zu hoch gewesen. Alle acht Löcher liegen in
+derselben Kategorie: Dinge, die *im* Raum stehen — und die kommen in meinen
+Diktaten nicht vor, weil sie in meinem Kopf nicht vorkamen.
+
+**Was ich daraus ändere:**
+
+1. **Testfälle nicht mehr frei erfinden.** Die nächsten kommen aus echten
+   Aufmaßblättern und echten Angeboten — Sandy kann sich zehn anonymisierte von
+   einem Malerbetrieb geben lassen. Ein echtes Angebot enthält Positionen, auf
+   die man am Schreibtisch nicht kommt.
+2. **Eine Gegenliste führen:** „Was steht in einem echten Raum?" — Heizkörper,
+   Fenstergriffe, Steckdosen, Stuck, Balken, Säulen, Einbauschrank, Kamin,
+   Möbel — und die gegen jeden Gewerkezweig prüfen, statt gegen meine Diktate.
+3. **Einen echten Handwerker die Liste lesen lassen.** Ich bin gut, aber ich bin
+   kein Ersatz für jemanden, der letzte Woche auf einer Baustelle stand.
+
+### Reihenfolge, die ich empfehle
+
+| | Was | Warum zuerst |
+|---|---|---|
+| 1 | **Fußbodenheizung**: Rückfrage + Aufpreis + **keine Trittschalldämmung** | Einziger Punkt, der aktiv etwas Falsches ins Angebot schreibt |
+| 2 | **Säulen** (PM-038) und **Heizkörper**: Rückfrage bei Stichwort | Häufig, dreistellig, Katalog liegt bereit |
+| 3 | **Möbel räumen**: eine Rückfrage „Ist die Wohnung bewohnt / möbliert?" | Norm sagt Besondere Leistung, Streitfall Nummer eins |
+| 4 | **Stuck**: Katalogeintrag „Stuckprofil streichen" + Rückfrage | Berliner Markt |
+| 5 | **Raumhöhe wechselnd**: Rückfrage statt einer Zahl | Seltener, aber still falsch |
+
+Punkt 1 bis 3 sind Rückfragen, kein neues Rechenwerk — derselbe Mechanismus, der
+bei den Leibungen schon steht. **Das ist die billigste Art, ein Loch zu
+schließen: nicht raten, sondern fragen.**
+
+*Prüfmeister · 2026-09-10*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
