@@ -125,7 +125,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
-| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) Rechenweg/Mono, (d) Press-States/Ränder, (e) Logo — siehe Detailabschnitt | Product Designer (Konzept: Marketing, Governance S. 19) |
+| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) Press-States/Ränder, (e) Logo — siehe Detailabschnitt | Product Designer (Konzept: Marketing, Governance S. 19) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -4894,6 +4894,47 @@ Handbuch, nicht Teil dieses Schritts: negative Letter-Spacing
 IBM Plex Mono für Maße/Rechenwege fehlt weiterhin komplett (das ist
 Schritt (c), an dem die inhaltliche Rechenweg-Sichtbarkeits-Frage aus
 Punkt 4 oben hängt).
+
+**Schritt (c) ✅ erledigt für die eigene App-Ansicht (`a26d81a`):**
+Vor der Umsetzung kurz mit Sandy abgestimmt (2026-09-10), weil das
+Handbuch eine bestehende UX-Entscheidung umkehrt. Ergebnis: Rechenweg
+startet **überall sichtbar**, mit **einem globalen Schalter** neben der
+„Positionen"-Überschrift („Rechenweg ausblenden/einblenden") statt der
+alten Klick-pro-Position-Lösung — Sandys gewählte Kompromiss-Option
+zwischen voller Handbuch-Konformität und einer beim Kalkulieren nicht
+überladenen Liste. Bei der zweiten Frage („Pauschal-Positionen ohne
+echten Rechenweg — Kleinmaterial, Anfahrt, Mindestauftragswert") hat
+Sandy „entscheid du" gewählt: Produktdesigner-Entscheidung war **eigenes
+Label „Pauschale"** statt einer Formel oder eines leeren Felds — hält
+die Positionen optisch einheitlich, ohne eine Berechnung vorzutäuschen,
+die es dort nicht gibt.
+
+Umgesetzt in `AngebotDetail.tsx`: das alte `infoItemId`-Bottom-Sheet
+(Klick auf ein (i) öffnete ein Overlay mit Rechenweg + Annahmen,
+Emoji-Titel „🧮 So gerechnet") ist komplett weg, ersetzt durch eine
+inline stehende Zeile direkt unter jeder Position — an beiden Stellen,
+wo Positionen gerendert werden (`SortableItem` im Bearbeiten-Modus,
+`renderItem` in der Nur-Lese-Ansicht). Annahmen stehen, falls vorhanden,
+direkt darunter mit. IBM Plex Mono (500/600) ist jetzt geladen
+(`layout.tsx`) und über `--font-mono` in `globals.css` eingehängt —
+überschreibt Tailwinds System-Mono-Stack, sodass auch die drei
+bestehenden `font-mono`-Stellen (Nummernkreise-Tabelle, Briefpapier-
+Farbfeld, Blog-Codeblock) automatisch den Marken-Font bekommen, ohne
+dass dort etwas geändert werden musste. `tsc --noEmit` sauber.
+
+**Bewusst NICHT Teil davon — eigener, noch offener Punkt:** Das
+Kundenangebot selbst (PDF via `@react-pdf/renderer` in `lib/pdf.tsx`,
+sowie die öffentliche Unterschreiben-Seite) zeigt den Rechenweg
+**weiterhin gar nicht** — `berechnungsweg` wird dort nirgends gelesen.
+Gerade dort zielt das Handbuch-Argument „Beweisstück, nicht
+Feature-Liste" eigentlich am stärksten hin, weil es um den Kunden geht,
+der nachvollziehen will, wie der Preis zustande kam — nicht nur um die
+eigene Arbeitsansicht beim Kalkulieren. Technisch ein separater Schritt
+(anderes Rendering — `@react-pdf/renderer`-Komponenten statt HTML/CSS,
+eigenes Font-Registrieren für IBM Plex Mono im PDF-Kontext, Layout-Frage
+auf einer bereits eng bemessenen Seite), den ich bewusst nicht
+mitgemacht habe, ohne das vorher mit Sandy zu klären. Vorschlag: eigener
+Schritt (c2), falls gewünscht.
 
 ---
 
