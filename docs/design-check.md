@@ -125,7 +125,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
-| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) Logo — siehe Detailabschnitt | Product Designer (Konzept: Marketing, Governance S. 19) |
+| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) ✅ Logo 10.09. (`531c268`, Bildmarke von Sandy als PNG geliefert — Browser-Tab-Favicon bewusst noch nicht umgestellt, siehe Detailabschnitt). Damit Reihenfolge (a)–(e) komplett — offene Restpunkte siehe Detailabschnitt | Product Designer (Konzept: Marketing, Governance S. 19) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -4984,6 +4984,51 @@ Ebenfalls offen: die generelle Hover-Regel für neutrale Flächen
 (→ `--surface-sunken`) und Links (Anthrazit → `--text-accent`) wurde
 in diesem Schritt nicht angefasst. `tsc --noEmit` über alle 30
 Dateien sauber.
+
+**Schritt (e) ✅ erledigt (`531c268`):** Sandy hat die Bildmarke (Maßband-
+Icon) als PNG-Set geliefert — 4 Varianten mit Vollton-Hintergrund
+(Anthrazit/Off-White) und 4 mit transparentem Hintergrund (Icon in
+Off-White bzw. Anthrazit), je einmal als reines Icon und einmal als
+fertiger Icon-über-Text-Lockup. Farben stimmen pixelgenau mit den
+Handbuch-Hex-Werten überein (`#D9A400`/`#2C2C2C`/`#F7F7F5`). Kein SVG,
+sondern Raster-PNG bei 500×500 bzw. 700×700 — für alle hier umgesetzten
+Verwendungen (Web-Anzeige, Downscale auf Icon-Größen) ausreichend
+Auflösung, kein Vektor nötig.
+
+Umgesetzt: Die beiden Icon-only-Transparenz-Varianten wurden auf den
+Bildinhalt zugeschnitten (Alpha-Bounding-Box + 10 % Rand) und liegen
+als `public/brand/icon-light.png`/`icon-dark.png`. `Logo.tsx` — die
+zentrale Wortmarke-Komponente — bekommt das Icon links vom Text, Höhe
+gekoppelt an die jeweilige Schriftgröße per CSS `em` (kein separates
+Size-Prop, kein Umbau an den 12 bestehenden Aufrufstellen nötig).
+Dabei außerdem `font-syne` (= Bricolage Grotesque seit Schritt 2)
+ergänzt — war beim Logo bisher übersehen worden, lief weiter in Inter.
+`landing/Nav.tsx` und `landing/Footer.tsx` hatten bisher eigenes,
+dupliziertes Inline-Markup statt `Logo.tsx` zu nutzen — beide jetzt
+umgestellt; dabei fiel auf, dass der Footer „sofort" bisher in Weiß
+statt Gelb zeigte (Abweichung von der Logo.tsx-eigenen Konvention für
+dunkle Flächen) — beim Umbau mit korrigiert. `apple-icon.tsx` (180×180,
+iOS-Homescreen-Icon) zeigt jetzt die echte Bildmarke statt der
+„sa"-Platzhalter-Initialen, per `next/og`s Standardmuster für lokale
+Bild-Assets (Datei unter `src/app/_assets/brand-mark.png`, zur
+Request-Zeit als Base64 eingebettet).
+
+**Nebenbei gefunden und mit erledigt:** `public/manifest.json`
+referenziert seit jeher `/icon-192.png` und `/icon-512.png` für die
+PWA-Installation — beide Dateien gab es im Repo nie (404 bei jedem
+Installationsversuch). Jetzt mit den neuen Icon-Assets ergänzt.
+
+**Bewusst NICHT Teil davon:** `icon.tsx`, der 32×32-Favicon für den
+Browser-Tab, zeigt weiterhin die „sa"-Text-Platzhalterlösung. Grund:
+Testrender bei 16×16/32×32 zeigten, dass das feine Maßband-Liniensymbol
+(dünne Skalen-Striche, kleiner Linsen-Kreis) bei diesen Miniaturgrößen
+sichtbar verschwimmt — bei 48px+ und beim 180×180-Apple-Icon dagegen
+klar erkennbar. Das ist eine Bild-/Markenqualitäts-Abwägung, die ich
+nicht einseitig zulasten der Wiedererkennbarkeit im Browser-Tab treffen
+wollte: entweder eine vereinfachte/kräftigere Mini-Variante des Icons
+besorgen (z. B. nur die Linse ohne Skala, dickere Striche) oder die
+„sa"-Lösung für diesen einen Platz bewusst beibehalten. Vorschlag an
+Sandy folgt im Chat.
 
 ---
 
