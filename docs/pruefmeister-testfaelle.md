@@ -1230,6 +1230,13 @@ war der richtige nächste Schritt, nicht meiner.
 | PM-035 | Drei Arten der Flächenangabe + L-förmiger Flur (Sockelleisten-Umfang) | ❌ Eingesprochen 2026-09-02. Gut: reine Flächenangabe („hat vierzehn Quadratmeter") wird korrekt als Fläche geführt; Sockelleisten-Ausschluss respektiert. Vier Befunde: L-Form verschwindet stumm (zweiter Schenkel weg, keine Rückfrage), „sechs **Meter** mal eins zwanzig" → 6 × 1 m (Gegenbeweis in PM-032), Sockelleisten mit falschem Umfang und nur 1 von 3 Türen, Trittschall zum dritten Mal nur im ersten Raum. **Befund 1, 3 und 4 behoben 03.09.** (L-Form wird gerechnet: 9,60 m² Fläche / 18,40 lfm Umfang; Türanzahl zählt mit; Trittschall je Raum) — Soll-Liste jetzt vollständig erreicht. Befund 2 an den heutigen Daten nicht mehr nachstellbar. Live-Nachtest steht aus **Nachtest 04.09.: drei von vier Befunden behoben** — **L-Form gelöst** (9,60 m² Fläche, 18,40 lfdm Umfang, mit erklärender Warnung), „eins zwanzig" kommt als 1,20 an, Sockelleisten 18,40 ohne Türabzug. 🟡 Offen: „Trittschalldämmung überall drunter" landet nur im Flur (158,94 € fehlen) ✅ **Vollständig grün (04.09. spät):** Trittschall jetzt in allen drei Räumen (44,92 m²) — „überall drunter" wird als alle Räume gelesen. L-Form, Sockelleisten 18,40, Flächenangaben alle korrekt |
 | PM-036 | Teilfläche nach Wasserschaden neben komplettem Raum (Wohnzimmer/Flur) | ❌ Eingesprochen 2026-09-02, wie erwartet gescheitert: **Teilfläche wird ignoriert, das Raummaß gewinnt** — 21 m² statt 6,30 m², Altbelag über 20 m² statt 6 m², 785,40 € zu viel. Dazu: Karte zeigt 6,3 m², Entwurf 6,0 m² (Verschnitt im Titel, nicht in der Menge). Sockelleisten-Ausschluss korrekt respektiert. **Befund 1 behoben 03.09.** (Teilfläche wird aus dem Transkript zurückgeholt, Soll-Liste stimmt 1:1 — siehe „Fix PM-036, Befund 1"), Befund 2 an den Daten vom 03.09. nicht nachstellbar, Befund 3 läuft über VOB-012. Live-Nachtest steht aus **Nachtest 04.09.: Hauptbefund behoben** — Teilfläche 6,30 m² statt 21,00, Altbelag 6,00 statt 20,00, Karte = Entwurf, Flur-Sockelleisten 11,00 lfdm. ~~🟡 Neuer Rückfall: Sockelleisten im Wohnzimmer~~ **behoben 04.09.** — gleiche Wurzel wie PM-034 (Satz mit zwei Räumen). Die 10 lfdm waren 4 × √6 m² über der Teilfläche, wie vom Prüfmeister vermutet; eine Teilfläche taugt jetzt nicht mehr als Umfangsquelle ✅ **Vollständig grün (2. Nachtest 04.09., 18:51):** Teilfläche 6,30 m², raumgebundener Sockelleisten-Ausschluss greift, Angebot 733,70 € — exakt die Soll-Summe |
 | PM-037 | Leibungen dreiseitig + Fensterbank (Prüfung des VOB-013-Fixes) | ❌ **Erstlauf 04.09.: Leibungen und Fensterbänke entstehen gar nicht.** Ausdrücklich beauftragt („Leibungen werden mitgestrichen, 25 cm tief", „Fensterbänke werden auch gestrichen") — keine Position, keine Rückfrage, kein Hinweis. `daten.leibungen[]` kommt leer aus der Extraktion, damit ist der VOB-013-Fix **unerreichbar und weiterhin ungeprüft**. Die drei übrigen Positionen exakt Soll |
+| PM-038 | Loft, acht Stahlstützen, Maler und Boden im selben Angebot | 🆕 angelegt 10.09., noch nicht eingesprochen |
+| PM-039 | Bewohnte Altbauwohnung: Möbel, Stuckprofil, zwei Heizkörper | 🆕 angelegt 10.09. |
+| PM-040 | Neubau mit Fußbodenheizung: verkleben, keine Trittschalldämmung, CM-Messung | 🆕 angelegt 10.09. — wichtigster Fall des Batches |
+| PM-041 | Küche im Betrieb: Einbauküche abkleben, Fliesenspiegel aussparen | 🆕 angelegt 10.09. |
+| PM-042 | Treppenhaus mit wechselnder Raumhöhe, Geländer | 🆕 angelegt 10.09. |
+| PM-043 | Bad: Schimmel, Feuchtraumanstrich nur über den Fliesen | 🆕 angelegt 10.09. |
+| PM-044 | Keller: gemauerter Pfeiler, Rohrleitungen, niedrige Höhe | 🆕 angelegt 10.09. |
 
 **Erledigt (2026-08-20):** Die vier fehlenden Standardpreise (Kniestockwände streichen, Dachschrägen
 streichen, Fassadenfläche streichen, Übergangsschiene) sind nachgetragen — zusammen mit einer
@@ -7844,6 +7851,233 @@ Diktaten nicht vor, weil sie in meinem Kopf nicht vorkamen.
 Punkt 1 bis 3 sind Rückfragen, kein neues Rechenwerk — derselbe Mechanismus, der
 bei den Leibungen schon steht. **Das ist die billigste Art, ein Loch zu
 schließen: nicht raten, sondern fragen.**
+
+*Prüfmeister · 2026-09-10*
+
+
+---
+
+# Batch 6 — PM-038 bis PM-044: die Baustelle, wie sie wirklich aussieht
+
+**Angelegt 2026-09-10.** Sieben Fälle, jeder gegen mindestens ein Loch aus der
+Suche von heute. Themenliste für die weiteren Batches:
+`pruefmeister-themenspeicher.md`.
+
+**Wichtig zur Erwartung:** Diese Fälle werden **rot** sein. Für Säulen,
+Heizkörper, Stuck, Möbel und Fußbodenheizung gibt es heute keinen Datenpfad —
+die Positionen können gar nicht entstehen. Das ist kein Fehlschlag des Tests,
+das ist sein Zweck: Jeder Fall ist gleichzeitig die Spezifikation dessen, was
+gebaut werden muss, mit den Zahlen, gegen die abgenommen wird.
+
+---
+
+### PM-038 — Loft mit acht Stahlstützen, Maler und Boden im selben Angebot
+
+**Deckt ab:** freistehende Säule in beiden Gewerken · Öffnung über 2,5 m² ·
+„Boden schützen" bei neuem Belag
+
+> Loft, ein offener Raum, zwölf mal zehn Meter, Höhe drei Meter zwanzig. Da stehen acht Stahlstützen drin, jede vierzig mal vierzig, gehen bis zur Decke hoch. Wände und Stützen alles zweimal streichen. Vier große Fenster, jeweils zwei Meter mal zwo zwanzig. Eine Tür, normal Maß. Auf den Boden kommt Klick-Vinyl, gerade verlegt, um die Stützen herum ausgeschnitten. Sockelleisten überall neu, an den Stützen keine.
+
+**Soll:**
+
+| Position | Menge | Rechenweg |
+|---|---|---|
+| Wandflächen streichen 2x | **123,20 m²** | Umfang 44,00 × 3,20 = 140,80 − 4 Fenster à 4,40 = 17,60 |
+| **Säulen streichen 2x** | **40,96 m²** | 8 × (4 × 0,40) × 3,20 = 8 × 5,12 |
+| Klick-Vinyl verlegen inkl. 5 % | **124,66 m²** | (120,00 − 8 × 0,16) × 1,05 |
+| **Anschnitt an Stützen** | **12,80 lfm** | 8 × 1,60 Umfang |
+| Trittschalldämmung | **118,72 m²** | Bodenfläche ohne Verschnitt, ohne Stützen |
+| Sockelleisten montieren | **44,00 lfdm** | voller Umfang, Tür 0,90 m bleibt drin (VOB-012); an den Stützen ausdrücklich keine |
+
+- Die vier Fenster à **4,40 m² liegen über 2,5 m²** und werden **abgezogen** —
+  Gegenprobe zur Übermessung, die sonst immer greift.
+- Die Tür bleibt drin, beide Regeln in einem Fall.
+- **Keine Position „Boden schützen".** Der Boden wird neu belegt; Abdeckvlies auf
+  einem Belag, der rauskommt, ist Unsinn. *Neue Regel, hiermit zur Bestätigung
+  gestellt: Wird im selben Angebot ein neuer Bodenbelag verlegt, entfällt
+  „Boden schützen" in diesem Raum.*
+- **Die Kernprobe:** Dieselbe Säule ist beim Maler eine **Zusatzfläche** und beim
+  Boden ein **Abzug**. Wer nur eine Richtung baut, fällt hier durch.
+
+---
+
+### PM-039 — Bewohnte Altbauwohnung: Möbel, Stuck, zwei Heizkörper
+
+**Deckt ab:** Möbel als Besondere Leistung · Stuckprofil · Heizkörper ·
+Raumhöhe über 3 m · Fenster über 2,5 m²
+
+> Altbauwohnung, die ist bewohnt, die Möbel müssen erst in die Raummitte gerückt und abgedeckt werden. Wohnzimmer, fünf Meter zwanzig mal vier Meter zehn, Höhe drei Meter fünfzig. Umlaufend ist Stuckprofil an der Decke, das wird mitgestrichen. Zwei Heizkörper unter den Fenstern, die sollen auch neu lackiert werden. Wände und Decke zweimal streichen. Zwei Fenster, jeweils eins vierzig mal zwei Meter zehn, eine Tür normal Maß.
+
+**Soll:**
+
+| Position | Menge |
+|---|---|
+| Wandflächen streichen 2x | **59,22 m²** (18,60 × 3,50 = 65,10 − 2 × 2,94) |
+| Deckenfläche streichen 2x | **21,32 m²** |
+| **Stuckprofil streichen** | **18,60 lfm** — Katalogeintrag fehlt heute noch |
+| **Heizkörper lackieren** | **2 Stück** |
+| **Möbel rücken und abdecken** | Rückfrage nach Aufwand, Position in Stunden |
+| Erschwerniszuschlag Raumhöhe > 3 m | **15 %** |
+| Sockelleisten abkleben | **18,60 lfdm** |
+
+- Fenster **2,94 m² > 2,5** → abziehen. Tür 1,89 → übermessen.
+- **Möbel rücken ist nach DIN 18363, 4.2 eine Besondere Leistung** — sie steckt
+  nicht im Quadratmeterpreis. Fehlt sie im Angebot, arbeitet der Handwerker eine
+  halbe Woche umsonst.
+- Stuck wird mit dem Pinsel gestrichen, nicht gerollt — der Satz muss ein
+  eigener sein, nicht der Wandsatz je Meter umgerechnet.
+
+---
+
+### PM-040 — Neubau mit Fußbodenheizung
+
+**Deckt ab:** Fußbodenheizung · Verklebung statt schwimmend · **keine**
+Trittschalldämmung · Belegreife / CM-Messung
+
+> Neubauwohnung, noch leer, nichts drin. Wohnzimmer, sechs mal vier fünfzig. Da ist Fußbodenheizung drin, der Estrich ist frisch. Wir sollen Eichen-Fertigparkett verlegen, vollflächig verklebt. Sockelleisten neu, eine Tür, normal.
+
+**Soll:**
+
+| Position | Menge |
+|---|---|
+| Fertigparkett verlegen, vollflächig verklebt | **27,00 m²** |
+| **Aufpreis Verlegung bei Fußbodenheizung (elastischer Kleber)** | **27,00 m² × 8,00 € = 216,00 €** |
+| **CM-Feuchtemessung Estrich** (oder Zuschlag Fußbodenheizung, 55,00 € Pauschale) | **1 Messung, 35,00 €** |
+| Sockelleisten montieren | **21,00 lfdm** |
+| **Trittschalldämmung** | **darf NICHT entstehen** |
+| Altbelag entfernen | **darf NICHT entstehen** (Neubau, „noch leer") |
+
+- **Das ist der wichtigste Fall des Batches.** Heute schlägt die Engine
+  Trittschalldämmung vor, sobald sie einen Bodenbelag erkennt. Über einer
+  Fußbodenheizung ist das fachlich falsch: Die Dämmung dämmt genau das weg, was
+  heizen soll. Eine falsche Position wiegt schwerer als eine fehlende — sie
+  sieht für den Kunden aus wie eine Empfehlung vom Fachmann.
+- „Der Estrich ist frisch" ist der Auslöser für die **Belegreife**: Ohne
+  CM-Messung darf nicht verlegt werden, und wer es doch tut, haftet für die
+  Schüssel im Parkett.
+
+---
+
+### PM-041 — Küche im Betrieb: abkleben, Fliesenspiegel aussparen
+
+**Deckt ab:** Einbauküche bleibt stehen · ausgesparte Wandfläche · Rückfrage
+statt Annahme
+
+> Küche, drei Meter achtzig mal drei Meter zwanzig, Höhe zwo fünfzig. Die Einbauküche bleibt drin, die muss abgeklebt und abgedeckt werden. An der Wand hinter der Arbeitsplatte ist ein Fliesenspiegel, der wird nicht gestrichen. Der Rest der Wände zweimal streichen, Decke einmal. Ein Fenster, Standardmaß, eine Tür normal.
+
+**Soll:**
+
+| Position | Menge |
+|---|---|
+| Wandflächen streichen 2x | **35,00 m² brutto** (14,00 × 2,50) **abzüglich Fliesenspiegel** |
+| Deckenfläche streichen 1x | **12,16 m²** |
+| **Einbauküche abkleben und abdecken** | eigene Position |
+| Sockelleisten abkleben | **14,00 lfdm** |
+
+- **Der Kern des Falls ist die Rückfrage.** Der Fliesenspiegel hat kein Maß im
+  Diktat. Die Software darf ihn weder ignorieren noch raten — sie muss nach
+  **Länge und Höhe** fragen. Typisch sind 60 cm über der Arbeitsplatte, aber
+  „typisch" ist kein Aufmaß.
+- Fenster und Tür unter 2,5 m² → übermessen.
+- Beobachtung, die ich mitprüfe: Hinter der Einbauküche gibt es keine
+  Sockelleisten. Ob die 14,00 lfdm deshalb zu kürzen sind, ist eine Rückfrage
+  wert — ich setze sie noch nicht als Soll.
+
+---
+
+### PM-042 — Treppenhaus mit wechselnder Höhe
+
+**Deckt ab:** eine Raumhöhe reicht nicht · Geländer · genannte Zahl ohne Auftrag
+
+> Treppenhaus im Einfamilienhaus. Grundfläche zwei Meter vierzig mal drei Meter. Unten ist die Höhe zwo fünfzig, oben am Treppenauge sind es fünf Meter achtzig. Wände und Decke zweimal streichen. Ein Fenster im Treppenhaus, eins zwanzig mal eins vierzig. Das Geländer soll auch gestrichen werden, vier Meter fünfzig lang. Vierzehn Stufen sind es.
+
+**Soll:**
+
+| Position | Menge |
+|---|---|
+| Wandflächen streichen 2x | **44,82 m²** — Umfang 10,80 × **gemittelte Höhe 4,15 m** ((2,50 + 5,80) / 2) |
+| Deckenfläche streichen 2x | **7,20 m²** |
+| **Geländer / Handlauf streichen** | **4,50 lfdm** |
+| Erschwerniszuschlag Raumhöhe > 3 m | **15 %** |
+| **Treppenstufen streichen** | **darf NICHT entstehen** |
+
+- **Falle Nummer eins:** Es gibt zwei Höhen. Das Modell hat ein Feld. Erwartet
+  wird entweder die gemittelte Höhe **mit sichtbarer Annahme** oder eine
+  Rückfrage. Was **nicht** passieren darf: still eine der beiden Zahlen nehmen.
+- **Falle Nummer zwei:** „Vierzehn Stufen sind es" ist eine Information, **kein
+  Auftrag**. Wer daraus eine Position baut, erfindet Arbeit — derselbe
+  Fehlertyp wie die erfundenen Sockelleisten in PM-033.
+
+---
+
+### PM-043 — Bad: Schimmel, Feuchtraum, gefliester Sockel
+
+**Deckt ab:** nur Teilhöhe der Wand · Schimmelbehandlung · Bauteil bleibt
+ausdrücklich
+
+> Badezimmer, zwei Meter zwanzig mal eins Meter achtzig, Höhe zwo fünfzig. An der Decke ist Schimmel, der muss erst behandelt werden, dann Anti-Schimmel-Anstrich drauf. Die Wände sind bis auf eins Meter zwanzig gefliest, darüber streichen wir mit Feuchtraumfarbe, zweimal. Ein kleines Fenster, sechzig mal sechzig. Der Handtuchheizkörper bleibt dran, der wird nicht gestrichen.
+
+**Soll:**
+
+| Position | Menge |
+|---|---|
+| Feuchtraumanstrich 2x | **10,40 m²** — Umfang 8,00 × (2,50 − **1,20**) |
+| Schimmelbehandlung Decke | **3,96 m²** |
+| Anti-Schimmel-Anstrich Decke | **3,96 m²** |
+| **Heizkörper** | **darf NICHT entstehen** |
+| **Sockelleisten** | **darf NICHT entstehen** (gefliest) |
+
+- **Die Fliesenhöhe ist der Test:** Gestrichen wird nur der Streifen darüber.
+  Wer 8,00 × 2,50 = 20,00 m² rechnet, verdoppelt die Fläche.
+- Das Fenster (0,36 m²) wird übermessen.
+- „Der bleibt dran, wird nicht gestrichen" ist ein Ausschluss — dieselbe
+  Mechanik wie in PM-012, nur an einem Bauteil statt an einer Leiste.
+
+---
+
+### PM-044 — Kellerraum: gemauerter Pfeiler, Rohrleitungen, niedrige Höhe
+
+**Deckt ab:** Pfeiler im Raum · Rohrleitungen · Höhe unter 3 m (kein Zuschlag)
+
+> Kellerraum, vier Meter mal drei Meter, Höhe zwo zwanzig. In der Mitte steht ein gemauerter Pfeiler, dreißig mal dreißig, geht bis zur Decke. An der Decke laufen Heizungsrohre lang, ungefähr acht Meter, die sollen mitlackiert werden. Wände und Decke einmal streichen, mit Kalkfarbe. Kein Fenster, eine Tür.
+
+**Soll:**
+
+| Position | Menge |
+|---|---|
+| Wandflächen streichen 1x | **30,80 m²** (14,00 × 2,20, Tür übermessen) |
+| **Pfeiler streichen 1x** | **2,64 m²** (4 × 0,30 × 2,20) |
+| Deckenfläche streichen 1x | **12,00 m²** |
+| **Rohrleitungen lackieren** | **8,00 lfdm** |
+| Erschwerniszuschlag Raumhöhe | **darf NICHT entstehen** (2,20 m) |
+| Sockelleisten | **darf NICHT entstehen** (nicht genannt) |
+
+- Die Deckenfläche wird **nicht** um den Pfeiler gekürzt: 0,09 m² liegen weit
+  unter der Übermessungsschwelle.
+- Der Pfeiler ist der kleine Bruder der Loft-Stütze — dieselbe Regel, andere
+  Größenordnung. Wenn PM-038 grün ist und PM-044 nicht, ist die Regel an eine
+  Bauart gebunden statt an das Prinzip.
+- „Kalkfarbe" prüft nebenbei die Preiszuordnung: dafür gibt es einen eigenen
+  Katalogeintrag.
+
+---
+
+## Was dieser Batch zusammen prüft
+
+| Loch aus der Suche vom 10.09. | Fall |
+|---|---|
+| Fußbodenheizung schreibt aktiv Falsches | **PM-040** |
+| Heizkörper | PM-039 (dabei), PM-043 (ausgeschlossen) |
+| Möbel räumen als Besondere Leistung | PM-039 |
+| Altbau-Stuck | PM-039 |
+| Wechselnde Raumhöhe | PM-042 |
+| Freistehende Bauteile | PM-038, PM-044 |
+| Erfundene Arbeit aus genannten Zahlen | PM-042 |
+| Ausgesparte Teilflächen | PM-041, PM-043 |
+
+**Reihenfolge zum Einsprechen:** PM-040 zuerst — dort entsteht heute etwas
+Falsches, nicht nur zu wenig. Dann PM-038 und PM-039, die tragen die meisten
+neuen Positionsarten. Der Rest in beliebiger Folge.
 
 *Prüfmeister · 2026-09-10*
 
