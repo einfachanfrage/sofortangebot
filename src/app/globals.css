@@ -19,6 +19,18 @@
      Farbfeld, Blog-Codeblöcke) bekommt IBM Plex Mono automatisch mit, ohne
      dass dort etwas geändert werden musste. */
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* DC-049 Schritt 4 (2026-09-10): Gelb-Skala aus dem CI-Handbuch — bisher
+     gab es nur EINEN Gelb-Wert (--color-yellow = "500 Basis"), keine
+     Unterscheidung Hover/Press. Ermöglicht bg-yellow-600 (Hover) /
+     bg-yellow-700 (Press) als normale Tailwind-Utilities, ohne dass jede
+     Stelle im Code einzeln umgebaut werden musste. --color-yellow bleibt
+     unverändert der Basis-Ton für bestehende bg-yellow/text-yellow. */
+  --color-yellow-50: #FBF4DE;
+  --color-yellow-100: #F4E4B3;
+  --color-yellow-300: #E7C459;
+  --color-yellow-500: #D9A400;
+  --color-yellow-600: #BF9000;
+  --color-yellow-700: #A67C00;
 }
 
 * {
