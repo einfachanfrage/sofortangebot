@@ -125,6 +125,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
+| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | ❌ offen, Umfang-Analyse mit Sandy abzustimmen (siehe Detailabschnitt) | Product Designer (Konzept: Marketing, Governance S. 19) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -4728,6 +4729,135 @@ Passwort-Feld ergänzen (Icon-Sprache im Produkt ist längst auf Lucide
 vereinheitlicht, DC-017) — bei Login UND Register. (2) `font-syne` auf
 Logo und Seitentitel in allen drei `(auth)`-Seiten nachziehen, damit die
 Login-Erfahrung von Anfang an nach demselben Produkt aussieht.
+
+---
+
+## DC-049 — CI-Handbuch (19.08.2026) vs. Live-Produkt: System-weiter Abgleich
+
+**Datum:** 2026-09-10 (Sandy lädt `Sofortangebot_CI_Handbuch.pdf` hoch:
+„schau dir ALLLESSSS An!!!!!!!! die CI gem pdf anbei gilt und muss
+überall gelten!!!!!!!!!!!!!")
+**Status:** ❌ offen — Umfang-Analyse fertig, Umsetzungsreihenfolge mit
+Sandy abzustimmen, bevor Code angefasst wird
+**Quelle:** `docs/Sofortangebot CI Handbuch.pdf`, 19 Seiten, laut
+Governance-Abschnitt (S. 19) von Sandy allein entschieden und verbindlich
+für Website, App, Angebots-PDF, Anzeigen, Präsentationen, Social, Print
+und Korrespondenz. Das Handbuch selbst hält im Abschnitt „Offene Punkte"
+fest: „Marketing- und App-Layouts sind CI-konforme Vorschläge, keine
+Abbildung eines Live-Produkts. Layout-Review offen." — genau dieser
+Live-Abgleich ist hiermit gemacht.
+
+Ich habe das komplette Handbuch gelesen und dem tatsächlichen Code
+gegenübergestellt (Farb-/Font-Tokens in `globals.css` + `layout.tsx`,
+Greps über den gesamten `src`-Baum). Ergebnis in sieben Bereichen,
+sortiert von „trivial" bis „grundsätzlich":
+
+**1. Farbe — nur EIN Token ist falsch, aber weitreichend genutzt.**
+Aktuell existieren in `globals.css` genau vier Farb-Variablen:
+`--color-yellow: #F5C400`, `--color-anthracite: #2C2C2C`,
+`--color-bg: #F7F7F5`, `--color-white: #FFFFFF`. Die gute Nachricht:
+Anthrazit und Off-White/Seite stimmen bereits exakt mit dem Handbuch
+überein (Anthrazit 900 = `#2C2C2C`, Off-White 50/Seite = `#F7F7F5`,
+Weiß/Karte = `#FFFFFF` — keine Änderung nötig). Nur Gelb ist das Problem:
+`#F5C400` ist im Handbuch explizit als „Deprecated — das vorherige
+Markengelb, ersetzt durch #D9A400. In neuer Arbeit nicht mehr verwenden"
+gelistet. Weil es EIN zentraler Tailwind-Token ist, reicht rein technisch
+eine Zeile in `globals.css`, um alle 67 Dateien mit `bg-yellow`/
+`text-yellow`/`border-yellow` auf einen Schlag umzustellen. ABER: das
+Handbuch will keinen Einzelwert, sondern eine Skala (50/100/300/500-Basis/
+600-Hover/700-Press) — aktuell gibt es keine Unterscheidung zwischen
+Grundfarbe/Hover/Press überhaupt (Buttons nutzen `hover:brightness-95`
+und `active:scale`, keine echten Farbstufen). Zusätzlich ist `#F5C400`
+in 13 Dateien als rohes Hex-Literal fest verdrahtet, nicht über den
+Token — die kriegt der zentrale Token-Fix NICHT automatisch mit:
+`app/icon.tsx` und `app/apple-icon.tsx` (Favicon/App-Icon-Generierung),
+`einstellungen/briefpapier/[id]/page.tsx` (PDF-Briefpapier-Vorlage),
+`api/email/route.ts` + `api/notifications/unterschrift/route.ts` +
+`lib/email.ts` (E-Mail-Templates), `api/cron/reminder/route.ts`,
+`lib/gewerke-config.ts`, `lib/status.ts`, `components/ComingSoon.tsx`,
+`components/RaumGrundrissEditor.tsx`. Diese müssen einzeln angefasst
+werden — sonst zeigen Favicon, Angebots-PDF und E-Mails weiter das alte
+Gelb, während die App-UI schon umgestellt ist.
+
+**2. Typografie — falscher Name, falsche Schrift, fehlende dritte Schrift.**
+`layout.tsx` lädt über `next/font/google` **Plus Jakarta Sans**
+(Gewichte 700/800) unter der CSS-Variable `--font-syne` — der Variablen-
+Name ist irreführend, es ist nie Syne gewesen. Diese Schrift steht für
+alle 38 `font-syne`-Stellen (Seitentitel im ganzen Produkt). Das Handbuch
+fordert für Überschriften **Bricolage Grotesque** (600/700/800) — eine
+andere Schrift, kompletter Font-Austausch nötig, technisch aber „nur"
+ein Wechsel in `layout.tsx` (Google-Font-Import) plus Umbenennung der
+Variable, weil `font-syne` als Klasse bereits konsequent im ganzen Code
+verwendet wird. Fließtext läuft schon auf **Inter** (400/500/600) — das
+ist exakt, was das Handbuch für Fließtext/Labels/Buttons/**Preise**
+verlangt, hier ist nichts zu tun. **IBM Plex Mono für Maße/Rechenwege
+fehlt komplett** — kein einziger Mono-Font ist geladen, `font-mono`
+kommt im ganzen Code nur 3× vor (Nummernkreise-Tabelle, ein Einstellungs-
+Feld, Blog-Codeblöcke), nie für Maße oder Rechenwege. Das ist der
+direkteste Bruch mit dem Handbuch, siehe Punkt 4.
+
+**3. Logo — Farben stimmen, Form nicht.** `Logo.tsx` zeigt „sofort" in
+Anthrazit/Gelb korrekt eingefärbt (siehe DC-048), ist aber eine reine
+Text-Wortmarke ohne jedes Icon. Das Handbuch fordert einen Lockup aus
+Wortmarke **plus** Bildmarke (Maßband-Icon), mit eigener Icon-only-
+Variante für Favicon/App-Icon/Social-Avatar. Das Handbuch selbst listet
+als offenen Punkt, dass nur ein PNG-Rasterbild existiert, noch kein SVG
+— das müsste vor einer Umsetzung erst von Marketing geliefert werden.
+
+**4. Rechenweg — das ist kein Stil-, sondern ein Prinzip-Bruch.**
+Das Handbuch sagt wörtlich, der Rechenweg müsse „nie versteckt, nie
+eingeklappt, nie gerundet" sein und sei „Beweisstück, nicht
+Feature-Liste". Live im Code (`AngebotDetail.tsx`) ist der Rechenweg
+aktuell aber genau das: hinter einem kleinen (i)-Button versteckt
+(„Rechenweg anzeigen", öffnet erst nach Klick auf `setInfoItemId`),
+mit einem 🧮-Emoji beschriftet (Handbuch verbietet Emoji explizit) und
+in normaler Fließschrift statt Monospace gesetzt. Das ist mehr als ein
+Farb-/Font-Detail — es widerspricht der Grundidee des Handbuchs, dass
+der nachvollziehbare Rechenweg der eigentliche Vertrauens-Baustein des
+Produkts ist. Sollte inhaltlich mit Sandy/Marketing abgestimmt werden,
+nicht einfach still umgesetzt, weil es eine bestehende UX-Entscheidung
+(Rechenweg standardmäßig eingeklappt, um die Liste kompakt zu halten)
+umkehrt.
+
+**5. Press-States — „kein Scale-down" vs. 30 Dateien mit `active:scale`.**
+Das Handbuch will beim Drücken `translateY(1px)` + Gelb 700, explizit
+„Kein Scale-down, kein Ripple". Aktuell nutzen 30 Dateien
+`active:scale-*`, darunter zentral `components/Button.tsx`
+(`active:scale-[0.98]`) — der gemeinsame Button-Baustein aus DC-005.
+Weil Button.tsx zentral ist, aber laut eigenem Kommentar im Code die
+Migration der 30 Alt-Stellen „bewusst nicht Teil" ihrer Einführung war,
+ist auch das ein zweistufiges Problem: den zentralen Button korrigieren
+ist schnell, die 30 Einzelstellen sind der eigentliche Aufwand.
+
+**6. Card-Muster — „nie farbiger linker Rand" wird 2× verletzt.**
+`AngebotDetail.tsx` und `onboarding/[step]/page.tsx` nutzen
+`border-l-yellow`/farbige linke Ränder auf Karten — exakt das Muster,
+das das Handbuch unter „Nie" auflistet („Nie das Muster ‚Karte mit
+runden Ecken und farbigem linken Rand'"). Das war auch die Karte, die
+mir beim „TEST – bitte löschen"-Eintrag in der Kundenliste schon beim
+Klick-Test aufgefallen war.
+
+**7. Was schon passt, ohne dass etwas getan werden muss:** Anthrazit-
+und Off-White-Werte (s.o.), Inter für Fließtext, Icon-Sprache (Lucide,
+seit DC-017), Gelb nie als ganzflächiger Abschnitts-Hintergrund (von
+DC-043 schon durchgesetzt), 44px-Mindesthöhe für Bedienelemente
+(`globals.css: input, textarea, select, button { min-height: 44px }`
+existiert bereits global).
+
+**Warum ich jetzt nicht einfach anfange umzubauen:** Das Handbuch selbst
+sagt unter Governance: „Das CI-Konzept liegt beim Marketing, die
+Umsetzung in Tokens und Code bei Produktdesign und Engineering." Der
+Umfang hier reicht von einer Ein-Zeilen-Änderung (Gelb-Token) bis zu
+einem Prinzip-Bruch, der eine bewusste UX-Entscheidung umkehrt
+(Rechenweg). Bevor ich anfange, Code in dutzenden Dateien zu ändern,
+sollte Sandy Priorität/Reihenfolge festlegen — z. B.: (a) Gelb-Token +
+hartcodierte Hex-Stellen zuerst (größter sichtbarer Effekt, kleinster
+Aufwand), (b) Bricolage-Grotesque-Umstellung, (c) Rechenweg-Sichtbarkeit
++ IBM-Plex-Mono (inhaltliche Abstimmung nötig, nicht nur Stil), (d)
+Press-States/Card-Ränder (viele kleine Einzelstellen), (e) Logo-Lockup
+(wartet auf SVG von Marketing). Emails/PDF/Favicon-Hex-Stellen sind
+technisch Engineering-Territorium (eigene Dateien außerhalb der reinen
+UI), auch das braucht Abstimmung, wer sie anfasst.
 
 ---
 
