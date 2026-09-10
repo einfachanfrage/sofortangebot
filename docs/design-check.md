@@ -124,6 +124,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-045 | Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding — `PlanWahlModal` erscheint laut Code nur einmalig direkt nach frischem Onboarding, danach keine Einstellungsseite für Plan-Wechsel/Rechnungen/Zahlungsmethode. Zusätzlich: das beworbene „3 Angebote/Monat kostenlos"-Limit wird im Code nirgends geprüft oder durchgesetzt (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Zugang über Einstellungen → Abo & Rechnungen (Stripe-Kundenportal); harte Grenze bei 3 Angeboten/Monat nach Sandys Entscheidung, Anlegen gesperrt, Bearbeiten und Revisionen frei | Head of Product Engineering |
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
+| DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -4688,6 +4689,45 @@ API-Zugang? Nimm 'Lexware Office'. Hast du schon einen alten
 Lexoffice-API-Key? Nimm 'Legacy'."), oder falls die Legacy-Variante kaum
 noch gebraucht wird, unter einem eingeklappten „Erweitert"-Bereich
 verstecken statt gleichrangig oben zu zeigen.
+
+---
+
+## DC-048 — Login: kein Passwort-Auge, Titel/Logo ohne Marken-Schrift
+
+**Datum:** 2026-09-10 (Sandy, Live-Blick auf die Login-Seite im
+Browser-Fenster: „es fehlt bspw ein auge um passwort anzeigen zu lassen.
+und ist das unsere CI?!?! iwie find ich die schriftart vom titel und
+einloggen komisch")
+**Status:** ❌ offen, bestätigter Befund
+
+**Befund 1 — kein Passwort-Auge:** `src/app/(auth)/login/page.tsx` und
+`.../register/page.tsx` haben je ein reines `<input type="password" ...>`
+ohne jede Show/Hide-Logik — kein `Eye`/`EyeOff`-Icon, kein Toggle-Button,
+nirgends in beiden Dateien. Bestätigt.
+
+**Befund 2 — Farben stimmen, Schriftart nicht:** Das Logo (`Logo.tsx`)
+zeigt „sofort" in Anthrazit und „angebot" in Gelb (`variant="light"`) —
+farblich exakt die CI-Palette, kein Fremdkörper. Die Schrift ist aber das
+Problem: sowohl `Logo.tsx` (`font-black tracking-tight`, keine
+Font-Familie) als auch der Seitentitel „Einloggen" darunter
+(`text-anthracite text-xl font-bold mt-1`, ebenfalls keine Font-Familie)
+verwenden nirgends `font-syne` — die eigens definierte Marken-Headline-
+Schrift (`globals.css`: `.font-syne { font-family: var(--font-syne,
+system-ui, sans-serif) }`), die im Rest des Produkts durchgängig für
+Seitentitel steht (`font-syne font-black`, 38 Fundstellen — „Angebote",
+„Einstellungen", „Kunden", „Dashboard", „Preisdatenbank" usw.). Ohne
+`font-syne` fällt beides auf die System-Schrift zurück, deshalb der
+optische Bruch, den Sandy richtig erkannt hat. Betrifft nicht nur Login:
+dieselbe Lücke besteht identisch in `register/page.tsx` und
+`passwort-vergessen/page.tsx` — die komplette `(auth)`-Routengruppe wurde
+offenbar separat gebaut und hat die `font-syne`-Konvention nie
+übernommen.
+
+**Vorschlag:** (1) Lucide `Eye`/`EyeOff` als Toggle-Button im
+Passwort-Feld ergänzen (Icon-Sprache im Produkt ist längst auf Lucide
+vereinheitlicht, DC-017) — bei Login UND Register. (2) `font-syne` auf
+Logo und Seitentitel in allen drei `(auth)`-Seiten nachziehen, damit die
+Login-Erfahrung von Anfang an nach demselben Produkt aussieht.
 
 ---
 
