@@ -272,7 +272,7 @@ function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; 
     <div className="bg-bg rounded-2xl mb-3 flex items-center justify-center">
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         {geschlossen ? (
-          <polygon points={punkteStr} fill="#F5C40022" stroke={stroke} strokeWidth={2.5} strokeLinejoin="round" />
+          <polygon points={punkteStr} fill="#D9A40022" stroke={stroke} strokeWidth={2.5} strokeLinejoin="round" />
         ) : (
           <>
             <polyline points={punkteStr} fill="none" stroke={stroke} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />

@@ -48,7 +48,7 @@ export const STATUS_CONFIG: Record<QuoteStatus, StatusInfo> = {
   // "handlungsbereit"), nicht Grün: Grün bleibt für "Kunde hat zugesagt"
   // reserviert, sonst wirken zwei ganz unterschiedlich wichtige Momente
   // (selbst fertig vs. Kunde hat beauftragt) optisch gleich bedeutsam.
-  bereit: { label: 'Bereit', bg: 'bg-[#FEF9C3]', text: 'text-[#8B7000]', dot: '#F5C400' },
+  bereit: { label: 'Bereit', bg: 'bg-[#FEF9C3]', text: 'text-[#8B7000]', dot: '#D9A400' },
   sent: { label: 'Beim Kunden', bg: 'bg-blue-50', text: 'text-blue-700', dot: '#3B82F6' },
   accepted: { label: 'Beauftragt', bg: 'bg-[#EDFAF0]', text: 'text-[#1A7A38]', dot: '#22C55E' },
   rejected: { label: 'Abgelehnt', bg: 'bg-red-50', text: 'text-red-700', dot: '#EF4444' },

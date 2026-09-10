@@ -140,14 +140,14 @@ async function sendReminder(
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #2C2C2C;">
         <div style="background: #2C2C2C; padding: 24px; border-radius: 8px 8px 0 0;">
-          <span style="background: #F5C400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">ERINNERUNG</span>
+          <span style="background: #D9A400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">ERINNERUNG</span>
         </div>
         <div style="background: white; padding: 32px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px;">
           <p>Hallo ${customer.name},</p>
           <p>wir möchten Sie freundlich daran erinnern, dass unser Angebot über <strong>${totalGross} €</strong> noch auf Ihre Bestätigung wartet.</p>
           <p>Sie können das Angebot direkt online einsehen und unterschreiben:</p>
           <a href="${signingLink}"
-             style="display:inline-block;background:#F5C400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
+             style="display:inline-block;background:#D9A400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
             Angebot jetzt ansehen →
           </a>
           <br><br>

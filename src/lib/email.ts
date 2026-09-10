@@ -5,7 +5,7 @@ const FROM = 'Sandra <sandra@sofortangebot.app>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
 
 function btn(text: string, url: string) {
-  return `<a href="${url}" style="display:inline-block;background:#F5C400;color:#2C2C2C;font-weight:900;padding:12px 28px;border-radius:10px;text-decoration:none;font-size:15px;">${text}</a>`
+  return `<a href="${url}" style="display:inline-block;background:#D9A400;color:#2C2C2C;font-weight:900;padding:12px 28px;border-radius:10px;text-decoration:none;font-size:15px;">${text}</a>`
 }
 
 function wrap(body: string) {

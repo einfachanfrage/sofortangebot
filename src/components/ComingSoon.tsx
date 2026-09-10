@@ -37,7 +37,7 @@ export default function ComingSoon() {
         fontSize: 17, fontWeight: 800, letterSpacing: '-0.3px',
       }}>
         <span style={{ color: '#FFFFFF' }}>sofort</span>
-        <span style={{ color: '#F5C400' }}>angebot</span>
+        <span style={{ color: '#D9A400' }}>angebot</span>
       </div>
 
       {/* Mitte */}
@@ -68,7 +68,7 @@ export default function ComingSoon() {
         {/* Gelbe Linie */}
         <div style={{
           width: 60, height: 2,
-          background: '#F5C400',
+          background: '#D9A400',
           margin: '0 auto 32px',
         }} />
 
@@ -103,7 +103,7 @@ export default function ComingSoon() {
               onClick={submit}
               disabled={loading}
               style={{
-                background: '#F5C400',
+                background: '#D9A400',
                 border: 'none',
                 borderRadius: 10,
                 padding: '13px 22px',
@@ -119,7 +119,7 @@ export default function ComingSoon() {
             </button>
           </div>
         ) : (
-          <p style={{ color: '#F5C400', fontSize: 16, fontWeight: 700, margin: 0 }}>
+          <p style={{ color: '#D9A400', fontSize: 16, fontWeight: 700, margin: 0 }}>
             ✓ Du bist dabei.
           </p>
         )}

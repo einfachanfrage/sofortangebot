@@ -8,7 +8,7 @@ import type { Briefpapier, Company } from '@/lib/types'
 import { Upload } from 'lucide-react'
 import { Input } from '@/components/Input'
 
-const FARB_CHIPS = ['#F5C400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
+const FARB_CHIPS = ['#D9A400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
 const SCHRIFTEN = [
   { value: 'inter', label: 'Inter' },
   { value: 'roboto', label: 'Roboto' },
@@ -20,7 +20,7 @@ const FUSSZEILE_CHIPS = ['Steuernummer', 'IBAN', 'Handwerkskammer', 'USt-IdNr.',
 function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; company: Company | null }) {
   // Firmeninfo kommt aus dem Betrieb (companies), nicht mehr aus dem Briefpapier.
   const firmenname = company?.name || 'Musterfirma'
-  const akzent = bp.akzentfarbe || '#F5C400'
+  const akzent = bp.akzentfarbe || '#D9A400'
   const adresse = company?.address || ''
 
   const dummyItems = [
@@ -97,7 +97,7 @@ function BriefpapierEditorInner() {
   const supabase = createClient()
   const router = useRouter()
   const [bp, setBp] = useState<Partial<Briefpapier>>({
-    akzentfarbe: '#F5C400',
+    akzentfarbe: '#D9A400',
     logo_position: 'links',
     logo_groesse: 'mittel',
     schrift: 'inter',
@@ -296,7 +296,7 @@ function BriefpapierEditorInner() {
             <div className="flex items-center gap-2">
               <span className="text-xs text-anthracite/40">#</span>
               <input
-                value={(bp.akzentfarbe ?? '#F5C400').replace('#', '')}
+                value={(bp.akzentfarbe ?? '#D9A400').replace('#', '')}
                 onChange={e => setField('akzentfarbe', '#' + e.target.value.replace('#', '').slice(0, 6))}
                 maxLength={6}
                 className="flex-1 bg-bg rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow/50"

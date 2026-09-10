@@ -19,7 +19,7 @@ export default function Icon() {
       >
         <span
           style={{
-            color: '#F5C400',
+            color: '#D9A400',
             fontSize: 16,
             fontWeight: 900,
             letterSpacing: '-0.5px',

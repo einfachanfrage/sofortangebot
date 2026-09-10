@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --yellow: #F5C400;
+  --yellow: #D9A400;
   --anthracite: #2C2C2C;
   --bg: #F7F7F5;
   --white: #FFFFFF;
 }
 
 @theme inline {
-  --color-yellow: #F5C400;
+  --color-yellow: #D9A400;
   --color-anthracite: #2C2C2C;
   --color-bg: #F7F7F5;
   --color-white: #FFFFFF;

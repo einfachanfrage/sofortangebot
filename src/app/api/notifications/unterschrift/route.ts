@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       html: `
         <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #2C2C2C;">
           <div style="background: #2C2C2C; padding: 24px; border-radius: 8px 8px 0 0;">
-            <span style="background: #F5C400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">AUFTRAGSBESTÄTIGUNG</span>
+            <span style="background: #D9A400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">AUFTRAGSBESTÄTIGUNG</span>
           </div>
           <div style="background: white; padding: 32px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px;">
             <p style="font-size: 18px; font-weight: 900; margin: 0 0 12px;">Vielen Dank für Ihren Auftrag! 🤝</p>
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
     html: `
       <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #2C2C2C;">
         <div style="background: #2C2C2C; padding: 24px; border-radius: 8px 8px 0 0;">
-          <span style="background: #F5C400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">UNTERSCHRIEBEN</span>
+          <span style="background: #D9A400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">UNTERSCHRIEBEN</span>
         </div>
         <div style="background: white; padding: 32px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px;">
           <p style="font-size: 18px; font-weight: 900; margin: 0 0 8px;">Angebot angenommen! 🎉</p>
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
               <strong style="font-size: 18px;">${totalGross} €</strong>
             </div>
           </div>
-          <a href="${appUrl}/angebot/${quoteId}" style="display: block; background: #F5C400; color: #2C2C2C; font-weight: 900; text-align: center; padding: 14px; border-radius: 8px; text-decoration: none; font-size: 15px;">
+          <a href="${appUrl}/angebot/${quoteId}" style="display: block; background: #D9A400; color: #2C2C2C; font-weight: 900; text-align: center; padding: 14px; border-radius: 8px; text-decoration: none; font-size: 15px;">
             Angebot ansehen →
           </a>
         </div>

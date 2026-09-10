@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #2C2C2C;">
         <div style="background: #2C2C2C; padding: 24px; border-radius: 8px 8px 0 0;">
-          <span style="background: #F5C400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">ANGEBOT</span>
+          <span style="background: #D9A400; color: #2C2C2C; font-weight: 900; padding: 4px 12px; border-radius: 4px; font-size: 12px;">ANGEBOT</span>
         </div>
         <div style="background: white; padding: 32px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px;">
           <p style="font-size: 16px; font-weight: 600;">Angebot ${quoteNumber}</p>
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
           <p>Das Angebot finden Sie im Anhang dieser E-Mail.${isZugferd ? ' Es enthält eine eingebettete ZUGFeRD-XML (Factur-X).' : ''}</p>
           <p>Sie können das Angebot auch direkt online einsehen und digital unterschreiben:</p>
           <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'}/angebot/${quote.share_token ?? quoteId}/unterschreiben"
-             style="display:inline-block;background:#F5C400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
+             style="display:inline-block;background:#D9A400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
             Angebot online unterschreiben →
           </a>
           <br><br>

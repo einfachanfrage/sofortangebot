@@ -4,7 +4,7 @@ export const AKTIVE_GEWERKE = [
     name: 'Maler & Lackierer',
     emoji: '🖌',
     beschreibung: 'Streichen, Spachteln, Tapezieren, Lackieren',
-    farbe: '#F5C400',
+    farbe: '#D9A400',
     positionen_count: 164,
     typische_auftraege: [
       'Wohnung streichen',
@@ -18,7 +18,7 @@ export const AKTIVE_GEWERKE = [
     name: 'Bodenbeläge & Parkett',
     emoji: '🏠',
     beschreibung: 'Laminat, Vinyl, Parkett, Teppich, Kork, Linoleum',
-    farbe: '#F5C400',
+    farbe: '#D9A400',
     positionen_count: 177,
     typische_auftraege: [
       'Parkett verlegen',
