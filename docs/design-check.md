@@ -125,7 +125,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
-| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) ✅ Logo 10.09. (`531c268`, Bildmarke von Sandy als PNG geliefert — Browser-Tab-Favicon bleibt auf Sandys Entscheidung bei „sa", siehe Detailabschnitt). Reihenfolge (a)–(e) komplett | Product Designer (Konzept: Marketing, Governance S. 19) |
+| DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) ✅ Logo 10.09. (`531c268`, Bildmarke von Sandy als PNG geliefert — Browser-Tab-Favicon bleibt auf Sandys Entscheidung bei „sa", siehe Detailabschnitt), (f) ✅ PDF 10.09. (`dd1d6fe`, Marken-Schriften + Rechenweg im Kunden-PDF, neutrale Farbgebung auf Sandys Wunsch — Rechenweg auf der Unterschreiben-Seite bleibt offen, siehe Detailabschnitt). Reihenfolge (a)–(f) komplett | Product Designer (Konzept: Marketing, Governance S. 19) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -5028,6 +5028,68 @@ eine vereinfachte/kräftigere Mini-Variante des Icons besorgen oder (2)
 für den Browser-Tab bewusst bei „sa" bleiben, überall sonst (App,
 Header, Apple-Icon, PWA) die echte Bildmarke. Sandy hat sich für (2)
 entschieden — keine weitere Aktion nötig, `icon.tsx` unverändert.
+
+**Schritt (f) „PDF" ✅ erledigt (`dd1d6fe`):** Sandy: „ich will das pdf
+angehen" — das Kunden-PDF (`src/lib/pdf.tsx`, `@react-pdf/renderer`)
+lief bisher komplett auf der PDF-Standardschrift Helvetica und zeigte
+den Rechenweg gar nicht an, obwohl das Handbuch „nie versteckt, nie
+eingeklappt" fordert und Schritt (c) das für die App-Ansicht bereits
+gelöst hatte.
+
+Zwei Design-/Technik-Fragen vorher mit Sandy geklärt: **Schriften
+jetzt umstellen** (trotz erkennbarem technischem Aufwand, statt später)
+und **Farbgebung neutral/grau lassen**, keine Gelb-Akzente im PDF
+(beides ihre Entscheidung, Empfehlung folgte für die Farbfrage).
+
+Umgesetzt: Alle drei Handbuch-Schriften sind jetzt als echte TTFs via
+`Font.register()` eingebettet — Bricolage Grotesque 600/700/800 für
+Firmenname/Betreff-Überschriften, Inter 400/500/600 für Fließtext
+**und Preise** (Handbuch-Regel: Preise sind Inter, nicht Bricolage
+Grotesque), IBM Plex Mono 500/600 exklusiv für den Rechenweg. Der
+Rechenweg selbst steht jetzt unter jeder Position — in beiden
+Render-Pfaden (Raum- und Gewerk-Gruppierung) — mit demselben
+`berechnungsweg || 'Pauschale'`-Fallback und derselben gedämpften
+grauen Mono-Optik wie in `AngebotDetail.tsx` (Schritt c); anders als
+dort ohne Auf-/Zuklapp-Toggle, weil ein statisches PDF sowieso alles
+zeigt.
+
+**Font-Beschaffung war der eigentliche Aufwand:** kein direkter
+Zugriff auf `fonts.googleapis.com`/`fonts.gstatic.com` (Netzwerk-
+Restriktion). Bricolage Grotesque und Inter kommen als statische
+Per-Weight-TTFs aus den `@expo-google-fonts/*`-npm-Paketen. Bei IBM
+Plex Mono hatte das entsprechende npm-Paket einen echten, reproduzier-
+baren Bug (das Leerzeichen-Glyph war über alle Schriftschnitte hinweg
+defekt und ließ den PDF-Renderer abstürzen) — stattdessen direkt aus
+dem offiziellen `google/fonts`-GitHub-Repo bezogen, dort sauber.
+Vor dem Einbau jede einzelne Schriftdatei einzeln gegen einen realen
+Render getestet, nicht nur importiert.
+
+**Nebenbei mit repariert:** Die bestehenden PDF-Render-Tests
+(`pdf-uebermessung-render.test.ts`, `wertersatz-g6.test.ts`) prüften
+den PDF-Text bisher über einen selbstgebauten Hex-Dekoder, der nur zur
+alten Standardschrift-Kodierung passte — mit eingebetteten Schriften
+kodiert react-pdf Text anders (Identity-H), der Dekoder hätte ab jetzt
+für jede Textstelle Datenmüll gelesen. Auf die im Projekt bereits
+vorhandene `pdf-parse`-Bibliothek umgestellt, die das korrekt löst.
+Eine neue Testdatei `pdf-rechenweg-render.test.ts` (4 Tests) prüft den
+Rechenweg selbst: in beiden Render-Pfaden vorhanden, korrekter
+„Pauschale"-Fallback. `tsc --noEmit` sauber, alle 16 PDF-Tests grün,
+zusätzlich ein reales Beispiel-PDF gerendert und visuell geprüft
+(Schriften, Rechenweg, Fallback, durchgehend neutrale Farbgebung ohne
+Gelb — alles wie erwartet).
+
+**Bewusst NICHT Teil davon:** Die Unterschreiben-Seite
+(`app/angebot/[id]/unterschreiben/page.tsx`) zeigt den Rechenweg
+weiterhin nicht — ihre API-Route (`api/public/quotes/[token]/route.ts`)
+selektiert die Spalten `berechnungsweg`/`annahmen` gar nicht erst
+(anders als die drei PDF-Routen, die per Wildcard `select('*, ...')`
+ohnehin alles mitbekommen). Das ist eine reine Backend-Änderung
+(Supabase-Select-Statement) und liegt außerhalb meines Bereichs —
+müsste vom Head of Product Engineering ergänzt werden, dann kann ich
+die Anzeige dort mit demselben Muster nachziehen. Noch offen aus
+früheren DC-049-Schritten, unverändert: volle Hover/Press-Farbskala für
+~29 Alt-Buttons (bisher nur `Button.tsx`), `status.ts`-Badge-Ton-Frage,
+allgemeine Hover-Regeln für neutrale Flächen/Links.
 
 ---
 
