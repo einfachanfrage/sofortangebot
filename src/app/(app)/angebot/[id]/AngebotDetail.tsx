@@ -650,7 +650,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [editItems, setEditItems] = useState<EditItem[]>(quote.items)
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
-  const [exporting, setExporting] = useState<string | null>(null)
   const [showStatusPicker, setShowStatusPicker] = useState(false)
   const [currentStatus, setCurrentStatus] = useState<string>(quote.status)
   const [showRevisionDialog, setShowRevisionDialog] = useState(false)
@@ -1473,16 +1472,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const isKleinunternehmer = company?.vat_rate === 0
 
   // ── Helpers ────────────────────────────────────────────────────────────────
-  const INTEGRATIONS = [
-    { id: 'lexware', label: 'Lexware Office', short: 'LW', color: '#003DA5', active: !!company?.lexware_api_key },
-    { id: 'lexoffice', label: 'Lexoffice', short: 'LO', color: '#0066CC', active: !!company?.lexoffice_api_key },
-    { id: 'sevdesk', label: 'sevDesk', short: 'SD', color: '#E84B3C', active: !!company?.sevdesk_api_key },
-    { id: 'fastbill', label: 'FastBill', short: 'FB', color: '#FF6B00', active: !!company?.fastbill_api_key && !!company?.fastbill_email },
-    { id: 'billomat', label: 'Billomat', short: 'BM', color: '#4CAF50', active: !!company?.billomat_api_key && !!company?.billomat_subdomain },
-    { id: 'papierkram', label: 'Papierkram', short: 'PK', color: '#795548', active: !!company?.papierkram_api_key },
-    { id: 'easybill', label: 'Easybill', short: 'EB', color: '#009688', active: !!company?.easybill_api_key },
-  ]
-  const activeIntegrations = INTEGRATIONS.filter(i => i.active)
+  // 2026-09-11 (Sandy: "NATÜRLICH im Senden-Dialog!!"): Buchhaltungs-Export
+  // (Liste, Buttons, Fetch-Aufruf) lebt jetzt komplett in
+  // VorschauUndVersand.tsx (Senden → Buchhaltung-Tab), nicht mehr hier im
+  // Aktionen-Sheet — daher hier keine `activeIntegrations` mehr nötig.
 
   const status = getStatusInfo(currentStatus)
 
@@ -1690,14 +1683,6 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     setNeueBaustelleAdresse('')
     await loadBaustellen(currentCustomer.id)
     await handleBaustelleWaehlen(neu.id)
-  }
-
-  async function handleExport(provider: string, label: string) {
-    setExporting(provider)
-    const r = await fetch(`/api/integrations/${provider}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quoteId: quote.id }) })
-    setExporting(null)
-    if (r.ok) { trackVia(provider); showToast(`Zu ${label} übertragen ✓`) }
-    else { const err = await r.json(); showToast(err.error ?? 'Export fehlgeschlagen') }
   }
 
   const displayItems = editItems
@@ -2791,6 +2776,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             setShowVorschau(false)
           }}
           onZeigeRechenwegChange={setZeigeRechenwegAufPdf}
+          onExported={(provider) => trackVia(provider)}
         />
       )}
 
@@ -2886,20 +2872,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <Zeile icon={<Download size={17} strokeWidth={2.5} />} label="XRechnung XML" href={`/api/pdf/xrechnung?id=${quote.id}`} />
               )}
 
-              {activeIntegrations.length > 0 && (
-                <>
-                  <div className="border-t border-[#EEEEEE] my-2" />
-                  <div className="text-[10px] font-black text-anthracite/30 uppercase tracking-widest px-4 py-1.5">Buchhaltung</div>
-                  {activeIntegrations.map(int => (
-                    <button key={int.id} onClick={() => { setShowAktionen(false); handleExport(int.id, int.label) }}
-                      disabled={exporting === int.id}
-                      className="flex items-center gap-3 w-full text-left rounded-xl px-4 py-3.5 font-bold text-sm text-anthracite hover:bg-bg disabled:opacity-50">
-                      <span className="font-black text-anthracite/35 text-xs w-[17px] text-center">{int.short}</span>
-                      {exporting === int.id ? 'Übertrage…' : `Zu ${int.label} übertragen`}
-                    </button>
-                  ))}
-                </>
-              )}
+              {/* 2026-09-11 (Sandy: "NATÜRLICH im Senden-Dialog!!"): der
+                  Buchhaltungs-Export war hier — thematisch am falschen Ort
+                  ("Zu sevDesk übertragen" hat mit den restlichen
+                  Neben-Aktionen wie Duplizieren/Löschen wenig zu tun, ein
+                  Nutzer sucht ihn dort nicht). Umgezogen in den
+                  Senden-Dialog (VorschauUndVersand, eigener
+                  "Buchhaltung"-Tab, nur sichtbar wenn eine Software
+                  verknüpft ist) — passend neben E-Mail/WhatsApp/Link, den
+                  anderen Wegen, ein Angebot "rauszuschicken". */}
 
               <div className="border-t border-[#EEEEEE] my-2" />
               <Zeile icon={<Trash2 size={17} strokeWidth={2.5} />} label="Angebot löschen" danger onClick={() => setShowDeleteSheet(true)} />

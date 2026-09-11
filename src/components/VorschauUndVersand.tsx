@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import AngebotVorschau from './AngebotVorschau'
 import { createClient } from '@/lib/supabase/client'
+import { getActiveIntegrations } from '@/lib/integrations'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
 
 interface Props {
@@ -17,9 +18,17 @@ interface Props {
   // Rechenweg-Antwort gespeichert wurde — die dortige `quote`-Prop bleibt
   // sonst auf dem Stand des Seitenladens, siehe Kommentar dort.
   onZeigeRechenwegChange?: (wert: boolean) => void
+  // 2026-09-11 (Sandy: "NATÜRLICH im Senden-Dialog!!"): der
+  // Buchhaltungs-Export lebte bisher im Aktionen-Sheet (⋯), jetzt als
+  // eigener Tab hier. Bewusst EIGENER Callback statt `onSent` — `onSent`
+  // markiert das Angebot als "an den Kunden gesendet" und schließt das
+  // Sheet, beides falsch für einen Export ans eigene Buchhaltungsprogramm.
+  // AngebotDetail hängt hier nur `trackVia` ein (Analyse-Tracking, kein
+  // Status-Wechsel).
+  onExported?: (provider: string, label: string) => void
 }
 
-type SendTab = 'email' | 'whatsapp' | 'link'
+type SendTab = 'email' | 'whatsapp' | 'link' | 'buchhaltung'
 
 function buildDefaultNachricht(
   company: Company,
@@ -37,11 +46,42 @@ Mit freundlichen Grüßen
 ${company.name}`
 }
 
-export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau', onZeigeRechenwegChange }: Props) {
+export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau', onZeigeRechenwegChange, onExported }: Props) {
   const supabase = createClient()
   const [mainTab, setMainTab] = useState<'vorschau' | 'senden'>(initialTab)
   const [sendTab, setSendTab] = useState<SendTab>('email')
   const [modus, setModus] = useState<'angebot' | 'rechnung'>('angebot')
+
+  // 2026-09-11: Buchhaltungs-Tab nur zeigen, wenn der Nutzer mindestens eine
+  // Software in den Einstellungen verknüpft hat — sonst wäre der Tab leer
+  // und würde nur verwirren ("was soll ich hier?").
+  const activeIntegrations = getActiveIntegrations(company)
+  const [exportingProvider, setExportingProvider] = useState<string | null>(null)
+  const [exportedProviders, setExportedProviders] = useState<string[]>([])
+  const [exportError, setExportError] = useState<string | null>(null)
+
+  async function handleExport(provider: string, label: string) {
+    setExportingProvider(provider)
+    setExportError(null)
+    try {
+      const r = await fetch(`/api/integrations/${provider}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quoteId: quote.id }),
+      })
+      if (r.ok) {
+        setExportedProviders(prev => prev.includes(provider) ? prev : [...prev, provider])
+        onExported?.(provider, label)
+      } else {
+        const err = await r.json().catch(() => null)
+        setExportError(err?.error ?? `Übertragung zu ${label} fehlgeschlagen.`)
+      }
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : `Übertragung zu ${label} fehlgeschlagen.`)
+    } finally {
+      setExportingProvider(null)
+    }
+  }
 
   // DC-050 (2026-09-11, Sandys Entscheidung "Frage pro Angebot vor dem
   // PDF-Erstellen"): Rechenweg auf dem KUNDEN-PDF ist steuerbar
@@ -317,13 +357,16 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
           <div className="flex-1 overflow-y-auto flex flex-col">
             {/* Sub-Tabs */}
             <div className="flex gap-1 mx-4 mt-3 bg-gray-100 rounded-xl p-1 flex-shrink-0">
-              {(['email', 'whatsapp', 'link'] as SendTab[]).map(tab => (
+              {([
+                'email', 'whatsapp', 'link',
+                ...(activeIntegrations.length > 0 ? ['buchhaltung'] as SendTab[] : []),
+              ] as SendTab[]).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setSendTab(tab)}
                   className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${sendTab === tab ? 'bg-white shadow text-anthracite' : 'text-gray-500'}`}
                 >
-                  {tab === 'email' ? '✉️ E-Mail' : tab === 'whatsapp' ? '💬 WhatsApp' : '🔗 Link'}
+                  {tab === 'email' ? '✉️ E-Mail' : tab === 'whatsapp' ? '💬 WhatsApp' : tab === 'link' ? '🔗 Link' : '📊 Buchhaltung'}
                 </button>
               ))}
             </div>
@@ -336,11 +379,15 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                 gleichzeitig die Prüfpflicht aus AGB §10.2 und, im
                 Streitfall, ein Mitverschuldens-Argument. Gilt für alle drei
                 Versandwege (E-Mail/WhatsApp/Link), deshalb hier über den
-                Tabs statt dreifach je Tab. */}
-            <div className="mx-4 mt-3 px-3.5 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-500 flex items-start gap-2 flex-shrink-0">
-              <span className="shrink-0">✓</span>
-              <span>Aus deinem Diktat erstellt — bitte einmal prüfen, bevor es rausgeht.</span>
-            </div>
+                Tabs statt dreifach je Tab. Für den Buchhaltungs-Export
+                irrelevant (geht nicht an den Kunden), deshalb dort
+                ausgeblendet. */}
+            {sendTab !== 'buchhaltung' && (
+              <div className="mx-4 mt-3 px-3.5 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-500 flex items-start gap-2 flex-shrink-0">
+                <span className="shrink-0">✓</span>
+                <span>Aus deinem Diktat erstellt — bitte einmal prüfen, bevor es rausgeht.</span>
+              </div>
+            )}
 
             <div className="flex-1 overflow-y-auto px-4 pt-4 pb-2">
 
@@ -479,6 +526,39 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                       <button onClick={loadPublicUrl} className="text-xs font-semibold text-anthracite underline underline-offset-2">
                         Erneut versuchen
                       </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── Buchhaltung Tab ────────────────────────────────────── */}
+              {sendTab === 'buchhaltung' && (
+                <div className="space-y-3">
+                  <div className="text-xs text-gray-500">
+                    Angebot als Beleg an deine verknüpfte Buchhaltungssoftware übertragen.
+                  </div>
+                  {activeIntegrations.map(int => {
+                    const isExporting = exportingProvider === int.id
+                    const isExported = exportedProviders.includes(int.id)
+                    return (
+                      <button
+                        key={int.id}
+                        onClick={() => handleExport(int.id, int.label)}
+                        disabled={isExporting}
+                        className={`w-full flex items-center gap-3 rounded-xl px-4 py-3.5 border font-semibold text-sm transition-colors disabled:opacity-50 ${
+                          isExported ? 'border-green-200 bg-green-50 text-green-800' : 'border-gray-200 text-anthracite hover:bg-gray-50'
+                        }`}
+                      >
+                        <span className="font-black text-anthracite/35 text-xs w-[20px] text-center flex-shrink-0">{int.short}</span>
+                        <span className="flex-1 text-left">
+                          {isExporting ? 'Übertrage…' : isExported ? `Zu ${int.label} übertragen ✓` : `Zu ${int.label} übertragen`}
+                        </span>
+                      </button>
+                    )
+                  })}
+                  {exportError && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+                      {exportError}
                     </div>
                   )}
                 </div>
