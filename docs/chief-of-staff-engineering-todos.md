@@ -107,7 +107,7 @@ nächsten Umbau kaputtgeht.
 |---|---|---|---|---|
 | CoS-E-002 | TN-005 | Mikro-Tippfehler navigierte in die Vorschau eines alten Angebots mit aktivem „Senden"-Knopf daneben | hoch | ❌ offen |
 | CoS-E-003 | TN-006 | (positiv) Schalter „Rechenweg auf PDF zeigen?" kommt gut an | niedrig | ❌ offen |
-| CoS-E-004 | TN-008 | 0,00-€-Position erscheint auf dem Kunden-PDF (Erschwerniszuschlag) | hoch | ❌ offen |
+| CoS-E-004 | TN-008 | 0,00-€-Position erscheint auf dem Kunden-PDF (Erschwerniszuschlag) | hoch | ✅ erledigt — Versand gesperrt, solange ein Preis fehlt (3 Tore) |
 | CoS-E-005 | TN-009 | Internes Wort „Transkript" steht auf einer Position im Kunden-PDF | hoch | 🟡 erledigt — Annahmen raus, Live-Nachtest offen |
 | CoS-E-006 | TN-011 | Rechnungssprache „Zahlungsziel: 14 Tage" auf einem ANGEBOT statt Gültigkeitsdauer | hoch | 🟡 erledigt — Zahlungsbedingungen statt Zahlungsziel |
 | CoS-E-007 | TN-013 | **Zu klären, bitte zuerst:** Steht „Sofortangebot haftet nicht für fehlerhafte Berechnungen" nur in Manfreds eigener Vorschau oder auch auf dem Kunden-PDF? Bei „auch auf dem Kunden-PDF" sofort an Head of Legal weiterreichen | hoch | ✅ geklärt — nur Vorschau, NICHT auf dem Kunden-PDF |
@@ -115,7 +115,7 @@ nächsten Umbau kaputtgeht.
 | CoS-E-009 | TN-016 | Interne Notiz „bitte prüfen" landet auf dem Kunden-PDF | hoch | 🟡 erledigt — gleiche Ursache wie CoS-E-005 |
 | CoS-E-010 | TN-017 | Widerspruch auf dem PDF: „Fenster 0 m²" direkt neben „3 Öffnungen nicht abgezogen (4,29 m²)" | hoch | 🟡 erledigt — keine 0-Abzüge im Rechenweg mehr |
 | CoS-E-011 | TN-018 | Tippfehler im Positionstitel landet unverändert auf dem PDF (gleiche Ursache wie CoS-E-020/TN-051) | mittel | ❌ offen |
-| CoS-E-012 | TN-019 | PDF ohne zugewiesenen Kunden ist trotzdem sendbar, Feld bleibt leer | hoch | ❌ offen |
+| CoS-E-012 | TN-019 | PDF ohne zugewiesenen Kunden ist trotzdem sendbar, Feld bleibt leer | hoch | ✅ erledigt — gleiche Regel: ohne Kunde kein Versand |
 | CoS-E-013 | TN-020 | Gültigkeitsdauer aus den Einstellungen (30 Tage) erscheint auf dem PDF nirgends (gleiche Familie wie TN-081/TN-100, siehe CoS-E-031/CoS-E-042) | hoch | 🟡 erledigt — „Gültig bis" wird gerechnet |
 | CoS-E-014 | TN-021 | Ladeanimation „Aufmaß wird angelegt…" startet, bevor überhaupt gesprochen wurde | niedrig | ❌ offen |
 | CoS-E-015 | TN-026 | „Satz aus Preisliste" bei Zuschlägen zeigt keine Zahl, anders als alle übrigen Positionen | mittel | ❌ offen |
@@ -126,7 +126,7 @@ nächsten Umbau kaputtgeht.
 | CoS-E-020 | TN-051 | Leerzeichen verschwinden beim Umbenennen bestehender Positionen, 3× reproduziert, tritt nur im Bearbeiten-Pfad auf (nicht bei neuen Positionen) | hoch | ❌ offen |
 | CoS-E-021 | TN-052 | Wechsel 1×→2× verlangt manuelles Ändern von Titel, Untertitel UND Preis statt eines Umschalters, obwohl die App den Preis kennt | mittel | ❌ offen |
 | CoS-E-022 | TN-053 | Neue Positionen landen immer unter „Allgemein", auch wenn sie eindeutig zu einem Raum gehören | mittel | ❌ offen |
-| CoS-E-023 | TN-054 | „Senden" ist aktiv, obwohl kein Kunde zugewiesen ist | hoch | ❌ offen |
+| CoS-E-023 | TN-054 | „Senden" ist aktiv, obwohl kein Kunde zugewiesen ist | hoch | ✅ erledigt — gleiche Regel |
 | CoS-E-024 | TN-060 | Vorgeschlagene Einheit bei „Preis anlegen" war falsch (m² statt Stück bei „Heizkörper abkleben – 1 Stück") | mittel | ❌ offen |
 | CoS-E-025 | TN-063 | Drei verschiedene Angebotsnummer-Formate gleichzeitig sichtbar in der App | mittel | ❌ offen |
 | CoS-E-026 | TN-064 | Deckenpositionen landen unter „Allgemein" statt beim zugehörigen Raum (siehe auch DC-091/TN-104) | mittel | ❌ offen |
@@ -138,15 +138,15 @@ nächsten Umbau kaputtgeht.
 | CoS-E-032 | TN-083 | Feld „Interne Notiz" bleibt leer, obwohl genau dort ein gesprochener Termin hingehört hätte (siehe TN-045/CoS-E-019) | niedrig | ❌ offen |
 | CoS-E-033 | TN-086 | Rechnungsnummer = Angebotsnummer, obwohl die Einstellungen getrennte Nummernkreise vorsehen | hoch | ✅ erledigt — mit dem Reiter weg; echter Nummernkreis erst mit echter Rechnung |
 | CoS-E-034 | TN-088 | Interne Prüfhinweise und „bitte Angebot prüfen"-Fußzeile erscheinen auch auf der Rechnung, nicht nur auf dem Angebot | hoch | 🟡 teilweise — interne Hinweise raus, Rest an der Rechnungs-Entscheidung |
-| CoS-E-035 | TN-090 | Ein Testangebot mit 0,00-€-Position wurde als „beauftragt/angenommen" markiert, ohne dass die fehlende Bepreisung vorher auffiel | hoch | ❌ offen |
+| CoS-E-035 | TN-090 | Ein Testangebot mit 0,00-€-Position wurde als „beauftragt/angenommen" markiert, ohne dass die fehlende Bepreisung vorher auffiel | hoch | ✅ erledigt — gleiche Regel; kann nicht mehr unbemerkt beauftragt werden |
 | CoS-E-036 | TN-091 | Kein auffindbarer Weg, aus einem beauftragten Angebot eine Rechnung zu erzeugen | hoch | ✅ erledigt — hinfällig, es gibt keine Rechnung mehr zu erzeugen |
-| CoS-E-037 | TN-092 | Preis-Matching findet einen vorhandenen Datenbankeintrag nicht, weil intern ein anderer Begriff verwendet wird als in der Preisdatenbank | hoch | ❌ offen |
-| CoS-E-038 | TN-093/TN-094 | Angebotspreise weichen von der Preisdatenbank ab, uneinheitlich zwischen zwei Angeboten desselben Betriebs für dieselbe Position | hoch | ❌ offen |
-| CoS-E-039 | TN-095 | Preisdatenbank hat viele Dopplungen mit identischen Preisen unter leicht anderem Namen | mittel | ❌ offen |
+| CoS-E-037 | TN-092 | Preis-Matching findet einen vorhandenen Datenbankeintrag nicht, weil intern ein anderer Begriff verwendet wird als in der Preisdatenbank | hoch | ❌ offen — Vokabelfrage (Sperranstrich/Isoliergrund), bitte an den Prüfmeister |
+| CoS-E-038 | TN-093/TN-094 | Angebotspreise weichen von der Preisdatenbank ab, uneinheitlich zwischen zwei Angeboten desselben Betriebs für dieselbe Position | hoch | ✅ erledigt — zwei reproduzierte Fehler behoben, an Manfreds echten Daten nachgestellt |
+| CoS-E-039 | TN-095 | Preisdatenbank hat viele Dopplungen mit identischen Preisen unter leicht anderem Namen | mittel | ❌ offen — Katalog aufräumen, nicht den Matcher raten lassen |
 | CoS-E-040 | TN-097 | Erschwerniszuschläge „Altbau"/„bewohnt" lassen sich in den Einstellungen nirgends abschalten | mittel | ❌ offen |
-| CoS-E-041 | TN-098 | Kleinmaterial-Pauschale „automatisch ab 200 €" griff bei einem 1.700-€-Angebot nicht | hoch | ❌ offen |
+| CoS-E-041 | TN-098 | Kleinmaterial-Pauschale „automatisch ab 200 €" griff bei einem 1.700-€-Angebot nicht | hoch | ✅ erledigt — Pauschale war an einem toten Pfad, jetzt im echten Weg |
 | CoS-E-042 | TN-100 | „Zahlungsziel" und „Gültigkeitsdauer" sind zwischen Einstellungen und PDF vertauscht (gleiche Familie wie CoS-E-013/CoS-E-031) | hoch | 🟡 erledigt — gleiche Ursache wie CoS-E-013 |
-| CoS-E-043 | TN-105 | Regionaler Preisfaktor kennt Bochum/Ruhrgebiet nicht als Kategorie; zusätzlich Produktfrage, ob ein pauschaler Faktor über der eigenen Preisliste überhaupt sinnvoll ist (möglicher Zusammenhang mit CoS-E-038) | mittel | ❌ offen |
+| CoS-E-043 | TN-105 | Regionaler Preisfaktor kennt Bochum/Ruhrgebiet nicht als Kategorie; zusätzlich Produktfrage, ob ein pauschaler Faktor über der eigenen Preisliste überhaupt sinnvoll ist (möglicher Zusammenhang mit CoS-E-038) | mittel | ❌ offen — Fund: der Faktor wird NIRGENDS gelesen; drei Wege zur Entscheidung, siehe Batch 4 |
 | CoS-E-044 | TN-115 | Kein sichtbarer Status, ob/wann/was beim „Angebots-Nachfassen" passiert | mittel | ❌ offen |
 | CoS-E-045 | TN-116 | Zwei Reiter zeigen unterschiedliche Flächenwerte für denselben Raum (einer leer, obwohl 53,2 m² längst berechnet) | hoch | ❌ offen |
 | CoS-E-046 | TN-117 | „Unregelmäßig" öffnet den Grundriss-Editor mit Standardmaßen 4×3 statt den bereits erfassten Raummaßen | mittel | ❌ offen |
@@ -508,6 +508,255 @@ Kundenkarte, mit einem Tipp zum Übernehmen.
 
 Additiv, kein Backfill — bestehende Angebote bleiben leer und verhalten sich
 wie bisher.
+
+*Head of Product Engineering · 2026-09-11*
+
+---
+
+## Antwort Head of Product Engineering — Batch 3 (11.09.2026)
+
+**Thema:** Was zwischen einem halbfertigen Angebot und dem Kunden steht.
+Fünf Tickets, zwei Ursachen.
+
+Stand: umgesetzt, Typecheck sauber, Testsuite (105 Dateien + 2 neue) grün,
+Lint ohne neue Fehler. Live-Nachtest steht aus.
+
+---
+
+### CoS-E-004 + CoS-E-012 + CoS-E-023 + CoS-E-035 — gewarnt wurde, gehindert nicht ✅
+
+Vier Meldungen, ein Befund. Die App hat **überall** gewarnt: roter Kasten
+„Bei 2 Positionen fehlen noch Preise", ein „Preis fehlt"-Vermerk an der
+Position, ein leerer Empfängerblock im PDF. Nur **gehindert hat niemand.**
+
+Deshalb konnte passieren, was Manfred in TN-090 beschreibt: Ein Angebot mit
+„Boden schützen 0,00 €" ging raus **und** wurde als beauftragt markiert, ohne
+dass es jemandem auffiel. Und „Senden" war aktiv ohne zugewiesenen Kunden
+(TN-054), das PDF mit leerem Empfänger versendbar (TN-019).
+
+Eine Warnung, die man wegklicken kann, ist bei einem Dokument, das der Kunde
+als verbindliches Angebot liest, keine Sicherung. Sie verschiebt die
+Verantwortung nur auf den müden Donnerstagabend.
+
+**Fix — eine Regel, drei Tore:**
+1. **Fertigstellen** ist gesperrt, solange ein Kunde oder ein Preis fehlt.
+   Der Knopf sagt im Tooltip, was fehlt.
+2. **Der Versand-Dialog** zeigt die Gründe als Liste und sperrt alle drei
+   Wege (E-Mail, WhatsApp, Link). Die **Vorschau bleibt offen** — der
+   Handwerker muss sein Angebot ansehen dürfen, gerade wenn noch was fehlt;
+   er soll ja sehen, wo. Der Buchhaltungs-Export bleibt ebenfalls frei, der
+   geht nicht an den Kunden.
+3. **Die Versand-Route auf dem Server** prüft dasselbe noch einmal. Das ist
+   die eigentliche Sicherung: Ein gesperrter Knopf ist eine Bitte, kein
+   Riegel. Alle drei Versandwege laufen durch diese eine Route, deshalb
+   genügt dort ein Riegel — und jeder künftige Versandweg erbt ihn.
+
+Alle drei fragen dieselbe Stelle (`src/lib/versandbereit.ts`), damit sie
+nicht auseinanderlaufen können.
+
+**Was bewusst NICHT passiert:** Die unbepreiste Position stillschweigend
+weglassen. Dann verschwände die Arbeit aus dem Angebot, und der Handwerker
+führte sie aus, ohne sie berechnet zu haben — schlimmer als die 0,00-€-Zeile.
+Die App sagt nur, dass es ohne nicht weitergeht, und welche Position es
+betrifft.
+
+**Eine Feinheit, die wichtig ist:** Eine 0,00-€-Position gilt nur dann als
+Fehler, wenn ihr **kein Eintrag aus der Preisdatenbank** zugeordnet ist. Ein
+Handwerker darf etwas bewusst mit 0 € anbieten („mach ich mit") — dann hängt
+die Zeile an einem echten Preiseintrag und ist eine Entscheidung, kein Loch.
+Genau dieselbe Bedingung, die die Bearbeiten-Ansicht seit jeher für ihren
+roten Kasten benutzt.
+
+---
+
+### CoS-E-041 / TN-098 — Kleinmaterial-Pauschale: dritter toter Pfad heute ✅
+
+Manfred: „Kleinmaterial-Pauschale stand auf ‚automatisch ab 200 €'. In meinem
+1.700-€-Angebot war sie nicht drin. Warum nicht?"
+
+**Weil sie nie irgendwo eingehängt war.** Die Regel gibt es, die Einstellung
+gibt es, beide rechnen richtig — aufgerufen wurden sie nur aus der Route
+`api/angebot-verfeinern`, und **diese Route ruft niemand auf.** Toter Pfad.
+
+Dieselbe Klasse wie der Kundenname (CoS-E-018) und, davor, der
+Mindestauftragswert: nicht falsch gerechnet, sondern gar nicht erst gefragt.
+Das ist heute der dritte Fund dieser Art — es lohnt sich, künftig bei jeder
+neuen Einstellung einmal nachzusehen, wer sie eigentlich liest.
+
+**Mit betroffen: die An-/Abfahrt-Pauschale.** Manfred notiert in TN-106
+„An-/Abfahrt automatisch – gut, war aus". Sie war nicht aus, sie war
+unerreichbar.
+
+**Fix:** Beide hängen jetzt im echten Weg (dort, wo auch der
+Mindestauftragswert entsteht), nach demselben Muster: eigene benannte Zeile,
+gefahrlos wiederholbar — anlegen, nachziehen wenn der Auftrag wächst, wieder
+entfernen wenn der Grund entfällt.
+
+**Ein Fehler, den ich dabei fast eingebaut hätte** (steht so auch im Code):
+Die drei Pauschalen dürfen **nicht in die Bemessungsgrundlage der jeweils
+anderen** zählen. Sonst hebt die Kleinmaterial-Pauschale die Summe über den
+Mindestauftragswert, dessen Zeile schrumpft beim nächsten Durchlauf, die
+Summe fällt wieder — und der Handwerker sieht bei jedem Neuberechnen andere
+Zahlen, ohne etwas geändert zu haben. Für die Mindestauftragszeile war das
+schon bedacht; mit zwei weiteren Pauschalen braucht es eine gemeinsame
+Erkennung.
+
+Die wurde bewusst als **exakter Namensvergleich** gebaut, nicht als
+„enthält 'anfahrt'": Die Mindestauftragszeile heißt „Anfahrt & Vorbereitung",
+die Fahrtkosten-Pauschale „An- und Abfahrt". Eine Teilstring-Suche hätte
+beide über einen Kamm geschoren — und eine echte Arbeitsposition
+„Anfahrtsweg absichern" gleich mit.
+
+**Und die Angebotssumme** wird jetzt aus dem tatsächlichen Stand der
+Positionen gelesen statt nachgerechnet. Mit drei Pauschalzeilen, die je nach
+Lage entstehen, wachsen oder verschwinden, wäre eine Handrechnung genau die
+Stelle, an der Summe und Positionsliste auseinanderlaufen — und das fällt
+erst dem Kunden auf.
+
+---
+
+### Nebenbei geklärt: CoS-E-008 Nachtrag — Nummernkreis „Rechnungen" ✅
+
+Auf Sandys „ja weg": Der zweite Reiter in den Nummern-Einstellungen ist raus.
+Aus ihm hat nie jemand eine Nummer gezogen, aber er hat Manfred genau den
+falschen Schluss nahegelegt (TN-015: „Zwei Rechnungsnummernkreise darf's
+nicht geben"). Ein Einstellungsfeld, das etwas verspricht, was das Produkt
+nicht tut, ist schlimmer als ein fehlendes.
+
+Die Zeile in der Datenbank bleibt unangetastet — sie schadet nicht, kostet
+nichts, und wenn eine echte Rechnung kommt, fängt sie genau dort an.
+
+*Head of Product Engineering · 2026-09-11*
+
+---
+
+## Antwort Head of Product Engineering — Batch 4 (11.09.2026)
+
+**Manfreds Prio 4: „Preise kommen nicht aus meiner Preisliste"** (TN-092,
+TN-093, TN-094). Das ist mein Kerngebiet, deshalb habe ich nicht vermutet,
+sondern **an seinen echten Daten nachgestellt** — Katalogzeilen und
+Angebotszeilen direkt aus der Produktionsdatenbank geholt und den echten
+Matcher darauf laufen lassen, bevor ich eine Zeile geändert habe. Dieselbe
+Methode wie beim Preisdatenbank-Audit im August.
+
+Stand: umgesetzt, Typecheck sauber, alle 105 Testdateien grün, Lint 0 Fehler.
+Live-Nachtest steht aus.
+
+---
+
+### Was ich gefunden habe
+
+Manfreds Verdacht war „die Preise werden ausgewürfelt". Er hatte recht, dass
+etwas systematisch falsch ist — aber es war kein Zufall, sondern **zwei
+saubere, reproduzierbare Fehler.** Beide ließen sich auf den Cent nachstellen.
+
+**Fehler 1 — die Anstrichzahl fiel hinten runter (CoS-E-038 / TN-093).**
+
+In seinem Angebot stand „Deckenfläche streichen — 2× Anstrich — **7,00 €**".
+7,00 € ist in seinem Katalog der Preis für **1x**. Also genau das, was seit
+dem 24.08. per Regel ausgeschlossen sein sollte: *Ein 2x-Auftrag bekommt nie
+einen 1x-Preis.*
+
+Die Regel war nicht kaputt — sie kam nie zum Zug. Der Matcher schneidet
+jeden Titel am Gedankenstrich ab, weil dort normalerweise der Raum steht
+(„… — Wohnzimmer"). Bei dieser Position stand hinter dem Strich aber die
+Anstrichzahl. Gesucht wurde also nach „Decke streichen" ohne jede Variante,
+die Sperre hatte nichts zu vergleichen, und unter 1x/2x/3x gewann der
+alphabetisch erste — 1x.
+
+*Fix:* Die Anstrichzahl wird jetzt am **ganzen Titel** gelesen, nicht am
+abgeschnittenen. Genau so, wie es für die Qualitätsstufe (Q2/Q3) seit dem
+04.09. schon festgelegt war und im Code begründet steht: **Sie ist ein
+Filter, kein Textmerkmal.** Wo im Titel sie steht, darf nicht darüber
+entscheiden, ob sie gilt.
+
+**Fehler 2 — „Kniestockwände" schlug „Wand" (CoS-E-038 / TN-094).**
+
+Nachgestellt: „Wandflächen streichen 2x" traf **„Kniestockwände streichen 2x"
+(11,50 €)** statt „Wand streichen 2x Anstrich" (9,50 €). Das erklärt Manfreds
+9,50 hier / 11,50 dort.
+
+Der Grund ist fies: Nach der internen Vereinheitlichung heißt die gesuchte
+Position „flaeche streichen 2x" und der Kniestock-Eintrag
+„kniestock**flaeche streichen 2x**" — er *enthält* den gesuchten Text, aber
+mitten im Wort. Dafür gab es pauschal die Bestnote, dieselbe wie für den
+richtigen Eintrag. Bei Gleichstand entschied die Sortierung, also K vor W.
+
+*Fix:* Ein Treffer an der Wortgrenze zählt jetzt mehr als einer im
+Wortinneren. Damit gewinnt „Wand streichen 2x" klar.
+
+**Ein Zwischenschritt, den ich wieder zurückgenommen habe — gehört dazu:**
+Mein erster Versuch war strenger: Treffer im Wortinneren gar nicht mehr
+zählen. Das hat **13 bestehende Tests gerissen**, und die hatten recht. Im
+Deutschen ist die Zusammensetzung der Normalfall: „fein**spachteln**" enthält
+„spachteln" mitten im Wort und meint dieselbe Arbeit. Ein Treffer im
+Wortinneren ist also nicht falsch — nur schwächer. Genau diese Abstufung
+hatte gefehlt. Die Tests haben mich vor einem Fix bewahrt, der schlimmer
+gewesen wäre als der Fehler.
+
+Dasselbe bei einer zweiten Idee: „Bei Gleichstand mit verschiedenen Preisen
+lieber gar keinen Preis." Klingt sauber, riss aber die Anstrich-Familie —
+fragt die Engine ohne Anstrichzahl, stehen 1x/2x/3x naturgemäß gleichauf mit
+verschiedenen Preisen. Auch zurückgenommen.
+
+---
+
+### Was damit NICHT gelöst ist — ehrlich
+
+**CoS-E-037 / TN-092 (Nikotinsperre) bleibt offen.** Manfreds Diagnose stimmt
+wörtlich: „Der Preis fehlt nicht, sie hat ihn nur nicht gefunden, weil sie
+sich ein anderes Wort ausgedacht hat." Die Engine erzeugt „Sperranstrich",
+der Katalog kennt „Nikotinsperre auftragen" und „Isoliergrund gegen Nikotin /
+Ruß / Wasserflecken" (beide 9,00 €). Zwischen den Wörtern gibt es keine
+Verbindung.
+
+Das ist **keine Matcher-Logik, sondern eine Vokabelfrage** — und ob
+„Sperranstrich", „Isoliergrund" und „Nikotinsperre" fachlich dieselbe
+Leistung sind, entscheide ich nicht im Alleingang. **Bitte einmal an den
+Prüfmeister**; sobald die Antwort da ist, ist es ein Dreizeiler.
+
+Der systematische Weg dahinter ist derselbe wie im August: alle von der
+Engine erzeugbaren Positionstitel gegen den echten Katalog simulieren und die
+Lücken einsammeln. Das ist ein eigener Durchgang und lohnt sich erst nach
+diesen Fixes, weil sie das Ergebnis verschieben.
+
+**CoS-E-039 / TN-095 (Doppeleinträge) bleibt offen.** Zwei echte Doppel mit
+verschiedenen Preisen liefern weiterhin still einen davon. Die Antwort darauf
+ist, den Katalog aufzuräumen — nicht, den Matcher raten zu lassen. Manfred
+sagt es selbst: „222 Positionen, davon gefühlt ein Drittel Varianten. Ich
+brauch 40."
+
+**CoS-E-043 / TN-105 — und hier ein Fund, der dich betrifft, Sandy:**
+Manfred vermutet, der regionale Preisfaktor sei die Ursache für die falschen
+Preise („Vielleicht der Grund für TN-093/094"). Ist er nicht — aber aus einem
+Grund, der eigenständig zählt: **Der regionale Preisfaktor wird nirgends
+gelesen.** Die Einstellung lässt sich setzen und speichern, und danach
+passiert nichts. Kein Angebot hat je einen Faktor auf den Preis bekommen.
+
+Das ist heute der **vierte** Fund dieser Art — nach dem Kundennamen
+(CoS-E-018), der Kleinmaterial-/Anfahrt-Pauschale (CoS-E-041) und dem
+Mindestauftragswert (07.09.). Es zieht sich, und es hat ein Muster: eine
+Einstellung wird gebaut, die Oberfläche verspricht etwas, und niemand prüft,
+wer den Wert eigentlich liest. Ich nehme das ab sofort in meine eigene
+Routine auf: bei jeder Einstellung einmal nachsehen, wer sie liest.
+
+Für den Faktor selbst braucht es aber deine Entscheidung, weil Manfreds
+zweite Frage die bessere ist: *„Wenn ich meine Preisliste pflege, warum noch
+ein Faktor drauf?"* Drei Wege:
+- **A — Einstellung raus.** Wer seine eigenen Preise pflegt, hat den Aufschlag
+  schon drin. Kleinster Eingriff, und er nimmt nichts weg, was heute wirkt.
+- **B — Faktor wirklich anschließen.** Dann muss er aufs Kundendokument
+  sichtbar werden (sonst ist das Aufmaß nicht nachrechenbar — dieselbe
+  Begründung wie beim Mindestauftragswert), und Bochum/Ruhrgebiet fehlt als
+  Kategorie.
+- **C — Nur für den Erstbefüllungs-Katalog.** Der Faktor formt die
+  Standardpreise beim Onboarding, danach gehört die Liste dem Betrieb. Das
+  passt am ehesten zu Manfreds Einwand.
+
+Meine Empfehlung ist **C**, mit **A** als ehrlicher Alternative. **B** würde
+ich nicht empfehlen: ein stiller Aufschlag über der eigenen Preisliste ist
+genau die Sorte Zahl, für die am Ende der Handwerker geradesteht, ohne sie
+bewusst gewählt zu haben.
 
 *Head of Product Engineering · 2026-09-11*
 

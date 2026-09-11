@@ -56,6 +56,10 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟢 Fix umgesetzt — alle drei Mails laufen jetzt über unsere eigene Resend-Anbindung, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
 | CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei komplett erledigt (inkl. Produktion), einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
+| CoS-P-009 | TN-101: unklar, ob "über meine Buchhaltung" das Angebot wirklich überträgt oder nur Erinnerungen abschaltet | 🟢 Text klargestellt | Manfred-Feedback Batch 1, 2026-09-11 |
+| CoS-P-010 | TN-108: Buchhaltungs-Anbindung erklärt nicht, WAS übertragen wird; "Lexoffice (Legacy)" unklar | 🟢 Text ergänzt | Manfred-Feedback Batch 1, 2026-09-11 |
+| CoS-P-011 | TN-113: Pro-Plan-Preise noch nicht konfiguriert | 🟡 Kein eigener Fix — dasselbe Thema wie CoS-P-007 (Stripe-Preise) plus ein zweiter, noch unbenannter Fund (veraltete Preisanzeige, CoS-038) | Manfred-Feedback Batch 1, 2026-09-11 |
+| CoS-P-012 | TN-114: Seitenleiste zeigt "PRO", Abo-Seite zeigt "Starter" | ✅ Fix umgesetzt & TypeScript-geprüft | Manfred-Feedback Batch 1, 2026-09-11 |
 
 ---
 
@@ -1037,5 +1041,86 @@ Zustand). **Nichts davon wurde real versendet** — reines Testkonto.
 | CoS-P-012 | TN-114 | Seitenleiste zeigt „Dein Plan: PRO", Abo-Seite zeigt „Starter" — Zustands-Widerspruch zwischen zwei Stellen in der App | hoch |
 
 *Chief of Staff · 2026-09-11*
+
+---
+
+## Fix-Update CoS-P-009/010/011/012 — Manfred-Feedback Batch 1 (Platform & Integrations Engineer, 2026-09-11)
+
+### CoS-P-012 (TN-114, hoch) — echter Bug, behoben
+
+**Root Cause gefunden, nicht nur vermutet:** `src/components/SideNav.tsx` zeigte
+den Plan-Badge in der Seitenleiste komplett **fest verdrahtet als "PRO"** —
+Zeile 64 war wörtlich `<span ...>PRO</span>`, unabhängig vom tatsächlichen
+Plan der Firma. Die Abo-Seite (`einstellungen/abo/page.tsx`) liest dagegen
+den echten Wert per `getAboStand()` direkt aus der Datenbank — daher der
+Widerspruch, den Manfred sah. Keine zwei widersprüchlichen Datenquellen,
+sondern eine Stelle, die nie eine Datenquelle hatte.
+
+**Fix:** `src/app/(app)/layout.tsx` (umschließt alle App-Seiten) fragt jetzt
+per `requireCompany()` den echten Plan der Firma ab — dieselbe Funktion, mit
+`cache()` gebaut, die die meisten Seiten ohnehin schon aufrufen, kostet also
+praktisch keine zusätzliche Datenbankabfrage — und reicht ihn als Prop an
+`SideNav` durch. Die Seitenleiste zeigt jetzt "PRO" oder "STARTER" je nach
+echtem Plan, genau wie die Abo-Seite.
+
+### CoS-P-009 (TN-101, hoch) — Text klargestellt
+
+**Nachgesehen, was die Auswahl "Über meine Buchhaltung" technisch wirklich
+tut** (`onboarding/[step]/page.tsx`, `einstellungen/page.tsx`,
+`api/cron/reminder/route.ts`): Sie setzt ausschließlich ein Flag
+(`abrechnungs_modus`), das steuert, ob **sofortangebot selbst** noch
+Zahlungserinnerungen verschickt oder nicht. Sie überträgt nichts, verbindet
+nichts, löst nichts aus. Manfreds Sorge war berechtigt — die Beschriftung
+sagte es nicht klar genug.
+
+**Fix:** In den Einstellungen (`Card "Abrechnung"`) steht jetzt explizit:
+"Wichtig: Diese Auswahl überträgt nichts automatisch. Ein Angebot landet nur
+dann in lexoffice, sevDesk & Co., wenn du die Software unter „Buchhaltung
+verbinden" verknüpfst und es im Angebot selbst per Knopfdruck dorthin
+schickst." Die eigentliche Übertragung ist und bleibt eine bewusste,
+manuelle Aktion pro Angebot — das ist jetzt auch so beschrieben.
+
+### CoS-P-010 (TN-108, mittel) — Text ergänzt
+
+**Nachgesehen, was beim Knopfdruck tatsächlich übertragen wird** (alle
+sieben `api/integrations/*/route.ts` direkt im Code geprüft, nicht
+angenommen): Bei allen sieben Anbindungen identisch — ein **Angebot bzw.
+Kostenvoranschlag** (lexoffice: `POST .../quotations`; FastBill:
+`estimate.create`; Billomat: `POST .../offers`; Papierkram:
+`.../income/estimates`; Easybill: `document_type: "OFFER"`; sevDesk:
+`Order`) mit allen Positionen, dazu der **Kunde** (neu angelegt oder mit
+einem bestehenden Kontakt verknüpft). Nie eine Rechnung.
+
+**Fix:** Auf der Seite "Buchhaltung verbinden" steht jetzt oben eine kurze
+Erklärkarte mit genau dieser Antwort (Angebot + Kunde, keine Rechnung).
+Zusätzlich zeigt "Lexoffice (Legacy)" jetzt direkt darunter den Hinweis "Nur
+falls dein Zugang von vor 2025 stammt. Neuer Account? Dann oben „Lexware
+Office" nehmen." — Manfreds konkreter Vorschlag ("vor 2025" oder so), fast
+wörtlich übernommen.
+
+### CoS-P-011 (TN-113, niedrig) — kein eigener Fix, zwei bekannte Punkte bestätigt
+
+Kurz geprüft, kein neuer Code-Fund nötig — bestätigt sich als genau das
+Thema, das schon offen war, plus ein zweiter Aspekt:
+
+1. **"Auf Pro upgraden" → "Preise sind noch nicht konfiguriert":** Das ist
+   exakt der Blocker aus CoS-P-007 oben ("Was noch fehlt, und warum es bei
+   dir liegt") — die beiden Stripe-Preise (Standard/Gründerpreis) sind noch
+   nicht im Stripe-Dashboard angelegt. Kein neuer Punkt, nur eine weitere
+   Bestätigung, dass er Nutzer real betrifft.
+2. **Die Zahlen davor sind zusätzlich veraltet:** Die Abo-Seite zeigt aktuell
+   noch "22 €/Monat, 17 €/Monat im Jahresabo" aus `src/lib/pricing.ts` — dem
+   alten Preismodell von CoS-001/DC-001 (16.08.). Das neue Modell (49 €
+   Standard, 29 € Gründerpreis, **kein** Jahresabo) wurde am 03.09. von dir
+   entschieden. `pricing.ts` gehört laut der Ressort-Abgrenzung aus dem
+   Fix-Update zu CoS-P-007 bewusst Head of Product Engineering (CoS-038),
+   deshalb habe ich die Datei nicht angefasst — aber der dortige Hinweis
+   ("pricing.ts braucht die neuen Zahlen … genau das, worauf CoS-038
+   wartet") ist damit nicht mehr nur eine Vorsichtsmaßnahme, sondern zeigt
+   sich jetzt konkret bei einem echten Testnutzer: falsche Zahlen UND ein
+   Checkout, der noch nicht funktioniert.
+
+**Geprüft, bevor ausgeliefert:** TypeScript-Check über das komplette Projekt
+lief nach allen vier Änderungen fehlerfrei durch.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
