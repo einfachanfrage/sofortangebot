@@ -5359,4 +5359,327 @@ sind absichtlich mit drin, damit nichts beim nächsten Umbau kaputtgeht.
 
 ---
 
+## DC-051 bis DC-098 — Durchgang Product Designer (11.09.2026)
+
+Manfreds 48 Punkte aus Batch 1, komplett durchgegangen. Aufteilung: **8 gebaut**,
+**1 gegenstandslos**, **11 warten** (Begründung unten), **28 Positiv-Notizen**
+in die Schutzliste übernommen.
+
+### Gebaut und committet (`acbdc83`)
+
+**DC-052 — „0 € Umsatz · −100 %"** (`src/data/dashboard.ts`, `dashboard/page.tsx`)
+Der Prozentwert stand immer da, sobald der Vormonat > 0 € war. Damit ergibt
+jeder Monatsanfang zwingend −100 %, und zwar unabhängig davon, wie der Betrieb
+läuft — Manfred: „An jedem Monatsersten sieht jeder Betrieb damit aus wie
+pleite." Der Vergleich steht jetzt nur noch da, wenn er etwas über den Betrieb
+aussagt: ab dem 8. des Monats **und** erst, wenn dieser Monat Umsatz hat. Sonst
+zeigt die Kachel „Letzter Monat 4.820 €" — dieselbe Information, ohne die
+Wertung. Kein Zustand, in dem die Kachel stumm ist: entweder Trend oder
+Bezugsgröße.
+
+**DC-053 — Status „Bereit" ohne Erklärung** (`src/lib/status.ts`,
+`DashboardFilters.tsx`)
+Die Antwort auf „Bereit wofür?" stand bisher an genau einer Stelle im Produkt:
+im Empty-State der Angebotsliste, also nur sichtbar, wenn nichts da ist. Jeder
+Status hat jetzt ein Feld `hilfe` in der zentralen Status-Quelle — ein Satz,
+was er bedeutet („Fertig gerechnet, aber noch nicht beim Kunden."). Angezeigt
+wird er unter den Filter-Reitern, sobald wirklich gefiltert wird. Bewusst in
+`status.ts` und nicht als Tooltip an einer Stelle: jede weitere Stelle, die
+einen Status erklärt (Status-Sheet in der Detailansicht, siehe DC-072), nimmt
+denselben Satz, statt einen eigenen zu erfinden — dieselbe Regel wie bei Label
+und Farbe seit DC-003.
+
+**DC-054 — Angebotsliste ohne Stichwort** (`MobileQuoteCard.tsx`,
+`angebote/page.tsx`)
+Der Titel der ersten Position wurde bereits geladen (`quote_items(title,
+position)`), bis in die Angebotskarte durchgereicht (`ersterItemTitel`) — und
+dort nie entgegengenommen. Toter Datenpfad seit `660656a`. Er steht jetzt
+direkt unter dem Kundennamen, auf der Karte wie in der Desktop-Tabelle. Kein
+neues Feld, keine neue Abfrage, drei Zeilen JSX. Manfreds „Fischer –
+Treppenhaus" ist damit da.
+
+**DC-059 — Zwei Stopp-Knöpfe** (`entwurf/page.tsx`)
+Der weiße Balken in der Liste war ein `div` ohne Handler, beschriftet mit
+„Nochmal tippen zum Stoppen". Er sah aus wie ein Knopf, forderte zum Tippen auf
+und tat nichts — der einzige echte Stopp ist die rote Leiste unten, die immer
+sichtbar ist und Laufzeit und Aktion bereits vollständig zeigt. Der falsche ist
+weg, nicht der richtige.
+
+**DC-062 — Hinweistext überlappt die Positionsliste** (`entwurf/page.tsx`)
+Die untere Leiste ist `fixed` und hatte weder Hintergrund noch z-index; die
+Liste scrollte sichtbar hindurch. Der Ausgleich war ein festes `pb-36` (144 px)
+gegen eine Leiste, die je nach Zustand 230–290 px hoch ist. Statt die Zahl
+größer zu raten, wird die Höhe jetzt gemessen (`ResizeObserver`) und als
+Scroll-Puffer gesetzt; die Leiste hat einen eigenen Hintergrund mit kurzem
+Verlauf nach oben. Damit ist der Fehler auch dann weg, wenn die Leiste später
+eine Zeile mehr bekommt.
+
+**DC-063 — Unklares „Zurück"** (`entwurf/page.tsx`)
+Zwei Antworten, die gefehlt haben. **Wohin:** der Knopf nennt jetzt sein Ziel
+(„Dashboard" bzw. „Angebot", Ziel-Logik unverändert aus DC-031). **Ist der
+Entwurf weg:** das Bestätigungs-Sheet sagt ausdrücklich, dass die Aufnahmen
+gespeichert sind und im Aufmaß bleiben. Dabei ist ein echter Datenverlust
+aufgefallen, den Manfred nicht sehen konnte: eine **laufende** Aufnahme wurde
+beim Tippen auf „Zurück" ohne jede Rückfrage verworfen (`cancelRecording()` in
+der ersten Zeile von `handleBackClick`). Jetzt wird erst gefragt („Aufnahme
+läuft noch — das gerade Gesprochene wurde noch nicht gespeichert"), verworfen
+wird nur nach Bestätigung.
+
+**DC-084 — Drei-Punkte-Menü nur „Löschen"** (`MobileQuoteCard.tsx`)
+Das Menü konnte genau eine Sache, und zwar die seltenste. „Status ändern" ist
+jetzt der erste Eintrag und öffnet dieselbe Auswahl wie das Status-Sheet der
+Detailansicht (`waehlbareStatus`, keine zweite Logik). Zweistufig statt alles
+auf einmal: erst „Status ändern / Löschen", dann die Liste. Bewusst **kein**
+„Nachfassen" — das gibt es im Produkt noch gar nicht (TN-115: nirgends
+auffindbar, was wann passiert), ein Knopf dafür wäre ein Versprechen ohne
+Deckung.
+
+**DC-096 — Briefpapier-Unterseite ohne Navigationsleiste**
+(`einstellungen/briefpapier/[id]/page.tsx`)
+`BottomNav` ergänzt. Ursache siehe DC-099 unten — es fehlt noch an einer
+zweiten Stelle.
+
+*Verifikation: `tsc --noEmit` über alle acht geänderten Dateien sauber
+(EXIT:0). Gescopter Commit, die parallel laufende uncommittete Arbeit von Head
+of Product Engineering wurde nicht angefasst.*
+
+---
+
+### DC-086 — gegenstandslos (Unterschriftslinie auf der Rechnung)
+
+Die Unterschriftslinie steht unverändert in `src/lib/pdf.tsx` (Z. 600–608), sie
+kann aber nicht mehr auf einer Rechnung landen: der Rechnungs-Modus ist im
+aktuellen Arbeitsstand komplett entfernt (`VorschauUndVersand.tsx`,
+`AngebotVorschau.tsx`, `DokumentTyp` kennt nur noch `angebot |
+kostenvoranschlag`). Auf Angebot und Kostenvoranschlag gehört sie hin — genau
+das lobt Manfred in TN-012. Kein Handlungsbedarf, solange die Rechnung draußen
+bleibt; kommt sie zurück, muss dieser Punkt **vor** dem ersten Rechnungs-PDF
+wieder aufgemacht werden. ✅ (durch Wegfall)
+
+---
+
+### Warten auf den Commit von Head of Product Engineering
+
+Diese elf Punkte liegen in Dateien, an denen Head of Product Engineering heute
+Abend **uncommitted** arbeitet (`AngebotDetail.tsx`, `VorschauUndVersand.tsx`,
+`pdf.tsx`, `einstellungen/page.tsx`, `maler.ts`, `vob-uebermessung.ts`, zuletzt
+angefasst gegen 20:00). Dort jetzt hineinzuschreiben, hieße entweder fremde
+halbfertige Arbeit in meinen Commit zu ziehen oder meine in seinen — beides ist
+in dieser Datei schon einmal schiefgegangen (siehe DC-035). Die Specs sind
+fertig, ich ziehe nach, sobald sein Stand committet ist; kein neuer Auftrag
+nötig.
+
+**DC-055 — Rechenweg wirkt technisch.** Drei getrennte Ursachen. ❌
+(1) *Schrift:* `pdf.tsx` Z. 160 `rechenwegText: { fontFamily: 'IBM Plex Mono' }`
+    und `AngebotVorschau.tsx` Z. 58 `font-mono` → auf die Dokumentschrift
+    umstellen. Monospace sagt „Maschine", und genau das ist die Beschwerde.
+(2) *Zahlen:* die Rechenweg-Texte entstehen als rohe Template-Strings in den
+    Mengen-Engines (`maler.ts` Z. 411/673/825/876, `fliesen.ts` Z. 43/87,
+    `boden.ts` Z. 287/311, `vob-uebermessung.ts` Z. 236). Die beiden
+    deutschen Formatter in `pdf.tsx` (Z. 51–61) greifen nur auf den
+    Tabellenspalten, nie hier — deshalb „2.4 m" durchgängig. Sauber ist eine
+    gemeinsame kleine Hilfe (`zahl()`, `Intl.NumberFormat('de-DE')`), die in
+    allen Bausteinen benutzt wird; das ist Engineering-Gebiet (Mengen-Engines),
+    ich gebe nur das Zielbild vor: **„Wand 6 m lang, 2,40 m hoch = 14,4 m²"**.
+(3) *Norm-Sprache:* `vob-uebermessung.ts` Z. 144 setzt „(… m², VOB/C DIN 18363
+    Übermessung)" mitten in die Positionszeile. Vorschlag für den Kundentext:
+    **„3 Fenster und Türen bis 2,5 m² sind nach Norm nicht abgezogen
+    (4,29 m²)"** — der genaue Normverweis bleibt in der Fußnote (`pdf.tsx`
+    Z. 583–592), wo er hingehört und wo ihn ein Prüfer auch sucht.
+
+**DC-056 — Pfennigposten.** 🔵 Sandys Entscheidung, nicht meine.
+Es gibt im Code keinerlei Bündelung von Kleinbeträgen. Eine automatische wäre
+eine Änderung daran, was der Kunde als Leistungsumfang sieht — das ist eine
+Produkt-/Preisfrage, keine Layoutfrage, und Manfred selbst nennt es
+„Geschmackssache". Sauber wäre ein Schalter in den Angebots-Einstellungen
+(Zahnrad, dort steht schon Gliederung/Kopf-/Fußtext): „Kleinbeträge unter X €
+als eine Zeile zusammenfassen". Baue ich, sobald entschieden ist — dann fällt
+auch die Frage an, ob der Rechenweg der zusammengefassten Zeile noch einzeln
+ausgewiesen wird.
+
+**DC-058 — „Senden" doppelt.** ❌ `VorschauUndVersand.tsx` Z. 273 (Reiter) und
+Z. 361 (Fuß-Knopf), beide beschriftet „Senden →", beide gleichzeitig sichtbar,
+beide mit demselben Ziel. Anders als bei DC-046 ist hier nicht einer zu viel:
+oben ist Navigation, unten der nächste Schritt nach dem Durchlesen — den
+Fuß-Knopf zu streichen hieße, nach der ganzen Vorschau wieder hochscrollen zu
+müssen. Fix ist die Beschriftung: Reiter werden zu reinen Substantiven
+(„Vorschau" / „Senden", **ohne** Pfeil, ein Reiter ist kein Knopf), der
+Fuß-Knopf heißt **„Weiter zum Senden →"**. Eine Aktion, eine Navigation,
+unterscheidbar.
+
+**DC-066 — Liste verrutscht beim Löschen.** ❌ `AngebotDetail.tsx` Z. 628
+(Trefferfläche ~26 px, direkt neben dem Ziehgriff) und `removeEditItem`
+Z. 1112. Das Löschen selbst soll schnell bleiben („ist mir recht"), der
+Sprung ist das Problem: es fallen bis zu ~100 px weg, wenn die letzte Position
+eines Raums geht (Raum-Kopf + Maß-Zeile verschwinden mit), und die
+Prozent-Zuschläge rechnen sich zeitgleich neu. Richtige Antwort ist nicht eine
+Rückfrage vor jedem Löschen, sondern **Rückgängig danach**: Toast „Position
+gelöscht · Rückgängig" (5 s), Position und Index solange im State halten.
+Braucht eine Aktionsfläche im `Toast`-Baustein — die gibt es noch nicht,
+baue ich mit.
+
+**DC-071 — „Speichern" ausgegraut ohne Erklärung.** ❌ Zwei Speichern-Knöpfe mit
+zwei verschiedenen Logiken: Kopfzeile Z. 1922 `disabled={saving}` (sieht grau
+aus, **ist aber klickbar**), Fußleiste Z. 2777 `disabled={saving ||
+!hasChanges}`. Fix: eine Logik für beide, und im Ruhezustand sagt der Knopf,
+was Sache ist — **„Gespeichert ✓"** statt eines grauen Knopfs, der wie „geht
+nicht" aussieht. Damit beantwortet sich Manfreds „vorher wusste ich nicht, ob
+meine Sachen sicher sind" an der Stelle, an der er hinschaut.
+
+**DC-072 — Grauer Punkt ohne Text.** ❌ Der Status-Knopf (`AngebotDetail.tsx`
+Z. 1888) hat seit `8aca1cf` ein Label — das aber im Entwurf-Zustand unsichtbar
+ist: `bg-anthracite/8` + `text-anthracite/50` auf dem dunklen Header
+(`bg-anthracite`), dunkelgrau auf dunkelgrau. Sichtbar bleibt nur der Punkt
+`#9CA3AF`, und der Chevron verschwindet gleich mit. Trifft **ausschließlich**
+Entwurf und **nur** mobil (Desktop-Header ist hell). Fix gehört in die zentrale
+Status-Quelle, nicht in die Komponente: `StatusInfo` bekommt eine
+Dunkel-Variante (`bgDark`/`textDark`, für Entwurf `bg-white/10` +
+`text-white/70`), der Header nimmt sie. Sonst erfindet die nächste dunkle
+Fläche wieder eigene Klassen.
+
+**DC-073 — Zuschläge doppelt.** ❌ Zwei völlig getrennte Mechanismen mit
+derselben Beschriftung: der Kasten „Rabatt & Zuschläge" (`AngebotDetail.tsx`
+Z. 2486, schreibt `surcharge_amount`/`surcharge_label` auf `quotes`) und die
+Erschwerniszuschläge als echte `quote_items` aus der Vollständigkeitsprüfung
+(`vollstaendigkeit/maler-extras.ts`, pro hohem Raum eine eigene Zeile). Nichts
+verbindet die beiden, nichts warnt, wenn derselbe Zuschlag zweimal drin ist.
+Mein Teil: der Kasten zeigt, was schon als Position in der Liste steht („2
+Zuschläge stehen bereits als eigene Position"), statt stumm einen zweiten Weg
+anzubieten. Manfreds eigentlicher Punkt liegt tiefer und ist **nicht** meine
+Entscheidung: er preist Erschwernisse in den m²-Preis ein und nie als eigene
+Zeile, weil zwei Zuschlagszeilen mit 30 % beim Privatkunden nach Abzocke
+aussehen (TN-042). Das ist eine Produktfrage → Chief of Staff.
+
+**DC-078 — „Hallo Renate," (Prio hoch).** ❌ `VorschauUndVersand.tsx` Z. 44–57
+(Mail) und Z. 225 (WhatsApp): `customer.name.split(' ')[0]`. Zwei Fehler in
+einer Zeile. *Ton:* „Hallo + Vorname" ist bei einer Privatkundin schlicht
+falsch, und Manfred sagt ausdrücklich, dass er die Mail deshalb nicht
+abschicken würde. *Richtigkeit:* das erste Wort des Namensfelds ist nicht
+zuverlässig der Vorname — bei „Frau Krüger" steht dann „Hallo Frau,", bei
+„Krüger, Renate" „Hallo Krüger,". Am Kunden gibt es kein Anrede- oder
+Geschlechtsfeld (`types.ts` Z. 183–193), „Sehr geehrte Frau Krüger" ist also
+heute nicht ableitbar. **Sofort und ohne Datenbank-Änderung richtig:**
+„**Guten Tag, Renate Krüger,**" (voller Name, höflich, in keiner Konstellation
+falsch), bei `ist_unternehmen` schlicht „**Guten Tag,**". **Danach, als Spec an
+Engineering:** Feld `anrede` am Kunden (`herr | frau | ohne`, Vorauswahl aus
+der Kundenanlage), dann wird daraus „Sehr geehrte Frau Krüger". Erst damit ist
+es das, was Manfred schreiben würde.
+
+**DC-079 — Leeres „An"-Feld, grauer Knopf.** ❌ `VorschauUndVersand.tsx` Z. 436
+(Feld) und Z. 603 (`disabled={!to || sending || !darfSenden}`). Für
+`!darfSenden` gibt es inzwischen einen Erklärkasten (Z. 402, aus Engineerings
+laufender Arbeit) — für den leeren Fall `!to` gibt es nichts, kein Hinweis,
+kein `title`. Fix: eine Zeile unter dem Feld, sobald es leer ist: **„Für diesen
+Kunden ist keine E-Mail-Adresse hinterlegt — hier eintragen oder beim Kunden
+ergänzen."** Kein grauer Knopf ohne Grund.
+
+**DC-089 — E-Rechnung/ZUGFeRD/DATEV.** 🔵 Wortlaut braucht den Head of Legal.
+Aktueller Text (`einstellungen/page.tsx` Z. 517–521): „Bei aktivem Toggle: PDFs
+von Geschäftskunden enthalten automatisch eine eingebettete ZUGFeRD-XML
+(Factur-X EN 16931). Kompatibel mit DATEV, Lexoffice, sevDesk." Das ist
+korrekt und für Manfred trotzdem halb unverständlich — er braucht nicht das
+Format, sondern die Antwort auf „betrifft mich das?". Mein Vorschlag als
+erster, führender Satz, **bitte gegenlesen**: „**Pflicht ist das nur bei
+Geschäftskunden. Bei Privatkunden ändert sich für dich nichts.**" Der
+technische Satz bleibt darunter stehen. Ich baue ihn ein, sobald der Wortlaut
+freigegeben ist — keine Rechtsaussage ohne Legal.
+
+**DC-091 — Erklärtext „Anfahrt/Kleinmaterial unter Allgemein".** ❌ Der Satz
+(`einstellungen/page.tsx` Z. 631: „An- und Abfahrt, Kleinmaterial und Aufmaß
+stehen immer separat unter ‚Allgemein'.") ist für das, was er aufzählt,
+richtig. Falsch ist, was Manfred daraus schließen musste: dass auch seine
+**Flurdecke** dort aus demselben Grund liegt. Tut sie nicht — die landet dort,
+weil die Raumzuordnung fehlt (CoS-E-026 in
+`chief-of-staff-engineering-todos.md`, dort offen). **Der Text wird deshalb
+ausdrücklich nicht angepasst:** einen Fehler in der Erklärung zur
+Normalität zu erklären, wäre die schlechteste Lösung von allen. Sobald
+CoS-E-026 behoben ist, stimmt der Satz wieder von allein. Bleibt hier als
+Verweis stehen, damit niemand ihn „passend" macht.
+
+---
+
+### DC-099 — Die untere Navigationsleiste hängt an jeder Seite einzeln (neu)
+
+Aufgefallen beim Fix von DC-096, gehört aber nicht zu Manfreds Liste, deshalb
+eigene ID. `BottomNav` wird **nicht** im Layout (`app/(app)/layout.tsx`)
+eingebunden, sondern in jeder Seite von Hand importiert und gerendert. Damit
+ist „Leiste vergessen" kein Ausrutscher, sondern der Normalfall bei jeder neuen
+Seite — DC-096 ist das Symptom, nicht die Ursache. Echte Lücken auf
+Einstellungs-Ebene sind zwei: `briefpapier/[id]` (gefixt) und
+`integrationen` (wartet, Datei gerade in fremder Arbeit). Bewusst **nicht**
+betroffen und richtig so: Onboarding und der Aufmaß-/Angebots-Flow, die haben
+eigene Fußleisten bzw. sollen keine Navigation anbieten.
+Sauber wäre die Einbindung im Layout mit einer Ausnahmeliste für diese Flows —
+das ist eine Struktur-Änderung an einer Datei, an der gerade jemand arbeitet,
+und sie gehört nicht in einen Wording-Batch. Als eigener Punkt hier notiert.
+❌ offen
+
+---
+
+## Positiv-Notizen aus Manfreds Testlauf (11.09.2026) — nicht kaputtmachen
+
+Manfreds Rohnotizen sagen es selbst: „Was mir gut gefallen hat, steht auch
+drin, damit ihr's nicht kaputtmacht." 28 der 48 Punkte sind Bestätigungen. Sie
+sind hier keine Erfolgsmeldung, sondern eine Schutzliste: wer eine dieser
+Stellen umbaut, baut gegen ein bestätigtes „passt" an und sollte einen guten
+Grund haben.
+
+**Das Beste in der App, nach Manfred:**
+- **DC-098 (TN-118)** L-Form/U-Form/Zeichnen — Wand für Wand mit Länge und
+  Drehrichtung, „Form geschlossen ✓", Fläche und Umfang live. Er hat L-Form
+  5-2-2-2-3-4 = 16 m² / 18 m von Hand nachgerechnet und es stimmt. Wörtlich:
+  „Das Beste in der App."
+- **DC-067 (TN-056)** Raummaße als Kästchen oben pro Raum, direkt änderbar —
+  „beste Stelle der App".
+- **DC-090 (TN-103)** Widerrufsbelehrung mit Erklärung (12 Monate + 14 Tage,
+  „anwaltlich prüfen lassen") — für ihn ein **Kaufargument**. Wusste er nicht.
+
+**Aufmaß und Aufnahme:** Sprech-Beispiele auf der Aufnahme-Seite (DC-060),
+Raum-Liste mit Positionen nach dem Diktat (DC-061), Fehlermeldung bei nicht
+erkanntem Foto-Zettel (DC-064, „in Ordnung"), „Aufnahme anhören" im
+Drei-Punkte-Menü (DC-065).
+
+**Angebot bearbeiten:** „Vorschlag"-Marke an automatisch ergänzten Positionen
+(DC-068) — „so weiß ich, was von mir kommt"; roter Warnbalken „fehlende Preise"
+(DC-069) — „klar und ehrlich"; der Ablauf „Preis anlegen" (DC-070) — „genau
+so"; „Entwurf gespeichert ✓" (DC-071, zweite Hälfte des Punkts).
+
+**Kunde:** Kundenanlage mit vier Feldern (DC-074), Rechnungshinweise auf der
+Kundenseite an der richtigen Stelle (DC-075), „+ Weitere Baustelle für diesen
+Kunden" (DC-076, „kluger Gedanke"), Kundenliste mit Umsatz/Status (DC-077).
+
+**Fertigstellen & Senden:** „Aus deinem Diktat erstellt — bitte einmal prüfen"
+(DC-080, „richtige Stelle"), die Statuswechsel-Kette (DC-081), die
+Angebots-Einstellungen über das Zahnrad (DC-082, „alles gut"), das
+Drei-Punkte-Menü der Detailansicht (DC-083), die Status-Filter (DC-085).
+
+**Dashboard & PDF:** Begrüßung und Anzahl offener Angebote (DC-051) — „das ist
+das, was ich morgens wissen will"; Unterschriftslinien auf dem Angebot
+(DC-057) — „mach ich genauso".
+
+**Preise & Einstellungen:** Preisdatenbank-Liste mit Suche/Stift/Mülleimer/Plus
+(DC-087), Betriebseinstellungen (DC-088, „alles da, alles klar"),
+Kleinmaterial-Pauschale und An-/Abfahrt-Automatik (DC-092, „mach ich genauso"),
+App-Reiter-Übersicht (DC-093), Angebotsnummern-Logik (DC-094, „mehr als ich
+brauch, aber alles richtig"), Briefpapier-Einstellungen (DC-095), die drei
+Benachrichtigungs-Optionen (DC-097, „genau die drei").
+
+**Was daraus für die Gestaltung folgt** — und das ist der eigentliche Grund,
+warum die Liste hier steht: die gelobten Stellen haben ein gemeinsames Muster.
+Direkt editierbare Zahlen dort, wo man sie liest (DC-067). Ehrliche Warnungen
+statt stiller Annahmen (DC-069, DC-090). Live sichtbare Zwischenergebnisse
+(DC-098). Klar markiert, was die App erfunden hat und was von ihm kommt
+(DC-068). Alle vier Punkte sind dasselbe Prinzip: **der Handwerker behält die
+Kontrolle und sieht, woran er ist.** Jeder der 20 Befunde aus derselben Liste
+verletzt genau dieses Prinzip — eine Zahl, die nicht sagt, was sie bedeutet
+(DC-052, DC-053), eine Liste, die nicht sagt, welches Angebot welches ist
+(DC-054), ein Knopf, der nicht tut, was er verspricht (DC-059), ein Weg, der
+nicht sagt, wohin er führt (DC-063). Das ist kein Zufall und keine Liste von
+Einzelfehlern: es ist ein Maßstab, und der steht damit nicht mehr in meinem
+Kopf, sondern hier.
+
+*Product Designer · 2026-09-11*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
