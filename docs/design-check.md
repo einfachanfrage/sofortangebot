@@ -126,7 +126,7 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
 | DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) ✅ Logo 10.09. (`531c268`, Bildmarke von Sandy als PNG geliefert — Browser-Tab-Favicon bleibt auf Sandys Entscheidung bei „sa", siehe Detailabschnitt), (f) ✅ PDF 10.09. (`dd1d6fe`, Marken-Schriften + Rechenweg im Kunden-PDF, neutrale Farbgebung auf Sandys Wunsch — Rechenweg auf der Unterschreiben-Seite bleibt offen, siehe Detailabschnitt). Reihenfolge (a)–(f) komplett. **Nachtrag 11.09.:** In-App-Vorschau (`AngebotVorschau.tsx`) an echtes PDF angeglichen, inkl. Raumgruppierung, die beim ersten Angleich übersehen wurde (`11b609e`, `d7fbd21`). Dabei einen kritischen, seit vier Deployments bestehenden Produktions-Build-Fehler gefunden und behoben — nichts von alldem war bis dahin tatsächlich live (`9ae8dcd`, `apple-icon.tsx`). WhatsApp/Link-Versand: Fehleranzeige im Frontend repariert (`b29c999`, live), echte Ursache in der Datenbank gefunden (Storage-Bucket `public-pdfs` mit falschem MIME-Type — DB-Fix selbst noch offen, siehe Detailabschnitt). Entwurfsansicht: Rechenweg standardmäßig eingeklappt statt immer offen (`86c742d`), PDF bleibt unverändert immer sichtbar. Neuer offener Punkt zur PDF-seitigen Sichtbarkeits-Steuerung siehe **DC-050** | Product Designer (Konzept: Marketing, Governance S. 19) |
-| DC-050 | Sandy, 11.09.2026: Entwurfsansicht mit dauerhaft offenem Rechenweg „zu viel" (gelöst, siehe DC-049-Nachtrag); zusätzlich die Frage, ob/wie sich die Rechenweg-Sichtbarkeit auf dem Kunden-PDF steuern lässt, obwohl das Handbuch dort „nie versteckt, nie eingeklappt" fordert — echter Zielkonflikt mit der Legal-Vorgabe aus DC-049 | 🟡 Zielkonflikt mit Sandy per Rückfrage geklärt: **„Frage pro Angebot vor dem PDF-Erstellen"** gewählt (nicht „immer sichtbar, kein Schalter", nicht „globaler Schalter in den Einstellungen"). Scoping: 6 Code-Stellen erzeugen ein Kunden-PDF (`api/email`, `api/notifications/unterschrift`, `api/pdf`, `api/pdf/public`, `api/quotes/[id]/public-pdf`, `api/quotes/[id]/send`) — „pro Angebot" (nicht „pro Versandweg") heißt: eine Entscheidung pro Angebot, die für alle sechs Stellen gilt, nicht pro Klick neu gefragt. Braucht eine neue, persistente Spalte an `quotes` (z. B. `zeige_rechenweg_auf_pdf boolean null`, `null` = noch nicht gefragt, Standard laut Handbuch = sichtbar) — reine Datenbank-/Backend-Änderung (Migration + die sechs Routen müssen die Spalte lesen/schreiben), liegt außerhalb meines Bereichs. Übernehme die Prompt-UI (Ja/Nein-Dialog vor PDF-Erstellung) und das Rendering (`zeigeRechenweg`-Prop durch `AngebotPDF` in `lib/pdf.tsx`, aktuell an zwei Stellen unbedingt gerendert), sobald die Spalte existiert | Product Designer (UI + Rendering, nach Migration) / Head of Product Engineering (Migration + Routen) |
+| DC-050 | Sandy, 11.09.2026: Entwurfsansicht mit dauerhaft offenem Rechenweg „zu viel" (gelöst, siehe DC-049-Nachtrag); zusätzlich die Frage, ob/wie sich die Rechenweg-Sichtbarkeit auf dem Kunden-PDF steuern lässt, obwohl das Handbuch dort „nie versteckt, nie eingeklappt" fordert — echter Zielkonflikt mit der Legal-Vorgabe aus DC-049 | ✅ erledigt. Zielkonflikt mit Sandy per Rückfrage geklärt: **„Frage pro Angebot vor dem PDF-Erstellen"** gewählt (nicht „immer sichtbar, kein Schalter", nicht „globaler Schalter in den Einstellungen"). Backend (`0d2b459`, Head of Product Engineering): neue Spalte `quotes.zeige_rechenweg_auf_pdf` (boolean, nullable, `null` = noch nicht gefragt = sichtbar), `AngebotPDF` in `lib/pdf.tsx` wertet sie mit Rangfolge Prop → gespeicherte Antwort → sichtbar aus — die sechs PDF-Routen mussten dank `select('*')` nicht angefasst werden. UI (`b3ce7b0`, Product Designer): Ja/Nein-Frage im Vorschau-Tab von `VorschauUndVersand.tsx`, direkt vor „Senden →" — der einen Stelle, an der alle drei Versandwege (E-Mail/WhatsApp/Link) vorbeikommen; kein Blocker, unbeantwortet bleibt sichtbar; Antwort wird per `supabase.from('quotes').update(...)` gespeichert (gleiches Muster wie `raum_details`), einmal beantwortet mit Ändern-Link statt Frage. `AngebotVorschau.tsx` bekam dieselbe `zeigeRechenweg`-Prop/Rangfolge wie das echte PDF, zieht beim Beantworten live mit. Siehe Detailabschnitt | Product Designer (UI ✅) / Head of Product Engineering (Backend ✅) |
 
 „Zuständig" trägt der Chief of Staff ein, sobald zugewiesen.
 
@@ -5206,6 +5206,34 @@ nicht auffällt. Zehn Tests rendern echte PDFs und lesen den Text zurück.
 **Unberührt bleibt der Übermessungs-Hinweis** (VOB-004 / Legal G5). Er steht in
 einer eigenen Zeile und verschwindet auch dann nicht, wenn der Rechenweg
 ausgeblendet ist — er ist eine Rechtspflicht, keine Darstellungsfrage.
+
+---
+
+**Nachtrag — UI-Teil ✅ erledigt (`b3ce7b0`, Product Designer, 11.09.2026):**
+Genau wie oben skizziert übernommen, kein eigener Endpunkt nötig. Die Frage
+sitzt im Vorschau-Tab von `VorschauUndVersand.tsx` — die einzige Stelle, an
+der alle drei Versandwege (E-Mail/WhatsApp/Link) vor dem PDF-Erzeugen
+vorbeikommen, kein Blocker vor „Senden →" (unbeantwortet = sichtbar, der
+sichere Standard). Gespeichert wird direkt per
+`supabase.from('quotes').update({ zeige_rechenweg_auf_pdf: … })`, exakt das
+oben genannte Muster. `AngebotDetail.tsx` hält die Antwort zusätzlich als
+eigenen State (`zeigeRechenwegAufPdf`), weil seine `quote`-Prop nur den Stand
+des Seitenladens hat — sonst würde ein erneutes Öffnen der Vorschau in
+derselben Sitzung wieder fragen, obwohl schon gespeichert wurde.
+
+`AngebotVorschau.tsx` bekam dieselbe `zeigeRechenweg`-Prop mit identischer
+Rangfolge (Prop → gespeicherte Antwort → sichtbar) wie `AngebotPDF` — dieselbe
+„muss wie das echte PDF aussehen"-Regel, die heute schon bei der
+Raumgruppierung galt (`d7fbd21`). Einmal beantwortet, zeigt eine kleine Zeile
+die aktuelle Wahl mit einem Ändern-Link, statt die Frage erneut zu stellen.
+
+`tsc --noEmit` über das komplette Projekt sauber. Bewusst nicht mit
+angefasst: der direkte „PDF herunterladen"-Link im Angebots-Menü
+(`/api/pdf?id=…`, `AngebotDetail.tsx`) — eine reine `<a href>`-Navigation ohne
+Klick-Handler, die denselben Vorschau-Umweg bräuchte, um vorher zu fragen.
+Läuft nicht leer: ohne Antwort zeigt auch dieser Download den Rechenweg
+(sicherer Standard), es fehlt nur die Möglichkeit, dort gezielt Nein zu
+sagen. Wenn das relevant wird, gerne als eigener kleiner Nachzug.
 
 ### Offen, bei Sandy
 
