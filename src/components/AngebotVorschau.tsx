@@ -42,7 +42,13 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
   const co = company as Company & { ust_id?: string }
 
   return (
-    <div className="bg-white font-sans text-anthracite text-[10px] leading-normal min-h-full">
+    // DC-049 PDF-Schritt Nachtrag (2026-09-11, Sandy: "hier sieht das pdf so
+    // aus wenn ich auf vorschau klicke" — diese Live-Vorschau und das echte
+    // PDF waren auseinandergelaufen): `font-sans` überschrieb bisher die von
+    // `body` geerbte Inter-Schrift mit Tailwinds System-Sans-Stack — diese
+    // Vorschau lief nie auf einer Marken-Schrift. Jetzt einfach weglassen und
+    // von `body` erben (siehe globals.css), wie der Rest der App.
+    <div className="bg-white text-anthracite text-[10px] leading-normal min-h-full">
       {/* A4-artiges Paper-Layout */}
       <div className="px-12 py-10">
 
@@ -53,7 +59,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
               // eslint-disable-next-line @next/next/no-img-element
               <img src={company.logo_url} alt={company.name} className="max-h-16 max-w-[200px] object-contain mb-2" />
             ) : (
-              <div className="text-[20px] font-black text-anthracite leading-tight mb-1">{company.name}</div>
+              <div className="font-syne text-[20px] font-black text-anthracite leading-tight mb-1">{company.name}</div>
             )}
             <div className="text-[#666] text-[9px] leading-relaxed whitespace-pre-line">{company.address}</div>
             {co.ust_id && <div className="text-[#666] text-[9px] mt-1">USt-IdNr.: {co.ust_id}</div>}
@@ -61,7 +67,12 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
             {company.iban && <div className="text-[#666] text-[9px]">IBAN: {company.iban}</div>}
           </div>
           <div>
-            <span className="bg-yellow text-anthracite font-black text-[11px] px-4 py-1.5 rounded">{dokumentTitel}</span>
+            {/* DC-049 PDF-Schritt Nachtrag (2026-09-11): war ein gelber Pill —
+                das echte Kunden-PDF (lib/pdf.tsx, S.angebotLabel) ist auf
+                Sandys Entscheidung hin bewusst neutral/grau, kein Gelb-Akzent.
+                Diese Vorschau behauptet "so sieht dein Angebot für den Kunden
+                aus" und muss deshalb dieselbe Farbgebung/Typografie zeigen. */}
+            <span className="text-[#999] uppercase tracking-wider text-[9px] font-bold">{dokumentTitel}</span>
           </div>
         </div>
 
@@ -128,6 +139,19 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
               <div style={{ width: '40%' }}>
                 <span className="font-bold">{item.title}</span>
                 {item.description && <div className="text-[#666] mt-0.5">{item.description}</div>}
+                {/* DC-049 PDF-Schritt Nachtrag (2026-09-11): Rechenweg fehlte
+                    hier komplett — das echte PDF (und AngebotDetail.tsx,
+                    Schritt c) zeigen ihn längst. Gleiche Konvention: IBM Plex
+                    Mono (`font-mono` ist in globals.css bereits global darauf
+                    umgebogen), gedeckte Grautöne, "Pauschale" als Fallback. */}
+                <div className="font-mono text-[8px] text-[#666] mt-1 leading-relaxed">
+                  {item.berechnungsweg || 'Pauschale'}
+                </div>
+                {(item.annahmen?.length ?? 0) > 0 && (
+                  <div className="font-mono text-[7.5px] text-[#999] mt-0.5">
+                    {item.annahmen!.join(' · ')}
+                  </div>
+                )}
               </div>
               <span style={{ width: '12%', textAlign: 'right' }}>{item.quantity}</span>
               <span style={{ width: '10%', textAlign: 'center' }}>{item.unit}</span>
