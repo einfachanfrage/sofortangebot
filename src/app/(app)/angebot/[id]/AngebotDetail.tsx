@@ -679,7 +679,17 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   // Position-Lösung, falls die Liste beim Kalkulieren zu voll wird). Ersetzt
   // das alte infoItemId-Bottom-Sheet, das den Rechenweg hinter einem
   // (i)-Button versteckt hat.
-  const [rechenwegSichtbar, setRechenwegSichtbar] = useState(true)
+  //
+  // Nachtrag (2026-09-11, Sandy: "mir ist das hier in der entwurfsansicht
+  // doch zu viel... es soll doch auklappbar sein"): Standard auf
+  // ausgeblendet gedreht — der Schalter bleibt derselbe, jetzt eben
+  // "einblenden" statt "ausblenden" als erster Klick. Betrifft NUR die
+  // eigene Entwurfsansicht des Handwerkers; das CI-Handbuch-Gebot "nie
+  // versteckt, nie eingeklappt" galt und gilt weiter für das Kunden-PDF
+  // (dort weiterhin immer sichtbar, kein Schalter) — Sandy hat das im
+  // selben Zug ausdrücklich bestätigt ("für kunden auf pdf soll es
+  // erkennbar sein").
+  const [rechenwegSichtbar, setRechenwegSichtbar] = useState(false)
   // CoS-043: `category` gehoert mit dazu — an ihr haengt, auf welche
   // Leistungen ein objektbezogener Zuschlag (Denkmalschutz, Sondermasse,
   // exotische Holzart) gerechnet wird. Ohne sie wuerde er still auf das
