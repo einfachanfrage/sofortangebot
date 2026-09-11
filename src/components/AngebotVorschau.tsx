@@ -1,6 +1,8 @@
 'use client'
 
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
+import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
+import { effektiveOptionen } from '@/lib/angebot-optionen'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
@@ -12,6 +14,49 @@ interface Props {
 function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
 function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+// DC-049 PDF-Schritt Nachtrag Teil 2 (2026-09-11, Sandy: "hier fehlt die
+// raumtrennung... das soll doch genau das gleiche pdf sein"): Eine Zeile war
+// hier schon immer eine Zeile — nur flach nach Position, nie nach Raum
+// gruppiert, obwohl das echte PDF (lib/pdf.tsx) das längst tut. Dieselbe
+// Zeilen-Darstellung jetzt einmal extrahiert, damit sie im flachen UND im
+// gruppierten Pfad identisch aussieht.
+function PositionsZeile({
+  position, idx, title, description, berechnungsweg, annahmen, quantity, unit, unitPrice, totalPrice,
+}: {
+  position: number
+  idx: number
+  title: string
+  description?: string | null
+  berechnungsweg?: string | null
+  annahmen?: string[] | null
+  quantity: number
+  unit: string
+  unitPrice: number
+  totalPrice: number
+}) {
+  return (
+    <div className={`flex px-2.5 py-2 text-[9px] border-b border-[#F0F0EE] ${idx % 2 !== 0 ? 'bg-[#FAFAF8]' : ''}`}>
+      <span style={{ width: '6%' }} className="text-[#999]">{position}</span>
+      <div style={{ width: '40%' }}>
+        <span className="font-bold">{title}</span>
+        {description && <div className="text-[#666] mt-0.5">{description}</div>}
+        <div className="font-mono text-[8px] text-[#666] mt-1 leading-relaxed">
+          {berechnungsweg || 'Pauschale'}
+        </div>
+        {(annahmen?.length ?? 0) > 0 && (
+          <div className="font-mono text-[7.5px] text-[#999] mt-0.5">
+            {annahmen!.join(' · ')}
+          </div>
+        )}
+      </div>
+      <span style={{ width: '12%', textAlign: 'right' }}>{quantity}</span>
+      <span style={{ width: '10%', textAlign: 'center' }}>{unit}</span>
+      <span style={{ width: '16%', textAlign: 'right' }}>{fmt(unitPrice)}</span>
+      <span style={{ width: '16%', textAlign: 'right' }} className="font-bold">{fmt(totalPrice)}</span>
+    </div>
+  )
 }
 
 export default function AngebotVorschau({ quote, company, quoteNumber, modus = 'angebot' }: Props) {
@@ -40,6 +85,15 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
   const totalGross = netWithSurcharge + totalVat
 
   const co = company as Company & { ust_id?: string }
+
+  // Gleiches Muster wie lib/pdf.tsx: Rechenweg/Annahmen stehen an den
+  // Rohdaten (quote.items), gruppiereNachStruktur reicht sie an den
+  // gruppierten Einträgen nicht durch — deshalb einmal nach id auflösen.
+  const opt = effektiveOptionen(quote, company, quote.customer?.ist_unternehmen)
+  const rechenwegJeItem = new Map(
+    quote.items.map(i => [i.id, { berechnungsweg: i.berechnungsweg, annahmen: i.annahmen }])
+  )
+  const gruppen = gruppiereNachStruktur(quote.items, opt.struktur)
 
   return (
     // DC-049 PDF-Schritt Nachtrag (2026-09-11, Sandy: "hier sieht das pdf so
@@ -129,36 +183,62 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
             <span style={{ width: '16%', textAlign: 'right' }}>Gesamt</span>
           </div>
 
-          {/* Zeilen */}
-          {quote.items.map((item, idx) => (
-            <div
-              key={item.id}
-              className={`flex px-2.5 py-2 text-[9px] border-b border-[#F0F0EE] ${idx % 2 !== 0 ? 'bg-[#FAFAF8]' : ''}`}
-            >
-              <span style={{ width: '6%' }} className="text-[#999]">{item.position}</span>
-              <div style={{ width: '40%' }}>
-                <span className="font-bold">{item.title}</span>
-                {item.description && <div className="text-[#666] mt-0.5">{item.description}</div>}
-                {/* DC-049 PDF-Schritt Nachtrag (2026-09-11): Rechenweg fehlte
-                    hier komplett — das echte PDF (und AngebotDetail.tsx,
-                    Schritt c) zeigen ihn längst. Gleiche Konvention: IBM Plex
-                    Mono (`font-mono` ist in globals.css bereits global darauf
-                    umgebogen), gedeckte Grautöne, "Pauschale" als Fallback. */}
-                <div className="font-mono text-[8px] text-[#666] mt-1 leading-relaxed">
-                  {item.berechnungsweg || 'Pauschale'}
+          {/* Zeilen — DC-049 PDF-Schritt Nachtrag Teil 2 (2026-09-11): jetzt
+              nach Raum/Gewerk/Arbeitsablauf gruppiert wie das echte PDF
+              (gruppiereNachStruktur), statt immer flach nach Position. */}
+          {!gruppen ? (
+            quote.items.map((item, idx) => (
+              <PositionsZeile
+                key={item.id}
+                position={item.position}
+                idx={idx}
+                title={item.title}
+                description={item.description}
+                berechnungsweg={item.berechnungsweg}
+                annahmen={item.annahmen}
+                quantity={item.quantity}
+                unit={item.unit}
+                unitPrice={item.unit_price}
+                totalPrice={item.total_price}
+              />
+            ))
+          ) : (() => {
+            const { raeume, allgemein, hatMehrereRaeume } = gruppen
+            const sektionen = [
+              ...raeume.map(r => ({ typ: 'raum' as const, raum: r })),
+              ...(allgemein.length > 0 ? [{ typ: 'allgemein' as const, raum: null }] : []),
+            ]
+            return sektionen.map(sek => (
+              <div key={sek.typ === 'raum' ? sek.raum!.raumName : 'allg'}>
+                <div className="bg-bg px-2.5 py-1.5 mt-3 first:mt-0">
+                  <span className="text-[8px] font-bold uppercase tracking-wider text-[#999]">
+                    {sek.typ === 'raum' ? sek.raum!.raumName : 'Allgemein'}
+                  </span>
                 </div>
-                {(item.annahmen?.length ?? 0) > 0 && (
-                  <div className="font-mono text-[7.5px] text-[#999] mt-0.5">
-                    {item.annahmen!.join(' · ')}
+                {(sek.typ === 'raum' ? sek.raum!.items : allgemein).map((gi, idx) => (
+                  <PositionsZeile
+                    key={gi.id}
+                    position={gi.position}
+                    idx={idx}
+                    title={gi.titleDisplay}
+                    description={gi.description}
+                    berechnungsweg={rechenwegJeItem.get(gi.id)?.berechnungsweg}
+                    annahmen={rechenwegJeItem.get(gi.id)?.annahmen}
+                    quantity={gi.quantity}
+                    unit={gi.unit}
+                    unitPrice={gi.unit_price}
+                    totalPrice={gi.total_price}
+                  />
+                ))}
+                {hatMehrereRaeume && sek.typ === 'raum' && (
+                  <div className="flex justify-end px-2.5 py-1.5 text-[8px]">
+                    <span className="text-[#999] mr-3">Summe {sek.raum!.raumName}</span>
+                    <span className="text-[#666] min-w-[60px] text-right">{fmt(sek.raum!.summe)}</span>
                   </div>
                 )}
               </div>
-              <span style={{ width: '12%', textAlign: 'right' }}>{item.quantity}</span>
-              <span style={{ width: '10%', textAlign: 'center' }}>{item.unit}</span>
-              <span style={{ width: '16%', textAlign: 'right' }}>{fmt(item.unit_price)}</span>
-              <span style={{ width: '16%', textAlign: 'right' }} className="font-bold">{fmt(item.total_price)}</span>
-            </div>
-          ))}
+            ))
+          })()}
         </div>
 
         {/* SUMMENBLOCK */}
