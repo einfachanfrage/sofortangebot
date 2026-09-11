@@ -639,6 +639,12 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showRevisionDialog, setShowRevisionDialog] = useState(false)
   const [creatingRevision, setCreatingRevision] = useState(false)
   const [sentVia, setSentVia] = useState<string[]>(quote.sent_via ?? [])
+  // DC-050 (2026-09-11, Sandys Entscheidung "Frage pro Angebot vor dem
+  // PDF-Erstellen"): lokale Kopie der gespeicherten Antwort, damit ein
+  // erneutes Öffnen der Vorschau innerhalb derselben Seiten-Sitzung nicht
+  // wieder fragt, nachdem VorschauUndVersand einmal gespeichert hat — die
+  // ursprüngliche `quote`-Prop bleibt sonst auf dem Stand des Seitenladens.
+  const [zeigeRechenwegAufPdf, setZeigeRechenwegAufPdf] = useState<boolean | null>(quote.zeige_rechenweg_auf_pdf ?? null)
   const [activeTab, setActiveTab] = useState<'positionen' | 'notizen'>('positionen')
   const [showExtras, setShowExtras] = useState(false)
   const [discountPercent, setDiscountPercent] = useState(0)
@@ -2697,6 +2703,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             discount_amount: discountAmount,
             surcharge_amount: surchargeAmount,
             surcharge_label: surchargeLabel,
+            zeige_rechenweg_auf_pdf: zeigeRechenwegAufPdf,
           } as Parameters<typeof VorschauUndVersand>[0]['quote']}
           company={company}
           quoteNumber={quoteNumber}
@@ -2708,6 +2715,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             showToast(`Angebot gesendet via ${via} ✓`)
             setShowVorschau(false)
           }}
+          onZeigeRechenwegChange={setZeigeRechenwegAufPdf}
         />
       )}
 

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import AngebotVorschau from './AngebotVorschau'
+import { createClient } from '@/lib/supabase/client'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
 
 interface Props {
@@ -12,6 +13,10 @@ interface Props {
   onClose: () => void
   onSent?: (via: string) => void
   initialTab?: 'vorschau' | 'senden'
+  // DC-050 (2026-09-11): informiert AngebotDetail, sobald hier eine
+  // Rechenweg-Antwort gespeichert wurde — die dortige `quote`-Prop bleibt
+  // sonst auf dem Stand des Seitenladens, siehe Kommentar dort.
+  onZeigeRechenwegChange?: (wert: boolean) => void
 }
 
 type SendTab = 'email' | 'whatsapp' | 'link'
@@ -32,10 +37,48 @@ Mit freundlichen Grüßen
 ${company.name}`
 }
 
-export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau' }: Props) {
+export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau', onZeigeRechenwegChange }: Props) {
+  const supabase = createClient()
   const [mainTab, setMainTab] = useState<'vorschau' | 'senden'>(initialTab)
   const [sendTab, setSendTab] = useState<SendTab>('email')
   const [modus, setModus] = useState<'angebot' | 'rechnung'>('angebot')
+
+  // DC-050 (2026-09-11, Sandys Entscheidung "Frage pro Angebot vor dem
+  // PDF-Erstellen"): Rechenweg auf dem KUNDEN-PDF ist steuerbar
+  // (quote.zeige_rechenweg_auf_pdf). `null` = noch nicht gefragt — dann
+  // gilt der CI-Handbuch-Standard (sichtbar) und die Frage erscheint
+  // genau hier, in der Vorschau, bevor einer der drei Versandwege
+  // (E-Mail/WhatsApp/Link) das PDF erzeugt. Bewusst kein Blocker vor
+  // "Senden →": unbeantwortet bleibt der Rechenweg sichtbar, das ist der
+  // sichere Standard, keine Lücke. Persistiert direkt am Angebot (nicht
+  // pro Versandweg neu), damit Vorschau und echtes PDF (lib/pdf.tsx,
+  // gleiche Rangfolge: Prop, dann gespeicherte Antwort, dann sichtbar)
+  // immer dieselbe Antwort zeigen — Backend-Teil (Migration, lib/pdf.tsx):
+  // Head of Product Engineering, docs/design-check.md DC-050.
+  const [zeigeRechenweg, setZeigeRechenweg] = useState(quote.zeige_rechenweg_auf_pdf ?? true)
+  const [rechenwegBeantwortet, setRechenwegBeantwortet] = useState(
+    quote.zeige_rechenweg_auf_pdf !== null && quote.zeige_rechenweg_auf_pdf !== undefined
+  )
+  const [rechenwegSaving, setRechenwegSaving] = useState(false)
+
+  async function beantworteRechenweg(antwort: boolean) {
+    const vorherAntwort = zeigeRechenweg
+    const vorherBeantwortet = rechenwegBeantwortet
+    setZeigeRechenweg(antwort)
+    setRechenwegBeantwortet(true)
+    setRechenwegSaving(true)
+    const { error } = await supabase.from('quotes').update({ zeige_rechenweg_auf_pdf: antwort }).eq('id', quote.id)
+    setRechenwegSaving(false)
+    if (error) {
+      // Speichern fehlgeschlagen — nicht so tun, als wäre die Antwort
+      // angekommen, sonst weicht die spätere Wirklichkeit (PDF liest die
+      // Datenbank, nicht diesen lokalen State) von der Anzeige hier ab.
+      setZeigeRechenweg(vorherAntwort)
+      setRechenwegBeantwortet(vorherBeantwortet)
+      return
+    }
+    onZeigeRechenwegChange?.(antwort)
+  }
 
   // Email-Tab
   const [to, setTo] = useState(quote.customer?.email ?? '')
@@ -209,11 +252,50 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
               </div>
             )}
 
+            {/* DC-050: Rechenweg-Frage — einmal pro Angebot, direkt hier vor
+                dem Versand. Unbeantwortet bleibt der Rechenweg sichtbar
+                (CI-Handbuch-Standard), deshalb kein Blocker vor "Senden →". */}
+            {!rechenwegBeantwortet ? (
+              <div className="mx-4 mt-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-semibold text-anthracite">Rechenweg auf dem PDF zeigen?</div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">Für den Kunden nachvollziehbar, wie die Fläche berechnet wurde.</div>
+                </div>
+                <div className="flex gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => beantworteRechenweg(false)}
+                    disabled={rechenwegSaving}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-300 text-gray-600 disabled:opacity-50"
+                  >
+                    Nein
+                  </button>
+                  <button
+                    onClick={() => beantworteRechenweg(true)}
+                    disabled={rechenwegSaving}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-anthracite text-white disabled:opacity-50"
+                  >
+                    Ja
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="mx-5 mt-3 flex items-center justify-between text-[11px] text-gray-400">
+                <span>Rechenweg auf PDF: <span className="font-semibold text-gray-600">{zeigeRechenweg ? 'sichtbar' : 'ausgeblendet'}</span></span>
+                <button
+                  onClick={() => beantworteRechenweg(!zeigeRechenweg)}
+                  disabled={rechenwegSaving}
+                  className="font-semibold text-anthracite underline underline-offset-2 disabled:opacity-50"
+                >
+                  {zeigeRechenweg ? 'ausblenden' : 'einblenden'}
+                </button>
+              </div>
+            )}
+
             {/* Skalierte Vorschau */}
             <div className="px-2 py-3">
               <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <div style={{ transform: 'scale(0.75)', transformOrigin: 'top left', width: '133%' }}>
-                  <AngebotVorschau quote={quote} company={company} quoteNumber={quoteNumber} modus={modus} />
+                  <AngebotVorschau quote={quote} company={company} quoteNumber={quoteNumber} modus={modus} zeigeRechenweg={zeigeRechenweg} />
                 </div>
               </div>
             </div>

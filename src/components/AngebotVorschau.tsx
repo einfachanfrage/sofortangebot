@@ -9,6 +9,15 @@ interface Props {
   company: Company
   quoteNumber: string
   modus?: 'angebot' | 'rechnung'
+  /**
+   * DC-050 (2026-09-11): Rechenweg auf dem Kunden-PDF zeigen? Gleiche
+   * Rangfolge wie in lib/pdf.tsx (das echte PDF, gleiche Frage): Prop, dann
+   * die am Angebot gespeicherte Antwort (`quote.zeige_rechenweg_auf_pdf`),
+   * dann der CI-Handbuch-Standard (sichtbar). Wird von VorschauUndVersand
+   * live mitgegeben, während der Handwerker die Frage dort beantwortet —
+   * ohne die Prop verhält sich diese Vorschau also identisch zum PDF.
+   */
+  zeigeRechenweg?: boolean
 }
 
 function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
@@ -23,7 +32,7 @@ function fmtDate(d: string) {
 // Zeilen-Darstellung jetzt einmal extrahiert, damit sie im flachen UND im
 // gruppierten Pfad identisch aussieht.
 function PositionsZeile({
-  position, idx, title, description, berechnungsweg, annahmen, quantity, unit, unitPrice, totalPrice,
+  position, idx, title, description, berechnungsweg, annahmen, quantity, unit, unitPrice, totalPrice, zeigeRechenweg,
 }: {
   position: number
   idx: number
@@ -35,6 +44,8 @@ function PositionsZeile({
   unit: string
   unitPrice: number
   totalPrice: number
+  // DC-050: siehe Props-Kommentar oben — hier nur durchgereicht.
+  zeigeRechenweg: boolean
 }) {
   return (
     <div className={`flex px-2.5 py-2 text-[9px] border-b border-[#F0F0EE] ${idx % 2 !== 0 ? 'bg-[#FAFAF8]' : ''}`}>
@@ -42,10 +53,12 @@ function PositionsZeile({
       <div style={{ width: '40%' }}>
         <span className="font-bold">{title}</span>
         {description && <div className="text-[#666] mt-0.5">{description}</div>}
-        <div className="font-mono text-[8px] text-[#666] mt-1 leading-relaxed">
-          {berechnungsweg || 'Pauschale'}
-        </div>
-        {(annahmen?.length ?? 0) > 0 && (
+        {zeigeRechenweg && (
+          <div className="font-mono text-[8px] text-[#666] mt-1 leading-relaxed">
+            {berechnungsweg || 'Pauschale'}
+          </div>
+        )}
+        {zeigeRechenweg && (annahmen?.length ?? 0) > 0 && (
           <div className="font-mono text-[7.5px] text-[#999] mt-0.5">
             {annahmen!.join(' · ')}
           </div>
@@ -59,8 +72,10 @@ function PositionsZeile({
   )
 }
 
-export default function AngebotVorschau({ quote, company, quoteNumber, modus = 'angebot' }: Props) {
+export default function AngebotVorschau({ quote, company, quoteNumber, modus = 'angebot', zeigeRechenweg }: Props) {
   const isKleinunternehmer = company.vat_rate === 0
+  // DC-050: siehe Props-Kommentar oben — gleiche Rangfolge wie lib/pdf.tsx.
+  const rechenwegSichtbar = zeigeRechenweg ?? quote.zeige_rechenweg_auf_pdf ?? true
   const isRechnung = modus === 'rechnung'
   const dokumentTitel = isRechnung ? 'RECHNUNG' : 'ANGEBOT'
 
@@ -200,6 +215,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
                 unit={item.unit}
                 unitPrice={item.unit_price}
                 totalPrice={item.total_price}
+                zeigeRechenweg={rechenwegSichtbar}
               />
             ))
           ) : (() => {
@@ -228,6 +244,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
                     unit={gi.unit}
                     unitPrice={gi.unit_price}
                     totalPrice={gi.total_price}
+                    zeigeRechenweg={rechenwegSichtbar}
                   />
                 ))}
                 {hatMehrereRaeume && sek.typ === 'raum' && (
