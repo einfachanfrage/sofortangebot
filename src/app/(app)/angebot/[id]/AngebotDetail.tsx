@@ -645,6 +645,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   // wieder fragt, nachdem VorschauUndVersand einmal gespeichert hat — die
   // ursprüngliche `quote`-Prop bleibt sonst auf dem Stand des Seitenladens.
   const [zeigeRechenwegAufPdf, setZeigeRechenwegAufPdf] = useState<boolean | null>(quote.zeige_rechenweg_auf_pdf ?? null)
+  // DC-050 Nachzug (2026-09-11, Sandy: "ja auch da" — der direkte
+  // "PDF herunterladen"-Link im Aktionen-Sheet blieb beim ersten DC-050-Fix
+  // bewusst außen vor, weil er ein reiner <a href>-Link ohne Klick-Logik
+  // ist. Jetzt nachgezogen: nur wenn noch nicht geantwortet (`null`), hält
+  // der Klick kurz an und fragt — schon beantwortet, lädt der Link direkt
+  // wie bisher.
+  const [showRechenwegDownloadFrage, setShowRechenwegDownloadFrage] = useState(false)
   const [activeTab, setActiveTab] = useState<'positionen' | 'notizen'>('positionen')
   const [showExtras, setShowExtras] = useState(false)
   const [discountPercent, setDiscountPercent] = useState(0)
@@ -1525,6 +1532,25 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     navigator.clipboard.writeText(`${window.location.origin}/angebot/${token}/unterschreiben`)
     trackVia('link')
     showToast('Link kopiert ✓')
+  }
+
+  // DC-050 Nachzug: "PDF herunterladen" im Aktionen-Sheet. Schon beantwortet
+  // (true/false) → direkt laden, wie der Link es vorher immer tat. Noch nie
+  // gefragt (null) → kurz anhalten und fragen, statt den Rechenweg-Standard
+  // stillschweigend zu entscheiden.
+  function handlePdfDownloadClick() {
+    if (zeigeRechenwegAufPdf !== null) {
+      window.open(`/api/pdf?id=${quote.id}`, '_blank')
+      return
+    }
+    setShowRechenwegDownloadFrage(true)
+  }
+
+  async function beantworteRechenwegUndDownload(antwort: boolean) {
+    setShowRechenwegDownloadFrage(false)
+    setZeigeRechenwegAufPdf(antwort)
+    await supabase.from('quotes').update({ zeige_rechenweg_auf_pdf: antwort }).eq('id', quote.id)
+    window.open(`/api/pdf?id=${quote.id}`, '_blank')
   }
 
   const [lexwareKontakte, setLexwareKontakte] = useState<{ id: string; name: string; address: string | null; phone: string | null; email: string | null; source: string }[]>([])
@@ -2719,6 +2745,37 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         />
       )}
 
+      {/* DC-050 Nachzug: Rechenweg-Frage vor direktem PDF-Download (Aktionen-
+          Sheet), nur wenn noch nie geantwortet. Eigenes kleines Sheet statt
+          ConfirmSheet — dessen Bestätigen/Abbrechen ist für "Ja/Nein" als
+          gleichwertige Antworten nicht gedacht (Abbrechen/Backdrop-Klick
+          würde sonst versehentlich als "Nein" gewertet). Hier bricht ein
+          Wegklicken den Download einfach ab, ohne etwas zu speichern. */}
+      {showRechenwegDownloadFrage && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center md:justify-center" onClick={() => setShowRechenwegDownloadFrage(false)}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="relative w-full md:max-w-sm bg-white rounded-t-3xl md:rounded-3xl px-5 pt-4 pb-10 md:pb-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-center mb-4 md:hidden"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
+            <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-2">Rechenweg auf dem PDF zeigen?</h2>
+            <p className="text-anthracite/50 font-semibold text-[14px] mb-6 leading-relaxed">Für den Kunden nachvollziehbar, wie die Fläche berechnet wurde.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => beantworteRechenwegUndDownload(false)}
+                className="flex-1 border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+              >
+                Nein
+              </button>
+              <button
+                onClick={() => beantworteRechenwegUndDownload(true)}
+                className="flex-1 bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[14px] active:translate-y-px transition-all"
+              >
+                Ja
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ConfirmSheet
         open={showDeleteSheet}
         title="Angebot löschen?"
@@ -2771,7 +2828,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   zusätzlich Sprachaufnahme/Transkript/erkannte Positionen
                   zeigt, die der Tab nicht abbildet. */}
               <Zeile icon={<Mic size={17} strokeWidth={2.5} />} label="Aufmaß-Aufnahme ansehen" href={`/angebot/${quote.id}/entwurf`} />
-              <Zeile icon={<Download size={17} strokeWidth={2.5} />} label={istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'} href={`/api/pdf?id=${quote.id}`} />
+              <Zeile icon={<Download size={17} strokeWidth={2.5} />} label={istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'} onClick={handlePdfDownloadClick} />
               <Zeile icon={<Link2 size={17} strokeWidth={2.5} />} label="Link zum Angebot kopieren" onClick={copyLink} />
               <Zeile icon={<Copy size={17} strokeWidth={2.5} />} label="Angebot duplizieren" onClick={handleDuplicate} />
               <Zeile icon={<FileText size={17} strokeWidth={2.5} />} label="CSV Export" href={`/api/csv?id=${quote.id}`} />
