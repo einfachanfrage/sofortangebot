@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useCallback } from 'react'
 import { Search } from 'lucide-react'
+import { getStatusInfo } from '@/lib/status'
 
 interface DashboardFiltersProps {
   entwurfCount: number
@@ -19,6 +20,21 @@ interface DashboardFiltersProps {
 // `key` bleibt bewusst "offen" (nur der Anzeige-Text ändert sich) — der
 // Query-Param wird an mehreren Stellen verlinkt (z. B. Dashboard-Hero),
 // eine Umbenennung des Keys hätte keinen echten Vorteil, nur Risiko.
+// DC-053 (2026-09-11, Manfred/TN-003): Der Reiter-Name allein sagt nicht,
+// was der Status bedeutet („Bereit versteh ich nicht. Bereit wofür?").
+// Die Erklärung kommt aus der zentralen Status-Quelle (src/lib/status.ts,
+// Feld `hilfe`), damit sie überall im Produkt gleich lautet — hier nur die
+// Zuordnung Reiter-Key -> Status-Key, weil die Reiter aus historischen
+// Gründen eigene Keys haben („offen" statt „sent").
+const PILL_STATUS: Record<string, string> = {
+  entwurf:    'draft',
+  bereit:     'bereit',
+  offen:      'sent',
+  beauftragt: 'accepted',
+  abgelehnt:  'rejected',
+  archived:   'archived',
+}
+
 const PILLS = [
   { key: '',           label: 'Alle',           hasCount: false },
   { key: 'entwurf',    label: 'Entwurf',        hasCount: true  },
@@ -101,6 +117,14 @@ export default function DashboardFilters({
           )
         })}
       </div>
+
+      {/* Ein Satz, was der gewählte Status bedeutet. Steht nur da, wenn
+          wirklich gefiltert wird — bei „Alle" gäbe es nichts zu erklären. */}
+      {PILL_STATUS[status] && (
+        <div className="-mt-1 text-[11px] font-semibold text-anthracite/40">
+          {getStatusInfo(PILL_STATUS[status]).hilfe}
+        </div>
+      )}
     </div>
   )
 }

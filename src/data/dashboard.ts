@@ -64,10 +64,26 @@ export async function getDashboardData() {
       quote_items: row.quote_items ?? [],
     })),
     monthRevenue,
+    prevMonthRevenue,
     // null wenn es im Vormonat schlicht keine Vergleichsbasis gibt (0 €
     // Vormonatsumsatz, z. B. ganz neue Firma) — dann lieber gar kein
     // Vergleich als eine bedeutungslose "+100%"/"+∞%"-Angabe.
-    monthRevenueDeltaPct: prevMonthRevenue > 0 ? Math.round(((monthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100) : null,
+    //
+    // DC-052 (2026-09-11, Manfred/TN-002): zwei weitere Fälle, in denen der
+    // Prozentwert nichts aussagt, aber wie ein Alarm aussieht. Manfreds Satz:
+    // "An jedem Monatsersten sieht jeder Betrieb damit aus wie pleite."
+    //   (a) Dieser Monat steht noch bei 0 € -> die Rechnung ergibt zwingend
+    //       -100 %, egal wie gut der Betrieb läuft.
+    //   (b) Die ersten sieben Tage: ein angefangener Monat gegen einen
+    //       vollen ist keine Aussage über den Betrieb, sondern über den
+    //       Kalender.
+    // In beiden Fällen zeigt die Kachel stattdessen den Vormonats-Umsatz als
+    // nuechterne Bezugsgroesse (siehe dashboard/page.tsx) — dieselbe
+    // Information, ohne die Wertung.
+    monthRevenueDeltaPct:
+      prevMonthRevenue > 0 && monthRevenue > 0 && now.getDate() > 7
+        ? Math.round(((monthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100)
+        : null,
     monthAccepted: monthQuotes.filter(q => q.status === 'accepted').length,
     priceListEmpty: (priceResult.count ?? 0) === 0,
     openCount: (openResult.data ?? []).length,

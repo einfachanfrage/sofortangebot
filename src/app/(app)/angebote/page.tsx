@@ -142,14 +142,24 @@ export default async function AngebotePage({
             {filteredQuotes.map(quote => {
               const cfg = getStatusInfo(quote.status)
               const gewerkBadge = quote.gewerk ? GEWERK_BADGE[quote.gewerk as string] : null
+              // DC-054 (2026-09-11, Manfred/TN-004): auch am Desktop stand in
+              // der Zeile nur der Kundenname — zwei Angebote für denselben
+              // Kunden waren nicht auseinanderzuhalten.
+              const desktopItems = (quote.quote_items ?? []).sort((a, b) => a.position - b.position)
+              const stichwort = desktopItems[0]?.title ?? null
               return (
                 <Link
                   key={quote.id}
                   href={`/angebot/${quote.id}`}
                   className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3.5 border-b border-anthracite/5 last:border-0 hover:bg-bg transition-colors group"
                 >
-                  <div className="font-black text-anthracite text-sm truncate group-hover:text-yellow transition-colors self-center">
-                    {quote.customer?.name || 'Kunde unbekannt'}
+                  <div className="min-w-0 self-center pr-4">
+                    <div className="font-black text-anthracite text-sm truncate group-hover:text-yellow transition-colors">
+                      {quote.customer?.name || 'Kunde unbekannt'}
+                    </div>
+                    {stichwort && (
+                      <div className="text-xs font-semibold text-anthracite/45 truncate mt-0.5">{stichwort}</div>
+                    )}
                   </div>
                   <div className="self-center">
                     {gewerkBadge

@@ -570,6 +570,27 @@ export default function EntwurfPage() {
   const [quoteInfo, setQuoteInfo] = useState<{ customer?: { name: string } | null; entwurf_gespeichert_am?: string; quote_items?: BestehendeQuotePosition[] } | null>(null)
   const [loading, setLoading] = useState(true)
   const [screen, setScreen] = useState<Screen>('timeline')
+  // DC-062 (2026-09-11, Manfred/TN-025): Die untere Leiste ist `fixed` und
+  // hatte keinen Hintergrund — die Positionsliste scrollte sichtbar durch den
+  // Hinweistext und unter dem gelben Knopf hindurch. Der Ausgleich war ein
+  // festes `pb-36` (144px), die Leiste ist je nach Zustand aber 230–290px
+  // hoch (Hinweissatz + Knopf mit zwei Zeilen + Aufnahme-Reihe), am Handy
+  // wegen der Umbrüche noch mehr. Statt einer neuen geratenen Zahl wird die
+  // tatsächliche Höhe gemessen und als Scroll-Puffer gesetzt.
+  const fussleisteRef = useRef<HTMLDivElement>(null)
+  const [fussleisteHoehe, setFussleisteHoehe] = useState(160)
+  useEffect(() => {
+    const el = fussleisteRef.current
+    if (!el) return
+    const messen = () => setFussleisteHoehe(el.offsetHeight)
+    messen()
+    const beobachter = new ResizeObserver(messen)
+    beobachter.observe(el)
+    return () => beobachter.disconnect()
+    // `screen` als einzige Abhängigkeit: nur dabei wird die Leiste neu
+    // ein-/ausgehängt. Jede Höhenänderung im Timeline-Screen selbst (Knopf
+    // erscheint, Text bricht um) meldet der ResizeObserver von sich aus.
+  }, [screen])
 
   const [recording, setRecording] = useState(false)
   const [recordingDauer, setRecordingDauer] = useState(0)
@@ -1264,15 +1285,27 @@ export default function EntwurfPage() {
     // weiterlaufen (Mikro bliebe offen) — beim Verlassen der Seite wird sie
     // verworfen, nicht hochgeladen (der Nutzer wollte ja gerade zurück, nicht
     // fertig aufnehmen).
-    if (recording) cancelRecording()
-    // Wenn Aufnahmen vorhanden aber noch keine Positionen generiert → nachfragen
+    //
+    // DC-063 (2026-09-11, Manfred/TN-029): Das Verwerfen passierte bisher
+    // OHNE Rückfrage, direkt beim Tippen auf „Zurück" — wer sich vertippt,
+    // verliert das gerade Gesprochene ersatzlos. Jetzt wird in beiden
+    // Verlust-Fällen erst gefragt (laufende Aufnahme / Aufnahmen ohne
+    // Berechnung), und verworfen wird erst nach der Bestätigung.
     const hatUnverarbeiteteAufnahmen = sprachen.length > 0 && !hatBestehendPositionen
-    if (hatUnverarbeiteteAufnahmen) {
+    if (recording || hatUnverarbeiteteAufnahmen) {
       setScreen('zurueck_bestaetigen')
     } else {
       router.push(zielZurueck)
     }
   }
+
+  /** DC-063: gemeinsamer Ausstieg — eine laufende Aufnahme wird erst hier verworfen. */
+  function verlasseSeite() {
+    if (recording) cancelRecording()
+    router.push(zielZurueck)
+  }
+
+  const zurueckZiel = zielZurueck === '/dashboard' ? 'Dashboard' : 'Angebot'
 
   if (screen === 'zurueck_bestaetigen') {
     return (
@@ -1280,24 +1313,56 @@ export default function EntwurfPage() {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setScreen('timeline')} />
         <div className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-10 shadow-2xl">
           <div className="flex justify-center mb-4"><div className="w-10 h-1 rounded-full bg-anthracite/20" /></div>
-          <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-2">Aufnahmen noch nicht ausgewertet</h2>
-          <p className="text-anthracite/50 font-semibold text-[14px] mb-6 leading-relaxed">
-            Du hast {sprachen.length} {sprachen.length === 1 ? 'Aufnahme' : 'Aufnahmen'} — aber noch keine Positionen berechnet. Jetzt auswerten?
-          </p>
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={() => { setScreen('timeline'); fertigstellen() }}
-              className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
-            >
-              Positionen berechnen →
-            </button>
-            <button
-              onClick={() => router.push(zielZurueck)}
-              className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
-            >
-              Trotzdem zurück ohne Berechnen
-            </button>
-          </div>
+          {/* DC-063 (2026-09-11, Manfred/TN-029): zwei Fälle, ein Sheet.
+              Eine laufende Aufnahme wäre beim Zurücktippen bisher stillschweigend
+              verloren gegangen; und auf die eigentliche Frage („ist der Entwurf
+              dann weg oder liegt er rum?") gab es nirgends eine Antwort. */}
+          {recording ? (
+            <>
+              <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-2">Aufnahme läuft noch</h2>
+              <p className="text-anthracite/50 font-semibold text-[14px] mb-6 leading-relaxed">
+                Wenn du jetzt zurückgehst, ist das gerade Gesprochene weg — es wurde noch nicht gespeichert.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => setScreen('timeline')}
+                  className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
+                >
+                  Weiter aufnehmen
+                </button>
+                <button
+                  onClick={verlasseSeite}
+                  className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                >
+                  Aufnahme verwerfen und zurück
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="font-syne font-extrabold text-anthracite text-[20px] mb-2">Aufnahmen noch nicht ausgewertet</h2>
+              <p className="text-anthracite/50 font-semibold text-[14px] mb-2 leading-relaxed">
+                Du hast {sprachen.length} {sprachen.length === 1 ? 'Aufnahme' : 'Aufnahmen'} — aber noch keine Positionen berechnet. Jetzt auswerten?
+              </p>
+              <p className="text-anthracite/40 font-semibold text-[13px] mb-6 leading-relaxed">
+                {sprachen.length === 1 ? 'Die Aufnahme ist gespeichert' : 'Die Aufnahmen sind gespeichert'} und bleibt{sprachen.length === 1 ? '' : 'en'} in diesem Aufmaß — du kannst später weitermachen.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => { setScreen('timeline'); fertigstellen() }}
+                  className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
+                >
+                  Positionen berechnen →
+                </button>
+                <button
+                  onClick={verlasseSeite}
+                  className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                >
+                  Später weitermachen
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     )
@@ -1337,9 +1402,12 @@ export default function EntwurfPage() {
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-anthracite/8 px-4 pt-safe-top">
         <div className="flex items-center justify-between h-14">
-          <button onClick={handleBackClick} className="flex items-center gap-1.5 text-anthracite/60">
-            <ArrowLeft size={18} />
-            <span className="font-semibold text-[14px]">Zurück</span>
+          {/* DC-063: „Zurück" allein sagte nicht, wo man landet. Jetzt steht
+              das Ziel dran — Dashboard bei einem noch leeren Aufmaß, sonst das
+              Angebot, zu dem dieses Aufmaß gehört (Ziel-Logik: DC-031). */}
+          <button onClick={handleBackClick} className="flex items-center gap-1.5 text-anthracite/60 min-w-0">
+            <ArrowLeft size={18} className="shrink-0" />
+            <span className="font-semibold text-[14px] truncate">{zurueckZiel}</span>
           </button>
 
           <div className="text-center">
@@ -1415,7 +1483,7 @@ export default function EntwurfPage() {
       )}
 
       {/* Timeline */}
-      <div className="flex-1 px-4 py-4 pb-36">
+      <div className="flex-1 px-4 py-4" style={{ paddingBottom: fussleisteHoehe + 16 }}>
         {loading && (
           <div className="flex justify-center pt-12">
             <Loader2 size={24} className="animate-spin text-anthracite/30" />
@@ -1480,16 +1548,14 @@ export default function EntwurfPage() {
           </div>
         )}
 
-        {/* Aufnahme-Indikator */}
-        {recording && (
-          <div className="mt-3 bg-white rounded-2xl border border-anthracite/5 px-4 py-3 flex items-center gap-3">
-            <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
-            <span className="font-extrabold text-anthracite text-[14px]">
-              Aufnahme läuft — {recordingDauer}s
-            </span>
-            <span className="text-anthracite/40 font-semibold text-[12px]">Nochmal tippen zum Stoppen</span>
-          </div>
-        )}
+        {/* DC-059 (2026-09-11, Manfred/TN-022): Hier stand ein zweiter,
+            weißer Balken „Aufnahme läuft — Nochmal tippen zum Stoppen". Er
+            sah aus wie ein Knopf, forderte wörtlich zum Tippen auf und war
+            ein `div` ohne Handler — der einzige echte Stopp ist die rote
+            Leiste unten. Zwei konkurrierende Stopp-Angebote, von denen eins
+            nicht funktioniert: der falsche ist weg. Laufzeit und Stopp stehen
+            vollständig auf der roten Leiste, die immer sichtbar ist. */
+        }
 
         {/* Status wenn alle Aufnahmen fertig — nicht während laufender Aufnahme.
             DC-009: 0 erkannte Positionen ist kein grüner Erfolg mehr, sondern ein
@@ -1512,7 +1578,12 @@ export default function EntwurfPage() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pt-3 pb-8 flex flex-col gap-3" style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}>
+      {/* DC-062: eigener Hintergrund statt durchscheinender Liste, plus ein
+          kurzer Verlauf nach oben, damit die Kante nicht hart abschneidet.
+          Die Höhe wird gemessen (fussleisteRef) und oben als Scroll-Puffer
+          gesetzt — die letzten Positionszeilen sind damit immer erreichbar. */}
+      <div className="fixed bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-bg to-transparent pointer-events-none" style={{ bottom: fussleisteHoehe }} />
+      <div ref={fussleisteRef} className="fixed bottom-0 left-0 right-0 z-20 bg-bg px-5 pt-3 pb-8 flex flex-col gap-3" style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}>
 
         {/* Positionen-berechnen-Button — NICHT während laufender Aufnahme (verwirrt:
             erst fertig aufnehmen, dann berechnen) */}

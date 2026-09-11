@@ -39,20 +39,30 @@ export interface StatusInfo {
   text: string
   /** Kräftige, volltonige Farbe für Punkte/Ränder (kein Pastell) */
   dot: string
+  /**
+   * DC-053 (2026-09-11, Manfred/TN-003): Ein Satz, der sagt, was der Status
+   * BEDEUTET — "Bereit versteh ich nicht. Bereit wofür? Fertig geschrieben,
+   * noch nicht raus? Sag's mir." Das Label allein beantwortet die Frage
+   * nicht, und die Antwort stand bisher nur als Code-Kommentar hier oben
+   * bzw. in einem Empty-State, den man nur sieht, wenn nichts da ist.
+   * Gehört zur Status-Quelle selbst, damit jede Stelle, die einen Status
+   * erklärt, denselben Satz nimmt.
+   */
+  hilfe: string
 }
 
 export const STATUS_CONFIG: Record<QuoteStatus, StatusInfo> = {
-  draft: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF' },
-  in_bearbeitung: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF' },
+  draft: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.' },
+  in_bearbeitung: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.' },
   // Fertig kalkuliert, aber noch nicht beim Kunden — bewusst Gelb (Marke,
   // "handlungsbereit"), nicht Grün: Grün bleibt für "Kunde hat zugesagt"
   // reserviert, sonst wirken zwei ganz unterschiedlich wichtige Momente
   // (selbst fertig vs. Kunde hat beauftragt) optisch gleich bedeutsam.
-  bereit: { label: 'Bereit', bg: 'bg-[#FEF9C3]', text: 'text-[#8B7000]', dot: '#D9A400' },
-  sent: { label: 'Beim Kunden', bg: 'bg-blue-50', text: 'text-blue-700', dot: '#3B82F6' },
-  accepted: { label: 'Beauftragt', bg: 'bg-[#EDFAF0]', text: 'text-[#1A7A38]', dot: '#22C55E' },
-  rejected: { label: 'Abgelehnt', bg: 'bg-red-50', text: 'text-red-700', dot: '#EF4444' },
-  archived: { label: 'Archiviert', bg: 'bg-gray-100', text: 'text-gray-500', dot: '#9CA3AF' },
+  bereit: { label: 'Bereit', bg: 'bg-[#FEF9C3]', text: 'text-[#8B7000]', dot: '#D9A400', hilfe: 'Fertig gerechnet, aber noch nicht beim Kunden.' },
+  sent: { label: 'Beim Kunden', bg: 'bg-blue-50', text: 'text-blue-700', dot: '#3B82F6', hilfe: 'Raus an den Kunden — du wartest auf Antwort.' },
+  accepted: { label: 'Beauftragt', bg: 'bg-[#EDFAF0]', text: 'text-[#1A7A38]', dot: '#22C55E', hilfe: 'Kunde hat zugesagt.' },
+  rejected: { label: 'Abgelehnt', bg: 'bg-red-50', text: 'text-red-700', dot: '#EF4444', hilfe: 'Kunde hat abgesagt.' },
+  archived: { label: 'Archiviert', bg: 'bg-gray-100', text: 'text-gray-500', dot: '#9CA3AF', hilfe: 'Abgelegt — taucht in der normalen Liste nicht mehr auf.' },
 }
 
 /** Fällt nie auf "falsch eingefärbt" zurück — unbekannter/alter Status zeigt neutral Grau statt eines zufälligen anderen Status. */

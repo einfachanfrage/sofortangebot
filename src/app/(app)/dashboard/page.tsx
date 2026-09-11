@@ -37,6 +37,7 @@ export default async function DashboardPage({
   const {
     company, recentQuotes, monthRevenue: monatUmsatz,
     monthRevenueDeltaPct: monatUmsatzDeltaPct,
+    prevMonthRevenue: vormonatUmsatz,
     monthAccepted: monatBeauftragt, priceListEmpty: preislisteIstLeer,
     openCount: offeneGesamtCount,
   } = data
@@ -108,13 +109,24 @@ export default async function DashboardPage({
         >
           <div className="flex items-baseline justify-between gap-2 flex-wrap">
             <div className="font-syne font-black text-anthracite text-[26px] leading-none">{fmt(monatUmsatz)}</div>
-            {monatUmsatzDeltaPct !== null && (
+            {/* DC-052 (2026-09-11, Manfred/TN-002): Der Prozentvergleich steht
+                nur noch da, wenn er etwas über den Betrieb aussagt — also ab
+                dem 8. des Monats und erst, wenn dieser Monat überhaupt Umsatz
+                hat. Sonst stand am Monatsanfang zwangsläufig "0 € · −100 %"
+                und jeder Betrieb sah an Tag 1 aus wie pleite. In dem Fall
+                zeigt die Kachel den Vormonat als reine Bezugsgröße: dieselbe
+                Information, ohne die Wertung. */}
+            {monatUmsatzDeltaPct !== null ? (
               <span className={`text-[11px] font-extrabold px-2.5 py-1 rounded-full whitespace-nowrap ${
                 monatUmsatzDeltaPct >= 0 ? 'bg-green-100 text-green-700' : 'bg-anthracite/8 text-anthracite/50'
               }`}>
                 {monatUmsatzDeltaPct >= 0 ? '+' : ''}{monatUmsatzDeltaPct}% ggü. letzten Monat
               </span>
-            )}
+            ) : vormonatUmsatz > 0 ? (
+              <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full whitespace-nowrap bg-anthracite/8 text-anthracite/50">
+                Letzter Monat {fmt(vormonatUmsatz)}
+              </span>
+            ) : null}
           </div>
           <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide">Umsatz · Monat</div>
           {monatBeauftragt > 0 && (

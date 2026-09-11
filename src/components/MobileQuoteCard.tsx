@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { Trash2, MoreHorizontal } from 'lucide-react'
+import { Trash2, MoreHorizontal, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { getStatusInfo } from '@/lib/status'
+import { getStatusInfo, waehlbareStatus } from '@/lib/status'
 
 // DC-003: hatte hier vorher zwei eigene Status→Farbe-Tabellen (Rand +
 // Badge), unabhängig von den drei weiteren im Rest des Produkts — jetzt
@@ -32,8 +32,10 @@ interface Props {
   ersterItemTitel?: string | null
 }
 
-export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props) {
+export function MobileQuoteCard({ quote, formattedDate, formattedAmount, ersterItemTitel }: Props) {
   const [showMenu, setShowMenu] = useState(false)
+  const [showStatusWahl, setShowStatusWahl] = useState(false)
+  const [statusSpeichert, setStatusSpeichert] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
@@ -45,6 +47,7 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props
     function handle(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setShowMenu(false)
+        setShowStatusWahl(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -57,6 +60,22 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props
     setDeleting(true)
     setShowMenu(false)
     await supabase.from('quotes').delete().eq('id', quote.id)
+    router.refresh()
+  }
+
+  // DC-084 (2026-09-11, Manfred/TN-084): Das Menü konnte bisher nur löschen.
+  // Manfreds Punkt: bei einem Angebot, das beim Kunden liegt, ist „Status
+  // ändern" die Aktion, die man von der Liste aus wirklich braucht („Kunde
+  // hat zugesagt" tippt man unterwegs, nicht am Schreibtisch) — Löschen ist
+  // die seltenste. Dieselbe Aktion und dieselbe Auswahl-Logik wie im
+  // Status-Sheet der Detailansicht (waehlbareStatus), nur eine Ebene früher.
+  async function setzeStatus(e: React.MouseEvent, neuerStatus: string) {
+    e.preventDefault(); e.stopPropagation()
+    setStatusSpeichert(true)
+    await supabase.from('quotes').update({ status: neuerStatus }).eq('id', quote.id)
+    setStatusSpeichert(false)
+    setShowStatusWahl(false)
+    setShowMenu(false)
     router.refresh()
   }
 
@@ -94,6 +113,16 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props
                 <div className={`font-black text-sm truncate ${kundenname ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/40 italic'}`}>
                   {primaryTitle}
                 </div>
+                {/* DC-054 (2026-09-11, Manfred/TN-004): „Zweimal Fischer GmbH,
+                    zweimal Lina Meier — ich weiß nicht, welches was ist."
+                    Der Titel der ersten Position wurde schon geladen und bis
+                    hierher durchgereicht, aber nie angezeigt (toter Datenpfad
+                    seit 660656a). Er steht jetzt direkt unter dem Namen —
+                    dort, wo man beim Überfliegen der Liste hinsieht —, die
+                    Nummer rutscht eine Zeile tiefer. */}
+                {ersterItemTitel && (
+                  <div className="text-xs text-anthracite/70 font-bold truncate mt-0.5">{ersterItemTitel}</div>
+                )}
                 <div className="text-xs text-[#888888] font-semibold mt-0.5">{subtitle}</div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -123,15 +152,51 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount }: Props
 
       {/* Dropdown-Menü */}
       {showMenu && (
-        <div ref={menuRef} className="absolute right-0 top-full mt-1 z-50 bg-white rounded-xl shadow-xl border border-anthracite/8 min-w-[150px] overflow-hidden">
-          <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="flex items-center gap-2.5 w-full px-4 py-3 text-red-500 font-semibold text-sm hover:bg-red-50 transition-colors disabled:opacity-50"
-          >
-            <Trash2 size={15} />
-            {deleting ? 'Wird gelöscht…' : 'Löschen'}
-          </button>
+        <div ref={menuRef} className="absolute right-0 top-full mt-1 z-50 bg-white rounded-xl shadow-xl border border-anthracite/8 min-w-[190px] overflow-hidden">
+          {showStatusWahl ? (
+            <>
+              <button
+                onClick={e => { e.preventDefault(); e.stopPropagation(); setShowStatusWahl(false) }}
+                className="flex items-center gap-2 w-full px-4 py-2.5 text-anthracite/40 font-bold text-[11px] uppercase tracking-wide border-b border-anthracite/5"
+              >
+                <ArrowLeft size={13} strokeWidth={3} />
+                Status ändern
+              </button>
+              {waehlbareStatus(quote.status).map(kandidat => {
+                const info = getStatusInfo(kandidat)
+                const istAktuell = kandidat === quote.status
+                return (
+                  <button
+                    key={kandidat}
+                    onClick={e => setzeStatus(e, kandidat)}
+                    disabled={statusSpeichert || istAktuell}
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 text-anthracite font-semibold text-sm hover:bg-bg transition-colors disabled:opacity-40"
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: info.dot }} />
+                    {info.label}
+                  </button>
+                )
+              })}
+            </>
+          ) : (
+            <>
+              <button
+                onClick={e => { e.preventDefault(); e.stopPropagation(); setShowStatusWahl(true) }}
+                className="flex items-center gap-2.5 w-full px-4 py-3 text-anthracite font-semibold text-sm hover:bg-bg transition-colors"
+              >
+                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: status.dot }} />
+                Status ändern
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex items-center gap-2.5 w-full px-4 py-3 text-red-500 font-semibold text-sm hover:bg-red-50 transition-colors disabled:opacity-50 border-t border-anthracite/5"
+              >
+                <Trash2 size={15} />
+                {deleting ? 'Wird gelöscht…' : 'Löschen'}
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>

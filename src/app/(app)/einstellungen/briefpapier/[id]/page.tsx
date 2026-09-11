@@ -7,6 +7,7 @@ import Link from 'next/link'
 import type { Briefpapier, Company } from '@/lib/types'
 import { Upload } from 'lucide-react'
 import { Input } from '@/components/Input'
+import BottomNav from '@/components/BottomNav'
 
 const FARB_CHIPS = ['#D9A400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
 const SCHRIFTEN = [
@@ -366,6 +367,13 @@ function BriefpapierEditorInner() {
           </button>
         </div>
       </div>
+
+      {/* DC-096 (2026-09-11, Manfred/TN-111): Auf dieser Unterseite fehlte die
+          untere Leiste komplett — einziger Weg raus war „← Briefpapier".
+          Die Leiste wird im Produkt pro Seite eingebunden (nicht im Layout),
+          deshalb fällt sie beim Anlegen einer neuen Unterseite leicht durch.
+          Die Elternseite briefpapier/page.tsx hat sie, diese hatte sie nicht. */}
+      <BottomNav />
     </div>
   )
 }
