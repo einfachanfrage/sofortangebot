@@ -45,6 +45,18 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
   // WhatsApp / Link
   const [publicUrl, setPublicUrl] = useState<string | null>(null)
   const [urlLoading, setUrlLoading] = useState(false)
+  // 2026-09-11 (Sandy, Live-Test): WhatsApp/Link zeigten beide nur ein
+  // stummes "Link konnte nicht generiert werden" — ohne jede Angabe, woran
+  // es lag. Beide hängen an derselben `loadPublicUrl`, die bisher weder
+  // `res.ok` noch die Fehlermeldung aus der API-Antwort auswertete und den
+  // Fehler komplett verschluckte (kein catch). Backend-seitig (Engineering-
+  // Domäne) konnte ich die Ursache von hier aus nicht abschließend
+  // reproduzieren — kein Netzwerkzugriff auf Supabase aus meiner
+  // Diagnose-Umgebung, und in Sentry liegt zu dieser Route kein einziges
+  // Fehler-Event (die Route meldet Fehler bisher nicht an Sentry). Diese
+  // Fehlermeldung macht den nächsten Fehlschlag wenigstens sichtbar, statt
+  // ihn stumm zu verschlucken.
+  const [urlError, setUrlError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
   // Sending state
@@ -62,10 +74,17 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
   const loadPublicUrl = useCallback(async () => {
     if (publicUrl) return
     setUrlLoading(true)
+    setUrlError(null)
     try {
       const res = await fetch(`/api/quotes/${quote.id}/public-pdf`, { method: 'POST' })
-      const data = await res.json()
-      if (data.url) setPublicUrl(data.url)
+      const data = await res.json().catch(() => null)
+      if (res.ok && data?.url) {
+        setPublicUrl(data.url)
+      } else {
+        setUrlError(data?.error ?? `Der Server hat den Link nicht erzeugt (Status ${res.status}).`)
+      }
+    } catch (e) {
+      setUrlError(e instanceof Error ? e.message : 'Verbindung zum Server fehlgeschlagen.')
     } finally {
       setUrlLoading(false)
     }
@@ -314,7 +333,12 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                       </button>
                     </>
                   ) : (
-                    <div className="text-center text-sm text-gray-500 py-8">Link konnte nicht generiert werden.</div>
+                    <div className="text-center py-8 space-y-2">
+                      <div className="text-sm text-red-600 font-medium px-4">{urlError ?? 'Link konnte nicht generiert werden.'}</div>
+                      <button onClick={loadPublicUrl} className="text-xs font-semibold text-anthracite underline underline-offset-2">
+                        Erneut versuchen
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
@@ -351,7 +375,12 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                       </div>
                     </>
                   ) : (
-                    <div className="text-center text-sm text-gray-500 py-8">Link konnte nicht generiert werden.</div>
+                    <div className="text-center py-8 space-y-2">
+                      <div className="text-sm text-red-600 font-medium px-4">{urlError ?? 'Link konnte nicht generiert werden.'}</div>
+                      <button onClick={loadPublicUrl} className="text-xs font-semibold text-anthracite underline underline-offset-2">
+                        Erneut versuchen
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
