@@ -12,7 +12,7 @@ import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon,
   Camera, AlertTriangle, GripVertical, MoreHorizontal, Percent, Tag, Settings,
-  Info, Eye, EyeOff,
+  Info,
 } from 'lucide-react'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
@@ -1575,22 +1575,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     window.open(`/api/pdf?id=${quote.id}`, '_blank')
   }
 
-  // DC-050 Nachzug: zentraler Ein/Aus-Schalter im Aktionen-Footer, siehe
-  // Kommentar an der Button-Stelle. Direktes Umschalten statt Ja/Nein-Frage
-  // — hier fragt niemand zum ersten Mal, hier wird eine bereits getroffene
-  // oder implizite (Standard: sichtbar) Entscheidung geändert.
-  async function toggleRechenwegAufPdf() {
-    const vorherWert = zeigeRechenwegAufPdf
-    const naechsterWert = !(zeigeRechenwegAufPdf ?? true)
-    setZeigeRechenwegAufPdf(naechsterWert)
-    const { error } = await supabase.from('quotes').update({ zeige_rechenweg_auf_pdf: naechsterWert }).eq('id', quote.id)
-    if (error) {
-      setZeigeRechenwegAufPdf(vorherWert)
-      showToast('Konnte nicht gespeichert werden')
-      return
-    }
-    showToast(naechsterWert ? 'Rechenweg auf PDF sichtbar ✓' : 'Rechenweg auf PDF ausgeblendet ✓')
-  }
+  // Nachtrag (2026-09-11): der zentrale Footer-Schalter, der diese Funktion
+  // aufrief, ist im nächsten Zug wieder raus (Sandy: "clean, nur zwei
+  // Buttons") — die Vorschau übernimmt das Umschalten jetzt allein (siehe
+  // VorschauUndVersand). Funktion entfernt statt totem Code liegen zu lassen.
 
   const [lexwareKontakte, setLexwareKontakte] = useState<{ id: string; name: string; address: string | null; phone: string | null; email: string | null; source: string }[]>([])
 
@@ -1883,6 +1871,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <button onClick={() => setShowOptionen(true)} title="Einstellungen für dieses Angebot"
               className="bg-white/10 md:bg-anthracite/5 text-white md:text-anthracite/60 rounded-xl p-2 hover:bg-yellow/30 transition-colors">
               <Settings size={16} />
+            </button>
+            {/* Nachtrag (2026-09-11, Sandy: "clean und minimalistisch"):
+                hierher aus der unteren Aktionsleiste verschoben, damit dort
+                nur noch Vorschau + Senden stehen. Gleicher Inhalt, gleiches
+                Sheet (showAktionen) — Duplizieren, CSV-Export, direkter
+                PDF-Download, Löschen etc., nichts ist weggefallen. */}
+            <button onClick={() => setShowAktionen(true)} title="Weitere Aktionen"
+              className="bg-white/10 md:bg-anthracite/5 text-white md:text-anthracite/60 rounded-xl p-2 hover:bg-yellow/30 transition-colors">
+              <MoreHorizontal size={16} />
             </button>
             {!editMode ? (
               <button onClick={handleEditClick}
@@ -2755,32 +2752,18 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             >
               <Share2 size={15} strokeWidth={2.5} /> Senden →
             </button>
-            {/* DC-050 Nachzug (2026-09-11, Sandy: "ich will da unten einen
-                zentralen button vonwegen rechenweg anzeigen oder ausblenden
-                auf pdf was dann für alle export pdf gilt"): direkter,
-                jederzeit erreichbarer Schalter — bislang gab es die Frage
-                nur einmalig (Vorschau-Tab) bzw. vor dem direkten Download.
-                Schreibt dasselbe Feld (zeige_rechenweg_auf_pdf), das bereits
-                alle PDF-Exporte steuert (E-Mail/WhatsApp/Link/Download/
-                ZUGFeRD, siehe lib/pdf.tsx) — kein neuer Mechanismus, nur ein
-                zusätzlicher, prominenter Zugang zum selben Wert. */}
-            <button
-              onClick={toggleRechenwegAufPdf}
-              title={`Rechenweg auf PDF: ${(zeigeRechenwegAufPdf ?? true) ? 'sichtbar' : 'ausgeblendet'} — antippen zum Ändern`}
-              className={`flex items-center justify-center px-3 py-2.5 rounded-xl border shrink-0 transition-colors ${
-                (zeigeRechenwegAufPdf ?? true) ? 'bg-bg text-anthracite/60 border-anthracite/10' : 'bg-anthracite/5 text-anthracite/30 border-anthracite/10'
-              }`}
-            >
-              {(zeigeRechenwegAufPdf ?? true) ? <Eye size={16} /> : <EyeOff size={16} />}
-            </button>
-            {/* Alle weiteren Aktionen an EINER Stelle */}
-            <button
-              onClick={() => setShowAktionen(true)}
-              title="Weitere Aktionen"
-              className="flex items-center justify-center px-3 py-2.5 rounded-xl bg-bg text-anthracite/60 border border-anthracite/10 shrink-0"
-            >
-              <MoreHorizontal size={16} />
-            </button>
+            {/* Nachtrag (2026-09-11, Sandy: "die ganze ansicht da unten mit
+                vorschau senden und dann den drei punkten so verwirrend...
+                es soll clean und minimalistisch sein"): der Eye/EyeOff-
+                Schalter von eben und das "⋯" sind hier raus — genau zwei
+                Buttons, wie sie es wollte. Der Rechenweg-Schalter bleibt
+                erreichbar, nur nicht mehr als eigenes Icon hier: die
+                Vorschau zeigt/ändert ihn bereits (siehe VorschauUndVersand,
+                "Rechenweg auf PDF: … · ändern"), "Vorschau" ist ja der
+                erste der beiden verbleibenden Buttons. "⋯" (Duplizieren,
+                CSV-Export, direkter PDF-Download, Löschen etc.) ist nicht
+                verschwunden, sondern in die Kopfzeile oben gewandert, siehe
+                dort neben dem Zahnrad. */}
           </div>
         )}
       </div>
