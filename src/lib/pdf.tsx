@@ -255,10 +255,25 @@ interface Props {
   // freigegeben hat (siehe src/lib/angebot-fotos.ts). Optional — wer sie nicht
   // mitgibt (Health-Check, Unterschrifts-Mail), bekommt das PDF wie bisher.
   fotos?: AngebotsFoto[]
+  /**
+   * DC-050: Rechenweg auf dem Kunden-PDF zeigen?
+   *
+   * Normalfall: weglassen. Dann entscheidet das Angebot selbst
+   * (`quote.zeige_rechenweg_auf_pdf`), und wo dort noch nichts steht, gilt der
+   * Standard aus dem CI-Handbuch — sichtbar.
+   *
+   * Die Prop ist nur der Übersteuerungsweg für die Vorschau, in der der
+   * Handwerker die Entscheidung trifft, BEVOR sie am Angebot gespeichert ist.
+   * Sechs Routen erzeugen ein Kunden-PDF; hinge die Antwort an der Prop, müsste
+   * jede von ihnen sie kennen, und eine vergessene Stelle würde das
+   * Kundendokument still ändern. Deshalb trägt das Angebot die Entscheidung,
+   * nicht der Aufrufer.
+   */
+  zeigeRechenweg?: boolean
 }
 
 // ── Hauptkomponente ────────────────────────────────────────────────────────
-export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase64, revision, fotos }: Props) {
+export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase64, revision, fotos, zeigeRechenweg }: Props) {
   const isKleinunternehmer = company.vat_rate === 0
   const vatRate = company.vat_rate
 
@@ -285,6 +300,25 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   // Position. Die Gruppierung (gruppiereNachStruktur) reicht `annahmen` nicht
   // durch — deshalb hier einmal nach id auflösen, statt den Gruppen-Typ und
   // seine Tests für ein reines Anzeigefeld zu erweitern.
+  // ── DC-050 (Sandy, 11.09.2026) ──────────────────────────────────────────
+  //
+  // Echter Zielkonflikt: Das CI-Handbuch fordert den Rechenweg auf dem
+  // Kundendokument „nie versteckt, nie eingeklappt" (S. 19) — Sandy wollte
+  // steuern können, ob er drauf muss. Ihre Entscheidung: pro Angebot fragen,
+  // nicht global schalten und nicht bei jedem Versand neu.
+  //
+  // Die Rangfolge ist bewusst so herum:
+  //   1. ausdrückliche Prop (Vorschau, bevor gespeichert ist)
+  //   2. die am Angebot gespeicherte Antwort
+  //   3. der Handbuch-Standard: sichtbar
+  //
+  // `null` heißt „noch nicht gefragt" und zeigt den Rechenweg. Schweigen darf
+  // nichts ausblenden, sonst entscheidet eine fehlende Datenbankspalte still
+  // gegen die Norm — und der Kunde bekommt ein Dokument, das er nicht
+  // nachrechnen kann (VOB-004/Legal G5, derselbe Grund wie beim
+  // Übermessungs-Hinweis darunter).
+  const rechenwegSichtbar = zeigeRechenweg ?? quote.zeige_rechenweg_auf_pdf ?? true
+
   const hinweisJeItem = uebermessungsHinweiseJePosition(quote.items)
   const zeigeUebermessungsFussnote = hinweisJeItem.size > 0
 
@@ -392,8 +426,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                   {hinweisJeItem.get(item.id) && (
                     <Text style={S.uebermessungText}>{hinweisJeItem.get(item.id)} ¹</Text>
                   )}
-                  <Text style={S.rechenwegText}>{rechenwegJeItem.get(item.id)?.berechnungsweg || 'Pauschale'}</Text>
-                  {(rechenwegJeItem.get(item.id)?.annahmen?.length ?? 0) > 0 && (
+                  {rechenwegSichtbar && (
+                    <Text style={S.rechenwegText}>{rechenwegJeItem.get(item.id)?.berechnungsweg || 'Pauschale'}</Text>
+                  )}
+                  {rechenwegSichtbar && (rechenwegJeItem.get(item.id)?.annahmen?.length ?? 0) > 0 && (
                     <Text style={S.rechenwegAnnahmen}>{rechenwegJeItem.get(item.id)!.annahmen!.join(' · ')}</Text>
                   )}
                 </View>
@@ -428,8 +464,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                     {hinweisJeItem.get(gi.id) && (
                       <Text style={S.uebermessungText}>{hinweisJeItem.get(gi.id)} ¹</Text>
                     )}
-                    <Text style={S.rechenwegText}>{rechenwegJeItem.get(gi.id)?.berechnungsweg || 'Pauschale'}</Text>
-                    {(rechenwegJeItem.get(gi.id)?.annahmen?.length ?? 0) > 0 && (
+                    {rechenwegSichtbar && (
+                      <Text style={S.rechenwegText}>{rechenwegJeItem.get(gi.id)?.berechnungsweg || 'Pauschale'}</Text>
+                    )}
+                    {rechenwegSichtbar && (rechenwegJeItem.get(gi.id)?.annahmen?.length ?? 0) > 0 && (
                       <Text style={S.rechenwegAnnahmen}>{rechenwegJeItem.get(gi.id)!.annahmen!.join(' · ')}</Text>
                     )}
                   </View>

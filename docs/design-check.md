@@ -5151,4 +5151,76 @@ einen echten Zielkonflikt mit dem Handbuch berührt und eine Backend-
 
 ---
 
+## DC-050 — Backend-Teil erledigt (Head of Product Engineering, 2026-09-11)
+
+Migration und Rendering stehen. 1.628 Tests grün, TypeScript und Lint sauber.
+**Die UI ist damit nicht mehr blockiert.**
+
+### Eine Korrektur am Scoping — zum Guten
+
+Im Ticket stand, die sechs PDF-Routen müssten die neue Spalte lesen. Nachgesehen:
+**Alle sechs laden das Angebot mit `select('*')`.** Die Spalte kommt also von
+selbst mit, keine Route wurde angefasst.
+
+Und ich habe die Entscheidung bewusst **nicht** über die Prop geführt, wie im
+Ticket skizziert, sondern über das Angebot selbst. Grund: Hinge die Antwort an
+der Prop, müssten alle sechs Aufrufer sie kennen — und eine vergessene Stelle
+würde das Kundendokument still ändern. Genau diese Fehlerfamilie hat mich diese
+Woche viermal beschäftigt (PM-012, PM-021, PM-030, PM-031). Jetzt entscheidet
+`AngebotPDF` an einer Stelle.
+
+Die Prop gibt es trotzdem, und du brauchst sie: als Übersteuerung für die
+Vorschau, in der der Handwerker die Entscheidung trifft, bevor sie gespeichert
+ist. Rangfolge:
+
+1. `zeigeRechenweg`-Prop (Vorschau)
+2. `quote.zeige_rechenweg_auf_pdf` (gespeicherte Antwort)
+3. sichtbar (Handbuch-Standard)
+
+### Die Regel, die man leicht falsch herum baut
+
+`null` heißt „noch nicht gefragt" — und zeigt den Rechenweg. **Schweigen
+blendet nichts aus.** Andernfalls entschiede eine fehlende Antwort still gegen
+das Handbuch, und der Kunde bekäme ein Dokument, das er nicht nachrechnen kann.
+Bestehende Angebote bleiben alle auf `null` und sehen aus wie bisher; die
+Migration ändert an keinem einzigen etwas.
+
+### Was du brauchst
+
+Die Spalte heißt `quotes.zeige_rechenweg_auf_pdf` (boolean, nullable). Du kannst
+sie direkt vom Client schreiben, ein eigener Endpunkt ist nicht nötig — dieselbe
+Stelle, an der `AngebotDetail.tsx` schon `raum_details` speichert:
+
+```ts
+await supabase.from('quotes')
+  .update({ zeige_rechenweg_auf_pdf: true /* oder false */ })
+  .eq('id', quote.id)
+```
+
+Für die Vorschau vor dem Speichern: `<AngebotPDF … zeigeRechenweg={wahl} />`.
+
+Beide Renderpfade sind abgedeckt (flach und nach Räumen gruppiert) — der
+Übermessungs-Test von gestern hat gezeigt, dass ein Fix in nur einem der beiden
+nicht auffällt. Zehn Tests rendern echte PDFs und lesen den Text zurück.
+
+**Unberührt bleibt der Übermessungs-Hinweis** (VOB-004 / Legal G5). Er steht in
+einer eigenen Zeile und verschwindet auch dann nicht, wenn der Rechenweg
+ausgeblendet ist — er ist eine Rechtspflicht, keine Darstellungsfrage.
+
+### Offen, bei Sandy
+
+Die Migration muss sie im Supabase-Editor ausführen, wie bei
+`mindestauftragswert` am 07.09. Bis dahin verhält sich alles wie bisher: Der
+Code liest die Spalte über `select('*')`, findet sie nicht, und fällt auf
+„sichtbar" zurück. Die UI kann erst danach speichern.
+
+**Nicht vergessen:** Der Storage-Bucket `public-pdfs` mit dem falschen
+MIME-Type (`document/pdf` statt `application/pdf`) ist laut deinem Nachtrag
+weiterhin offen und blockiert den WhatsApp-/Link-Versand. Das ist der ältere
+und lautere Fund von beiden.
+
+*Head of Product Engineering · 2026-09-11*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

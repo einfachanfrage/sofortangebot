@@ -218,6 +218,18 @@ export interface Quote {
   widerruf_beilegen?: boolean | null
   preis_darstellung?: 'netto' | 'brutto' | null
   raum_details?: Record<string, unknown> | null
+  /**
+   * DC-050: Soll der Rechenweg auf dem KUNDEN-PDF stehen?
+   *
+   * `null` = noch nicht gefragt. Dann gilt der Standard aus dem CI-Handbuch:
+   * sichtbar („nie versteckt, nie eingeklappt", S. 19). Erst eine bewusste
+   * Antwort des Handwerkers kann ihn ausblenden — Schweigen blendet nichts aus.
+   *
+   * Betrifft ausschließlich das Kunden-PDF. Die eigene Entwurfsansicht klappt
+   * den Rechenweg seit DC-049 standardmäßig ein; das ist eine andere Frage an
+   * einer anderen Oberfläche.
+   */
+  zeige_rechenweg_auf_pdf?: boolean | null
   revision: number
   original_id: string | null
   // CoS-012/DC-029: bewusst dauerhaft nullable, siehe src/lib/baustellen.ts
