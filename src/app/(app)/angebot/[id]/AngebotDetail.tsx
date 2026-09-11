@@ -12,6 +12,7 @@ import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon,
   Camera, AlertTriangle, GripVertical, MoreHorizontal, Percent, Tag, Settings,
+  Info, Eye, EyeOff,
 } from 'lucide-react'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
@@ -343,7 +344,7 @@ function sucheVorschlaege(query: string, katalog: PreisKatalogEintrag[]): PreisK
 }
 
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, rechenwegSichtbar, onAddMaterial, onAddPrice, priceItems, onPreisVorschlag, onNeuePosition }: {
+function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, rechenwegExpandiert, onToggleRechenweg, onAddMaterial, onAddPrice, priceItems, onPreisVorschlag, onNeuePosition }: {
   item: EditItem
   titleOverride?: string
   editingId: string | null
@@ -352,7 +353,10 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   removeEditItem: (id: string) => void
   vatRate: number
   onUnitPick: (id: string) => void
-  rechenwegSichtbar: boolean
+  // Nachtrag 11.09. (zweiter Teil, siehe rechenwegExpandiert oben): pro
+  // Position statt einem globalen Schalter.
+  rechenwegExpandiert: boolean
+  onToggleRechenweg: () => void
   onAddMaterial: (item: EditItem) => void
   onAddPrice: (item: EditItem) => void
   priceItems: PreisKatalogEintrag[]
@@ -568,12 +572,25 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                   Vorschlag
                 </span>
               )}
+              {/* Nachtrag 11.09. (Sandy: "so wie es vorher war... mit einem
+                  Info 'i' oderso"): Rechenweg wieder pro Position einzeln
+                  aufklappbar statt über einen globalen Schalter. */}
+              <button
+                type="button"
+                onClick={e => { e.stopPropagation(); onToggleRechenweg() }}
+                title="Rechenweg"
+                className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                  rechenwegExpandiert ? 'bg-anthracite text-white border-anthracite' : 'border-anthracite/25 text-anthracite/40'
+                }`}
+              >
+                <Info size={10} strokeWidth={2.5} />
+              </button>
             </div>
             {item.description && <div className="text-xs text-anthracite/50 font-semibold mt-0.5">{item.description}</div>}
             <div className="text-xs text-anthracite/40 font-semibold mt-1">
               {item.quantity} {item.unit} × {fmt(item.unit_price)}
             </div>
-            {rechenwegSichtbar && (
+            {rechenwegExpandiert && (
               <div className="mt-1.5 pt-1.5 border-t border-anthracite/8">
                 <div className="font-mono text-[11px] text-anthracite/60 leading-relaxed">
                   {item.berechnungsweg || 'Pauschale'}
@@ -686,23 +703,28 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showVorschau, setShowVorschau] = useState(false)
   const [vorschauInitialTab, setVorschauInitialTab] = useState<'vorschau' | 'senden'>('vorschau')
   const [unitPickerItemId, setUnitPickerItemId] = useState<string | null>(null)
-  // DC-049 Schritt 3 (2026-09-10, CI-Handbuch: Rechenweg "nie versteckt, nie
-  // eingeklappt" — Sandys Entscheidung nach kurzer Abstimmung: standardmäßig
-  // überall sichtbar, EIN globaler Schalter statt der bisherigen Klick-pro-
-  // Position-Lösung, falls die Liste beim Kalkulieren zu voll wird). Ersetzt
-  // das alte infoItemId-Bottom-Sheet, das den Rechenweg hinter einem
-  // (i)-Button versteckt hat.
+  // DC-049 Schritt 3 (2026-09-10) hatte hier einen EINEN globalen Schalter
+  // für die ganze Liste eingeführt (ersetzte das alte infoItemId-Bottom-
+  // Sheet mit einem (i)-Button pro Position). Nachtrag 11.09. drehte dessen
+  // Standard auf eingeklappt.
   //
-  // Nachtrag (2026-09-11, Sandy: "mir ist das hier in der entwurfsansicht
-  // doch zu viel... es soll doch auklappbar sein"): Standard auf
-  // ausgeblendet gedreht — der Schalter bleibt derselbe, jetzt eben
-  // "einblenden" statt "ausblenden" als erster Klick. Betrifft NUR die
-  // eigene Entwurfsansicht des Handwerkers; das CI-Handbuch-Gebot "nie
-  // versteckt, nie eingeklappt" galt und gilt weiter für das Kunden-PDF
-  // (dort weiterhin immer sichtbar, kein Schalter) — Sandy hat das im
-  // selben Zug ausdrücklich bestätigt ("für kunden auf pdf soll es
-  // erkennbar sein").
-  const [rechenwegSichtbar, setRechenwegSichtbar] = useState(false)
+  // Zweiter Nachtrag (2026-09-11, Sandy: "man soll... den rechenweg
+  // natürlich aufklappen können... also so wie es vorher war eigentlich mit
+  // einem Info 'i' oderso"): der globale Schalter fällt wieder weg —
+  // zurück zu pro Position einzeln aufklappbar, wie ursprünglich, nur ohne
+  // eigenes Bottom-Sheet (inline, direkt unter der Position). Betrifft NUR
+  // die eigene Entwurfsansicht/Ansicht des Handwerkers; das CI-Handbuch-
+  // Gebot "nie versteckt, nie eingeklappt" gilt unverändert nur fürs
+  // Kunden-PDF (DC-050, eigener Mechanismus, siehe zeige_rechenweg_auf_pdf).
+  const [rechenwegExpandiert, setRechenwegExpandiert] = useState<Set<string>>(new Set())
+  function toggleRechenweg(itemId: string) {
+    setRechenwegExpandiert(prev => {
+      const next = new Set(prev)
+      if (next.has(itemId)) next.delete(itemId)
+      else next.add(itemId)
+      return next
+    })
+  }
   // CoS-043: `category` gehoert mit dazu — an ihr haengt, auf welche
   // Leistungen ein objektbezogener Zuschlag (Denkmalschutz, Sondermasse,
   // exotische Holzart) gerechnet wird. Ohne sie wuerde er still auf das
@@ -1553,6 +1575,23 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     window.open(`/api/pdf?id=${quote.id}`, '_blank')
   }
 
+  // DC-050 Nachzug: zentraler Ein/Aus-Schalter im Aktionen-Footer, siehe
+  // Kommentar an der Button-Stelle. Direktes Umschalten statt Ja/Nein-Frage
+  // — hier fragt niemand zum ersten Mal, hier wird eine bereits getroffene
+  // oder implizite (Standard: sichtbar) Entscheidung geändert.
+  async function toggleRechenwegAufPdf() {
+    const vorherWert = zeigeRechenwegAufPdf
+    const naechsterWert = !(zeigeRechenwegAufPdf ?? true)
+    setZeigeRechenwegAufPdf(naechsterWert)
+    const { error } = await supabase.from('quotes').update({ zeige_rechenweg_auf_pdf: naechsterWert }).eq('id', quote.id)
+    if (error) {
+      setZeigeRechenwegAufPdf(vorherWert)
+      showToast('Konnte nicht gespeichert werden')
+      return
+    }
+    showToast(naechsterWert ? 'Rechenweg auf PDF sichtbar ✓' : 'Rechenweg auf PDF ausgeblendet ✓')
+  }
+
   const [lexwareKontakte, setLexwareKontakte] = useState<{ id: string; name: string; address: string | null; phone: string | null; email: string | null; source: string }[]>([])
 
   async function handleKundenSuche(q: string) {
@@ -2127,14 +2166,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="bg-white rounded-2xl border border-anthracite/5" onClick={e => e.stopPropagation()}>
               <div className="px-4 pt-4 pb-2 flex items-center justify-between">
                 <div className="font-black text-anthracite">Positionen</div>
-                {/* DC-049 Schritt 3: ein Schalter für die ganze Liste statt
-                    Klick pro Position — Rechenweg startet immer sichtbar. */}
-                <button
-                  onClick={() => setRechenwegSichtbar(v => !v)}
-                  className="text-[11px] font-bold text-anthracite/40 hover:text-anthracite/70 transition-colors"
-                >
-                  Rechenweg {rechenwegSichtbar ? 'ausblenden' : 'einblenden'}
-                </button>
+                {/* Nachtrag 11.09.: der globale Schalter (DC-049 Schritt 3)
+                    ist wieder weg — jede Position hat jetzt ihr eigenes
+                    Info-"i", siehe SortableItem/renderItem unten. */}
               </div>
 
               {editItems.some(item => !item.price_item_id && item.unit_price <= 0) && (
@@ -2188,7 +2222,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                         {editItems.map(item => (
-                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegSichtbar={rechenwegSichtbar} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(item.id)} onToggleRechenweg={() => toggleRechenweg(item.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                         ))}
                       </SortableContext>
                     </DndContext>
@@ -2233,7 +2267,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegSichtbar={rechenwegSichtbar} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(orig.id)} onToggleRechenweg={() => toggleRechenweg(orig.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                         )
@@ -2245,7 +2279,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegSichtbar={rechenwegSichtbar} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(orig.id)} onToggleRechenweg={() => toggleRechenweg(orig.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                       )}
@@ -2259,7 +2293,21 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   <div key={item.id} className="border-t border-anthracite/5 px-4 py-3">
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="font-bold text-anthracite text-sm">{title}</div>
+                        <div className="flex items-center gap-1.5">
+                          <div className="font-bold text-anthracite text-sm">{title}</div>
+                          {/* Nachtrag 11.09.: dasselbe Info-"i" wie in SortableItem
+                              — pro Position einzeln aufklappbar. */}
+                          <button
+                            type="button"
+                            onClick={e => { e.stopPropagation(); toggleRechenweg(item.id) }}
+                            title="Rechenweg"
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                              rechenwegExpandiert.has(item.id) ? 'bg-anthracite text-white border-anthracite' : 'border-anthracite/25 text-anthracite/40'
+                            }`}
+                          >
+                            <Info size={10} strokeWidth={2.5} />
+                          </button>
+                        </div>
                         {item.description && <div className="text-xs text-anthracite/50 font-semibold mt-0.5">{item.description}</div>}
                         <div className="text-xs text-anthracite/40 font-semibold mt-1 flex items-center gap-1 flex-wrap">
                           <span>{item.quantity}</span>
@@ -2271,7 +2319,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </button>
                           <span>× {fmt(item.unit_price)}</span>
                         </div>
-                        {rechenwegSichtbar && (
+                        {rechenwegExpandiert.has(item.id) && (
                           <div className="mt-1.5 pt-1.5 border-t border-anthracite/8">
                             <div className="font-mono text-[11px] text-anthracite/60 leading-relaxed">
                               {item.berechnungsweg || 'Pauschale'}
@@ -2707,6 +2755,24 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             >
               <Share2 size={15} strokeWidth={2.5} /> Senden →
             </button>
+            {/* DC-050 Nachzug (2026-09-11, Sandy: "ich will da unten einen
+                zentralen button vonwegen rechenweg anzeigen oder ausblenden
+                auf pdf was dann für alle export pdf gilt"): direkter,
+                jederzeit erreichbarer Schalter — bislang gab es die Frage
+                nur einmalig (Vorschau-Tab) bzw. vor dem direkten Download.
+                Schreibt dasselbe Feld (zeige_rechenweg_auf_pdf), das bereits
+                alle PDF-Exporte steuert (E-Mail/WhatsApp/Link/Download/
+                ZUGFeRD, siehe lib/pdf.tsx) — kein neuer Mechanismus, nur ein
+                zusätzlicher, prominenter Zugang zum selben Wert. */}
+            <button
+              onClick={toggleRechenwegAufPdf}
+              title={`Rechenweg auf PDF: ${(zeigeRechenwegAufPdf ?? true) ? 'sichtbar' : 'ausgeblendet'} — antippen zum Ändern`}
+              className={`flex items-center justify-center px-3 py-2.5 rounded-xl border shrink-0 transition-colors ${
+                (zeigeRechenwegAufPdf ?? true) ? 'bg-bg text-anthracite/60 border-anthracite/10' : 'bg-anthracite/5 text-anthracite/30 border-anthracite/10'
+              }`}
+            >
+              {(zeigeRechenwegAufPdf ?? true) ? <Eye size={16} /> : <EyeOff size={16} />}
+            </button>
             {/* Alle weiteren Aktionen an EINER Stelle */}
             <button
               onClick={() => setShowAktionen(true)}
@@ -2786,10 +2852,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         onCancel={() => setShowDeleteSheet(false)}
       />
 
-      {/* DC-049 Schritt 3: das alte infoItemId-Bottom-Sheet ist weg — der
-          Rechenweg (inkl. Annahmen) steht jetzt inline unter jeder Position,
-          siehe SortableItem/renderItem oben + den rechenwegSichtbar-Schalter
-          neben der "Positionen"-Überschrift. */}
+      {/* DC-049 Schritt 3 hatte hier ein altes infoItemId-Bottom-Sheet durch
+          einen globalen Schalter ersetzt; Nachtrag 11.09. dreht das zurück —
+          der Rechenweg (inkl. Annahmen) steht inline unter jeder Position,
+          pro Position einzeln über das Info-"i" aufklappbar (rechenwegExpandiert),
+          siehe SortableItem/renderItem oben. */}
 
       {/* ── Aktionen-Sheet (⋯) — ALLE Neben-Aktionen an einer Stelle ─────── */}
       {showAktionen && (() => {
