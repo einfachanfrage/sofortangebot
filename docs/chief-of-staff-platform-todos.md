@@ -1021,4 +1021,21 @@ vorliegt.
 
 Damit ist CoS-P-002 inhaltlich vollständig abgeschlossen.
 
+---
+
+## Manfred-Feedback — Batch 1 (11.09.2026)
+
+**Quelle:** `docs/testnutzer-notizen-manfred.md` — erster echter Testlauf.
+Vier Punkte betreffen dein Ressort (Buchhaltungs-Anbindung, Abo/Plan-
+Zustand). **Nichts davon wurde real versendet** — reines Testkonto.
+
+| ID | TN-Ref | Thema | Prio |
+|---|---|---|---|
+| CoS-P-009 | TN-101 | Unklar, ob „über meine Buchhaltung (lexoffice…)" nur „keine Mahnung von Sofortangebot" bedeutet oder Angebote tatsächlich nach lexoffice übertragen werden — für Manfred eine echte Kaufentscheidung, die die App aktuell nicht beantwortet | hoch |
+| CoS-P-010 | TN-108 | Buchhaltungs-Anbindung erklärt nicht, WAS genau übertragen wird (Angebot? Rechnung? Kunde?); „Lexoffice (Legacy)" ist für Nutzer ohne technischen Hintergrund nicht einzuordnen | mittel |
+| CoS-P-011 | TN-113 | Pro-Plan-Preise sind noch nicht konfiguriert (bekannt, Testphase) | niedrig |
+| CoS-P-012 | TN-114 | Seitenleiste zeigt „Dein Plan: PRO", Abo-Seite zeigt „Starter" — Zustands-Widerspruch zwischen zwei Stellen in der App | hoch |
+
+*Chief of Staff · 2026-09-11*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

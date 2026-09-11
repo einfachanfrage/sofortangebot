@@ -81,3 +81,48 @@ der Import-Block in `angebot-extrahieren/route.ts` sauber aus — `import *
 as Sentry from '@sentry/nextjs'` steht als eigene Zeile nach dem
 `extraktion-masse`-Import, kein Merge-Rest, `tsc --noEmit` läuft grün. Kein
 weiterer Handlungsbedarf von unserer Seite.
+
+### EX-003 — Der ZUGFeRD/XRechnung-Export deklariert ein ANGEBOT als Rechnung
+
+**Datum:** 2026-09-11
+**Von:** Head of Product Engineering
+**Für:** Platform & Integrations Engineer
+**Status:** ❌ offen, gehört euch (Buchhaltung/E-Rechnung)
+
+**Wie ich darauf gestoßen bin:** Sandy hat heute entschieden, dass der
+Angebot/Rechnung-Umschalter in der Vorschau rausfliegt („Rechnung erstmal
+raus", CoS-E-008/033/036 aus Manfreds Testlauf). Grund: Er hat nie eine
+Rechnung erzeugt, sondern nur zwei Überschriften getauscht — gleiche Nummer,
+gleiche Unterschriftszeile, kein Leistungsdatum. Beim Aufräumen habe ich
+geprüft, ob irgendwo sonst noch eine „Rechnung" verspricht, was es nicht
+gibt. Ein Fund, und der liegt bei euch:
+
+`src/lib/zugferd/generateXML.ts:212` setzt fest `<ram:TypeCode>380</ram:TypeCode>`.
+380 ist in UNTDID 1001 die **Handelsrechnung**. Erreichbar ist das über den
+Knopf „XRechnung XML" im Angebots-Menü (`/api/pdf/xrechnung?id=…`) und über
+den ZUGFeRD-Pfad, sichtbar sobald `e_rechnung_aktiv` an ist und der Kunde
+gewerblich ist.
+
+**Warum das mehr ist als ein Schönheitsfehler:** Das erzeugte XML behauptet
+gegenüber dem Empfängersystem, ein steuerlich wirksames Rechnungsdokument zu
+sein — mit der Angebotsnummer als Rechnungsnummer. Bei einem öffentlichen
+Auftraggeber landet das in einer Rechnungseingangsprüfung. Genau davor hat
+Manfred Angst (TN-015: „Ich hab lexoffice. Zwei Rechnungsnummernkreise
+darf's nicht geben.").
+
+**Was ich NICHT gemacht habe:** angefasst. E-Rechnung/ZUGFeRD/Buchhaltung ist
+laut Rollen-Split (CoS-009, 17.08.) euer Gebiet, und die richtige Antwort
+hängt davon ab, wie ihr den Bereich insgesamt schneidet. Zwei plausible
+Wege, nur als Einordnung: TypeCode 325 (Proforma) für ein Angebot, oder den
+Export am Angebot gar nicht anbieten, solange es keine echte Rechnung gibt.
+
+**Verwandt, ebenfalls eher bei euch:** Die Einstellungen bieten weiterhin
+einen getrennten Nummernkreis „Rechnungen"
+(`src/app/(app)/einstellungen/nummern/page.tsx`). Aus ihm zieht aktuell
+niemand eine Nummer — `api/quotes/[id]/nummer` fragt fest nach `p_typ:
+'angebot'`. Inert, aber sichtbar; nach Sandys Entscheidung ist das dieselbe
+Frage wie oben. Ich habe es bewusst stehen lassen statt einseitig zu
+entfernen — sagt Bescheid, wenn ihr das mitnehmt, sonst frage ich Sandy
+gesondert.
+
+*Head of Product Engineering · 2026-09-11*

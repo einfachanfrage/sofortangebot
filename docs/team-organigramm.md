@@ -22,12 +22,12 @@ der Einzige mit Überblick über alle Fäden gleichzeitig.
                     (Koordination, Überblick, Go/No-Go —
                      entscheidet nie fachlich für andere)
                                     │
-    ┌───────────────┬──────────┬───┴────────┬───────────────┬───────────────┬───────────────┬───────────────┐
-    │               │          │             │               │               │               │
-Head of Product  Platform &  Prüfmeister  Product        Head of         Head of         Head of
-Engineering      Integrations  (QA)       Designer       Marketing       Finance         Legal &
-                  Engineer                (UI/UX)        (CI/Marke)      (Kosten/        Compliance
-                                                              │            Einnahmen)     (Recht/Gewerke-
+    ┌───────────────┬──────────┬───┴────────┬───────────────┬───────────────┬───────────────┬───────────────┬───────────────┐
+    │               │          │             │               │               │               │              │
+Head of Product  Platform &  Prüfmeister  Product        Head of         Head of         Head of            Testnutzer
+Engineering      Integrations  (QA)       Designer       Marketing       Finance         Legal &            (Manfred)
+                  Engineer                (UI/UX)        (CI/Marke)      (Kosten/        Compliance         (Erstfeedback,
+                                                              │            Einnahmen)     (Recht/Gewerke-    kein Fix)
                                                     [geplant, laut Sandy:                  Konformität)
                                                      Social Media, Blog/
                                                      Content, weitere ...]
@@ -41,7 +41,12 @@ Marketing und Product Designer direkt aus (`docs/marketing-design-austausch.md`)
 weil CI/Marke und Produkt-Design-System sich oft berühren. Head of Finance ist
 bewusst die Ausnahme: kein fachlicher Berührungspunkt mit den anderen
 Spezialisten, deshalb kein eigener Austausch-Kanal — nur Chief of Staff und
-Sandy direkt.
+Sandy direkt. Testnutzer (Manfred) ist eine weitere bewusste
+Ausnahme in die andere Richtung: er steht zwar wie die anderen unter dem
+Chief of Staff im Organigramm, ist aber kein Fixer und hat keine eigene
+Koordinationsdatei mit einem Spezialisten — er liefert rohes, ungefiltertes
+Feedback, das der Chief of Staff sichtet und an die jeweils passende Stelle
+verteilt (siehe eigener Abschnitt unten).
 
 ---
 
@@ -286,6 +291,54 @@ interpretiert; falls tatsächlich etwas anderes gemeint war, bitte mit Sandy
 klären.
 
 **Seit:** 01.09.2026.
+
+---
+
+## Testnutzer (Manfred Vogler)
+
+*(NEU seit 11.09.2026 — auf Sandys Wunsch als erster echter Praxistest der
+App aus Sicht eines potenziellen Kunden.)*
+
+**Wer:** Manfred Vogler, fiktiver/simulierter Ersttestnutzer-Persona — Maler
+mit ca. 30 Jahren Berufserfahrung, Mitte 50, 4 Angestellte, macht seine
+Angebote bisher selbst, nutzt lexoffice für die Buchhaltung, wenig
+technikaffin. Kein Coding- oder Produkt-Hintergrund — bewusst so gewählt,
+weil er genau die Zielgruppe der App verkörpert.
+
+**Rolle:** Nutzt die App wie ein echter Kunde und notiert ungefiltert, was
+ihm auffällt — Verwirrung, Umwege, Dinge, die für ihn als Handwerker keinen
+Sinn ergeben, aber auch Dinge, die gut funktionieren. Kein systematisches
+Test-Protokoll, keine Soll/Ist-Prüfung — reine Erstnutzer-Perspektive.
+
+**Abgrenzung zum Prüfmeister:** Der Prüfmeister prüft systematisch und
+fachlich, ob ein Ergebnis (z. B. eine Mengen-/Preisberechnung) korrekt ist —
+er kennt die Soll-Lösung vorher und vergleicht. Manfred kennt keine
+Soll-Lösung, er hat nur seinen Eindruck als Nutzer. Deshalb bewusst getrennt:
+Manfreds Feedback zu allem, was direkt die Diktat-zu-Positionen-Genauigkeit
+betrifft, läuft weiterhin über den Prüfmeister (dort ist die fachliche
+Prüfung sauberer aufgehoben) — sein restliches Feedback (Dashboard, Buttons,
+Logik, Einstellungen, Verknüpfungen, Wording, Vertrauen/Wirkung) geht direkt
+an den Chief of Staff.
+
+**Koordination:**
+- `docs/testnutzer-notizen-manfred.md` (rohes Feedback-Log, von Manfred
+  selbst geführt, ID-Schema TN-XXX — Quelle der Wahrheit für seine
+  Beobachtungen, wird nicht umnummeriert)
+- Der Chief of Staff sichtet Manfreds Feedback und verteilt es mit neuen,
+  eigenen Ticket-IDs an die zuständigen Spezialisten-Dateien (unter Verweis
+  auf die ursprüngliche TN-ID) — kein direkter Austausch-Kanal zwischen
+  Manfred und den anderen Positionen.
+
+**Wichtig:** Manfreds Nutzung findet ausschließlich in einem Testkonto statt.
+Nichts, was er in seinen Notizen beschreibt, wurde real an einen Kunden
+versendet — Prioritäten aus seinem Feedback sind Risikobewertungen, keine
+Vorfälle.
+
+**Erster Auftrag:** freie Erstnutzung der App, alles Auffällige notieren —
+siehe `docs/testnutzer-notizen-manfred.md`. Erste Auswertung („Batch 1")
+am 11.09.2026 an Engineering, Product Designer, Platform und Legal verteilt.
+
+**Seit:** 11.09.2026.
 
 ---
 

@@ -2058,4 +2058,34 @@ lege ich als Alternative daneben, entscheiden müsst ihr.
 
 ---
 
+## CoS-L-006 — Fehlende Pflichtangaben auf der Rechnung (Manfred-Feedback)
+
+**Datum:** 2026-09-11
+**Quelle:** `docs/testnutzer-notizen-manfred.md`, TN-089. Erster echter
+Testlauf durch den simulierten Testnutzer — **nichts davon wurde real
+versendet**, reines Testkonto.
+
+**Befund:** Auf der im Testkonto erzeugten Rechnung fehlen Leistungsdatum
+und Steuernummer/USt-ID; die Fußzeile zeigt nur Firmenname und Adresse.
+Manfreds eigene Einschätzung als Betriebsinhaber: „Damit kriegt der Kunde
+Ärger beim Finanzamt und ruft mich an." Zusätzlich (siehe CoS-E-034 in
+`chief-of-staff-engineering-todos.md`): interne Prüfhinweise und die
+„bitte Angebot vor dem Versand prüfen"-Fußzeile erscheinen ebenfalls auf
+der Rechnung, nicht nur auf dem Angebot.
+
+**Frage an dich:** Welche Pflichtangaben muss eine Rechnung nach § 14
+UStG tatsächlich zwingend enthalten (insbesondere für Kleinunternehmer
+nach § 19 UStG, da das hier der geplante Status ist, siehe CoS-L-Punkte
+zur UG-Gründung), und was ist bei Sofortangebots Rechnungsvorlage
+gegenüber dieser Pflichtliste konkret nachzurüsten? Umsetzung übernimmt
+Head of Product Engineering, sobald du den Soll-Zustand definiert hast.
+
+**Priorität:** hoch — kein akuter Vorfall (Testkonto), aber ein
+Compliance-Punkt, der vor dem ersten echten Rechnungsversand geschlossen
+sein sollte.
+
+*Chief of Staff · 2026-09-11*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

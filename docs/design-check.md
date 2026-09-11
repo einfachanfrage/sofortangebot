@@ -5264,4 +5264,99 @@ und lautere Fund von beiden.
 
 ---
 
+## Erledigt: Storage-Bucket `public-pdfs` — MIME-Type korrigiert (2026-09-11)
+
+Sandy hat den Fix angewendet. Nachgeprüft im SQL-Editor:
+
+| | Wert |
+|---|---|
+| `id` | `public-pdfs` |
+| `public` | `true` |
+| `allowed_mime_types` | `["application/pdf"]` ✅ (vorher `document/pdf`) |
+| `file_size_limit` | `20971520` (= 20 MB) |
+
+Alle drei Werte stimmen jetzt mit dem überein, was die Migration vom 13.06.
+dokumentiert hatte (`20260613144614_add_quote_send.sql`, Zeilen 36–40). Der
+Tippfehler bei der manuellen Bucket-Anlage im Juni ist damit zu.
+
+**Bemerkenswert daran, und deshalb hier festgehalten:** Der Bucket war seit Juni
+falsch konfiguriert, und aufgefallen ist es erst, nachdem die generische
+Fehlermeldung im Frontend durch die echte ersetzt wurde (`b29c999`). Drei Monate
+lang hat eine Sammelmeldung („hat nicht geklappt") den einen Satz verdeckt, der
+den Fehler in einer Minute erklärt hätte. Dieselbe Lehre wie bei den stillen
+Prüfungen in der Rechen-Pipeline: Was nicht sagt, was es meint, kostet Wochen.
+
+**Noch zu bestätigen:** Ein echter Versand per WhatsApp oder Link. Erst danach
+gilt der Punkt als live bewiesen, nicht nur als konfiguriert — dieselbe Regel
+wie bei den Prüfmeister-Nachtests.
+
+*Head of Product Engineering · 2026-09-11*
+
+---
+
+## Manfred-Feedback — Batch 1 (11.09.2026, vom Chief of Staff eingetragen)
+
+**Quelle:** `docs/testnutzer-notizen-manfred.md` — erster echter Testlauf.
+Sandys Anweisung: alles außer fachlicher Extraktions-Korrektheit
+(„Diktat → Positionen", geht an den Prüfmeister) verteilen, wirklich jeden
+Punkt, nach Priorität. **Nichts davon wurde real versendet** — reines
+Testkonto, Status von Hand verändert. Prioritäten sind
+Produktrisiko-Einschätzungen, keine Vorfallsmeldungen. Positiv-Meldungen
+sind absichtlich mit drin, damit nichts beim nächsten Umbau kaputtgeht.
+
+| ID | TN-Ref | Thema | Prio |
+|---|---|---|---|
+| DC-051 | TN-001 | (positiv) Dashboard-Begrüßung und Anzahl offener Angebote kommt gut an | niedrig |
+| DC-052 | TN-002 | „0 € Umsatz · −100 %" wirkt am Monatsanfang systematisch wie ein Alarmsignal — jeder Betrieb sieht an Tag 1 wie pleite aus | mittel |
+| DC-053 | TN-003 | Status „Bereit" ohne Erklärung, was er bedeutet | niedrig |
+| DC-054 | TN-004 | Angebotsliste zeigt nur Kundenname, kein Stichwort zum Auftrag — bei Namensdopplung nicht unterscheidbar | mittel |
+| DC-055 | TN-007 | Rechenweg auf dem Kunden-PDF wirkt technisch (Schreibmaschinenschrift, Punkt statt Komma, VOB-Paragraphen) statt nach Handwerk | mittel |
+| DC-056 | TN-010 | Pfennigposten als eigene PDF-Zeilen wirken kleinlich | niedrig |
+| DC-057 | TN-012 | (positiv) Unterschriftslinien auf dem Angebot passen | niedrig |
+| DC-058 | TN-014 | „Senden" erscheint doppelt (Reiter und Knopf) | niedrig |
+| DC-059 | TN-022 | Zwei Stopp-Knöpfe während der Aufnahme gleichzeitig sichtbar | niedrig |
+| DC-060 | TN-023 | (positiv) Sprech-Beispiele auf der Aufnahme-Seite helfen | niedrig |
+| DC-061 | TN-024 | (positiv) Raum-Liste mit Positionen nach dem Diktat ist übersichtlich | niedrig |
+| DC-062 | TN-025 | Hinweistext überlappt die Positionsliste, verdeckt zwei Zeilen (am Handy schlimmer) | mittel |
+| DC-063 | TN-029 | Unklar, wohin „Zurück" auf der Aufmaß-Seite führt und ob der Entwurf dabei verloren geht | mittel |
+| DC-064 | TN-031 | (in Ordnung) Fehlermeldung bei nicht erkanntem Foto-Zettel | niedrig |
+| DC-065 | TN-032 | (positiv) „Aufnahme anhören" ist hilfreich | niedrig |
+| DC-066 | TN-055 | Positionsliste kann beim Löschen unter dem Finger verrutschen, falsche Zeile wird getroffen | mittel |
+| DC-067 | TN-056 | (positiv) Raummaße direkt im Kästchen editierbar — laut Manfred die beste Stelle der App | niedrig |
+| DC-068 | TN-057 | (positiv) „Vorschlag"-Markierung an KI-erfundenen Positionen hilft | niedrig |
+| DC-069 | TN-058 | (positiv) Roter Warnbalken „fehlende Preise" ist klar | niedrig |
+| DC-070 | TN-059 | (positiv) Ablauf „Preis anlegen" ist genau richtig | niedrig |
+| DC-071 | TN-061 | „Speichern"-Zustand vorher unklar (ausgegraut ohne Erklärung), „Entwurf gespeichert ✓" danach gut | niedrig |
+| DC-072 | TN-062 | Grauer Punkt ohne Textbeschriftung für Entwurf-Status wirkt wie ein Rendering-Fehler | niedrig |
+| DC-073 | TN-065 | Zuschläge erscheinen doppelt: als eigener Kasten UND als einzelne Positionen | mittel |
+| DC-074 | TN-070 | (positiv) Kundenanlage mit vier Feldern passt | niedrig |
+| DC-075 | TN-072 | (positiv) Kundenseite mit Rechnungshinweisen an der richtigen Stelle | niedrig |
+| DC-076 | TN-073 | (positiv) „+ Weitere Baustelle für diesen Kunden" ist ein kluger Gedanke | niedrig |
+| DC-077 | TN-074 | (positiv) Kundenliste mit Umsatz/Status reicht | niedrig |
+| DC-078 | TN-075 | Sende-Mail an Privatkundin beginnt zu locker/informell („Hallo [Vorname]", im Test „Hallo Renate") — mit Head of Product Engineering klären, ob der Name überhaupt korrekt zugeordnet wird | hoch |
+| DC-079 | TN-076 | „An"-Feld leer, Senden-Knopf grau, ohne erklärenden Hinweistext | mittel |
+| DC-080 | TN-077 | (positiv) Hinweis „bitte einmal prüfen" an der richtigen Stelle | niedrig |
+| DC-081 | TN-079 | (positiv) Statuswechsel-Kette ist klar | niedrig |
+| DC-082 | TN-080 | (positiv) Angebots-Einstellungen über das Zahnrad sind vollständig | niedrig |
+| DC-083 | TN-082 | (positiv) Drei-Punkte-Menü reicht für die Grundfunktionen | niedrig |
+| DC-084 | TN-084 | Drei-Punkte-Menü pro Angebot bietet nur „Löschen" — bei „Beim Kunden" fehlt „Nachfassen"/Status direkt | mittel |
+| DC-085 | TN-085 | (positiv) Status-Filter sind schnell nutzbar | niedrig |
+| DC-086 | TN-087 | Unterschriftslinie erscheint auch auf der Rechnung — dort unüblich | mittel |
+| DC-087 | TN-096 | (positiv) Preisdatenbank-Liste (Suche/Stift/Mülleimer/Plus) ist einfach zu bedienen | niedrig |
+| DC-088 | TN-099 | (positiv) Betriebseinstellungen sind vollständig und klar erklärt | niedrig |
+| DC-089 | TN-102 | E-Rechnung/ZUGFeRD/DATEV-Erklärung ist für Handwerker schwer verständlich, ein erklärender Satz würde helfen — Wortlaut bitte mit Head of Legal gegenchecken | mittel |
+| DC-090 | TN-103 | (positiv) Widerrufsbelehrung mit Erklärung ist für Manfred ein Kaufargument | niedrig |
+| DC-091 | TN-104 | Erklärtext „Anfahrt/Kleinmaterial landet unter Allgemein" passt nicht auf den echten Fall — Deckenpositionen landen aus demselben Grund dort (siehe CoS-E-026 in `chief-of-staff-engineering-todos.md`) | mittel |
+| DC-092 | TN-106 | (positiv) Kleinmaterial-Pauschale und An-/Abfahrt-Automatik passen | niedrig |
+| DC-093 | TN-107 | (positiv) App-Reiter-Übersicht ist klar | niedrig |
+| DC-094 | TN-109 | (positiv) Angebotsnummern-Logik in den Einstellungen ist vollständig | niedrig |
+| DC-095 | TN-110 | (positiv) Briefpapier-Einstellungen reichen | niedrig |
+| DC-096 | TN-111 | Auf der Briefpapier-Unterseite fehlt die untere Navigationsleiste, einziger Weg raus ist „← Briefpapier" | mittel |
+| DC-097 | TN-112 | (positiv) Die drei Benachrichtigungs-Optionen sind genau die richtigen | niedrig |
+| DC-098 | TN-118 | (positiv) L-Form/U-Form/Zeichnen rechnet korrekt nach — laut Manfred das beste Feature der App | niedrig |
+
+*Chief of Staff · 2026-09-11*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
