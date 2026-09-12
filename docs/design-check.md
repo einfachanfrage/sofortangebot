@@ -5682,4 +5682,162 @@ Kopf, sondern hier.
 
 ---
 
+## Entscheidungen von Sandy zu DC-056 / DC-073 / DC-078 (12.09.2026)
+
+**Vorbemerkung, damit die Lücke im Protokoll erklärt ist:** Am 12.09. war die
+Shell auf Sandys Rechner nicht erreichbar (Windows-Update vom 08.09., Dateien
+lesbar/schreibbar, `git` und `tsc` nicht). Deshalb sind die drei Punkte unten
+**entschieden und fertig spezifiziert, aber noch nicht gebaut** — ohne Typcheck
+und ohne eigenen Commit hätten meine Änderungen uncommitted auf dem ebenfalls
+uncommitteten Stand von Head of Product Engineering gelegen. Umsetzung im
+nächsten Durchgang, kein neuer Auftrag nötig.
+
+---
+
+### DC-073 — Erschwerniszuschläge: geht an den Chief of Staff 🔵
+
+Sandys Entscheidung vom 12.09.: die Frage wird beim Chief of Staff besprochen,
+nicht von mir entschieden. Hier deshalb **nur der Ist-Zustand, ohne
+Handlungsempfehlung von mir.**
+
+**Was im Produkt passiert.** Es gibt zwei voneinander unabhängige Wege, einen
+Zuschlag ins Angebot zu bekommen:
+1. **Als eigene Position.** Die Vollständigkeitsprüfung legt
+   Erschwerniszuschläge als echte `quote_items` an
+   (`src/lib/vollstaendigkeit/maler-extras.ts`: Raumhöhe > 3 m — pro hohem Raum
+   eine eigene Zeile —, schwieriger Untergrund, Altbau, Denkmalschutz,
+   bewohnt), Einheit `%`, Betrag laufend nachgerechnet gegen die
+   Bemessungsgrundlage (`zuschlag-basis.ts`). Diese Zeilen stehen im
+   Kunden-PDF.
+2. **Als Pauschale aus dem Kasten.** Der Block „Rabatt & Zuschläge" im Editor
+   (`AngebotDetail.tsx` Z. 2486) schreibt `surcharge_amount`/`surcharge_label`
+   auf `quotes` und erscheint erst im Summenblock.
+
+Nichts verbindet die beiden, nichts warnt bei Doppelung. Wer denselben Zuschlag
+einmal als Position stehen lässt und einmal im Kasten einträgt, berechnet ihn
+zweimal.
+
+**Was Manfred dazu sagt (TN-042, unverändert zitiert):** Zwei Zuschläge —
+„Altbau" (20 %) und „bewohnt" (10 %) — ergaben zusammen rund 390 €, also 30 %
+auf ein Wohnzimmer. „bewohnt" hatte er nie gesagt. Sein Satz: „Sieht für den
+Privatkunden nach Abzocke aus. Ich preis sowas in den m² ein, nie als Zeile."
+
+**Was daran welche Rolle betrifft:**
+- Dass „bewohnt" überhaupt erfunden wurde, ist ein Extraktions-Thema und liegt
+  beim Prüfmeister/Engineering, nicht hier.
+- Ob Erschwernisse beim Kunden als eigene Zeile erscheinen oder in die
+  Einzelpreise einfließen, ist eine Preis- und Produktentscheidung mit Folgen
+  für Rechenweg, PDF und Preisdatenbank — zur Klärung beim Chief of Staff.
+- **Mein Teil bleibt davon unberührt und wird unabhängig gebaut:** der Kasten
+  „Rabatt & Zuschläge" zeigt künftig an, was bereits als Position in der Liste
+  steht („2 Zuschläge stehen schon als eigene Position"), statt stumm einen
+  zweiten Weg anzubieten. Das behebt die Doppel-Berechnung und nimmt der
+  großen Frage nichts vorweg.
+
+---
+
+### DC-056 — Kleinbeträge: Schalter in den Angebots-Einstellungen ✅ entschieden
+
+Sandys Entscheidung vom 12.09.: **Schalter, Standard aus.** Kein automatisches
+Zusammenfassen — wer es will, schaltet es ein.
+
+**Wo.** Zahnrad → „Einstellungen für dieses Angebot", direkt unter
+„Gliederung". Dort stehen Kopf-/Fußtext, Skonto, Brutto/Netto und Widerruf
+schon; der Schalter gehört sachlich dazu (was steht auf dem Papier) und nicht
+in die Betriebseinstellungen (wie rechnet der Betrieb).
+
+**Wortlaut.**
+- Schalter: **„Kleinbeträge zu einer Zeile zusammenfassen"**
+- Erklärsatz darunter: **„Positionen unter 10 € erscheinen als eine Zeile
+  ‚Kleinmaterial und Nebenleistungen'. Die Summe bleibt gleich."**
+- Die Sammelzeile selbst im PDF: **„Kleinmaterial und Nebenleistungen"**, als
+  Untertitel die zusammengefassten Titel in Klammern, damit auf Nachfrage
+  nachvollziehbar bleibt, was drinsteckt.
+
+**Schwelle.** Fest 10 €, keine Eingabe. Eine frei einstellbare Grenze ist eine
+Zahl, über die jeder einmal nachdenken muss und danach nie wieder — das ist
+genau die Art Einstellung, die das Produkt nicht braucht. Falls sich 10 € in
+der Praxis als falsch erweist, ändern wir die Zahl, nicht das Prinzip.
+
+**Was NICHT zusammengefasst wird, auch unter 10 €:** An-/Abfahrt, die
+Kleinmaterial-Pauschale und alles mit `ist_erschwerniszuschlag` — die haben
+schon ihre eigene Sammel-Logik bzw. sind prozentual und hätten in einer
+Betragssumme nichts verloren.
+
+**Rechenweg.** Die Sammelzeile bekommt keinen eigenen Rechenweg (es gibt
+keinen gemeinsamen). Die Einzel-Rechenwege bleiben im Angebot erhalten und sind
+im Editor weiter sichtbar — zusammengefasst wird nur die Darstellung auf dem
+Kundenpapier, nicht die Kalkulation.
+
+**Umsetzung.** Anzeige-seitig in `pdf.tsx` (Z. 446–464 flach, Z. 480–498
+gruppiert) und spiegelbildlich in `AngebotVorschau.tsx` (`PositionsZeile`),
+Schalter als neues Feld in `angebot-optionen.ts` analog zu `struktur`. Keine
+Änderung an `quote_items`, keine Migration: die Positionen bleiben einzeln in
+der Datenbank, nur das Rendern gruppiert.
+
+---
+
+### DC-078 — Anrede: Sofortfix jetzt, Anrede-Feld als Spec ✅ entschieden
+
+Sandys Entscheidung vom 12.09.: **beides** — der Sofortfix ohne
+Datenbank-Änderung, parallel die Spec für ein richtiges Anrede-Feld.
+
+#### Teil 1 — Sofortfix (mein Teil, keine Migration)
+
+`VorschauUndVersand.tsx` Z. 44–57 (`buildDefaultNachricht`) und Z. 225
+(WhatsApp-Text) ersetzen beide `customer.name.split(' ')[0]`. Neu:
+
+- Privatkunde (`ist_unternehmen === false`) mit Namen:
+  **„Guten Tag, Renate Krüger,"** — voller Name. Höflich, in keiner
+  Namens-Schreibweise falsch, und vor allem: nie peinlich. „Hallo Frau," kann
+  damit nicht mehr entstehen.
+- Gewerblicher Kunde oder kein Name hinterlegt: **„Guten Tag,"**
+- WhatsApp bekommt denselben Satz. Der Ton ist dort zwar lockerer, aber ein
+  Angebot ist ein Angebot — und zwei verschiedene Anreden für dasselbe Dokument
+  wären schlechter als eine etwas förmliche.
+
+Wichtig: **kein Raten.** Das Namensfeld ist ein einziger Freitext, es gibt
+darin keine verlässliche Grenze zwischen Vor- und Nachname. Jede Heuristik
+(„erstes Wort ist der Vorname", „letztes Wort ist der Nachname") ist bei
+Doppelnamen, Titeln, Firmierungen und umgekehrter Schreibweise falsch — und
+falsch ist hier teurer als förmlich. Deshalb voller Name, bis das Feld da ist.
+
+#### Teil 2 — Spec für Head of Product Engineering: Feld `anrede` am Kunden
+
+**Datenmodell.** `customers.anrede text null`, erlaubte Werte `'herr' | 'frau' |
+'ohne'`, Bestandszeilen `null` (= „ohne", nichts wird geraten, keine
+Daten-Migration nötig). `Customer` in `src/lib/types.ts` Z. 183–193 entsprechend
+ergänzen.
+
+**Eingabe.** In der Kundenanlage (`kunden/neu/page.tsx`) und im Bearbeiten-
+Formular (`KundeBearbeitenFormular.tsx`) **vor** dem Namensfeld, als
+Segmented-Control mit drei Feldern: `Frau · Herr · ohne`. Vorauswahl: keine
+(„ohne" ist der stille Standard, wird aber nicht als gewählt dargestellt).
+Kein Pflichtfeld — Manfred legt Kunden am Telefon an, ein Pflichtfeld mehr
+kostet ihn genau da Zeit, wo er sie nicht hat. Bei `ist_unternehmen` wird das
+Feld ausgeblendet, nicht deaktiviert: eine Firma hat keine Anrede.
+
+**Nachname.** Für „Sehr geehrte Frau Krüger" braucht es zusätzlich den
+Nachnamen. Zwei Wege, die ich bewusst NICHT selbst entscheide, weil es an der
+Datenhaltung hängt: entweder ein zweites Feld (`nachname`, optional, nur für
+die Anrede) oder die Regel „letztes Wort des Namensfelds", die bei gesetztem
+`anrede` vertretbar ist, weil der Betrieb den Namen dann bewusst eingetragen
+hat. Bitte im Zuge der Umsetzung festlegen und hier vermerken.
+
+**Ergebnis der Kette, sobald beides steht:**
+- `anrede = 'frau'` + Nachname → **„Sehr geehrte Frau Krüger,"**
+- `anrede = 'herr'` + Nachname → **„Sehr geehrter Herr Yilmaz,"**
+- `anrede = 'ohne'` / leer, Privatkunde → **„Guten Tag, Renate Krüger,"**
+  (der Sofortfix aus Teil 1 bleibt als Rückfallebene bestehen)
+- Gewerblich → **„Guten Tag,"**
+
+Der Sofortfix ist damit kein Wegwerf-Code: er wird zur untersten Stufe einer
+Leiter, die oben genauer wird. Ich ziehe Teil 1 nach, sobald die Datei frei
+ist; Teil 2 baue ich direkt ein, sobald das Feld live ist — ohne erneuten
+Auftrag.
+
+*Product Designer · 2026-09-12*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
