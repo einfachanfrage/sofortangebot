@@ -39,7 +39,197 @@ bestehende Abschnitte hineinschreiben** (Konvention aus CoS-013
 gleichzeitig entstehen.
 
 **Datei-Sicherheit:** Ganz am Ende dieser Datei steht eine feste
-Markierung (`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH
+Markierung (`---
+
+## CoS-E-039 / TN-095 — das Ticket hieß falsch (12.09.2026)
+
+Manfreds Satz war: *„222 Positionen, davon gefühlt ein Drittel Varianten. Ich
+brauch 40."* Daraus wurde das Ticket „Katalog-Dopplungen aufräumen". Ich habe
+zuerst gemessen statt aufgeräumt, und die Messung sagt etwas anderes.
+
+### Was tatsächlich da war
+
+Es sind **fast keine Dopplungen**. Es sind **Staffeln** — zwei Zeilen, die
+sich nur durch eine Angabe in Klammern unterscheiden:
+
+```
+PV-Anlage elektrisch anschließen (bis 10 kWp)        850,00 €
+PV-Anlage elektrisch anschließen (>10 kWp)         1.400,00 €
+```
+
+Der Preis-Matcher wirft Klammern weg, bevor er vergleicht. Danach heißen
+beide Zeilen gleich — und es gewinnt die, die im Katalog weiter oben steht.
+Bei einer Staffel ist das die kleinste.
+
+**Die Richtung ist deshalb nie zufällig: Der Betrieb rechnet systematisch zu
+billig ab.** Beim Personenaufzug waren es 10.000 €, bei der Küche 2.400 € je
+laufendem Meter, bei der beidseitig lackierten Tür 30 € — und die Tür kommt
+jeden Tag vor.
+
+Das ist der **vierte Fall derselben Familie** an einem Tag, nach der
+Millimeterspanne, der Grundierungsart und der Epoxid-Schicht: *Was eine Zeile
+von der anderen unterscheidet, steht in Klammern — und Klammern wirft die
+Normalisierung weg.*
+
+### Was gemessen wurde
+
+`node scripts/katalog-dopplungen.mjs` schickt **jede** Katalogzeile als
+gesuchten Titel durch denselben Matcher wie der Angebots-Endpunkt, mit den
+Zeilen ihres eigenen Gewerks als Kandidaten. Kommt etwas anderes zurück als
+sie selbst, ist sie über ihren eigenen Namen unerreichbar.
+
+| | Zeilen |
+|---|---|
+| Katalog gesamt | 2379 |
+| unerreichbar, Stand morgens | **64** |
+| davon mit gleichem Preis (harmlos fürs Geld) | 0 |
+| davon mit **anderem** Preis | 64 |
+| unerreichbar nach dem Fix | **22** |
+
+Die 22 sind der Rest, den kein Muster lösen kann — dazu unten.
+
+### Was ich repariert habe
+
+Die Gruppe `Maßschwelle` in `src/lib/preis-aufwandswoerter.ts` kannte nur
+mm/cm/km. Sie heißt jetzt **`Staffel`** und liest am Rohtitel:
+
+- Zahl + Einheit dahinter (`10 kWp`, `8 Haltestellen`, `3-Zimmer`, `bis 8t`)
+- Einheit **vor** der Zahl (`DN 150`, `R90`, `M25`) — das kann kein
+  Suffix-Muster, und daran sind SHK, Elektro und Brandschutz hängen geblieben
+- zwei Maße mit `x`/`×` (`114x118cm`) — sonst sind `78x118cm` und
+  `114x118cm` für den Vergleich dasselbe, nämlich `118cm`
+- der Vergleichswert enthält die Vorsilbe, sonst sähen `bis 10 kWp` und
+  `>10 kWp` gleich aus
+
+Dazu zwei kleinere Gruppen:
+
+- **`Umfang`** (neu): `einseitig` / `beidseitig` / `allseitig`. Das ist
+  **unser eigenes Gewerk**: `Tür streichen / lackieren (beidseitig)` kostet
+  75,00 €, `(einseitig)` 45,00 € — und die beidseitige Tür bekam den
+  einseitigen Preis.
+- **`Schicht/Gang`**: `2-lagig` als Zahl, nicht nur `zweilagig` als Wort.
+  `Parkett ölen (2-lagig)` bekam den 1-lagig-Preis.
+
+Alle drei Regeln arbeiten mit `nur-unterschied`: Sie sperren **nur**, wenn
+beide Seiten eine Angabe tragen und die Angaben sich widersprechen. Sagt der
+Handwerker bloß „Tür lackieren", bekommt er weiter einen Preis. Das ist die
+Lehre aus der Verlegeart (Abschnitt G): Eine Sperre, die auch dann greift,
+wenn eine Seite gar nichts sagt, macht mehr kaputt als sie heilt.
+
+**Gemessen gegengeprüft:** die 25 bekannten Maler- und Boden-Paare (Wand
+streichen 9,50 €, Decke 11,00 €, Heizkörper 40,00 €, Kalkputz 35,00 €,
+Laminat 14,00 €, Parkett abschleifen 20,00 €, Spachtelarbeiten Q3 14,00 € …)
+sind Zeichen für Zeichen unverändert.
+
+### Was jetzt einen Menschen braucht — Entscheidungsliste
+
+Die verbliebenen 22 Zeilen unterscheiden sich **nicht durch eine Zahl,
+sondern durch ein Wort**: „gewendelt" statt „gerade", „Beton" statt
+„Mauerwerk", „Gips" statt „PU-Hartschaum", „hochwertig" statt „einfach". Das
+kann kein Muster entscheiden — das ist eine Benennungsfrage.
+
+**Die Frage an Manfred bzw. den Prüfmeister lautet für jede Zeile gleich:**
+Wie heißt diese Position, wenn man sie **ohne Klammer** schreiben müsste?
+`Treppe abbrechen (Beton)` → `Betontreppe abbrechen`. Steht das
+unterscheidende Wort **vor** der Klammer, findet die Suche sie wieder — ohne
+jede Codeänderung.
+
+Die Liste erzeugt sich selbst neu mit
+`node scripts/katalog-dopplungen.mjs --liste`. Stand 12.09.2026:
+
+## Abbruch
+
+- **Garage abbrechen (Leichtbau / Fertiggarage)** — 1.200,00 €/Stück
+  bekommt heute: *Garage abbrechen (Beton / Massiv, bis 25 m²)* — 2.800,00 €
+- **Treppe abbrechen (Holz)** — 280,00 €/Stück
+  bekommt heute: *Treppe abbrechen (Beton)* — 850,00 €
+- **Wandöffnung / Durchbruch herstellen (bis 1 m², Beton / Stahlbeton)** — 650,00 €/Stück
+  bekommt heute: *Wandöffnung / Durchbruch herstellen (bis 1 m², Mauerwerk)* — 280,00 €
+- **Vollabbruch je m² BGF (Stahlbeton / aufwändig)** — 110,00 €/m²
+  bekommt heute: *Vollabbruch je m² BGF (Massivbau, Richtwert)* — 75,00 €
+
+## Aufzugstechnik
+
+- **Treppenlift einbauen (gewendelte Treppe)** — 9.500,00 €/Pauschale
+  bekommt heute: *Treppenlift einbauen (gerade Treppe, komplett)* — 5.500,00 €
+
+## Boden
+
+- **Massivholzdielen verlegen vollflächig verklebt** — 52,00 €/m²
+  bekommt heute: *Landhausdiele verlegen vollflächig verklebt* — 40,00 €
+- **Klebe-Vinyl verlegen vollflächig (Profikleber, Nasskleber)** — 28,00 €/m²
+  bekommt heute: *Klebe-Vinyl verlegen vollflächig (Dünnbett, Self-Adhesive)* — 22,00 €
+- **Aufpreis Verlegung bei Fußbodenheizung (FBH-geeignet)** — 4,00 €/m²
+  bekommt heute: *Aufpreis Verlegung bei Fußbodenheizung (elastischer Kleber)* — 8,00 €
+- **Laminat verlegen schwimmend (Großdiele / breites Format)** — 16,00 €/m²
+  bekommt heute: *Laminat verlegen schwimmend (Klick-System, Standard)* — 14,00 €
+
+## Dach
+
+- **Oberste Geschossdecke dämmen (begehbar, Trittschutzplatte)** — 55,00 €/m²
+  bekommt heute: *Oberste Geschossdecke dämmen (nicht begehbar, MW 160mm)* — 35,00 €
+
+## Estrich
+
+- **Wärmedämmung verlegen (Mineralwolle / Steinwolle)** — 22,00 €/m²
+  bekommt heute: *Wärmedämmung verlegen (EPS, bis 60mm)* — 14,00 €
+
+## Fenster
+
+- **Außenrollladen (elektrisch, 230V) einbauen inkl. Kasten** — 580,00 €/Stück
+  bekommt heute: *Außenrollladen (manuell, Gurt) einbauen inkl. Kasten* — 380,00 €
+
+## Garten
+
+- **Gartenpflege allgemein (Hilfsarbeiter, je Stunde)** — 30,00 €/Stunde
+  bekommt heute: *Gartenpflege allgemein (Fachkraft, je Stunde)* — 45,00 €
+
+## Schreiner
+
+- **Holztreppe Massiv (gewendelt / Sonderform)** — 9.500,00 €/Pauschale
+  bekommt heute: *Holztreppe Massiv (gerade, bis 10 Stufen, inkl. Geländer)* — 5.500,00 €
+- **Küche Planung + Fertigung + Montage (hochwertig, je lfdm)** — 4.200,00 €/lfdm
+  bekommt heute: *Küche Planung + Fertigung + Montage (einfach, je lfdm)* — 1.800,00 €
+- **Küche Planung + Fertigung + Montage (mittel, je lfdm)** — 2.800,00 €/lfdm
+  bekommt heute: *Küche Planung + Fertigung + Montage (einfach, je lfdm)* — 1.800,00 €
+
+## Stuck
+
+- **Deckenrosette montieren (groß, >50cm Durchmesser)** — 90,00 €/Stück
+  bekommt heute: *Deckenrosette montieren (PU / Gips, Fertigteil)* — 55,00 €
+- **Stuckleiste montieren (Gips, profiliert / aufwändig)** — 40,00 €/lfdm
+  bekommt heute: *Stuckleiste montieren (PU-Hartschaum, einfach)* — 18,00 €
+- **Stuckleiste montieren (PU-Hartschaum, profiliert / aufwändig)** — 28,00 €/lfdm
+  bekommt heute: *Stuckleiste montieren (PU-Hartschaum, einfach)* — 18,00 €
+- **Stuckleiste montieren (Gips, einfach)** — 25,00 €/lfdm
+  bekommt heute: *Stuckleiste montieren (PU-Hartschaum, einfach)* — 18,00 €
+- **Stuckleiste montieren (EPS / Styropor, einfach)** — 12,00 €/lfdm
+  bekommt heute: *Stuckleiste montieren (PU-Hartschaum, einfach)* — 18,00 €
+
+## Echte Dopplungen — gleicher Titel, zwei Preise
+
+- **Aufpreis Estrichdicke je zusätzlicher cm** (Estrich – Anhydritestrich): 2,80 € und 2,50 € — eine der beiden muss weg.
+
+Die letzte ist die einzige **echte** Dopplung im ganzen Katalog: derselbe
+Titel, zwei Preise. Da muss eine der beiden Zeilen weg — das ist keine
+Benennungsfrage, sondern ein Fehler in den Daten.
+
+### Was daraus als Regel bleibt
+
+**Eine Klammer darf nie das Einzige sein, was zwei Preise auseinanderhält.**
+Wer eine Katalogzeile anlegt, deren Unterscheidungsmerkmal in Klammern steht,
+legt eine Zeile an, die niemand finden kann. Das gilt für den Standardkatalog
+und genauso für die Zeilen, die ein Betrieb sich selbst anlegt — und beim
+Betrieb fällt es niemandem auf, weil er seinen eigenen Preis für gesetzt hält.
+
+Für die Zukunft gehört das in die Oberfläche: Wer beim Anlegen einer Position
+einen Titel eingibt, der sich von einem vorhandenen **nur** in der Klammer
+unterscheidet, sollte einen Hinweis bekommen. Das ist kein Ticket für heute,
+aber es ist der einzige Ort, an dem das Problem nicht wieder entsteht.
+
+*Head of Product Engineering · 2026-09-12*
+
+<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH
 dieser Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte
 nicht selbst löschen, sondern dem Chief of Staff melden.
 
@@ -142,7 +332,7 @@ nächsten Umbau kaputtgeht.
 | CoS-E-036 | TN-091 | Kein auffindbarer Weg, aus einem beauftragten Angebot eine Rechnung zu erzeugen | hoch | ✅ erledigt — hinfällig, es gibt keine Rechnung mehr zu erzeugen |
 | CoS-E-037 | TN-092 | Preis-Matching findet einen vorhandenen Datenbankeintrag nicht, weil intern ein anderer Begriff verwendet wird als in der Preisdatenbank | hoch | ❌ offen — Vokabelfrage (Sperranstrich/Isoliergrund), bitte an den Prüfmeister |
 | CoS-E-038 | TN-093/TN-094 | Angebotspreise weichen von der Preisdatenbank ab, uneinheitlich zwischen zwei Angeboten desselben Betriebs für dieselbe Position | hoch | ✅ erledigt — zwei reproduzierte Fehler behoben, an Manfreds echten Daten nachgestellt |
-| CoS-E-039 | TN-095 | Preisdatenbank hat viele Dopplungen mit identischen Preisen unter leicht anderem Namen | mittel | ❌ offen — Katalog aufräumen, nicht den Matcher raten lassen |
+| CoS-E-039 | TN-095 | Preisdatenbank hat viele Dopplungen mit identischen Preisen unter leicht anderem Namen | mittel | ✅ 12.09. — **keine Dopplungen, sondern Staffeln**: 64 von 2379 Zeilen waren über ihren eigenen Namen unerreichbar und bekamen still den billigeren Preis. Jetzt 22, alle 22 durch ein Wort unterscheidbar → Entscheidungsliste für Manfred / Prüfmeister, siehe unten |
 | CoS-E-040 | TN-097 | Erschwerniszuschläge „Altbau"/„bewohnt" lassen sich in den Einstellungen nirgends abschalten | mittel | ❌ offen |
 | CoS-E-041 | TN-098 | Kleinmaterial-Pauschale „automatisch ab 200 €" griff bei einem 1.700-€-Angebot nicht | hoch | ✅ erledigt — Pauschale war an einem toten Pfad, jetzt im echten Weg |
 | CoS-E-042 | TN-100 | „Zahlungsziel" und „Gültigkeitsdauer" sind zwischen Einstellungen und PDF vertauscht (gleiche Familie wie CoS-E-013/CoS-E-031) | hoch | 🟡 erledigt — gleiche Ursache wie CoS-E-013 |
@@ -845,6 +1035,286 @@ für genau das Stück, das gerade dazugekommen war. Wer die Engine ändert, muss
 das Prüfskript mitziehen, sonst misst es still weniger, als es behauptet.
 
 Gesamte Suite (112 Dateien) grün, `tsc` und `eslint` sauber.
+
+*Head of Product Engineering · 2026-09-12*
+
+---
+
+## F.5/4 Ausgleichsmasse — Korrektur an mir selbst (12.09.2026)
+
+Ich hatte geschrieben, für 10 mm und 30 mm führe der Standardkatalog keine
+Zeile und die Richtwerte des Prüfmeisters müssten angelegt werden. **Das war
+falsch.** Der Katalog führt beide seit jeher:
+`Ausgleichsmasse 3–10 mm einbringen` 16,00 € und `10–30 mm einbringen`
+26,00 €. Ich hatte es behauptet, ohne nachzusehen.
+
+Die Lücke war im ENGINE-Titel. Er schrieb `(bis 10mm)` — eine Schreibweise,
+die im Katalog nicht vorkommt; die Klammer fällt in der Normalisierung weg,
+also bekamen alle drei Stärken den 3-mm-Preis. 10,00 € statt 16,00 € oder
+26,00 €, bei 60 m² Estrich knapp tausend Euro.
+
+Gebaut: Die Stärke aus dem Diktat wird jetzt in die Staffel des Katalogs
+übersetzt (`ausgleichsmasseTitel()` in `boden-basis.ts`), Titel wörtlich wie
+im Katalog. Über 30 mm bleibt sichtbar ohne Preis — dort hört der
+Boden-Katalog auf.
+
+**Folge für den Rest der Liste:** Erst nachsehen, was der Katalog führt, dann
+anlegen. Mehrere Zeilen in F.2/F.3 sind ohnehin als „W" markiert — das sind
+Umbenennungen, keine neuen Einträge.
+
+**Noch nicht nachgemessen.** Die Shell auf Sandys Rechner ist während dieser
+Änderung ausgefallen (Windows-Update vom 08.09.). Die Änderung ist am echten
+Standardkatalog geprüft, aber in einer Ersatzumgebung — Testsuite und
+`vokabular-abgleich.mjs` sind noch nicht gelaufen und müssen nachgeholt
+werden, sobald der Zugriff wieder da ist.
+
+*Head of Product Engineering · 2026-09-12*
+
+---
+
+## CoS-E-048 — Sandys Entscheidung: Umbenennungen jetzt, neue Katalogeinträge + Migration in einem Zug (12.09.2026)
+
+Bezug: deine Frage an Sandy zu den restlichen Prüfmeister-Punkten —
+Umbenennungen vs. neue Katalogeinträge mit Migration (F.5/F.6 in
+`vokabular-abgleich.md`).
+
+**Wichtige Klarstellung zuerst, für alle künftigen Migrations-/Rollout-
+Fragen:** Es gibt aktuell keine echten Betriebe außer Sandys eigenem
+Testkonto. „Bestehende Betriebe sehen die neue Position mit 0,00 €" ist als
+Architektur-Feststellung richtig, aber operativ folgenlos — niemand ist
+heute davon betroffen. Sandys Entscheidung unten ist deshalb **nicht** aus
+Vorsicht für echte Kunden gefallen, sondern aus reiner Sauberkeit.
+
+**Entscheidung: deine eigene Empfehlung, genau so.**
+1. Umbenennungen jetzt bauen — kein Risiko, kein Datenbank-Zugriff nötig.
+2. Neue Katalogeinträge (Geländer abkleben, Fugen fräsen, Betonwände
+   streichen, etc.) zurückstellen, bis der Prüfmeister alle Richtwerte final
+   bestätigt hat. Dann alles in einem Zug bauen — Katalogeinträge und
+   Migration zusammen, vollständig, nicht gestückelt.
+
+Begründung für die Reihenfolge: nicht Risiko-Vermeidung (den gibt es nicht),
+sondern Vermeidung doppelter Migrationsarbeit. Sandys Grundsatz dazu, gilt ab
+jetzt generell: „Alles muss perfekt laufen, alles soll direkt richtig
+gefixt werden" — einmal vollständig und korrekt ist unter diesem Grundsatz
+immer die bessere Lösung als zweimal halb, unabhängig von Kunden-Risiko.
+
+*Chief of Staff · 2026-09-12*
+
+---
+
+## CoS-E-048 — Zug 1 der Umbenennungen gebaut (12.09.2026)
+
+Entscheidung umgesetzt, erster Zug: nur Titel, bei denen der Katalog den Preis
+schon führt. Vollständig in `vokabular-abgleich.md`, Abschnitt K.
+
+**Drei Positionen, die mit 0,00 € im Angebot standen, haben jetzt einen
+Preis** — einen, der die ganze Zeit im Katalog stand: Tiefengrund Beton →
+4,50 €/m², Kalkputz → 35,00 €/m², Rohrleitungen → 9,00 €/lfdm. Dazu zwei
+Positionen, die den richtigen Betrag über die falsche Katalogzeile bekamen
+(Fassade reinigen, Fassadengrundierung) — gleicher Preis, jetzt der richtige
+Name auf dem Kundenpapier.
+
+Raus ist außerdem der Stück-Zweig bei den Rohren: Ohne Meterangabe wurde „1
+Stück pro Heizkörper" erfunden. Erfundene Menge und falsche Einheit in einer
+Zeile. Steht jetzt sichtbar in der Fehlt-Liste.
+
+**Ein Fund, der die Reihenfolge für den Rest bestimmt.** Eine der
+Umbenennungen aus der Prüfmeister-Tabelle hätte einen funktionierenden Preis
+zerstört: `Estrich schleifen / Untergrundvorbereitung` → `Estrich anschleifen`
+wäre von 8,00 € auf 0,00 € gefallen, weil der Katalog die Zeile ausgerechnet
+mit dem Werkzeugwort führt und die schöner benannte unter einem anderen Gewerk
+steht. Zurückgestellt in den Katalog-Zug.
+
+Daraus die Regel, die ab jetzt für jede Umbenennung gilt:
+
+> Eine Umbenennung ist nur für sich allein sicher, wenn der Katalog das neue
+> Wort schon führt. Sonst gehören Engine-Titel und Katalogzeile in denselben
+> Zug.
+
+Ich prüfe deshalb jede weitere Umbenennung vorher gegen den echten Katalog,
+unter dem richtigen Gewerk — dieselbe Zeile kann unter Maler existieren und
+unter Boden nicht.
+
+**Noch nicht nachgemessen.** Mein Zugriff auf Sandys Rechner ist weiterhin
+unterbrochen (Windows-Update vom 08.09.). Jede einzelne Umbenennung ist gegen
+den echten Standardkatalog geprüft, aber in einer Ersatzumgebung — Testsuite
+und `vokabular-abgleich.mjs` laufen bei Sandy.
+
+*Head of Product Engineering · 2026-09-12*
+
+---
+
+## CoS-E-048 — Zug 2a gebaut, Zusammenlegungen (12.09.2026)
+
+Drei weitere Positionen haben einen Preis bekommen, den der Katalog schon
+führte: die beiden Sperranstriche (je **9,00 €/m²**) und der Fliesenspiegel
+(**0,80 €/lfdm**). Die drei Leuchten-Zeilen sind zu einer zusammengelegt.
+Details in `vokabular-abgleich.md`, Abschnitt L.
+
+**Zwei Titel aus der Prüfmeister-Tabelle funktionieren nicht — gemessen, nicht
+vermutet.** Sein `Isoliergrund auftragen (… / Schimmel)` findet gar nichts,
+weil die Aufwandswort-Regel „Schimmel" im Titel gegen eine Katalogzeile ohne
+Schimmel sperrt — und damit recht hat. Sein `Estrich grundieren (Haftgrund)`
+trifft weiter den Tiefengrund-Preis, weil die Normalisierung Klammern wegwirft.
+Ersteres ist gelöst (Katalogtitel wörtlich, Anlass in den Rechenweg), das
+zweite ist eine **Preisfrage für Manfred**: 4,50 € oder 6,00 € für Estrich
+grundieren.
+
+Zug 2b (`Wandflächen` → `Wand`, `Deckenfläche` → `Decke`) folgt separat. Der
+ändert gemessen keinen einzigen Preis, streut aber über sieben Testdateien —
+das gehört nicht in denselben ungeprüften Schwung wie eine Änderung, die Geld
+bewegt.
+
+*Head of Product Engineering · 2026-09-12*
+
+---
+
+## CoS-E-048 — Zug 2b + Haftgrund-Korrektur (12.09.2026)
+
+**Manfred hat mich zweimal korrigiert, beide Male zu Recht.** Mein „sichtbar
+statt still" für den 4,50-€-Haftgrund war eine Ausrede — für den Betrieb steht
+da ein Preis, den er für seinen hält. Und der richtige Preis ist 6,00 €, aus
+Materialgründen: Haftgrund ist mit Quarzsand gefüllt und kostet das Drei- bis
+Vierfache vom Tiefengrund.
+
+**Sein eigener Lösungsvorschlag trug allerdings auch nicht** — gemessen. Wir
+haben beide auf der falschen Seite gesucht: Die Klammer stört nicht im
+gesuchten Titel, sondern im KATALOG. `Grundieren (Tiefengrund)` und
+`Grundieren (Haftgrund / Sperrgrund)` heißen nach der Normalisierung beide
+„grundieren", und bei Gleichstand gewinnt die obere Zeile. Gelöst als Filter
+am Rohtitel — dieselbe Bauweise wie Q-Stufe und Anstrichzahl. `Estrich
+grundieren (Haftgrund)` trifft jetzt 6,00 €, ohne Eingriff in die
+Normalisierung.
+
+**Zug 2b ist gebaut:** `Wandflächen streichen` → `Wand streichen`,
+`Deckenfläche` → `Decke`. Keine Preisänderung, reine Kundenpapier-Hygiene.
+
+**Der Ertrag steckt woanders:** Drei Stellen im Code lasen die alten Titel als
+stillen Vertrag, und zwei davon hätten Geld gekostet — die Streichposition
+wäre neben der Tapete stehen geblieben (doppelt berechnet), und die
+Raumzählung für die Heizkörper wäre auf null gefallen. **Keine davon hätte
+einen Test zwingend rot gemacht.** Gefunden durch die Routine aus dem
+`Parkett schleifen`-Fall. Die Erkennung steht jetzt an einer Stelle
+(`istWandStreichen()`), damit der nächste Umbenenner sie über die Aufrufer
+findet.
+
+**Zu Sandys Frage, ob Manfred alle Preise setzen soll:** Meine Empfehlung ist
+nein — seine beiden Gewerke ja, die übrigen nicht (er kann Elektro und SHK
+nicht bepreisen, und aus dem Standardkatalog würde „Manfreds Preisliste", was
+den regionalen Faktor später unbeurteilbar macht). Wichtiger: Der Preis ist
+nicht das Wertvollste an ihm. Alle fünf teuren Funde heute waren **Struktur**,
+kein Preis — Verlegeart, Schleifgänge, Millimeterstaffel, Einheit, Werkstoff.
+Da ist er unersetzlich, und da verbrennt man ihn, wenn man ihn 300 Zahlen
+abtippen lässt. Vorschlag: Preise zur Bestätigung, aber immer mit der Frage
+„warum", nicht nur „wie viel" — die Begründung ist das, was für andere
+Betriebe verallgemeinerbar ist.
+
+*Head of Product Engineering · 2026-09-12*
+
+---
+
+## CoS-E-049 — O und P des Prüfmeisters abgearbeitet (12.09.2026)
+
+**An den Chief of Staff, nicht an Sandy.** Sie hat heute gesagt, sie kann die
+Engineering-Berichte nicht mehr prüfen und will nur noch hören, was sie oder
+ein Kollege TUN muss. Das ist berechtigt — die Details gehören hierher, nicht
+in den Chat. Ich halte mich ab jetzt daran.
+
+### 1. Was gebaut wurde
+
+**O.3 — der einzige wirklich neue Punkt seiner Liste, und er ist älter als
+die Umbenennung.** Drei Funktionen kennzeichnen die Streichposition
+nachträglich mit dem Material (Feuchtraumfarbe, abwaschbare Farbe,
+chlorbeständige Spezialfarbe). Alle drei machten es unterschiedlich falsch:
+
+| | Fehler | Folge |
+|---|---|---|
+| `pruefeFeuchtraum` | ersetzte mit `/streichen(\s*—\s*.+)?$/` | Seit der Anstrichzahl endet der Titel auf „… streichen **2x** — Bad". Muster greift nicht → **Zusage verschwand wortlos vom Kundenpapier** |
+| `pruefeAbwaschbar` | `.replace(/streichen/, …)` | Zusatz landete VOR der Anstrichzahl |
+| `pruefeChlor` | `beschreibung += ' (…)'` | Zusatz landete HINTER dem Raum → der Raum hieß „Bad (chlorbeständige Spezialfarbe)"; jede Stelle, die den Raum ausliest, bekam Müll |
+
+Alle drei laufen jetzt über `mitTitelZusatz()` in `positions-titel.ts`, das den
+Zusatz vor den Raum-Gedankenstrich setzt.
+
+**O.1/O.2 waren bereits erledigt** — unsere Notizen haben sich überkreuzt. Er
+fand sechs Stellen, ich hatte zwölf gefunden und umgestellt. Seine Liste ist
+damit vollständig abgedeckt.
+
+**O.4/2 — zwölf Tests**, einer je stiller Vertrag, in
+`src/lib/__tests__/titel-vertraege.test.ts`. Wie von ihm verlangt auf das
+ERGEBNIS geprüft, nicht auf den Titel im Code. Inklusive der Zusicherung, dass
+Angebote mit der ALTEN Schreibweise weiter erkannt werden.
+
+**P.2 — die drei Wortgruppen** sind in `preis-aufwandswoerter.ts`:
+`Arbeitsgang` um `streichen`/`überstreichen`/`anstreichen`/`anstrich` (eine
+Kennung) und `tapezieren`/`aufziehen` (eine Kennung) erweitert; neue Gruppen
+`Sondermaterial` und `Materialbeistellung`.
+
+**P.1 — die drei Umbenennungen ohne Katalogänderung:**
+
+| Engine sagte | heißt jetzt | vorher | jetzt |
+|---|---|---|---|
+| `Raufaser tapezieren` | `Raufaser tapezieren ohne Anstrich` | 14,00 € | **10,00 €/m²** |
+| `Raufaser/Malervlies/Vliestapete/Tapete streichen` | `Tapete / Raufaser überstreichen Nx` | **0,00 €** | **11,00 €/m²** (1x: 7,00 €) |
+
+Die Raufaser-Zeile traf `Raufaser tapezieren + überstreichen 1x` — ein
+Anstrich, den niemand bestellt hat, 4,00 €/m² zu viel, und der Betrieb schuldet
+die Arbeit. Dieselbe Familie wie `Parkett schleifen` → Komplettpaket. Seit
+`streichen` und `anstrich` eine Kennung sind, ist das gesperrt.
+
+### 2. Der Beinahe-Schaden, der beim Bauen auffiel
+
+`chlorbeständig` sollte laut P.2 ein Sperrwort werden — und `pruefeChlor`
+schrieb genau dieses Wort in **jede** Streichposition. Ein Schwimmbad-Auftrag
+hätte damit **sämtliche Anstrichpreise verloren**. Der Prüfmeister hatte das in
+F.2 #10 vorhergesagt, nur aus dem anderen Blickwinkel: Die Umbenennung war
+ohnehin eine unbezahlte Zusage („das Versprechen steht auf dem Papier, bezahlt
+wird der Normalpreis"). Sie ist jetzt raus; der Aufpreis läuft auf die
+Streichfläche statt pauschal.
+
+**Merksatz für den Themenspeicher:** Ein Wort, das die Engine SELBST in Titel
+schreibt, darf nicht ohne Prüfung zum Sperrwort werden. Die Aufwandswörter
+beschreiben, was der Kunde bestellt hat — nicht, was wir hineingeschrieben
+haben.
+
+### 3. Bewusst offen, gehört in den Katalog-Zug
+
+- `Silikatfarbe 2× Anstrich` steht jetzt sichtbar auf **0,00 €** (traf vorher
+  den Fassadenfarben-Preis 14,00 €; Silikat-Fassade kostet laut seiner P.1-Liste
+  20,00 €). Gewollte Richtung nach PM-018.
+- `Tapete tapezieren` ohne genannte Art rät weiter die teuerste Sorte
+  (Vliestapete, 18,00 €). Er will dafür **keinen Titel, sondern eine
+  Rückfrage** — das ist F.5/6.
+- Die komplette Anlageliste aus P.1 (14 neue Zeilen + 2 Änderungen an
+  bestehenden) wartet auf Sandys Katalog-Zug (CoS-E-048).
+
+### 4. Was Sandy tun muss
+
+Nur zwei Befehle, sonst nichts. Sie hat keinen anderen Weg, den Stand zu
+prüfen — meine Shell auf ihrem Rechner ist seit dem Windows-Update vom 08.09.
+tot, und das ist der Flaschenhals des ganzen Tages gewesen.
+
+```
+npx vitest run 2>&1 | Out-File -Encoding utf8 testlauf.txt
+node scripts/vokabular-abgleich.mjs 2>&1 | Out-File -Encoding utf8 abgleich.txt
+```
+
+### 5. Eine Bitte an den Chief of Staff
+
+Sandy hat heute geschrieben: *„ich hab irgendwie Sorge, dass ich jetzt einen
+komplett normalen Testfall einspreche und plötzlich nur Scheiße rauskommt, weil
+du hier gefühlt alles umbaust und ich nichts checke."*
+
+Das ist der wichtigste Satz des Tages. Eine grüne Testsuite beweist ihr nichts,
+weil sie sie nicht lesen kann. Ich habe deshalb `scripts/probe-angebot.mjs`
+gebaut: Es druckt vier vollständige Angebote aus — Positionen, Mengen, Preise,
+Summe, Fehlt-Liste — über dieselbe Kette wie der echte Endpunkt.
+
+**Vorschlag: Das gehört nicht mir, sondern in die Routine.** Nach jedem
+größeren Eingriff an der Preis- oder Mengenlogik ein Probeangebot, das ein
+Mensch ohne Programmierkenntnisse lesen kann. Manfred sollte es ebenfalls
+bekommen — er erkennt in dreißig Sekunden, ob ein Angebot Hand und Fuß hat, und
+das kann keine Testsuite.
 
 *Head of Product Engineering · 2026-09-12*
 

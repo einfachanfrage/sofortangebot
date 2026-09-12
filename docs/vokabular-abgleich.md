@@ -352,7 +352,8 @@ Q1–Q4 · 1x/2x/3x · einlagig · zweilagig · dreilagig · Schicht 1 / Schicht
 *(Q-Stufe und Anstrichzahl sind bereits harte Filter im Matcher — die bleiben
 wie sie sind. Manfreds „Q3, Q4, dreifach" stehen also schon im Code.)*
 
-**4. Maßschwellen — jede Zahl mit Maßeinheit im Titel:**
+**4. Staffeln — jede Größen-, Mengen- oder Leistungsangabe im Titel**
+(hieß bis zum 12.09.2026 „Maßschwellen" und kannte nur mm/cm/km — siehe Q):
 bis 3 mm · 3–10 mm · 10–30 mm · bis 15 mm · über 3 m · über 4 m · bis 20 km
 Das sind die leisesten von allen. `Ausgleichsmasse einbringen` → `bis 3 mm`
 (10,00 €) statt `3–10 mm` (16,00 €) oder `10–30 mm` (26,00 €): 16 € Unterschied
@@ -886,8 +887,11 @@ neuen Null-Positionen ist eine, die vorher still einen falschen Preis trug:
 | `Ausgleichsmasse einbringen (bis 10mm)` | 10,00 € (der bis-3-mm-Preis) | 0,00 €, Versand gesperrt |
 | `Ausgleichsmasse einbringen (bis 30mm)` | 10,00 € (derselbe) | 0,00 €, Versand gesperrt |
 
-Für beide führt der Standardkatalog keine Zeile — das ist F.2/F.3, seine
-Richtwerte liegen vor, gehört zum Katalog-Schritt.
+**Nachtrag 12.09., und es ist eine Korrektur an mir selbst:** Der Satz „für
+beide führt der Katalog keine Zeile" war falsch. Er führt sie — sie heißen nur
+anders (`Ausgleichsmasse 3–10 mm einbringen` 16,00 €,
+`10–30 mm` 26,00 €). Siehe Abschnitt J. Es war also nie ein Katalog-Schritt,
+sondern eine Umbenennung.
 
 Und die Treffer, die sich **verbessert** haben:
 
@@ -1037,6 +1041,739 @@ wenn der Titel stumm geblieben ist:
 - Teppich: *„Gespannt, verklebt oder lose?"* (14 / 18 / 10 €)
 - Parkett, Kork: *„Schwimmend oder vollflächig verklebt?"* (22 / 35 €, 18 / 24 €)
 - Vinyl: *„Klick oder geklebt?"* (16 / 28 €)
+
+*Head of Product Engineering · 12.09.2026*
+
+---
+
+## J. Ausgleichsmasse — und warum F.5/4 kleiner war als gedacht (12.09.2026)
+
+Ich wollte die zwei fehlenden Katalogeinträge anlegen und habe zuerst
+nachgesehen, was der Katalog wirklich führt. **Er führt sie schon:**
+
+```
+Ausgleichsmasse bis 3 mm einbringen      10,00 €/m²
+Ausgleichsmasse 3–10 mm einbringen       16,00 €/m²
+Ausgleichsmasse 10–30 mm einbringen      26,00 €/m²
+```
+
+Die Lücke war nie im Katalog, sondern im Engine-Titel: Er schrieb
+`Ausgleichsmasse einbringen (bis 10mm)` — eine Schreibweise, die es im Katalog
+nicht gibt. Die Klammer fällt in der Normalisierung weg, also bekamen **alle
+drei Stärken den 3-mm-Preis**: 10,00 € statt 16,00 € oder 26,00 €. Bei 60 m²
+Estrich sind das knapp tausend Euro, die niemandem auffallen — der
+Prüfmeister: *„Das sind die leisesten von allen."*
+
+Seit die Maßschwellen ein Filter sind (H), war der falsche Preis weg und die
+Position stand sichtbar auf 0,00 €. Richtig, aber unbrauchbar: Der Preis war
+ja da. Jetzt baut `ausgleichsmasseTitel()` in `boden-basis.ts` die Stärke aus
+dem Diktat in die Staffel des Katalogs:
+
+| im Diktat | Titel | Preis |
+|---|---|---|
+| nichts gesagt | `Ausgleichsmasse einbringen` | 10,00 € (Grundfall) |
+| bis 3 mm | `Ausgleichsmasse bis 3 mm einbringen` | 10,00 € |
+| 4–10 mm | `Ausgleichsmasse 3–10 mm einbringen` | 16,00 € |
+| 11–30 mm | `Ausgleichsmasse 10–30 mm einbringen` | 26,00 € |
+| über 30 mm | `Ausgleichsmasse einbringen (45 mm)` | **kein Preis, sichtbar** |
+
+Über 30 mm hört der Boden-Katalog auf; weiter geht es nur unter „Estrich –
+Ausgleich & Spachtelung", einem anderen Gewerk. Lieber sichtbar ohne Preis als
+still der 26-€-Satz für eine anderthalbmal so dicke Schicht (PM-018).
+
+Geprüft in `src/lib/__tests__/ausgleichsmasse.test.ts`, inklusive der Zusage,
+dass keine Stärke den Preis einer anderen bekommt.
+
+### J.1 Was das für die restliche F.5/4-Liste heißt
+
+**Erst nachsehen, was der Katalog führt, dann Einträge anlegen.** Von den
+Richtwerten aus F.2/F.3 sind mehrere schon als „**W**" markiert (dasselbe
+Wort, Katalog folgt der Engine) — das sind Umbenennungen, keine neuen
+Einträge. Ich gehe die Liste vor dem Anlegen einzeln durch, so wie hier.
+
+### J.2 Das Messgerät, zum zweiten Mal
+
+Der Titel kommt jetzt aus einer Funktion statt aus einem Template. Das
+Abgleich-Skript liest nur Text-Literale — die vier Ausgleichsmasse-Titel wären
+also stillschweigend aus der Messung verschwunden, genau wie bei G.2. Das
+Skript ruft `ausgleichsmasseTitel()` deshalb selbst auf, mit je einem
+Vertreter pro Stufe. Zum zweiten Mal an einem Tag dieselbe Lehre:
+
+**Wer die Engine ändert, muss das Prüfskript mitziehen — sonst misst es still
+weniger, als es behauptet.**
+
+### J.3 Offen: nicht nachgemessen
+
+Meine Shell auf Sandys Rechner ist während dieser Änderung ausgefallen (ein
+Windows-Update vom 08.09. blockiert den Zugriff). Geprüft ist diese Änderung
+am echten Standardkatalog, aber in einer Ersatzumgebung — **die Testsuite und
+`node scripts/vokabular-abgleich.mjs` sind noch nicht gelaufen.** Beides muss
+nachgeholt werden, bevor der Stand als fertig gilt.
+
+*Head of Product Engineering · 12.09.2026*
+
+---
+
+## K. Umbenennungen, Zug 1 (12.09.2026)
+
+Sandys Entscheidung (CoS-E-048): Umbenennungen jetzt, neue Katalogeinträge
+später in einem Zug mit der Migration. Das hier ist der erste Zug — nur die
+Titel, bei denen der Katalog den Preis **schon führt**.
+
+| Engine sagte | heißt jetzt | vorher | jetzt |
+|---|---|---|---|
+| `Tiefengrund Beton` | `Grundieren (Tiefengrund)` | **0,00 €** | **4,50 €/m²** |
+| `Kalkputz auftragen` | `Kalkputz aufbringen` | **0,00 €** | **35,00 €/m²** |
+| `Rohre lackieren` | `Rohrleitungen lackieren` | **0,00 €** | **9,00 €/lfdm** |
+| `Fassade reinigen / Untergrundvorbereitung` | `Fassade reinigen (druckwaschen)` | 5,00 € (Treffer 0,67) | 5,00 € (Treffer 0,94) |
+| `Grundierung / Tiefengrund Fassade` | `Fassadengrundierung auftragen` | 6,00 € über die **Graffiti**-Zeile | 6,00 € über die richtige Zeile |
+
+Drei Positionen, die im Angebot mit 0,00 € standen, haben jetzt einen Preis —
+und zwar einen, der die ganze Zeit im Katalog stand. Niemand musste etwas
+anlegen.
+
+Dazu aus F.2 #8: **Der Stück-Zweig bei den Rohren ist raus.** Ohne Meterangabe
+wurde bisher „1 Stück pro Heizkörper" erfunden und als Stück-Position
+ausgegeben — eine Einheit, die der Katalog für diese Arbeit nicht führt, mit
+einer Menge, die niemand gesagt hat. Jetzt steht die Position sichtbar in der
+Fehlt-Liste mit der Bitte um die Meter.
+
+### K.1 Der wichtigste Fund: Eine Umbenennung kann einen Preis zerstören
+
+`Estrich schleifen / Untergrundvorbereitung` → `Estrich anschleifen` steht in
+seiner Tabelle, ist fachlich richtig — und **hätte 8,00 € gegen 0,00 €
+getauscht.**
+
+Der Standardkatalog führt die Zeile wörtlich mit dem Werkzeugwort:
+`Estrich schleifen / Untergrundvorbereitung`, Maler, 8,00 €/m², Treffer 1,00.
+Die Zeile mit dem besseren Wort (`Estrich anschleifen und absaugen`, 8,50 €)
+steht unter **Boden** und fällt für eine Malerposition durch den
+Gewerke-Filter.
+
+Daraus die Regel für den Rest der Tabelle:
+
+> **Eine Umbenennung ist nur dann für sich allein sicher, wenn der Katalog das
+> neue Wort schon führt. Sonst gehören Engine-Titel und Katalogzeile in
+> denselben Zug.**
+
+Das ist das Spiegelbild der G.2-Lehre („ein Zusatz ohne passende Katalogzeile
+ist schlimmer als gar keiner"). Ich prüfe deshalb jede weitere Umbenennung
+vorher gegen den echten Katalog, unter dem **richtigen Gewerk** — dieselbe
+Zeile kann unter Maler existieren und unter Boden nicht.
+
+### K.2 Eine Abweichung vom Papier, gemessen
+
+Er schlägt `Fassade grundieren` vor. Das trifft mit 0,80 den Eintrag
+`Grundierung Fassade nach Graffiti` — richtiger Betrag, falscher Name auf dem
+Kundenpapier. Der Katalog führt die neutrale Zeile als
+`Fassadengrundierung auftragen`, ebenfalls 6,00 €, Treffer 1,00. Also die
+Katalogschreibweise, wie überall heute. Handwerkersprache bleibt es auch.
+
+### K.3 Was noch aussteht, und warum
+
+**Zurückgestellt in den Katalog-Zug** (Engine + Katalogzeile zusammen):
+`Estrich anschleifen`, `Epoxid-Versiegelung Schicht 1/2` (die Katalogzeile
+trägt den Gedankenstrich selbst; die Falle ist seit den Aufwandswörtern
+ohnehin entschärft), `Gerüst stellen und abbauen`.
+
+**Wartet auf Richtwerte des Prüfmeisters** (neue Katalogzeilen):
+`Betonwände anschleifen`, `Betonwände streichen (Betonfarbe, 2x)`,
+`Untergrund für Kalkputz vorbereiten`, `Umgebung abdecken`, `Fugen verkitten`,
+`Geländer abkleben`, `Fugen fräsen`, `Stoßkanten verkleben`,
+`Fugen thermisch verschweißen`, `Boden abdecken (Pauschale)`,
+`Heizkörper abkleben`, `Leuchten / Spots abkleben`.
+
+**Nächster Zug, ohne Katalogänderung:** die Tool-Sprache im Kundenpapier
+(`Wandflächen streichen` → `Wand streichen`, `Deckenfläche` → `Decke`) und die
+Zusammenlegungen (Leuchten/Spots, Boden abdecken, Möbel abdecken,
+Sperranstrich → Isoliergrund). Die fasse ich als eigenen Zug an, weil sie
+breit streuen — der Wand-/Decken-Titel steckt in der Maler-Engine, in den
+Farbzonen und in vielen Tests.
+
+**Nicht meine Entscheidung, liegt weiter bei Manfred:** die offene Frage am
+Ende von F.6 — `Wände spachteln / glätten` ohne Q-Stufe. Solange kein Q im
+Titel steht, greift der Stufen-Filter nie, und eine Q3-Fläche kann still zum
+Q2-Preis rausgehen. Der Prüfmeister will das nicht allein entscheiden, ich
+auch nicht.
+
+*Head of Product Engineering · 12.09.2026*
+
+---
+
+## L. Umbenennungen, Zug 2a — die Zusammenlegungen (12.09.2026)
+
+| Engine sagte | heißt jetzt | vorher | jetzt |
+|---|---|---|---|
+| `Sperranstrich / Flecken sperren` | `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` | **0,00 €** | **9,00 €/m²** |
+| `Sperranstrich nach Schimmelbehandlung` | dieselbe Zeile | **0,00 €** | **9,00 €/m²** |
+| `Fliesenspiegel abkleben` (lfdm) | `Abkleben Kanten / Leisten` | **0,00 €** | **0,80 €/lfdm** |
+| `Boden schützen / Abdeckfolie` | `Boden abdecken (Abdeckvlies)` | 1,20 € (0,94) | 1,20 € (1,00) |
+| `Möbel schützen / Abdecken` | `Möbel abdecken mit Folie` | 1,50 € (0,80) | 1,50 € (1,00) |
+| `Deckenfläche grundieren` · `Dachschräge Grundierung` | `Grundieren (Tiefengrund)` | 4,50 € (0,94) | 4,50 € (1,00) |
+| `Lampen / Leuchten` · `Pendelleuchten` · `Einbauspots abkleben` | `Leuchten / Spots abkleben` | 3 × 0,00 € | **1 ×** 0,00 € |
+
+Dazu zwei Zweige, die erfundene Mengen ausgaben und jetzt in der Fehlt-Liste
+stehen: der Pauschale-Zweig beim Fliesenspiegel (Menge 1 für eine Leistung,
+die in laufenden Metern abgerechnet wird — „eine Arbeit, eine Einheit") und,
+schon in Zug 1, der Stück-Zweig bei den Rohren.
+
+### L.1 Zwei Titel aus dem Papier funktionieren nicht — gemessen
+
+**`Isoliergrund auftragen (Nikotin / Ruß / Wasserflecken / Schimmel)` findet
+nichts.** Der Grund ist die Aufwandswort-Regel von heute Morgen: „Schimmel"
+steht im gesuchten Titel, nicht in der Katalogzeile → harte Sperre. Und die
+Regel hat recht. Der Titel verspricht Arbeit am Schimmel, die diese Zeile
+nicht bepreist; die Behandlung selbst steht als eigene Position darüber.
+Gebaut ist deshalb der Katalogtitel wörtlich, der Anlass steht im
+**Rechenweg** — der erscheint auf dem Kundendokument, die Annahmen nicht
+(CoS-E-002).
+
+**`Estrich grundieren (Haftgrund)` erreicht sein Ziel nicht.** Der Titel ist
+gebaut, aber er trifft weiter `Grundieren (Tiefengrund)` 4,50 € statt
+`Grundieren (Haftgrund / Sperrgrund)` 6,00 € — die Normalisierung wirft
+Klammerinhalte weg, für den Matcher sehen beide gleich aus. Das ist keine
+Nachlässigkeit: **Ob Estrich grundieren 4,50 € oder 6,00 € kostet, ist
+Manfreds Entscheidung, nicht die des Matchers.** Bis dahin steht der richtige
+Arbeitsgang auf dem Papier und der bisherige Preis daneben — sichtbar, nicht
+still.
+
+Beide Fälle bestätigen die Regel aus K.1 in der Gegenrichtung: Auch ein
+Titel, der fachlich besser ist, muss gegen den echten Katalog gemessen werden,
+bevor er gebaut wird.
+
+### L.2 Was Zug 2b noch bringt
+
+Die reine Tool-Sprache: `Wandflächen streichen 2x` → `Wand streichen 2x`,
+`Deckenfläche streichen 2x` → `Decke streichen 2x`. Gemessen ändert das
+**keinen einzigen Preis** (beide Schreibweisen treffen dieselbe Katalogzeile
+mit 0,94), es streut aber über die Maler-Engine, die Farbzonen und sieben
+Testdateien. Deshalb als eigener Zug — eine breite Änderung ohne Preiswirkung
+gehört nicht in denselben ungeprüften Schwung wie eine, die Geld bewegt.
+
+*Head of Product Engineering · 12.09.2026*
+
+---
+
+## L.3 Nachtrag zu Zug 2a — der Golden Corpus hatte recht (12.09.2026)
+
+Von 1722 Tests waren nach Zug 2a zwei rot. Einer war eine reine Umbenennung im
+Test. Der andere war ein echter Einwand, und er kam aus dem Golden Corpus:
+
+> `MUSS enthalten: "fliesenspiegel"` — hat: `wandflächen streichen 2x — küche`
+
+Ich hatte `Fliesenspiegel abkleben` in `Abkleben Kanten / Leisten` umbenannt.
+Der Preis stimmte (0,80 €/lfdm), aber **das Wort des Handwerkers war weg**.
+Manfred diktiert „Fliesenspiegel abkleben" und findet auf dem Papier eine
+Zeile, die das Wort nicht mehr enthält — weder er noch sein Kunde erkennen sie
+wieder. Genau die Sorte Schaden, die keine Preisspalte anzeigt.
+
+Gelöst mit der Klammer: **`Abkleben Kanten / Leisten (Fliesenspiegel)`**. Die
+Normalisierung wirft Klammerinhalte weg, der Treffer bleibt bei 1,00 und
+0,80 €/lfdm — sichtbar bleibt das Wort trotzdem.
+
+Derselbe Griff funktioniert beim Isoliergrund **nicht**: `(nach
+Schimmelbehandlung)` wird von der Aufwandswort-Regel am Rohtitel gelesen und
+sperrt hart (gemessen: kein Preis). Dort steht der Anlass deshalb im
+Rechenweg, der auf dem Kundendokument erscheint.
+
+Daraus die dritte Regel dieses Tages, neben K.1 und der G.2-Regel:
+
+> **Der Katalog bestimmt, was die Zeile kostet. Der Handwerker bestimmt, wie
+> er sie wiedererkennt. Wo beides auseinanderfällt, trägt die Klammer das
+> Handwerkerwort — außer ein Aufwandswort steckt darin, dann gehört es in den
+> Rechenweg.**
+
+Bemerkenswert daran: Das hat kein Mensch gemeldet, sondern ein Test, den
+jemand vor Wochen geschrieben hat, weil ihm genau dieser Fall wichtig war.
+
+*Head of Product Engineering · 12.09.2026*
+
+---
+
+## M. Grundierungsart als Filter — und Zug 2b (12.09.2026)
+
+### M.1 Manfred hat zwei Dinge korrigiert, ich hatte in beiden unrecht
+
+**Erstens das „sichtbar statt still".** Ich hatte `Estrich grundieren
+(Haftgrund)` mit dem alten Preis von 4,50 € stehen lassen und das für ehrlich
+gehalten. Manfred: *„Für dich ist das sichtbar, weil du's weißt. Für den
+Betrieb steht da ‚Estrich grundieren (Haftgrund)' mit 4,50 € — und er denkt,
+das ist sein Preis. Das ist still, nur anders."* Er hat recht. Es war kein
+Argument, es war eine Ausrede. *„Halb geht nicht."*
+
+**Zweitens der Preis selbst: 6,00 €, nicht 4,50 €** — und die Begründung ist
+Material, nicht Arbeit:
+
+> *„Tiefengrund ist Wasser mit ein bisschen Bindemittel, der Eimer kostet fast
+> nichts. Haftgrund für Estrich ist gefüllt, mit Quarzsand, damit die
+> Ausgleichsmasse greift — der Eimer kostet das Drei- bis Vierfache, und du
+> brauchst mehr davon pro Quadratmeter, weil der Estrich saugt."*
+
+Epoxi-Grund (feuchter Estrich) liegt bei ~10 € und ist ausdrücklich **eine
+eigene Position** „Estrich sperren (Epoxi)", nicht dieselbe.
+
+### M.2 Sein Lösungsvorschlag trägt auch nicht — und das war der Fund
+
+Manfred schlug vor, den Titel ohne Klammer zu bauen („Estrich grundieren
+Haftgrund"), damit er heute schon trifft. Gemessen: **trifft weiter 4,50 €.**
+
+Der Grund ist, dass wir beide auf der falschen Seite gesucht haben. Die
+Klammer stört nicht im gesuchten Titel, sondern **im Katalog**:
+
+```
+Grundieren (Tiefengrund)             4,50 €   → normalisiert: „grundieren"
+Grundieren (Haftgrund / Sperrgrund)  6,00 €   → normalisiert: „grundieren"
+```
+
+Beide Kandidaten sind für den Matcher identisch. Gleichstand, und es gewinnt
+die obere Zeile. Was im Suchtitel steht, ist dabei völlig egal.
+
+**Gelöst als Filter am Rohtitel** — dieselbe Bauweise wie Q-Stufe und
+Anstrichzahl seit PM-018, neue Gruppe `Grundierungsart` in
+`preis-aufwandswoerter.ts`. Tiefengrund, Haftgrund und Epoxi sind jetzt drei
+unterscheidbare Werkstoffe, gelesen am ungeschnittenen Titel, auf **beiden**
+Seiten. Kein Eingriff in die Normalisierung, die Klammer darf bleiben.
+
+Ergebnis: `Estrich grundieren (Haftgrund)` → **6,00 €**. Alle anderen
+Grundierungszeilen gegengeprüft, keine hat sich bewegt.
+
+Neue Regelart dabei: **'kein-schnitt'**. Sammelzeilen wie
+`Untergrund grundieren (Haftgrund / Tiefengrund)` decken beide Materialien ab
+und dürfen für beide gelten — gesperrt wird erst, wenn sich die Werkstoffe gar
+nicht überschneiden. Das ist der Unterschied zwischen „anderes Material" und
+„auch anderes Material".
+
+### M.3 Zug 2b — die Tool-Sprache
+
+| Engine sagte | heißt jetzt |
+|---|---|
+| `Wandflächen streichen 2x` | `Wand streichen 2x` |
+| `Wandflächen streichen 2x (ohne Akzentwand)` | `Wand streichen 2x (ohne Akzentwand)` |
+| `Deckenfläche streichen 2x` | `Decke streichen 2x` |
+
+Gemessen **keine Preisänderung** — beide Schreibweisen trafen dieselbe
+Katalogzeile mit 0,94. Rein das, was auf dem Kundenpapier steht. Nebenbei ist
+damit auch eine Unstimmigkeit weg: Der Farbzonen-Zweig schrieb längst „Wand
+streichen", der Hauptzweig „Wandflächen streichen" — zwei Namen für dieselbe
+Arbeit im selben Angebot.
+
+### M.4 Drei stille Verträge, zwei davon hätten Geld gekostet
+
+Die Umbenennung selbst war trivial. Gefährlich war, wer den Titel LIEST:
+
+| Stelle | was sie tut | ohne Anpassung |
+|---|---|---|
+| `maler-tapete.ts` | entfernt die Streichposition, wenn stattdessen tapeziert wird | Position bleibt stehen → **doppelt berechnet** |
+| `maler-lackieren.ts` | zählt die Räume anhand dieser Positionen | null Räume → **falsche Heizkörperzahl** |
+| `mengen/gewerke/maler.ts` | warnt, wenn die Wandfläche kleiner ist als die Bodenfläche | Warnung läuft wortlos nie wieder an |
+
+Keine davon hätte einen Test zwingend rot gemacht. Gefunden wurden sie durch
+die Routine, die aus dem `Parkett schleifen`-Fall entstanden ist: **vor jeder
+Umbenennung nach Stellen suchen, die den Titel lesen.**
+
+Damit das nicht beim nächsten Mal wieder passiert, steht die Erkennung jetzt
+an einer Stelle: `istWandStreichen()` in `vollstaendigkeit/helpers.ts`. Wer
+den Titel ändert, ändert ihn dort mit — und findet über die Aufrufer sofort
+alle betroffenen Stellen.
+
+Nachgezogen: 90 Stellen in acht Testdateien und der Platzhalter im
+Abgleich-Skript. Historische Kommentare blieben bewusst unangetastet — sie
+beschreiben, was damals war.
+
+*Head of Product Engineering · 12.09.2026*
+
+---
+
+## N. Nachgemessen: H bis M (Prüfmeister, 12.09.2026)
+
+Meine Shell auf Sandys Rechner ist am selben Windows-Update gescheitert wie
+seine. Ich habe die Dateien einzeln rübergeholt und den Abgleich in einer
+Ersatzumgebung gefahren, gegen genau den Stand, der jetzt auf ihrer Platte
+liegt.
+
+**J.3 ist damit zur Hälfte erledigt: `scripts/vokabular-abgleich.mjs` läuft
+wieder und ist gelaufen. Die Vitest-Suite konnte ich nicht fahren** (die
+Ersatzumgebung hat die Abhängigkeiten nicht) — die steht weiter aus, und
+solange sie aussteht, gilt der Stand nicht als fertig.
+
+```
+Engine-Titel mit eigener Einheit   166
+davon ohne Preis                    20
+davon knapp (Score < 0,75)           4
+gute Treffer (Score >= 0,75)       142
+Titel aus Variablen, nicht prüfbar   3
+```
+
+Von 31 Nullpreisen nach H auf 20, von 7 knappen auf 4. Der Weg stimmt.
+
+### N.1 Was ich bestätigen kann
+
+Alles einzeln nachgemessen, nicht aus dem Text übernommen:
+
+| | |
+|---|---|
+| `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` | 9,00 € · Treffer 1,00 |
+| `Estrich grundieren (Haftgrund)` | 6,00 € — die Grundierungsart als Filter trägt |
+| `Parkett abschleifen (2 Schleifgänge)` | 20,00 € statt 38,00 € Komplettpaket |
+| `Alten Teppichboden entfernen (verklebt)` | 9,00 € statt 6,00 € |
+| `Ausgleichsmasse bis 3 / 3–10 / 10–30 mm` | 10 / 16 / 26 € — jede Stufe exakt, keine erbt den Preis der anderen |
+| alle Verlegeart-Kombinationen aus I.3 | wie beschrieben, Score 1,00 |
+| `Abkleben Kanten / Leisten (Fliesenspiegel)` | 0,80 € und das Handwerkerwort steht wieder da |
+
+**Und mein Hauptfund aus F.4 ist weg:** Beide Decken-Zweige in `maler.ts`
+schreiben die Anstrichzahl jetzt in den Titel. `Decke streichen 2x` trifft
+11,00 €, nicht mehr den 1x-Preis. Das war die teuerste Zeile auf der Liste.
+
+Die Regel aus L.3 („der Katalog bestimmt den Preis, der Handwerker das
+Wiedererkennen, die Klammer trägt sein Wort") ist die beste Formulierung, die
+in diesen zwei Tagen gefallen ist. Die gilt über diese Datei hinaus.
+
+### N.2 Fünf Stellen, die noch falsch rechnen
+
+**1. Raufaser — 7,00 €/m² zu billig, und der Preis steht die ganze Zeit im
+Katalog.** Der schwerste der fünf.
+
+| | heute | richtig |
+|---|---|---|
+| `Raufaser tapezieren` | `Raufaser tapezieren + überstreichen 1x` **14,00 €** | `Raufaser tapezieren ohne Anstrich` **10,00 €** |
+| `Raufaser streichen` | **0,00 €**, kein Treffer | `Tapete / Raufaser überstreichen 2x` **11,00 €** |
+| zusammen | 14,00 € | **21,00 €** |
+
+Auf 50 m² Wandfläche sind das 350 €. Und der Anstrich ist doppelt im Angebot:
+einmal versteckt im Tapezierpreis, einmal als leere Zeile daneben. Dasselbe
+gilt für `Malervlies streichen` und `Vliestapete streichen` — beide 0,00 €,
+beide haben mit `Tapete / Raufaser überstreichen 1x/2x` (7,00 / 11,00 €) eine
+Katalogzeile.
+
+Ursache: siehe N.3.
+
+**2. Silikat-Fassade — 14,00 € statt rund 20,00 €.** `Silikatfarbe 2× Anstrich`
+trifft `Fassadenfarbe 2× Anstrich` (14,00 €). Silikat ist teurer als
+Dispersion, im Material und im Auftrag. Der Katalog führt
+`Fassadenbeschichtung mineralisch (Silikatfarbe)` für 22,00 € — aber unter
+**Fassade**, und die Position läuft als Maler-Position durch den
+Gewerke-Filter, kommt dort also nie an. Unter Maler gibt es nur
+`Silikatfarbe auftragen (2×)` 13,00 €, und das ist eine Innenzeile.
+
+Das ist eine echte Katalog-Lücke, keine Umbenennung: **`Fassade mit
+Silikatfarbe streichen 2x`, Richtwert 20,00 €/m²**, Rubrik „Maler – Anstrich
+Außen". (`Dispersionsfarbe 2× Anstrich` → `Fassadenfarbe` ist dagegen
+richtig, Fassadenfarbe *ist* Dispersion.)
+
+**3. `Tapete tapezieren` bekommt 18,00 € — den Preis der Vliestapete.** Das
+ist der Fall, in dem die Engine die Tapetenart NICHT erkannt hat. Sie rät dann
+die teuerste. Richtig ist dieselbe Antwort wie bei `Bodenbelag verlegen`
+(steht korrekt auf 0,00 €): **Wenn die Art unklar ist, wird gefragt, nicht
+geraten.**
+
+**4. Vinyl, zwei Namen, zwei Preise.** `Vinyl-Boden verlegen` → 16,00 €,
+`Vinyl / Designboden verlegen` → 17,00 € (`Vinyl-Planken, Einzelplanken`).
+Dieselbe Arbeit, zwei Beträge, je nachdem welches Wort die Erkennung erwischt
+hat — genau TN-094. Die beiden Label-Listen (`belagLabel` in `boden.ts`,
+`erkenneBelagName` in `boden-normalisierer.ts`) müssen dieselben Namen liefern.
+
+**5. Ausgleichsmasse ohne Angabe → 10,00 €, die dünnste Stufe.** In J als
+„Grundfall" gesetzt. Das ist die einzige Stelle, an der wieder die billigste
+Variante als Annahme steht, und es ist dieselbe Fehlerform wie der 1x-Anstrich:
+Wer nichts sagt, meint nicht automatisch das Dünnste — er hat die Dicke nur
+noch nicht gemessen. Gehört in die Rückfrage („Wie dick muss ausgeglichen
+werden?"), nicht in eine Annahme. Bis dahin lieber sichtbar ohne Preis.
+
+*(Der Nadelvlies-Fall aus I.3 — 18,00 € statt 16,00 € — ist bekannt und liegt
+richtig in F.6.)*
+
+### N.3 Meine Wortliste hatte drei Löcher — das ist mein Fehler, nicht seiner
+
+Er hat gebaut, was ich geliefert habe. Beim Nachmessen sieht man, was ich
+vergessen habe:
+
+**Gruppe 1 (Arbeitsgang) ohne `streichen`.** Drin sind schleifen, spachteln,
+grundieren, versiegeln, ölen, lackieren, beizen, fräsen, verschweißen,
+verkitten — aber nicht der häufigste Arbeitsgang des Malers. Deshalb darf
+`Raufaser tapezieren` weiter auf `+ überstreichen 1x` treffen (N.2/1).
+
+Nachzutragen: **`streichen`, `überstreichen`, `anstreichen`, `anstrich`,
+`tapezieren`, `demontieren`, `ausbauen`**.
+
+⚠ **Wichtig für den Bau: `streichen`, `anstrich` und `überstreichen` müssen
+EINE Kennung sein, nicht drei.** Sonst sperrt
+`Heizkörper lackieren (2× Anstrich)` gegen `Heizkörper streichen / lackieren`
+— zwei Wörter für denselben Arbeitsgang, und die Regel würde einen richtigen
+Treffer wegwerfen. Dasselbe gilt für `tapezieren` / `aufziehen`.
+
+**Gruppe 7 (Sondermaterial) fehlt ganz.** Silikat, Latex, Lehm, Kalk,
+chlorbeständig, Brandschutz, Anti-Schimmel. Ursache von N.2/2. Epoxid ist
+über die neue Grundierungsart schon abgedeckt.
+
+**Gruppe 8 (Materialbeistellung) fehlt ganz.** `inkl. Material`,
+`ohne Material`, `Material bauseits`, `nur verlegen`. Das ist TN-122/TN-128 —
+wer sein Laminat selbst kauft, darf es nicht mitbezahlen.
+
+**Gruppe 5 (Ort und Zugang) nur mit `fassade`.** Treppenhaus, Dachschräge,
+Kniestock, Keller, Garage fehlen. Weniger dringend, aber es gehört
+nachgetragen, damit die Liste nicht wieder halb gelesen wird.
+
+### N.4 Zu H.3 und I.5 — die Verlegeart bleibt einseitig, einverstanden
+
+Seine Messung ist der Beweis, nicht seine Meinung: beidseitig springt
+`Parkett verlegen` von 22,00 € auf 52,00 € (Industrieparkett). Wo der Titel
+schweigt, WEIL die Sache offen ist, darf man nicht filtern — da muss gefragt
+werden. Das ist richtig und bleibt so.
+
+Eine Anmerkung zu den Rückfragetexten aus I.5: Sie sind gut. Nur beim Teppich
+würde ich den heutigen Standardtreffer nicht so lassen — ohne Angabe landet
+`Teppichboden verlegen` auf **gespannt / Tackern auf Nagelleiste** (14,00 €).
+Gespannt auf Nagelleiste ist heute die Ausnahme, verklebt der Normalfall.
+Solange die Rückfrage nicht steht, ist das die falsche Voreinstellung.
+
+### N.5 Was offen bleibt
+
+1. **Vitest-Suite** — nicht gelaufen, weder bei ihm noch bei mir. Erst danach
+   ist der heutige Stand fertig.
+2. **G.3, Manfreds zwei Szenarien** — braucht die laufende App, nicht das
+   Skript. Sein Satz gilt: *„Bevor ich das nicht gesehen hab, ist das für mich
+   ein Papier, kein Fix."*
+3. Die fünf Stellen aus N.2 und die drei Wortgruppen aus N.3.
+
+*Prüfmeister · 12.09.2026*
+
+---
+
+## O. Rot: Zug 2b hat fünf Stellen abgeschaltet (Prüfmeister, 12.09.2026)
+
+**Das hier zuerst lesen. Es kostet Geld, es ist heute entstanden, und es ist
+nicht die Umbenennung selbst — es sind die Stellen, die den alten Titel
+gelesen haben.**
+
+Ich habe die Testsuite in der Ersatzumgebung so weit zum Laufen gebracht, wie
+die Abhängigkeiten es hergeben: **27 Testdateien, 400 Tests, 399 grün — einer
+rot.** Der rote ist echt:
+
+```
+FAIL  maler-engine.test.ts > Vollständigkeits-Check: Raufaser entfernen
+      + Spachteln mit echter Wandfläche, KEIN neu Aufziehen
+      → const entfernen = find(positionen, 'tapete entfern')
+        expected undefined to be defined
+```
+
+### O.1 Die Ursache — und sie steht in M.4 als gelöst
+
+`pruefeTapeteWegDannStreich` in `maler-tapete.ts:217` sucht die Wandposition
+so:
+
+```js
+ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
+```
+
+Seit Zug 2b heißt die Position **`Wand streichen 2x`**. Das Wort „wandfläch"
+gibt es nicht mehr. Der Fund geht ins Leere, und die Funktion fällt in ihren
+Else-Zweig: **`Tapete entfernen` und `Wände spachteln / glätten` wandern aus
+dem Angebot in die Fehlt-Liste.**
+
+Bei „Tapete runter, spachteln, streichen" auf 50 m²:
+4,00 €/m² Tapete ablösen + 9,00 €/m² spachteln = **650 € weniger im Angebot**,
+und der Handwerker sieht nur zwei Zeilen in einer Liste, die er selbst
+nachtragen muss.
+
+M.4 hat drei solcher stillen Verträge gefunden und `istWandStreichen()`
+gebaut, damit es nicht wieder passiert. **Die Suche war nicht vollständig.**
+
+### O.2 Fünf Stellen, gemessen — nicht vermutet
+
+Ich habe die betroffenen Funktionen einzeln aufgerufen, einmal mit dem alten
+und einmal mit dem neuen Titel. Ergebnis wörtlich aus dem Lauf:
+
+```
+BETON  [Wandflächen streichen 2x — Zimmer] → Betonwände schleifen /
+       Untergrundvorbereitung · Grundieren (Tiefengrund) · Betonfarbe streichen
+BETON  [Wand streichen 2x — Zimmer]        → Wand streichen 2x — Zimmer
+
+KALK   [Wandflächen streichen 2x — Zimmer] → Untergrundvorbereitung für
+       Kalkputz · Kalkputz aufbringen
+KALK   [Wand streichen 2x — Zimmer]        → Wand streichen 2x — Zimmer
+```
+
+| Stelle | was sie tut | Stand heute |
+|---|---|---|
+| `maler-tapete.ts:217` | Tapete entfernen + Spachteln mit echter Wandfläche | **tot** — roter Test, 650 € auf 50 m² |
+| `maler-sonder.ts:128/131` `pruefeBetonwand` | ersetzt die Wandposition durch schleifen + grundieren + Betonfarbe | **tot** — Betonwand wird als normale Wand berechnet |
+| `maler-sonder.ts:151/154` `pruefeKalkputz` | ersetzt die Wandposition durch Untergrund + Kalkputz | **tot** — Kalkputz (35,00 €/m²) wird als Wandanstrich (9,50 €/m²) berechnet: **25,50 €/m² zu billig** |
+| `maler-sonder.ts:98` `pruefeAbwaschbar` | schreibt „(abwaschbare Farbe)" in den Titel | **tot** — Zusage verschwindet vom Kundenpapier |
+| `maler-basis.ts:177` | hängt die Wand-Grundierung an die Wandposition | **tot** — Grundierung fehlt, inkl. Raumzuordnung |
+
+Die Kalkputz-Zeile ist die teuerste: Der Kunde bekommt „Wand streichen 2x" auf
+ein Papier, auf dem Kalkputz stehen müsste. Falscher Preis **und** falsche
+Leistung.
+
+### O.3 Eine sechste Stelle war schon vorher tot — nicht von heute
+
+`pruefeFeuchtraum` (`maler-sonder.ts:87`) fällt mit **beiden** Titeln durch.
+Sie ersetzt per `/streichen(\s*—\s*.+)?$/`, der Titel endet aber seit der
+Anstrichzahl auf `… streichen 2x — Zimmer`. Zwischen „streichen" und dem
+Gedankenstrich steht das „2x", also greift das Muster nicht. Das ist älter als
+heute und war bisher unentdeckt — dieselbe Wortsuche hat es mitgefunden.
+
+### O.4 Das Soll
+
+1. **Alle sechs Stellen auf `istWandStreichen()` umstellen** (die Funktion aus
+   M.4 gibt es ja bereits) — nicht auf eine neue Zeichenkette, sonst steht in
+   drei Wochen dieselbe Meldung hier.
+2. **Für jede der sechs einen Test**, der die Position im Ergebnis erwartet —
+   nicht den Titel im Code. Fünf davon waren durch keinen Test gedeckt; nur
+   die Tapete hatte einen, und den gibt es, weil ihn jemand vor Wochen für
+   genau diesen Fall geschrieben hat. Dasselbe Muster wie beim Golden Corpus
+   in L.3.
+3. **Die Routine aus M.4 erweitern:** nicht nur nach dem Titel suchen, sondern
+   nach seinen *Bestandteilen* — „wandfläch", „deckenfläch", „sperranstrich",
+   „fliesenspiegel", „parkett schleifen". Ein Titel wird selten ganz gelesen,
+   meistens nur ein Wortstück davon.
+4. **Die Suchtreffer von heute prüfen, nicht nur die Umbenennung.** Ich habe
+   für „wandfläch" acht Fundstellen gehabt, zwei davon lesen nur das
+   Transkript und sind in Ordnung. Für „deckenfläch" ist dieselbe Suche noch
+   nicht gemacht.
+
+---
+
+## P. Meine zwei offenen Lieferungen
+
+### P.1 Die Katalog-Anlageliste (K.3 wartet darauf)
+
+Alles, was neu angelegt werden muss, mit Rubrik, Einheit und Richtwert. Netto,
+Ruhrgebiet-Niveau, auf dem Stand des Standardkatalogs. Das sind **Vorschläge
+für den Standardkatalog** — der eigene Preis des Betriebs schlägt sie immer.
+
+| Titel | Rubrik | Einheit | Richtwert |
+|---|---|---|---|
+| Betonwände anschleifen (Sinterschicht entfernen) | Maler – Untergrundvorbereitung | m² | **7,50 €** |
+| Betonwände streichen (Betonfarbe, 2x) | Maler – Anstrich Innen | m² | **13,50 €** |
+| Untergrund für Kalkputz vorbereiten (Haftgrund / Vorspritzer) | Maler – Untergrundvorbereitung | m² | **8,00 €** |
+| Fassade mit Silikatfarbe streichen 2x | Maler – Anstrich Außen | m² | **20,00 €** |
+| Aufpreis chlorbeständige Spezialfarbe | Maler – Anstrich Innen | m² | **6,00 €** |
+| Umgebung abdecken (Lackierarbeiten) | Maler – Vorbereitung & Schutz | Pauschale | **20,00 €** |
+| Boden abdecken (Abdeckvlies), je Zimmer | Maler – Vorbereitung & Schutz | Pauschale | **25,00 €** |
+| Geländer abkleben | Maler – Vorbereitung & Schutz | Pauschale | **35,00 €** |
+| Heizkörper abkleben | Maler – Vorbereitung & Schutz | Stück | **18,00 €** |
+| Leuchten / Spots abkleben | Maler – Vorbereitung & Schutz | Stück | **3,00 €** |
+| Fugen verkitten (Acryl / Fugenkitt) | Boden – Parkett Aufarbeitung | lfdm | **2,50 €** |
+| Naht fräsen (Vinyl / Linoleum) | Boden – PVC / Elastisch | lfdm | **3,50 €** |
+| Stoßkanten / Nähte verkleben (Vinyl / PVC) | Boden – PVC / Elastisch | lfdm | **3,50 €** |
+| Naht thermisch verschweißen (inkl. Schweißdraht) | Boden – PVC / Elastisch | lfdm | **7,00 €** |
+
+**Zwei Änderungen an bestehenden Zeilen** (keine neuen Einträge):
+
+- `Fugen kitten / Risse ausspachteln` (8,00 €/m²) ist zweierlei in einer Zeile.
+  Der Kitt geht raus in die neue lfdm-Zeile oben; die Restzeile heißt
+  **`Risse / Unreinheiten ausspachteln (Fläche)`**, Preis bleibt 8,00 €/m².
+- `Nadelvlies vollflächig verkleben` (16,00 €) wird vom Engine-Titel textlich
+  nicht getroffen (I.3). Zeile umbenennen in
+  **`Nadelvlies-Teppichboden verlegen vollflächig verklebt`**, Preis bleibt.
+
+**Und drei, die KEINEN neuen Eintrag brauchen** — der Preis steht schon da,
+es fehlt nur der richtige Titel (siehe N.2/1):
+
+| Engine sagt | soll heißen | Preis, der schon existiert |
+|---|---|---|
+| `Raufaser tapezieren` | `Raufaser tapezieren ohne Anstrich` | 10,00 €/m² |
+| `Raufaser streichen` · `Malervlies streichen` · `Vliestapete streichen` | `Tapete / Raufaser überstreichen 2x` | 11,00 €/m² (1x: 7,00 €) |
+| `Tapete tapezieren` (Art unbekannt) | **kein Titel** — Rückfrage stellen | — |
+
+### P.2 Die drei fehlenden Wortgruppen, baufertig
+
+Aus N.3, jetzt als Liste zum Eintragen in `preis-aufwandswoerter.ts`.
+
+**Ergänzung Gruppe „Arbeitsgang":**
+`streichen` · `überstreichen` · `anstreichen` · `anstrich` · `tapezieren` ·
+`aufziehen` · `demontieren` · `ausbauen`
+
+> ⚠ `streichen`, `überstreichen`, `anstreichen` und `anstrich` müssen **eine
+> Kennung** sein, ebenso `tapezieren` und `aufziehen`. Als getrennte Kennungen
+> würde `Heizkörper lackieren (2× Anstrich)` gegen
+> `Heizkörper streichen / lackieren` sperren — zwei Wörter für denselben
+> Arbeitsgang, und ein richtiger Treffer flöge weg.
+
+**Neue Gruppe „Sondermaterial"** (beidseitig, wie Arbeitsgang):
+`silikat` · `latex` · `lehm` · `kalk` · `chlorbeständig` · `brandschutz` ·
+`anti-schimmel` · `mineralisch`
+*(Epoxid ist über die Grundierungsart aus M.2 schon abgedeckt.)*
+
+**Neue Gruppe „Materialbeistellung"** (beidseitig):
+`inkl. material` · `ohne material` · `material bauseits` · `nur verlegen` ·
+`nur liefern` · `liefern und montieren`
+*(TN-122/TN-128: Wer sein Laminat selbst kauft, darf es nicht mitbezahlen —
+und wer es stellt, darf nicht darauf sitzen bleiben.)*
+
+**Nachtrag Gruppe „Ort und Zugang"** (heute nur `fassade`):
+`treppenhaus` · `dachschräge` · `kniestock` · `giebel` · `keller` · `garage`
+
+### P.3 Was ich prüfen konnte, und was nicht
+
+**Gelaufen:** `scripts/vokabular-abgleich.mjs` (166 Titel, 20 ohne Preis, 4
+knapp, 142 gut) und 27 Testdateien mit 400 Tests, davon der eine rote aus O.
+
+**Nicht gelaufen:** die restlichen Testdateien — sie brauchen Module, die ich
+in der Ersatzumgebung nicht habe (`extraktion-pipeline`, `status-uebergang`,
+`preise-vorlagen`, `aufnahme-hinweise`). Das ist eine Grenze meiner Umgebung,
+kein Befund. Der vollständige Lauf (`npm test`, 1722 Tests) steht weiter aus,
+sobald der Zugriff auf Sandys Rechner wieder da ist. **Erst dann ist der
+heutige Stand fertig** — mit dem roten Test aus O ist er es ohnehin nicht.
+
+**Weiterhin offen und unverändert:** G.3, Manfreds zwei Szenarien. Die
+brauchen die laufende App.
+
+*Prüfmeister · 12.09.2026*
+
+## Q. Der Katalog gegen sich selbst — 64 unerreichbare Zeilen (CoS-E-039, 12.09.2026)
+
+Bis heute wurde immer in eine Richtung gemessen: **Findet die Engine ihre
+Titel im Katalog?** Das ist der Vokabular-Abgleich, und er hat heute 33 → 20
+Lücken gebracht.
+
+Manfreds TN-095 („die Preisliste hat lauter Dopplungen") hat mich gezwungen,
+in die andere Richtung zu messen: **Findet der Katalog sich selbst?** Jede
+Zeile als gesuchter Titel, durch denselben `findePreisposition`, gegen die
+Zeilen ihres eigenen Gewerks. Kommt etwas anderes zurück als sie selbst, kann
+sie über ihren eigenen Namen niemals gefunden werden — auch nicht von einem
+Menschen, der sie in der Oberfläche sucht.
+
+**Ergebnis morgens: 64 von 2379 Zeilen. In allen 64 Fällen mit einem anderen
+Preis. In allen 64 Fällen mit dem billigeren.**
+
+Das war keine Dopplung. Es waren Staffeln, und die unterscheidende Angabe
+stand in Klammern — dem vierten Fall derselben Familie an einem Tag
+(Millimeterspanne, Grundierungsart, Epoxid-Schicht, jetzt Staffel). Die
+Reparatur steht in `preis-aufwandswoerter.ts` (Gruppen `Staffel`, `Umfang`,
+`Schicht/Gang`), die Zahlen und die Entscheidungsliste in
+`docs/chief-of-staff-engineering-todos.md`. Hier nur die drei Dinge, die für
+den Code gelten:
+
+**Q.1 — Maßangaben haben zwei Bauformen, und die zweite hatte niemand.**
+`10 kWp` steht hinter der Zahl, `DN 150` und `R90` davor. Das Suffix-Muster
+allein hat SHK, Elektro und Brandschutz komplett verfehlt: `Heizungsrohre
+(DN 50+)` bekam den Preis für `DN 25–40`, `Brandschutzbeschichtung R90` den
+für `R30` — halber Preis, je m².
+
+**Q.2 — Zwei Maße hintereinander sind ein Maß, kein zweites.**
+`78x118cm` und `114x118cm` enden beide auf `118cm`. Wer nur das letzte Maß
+nimmt, hält die beiden für gleich. Das Muster muss `x`/`×` mitlesen.
+
+**Q.3 — Diese Sperren müssen `nur-unterschied` sein, nie `beidseitig`.**
+Dieselbe Lehre wie bei der Verlegeart (G): Eine Sperre, die auch dann greift,
+wenn **eine** Seite gar nichts sagt, nimmt dem Handwerker den Preis für den
+Normalfall weg. `Tür streichen / lackieren` ohne Zusatz muss weiter einen
+Treffer bekommen; nur `(beidseitig)` gegen `(einseitig)` darf sperren.
+
+**Was daraus als Produktregel folgt** — und das ist der eigentliche Fund:
+*Eine Klammer darf nie das Einzige sein, was zwei Preise auseinanderhält.*
+Der Standardkatalog verstößt an 22 verbliebenen Stellen dagegen, und sie
+lassen sich nicht durch ein Muster lösen, sondern nur durch Umbenennen
+(`Treppe abbrechen (Beton)` → `Betontreppe abbrechen`). Dasselbe gilt für
+Zeilen, die ein Betrieb sich selbst anlegt — dort fällt es nie auf, weil er
+seinen eigenen Preis für gesetzt hält.
+
+**Nachmessen:** `node scripts/katalog-dopplungen.mjs`
+**Entscheidungsliste:** `node scripts/katalog-dopplungen.mjs --liste`
+**Festgehalten in:** `src/lib/__tests__/katalog-staffeln.test.ts` — mit einer
+Sperrklinke auf 22: Die Zahl darf fallen, nie steigen.
 
 *Head of Product Engineering · 12.09.2026*
 
