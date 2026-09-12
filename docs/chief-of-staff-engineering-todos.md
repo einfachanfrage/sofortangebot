@@ -761,4 +761,91 @@ bewusst gewählt zu haben.
 *Head of Product Engineering · 2026-09-11*
 
 
+---
+
+## Aufwandswörter gebaut (12.09.2026)
+
+Punkt 1 und 3 der Prüfmeister-Liste sind gebaut und gemessen. Vollständige
+Begründung in `docs/vokabular-abgleich.md`, Abschnitt H. Kurz:
+
+**Was jetzt nicht mehr passiert.** Ein Arbeitsgang kann nicht mehr still aus
+einem Angebot verschwinden oder still hineinrutschen. `Parkett schleifen` bekam
+bis heute den Preis für `Parkett schleifen + versiegeln komplett` (38,00 €) —
+in einem Angebot, das die Versiegelung ohnehin schon als zwei eigene Zeilen
+führt. Doppelt berechnet, und auf dem Kundenpapier stand eine Lackversiegelung,
+obwohl im Transkript „ölen" steht. Der Betrieb schuldet, was auf dem Papier
+steht.
+
+**Die Zahl „ohne Preis" steigt von 29 auf 31, und das ist die gewollte
+Richtung.** Beide neuen Null-Positionen (Ausgleichsmasse bis 10 mm und bis
+30 mm) trugen vorher still den Preis für „bis 3 mm". Jetzt stehen sie sichtbar
+auf 0,00 € mit Versandsperre, bis der Betrieb den Preis einträgt — PM-018,
+*„lieber sichtbar kein Preis als still der falsche"*. Fünf andere Positionen
+haben den richtigen Preis bekommen, darunter Manfreds verklebter Teppich
+(6,00 € → 9,00 €).
+
+**Drei Fehler, die die Messung nicht gezeigt hat.** `\b` kennt in JavaScript
+keine Umlaute, ein verlorenes `u`-Flag schaltet Unicode-Grenzen still ab, und
+der Katalog schreibt „Schleifgang" mit a statt mit ä. Alle drei ließen die
+Regel wirkungslos oder schädlich laufen, ohne dass die Summen sich auffällig
+verhielten. Gefunden nur durch den Zeilenvergleich „mit Regel gegen ohne
+Regel". **Eine Filterregel, die nicht greift, ist in der Messung nicht von
+einer zu unterscheiden, die greift und nichts findet.**
+
+**Ein fünfter toter Pfad.** Beim Umbenennen von `Parkett schleifen` →
+`Parkett abschleifen (2 Schleifgänge)` lieferte eine Flächenermittlung in
+`boden-sonder.ts` wortlos `null`, weil sie den alten Titel als stillen Vertrag
+las — Versiegelung und Verkitten rutschten aus dem Angebot in die Fehlt-Liste.
+Neue Routine, neben „wer LIEST diese Einstellung": **Wer einen Engine-Titel
+ändert, sucht vorher nach Stellen, die ihn lesen.**
+
+**Eine Abweichung vom Papier, bewusst.** Die Verlegeart (verklebt / schwimmend
+/ gespannt) sperrt nur in eine Richtung. Beidseitig gelesen hätte sie
+`Laminat verlegen` von 14,00 € auf 24,00 € und `Parkett verlegen` von 22,00 €
+auf 52,00 € gehoben — derselbe Schaden mit umgedrehtem Vorzeichen, weil die
+Engine die Verlegeart heute fast nie in den Titel schreibt. Die Gegenrichtung
+wird aufgemacht, sobald G.2 gebaut ist.
+
+Testabdeckung: `src/lib/__tests__/preis-aufwandswoerter.test.ts`, 16 Fälle in
+beide Richtungen. Gesamte Suite (110 Dateien) grün, `tsc` sauber.
+
+*Head of Product Engineering · 2026-09-12*
+
+---
+
+## G.2 gebaut — Verlegeart im Titel (12.09.2026)
+
+Die Engine schreibt die Verlegeart jetzt in den Positionstitel, wo sie
+feststeht. Vollständig in `docs/vokabular-abgleich.md`, Abschnitt I. Drei
+Punkte, die hierher gehören:
+
+**Manfreds Fall ist jetzt ganz zu.** `Teppichboden verlegen vollflächig
+verklebt` trifft die 18-€-Zeile statt zwischen 10, 14 und 18 € zu würfeln.
+Laminat, Linoleum, Kork und Parkett ebenso, alle mit exaktem Treffer.
+
+**Der wichtigste Fund stand in keinem Papier: Ein Zusatz ohne passende
+Katalogzeile ist schlimmer als gar keiner.** `Vinyl-Boden verlegen vollflächig
+verklebt` landete auf `Fertigparkett verlegen vollflächig verklebt` —
+**35,00 € statt 16,00 €**. Der Zusatz macht den Titel der Parkettzeile so
+ähnlich, dass der Belagname nicht mehr entscheidet. Vinyl, Eichenparkett und
+der nackte „Teppich" bekommen deshalb keinen Zusatz; sie brauchen erst die
+Umbenennung (F.6). Das ist jetzt ein Test, keine Fußnote.
+
+**Ich habe mich gestern geirrt, und korrigiere es.** Ich hatte angekündigt, die
+Verlegeart dürfe nach G.2 in beide Richtungen sperren. Die Messung sagt
+deutlich Nein: beidseitig steigt `Fertigparkett verlegen` von 22 € auf 52 €
+und `Vinyl-Boden verlegen` von 16 € auf 25 €. Nach G.2 schweigt der Titel
+nämlich nur noch dort, wo die Verlegeart wirklich offen ist — und genau dort
+darf sie kein Filter sein. Die einseitige Sperre bleibt dauerhaft; für die
+offenen Fälle ist die Rückfrage im Angebot die richtige Antwort.
+
+**Nebenbefund, der Beachtung verdient:** Beim ersten Bau sprang die Zahl
+„Titel aus Variablen, nicht prüfbar" von 4 auf 17 — das Messgerät war blind
+für genau das Stück, das gerade dazugekommen war. Wer die Engine ändert, muss
+das Prüfskript mitziehen, sonst misst es still weniger, als es behauptet.
+
+Gesamte Suite (112 Dateien) grün, `tsc` und `eslint` sauber.
+
+*Head of Product Engineering · 2026-09-12*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

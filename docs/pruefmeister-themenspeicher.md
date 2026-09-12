@@ -109,4 +109,53 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
 ---
 
+## H — Produktregeln, die größer sind als ein Testfall
+
+| Thema | Stand |
+|---|---|
+| **„Nichts erfinden"** — Manfreds Forderung vom 12.09., **von Sandy entschieden: ja.** Ausformuliert unten unter „Die Regel ‚Nichts erfinden'" | ✅ entschieden 12.09.2026 |
+| Verlegeart im Titel: schwimmend / vollflächig verklebt / gespannt. Heute schweigt jeder Verlege-Titel, der Katalog unterscheidet bei jedem Eintrag → immer der Klick-Preis (vokabular-abgleich.md G.2) | offen — Auftrag ans Engineering |
+| Q-Stufe erfragen in Handwerkersprache: „Nur ausbessern, oder ganz glatt für Streiflicht?", und bei Raufaser gar nicht fragen (Manfred, 12.09.) | offen — Auftrag ans Engineering |
+
+---
+
+### Die Regel „Nichts erfinden" — entschieden von Sandy am 12.09.2026
+
+Manfred: *„Nur anlegen, wenn ausdrücklich genannt — nie automatisch ergänzen."*
+Sandy: ja. Damit sie gebaut werden kann, ohne die Vollständigkeitsprüfung
+mitzureißen, hier scharf gestellt — vier Sätze:
+
+1. **Gesagt → Position.** Mit Menge und Preis, wie bisher.
+2. **Ausdrücklich abbedungen → nie eine Position.** Auch keine abgeleitete,
+   auch nicht in einem anderen Raum. „Die Möbel räum ich selbst raus" heißt
+   für die ganze Wohnung nein (TN-037 — heute erzeugt die App die Position
+   trotzdem, das ist der schlimmste Fall von allen: sie widerspricht dem,
+   was er gesagt hat).
+3. **Nicht gesagt → keine bepreiste Zeile.** Zwei erlaubte Wege: als
+   **Rückfrage** vor dem Angebot, oder als **Vorschlag ohne Menge und ohne
+   Preis**, den der Handwerker antippen muss, damit er ins Angebot kommt.
+   Ein Vorschlag, der schon eine Zahl trägt, ist keine Frage mehr, sondern
+   eine Behauptung — und genau die repariert Manfred dann von Hand
+   (TN-040 Deckengrundierung, TN-042 „bewohnt").
+4. **Kleinkram wird gar nicht erst zur Zeile.** Steckdosen abkleben, Boden
+   auslegen beim Streichen: das steckt im Einheitspreis, weder mit noch ohne
+   Preis gehört es ins Angebot. Manfred, TN-010: *„Bei mir läuft das mit
+   rein."*
+
+**Was die Vollständigkeitsprüfung bleibt:** Sie darf weiter erkennen, was
+fehlt — und das als Rückfrage stellen. Die vergessene Flurdecke (TN-036) ist
+derselbe Mechanismus, nur richtig herum benutzt. Sie darf nur nicht mehr
+selbst ins Angebot schreiben. Das Feld dafür gibt es schon
+(`automatisch_ergaenzt`, gesetzt in `vollstaendigkeit/index.ts`) und die
+Vorschlag-Marke in der Oberfläche auch (TN-057, die mag er) — was fehlt, ist
+dass eine so markierte Position **ohne Zahl** kommt und angetippt werden muss.
+
+**Heute betroffen, aus Manfreds einer Session:** Möbel schützen (TN-037),
+Deckenfläche grundieren (TN-040), Erschwerniszuschlag Altbau + bewohnt
+(TN-042), Boden schützen und Sockelleisten abkleben in `maler.ts` (tragen das
+Flag bereits), Laminat demontieren statt Teppich (TN-127).
+
+---
+
+
 *Prüfmeister · angelegt 2026-09-10 · wird bei jedem neuen Batch fortgeschrieben*
