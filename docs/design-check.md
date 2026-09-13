@@ -5584,7 +5584,18 @@ Geschäftskunden. Bei Privatkunden ändert sich für dich nichts.**" Der
 technische Satz bleibt darunter stehen. Ich baue ihn ein, sobald der Wortlaut
 freigegeben ist — keine Rechtsaussage ohne Legal.
 
-**DC-091 — Erklärtext „Anfahrt/Kleinmaterial unter Allgemein".** ❌ Der Satz
+**DC-091 — Erklärtext „Anfahrt/Kleinmaterial unter Allgemein".** ✅ erledigt
+am 13.09.2026 — **ohne den Text anzufassen**, genau wie unten gefordert.
+CoS-E-026 ist behoben, und beim Nachmessen zeigte sich, dass der Satz noch
+nicht ganz stimmte: Die Flurdecke saß im Raum, die Heizkörper nicht (bei
+„je ein Heizkörper" standen beide im Flur). Zwei Ursachen, beide dieselbe
+Familie wie CoS-E-026 — eine Stückzahl aus der Raumzahl gehört in jeden
+Raum, und `findeRaumImSatz` nahm den ersten Raum der Liste statt den nächsten
+im Satz. Beides repariert; unter „Allgemein" steht jetzt genau das, was der
+Satz aufzählt. Festgehalten in `src/lib/__tests__/heizkoerper-raum.test.ts`,
+Begründung in `chief-of-staff-engineering-todos.md`.
+
+Der ursprüngliche Befund, unverändert stehen gelassen: Der Satz
 (`einstellungen/page.tsx` Z. 631: „An- und Abfahrt, Kleinmaterial und Aufmaß
 stehen immer separat unter ‚Allgemein'.") ist für das, was er aufzählt,
 richtig. Falsch ist, was Manfred daraus schließen musste: dass auch seine
@@ -6355,6 +6366,58 @@ Stelle, die `StatusInfo` baut (alle sieben Einträge ergänzt), ein vollständig
 `tsc`-Lauf sollte das beim nächsten Build bestätigen.
 
 Status DC-072: 🟡 gebaut, Live-Test offen — am besten am Handy, im Entwurf.
+
+*Product Designer · 2026-09-13*
+
+---
+
+## DC-073 — Mein Teil: der Kasten zeigt, was schon dasteht (13.09.2026)
+
+Gebaut in `AngebotDetail.tsx`, **noch nicht committet** (Shell tot, Commit von
+Sandy). Die Grundsatzfrage bleibt unverändert beim Chief of Staff, siehe
+Eintrag vom 12.09. — hier nur das, was unabhängig davon richtig ist.
+
+**Das Problem, das keiner Entscheidung bedarf:** Zuschläge entstehen auf zwei
+getrennten Wegen, die nichts voneinander wissen. Als echte Positionen aus der
+Vollständigkeitsprüfung (Einheit „%", je hohem Raum eine eigene Zeile) und als
+Pauschale im Kasten „Rabatt & Zuschläge" (`surcharge_amount` am Angebot).
+Nichts verband sie, nichts warnte. Wer im Kasten den Zuschlag einträgt, den er
+oben schon als Position stehen hat, berechnet ihn zweimal — und merkt es erst,
+wenn der Kunde nachrechnet.
+
+**Gebaut:** Der aufgeklappte Kasten zeigt über dem Eingabefeld, was bereits in
+der Liste steht:
+
+```
+2 Zuschläge stehen schon als eigene Positionen im Angebot:
+   Erschwerniszuschlag Altbau              260,60 €
+   Erschwerniszuschlag bewohnt             130,30 €
+   Ein Zuschlag hier unten kommt zusätzlich dazu.
+```
+
+Drei Entscheidungen dahinter:
+
+- **Nicht rot, kein Warnsymbol.** Es ist kein Fehler, zwei Wege zu haben — es
+  ist nur eine Information, die man an genau dieser Stelle braucht. Eine
+  Warnfarbe würde behaupten, der Nutzer habe etwas falsch gemacht, bevor er
+  überhaupt etwas getan hat.
+- **Der letzte Satz ist der eigentliche Inhalt.** Die Liste allein ließe offen,
+  ob der Kasten die Positionen oben ersetzt oder ergänzt. „Ein Zuschlag hier
+  unten kommt zusätzlich dazu" beantwortet die einzige Frage, die zählt.
+- **Erkannt wird über die Einheit UND den Titel** (`istProzentZuschlag(unit)
+  || /zuschlag/i`). Die Prozent-Einheit ist seit der Migration vom 31.08. die
+  kanonische Form, aber ein als Pauschale angelegter Zuschlag zählt genauso —
+  und wer die Erkennung nur an der Einheit festmacht, verliert ihn still.
+
+**Ohne Zuschläge im Angebot bleibt der Kasten unverändert** — kein leerer
+Hinweis, keine zusätzliche Zeile für den Normalfall.
+
+**Verifikation:** Syntax sauber, Erkennung gegen vier Fälle ausgeführt
+(Prozent-Zuschläge, Pauschal-Zuschlag, normale Positionen, Angebot ganz ohne
+Zuschläge) — alle grün. `tsc`/`vitest` ohne Shell nicht ausführbar.
+
+Status DC-073: 🟡 mein Teil gebaut · 🔵 Grundsatzfrage (Zeile vs. eingepreist)
+weiter beim Chief of Staff.
 
 *Product Designer · 2026-09-13*
 

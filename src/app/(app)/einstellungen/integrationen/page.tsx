@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Eye, EyeOff, Check, ChevronDown, ChevronUp } from 'lucide-react'
 import { Input } from '@/components/Input'
+import BottomNav from '@/components/BottomNav'
 
 interface Keys {
   lexware_api_key: string
@@ -34,6 +35,7 @@ const SOFTWARES = [
   {
     id: 'lexware',
     name: 'Lexware Office',
+    hinweis: '',
     color: '#003DA5',
     short: 'LW',
     fields: [{ key: 'lexware_api_key' as keyof Keys, label: 'API-Key', placeholder: 'Deinen Lexware Office API-Key hier einfügen' }],
@@ -49,6 +51,9 @@ const SOFTWARES = [
   {
     id: 'lexoffice',
     name: 'Lexoffice (Legacy)',
+    // CoS-P-010, TN-108: "ich weiß nicht, ob ich alt oder neu hab" — Klartext statt
+    // des Fachworts "Legacy", das für Nutzer ohne IT-Hintergrund nichts bedeutet.
+    hinweis: 'Nur falls dein Zugang von vor 2025 stammt. Neuer Account? Dann oben „Lexware Office" nehmen.',
     color: '#0066CC',
     short: 'LO',
     fields: [{ key: 'lexoffice_api_key' as keyof Keys, label: 'API-Key', placeholder: 'Deinen Lexoffice API-Key hier einfügen' }],
@@ -63,6 +68,7 @@ const SOFTWARES = [
   {
     id: 'sevdesk',
     name: 'sevDesk',
+    hinweis: '',
     color: '#E84B3C',
     short: 'SD',
     fields: [{ key: 'sevdesk_api_key' as keyof Keys, label: 'API-Token', placeholder: 'Deinen sevDesk API-Token hier einfügen' }],
@@ -77,6 +83,7 @@ const SOFTWARES = [
   {
     id: 'fastbill',
     name: 'FastBill',
+    hinweis: '',
     color: '#FF6B00',
     short: 'FB',
     fields: [
@@ -94,6 +101,7 @@ const SOFTWARES = [
   {
     id: 'billomat',
     name: 'Billomat',
+    hinweis: '',
     color: '#4CAF50',
     short: 'BM',
     fields: [
@@ -111,6 +119,7 @@ const SOFTWARES = [
   {
     id: 'papierkram',
     name: 'Papierkram',
+    hinweis: '',
     color: '#795548',
     short: 'PK',
     fields: [{ key: 'papierkram_api_key' as keyof Keys, label: 'API-Token', placeholder: 'Deinen Papierkram API-Token hier einfügen' }],
@@ -125,6 +134,7 @@ const SOFTWARES = [
   {
     id: 'easybill',
     name: 'Easybill',
+    hinweis: '',
     color: '#009688',
     short: 'EB',
     fields: [{ key: 'easybill_api_key' as keyof Keys, label: 'API-Key', placeholder: 'Deinen Easybill API-Key hier einfügen' }],
@@ -221,7 +231,7 @@ export default function IntegrationenPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg pb-16">
+    <div className="min-h-dvh bg-bg pb-24">
       <div className="bg-anthracite px-5 pt-12 pb-6">
         <Link href="/einstellungen" className="text-white/50 text-sm font-semibold">← Einstellungen</Link>
         <div className="text-white font-syne font-black text-xl mt-1">Buchhaltung verbinden</div>
@@ -229,6 +239,27 @@ export default function IntegrationenPage() {
       </div>
 
       <div className="px-5 pt-5 flex flex-col gap-3 max-w-xl mx-auto">
+
+        {/* CoS-P-010 (Platform & Integrations Engineer, 2026-09-11), TN-108:
+            Testnutzer Manfred fand hier zwei Lücken: (1) es stand nirgends, WAS beim
+            Knopfdruck im Angebot eigentlich rübergeht, (2) "Lexoffice (Legacy)" war für
+            ihn ohne technischen Hintergrund nicht einzuordnen. Zu (1): tatsächlich
+            überträgt sofortangebot für alle sieben Anbindungen dasselbe — direkt im
+            jeweiligen Code nachgesehen, nicht angenommen: immer ein Angebot/Kosten-
+            voranschlag (z. B. lexoffice: POST .../quotations; FastBill:
+            "estimate.create"; Easybill: document_type "OFFER") mit allen Positionen,
+            plus der Kunde (neu angelegt oder mit einem bestehenden Kontakt verknüpft).
+            Nie eine Rechnung — die schreibst du danach selbst in deiner Software. */}
+        <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
+          <div className="text-xs font-black text-anthracite/50 uppercase tracking-wide mb-1.5">Was genau übertragen wird</div>
+          <p className="text-xs font-semibold text-anthracite/60 leading-relaxed">
+            Pro Knopfdruck im Angebot gehen zwei Dinge rüber: das <strong>Angebot</strong> (als
+            Angebot bzw. Kostenvoranschlag, mit allen Positionen) und der <strong>Kunde</strong>
+            {' '}(neu angelegt oder mit einem bestehenden Kontakt verknüpft). Es geht nie
+            automatisch eine <strong>Rechnung</strong> raus — die schreibst du danach selbst
+            in deiner Buchhaltungssoftware.
+          </p>
+        </div>
 
         {SOFTWARES.map(sw => {
           const connected = isConnected(sw)
@@ -252,6 +283,9 @@ export default function IntegrationenPage() {
                   <div className={`text-xs font-bold mt-0.5 ${connected ? 'text-green-600' : 'text-anthracite/30'}`}>
                     {connected ? '● Verbunden' : '○ Nicht verbunden'}
                   </div>
+                  {sw.hinweis && (
+                    <div className="text-[11px] font-semibold text-anthracite/35 mt-0.5 leading-snug">{sw.hinweis}</div>
+                  )}
                 </div>
                 {open ? <ChevronUp size={18} color="var(--color-anthracite)" className="opacity-30" /> : <ChevronDown size={18} color="var(--color-anthracite)" className="opacity-30" />}
               </button>
@@ -336,6 +370,15 @@ export default function IntegrationenPage() {
           {saved ? <><Check size={20} strokeWidth={3} /> Gespeichert</> : saving ? 'Speichert…' : 'Speichern'}
         </button>
       </div>
+
+      {/* DC-096 (2026-09-11, Manfred/TN-111): zweite Lücke derselben Art wie
+          auf der Briefpapier-Unterseite — die untere Leiste fehlte, einziger
+          Weg raus war der Zurück-Pfeil oben. Manfred hat nur die eine Seite
+          gemeldet; gefunden wurden beim Nachsehen zwei. Ursache ist, dass
+          BottomNav pro Seite eingebunden wird statt im Layout — siehe DC-099.
+          `pb-16` war außerdem zu knapp für die Leiste und ist jetzt `pb-24`,
+          gleich wie auf den übrigen Einstellungs-Seiten. */}
+      <BottomNav />
     </div>
   )
 }
