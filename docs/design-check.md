@@ -6423,4 +6423,164 @@ weiter beim Chief of Staff.
 
 ---
 
+## DC-096 abgeschlossen — zweite Lücke geschlossen (13.09.2026)
+
+`einstellungen/integrationen/page.tsx` hat jetzt ebenfalls `BottomNav`.
+**Noch nicht committet** (Shell tot, Commit von Sandy).
+
+Manfred hat eine Seite gemeldet (Briefpapier-Unterseite, TN-111). Beim
+Nachsehen waren es zwei: auf derselben Einstellungs-Ebene fehlte die untere
+Leiste auch bei „Buchhaltung verbinden" — der Seite, auf der er nach der
+5-Schritte-Anleitung für den API-Key gelandet wäre (TN-108). Auch dort war der
+Zurück-Pfeil oben der einzige Ausweg.
+
+Mitgenommen: `pb-16` war zu knapp für die Leiste und ist jetzt `pb-24`, gleich
+wie auf den übrigen Einstellungs-Seiten. Eine Navigationsleiste, die den
+letzten Knopf überdeckt, wäre kein Fortschritt gegenüber gar keiner.
+
+Beide Lücken sind Symptome von **DC-099**: `BottomNav` wird pro Seite von Hand
+eingebunden statt im Layout. Der Punkt bleibt offen — dass zwei Seiten jetzt
+richtig sind, heißt nur, dass die nächste neue Seite wieder falsch anfängt.
+
+**Verifikation:** Syntax sauber. `tsc` ohne Shell nicht ausführbar.
+
+Status DC-096: 🟡 beide Seiten gebaut, Live-Test offen.
+
+---
+
+### Manfred-Batch DC-051..DC-098 — Abschluss
+
+Damit ist der Anteil des Product Designers an Manfreds erstem Testlauf
+abgearbeitet:
+
+| | |
+|---|---|
+| Positiv-Notizen als Schutzliste übernommen | 28 |
+| Gebaut | 18 |
+| Durch Wegfall der Rechnung gegenstandslos (DC-086) | 1 |
+| Bei anderen Rollen (DC-089 Legal, DC-091 CoS-E-026) | 2 |
+| Dabei neu gefunden und eröffnet (DC-099) | 1 |
+
+**Was dabei zusätzlich gefunden wurde — Dinge, die in keinem Ticket standen:**
+ein toter Datenpfad (DC-054, Titel wurde geladen und nie angezeigt), ein
+stiller Datenverlust (DC-063, laufende Aufnahme wurde ohne Rückfrage
+verworfen), ein Knopf, der aussah wie gesperrt und trotzdem feuerte (DC-071),
+ein unsichtbarer Chevron, der dem Status-Knopf seinen einzigen
+Antippbarkeits-Hinweis nahm (DC-072), ein Toast-Timer, bei dem eine alte
+Meldung die neue wegräumte (DC-066), zwei Schreibweisen derselben Zahl in
+Vorschau und PDF (DC-055) und eine zweite fehlende Navigationsleiste (hier).
+Keiner dieser Punkte stand in den Testnotizen — sie lagen jeweils direkt neben
+dem, was Manfred gemeldet hatte.
+
+**Der Rückstand, der jetzt zählt:** achtzehn Änderungen, keine davon je im
+Browser gesehen. Seit dem 11.09. ist die Shell auf dem Gerät tot, `tsc` lief
+seither nicht mehr; geprüft wurde stattdessen Syntax über den
+TypeScript-Parser und die jeweilige Logik direkt ausgeführt. Bevor weitere
+Tickets dazukommen, gehört ein Build und ein Durchklicken am Handy an die
+erste Stelle — besonders DC-072 (nur im Entwurf, nur mobil sichtbar) und
+DC-066 (Rückgängig).
+
+*Product Designer · 2026-09-13*
+
+---
+
+## Antwort an den Head of Legal — zweimal „Rechnung" (13.09.2026)
+
+Zwei Rückfragen, beide berechtigt. Die zweite beantworte ich mit einem
+Eingeständnis, die erste mit einem Fund, der schlimmer ist als die Frage.
+
+### Frage 2 zuerst: Was meint DC-086 mit „der Rechnung"?
+
+**Zu Recht moniert.** In der Datenbank gibt es keine Rechnung, und ich habe das
+Wort trotzdem benutzt.
+
+Was Manfred gesehen hat (TN-087): In der Vorschau stand damals ein Umschalter
+**„Angebot / Rechnung"**. Er erzeugte nichts — er tauschte die Überschrift aus
+und zeigte dasselbe Blatt: dieselbe Nummer (daher TN-086 „Rechnungsnummer =
+Angebotsnummer"), dieselbe Unterschriftszeile (TN-087), denselben
+Angebots-Schlusstext, ohne Leistungsdatum und Steuernummer (TN-089). Manfreds
+„die Rechnung" war also ein **Reiter, der log** — kein Datenobjekt. Der
+Umschalter ist inzwischen entfernt (CoS-E-008, Sandys Entscheidung „Rechnung
+erstmal raus"), weshalb DC-086 als gegenstandslos endete.
+
+Mein Fehler liegt in der Formulierung: Ich habe Manfreds Wort übernommen,
+statt zu benennen, was es war. Richtig hätte DC-086 heißen müssen: *„Die
+Unterschriftslinie erscheint auch im Rechnungs-Reiter der Vorschau — einer
+Ansicht, die ein Angebot als Rechnung beschriftet."* Dann wäre schon beim
+Aufschreiben aufgefallen, dass nicht die Unterschriftslinie das Problem ist,
+sondern der Reiter.
+
+**Der Einwand trifft auch über DC-086 hinaus.** Das Wort steht weiter im Code,
+wo es nichts zu suchen hat: `Nummernkreis.typ = 'angebot' | 'rechnung'`
+(`types.ts` Z. 283/295), und `init_nummernkreise`
+(`20260613150138_add_nummernkreise.sql`) legt für jeden Betrieb weiterhin einen
+Rechnungs-Nummernkreis an, den niemand füllt. Der Reiter „Rechnungen" in den
+Nummern-Einstellungen ist raus, die Struktur dahinter nicht. Ab jetzt schreibe
+ich in dieser Datei nur noch „Rechnung", wenn eine gemeint ist.
+
+### Frage 1: Heißt die Überschrift „E-Rechnung"?
+
+Ja. Wörtlich: Karte **„E-Rechnung & Compliance"**, darin der Schalter
+**„E-Rechnungen automatisch erstellen"** (`einstellungen/page.tsx` Z. 510/519).
+
+**Aber die Überschrift ist nicht das Problem, und sie umzubenennen wäre der
+falsche Fix.** Ich habe vor der Antwort den Code geprüft, weil ich dasselbe
+vermutet hatte wie Legal — ein Etikett ohne Funktion. Das Gegenteil ist der
+Fall: Die Funktion existiert vollständig und tut genau das, was draufsteht.
+
+- `src/lib/zugferd/generateXML.ts` erzeugt eine CII-XML nach
+  `urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:en16931` (Z. 206).
+- `src/lib/zugferd/embedXML.ts` hängt sie als `factur-x.xml` ins PDF und setzt
+  das XMP-Profil (`pdfaid:part 3`, Z. 6–21, 33–39).
+- Produktiv aufgerufen aus drei Routen: `api/pdf/route.ts` (Download),
+  `api/email/route.ts` (Anhang) und `api/quotes/[id]/send/route.ts`.
+- Dazu ein reiner XRechnung-Download (`api/pdf/xrechnung/route.ts`).
+
+**Und darin steckt der eigentliche Fund — eine neue ID, DC-100:**
+
+Das Produkt erzeugt ausschließlich **Angebote und Kostenvoranschläge**
+(`DokumentTyp = 'angebot' | 'kostenvoranschlag'`, eine Rechnung gibt es nach
+Sandys Entscheidung nicht). In das Angebots-PDF wird aber eine XML eingebettet,
+die sich selbst als **Rechnung ausweist**:
+
+- `ExchangedDocument/TypeCode` = **380** (`generateXML.ts` Z. 212) — das ist im
+  UN/CEFACT-Code „Commercial invoice".
+- Im PDF steht dazu `fx:DocumentType` = **INVOICE** (`embedXML.ts` Z. 14).
+
+Ein Angebot meldet sich gegenüber DATEV, Lexoffice und sevDesk also als
+Rechnung an. Das ist keine schiefe Überschrift mehr, sondern eine falsche
+Angabe in maschinenlesbaren Daten, die in die Buchhaltung des Handwerkers
+laufen. Genau der Weg, den Legal beschreibt — nur eine Ebene tiefer als
+vermutet, und deshalb von außen nicht sichtbar.
+
+Bemerkenswert dabei: **Das Kunden-PDF enthält die XML gar nicht.**
+`api/quotes/[id]/public-pdf/route.ts` und `api/pdf/public/route.ts` betten
+nichts ein. Empfänger der als Rechnung deklarierten Datei ist also nicht der
+Kunde, sondern der Betrieb selbst und sein Steuerberater.
+
+**Ich setze das nicht selbst um, in keine Richtung.** Ob der richtige Weg
+TypeCode 325 („Proforma") ist, das Abschalten der Einbettung für Angebote oder
+etwas Drittes, ist eine steuer- und formatrechtliche Frage, keine
+Gestaltungsfrage — und ob das Feature ohne Rechnungen überhaupt sinnvoll ist,
+entscheidet Sandy. Beides gehört an den Head of Legal und den Head of Product
+Engineering. Was ich beitrage, sobald der Weg feststeht: der Wortlaut der Karte
+und der Erklärtext. Solange das offen ist, bleibt die Überschrift wie sie ist —
+ein umbenanntes Etikett über unverändertem Verhalten würde den Fund verdecken,
+statt ihn zu beheben.
+
+**DC-089 bleibt davon unberührt**, sollte aber erst zusammen mit DC-100
+entschieden werden: der dort vorgeschlagene Satz träfe sonst eine Aussage über
+ein Verhalten, das sich möglicherweise gerade ändert.
+
+### DC-100 — Angebots-PDF trägt eine als Rechnung deklarierte ZUGFeRD-XML
+
+🔵 Entscheidung nötig. Aufgefallen bei der Beantwortung der Legal-Rückfrage
+oben, Belegstellen dort. Zuständig: Head of Legal (formatrechtlich) und Head of
+Product Engineering (Umsetzung), Produktentscheidung bei Sandy. Nicht vom
+Product Designer umzusetzen.
+
+*Product Designer · 2026-09-13*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
