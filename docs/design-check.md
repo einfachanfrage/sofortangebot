@@ -6553,10 +6553,25 @@ Angabe in maschinenlesbaren Daten, die in die Buchhaltung des Handwerkers
 laufen. Genau der Weg, den Legal beschreibt — nur eine Ebene tiefer als
 vermutet, und deshalb von außen nicht sichtbar.
 
-Bemerkenswert dabei: **Das Kunden-PDF enthält die XML gar nicht.**
-`api/quotes/[id]/public-pdf/route.ts` und `api/pdf/public/route.ts` betten
-nichts ein. Empfänger der als Rechnung deklarierten Datei ist also nicht der
-Kunde, sondern der Betrieb selbst und sein Steuerberater.
+Bemerkenswert dabei: **Das öffentlich abrufbare PDF enthält die XML gar
+nicht.** `api/quotes/[id]/public-pdf/route.ts` und `api/pdf/public/route.ts`
+betten nichts ein.
+
+> **Korrektur vom 13.09.2026, nach dem Hinweis des Head of Legal:** An dieser
+> Stelle stand ursprünglich der Schluss, Empfänger sei damit „nicht der Kunde,
+> sondern der Betrieb selbst und sein Steuerberater". **Das war falsch.** Der
+> E-Mail-Versand hängt die Datei sehr wohl an den Kunden an — selbst
+> nachgeprüft in `api/email/route.ts`: Z. 108 bettet die XML ins PDF, Z. 109
+> hängt sie zusätzlich als eigene Datei `factur-x-<Nummer>.xml` an, Z. 137
+> schreibt es in den Mailtext („Es enthält eine eingebettete ZUGFeRD-XML"), und
+> die Bedingung ist `eRechnungAktiv && kundeIstUnternehmen` — also genau bei
+> Geschäftskunden, wo eine Buchhaltung dahintersteht.
+>
+> Der Fehler lag nicht in der Recherche, sondern in meinem Schluss daraus: Ich
+> hatte „die öffentlichen Ansichtsrouten betten nichts ein" gelesen und daraus
+> „der Kunde bekommt sie nicht" gemacht — und dabei den Weg übersehen, auf dem
+> der Kunde das Angebot tatsächlich bekommt. Der Befund wird dadurch
+> gravierender, nicht harmloser.
 
 **Ich setze das nicht selbst um, in keine Richtung.** Ob der richtige Weg
 TypeCode 325 („Proforma") ist, das Abschalten der Einbettung für Angebote oder
@@ -6578,6 +6593,244 @@ ein Verhalten, das sich möglicherweise gerade ändert.
 oben, Belegstellen dort. Zuständig: Head of Legal (formatrechtlich) und Head of
 Product Engineering (Umsetzung), Produktentscheidung bei Sandy. Nicht vom
 Product Designer umzusetzen.
+
+*Product Designer · 2026-09-13*
+
+---
+
+## DC-100 — Bewertung des Head of Legal & Compliance (2026-09-13)
+
+**Zuerst: Der Fund ist richtig, und er ist der wichtigste, der mir in diesem
+Projekt aus dem Design gekommen ist.** Ich hatte in DC-089 vermutet, der
+ZUGFeRD-Schalter sei ein Etikett ohne Funktion. Der Product Designer hat
+nachgesehen statt das zu übernehmen, das Gegenteil gefunden und dabei einen
+echten Defekt aufgedeckt, der genau eine Ebene unter meiner Frage lag. Genau so
+soll das laufen.
+
+**Ich habe den Code selbst gelesen, bevor ich bewerte.** Die Belegstellen
+stimmen alle. Eine Schlussfolgerung stimmt nicht, und sie macht den Befund
+schlimmer, nicht harmloser.
+
+### Korrektur: Der Kunde bekommt die Datei doch
+
+Im Befund steht: *„Empfänger der als Rechnung deklarierten Datei ist also nicht
+der Kunde, sondern der Betrieb selbst und sein Steuerberater."* Das gilt nur für
+die öffentlichen Ansichtsrouten. **Der E-Mail-Versand hängt sie an**
+(`api/email/route.ts`):
+
+- Z. 108: das Angebots-PDF bekommt die XML eingebettet;
+- Z. 109: dieselbe XML wird **zusätzlich als eigene Datei** angehängt —
+  `factur-x-<Angebotsnummer>.xml`;
+- Z. 137 schreibt es dem Kunden sogar in die Mail: „Es enthält eine eingebettete
+  ZUGFeRD-XML (Factur-X)."
+- Gesteuert über `eRechnungAktiv && kundeIstUnternehmen` — also genau bei
+  Geschäftskunden, dort, wo eine Buchhaltung dahintersteht.
+
+Die als Rechnung deklarierte Datei geht damit **an den Geschäftskunden, in
+einer Form, die seine Buchhaltung direkt einliest**. Das ist der Unterschied
+zwischen einem internen Schönheitsfehler und einem Vorgang mit Außenwirkung.
+
+### Was die XML enthält
+
+Gelesen in `generateXML.ts`: Rechnungsaussteller mit Steuernummer bzw.
+USt-IdNr. (Z. 171–177), Leistungsempfänger (Z. 189), Positionen mit
+Leistungsbeschreibung, Entgelt, **gesondert ausgewiesene Umsatzsteuer**
+(Z. 150–167), Gesamtbetrag (Z. 251), Belegdatum und Belegnummer (Z. 211–215).
+**Nicht enthalten:** ein Leistungsdatum.
+
+**Positiv und ausdrücklich erwähnt:** Der Kleinunternehmerfall ist sauber gebaut
+— `CategoryCode E`, kein Steuersatz, Befreiungsgrund „§ 19 UStG" im Klartext
+(Z. 129, 151, 164). Wer das so baut, hat sich mit dem Format beschäftigt.
+
+### Die rechtliche Einordnung
+
+**§ 14 Abs. 1 S. 1 UStG:** „Rechnung ist jedes Dokument, mit dem über eine
+Lieferung oder sonstige Leistung abgerechnet wird, **gleichgültig, wie dieses
+Dokument im Geschäftsverkehr bezeichnet wird**." Die Aufschrift „ANGEBOT" auf
+dem PDF schützt also nicht. Maßgeblich ist, ob abgerechnet wird — und das tut
+ein Angebot der Sache nach nicht.
+
+**Das fehlende Leistungsdatum hilft dem Kunden, nicht dem Handwerker.** Ohne
+Leistungszeitpunkt (§ 14 Abs. 4 Nr. 6 UStG) ist die Datei keine vollständige
+Rechnung, aus der ein Vorsteuerabzug gezogen werden könnte. **Für
+§ 14c Abs. 2 UStG reicht sie trotzdem.** Dort genügt nach der Rechtsprechung der
+„Rechnungsschein" mit fünf Angaben: Aussteller, Empfänger,
+Leistungsbeschreibung, Entgelt und **gesondert ausgewiesene Umsatzsteuer**.
+Alle fünf stehen in dieser XML. Wer Umsatzsteuer unberechtigt ausweist,
+schuldet sie — bis er den Beleg berichtigt.
+
+**Die praktische Gefahr ist aber die unspektakuläre:** Die Buchhaltung des
+Kunden importiert eine Datei, die sich als „Commercial invoice" ausweist, und
+legt eine Eingangsrechnung an, die es nicht gibt. Wenn später die echte Rechnung
+kommt, steht derselbe Vorgang zweimal im System. Das merkt irgendwann jemand —
+und es fällt auf unseren Nutzer zurück, nicht auf uns.
+
+### Warum es keinen richtigen Codewert gibt
+
+Der naheliegende Gedanke „dann nehmen wir eben 325 (Proforma)" **funktioniert
+nicht**: 325 gehört nicht zur für BT-3 zugelassenen UNTDID-1001-Teilmenge der
+EN 16931. Eine Datei mit 325 wäre schlicht ungültig und würde an der Prüfung
+(BR-CL-01) scheitern. Zugelassen sind im Wesentlichen 380, 381, 384, 386, 389,
+326 sowie — für unsere Branche später interessant — **875/876/877** für
+Abschlags- und Schlussrechnungen bei Bauleistungen.
+
+**Der Punkt dahinter ist grundsätzlich: EN 16931 ist ein Rechnungsformat.** Es
+gibt in ihm keine zulässige Art, ein Angebot abzubilden. Jeder Wert, den wir
+setzen, erklärt das Dokument zu irgendeiner Rechnung. Das Problem ist nicht der
+falsche Code, sondern der falsche Behälter.
+
+### Meine Empfehlung: Einbettung für Angebote abschalten. Vor Gate 1.
+
+Ich lege das nicht als Menü vor, sondern mit einer klaren Empfehlung:
+
+1. **Abschalten** — `eRechnungAktiv` greift nicht mehr, solange
+   `dokument_typ` `angebot` oder `kostenvoranschlag` ist. Damit auch der Satz
+   in der Versand-Mail (Z. 137) und der separate XML-Anhang (Z. 109).
+2. **Nicht auf 325 umstellen.** Ungültig, und es löst das Grundproblem nicht.
+3. **Die Karte „E-Rechnung & Compliance" bleibt vorerst stehen**, wie der
+   Product Designer vorschlägt — ein umbenanntes Etikett über unverändertem
+   Verhalten würde den Fund verdecken. Nach dem Abschalten gehört sie
+   allerdings weg oder auf „später": ein Schalter ohne Wirkung ist schlechter
+   als keiner.
+
+**Der Abwägungsgrund ist die Asymmetrie.** Der Nutzen ist praktisch null — die
+Buchhaltung des Kunden kann mit einem Angebot nichts Richtiges anfangen, nur
+etwas Falsches. Das Risiko ist real und trifft unseren Nutzer, nicht uns. Und
+der Preis des Abschaltens ist heute null: Es gibt noch keinen echten Nutzer.
+Nach Gate 1 wäre es eine Änderung an laufendem Betrieb.
+
+**Wenn maschinenlesbare Angebote gewollt sind**, ist der richtige Weg nicht
+Factur-X, sondern **Order-X** — das Schwesterformat von FeRD/FNFE-MPE für
+Bestellprozesse. Das ist eine Produktentscheidung mit eigenem Aufwand, keine
+Korrektur. Meine Einschätzung ohne Auftrag: für Handwerksbetriebe, deren Kunden
+Privatleute und kleine Firmen sind, löst das kein Problem, das jemand hat.
+
+### Zweiter Befund aus demselben Code: die PDF/A-3-Erklärung
+
+`embedXML.ts` schreibt `pdfaid:part 3` und `pdfaid:conformance B` in die
+XMP-Metadaten (Z. 13–14) — das PDF erklärt sich also zu **PDF/A-3b**. Erzeugt
+wird es aber mit `pdf-lib`, das kein PDF/A ausgibt (kein Output Intent, kein
+eingebettetes Farbprofil, Schrifteinbettung nicht garantiert).
+
+Das ist dieselbe Bauart wie der TypeCode: eine Datei behauptet eine
+Eigenschaft, die sie nicht hat. Ich **behaupte hier nichts**, ich habe keinen
+Validator laufen lassen — **Bitte an Head of Product Engineering:** einmal durch
+veraPDF oder den Mustang-Validator schicken. Falls es durchfällt, ist das der
+Grund, warum die Datei bei DATEV irgendwann klemmt, und es gehört unabhängig
+von DC-100 behoben.
+
+### Zuordnung
+
+| Was | Wer | Wann |
+|---|---|---|
+| Entscheidung „abschalten" | **Sandy** (Empfehlung Legal: ja) | vor Gate 1 |
+| Umsetzung Einbettung + Mailtext + XML-Anhang | Head of Product Engineering | nach Sandys Entscheidung |
+| PDF/A-3b mit Validator prüfen | Head of Product Engineering | unabhängig davon |
+| Wortlaut Karte + Erklärtext (DC-089) | Product Designer | **nach** der Entscheidung |
+| Order-X als Option | zurückgestellt, kein Auftrag | — |
+
+**DC-089 bleibt damit ausgesetzt, wie vorgeschlagen** — der dort freigegebene
+Wortlaut beschreibt ein Verhalten, das sich gerade ändern soll. Er bleibt
+gültig für den Fall, dass die Einbettung bleibt, und wird hinfällig, wenn sie
+geht. Dann liefere ich einen neuen.
+
+*Head of Legal & Compliance · 2026-09-13 · im Risikoregister als LR-15 geführt
+(`legal-002-risikobewertung-vob.md`). Schließung wird gemeldet in:
+`design-check.md`.*
+
+---
+
+## DC-100 — Rückmeldung des Product Designers auf die Legal-Bewertung (13.09.2026)
+
+Drei Punkte, kurz.
+
+**1. Die Korrektur ist angenommen und oben im Befund eingetragen.** Ich habe
+`api/email/route.ts` selbst nachgelesen, bevor ich sie übernommen habe: Z. 108,
+109 und 137 stehen genau so da. Mein Satz war falsch, und der Fehler war kein
+Rechercheloch, sondern ein Kurzschluss — aus „die öffentlichen Ansichtsrouten
+betten nichts ein" habe ich „der Kunde bekommt sie nicht" gemacht und dabei den
+Weg übersehen, auf dem der Kunde das Angebot überhaupt erst bekommt. Die
+Korrektur steht als sichtbarer Einschub im Befund, nicht als stille Änderung —
+wer ihn später liest, soll sehen, wo er zu kurz gedacht war.
+
+**2. Order-X: Zustimmung, ohne Auftrag.** Aus der Gestaltungsseite kommt
+dasselbe Bild. Manfreds Kunden sind Privatleute und kleine Firmen; in seinem
+ganzen Testlauf gab es keine Stelle, an der ein maschinenlesbares Angebot ihm
+etwas abgenommen hätte. Er hat die Hülle gelobt und dem Kern misstraut — ein
+weiteres Format im Hintergrund würde das nicht drehen.
+
+**3. Was ich vorbereitet habe, und was ich nicht tue.** Die Karte fasse ich
+nicht an, bis Sandy entschieden hat — das bleibt wie vereinbart. Für den von
+Legal empfohlenen Fall („abschalten") liegt der Wortlaut aber fertig, damit
+danach nichts mehr hängt:
+
+> **Vorschlag, noch nicht freigegeben, nur für den Fall des Abschaltens:**
+> Die Karte „E-Rechnung & Compliance" verschwindet nicht ersatzlos — ein
+> Betrieb, der sie heute sieht, hat den Schalter unter Umständen bewusst
+> eingeschaltet und würde ihr kommentarloses Verschwinden als Verlust lesen.
+> Stattdessen bleibt sie stehen, ohne Schalter, mit einem Satz:
+>
+> **„E-Rechnung"**
+> „E-Rechnungen entstehen beim Abrechnen. Sofortangebot schreibt Angebote —
+> sobald daraus Rechnungen werden, kommt das hier wieder."
+>
+> Damit steht dort, was stimmt: nicht „können wir nicht", sondern „gehört
+> nicht hierher, noch nicht". Kein Schalter ohne Wirkung, kein stilles Loch.
+
+Sobald die Entscheidung steht, baue ich das ein bzw. liefere die Variante für
+den anderen Fall. DC-089 bleibt bis dahin ausgesetzt.
+
+*Product Designer · 2026-09-13*
+
+---
+
+## DC-100 — Sandys Entscheidung: abschalten (13.09.2026)
+
+**Sandy hat entschieden: Die ZUGFeRD-Einbettung wird für Angebote und
+Kostenvoranschläge abgeschaltet** — der Empfehlung des Head of Legal folgend,
+vor Gate 1. Damit ist der Punkt aus der Entscheidungsschleife raus und liegt
+bei der Umsetzung.
+
+### An Head of Product Engineering
+
+Drei Stellen, alle an dieselbe Bedingung gehängt: solange `dokument_typ`
+`angebot` oder `kostenvoranschlag` ist — und etwas anderes gibt es derzeit
+nicht —, greift `eRechnungAktiv` nicht mehr.
+
+1. `api/email/route.ts` — Einbettung (Z. ~108), der zusätzliche XML-Anhang
+   `factur-x-<Nummer>.xml` (Z. 109) **und** der Satz im Mailtext „Es enthält
+   eine eingebettete ZUGFeRD-XML (Factur-X)" (Z. 137). Auch der Dateiname
+   `Angebot-<Nr>-ZUGFeRD.pdf` fällt damit zurück auf `Angebot-<Nr>.pdf`.
+2. `api/pdf/route.ts` — Einbettung und der Antwort-Header `X-ZUGFeRD`.
+3. `api/quotes/[id]/send/route.ts` — dieselbe Einbettung.
+
+Dazu der separate XRechnung-Download (`api/pdf/xrechnung/route.ts`) samt
+Verlinkung in `AngebotDetail.tsx` Z. ~3205: Er erzeugt aus demselben Angebot
+dieselbe als Rechnung deklarierte XML, nur ohne PDF drumherum. Er fällt unter
+dieselbe Entscheidung — wenn die Einbettung geht, gehört der Menüeintrag mit
+weg. **Den Menüeintrag entferne ich** (Oberfläche), die Route ist deine.
+
+Unberührt bleibt die zweite Bitte von Legal: das PDF/A-3b-Versprechen einmal
+durch veraPDF oder Mustang schicken. Das hängt nicht an dieser Entscheidung.
+
+### Reihenfolge — wichtig
+
+**Der Wortlaut der Karte geht NICHT zuerst.** Er ist fertig (siehe
+Rückmeldung oben), wird aber erst eingebaut, wenn die Einbettung tatsächlich
+abgeschaltet ist. Andernfalls stünde für die Dauer dazwischen in den
+Einstellungen „E-Rechnungen entstehen beim Abrechnen" über einem Produkt, das
+weiter ZUGFeRD-XML verschickt — dieselbe Sorte falsche Aussage, nur in die
+andere Richtung. Eine Oberfläche, die dem Code vorauseilt, lügt genauso wie
+eine, die hinterherhinkt.
+
+Sobald der Commit da ist, ziehe ich im selben Arbeitsgang nach:
+Karte ohne Schalter mit dem abgestimmten Satz, XRechnung-Eintrag aus dem
+Drei-Punkte-Menü, und DC-089 wird geschlossen (der freigegebene Satz
+beschreibt dann ein Verhalten, das es nicht mehr gibt — ein neuer kommt vom
+Head of Legal, falls einer gebraucht wird).
+
+Status DC-100: 🔵 → **entschieden**, wartet auf die Umsetzung bei Head of
+Product Engineering. Mein Teil steht bereit, kein neuer Auftrag nötig.
 
 *Product Designer · 2026-09-13*
 
