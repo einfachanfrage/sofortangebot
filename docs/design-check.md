@@ -6163,4 +6163,92 @@ Status DC-058: 🟡 gebaut, Live-Test offen.
 
 ---
 
+## DC-066 und DC-079 (13.09.2026)
+
+Beide gebaut, **noch nicht committet** (Shell tot, Commit von Sandy).
+
+### DC-066 — Rückgängig nach dem Löschen
+
+Manfred (TN-055): „Position löschen: ein Tipp, weg, Summe rechnet nach, keine
+Rückfrage. Ist mir recht. Aber beim zweiten Löschen ist die Liste unterm Finger
+verrutscht und ich hab eine andere Position getroffen."
+
+Zwei Sätze, die einander scheinbar widersprechen — und genau darin liegt die
+Lösung. Er will es schnell, und es ist ihm einmal danebengegangen. Eine
+Sicherheitsabfrage vor jedem Löschen würde den häufigen, richtigen Fall bei
+jedem Mal ausbremsen, um den seltenen, falschen abzufangen. Sie hätte ihm den
+Satz genommen, den er lobt. Also kein Vorher, sondern ein Nachher: **gelöscht
+wird sofort, rückgängig ist einen Tipp entfernt.**
+
+Warum der Finger daneben trifft, steht im Code: die Trefferfläche ist der
+kleine Mülleimer direkt neben dem Ziehgriff, und nach dem Löschen springt die
+Liste gleich dreifach — die Zeile fällt weg, die Prozent-Zuschläge rechnen sich
+neu, und war es die letzte Position eines Raums, verschwinden Raumkopf und
+Maßzeile mit. Rund 100 px unter dem Finger. Die Trefferfläche zu vergrößern
+würde den Ziehgriff verdrängen; den Sprung zu verhindern hieße, die
+Neuberechnung zu verzögern. Beides wäre ein neuer Fehler gegen einen alten.
+
+**`src/components/Toast.tsx`** trägt jetzt optional **eine** Aktion (nicht
+mehrere: ein Toast ist eine Beiläufigkeit, wer zwei Entscheidungen braucht,
+braucht ein Sheet). Trennstrich statt Rahmen, damit die Pille eine Pille
+bleibt; die Aktion in Marken-Gelb.
+
+**`AngebotDetail.tsx`**: `removeEditItem` merkt sich die gelöschte Position
+**und ihren Index** und zeigt „Position gelöscht · Rückgängig". Zurück kommt
+sie an dieselbe Stelle, nicht ans Ende — sonst hätte man den Fehler korrigiert
+und die Reihenfolge kaputtgemacht.
+
+Drei Details, die beim Bauen dazukamen:
+- **Der Toast nennt den Positionstitel nicht.** „Wandflächen streichen 2x —
+  Wohnzimmer" sprengt eine einzeilige Pille auf dem Handy. Und die Frage im
+  Kopf ist ohnehin nicht „welche war das", sondern „kann ich das zurückholen".
+- **Ein zweiter Tipp auf Rückgängig legt nichts doppelt an** — zweimal dieselbe
+  Position wäre schlimmer als der Fehler, der hier repariert wird.
+- **Der Toast-Timer liegt jetzt in einem Ref und wird vor jedem neuen Toast
+  gestoppt.** Vorher konnte die Stoppuhr einer alten Meldung eine gerade
+  erschienene neue wegräumen. Bei reinen Bestätigungen fiel das nie auf — beim
+  „Rückgängig" wäre es der Unterschied zwischen wiederherstellbar und weg.
+  Eine Aktion steht außerdem länger (5 s statt 2,5 s): man muss sie lesen,
+  verstehen und treffen, nicht nur zur Kenntnis nehmen.
+
+Status DC-066: 🟡 gebaut, Live-Test offen.
+
+### DC-079 — Leeres „An"-Feld, grauer Knopf
+
+Manfred (TN-076): „‚An'-Feld leer, Knopf grau, keine Erklärung. Sag mir, dass
+die Mail-Adresse fehlt."
+
+Der Hinweis steht jetzt **am Feld**, nicht am Knopf — dort, wo man ihn beheben
+kann. Zwei Fälle, zwei Sätze, weil es zwei verschiedene Probleme sind:
+
+- Kunde da, aber ohne Adresse: **„Für Renate Krüger ist keine E-Mail-Adresse
+  hinterlegt — hier eintragen, dann geht's raus."**
+- Gar kein Kunde am Angebot: **„Diesem Angebot ist noch kein Kunde zugewiesen —
+  Adresse hier eintragen oder den Kunden am Angebot hinterlegen."**
+
+Nicht rot: es ist nichts kaputt, es fehlt etwas. Marken-Gelbbraun (#8B7000),
+dieselbe Farbe wie überall im Produkt für „schau hier nochmal hin".
+
+**Der Hinweis erscheint nur, wenn sonst nichts im Weg steht.** Liegt ein echtes
+Versandhindernis vor, erklärt der rote Kasten darüber das bereits — zwei
+Meldungen gleichzeitig beantworten keine Frage doppelt, sie stellen eine neue.
+
+Dazu ein `title` am Knopf für den Desktop („Trag oben eine E-Mail-Adresse
+ein"). Am Handy gibt es kein Draufzeigen, dort trägt der Hinweis am Feld.
+
+Status DC-079: 🟡 gebaut, Live-Test offen.
+
+**Verifikation beider Punkte:** Syntax aller drei Dateien sauber; die
+Wiederherstell-Logik von DC-066 gegen sechs Fälle ausgeführt (Mitte, erste und
+letzte Position, Doppeltipp, zwischenzeitlich verkürzte Liste) — alle grün.
+`tsc`/`vitest` ohne Shell weiterhin nicht ausführbar.
+
+**Hinweis zur Datei:** `AngebotDetail.tsx` wurde am 13.09. gegen 14:35 von Head
+of Product Engineering bearbeitet, meine Änderung liegt direkt darauf. Diesen
+Commit besser zeitnah setzen.
+
+*Product Designer · 2026-09-13*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

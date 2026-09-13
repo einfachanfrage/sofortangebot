@@ -8,6 +8,9 @@ import type { Quote, QuoteItem, Company, Customer, Baustelle, EntwurfAufnahme } 
 import { DRAFT_STATUSES, SENT_STATUSES, waehlbareStatus, getStatusInfo } from '@/lib/status'
 import { statusPatch, type AblehnungsGrund } from '@/lib/status-uebergang'
 import { aktualisiereProzentZuschlaege, istProzentZuschlag } from '@/lib/zuschlag-basis'
+import { einheitenFuer } from '@/lib/einheiten'
+import { hatAnstrichzahl, anstrichzahl, mitAnstrichzahl, ANSTRICHSTUFEN } from '@/lib/anstrichzahl'
+import { waehleUntertitel } from '@/lib/positions-untertitel'
 import {
   Download, Share2, Trash2, FileText, Link2, Phone, Check, Pencil, X,
   Plus, ChevronDown, Copy, Mic, Loader2, Image as ImageIcon,
@@ -25,7 +28,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import { ermittleHandaenderungen } from '@/lib/manuelle-positionen'
-import { normalisierePreistext } from '@/lib/preis-matcher'
+import { normalisierePreistext, findePreisposition } from '@/lib/preis-matcher'
 import VorschauUndVersand from '@/components/VorschauUndVersand'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Toast } from '@/components/Toast'
@@ -37,6 +40,7 @@ import {
 } from '@/lib/raum-geometrie'
 import { materialFuerPosition } from '@/lib/material-mapping'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
+import { versandHindernisse, unbepreistePositionen } from '@/lib/versandbereit'
 import { brauchtWandmasse, brauchtRaumhoehe } from '@/lib/raum-anzeige'
 
 interface Props {
@@ -73,7 +77,9 @@ const VIA_LABELS: Record<string, string> = {
   billomat: 'Billomat', papierkram: 'Papierkram', easybill: 'Easybill',
 }
 
-const UNITS = ['m²', 'lfdm', 'Stk', 'Stunde', 'pauschal', 'm³', 'kg', 'ltr', 'Rolle', 'Satz']
+// CoS-E-024 / TN-060: Die Einheitenliste liegt in `src/lib/einheiten.ts` —
+// dort steht auch, warum („Stk“ statt „Stück“), und dort prüft ein Test sie
+// gegen das, was Engine und Katalog tatsächlich erzeugen.
 
 function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
 function fmtZahl(n: number) { return n.toFixed(2).replace('.', ',') }
@@ -344,7 +350,7 @@ function sucheVorschlaege(query: string, katalog: PreisKatalogEintrag[]): PreisK
 }
 
 // ── Sortierbare Position ──────────────────────────────────────────────────────
-function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, rechenwegExpandiert, onToggleRechenweg, onAddMaterial, onAddPrice, priceItems, onPreisVorschlag, onNeuePosition }: {
+function SortableItem({ item, titleOverride, editingId, setEditingId, updateEditItem, removeEditItem, vatRate, onUnitPick, rechenwegExpandiert, onToggleRechenweg, onAddMaterial, onAddPrice, priceItems, onPreisVorschlag, onAnstrichWechsel, onNeuePosition }: {
   item: EditItem
   titleOverride?: string
   editingId: string | null
@@ -361,6 +367,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   onAddPrice: (item: EditItem) => void
   priceItems: PreisKatalogEintrag[]
   onPreisVorschlag: (itemId: string, vorschlag: { title: string; unit: string; unit_price: number; price_item_id: string }) => void
+  onAnstrichWechsel: (itemId: string, stufe: '1' | '2' | '3') => void
   onNeuePosition: (itemId: string, title: string, unit: string, unitPrice: number) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
@@ -509,6 +516,31 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
               </div>
             )}
 
+            {/* CoS-E-021 / TN-052: Ein Griff statt drei. Der Katalog führt 1x,
+                2x und 3x als eigene Zeilen mit eigenen Preisen — der
+                Umschalter schreibt den Titel um und holt den Preis von dort.
+                Nicht × 2 rechnen: Der zweite Anstrich kostet 3,50 €, nicht
+                6,00 €. */}
+            {hatAnstrichzahl(item.title) && (
+              <div className="flex items-center gap-1.5 mb-2" onClick={e => e.stopPropagation()}>
+                <span className="text-[10px] font-black uppercase tracking-widest text-anthracite/40">Anstriche</span>
+                {ANSTRICHSTUFEN.map(stufe => (
+                  <button
+                    key={stufe}
+                    type="button"
+                    onClick={e => { e.stopPropagation(); onAnstrichWechsel(item.id, stufe) }}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-black transition-colors ${
+                      anstrichzahl(item.title) === stufe
+                        ? 'bg-yellow text-anthracite'
+                        : 'bg-bg text-anthracite/50 hover:text-anthracite'
+                    }`}
+                  >
+                    {stufe}×
+                  </button>
+                ))}
+              </div>
+            )}
+
             <textarea
               value={item.description ?? ''}
               onChange={e => updateEditItem(item.id, 'description', e.target.value)}
@@ -646,6 +678,9 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
 export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [showDeleteSheet, setShowDeleteSheet] = useState(false)
   const [toast, setToast] = useState('')
+  // DC-066 (2026-09-11, Manfred/TN-055): Der Toast kann eine Aktion tragen —
+  // gebraucht fürs „Rückgängig" nach dem Löschen einer Position.
+  const [toastAktion, setToastAktion] = useState<{ label: string; onClick: () => void } | null>(null)
   const [editMode, setEditMode] = useState(DRAFT_STATUSES.includes(quote.status))
   const [editItems, setEditItems] = useState<EditItem[]>(quote.items)
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
@@ -753,6 +788,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [currentCustomer, setCurrentCustomer] = useState(quote.customer ?? null)
   const [showKundenSuche, setShowKundenSuche] = useState(false)
   const [kundenSucheQuery, setKundenSucheQuery] = useState('')
+  // CoS-E-028: verhindert Doppel-Anlage bei einem zweiten Tipp.
+  const [kundeAnlegenLaeuft, setKundeAnlegenLaeuft] = useState(false)
   const [kundenListe, setKundenListe] = useState<Customer[]>([])
   // DC-029, korrigiert 2026-09-02 (Sandys Auftrag "IMMER eine Baustelle
   // auswählbar, bei JEDEM Angebot Kunde+Baustelle"): Zeile/Sheet ist jetzt
@@ -774,6 +811,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   )
   const [grundrissRaum, setGrundrissRaum] = useState<string | null>(null)
   const [showRaumPicker, setShowRaumPicker] = useState(false)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const raumDetailsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -1106,10 +1144,49 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     if (naechste !== editItems) setEditItems(naechste)
   }, [editItems, editMode, priceItems])
 
+  // DC-066 (2026-09-11, Manfred/TN-055): „Position löschen: ein Tipp, weg,
+  // Summe rechnet nach, keine Rückfrage. Ist mir recht. Aber beim zweiten
+  // Löschen ist die Liste unterm Finger verrutscht und ich hab eine andere
+  // Position getroffen."
+  //
+  // Die Trefferfläche ist klein (Mülleimer, direkt neben dem Ziehgriff), und
+  // nach dem Löschen springt die Liste zusätzlich: die Zeile fällt weg, die
+  // Prozent-Zuschläge rechnen sich neu, und war es die letzte Position eines
+  // Raums, verschwinden Raumkopf und Maßzeile gleich mit — rund 100 px unter
+  // dem Finger.
+  //
+  // Bewusst KEINE Rückfrage vor dem Löschen: die würde den häufigen, richtigen
+  // Fall bei jedem Mal ausbremsen, um den seltenen, falschen abzufangen, und
+  // Manfred lobt die Schnelligkeit ausdrücklich. Stattdessen der Weg zurück
+  // danach — gelöscht wird sofort, rückgängig ist einen Tipp entfernt.
   function removeEditItem(id: string) {
+    const index = editItems.findIndex(item => item.id === id)
+    const geloescht = index >= 0 ? editItems[index] : null
+
     setEditItems(prev => prev.filter(item => item.id !== id))
     setEditingItemId(null)
     setHasChanges(true)
+
+    if (!geloescht) return
+    // Bewusst ohne den Positionstitel: der Toast ist eine Pille in einer
+    // Zeile, ein echter Titel („Wandflächen streichen 2x — Wohnzimmer")
+    // sprengt sie auf dem Handy. Und die Frage im Kopf ist ohnehin nicht
+    // „welche war das", sondern „kann ich das zurückholen".
+    showToast('Position gelöscht', {
+      label: 'Rückgängig',
+      onClick: () => {
+        setEditItems(prev => {
+          // Schon wieder da (Doppeltipp, zwischenzeitliches Neuladen)? Dann
+          // nichts tun — zweimal dieselbe Position wäre schlimmer als der
+          // Fehler, den wir hier reparieren.
+          if (prev.some(item => item.id === geloescht.id)) return prev
+          const naechste = [...prev]
+          naechste.splice(Math.min(index, naechste.length), 0, geloescht)
+          return naechste
+        })
+        setHasChanges(true)
+      },
+    })
   }
 
   async function addMissingDatabasePrice() {
@@ -1165,6 +1242,58 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   // Preis) auf eine Position übernehmen — Titel, Einheit, Preis UND die
   // Verknüpfung (price_item_id) in einem Schritt, damit die Position beim
   // Speichern korrekt als "aus der Preisdatenbank" erkennbar bleibt.
+  /**
+   * CoS-E-021 / TN-052 — 1× ↔ 2× ↔ 3× in einem Griff.
+   *
+   * Manfred: *„Verlangt manuelles Ändern von Titel, Untertitel UND Preis
+   * statt eines Umschalters, obwohl die App den Preis kennt."*
+   *
+   * Die Handarbeit war nicht nur lästig, sie war gefährlich: Wer den Titel
+   * auf 2× ändert und den Preis vergisst, hat eine Position, die zwei
+   * Anstriche verspricht und einen kostet. Genau das, was Regel 1 vom
+   * 24.08. im Matcher verhindert — nur eben von Hand wieder hergestellt.
+   *
+   * Der Preis kommt aus der Preisdatenbank des Betriebs, nicht aus einer
+   * Formel. × 2 wäre falsch: 6,00 € → 9,50 €, nicht 12,00 €. Grundierung,
+   * Abkleben und Anfahrt fallen einmal an, und genau deshalb führt der
+   * Katalog drei eigene Zeilen.
+   *
+   * Gibt es die Stufe im Katalog nicht („Türen lackieren (3× Anstrich)" ist
+   * dort nicht vorgesehen), wird der Titel trotzdem umgestellt — der
+   * Handwerker darf sagen, was er tut — aber der Preis geht sichtbar auf
+   * 0,00 € und ein Hinweis sagt es. Lieber sichtbar kein Preis als still
+   * der falsche (PM-018).
+   */
+  function wechsleAnstrichzahl(itemId: string, stufe: '1' | '2' | '3') {
+    const item = editItems.find(i => i.id === itemId)
+    if (!item || anstrichzahl(item.title) === stufe) return
+    const neuerTitel = mitAnstrichzahl(item.title, stufe)
+    const treffer = findePreisposition(
+      neuerTitel,
+      item.unit,
+      priceItems.map(p => ({ id: p.id, title: p.title, category: p.category ?? '', unit: p.unit, unit_price: p.unit_price })),
+    )
+    setEditItems(prev => prev.map(i => {
+      if (i.id !== itemId) return i
+      const preis = treffer?.position.unit_price ?? 0
+      return {
+        ...i,
+        title: neuerTitel,
+        // Der Untertitel gehört zum Titel — er muss mitwandern, sonst steht
+        // unter „2×" die Erklärung für „1×". Das war Manfreds dritter
+        // Handgriff.
+        description: waehleUntertitel(neuerTitel) ?? i.description,
+        unit_price: preis,
+        total_price: i.quantity * preis,
+        ...(treffer ? { price_item_id: treffer.position.id } : {}),
+      }
+    }))
+    setHasChanges(true)
+    if (!treffer) {
+      showToast(`Für ${stufe}× gibt es keinen Preis in deiner Preisdatenbank — bitte eintragen.`)
+    }
+  }
+
   function applyPreisVorschlag(itemId: string, vorschlag: { title: string; unit: string; unit_price: number; price_item_id: string }) {
     setEditItems(prev => prev.map(item => {
       if (item.id !== itemId) return item
@@ -1334,8 +1463,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
         if (editItems.length === 0) {
           throw new Error('Bitte füge mindestens eine Position hinzu, bevor du das Angebot fertigstellst.')
         }
-        if (!currentCustomer) {
-          throw new Error('Bitte weise einen Kunden zu, bevor du das Angebot fertigstellst.')
+        // CoS-E-004/012/023/035 (Manfred, 11.09.2026): Kunde UND Preise
+        // kommen jetzt aus derselben Prüfung wie der Senden-Knopf und die
+        // Versand-Route (src/lib/versandbereit.ts) — vorher stand hier nur
+        // der Kunde, und ein Angebot mit „Boden schützen 0,00 €" konnte
+        // fertiggestellt, versendet und als beauftragt markiert werden,
+        // ohne dass es jemandem auffiel (TN-090).
+        const hindernisse = versandHindernisse({ hatKunden: Boolean(currentCustomer), items: editItems })
+        if (hindernisse.length > 0) {
+          throw new Error('Bitte noch erledigen: ' + hindernisse.join(' '))
         }
       }
       // CoS-014 (2026-08-24): Festhalten, WAS der Handwerker hier von Hand
@@ -1479,7 +1615,30 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   const status = getStatusInfo(currentStatus)
 
-  function showToast(msg: string) { setToast(msg); setTimeout(() => setToast(''), 2500) }
+  // DC-066: zwei Ergänzungen. (1) Optionale Aktion (siehe Toast.tsx).
+  // (2) Der Timer liegt jetzt in einem Ref und wird vor jedem neuen Toast
+  // gestoppt — vorher konnte die Stoppuhr einer ALTEN Meldung eine gerade
+  // erschienene neue wegräumen. Bei reinen Bestätigungen fiel das nicht auf,
+  // beim „Rückgängig" wäre es der Unterschied zwischen wiederherstellbar und
+  // weg. Eine Aktion bekommt mehr Zeit als eine Bestätigung: man muss sie
+  // lesen, verstehen und treffen, nicht nur zur Kenntnis nehmen.
+  function showToast(msg: string, aktion?: { label: string; onClick: () => void }, dauerMs = 2500) {
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    setToast(msg)
+    setToastAktion(
+      aktion
+        ? { label: aktion.label, onClick: () => { verbergeToast(); aktion.onClick() } }
+        : null,
+    )
+    toastTimer.current = setTimeout(verbergeToast, aktion ? Math.max(dauerMs, 5000) : dauerMs)
+  }
+
+  function verbergeToast() {
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    toastTimer.current = null
+    setToast('')
+    setToastAktion(null)
+  }
   function trackVia(via: string) {
     if (sentVia.includes(via)) return
     setSentVia(prev => [...prev, via])
@@ -1617,6 +1776,35 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     showToast(kunde ? `Kunde: ${kunde.name} ✓` : 'Kunde entfernt')
   }
 
+  // CoS-E-028 (Manfred TN-068, 11.09.2026): „+ Kunde" bot nur eine Suche.
+  // Wer nicht gefunden wurde, war von hier aus nicht anzulegen — Manfred
+  // musste raus ins Kunden-Menü und wieder zurück. Seine Zahl dazu: rund
+  // 80 % seiner Angebote sind Erstkunden, die es hier also nie gibt.
+  //
+  // Bewusst nur der Name: Adresse, Telefon und Mail stehen beim Anruf oft
+  // noch gar nicht fest, und ein Pflichtformular an dieser Stelle wäre
+  // wieder ein Umweg. Der Kunde existiert danach und lässt sich in Ruhe
+  // vervollständigen — der Weg zurück ins Angebot ist das Wichtige.
+  async function handleKundeNeuAnlegen(name: string) {
+    const sauber = name.trim()
+    if (!sauber || kundeAnlegenLaeuft) return
+    setKundeAnlegenLaeuft(true)
+    try {
+      const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
+      if (!co) { showToast('Betrieb nicht gefunden'); return }
+      const { data: neu, error } = await supabase.from('customers')
+        .insert({ company_id: co.id, name: sauber })
+        .select()
+        .single()
+      if (error || !neu) { showToast('Kunde konnte nicht angelegt werden'); return }
+      // Ab hier exakt derselbe Weg wie bei jeder anderen Zuweisung —
+      // inklusive Erstbaustelle (CoS-012/DC-029). Kein zweiter Pfad.
+      await handleKundeZuweisen(neu as Customer)
+    } finally {
+      setKundeAnlegenLaeuft(false)
+    }
+  }
+
   async function handleLexwareKontaktImportieren(k: typeof lexwareKontakte[0]) {
     const { data: co } = await supabase.from('companies').select('id').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
     if (!co) return
@@ -1686,6 +1874,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   }
 
   const displayItems = editItems
+  // CoS-E-004/012/023/035: Was diesem Angebot noch zum Kunden fehlt —
+  // EINE Quelle für den Fertigstellen-Knopf, den Versand-Dialog und (als
+  // eigentliche Sicherung) die Versand-Route auf dem Server.
+  // Siehe src/lib/versandbereit.ts.
+  const fertigHindernisse = versandHindernisse({
+    hatKunden: Boolean(currentCustomer),
+    items: editItems,
+  })
   const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
   const istZugferd = company?.e_rechnung_aktiv !== false && kundeIstUnternehmen
 
@@ -1694,7 +1890,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     <div className="min-h-dvh bg-bg pb-10" onClick={() => setEditingItemId(null)}>
 
       {/* Toast */}
-      <Toast message={toast} />
+      <Toast message={toast} aktion={toastAktion} />
 
       {/* DC-029: Baustelle-Wahl-Sheet — relevant, sobald die Zeile oben
           sichtbar ist (kundenBaustellen.length > 0, seit 2026-09-02). */}
@@ -1963,7 +2159,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           <div className="bg-white w-full rounded-t-3xl p-5" onClick={e => e.stopPropagation()}>
             <div className="font-black text-anthracite text-lg mb-4">Einheit ändern</div>
             <div className="grid grid-cols-3 gap-2">
-              {UNITS.map(u => (
+              {einheitenFuer(displayItems.find(i => i.id === unitPickerItemId)?.unit).map(u => (
                 <button key={u} onClick={() => quickUnitChange(unitPickerItemId, u)}
                   className={`py-3 rounded-2xl border-2 font-black text-sm transition-colors ${
                     displayItems.find(i => i.id === unitPickerItemId)?.unit === u
@@ -2099,6 +2295,18 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                       )}
                     </div>
                   )}
+                  {/* CoS-E-028: Anlegen gehört direkt hierher, nicht ins
+                      Kunden-Menü. Bewusst UNTER die Treffer — wer schon
+                      existiert, soll nicht doppelt angelegt werden. */}
+                  {kundenSucheQuery.trim().length > 1 && (
+                    <button
+                      onClick={() => handleKundeNeuAnlegen(kundenSucheQuery)}
+                      disabled={kundeAnlegenLaeuft}
+                      className="mt-1 w-full text-left px-3 py-2.5 rounded-xl border border-dashed border-yellow/60 bg-yellow/5 text-sm font-bold text-anthracite disabled:opacity-50"
+                    >
+                      + „{kundenSucheQuery.trim()}" als neuen Kunden anlegen
+                    </button>
+                  )}
                   {currentCustomer && (
                     <button onClick={() => handleKundeZuweisen(null)} className="mt-2 text-xs font-bold text-red-400 hover:text-red-600">
                       Kunde entfernen
@@ -2139,6 +2347,34 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     )
                   })()}
                 </>
+              ) : quote.erkannter_kundenname ? (
+                /* CoS-E-018 (Manfred TN-044/TN-129): Manfred hat den Kunden
+                   als Allererstes gesagt und trotzdem „Kein Kunde
+                   zugewiesen" gelesen — der Name wurde erkannt, kam nur
+                   nirgends an. Jetzt steht er hier, als Vorschlag mit einem
+                   Tipp. Bewusst nicht automatisch zugewiesen: ein verhörter
+                   Name darf nicht still einen Kundendatensatz erzeugen. */
+                <div>
+                  <div className="text-sm text-anthracite/30 font-semibold">Kein Kunde zugewiesen</div>
+                  <div className="mt-2 rounded-xl bg-yellow/5 border border-dashed border-yellow/60 p-3">
+                    <div className="text-[11px] font-bold text-anthracite/40 uppercase tracking-wide">Aus der Aufnahme gehört</div>
+                    <div className="font-black text-anthracite mt-0.5">{quote.erkannter_kundenname}</div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => { setShowKundenSuche(true); handleKundenSuche(quote.erkannter_kundenname!) }}
+                        className="text-xs font-bold px-2.5 py-1.5 rounded-full bg-anthracite text-white"
+                      >
+                        Übernehmen
+                      </button>
+                      <button
+                        onClick={() => { setShowKundenSuche(true); setKundenSucheQuery('') }}
+                        className="text-xs font-bold px-2.5 py-1.5 rounded-full border border-anthracite/15 text-anthracite/60"
+                      >
+                        Anderer Kunde
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <div className="text-sm text-anthracite/30 font-semibold">Kein Kunde zugewiesen</div>
               )}
@@ -2198,13 +2434,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
 
               {editMode ? (() => {
-                const gruppen = gruppiereNachStruktur(editItems, (optStruktur || company?.angebot_struktur || 'raeume'))
+                const gruppen = gruppiereNachStruktur(editItems, (optStruktur || company?.angebot_struktur || 'raeume'), Object.keys(raumDetails))
                 if (!gruppen) {
                   return (
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={editItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                         {editItems.map(item => (
-                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(item.id)} onToggleRechenweg={() => toggleRechenweg(item.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                          <SortableItem key={item.id} item={item} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(item.id)} onToggleRechenweg={() => toggleRechenweg(item.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onAnstrichWechsel={wechsleAnstrichzahl} onNeuePosition={legeNeuenPreisAn} />
                         ))}
                       </SortableContext>
                     </DndContext>
@@ -2249,7 +2485,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           />
                           {raum.items.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(orig.id)} onToggleRechenweg={() => toggleRechenweg(orig.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.titleDisplay} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(orig.id)} onToggleRechenweg={() => toggleRechenweg(orig.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onAnstrichWechsel={wechsleAnstrichzahl} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                         )
@@ -2261,7 +2497,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                           {allgemein.map(gi => {
                             const orig = editItems.find(i => i.id === gi.id)!
-                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(orig.id)} onToggleRechenweg={() => toggleRechenweg(orig.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onNeuePosition={legeNeuenPreisAn} />
+                            return <SortableItem key={orig.id} item={orig} titleOverride={gi.title} editingId={editingItemId} setEditingId={setEditingItemId} updateEditItem={updateEditItem} removeEditItem={removeEditItem} vatRate={company?.vat_rate ?? 0} onUnitPick={setUnitPickerItemId} rechenwegExpandiert={rechenwegExpandiert.has(orig.id)} onToggleRechenweg={() => toggleRechenweg(orig.id)} onAddMaterial={addMaterialFor} onAddPrice={item => { setPriceItemToAdd(item); setNewDatabasePrice(''); setNewDatabaseUnit(item.unit); setDatabasePriceError('') }} priceItems={priceItems} onPreisVorschlag={applyPreisVorschlag} onAnstrichWechsel={wechsleAnstrichzahl} onNeuePosition={legeNeuenPreisAn} />
                           })}
                         </div>
                       )}
@@ -2269,7 +2505,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </DndContext>
                 )
               })() : (() => {
-                const gruppen = gruppiereNachStruktur(displayItems, (optStruktur || company?.angebot_struktur || 'raeume'))
+                const gruppen = gruppiereNachStruktur(displayItems, (optStruktur || company?.angebot_struktur || 'raeume'), Object.keys(raumDetails))
 
                 const renderItem = (title: string, item: EditItem) => (
                   <div key={item.id} className="border-t border-anthracite/5 px-4 py-3">
@@ -2619,6 +2855,31 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               <span className="text-xs font-semibold text-anthracite/30 bg-anthracite/5 px-2.5 py-1 rounded-full">Nicht im PDF</span>
             </div>
             <div className="text-xs text-anthracite/40 font-semibold mb-3">Nur für dich — der Kunde sieht das nie.</div>
+
+            {/* CoS-E-019 / TN-045 (+ CoS-E-032): Der gesprochene Termin.
+                Manfred nennt ihn im selben Atemzug wie die Maße („in drei
+                Wochen fertig“) — und bis heute gab es dafür kein Feld. Er
+                steht hier als VORSCHLAG im eigenen Wortlaut, mit einem Tipp
+                zum Übernehmen. Bewusst nicht automatisch in die Notiz
+                geschrieben und erst recht nicht ins Kundendokument: Ein
+                Termin ist eine Zusage, und die macht der Handwerker, nicht
+                die App. */}
+            {quote.erkannter_termin && !internalNotes.includes(quote.erkannter_termin) && (
+              <div className="mb-3 rounded-xl bg-yellow/5 border border-dashed border-yellow/60 p-3">
+                <div className="text-[11px] font-bold text-anthracite/40 uppercase tracking-wide">Aus der Aufnahme gehört</div>
+                <div className="font-black text-anthracite mt-0.5">{quote.erkannter_termin}</div>
+                <button
+                  type="button"
+                  onClick={() => scheduleAutosaveNotes(
+                    internalNotes.trim() ? `${internalNotes.trim()}\n${quote.erkannter_termin}` : quote.erkannter_termin!,
+                  )}
+                  className="mt-2 text-xs font-bold px-2.5 py-1.5 rounded-full bg-anthracite text-white"
+                >
+                  In die Notiz übernehmen
+                </button>
+              </div>
+            )}
+
             <textarea
               value={internalNotes}
               onChange={e => scheduleAutosaveNotes(e.target.value)}
@@ -2697,8 +2958,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               </button>
               <button
                 onClick={fertigstellen}
-                disabled={saving || editItems.length === 0 || !currentCustomer}
-                title={editItems.length === 0 ? 'Mindestens eine Position nötig' : !currentCustomer ? 'Bitte zuerst einen Kunden zuweisen' : undefined}
+                disabled={saving || editItems.length === 0 || fertigHindernisse.length > 0}
+                title={editItems.length === 0 ? 'Mindestens eine Position nötig' : fertigHindernisse[0]}
                 className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-anthracite text-white font-bold text-sm disabled:opacity-50"
               >
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={15} strokeWidth={2.5} />}
@@ -2767,6 +3028,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           } as Parameters<typeof VorschauUndVersand>[0]['quote']}
           company={company}
           quoteNumber={quoteNumber}
+          versandHindernisse={fertigHindernisse}
           initialTab={vorschauInitialTab}
           onClose={() => setShowVorschau(false)}
           onSent={(via) => {
@@ -3065,7 +3327,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 onChange={event => { setNewDatabaseUnit(event.target.value); setDatabasePriceError('') }}
                 className="rounded-xl border-2 border-anthracite/10 bg-bg px-2 text-sm font-black text-anthracite outline-none focus:border-yellow"
               >
-                {UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
+                {einheitenFuer(newDatabaseUnit).map(unit => <option key={unit} value={unit}>{unit}</option>)}
               </select>
             </div>
             {databasePriceError && <div className="mt-2 text-xs font-bold text-red-600">{databasePriceError}</div>}

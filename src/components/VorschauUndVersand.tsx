@@ -101,8 +101,8 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
   // (quote.zeige_rechenweg_auf_pdf). `null` = noch nicht gefragt — dann
   // gilt der CI-Handbuch-Standard (sichtbar) und die Frage erscheint
   // genau hier, in der Vorschau, bevor einer der drei Versandwege
-  // (E-Mail/WhatsApp/Link) das PDF erzeugt. Bewusst kein Blocker vor
-  // "Senden →": unbeantwortet bleibt der Rechenweg sichtbar, das ist der
+  // (E-Mail/WhatsApp/Link) das PDF erzeugt. Bewusst kein Blocker auf
+  // dem Weg zum Senden: unbeantwortet bleibt der Rechenweg sichtbar, das ist der
   // sichere Standard, keine Lücke. Persistiert direkt am Angebot (nicht
   // pro Versandweg neu), damit Vorschau und echtes PDF (lib/pdf.tsx,
   // gleiche Rangfolge: Prop, dann gespeicherte Antwort, dann sichtbar)
@@ -322,7 +322,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
 
             {/* DC-050: Rechenweg-Frage — einmal pro Angebot, direkt hier vor
                 dem Versand. Unbeantwortet bleibt der Rechenweg sichtbar
-                (CI-Handbuch-Standard), deshalb kein Blocker vor "Senden →". */}
+                (CI-Handbuch-Standard), deshalb kein Blocker vor dem Senden. */}
             {!rechenwegBeantwortet ? (
               <div className="mx-4 mt-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
                 <div>
@@ -453,6 +453,24 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                           placeholder="kunde@beispiel.de"
                           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-yellow"
                         />
+                        {/* DC-079 (2026-09-11, Manfred/TN-076): „‚An'-Feld
+                            leer, Knopf grau, keine Erklärung. Sag mir, dass
+                            die Mail-Adresse fehlt." Der Hinweis steht genau
+                            da, wo man ihn beheben kann — am Feld, nicht am
+                            grauen Knopf. Nicht rot: es ist nichts kaputt,
+                            es fehlt etwas.
+                            Nur wenn sonst nichts im Weg steht — liegt ein
+                            echtes Versandhindernis vor, erklärt der Kasten
+                            oben das bereits, und zwei Meldungen gleichzeitig
+                            beantworten keine Frage doppelt, sie stellen eine
+                            neue. */}
+                        {!to.trim() && darfSenden && (
+                          <p className="text-xs font-semibold text-[#8B7000] mt-1.5 leading-relaxed">
+                            {quote.customer?.name
+                              ? `Für ${quote.customer.name} ist keine E-Mail-Adresse hinterlegt — hier eintragen, dann geht's raus.`
+                              : 'Diesem Angebot ist noch kein Kunde zugewiesen — Adresse hier eintragen oder den Kunden am Angebot hinterlegen.'}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <label className="text-xs font-semibold text-gray-500 mb-1 block">Betreff</label>
@@ -610,12 +628,15 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
               )}
             </div>
 
-            {/* Senden-Button */}
+            {/* Senden-Button. DC-079: am Desktop erklärt sich der graue Knopf
+                zusätzlich beim Draufzeigen (title) — am Handy, wo es kein
+                Draufzeigen gibt, tut das der Hinweis direkt am Feld. */}
             {sendTab === 'email' && !sentOk && (
               <div className="px-4 py-3 border-t border-gray-100 flex-shrink-0">
                 <button
                   onClick={handleSend}
                   disabled={!to || sending || !darfSenden}
+                  title={!to.trim() ? 'Trag oben eine E-Mail-Adresse ein' : undefined}
                   className="w-full bg-anthracite text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {sending ? (
