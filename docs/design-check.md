@@ -6251,4 +6251,59 @@ Commit besser zeitnah setzen.
 
 ---
 
+## DC-071 — Speichern-Zustand (13.09.2026)
+
+Gebaut in `AngebotDetail.tsx`, **noch nicht committet** (Shell tot, Commit von
+Sandy).
+
+Manfred (TN-061): „‚Speichern' ausgegraut, bis ich was ändere — okay, aber
+vorher wusste ich nicht, ob meine Sachen sicher sind. ‚Entwurf gespeichert ✓'
+danach ist gut."
+
+**Fehler eins: eine Farbe für zwei verschiedene Aussagen.** Grau heißt im
+Produkt sonst „geht nicht" — hier hieß es „nichts zu tun". Das sind
+gegensätzliche Nachrichten, und der Nutzer muss raten, welche gemeint ist.
+Ein Knopf ohne Aufgabe ist kein gesperrter Knopf, sondern eine
+Zustandsanzeige. Also sagt er das jetzt auch:
+
+| Lage | Aufschrift | Zustand |
+|---|---|---|
+| nichts geändert | **Gespeichert** ✓ | gesperrt |
+| Änderungen offen | **Speichern** (gelb) | klickbar |
+| wird gespeichert | **Speichern…** | gesperrt, Spinner |
+
+Damit beantwortet der Knopf Manfreds Frage an der Stelle, an der er sie sich
+stellt — vorher, nicht erst nach dem Tippen über den Toast.
+
+**Fehler zwei: es gab die Antwort zweimal, und zwar unterschiedlich.** Der
+Knopf in der Kopfzeile sah ausgegraut aus, war aber klickbar
+(`disabled={saving}`); der in der Fußleiste war wirklich gesperrt
+(`saving || !hasChanges`). Wer oben tippte, löste ein Speichern ohne Änderung
+aus und bekam „Entwurf gespeichert ✓" — was den Eindruck erweckt, vorher sei
+etwas offen gewesen. Genau der Zweifel, den der Punkt beseitigen soll.
+
+Beide hängen jetzt an denselben zwei Zeilen (`speichernGesperrt`,
+`speichernLabel`) und tragen dasselbe Häkchen-Symbol. Zwei Knöpfe für dieselbe
+Sache dürfen sich nicht unterschiedlich verhalten — und wenn die Regel an
+einer Stelle steht, können sie es auch nicht mehr.
+
+Das `disabled:opacity`-Ausblenden ist bei beiden raus: die Aussage steckt jetzt
+in der Beschriftung, eine zusätzlich blasse Fläche würde sie nur wieder nach
+„kaputt" aussehen lassen.
+
+**Nicht angefasst:** das eigene Autosave der internen Notiz mit seiner eigenen
+„Gespeichert"-Anzeige. Es gehört zu einem anderen Feld und beantwortet eine
+andere Frage; zusammenzulegen wäre eine Vereinheitlichung um ihrer selbst
+willen.
+
+**Verifikation:** Syntax sauber, Zustandsmatrix (alle drei Kombinationen aus
+`saving`/`hasChanges`) durchgerechnet. `tsc`/`vitest` ohne Shell nicht
+ausführbar.
+
+Status DC-071: 🟡 gebaut, Live-Test offen.
+
+*Product Designer · 2026-09-13*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1615,6 +1615,24 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
 
   const status = getStatusInfo(currentStatus)
 
+  // DC-071 (2026-09-11, Manfred/TN-061): „‚Speichern' ausgegraut, bis ich was
+  // ändere — okay, aber vorher wusste ich nicht, ob meine Sachen sicher sind."
+  //
+  // Zwei Fehler steckten darin. Erstens sagte der graue Knopf „geht nicht",
+  // wo er „nichts zu tun" meinte — dieselbe Farbe für zwei völlig
+  // verschiedene Aussagen. Ein Knopf ohne Aufgabe ist kein gesperrter Knopf,
+  // sondern eine Zustandsanzeige, und die darf das auch sagen.
+  //
+  // Zweitens gab es die Antwort zweimal, und zwar unterschiedlich: der Knopf
+  // in der Kopfzeile sah ausgegraut aus, war aber klickbar (`disabled={saving}`),
+  // der in der Fußleiste war wirklich gesperrt (`saving || !hasChanges`).
+  // Wer oben tippte, löste ein Speichern ohne Änderung aus und bekam
+  // „Entwurf gespeichert ✓" — was den Eindruck erweckt, vorher sei etwas
+  // offen gewesen. Beide hängen jetzt an denselben zwei Zeilen; ein
+  // Auseinanderlaufen ist damit nicht mehr möglich.
+  const speichernGesperrt = saving || !hasChanges
+  const speichernLabel = saving ? 'Speichern…' : hasChanges ? 'Speichern' : 'Gespeichert'
+
   // DC-066: zwei Ergänzungen. (1) Optionale Aktion (siehe Toast.tsx).
   // (2) Der Timer liegt jetzt in einem Ref und wird vor jedem neuen Toast
   // gestoppt — vorher konnte die Stoppuhr einer ALTEN Meldung eine gerade
@@ -2068,10 +2086,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <Pencil size={16} strokeWidth={2.5} />
               </button>
             ) : (
-              <button onClick={() => saveEdits()} disabled={saving}
-                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-yellow text-anthracite' : 'bg-white/10 text-white/40'} disabled:opacity-50`}>
+              <button onClick={() => saveEdits()} disabled={speichernGesperrt}
+                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-yellow text-anthracite' : 'bg-white/10 text-white/60'}`}>
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
-                Speichern
+                {speichernLabel}
               </button>
             )}
           </div>
@@ -2950,11 +2968,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               </button>
               <button
                 onClick={() => saveEdits()}
-                disabled={saving || !hasChanges}
-                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg text-anthracite font-semibold text-sm border border-anthracite/10 disabled:opacity-40"
+                disabled={speichernGesperrt}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg font-semibold text-sm border border-anthracite/10 ${hasChanges ? 'text-anthracite' : 'text-anthracite/50'}`}
               >
-                {saving ? <Loader2 size={14} className="animate-spin" /> : null}
-                Speichern
+                {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
+                {speichernLabel}
               </button>
               <button
                 onClick={fertigstellen}
