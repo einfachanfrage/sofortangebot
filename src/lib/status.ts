@@ -49,20 +49,44 @@ export interface StatusInfo {
    * erklärt, denselben Satz nimmt.
    */
   hilfe: string
+  /**
+   * DC-072 (2026-09-11, Manfred/TN-062): „Grauer Punkt unter der Summe ohne
+   * Text = Entwurf-Status. Sieht kaputt aus."
+   *
+   * Ein Label gibt es dort seit DC-003 — es ist nur unsichtbar: Der
+   * Angebots-Header ist auf dem Handy `bg-anthracite`, und `draft` bringt
+   * `bg-anthracite/8` + `text-anthracite/50` mit. Dunkelgrau auf Dunkelgrau.
+   * Übrig bleibt der Punkt, und der sieht dann tatsächlich nach
+   * Rendering-Fehler aus.
+   *
+   * `aufDunkel` sind die Klassen für genau diesen Fall. Warum hier und nicht
+   * in der Komponente: sonst erfindet die nächste dunkle Fläche wieder ihre
+   * eigenen Werte, und wir haben denselben Wildwuchs wie vor DC-003, nur eine
+   * Ebene tiefer. Jeder Status hat eine — auch die, die schon funktionieren
+   * (helle Pillen auf Dunkel sind korrekt); so muss niemand prüfen, ob es für
+   * seinen Status eine gibt.
+   *
+   * Der `md:`-Teil bei `draft` ist kein Ausrutscher: derselbe Header ist am
+   * Desktop hell (`md:bg-transparent`), dieselbe Schaltfläche steht also auf
+   * zwei verschiedenen Untergründen. Die Klassen stehen komplett und wörtlich
+   * hier, weil Tailwind sie im Quelltext finden muss — zusammengesetzt zur
+   * Laufzeit fielen sie aus dem fertigen Stylesheet heraus.
+   */
+  aufDunkel: string
 }
 
 export const STATUS_CONFIG: Record<QuoteStatus, StatusInfo> = {
-  draft: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.' },
-  in_bearbeitung: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.' },
+  draft: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.', aufDunkel: 'bg-white/15 text-white/80 md:bg-anthracite/8 md:text-anthracite/50' },
+  in_bearbeitung: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.', aufDunkel: 'bg-white/15 text-white/80 md:bg-anthracite/8 md:text-anthracite/50' },
   // Fertig kalkuliert, aber noch nicht beim Kunden — bewusst Gelb (Marke,
   // "handlungsbereit"), nicht Grün: Grün bleibt für "Kunde hat zugesagt"
   // reserviert, sonst wirken zwei ganz unterschiedlich wichtige Momente
   // (selbst fertig vs. Kunde hat beauftragt) optisch gleich bedeutsam.
-  bereit: { label: 'Bereit', bg: 'bg-[#FEF9C3]', text: 'text-[#8B7000]', dot: '#D9A400', hilfe: 'Fertig gerechnet, aber noch nicht beim Kunden.' },
-  sent: { label: 'Beim Kunden', bg: 'bg-blue-50', text: 'text-blue-700', dot: '#3B82F6', hilfe: 'Raus an den Kunden — du wartest auf Antwort.' },
-  accepted: { label: 'Beauftragt', bg: 'bg-[#EDFAF0]', text: 'text-[#1A7A38]', dot: '#22C55E', hilfe: 'Kunde hat zugesagt.' },
-  rejected: { label: 'Abgelehnt', bg: 'bg-red-50', text: 'text-red-700', dot: '#EF4444', hilfe: 'Kunde hat abgesagt.' },
-  archived: { label: 'Archiviert', bg: 'bg-gray-100', text: 'text-gray-500', dot: '#9CA3AF', hilfe: 'Abgelegt — taucht in der normalen Liste nicht mehr auf.' },
+  bereit: { label: 'Bereit', bg: 'bg-[#FEF9C3]', text: 'text-[#8B7000]', dot: '#D9A400', hilfe: 'Fertig gerechnet, aber noch nicht beim Kunden.', aufDunkel: 'bg-[#FEF9C3] text-[#8B7000]' },
+  sent: { label: 'Beim Kunden', bg: 'bg-blue-50', text: 'text-blue-700', dot: '#3B82F6', hilfe: 'Raus an den Kunden — du wartest auf Antwort.', aufDunkel: 'bg-blue-50 text-blue-700' },
+  accepted: { label: 'Beauftragt', bg: 'bg-[#EDFAF0]', text: 'text-[#1A7A38]', dot: '#22C55E', hilfe: 'Kunde hat zugesagt.', aufDunkel: 'bg-[#EDFAF0] text-[#1A7A38]' },
+  rejected: { label: 'Abgelehnt', bg: 'bg-red-50', text: 'text-red-700', dot: '#EF4444', hilfe: 'Kunde hat abgesagt.', aufDunkel: 'bg-red-50 text-red-700' },
+  archived: { label: 'Archiviert', bg: 'bg-gray-100', text: 'text-gray-500', dot: '#9CA3AF', hilfe: 'Abgelegt — taucht in der normalen Liste nicht mehr auf.', aufDunkel: 'bg-gray-100 text-gray-500' },
 }
 
 /** Fällt nie auf "falsch eingefärbt" zurück — unbekannter/alter Status zeigt neutral Grau statt eines zufälligen anderen Status. */

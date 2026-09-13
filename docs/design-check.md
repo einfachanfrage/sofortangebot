@@ -6306,4 +6306,58 @@ Status DC-071: 🟡 gebaut, Live-Test offen.
 
 ---
 
+## DC-072 — Status-Label auf dem dunklen Header (13.09.2026)
+
+Gebaut in `src/lib/status.ts` und `AngebotDetail.tsx`, **noch nicht
+committet** (Shell tot, Commit von Sandy).
+
+Manfred (TN-062): „Grauer Punkt unter der Summe ohne Text = Entwurf-Status.
+Sieht kaputt aus. Ein Wort ‚Entwurf' dran."
+
+**Das Wort war schon dran.** Seit DC-003 steht neben dem Punkt ein Label —
+es ist nur unsichtbar: Der Angebots-Header ist auf dem Handy `bg-anthracite`
+(#2C2C2C), und der Entwurf-Status bringt `bg-anthracite/8` +
+`text-anthracite/50` mit. Dunkelgrau auf Dunkelgrau. Übrig bleibt der Punkt,
+und genau der sieht dann nach Rendering-Fehler aus.
+
+Mitgefunden und schlimmer als das Gemeldete: **der Chevron verschwand gleich
+mit.** Er erbt `currentColor`. Der Knopf sah also nicht nur kaputt aus, er
+verlor auch seinen einzigen Hinweis darauf, dass man ihn antippen kann — und
+zwar in dem Zustand, in dem der Handwerker am häufigsten draufschaut. Dass er
+antippbar ist, war der ganze Punkt des DC-003-Nachtrags („dieser kleine Punkt
+ist zum Status ändern?! da kommt kein Schwein drauf").
+
+**Der Fehler trifft ausschließlich den Entwurf und ausschließlich das Handy.**
+Alle anderen Status haben helle Pillen (Gelb, Blau, Grün, Rot, Grau) und sind
+auf Dunkel einwandfrei lesbar; am Desktop ist der Header hell
+(`md:bg-transparent`), dort stimmte die Farbe schon immer.
+
+**Gelöst in der Status-Quelle, nicht in der Komponente.** `StatusInfo` hat
+jetzt ein Feld `aufDunkel` — die Klassen für eine dunkle Fläche. Jeder Status
+bekommt eins, auch die, die schon funktionieren: sonst muss der Nächste
+nachsehen, ob es für seinen Fall eine gibt, und erfindet im Zweifel eigene
+Werte. Genau der Wildwuchs, den DC-003 abgeräumt hat, nur eine Ebene tiefer.
+
+Zwei Dinge, die dabei aufzupassen waren:
+
+- **Dieselbe Schaltfläche steht auf zwei Untergründen.** Der Header ist mobil
+  dunkel, ab `md` hell. `aufDunkel` enthält deshalb beim Entwurf die
+  `md:`-Rückfallwerte gleich mit:
+  `bg-white/15 text-white/80 md:bg-anthracite/8 md:text-anthracite/50`.
+- **Die Klassen stehen wörtlich in `status.ts`.** Zur Laufzeit
+  zusammengesetzte Tailwind-Klassen findet der Scanner nicht und sie fallen
+  aus dem fertigen Stylesheet — der Knopf wäre dann wieder unsichtbar,
+  diesmal ohne dass man es im Code sieht.
+
+**Verifikation:** Syntax beider Dateien sauber. `aufDunkel` ist ein
+Pflichtfeld der Schnittstelle; `STATUS_CONFIG` ist laut DC-003 die einzige
+Stelle, die `StatusInfo` baut (alle sieben Einträge ergänzt), ein vollständiger
+`tsc`-Lauf sollte das beim nächsten Build bestätigen.
+
+Status DC-072: 🟡 gebaut, Live-Test offen — am besten am Handy, im Entwurf.
+
+*Product Designer · 2026-09-13*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

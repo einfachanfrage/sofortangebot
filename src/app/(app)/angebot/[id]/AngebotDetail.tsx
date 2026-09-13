@@ -2052,9 +2052,21 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 Zeile direkt unter der Summe: sichtbarer Rahmen (macht ihn von
                 einem reinen Info-Badge unterscheidbar), größerer Punkt,
                 Chevron als Tap-Hinweis. */}
+            {/* DC-072 (2026-09-11, Manfred/TN-062): „Grauer Punkt ohne Text,
+                sieht kaputt aus." Das Label war da — nur unsichtbar: Dieser
+                Header ist auf dem Handy `bg-anthracite`, und der Entwurf-Status
+                bringt Dunkelgrau auf Dunkelgrau mit (`bg-anthracite/8` +
+                `text-anthracite/50`). Sichtbar blieb genau der Punkt. Der
+                Chevron verschwand gleich mit, er erbt `currentColor` — der
+                Knopf sah damit nicht nur kaputt aus, er verlor auch seinen
+                einzigen Hinweis darauf, dass man ihn antippen kann.
+                Die Dunkel-Variante kommt aus derselben Quelle wie Label und
+                Farbe (src/lib/status.ts, `aufDunkel`) und enthält die
+                Desktop-Rückfallwerte gleich mit — dieser Header ist ab `md`
+                hell. */}
             <button
               onClick={() => setShowStatusPicker(true)}
-              className={`flex items-center gap-1.5 text-sm font-bold pl-2.5 pr-2 py-1.5 rounded-full border border-current/20 mt-2 active:opacity-70 transition-opacity ${status.bg} ${status.text}`}
+              className={`flex items-center gap-1.5 text-sm font-bold pl-2.5 pr-2 py-1.5 rounded-full border border-current/20 mt-2 active:opacity-70 transition-opacity ${status.aufDunkel}`}
             >
               <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: status.dot }} />
               {status.label}
