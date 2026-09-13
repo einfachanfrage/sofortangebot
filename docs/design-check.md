@@ -5840,4 +5840,327 @@ Auftrag.
 
 ---
 
+## DC-078 Teil 1 umgesetzt — Anrede in Mail und WhatsApp (13.09.2026)
+
+Sandys Auftrag: „los DC-078 Teil 1". Gebaut, aber **noch nicht committet** —
+die Shell auf dem Gerät ist weiter tot (siehe Vorbemerkung vom 12.09.), der
+Commit kommt von Sandy.
+
+**Geändert:**
+- **Neu: `src/lib/anrede.ts`** — `anredeZeile(kunde)` liefert die fertige
+  Anrede-Zeile inklusive Komma. Privatkunde mit Namen →
+  „Guten Tag, Renate Krüger,"; gewerblich oder ohne Namen → „Guten Tag,".
+- **`src/components/VorschauUndVersand.tsx`** — beide Aufrufstellen nutzen
+  jetzt diese eine Funktion: `buildDefaultNachricht()` (E-Mail) und
+  `handleWhatsApp()`. Vorher stand in beiden getrennt
+  `customer.name.split(' ')[0]`.
+- **Neu: `src/lib/__tests__/dc078-anrede.test.ts`** — sieben Fälle, darunter
+  genau die drei, an denen die alte Zeile falsch lag.
+
+**Warum eine eigene Datei für drei Zeilen Logik.** Derselbe Fehler stand
+zweimal nebeneinander in derselben Komponente — einmal für die Mail, einmal
+für WhatsApp. Wer nur den Bug-Report abarbeitet, fixt eine davon. Eine
+gemeinsame Funktion macht es unmöglich, dass die Kanäle wieder auseinander
+laufen, und sie ist die Stelle, an der Teil 2 (Feld `anrede` → „Sehr geehrte
+Frau Krüger") später andockt — an genau einem Ort statt an zweien. Dieselbe
+Regel wie bei `status.ts` (DC-003) und `preis-kategorie.ts`.
+
+**Warum der volle Name und kein geratener Vorname.** Das Namensfeld ist ein
+einziger Freitext. Jede Heuristik ist an echten Eingaben falsch, und die
+Testfälle zeigen es:
+
+| im Feld steht | alt (`split(' ')[0]`) | neu |
+|---|---|---|
+| `Renate Krüger` | „Hallo Renate," | „Guten Tag, Renate Krüger," |
+| `Frau Krüger` | **„Hallo Frau,"** | „Guten Tag, Frau Krüger," |
+| `Krüger, Renate` | **„Hallo Krüger,"** | „Guten Tag, Krüger, Renate," |
+| `Fischer GmbH` (gewerblich) | „Hallo Fischer," | „Guten Tag," |
+
+Der dritte Fall liest sich mit drei Kommas etwas holprig — das ist bewusst in
+Kauf genommen. „Nachname, Vorname" am Komma aufzutrennen wäre wieder Raten
+(„Müller, Bau GmbH"), und holprig ist billiger als falsch. Der zweite Fall
+ist der Gewinn: wer den Namen ohnehin mit Anrede einträgt, bekommt ohne jede
+Zusatzfunktion genau die Anrede, die Manfred selbst schreiben würde.
+
+**Verifikation, ehrlich benannt:** `tsc` und `vitest` waren ohne Shell nicht
+ausführbar. Geprüft wurde stattdessen (1) Syntax aller drei Dateien über den
+TypeScript-Parser im Container — sauber, (2) die Logik selbst gegen alle
+sieben Testfälle ausgeführt — alle grün, (3) die Dateigrößen auf dem Gerät
+nach dem Schreiben gegengeprüft. **Ein vollständiger Typcheck steht noch
+aus** und sollte beim nächsten Build mitlaufen; das Risiko ist gering (die
+Hilfsfunktion ist strukturell getippt und nimmt `Customer` unverändert an),
+aber es ist nicht null.
+
+Status DC-078 Teil 1: 🟡 gebaut, Typcheck und Live-Test stehen aus.
+Teil 2 (`anrede`-Feld) unverändert bei Head of Product Engineering.
+
+*Product Designer · 2026-09-13*
+
+---
+
+## DC-055 — Rechenweg: Teile 1 und 2 umgesetzt, Teil 3 gestoppt (13.09.2026)
+
+Gebaut, **noch nicht committet** (Shell auf dem Gerät weiter tot, Commit von
+Sandy). Manfreds Befund hatte drei Ursachen — zwei sind erledigt, die dritte
+darf so nicht umgesetzt werden. Dazu unten, das ist der wichtigere Teil.
+
+### Teil 1 — Schreibmaschinenschrift ✅
+
+`pdf.tsx`, `rechenwegText`: `fontFamily: 'IBM Plex Mono'` ist raus, der
+Rechenweg läuft in der Dokumentschrift. Größe (7,5 pt) und Grau (#666) bleiben
+— die Abstufung macht weiter die Größe, nicht die Schriftart.
+
+**Nicht mitgeändert: die App.** In `AngebotDetail.tsx` bleibt der Rechenweg
+monospaced. Das ist kein vergessener Rest, sondern die Trennlinie: dort prüft
+der Betrieb Zahl unter Zahl, da hilft die feste Laufweite. Das Papier beim
+Kunden ist ein Dokument und sieht auch so aus. Zwei Leser, zwei Anforderungen
+— die bisherige „gleiche Konvention überall" (DC-049) hat den Unterschied
+eingeebnet.
+
+`AngebotVorschau.tsx` wechselt mit (`font-mono` raus): das ist die Vorschau
+AUF das PDF, sie muss aussehen wie das PDF, sonst ist sie keine.
+
+### Teil 2 — Punkt statt Komma ✅
+
+**Neu: `src/lib/zahlen-text.ts`** mit `mitDeutschenZahlen(text)`. Angewendet
+in `pdf.tsx` (Rechenweg und Übermessungs-Hinweis, je beide Renderpfade) und
+spiegelbildlich in `AngebotVorschau.tsx`. Tests:
+`src/lib/__tests__/dc055-zahlen-text.test.ts`.
+
+**Abweichung von meiner eigenen Spec vom 11.09., mit Begründung.** Dort stand,
+eine `zahl()`-Hilfe gehöre in die Mengen-Engines (`maler.ts`, `boden.ts`,
+`fliesen.ts`, `vob-uebermessung.ts`) und damit zu Engineering. Beim Bauen hat
+sich das als der schlechtere Weg erwiesen: es wären ~10 Template-Strings in
+vier Rechen-Dateien gewesen, jede neue Engine müsste daran denken, und ich
+hätte Berechnungscode angefasst, um einen Darstellungsfehler zu beheben. An
+der Ausgabe angesetzt ist es eine Stelle, gilt für alle Gewerke — auch für
+die, die es noch nicht gibt — und keine einzige Berechnung wird berührt.
+Formatiert Engineering die Texte später doch schon deutsch, ändert das hier
+nichts: aus einem Komma wird kein zweites. Der Umweg über die Anzeige ist hier
+nicht die faule, sondern die richtige Lösung.
+
+Ausgenommen sind Datumsangaben (`11.09.2026` bleibt), Normnummern haben
+ohnehin keinen Punkt (`DIN 18363`).
+
+**Dabei mitgefunden:** in `AngebotVorschau.tsx` stand die Menge als rohe
+JS-Zahl (`46.64`), während das PDF sie längst deutsch formatiert
+(`fmtMenge`). Dieselbe Zahl, zwei Schreibweisen, je nachdem wohin man sieht —
+und die Vorschau ist genau der Ort, an dem der Betrieb prüft, bevor er sendet.
+Mitgefixt.
+
+### Teil 3 — VOB-Sprache: NICHT umgesetzt, und zwar bewusst 🔵
+
+Meine Spec vom 11.09. schlug vor, `vobHinweistext()` (`vob-uebermessung.ts`
+Z. 144) umzuformulieren zu „3 Fenster und Türen bis 2,5 m² sind nach Norm
+nicht abgezogen (4,29 m²)". **Das wäre ein Fehler gewesen.** Beim Lesen des
+Codes kamen zwei Dinge heraus, die in der Spec fehlten:
+
+1. **Der Satz ist juristisch abgestimmt.** Er ist kein technisches Beiwerk,
+   sondern die Erklärung, die VOB-004 / Legal G5 (LR-01, 🔴) verlangt, weil
+   der Kunde „50,00 m²" liest, 46,64 m² nachmisst und sonst keine Erklärung
+   findet — freigegeben von Sandy als S-2 am 01.09.2026. Der Normverweis ist
+   dort nicht Fachjargon, sondern der Beleg. Ihn zu streichen, um den Text
+   freundlicher zu machen, nimmt dem Satz genau das, wofür er da ist. Das
+   fällt unter dieselbe Regel wie DC-089: Wortlaut mit Rechtsbezug wird
+   vorgeschlagen, nicht gebaut.
+2. **Am Wortlaut hängt eine Erkennung.** `UEBERMESSUNG_KENNZEICHEN`
+   (`/nicht abgezogen.*Übermessung|Übermessung.*nicht abgezogen/i`) findet den
+   Hinweis im `annahmen`-Freitext — bewusst über eine Textprobe, weil
+   Bestandsangebote kein eigenes Feld haben. Ein Wortlaut ohne „Übermessung"
+   würde von dieser Regex nicht mehr erfasst, und der Hinweis verschwände
+   **still vom PDF**. Eine Wording-Änderung ohne gleichzeitige Anpassung der
+   Regex (die weiter auf Altbestände passen muss) wäre ein stiller Rückschritt
+   in genau dem Punkt, den Legal als rot geführt hat.
+
+**Was stattdessen passiert:** Der Satz bleibt, wie er ist. Die Zahl darin ist
+jetzt deutsch geschrieben (Teil 2) — ein Drittel von Manfreds Beschwerde an
+dieser Zeile ist damit weg, ohne den Inhalt anzufassen.
+
+**Offene Frage an den Head of Legal** (nicht an mich): Lässt sich der
+Normverweis aus der Positionszeile in die ohnehin vorhandene Fußnote
+(`UEBERMESSUNG_ERKLAERUNG`, steht bereits unter der Positionsliste und nennt
+VOB/C DIN 18363) verlagern, sodass an der Position nur der verständliche Teil
+steht — „3 Öffnungen bis 2,5 m² Einzelgröße nicht abgezogen (4,29 m²) ¹" —
+und die Norm einmal in der Fußnote? Inhaltlich ginge nichts verloren, der
+Beleg bliebe auf demselben Blatt. Falls ja, muss `UEBERMESSUNG_KENNZEICHEN`
+im selben Schritt um eine Alternative erweitert werden, die alte Bestände
+weiterhin erkennt. Umsetzung übernehme ich, sobald der Wortlaut freigegeben
+ist.
+
+**Verifikation:** `tsc`/`vitest` ohne Shell nicht ausführbar. Geprüft:
+Syntax aller vier Dateien über den TypeScript-Parser (sauber) und die
+Formatier-Logik gegen neun Fälle ausgeführt (alle grün, darunter Normnummer,
+Datum und ein bereits deutscher Text als Idempotenz-Probe). Der bestehende
+Test `pdf-rechenweg-render.test.ts` arbeitet mit einem bereits deutschen
+Rechenweg-String und ist von der Änderung nicht betroffen. **Vollständiger
+Typcheck steht aus.**
+
+Status DC-055: Teil 1 + 2 🟡 gebaut, Typcheck und Live-Test offen.
+Teil 3 🔵 beim Head of Legal.
+
+*Product Designer · 2026-09-13*
+
+---
+
+## DC-056 — Kleinbeträge zusammenfassen: Mechanik gebaut, Schalter fehlt noch (13.09.2026)
+
+Gebaut, **noch nicht committet** (Shell tot, Commit von Sandy). Und eine
+Lücke in meiner eigenen Spec, die ich hier zuerst benenne.
+
+### Was ich in der Spec vom 12.09. übersehen habe
+
+Dort stand: „Keine Änderung an `quote_items`, keine Migration." Das stimmt für
+die Positionen — aber der **Schalter selbst muss irgendwo stehen**. Die
+Angebots-Einstellungen (Zahnrad) sind Spalten auf `quotes`
+(`AngebotOverrides` in `angebot-optionen.ts`: `kopftext`, `skonto_prozent`,
+`widerruf_beilegen` …). Eine neue Einstellung pro Angebot heißt also eine neue
+Spalte, und Datenbank-Felder liegen bei Head of Product Engineering. Das hätte
+in der Spec stehen müssen; ich habe es beim Schreiben nicht zu Ende gedacht.
+
+Konsequenz: **alles außer Speicherung und Schalter ist fertig und liegt
+inaktiv im Code.** Solange die Spalte fehlt, löst die Option zu `false` auf und
+das Dokument verhält sich exakt wie bisher — kein halber Zustand, kein
+sichtbarer Unterschied.
+
+### Gebaut
+
+**Neu: `src/lib/kleinbetraege.ts`** — `fasseKleinbetraegeZusammen(items,
+aktiv, istSammelposition)`. Schwelle 10 €, ab zwei Kleinbeträgen, Sammelzeile
+**„Nebenleistungen"** mit den zusammengefassten Titeln als Untertitel.
+Ausgenommen: alles, was `istAllgemeinPosition` schon als Sammelposition kennt
+(An-/Abfahrt, Kleinmaterial-Pauschale, Aufmaß, Entsorgung, Gerüst) und jeder
+Prozent-Zuschlag — der rechnet aus einer Bemessungsgrundlage und wäre als
+fester Betrag in einer Sammelzeile schlicht falsch.
+
+**`angebot-optionen.ts`** — `kleinbetraege_zusammenfassen` als Override,
+`kleinbetraegeZusammenfassen` als effektive Option. Bewusst **kein Erben vom
+Betrieb**: „wie ausführlich ist DIESES Angebot" hängt am einzelnen Angebot.
+
+**`pdf.tsx` und `AngebotVorschau.tsx`** — gebündelt wird **vor** der
+Gruppierung. Dadurch gilt es für beide Renderpfade (flach und gruppiert) und
+für alle drei Gliederungen, ohne dass eine dieser Stellen davon wissen muss.
+
+**`angebot-gruppierung.ts`** — „nebenleistungen" in `ALLGEMEIN_MUSTER`
+ergänzt. Ohne das wäre die Sammelzeile in der Gliederung „nach Arbeitsablauf"
+bei der Hauptarbeit gelandet: sie stammt aus mehreren Räumen und gehört aus
+demselben Grund unter „Allgemein" wie Anfahrt und Kleinmaterial.
+
+**Tests:** `src/lib/__tests__/dc056-kleinbetraege.test.ts`.
+
+### Zwei Abweichungen von der Spec, beide begründet
+
+**Der Titel heißt „Nebenleistungen", nicht „Kleinmaterial und
+Nebenleistungen".** Der ursprüngliche Name hätte im Normalfall direkt neben
+der automatischen Kleinmaterial-Pauschale gestanden („Kleinmaterial und
+Verbrauchsmaterial", ab 200 € Angebotswert). Zwei fast gleich heißende Zeilen
+mit verschiedenen Beträgen untereinander — genau das Muster, das Manfred bei
+den Zuschlägen als doppelt gemeldet hat (DC-073). Ein Wort weniger, keine
+Verwechslung.
+
+**Die Sammelzeile steht unter „Allgemein", nicht in ihrem Raum.** Alternative
+wäre gewesen, je Raum zu bündeln — dann bliebe die Raumstruktur intakt. Nur
+greift das bei Manfreds echtem Fall nicht: seine zwei Pfennigposten stehen in
+ZWEI verschiedenen Räumen (Boden schützen im Wohnzimmer, Sockelleisten
+abkleben im Flur), es gäbe pro Raum nur einen und damit nichts zu bündeln. Die
+Titel der Einzelpositionen bleiben als Untertitel mitsamt Raum-Suffix stehen,
+die Zuordnung ist also nachlesbar.
+
+So sieht Manfreds Angebot mit dem Schalter aus:
+
+```
+Wandflächen streichen 2x — Wohnzimmer      611,80 €
+Nebenleistungen                              6,78 €
+    Boden schützen — Wohnzimmer · Sockelleisten abkleben — Flur
+An- und Abfahrt                              4,50 €
+```
+
+### Was noch fehlt — an Head of Product Engineering
+
+**1. Die Spalte.** Additiv, nullable, kein Backfill — gleiches Muster wie
+`zeige_rechenweg_auf_pdf` (DC-050):
+
+```sql
+-- quotes.kleinbetraege_zusammenfassen: Kleinbetraege auf dem Kundendokument
+-- zu einer Zeile buendeln (DC-056 / TN-010, Sandys Entscheidung 12.09.2026)
+--
+-- NULL/false = einzeln auflisten (Standard, Verhalten wie bisher)
+-- true        = Positionen unter 10 EUR als eine Zeile "Nebenleistungen"
+--
+-- Reine Anzeige: quote_items bleiben unveraendert einzeln gespeichert, die
+-- Kalkulation und der Editor sehen sie weiter. Der Schalter ist damit
+-- jederzeit folgenlos umlegbar.
+ALTER TABLE public.quotes
+  ADD COLUMN IF NOT EXISTS kleinbetraege_zusammenfassen BOOLEAN;
+
+COMMENT ON COLUMN public.quotes.kleinbetraege_zusammenfassen IS
+  'DC-056: Kleinbetraege (< 10 EUR) auf dem Kundendokument zu einer Zeile "Nebenleistungen" buendeln. NULL/false = einzeln.';
+```
+
+Gelesen wird sie an einer Stelle (`effektiveOptionen`), geschrieben vom
+Schalter. Alle PDF-Routen laden mit `select('*')` — die Spalte kommt von
+selbst mit, genau wie bei DC-050.
+
+**2. Den Schalter baue ich**, sobald die Spalte steht — kein erneuter Auftrag
+nötig. Ort: Zahnrad „Einstellungen für dieses Angebot" in `AngebotDetail.tsx`,
+direkt unter „Gliederung", gleicher Baustein wie die dortigen Schalter.
+Wortlaut:
+
+> **Kleinbeträge zu einer Zeile zusammenfassen**
+> Positionen unter 10 € erscheinen als eine Zeile „Nebenleistungen". Die Summe
+> bleibt gleich.
+
+**Verifikation:** Syntax aller sechs Dateien sauber, die Bündel-Logik gegen
+zehn Prüfungen ausgeführt (alle grün, darunter: Gesamtsumme bleibt
+unverändert, Anfahrt und Prozent-Zuschläge bleiben draußen, eine einzelne
+Kleinposition wird nicht umbenannt, Reihenfolge stimmt). `tsc`/`vitest` ohne
+Shell weiterhin nicht ausführbar.
+
+Status DC-056: 🟡 Anzeige-Mechanik gebaut und inaktiv · 🔵 Spalte bei
+Engineering, Schalter danach bei mir.
+
+*Product Designer · 2026-09-13*
+
+---
+
+## DC-058 — Doppeltes „Senden" (13.09.2026)
+
+Gebaut in `src/components/VorschauUndVersand.tsx`, **noch nicht committet**
+(Shell tot, Commit von Sandy).
+
+**Der Befund:** „Senden →" stand zweimal gleichzeitig auf dem Schirm — als
+Reiter oben (Z. 273) und als Knopf in der Fußleiste der Vorschau (Z. 361),
+gleiche Beschriftung, gleicher Pfeil, gleiches Ziel.
+
+**Warum hier nicht gestrichen wurde wie bei DC-046.** Dort war ein Knopf
+tatsächlich zu viel. Hier haben die beiden verschiedene Aufgaben: oben ist
+Navigation (ich springe hin und her, bevor ich mich entscheide), unten ist der
+nächste Schritt, nachdem ich die Vorschau von oben bis unten gelesen habe.
+Nimmt man den Fuß-Knopf weg, muss der Handwerker nach dem Durchlesen wieder
+ganz nach oben scrollen — der Befund wäre weg und ein neuer da.
+
+Zu viel war nicht der Knopf, sondern die **gleiche Beschriftung**. Ein Reiter
+ist ein Substantiv und trägt keinen Pfeil; der Pfeil gehört der einen Aktion:
+
+| | vorher | jetzt |
+|---|---|---|
+| Reiter oben | „Senden →" | **„Senden"** |
+| Knopf unten | „Senden →" | **„Weiter zum Senden →"** |
+
+Damit ist auf einen Blick unterscheidbar, was Ort und was Schritt ist — dieselbe
+Regel, nach der DC-043 den FAB als die eine CTA stehen ließ und alles andere
+darauf zeigen ließ.
+
+Zwei Code-Kommentare, die den alten Knopftext wörtlich zitierten, sind
+mitgezogen — ein Kommentar, der eine Beschriftung nennt, die es nicht mehr
+gibt, schickt den Nächsten auf die falsche Fährte.
+
+**Verifikation:** Syntax sauber. Reine Textänderung, keine Logik berührt.
+`tsc`/`vitest` ohne Shell weiterhin nicht ausführbar.
+
+Status DC-058: 🟡 gebaut, Live-Test offen.
+
+*Product Designer · 2026-09-13*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

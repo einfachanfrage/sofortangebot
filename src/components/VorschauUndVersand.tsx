@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import AngebotVorschau from './AngebotVorschau'
 import { createClient } from '@/lib/supabase/client'
+import { anredeZeile } from '@/lib/anrede'
 import { getActiveIntegrations } from '@/lib/integrations'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
 
@@ -14,6 +15,17 @@ interface Props {
   onClose: () => void
   onSent?: (via: string) => void
   initialTab?: 'vorschau' | 'senden'
+  /**
+   * CoS-E-004/012/023/035 (Manfred, 11.09.2026): Was diesem Angebot noch
+   * fehlt, bevor es zum Kunden darf — fehlender Kunde, unbepreiste
+   * Positionen. Kommt aus `src/lib/versandbereit.ts`, derselben Quelle, die
+   * auch den Fertigstellen-Knopf und die Versand-Route benutzen.
+   *
+   * Blockiert wird bewusst nur das SENDEN, nicht das Ansehen: Der Handwerker
+   * muss sich sein Angebot anschauen dürfen, gerade wenn noch etwas fehlt —
+   * er soll ja sehen, wo.
+   */
+  versandHindernisse?: string[]
   // DC-050 (2026-09-11): informiert AngebotDetail, sobald hier eine
   // Rechenweg-Antwort gespeichert wurde — die dortige `quote`-Prop bleibt
   // sonst auf dem Stand des Seitenladens, siehe Kommentar dort.
@@ -35,8 +47,10 @@ function buildDefaultNachricht(
   customer: Customer | null | undefined,
   quoteNumber: string
 ): string {
-  const anrede = customer?.name ? `Hallo ${customer.name.split(' ')[0]},` : 'Hallo,'
-  return `${anrede}
+  // DC-078 (2026-09-11, Manfred/TN-075): hier stand
+  // `Hallo ${customer.name.split(' ')[0]},` — Ton falsch und der „Vorname"
+  // nur geraten. Siehe src/lib/anrede.ts.
+  return `${anredeZeile(customer)}
 
 vielen Dank für Ihr Interesse. Im Anhang finden Sie unser Angebot Nr. ${quoteNumber}.
 
@@ -46,11 +60,10 @@ Mit freundlichen Grüßen
 ${company.name}`
 }
 
-export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau', onZeigeRechenwegChange, onExported }: Props) {
+export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau', versandHindernisse = [], onZeigeRechenwegChange, onExported }: Props) {
   const supabase = createClient()
   const [mainTab, setMainTab] = useState<'vorschau' | 'senden'>(initialTab)
   const [sendTab, setSendTab] = useState<SendTab>('email')
-  const [modus, setModus] = useState<'angebot' | 'rechnung'>('angebot')
 
   // 2026-09-11: Buchhaltungs-Tab nur zeigen, wenn der Nutzer mindestens eine
   // Software in den Einstellungen verknüpft hat — sonst wäre der Tab leer
@@ -180,7 +193,13 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
     }
   }, [mainTab, sendTab, loadPublicUrl])
 
+  // CoS-E-004/012/023/035: alle drei Versandwege gehen über dieselbe Route,
+  // die serverseitig ebenfalls prüft — das hier ist nur die freundliche
+  // Variante, damit der Handwerker nicht erst auf einen Fehler läuft.
+  const darfSenden = versandHindernisse.length === 0
+
   async function handleSend() {
+    if (!darfSenden) return
     setSending(true)
     setSendError(null)
     try {
@@ -206,8 +225,8 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
   }
 
   function handleWhatsApp() {
-    if (!publicUrl) return
-    const text = encodeURIComponent(`Hallo${quote.customer?.name ? ` ${quote.customer.name.split(' ')[0]}` : ''},\n\nanbei das Angebot Nr. ${quoteNumber}:\n${publicUrl}\n\nBei Fragen gerne melden.\n\n${company.name}`)
+    if (!publicUrl || !darfSenden) return
+    const text = encodeURIComponent(`${anredeZeile(quote.customer)}\n\nanbei das Angebot Nr. ${quoteNumber}:\n${publicUrl}\n\nBei Fragen gerne melden.\n\n${company.name}`)
     window.open(`https://wa.me/?text=${text}`, '_blank')
     // Status als gesendet markieren
     fetch(`/api/quotes/${quote.id}/send`, {
@@ -219,7 +238,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
   }
 
   async function copyLink() {
-    if (!publicUrl) return
+    if (!publicUrl || !darfSenden) return
     await navigator.clipboard.writeText(publicUrl)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -247,6 +266,14 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
         </div>
 
         {/* Tabs: Vorschau | Senden */}
+        {/* DC-058 (2026-09-11, Manfred/TN-014): „Senden" stand doppelt — hier
+            als Reiter und unten als Knopf, beide mit Pfeil, beide mit
+            demselben Ziel. Anders als bei DC-046 ist hier keiner zu viel: oben
+            ist Navigation, unten der nächste Schritt, nachdem man die Vorschau
+            durchgelesen hat (den Fuß-Knopf zu streichen hieße, danach wieder
+            hochscrollen zu müssen). Zu viel war die gleiche Beschriftung. Ein
+            Reiter ist ein Substantiv und trägt keinen Pfeil; der Pfeil gehört
+            der einen Aktion. */}
         <div className="flex border-b border-gray-100 mx-4 flex-shrink-0">
           <button
             onClick={() => setMainTab('vorschau')}
@@ -258,7 +285,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
             onClick={() => setMainTab('senden')}
             className={`flex-1 py-2.5 text-sm font-semibold border-b-2 transition-colors ${mainTab === 'senden' ? 'border-yellow text-anthracite' : 'border-transparent text-gray-400'}`}
           >
-            Senden →
+            Senden
           </button>
           <button onClick={onClose} className="px-4 text-gray-400 text-lg">✕</button>
         </div>
@@ -266,23 +293,24 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
         {/* VORSCHAU TAB */}
         {mainTab === 'vorschau' && (
           <div className="flex-1 overflow-y-auto relative">
-            {/* Angebot/Rechnung Toggle */}
-            <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm px-4 py-2 flex items-center justify-between border-b border-gray-100">
-              <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
-                <button
-                  onClick={() => setModus('angebot')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${modus === 'angebot' ? 'bg-white shadow text-anthracite' : 'text-gray-500'}`}
-                >
-                  Angebot
-                </button>
-                <button
-                  onClick={() => setModus('rechnung')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${modus === 'rechnung' ? 'bg-white shadow text-anthracite' : 'text-gray-500'}`}
-                >
-                  Rechnung
-                </button>
-              </div>
-              <span className="text-[10px] text-gray-400">So sieht dein {modus === 'angebot' ? 'Angebot' : 'Rechnung'} aus</span>
+            {/* CoS-E-008/033/036 (Sandys Entscheidung, 11.09.2026: „Rechnung
+                erstmal raus"): Hier stand ein Umschalter Angebot/Rechnung.
+                Er hat nichts erzeugt — er tauschte zwei Überschriften aus und
+                zeigte dasselbe Blatt: dieselbe Nummer (deshalb TN-086
+                „Rechnungsnummer = Angebotsnummer"), dieselbe
+                Unterschriftszeile (TN-087), derselbe Angebots-Schlusstext,
+                ohne Leistungsdatum und Steuernummer (TN-089). Es gab
+                folgerichtig auch keinen Weg vom beauftragten Angebot zur
+                Rechnung (TN-091) — es gab nämlich gar keine Rechnung.
+                Manfreds Sorge war berechtigt: „Zwei Rechnungsnummernkreise
+                darf's nicht geben."
+                Entfernt statt beschriftet, weil ein Reiter, der eine Rechnung
+                verspricht, genau das Vertrauen kostet, um das es in TN-067
+                geht. Was eine echte Rechnung bräuchte, steht in
+                docs/chief-of-staff-engineering-todos.md — sie ist ein eigenes
+                Vorhaben, kein Fix. */}
+            <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm px-4 py-2 flex items-center justify-end border-b border-gray-100">
+              <span className="text-[10px] text-gray-400">So sieht dein Angebot aus</span>
             </div>
 
             {/* Banner */}
@@ -335,7 +363,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
             <div className="px-2 py-3">
               <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <div style={{ transform: 'scale(0.75)', transformOrigin: 'top left', width: '133%' }}>
-                  <AngebotVorschau quote={quote} company={company} quoteNumber={quoteNumber} modus={modus} zeigeRechenweg={zeigeRechenweg} />
+                  <AngebotVorschau quote={quote} company={company} quoteNumber={quoteNumber} zeigeRechenweg={zeigeRechenweg} />
                 </div>
               </div>
             </div>
@@ -346,7 +374,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                 onClick={() => { setMainTab('senden'); setSendTab('email') }}
                 className="flex-1 bg-anthracite text-white py-3 rounded-xl font-semibold text-sm"
               >
-                Senden →
+                Weiter zum Senden →
               </button>
             </div>
           </div>
@@ -382,7 +410,21 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                 Tabs statt dreifach je Tab. Für den Buchhaltungs-Export
                 irrelevant (geht nicht an den Kunden), deshalb dort
                 ausgeblendet. */}
-            {sendTab !== 'buchhaltung' && (
+            {sendTab !== 'buchhaltung' && versandHindernisse.length > 0 && (
+              /* CoS-E-004/012/023/035: Vorher stand hier nur eine Warnung, die
+                 man wegklicken konnte — Manfreds Angebot mit „Boden schützen
+                 0,00 €" ist genau so rausgegangen und wurde angenommen
+                 (TN-090). Jetzt sind die Versandwege gesperrt, solange etwas
+                 fehlt. Der Buchhaltungs-Export bleibt frei: der geht nicht an
+                 den Kunden. */
+              <div className="mx-4 mt-3 px-3.5 py-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex-shrink-0">
+                <div className="font-bold mb-1">Noch nicht fertig zum Senden</div>
+                <ul className="space-y-0.5">
+                  {versandHindernisse.map((h, i) => <li key={i}>· {h}</li>)}
+                </ul>
+              </div>
+            )}
+            {sendTab !== 'buchhaltung' && versandHindernisse.length === 0 && (
               <div className="mx-4 mt-3 px-3.5 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-500 flex items-start gap-2 flex-shrink-0">
                 <span className="shrink-0">✓</span>
                 <span>Aus deinem Diktat erstellt — bitte einmal prüfen, bevor es rausgeht.</span>
@@ -466,14 +508,16 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                         </div>
                         <button
                           onClick={copyLink}
-                          className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors shrink-0 ${copied ? 'bg-green-100 text-green-700' : 'bg-anthracite text-white'}`}
+                          disabled={!darfSenden}
+                          className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors shrink-0 disabled:opacity-50 ${copied ? 'bg-green-100 text-green-700' : 'bg-anthracite text-white'}`}
                         >
                           {copied ? '✓ Kopiert' : 'Kopieren'}
                         </button>
                       </div>
                       <button
                         onClick={handleWhatsApp}
-                        className="w-full bg-[#25D366] text-white py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2"
+                        disabled={!darfSenden}
+                        className="w-full bg-[#25D366] text-white py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
                       >
                         <span className="text-base">💬</span> In WhatsApp öffnen
                       </button>
@@ -514,7 +558,8 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                         </div>
                         <button
                           onClick={copyLink}
-                          className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-anthracite text-white'}`}
+                          disabled={!darfSenden}
+                          className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors disabled:opacity-50 ${copied ? 'bg-green-100 text-green-700' : 'bg-anthracite text-white'}`}
                         >
                           {copied ? '✓ Kopiert' : 'Kopieren'}
                         </button>
@@ -570,7 +615,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
               <div className="px-4 py-3 border-t border-gray-100 flex-shrink-0">
                 <button
                   onClick={handleSend}
-                  disabled={!to || sending}
+                  disabled={!to || sending || !darfSenden}
                   className="w-full bg-anthracite text-white py-3.5 rounded-2xl font-bold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {sending ? (
