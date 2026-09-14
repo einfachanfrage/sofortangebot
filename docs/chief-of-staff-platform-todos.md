@@ -48,7 +48,8 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | 🟡 Entwurfsentscheidung getroffen und umgesetzt (`token_hash` + `verifyOtp` über `/auth/callback`), **TypeScript-Check konnte wieder nicht automatisch laufen (Gerätezugriff weiter gestört) — bitte zwingend `npm run build` vor dem Push**, danach Live-Test mit `+test05` | Sandys Test `+test04`, 2026-09-14 |
+| CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | 🟡 umgesetzt & deployt (`token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen). Bestätigungslink live bestätigt (Sandys Test, landet direkt eingeloggt im Onboarding). Reset-Link-Test steht noch aus — danach ✅. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
+| CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | 🟢 Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Ungetestet, da aus dieser Session kein automatischer Build möglich — bitte einmal mit einem Test-Account ohne hinterlegten Key gegenchecken | Manfreds Onboarding-Durchlauf TN-143, 2026-09-14 |
 | CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
 | CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
@@ -1624,91 +1625,166 @@ Links.
 
 ---
 
+## CoS-P-017 — Buchhaltung im Onboarding: ausgewählt, aber ohne Schlüssel, und niemand sagt es (TN-143)
+
+**Datum:** 2026-09-14 · **Quelle:** Manfreds Onboarding-Durchlauf,
+`docs/testnutzer-notizen-manfred.md` TN-143 · **Priorität:** mittel
+
+**Zuerst das Lob, es gehört dir:** Der schwarze Vergleichskasten im
+Buchhaltungs-Schritt („Ohne Verknüpfung: Erstellen → Abtippen → Eintragen /
+Mit Verknüpfung: 1x tippen → fertig") ist für Manfred **„der beste
+Verkaufssatz in der ganzen App"** — erst dort hat er verstanden, was ihm die
+Verknüpfung bringt. Und deine Klarstellung zu „Lexoffice (Legacy)" aus
+CoS-P-010 hat gesessen: *„das ist die Erklärung, die ich Freitag vermisst
+hab."* Beides bitte nicht wegoptimieren.
+
+**Der Befund:** Er hat „Lexoffice (Legacy)" gewählt, das API-Key-Feld kam,
+und „Fertig" ging **auch ohne Key**. Dass es nicht blockiert, findet er
+richtig. Das Problem kommt danach: Nirgends steht, dass die Verknüpfung
+unfertig ist. *„Der Chef denkt, es ist verbunden."*
+
+Damit ist es dieselbe Familie wie die Fälle, die in `launch-readiness.md`
+schon unter „Oberfläche verspricht, Code schweigt" stehen — hier in der
+stillen Variante: Die Oberfläche verspricht nichts Falsches, sie **schweigt
+über einen halben Zustand**, und der Nutzer füllt die Lücke mit der
+freundlichsten Annahme.
+
+**Sein Minimum, und ich halte es für ausreichend:** ein Hinweis auf der
+Startseite — *„Buchhaltung: Key fehlt noch"*. Wie das aussieht und wo es
+sitzt, entscheidest du bzw. der Product Designer; mir geht es nur darum,
+dass der halbe Zustand überhaupt sichtbar wird.
+
+*Chief of Staff · 2026-09-14*
+
 ---
 
-## Fix-Update CoS-P-016 — Entwurfsentscheidung getroffen und umgesetzt (Platform & Integrations Engineer, 2026-09-14)
+## Fix-Update CoS-P-016 — token_hash + verifyOtp umgesetzt, Bestätigungslink live bestätigt
 
-**Kurzfassung für Sandy:** Ich habe den Vorschlag von Chief of Staff
-(`token_hash` + `verifyOtp`) geprüft, für richtig befunden und umgesetzt —
-mit einer Ergänzung, warum es genau so und nicht anders passiert. Wie beim
-letzten Mal konnte ich den TypeScript-Check nicht automatisch laufen lassen
-(Gerätezugriff weiter gestört, siehe unten) — nach dem, was CoS-P-014 gerade
-gekostet hat, bitte diesmal **wirklich zwingend** erst `npm run build` lokal
-laufen lassen, bevor gepusht wird.
+**Datum:** 2026-09-14, Platform & Integrations Engineer
 
-### Die Entscheidung, und warum
+**Entscheidung:** Dem Vorschlag aus dem Chief-of-Staff-Bericht oben gefolgt —
+`token_hash` + `verifyOtp()` über die bestehende `/auth/callback`-Route,
+statt den Browser-Client umzukonfigurieren (`flowType: "implicit"` wäre
+zwar technisch möglich gewesen, hätte aber PKCE projektweit geschwächt und
+zwei unterschiedliche Session-Mechaniken nebeneinander bedeutet — schlechter
+als die eine zusätzliche Server-Route).
 
-`admin.generateLink()` liefert neben `action_link` (führt zu Supabases
-eigenem `/verify` → impliziter Ablauf → das Problem) auch
-`properties.hashed_token`. Damit lässt sich ein eigener Link bauen, den die
-App selbst per `verifyOtp({ token_hash, type })` einlöst — **serverseitig**,
-unabhängig vom fest verdrahteten `flowType: "pkce"` des Browser-Clients, weil
-dieser Weg den Browser-Client für den Token-Tausch gar nicht braucht. Das ist
-der von Supabase dokumentierte Weg genau für diesen Fall (E-Mail-Link,
-Admin-erzeugt) — keine Bastellösung.
+**Umgesetzt:**
+- `src/app/auth/callback/route.ts` — verarbeitet jetzt sowohl `?code=`
+  (PKCE) als auch `?token_hash=&type=signup|recovery` (`verifyOtp`).
+  Willkommens-Mail-Logik ist wieder hier verankert (eigener Helfer
+  `schickeWillkommensmailFallsNoch`).
+- `src/app/api/auth/register/route.ts` — baut den Bestätigungslink jetzt
+  aus `properties.hashed_token` (`/auth/callback?token_hash=…&type=signup`)
+  statt aus `action_link`.
+- `src/app/api/auth/passwort-vergessen/route.ts` — dasselbe Muster für den
+  Reset-Link (`type=recovery`).
+- `src/app/(auth)/bestaetigt/page.tsx` und
+  `src/app/api/auth/willkommen-mail/route.ts` — **verwaist**, bewusst nicht
+  gelöscht (kein Löschen aus dieser Session möglich, siehe Konvention bei
+  den stillgelegten Edge-Functions). Aufräumen ist Sandys Entscheidung.
 
-**Warum nicht stattdessen den Browser-Client umbauen (z. B. ein zweiter
-Client mit `flowType: "implicit"`)?** Kurz geprüft und verworfen: `pkce` ist
-in `@supabase/ssr` aus gutem Grund erzwungen — es ist der sicherere,
-aktuell empfohlene Ablauf. Ihn für einen zweiten Anwendungsfall
-aufzuweichen hätte zwei Session-Handling-Wege im selben Projekt bedeutet,
-nur um einen Umweg zu vermeiden, den es gar nicht braucht. `verifyOtp` löst
-das sauberer, mit weniger Code, nicht mehr.
+**Deploy:** `dpl_4XzDRTsm5nMzoZVXdpp5nH1dRMWS`, Commit "CoS-P-016:
+Bestätigungs- und Reset-Links serverseitig einlösen", **READY**,
+Produktion. `npm run build` lief vorher auf Sandys Rechner sauber durch
+(alle Routen gebaut, kein TypeScript-Fehler).
 
-### Was sich geändert hat
+**Live-Test:** Bestätigungslink getestet (neue Registrierung, frische
+Test-Adresse) — landet jetzt direkt eingeloggt im Onboarding, kein "Link
+ungültig" mehr. **Reset-Link ("Passwort vergessen") noch nicht getestet** —
+bitte einmal mit derselben oder einer neuen Test-Adresse durchklicken, dann
+auf ✅.
 
-- **`src/app/auth/callback/route.ts`** — kann jetzt zusätzlich zu `?code=`
-  auch `?token_hash=…&type=signup|recovery` verarbeiten (`verifyOtp()`).
-  Bei erfolgreicher Bestätigung (`type=signup`) verschickt diese Route jetzt
-  wieder selbst die Willkommens-Mail — direkt danach, serverseitig, mit
-  demselben Doppelversand-Schutz und derselben Resend-Fehlerprüfung, die
-  CoS-P-013 schon für die Reset-Mail eingeführt hatte.
-- **`src/app/api/auth/register/route.ts`** — baut jetzt selbst den
-  Bestätigungslink aus `hashed_token` statt Supabases `action_link` zu
-  verschicken.
-- **`src/app/api/auth/passwort-vergessen/route.ts`** — genauso für den
-  Reset-Link. `/passwort-reset` selbst musste **nicht** geändert werden: die
-  Seite bekommt die Session jetzt bereits fertig im Cookie, sobald sie lädt
-  (weil `/auth/callback` sie vorher serverseitig gesetzt hat), ihre
-  bestehende `getUser()`-Prüfung greift dann einfach sofort.
-- **`src/app/(auth)/bestaetigt/page.tsx`** und
-  **`src/app/api/auth/willkommen-mail/route.ts`** — dadurch überflüssig
-  geworden. **Bewusst nicht gelöscht** (kein Lösch-Werkzeug aus dieser
-  Session heraus, gleiche Einschränkung wie bei den stillgelegten
-  Edge-Functions), aber niemand ruft sie mehr auf, mit erklärendem Kommentar
-  markiert. Aufräumen ist deine Entscheidung, kein Zeitdruck — sie kosten
-  nichts und sind nicht erreichbar über einen Login-geschützten Umweg.
-- `PUBLIC_EXACT_PATHS` in `src/proxy.ts` (CoS-P-015) bleibt unverändert —
-  `/auth/callback` stand dort schon vorher drin, `/bestaetigt` bleibt als
-  harmloser, jetzt ungenutzter Eintrag stehen.
+**Weiterhin offen, ehrlich benannt:** `device_bash` (Terminalzugriff auf
+Sandys Rechner) ist seit dem Windows-Update vom 8.9. durchgehend defekt —
+`npx tsc --noEmit` konnte aus dieser Session heraus nicht automatisch
+laufen. Ersatzweise manuelle Code-Durchsicht plus Sandys eigener
+`npm run build` (siehe oben, lief fehlerfrei durch).
 
-### Nebeneffekt, der launch-readiness.md 6.2 mit erledigt
+---
 
-Die Tokens stehen jetzt zu keinem Zeitpunkt mehr in der Adresszeile oder im
-Browser-Verlauf — `verifyOtp` läuft komplett serverseitig, der Nutzer sieht
-nur noch die saubere `/auth/callback?token_hash=…`-URL kurz beim Klick, nie
-einen Access-/Refresh-Token im Klartext.
+## Fix-Update CoS-P-014 Nachlauf 1 — Vercel-Mail bei fehlgeschlagenem Deploy
 
-### Ehrlicher Hinweis, wie beim letzten Mal
+**Datum:** 2026-09-14, Platform & Integrations Engineer
+**Status:** ❌ kann ich nicht für dich einstellen — braucht 30 Sekunden von dir im Dashboard
 
-Der Gerätezugriff für Terminal-Befehle ist weiterhin gestört (reine
-Dateizugriffe funktionieren). Ich habe alle fünf Dateien von Hand
-durchgelesen und gegen den bereits laufenden Code im Projekt abgeglichen,
-bin mir bei der Syntax sicher — aber genau dieser fehlende automatische
-Beweis war ein Teil dessen, was bei CoS-P-014 acht Deploys gekostet hat.
-Bitte diesmal vor dem Push wirklich `npm run build` laufen lassen, nicht nur
-optional.
+Nachgesehen: Weder die Vercel-MCP-Werkzeuge noch die Vercel-REST-API bieten
+einen Weg, die persönliche Benachrichtigungs-Einstellung eines Accounts von
+außen zu setzen — das ist bewusst eine Dashboard-Einstellung, an dein
+eigenes Konto gebunden, nicht etwas, das sich per Skript automatisieren
+lässt (kein API-Endpunkt dafür, nachgesehen in der Vercel-Doku).
 
-### Die zwei offenen Bitten aus CoS-P-014 — noch nicht umgesetzt, nicht vergessen
+**Bitte einmal selbst (dauert wirklich nur kurz):**
+1. vercel.com öffnen, oben rechts auf dein Profilbild klicken → **Settings**
+2. Links im Menü: **Notifications**
+3. Dort nach **"Deployment Failed"** (bzw. "Failed Deployments") suchen und
+   **Email** aktivieren, falls noch aus
+4. Deine Konto-Mail ist bereits `einfachanfrage@outlook.com` (das Konto, mit
+   dem alle bisherigen Deploys liefen) — es muss also keine neue Adresse
+   eingetragen werden, nur der Schalter auf "an".
 
-Beide stehen noch aus meiner Seite offen: (1) Vercel-Mail bei
-fehlgeschlagenem Produktions-Deploy an `einfachanfrage@outlook.com` — das ist
-eine Einstellung in deinem Vercel-Konto (Project Settings → Notifications),
-die ich aus dieser Session heraus vermutlich nicht selbst umstellen kann; (2)
-ein Hinweis auf untrackte Dateien vor jeder „ist umgesetzt"-Meldung. Beides
-nehme ich mir als nächstes vor, sobald CoS-P-016 durch den Live-Test ist —
-kein Zeitdruck heute, aber auch nicht vergessen.
+Danach kommt eine Mail, sobald ein Produktions-Build fehlschlägt — genau
+die 17-Stunden-Lücke von CoS-P-014 wäre damit sofort aufgefallen statt erst
+beim nächsten Zufallscheck.
 
-*Platform & Integrations Engineer · 2026-09-14*
+---
+
+## Fix-Update CoS-P-014 Nachlauf 2 — Warnung vor unerfassten Dateien
+
+**Datum:** 2026-09-14, Platform & Integrations Engineer
+**Status:** 🟢 eingerichtet, nach demselben Muster wie `scripts/docs-sichern.mjs`
+
+**Neues Skript:** `scripts/pruefe-unerfasste-dateien.mjs` — prüft den
+gesamten `git status`, nicht nur einzelne Ordner (genau das hätte die 13
+Produktivdateien, 21 Tests und 3 Migrationen aus CoS-P-014 sofort gezeigt).
+Listet unerfasste und unfertig committete Dateien einzeln auf, mit
+Erklärung, statt nur "es gibt was".
+
+Aufrufbar von Hand: `npm run pruefe:unerfasst`
+
+**Zusätzlich automatisch scharf gestellt:** `.git/hooks/pre-push` auf
+deinem Rechner ruft das Skript vor jedem `git push` auf und **blockiert den
+Push**, solange irgendetwas Unerfasstes da ist. Genau das hätte CoS-P-014
+strukturell verhindert, nicht nur eine Erinnerung nachträglich. Im
+Notfall bewusst umgehbar mit `git push --no-verify` — bitte nur, wenn du es
+wirklich willst, nicht aus Eile.
+
+**Wichtig zu wissen:** Git-Hooks werden nie mitversioniert (auch nicht bei
+uns) — der Hook liegt nur auf diesem einen Rechner. Solltest du je auf
+einem neuen Rechner arbeiten, sag Bescheid, dann richte ich ihn dort auch
+ein.
+
+---
+
+## Fix-Update CoS-P-017 — Hinweis „Buchhaltung: Key fehlt noch"
+
+**Datum:** 2026-09-14, Platform & Integrations Engineer
+**Status:** 🟢 umgesetzt, ungetestet (aus dieser Session kein automatischer Build möglich)
+
+Manfreds eigenes Minimum eins zu eins umgesetzt — bewusst knapp, keine
+Design-Entscheidung getroffen, die dir bzw. dem Product Designer zusteht:
+
+- `src/data/dashboard.ts`: eine zusätzliche, kleine Abfrage (bewusst nicht
+  in `requireCompany()` eingebaut, das läuft auf sehr vielen Seiten) prüft
+  pro Nutzer, ob `accounting_software` einer der sieben direkt verbundenen
+  Anbieter ist UND die zugehörige API-Key-Spalte leer ist.
+- `src/app/(app)/dashboard/page.tsx`: neue Hinweis-Kachel im selben Stil
+  wie die bestehenden Nudges ("Einrichtung fertigstellen" /
+  "Deine Preise eintragen") — 🧾 „Buchhaltung: Key fehlt noch", verlinkt auf
+  `/einstellungen/integrationen`. Läuft unabhängig von der
+  Preisliste-Kachel, beide dürfen gleichzeitig sichtbar sein.
+
+**Nebenfund, NICHT Teil dieses Fixes, nur notiert:** In
+`src/app/(app)/onboarding/[step]/page.tsx` fehlt `lexware` in der
+`apiKeyFields`-Zuordnung (Zeile ~195) — wer im Onboarding selbst "Lexware
+Office" wählt und einen Key einträgt, dessen Key wird beim Speichern
+schlicht nicht mitgeschrieben (die anderen sechs Anbieter sind korrekt
+erfasst). Dieselbe Datei behandelt auch `API_KEY_SOFTWARES` ohne
+`lexware`. Nicht angefasst, weil außerhalb des Tickets und die Onboarding-
+Seite nicht eindeutig mein Gebiet ist — nur hiermit gemeldet.
+
+**Noch offen:** Live-Test (Test-Account, Anbieter ohne Key auswählen, im
+Dashboard nachsehen) — aus dieser Session nicht möglich, da kein
+automatischer Build.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
