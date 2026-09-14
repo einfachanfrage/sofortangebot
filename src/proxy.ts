@@ -8,6 +8,17 @@ const PUBLIC_EXACT_PATHS = new Set([
   '/register',
   '/passwort-vergessen',
   '/passwort-reset',
+  // CoS-P-015 (14.09.2026): Die Bestätigungsseite MUSS ohne Session
+  // erreichbar sein — genau wie '/passwort-reset' direkt darüber und aus
+  // demselben Grund. Der Bestätigungslink liefert die Session als
+  // `#access_token=…` im URL-Fragment; das sieht nur der Browser, nie der
+  // Server. Stand die Seite nicht hier, lief sie in `!user && !isPublic`
+  // und wurde nach '/login' umgeleitet, BEVOR der Browser das Fragment
+  // lesen konnte — das Fragment blieb dabei an der URL hängen
+  // ('/login#access_token=…'), was den Fehler so schwer lesbar machte.
+  // Die Seite selbst zeigt nichts an: sie wartet auf die Anmeldung durch
+  // den Browser-Client und leitet dann auf '/onboarding' weiter.
+  '/bestaetigt',
   '/auth/callback',
   '/vorschau',
   '/agb',

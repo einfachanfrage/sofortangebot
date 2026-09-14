@@ -48,7 +48,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-P-014 | 🔴 **Seit 13.09. 19:46 UTC geht nichts mehr live** — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
+| CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
 | CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
 | CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
@@ -1463,6 +1463,59 @@ Zwei Dinge, beide klein, beide verhindern die Wiederholung:
    Koordinationsdateien (`AGENTS.md`); dasselbe Prinzip für Quellcode wäre
    die eigentliche Lösung von CoS-013 und CoS-P-014 zugleich. Wie das
    aussieht, entscheidest du — ich sage nur, woran es gefehlt hat.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## CoS-P-014 ✅ gelöst — 14.09.2026, 14:53 MESZ
+
+Deploy **`dpl_ADRqsU5QNQiUHziShJozaEyKFx2r` steht auf READY** — der erste
+erfolgreiche Produktions-Deploy seit dem 13.09. um 19:46 UTC. Drei Schritte
+waren nötig, jeder hat den nächsten Fehler erst sichtbar gemacht:
+
+1. **`90f0fcb`** — die 40 fehlenden Dateien erfasst (13 Produktivdateien,
+   21 Tests, 3 Migrationen, 3 Skripte). Damit war der `Module not found`-Fehler
+   weg, und der Build kam erstmals bis zur Typprüfung.
+2. **`775715b`** — zwei Typfehler, die vorher nie jemand sehen konnte:
+   - `src/app/api/health/pdf/route.ts`: dem Test-Betrieb „Health Check GmbH"
+     fehlte `erschwernis_config`, seit CoS-E-040 ein Pflichtfeld am
+     Betriebs-Typ. Nachgetragen als `null` — fachlich ebenfalls richtig,
+     `null` heißt „nie eingestellt", also alle Zuschläge an.
+   - `src/lib/preis-matcher.ts`: zwei Imports endeten auf `.ts`
+     (`'./preis-aufwandswoerter.ts'`, `'./katalog-standard.ts'`). TypeScript
+     verbietet das ohne `allowImportingTsExtensions`. Endung entfernt,
+     inhaltlich unverändert.
+3. Beides vom Chief of Staff geändert, auf Sandys ausdrückliche Zustimmung.
+   **Das ist eine Grenzüberschreitung in dein Gebiet, und sie ist hiermit
+   gemeldet** — beide Änderungen sind mechanisch und ohne Entscheidungsspielraum
+   (ein Pflichtfeld, das nur `null` sein kann; eine Dateiendung, die weg muss),
+   und der Fix hing zwischen Sandy und jedem weiteren Schritt. Wenn du eine der
+   beiden anders haben willst, ändere sie ohne Rückfrage.
+
+### Was dieser Vorgang über die Testsuite sagt, und das ist der bleibende Teil
+
+Der zweite Fehler saß im **Preis-Matcher** — dem Herzstück der Preisfindung.
+Er hat 1.942 grüne Tests überlebt, weil die Testumgebung die `.ts`-Endung
+toleriert und der Typprüfer nicht. „Alle Tests grün" hat hier also nicht
+einmal „lässt sich bauen" bedeutet.
+
+**Konkreter Vorschlag, Umsetzung deine:** `npx tsc --noEmit` gehört vor jede
+Meldung „ist umgesetzt" — es ist der einzige Schritt, der genau diese Klasse
+findet, und er dauert eine Minute. Als Teil des Build-Skripts in
+`package.json` wäre er nicht vergesslich.
+
+### Weiterhin offen aus diesem Vorgang
+
+Die beiden Aufträge aus dem Nachtrag oben stehen unverändert:
+**(1)** Deploy-Fehlschläge müssen jemanden erreichen (Vercel-Mail an
+`einfachanfrage@outlook.com`), **(2)** ein Hinweis auf untracked Dateien,
+bevor etwas als ausgeliefert gemeldet wird. Solange beides fehlt, kann
+derselbe Vorgang morgen wieder passieren — deshalb steht `launch-readiness.md`
+8.7 bei 70 % und nicht wieder bei 80 %.
+
+**Nächster Schritt, gehört dir:** CoS-P-013 ist jetzt zum ersten Mal
+tatsächlich live und damit prüfbar. Sandy macht den Durchlauf mit `+test03`.
 
 *Chief of Staff · 2026-09-14*
 
