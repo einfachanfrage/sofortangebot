@@ -13,7 +13,7 @@ import {
 import { Logo } from '@/components/Logo'
 import { AKTIVE_GEWERKE } from '@/lib/gewerke-config'
 import { ACCOUNTING_OPTIONS, TIER_LABEL } from '@/lib/accounting-options'
-import { standardpreiseFuerGewerke, zuPriceItemRows } from '@/lib/default-price-selection'
+import { standardpreiseFuerGewerke, zuPriceItemRows, mischeEigenePreise } from '@/lib/default-price-selection'
 import { DEFAULT_EMPFEHLUNGEN } from '@/lib/empfehlungen-defaults'
 import { getPreisvorlagenForGewerke, type PreisVorlage } from '@/lib/preise-vorlagen'
 import type { AccountingSoftware } from '@/lib/types'
@@ -34,6 +34,28 @@ import { OnboardingProgress as ProgressBar } from '@/components/onboarding/Onboa
 // ─── Shared styles ─────────────────────────────────────────────────────────
 const inputCls = 'w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-3.5 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow transition-colors'
 const labelCls = 'block text-[11px] font-extrabold text-anthracite/40 mb-1.5 uppercase tracking-widest'
+
+/**
+ * DC-101 (2026-09-14, Manfred/TN-144): Die Fehlermeldungen wurden bisher erst
+ * beim Fehler ins Layout eingefügt und beim ersten Zeichen wieder entfernt.
+ * Jedes Mal wurde die Seite dadurch ~20 px kürzer — auf einem Schritt, der
+ * seinen Inhalt vertikal zentriert, rutscht damit ALLES nach unten bzw. oben,
+ * während der Daumen schon zum nächsten Feld unterwegs ist. Das ist der
+ * dritte und der einzige Teil des Sprungs, der sich in jedem Browser
+ * reproduzieren lässt: Der Platz steht jetzt immer, sichtbar wird nur der
+ * Text.
+ *
+ * `aria-live` statt Ein- und Aushängen ist nebenbei auch für Vorlesesoftware
+ * das richtige Muster: Die Meldung wird angesagt, wenn sie erscheint, statt
+ * dass ein Element aus dem Nichts auftaucht.
+ */
+function FehlerZeile({ text, zeigen, className = '' }: { text: string; zeigen: boolean; className?: string }) {
+  return (
+    <p aria-live="polite" className={`text-[12px] text-red-500 font-semibold mt-1.5 min-h-[18px] ${className}`}>
+      {zeigen ? text : ''}
+    </p>
+  )
+}
 const btnPrimary = 'w-full bg-yellow text-anthracite font-extrabold text-lg rounded-2xl py-4 active:translate-y-px transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
 const btnBack = 'flex-1 bg-white border-2 border-anthracite/15 text-anthracite font-extrabold text-base rounded-xl py-4 active:translate-y-px transition-transform'
 
@@ -71,7 +93,23 @@ export default function OnboardingStep() {
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set())
 
   // Hydrate from localStorage
-  useEffect(() => { setState(loadState()) }, [])
+  //
+  // DC-101 (2026-09-14, Manfred/TN-144): Hier stand `setState(loadState())`
+  // ohne Bedingung. Der Effekt läuft NACH dem ersten Zeichnen — wer sofort
+  // lostippt (und genau das tut man auf dem ersten Bildschirm), bekommt sein
+  // Getipptes im selben Moment wieder überschrieben. Bei einem frischen Konto
+  // liefert `loadState()` leere Felder zurück, und das Firmenfeld ist wieder
+  // leer. Das erklärt Manfreds „Name leer" ohne jedes Browser-Rätsel.
+  //
+  // Der gespeicherte Stand wird deshalb nur noch übernommen, wenn der Nutzer
+  // noch nichts angefasst hat. `update()` ersetzt das ganze State-Objekt, also
+  // ist der Identitätsvergleich mit DEFAULT_STATE ein zuverlässiges „unberührt".
+  // Kein Ladegatter, kein leerer Frame — und getippte Zeichen sind nie wieder
+  // die Verlierer eines Rennens.
+  useEffect(() => {
+    const gespeichert = loadState()
+    setState(prev => (prev === DEFAULT_STATE ? gespeichert : prev))
+  }, [])
 
   // On step 1: check if onboarding already completed
   useEffect(() => {
@@ -243,17 +281,37 @@ export default function OnboardingStep() {
       // und der Fehler wurde hier nicht mal geprüft. Genau das war vermutlich
       // der eigentliche Grund, warum "Lisa Schein Malerbetrieb" trotz dieses
       // Codes nur 5 generische Posten bekam.
-      const basis = zuPriceItemRows(standardpreiseFuerGewerke(state.gewerke), company.id)
+      //
+      // CoS-E-052, zweiter Teil (14.09.2026): Bis hierher schrieben ZWEI
+      // Quellen in dieselbe Tabelle — der Basis-Katalog und, zusätzlich, die
+      // im Onboarding eingetippten Zahlen. 41 der 83 Maler-Vorlagen tragen
+      // denselben Titel wie eine Basiszeile; sie landeten als zweite Zeile
+      // daneben, und welche von beiden der Matcher später nimmt, war nicht
+      // festgelegt. Der Handwerker hätte seine eigenen Preise eintippen und
+      // Marktpreise bekommen können, ohne dass irgendwo etwas schiefgeht.
+      //
+      // Jetzt entsteht gar nicht erst eine zweite Zeile: Seine Zahlen werden
+      // auf den Basis-Katalog gelegt, bevor der eingefügt wird. Was er nennt,
+      // gilt; was es im Katalog nicht gibt, kommt als eigene Zeile dazu.
+      const eigene = state.preisMode === 'manuell'
+        ? state.preisEntries
+            .filter(e => e.title.trim() && parseFloat(e.unit_price) > 0)
+            .map(e => ({ category: e.category, title: e.title, unit: e.unit, unit_price: parseFloat(e.unit_price) }))
+        : []
+
+      const { zeilen, zusaetzlich } = mischeEigenePreise(
+        zuPriceItemRows(standardpreiseFuerGewerke(state.gewerke), company.id),
+        eigene,
+      )
+
       const BATCH = 400
-      for (let i = 0; i < basis.length; i += BATCH) {
-        const { error: basisErr } = await supabase.from('price_items').insert(basis.slice(i, i + BATCH))
+      for (let i = 0; i < zeilen.length; i += BATCH) {
+        const { error: basisErr } = await supabase.from('price_items').insert(zeilen.slice(i, i + BATCH))
         if (basisErr) console.error('Basis-Preiskatalog: Batch fehlgeschlagen', basisErr)
       }
-      if (state.preisMode === 'manuell' && state.preisEntries.length > 0) {
-        const toInsert = state.preisEntries
-          .filter(e => e.title.trim() && parseFloat(e.unit_price) > 0)
-          .map(e => ({ company_id: company.id, category: e.category, title: e.title, unit: e.unit, unit_price: parseFloat(e.unit_price) }))
-        if (toInsert.length > 0) await supabase.from('price_items').insert(toInsert)
+      if (zusaetzlich.length > 0) {
+        await supabase.from('price_items')
+          .insert(zusaetzlich.map(e => ({ company_id: company.id, ...e })))
       }
       await supabase.from('positions_empfehlungen')
         .insert(DEFAULT_EMPFEHLUNGEN.map(e => ({ ...e, company_id: company.id })))
@@ -339,14 +397,24 @@ export default function OnboardingStep() {
           <div className="flex flex-col gap-5">
             <div>
               <label className={labelCls}>Firmenname oder dein Name</label>
+              {/* DC-101: `autoFocus` ist raus. Auf dem Handy öffnet es beim
+                  Laden ungefragt die Tastatur; der sichtbare Bereich schrumpft
+                  um die halbe Höhe, und weil dieser Schritt seinen Inhalt
+                  vertikal zentriert (DC-015), wandern in diesem Moment ALLE
+                  Felder nach oben. Wer währenddessen zielt, trifft das Feld
+                  darunter — Manfreds Straße im Ort-Feld. Dazu läuft beim
+                  Schrittwechsel noch die 200-ms-Einblendung (motion.div mit
+                  x: 30): Tastatur und Bewegung fallen zusammen. Die Animation
+                  bleibt, der ungefragte Fokus geht. Wer tippen will, tippt
+                  selbst ins Feld — und dann steht die Seite still. */}
               <input
-                type="text" autoFocus
+                type="text"
                 placeholder="z.B. Müller Malerbetrieb"
                 value={state.name}
                 onChange={e => { update({ name: e.target.value }); setNameError(false) }}
                 className={`${inputCls} ${nameError ? 'border-red-400' : ''}`}
               />
-              {nameError && <p className="text-[12px] text-red-500 font-semibold mt-1.5">Bitte Firmenname eingeben.</p>}
+              <FehlerZeile text="Bitte Firmenname eingeben." zeigen={nameError} />
             </div>
             <div>
               <label className={labelCls}>Adresse</label>
@@ -378,7 +446,7 @@ export default function OnboardingStep() {
               <p className="text-[13px] text-anthracite/30 font-semibold mt-1.5">
                 Wird auf dem Angebot als Absender angezeigt.
               </p>
-              {addrError && <p className="text-[12px] text-red-500 font-semibold mt-1">Bitte vollständige Adresse eingeben.</p>}
+              <FehlerZeile text="Bitte vollständige Adresse eingeben." zeigen={addrError} />
             </div>
 
             {/* Optional contact */}
@@ -474,7 +542,7 @@ export default function OnboardingStep() {
           <p className="text-[13px] text-anthracite/25 font-semibold text-center mt-3">
             Mehr Gewerke kommen bald — Dachdecker, Schreiner, GaLaBau & mehr.
           </p>
-          {gewerkError && <p className="text-[12px] text-red-500 font-semibold text-center mt-1">Bitte mindestens ein Gewerk wählen.</p>}
+          <FehlerZeile text="Bitte mindestens ein Gewerk wählen." zeigen={gewerkError} className="text-center" />
 
           <div className="pt-4 flex gap-3">
             <button onClick={() => goTo(2)} className={btnBack}>← Zurück</button>
@@ -737,12 +805,16 @@ export default function OnboardingStep() {
         // Bildschirmmitte zu schweben.
         <div className="flex flex-col flex-1 justify-center">
           <Palette size={40} strokeWidth={1.5} className="text-yellow mb-4" />
-          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-2">
+          {/* DC-103 (2026-09-14, Manfred/TN-146, Sandys Entscheidung „raus"):
+              Hier stand „Angebote mit Logo wirken professioneller — und werden
+              häufiger unterschrieben." Manfred: „Ist das gemessen oder
+              gefühlt? Handwerker riechen Werbesprüche." Gemessen kann es
+              nicht sein, es gibt noch keine Nutzer. Ersatzlos gestrichen; der
+              Abstand wandert in die Überschrift, damit der Schritt nicht
+              enger wird. */}
+          <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-6">
             Dein Logo
           </h1>
-          <p className="text-anthracite/50 font-semibold text-[15px] leading-relaxed mb-6">
-            Angebote mit Logo wirken professioneller — und werden häufiger unterschrieben.
-          </p>
 
           <input
             ref={logoInputRef}

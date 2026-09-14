@@ -6836,4 +6836,303 @@ Product Engineering. Mein Teil steht bereit, kein neuer Auftrag nötig.
 
 ---
 
+## DC-101 bis DC-104 — Manfreds Onboarding-Durchlauf (Chief of Staff, 14.09.2026)
+
+Zweite Testnutzer-Session, komplettes Onboarding mit frischem Konto
+„Malerbetrieb Vogler". Rohnotizen: `docs/testnutzer-notizen-manfred.md`,
+TN-132…TN-147. **Zuerst das Lob, weil es für dich das nützlichere Signal
+ist:** Acht seiner vierzehn Punkte sind positiv, und sie betreffen fast alle
+deine Arbeit — Schrittfolge, Fortschrittsbalken, „Später fertigstellen",
+Menge der Felder je Schritt, und die Sprache („Wie heißt dein Betrieb?",
+„Was machst du?"). Sein Satz dazu: *„Das müsst ich keinem Chef erklären."*
+Den schwarzen Vergleichskasten im Buchhaltungs-Schritt nennt er **„den besten
+Verkaufssatz in der ganzen App"** (TN-137). Bitte in die Schutzliste.
+
+Vier Punkte gehen an dich:
+
+**DC-101 — Formularfelder springen beim ersten Tippen (TN-144). 🔴 Prio hoch.**
+Schritt 1: Beim ersten Tippen ins Firmenfeld ist die Seite gesprungen, sein
+Text landete im **falschen Feld** — Straße im Ort-Feld, Name leer. Er
+schränkt selbst ein, dass es am Browser gelegen haben könnte. Ich stufe es
+trotzdem hoch ein, weil der Schaden nicht „unschön" ist, sondern **falsche
+Daten im falschen Feld**, und zwar im allerersten Bildschirm, den ein neuer
+Betrieb sieht. Seine Bitte wörtlich: *„Am Handy mit Tastatur bitte einmal mit
+dem Daumen durchprobieren, ob die Felder beim Tippen stillhalten."*
+
+**DC-102 — Preise-Schritt ehrlich beschriften (TN-140). 🔵 hängt an Sandy.**
+Der Schritt heißt „Eigene Preise eingeben", bietet fünf Felder (Fahrtkosten,
+zwei Stundensätze, Container, Kleinfuhre) und füllt am Ende denselben
+220-Positionen-Katalog wie „Marktpreise laden". Manfreds Zwischenlösung, bis
+`docs/preisliste-konzept.md` gebaut ist: **eine** Option „Marktpreise laden
+(du kannst sie jederzeit anpassen)", die fünf Zahlen als „Grunddaten:
+Stundensatz und Anfahrt". Ich habe das Sandy mit Empfehlung „ja" vorgelegt
+(`entscheidungen-fuer-sandy.md`, M-1). **Bitte noch nicht bauen** — ich melde
+dir die Entscheidung.
+
+**DC-103 — Logo-Schritt: „werden häufiger unterschrieben" (TN-146). 🔵 hängt an Sandy.**
+Manfred: *„Ist das gemessen oder gefühlt? Handwerker riechen Werbesprüche."*
+Es kann nicht gemessen sein — es gibt noch keine echten Nutzer. Sandy
+entscheidet zwischen streichen und umformulieren (M-3). Kein Auftrag, bis das
+steht; ich wollte es dir nur nicht erst hinterher erzählen.
+
+**DC-104 — 7-%-Kachel im Steuer-Schritt (TN-147). ⏳ wartet auf Legal.**
+Neben 19 % und Kleinunternehmer steht 7 %, was laut Manfred kein Maler und
+kein Bodenleger je braucht. Ich lasse das von Head of Legal in einem Satz
+bestätigen (CoS-L-007), dann kommt der Auftrag zum Entfernen. Nicht
+vorgreifen — wenn es doch einen Fall gibt, ist die Kachel richtig.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## DC-102 — Sandys Entscheidung: die richtige Lösung, keine Umbeschriftung (14.09.2026)
+
+Ich hatte dir oben geschrieben, Manfreds Zwischenlösung liege Sandy mit
+meiner Empfehlung „ja" vor. **Sandy hat abgelehnt** — wörtlich: *„es soll
+direkt die richtige Lösung gemacht werden, keine Zwischenlösung."*
+Sie hat recht, und zwar nach ihrer eigenen, länger geltenden Regel: Solange
+es keine echten Nutzer gibt, wird die vollständige Lösung gebaut, nicht die
+schnelle.
+
+**Also: `docs/preisliste-konzept.md` (Fassung 2, 11.09.) wird gebaut.** Der
+Onboarding-Preise-Schritt wird nicht umbeschriftet, sondern ersetzt.
+
+**Was dabei für dich drin steckt** (die Gliederung steht im Konzept, ich
+zähle nur auf, was Oberfläche ist):
+- die Materialfrage ganz vorn („Sind in deinen Preisen die Materialkosten
+  drin?") — laut Konzept die wichtigste Einzelfrage des ganzen Schritts
+- die Tätigkeitsauswahl („Was machst du am meisten?"), die steuert, welche
+  Felder überhaupt erscheinen
+- sechs bis sieben Zahlenfelder, jedes mit einem Halbsatz darunter, **was die
+  Zahl einschließt** (Manfred: *„Eine Zahl ohne Bezugsgröße ist keine Zahl"*)
+- **die Nick-Seite** — rund 40 abgeleitete Zeilen, jede mit „abgeleitet aus:
+  Wand 2x", ein Knopf „Passt alles". Das Konzept nennt sie ausdrücklich den
+  Kern und nicht die Kür.
+- und die Folge für „Überspringen": ein Balken auf jedem Angebot („Preise
+  sind Durchschnittswerte, nicht deine"), bis die Nick-Seite einmal
+  durchlaufen ist
+
+**Bevor du anfängst, zwei Abhängigkeiten, die nicht bei dir liegen:** Das
+Konzept verlangt in Abschnitt 3 ausdrücklich, dass **zuerst** das Vokabular
+von Katalog und Engine angeglichen wird (Prüfmeister/Engineering), und es gibt
+einen frisch gefundenen Datenfehler im heutigen Schritt (**CoS-E-052**: die
+Gewerk-Kennungen greifen nicht, deshalb die fünf zusammengewürfelten Felder
+inklusive Bauschutt-Container). Beides sitzt vor deiner Arbeit. Ich melde
+dir, wenn der Weg frei ist — fang bitte mit dem Entwurf an, nicht mit dem
+Einbau.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+---
+
+## DC-100 — umgesetzt, der Commit ist da (14.09.2026)
+
+**An den Product Designer:** Dein Teil kann laufen. Die Einbettung ist ab
+sofort wirklich weg, nicht nur umbeschriftet — die Reihenfolge, auf der du
+bestanden hast, ist eingehalten.
+
+Was im Code steht:
+
+- **Eine** Entscheidungsstelle, `src/lib/zugferd/einbettung.ts`, mit der
+  Funktion `eRechnungErlaubt`. Die Liste der erlaubten Dokumenttypen ist leer.
+- Alle drei Einbettungsstellen (`api/pdf`, `api/email`,
+  `api/quotes/[id]/send`) fragen diese eine Funktion. Damit fallen der
+  Dateiname `Angebot-…-ZUGFeRD.pdf`, der Header `X-ZUGFeRD`, der zusätzliche
+  XML-Anhang und der Satz „Es enthält eine eingebettete ZUGFeRD-XML" von
+  selbst mit weg.
+- **Die XRechnung-Route** (`api/pdf/xrechnung`) ist nicht gelöscht, sondern
+  antwortet **410** mit einem Klartextsatz. Begründung: Du nimmst den
+  Menüeintrag raus, aber ein gesetztes Lesezeichen bleibt — und ein
+  Next.js-404 erklärt nichts. Der Satz, den sie zurückgibt, steht in
+  `E_RECHNUNG_ABGESCHALTET` und lautet:
+
+  > „E-Rechnungen entstehen erst beim Abrechnen. Ein Angebot ist keine
+  > Rechnung und bekommt deshalb keine E-Rechnungs-Datei."
+
+  **Wenn dir für die Karte ein anderer Wortlaut lieber ist, nimm deinen** —
+  der Satz ist an einer Stelle definiert und leicht zu ändern. Ich wollte
+  keine zweite Fassung neben deiner erfinden.
+- Eine Sperrklinke (`erechnung-abgeschaltet.test.ts`) prüft bei jedem Testlauf,
+  dass keine neue Route an dieser Entscheidung vorbeikommt.
+
+Damit sind deine drei Nachzüge frei: Karte ohne Schalter mit dem abgestimmten
+Satz, XRechnung-Eintrag aus dem Drei-Punkte-Menü, DC-089 schließen.
+
+Unberührt und weiterhin offen: die PDF/A-3b-Prüfung durch veraPDF oder
+Mustang, die Legal angeregt hat. Sie hängt nicht an DC-100.
+
+Status DC-100: **entschieden → umgesetzt.** Rest liegt beim Product Designer.
+
+*Head of Product Engineering · 2026-09-14*
+
+## DC-102 — die Datenseite steht bereit (Head of Product Engineering, 14.09.2026)
+
+**An den Product Designer.** Für deinen Entwurf des neuen Preise-Schritts
+liegt ab jetzt fest, was dahinter rechnet. Du musst nichts davon nachbauen —
+das hier ist die Liste dessen, worauf du dich verlassen kannst.
+
+**Die Haken auf dem Bildschirm** (`src/lib/taetigkeiten.ts`) — fünf, mit
+genau diesen Beschriftungen und Standards:
+
+| Haken | Material-Standard |
+|---|---|
+| Innen streichen | drin |
+| Tapezieren | drin |
+| Lackieren | drin |
+| Fassade | getrennt |
+| Boden | getrennt |
+
+Manfreds Satz dazu: *„Ein Bildschirm, vier Haken, jeder mit dem
+Material-Standard dran, den man antippen kann. Das sind keine zusätzlichen
+Fragen, das ist dieselbe Frage mit mehr Antworten."* Antippen stellt um; der
+Standard ist nur die Vorbelegung.
+
+**Der Halbsatz an der Zeile** — wichtiger als der Schalter, sagt Manfred, und
+der Prüfmeister hat ihn noch geschärft: **„ohne Material" ist selbst schon
+falsch.** Bei „Vliestapete tapezieren ohne Material" bliebe der Kleister drin,
+und man streitet später über zwanzig Euro. Deshalb heißt das Material immer
+beim Namen — `halbsatz()` liefert dir genau eins von:
+
+`inkl. Farbe` · `inkl. Lack` · `inkl. Tapete` · `inkl. Belag` ·
+`inkl. Fliesen` — und dieselben fünf mit `ohne`.
+
+Wo die Funktion `null` liefert, hat die Position **kein Material, das der
+Kunde aussucht** (Zubehör wie Trittschall oder Kleister, reine Vorbereitung,
+Rückbau). Dort gehört **gar kein Schalter** hin, nicht ein ausgegrauter. Von
+2.379 Katalogzeilen betrifft das 140 — der Schalter ist die Ausnahme, nicht
+die Regel, und das sollte der Entwurf tragen können.
+
+**Für das Kundenpapier** liefert `kundensatz()` den Klartext, den Manfred
+verlangt hat: *„Die Tapete wird vom Kunden gestellt."* Kein „Material
+bauseits" — *„das versteht mein Bauleiter, Frau Krüger nicht."* Den Wortlaut
+bewertet noch der Head of Legal (§ 5a UWG), deine Fassung darf gern besser
+sein.
+
+**Die Zahl hinter dem Knopf** ist ebenfalls fertig: `teileMaterialAb()` gibt
+Arbeit und Material zurück, und die Summe ergibt auf den Cent den
+ursprünglichen Preis. Für dich heißt das: Du kannst im Entwurf beide Zahlen
+gleichzeitig zeigen, ohne dass jemand nachrechnen muss.
+
+**Was ich bewusst nicht gebaut habe:** den Bildschirm. Spur 4 Nr. 3 sagt
+„Entwerfen ja, einbauen noch nicht", und ich will dir nicht vorwegnehmen, wie
+die Haken aussehen. Wenn dir beim Entwerfen auffällt, dass die Daten anders
+geschnitten sein müssten — jetzt ist es billig zu ändern, sag einfach
+Bescheid.
+
+*Head of Product Engineering · 2026-09-14*
+
+---
+
+## DC-101 und DC-103 gebaut, DC-102 als Entwurf (14.09.2026)
+
+**Noch nicht committet** (Shell auf dem Gerät weiter tot, Commit von Sandy).
+Reihenfolge wie von Sandy vorgegeben.
+
+### DC-101 — springende Formularfelder 🔴
+
+Manfred hat es selbst relativiert („kann am Browser gelegen haben"). Es lag
+nicht am Browser. Im Code stehen **drei** Ursachen, die sich addieren, und
+zwei davon springen in jedem Browser.
+
+**1. Das Getippte wurde überschrieben.** `useEffect(() => setState(loadState()), [])`
+lief ohne Bedingung — also nach dem ersten Zeichnen. Wer sofort lostippt, und
+genau das tut man auf dem ersten Bildschirm, bekam sein Getipptes im selben
+Moment vom geladenen Stand ersetzt. Bei einem frischen Konto ist dieser Stand
+leer. **Das ist Manfreds „Name leer", vollständig erklärt.** Der gespeicherte
+Stand wird jetzt nur noch übernommen, wenn der Nutzer noch nichts angefasst hat
+(Identitätsvergleich gegen `DEFAULT_STATE`, den `update()` immer ersetzt). Kein
+Ladegatter, kein leerer Frame — getippte Zeichen verlieren dieses Rennen nicht
+mehr.
+
+**2. `autoFocus` auf dem Firmenfeld.** Auf dem Handy öffnet das beim Laden
+ungefragt die Tastatur. Der sichtbare Bereich schrumpft um die halbe Höhe, und
+weil dieser Schritt seinen Inhalt vertikal zentriert (DC-015), wandern in
+diesem Moment **alle** Felder nach oben. Wer währenddessen zielt, trifft das
+Feld darunter — **Manfreds Straße im Ort-Feld.** Verschärfend läuft beim
+Schrittwechsel gleichzeitig die 200-ms-Einblendung (`motion.div`, `x: 30`):
+Tastatur und Bewegung fallen zusammen. Die Animation bleibt, der ungefragte
+Fokus ist weg. Wer tippen will, tippt selbst ins Feld — und dann steht die
+Seite still.
+
+**3. Die Fehlermeldungen wurden ein- und ausgehängt.** `{nameError && <p>…}`
+fügt beim Fehler ~20 px ins Layout ein und entfernt sie beim ersten Zeichen
+wieder. Auf einem zentrierten Schritt verschiebt das alles darüber und
+darunter — während der Daumen schon zum nächsten Feld unterwegs ist. Neuer
+Baustein `FehlerZeile`: der Platz steht immer, sichtbar wird nur der Text.
+`aria-live="polite"` statt Ein-/Aushängen ist nebenbei das richtige Muster für
+Vorlesesoftware. Gilt für alle drei Stellen im Onboarding (Name, Adresse,
+Gewerk).
+
+**Was Manfred nachprüfen sollte**, wörtlich seine Bitte: am Handy mit Tastatur
+mit dem Daumen durchprobieren, ob die Felder stillhalten. Punkt 1 lässt sich
+dabei gezielt provozieren — Seite laden und **sofort** tippen, ohne zu warten.
+
+Status DC-101: 🟡 gebaut, Live-Test offen.
+
+### DC-103 — „werden häufiger unterschrieben" ✅ raus
+
+Sandys Entscheidung war „streichen", nicht „umformulieren" — entsprechend
+ersatzlos entfernt, der Abstand wandert in die Überschrift, damit der Schritt
+nicht enger wird.
+
+Fürs Protokoll, ohne Handlung: Ich hätte an der Stelle einen **faktischen**
+Satz vorgeschlagen („Es steht oben auf jedem Angebot"), analog zu Schritt 2
+(„Das erscheint auf jedem Angebot das du rausschickst"), den Manfred gelobt
+hat. Das wäre aber die andere der beiden Optionen gewesen, zwischen denen
+entschieden wurde — deshalb steht es hier und nicht im Code. Falls der Schritt
+ohne Unterzeile zu nackt wirkt, ist der Satz einen Einzeiler entfernt.
+
+Status DC-103: 🟡 gebaut, Live-Test offen.
+
+### DC-102 — Entwurf liegt, Einbau nicht
+
+Neue Datei: **`docs/dc-102-konzept-preise-schritt.md`**. Vier Bildschirme, eine
+Frage pro Bildschirm, mit Wortlaut und Zuständen.
+
+**Ein bewusster Widerspruch zur Vorlage, damit er nicht untergeht:** Das
+Preislisten-Konzept legt Tätigkeit und Material-Standard auf **einen**
+Bildschirm (Haken plus antippbarer Halbsatz). Ich trenne sie. Manfreds Satz
+*„keine zusätzlichen Fragen, dieselbe Frage mit mehr Antworten"* stimmt für den
+Haken; für den Material-Umschalter daneben stimmt er nicht. Das ist eine
+zweite Frage, die beim ersten Hinsehen wie eine Beschriftung aussieht — fünf
+Zeilen mit je zwei Bedeutungen, bedient mit dem Daumen, in der ersten Minute
+mit der App. Dazu ist der Material-Standard die zahl-bestimmende Angabe des
+ganzen Schritts: ob „Wand streichen 11 €" mit oder ohne Farbe gemeint ist,
+verschiebt jede abgeleitete Zeile. So etwas gehört nicht als Beiwerk an eine
+Checkbox. Wenn der Chief of Staff oder Manfred das anders sehen, ist es eine
+Diskussion wert — ich wollte es nur nicht stillschweigend anders bauen.
+
+**Als Nächstes von mir, sobald der Entwurf abgenickt ist:** ein Prototyp der
+**Nick-Seite**, nur dieser eine Bildschirm. Die anderen drei sind Formulare
+und lassen sich aus Text beurteilen. Die Nick-Seite nicht: ob 40 Zeilen mit
+Herkunftsangabe überfliegbar sind oder erschlagen, und ob „Passt alles" nach
+Zustimmung oder nach Wegklicken aussieht, entscheidet sich am Daumen. Dieselbe
+Lehre wie bei DC-038.
+
+Status DC-102: 🔵 Entwurf liegt vor, wartet auf Go — und auf die beiden
+Abhängigkeiten davor (Vokabular-Angleich, CoS-E-052).
+
+### Nicht angefasst
+
+**DC-104** wartet auf Legals Satz (CoS-L-007), wie vom Chief of Staff
+angewiesen.
+
+**DC-089 und die drei DC-100-Nachzüge sind seit heute frei** — Head of Product
+Engineering hat die Einbettung abgeschaltet und den Commit gemeldet. Sie
+stehen auf Sandys Liste an letzter Stelle, deshalb heute nicht angefasst;
+sobald sie dran sind: Karte ohne Schalter, XRechnung-Eintrag aus dem
+Drei-Punkte-Menü, DC-089 schließen. Der von Engineering vorgeschlagene Satz
+(„E-Rechnungen entstehen erst beim Abrechnen. Ein Angebot ist keine Rechnung
+und bekommt deshalb keine E-Rechnungs-Datei.") ist besser als meiner — ich
+nehme ihn und ziehe meinen zurück.
+
+**Verifikation:** Syntax der geänderten Datei sauber. `tsc`/`vitest` ohne
+Shell weiterhin nicht ausführbar.
+
+*Product Designer · 2026-09-14*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
