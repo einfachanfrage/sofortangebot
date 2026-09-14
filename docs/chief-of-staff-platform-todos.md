@@ -49,7 +49,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
 | CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
-| CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | 🟢 Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Ungetestet, da aus dieser Session kein automatischer Build möglich — bitte einmal mit einem Test-Account ohne hinterlegten Key gegenchecken | Manfreds Onboarding-Durchlauf TN-143, 2026-09-14 |
+| CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | ✅ **erledigt & geprüft** — Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Live mit Test-Account bestätigt: Kachel erscheint korrekt mit Anbieter-Label. Nachtrag am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
 | CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
@@ -1826,5 +1826,21 @@ aktualisiert, `.git/hooks/pre-push` unverändert (ruft nur das Skript auf).
 untrackte Testdatei, `src/lib/__tests__/preisvorlagen-gewerke.test.ts` —
 existiert nur auf Sandys Rechner. Nach Lage der Dinge Product Engineerings
 laufende Arbeit an CoS-E-053/054, nicht angefasst.
+
+## Nachtrag CoS-P-017 — live bestätigt
+
+**Datum:** 2026-09-14, Platform & Integrations Engineer
+
+Sandy hat mit einem frischen Test-Account das Onboarding bis Schritt 7
+durchlaufen (Anbieter „Lexware Office" gewählt, Key-Feld leer gelassen,
+„Fertig"). Zwei Screenshots vom `/dashboard` danach zeigen die Kachel
+genau wie vorgesehen: 🧾 „Buchhaltung: Key fehlt noch" / „Lexware Office
+ist ausgewählt, aber noch nicht verbunden — Angebote gehen bis dahin nicht
+automatisch rüber." — Anbieter-Label korrekt aus `ACCOUNTING_OPTIONS`
+aufgelöst. Status oben auf ✅ gesetzt.
+
+Der zuvor gemeldete Nebenfund (`lexware` fehlt in `apiKeyFields` /
+`API_KEY_SOFTWARES` im Onboarding-Schritt 7) bleibt unverändert offen und
+außerhalb dieses Tickets — s. Fix-Update CoS-P-017 oben im Dokument.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -5,7 +5,14 @@ export const AKTIVE_GEWERKE = [
     emoji: '🖌',
     beschreibung: 'Streichen, Spachteln, Tapezieren, Lackieren',
     farbe: '#D9A400',
-    positionen_count: 164,
+    // CoS-E-052 (14.09.2026): Hier stand `positionen_count: 164`. Die Zahl
+    // wurde **nirgends angezeigt** — sie stand nur hier und stimmte mit
+    // nichts überein: Der Basiskatalog liefert für dieses Gewerk eine andere
+    // Zahl, die Vorlagen eine dritte. Eine Zahl, die niemand rendert und
+    // niemand nachrechnet, wird trotzdem geglaubt — sie ist als Tatsache in
+    // ein Ticket gewandert. Wer die Zahl braucht, holt sie mit
+    // `positionenImKatalog(id)` aus `default-price-selection.ts`, wo der
+    // Katalog ohnehin liegt.
     typische_auftraege: [
       'Wohnung streichen',
       'Fassade streichen',
@@ -19,7 +26,14 @@ export const AKTIVE_GEWERKE = [
     emoji: '🏠',
     beschreibung: 'Laminat, Vinyl, Parkett, Teppich, Kork, Linoleum',
     farbe: '#D9A400',
-    positionen_count: 177,
+    // CoS-E-052 (14.09.2026): Hier stand `positionen_count: 177`. Die Zahl
+    // wurde **nirgends angezeigt** — sie stand nur hier und stimmte mit
+    // nichts überein: Der Basiskatalog liefert für dieses Gewerk eine andere
+    // Zahl, die Vorlagen eine dritte. Eine Zahl, die niemand rendert und
+    // niemand nachrechnet, wird trotzdem geglaubt — sie ist als Tatsache in
+    // ein Ticket gewandert. Wer die Zahl braucht, holt sie mit
+    // `positionenImKatalog(id)` aus `default-price-selection.ts`, wo der
+    // Katalog ohnehin liegt.
     typische_auftraege: [
       'Parkett verlegen',
       'Laminat verlegen',
@@ -155,12 +169,18 @@ export function anfahrtPosition(
 // Der Schwellenwert bleibt eine **Betriebseinstellung**: Legal hat
 // nachgerechnet, dass die Stundensätze regional zwischen 44 € (MV) und 90 €
 // (BY/BW) liegen — mehr als doppelt so breit, wie ein fester Wert im Code
-// sinnvoll abdecken kann. 180 € ≈ drei Arbeitsstunden ist der Vorschlagswert,
-// keine Konstante.
+// sinnvoll abdecken kann.
 //
-// 0 heißt AUS. Ein Betrieb, der den Wert nie gesetzt hat, bekommt nichts
-// aufgeschlagen — ungefragt Geld in fremde Angebote zu rechnen wäre genau der
-// stille Aufschlag, den wir hier vermeiden.
+// 0 heißt AUS, und 0 ist seit dem 14.09.2026 auch der Standard (Sandys
+// Entscheidung M-2, TN-142). Vorher trug das Einstellungsformular 180 € als
+// Vorschlag ins Feld und schrieb ihn beim Speichern mit — auch dann, wenn der
+// Betrieb wegen einer ganz anderen Einstellung dort war. Manfred ist der Wert
+// im Onboarding nie begegnet und stand trotzdem in seinen Angeboten:
+// *„Das ist das Möbel-abdecken-Problem in neuem Gewand: die App entscheidet,
+// ich unterschreib."* Die 180 € leben weiter — aber nur noch als Satz im
+// Hilfetext, den der Handwerker lesen und selbst eintragen kann. Ein
+// Orientierungswert, der sich selbst einträgt, ist kein Vorschlag mehr,
+// sondern eine Entscheidung.
 //
 // Und die Sequenzierung, die der CoS zurecht angemahnt hat (erst die
 // Leibungs-Einheit klären): Sie greift hier nicht. Diese Regel rechnet
@@ -168,8 +188,15 @@ export function anfahrtPosition(
 // wird, ändert die Angebotssumme nicht — die Kleinauftragslogik ist
 // einheitenblind und muss bei einem Einheitenwechsel nicht angefasst werden.
 
-/** Vorschlagswert bei der Ersteinrichtung — rund drei Arbeitsstunden. */
-export const MINDESTAUFTRAGSWERT_VORSCHLAG = 180
+/**
+ * Orientierungswert für den Hilfetext — rund drei Arbeitsstunden.
+ *
+ * NUR für Text. Diese Zahl darf nirgends als Wert in ein Feld oder in die
+ * Datenbank wandern; der Standard ist 0 (M-2). Der Name sagt das absichtlich:
+ * Er hieß bis zum 14.09.2026 `…_VORSCHLAG` — und ein Vorschlag, der sich
+ * selbst einträgt, war genau der Fehler.
+ */
+export const MINDESTAUFTRAGSWERT_ORIENTIERUNG = 180
 
 /** Der Zeilentext auf dem Kundenangebot (Sandys Wortlaut, 07.09.2026). */
 export const MINDESTAUFTRAG_BEZEICHNUNG = 'Anfahrt & Vorbereitung'

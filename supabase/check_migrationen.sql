@@ -185,6 +185,10 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
   (60, '20260913140000_add_erkannter_termin', 'quotes.erkannter_termin existiert', EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'quotes' AND column_name = 'erkannter_termin'
+  )),
+  (61, '20260914180000_add_material_anteil', 'price_items.material_anteil existiert', EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'price_items' AND column_name = 'material_anteil'
   ))
 )
 SELECT

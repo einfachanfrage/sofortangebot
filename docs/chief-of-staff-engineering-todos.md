@@ -1023,6 +1023,113 @@ echten App — steht weiter aus und braucht einen Menschen vor dem Bildschirm.
 
 *Head of Product Engineering · 2026-09-13*
 
+## CoS-E-054, Gegenprobe vom Prüfmeister — zwei Ebenen reichen, unter drei Bedingungen
+
+**Datum:** 2026-09-14 · **An:** Head of Product Engineering, Chief of Staff ·
+**Beantwortet:** die Frage aus CoS-E-054 („vom Prüfmeister die Gegenprobe, ob
+es in der Praxis wirklich drei Ebenen sind oder ob zwei reichen")
+
+**Kurz: Manfred hat recht, zwei Ebenen reichen.** Ich habe das Modell gegen
+die Fälle gehalten, die wir wirklich haben — seine beiden Sessions, die 44
+Testfälle, den Standardkatalog. Es trägt. Aber es trägt nur, wenn drei
+Bedingungen erfüllt sind, und zwei davon stehen so noch nirgends.
+
+### 1. Ebene 2 ist je POSITION, nicht je Angebot
+
+Im Konzept steht „für dieses eine Angebot umstellbar". Manfred sagt selbst
+*„das ist exakt die Umstellung pro Angebot"* — er denkt dabei aber an den
+Yilmaz-Fall, und der ist ein **reines Bodenangebot**. Da fällt beides
+zusammen.
+
+Das Normalangebot fällt nicht zusammen. „Wände streichen, und im Flur kommt
+Laminat rein" ist ein Angebot mit zwei Materiallogiken: Farbe drin, Laminat
+vom Kunden. Ein Schalter auf Angebotsebene steht für die Hälfte davon falsch,
+egal wie er steht — genau das Argument, mit dem der Chief of Staff den
+globalen Schalter verworfen hat, eine Ebene tiefer.
+
+Der Knopf, den Manfred in TN-122 gelobt hat, saß auch an der **Position**
+(„+ Laminat (Material)"), nicht am Angebot. Also: Vorbelegung kommt von der
+Tätigkeit, umgestellt wird an der Zeile.
+
+### 2. Der Schalter braucht eine dritte ZAHL — das ist keine dritte Ebene
+
+Das ist der Punkt, der mir beim Gegenrechnen aufgefallen ist und der den
+🔴-Punkt überhaupt erst baubar macht.
+
+Manfred: *„Wenn ich Material rausziehe, sind es nicht mehr 11,50 für Wand 2x,
+sondern 8,50 plus Farbe."* Die App kennt aber nur **eine** Zahl: 11,50.
+**Woher kommen die 8,50?** Aus nichts. Ohne einen hinterlegten Materialanteil
+je Position ist „die Zahl muss mitgehen" nicht umsetzbar, und der Knopf
+erzeugt genau den Doppelfehler, vor dem Manfred warnt.
+
+Das ist **keine zusätzliche Frage an den Nutzer** — also keine dritte Ebene —
+sondern ein Feld je Katalogzeile, vorbelegt, änderbar wie der Preis selbst.
+Startwerte, fachlich, Innenbereich Standardqualität:
+
+| Position | Preis | davon Material | Arbeit |
+|---|---|---|---|
+| Wand streichen 2x | 11,50 € | **3,00 €** | 8,50 € *(Manfreds eigene Zahl)* |
+| Wand streichen 1x | 6,00–9,50 € | **1,50 €** | Rest |
+| Decke streichen 2x | 11,00 € | **2,50 €** | 8,50 € |
+| Raufaser tapezieren ohne Anstrich | 10,00 € | **2,50 €** (Tapete + Kleister) | 7,50 € |
+| Fassade Silikat 2x | 20,00 € | **6,50 €** | 13,50 € |
+
+**Faustregel für alles, was hier nicht steht:** bei zwei Anstrichen liegt der
+Materialanteil innen bei rund einem Viertel des Quadratmeterpreises, nie über
+einem Drittel. Beim Lack höher (gute Lacke sind teuer), bei reiner
+Vorbereitung — schleifen, spachteln, abkleben — praktisch null; dort gehört
+gar kein Schalter hin.
+
+Und das erklärt nebenbei, **warum Fassade und Boden getrennt laufen**: Dort
+ist der Materialanteil nicht ein Viertel, sondern ein Drittel bis die Hälfte,
+und er schwankt mit der Auswahl des Kunden. Genau da wird ein eingerechneter
+Materialanteil zum Risiko für den Betrieb.
+
+### 3. Der Halbsatz muss das Material BENENNEN
+
+Manfred: *„Der Halbsatz ist wichtiger als der Schalter."* Richtig, und eine
+Stufe schärfer: **„ohne Material" ist selbst schon falsch.**
+
+Bei „Vliestapete tapezieren ohne Material" bleibt der Kleister drin — der
+gehört zum Handwerk, nicht zur Auswahl des Kunden. Der Kunde stellt die
+Tapete. Steht „ohne Material" auf dem Angebot, streitet man später über den
+Kleister, und zwar um zwanzig Euro und das Verhältnis.
+
+Also: **„ohne Tapete", „ohne Farbe", „ohne Belag"** — das Material beim Namen.
+Für den Privatkunden dann in Klartext, wie Manfred es für das PDF verlangt
+hat.
+
+### Wo zwei Ebenen NICHT reichen — und warum es trotzdem keine dritte braucht
+
+Drei Fälle habe ich gesucht, die das Modell brechen. Sie brechen es nicht:
+
+- **Ein Material, zwei Zeilen.** Wandfarbe steckt in „Wand streichen" *und*
+  „Decke streichen". Stellt er eine um, muss die andere mit. Das ist eine
+  **Rückfrage** („auch bei der Decke?"), keine Ebene.
+- **Teilmaterial.** Kunde stellt die Tapete, nicht den Kleister — erledigt
+  sich mit Bedingung 3.
+- **Kunde entscheidet sich später anders**, nimmt die teurere Fliese. Das ist
+  ein **Nachtrag**, kein Materialschalter. Steht schon im Themenspeicher und
+  hat mit dieser Frage nichts zu tun.
+
+### Zu Manfreds Lernfrage nach dem dritten Mal
+
+Einverstanden, mit einer Einschränkung: Die Frage darf erst kommen, wenn er
+**dieselbe Position** dreimal umgestellt hat, nicht dreimal irgendeine. Sonst
+fragt die App nach dem dritten Angebot pauschal „immer ohne Material?" — und
+das ist wieder der globale Schalter, nur später und mit mehr Anlauf.
+
+### Was ich prüfen werde, sobald es gebaut ist
+
+Ein Angebot mit beiden Logiken nebeneinander (Wand inklusive, Boden getrennt),
+und dann die Probe aufs Exempel: Material herausziehen und nachrechnen, ob die
+Summe um genau den Materialanteil fällt — nicht um null und nicht um den
+ganzen Preis. Der Test gehört geschrieben, **bevor** der Knopf gebaut wird.
+
+*Prüfmeister · 2026-09-14*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH
 dieser Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte
 nicht selbst löschen, sondern dem Chief of Staff melden.
@@ -2345,5 +2452,682 @@ Umbenennungen wie gewohnt; der volle Testlauf zur Bestätigung kann warten,
 bis der Zugriff zurück ist, das Bauen selbst nicht.
 
 *Chief of Staff · 2026-09-12*
+
+## CoS-E-052 🔴 — Der Preise-Schritt findet die Gewerk-Vorlagen nicht. Seit immer.
+
+**Datum:** 2026-09-14 · **Quelle:** TN-140 + Sandys Rückfrage „warum
+Entsorgung?" · **Priorität:** hoch, unabhängig vom Preislisten-Konzept
+
+**Der Befund, an drei Stellen im Code nachgelesen:**
+
+| | |
+|---|---|
+| `src/lib/gewerke-config.ts` Z. 3 / 17 | Die beiden wählbaren Gewerke heißen **`maler`** und **`boden_parkett`** |
+| `src/lib/preise-vorlagen.ts` | `GEWERK_PREISE` hat die Schlüssel **`malerarbeiten`** (42 Vorlagen), **`bodenbeläge`** (48), **`maler_fassade`** (41) — **`maler` und `boden_parkett` existieren dort nicht** |
+| `getPreisvorlagenForGewerke()` | `GEWERK_PREISE[id] ?? []` → für beide aktiven Gewerke immer die **leere Liste** |
+
+Übrig bleiben drei Einträge aus `ALLGEMEINE_PREISE` (Anfahrt/km,
+Stundensatz Fachkraft 65 €, Stundensatz Helfer 42 €) — und dann greift diese
+Regel:
+
+```ts
+// Allrounder = Entsorgung immer dabei
+if (gewerkeIds.length > 0 && !seen.has('Entsorgung::Bauschutt-Container 7m³')) {
+  result.push(...(GEWERK_PREISE['allrounder'] ?? []))
+}
+```
+
+`allrounder` enthält genau zwei Zeilen: *Bauschutt-Container 7m³* und
+*Kleinfuhre bis 1m³*. Da `seen` durch den Fehlschlag oben immer leer ist,
+feuert die Regel **bei jedem Gewerk**.
+
+**3 + 2 = die fünf Felder, die Manfred gesehen hat, in genau dieser
+Reihenfolge.** Das ist kein unglücklicher Entwurf, das ist ein Rest.
+
+**Was es schlimmer macht:** `AKTIVE_GEWERKE` wirbt in der Gewerk-Kachel mit
+`positionen_count: 164` für Maler. Die Oberfläche verspricht 164 Positionen,
+über diesen Pfad kommt keine einzige an. Dieselbe Familie wie
+`mindestauftragswert` (Spalte existierte, wurde nie gelesen) und
+`kleinmaterial`-Pauschale (toter Pfad) — **„Oberfläche verspricht, Code
+schweigt", jetzt zum dritten Mal.**
+
+**Und der Fall ist schon einmal an uns vorbeigelaufen.** Im Kommentar in
+`onboarding/[step]/page.tsx` (18.08.2026) steht wörtlich: *„live gefunden am
+Konto ‚Lisa Schein Malerbetrieb' — nur 5 generische Posten, keine einzige
+Maler-Position, Preis-Matching lief komplett leer."* Dasselbe Symptom, exakt
+dieselben fünf Posten. Behoben wurde damals, dass der **Basis-Katalog** jetzt
+in jedem Modus geladen wird — was das Symptom zugedeckt hat (die 220
+Positionen, die Manfred in der Datenbank findet, kommen daher). **Die Ursache
+wurde nie gesucht.** Bitte diesen Zusammenhang mitlesen, bevor du fixt: Es
+gibt seither **zwei parallele Preisquellen** (Vorlagen im Onboarding,
+Basis-Katalog beim Speichern), und das ist der Grund, warum „Eigene Preise"
+und „Marktpreise" am Ende dasselbe Ergebnis liefern.
+
+**Was ich NICHT vorgebe:** ob die Kennungen angeglichen werden (und in welche
+Richtung), ob eine Zuordnungstabelle sauberer ist, und was mit der
+Allrounder-Regel passiert. Das ist dein Gebiet. Meine einzige Bitte: Die
+Entsorgungsposten sollen nicht mehr bei einem Maler landen, der zweimal im
+Jahr einen Container braucht.
+
+---
+
+## CoS-E-053 — Sandys Auftrag: `preisliste-konzept.md` bauen, keine Zwischenlösung
+
+**Datum:** 2026-09-14 · **Entscheidung Sandy, M-1 in `entscheidungen-fuer-sandy.md`**
+
+Sandy hat meinen Vorschlag einer ehrlichen Zwischenbeschriftung abgelehnt:
+*„es soll direkt die richtige Lösung gemacht werden."* Gebaut wird
+`docs/preisliste-konzept.md`, **Fassung 2 vom 11.09.** — die ist mit Manfred
+abgestimmt und enthält seine vier Korrekturen bereits.
+
+**Die Reihenfolge steht nicht bei mir, sondern im Konzept selbst** (Abschnitt
+3, „Voraussetzung — erst das, dann alles andere"), und ich gebe sie nur
+weiter, weil sie beim Bauen leicht untergeht:
+
+1. **Zuerst das Vokabular.** Der Katalog muss Wort für Wort die Sprache der
+   Engine sprechen, sonst baut die Rückfrage im Angebot die Doppeleinträge
+   wieder auf, die gerade weggeräumt wurden. **CoS-E-037**
+   (Sperranstrich ↔ Nikotinsperre) ist der erste bekannte Fall und weiterhin
+   offen; welches Wort gilt, entscheidet der **Prüfmeister**.
+2. **Dann CoS-E-052** — solange die Gewerk-Kennungen nicht greifen, hat der
+   Schritt keine Datengrundlage, egal wie gut er gestaltet ist.
+3. **Dann das Konzept** (Materialfrage vorweg → Tätigkeitsauswahl →
+   die sechs bis sieben Ankerzahlen → Ableitung → Nick-Seite).
+
+**Die Nick-Seite ist laut Konzept der Kern, nicht die Kür** — der Moment, in
+dem die Liste den Besitzer wechselt. Manfreds Satz dazu: *„Zwei Minuten, dann
+ist es meine Liste, nicht eure."*
+
+**Zwei Punkte aus dem Konzept, die direkt Geld betreffen und deshalb nicht
+wegfallen dürfen:** die Frage „sind Materialkosten in deinen Preisen drin?"
+(ohne sie rechnet das Produkt bei etwa der Hälfte der Betriebe unsichtbar
+falsch) und „Fassade wird nie aus Innen abgeleitet".
+
+**Der Product Designer hat die Oberflächenseite** (DC-102, dort ebenfalls auf
+Sandys Entscheidung aktualisiert). Bitte stimmt euch über
+`docs/marketing-design-austausch.md`-Muster direkt ab oder sagt mir Bescheid,
+wenn ihr einen eigenen Kanal dafür wollt — ich will euch da nicht dazwischen
+sitzen.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## CoS-E-054 — Sandy zur Materialfrage: der Schalter ist ihr zu eng. Rückfrage ans Konzept, bevor gebaut wird.
+
+**Datum:** 2026-09-14 · **An:** Head of Product Engineering (dir gehört
+`docs/preisliste-konzept.md`) · **Mitlesen:** Prüfmeister · **Blockiert
+CoS-E-053, Schritt 5** — bitte vor dem Onboarding-Bau klären, nicht danach.
+
+**Sandys Anstoß, wörtlich:** *„soll der user auswählen können beim
+Onboarding! Da gefragt: alle Preise inkl. Material? oder ohne und bei Bedarf
+Material dazuführen oder mal so mal so, soll so frei wie möglich für User
+sein."*
+
+Dein Konzept hat dafür in „Schritt 0" einen **binären** Schalter
+(inklusive / getrennt). Sandy hält das für zu eng. **Ich halte ihren Einwand
+für belegt, und der Beleg steht in Manfreds eigenem Log** — nicht in einer
+Vermutung:
+
+- **TN-122:** *„Laminat hat er selber gekauft"* → kein Material gerechnet,
+  aber „+ Laminat (Material)" als Knopf angeboten. Manfred lobt das
+  ausdrücklich als die erste Stelle, an der die App etwas richtig
+  **weggelassen** hat.
+- **TN-128:** *„Verschnitt ist Material. Wenn der Kunde das Laminat kauft,
+  ist sein Verschnitt sein Problem, nicht mein Lohn."*
+- **Konzept Schritt 0, Manfred selbst:** *„Meine 11,50 für Wand 2x sind
+  inklusive Farbe. Beim Kollegen sind's 8 plus Material extra."*
+
+Das sind **drei Zustände in einem Betrieb**: Wandanstrich inklusive Farbe,
+Laminat ohne Material, Verschnitt gar nicht. Ein einziger Schalter für alles
+bildet das nicht ab — er würde bei Manfred selbst schon falsch stehen, egal
+wie er ihn setzt.
+
+**Wo ich Sandy widerspreche, und das gehört mit auf den Tisch:** „So frei wie
+möglich" darf nicht „so viele Fragen wie möglich" heißen. Der Schritt hat ein
+Versprechen — drei Minuten, Manfred hat es bestätigt (TN-132). Jede weitere
+Frage im Onboarding kostet davon; jede Änderbarkeit **danach** kostet nichts.
+Freiheit entsteht hier aus **Vorbelegung plus Änderbarkeit**, nicht aus
+zusätzlichen Fragen.
+
+**Mein Vorschlag zur Prüfung — deine Entscheidung, nicht meine:**
+
+| Ebene | Was | Kosten für den Nutzer |
+|---|---|---|
+| Onboarding | Eine Frage **je gewählter Tätigkeit**, nicht global (Innen / Fassade / Boden …) — dieselbe Auswahl, die ohnehin die Zahlenfelder steuert | ein Tipp je Haken, den er eh setzt |
+| Preisliste | Je Position änderbar, gilt ab dann dauerhaft | null, bis er es braucht |
+| Einzelnes Angebot | Für diesen einen Fall umstellbar (der Laminat-Fall) | null, bis er es braucht |
+
+**Zwei Punkte, die unabhängig von der Ausgestaltung gelten müssen** — und die
+bitte nicht wegfallen, egal wofür du dich entscheidest:
+
+1. **Am Feld muss stehen, was die Zahl einschließt.** Steht schon in deinem
+   Konzept (Manfred: *„Eine Zahl ohne Bezugsgröße ist keine Zahl"*), wird
+   hier aber tragend: Ohne den Halbsatz ist jede Materialeinstellung
+   Ratespiel.
+2. **Es muss auf dem Kunden-PDF erkennbar sein.** Wenn Material getrennt
+   abgerechnet wird, darf der Privatkunde das nicht erst auf der Rechnung
+   merken. Das ist dieselbe Familie wie die „Anfahrt & Vorbereitung"-Zeile,
+   bei der Head of Legal über § 5a UWG korrigiert hat (10.09.) — **ich
+   flagge das nur, bewerten muss es Legal**, und ich hole das ein, sobald
+   die Richtung steht.
+
+**Was ich von dir brauche:** eine Einschätzung, ob die drei Ebenen oben
+fachlich und technisch tragen oder ob es einen saubereren Schnitt gibt. Und
+vom **Prüfmeister** die Gegenprobe, ob es in der Praxis wirklich drei Ebenen
+sind oder ob zwei reichen. **Sandy holt zusätzlich Manfreds Einschätzung ein**
+— er ist der einzige von uns, der die Rechnung wirklich schreibt.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## CoS-E-054 ✅ beantwortet — Manfred: zwei Ebenen, nicht drei. Die dritte entsteht von selbst.
+
+**Datum:** 2026-09-14 · Antwort über Sandy eingeholt. **Das ersetzt meinen
+Dreistufen-Vorschlag von oben** — er hatte eine Ebene zu viel und eine
+Voraussetzung zu wenig.
+
+### Die Antwort in einem Satz
+
+**Zwei Ebenen bauen — Tätigkeit und Angebot. Die dritte entsteht von selbst.
+Und die drei Minuten halten.**
+
+### Ebene 1: Tätigkeit — und die Vorbelegung ist keine Vermutung
+
+Manfreds Praxis, dreißig Jahre, wörtlich:
+
+| Tätigkeit | Material | seine Begründung |
+|---|---|---|
+| **Innen** (Wand, Decke, Lack, Vlies) | **drin** | *„Farbe ist bei mir Standardqualität, das kalkulier ich in den Quadratmeter, seit dreißig Jahren."* |
+| **Fassade** | **getrennt** | *„Silikat oder Silikonharz ist ein Unterschied von 40 % beim Eimer, und beim Altbau kommt oft Grundierung und Armierung dazu, die ich vorher nicht seh."* |
+| **Boden** | **getrennt** | *„Der Kunde sucht sich sein Laminat im Baumarkt aus, das ist einfach so."* |
+
+*„Die Vorbelegung je Tätigkeit trifft bei mir in neun von zehn Fällen. […]
+Ehrlich gesagt könntet ihr die Haken gleich mit Standard setzen, denn jeder
+Maler in Deutschland, den ich kenne, macht's genauso."*
+
+**Wichtige Abgrenzung, die im Konzept fehlt:** *„Kleinmaterial — Trittschall,
+Kleber, Übergangsprofil — ist bei mir drin, das ist kein Material, das ist
+Zubehör."* Zubehör folgt also **nicht** dem Material-Schalter. Wer das
+zusammenwirft, zieht dem Bodenleger den Trittschall aus der Arbeitszeile.
+
+### Ebene 2: das einzelne Angebot — **die gibt es schon, sie ist nur nicht als solche erkannt**
+
+*„Im Angebot stand unter jeder Position ein Knopf ‚+ Wandfarbe' oder
+‚+ Laminat (Material)'. Wenn ich den drücke, ist Material eine eigene Zeile.
+Wenn nicht, ist es drin. Das ist exakt die Umstellung pro Angebot."*
+
+Das ist derselbe Knopf, den er in **TN-122** schon gelobt hat. Zwei
+Bedingungen macht er daran fest:
+
+1. **Die Tätigkeit entscheidet, ob der Knopf schon gedrückt ist.**
+2. **🔴 Beim Drücken muss die Zahl in der Arbeitszeile mitgehen.** Wörtlich:
+   *„Wenn ich Material rausziehe, sind es nicht mehr 11,50 für Wand 2x,
+   sondern 8,50 plus Farbe. Das muss die App wissen, sonst hab ich Material
+   doppelt."*
+
+Punkt 2 ist der teuerste Satz seiner Antwort. Ohne ihn erzeugt die
+Material-Freiheit **doppelt berechnetes Material** — ein Geldfehler in die
+Richtung, die der Kunde merkt, nicht der Betrieb. Er gehört in einen Test,
+bevor der Knopf angefasst wird.
+
+### Ebene 3 — nicht bauen, entstehen lassen
+
+*„Eine Einstellung je Position dauerhaft — das wär die Tapete: ‚Vlies
+tapezieren immer ohne Tapete, weil der Kunde die aussucht'. Ja, das gibt's,
+aber es sind zwei, drei Positionen pro Betrieb. Dafür würd ich keine eigene
+Ebene bauen. Wenn ich's dreimal im Angebot umgestellt hab, kann die App
+fragen: ‚Vlies tapezieren — Material immer getrennt?' Dann ist die Ebene da,
+ohne dass sie jemand pflegen muss. Gleiches Muster wie beim Preis, der aus
+der Arbeit entsteht."*
+
+Also: **keine Einstellungsebene, sondern eine Lernfrage nach dem dritten
+Mal** — dasselbe Muster wie „9 € wie beim letzten Mal?" aus Abschnitt 5
+deines Konzepts.
+
+### 🔴 Voraussetzung, die vorher niemand gesehen hat — und sie trifft CoS-E-052
+
+*„Der Schritt ‚Was machst du?' fragt heute nur Maler oder Boden. Innen und
+Fassade sind kein Haken. Wenn die Material-Frage je Tätigkeit laufen soll,
+muss vorher die Tätigkeit selbst ein Haken sein — Innen, Fassade, Boden,
+vielleicht Lack. Das ist auch die Antwort auf meine Fassaden-Lücke vom
+Wochenende. Ein Bildschirm, vier Haken, jeder mit dem Material-Standard dran,
+den man antippen kann. **Das sind keine zusätzlichen Fragen, das ist dieselbe
+Frage mit mehr Antworten.**"*
+
+**Das ist der Koordinationspunkt, weswegen ich dich bitte, CoS-E-052 und
+diesen Punkt zusammen zu entscheiden und nicht nacheinander.** CoS-E-052 ist
+der Fehler, dass die Gewerk-Kennungen (`maler`, `boden_parkett`) nicht zu den
+Schlüsseln der Preisvorlagen (`malerarbeiten`, `bodenbeläge`,
+`maler_fassade`) passen. Wenn die Auswahl ohnehin von **Gewerken** auf
+**Tätigkeiten** umgestellt wird, ist ein Angleichen der alten Kennungen
+möglicherweise Arbeit, die sofort wieder wegfällt — und bemerkenswert:
+`maler_fassade` existiert in den Vorlagen bereits als eigener Schlüssel mit
+41 Einträgen. Die Vorlagen kennen die Tätigkeitsebene also schon, nur die
+Oberfläche nicht.
+
+**Du entscheidest, wie das geschnitten wird.** Ich will nur verhindern, dass
+CoS-E-052 zweimal gemacht wird.
+
+### Die zwei unabhängigen Punkte, beide von ihm bestätigt und geschärft
+
+**Am Feld** — *„‚Wand streichen 2x — 11,50 €/m² inkl. Farbe' oder ‚… ohne
+Material'. **Der Halbsatz ist wichtiger als der Schalter.**"*
+
+**Auf dem Angebot, in Kundensprache** — *„Ich schreib ‚Material bauseits' —
+das versteht mein Bauleiter, Frau Krüger nicht. Für Privatkunden muss da
+stehen ‚Material wird vom Kunden gestellt' oder ‚Material wird nach Auswahl
+gesondert angeboten'."* Das ist zugleich ein neuer Fund für die
+Kundenpapier-Familie (TN-009/013/016): nicht interne Sprache, aber
+**Fachsprache** auf dem Papier eines Privatkunden.
+
+**Und ein Fehler, den er dabei rückwirkend erklärt:** *„Beim Verschnitt: Wenn
+Material getrennt ist, gehört der Verschnitt in die Materialzeile, nicht in
+die Arbeitszeile. Das war der Yilmaz-Fehler."* — also TN-128. Dazu unten
+mehr, das hat Folgen über diesen Punkt hinaus.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## CoS-E-054, Erweiterung — Sandy legt die Verschnitt-Fragen mit hinein (14.09.2026)
+
+**Entscheidung Sandy:** Die vier Verschnitt-Punkte werden **nicht mehr
+einzeln** beantwortet, sondern fallen mit der Material-Mechanik aus
+CoS-E-054. Grund: Es ist dieselbe Mechanik, und zwei getrennte Antworten
+darauf erzeugen genau die Widersprüche, die wir gerade an fünf verschiedenen
+Höhenschwellen (VOB-006) abarbeiten.
+
+**Was damit zu CoS-E-054 gehört und aus `entscheidungen-fuer-sandy.md`
+hierher wandert:**
+
+| bisher offen als | fällt jetzt so |
+|---|---|
+| **VOB-001/002/014** — Verschnitt in der Menge oder im Preis? | Nach dem Zahler: Material getrennt → Verschnitt in die **Materialzeile**. Material drin → steckt im Materialanteil der Arbeitszeile. Keine Normfrage, eine Zahlerfrage |
+| **Fliesen-Verschnitt fest im Code oder im Katalog?** | folgt derselben Mechanik, nicht mehr als Sonderfall im Code |
+| **Kork und Teppich 0 %** | dito — 0 % ist dann keine Ausnahme, sondern das Ergebnis von „Material vom Kunden" |
+
+**Die Belege stehen bei Manfred, nicht in der Norm:** TN-128 (*„Verschnitt ist
+Material. Wenn der Kunde das Laminat kauft, ist sein Verschnitt sein Problem,
+nicht mein Lohn. 21 m² verlegen auf 17 m² Boden — ich verleg 17."*) und seine
+Antwort vom 14.09. (*„Wenn Material getrennt ist, gehört der Verschnitt in
+die Materialzeile, nicht in die Arbeitszeile. Das war der Yilmaz-Fehler."*).
+
+**Was Legal dazu bereits geliefert hat und weiter gilt:** „Verschnitt" kommt
+in DIN 18365 nicht vor, bei Bodenbelägen zählt nur die belegte Fläche — der
+heutige Prozentaufschlag auf die Menge hat also keine Normgrundlage. Das
+*verbietet* ihn nicht, widerspricht aber der PDF-Zeile „nach VOB berechnet"
+(VOB-007). Mit der Zahler-Regel oben löst sich beides auf einmal.
+
+**Für dich heißt das:** Die Verschnitt-Behandlung ist kein eigener Auftrag
+mehr, sondern eine Anforderung an die Material-Mechanik. Bitte im Konzept
+(Fassung 3) als solche aufnehmen, damit sie nicht als Restposten
+danebenliegt.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+---
+
+## DC-100 abgeschaltet und M-2 gebaut (14.09.2026) — beide mit Sperrklinke
+
+Spur 3 Nr. 1 und Nr. 2 aus `arbeitsreihenfolge.md`. Beide klein, beide von
+derselben Sorte: Die Software hatte etwas entschieden, wofür am Ende der
+Handwerker geradesteht.
+
+### DC-100 — Angebote tragen keine E-Rechnung mehr
+
+Sandys Entscheidung vom 13.09.: abschalten. Umgesetzt, aber nicht als
+dreimal `if (false)`.
+
+**Warum nicht.** Dieselbe Bedingung stand in drei Routen (`api/pdf`,
+`api/email`, `api/quotes/[id]/send`), und eine vierte (`api/pdf/xrechnung`)
+erzeugte dieselbe als Rechnung deklarierte XML **ohne jede Bedingung**. Genau
+diese Streuung ist der Grund, warum der Fehler niemandem auffiel — und drei
+abgeschaltete Stellen plus eine vergessene wären derselbe Fehler noch einmal.
+
+**Was jetzt da ist.** `src/lib/zugferd/einbettung.ts`, eine Datei, eine
+Funktion:
+
+```ts
+export const E_RECHNUNG_DOKUMENTTYPEN: readonly DokumentTyp[] = []
+
+export function eRechnungErlaubt(lage: ERechnungLage): boolean {
+  const typ = lage.dokumentTyp ?? 'angebot'
+  if (!E_RECHNUNG_DOKUMENTTYPEN.includes(typ)) return false
+  if (lage.eRechnungAktiv === false) return false
+  return lage.kundeIstUnternehmen === true
+}
+```
+
+Die leere Liste **ist** DC-100. Die Reihenfolge der Prüfung ist Absicht: Der
+Dokumenttyp steht vorne, weil er die rechtliche Frage ist; alles darunter sind
+Einstellungen. Kein Betrieb kann den Schalter so stellen, dass ein Angebot zur
+Rechnung wird.
+
+Alle vier Stellen fragen jetzt diese eine Funktion. Was daran hängt, löst sich
+von selbst mit: der Dateiname `Angebot-…-ZUGFeRD.pdf`, der Header `X-ZUGFeRD`,
+der zusätzliche XML-Anhang, der Satz im Mailtext („Es enthält eine
+eingebettete ZUGFeRD-XML"), und das `zugferd:`-Feld in der Antwort. Der Code
+zum Erzeugen und Einbetten bleibt — er ist in Ordnung, er ist nur nicht mehr
+erreichbar.
+
+**Die XRechnung-Route wird nicht gelöscht, sondern antwortet 410.** Ein
+gesetztes Lesezeichen soll einen Satz bekommen, kein Rätsel:
+*„E-Rechnungen entstehen erst beim Abrechnen. Ein Angebot ist keine Rechnung
+und bekommt deshalb keine E-Rechnungs-Datei."* Der Menüeintrag ist beim
+Product Designer raus.
+
+**Sperrklinke:** `src/lib/__tests__/erechnung-abgeschaltet.test.ts`. Neben der
+Wahrheitstabelle steht dort ein Scan über `src/app/api`: Jede Datei, die
+`zugferd/generateXML` oder `zugferd/embedXML` importiert, **muss**
+`eRechnungErlaubt` abfragen. Eine neue Route, die das vergisst, macht den Test
+rot. Nachgemessen: genau vier Dateien fassen ZUGFeRD an, alle vier fragen.
+
+**Für den Tag mit echten Rechnungen:** `'rechnung'` in
+`E_RECHNUNG_DOKUMENTTYPEN` aufnehmen — alle vier Stellen leben wieder auf,
+ohne dass eine vergessen werden kann. Gegenprobe gemacht.
+
+**Offen bleibt** die zweite Bitte von Legal: das PDF/A-3b-Versprechen einmal
+durch veraPDF oder Mustang schicken. Hängt nicht an dieser Entscheidung.
+
+### M-2 — Mindestauftragswert: Standard 0
+
+**Der Fund war präziser als gedacht.** Nachgesehen, bevor gebaut:
+
+- Die Datenbankspalte `companies.mindestauftragswert` hat **keinen** Default
+  (NULL).
+- `mindestauftragsPosition()` liest NULL bereits als 0, also als „aus".
+- In der Produktionsdatenbank steht bei **keinem einzigen Betrieb** 180 —
+  sechs mal NULL, zwei mal 0.
+
+Die 180 € kamen ausschließlich aus dem Einstellungsformular, und dort aus zwei
+Zeilen: Das Feld zeigte `mindestauftragswert ?? 180`, und beim Speichern ging
+`mindestauftragswert ?? 180` in die Datenbank. Damit genügte **ein Besuch der
+Einstellungen wegen irgendeiner anderen Sache** — IBAN, Steuernummer,
+Logo — um sich einen Mindestauftragswert einzuhandeln, von dem man nichts
+wusste. Manfred hatte ihn deshalb noch nicht gespeichert; er hat ihn im
+Formular stehen sehen und richtig misstraut.
+
+Kein Backfill nötig, keine Migration. Geändert wurde:
+
+- Feld zeigt 0, Platzhalter 0, Speichern schreibt `?? 0`.
+- Die Konstante heißt nicht mehr `MINDESTAUFTRAGSWERT_VORSCHLAG`, sondern
+  **`MINDESTAUFTRAGSWERT_ORIENTIERUNG`**. Die Umbenennung ist kein Kosmetik:
+  Ein Vorschlag, der sich selbst einträgt, war genau der Fehler, und der alte
+  Name lud dazu ein.
+- Die 180 € leben weiter — als Satz im Hilfetext: *„0 € = aus. Es kommt nichts
+  dazu. Wenn du einen Mindestauftragswert willst, trag ihn hier ein — viele
+  Betriebe liegen bei rund 180 €, etwa drei Arbeitsstunden."*
+
+**Sperrklinke:** `src/lib/__tests__/mindestauftragswert.test.ts` scannt
+`src/app` und schlägt an, sobald der Orientierungswert wieder als Ersatzwert
+(`?? …`) oder als Feldinhalt (`value={…}`) auftaucht.
+
+### Die Regel, die beide Punkte teilen
+
+Beide Fehler sahen im Code harmlos aus — ein `??` hier, eine Bedingung dort.
+Beide wurden dadurch gefährlich, dass die Stelle, an der entschieden wird,
+nicht die Stelle war, an der jemand nachsieht. Deshalb steht bei beiden jetzt
+**eine** Entscheidungsstelle und **ein** Test, der prüft, dass niemand daran
+vorbeikommt — nicht zwei richtig gesetzte Werte.
+
+*Head of Product Engineering · 2026-09-14*
+
+---
+
+## CoS-E-052 entschieden — und beim Nachmessen eine scharfe Falle gefunden, die ich selbst gelegt hatte
+
+**Datum:** 2026-09-14 · **An:** Chief of Staff · **Bezug:** Spur 3 Nr. 4,
+gekoppelt an Fassung 3 des Preislisten-Konzepts
+
+Unter der Nummer CoS-E-052 stecken **drei** Defekte, nicht einer. Zwei sind
+erledigt, der dritte war der eigentliche.
+
+### Teil 1 ✅ — Die Kennungen passten nicht
+
+`maler` / `boden_parkett` im Onboarding gegen `malerarbeiten` / `bodenbeläge`
+/ `maler_fassade` in den Vorlagen. Behoben am 12.09. mit der
+Zuordnungstabelle `GEWERK_VORLAGEN`: 18 Gewerk-Kennungen, 0 ohne Treffer
+(vorher 13 von 18). Maler bekommt 83 Vorlagen statt 5, Boden 48.
+
+### Teil 2 ✅ — Die Entsorgungsregel feuerte bei jedem Gewerk
+
+Behoben mit `ENTSORGUNG_STANDARD` (abbruch, entrümpelung, rohbau). Deine
+Bitte — *„nicht mehr bei einem Maler landen, der zweimal im Jahr einen
+Container braucht"* — ist damit erfüllt, und zwar als Liste statt als
+Bedingung, die von einem Fehler abhing.
+
+### Teil 3 🔴 — Zwei Preisquellen, und mein eigener Fix hätte sie scharf gemacht
+
+**Das ist der Punkt, auf den du mit den „zwei parallelen Preisquellen" gezeigt
+hast. Er ist schlimmer als beschrieben.** Nachgemessen am echten Katalog:
+
+| | Maler | Boden |
+|---|---|---|
+| Vorlagen (was er im Onboarding sieht und eintippt) | 83 | 48 |
+| Basis-Katalog (was beim Speichern IMMER eingefügt wird) | 220 | 189 |
+| **Titel, die in beiden vorkommen** | **41** | **35** |
+
+Beide Quellen schreiben in dieselbe Tabelle `price_items`. Ein Titel, der in
+beiden steht, wurde **zweimal** eingefügt — einmal mit dem Marktpreis, einmal
+mit der Zahl, die der Handwerker eingetippt hat.
+
+**Und dann entscheidet nichts mehr.** Der Matcher nimmt bei Gleichstand den
+ersten Treffer (`score > bestScore`, bewusst so), geladen wird mit
+`.order('category').order('title')` — bei identischer Kategorie **und**
+identischem Titel gibt Postgres keine definierte Reihenfolge zurück. Ob im
+Angebot seine 11,50 oder die 9,50 aus dem Katalog steht, wäre von Abfrage zu
+Abfrage offen gewesen.
+
+**Das ist Manfreds „Preise werden ausgewürfelt" (TN-094) — diesmal wirklich
+gewürfelt.** Wir hatten TN-094 am 11.09. als vollständig erklärt abgehakt
+(verschluckte Anstrichzahl, Kniestock schlägt Wand). Diese dritte Ursache lag
+daneben und war nicht dieselbe Art Fehler: Die beiden anderen waren falsch,
+aber wiederholbar. Diese hier ist nicht einmal wiederholbar.
+
+**Warum es trotzdem noch nie passiert ist — und warum das die unangenehme
+Pointe ist.** In der Produktionsdatenbank steht heute **kein einziger**
+doppelter Eintrag (nachgesehen, `group by company_id, category, title, unit
+having count(*) > 1` → leer). Grund: Die Vorlagen wurden wegen Teil 1 nie
+gefunden. Manfred bekam fünf Felder, und fünf generische Posten kollidieren
+mit nichts.
+
+**Mein Fix aus Teil 1 hätte die Falle scharf gemacht.** Ab dem nächsten
+Onboarding im Modus „Eigene Preise" wären es 41 Dopplungen gewesen, beim
+ersten Betrieb, der seine Zahlen eintippt. Ein Fix, der einen zweiten Fehler
+freischaltet, ist kein Fix.
+
+### Die Entscheidung
+
+**Nicht entdoppeln, sondern gar nicht erst zwei Zeilen erzeugen.**
+
+Der Basis-Katalog liefert die Zeilen. Die im Onboarding eingetippten Zahlen
+werden **auf ihn gelegt, bevor er eingefügt wird** — was er nennt, gilt; was
+es im Katalog nicht gibt, kommt als eigene Zeile dazu. Eine Funktion,
+`mischeEigenePreise` in `default-price-selection.ts`, ein Aufrufer im
+Onboarding, kein zusätzlicher Datenbankweg.
+
+Nachgemessen:
+
+```
+maler:         vorher 303 Zeilen (41 davon doppelt) → jetzt 262, doppelt: 0
+boden_parkett: vorher 237 Zeilen (35 davon doppelt) → jetzt 202, doppelt: 0
+Probe "Wand streichen 1x Anstrich": eingetippte 99,99 → im Ergebnis 99,99
+```
+
+Damit bekommt „Eigene Preise" zum ersten Mal eine Wirkung, die sich von
+„Marktpreise" unterscheidet. Bisher war der Unterschied nicht falsch — er war
+gar nicht da.
+
+**Sperrklinke:** `src/lib/__tests__/onboarding-eine-preisquelle.test.ts`.
+Läuft gegen den echten Katalog, für beide aktiven Gewerke, und prüft zusätzlich,
+dass es überhaupt eine Überschneidung gibt — sonst prüfte der Test nichts.
+
+**Warum das VOR dem Tätigkeiten-Umbau gebaut wurde und nicht danach:** Die
+Frage, die du gekoppelt sehen wolltest, war *„werden die Kennungen
+angeglichen"* — die ist gekoppelt und unten beantwortet. Die Dopplung ist es
+nicht. Sie ist seit meinem Commit vom 12.09. eine geladene Waffe, und sie
+wird durch den Umbau nicht kleiner, sondern größer (mehr Tätigkeiten, mehr
+Vorlagen, mehr Überschneidung).
+
+### Und die eigentliche Koppelungsfrage: wie wird geschnitten?
+
+**Die Zuordnungstabelle bleibt und ist die richtige Form — unabhängig vom
+Umbau.** Sie bildet ab: *was der Nutzer gewählt hat* → *welche
+Vorlagenschlüssel gelten*. Genau diese Zwischenschicht macht den
+Tätigkeiten-Umbau billig, weil er nur die **linke** Seite ändert:
+
+| heute | nach dem Umbau |
+|---|---|
+| `maler: ['malerarbeiten', 'maler_fassade']` | `maler_innen: ['malerarbeiten']`<br>`fassade: ['maler_fassade']` |
+| `boden_parkett: ['bodenbeläge']` | `boden: ['bodenbeläge']` |
+
+**Kein Angleichen der Kennungen, keine Umbenennung in der Datenbank, keine
+Migration.** Die alten Werte in `companies.gewerke` bleiben als Einträge in
+derselben Tabelle stehen und zeigen weiter auf dasselbe — bestehende Betriebe
+merken nichts.
+
+Und ein Nebeneffekt, der für sich allein den Umbau rechtfertigt: Heute
+bekommt ein reiner Innen-Maler über `maler` **41 Fassadenzeilen**, die er nie
+braucht. Der Umbau nimmt sie ihm ab, ohne dass jemand eine Zeile pflegen muss.
+
+Der Vollständigkeit halber, weil es die Richtung bestätigt: `maler_fassade`
+existiert in den Vorlagen bereits als eigener Schlüssel mit 41 Einträgen.
+**Die Vorlagen kennen die Tätigkeitsebene längst, nur die Oberfläche nicht.**
+
+### Was mir das über meine eigene Arbeitsweise sagt
+
+Ich habe am 12.09. gemessen, ob die Vorlagen jetzt **gefunden** werden — 13
+von 18 Kennungen ohne Treffer auf 0. Das war die richtige Zahl für die Frage,
+die ich mir gestellt hatte. Ich habe nicht gemessen, **was mit ihnen
+passiert, nachdem sie gefunden wurden.** Die Dopplung stand zwei Bildschirme
+weiter unten in derselben Datei.
+
+Regel für mich: **Wenn ein Fix einen Pfad zum ersten Mal erreichbar macht,
+ist der Pfad ab da neuer Code** — auch wenn er seit einem Jahr dasteht und
+nie angefasst wurde. Er gehört gelesen, nicht vorausgesetzt.
+
+*Head of Product Engineering · 2026-09-14*
+
+---
+
+## CoS-E-053 — Schritt 3 und die Rechenseite von Schritt 4 stehen (14.09.2026)
+
+Die Reihenfolge aus `preisliste-konzept.md` Fassung 3, Abschnitt 8. Schritte 1
+und 2 waren schon erledigt (Vokabular, Dopplungen). Heute dazugekommen:
+
+### Schritt 3 — der Materialanteil, mit dem Test vorweg
+
+Der Prüfmeister hat verlangt, dass der Test **vor** dem Knopf geschrieben
+wird. Ist er. Die Zusicherung, um die es geht, steht in
+`materialanteil.test.ts` und läuft über den ganzen Katalog: **`arbeit +
+material` ergibt auf den Cent den ursprünglichen Preis** — nicht ungefähr.
+Deshalb wird nur das Material gerundet und die Arbeit als Rest gebildet, nie
+beides einzeln.
+
+**Absolut, nicht prozentual.** Ein Liter Wandfarbe wird nicht teurer, weil der
+Betrieb einen höheren Stundensatz hat. Wer seinen Preis anhebt, hebt seine
+Arbeit an. Ein Prozentsatz würde bei jeder Preiserhöhung stillschweigend
+mitwachsen.
+
+**Die Herleitung** läuft dagegen über einen Anteil, weil die Faustregel so
+formuliert ist. Warum ich die fünf Euro-Werte des Prüfmeisters **nicht** in
+den Katalog geschrieben habe: Sie stammen von Manfreds Preisniveau (Wand 2x =
+11,50), der Katalog steht bei 9,50. Ein absoluter Wert aus einer fremden
+Preiswelt wäre genau die stille Falschheit, die wir sonst überall wegräumen.
+Seine Zahlen stehen deshalb im Test als **Prüfstein**: Unsere Anteile, gegen
+seine Preise gerechnet, müssen seine Beträge treffen. Tun sie (2,88 gegen
+3,00 · 2,75 gegen 2,50 · 2,50 gegen 2,50).
+
+`price_items.material_anteil` ist angelegt, in Produktion **und** Staging,
+idempotent, im Registry-Check als Nr. 61. Kein Backfill, kein Default: NULL
+heißt „nicht selbst gesetzt", und dann wird abgeleitet. Das ist besser als ein
+eingefrorener Backfill — ändert der Betrieb seinen Preis, stimmt der
+abgeleitete Anteil weiterhin, ein gebackfillter nicht mehr.
+
+**Zwei Dinge, die der Test gefunden hat, bevor es jemand anderes musste:**
+
+**1. Meine Obergrenze war falsch.** Ich hatte „nie über ein Drittel" auf alles
+angewandt. Der Prüfmeister hatte zwei Bänder genannt, nicht eines — für
+Fassade und Boden ausdrücklich *„ein Drittel bis die Hälfte"*. Der Test wurde
+rot, zu Recht.
+
+**2. Der Schalter griff in fremde Gewerke.** Über das Verb „verlegen" bekamen
+Erdkabel, Drainagerohre, Teichfolie, Bewässerungsschläuche,
+Luftdichtigkeitsbahnen, Natursteinpflaster und PVC-Fenster („inkl. Element")
+einen Materialschalter. Aus keinem dieser Berufe hat uns jemand etwas zum
+Material gesagt. Das wäre dieselbe stille Entscheidung wie beim
+Mindestauftragswert — nur in einem Bereich, in dem sie niemandem aufgefallen
+wäre.
+
+Drei Grenzen, die daraus entstanden sind und die ich für die wichtigere Hälfte
+der Arbeit halte:
+
+- **Zubehör sperrt vor Material.** Manfreds Liste wörtlich (Trittschall,
+  Kleber, Übergangsprofil) plus dieselbe Familie. Nötig, weil
+  „Teppich**unterlage** verlegen" das Wort Teppich enthält und
+  „**Sockelleiste** / Fliesensockel verlegen" das Wort Fliesen. Ohne diesen
+  Vorrang zöge der Schalter dem Bodenleger genau die Zeilen auseinander, die
+  zusammengehören.
+- **Rückbau und Reinigung nennen einen Belag und verbrauchen keinen.**
+  „Teppichboden entfernen + entsorgen", „Parkett reinigen und pflegen". Wer
+  hier einen Schalter hinsetzt, bietet an, den Belag, den er herausreißt, vom
+  Kunden stellen zu lassen.
+- **„streichfertig" ist kein Anstrich.** Ein Q3-Spachtel verbraucht keine
+  Farbe.
+
+Ergebnis: **140 Katalogzeilen** bekommen einen Schalter — Maler 84, Boden 45,
+Fliesen 5, Fassade 6. Kein fremdes Gewerk, und ein Test hält das fest.
+
+### Schritt 4 — die Rechenseite. Der Bildschirm ist DC-102.
+
+`src/lib/taetigkeiten.ts`: fünf Tätigkeiten, jede mit ihrem Material-Standard,
+ihren Vorlagenschlüsseln und ihren Katalogrubriken. Dazu die Übersetzung aus
+den alten Gewerk-Kennungen — **ohne Migration**: `companies.gewerke` bleibt
+stehen und bedeutet weiter dasselbe.
+
+**Den Bildschirm baue ich nicht.** Das ist DC-102 beim Product Designer, und
+Spur 4 Nr. 3 sagt ausdrücklich „Entwerfen ja, einbauen noch nicht". Was er
+braucht, liegt jetzt bereit: die Haken, die Beschriftungen, die Standards und
+was ein Antippen bewirkt.
+
+**Auch hier hat das Bauen einen Fehler in meinem eigenen Konzept gefunden.**
+In Fassung 3 stand „Tapezieren · **ohne Tapete**". Manfred zählt Vlies aber
+unter *„Innen (Wand, Decke, Lack, Vlies)"* auf — mit Material **drin**. Ich
+hatte aus seinem Beispiel für den *seltenen* Fall (*„Vlies tapezieren immer
+ohne Tapete"* — genau der Fall, für den er ausdrücklich keine eigene Ebene
+wollte) einen *Standard* gemacht. Korrigiert, und im Konzept als Korrektur
+kenntlich.
+
+Und ein zweiter, kleinerer: Meine Rubrikliste für „Innen" zählte die
+Kategorien einzeln auf und übersah zwei — „Maler – Bodenbeschichtung" (Boden
+streichen) und „Maler – Stuck & Dekorative Techniken" (Stuckleisten
+streichen). Jetzt eine Auffangregel: alles aus dem Maler-Katalog gehört zu
+Innen, außer was eine längere Rubrik beansprucht. Eine Aufzählung veraltet mit
+der nächsten neuen Rubrik, eine Auffangregel nicht.
+
+### Was als Nächstes dran ist — und woran es hängt
+
+| Schritt | Lage |
+|---|---|
+| 5 · Knopf an der Zeile | Rechenseite steht (`teileMaterialAb`, `halbsatz`, `kundensatz`). **Oberfläche wartet auf DC-102.** |
+| 6 · Preisliste dreigeteilt | frei, kein Blocker |
+| 7 · Rückfrage im Angebot statt „Preis fehlt" | frei |
+| 8 · Onboarding mit Tätigkeiten | wartet auf DC-102 |
+| 9 · Lernfrage nach dem dritten Mal | zuletzt, braucht Nutzung |
+
+**An den Product Designer:** Für DC-102 steht die Datenseite bereit. Sag
+Bescheid, wenn du für den Entwurf etwas brauchst, das anders geschnitten sein
+müsste — jetzt ist es billig zu ändern.
+
+**An den Prüfmeister:** Deine Probe („Angebot mit beiden Logiken nebeneinander,
+Material herausziehen, nachrechnen ob die Summe um genau den Materialanteil
+fällt") lässt sich für die Rechenseite schon jetzt fahren. Was noch fehlt, ist
+der Knopf, der sie in der laufenden App auslöst.
+
+*Head of Product Engineering · 2026-09-14*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

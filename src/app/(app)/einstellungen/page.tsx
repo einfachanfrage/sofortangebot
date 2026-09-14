@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { MINDESTAUFTRAG_BEZEICHNUNG, MINDESTAUFTRAGSWERT_VORSCHLAG } from '@/lib/gewerke-config'
+import { MINDESTAUFTRAG_BEZEICHNUNG, MINDESTAUFTRAGSWERT_ORIENTIERUNG } from '@/lib/gewerke-config'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -39,10 +39,12 @@ export default function EinstellungenPage() {
   const [regionalManual, setRegionalManual] = useState(false)
   const [angebotGueltigTage, setAngebotGueltigTage] = useState(30)
   const [materialpreisHinweis, setMaterialpreisHinweis] = useState(false)
-  // NULL = nie eingestellt (Migration 20260907140000). Das Formular schlägt
-  // dann 180 € vor; 0 bleibt „bewusst aus". Ohne diese Unterscheidung wären
-  // „nie angefasst" und „ausgeschaltet" derselbe Zustand, und ein Vorschlag
-  // hätte bestehenden Betrieben ungefragt Geld in die Angebote gerechnet.
+  // M-2 (Sandy, 14.09.2026 — TN-142): Standard ist 0, also AUS. NULL heißt
+  // weiterhin „nie eingestellt" (Migration 20260907140000), wird aber im
+  // Formular wie 0 angezeigt und wie 0 gespeichert. Genau hier lag der
+  // Fehler: Das Feld trug 180 € vor, und wer die Einstellungen wegen seiner
+  // IBAN geöffnet und gespeichert hatte, hatte danach einen
+  // Mindestauftragswert, von dem er nichts wusste.
   const [mindestauftragswert, setMindestauftragswert] = useState<number | null>(null)
   const [kleinAktiv, setKleinAktiv] = useState(true)
   const [kleinBetrag, setKleinBetrag] = useState(25)
@@ -149,9 +151,9 @@ export default function EinstellungenPage() {
       regionaler_preisfaktor_prozent: regionalFaktor,
       angebot_gueltig_tage: angebotGueltigTage,
       materialpreis_hinweis_aktiv: materialpreisHinweis,
-      // Nie eingestellt: Der Vorschlagswert wird beim Speichern übernommen —
-      // er steht sichtbar im Feld, der Handwerker sieht ihn, bevor er speichert.
-      mindestauftragswert: mindestauftragswert ?? MINDESTAUFTRAGSWERT_VORSCHLAG,
+      // M-2: Nie eingestellt heißt 0. Speichern darf nichts aktivieren, was
+      // der Betrieb nicht selbst eingetragen hat.
+      mindestauftragswert: mindestauftragswert ?? 0,
       e_rechnung_aktiv: eRechnungAktiv,
       abrechnungs_modus: abrechnungsModus,
       angebot_struktur: angebotStruktur,
@@ -473,9 +475,9 @@ export default function EinstellungenPage() {
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
-                  value={mindestauftragswert ?? MINDESTAUFTRAGSWERT_VORSCHLAG}
+                  value={mindestauftragswert ?? 0}
                   onChange={e => setMindestauftragswert(Number(e.target.value) || 0)}
-                  placeholder={String(MINDESTAUFTRAGSWERT_VORSCHLAG)}
+                  placeholder="0"
                   min={0}
                   step={10}
                 />
@@ -485,22 +487,19 @@ export default function EinstellungenPage() {
                   mit Vorschlag zur Kleinstauftragspauschale" — passiert ist
                   nie etwas, die Einstellung wurde nirgends gelesen. Jetzt
                   beschreibt der Text, was das Produkt tatsächlich tut. */}
-              {mindestauftragswert === null ? (
-                <p className="text-xs text-anthracite/40 font-semibold mt-1.5">
-                  Vorschlag: {MINDESTAUFTRAGSWERT_VORSCHLAG} € — rund drei Arbeitsstunden. Mit dem
-                  Speichern wird er aktiv: Bleibt ein Angebot darunter, kommt die Position
-                  „{MINDESTAUFTRAG_BEZEICHNUNG}" mit dem Differenzbetrag dazu. Du siehst sie im
-                  Entwurf und kannst sie entfernen. Trag 0 ein, wenn du das nicht willst.
-                </p>
-              ) : mindestauftragswert > 0 ? (
+              {mindestauftragswert && mindestauftragswert > 0 ? (
                 <p className="text-xs text-anthracite/40 font-semibold mt-1.5">
                   Bleibt ein Angebot unter {mindestauftragswert} € netto, kommt die Position
                   „{MINDESTAUFTRAG_BEZEICHNUNG}" mit dem Differenzbetrag dazu. Du siehst sie im
                   Entwurf und kannst sie entfernen.
                 </p>
               ) : (
-                <p className="text-xs text-anthracite/30 font-semibold mt-1.5">
-                  0 € = deaktiviert. Kein Mindestauftragswert.
+                <p className="text-xs text-anthracite/40 font-semibold mt-1.5">
+                  0 € = aus. Es kommt nichts dazu. Wenn du einen Mindestauftragswert willst,
+                  trag ihn hier ein — viele Betriebe liegen bei rund
+                  {' '}{MINDESTAUFTRAGSWERT_ORIENTIERUNG} €, etwa drei Arbeitsstunden. Bleibt ein
+                  Angebot darunter, kommt die Position „{MINDESTAUFTRAG_BEZEICHNUNG}" mit dem
+                  Differenzbetrag dazu.
                 </p>
               )}
             </Field>

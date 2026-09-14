@@ -1,185 +1,135 @@
-# Nachtestplan — Stand 07.09., nachmittags
+# Nachtestplan 07.09. — abgearbeitet am 14.09.2026
 
-> **GRÜN FÜR ALLE DREIZEHN.** Commit **dadf67b** ist gepusht und seit 12:03 als
-> Produktions-Deployment `dpl_FoZKUk1Jo5zpxw3y5jnvHV37p1Ci` **READY**. Er
-> enthält alle heutigen Fixes: `boden.ts` (MUSTER_KATALOG),
-> `positions-untertitel.ts`, `raum-geometrie.ts`, `vob-uebermessung.ts`,
-> `maler.ts`. Der Arbeitsbaum ist sauber — es liegt nichts mehr unversioniert
-> herum.
->
-> Damit sind die vier Läufe von 11:51 bis 11:57 (PM-025, PM-013, PM-033,
-> PM-002) gegen den alten Stand gelaufen und müssen wiederholt werden. Alle
-> Soll-Zahlen unten gelten unverändert.
+**Diese Datei ersetzt den Arbeitszettel vom 07.09.** Der alte Stand („grün für
+alle dreizehn, bitte einsprechen") ist erledigt: Die dreizehn Fälle sind
+nachgerechnet, nicht mehr von Hand eingesprochen, sondern als Code hinterlegt.
+Was von Hand bleibt, steht ganz unten.
 
 ---
 
-## Lage
+## Wie geprüft wurde
 
-Ich habe die Fixes im Code nachgesehen, nicht nur die Notiz gelesen. **Alle acht
-Punkte meiner Restliste sind erledigt** — Untertitel, Fischgrätpreis,
-Belag-Etikett, Erschwerniszuschlag neben Q2, Abkleben neben Streichen,
-Dachgeschoss, Leibungen, Rechenweg. Es steht kein bekannter Code-Fund mehr offen.
+Sandys Rechner ist seit dem 12.09. nicht erreichbar (Windows-Update vom
+08.09.). Geprüft wurde deshalb in einer Ersatzumgebung, mit dem echten Code
+und dem echten Standardkatalog, über **dieselbe Pipeline wie das Produkt**:
 
-Drei Anmerkungen zur Liste des Engineers, damit du nicht falsch losläufst:
+```
+verarbeiteExtraktion → berechneMengen → Vollständigkeitsprüfung → Preis-Matcher
+```
 
-**1. Drei Fälle in seiner Liste sind längst grün.** PM-006, PM-010 und PM-018
-wurden am 04.09. mit der VOB-Übermessung nachgetestet und stehen seitdem auf ✅.
-Sein Eintrag „Haken vor der VOB-Übermessung zurückgezogen" ist vom 02.09. und
-inzwischen überholt. **Die drei sparst du dir.**
+Nicht abgedeckt bleibt der KI-Schritt davor (aus Sprache wird Struktur). Die
+Raumdaten sind so gesetzt, wie die Extraktion sie bei korrekter Arbeit liefern
+muss. Weicht sie live davon ab, ist das ein Extraktionsfund und kein
+Rechenfehler.
 
-**2. PM-002 muss dagegen neu — aber aus einem anderen Grund als bei ihm.** Der
-Fall war grün. Der Fischgrät-Fix greift auch für die **Diagonalverlegung**, und
-PM-002 ist der einzige Diagonalfall im Bestand. Damit entsteht dort eine neue
-Position, die es beim letzten Lauf nicht gab.
-
-**3. Zwei Fälle fehlen in seiner Liste ganz:** **PM-033** (Fischgrät im
-Wohnzimmer — bekommt genauso eine Aufpreiszeile) und **PM-032** (das
-Belag-Etikett). Beide sind unten drin. Ohne sie wäre die Reihe nicht durch.
-
-**Reihenfolge:** Block A zuerst — dort ändern sich Positionszahlen, da will ich
-zuerst wissen, ob die Summen stimmen. Block B ist Textprüfung und geht schnell.
+**Gesamtlauf: 631 Tests, 628 grün**, zwei rot aus Umgebungsgründen (zwei
+Dateien, die es nur im vollständigen Projekt gibt), plus eine bewusste
+Sperrklinke (siehe PM-013).
 
 ---
 
-## Block A — neue Positionen, neue Summen *(fünf Fälle)*
+## Die dreizehn Fälle
 
-Hier kommt jeweils **eine Position dazu** oder ein Titel wird ersetzt. Auf die
-Positionszahl achten: Karte und Entwurf müssen dieselbe zeigen.
+**Sieben standen längst als Soll-Test hinterlegt** und laufen grün, ohne dass
+sie jemand einsprechen muss: PM-021, PM-022, PM-025, PM-026, PM-012, PM-030,
+PM-031 (`pruefmeister-soll.test.ts`, 111 Prüfungen).
 
-### PM-025 — Vinyl-Fischgrät, Titel wird ersetzt
+**Sechs standen nirgends.** Die sind jetzt neu hinterlegt in
+`src/lib/__tests__/pruefmeister-nachtest-0709.test.ts`:
 
-> Gästezimmer, vier Meter mal drei Meter fünfzig, eine Tür normal Maß. Vinylboden im Fischgrätmuster verlegen. Sockelleisten werden auch neu montiert, passend zum Fischgrätmuster.
-
-- Titel muss **„Designbelag im Fischgrätmuster kleben"** heißen, **36,00 €/m²**
-- 16,10 m² × 36,00 = **579,60 €** · Sockelleisten 15,00 lfdm × 5,50 = 82,50 €
-- **Keine** zusätzliche Aufpreiszeile — bei Vinyl ersetzt der Eintrag den Titel
-
-### PM-013 — Parkett-Fischgrät, Aufpreis als eigene Zeile
-
-> Wohnzimmer, acht mal viereinhalb. Eichenparkett, Fischgrät verlegt, das braucht ja mehr Verschnitt. Ist schon ne große Fläche, da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte mit rein. Boden nur, an den Wänden machen wir nix. — Flur daneben, fünf mal eins achtzig, Höhe zwo sechzig. Kein Fenster da, aber eine Tür, normal Maß. Nur Wände und Decke streichen, zweimal. Da wird nix am Boden gemacht, der bleibt wie er ist.
-
-- Parkettposition bleibt **41,40 m²**, Titel bleibt
-- **Neu: „Aufpreis Fischgrät-Verlegemuster" 41,40 m² × 14,00 = 579,60 €**
-- Dehnungsfuge weiter mit Preis · Flur-Sockelleisten 13,60 lfdm
-- Wohnzimmer weiterhin **ohne jede Wandposition**
-
-### PM-033 — Fischgrät nur in einem von drei Räumen
-
-> Wohnzimmer, sechs mal vier fünfzig, da kommt Eichenparkett rein, Fischgrät verlegt. Schlafzimmer, vier mal drei sechzig, da wollen die Teppich, Bahnenware. Flur, fünf mal eins fünfzig, da kommt Laminat, ganz normal gerade. An den beiden Türen zum Wohnzimmer und zum Schlafzimmer jeweils eine Übergangsschiene, weil ja unterschiedliche Beläge. Trittschall nur unterm Laminat im Flur. Sockelleisten bleiben überall, wie sie sind.
-
-- **Neu: „Aufpreis Fischgrät-Verlegemuster" 31,05 m² × 14,00 = 434,70 €** —
-  **nur im Wohnzimmer.** Teppich und Laminat dürfen keine Aufpreiszeile bekommen
-- Mengen unverändert 31,05 / 14,40 / 7,88 m² · zwei Schienen · keine Sockelleisten
-
-### PM-002 — Diagonalverlegung, war grün, ändert sich jetzt
-
-> Schlafzimmer, vier mal dreieinhalb, Höhe zwo sechzig. Drei Wände weiß streichen, zweimal. Die Wand hinterm Bett kriegt Tapete, sozusagen Akzentwand, der Rest bleibt weiß. Ein Fenster, eine Tür, normal. Boden kriegt Klick-Vinyl, diagonal verlegt. Sockelleisten werden neu montiert, nicht gestrichen, nur montiert.
-
-- Belag bleibt **Klick-Vinyl 16,10 m²** zu **16,00 €/m²**
-- **Neu: „Aufpreis Diagonalverlegung Vinyl" 16,10 m² × 8,00 = 128,80 €**
-- Unverändert: Akzentwand 9,10 · Restwände 29,90 · Trittschall 14,00 ·
-  Sockelleisten montieren 15,00 lfdm · **keine** Deckenposition
-
-### PM-032 — das Belag-Etikett, zwei Läufe
-
-> Erdgeschosswohnung. Flur, sechs mal eins zwanzig. Wohnzimmer, fünf mal vier. Küche, drei mal zwo achtzig. Überall dasselbe Klick-Vinyl, gerade verlegt, durchgehend ohne Schwellen — das läuft von der Küche durch den Flur ins Wohnzimmer. Trittschalldämmung drunter. Nur zum Bad hin kommt eine Übergangsschiene, im Bad selbst machen wir nichts. Sockelleisten überall neu, weiße MDF. Jeder Raum hat eine normale Tür.
-
-- Titel **„Klick-Vinyl"** mit **16,00 €/m²** — nicht „Vinyl-Boden" mit 22,00
-- Belag 37,38 m² · Dämmung 35,60 m² · eine Schiene · Sockelleisten 44,00 lfdm
-- **Diesen Fall bitte zweimal einsprechen.** Der Fehler trat in einem von vier
-  Läufen auf; ein einzelner grüner Lauf beweist nichts. Der Fix nimmt jetzt das
-  gesprochene „Klick" statt des Modellfelds — genau deshalb will ich zwei Läufe
+| Fall | Stand | Soll getroffen |
+|---|---|---|
+| **PM-037** Leibungen und Fensterbänke | ✅ **grün, zum ersten Mal** | Leibungen 1,60 m² dreiseitig · Fensterbänke 0,60 m² · Wand 46,80 · Boden 20,00 · Sockel 18,00 lfdm · beide Kleinteilzeilen mit 45,00 €/m² |
+| **PM-011** Q2 ohne Untergrund-Zuschlag | ✅ grün | Q2 über die echte Wandfläche 36,00 m² zu 9,00 € · kein „schwieriger Untergrund" · Altbau bleibt · Sockel 14,40 |
+| **PM-032** Klick-Vinyl durchgehend | ✅ grün | Titel „Klick-Vinyl" zu 16,00 € (nicht 22,00) · Belag 37,38 · Dämmung 35,60 · Sockel 44,00 lfdm · eine Schiene |
+| **PM-033** Fischgrät in einem von drei Räumen | ✅ grün | 31,05 / 14,40 / 7,88 · Aufpreiszeile **nur** im Wohnzimmer · Trittschall nur im Flur · keine Sockelleisten |
+| **PM-013** Parkett-Fischgrät | ⚠️ **grün bis auf einen Fund** | 41,40 m² · Aufpreiszeile 41,40 × 14,00 · keine Wandposition — **aber die Dehnungsfuge fehlt** |
+| **PM-002** Diagonalverlegung + Akzentwand | ⏸ **nicht hier prüfbar** | Maler-Hälfte stimmt (Akzentwand 9,10 · Restwand 29,90 · keine Decke). Der Boden-Teil hängt an der Gewerke-Aufteilung, die erst der KI-Schritt liefert — gehört in den Live-Lauf |
 
 ---
 
-## Block B — Texte und Einzelfunde *(acht Fälle, gehen schnell)*
+## Der Fund: PM-013-A — die Dehnungsfuge entsteht nirgends
 
-### PM-021 — Untertitel bei 1x-Anstrich + Klammer im Rechenweg
+Im Diktat steht *„da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte
+mit rein"*. Nachgestellt, mit der Dehnungsfuge zusätzlich als Arbeit in der
+Extraktion: **es entsteht keine Position.** Im Quelltext erzeugt sie auch
+niemand — kein Treffer in `boden.ts` oder den Vollständigkeits-Dateien.
 
-> Wohnküche, sechs mal fünf, Höhe zwo sechzig. Zwei Fenster: eins ist eins zwanzig mal eins vierzig, das andere achtzig mal eins zehn. Zwei Türen: eine normal Maß, die andere eine breite Terrassentür, zwei Meter mal zwo zehn. Wände streichen, einmal drüber reicht.
+Der Katalog hat sie sogar doppelt, mit zwei Einheiten:
 
-- Untertitel muss **„einlagig"** sagen, nicht „2-fach"
-- Rechenweg: die Klammer darf **nur die Terrassentür** listen (`[2×2.1]`),
-  nicht mehr beide. Die Zimmertür steht im Übermessungs-Hinweis darunter
-- Mengen unverändert: Wand **53,00 m²**, Sockelleisten **20,00 lfdm**
+```
+Dehnungsfuge mit Bewegungsprofil herstellen   18,00 €/lfdm
+Dehnungsfuge einbauen                         45,00 €/Stück
+```
 
-### PM-022 — Untertitel Decke
+**Warum das mehr ist als eine fehlende Zeile:** Ein Parkett über 40 m² ohne
+Dehnungsfuge wölbt sich. Die Position fehlt im Angebot, die Arbeit macht der
+Handwerker trotzdem — oder er verlässt sich auf die Liste, und dann hat er in
+zwei Jahren eine Reklamation, die ihn mehr kostet als die Fuge.
 
-> Schlafzimmer, vier Meter fünfzig mal drei Meter achtzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke einmal mit. Ein Fenster, Standardmaß, eine Tür, normal.
+**Soll:** Fällt „Dehnungsfuge", „Bewegungsfuge" oder „Randfuge" im Diktat,
+entsteht eine Position. Ohne Meterangabe **keine geschätzte Menge**, sondern
+sichtbarer Platzhalter — dieselbe Regel wie bei den Fugenmetern (E.1 in
+`vokabular-abgleich.md`). Und eine der beiden Katalogzeilen muss weg: eine
+Arbeit, eine Einheit. **Meine Entscheidung: lfdm zu 18,00 €** — eine
+Dehnungsfuge wird in Metern gelegt, nicht in Stück.
 
-- Wand-Untertitel **zweilagig**, Decken-Untertitel **einlagig**
-- Sockelleisten 16,60 lfdm, Mengen sonst unverändert
-
-### PM-026 — beide Anstrichzahlen in einem Raum
-
-> Küche, vier Meter zwanzig mal drei Meter sechzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke reicht einmal. Zwei Fenster, Standardmaß, eine Tür, normal.
-
-- Wand „2x" / **zweilagig**, Decke „1x" / **einlagig** — der schärfste Test für
-  den Fix, weil beide Fälle nebeneinander stehen
-- Mengen 39,00 · 15,12 · 15,12 · 15,60, Preise 11,50 / 7,00 / 1,20 / 0,80
-
-### PM-011 — kein Zuschlag neben der Q2-Spachtelung
-
-> Ähm, Arbeitszimmer, vier mal drei zwanzig, Höhe zwo fünfzig. Ist n Altbau, die Wände sind ordentlich uneben — die müssen komplett gespachtelt werden, Qualitätsstufe Q2, nicht nur ne kleine Ausbesserung, wirklich die ganze Fläche. Danach zweimal streichen. Ein Fenster, Standardmaß, eine Tür, normal. Sockelleisten kleben wir ab, die bleiben wie sie sind.
-
-- **Kein** „Erschwerniszuschlag schwieriger Untergrund" mehr
-- Altbau-Zuschlag **darf** bleiben · Sockelleisten 14,40 lfdm
-- Grundierung als Vorschlag ist richtig so
-
-### PM-012 — eine Sockelleistenposition, nicht zwei
-
-> Esszimmer, viereinhalb mal drei, Höhe zwo fünfundfünfzig. Wände streichen, zweimal drüber, ganz normal. Die Sockelleisten bleiben genau wie sie sind, die werden NICHT neu gemacht, die NICHT demontiert — die sollen nur nochmal mitgestrichen werden, in der gleichen Farbe wie die Wand. Ein Fenster, Standardgröße, eine Tür, normal Maß.
-
-- Genau **eine** Sockelleistenposition: „streichen", **15,00 lfdm**
-- Kein „abkleben" daneben · Karte und Entwurf müssen dieselbe Positionszahl zeigen
-
-### PM-030 — Dachgeschoss, drei Funde auf einmal
-
-> Dachzimmer, vier Meter fünfzig mal vier Meter. Kniestock ist eins Meter hoch. Die Dachschrägen zusammen ergeben achtzehn Quadratmeter. Ein Dachfenster drin, normale Größe. Wände, Schrägen und Kniestock alles zweimal streichen.
-
-- Dachschrägen **18,00 m²** in Karte **und** Entwurf — kein Dachfensterabzug
-  (letztes Mal 16,80 auf der Karte, 17,08 im Entwurf: zwei verschiedene Abzüge
-  in einem Lauf)
-- „Sockelleisten abkleben" **17,00 lfdm** muss im Entwurf noch da sein
-- Kein rotes „!" bei der Raumhöhe
-
-### PM-037 — Leibungen und Fensterbänke
-
-> Wohnzimmer, fünf mal vier, Höhe zwo sechzig. Wände zweimal streichen. Zwei Fenster, jeweils eins zwanzig mal einen Meter, die Leibungen werden mitgestrichen, fünfundzwanzig Zentimeter tief. Die Fensterbänke werden auch gestrichen. Eine Tür, normal Maß.
-
-- **Fensterleibungen 1,60 m²** — dreiseitig gerechnet, nicht 2,20 rundherum
-- **Fensterbänke 0,60 m²** als eigene Position, und diese Fläche darf nicht
-  zusätzlich in der Leibung stecken
-- Wand 46,80 m² · Boden schützen 20,00 · Sockelleisten abkleben 18,00 lfdm
-- Der Fall lief bisher **nie** durch — hier entstehen die Positionen zum ersten Mal
-
-### PM-031 — Fassade, und diesmal mit Bearbeiten
-
-> Fassade an der Nordseite, zehn Meter lang, Wandhöhe fünf Meter. Zwei Fenster drin, jeweils eins zwanzig mal eins vierzig. Einmal Fassadenfarbe drauf.
-
-- „So gerechnet" muss **50,00 m²** zeigen — dieselbe Zahl wie die Position
-- **Und dann der eigentliche Test:** in der Bearbeiten-Ansicht ein Raummaß
-  anfassen (z. B. die Länge auf 10 m bestätigen oder kurz ändern und
-  zurückstellen) und schauen, ob die Menge **stehen bleibt**. Vorher fielen dort
-  49 € je Raum weg, sobald jemand sein eigenes Aufmaß nachgebessert hat
+Der Test dazu steht als `it.fails` in der neuen Datei. Er ist heute grün, weil
+der Fund bestätigt ist — **sobald jemand die Position baut, wird er rot und
+zwingt dazu, ihn zurückzustellen.** Sperrklinke statt Schweigen.
 
 ---
 
-## Ohne Diktat, kannst du nebenbei machen
+## Nebenbefund am Testaufbau — der Grund, warum PM-037 „nie durchlief"
 
-- **PM-014** — Angebot bis zum Entwurf, dann zweimal schnell auf „Angebot
-  erstellen". Es darf **genau ein** Angebot entstehen. Nummer und Summe an mich.
-- **PM-015** — frisches Testkonto, Onboarding „manuell", dann `/preise` öffnen:
-  erwartet rund **340 Positionen**, nicht null.
+`pruefmeister-soll.test.ts` ruft `berechneMengen` **direkt** mit handgebauten
+Räumen und überspringt damit `verarbeiteExtraktion`. Alles, was erst dort
+entsteht, kann dieser Test grundsätzlich nicht sehen: **Leibungen,
+Fensterbänke, Zahlwörter, Maßreparatur, Mehrgewerk-Aufteilung.**
+
+PM-037 war also nicht kaputt — er wurde an der Stelle geprüft, an der seine
+Positionen noch gar nicht existieren. Die neue Datei läuft über die Pipeline.
+**Empfehlung ans Engineering:** den Soll-Test auf denselben Einstieg umstellen,
+sonst prüft er auf Dauer weniger, als er behauptet. Dieselbe Lehre wie beim
+Abgleich-Skript am 12.09.
 
 ---
 
-## Was danach steht
+## Zwei Richtwerte, die im Katalog auf mich warteten
 
-Wenn diese dreizehn durch sind: **37 Fälle, alle grün, kein bekannter
-Rechenfehler in Maler und Boden.** Dann fangen die neuen Batches an —
-Bad/Fliesen, Treppen, Fenster und Türen lackieren, Abriss und Entsorgung,
-mehrere Aufnahmen pro Angebot, Selbstkorrektur mitten im Diktat.
+- **Fassadenleibung** (`Fensterleibungen streichen`, Maler – Anstrich Außen):
+  steht zum selben Satz wie innen, mit dem Vermerk „der Prüfmeister
+  entscheidet". Entscheidung: **35,00 €/m²**, nicht 45,00. Außen ist die
+  Fläche gröber und der Farbverbrauch höher, aber die Feinarbeit an der Kante
+  entfällt weitgehend — und das Gerüst steht ohnehin als eigene Position.
+- **Dehnungsfuge**: 18,00 €/lfdm, siehe oben.
 
-*Prüfmeister · 2026-09-07 · Arbeitszettel, wird gelöscht wenn alles grün ist ·
-Ergebnisse nach `pruefmeister-testfaelle.md`*
+---
+
+## Was von Hand bleibt — Live-Lauf in der App
+
+Nicht mit Code prüfbar, gehört in Spur 6:
+
+1. **PM-002 komplett** — gemischtes Angebot, Maler und Boden in einem Raum.
+2. **PM-032 zweimal einsprechen** — der Fehler trat in einem von vier Läufen
+   auf. Ein grüner Lauf beweist da nichts, auch kein grüner Test.
+3. **PM-031, zweiter Teil** — Raummaß in der Bearbeiten-Ansicht anfassen und
+   sehen, ob die Menge stehen bleibt. Das ist Oberfläche, nicht Rechnung.
+4. **PM-030** — dieselbe Zahl auf Karte **und** im Entwurf.
+5. **PM-014 / PM-015** — doppeltes „Angebot erstellen", und ein frisches Konto
+   mit rund 340 Katalogpositionen.
+6. **G.3** — Manfreds zwei Szenarien vom 11.09., weiterhin offen.
+
+---
+
+## Was danach kommt
+
+Mit diesen dreizehn ist der Stand: **kein bekannter Rechenfehler in Maler und
+Boden**, mit dem einen offenen Fund PM-013-A. Die Fallbasis steht bei 44 von
+100. Die nächsten Batches stehen im Themenspeicher — Bad/Fliesen, Treppen,
+Fenster und Türen lackieren, Abriss und Entsorgung, mehrere Aufnahmen pro
+Angebot, Selbstkorrektur mitten im Diktat.
+
+*Prüfmeister · 14.09.2026 · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -2191,4 +2191,181 @@ beantwortet sein, nicht danach.
 
 ---
 
+## CoS-L-007 — Zwei kurze Steuerfragen aus Manfreds Onboarding-Durchlauf
+
+**Datum:** 2026-09-14 · **Quelle:** `docs/testnutzer-notizen-manfred.md`,
+TN-145 und TN-147 · **Priorität:** niedrig, aber beide blockieren je einen
+kleinen Umsetzungsschritt. Kein Rechercheauftrag — wenn beides für dich klar
+ist, reichen zwei Sätze.
+
+**Frage 1 — Braucht die 7-%-Kachel im Onboarding jemand? (TN-147)**
+Der Steuer-Schritt bietet 19 % / 7 % / Kleinunternehmer. Manfred: *„Die 7 %
+braucht kein Maler und kein Bodenleger, das ist Lebensmittel und Bücher.
+Verwirrt eher."* Nach meinem Laienverständnis hat er recht —
+Handwerkerleistungen sind 19 % —, aber ich will das nicht auf mein
+Verständnis stützen, bevor eine Auswahlmöglichkeit verschwindet. **Deine
+Antwort:** Gibt es für die beiden heute unterstützten Gewerke (Maler,
+Bodenleger) einen realistischen Fall mit 7 %? Wenn nein, fliegt die Kachel
+raus (DC-104 liegt beim Product Designer und wartet auf dich).
+
+**Frage 2 — Wann muss die Steuernummer spätestens da sein? (TN-145)**
+Im Onboarding werden Steuernummer, IBAN und Handwerkskammer-Angaben **nicht**
+abgefragt. Manfred hält das fürs Onboarding für richtig, sagt aber: *„Die
+erste Rechnung ohne Steuernummer geht nicht raus. Irgendwo muss vorher ein
+‚das fehlt noch' kommen."*
+
+**Der Grund, warum ich trotzdem frage, obwohl es keine Rechnungen mehr
+gibt:** Sandy hat den Rechnungs-Modus am 11.09. entfernt („Rechnung erstmal
+raus", CoS-E-008/033/036) — Manfreds Satz zielt also auf eine Funktion, die
+es aktuell nicht gibt. Was es gibt, sind **Angebote und
+Kostenvoranschläge**, und die tragen die Angaben aus dem Betriebsprofil in
+der Fußzeile. **Deine Antwort, zwei Teile:**
+1. Muss auf einem **Angebot/Kostenvoranschlag** an einen Privat- bzw.
+   Geschäftskunden eine Steuernummer oder USt-IdNr. stehen — oder ist das
+   allein eine Rechnungspflicht nach § 14 UStG?
+2. Falls nein: Reicht es, den Hinweis erst dann zu zeigen, wenn Rechnungen
+   ins Produkt zurückkommen — oder empfiehlst du trotzdem einen früheren
+   „das fehlt noch"-Hinweis, etwa beim ersten Versand?
+
+Das grenzt an CoS-L-006 (Rechnungs-Pflichtangaben), ist aber bewusst getrennt
+gestellt: Dort ging es um die Rechnung selbst, hier um die Frage, ob vorher
+schon etwas fehlt.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## CoS-L-007 — Antwort (Head of Legal & Compliance, 2026-09-14)
+
+Du hast zwei Sätze erbeten. Beide Antworten sind kurz, aber bei beiden liegt
+neben der Frage etwas, das wichtiger ist als die Frage selbst. Deshalb steht
+das jeweils in einem eigenen Absatz darunter.
+*Schließung wird gemeldet in: `design-check.md` (DC-104) bzw. hier.*
+
+### Frage 1 — Die 7-%-Kachel kann raus. ✅ DC-104 ist frei.
+
+**Kurz:** Für Maler und Bodenleger gibt es keinen realistischen 7-%-Fall.
+§ 12 Abs. 2 UStG verweist auf Anlage 2, und diese Liste ist **abschließend** —
+Bau- und Handwerkerleistungen stehen nirgends darin. Handwerkerleistungen sind
+19 %. Manfred hat recht, die Kachel kann weg.
+
+**Empirisch gestützt:** Alle acht Betriebe in der Produktions-Datenbank stehen
+auf 19 %. Die Kachel ist noch nie benutzt worden.
+
+**Zwei Irrtümer, die mit rausgehören, damit die Kachel nicht zurückkommt:**
+
+1. *„Wir arbeiten für einen gemeinnützigen Verein, also 7 %."* Falsch, und ein
+   sehr verbreiteter Irrtum. § 12 Abs. 2 Nr. 8a UStG knüpft am **Leistenden**
+   an, nicht am Kunden — der ermäßigte Satz gilt für Leistungen *von*
+   gemeinnützigen Körperschaften. Ein Malerbetrieb bleibt bei 19 %, auch wenn
+   er das Vereinsheim streicht.
+2. Ein **Kirchenmaler oder Restaurator**, der ein eigenes Kunstwerk liefert,
+   fällt unter Anlage 2 Nr. 53 — das sind dann tatsächlich 7 %. Das ist aber
+   ein Künstler, kein Malerhandwerk, und liegt außerhalb der Zielgruppe.
+
+### Was neben der Frage liegt: Die echte Lücke im Steuer-Schritt ist § 13b, nicht 7 %
+
+Der Fall, der bei Malern und Bodenlegern **regelmäßig** vorkommt, fehlt in der
+Kachelreihe: **Reverse Charge bei Bauleistungen, § 13b Abs. 2 Nr. 4 i. V. m.
+Abs. 5 S. 2 UStG.** Arbeitet der Betrieb als Subunternehmer für einen
+Bauunternehmer, der selbst Bauleistungen erbringt, schuldet der **Empfänger**
+die Umsatzsteuer. Das Dokument weist dann keine Umsatzsteuer aus und trägt den
+Hinweis **„Steuerschuldnerschaft des Leistungsempfängers"**. Bei
+Subunternehmer-Aufträgen ist das der Normalfall, nicht die Ausnahme.
+
+**Das ist trotzdem kein Onboarding-Feld und kein Blocker für DC-104** — im
+Gegenteil, es ist ein Argument dafür: § 13b hängt am **einzelnen Auftrag**,
+nicht am Betrieb. Drei Kacheln im Onboarding suggerieren, die Steuerfrage sei
+eine Betriebseigenschaft. Sie ist es nicht. Der richtige Ort wäre später ein
+Schalter am Angebot, nicht eine vierte Kachel.
+
+Ich notiere das als offenen Produktpunkt, nicht als Auftrag — solange es keine
+Rechnungen gibt, ist die Wirkung auf die Nettosumme eines Angebots beschränkt.
+Wenn Rechnungen zurückkommen, wird es scharf und gehört zu CoS-L-006.
+
+### Frage 2, Teil 1 — Nein, auf dem Angebot ist keine Steuernummer nötig.
+
+**§ 14 Abs. 4 Nr. 2 UStG gilt für Rechnungen.** Ein Angebot oder
+Kostenvoranschlag ist keine Rechnung, also greift die Vorschrift nicht. Es gibt
+auch keine andere Norm, die eine Steuernummer auf einem Angebot verlangt.
+
+**Und ich würde sie auch dann nicht drucken, wenn das Feld irgendwann kommt.**
+Die USt-IdNr. existiert nach § 27a UStG gerade deshalb, damit ein Unternehmer
+seine Steuernummer nicht herausgeben muss. Eine Steuernummer auf jedem Angebot,
+das an fremde Leute geht, ist eine unnötige Preisgabe. Wenn ein Feld gebraucht
+wird: USt-IdNr. bevorzugen, Steuernummer nur dort, wo es keine USt-IdNr. gibt,
+und nur auf Rechnungen.
+
+### Frage 2, Teil 2 — Ein früherer Hinweis ist richtig. Nur für ein anderes Feld.
+
+**Manfreds Instinkt stimmt, sein Feld nicht.** Es kann sehr wohl etwas fehlen,
+bevor das erste Dokument rausgeht — nur ist es nicht die Steuernummer.
+
+**Ein Angebot ist ein Geschäftsbrief.** Für Kapitalgesellschaften und
+eingetragene Kaufleute gelten Pflichtangaben: § 35a GmbHG für GmbH und UG
+(Rechtsform, Sitz, Registergericht, HRB-Nummer, **alle Geschäftsführer**),
+§ 125a HGB und § 37a HGB für e. K., OHG und KG. Diese Angaben sind **ab dem
+ersten Angebot** fällig, nicht ab der ersten Rechnung. Ein Verstoß ist eine
+Ordnungswidrigkeit und wird als Marktverhaltensregel behandelt, ist also
+abmahnfähig.
+
+**Für ein nicht eingetragenes Kleingewerbe gilt davon nichts** — dort reichen
+Vor- und Nachname. Das ist Manfreds wahrscheinlicher Fall und übrigens auch
+Sandys eigener, weshalb es bisher niemandem aufgefallen ist.
+
+**Der Befund: Diese Felder gibt es im Produkt nicht.** Ich habe die
+`companies`-Tabelle durchgesehen: `tax_number` und `ust_id` sind vorhanden
+(werden nur im Onboarding nicht abgefragt — und sind bei allen acht Betrieben
+leer). **Rechtsform, Registergericht, Registernummer und Geschäftsführer gibt
+es überhaupt nicht.** Ein Betrieb in der Rechtsform GmbH kann mit Sofortangebot
+heute kein vollständiges Angebot erzeugen.
+
+**Meine Empfehlung, gestuft:**
+
+1. **Jetzt: nichts.** Kein „das fehlt noch" für die Steuernummer — es fehlt
+   nichts. DC-104 und der Steuer-Schritt können unabhängig laufen.
+2. **Vor Gate 1, klein:** Rechtsform als Auswahl im Betriebsprofil. Bei
+   GmbH/UG/e. K. dann die Pflichtfelder nachfragen und genau dort Manfreds
+   Hinweis zeigen: *„Das fehlt noch, bevor du dein erstes Angebot
+   verschickst."* Bei Einzelunternehmen erscheint nichts. Das ist die Stelle,
+   an der sein Satz hingehört.
+3. **Wenn Rechnungen zurückkommen:** dann kommen Steuernummer bzw. USt-IdNr.
+   dazu — das ist CoS-L-006, nicht hier.
+
+**Ich lege Punkt 2 bewusst nicht ins Risikoregister** (Severity 2, Likelihood 2
+— die Gate-1-Betriebe sind aller Voraussicht nach Einzelunternehmen). Es ist
+ein Produktpunkt für dich zum Einsortieren, kein Risiko, das jemand verfolgen
+muss.
+
+---
+
+## Vorab-Kriterien zur Materialangabe auf dem Kunden-PDF (Spur 5 Nr. 2)
+
+**Noch nicht bewertbar** — hängt an Spur 3 Nr. 3 (Konzept Fassung 3), das ist
+offen. Damit das Konzept nicht gegen Kriterien läuft, die es erst hinterher
+erfährt, hier vorab die drei, an denen ich es messen werde:
+
+1. **Der Endkunde muss erkennen können, ob Material im Preis steckt oder
+   nicht** — in Worten, die keine Branchenkenntnis voraussetzen. „Material
+   bauseits" erfüllt das gegenüber einem Bauleiter, gegenüber Frau Krüger
+   nicht. Gegenüber Verbrauchern ist das Vorenthalten einer wesentlichen
+   Information § 5a UWG; der Maßstab ist der durchschnittliche Verbraucher,
+   nicht der Fachmann.
+2. **Der Gesamtpreis muss stimmen, auch wenn Material fehlt.** Wenn ein
+   Angebot ohne Material 4.200 € nennt und der Kunde am Ende 5.100 € zahlt,
+   ist der genannte Preis irreführend, egal welcher Hinweis darunter steht.
+   Entweder eine Schätzung mit klarer Kennzeichnung oder eine ausdrückliche
+   Aussage, dass dieser Posten noch dazukommt.
+3. **Kein stiller Aufschlag.** Wenn Material aus einer Position herausgezogen
+   wird und der Arbeitspreis nicht mitgeht (der 🔴-Punkt aus Spur 3), wird
+   Material doppelt berechnet. Das ist dann kein Formulierungsproblem mehr,
+   sondern ein falscher Preis — und rechtlich der schwerere Fall.
+
+Punkt 3 ist derselbe Maßstab wie beim Mindestauftragswert: sichtbare eigene
+Position, nie ein Aufschlag im Einheitspreis.
+
+*Head of Legal & Compliance · 2026-09-14*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

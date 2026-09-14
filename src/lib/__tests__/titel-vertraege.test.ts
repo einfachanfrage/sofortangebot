@@ -144,14 +144,29 @@ describe('Stellen, die von der Streichposition ERBEN — sonst fehlt die Folgear
   it('Heizkörper: die Raumzahl kommt aus den Wandpositionen', () => {
     // `maler-lackieren.ts` zählt die Räume anhand dieser Positionen. Ohne
     // Treffer sind es null Räume und die Heizkörperzahl stimmt nicht.
+    //
+    // ── Geändert am 14.09.2026 (DC-091) ───────────────────────────────
+    //
+    // Hier stand `.find(...)` und `menge === 2`: EINE Position mit beiden
+    // Heizkörpern. Genau die war der Fehler — sie trug den Raum der ersten
+    // Wandposition, also standen auf dem Kundenpapier unter „Wohnzimmer"
+    // zwei Heizkörper und unter „Schlafzimmer" keiner.
+    //
+    // Die Zusicherung dieses Tests bleibt dieselbe: Die Zahl muss aus den
+    // Wandpositionen kommen. Sie steht jetzt nur in der SUMME statt in einer
+    // Zeile — und die Summe ist der schärfere Test: Fällt der Erkenner aus,
+    // sind es null Räume und damit eine Position mit Menge 1, nicht zwei.
     const eingabe = [
       pos('Wand streichen 2x — Wohnzimmer', 45),
       pos('Wand streichen 2x — Schlafzimmer', 38),
     ]
     const hzk = lauf(eingabe, 'Wohnzimmer und Schlafzimmer streichen, je ein Heizkörper lackieren.')
-      .positionen.find(p => /heizkörper.*(?:lackieren|streichen)/i.test(p.beschreibung))
-    expect(hzk).toBeDefined()
-    expect(hzk!.menge).toBe(2)
+      .positionen.filter(p => /heizkörper.*(?:lackieren|streichen)/i.test(p.beschreibung))
+    expect(hzk.length).toBeGreaterThan(0)
+    expect(hzk.reduce((summe, p) => summe + p.menge, 0)).toBe(2)
+    // Und jeder in seinem Raum — das ist der Teil, der vorher fehlte.
+    expect(hzk.map(p => p.beschreibung).join(' ')).toMatch(/— Wohnzimmer/)
+    expect(hzk.map(p => p.beschreibung).join(' ')).toMatch(/— Schlafzimmer/)
   })
 })
 

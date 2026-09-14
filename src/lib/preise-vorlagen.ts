@@ -1130,24 +1130,99 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
   ],
 }
 
+/**
+ * Welche Vorlagengruppen gehören zu welchem Gewerk? (CoS-E-052 / TN-140)
+ *
+ * ── Warum es diese Tabelle gibt ───────────────────────────────────────────
+ *
+ * Die Gewerke heißen `maler` und `boden_parkett` (siehe `gewerke-config.ts`).
+ * Die Vorlagengruppen hier heißen `malerarbeiten`, `bodenbeläge`,
+ * `maler_fassade` — zwei Namensräume, die nie zusammengeführt wurden.
+ * `GEWERK_PREISE[id]` traf deshalb **nie**, und übrig blieben die drei
+ * allgemeinen Zeilen plus zwei Entsorgungsposten. Genau die fünf Felder, die
+ * Manfred gesehen hat.
+ *
+ * Gemessen am 14.09.2026: **13 von 18 Gewerk-Kennungen** treffen keine
+ * Vorlagengruppe — nicht nur die beiden aktiven. Es hätte also jedes weitere
+ * Gewerk beim Freischalten genauso getroffen.
+ *
+ * ── Warum eine Tabelle und keine Umbenennung ──────────────────────────────
+ *
+ * Weil die Zuordnung nicht 1:1 ist. Ein Maler macht auch Fassade — die
+ * Gewerk-Kachel wirbt ausdrücklich mit „Fassade streichen“ —, also braucht
+ * `maler` ZWEI Gruppen. Das kann keine Umbenennung ausdrücken, und eine
+ * Umbenennung hätte 21 Schlüssel in einer 140-KB-Datei angefasst, um ein
+ * Zuordnungsproblem zu lösen.
+ *
+ * Wer ein Gewerk freischaltet, trägt es hier ein. Ein Test hält fest, dass
+ * **jede** Kennung aus `gewerke-config.ts` hier eine nicht-leere Gruppe
+ * findet — sonst wiederholt sich der Fall still beim nächsten Gewerk.
+ */
+export const GEWERK_VORLAGEN: Record<string, string[]> = {
+  // aktive Gewerke
+  maler: ['malerarbeiten', 'maler_fassade'],
+  boden_parkett: ['bodenbeläge'],
+  // im UI noch nicht freigeschaltet, Vorlagen aber vorhanden
+  fliesen: ['fliesenleger'],
+  trockenbau: ['trockenbau'],
+  sanitaer_heizung: ['sanitär'],
+  elektro: ['elektro'],
+  putz_stuck: ['putz_stuck'],
+  estrich: ['estrich'],
+  schreiner_tischler: ['schreiner'],
+  dachdecker_zimmerer: ['dachdecker'],
+  fenster_tueren: ['fenster_türen'],
+  entruempelung_transport: ['entrümpelung'],
+  galabau: ['garten'],
+  gebaeudereinigung: ['reinigung'],
+  abbruch_rueckbau: ['abbruch'],
+  fassade: ['maler_fassade'],
+  rohbau_maurer: ['rohbau'],
+  brandschutz: ['brandschutz'],
+}
+
+/**
+ * Gewerke, bei denen Entsorgung zum Alltag gehört.
+ *
+ * Vorher stand hier „Allrounder = Entsorgung immer dabei“ — und weil die
+ * Zuordnung oben nie traf, war die Merkliste `seen` immer leer und die Regel
+ * feuerte bei **jedem** Gewerk. Der Chief of Staff dazu: *„Die
+ * Entsorgungsposten sollen nicht mehr bei einem Maler landen, der zweimal im
+ * Jahr einen Container braucht."*
+ *
+ * Ein Bauschutt-Container ist für einen Abbruchbetrieb eine Standardzeile
+ * und für einen Maler eine Ausnahme. Deshalb steht jetzt hier, für wen —
+ * und nicht mehr eine Bedingung, die von einem Fehler abhing.
+ */
+export const ENTSORGUNG_STANDARD = ['abbruch_rueckbau', 'entruempelung_transport', 'rohbau_maurer']
+
 export function getPreisvorlagenForGewerke(gewerkeIds: string[]): PreisVorlage[] {
   const result: PreisVorlage[] = [...ALLGEMEINE_PREISE]
   const seen = new Set<string>()
 
   for (const id of gewerkeIds) {
-    const vorlagen = GEWERK_PREISE[id] ?? []
-    for (const v of vorlagen) {
+    // Über die Zuordnungstabelle, nicht über den Gewerknamen: Die Schlüssel
+    // in GEWERK_PREISE sind ein eigener Namensraum (CoS-E-052).
+    for (const schluessel of GEWERK_VORLAGEN[id] ?? []) {
+      for (const v of GEWERK_PREISE[schluessel] ?? []) {
+        const key = `${v.category}::${v.title}`
+        if (!seen.has(key)) {
+          seen.add(key)
+          result.push(v)
+        }
+      }
+    }
+  }
+
+  // Entsorgung nur für die Gewerke, bei denen sie Alltag ist.
+  if (gewerkeIds.some(id => ENTSORGUNG_STANDARD.includes(id))) {
+    for (const v of GEWERK_PREISE['allrounder'] ?? []) {
       const key = `${v.category}::${v.title}`
       if (!seen.has(key)) {
         seen.add(key)
         result.push(v)
       }
     }
-  }
-
-  // Allrounder = Entsorgung immer dabei
-  if (gewerkeIds.length > 0 && !seen.has('Entsorgung::Bauschutt-Container 7m³')) {
-    result.push(...(GEWERK_PREISE['allrounder'] ?? []))
   }
 
   return result

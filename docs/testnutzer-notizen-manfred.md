@@ -200,3 +200,42 @@ Szenario 2 (Boden): Herr Yilmaz, Herne, Schlafzimmer L-förmig 5×4 minus Ecke 2
 6. **TN-075** – „Hallo Renate"
 
 Mein Gesamtbild, ehrlich: Die Hülle (Einstellungen, Kunden, Nummern, Briefpapier, Buchhaltung, Widerruf, E-Rechnung, Bearbeiten) ist sauberer als mein Word und ich würd nichts wegnehmen. Der Kern – Diktat rein, Angebot raus – darf nichts erfinden, was ich nicht gesagt hab, und nichts weglassen, was ich gesagt hab. Solange das nicht stimmt, lese ich jede Zeile, und dann ist es ein gutes Angebotsprogramm, aber kein Sofortangebot.
+
+
+---
+
+**Session 2 – 14.09.2026, Onboarding**
+Frisches Konto „Malerbetrieb Vogler", kompletter Onboarding-Durchlauf, danach
+ein Blick in die Einstellungen. Acht Bildschirme, drei Minuten. Tab blieb
+offen, Konto ist eingerichtet.
+
+## Onboarding – was gut ist
+
+- **TN-132** Acht Bildschirme, drei Minuten, kein Papierkram – das Versprechen stimmt. Jeder Schritt hat „Später fertigstellen" oben rechts und „Zurück" unten, der Fortschrittsbalken sagt mir, wo ich bin. Das müsst ich keinem Chef erklären.
+- **TN-133** Die Wörter sind richtig: „Wie heißt dein Betrieb?", „Was machst du?", „Wie stellst du Rechnungen?" – so redet man.
+- **TN-134** Schritt 1: Firmenname und Adresse, Telefon und Mail eingeklappt als „optional". Genau die richtige Menge. „Wird auf dem Angebot als Absender angezeigt" – ich weiß, wofür.
+- **TN-135** Schritt 2 Gewerk: zwei Kacheln, klar, und „Mehr Gewerke kommen bald" darunter. Ehrlich.
+- **TN-136** Schritt 3 Steuer: 19 % / 7 % / Kleinunternehmer, Zahlungsziel, AGB-Link. Reicht.
+- **TN-137** Schritt 5 Buchhaltung, der schwarze Kasten: „Ohne Verknüpfung: Erstellen → Abtippen → Eintragen / Mit Verknüpfung: 1x tippen → fertig". **Das ist der beste Verkaufssatz in der ganzen App.** Da hab ich zum ersten Mal verstanden, was mir die Verknüpfung bringt. Und „Lexoffice (Legacy) – nur falls du noch den alten Zugang nutzt" ist genau die Erklärung, die ich Freitag vermisst hab (TN-108).
+- **TN-138** „Kein Tool / Später" als letzte Option – gut, kein Zwang.
+- **TN-139** Nach dem Abschluss in den Einstellungen nachgesehen: Erschwerniszuschläge sind jetzt einzeln abschaltbar, mit Erklärung, wann sie vorgeschlagen werden (das war TN-097). Und der Regionalfaktor ist weg (TN-105). Beides gut.
+
+## Onboarding – was nicht stimmt
+
+- **TN-140** „Eigene Preise eingeben" bietet **fünf** Positionen: Fahrtkosten, Stundensatz Fachkraft, Stundensatz Helfer, Container, Kleinfuhre. Kein Wand streichen, keine Decke, keine Tapete. Genau die sechs Zahlen aus dem Preislisten-Konzept fehlen, dafür steht ein Bauschutt-Container drin, den ich als Maler zweimal im Jahr brauch. **Wer hier „eigene Preise" wählt, denkt danach, seine Preise sind drin – und die App rechnet trotzdem mit den 220 Katalogpreisen.** Nachgeguckt: 220 Positionen liegen in der Preisdatenbank, obwohl ich „Eigene Preise" gewählt hab und nicht „Marktpreise laden". Beide Wege führen zum selben Katalog, der eine mit fünf Zahlen obendrauf.
+- **TN-141** Stundensatz Fachkraft 65 € als Vorschlag – für Bochum eher hoch, ich nehm 58. Helfer 42 passt. Kein Drama, nur zur Kenntnis.
+- **TN-142** Mindestauftragswert 180 € steht nach dem Onboarding in den Einstellungen („Vorschlag: rund drei Arbeitsstunden"). **Hab ich nie gesehen, nie entschieden.** Wenn ich das nicht finde, landet bei jedem Kleinauftrag unter 180 € eine Position „Anfahrt & Vorbereitung" auf dem Angebot, von der ich nicht weiß, wo sie herkommt. Das ist das Möbel-abdecken-Problem (TN-037) in neuem Gewand: die App entscheidet, ich unterschreib.
+- **TN-143** Buchhaltung: „Lexoffice (Legacy)" angeklickt, API-Key-Feld kam, „Fertig" ging auch ohne Key. Gut, dass es nicht blockiert. Aber danach steht nirgends „Lexoffice ausgewählt, Key fehlt noch". Der Chef denkt, es ist verbunden. Ein Hinweis auf der Startseite wär das Minimum.
+- **TN-144** Schritt 1: Beim ersten Tippen ins Firmenfeld ist die Seite gehüpft (Tastatur? Fokus?), mein Text landete im falschen Feld – Straße im Ort-Feld, Name leer. Kann am Browser liegen. Am Handy bitte einmal mit dem Daumen durchprobieren, ob die Felder beim Tippen stillhalten.
+- **TN-145** Steuernummer, IBAN, Handwerkskammer werden nicht abgefragt. Fürs Onboarding okay, aber die erste Rechnung ohne Steuernummer geht nicht raus. Irgendwo muss vorher ein „das fehlt noch" kommen.
+- **TN-146** Schritt 4 Logo: „werden häufiger unterschrieben" – ist das gemessen oder gefühlt? Wenn gefühlt, würd ich's rausnehmen. **Handwerker riechen Werbesprüche.**
+- **TN-147** „Kleinunternehmer" als Kachel neben 19 % und 7 % – die 7 % braucht kein Maler und kein Bodenleger, das ist Lebensmittel und Bücher. Verwirrt eher.
+
+## Fazit Onboarding
+
+Die Hülle steht, in drei Minuten ist man drin, die Sprache ist richtig. **Der
+Preise-Schritt ist die einzige echte Baustelle** – und die ist ja schon
+geplant. Bis das Konzept gebaut ist, würd ich den Schritt ehrlich beschriften:
+**„Marktpreise laden (du kannst sie jederzeit anpassen)"** als einzige Option,
+und die fünf Zahlen als **„Grunddaten: Stundensatz und Anfahrt"**. Dann
+verspricht der Schritt nichts, was er nicht hält.

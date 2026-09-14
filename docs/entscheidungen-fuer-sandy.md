@@ -835,3 +835,208 @@ Datum, was geprüft, was gefunden, was gefixt. Das ist später Gold wert und
 kostet jetzt fünf Minuten pro Sitzung.
 
 ---
+
+## Manfreds Onboarding-Durchlauf (14.09.2026) — vier Entscheidungen für dich
+
+Zweite Testnutzer-Session, komplettes Onboarding mit frischem Konto.
+Rohnotizen TN-132…TN-147 in `docs/testnutzer-notizen-manfred.md`. Sein Urteil
+in einem Satz: *„Die Hülle steht, in drei Minuten ist man drin, die Sprache
+ist richtig. Der Preise-Schritt ist die einzige echte Baustelle."*
+
+Acht von vierzehn Punkten sind Lob — darunter zwei Bestätigungen, dass
+frühere Funde wirklich behoben sind (Erschwerniszuschläge abschaltbar,
+Regionalfaktor weg). Die restlichen sechs sind an die Fachrollen verteilt;
+die vier hier brauchen dich.
+
+---
+
+**🔵 M-1. Der Preise-Schritt verspricht etwas, das er nicht hält (TN-140).**
+„Eigene Preise eingeben" bietet **fünf** Felder: Fahrtkosten, Stundensatz
+Fachkraft, Stundensatz Helfer, Container, Kleinfuhre. Keine einzige
+Gewerkeposition — kein Wand streichen, keine Decke, keine Tapete. Und beide
+Wege („Eigene Preise" wie „Marktpreise laden") füllen am Ende denselben
+220-Positionen-Katalog; der eine nur mit fünf Zahlen obendrauf.
+
+**Warum das mehr ist als eine Beschriftungsfrage:** Wer „eigene Preise"
+wählt, glaubt danach, seine Preise stehen drin. Tatsächlich rechnet die App
+mit Katalogpreisen, die er nie gesehen hat — und genau dieser Irrtum ist
+teuer, weil er ihn erst am Angebot merkt. Manfred hat das schon zweimal
+gemeldet, aus der anderen Richtung (TN-093/094: „Preise werden irgendwo
+ausgewürfelt").
+
+Das echte Gegenmittel ist `docs/preisliste-konzept.md` (Fassung 2 vom
+11.09.) — **entworfen, noch nichts gebaut.** Bis dahin schlägt Manfred eine
+ehrliche Zwischenlösung vor, und sie kostet fast nichts:
+
+- eine einzige Option statt zweier: **„Marktpreise laden (du kannst sie
+  jederzeit anpassen)"**
+- die fünf Zahlen umbenannt in **„Grunddaten: Stundensatz und Anfahrt"**
+
+**Meine Empfehlung: ja, so machen.** Ein Schritt, der weniger verspricht, ist
+besser als einer, der ein Versprechen bricht — und es hält die Tür für das
+Konzept offen, statt sie vorher zuzuschlagen. **Deine Entscheidung:**
+Zwischenlösung jetzt, oder auf das gebaute Konzept warten und den Schritt so
+lassen, wie er ist?
+
+---
+
+**🔵 M-2. Mindestauftragswert 180 € — nie gefragt, trotzdem gesetzt (TN-142).**
+Nach dem Onboarding steht in den Einstellungen ein Mindestauftragswert von
+180 € („Vorschlag: rund drei Arbeitsstunden"). Manfred ist er im Onboarding
+nie begegnet. Folge: Bei jedem Auftrag unter 180 € erscheint eine Position
+**„Anfahrt & Vorbereitung"** auf dem Angebot, von der der Betrieb nicht weiß,
+wo sie herkommt.
+
+Er ordnet das selbst ein, und die Einordnung sitzt: *„Das ist das
+Möbel-abdecken-Problem in neuem Gewand: die App entscheidet, ich
+unterschreib."* (Bezug: TN-037, die erfundene Abdeck-Position.)
+
+Das kommt aus CoS-L-005/10.09. Legal hatte ausdrücklich verlangt, dass der
+Wert eine **Betriebseinstellung** ist und keine Konstante — das ist er auch.
+Nur ist der Vorschlagswert stillschweigend zum Standard geworden.
+
+**Deine Entscheidung, zwei saubere Wege:**
+(a) Standard auf **0**, der Betrieb setzt ihn selbst, wenn er ihn will —
+sicherer, weil nichts ungefragt aufs Kundenpapier kommt;
+(b) **im Onboarding fragen** — ein Schritt mehr, dafür eine bewusste
+Entscheidung.
+**Meine Empfehlung: (a).** Es gibt noch keinen Betrieb, dem etwas weggenommen
+würde, und „nichts ungefragt" ist bei Geld die bessere Grundregel. (b) lässt
+sich jederzeit nachschieben.
+
+---
+
+**🔵 M-3. „Logos werden häufiger unterschrieben" — gemessen oder behauptet? (TN-146)**
+Im Logo-Schritt steht dieser Satz als Begründung. Manfred: *„Ist das gemessen
+oder gefühlt? Wenn gefühlt, würd ich's rausnehmen. Handwerker riechen
+Werbesprüche."*
+
+Er hat recht, und es ist mehr als Geschmack: Es gibt **keine echten Nutzer**
+und damit auch keine Daten, aus denen so ein Satz stammen könnte. Er ist
+erfunden. Bei einer Zielgruppe, deren Vertrauen ihr gerade erst aufbaut, ist
+eine unbelegte Zahlbehauptung ein schlechter Tausch für einen halben Satz
+mehr Überzeugungskraft.
+
+**Deine Entscheidung:** Satz raus (Empfehlung), oder umformulieren in etwas,
+das ohne Beleg auskommt („Mit Logo sieht dein Angebot aus wie von deinem
+Betrieb").
+
+---
+
+**🔵 M-4. Die 7-%-Kachel im Steuer-Schritt (TN-147).**
+Neben 19 % und Kleinunternehmer steht 7 %. Manfred: *„Die braucht kein Maler
+und kein Bodenleger, das ist Lebensmittel und Bücher. Verwirrt eher."*
+
+Nach meinem Verständnis hat er recht — Handwerkerleistungen sind 19 % —,
+aber das ist eine Steuerfrage und keine Designfrage. **Vorschlag: Ich lasse
+es von Head of Legal in einem Satz bestätigen, dann fliegt die Kachel raus.**
+Sag Bescheid, wenn du das anders willst.
+
+---
+
+**Zur Kenntnis, keine Entscheidung nötig (TN-141):** Der vorgeschlagene
+Stundensatz Fachkraft steht auf 65 €; Manfred nimmt in Bochum 58 €
+(Helfer 42 € passt ihm). Interessant im Zusammenhang mit dem gerade
+entfernten Regionalfaktor: Der pauschale Faktor ist raus — ein bundesweit
+einheitlicher Stundensatz-Vorschlag ist aber dieselbe Vereinfachung, nur an
+anderer Stelle. Kein Handlungsbedarf heute; gehört auf den Tisch, wenn das
+Preislisten-Konzept gebaut wird.
+
+---
+
+## ✅ Sandys Entscheidungen zu Manfreds Onboarding (14.09.2026)
+
+**M-1 — Preise-Schritt: KEINE Zwischenlösung.** Sandy wörtlich: *„es soll
+direkt die richtige Lösung gemacht werden, keine Zwischenlösung."* Damit ist
+mein Vorschlag (Schritt ehrlich umbeschriften und auf das Konzept warten)
+**abgelehnt** — und zwar zu Recht: Er widersprach ihrer eigenen, seit dem
+12.09. geltenden Regel, dass ohne echte Nutzer immer die vollständige Lösung
+gebaut wird und nicht die risikoarme. Auftrag: `docs/preisliste-konzept.md`
+(Fassung 2) wird gebaut. Reihenfolge und Zuständigkeiten in CoS-E-053.
+
+**M-2 — Mindestauftragswert: Standard auf 0.** Kein Wert wird mehr
+stillschweigend gesetzt; wer ihn will, setzt ihn selbst.
+
+**M-3 — „Logos werden häufiger unterschrieben": raus.** Unbelegte Behauptung,
+es gibt keine Daten, aus denen sie stammen könnte.
+
+**M-4 — 7-%-Kachel: bestätigt.** Head of Legal prüft in einem Satz
+(CoS-L-007), danach entfernt der Product Designer die Kachel (DC-104).
+
+**Sandys Rückfrage zum Container, hier beantwortet, weil sie einen echten
+Fehler aufgedeckt hat:** *„WARUM ENTSORGUNG?"* — Antwort in CoS-E-052. Kurz:
+Die Gewerk-Kennungen im Onboarding (`maler`, `boden_parkett`) kommen in der
+Preisvorlagen-Tabelle gar nicht vor (dort heißen sie `malerarbeiten`,
+`bodenbeläge`). Die 42 Maler-Vorlagen werden deshalb **nie gefunden**, und
+was übrig bleibt, sind drei allgemeine Posten plus zwei Entsorgungsposten aus
+einer Notfallregel, die für jedes Gewerk feuert. Die fünf Felder sind kein
+Entwurf, sondern ein Rest.
+
+---
+
+## 🔵 Deine offene Verschnitt-Frage (VOB-001/002/014) hat eine Antwort aus der Praxis bekommen
+
+**14.09.2026.** Seit dem 04.09. liegt unter „Offen" die Frage, ob der
+Verschnitt weiter in die **abgerechnete Menge** eingerechnet wird (einfacher
+für den Nutzer, aber ohne Normgrundlage) oder in den **Einheitspreis bzw.
+eine eigene Materialposition** wandert (VOB-konform, mehr Umbau). Der
+Ausgangspunkt war, dass „Verschnitt" in DIN 18365 gar nicht vorkommt.
+
+**Manfred hat das heute nebenbei beantwortet**, ohne die Frage zu kennen —
+als er die Materialfrage erklärt hat (CoS-E-054):
+
+> *„Wenn Material getrennt ist, gehört der Verschnitt in die Materialzeile,
+> nicht in die Arbeitszeile. Das war der Yilmaz-Fehler."*
+
+Und früher schon, aus dem Testlauf (TN-128):
+
+> *„Verschnitt ist Material. Wenn der Kunde das Laminat kauft, ist sein
+> Verschnitt sein Problem, nicht mein Lohn. 21 m² verlegen auf 17 m² Boden —
+> ich verleg 17."*
+
+**Was das für deine Entscheidung ändert:** Die beiden Optionen standen sich
+bisher als „einfach" gegen „normkonform" gegenüber — eine Abwägung ohne
+klaren Sieger. Jetzt kommt ein drittes Argument dazu, und es ist das
+stärkste: **In der Praxis hängt der Verschnitt nicht an der Norm, sondern
+daran, wer das Material bezahlt.** Zahlt der Kunde, ist der Verschnitt seiner
+und hat in der Arbeitszeile nichts verloren. Zahlt der Betrieb, steckt er
+ohnehin im Materialanteil.
+
+Damit ist die Verschnitt-Frage **keine eigene Entscheidung mehr**, sondern
+ein Nebenprodukt der Material-Ebenen aus CoS-E-054: Sobald „Material
+getrennt" sauber gebaut ist, ergibt sich die Verschnitt-Behandlung daraus von
+allein — und zwar in beide Richtungen richtig.
+
+**Mein Vorschlag:** Die Frage nicht mehr einzeln entscheiden, sondern an
+CoS-E-054 hängen und dort mitbauen. **Deine Entscheidung** — du kannst auch
+sagen, dass du sie getrennt beantworten willst; dann lege ich sie dir mit
+Legals Normlage und Manfreds Praxis nebeneinander vor. Ich empfehle das
+Zusammenlegen, weil zwei getrennte Antworten auf dieselbe Mechanik genau die
+Art von Widerspruch erzeugt, die wir gerade an fünf Höhenschwellen
+(VOB-006) abarbeiten.
+
+**Zur Kenntnis, damit es nicht untergeht:** Die verwandten offenen Punkte
+„Fliesen-Verschnitt fest im Code oder im Katalog?" und „Kork und Teppich 0 %"
+hängen an derselben Mechanik und sollten in derselben Runde fallen, nicht
+davor.
+
+---
+
+## ✅ Entschieden 14.09.2026 — Verschnitt-Fragen zusammengelegt
+
+Sandy folgt der Empfehlung: **VOB-001/002/014** (Verschnitt in Menge oder
+Preis), **Fliesen-Verschnitt** (Code oder Katalog) und **Kork/Teppich 0 %**
+werden nicht mehr einzeln beantwortet. Sie fallen mit der Material-Mechanik
+aus **CoS-E-054** und sind dort als Anforderung aufgenommen.
+
+Damit sind drei Punkte aus „Offen" oben erledigt — nicht durch eine Antwort,
+sondern weil sie sich als Teil einer größeren Frage herausgestellt haben.
+Die Regel, die sie alle drei beantwortet, ist eine einzige:
+**Der Verschnitt folgt dem, der das Material bezahlt.**
+
+Gleichzeitig ihr Auftrag: **eine lebende Arbeitsreihenfolge** über alle
+Rollen hinweg — neue Heimat `docs/arbeitsreihenfolge.md`. Wird bei jeder
+Änderung **ersetzt**, nicht ergänzt.
+
+---
+
