@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   // Company + Plan laden
   const { data: company } = await supabase
     .from('companies')
-    .select('id, vat_rate, plan')
+    .select('id, vat_rate, plan, angebot_gueltig_tage')
     .eq('user_id', user.id)
     .single()
 
@@ -99,8 +99,15 @@ export async function POST(req: NextRequest) {
     .reduce((s, i) => s + i.quantity * i.unit_price, 0)
   const totalVat = company.vat_rate > 0 ? totalNet * (company.vat_rate / 100) : 0
 
+  // CoS-E-013/031/042: Hier standen fest verdrahtete 30 Tage, während in den
+  // Einstellungen eine eigene Gültigkeitsdauer steht — wer sie dort auf 14
+  // stellte, bekam trotzdem 30. Jetzt dieselbe Einstellung wie überall sonst.
+  // (Das Dokument selbst rechnet die Gültigkeit inzwischen ohnehin selbst,
+  // siehe gueltigBis() — dieses Feld hier ist nur noch der ausdrücklich
+  // gespeicherte Wert für Angebote, die über diese ältere Route entstehen.)
   const validUntilDate = validUntil ?? (() => {
-    const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]
+    const tage = company.angebot_gueltig_tage ?? 30
+    const d = new Date(); d.setDate(d.getDate() + tage); return d.toISOString().split('T')[0]
   })()
 
   // Angebot erstellen

@@ -1,47 +1,85 @@
 const DASH = /\s+[-–—]\s+/
 
-// Nur echte Raumbezeichnungen werden als Gruppe behandelt — alles andere (z.B. "1. Anstrich") geht in Allgemein
+// ── Was ist ein Raum? (CoS-E-022 / TN-053, 13.09.2026) ────────────────────
 //
-// PM-005: "Speisekammer" fehlte hier. Ergebnis: die Anzeige hielt den Namen
-// für keinen Raum, entfernte das Suffix und hängte die Position an die
-// einzige ANDERE erkannte Raumgruppe (Küche) — sah aus wie ein Duplikat,
-// obwohl die Berechnung längst zwei getrennte, korrekt benannte Positionen
-// hatte. Reine Anzeige-Lücke, keine Rechenlücke. Ergänzt um Speisekammer plus
-// die gängigsten weiteren Nebenräume, die aus demselben Grund betroffen wären
-// (keiner davon enthält eins der bisherigen Schlüsselwörter als Teilstring).
+// Hier stand eine **Stichwortliste** mit 32 Raumwörtern. Sie ist viermal
+// erweitert worden, jedes Mal wegen desselben Fehlers und jedes Mal erst,
+// nachdem er passiert war: PM-005 (Speisekammer), PM-019 (Gästeklo), DC-040
+// (Wohnung/Haus/Etage). Eine Liste, die man erweitern muss, sobald ein Kunde
+// ein Zimmer anders nennt, ist keine Regel, sondern eine Wartungsaufgabe ohne
+// Ende.
 //
-// PM-019 (2026-08-21): dieselbe Fehlerkategorie, neu aufgetreten bei
-// "Gästeklo" — enthält weder "toilette" noch "wc" noch sonst eins der obigen
-// Schlüsselwörter als Teilstring. Ergebnis: alle drei Positionen liefen ohne
-// gemeinsame Raumkarte einzeln in den Allgemein-Topf, nur noch mit sichtbarem
-// "— Gästeklo"-Titel-Suffix statt einer echten Gruppierung mit Maßen —
-// obwohl die Berechnung selbst (Wandfläche/Bodenfläche/Sockelleisten) den
-// Raum korrekt als eigenes Objekt hatte. "klo" ergänzt (deckt "Gästeklo",
-// "Klo" und ähnliche Kurzformen ab).
+// Gemessen am 13.09.2026 mit 52 Raumnamen, die in einem Angebot vorkommen
+// können: **21 wurden nicht erkannt** — darunter Atelier, Salon, Wintergarten,
+// Ankleide, Praxis, Werkstatt-Nebenräume, „Schlafraum“, „Vorraum“ und
+// „Raum 2“. Das Wort „Raum“ selbst stand nicht in der Liste.
 //
-// DC-040 (2026-08-29): dieselbe Fehlerkategorie erneut — "Wohnung" (und die
-// Geschwister "Haus"/"Etage"/"Geschoss"/"Stockwerk") sind
-// jetzt gültige raeume-Namen (Wohnung-als-Ganzes-Aufnahme), enthielten aber
-// keins der bisherigen Schlüsselwörter. Ohne diesen Eintrag wäre eine
-// "Wohnung"-Position hier fälschlich in den Allgemein-Topf gefallen, obwohl
-// die Berechnung sie korrekt als eigenen Raum mit Wand-/Bodenfläche führt.
-const RAUM_KEYWORDS = [
-  'zimmer', 'küche', 'bad', 'badezimmer', 'toilette', 'wc', 'klo', 'flur', 'diele',
-  'keller', 'dachboden', 'garage', 'treppenhaus', 'terrasse', 'balkon',
-  'fassade', 'außen', 'büro', 'werkstatt', 'eingang', 'korridor',
-  'speisekammer', 'abstellraum', 'abstellkammer', 'vorratsraum',
-  'hauswirtschaftsraum', 'hobbyraum',
-  'wohnung', 'haus', 'etage', 'geschoss', 'stockwerk',
-]
+// Und die Folge war schlimmer als „landet unter Allgemein“: Erkennt die
+// Gruppierung **gar keinen** Raum, gibt sie null zurück und das ganze Angebot
+// wird flach angezeigt. Bei einem Auftrag „Atelier und Salon streichen“ war
+// die Raumstruktur komplett weg.
+//
+// Deshalb jetzt in dieser Reihenfolge:
+//
+//   1. **Die Wahrheit, wenn wir sie haben.** Das Angebot kennt seine Räume
+//      (`quote.raum_details`). Steht der Name dort, ist es ein Raum — fertig.
+//      Kein Raten über Wortbestandteile.
+//   2. **Sonst die Form, nicht das Vokabular.** Ein Raumname sieht aus wie
+//      ein Name: ein bis drei Wörter, Buchstaben, keine Klammern, keine
+//      Maßangaben. Was dahinter steht und NICHT so aussieht, ist eine
+//      Ausführungsangabe („2× Anstrich“, „Schicht 2“) — die kennen wir
+//      abschließend, denn die Engine erzeugt sie selbst.
+//
+// Der Unterschied ist grundsätzlich: Die alte Regel musste jeden möglichen
+// Raumnamen kennen. Die neue muss nur die endlich vielen Dinge kennen, die
+// KEIN Raum sind.
 
-function istEchterRaum(name: string): boolean {
-  const lower = name.toLowerCase()
-  return RAUM_KEYWORDS.some(k => lower.includes(k))
+/**
+ * Angaben, die hinter dem Gedankenstrich stehen können, ohne ein Raum zu
+ * sein. Die Engine erzeugt genau diese Formen — sie sind abzählbar, im
+ * Gegensatz zu den Namen, die sich ein Kunde für sein Zimmer ausdenkt.
+ */
+const KEIN_RAUM = /anstrich|\bgang\b|\bschicht\b|\blage\b|\bq[1-4]\b|vollton|dunkelfarbe|schwimmend|verklebt|geschliffen|grundiert/i
+
+/**
+ * Maße, Klammern, Schrägstriche, Kommas — das ist eine Beschreibung, kein
+ * Zimmer. Das Komma steht hier, weil `(Klick-System, Standard)` als Suffix
+ * sonst als Raum durchging: Ein Raum heißt nie „irgendwas, irgendwas“.
+ */
+const SPEZIFIKATION = /[()\[\],;/%€]|\d\s*(?:mm|cm|dm|m²|m2|qm|m³|km|kwp|kw|x|×)\b/i
+
+function istRaumName(name: string): boolean {
+  const n = (name ?? '').trim()
+  if (n.length < 2 || n.length > 40) return false
+  if (SPEZIFIKATION.test(n)) return false
+  if (KEIN_RAUM.test(n)) return false
+  // Höchstens drei Wörter („Bad oben", „1. OG links") und mindestens zwei
+  // Buchstaben — eine reine Zahl ist kein Name.
+  if (n.split(/\s+/).length > 3) return false
+  return (n.match(/[\p{L}]/gu) ?? []).length >= 2
+}
+
+/**
+ * Ist dieser Titel-Suffix ein Raum?
+ *
+ * `bekannt` sind die Raumnamen des Angebots selbst, wenn der Aufrufer sie
+ * hat. Sie gewinnen immer — gegen jede Formregel.
+ */
+function istEchterRaum(name: string, bekannt?: Set<string>): boolean {
+  const n = (name ?? '').trim().toLowerCase()
+  if (bekannt?.has(n)) return true
+  return istRaumName(name)
 }
 
 // Nur DAS gehört wirklich unter "Allgemein" — alles andere ist raumbezogene Arbeit
 // (z.B. "Türen lackieren" gehört in den Raum, nicht in den Allgemein-Topf).
-const ALLGEMEIN_MUSTER = /an-?\s*und\s*abfahrt|anfahrt|abfahrt|fahrtkosten|kleinmaterial|verbrauchsmaterial|aufma(ß|ss)|entsorgung|schuttcontainer|gerüst|baustelleneinrichtung|besichtigung/i
+// DC-056 (2026-09-11): „nebenleistungen" ist die Sammelzeile der
+// zusammengefassten Kleinbeträge (src/lib/kleinbetraege.ts). Sie gehört aus
+// demselben Grund hierher wie Anfahrt und Kleinmaterial: sie stammt aus
+// mehreren Räumen und lässt sich keinem einzelnen zuordnen. Ohne diesen
+// Eintrag würde sie in der Gliederung „nach Arbeitsablauf" bei der
+// Hauptarbeit landen.
+const ALLGEMEIN_MUSTER = /an-?\s*und\s*abfahrt|anfahrt|abfahrt|fahrtkosten|kleinmaterial|verbrauchsmaterial|nebenleistungen|aufma(ß|ss)|entsorgung|schuttcontainer|gerüst|baustelleneinrichtung|besichtigung/i
 
 export function istAllgemeinPosition(titel: string): boolean {
   return ALLGEMEIN_MUSTER.test(titel ?? '')
@@ -114,6 +152,22 @@ export interface GruppierungsErgebnis {
   gesamtsumme: number
 }
 
+/**
+ * Die Räume, die das Angebot selbst kennt.
+ *
+ * `raum_details` wird beim Aufmaß geschrieben; die Schlüssel sind die
+ * Raumnamen, wie der Handwerker sie gesagt hat. Das ist die verlässlichste
+ * Quelle, die es gibt — besser als jede Regel über Titel.
+ *
+ * Defensiv, weil das Feld bei alten Angeboten fehlen kann: Dann kommt eine
+ * leere Liste zurück und die Gruppierung fällt auf die Formregel zurück.
+ */
+export function raeumeAusQuote(quote: { raum_details?: unknown } | null | undefined): string[] {
+  const d = quote?.raum_details
+  if (!d || typeof d !== 'object' || Array.isArray(d)) return []
+  return Object.keys(d as Record<string, unknown>).filter(k => k.trim().length > 0)
+}
+
 export function gruppiereNachRaum<T extends {
   id: string
   title: string
@@ -123,7 +177,12 @@ export function gruppiereNachRaum<T extends {
   unit_price: number
   total_price: number
   position: number
-}>(items: T[]): GruppierungsErgebnis | null {
+}>(items: T[], bekannteRaeume?: readonly string[]): GruppierungsErgebnis | null {
+  // Die Räume des Angebots selbst, wenn der Aufrufer sie mitgibt
+  // (`quote.raum_details`). Sie sind die Wahrheit; alles andere ist Form.
+  const bekannt = bekannteRaeume && bekannteRaeume.length > 0
+    ? new Set(bekannteRaeume.map(r => r.trim().toLowerCase()))
+    : undefined
   const raumMap = new Map<string, GruppenItem[]>()
   const allgemein: GruppenItem[] = []
   let hatRaeume = 0
@@ -134,7 +193,7 @@ export function gruppiereNachRaum<T extends {
       const raum = item.title.slice(m.index! + m[0].length).trim()
       const titleDisplay = item.title.slice(0, m.index).trim()
       // Nur echte Räume gruppieren — "1. Anstrich" o.ä. geht in Allgemein
-      if (istEchterRaum(raum)) {
+      if (istEchterRaum(raum, bekannt)) {
         if (!raumMap.has(raum)) raumMap.set(raum, [])
         raumMap.get(raum)!.push({
           id: item.id,

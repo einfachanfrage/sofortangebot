@@ -140,7 +140,7 @@ describe('PM-012 — „Sockel in Wandfarbe" wird erfüllt, aber mit Lack', () =
     + 'die sollen nur nochmal mitgestrichen werden, in der gleichen Farbe wie die Wand.'
 
   const basis: BerechnetePosition[] = [
-    { beschreibung: 'Wandflächen streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
+    { beschreibung: 'Wand streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
     { beschreibung: 'Sockelleisten abkleben — Esszimmer', menge: 15, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
   ]
 

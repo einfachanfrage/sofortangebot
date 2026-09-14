@@ -9,7 +9,20 @@ import { Download, Info } from 'lucide-react'
 import BottomNav from '@/components/BottomNav'
 import { Input } from '@/components/Input'
 
-type Typ = 'angebot' | 'rechnung'
+// CoS-E-008/033 (Sandy, 11.09.2026: „rechnung erstmal raus… ja weg"):
+// Diese Seite hatte einen zweiten Reiter „Rechnungen" mit eigenem
+// Nummernkreis. Aus dem hat nie jemand eine Nummer gezogen —
+// `api/quotes/[id]/nummer` fragt fest nach `p_typ: 'angebot'`. Manfred hat
+// daraus genau den falschen Schluss gezogen, den die Oberfläche nahelegte
+// (TN-015: „Zwei Rechnungsnummernkreise darf's nicht geben"). Ein
+// Einstellungsfeld, das etwas verspricht, was das Produkt nicht tut, ist
+// schlimmer als ein fehlendes.
+//
+// Die Zeile in der Datenbank bleibt unangetastet (`init_nummernkreise` legt
+// sie weiter an): Sie schadet nicht, sie kostet nichts, und wenn eine echte
+// Rechnung kommt, ist sie genau der Platz, an dem sie anfängt. Entfernt ist
+// nur das Versprechen an der Oberfläche.
+type Typ = 'angebot'
 
 function buildPreview(k: Nummernkreis): string {
   let s = ''
@@ -22,9 +35,9 @@ function buildPreview(k: Nummernkreis): string {
 export default function NummernPage() {
   const supabase = createClient()
   const router = useRouter()
-  const [tab, setTab] = useState<Typ>('angebot')
-  const [kreis, setKreis] = useState<Record<Typ, Nummernkreis | null>>({ angebot: null, rechnung: null })
-  const [form, setForm] = useState<Record<Typ, Partial<Nummernkreis>>>({ angebot: {}, rechnung: {} })
+  const tab: Typ = 'angebot'
+  const [kreis, setKreis] = useState<Record<Typ, Nummernkreis | null>>({ angebot: null })
+  const [form, setForm] = useState<Record<Typ, Partial<Nummernkreis>>>({ angebot: {} })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [warning, setWarning] = useState('')
@@ -60,18 +73,14 @@ export default function NummernPage() {
 
   function applyRows(rows: Nummernkreis[]) {
     const a = rows.find(r => r.typ === 'angebot') ?? null
-    const r = rows.find(r => r.typ === 'rechnung') ?? null
-    setKreis({ angebot: a, rechnung: r })
-    setForm({
-      angebot: a ? { ...a } : defaultKreis('angebot'),
-      rechnung: r ? { ...r } : defaultKreis('rechnung'),
-    })
+    setKreis({ angebot: a })
+    setForm({ angebot: a ? { ...a } : defaultKreis('angebot') })
   }
 
   function defaultKreis(typ: Typ): Partial<Nummernkreis> {
     return {
       typ,
-      prefix: typ === 'angebot' ? 'AG' : 'RE',
+      prefix: 'AG',
       jahr_aktiv: new Date().getFullYear(),
       trennzeichen: '-',
       naechste_nummer: 1,
@@ -178,19 +187,6 @@ export default function NummernPage() {
       </div>
 
       <div className="max-w-xl mx-auto px-5 pt-5 space-y-4">
-
-        {/* Tabs */}
-        <div className="flex gap-1 bg-white rounded-2xl p-1 shadow-sm border border-anthracite/5">
-          {(['angebot', 'rechnung'] as Typ[]).map(t => (
-            <button
-              key={t}
-              onClick={() => { setTab(t); setSaved(false); setWarning('') }}
-              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors ${tab === t ? 'bg-anthracite text-white' : 'text-anthracite/40'}`}
-            >
-              {t === 'angebot' ? 'Angebote' : 'Rechnungen'}
-            </button>
-          ))}
-        </div>
 
         {/* Vorschau */}
         <div className="bg-[#FFF9E6] border border-yellow/40 rounded-2xl px-6 py-5 text-center">

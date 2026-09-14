@@ -2,7 +2,7 @@ import type { MengenErgebnis, BerechnetePosition } from '../types'
 import { erkenneScope } from '../../arbeiten-normalisierer'
 import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge, sockelAbzug } from './sockelleisten'
-import { berechneOeffnungsabzugVob, vobHinweistext, abgezogeneOeffnungen, type OeffnungsabzugErgebnis } from './vob-uebermessung'
+import { berechneOeffnungsabzugVob, vobHinweistext, abgezogeneOeffnungen, abzugsText, type OeffnungsabzugErgebnis } from './vob-uebermessung'
 import { nichtStreichbarerWerkstoff, nichtStreichbarHinweis, brauchtVorlack } from '../../lack-untergrund'
 
 function round2(n: number): number {
@@ -404,17 +404,38 @@ export function malerEngine(daten: any): MengenErgebnis {
         }, 0))
 
         const zoneFl = round2(effUmfangWZ! * zone.hoehe - fensterFl - tuerFl)
-        const zoneLabel = zone.farbe ? `${zone.farbe} streichen` : `Wandzone ${zone.zone} streichen`
+        // ── Prüfmeister F.5 Punkt 2 (12.09.2026) ────────────────────────────
+        //
+        // „Kein Titel ohne Anstrichzahl." Dieser Zweig (mehrere Farbzonen an
+        // einer Wand) hat die Anstrichzahl bisher nirgends in den Titel
+        // geschrieben — er hieß schlicht „Blau streichen" oder „Wandzone 2
+        // streichen". Beides findet im Katalog nichts Sinnvolles, und ohne
+        // Anstrichzahl greift die Sperre aus Regel 1 nicht: Unter 1x/2x/3x
+        // gewinnt dann der alphabetisch erste, also der billigste.
+        // Derselbe Fehler wie TN-093, nur an einer anderen Stelle.
+        //
+        // Der Farbton gehört in die Klammer, nicht in den Namen der Leistung:
+        // Er ist für den Kunden wichtig, für den Preis nicht — der
+        // Prüfmeister führt Farbtöne ausdrücklich NICHT als Aufwandswort.
+        // Klammerinhalte werden beim Preisvergleich ohnehin ignoriert.
+        const zoneZusatz = zone.farbe ? ` (${zone.farbe}, Zone ${zone.zone})` : ` (Zone ${zone.zone})`
         positionen.push({
-          beschreibung: `${zoneLabel} — ${name}`,
+          beschreibung: `Wand streichen ${anstricheWand}x${zoneZusatz} — ${name}`,
           menge: Math.max(0, zoneFl), einheit: 'm²', konfidenz: 'high',
-          berechnungsweg: `${effUmfangWZ}m × ${zone.hoehe}m − Fenster ${fensterFl} m² − Türen ${tuerFl} m²`,
+          berechnungsweg: `${effUmfangWZ}m × ${zone.hoehe}m${abzugsText([
+            { label: 'Fenster', flaeche: fensterFl },
+            { label: 'Türen', flaeche: tuerFl },
+          ])}`,
           annahmen: [],
         })
         zoneStart = zoneEnd
       }
       if (anDecke && deckenflaecheM2 !== null) {
-        positionen.push({ beschreibung: `Deckenfläche streichen — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${laenge} × ${breite}`, annahmen: [] })
+        // Prüfmeister F.4: „Jede Decke in einem Angebot mit Farbzonen wird zum
+        // 1x-Preis kalkuliert." Hier fehlte die Anstrichzahl, während der
+        // normale Zweig weiter unten sie längst schreibt. Dieselbe Quelle
+        // benutzen, damit die beiden nicht wieder auseinanderlaufen.
+        positionen.push({ beschreibung: `Decke streichen ${anstricheDecke}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Deckenfläche ${laenge} × ${breite}`, annahmen: [] })
       }
       if (bodenStreichen && bodenflaecheM2 !== null) {
         positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenflaecheM2} m²`, annahmen: [] })
@@ -571,7 +592,11 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({
           beschreibung: `Sockelleisten abkleben — ${name}`,
           menge: sockelKnM, einheit: 'lfdm', konfidenz: 'high',
-          berechnungsweg: `Kniestockumfang ${knUmfang} lfm − Türen ${round2(knUmfang - sockelKnM)} m`, annahmen: [],
+          // CoS-E-010: kein „− Türen 0 m", wenn keine Tür abgezogen wurde.
+          berechnungsweg: knUmfang > sockelKnM
+            ? `Kniestockumfang ${knUmfang} lfm − Türen ${round2(knUmfang - sockelKnM)} m`
+            : `Kniestockumfang ${knUmfang} lfm`,
+          annahmen: [],
         })
       }
     } else {
@@ -612,7 +637,7 @@ export function malerEngine(daten: any): MengenErgebnis {
           // Der Kunde bekommt die Erklärung, die Preisliste bleibt bei einem
           // Eintrag.
           if (restwandFlaeche > 0) positionen.push({
-            beschreibung: `Wandflächen streichen ${anstricheWand}x (ohne Akzentwand) — ${name}`,
+            beschreibung: `Wand streichen ${anstricheWand}x (ohne Akzentwand) — ${name}`,
             menge: restwandFlaeche,
             einheit: 'm²',
             konfidenz: 'high',
@@ -635,7 +660,7 @@ export function malerEngine(daten: any): MengenErgebnis {
             ? `Dachschrägen streichen ${anstricheWand}x — ${name}`
             : istFassadeRaum
               ? `Fassadenfläche streichen ${anstricheWand}x — ${name}`
-              : `Wandflächen streichen ${anstricheWand}x — ${name}`
+              : `Wand streichen ${anstricheWand}x — ${name}`
           const wandBrutto2 = round2((umfangM ?? 0) * (hoehe ?? 0))
           const fensterAnzahl2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1), 0)
           const tuerAnzahl2 = effTueren.reduce((s: number, t: any) => s + (t.anzahl ?? 1), 0)
@@ -661,7 +686,12 @@ export function malerEngine(daten: any): MengenErgebnis {
           const vobHinweis = fensterAbzugVob && tuerAbzugVob ? vobHinweistext(fensterAbzugVob, tuerAbzugVob) : null
           positionen.push({
             beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: annahmenUmfang.length > 0 ? 'medium' : 'high',
-            berechnungsweg: istDachschraege ? `Dachschrägenfläche ${wandflaecheNettoM2} m²` : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m² − Fenster ${fensterAbzugAnzeige} m² − Türen ${tuerAbzugAnzeige} m²${tuerMasseAnzeige}`,
+            berechnungsweg: istDachschraege
+              ? `Dachschrägenfläche ${wandflaecheNettoM2} m²`
+              : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m²${abzugsText([
+                  { label: 'Fenster', flaeche: fensterAbzugAnzeige },
+                  { label: 'Türen', flaeche: tuerAbzugAnzeige, masse: tuerMasseAnzeige },
+                ])}`,
             annahmen: [...annahmenFenster, ...annahmenUmfang, ...anstrichAnnahmen, ...(vobHinweis ? [vobHinweis] : [])],
             ...(!istDachschraege && umfangM && hoehe ? {
               flaechen_parameter: {
@@ -699,7 +729,10 @@ export function malerEngine(daten: any): MengenErgebnis {
         })
       }
       if (anDecke && deckenflaecheM2 !== null) {
-        positionen.push({ beschreibung: `Deckenfläche streichen ${anstricheDecke}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [...anstrichAnnahmen] })
+        // F.6: „Deckenfläche" ist ein Werkzeugwort — der Handwerker sagt
+        // „Decke". Der Katalog auch: `Decke streichen 2x Anstrich`. Preis
+        // unverändert, beide Schreibweisen trafen dieselbe Zeile.
+        positionen.push({ beschreibung: `Decke streichen ${anstricheDecke}x — ${name}`, menge: deckenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: laenge && breite ? `Länge (${laenge}) × Breite (${breite})` : `Deckenfläche ${deckenflaecheM2} m² (= Bodenfläche)`, annahmen: [...anstrichAnnahmen] })
       }
       if (bodenStreichen && bodenflaecheM2 !== null) {
         positionen.push({ beschreibung: `Boden streichen — ${name}`, menge: bodenflaecheM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche = Länge × Breite`, annahmen: [] })
@@ -861,9 +894,9 @@ export function malerEngine(daten: any): MengenErgebnis {
       menge: nettoFlaeche,
       einheit: 'm²',
       konfidenz: 'high',
-      berechnungsweg: wFensterRoh.length > 0
-        ? `${wLaenge}m × ${wHoehe}m − Fenster (${wFensterAbzugVob.abzugFlaeche} m²)`
-        : `${wLaenge}m × ${wHoehe}m`,
+      berechnungsweg: `${wLaenge}m × ${wHoehe}m${abzugsText([
+        { label: 'Fenster', flaeche: wFensterAbzugVob.abzugFlaeche },
+      ])}`,
       annahmen: [...wAnstrichAnnahmen, ...(wVobHinweis ? [wVobHinweis] : [])],
     })
 
@@ -906,8 +939,29 @@ export function malerEngine(daten: any): MengenErgebnis {
       case 'rissversschluss':
         positionen.push({ beschreibung: 'Rissverschluss mit Gewebe', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
         break
-      case 'heizkoerper':
-        positionen.push({ beschreibung: 'Heizkörper schleifen und lackieren', menge: s.anzahl ?? 1, einheit: 'Stück', berechnungsweg: `${s.anzahl ?? 1} Stück`, ...mk })
+      case 'heizkoerper': {
+        // Prüfmeister, 12.09.2026: *„Wo die Engine Arbeitsgänge in einen
+        // Titel packt, gehören sie auseinander."*
+        //
+        // `Heizkörper schleifen und lackieren` traf bisher
+        // `Heizkörper streichen / lackieren` — 40,00 €. Das Schleifen fiel
+        // unter den Tisch, obwohl der Katalog es als eigene Zeile führt
+        // (`Heizkörper abschleifen` 20,00 €). Der Betrieb schuldet die
+        // Arbeit, bekommt sie aber nicht bezahlt.
+        //
+        // Seit die Aufwandswörter greifen, wäre die Zeile stattdessen
+        // gesperrt (0,00 €) — richtig, aber unbrauchbar. Die bessere
+        // Antwort ist die Aufteilung: zwei bepreiste Zeilen statt einer
+        // gesperrten, und der Kunde sieht, wofür er zahlt.
+        //
+        // Grundieren (25,00 €) steht bewusst NICHT dabei: Das Transkript
+        // sagt „schleifen und lackieren", und eine Grundierung dazuzu-
+        // erfinden wäre eine Entscheidung, keine Ableitung. Braucht der
+        // Untergrund sie, ergänzt der Handwerker sie im Entwurf.
+        const stk = s.anzahl ?? 1
+        positionen.push({ beschreibung: 'Heizkörper abschleifen', menge: stk, einheit: 'Stück', berechnungsweg: `${stk} Stück`, ...mk })
+        positionen.push({ beschreibung: 'Heizkörper streichen / lackieren', menge: stk, einheit: 'Stück', berechnungsweg: `${stk} Stück`, ...mk })
+      }
         break
       case 'fussleisten':
         positionen.push({ beschreibung: 'Fußleisten schleifen und lackieren', menge: s.lfdm, einheit: 'lfdm', berechnungsweg: `${s.lfdm} lfdm`, ...mk })
@@ -937,7 +991,10 @@ export function malerEngine(daten: any): MengenErgebnis {
   }
 
   for (const pos of positionen) {
-    const wand = positionen.find(p => p.beschreibung.includes('Wandfläche'))
+    // „Wandfläche" stand hier als Titelbestandteil; seit F.6 heißt die
+    // Position `Wand streichen Nx`. Ohne diese Anpassung lief die
+    // Plausibilitätswarnung (Wandfläche < Bodenfläche) wortlos nie wieder an.
+    const wand = positionen.find(p => /wand(?:fläche)?\s+streichen/i.test(p.beschreibung))
     const boden = positionen.find(p => p.beschreibung.includes('Boden'))
     if (wand && boden && wand.menge < boden.menge) {
       warnungen.push('Wandfläche kleiner als Bodenfläche — Raumhöhe prüfen!')

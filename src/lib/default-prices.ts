@@ -567,12 +567,12 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Parkett', title: 'Mehrschichtparkett verlegen vollflächig verklebt', unit: 'm²', unit_price: 42.00 },
   { category: 'Boden – Parkett', title: 'Massivparkett (Stabparkett) verlegen vollflächig verklebt', unit: 'm²', unit_price: 55.00 },
   { category: 'Boden – Parkett', title: 'Landhausdiele verlegen schwimmend (Klick)', unit: 'm²', unit_price: 25.00 },
-  { category: 'Boden – Parkett', title: 'Landhausdiele verlegen vollflächig verklebt', unit: 'm²', unit_price: 40.00 },
+  { category: 'Boden – Parkett', title: 'Landhausdiele Mehrschicht verlegen, vollflächig verklebt', unit: 'm²', unit_price: 40.00 },
   { category: 'Boden – Parkett', title: 'Mosaikparkett / Industrieparkett verlegen (verklebt)', unit: 'm²', unit_price: 50.00 },
   { category: 'Boden – Parkett', title: 'Aufpreis Fischgrät-Verlegemuster', unit: 'm²', unit_price: 14.00 },
   { category: 'Boden – Parkett', title: 'Aufpreis Schachbrett-Muster / Kassetten', unit: 'm²', unit_price: 18.00 },
   { category: 'Boden – Parkett', title: 'Aufpreis Diagonalverlegung', unit: 'm²', unit_price: 10.00 },
-  { category: 'Boden – Parkett', title: 'Aufpreis Verlegung bei Fußbodenheizung (elastischer Kleber)', unit: 'm²', unit_price: 8.00 },
+  { category: 'Boden – Parkett', title: 'Aufpreis Fußbodenheizung, verklebt mit Elastikkleber', unit: 'm²', unit_price: 8.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // BODENBELÄGE & PARKETT — Parkett Aufarbeitung / Sanierung
@@ -593,19 +593,19 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // BODENBELÄGE & PARKETT — Laminat
   // ═══════════════════════════════════════════════════════════════════════════
-  { category: 'Boden – Laminat', title: 'Laminat verlegen schwimmend (Klick-System, Standard)', unit: 'm²', unit_price: 14.00 },
-  { category: 'Boden – Laminat', title: 'Laminat verlegen schwimmend (Großdiele / breites Format)', unit: 'm²', unit_price: 16.00 },
+  { category: 'Boden – Laminat', title: 'Laminat verlegen, schwimmend', unit: 'm²', unit_price: 14.00 },
+  { category: 'Boden – Laminat', title: 'Laminat Großdiele verlegen, schwimmend', unit: 'm²', unit_price: 16.00 },
   { category: 'Boden – Laminat', title: 'Aufpreis Diagonalverlegung Laminat', unit: 'm²', unit_price: 8.00 },
   { category: 'Boden – Laminat', title: 'Aufpreis Fischgrät / Muster Laminat', unit: 'm²', unit_price: 12.00 },
-  { category: 'Boden – Laminat', title: 'Aufpreis Verlegung bei Fußbodenheizung (FBH-geeignet)', unit: 'm²', unit_price: 4.00 },
+  { category: 'Boden – Laminat', title: 'Aufpreis Fußbodenheizung, schwimmend verlegt', unit: 'm²', unit_price: 4.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // BODENBELÄGE & PARKETT — Vinyl / LVT / Designboden
   // ═══════════════════════════════════════════════════════════════════════════
   { category: 'Boden – Vinyl / LVT', title: 'Klick-Vinyl (LVT) verlegen schwimmend, Standard', unit: 'm²', unit_price: 16.00 },
   { category: 'Boden – Vinyl / LVT', title: 'Klick-Vinyl (SPC) verlegen schwimmend (Vollkern, wasserfest)', unit: 'm²', unit_price: 18.00 },
-  { category: 'Boden – Vinyl / LVT', title: 'Klebe-Vinyl verlegen vollflächig (Dünnbett, Self-Adhesive)', unit: 'm²', unit_price: 22.00 },
-  { category: 'Boden – Vinyl / LVT', title: 'Klebe-Vinyl verlegen vollflächig (Profikleber, Nasskleber)', unit: 'm²', unit_price: 28.00 },
+  { category: 'Boden – Vinyl / LVT', title: 'Selbstklebendes Vinyl verlegen', unit: 'm²', unit_price: 22.00 },
+  { category: 'Boden – Vinyl / LVT', title: 'Klebe-Vinyl verlegen, Nasskleber', unit: 'm²', unit_price: 28.00 },
   { category: 'Boden – Vinyl / LVT', title: 'Vinyl-Planken verlegen (Einzelplanken, Klick)', unit: 'm²', unit_price: 17.00 },
   { category: 'Boden – Vinyl / LVT', title: 'Vinyl-Fliesen verlegen (Klick oder Klebe)', unit: 'm²', unit_price: 20.00 },
   { category: 'Boden – Vinyl / LVT', title: 'WPC-Boden / Outdoorvinyl verlegen (Terrasse / Feuchtraum)', unit: 'm²', unit_price: 25.00 },
@@ -722,7 +722,7 @@ export const DEFAULT_PRICES: Array<{
 
   // BODENBELÄGE & PARKETT — ergänzende Beläge und Verlegemuster
   { category: 'Boden – Parkett', title: 'Massivholzdielen verlegen verschraubt', unit: 'm²', unit_price: 48.00 },
-  { category: 'Boden – Parkett', title: 'Massivholzdielen verlegen vollflächig verklebt', unit: 'm²', unit_price: 52.00 },
+  { category: 'Boden – Parkett', title: 'Massivholzdiele verlegen, vollflächig verklebt', unit: 'm²', unit_price: 52.00 },
   { category: 'Boden – Parkett', title: 'Stabparkett im englischen Verband verlegen', unit: 'm²', unit_price: 58.00 },
   { category: 'Boden – Parkett', title: 'Stabparkett im Fischgrätmuster verlegen', unit: 'm²', unit_price: 68.00 },
   { category: 'Boden – Parkett', title: 'Stabparkett im französischen Fischgrät verlegen', unit: 'm²', unit_price: 78.00 },
@@ -878,14 +878,14 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // PUTZ & STUCK — Stuck Dekorativ
   // ═══════════════════════════════════════════════════════════════════════════
-  { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (PU-Hartschaum, einfach)', unit: 'lfdm', unit_price: 18.00 },
-  { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (PU-Hartschaum, profiliert / aufwändig)', unit: 'lfdm', unit_price: 28.00 },
-  { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (Gips, einfach)', unit: 'lfdm', unit_price: 25.00 },
-  { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (Gips, profiliert / aufwändig)', unit: 'lfdm', unit_price: 40.00 },
-  { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (EPS / Styropor, einfach)', unit: 'lfdm', unit_price: 12.00 },
+  { category: 'Stuck – Dekorativ', title: 'PU-Stuckleiste montieren', unit: 'lfdm', unit_price: 18.00 },
+  { category: 'Stuck – Dekorativ', title: 'PU-Stuckleiste profiliert montieren', unit: 'lfdm', unit_price: 28.00 },
+  { category: 'Stuck – Dekorativ', title: 'Gipsstuckleiste montieren', unit: 'lfdm', unit_price: 25.00 },
+  { category: 'Stuck – Dekorativ', title: 'Gipsstuckleiste profiliert montieren', unit: 'lfdm', unit_price: 40.00 },
+  { category: 'Stuck – Dekorativ', title: 'Styroporleiste montieren', unit: 'lfdm', unit_price: 12.00 },
   { category: 'Stuck – Dekorativ', title: 'Gehrungsschnitte / Eckverbindungen Stuckleiste', unit: 'Stück', unit_price: 8.00 },
-  { category: 'Stuck – Dekorativ', title: 'Deckenrosette montieren (PU / Gips, Fertigteil)', unit: 'Stück', unit_price: 55.00 },
-  { category: 'Stuck – Dekorativ', title: 'Deckenrosette montieren (groß, >50cm Durchmesser)', unit: 'Stück', unit_price: 90.00 },
+  { category: 'Stuck – Dekorativ', title: 'Deckenrosette montieren', unit: 'Stück', unit_price: 55.00 },
+  { category: 'Stuck – Dekorativ', title: 'Deckenrosette groß montieren, über 50 cm', unit: 'Stück', unit_price: 90.00 },
   { category: 'Stuck – Dekorativ', title: 'Deckenspiegel / Rahmenfeld herstellen (Stuckleisten)', unit: 'Stück', unit_price: 120.00 },
   { category: 'Stuck – Dekorativ', title: 'Pilaster / Wandpilaster montieren', unit: 'Stück', unit_price: 95.00 },
   { category: 'Stuck – Dekorativ', title: 'Konsolstein / Konsole montieren', unit: 'Stück', unit_price: 65.00 },
@@ -990,9 +990,9 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Estrich – Dämmung & Trennlagen', title: 'Trittschalldämmung verlegen (EPS-T / PS-T, bis 20mm)', unit: 'm²', unit_price: 9.00 },
   { category: 'Estrich – Dämmung & Trennlagen', title: 'Trittschalldämmung verlegen (bis 30mm)', unit: 'm²', unit_price: 12.00 },
   { category: 'Estrich – Dämmung & Trennlagen', title: 'Trittschalldämmung verlegen (bis 50mm)', unit: 'm²', unit_price: 16.00 },
-  { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung verlegen (EPS, bis 60mm)', unit: 'm²', unit_price: 14.00 },
-  { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung verlegen (EPS, bis 100mm)', unit: 'm²', unit_price: 20.00 },
-  { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung verlegen (Mineralwolle / Steinwolle)', unit: 'm²', unit_price: 22.00 },
+  { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung EPS verlegen, bis 60 mm', unit: 'm²', unit_price: 14.00 },
+  { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung EPS verlegen, bis 100 mm', unit: 'm²', unit_price: 20.00 },
+  { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung Mineralwolle verlegen', unit: 'm²', unit_price: 22.00 },
   { category: 'Estrich – Dämmung & Trennlagen', title: 'PE-Folie / Trennlage verlegen (0,2mm)', unit: 'm²', unit_price: 3.00 },
   { category: 'Estrich – Dämmung & Trennlagen', title: 'Dampfbremse verlegen (verstärkte PE-Folie)', unit: 'm²', unit_price: 5.00 },
   { category: 'Estrich – Dämmung & Trennlagen', title: 'Bewehrungsmatte / Glasfasermatte einlegen (Rissschutz)', unit: 'm²', unit_price: 8.00 },
@@ -1006,7 +1006,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Estrich – Zementestrich', title: 'Zementestrich Heizestrich auf FBH (65mm, F5)', unit: 'm²', unit_price: 35.00 },
   { category: 'Estrich – Zementestrich', title: 'Zementestrich Nassraum / Feuchtraum (wasserbeständig, 50mm)', unit: 'm²', unit_price: 32.00 },
   { category: 'Estrich – Zementestrich', title: 'Zementestrich Außenbereich / Garage (frostsicher, 80mm)', unit: 'm²', unit_price: 38.00 },
-  { category: 'Estrich – Zementestrich', title: 'Aufpreis Estrichdicke je zusätzlicher cm', unit: 'm²/cm', unit_price: 2.50 },
+  { category: 'Estrich – Zementestrich', title: 'Aufpreis Zementestrich je zusätzlicher cm', unit: 'm²/cm', unit_price: 2.50 },
   { category: 'Estrich – Zementestrich', title: 'Aufpreis Festigkeitsklasse F5 (gegenüber F4)', unit: 'm²', unit_price: 4.00 },
   { category: 'Estrich – Zementestrich', title: 'Aufpreis Festigkeitsklasse F7 / Industrieestrich', unit: 'm²', unit_price: 12.00 },
 
@@ -1017,7 +1017,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Estrich – Anhydritestrich', title: 'Anhydrit-Fließestrich Heizestrich auf FBH (45mm, F5)', unit: 'm²', unit_price: 36.00 },
   { category: 'Estrich – Anhydritestrich', title: 'Anhydrit-Fließestrich großflächig (>200m², Pumpe)', unit: 'm²', unit_price: 28.00 },
   { category: 'Estrich – Anhydritestrich', title: 'Anhydritestrich händisch eingebaut (Kleinfläche)', unit: 'm²', unit_price: 38.00 },
-  { category: 'Estrich – Anhydritestrich', title: 'Aufpreis Estrichdicke je zusätzlicher cm', unit: 'm²/cm', unit_price: 2.80 },
+  { category: 'Estrich – Anhydritestrich', title: 'Aufpreis Anhydritestrich je zusätzlicher cm', unit: 'm²/cm', unit_price: 2.80 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // ESTRICH & AUSGLEICH — Schnellestrich
@@ -1731,9 +1731,9 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // SCHREINER & TISCHLER — Küche nach Maß
   // ═══════════════════════════════════════════════════════════════════════════
-  { category: 'Schreiner – Küche nach Maß', title: 'Küche Planung + Fertigung + Montage (einfach, je lfdm)', unit: 'lfdm', unit_price: 1800.00 },
-  { category: 'Schreiner – Küche nach Maß', title: 'Küche Planung + Fertigung + Montage (mittel, je lfdm)', unit: 'lfdm', unit_price: 2800.00 },
-  { category: 'Schreiner – Küche nach Maß', title: 'Küche Planung + Fertigung + Montage (hochwertig, je lfdm)', unit: 'lfdm', unit_price: 4200.00 },
+  { category: 'Schreiner – Küche nach Maß', title: 'Einbauküche einfach je lfdm', unit: 'lfdm', unit_price: 1800.00 },
+  { category: 'Schreiner – Küche nach Maß', title: 'Einbauküche mittel je lfdm', unit: 'lfdm', unit_price: 2800.00 },
+  { category: 'Schreiner – Küche nach Maß', title: 'Einbauküche hochwertig je lfdm', unit: 'lfdm', unit_price: 4200.00 },
   { category: 'Schreiner – Küche nach Maß', title: 'Küchenarbeitsplatte Holz / Massivholz einpassen + montieren', unit: 'lfdm', unit_price: 280.00 },
   { category: 'Schreiner – Küche nach Maß', title: 'Küchenarbeitsplatte Ausschnitt (Spüle / Herd) fräsen', unit: 'Stück', unit_price: 95.00 },
   { category: 'Schreiner – Küche nach Maß', title: 'Küchenmontage (nur Montage von Kundenware, je lfdm)', unit: 'lfdm', unit_price: 120.00 },
@@ -1758,8 +1758,8 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // SCHREINER & TISCHLER — Treppen & Treppenbeläge
   // ═══════════════════════════════════════════════════════════════════════════
-  { category: 'Schreiner – Treppen', title: 'Holztreppe Massiv (gerade, bis 10 Stufen, inkl. Geländer)', unit: 'Pauschale', unit_price: 5500.00 },
-  { category: 'Schreiner – Treppen', title: 'Holztreppe Massiv (gewendelt / Sonderform)', unit: 'Pauschale', unit_price: 9500.00 },
+  { category: 'Schreiner – Treppen', title: 'Holztreppe gerade', unit: 'Pauschale', unit_price: 5500.00 },
+  { category: 'Schreiner – Treppen', title: 'Holztreppe gewendelt', unit: 'Pauschale', unit_price: 9500.00 },
   { category: 'Schreiner – Treppen', title: 'Treppenstufe Holz (Auftrittsplatte) montieren / ersetzen', unit: 'Stück', unit_price: 180.00 },
   { category: 'Schreiner – Treppen', title: 'Setzstufe montieren / ersetzen', unit: 'Stück', unit_price: 120.00 },
   { category: 'Schreiner – Treppen', title: 'Bestandstreppe renovieren (neue Holzstufen auf Betonstiege)', unit: 'Stück', unit_price: 220.00 },
@@ -1963,8 +1963,8 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Dach – Dachdämmung', title: 'Untersparrendämmung (Zusatzdämmung, 40–60mm)', unit: 'm²', unit_price: 38.00 },
   { category: 'Dach – Dachdämmung', title: 'Aufsparrendämmung PU-Hartschaum (120mm, inkl. Eindeckung)', unit: 'm²', unit_price: 175.00 },
   { category: 'Dach – Dachdämmung', title: 'Aufsparrendämmung (160mm, inkl. Eindeckung)', unit: 'm²', unit_price: 210.00 },
-  { category: 'Dach – Dachdämmung', title: 'Oberste Geschossdecke dämmen (nicht begehbar, MW 160mm)', unit: 'm²', unit_price: 35.00 },
-  { category: 'Dach – Dachdämmung', title: 'Oberste Geschossdecke dämmen (begehbar, Trittschutzplatte)', unit: 'm²', unit_price: 55.00 },
+  { category: 'Dach – Dachdämmung', title: 'Geschossdecke dämmen, nicht begehbar', unit: 'm²', unit_price: 35.00 },
+  { category: 'Dach – Dachdämmung', title: 'Geschossdecke dämmen, begehbar mit Trittschutz', unit: 'm²', unit_price: 55.00 },
   { category: 'Dach – Dachdämmung', title: 'Einblasdämmung (in bestehende Hohlräume)', unit: 'm²', unit_price: 28.00 },
   { category: 'Dach – Dachdämmung', title: 'Kellerdecke dämmen von unten (Mineralwolle / EPS, 80mm)', unit: 'm²', unit_price: 42.00 },
 
@@ -2150,8 +2150,8 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Türen – Garagentore', title: 'Garagentor nur Montage (ohne Element, Standard)', unit: 'Stück', unit_price: 380.00 },
   { category: 'Türen – Garagentore', title: 'Garagentor Wartung / Einstellung + Ölservice', unit: 'Stück', unit_price: 95.00 },
   // Rollladen & Sonnenschutz
-  { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Außenrollladen (manuell, Gurt) einbauen inkl. Kasten', unit: 'Stück', unit_price: 380.00 },
-  { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Außenrollladen (elektrisch, 230V) einbauen inkl. Kasten', unit: 'Stück', unit_price: 580.00 },
+  { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Rollladen manuell einbauen', unit: 'Stück', unit_price: 380.00 },
+  { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Rollladen elektrisch einbauen', unit: 'Stück', unit_price: 580.00 },
   { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Rollladen motorisieren (Umbau manuell → elektrisch)', unit: 'Stück', unit_price: 280.00 },
   { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Aufpreis Smart-Home-Steuerung (je Rollladen)', unit: 'Stück', unit_price: 95.00 },
   { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Rollladen reparieren / Panzer tauschen', unit: 'Stück', unit_price: 180.00 },
@@ -2327,8 +2327,8 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Abbruch – Wände', title: 'GK-Trennwand entfernen', unit: 'm²', unit_price: 12.00 },
   { category: 'Abbruch – Wände', title: 'Wandfliesen abstemmen', unit: 'm²', unit_price: 22.00 },
   { category: 'Abbruch – Wände', title: 'Putz abschlagen', unit: 'm²', unit_price: 14.00 },
-  { category: 'Abbruch – Wände', title: 'Wandöffnung / Durchbruch herstellen (bis 1 m², Mauerwerk)', unit: 'Stück', unit_price: 280.00 },
-  { category: 'Abbruch – Wände', title: 'Wandöffnung / Durchbruch herstellen (bis 1 m², Beton / Stahlbeton)', unit: 'Stück', unit_price: 650.00 },
+  { category: 'Abbruch – Wände', title: 'Durchbruch Mauerwerk bis 1 m²', unit: 'Stück', unit_price: 280.00 },
+  { category: 'Abbruch – Wände', title: 'Durchbruch Beton bis 1 m²', unit: 'Stück', unit_price: 650.00 },
   { category: 'Abbruch – Wände', title: 'Kernbohrung (bis DN 150)', unit: 'Stück', unit_price: 180.00 },
   { category: 'Abbruch – Wände', title: 'Wandschlitz stemmen (Mauerwerk)', unit: 'lfdm', unit_price: 12.00 },
   // Decken- & Bodenabbruch
@@ -2341,8 +2341,8 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Abbruch – Decken & Böden', title: 'Kleberbett / Kleber abfräsen', unit: 'm²', unit_price: 14.00 },
   // Teilabbruch & Einzelbauteile
   { category: 'Abbruch – Teilabbruch', title: 'Kamin / Schornstein abtragen (je m Höhe)', unit: 'lfdm', unit_price: 65.00 },
-  { category: 'Abbruch – Teilabbruch', title: 'Treppe abbrechen (Beton)', unit: 'Stück', unit_price: 850.00 },
-  { category: 'Abbruch – Teilabbruch', title: 'Treppe abbrechen (Holz)', unit: 'Stück', unit_price: 280.00 },
+  { category: 'Abbruch – Teilabbruch', title: 'Betontreppe abbrechen', unit: 'Stück', unit_price: 850.00 },
+  { category: 'Abbruch – Teilabbruch', title: 'Holztreppe abbrechen', unit: 'Stück', unit_price: 280.00 },
   { category: 'Abbruch – Teilabbruch', title: 'Balkon abbrechen (Stahlbeton)', unit: 'm²', unit_price: 180.00 },
   { category: 'Abbruch – Teilabbruch', title: 'Dachstuhl abbrechen + entsorgen', unit: 'm²', unit_price: 35.00 },
   { category: 'Abbruch – Teilabbruch', title: 'Dachabdeckung entfernen + entsorgen', unit: 'm²', unit_price: 18.00 },
@@ -2354,10 +2354,10 @@ export const DEFAULT_PRICES: Array<{
   // Vollabbruch
   { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch EFH (Massivbau, bis 120 m², inkl. Entsorgung)', unit: 'Pauschale', unit_price: 28000.00 },
   { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch EFH (Leichtbau / Holz, bis 120 m²)', unit: 'Pauschale', unit_price: 16000.00 },
-  { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch je m² BGF (Massivbau, Richtwert)', unit: 'm²', unit_price: 75.00 },
-  { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch je m² BGF (Stahlbeton / aufwändig)', unit: 'm²', unit_price: 110.00 },
-  { category: 'Abbruch – Vollabbruch', title: 'Garage abbrechen (Beton / Massiv, bis 25 m²)', unit: 'Stück', unit_price: 2800.00 },
-  { category: 'Abbruch – Vollabbruch', title: 'Garage abbrechen (Leichtbau / Fertiggarage)', unit: 'Stück', unit_price: 1200.00 },
+  { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch Massivbau je m²', unit: 'm²', unit_price: 75.00 },
+  { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch Stahlbeton je m²', unit: 'm²', unit_price: 110.00 },
+  { category: 'Abbruch – Vollabbruch', title: 'Massivgarage abbrechen', unit: 'Stück', unit_price: 2800.00 },
+  { category: 'Abbruch – Vollabbruch', title: 'Fertiggarage abbrechen', unit: 'Stück', unit_price: 1200.00 },
   { category: 'Abbruch – Vollabbruch', title: 'Gartenhaus / Nebengebäude abbrechen (Holz, bis 20 m²)', unit: 'Stück', unit_price: 950.00 },
   { category: 'Abbruch – Vollabbruch', title: 'Aufpreis Keller (Vollabbruch inkl. Keller, je m² Kellerfläche)', unit: 'm²', unit_price: 95.00 },
   // Schadstoff-Rückbau
@@ -2491,8 +2491,8 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Garten – Gehölzpflege & Baumarbeiten', title: 'Schnittgut / Grünschnitt abtransportieren + entsorgen', unit: 'm³', unit_price: 35.00 },
   { category: 'Garten – Gehölzpflege & Baumarbeiten', title: 'Baumgutachten / Baumkontrolle (Fremdleistung, Weiterberechnung)', unit: 'Pauschale', unit_price: 0.00 },
   // Gartenpflege & Wartung
-  { category: 'Garten – Pflege & Wartung', title: 'Gartenpflege allgemein (Fachkraft, je Stunde)', unit: 'Stunde', unit_price: 45.00 },
-  { category: 'Garten – Pflege & Wartung', title: 'Gartenpflege allgemein (Hilfsarbeiter, je Stunde)', unit: 'Stunde', unit_price: 30.00 },
+  { category: 'Garten – Pflege & Wartung', title: 'Gartenpflege Fachkraft je Stunde', unit: 'Stunde', unit_price: 45.00 },
+  { category: 'Garten – Pflege & Wartung', title: 'Gartenpflege Hilfskraft je Stunde', unit: 'Stunde', unit_price: 30.00 },
   { category: 'Garten – Pflege & Wartung', title: 'Gartenpflegevertrag pauschal (je m², je Monat)', unit: 'm²/Monat', unit_price: 0.25 },
   { category: 'Garten – Pflege & Wartung', title: 'Unkraut jäten', unit: 'm²', unit_price: 2.50 },
   { category: 'Garten – Pflege & Wartung', title: 'Laubharken / Laub zusammenrechen', unit: 'm²', unit_price: 0.80 },
@@ -3067,8 +3067,8 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (2–4 Haltestellen, maschinenraumlos, komplett)', unit: 'Pauschale', unit_price: 28000.00 },
   { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (5–8 Haltestellen, maschinenraumlos)', unit: 'Pauschale', unit_price: 38000.00 },
   { category: 'Aufzugstechnik – Einbau', title: 'Plattformlift / Hebebühne einbauen (innen, bis 3 Haltestellen)', unit: 'Pauschale', unit_price: 18000.00 },
-  { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift einbauen (gerade Treppe, komplett)', unit: 'Pauschale', unit_price: 5500.00 },
-  { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift einbauen (gewendelte Treppe)', unit: 'Pauschale', unit_price: 9500.00 },
+  { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift gerade Treppe', unit: 'Pauschale', unit_price: 5500.00 },
+  { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift gewendelte Treppe', unit: 'Pauschale', unit_price: 9500.00 },
   { category: 'Aufzugstechnik – Einbau', title: 'Aufzugsschacht mauern / herstellen (je m² Innenfläche)', unit: 'm²', unit_price: 280.00 },
   { category: 'Aufzugstechnik – Einbau', title: 'Aufzugsschacht Stahlkonstruktion / Glas (je m² Innenfläche)', unit: 'm²', unit_price: 480.00 },
   { category: 'Aufzugstechnik – Einbau', title: 'Aufzugsgrube herstellen (Beton, je Grube)', unit: 'Stück', unit_price: 2800.00 },

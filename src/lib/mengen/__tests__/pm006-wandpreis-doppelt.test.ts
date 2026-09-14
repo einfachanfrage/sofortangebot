@@ -30,7 +30,7 @@ describe('PM-006 — ein Arbeitsgang, ein Katalogtitel', () => {
       }],
     })
     const titel = e.positionen.map(p => p.beschreibung)
-    expect(titel).toContain('Wandflächen streichen 2x (ohne Akzentwand) — Schlafzimmer')
+    expect(titel).toContain('Wand streichen 2x (ohne Akzentwand) — Schlafzimmer')
     expect(titel.some(t => /Restwände/i.test(t))).toBe(false)
   })
 
@@ -46,7 +46,7 @@ describe('PM-006 — ein Arbeitsgang, ein Katalogtitel', () => {
         akzentwand: true,
       }],
     })
-    const rest = e.positionen.find(p => /Wandflächen streichen/i.test(p.beschreibung))
+    const rest = e.positionen.find(p => /Wand streichen/i.test(p.beschreibung))
     // Der Kunde sieht weiterhin, dass nicht alle Wände gestrichen werden —
     // nur eben im Rechenweg statt im Katalogtitel.
     expect(rest?.berechnungsweg).toMatch(/Akzentwand/)
@@ -57,8 +57,8 @@ describe('PM-006 — ein Arbeitsgang, ein Katalogtitel', () => {
     // Der Matcher entfernt Klammerinhalte — der Titel trifft weiterhin
     // denselben Eintrag wie eine ganz normale Wandposition.
     const katalog = [{ id: '1', title: 'Wand streichen 2x Anstrich', category: 'Maler – Anstrich Innen', unit: 'm²', unit_price: 11.50 }]
-    const mit = findePreisposition('Wandflächen streichen 2x (ohne Akzentwand) — Schlafzimmer', 'm²', katalog)
-    const ohne = findePreisposition('Wandflächen streichen 2x — Schlafzimmer', 'm²', katalog)
+    const mit = findePreisposition('Wand streichen 2x (ohne Akzentwand) — Schlafzimmer', 'm²', katalog)
+    const ohne = findePreisposition('Wand streichen 2x — Schlafzimmer', 'm²', katalog)
     expect(mit?.position.unit_price).toBe(11.50)
     expect(mit?.position.id).toBe(ohne?.position.id)
   })

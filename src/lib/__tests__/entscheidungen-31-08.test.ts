@@ -49,8 +49,8 @@ describe('PM-008/PM-015 — Erschwerniszuschläge laufen in Prozent', () => {
 
   it('rechnet den Zuschlag auf die Leistungen genau seines Raums, nicht auf das ganze Angebot', () => {
     const zeilen = [
-      { title: 'Wandflächen streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5 },
-      { title: 'Wandflächen streichen 2x — Küche', quantity: 40, unit: 'm²', unit_price: 9.5 },
+      { title: 'Wand streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5 },
+      { title: 'Wand streichen 2x — Küche', quantity: 40, unit: 'm²', unit_price: 9.5 },
       { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 15, unit: '%', unit_price: 0 },
     ]
     const basis = bemessungsgrundlage(zeilen, raumAusTitel('Erschwerniszuschlag Raumhöhe > 3m — Büro'))
@@ -62,7 +62,7 @@ describe('PM-008/PM-015 — Erschwerniszuschläge laufen in Prozent', () => {
 
   it('nimmt ohne Raumbezug alle Leistungen — aber nie einen anderen Zuschlag', () => {
     const zeilen = [
-      { title: 'Wandflächen streichen 2x', quantity: 10, unit: 'm²', unit_price: 10 },
+      { title: 'Wand streichen 2x', quantity: 10, unit: 'm²', unit_price: 10 },
       { title: 'Erschwerniszuschlag Altbau', quantity: 20, unit: '%', unit_price: 1 },
       { title: 'Erschwerniszuschlag bewohnt', quantity: 10, unit: '%', unit_price: 1 },
     ]
@@ -81,8 +81,8 @@ describe('PM-008/PM-015 — Erschwerniszuschläge laufen in Prozent', () => {
 
   it('rechnet das ganze Angebot durch: zwei Räume, zwei Zuschläge, keine Kettenrechnung', () => {
     const items = [
-      { title: 'Wandflächen streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, berechnungsweg: null as string | null },
-      { title: 'Wandflächen streichen 2x — Küche', quantity: 40, unit: 'm²', unit_price: 9.5, berechnungsweg: null as string | null },
+      { title: 'Wand streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, berechnungsweg: null as string | null },
+      { title: 'Wand streichen 2x — Küche', quantity: 40, unit: 'm²', unit_price: 9.5, berechnungsweg: null as string | null },
       { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 1, unit: '%', unit_price: 15, berechnungsweg: 'Raumhöhe 3.2m > 3m' as string | null },
       { title: 'Erschwerniszuschlag Altbau', quantity: 1, unit: '%', unit_price: 20, berechnungsweg: null as string | null },
     ]
@@ -104,7 +104,7 @@ describe('PM-008/PM-015 — Erschwerniszuschläge laufen in Prozent', () => {
 
   it('lässt einen Zuschlag ohne Katalogpreis sichtbar bei 0,00 € stehen, statt einen Satz zu erfinden', () => {
     const items = [
-      { title: 'Wandflächen streichen 2x — Büro', quantity: 10, unit: 'm²', unit_price: 10, berechnungsweg: null as string | null },
+      { title: 'Wand streichen 2x — Büro', quantity: 10, unit: 'm²', unit_price: 10, berechnungsweg: null as string | null },
       { title: 'Erschwerniszuschlag Denkmalschutz', quantity: 1, unit: '%', unit_price: 0, berechnungsweg: null as string | null },
     ]
     wendeProzentZuschlaegeAn(items, index => index !== 1)
@@ -112,8 +112,19 @@ describe('PM-008/PM-015 — Erschwerniszuschläge laufen in Prozent', () => {
     expect(items[1].unit_price).toBe(0)
   })
 
+  // ── Ursache behoben statt Zeit hochgesetzt (12.09.2026) ─────────────────
+  //
+  // Dieser Test war an einem Tag dreimal rot und zweimal grün, ohne dass sich
+  // etwas an ihm geändert hätte: „Test timed out". Er lud die halbe
+  // Next.js-Route nach, um EINE Zeile zu prüfen — erst 2,3 s, dann über 5 s,
+  // nach dem Hochsetzen auch über 20 s.
+  //
+  // Ein Test, der zufällig rot wird, ist schlimmer als gar kein Test: Er
+  // bringt einem bei, rote Läufe wegzuklicken. Die Funktion liegt deshalb
+  // jetzt in `@/lib/positions-gewerk` — reine Logik ohne Datenbank und ohne
+  // Next.js. Der Endpunkt exportiert sie unverändert weiter.
   it('ordnet Zuschläge auch im gemischten Angebot dem Maler zu (sonst 0,00 € wie bei „Boden schützen")', async () => {
-    const { gewerkFuerPosition } = await import('@/app/api/angebot-generieren/route')
+    const { gewerkFuerPosition } = await import('@/lib/positions-gewerk')
     expect(gewerkFuerPosition('Erschwerniszuschlag Raumhöhe > 3m — Büro', 'boden_parkett')).toBe('maler')
   })
 })
@@ -230,7 +241,7 @@ describe('CoS-019 Teil 2 — eine Schreibweise für die Anfahrt-Rubrik', () => {
 
 describe('CoS-026 — ändert der Handwerker die Grundlage, geht der Zuschlag mit', () => {
   const angebot = () => [
-    { title: 'Wandflächen streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, total_price: 547.2 },
+    { title: 'Wand streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, total_price: 547.2 },
     { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 15, unit: '%', unit_price: 5.47, total_price: 82.05 },
   ]
 
@@ -258,7 +269,7 @@ describe('CoS-026 — ändert der Handwerker die Grundlage, geht der Zuschlag mi
 
   it('fällt bei gelöschter Grundlage auf 0,00 € statt still auf fremde Räume', () => {
     const items = [
-      { title: 'Wandflächen streichen 2x — Küche', quantity: 100, unit: 'm²', unit_price: 10, total_price: 1000 },
+      { title: 'Wand streichen 2x — Küche', quantity: 100, unit: 'm²', unit_price: 10, total_price: 1000 },
       { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 15, unit: '%', unit_price: 5.47, total_price: 82.05 },
     ]
     const neu = aktualisiereProzentZuschlaege(items)
@@ -273,7 +284,7 @@ describe('PM-024 — Büro mit 3,20 m Raumhöhe, Zuschlag als Prozent', () => {
   // Sandys echte Zahlen aus dem vierten Nachtest, 1:1 aus
   // pruefmeister-testfaelle.md übernommen.
   const buero = () => [
-    { title: 'Wandflächen streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, berechnungsweg: null as string | null },
+    { title: 'Wand streichen 2x — Büro', quantity: 57.6, unit: 'm²', unit_price: 9.5, berechnungsweg: null as string | null },
     { title: 'Boden schützen / Abdecken — Büro', quantity: 20, unit: 'm²', unit_price: 1.2, berechnungsweg: null as string | null },
     { title: 'Sockelleisten abkleben — Büro', quantity: 17.1, unit: 'lfdm', unit_price: 0.8, berechnungsweg: null as string | null },
     { title: 'Erschwerniszuschlag Raumhöhe > 3m — Büro', quantity: 1, unit: '%', unit_price: 15, berechnungsweg: 'Raumhöhe 3.2m > 3m' as string | null },

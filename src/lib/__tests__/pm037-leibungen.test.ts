@@ -48,7 +48,7 @@ describe('PM-037 — der Originalfall, Ende zu Ende', () => {
 
   it('lässt die drei bereits korrekten Positionen unverändert', () => {
     const p = lauf(DIKTAT).positionen
-    expect(menge(p, /wandflächen streichen/i)).toBe(46.8)
+    expect(menge(p, /wand streichen/i)).toBe(46.8)
     expect(menge(p, /boden schützen/i)).toBe(20)
     expect(menge(p, /sockelleisten abkleben/i)).toBe(18)
   })

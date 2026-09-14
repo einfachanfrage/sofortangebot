@@ -81,8 +81,8 @@ describe('CoS-043 — der Prozentsatz im Titel unterscheidet gleichnamige Eintr�
 describe('CoS-043 — aus dem Prozentsatz wird echtes Geld', () => {
   function angebot() {
     return [
-      { title: 'Wandflächen streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5 },
-      { title: 'Deckenfläche streichen 1x — Wohnzimmer', quantity: 20, unit: 'm²', unit_price: 8 },
+      { title: 'Wand streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5 },
+      { title: 'Decke streichen 1x — Wohnzimmer', quantity: 20, unit: 'm²', unit_price: 8 },
       { title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', quantity: 1, unit: '%', unit_price: 25 },
     ]
   }
@@ -110,8 +110,8 @@ describe('CoS-043 — aus dem Prozentsatz wird echtes Geld', () => {
     // Notdienst und Wochenendarbeit ist das fachlich richtig — der Zuschlag
     // hängt daran, WANN gearbeitet wird, nicht in welchem Zimmer.
     const items = [
-      { title: 'Wandflächen streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5 },
-      { title: 'Wandflächen streichen 2x — Küche', quantity: 20, unit: 'm²', unit_price: 9.5 },
+      { title: 'Wand streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5 },
+      { title: 'Wand streichen 2x — Küche', quantity: 20, unit: 'm²', unit_price: 9.5 },
       { title: 'Zuschlag Notdienst (Wochenende / Nacht / Feiertag, 100%)', quantity: 1, unit: '%', unit_price: 100 },
     ]
     wendeProzentZuschlaegeAn(items, () => true)
@@ -121,7 +121,7 @@ describe('CoS-043 — aus dem Prozentsatz wird echtes Geld', () => {
 
   it('zwei Zuschläge stehen beide auf derselben Grundlage — keiner auf dem anderen', () => {
     const items = [
-      { title: 'Wandflächen streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5 },
+      { title: 'Wand streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5 },
       { title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', quantity: 1, unit: '%', unit_price: 25 },
       { title: 'Zuschlag Denkmalschutz / besondere Sorgfalt (30%)', quantity: 1, unit: '%', unit_price: 30 },
     ]
@@ -139,7 +139,7 @@ describe('CoS-043 — aus dem Prozentsatz wird echtes Geld', () => {
 
   it('ändert der Handwerker die Grundlage im Editor, folgt der Zuschlag', () => {
     const items = [
-      { title: 'Wandflächen streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5, total_price: 380 },
+      { title: 'Wand streichen 2x — Wohnzimmer', quantity: 40, unit: 'm²', unit_price: 9.5, total_price: 380 },
       { title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', quantity: 25, unit: '%', unit_price: 3.8, total_price: 95 },
     ]
     items[0].quantity = 50 // Handwerker korrigiert das Aufmaß: 475,00 €
@@ -150,7 +150,7 @@ describe('CoS-043 — aus dem Prozentsatz wird echtes Geld', () => {
 
   it('einen Zuschlag, den der Handwerker selbst angefasst hat, rechnet niemand um', () => {
     const items = [
-      { title: 'Wandflächen streichen 2x — Wohnzimmer', quantity: 50, unit: 'm²', unit_price: 9.5, total_price: 475 },
+      { title: 'Wand streichen 2x — Wohnzimmer', quantity: 50, unit: 'm²', unit_price: 9.5, total_price: 475 },
       { title: 'Zuschlag Wochenend- / Feiertagsarbeit (25%)', quantity: 25, unit: '%', unit_price: 3.8, total_price: 95 },
     ]
     const neu = aktualisiereProzentZuschlaege(items, item => item.title.startsWith('Zuschlag'))
@@ -163,7 +163,7 @@ describe('CoS-043 — aus dem Prozentsatz wird echtes Geld', () => {
 // „exotische Holzart auf Malerarbeiten will ich nicht im Produkt haben."
 describe('CoS-043 — zeitbezogen rechnet aufs Angebot, objektbezogen aufs Gewerk', () => {
   const gemischt = () => [
-    { title: 'Wandflächen streichen 2x — Flur', quantity: 40, unit: 'm²', unit_price: 9.5, kategorie: 'Maler – Wandflächen' },
+    { title: 'Wand streichen 2x — Flur', quantity: 40, unit: 'm²', unit_price: 9.5, kategorie: 'Maler – Wandflächen' },
     { title: 'Holztreppe fertigen', quantity: 1, unit: 'Stück', unit_price: 9500, kategorie: 'Schreiner – Treppen' },
   ]
 

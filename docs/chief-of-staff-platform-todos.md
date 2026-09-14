@@ -48,12 +48,14 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-P-014 | 🔴 **Seit 13.09. 19:46 UTC geht nichts mehr live** — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
+| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
 | CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
 | CoS-P-002 | Observability herstellen: strukturiertes Logging über die wichtigsten Schritte | 🟢 Vollständig erledigt — auch die restlichen Nebenpfade haben jetzt Sentry-Meldung. Neuer Fund dabei: 10 verwaiste API-Routen ohne Frontend-Aufrufer, Aufräum-Entscheidung liegt bei Sandy | `docs/launch-readiness.md` Abschnitt 8 (vormals CoS-006) |
-| CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🟢 Fix umgesetzt — Passwort-Reset-Bug behoben, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
-| CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🟢 Fix umgesetzt — alle drei Mails laufen jetzt über unsere eigene Resend-Anbindung, Live-Test steht noch aus | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
+| CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🔴 **Live-Test am 13.09. gemacht — Fix trägt nicht, siehe CoS-P-013.** Registrierung/Login/Logout laufen, Bestätigungslink und Passwort-Reset nicht | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
+| CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🔴 **Live-Test am 13.09.: eine von drei.** Verifizierung kommt sofort im Posteingang an (Resend-Strecke steht ✅), Reset kommt nicht an, Willkommen wird gar nicht erst ausgelöst — siehe CoS-P-013 | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | 🟡 DB + Produktions-Deploy erledigt & verifiziert, Live-Test im echten Onboarding-Flow steht noch aus | Sandys Screenshots vom Onboarding-Testlauf, 2026-08-17 |
 | CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei komplett erledigt (inkl. Produktion), einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
 | CoS-P-009 | TN-101: unklar, ob "über meine Buchhaltung" das Angebot wirklich überträgt oder nur Erinnerungen abschaltet | 🟢 Text klargestellt | Manfred-Feedback Batch 1, 2026-09-11 |
@@ -1122,5 +1124,348 @@ Thema, das schon offen war, plus ein zweiter Aspekt:
 
 **Geprüft, bevor ausgeliefert:** TypeScript-Check über das komplette Projekt
 lief nach allen vier Änderungen fehlerfrei durch.
+
+## CoS-P-013 — Sandys Live-Postfach-Test vom 13.09.2026: zwei Befunde, einer davon neu und größer als der gesuchte
+
+**Datum:** 2026-09-13
+**Status:** ❌ offen, zwei getrennte Fehler
+**Quelle:** Sandy hat den seit dem 25.08. ausstehenden Live-Klick-Durchlauf
+heute Abend gemacht (Produktion, Testkonto `sandraholm95+test01@gmail.com`,
+Registrierung 20:21 MESZ). Damit ist CoS-P-003/CoS-P-004 erstmals scharf
+gegen ein echtes Postfach getestet. **Ergebnis: der Fix vom 25.08. trägt
+nicht.**
+
+Belege stammen nicht aus dem Chatprotokoll, sondern aus den Logs: Vercel
+Runtime-Logs (Projekt `prj_9UMdATww…`, Deployment `dpl_7it5XKTy…`) und dem
+Supabase-Auth-Log des Produktionsprojekts, Zeitfenster 18:20–18:25 UTC.
+
+### Was funktioniert hat — und das ist echter Fortschritt
+
+| | Beleg |
+|---|---|
+| Konto angelegt | `/admin/users` 200, 18:21:16 UTC, `user_signedup` über `service_role` |
+| Bestätigungs-Link erzeugt | `/admin/generate_link` 200, 18:21:16 UTC |
+| **Bestätigungs-Mail zugestellt** | **im Posteingang, nicht im Spam, gefühlt sofort** (Sandy). Absender `Sandra <sandra@sofortangebot.app>`, Inhalt und Gültigkeitshinweis korrekt |
+| Konto wirklich bestätigt | `/verify` 303, 18:22:54 UTC, `user_signedup` |
+| Login mit Passwort | `/token` 200, 18:24:02 UTC |
+| Logout | `/logout` 204, 18:24:17 UTC |
+
+Die Resend-Strecke steht also. Das war die eigentliche Sorge aus CoS-P-004
+und sie ist ausgeräumt — für diese eine Mail.
+
+---
+
+### Befund 1 (NEU, nicht gesucht) — der Bestätigungslink wirft jeden neuen Nutzer auf die Login-Seite mit Fehlermeldung
+
+**Was Sandy gesehen hat:** Klick auf „E-Mail bestätigen" landet auf
+
+```
+sofortangebot.app/login?error=auth#access_token=eyJhbGci…
+```
+
+Sie musste sich danach von Hand einloggen. Onboarding wurde nie geöffnet.
+
+**Ursache, im Code nachgelesen (`src/app/auth/callback/route.ts`):** Die
+Route liest ausschließlich `searchParams.get('code')` und tauscht ihn per
+`exchangeCodeForSession`. Fehlt `code`, fällt sie ohne Umweg auf
+`NextResponse.redirect(origin + '/login?error=auth')`.
+
+**Und `code` kann bei diesem Link gar nicht ankommen.** Die Links aus
+`admin.generateLink()` zeigen auf Supabases `/verify`-Endpunkt. Der prüft
+den Token serverseitig und leitet dann auf `redirect_to` weiter — mit den
+Tokens **im URL-Fragment** (`#access_token=…`), also im impliziten Ablauf,
+nicht mit `?code=` im PKCE-Ablauf. Belegt im Auth-Log, 18:22:54 UTC:
+
+```
+"action":"login","login_method":"implicit"
+```
+
+Das Fragment hinter `#` erreicht den Server nie — die Callback-Route kann
+also nie etwas anderes tun als fehlzuschlagen. Das ist kein Wackelkontakt,
+sondern strukturell: **dieser Pfad hat noch nie funktionieren können.**
+
+**Drei Folgen, die dritte ist die unangenehmste:**
+
+1. **Jeder neue Nutzer landet auf einer Fehlerseite**, obwohl sein Konto in
+   Ordnung ist. Ein Handwerker, der das sieht, denkt, die Registrierung sei
+   schiefgegangen, und meldet sich nicht nochmal an. Das ist der erste
+   Eindruck des Produkts.
+2. **Die Willkommens-Mail wird nie verschickt.** `sendWelcomeEmail()` steht
+   in `auth/callback/route.ts` *innerhalb* des `if (code)`-Blocks. Kein
+   `code` → kein Aufruf. Die Mail, die als die eine sicher funktionierende
+   galt, geht im echten Ablauf überhaupt nicht raus. Bitte gegenprüfen:
+   Sandy hat heute keine bekommen.
+3. **Access- und Refresh-Token stehen in der Browser-Adresszeile** und
+   damit im Verlauf. Kein akuter Vorfall (es gibt nur Testkonten), aber es
+   gehört zu `launch-readiness.md` 6.2 und sollte mit dem Fix verschwinden.
+
+**Was das für CoS-P-003 bedeutet — bitte zuerst lesen:** Der Fix vom 25.08.
+hat den Reset-Link bewusst von `/passwort-reset` auf `/auth/callback`
+umgebogen, „genau wie bei der Registrierung, wo der Tausch bereits korrekt
+passiert". Die Annahme in diesem Halbsatz stimmt nicht — bei der
+Registrierung passiert er eben **nicht**. Der Reset-Link liefe damit in
+genau dieselbe Wand. **Selbst wenn die Reset-Mail heute angekommen wäre,
+hätte der Ablauf nicht funktioniert.** Die Mail zu reparieren, ohne den
+Callback zu reparieren, löst den Fall also nicht.
+
+---
+
+### Befund 2 (der gesuchte) — die Reset-Mail kommt nicht an, und der Fehler wird verschluckt
+
+**Was Sandy gesehen hat:** „Reset-Link senden" bestätigt den Versand, es
+kommt nichts an — weder in Posteingang noch Spam.
+
+**Was die Logs sagen:**
+
+| | |
+|---|---|
+| `POST /api/auth/passwort-vergessen` | **200**, 18:24:34 UTC (Vercel) |
+| `POST /admin/generate_link` | **200**, 18:24:35 UTC, `action: user_recovery_requested` (Supabase) |
+| Fehler in Vercel-Runtime-Logs im Fenster 16:57–18:27 UTC | **keine** |
+| Sentry-Meldung | **keine** |
+
+**Der Link wurde also erfolgreich erzeugt.** Der Fehler liegt hinter
+`generateLink`, in `sendPasswordResetEmail()` bzw. dem Resend-Aufruf.
+
+**Meine Vermutung, ausdrücklich als Vermutung markiert** — das ist dein
+Gebiet, ich schreibe nur auf, was mir beim Lesen aufgefallen ist: Der
+Versand ist „fire and forget" —
+
+```ts
+sendPasswordResetEmail(email, data.properties.action_link).catch(fehler => { … })
+return NextResponse.json({ ok: true })
+```
+
+Die Promise wird **nicht** `await`-et, und die Antwort geht sofort raus. Auf
+einer Serverless-Funktion darf die Laufzeit die Instanz einfrieren, sobald
+die Antwort steht; noch laufende Arbeit wird dann verworfen. Das würde
+zugleich erklären, warum **weder** `console.error` **noch** Sentry etwas
+gesehen hat: Der `catch` kam nie zum Zug. `register/route.ts` und
+`auth/callback/route.ts` benutzen dasselbe Muster — dort hat es heute
+funktioniert, was für „unzuverlässig", nicht für „immer kaputt" spricht. Ob
+das die Ursache ist oder Resend die Mail aus einem anderen Grund
+abgewiesen hat, kann nur jemand mit Resend-Zugriff endgültig sagen.
+
+**Unabhängig von der Ursache ein eigener Befund:** Die Route antwortet
+`{ ok: true }`, bevor irgendetwas verschickt wurde. Die Oberfläche sagt dem
+Nutzer „E-Mail gesendet", auch wenn nichts gesendet wurde und niemand davon
+erfährt. Das ist dieselbe Fehlerfamilie wie „Oberfläche verspricht, Code
+schweigt" aus `launch-readiness.md` — und hier trifft sie einen
+Sicherheitsablauf. Die Anti-Enumeration-Regel (immer dieselbe Antwort,
+egal ob die E-Mail existiert) ist richtig und soll bleiben; sie verlangt
+aber nur, dass der **Nutzer** nichts erfährt — nicht, dass **wir** nichts
+erfahren.
+
+---
+
+### Was ich mir als Reihenfolge wünsche, Umsetzung ist deine
+
+1. **Callback zuerst** (Befund 1). Solange der nicht trägt, ist der
+   Reset-Ablauf auch mit funktionierender Mail kaputt, und jeder neue Nutzer
+   sieht weiter eine Fehlerseite.
+2. **Dann der Mailversand** (Befund 2), inklusive der Frage, ob der Versand
+   abgewartet werden muss, damit ein Fehlschlag überhaupt sichtbar wird.
+3. **Danach bitte an Sandy zurück** — sie macht denselben Durchlauf noch
+   einmal, diesmal mit `+test02`. Es ist der einzige Weg, das zu bestätigen;
+   keine Testsuite deckt diesen Pfad ab.
+
+**Bitte nicht auslassen:** Ein Test, der diesen Ablauf festhält, fehlt.
+Beide Fehler waren durch Code-Review nicht gefunden worden — CoS-P-003 hat
+den Callback am 24.08. ausdrücklich als „sauber" geprüft. Was hier fehlte,
+war nicht Sorgfalt, sondern ein echter Klick.
+
+*Chief of Staff · 2026-09-13*
+
+---
+
+## CoS-P-014 🔴 — Seit dem 13.09. um 21:44 ist NICHTS mehr live gegangen: acht fehlgeschlagene Produktions-Builds, eine einzige nicht committete Datei
+
+**Datum:** 2026-09-14
+**Status:** 🔴 **dringend, blockiert das gesamte Team** — Ursache eindeutig, Fix klein
+**Gefunden:** beim Nachsehen, warum bei Sandys zweitem Postfach-Test (`+test02`,
+14.09. 14:31 MESZ) gar keine Mail mehr ankam.
+
+### Der Befund
+
+Der letzte **erfolgreiche** Produktions-Deploy ist
+`dpl_7it5XKTyBWLHHbeRdZBqE75u1WKw`, „docs: CoS-E-039 Katalog-Staffeln",
+**13.09.2026, 19:46 UTC**. Jeder Produktions-Deploy danach steht auf
+`state: ERROR`:
+
+| Commit | Zeit (UTC) | Status |
+|---|---|---|
+| `ba2e8ab` DC-058 Reiter/Aktion | 13.09. 20:10 | ERROR |
+| `af67b9d` DC-066 + DC-079 | 13.09. 20:18 | ERROR |
+| `6772284` DC-071 Speichern-Knopf | 13.09. 20:21 | ERROR |
+| `4fcfd1d` DC-072 Status-Pillen dunkel | 13.09. 20:24 | ERROR |
+| `b222372` DC-096 BottomNav Integrationen | 13.09. 22:03 | ERROR |
+| `423766e` docs Legal/DC-100 | 13.09. 22:38 | ERROR |
+| `e7a9a77` docs DC-100 Entscheidung | 13.09. 22:39 | ERROR |
+| **`7bf8ab2` fix: Bestaetigungslink und Reset-Mail reparieren (CoS-P-013)** | **14.09. 12:26** | **ERROR** |
+
+**Der Fix für CoS-P-013 ist geschrieben — und hat noch nie gelaufen.** Sandy
+hat heute gegen den Stand von gestern Abend getestet. Dasselbe gilt für die
+komplette Designer-Arbeit vom 13.09.: gebaut, committet, gepusht, **nicht
+live**.
+
+### Die Ursache — eine Datei, die nie ins Repository gekommen ist
+
+Aus dem Build-Log von `dpl_CAePcbqp5y41Qo3TPJ6eVLEhqLMk`:
+
+```
+./src/app/(app)/angebot/[id]/AngebotDetail.tsx:43:1
+Module not found: Can't resolve '@/lib/versandbereit'
+  43 | import { versandHindernisse, unbepreistePositionen } from '@/lib/versandbereit'
+Error: Command "npm run build" exited with 1
+```
+
+**`src/lib/versandbereit.ts` liegt auf Sandys Rechner** (4.104 Bytes, zuletzt
+geändert 11.09.2026, 19:53 MESZ) — sie ist nur nie committet worden. In
+`.gitignore` steht nichts, was sie ausschließen würde; sie wurde schlicht nie
+zu einem Commit hinzugefügt. Sie stammt aus der „gewarnt wurde, gehindert
+nicht"-Runde (CoS-E-004/012/023/035, drei Tore gegen den Versand ohne Preis).
+Lokal ist alles vollständig, deshalb lief dort auch jeder Test grün — im
+Repository fehlt die Datei, und damit scheitert jeder Build seither.
+
+### Der Fix (klein, und Sandy kann ihn selbst machen)
+
+```
+git add src/lib/versandbereit.ts
+git commit -m "fix: fehlende versandbereit.ts nachtragen (CoS-P-014)"
+git push
+```
+
+Danach bitte prüfen, ob der Build durchläuft — und **erst dann** ist CoS-P-013
+überhaupt testbar.
+
+**Bitte zusätzlich gegenprüfen, bevor gepusht wird:** ob noch weitere
+untracked Dateien im Arbeitsbaum liegen, die schon irgendwo importiert werden.
+`git status --short` zeigt sie mit `??`. Ein zweiter Fehlschlag aus demselben
+Grund wäre vermeidbar.
+
+### Die eigentliche Lehre — und die gehört nicht dem Zufall überlassen
+
+**Siebzehn Stunden lang sind acht Produktions-Deploys fehlgeschlagen, und
+niemandem ist es aufgefallen.** Nicht dem Verfasser der Commits, nicht dem
+Chief of Staff, nicht Sandy. Gemerkt haben wir es erst, weil eine Mail nicht
+ankam — über einen Umweg, der genauso gut hätte ausbleiben können.
+
+Das ist derselbe Fehlertyp, der in `launch-readiness.md` schon zweimal steht
+(„Oberfläche verspricht, Code schweigt" und „ein Check, der eine Migration
+nicht kennt, meldet sie auch nicht als fehlend"), nur eine Ebene höher: **Wir
+haben geglaubt, etwas sei ausgeliefert, weil es committet war.** Committet ist
+nicht live.
+
+**Meine Bitte an dich, als eigener kleiner Auftrag:** Deploy-Fehlschläge
+müssen irgendwo aufschlagen, wo ein Mensch sie sieht — Vercel kann bei
+fehlgeschlagenem Produktions-Deploy eine Mail schicken (Sandys Postfach
+`einfachanfrage@outlook.com`, dasselbe wie bei den Sentry-Alarmen aus
+`launch-readiness.md` 8.9). Das ist eine Einstellung, kein Bau. Solange das
+fehlt, ist „ist es live?" jedes Mal Handarbeit.
+
+### Auswirkung auf die Gate-Bewertung (vom Chief of Staff bereits nachgezogen)
+
+- **8.7** „Verlässliche Kette Code-Fix → Deploy → tatsächlich live":
+  65 % → **35 %**. Gestern Abend habe ich diesen Punkt von 55 auf 65
+  hochkorrigiert, mit der Begründung, die Kette sei „manuell, nicht
+  unterbrochen". Das war falsch — sie war zu diesem Zeitpunkt bereits seit
+  zwei Stunden unterbrochen, ich habe nur nicht nachgesehen.
+- **8.4** „Fehler-Monitoring: du merkst, wenn im Betrieb etwas bricht":
+  20 % → **15 %**. Streng genommen geht es dort um Laufzeitfehler, nicht um
+  Builds — deshalb nur ein kleiner Abzug, aber der Punkt misst genau die
+  Blindheit, die hier sichtbar wurde.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## CoS-P-014, Nachtrag am selben Tag — es ist nicht eine Datei, es sind vierzig
+
+**Datum:** 2026-09-14
+**Anlass:** `git status --short` auf Sandys Rechner, wie im Bericht oben
+erbeten. Das Ergebnis ändert die Größenordnung des Befunds vollständig.
+
+### Was tatsächlich fehlt
+
+**Dreizehn Produktivdateien unter `src/lib/`** sind untracked — sie existieren
+nur auf Sandys Rechner und in keinem Commit:
+
+```
+anrede.ts · anstrichzahl.ts · einheiten.ts · erschwernis.ts
+katalog-standard.ts · kleinbetraege.ts · positions-gewerk.ts
+positions-titel.ts · preis-aufwandswoerter.ts · termin.ts
+verlegeart.ts · versandbereit.ts · zahlen-text.ts
+```
+
+Das ist **die gesamte Manfred-Welle**: DC-078 (`anrede`), CoS-E-021
+(`anstrichzahl`), CoS-E-024 (`einheiten`), CoS-E-040 (`erschwernis`),
+CoS-E-051 (`katalog-standard`), DC-056 (`kleinbetraege`), CoS-E-049
+(`positions-titel`), CoS-E-019 (`termin`), DC-055 (`zahlen-text`) — und
+`preis-aufwandswoerter.ts` mit 35 KB, das Ergebnis der kompletten
+Vokabular-Arbeit aus `vokabular-abgleich.md`.
+
+Dazu:
+- **21 Testdateien** unter `src/lib/__tests__/` — darunter genau die, die im
+  Bericht vom 13.09. als Beleg für „1.942 Tests grün" aufgezählt wurden
+  (`raum-zuordnung`, `katalog-standard`, `termin`, `alltagsbegriffe`,
+  `anstrichzahl`, `katalog-staffeln`, `einheiten`, `erschwernis`).
+- **Drei Datenbank-Migrationen**: `20260911160000_erkannter_kundenname.sql`,
+  `20260913080000_add_erschwernis_config.sql`,
+  `20260913140000_add_erkannter_termin.sql`.
+- **Drei Skripte**: `katalog-dopplungen.mjs`, `probe-angebot.mjs`,
+  `vokabular-abgleich.mjs`.
+
+### Drei Konsequenzen, jede für sich ernst
+
+**1. Die Testsuite hat nie bewiesen, was wir geglaubt haben.** „122 Dateien /
+1.942 Tests grün" galt für Sandys Arbeitsbaum. Im Repository fehlen sowohl die
+Tests als auch die geprüften Dateien. Was auf den Build-Servern lag, war nie
+grün — es war nie vollständig.
+
+**2. Die Datenbank ist dem Repository voraus.** Die drei Migrationen sind laut
+CoS-E-040 in **Produktion und Staging bereits ausgeführt**, die Dateien dazu
+liegen in keinem Commit. Wer das Projekt neu auscheckt, bekommt einen Stand,
+der nicht zu den Datenbanken passt — und `supabase/check_migrationen.sql`, der
+genau das verhindern soll, ist selbst noch unversioniert geändert. Derselbe
+Fehlertyp, den Engineering am 13.09. beschrieben hat („ein Check, der eine
+Migration nicht kennt, meldet sie auch nicht als fehlend"), nur eine Ebene
+höher.
+
+**3. Die Ursache ist ein Arbeitsmuster, kein Versehen.** Alle acht Commits seit
+dem 13.09. enthalten ausschließlich **geänderte** Dateien, keine **neuen**.
+Wer mit `git add <datei>` oder `git commit -a` arbeitet, erfasst neue Dateien
+nie — `-a` nimmt ausdrücklich nur bereits verfolgte Dateien mit. Das erklärt,
+warum es niemandem aufgefallen ist: Lokal war immer alles da, jeder Testlauf
+grün, jeder Commit „erfolgreich".
+
+### Was zu tun ist (Sandy macht es, Reihenfolge zählt)
+
+`.gitignore` ist vom Chief of Staff bereits erweitert worden, damit der
+Sammel-Befehl im nächsten Schritt nichts Falsches mitnimmt: `_to_delete/`,
+`Claude outputs/` sowie `abgleich.txt`, `katalog.txt`, `probe.txt`,
+`testlauf.txt` sind jetzt ausgeschlossen. Besonders wichtig ist
+`Claude outputs/` — dort liegt die Test-Kopie `titel-vertraege.test.ts`, die
+am 12.09. die Suite falsch-rot gemacht hat; sie darf auf keinen Fall ins
+Repository.
+
+Danach: alles erfassen, committen, pushen, und den Build beobachten.
+
+### Bitte an dich, Platform & Integrations Engineer
+
+Zwei Dinge, beide klein, beide verhindern die Wiederholung:
+
+1. **Deploy-Fehlschläge müssen jemanden erreichen.** Vercel kann bei
+   fehlgeschlagenem Produktions-Deploy mailen (`einfachanfrage@outlook.com`,
+   dasselbe Postfach wie die Sentry-Alarme aus `launch-readiness.md` 8.9).
+   Einstellung, kein Bau.
+2. **Ein Hinweis auf untracked Dateien**, bevor etwas als „ausgeliefert"
+   gemeldet wird. `scripts/docs-sichern.mjs` gibt es schon für die
+   Koordinationsdateien (`AGENTS.md`); dasselbe Prinzip für Quellcode wäre
+   die eigentliche Lösung von CoS-013 und CoS-P-014 zugleich. Wie das
+   aussieht, entscheidest du — ich sage nur, woran es gefehlt hat.
+
+*Chief of Staff · 2026-09-14*
+
+---
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

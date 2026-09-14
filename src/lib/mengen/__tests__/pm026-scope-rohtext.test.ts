@@ -30,7 +30,7 @@ describe('PM-026 — ein Verhörer im Transkript darf keine Position löschen', 
       KUECHE,
       'Küche 4,20 m x 3,60 m, Höhe 2,50 m, Bände zweimal streichen, Decke reicht einmal, zwei Fenster Standardmaß, eine Tür normal.',
     )
-    expect(beschreibungen).toContain('Wandflächen streichen 2x — Küche')
+    expect(beschreibungen).toContain('Wand streichen 2x — Küche')
     expect(beschreibungen).toContain('Sockelleisten abkleben — Küche')
   })
 
@@ -39,7 +39,7 @@ describe('PM-026 — ein Verhörer im Transkript darf keine Position löschen', 
     const pos = malerEngine({ gewerk: 'maler', raeume: [KUECHE],
       transkript: 'Küche 4,20 m x 3,60 m, Höhe 2,50 m, Bände zweimal streichen, Decke reicht einmal.' } as any).positionen
     // Umfang 15,60 lfm × 2,50 m = 39,00 m² (Öffnungen ≤ 2,5 m² → VOB-Übermessung)
-    expect(pos.find(p => /wandfl/i.test(p.beschreibung))?.menge).toBe(39)
+    expect(pos.find(p => /wand streichen/i.test(p.beschreibung))?.menge).toBe(39)
     // 15,60 lfm − 0,90 m Türbreite
     expect(pos.find(p => /sockelleisten abkleben/i.test(p.beschreibung))?.menge).toBe(15.6) // VOB-012 (CoS-042): Tür 0,90 m nicht abgezogen
   })
@@ -49,8 +49,8 @@ describe('PM-026 — ein Verhörer im Transkript darf keine Position löschen', 
       { ...KUECHE, arbeiten: ['wände streichen', 'decke streichen'] },
       'Küche 4,20 mal 3,60, Höhe 2,50, nur die Decke streichen.',
     )
-    expect(beschreibungen.some(b => /wandfl/i.test(b))).toBe(false)
-    expect(beschreibungen.some(b => /deckenfl/i.test(b))).toBe(true)
+    expect(beschreibungen.some(b => /wand streichen/i.test(b))).toBe(false)
+    expect(beschreibungen.some(b => /decke streichen/i.test(b))).toBe(true)
   })
 
   it('respektiert weiterhin ein ausdrückliches „ohne Decke"', () => {
@@ -58,8 +58,8 @@ describe('PM-026 — ein Verhörer im Transkript darf keine Position löschen', 
       { ...KUECHE, arbeiten: ['wände streichen', 'decke streichen'] },
       'Küche 4,20 mal 3,60, Höhe 2,50, Wände streichen, ohne Decke.',
     )
-    expect(beschreibungen.some(b => /deckenfl/i.test(b))).toBe(false)
-    expect(beschreibungen.some(b => /wandfl/i.test(b))).toBe(true)
+    expect(beschreibungen.some(b => /decke streichen/i.test(b))).toBe(false)
+    expect(beschreibungen.some(b => /wand streichen/i.test(b))).toBe(true)
   })
 
   it('lässt die schwache Regel wirken, wenn die Arbeiten-Liste nichts anderes sagt', () => {
@@ -69,6 +69,6 @@ describe('PM-026 — ein Verhörer im Transkript darf keine Position löschen', 
       { ...KUECHE, arbeiten: ['decke streichen'] },
       'Küche 4,20 mal 3,60, Höhe 2,50, Decke streichen.',
     )
-    expect(beschreibungen.some(b => /wandfl/i.test(b))).toBe(false)
+    expect(beschreibungen.some(b => /wand streichen/i.test(b))).toBe(false)
   })
 })

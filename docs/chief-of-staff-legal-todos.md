@@ -2088,4 +2088,107 @@ sein sollte.
 
 ---
 
+## DC-089 — Wortlautfreigabe E-Rechnung/ZUGFeRD: abgelehnt, Alternative geliefert (2026-09-13)
+
+**Zugegangen über:** `design-check.md`, DC-089 (Product Designer, aus Manfreds
+Testnutzer-Rückmeldung TN-102). **Antwort steht dort am Dateiende.**
+*Schließung wird gemeldet in: `design-check.md`.*
+
+**Ergebnis: 🔴 nicht freigegeben.** Der Product Designer wollte als führenden
+Satz einbauen: „Pflicht ist das nur bei Geschäftskunden. Bei Privatkunden ändert
+sich für dich nichts." Das hätte eine Rechtsaussage in die Oberfläche gebracht,
+die für dieses Produkt nicht stimmt.
+
+**Der tragende Befund:** Die E-Rechnungspflicht nach § 14 UStG gilt nur für
+**Rechnungen**. Angebote und Kostenvoranschläge sind ausdrücklich nicht erfasst
+— und Sofortangebot erzeugt keine Rechnungen. Ich habe das nicht aus der
+Dokumentation übernommen, sondern in der Produktions-Datenbank nachgesehen:
+`quotes.dokument_typ` lässt per Check-Constraint nur `angebot` und
+`kostenvoranschlag` zu, tatsächlich vorhanden sind 18 Angebote und 1
+Kostenvoranschlag. Eine Rechnungstabelle existiert nicht.
+
+Der ZUGFeRD-Schalter ist damit **keine Compliance-Funktion, sondern Komfort**:
+Er legt dem Angebots-PDF eine maschinenlesbare Fassung bei, die die Buchhaltung
+des Geschäftskunden einlesen kann. Ein Satz, der von „Pflicht" spricht, sagt
+etwas anderes.
+
+**Bemerkenswert: Der heutige Text war korrekt.** Er beschreibt nur, was
+passiert, und behauptet keine Pflicht. Die vorgeschlagene Verbesserung hätte
+einen Fehler eingebaut, den es vorher nicht gab. Manfreds Beschwerde bleibt
+trotzdem berechtigt — er bekommt keine Antwort auf „betrifft mich das?". Die
+richtige Antwort ist „nein", nicht „ja, bei Geschäftskunden".
+
+**Geliefert:** ein freigegebener Ersatzwortlaut (zwei Absätze, alterungssicher)
+plus ein optionaler Einordnungsabsatz mit den echten Fristen — Empfangspflicht
+seit 01.01.2025, Ausstellungspflicht ab 2027 über 800.000 € Vorjahresumsatz,
+ab 2028 für alle, Kleinunternehmer von der Ausstellung ausgenommen. Der
+optionale Absatz enthält Datumsangaben und braucht deshalb eine Wiedervorlage
+vor dem 01.01.2027, wenn er gebaut wird.
+
+**Zwei Rückfragen laufen zurück an den Product Designer:** ob die Überschrift
+des Abschnitts „E-Rechnung" heißt (dann ist schon die Überschrift schief), und
+was DC-086 mit „der Rechnung" meint — in der Datenbank gibt es keine. Wenn das
+Team intern „Rechnung" zum Angebot sagt, ist das genau der Weg, auf dem eine
+falsche Rechtsaussage in die Oberfläche kommt; DC-089 ist so entstanden.
+
+**Wiedervorlage für mich:** Sobald echte Rechnungen ins Produkt kommen, kippt
+die Bewertung vollständig — dann ist der Schalter Compliance und der Text muss
+neu geschrieben werden. Bitte vorher melden.
+
+---
+
+## DC-100 — ZUGFeRD-XML im Angebots-PDF deklariert sich als Rechnung (2026-09-13)
+
+**Status:** 🔵 **Entscheidung Sandy nötig, vor Gate 1.** Meine Empfehlung steht:
+abschalten.
+*Zugegangen über `design-check.md` (Product Designer). Antwort und volle
+Begründung stehen dort. Schließung wird gemeldet in: `design-check.md`.
+Im Risikoregister als LR-15.*
+
+**Worum es geht:** Das Produkt erzeugt nur Angebote und Kostenvoranschläge —
+Rechnungen gibt es nach Sandys Entscheidung nicht. In das Angebots-PDF wird
+trotzdem eine ZUGFeRD-/Factur-X-XML eingebettet, die sich selbst als
+**„Commercial invoice"** ausweist (`TypeCode 380`, dazu `fx:DocumentType
+INVOICE` in den PDF-Metadaten).
+
+**Was der Product Designer nicht gesehen hat und was den Fall verschärft:** Die
+Datei bleibt nicht intern. `api/email/route.ts` hängt sie beim Versand an den
+**Geschäftskunden** an — eingebettet im PDF und zusätzlich als eigene
+`factur-x-<Nr>.xml`, mit einem Hinweis darauf im Mailtext. Genau dort steht eine
+Buchhaltung dahinter.
+
+**Rechtlich, kurz:** Nach § 14 Abs. 1 S. 1 UStG ist Rechnung jedes Dokument,
+mit dem abgerechnet wird — „gleichgültig, wie dieses Dokument im
+Geschäftsverkehr bezeichnet wird". Die Aufschrift „ANGEBOT" schützt also nicht.
+Das fehlende Leistungsdatum verhindert einen Vorsteuerabzug beim Kunden, **nicht
+aber die Haftung nach § 14c Abs. 2 UStG** — dafür genügen Aussteller,
+Empfänger, Leistungsbeschreibung, Entgelt und gesondert ausgewiesene
+Umsatzsteuer, und alle fünf stehen in der Datei. Die praktisch wahrscheinlichere
+Folge ist banaler: Die Buchhaltung des Kunden legt eine Eingangsrechnung an, die
+es nicht gibt, und hat den Vorgang doppelt, sobald die echte kommt.
+
+**Kein sauberer Reparaturweg über den Codewert:** 325 („Proforma") ist für BT-3
+nach EN 16931 nicht zugelassen, die Datei wäre ungültig. EN 16931 ist ein
+Rechnungsformat; ein Angebot lässt sich darin nicht korrekt abbilden. Das
+Problem ist der Behälter, nicht die Beschriftung.
+
+**Warum ich zum Abschalten rate:** Der Nutzen ist praktisch null, das Risiko
+trifft unseren Nutzer, und der Preis ist heute null — es gibt noch keinen echten
+Nutzer. Nach Gate 1 wäre es eine Änderung am laufenden Betrieb.
+
+**Zweiter Befund aus demselben Code, unabhängig zu prüfen:** `embedXML.ts`
+schreibt `pdfaid:part 3` / `conformance B` — das PDF erklärt sich zu PDF/A-3b,
+erzeugt wird es aber mit `pdf-lib`, das kein PDF/A ausgibt. Ich habe keinen
+Validator laufen lassen; bitte einmal durch veraPDF oder Mustang schicken.
+
+**DC-089 (Wortlaut E-Rechnung-Karte) bleibt ausgesetzt**, bis die Entscheidung
+steht — der dort freigegebene Text beschreibt sonst ein Verhalten, das sich
+gerade ändert.
+
+**Für dich als Chief of Staff, in einem Satz:** Das ist eine Ja/Nein-Frage an
+Sandy mit klarer Empfehlung, kein Rechercheauftrag — und sie sollte vor Gate 1
+beantwortet sein, nicht danach.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

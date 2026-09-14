@@ -23,7 +23,7 @@ describe('Maler-Engine – 10 Integrationstests', () => {
       ],
     })
 
-    const wand = find(positionen, 'wandflächen')
+    const wand = find(positionen, 'wand streichen')
     expect(wand?.menge).toBeCloseTo(20.3, 1)
 
     const schimmel = find(positionen, 'schimmelbehandlung')
@@ -50,7 +50,7 @@ describe('Maler-Engine – 10 Integrationstests', () => {
       }],
     })
 
-    const wand = find(positionen, 'wandflächen')
+    const wand = find(positionen, 'wand streichen')
     expect(wand).toBeDefined()
     expect(wand?.menge).toBeCloseTo(38.2, 1)
   })
@@ -69,11 +69,11 @@ describe('Maler-Engine – 10 Integrationstests', () => {
       }],
     })
 
-    const wand = find(positionen, 'wandflächen')
+    const wand = find(positionen, 'wand streichen')
     expect(wand).toBeDefined()
     expect(wand?.menge).toBe(48)
 
-    const decke = find(positionen, 'deckenfläche')
+    const decke = find(positionen, 'decke streichen')
     expect(decke).toBeDefined()
     expect(decke?.menge).toBe(20)
   })
@@ -125,7 +125,7 @@ describe('Maler-Engine – 10 Integrationstests', () => {
       ],
     })
 
-    const wand = find(positionen, 'wandflächen')
+    const wand = find(positionen, 'wand streichen')
     expect(wand?.menge).toBe(32)
 
     const nikotin = find(positionen, 'nikotinsperre')
@@ -166,7 +166,7 @@ describe('Maler-Engine – 10 Integrationstests', () => {
     })
 
     // Geometrie-Position vorhanden
-    const wand = find(positionen, 'wandflächen')
+    const wand = find(positionen, 'wand streichen')
     expect(wand?.menge).toBe(36)
 
     // Keine Extra-Materialposition durch "bauseits"
@@ -250,8 +250,8 @@ describe('Maler-Engine – Scope "nur die Wände"', () => {
         arbeiten: ['streichen'],
       }],
     })
-    expect(find(positionen, 'wandflächen')).toBeDefined()
-    expect(find(positionen, 'deckenfläche')).toBeUndefined() // <- der Bug
+    expect(find(positionen, 'wand streichen')).toBeDefined()
+    expect(find(positionen, 'decke streichen')).toBeUndefined() // <- der Bug
   })
 
   it('"nur Wände" ohne "die" funktioniert auch', () => {
@@ -259,7 +259,7 @@ describe('Maler-Engine – Scope "nur die Wände"', () => {
       transkript: 'Bad, nur Wände streichen, 3 mal 2, 2,50 hoch',
       raeume: [{ name: 'Bad', breite: 3, laenge: 2, hoehe: 2.5, arbeiten: ['streichen'] }],
     })
-    expect(find(positionen, 'deckenfläche')).toBeUndefined()
+    expect(find(positionen, 'decke streichen')).toBeUndefined()
   })
 
   it('"nur die Decke" → KEINE Wandflächen', () => {
@@ -267,8 +267,8 @@ describe('Maler-Engine – Scope "nur die Wände"', () => {
       transkript: 'Flur, nur die Decke streichen, 4 mal 2, 2,50 hoch',
       raeume: [{ name: 'Flur', breite: 4, laenge: 2, hoehe: 2.5, arbeiten: ['streichen'] }],
     })
-    expect(find(positionen, 'deckenfläche')).toBeDefined()
-    expect(find(positionen, 'wandflächen')).toBeUndefined()
+    expect(find(positionen, 'decke streichen')).toBeDefined()
+    expect(find(positionen, 'wand streichen')).toBeUndefined()
   })
 })
 
@@ -288,7 +288,7 @@ describe('Maler-Engine – Dachschräge neben Wänden (Treppenhaus)', () => {
       }],
     })
 
-    const wand = find(positionen, 'wandflächen streichen')
+    const wand = find(positionen, 'wand streichen')
     expect(wand).toBeDefined()
     expect(wand?.menge).toBe(68)
 
@@ -341,7 +341,7 @@ describe('Maler-Engine – freies Sprechen (Bodenfläche + Höhe statt L×B)', (
 
   it('Wandfläche wird per Quadrat-Annahme aus Bodenfläche + Höhe geschätzt', () => {
     const positionen = pipeline()
-    const wand = find(positionen, 'wandflächen')
+    const wand = find(positionen, 'wand streichen')
     expect(wand).toBeDefined()
     // Umfang ≈ 4×√20 = 17,89 → 17,89×3 = 53,67 − Std-Fenster 1,2 − Std-Tür 1,89 ≈ 50,6
     expect(wand!.menge).toBeGreaterThan(45)
@@ -352,7 +352,7 @@ describe('Maler-Engine – freies Sprechen (Bodenfläche + Höhe statt L×B)', (
 
   it('ergänzt keine Decke, wenn nur unspezifisch Streichen und Wandvorarbeiten genannt sind', () => {
     const positionen = pipeline()
-    const decke = find(positionen, 'deckenfläche')
+    const decke = find(positionen, 'decke streichen')
     expect(decke).toBeUndefined()
   })
 
@@ -485,7 +485,7 @@ describe('Maler-Engine – PM-007 Dachgeschoss (Kniestock + Dachschrägen)', () 
 
   it('aktiviert den Dachgeschoss-Zweig statt der normalen Wandflächen-Rechnung', () => {
     const positionen = pipeline()
-    expect(find(positionen, 'wandflächen')).toBeUndefined()
+    expect(find(positionen, 'wand streichen')).toBeUndefined()
   })
 
   it('Kniestockwände: Umfang 2×(5+3,5)=17 lfm × 1,20 m = 20,40 m²', () => {

@@ -7,8 +7,43 @@ import type { BelagTyp } from '../boden-normalisierer'
 import { erkenneBelag, belagBezeichnung, erkenneBelagName, verschnittFuerVerlegung } from '../boden-normalisierer'
 import { extrahiereBodenflaeche, extrahiereStreichflaeche } from '@/lib/extraktion-masse'
 import { erkenneSockelleistenAusschluss } from '../sockelleisten-ausschluss'
+import { verlegeartZusatz } from '../verlegeart'
 export type { BelagTyp }
 export { erkenneBelag, belagBezeichnung, erkenneBelagName }
+
+// ── Ausgleichsmasse: die Stärke entscheidet den Preis ─────────────────────
+//
+// Der Katalog staffelt die Ausgleichsmasse in drei Stärken, und die Preise
+// liegen weit auseinander:
+//
+//   `Ausgleichsmasse bis 3 mm einbringen`    10,00 €/m²
+//   `Ausgleichsmasse 3–10 mm einbringen`     16,00 €/m²
+//   `Ausgleichsmasse 10–30 mm einbringen`    26,00 €/m²
+//
+// Die Engine schrieb bisher `Ausgleichsmasse einbringen (bis 10mm)` — eine
+// Schreibweise, die im Katalog nicht vorkommt. Der Preis-Matcher warf die
+// Klammer weg, und ALLE drei Stärken bekamen den 3-mm-Preis: 10,00 € statt
+// 16,00 € oder 26,00 €. Der Prüfmeister über diese Fehlerklasse: *„Das sind
+// die leisesten von allen."* Bei 60 m² Estrich sind 16,00 € Unterschied pro
+// Quadratmeter knapp tausend Euro, die niemandem auffallen.
+//
+// Seit die Staffeln ein Filter sind (Gruppe `Staffel` in
+// preis-aufwandswoerter.ts; hieß bis zum 12.09.2026 `Maßschwelle`), ist der
+// falsche Preis immerhin weg — die Position stand aber mit 0,00 € da. Das
+// war richtig und trotzdem unbrauchbar: Der Katalog HAT die Zeile, sie hieß
+// nur anders. Deshalb hier die Staffel wörtlich wie im Katalog.
+//
+// Über 30 mm bleibt bewusst ohne Staffel: Der Boden-Katalog hört dort auf
+// (weiter geht es nur unter „Estrich – Ausgleich & Spachtelung", einem
+// anderen Gewerk). Lieber sichtbar ohne Preis als still der 26-€-Satz für
+// eine Schicht, die doppelt so dick ist — PM-018.
+export function ausgleichsmasseTitel(mm: number | null): string {
+  if (mm === null || !Number.isFinite(mm)) return 'Ausgleichsmasse einbringen'
+  if (mm <= 3) return 'Ausgleichsmasse bis 3 mm einbringen'
+  if (mm <= 10) return 'Ausgleichsmasse 3–10 mm einbringen'
+  if (mm <= 30) return 'Ausgleichsmasse 10–30 mm einbringen'
+  return `Ausgleichsmasse einbringen (${mm} mm)`
+}
 
 /**
  * Bodenfläche aus dem Rohtext — die Grundlage für ALLE hier ergänzten
@@ -131,18 +166,44 @@ export function pruefeBodenBasis(
   if (!hatSperre && !hat(ergaenzt, 'ausgleich', 'spachtelmasse', 'grundier')) {
     if (hatGrundieren) {
       if (m2) {
-        ergaenzt.push({ beschreibung: 'Estrich grundieren', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        // ── Estrich grundieren = Haftgrund, 6,00 € (Manfred, 12.09.2026) ──
+        //
+        // *„Sechs. Nicht viereinhalb. Der Grund ist das Material, nicht die
+        // Arbeit: Tiefengrund ist Wasser mit ein bisschen Bindemittel.
+        // Haftgrund für Estrich ist gefüllt, mit Quarzsand, damit die
+        // Ausgleichsmasse greift — der Eimer kostet das Drei- bis Vierfache,
+        // und du brauchst mehr davon pro Quadratmeter, weil der Estrich
+        // saugt."*
+        //
+        // Ich hatte diese Zeile kurz mit 4,50 € stehen lassen und das
+        // „sichtbar statt still" genannt. Manfred hat das zerlegt, und er
+        // hat recht: *„Für dich ist das sichtbar, weil du's weißt. Für den
+        // Betrieb steht da ‚Estrich grundieren (Haftgrund)' mit 4,50 € — und
+        // er denkt, das ist sein Preis. Das ist still, nur anders."*
+        //
+        // Gelöst über die Grundierungsart als Filter am Rohtitel
+        // (preis-aufwandswoerter.ts) — dieselbe Bauweise wie Q-Stufe und
+        // Anstrichzahl. Der Titel trifft jetzt `Grundieren (Haftgrund /
+        // Sperrgrund)` für 6,00 €, mit Klammer und ohne Eingriff in die
+        // Normalisierung.
+        //
+        // Offen bleibt nur die eigene Katalogzeile `Estrich grundieren
+        // (Haftgrund)` — gleicher Betrag, schönerer Name, kommt mit dem
+        // Katalog-Zug. Und `Estrich sperren (Epoxi)` (~10 €) als EIGENE
+        // Position, wenn der Estrich feucht ist; das ist ausdrücklich nicht
+        // dieselbe Arbeit.
+        ergaenzt.push({ beschreibung: 'Estrich grundieren (Haftgrund)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
       } else {
-        fehlende.push('Estrich grundieren')
+        fehlende.push('Estrich grundieren (Haftgrund)')
       }
       if (hatAusgleich) {
         // Stärke aus Transkript: "3 Millimeter" o.ä.
         const mmMatch = lower.match(/(\d+)\s*m(?:illimeter|m)/)
-        const mmStr = mmMatch ? ` (bis ${mmMatch[1]}mm)` : ''
+        const titel = ausgleichsmasseTitel(mmMatch ? Number(mmMatch[1]) : null)
         if (m2) {
-          ergaenzt.push({ beschreibung: `Ausgleichsmasse einbringen${mmStr}`, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+          ergaenzt.push({ beschreibung: titel, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
         } else {
-          fehlende.push(`Ausgleichsmasse einbringen${mmStr}`)
+          fehlende.push(titel)
         }
       }
     }
@@ -172,19 +233,23 @@ export function pruefeBodenBasis(
   const explizitVerschnitt = extrahiereVerschnitt(lower)
   const verschnitt = explizitVerschnitt ?? verschnittFuerVerlegung(belag, lower)
 
+  // G.2: Verlegeart in den Titel, wo sie feststeht — siehe verlegeart.ts.
+  // Hier gibt es keinen Raumtext, es gilt der ganze Auftragstext.
+  const verlegeart = verlegeartZusatz(spezName, lower)
+
   if (m2) {
     const mengeMitVerschnitt = verschnitt > 0 ? round2(m2 * (1 + verschnitt)) : m2
     const pct = Math.round(verschnitt * 100)
     const verschnittSuffix = verschnitt > 0 ? ` inkl. ${pct}% Verschnitt` : ''
     ergaenzt.push({
-      beschreibung: `${spezName} verlegen${verschnittSuffix}`,
+      beschreibung: `${spezName} verlegen${verlegeart}${verschnittSuffix}`,
       menge: mengeMitVerschnitt,
       einheit: 'm²',
       berechnungsweg: verschnitt > 0 ? `${m2} m² × ${1 + verschnitt} = ${mengeMitVerschnitt} m²` : `${m2} m²`,
       ...mk,
     })
   } else {
-    add(ergaenzt, fehlende, `${spezName} verlegen`)
+    add(ergaenzt, fehlende, `${spezName} verlegen${verlegeart}`)
   }
 
   return { nurOhneSockel }

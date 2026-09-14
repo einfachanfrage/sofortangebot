@@ -17,7 +17,7 @@ const KATALOG = [
   { id: '1', title: 'Boden abdecken (Abdeckvlies)', category: 'Maler – Vorbereitung & Schutz', unit: 'm²', unit_price: 1.2 },
   { id: '2', title: 'Boden abdecken (Abdeckvlies)', category: 'Fliesen – Vorbereitung & Schutz', unit: 'm²', unit_price: 1.2 },
   { id: '3', title: 'Laminat verlegen', category: 'Boden – Laminat', unit: 'm²', unit_price: 18 },
-  { id: '4', title: 'Wandflächen streichen 2x Anstrich', category: 'Maler – Anstrich Innen', unit: 'm²', unit_price: 9.5 },
+  { id: '4', title: 'Wand streichen 2x Anstrich', category: 'Maler – Anstrich Innen', unit: 'm²', unit_price: 9.5 },
 ]
 
 function preisFuer(beschreibung: string, einheit: string, hauptgewerk: string) {
@@ -44,7 +44,7 @@ describe('Gewerke-Zuordnung einzelner Positionen', () => {
   })
 
   it('lässt Wandarbeiten beim Maler', () => {
-    expect(preisFuer('Wandflächen streichen 2x — Küche', 'm²', 'boden_parkett')).toBe(9.5)
+    expect(preisFuer('Wand streichen 2x — Küche', 'm²', 'boden_parkett')).toBe(9.5)
   })
 })
 

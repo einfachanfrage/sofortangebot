@@ -59,8 +59,8 @@ describe('berechneUndPruefeAlleGewerke — Maler UND Boden im selben Raum', () =
   const namen = positionen.map(p => p.beschreibung.toLowerCase())
 
   it('enthält die MALER-Arbeiten', () => {
-    expect(namen.some(n => n.includes('wandflächen streichen'))).toBe(true)
-    expect(namen.some(n => n.includes('deckenfläche streichen'))).toBe(true)
+    expect(namen.some(n => n.includes('wand streichen'))).toBe(true)
+    expect(namen.some(n => n.includes('decke streichen'))).toBe(true)
   })
   it('enthält die BODEN-Arbeiten (das war der gedroppte Teil)', () => {
     expect(namen.some(n => n.includes('vinyl') && n.includes('verlegen'))).toBe(true)
@@ -102,7 +102,7 @@ describe('Komplettrenovierung mit Maler- und Bodenarbeiten', () => {
       belagText: null, altbelagEntfernen: false,
     })
     const namen = positionen.map(p => p.beschreibung.toLowerCase())
-    for (const erwartet of ['wandflächen streichen', 'deckenfläche streichen', 'spachtel', 'schleifen', 'grundier', 'tapete entfernen', 'altbelag entfernen', 'vinyl', 'trittschall', 'sockelleisten montieren']) {
+    for (const erwartet of ['wand streichen', 'decke streichen', 'spachtel', 'schleifen', 'grundier', 'tapete entfernen', 'altbelag entfernen', 'vinyl', 'trittschall', 'sockelleisten montieren']) {
       expect(namen.some(name => name.includes(erwartet)), `fehlt: ${erwartet}`).toBe(true)
     }
     expect(namen.some(name => name.includes('sockelleisten abkleben'))).toBe(false)

@@ -750,4 +750,51 @@ grün mit der oben genannten Bedingung.
 
 ---
 
+## Nachtrag 2026-09-13 — LR-15 neu
+
+### LR-15 🟠 — Angebots-PDF trägt eine als Rechnung deklarierte ZUGFeRD-XML
+
+**Score 12 (Severity 4 × Likelihood 3) · DC-100 · Adressat: Sandy (Entscheidung),
+dann Head of Product Engineering**
+*Schließung wird gemeldet in: `design-check.md`, DC-100.*
+
+**Risikobeschreibung:** Das Produkt erzeugt ausschließlich Angebote und
+Kostenvoranschläge. In das Angebots-PDF wird dennoch eine Factur-X-XML
+eingebettet, die sich mit `TypeCode 380` als „Commercial invoice" ausweist
+(`fx:DocumentType INVOICE` in den PDF-Metadaten). Beim E-Mail-Versand an
+Geschäftskunden geht sie zusätzlich als eigene `factur-x-<Nr>.xml` mit. Gefunden
+vom Product Designer (DC-100); die Außenwirkung über den Mailversand habe ich
+beim Gegenlesen des Codes ergänzt.
+
+**Severity 4 — Major.** Zwei Wirkungen, beide beim Nutzer, nicht bei uns:
+§ 14c Abs. 2 UStG (unberechtigter Steuerausweis — die fünf Merkmale des
+Rechnungsscheins liegen vor, das fehlende Leistungsdatum schützt davor nicht)
+und, praktisch wahrscheinlicher, eine Falschbuchung in der Buchhaltung des
+Kunden mit doppeltem Vorgang, sobald die echte Rechnung kommt. Kein
+Reputationsschaden für uns, aber ein handfester beim Handwerksbetrieb — und
+zwar verursacht durch unser Produkt, in Daten, die er nie zu Gesicht bekommt.
+
+**Likelihood 3 — Possible.** Der Schalter ist eine Betriebseinstellung und
+greift nur bei Geschäftskunden; wie viele Betriebe ihn einschalten, weiß heute
+niemand. Vor Gate 1 ist die Eintrittswahrscheinlichkeit real null — es gibt
+keine Nutzer. Genau deshalb ist jetzt der billigste Zeitpunkt.
+
+**Mitigation:** Einbettung für `dokument_typ = angebot | kostenvoranschlag`
+abschalten, samt separatem XML-Anhang und dem Hinweissatz im Mailtext. **Kein**
+Ausweichen auf `TypeCode 325` — für BT-3 nach EN 16931 nicht zugelassen, die
+Datei wäre ungültig. EN 16931 kennt keine zulässige Abbildung eines Angebots;
+für maschinenlesbare Angebote wäre Order-X das Format, das ist aber eine
+Produktentscheidung ohne erkennbaren Bedarf.
+
+**Restrisiko nach Abschalten: 0.** Der Eintrag lebt wieder auf, sobald echte
+Rechnungen ins Produkt kommen — dann ist ZUGFeRD richtig, und für Bauleistungen
+kommen die Codes 875/876/877 (Abschlags- und Schlussrechnung) dazu.
+
+**Angrenzend, nicht Teil von LR-15:** `embedXML.ts` erklärt das PDF über die
+XMP-Metadaten zu PDF/A-3b, erzeugt wird es mit `pdf-lib`, das kein PDF/A
+ausgibt. Nicht validiert, deshalb kein eigener Registereintrag — Prüfbitte an
+Head of Product Engineering (veraPDF/Mustang).
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

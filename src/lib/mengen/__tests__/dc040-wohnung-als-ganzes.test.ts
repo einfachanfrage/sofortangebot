@@ -93,7 +93,7 @@ describe('DC-040-Nachtrag — "35 m² gestrichen" ist eine Wandfläche, keine Ra
         }],
       })
       const angereichert = analysiereKontext(JSON.parse(JSON.stringify(daten))).extraktion_angereichert
-      const position = malerEngine(angereichert).positionen.find(p => /wandfl/i.test(p.beschreibung))
+      const position = malerEngine(angereichert).positionen.find(p => /wand streichen/i.test(p.beschreibung))
       return { menge: position?.menge, direkt: angereichert.raeume[0].wandflaeche_direkt }
     }
 
@@ -181,7 +181,7 @@ describe('DC-040 — nachfragen statt raten', () => {
 describe('DC-040 — Berechnung', () => {
   function wandmenge(daten: ExtrahierteDaten): number | undefined {
     const { positionen } = malerEngine(daten)
-    return positionen.find(p => /wandfl/i.test(p.beschreibung))?.menge
+    return positionen.find(p => /wand streichen/i.test(p.beschreibung))?.menge
   }
 
   it('lässt eine genannte Fläche unangetastet, solange nichts beantwortet ist', () => {

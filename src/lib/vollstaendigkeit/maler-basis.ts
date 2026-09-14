@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, filtereArray } from './helpers'
+import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, raumAusTitel } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import type { RaumScope } from '../arbeiten-normalisierer'
 
@@ -79,10 +79,10 @@ export function pruefeStreichenBasis(
   const waendeAusdruecklich = /w(?:a|ä)nd|wandfl(?:a|ä)che/i.test(lower)
   const deckeAusdruecklich = /decke|deckenfl(?:a|ä)che/i.test(lower)
   if (waendeAusdruecklich && !nurDecke && !nurBoden && !hat(ergaenzt, 'wand', 'wandfläche')) {
-    add(ergaenzt, fehlende, 'Wandflächen streichen')
+    add(ergaenzt, fehlende, 'Wand streichen')
   }
   if (deckeAusdruecklich && !nurWaende && !nurBoden && !hat(ergaenzt, 'decke', 'deckenfläche')) {
-    add(ergaenzt, fehlende, 'Deckenfläche streichen')
+    add(ergaenzt, fehlende, 'Decke streichen')
   }
   // Schutz- und Abklebearbeiten nur ausgeben, wenn sie im Auftrag tatsächlich
   // genannt wurden. Keine ungefragten Zusatzpositionen erzeugen.
@@ -154,34 +154,74 @@ export function pruefeGrundierung(
   // ohne dass der ausdrückliche Auftrag dazu widersprochen wird. Vor der
   // Wand-Grundierung geprüft, aus demselben Grund wie beim Dachschrägen-Fall
   // oben: die generische hat(...'grundier')-Prüfung soll erst danach greifen.
-  const deckePos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('deckenfläch'))
-  const hatDeckenGrundierung = ergaenzt.some(p =>
-    /grundier|voranstrich|tiefengrund/i.test(p.beschreibung) && /decke/i.test(p.beschreibung))
-  if (deckePos && !hatDeckenGrundierung && explizitVollflaechig) {
-    ergaenzt.unshift({
-      beschreibung: 'Voranstrich / Grundierung Decke',
-      menge: deckePos.menge,
-      einheit: 'm²',
-      konfidenz: 'high',
-      berechnungsweg: `Gleiche Fläche wie Deckenfläche (${deckePos.menge} m²)`,
-      annahmen: [...deckePos.annahmen],
-      automatisch_ergaenzt: false,
-    })
+  // ── CoS-E-026 / TN-064 (Manfred), 13.09.2026 ──────────────────────────
+  //
+  // Hier stand `ergaenzt.find(...)` — die ERSTE Deckenposition. Bei zwei
+  // Räumen entstand damit **eine** Deckengrundierung, mit der Fläche des
+  // ersten Raums, ohne Raum im Titel. Zwei Schäden in einer Zeile:
+  //
+  //   1. Der zweite Raum bekam gar keine Deckengrundierung — bezahlte
+  //      Arbeit, die niemand sieht, weil sie im Angebot schlicht fehlt.
+  //   2. Die eine, die es gab, landete unter „Allgemein“ statt beim Raum.
+  //      Das war Manfreds Meldung; Punkt 1 war darunter versteckt.
+  //
+  // Die Wandgrundierung darunter hatte denselben Fehler, an ihr wurde am
+  // 30.08. (PM-028) nur die Hälfte repariert: Sie bekam den Raum in den
+  // Titel, blieb aber ein `.find()`.
+  //
+  // Deshalb jetzt beide je Raum, mit dem Raum aus der Position, aus der die
+  // Fläche stammt. Der Raum steht immer in der Quelle — er muss nur
+  // mitgenommen werden.
+  const deckenPositionen = ergaenzt.filter(p => istDeckeStreichen(p.beschreibung))
+  if (explizitVollflaechig) {
+    for (const deckePos of deckenPositionen) {
+      const raum = raumAusTitel(deckePos.beschreibung)
+      // Pro RAUM prüfen, nicht global: Sonst verhindert die Grundierung im
+      // ersten Raum die im zweiten — genau der alte Fehler.
+      const schonDa = ergaenzt.some(p =>
+        /grundier|voranstrich|tiefengrund/i.test(p.beschreibung)
+        && /decke/i.test(p.beschreibung)
+        && raumAusTitel(p.beschreibung) === raum)
+      if (schonDa) continue
+      ergaenzt.unshift({
+        beschreibung: `Voranstrich / Grundierung Decke${raum ? ` — ${raum}` : ''}`,
+        menge: deckePos.menge,
+        einheit: 'm²',
+        konfidenz: 'high',
+        berechnungsweg: `Gleiche Fläche wie Deckenfläche (${deckePos.menge} m²)`,
+        annahmen: [...deckePos.annahmen],
+        automatisch_ergaenzt: false,
+      })
+    }
   }
 
   // Wand-Grundierung: nur wenn noch keine Wand-Grundierung existiert.
-  const hatWandGrundierung = ergaenzt.some(p =>
-    /grundier|voranstrich|tiefengrund/i.test(p.beschreibung) && !/dachschräge/i.test(p.beschreibung) && !/decke/i.test(p.beschreibung))
-  if (hatWandGrundierung) return
+  // Auch diese Prüfung war global und muss pro Raum laufen (CoS-E-026):
+  // Eine Wandgrundierung im Wohnzimmer darf die im Schlafzimmer nicht
+  // verhindern.
+  const hatWandGrundierung = (raum: string | null) => ergaenzt.some(p =>
+    /grundier|voranstrich|tiefengrund/i.test(p.beschreibung)
+    && !/dachschräge/i.test(p.beschreibung)
+    && !/decke/i.test(p.beschreibung)
+    && raumAusTitel(p.beschreibung) === raum)
 
-  const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
-  if (wandPos) {
+  // F.6: hieß `includes('wandfläch')`. Ohne Anpassung fällt die
+  // Grundierung entweder ganz aus oder verliert ihren Raum im Titel und
+  // landet unter „Allgemein" — der Fund aus Trockenlauf PM-028, den die
+  // Zeile darunter gerade behebt.
+  const wandPositionen = ergaenzt.filter(p => istWandStreichen(p.beschreibung))
+  if (wandPositionen.length === 0) {
+    add(ergaenzt, fehlende, 'Voranstrich / Grundierung')
+    return
+  }
+  for (const wandPos of wandPositionen) {
     // Trockenlauf PM-028 (2026-08-30): Die Position kam ohne Raum im Titel und
     // landete damit unter „Allgemein" statt beim Arbeitszimmer — dieselbe
     // Ursache wie bei der Trittschalldämmung (PM-023). Und sie trug das
     // „Vorschlag"-Etikett, obwohl „Wände bitte grundieren" ausdrücklich gesagt
     // wurde. Beides hängt an derselben Zeile.
-    const raumSuffix = wandPos.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
+    const raumSuffix = raumAusTitel(wandPos.beschreibung)
+    if (hatWandGrundierung(raumSuffix)) continue
     ergaenzt.unshift({
       beschreibung: `Voranstrich / Grundierung${raumSuffix ? ` — ${raumSuffix}` : ''}`,
       menge: wandPos.menge,
@@ -191,7 +231,5 @@ export function pruefeGrundierung(
       annahmen: [...wandPos.annahmen],
       ...(explizitVollflaechig ? { automatisch_ergaenzt: false } : {}),
     })
-  } else {
-    add(ergaenzt, fehlende, 'Voranstrich / Grundierung')
   }
 }

@@ -352,8 +352,7 @@ Q1–Q4 · 1x/2x/3x · einlagig · zweilagig · dreilagig · Schicht 1 / Schicht
 *(Q-Stufe und Anstrichzahl sind bereits harte Filter im Matcher — die bleiben
 wie sie sind. Manfreds „Q3, Q4, dreifach" stehen also schon im Code.)*
 
-**4. Staffeln — jede Größen-, Mengen- oder Leistungsangabe im Titel**
-(hieß bis zum 12.09.2026 „Maßschwellen" und kannte nur mm/cm/km — siehe Q):
+**4. Maßschwellen — jede Zahl mit Maßeinheit im Titel:**
 bis 3 mm · 3–10 mm · 10–30 mm · bis 15 mm · über 3 m · über 4 m · bis 20 km
 Das sind die leisesten von allen. `Ausgleichsmasse einbringen` → `bis 3 mm`
 (10,00 €) statt `3–10 mm` (16,00 €) oder `10–30 mm` (26,00 €): 16 € Unterschied
@@ -1721,60 +1720,5 @@ heutige Stand fertig** — mit dem roten Test aus O ist er es ohnehin nicht.
 brauchen die laufende App.
 
 *Prüfmeister · 12.09.2026*
-
-## Q. Der Katalog gegen sich selbst — 64 unerreichbare Zeilen (CoS-E-039, 12.09.2026)
-
-Bis heute wurde immer in eine Richtung gemessen: **Findet die Engine ihre
-Titel im Katalog?** Das ist der Vokabular-Abgleich, und er hat heute 33 → 20
-Lücken gebracht.
-
-Manfreds TN-095 („die Preisliste hat lauter Dopplungen") hat mich gezwungen,
-in die andere Richtung zu messen: **Findet der Katalog sich selbst?** Jede
-Zeile als gesuchter Titel, durch denselben `findePreisposition`, gegen die
-Zeilen ihres eigenen Gewerks. Kommt etwas anderes zurück als sie selbst, kann
-sie über ihren eigenen Namen niemals gefunden werden — auch nicht von einem
-Menschen, der sie in der Oberfläche sucht.
-
-**Ergebnis morgens: 64 von 2379 Zeilen. In allen 64 Fällen mit einem anderen
-Preis. In allen 64 Fällen mit dem billigeren.**
-
-Das war keine Dopplung. Es waren Staffeln, und die unterscheidende Angabe
-stand in Klammern — dem vierten Fall derselben Familie an einem Tag
-(Millimeterspanne, Grundierungsart, Epoxid-Schicht, jetzt Staffel). Die
-Reparatur steht in `preis-aufwandswoerter.ts` (Gruppen `Staffel`, `Umfang`,
-`Schicht/Gang`), die Zahlen und die Entscheidungsliste in
-`docs/chief-of-staff-engineering-todos.md`. Hier nur die drei Dinge, die für
-den Code gelten:
-
-**Q.1 — Maßangaben haben zwei Bauformen, und die zweite hatte niemand.**
-`10 kWp` steht hinter der Zahl, `DN 150` und `R90` davor. Das Suffix-Muster
-allein hat SHK, Elektro und Brandschutz komplett verfehlt: `Heizungsrohre
-(DN 50+)` bekam den Preis für `DN 25–40`, `Brandschutzbeschichtung R90` den
-für `R30` — halber Preis, je m².
-
-**Q.2 — Zwei Maße hintereinander sind ein Maß, kein zweites.**
-`78x118cm` und `114x118cm` enden beide auf `118cm`. Wer nur das letzte Maß
-nimmt, hält die beiden für gleich. Das Muster muss `x`/`×` mitlesen.
-
-**Q.3 — Diese Sperren müssen `nur-unterschied` sein, nie `beidseitig`.**
-Dieselbe Lehre wie bei der Verlegeart (G): Eine Sperre, die auch dann greift,
-wenn **eine** Seite gar nichts sagt, nimmt dem Handwerker den Preis für den
-Normalfall weg. `Tür streichen / lackieren` ohne Zusatz muss weiter einen
-Treffer bekommen; nur `(beidseitig)` gegen `(einseitig)` darf sperren.
-
-**Was daraus als Produktregel folgt** — und das ist der eigentliche Fund:
-*Eine Klammer darf nie das Einzige sein, was zwei Preise auseinanderhält.*
-Der Standardkatalog verstößt an 22 verbliebenen Stellen dagegen, und sie
-lassen sich nicht durch ein Muster lösen, sondern nur durch Umbenennen
-(`Treppe abbrechen (Beton)` → `Betontreppe abbrechen`). Dasselbe gilt für
-Zeilen, die ein Betrieb sich selbst anlegt — dort fällt es nie auf, weil er
-seinen eigenen Preis für gesetzt hält.
-
-**Nachmessen:** `node scripts/katalog-dopplungen.mjs`
-**Entscheidungsliste:** `node scripts/katalog-dopplungen.mjs --liste`
-**Festgehalten in:** `src/lib/__tests__/katalog-staffeln.test.ts` — mit einer
-Sperrklinke auf 22: Die Zahl darf fallen, nie steigen.
-
-*Head of Product Engineering · 12.09.2026*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

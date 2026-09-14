@@ -1,14 +1,17 @@
 'use client'
 
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
+import { mitDeutschenZahlen } from '@/lib/zahlen-text'
+import { fasseKleinbetraegeZusammen } from '@/lib/kleinbetraege'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
-import { effektiveOptionen } from '@/lib/angebot-optionen'
+import { raeumeAusQuote, istAllgemeinPosition } from '@/lib/angebot-gruppierung'
+import { effektiveOptionen, gueltigBis } from '@/lib/angebot-optionen'
+import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from '@/lib/mengen/gewerke/vob-uebermessung'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
   company: Company
   quoteNumber: string
-  modus?: 'angebot' | 'rechnung'
   /**
    * DC-050 (2026-09-11): Rechenweg auf dem Kunden-PDF zeigen? Gleiche
    * Rangfolge wie in lib/pdf.tsx (das echte PDF, gleiche Frage): Prop, dann
@@ -25,6 +28,13 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
+// Spiegelbild von fmtMenge in lib/pdf.tsx — gleiche Nachkommastellen, damit
+// Vorschau und PDF dieselbe Zahl gleich schreiben.
+const MENGE_FORMAT = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 3 })
+function fmtMenge(n: number) {
+  return MENGE_FORMAT.format(n)
+}
+
 // DC-049 PDF-Schritt Nachtrag Teil 2 (2026-09-11, Sandy: "hier fehlt die
 // raumtrennung... das soll doch genau das gleiche pdf sein"): Eine Zeile war
 // hier schon immer eine Zeile — nur flach nach Position, nie nach Raum
@@ -32,14 +42,15 @@ function fmtDate(d: string) {
 // Zeilen-Darstellung jetzt einmal extrahiert, damit sie im flachen UND im
 // gruppierten Pfad identisch aussieht.
 function PositionsZeile({
-  position, idx, title, description, berechnungsweg, annahmen, quantity, unit, unitPrice, totalPrice, zeigeRechenweg,
+  position, idx, title, description, berechnungsweg, uebermessungsHinweis, quantity, unit, unitPrice, totalPrice, zeigeRechenweg,
 }: {
   position: number
   idx: number
   title: string
   description?: string | null
   berechnungsweg?: string | null
-  annahmen?: string[] | null
+  /** VOB-004/Legal G5 — muss auf dem Kundendokument stehen, siehe unten. */
+  uebermessungsHinweis?: string | null
   quantity: number
   unit: string
   unitPrice: number
@@ -53,18 +64,22 @@ function PositionsZeile({
       <div style={{ width: '40%' }}>
         <span className="font-bold">{title}</span>
         {description && <div className="text-[#666] mt-0.5">{description}</div>}
-        {zeigeRechenweg && (
-          <div className="font-mono text-[8px] text-[#666] mt-1 leading-relaxed">
-            {berechnungsweg || 'Pauschale'}
-          </div>
+        {uebermessungsHinweis && (
+          <div className="text-[8.5px] text-[#444] mt-1 leading-relaxed">{mitDeutschenZahlen(uebermessungsHinweis)} ¹</div>
         )}
-        {zeigeRechenweg && (annahmen?.length ?? 0) > 0 && (
-          <div className="font-mono text-[7.5px] text-[#999] mt-0.5">
-            {annahmen!.join(' · ')}
+        {/* DC-055 (2026-09-11, Manfred/TN-007): `font-mono` ist raus und die
+            Zahlen laufen durch den deutschen Formatter — diese Vorschau MUSS
+            aussehen wie das PDF (lib/pdf.tsx), sonst ist sie keine Vorschau. */}
+        {zeigeRechenweg && (
+          <div className="text-[8px] text-[#666] mt-1 leading-relaxed">
+            {mitDeutschenZahlen(berechnungsweg) || 'Pauschale'}
           </div>
         )}
       </div>
-      <span style={{ width: '12%', textAlign: 'right' }}>{quantity}</span>
+      {/* DC-055, dabei mitgefunden: die Menge stand hier als rohe JS-Zahl
+          („46.64"), während das PDF sie längst deutsch formatiert (fmtMenge).
+          Dieselbe Zahl, zwei Schreibweisen, je nachdem wo man hinsieht. */}
+      <span style={{ width: '12%', textAlign: 'right' }}>{fmtMenge(quantity)}</span>
       <span style={{ width: '10%', textAlign: 'center' }}>{unit}</span>
       <span style={{ width: '16%', textAlign: 'right' }}>{fmt(unitPrice)}</span>
       <span style={{ width: '16%', textAlign: 'right' }} className="font-bold">{fmt(totalPrice)}</span>
@@ -72,12 +87,19 @@ function PositionsZeile({
   )
 }
 
-export default function AngebotVorschau({ quote, company, quoteNumber, modus = 'angebot', zeigeRechenweg }: Props) {
+export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRechenweg }: Props) {
   const isKleinunternehmer = company.vat_rate === 0
   // DC-050: siehe Props-Kommentar oben — gleiche Rangfolge wie lib/pdf.tsx.
   const rechenwegSichtbar = zeigeRechenweg ?? quote.zeige_rechenweg_auf_pdf ?? true
-  const isRechnung = modus === 'rechnung'
-  const dokumentTitel = isRechnung ? 'RECHNUNG' : 'ANGEBOT'
+  // CoS-E-008/033/036 (Sandy, 11.09.2026: „Rechnung erstmal raus"): Diese
+  // Vorschau kannte einen Modus „rechnung", der nichts anderes tat, als
+  // Überschriften auszutauschen — dieselbe Nummer, dieselbe
+  // Unterschriftszeile, derselbe Angebots-Schlusstext. Der Umschalter dazu
+  // ist aus dem Versand-Dialog raus; der Modus hier ebenfalls, statt als
+  // toter Pfad liegen zu bleiben. Eine echte Rechnung ist ein eigenes
+  // Vorhaben (eigener Nummernkreis, eigenes Layout, Leistungsdatum,
+  // Steuernummer) und wird dann richtig gebaut, nicht wiederbelebt.
+  const dokumentTitel = 'ANGEBOT'
 
   // Summen (inkl. Rabatt/Zuschlag wenn in quote gespeichert)
   const q = quote as Quote & {
@@ -101,14 +123,34 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
 
   const co = company as Company & { ust_id?: string }
 
-  // Gleiches Muster wie lib/pdf.tsx: Rechenweg/Annahmen stehen an den
-  // Rohdaten (quote.items), gruppiereNachStruktur reicht sie an den
-  // gruppierten Einträgen nicht durch — deshalb einmal nach id auflösen.
+  // Gleiches Muster wie lib/pdf.tsx: Der Rechenweg steht an den Rohdaten
+  // (quote.items), gruppiereNachStruktur reicht ihn an den gruppierten
+  // Einträgen nicht durch — deshalb einmal nach id auflösen.
+  //
+  // CoS-E-005/CoS-E-009 (11.09.2026): `annahmen` ist hier bewusst NICHT mehr
+  // dabei. Diese Vorschau ist das Versprechen „so sieht dein Angebot für den
+  // Kunden aus" — sie muss deshalb genau das zeigen, was lib/pdf.tsx druckt,
+  // und dort sind die internen Annahmen jetzt raus (Begründung steht
+  // ausführlich in lib/pdf.tsx an derselben Stelle). Zwei Ansichten, die
+  // auseinanderlaufen, sind hier schon einmal teuer geworden.
   const opt = effektiveOptionen(quote, company, quote.customer?.ist_unternehmen)
   const rechenwegJeItem = new Map(
-    quote.items.map(i => [i.id, { berechnungsweg: i.berechnungsweg, annahmen: i.annahmen }])
+    quote.items.map(i => [i.id, { berechnungsweg: i.berechnungsweg }])
   )
-  const gruppen = gruppiereNachStruktur(quote.items, opt.struktur)
+  // Der eine Satz aus den Annahmen, der ausdrücklich AUF das Kundendokument
+  // gehört (VOB-004/Legal G5): er erklärt, warum die abgerechnete Fläche
+  // größer ist als die, die der Kunde nachmisst. Im PDF stand er längst —
+  // in dieser Vorschau bisher nicht, die Vorschau zeigte also weniger als
+  // das Papier. Gleiche Quelle wie lib/pdf.tsx, damit das so bleibt.
+  const uebermessungJeItem = uebermessungsHinweiseJePosition(quote.items)
+  // CoS-E-013/031/042 — gleiche Quelle wie lib/pdf.tsx.
+  const gueltigBisDatum = gueltigBis(quote, opt.gueltigTage)
+  // DC-056 (Manfred/TN-010): identisch zum PDF — gebündelt wird vor der
+  // Gruppierung, damit Vorschau und Dokument dieselbe Zeilenliste zeigen.
+  const positionen = fasseKleinbetraegeZusammen(
+    quote.items, opt.kleinbetraegeZusammenfassen, istAllgemeinPosition,
+  )
+  const gruppen = gruppiereNachStruktur(positionen, opt.struktur, raeumeAusQuote(quote))
 
   return (
     // DC-049 PDF-Schritt Nachtrag (2026-09-11, Sandy: "hier sieht das pdf so
@@ -151,7 +193,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
             {quote.customer && (
               <div>
                 <div className="text-[#999] uppercase tracking-wider text-[8px] font-bold mb-1">
-                  {isRechnung ? 'Rechnung an' : 'Angebot für'}
+                  Angebot für
                 </div>
                 <div className="font-black text-[11px]">{quote.customer.name}</div>
                 {quote.customer.address && (
@@ -163,23 +205,22 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
           </div>
           <div className="space-y-2 text-[9px] text-right min-w-[160px]">
             <div className="flex justify-between gap-4">
-              <span className="text-[#999] font-semibold">{isRechnung ? 'Rechnungsnummer:' : 'Angebotsnummer:'}</span>
+              <span className="text-[#999] font-semibold">Angebotsnummer:</span>
               <span className="font-black">{quoteNumber}</span>
             </div>
             <div className="flex justify-between gap-4">
               <span className="text-[#999] font-semibold">Datum:</span>
               <span>{fmtDate(quote.created_at)}</span>
             </div>
-            {quote.valid_until && (
+            {/* CoS-E-006/013/031/042 — Begründung steht in lib/pdf.tsx an
+                derselben Stelle: „Zahlungsziel" ist Rechnungssprache, aufs
+                Angebot gehört, wie lange der Preis gilt. */}
+            {gueltigBisDatum && (
               <div className="flex justify-between gap-4">
-                <span className="text-[#999] font-semibold">{isRechnung ? 'Fällig am:' : 'Gültig bis:'}</span>
-                <span>{fmtDate(quote.valid_until)}</span>
+                <span className="text-[#999] font-semibold">Gültig bis:</span>
+                <span>{fmtDate(gueltigBisDatum)}</span>
               </div>
             )}
-            <div className="flex justify-between gap-4">
-              <span className="text-[#999] font-semibold">Zahlungsziel:</span>
-              <span>{company.payment_days} Tage</span>
-            </div>
           </div>
         </div>
 
@@ -202,7 +243,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
               nach Raum/Gewerk/Arbeitsablauf gruppiert wie das echte PDF
               (gruppiereNachStruktur), statt immer flach nach Position. */}
           {!gruppen ? (
-            quote.items.map((item, idx) => (
+            positionen.map((item, idx) => (
               <PositionsZeile
                 key={item.id}
                 position={item.position}
@@ -210,7 +251,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
                 title={item.title}
                 description={item.description}
                 berechnungsweg={item.berechnungsweg}
-                annahmen={item.annahmen}
+                uebermessungsHinweis={uebermessungJeItem.get(item.id)}
                 quantity={item.quantity}
                 unit={item.unit}
                 unitPrice={item.unit_price}
@@ -239,7 +280,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
                     title={gi.titleDisplay}
                     description={gi.description}
                     berechnungsweg={rechenwegJeItem.get(gi.id)?.berechnungsweg}
-                    annahmen={rechenwegJeItem.get(gi.id)?.annahmen}
+                    uebermessungsHinweis={uebermessungJeItem.get(gi.id)}
                     quantity={gi.quantity}
                     unit={gi.unit}
                     unitPrice={gi.unit_price}
@@ -257,6 +298,13 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
             ))
           })()}
         </div>
+
+        {/* Übermessungs-Erklärung — einmal, genau wie im PDF (VOB-004/G5). */}
+        {uebermessungJeItem.size > 0 && (
+          <div className="mt-3 pt-2 border-t border-[#E0E0DE] text-[8.5px] text-[#444] leading-relaxed">
+            ¹ {UEBERMESSUNG_ERKLAERUNG}
+          </div>
+        )}
 
         {/* SUMMENBLOCK */}
         <div className="flex justify-end mt-4">
@@ -318,9 +366,10 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
           </div>
         )}
 
-        {/* Zahlungsbedingungen */}
+        {/* Zahlungsbedingungen — bewusst als Bedingung formuliert, nicht als
+            Fälligkeit (CoS-E-006), gleicher Wortlaut wie im PDF. */}
         <div className="mt-6 text-[9px] text-[#666]">
-          Zahlbar innerhalb von {company.payment_days} Tagen ohne Abzug.
+          Zahlungsbedingungen: {opt.zahlungszielTage} Tage nach Rechnungserhalt ohne Abzug.
         </div>
 
         {/* Unterschriftszeilen */}
@@ -350,7 +399,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, modus = '
 
       {/* KI-Hinweis — nur in Web-Vorschau, nicht im PDF */}
       <div className="mt-3 px-2 text-[10px] text-anthracite/30 font-medium text-center">
-        Bitte Angebot vor dem Versand prüfen. Sofortangebot haftet nicht für fehlerhafte Berechnungen.
+        Bitte das Angebot vor dem Versand prüfen. Sofortangebot haftet nicht für fehlerhafte Berechnungen.
       </div>
 
     </div>

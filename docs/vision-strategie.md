@@ -374,3 +374,21 @@ drankommt — mit dem Hinweis, dass der neue Wettbewerber Kalkulai (gefunden
 06.09.) Bodenleger explizit ausspart, was die aktuelle Nische bestätigt,
 aber nichts über den übernächsten Schritt sagt. Antwort steht noch aus,
 daher unten unverändert gelassen.
+
+**14.09.2026 (sechster Check-in):** Stand Richtung Launch: weiter auf Kurs zu
+Gate 1 (≈ 50,2 %, nach Sandys eigenem Live-Postfach-Test vom 13.09. leicht
+von 51,0 % gefallen) — der Test hat zwei echte, sonst unentdeckte Fehler im
+Login-/Passwort-Reset-Flow aufgedeckt, ein guter Fund trotz der gefallenen
+Zahl, weil das sonst erst ein echter Testnutzer gefunden hätte. Keine akute
+strategische Entscheidung diese Woche; die einzige größere offene
+Weichenstellung (wann die Website mit Impressum/Blog online geht, um die
+SEO-Uhr laufen zu lassen) hängt weiter an Antworten von Legal/Engineering und
+ist noch nicht entscheidungsreif. Zur Erinnerung an den seit 03.09.
+feststehenden, in den letzten Check-ins aber nicht wiederholten Zeitplan:
+Gate 1 ab Anfang Dezember (nach der Thailand-Reise), Gate 2 im Januar 2027 —
+mehr Luft als der ursprüngliche „baldige Launch"-Rahmen. Frage aus „Was hier
+noch fehlt" erneut an Sandy weitergegeben, da die Frage vom 07.09. weiterhin
+unbeantwortet ist: welches Gewerk nach Maler/Bodenleger als Nächstes
+drankommt — mit dem Hinweis, dass Kalkulai (der neue Wettbewerber) Bodenleger
+weiterhin bewusst ausspart. Antwort steht noch aus, daher unten unverändert
+gelassen.

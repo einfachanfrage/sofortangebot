@@ -89,7 +89,7 @@ const KORPUS: Fall[] = [
       // UND die Standardtür (0,90×2,10=1,89 m²) liegen beide unter der
       // 2,5-m²-Schwelle → werden NICHT mehr abgezogen. Netto = Brutto = 46,50 m²
       // (vorher, ohne VOB-Regel: 42,21 m²).
-      { enthaelt: 'wandflächen streichen', menge: 46.50 },
+      { enthaelt: 'wand streichen', menge: 46.50 },
       // Sockelleisten abkleben: Umfang 18,60 lfm — VOB-012 (CoS-042,
       // 04.09.2026): Unterbrechungen bis 1 m Einzellänge werden nach
       // DIN 18363/18365 (5.3.2) NICHT abgezogen, eine Standardtür also nie.
@@ -135,7 +135,7 @@ const KORPUS: Fall[] = [
     }],
     exakteMengen: [
       // Siehe VOB-Kommentar bei Testfall 1 — identische Raumdaten.
-      { enthaelt: 'wandflächen streichen', menge: 46.50 },
+      { enthaelt: 'wand streichen', menge: 46.50 },
     ],
     verboten: ['decke'],
   },
@@ -166,7 +166,7 @@ const KORPUS: Fall[] = [
       // hängt nicht von Fenster/Tür ab.
       { enthaelt: 'akzentwand', menge: 9.10 },
       // Restwände: 39,00 − 9,10 = 29,90 m² (vorher 26,81 m²)
-      { enthaelt: 'wandflächen streichen 2x', menge: 29.90 },
+      { enthaelt: 'wand streichen 2x', menge: 29.90 },
     ],
     verboten: [],
     annahmenPruefung: [
@@ -237,14 +237,14 @@ const KORPUS: Fall[] = [
       // Umfang 2×(3,50+2,80)=12,60 lfm; Wandbrutto 31,50 m²; Fenster (1,20 m²)
       // und Tür (1,89 m²) sind beide Standardgröße ≤2,5 m² → VOB-Übermessung
       // greift, kein Abzug (VOB/C DIN 18363, siehe pruefmeister-testfaelle.md)
-      { enthaelt: 'wandflächen streichen 2x — küche', menge: 31.50 },
-      { enthaelt: 'deckenfläche streichen 2x — küche', menge: 9.80 },
-      { enthaelt: 'deckenfläche streichen 2x — speisekammer', menge: 9.80 },
+      { enthaelt: 'wand streichen 2x — küche', menge: 31.50 },
+      { enthaelt: 'decke streichen 2x — küche', menge: 9.80 },
+      { enthaelt: 'decke streichen 2x — speisekammer', menge: 9.80 },
     ],
     // Kernpunkt des Fixes: die Speisekammer darf trotz "nur Decke" niemals
     // eine eigene Wandposition bekommen — UND das darf die Küches Wand von
     // oben (siehe exakteMengen) nicht mit wegreißen.
-    verboten: ['wandflächen streichen 2x — speisekammer'],
+    verboten: ['wand streichen 2x — speisekammer'],
   },
   {
     name: 'PM-003 — Kleinreparatur (Dübellöcher) darf keine Grundierung auf volle Wandfläche auslösen',
@@ -279,8 +279,8 @@ const KORPUS: Fall[] = [
       // Umfang 2×(6,00+1,50)=15,00 lfm; Wandbrutto 48,00 m²; kein Fenster,
       // die einzige Tür ist Standardgröße (1,89 m²) ≤2,5 m² → VOB-
       // Übermessung greift, kein Abzug (VOB/C DIN 18363)
-      { enthaelt: 'wandflächen streichen', menge: 48.00 },
-      { enthaelt: 'deckenfläche streichen', menge: 9.00 },
+      { enthaelt: 'wand streichen', menge: 48.00 },
+      { enthaelt: 'decke streichen', menge: 9.00 },
       { enthaelt: 'dübellöcher spachteln', menge: 2 },
     ],
     // Kernpunkt: keine Grundierung/Voranstrich-Position auf 46,11 m² (276,66 €)
@@ -452,7 +452,7 @@ const KORPUS: Fall[] = [
       // Umfang 2×(4,50+3,00)=15,00 lfm; Wandbrutto 38,25 m²; Fenster (1,20 m²)
       // und Tür (1,89 m²) sind beide Standardgröße ≤2,5 m² → VOB-Übermessung
       // greift, kein Abzug (VOB/C DIN 18363)
-      { enthaelt: 'wandflächen streichen', menge: 38.25 },
+      { enthaelt: 'wand streichen', menge: 38.25 },
       // Sockelleisten streichen: Umfang 15,00 lfdm ungekürzt (VOB-012)
       // — übernommen von "Sockelleisten abkleben", keine eigene Meterangabe im Transkript.
       { enthaelt: 'sockelleisten streichen', menge: 15.00 },
@@ -492,7 +492,7 @@ const KORPUS: Fall[] = [
     ],
     // Kernpunkt: keine Wand-/Deckenposition — ausdrücklich ausgeschlossen
     // ("an den Wänden machen wir nix"), reiner Boden-Gewerk-Testfall.
-    verboten: ['wandflächen streichen', 'deckenfläche streichen'],
+    verboten: ['wand streichen', 'decke streichen'],
   },
   {
     name: 'PM-020 — Alter Belag bleibt ausdrücklich liegen, kein Sockelleisten-Phantom (Kinderzimmer 2)',
@@ -577,7 +577,7 @@ const KORPUS: Fall[] = [
       // 0,88 m²) und die normale Tür (1,89 m²) sind ≤2,5 m² → VOB-Übermessung,
       // kein Abzug. Nur die breite Terrassentür (2×2,1=4,20 m²) liegt über der
       // 2,5 m²-Schwelle und wird weiterhin abgezogen: 57,20 − 4,20 = 53,00 m²
-      { enthaelt: 'wandflächen streichen 1x', menge: 53.00 },
+      { enthaelt: 'wand streichen 1x', menge: 53.00 },
       { enthaelt: 'sockelleisten abkleben', menge: 20.00 },
     ],
     // Kernpunkt: keine Balkon-/Terrassen-Position — im Transkript kommt nur

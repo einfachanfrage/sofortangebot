@@ -108,18 +108,18 @@ const FAELLE: Fall[] = [
     transkript: 'Also, äh, Wohnzimmer, fünf zwanzig mal vier zehn, Deckenhöhe zwo fünfzig. Wände komplett streichen, zweimal drüber. Ein Fenster — ne halt, zwei Fenster sind da drin, Standardgröße reicht. Eine Tür, normal Maß. Die Decke lassen wir, ist erst letztes Jahr gemacht worden, die bitte NICHT mitrechnen. Sockelleisten kleben wir noch ab, sind aus Holz, werden mitgestrichen.',
     raeume: [basisRaum('Wohnzimmer', { laenge: 5.2, breite: 4.1, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER(2)], arbeiten: ['waende_streichen'] })],
     soll: [
-      { muster: /wandflächen streichen 2x/i, menge: 46.5 },
+      { muster: /wand streichen 2x/i, menge: 46.5 },
       { muster: /sockelleisten abkleben/i, menge: 18.6 },
     ],
-    verboten: [/deckenfläche streichen/i],
+    verboten: [/decke streichen/i],
   },
   {
     id: 'PM-003', titel: 'Kleinreparatur + Höhenzuschlag + Boden-Ausschluss (Flur)', gewerk: 'maler',
     transkript: 'Flur, sechs mal eins fünfzig, Deckenhöhe drei zwanzig — is schon ne hohe Bude hier. Kein Fenster im Flur, aber eine Tür, normal Maß. Wände streichen, zweimal, Decke auch mit. Zwei Dübellöcher spachteln, sonst nix Großes. Boden lass mal weg, der bleibt wie er ist, den nicht anfassen.',
     raeume: [basisRaum('Flur', { laenge: 6, breite: 1.5, hoehe: 3.2, tueren: [TUER], fenster: [], arbeiten: ['waende_streichen', 'decke_streichen'] })],
     soll: [
-      { muster: /wandflächen streichen 2x/i, menge: 48 },
-      { muster: /deckenfläche streichen 2x/i, menge: 9 },
+      { muster: /wand streichen 2x/i, menge: 48 },
+      { muster: /decke streichen 2x/i, menge: 9 },
       { muster: /erschwerniszuschlag raumhöhe/i },
     ],
     verboten: [/boden streichen/i],
@@ -141,11 +141,11 @@ const FAELLE: Fall[] = [
       basisRaum('Speisekammer', { laenge: 3.5, breite: 2.8, hoehe: 2.5, tueren: [TUER], fenster: [], arbeiten: ['decke_streichen'] }),
     ],
     soll: [
-      { muster: /wandflächen streichen 2x — küche/i, menge: 31.5 },
-      { muster: /deckenfläche streichen 2x — küche/i, menge: 9.8 },
-      { muster: /deckenfläche streichen 2x — speisekammer/i, menge: 9.8 },
+      { muster: /wand streichen 2x — küche/i, menge: 31.5 },
+      { muster: /decke streichen 2x — küche/i, menge: 9.8 },
+      { muster: /decke streichen 2x — speisekammer/i, menge: 9.8 },
     ],
-    verboten: [/wandflächen streichen.*speisekammer/i],
+    verboten: [/wand streichen.*speisekammer/i],
   },
   {
     id: 'PM-007', titel: 'Dachgeschoss: Kniestock + Dachschrägen', gewerk: 'maler',
@@ -167,7 +167,7 @@ const FAELLE: Fall[] = [
       { muster: /fassadenfläche streichen 2x/i, menge: 72 },
       { muster: /grundierung|grundieren/i, menge: 72 },
     ],
-    verboten: [/boden schützen/i, /deckenfläche streichen/i],
+    verboten: [/boden schützen/i, /decke streichen/i],
   },
   {
     id: 'PM-009', titel: 'Bodenleger-Komplettpaket (Flur)', gewerk: 'boden_parkett',
@@ -188,7 +188,7 @@ const FAELLE: Fall[] = [
     id: 'PM-012', titel: 'Sockelleisten nur streichen, ausdrücklich nicht neu', gewerk: 'maler',
     transkript: 'Esszimmer, viereinhalb mal drei, Höhe zwo fünfundfünfzig. Wände streichen, zweimal drüber, ganz normal. Die Sockelleisten bleiben genau wie sie sind, die werden NICHT neu gemacht, die NICHT demontiert — die sollen nur nochmal mitgestrichen werden, in der gleichen Farbe wie die Wand. Ein Fenster, Standardgröße, eine Tür, normal Maß.',
     raeume: [basisRaum('Esszimmer', { laenge: 4.5, breite: 3, hoehe: 2.55, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen'] })],
-    soll: [{ muster: /wandflächen streichen 2x/i, menge: 38.25 }],
+    soll: [{ muster: /wand streichen 2x/i, menge: 38.25 }],
     verboten: [/sockelleisten montieren/i, /sockelleisten entfernen/i],
   },
   {
@@ -196,14 +196,14 @@ const FAELLE: Fall[] = [
     transkript: 'Kinderzimmer, vier mal drei, Höhe zwo fünfzig. Wände tapezieren, keine Farbe. Der Putz ist frisch, aber Grundierung brauchen wir trotzdem nicht, das lassen wir weg. Ein Fenster, normale Größe, eine Tür, normal Maß.',
     raeume: [basisRaum('Kinderzimmer', { laenge: 4, breite: 3, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['tapezieren'] })],
     soll: [{ muster: /tapezieren|tapete/i }],
-    verboten: [/wandflächen streichen/i, /grundierung|voranstrich/i, /tapete entfernen|tapete ablösen/i],
+    verboten: [/wand streichen/i, /grundierung|voranstrich/i, /tapete entfernen|tapete ablösen/i],
   },
   {
     id: 'PM-019', titel: 'Erschwerniszuschlag schwieriger Untergrund (Gäste-WC)', gewerk: 'maler',
     transkript: 'Gästeklo, zwei mal eins fünfzig, Höhe zwo vierzig. Wände streichen, zweimal. Der Putz ist aber total uneben und bröckelig, ein wirklich schwieriger Untergrund, das wird aufwendiger als normal. Eine Tür, kein Fenster.',
     raeume: [basisRaum('Gästeklo', { laenge: 2, breite: 1.5, hoehe: 2.4, tueren: [TUER], fenster: [], arbeiten: ['waende_streichen'] })],
     soll: [
-      { muster: /wandflächen streichen 2x/i, menge: 16.8 },
+      { muster: /wand streichen 2x/i, menge: 16.8 },
       { muster: /erschwerniszuschlag schwieriger untergrund/i },
     ],
     verboten: [/erschwerniszuschlag raumhöhe/i, /erschwerniszuschlag altbau/i],
@@ -224,15 +224,15 @@ const FAELLE: Fall[] = [
       fenster: [{ anzahl: 1, breite: 1.2, hoehe: 1.4, annahme: false }, { anzahl: 1, breite: 0.8, hoehe: 1.1, annahme: false }],
       arbeiten: ['waende_streichen'],
     })],
-    soll: [{ muster: /wandflächen streichen 1x/i, menge: 53 }],
+    soll: [{ muster: /wand streichen 1x/i, menge: 53 }],
   },
   {
     id: 'PM-022', titel: 'Schlafzimmer, Baseline-Malerfall', gewerk: 'maler',
     transkript: 'Schlafzimmer, vier Meter fünfzig mal drei Meter achtzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke einmal mit. Ein Fenster, Standardmaß, eine Tür, normal.',
     raeume: [basisRaum('Schlafzimmer', { laenge: 4.5, breite: 3.8, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen', 'decke_streichen'] })],
     soll: [
-      { muster: /wandflächen streichen 2x/i, menge: 41.5 },
-      { muster: /deckenfläche streichen 1x/i, menge: 17.1 },
+      { muster: /wand streichen 2x/i, menge: 41.5 },
+      { muster: /decke streichen 1x/i, menge: 17.1 },
       { muster: /boden schützen/i, menge: 17.1 },
       { muster: /sockelleisten abkleben/i, menge: 16.6 },
     ],
@@ -247,19 +247,19 @@ const FAELLE: Fall[] = [
       { muster: /trittschall/i, menge: 10.8 },
       { muster: /sockelleisten montieren/i, menge: 15.6 },
     ],
-    verboten: [/wandflächen streichen/i, /deckenfläche streichen/i],
+    verboten: [/wand streichen/i, /decke streichen/i],
   },
   {
     id: 'PM-024', titel: 'Büro, Erschwerniszuschlag Höhe', gewerk: 'maler',
     transkript: 'Büro, fünf Meter mal vier Meter, Höhe drei Meter zwanzig. Wände zweimal streichen. Zwei Fenster, Standardmaß, eine Tür, normal.',
     raeume: [basisRaum('Büro', { laenge: 5, breite: 4, hoehe: 3.2, tueren: [TUER], fenster: [FENSTER(2)], arbeiten: ['waende_streichen'] })],
     soll: [
-      { muster: /wandflächen streichen 2x/i, menge: 57.6 },
+      { muster: /wand streichen 2x/i, menge: 57.6 },
       { muster: /erschwerniszuschlag raumhöhe > 3m — büro/i },
       { muster: /boden schützen/i, menge: 20 },
       { muster: /sockelleisten abkleben/i, menge: 18 },
     ],
-    verboten: [/deckenfläche streichen/i],
+    verboten: [/decke streichen/i],
   },
   {
     id: 'PM-025', titel: 'Gästezimmer, Vinyl Fischgrät + neue Sockelleisten', gewerk: 'boden_parkett',
@@ -280,12 +280,12 @@ const FAELLE: Fall[] = [
     transkript: 'Küche, vier Meter zwanzig mal drei Meter sechzig, Höhe zwo fünfzig. Wände zweimal streichen, Decke reicht einmal. Zwei Fenster, Standardmaß, eine Tür, normal.',
     raeume: [basisRaum('Küche', { laenge: 4.2, breite: 3.6, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER(2)], arbeiten: ['waende_streichen', 'decke_streichen'] })],
     soll: [
-      { muster: /wandflächen streichen 2x/i, menge: 39 },
-      { muster: /deckenfläche streichen 1x/i, menge: 15.12 },
+      { muster: /wand streichen 2x/i, menge: 39 },
+      { muster: /decke streichen 1x/i, menge: 15.12 },
       { muster: /boden schützen/i, menge: 15.12 },
       { muster: /sockelleisten abkleben/i, menge: 15.6 },
     ],
-    verboten: [/deckenfläche streichen 2x/i],
+    verboten: [/decke streichen 2x/i],
   },
   {
     id: 'PM-027', titel: 'Kellerraum, Parkett gerade + Altbelag raus', gewerk: 'boden_parkett',
@@ -302,7 +302,7 @@ const FAELLE: Fall[] = [
     transkript: 'Arbeitszimmer, vier Meter mal drei Meter fünfzig, Höhe zwo fünfzig, ist ein Altbau. Wände bitte grundieren und dann zweimal streichen. Ein Fenster, Standardmaß, eine Tür, normal.',
     raeume: [basisRaum('Arbeitszimmer', { laenge: 4, breite: 3.5, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen', 'grundieren'] })],
     soll: [
-      { muster: /wandflächen streichen 2x/i, menge: 37.5 },
+      { muster: /wand streichen 2x/i, menge: 37.5 },
       { muster: /grundierung|voranstrich|grundieren/i, menge: 37.5 },
       { muster: /erschwerniszuschlag altbau/i },
       { muster: /boden schützen/i, menge: 14 },
@@ -315,7 +315,7 @@ const FAELLE: Fall[] = [
     transkript: 'Abstellraum, zwei Meter mal eins Meter achtzig, Höhe zwo vierzig. Wände einmal streichen reicht völlig. Kein Fenster, keine Tür.',
     raeume: [basisRaum('Abstellraum', { laenge: 2, breite: 1.8, hoehe: 2.4, tueren: [], fenster: [], arbeiten: ['waende_streichen'] })],
     soll: [
-      { muster: /wandflächen streichen 1x/i, menge: 18.24 },
+      { muster: /wand streichen 1x/i, menge: 18.24 },
       { muster: /boden schützen/i, menge: 3.6 },
       { muster: /sockelleisten abkleben/i, menge: 7.6 },
     ],
@@ -337,7 +337,7 @@ const FAELLE: Fall[] = [
     transkript: 'Fassade an der Nordseite, zehn Meter lang, Wandhöhe fünf Meter. Zwei Fenster drin, jeweils eins zwanzig mal eins vierzig. Einmal Fassadenfarbe drauf.',
     raeume: [basisRaum('Fassade', { laenge: 10, breite: null, hoehe: 5, wandflaeche_direkt: 50, fenster: [{ anzahl: 2, breite: 1.2, hoehe: 1.4, annahme: false }], arbeiten: ['waende_streichen'] })],
     soll: [{ muster: /fassadenfläche streichen 1x/i, menge: 50 }],
-    verboten: [/grundierung|voranstrich/i, /boden schützen/i, /deckenfläche streichen/i],
+    verboten: [/grundierung|voranstrich/i, /boden schützen/i, /decke streichen/i],
   },
 ]
 

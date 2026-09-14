@@ -24,13 +24,13 @@ describe('Beta-Frust-Ansage — komplette Pipeline', () => {
   })
 
   it('enthält die drei tatsächlich genannten Arbeiten', () => {
-    expect(namen.some(n => n.includes('wandflächen streichen'))).toBe(true)
+    expect(namen.some(n => n.includes('wand streichen'))).toBe(true)
     expect(namen.some(n => n.includes('tapete entfernen'))).toBe(true)
     expect(namen.some(n => n.includes('spachteln') || n.includes('glätten'))).toBe(true)
   })
 
   it('Wandfläche aus 24 m² Boden + 2,60 Höhe berechnet (~48 m²)', () => {
-    const wand = positionen.find(p => p.beschreibung.toLowerCase().includes('wandflächen streichen'))
+    const wand = positionen.find(p => p.beschreibung.toLowerCase().includes('wand streichen'))
     expect(wand?.menge).toBeGreaterThan(44)
     expect(wand?.menge).toBeLessThan(52)
   })

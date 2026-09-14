@@ -9,7 +9,7 @@ const pos = (beschreibung: string, menge: number, einheit = 'm²', berechnungswe
 describe('Aufnahme-Hinweise als sicheres Fallback', () => {
   it('ergänzt Arbeiten, ohne Phantomraum oder Parkett-Aufarbeitung zu erzeugen', () => {
     const ergebnis = ergaenzeAusAufnahmeHinweisen([
-      pos('Wandflächen streichen — Wohnzimmer', 45.93),
+      pos('Wand streichen — Wohnzimmer', 45.93),
       pos('Vinyl-Boden verlegen inkl. 10% Verschnitt — Wohnzimmer', 23.45, 'm²', '21.32 m² + 10% Verschnitt'),
       pos('Sockelleisten montieren — Wohnzimmer', 18, 'lfdm'),
     ], ['Wände schleifen', 'Teppichboden entfernen', 'Klickvinyl verlegen', 'Sockelleisten montieren'])
@@ -25,7 +25,7 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
 
   it('ersetzt Sockelleisten abkleben durch die ausdrücklich genannte Montage', () => {
     const ergebnis = ergaenzeAusAufnahmeHinweisen([
-      pos('Wandflächen streichen — Wohnzimmer', 45.93),
+      pos('Wand streichen — Wohnzimmer', 45.93),
       pos('Vinyl-Boden verlegen inkl. 10% Verschnitt — Wohnzimmer', 23.45, 'm²', '21.32 m² + 10% Verschnitt'),
       pos('Sockelleisten abkleben — Wohnzimmer', 17.7, 'lfdm'),
     ], ['Wände streichen', 'Klickvinyl verlegen', 'Sockelleisten montieren'], 'Es werden achtzehn laufende Meter Sockelleisten montiert.')
@@ -54,8 +54,8 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
   // erkannt" gemeldet hatte. Bestätigt am echten Transkript aus dem Nachtest.
   it('erkennt "Sockelleisten entfernen" als Chip-Titel (nicht nur "demontieren") — PM-010', () => {
     const ergebnis = ergaenzeAusAufnahmeHinweisen([
-      pos('Wandflächen streichen — Gästezimmer', 30.71),
-      pos('Deckenfläche streichen — Gästezimmer', 10.5),
+      pos('Wand streichen — Gästezimmer', 30.71),
+      pos('Decke streichen — Gästezimmer', 10.5),
       pos('Sockelleisten montieren — Gästezimmer', 12.1, 'lfdm'),
     ], ['Wände streichen', 'Decke streichen', 'Sockelleisten entfernen', 'Neue Sockelleisten montieren', 'Sockelleisten streichen'],
       'Die alten Sockelleisten kommen raus, neue werden montiert, weiße MDF-Leisten.')
@@ -126,7 +126,7 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
   // (14,1 lfdm), weil keine Neumontage existiert — exakt die Soll-Lösung.
   it('erkennt "Sockelleisten streichen" vom Chip-Titel als Sicherheitsnetz, auch ohne Neumontage — PM-012', () => {
     const ergebnis = ergaenzeAusAufnahmeHinweisen([
-      pos('Wandflächen streichen — Esszimmer', 35.16),
+      pos('Wand streichen — Esszimmer', 35.16),
       pos('Boden schützen — Esszimmer', 13.5),
       pos('Sockelleisten abkleben — Esszimmer', 14.1, 'lfdm'),
     ], ['Wände streichen', 'Sockelleisten streichen'],
@@ -151,12 +151,12 @@ describe('Aufnahme-Hinweise als sicheres Fallback', () => {
   // weil das Wohnzimmer eine (fehlerhafte) Sockelleisten-Montage-Karte hatte.
   it('entfernt "Sockelleisten abkleben" nur im selben Raum wie die Montage-Position — PM-013 Nachtest 3', () => {
     const ergebnis = ergaenzeAusAufnahmeHinweisen([
-      pos('Wandflächen streichen — Flur', 33.47),
-      pos('Deckenfläche streichen — Flur', 9),
+      pos('Wand streichen — Flur', 33.47),
+      pos('Decke streichen — Flur', 9),
       pos('Sockelleisten abkleben — Flur', 12.7, 'lfdm'),
       pos('Fertigparkett verlegen inkl. 15% Verschnitt — Wohnzimmer', 41.4),
       pos('Sockelleisten montieren — Wohnzimmer', 25, 'lfdm'),
-    ], ['Wandflächen streichen', 'Deckenfläche streichen', 'Sockelleisten abkleben', 'Fertigparkett verlegen', 'Sockelleisten montieren'],
+    ], ['Wand streichen', 'Decke streichen', 'Sockelleisten abkleben', 'Fertigparkett verlegen', 'Sockelleisten montieren'],
       'Wohnzimmer, 8x4,5, Eichenparkett, Fischgrät verlegt. Flur daneben, nur Wände und Decke streichen.')
 
     const abklebenFlur = ergebnis.find(p => /sockelleisten abkleben/i.test(p.beschreibung))

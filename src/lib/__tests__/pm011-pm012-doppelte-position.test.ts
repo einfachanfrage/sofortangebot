@@ -68,7 +68,7 @@ describe('PM-011 — die Erschwernis wird nicht zweimal kassiert', () => {
 
   it('die Mengen des Prüfmeisters bleiben exakt', () => {
     const p = lauf(PM011, RAUM_PM011).positionen
-    expect(menge(p, /wandflächen streichen/i)).toBe(36)
+    expect(menge(p, /wand streichen/i)).toBe(36)
     expect(menge(p, /spachtelarbeiten q2/i)).toBe(36)
     expect(menge(p, /boden schützen/i)).toBe(12.8)
     expect(menge(p, /sockelleisten abkleben/i)).toBe(14.4)
@@ -133,7 +133,7 @@ describe('PM-012 — wer die Leiste streicht, klebt sie nicht ab', () => {
 
   it('die übrigen Mengen bleiben exakt', () => {
     const p = lauf(PM012, RAUM_PM012).positionen
-    expect(menge(p, /wandflächen streichen/i)).toBe(38.25)
+    expect(menge(p, /wand streichen/i)).toBe(38.25)
     expect(menge(p, /boden schützen/i)).toBe(13.5)
   })
 })
@@ -147,7 +147,7 @@ describe('PM-012 — wer die Leiste streicht, klebt sie nicht ab', () => {
 // Aufnahme-Karte drei Positionen und der Entwurf vier.
 describe('PM-012, Wurzel: das Sicherheitsnetz in der Route räumt jetzt mit auf', () => {
   const karte: BerechnetePosition[] = [
-    { beschreibung: 'Wandflächen streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
+    { beschreibung: 'Wand streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
     { beschreibung: 'Boden schützen — Esszimmer', menge: 13.5, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
     { beschreibung: 'Sockelleisten abkleben — Esszimmer', menge: 15, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
   ]
@@ -155,7 +155,7 @@ describe('PM-012, Wurzel: das Sicherheitsnetz in der Route räumt jetzt mit auf'
   it('Karte 3 Positionen → Entwurf 3 Positionen, nicht 4', () => {
     const t = titel(ergaenzeAusAufnahmeHinweisen(karte, ['Wände streichen', 'Sockelleisten streichen'], PM012))
     expect(t).toEqual([
-      'Wandflächen streichen 2x — Esszimmer',
+      'Wand streichen 2x — Esszimmer',
       'Boden schützen — Esszimmer',
       'Sockelleisten streichen — Esszimmer',
     ])
@@ -164,7 +164,7 @@ describe('PM-012, Wurzel: das Sicherheitsnetz in der Route räumt jetzt mit auf'
   it('PM-010 bleibt wie er war: montieren und streichen, kein Abkleben', () => {
     const t = titel(ergaenzeAusAufnahmeHinweisen(
       [
-        { beschreibung: 'Wandflächen streichen 2x — Flur', menge: 30, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
+        { beschreibung: 'Wand streichen 2x — Flur', menge: 30, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
         { beschreibung: 'Sockelleisten abkleben — Flur', menge: 12, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
       ],
       ['Sockelleisten montieren', 'Sockelleisten streichen'],

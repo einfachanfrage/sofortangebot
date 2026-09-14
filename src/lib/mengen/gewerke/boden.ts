@@ -5,6 +5,7 @@ import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge } from './sockelleisten'
 import { erkenneSockelleistenAusschluss, SOCKEL_WORT } from '../../sockelleisten-ausschluss'
 import { KLICK_VINYL_WORT } from '../../hoerfehler'
+import { verlegeartZusatz } from '../../verlegeart'
 import { saetzeJeRaum } from '../../satz-raum'
 
 function round2(n: number): number {
@@ -280,7 +281,14 @@ export function bodenEngine(daten: any): MengenErgebnis {
       const musterPreis = muster ? MUSTER_KATALOG[muster][belagTyp ?? ''] : undefined
       const verlegeMenge = round2(flaeche * (1 + verschnitt))
       positionen.push({
-        beschreibung: `${musterPreis?.ersatzTitel ?? `${label} verlegen`}${verschnittSuffix} — ${name}`,
+        // G.2 (12.09.2026): Die Verlegeart gehört in den Titel — sonst
+        // entscheidet die Textähnlichkeit zwischen 10,00 € (lose),
+        // 14,00 € (gespannt) und 18,00 € (verklebt). Nur dort, wo sie
+        // feststeht; siehe verlegeart.ts. Ein `ersatzTitel` ist ein
+        // wörtlicher Katalogeintrag und bleibt unangetastet.
+        beschreibung: musterPreis?.ersatzTitel
+          ? `${musterPreis.ersatzTitel}${verschnittSuffix} — ${name}`
+          : `${label} verlegen${verlegeartZusatz(label, eigenerText || gesamtText)}${verschnittSuffix} — ${name}`,
         menge: verlegeMenge,
         einheit: 'm²',
         konfidenz: 'high',
@@ -384,7 +392,21 @@ export function bodenEngine(daten: any): MengenErgebnis {
 
     if (parkett_schleifen) {
       positionen.push({
-        beschreibung: `Parkett schleifen — ${name}`,
+        // F.6 (Prüfmeister, 12.09.2026): „`Parkett schleifen` →
+        // `Parkett abschleifen (2 Schleifgänge)` — Zahl der Schleifgänge
+        // gehört in den Titel."
+        //
+        // Der alte Titel sprach das Wort des Katalogs nicht („abschleifen")
+        // und nannte keine Gangzahl. Ergebnis war der Treffer
+        // `Parkett schleifen + versiegeln komplett (2x schleifen, 2x Lack)`
+        // für 38,00 € — in einem Angebot, das die Versiegelung ohnehin schon
+        // als „Versiegelung 1./2. Gang" einzeln führt. Also doppelt
+        // berechnet UND eine Lackversiegelung auf dem Kundenpapier, obwohl
+        // im Transkript „ölen" steht.
+        //
+        // Zwei Schleifgänge sind der Standardfall (grob + fein); wird im
+        // Transkript eine andere Zahl genannt, setzt boden-sonder.ts sie.
+        beschreibung: `Parkett abschleifen (2 Schleifgänge) — ${name}`,
         menge: flaeche,
         einheit: 'm²',
         konfidenz: 'high',

@@ -5,6 +5,7 @@ import { extrahiereKorrekturen, formatKorrekturenFuerKi } from '@/lib/korrektur-
 import { wendeImplizitRegelnAn } from '@/lib/implizit-wissen'
 import { ergaenzeOeffnungenAusText } from './gesagte-werte'
 import { berechneUndPruefeAlleGewerke } from './mehrgewerk'
+import type { ErschwernisConfig } from '../erschwernis'
 import { berechneBewertung } from './bewertung'
 import type { ExtrahierteDaten, MengenErgebnis, KalkulationsBewertung, KIRueckfrage } from './types'
 import { normalisiereExtraktion } from './extraktion-normalisierer'
@@ -68,6 +69,12 @@ export function verarbeiteExtraktion(
   edgeResult: { result: ExtrahierteDaten } | null,
   antworten: KalkulationsAntworten = {},
   basis_extraktion?: ExtrahierteDaten,
+  /**
+   * CoS-E-040: Welche Erschwerniszuschläge der Betrieb automatisch
+   * vorgeschlagen haben will. Fehlt der Wert, bleibt alles wie bisher —
+   * die Pipeline läuft auch in Tests und Skripten ohne Betriebskontext.
+   */
+  erschwernis?: ErschwernisConfig | null,
 ): ExtraktionResponse {
   // Vorverarbeitung: Zahlwörter + Multi-Raum + Ergänzungen + Korrekturen —
   // dieselben Schritte wie vor dem Edge-Aufruf, hier bewusst aus dem reinen
@@ -353,6 +360,9 @@ export function verarbeiteExtraktion(
       // Erschwerniszuschlag nicht davon abhängt, ob eine Regex die Sprechweise
       // kennt, UND damit er beim richtigen Raum landet (Sandy, 2026-08-30).
       raeume: (extraktion.raeume ?? []).map(r => ({ name: r.name, hoehe: r.hoehe })),
+      // CoS-E-040: durchgereicht bis zur Vollständigkeitsprüfung, die die
+      // abgeschalteten Zuschläge am Ausgang entfernt.
+      erschwernis,
     },
     kiSignale,
   )

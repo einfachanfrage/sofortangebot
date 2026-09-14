@@ -1,5 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { baueVerstaendnis, type ExtraktionSignale } from '../auftrags-verstaendnis'
+import { filtereErschwernis, type ErschwernisConfig } from '../erschwernis'
 import { pruefeMaler } from './maler'
 import { pruefeFliesen } from './fliesen'
 import { pruefeSanitaer } from './sanitaer'
@@ -20,7 +21,13 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   gewerk: string,
   positionen: BerechnetePosition[],
   transkript: string,
-  meta?: { fensterAnzahl?: number; tuerenAnzahl?: number; raeume?: Array<{ name?: string; hoehe?: number | null }> },
+  meta?: {
+    fensterAnzahl?: number
+    tuerenAnzahl?: number
+    raeume?: Array<{ name?: string; hoehe?: number | null }>
+    /** Welche Erschwerniszuschläge der Betrieb überhaupt will (CoS-E-040). */
+    erschwernis?: ErschwernisConfig | null
+  },
   signale?: ExtraktionSignale,
 ): CheckErgebnis {
   const lower = transkript.toLowerCase()
@@ -74,5 +81,13 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     originale.has(p) || p.automatisch_ergaenzt !== undefined ? p : { ...p, automatisch_ergaenzt: true },
   )
 
-  return { fehlende, positionen: markiert }
+  // CoS-E-040 / TN-097: Erschwerniszuschläge, die der Betrieb abgeschaltet
+  // hat, fallen hier raus — an EINER Stelle, aus demselben Grund wie die
+  // Markierung darüber: Die Zuschäge entstehen an fünf Orten in drei
+  // Dateien, und der nächste entsteht an einem sechsten. Eine Abfrage an
+  // jedem `push(...)` vergisst man; eine Filterung am Ausgang nicht.
+  //
+  // Ohne Einstellung (NULL) ändert sich nichts — ein Update darf niemandem
+  // still einen Zuschlag wegnehmen, den er bisher bekommen hat.
+  return { fehlende, positionen: filtereErschwernis(markiert, meta?.erschwernis) }
 }

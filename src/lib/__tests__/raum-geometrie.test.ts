@@ -179,8 +179,8 @@ describe('berechneRaumMasse — Modi', () => {
 describe('berechneQuantityFuerItem — Positions-Mapping', () => {
   const rechteck = { modus: 'rechteck' as const, breite: 5, laenge: 4, hoehe: 2.5, tueren: 1, fenster: 2 }
 
-  it('Wandflächen streichen → Wandfläche', () => {
-    expect(berechneQuantityFuerItem('Wandflächen streichen', 'm²', rechteck)).toBe(45) // 18 × 2,5
+  it('Wand streichen → Wandfläche', () => {
+    expect(berechneQuantityFuerItem('Wand streichen', 'm²', rechteck)).toBe(45) // 18 × 2,5
   })
 
   // PM-031, der teure Teil: Diese Funktion rechnet die MENGE neu, sobald der
@@ -191,7 +191,7 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
     const dim = { modus: 'rechteck' as const, breite: 4.1, laenge: 5.2, hoehe: 2.7, tueren: 1, fenster: 2 }
     expect(berechneRaumMasse(dim).wandflaeche).toBe(50.22)
     for (const titel of [
-      'Wandflächen streichen 2x',
+      'Wand streichen 2x',
       'Spachtelarbeiten Q2',
       'Schleifen',
       'Voranstrich / Grundierung',
@@ -200,8 +200,8 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
       expect(berechneQuantityFuerItem(titel, 'm²', dim), titel).toBe(50.22)
     }
   })
-  it('Deckenfläche streichen → Bodenfläche', () => {
-    expect(berechneQuantityFuerItem('Deckenfläche streichen', 'm²', rechteck)).toBe(20)
+  it('Decke streichen → Bodenfläche', () => {
+    expect(berechneQuantityFuerItem('Decke streichen', 'm²', rechteck)).toBe(20)
   })
   // VOB-012 (DIN 18363/18365 5.3.2): Unterbrechungen bis 1 m Einzellänge
   // werden nicht abgezogen. Eine Zimmertür ist 0,90 m breit. Vorher zog diese
@@ -219,7 +219,7 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
     expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', { modus: 'flaeche', wandflaeche: 40 })).toBeNull()
   })
   it('flaeche-Modus: Wand nimmt direkte Fläche', () => {
-    expect(berechneQuantityFuerItem('Wandflächen streichen', 'm²', { modus: 'flaeche', wandflaeche: 37.5 })).toBe(37.5)
+    expect(berechneQuantityFuerItem('Wand streichen', 'm²', { modus: 'flaeche', wandflaeche: 37.5 })).toBe(37.5)
   })
 
   it('wand-Modus: "Fassadenfläche streichen" nimmt die Wandfläche', () => {
@@ -277,8 +277,8 @@ describe('PM-031 — Engine und Bearbeiten-Ansicht rechnen dieselbe Menge', () =
         tueren: f.tueren, fenster: f.fenster,
       }
       const ausEngine = (m: RegExp) => positionen.find(p => m.test(p.beschreibung))?.menge
-      expect(berechneQuantityFuerItem('Wandflächen streichen 2x', 'm²', dim))
-        .toBe(ausEngine(/wandflächen streichen/i))
+      expect(berechneQuantityFuerItem('Wand streichen 2x', 'm²', dim))
+        .toBe(ausEngine(/wand streichen/i))
       expect(berechneQuantityFuerItem('Sockelleisten abkleben', 'lfdm', dim))
         .toBe(ausEngine(/sockelleisten abkleben/i))
     })

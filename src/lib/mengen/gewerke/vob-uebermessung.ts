@@ -194,3 +194,41 @@ export const UEBERMESSUNG_ERKLAERUNG =
   'Einzelgröße werden nicht von der Fläche abgezogen. Der Mehraufwand für das saubere Arbeiten ' +
   'an Kanten, Laibungen und Anschlüssen gleicht die eingesparte Fläche aus. Die oben genannten ' +
   'Öffnungsflächen sind deshalb in der abgerechneten Menge enthalten.'
+
+// ── CoS-E-010 / TN-017 (Manfred, 11.09.2026) ──────────────────────────────
+//
+// Auf dem Kunden-PDF stand im Rechenweg „… − Fenster 0 m² − Türen 0 m²" und
+// eine Zeile darunter der Übermessungs-Hinweis „3 Öffnungen bis 2,5 m² nicht
+// abgezogen (4,29 m²)". Beides stimmt — zusammen liest es sich wie ein
+// Widerspruch. Manfreds Satz dazu: „Kunde sieht ‚Fenster 0' und denkt, ich
+// hab nicht hingeguckt."
+//
+// Beide Zahlen waren korrekt, die Null war nur die ehrliche Folge der
+// VOB-Übermessung: es WURDE nichts abgezogen. Ein Abzug von null ist aber
+// kein Rechenschritt, sondern ein nicht stattgefundener — und was nicht
+// passiert ist, gehört nicht in den Rechenweg. Warum nicht abgezogen wurde,
+// steht bereits im Hinweis darunter, und der ist für den Kunden gedacht.
+//
+// Deshalb eine gemeinsame Stelle statt drei Stringbauten: der Rechenweg
+// nennt nur noch Abzüge, die es wirklich gibt.
+
+export interface AbzugAnzeige {
+  /** Beschriftung im Rechenweg, z.B. "Fenster", "Türen", "Dachfenster". */
+  label: string
+  /** Die TATSÄCHLICH abgezogene Fläche in m². 0 (oder weniger) → wird nicht genannt. */
+  flaeche: number
+  /** Optionaler Maßzusatz, z.B. " [0.9×2.1]". Erscheint nur zusammen mit einer echten Fläche. */
+  masse?: string
+}
+
+/**
+ * Der Abzugs-Teil eines Rechenwegs („ − Fenster 3,2 m² − Türen 1,89 m²").
+ * Leerer String, wenn nichts abgezogen wurde — der Rechenweg endet dann
+ * einfach nach der Bruttofläche.
+ */
+export function abzugsText(teile: AbzugAnzeige[]): string {
+  return teile
+    .filter(t => t.flaeche > 0)
+    .map(t => ` − ${t.label} ${t.flaeche} m²${t.masse ?? ''}`)
+    .join('')
+}

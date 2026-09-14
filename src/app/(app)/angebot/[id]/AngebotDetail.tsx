@@ -1630,6 +1630,22 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   // „Entwurf gespeichert ✓" — was den Eindruck erweckt, vorher sei etwas
   // offen gewesen. Beide hängen jetzt an denselben zwei Zeilen; ein
   // Auseinanderlaufen ist damit nicht mehr möglich.
+  // DC-073 (2026-09-11, Manfred/TN-065): Zuschläge gibt es im Produkt auf zwei
+  // völlig getrennten Wegen — als echte Positionen aus der
+  // Vollständigkeitsprüfung (Erschwerniszuschläge, Einheit „%") und als
+  // Pauschale aus dem Kasten „Rabatt & Zuschläge" (`surcharge_amount` am
+  // Angebot). Nichts verband die beiden, nichts warnte: wer den Zuschlag im
+  // Kasten einträgt, den er oben schon als Position stehen hat, berechnet ihn
+  // zweimal. Der Kasten zeigt deshalb, was bereits in der Liste steht.
+  //
+  // Die größere Frage dahinter — ob Erschwernisse überhaupt als eigene Zeile
+  // beim Kunden erscheinen sollen oder in die Einzelpreise gehören (Manfred:
+  // „Ich preis sowas in den m² ein, nie als Zeile") — ist eine Produkt- und
+  // Preisentscheidung und liegt beim Chief of Staff, nicht hier.
+  const zuschlagPositionen = editItems.filter(
+    item => istProzentZuschlag(item.unit) || /zuschlag/i.test(item.title),
+  )
+
   const speichernGesperrt = saving || !hasChanges
   const speichernLabel = saving ? 'Speichern…' : hasChanges ? 'Speichern' : 'Gespeichert'
 
@@ -2698,6 +2714,31 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                         </div>
                       </div>
                     </div>
+
+                    {/* DC-073: was schon als Position im Angebot steht. Bewusst
+                        nüchtern und nicht rot — es ist kein Fehler, sondern
+                        eine Information, die man an dieser Stelle braucht:
+                        beides zählt, und beides zusammen ist schnell zu viel. */}
+                    {zuschlagPositionen.length > 0 && (
+                      <div className="bg-bg rounded-xl px-3 py-2.5">
+                        <div className="text-xs font-bold text-anthracite/40">
+                          {zuschlagPositionen.length === 1
+                            ? 'Ein Zuschlag steht schon als eigene Position im Angebot:'
+                            : `${zuschlagPositionen.length} Zuschläge stehen schon als eigene Positionen im Angebot:`}
+                        </div>
+                        <ul className="mt-1.5 flex flex-col gap-1">
+                          {zuschlagPositionen.map(item => (
+                            <li key={item.id} className="flex items-baseline justify-between gap-3 text-xs font-bold text-anthracite/70">
+                              <span className="truncate">{item.title}</span>
+                              <span className="shrink-0">{fmt(item.total_price)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="text-xs font-semibold text-anthracite/40 mt-2 leading-relaxed">
+                          Ein Zuschlag hier unten kommt zusätzlich dazu.
+                        </div>
+                      </div>
+                    )}
 
                     <div>
                       <label className="text-xs font-bold text-anthracite/40 mb-1 block">Zuschlag Bezeichnung</label>

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Company } from '@/lib/types'
 import { KLEINMATERIAL_CONFIG } from '@/lib/gewerke-config'
+import { ERSCHWERNIS_ARTEN, type ErschwernisConfig } from '@/lib/erschwernis'
 import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image as ImageIcon, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Car, ArrowLeftRight } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
 import BottomNav from '@/components/BottomNav'
@@ -48,6 +49,8 @@ export default function EinstellungenPage() {
   const [kleinSchwelle, setKleinSchwelle] = useState(200)
   const [kleinBezeichnung, setKleinBezeichnung] = useState('Kleinmaterial und Verbrauchsmaterial')
   const [anfahrtAktiv, setAnfahrtAktiv] = useState(false)
+  // CoS-E-040: leeres Objekt = nichts abgeschaltet = alles an.
+  const [erschwernis, setErschwernis] = useState<ErschwernisConfig>({})
   const [anfahrtBetrag, setAnfahrtBetrag] = useState(45)
   const [anfahrtBezeichnung, setAnfahrtBezeichnung] = useState('An- und Abfahrt')
   const [eRechnungAktiv, setERechnungAktiv] = useState(true)
@@ -115,6 +118,8 @@ export default function EinstellungenPage() {
         setAnfahrtAktiv(ac?.aktiv ?? false)
         setAnfahrtBetrag(ac?.betrag_eur ?? 45)
         setAnfahrtBezeichnung(ac?.bezeichnung ?? 'An- und Abfahrt')
+        // Erschwerniszuschläge (NULL = nie eingestellt = alle an)
+        setErschwernis((data.erschwernis_config ?? {}) as ErschwernisConfig)
       }
     }
     load()
@@ -163,6 +168,12 @@ export default function EinstellungenPage() {
         betrag_eur: anfahrtBetrag,
         bezeichnung: anfahrtBezeichnung.trim() || 'An- und Abfahrt',
       },
+      // CoS-E-040: Immer vollständig schreiben — so steht nach dem ersten
+      // Speichern für jede Art ein ausdrücklicher Wert da, statt eines
+      // Lückentexts, den spätere Versionen anders auslegen könnten.
+      erschwernis_config: Object.fromEntries(
+        ERSCHWERNIS_ARTEN.map(a => [a.id, erschwernis[a.id] !== false]),
+      ),
     }).eq('user_id', user.id)
     setSaving(false)
     setSaved(true)
@@ -534,7 +545,7 @@ export default function EinstellungenPage() {
           <div className="flex flex-col gap-2">
             {([
               { value: 'inapp', label: '🧾 Alles bei sofortangebot', desc: 'Rechnungen & Zahlungserinnerungen laufen direkt hier.' },
-              { value: 'extern', label: '🔗 Über meine Buchhaltung', desc: 'Rechnung/Mahnung in lexoffice, sevDesk & Co. — sofortangebot schickt keine Zahlungserinnerungen.' },
+              { value: 'extern', label: '🔗 Über meine Buchhaltung', desc: 'Rechnung & Mahnung schreibst du selbst in lexoffice, sevDesk & Co. — sofortangebot schickt dafür keine eigenen Zahlungserinnerungen mehr.' },
             ] as { value: 'inapp' | 'extern'; label: string; desc: string }[]).map(opt => (
               <button key={opt.value} type="button"
                 onClick={() => setAbrechnungsModus(opt.value)}
@@ -554,6 +565,19 @@ export default function EinstellungenPage() {
           </div>
           <p className="text-xs text-anthracite/30 font-semibold mt-3 leading-relaxed">
             Angebots-Nachfassen (Erinnerung an offene Angebote vor der Rechnung) läuft in beiden Fällen.
+          </p>
+          {/* CoS-P-009 (Platform & Integrations Engineer, 2026-09-11), TN-101: Test-
+              nutzer Manfred konnte aus der Beschriftung oben nicht ableiten, ob "Über
+              meine Buchhaltung" das Angebot automatisch überträgt oder nur bedeutet,
+              dass sofortangebot keine eigenen Erinnerungen mehr schickt — für ihn eine
+              echte Kaufentscheidung. Tatsächlich tut diese Auswahl rein gar nichts mit
+              der Datenübertragung: die läuft ausschließlich manuell, pro Angebot, über
+              den eigenen Knopf im Angebot (nur wenn unter "Buchhaltung verbinden" ein
+              API-Key hinterlegt ist). Das jetzt explizit gesagt, statt es zu vermuten. */}
+          <p className="text-xs text-anthracite/30 font-semibold mt-2 leading-relaxed">
+            Wichtig: Diese Auswahl überträgt nichts automatisch. Ein Angebot landet nur
+            dann in lexoffice, sevDesk & Co., wenn du die Software unter „Buchhaltung
+            verbinden" verknüpfst und es im Angebot selbst per Knopfdruck dorthin schickst.
           </p>
         </Card>
 
@@ -740,6 +764,49 @@ export default function EinstellungenPage() {
               </p>
             </>
           )}
+        </Card>
+
+        {/* Erschwerniszuschläge — CoS-E-040 / TN-097 (Manfred):
+            „Lassen sich in den Einstellungen nirgends abschalten." Wer nur im
+            Altbau arbeitet, hat den Aufwand im Quadratmeterpreis und löscht
+            die Position sonst in jedem Angebot von Hand. */}
+        <Card icon={<Wrench size={16} />} title="Erschwerniszuschläge">
+          <p className="text-xs text-anthracite/40 font-semibold -mt-2 mb-3">
+            Diese Zuschläge werden aus dem Diktat erkannt und als Position vorgeschlagen.
+            Was du hier abschaltest, taucht gar nicht erst auf.
+          </p>
+          <div className="flex flex-col gap-2">
+            {ERSCHWERNIS_ARTEN.map(art => {
+              const an = erschwernis[art.id] !== false
+              return (
+                <button
+                  key={art.id}
+                  type="button"
+                  onClick={() => setErschwernis(v => ({ ...v, [art.id]: !an }))}
+                  className={`flex items-start gap-3 w-full rounded-xl border-2 px-3 py-3 text-left transition-colors ${
+                    an ? 'border-yellow bg-yellow/10' : 'border-anthracite/10 bg-bg'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                    an ? 'border-yellow bg-yellow' : 'border-anthracite/20'}`}>
+                    {an && <Check size={11} color="var(--color-anthracite)" strokeWidth={3} />}
+                  </div>
+                  <span className="min-w-0">
+                    <span className={`block font-bold text-sm ${an ? 'text-anthracite' : 'text-anthracite/50'}`}>
+                      {art.label}
+                    </span>
+                    <span className="block text-xs text-anthracite/40 font-semibold mt-0.5">
+                      {art.erklaerung}
+                    </span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-xs text-anthracite/40 font-semibold mt-3">
+            Der Preis je Zuschlag steht in deiner Preisdatenbank — hier entscheidest du nur,
+            ob er überhaupt vorgeschlagen wird.
+          </p>
         </Card>
 
         {/* An- und Abfahrt-Pauschale */}

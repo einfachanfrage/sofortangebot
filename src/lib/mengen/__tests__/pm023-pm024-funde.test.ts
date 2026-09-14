@@ -72,20 +72,20 @@ describe('PM-026 — Anstrichzahl gilt je Fläche, nicht für den ganzen Raum', 
 
   it('rechnet Wände 2x und Decke 1x, wenn beides so gesagt wurde', () => {
     const t = titel('Küche 4,20 x 3,60, Höhe 2,50, Wände zweimal streichen, Decke reicht einmal.')
-    expect(t).toContain('Wandflächen streichen 2x — Küche')
-    expect(t).toContain('Deckenfläche streichen 1x — Küche')
+    expect(t).toContain('Wand streichen 2x — Küche')
+    expect(t).toContain('Decke streichen 1x — Küche')
   })
 
   it('gilt auch, wenn das Wandwort im Transkript verhört wurde', () => {
     const t = titel('Küche 4,20 x 3,60, Höhe 2,50, Bände zweimal streichen, Decke reicht einmal.')
-    expect(t).toContain('Wandflächen streichen 2x — Küche')
-    expect(t).toContain('Deckenfläche streichen 1x — Küche')
+    expect(t).toContain('Wand streichen 2x — Küche')
+    expect(t).toContain('Decke streichen 1x — Küche')
   })
 
   it('bleibt bei einer einzigen Angabe für beide Flächen', () => {
     const t = titel('Küche 4,20 x 3,60, Höhe 2,50, alles zweimal streichen.')
-    expect(t).toContain('Wandflächen streichen 2x — Küche')
-    expect(t).toContain('Deckenfläche streichen 2x — Küche')
+    expect(t).toContain('Wand streichen 2x — Küche')
+    expect(t).toContain('Decke streichen 2x — Küche')
   })
 })
 
@@ -98,7 +98,7 @@ describe('PM-024-Nachtest — Erschwerniszuschlag Höhe hängt nicht mehr an ein
   it('löst den Zuschlag über die erkannte Raumhöhe aus, nicht über den Rohtext', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [{ beschreibung: 'Wandflächen streichen 2x — Büro', menge: 57.6, einheit: 'm²', konfidenz: 'high', berechnungsweg: '18 × 3,2', annahmen: [] }],
+      [{ beschreibung: 'Wand streichen 2x — Büro', menge: 57.6, einheit: 'm²', konfidenz: 'high', berechnungsweg: '18 × 3,2', annahmen: [] }],
       // Transkript ohne jedes Höhen-Stichwort, das eine Regex finden könnte
       'Büro streichen.',
       { raeume: [{ name: 'Büro', hoehe: 3.2 }] },
@@ -111,7 +111,7 @@ describe('PM-024-Nachtest — Erschwerniszuschlag Höhe hängt nicht mehr an ein
   it('löst ihn nicht aus, wenn kein Raum über 3 m ist', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [{ beschreibung: 'Wandflächen streichen 2x — Küche', menge: 39, einheit: 'm²', konfidenz: 'high', berechnungsweg: '15,6 × 2,5', annahmen: [] }],
+      [{ beschreibung: 'Wand streichen 2x — Küche', menge: 39, einheit: 'm²', konfidenz: 'high', berechnungsweg: '15,6 × 2,5', annahmen: [] }],
       'Küche streichen.',
       { raeume: [{ name: 'Küche', hoehe: 2.5 }] },
     )
@@ -131,12 +131,12 @@ describe('PM-026-Nachtest — Anstrichzahl auch bei zwei Räumen im Angebot', ()
   it('liest „Decke reicht einmal" aus dem Abschnitt der Küche, nicht aus dem ganzen Text', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const titel = malerEngine({ gewerk: 'maler', raeume, transkript: T } as any).positionen.map(p => p.beschreibung)
-    expect(titel).toContain('Deckenfläche streichen 1x — Küche')
+    expect(titel).toContain('Decke streichen 1x — Küche')
     // Das Büro hat keine eigene Decken-Angabe → bleibt beim Standard 2×.
-    expect(titel).toContain('Deckenfläche streichen 2x — Büro')
+    expect(titel).toContain('Decke streichen 2x — Büro')
     // Und die Wand-Angabe des einen Raums färbt nicht auf den anderen ab.
-    expect(titel).toContain('Wandflächen streichen 2x — Küche')
-    expect(titel).toContain('Wandflächen streichen 2x — Büro')
+    expect(titel).toContain('Wand streichen 2x — Küche')
+    expect(titel).toContain('Wand streichen 2x — Büro')
   })
 })
 

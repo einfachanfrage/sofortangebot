@@ -1,4 +1,5 @@
 import type { BerechnetePosition } from './types'
+import { istWandStreichen } from '../positions-titel'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { pruefeTrittschalldaemmung } from '../vollstaendigkeit/boden-sonder'
 import { entferneRedundantesSockelAbkleben } from './mehrgewerk'
@@ -39,7 +40,7 @@ function ergaenzeAusAufnahmeHinweisenRoh(
   const ergebnis = [...positionen]
   const hinweise = titel.join(' | ').toLocaleLowerCase('de-DE')
   const hatPos = (muster: RegExp) => ergebnis.some(p => muster.test(p.beschreibung))
-  const wand = ergebnis.find(p => /wandfl[äa]chen streichen/i.test(p.beschreibung))
+  const wand = ergebnis.find(p => istWandStreichen(p.beschreibung))
   const boden = ergebnis.find(p => /(?:vinyl|laminat|parkett|bodenbelag).*verlegen/i.test(p.beschreibung))
   const bodenM2 = nettoBodenflaeche(boden)
   const textMitZahlen = ersetzeZahlenWorte(quelltext).toLocaleLowerCase('de-DE')

@@ -35,7 +35,13 @@ describe('Boden – 10 Integrationstests', () => {
     const ausgleich = find(positionen, 'ausgleichsmasse')
     expect(ausgleich).toBeDefined()
     expect(ausgleich?.menge).toBe(34)
-    expect(ausgleich?.beschreibung).toContain('3mm')
+    // Geändert am 12.09.2026 (F.5/4): Der Titel heißt jetzt wörtlich wie die
+    // Katalogzeile, `Ausgleichsmasse bis 3 mm einbringen`. Die alte
+    // Schreibweise „(bis 3mm)" gab es im Katalog nicht — die Klammer fiel
+    // beim Vergleichen weg, und ALLE Stärken bekamen den 3-mm-Preis
+    // (10,00 € statt 16,00 € bzw. 26,00 €). Geprüft wird weiter dasselbe:
+    // Die 3 Millimeter aus dem Diktat kommen im Titel an.
+    expect(ausgleich?.beschreibung).toBe('Ausgleichsmasse bis 3 mm einbringen')
 
     const vinyl = find(positionen, 'klick-vinyl')
     expect(vinyl).toBeDefined()
@@ -44,17 +50,33 @@ describe('Boden – 10 Integrationstests', () => {
   })
 
   it('Test 2: Parkett schleifen 3-fach + Fugen verkitten + 3× Parkettlack', () => {
-    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
+    const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Altes Eichenparkett im Salon, 42 Quadratmeter. Dreimal komplett abgeschliffen, von grob bis feinst. Danach Unreinheiten verkitten. Dreimal mit hochabriebfestem seidenmatten Parkettlack versiegeln.'
     )
 
-    const schleifen = find(positionen, 'parkett schleifen 3-fach')
+    // Geändert am 12.09.2026 (Prüfmeister F.6): Der Titel hieß bis hierher
+    // `Parkett schleifen 3-fach (grob bis fein)` — ein Titel, mit dem die
+    // Engine im Katalog GAR NICHTS fand. Jetzt spricht er die Sprache des
+    // Katalogs, samt Gangzahl: `Parkett abschleifen (3 Schleifgänge)`.
+    // Geprüft wird weiter dasselbe: drei Gänge erkannt, Menge = Bodenfläche.
+    const schleifen = find(positionen, 'parkett abschleifen (3 schleifgänge)')
     expect(schleifen).toBeDefined()
     expect(schleifen?.menge).toBe(42)
 
-    const kitten = find(positionen, 'verkitten')
-    expect(kitten).toBeDefined()
-    expect(kitten?.menge).toBe(42)
+    // Geändert am 11.09.2026 (Manfred, Einheiten-Eimer): Hier stand bis heute
+    // `menge = 42` — die BODENFLÄCHE. Verkitten ist Acryl in die Fuge und
+    // wird in laufenden Metern abgerechnet; 42 m² Boden sagen nichts über die
+    // Fugenmeter. Im Transkript steht keine Meterzahl, also wird auch keine
+    // erfunden: Die Position bleibt sichtbar (Platzhalter mit Menge 0 und
+    // „bitte manuell ergänzen"), statt eine Fuge nach Quadratmetern zu
+    // berechnen. Der Test hielt den Fehler fest, nicht die Regel.
+    // Die Leistung geht nicht verloren: Sie landet in `fehlende` und wird
+    // eine Zeile weiter oben in der Kette (mehrgewerk.ts) zur sichtbaren
+    // Position mit Menge 0 und „bitte manuell ergänzen". Seit CoS-E-004
+    // sperrt eine unbepreiste Position außerdem den Versand — der Handwerker
+    // kommt also nicht daran vorbei.
+    expect(find(positionen, 'verkitten')).toBeUndefined()
+    expect(fehlende.some(f => /verkitten/i.test(f))).toBe(true)
 
     const lack1 = find(positionen, 'parkettlack versiegeln 1.')
     const lack2 = find(positionen, 'parkettlack versiegeln 2.')
@@ -179,7 +201,7 @@ describe('Boden – 10 Integrationstests', () => {
   })
 
   it('Test 9: Laminat 55 m² + Trittschalldämmung hochwertig PUR + Stoßkanten + Verschnitt 57,75 m²', () => {
-    const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
+    const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Laminat im Obergeschoss, 55 Quadratmeter. Hochwertige Trittschalldämmung, 3 Millimeter PUR-Schaum mit Alufolie kaschiert, inklusive Stoßkanten verkleben.'
     )
 
@@ -188,9 +210,13 @@ describe('Boden – 10 Integrationstests', () => {
     expect(daemmung?.menge).toBe(55)
     expect(daemmung?.beschreibung.toLowerCase()).toContain('pur')
 
-    const stosskanten = find(positionen, 'stoßkanten')
-    expect(stosskanten).toBeDefined()
-    expect(stosskanten?.menge).toBe(55)
+    // Geändert am 11.09.2026, gleicher Grund wie bei „verkitten" in Test 2:
+    // Stoßkanten sind die Nähte zwischen den Bahnen, laufende Meter. Vorher
+    // stand hier die Bodenfläche (55) — bei einem Nahtpreis wäre das das
+    // Vier- bis Fünffache. Ohne genannte Meterzahl wird gefragt, nicht
+    // geraten.
+    expect(find(positionen, 'stoßkanten')).toBeUndefined()
+    expect(fehlende.some(f => /stoßkanten/i.test(f))).toBe(true)
 
     const laminat = find(positionen, 'laminat')
     expect(laminat).toBeDefined()
@@ -207,7 +233,14 @@ describe('Boden – 10 Integrationstests', () => {
     const fischgraet = find(positionen, 'fischgrät')
     expect(fischgraet).toBeDefined()
     expect(fischgraet?.menge).toBeCloseTo(57.5, 1)
-    expect(fischgraet?.beschreibung.toLowerCase()).toContain('vollflächig')
+    // Geändert am 12.09.2026 (F.5/5): Die Verlegeart steht nicht mehr im
+    // Titel des AUFPREISES — ein Aufpreis auf das Muster ist verlegeart-
+    // neutral, und der erfundene Zusatz sperrte seit den Aufwandswörtern
+    // den einzigen passenden Katalogeintrag aus (14,00 € → 0,00 €). Der
+    // Titel heißt jetzt wörtlich wie im Katalog; die Information selbst ist
+    // nicht verloren, sie steht in den Annahmen.
+    expect(fischgraet?.beschreibung).toBe('Aufpreis Fischgrät-Verlegemuster')
+    expect(fischgraet?.annahmen?.join(' ').toLowerCase()).toContain('vollflächig')
   })
 })
 

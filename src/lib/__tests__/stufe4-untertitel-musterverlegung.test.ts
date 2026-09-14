@@ -18,24 +18,24 @@ import { abgezogeneOeffnungen } from '../mengen/gewerke/vob-uebermessung'
 
 describe('Untertitel: die Anstrichzahl im Titel regiert den Text darunter', () => {
   it('1x verspricht keine zwei Lagen mehr — der Originalfund aus PM-021', () => {
-    const u = positionsUntertitel('Wandflächen streichen 1x — Wohnzimmer')
+    const u = positionsUntertitel('Wand streichen 1x — Wohnzimmer')
     expect(u).toMatch(/einlagig/)
     expect(u).not.toMatch(/2-fach|zwei|2 Lagen/i)
   })
 
   it('PM-022 und PM-026: dieselbe Regel für die Decke', () => {
-    expect(positionsUntertitel('Deckenfläche streichen 1x — Flur')).toMatch(/einlagig/)
-    expect(positionsUntertitel('Deckenfläche streichen 1x — Küche')).not.toMatch(/2 Lagen/i)
+    expect(positionsUntertitel('Decke streichen 1x — Flur')).toMatch(/einlagig/)
+    expect(positionsUntertitel('Decke streichen 1x — Küche')).not.toMatch(/2 Lagen/i)
   })
 
   it('2x und 3x bleiben ehrlich benannt', () => {
-    expect(positionsUntertitel('Wandflächen streichen 2x — Bad')).toMatch(/zweilagig/)
-    expect(positionsUntertitel('Deckenfläche streichen 2x — Bad')).toMatch(/zweilagig/)
-    expect(positionsUntertitel('Wandflächen streichen 3x — Bad')).toMatch(/dreilagig/)
+    expect(positionsUntertitel('Wand streichen 2x — Bad')).toMatch(/zweilagig/)
+    expect(positionsUntertitel('Decke streichen 2x — Bad')).toMatch(/zweilagig/)
+    expect(positionsUntertitel('Wand streichen 3x — Bad')).toMatch(/dreilagig/)
   })
 
   it('der Klammerzusatz aus PM-032 stört die Zahl nicht', () => {
-    expect(positionsUntertitel('Wandflächen streichen 1x (ohne Akzentwand) — Bad')).toMatch(/einlagig/)
+    expect(positionsUntertitel('Wand streichen 1x (ohne Akzentwand) — Bad')).toMatch(/einlagig/)
   })
 
   // Lieber gar keine Zahl als eine erfundene: Ohne „Nx" im Titel weiß
@@ -58,8 +58,8 @@ describe('Untertitel: die Anstrichzahl im Titel regiert den Text darunter', () =
       }],
     } as never).positionen
 
-    const wand = positionen.find(p => /wandflächen streichen/i.test(p.beschreibung))
-    const decke = positionen.find(p => /deckenfläche streichen/i.test(p.beschreibung))
+    const wand = positionen.find(p => /wand streichen/i.test(p.beschreibung))
+    const decke = positionen.find(p => /decke streichen/i.test(p.beschreibung))
     expect(wand?.beschreibung).toMatch(/2x/)
     expect(decke?.beschreibung).toMatch(/1x/)
     expect(positionsUntertitel(wand!.beschreibung)).toMatch(/zweilagig/)
@@ -67,7 +67,7 @@ describe('Untertitel: die Anstrichzahl im Titel regiert den Text darunter', () =
   })
 
   it('die KI darf den Untertitel weiterhin nicht überschreiben', () => {
-    expect(waehleUntertitel('Deckenfläche streichen 1x — Küche', 'Deckenanstrich in 2 Lagen'))
+    expect(waehleUntertitel('Decke streichen 1x — Küche', 'Deckenanstrich in 2 Lagen'))
       .toMatch(/einlagig/)
   })
 })
@@ -225,7 +225,7 @@ describe('PM-021 — die Klammer listet nur, was auch abgezogen wurde', () => {
       }],
     } as never).positionen
 
-    const wand = positionen.find(p => /wandflächen streichen/i.test(p.beschreibung))
+    const wand = positionen.find(p => /wand streichen/i.test(p.beschreibung))
     const weg = wand?.berechnungsweg ?? ''
     expect(weg).toMatch(/Türen 4\.2 m²/)
     expect(weg).toContain('[2×2.1]')

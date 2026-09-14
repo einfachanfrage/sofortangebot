@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { gewerkFuerPosition } from '@/lib/positions-gewerk'
 import { createClient } from '@/lib/supabase/server'
 import { waehleUntertitel } from '@/lib/positions-untertitel'
 import { findePreisposition, type PreisPosition } from '@/lib/preis-matcher'
@@ -24,32 +25,10 @@ interface BerechnetePositionInput {
   }
 }
 
-export function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): string | undefined {
-  const text = beschreibung.toLocaleLowerCase('de-DE')
-  const istBoden = /vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleisten montier|boden (?:verleg|entfern|schleif)|untergrund schleifen.*kleberreste|kleberreste.*schleifen/i.test(text)
-  if (istBoden) return 'boden_parkett'
-  // PM-024/PM-026-Nachtest (Sandy, 2026-08-30): „Boden schützen" enthält kein
-  // einziges Maler-Wort — kein „streichen", kein „abdecken". In einem reinen
-  // Malerauftrag fiel das nie auf, weil dann ohnehin auf 'maler' gefiltert
-  // wurde. In einem GEMISCHTEN Angebot (Laminat + Streichen) landet die
-  // Position dagegen beim Hauptgewerk 'boden_parkett' — und der Katalogeintrag
-  // „Boden abdecken (Abdeckvlies)" steht unter „Maler – Vorbereitung & Schutz".
-  // Ergebnis: kein Kandidat, 0,00 €, „Preis fehlt" bei einer der häufigsten
-  // Positionen überhaupt. Bodenschutz ist Vorbereitung des Malers, auch wenn
-  // das Wort „Boden" darin vorkommt.
-  const istMalerVorbereitung = /boden\s*sch[üu]tz|bodenschutz|abdeckvlies|abdeckfolie|m[öo]bel\s*abdeck/i.test(text)
-  if (istMalerVorbereitung) return 'maler'
-  const istMaler = /wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleifen|grundier|abdeck|abkleb/i.test(text)
-  if (istMaler) return 'maler'
-  // Dieselbe Falle wie bei „Boden schützen": „Erschwerniszuschlag Raumhöhe
-  // > 3m — Büro" enthält kein einziges Maler-Wort. In einem reinen
-  // Malerauftrag fiel das nie auf, in einem gemischten Angebot landete der
-  // Zuschlag beim Hauptgewerk „boden_parkett" und fand seinen Katalogeintrag
-  // unter „Maler – Erschwernisse & Zuschläge" nicht mehr. Alle Zuschläge,
-  // die die Vollständigkeitsprüfung erzeugt, sind Maler-Zuschläge.
-  if (/^\s*erschwerniszuschlag\b/i.test(text)) return 'maler'
-  return hauptgewerk
-}
+// Liegt seit dem 12.09.2026 in `src/lib/positions-gewerk.ts` — reine Logik
+// gehört nicht in einen Next.js-Endpunkt. Hier weiterexportiert, damit
+// bestehende Importe unverändert funktionieren.
+export { gewerkFuerPosition }
 
 /**
  * Bepreist bereits berechnete Positionen ausschließlich aus der persönlichen
@@ -129,7 +108,15 @@ export async function POST(req: NextRequest) {
     preis_position_titel: treffer?.position.title,
     preis_match_score: treffer?.score,
     berechnungsweg: position.berechnungsweg ?? null,
-    annahmen: position.annahmen ?? [],
+    // Standardzeile (Manfred, 12.09.2026): Hat der Titel sich nicht
+    // festgelegt und ist dafür eine Standardzeile benannt, sagt der Matcher
+    // hier, was er angenommen hat. Das gehört dem Handwerker in den Entwurf
+    // — und bewusst nicht auf das Kunden-PDF, wo Annahmen nichts zu suchen
+    // haben. Beides erledigt der vorhandene `annahmen`-Kanal.
+    annahmen: [
+      ...(position.annahmen ?? []),
+      ...(treffer?.annahme ? [treffer.annahme] : []),
+    ],
     // DC-027/CoS-017: "vom Tool ergaenzt"-Kennzeichnung bis zur Position durchreichen
     automatisch_ergaenzt: position.automatisch_ergaenzt ?? false,
     ...(position.flaechen_parameter ? { flaechen_parameter: position.flaechen_parameter } : {}),

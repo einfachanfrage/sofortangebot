@@ -1,3 +1,6 @@
+import { aufwandSperre } from './preis-aufwandswoerter.ts'
+import { standardFamilie } from './katalog-standard.ts'
+
 export interface PreisPosition {
   id: string
   title: string
@@ -9,6 +12,13 @@ export interface PreisPosition {
 export interface Zuordnung {
   position: PreisPosition
   score: number
+  /**
+   * Gesetzt, wenn der Treffer aus einer Standardzeile kommt, weil der Titel
+   * sich nicht festgelegt hat (siehe `katalog-standard.ts`). Der Text gehört
+   * in die `annahmen` der Position — er wird im Entwurf angezeigt und steht
+   * bewusst nicht auf dem Kunden-PDF.
+   */
+  annahme?: string
 }
 
 const STOPP = new Set([
@@ -110,6 +120,21 @@ export function qStufeAusTitel(text: string): string | null {
   return /\bq([1-4])\b/i.exec(text ?? '')?.[1] ?? null
 }
 
+/**
+ * Die Anstrichzahl (1x/2x/3x) aus dem ROHTITEL — bewusst wie die Q-Stufe
+ * darüber am ungeschnittenen Text, siehe die Begründung in
+ * `findePreisposition`. Erkennt „2x", „2×", „2 x" und „zweifach".
+ */
+export function anstrichzahlAusTitel(text: string): string | undefined {
+  const roh = (text ?? '').toLocaleLowerCase('de-DE').replace(/×/g, 'x')
+  const zahl = /\b([123])\s*x\b/.exec(roh)?.[1]
+  if (zahl) return zahl
+  if (/\beinfach\b|\b1fach\b/.test(roh)) return '1'
+  if (/\bzweifach\b|\b2fach\b/.test(roh)) return '2'
+  if (/\bdreifach\b|\b3fach\b/.test(roh)) return '3'
+  return undefined
+}
+
 /** Flächen-Suffix, das die Engine an den Titel hängt („… Q3 Decke"). */
 const FLAECHEN_SUFFIX = /\s+(decke|wand|w[äa]nde|boden)\s*$/i
 
@@ -123,9 +148,54 @@ function normalisiereEinheit(einheit: string): string {
   return e
 }
 
+// ── CoS-E-038 / TN-094 (Manfred, 11.09.2026) ───────────────────────────────
+//
+// Manfred: „Fischer-Angebot: Wände 2x für 9,50 €/m². Krüger-Angebot: Wände 2x
+// für 11,50 €/m². Gleicher Betrieb, gleiche Position, zwei Preise. Preise
+// werden irgendwo ausgewürfelt."
+//
+// Nachgestellt mit seinem echten Katalog: „Wandflächen streichen 2x" traf
+// **„Kniestockwände streichen 2x" (11,50 €)** statt „Wand streichen 2x
+// Anstrich" (9,50 €). Beide bekamen 0,94 — und bei Gleichstand gewann der
+// alphabetisch erste, also K vor W.
+//
+// Die 0,94 kam aus dieser Enthaltensein-Regel, und zwar MITTEN IM WORT:
+// Nach der Normalisierung heißt die gesuchte Position „flaeche streichen 2x",
+// der Kniestock-Eintrag „kniestockflaeche streichen 2x" — und der enthält den
+// gesuchten Text, weil „...stock|flaeche streichen 2x" zufällig an einer
+// Wortmitte beginnt. Ein Kniestock ist aber eine andere Wandart, kein
+// Spezialfall einer Wand.
+//
+// Die Enthaltensein-Regel bleibt — sie ist richtig für „Fassade streichen"
+// gegen „Fassade streichen mit Silikatfarbe". Sie greift nur nicht mehr
+// mitten im Wort. Ohne sie übernimmt die Token-Wertung und entscheidet
+// richtig: 0,86 für den Wand-Eintrag gegen 0,67 für den Kniestock.
+// Erster Anlauf war eine harte Wortgrenze — die Tests haben ihn zu Recht
+// abgeräumt: Im Deutschen ist die Zusammensetzung der Normalfall, und
+// „feinspachteln" enthält „spachteln" mitten im Wort und meint trotzdem
+// dieselbe Arbeit (PM-018). Ein Mitten-im-Wort-Treffer ist also nicht
+// falsch — er ist nur **schwächer** als einer, der an der Wortgrenze
+// aufgeht. Genau diese Abstufung hat gefehlt: Vorher bekamen beide 0,94,
+// und bei Gleichstand entschied die Sortierung.
+//
+//   „flaeche streichen 2x anstrich" enthält „flaeche streichen 2x" ab
+//   Wortanfang            → 0,94
+//   „kniestockflaeche streichen 2x" enthält es mitten im Wort → 0,90
+//
+// Damit gewinnt der Wand-Eintrag gegen den Kniestock-Eintrag, ohne dass
+// irgendein bisher funktionierender Treffer unter die Schwelle (0,62) fällt.
+function enthaeltAnWortgrenze(lang: string, kurz: string): boolean {
+  const i = lang.indexOf(kurz)
+  if (i === -1) return false
+  const linksFrei = i === 0 || lang[i - 1] === ' '
+  const rechtsFrei = i + kurz.length === lang.length || lang[i + kurz.length] === ' '
+  return linksFrei && rechtsFrei
+}
+
 function tokenScore(a: string, b: string): number {
   if (a === b) return 1
-  if (a.includes(b) || b.includes(a)) return 0.94
+  if (enthaeltAnWortgrenze(a, b) || enthaeltAnWortgrenze(b, a)) return 0.94
+  if (a.includes(b) || b.includes(a)) return 0.90
   const aa = new Set(a.split(' '))
   const bb = new Set(b.split(' '))
   const schnitt = [...aa].filter(t => bb.has(t)).length
@@ -142,8 +212,54 @@ export function findePreisposition(
 ): Zuordnung | null {
   const gesucht = normalisierePreistext(beschreibung)
   const einheitNorm = normalisiereEinheit(einheit)
-  const gesuchtAnstriche = gesucht.match(/\b([123])x\b/)?.[1]
-  const gesuchteQ = qStufeAusTitel(beschreibung.split(/\s+[—–-]\s+/)[0])
+
+  // ── Standardzeile vor allem anderen (Manfred, 12.09.2026) ────────────────
+  //
+  // Legt der Titel sich nicht fest („Tür lackieren", „Wärmedämmung
+  // verlegen"), entschied bisher der Zufall der Wortüberlappung — und zwar
+  // zugunsten des KÜRZESTEN Titels, nicht des sinnvollsten. Gemessen:
+  // `Tür lackieren` → `Außentür lackieren beidseitig`, 110,00 € statt 45,00 €.
+  //
+  // Deshalb steht die Frage jetzt am Anfang, nicht am Ende: Gibt es für
+  // diesen Begriff eine benannte Standardzeile, und hat der Betrieb sie?
+  // Dann gilt sie, und die Annahme wird mitgegeben. Die Begründung je
+  // Familie steht in `katalog-standard.ts`.
+  //
+  // Enthält der Titel eine Festlegung, liefert `standardFamilie` null und
+  // hier passiert nichts — eine ausdrückliche Ansage darf ein Standard nie
+  // überstimmen.
+  const familie = standardFamilie(beschreibung)
+  if (familie) {
+    const standardZeile = preise.find(
+      p => p.title === familie.standard && normalisiereEinheit(p.unit) === einheitNorm,
+    )
+    if (standardZeile) return { position: standardZeile, score: 1, annahme: familie.annahme }
+  }
+
+  // ── CoS-E-038 / TN-093 (Manfred, 11.09.2026) ─────────────────────────────
+  //
+  // Manfred: Katalog „Decke streichen 2x — 11,00 €", im Angebot stand
+  // „Deckenfläche streichen — 2× Anstrich — 7,00 €". 7,00 € ist der **1x**-
+  // Preis. Also genau das, was Regel 1 unten seit dem 24.08. ausschließen
+  // soll: ein 2x-Auftrag darf nie einen 1x-Preis bekommen.
+  //
+  // Die Regel war nicht kaputt, sie kam nur nie zum Zug. Die Anstrichzahl
+  // wurde aus dem NORMALISIERTEN Text gelesen, und der entsteht aus
+  // `text.split(/\s+[—–-]\s+/)[0]` — alles nach dem Gedankenstrich fällt weg,
+  // weil dort normalerweise der Raum steht („… — Wohnzimmer"). Bei dieser
+  // Position stand hinter dem Strich aber die Anstrichzahl. Gesucht wurde
+  // damit nach „decke streichen" ohne jede Variante, Regel 1 hatte nichts
+  // zu vergleichen, und unter 1x/2x/3x gewann der erste — alphabetisch 1x.
+  //
+  // Die Anstrichzahl wird deshalb jetzt am ROHTITEL gelesen, genau wie die
+  // Qualitätsstufe darunter und aus demselben, bereits festgehaltenen Grund
+  // (siehe qStufeAusTitel): Sie ist ein FILTER, kein Textmerkmal. Wo im
+  // Titel sie steht, darf nicht darüber entscheiden, ob sie gilt.
+  //
+  // Für die Q-Stufe fällt derselbe Schnitt weg — ein Raumname trägt kein
+  // „Q3", der Split hat dort nie geschützt, nur verdeckt.
+  const gesuchtAnstriche = anstrichzahlAusTitel(beschreibung)
+  const gesuchteQ = qStufeAusTitel(beschreibung)
 
   // Anstrich-Varianten (1x/2x/3x) — die Regeln, festgeklopft am 2026-08-24
   // (Sandys „klopf fest"), nachdem PM-007 gezeigt hat, wie teuer eine
@@ -193,13 +309,38 @@ export function findePreisposition(
   const kandidatenListe = passendeProzentKandidaten.length > 0 ? passendeProzentKandidaten : preise
 
   const SCHWELLE = 0.62
+  // ── CoS-E-038, zweiter Teil: Gleichstand ──────────────────────────────────
+  //
+  // Hier stand kurzzeitig eine schärfere Regel: Bei Gleichstand mit
+  // unterschiedlichen Preisen gar keinen Treffer liefern („lieber sichtbar
+  // kein Preis als still der falsche", PM-018). Sie ist wieder raus, und
+  // zwar aus einem Grund, der festgehalten gehört:
+  //
+  // Sie hat 13 bestehende Tests gerissen — vor allem die Anstrich-Familie.
+  // Fragt die Engine nach „Wandflächen streichen" OHNE Anstrichzahl, stehen
+  // 1x, 2x und 3x gleichauf und haben naturgemäß verschiedene Preise. Das
+  // ist kein Würfeln, sondern eine Variantenfamilie, und sie pauschal
+  // preislos zu machen hätte funktionierende Angebote kaputtgemacht.
+  //
+  // Manfreds „Preise werden ausgewürfelt" (TN-094) war außerdem gar kein
+  // Zufall: Die Ursache waren die beiden Fehler darüber (verschluckte
+  // Anstrichzahl, Kniestock schlägt Wand), beide nachgestellt und behoben.
+  // Der Gleichstand entscheidet weiterhin nach der stabilen Sortierung der
+  // Preisliste — gleiche Eingabe, gleicher Preis.
+  //
+  // Was DAMIT nicht gelöst ist, ehrlich gesagt: Zwei echte Doppeleinträge
+  // mit verschiedenen Preisen (TN-095 — „gefühlt ein Drittel Varianten")
+  // liefern weiterhin still einen davon. Die Antwort darauf ist, den Katalog
+  // aufzuräumen, nicht den Matcher raten zu lassen. Steht als eigener Punkt.
   let besteMitVariante: Zuordnung | null = null
   let besteOhneVariante: Zuordnung | null = null
 
   for (const position of kandidatenListe) {
     if (normalisiereEinheit(position.unit) !== einheitNorm) continue
     const kandidat = normalisierePreistext(position.title)
-    const kandidatAnstriche = kandidat.match(/\b([123])x\b/)?.[1]
+    // Auch hier der Rohtitel: Ein Katalogeintrag „Wand streichen — 2x
+    // Anstrich" verlöre seine Variante sonst genauso wie die gesuchte Seite.
+    const kandidatAnstriche = anstrichzahlAusTitel(position.title)
 
     // Regel 1: andere Anstrichzahl → nie ein Treffer.
     if (gesuchtAnstriche && kandidatAnstriche && gesuchtAnstriche !== kandidatAnstriche) continue
@@ -210,11 +351,20 @@ export function findePreisposition(
     const kandidatQ = qStufeAusTitel(position.title)
     if (gesuchteQ && kandidatQ && gesuchteQ !== kandidatQ) continue
 
+    // Aufwandswörter (Prüfmeister F.1, 12.09.2026) — dieselbe Bauweise wie
+    // die Q-Stufe darüber: ein Filter am Rohtitel, kein Textmerkmal. Sperrt
+    // in BEIDE Richtungen, und die zweite ist die wichtigere: Ein
+    // Arbeitsgang im Katalogtitel, der im Auftrag nicht steht, sieht nach
+    // mehr Geld aus — aber der Betrieb schuldet die Arbeit, die auf dem
+    // Papier steht. Begründung und Wortliste in preis-aufwandswoerter.ts.
+    const aufwand = aufwandSperre(beschreibung, position.title)
+    if (aufwand?.grad === 'hart') continue
+
     const score = tokenScore(gesucht, kandidat)
 
     // Regel 2/3: variantenlose Kandidaten getrennt sammeln — sie kommen nur
     // zum Zug, wenn keine passende Variante über die Schwelle kommt.
-    if ((gesuchtAnstriche && !kandidatAnstriche) || (gesuchteQ && !kandidatQ)) {
+    if (aufwand?.grad === 'nachrang' || (gesuchtAnstriche && !kandidatAnstriche) || (gesuchteQ && !kandidatQ)) {
       if (!besteOhneVariante || score > besteOhneVariante.score) besteOhneVariante = { position, score }
       continue
     }

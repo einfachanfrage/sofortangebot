@@ -20,9 +20,33 @@ export function add(ergaenzt: BerechnetePosition[], fehlende: string[], beschrei
 export function findeRaumImSatz(begriff: RegExp, lower: string, raumNamen: string[]): string | null {
   if (raumNamen.length === 0) return null
   for (const satz of saetze(lower ?? '')) {
-    if (!begriff.test(satz)) continue
-    const treffer = raumNamen.find(r => satz.includes(r.toLowerCase()))
-    if (treffer) return treffer
+    const begriffTreffer = begriff.exec(satz)
+    if (!begriffTreffer) continue
+
+    // DC-091 (13.09.2026): Der NÄCHSTE Raumname gewinnt, nicht der erste aus
+    // der Liste.
+    //
+    // Vorher stand hier `raumNamen.find(...)` — das lieferte den Raum, der in
+    // der ÜBERGABELISTE zuerst steht, nicht den, der im Satz neben der Arbeit
+    // steht. Bei „Flur und Wohnzimmer streichen, im Bad zwei Heizkörper
+    // lackieren" gewann der Flur, obwohl „Bad" unmittelbar davor steht.
+    // Auf dem Kundenpapier standen die Heizkörper damit im falschen Raum.
+    //
+    // Deutsch stellt den Ort meist voran („im Bad zwei Heizkörper"), deshalb
+    // gewinnt bei gleichem Abstand der Raum VOR dem Begriff.
+    const ziel = begriffTreffer.index
+    let bester: string | null = null
+    let besteEntfernung = Infinity
+    for (const raum of raumNamen) {
+      const stelle = satz.indexOf(raum.toLocaleLowerCase('de-DE'))
+      if (stelle === -1) continue
+      const entfernung = stelle <= ziel ? ziel - stelle : (stelle - ziel) + 0.5
+      if (entfernung < besteEntfernung) {
+        besteEntfernung = entfernung
+        bester = raum
+      }
+    }
+    if (bester) return bester
   }
   return null
 }
@@ -60,3 +84,8 @@ export function anzahlAus(lower: string, schluessel: string, fallback = 1): numb
   const m = lower.match(vorher) ?? lower.match(nachher) ?? lower.match(stueckAllgemein)
   return m ? parseInt(m[1]) : fallback
 }
+
+// Der Titel-Erkenner ist schichtübergreifend (auch die Mengen-Engine liest
+// ihn) und wohnt deshalb in `positions-titel.ts`. Hier nur weitergereicht,
+// damit die bestehenden Importe aus './helpers' unverändert bleiben.
+export { istWandStreichen, istDeckeStreichen, raumAusTitel } from '../positions-titel'

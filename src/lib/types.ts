@@ -156,6 +156,12 @@ export interface Company {
     betrag_eur?: number
     bezeichnung?: string
   } | null
+  /**
+   * Welche Erschwerniszuschläge automatisch vorgeschlagen werden
+   * (CoS-E-040). NULL = nie eingestellt = alle an; ein fehlender Schlüssel
+   * gilt als eingeschaltet. Arten und Filter in `src/lib/erschwernis.ts`.
+   */
+  erschwernis_config: import('./erschwernis').ErschwernisConfig | null
 }
 
 export interface MengenrabattTier {
@@ -230,6 +236,21 @@ export interface Quote {
    * einer anderen Oberfläche.
    */
   zeige_rechenweg_auf_pdf?: boolean | null
+  /**
+   * CoS-E-018: Der im Diktat genannte Kundenname — als VORSCHLAG, nicht als
+   * Kunde. Wird nur gesetzt, solange das Angebot keinen Kunden hat, und wird
+   * nie selbst zu einem Kundendatensatz: der Handwerker bestätigt mit einem
+   * Tipp (zuweisen oder neu anlegen). NULL = nichts gehört oder längst
+   * zugewiesen. Siehe Migration 20260911160000_erkannter_kundenname.sql.
+   */
+  erkannter_kundenname?: string | null
+  /**
+   * CoS-E-019: Im Diktat genannter Ausführungstermin als VORSCHLAG, im
+   * Wortlaut des Handwerkers („in drei Wochen“) — nicht als errechnetes
+   * Datum, das wie eine Zusage aussähe. NULL = nichts gehört.
+   * Siehe `src/lib/termin.ts` und Migration `erkannter_termin`.
+   */
+  erkannter_termin?: string | null
   revision: number
   original_id: string | null
   // CoS-012/DC-029: bewusst dauerhaft nullable, siehe src/lib/baustellen.ts

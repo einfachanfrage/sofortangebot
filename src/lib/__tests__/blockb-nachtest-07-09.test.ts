@@ -89,7 +89,7 @@ describe('PM-012-A — eine bestellte Leistung ist kein Vorschlag', () => {
 
   it('über die Vollständigkeitsprüfung: nicht als ergänzt markiert', () => {
     const basis: BerechnetePosition[] = [
-      { beschreibung: 'Wandflächen streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
+      { beschreibung: 'Wand streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
       { beschreibung: 'Sockelleisten abkleben — Esszimmer', menge: 15, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
     ]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', basis, PM012, undefined,
@@ -102,7 +102,7 @@ describe('PM-012-A — eine bestellte Leistung ist kein Vorschlag', () => {
   it('über das Sicherheitsnetz der Route: ebenfalls nicht', () => {
     const streichen = ergaenzeAusAufnahmeHinweisen(
       [
-        { beschreibung: 'Wandflächen streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
+        { beschreibung: 'Wand streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
         { beschreibung: 'Sockelleisten abkleben — Esszimmer', menge: 15, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
       ],
       ['Wände streichen', 'Sockelleisten streichen'],
@@ -116,7 +116,7 @@ describe('PM-012-A — eine bestellte Leistung ist kein Vorschlag', () => {
   it('die übernommene Menge bleibt als Annahme gekennzeichnet', () => {
     const streichen = ergaenzeAusAufnahmeHinweisen(
       [
-        { beschreibung: 'Wandflächen streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
+        { beschreibung: 'Wand streichen 2x — Esszimmer', menge: 38.25, einheit: 'm²', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
         { beschreibung: 'Sockelleisten abkleben — Esszimmer', menge: 15, einheit: 'lfdm', konfidenz: 'high', berechnungsweg: '', annahmen: [] },
       ],
       ['Sockelleisten streichen'], PM012,

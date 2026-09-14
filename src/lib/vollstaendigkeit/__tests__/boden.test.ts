@@ -124,7 +124,11 @@ describe('boden – sonder', () => {
   it('Parkett schleifen → genau 3 Positionen (schleifen + 2 Versiegelungen)', () => {
     const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett schleifen, 40 qm')
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
-    expect(alle).toContain('Parkett schleifen')
+    // F.6 (12.09.2026): Titel in der Sprache des Katalogs. Ohne Angabe im
+    // Transkript sind zwei Schleifgänge der Standardfall (grob + fein) —
+    // vorher stand hier still EIN Gang, was auf den 12-€-Eintrag zeigte
+    // statt auf die 20 €, die die übliche Aufarbeitung kostet.
+    expect(alle).toContain('Parkett abschleifen (2 Schleifgänge)')
     expect(alle).toContain('Versiegelung 1. Gang')
     expect(alle).toContain('Versiegelung 2. Gang')
   })

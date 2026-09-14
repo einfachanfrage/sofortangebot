@@ -11,7 +11,9 @@ import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } 
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
-import { mindestauftragsPosition, MINDESTAUFTRAG_BEZEICHNUNG } from '@/lib/gewerke-config'
+import { filtereErschwernis, type ErschwernisConfig } from '@/lib/erschwernis'
+import { lesTermin, terminNotiz } from '@/lib/termin'
+import { mindestauftragsPosition, MINDESTAUFTRAG_BEZEICHNUNG, kleinmaterialPosition, anfahrtPosition, istPauschalZeile, pauschalZeilenNamen } from '@/lib/gewerke-config'
 import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 90
@@ -58,7 +60,9 @@ export async function POST(req: NextRequest) {
     // nicht selbst erzeugen kann — allen voran ein von Hand gezeichneter
     // Grundriss — ging dabei still verloren. Jetzt wird der bestehende Stand
     // gelesen und als Basis untergelegt.
-    .select('id, entwurf_gespeichert_am, kombinierte_extraktion_cache, manuell_bearbeitete_positionen, raum_details, companies!inner(user_id)')
+    // customer_id neu seit CoS-E-018 (2026-09-11): entscheidet, ob der
+    // gehörte Kundenname überhaupt noch als Vorschlag gebraucht wird.
+    .select('id, customer_id, entwurf_gespeichert_am, kombinierte_extraktion_cache, manuell_bearbeitete_positionen, raum_details, companies!inner(user_id)')
     .eq('id', angebot_id)
     .single()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -204,6 +208,13 @@ export async function POST(req: NextRequest) {
     mass_hinweise?: string[]
     extraktion?: {
       gewerk?: string
+      // CoS-E-018 (Manfred TN-044/TN-129, 11.09.2026): Dieses Feld liefert
+      // die Extraktion seit jeher (siehe ExtrahierteDaten in mengen/types.ts
+      // und den GPT-Prompt) — es stand hier nur nicht im Typ und wurde
+      // deshalb von dieser Route nie gelesen. Der gesprochene Kundenname
+      // endete in einer Sackgasse, und der Handwerker las "Kein Kunde
+      // zugewiesen", obwohl er den Namen als Allererstes gesagt hatte.
+      kunde?: { name?: string | null; adresse?: string | null; ort?: string | null }
       raeume?: Array<{
         name?: string
         breite?: number | null
@@ -238,14 +249,28 @@ export async function POST(req: NextRequest) {
       }>
     }
   }
-  const positionen = normalisiereBodenPositionenAusAufnahme(
+  // CoS-E-040 / TN-097: Sicherheitsnetz für abgeschaltete
+  // Erschwerniszuschläge. Die Zuschäge werden in der Extraktion gefiltert;
+  // hier können sie aber aus einem **Zwischenspeicher** kommen, der noch
+  // unter der alten Einstellung entstanden ist. Ohne diese zweite Filterung
+  // taucht ein gerade abgeschalteter Zuschlag im nächsten Angebot wieder
+  // auf, und der Betrieb hält die Einstellung für kaputt.
+  const { data: betriebErschwernis } = await supabase
+    .from('companies')
+    .select('erschwernis_config')
+    .eq('user_id', user.id)
+    .single()
+  const erschwernisConfig =
+    (betriebErschwernis as { erschwernis_config?: ErschwernisConfig | null } | null)?.erschwernis_config ?? null
+
+  const positionen = filtereErschwernis(normalisiereBodenPositionenAusAufnahme(
     ergaenzeAusAufnahmeHinweisen(
       (extData.mengen?.positionen ?? []) as BerechnetePosition[],
       erkannteArbeiten,
       combinedText,
     ),
     combinedText,
-  )
+  ), erschwernisConfig)
   const rueckfragen = extData.rueckfragen ?? []
 
   // PM-010, Whisper-Vorschlag (freigegeben 2026-08-17): unrealistische
@@ -271,7 +296,51 @@ export async function POST(req: NextRequest) {
   // Rohschnappschuss aus der ersten Runde darf das nicht überschreiben.
   const rohUpdate: Record<string, unknown> = { extraktion_final: extData.extraktion ?? null }
   if (extData.extraktion_roh != null) rohUpdate.extraktion_roh = extData.extraktion_roh
-  const { error: rohError } = await supabase.from('quotes').update(rohUpdate).eq('id', angebot_id)
+
+  // CoS-E-018: den gehörten Kundennamen als VORSCHLAG ans Angebot heften.
+  //
+  // Bewusst nur ein Vorschlag und kein `customer_id`: Ein verhörter Name
+  // („Krüger"/„Grüger") würde sonst still einen echten Kundendatensatz
+  // anlegen, den danach niemand wiederfindet — und bei Manfred sind 80 %
+  // seiner Angebote Erstkunden, das passierte also bei fast jedem Angebot.
+  // Der Handwerker bestätigt mit einem Tipp (zuweisen oder neu anlegen);
+  // erst dann entsteht ein Kunde. Entwurfsgenerator mit Prüfpflicht.
+  //
+  // Nur schreiben, wenn das Angebot noch keinen Kunden hat: Hat der
+  // Handwerker schon zugewiesen, ist seine Entscheidung die richtige und
+  // ein späterer Lauf darf ihm keinen alten Vorschlag zurückspielen.
+  const gehoerterName = extData.extraktion?.kunde?.name?.trim()
+  if (gehoerterName && !quoteCheck.customer_id) {
+    rohUpdate.erkannter_kundenname = gehoerterName
+  }
+
+  // CoS-E-019 / TN-045: denselben Weg für den gesprochenen Termin.
+  //
+  // Manfred nennt ihn im selben Atemzug wie die Maße („in drei Wochen
+  // fertig“), und bis heute gab es dafür kein Feld. Gespeichert wird sein
+  // WORTLAUT — „in drei Wochen“ rechnet sich vom Tag des Diktats, nicht vom
+  // Tag der Zusage; ein daraus errechnetes Datum sähe aus wie eine
+  // Verpflichtung und wäre keine. Begründung in `src/lib/termin.ts`.
+  const gehoerterTermin = lesTermin(combinedText)
+  if (gehoerterTermin) {
+    rohUpdate.erkannter_termin = terminNotiz(gehoerterTermin)
+  }
+  let { error: rohError } = await supabase.from('quotes').update(rohUpdate).eq('id', angebot_id)
+  if (rohError?.message?.includes('erkannter_termin')) {
+    // Migration noch nicht ausgeführt — dieselbe Vorsicht wie beim
+    // Kundennamen darunter: Eine fehlende Spalte darf nicht das Speichern
+    // der Extraktion selbst mitreißen.
+    delete rohUpdate.erkannter_termin
+    rohError = (await supabase.from('quotes').update(rohUpdate).eq('id', angebot_id)).error
+  }
+  if (rohError?.message?.includes('erkannter_kundenname')) {
+    // Migration 20260911160000 noch nicht ausgeführt — dieselbe Vorsicht wie
+    // bei baustelle_id/share_token an anderer Stelle. Ohne den Rückfall
+    // würde eine fehlende Spalte auch das Speichern der Extraktion selbst
+    // mitreißen, und das ist die wichtigere der beiden Aufgaben.
+    delete rohUpdate.erkannter_kundenname
+    rohError = (await supabase.from('quotes').update(rohUpdate).eq('id', angebot_id)).error
+  }
   if (rohError) {
     console.error('[positionen-generieren] Extraktion konnte nicht gespeichert werden')
     Sentry.captureException(new Error(rohError.message), { tags: { feature: 'positionen_generieren_extraktion' } })
@@ -669,7 +738,9 @@ export async function POST(req: NextRequest) {
   // MwSt + Mindestauftragswert aus Company-Profil laden
   const { data: companyData2 } = await supabase
     .from('companies')
-    .select('vat_rate, mindestauftragswert')
+    // CoS-E-041: kleinmaterial_config/anfahrt_config neu seit 11.09.2026 —
+    // siehe den Block weiter unten.
+    .select('vat_rate, mindestauftragswert, kleinmaterial_config, anfahrt_config, gewerke')
     .eq('user_id', user.id)
     .single()
   const vatRate = (companyData2 as { vat_rate?: number } | null)?.vat_rate ?? 19
@@ -687,8 +758,23 @@ export async function POST(req: NextRequest) {
   // und verschwände beim nächsten Durchlauf wieder.
   const istMindestauftragsZeile = (titel: string | null | undefined) =>
     (titel ?? '').trim().toLowerCase() === MINDESTAUFTRAG_BEZEICHNUNG.toLowerCase()
+
+  // CoS-E-041: Die Bemessungsgrundlage schließt jetzt ALLE drei
+  // Pauschalzeilen aus, nicht nur die Mindestauftragszeile. Sonst höbe die
+  // Kleinmaterial-Pauschale die Summe über den Mindestauftragswert, dessen
+  // Zeile schrumpfte beim nächsten Durchlauf, die Summe fiele wieder — der
+  // Handwerker sähe bei jedem Neuberechnen andere Zahlen, ohne etwas
+  // geändert zu haben. Siehe istPauschalZeile() in gewerke-config.ts.
+  const kleinConfig = (companyData2 as { kleinmaterial_config?: Record<string, unknown> | null } | null)?.kleinmaterial_config ?? null
+  const anfahrtConfig = (companyData2 as { anfahrt_config?: Record<string, unknown> | null } | null)?.anfahrt_config ?? null
+  const gewerkFuerPauschalen =
+    extData.extraktion?.gewerk
+    ?? ((companyData2 as { gewerke?: string[] | null } | null)?.gewerke ?? [])[0]
+    ?? null
+  const pauschalNamen = pauschalZeilenNamen(gewerkFuerPauschalen, kleinConfig, anfahrtConfig)
+
   const arbeitsSumme = (alleItems ?? [])
-    .filter(i => !istMindestauftragsZeile(i.title as string | null))
+    .filter(i => !istPauschalZeile(i.title as string | null, pauschalNamen))
     .reduce((s, i) => s + (i.total_price ?? 0), 0)
   const bestehendeZeile = (alleItems ?? []).find(i => istMindestauftragsZeile(i.title as string | null))
   const mindestPos = mindestauftragsPosition(
@@ -726,9 +812,82 @@ export async function POST(req: NextRequest) {
     await supabase.from('quote_items').delete().eq('id', bestehendeZeile.id)
   }
 
-  const total_net = mindestPos
-    ? Math.round((arbeitsSumme + mindestPos.unit_price) * 100) / 100
-    : arbeitsSumme
+  // ── Kleinmaterial & An-/Abfahrt (CoS-E-041, Manfred TN-098, 11.09.2026) ──
+  //
+  // Manfred: „Kleinmaterial-Pauschale stand auf ‚automatisch ab 200 €'. In
+  // meinem 1.700-€-Angebot war sie nicht drin. Warum nicht?"
+  //
+  // Weil sie nie irgendwo eingehängt war. Die Regel gibt es
+  // (kleinmaterialPosition in gewerke-config.ts), die Einstellung gibt es,
+  // beide sind richtig — aufgerufen wurden sie nur aus `api/angebot-
+  // verfeinern`, und diese Route ruft niemand auf. Dieselbe Klasse wie der
+  // Kundenname (CoS-E-018) und der Mindestauftragswert davor: nicht falsch
+  // gerechnet, sondern gar nicht erst gefragt. Betrifft auch die
+  // An-/Abfahrt-Pauschale — Manfred hielt sie für ausgeschaltet (TN-106),
+  // dabei war sie unerreichbar.
+  //
+  // Aufbau bewusst identisch zum Mindestauftragswert direkt darüber: eigene
+  // benannte Zeile, gefahrlos wiederholbar (anlegen / nachziehen / wieder
+  // entfernen, wenn der Grund entfällt), und ein Fehler blockiert nicht —
+  // die Arbeitspositionen stehen längst sicher in der Datenbank.
+  const pauschalen = [
+    kleinmaterialPosition(gewerkFuerPauschalen, arbeitsSumme, kleinConfig),
+    anfahrtPosition(anfahrtConfig),
+  ].filter(Boolean) as NonNullable<ReturnType<typeof anfahrtPosition>>[]
+
+  for (const pauschale of pauschalen.concat()) {
+    const bestehend = (alleItems ?? []).find(
+      i => istPauschalZeile(i.title as string | null, [pauschale.title]),
+    )
+    if (bestehend) {
+      if ((bestehend.total_price ?? 0) !== pauschale.unit_price) {
+        await supabase.from('quote_items')
+          .update({ unit_price: pauschale.unit_price, total_price: pauschale.unit_price })
+          .eq('id', bestehend.id)
+      }
+      continue
+    }
+    const { error } = await supabase.from('quote_items').insert({
+      quote_id: angebot_id,
+      position: 9000, // ans Ende, wie die anderen Pauschalen
+      title: pauschale.title,
+      description: pauschale.description,
+      quantity: pauschale.quantity,
+      unit: pauschale.unit,
+      unit_price: pauschale.unit_price,
+      total_price: pauschale.unit_price,
+      automatisch_ergaenzt: true,
+    })
+    if (error) {
+      console.error('[positionen-generieren] Pauschale konnte nicht angelegt werden')
+      Sentry.captureException(new Error(error.message), { tags: { feature: 'pauschalen' } })
+    }
+  }
+
+  // Pauschalen, deren Grund entfallen ist (Schwelle unterschritten, Einstellung
+  // abgeschaltet), wieder entfernen — sonst berechnet das Angebot dem Kunden
+  // etwas, das nicht mehr zutrifft. Gleiche Regel wie beim Mindestauftragswert.
+  const sollNamen = pauschalen.map(p => p.title)
+  const verwaist = (alleItems ?? []).filter(i =>
+    istPauschalZeile(i.title as string | null, pauschalNamen)
+    && !istMindestauftragsZeile(i.title as string | null)
+    && !istPauschalZeile(i.title as string | null, sollNamen),
+  )
+  if (verwaist.length > 0) {
+    await supabase.from('quote_items').delete().in('id', verwaist.map(i => i.id))
+  }
+
+  // Summe aus dem tatsächlichen Stand, nicht nachgerechnet: Mit drei
+  // Pauschalzeilen, die je nach Lage entstehen, wachsen oder verschwinden,
+  // wäre eine Handrechnung genau die Stelle, an der Angebotssumme und
+  // Positionsliste auseinanderlaufen — und das fällt erst dem Kunden auf.
+  const { data: itemsDanach } = await supabase
+    .from('quote_items')
+    .select('total_price')
+    .eq('quote_id', angebot_id)
+  const total_net = Math.round(
+    (itemsDanach ?? []).reduce((s, i) => s + (i.total_price ?? 0), 0) * 100,
+  ) / 100
   const total_gross = total_net * (1 + vatRate / 100)
 
   // Audit 2026-08-31: Ohne Fehlerprüfung wären die Positionen gespeichert, die

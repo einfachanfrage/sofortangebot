@@ -40,14 +40,14 @@ describe('Rohtext-Rangordnung — ein Signal aus einem Raum färbt nicht auf die
   it('rechnet die Wandfläche auch dann, wenn das Wandwort im Transkript verhört wurde', () => {
     // Strukturiert steht „wände streichen" — der Rohtext kennt nur „Bände".
     const t = titel([WOHNZIMMER], 'Wohnzimmer 5 mal 4 Meter, 2,60 hoch, Bände streichen, Decke auch.')
-    expect(t.some(b => /wandfl/i.test(b))).toBe(true)
+    expect(t.some(b => /wand streichen/i.test(b))).toBe(true)
   })
 })
 
 describe('Rohtext-Rangordnung — der globale Scope löscht keine Positionen mehr auf Verdacht', () => {
   const positionen: BerechnetePosition[] = [
-    { beschreibung: 'Wandflächen streichen 2x — Küche', menge: 39, einheit: 'm²', konfidenz: 'high', berechnungsweg: '15,6 × 2,5', annahmen: [] },
-    { beschreibung: 'Deckenfläche streichen 1x — Küche', menge: 15.12, einheit: 'm²', konfidenz: 'high', berechnungsweg: '4,2 × 3,6', annahmen: [] },
+    { beschreibung: 'Wand streichen 2x — Küche', menge: 39, einheit: 'm²', konfidenz: 'high', berechnungsweg: '15,6 × 2,5', annahmen: [] },
+    { beschreibung: 'Decke streichen 1x — Küche', menge: 15.12, einheit: 'm²', konfidenz: 'high', berechnungsweg: '4,2 × 3,6', annahmen: [] },
   ]
 
   it('behält die Wandposition, obwohl der Rohtext kein Wandwort enthält', () => {
@@ -57,7 +57,7 @@ describe('Rohtext-Rangordnung — der globale Scope löscht keine Positionen meh
       undefined,
       { arbeitenTexte: ['wände streichen', 'decke streichen'], raeume: [{ name: 'Küche', arbeiten: ['wände streichen', 'decke streichen'] }] },
     )
-    expect(ergebnis.some(p => /wandfl/i.test(p.beschreibung))).toBe(true)
+    expect(ergebnis.some(p => /wand streichen/i.test(p.beschreibung))).toBe(true)
   })
 
   it('respektiert weiterhin ein ausdrückliches „nur die Decke"', () => {
@@ -67,6 +67,6 @@ describe('Rohtext-Rangordnung — der globale Scope löscht keine Positionen meh
       undefined,
       { arbeitenTexte: ['decke streichen'], raeume: [{ name: 'Küche', arbeiten: ['decke streichen'] }] },
     )
-    expect(ergebnis.some(p => /wandfl/i.test(p.beschreibung))).toBe(false)
+    expect(ergebnis.some(p => /wand streichen/i.test(p.beschreibung))).toBe(false)
   })
 })

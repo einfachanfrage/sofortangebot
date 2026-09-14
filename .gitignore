@@ -44,3 +44,13 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Arbeitsordner und Ausgabedateien — gehören nicht ins Repository
+# (14.09.2026, CoS-P-014: "Claude outputs" enthielt eine Test-Kopie, die die
+# Suite falsch-rot gemacht hat; _to_delete sammelt alte Git-Lock-Reste)
+/_to_delete/
+/Claude outputs/
+/abgleich.txt
+/katalog.txt
+/probe.txt
+/testlauf.txt

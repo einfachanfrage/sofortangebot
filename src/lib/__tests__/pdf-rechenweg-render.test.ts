@@ -62,10 +62,19 @@ async function text(quote: Quote & { items: QuoteItem[] }, struktur: 'raeume' | 
 }
 
 describe('PDF-Render: Rechenweg (DC-049 Schritt "PDF")', () => {
-  it('Berechnungsweg und Annahme stehen unter der Position (Raum-Gruppierung)', async () => {
+  it('Berechnungsweg steht unter der Position (Raum-Gruppierung)', async () => {
     const roh = await text(angebot(true), 'raeume')
     expect(roh).toContain(BERECHNUNGSWEG)
-    expect(roh).toContain(ANNAHME)
+  }, 30000)
+
+  // CoS-E-005/009 (Manfred, 11.09.2026): Hier stand bis zum 11.09. das
+  // Gegenteil — dass die Annahme mit aufs PDF gehört. Das war der Bug, nicht
+  // der Test: Annahmen sind Notizen an den Handwerker ("bitte prüfen",
+  // "im Transkript erkannt") und standen damit auf dem Kundenpapier.
+  // Der Rechenweg bleibt (Beweisstück), die Annahme geht raus.
+  it('die Annahme steht NICHT auf dem Kunden-PDF', async () => {
+    const roh = await text(angebot(true), 'raeume')
+    expect(roh).not.toContain(ANNAHME)
   }, 30000)
 
   it('Berechnungsweg steht auch im zweiten Renderpfad (Gewerk-Gruppierung)', async () => {

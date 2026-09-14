@@ -16,8 +16,14 @@ const NAV = [
   { href: '/einstellungen', icon: Settings, label: 'Einstellungen' },
 ]
 
-export default function SideNav() {
+interface SideNavProps {
+  /** CoS-P-012: kommt jetzt vom Server (echter Firmen-Plan), statt fest "PRO". */
+  plan: 'starter' | 'pro'
+}
+
+export default function SideNav({ plan }: SideNavProps) {
   const path = usePathname()
+  const istPro = plan === 'pro'
   return (
     <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-[220px] bg-anthracite z-50">
       {/* Logo */}
@@ -61,7 +67,9 @@ export default function SideNav() {
       <div className="px-4 pb-6 pt-4 border-t border-white/8">
         <div className="flex items-center justify-between">
           <span className="text-white/30 text-xs font-semibold">Dein Plan</span>
-          <span className="text-[10px] font-black text-yellow bg-yellow/10 px-2 py-0.5 rounded-full">PRO</span>
+          <span className="text-[10px] font-black text-yellow bg-yellow/10 px-2 py-0.5 rounded-full">
+            {istPro ? 'PRO' : 'STARTER'}
+          </span>
         </div>
       </div>
     </aside>

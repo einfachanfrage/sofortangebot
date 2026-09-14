@@ -97,7 +97,7 @@ describe('PM-028 — Arbeitszimmer, Altbau + ausdrücklich verlangte Grundierung
     }])
 
   it('trifft alle Soll-Mengen', () => {
-    expect(ergebnis.menge(/wandfläch/i)).toBe(37.5)
+    expect(ergebnis.menge(/wand streichen/i)).toBe(37.5)
     expect(ergebnis.menge(/grundierung/i)).toBe(37.5)
     expect(ergebnis.menge(/boden schützen/i)).toBe(14)
     expect(ergebnis.menge(/sockelleisten abkleben/i)).toBe(15) // VOB-012 (CoS-042): Tür 0,90 m nicht abgezogen
@@ -125,8 +125,8 @@ describe('PM-029 — Abstellraum ohne jede Öffnung', () => {
     }])
 
   it('rechnet einen Anstrich und zieht nichts ab', () => {
-    expect(ergebnis.titel).toContain('Wandflächen streichen 1x — Abstellraum')
-    expect(ergebnis.menge(/wandfläch/i)).toBe(18.24)
+    expect(ergebnis.titel).toContain('Wand streichen 1x — Abstellraum')
+    expect(ergebnis.menge(/wand streichen/i)).toBe(18.24)
   })
 
   it('rechnet die Sockelleisten ohne Türabzug', () => {

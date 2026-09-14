@@ -174,6 +174,52 @@ export const MINDESTAUFTRAGSWERT_VORSCHLAG = 180
 /** Der Zeilentext auf dem Kundenangebot (Sandys Wortlaut, 07.09.2026). */
 export const MINDESTAUFTRAG_BEZEICHNUNG = 'Anfahrt & Vorbereitung'
 
+// ── Pauschalzeilen erkennen (CoS-E-041, 11.09.2026) ─────────────────────────
+//
+// Drei Zeilen entstehen nicht aus dem Diktat, sondern aus einer Einstellung:
+// Kleinmaterial, An- und Abfahrt, Mindestauftragswert. Sie haben eine
+// Eigenschaft gemeinsam, die man leicht übersieht: **keine von ihnen darf in
+// die Bemessungsgrundlage einer anderen zählen.**
+//
+// Sonst passiert Folgendes: Die Kleinmaterial-Pauschale hebt die Summe über
+// den Mindestauftragswert, dessen Zeile schrumpft daraufhin beim nächsten
+// Durchlauf, die Summe fällt wieder — und der Handwerker sieht bei jedem
+// Neuberechnen andere Zahlen, ohne etwas geändert zu haben. Bei der
+// Mindestauftragszeile war das schon bedacht (sie zählte nicht in ihre
+// eigene Grundlage); mit zwei weiteren Pauschalen braucht es eine
+// gemeinsame Erkennung statt drei Einzelvergleiche.
+//
+// Bewusst EXAKTER Namensvergleich statt „enthält 'anfahrt'": Die
+// Mindestauftragszeile heißt „Anfahrt & Vorbereitung", die Fahrtkosten-
+// Pauschale „An- und Abfahrt" — eine Teilstring-Suche würde beide über einen
+// Kamm scheren, und eine echte Arbeitsposition „Anfahrtsweg absichern" gleich
+// mit. Die Namen sind konfigurierbar, deshalb werden die tatsächlich
+// aufgelösten Bezeichnungen übergeben.
+
+/**
+ * Erkennt die aus Einstellungen erzeugten Pauschalzeilen.
+ * `namen` sind die für diesen Betrieb aufgelösten Bezeichnungen.
+ */
+export function istPauschalZeile(titel: string | null | undefined, namen: string[]): boolean {
+  const t = (titel ?? '').trim().toLocaleLowerCase('de-DE')
+  if (!t) return false
+  return namen.some(n => n.trim().toLocaleLowerCase('de-DE') === t)
+}
+
+/** Die Bezeichnungen aller Pauschalzeilen dieses Betriebs — eine Stelle. */
+export function pauschalZeilenNamen(
+  gewerk: string | null | undefined,
+  kleinConfig?: Partial<KleinmaterialConfig> | null,
+  anfahrtConfig?: Partial<AnfahrtConfig> | null,
+): string[] {
+  const kleinBasis = (gewerk && KLEINMATERIAL_CONFIG[gewerk]) || null
+  return [
+    MINDESTAUFTRAG_BEZEICHNUNG,
+    kleinConfig?.bezeichnung ?? kleinBasis?.bezeichnung ?? 'Kleinmaterial und Verbrauchsmaterial',
+    anfahrtConfig?.bezeichnung ?? ANFAHRT_DEFAULT.bezeichnung,
+  ]
+}
+
 export interface MindestauftragsPosition {
   title: string
   description: string

@@ -47,7 +47,10 @@ function anstrichText(vorne: string, hinten: string) {
 
 const REGELN: Regel[] = [
   // — Maler: Wand/Decke/Boden —
-  { test: /wandfläche(n)?\s*streich|wände\s*streich/i, text: anstrichText('Deckender Anstrich', 'Kanten sauber abgeschnitten') },
+  // „wand streich" muss mit: Seit F.6 heißt die Position `Wand streichen Nx`.
+  // Ohne das steht auf dem KUNDENDOKUMENT kein Untertitel mehr unter der
+  // häufigsten Position des ganzen Produkts — und zwar wortlos.
+  { test: /wand(?:fläche(?:n)?)?\s*streich|wände\s*streich/i, text: anstrichText('Deckender Anstrich', 'Kanten sauber abgeschnitten') },
   { test: /decken(fläche)?\s*streich|decke\s*streich/i, text: anstrichText('Deckenanstrich', 'gleichmäßig deckend') },
   // PM-030-B (07.09.2026): Diese Positionsarten sind heute neu entstanden und
   // standen ohne jede Beschreibung im Angebot. Muss VOR der allgemeinen

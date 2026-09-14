@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, anzahlAus, findeRaumImSatz, raumNamenAus } from './helpers'
+import { hat, anzahlAus, findeRaumImSatz, raumNamenAus, istWandStreichen, raumAusTitel } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 // Türen lackieren: Schleifen, Grundieren, 2× Lackieren, Zargen
@@ -81,6 +81,9 @@ export function pruefeFensterLackieren(
 // Heizkörper lackieren: Schleifen, Grundieren, 2× Anstrich
 export function pruefeHeizkLackieren(
   ergaenzt: BerechnetePosition[],
+  // F.2 #8: neu dazu — ohne Meterangabe gehören die Rohre in die Fehlt-Liste
+  // statt als erfundene Stück-Position ins Angebot.
+  fehlende: string[],
   lower: string,
   v: AuftragsVerstaendnis,
 ): boolean {
@@ -93,7 +96,7 @@ export function pruefeHeizkLackieren(
   const jeHzkMatch = lower.match(/je\s+(\d+)\s*(?:stück\s*)?(?:heizkörper|heizkoerper)/i)
   const anzHzkExplizit = !jeHzkMatch ? anzahlAus(lower, 'heizkörper', anzahlAus(lower, 'heizkoerper', 0)) : 0
   const anzZimmer = anzahlAus(lower, 'zimmer', anzahlAus(lower, 'raum', anzahlAus(lower, 'räume', 0)))
-  const anzRaeumeAusPos = ergaenzt.filter(p => p.beschreibung.toLowerCase().includes('wandflächen streichen')).length
+  const anzRaeumeAusPos = ergaenzt.filter(p => istWandStreichen(p.beschreibung)).length
   const anzZimmerEff = anzZimmer > 0 ? anzZimmer : anzRaeumeAusPos > 0 ? anzRaeumeAusPos : 0
   let anzHzk: number
   if (jeHzkMatch) {
@@ -103,17 +106,87 @@ export function pruefeHeizkLackieren(
   }
   const hzkAnnahme = !jeHzkMatch && anzHzkExplizit === 0 && anzZimmerEff > 0 ? [`${anzZimmerEff} Zimmer → je 1 Heizkörper angenommen`] : []
 
-  ergaenzt.push({ beschreibung: `Heizkörper abschleifen${sfx}`, menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper aus Transkript`, annahmen: hzkAnnahme })
-  ergaenzt.push({ beschreibung: `Heizkörper grundieren${sfx}`, menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
-  ergaenzt.push({ beschreibung: `Heizkörper lackieren (2× Anstrich)${sfx}`, menge: anzHzk, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzHzk} Heizkörper`, annahmen: hzkAnnahme })
+  // ── DC-091 / TN-104, 13.09.2026 ────────────────────────────────────────
+  //
+  // Kommt die Stückzahl aus der ZAHL DER RÄUME („je ein Heizkörper", oder
+  // die Annahme „n Zimmer → je 1"), dann gehört sie nicht in einen Raum,
+  // sondern in jeden.
+  //
+  // Vorher stand `findeRaumImSatz` davor und fand bei „Flur und Wohnzimmer,
+  // … je ein Heizkörper lackieren" den **Flur** — den ersten Raum im Satz.
+  // Ergebnis auf dem Kundenpapier: unter „Flur" zwei Heizkörper, unter
+  // „Wohnzimmer" keiner. Die Summe stimmte, die Zuordnung nicht — und in
+  // einem nach Räumen gegliederten Angebot liest der Kunde genau die.
+  //
+  // Derselbe Fehler wie bei der Deckengrundierung (CoS-E-026): Eine
+  // abgeleitete Position nimmt den Raum der ERSTEN Quelle statt ihren
+  // eigenen. Deshalb hier dieselbe Reparatur — eine Position je Raum.
+  //
+  // Ein ausdrücklich genannter Raum gewinnt weiter, aber nur, wenn die Zahl
+  // NICHT aus der Raumzahl kommt: „im Bad zwei Heizkörper" ist eine Ansage,
+  // „Flur und Wohnzimmer … je einer" ist keine über den Flur.
+  const raeumeMitWand = ergaenzt
+    .filter(p => istWandStreichen(p.beschreibung))
+    .map(p => raumAusTitel(p.beschreibung))
+    .filter((r): r is string => Boolean(r))
+  const jeRaum = jeHzkMatch
+    ? parseInt(jeHzkMatch[1])
+    : (anzHzkExplizit === 0 && anzZimmerEff > 0 ? 1 : null)
 
+  const schritte: Array<[string, string]> = [
+    ['Heizkörper abschleifen', 'aus Transkript'],
+    ['Heizkörper grundieren', ''],
+    ['Heizkörper lackieren (2× Anstrich)', ''],
+  ]
+
+  if (jeRaum !== null && raeumeMitWand.length > 1) {
+    for (const raumName of raeumeMitWand) {
+      for (const [titel] of schritte) {
+        ergaenzt.push({
+          beschreibung: `${titel} — ${raumName}`,
+          menge: jeRaum,
+          einheit: 'Stück',
+          konfidenz: 'high',
+          berechnungsweg: `${jeRaum} Heizkörper in ${raumName}`,
+          annahmen: hzkAnnahme,
+        })
+      }
+    }
+  } else {
+    for (const [titel, zusatz] of schritte) {
+      ergaenzt.push({
+        beschreibung: `${titel}${sfx}`,
+        menge: anzHzk,
+        einheit: 'Stück',
+        konfidenz: 'high',
+        berechnungsweg: `${anzHzk} Heizkörper${zusatz ? ' ' + zusatz : ''}`,
+        annahmen: hzkAnnahme,
+      })
+    }
+  }
+
+  // ── F.2 #8 (Prüfmeister, 12.09.2026) ────────────────────────────────────
+  //
+  // Zwei Änderungen, beide aus derselben Zeile seiner Liste:
+  //
+  // 1. **Titel.** Der Katalog sagt `Rohrleitungen lackieren` (9,00 €/lfdm).
+  //    Die Engine sagte „Rohre lackieren" und fand deshalb gar nichts —
+  //    0,00 € im Angebot, obwohl der Preis dasteht.
+  //
+  // 2. **Der Stück-Zweig fliegt raus.** *„Rohre rechnet man in lfdm."*
+  //    Ohne Meterangabe wurde bisher „1 Stück pro Heizkörper" erfunden und
+  //    als Stück-Position ausgegeben — eine Einheit, die der Katalog für
+  //    diese Arbeit nicht führt, mit einer Menge, die niemand gesagt hat.
+  //    Zwei Fehler in einer Zeile: erfundene Menge UND falsche Einheit.
+  //    Jetzt steht die Position sichtbar in `fehlende`, mit der Bitte um die
+  //    Meter. Das ist Manfreds Einheiten-Eimer und PM-018 in einem.
   const hatRohre = lower.includes('rohr') || lower.includes('heizungsrohr') || lower.includes('rohre')
-  if (hatRohre && !hat(ergaenzt, 'rohr lackier', 'rohre lackier')) {
+  if (hatRohre && !hat(ergaenzt, 'rohr lackier', 'rohre lackier', 'rohrleitungen lackier')) {
     const rohrM = anzahlAus(lower, 'rohr', anzahlAus(lower, 'rohre', 0))
     if (rohrM > 0) {
-      ergaenzt.push({ beschreibung: 'Rohre lackieren', menge: rohrM, einheit: 'lfdm', konfidenz: 'medium', berechnungsweg: `${rohrM} lfdm aus Transkript`, annahmen: [] })
+      ergaenzt.push({ beschreibung: 'Rohrleitungen lackieren', menge: rohrM, einheit: 'lfdm', konfidenz: 'medium', berechnungsweg: `${rohrM} lfdm aus Transkript`, annahmen: [] })
     } else {
-      ergaenzt.push({ beschreibung: 'Rohre lackieren', menge: anzHzk, einheit: 'Stück', konfidenz: 'medium', berechnungsweg: `${anzHzk} Stück (1 pro Heizkörper angenommen)`, annahmen: ['Rohrlänge nicht angegeben — pauschale Stückzahl'] })
+      fehlende.push('Rohrleitungen lackieren (laufende Meter prüfen)')
     }
   }
 

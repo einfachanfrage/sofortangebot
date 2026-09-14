@@ -21,7 +21,7 @@ describe('betriebliche Preiszuordnung', () => {
     ['Sockelleisten montieren — Flur', 'lfdm'],
     ['Untergrundvorbereitung / Ausgleich — Flur', 'm²'],
     ['Epoxidharz-Feuchtigkeitssperre aufwalzen — Keller', 'm²'],
-    ['Parkett schleifen — Wohnzimmer', 'm²'],
+    ['Parkett abschleifen (2 Schleifgänge) — Wohnzimmer', 'm²'],
     ['Voranstrich / Grundierung — Schlafzimmer', 'm²'],
     ['Wände spachteln / glätten — Schlafzimmer', 'm²'],
     ['Spachtelarbeiten Q2 — Wohnzimmer', 'm²'],
@@ -40,7 +40,8 @@ describe('betriebliche Preiszuordnung', () => {
     ['Silikatfarbe auftragen (2×)', 'm²'],
     ['Nikotinsperre auftragen', 'm²'],
     ['Rissverschluss mit Gewebe', 'm²'],
-    ['Heizkörper schleifen und lackieren', 'Stück'],
+    ['Heizkörper abschleifen', 'Stück'],
+    ['Heizkörper streichen / lackieren', 'Stück'],
     ['Fußleisten schleifen und lackieren', 'lfdm'],
     ['Anti-Schimmel-Anstrich', 'm²'],
     ['Spachteltechnik (Betonoptik)', 'm²'],
@@ -83,7 +84,7 @@ describe('betriebliche Preiszuordnung', () => {
 
   it.each([
     ['Untergrund schleifen (Unebenheiten, Kleberreste)', 'm²', 7],
-    ['Aufpreis Fischgrät-Verlegemuster (vollflächig verklebt)', 'm²', 14],
+    ['Aufpreis Fischgrät-Verlegemuster', 'm²', 14],
     ['Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)', 'Pauschale', 45],
     ['Fertigparkett verlegen vollflächig verklebt', 'm²', 35],
     ['Laminat demontieren und entsorgen', 'm²', 5],

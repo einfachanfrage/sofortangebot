@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { versandHindernisse } from '@/lib/versandbereit'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 import { renderToBuffer } from '@react-pdf/renderer'
@@ -49,6 +50,31 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .single()
 
   if (!quote || !company) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
+  // ── CoS-E-004/012/023/035 (Manfred, 11.09.2026) ─────────────────────────
+  //
+  // Die eigentliche Sicherung. Alle drei Versandwege (E-Mail, WhatsApp,
+  // Link) laufen durch diese Route — deshalb genügt hier EIN Riegel, und
+  // deshalb steht er hier und nicht dreimal im Frontend. Der Dialog sperrt
+  // seine Knöpfe zwar auch, aber ein gesperrter Knopf ist eine Bitte, kein
+  // Riegel: Genau so ist Manfreds Angebot mit „Boden schützen 0,00 €"
+  // rausgegangen und anschließend als beauftragt markiert worden (TN-090),
+  // und genau so war „Senden" ohne zugewiesenen Kunden aktiv (TN-054).
+  //
+  // Bewusst 422 und nicht 400: Die Anfrage ist in Ordnung, das Angebot ist
+  // es noch nicht. Die Gründe gehen im Klartext zurück, damit der Dialog sie
+  // unverändert anzeigen kann — der Handwerker soll lesen, was zu tun ist,
+  // nicht was schiefging.
+  const hindernisse = versandHindernisse({
+    hatKunden: Boolean(quote.customer_id),
+    items: quote.items ?? [],
+  })
+  if (hindernisse.length > 0) {
+    return NextResponse.json(
+      { error: hindernisse.join(' '), hindernisse },
+      { status: 422 },
+    )
+  }
 
   // Angebotsnummer
   const { count } = await supabase

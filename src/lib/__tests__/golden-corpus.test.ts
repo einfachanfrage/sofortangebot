@@ -35,8 +35,24 @@ function pipeline(fall: Fall): string[] {
     fensterAnzahl: zaehleFenster(fall.transkript) || undefined,
     tuerenAnzahl: zaehleTueren(fall.transkript) || undefined,
   }
-  const { positionen } = pruefeUndErgaenzeVollstaendigkeit(fall.gewerk, eng.positionen, fall.transkript, meta, signale)
-  return positionen.map(p => p.beschreibung)
+  const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit(fall.gewerk, eng.positionen, fall.transkript, meta, signale)
+  // ── Geändert am 12.09.2026 (F.2 #2, „eine Arbeit, eine Einheit") ─────────
+  //
+  // `fehlende` zählt mit. Der Korpus prüft, ob eine Leistung im Entwurf
+  // AUFTAUCHT — und die Fehlt-Liste ist Teil des Entwurfs, die sieht der
+  // Handwerker.
+  //
+  // Anlass: Der Fliesenspiegel wurde ohne Meterangabe bisher als
+  // Pauschale-Position mit der erfundenen Menge 1 ausgegeben, obwohl er in
+  // laufenden Metern abgerechnet wird. Dieser Zweig ist raus; ohne Meter
+  // steht die Position jetzt in der Fehlt-Liste mit der Bitte um die Meter.
+  // Der Korpus hat das zu Recht als Verlust gemeldet — verloren ist sie aber
+  // nur, wenn man die Fehlt-Liste nicht mitliest.
+  //
+  // Was der Korpus damit NICHT mehr unterscheidet: bepreiste Position gegen
+  // Hinweis. Dafür ist `katalog-deckung.test.ts` zuständig, das jede
+  // erzeugbare Position gegen den Katalog fährt.
+  return [...positionen.map(p => p.beschreibung), ...fehlende]
 }
 
 const KORPUS: Fall[] = [
@@ -45,7 +61,7 @@ const KORPUS: Fall[] = [
     gewerk: 'maler',
     transkript: 'hier im wohnzimmer muss komplett gestrichen werden, 25 quadratmeter bodenfläche, 2 meter 60 hoch, 2 fenster 1 tür',
     raeume: [{ name: 'Wohnzimmer', flaeche: 25, hoehe: 2.6, arbeiten: ['wände streichen', 'decke streichen'], fenster: [{ anzahl: 2 }], tueren: [{ anzahl: 1 }] }],
-    muss: ['wandflächen streichen', 'deckenfläche streichen'],
+    muss: ['wand streichen', 'decke streichen'],
     verboten: ['estrich', 'epoxid', 'erschwerniszuschlag'],
   },
   {
@@ -53,7 +69,7 @@ const KORPUS: Fall[] = [
     gewerk: 'maler',
     transkript: 'wohnzimmer, muss erst die tapete ab und dann die wände glattgemacht werden und dann gestrichen, 24 quadratmeter bodenfläche, 2,60 hoch',
     raeume: [{ name: 'Wohnzimmer', flaeche: 24, hoehe: 2.6, arbeiten: ['tapete entfernen', 'wände glätten', 'streichen'] }],
-    muss: ['wandflächen streichen', 'tapete entfernen', 'spachteln'],
+    muss: ['wand streichen', 'tapete entfernen', 'spachteln'],
     verboten: ['estrich', 'epoxid'],
   },
   {
@@ -61,8 +77,8 @@ const KORPUS: Fall[] = [
     gewerk: 'maler',
     transkript: 'schlafzimmer nur die wände streichen, 4 mal 5 meter, 2,50 hoch',
     raeume: [{ name: 'Schlafzimmer', laenge: 5, breite: 4, hoehe: 2.5, arbeiten: ['wände streichen'] }],
-    muss: ['wandflächen streichen'],
-    verboten: ['deckenfläche streichen', 'estrich'],
+    muss: ['wand streichen'],
+    verboten: ['decke streichen', 'estrich'],
   },
   {
     name: 'Flur: verklebter Teppich + garbeltes Klick-Vinyl (Prod-Fall)',
@@ -85,7 +101,7 @@ const KORPUS: Fall[] = [
     gewerk: 'maler',
     transkript: 'loft streichen, 4 meter hohe decke, 40 quadratmeter wandfläche',
     raeume: [{ name: 'Loft', wandflaeche_direkt: 40, hoehe: 4, arbeiten: ['wände streichen'] }],
-    muss: ['wandflächen streichen', 'erschwerniszuschlag'],
+    muss: ['wand streichen', 'erschwerniszuschlag'],
     verboten: ['estrich'],
   },
   {
@@ -96,7 +112,7 @@ const KORPUS: Fall[] = [
       { name: 'Wohnzimmer', flaeche: 20, hoehe: 2.5, arbeiten: ['wände streichen', 'decke streichen'] },
       { name: 'Flur', flaeche: 20, hoehe: 2.5, arbeiten: ['wände streichen', 'decke streichen'] },
     ],
-    muss: ['wandflächen streichen', 'deckenfläche streichen'],
+    muss: ['wand streichen', 'decke streichen'],
     verboten: ['estrich', 'erschwerniszuschlag'],
   },
   {
@@ -115,7 +131,7 @@ const KORPUS: Fall[] = [
     transkript: 'hausfassade komplett neu streichen, 120 quadratmeter außenwand',
     raeume: [{ name: 'Fassade', wandflaeche_direkt: 120, arbeiten: ['fassade streichen'] }],
     muss: ['streichen'],
-    verboten: ['estrich', 'erschwerniszuschlag', 'deckenfläche streichen'],
+    verboten: ['estrich', 'erschwerniszuschlag', 'decke streichen'],
   },
 
   // ── Maler Sonderregeln ────────────────────────────────────────────────────
@@ -141,7 +157,7 @@ const KORPUS: Fall[] = [
     transkript: 'drei zimmertüren abschleifen grundieren und weiß lackieren',
     raeume: [{ name: 'Wohnung', arbeiten: ['türen lackieren'], tueren: [{ anzahl: 3 }] }],
     muss: ['türen', 'lackier'],
-    verboten: ['estrich', 'deckenfläche streichen'],
+    verboten: ['estrich', 'decke streichen'],
   },
   {
     name: 'Fenster außen lackieren',
@@ -213,14 +229,14 @@ const KORPUS: Fall[] = [
     transkript: 'fassade streichen, dafür brauchen wir ein gerüst, 80 quadratmeter außenwand',
     raeume: [{ name: 'Fassade', wandflaeche_direkt: 80, arbeiten: ['fassade streichen'] }],
     muss: ['gerüst'],
-    verboten: ['estrich', 'deckenfläche streichen'],
+    verboten: ['estrich', 'decke streichen'],
   },
   {
     name: 'Kellerraum streichen, kein Fenster',
     gewerk: 'maler',
     transkript: 'kellerraum weiß streichen, 18 quadratmeter bodenfläche, 2,20 hoch, keine fenster',
     raeume: [{ name: 'Keller', flaeche: 18, hoehe: 2.2, arbeiten: ['wände streichen', 'decke streichen'] }],
-    muss: ['wandflächen streichen'],
+    muss: ['wand streichen'],
     verboten: ['estrich', 'erschwerniszuschlag'],
   },
 
@@ -280,8 +296,8 @@ const KORPUS: Fall[] = [
     gewerk: 'maler',
     transkript: 'im schlafzimmer nur die decke streichen, die wände bleiben, 16 quadratmeter, 2,50 hoch',
     raeume: [{ name: 'Schlafzimmer', flaeche: 16, hoehe: 2.5, arbeiten: ['decke streichen'] }],
-    muss: ['deckenfläche streichen'],
-    verboten: ['wandflächen streichen', 'estrich'],
+    muss: ['decke streichen'],
+    verboten: ['wand streichen', 'estrich'],
   },
   {
     name: 'Zwei Räume, unterschiedlicher Scope',
@@ -291,7 +307,7 @@ const KORPUS: Fall[] = [
       { name: 'Wohnzimmer', flaeche: 20, hoehe: 2.5, arbeiten: ['wände streichen'] },
       { name: 'Schlafzimmer', flaeche: 20, hoehe: 2.5, arbeiten: ['wände streichen', 'decke streichen'] },
     ],
-    muss: ['wandflächen streichen'],
+    muss: ['wand streichen'],
     verboten: ['estrich'],
   },
   {
@@ -300,7 +316,7 @@ const KORPUS: Fall[] = [
     transkript: 'balkon außen streichen mit wetterfester fassadenfarbe, 20 quadratmeter',
     raeume: [{ name: 'Balkon', wandflaeche_direkt: 20, arbeiten: ['wände streichen'] }],
     muss: ['streichen'],
-    verboten: ['estrich', 'deckenfläche streichen'],
+    verboten: ['estrich', 'decke streichen'],
   },
   {
     name: 'Treppenhaus streichen + Geländer',

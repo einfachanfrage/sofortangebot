@@ -20,8 +20,8 @@ const pos = (b: string, m: number): BerechnetePosition =>
   ({ beschreibung: b, menge: m, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${m} m²`, annahmen: [] })
 
 const lauf = (text: string) => pruefeUndErgaenzeVollstaendigkeit('maler', [
-  pos('Wandflächen streichen 2x — Arbeitszimmer', 39),
-  pos('Deckenfläche streichen 2x — Arbeitszimmer', 14),
+  pos('Wand streichen 2x — Arbeitszimmer', 39),
+  pos('Decke streichen 2x — Arbeitszimmer', 14),
 ], text).positionen
 
 describe('PM-018 — die Qualitätsstufe überlebt das Komma', () => {

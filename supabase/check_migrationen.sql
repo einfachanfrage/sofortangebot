@@ -165,6 +165,26 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'companies' AND column_name = 'mindestauftragswert'
       AND is_nullable = 'YES'
+  )),
+  -- 57 und 58 am 13.09.2026 nachgetragen: Die beiden Migrationen vom 11.09.
+  -- standen hier nicht, obwohl die README das verlangt. Ein Check, der eine
+  -- Migration nicht kennt, meldet sie auch nicht als fehlend — er sagt dann
+  -- „allesgrün“ über einen Stand, den er gar nicht geprüft hat.
+  (57, '20260911120000_zeige_rechenweg_auf_pdf', 'quotes.zeige_rechenweg_auf_pdf existiert', EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'quotes' AND column_name = 'zeige_rechenweg_auf_pdf'
+  )),
+  (58, '20260911160000_erkannter_kundenname', 'quotes.erkannter_kundenname existiert', EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'quotes' AND column_name = 'erkannter_kundenname'
+  )),
+  (59, '20260913080000_add_erschwernis_config', 'companies.erschwernis_config existiert', EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'companies' AND column_name = 'erschwernis_config'
+  )),
+  (60, '20260913140000_add_erkannter_termin', 'quotes.erkannter_termin existiert', EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'quotes' AND column_name = 'erkannter_termin'
   ))
 )
 SELECT

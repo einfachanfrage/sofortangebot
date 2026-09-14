@@ -11,8 +11,8 @@ function pos(beschreibung: string, menge = 10, einheit = 'm²'): BerechnetePosit
 describe('maler – streichen basis', () => {
   it('ergänzt nur die ausdrücklich beauftragten Streicharbeiten', () => {
     const { fehlende } = pruefeUndErgaenzeVollstaendigkeit('maler', [], 'Wände und Decke streichen')
-    expect(fehlende).toContain('Wandflächen streichen')
-    expect(fehlende).toContain('Deckenfläche streichen')
+    expect(fehlende).toContain('Wand streichen')
+    expect(fehlende).toContain('Decke streichen')
     expect(fehlende).not.toContain('Boden schützen / Abdecken')
     expect(fehlende).not.toContain('Sockelleisten abkleben')
   })
@@ -26,10 +26,10 @@ describe('maler – streichen basis', () => {
   it('erfindet bei ausdrücklich genannten Wänden keine Deckenarbeit', () => {
     const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 35)],
+      [pos('Wand streichen', 35)],
       'Im Wohnzimmer die Wände zweimal streichen.',
     )
-    expect(fehlende).not.toContain('Deckenfläche streichen')
+    expect(fehlende).not.toContain('Decke streichen')
     expect(positionen.some(position => /decke/i.test(position.beschreibung))).toBe(false)
   })
 
@@ -41,7 +41,7 @@ describe('maler – streichen basis', () => {
   it('erkennt "schwieriger Untergrund" als eigenen Erschwerniszuschlag — PM-019', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 14.91)],
+      [pos('Wand streichen', 14.91)],
       'Gästeklo, Wände streichen, zweimal. Der Putz ist aber total uneben und bröckelig, ' +
       'ein wirklich schwieriger Untergrund, das wird aufwendiger als normal.',
     )
@@ -51,7 +51,7 @@ describe('maler – streichen basis', () => {
   it('erfindet keinen Untergrund-Zuschlag ohne entsprechenden Hinweis', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 14.91)],
+      [pos('Wand streichen', 14.91)],
       'Gästeklo, Wände streichen, zweimal. Eine Tür, kein Fenster.',
     )
     expect(positionen.some(p => /erschwerniszuschlag.*untergrund/i.test(p.beschreibung))).toBe(false)
@@ -60,16 +60,18 @@ describe('maler – streichen basis', () => {
   it('prüft Möbelabdeckung und Bewohnt-Zuschlag unabhängig voneinander', () => {
     const { fehlende } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 35), pos('Erschwerniszuschlag bewohnt', 1, 'Pauschale')],
+      [pos('Wand streichen', 35), pos('Erschwerniszuschlag bewohnt', 1, 'Pauschale')],
       'Bewohnte Wohnung, die Möbel müssen gerückt und abgedeckt werden.',
     )
-    expect(fehlende).toContain('Möbel schützen / Abdecken')
+    // F.6, Zug 2a: Katalogtitel wörtlich — `Möbel abdecken mit Folie`,
+    // 1,50 €/m². Preis unverändert, Treffer 0,80 → 1,00.
+    expect(fehlende).toContain('Möbel abdecken mit Folie')
   })
 
   it('macht aus Dübellöchern und Schadstellen keine vollflächige Q2-Spachtelung', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 35)],
+      [pos('Wand streichen', 35)],
       'Wände streichen, fünf Dübellöcher schließen und zwei kleine Schadstellen spachteln.',
     )
     expect(positionen.some(position => /dübellöcher spachteln/i.test(position.beschreibung))).toBe(true)
@@ -86,7 +88,7 @@ describe('maler – streichen basis', () => {
   it('erfindet keine Kleinreparatur-Position, wenn der Nutzer die volle Fläche verlangt (PM-011)', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 32.91)],
+      [pos('Wand streichen', 32.91)],
       'Die Wände sind ordentlich uneben — die müssen komplett gespachtelt werden, Qualitätsstufe Q2, ' +
       'nicht nur ne kleine Ausbesserung, wirklich die ganze Fläche. Danach zweimal streichen.',
     )
@@ -96,20 +98,20 @@ describe('maler – streichen basis', () => {
   })
 
   it('"nur Decke" filtert Wand+Sockel aus Engine-Positionen', () => {
-    const eingabe = [pos('Wandflächen streichen'), pos('Deckenfläche streichen'), pos('Sockelleisten montieren')]
+    const eingabe = [pos('Wand streichen'), pos('Decke streichen'), pos('Sockelleisten montieren')]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'nur Decke streichen')
     const beschr = positionen.map(p => p.beschreibung)
-    expect(beschr).not.toContain('Wandflächen streichen')
+    expect(beschr).not.toContain('Wand streichen')
     expect(beschr).not.toContain('Sockelleisten montieren')
-    expect(beschr).toContain('Deckenfläche streichen')
+    expect(beschr).toContain('Decke streichen')
   })
 
   it('"nur Wände" entfernt Decke aus Engine-Positionen', () => {
-    const eingabe = [pos('Deckenfläche streichen'), pos('Wandflächen streichen')]
+    const eingabe = [pos('Decke streichen'), pos('Wand streichen')]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'nur Wände streichen')
     const beschr = positionen.map(p => p.beschreibung)
-    expect(beschr).not.toContain('Deckenfläche streichen')
-    expect(beschr).toContain('Wandflächen streichen')
+    expect(beschr).not.toContain('Decke streichen')
+    expect(beschr).toContain('Wand streichen')
   })
 
   // PM-001-Nebenfund (2026-08-20, gefunden beim Bauen des Aufnahmekarten-Fixes):
@@ -121,11 +123,11 @@ describe('maler – streichen basis', () => {
   // Kalkulation, nicht nur eine Vorschau — "nur Wände streichen" ist der
   // Alltagsfall bei einem reinen Wandanstrich.
   it('"nur Wände" behält Boden schützen / Abdecken trotz der "decke"-Zeichenkette in "abdecken" (PM-001-Nebenfund)', () => {
-    const eingabe = [pos('Wandflächen streichen'), pos('Boden schützen / Abdecken', 0)]
+    const eingabe = [pos('Wand streichen'), pos('Boden schützen / Abdecken', 0)]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'nur Wände streichen, Boden vorher abdecken')
     const beschr = positionen.map(p => p.beschreibung)
     expect(beschr).toContain('Boden schützen / Abdecken')
-    expect(beschr).toContain('Wandflächen streichen')
+    expect(beschr).toContain('Wand streichen')
   })
 })
 
@@ -135,7 +137,7 @@ describe('maler – tapete mit direkter Wandfläche + Abzug', () => {
   const transkript = 'Die Wandfläche insgesamt sind 45 Quadratmeter. Davon müssen wir aber ein großes Fenster mit 3 Quadratmetern abziehen. Tapezieren mit Raufaser.'
 
   it('nimmt 45 m² Brutto-Wandfläche aus Text', () => {
-    const wandPos = pos('Wandflächen streichen', 42)
+    const wandPos = pos('Wand streichen', 42)
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', [wandPos], transkript)
     const tapetePos = positionen.find(p => /aufziehen|tapezieren/i.test(p.beschreibung))
     // Fläche aus Engine-Position (42), nicht neu aus Text berechnen da wandPos vorhanden
@@ -252,6 +254,14 @@ describe('maler – schimmel', () => {
 // ─── MALER FASSADE ──────────────────────────────────────────────────────────
 
 describe('maler – fassade', () => {
+  // Nicht `.includes('Grundierung')`: Seit F.6 heißt die Position
+  // `Fassadengrundierung auftragen` — das große G steckt im Kompositum und
+  // die wörtliche Suche ging ins Leere. Schlimmer als der rote Test war die
+  // stille Hälfte: Der Nachbartest unten prüft, dass die Grundierung NICHT
+  // ungefragt kommt, und der wäre ab jetzt auch dann grün geblieben, wenn sie
+  // gekommen wäre. Ein Wächter, der nichts mehr bewacht.
+  const grundierung = /grundier/i
+
   it('ergänzt die Fassadenfarbe, aber keine ungefragte Grundierung', () => {
     // Trockenlauf PM-031 (2026-08-30): Die Grundierung kam bedingungslos,
     // allein weil das Wort „Fassade" fiel — bei „einmal Fassadenfarbe drauf"
@@ -261,13 +271,17 @@ describe('maler – fassade', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Fassade streichen, 200 qm.')
     const beschr = positionen.map(p => p.beschreibung)
     expect(beschr.some(b => b.includes('Fassadenfarbe'))).toBe(true)
-    expect(beschr.some(b => b.includes('Grundierung'))).toBe(false)
+    expect(beschr.some(b => grundierung.test(b))).toBe(false)
   })
 
   it('ergänzt die Grundierung sehr wohl, wenn sie verlangt wird', () => {
     const eingabe = [pos('Fassade streichen', 200)]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Fassade grundieren und streichen, 200 qm.')
-    expect(positionen.some(p => p.beschreibung.includes('Grundierung'))).toBe(true)
+    expect(positionen.some(p => grundierung.test(p.beschreibung))).toBe(true)
+    // F.6, Zug 1 (12.09.2026): Der Titel heißt jetzt wörtlich wie im Katalog.
+    // Vorher traf `Grundierung / Tiefengrund Fassade` den INNEN-Tiefengrund
+    // (4,50 €) statt der Fassadenzeile (6,00 €).
+    expect(positionen.map(p => p.beschreibung)).toContain('Fassadengrundierung auftragen')
   })
 
   // PM-008-Nachtest: "Fassade reinigen" kam bisher ungefragt bei JEDEM
@@ -298,7 +312,7 @@ describe('maler – balkon (PM-021)', () => {
   // streichen", Menge = Fläche des Raums selbst). Siehe golden-korrekturen.
   // test.ts für den vollen End-to-End-Fall mit echten Produktionsdaten.
   it('erfindet KEINEN Balkon bei "Terrassentür" (nur Türbezeichnung, kein eigener Ort)', () => {
-    const eingabe = [pos('Wandflächen streichen', 40), pos('Boden schützen', 30)]
+    const eingabe = [pos('Wand streichen', 40), pos('Boden schützen', 30)]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler', eingabe,
       'Wohnküche, Wände streichen. Eine Terrassentür, zwei Meter breit.',
@@ -308,7 +322,7 @@ describe('maler – balkon (PM-021)', () => {
   })
 
   it('erfindet KEINEN Balkon bei "Balkontür" (direkte Zusammensetzung, kein eigener Ort)', () => {
-    const eingabe = [pos('Wandflächen streichen', 40), pos('Boden schützen', 30)]
+    const eingabe = [pos('Wand streichen', 40), pos('Boden schützen', 30)]
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler', eingabe,
       'Wohnzimmer, Wände streichen. Eine Balkontür, normal breit.',
@@ -423,7 +437,7 @@ describe('trockenbau', () => {
 
 describe('API – kein Seiteneffekt auf input-positionen', () => {
   it('mutiert die originale positionen-Liste nicht', () => {
-    const original = [pos('Wandflächen streichen', 42)]
+    const original = [pos('Wand streichen', 42)]
     const kopie = [...original]
     pruefeUndErgaenzeVollstaendigkeit('maler', original, 'Wände streichen')
     expect(original).toHaveLength(kopie.length)
@@ -440,10 +454,10 @@ describe('DC-027 – Kennzeichnung automatisch ergänzter Positionen', () => {
   it('lässt vom Nutzer gesagte Positionen unmarkiert', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 35)],
+      [pos('Wand streichen', 35)],
       'Im Wohnzimmer die Wände zweimal streichen.',
     )
-    const gesagt = positionen.find(p => p.beschreibung === 'Wandflächen streichen')
+    const gesagt = positionen.find(p => p.beschreibung === 'Wand streichen')
     expect(gesagt).toBeDefined()
     expect(gesagt?.automatisch_ergaenzt).toBeFalsy()
   })
@@ -451,7 +465,7 @@ describe('DC-027 – Kennzeichnung automatisch ergänzter Positionen', () => {
   it('markiert eine vom Tool ergänzte Position als automatisch ergänzt', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 35)],
+      [pos('Wand streichen', 35)],
       'Im Wohnzimmer die Wände streichen, wir haben hohe Decken.',
     )
     const ergaenzt = positionen.find(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))
@@ -463,7 +477,7 @@ describe('DC-027 – Kennzeichnung automatisch ergänzter Positionen', () => {
     // Mehrgewerk-Fall: die Prüfung läuft nacheinander für zwei Gewerke.
     const ersterLauf = pruefeUndErgaenzeVollstaendigkeit(
       'maler',
-      [pos('Wandflächen streichen', 35)],
+      [pos('Wand streichen', 35)],
       'Im Wohnzimmer die Wände streichen, wir haben hohe Decken.',
     )
     const zweiterLauf = pruefeUndErgaenzeVollstaendigkeit(
@@ -473,12 +487,12 @@ describe('DC-027 – Kennzeichnung automatisch ergänzter Positionen', () => {
     )
     const ergaenzt = zweiterLauf.positionen.find(p => /erschwerniszuschlag raumhöhe/i.test(p.beschreibung))
     expect(ergaenzt?.automatisch_ergaenzt).toBe(true)
-    const gesagt = zweiterLauf.positionen.find(p => p.beschreibung === 'Wandflächen streichen')
+    const gesagt = zweiterLauf.positionen.find(p => p.beschreibung === 'Wand streichen')
     expect(gesagt?.automatisch_ergaenzt).toBeFalsy()
   })
 
   it('mutiert die übergebenen Original-Positionen nicht', () => {
-    const original = [pos('Wandflächen streichen', 35)]
+    const original = [pos('Wand streichen', 35)]
     pruefeUndErgaenzeVollstaendigkeit('maler', original, 'Wände streichen, hohe Decken.')
     expect(original[0].automatisch_ergaenzt).toBeUndefined()
   })

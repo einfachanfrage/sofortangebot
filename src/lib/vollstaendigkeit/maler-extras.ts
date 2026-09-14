@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, anzahlAus, filtereArray } from './helpers'
+import { hat, add, anzahlAus, filtereArray, istWandStreichen, istDeckeStreichen } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import { extrahiereRaumhoehe } from '../extraktion-masse'
 import { ZUSCHLAG_EINHEIT } from '../zuschlag-basis'
@@ -236,10 +236,15 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
   const schleifenSchonVorhanden = ergaenzt.some(p => /\bschleifen\b/i.test(p.beschreibung))
 
   const deckeExplizitSpachteln = /deck\w*(?:\s+\w+){0,4}\s+spachtel|spachtel\w*(?:\s+\w+){0,4}\s+deck/i.test(lower)
-  const basisPositionen = ergaenzt.filter(p => {
-    const d = p.beschreibung.toLowerCase()
-    return (d.includes('wandfläch') || (deckeExplizitSpachteln && d.includes('deckenfläch'))) && p.einheit === 'm²'
-  })
+  // F.6, Zug 2b: Hier stand `includes('wandfläch')` / `includes('deckenfläch')`.
+  // Seit die Positionen `Wand streichen Nx` und `Decke streichen Nx` heißen,
+  // fand das NICHTS — und damit fielen sämtliche Spachtelarbeiten ersatzlos
+  // aus dem Angebot. Nicht zu wenig Geld, sondern gar keine Position.
+  // Der fünfte stille Vertrag an einem Tag; deshalb jetzt über die
+  // gemeinsamen Erkenner, die mit dem Titel mitwandern.
+  const basisPositionen = ergaenzt.filter(p =>
+    p.einheit === 'm²'
+    && (istWandStreichen(p.beschreibung) || (deckeExplizitSpachteln && istDeckeStreichen(p.beschreibung))))
   if (basisPositionen.length > 0) {
     for (const basisPos of basisPositionen) {
       const raumMatch = basisPos.beschreibung.match(/ — (.+)$/)
@@ -249,7 +254,12 @@ export function pruefeSpachtelarbeiten(ergaenzt: BerechnetePosition[], fehlende:
       // Auf dem Kundenangebot standen zwei gleiche Zeilen mit verschiedenen
       // Mengen, und niemand konnte sagen, welche die Decke ist. Die
       // Grundierung macht es zwei Zeilen weiter richtig vor.
-      const istDecke = basisPos.beschreibung.toLowerCase().includes('deckenfläch')
+      // F.6: hieß `includes('deckenfläch')`. Ohne Anpassung verlieren Wand-
+      // und Deckenzeile wieder ihre Unterscheidung — genau der
+      // Darstellungsfund aus PM-018, wegen dem dieser Zusatz überhaupt
+      // eingebaut wurde: zwei gleich benannte Zeilen mit verschiedenen
+      // Mengen, und niemand weiß, welche die Decke ist.
+      const istDecke = istDeckeStreichen(basisPos.beschreibung)
       const flaechenTeil = istDecke ? ' Decke' : ''
       if (hatSpachteln2 && !spachtelnSchonVorhanden) ergaenzt.push({
         beschreibung: `Spachtelarbeiten ${qLevel}${flaechenTeil}${raumSuffix}`,
@@ -286,6 +296,19 @@ export function pruefeEstrich(ergaenzt: BerechnetePosition[], fehlende: string[]
   const em2 = bodenPosEstrich?.menge ?? null
   if (em2 !== null && em2 > 0) {
     filtereArray(ergaenzt, p => !p.beschreibung.toLowerCase().includes('boden schütz') && !p.beschreibung.toLowerCase().includes('boden — '))
+    // ── F.6, ZURÜCKGESTELLT (12.09.2026) ────────────────────────────────
+    //
+    // Der Prüfmeister will hier `Estrich anschleifen` — „Untergrund-
+    // vorbereitung" ist ein Werkzeugwort. Fachlich richtig, **aber die
+    // Umbenennung allein zerstört den Preis**: Der Standardkatalog führt
+    // diese Zeile wörtlich als `Estrich schleifen / Untergrundvorbereitung`
+    // (Maler, 8,00 €/m², Treffer 1,00). Die Zeile mit dem besseren Wort
+    // (`Estrich anschleifen und absaugen`, 8,50 €) steht unter **Boden** und
+    // fällt für eine Malerposition durch den Gewerke-Filter.
+    //
+    // Umbenannt hätte die Position also 8,00 € gegen 0,00 € getauscht.
+    // Gehört deshalb in den Katalog-Zug: Engine UND Katalogzeile zusammen
+    // umbenennen, nicht einzeln (Sandys Entscheidung, CoS-E-048).
     ergaenzt.push({ beschreibung: 'Estrich schleifen / Untergrundvorbereitung', menge: em2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${em2} m²`, annahmen: [] })
     ergaenzt.push({ beschreibung: 'Epoxid / Versiegelung — Schicht 1', menge: em2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${em2} m²`, annahmen: [] })
     ergaenzt.push({ beschreibung: 'Epoxid / Versiegelung — Schicht 2', menge: em2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${em2} m²`, annahmen: [] })
@@ -325,9 +348,12 @@ export function pruefeBewohnt(ergaenzt: BerechnetePosition[], fehlende: string[]
     const bodenPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('boden'))
     const bodenmenge = bodenPos?.menge ?? null
     if (bodenmenge !== null) {
-      ergaenzt.push({ beschreibung: 'Möbel schützen / Abdecken', menge: bodenmenge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenmenge} m²`, annahmen: [] })
+      // F.6: Katalogtitel wörtlich (`Möbel abdecken mit Folie`, 1,50 €/m²).
+      // Preis bleibt gleich, der Treffer steigt von 0,80 auf 1,00 — und der
+      // Kunde liest, was passiert, statt „schützen / abdecken".
+      ergaenzt.push({ beschreibung: 'Möbel abdecken mit Folie', menge: bodenmenge, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Bodenfläche ${bodenmenge} m²`, annahmen: [] })
     } else {
-      add(ergaenzt, fehlende, 'Möbel schützen / Abdecken')
+      add(ergaenzt, fehlende, 'Möbel abdecken mit Folie')
     }
   }
   if (!hat(ergaenzt, 'erschwerniszuschlag bewohnt')) {

@@ -8,6 +8,7 @@
 import type { BerechnetePosition, MengenErgebnis } from './types'
 import { berechneMengen } from './engine'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../vollstaendigkeit/index'
+import type { ErschwernisConfig } from '../erschwernis'
 import type { ExtraktionSignale } from '../auftrags-verstaendnis'
 import { erkenneBelag, hatBodenArbeit } from '../boden-normalisierer'
 import { BODEN_VERLEGEN_SIGNAL } from './gewerke/boden'
@@ -170,7 +171,13 @@ function reichereBodenAn<E extends { raeume?: RaumLike[]; bereiche?: RaumLike[] 
   }
 }
 
-interface Meta { fensterAnzahl?: number; tuerenAnzahl?: number; raeume?: Array<{ name?: string; hoehe?: number | null }> }
+interface Meta {
+  fensterAnzahl?: number
+  tuerenAnzahl?: number
+  raeume?: Array<{ name?: string; hoehe?: number | null }>
+  /** CoS-E-040: welche Erschwerniszuschläge der Betrieb will. */
+  erschwernis?: ErschwernisConfig | null
+}
 
 /**
  * Berechnet Mengen + Vollständigkeit über ALLE beteiligten Gewerke und merged.

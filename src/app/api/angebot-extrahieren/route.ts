@@ -10,6 +10,7 @@ import * as Sentry from '@sentry/nextjs'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { KalkulationsAntworten } from '@/lib/mengen/antworten-verarbeiter'
 import { verarbeiteExtraktion, type ExtraktionResponse } from '@/lib/mengen/extraktion-pipeline'
+import type { ErschwernisConfig } from '@/lib/erschwernis'
 
 export const maxDuration = 60
 
@@ -64,8 +65,12 @@ export async function POST(req: NextRequest) {
   }
 
   // Gewerk-Hinweis aus Company-Profil
-  const { data: company } = await supabase.from('companies').select('gewerke').eq('user_id', user.id).single()
-  const gewerke = (company as { gewerke?: string[] } | null)?.gewerke ?? []
+  // CoS-E-040: `erschwernis_config` mitladen — abgeschaltete Zuschläge
+  // sollen gar nicht erst als Position entstehen.
+  const { data: company } = await supabase.from('companies').select('gewerke, erschwernis_config').eq('user_id', user.id).single()
+  const betrieb = company as { gewerke?: string[]; erschwernis_config?: ErschwernisConfig | null } | null
+  const gewerke = betrieb?.gewerke ?? []
+  const erschwernis = betrieb?.erschwernis_config ?? null
   const gewerk_hinweis = gewerke.length > 0
     ? `Der Handwerker arbeitet hauptsächlich in: ${gewerke.join(', ')}. Bevorzuge diese Gewerke bei der Zuweisung.`
     : ''
@@ -105,7 +110,7 @@ export async function POST(req: NextRequest) {
             session.access_token
           ) as { result: ExtrahierteDaten }
 
-    const antwort = verarbeiteExtraktion(text, edgeResult, antworten, basis_extraktion)
+    const antwort = verarbeiteExtraktion(text, edgeResult, antworten, basis_extraktion, erschwernis)
 
     return NextResponse.json(antwort satisfies ExtraktionResponse)
   } catch (err) {

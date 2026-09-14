@@ -5,6 +5,35 @@ import { hat } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen, extrahiereVerschnitt, erkenneBelagName } from './boden-basis'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
+// ── CoS-E-Einheiten (Manfred, 11.09.2026) ─────────────────────────────────
+//
+// Manfred beim Durchsehen des Vokabular-Abgleichs: *„Vier von den 14 Lücken
+// sind gar keine Wortlücken, sondern falsche Einheiten. Fugen und Kanten sind
+// immer laufende Meter, in jedem Betrieb in Deutschland."*
+//
+// Er hat recht, und es war schlimmer als ein falsches Etikett: Nicht nur die
+// Einheit stand auf m², auch die MENGE war die Bodenfläche. Eine Fuge wurde
+// also nach Quadratmetern berechnet. Aufgefallen ist es nur deshalb nicht,
+// weil zu diesen Positionen ohnehin kein Katalogpreis existiert und sie mit
+// 0,00 € dastanden — der Fehler war von einem zweiten Fehler verdeckt. Wer
+// den fehlenden Preis anlegt, ohne das hier zu kennen, bekommt sofort eine
+// Fuge mal Bodenfläche.
+//
+// Die Meterzahl kommt aus dem gesprochenen Text. Ist keine genannt, wird
+// KEINE geschätzt: Aus der Bodenfläche auf Fugenmeter zu schließen wäre
+// genau die erfundene Zahl, für die am Ende der Handwerker geradesteht. Die
+// Position geht dann in `fehlende` und wird nachgefragt.
+
+/** Fugen-/Nahtmeter aus dem gesprochenen Text, oder null. */
+export function fugenMeterAusText(lower: string): number | null {
+  const treffer =
+    lower.match(/(\d+)\s*(?:laufende meter|lfm|lfdm|lm|meter)\s*(?:fuge|fugen|naht|nähte|naehte|stoß|stoss)/i) ??
+    lower.match(/(?:fuge|fugen|naht|nähte|naehte|stoßkante|stosskante)[^.]*?(\d+)\s*(?:laufende meter|lfm|lfdm|lm|meter)/i) ??
+    lower.match(/(?:so\s+)?um\s+die\s+(\d+)\s*(?:laufende meter|lfm|lfdm|lm|meter)/i)
+  return treffer ? parseInt(treffer[1]) : null
+}
+
+
 const zahlwoerter: Record<string, number> = { einmal: 1, zweimal: 2, dreimal: 3, viermal: 4 }
 
 export function pruefeDiagonalBoden(
@@ -65,14 +94,23 @@ export function pruefeParkettSchleifen(
   // Fläche: aus Text, sonst aus vorhandener Schleif-/Boden-Position
   const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
     ?? bodenNettoflaecheAusPositionen(ergaenzt)
-    ?? ergaenzt.find(p => /parkett schleifen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
+    // „(?:ab)?schleifen", nicht „schleifen": Seit F.6 heißt die Position der
+    // Engine `Parkett abschleifen (2 Schleifgänge)`. Der alte Ausdruck las
+    // den Titel als stillen Vertrag mit — und lieferte nach der Umbenennung
+    // wortlos `null`, womit Versiegelung und Verkitten aus dem Angebot in
+    // die Fehlt-Liste rutschten. Derselbe Fehlertyp wie die vier toten
+    // Pfade: Etwas liest einen Wert, den niemand mehr schreibt.
+    ?? ergaenzt.find(p => /parkett (?:ab)?schleifen|boden/i.test(p.beschreibung) && p.einheit === 'm²')?.menge
     ?? null
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
 
   // Schleif-Position nur, wenn die Engine sie noch nicht angelegt hat.
   // WICHTIG: NICHT die ganze Funktion abbrechen — Versiegelung/Verkitten müssen folgen.
   if (!hat(ergaenzt, 'schleifen')) {
-    let schleifGaenge = 1
+    // Standard sind zwei Gänge (grob + fein) — F.6. Vorher stand hier 1,
+    // was auf den 12-€-Eintrag zeigt statt auf die 20 €, die der Betrieb für
+    // die übliche Aufarbeitung braucht.
+    let schleifGaenge = 2
     const gangMatch = lower.match(/(\d+)[\s-]*(?:fach|mal|x)\s*(?:abgeschliffen|schleif|schleifen)?/i)
     if (gangMatch) {
       schleifGaenge = parseInt(gangMatch[1])
@@ -81,20 +119,23 @@ export function pruefeParkettSchleifen(
         if (lower.includes(wort)) { schleifGaenge = val; break }
       }
     }
-    const schleifLabel = schleifGaenge > 1
-      ? `Parkett schleifen ${schleifGaenge}-fach (grob bis fein)`
-      : 'Parkett schleifen'
+    // Titel wörtlich in der Sprache des Katalogs, samt Gangzahl (F.6). Mit
+    // „2-fach (grob bis fein)" fand die Engine laut Prüfmeister GAR NICHTS.
+    const schleifLabel = `Parkett abschleifen (${schleifGaenge} ${schleifGaenge === 1 ? 'Schleifgang' : 'Schleifgänge'})`
     if (m2) ergaenzt.push({ beschreibung: schleifLabel, menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
     else fehlende.push(schleifLabel)
   }
 
-  // Fugen / Unreinheiten verkitten
+  // Fugen / Unreinheiten verkitten — laufende Meter, nicht Fläche.
+  // Manfred: „Verkitten ist Acryl in die Fuge, lfdm. Spachteln ist Fläche.
+  // Zwei Leistungen." Siehe fugenMeterAusText() oben.
   if (lower.includes('verkitten') || lower.includes('kitten') || lower.includes('unreinheit')) {
     if (!hat(ergaenzt, 'kitten', 'verkitten')) {
-      if (m2) {
-        ergaenzt.push({ beschreibung: 'Fugen/Unreinheiten verkitten', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+      const fugenMeter = fugenMeterAusText(lower)
+      if (fugenMeter) {
+        ergaenzt.push({ beschreibung: 'Fugen/Unreinheiten verkitten', menge: fugenMeter, einheit: 'lfdm', berechnungsweg: `${fugenMeter} lfdm aus Transkript`, ...mk })
       } else {
-        fehlende.push('Fugen/Unreinheiten verkitten')
+        fehlende.push('Fugen/Unreinheiten verkitten (Meter prüfen)')
       }
     }
   }
@@ -209,11 +250,7 @@ export function pruefeFugenVerschweissen(
   if (!hatVerschweissen) return
   if (hat(ergaenzt, 'verschweißen', 'verschweissen')) return
 
-  const fugMatch =
-    lower.match(/(\d+)\s*(?:laufende meter|lfm|lfdm|lm|meter)\s*(?:fuge|fugen)/i) ??
-    lower.match(/(?:fuge|fugen)[^.]*?(\d+)\s*(?:laufende meter|lfm|lfdm|lm|meter)/i) ??
-    lower.match(/(?:so\s+)?um\s+die\s+(\d+)\s*(?:laufende meter|lfm|lfdm|lm|meter)/i)
-  const lfdm = fugMatch ? parseInt(fugMatch[1]) : null
+  const lfdm = fugenMeterAusText(lower)
   const mk = lfdm
     ? { konfidenz: 'high' as const, annahmen: [] as string[] }
     : { konfidenz: 'medium' as const, annahmen: ['Fugenmeter geschätzt, bitte vor Ort prüfen'] as string[] }
@@ -453,12 +490,14 @@ export function pruefeStosskanten(
   if (!hatStosskanten) return
   if (hat(ergaenzt, 'stoßkanten', 'stosskanten')) return
 
-  const m2 = extrahiereFlaeche(lower) ?? extrahiereFlaecheAusAbmessungen(lower)
+  // Nähte bei Vinyl/PVC — laufende Meter, nicht Bodenfläche.
+  // Manfred: „Bodenleger, Nähte bei Vinyl/PVC, lfdm, ~3 €. Einheit falsch."
+  const nahtMeter = fugenMeterAusText(lower)
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
-  if (m2) {
-    ergaenzt.push({ beschreibung: 'Stoßkanten verkleben', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+  if (nahtMeter) {
+    ergaenzt.push({ beschreibung: 'Stoßkanten verkleben', menge: nahtMeter, einheit: 'lfdm', berechnungsweg: `${nahtMeter} lfdm aus Transkript`, ...mk })
   } else {
-    fehlende.push('Stoßkanten verkleben')
+    fehlende.push('Stoßkanten verkleben (Meter prüfen)')
   }
 }
 
@@ -491,12 +530,20 @@ export function pruefeFischgraet(
     const pct = Math.round(verschnitt * 100)
     const mengeMitVerschnitt = Math.round(m2 * (1 + verschnitt) * 100) / 100
     ergaenzt.push({
-      beschreibung: 'Aufpreis Fischgrät-Verlegemuster (vollflächig verklebt)',
+      // F.5/5 (12.09.2026): Titel wörtlich wie im Katalog und wie in
+      // boden.ts — derselbe Aufpreis hieß hier bisher anders. Der Zusatz
+      // „(vollflächig verklebt)" musste weg: Er beschreibt die Verlegeart
+      // der HAUPTposition, nicht die Arbeit dieser Zeile; ein Aufpreis auf
+      // das Muster ist verlegeartneutral. Seit die Verlegeart ein Filter am
+      // Rohtitel ist (preis-aufwandswoerter.ts), sperrte der erfundene
+      // Zusatz den einzigen passenden Katalogeintrag aus — 14,00 € wurden
+      // zu 0,00 €. Die Verlegeart steht weiter in den Annahmen.
+      beschreibung: 'Aufpreis Fischgrät-Verlegemuster',
       menge: mengeMitVerschnitt,
       einheit: 'm²',
       berechnungsweg: `${m2} m² × ${1 + verschnitt} = ${mengeMitVerschnitt} m²`,
       ...mk,
-      annahmen: [`Verlegemuster Fischgrät: +${pct}% Verschnitt`],
+      annahmen: [`Verlegemuster Fischgrät: +${pct}% Verschnitt`, 'Vollflächig verklebt'],
     })
   } else {
     fehlende.push('Fertigparkett Fischgrät vollflächig verkleben (Menge prüfen)')

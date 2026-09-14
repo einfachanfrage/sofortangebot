@@ -96,7 +96,7 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Boden – Parkett', title: 'Mehrschichtparkett verlegen vollflächig verklebt', unit: 'm²', hint: '34–52 €', defaultPrice: 42.00 },
     { category: 'Boden – Parkett', title: 'Massivparkett (Stabparkett) verlegen vollflächig verklebt', unit: 'm²', hint: '44–68 €', defaultPrice: 55.00 },
     { category: 'Boden – Parkett', title: 'Landhausdiele verlegen schwimmend (Klick)', unit: 'm²', hint: '20–32 €', defaultPrice: 25.00 },
-    { category: 'Boden – Parkett', title: 'Landhausdiele verlegen vollflächig verklebt', unit: 'm²', hint: '32–50 €', defaultPrice: 40.00 },
+    { category: 'Boden – Parkett', title: 'Landhausdiele Mehrschicht verlegen, vollflächig verklebt', unit: 'm²', hint: '32–50 €', defaultPrice: 40.00 },
     { category: 'Boden – Parkett', title: 'Aufpreis Fischgrät-Verlegemuster', unit: 'm²', hint: '10–19 €', defaultPrice: 14.00 },
     { category: 'Boden – Parkett', title: 'Aufpreis Verlegung bei Fußbodenheizung', unit: 'm²', hint: '5–12 €', defaultPrice: 8.00 },
     // Parkett Aufarbeitung
@@ -280,10 +280,10 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Putz – Spachtelung', title: 'Fläche glätten (Q4, Hochglatt)', unit: 'm²', hint: '24–42 €', defaultPrice: 32.00 },
     { category: 'Putz – Spachtelung', title: 'Putz ausbessern (Fehlstellen, Schadstellen)', unit: 'm²', hint: '21–36 €', defaultPrice: 28.00 },
     // Stuck Dekorativ
-    { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (PU-Hartschaum, einfach)', unit: 'lfdm', hint: '13–24 €', defaultPrice: 18.00 },
+    { category: 'Stuck – Dekorativ', title: 'PU-Stuckleiste montieren', unit: 'lfdm', hint: '13–24 €', defaultPrice: 18.00 },
     { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (PU-Hartschaum, profiliert)', unit: 'lfdm', hint: '21–36 €', defaultPrice: 28.00 },
-    { category: 'Stuck – Dekorativ', title: 'Stuckleiste montieren (Gips, einfach)', unit: 'lfdm', hint: '18–33 €', defaultPrice: 25.00 },
-    { category: 'Stuck – Dekorativ', title: 'Deckenrosette montieren (PU / Gips, Fertigteil)', unit: 'Stück', hint: '40–72 €', defaultPrice: 55.00 },
+    { category: 'Stuck – Dekorativ', title: 'Gipsstuckleiste montieren', unit: 'lfdm', hint: '18–33 €', defaultPrice: 25.00 },
+    { category: 'Stuck – Dekorativ', title: 'Deckenrosette montieren', unit: 'Stück', hint: '40–72 €', defaultPrice: 55.00 },
     { category: 'Stuck – Dekorativ', title: 'Deckenrosette montieren (groß, >50cm)', unit: 'Stück', hint: '68–116 €', defaultPrice: 90.00 },
     { category: 'Stuck – Dekorativ', title: 'Deckenspiegel / Rahmenfeld (Stuckleisten)', unit: 'Stück', hint: '90–155 €', defaultPrice: 120.00 },
     { category: 'Stuck – Dekorativ', title: 'LED-Stuckleiste montieren (inkl. LED-Profil)', unit: 'lfdm', hint: '26–46 €', defaultPrice: 35.00 },
@@ -306,7 +306,7 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Estrich – Untergrundvorbereitung', title: 'Schüttung einbringen (Blähton / Perlite)', unit: 'm²', hint: '18–28 €', defaultPrice: 22.00 },
     // Dämmung & Trennlagen
     { category: 'Estrich – Dämmung & Trennlagen', title: 'Trittschalldämmung verlegen (bis 20mm)', unit: 'm²', hint: '7–12 €', defaultPrice: 9.00 },
-    { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung verlegen (EPS, bis 60mm)', unit: 'm²', hint: '11–18 €', defaultPrice: 14.00 },
+    { category: 'Estrich – Dämmung & Trennlagen', title: 'Wärmedämmung EPS verlegen, bis 60 mm', unit: 'm²', hint: '11–18 €', defaultPrice: 14.00 },
     { category: 'Estrich – Dämmung & Trennlagen', title: 'PE-Folie / Trennlage verlegen', unit: 'm²', hint: '2–4 €', defaultPrice: 3.00 },
     // Zementestrich
     { category: 'Estrich – Zementestrich', title: 'Zementestrich schwimmend (CT-C25-F4, 60mm)', unit: 'm²', hint: '22–35 €', defaultPrice: 28.00 },
@@ -490,8 +490,8 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Schreiner – Einbauschränke', title: 'Garderobenschrank Maßanfertigung (je lfdm)', unit: 'lfdm', hint: '540–870 €', defaultPrice: 680.00 },
     { category: 'Schreiner – Einbauschränke', title: 'IKEA-Schrank / Serienmöbel montieren (nur Montage)', unit: 'Stunde', hint: '52–82 €', defaultPrice: 65.00 },
     // Küche nach Maß
-    { category: 'Schreiner – Küche nach Maß', title: 'Küche Planung + Fertigung + Montage (einfach, je lfdm)', unit: 'lfdm', hint: '1.400–2.200 €', defaultPrice: 1800.00 },
-    { category: 'Schreiner – Küche nach Maß', title: 'Küche Planung + Fertigung + Montage (mittel, je lfdm)', unit: 'lfdm', hint: '2.200–3.500 €', defaultPrice: 2800.00 },
+    { category: 'Schreiner – Küche nach Maß', title: 'Einbauküche einfach je lfdm', unit: 'lfdm', hint: '1.400–2.200 €', defaultPrice: 1800.00 },
+    { category: 'Schreiner – Küche nach Maß', title: 'Einbauküche mittel je lfdm', unit: 'lfdm', hint: '2.200–3.500 €', defaultPrice: 2800.00 },
     { category: 'Schreiner – Küche nach Maß', title: 'Küchenmontage (nur Montage Kundenware, je lfdm)', unit: 'lfdm', hint: '95–155 €', defaultPrice: 120.00 },
     { category: 'Schreiner – Küche nach Maß', title: 'Küchenarbeitsplatte Holz einpassen + montieren', unit: 'lfdm', hint: '220–360 €', defaultPrice: 280.00 },
     // Möbel nach Maß
@@ -620,7 +620,7 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Türen – Garagentore', title: 'Sektionaltor (Deckentor, Standard bis 2,5×2,25m) einbauen inkl. Element', unit: 'Stück', hint: '1.750–2.650 €', defaultPrice: 2200.00 },
     { category: 'Türen – Garagentore', title: 'Garagentorantrieb elektrisch einbauen / nachrüsten', unit: 'Stück', hint: '380–580 €', defaultPrice: 480.00 },
     // Rollladen & Sonnenschutz
-    { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Außenrollladen (elektrisch, 230V) einbauen inkl. Kasten', unit: 'Stück', hint: '460–700 €', defaultPrice: 580.00 },
+    { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Rollladen elektrisch einbauen', unit: 'Stück', hint: '460–700 €', defaultPrice: 580.00 },
     { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Rollladen motorisieren (Umbau manuell → elektrisch)', unit: 'Stück', hint: '220–340 €', defaultPrice: 280.00 },
     { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Markise einbauen (Standard, bis 3m Breite)', unit: 'Stück', hint: '515–790 €', defaultPrice: 650.00 },
     { category: 'Fenster – Rollladen & Sonnenschutz', title: 'Insektenschutz / Fliegengitter einbauen (Spannrahmen)', unit: 'Stück', hint: '65–105 €', defaultPrice: 85.00 },
@@ -945,8 +945,8 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Abbruch – Wände', title: 'Tragende Betonwand abbrechen (inkl. Bewehrung trennen)', unit: 'm²', hint: '140–220 €', defaultPrice: 180.00 },
     { category: 'Abbruch – Wände', title: 'Wandfliesen abstemmen', unit: 'm²', hint: '17–27 €', defaultPrice: 22.00 },
     { category: 'Abbruch – Wände', title: 'Putz abschlagen', unit: 'm²', hint: '11–17 €', defaultPrice: 14.00 },
-    { category: 'Abbruch – Wände', title: 'Wandöffnung / Durchbruch herstellen (bis 1 m², Mauerwerk)', unit: 'Stück', hint: '220–340 €', defaultPrice: 280.00 },
-    { category: 'Abbruch – Wände', title: 'Wandöffnung / Durchbruch herstellen (bis 1 m², Beton / Stahlbeton)', unit: 'Stück', hint: '510–790 €', defaultPrice: 650.00 },
+    { category: 'Abbruch – Wände', title: 'Durchbruch Mauerwerk bis 1 m²', unit: 'Stück', hint: '220–340 €', defaultPrice: 280.00 },
+    { category: 'Abbruch – Wände', title: 'Durchbruch Beton bis 1 m²', unit: 'Stück', hint: '510–790 €', defaultPrice: 650.00 },
     { category: 'Abbruch – Wände', title: 'Kernbohrung (bis DN 150)', unit: 'Stück', hint: '140–220 €', defaultPrice: 180.00 },
     // Decken & Böden
     { category: 'Abbruch – Decken & Böden', title: 'Betondecke abbrechen (Stahlbetondecke)', unit: 'm²', hint: '95–145 €', defaultPrice: 120.00 },
@@ -955,16 +955,16 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Abbruch – Decken & Böden', title: 'Bodenfliesen abstemmen', unit: 'm²', hint: '14–22 €', defaultPrice: 18.00 },
     // Teilabbruch
     { category: 'Abbruch – Teilabbruch', title: 'Kamin / Schornstein abtragen (je m Höhe)', unit: 'lfdm', hint: '51–79 €', defaultPrice: 65.00 },
-    { category: 'Abbruch – Teilabbruch', title: 'Treppe abbrechen (Beton)', unit: 'Stück', hint: '670–1.030 €', defaultPrice: 850.00 },
+    { category: 'Abbruch – Teilabbruch', title: 'Betontreppe abbrechen', unit: 'Stück', hint: '670–1.030 €', defaultPrice: 850.00 },
     { category: 'Abbruch – Teilabbruch', title: 'Balkon abbrechen (Stahlbeton)', unit: 'm²', hint: '140–220 €', defaultPrice: 180.00 },
     { category: 'Abbruch – Teilabbruch', title: 'Dachstuhl abbrechen + entsorgen', unit: 'm²', hint: '27–43 €', defaultPrice: 35.00 },
     { category: 'Abbruch – Teilabbruch', title: 'Dachabdeckung entfernen + entsorgen', unit: 'm²', hint: '14–22 €', defaultPrice: 18.00 },
     { category: 'Abbruch – Teilabbruch', title: 'Keller abbrechen + verfüllen', unit: 'm²', hint: '95–145 €', defaultPrice: 120.00 },
     // Vollabbruch
     { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch EFH (Massivbau, bis 120 m², inkl. Entsorgung)', unit: 'Pauschale', hint: '22.000–34.000 €', defaultPrice: 28000.00 },
-    { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch je m² BGF (Massivbau, Richtwert)', unit: 'm²', hint: '60–92 €', defaultPrice: 75.00 },
-    { category: 'Abbruch – Vollabbruch', title: 'Garage abbrechen (Beton / Massiv, bis 25 m²)', unit: 'Stück', hint: '2.200–3.400 €', defaultPrice: 2800.00 },
-    { category: 'Abbruch – Vollabbruch', title: 'Garage abbrechen (Leichtbau / Fertiggarage)', unit: 'Stück', hint: '950–1.450 €', defaultPrice: 1200.00 },
+    { category: 'Abbruch – Vollabbruch', title: 'Vollabbruch Massivbau je m²', unit: 'm²', hint: '60–92 €', defaultPrice: 75.00 },
+    { category: 'Abbruch – Vollabbruch', title: 'Massivgarage abbrechen', unit: 'Stück', hint: '2.200–3.400 €', defaultPrice: 2800.00 },
+    { category: 'Abbruch – Vollabbruch', title: 'Fertiggarage abbrechen', unit: 'Stück', hint: '950–1.450 €', defaultPrice: 1200.00 },
     { category: 'Abbruch – Vollabbruch', title: 'Gartenhaus / Nebengebäude abbrechen (Holz, bis 20 m²)', unit: 'Stück', hint: '750–1.150 €', defaultPrice: 950.00 },
     // Schadstoff-Rückbau
     { category: 'Abbruch – Schadstoff-Rückbau', title: 'Asbest-Dachplatten (Eternit) entfernen + Sonderentsorgung', unit: 'm²', hint: '55–85 €', defaultPrice: 70.00 },
@@ -1080,8 +1080,8 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (2–4 Haltestellen, maschinenraumlos)', unit: 'Pauschale', hint: '22.000–34.000 €', defaultPrice: 28000.00 },
     { category: 'Aufzugstechnik – Einbau', title: 'Personenaufzug einbauen (5–8 Haltestellen)', unit: 'Pauschale', hint: '30.000–46.000 €', defaultPrice: 38000.00 },
     { category: 'Aufzugstechnik – Einbau', title: 'Plattformlift / Hebebühne einbauen (bis 3 Haltestellen)', unit: 'Pauschale', hint: '14.000–22.000 €', defaultPrice: 18000.00 },
-    { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift einbauen (gerade Treppe, komplett)', unit: 'Pauschale', hint: '4.300–6.700 €', defaultPrice: 5500.00 },
-    { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift einbauen (gewendelte Treppe)', unit: 'Pauschale', hint: '7.400–11.600 €', defaultPrice: 9500.00 },
+    { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift gerade Treppe', unit: 'Pauschale', hint: '4.300–6.700 €', defaultPrice: 5500.00 },
+    { category: 'Aufzugstechnik – Einbau', title: 'Treppenlift gewendelte Treppe', unit: 'Pauschale', hint: '7.400–11.600 €', defaultPrice: 9500.00 },
     { category: 'Aufzugstechnik – Einbau', title: 'Aufzugsschacht mauern / herstellen (je m² Innenfläche)', unit: 'm²', hint: '220–340 €', defaultPrice: 280.00 },
     { category: 'Aufzugstechnik – Einbau', title: 'Aufzugsgrube herstellen (Beton, je Grube)', unit: 'Stück', hint: '2.200–3.400 €', defaultPrice: 2800.00 },
     { category: 'Aufzugstechnik – Einbau', title: 'Elektroanschluss Aufzug (Zuleitung + Unterverteilung)', unit: 'Pauschale', hint: '660–1.040 €', defaultPrice: 850.00 },

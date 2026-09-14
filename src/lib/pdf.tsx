@@ -3,12 +3,15 @@ import path from 'node:path'
 import type { AngebotsFoto } from '@/lib/angebot-fotos'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
+import { raeumeAusQuote, istAllgemeinPosition } from './angebot-gruppierung'
 import {
   widerrufsbelehrungText, musterWiderrufsformular,
   WERTERSATZ_UEBERSCHRIFT, WERTERSATZ_ERKLAERUNG, WERTERSATZ_HINWEIS,
 } from './widerrufsbelehrung'
-import { effektiveOptionen, skontoText, DOKUMENT_TYP_LABEL } from './angebot-optionen'
+import { effektiveOptionen, skontoText, gueltigBis, DOKUMENT_TYP_LABEL } from './angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './mengen/gewerke/vob-uebermessung'
+import { mitDeutschenZahlen } from './zahlen-text'
+import { fasseKleinbetraegeZusammen } from './kleinbetraege'
 
 // ── Marken-Schriften (CI-Handbuch, DC-049 "PDF-Schritt", 2026-09-10) ────────
 // react-pdf kennt von Haus aus nur die PDF-Standardschriften (Helvetica,
@@ -157,8 +160,14 @@ const S = StyleSheet.create({
   // Feature-Liste". Gleiche Konvention wie in AngebotDetail.tsx (Schritt c):
   // IBM Plex Mono, gedeckte Grautöne, "Pauschale" als Fallback-Text bei
   // Positionen ohne echten Rechenweg.
-  rechenwegText: { fontFamily: 'IBM Plex Mono', fontWeight: 500, fontSize: 7.5, color: '#666666', marginTop: 3, lineHeight: 1.4 },
-  rechenwegAnnahmen: { fontFamily: 'IBM Plex Mono', fontWeight: 500, fontSize: 7, color: '#999999', marginTop: 1 },
+  // DC-055 (2026-09-11, Manfred/TN-007): hier stand IBM Plex Mono — auf dem
+  // Kundendokument las sich der Rechenweg dadurch „wie Computer". Die
+  // Monospace-Konvention bleibt dort, wo sie hilft: in der App
+  // (AngebotDetail.tsx), wo der Betrieb Zahl unter Zahl prüft. Das Papier,
+  // das beim Kunden auf dem Tisch liegt, ist ein Dokument und sieht auch so
+  // aus — die Abstufung macht weiter die Größe und das Grau, nicht die
+  // Schriftart.
+  rechenwegText: { fontSize: 7.5, color: '#666666', marginTop: 3, lineHeight: 1.4 },
   mengeText: { fontSize: 9, color: '#333333', textAlign: 'right' },
   einheitText: { fontSize: 9, color: '#555555', textAlign: 'center' },
   einzelText: { fontSize: 9, color: '#333333', textAlign: 'right' },
@@ -288,8 +297,18 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   const iban         = company.iban || ''
   // Pro-Angebot-Optionen (Zahnrad) schlagen die Betriebs-Einstellungen
   const opt = effektiveOptionen(quote, company, quote.customer?.ist_unternehmen)
+  // DC-056 (Manfred/TN-010): Kleinbeträge zu einer Zeile bündeln, wenn der
+  // Schalter am Angebot an ist. Bewusst HIER, vor der Gruppierung — dann gilt
+  // es für beide Renderpfade (flach und nach Räumen) und für jede Gliederung,
+  // ohne dass eine der Stellen es selbst wissen muss. Ist der Schalter aus,
+  // kommt die unveränderte Liste zurück.
+  const positionen = fasseKleinbetraegeZusammen(
+    quote.items, opt.kleinbetraegeZusammenfassen, istAllgemeinPosition,
+  )
   const dokTitel = DOKUMENT_TYP_LABEL[opt.dokumentTyp]
   const zahlungsTage = opt.zahlungszielTage
+  // CoS-E-013/031/042: siehe gueltigBis() in angebot-optionen.ts.
+  const gueltigBisDatum = gueltigBis(quote, opt.gueltigTage)
   const logoSrc      = logoBase64 || briefpapier?.logo_url || (company as Company & { logo_url?: string }).logo_url
 
   const footerLinks  = [firmenname, adresse?.split('\n')[0]].filter(Boolean).join(' · ')
@@ -326,8 +345,27 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   // `berechnungsweg`/`annahmen` nicht durch (dieselbe Lücke wie beim
   // Übermessungs-Hinweis oben) — deshalb dieselbe Lösung: einmal nach id
   // auflösen statt den Gruppierungs-Typ dafür zu erweitern.
+  //
+  // CoS-E-005/CoS-E-009 (Manfred, 11.09.2026): Hier stand bis heute auch
+  // `annahmen` — und landete damit direkt unter jeder Position auf dem
+  // Kundenpapier. Das `annahmen`-Array ist aber eine **Notiz an den
+  // Handwerker**, keine Aussage an den Kunden: „Schwieriger Untergrund im
+  // Transkript erkannt", „Zweifacher Anstrich als Standard angenommen —
+  // bitte prüfen", „Leitungsmeter nicht angegeben — bitte Menge manuell
+  // anpassen". Der Kunde las also Arbeitsanweisungen an den Betrieb und das
+  // interne Wort „Transkript" auf seinem Angebot.
+  //
+  // Deshalb ab hier eine harte Trennung, nicht nur ein gelöschter Block:
+  // `annahmen` kommt gar nicht mehr bis ins PDF. Was der Kunde sehen MUSS,
+  // wird ausdrücklich herausgezogen — heute ist das genau eines, der
+  // Übermessungs-Hinweis (VOB-004/Legal G5, oben über
+  // `uebermessungsHinweiseJePosition`). Wer künftig etwas aus den Annahmen
+  // aufs Kundendokument bringen will, muss es dort ebenso ausdrücklich
+  // herausziehen — und nicht das ganze interne Array wieder durchreichen.
+  // Der Rechenweg selbst (die reine Rechnung) bleibt: er ist laut CI-Handbuch
+  // das Beweisstück für den Kunden.
   const rechenwegJeItem = new Map(
-    quote.items.map(i => [i.id, { berechnungsweg: i.berechnungsweg, annahmen: i.annahmen }])
+    quote.items.map(i => [i.id, { berechnungsweg: i.berechnungsweg }])
   )
 
   const ersterRaum = quote.items[0]?.title?.split(' — ')[1] ?? ''
@@ -367,16 +405,22 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                 <Text style={S.metaLabel}>Datum</Text>
                 <Text style={S.metaWert}>{fmtDatum(quote.created_at)}</Text>
               </View>
-              {quote.valid_until && (
+              {/* CoS-E-006/013/031/042 (Manfred, 11.09.2026): Hier stand
+                  „Zahlungsziel: 14 Tage" — auf einem ANGEBOT. Das ist
+                  Rechnungssprache: ein Zahlungsziel läuft ab einer Rechnung,
+                  die es noch gar nicht gibt. In denselben Kopfblock gehört
+                  die Frist, die es hier wirklich gibt: wie lange der Preis
+                  gilt. Die Zahlungsbedingungen stehen weiter unten im Text,
+                  wo sie als Bedingung gelesen werden und nicht als Fälligkeit.
+                  „Gültig bis" wird jetzt gerechnet statt gelesen und ist
+                  deshalb immer da — vorher hing es an einem Feld, das der
+                  Aufnahme-Flow nie gefüllt hat. */}
+              {gueltigBisDatum && (
                 <View style={S.metaZeile}>
                   <Text style={S.metaLabel}>Gültig bis</Text>
-                  <Text style={S.metaWert}>{fmtDatum(quote.valid_until)}</Text>
+                  <Text style={S.metaWert}>{fmtDatum(gueltigBisDatum)}</Text>
                 </View>
               )}
-              <View style={S.metaZeile}>
-                <Text style={S.metaLabel}>Zahlungsziel</Text>
-                <Text style={S.metaWert}>{zahlungsTage} Tage</Text>
-              </View>
             </View>
           </View>
         </View>
@@ -414,23 +458,20 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
         {/* ── POSITIONEN ─────────────────────────────────────────────────── */}
         {(() => {
-          const gruppen = gruppiereNachStruktur(quote.items, opt.struktur)
+          const gruppen = gruppiereNachStruktur(positionen, opt.struktur, raeumeAusQuote(quote))
 
           if (!gruppen) {
-            return quote.items.map((item, idx) => (
+            return positionen.map((item, idx) => (
               <View key={item.id} style={S.tableRow} wrap={false}>
                 <Text style={{ ...S.posText, ...S.cPos }}>{idx + 1}</Text>
                 <View style={S.cBez}>
                   <Text style={S.titelText}>{item.title}</Text>
                   {item.description && <Text style={S.beschreibungText}>{item.description}</Text>}
                   {hinweisJeItem.get(item.id) && (
-                    <Text style={S.uebermessungText}>{hinweisJeItem.get(item.id)} ¹</Text>
+                    <Text style={S.uebermessungText}>{mitDeutschenZahlen(hinweisJeItem.get(item.id))} ¹</Text>
                   )}
                   {rechenwegSichtbar && (
-                    <Text style={S.rechenwegText}>{rechenwegJeItem.get(item.id)?.berechnungsweg || 'Pauschale'}</Text>
-                  )}
-                  {rechenwegSichtbar && (rechenwegJeItem.get(item.id)?.annahmen?.length ?? 0) > 0 && (
-                    <Text style={S.rechenwegAnnahmen}>{rechenwegJeItem.get(item.id)!.annahmen!.join(' · ')}</Text>
+                    <Text style={S.rechenwegText}>{mitDeutschenZahlen(rechenwegJeItem.get(item.id)?.berechnungsweg) || 'Pauschale'}</Text>
                   )}
                 </View>
                 <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(item.quantity)}</Text>
@@ -462,13 +503,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                     <Text style={S.titelText}>{gi.titleDisplay}</Text>
                     {gi.description && <Text style={S.beschreibungText}>{gi.description}</Text>}
                     {hinweisJeItem.get(gi.id) && (
-                      <Text style={S.uebermessungText}>{hinweisJeItem.get(gi.id)} ¹</Text>
+                      <Text style={S.uebermessungText}>{mitDeutschenZahlen(hinweisJeItem.get(gi.id))} ¹</Text>
                     )}
                     {rechenwegSichtbar && (
-                      <Text style={S.rechenwegText}>{rechenwegJeItem.get(gi.id)?.berechnungsweg || 'Pauschale'}</Text>
-                    )}
-                    {rechenwegSichtbar && (rechenwegJeItem.get(gi.id)?.annahmen?.length ?? 0) > 0 && (
-                      <Text style={S.rechenwegAnnahmen}>{rechenwegJeItem.get(gi.id)!.annahmen!.join(' · ')}</Text>
+                      <Text style={S.rechenwegText}>{mitDeutschenZahlen(rechenwegJeItem.get(gi.id)?.berechnungsweg) || 'Pauschale'}</Text>
                     )}
                   </View>
                   <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(gi.quantity)}</Text>
@@ -532,8 +570,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
           </View>
         </View>
 
-        {/* Zahlungsziel */}
-        <Text style={S.zahlungsziel}>Zahlungsziel: {zahlungsTage} Tage ohne Abzug</Text>
+        {/* Zahlungsbedingungen — bewusst als Bedingung formuliert, nicht als
+            Fälligkeit: auf einem Angebot gibt es noch keine Rechnung, ab der
+            eine Frist laufen könnte (CoS-E-006). */}
+        <Text style={S.zahlungsziel}>Zahlungsbedingungen: {zahlungsTage} Tage nach Rechnungserhalt ohne Abzug</Text>
         {skontoText(opt) && (
           <Text style={S.zahlungsziel}>{skontoText(opt)}</Text>
         )}

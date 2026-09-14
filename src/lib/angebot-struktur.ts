@@ -89,8 +89,12 @@ export function gruppiereNachStruktur<T extends {
   unit_price: number
   total_price: number
   position: number
-}>(items: T[], struktur: AngebotStruktur): GruppierungsErgebnis | null {
-  if (struktur === 'raeume') return gruppiereNachRaum(items)
+}>(items: T[], struktur: AngebotStruktur, bekannteRaeume?: readonly string[]): GruppierungsErgebnis | null {
+  // `bekannteRaeume` sind die Räume des Angebots selbst (die Schlüssel aus
+  // `quote.raum_details`). Wer sie hat, soll sie mitgeben — dann muss die
+  // Gruppierung nicht aus dem Titel raten, welcher Name ein Raum ist
+  // (CoS-E-022). Ohne sie greift die Formregel dort, unverändert gültig.
+  if (struktur === 'raeume') return gruppiereNachRaum(items, bekannteRaeume)
   if (items.length === 0) return null
 
   const alle: GruppenItem[] = items.map(i => ({

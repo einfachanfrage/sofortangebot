@@ -34,7 +34,7 @@ export function pruefeMaler(
 
   pruefeTuerenLackieren(ergaenzt, lower, verstaendnis, meta)
   pruefeFensterLackieren(ergaenzt, lower, verstaendnis, meta)
-  const hatHeizkLackierenFlag = pruefeHeizkLackieren(ergaenzt, lower, verstaendnis)
+  const hatHeizkLackierenFlag = pruefeHeizkLackieren(ergaenzt, fehlende, lower, verstaendnis)
 
   pruefeBodenAbdecken(ergaenzt, fehlende, lower)
   pruefeFliesenspiegel(ergaenzt, fehlende, lower)

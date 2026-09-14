@@ -80,9 +80,9 @@ describe('Die Anstrichregel bleibt unangetastet', () => {
     p('2', 'Wand streichen 2x Anstrich', 11.50),
   ]
   it('2x nimmt nie den 1x-Preis', () => {
-    expect(findePreisposition('Wandflächen streichen 2x — Raum', 'm²', ANSTRICH)?.position.unit_price).toBe(11.50)
+    expect(findePreisposition('Wand streichen 2x — Raum', 'm²', ANSTRICH)?.position.unit_price).toBe(11.50)
   })
   it('1x nimmt nie den 2x-Preis', () => {
-    expect(findePreisposition('Wandflächen streichen 1x — Raum', 'm²', ANSTRICH)?.position.unit_price).toBe(6.00)
+    expect(findePreisposition('Wand streichen 1x — Raum', 'm²', ANSTRICH)?.position.unit_price).toBe(6.00)
   })
 })

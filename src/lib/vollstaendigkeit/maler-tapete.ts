@@ -1,6 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { nichtStreichbarerWerkstoff, nichtStreichbarHinweis, brauchtVorlack, VORLACK_HINWEIS, farbtonWieWand, FARBTON_HINWEIS, sockelIstMineralisch, MINERALISCH_HINWEIS } from '../lack-untergrund'
-import { hat, add, filtereArray } from './helpers'
+import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 // Sockelleisten lackieren: Schleifen + 2× Lackieren
@@ -179,7 +179,15 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
     ergaenzt.push({
       beschreibung: `Sockelleisten streichen${raumSuffix}`,
       menge: quelle.menge,
-      einheit: quelle.einheit,
+      // CoS-E-Einheiten (11.09.2026): Hier stand `quelle.einheit` — die
+      // Einheit wurde von der Schwester-Position geerbt. Heute liefern beide
+      // Quellen (montieren/abkleben) lfdm, es ging also gut. Aber eine
+      // Sockelleiste ist IMMER in laufenden Metern, das hängt nicht davon ab,
+      // woher die Menge kam: Ändert eines Tages eine der Quellpositionen ihre
+      // Einheit, entstünde hier still eine Sockelleiste in m², die keinen
+      // Preis findet. Manfreds Satz dazu: „Wo das einmal passiert, passiert's
+      // öfter." Deshalb ausgeschrieben statt geerbt.
+      einheit: 'lfdm',
       konfidenz: 'medium',
       berechnungsweg: `Gleiche Länge wie „${quelle.beschreibung}" — im Transkript stand keine eigene Meterangabe fürs Streichen`,
       annahmen: [
@@ -206,7 +214,7 @@ export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehle
   const hatTapeteWegDannStreich = kat.has('tapete_entfernen') && kat.has('streichen') && !kat.has('tapezieren')
   if (!hatTapeteWegDannStreich) return false
 
-  const wandPosTapRaus = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wandfläch'))
+  const wandPosTapRaus = ergaenzt.find(p => istWandStreichen(p.beschreibung))
   const tfmRaus = wandPosTapRaus?.menge ?? null
   if (tfmRaus !== null && tfmRaus > 0) {
     if (!hat(ergaenzt, 'tapete entfern')) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfmRaus, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfmRaus} m²`, annahmen: [] })
@@ -260,7 +268,10 @@ export function pruefeTapezieren(
   }
 
   if (tfm !== null && tfm > 0) {
-    filtereArray(ergaenzt, p => !p.beschreibung.toLowerCase().includes('wandflächen streichen'))
+    // Erkennung zentral, siehe istWandStreichen() — der Titel hat sich schon
+    // einmal geändert und würde hier sonst still ins Leere laufen: die
+    // Streichposition bliebe neben der Tapete stehen und wäre doppelt drin.
+    filtereArray(ergaenzt, p => !istWandStreichen(p.beschreibung))
 
     const hatEntfernen = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('tapete entf') || p.beschreibung.toLowerCase().includes('tapete abneh'))
     const aufziehenPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('aufzieh') || p.beschreibung.toLowerCase().includes('tapezier'))
@@ -291,8 +302,26 @@ export function pruefeTapezieren(
     }
 
     if (!hatEntfernen && hatEntfernenSignal) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
-    if (!hatAufziehen) ergaenzt.push({ beschreibung: `${tapetenTyp} tapezieren`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
-    if (!hatStreichen && hatStreichSignal) ergaenzt.push({ beschreibung: `${tapetenTyp} streichen`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+    // ── P.1 / N.2 (Prüfmeister, 12.09.2026): zwei Titel, ein Preis je ────────
+    //
+    // 1. **Raufaser tapezieren** traf `Raufaser tapezieren + überstreichen 1x`
+    //    für 14,00 € — ein Anstrich, den niemand bestellt hat. Dieselbe
+    //    Fehlerfamilie wie `Parkett schleifen` → Komplettpaket: sieht nach
+    //    mehr Geld aus, aber der Betrieb schuldet die Arbeit, die auf dem
+    //    Papier steht. Der unbündelte Eintrag `Raufaser tapezieren ohne
+    //    Anstrich` (10,00 €) stand die ganze Zeit daneben. Die anderen
+    //    Tapetenarten führt der Katalog ohnehin unbündelt.
+    //
+    // 2. **„<Typ> streichen"** fand GAR NICHTS — vier Titel, alle 0,00 €.
+    //    Der Katalog nennt es `Tapete / Raufaser überstreichen 1x/2x`
+    //    (7,00 € / 11,00 €). Die Anstrichzahl gehört in den Titel, sonst
+    //    entscheidet wieder der Zufall zwischen den beiden.
+    const tapezierTitel = tapetenTyp === 'Raufaser' ? 'Raufaser tapezieren ohne Anstrich' : `${tapetenTyp} tapezieren`
+    if (!hatAufziehen) ergaenzt.push({ beschreibung: tapezierTitel, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+    if (!hatStreichen && hatStreichSignal) {
+      const anstriche = /\b(?:drei|3)\s*(?:mal|x)|\b3x\b/i.test(lower) ? 3 : /\b(?:ein|1)\s*(?:mal|x)\b|\b1x\b/i.test(lower) ? 1 : 2
+      ergaenzt.push({ beschreibung: `Tapete / Raufaser überstreichen ${anstriche}x`, menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m² (${tapetenTyp})`, annahmen: [] })
+    }
 
     const bodenWirdEntfernt = /(?:teppich|altbelag|bodenbelag|laminat|vinyl|parkett).{0,30}(?:entfern|raus|aufnehm|demont)/i.test(lower)
     const leerstehend = /leer\s*steh|unbewohnt|ohne\s+möbel|möbelfrei/i.test(lower)
@@ -373,14 +402,28 @@ export function pruefeFassade(ergaenzt: BerechnetePosition[], lower: string, tra
   const hatRissfix = ergaenzt.some(p => p.beschreibung.toLowerCase().includes('rissverschluss'))
   const fassadeFarbTyp = lower.includes('silikat') ? 'Silikatfarbe' : lower.includes('dispersion') ? 'Dispersionsfarbe' : 'Fassadenfarbe'
 
-  if (hatReinigenSignal && !hatReinigen) ergaenzt.push({ beschreibung: 'Fassade reinigen / Untergrundvorbereitung', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
+  // F.6: Werkzeugwort raus, Katalogwort rein („Fassade reinigen /
+  // druckwaschen", 5,00 €/m²). Preis bleibt gleich, der Treffer wird von
+  // 0,67 auf 0,94 sicherer — und auf dem Kundenpapier steht, was gemacht wird.
+  if (hatReinigenSignal && !hatReinigen) ergaenzt.push({ beschreibung: 'Fassade reinigen (druckwaschen)', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   // Trockenlauf PM-031 (2026-08-30): Die Grundierung kam BEDINGUNGSLOS, allein
   // weil das Wort „Fassade" fiel — bei „einmal Fassadenfarbe drauf" also eine
   // volle, bepreiste Position, die niemand verlangt hat. Exakt das Muster, das
   // im Kommentar oben für „Fassade reinigen" schon als falsch erkannt wurde;
   // die Zeile daneben blieb es. Jetzt auch hier: nur bei echtem Signal.
   const hatGrundierSignal = /grundier|voranstrich|tiefengrund|primer|neubau|erstanstrich|rohbau|kreidet|saugend|sandet/i.test(lower) || hatRisse
-  if (hatGrundierSignal && !hatGrundierung) ergaenzt.push({ beschreibung: 'Grundierung / Tiefengrund Fassade', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
+  // F.6 mit einer Abweichung vom Papier, gemessen statt geraten:
+  //
+  // Der Prüfmeister schlägt `Fassade grundieren` vor. Das trifft mit 0,80 den
+  // Eintrag `Grundierung Fassade nach Graffiti` — richtiger Betrag (6,00 €),
+  // falscher Name auf dem Kundenpapier. Der Katalog führt die neutrale Zeile
+  // als `Fassadengrundierung auftragen`, ebenfalls 6,00 €, und die trifft mit
+  // 1,00. Also derselbe Grundsatz wie überall heute: Titel wörtlich wie im
+  // Katalog. Handwerkersprache bleibt es auch.
+  //
+  // Vorher traf der Titel den INNEN-Tiefengrund (4,50 €) — „auf einer Fassade
+  // sind das schnell 150 €" (Prüfmeister).
+  if (hatGrundierSignal && !hatGrundierung) ergaenzt.push({ beschreibung: 'Fassadengrundierung auftragen', menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   if (!hatFarbe) ergaenzt.push({ beschreibung: `${fassadeFarbTyp} 2× Anstrich`, menge: fm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Gleiche Fläche wie Fassadenanstrich (${fm} m²)`, annahmen: [] })
   if (hatRisse && !hatRissfix) ergaenzt.push({ beschreibung: 'Rissverschluss / Spachtelarbeiten Außen', menge: 1, einheit: 'Pauschale', konfidenz: 'high', berechnungsweg: 'Pauschale bei Rissen/Schäden', annahmen: [] })
 }
