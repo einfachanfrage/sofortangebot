@@ -4,6 +4,15 @@ import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { sendWelcomeEmail } from '@/lib/email'
 import * as Sentry from '@sentry/nextjs'
 
+// ── CoS-P-016 (Platform & Integrations Engineer, 2026-09-14): VERWAIST ────
+//
+// Wird seit dem CoS-P-016-Fix von niemandem mehr aufgerufen — die einzige
+// Aufruferin war `/bestaetigt` (siehe deren Kommentar, selbst jetzt
+// verwaist). Die Willkommens-Mail steht wieder direkt in
+// `auth/callback/route.ts`, mit derselben Doppelversand-Absicherung wie
+// hier. Bewusst nicht gelöscht, nur nicht mehr angesteuert — Aufräumen ist
+// Sandys Entscheidung.
+//
 // ── CoS-P-013 Befund 1 (Platform & Integrations Engineer, 2026-09-13) ─────
 //
 // Die Willkommens-Mail stand vorher in auth/callback/route.ts, innerhalb

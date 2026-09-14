@@ -48,6 +48,8 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | 🟡 Entwurfsentscheidung getroffen und umgesetzt (`token_hash` + `verifyOtp` über `/auth/callback`), **TypeScript-Check konnte wieder nicht automatisch laufen (Gerätezugriff weiter gestört) — bitte zwingend `npm run build` vor dem Push**, danach Live-Test mit `+test05` | Sandys Test `+test04`, 2026-09-14 |
+| CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
 | CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
@@ -1520,5 +1522,193 @@ tatsächlich live und damit prüfbar. Sandy macht den Durchlauf mit `+test03`.
 *Chief of Staff · 2026-09-14*
 
 ---
+
+## CoS-P-015 ✅ / CoS-P-016 🔴 — die Ursache liegt eine Ebene tiefer, und die Entscheidung gehört dir
+
+**Datum:** 2026-09-14, 15:10 MESZ
+**Status:** CoS-P-015 erledigt · **CoS-P-016 offen, Entwurfsentscheidung, bewusst NICHT von mir umgesetzt**
+
+### CoS-P-015 — erledigt, hat gewirkt
+
+`/bestaetigt` fehlte in `PUBLIC_EXACT_PATHS` (`src/proxy.ts`). Der Türsteher
+hat jeden Bestätigungslink nach `/login` umgeleitet, **bevor** die Seite
+laden konnte; das Fragment blieb an der URL hängen, was den Fehler so
+schwer lesbar machte. Eine Zeile ergänzt (mit Begründung im Code), auf
+Sandys ausdrückliche Zustimmung — wieder ein Eingriff in dein Gebiet,
+hiermit gemeldet. Deploy `dpl_8LaxMcbS…` READY, und es hat gewirkt: Sandy
+erreicht die Seite jetzt (`+test04`, 15:04 MESZ).
+
+**Dasselbe Muster zum dritten Mal an einem Tag:** etwas Neues gebaut
+(`versandbereit.ts`, dann `/bestaetigt`), aber die Stelle nicht nachgezogen,
+an der es angemeldet werden muss (Repository, dann Pfadliste). Wert für den
+Themenspeicher, nicht für den Tagesbetrieb.
+
+### CoS-P-016 — warum es trotzdem nicht funktioniert
+
+Sandy sieht jetzt „Link ungültig oder abgelaufen" — die 4-Sekunden-Abbruch-
+meldung der neuen Seite. Der Link ist aber gültig: Supabase hat `+test04`
+um 13:04:25 UTC sauber verifiziert (`/verify` 303, `user_signedup`,
+`"login_method":"implicit"`). Die Seite bekommt die Session nur nie zu
+sehen.
+
+**Der Grund steht im installierten Paket, ich habe nachgesehen statt
+geraten** — `node_modules/@supabase/ssr/dist/main/createBrowserClient.js`,
+Zeile 35–43:
+
+```js
+auth: {
+    ...options?.auth,
+    ...
+    flowType: "pkce",                    // ← Zeile 40
+    detectSessionInUrl: ... ?? isBrowser(),
+```
+
+`flowType: "pkce"` steht **nach** dem Spread von `options?.auth`. Es ist
+damit fest verdrahtet und lässt sich von außen **nicht** überschreiben. Der
+Browser-Client dieses Pakets ist PKCE-only und verarbeitet ein
+`#access_token=…`-Fragment nicht.
+
+**Damit ist die Lage eindeutig:** Die App **erzeugt** implizite Links
+(`admin.generateLink`), kann sie aber mit dem verwendeten Client
+**prinzipiell nicht einlösen** — weder server- noch clientseitig. Das ist
+kein Konfigurationsfehler und keine vergessene Zeile mehr, sondern ein
+Widerspruch im Entwurf. Die Kette „ein Fix, eine Zeile" endet hier.
+
+**Wichtig, weil es Arbeit spart:** `/passwort-reset` benutzt denselben
+Client und hat denselben Defekt — nur ist er dort bis heute nie
+aufgefallen, weil nie eine Reset-Mail ankam. **Ein Test des Reset-Wegs
+würde jetzt aus genau diesem Grund fehlschlagen.** Ich habe Sandy gebeten,
+sich das zu sparen, bis das hier entschieden ist.
+
+### Was ich dir vorlege, ohne es zu entscheiden
+
+Der dokumentierte Weg für `@supabase/ssr` ist `token_hash` + `verifyOtp`:
+`admin.generateLink()` liefert neben `action_link` auch
+`properties.hashed_token`. Damit ließe sich ein eigener Link bauen
+(`/auth/callback?token_hash=…&type=signup&next=/onboarding`), den die
+**bestehende** Server-Route mit `verifyOtp({ token_hash, type })` einlöst —
+serverseitig, mit Cookie, ohne Token in der Adresszeile.
+
+Das hätte, soweit ich es überblicke, vier Effekte auf einmal: Bestätigung
+und Reset laufen wieder über denselben Weg; `/auth/callback` wäre nicht
+mehr toter Code; `/bestaetigt` würde überflüssig; und die Tokens
+verschwänden aus URL und Browser-Verlauf (`launch-readiness.md` 6.2).
+
+**Das ist ausdrücklich ein Vorschlag zur Prüfung, keine Ansage.** Ob
+`verifyOtp` der richtige Weg ist, ob es eine bessere Variante gibt, ob
+`/bestaetigt` aus anderen Gründen bleiben soll — das ist deine Entscheidung
+und dein Fachgebiet. Ich habe bis hierher drei Einzeiler selbst gemacht,
+weil sie ohne Entscheidungsspielraum waren. Dieser hier hat welchen,
+deshalb liegt er bei dir.
+
+**Was ich dir mitgebe, damit du nicht nachmessen musst:**
+- Supabase-Auth-Log 14.09., 13:04:25 UTC: `/verify` 303,
+  `"login_method":"implicit"`, Referer
+  `https://www.sofortangebot.app/bestaetigt?next=/onboarding`
+- `createBrowserClient.js:40` — `flowType: "pkce"`, nicht überschreibbar
+- Betroffen sind **beide** Wege: Registrierungs-Bestätigung und
+  Passwort-Reset
+
+### Gate-Stand bleibt unverändert
+
+`launch-readiness.md` 2.1 (45 %), 2.3 (15 %) und 3.1 (35 %) bleiben, wo sie
+sind: Die Registrierung endet weiterhin nicht im Onboarding, der Reset ist
+weiterhin unbestätigt, und die Willkommens-Mail wird weiterhin nicht
+ausgelöst — sie hängt an genau dem Zustand, den `/bestaetigt` nie erreicht.
+**Gute Nachricht daneben, belegt:** Die Verifizierungs-Mail kommt inzwischen
+zuverlässig an (13.09. und zweimal am 14.09., jedes Mal Posteingang). Der
+Mailversand selbst ist damit kein offener Punkt mehr — nur das Einlösen des
+Links.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+---
+
+## Fix-Update CoS-P-016 — Entwurfsentscheidung getroffen und umgesetzt (Platform & Integrations Engineer, 2026-09-14)
+
+**Kurzfassung für Sandy:** Ich habe den Vorschlag von Chief of Staff
+(`token_hash` + `verifyOtp`) geprüft, für richtig befunden und umgesetzt —
+mit einer Ergänzung, warum es genau so und nicht anders passiert. Wie beim
+letzten Mal konnte ich den TypeScript-Check nicht automatisch laufen lassen
+(Gerätezugriff weiter gestört, siehe unten) — nach dem, was CoS-P-014 gerade
+gekostet hat, bitte diesmal **wirklich zwingend** erst `npm run build` lokal
+laufen lassen, bevor gepusht wird.
+
+### Die Entscheidung, und warum
+
+`admin.generateLink()` liefert neben `action_link` (führt zu Supabases
+eigenem `/verify` → impliziter Ablauf → das Problem) auch
+`properties.hashed_token`. Damit lässt sich ein eigener Link bauen, den die
+App selbst per `verifyOtp({ token_hash, type })` einlöst — **serverseitig**,
+unabhängig vom fest verdrahteten `flowType: "pkce"` des Browser-Clients, weil
+dieser Weg den Browser-Client für den Token-Tausch gar nicht braucht. Das ist
+der von Supabase dokumentierte Weg genau für diesen Fall (E-Mail-Link,
+Admin-erzeugt) — keine Bastellösung.
+
+**Warum nicht stattdessen den Browser-Client umbauen (z. B. ein zweiter
+Client mit `flowType: "implicit"`)?** Kurz geprüft und verworfen: `pkce` ist
+in `@supabase/ssr` aus gutem Grund erzwungen — es ist der sicherere,
+aktuell empfohlene Ablauf. Ihn für einen zweiten Anwendungsfall
+aufzuweichen hätte zwei Session-Handling-Wege im selben Projekt bedeutet,
+nur um einen Umweg zu vermeiden, den es gar nicht braucht. `verifyOtp` löst
+das sauberer, mit weniger Code, nicht mehr.
+
+### Was sich geändert hat
+
+- **`src/app/auth/callback/route.ts`** — kann jetzt zusätzlich zu `?code=`
+  auch `?token_hash=…&type=signup|recovery` verarbeiten (`verifyOtp()`).
+  Bei erfolgreicher Bestätigung (`type=signup`) verschickt diese Route jetzt
+  wieder selbst die Willkommens-Mail — direkt danach, serverseitig, mit
+  demselben Doppelversand-Schutz und derselben Resend-Fehlerprüfung, die
+  CoS-P-013 schon für die Reset-Mail eingeführt hatte.
+- **`src/app/api/auth/register/route.ts`** — baut jetzt selbst den
+  Bestätigungslink aus `hashed_token` statt Supabases `action_link` zu
+  verschicken.
+- **`src/app/api/auth/passwort-vergessen/route.ts`** — genauso für den
+  Reset-Link. `/passwort-reset` selbst musste **nicht** geändert werden: die
+  Seite bekommt die Session jetzt bereits fertig im Cookie, sobald sie lädt
+  (weil `/auth/callback` sie vorher serverseitig gesetzt hat), ihre
+  bestehende `getUser()`-Prüfung greift dann einfach sofort.
+- **`src/app/(auth)/bestaetigt/page.tsx`** und
+  **`src/app/api/auth/willkommen-mail/route.ts`** — dadurch überflüssig
+  geworden. **Bewusst nicht gelöscht** (kein Lösch-Werkzeug aus dieser
+  Session heraus, gleiche Einschränkung wie bei den stillgelegten
+  Edge-Functions), aber niemand ruft sie mehr auf, mit erklärendem Kommentar
+  markiert. Aufräumen ist deine Entscheidung, kein Zeitdruck — sie kosten
+  nichts und sind nicht erreichbar über einen Login-geschützten Umweg.
+- `PUBLIC_EXACT_PATHS` in `src/proxy.ts` (CoS-P-015) bleibt unverändert —
+  `/auth/callback` stand dort schon vorher drin, `/bestaetigt` bleibt als
+  harmloser, jetzt ungenutzter Eintrag stehen.
+
+### Nebeneffekt, der launch-readiness.md 6.2 mit erledigt
+
+Die Tokens stehen jetzt zu keinem Zeitpunkt mehr in der Adresszeile oder im
+Browser-Verlauf — `verifyOtp` läuft komplett serverseitig, der Nutzer sieht
+nur noch die saubere `/auth/callback?token_hash=…`-URL kurz beim Klick, nie
+einen Access-/Refresh-Token im Klartext.
+
+### Ehrlicher Hinweis, wie beim letzten Mal
+
+Der Gerätezugriff für Terminal-Befehle ist weiterhin gestört (reine
+Dateizugriffe funktionieren). Ich habe alle fünf Dateien von Hand
+durchgelesen und gegen den bereits laufenden Code im Projekt abgeglichen,
+bin mir bei der Syntax sicher — aber genau dieser fehlende automatische
+Beweis war ein Teil dessen, was bei CoS-P-014 acht Deploys gekostet hat.
+Bitte diesmal vor dem Push wirklich `npm run build` laufen lassen, nicht nur
+optional.
+
+### Die zwei offenen Bitten aus CoS-P-014 — noch nicht umgesetzt, nicht vergessen
+
+Beide stehen noch aus meiner Seite offen: (1) Vercel-Mail bei
+fehlgeschlagenem Produktions-Deploy an `einfachanfrage@outlook.com` — das ist
+eine Einstellung in deinem Vercel-Konto (Project Settings → Notifications),
+die ich aus dieser Session heraus vermutlich nicht selbst umstellen kann; (2)
+ein Hinweis auf untrackte Dateien vor jeder „ist umgesetzt"-Meldung. Beides
+nehme ich mir als nächstes vor, sobald CoS-P-016 durch den Live-Test ist —
+kein Zeitdruck heute, aber auch nicht vergessen.
+
+*Platform & Integrations Engineer · 2026-09-14*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

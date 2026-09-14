@@ -64,39 +64,43 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen. Versuche es nochmal.' }, { status: 500 })
   }
 
-  // CoS-P-013 Befund 1 (2026-09-13): Ziel war bisher `/auth/callback`, das
-  // ausschließlich `?code=` (PKCE) verarbeiten kann. `admin.generateLink()`
-  // liefert die Session aber als `#access_token=…` im URL-Fragment (impliziter
-  // Ablauf) — ein Server-Handler sieht das nie. Jeder Bestätigungslink lief
-  // deshalb strukturell in "/login?error=auth", und die Willkommens-Mail
-  // (vorher im "if (code)"-Zweig von auth/callback) ging nie raus. Neues
-  // Ziel: die Client-Seite `/bestaetigt`, die das Fragment selbst verarbeitet
-  // (genau wie /passwort-reset es für den Reset-Link schon tut) und danach
-  // die Willkommens-Mail über `api/auth/willkommen-mail` anstößt.
+  // CoS-P-016 (2026-09-14): CoS-P-013 hatte auf `/bestaetigt` umgestellt,
+  // weil `/auth/callback` nur `?code=` (PKCE) kann und `admin.generateLink()`
+  // die Session als `#access_token=…`-Fragment liefert. Chief of Staff fand
+  // die tiefere Ursache: `@supabase/ssr`s Browser-Client hat `flowType:
+  // "pkce"` fest verdrahtet — er kann dieses Fragment PRINZIPIELL nie lesen,
+  // auf keiner Seite. Deshalb jetzt der dokumentierte Weg für E-Mail-Links:
+  // `properties.hashed_token` selbst zu einem Link zusammenbauen, den
+  // `/auth/callback` per `verifyOtp()` **serverseitig** einlöst — unabhängig
+  // vom Browser-Client-Bug. `action_link`/`redirectTo` werden dafür nicht
+  // mehr gebraucht (der Rückgabewert `redirect_to` bleibt informativ gesetzt).
   const origin = req.nextUrl.origin
   const { data: linkData, error: linkError } = await service.auth.admin.generateLink({
     type: 'signup',
     email,
     password,
     options: {
-      redirectTo: `${origin}/bestaetigt?next=/onboarding`,
+      redirectTo: `${origin}/onboarding`,
     },
   })
 
-  if (linkError || !linkData?.properties?.action_link) {
+  if (linkError || !linkData?.properties?.hashed_token) {
     console.error('[register] generateLink fehlgeschlagen:', linkError?.message)
-    Sentry.captureException(new Error(linkError?.message ?? 'generateLink ohne action_link'), {
+    Sentry.captureException(new Error(linkError?.message ?? 'generateLink ohne hashed_token'), {
       tags: { feature: 'registrierung_generate_link' },
     })
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen. Versuche es nochmal.' }, { status: 500 })
   }
+
+  const bestaetigungsLink =
+    `${origin}/auth/callback?token_hash=${linkData.properties.hashed_token}&type=signup&next=/onboarding`
 
   // CoS-P-013 Befund 2, hier vorsorglich mitbehoben: dasselbe "fire and
   // forget"-Muster wie bei der Reset-Mail — kein await plus ein Resend-Fehler,
   // der als { ok: false } zurückkommt statt zu werfen, hätte auch hier still
   // verschwinden können. Sandys Test traf diese Mail heute zufällig nicht,
   // Chief of Staff hat den Musterfehler aber ausdrücklich mitgemeldet.
-  const versand = await sendVerificationEmail(email, linkData.properties.action_link)
+  const versand = await sendVerificationEmail(email, bestaetigungsLink)
   if (!versand.ok) {
     console.error('[register] Bestätigungs-Mail fehlgeschlagen:', versand.error)
     Sentry.captureException(new Error(versand.error ?? 'Resend-Versand fehlgeschlagen'), {

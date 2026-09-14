@@ -6,6 +6,22 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 
+// ── CoS-P-016 (Platform & Integrations Engineer, 2026-09-14): VERWAIST ────
+//
+// Diese Seite wird seit dem CoS-P-016-Fix von niemandem mehr angesteuert.
+// Grund: Der Ansatz unten (Fragment im Browser verarbeiten lassen) kann bei
+// diesem Projekt strukturell nicht funktionieren — `@supabase/ssr`s
+// Browser-Client hat `flowType: "pkce"` fest verdrahtet und liest ein
+// `#access_token=…`-Fragment nie, egal auf welcher Seite. `register/route.ts`
+// schickt Nutzer jetzt stattdessen direkt zu `/auth/callback?token_hash=…`,
+// das serverseitig per `verifyOtp()` einlöst (siehe Kommentar dort) — bis
+// dahin auch bereits fertig eingeloggt, kein Zwischenstopp mehr nötig.
+//
+// Bewusst nicht gelöscht (siehe „Fix-Update CoS-P-016" in
+// docs/chief-of-staff-platform-todos.md) — nur nicht mehr verlinkt. Ob die
+// Datei ganz aufgeräumt wird, ist Sandys Entscheidung, genau wie bei den
+// stillgelegten Edge-Functions.
+//
 // ── CoS-P-013 Befund 1 (Platform & Integrations Engineer, 2026-09-13) ─────
 //
 // Der Bestätigungslink aus admin.generateLink({type:'signup', ...}) liefert

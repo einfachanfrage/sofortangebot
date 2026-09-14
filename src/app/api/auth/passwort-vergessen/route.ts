@@ -8,16 +8,18 @@ import * as Sentry from '@sentry/nextjs'
 //
 // 1. CoS-P-004: löste bisher Supabases eigene, aus dieser Session nicht
 //    prüfbare Reset-Mail aus. Läuft jetzt über unsere Resend-Anbindung.
-// 2. CoS-P-003 (25.08.) hatte hier `/auth/callback` als Redirect-Ziel
-//    eingetragen, mit der Annahme, der PKCE-Code werde dort "genau wie bei
-//    der Registrierung" serverseitig getauscht. Diese Annahme war falsch —
-//    siehe CoS-P-013 Befund 1: `admin.generateLink()` liefert die Session
-//    hier wie bei der Registrierung als `#access_token=…` im URL-Fragment,
-//    nicht als `?code=`. `/auth/callback` konnte das nie verarbeiten; jeder
-//    Reset-Link lief in dieselbe Fehlerseite wie der Bestätigungslink.
-//    Zurück auf das eigentlich richtige Ziel: direkt `/passwort-reset`, das
-//    das Fragment selbst über den Supabase-Browser-Client verarbeitet
-//    (`detectSessionInUrl`, dort schon vorbereitet und jetzt der einzige Weg).
+// 2. CoS-P-016 (2026-09-14): CoS-P-013 hatte hier direkt auf `/passwort-reset`
+//    umgestellt, mit der Annahme, der Supabase-Browser-Client würde das
+//    `#access_token=…`-Fragment aus dem Link automatisch verarbeiten
+//    (`detectSessionInUrl`). Chief of Staff fand die tiefere Ursache: dieser
+//    Client hat `flowType: "pkce"` fest verdrahtet und kann ein solches
+//    Fragment PRINZIPIELL nie lesen — auf keiner Seite. Jetzt der
+//    dokumentierte Weg für E-Mail-Links: `properties.hashed_token` selbst zu
+//    einem Link zusammenbauen, den `/auth/callback` per `verifyOtp()`
+//    serverseitig gegen eine Session tauscht (derselbe Mechanismus wie bei
+//    der Registrierung). `/passwort-reset` selbst bleibt unverändert — es
+//    bekommt die Session jetzt einfach schon fertig im Cookie, sobald es
+//    lädt, und dessen `getUser()`-Prüfung greift dann sofort.
 //
 // Antwort ist bewusst IMMER gleich (Erfolg), unabhängig davon, ob die
 // E-Mail existiert — verhindert Account-Enumeration, exakt wie beim
@@ -50,7 +52,10 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  if (!error && data?.properties?.action_link) {
+  if (!error && data?.properties?.hashed_token) {
+    const resetLink =
+      `${origin}/auth/callback?token_hash=${data.properties.hashed_token}&type=recovery&next=/passwort-reset`
+
     // CoS-P-013 Befund 2: vorher "fire and forget" (kein await, Antwort ging
     // sofort raus) — auf einer Serverless-Funktion darf die Laufzeit danach
     // jederzeit einfrieren, noch laufende Arbeit wird dann verworfen, ohne
@@ -61,7 +66,7 @@ export async function POST(req: NextRequest) {
     // nie gesehen. Beides zusammen ist die wahrscheinlichste Erklärung dafür,
     // dass Sandys Reset-Mail heute weder ankam noch irgendwo einen Fehler
     // hinterließ.
-    const versand = await sendPasswordResetEmail(email, data.properties.action_link)
+    const versand = await sendPasswordResetEmail(email, resetLink)
     if (!versand.ok) {
       console.error('[passwort-vergessen] Reset-Mail fehlgeschlagen:', versand.error)
       Sentry.captureException(new Error(versand.error ?? 'Resend-Versand fehlgeschlagen'), {
