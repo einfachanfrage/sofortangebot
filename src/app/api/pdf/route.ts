@@ -6,6 +6,7 @@ import { ladeFotosFuerPdf } from '@/lib/angebot-fotos'
 import { AngebotPDF } from '@/lib/pdf'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
+import { eRechnungErlaubt } from '@/lib/zugferd/einbettung'
 import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
 import * as Sentry from '@sentry/nextjs'
 
@@ -72,12 +73,17 @@ export async function GET(req: NextRequest) {
     fotos,
   }))
 
-  // ZUGFeRD einbetten wenn: E-Rechnung aktiv + Geschäftskunde
+  // DC-100: Eine Stelle entscheidet — siehe `lib/zugferd/einbettung.ts`.
+  // Für Angebote und Kostenvoranschläge ist die Antwort immer `false`.
   const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true
     || !!quote.customer?.ustid
-  const eRechnungAktiv = company.e_rechnung_aktiv !== false
+  const eRechnung = eRechnungErlaubt({
+    dokumentTyp: quote.dokument_typ,
+    eRechnungAktiv: company.e_rechnung_aktiv,
+    kundeIstUnternehmen,
+  })
 
-  if (eRechnungAktiv && kundeIstUnternehmen) {
+  if (eRechnung) {
     try {
       const datum = new Date(quote.created_at)
       const faellig = new Date(datum)
@@ -126,8 +132,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const isZugferd = eRechnungAktiv && kundeIstUnternehmen
-  const filename = isZugferd
+  const filename = eRechnung
     ? `Angebot-${quoteNumber}-ZUGFeRD.pdf`
     : `Angebot-${quoteNumber}.pdf`
 
@@ -135,7 +140,7 @@ export async function GET(req: NextRequest) {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
-      'X-ZUGFeRD': isZugferd ? '1' : '0',
+      'X-ZUGFeRD': eRechnung ? '1' : '0',
     },
   })
 }

@@ -9,6 +9,7 @@ import { AngebotPDF } from '@/lib/pdf'
 import { ladeFotosFuerPdf } from '@/lib/angebot-fotos'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
+import { eRechnungErlaubt } from '@/lib/zugferd/einbettung'
 import * as Sentry from '@sentry/nextjs'
 
 export const maxDuration = 60
@@ -110,10 +111,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       fotos,
     }))
 
-    // ZUGFeRD für B2B-Kunden
+    // DC-100: Eine Stelle entscheidet — siehe `lib/zugferd/einbettung.ts`.
+    // Für Angebote und Kostenvoranschläge ist die Antwort immer `false`.
     const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
     let xmlAttachment: { filename: string; content: Buffer } | null = null
-    if (company.e_rechnung_aktiv !== false && kundeIstUnternehmen) {
+    if (eRechnungErlaubt({
+      dokumentTyp: quote.dokument_typ,
+      eRechnungAktiv: company.e_rechnung_aktiv,
+      kundeIstUnternehmen,
+    })) {
       try {
         const xml = generateZUGFeRDXml({
           nummer: quoteNumber,

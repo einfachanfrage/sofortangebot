@@ -10,6 +10,7 @@ import * as Sentry from '@sentry/nextjs'
 import { AngebotPDF } from '@/lib/pdf'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
 import { embedZUGFeRDInPdf } from '@/lib/zugferd/embedXML'
+import { eRechnungErlaubt } from '@/lib/zugferd/einbettung'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -59,12 +60,24 @@ export async function POST(req: NextRequest) {
     quoteNumber,
   }))
 
-  // ZUGFeRD für Geschäftskunden
+  // ── DC-100 (Sandys Entscheidung 13.09.2026) ─────────────────────────────
+  //
+  // Ob überhaupt eine E-Rechnungs-XML entstehen darf, entscheidet genau EINE
+  // Stelle: `eRechnungErlaubt` in `lib/zugferd/einbettung.ts`. Vorher stand
+  // dieselbe Bedingung in drei Routen — und genau deshalb konnte ein Angebot
+  // sich in der Buchhaltung des Kunden als Rechnung ausweisen, ohne dass es
+  // auffiel. Für Angebote und Kostenvoranschläge ist die Antwort heute immer
+  // `false`; der Block darunter bleibt für den Tag stehen, an dem es echte
+  // Rechnungen gibt.
   const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
-  const eRechnungAktiv = company.e_rechnung_aktiv !== false
+  const eRechnung = eRechnungErlaubt({
+    dokumentTyp: quote.dokument_typ,
+    eRechnungAktiv: company.e_rechnung_aktiv,
+    kundeIstUnternehmen,
+  })
   let xmlAttachment: { filename: string; content: Buffer } | null = null
 
-  if (eRechnungAktiv && kundeIstUnternehmen) {
+  if (eRechnung) {
     try {
       const datum = new Date(quote.created_at)
       const faellig = new Date(datum)
@@ -114,8 +127,7 @@ export async function POST(req: NextRequest) {
   }
 
   const totalGross = quote.total_gross.toFixed(2).replace('.', ',')
-  const isZugferd = eRechnungAktiv && kundeIstUnternehmen
-  const pdfFilename = isZugferd ? `Angebot-${quoteNumber}-ZUGFeRD.pdf` : `Angebot-${quoteNumber}.pdf`
+  const pdfFilename = eRechnung ? `Angebot-${quoteNumber}-ZUGFeRD.pdf` : `Angebot-${quoteNumber}.pdf`
 
   const attachments: { filename: string; content: Buffer }[] = [
     { filename: pdfFilename, content: Buffer.from(pdfBuffer) },
@@ -134,7 +146,7 @@ export async function POST(req: NextRequest) {
         <div style="background: white; padding: 32px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px;">
           <p style="font-size: 16px; font-weight: 600;">Angebot ${quoteNumber}</p>
           <p>anbei erhalten Sie unser Angebot über <strong>${totalGross} €</strong>.</p>
-          <p>Das Angebot finden Sie im Anhang dieser E-Mail.${isZugferd ? ' Es enthält eine eingebettete ZUGFeRD-XML (Factur-X).' : ''}</p>
+          <p>Das Angebot finden Sie im Anhang dieser E-Mail.${eRechnung ? ' Es enthält eine eingebettete ZUGFeRD-XML (Factur-X).' : ''}</p>
           <p>Sie können das Angebot auch direkt online einsehen und digital unterschreiben:</p>
           <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'}/angebot/${quote.share_token ?? quoteId}/unterschreiben"
              style="display:inline-block;background:#D9A400;color:#2C2C2C;font-weight:900;padding:12px 24px;border-radius:8px;text-decoration:none;margin:8px 0;">
@@ -167,5 +179,5 @@ export async function POST(req: NextRequest) {
     .update({ status: 'sent', gesendet_am: new Date().toISOString() })
     .eq('id', quoteId)
 
-  return NextResponse.json({ ok: true, zugferd: isZugferd })
+  return NextResponse.json({ ok: true, zugferd: eRechnung })
 }

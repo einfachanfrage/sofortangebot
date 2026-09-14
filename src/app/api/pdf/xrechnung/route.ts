@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { generateZUGFeRDXml } from '@/lib/zugferd/generateXML'
+import { eRechnungErlaubt, E_RECHNUNG_ABGESCHALTET } from '@/lib/zugferd/einbettung'
 
 export const maxDuration = 30
 
@@ -29,6 +30,25 @@ export async function GET(req: NextRequest) {
     .single()
 
   if (!company) return NextResponse.json({ error: 'Betrieb nicht gefunden' }, { status: 404 })
+
+  // ── DC-100 ───────────────────────────────────────────────────────────────
+  //
+  // Diese Route erzeugte dieselbe als Rechnung deklarierte XML wie die
+  // Einbettung, nur ohne PDF drumherum — und ohne jede Bedingung. Sie fällt
+  // unter dieselbe Entscheidung. Der Menüeintrag ist beim Product Designer
+  // raus; die Route bleibt bestehen, antwortet aber 410 (dauerhaft weg), statt
+  // gelöscht zu werden: Ein gesetztes Lesezeichen soll einen Satz bekommen,
+  // kein Rätsel — und sobald es echte Rechnungen gibt, lebt sie über denselben
+  // einen Schalter wieder auf.
+  const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true
+    || !!quote.customer?.ustid
+  if (!eRechnungErlaubt({
+    dokumentTyp: quote.dokument_typ,
+    eRechnungAktiv: company.e_rechnung_aktiv,
+    kundeIstUnternehmen,
+  })) {
+    return NextResponse.json({ error: E_RECHNUNG_ABGESCHALTET }, { status: 410 })
+  }
 
   let quoteNumber = quote.quote_number as string | null
   if (!quoteNumber) {
