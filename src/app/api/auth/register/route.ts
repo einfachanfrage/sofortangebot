@@ -64,13 +64,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen. Versuche es nochmal.' }, { status: 500 })
   }
 
+  // CoS-P-013 Befund 1 (2026-09-13): Ziel war bisher `/auth/callback`, das
+  // ausschließlich `?code=` (PKCE) verarbeiten kann. `admin.generateLink()`
+  // liefert die Session aber als `#access_token=…` im URL-Fragment (impliziter
+  // Ablauf) — ein Server-Handler sieht das nie. Jeder Bestätigungslink lief
+  // deshalb strukturell in "/login?error=auth", und die Willkommens-Mail
+  // (vorher im "if (code)"-Zweig von auth/callback) ging nie raus. Neues
+  // Ziel: die Client-Seite `/bestaetigt`, die das Fragment selbst verarbeitet
+  // (genau wie /passwort-reset es für den Reset-Link schon tut) und danach
+  // die Willkommens-Mail über `api/auth/willkommen-mail` anstößt.
   const origin = req.nextUrl.origin
   const { data: linkData, error: linkError } = await service.auth.admin.generateLink({
     type: 'signup',
     email,
     password,
     options: {
-      redirectTo: `${origin}/auth/callback?next=/onboarding`,
+      redirectTo: `${origin}/bestaetigt?next=/onboarding`,
     },
   })
 
@@ -82,12 +91,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen. Versuche es nochmal.' }, { status: 500 })
   }
 
-  sendVerificationEmail(email, linkData.properties.action_link).catch(fehler => {
-    console.error('[register] Bestätigungs-Mail fehlgeschlagen')
-    Sentry.captureException(fehler instanceof Error ? fehler : new Error(String(fehler)), {
+  // CoS-P-013 Befund 2, hier vorsorglich mitbehoben: dasselbe "fire and
+  // forget"-Muster wie bei der Reset-Mail — kein await plus ein Resend-Fehler,
+  // der als { ok: false } zurückkommt statt zu werfen, hätte auch hier still
+  // verschwinden können. Sandys Test traf diese Mail heute zufällig nicht,
+  // Chief of Staff hat den Musterfehler aber ausdrücklich mitgemeldet.
+  const versand = await sendVerificationEmail(email, linkData.properties.action_link)
+  if (!versand.ok) {
+    console.error('[register] Bestätigungs-Mail fehlgeschlagen:', versand.error)
+    Sentry.captureException(new Error(versand.error ?? 'Resend-Versand fehlgeschlagen'), {
       tags: { feature: 'registrierung_bestaetigungsmail' },
     })
-  })
+  }
 
   return NextResponse.json({ ok: true })
 }

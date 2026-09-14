@@ -8,11 +8,16 @@ import * as Sentry from '@sentry/nextjs'
 //
 // 1. CoS-P-004: löste bisher Supabases eigene, aus dieser Session nicht
 //    prüfbare Reset-Mail aus. Läuft jetzt über unsere Resend-Anbindung.
-// 2. CoS-P-003: der bisherige Redirect ging direkt auf `/passwort-reset`,
-//    ohne den PKCE-Code serverseitig gegen eine Session zu tauschen — der
-//    bekannte "Auth session missing"-Fehler. Der neue Link läuft über
-//    `/auth/callback`, genau wie bei der Registrierung, wo der Tausch
-//    bereits korrekt passiert.
+// 2. CoS-P-003 (25.08.) hatte hier `/auth/callback` als Redirect-Ziel
+//    eingetragen, mit der Annahme, der PKCE-Code werde dort "genau wie bei
+//    der Registrierung" serverseitig getauscht. Diese Annahme war falsch —
+//    siehe CoS-P-013 Befund 1: `admin.generateLink()` liefert die Session
+//    hier wie bei der Registrierung als `#access_token=…` im URL-Fragment,
+//    nicht als `?code=`. `/auth/callback` konnte das nie verarbeiten; jeder
+//    Reset-Link lief in dieselbe Fehlerseite wie der Bestätigungslink.
+//    Zurück auf das eigentlich richtige Ziel: direkt `/passwort-reset`, das
+//    das Fragment selbst über den Supabase-Browser-Client verarbeitet
+//    (`detectSessionInUrl`, dort schon vorbereitet und jetzt der einzige Weg).
 //
 // Antwort ist bewusst IMMER gleich (Erfolg), unabhängig davon, ob die
 // E-Mail existiert — verhindert Account-Enumeration, exakt wie beim
@@ -41,17 +46,28 @@ export async function POST(req: NextRequest) {
     type: 'recovery',
     email,
     options: {
-      redirectTo: `${origin}/auth/callback?next=/passwort-reset`,
+      redirectTo: `${origin}/passwort-reset`,
     },
   })
 
   if (!error && data?.properties?.action_link) {
-    sendPasswordResetEmail(email, data.properties.action_link).catch(fehler => {
-      console.error('[passwort-vergessen] Reset-Mail fehlgeschlagen')
-      Sentry.captureException(fehler instanceof Error ? fehler : new Error(String(fehler)), {
+    // CoS-P-013 Befund 2: vorher "fire and forget" (kein await, Antwort ging
+    // sofort raus) — auf einer Serverless-Funktion darf die Laufzeit danach
+    // jederzeit einfrieren, noch laufende Arbeit wird dann verworfen, ohne
+    // dass ein catch je zum Zug kommt. Jetzt abgewartet. UND: sendPassword-
+    // ResetEmail() wirft bei einem Resend-Fehler nicht, sondern gibt
+    // { ok: false, error } zurück — das reine .catch() von vorher hätte einen
+    // echten Resend-Fehler (falsche Domain, Rate-Limit, …) also so oder so
+    // nie gesehen. Beides zusammen ist die wahrscheinlichste Erklärung dafür,
+    // dass Sandys Reset-Mail heute weder ankam noch irgendwo einen Fehler
+    // hinterließ.
+    const versand = await sendPasswordResetEmail(email, data.properties.action_link)
+    if (!versand.ok) {
+      console.error('[passwort-vergessen] Reset-Mail fehlgeschlagen:', versand.error)
+      Sentry.captureException(new Error(versand.error ?? 'Resend-Versand fehlgeschlagen'), {
         tags: { feature: 'passwort_reset_mail' },
       })
-    })
+    }
   } else if (error) {
     // Erwarteter Fall bei unbekannter E-Mail — bewusst nicht als Fehler
     // an den Client durchreichen, siehe Kommentar oben. Absichtlich AUCH
