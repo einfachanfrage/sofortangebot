@@ -48,7 +48,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | 🟡 umgesetzt & deployt (`token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen). Bestätigungslink live bestätigt (Sandys Test, landet direkt eingeloggt im Onboarding). Reset-Link-Test steht noch aus — danach ✅. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
+| CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | 🟢 Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Ungetestet, da aus dieser Session kein automatischer Build möglich — bitte einmal mit einem Test-Account ohne hinterlegten Key gegenchecken | Manfreds Onboarding-Durchlauf TN-143, 2026-09-14 |
 | CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
@@ -1786,5 +1786,45 @@ Seite nicht eindeutig mein Gebiet ist — nur hiermit gemeldet.
 **Noch offen:** Live-Test (Test-Account, Anbieter ohne Key auswählen, im
 Dashboard nachsehen) — aus dieser Session nicht möglich, da kein
 automatischer Build.
+
+## Nachtrag CoS-P-016 — beide Wege live bestätigt
+
+**Datum:** 2026-09-14, Platform & Integrations Engineer
+
+Sandys Live-Test: Reset-Mail angekommen, Link führt direkt auf das
+"Neues Passwort"-Formular (kein "Link ungültig", kein Umweg). Zusammen mit
+dem bereits bestätigten Bestätigungslink ist CoS-P-016 damit **beide**
+Wege geprüft — Status oben auf ✅ gesetzt.
+
+---
+
+## Nachtrag CoS-P-014 Nachlauf 2 — Hook nach dem ersten echten Einsatz nachgeschärft
+
+**Datum:** 2026-09-14, Platform & Integrations Engineer
+
+Der neue `pre-push`-Hook hat bei Sandys erstem Push sofort gegriffen — nur
+anders als gedacht: blockiert wurde nicht ein vergessener Teil ihrer
+eigenen Änderung, sondern **fremde, gerade laufende Arbeit** im selben
+Ordner (u. a. `src/lib/default-price-selection.ts`, `gewerke-config.ts`,
+`preise-vorlagen.ts` — nach Lage der Dinge Product Engineerings
+Tätigkeiten-Umbau aus `preisliste-konzept.md`, plus mehrere unfertige
+docs/-Stände). Die erste Fassung prüfte den **gesamten** Arbeitsbaum, nicht
+nur das, was gerade gepusht wird — bei mehreren Rollen im selben
+Arbeitsordner ist der Baum praktisch nie vollständig sauber, das hätte
+fast jeden Push blockiert, unabhängig vom eigenen Stand.
+
+**Nachgeschärft, näher am eigentlichen CoS-P-014-Muster:** Blockiert wird
+jetzt nur noch, was **komplett unbekannt für Git ist** (`??`) **und**
+außerhalb von `docs/` liegt — genau die Art Datei, die beim letzten Mal 17
+Stunden unbemerkt blieb. Bereits getrackte, nur noch nicht committete
+Änderungen (nichts davon ist verloren) und alles unter `docs/` (eigener
+Schutz über `docs-sichern.mjs`) werden weiterhin angezeigt, aber
+blockieren den Push nicht mehr. `scripts/pruefe-unerfasste-dateien.mjs`
+aktualisiert, `.git/hooks/pre-push` unverändert (ruft nur das Skript auf).
+
+**Dabei aufgefallen, nicht mein Gebiet, nur gemeldet:** eine komplett
+untrackte Testdatei, `src/lib/__tests__/preisvorlagen-gewerke.test.ts` —
+existiert nur auf Sandys Rechner. Nach Lage der Dinge Product Engineerings
+laufende Arbeit an CoS-E-053/054, nicht angefasst.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
