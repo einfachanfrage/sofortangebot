@@ -1,5 +1,5 @@
-import { aufwandSperre } from './preis-aufwandswoerter.ts'
-import { standardFamilie } from './katalog-standard.ts'
+import { aufwandSperre } from './preis-aufwandswoerter'
+import { standardFamilie } from './katalog-standard'
 
 export interface PreisPosition {
   id: string

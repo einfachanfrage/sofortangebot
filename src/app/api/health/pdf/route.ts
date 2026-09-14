@@ -54,6 +54,11 @@ export async function GET() {
       onboarding_step: 8,
       kleinmaterial_config: null,
       anfahrt_config: null,
+      // CoS-P-014 (14.09.2026): mit CoS-E-040 kam `erschwernis_config` zum
+      // Betriebs-Typ dazu, diese Attrappe wurde nicht mitgezogen — der
+      // Produktions-Build scheiterte daran. `null` ist hier auch fachlich
+      // richtig: es bedeutet "nie eingestellt", also alle Zuschläge an.
+      erschwernis_config: null,
     }
 
     const dummyItem: QuoteItem = {
