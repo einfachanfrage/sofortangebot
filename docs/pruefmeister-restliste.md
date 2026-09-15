@@ -1,135 +1,210 @@
-# Nachtestplan 07.09. — abgearbeitet am 14.09.2026
+# Restliste Prüfmeister — Stand 15.09.2026, abends
 
-**Diese Datei ersetzt den Arbeitszettel vom 07.09.** Der alte Stand („grün für
-alle dreizehn, bitte einsprechen") ist erledigt: Die dreizehn Fälle sind
-nachgerechnet, nicht mehr von Hand eingesprochen, sondern als Code hinterlegt.
-Was von Hand bleibt, steht ganz unten.
+**Diese Datei ersetzt die Fassung von heute mittag.** Was dort offen stand, ist
+unten weitergeführt oder als erledigt eingetragen. Die Datei wird immer
+ersetzt, nie ergänzt.
 
 ---
 
 ## Wie geprüft wurde
 
-Sandys Rechner ist seit dem 12.09. nicht erreichbar (Windows-Update vom
-08.09.). Geprüft wurde deshalb in einer Ersatzumgebung, mit dem echten Code
-und dem echten Standardkatalog, über **dieselbe Pipeline wie das Produkt**:
+Sandys Rechner ist über die Shell weiterhin nicht erreichbar (Windows-Update
+vom 08.09.). Gelesen und geschrieben wurde über Staging und Commit, gerechnet
+in der Ersatzumgebung mit dem echten Code und dem echten Standardkatalog.
 
-```
-verarbeiteExtraktion → berechneMengen → Vollständigkeitsprüfung → Preis-Matcher
-```
-
-Nicht abgedeckt bleibt der KI-Schritt davor (aus Sprache wird Struktur). Die
-Raumdaten sind so gesetzt, wie die Extraktion sie bei korrekter Arbeit liefern
-muss. Weicht sie live davon ab, ist das ein Extraktionsfund und kein
-Rechenfehler.
-
-**Gesamtlauf: 631 Tests, 628 grün**, zwei rot aus Umgebungsgründen (zwei
-Dateien, die es nur im vollständigen Projekt gibt), plus eine bewusste
-Sperrklinke (siehe PM-013).
+**Gelaufen:** `node scripts/vokabular-abgleich.mjs` und die Testdateien dieser
+Spur — **215 grüne Prüfungen, 27 bewusste Sperrklinken** (`it.fails`).
+`katalog-deckung.test.ts` braucht den Next.js-Endpunkt und läuft hier
+grundsätzlich nicht — eine Grenze der Umgebung, kein Befund.
 
 ---
 
-## Die dreizehn Fälle
+## Erledigt in diesem Lauf
 
-**Sieben standen längst als Soll-Test hinterlegt** und laufen grün, ohne dass
-sie jemand einsprechen muss: PM-021, PM-022, PM-025, PM-026, PM-012, PM-030,
-PM-031 (`pruefmeister-soll.test.ts`, 111 Prüfungen).
+### 1. Restliste Nr. 10 — `VARIANTEN` nachziehen. War die falsche Diagnose.
 
-**Sechs standen nirgends.** Die sind jetzt neu hinterlegt in
-`src/lib/__tests__/pruefmeister-nachtest-0709.test.ts`:
+Der Zähler „Titel aus Variablen, nicht prüfbar" stand auf 6 und war von 3
+gewachsen. Ich hatte das einer unvollständigen `VARIANTEN`-Liste zugeschrieben.
+Nachgesehen, welche sechs Titel es sind: **vier brechen mitten im Ausdruck ab.**
 
-| Fall | Stand | Soll getroffen |
+Die Ursache saß in `literal()` im Skript selbst: Der Leser zählte `${ … }`
+nicht mit und hielt den ersten Backtick eines **verschachtelten** Templates für
+das Ende des Titels. Jeder Raum-Anhang, der als Ternär geschrieben ist
+— `${raum ? ` — ${raum}` : ''}` —, erhöhte den Zähler um eins. Dahinter stehen
+ganz normale, prüfbare Titel.
+
+Behoben (drei Eingriffe in `scripts/vokabular-abgleich.mjs`), **Zähler jetzt
+0.** Alle sechs Titel finden einen Katalogpreis, keiner ist eine Lücke.
+Ausführlich in `vokabular-abgleich.md` R.
+Test: `src/lib/__tests__/pm-vokabular-varianten.test.ts`.
+
+### 2. Dabei aufgefallen: das Skript las zwei von sechs aktiven Gewerken
+
+`QUELLEN` enthielt Maler und Boden. **`fliesen` steht in `gewerke-config.ts`
+auf `aktiv: true`** — ein Fliesenleger bekommt das Gewerk angeboten, geprüft
+hat es nie jemand. Jetzt mit drin.
+
+```
+                                   vorher    nachher
+Engine-Titel mit eigener Einheit     155        170
+davon ohne Preis                      15         22
+davon knapp (Score < 0,75)             3          3
+gute Treffer                         137        145
+Titel aus Variablen, nicht prüfbar     6          0
+```
+
+**Alle sieben neuen Lücken sind Fliesen** — und es sind die tragenden Zeilen
+eines Bades. Siehe PM-060 unten. Ausführlich in `vokabular-abgleich.md` S.
+
+### 3. Restliste Nr. 9 — `Übergangsprofil / Schwelle einbauen` nachgemessen
+
+Die Frage war: sind die 0,29 h zu hoch, oder fehlt das Material?
+**Die Stunden sind richtig, das Material fehlt.** Der Beweis kommt aus dem
+Katalog, nicht aus einem Baumarktpreis:
+
+```
+Übergangsprofil / Schwelle einbauen     15,00 €/Stück
+Schwelle / Übergangsprofil entfernen     8,00 €/Stück   ← reine Arbeit
+```
+
+Steckten im Einbau 8–12 € Profil, bliebe für die Einbau-**Arbeit** 3,00 bis
+7,00 € — weniger als für den Ausbau. Niemand setzt ein Profil schneller, als er
+eines herausreißt. Also: 15,00 € ist Arbeitslohn, 0,29 h stimmen (unterstellter
+Satz 51,7 €/h, im Band der übrigen Zeit-Zeilen 51,7–55,0 €/h).
+
+Offen bleibt damit nicht die Stundenzahl, sondern die **Marke**: Die Zeile
+trägt `material: 'zubehoer'`, ihr Preis ist aber zu 100 % Zeit — bei jedem
+Stundensatz. Als PM-057 in die Fallbasis, Entscheidung über die Bauweise liegt
+bei Engineering.
+
+---
+
+## Neu: drei Funde aus der Preisliste, zwei mit Geldweg
+
+Beim Nachmessen von Nr. 9 quer geprüft, was `preis-ableitung.ts` und
+`materialanteil.ts` über dieselbe Zeile sagen.
+
+| Fund | Wirkung | Geldweg |
 |---|---|---|
-| **PM-037** Leibungen und Fensterbänke | ✅ **grün, zum ersten Mal** | Leibungen 1,60 m² dreiseitig · Fensterbänke 0,60 m² · Wand 46,80 · Boden 20,00 · Sockel 18,00 lfdm · beide Kleinteilzeilen mit 45,00 €/m² |
-| **PM-011** Q2 ohne Untergrund-Zuschlag | ✅ grün | Q2 über die echte Wandfläche 36,00 m² zu 9,00 € · kein „schwieriger Untergrund" · Altbau bleibt · Sockel 14,40 |
-| **PM-032** Klick-Vinyl durchgehend | ✅ grün | Titel „Klick-Vinyl" zu 16,00 € (nicht 22,00) · Belag 37,38 · Dämmung 35,60 · Sockel 44,00 lfdm · eine Schiene |
-| **PM-033** Fischgrät in einem von drei Räumen | ✅ grün | 31,05 / 14,40 / 7,88 · Aufpreiszeile **nur** im Wohnzimmer · Trittschall nur im Flur · keine Sockelleisten |
-| **PM-013** Parkett-Fischgrät | ⚠️ **grün bis auf einen Fund** | 41,40 m² · Aufpreiszeile 41,40 × 14,00 · keine Wandposition — **aber die Dehnungsfuge fehlt** |
-| **PM-002** Diagonalverlegung + Akzentwand | ⏸ **nicht hier prüfbar** | Maler-Hälfte stimmt (Akzentwand 9,10 · Restwand 29,90 · keine Decke). Der Boden-Teil hängt an der Gewerke-Aufteilung, die erst der KI-Schritt liefert — gehört in den Live-Lauf |
+| **PM-057** Zeile mit `material: 'zubehoer'` trägt das Zubehör nicht im Preis | Betrieb zahlt das Profil selbst, bei jeder Tür | 8–12 € je Stück |
+| **PM-058** `Grundieren (Tiefengrund)` steht **zweimal** in einer Preisliste — 5,50 € und 3,00 €, Katalog 4,50 € | zwei Preise für dieselbe Arbeit; welcher gilt, entscheidet der Matcher | 2,50 €/m² Spanne |
+| **PM-059** fünf Zeilen: `preis-ableitung.ts` sagt `wahl`, `materialanteil.ts` gibt keinen Schalter | wer Material selbst stellt, bekommt nichts abgezogen | je Zeile 25–45 % |
+
+Zu PM-058: betroffen ist jeder Betrieb, der **Maler innen und Tapezieren**
+ankreuzt. Zu PM-059: zwei der fünf Zeilen (Trittschall, Sockelleisten) wurden
+in PD-009 §2 **absichtlich** auf `wahl` gestellt, während `materialanteil.ts`
+sie wörtlich als Zubehör sperrt — beide Dateien am selben Tag geschrieben.
+
+**Was ich ausdrücklich nicht entscheide:** welche der beiden Dateien recht hat.
+Die fachliche Frage beantworte ich gern, aber erst, wenn klar ist, welche Datei
+die Oberfläche speist. Eine Quelle, nicht zwei, ist die Bedingung.
+
+Ausführlich in `pruefmeister-notizen-fuer-designer.md`, PD-014.
+Test: `src/lib/__tests__/pm-preisliste-material.test.ts`.
 
 ---
 
-## Der Fund: PM-013-A — die Dehnungsfuge entsteht nirgends
+## Neu: Batch PM-060 bis PM-062 — Bad und Fliesen
 
-Im Diktat steht *„da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte
-mit rein"*. Nachgestellt, mit der Dehnungsfuge zusätzlich als Arbeit in der
-Extraktion: **es entsteht keine Position.** Im Quelltext erzeugt sie auch
-niemand — kein Treffer in `boden.ts` oder den Vollständigkeits-Dateien.
+Erster Batch außerhalb von Maler und Boden. Thema stand seit dem 10.09. im
+Speicher unter F. Hinterlegt als
+`src/lib/__tests__/pruefmeister-batch-60-62.test.ts` — **9 Prüfungen grün, vier
+Sperrklinken.**
 
-Der Katalog hat sie sogar doppelt, mit zwei Einheiten:
+Anders als PM-047 bis PM-056 läuft dieser Batch nicht über
+`verarbeiteExtraktion`: Die Pipeline dort normalisiert `raeume` für Maler und
+Boden, die Fliesen-Engine liest `bereiche` und `altbelag`. Gefahren wird
+Engine + Vollständigkeitsprüfung, so wie der Endpunkt es für dieses Gewerk tut.
+
+| Fall | Inhalt | Stand |
+|---|---|---|
+| PM-060 | Bad komplett neu fliesen, Nassbereich — Mengen und Verschnitt stimmen | ✅ + 2 Funde |
+| PM-061 | „nur die Wandfliesen" — der Boden wird trotzdem berechnet | 🔴 Sperrklinke |
+| PM-062 | `Altfliesen abstemmen` nimmt immer den Bodenpreis | 🔴 zwei Sperrklinken |
+
+### PM-060-A — sieben von neun Zeilen ohne Preis: 1.935,94 € auf einem kleinen Bad
+
+Bad 2,40 × 1,80 m, Fliesenhöhe 2,10 m. Ohne Preis stehen da:
 
 ```
-Dehnungsfuge mit Bewegungsprofil herstellen   18,00 €/lfdm
-Dehnungsfuge einbauen                         45,00 €/Stück
+Bodenfliesen verlegen     4,75 m²   Verfugung Boden                4,32 m²
+Wandfliesen verlegen     18,52 m²   Verfugung Wand                17,64 m²
+Verbundabdichtung Wand   17,64 m²   Fliesensockel / Abschluss       8,40 lfdm
+Entsorgung Fliesenmaterial 16,00 m²
 ```
 
-**Warum das mehr ist als eine fehlende Zeile:** Ein Parkett über 40 m² ohne
-Dehnungsfuge wölbt sich. Die Position fehlt im Angebot, die Arbeit macht der
-Handwerker trotzdem — oder er verlässt sich auf die Liste, und dann hat er in
-zwei Jahren eine Reklamation, die ihn mehr kostet als die Fuge.
+Die Mengen selbst stimmen (10 % Verschnitt Boden, 5 % Wand, Verfugung und
+Abdichtung auf netto — richtig so, abgedichtet wird die Wand, nicht der
+Verschnitt). Es fehlt nur der Preis. **Zwei Ursachen, sauber getrennt:**
 
-**Soll:** Fällt „Dehnungsfuge", „Bewegungsfuge" oder „Randfuge" im Diktat,
-entsteht eine Position. Ohne Meterangabe **keine geschätzte Menge**, sondern
-sichtbarer Platzhalter — dieselbe Regel wie bei den Fugenmetern (E.1 in
-`vokabular-abgleich.md`). Und eine der beiden Katalogzeilen muss weg: eine
-Arbeit, eine Einheit. **Meine Entscheidung: lfdm zu 18,00 €** — eine
-Dehnungsfuge wird in Metern gelegt, nicht in Stück.
+- **Wortlaut** — die Engine schreibt `Verfugung Boden`, der Katalog führt
+  `Verfugen Boden`; `Bodenfliesen verlegen` gegen `Bodenfliesen Standard
+  (30×30 bis 60×60cm), gerade, Q2`. Kein Treffer über der Schwelle.
+- **PM-060-B, Gewerke-Zuordnung** — `gewerkFuerPosition` liest „Wand" und
+  entscheidet auf **`maler`**, für alle drei Wand-Zeilen. Danach wird gegen den
+  Malerkatalog gehalten. `Verbundabdichtung Wand` hätte im Fliesenkatalog mit
+  Score 0,94 auf 28,00 €/m² getroffen: **493,92 € allein an der Zuordnung.**
 
-Der Test dazu steht als `it.fails` in der neuen Datei. Er ist heute grün, weil
-der Fund bestätigt ist — **sobald jemand die Position baut, wird er rot und
-zwingt dazu, ihn zurückzustellen.** Sperrklinke statt Schweigen.
+### PM-061-A — „nur die Wandfliesen", und der Boden steht trotzdem im Angebot
 
----
+Das Gegenstück zu PM-047 („nur die Decke, Wände bleiben"), das für Maler grün
+ist. `fliesenEngine` schreibt Bodenfliesen, sobald Länge und Breite dastehen —
+unabhängig davon, was gesagt wurde. `erkenneFliesenBereich()` kennt `nurWand`
+sogar, wird aber erst **nach** der Engine gelesen und räumt nichts mehr weg.
 
-## Nebenbefund am Testaufbau — der Grund, warum PM-037 „nie durchlief"
+Das ist die Regel „Nichts erfinden" einmal ganz: nicht eine ergänzte Zeile mit
+Preis, sondern drei Zeilen für eine Arbeit, die ausdrücklich ausgenommen wurde.
+**324,50 €**, sobald PM-060-A behoben ist.
 
-`pruefmeister-soll.test.ts` ruft `berechneMengen` **direkt** mit handgebauten
-Räumen und überspringt damit `verarbeiteExtraktion`. Alles, was erst dort
-entsteht, kann dieser Test grundsätzlich nicht sehen: **Leibungen,
-Fensterbänke, Zahlwörter, Maßreparatur, Mehrgewerk-Aufteilung.**
+### PM-062-A — der Titel sagt nicht, welche Fliesen abgestemmt werden
 
-PM-037 war also nicht kaputt — er wurde an der Stelle geprüft, an der seine
-Positionen noch gar nicht existieren. Die neue Datei läuft über die Pipeline.
-**Empfehlung ans Engineering:** den Soll-Test auf denselben Einstieg umstellen,
-sonst prüft er auf Dauer weniger, als er behauptet. Dieselbe Lehre wie beim
-Abgleich-Skript am 12.09.
-
----
-
-## Zwei Richtwerte, die im Katalog auf mich warteten
-
-- **Fassadenleibung** (`Fensterleibungen streichen`, Maler – Anstrich Außen):
-  steht zum selben Satz wie innen, mit dem Vermerk „der Prüfmeister
-  entscheidet". Entscheidung: **35,00 €/m²**, nicht 45,00. Außen ist die
-  Fläche gröber und der Farbverbrauch höher, aber die Feinarbeit an der Kante
-  entfällt weitgehend — und das Gerüst steht ohnehin als eigene Position.
-- **Dehnungsfuge**: 18,00 €/lfdm, siehe oben.
+Der Katalog unterscheidet Boden (18,00 €/m²) und Wand (22,00 €/m²). Die Engine
+schreibt einen Titel für beides, und er trifft immer den Boden. Bei Wandfliesen
+sind das 4,00 €/m² zu wenig — auf 18 m² **72,00 €** — und auf dem Kundenpapier
+steht eine Arbeit, die nicht die ausgeführte ist. Dieselbe Familie wie TN-127
+(PM-056-A): Der Titel nimmt nicht, was im Raum liegt.
 
 ---
 
-## Was von Hand bleibt — Live-Lauf in der App
+## Offen
 
-Nicht mit Code prüfbar, gehört in Spur 6:
+### Braucht die laufende App (Spur 6)
 
 1. **PM-002 komplett** — gemischtes Angebot, Maler und Boden in einem Raum.
-2. **PM-032 zweimal einsprechen** — der Fehler trat in einem von vier Läufen
-   auf. Ein grüner Lauf beweist da nichts, auch kein grüner Test.
-3. **PM-031, zweiter Teil** — Raummaß in der Bearbeiten-Ansicht anfassen und
-   sehen, ob die Menge stehen bleibt. Das ist Oberfläche, nicht Rechnung.
-4. **PM-030** — dieselbe Zahl auf Karte **und** im Entwurf.
-5. **PM-014 / PM-015** — doppeltes „Angebot erstellen", und ein frisches Konto
-   mit rund 340 Katalogpositionen.
-6. **G.3** — Manfreds zwei Szenarien vom 11.09., weiterhin offen.
+   **Unverändert offen seit dem 14.09., ohne laufende App nicht weiterzubringen.**
+2. **PM-032 zweimal einsprechen** — der Fehler trat in einem von vier Läufen auf.
+3. **PM-031, zweiter Teil** — Raummaß in der Bearbeiten-Ansicht anfassen.
+4. **PM-030** — dieselbe Zahl auf Karte und im Entwurf.
+5. **PM-014 / PM-015** — doppeltes „Angebot erstellen", frisches Konto.
+6. **G.3** — Manfreds zwei Szenarien vom 11.09.
+7. **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt.
+
+### Geht ohne App, steht als Nächstes an
+
+8. **PM-013-A** — die Dehnungsfuge entsteht weiter nirgends. Sperrklinke steht,
+   Entscheidung steht (lfdm zu 18,00 €), Umsetzung bei Engineering.
+9. **`Untergrund spachteln / ausgleichen (bis 5mm)`** — nach der Regel aus
+   PD-013 wäre es `zeit`, dagegen steht ein ungemessener Materialanteil. Bleibt
+   `anker`, bis die Zahl da ist. Ausdrücklich keine stille Entscheidung.
+10. **Die drei übrigen aktiven Gewerke im Abgleich** — Trockenbau,
+    Sanitär/Heizung, Elektro stehen weiterhin nicht in `QUELLEN`. Ob sie
+    hineingehören, hängt daran, ob ihre Engines mehr sind als Durchreichen.
+    Nachzusehen, **bevor** jemand eine Zahl aus dem Abgleich zitiert.
+11. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung,
+    nicht danach.
+12. **Fallbasis Richtung 100** — Stand **62 von 100** (56 + PM-057 bis PM-062).
+    Nächste Themen aus dem Speicher: Treppen komplett, Abbruch und Entsorgung,
+    mehrere Aufnahmen pro Angebot, Trockenbau.
+
+### Bleibt ausdrücklich draußen
+
+Selbstkorrektur mitten im Diktat und ausgeschriebene Zahlwörter als Raummaß
+entstehen **vor** der Pipeline. Nachgestellt bleiben die Raummaße unverändert
+stehen — ein Test dafür würde etwas anderes prüfen als das, was er behauptet.
+Gehört in den Live-Lauf.
 
 ---
 
-## Was danach kommt
-
-Mit diesen dreizehn ist der Stand: **kein bekannter Rechenfehler in Maler und
-Boden**, mit dem einen offenen Fund PM-013-A. Die Fallbasis steht bei 44 von
-100. Die nächsten Batches stehen im Themenspeicher — Bad/Fliesen, Treppen,
-Fenster und Türen lackieren, Abriss und Entsorgung, mehrere Aufnahmen pro
-Angebot, Selbstkorrektur mitten im Diktat.
-
-*Prüfmeister · 14.09.2026 · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
+*Prüfmeister · 15.09.2026 · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

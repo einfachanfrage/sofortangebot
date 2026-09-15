@@ -1,105 +1,126 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 15.09.2026, 16:45 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 16:15 — diese Datei wird immer ersetzt, nie ergänzt)*
+**Stand: 15.09.2026, 16:50 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 16:45 — diese Datei wird immer ersetzt, nie ergänzt)*
 
 ---
 
 ## Lage in drei Zeilen
 
-**Produktion:** grün und live — `dpl_4K1yBgk`, Commit `2f93123`.
-**Die CI ist rot**, an den Tests, nicht am Lint — Lauf `34969779950`, `failure`.
-Die sieben Zeilen sind am Quelltext nachgesehen (CoS-E-055 Nachtrag 2).
-**Sandy hat gepusht:** `db5d9d9` liegt auf `main`, selbst nachgeprüft. Die
-Doku ist damit vollständig im Repository — PD-009 und PD-010 eingeschlossen.
-**Und sie hat vier Entscheidungen auf einmal beantwortet.** Alle vier sind
-verteilt. Die Sandy-Tabelle ist zum ersten Mal seit Tagen fast leer.
+**Die CI ist grün.** Lauf **#187** auf Commit **`de1ae80`**: `success`. Damit
+ist CoS-E-055 geschlossen — belegt am Lauf, nicht an einer lokalen Messung.
+**Produktion grün:** `dpl_Ba3B8QBk`, `READY`, auf demselben Commit.
+**`_to_delete/` ist weg** — nachgesehen, der Ordner existiert nicht mehr.
+**Neu auf dem Tisch:** sechs Funde des Prüfmeisters aus PM-045 und PM-046,
+drei davon mit einem Geldweg zum Kunden. Verteilt als CoS-E-058 und CoS-E-059.
 
 ---
 
-## ✅ Vier Entscheidungen von Sandy, alle verteilt
+## ✅ Die rote CI ist erledigt
 
-| Was | Antwort | liegt jetzt bei |
+| Lauf | Commit | Ergebnis |
 |---|---|---|
-| Push-Hook, zweiter Checkout | **ja** | Platform — **CoS-P-023** |
-| § 35a Pflichtangaben | **ja, vor Gate 1** | Legal **CoS-L-008** (Feldliste) · Engineering **CoS-E-057** (Einbau) |
-| `_to_delete/` löschen | **ja** | Sandy selbst — ich habe keinen Shell-Zugriff auf ihren Rechner |
-| DC-102-Prototyp | **freigegeben** | Designer — **DC-102 ✅** |
+| CI #184 | `2f93123` | failure — die sieben Zusicherungen |
+| CI #186 | `caec47f` | failure — dieselben sieben |
+| **CI #187** | **`de1ae80`** | **success** |
 
-**Wichtig zur Prototyp-Freigabe:** Sie betrifft **Ablauf und Darstellung**,
-nicht die Zahlen im Prototyp. Die hat der Prüfmeister in PD-009 durchgesehen,
-und dort stehen drei falsch eingeordnete Zeilen, vier zu hohe Zeitwerte und
-abweichende `basis`-Werte. Beim Einbau werden die Basiswerte aus
-`default-prices.ts` gezogen, nicht aus dem Prototyp abgeschrieben.
+`de1ae80` („CoS-E-055: Tuer-Anker, Taetigkeiten, Materialanteil + Doku")
+enthält 19 Quelldateien **und** die sechs Doku-Dateien, die vorher nur auf
+Sandys Rechner lagen — PD-009 und PD-010 eingeschlossen.
+
+Der Prüfmeister hatte geschrieben: „die Behebung liegt auf Sandys Rechner und
+nicht im Repository". Genau das war es. Die Vermutung ist damit bestätigt, und
+zwar an der einzigen Stelle, an der sie sich bestätigen lässt.
+
+**Was ich weiterhin nicht behaupte:** dass damit alle Tests der Fallbasis grün
+sind. #187 sagt, dass der CI-Lauf durchgeht — nicht, dass die sechs neuen
+Funde unten schon abgedeckt wären. Sie sind es nicht.
 
 ---
 
-## 🔴 Die rote CI — unverändert, aber vollständig aufgeschlüsselt
+## 🔴 Neu: sechs Funde aus PM-045 und PM-046
 
-Kein neuer CI-Lauf seit 14:35; `db5d9d9` ist ein reiner Doku-Commit. Der Stand
-von 16:15 gilt: **keine Regression, und die Zusicherungen sind nicht
-versehentlich falsch** — an vier Stellen fehlt der Einbau.
-
-| Datei | rot | fehlt |
+| Fund | Wirkung auf ein einzelnes Angebot | liegt bei |
 |---|---|---|
-| `pd010-tueranker.test.ts` | 4 | **ein einziger Wechsel** — Anker fürs Lackieren auf `Türen lackieren (2× Anstrich)` (90 €, Katalogzeile existiert), die zwei alten Innen-Zeilen raus |
-| `preis-ableitung.test.ts` | 1 | ein Halbsatz bei **Fassade 1x** — bei Wand 1x und Decke 1x steht er schon |
-| `taetigkeiten.test.ts` | 1 | zwei Rubriken mit Materialschalter ohne Tätigkeit — **fachliche Entscheidung**, nicht Reparatur |
-| `materialanteil.test.ts` | 1 | **eine Zahl**: Anteil 25 % ergibt 8,62, Manfreds Beispiel 8,50 entspricht 26,1 % |
+| PM-045-A/B — „vier Türen" wird als **eine** gerechnet | **540,00 € zu wenig** | Engineering **CoS-E-058** |
+| PM-045-C — Begründung an der Tür erzeugt Fensterzeilen | Zeilen, die niemand bestellt hat | Engineering **CoS-E-058** |
+| PM-046-A — Sperrgrund auf Boden- statt Wandfläche | **219,60 € zu wenig**, zwei Drittel ohne Sperre | Engineering **CoS-E-059** |
+| PM-046-B — Isolier- **und** Tiefengrund auf derselben Fläche | **76,95 € zu viel**, fachlich schädlich | Engineering **CoS-E-059** |
+| PM-046-C — bestellte Decke trägt `automatisch_ergaenzt` | fällt aus dem Angebot, sobald „Nichts erfinden" umgebaut ist | Engineering **CoS-E-059** |
 
-Nachweise mit Datei- und Zeilenangabe: **CoS-E-055 Nachtrag 2**. Die Antwort
-„behoben (mit Commit) / offen (mit Datum und Bedingung)" pro Zeile bleibt bei
-Engineering. **„Erwartet rot" gibt es nicht.**
+Sperrklinke für alle: `src/lib/__tests__/pruefmeister-batch-1509.test.ts` —
+liegt auf Sandys Rechner, noch nicht committet.
 
-**Und was ich weiterhin nicht behaupte:** dass der Build durchgeht. Der Lauf
-kam nach den Tests gar nicht mehr bis `npm run build`.
+**A und B in PM-046 zeigen in verschiedene Richtungen** — einmal zu wenig,
+einmal zu viel. Ob eine Ursache oder zwei, weiß ich nicht und rate es nicht;
+die Einschätzung steht bei Engineering.
 
 ---
 
-## Sandy — was noch offen ist
+## Sandy — was offen ist
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | **`_to_delete/` löschen** — entschieden, aber ich kann es nicht ausführen. Befehl liegt ihr vor | ein Befehl |
-| 2 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · KW 41 | unverändert |
-| 3 | **Neu, sobald Engineering antwortet:** der Materialanteil innen — 25 % oder Manfreds 26,1 %. Kommt erst zu ihr, wenn Prüfmeister und Engineering sich nicht einig sind | noch nicht fällig |
+| 1 | **Neu: Reihenfolge bei Engineering.** PM-045/PM-046 vor CoS-E-057 (§ 35a) oder nicht? Empfehlung und Gegenargument in `entscheidungen-fuer-sandy.md` | eine Antwort |
+| 2 | **Committen.** Neun Dateien liegen nur auf ihrem Rechner — Liste unten | ein Befehl |
+| 3 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert übernommen, in diesem Lauf nicht neu geprüft |
 
-**Zu committen ist nichts mehr offen gewesen** — bis zu diesem Lauf. Die
-Dateien dieses Laufs liegen wieder auf ihrem Rechner und nicht im Repository:
-`arbeitsreihenfolge.md`, `chief-of-staff-engineering-todos.md`,
-`chief-of-staff-platform-todos.md`, `chief-of-staff-legal-todos.md`,
-`design-check.md`, `entscheidungen-fuer-sandy.md`.
+**Erledigt und damit von der Liste:** `_to_delete/` löschen · die sechs
+Doku-Dateien committen · die vier Entscheidungen von 16:45.
+
+### Nur auf Sandys Rechner, nicht im Repository
+
+```
+docs/arbeitsreihenfolge.md
+docs/chief-of-staff-engineering-todos.md
+docs/entscheidungen-fuer-sandy.md
+docs/pruefmeister-restliste.md
+docs/pruefmeister-themenspeicher.md
+docs/pruefmeister-notizen-fuer-designer.md
+docs/vokabular-abgleich.md
+src/lib/__tests__/pm-flaeche-oder-zeit.test.ts
+src/lib/__tests__/pm-materialanteil-25.test.ts
+src/lib/__tests__/pm-vorlagen-zwilling.test.ts
+src/lib/__tests__/pruefmeister-batch-1509.test.ts
+src/lib/__tests__/pm-vokabular-varianten.test.ts
+src/lib/__tests__/pm-preisliste-material.test.ts
+src/lib/__tests__/pruefmeister-batch-60-62.test.ts
+scripts/vokabular-abgleich.mjs
+```
+
+**Sieben davon sind neue Dateien** — der Push-Hook blockiert, bis sie `git add`
+gesehen haben. `scripts/vokabular-abgleich.mjs` ist geändert, nicht neu.
 
 ---
 
 ## Head of Product Engineering
 
-1. **🔴 CoS-E-055 beantworten** — die sieben roten Zusicherungen, pro Zeile
-   „behoben" (mit Commit) oder „offen" (mit Datum und Bedingung). **Nachtrag 2
-   nimmt dir das Nachschlagen ab.** Das geht vor allem anderen
-2. **Der Tür-Anker ist die größte Einzelwirkung**: vier der sieben Zeilen
-   hängen an einer Umstellung, und die Zielzeile im Katalog existiert bereits
-3. **CoS-E-056 beantworten, bevor `taetigkeiten.ts` angefasst wird** —
-   `taetigkeiten.test.ts` ist ohnehin eine der vier roten Dateien
-4. **CoS-E-053 weiterbauen**, mit den vier Legal-Bedingungen. Der
+1. **CoS-E-058 und CoS-E-059 einschätzen** — die sechs Funde. Keine Umsetzung
+   gefragt, sondern: ein Eingriff oder mehrere, und hängt die Stückzahl an der
+   Extraktion oder am Matching. **Das geht vor allem anderen**, weil hier
+   falsche Beträge auf Kundenpapier landen
+2. **CoS-E-053 weiterbauen**, mit den vier Legal-Bedingungen. Der
    Preisanpassungs-Hinweis darf **nicht** aufs Kunden-PDF, bevor Sandy einen
    Wortlaut freigegeben hat — LR-16
-5. **CoS-E-057 — neu, von Sandy freigegeben:** Rechtsform-Auswahl und die
-   §-35a-Pflichtfelder im Betriebsprofil, vor Gate 1. **Nach** der roten CI,
-   und erst, wenn Legal die Feldliste geliefert hat (CoS-L-008). Es ist ein
-   Schema-Wechsel an `companies` — Migration **und** Eintrag in
-   `check_migrationen.sql`, der Abgleich ist seit heute scharf
+3. **CoS-E-056** bleibt bei Manfreds Vlies-Antwort. `taetigkeiten.ts` bis
+   dahin unangetastet, wie vereinbart
+4. **CoS-E-057** — angenommen, wartet auf Legals Feldliste (CoS-L-008).
+   Schema-Wechsel an `companies`: Migration **und** Eintrag in
+   `check_migrationen.sql`, der Abgleich ist scharf
+5. **Entsperrt:** „Fläche oder Zeit" ist entschieden (PD-013), 25 % bleibt.
+   Zwei Zeilen bleiben ausdrücklich offen — `Untergrund spachteln` und
+   `Übergangsprofil / Schwelle einbauen`
 
 ## Product Designer
 
-1. **DC-102 ist von Sandy freigegeben** — die Freigabe-Sperre ist weg. Der
-   Einbau hängt weiter an CoS-E-053 und an der roten CI; vier der sieben roten
-   Zusicherungen gehören zu genau diesem Schritt
-2. **Die Zahlen im Prototyp sind nicht mitfreigegeben** — PD-009 lesen, bevor
-   die Tabelle übernommen wird
-3. Live-Test von DC-101 / DC-103 / DC-104 / DC-089 am aktuellen Stand
-4. DC-047 und DC-048 sind live — beide brauchen noch einen Blick in der
-   laufenden App, nicht nur im Code
+1. **DC-102 ist freigegeben** — Ablauf und Darstellung, **nicht die Zahlen**.
+   PD-009 lesen, bevor die Tabelle übernommen wird; Basiswerte kommen aus
+   `default-prices.ts`, nicht aus dem Prototyp
+2. Der Einbau hängt weiter an CoS-E-053
+3. **DC-105 ist live** (`caec47f`) — Onboarding-Schritt 4 heißt jetzt „Wie
+   rechnest du ab?". In der laufenden App nachsehen
+4. Live-Test von DC-101 / DC-103 / DC-104 / DC-089 am aktuellen Stand
+5. DC-047 und DC-048 sind live — beide brauchen einen Blick in der App
 
 ## Platform
 
@@ -112,33 +133,65 @@ Dateien dieses Laufs liegen wieder auf ihrem Rechner und nicht im Repository:
    bleibt, eine Zeile, dass er bewusst offen bleibt
 4. **CoS-P-021** — zwei Fragen zum Rechnungsnummernkreis. Einschätzung, keine
    Umsetzung, kein Löschen von Produktionsdaten
-5. **CoS-P-022** — `docs-sichern.mjs pruefen` in die CI? **Nicht** von Sandy
-   mitentschieden, das ist eure Entscheidung und steht weiter offen
+5. **CoS-P-022** — `docs-sichern.mjs pruefen` in die CI? Eure Entscheidung,
+   steht weiter offen. **Sie wird dringender:** die Shell-Einhängung ist seit
+   dem 08.09. defekt, die Sicherung läuft also seit einer Woche nicht
 
 ## Prüfmeister
 
-1. **Die 26,1 % aus Manfreds Beispiel gegen die 25 % der Faustregel** — eine
-   Einschätzung, welche Zahl gilt. Sie hängt an Legal-Bedingung 3 zu CoS-E-053
-   und verschiebt im Zweifel jede Innen-Position. Das ist die einzige der
-   sieben roten Zeilen, die fachlich bei dir liegt und nicht bei Engineering
-2. Die Gegenprobe aus PD-009 §7, sobald der Preise-Schritt gebaut ist (zwei
-   Betriebe, 52 €/h und 75 €/h)
-3. **164 Vorlagen ohne Katalog-Zwilling** — die vierzehn Zeilen der aktiven
-   Gewerke sind ein kurzer Durchgang, die 150 der gesperrten haben Zeit
-4. **PM-002** braucht einen Live-Lauf
-5. Fallbasis Richtung 100 — bleibt der limitierende Faktor für Gate-1-Punkt 1.1
+1. ✅ **25 % gegen 26,1 % — entschieden: 25 % bleibt.** `pm-materialanteil-25.test.ts`
+2. ✅ **„Fläche oder Zeit" gegengeprüft und entschieden** (PD-013).
+   `pm-flaeche-oder-zeit.test.ts`
+3. ✅ **Vorlagen ohne Katalog-Zwilling nachgemessen** — 4 von 134 finden sich
+   selbst nicht, 2 davon mit anderem Preis. `vokabular-abgleich.md` Q
+4. ✅ **`VARIANTEN` nachgezogen — war die falsche Diagnose.** Der Zähler
+   „nicht prüfbar" lag an einem Lesefehler im Skript selbst (`literal()` zählte
+   `${ … }` nicht mit und brach an verschachtelten Templates ab), nicht an einer
+   Liste. Behoben, **Zähler 0**; alle sechs Titel haben einen Preis, keiner ist
+   eine Lücke. `vokabular-abgleich.md` R, `pm-vokabular-varianten.test.ts`
+5. ✅ **`Übergangsprofil / Schwelle` nachgemessen.** Antwort auf die Frage aus
+   der Restliste: **die Stunden stimmen, das Material fehlt** — bewiesen am
+   Katalog selbst (Ausbau kostet 8,00 €; steckten 8–12 € Profil im Einbaupreis
+   von 15,00 €, bliebe für die Einbau-Arbeit weniger als für den Ausbau).
+   0,29 h unterstellen 51,7 €/h, im Band der übrigen Zeit-Zeilen
+6. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
+7. ⏸ **PM-002** braucht einen Live-Lauf
+8. **Fallbasis: 62 von 100** — neu PM-057 bis PM-062, zwei Batches:
+   - **Preisliste (PM-057/058/059)** — drei Funde, zwei mit Geldweg. Eine Zeile
+     mit `material: 'zubehoer'` trägt das Zubehör nicht im Preis ·
+     `Grundieren (Tiefengrund)` steht **zweimal** in einer Preisliste, 5,50 €
+     gegen 3,00 € bei Katalog 4,50 € · **fünf** Zeilen, bei denen
+     `preis-ableitung.ts` und `materialanteil.ts` dieselbe Materialfrage
+     verschieden beantworten. `pm-preisliste-material.test.ts`, PD-014
+   - **Bad/Fliesen (PM-060/061/062)** — erster Batch außerhalb Maler/Boden.
+     `pruefmeister-batch-60-62.test.ts`
+9. 🔴 **Der größte Fund des Laufs: `fliesen` ist ein aktives Gewerk und kann
+   ein Bad nicht bepreisen.** Sieben von neun Zeilen eines Bades (2,40 × 1,80 m)
+   finden keinen Preis — **1.935,94 €**, Versand gesperrt. Zwei Ursachen,
+   getrennt gemessen: Wortlaut (Engine `Verfugung Boden`, Katalog
+   `Verfugen Boden`) und **Gewerke-Zuordnung** — `gewerkFuerPosition` liest
+   „Wand" und entscheidet auf `maler`, für alle drei Wand-Zeilen. Allein daran
+   hängen 493,92 €, denn `Verbundabdichtung Wand` hätte im Fliesenkatalog mit
+   Score 0,94 getroffen. Dazu: „nur die Wandfliesen" erzeugt trotzdem drei
+   Bodenzeilen (324,50 €), und `Altfliesen abstemmen` nimmt immer den
+   Bodenpreis (72,00 € auf 18 m²). **Gehört zu Engineering, vor der nächsten
+   Gewerke-Freischaltung**
+10. **Offen ohne App:** die drei übrigen aktiven Gewerke (Trockenbau,
+    Sanitär/Heizung, Elektro) stehen weiterhin nicht im Abgleich — nachsehen,
+    bevor jemand eine Zahl daraus zitiert · `Untergrund spachteln` bleibt
+    `anker`, bis der Materialanteil gemessen ist · die 142 Vorlagen der
+    gesperrten Gewerke, jeweils **vor** der Freischaltung
 
 ## Legal
 
-1. **CoS-L-008 — neu und vordringlich:** Sandy hat § 35a vor Gate 1
-   freigegeben. Engineering wartet auf die abschließende Feldliste je
-   Rechtsform (e. K. und GmbH & Co. KG sind nicht dieselbe wie GmbH/UG), auf
-   die Abgrenzung PDF gegen Produkt-E-Mails, und darauf, was bei einem
-   unvollständigen Profil passieren soll
+1. **CoS-L-008 — vordringlich:** die abschließende Feldliste je Rechtsform
+   (e. K. und GmbH & Co. KG sind nicht dieselbe wie GmbH/UG), die Abgrenzung
+   PDF gegen Produkt-E-Mails, und was bei unvollständigem Profil passiert.
+   Engineering wartet darauf und fängt bewusst nicht an
 2. **§ 14 UStG — Pflichtangabenliste nachholen**, sobald die Normtexte
    abrufbar sind (CoS-L-006)
-3. **Materialangabe auf dem Kunden-PDF bewerten** — Konzept Fassung 3 und
-   Prototyp liegen vor; die vier Bedingungen sind an Engineering übergeben
+3. **Materialangabe auf dem Kunden-PDF bewerten** — die vier Bedingungen sind
+   an Engineering übergeben
 4. CoS-L-002 · CoS-L-004 laufend
 
 ## Manfred
@@ -147,26 +200,26 @@ Dateien dieses Laufs liegen wieder auf ihrem Rechner und nicht im Repository:
 2. **DC-101 nachprüfen**: am Handy laden und **sofort** lostippen
 3. **Rückfrage aus CoS-E-056:** Gilt „Tapete extra" bei ihm auch für Vlies?
 4. **Aus PD-009 §5:** Seine 75 % gegen die 63 % des Katalogs sind kein
-   Widerspruch — sie hängen daran, ob die Vorbereitung im m²-Preis steckt. Bei
-   ihm steckt sie nicht drin; das ist zu bestätigen, nicht zu entscheiden
+   Widerspruch — zu bestätigen, nicht zu entscheiden
 5. G.3 — seine zwei Szenarien in der laufenden App, offen seit 11.09.
 
 ---
 
 ## Was ich als Nächstes tue
 
-**Den CI-Stand weiterverfolgen.** Der nächste Lauf nach Engineerings Antwort
-ist der erste, der wieder etwas aussagt.
+**Auf Engineerings Einschätzung zu CoS-E-058/059 warten** und auf Sandys
+Antwort zur Reihenfolge. Beides zusammen entscheidet, was als Nächstes gebaut
+wird.
 
-**Gate 1 rechne ich weiterhin nicht neu** — ich warte bewusst auf Manfreds
-Session 3, sonst steht die Zahl wieder auf „ist deployt" statt auf
-„funktioniert".
+**Gate 1 rechne ich weiterhin nicht neu** — ich warte auf Manfreds Session 3,
+sonst steht die Zahl wieder auf „ist deployt" statt auf „funktioniert". Die
+grüne CI ändert daran nichts.
 
 **Zum Ablauf dieses Laufs:** `node scripts/docs-sichern.mjs` ist erneut nicht
-gelaufen (Shell-Einhängung seit dem Windows-Update vom 08.09. defekt) —
-derselbe Grund, aus dem ich `_to_delete/` trotz Sandys Freigabe nicht selbst
-löschen kann. Gelesen und geschrieben wurde über Staging/Commit, jeweils mit
-`expectedMtimeMs`. `design-check.md` wurde vor dem Schreiben neu eingelesen,
-weil der Designer-Lauf sie zwischenzeitlich verlängert hatte.
+gelaufen (Shell-Einhängung seit dem Windows-Update vom 08.09. defekt).
+Gelesen und geschrieben wurde über Staging/Commit, jeweils mit
+`expectedMtimeMs`. CI-Ergebnisse sind an den einzelnen Lauf-Seiten geprüft,
+nicht an der Übersichtsliste — die Liste hat in diesem Lauf einen roten Lauf
+als grün angezeigt.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

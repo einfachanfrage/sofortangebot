@@ -4121,4 +4121,297 @@ gedacht werden muss:
 
 ---
 
+## CoS-E-055 ✅ geschlossen — die CI ist grün, nachgewiesen am Lauf
+
+**Datum:** 2026-09-15, 16:50 MESZ · Chief of Staff
+
+Sandy hat `de1ae80` gepusht („CoS-E-055: Tuer-Anker, Taetigkeiten,
+Materialanteil + Doku"). **CI-Lauf #187 auf genau diesem Commit: `success`.**
+Damit ist CoS-E-055 nicht mehr offen — belegt am Lauf selbst, nicht an einer
+lokalen Messung.
+
+| Lauf | Commit | Ergebnis |
+|---|---|---|
+| CI #184 | `2f93123` | failure — die sieben Zusicherungen |
+| CI #186 | `caec47f` | failure — dieselben sieben |
+| **CI #187** | **`de1ae80`** | **success** |
+
+Der Prüfmeister hatte geschrieben, die Behebung liege auf Sandys Rechner und
+nicht im Repository. Genau das war es. Produktion: `dpl_Ba3B8QBk`, `READY`,
+auf `de1ae80`.
+
+**Nicht mitgeschlossen:** CoS-E-056 hängt weiter an Manfreds Vlies-Antwort,
+CoS-E-053 und CoS-E-057 laufen unverändert.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-E-058 🔴 — PM-045: Stückzahlen werden nur als Ziffer verstanden. 540,00 € fehlen auf einer Wohnung.
+
+**Datum:** 2026-09-15, 16:50 MESZ · Chief of Staff
+**Herkunft:** `pruefmeister-restliste.md`, Fallbasis PM-045 — Befund des
+Prüfmeisters, nicht meine Messung
+**Status:** ❌ offen — Einschätzung gefragt, bevor ich daraus einen Bauauftrag
+mache
+
+Der Fall: vier Innentüren mit Zargen, diktiert als „die vier Innentüren".
+
+- **PM-045-A** — alle vier Lackierzeilen stehen mit Menge **1** statt 4:
+  **180,00 € statt 720,00 €.** Der Raum trägt vier Türen; auch die zu lesen
+  hätte gereicht.
+- **PM-045-B** — `zaehleTueren` und `zaehleFenster` verstehen **nur Ziffern**.
+  „4 Türen" → 4, „vier Türen" → 0, „zwei Türen" → 0, „drei Fenster" → 0.
+  **Zwei Ursachen, jede allein reicht.** Im Themenspeicher galten Zahlwörter
+  als abgedeckt — das stimmt für die Maße über `zahlen-parser.ts`; die
+  Stückzahlen laufen einen anderen Weg, der nie geprüft war.
+- **PM-045-C** — „Die Türen sind alt, die müssen angeschliffen werden" erzeugt
+  zusätzlich `Fenster abschleifen` und `Fenster grundieren`, mit Preis. Eine
+  Begründung, die an einem Bauteil hängt, wandert auf ein anderes.
+
+Sperrklinke: `src/lib/__tests__/pruefmeister-batch-1509.test.ts` — liegt auf
+Sandys Rechner und ist noch nicht committet.
+
+**Was ich brauche:** ob A und B ein Eingriff sind oder zwei, und ob C
+dazugehört. Ich weiß nicht, ob die Stückzahl an der Extraktion oder am
+Matching hängt, und rate es nicht.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-E-059 🔴 — PM-046: Der Sperrgrund liegt auf der falschen Fläche, und er steht doppelt
+
+**Datum:** 2026-09-15, 16:50 MESZ · Chief of Staff
+**Herkunft:** `pruefmeister-restliste.md`, Fallbasis PM-046
+**Status:** ❌ offen — Einschätzung gefragt
+
+Der Fall: verrauchte Wohnung, Isoliergrund gegen Nikotin.
+
+- **PM-046-A** — der Isoliergrund liegt auf **17,10 m²**, der
+  Decken-/Bodenfläche. Gelb sind die **Wände, 41,50 m²**. 219,60 € fehlen —
+  und schwerer als die Zahl: zwei Drittel der Fläche werden ohne Sperre
+  überstrichen. Das Nikotin schlägt durch, und der Betrieb steht in der
+  Gewährleistung.
+- **PM-046-B** — Isoliergrund **und** Tiefengrund stehen auf derselben Fläche.
+  Der Isoliergrund ersetzt den Tiefengrund; Tiefengrund darüber hebt die
+  Sperre auf. **76,95 € zu viel für eine Arbeit, die schadet.**
+- **PM-046-C** — `Decke streichen 2x` trägt `automatisch_ergaenzt`, obwohl im
+  Diktat wörtlich „Wände und Decke zweimal streichen" steht. **Das gehört vor
+  den Umbau von „Nichts erfinden":** Sobald eine ergänzte Position ohne Preis
+  kommt und angetippt werden muss, fällt die ausdrücklich bestellte Decke aus
+  dem Angebot, wenn niemand tippt.
+
+**A und B zeigen in verschiedene Richtungen** — A ist zu wenig, B ist zu viel.
+Bitte nicht als ein Ticket behandeln, bevor ihr wisst, ob es eine Ursache ist.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## Zur Kenntnis: zwei Entscheidungen des Prüfmeisters, die euch entsperren
+
+**Datum:** 2026-09-15, 16:50 MESZ · Chief of Staff
+
+1. **„Fläche oder Zeit" ist entschieden (PD-013).** Eure Tabelle aus PD-011 ist
+   nachgerechnet und stimmt in jeder Zahl. Regel: *Bestimmt die neue Leistung
+   den Aufwand oder der Bestand?* Fünf Zeilen auf `zeit`, `Türen abschleifen`
+   und `Türen grundieren` bleiben `anker`. Danach tragen neun Zeit-Zeilen einen
+   Katalog-Zwilling statt vier, Spanne unverändert 6,3 %, grünes Band
+   unverändert 44–63 €/h. Ausführlich in
+   `pruefmeister-notizen-fuer-designer.md`, PD-013.
+2. **25 % gegen 26,1 % ist entschieden: 25 % bleibt.** Manfred hat drei Zahlen
+   genannt, nicht eine; über alle drei ist 25 % das Minimum der Abweichung.
+   **Kein Änderungsbedarf an `ANTEIL_INNEN`**, eure Lockerung auf ±0,50 ist
+   fachlich gedeckt.
+
+**Zwei Zeilen bleiben ausdrücklich nicht entschieden**, damit sie nicht als
+stille Entscheidung mitlaufen: `Untergrund spachteln / ausgleichen (bis 5mm)`
+bleibt `anker`, bis der Materialanteil gemessen ist, und
+`Übergangsprofil / Schwelle einbauen` ist nachzumessen — 15,00 €/Stück bei
+0,29 h sind rechnerisch reine Zeit, für das Profil bleibt nichts.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-E-058 + CoS-E-059 — Einschätzung: drei Eingriffe, nicht sechs. Und einer der sechs Funde ist keiner.
+
+**Datum:** 2026-09-15, 17:40 MESZ · Head of Product Engineering
+**Antwort auf:** CoS-E-058 und CoS-E-059 (Chief of Staff, 16:50)
+**Status:** Einschätzung, wie verlangt — **nichts gebaut, nichts geändert.**
+
+Gefragt waren drei Dinge: ob PM-045-A und -B ein Eingriff sind oder zwei, ob
+PM-045-C dazugehört, und ob PM-046-A und -B eine Ursache haben. Dazu die
+Frage, ob die Stückzahl an der Extraktion oder am Matching hängt.
+
+**Gemessen, nicht geraten.** Zwei Wege: den Quelltext vom Eingang
+(`api/angebot-extrahieren/route.ts`) bis zur erzeugenden Zeile
+nachgelesen, und die beiden Zählfunktionen in der Ersatzumgebung mit den
+Sätzen des Prüfmeisters laufen lassen.
+
+---
+
+### 1. Die Frage „Extraktion oder Matching" — weder noch
+
+Der Weg der Stückzahl im laufenden Betrieb:
+
+```
+api/angebot-extrahieren/route.ts   →  verarbeiteExtraktion(text, …)
+mengen/extraktion-pipeline.ts:83   →  textMitZahlen = ersetzeZahlenWorte(text)
+mengen/extraktion-pipeline.ts:271  →  zaehleFenster(textMitZahlen)
+mengen/extraktion-pipeline.ts:272  →  zaehleTueren(textMitZahlen)
+mengen/mehrgewerk.ts:212           →  pruefeUndErgaenzeVollstaendigkeit(…, textMitZahlen, meta, …)
+vollstaendigkeit/maler-lackieren.ts →  anzTueren = meta?.tuerenAnzahl ?? …
+```
+
+Die Stückzahl entsteht **nach** der Extraktion und **vor** dem Matching, in
+der Vollständigkeitsschicht. Der Preis-Matcher sieht die Zahl nur noch; die
+KI-Extraktion liefert sie zwar (`raum.tueren[].anzahl`), aber diese Schicht
+liest sie nicht. Dazwischen liegt der Fehler, und nur dort.
+
+### 2. PM-045-B ist ein Fund der Testumgebung, kein Fund im Produkt
+
+Entscheidend ist die Zeile 83 oben: Ab dort läuft alles auf
+`textMitZahlen`, also auf dem Text **nach** `ersetzeZahlenWorte`. Der
+Prüfmeister ruft `zaehleTueren` in seiner `lauf()`-Hilfsfunktion dagegen mit
+dem **rohen** Transkript auf und übergibt auch das rohe Transkript an die
+Vollständigkeitsprüfung. Das ist nicht der Weg, den ein Diktat im Betrieb
+nimmt.
+
+Gemessen in der Ersatzumgebung, mit dem echten Code beider Funktionen:
+
+```
+Satz                          roh            nach ersetzeZahlenWorte
+„die vier Innentüren"         Türen = 0      Türen = 4
+„vier Türen lackieren"        Türen = 0      Türen = 4
+„die zwei Türen streichen"    Türen = 0      Türen = 2
+„drei Fenster streichen"      Fenster = 0    Fenster = 3
+„drei Dübellöcher"            anzahlAus = 1  anzahlAus = 3
+```
+
+**Im Betrieb werden Zahlwörter gelesen.** PM-045-B und die Sperrklinke
+PM-050-A messen einen Zustand, den die Pipeline an dieser Stelle nicht hat.
+Kein Eingriff nötig — aber der Test gehört korrigiert, dazu unten.
+
+Das entwertet **PM-045-A nicht.** Siehe nächster Punkt.
+
+### 3. PM-045-A — ein echter Eingriff (Eingriff 1)
+
+In `vollstaendigkeit/maler-lackieren.ts`, `pruefeTuerenLackieren`:
+
+```ts
+const anzTueren = meta?.tuerenAnzahl
+  ?? (anzTuerenExplizit > 0 ? anzTuerenExplizit : anzZimmerFuerTuer > 0 ? anzZimmerFuerTuer : 1)
+```
+
+Die Funktion bekommt `lower`, `v` und `meta` — **die Räume bekommt sie nie.**
+`meta.raeume` trägt nur Name und Höhe (Aufruf von
+`berechneUndPruefeAlleGewerke` in `extraktion-pipeline.ts`). Steht
+die Zahl also nicht im Satz, endet jede Kette bei `1`, auch wenn der Raum
+vier Türen trägt. Genau das hat der Prüfmeister als zweite Ursache
+beschrieben, und sie stimmt.
+
+Was daraus folgt: Beim Diktat aus PM-045 („die vier Innentüren") stimmt die
+Menge im Betrieb, weil die Zahl im Satz steht. Bei „die Innentüren
+lackieren" — ohne Zahl, Türen nur aus der Raumaufnahme — steht dieselbe
+Zeile auf 1. Der Fehler ist real, der Auslöser ist ein anderer als
+angenommen, und der Betrag ist derselbe.
+
+**Eingriff:** Türanzahl aus den Räumen bis zu dieser Regel durchreichen und
+ihr Vorrang vor der Textzählung geben, wenn die Aufnahme sie nicht nur
+annimmt (`annahme: false`). Betrifft `pruefeTuerenLackieren`,
+`pruefeFensterLackieren` und `pruefeHeizkLackieren` — alle drei zählen heute
+nur am Text. Ein Eingriff, eine Datei, ein Durchlauf.
+
+### 4. PM-045-C gehört **nicht** dazu (Eingriff 2)
+
+Andere Datei-Stelle, andere Fehlerklasse. `pruefeFensterLackieren` prüft
+`lower.includes('fenster')` gegen das **ganze** Transkript und schiebt
+`Fenster abschleifen` und `Fenster grundieren` dann **ohne Bedingung** dazu.
+Zwei Fehler in einem Block: die Regel hat keinen Satz- oder Raumbezug, und
+die Vorarbeiten hängen nicht daran, ob jemand sie gesagt hat. Der
+Türen-Block daneben macht es genauso.
+
+Das ist „Nichts erfinden", nicht „Stückzahl". Eigenes Ticket, eigene
+Sperrklinke. Wer es mit Eingriff 1 vermischt, prüft am Ende beides nicht.
+
+### 5. PM-046 A, B und C sind **eine** Ursache (Eingriff 3)
+
+Der Chief of Staff bittet ausdrücklich, A und B nicht als ein Ticket zu
+behandeln, „bevor ihr wisst, ob es eine Ursache ist". Wir wissen es jetzt:
+Es ist eine, und sie ist benennbar.
+
+Alle drei Funde entstehen in **einer Funktion**, `pruefeWasserflecken` in
+`src/lib/vollstaendigkeit/maler-sonder.ts`. Der Block sucht die
+Decken-Position, wirft sie weg und baut drei neue Positionen auf derselben
+Zahl `dm2` (= Deckenfläche):
+
+```ts
+const deckenPos = ergaenzt.find(p => istDeckeStreichen(p.beschreibung))
+const dm2 = deckenPos.menge
+filtereArray(ergaenzt, p => !istDeckeStreichen(p.beschreibung))
+ergaenzt.push({ beschreibung: 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken', menge: dm2, … })
+ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)',                          menge: dm2, … })
+ergaenzt.push({ beschreibung: 'Decke streichen 2x',                                menge: dm2, … })
+```
+
+Damit ist alles erklärt:
+
+- **PM-046-A** — der Isoliergrund steht auf `dm2`, weil die Regel aus ihrem
+  ursprünglichen Fall stammt: Wasserflecken **an der Decke**. Ausgelöst wird
+  sie aber von `lower.includes('sperr')`, also auch von „Sperrgrund" für
+  verrauchte **Wände**. Die Fläche wird nicht gewählt, sie ist eingebaut.
+- **PM-046-B** — der Tiefengrund steht direkt darunter, bedingungslos, auf
+  derselben Zahl. Kein zweiter Fehler, dieselbe drei Zeilen lange Kette.
+- **PM-046-C** — `Decke streichen 2x` wird als **neues** Objekt gepusht.
+  `vollstaendigkeit/index.ts` markiert am Ausgang alles, was nicht
+  objektidentisch aus der Eingabe stammt, als `automatisch_ergaenzt`. Die
+  ausdrücklich bestellte Decke wird hier also nicht ergänzt, sondern
+  ersetzt — und verliert dabei ihre Herkunft.
+
+**A und B zeigen genau deshalb in verschiedene Richtungen**, weil die eine
+Zeile auf der zu kleinen Fläche steht und die andere überhaupt nicht stehen
+dürfte. Eine Ursache, drei Wirkungen, eine Funktion. **Ein Eingriff.**
+
+Was er umfasst: die Fläche aus dem Befund wählen statt fest die Decke; den
+Tiefengrund weglassen, wo ein Isoliergrund liegt; und die Decken-Position
+nicht ersetzen, sondern stehen lassen (die Regel setzt dann
+`automatisch_ergaenzt: false` selbst — das ist der PM-023-Weg, den
+`index.ts` bereits vorsieht).
+
+### 6. Zwei Fragen, die nicht mir gehören
+
+**An den Prüfmeister**, beide vor dem Bauen von Eingriff 3:
+
+1. Wenn im Diktat nur „Sperrgrund" steht, ohne dass eine Fläche genannt
+   wird — welche Fläche gilt dann? Wand, Decke, beides? Heute ist es still
+   die Decke. Ich baue keine Ersatzregel, ohne dass die Antwort steht.
+2. Der Tiefengrund unter dem Isoliergrund: fällt er ganz weg oder nur auf
+   der gesperrten Fläche? Bei „Wände sperren, Decke normal grundieren"
+   stehen beide zu Recht im Angebot — nur eben nicht auf derselben Fläche.
+
+**An den Prüfmeister, zu den Tests:** `pruefmeister-batch-1509.test.ts` und
+`pruefmeister-batch-47-56.test.ts` bauen `meta` selbst aus dem rohen
+Transkript. Die Pipeline übergibt an dieser Stelle `textMitZahlen`. Solange
+das so steht, ist PM-045-B/PM-050-A eine Sperrklinke auf einen Zustand, den
+das Produkt nicht hat — und das ist teurer als kein Test, weil ein echter
+Fehler dahinter unsichtbar bliebe. Vorschlag: `lauf()` normalisiert den Text
+einmal am Eingang, wie die Pipeline es tut. Die Prüfung, dass die Pipeline
+das wirklich tut, gehört dann als eigene, kurze Zusicherung daneben.
+
+### 7. Was ich empfehle, ohne es zu entscheiden
+
+Wenn Sandy die Reihenfolge freigibt: **Eingriff 3 zuerst** (PM-046). Er ist
+der einzige der drei, bei dem der Betrieb heute eine Arbeit anbietet, die
+schadet — Tiefengrund über der Sperre — und bei dem zwei Drittel der Fläche
+ohne Sperre überstrichen werden. Danach Eingriff 1, dann Eingriff 2. Die
+Reihenfolge-Entscheidung gegenüber CoS-E-057 (§ 35a) bleibt bei ihr.
+
+**Nichts davon ist gebaut.** Kein Testlauf nötig, keine neue Datei.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

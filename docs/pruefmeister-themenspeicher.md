@@ -10,7 +10,8 @@ Fenstern und Türen — die Welt, die das Datenmodell ohnehin kann. Alles, was *
 einem Raum steht, kam nicht vor. Diese Liste ist die Gegenprobe: sie wird nicht
 aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
-**Zielgröße:** 100 Fälle. Stand heute 37 + 7 in Arbeit = 44.
+**Zielgröße:** 100 Fälle. Stand 15.09.2026, abends: **62**
+(46 + Batch PM-047 bis PM-056 + PM-057 bis PM-062).
 
 ---
 
@@ -29,6 +30,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Einbauküche bleibt stehen, wird abgeklebt | **PM-041** |
 | Einbauschrank vor der Wand | offen |
 | Kamin / Kaminsockel im Raum (Boden: Aussparung) | offen |
+| Wandnische im Bad, gefliest (eigene Katalogzeile, 95,00 €/Stück) | offen |
 | Erker (Zusatzfläche über 2,5 m²) | offen |
 | Wandnische / Regalnische | offen |
 | Rollladenkästen | offen |
@@ -44,7 +46,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Bodenbelag bleibt und muss geschützt werden vs. Boden wird neu (dann **kein** Abdecken) | **PM-038** |
 | Fliesenspiegel wird ausgespart | **PM-041** |
 | Schimmelbefall, Behandlung vor Anstrich | **PM-043** |
-| Nikotin-/Rußbelastung, Sperrgrund nötig | offen |
+| Nikotin-/Rußbelastung, Sperrgrund nötig | **PM-046** — drei Funde, siehe Restliste |
 | Alte Tapete muss runter, Zustand unbekannt | offen |
 | Baustelle bewohnt → Staubschutzwand, Abendreinigung | offen |
 
@@ -75,7 +77,8 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Thema | Stand |
 |---|---|
 | Selbstkorrektur mitten im Satz („nee warte, doch drei Meter") | teilweise PM-001, eigener Fall offen |
-| Zahlwörter, Dialekt, „zwo", „einskommafünf" | PM-034, PM-035 ✅ |
+| Zahlwörter, Dialekt, „zwo", „einskommafünf" — **bei den Maßen** | PM-034, PM-035 ✅ |
+| Zahlwörter bei **Stückzahlen** („vier Türen", „zwei Fenster") — anderer Codeweg, war nie geprüft | **PM-045-B** 🔴 |
 | Mehrere Aufnahmen zu einem Angebot | teilweise, eigener Fall offen |
 | Kunde redet im Hintergrund dazwischen | offen |
 | Unterbrechung, Aufnahme bricht ab und wird fortgesetzt | offen |
@@ -88,9 +91,9 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
 | Thema | Stand |
 |---|---|
-| Bad / Fliesen (DIN 18352) | offen — eigener Batch |
+| Bad / Fliesen (DIN 18352) | **PM-060 bis PM-062** 🔴 — sieben Zeilen ohne Preis, siehe Restliste |
 | Treppen komplett | offen |
-| Türen, Zargen, Fenster lackieren (Katalog + Felder da, **kein Testfall**) | offen |
+| Türen, Zargen, Fenster lackieren | **PM-045** — drei Funde, siehe Restliste |
 | Trockenbau: Wand stellen, Decke abhängen | offen |
 | Abbruch und Entsorgung, Container | offen |
 | Estrich | offen |
@@ -158,4 +161,59 @@ Flag bereits), Laminat demontieren statt Teppich (TN-127).
 ---
 
 
-*Prüfmeister · angelegt 2026-09-10 · wird bei jedem neuen Batch fortgeschrieben*
+---
+
+## I — Nachtrag 15.09.2026: was die zwei neuen Fälle an Themen aufgemacht haben
+
+| Thema | Stand |
+|---|---|
+| Stückzahlen als Zahlwort (`zaehleTueren` / `zaehleFenster` kennen nur Ziffern) | **PM-045-B** 🔴 |
+| Stückzahl steht am Raum, wird aber nicht gelesen (Lackierzeilen bleiben bei 1) | **PM-045-A** 🔴 |
+| Eine Begründung wandert vom Bauteil aufs Nachbarbauteil („die Türen sind alt" → Fenster abschleifen) | **PM-045-C** 🔴 |
+| Zuschlags-/Sonderanstriche auf der falschen Bezugsfläche (Sperrgrund auf Boden statt Wand) | **PM-046-A** 🔴 |
+| Zwei Grundierungen auf derselben Fläche (Isoliergrund + Tiefengrund) | **PM-046-B** 🔴 |
+| Eine ausdrücklich genannte Leistung trägt `automatisch_ergaenzt` | **PM-046-C** 🔴 — **blockiert den Umbau von „Nichts erfinden"** |
+| Mehrere Türen/Fenster mit verschiedenen Maßen in einem Raum | offen |
+| Nur eine Seite lackieren („von innen streichen") gegen beidseitig | offen |
+| Materialanteil bei Zubehörzeilen mit teurem Teil (Übergangsprofil) | **PM-057** 🔴 — gemessen: Stunden stimmen, Material fehlt |
+
+**Der wichtigste Eintrag ist PM-046-C.** Die Regel „Nichts erfinden" (H, von
+Sandy am 12.09. entschieden) macht die Marke `automatisch_ergaenzt` tragend:
+Was sie trägt, kommt ohne Menge und Preis und muss angetippt werden. Solange
+die Marke auch auf Zeilen sitzt, die der Handwerker ausdrücklich bestellt hat,
+würde der Umbau Leistungen aus dem Angebot werfen, die gesagt wurden — das
+wäre schlimmer als der heutige Stand. **Die Marke gehört sauber, bevor sie
+trägt.**
+
+
+*Prüfmeister · angelegt 2026-09-10 · fortgeschrieben 2026-09-15*
+
+---
+
+## J — Nachtrag 15.09.2026 abends: was die Fliesen-Fälle und die Preisliste aufgemacht haben
+
+| Thema | Stand |
+|---|---|
+| Eine `zeit`-Zeile kann keinen festen Materialbetrag tragen (`zubehoer` ist eine Zusage, die der Preis nicht hält) | **PM-057** 🔴 |
+| Dieselbe Katalogzeile steht mehrfach in einer Preisliste, mit verschiedenen Preisen | **PM-058** 🔴 |
+| Zwei Dateien entscheiden dieselbe Materialfrage verschieden (`preis-ableitung.ts` gegen `materialanteil.ts`) | **PM-059** 🔴 |
+| Ein aktives Gewerk erzeugt Zeilen, für die es keinen Preis gibt | **PM-060-A** 🔴 |
+| `gewerkFuerPosition` entscheidet am Wort „Wand" auf Maler, auch bei Fliesenzeilen | **PM-060-B** 🔴 |
+| „Nur die Wandfliesen" — die Engine schreibt trotzdem den Boden | **PM-061-A** 🔴 |
+| Abstemmen: der Titel nennt das Bauteil nicht und nimmt immer den Bodenpreis | **PM-062** 🔴 |
+| Verschnitt Fliesen: 10 % Boden, 5 % Wand, Verfugung und Abdichtung auf netto | **PM-060** ✅ geprüft |
+| Fliesenspiegel Küche als eigene Katalogzeile (55,00 €/m², inkl. Ausschnitte) | offen |
+| Bodengleiche Dusche, Gefälleestrich (550,00 € Pauschale) | offen |
+| Wandhöhe über 2,50 m: Aufpreis-Zeile im Fliesenkatalog | offen |
+| Sanitärobjekte ausbauen und wieder einbauen (65,00 €/Stück, beide Richtungen) | offen |
+| Trockenbau, Sanitär/Heizung, Elektro — drei aktive Gewerke, nie geprüft | offen — Restliste Nr. 10 |
+
+**Der Eintrag, der am weitesten trägt, ist PM-060-B.** `gewerkFuerPosition`
+entscheidet das Gewerk am Wortlaut des Titels. Solange ein einzelnes Wort
+(„Wand") stärker wiegt als das Gewerk, aus dem die Zeile stammt, ist jede neue
+Gewerke-Freischaltung ein Glücksspiel: Die Zeile wird gegen den falschen
+Katalog gehalten und findet ihren Preis nicht — oder, schlimmer, einen
+fremden. Das gehört geprüft, **bevor** das nächste Gewerk aufgeht, nicht
+danach.
+
+*Prüfmeister · fortgeschrieben 2026-09-15 abends*

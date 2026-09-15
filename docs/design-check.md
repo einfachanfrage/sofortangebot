@@ -64,7 +64,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-011 | **Kritisch:** Fertiggestelltes Angebot verschwindet komplett aus der Angebote-Liste | ✅ behoben + live bestätigt (fehlende DB-Spalten `gewerk`/`title` ließen JEDE Abfrage scheitern, alle 56 Angebote betroffen) | Head of Product Engineering |
 | DC-012 | Text-Notiz-Eingabe komplett gebaut, aber nirgends verlinkt (keine Alternative zur Sprachaufnahme) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-013 | AppLayout-Footer stört den fokussierten Aufmaß-Aufnahme-Screen | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Ursache = CoS-P-005, Migration offen — Fehlermeldungs-Politur separat offen | Platform & Integrations Engineer (Ursache) / Product Designer (Text, 25.08. zugewiesen) |
+| DC-014 | **Kritisch:** Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload im Onboarding | 🟡 Punkt 1 (Ursache/RLS): = CoS-P-005, Migration offen, bei Platform. ✅ Punkt 2 (nie eine Rohmeldung anzeigen) erledigt 15.09. — neue `src/lib/fehlertexte.ts` (`nutzerFehler()`), eingesetzt an elf Anzeigestellen plus der Route `api/upload-logo`, die den Wortlaut aus Sandys Screenshot erzeugt hat; Test `dc014-fehlertexte.test.ts` | Platform & Integrations Engineer (Ursache) / Product Designer (Text, ✅ 15.09.) |
 | DC-015 | Onboarding-Schritte: viel ungenutzter Leerraum zwischen Formular und Button-Leiste | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-016 | Onboarding: „Weiter"-Button 6× unterschiedlich beschriftet, Klammer-Zahl unklar | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
@@ -263,7 +263,7 @@ schließen, aber inhaltlich betrachte ich das als erledigt.
 ## DC-003 — Statusfarben für Angebote: 3 inkonsistente Quellen
 
 **Datum:** 2026-08-16
-**Status:** ❌ offen
+**Status:** ✅ behoben + live bestätigt (Stand aus der Übersichtstabelle oben; der Text darunter ist der ursprüngliche Befund von 2026-08-16)
 
 **Befund:** Drei unabhängige Farb-Maps für denselben Angebots-Status:
 `src/app/(app)/angebote/page.tsx`, `src/components/MobileQuoteCard.tsx` und
@@ -419,7 +419,7 @@ vorgesehen.
 ## DC-006 — `typography.ts` + Farb-Tokens werden nirgends genutzt
 
 **Datum:** 2026-08-16
-**Status:** ❌ offen
+**Status:** ✅ vollständig abgeschlossen (Stand aus der Übersichtstabelle oben; der Text darunter ist der ursprüngliche Befund von 2026-08-16)
 
 **Befund:** `src/lib/typography.ts` definiert saubere Tokens (`h1`, `h2`,
 `h3`, `body`, `label` …) — wird laut Grep über `src/` von keiner einzigen
@@ -939,7 +939,7 @@ ausgeweitet. Scoped `tsc --noEmit` lief clean, Commit `f451052`.
 ## DC-014 — Kritisch: Rohe Datenbank-Fehlermeldung auf Englisch beim Logo-Upload
 
 **Datum:** 2026-08-17 (aus Screenshots von Sandy, Onboarding-Schritt „Dein Logo")
-**Status:** 🟡 Ursache gefunden & behoben, Migration noch nicht angewendet — Fehlermeldungs-Politur separat offen
+**Status:** ✅ Punkt 2 (Fehlermeldungs-Politur) erledigt 15.09.2026 — siehe Eintrag am Dateiende. Punkt 1 (Migration/RLS) unverändert bei Platform (CoS-P-005)
 
 **Befund:** Wird im Onboarding-Schritt „Dein Logo" ein Bild hochgeladen,
 erscheint unter dem Upload-Feld folgende Fehlermeldung im roten Banner,
@@ -1627,7 +1627,7 @@ durchgespielt und bestätigt.
 ## DC-026 — Rückfragen werden gestellt, obwohl die Antwort schon im Gesagten steht
 
 **Datum:** 2026-08-18 (übernommen aus PD-005)
-**Status:** ❌ offen — verwandt mit DC-025
+**Status:** ✅ vollständig behoben (Stand aus der Übersichtstabelle oben; der Text darunter ist der ursprüngliche Befund)
 
 **Befund:** Sandy hatte im Transkript eines Tests bereits klar die
 Fensteranzahl und die Bodenfläche genannt. Das Tool fragt in der
@@ -1751,7 +1751,7 @@ Fenster-/Türanzahl oder Höhe enthält.
 ## DC-027 — Automatisch ergänzte Positionen sollten als „Vorschlag" gekennzeichnet sein
 
 **Datum:** 2026-08-18 (übernommen aus PD-008, Idee ursprünglich von Sandy)
-**Status:** ❌ offen — dreifach reproduziert
+**Status:** ✅ vollständig live bestätigt (Stand aus der Übersichtstabelle oben; der Text darunter ist der ursprüngliche Befund)
 
 **Befund:** Das Tool ergänzt inzwischen an vielen Stellen automatisch
 sinnvolle Positionen, ohne dass der Nutzer sie ausdrücklich verlangt hat —
@@ -4433,7 +4433,7 @@ tsc sauber (scoped auf die beiden Dateien + Abhängigkeiten, `--noEmit`).
 **Datum:** 2026-09-06 (Product Designer, Sandys Auftrag „klick dich hier im
 Fenster durch alles durch... check alles auch das woran ich jetzt nicht
 gedacht habe")
-**Status:** ❌ offen, bestätigter Befund
+**Status:** ✅ behoben 06.09. (Stand aus der Übersichtstabelle oben; der Text darunter ist der ursprüngliche Befund)
 
 **Befund:** Beim Neuanlegen (`/kunden/neu`) lassen sich Name, Adresse,
 PLZ/Ort, Telefon, E-Mail und „Gewerblicher Kunde" vollständig erfassen.
@@ -4506,7 +4506,7 @@ als sein Fehlen. → Sandy.
 ## DC-045 — Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding
 
 **Datum:** 2026-09-06 (Product Designer, Klick-Test)
-**Status:** ❌ offen, bestätigter Befund
+**Status:** ✅ behoben 06.09. (Stand aus der Übersichtstabelle oben; der Text darunter ist der ursprüngliche Befund)
 
 **Befund:** `PlanWahlModal` (das Fenster mit „Vollgas — 17 €/Monat") wird
 laut Code ausschließlich von `WelcomeModalWrapper` aufgerufen, das wiederum
@@ -4622,7 +4622,7 @@ eingetippten Zahl.
 ## DC-046 — Doppelte CTA auf der Angebote-Liste (Header-„Neu" vs. FAB)
 
 **Datum:** 2026-09-06 (Product Designer, Klick-Test)
-**Status:** ❌ offen, bestätigter Befund
+**Status:** ✅ behoben 06.09. (Stand aus der Übersichtstabelle oben; der Text darunter ist der ursprüngliche Befund)
 
 **Befund:** `src/app/(app)/angebote/page.tsx` hat einen eigenen
 „Neu"-Button (Mikro-Icon) im Header, der auf `/angebot/neu` verlinkt —
@@ -4739,8 +4739,8 @@ Login-Erfahrung von Anfang an nach demselben Produkt aussieht.
 **Datum:** 2026-09-10 (Sandy lädt `Sofortangebot_CI_Handbuch.pdf` hoch:
 „schau dir ALLLESSSS An!!!!!!!! die CI gem pdf anbei gilt und muss
 überall gelten!!!!!!!!!!!!!")
-**Status:** ❌ offen — Umfang-Analyse fertig, Umsetzungsreihenfolge mit
-Sandy abzustimmen, bevor Code angefasst wird
+**Status:** 🟡 in Arbeit — Reihenfolge (a)–(f) komplett, Stand und Rest
+siehe Übersichtstabelle oben
 **Quelle:** `docs/Sofortangebot CI Handbuch.pdf`, 19 Seiten, laut
 Governance-Abschnitt (S. 19) von Sandy allein entschieden und verbindlich
 für Website, App, Angebots-PDF, Anzeigen, Präsentationen, Social, Print
@@ -7977,6 +7977,126 @@ Das ist keine Einschränkung ihrer Entscheidung, sondern die Arbeitsteilung:
 Die Zahlen prüft der Prüfmeister, und er hat es getan.
 
 *Chief of Staff · 2026-09-15*
+
+---
+
+## DC-014 Punkt 2 erledigt — keine Rohmeldung eines Systems mehr im Produkt (15.09.2026)
+
+**Noch nicht committet** (Shell auf dem Gerät weiter tot, Commit von Sandy —
+PowerShell-Block steht in meiner Antwort).
+
+Punkt 1 des Befundes (die fehlende RLS-Policy) ist über CoS-P-005 erledigt und
+gehört weiter Platform. Punkt 2 war seit dem 17.08. der offene Rest und stand
+als Grundsatz da: *„Jede Fehlermeldung im Produkt, die aus einer API-/
+Datenbank-Antwort stammt, VOR der Anzeige auf einen freundlichen, deutschen
+Text abbilden. Nie die Rohmeldung eines Systems direkt anzeigen."* Das ist
+gebaut.
+
+### Die Quelle des gemeldeten Satzes — sie lag nicht im Frontend
+
+Sandys Screenshot zeigte „Upload fehlgeschlagen: new row violates row-level
+security policy". Gesucht habe ich im Onboarding-Schritt; entstanden ist der
+Satz aber eine Etage tiefer, in `src/app/api/upload-logo/route.ts`:
+
+```ts
+return NextResponse.json({ error: 'Upload fehlgeschlagen: ' + uploadError.message }, { status: 500 })
+```
+
+Die Route hängte den Storage-Wortlaut selbst an und reichte ihn als eigenes
+`error`-Feld heraus — das Frontend hat ihn dann pflichtschuldig angezeigt.
+Hätte ich nur die Anzeigestelle angefasst, wäre der Satz weiterhin über die
+Leitung gekommen, nur woanders sichtbar. Deshalb ist die Route mitgeändert:
+Der technische Wortlaut geht unverändert an `console.error` und Sentry (beide
+Zeilen stehen unberührt darüber), an den Betrieb geht ein Satz mit nächstem
+Schritt.
+
+### Gebaut: `src/lib/fehlertexte.ts`
+
+`nutzerFehler(roh, fallback)` nimmt alles entgegen, was an einer Fehlerstelle
+ankommt — `Error`, String, Supabase-Fehlerobjekt, geparste JSON-Antwort — und
+gibt einen Satz zurück, der gezeigt werden darf. Drei Ausgänge:
+
+1. **Bekannte Ursache → eigener Satz mit nächstem Schritt.** Zwölf Regeln,
+   von der speziellsten zur allgemeinsten: abgelaufene Sitzung, fehlende
+   Berechtigung (der gemeldete RLS-Fall), doppelter Eintrag, fehlendes
+   Pflichtfeld, fehlender Bezug, Datei zu groß, falsches Format, kein Netz,
+   Zeitüberschreitung, zu viele Anfragen, Serverfehler, Storage.
+   „Abgelaufene Sitzung" steht **vor** „fehlende Berechtigung": in Postgres
+   sieht beides gleich aus, für den Nutzer ist es etwas anderes — einmal
+   „melde dich neu an", einmal „meld dich bei uns".
+2. **Maschinentext → der Satz der aufrufenden Stelle.** Erkannt an
+   technischen Zeichen (`{}`, `::`, `->`, snake_case, Pfade, URLs), an
+   englischen Fachwörtern und, ab 40 Zeichen, am Fehlen jeder deutschen Spur.
+3. **Alles andere → unverändert durch.** Unsere eigenen Meldungen sind schon
+   deutsch und oft genauer als jeder Ersatz.
+
+**Die Erkennung ist bewusst zurückhaltend.** Der teurere Fehler wäre nicht
+eine englische Zeile zu viel, sondern eine gute eigene Meldung zu verschlucken
+— „Dein Monat ist voll" (DC-045) oder „Nur PNG, JPG, WebP oder SVG" müssen
+ankommen, sonst ersetzt der Schutz eine unverständliche Antwort durch gar
+keine. Unterdrückt wird deshalb nur, was sich positiv als Maschinentext
+erkennen lässt. `<` und `>` stehen deshalb ausdrücklich **nicht** in der
+Zeichenliste: „Raumhöhe > 3 m" ist im Produkt ein normaler deutscher Satz.
+
+### Wo es jetzt hängt — elf Anzeigestellen
+
+Logo-Upload im Onboarding und in den Einstellungen (der gemeldete Ort),
+Kunde anlegen und Kunde bearbeiten (dort stand `'Fehler beim Speichern: ' +
+err.message`, also der Postgres-Wortlaut im roten Banner), Aufnahme-Upload im
+Entwurf, Vorschau & Versand an fünf Stellen (Buchhaltungs-Export, Link
+erzeugen, Senden), Unterschreiben-Seite, Konto löschen, neuer Entwurf,
+Registrierung.
+
+Zwei davon waren mehr als eine Übersetzung: `NeuerEntwurfButton` zeigte im
+Fehlerfall wörtlich **„Fehler"**, und `VorschauUndVersand` beim Senden
+**„Unbekannter Fehler"** — beides Sätze, die nichts sagen und nichts anbieten.
+Sie heißen jetzt, was sie meinen, mit nächstem Schritt.
+
+**Bewusst ausgelassen: `AngebotDetail.tsx`.** Eine Stelle dort
+(`showToast(ergebnis.error ?? …)`) gehört fachlich dazu. Die Datei liegt in
+laufender, uncommitteter Arbeit von Head of Product Engineering und ist heute
+schon einmal angefasst worden; für eine Zeile einen 188-KB-Brocken
+zurückzuschreiben, ist genau der Weg, auf dem in dieser Datei schon zweimal
+fremde Arbeit verschwunden ist (DC-035). Der Fallback dort ist ohnehin
+deutsch. Ziehe ich nach, sobald sein Stand committet ist — kein neuer Auftrag
+nötig.
+
+### Verifikation
+
+`tsc`/`vitest` sind auf dem Gerät weiter nicht ausführbar (Shell seit dem
+08.09. tot). Geprüft:
+
+- **Syntax** aller dreizehn Dateien über den TypeScript-Parser (5.6.3) —
+  sauber.
+- **Die Logik ausgeführt**, gegen 25 Proben: acht echte Rohmeldungen
+  (RLS-Verletzung, `duplicate key`, `not-null`, Fremdschlüssel, `TypeError`,
+  `Failed to fetch`, `JWT expired`, `Internal Server Error`) — keine davon
+  kommt durch; elf eigene deutsche Meldungen — jede kommt unverändert an;
+  dazu Herkunft (`Error` / String / `{error}` / `{message}`), leere Eingaben
+  und die Erkennung selbst.
+- **Zurückgelesen:** alle dreizehn Dateien nach dem Schreiben neu gestaget,
+  Bytegröße **und** Prüfsumme gegen die geschriebene Fassung — identisch.
+
+Festgehalten in `src/lib/__tests__/dc014-fehlertexte.test.ts` (dieselben
+Proben als vitest-Fall, damit die Grenze nicht bei mir bleibt).
+
+### Nebenbei aufgeräumt: acht Status-Zeilen, die in dieser Datei falsch standen
+
+Beim Suchen nach dem nächsten offenen Punkt bin ich zuerst auf die
+`❌ offen`-Zeilen in den Detailabschnitten gelaufen — und die stimmten bei
+DC-003, DC-006, DC-026, DC-027, DC-044, DC-045, DC-046 und DC-049 nicht mehr
+mit der Übersichtstabelle überein. Alle acht sind laut Tabelle längst behoben
+(sechs davon live bestätigt); die Detail-Zeile war schlicht nie nachgezogen
+worden, weil das Ergebnis in der Tabelle landete.
+
+Das ist keine Kosmetik: Wer diese Datei nach „was ist offen" durchsucht — so
+steht es oben in der Arbeitsanweisung —, findet als Erstes diese acht Zeilen
+und fängt an, fertige Arbeit noch einmal zu machen. Sie zeigen jetzt den Stand
+der Tabelle und sagen dazu, dass der Text darunter der ursprüngliche Befund
+ist. **Inhaltlich ist an keinem Befund etwas geändert**, nur an der
+Status-Zeile.
+
+*Product Designer · 2026-09-15*
 
 ---
 

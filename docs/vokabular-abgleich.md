@@ -1721,4 +1721,260 @@ brauchen die laufende App.
 
 *Prüfmeister · 12.09.2026*
 
+---
+
+## Q. Die Vorlagen gegen den Katalog — 167 Lücken, zwei davon bewegen Geld (Prüfmeister, 15.09.2026)
+
+In der Arbeitsreihenfolge stand „164 Vorlagen ohne Katalog-Zwilling". Die Zahl
+stimmte, sie beantwortet nur die falsche Frage. Nachgemessen, Stand heute:
+
+```
+Vorlagen gesamt (je Gruppe einmal)          : 832
+ohne titelgleichen Katalog-Zwilling         : 167
+  aktive Gewerke (Maler, Boden)             :  15
+  gesperrte Gewerke                         : 142
+  in Gruppen, die kein Gewerk erreicht      :  10
+```
+
+**Warum die Zahl nicht die Frage beantwortet:** Eine Vorlage ist nicht deshalb
+kaputt, weil die Katalogzeile denselben Titel mit einem Klammerzusatz trägt.
+Die Normalisierung wirft Klammern ohnehin weg (PM-018). Kaputt ist sie, wenn
+der Handwerker eine Zahl einträgt und **eine andere im Angebot steht**.
+
+### Die richtige Messung — dieselbe wie bei `katalog-dopplungen.mjs`
+
+Jede der 134 Zeilen, die ein Maler und Bodenleger im Onboarding wirklich
+vorgesetzt bekommt, durch den echten Matcher gegen die eigene Liste geschickt
+und gefragt, ob sie sich selbst findet:
+
+```
+Zeilen, die sich selbst NICHT finden : 4 von 134
+  davon harmlos (derselbe Preis)     : 2
+  davon mit ANDEREM Preis            : 2
+```
+
+Von den 15 Lücken der aktiven Gewerke sind **dreizehn harmlos**: Der Matcher
+trifft die Katalogzeile mit Score 1,00 und identischem Preis, der Titel ist
+nur kürzer. Zwei bewegen Geld.
+
+### Q.1 — „Laminat verlegen schwimmend (Großdiele)": 2,00 €/m², die nie ankommen
+
+```
+eingetragen : Laminat verlegen schwimmend (Großdiele)   16,00 €/m²
+im Angebot  : Laminat verlegen schwimmend (Standard)    14,00 €/m²
+```
+
+Beide Vorlagen heißen nach der Normalisierung `laminat verlegen schwimmend`,
+beide in m². Der Unterschied steht in Klammern am Ende — und Klammern fallen
+weg, aus dem guten Grund, der seit PM-018 im Code steht. Der Handwerker füllt
+zwei Felder aus und kann eines davon nie erreichen. Bei 40 m² Großdiele sind
+das 80,00 € je Auftrag, zu Lasten des Betriebs.
+
+**Entscheidung:** Die Vorlage heißt künftig wörtlich wie die Katalogzeile, die
+es längst gibt — **`Laminat Großdiele verlegen, schwimmend`** (16,00 €). Damit
+steht das Unterscheidende vor dem Verb, genau nach Manfreds Regel, und der
+Matcher kann sie treffen. Kein neuer Eintrag, keine neue Sonderregel, ein
+Titel.
+
+### Q.2 — „Kleinstauftrag pauschal": drei Quellen für einen Mindestbetrag
+
+```
+Fassade – Stundenleistungen : Kleinstauftrag pauschal (Mindestbetrag)  150,00 €
+Boden   – Stundenleistungen : Kleinstauftrag pauschal (Mindestbetrag)  110,00 €
+```
+
+Gleicher Titel, gleiche Einheit, zwei Rubriken. Wer Maler **und** Boden macht,
+bekommt auf jeden kleinen Bodenauftrag die 150,00 € — 40,00 € zu viel, und die
+zahlt der Kunde.
+
+Dahinter steckt mehr als eine Dopplung. Den Mindestauftragswert gibt es längst
+als **Einstellung** (`MINDESTAUFTRAGSWERT_ORIENTIERUNG`, Orientierung 180,
+Standard 0, Zeile „Anfahrt & Vorbereitung"), und am 14.09. wurde ausdrücklich
+entschieden, dass ein Vorschlag sich nicht selbst einträgt — der Name der
+Konstanten sagt das seitdem selbst. Zwei bepreiste Vorlagenzeilen für dieselbe
+Sache machen genau das wieder auf: drei Quellen, drei Zahlen (180 · 150 · 110).
+
+**Entscheidung:** Der Mindestauftragswert ist eine Eigenschaft des
+**Betriebs**, nicht des Gewerks. Ein Betrieb hat einen Mindestbetrag, nicht
+zwei. Eine Quelle, und das ist die Einstellung; beide Vorlagenzeilen gehören
+weg. Weil Betriebe sie ausgefüllt haben können, ist das eine Migration und
+keine Streichung nebenbei — der Wert gehört in die Einstellung übernommen.
+
+### Q.3 — Zwei Vorlagen, die im Standardkatalog gar nichts treffen
+
+```
+Aufpreis Verlegung bei Fußbodenheizung     8,00 €/m²   → kein Treffer
+Klebe-Vinyl verlegen vollflächig (Profikleber)  28,00 €/m² → kein Treffer
+```
+
+Keine falschen Preise, sondern Zeilen, nach denen das Onboarding fragt und die
+hinterher niemand benutzt — dieselbe Falle wie CoS-E-052, nur kleiner.
+
+**Entscheidung:** beide Titel auf die Katalogzeile ziehen, die es schon gibt,
+Preis bleibt in beiden Fällen unverändert:
+
+| Vorlage heute | soll heißen | Preis |
+|---|---|---|
+| Aufpreis Verlegung bei Fußbodenheizung | `Aufpreis Fußbodenheizung, verklebt mit Elastikkleber` | 8,00 € |
+| Klebe-Vinyl verlegen vollflächig (Profikleber) | `Klebe-Vinyl verlegen, Nasskleber` | 28,00 € |
+
+„Profikleber" ist kein Verlegeverfahren, „Nasskleber" schon.
+
+### Q.4 — CoS-E-052 in der Gegenrichtung: 36 Zeilen, die kein Gewerk erreicht
+
+`preisvorlagen-gewerke.test.ts` fragt: Findet jedes Gewerk seine Gruppen? Die
+Gegenfrage stand nirgends. Gemessen: **zwei Gruppen mit zusammen 36 Vorlagen
+werden von keinem Gewerk abgerufen** — `aufzug` (18) und `luftdichtigkeit`
+(18). Entweder fehlt die Gewerk-Kennung in `gewerke-config.ts`, oder die
+Zeilen sind tot. (`allrounder` ist in Ordnung: die Gruppe hängt an
+`ENTSORGUNG_STANDARD`, nicht an `GEWERK_VORLAGEN`.)
+
+Das ist keine Geldfrage, aber es ist derselbe Fehler wie CoS-E-052, nur von
+der anderen Seite — und er gehört entschieden, **bevor** jemand eines dieser
+Gewerke freischaltet.
+
+### Q.5 — Was ausdrücklich NICHT auffiel
+
+Sechs Vorlagenpaare heißen nach der Normalisierung gleich und tragen
+verschiedene Preise — `Tapete ablösen` einlagig/mehrlagig, `Grundieren`
+Tiefengrund/Sperrgrund, `Zuschlag hohe Räume` >2,80/>4 m, `Untergrund
+spachteln` 5/20 mm, `Regiearbeit Geselle` 65/68. **Alle sechs finden sich
+selbst.** Die Filter für Staffeln, Grundierungsart und Rubrik greifen. Sie
+stehen hier, damit niemand sie später „findet" und repariert, was nicht kaputt
+ist.
+
+### Die 142 der gesperrten Gewerke
+
+Unverändert Zeit, aber sie gehören vor die jeweilige Freischaltung — nicht
+danach. Verteilung: Schreiner 24 · Estrich 23 · Sanitär 20 · Elektro 19 ·
+Trockenbau 18 · Dachdecker 17 · Putz/Stuck 10 · Garten 6 · Brandschutz 2 ·
+Fliesen 1 · Entrümpelung 1 · Rohbau 1.
+
+### Nachtrag zum Abgleich-Skript
+
+`node scripts/vokabular-abgleich.mjs` heute in der Ersatzumgebung gefahren:
+**155 Titel, 15 ohne Preis, 3 knapp, 137 gut.** Gegen den Stand vom 12.09.
+(158 / 16 / 3 / 139) ist eine Lücke zu: `Teppich verlegen` findet jetzt einen
+Preis. Die übrigen 15 sind unverändert die aus P.1, die auf die
+Katalog-Anlageliste warten.
+
+**Eine Verschlechterung, die niemand gemeldet hat:** „Titel aus Variablen,
+nicht prüfbar" ist von **3 auf 6** gestiegen. Das Skript prüft damit still
+weniger, als es behauptet — genau das, wovor sein eigener Kopfkommentar warnt.
+Die `VARIANTEN`-Liste ist nachzuziehen; steht in der Restliste.
+
+## R. Der Zähler „nicht prüfbar" war kein Messfehler, sondern ein Lesefehler (Prüfmeister, 15.09.2026, nachmittags)
+
+Der Nachtrag oben meldete „von 3 auf 6 gestiegen" und schob die Ursache auf
+eine nachzuziehende `VARIANTEN`-Liste. Das war die falsche Fährte. Nachgesehen,
+welche sechs Titel es sind:
+
+```
+maler.ts              Wand streichen 2x${zoneZusatz}
+boden-vorarbeiten.ts  Sockelleisten montieren${verlegeRaum ?
+maler-basis.ts        Voranstrich / Grundierung Decke${raum ?
+maler-basis.ts        Voranstrich / Grundierung${raumSuffix ?
+maler-lackieren.ts    ${titel} — ${raumName}
+maler-lackieren.ts    ${titel}
+```
+
+Vier von sechs brechen **mitten im Ausdruck** ab. Die Ursache sitzt in
+`literal()`: Der Leser zählte `${ … }` nicht mit und hielt den ersten Backtick
+eines **verschachtelten** Templates für das Ende des Titels. Jeder Raum-Anhang,
+der als Ternär geschrieben ist — `${raum ? ` — ${raum}` : ''}` — erhöhte den
+Zähler um eins. Die Titel dahinter sind ganz normale, prüfbare Titel.
+
+Das ist derselbe Fehler, gegen den das Skript gebaut wurde, nur eine Etage
+tiefer: eine Zahl, die still kleiner wird, ohne dass jemand es merkt.
+
+**Behoben, drei Eingriffe, alle in `scripts/vokabular-abgleich.mjs`:**
+
+1. `literal()` liest Template-Literale mit `${ … }`-Tiefe, verschachtelte
+   Templates eingeschlossen.
+2. Zwei Füllregeln für den Raum-Anhang in seinen anderen Schreibweisen —
+   `${x ? ` — ${x}` : ''}` und `${x ?? 'Bereich'}` — **vor** den
+   Einzelplatzhaltern, sonst ist das innere `${raum}` schon ersetzt.
+3. `${titel}` (die drei Heizkörper-Schritte aus `maler-lackieren.ts:136`) und
+   `${zoneZusatz}` stehen in `VARIANTEN`.
+
+**Zähler jetzt 0.** Steigt er wieder, fehlt ein Eintrag — dann ist es eine
+echte Lücke und kein Lesefehler mehr.
+
+### Was die sechs Titel kosten
+
+Keiner ist eine Lücke. Gemessen, nicht angenommen:
+
+| Engine sagt | trifft | Preis |
+|---|---|---|
+| Heizkörper abschleifen | Heizkörper abschleifen | 20,00 €/Stück |
+| Heizkörper grundieren | Heizkörper grundieren | 25,00 €/Stück |
+| Heizkörper lackieren (2× Anstrich) | Heizkörper streichen / lackieren | 40,00 €/Stück |
+| Voranstrich / Grundierung | Grundieren (Tiefengrund) | 4,50 €/m² |
+| Voranstrich / Grundierung Decke | Grundieren (Tiefengrund) | 4,50 €/m² |
+| Sockelleisten montieren | Sockelleisten montieren (Holz / MDF / Kunststoff) | 5,50 €/lfdm |
+
+Zum Zonen-Zusatz gibt es **keine Liste zum Abschreiben** — Zone und Farbe sind
+freier Text aus dem Diktat. Deshalb gemessen statt aufgezählt: Der
+Klammerzusatz bewegt den Treffer nicht. „Wand streichen 2x", „… (Zone oben)"
+und „… (Blau, Zone oben)" landen alle auf 9,50 €/m², und „3x (Zone oben)"
+bleibt bei 13,00 €. Festgehalten als
+`src/lib/__tests__/pm-vokabular-varianten.test.ts`.
+
+---
+
+## S. Das Skript las zwei von sechs aktiven Gewerken (Prüfmeister, 15.09.2026, nachmittags)
+
+Beim Nachziehen ist eine größere Lücke aufgefallen als der Zähler: `QUELLEN`
+enthielt Maler und Boden. **`fliesen` steht in `gewerke-config.ts` auf
+`aktiv: true`** — ein Fliesenleger bekommt das Gewerk angeboten, geprüft hat es
+nie jemand. Ein Abgleich, der „Engine ↔ Standardkatalog" heißt und ein Drittel
+der aktiven Gewerke liest, prüft still weniger als er behauptet.
+
+`fliesen.ts` und `vollstaendigkeit/fliesen*.ts` sind jetzt in `QUELLEN`.
+
+```
+                                   vorher    nachher
+Engine-Titel mit eigener Einheit     155        170
+davon ohne Preis                      15         22
+davon knapp (Score < 0,75)             3          3
+gute Treffer                         137        145
+Titel aus Variablen, nicht prüfbar     6          0
+```
+
+**Alle sieben neuen Lücken sind Fliesen**, und es sind die tragenden Zeilen
+eines Bades, nicht die Ränder:
+
+```
+Bodenfliesen verlegen              Verfugung Boden
+Wandfliesen verlegen               Verfugung Wand
+Verbundabdichtung Wand             Fliesensockel / Abschlussleiste
+Entsorgung Fliesenmaterial
+```
+
+Auf einem Bad von 2,40 × 1,80 m mit 2,10 m Fliesenhöhe sind das **1.935,94 €**
+ohne Preis — bei neun erzeugten Zeilen insgesamt. Zwei Ursachen, sauber
+getrennt:
+
+- **Wortlaut.** Die Engine schreibt `Verfugung Boden`, der Katalog führt
+  `Verfugen Boden`; `Bodenfliesen verlegen` gegen
+  `Bodenfliesen Standard (30×30 bis 60×60cm), gerade, Q2`. Kein Treffer über
+  der Schwelle.
+- **Gewerke-Zuordnung.** `gewerkFuerPosition` liest „Wand" und entscheidet auf
+  **`maler`** — für `Wandfliesen verlegen`, `Verfugung Wand` und
+  `Verbundabdichtung Wand`. Danach wird gegen den Malerkatalog gehalten.
+  `Verbundabdichtung Wand` hätte im Fliesenkatalog mit Score 0,94 auf
+  28,00 €/m² getroffen: **493,92 € allein an dieser Zuordnung.**
+
+Ausführlich als Fälle PM-060 bis PM-062 in
+`src/lib/__tests__/pruefmeister-batch-60-62.test.ts`; dort auch der zweite
+Fund (die Engine schreibt Bodenzeilen, obwohl „nur die Wandfliesen" gesagt
+wurde) und der dritte (`Altfliesen abstemmen` nimmt immer den Bodenpreis).
+
+**Offen und ausdrücklich nicht still entschieden:** Die übrigen drei aktiven
+Gewerke — Trockenbau, Sanitär/Heizung, Elektro — sind weiterhin nicht im
+Abgleich. Ob sie hineingehören, hängt daran, ob ihre Engines mehr sind als
+Durchreichen; das ist nachzusehen, bevor jemand eine Zahl daraus zitiert.
+
+*Prüfmeister · 15.09.2026*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

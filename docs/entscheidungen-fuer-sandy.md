@@ -1147,3 +1147,52 @@ Der Befehl steht in meiner Meldung im Chat. Er ist ein Einzeiler, und der
 Ordner steht in `.gitignore` — es geht nichts verloren, was das Repository
 kennt.
 
+
+---
+
+# Stand 15.09.2026, 16:50 MESZ — zwei erledigt, eine neue Frage
+
+*Chief of Staff*
+
+## ✅ `_to_delete/` ist weg
+
+Nachgesehen, nicht angenommen: Der Ordner existiert in deinem Projektordner
+nicht mehr. Damit ist der Punkt erledigt, und er kommt hier nicht wieder.
+
+## ✅ Die Doku ist im Repository, und die CI ist grün
+
+`de1ae80` enthält die sechs Doku-Dateien **und** Engineerings Behebung.
+**CI-Lauf #187 auf diesem Commit: grün.** Die sieben roten Zusicherungen aus
+CoS-E-055 sind damit erledigt — nachgewiesen am Lauf, nicht an einer lokalen
+Messung. Produktion ist grün.
+
+## 🔵 Neu und das Einzige, was auf dich wartet: die Reihenfolge bei Engineering
+
+Der Prüfmeister hat heute zwei neue Fälle durchgerechnet und **sechs Funde**
+gemeldet, drei davon mit einem Geldweg zum Kunden:
+
+| Fund | Wirkung auf ein einzelnes Angebot |
+|---|---|
+| PM-045-A/B — „vier Türen" wird als **eine** Tür gerechnet | **540,00 € zu wenig** |
+| PM-046-A — Sperrgrund auf der Boden- statt der Wandfläche | **219,60 € zu wenig**, und zwei Drittel der Wand ohne Sperre |
+| PM-046-B — Isoliergrund **und** Tiefengrund auf derselben Fläche | **76,95 € zu viel**, für eine Arbeit, die schadet |
+
+Sie liegen jetzt als **CoS-E-058** und **CoS-E-059** bei Engineering. Dort
+liegen aber schon **CoS-E-053** (Preise-Schritt) und **CoS-E-057**
+(§-35a-Pflichtangaben, die du heute vor Gate 1 gesetzt hast).
+
+**Deine Entscheidung:** Kommen PM-045/PM-046 vor CoS-E-057, oder bleibt die
+Reihenfolge, wie sie ist?
+
+**Meine Empfehlung: PM-045/PM-046 zuerst, § 35a danach.** Begründung in einem
+Satz: § 35a trifft GmbH-, UG- und e.-K.-Betriebe — davon hast du heute keinen
+einzigen —, während ein falscher Betrag auf jedem Angebot landet, das ein
+Handwerker heute verschickt, und genau das ist die Fehlerklasse, wegen der du
+vor Gate 1 noch zwei Monate Prüfzeit eingeplant hast. § 35a verliert dabei
+nichts: Es bleibt vor Gate 1, nur nicht vor den Geldfehlern.
+
+**Was dagegen spricht, damit du es abwägen kannst:** CoS-E-057 hängt an Legals
+Feldliste (CoS-L-008), die ohnehin noch nicht da ist. Engineering kann also
+gar nicht sofort loslegen — in dem Fall entscheidest du nur, was passiert,
+wenn Legal schneller liefert als erwartet.
+

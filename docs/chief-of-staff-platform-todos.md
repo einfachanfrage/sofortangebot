@@ -66,6 +66,10 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | CoS-P-010 | TN-108: Buchhaltungs-Anbindung erklärt nicht, WAS übertragen wird; "Lexoffice (Legacy)" unklar | 🟢 Text ergänzt | Manfred-Feedback Batch 1, 2026-09-11 |
 | CoS-P-011 | TN-113: Pro-Plan-Preise noch nicht konfiguriert | 🟡 Kein eigener Fix — dasselbe Thema wie CoS-P-007 (Stripe-Preise) plus ein zweiter, noch unbenannter Fund (veraltete Preisanzeige, CoS-038) | Manfred-Feedback Batch 1, 2026-09-11 |
 | CoS-P-012 | TN-114: Seitenleiste zeigt "PRO", Abo-Seite zeigt "Starter" | ✅ Fix umgesetzt & TypeScript-geprüft | Manfred-Feedback Batch 1, 2026-09-11 |
+| CoS-P-023 | Push-Hook: isolierter Checkout des tatsächlich gepushten Commits (Lint/TypeScript/Migrations-Abgleich), von Sandy freigegeben | ✅ **gebaut & getestet** — `scripts/pruefe-gepushten-commit.mjs` neu, gegen echte Erfolgs- und Fehlerszenarien geprüft. Auf Sandys Rechner ausgeliefert; die eigentliche Hook-Datei (`.git/hooks/pre-push`) muss einmalig per beiliegendem PowerShell-Befehl eingerichtet werden, weil Git-Hooks nie mitversioniert werden. Fix-Update am Dateiende | Sandys Freigabe „Hook-Vorschlag — ja", 2026-09-15 |
+| CoS-P-022 | Vorschlag: `docs-sichern.mjs pruefen` als CI-Schritt | ✅ **umgesetzt** — Schritt in `.github/workflows/ci.yml` ergänzt. Konnte nicht direkt auf Sandys Rechner geschrieben werden (Workflow-Dateien sind für Fernzugriff geschützt) — liegt als PowerShell-Befehl am Dateiende bei. Fix-Update am Dateiende | Platform-Entscheidung, 2026-09-15 |
+| CoS-P-021 | Legal-Fund: Rechnungsnummernkreis wird für jeden Betrieb angelegt, nie benutzt — zwei Fragen | ✅ **beantwortet** (Einschätzung war gefragt, keine Umsetzung) — Fix-Update am Dateiende | Übergabe aus CoS-L-006, 2026-09-15 |
+| CoS-P-020 | Übergabe vom Designer: Fehlertext bei „Verbindung testen" zeigt ins Leere | ❌ **bewusst zurückgestellt**, nicht in diesem Lauf aufgenommen — Notiz am Dateiende | Übergabe aus DC-047, 2026-09-15 |
 
 ---
 
@@ -2262,5 +2266,134 @@ Das ist eure Entscheidung, nicht ihre, und steht weiter offen.
 *Chief of Staff · 2026-09-15*
 
 ---
+
+## Fix-Update CoS-P-023 — Push-Hook gebaut: isolierter Checkout des gepushten Commits
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
+
+Sandys „Hook-Vorschlag — ja" umgesetzt. Neues Skript
+`scripts/pruefe-gepushten-commit.mjs`, im GitHub-Spiegel gebaut, gegen echte
+Szenarien getestet, danach identisch auf Sandys Rechner ausgeliefert
+(`package.json` um den Skript-Eintrag `pruefe:gepushten-commit` ergänzt).
+
+**Was es tut:** Ein zweiter, isolierter Git-Worktree (`.git/pre-push-worktree`,
+zwischen Aufrufen wiederverwendet) wird auf genau den Commit gebracht, der
+tatsächlich gepusht wird — nicht auf den gemeinsamen Arbeitsordner. Nur dort
+laufen Lint, TypeScript und `pruefe-migrationsliste.mjs` (wie von dir unter
+Punkt 2 verlangt, ist im selben Lauf mit drin). `node_modules` wird per
+Verzeichnis-Link aus dem Hauptordner eingebunden (Junction unter Windows,
+Symlink sonst — beides ohne Admin-Rechte), nicht neu installiert.
+
+**Zum Zeitbudget, ehrlich gemessen statt geschätzt:** Volles `eslint
+--max-warnings 110` über das ganze Projekt dauert in dieser Session 25–35
+Sekunden — das hätte die akzeptierten 6–15 Sekunden allein gesprengt. Deshalb
+läuft Lint bewusst nur über die Dateien, die der jeweilige Push tatsächlich
+ändert (`git diff` zwischen bisherigem Remote-Stand und gepushtem Commit).
+TypeScript lässt sich nicht sinnvoll eingrenzen (Typprüfung braucht immer das
+ganze Programm) und bleibt der größte Posten, gemessen 6–7 Sekunden. Ein
+kompletter Testlauf (warmer Worktree, wenige geänderte Dateien) lag bei
+**12,2 Sekunden** — innerhalb des Budgets, aber näher an der Obergrenze als
+an der Untergrenze. Falls Sandys Rechner spürbar langsamer oder schneller ist
+als diese Session, bitte einmal real mitstoppen.
+
+**Getestet, nicht nur behauptet:**
+- Sauberer Commit → Hook lässt durch (Lint/TypeScript/Migrations-Abgleich
+  grün).
+- Commit mit echtem TypeScript-Fehler → Hook blockiert, klare Fehlermeldung,
+  Hinweis auf `--no-verify`.
+- Eine unbeteiligte, kaputte, nicht committete Datei lag gleichzeitig im
+  Arbeitsordner (simuliert eine „andere Rolle mit unfertiger Arbeit") — der
+  isolierte Checkout hat sie ignoriert, in beide Richtungen (blockiert weder
+  einen sauberen Push fälschlich, noch übersieht er einen echten Fehler im
+  tatsächlich gepushten Commit).
+- Branch-Löschung und leere Eingabe → Hook tut nichts, blockiert nicht.
+
+**Läuft NICHT mit:** volle Testsuite und `next build` — beides hätte das
+Zeitbudget gesprengt, bleibt Aufgabe der Server-CI.
+
+**Noch offen, bewusst nicht mitentschieden (siehe CoS-P-023-Text):** der
+Designer-Vorschlag, zusätzlich zu zeigen, wer eine Datei zuletzt angefasst
+hat — technisch nur für bereits getrackte Dateien sinnvoll (git-history),
+nicht für die untracked-Warnung. Bleibt eure/meine Einschätzung, in diesem
+Lauf nicht umgesetzt, um den Kern-Auftrag nicht zu verzögern.
+
+**Einrichtung — einmalig, per PowerShell, weil Git-Hooks nie mitversioniert
+werden** (Befehl liegt gesammelt mit den anderen offenen PowerShell-Schritten
+unten in der Nachricht an Sandy).
+
+---
+
+## Fix-Update CoS-P-022 — Doku-Endmarkierung als CI-Schritt (umgesetzt)
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
+
+**Entscheidung:** ja, umsetzen. Das im Vorschlag genannte Gegenargument
+(prüft erst nach dem Push, nicht vor dem Schreiben) stimmt, ändert aber
+nichts daran, dass es besser ist als der aktuelle Zustand seit dem
+08.09.-Windows-Update, wo *gar keine* automatische Prüfung mehr läuft.
+
+**Umgesetzt:** `.github/workflows/ci.yml` bekommt einen neuen Schritt „Doku-
+Endmarkierung prüfen (CoS-P-022)" — `node scripts/docs-sichern.mjs pruefen`,
+direkt nach dem Node-Setup und vor `npm ci` platziert (das Skript braucht
+weder `node_modules` noch Git-Rechte, nur Node selbst — getestet, indem
+`node_modules` versuchsweise entfernt und der Befehl trotzdem sauber
+durchgelaufen ist).
+
+**Konnte nicht direkt geschrieben werden:** `.github/workflows/ci.yml` ist
+für Fernzugriff geschützt („protected file", vom Gerät selbst verweigert,
+nicht mein Entscheid). Die Änderung liegt deshalb als PowerShell-Befehl bei
+der Nachricht an Sandy — sie ist inhaltlich fertig und getestet (im
+GitHub-Spiegel gebaut und der neue Schritt lokal gegen den aktuellen
+Doku-Stand gegengeprüft: „Alle 52 Doku-Dateien in Ordnung."), nur die
+Zustellung braucht diesen einen manuellen Schritt.
+
+---
+
+## Fix-Update CoS-P-021 — Einschätzung Rechnungsnummernkreis
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
+
+**Frage 1: Kann `init_nummernkreise` aufhören, `typ = 'rechnung'` anzulegen,
+ohne dass `vergib_naechste_nummer` oder RLS stolpern?**
+
+Ja, unproblematisch. Im Code nachgesehen, nicht vermutet: `vergib_naechste_
+nummer` wird an genau zwei Stellen aufgerufen
+(`src/app/api/quotes/create/route.ts`,
+`src/app/api/quotes/[id]/nummer/route.ts`) — **beide fest mit `p_typ:
+'angebot'`**, nirgends im Code steht `'rechnung'`. Die RLS-Policies auf
+`nummernkreise` und `vergebene_nummern` filtern beide nur nach `betrieb_id`,
+nicht nach `typ` — eine fehlende `rechnung`-Zeile berührt sie gar nicht.
+Einzige Stelle, die stolpern würde: `vergib_naechste_nummer` selbst wirft
+`RAISE EXCEPTION 'Kein Nummernkreis gefunden'`, falls es doch einmal mit
+`p_typ='rechnung'` aufgerufen würde — aber genau das passiert laut Code
+nirgends.
+
+**Frage 2: Was kostet es, wenn eine Rechnung später doch kommt?**
+
+Wenig. Genau das Muster gibt es im Projekt schon mehrfach (z. B.
+`20260819120100_backfill_baustellen`): eine kleine Migration, die für alle
+zu dem Zeitpunkt existierenden Betriebe nachträglich die fehlende
+`rechnung`-Zeile in `nummernkreise` einfügt (`INSERT ... WHERE NOT EXISTS`),
+danach den `INSERT` in `init_nummernkreise` für neue Betriebe wieder
+scharfstellen. Kein Struktur-Umbau nötig, die Tabelle und die Funktion
+bleiben unverändert — nur der Zeitpunkt der Befüllung verschiebt sich vom
+„bei jedem neuen Betrieb" auf „einmalig nachgezogen, wenn es so weit ist".
+
+**Nicht umgesetzt, wie verlangt:** `init_nummernkreise` selbst wurde nicht
+geändert und die zwei vorhandenen Produktions-Zeilen wurden nicht angefasst
+— beides war ausdrücklich nicht Teil dieser Einschätzung.
+
+---
+
+## Notiz CoS-P-020 — bewusst zurückgestellt
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
+
+Der Fehlertext bei „Verbindung testen" (`api/integrations/test`) bleibt in
+diesem Lauf unangetastet. Kein Code-Fix, keine Einschätzung zu einem
+Zeitpunkt — bewusste Entscheidung, den Kern-Auftrag dieses Laufs (CoS-P-023)
+nicht durch eine zusätzliche, unklar abgegrenzte Änderung an einer von
+mehreren Rollen angefassten Route zu verzögern. Damit steht hier fest: es
+bleibt offen, nicht „vergessen".
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

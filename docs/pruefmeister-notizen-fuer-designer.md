@@ -1064,3 +1064,208 @@ anders siehst.
 
 *Head of Product Engineering · 2026-09-15*
 
+
+---
+
+## PD-013 — Antwort auf PD-011: „Fläche oder Zeit" ist entschieden
+
+*Prüfmeister · 15.09.2026 · an den Product Designer, Kopie Head of Product
+Engineering*
+
+Deine Tabelle habe ich nachgerechnet, nicht überflogen. Alle Zahlen aus
+PD-011 stimmen: die vier unterstellten Stundensätze (53,3 · 53,3 · 55,0 ·
+51,7), die 6 % Spanne, das grüne Band 44–63 €/h, und die drei Tabellen mit
+den Ankerpreisen. Nachgefahren mit dem echten `leiteAb()` und
+`pruefeGegenKatalog()` über den echten Katalog.
+
+### Die Frage heißt anders, als sie dasteht
+
+„Fläche oder Zeit" ist die Antwort, nicht die Frage. Die Frage, die eine
+Einteilung trägt, ist diese:
+
+> **Bestimmt die neue Leistung den Aufwand — oder bestimmt ihn der Bestand?**
+
+- Aufwand aus dem, was **entsteht** (Güte der neuen Oberfläche, Anzahl der
+  Gänge, Sorgfalt am Finish) → `anker`.
+- Aufwand aus dem, was **schon da ist** (Altbelag, Altkleber, alte Tapete,
+  verschmutzte Fassade, möbliertes Zimmer) → `zeit`.
+
+Das ist keine Verfeinerung deiner Prüffrage, sondern sie zu Ende gedacht. Du
+hast gefragt: *„Wenn der Betrieb seinen Türpreis um ein Drittel anhebt —
+schleift er die Tür dann auch teurer?"* Die ehrliche Antwort ist **ja**, und
+deshalb steht Türen abschleifen richtig. Eine 120-€-Tür wird anders
+angeschliffen als eine 90-€-Tür: feinere Körnung, ein Gang mehr, saubere
+Kanten. Das ist dieselbe Arbeit in einer anderen Güte — und Güte ist genau
+das, was der Ankerpreis abbildet.
+
+Beim Altkleber ist es umgekehrt. Was da klebt, hat der Vormieter entschieden.
+Der Bodenleger schabt es nicht schneller, weil er anschließend teures Laminat
+verlegt.
+
+### Die drei Stellen
+
+**1. Boden — Altbelag gegen Kleberreste: beide auf `zeit`.**
+
+Deine Beobachtung, dass hier etwas nicht stimmt, trägt. Gemessen bei einem
+Betrieb mit 75 €/h und 25 €/m² Laminat:
+
+```
+                        heute     Katalog    nach der Änderung
+Altbelag verklebt       16,00      9,00           12,75
+Kleberreste entfernen   11,50      8,00           11,25
+Verhältnis               1,39      1,13            1,13
+```
+
+Zwei Gänge am selben Vormittag am selben Boden, deren Verhältnis sich um ein
+Viertel verschiebt — allein deshalb, weil einer am Belagspreis hängt. Mit
+`zeit` steht es wieder auf dem Verhältnis, das der Katalog selbst kennt, und
+zwar bei jedem Stundensatz.
+
+**Mitentschieden, aus demselben Grund:** `Altbelag aufnehmen, lose verlegt`.
+Auch Abbruch, auch am Bestand.
+
+**2. Maler innen — Abdecken auf `zeit`.**
+
+Dein und Engineerings Satz ist richtig: Vlies auslegen und Kreppband ziehen
+sind derselbe Handgriff am selben Morgen. Der Aufwand kommt aus dem Zimmer,
+nicht aus der Wandfarbe.
+
+**3. Lackieren — beide bleiben `anker`.**
+
+`Türen abschleifen` und `Türen grundieren` bleiben, wo sie sind. Begründung
+oben. Der Grundgang ist ohnehin der erste Gang des Lackaufbaus, kein
+Vorbereiten des Bestands.
+
+### Zwei weitere Zeilen fallen unter dieselbe Regel
+
+`Tapete ablösen (einlagig)` — was an der Wand klebt, gibt den Aufwand vor.
+`Fassade reinigen / druckwaschen` — der Zustand der Fassade, nicht die Farbe,
+die danach draufkommt. Beide auf `zeit`.
+
+### Die Stundenzahlen — und warum sie nicht geschätzt sind
+
+Jede ist aus dem Katalogpreis ihrer eigenen Zeile zurückgerechnet, über den
+Stundensatz, den der Katalog selbst trägt:
+
+| Zeile | Katalog | Stunden | unterstellt |
+|---|---|---|---|
+| Teppichboden verklebt entfernen | 9,00 €/m² | **0,17** | 52,9 €/h |
+| Laminat demontieren und entsorgen | 5,00 €/m² | **0,094** | 53,2 €/h |
+| Boden abdecken (Abdeckvlies) | 1,20 €/m² | **0,0225** | 53,3 €/h |
+| Tapete ablösen (einlagig) | 4,00 €/m² | **0,075** | 53,3 €/h |
+| Fassade reinigen / druckwaschen | 5,00 €/m² | **0,094** | 53,2 €/h |
+
+**Und hier wird deine Messung stärker, nicht schwächer:** Mit diesen fünf
+sind es **neun** Zeit-Zeilen mit Katalog-Zwilling statt vier — und die Spanne
+bleibt bei **51,7 bis 55,0 €/h, also 6,3 %**. Vier Zeilen konnten Zufall
+sein. Neun sind es nicht. Das grüne Band von `pruefeGegenKatalog` bleibt
+unverändert bei **44–63 €/h**; nachgefahren mit dem echten `runde()`.
+
+### Eine Zeile, die ich ausdrücklich NICHT entscheide
+
+`Untergrund spachteln / ausgleichen (bis 5mm)` (12,00 €/m²). Nach der Regel
+wäre es `zeit` — der Estrich gibt den Aufwand vor. Dagegen steht ein
+Materialanteil, der bei Ausgleichsmasse nicht klein ist und den bisher
+niemand gemessen hat. Solange die Zahl fehlt, bleibt die Zeile, wo sie ist.
+Sie steht als offener Punkt in der Restliste, nicht als stille Entscheidung.
+
+### Was zu tun ist
+
+Je Zeile ein Wort in `preis-ableitung.ts` (`art: 'anker'` → `art: 'zeit'`)
+plus die Stundenzahl aus der Tabelle oben. Der Test liegt schon:
+`src/lib/__tests__/pm-flaeche-oder-zeit.test.ts`. Er ist heute grün, weil er
+den Ist-Stand als Sperrklinke festhält — **sobald ihr umstellt, wird er rot
+und zwingt dazu, das `.fails` zu streichen.** Dieselbe Bauart wie PM-013-A.
+
+*Prüfmeister · 2026-09-15*
+
+---
+
+## PD-014 — Nachlauf zu PD-009: die Materialseite der Preisliste hält nicht, was sie anzeigt
+
+Restliste Nr. 9 war eine kleine Frage: `Übergangsprofil / Schwelle einbauen`
+steht mit 15,00 €/Stück im Katalog und mit 0,29 h in `preis-ableitung.ts`. Bei
+52 €/h sind das 15,08 € reine Zeit — für das Profil selbst bliebe nichts.
+Waren die Stunden zu hoch, oder fehlt das Material?
+
+**Die Stunden sind richtig. Das Material fehlt.** Und beim Nachmessen sind aus
+der einen Frage drei geworden, die alle dasselbe Muster haben: Eine Marke sagt
+etwas über das Material, das der Preis daneben nicht einlöst.
+
+### 1. Das Übergangsprofil (PM-057)
+
+Der Beweis kommt aus dem Katalog selbst, nicht aus einem Baumarktpreis:
+
+```
+Übergangsprofil / Schwelle einbauen     15,00 €/Stück
+Schwelle / Übergangsprofil entfernen     8,00 €/Stück   ← reine Arbeit
+```
+
+Steckten im Einbau 8–12 € Profil, bliebe für die Einbau-**Arbeit** 3,00 bis
+7,00 € — **weniger als für den Ausbau.** Niemand setzt ein Profil schneller,
+als er eines herausreißt: messen, ablängen, bohren, dübeln, schrauben. Also
+sind die 15,00 € Arbeitslohn, und 0,29 h stimmen — der unterstellte Satz ist
+51,7 €/h und liegt damit im selben Band wie die übrigen Zeit-Zeilen
+(51,7–55,0 €/h).
+
+Bleibt: Die Zeile trägt `material: 'zubehoer'` („ist bei mir drin", Manfred),
+und ihr Preis ist **zu 100 % Zeit, bei jedem Stundensatz**. Bei Kreppband und
+Folie fällt das nicht auf; hier sind es 8–12 € auf eine 15-€-Zeile, also über
+die Hälfte. Der Betrieb zahlt das Profil aus der eigenen Tasche, bei jeder Tür.
+
+**Was ich nicht entscheide:** ob eine `zeit`-Zeile einen festen Materialbetrag
+bekommen soll. Das ist ein Eingriff in die Bauweise und gehört zu euch. Die
+Sperrklinke dafür liegt in `pm-preisliste-material.test.ts`.
+
+### 2. „Grundieren (Tiefengrund)" steht zweimal in einer Preisliste (PM-058)
+
+Ein Betrieb, der **Maler innen und Tapezieren** ankreuzt, bekommt dieselbe
+Katalogzeile zweimal — einmal aus dem Wand-Anker, einmal aus dem Tapeten-Anker:
+
+```
+Grundieren (Tiefengrund)   5,50 €/m²   material: wahl       [maler_innen]
+Grundieren (Tiefengrund)   3,00 €/m²   material: zubehoer   [tapezieren]
+Katalog                    4,50 €/m²
+```
+
+Zwei Preise und zwei Material-Marken für dieselbe Arbeit, in einer Liste.
+Welcher im Angebot landet, entscheidet der Matcher, nicht der Betrieb. Spanne
+2,50 €/m². Dieselbe Familie wie Q.2 („Kleinstauftrag pauschal" steht zweimal):
+eine Zahl, mehrere Quellen.
+
+### 3. Zwei Dateien, zwei Antworten auf dieselbe Materialfrage (PM-059)
+
+`preis-ableitung.ts` markiert je Zeile `'wahl' | 'zubehoer' | null`.
+`materialanteil.ts` entscheidet dieselbe Frage noch einmal, am Titel, mit
+eigener Zubehör-Liste. Bei **fünf** Zeilen widersprechen sie sich, und immer
+in dieselbe Richtung — die Preisliste verspricht einen Materialschalter, die
+Angebotszeile hat keinen:
+
+```
+Grundieren (Tiefengrund)
+Isoliergrund gegen Nikotin / Ruß / Wasserflecken
+Fassadengrundierung auftragen
+Trittschalldämmung verlegen (PE-Schaum / Filz)
+Sockelleisten montieren (Holz / MDF / Kunststoff)
+```
+
+Die letzten beiden sind **absichtlich** so entstanden: In PD-009 §2 wurden sie
+bewusst auf `wahl` gestellt, mit guter Begründung. `materialanteil.ts` sperrt
+`trittschall` und `sockelleiste` wörtlich als Zubehör — beide Dateien am selben
+Tag geschrieben, keine kennt die andere.
+
+Praktisch heißt das: Wer sein Material selbst stellt, bekommt bei diesen
+Zeilen **nichts abgezogen**, weil `teileMaterialAb()` `null` liefert. Der
+umgekehrte Fall kommt nicht vor — geprüft.
+
+**Was zu entscheiden ist, und von wem:** Welche der beiden Dateien recht hat,
+ist eine fachliche Frage (Manfreds Satz gegen die Begründung in PD-009 §2), und
+die beantworte ich gern — aber erst, wenn klar ist, welche Datei die Oberfläche
+speist. Das weiß ich von hier aus nicht. **Eine Quelle, nicht zwei**, ist die
+Bedingung; welche es wird, hängt an eurem Aufbau.
+
+Alles drei mit Zahlen in `src/lib/__tests__/pm-preisliste-material.test.ts`.
+Zwei Prüfungen stehen als `it.fails` — sobald ihr baut, werden sie rot und
+zwingen dazu, das `.fails` zu streichen. Dieselbe Bauart wie PM-013-A.
+
+*Prüfmeister · 2026-09-15*
