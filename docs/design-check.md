@@ -7410,7 +7410,7 @@ den Balken. Danach steht entweder Engineerings Fassung, oder mein Bildschirm 2
 wird die Rückfallebene — er ist entworfen und kostet dann nur noch die
 Entscheidung.
 
-### DC-105 — „Wie stellst du Rechnungen?" (neu) ❌
+### DC-105 — „Wie stellst du Rechnungen?" (neu) ✅ umgesetzt, siehe Eintrag am Dateiende
 
 Aufgefallen beim Entfernen der 7-%-Kachel, gehört nicht zu DC-104: Die
 Überschrift des Steuer-Schritts im Onboarding lautet **„Wie stellst du
@@ -7853,6 +7853,95 @@ String-Literale und eine Tailwind-Klassenliste an, keine Typen.
 **Für den Live-Test:** beide Karten in Einstellungen → Buchhaltung verbinden
 ansehen — unter jedem der beiden Lexware-Namen muss jetzt ein Satz stehen, und
 er muss ohne Hinsehen lesbar sein.
+
+*Product Designer · 2026-09-15*
+
+---
+
+## DC-105 umgesetzt — der Steuer-Schritt fragt nicht mehr nach Rechnungen (15.09.2026)
+
+**Status: ✅ erledigt.** **Noch nicht committet** (Shell auf Sandys Rechner
+weiter tot, Commit von Sandy — PowerShell-Block ging mit der Meldung raus).
+
+Genommen, weil es der einzige unblockierte Punkt meiner Liste war. Die
+Arbeitsreihenfolge vom 15.09., 15:10 sagt es wörtlich: Einbau des
+Preise-Schritts (DC-102) hängt an CoS-E-053 und am Vokabular-Angleich, die
+Live-Tests von DC-101/103/104/089 und die Nachschau zu DC-047/DC-048 brauchen
+die laufende App auf einem Gerät — „DC-105 hängt an nichts."
+
+### Geändert (`src/app/(app)/onboarding/[step]/page.tsx`, eine Stelle)
+
+| | vorher | jetzt |
+|---|---|---|
+| Überschrift Schritt 4 | „Wie stellst du Rechnungen?" | **„Wie rechnest du ab?"** |
+
+Wortlaut unverändert aus meinem Vorschlag vom Vormittag übernommen, damit die
+Zeile nicht zweimal zur Diskussion steht.
+
+**Warum das mehr ist als Wortklauberei:** Der Schritt fragt zwei Dinge —
+Mehrwertsteuersatz und Zahlungsziel. Beides sind Angaben über den **Betrieb**,
+beides landet auf dem **Angebot**. Die alte Überschrift behauptete darüber
+hinaus eine Rechnungsfunktion, die es nicht gibt. Genau dieses Wort hat in den
+letzten zwei Wochen zweimal Arbeit erzeugt: DC-089 (E-Rechnungs-Karte im
+Onboarding) und DC-100 (als Rechnung deklarierte ZUGFeRD-XML im Angebots-PDF).
+Beide Male stand das Wort zuerst in einer Oberfläche und ist von dort in die
+Technik gewandert.
+
+**Warum „Wie rechnest du ab?" und nicht „Steuer & Zahlungsziel":** Die
+bisherige Überschrift war eine Frage in Handwerkersprache, und der Schritt
+liest sich als Gespräch. Eine Sachbezeichnung hätte den Ton des Onboardings an
+genau der Stelle gebrochen, an der es um Geld geht. „Abrechnen" deckt beide
+Felder ab (mit welchem Satz, mit welcher Frist) und verspricht nichts.
+
+**Gewicht, Symbol und Aufbau bewusst unverändert:** dieselbe `Receipt`-Ikone,
+dieselben Klassen. Das Symbol zeigt einen Beleg, nicht eine ausgestellte
+Rechnung — es trägt die falsche Zusage nicht mit. Eine Zeile ändern und
+daneben das Bild tauschen hätte den Vergleich unnötig verwackelt.
+
+Im Code steht der Grund als Kommentar über der Überschrift, mit den beiden
+IDs — damit der nächste, der hier eine „gefälligere" Formulierung sucht,
+nicht wieder bei „Rechnung" landet.
+
+### Verifikation
+
+Datei vor dem Schreiben frisch gestaget (unverändert seit dem Lesen), Syntax
+gegen TypeScript 5.6.3 als TSX geparst — 0 Diagnosen. Nach dem Schreiben
+zurückgelesen und Byte für Byte gegen die geschriebene Fassung verglichen:
+**55.743 Bytes, identisch** (vorher 55.315). Zeilenenden LF, wie vorher.
+`tsc`/`vitest` auf Sandys Rechner weiterhin nicht ausführbar; die Änderung
+fasst einen JSX-Textknoten und einen Kommentar an, keine Typen.
+
+**Für den Live-Test:** Onboarding Schritt 4 — über „Mehrwertsteuer" muss
+„Wie rechnest du ab?" stehen. Eine einzige Stelle; die Überschrift kommt in
+dieser Datei nur einmal vor und es gibt keine Liste von Schritt-Titeln, aus der
+sie ein zweites Mal gerendert würde — geprüft.
+
+### DC-106 — zweite Fundstelle im selben Schritt, NICHT geändert ❌
+
+Beim Nachsehen in derselben Datei gefunden, Schritt 7 („Nutzt du eine
+Buchhaltungssoftware?"). Der Hinweissatz unter den Kacheln lautet, wenn
+niemand eine Software gewählt hat:
+
+> „🧾 Ohne Tool: Rechnungen & Zahlungserinnerungen laufen direkt über
+> sofortangebot."
+
+Das ist keine Frage an den Betrieb mehr, sondern eine **Zusage über das
+Produkt** — und damit deutlich schwerer als DC-105. Die Gegenfassung („Mit
+Verknüpfung: Rechnungen & Mahnungen laufen in deiner Buchhaltung") sagt
+dasselbe im Umkehrschluss.
+
+**Ich habe es bewusst nicht angefasst**, weil ich die Antwort nicht habe: Ob
+und was `api/cron/reminder` an Kunden schickt, ist eine Produktfrage, keine
+Gestaltungsfrage. Verschickt das Produkt tatsächlich Zahlungserinnerungen, ist
+nur das Wort „Rechnungen" falsch. Verschickt es keine, ist der ganze Satz
+falsch — und dann steht im Onboarding eine Funktionszusage, die es nicht gibt.
+Ein Vorschlagstext von mir hätte in beiden Fällen geraten.
+
+**An Head of Product Engineering:** Was löst `api/cron/reminder` aus — geht da
+etwas an den Endkunden, oder nur an den Betrieb? Eine Zeile Antwort genügt,
+danach formuliere ich beide Sätze in einem Durchgang.
+**An Head of Legal & Compliance:** Falls die Antwort „an den Endkunden" lautet,
+gehört der Satz vor Gate 1 angesehen — dieselbe Kategorie wie DC-089.
 
 *Product Designer · 2026-09-15*
 

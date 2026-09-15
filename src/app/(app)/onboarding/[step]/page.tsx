@@ -63,13 +63,21 @@ const btnBack = 'flex-1 bg-white border-2 border-anthracite/15 text-anthracite f
 // ─── Accounting label helper ────────────────────────────────────────────────
 function softwareLabel(s: string) {
   const m: Record<string, string> = {
+    // CoS-P-019 (Platform & Integrations Engineer, 2026-09-15), Zuordnung
+    // durch den Chief of Staff: „lexware" fehlte hier, obwohl es in
+    // ACCOUNTING_OPTIONS (accounting-options.ts) der beliebteste/empfohlene
+    // Eintrag ist — wer ihn im Onboarding wählte, sah gar kein Key-Feld
+    // (s. API_KEY_SOFTWARES unten) und dessen Key wurde beim Speichern nicht
+    // mitgeschrieben (s. apiKeyFields in handleFinish). Gleiche Spalte wie in
+    // dashboard.ts (CoS-P-017) und accounting-options.ts.
+    lexware: 'Lexware Office',
     lexoffice: 'LexOffice', sevdesk: 'sevDesk', fastbill: 'FastBill',
     billomat: 'Billomat', papierkram: 'Papierkram', easybill: 'Easybill',
   }
   return m[s] ?? s
 }
 
-const API_KEY_SOFTWARES = ['lexoffice', 'sevdesk', 'fastbill', 'billomat', 'papierkram', 'easybill']
+const API_KEY_SOFTWARES = ['lexware', 'lexoffice', 'sevdesk', 'fastbill', 'billomat', 'papierkram', 'easybill']
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 export default function OnboardingStep() {
@@ -215,10 +223,18 @@ export default function OnboardingStep() {
   async function testConnection() {
     setConnStatus('testing')
     try {
+      // CoS-P-019-Nebenfund (Platform & Integrations Engineer, 2026-09-15):
+      // `/api/integrations/test` (route.ts) liest `anbieter`, nicht
+      // `software` — genau wie die Einstellungsseite es schon schickt
+      // (einstellungen/integrationen/page.tsx). Mit `software` kam dort immer
+      // "Fehlende Parameter" (400) zurück, für JEDEN Anbieter, nicht nur
+      // Lexware — „Verbindung testen" im Onboarding hat also noch nie
+      // funktioniert. Beim Beheben des lexware-Nebenfunds aufgefallen, nicht
+      // Teil der ursprünglichen Meldung, aber derselbe Codeabschnitt.
       const r = await fetch('/api/integrations/test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ software: state.accounting, apiKey: state.apiKey }),
+        body: JSON.stringify({ anbieter: state.accounting, apiKey: state.apiKey }),
       })
       setConnStatus(r.ok ? 'ok' : 'error')
     } catch { setConnStatus('error') }
@@ -231,6 +247,9 @@ export default function OnboardingStep() {
     if (!user) { router.push('/login'); return }
 
     const apiKeyFields: Record<string, string> = {
+      // CoS-P-019: dieselbe Lücke wie oben bei softwareLabel/API_KEY_SOFTWARES
+      // — ohne diese Zeile landete ein eingetippter Lexware-Key nirgends.
+      lexware: 'lexware_api_key',
       lexoffice: 'lexoffice_api_key', sevdesk: 'sevdesk_api_key',
       fastbill: 'fastbill_api_key', billomat: 'billomat_api_key',
       papierkram: 'papierkram_api_key', easybill: 'easybill_api_key',
@@ -564,8 +583,14 @@ export default function OnboardingStep() {
         // DC-015: siehe Kommentar bei Schritt 2.
         <div className="flex flex-col flex-1 justify-center">
           <Receipt size={40} strokeWidth={1.5} className="text-yellow mb-4" />
+          {/* DC-105 (2026-09-15): Überschrift hieß „Wie stellst du
+              Rechnungen?". Das Produkt stellt keine Rechnungen aus — dasselbe
+              Wort, aus dem DC-089 und DC-100 entstanden sind. Gefragt wird hier
+              nach der Steuerlage und der Zahlungsfrist des Betriebs, nicht nach
+              einer Rechnungsfunktion. „Wie rechnest du ab?" stellt dieselbe
+              Frage ohne die Zusage. */}
           <h1 className="font-syne font-extrabold text-anthracite text-[26px] leading-tight mb-6">
-            Wie stellst du Rechnungen?
+            Wie rechnest du ab?
           </h1>
 
           <div className="flex flex-col gap-7">
