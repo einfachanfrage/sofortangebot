@@ -23,6 +23,7 @@ import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahm
 // strukturell nie von der finalen Darstellung abweichen kann.
 import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import { istProzentZuschlag } from '@/lib/zuschlag-basis'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 // Bereits berechnete quote_items — vollständig geladen (nicht nur die Anzahl),
 // damit sie sich zusammen mit frischen Vorschau-Positionen raum-gruppieren
@@ -1006,7 +1007,7 @@ export default function EntwurfPage() {
           setAufnahmen(prev => prev.map(a => a.id === tempId ? { ...a, id: data.id!, verarbeitung_status: 'fehler' } : a))
         } else {
           setAufnahmen(prev => prev.filter(a => a.id !== tempId))
-          setFehler(data.error ?? 'Upload fehlgeschlagen. Bitte nochmal versuchen.')
+          setFehler(nutzerFehler(data, 'Upload fehlgeschlagen. Bitte nochmal versuchen.'))
         }
       })
       .catch(() => {

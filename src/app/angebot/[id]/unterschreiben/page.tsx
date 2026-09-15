@@ -10,6 +10,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { use } from 'react'
 import Link from 'next/link'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 interface Quote {
   id: string
@@ -141,7 +142,7 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
       setDone(true)
     } else {
       const err = await r.json()
-      alert(err.error ?? 'Fehler beim Speichern — bitte nochmal versuchen.')
+      alert(nutzerFehler(err, 'Fehler beim Speichern — bitte nochmal versuchen.'))
     }
   }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import * as Sentry from '@sentry/nextjs'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -33,7 +34,12 @@ export async function POST(req: NextRequest) {
   if (uploadError) {
     console.error('[upload-logo] Storage-Upload fehlgeschlagen')
     Sentry.captureException(new Error(uploadError.message), { tags: { feature: 'logo_upload' } })
-    return NextResponse.json({ error: 'Upload fehlgeschlagen: ' + uploadError.message }, { status: 500 })
+    // DC-014: Der technische Wortlaut geht an Sentry (oben), nicht an den
+    // Betrieb. nutzerFehler() erkennt die bekannten Ursachen — die gemeldete
+    // RLS-Meldung wird dadurch zu einem Satz mit nächstem Schritt.
+    return NextResponse.json({
+      error: nutzerFehler(uploadError, 'Hochladen hat nicht geklappt — bitte nochmal versuchen oder später in den Einstellungen nachholen.'),
+    }, { status: 500 })
   }
 
   const { data: { publicUrl } } = supabase.storage.from('company-logos').getPublicUrl(path)

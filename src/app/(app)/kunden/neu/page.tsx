@@ -8,6 +8,7 @@ import { Check } from 'lucide-react'
 import { Input } from '@/components/Input'
 import { KundenKontaktFelder, type KundenKontakt } from '@/components/KundenKontaktFelder'
 import { EMPTY_ADDRESS, composeAddress } from '@/lib/address'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 export default function NeuerKundePage() {
   const router = useRouter()
@@ -42,7 +43,8 @@ export default function NeuerKundePage() {
     }).select().single()
 
     setSaving(false)
-    if (err) { setError('Fehler beim Speichern: ' + err.message); return }
+    // DC-014: der Postgres-Wortlaut gehört nicht ins rote Banner.
+    if (err) { setError(nutzerFehler(err, 'Speichern hat nicht geklappt — bitte nochmal versuchen.')); return }
     router.push(`/kunden/${data.id}`)
   }
 

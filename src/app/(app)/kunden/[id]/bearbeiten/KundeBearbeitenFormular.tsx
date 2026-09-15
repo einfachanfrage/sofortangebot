@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { KundenKontaktFelder, type KundenKontakt } from '@/components/KundenKontaktFelder'
 import { composeAddress, parseAddress } from '@/lib/address'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 interface Props {
   kundeId: string
@@ -44,7 +45,8 @@ export function KundeBearbeitenFormular({ kundeId, name, address, phone, email }
     }).eq('id', kundeId)
 
     setSaving(false)
-    if (err) { setError('Fehler beim Speichern: ' + err.message); return }
+    // DC-014: der Postgres-Wortlaut gehört nicht ins rote Banner.
+    if (err) { setError(nutzerFehler(err, 'Speichern hat nicht geklappt — bitte nochmal versuchen.')); return }
     router.push(`/kunden/${kundeId}`)
     router.refresh()
   }

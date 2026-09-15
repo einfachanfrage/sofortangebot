@@ -18,6 +18,7 @@ import { Input } from '@/components/Input'
 import { AddressFields } from '@/components/AddressFields'
 import { EMPTY_ADDRESS, parseAddress, composeAddress, type AddressValue } from '@/lib/address'
 import { SettingsCard as Card, SettingsField as Field } from '@/components/settings/SettingsCard'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 export default function EinstellungenPage() {
   const [activeTab, setActiveTab] = useState<'betrieb' | 'angebote' | 'app'>('betrieb')
@@ -204,7 +205,8 @@ export default function EinstellungenPage() {
     const r = await fetch('/api/upload-logo', { method: 'POST', body: fd })
     const data = await r.json()
     setLogoUploading(false)
-    if (!r.ok) { setLogoError(data.error ?? 'Upload fehlgeschlagen'); return }
+    // DC-014: nie die Rohmeldung eines Systems anzeigen.
+    if (!r.ok) { setLogoError(nutzerFehler(data, 'Hochladen hat nicht geklappt — bitte nochmal versuchen.')); return }
     setLogoUrl(data.url + '?t=' + Date.now())
   }
 

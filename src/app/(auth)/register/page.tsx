@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
 import { PasswortFeld } from '@/components/PasswortFeld'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -53,7 +54,7 @@ export default function RegisterPage() {
     const result = await res.json()
 
     if (!res.ok || result.error) {
-      setError(result.error ?? 'Registrierung fehlgeschlagen. Versuche es nochmal.')
+      setError(nutzerFehler(result, 'Registrierung fehlgeschlagen. Versuche es nochmal.'))
       setLoading(false)
       return
     }

@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { anredeZeile } from '@/lib/anrede'
 import { getActiveIntegrations } from '@/lib/integrations'
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
@@ -87,10 +88,10 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
         onExported?.(provider, label)
       } else {
         const err = await r.json().catch(() => null)
-        setExportError(err?.error ?? `Übertragung zu ${label} fehlgeschlagen.`)
+        setExportError(nutzerFehler(err, `Übertragung zu ${label} fehlgeschlagen.`))
       }
     } catch (e) {
-      setExportError(e instanceof Error ? e.message : `Übertragung zu ${label} fehlgeschlagen.`)
+      setExportError(nutzerFehler(e, `Übertragung zu ${label} fehlgeschlagen.`))
     } finally {
       setExportingProvider(null)
     }
@@ -177,10 +178,10 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
       if (res.ok && data?.url) {
         setPublicUrl(data.url)
       } else {
-        setUrlError(data?.error ?? `Der Server hat den Link nicht erzeugt (Status ${res.status}).`)
+        setUrlError(nutzerFehler(data, `Der Server hat den Link nicht erzeugt (Status ${res.status}).`))
       }
     } catch (e) {
-      setUrlError(e instanceof Error ? e.message : 'Verbindung zum Server fehlgeschlagen.')
+      setUrlError(nutzerFehler(e, 'Verbindung zum Server fehlgeschlagen.'))
     } finally {
       setUrlLoading(false)
     }
@@ -218,7 +219,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
       setSentOk(true)
       onSent?.(sendTab)
     } catch (e: unknown) {
-      setSendError(e instanceof Error ? e.message : 'Unbekannter Fehler')
+      setSendError(nutzerFehler(e, 'Das Senden hat nicht geklappt — bitte nochmal versuchen.'))
     } finally {
       setSending(false)
     }

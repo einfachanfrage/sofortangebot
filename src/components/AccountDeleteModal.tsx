@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AlertTriangle } from 'lucide-react'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 export function AccountDeleteModal() {
   const [open, setOpen] = useState(false)
@@ -21,7 +22,7 @@ export function AccountDeleteModal() {
     const res = await fetch('/api/account/delete', { method: 'POST' })
     const data = await res.json()
     if (!res.ok) {
-      setError(data.error ?? 'Fehler beim Löschen. Bitte versuche es erneut.')
+      setError(nutzerFehler(data, 'Fehler beim Löschen. Bitte versuche es erneut.'))
       setLoading(false)
       return
     }

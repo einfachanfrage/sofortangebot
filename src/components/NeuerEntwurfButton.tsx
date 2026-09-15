@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mic, Loader2 } from 'lucide-react'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 export function NeuerEntwurfButton() {
   const router = useRouter()
@@ -15,7 +16,7 @@ export function NeuerEntwurfButton() {
     try {
       const res = await fetch('/api/entwurf/neu', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
       const data = await res.json() as { id?: string; error?: string }
-      if (!res.ok || !data.id) { setError(data.error ?? 'Fehler'); setLoading(false); return }
+      if (!res.ok || !data.id) { setError(nutzerFehler(data, 'Der Entwurf konnte nicht angelegt werden — bitte nochmal versuchen.')); setLoading(false); return }
       router.push(`/angebot/${data.id}/entwurf`)
     } catch {
       setError('Verbindungsfehler')

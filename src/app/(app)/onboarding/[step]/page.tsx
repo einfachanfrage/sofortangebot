@@ -28,6 +28,7 @@ import {
   type PriceEntry,
 } from '@/components/onboarding/state'
 import { OnboardingProgress as ProgressBar } from '@/components/onboarding/OnboardingProgress'
+import { nutzerFehler } from '@/lib/fehlertexte'
 
 // ─── Storage ───────────────────────────────────────────────────────────────
 
@@ -182,7 +183,8 @@ export default function OnboardingStep() {
     const r = await fetch('/api/upload-logo', { method: 'POST', body: fd })
     const data = await r.json()
     setLogoUploading(false)
-    if (!r.ok) { setLogoError(data.error ?? 'Upload fehlgeschlagen'); return }
+    // DC-014: nie die Rohmeldung eines Systems anzeigen.
+    if (!r.ok) { setLogoError(nutzerFehler(data, 'Hochladen hat nicht geklappt — bitte nochmal versuchen oder später in den Einstellungen nachholen.')); return }
     update({ logoUrl: data.url + '?t=' + Date.now() })
   }
 
