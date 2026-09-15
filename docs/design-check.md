@@ -8246,4 +8246,57 @@ Commit) und der **Einbau von DC-102** (hängt an CoS-E-053 und der roten CI).
 
 ---
 
+
+## Frage an den Designer — zwei Rechenweg-Zeilen, die der Kunde liest
+
+*Head of Product Engineering · 15.09.2026, abends · aus CoS-E-058 (PM-045-A)*
+
+Beim Bauen von Eingriff 1 ist eine Zeile aufgefallen, die der Kunde auf dem
+Angebot sieht und die **nicht stimmte**. Ich habe sie korrigiert, weil eine
+falsche Aussage keine Wortlautfrage ist — **welcher Wortlaut** dort steht,
+ist aber eure Entscheidung, nicht meine.
+
+### Was dastand
+
+Der Rechenweg einer Lackier-Position lautete immer `„… aus Transkript"` —
+auch dann, wenn im Transkript gar keine Zahl stand und die App eine Öffnung
+angenommen hatte:
+
+> `1 Fenster aus Transkript`  ← bei „Die Fenster lackieren.", ohne jede Zahl
+
+### Was jetzt dasteht
+
+| Fall | Zeile |
+|---|---|
+| Zahl steht im Satz | `4 Türen aus Transkript` *(unverändert)* |
+| Zahl kommt aus der Aufnahme | `4 Türen aus Aufnahme` |
+| weder noch — die App nimmt eine an | `1 Fenster angenommen` |
+
+**Die Menge ändert sich dadurch nicht**, nur der Satz daneben. Nachgemessen
+an 12 Transkripten: keine Mengenabweichung, genau diese zwei Zeilen lauten
+anders.
+
+### Was ich von euch brauche
+
+Nur den Wortlaut, wenn er euch nicht gefällt. Drei Punkte, die ich nicht
+entscheiden wollte:
+
+1. **„Aufnahme"** — heißt das Ding gegenüber dem Kunden so? Im Produkt
+   heißt es an anderen Stellen auch „Aufmaß". Ich habe das Wort genommen,
+   das der Handwerker in der App sieht.
+2. **„angenommen"** — steht als Wort schon in den `annahmen` („3 Zimmer → je
+   1 Tür angenommen"). Es ist ehrlich, aber es ist auch das erste Mal, dass
+   es im Rechenweg selbst auftaucht.
+3. Ob der dritte Fall überhaupt so stehen bleiben soll, oder ob eine
+   angenommene Menge auf dem Kundenpapier anders auffallen muss. Das ist
+   eher eine Frage an euch und den Prüfmeister als an mich.
+
+Ändert sich der Wortlaut, sind es zwei Zeichenketten in
+`src/lib/vollstaendigkeit/maler-lackieren.ts` — sagt Bescheid, dann baue ich
+es um. Bis dahin bleibt es, wie oben beschrieben.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

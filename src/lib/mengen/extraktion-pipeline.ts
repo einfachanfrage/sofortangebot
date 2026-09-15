@@ -3,7 +3,7 @@ import { segmentiereRaeume, loeseKorrekturenAuf, bauSegmentiertenTranskript } fr
 import { erkenneErgaenzungen, bereiteFuerKiAuf } from '@/lib/ergaenzungs-erkenner'
 import { extrahiereKorrekturen, formatKorrekturenFuerKi } from '@/lib/korrektur-resolver'
 import { wendeImplizitRegelnAn } from '@/lib/implizit-wissen'
-import { ergaenzeOeffnungenAusText } from './gesagte-werte'
+import { ergaenzeOeffnungenAusText, oeffnungenAusAufnahme } from './gesagte-werte'
 import { berechneUndPruefeAlleGewerke } from './mehrgewerk'
 import type { ErschwernisConfig } from '../erschwernis'
 import { berechneBewertung } from './bewertung'
@@ -348,6 +348,8 @@ export function verarbeiteExtraktion(
     ],
   }
 
+  const oeffnungenAufnahme = oeffnungenAusAufnahme(extraktion)
+
   // Mengen + Vollständigkeit über ALLE beteiligten Gewerke (Maler UND Boden im
   // selben Auftrag) — nicht nur das Haupt-Gewerk.
   const { positionen: positionenKomplett, mengenRoh } = berechneUndPruefeAlleGewerke(
@@ -356,6 +358,12 @@ export function verarbeiteExtraktion(
     {
       fensterAnzahl: fensterAnzahlText || undefined,
       tuerenAnzahl: tuerenAnzahlText || undefined,
+      // CoS-E-058 / PM-045-A: Die Öffnungen aus der AUFNAHME mitgeben.
+      // Ohne sie endet „die Innentüren lackieren" (keine Zahl im Satz) bei
+      // einer Tür, obwohl der Raum vier trägt. Die Zahlen sind hier längst
+      // da — sie kamen nur nie bis zu den Lackier-Regeln.
+      tuerenAusAufnahme: oeffnungenAufnahme.tueren || undefined,
+      fensterAusAufnahme: oeffnungenAufnahme.fenster || undefined,
       // PM-024: die erkannten Räume mit ihren Höhen mitgeben — damit der
       // Erschwerniszuschlag nicht davon abhängt, ob eine Regex die Sprechweise
       // kennt, UND damit er beim richtigen Raum landet (Sandy, 2026-08-30).

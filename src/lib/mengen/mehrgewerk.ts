@@ -174,6 +174,10 @@ function reichereBodenAn<E extends { raeume?: RaumLike[]; bereiche?: RaumLike[] 
 interface Meta {
   fensterAnzahl?: number
   tuerenAnzahl?: number
+  /** CoS-E-058: Türen aus der Aufnahme (raeume[].tueren), Annahmen zählen nicht. */
+  tuerenAusAufnahme?: number
+  /** CoS-E-058: Fenster aus der Aufnahme (raeume[].fenster), Annahmen zählen nicht. */
+  fensterAusAufnahme?: number
   raeume?: Array<{ name?: string; hoehe?: number | null }>
   /** CoS-E-040: welche Erschwerniszuschläge der Betrieb will. */
   erschwernis?: ErschwernisConfig | null

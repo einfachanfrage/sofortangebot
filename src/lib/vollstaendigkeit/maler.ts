@@ -25,7 +25,15 @@ export function pruefeMaler(
   transkript: string,
   positionen: BerechnetePosition[],
   verstaendnis: AuftragsVerstaendnis,
-  meta?: { fensterAnzahl?: number; tuerenAnzahl?: number; raeume?: Array<{ name?: string; hoehe?: number | null }> },
+  meta?: {
+    fensterAnzahl?: number
+    tuerenAnzahl?: number
+    /** CoS-E-058: Türen aus der Aufnahme (raeume[].tueren), Annahmen zählen nicht. */
+    tuerenAusAufnahme?: number
+    /** CoS-E-058: Fenster aus der Aufnahme (raeume[].fenster), Annahmen zählen nicht. */
+    fensterAusAufnahme?: number
+    raeume?: Array<{ name?: string; hoehe?: number | null }>
+  },
 ): void {
   const { nurDecke, nurWaende, nurBoden } = wendeNurXFilterAn(ergaenzt, verstaendnis)
 

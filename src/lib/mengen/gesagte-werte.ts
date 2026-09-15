@@ -281,3 +281,44 @@ export function artFuerRueckfrage(id: string, typ: string): GesagteWertArt | nul
   if (/^masse_/.test(id) || /_masse$/.test(id) || typ === 'masse_einzel') return 'masse'
   return null
 }
+
+/**
+ * CoS-E-058 / PM-045-A (2026-09-15): Die Öffnungen, die in der AUFNAHME
+ * stehen — summiert über alle Räume.
+ *
+ * Warum es diese Funktion gibt: Die Lackier-Regeln in
+ * `vollstaendigkeit/maler-lackieren.ts` zählen Türen und Fenster
+ * ausschließlich am Text. Steht die Zahl nicht im Satz („die Innentüren
+ * lackieren"), endet jede Kette bei **1** — auch wenn der aufgenommene Raum
+ * vier Türen trägt. Auf einer Wohnung mit vier Innentüren fehlen dadurch
+ * die Positionen für drei davon.
+ *
+ * `raeume[].tueren` / `raeume[].fenster` liegen zu diesem Zeitpunkt längst
+ * vor; sie wurden nur nie bis zu den Regeln durchgereicht.
+ *
+ * **Angenommene Öffnungen zählen nicht mit** (`annahme: true`). Eine
+ * Annahme ist keine Messung und darf keine Menge tragen — dieselbe Linie
+ * wie bei PM-023: nur nachholen, was jemand wirklich gesagt hat, nichts
+ * erfinden. Ein Eintrag ohne `anzahl` beschreibt genau eine Öffnung.
+ *
+ * `0` heißt: die Aufnahme sagt dazu nichts. Dann bleibt alles wie bisher.
+ */
+export function oeffnungenAusAufnahme(extraktion: {
+  raeume?: Array<{
+    fenster?: Array<{ anzahl?: number; annahme?: boolean }>
+    tueren?: Array<{ anzahl?: number; annahme?: boolean }>
+  }>
+}): { tueren: number; fenster: number } {
+  const summe = (liste?: Array<{ anzahl?: number; annahme?: boolean }>): number =>
+    (liste ?? [])
+      .filter(o => o?.annahme !== true)
+      .reduce((n, o) => n + (typeof o.anzahl === 'number' && o.anzahl > 0 ? o.anzahl : 1), 0)
+
+  let tueren = 0
+  let fenster = 0
+  for (const raum of extraktion.raeume ?? []) {
+    tueren += summe(raum.tueren)
+    fenster += summe(raum.fenster)
+  }
+  return { tueren, fenster }
+}

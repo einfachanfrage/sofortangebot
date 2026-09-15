@@ -4633,4 +4633,114 @@ Einschätzung dazu steht weiter aus.
 
 ---
 
+
+---
+
+## CoS-E-058 ✅ Eingriff 1 gebaut — die Türen und Fenster aus der Aufnahme kommen an (15.09.2026)
+
+**Datum:** 2026-09-15, abends · Head of Product Engineering
+**Betrifft:** PM-045-A aus CoS-E-058 · **Eingriff 1** der drei aus der
+Einschätzung von 17:40
+**Status:** gebaut, gemessen, Zusicherung steht. **Nicht committet** — das
+kann nur Sandy.
+
+### Was falsch war
+
+`pruefeTuerenLackieren` bekam `lower`, `v` und `meta` — die Räume bekam sie
+nie. Stand die Zahl nicht im Satz, endete jede Kette bei `1`:
+
+```
+„Im Wohnzimmer die Wände und die Decke streichen, die Innentüren lackieren."
+Aufnahme: Wohnzimmer, 4 Türen
+
+vorher:  Türen abschleifen = 1 · grundieren = 1 · lackieren = 1 · Zarge = 1
+nachher: Türen abschleifen = 4 · grundieren = 4 · lackieren = 4 · Zarge = 4
+```
+
+Gemessen am **echten Weg** (`verarbeiteExtraktion`), nicht an einer von Hand
+gebauten `meta` — das ist die Lehre aus PM-045-B, und sie steht als eigene
+Zusicherung in der Testdatei.
+
+Die Zahl war nie verloren. `raeume[].tueren` liegt seit jeher in der
+Extraktion; sie kam nur nie bis zu der Regel, die die Positionen baut.
+
+### Was gebaut ist
+
+| Datei | Änderung |
+|---|---|
+| `src/lib/mengen/gesagte-werte.ts` | neu: `oeffnungenAusAufnahme()` — summiert Türen und Fenster über alle Räume, **angenommene Öffnungen (`annahme: true`) zählen nicht mit** |
+| `src/lib/mengen/extraktion-pipeline.ts` | gibt die zwei Zahlen als `tuerenAusAufnahme` / `fensterAusAufnahme` in die `meta` |
+| `src/lib/mengen/mehrgewerk.ts`, `src/lib/vollstaendigkeit/index.ts`, `src/lib/vollstaendigkeit/maler.ts` | die zwei Felder durch den `meta`-Vertrag durchgereicht |
+| `src/lib/vollstaendigkeit/maler-lackieren.ts` | `pruefeTuerenLackieren` und `pruefeFensterLackieren` lesen sie |
+| `src/lib/__tests__/cos-e-058-oeffnungen-aus-aufnahme.test.ts` | **neu**, 15 Zusicherungen |
+
+### Die eine Entscheidung darin — und warum sie anders ausfiel als angekündigt
+
+In der Einschätzung von 17:40 stand: *„Türanzahl aus den Räumen … und ihr
+**Vorrang vor der Textzählung** geben."* **So ist es nicht gebaut, und zwar
+mit Absicht.** Gebaut ist die umgekehrte Reihenfolge:
+
+> gesprochene Zahl → **dann** Aufnahme → **dann** die Zimmer-Annahme → **dann** `1`
+
+Der Grund ist beim Nachmessen aufgefallen: Sagt jemand *„die zwei Türen
+lackieren"*, während die Aufnahme vier führt, hätte der Vorrang der Aufnahme
+**vier** ins Angebot geschrieben. **Die Aufnahme ist der Bestand, der Satz
+ist der Auftrag.** Zwei bestellte Türen zu vier zu machen wäre derselbe
+Fehler wie PM-046-A, nur in die andere Richtung — und teurer, weil er auf
+jedem Angebot landet, auf dem jemand eine Teilmenge nennt.
+
+Die Lücke, die PM-045-A beschreibt, schließt die neue Reihenfolge
+vollständig: Sie tritt genau dort an die Stelle der alten `1`, wo im Satz
+gar keine Zahl steht. Das ist der Fall aus dem Fund.
+
+**Angenommene Öffnungen tragen keine Menge** (`annahme: true` wird
+übersprungen) — dieselbe Grenze wie PM-023: nachholen, was jemand gesagt
+hat, nichts erfinden. Auch dafür steht eine Zusicherung.
+
+### Was NICHT dazugehört, obwohl es in der Einschätzung stand
+
+`pruefeHeizkLackieren` habe ich als dritte betroffene Stelle genannt. **Das
+war zu schnell:** Heizkörper stehen nicht in `raeume[]`, es gibt für sie
+keine Aufnahme-Quelle, die man durchreichen könnte — nur das Feld
+`heizkoerper` an der Wurzel der Extraktion. Es zu benutzen hieße, den
+Raum-Verteiler aus DC-091 im selben Ausdruck umzubauen (die Aufteilung „je
+ein Heizkörper pro Raum" hängt genau dort). Das ist ein eigener Eingriff,
+kein Teil dieses. **Neu und offen**, gehört in die Reihenfolge hinter
+Eingriff 2. Der Betrag ist derselbe Bauart wie PM-045-A: ohne Zahl im Satz
+ein Heizkörper statt der tatsächlichen Anzahl.
+
+### Gemessen
+
+- **Neu:** 15 Zusicherungen grün.
+- **Regression:** 585 Zusicherungen in 27 Dateien gelaufen, **583 grün**.
+  Die zwei roten (`entscheidungen-31-08.test.ts`) lesen `src/data/` und
+  `src/app/`, die in der Ersatzumgebung nicht liegen — **kein Befund**, das
+  ist die Umgebung. `pruefmeister-soll.test.ts` lädt eine Next-Route und
+  läuft hier aus demselben Grund nicht.
+- **A/B ohne die neuen Felder:** 12 Transkripte durch alte und neue Fassung.
+  **Keine einzige Mengenabweichung.** Zwei Rechenwege lauten anders, siehe
+  nächster Punkt.
+
+### Eine Zeile, die der Kunde sieht — Frage an den Designer
+
+Der Rechenweg einer Position stand bisher auf `„1 Fenster aus Transkript"`,
+**auch wenn im Transkript keine Zahl stand**. Das ist eine Unwahrheit auf
+dem Kundenpapier, deshalb steht dort jetzt:
+
+- `„3 Türen aus Aufnahme"` — wenn die Zahl aus der Aufnahme kommt
+- `„1 Fenster angenommen"` — wenn weder Satz noch Aufnahme etwas sagen
+
+Die Menge ändert sich dadurch **nicht**, nur der Satz daneben. Der Wortlaut
+gehört nicht mir: in `design-check.md` abgelegt.
+
+### Für Sandy
+
+Neue Datei, muss vor dem Push in Git:
+
+```
+git add src/lib/__tests__/cos-e-058-oeffnungen-aus-aufnahme.test.ts
+```
+
+*Head of Product Engineering · 2026-09-15*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

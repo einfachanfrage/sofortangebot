@@ -7,7 +7,7 @@ export function pruefeTuerenLackieren(
   ergaenzt: BerechnetePosition[],
   lower: string,
   v: AuftragsVerstaendnis,
-  meta?: { tuerenAnzahl?: number },
+  meta?: { tuerenAnzahl?: number; tuerenAusAufnahme?: number },
 ): void {
   // Raumbezug aus dem Satz ("im Wohnzimmer die Türen lackieren") → Suffix,
   // damit die Position im Raum landet und nicht unter Allgemein
@@ -19,10 +19,36 @@ export function pruefeTuerenLackieren(
 
   const anzTuerenExplizit = anzahlAus(lower, 'tür', anzahlAus(lower, 'türen', 0))
   const anzZimmerFuerTuer = anzahlAus(lower, 'zimmer', anzahlAus(lower, 'raum', anzahlAus(lower, 'räume', 0)))
-  const anzTueren = meta?.tuerenAnzahl ?? (anzTuerenExplizit > 0 ? anzTuerenExplizit : anzZimmerFuerTuer > 0 ? anzZimmerFuerTuer : 1)
-  const tuerAnnahme = anzTuerenExplizit === 0 && anzZimmerFuerTuer > 0 ? [`${anzZimmerFuerTuer} Zimmer → je 1 Tür angenommen`] : []
 
-  ergaenzt.push({ beschreibung: `Türen abschleifen${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) aus Transkript`, annahmen: tuerAnnahme })
+  // ── CoS-E-058 / PM-045-A (15.09.2026) ───────────────────────────────────
+  //
+  // Vorher endete diese Kette bei `1`, sobald im Satz keine Zahl stand:
+  // „die Innentüren lackieren" ergab EINE Tür — auch wenn die Aufnahme des
+  // Raums vier trägt. Auf einer Wohnung mit vier Innentüren fehlten damit
+  // drei Türen in jeder der fünf Positionen unten.
+  //
+  // Die Zahl war nie verloren, sie kam nur nie hier an: `raeume[].tueren`
+  // steht seit jeher in der Extraktion, die Regel bekam aber nur `lower`,
+  // `v` und `meta`. Jetzt liegt sie in `meta.tuerenAusAufnahme`.
+  //
+  // **Reihenfolge, bewusst so und nicht anders:** Das gesprochene Wort
+  // gewinnt vor der Aufnahme. Sagt jemand „die zwei Türen streichen",
+  // während die Aufnahme vier führt, sind zwei bestellt und zwei gemeint —
+  // die Aufnahme ist der Bestand, der Satz ist der Auftrag. Erst wenn der
+  // Satz gar keine Zahl nennt, tritt die Aufnahme an die Stelle der
+  // bisherigen `1`. Angenommene Öffnungen zählen dabei nicht mit (siehe
+  // `oeffnungenAusAufnahme`) — sonst stünde eine Annahme als Menge im
+  // Angebot, und das ist genau die Grenze aus PM-023.
+  const anzTuerenAufnahme = meta?.tuerenAusAufnahme ?? 0
+  const anzTueren = meta?.tuerenAnzahl
+    ?? (anzTuerenExplizit > 0 ? anzTuerenExplizit
+      : anzTuerenAufnahme > 0 ? anzTuerenAufnahme
+      : anzZimmerFuerTuer > 0 ? anzZimmerFuerTuer : 1)
+  const ausAufnahme = meta?.tuerenAnzahl === undefined && anzTuerenExplizit === 0 && anzTuerenAufnahme > 0
+  const tuerQuelle = ausAufnahme ? 'aus Aufnahme' : 'aus Transkript'
+  const tuerAnnahme = !ausAufnahme && anzTuerenExplizit === 0 && anzZimmerFuerTuer > 0 ? [`${anzZimmerFuerTuer} Zimmer → je 1 Tür angenommen`] : []
+
+  ergaenzt.push({ beschreibung: `Türen abschleifen${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) ${tuerQuelle}`, annahmen: tuerAnnahme })
   ergaenzt.push({ beschreibung: `Türen grundieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
   ergaenzt.push({ beschreibung: `Türen lackieren (2× Anstrich)${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
   // Katalog-Deckungsaudit 2026-08-31: hieß hier „Türzargen lackieren" (Plural),
@@ -46,7 +72,7 @@ export function pruefeFensterLackieren(
   ergaenzt: BerechnetePosition[],
   lower: string,
   v: AuftragsVerstaendnis,
-  meta?: { fensterAnzahl?: number },
+  meta?: { fensterAnzahl?: number; fensterAusAufnahme?: number },
 ): void {
   const hatFensterLackieren = lower.includes('fenster') &&
     (v.hatArbeit('lackieren') || lower.includes('holzfenster') ||
@@ -57,7 +83,13 @@ export function pruefeFensterLackieren(
 
   const raum = findeRaumImSatz(/fenster/i, lower, raumNamenAus(ergaenzt))
   const sfx = raum ? ` — ${raum}` : ''
-  const anzFenster = (meta?.fensterAnzahl ?? 0) > 1 ? meta!.fensterAnzahl! : anzahlAus(lower, 'fenster')
+  // CoS-E-058 / PM-045-A: dieselbe Lücke wie bei den Türen — ohne Zahl im
+  // Satz stand hier `1`, auch wenn die Aufnahme drei Fenster führt. Die
+  // Reihenfolge ist dieselbe: gesprochene Zahl vor Aufnahme vor `1`.
+  const anzFensterText = (meta?.fensterAnzahl ?? 0) > 1 ? meta!.fensterAnzahl! : anzahlAus(lower, 'fenster', 0)
+  const anzFensterAufnahme = meta?.fensterAusAufnahme ?? 0
+  const anzFenster = anzFensterText > 0 ? anzFensterText : anzFensterAufnahme > 0 ? anzFensterAufnahme : 1
+  const fensterQuelle = anzFensterText > 0 ? 'aus Transkript' : anzFensterAufnahme > 0 ? 'aus Aufnahme' : 'angenommen'
   const istOelfarbe = lower.includes('ölfarbe') || lower.includes('oelfarbe') || lower.includes('öl')
   const farbTyp = istOelfarbe ? 'Ölfarbe' : 'Lack'
   const istAußen = lower.includes('außen') || lower.includes('holzfenster')
@@ -67,7 +99,7 @@ export function pruefeFensterLackieren(
   const anzAnstrich = istZweiSeitig ? anzFenster * 2 : anzFenster
   const zweiSeitigHinweis = istZweiSeitig ? ' (2-seitig)' : ''
 
-  ergaenzt.push({ beschreibung: `Fenster abschleifen${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster aus Transkript`, annahmen: [] })
+  ergaenzt.push({ beschreibung: `Fenster abschleifen${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster ${fensterQuelle}`, annahmen: [] })
   ergaenzt.push({ beschreibung: `Fenster grundieren${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
   // Katalog-Deckungsaudit 2026-08-31: hieß „Fenster Lack (2× Anstrich)" —
   // kein Katalogtreffer und holpriges Deutsch auf dem Angebot. Der Farbtyp
