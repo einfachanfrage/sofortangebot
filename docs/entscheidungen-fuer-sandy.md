@@ -1196,3 +1196,106 @@ Feldliste (CoS-L-008), die ohnehin noch nicht da ist. Engineering kann also
 gar nicht sofort loslegen — in dem Fall entscheidest du nur, was passiert,
 wenn Legal schneller liefert als erwartet.
 
+
+---
+
+## ✅ Entschieden 15.09.2026, 17:45 MESZ — PM-045/PM-046 vor § 35a
+
+**Sandys Antwort: „JA."**
+
+Reihenfolge bei Engineering ist damit: **CoS-E-058 / CoS-E-059** (die sechs
+Funde mit Geldweg) → CoS-E-053 läuft nebenher weiter → **CoS-E-057 (§ 35a)**
+bleibt vor Gate 1, aber dahinter. Verteilt in
+`docs/chief-of-staff-engineering-todos.md`.
+
+Damit wartet aktuell **keine Entscheidung** auf Sandy.
+
+---
+
+# Stand 15.09.2026, 18:00 MESZ — eine neue Entscheidung, sonst nichts
+
+*Chief of Staff*
+
+## ✅ Nichts Neues zu prüfen: CI und Produktion sind unverändert grün
+
+CI-Lauf **#187** auf `de1ae80`: `success` — an der Lauf-Seite selbst
+nachgesehen (Lauf-ID 34982664337), nicht an der Übersichtsliste. Produktion
+`dpl_Ba3B8QBk`: `READY`, derselbe Commit. Seit deinem Push ist nichts Neues
+deployt worden.
+
+## ✅ Deine „JA" von 17:45 ist verteilt, und Engineering hat schon geantwortet
+
+Die Reihenfolge steht: CoS-E-058/059 zuerst. Engineerings Einschätzung dazu
+lag bereits vor und macht die Sache kleiner, als sie aussah: **Aus sechs
+Funden werden drei Eingriffe, nicht sechs** — PM-046 A, B und C haben eine
+einzige Ursache. Engineering empfiehlt, mit PM-046 anzufangen (der einzige der
+drei, bei dem der Betrieb heute eine Arbeit anbietet, die *schadet*), und
+stellt dafür zwei Fachfragen an den Prüfmeister. Die habe ich weitergereicht.
+**Du musst dazu nichts tun.**
+
+## 🔵 Neu und das Einzige, was auf dich wartet
+
+Der Prüfmeister hat heute Abend sechs weitere Fälle gerechnet (Fallbasis jetzt
+**62 von 100**, nicht 46). Sieben der acht neuen Funde sind Fachfragen und
+liegen bei Engineering (**CoS-E-060**, **CoS-E-061**). Einer gehört dir.
+
+### Soll das Produkt ein Gewerk rechnen, das du nie freigeschaltet hast?
+
+**Was ich nachgesehen habe, statt es zu glauben:** Im Onboarding kann man nur
+**Maler** und **Bodenbeläge** auswählen — Fliesen, Trockenbau,
+Sanitär/Heizung und Elektro sind ausdrücklich abgeschaltet. So weit, so
+gewollt. *(Der Prüfmeister hat das Gegenteil gemeldet; seine Begründung war
+eine Verwechslung mit der Kleinmaterial-Einstellung. Sein Befund stimmt
+trotzdem — nur über einen anderen Weg.)*
+
+**Der andere Weg:** Welches Gewerk gerechnet wird, entscheidet nicht die
+Auswahl im Betriebsprofil, sondern das, was die KI aus dem **Diktat**
+heraushört. Und für alle sechs Gewerke liegt eine fertige Rechen-Engine
+bereit, die nicht fragt, ob das Gewerk freigeschaltet ist.
+
+Konkret: Ein **Maler** — dein heutiger Nutzer — diktiert „Bad komplett neu
+fliesen". Das Produkt schaltet still auf die Fliesen-Engine um. Genau diesen
+Fall hat der Prüfmeister gerechnet: **sieben von neun Zeilen bekommen keinen
+Preis**, auf einem kleinen Bad sind das **1.935,94 €**, die als Leerzeile im
+Angebot stehen. Dazu drei weitere Fehler in derselben Spur (Wandfliesen
+werden gegen den *Maler*katalog gehalten; „nur die Wandfliesen" bringt den
+Boden trotzdem ins Angebot; Abstemmen nimmt immer den Bodenpreis).
+
+**Deine Entscheidung:** Soll ein nicht freigeschaltetes Gewerk weiter
+durchgerechnet werden, oder soll das Produkt in dem Fall ehrlich sagen, dass
+es die Mengen nicht ermitteln kann?
+
+**Meine Empfehlung: sperren, und zwar vor Gate 1.** Begründung in einem Satz:
+Ein Angebot mit sieben preislosen Zeilen ist schlimmer als ein klarer Satz
+„das kann ich noch nicht", weil der Handwerker im ersten Fall glaubt, er habe
+ein Angebot — und der Weg dorthin ist klein, weil der Zweig für „Gewerk noch
+nicht verfügbar" im Code bereits existiert und nur erreicht werden muss.
+
+**Was dagegen spricht, damit du es abwägen kannst:** Es nimmt dir eine
+Halb-Fähigkeit weg, die heute niemandem auffällt — Manfred fliest keine
+Bäder, und beschwert hat sich niemand. Und wenn du Fliesen ohnehin früh nach
+Gate 1 freischalten willst, baust du zweimal: einmal die Sperre, einmal
+wieder auf. Die Alternative wäre, die vier Fliesen-Funde (CoS-E-061) gleich
+zu beheben statt das Tor zu schließen — das ist aber deutlich mehr Arbeit und
+steht hinter CoS-E-058/059, die du gerade nach vorn gesetzt hast.
+
+## 🔵 Committen — die Liste ist länger als heute Nachmittag
+
+Seit `de1ae80` haben drei Rollen weitergearbeitet. Nicht im Repository sind
+**acht Doku-Dateien, neun neue Testdateien und eine neue Quelldatei**
+(`src/lib/fehlertexte.ts` aus DC-014) — dazu die Anzeigestellen, die der
+Designer dafür angefasst hat. Deren Anzahl habe ich **nicht** gezählt und
+behaupte sie deshalb auch nicht; `git status` zeigt sie dir.
+
+**Ein Befehl genügt** (`git add -A`), er steht in meiner Meldung im Chat.
+
+### Dabei fällt noch etwas mit ab, das du wissen solltest
+
+`_to_delete/` ist auf deinem Rechner weg — richtig. **Im Repository liegt der
+Ordner aber noch**: 261 Dateien, 4,4 MB, in `de1ae80` nachgezählt. Der Eintrag
+in `.gitignore` hat ihn nie entfernt, weil `.gitignore` nur für *neue* Dateien
+gilt, nicht für bereits eingecheckte. Dein nächster `git add -A` trägt die
+Löschung mit ein und räumt ihn auch dort weg. Kein Handgriff nötig — nur damit
+du nicht erschrickst, wenn `git status` 261 gelöschte Dateien anzeigt.
+
+---

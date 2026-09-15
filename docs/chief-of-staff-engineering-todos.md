@@ -4414,4 +4414,149 @@ Reihenfolge-Entscheidung gegenüber CoS-E-057 (§ 35a) bleibt bei ihr.
 
 ---
 
+## ✅ Sandy hat die Reihenfolge entschieden: PM-045/PM-046 vor § 35a
+
+**Datum:** 2026-09-15, 17:45 MESZ · Chief of Staff
+
+**Sandys Antwort, wörtlich: „JA."** Auf die Frage, ob CoS-E-058 und CoS-E-059
+vor CoS-E-057 kommen.
+
+**Damit gilt für euch diese Reihenfolge:**
+
+1. **CoS-E-058 und CoS-E-059** — die sechs Funde aus PM-045/PM-046. Erst die
+   Einschätzung (ein Eingriff oder mehrere, Extraktion oder Matching), dann
+   der Bau. Begründung von Sandy übernommen: ein falscher Betrag landet auf
+   jedem Angebot, das heute verschickt wird.
+2. **CoS-E-053** — läuft unverändert weiter, war nie Teil der Frage.
+3. **CoS-E-057 (§ 35a)** — bleibt **vor Gate 1**, aber hinter 1. Es wartet
+   ohnehin auf Legals Feldliste (CoS-L-008).
+
+**Was diese Entscheidung nicht sagt:** dass CoS-E-057 kleiner geworden wäre.
+Der Schema-Wechsel an `companies` steht unverändert, samt Eintrag in
+`check_migrationen.sql`.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+---
+
+## CoS-E-060 🔴 — PM-057, PM-058, PM-059: drei Funde aus der Preisliste, zwei mit Geldweg
+
+*Chief of Staff · 15.09.2026, abends · Quelle: `pruefmeister-restliste.md`, `pruefmeister-notizen-fuer-designer.md` PD-014, Test `src/lib/__tests__/pm-preisliste-material.test.ts`*
+
+Der Prüfmeister hat beim Nachmessen von `Übergangsprofil / Schwelle einbauen`
+quer geprüft, was `preis-ableitung.ts` und `materialanteil.ts` über dieselbe
+Zeile sagen. Drei Funde. **Nichts davon ist gebaut, nichts davon entschieden.**
+
+| Fund | Wirkung | Geldweg |
+|---|---|---|
+| **PM-057** — Zeile trägt `material: 'zubehoer'`, ihr Preis ist aber zu 100 % Zeit | Betrieb zahlt das Profil selbst, bei jeder Tür | 8–12 € je Stück |
+| **PM-058** — `Grundieren (Tiefengrund)` steht **zweimal** in einer Preisliste (5,50 € und 3,00 €, Katalog 4,50 €) | zwei Preise für dieselbe Arbeit; welcher gilt, entscheidet der Matcher | 2,50 €/m² Spanne |
+| **PM-059** — fünf Zeilen: `preis-ableitung.ts` sagt `wahl`, `materialanteil.ts` gibt keinen Schalter | wer Material selbst stellt, bekommt nichts abgezogen | je Zeile 25–45 % |
+
+**Gefragt ist eine Einschätzung, keine Umsetzung** — dieselbe Form wie bei
+CoS-E-058/059: ein Eingriff oder mehrere, und wo die Ursache sitzt.
+
+**PM-059 ist der Kern und die einzige Frage, die ihr beantworten müsst, bevor
+irgendetwas gebaut wird:** Welche der beiden Dateien speist die Oberfläche?
+Der Prüfmeister sagt ausdrücklich, dass er die fachliche Frage (welcher Wert
+richtig ist) erst beantwortet, wenn es **eine** Quelle gibt, nicht zwei. Zwei
+der fünf Zeilen (Trittschall, Sockelleisten) wurden in PD-009 §2 **absichtlich**
+auf `wahl` gestellt, während `materialanteil.ts` sie wörtlich als Zubehör
+sperrt — beide Dateien am selben Tag geschrieben. Das ist kein Tippfehler,
+sondern zwei Entscheidungen nebeneinander.
+
+PM-057 hängt an derselben Mechanik: `zubehoer` ist eine Zusage über den
+Materialanteil, die der hinterlegte Preis nicht hält. Ob das eine Marke am
+falschen Ort ist oder ein fehlender Betrag, gehört zu eurer Einschätzung.
+
+PM-058 ist davon unabhängig und vermutlich kleiner: betroffen ist jeder
+Betrieb, der **Maler innen und Tapezieren** ankreuzt. Die Frage dahinter ist,
+ob eine Preisliste dieselbe Katalogzeile überhaupt zweimal enthalten darf.
+
+---
+
+## CoS-E-061 🔴 — PM-060 bis PM-062: der Fliesen-Weg ist erreichbar, obwohl das Gewerk nicht freigeschaltet ist
+
+*Chief of Staff · 15.09.2026, abends · Quelle: `pruefmeister-restliste.md`, Test `src/lib/__tests__/pruefmeister-batch-60-62.test.ts` (9 grün, 4 Sperrklinken)*
+
+### Was der Prüfmeister gemessen hat
+
+| Fall | Fund | Wirkung auf ein Bad (2,40 × 1,80 m) |
+|---|---|---|
+| **PM-060-A** | sieben von neun Zeilen finden keinen Preis (Wortlaut: Engine schreibt `Verfugung Boden`, Katalog führt `Verfugen Boden`) | **1.935,94 €** stehen ohne Preis |
+| **PM-060-B** | `gewerkFuerPosition` liest „Wand" und entscheidet auf **`maler`** — für alle drei Wand-Zeilen | **493,92 €** allein an der Zuordnung |
+| **PM-061-A** | „nur die Wandfliesen": `fliesenEngine` schreibt den Boden trotzdem, `erkenneFliesenBereich()` kennt `nurWand`, wird aber erst **danach** gelesen | **324,50 €** für eine ausgenommene Arbeit |
+| **PM-062-A** | `Altfliesen abstemmen` trifft immer den Bodenpreis (18,00 €), auch bei Wandfliesen (22,00 €) | **72,00 €** zu wenig auf 18 m² |
+
+Die Mengen selbst hat er gegengerechnet und für richtig befunden (10 %
+Verschnitt Boden, 5 % Wand, Verfugung und Abdichtung auf netto).
+
+### Korrektur an der Begründung — bitte vor dem Einordnen lesen
+
+Der Prüfmeister schreibt, `fliesen` stehe in `gewerke-config.ts` auf
+`aktiv: true` und „ein Fliesenleger bekommt das Gewerk angeboten". **Das
+stimmt so nicht, und ich habe es nachgesehen statt es weiterzureichen:**
+
+- Das `aktiv: true`, das er gefunden hat, steht in `KLEINMATERIAL_CONFIG`
+  (Zeile 83) und schaltet die **Kleinmaterial-Pauschale**, nicht das Gewerk.
+- `fliesen` steht in **`INAKTIVE_GEWERKE_IDS`**, zusammen mit `trockenbau`,
+  `sanitaer_heizung`, `elektro` und zwölf weiteren.
+- Der Gewerke-Schritt im Onboarding rendert `AKTIVE_GEWERKE`
+  (`src/app/(app)/onboarding/[step]/page.tsx`, Zeile 530) — und das sind
+  **nur `maler` und `boden_parkett`**. Ein Fliesenleger kann sich hier nicht
+  anmelden.
+
+**Seine Schlussfolgerung bleibt trotzdem stehen, nur über einen anderen
+Weg** — und der ist der eigentliche Fund dieses Tickets:
+
+```
+generiere-positionen/route.ts → gewerk: extData.extraktion?.gewerk
+normalisiereGewerk('fliesen' | 'fliesenarbeiten' | 'fliesenleger') → 'fliesen'
+berechneMengen('fliesen', …) → GEWERK_ENGINES['fliesen'] → fliesenEngine
+```
+
+Das Gewerk kommt **aus der Extraktion des Diktats**, nicht aus der Auswahl im
+Betriebsprofil. `GEWERK_ENGINES` in `src/lib/mengen/engine.ts` hält alle sechs
+Engines bereit, ohne zu fragen, ob das Gewerk freigeschaltet ist. Ein Maler,
+der „Bad komplett neu fliesen" diktiert, landet heute in `fliesenEngine` und
+bekommt die sieben preislosen Zeilen aus PM-060-A.
+
+**Die Tür steht also offen, nur nicht dort, wo der Prüfmeister sie gesucht
+hat.** Dieselbe Tür gilt für `trockenbau`, `sanitaer_heizung` und `elektro`.
+
+### Was ich von euch brauche
+
+1. **Eine Einschätzung zum Tor**, nicht zu den vier Funden: Soll
+   `berechneMengen` ein Gewerk, das nicht in `AKTIVE_GEWERKE` steht,
+   überhaupt rechnen? Der Zweig für unbekannte Gewerke existiert bereits
+   (`engine.ts`, Zeile 21 ff.: Positionen ohne Menge, Warnung „Gewerk noch
+   nicht in Engine"). Ob der Weg dorthin richtig ist, sagt ihr.
+2. **PM-060-B einordnen.** `gewerkFuerPosition` entscheidet am Wortlaut des
+   Titels statt an der Herkunft der Zeile. Das trifft nicht nur Fliesen —
+   es trifft jede künftige Freischaltung. Der Prüfmeister nennt es den
+   Eintrag, der am weitesten trägt, und ich teile das.
+3. **PM-060-A, PM-061-A, PM-062-A** sind Fliesen-Innenleben und haben Zeit,
+   **solange** Punkt 1 geschlossen ist. Sind sie es nicht, wandern sie nach
+   vorn, weil dann echte Angebote betroffen sind.
+
+**Reihenfolge:** Dieses Ticket steht **hinter** CoS-E-058/059 — Sandy hat das um 17:45 MESZ mit „JA" entschieden.
+Beträge auf Angeboten, die Maler und Bodenleger heute verschicken; hier
+braucht es erst ein Diktat, das ein nicht freigeschaltetes Gewerk trifft.
+
+---
+
+## An den Prüfmeister — zwei Fragen aus eurer Einschätzung sind weitergereicht
+
+*Chief of Staff · 15.09.2026, abends*
+
+Eure drei Fragen aus CoS-E-058/059 (Abschnitt 6: die Fläche bei bloßem
+„Sperrgrund", der Tiefengrund unter dem Isoliergrund, und `meta` gegen
+`textMitZahlen` in den beiden Batch-Tests) stehen jetzt in
+`pruefmeister-themenspeicher.md` unter **K**. Ihr wartet darauf, bevor
+Eingriff 3 gebaut wird — das ist so festgehalten und geht nicht unter.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

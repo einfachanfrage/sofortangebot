@@ -11,9 +11,18 @@
 // Live-Lauf, nicht in eine Testdatei, die etwas anderes prüfen würde als das,
 // was sie behauptet.
 //
-// Zwei Prüfungen stehen als `it.fails` — sie halten ein Soll fest, das heute
-// nicht erfüllt ist (PM-052-A, PM-056-A). Wird der Fall gebaut, schlägt die
-// Sperrklinke an und der Test muss auf `it` zurückgestellt werden.
+// Mehrere Prüfungen stehen als `it.fails` — sie halten ein Soll fest, das heute
+// nicht erfüllt ist. Wird der Fall gebaut, schlägt die Sperrklinke an und der
+// Test muss auf `it` zurückgestellt werden.
+//
+// Stand 15.09., nach Manfreds Durchsicht der Diktate überarbeitet:
+//   PM-050-B  Dübellöcher: Katalog auf Pauschale 20,00 € umstellen
+//   PM-052-A  Zahlwort „die zwei Heizkörper" ergibt Menge 1
+//   PM-053-A  Erschwerniszuschlag Raumhöhe feuert außen neben dem Gerüst
+//   PM-055-A  Verschnitt fehlt beim geklebten Belag
+//   PM-056-A  Altbelag-Titel nennt den neuen Belag (TN-127)
+//   PM-056-B  Entsorgungsfahrt fehlt
+//   PM-063-A  „bauseits gestellt" erzeugt trotzdem 450 € Gerüst
 import { describe, expect, it } from 'vitest'
 import { berechneMengen } from '../mengen/engine'
 import { verarbeiteExtraktion } from '../mengen/extraktion-pipeline'
@@ -113,20 +122,24 @@ describe('PM-049 — Wand zweimal, Decke einmal im selben Raum', () => {
 describe('PM-050 — Kleinreparatur: drei Dübellöcher, keine Vollflächenspachtelung', () => {
   const T = 'Küche, vier mal drei, Höhe zwo fünfzig. Wände zweimal streichen. Drei Dübellöcher müssen noch gespachtelt werden, sonst nix Großes. Eine Tür, ein Fenster.'
   const pos = () => lauf('maler', T, [raum('Küche', { laenge: 4, breite: 3, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen'] })])
-  it('Dübellöcher als Stückposition zu 3,00 € — nicht als Fläche', () => {
-    const p = finde(pos(), /dübellöcher/i)
+  it('eine eigene Zeile für die Ausbesserung — nicht als Fläche', () => {
+    const p = finde(pos(), /dübellöcher|kleine ausbesserungen/i)
     expect(p).toBeDefined()
-    expect(p.einheit).toBe('Stück')
-    expect(preis(pos(), /dübellöcher/i, 'maler')).toBe(3)
   })
   it('keine Vollflächenspachtelung daneben — das ist der teure Verwechsler', () => {
     expect(finde(pos(), /spachtelarbeiten q[234]|fläche spachteln|wände spachteln/i)).toBeUndefined()
   })
-  // ── PM-050-A, offen — dieselbe Familie wie PM-045-B ─────────────────────
-  // „DREI Dübellöcher" ergibt Menge 1. Die Zahl steht als Wort im Satz und
-  // wird nicht gelesen; mit Ziffer („3 Dübellöcher") geht es.
-  it.fails('OFFEN: „drei Dübellöcher" ergibt Menge 3', () => {
-    expect(menge(pos(), /dübellöcher/i)).toBe(3)
+  // ── PM-050-B, offen — Katalogentscheidung (Manfred, 15.09.) ────────────
+  // 3,00 € je Loch heißt bei drei Löchern 9,00 €. Dafür fährt kein Betrieb
+  // raus. Kleine Ausbesserungen sind eine Pauschale, Praxis 15–25 €.
+  // Soll: Katalogzeile „Kleine Ausbesserungen (bis 5 Stellen)", Pauschale,
+  // 20,00 €. Ab der sechsten Stelle greift die Flächen- bzw. Zeitzeile.
+  // Mit der Pauschale erledigt sich hier auch die Mengenfrage — das Zahlwort
+  // bleibt über PM-052-A abgedeckt.
+  it.fails('OFFEN: Ausbesserung ist eine Pauschale zu 20,00 €', () => {
+    const p = finde(pos(), /dübellöcher|kleine ausbesserungen/i)
+    expect(p.einheit).toBe('Pauschale')
+    expect(preis(pos(), /dübellöcher|kleine ausbesserungen/i, 'maler')).toBe(20)
   })
 })
 
@@ -155,6 +168,11 @@ describe('PM-052 — Heizkörper: drei Arbeitsgänge, drei Zeilen', () => {
     expect(finde(pos(), /türen (abschleifen|grundieren|lackieren)|türzarge/i)).toBeUndefined()
     expect(finde(pos(), /fenster (abschleifen|grundieren|lackieren)/i)).toBeUndefined()
   })
+  // Wer lackiert, klebt nicht ab. Die beiden Zeilen liegen im Katalog
+  // nebeneinander — das ist die Verwechslung, die am nächsten liegt.
+  it('kein „Heizkörper abkleben" neben dem Lackieren', () => {
+    expect(finde(pos(), /heizkörper abkleben/i)).toBeUndefined()
+  })
   // ── offen, gehört zu PM-045-A (stündlicher Lauf, 15.09.) ───────────────
   // „Die ZWEI Heizkörper" — im Angebot steht Menge 1. Der Betrieb schleift,
   // grundiert und lackiert zwei und bekommt einen bezahlt: 85,00 € weniger.
@@ -164,8 +182,11 @@ describe('PM-052 — Heizkörper: drei Arbeitsgänge, drei Zeilen', () => {
   })
 })
 
-describe('PM-053 — Fassade zweimal streichen, mit Gerüst', () => {
-  const T = 'Einfamilienhaus, Fassade Nordseite, zwölf Meter lang, Wandhöhe sechs Meter. Zwei Fenster, jeweils eins zwanzig mal eins vierzig. Fassade zweimal streichen mit Fassadenfarbe, vorher grundieren. Gerüst wird gestellt.'
+describe('PM-053 — Fassade zweimal streichen, Gerüst stellen wir', () => {
+  // „Gerüst wird gestellt" ist auf dem Bau zweideutig — bauseits gestellt
+  // heißt: steht schon da, wird nicht berechnet. Das Diktat sagt deshalb
+  // ausdrücklich, wer stellt. Der bauseitige Fall ist PM-063.
+  const T = 'Einfamilienhaus, Fassade Nordseite, zwölf Meter lang, Wandhöhe sechs Meter. Zwei Fenster, jeweils eins zwanzig mal eins vierzig. Fassade zweimal streichen mit Fassadenfarbe, vorher grundieren. Wir stellen das Gerüst.'
   const pos = () => lauf('maler', T, [raum('Fassade', { laenge: 12, hoehe: 6, fenster: [{ anzahl: 2, breite: 1.2, hoehe: 1.4, annahme: false }], arbeiten: ['fassade streichen'] })])
   it('Fassadenfläche 72,00 m² — Fenster unter 2,5 m² nicht abgezogen', () => {
     expect(menge(pos(), /fassadenfläche streichen 2x/i)).toBe(72)
@@ -174,9 +195,32 @@ describe('PM-053 — Fassade zweimal streichen, mit Gerüst', () => {
     expect(menge(pos(), /fassadengrundierung/i)).toBe(72)
     expect(preis(pos(), /fassadengrundierung/i, 'maler')).toBe(6)
   })
-  it('Gerüst als eigene Position, Höhenzuschlag erkannt', () => {
+  it('Gerüst als eigene Position', () => {
     expect(finde(pos(), /gerüst/i)).toBeDefined()
-    expect(finde(pos(), /erschwerniszuschlag raumhöhe/i)).toBeDefined()
+  })
+  // ── PM-053-A, offen — Doppelberechnung (Manfred, 15.09.) ───────────────
+  // Der Zuschlag Raumhöhe > 3 m ist der Innenfall: Leiter oder Rollgerüst
+  // statt Stehen auf dem Boden. Außen IST das Gerüst die Erschwernis, und es
+  // steht mit 450,00 € als eigene Zeile drin. Beides zusammen ist zweimal
+  // Geld für dieselbe Sache — das fällt spätestens dem Bauleiter auf.
+  it.fails('OFFEN: außen kein Erschwerniszuschlag Raumhöhe neben dem Gerüst', () => {
+    expect(finde(pos(), /erschwerniszuschlag raumhöhe/i)).toBeUndefined()
+  })
+})
+
+describe('PM-063 — Gerüst steht schon, bauseits gestellt', () => {
+  const T = 'Einfamilienhaus, Fassade Nordseite, zwölf Meter lang, Wandhöhe sechs Meter. Fassade zweimal streichen, vorher grundieren. Das Gerüst wird bauseits gestellt, das steht schon.'
+  const pos = () => lauf('maler', T, [raum('Fassade', { laenge: 12, hoehe: 6, fenster: [{ anzahl: 2, breite: 1.2, hoehe: 1.4, annahme: false }], arbeiten: ['fassade streichen'] })])
+  it('Fassade und Grundierung stehen wie bei PM-053', () => {
+    expect(menge(pos(), /fassadenfläche streichen 2x/i)).toBe(72)
+    expect(menge(pos(), /fassadengrundierung/i)).toBe(72)
+  })
+  // ── PM-063-A, offen ────────────────────────────────────────────────────
+  // „bauseits" wird nicht gelesen: das Angebot enthält trotzdem „Gerüst
+  // stellen (Pauschale)" zu 450,00 €. Der Kunde hat das Gerüst schon stehen
+  // und liest eine Position, die er nicht bestellt hat.
+  it.fails('OFFEN: bauseits gestelltes Gerüst wird nicht berechnet', () => {
+    expect(finde(pos(), /gerüst stellen/i)).toBeUndefined()
   })
 })
 
@@ -204,8 +248,14 @@ describe('PM-055 — Kork vollflächig verklebt', () => {
     expect(p.beschreibung).toMatch(/vollflächig verklebt/i)
     expect(preis(pos(), /kork verlegen/i, 'boden_parkett')).toBe(24)
   })
-  it('12,00 m² ohne Verschnittaufschlag beim Kleben', () => {
-    expect(menge(pos(), /kork verlegen/i)).toBe(12)
+  // ── PM-055-A, offen — Regelfehler (Manfred, 15.09.) ────────────────────
+  // Heute gibt es 5 % Verschnitt nur beim schwimmenden Belag. Kork kommt in
+  // Platten, da ist der Verschnitt eher höher als beim Klick-Laminat. Eine
+  // Regel „Verschnitt nur bei schwimmend" ist fachlich falsch.
+  // Entscheidung: 5 % auf jeden Belag, unabhängig von der Verlegeart;
+  // 15 % bei Fischgrät und Diagonalverlegung. Soll hier: 12,60 m².
+  it.fails('OFFEN: 12,60 m² — 5 % Verschnitt auch beim geklebten Belag', () => {
+    expect(menge(pos(), /kork verlegen/i)).toBe(12.6)
   })
 })
 
@@ -230,4 +280,21 @@ describe('PM-056 — alter Teppich raus, Laminat rein', () => {
     expect(p.beschreibung).toMatch(/teppich/i)
     expect(p.beschreibung).toMatch(/verklebt/i)
   })
+  // ── PM-056-B, offen — Entsorgung fehlt (Manfred, 15.09.) ───────────────
+  // „raus UND entsorgt werden" ist gesagt. Die richtige Zeile für verklebten
+  // Teppich heißt „Teppichboden verklebt entfernen" (9,00 €/m²) — die Wörter
+  // „und entsorgen" stehen dort NICHT drin, anders als bei der losen Zeile.
+  // 14 m² verklebter Teppich sind rund ein Kubikmeter Sperrmüll: das ist die
+  // Kleinfuhre bis 1 m³ aus dem Onboarding, 110,00 €. Fehlt sie, fährt der
+  // Betrieb die Fuhre umsonst.
+  // Der Katalog kennt die Zeile heute nur in der Allrounder-Vorlage, nicht
+  // unter „Boden – Reinigung & Entsorgung". Soll: dort aufnehmen und setzen,
+  // sobald Altbelag entfernt wird und der Entfernen-Titel die Entsorgung
+  // nicht selbst schon enthält.
+  it.fails('OFFEN: Entsorgungsfahrt / Kleinfuhre steht im Angebot', () => {
+    expect(finde(pos(), /kleinfuhre|entsorgungsfahrt/i)).toBeDefined()
+  })
+  // Kein Fehler, wenn zusätzlich „Klebstoffreste / Altkleber abfräsen"
+  // (14,00 €/m²) auftaucht — nach verklebtem Teppich ist das die Regel und
+  // nicht die Ausnahme. Deshalb steht hier bewusst keine Verbotsprüfung.
 })

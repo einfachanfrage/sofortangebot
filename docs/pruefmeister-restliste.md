@@ -166,6 +166,82 @@ steht eine Arbeit, die nicht die ausgeführte ist. Dieselbe Familie wie TN-127
 
 ---
 
+---
+
+## Neu: Manfreds Durchsicht der Diktate PM-047 bis PM-056 (15.09., abends)
+
+Sandy hat die zehn Diktate zum Einsprechen bekommen. Manfred hat sie gegengelesen.
+047, 048, 049, 051, 054 hat er nachgerechnet und freigegeben — Umfänge, Flächen,
+Übermessung, 49,40 / 39,00 / 46,80 / 15,12 stimmen. Fünf Punkte kamen zurück, vier
+davon sind echte Funde am Produkt, einer war ein Fehler in meiner Erwartung.
+
+### PM-053-A — Erschwerniszuschlag Raumhöhe feuert außen neben dem Gerüst
+
+Der Zuschlag „Raumhöhe > 3 m" (15 %) ist der Innenfall: Leiter oder Rollgerüst statt
+Stehen auf dem Boden. Außen **ist** das Gerüst die Erschwernis, und es steht mit
+450,00 € als eigene Pauschale im selben Angebot. Heute kommen beide Zeilen.
+Das ist zweimal Geld für dieselbe Sache und fällt auf dem Kundenpapier auf.
+**Soll:** kein Raumhöhen-Zuschlag, wenn die Fläche eine Außenfläche ist oder eine
+Gerüstposition im selben Angebot steht. Sperrklinke steht in der Batch-Datei.
+
+### PM-063-A — „bauseits gestellt" wird nicht gelesen (neuer Fall)
+
+Nachgemessen mit drei Formulierungen: „Gerüst wird gestellt", „wir stellen das
+Gerüst", „das Gerüst wird bauseits gestellt" — **alle drei** ergeben
+`Gerüst stellen (Pauschale)` zu 450,00 €. Das Wort bauseits kommt im Code nicht vor.
+Bauseits heißt: der Kunde hat es schon stehen, es wird nicht berechnet. Heute liest er
+eine Position, die er nicht bestellt hat.
+**Soll:** bei bauseits / „steht schon" / „stellt der Kunde" keine Gerüstposition.
+
+Gleichzeitig war mein Diktat schlecht gewählt: „Gerüst wird gestellt" ist auf dem Bau
+zweideutig und taugt nicht als Prüfsatz. PM-053 sagt jetzt „wir stellen das Gerüst",
+der bauseitige Fall ist PM-063. Das war ein Fehler in der Erwartung, nicht am Produkt.
+
+### PM-055-A — Verschnitt nur bei schwimmend ist die falsche Regel
+
+Kork vollflächig verklebt ergibt 12,00 m² auf 12,00 m² Rohfläche. Laminat schwimmend
+bekommt 5 % Aufschlag. Kork kommt in Platten, der Verschnitt ist dort eher höher als
+beim Klick-Laminat. Eine Regel, die den Aufschlag an der Verlegeart festmacht, ist
+fachlich falsch.
+**Entscheidung (Prüfmeister):** 5 % Verschnitt auf **jeden** Belag, unabhängig von der
+Verlegeart; 15 % bei Fischgrät und Diagonalverlegung. Soll für PM-055: 12,60 m².
+
+### PM-056-B — die Entsorgung fehlt, 110,00 € je Fall
+
+Im Diktat steht „raus **und entsorgt** werden". Die fachlich richtige Zeile für
+verklebten Teppich heißt `Teppichboden verklebt entfernen` (9,00 €/m²) — und die Wörter
+„und entsorgen" stehen dort, anders als bei der Zeile für losen Teppich, **nicht** drin.
+14 m² verklebter Teppich sind rund ein Kubikmeter Sperrmüll. Das ist die
+`Kleinfuhre bis 1m³` mit 110,00 €, die heute nur in der Allrounder-Vorlage
+(`preise-vorlagen.ts`) steht und nicht im Katalog unter `Boden – Reinigung & Entsorgung`.
+**Soll:** Zeile in den Katalog aufnehmen und setzen, sobald Altbelag entfernt wird und
+der Entfernen-Titel die Entsorgung nicht selbst schon enthält.
+Zusätzlich: `Klebstoffreste / Altkleber abfräsen` (14,00 €/m²) ist nach verklebtem
+Teppich die Regel, nicht die Ausnahme — steht als „darf drinstehen", nicht als Fehler.
+
+### PM-050-B — 3,00 € je Dübelloch ist keine Zahl, die ein Betrieb schreibt
+
+Drei Löcher ergeben 9,00 €. Dafür fährt niemand raus. In der Praxis ist das eine
+Pauschale, Manfreds Spanne 15–25 €.
+**Entscheidung (Prüfmeister):** Katalogzeile wird
+`Kleine Ausbesserungen (bis 5 Stellen)`, Pauschale, **20,00 €**. Ab der sechsten Stelle
+greift die Flächen- oder Zeitzeile. Damit erledigt sich für diesen Fall auch die
+Mengenfrage; das Zahlwort bleibt über PM-052-A abgedeckt.
+
+### PM-052 — „Heizkörper abkleben" als Verbotsprüfung nachgetragen
+
+Wer lackiert, klebt nicht ab. Die beiden Zeilen liegen im Katalog nebeneinander, das ist
+die naheliegendste Verwechslung. Nachgemessen: die App macht sie heute **nicht** —
+die Prüfung steht ab jetzt trotzdem als Sperrklinke drin.
+
+### Stand der Batch-Datei
+
+`pruefmeister-batch-47-56.test.ts`: 22 Prüfungen grün, 7 Sperrklinken
+(PM-050-B, PM-052-A, PM-053-A, PM-055-A, PM-056-A, PM-056-B, PM-063-A).
+Die Diktate zum Einsprechen liegen in `docs/pruefmeister-einsprechen-47-56.md`.
+
+---
+
 ## Offen
 
 ### Braucht die laufende App (Spur 6)
@@ -192,7 +268,7 @@ steht eine Arbeit, die nicht die ausgeführte ist. Dieselbe Familie wie TN-127
     Nachzusehen, **bevor** jemand eine Zahl aus dem Abgleich zitiert.
 11. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung,
     nicht danach.
-12. **Fallbasis Richtung 100** — Stand **62 von 100** (56 + PM-057 bis PM-062).
+12. **Fallbasis Richtung 100** — Stand **63 von 100** (56 + PM-057 bis PM-063).
     Nächste Themen aus dem Speicher: Treppen komplett, Abbruch und Entsorgung,
     mehrere Aufnahmen pro Angebot, Trockenbau.
 

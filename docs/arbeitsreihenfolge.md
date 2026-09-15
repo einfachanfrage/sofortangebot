@@ -1,59 +1,55 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 15.09.2026, 16:50 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 16:45 — diese Datei wird immer ersetzt, nie ergänzt)*
+**Stand: 15.09.2026, 18:00 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 17:45 — diese Datei wird immer ersetzt, nie ergänzt.
+Die Fassungen davor trugen „16:45"/„16:50", waren aber um 17:39 bzw. 17:45
+geschrieben: eine Stunde zu früh gestempelt. Ab hier steht die echte Zeit.)*
 
 ---
 
 ## Lage in drei Zeilen
 
-**Die CI ist grün.** Lauf **#187** auf Commit **`de1ae80`**: `success`. Damit
-ist CoS-E-055 geschlossen — belegt am Lauf, nicht an einer lokalen Messung.
-**Produktion grün:** `dpl_Ba3B8QBk`, `READY`, auf demselben Commit.
-**`_to_delete/` ist weg** — nachgesehen, der Ordner existiert nicht mehr.
-**Neu auf dem Tisch:** sechs Funde des Prüfmeisters aus PM-045 und PM-046,
-drei davon mit einem Geldweg zum Kunden. Verteilt als CoS-E-058 und CoS-E-059.
+**Grün und unverändert.** CI **#187** auf `de1ae80`: `success`, an der
+Lauf-Seite nachgesehen (Lauf-ID 34982664337). Produktion `dpl_Ba3B8QBk`:
+`READY`, derselbe Commit. Seit dem letzten Lauf ist nichts deployt worden.
+**Sandys „JA" ist verteilt:** CoS-E-058/059 vor § 35a.
+**Engineering hat eingeschätzt:** drei Eingriffe, nicht sechs.
+**Der Prüfmeister hat nachgelegt:** PM-057 bis PM-062, Fallbasis **62 von
+100**. Verteilt als CoS-E-060 und CoS-E-061.
+**Der Designer hat DC-014 Punkt 2 fertig** — neue `src/lib/fehlertexte.ts`.
 
 ---
 
-## ✅ Die rote CI ist erledigt
+## Was seit dem letzten Lauf dazugekommen ist
 
-| Lauf | Commit | Ergebnis |
+| Rolle | Ergebnis | liegt jetzt |
 |---|---|---|
-| CI #184 | `2f93123` | failure — die sieben Zusicherungen |
-| CI #186 | `caec47f` | failure — dieselben sieben |
-| **CI #187** | **`de1ae80`** | **success** |
-
-`de1ae80` („CoS-E-055: Tuer-Anker, Taetigkeiten, Materialanteil + Doku")
-enthält 19 Quelldateien **und** die sechs Doku-Dateien, die vorher nur auf
-Sandys Rechner lagen — PD-009 und PD-010 eingeschlossen.
-
-Der Prüfmeister hatte geschrieben: „die Behebung liegt auf Sandys Rechner und
-nicht im Repository". Genau das war es. Die Vermutung ist damit bestätigt, und
-zwar an der einzigen Stelle, an der sie sich bestätigen lässt.
-
-**Was ich weiterhin nicht behaupte:** dass damit alle Tests der Fallbasis grün
-sind. #187 sagt, dass der CI-Lauf durchgeht — nicht, dass die sechs neuen
-Funde unten schon abgedeckt wären. Sie sind es nicht.
+| Engineering | Einschätzung zu den sechs Funden: **drei Eingriffe**, PM-046 A/B/C sind **eine** Ursache (`pruefeWasserflecken` in `vollstaendigkeit/maler-sonder.ts`) | beim Prüfmeister (zwei Fachfragen), dann bauen |
+| Prüfmeister | **PM-057 bis PM-059** (Preisliste/Material) | Engineering, **CoS-E-060** |
+| Prüfmeister | **PM-060 bis PM-062** (Bad/Fliesen) | Engineering, **CoS-E-061** |
+| Prüfmeister | `VARIANTEN`-Zähler war eine Fehldiagnose im Skript selbst — behoben, Zähler 0 | erledigt |
+| Prüfmeister | `Übergangsprofil / Schwelle` nachgemessen: **Stunden stimmen, Material fehlt** | als PM-057 in CoS-E-060 |
+| Designer | **DC-014 Punkt 2 erledigt** — keine Rohmeldung eines Systems mehr im Produkt | erledigt, nicht committet |
 
 ---
 
-## 🔴 Neu: sechs Funde aus PM-045 und PM-046
+## 🔎 Eine Korrektur, die ich selbst nachgesehen habe
 
-| Fund | Wirkung auf ein einzelnes Angebot | liegt bei |
-|---|---|---|
-| PM-045-A/B — „vier Türen" wird als **eine** gerechnet | **540,00 € zu wenig** | Engineering **CoS-E-058** |
-| PM-045-C — Begründung an der Tür erzeugt Fensterzeilen | Zeilen, die niemand bestellt hat | Engineering **CoS-E-058** |
-| PM-046-A — Sperrgrund auf Boden- statt Wandfläche | **219,60 € zu wenig**, zwei Drittel ohne Sperre | Engineering **CoS-E-059** |
-| PM-046-B — Isolier- **und** Tiefengrund auf derselben Fläche | **76,95 € zu viel**, fachlich schädlich | Engineering **CoS-E-059** |
-| PM-046-C — bestellte Decke trägt `automatisch_ergaenzt` | fällt aus dem Angebot, sobald „Nichts erfinden" umgebaut ist | Engineering **CoS-E-059** |
+Der Prüfmeister schreibt in der Restliste, `fliesen` stehe auf `aktiv: true`
+und ein Fliesenleger bekomme das Gewerk angeboten. **Das stimmt so nicht:**
+Das gefundene `aktiv: true` gehört zur Kleinmaterial-Pauschale; `fliesen`,
+`trockenbau`, `sanitaer_heizung` und `elektro` stehen in
+`INAKTIVE_GEWERKE_IDS`, und der Gewerke-Schritt im Onboarding rendert nur
+`maler` und `boden_parkett`.
 
-Sperrklinke für alle: `src/lib/__tests__/pruefmeister-batch-1509.test.ts` —
-liegt auf Sandys Rechner, noch nicht committet.
-
-**A und B in PM-046 zeigen in verschiedene Richtungen** — einmal zu wenig,
-einmal zu viel. Ob eine Ursache oder zwei, weiß ich nicht und rate es nicht;
-die Einschätzung steht bei Engineering.
+**Sein Befund bleibt richtig, über einen anderen Weg:** Das Gewerk kommt aus
+der Extraktion des **Diktats** (`extraktion.gewerk`), nicht aus dem
+Betriebsprofil — und `GEWERK_ENGINES` hält alle sechs Engines bereit, ohne zu
+fragen, ob das Gewerk freigeschaltet ist. Betroffen ist also nicht der
+Fliesenleger, den es nicht gibt, sondern der **Maler mit einem Bad im
+Diktat**. Das ist die erste Frage in CoS-E-061 und die einzige offene
+Entscheidung für Sandy. Festgehalten für den Prüfmeister in
+`pruefmeister-themenspeicher.md` K.3.
 
 ---
 
@@ -61,95 +57,128 @@ die Einschätzung steht bei Engineering.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | **Neu: Reihenfolge bei Engineering.** PM-045/PM-046 vor CoS-E-057 (§ 35a) oder nicht? Empfehlung und Gegenargument in `entscheidungen-fuer-sandy.md` | eine Antwort |
-| 2 | **Committen.** Neun Dateien liegen nur auf ihrem Rechner — Liste unten | ein Befehl |
+| 1 | **Neu: nicht freigeschaltetes Gewerk sperren?** Ein Maler, der ein Bad diktiert, bekommt sieben preislose Zeilen (1.935,94 €). Empfehlung: sperren, vor Gate 1. Steht in `entscheidungen-fuer-sandy.md` | eine Antwort |
+| 2 | **Committen.** Acht Doku-Dateien, neun neue Testdateien, `src/lib/fehlertexte.ts` und die Anzeigestellen dazu | ein Befehl |
 | 3 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert übernommen, in diesem Lauf nicht neu geprüft |
 
-**Erledigt und damit von der Liste:** `_to_delete/` löschen · die sechs
-Doku-Dateien committen · die vier Entscheidungen von 16:45.
+**Erledigt und damit von der Liste:** die Reihenfolge-Entscheidung
+(„JA", 17:45 MESZ) · `_to_delete/` auf dem Rechner · die sechs Doku-Dateien
+von 17:15.
 
-### Nur auf Sandys Rechner, nicht im Repository
+### Nicht im Repository (gegen `de1ae80` verglichen, frischer Klon)
 
+Doku (acht):
 ```
 docs/arbeitsreihenfolge.md
 docs/chief-of-staff-engineering-todos.md
+docs/chief-of-staff-platform-todos.md
+docs/design-check.md
 docs/entscheidungen-fuer-sandy.md
+docs/pruefmeister-notizen-fuer-designer.md
 docs/pruefmeister-restliste.md
 docs/pruefmeister-themenspeicher.md
-docs/pruefmeister-notizen-fuer-designer.md
 docs/vokabular-abgleich.md
+```
+Neue Testdateien (neun):
+```
+src/lib/__tests__/dc014-fehlertexte.test.ts
 src/lib/__tests__/pm-flaeche-oder-zeit.test.ts
 src/lib/__tests__/pm-materialanteil-25.test.ts
+src/lib/__tests__/pm-preisliste-material.test.ts
+src/lib/__tests__/pm-vokabular-varianten.test.ts
 src/lib/__tests__/pm-vorlagen-zwilling.test.ts
 src/lib/__tests__/pruefmeister-batch-1509.test.ts
+src/lib/__tests__/pruefmeister-batch-47-56.test.ts
+src/lib/__tests__/pruefmeister-batch-60-62.test.ts
 ```
+Neue Quelldatei: `src/lib/fehlertexte.ts`.
+Dazu die Anzeigestellen aus DC-014 und `api/upload-logo` — **deren Anzahl habe
+ich nicht gezählt und behaupte sie nicht.** `git add -A` nimmt alles mit.
 
-**Vier davon sind neue Dateien** — der Push-Hook blockiert, bis sie `git add`
-gesehen haben.
+**`_to_delete/` liegt noch im Repository** — 261 Dateien, 4,4 MB, in `de1ae80`
+nachgezählt. `.gitignore` entfernt nichts, was schon eingecheckt ist. Der
+nächste `git add -A` trägt die Löschung mit ein.
 
 ---
 
 ## Head of Product Engineering
 
-1. **CoS-E-058 und CoS-E-059 einschätzen** — die sechs Funde. Keine Umsetzung
-   gefragt, sondern: ein Eingriff oder mehrere, und hängt die Stückzahl an der
-   Extraktion oder am Matching. **Das geht vor allem anderen**, weil hier
-   falsche Beträge auf Kundenpapier landen
-2. **CoS-E-053 weiterbauen**, mit den vier Legal-Bedingungen. Der
+1. **CoS-E-058/059 bauen — freigegeben, Reihenfolge steht.** Sandys „JA" vom
+   17:45 MESZ. Eure eigene Empfehlung: Eingriff 3 (PM-046) zuerst, dann 1,
+   dann 2. **Eingriff 3 wartet auf zwei Antworten des Prüfmeisters** (K.1) —
+   ohne die wird keine Ersatzregel gebaut, so steht es bei euch, und so bleibt
+   es. Eingriff 1 und 2 hängen nicht daran
+2. **CoS-E-060 einschätzen** (PM-057/058/059). **Die eine Frage, die vorher
+   geklärt sein muss:** welche Datei speist die Oberfläche —
+   `preis-ableitung.ts` oder `materialanteil.ts`? Der Prüfmeister beantwortet
+   die fachliche Frage erst, wenn es *eine* Quelle gibt
+3. **CoS-E-061 einschätzen** (Fliesen). Zuerst das **Tor**: Soll
+   `berechneMengen` ein Gewerk rechnen, das nicht in `AKTIVE_GEWERKE` steht?
+   Dann PM-060-B (`gewerkFuerPosition` entscheidet am Wort, nicht an der
+   Herkunft der Zeile) — das trifft jede künftige Freischaltung
+4. **CoS-E-053 weiterbauen**, mit den vier Legal-Bedingungen. Der
    Preisanpassungs-Hinweis darf **nicht** aufs Kunden-PDF, bevor Sandy einen
    Wortlaut freigegeben hat — LR-16
-3. **CoS-E-056** bleibt bei Manfreds Vlies-Antwort. `taetigkeiten.ts` bis
-   dahin unangetastet, wie vereinbart
-4. **CoS-E-057** — angenommen, wartet auf Legals Feldliste (CoS-L-008).
-   Schema-Wechsel an `companies`: Migration **und** Eintrag in
-   `check_migrationen.sql`, der Abgleich ist scharf
-5. **Entsperrt:** „Fläche oder Zeit" ist entschieden (PD-013), 25 % bleibt.
-   Zwei Zeilen bleiben ausdrücklich offen — `Untergrund spachteln` und
-   `Übergangsprofil / Schwelle einbauen`
+5. **CoS-E-056** bleibt bei Manfreds Vlies-Antwort. `taetigkeiten.ts` bis
+   dahin unangetastet
+6. **CoS-E-057 (§ 35a)** — bleibt vor Gate 1, aber hinter 1. Wartet ohnehin
+   auf Legals Feldliste (CoS-L-008). Schema-Wechsel an `companies`: Migration
+   **und** Eintrag in `check_migrationen.sql`
+7. **Entsperrt:** „Fläche oder Zeit" ist entschieden (PD-013), 25 % bleibt.
+   `Untergrund spachteln` und `Übergangsprofil / Schwelle einbauen` bleiben
+   ausdrücklich offen
 
 ## Product Designer
 
-1. **DC-102 ist freigegeben** — Ablauf und Darstellung, **nicht die Zahlen**.
+1. ✅ **DC-014 Punkt 2 erledigt.** Punkt 1 (RLS-Migration) bleibt bei
+   Platform, CoS-P-005
+2. **Nachzuziehen, sobald Engineering committet hat:** die eine Stelle in
+   `AngebotDetail.tsx`, bewusst ausgelassen. Kein neuer Auftrag nötig
+3. **DC-102 ist freigegeben** — Ablauf und Darstellung, **nicht die Zahlen**.
    PD-009 lesen, bevor die Tabelle übernommen wird; Basiswerte kommen aus
-   `default-prices.ts`, nicht aus dem Prototyp
-2. Der Einbau hängt weiter an CoS-E-053
-3. **DC-105 ist live** (`caec47f`) — Onboarding-Schritt 4 heißt jetzt „Wie
-   rechnest du ab?". In der laufenden App nachsehen
-4. Live-Test von DC-101 / DC-103 / DC-104 / DC-089 am aktuellen Stand
-5. DC-047 und DC-048 sind live — beide brauchen einen Blick in der App
+   `default-prices.ts`. Der Einbau hängt weiter an CoS-E-053
+4. **DC-105 ist live** (`caec47f`) — Onboarding-Schritt 4 in der App nachsehen
+5. Live-Test von DC-101 / DC-103 / DC-104 / DC-089; DC-047 und DC-048 sind
+   live und brauchen einen Blick
 
 ## Platform
 
 1. **CoS-P-023 — der Hook ist freigegeben, bauen.** Zweiter, isolierter
-   Checkout gegen den tatsächlich gepushten Commit. 6–15 s pro Push sind
-   akzeptiert; deutlich mehr ist eine Rückmeldung wert
+   Checkout gegen den tatsächlich gepushten Commit
 2. **Mit im selben Lauf:** `pruefe-migrationsliste.mjs` in den Hook, und der
    zurückgestellte Designer-Vorschlag ist entsperrt
-3. **CoS-P-020** — Fehlertext in `api/integrations/test`. Wenn er offen
-   bleibt, eine Zeile, dass er bewusst offen bleibt
+3. **CoS-P-020** — Fehlertext in `api/integrations/test`. Bleibt er offen,
+   eine Zeile, dass er bewusst offen bleibt. **Hinweis:** der Designer hat mit
+   `src/lib/fehlertexte.ts` jetzt eine `nutzerFehler()`-Funktion gebaut — die
+   Stelle lässt sich damit vermutlich in einer Zeile erledigen
 4. **CoS-P-021** — zwei Fragen zum Rechnungsnummernkreis. Einschätzung, keine
    Umsetzung, kein Löschen von Produktionsdaten
 5. **CoS-P-022** — `docs-sichern.mjs pruefen` in die CI? Eure Entscheidung,
-   steht weiter offen. **Sie wird dringender:** die Shell-Einhängung ist seit
-   dem 08.09. defekt, die Sicherung läuft also seit einer Woche nicht
+   weiter offen. **Wird dringender:** die Shell-Einhängung ist seit dem 08.09.
+   defekt, die Sicherung läuft seit einer Woche nicht
+6. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload. Der Designer
+   hat den *Text* erledigt, die *Ursache* liegt weiter bei euch
 
 ## Prüfmeister
 
-1. ✅ **25 % gegen 26,1 % — entschieden: 25 % bleibt.** Über Manfreds drei
-   eigene Zahlen gerechnet, nicht gegen sie. `pm-materialanteil-25.test.ts`
-2. ✅ **„Fläche oder Zeit" gegengeprüft und entschieden** (PD-013).
-   `pm-flaeche-oder-zeit.test.ts`
-3. ✅ **Vorlagen ohne Katalog-Zwilling nachgemessen** — 4 von 134 finden sich
-   selbst nicht, 2 davon mit anderem Preis. `vokabular-abgleich.md` Q,
-   `pm-vorlagen-zwilling.test.ts`
-4. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
-5. ⏸ **PM-002** braucht einen Live-Lauf
-6. **Fallbasis: 46 von 100.** Nächste Themen laut Speicher: Bad/Fliesen,
-   Treppen komplett, Abbruch und Entsorgung, mehrere Aufnahmen pro Angebot,
-   Selbstkorrektur mitten im Diktat
-7. **Offen ohne App:** `Übergangsprofil / Schwelle` nachmessen · `VARIANTEN`
-   in `vokabular-abgleich.mjs` nachziehen (still von 3 auf 6 gestiegen) · die
-   142 Vorlagen der gesperrten Gewerke, jeweils **vor** der Freischaltung
+1. **K.1 beantworten — das blockiert Engineerings Eingriff 3.** Zwei Fragen in
+   `pruefmeister-themenspeicher.md` K: welche Fläche gilt bei bloßem
+   „Sperrgrund", und fällt der Tiefengrund ganz weg oder nur auf der
+   gesperrten Fläche
+2. **K.2 — die Batch-Tests.** `meta` gegen `textMitZahlen`: Engineering hält
+   die Sperrklinke PM-045-B/PM-050-A für auf einen Zustand gesetzt, den das
+   Produkt nicht hat. Vorschlag steht in K.2
+3. **K.3 lesen — Korrektur an „aktive Gewerke".** Der Befund bleibt, die
+   Begründung nicht. Für Restliste Nr. 2 und Nr. 10 heißt das: die vier
+   Gewerke sind nicht „aktiv", sie sind über das **Diktat erreichbar** — das
+   ist die schärfere Formulierung, nicht die weichere
+4. ✅ Erledigt in diesem Lauf: `VARIANTEN` (Zähler 0), `Übergangsprofil /
+   Schwelle` nachgemessen, Batch PM-057 bis PM-062
+5. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
+6. **Fallbasis: 62 von 100.** Nächste Themen laut Speicher: Treppen komplett,
+   Abbruch und Entsorgung, mehrere Aufnahmen pro Angebot, Trockenbau
+7. **Offen ohne App:** die 142 Vorlagen der gesperrten Gewerke, jeweils
+   **vor** der Freischaltung
 
 ## Legal
 
@@ -176,19 +205,19 @@ gesehen haben.
 
 ## Was ich als Nächstes tue
 
-**Auf Engineerings Einschätzung zu CoS-E-058/059 warten** und auf Sandys
-Antwort zur Reihenfolge. Beides zusammen entscheidet, was als Nächstes gebaut
-wird.
+**Auf zwei Dinge warten:** Sandys Entscheidung zum Gewerke-Tor und die
+Antworten des Prüfmeisters auf K.1. Beides zusammen entsperrt, was Engineering
+als Nächstes baut.
 
 **Gate 1 rechne ich weiterhin nicht neu** — ich warte auf Manfreds Session 3,
-sonst steht die Zahl wieder auf „ist deployt" statt auf „funktioniert". Die
-grüne CI ändert daran nichts.
+sonst steht die Zahl wieder auf „ist deployt" statt auf „funktioniert".
 
 **Zum Ablauf dieses Laufs:** `node scripts/docs-sichern.mjs` ist erneut nicht
-gelaufen (Shell-Einhängung seit dem Windows-Update vom 08.09. defekt).
-Gelesen und geschrieben wurde über Staging/Commit, jeweils mit
-`expectedMtimeMs`. CI-Ergebnisse sind an den einzelnen Lauf-Seiten geprüft,
-nicht an der Übersichtsliste — die Liste hat in diesem Lauf einen roten Lauf
-als grün angezeigt.
+gelaufen (Shell-Einhängung seit dem Windows-Update vom 08.09. defekt). Gelesen
+und geschrieben wurde über Staging/Commit, jeweils mit `expectedMtimeMs` —
+drei Dateien wurden dabei einmal zurückgewiesen, weil ein paralleler Lauf sie
+verändert hatte; neu gelesen und darauf aufgesetzt. Der Repository-Stand wurde
+gegen einen frischen Klon von `de1ae80` verglichen, die CI am einzelnen Lauf
+geprüft, nicht an der Übersichtsliste.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

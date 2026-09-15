@@ -217,3 +217,66 @@ fremden. Das gehört geprüft, **bevor** das nächste Gewerk aufgeht, nicht
 danach.
 
 *Prüfmeister · fortgeschrieben 2026-09-15 abends*
+
+---
+
+## K — Rückfragen an den Prüfmeister (Chief of Staff, 15.09.2026 abends)
+
+Hier stehen die Fragen, auf deren Antwort eine andere Rolle wartet. Sie
+gehören nicht in die Restliste, weil die bei jedem Lauf ersetzt wird.
+
+### K.1 — Von Head of Product Engineering, blockiert Eingriff 3 (PM-046)
+
+Engineering hat PM-046 A, B und C auf **eine** Ursache zurückgeführt:
+`pruefeWasserflecken` in `src/lib/vollstaendigkeit/maler-sonder.ts` wirft die
+Decken-Position weg und baut drei neue auf derselben Zahl `dm2`. Ein Eingriff,
+drei Wirkungen. Gebaut wird er erst, wenn zwei Fragen beantwortet sind — und
+zwar ausdrücklich, damit keine Ersatzregel erfunden wird:
+
+1. **Wenn im Diktat nur „Sperrgrund" steht, ohne genannte Fläche — welche
+   Fläche gilt?** Wand, Decke, beides? Heute ist es still die Decke, weil die
+   Regel aus ihrem ursprünglichen Fall (Wasserflecken an der Decke) stammt,
+   ausgelöst wird sie aber von `lower.includes('sperr')`.
+2. **Der Tiefengrund unter dem Isoliergrund: fällt er ganz weg oder nur auf
+   der gesperrten Fläche?** Bei „Wände sperren, Decke normal grundieren"
+   stehen beide zu Recht im Angebot — nur nicht auf derselben Fläche.
+
+### K.2 — Von Head of Product Engineering, zu den Batch-Tests
+
+`pruefmeister-batch-1509.test.ts` und `pruefmeister-batch-47-56.test.ts` bauen
+`meta` selbst aus dem rohen Transkript; die Pipeline übergibt an dieser Stelle
+`textMitZahlen`. Solange das so steht, ist die Sperrklinke PM-045-B/PM-050-A
+auf einen Zustand gesetzt, den das Produkt nicht hat — und das ist teurer als
+kein Test, weil ein echter Fehler dahinter unsichtbar bliebe.
+Engineerings Vorschlag: `lauf()` normalisiert den Text einmal am Eingang, wie
+die Pipeline es tut; die Prüfung, dass die Pipeline das wirklich tut, kommt als
+eigene kurze Zusicherung daneben.
+
+### K.3 — Vom Chief of Staff: Korrektur an „aktive Gewerke"
+
+In der Restliste vom 15.09. abends steht unter Nr. 2 und Nr. 10, `fliesen`
+stehe in `gewerke-config.ts` auf `aktiv: true` und „ein Fliesenleger bekommt
+das Gewerk angeboten", und Trockenbau, Sanitär/Heizung und Elektro seien
+ebenfalls aktiv. **Nachgesehen im Repository-Stand `de1ae80`:**
+
+- Das gefundene `aktiv: true` steht in `KLEINMATERIAL_CONFIG` (Zeile 83) und
+  schaltet die Kleinmaterial-Pauschale, nicht das Gewerk.
+- `fliesen`, `trockenbau`, `sanitaer_heizung` und `elektro` stehen alle vier
+  in **`INAKTIVE_GEWERKE_IDS`**.
+- Der Gewerke-Schritt im Onboarding rendert `AKTIVE_GEWERKE` — das sind nur
+  `maler` und `boden_parkett`. Ein Fliesenleger kann sich nicht anmelden.
+
+**Der Befund selbst bleibt richtig, der Weg dorthin ist ein anderer:** Das
+Gewerk kommt aus der Extraktion des Diktats (`extraktion.gewerk` in
+`api/entwurf/generiere-positionen`), nicht aus dem Betriebsprofil.
+`normalisiereGewerk` kennt `fliesen`/`fliesenarbeiten`/`fliesenleger`, und
+`GEWERK_ENGINES` hält alle sechs Engines bereit, ohne zu fragen, ob das Gewerk
+freigeschaltet ist. Ein **Maler**, der „Bad komplett neu fliesen" diktiert,
+landet heute in `fliesenEngine`.
+
+Für die Fallbasis ändert das nichts an PM-060 bis PM-062 — die Zahlen stehen.
+Es ändert, wer betroffen ist: nicht der Fliesenleger, den es nicht gibt,
+sondern der Maler mit einem Bad im Diktat. Als Ticket CoS-E-061 bei
+Engineering, mit dem Tor als erster Frage.
+
+*Chief of Staff · 2026-09-15*
