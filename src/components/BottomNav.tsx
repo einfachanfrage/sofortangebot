@@ -16,8 +16,24 @@ const RIGHT_NAV = [
   { href: '/einstellungen', icon: Settings, label: 'Einstellungen' },
 ]
 
+// DC-099 (2026-09-15): Die Leiste wurde bisher in jede Seite von Hand
+// eingebaut. „Vergessen" war damit der Normalfall, nicht der Ausrutscher —
+// DC-096 hat zwei Seiten gefunden, auf denen sie fehlte, und die nächste neue
+// Seite hätte wieder bei null angefangen. Jetzt steht sie EINMAL im Layout
+// (app/(app)/layout.tsx) und entscheidet hier selbst, wo sie sich zurückhält.
+//
+// Ausgenommen sind nur Abläufe mit eigener Fußleiste oder ohne Navigation:
+//   /onboarding…      — führt durch einen Ablauf, Wegspringen ist der Fehler
+//   /angebot/neu      — eigener Ablauf
+//   /angebot/<id>…    — eigene Aktionsleiste (Abbrechen · Speichern · Senden)
+//                       und die Aufmaß-Seite mit Aufnahme-Knopf
+// `/angebote` (die Liste) ist bewusst NICHT betroffen: der Schrägstrich in
+// '/angebot/' trennt sie sauber vom Einzelangebot.
+const OHNE_LEISTE = ['/onboarding', '/angebot/']
+
 export default function BottomNav() {
   const path = usePathname()
+  if (OHNE_LEISTE.some(p => path === p.replace(/\/$/, '') || path.startsWith(p))) return null
 
   function NavItem({ href, icon: Icon, label }: { href: string; icon: React.ElementType; label: string }) {
     const active = path === href || (href !== '/dashboard' && path.startsWith(href))

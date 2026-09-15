@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Eye, EyeOff, Check, ChevronDown, ChevronUp } from 'lucide-react'
 import { Input } from '@/components/Input'
-import BottomNav from '@/components/BottomNav'
 
 interface Keys {
   lexware_api_key: string
@@ -371,14 +370,6 @@ export default function IntegrationenPage() {
         </button>
       </div>
 
-      {/* DC-096 (2026-09-11, Manfred/TN-111): zweite Lücke derselben Art wie
-          auf der Briefpapier-Unterseite — die untere Leiste fehlte, einziger
-          Weg raus war der Zurück-Pfeil oben. Manfred hat nur die eine Seite
-          gemeldet; gefunden wurden beim Nachsehen zwei. Ursache ist, dass
-          BottomNav pro Seite eingebunden wird statt im Layout — siehe DC-099.
-          `pb-16` war außerdem zu knapp für die Leiste und ist jetzt `pb-24`,
-          gleich wie auf den übrigen Einstellungs-Seiten. */}
-      <BottomNav />
     </div>
   )
 }

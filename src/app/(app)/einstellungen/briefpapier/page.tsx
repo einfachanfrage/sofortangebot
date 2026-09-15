@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Briefpapier } from '@/lib/types'
 import { Plus, Star, Copy, Trash2, Pencil } from 'lucide-react'
-import BottomNav from '@/components/BottomNav'
 
 export default function BriefpapierUebersicht() {
   const supabase = createClient()
@@ -195,7 +194,6 @@ export default function BriefpapierUebersicht() {
           </>
         )}
       </div>
-      <BottomNav />
     </div>
   )
 }

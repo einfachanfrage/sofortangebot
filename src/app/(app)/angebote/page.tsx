@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
-import BottomNav from '@/components/BottomNav'
 import DashboardFilters from '@/components/DashboardFilters'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { getQuotesOverview } from '@/data/quotes'
@@ -179,7 +178,6 @@ export default async function AngebotePage({
       )}
       </div>
 
-      <BottomNav />
     </div>
   )
 }

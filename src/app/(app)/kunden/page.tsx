@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import BottomNav from '@/components/BottomNav'
 import { getCustomersOverview } from '@/data/customers'
 
 function formatDate(d: string) {
@@ -78,7 +77,6 @@ export default async function KundenPage() {
       </div>
       </div>
 
-      <BottomNav />
     </div>
   )
 }

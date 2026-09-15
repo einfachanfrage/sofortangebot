@@ -10,7 +10,6 @@ import { KLEINMATERIAL_CONFIG } from '@/lib/gewerke-config'
 import { ERSCHWERNIS_ARTEN, type ErschwernisConfig } from '@/lib/erschwernis'
 import { Check, Upload, X, Loader2, Building2, Receipt, Wrench, Image as ImageIcon, ExternalLink, LogOut, FileCheck2, Download, Bell, Smartphone, Car, ArrowLeftRight } from 'lucide-react'
 import { AccountDeleteModal } from '@/components/AccountDeleteModal'
-import BottomNav from '@/components/BottomNav'
 import { PwaBottomSheet } from '@/components/PwaBottomSheet'
 import { PushBanner } from '@/components/PushBanner'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
@@ -1035,7 +1034,6 @@ export default function EinstellungenPage() {
         />
       )}
 
-      <BottomNav />
     </div>
   )
 }

@@ -47,7 +47,7 @@ export default function NeuerKundePage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg">
+    <div className="min-h-dvh bg-bg pb-24">
       <div className="bg-anthracite px-5 md:px-8 pt-12 pb-6">
         <Link href="/kunden" className="text-white/50 text-sm font-semibold">← Kunden</Link>
         <div className="text-white font-syne font-black text-xl mt-1">Neuer Kunde</div>

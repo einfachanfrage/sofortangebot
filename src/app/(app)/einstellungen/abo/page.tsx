@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import BottomNav from '@/components/BottomNav'
 import { getAboStand } from '@/data/abo'
 import { PRICING } from '@/lib/pricing'
 import { AboAktionen } from './AboAktionen'
@@ -79,7 +78,6 @@ export default async function AboPage() {
 
       </div>
 
-      <BottomNav />
     </div>
   )
 }

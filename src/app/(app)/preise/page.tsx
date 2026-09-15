@@ -465,7 +465,7 @@ export default function PreisePage() {
   // ─── MOBILE RENDER ────────────────────────────────────────────────────────
 
   const MobileLayout = (
-    <div className="md:hidden min-h-dvh bg-bg pb-20">
+    <div className="md:hidden min-h-dvh bg-bg pb-24">
       {/* Header */}
       <div className="bg-anthracite px-5 pt-12 pb-4">
         {selectedGewerk ? (

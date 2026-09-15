@@ -1,4 +1,5 @@
 import SideNav from '@/components/SideNav'
+import BottomNav from '@/components/BottomNav'
 import { AgbUpdateModal } from '@/components/AgbUpdateModal'
 import { RestoreBanner } from '@/components/RestoreBanner'
 import { AppFooter } from '@/components/AppFooter'
@@ -17,6 +18,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-dvh bg-bg">
       <SideNav plan={plan} />
+      {/* DC-099 (2026-09-15): Die mobile Leiste gehört hierher, nicht in jede
+          Seite einzeln — sie ist Navigation, und Navigation ist eine
+          Eigenschaft des Bereichs, nicht der einzelnen Seite. Welche Abläufe
+          sie auslassen, entscheidet sie selbst (siehe BottomNav.tsx). */}
+      <BottomNav />
       <AgbUpdateModal />
       <RestoreBanner />
       <div className="md:ml-[220px] flex flex-col min-h-dvh">

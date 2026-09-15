@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Pencil } from 'lucide-react'
-import BottomNav from '@/components/BottomNav'
 import { KundeTypToggle } from './KundeTypToggle'
 import { NeueBaustelleButton } from '@/components/NeueBaustelleButton'
 import { getCustomerDetail } from '@/data/customers'
@@ -189,7 +188,6 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
         )}
       </div>
 
-      <BottomNav />
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { PwaBannerManager } from '@/components/PwaBannerManager'
-import BottomNav from '@/components/BottomNav'
 import { MobileQuoteCard } from '@/components/MobileQuoteCard'
 import { WelcomeModalWrapper } from '@/components/WelcomeModalWrapper'
 import AvatarSheet from '@/components/AvatarSheet'
@@ -40,7 +39,6 @@ export default async function DashboardPage({
     prevMonthRevenue: vormonatUmsatz,
     monthAccepted: monatBeauftragt, priceListEmpty: preislisteIstLeer,
     openCount: offeneGesamtCount,
-    buchhaltungKeyFehlt, buchhaltungAnbieterLabel,
   } = data
   const firstName = company.name?.split(' ')[0] ?? 'Hallo'
   const initial = company.name?.[0]?.toUpperCase() ?? 'A'
@@ -175,51 +173,22 @@ export default async function DashboardPage({
             <span className="text-anthracite/30 font-black text-lg shrink-0">›</span>
           </Link>
         </div>
-      ) : (
-        <>
-          {/* CoS-P-017 (Platform & Integrations Engineer, 2026-09-14), TN-143:
-              Manfreds Minimum — "ein Hinweis auf der Startseite, dass die
-              Buchhaltungs-Verknüpfung unfertig ist" — bewusst genau so knapp
-              umgesetzt wie er es vorschlug. Wortlaut, Platzierung und
-              Gestaltung sind sein Minimum, keine Design-Entscheidung; Sandy
-              bzw. der Product Designer können das gerne verfeinern. Steht
-              unabhängig von der Preisliste-Nudge darunter (anderes Thema,
-              beide dürfen gleichzeitig sichtbar sein). */}
-          {buchhaltungKeyFehlt && (
-            <div className="px-5 mt-4 md:px-0">
-              <Link
-                href="/einstellungen/integrationen"
-                className="flex items-center gap-3 bg-yellow/10 border border-yellow/40 rounded-2xl px-4 py-3.5 active:opacity-80 transition-opacity"
-              >
-                <span className="text-xl shrink-0">🧾</span>
-                <div className="flex-1 min-w-0">
-                  <div className="font-extrabold text-anthracite text-[14px]">Buchhaltung: Key fehlt noch</div>
-                  <div className="text-anthracite/50 font-semibold text-[12px] leading-snug mt-0.5">
-                    {buchhaltungAnbieterLabel} ist ausgewählt, aber noch nicht verbunden — Angebote gehen bis dahin nicht automatisch rüber.
-                  </div>
-                </div>
-                <span className="text-anthracite/30 font-black text-lg shrink-0">›</span>
-              </Link>
+      ) : preislisteIstLeer && (
+        <div className="px-5 mt-4 md:px-0">
+          <Link
+            href="/preise"
+            className="flex items-center gap-3 bg-yellow/10 border border-yellow/40 rounded-2xl px-4 py-3.5 active:opacity-80 transition-opacity"
+          >
+            <span className="text-xl shrink-0">💰</span>
+            <div className="flex-1 min-w-0">
+              <div className="font-extrabold text-anthracite text-[14px]">Deine Preise eintragen</div>
+              <div className="text-anthracite/50 font-semibold text-[12px] leading-snug mt-0.5">
+                Noch keine eigenen Preise — KI nutzt Marktpreise. Trag deine echten Preise ein für genauere Angebote.
+              </div>
             </div>
-          )}
-          {preislisteIstLeer && (
-            <div className="px-5 mt-4 md:px-0">
-              <Link
-                href="/preise"
-                className="flex items-center gap-3 bg-yellow/10 border border-yellow/40 rounded-2xl px-4 py-3.5 active:opacity-80 transition-opacity"
-              >
-                <span className="text-xl shrink-0">💰</span>
-                <div className="flex-1 min-w-0">
-                  <div className="font-extrabold text-anthracite text-[14px]">Deine Preise eintragen</div>
-                  <div className="text-anthracite/50 font-semibold text-[12px] leading-snug mt-0.5">
-                    Noch keine eigenen Preise — KI nutzt Marktpreise. Trag deine echten Preise ein für genauere Angebote.
-                  </div>
-                </div>
-                <span className="text-anthracite/30 font-black text-lg shrink-0">›</span>
-              </Link>
-            </div>
-          )}
-        </>
+            <span className="text-anthracite/30 font-black text-lg shrink-0">›</span>
+          </Link>
+        </div>
       )}
 
       {/* ── ANGEBOTSLISTE ────────────────────────────────────────────── */}
@@ -271,7 +240,6 @@ export default async function DashboardPage({
 
       </div>
 
-      <BottomNav />
     </div>
   )
 }

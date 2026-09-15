@@ -5623,7 +5623,43 @@ eigene Fußleisten bzw. sollen keine Navigation anbieten.
 Sauber wäre die Einbindung im Layout mit einer Ausnahmeliste für diese Flows —
 das ist eine Struktur-Änderung an einer Datei, an der gerade jemand arbeitet,
 und sie gehört nicht in einen Wording-Batch. Als eigener Punkt hier notiert.
-❌ offen
+
+**Erledigt am 15.09.2026.** Die Leiste hängt jetzt einmal im Layout
+(`app/(app)/layout.tsx`, direkt nach `<SideNav />`), und der Import samt
+`<BottomNav />` ist aus allen zehn Seiten raus, die ihn von Hand hatten:
+`dashboard`, `angebote`, `kunden`, `kunden/[id]`, `einstellungen`,
+`einstellungen/abo`, `einstellungen/briefpapier`,
+`einstellungen/briefpapier/[id]`, `einstellungen/nummern`,
+`einstellungen/integrationen`.
+
+**Die Ausnahmeliste steht in `BottomNav.tsx` selbst**, nicht im Layout:
+
+```ts
+const OHNE_LEISTE = ['/onboarding', '/angebot/']
+// ...
+if (OHNE_LEISTE.some(p => path === p.replace(/\/$/, '') || path.startsWith(p)))
+  return null
+```
+
+Damit entscheidet der Baustein über sein eigenes Erscheinen — eine neue Seite
+bekommt die Leiste ab jetzt automatisch, und wer sie *nicht* will, trägt sich
+an genau einer Stelle ein. Das war der eigentliche Punkt des Tickets: DC-096
+konnte nur passieren, weil „Leiste vergessen" der Normalfall war.
+
+Zur Liste selbst: `/onboarding` ist exakt-oder-Unterpfad, `/angebot/` bewusst
+**mit** Schrägstrich, damit die Übersicht `/angebote` die Leiste behält und nur
+der Einzel-Flow (`/angebot/abc`, `/angebot/abc/entwurf`) sie verliert. Gegen 14
+Pfade durchgerechnet, das Ergebnis stimmt.
+
+Drei Seiten bekommen die Leiste dadurch **neu** — `preise`, `kunden/neu`,
+`kunden/[id]/bearbeiten`. Dort ist der untere Abstand nachgezogen
+(`pb-24` bzw. `pb-20` → `pb-24`), sonst hätte die Leiste den letzten Knopf
+verdeckt. Genau der Fehler, den eine Layout-Einbindung sonst leise
+einschleppt.
+
+15 Dateien, alle syntaktisch geprüft. Im Browser gesehen hat das niemand —
+das gilt weiter für den ganzen Stapel seit dem 11.09.
+✅ erledigt
 
 ---
 

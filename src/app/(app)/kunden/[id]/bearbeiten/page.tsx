@@ -9,7 +9,7 @@ export default async function KundeBearbeitenPage({ params }: { params: Promise<
   const { customer } = await getCustomerDetail(id)
 
   return (
-    <div className="min-h-dvh bg-bg">
+    <div className="min-h-dvh bg-bg pb-24">
       <div className="bg-anthracite px-5 md:px-8 pt-12 pb-6">
         <Link href={`/kunden/${customer.id}`} className="text-white/50 text-sm font-semibold">← {customer.name}</Link>
         <div className="text-white font-syne font-black text-xl mt-1">Kunde bearbeiten</div>

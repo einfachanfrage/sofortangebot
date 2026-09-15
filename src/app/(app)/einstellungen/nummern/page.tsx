@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Nummernkreis, VergebeneNummer } from '@/lib/types'
 import { Download, Info } from 'lucide-react'
-import BottomNav from '@/components/BottomNav'
 import { Input } from '@/components/Input'
 
 // CoS-E-008/033 (Sandy, 11.09.2026: „rechnung erstmal raus… ja weg"):
@@ -339,7 +338,6 @@ export default function NummernPage() {
         </div>
 
       </div>
-      <BottomNav />
     </div>
   )
 }
