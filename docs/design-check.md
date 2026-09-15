@@ -7395,4 +7395,257 @@ Ableitungslogik des Prototyps gegen die Konzeptzahlen nachgerechnet.
 
 ---
 
+## DC-102 — Prototyp 2 nach Manfreds Test (15.09.2026)
+
+`docs/dc-102-preise-prototyp.html` überschrieben (keine zweite Fassung
+daneben). **Noch nicht committet.**
+
+**Seite 1 ist bestätigt.** Manfred: *„Fällt auf. Weil sie erst aufklappt, wenn
+ich den Haken setz. Beim Haken guckt man automatisch hin, was drunter
+passiert."* Damit ist Engineerings Fassung belegt und mein Bildschirm 2 wird
+nicht gebraucht — die Rückfallebene kann zu.
+
+Bemerkenswert an seiner Antwort ist die zweite Hälfte: *„Ich würd bei keinem
+umstellen, ich würd's nur lesen und weiter."* Genau das ist der Maßstab für so
+eine Zeile. Sie muss nicht bedient werden, sie muss gelesen werden können.
+
+### Geändert auf Seite 1
+
+- **„Farbe extra" statt „ohne Farbe".** Sein Einwand: *„‚ohne Farbe' liest sich
+  beim ersten Mal wie ‚streichen ohne Farbe'."* Beide Knöpfe stehen jetzt
+  gleich gebaut da, Substantiv zuerst: **„Farbe inkl." · „Farbe extra"**. Das
+  war vorher asymmetrisch („inkl. Farbe" gegen „ohne Farbe"), und asymmetrische
+  Paare liest man langsamer.
+- **Der Merksatz steht oben**, direkt unter „Wähle alles, was du anbietest",
+  nicht mehr unter der Liste. *„Wer nicht scrollt, weiß nicht, dass er's
+  zurückholen kann."* Eine Einschränkung, die man erst nach der Entscheidung
+  liest, ist keine.
+
+### An Head of Product Engineering: Vorbelegung Tapezieren
+
+Manfred hat gefragt, was bei den nicht angehakten Tätigkeiten vorbelegt ist.
+Antwort aus `src/lib/taetigkeiten.ts`: **Tapezieren = Material drin.** Sein
+Widerspruch: *„Da ist bei mir ‚extra' der Standard, weil der Kunde die Tapete
+aussucht."*
+
+Das ist eine Datenfrage, keine Gestaltungsfrage — ich ändere die Tabelle nicht.
+Aber seine Begründung trägt weiter als der Einzelfall: Wer das Material
+**aussucht**, bezahlt es meistens auch. Bei Tapete und Belag sucht der Kunde
+aus, bei Farbe und Lack der Handwerker. Nach dieser Regel wäre Tapezieren wie
+Boden und Fassade einzusortieren, nicht wie Innen. Bitte gegenprüfen — wenn es
+stimmt, ist es eine Zeile in der Tabelle.
+
+---
+
+### Seite 2: zwei Blocker, beide behoben
+
+Manfred: *„Beide Seiten sind richtig gedacht. Prototyp 2 ist richtig, sobald
+die Einheiten stimmen und die Zahlen rund sind. Das sind keine Konzeptfehler,
+das ist Handwerk. Aber ohne die beiden würd ich die Seite als Chef nicht ernst
+nehmen."*
+
+**1. Die Einheiten waren geerbt — mein Fehler, und ein aufschlussreicher.**
+„Sockelleisten montieren 6,12 €/m²" (sind laufende Meter), „Übergangsprofil
+setzen 5,04 €/m²" (ist ein Stück). Mein Prototyp hat pro Tätigkeit **eine**
+Einheit vergeben und sie an alle abgeleiteten Zeilen weitergereicht. Manfred
+erkennt darin dieselbe Fehlerklasse wie letzte Woche, und er hat recht: Es ist
+die Vermutung, alles unter einem Anker sei von derselben Art.
+
+Der Prototyp rechnet jetzt anders, und so sollte es auch das Produkt tun:
+**Abgeleitet wird der PREIS, nie die Einheit.** Jede Katalogzeile bringt ihre
+eigene Einheit und ihren eigenen Katalogpreis mit; aus der Zahl des Betriebs
+entsteht nur ein Verhältnis (11,00 ÷ 10,00 = 1,10), mit dem der Katalogpreis
+skaliert wird. **Bitte an Engineering:** gegenprüfen, dass die echte Ableitung
+die Einheit aus `price_items` behält und nicht vom Anker übernimmt. Wenn doch,
+ist es derselbe Fehler in echt.
+
+**2. Die Cent-Preise.** *„Kein Mensch schreibt 6,93 €/m² auf ein Angebot. Ich
+schreib 7,00 oder 6,50. Das Verhältnis darf krumm sein, der Preis nicht."*
+Der beste Satz aus dem ganzen Feedback, weil er sagt, wo die Genauigkeit
+hingehört und wo nicht. Gerundet wird jetzt nach der Einheit:
+
+| Einheit | Stufe | Beispiel |
+|---|---|---|
+| €/m², €/lfm | 0,50 € | 6,93 → **7,00** · 4,40 → **4,50** |
+| €/Stück | 1,00 € | 13,20 → **13,00** · 46,58 → **47,00** |
+| € pauschal | 5,00 € | |
+
+**Abweichung von seinem Vorschlag, mit Grund:** Er sagte „bei Pauschalen auf
+5 €". Auf Stückpreise angewandt hätte das „Heizkörper abkleben 13,20" auf
+15,00 gehoben — eine Preiserhöhung um 14 %, keine Glättung. Bei Stück also
+1 €, bei echten Pauschalen 5 €. Falls er das anders sieht, ist es eine Zahl an
+einer Stelle.
+
+### Drei seiner Vorschläge übernommen
+
+- **Die eigenen Anker stehen oben**, fett, mit dunklem Rand und „deine Zahl"
+  statt „abgeleitet aus". *„So seh ich sofort, dass meine Zahlen angekommen
+  sind."* Das ist besser als mein Entwurf: Der Bildschirm beginnt jetzt mit
+  dem, was ihm gehört, und erst danach kommt, was die App daraus gemacht hat.
+- **„Passt" pro Gruppe**, zusätzlich zu „Passt alles". *„Dann kann ich Innen
+  abhaken und Boden morgen machen."* Eine genickte Gruppe wird grün; sind alle
+  genickt, heißt der Fußknopf „Fertig →" statt „Passt alles".
+- **Die Einheit ist im Änderungsfenster wählbar**, nicht nur die Zahl. Sein
+  Satz dazu ist das eigentliche Argument: *„Sonst kann ich den Fehler von oben
+  nicht mal selbst reparieren."* Ein Korrekturweg, der nur die Hälfte
+  korrigieren lässt, ist ein halber Korrekturweg.
+
+### „Altbelag aufnehmen" — die Teppich-Falle
+
+*„Lose oder verklebt? Wenn hier nur eine Zeile steht, muss klar sein, welche —
+oder es sind zwei."* Im Prototyp sind es **zwei** Zeilen („lose verlegt" 5,50 /
+„verklebt" 10,00) — fast der doppelte Preis, das ist keine Nuance. **An den
+Prüfmeister/Engineering:** ob der echte Katalog das trennt, kann ich von hier
+nicht prüfen. Wenn nicht, ist es eine Katalogzeile mehr und kein UI-Thema.
+
+### „Später" — sein Punkt geht weiter als der Balken
+
+*„Wenn ich Später drücke, sind alle 26 unbestätigt. Dann muss überall
+‚Vorschlag' dranstehen. Sonst ist Später dasselbe wie ‚Passt alles', nur ohne
+dass ich's weiß."*
+
+Im Prototyp nennt der Balken jetzt die **offenen Gruppen** namentlich; was
+abgehakt ist, taucht nicht mehr auf. Damit wird „Später" teilbar statt
+alles-oder-nichts.
+
+**Eine Warnung dazu, bevor das jemand baut:** Das Wort „Vorschlag" ist im
+Produkt bereits vergeben — es markiert seit DC-027 die Positionen, die die KI
+selbst ergänzt hat, und Manfred hat genau diese Markierung gelobt (DC-068,
+*„so weiß ich, was von mir kommt"*). Dasselbe Wort für „Preis noch nicht
+bestätigt" zu verwenden, würde eine gute Markierung entwerten. Vorschlag für
+die Preisliste: **„Durchschnitt"** statt „Vorschlag" — es sagt dasselbe und
+kollidiert mit nichts.
+
+### Was offen bleibt
+
+Der 63-%-Faktor, den Manfred angezweifelt hat, bleibt unverändert im Katalog —
+und das ist richtig so. Sein eigener Satz dazu ist die Begründung: *„Der
+falsche Faktor ist egal, solange ich ihn sehe."* Die Nick-Seite ist die
+Antwort auf das Problem, nicht der korrigierte Faktor.
+
+Status DC-102: Seite 1 🟢 bestätigt · Seite 2 🟡 überarbeitet, zweiter
+Durchgang mit Manfred sinnvoll · Einbau weiterhin blockiert durch
+Vokabular-Angleich und CoS-E-052.
+
+*Product Designer · 2026-09-15*
+
+---
+
+## DC-102 — Prototyp 3, Manfreds letzte vier Punkte (15.09.2026)
+
+`docs/dc-102-preise-prototyp.html` erneut überschrieben. Manfreds Urteil zu
+Fassung 2: *„Das ist jetzt eine Seite, die ich einem Kollegen zeigen würde."*
+Die vier verbliebenen Punkte waren alle meine, und der erste ist der wichtigste
+der ganzen Runde.
+
+### 1. Die Herkunftszeile war falsch — „abgeleitet aus: Wand 2x" bei einem Heizkörper
+
+*„Ein Heizkörper hat mit dem Quadratmeterpreis nichts zu tun, der kommt aus der
+Zeit. Der graue Satz ist nur dann was wert, wenn er wahr ist."*
+
+Das trifft den Kern der Nick-Seite. Die Herkunftszeile ist der einzige Grund,
+warum jemand einer abgeleiteten Zahl widerspricht — sie macht die Ableitung
+angreifbar. Eine falsche Herkunftszeile macht das Gegenteil: Sie lädt zum
+Widerspruch ein und liegt dann selbst daneben, und der Handwerker, der es
+merkt, hört auf, der Seite zu glauben. Das ist schlimmer als gar keine Zeile.
+
+**Geändert:** Jede Katalogzeile sagt jetzt selbst, woraus sie kommt. Zwei
+Quellen statt einer:
+
+| Quelle | Rechnung | steht dran |
+|---|---|---|
+| Fläche | Katalogpreis × (deine Zahl ÷ Katalog-Anker) | „abgeleitet aus: Wand 2x" |
+| Zeit | hinterlegte Zeit × dein Stundensatz | **„abgeleitet aus: Stundensatz"** |
+
+Aus der Zeit kommen jetzt: Heizkörper abkleben (0,3 Std → 16,00 €/Stück),
+Steckdosen abklemmen (0,15 → 8,00), Sockelleisten abkleben (0,04 → 2,00/lfm),
+Übergangsprofil setzen (0,35 → 18,00) und Gerüstplane anbringen. Genau die
+vier, die Manfred genannt hat, plus eine aus derselben Familie.
+
+**Der Stundensatz ist damit ein Anker geworden**, nicht nur ein Feld im
+Onboarding: Ändert man ihn auf der Nick-Seite, ziehen alle Zeit-Zeilen mit.
+Dasselbe gilt jetzt auch für die Flächen-Anker — wer „Wand 2x" von 11,00 auf
+12,00 stellt, sieht seine ganze Innen-Gruppe nachrechnen. Das war in Fassung 2
+noch nicht so und ist der eigentliche Gewinn daraus, die eigenen Zahlen nach
+oben zu holen: Sie sind nicht nur Beleg, sie sind bedienbar.
+
+**An Prüfmeister/Engineering:** Die Zuordnung „Fläche oder Zeit" ist im echten
+Katalog eine Eigenschaft der Position, keine Vermutung aus der Einheit —
+„Sockelleisten montieren" ist lfm und kommt trotzdem aus der Fläche, weil der
+Aufwand mit der Bodenfläche skaliert. Meine Einteilung im Prototyp ist ein
+Vorschlag; sie gehört einmal fachlich durchgesehen.
+
+### 2. Der Halbsatz fehlte auf Seite 2
+
+*„Auf Seite 1 hab ich ‚Farbe inkl.' gewählt. Auf Seite 2 steht bei ‚Wand
+streichen 2x 11,00 €/m²' nichts davon. Sonst weiß ich in vier Wochen nicht
+mehr, ob die 11 mit oder ohne war."*
+
+Berechtigt, und es ist genau der Satz, der schon im Konzept steht — ich hatte
+ihn auf Seite 3 des Entwurfs gefordert und auf Seite 4 selbst vergessen. Der
+Halbsatz steht jetzt unter jedem Preis.
+
+Dabei zeigte sich, dass es **drei** Fälle sind, nicht zwei:
+
+| Fall | Beispiel | Anzeige |
+|---|---|---|
+| folgt der Wahl von Seite 1 | Wand streichen | „inkl. Farbe" / „Farbe extra" |
+| Zubehör, immer drin | Trittschall, Spachtelmasse | **„inkl. Material"** |
+| reine Arbeit | Wand schleifen, Tapete ablösen | nichts |
+
+Manfreds Hinweis zum Trittschall (*„da müsste ‚inkl. Material' stehen, weil das
+Zubehör ist, kein Belag"*) passt exakt zu Engineerings Regel, dass
+`halbsatz()` bei solchen Zeilen `null` liefert und dort **kein Schalter**
+hingehört. Kein Schalter heißt aber nicht keine Angabe: Die Zahl braucht ihren
+Bezug trotzdem. Der dritte Fall — reine Arbeit ohne jedes Material — bekommt
+bewusst gar nichts; ein „ohne Material" wäre dort die falsche Antwort auf eine
+Frage, die sich nicht stellt.
+
+### 3. Drei von 26 würde er antippen
+
+Wand 1x auf 8,00, Decke 2x auf 12,00 (*„überkopf ist immer ein bisschen mehr
+als Wand"*), Heizkörper auf 20. Sein eigener Schluss: *„Wenn drei von 26 nicht
+passen, ist die Ableitung gut genug."*
+
+Nicht geändert, und das ist die Pointe der ganzen Seite: Der Katalogfaktor
+bleibt falsch, und es ist egal, weil man ihn sieht. Die Decke-über-Wand-Regel
+wäre allerdings ein billiger Gewinn im Katalog — **an den Prüfmeister:** wenn
+Deckenarbeit systematisch über Wandarbeit liegt, gehört das in die
+Katalogverhältnisse, nicht in 300 einzelne Korrekturen.
+
+### 4. „Später" und die Einheit waren unsichtbar
+
+Beides war in Fassung 2 gebaut — und ein Tester, der gezielt danach gesucht
+hat, hat es nicht gefunden. Damit ist es nicht gebaut. Zwei Änderungen:
+
+- **Über dem Fußknopf steht jetzt, was „Später" bedeutet**, bevor man ihn
+  drückt: „Nicht Genicktes bleibt als **Durchschnitt** markiert — auf der
+  Preisliste und auf jedem Angebot, bis du es einmal durchgegangen bist." Der
+  Knopf heißt „Später erledigen" statt „Später". Eine Folge, die man erst nach
+  dem Drücken erfährt, ist keine Entscheidungsgrundlage.
+- **Im Änderungsfenster steht „Einheit — antippen zum Ändern"** über den vier
+  Knöpfen. Vorher sahen sie aus wie eine Anzeige. Beim Stundensatz ist die
+  Einheit gesperrt — €/Std ist keine Wahl.
+
+**Zur Wortwahl „Durchschnitt":** bewusst nicht „Vorschlag". Das Wort ist im
+Produkt vergeben — es markiert seit DC-027 die von der KI ergänzten
+Positionen, und genau diese Markierung hat Manfred gelobt (DC-068). Zwei
+Bedeutungen für ein Wort hätten die gute Markierung entwertet.
+
+### Stand
+
+Manfreds Schlusssatz zu Fassung 2: *„Sonst nichts. Baut das."*
+
+Fassung 3 beantwortet seine vier Punkte. Ein dritter Durchgang ist aus meiner
+Sicht nicht nötig — die verbliebenen Fragen sind fachliche (Fläche/Zeit je
+Katalogzeile, Decke-über-Wand, Vorbelegung Tapezieren), und die beantwortet
+niemand am Prototyp, sondern am Katalog.
+
+Status DC-102: Seiten 1 und 2 🟢 abgenommen · Einbau weiterhin blockiert durch
+Vokabular-Angleich und CoS-E-052 (Chief of Staff meldet, wenn frei).
+
+*Product Designer · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

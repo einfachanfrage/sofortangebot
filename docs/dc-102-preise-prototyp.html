@@ -3,27 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DC-102 — Prototyp: Tätigkeiten & Nick-Seite</title>
+<title>DC-102 — Prototyp 3: Tätigkeiten & Nick-Seite</title>
 <style>
-  :root{
-    --gelb:#D9A400; --gelb-hell:#FEF9C3; --gelb-text:#8B7000;
-    --anthrazit:#2C2C2C; --bg:#F7F6F3; --weiss:#fff;
-    --linie:rgba(44,44,44,.10); --grau:rgba(44,44,44,.45); --grau-hell:rgba(44,44,44,.30);
-  }
+  :root{--gelb:#D9A400;--gelb-hell:#FEF9C3;--gelb-text:#8B7000;--anthrazit:#2C2C2C;
+    --bg:#F7F6F3;--weiss:#fff;--linie:rgba(44,44,44,.10);--grau:rgba(44,44,44,.45);--grau-hell:rgba(44,44,44,.30)}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{margin:0;background:#e9e7e2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--anthrazit)}
   .rahmen{max-width:430px;margin:0 auto;background:var(--bg);min-height:100dvh;display:flex;flex-direction:column}
   .hinweis{background:var(--anthrazit);color:#fff;font-size:12px;line-height:1.5;padding:10px 16px}
   .hinweis b{color:var(--gelb)}
-  .inhalt{flex:1;padding:24px 20px 140px}
+  .inhalt{flex:1;padding:24px 20px 170px}
   h1{font-size:26px;font-weight:800;line-height:1.2;margin:0 0 6px}
-  .unter{color:var(--grau);font-weight:600;font-size:15px;line-height:1.5;margin:0 0 24px}
-  .fuss{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 70%,transparent);padding:16px 20px 24px;display:flex;gap:10px}
+  .unter{color:var(--grau);font-weight:600;font-size:15px;line-height:1.5;margin:0 0 10px}
+  .merk{color:var(--grau-hell);font-weight:600;font-size:13px;line-height:1.5;margin:0 0 22px}
+  .fuss{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 76%,transparent);padding:14px 20px 24px}
+  .fusssatz{color:var(--grau);font-weight:600;font-size:12.5px;line-height:1.45;margin:0 0 10px}
+  .reihe{display:flex;gap:10px}
   .knopf{flex:1;border:0;border-radius:16px;padding:17px;font-size:17px;font-weight:800;background:var(--gelb);color:var(--anthrazit)}
-  .knopf.zweit{background:transparent;border:2px solid var(--linie);color:var(--grau);flex:0 0 38%;font-size:15px}
+  .knopf.zweit{background:transparent;border:2px solid var(--linie);color:var(--grau);flex:0 0 42%;font-size:15px}
   .knopf:active{transform:translateY(1px)}
 
-  /* Tätigkeiten */
   .taet{background:var(--weiss);border:2px solid var(--linie);border-radius:16px;margin-bottom:10px;overflow:hidden}
   .taet.an{border-color:var(--gelb)}
   .hakenzeile{display:flex;align-items:center;gap:14px;padding:16px;width:100%;background:none;border:0;font:inherit;text-align:left;color:inherit}
@@ -35,28 +34,37 @@
   .wahl{display:flex;gap:8px;flex:1}
   .wahl button{flex:1;border:2px solid var(--linie);background:var(--bg);border-radius:12px;padding:11px 6px;font:inherit;font-size:13px;font-weight:800;color:var(--grau)}
   .wahl button.an{border-color:var(--gelb);background:rgba(217,164,0,.12);color:var(--anthrazit)}
-  .schluss{color:var(--grau-hell);font-weight:600;font-size:13px;margin-top:18px;line-height:1.5}
 
-  /* Nick-Seite */
-  .gruppe{font-size:11px;font-weight:800;color:var(--grau-hell);text-transform:uppercase;letter-spacing:.1em;margin:22px 0 8px}
+  .gruppe{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:24px 0 8px}
+  .gruppe b{font-size:11px;font-weight:800;color:var(--grau-hell);text-transform:uppercase;letter-spacing:.1em}
+  .passt{border:2px solid var(--linie);background:var(--weiss);border-radius:10px;padding:7px 12px;font:inherit;font-size:12px;font-weight:800;color:var(--grau)}
+  .passt.fertig{border-color:#1A7A38;background:#EDFAF0;color:#1A7A38}
   .zeile{background:var(--weiss);border:2px solid var(--linie);border-radius:14px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;width:100%;font:inherit;text-align:left;color:inherit}
   .zeile.meins{border-color:var(--gelb)}
+  .zeile.anker{border-color:var(--anthrazit)}
   .ztext{flex:1;min-width:0}
   .ztitel{font-weight:800;font-size:15px}
+  .zeile.anker .ztitel{font-size:16px}
   .zher{font-size:12px;font-weight:600;color:var(--grau-hell);margin-top:3px}
-  .zeile.meins .zher{color:var(--gelb-text)}
-  .zpreis{font-weight:800;font-size:15px;white-space:nowrap}
-  .stift{color:var(--grau-hell);font-size:14px}
-  .zaehler{background:var(--gelb-hell);color:var(--gelb-text);font-weight:800;font-size:13px;border-radius:12px;padding:12px 14px;margin-bottom:4px}
+  .zeile.meins .zher,.zeile.anker .zher{color:var(--gelb-text)}
+  .zrechts{text-align:right;white-space:nowrap}
+  .zpreis{font-weight:800;font-size:15px}
+  .zeile.anker .zpreis{font-size:17px}
+  .zmat{font-size:11.5px;font-weight:700;color:var(--grau);margin-top:2px}
+  .stift{color:var(--grau-hell);font-size:14px;margin-top:2px}
+  .zaehler{background:var(--gelb-hell);color:var(--gelb-text);font-weight:800;font-size:13px;border-radius:12px;padding:12px 14px;margin-bottom:6px}
 
   dialog{border:0;border-radius:20px 20px 0 0;padding:22px 20px 28px;width:100%;max-width:430px;margin:auto auto 0;background:var(--weiss)}
   dialog::backdrop{background:rgba(0,0,0,.4)}
   dialog h2{margin:0 0 4px;font-size:19px;font-weight:800}
   dialog p{margin:0 0 18px;color:var(--grau);font-weight:600;font-size:13px}
+  .feldlabel{font-size:11px;font-weight:800;color:var(--grau-hell);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
   .eingabe{display:flex;align-items:center;gap:10px;background:var(--bg);border:2px solid var(--gelb);border-radius:14px;padding:14px 16px;margin-bottom:16px}
   .eingabe input{flex:1;border:0;background:none;font:inherit;font-size:22px;font-weight:800;width:100%;outline:none}
-  .eingabe span{font-weight:800;color:var(--grau)}
-  .balken{background:var(--gelb-hell);color:var(--gelb-text);font-weight:700;font-size:13px;border-radius:12px;padding:12px 14px;margin:0 20px 12px;line-height:1.45}
+  .einheitwahl{display:flex;gap:8px;margin-bottom:20px}
+  .einheitwahl button{flex:1;border:2px solid var(--linie);background:var(--bg);border-radius:12px;padding:12px 4px;font:inherit;font-size:13px;font-weight:800;color:var(--grau)}
+  .einheitwahl button.an{border-color:var(--gelb);background:rgba(217,164,0,.12);color:var(--anthrazit)}
+  .balken{background:var(--gelb-hell);color:var(--gelb-text);font-weight:700;font-size:13px;border-radius:12px;padding:12px 14px;margin:0 0 16px;line-height:1.45}
 </style>
 </head>
 <body>
@@ -69,132 +77,228 @@
 <dialog id="dlg">
   <h2 id="dlgTitel"></h2>
   <p id="dlgHer"></p>
-  <div class="eingabe"><input id="dlgWert" type="text" inputmode="decimal"><span id="dlgEinheit"></span></div>
-  <div style="display:flex;gap:10px">
-    <button class="knopf zweit" onclick="document.getElementById('dlg').close()">Abbrechen</button>
+  <div class="feldlabel">Preis</div>
+  <div class="eingabe"><input id="dlgWert" type="text" inputmode="decimal"></div>
+  <div class="feldlabel">Einheit — antippen zum Ändern</div>
+  <div class="einheitwahl" id="dlgEinheiten"></div>
+  <div class="reihe">
+    <button class="knopf zweit" onclick="dlg.close()">Abbrechen</button>
     <button class="knopf" onclick="uebernehmen()">Übernehmen</button>
   </div>
 </dialog>
 
 <script>
+const EINHEITEN = ['€/m²','€/lfm','€/Stück','€ pauschal']
+const STUNDENSATZ = 52.00
+
 const TAET = [
-  { id:'innen',      name:'Innen streichen', mat:'Farbe',   standard:'inkl' },
-  { id:'tapezieren', name:'Tapezieren',      mat:'Tapete',  standard:'inkl' },
-  { id:'lackieren',  name:'Lackieren',       mat:'Lack',    standard:'inkl' },
-  { id:'fassade',    name:'Fassade',         mat:'Farbe',   standard:'ohne' },
-  { id:'boden',      name:'Boden',           mat:'Belag',   standard:'ohne' },
+  { id:'innen',      name:'Innen streichen', mat:'Farbe',  standard:'inkl',  anker:'Wand streichen 2x',    kurz:'Wand 2x',   basis:10.00, mein:11.00, einheit:'€/m²' },
+  { id:'tapezieren', name:'Tapezieren',      mat:'Tapete', standard:'inkl',  anker:'Vliestapete kleben',   kurz:'Vliestapete', basis:9.00, mein:9.50, einheit:'€/m²' },
+  { id:'lackieren',  name:'Lackieren',       mat:'Lack',   standard:'inkl',  anker:'Tür lackieren',        kurz:'Tür',       basis:60.00, mein:65.00, einheit:'€/Stück' },
+  { id:'fassade',    name:'Fassade',         mat:'Farbe',  standard:'extra', anker:'Fassade streichen 2x', kurz:'Fassade 2x', basis:13.00, mein:14.50, einheit:'€/m²' },
+  { id:'boden',      name:'Boden',           mat:'Belag',  standard:'extra', anker:'Laminat verlegen',     kurz:'Laminat',   basis:17.00, mein:18.00, einheit:'€/m²' },
 ]
-const ANKER = { innen:11.0, fassade:14.5, boden:18.0, tapezieren:9.5, lackieren:65.0 }
-const ABGELEITET = {
-  innen:[['Wand streichen 1x',.63],['Wand grundieren',.40],['Decke streichen 2x',1.0],['Decke streichen 1x',.63],
-         ['Decke grundieren',.40],['Wand spachteln Q2',.72],['Wand schleifen',.34],['Nikotinsperre auftragen',.82],
-         ['Heizkörper abkleben',.28],['Boden abdecken',.16],['Sockelleisten abkleben',.20],['Steckdosen abklemmen',.22]],
-  fassade:[['Fassade streichen 1x',.63],['Fassade grundieren',.42],['Fassade reinigen',.30],['Risse verspachteln',.55],
-           ['Sockel streichen',.80],['Gerüstplane anbringen',.25]],
-  boden:[['Laminat verlegen',1.0],['Trittschall verlegen',.31],['Altbelag aufnehmen',.42],['Kleberreste entfernen',.55],
-         ['Untergrund spachteln',.61],['Sockelleisten montieren',.34],['Übergangsprofil setzen',.28],['Boden reinigen',.14]],
-  tapezieren:[['Vliestapete kleben',1.0],['Raufaser kleben',.84],['Tapete ablösen',.47],['Untergrund vorbereiten',.55]],
-  lackieren:[['Fenster lackieren',.72],['Zarge lackieren',.46],['Heizkörper lackieren',.60],['Geländer lackieren',.88]],
+
+// Jede Zeile sagt selbst, WORAUS sie kommt:
+//   'flaeche' = aus dem Flaechenpreis der Taetigkeit (Katalogpreis x Verhaeltnis)
+//   'zeit'    = aus dem Stundensatz (hinterlegte Zeit x Stundensatz)
+// Manfred: "Ein Heizkoerper hat mit dem Quadratmeterpreis nichts zu tun, der
+// kommt aus der Zeit. Der graue Satz ist nur dann was wert, wenn er wahr ist."
+//
+// mat: 'wahl'    = folgt der Entscheidung von Seite 1 (Farbe/Tapete/Belag)
+//      'zubehoer'= Material immer drin, nicht waehlbar (Trittschall, Kleister)
+//      null      = reine Arbeit, kein Material
+const KATALOG = {
+  innen:[
+    ['Wand streichen 1x',        'flaeche', 6.30,'€/m²','wahl'],
+    ['Wand grundieren',          'flaeche', 4.00,'€/m²','wahl'],
+    ['Decke streichen 2x',       'flaeche',10.00,'€/m²','wahl'],
+    ['Decke streichen 1x',       'flaeche', 6.30,'€/m²','wahl'],
+    ['Wand spachteln Q2',        'flaeche', 7.20,'€/m²','zubehoer'],
+    ['Wand schleifen',           'flaeche', 3.40,'€/m²', null],
+    ['Nikotinsperre auftragen',  'flaeche', 8.20,'€/m²','wahl'],
+    ['Boden abdecken',           'flaeche', 1.60,'€/m²','zubehoer'],
+    ['Heizkörper abkleben',      'zeit',    0.30,'€/Stück','zubehoer'],
+    ['Steckdosen abklemmen',     'zeit',    0.15,'€/Stück', null],
+    ['Sockelleisten abkleben',   'zeit',    0.04,'€/lfm','zubehoer'],
+  ],
+  fassade:[
+    ['Fassade streichen 1x','flaeche', 8.20,'€/m²','wahl'],
+    ['Fassade grundieren',  'flaeche', 5.50,'€/m²','wahl'],
+    ['Fassade reinigen',    'flaeche', 3.90,'€/m²', null],
+    ['Risse verspachteln',  'flaeche', 7.10,'€/lfm','zubehoer'],
+    ['Sockel streichen',    'flaeche',10.40,'€/lfm','wahl'],
+    ['Gerüstplane anbringen','zeit',   0.06,'€/m²','zubehoer'],
+  ],
+  boden:[
+    ['Trittschall verlegen',            'flaeche', 5.30,'€/m²','zubehoer'],
+    ['Altbelag aufnehmen, lose verlegt','flaeche', 5.20,'€/m²', null],
+    ['Altbelag aufnehmen, verklebt',    'flaeche', 9.40,'€/m²', null],
+    ['Kleberreste entfernen',           'flaeche', 9.30,'€/m²', null],
+    ['Untergrund spachteln',            'flaeche',10.40,'€/m²','zubehoer'],
+    ['Sockelleisten montieren',         'flaeche', 5.80,'€/lfm','wahl'],
+    ['Übergangsprofil setzen',          'zeit',    0.35,'€/Stück','zubehoer'],
+    ['Boden reinigen',                  'zeit',    0.05,'€/m²', null],
+  ],
+  tapezieren:[
+    ['Raufaser kleben',       'flaeche',7.60,'€/m²','wahl'],
+    ['Tapete ablösen',        'flaeche',4.20,'€/m²', null],
+    ['Untergrund vorbereiten','flaeche',5.00,'€/m²','zubehoer'],
+  ],
+  lackieren:[
+    ['Fenster lackieren',   'flaeche',43.00,'€/Stück','wahl'],
+    ['Zarge lackieren',     'flaeche',28.00,'€/Stück','wahl'],
+    ['Heizkörper lackieren','flaeche',36.00,'€/Stück','wahl'],
+    ['Geländer lackieren',  'flaeche',53.00,'€/lfm','wahl'],
+  ],
 }
-const EINHEIT = { lackieren:'€/Stück' }
+
+function runden(wert, einheit){
+  const stufe = einheit === '€ pauschal' ? 5 : einheit === '€/Stück' ? 1 : 0.5
+  return Math.round(wert / stufe) * stufe
+}
 
 let seite = 1
 const gewaehlt = { innen:true, fassade:true, boden:true }
 const material = {}
 TAET.forEach(t => material[t.id] = t.standard)
+let stundensatz = STUNDENSATZ
 let preise = null
+let genickt = {}
 let offen = null
 
 const eur = n => n.toFixed(2).replace('.', ',')
 
-function bauen() {
-  const h = document.getElementById('hinweis')
-  const i = document.getElementById('inhalt')
-  const f = document.getElementById('fuss')
-  if (seite === 1) {
-    h.innerHTML = '<b>Prototyp 1 von 2 — Tätigkeitsseite.</b> Zu prüfen: Setz die Haken schnell hintereinander. Fällt dir die Materialzeile auf, oder scrollst du dran vorbei?'
+function matSatz(t, art){
+  if (art === 'zubehoer') return 'inkl. Material'
+  if (art === 'wahl') return material[t.id] === 'inkl' ? 'inkl. ' + t.mat : t.mat + ' extra'
+  return ''
+}
+
+function bauen(){
+  const h = hinweis, i = inhalt, f = fuss
+  if (seite === 1){
+    h.innerHTML = '<b>Prototyp 3 · Seite 1.</b> Unverändert — von dir bestätigt. Nur zum Durchklicken auf Seite 2.'
     i.innerHTML = '<h1>Was machst du?</h1><p class="unter">Wähle alles, was du anbietest.</p>' +
+      '<p class="merk">Du kannst das später an jeder einzelnen Position ändern.</p>' +
       TAET.map(t => {
         const an = !!gewaehlt[t.id]
         return `<div class="taet ${an?'an':''}">
-          <button class="hakenzeile" onclick="haken('${t.id}')">
-            <span class="box">✓</span><span>${t.name}</span>
-          </button>
-          ${an ? `<div class="matzeile">
-            <div class="matlabel">Material</div>
-            <div class="wahl">
-              <button class="${material[t.id]==='inkl'?'an':''}" onclick="mat('${t.id}','inkl')">inkl. ${t.mat}</button>
-              <button class="${material[t.id]==='ohne'?'an':''}" onclick="mat('${t.id}','ohne')">ohne ${t.mat}</button>
+          <button class="hakenzeile" onclick="haken('${t.id}')"><span class="box">✓</span><span>${t.name}</span></button>
+          ${an ? `<div class="matzeile"><div class="matlabel">Material</div><div class="wahl">
+              <button class="${material[t.id]==='inkl'?'an':''}" onclick="mat('${t.id}','inkl')">${t.mat} inkl.</button>
+              <button class="${material[t.id]==='extra'?'an':''}" onclick="mat('${t.id}','extra')">${t.mat} extra</button>
             </div></div>` : ''}
         </div>`
-      }).join('') +
-      '<p class="schluss">Du kannst das später an jeder einzelnen Position ändern.</p>'
-    f.innerHTML = '<button class="knopf" onclick="weiter()">Weiter →</button>'
+      }).join('')
+    f.innerHTML = '<div class="reihe"><button class="knopf" onclick="weiter()">Weiter →</button></div>'
   } else {
     if (!preise) preise = ableiten()
-    const geaendert = preise.filter(p => p.meins).length
-    h.innerHTML = '<b>Prototyp 2 von 2 — Nick-Seite.</b> Zu prüfen: Kannst du ' + preise.length + ' Zeilen überfliegen, oder erschlagen sie dich? Tippe eine an, die nicht passt.'
-    let html = '<h1>Das hat die App daraus gemacht</h1><p class="unter">' + preise.length +
-      ' Preise, abgeleitet aus deinen Zahlen. Schau drüber — was nicht passt, tippst du an.</p>'
-    if (geaendert) html += `<div class="zaehler">${geaendert} ${geaendert===1?'Preis ist':'Preise sind'} jetzt von dir.</div>`
+    const meine = preise.filter(p => p.meins && !p.istAnker).length
+    const offeneGruppen = TAET.filter(t => gewaehlt[t.id] && !genickt[t.id])
+    h.innerHTML = '<b>Prototyp 3 · Seite 2.</b> Geändert: Herkunft stimmt jetzt (Zeit statt Fläche), Halbsatz an jeder Zahl, „Später" erklärt sich vorher, Einheit im Fenster beschriftet.'
+    let html = '<h1>Das hat die App daraus gemacht</h1>' +
+      `<p class="unter">${preise.filter(p=>!p.istAnker).length} Preise, abgeleitet aus deinen Zahlen. Schau drüber — was nicht passt, tippst du an.</p>`
+    if (meine) html += `<div class="zaehler">${meine} ${meine===1?'Preis ist':'Preise sind'} jetzt von dir.</div>`
     let letzte = null
     preise.forEach((p, idx) => {
-      if (p.gruppe !== letzte) { html += `<div class="gruppe">${p.gruppe}</div>`; letzte = p.gruppe }
-      html += `<button class="zeile ${p.meins?'meins':''}" onclick="bearbeiten(${idx})">
+      if (p.gruppe !== letzte){
+        letzte = p.gruppe
+        const t = TAET.find(x => x.name === p.gruppe)
+        if (t){
+          const fertig = genickt[t.id]
+          html += `<div class="gruppe"><b>${p.gruppe}</b>
+            <button class="passt ${fertig?'fertig':''}" onclick="nicken('${t.id}')">${fertig?'✓ passt':'Passt'}</button></div>`
+        } else {
+          html += `<div class="gruppe"><b>${p.gruppe}</b></div>`
+        }
+      }
+      html += `<button class="zeile ${p.istAnker?'anker':''} ${p.meins&&!p.istAnker?'meins':''}" onclick="bearbeiten(${idx})">
         <div class="ztext"><div class="ztitel">${p.titel}</div>
-          <div class="zher">${p.meins ? 'von dir' : 'abgeleitet aus: ' + p.quelle}</div></div>
-        <div class="zpreis">${eur(p.preis)} ${p.einheit}</div><div class="stift">✎</div>
+          <div class="zher">${p.istAnker ? 'deine Zahl' : p.meins ? 'von dir' : 'abgeleitet aus: ' + p.quelle}</div></div>
+        <div class="zrechts"><div class="zpreis">${eur(p.preis)} ${p.einheit}</div>
+          ${p.matSatz ? `<div class="zmat">${p.matSatz}</div>` : ''}</div>
+        <div class="stift">✎</div>
       </button>`
     })
     i.innerHTML = html
-    f.innerHTML = '<button class="knopf zweit" onclick="spaeter()">Später</button><button class="knopf" onclick="passt()">Passt alles</button>'
+    f.innerHTML = offeneGruppen.length
+      ? `<p class="fusssatz">Nicht Genicktes bleibt als <b>Durchschnitt</b> markiert — auf der Preisliste und auf jedem Angebot, bis du es einmal durchgegangen bist.</p>
+         <div class="reihe"><button class="knopf zweit" onclick="spaeter()">Später erledigen</button><button class="knopf" onclick="alleNicken()">Passt alles</button></div>`
+      : `<div class="reihe"><button class="knopf" onclick="passt()">Fertig →</button></div>`
   }
 }
 
-function ableiten() {
+function ableiten(){
   const raus = []
+  // Die eigenen Zahlen zuerst, als eigene Gruppe: "So seh ich sofort, dass
+  // meine Zahlen angekommen sind."
+  raus.push({ gruppe:'Deine Zahlen', titel:'Dein Stundensatz', preis:stundensatz,
+              einheit:'€/Std', istAnker:true, meins:true, quelle:'', matSatz:'', stunde:true })
   TAET.forEach(t => {
     if (!gewaehlt[t.id]) return
-    const anker = ANKER[t.id]
-    const einheit = EINHEIT[t.id] || '€/m²'
-    const ankerName = t.id === 'innen' ? 'Wand 2x' : t.id === 'fassade' ? 'Fassade 2x'
-      : t.id === 'boden' ? 'Laminat verlegen' : t.id === 'tapezieren' ? 'Vliestapete' : 'Tür lackieren'
-    ;(ABGELEITET[t.id] || []).forEach(([titel, faktor]) => {
-      raus.push({ gruppe:t.name, titel, preis: Math.round(anker*faktor*100)/100, quelle: ankerName, einheit, meins:false })
+    raus.push({ gruppe:'Deine Zahlen', titel:t.anker, preis:t.mein, einheit:t.einheit,
+                istAnker:true, meins:true, quelle:'', matSatz:matSatz(t,'wahl'), taetId:t.id })
+  })
+  TAET.forEach(t => {
+    if (!gewaehlt[t.id]) return
+    const faktor = t.mein / t.basis
+    ;(KATALOG[t.id]||[]).forEach(([titel, art, wert, einheit, matArt]) => {
+      const roh = art === 'zeit' ? wert * stundensatz : wert * faktor
+      raus.push({ gruppe:t.name, titel, preis:runden(roh, einheit), einheit,
+                  quelle: art === 'zeit' ? 'Stundensatz' : t.kurz,
+                  istAnker:false, meins:false, matSatz:matSatz(t, matArt), taetId:t.id })
     })
   })
   return raus
 }
 
-function haken(id){ gewaehlt[id] = !gewaehlt[id]; preise = null; bauen() }
-function mat(id,w){ material[id] = w; bauen() }
-function weiter(){ if(!Object.values(gewaehlt).some(Boolean)) return; seite = 2; window.scrollTo(0,0); bauen() }
+function haken(id){ gewaehlt[id] = !gewaehlt[id]; preise = null; genickt = {}; bauen() }
+function mat(id,w){ material[id] = w; preise = null; bauen() }
+function weiter(){ if(!Object.values(gewaehlt).some(Boolean)) return; seite = 2; scrollTo(0,0); bauen() }
+function nicken(id){ genickt[id] = !genickt[id]; bauen() }
+function alleNicken(){ TAET.forEach(t => { if(gewaehlt[t.id]) genickt[t.id] = true }); scrollTo(0,0); bauen() }
+
 function bearbeiten(idx){
   offen = idx
   const p = preise[idx]
   dlgTitel.textContent = p.titel
-  dlgHer.textContent = p.meins ? 'von dir' : 'abgeleitet aus: ' + p.quelle
+  dlgHer.textContent = p.istAnker ? 'deine Zahl' : p.meins ? 'von dir' : 'abgeleitet aus: ' + p.quelle
   dlgWert.value = eur(p.preis)
-  dlgEinheit.textContent = p.einheit
-  dlg.showModal()
-  setTimeout(()=>dlgWert.select(),50)
+  zeichneEinheiten(p.stunde ? '€/Std' : p.einheit, !!p.stunde)
+  dlg.showModal(); setTimeout(()=>dlgWert.select(),50)
 }
+function zeichneEinheiten(aktiv, gesperrt){
+  const liste = gesperrt ? ['€/Std'] : EINHEITEN
+  dlgEinheiten.innerHTML = liste.map(e =>
+    `<button class="${e===aktiv?'an':''}" ${gesperrt?'disabled':''} onclick="einheitWaehlen('${e}')">${e}</button>`).join('')
+}
+function einheitWaehlen(e){ preise[offen].einheit = e; zeichneEinheiten(e, false) }
 function uebernehmen(){
   const z = parseFloat(String(dlgWert.value).replace(',','.'))
-  if (!isNaN(z) && z > 0) { preise[offen].preis = z; preise[offen].meins = true }
+  if (!isNaN(z) && z > 0){
+    const p = preise[offen]
+    if (p.stunde){ stundensatz = z; preise = null }          // Stundensatz zieht alle Zeit-Zeilen mit
+    else if (p.istAnker){
+      const t = TAET.find(x => x.id === p.taetId)
+      if (t){ t.mein = z; preise = null }                     // Anker zieht seine Gruppe mit
+    } else { p.preis = z; p.meins = true }
+  }
   dlg.close(); bauen()
 }
 function passt(){
-  document.getElementById('hinweis').innerHTML = '<b>Ende des Prototyps.</b> „Passt alles" — ab hier gehört die Liste dem Betrieb. Kein Balken auf den Angeboten.'
-  document.getElementById('fuss').innerHTML = '<button class="knopf zweit" onclick="location.reload()">Nochmal</button>'
+  hinweis.innerHTML = '<b>Ende.</b> Alle Gruppen genickt — die Liste gehört jetzt dem Betrieb. Nichts ist mehr als Durchschnitt markiert.'
+  fuss.innerHTML = '<div class="reihe"><button class="knopf zweit" onclick="location.reload()">Nochmal</button></div>'
 }
 function spaeter(){
-  document.getElementById('hinweis').innerHTML = '<b>Ende des Prototyps.</b> „Später" — so sieht dann jedes Angebot oben aus, bis die Seite einmal durchlaufen ist.'
-  document.getElementById('inhalt').innerHTML =
-    '<div class="balken" style="margin:0 0 16px">Diese Preise sind Durchschnittswerte, keine eigenen. <u>Jetzt durchgehen</u></div>' +
+  const namen = TAET.filter(t => gewaehlt[t.id] && !genickt[t.id]).map(t => t.name).join(', ')
+  hinweis.innerHTML = '<b>Ende.</b> „Später erledigen" — offen geblieben: ' + namen + '. So sieht ein Angebot dann aus.'
+  inhalt.innerHTML =
+    '<div class="balken">Preise aus ' + namen + ' sind <b>Durchschnitt</b>, keine eigenen. <u>Jetzt durchgehen</u></div>' +
     '<h1>Angebot AG-2026-002</h1><p class="unter">Frau Krüger · Bochum</p>' +
-    '<p class="schluss">Bewusst kein roter Balken: Mit Durchschnittspreisen zu starten ist kein Fehler, sondern ein Zustand.</p>'
-  document.getElementById('fuss').innerHTML = '<button class="knopf zweit" onclick="location.reload()">Nochmal</button>'
+    '<p class="merk">Nur die offenen Gruppen werden genannt — was du abgehakt hast, taucht hier nicht mehr auf. ' +
+    'In der Preisliste steht bei diesen Zeilen dasselbe Wort.</p>'
+  fuss.innerHTML = '<div class="reihe"><button class="knopf zweit" onclick="location.reload()">Nochmal</button></div>'
 }
 bauen()
 </script>
