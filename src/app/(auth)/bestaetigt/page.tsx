@@ -88,7 +88,7 @@ function BestaetigungInner() {
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
-        <h1 className="text-xl font-black text-anthracite mb-3 text-center">Link ungültig oder abgelaufen</h1>
+        <h1 className="font-syne text-xl font-black text-anthracite mb-3 text-center">Link ungültig oder abgelaufen</h1>
         <p className="text-anthracite/60 font-semibold text-sm text-center mb-8">
           Dieser Bestätigungslink funktioniert nicht mehr — zum Beispiel, weil
           er schon einmal geöffnet wurde. Dein Konto ist trotzdem angelegt,

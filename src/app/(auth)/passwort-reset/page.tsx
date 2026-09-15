@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+import { PasswortFeld } from '@/components/PasswortFeld'
 
 export default function PasswortResetPage() {
   const [password, setPassword] = useState('')
@@ -81,7 +82,7 @@ export default function PasswortResetPage() {
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
-        <h1 className="text-xl font-black text-anthracite mb-3 text-center">Link ungültig oder abgelaufen</h1>
+        <h1 className="font-syne text-xl font-black text-anthracite mb-3 text-center">Link ungültig oder abgelaufen</h1>
         <p className="text-anthracite/60 font-semibold text-sm text-center mb-8">
           Dieser Reset-Link funktioniert nicht mehr. Fordere einfach einen neuen an.
         </p>
@@ -110,15 +111,14 @@ export default function PasswortResetPage() {
     <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
-        <div className="text-anthracite text-xl font-bold mt-1">Neues Passwort</div>
+        <div className="font-syne text-anthracite text-xl font-bold mt-1">Neues Passwort</div>
         <p className="text-anthracite/50 font-semibold text-sm mt-1">
           Wähle ein sicheres Passwort mit mindestens 8 Zeichen.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="password"
+        <PasswortFeld
           placeholder="Neues Passwort"
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -127,8 +127,7 @@ export default function PasswortResetPage() {
           minLength={8}
           className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
         />
-        <input
-          type="password"
+        <PasswortFeld
           placeholder="Passwort bestätigen"
           value={passwordConfirm}
           onChange={e => setPasswordConfirm(e.target.value)}

@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Logo } from '@/components/Logo'
+import { PasswortFeld } from '@/components/PasswortFeld'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -34,7 +35,7 @@ export default function LoginPage() {
     <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
-        <div className="text-anthracite text-xl font-bold mt-1">Einloggen</div>
+        <div className="font-syne text-anthracite text-xl font-bold mt-1">Einloggen</div>
       </div>
 
       <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -47,8 +48,7 @@ export default function LoginPage() {
           className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
         />
         <div>
-          <input
-            type="password"
+          <PasswortFeld
             placeholder="Passwort"
             value={password}
             onChange={e => setPassword(e.target.value)}

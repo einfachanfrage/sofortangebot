@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+import { PasswortFeld } from '@/components/PasswortFeld'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -66,7 +67,7 @@ export default function RegisterPage() {
       <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
         <div className="bg-white border-2 border-anthracite rounded-2xl p-8 text-center">
           <div className="text-5xl mb-4">📧</div>
-          <div className="font-black text-2xl text-anthracite mb-2">Fast geschafft.</div>
+          <div className="font-syne font-black text-2xl text-anthracite mb-2">Fast geschafft.</div>
           <div className="text-anthracite font-semibold">
             Wir haben dir eine Bestätigungs-E-Mail an <strong>{email}</strong> geschickt. Klick auf den Link darin.
           </div>
@@ -79,7 +80,7 @@ export default function RegisterPage() {
     <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
-        <div className="text-anthracite text-xl font-bold mt-1">Konto erstellen</div>
+        <div className="font-syne text-anthracite text-xl font-bold mt-1">Konto erstellen</div>
       </div>
 
       <form onSubmit={handleRegister} className="flex flex-col gap-4">
@@ -91,8 +92,7 @@ export default function RegisterPage() {
           required
           className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
         />
-        <input
-          type="password"
+        <PasswortFeld
           placeholder="Passwort (mind. 8 Zeichen)"
           value={password}
           onChange={e => setPassword(e.target.value)}

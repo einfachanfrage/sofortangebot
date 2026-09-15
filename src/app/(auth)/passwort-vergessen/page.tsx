@@ -36,7 +36,7 @@ export default function PasswortVergessenPage() {
           <Logo variant="light" className="text-4xl" />
         </div>
         <div className="text-5xl mb-5">📬</div>
-        <h1 className="text-2xl font-black text-anthracite mb-3">E-Mail gesendet!</h1>
+        <h1 className="font-syne text-2xl font-black text-anthracite mb-3">E-Mail gesendet!</h1>
         <p className="text-anthracite/60 font-semibold leading-relaxed mb-2">
           Wir haben einen Link zum Zurücksetzen deines Passworts an <strong>{email}</strong> geschickt.
         </p>
@@ -54,7 +54,7 @@ export default function PasswortVergessenPage() {
     <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
-        <div className="text-anthracite text-xl font-bold mt-1">Passwort vergessen</div>
+        <div className="font-syne text-anthracite text-xl font-bold mt-1">Passwort vergessen</div>
         <p className="text-anthracite/50 font-semibold text-sm mt-1">
           Wir schicken dir einen Reset-Link per E-Mail.
         </p>

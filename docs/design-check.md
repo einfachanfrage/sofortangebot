@@ -123,8 +123,8 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-044 | Kundendaten (Name, Adresse, Telefon, E-Mail) lassen sich nach dem Anlegen nirgends mehr bearbeiten — kein „Bearbeiten"-Button auf der Kunden-Detailseite, keine API-Route dafür (Product Designer, 2026-09-06, kompletter Klick-Test „check alles") | ✅ **behoben 06.09.** — „Bearbeiten" im Kopf der Kundenseite, eigene Seite `/kunden/[id]/bearbeiten`, gemeinsames Formular mit „Neuer Kunde" | Head of Product Engineering |
 | DC-045 | Kein Zugang zur Abo-/Plan-Verwaltung nach dem Onboarding — `PlanWahlModal` erscheint laut Code nur einmalig direkt nach frischem Onboarding, danach keine Einstellungsseite für Plan-Wechsel/Rechnungen/Zahlungsmethode. Zusätzlich: das beworbene „3 Angebote/Monat kostenlos"-Limit wird im Code nirgends geprüft oder durchgesetzt (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Zugang über Einstellungen → Abo & Rechnungen (Stripe-Kundenportal); harte Grenze bei 3 Angeboten/Monat nach Sandys Entscheidung, Anlegen gesperrt, Bearbeiten und Revisionen frei | Head of Product Engineering |
 | DC-046 | Doppelte CTA auf der Angebote-Liste: Header-Button „Neu" (Mikro-Icon) führt zum exakt selben Ziel (`/angebot/neu`) wie der FAB unten — genau das Muster, das DC-043 fürs Dashboard bewusst auf eine einzige CTA reduziert hat (Product Designer, 2026-09-06) | ✅ **behoben 06.09.** — Header-CTA entfernt, Empty-State zeigt auf die eine CTA; dabei den Desktop-Fall des DC-043-Hinweistextes mitkorrigiert | Product Designer |
-| DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ❌ offen, bestätigter Befund | Product Designer |
-| DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ❌ offen, bestätigter Befund | Product Designer |
+| DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ✅ erledigt (15.09.2026). Die Hälfte war schon da: CoS-P-010 hatte der Legacy-Karte im September Klartext gegeben. Offen war, dass dieser Unterschied NUR auf der zweiten Karte stand — wer von oben liest und einen Zugang von vor 2025 hat, trägt seinen Key in die erste ein. Jetzt steht der Unterschied auf beiden Karten, und der Hinweis ist nicht mehr die leiseste Zeile der Karte | Product Designer |
+| DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ✅ erledigt (15.09.2026). (1) Neuer gemeinsamer Baustein `src/components/PasswortFeld.tsx` (Lucide `Eye`/`EyeOff`, `type="button"`, eigene Screenreader-Beschriftung) an allen vier Passwort-Feldern der `(auth)`-Gruppe — Login, Registrierung, neues Passwort + Bestätigung. (2) `font-syne` auf allen Seitentiteln der kompletten `(auth)`-Gruppe nachgezogen (5 Dateien, inkl. der Zwischenzustände „Fast geschafft.", „E-Mail gesendet!", „Link ungültig oder abgelaufen"). Das Logo selbst hatte `font-syne` bereits seit DC-049 Schritt 5 — Befund 2 war zur Hälfte schon erledigt. Siehe Detailabschnitt | Product Designer |
 | DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) ✅ Logo 10.09. (`531c268`, Bildmarke von Sandy als PNG geliefert — Browser-Tab-Favicon bleibt auf Sandys Entscheidung bei „sa", siehe Detailabschnitt), (f) ✅ PDF 10.09. (`dd1d6fe`, Marken-Schriften + Rechenweg im Kunden-PDF, neutrale Farbgebung auf Sandys Wunsch — Rechenweg auf der Unterschreiben-Seite bleibt offen, siehe Detailabschnitt). Reihenfolge (a)–(f) komplett. **Nachtrag 11.09.:** In-App-Vorschau (`AngebotVorschau.tsx`) an echtes PDF angeglichen, inkl. Raumgruppierung, die beim ersten Angleich übersehen wurde (`11b609e`, `d7fbd21`). Dabei einen kritischen, seit vier Deployments bestehenden Produktions-Build-Fehler gefunden und behoben — nichts von alldem war bis dahin tatsächlich live (`9ae8dcd`, `apple-icon.tsx`). WhatsApp/Link-Versand: Fehleranzeige im Frontend repariert (`b29c999`, live), echte Ursache in der Datenbank gefunden (Storage-Bucket `public-pdfs` mit falschem MIME-Type — DB-Fix selbst noch offen, siehe Detailabschnitt). Entwurfsansicht: Rechenweg standardmäßig eingeklappt statt immer offen (`86c742d`), PDF bleibt unverändert immer sichtbar. Neuer offener Punkt zur PDF-seitigen Sichtbarkeits-Steuerung siehe **DC-050** | Product Designer (Konzept: Marketing, Governance S. 19) |
 | DC-050 | Sandy, 11.09.2026: Entwurfsansicht mit dauerhaft offenem Rechenweg „zu viel" (gelöst, siehe DC-049-Nachtrag); zusätzlich die Frage, ob/wie sich die Rechenweg-Sichtbarkeit auf dem Kunden-PDF steuern lässt, obwohl das Handbuch dort „nie versteckt, nie eingeklappt" fordert — echter Zielkonflikt mit der Legal-Vorgabe aus DC-049 | ✅ erledigt. Zielkonflikt mit Sandy per Rückfrage geklärt: **„Frage pro Angebot vor dem PDF-Erstellen"** gewählt (nicht „immer sichtbar, kein Schalter", nicht „globaler Schalter in den Einstellungen"). Backend (`0d2b459`, Head of Product Engineering): neue Spalte `quotes.zeige_rechenweg_auf_pdf` (boolean, nullable, `null` = noch nicht gefragt = sichtbar), `AngebotPDF` in `lib/pdf.tsx` wertet sie mit Rangfolge Prop → gespeicherte Antwort → sichtbar aus — die sechs PDF-Routen mussten dank `select('*')` nicht angefasst werden. UI (`b3ce7b0`, Product Designer): Ja/Nein-Frage im Vorschau-Tab von `VorschauUndVersand.tsx`, direkt vor „Senden →" — der einen Stelle, an der alle drei Versandwege (E-Mail/WhatsApp/Link) vorbeikommen; kein Blocker, unbeantwortet bleibt sichtbar; Antwort wird per `supabase.from('quotes').update(...)` gespeichert (gleiches Muster wie `raum_details`), einmal beantwortet mit Ändern-Link statt Frage. `AngebotVorschau.tsx` bekam dieselbe `zeigeRechenweg`-Prop/Rangfolge wie das echte PDF, zieht beim Beantworten live mit. Nachzug (`d3d4d4e`): derselbe Ja/Nein-Moment jetzt auch vor dem direkten „PDF herunterladen"-Link im Aktionen-Sheet, der anfangs bewusst ausgelassen war. Siehe Detailabschnitt | Product Designer (UI ✅) / Head of Product Engineering (Backend ✅) |
 
@@ -4676,7 +4676,7 @@ mobil den Mikrofon-FAB, auf dem Desktop „Neues Angebot" in der Seitenleiste.
 ## DC-047 — Zwei gleichlautende, nicht erklärte Lexware-Integrationen
 
 **Datum:** 2026-09-06 (Product Designer, Klick-Test)
-**Status:** ❌ offen, bestätigter Befund
+**Status:** ✅ erledigt (Product Designer, 15.09.2026) — Fix-Update am Ende der Datei
 
 **Befund:** `einstellungen/integrationen/page.tsx` listet „Lexware Office"
 und „Lexoffice (Legacy)" als zwei getrennte Karten mit eigenem API-Key-Feld
@@ -4700,7 +4700,8 @@ verstecken statt gleichrangig oben zu zeigen.
 Browser-Fenster: „es fehlt bspw ein auge um passwort anzeigen zu lassen.
 und ist das unsere CI?!?! iwie find ich die schriftart vom titel und
 einloggen komisch")
-**Status:** ❌ offen, bestätigter Befund
+**Status:** ✅ erledigt (Product Designer, 15.09.2026) — Fix-Update am Ende
+der Datei
 
 **Befund 1 — kein Passwort-Auge:** `src/app/(auth)/login/page.tsx` und
 `.../register/page.tsx` haben je ein reines `<input type="password" ...>`
@@ -7679,6 +7680,179 @@ niemand am Prototyp, sondern am Katalog.
 
 Status DC-102: Seiten 1 und 2 🟢 abgenommen · Einbau weiterhin blockiert durch
 Vokabular-Angleich und CoS-E-052 (Chief of Staff meldet, wenn frei).
+
+*Product Designer · 2026-09-15*
+
+---
+
+## DC-048 umgesetzt — Passwort-Auge und Marken-Schrift in der ganzen (auth)-Gruppe (15.09.2026)
+
+**Noch nicht committet** (Shell weiter tot, Commit von Sandy — PowerShell-Block
+ging mit der Meldung raus).
+
+Genommen, weil unblockiert: Der Preise-Einbau (DC-102) hängt an Engineerings
+CoS-E-053 und am Vokabular-Angleich, der Live-Test von DC-101/103/104/089
+braucht den deployten Stand — DC-048 braucht keins von beidem und ist ein
+Befund, den Sandy selbst gemeldet hat.
+
+### Befund 1 — das Auge
+
+Vier Passwort-Felder, ein Baustein: `src/components/PasswortFeld.tsx` (neu).
+Vier eigene `useState`-Toggles wären vier Stellen gewesen, an denen
+Beschriftung, Icon-Größe und Touch-Fläche später auseinanderlaufen — dieselbe
+Lehre wie bei `Button.tsx` (DC-005), und der Grund, warum es hier eine Datei
+mehr gibt statt vier Kopien.
+
+Eingebaut an allen vier Stellen: Login, Registrierung, „Neues Passwort" und
+„Passwort bestätigen" auf der Reset-Seite. Die beiden letzten standen in
+keiner Meldung — ein Auge nur beim Einloggen und nicht beim Vergeben eines
+neuen Passworts wäre aber genau dort weg, wo man am ehesten vertippt und es
+am wenigsten merkt (zwei Felder, die übereinstimmen müssen).
+
+Drei Details, die nicht zufällig so sind:
+
+- **`type="button"`.** Ein Button ohne Typ ist in einem Formular ein
+  Submit-Button — das Auge hätte sonst beim ersten Tippen das Formular
+  abgeschickt.
+- **Eigene Beschriftung** (`aria-label` „Passwort anzeigen" / „Passwort
+  verbergen", dazu `aria-pressed`). Ein Icon allein sagt einem Screenreader
+  nichts.
+- **Touch-Fläche über die volle Feldhöhe** (`h-full px-4`), nicht nur 20 px
+  Icon. Das Feld ist 48 px hoch, der Daumen trifft die ganze rechte Kante.
+
+Der Aufrufer bringt seinen Feld-Stil weiter selbst mit, weil die
+`(auth)`-Seiten den kräftigen `border-anthracite`-Rahmen nutzen und nicht den
+leiseren App-Stil aus `Input.tsx`. Der Baustein ergänzt nur den Platz rechts
+(`pr-14`). Ein Vereinheitlichen der beiden Feld-Stile wäre eine eigene
+Entscheidung und gehört nicht in einen Bugfix.
+
+### Befund 2 — die Schrift, zur Hälfte schon erledigt
+
+Das Logo hatte beim Aufschreiben des Befunds (10.09.) keine `font-syne`. Beim
+Nachsehen heute: `Logo.tsx` hat sie inzwischen — nachgezogen in DC-049
+Schritt 5, als die Bildmarke dazukam. Offen war also nur noch die zweite
+Hälfte, die Seitentitel.
+
+Die haben jetzt `font-syne` — in allen fünf Dateien der Gruppe, nicht nur den
+drei gemeldeten: „Einloggen", „Konto erstellen", „Passwort vergessen", „Neues
+Passwort" und die Zwischenzustände „Fast geschafft.", „E-Mail gesendet!",
+„Link ungültig oder abgelaufen" (zweimal, `passwort-reset` und `bestaetigt`).
+Drei von fünf zu ändern hätte den Bruch nur verschoben: Wer sich registriert,
+sieht heute Login → Registrierung → Bestätigungsseite hintereinander.
+
+**Gewicht bewusst gelassen, wie es war** (`font-bold` bei den Titeln,
+`font-black` bei den Überschriften). `font-syne` ist seit DC-049 Schritt (b)
+Bricolage Grotesque mit 600/700/800 — die Schrift wechselt, die Stärke nicht.
+Beides zugleich zu ändern hätte den Vergleich mit dem Rest des Produkts
+unmöglich gemacht, falls Sandy die Titel danach zu schwer findet.
+
+### Verifikation
+
+Syntax aller sechs Dateien gegen TypeScript 5.6.3 geparst, sauber. Alle sechs
+nach dem Schreiben zurückgelesen und die Bytegröße verglichen (2946 · 7854 ·
+5490 · 3316 · 5089 · 2085) — stimmt überein. `tsc`/`vitest` ohne Shell auf
+Sandys Rechner weiterhin nicht ausführbar; die Typen sind aber unkritisch, der
+Baustein nimmt exakt die `InputHTMLAttributes` ohne `type` entgegen.
+
+**Nicht geprüft und offen für den Live-Test:** dass `pr-14` den Platz rechts
+tatsächlich freihält (Tailwind stellt richtungs- vor achsenbasierte
+Abstände, `px-4` müsste also verlieren) — am schnellsten daran zu sehen, ob
+ein langes Passwort unter dem Auge durchläuft.
+
+**Ein Nachbar-Befund, nicht angefasst:** `login/page.tsx` und
+`register/page.tsx` setzen ihren Feld-Stil als wörtlich kopierten
+Klassen-String, an vier Stellen gleich. Das ist derselbe Kopier-Zustand, den
+DC-005 für Buttons aufgelöst hat. Gehört in DC-005, nicht hierher.
+
+*Product Designer · 2026-09-15*
+
+---
+
+## DC-047 umgesetzt — der Unterschied steht jetzt auf beiden Lexware-Karten (15.09.2026)
+
+**Noch nicht committet** (Shell weiter tot, Commit von Sandy — PowerShell-Block
+ging mit der Meldung raus).
+
+Genommen, weil unblockiert und mir zugewiesen: DC-102 (Einbau) hängt an
+CoS-E-053 und am Vokabular-Angleich, der Live-Test von DC-101/103/104/089
+braucht den deployten Stand, DC-049s Restliste wartet auf Sandys Reihenfolge.
+DC-047 wartet auf niemanden.
+
+### Zuerst: die Hälfte war schon erledigt, nur nicht hier eingetragen
+
+Beim Nachsehen im Code stand auf der Legacy-Karte längst ein Klartext-Hinweis
+— „Nur falls dein Zugang von vor 2025 stammt." Den hat Platform am 11.09. unter
+**CoS-P-010** aus Manfreds TN-108 gebaut (*„ich weiß nicht, ob ich alt oder neu
+hab"*), ohne dass DC-047 davon wusste. Der Befund stand seit dem 06.09. als
+„❌ offen" in dieser Tabelle und war zu zwei Dritteln kalt. Das ist der
+eigentliche Fund des Tickets, und er gehört notiert: Zwei Rollen sind über
+denselben Bildschirm gestolpert, haben ihn getrennt aufgeschrieben, und die
+Lösung der einen ist nie in der Liste der anderen angekommen. Ich habe hier
+zuerst den Code gelesen und dann erst angefasst — hätte ich es umgekehrt
+gemacht, stünde jetzt ein zweiter, konkurrierender Hinweistext auf derselben
+Karte.
+
+### Was wirklich noch offen war
+
+Der Hinweis stand auf der **zweiten** Karte. Die Entscheidung fällt aber auf
+der ersten. Der Ablauf, der bis heute kaputt war:
+
+1. Handwerker öffnet „Buchhaltung verbinden", erste Karte heißt „Lexware
+   Office" — der Name auf seiner Rechnung.
+2. Er klappt auf, trägt seinen (alten) Key ein, drückt „Verbindung testen".
+3. Es schlägt fehl. Er erfährt nicht, warum, und vor allem nicht, dass zwei
+   Zentimeter tiefer eine Karte genau für seinen Fall steht.
+
+Das ist keine Textlücke, das ist eine Reihenfolgelücke: Eine
+Unterscheidungshilfe, die erst auf der Alternative steht, kommt zu spät. Wer
+sich richtig entscheiden soll, muss den Unterschied dort lesen, wo er wählt.
+
+### Geändert (`einstellungen/integrationen/page.tsx`, drei Stellen)
+
+| Stelle | vorher | jetzt |
+|---|---|---|
+| Karte „Lexware Office" | kein Hinweis (`hinweis: ''`) | „Der normale Zugang. Nimm diesen, wenn du deinen API-Key heute neu erstellst." |
+| Karte „Lexoffice (Legacy)" | „… Neuer Account? Dann **oben** ‚Lexware Office' nehmen." | „… Sonst die Karte **darüber** — ‚Lexware Office'." |
+| Darstellung des Hinweises | `text-[11px]`, `text-anthracite/35` | `text-xs`, `text-anthracite/55` |
+
+**Zur dritten Zeile, weil sie die unscheinbarste und die wirksamste ist:** Der
+Hinweis war die kleinste und blasseste Schrift auf der ganzen Karte — kleiner
+als der Verbunden-Status, blasser als alles andere. Das ist die Behandlung für
+eine Fußnote. Dieser Satz ist aber keine Fußnote, er ist die einzige
+Entscheidungsgrundlage auf dem Bildschirm; die Karte ohne ihn ist raten. Ein
+Hinweis, den man übersieht, ist derselbe Zustand wie kein Hinweis — genau das,
+was Manfred bei DC-102 über „Später" und die Einheit gesagt hat („war gebaut,
+hat es nicht gefunden, also ist es nicht gebaut"). Er bleibt leiser als der
+Kartenname, aber lesbar.
+
+**Bewusst NICHT gemacht — die Legacy-Karte wegklappen.** Mein eigener Vorschlag
+vom 06.09. war, sie unter „Erweitert" zu verstecken. Nach CoS-P-010 ist das die
+falsche Antwort: Sie richtet sich an die Bestandskunden mit altem Zugang, und
+genau die sind die, die am ehesten Hilfe brauchen und am wenigsten hinter einem
+Wort wie „Erweitert" suchen. Zwei benannte Karten mit je einem Satz sind ehrlicher
+als eine sichtbare und eine versteckte. Der ursprüngliche Vorschlag ist damit
+verworfen, nicht vergessen.
+
+**Ebenfalls nicht angefasst:** Was passiert, wenn „Verbindung testen" auf der
+Lexware-Office-Karte mit einem Legacy-Key fehlschlägt. Die richtige Antwort wäre,
+dass die Fehlermeldung selbst auf die andere Karte zeigt — das ist aber
+`api/integrations/test` und gehört Platform (Rollen-Split CoS-009). **An
+Platform:** Wenn ihr den Fehlertext dort mal anfasst, ist das der billigste
+Moment, es mitzunehmen; ich baue es nicht in eure Route.
+
+### Verifikation
+
+Die Datei war vor dem Schreiben frisch gestaget — wichtig hier, weil Platform
+sie zuletzt am selben Tag für CoS-P-019 angefasst hat und eine ältere Kopie
+deren Fix überschrieben hätte. Syntax gegen TypeScript 5.6.3 geparst, sauber.
+Nach dem Schreiben zurückgelesen und Byte-für-Byte gegen die geschriebene
+Fassung verglichen: 17.020 Bytes, identisch. `tsc`/`vitest` ohne Shell auf
+Sandys Rechner weiterhin nicht ausführbar; die Änderung fasst nur zwei
+String-Literale und eine Tailwind-Klassenliste an, keine Typen.
+
+**Für den Live-Test:** beide Karten in Einstellungen → Buchhaltung verbinden
+ansehen — unter jedem der beiden Lexware-Namen muss jetzt ein Satz stehen, und
+er muss ohne Hinsehen lesbar sein.
 
 *Product Designer · 2026-09-15*
 
