@@ -7,12 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "lint:ci": "eslint --max-warnings 109",
+    "lint:ci": "eslint --max-warnings 110",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "env:check": "node scripts/verify-environment.mjs",
     "vokabular": "node scripts/vokabular-abgleich.mjs",
-    "pruefe:unerfasst": "node scripts/pruefe-unerfasste-dateien.mjs"
+    "pruefe:unerfasst": "node scripts/pruefe-unerfasste-dateien.mjs",
+    "pruefe:migrationsliste": "node scripts/pruefe-migrationsliste.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

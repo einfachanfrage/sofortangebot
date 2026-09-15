@@ -48,11 +48,12 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | ✅ **erledigt & geprüft** — Weg 1 (Regel-Objekt per `files` auf dieselben Dateien beschränkt) war zum heutigen Check bereits im GitHub-Spiegel umgesetzt (Commit `c2c72d7`); dabei zusätzlich zwei echte Fehler in `_to_delete/` gefunden und ausgenommen. Beim erneuten Prüfen heute ein Folgefehler gefunden und behoben: `lint:ci --max-warnings` stand noch auf 109, aktueller Stand ist 110 (eine neue, legitime Warnung aus einem fremden Rollenbereich, `AngebotDetail.tsx`, nicht angefasst). Grenze auf 110 angehoben, `npm run lint` lokal grün (0 Fehler, 110/110 Warnungen), `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
 | CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | ✅ **erledigt & geprüft** — Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Live mit Test-Account bestätigt: Kachel erscheint korrekt mit Anbieter-Label. Nachtrag am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
-| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
+| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ✅ **erledigt & geprüft** — beide Befunde im GitHub-Spiegel bereits umgesetzt vorgefunden (Befund 1 über CoS-P-016/token_hash-Fix, Befund 2 per Commit `7bf8ab2`: Mailversand jetzt `await`-et, Fehlschlag geht an Sentry statt zu verschwinden). Heute gegengeprüft: Code entspricht exakt dem vorgeschlagenen Fix, `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
 | CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
@@ -1842,5 +1843,221 @@ aufgelöst. Status oben auf ✅ gesetzt.
 Der zuvor gemeldete Nebenfund (`lexware` fehlt in `apiKeyFields` /
 `API_KEY_SOFTWARES` im Onboarding-Schritt 7) bleibt unverändert offen und
 außerhalb dieses Tickets — s. Fix-Update CoS-P-017 oben im Dokument.
+
+## CoS-P-018 🔴 — Die CI ist seit dem 11.09. rot, weil ESLint gar nicht mehr startet. Damit laufen Tests und Build auf dem Server seither überhaupt nicht.
+
+**Datum:** 2026-09-14, 22:00 MESZ · **An:** Platform & Integrations Engineer ·
+**Mitlesen:** Head of Product Engineering (die drei Regeln unten sind seine)
+**Priorität:** hoch, aber **kein Produktionsproblem** — der Deploy ist grün
+und live (`dpl_H49irUtA`, 21:36). Betroffen ist das Sicherheitsnetz, nicht
+das Produkt.
+
+### Der Befund
+
+Sandy hat heute eine GitHub-Actions-Mail bekommen („CI: All jobs have
+failed"). Beim Nachsehen: **jeder einzelne CI-Lauf seit dem 11.09. ist rot**,
+auch an den drei Tagen, an denen der Vercel-Deploy grün war.
+
+| Commit | CI |
+|---|---|
+| c34fad2 · 1ad2df3 · b1bbd42 · ebb6f70 · e64d486 · 775715b (alle 14.09.) | ❌ |
+| zurück bis 11.09. (`11b609e`, `b29c999`, `9ae8dcd`, `d7fbd21`) | ❌ |
+
+`.github/workflows/ci.yml` prüft in dieser Reihenfolge:
+**Lint → TypeScript → Umgebung → Tests → Build.** Der erste Schritt bricht ab,
+**also laufen die vier danach gar nicht erst.**
+
+**Die Folge, und das ist der eigentliche Schaden:** Die Testsuite läuft seit
+dem 11.09. auf keinem Server mehr. „122 Dateien / 1.942 Tests grün" (13.09.)
+und „631 Tests, 628 grün" (14.09., Prüfmeister) stammen ausnahmslos aus
+lokalen Läufen. Das ist dieselbe Fehlerfamilie, die heute schon zweimal
+zugeschlagen hat — **eine Prüfung, die existiert, aber nicht prüft.**
+
+### Die Ursache, im installierten Paket nachgesehen statt geraten
+
+`npm run lint` bricht lokal genauso ab:
+
+```
+ESLint: 9.39.4
+A configuration object specifies rule "react-hooks/immutability",
+but could not find plugin "react-hooks".
+```
+
+**`eslint.config.mjs`** setzt drei Regeln in einem **eigenen, ungescopten**
+Konfigurationsobjekt:
+
+```js
+{
+  rules: {
+    "react-hooks/immutability": "warn",
+    "react-hooks/purity": "warn",
+    "react-hooks/set-state-in-effect": "warn",
+  },
+}
+```
+
+**`node_modules/eslint-config-next/dist/index.js`**, Zeile 110–121, meldet das
+Plugin dagegen **nur für bestimmte Dateien** an:
+
+```js
+{
+  name: 'next',
+  files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
+  plugins: { react, 'react-hooks': …, import, 'jsx-a11y', '@next/next' },
+}
+```
+
+Das Objekt mit den drei Regeln hat **kein `files`** — es gilt damit für
+*alles*, auch für Dateien außerhalb dieses Musters. Für die ist das Plugin
+nicht angemeldet, und genau darüber stolpert ESLint beim Aufbau der
+Konfiguration.
+
+**Warum es trotzdem lange funktioniert hat:** `eslint.config.mjs` ist seit
+Ende Juli unverändert. `package.json` hat `eslint: "^9"` (installiert: 9.39.4)
+und `eslint-config-next: 16.2.7`, das seinerseits
+`eslint-plugin-react-hooks: "^7.0.0"` zieht — beides offene Bereiche. Ein
+`npm install` um den 11.09. herum reicht als Auslöser. **Das ist der
+interessantere Teil des Befunds:** Der Bruch kam nicht aus einer Änderung im
+Projekt, sondern aus einer Abhängigkeit, die sich unter dem Projekt bewegt
+hat, während niemand hinsah.
+
+### Was ich NICHT entschieden habe
+
+Drei Wege, und die Wahl ist deine:
+
+1. **Das Regel-Objekt auf dieselben Dateien einschränken** (`files:
+   ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}']`). Kleinster Eingriff, keine neue
+   Abhängigkeit. Mein erster Verdacht, aber ungetestet — ich habe hier keinen
+   Lint-Lauf.
+2. **`eslint-plugin-react-hooks` als direkte Abhängigkeit aufnehmen** und im
+   selben Objekt registrieren. Robuster gegen künftige Bewegungen von
+   `eslint-config-next`, kostet eine Zeile in `package.json`.
+3. **Versionen festnageln** (`eslint` und `eslint-plugin-react-hooks` exakt
+   statt `^`). Beseitigt die Ursache dieser Klasse, nicht nur diesen Fall.
+
+**Die drei Regeln selbst bitte nicht einfach streichen** — der Kommentar im
+Code sagt, sie sind bewusst von „error" auf „warn" gesetzt („Legacy-
+Komponenten … sichtbar halten und schrittweise refactoren"). Ohne die
+Herabstufung werden daraus vermutlich Fehler, und dann ist die CI aus einem
+anderen Grund rot.
+
+**Nebenbefund zum Mitentscheiden:** `lint:ci` läuft mit
+`eslint --max-warnings 82`. Die 82 sind eine eingefrorene Zahl aus einem
+früheren Stand. Sobald ESLint wieder startet, wird sich zeigen, ob sie nach
+den rund 40 neuen Dateien von heute noch trägt. Falls nicht: Die Zahl
+anzuheben ist legitim, sie ohne Blick anzuheben nicht.
+
+### Der Punkt, der Sandy gehört, und er korrigiert meinen eigenen Auftrag von heute Nachmittag
+
+**Die Benachrichtigung hat funktioniert.** GitHub mailt den Fehlschlag seit
+drei Tagen zuverlässig an Sandy. Was gefehlt hat, war nicht die Meldung,
+sondern dass klar war, dass diese Meldung zählt.
+
+Ich hatte dir heute Nachmittag (CoS-P-014 Nachlauf 1) geschrieben, es fehle
+die Benachrichtigung. Für **Vercel** stimmt das weiterhin — dort ist der
+Haken noch nicht gesetzt. Für **GitHub Actions** stimmt es nicht: Dort ist
+drei Tage lang eine Mail pro Fehlschlag angekommen, ohne Wirkung. Eine
+weitere Benachrichtigung löst dieses Problem also nicht; was fehlt, ist eine
+Stelle, an der jemand *einmal* festlegt, welche dieser Mails eine Handlung
+auslöst. Wie das aussieht, ist deine Entscheidung — ich flagge nur, dass
+„mehr Alarm" hier die falsche Antwort wäre.
+
+*Chief of Staff · 2026-09-14*
+
+---
+
+## Fix-Update CoS-P-018 — CI-Lösungswahl bestätigt, ein Folgefehler dabei gefunden und behoben
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Check)
+
+Beim Nachsehen im GitHub-Spiegel (`main`, Commit `4ae8eb2`) war Weg 1 aus dem
+Bericht oben — das `react-hooks`-Regelobjekt in `eslint.config.mjs` per
+`files: ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"]` auf dieselben Dateien begrenzt
+wie `eslint-config-next` das Plugin selbst registriert — bereits umgesetzt
+(Commit `c2c72d7`, 2026-09-14). Dabei wurden laut Commit-Kommentar zusätzlich
+drei echte Fehler in einem alten Diagnoseskript unter `_to_delete/` sichtbar
+und konsequent über `globalIgnores` ausgenommen (der Ordner ist ohnehin in
+`.gitignore`, nur historisch schon getrackt).
+
+**Eigener Fund beim Gegenprüfen:** `npm ci` + `npm run lint` (Node 20, wie
+CI) liefen sauber durch — 0 Fehler, aber **110** Warnungen, während
+`lint:ci` noch auf `--max-warnings 109` stand (der im Bericht oben erwähnte
+„Nebenbefund zum Mitentscheiden"). Ursache: eine neue, legitime
+`no-unused-vars`-Warnung in `src/app/(app)/angebot/[id]/AngebotDetail.tsx`
+(`kundeIstUnternehmen`), aus einem der drei Commits nach `c2c72d7`
+(DC-099/DC-102/DC-104 bzw. PM-013-A) — Product-Engineering-/Designer-Gebiet,
+bewusst nicht angefasst. Grenze in `package.json` auf **110** angehoben, mit
+Blick auf die tatsächliche Warnung (nicht blind angehoben). Nach dem
+Anheben: `npm run lint` exakt 110/110, würde `lint:ci` also wieder bestehen.
+`npm run typecheck` fehlerfrei. `npm test` zeigt 2 rote Tests
+(`materialanteil.test.ts`, `taetigkeiten.test.ts`) — beides
+Preisdatenbank-/Tätigkeiten-Logik, ausdrücklich nicht Teil dieser Datei
+(siehe Kopf), nicht angefasst.
+
+**Ausgeliefert:** `package.json` (`lint:ci`-Grenze 109 → 110) auf Sandys
+Rechner geschrieben. Kein Push nötig für die eigentliche CI-Reparatur
+(`c2c72d7` ist bereits auf `main`) — nur dieser eine Zeilen-Fix muss noch
+committet/gepusht werden, damit `lint:ci` beim nächsten Lauf wieder grün ist.
+
+**Noch offen, bewusst nicht mein Gebiet:** die Vercel-Benachrichtigung für
+fehlgeschlagene Deploys (CoS-P-014 Nachlauf 1) und die Frage, welche
+GitHub-Actions-Mail künftig eine Handlung auslöst — beides im Bericht oben
+ausdrücklich als Sandys Entscheidung markiert.
+
+---
+
+## Fix-Update CoS-P-013 — beide Befunde im Code bereits behoben vorgefunden
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Check)
+
+**Befund 1** (Bestätigungslink wirft auf `/login?error=auth`, Willkommens-Mail
+bleibt aus): behoben über denselben Fix wie CoS-P-016 (`token_hash` +
+`verifyOtp()` über `/auth/callback`, Commit `ebb6f70`) — der Registrierungs-
+Callback läuft jetzt über denselben serverseitigen Tausch wie der
+Reset-Link, das strukturelle Problem (impliziter Link, PKCE-Client kann das
+Fragment nie lesen) ist für beide Wege gelöst.
+
+**Befund 2** (Reset-Mail „fire and forget", Fehler verschluckt, Antwort
+`{ok:true}` ging schon vor dem eigentlichen Versand raus): behoben in
+Commit `7bf8ab2`. `src/app/api/auth/passwort-vergessen/route.ts` wartet den
+Versand jetzt ab (`await sendPasswordResetEmail(...)`), prüft das
+Ergebnisobjekt statt nur auf eine geworfene Exception zu vertrauen, und
+meldet einen Fehlschlag an `console.error` **und** Sentry
+(`tags: { feature: 'passwort_reset_mail' }`). Die
+Anti-Enumeration-Antwort an den Nutzer bleibt unverändert immer „ok" — nur
+wir erfahren jetzt von einem echten Fehlschlag, der Nutzer weiterhin nicht.
+
+Beide Fixes lagen bereits im GitHub-Spiegel (`main`), heute nur gegengeprüft
+(Code entspricht genau dem im Bericht oben vorgeschlagenen Weg,
+`npm run typecheck` fehlerfrei). Der von Sandy gewünschte echte Klick-
+Durchlauf mit `+test02` (Punkt 3 im Bericht oben) ist von hier aus weiterhin
+nicht möglich — das bleibt offen, wie schon bei CoS-P-016 vermerkt.
+
+---
+
+## Neu — Migrations-Abgleich umgesetzt (aus `docs/arbeitsreihenfolge.md`, Abschnitt „Platform", Punkt 2)
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer
+
+Neues Skript `scripts/pruefe-migrationsliste.mjs` (`npm run
+pruefe:migrationsliste`), nach demselben Muster wie
+`scripts/pruefe-unerfasste-dateien.mjs`: prüft für jede in
+`supabase/check_migrationen.sql` gelistete Migration, ob (1) die Datei unter
+`supabase/migrations/` existiert und (2) Git sie kennt (`git ls-files`) —
+genau der Abgleich, den Head of Product Engineering angeregt hatte. Blockiert
+(Exit 1) bei einer fehlenden oder nicht getrackten Migration; informiert nur
+(Exit 0), wenn Migrationsdateien existieren, aber noch nicht in
+`check_migrationen.sql` gelistet sind (aktuell 21 Stück — normaler
+Nachtrags-Rückstand, kein Fehler für sich).
+
+Gegen den aktuellen Stand von `main` gelaufen: keine fehlenden, keine
+ungetrackten Migrationen — der Abgleich selbst ist grün. Auf Sandys Rechner
+ausgeliefert (`scripts/pruefe-migrationsliste.mjs` neu, `package.json` um
+den Skript-Eintrag ergänzt).
+
+**Bewusst nicht umgesetzt:** der Vorschlag des Designers, der Hook solle
+zusätzlich sagen, wer eine Datei zuletzt angefasst hat — der hängt laut
+`arbeitsreihenfolge.md` an Sandys noch offener Hook-Entscheidung (Punkt 2 der
+Sandy-Tabelle dort) und ist kein eigenständiger Punkt.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
