@@ -2,6 +2,7 @@
 
 import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
 import { mitDeutschenZahlen } from '@/lib/zahlen-text'
+import { kundenRechenweg } from '@/lib/rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from '@/lib/kleinbetraege'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import { raeumeAusQuote, istAllgemeinPosition } from '@/lib/angebot-gruppierung'
@@ -72,7 +73,7 @@ function PositionsZeile({
             aussehen wie das PDF (lib/pdf.tsx), sonst ist sie keine Vorschau. */}
         {zeigeRechenweg && (
           <div className="text-[8px] text-[#666] mt-1 leading-relaxed">
-            {mitDeutschenZahlen(berechnungsweg) || 'Pauschale'}
+            {mitDeutschenZahlen(kundenRechenweg(berechnungsweg)) || 'Pauschale'}
           </div>
         )}
       </div>

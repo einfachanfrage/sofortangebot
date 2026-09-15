@@ -187,22 +187,51 @@ nachgezählt. Der nächste `git add -A` trägt die Löschung mit ein.
 
 ## Prüfmeister
 
-1. ✅ **K.1, K.2 und K.3 beantwortet.** Damit ist Eingriff 3 frei, zwei
-   gemeldete Funde sind zurückgenommen, und die Formulierung „über das Diktat
-   erreichbar" ist in Restliste und `vokabular-abgleich.md` T nachgezogen
-2. ✅ **Batch PM-064 bis PM-068 abgeliefert** — als CoS-E-062 bei Engineering,
-   von Sandy um 18:55 **vor** die Gewerke-Sperre gesetzt und damit freigegeben
-3. **Fallbasis: 68 von 100.** Nächste Themen laut Speicher: mehrere Aufnahmen
-   zu einem Angebot, Estrich, Fassade mit Gerüst vollständig, Möbel komplett
-   ausräumen, Deckenrosette und Sichtbalken
-4. **Mitlesen bei DC-107** — die dritte Frage (muss eine angenommene Menge auf
-   dem Kundenpapier auffallen?) ist eher eure als die des Designers
-5. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
-6. **Offen ohne App:** die 142 Vorlagen der gesperrten Gewerke, jeweils **vor**
-   der Freischaltung. Mit PM-068 ist klar, worauf zu achten ist: auf das Paar
-   aus Engine-Titel und Katalogzeile, nicht auf die Vorlage allein
-7. **Braucht die laufende App:** PM-002, PM-014/015, PM-030, PM-031, PM-032,
-   G.3 — unverändert seit dem 14.09.
+1. ✅ **Batch PM-069 bis PM-078 abgeliefert** — zehn Themen aus dem Speicher,
+   **17 grüne Prüfungen, 13 Sperrklinken**, jeder Fund mit einer Kontrolle
+   daneben. Neue Datei `src/lib/__tests__/pruefmeister-batch-69-77.test.ts`.
+   **Fallbasis: 78 von 100.** Die drei, die Geld bewegen:
+   **PM-072** (Estrich wird zu „Bodenbelag verlegen" ohne Preis, 560,00 €) ·
+   **PM-069** (Möbel ausräumen fehlt, 220,00 €; und „der Kunde räumt selbst"
+   erzeugt trotzdem Folie und Zuschlag — TN-037-Klasse) ·
+   **PM-075** (Wandnische im Bad, 95,00 €, Katalogzeile vorhanden).
+   Ausführlich in `pruefmeister-restliste.md`
+2. 🔴 **Einer davon gehört vor CoS-E-059, nicht danach: PM-077.** Eine
+   diktierte Arbeit (`Tapete entfernen`, 45,00 m², 4,00 €/m²) trägt
+   `automatisch_ergaenzt: true`. Wird Regel H Satz 3 gebaut, ohne diese Marke
+   vorher zu reparieren, verliert eine **ausdrücklich beauftragte** Arbeit
+   ihren Preis. Gehört in CoS-E-059 mit hinein
+3. ✅ **DC-107 Frage 3 beantwortet** — als **PD-015** in
+   `pruefmeister-notizen-fuer-designer.md`. Kurz: auf dem Kundenpapier soll
+   eine angenommene Menge **gar nicht** als Annahme erscheinen, sie muss vor
+   dem Versand auffallen. Dazu ein nachgesehener Nebenbefund für den Designer:
+   `annahmen` kommt absichtlich nicht ins Kunden-PDF, der `berechnungsweg` mit
+   „aus Aufnahme" **schon** — die sichere Zahl trägt beim Kunden ein
+   Herkunftsetikett, die geratene keins. Zu den beiden anderen Fragen steht
+   dort ein Fachhinweis („Aufmaß" ist am Bau ein belegtes Wort — eine Frage
+   für die Legal-Runde, keine Forderung von mir).
+   **Der Designer hat DC-107 noch am selben Abend gebaut**
+   (`rechenweg-kundentext.ts`, in `pdf.tsx` eingehängt). Gegengelesen: seine
+   Begründung ist besser als meine und stimmt. Zwei Punkte bleiben, beide in
+   PD-015: „(angenommen)" darf nur beim Kunden stehen, **wenn** den
+   Handwerker vorher etwas aufhält — und **PM-078**: „Erkannt, aber Menge
+   nicht sicher berechenbar — bitte manuell ergänzen" geht durch den neuen
+   Filter hindurch aufs Kundendokument
+4. ✅ **Neue Katalog-Richtung aufgemacht** — `vokabular-abgleich.md` **U**:
+   Katalogzeilen, nach denen kein Engine-Titel je fragt (fünf gemessen), plus
+   eine echte Katalog-Lücke: **Rollladenkasten streichen gibt es im Katalog
+   nicht** (PM-076). Das Abgleich-Skript kann diese Richtung nicht messen,
+   dafür braucht es Testfälle
+5. **Nächste Themen aus dem Speicher**, alle ohne App prüfbar: Erker und
+   Wandnische außerhalb des Bades, Bodenluke, elektrische Heizmatte, feuchter
+   Untergrund, runder Raum, Podest, Kleinauftrag mit Anfahrt, Kunde stellt
+   Material selbst. **„Mehrere Aufnahmen zu einem Angebot" bleibt draußen** —
+   das Zusammenführen passiert oberhalb der Pipeline, gehört in den Live-Lauf
+6. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
+
+**Für den nächsten Lauf, Ersatzumgebung:** `npm install vitest` bricht im
+Container mit `Cannot read properties of null (reading 'edgesOut')` ab —
+`--legacy-peer-deps` löst es. Kein Befund am Projekt.
 
 ## Legal
 

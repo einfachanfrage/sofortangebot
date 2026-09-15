@@ -1269,3 +1269,135 @@ Zwei Prüfungen stehen als `it.fails` — sobald ihr baut, werden sie rot und
 zwingen dazu, das `.fails` zu streichen. Dieselbe Bauart wie PM-013-A.
 
 *Prüfmeister · 2026-09-15*
+
+---
+
+## PD-015 — DC-107, dritte Frage: muss eine angenommene Menge auf dem Kundenpapier auffallen?
+
+Das ist die Frage aus DC-107, die eher meine ist als deine, also beantworte ich
+sie. **Kurz: nein — auf dem Kundenpapier soll eine angenommene Menge gar nicht
+als angenommen erscheinen. Auffallen muss sie vorher, auf dem Schirm des
+Handwerkers, solange er noch etwas ändern kann.**
+
+### Warum nicht beim Kunden
+
+Ein Angebot ist ein Preisversprechen, keine Arbeitsnotiz. Steht dort „4 Türen
+(angenommen)", passiert zweierlei, und beides ist schlecht für den Betrieb:
+Der Kunde liest, dass der Handwerker nicht nachgesehen hat — und er hat einen
+Anker, um über eine Menge zu verhandeln, die gar nicht strittig war. Manfred
+würde so ein Papier nicht rausschicken; er würde die Zahl vorher richtigstellen.
+
+Dazu die fachliche Seite: Eine Menge, die auf dem Angebot als Annahme
+gekennzeichnet ist, ist kein Aufmaß, sondern ein Vorbehalt. Wer so anbietet,
+verschiebt die Klärung in die Abrechnung — genau dahin, wo sie am teuersten
+ist. **Die Annahme gehört vor den Versand, nicht ins Dokument.**
+
+### Was der Code heute macht — und die Schieflage darin
+
+Beides ist nachgesehen, nicht vermutet:
+
+- Das Feld `annahmen` (z. B. `3 Zimmer → je 1 Tür angenommen`) kommt
+  **absichtlich nicht** bis ins Kunden-PDF. Das ist so gebaut und richtig so;
+  die Begründung steht als Kommentar in `pdf.tsx` (VOB-004 / Legal G5).
+- Der `berechnungsweg` kommt **schon** aufs Kundenpapier, wenn der Rechenweg
+  eingeschaltet ist (Standard). Und genau dort steht seit CoS-E-058 die
+  Quellenangabe: `4 Tür(en) aus Aufnahme`.
+
+**Die Schieflage:** Die Zeile mit der belegten Zahl trägt beim Kunden ein
+Herkunftsetikett, die Zeile mit der geratenen Zahl trägt keins — die Annahme
+ist ja ausgeblendet. Der Kunde sieht also ausgerechnet bei der **sichersten**
+Zahl einen Hinweis, dass hier etwas hergeleitet wurde, und bei der
+**unsichersten** nichts. Das ist genau verkehrt herum.
+
+### Mein Vorschlag, in drei Sätzen
+
+1. **Auf dem Kundenpapier: keine Herkunftsangabe.** Im Rechenweg steht
+   „4 Türen", nicht „4 Tür(en) aus Aufnahme" und auch nicht „aus Transkript".
+   Woher der Handwerker seine Mengen hat, ist eine Frage zwischen ihm und
+   seiner Aufnahme, nicht zwischen ihm und dem Kunden.
+2. **Auf dem Schirm des Handwerkers: deutlich, und zwar im Weg zum Versand.**
+   Dort ist die Herkunft nützlich — und dort ist eine angenommene Menge etwas,
+   das er antippen und überschreiben soll. Die Stelle dafür gibt es schon
+   (`versandbereit.ts`), die Vorschlag-Marke aus TN-057 auch.
+3. **Unterscheide drei Fälle, nicht zwei:** *gesagt* (steht so im Diktat) ·
+   *aus der Aufnahme* (er hat es gemessen, nur nicht in diesem Satz gesagt) ·
+   *angenommen* (niemand weiß es). Nur der dritte Fall muss ihn aufhalten. Der
+   zweite ist eine stille Fußnote für ihn, der erste braucht gar nichts.
+
+### Zu deinen beiden eigenen Fragen, nur als Fachhinweis
+
+**„aus Aufnahme" oder „aus Aufmaß"?** Nicht „Aufmaß". Das Wort ist am Bau
+belegt: Ein Aufmaß ist die Mengenermittlung, nach der abgerechnet wird, im
+VOB-Vertrag gemeinsam genommen und unterschrieben. Ein Diktat ins Handy ist
+das nicht. Wer es auf dem Kundenpapier so nennt, weckt eine Erwartung, die das
+Papier nicht hält. **„Aufnahme" ist harmlos und richtig** — nur versteht der
+Kunde es auch nicht, was der eigentliche Grund für Vorschlag 1 oben ist.
+
+**Ist „angenommen" der richtige Satz?** Für den Handwerker ja, das Wort
+benutzt er selbst. Beim Kunden hat es nichts verloren — siehe oben. Wenn dort
+doch je etwas stehen soll, dann nicht das Wort, sondern die Zahl, die stimmt.
+
+Nachgesehen in `src/lib/vollstaendigkeit/maler-lackieren.ts` (die beiden
+Zeilen aus CoS-E-058) und `src/lib/pdf.tsx`. Kein Test dazu — das ist eine
+Wortlaut- und Ablauffrage, keine Rechenfrage. Sobald der Wortlaut steht,
+hinterlege ich ihn als Fall.
+
+### Nachtrag, eine halbe Stunde später: du hast es gebaut
+
+`src/lib/rechenweg-kundentext.ts` und der Einhängepunkt in `pdf.tsx` waren da,
+als ich das oben geschrieben hatte. Ich lasse meinen Text stehen, wie er war,
+und setze die Antwort darunter — damit sichtbar bleibt, wo wir übereinstimmen
+und wo nicht.
+
+**Wo du recht hast, und zwar mehr als ich.** Deine Begründung, die Herkunft
+fallen zu lassen statt sie umzubenennen, ist besser als meine. Ich habe sie
+nachgesehen und sie stimmt: `maler-lackieren.ts` schreibt „aus Aufnahme", wenn
+im Satz **keine** Zahl stand, `aufnahme-hinweise.ts` schreibt dieselben zwei
+Wörter, wenn ausdrücklich **eine** dastand. Zwei Gegenteile, ein Wortlaut, auf
+demselben Blatt. Das ist ein härteres Argument als mein „der Kunde versteht es
+nicht", und der Filter an einer Stelle statt in 35 Templates ist die richtige
+Bauart.
+
+**Wo ich bei meiner Meinung bleibe: „(angenommen)" auf dem Kundenpapier.** Dein
+Argument, das sei keine Herkunft, sondern eine Einschränkung der Menge, ist
+richtig. Meins bleibt trotzdem: Der Kunde bekommt damit einen Anker, um über
+eine Menge zu verhandeln, die gar nicht strittig war, und liest, dass nicht
+nachgesehen wurde. **Beides ist vereinbar, wenn die andere Hälfte gebaut
+wird** — der Handwerker muss die angenommene Menge vor dem Versand zu sehen
+bekommen und antippen können. Solange ihn nichts aufhält, geht die Klammer
+raus, und dann ist sie schlechter als eine Zahl, die stimmt. **Kein
+Widerspruch zu deinem Bau, eine Bedingung dazu.**
+
+**Eine Frage, keine Forderung: „im Aufmaß".** `Transkript` → `Aufmaß` ist
+verständlicher, keine Frage. Nur ist „Aufmaß" am Bau ein belegtes Wort: die
+Mengenermittlung, nach der abgerechnet wird, im VOB-Vertrag gemeinsam genommen.
+Auf einem **Angebot** hat die noch gar nicht stattgefunden. „Altbau im Aufmaß
+erkannt" kann gelesen werden als: da war jemand und hat gemessen. Dass die App
+den Vorgang selbst „Aufmaß" nennt, ist ein gutes Gegenargument — dann ist das
+Wort im Produkt schon gesetzt und die Uneinheitlichkeit wäre schlimmer.
+**Ich entscheide das nicht, ich melde es:** Das ist eine Wortlautfrage fürs
+Kundendokument, und dafür gibt es die Runde mit Legal (LR-16).
+
+### Und ein Fund, den der Filter nicht sieht — PM-078
+
+Zwei `berechnungsweg`-Texte erreichen das Kundenpapier, die keine
+Rechnung sind und kein „Transkript" enthalten, also durch den neuen Filter
+unverändert durchgehen:
+
+1. **„Erkannt, aber Menge nicht sicher berechenbar — bitte manuell
+   ergänzen"** — wörtlich so in `chips-vervollstaendigung.ts` und
+   `mengen/mehrgewerk.ts`, beide als `berechnungsweg`, nicht als `annahmen`.
+   Der Kunde liest auf dem Angebot eine Arbeitsanweisung an den Betrieb.
+   Genau die Sorte Text, die CoS-E-005 mit dem `annahmen`-Array vom Papier
+   genommen hat.
+2. **„Umfang ≈ 4 × √20 m² = 18 lfdm"** — aus `boden-vorarbeiten.ts` und
+   `maler-extras.ts`. Der Kunde sieht eine Wurzel und erfährt, dass sein Raum
+   als Quadrat angenommen wurde; die dazugehörige Annahme bleibt unsichtbar,
+   sie steht in `annahmen`. Entweder die Annahme wird sichtbar oder der
+   Schätzweg verschwindet — beides zugleich ist die schlechteste Fassung.
+
+Hinterlegt als **PM-078 A/B** in
+`src/lib/__tests__/pruefmeister-batch-69-77.test.ts`, mit einer grünen
+Kontrolle, die bestätigt, dass dein Filter tut, was er soll.
+
+*Prüfmeister · 2026-09-15, nachts*

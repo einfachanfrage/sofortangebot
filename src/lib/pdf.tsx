@@ -11,6 +11,7 @@ import {
 import { effektiveOptionen, skontoText, gueltigBis, DOKUMENT_TYP_LABEL } from './angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './mengen/gewerke/vob-uebermessung'
 import { mitDeutschenZahlen } from './zahlen-text'
+import { kundenRechenweg } from './rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from './kleinbetraege'
 
 // ── Marken-Schriften (CI-Handbuch, DC-049 "PDF-Schritt", 2026-09-10) ────────
@@ -471,7 +472,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                     <Text style={S.uebermessungText}>{mitDeutschenZahlen(hinweisJeItem.get(item.id))} ¹</Text>
                   )}
                   {rechenwegSichtbar && (
-                    <Text style={S.rechenwegText}>{mitDeutschenZahlen(rechenwegJeItem.get(item.id)?.berechnungsweg) || 'Pauschale'}</Text>
+                    <Text style={S.rechenwegText}>{mitDeutschenZahlen(kundenRechenweg(rechenwegJeItem.get(item.id)?.berechnungsweg)) || 'Pauschale'}</Text>
                   )}
                 </View>
                 <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(item.quantity)}</Text>
@@ -506,7 +507,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                       <Text style={S.uebermessungText}>{mitDeutschenZahlen(hinweisJeItem.get(gi.id))} ¹</Text>
                     )}
                     {rechenwegSichtbar && (
-                      <Text style={S.rechenwegText}>{mitDeutschenZahlen(rechenwegJeItem.get(gi.id)?.berechnungsweg) || 'Pauschale'}</Text>
+                      <Text style={S.rechenwegText}>{mitDeutschenZahlen(kundenRechenweg(rechenwegJeItem.get(gi.id)?.berechnungsweg)) || 'Pauschale'}</Text>
                     )}
                   </View>
                   <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(gi.quantity)}</Text>

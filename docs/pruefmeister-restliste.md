@@ -1,10 +1,10 @@
-# Restliste Prüfmeister — Stand 15.09.2026, spät abends
+# Restliste Prüfmeister — Stand 15.09.2026, nachts
 
-**Diese Datei ersetzt die Fassung vom Live-Lauf** und führt sie fort: Der
-Live-Teil unten steht unverändert, dahinter steht, was der stündliche Lauf
-danach gemacht hat (K.1/K.2/K.3, Batch PM-064 bis PM-068). Was dort offen stand, ist
-unten weitergeführt oder als erledigt eingetragen. Die Datei wird immer
-ersetzt, nie ergänzt.
+**Diese Datei ersetzt die Fassung von 19:00** und führt sie fort: Der
+Live-Teil unten steht unverändert, dahinter steht, was die Läufe danach
+gemacht haben (K.1/K.2/K.3, Batch PM-064 bis PM-068, und neu der Batch
+PM-069 bis PM-078). Was dort offen stand, ist unten weitergeführt oder als
+erledigt eingetragen. Die Datei wird immer ersetzt, nie ergänzt.
 
 ---
 
@@ -579,6 +579,134 @@ widersprechen dem nicht.
 
 ---
 
+## Neu: Batch PM-069 bis PM-078 — neun Themen aus dem Speicher
+
+Der Batch räumt die Spalte „offen" im Themenspeicher weiter ab: **Möbel
+komplett ausräumen (B), Deckenrosette und Sichtbalken (A), Estrich (F),
+Fassade mit Gerüst vollständig (F), Kaminsockel (A), Wandnische im Bad (A),
+Rollladenkästen (A), alte Tapete (B).** Gefahren in der Ersatzumgebung über
+die Pipeline, PM-075 über Engine + Vollständigkeit direkt (Fliesen liest
+`bereiche`, nicht `raeume`).
+
+**Neu an diesem Batch: zu jedem Fund steht eine Kontrolle daneben** — derselbe
+Satz ohne das fragliche Wort. Ohne Kontrolle ist ein Fund eine Behauptung.
+Gelaufen: **17 grüne Prüfungen, 13 Sperrklinken** in
+`src/lib/__tests__/pruefmeister-batch-69-77.test.ts`. PM-078 ist noch am
+selben Abend dazugekommen — siehe unten.
+
+### PM-072 — der Estrich · der schwerste Fund
+
+„Keller fünf mal vier. **Zementestrich schwimmend einbauen, sechzig
+Millimeter.**" ergibt **eine** Position: `Bodenbelag verlegen inkl. 5%
+Verschnitt — Keller`, 21,00 m², **ohne Preis**.
+
+Zwei Fehler in einer Zeile. Der Estrich, der beauftragt ist, fehlt — der
+Katalog führt ihn (`Zementestrich schwimmend (CT-C25-F4, 60mm)`, 28,00 €/m²,
+20,00 m² = **560,00 €**). Und der Bodenbelag, der dasteht, ist nie genannt
+worden; er trägt 0,00 €. Das Angebot behauptet also eine Arbeit und lässt die
+bestellte weg. Regel H Satz 1 und Satz 3 in einer Zeile.
+
+### PM-069 — Möbel: die gesagte Arbeit fehlt, die ungesagte kommt
+
+„Die Möbel müssen wir **komplett ausräumen** und hinterher wieder
+reinstellen." erzeugt einzig `Möbel abdecken mit Folie`, 20,00 m² = 30,00 €.
+Der Katalog hat beide gesuchten Zeilen seit jeher — `Möbel rücken / ausräumen`
+und `Möbel zurückrücken`, je 55,00 €/Std. Bei zwei Mann, zwei Stunden je
+Richtung fehlen **220,00 €**.
+
+Die Gegenrichtung im selben Fall: „Die Möbel räumt **der Kunde selbst** raus."
+erzeugt trotzdem `Möbel abdecken mit Folie` **und**
+`Erschwerniszuschlag bewohnt`. Das ist die TN-037-Klasse (Regel H Satz 2,
+ausdrücklich abbedungen → nie eine Position), an einem frischen Wortlaut
+bestätigt.
+
+### PM-074 — ein Maß im Nebensatz baut eine fremde Position
+
+„In der Ecke steht ein Kaminsockel, **ein mal ein Meter**, da muss ausgespart
+werden." erzeugt `Sockelleisten montieren — Wohnzimmer`, **1,00 lfdm**,
+5,50 €. Niemand hat Sockelleisten bestellt.
+
+**Beide Kontrollen sitzen:** derselbe Satz ohne die Maßangabe erzeugt keine
+Sockelleistenzeile, und wirklich bestellte Sockelleisten kommen mit dem
+Raumumfang, 18,00 lfdm. Es ist also das Maß aus dem Nebensatz, das zur Menge
+einer fremden Position wird. Kleines Geld, großer Mechanismus — jede
+Maßangabe in einem Nebensatz kann so eine Zeile bauen. Die Aussparung selbst
+wird nicht abgezogen (21,00 m², als stünde der Kamin nicht da).
+
+### PM-077 — die diktierte Arbeit trägt die Marke „automatisch ergänzt"
+
+`Tapete entfernen` entsteht richtig: 45,00 m² Wandfläche, 4,00 €/m², und die
+Kontrolle zeigt, dass die Zeile ohne den Satz **nicht** entsteht — sie ist
+gesagt, nicht geraten. Trotzdem trägt sie `automatisch_ergaenzt: true`.
+
+**Warum das jetzt zählt:** Nach Regel H Satz 3 soll eine so markierte Position
+künftig ohne Menge und Preis kommen und angetippt werden müssen. Wird das
+gebaut, ohne diese Marke vorher zu reparieren, verliert eine ausdrücklich
+beauftragte Arbeit ihren Preis — **180,00 €** in diesem Fall. **Das gehört vor
+CoS-E-059 auf den Tisch, nicht danach.**
+
+### PM-070, PM-071, PM-075 — gesagt, im Katalog vorhanden, trotzdem keine Zeile
+
+| Fall | Gesagt | Katalogzeile, die es gäbe | Heute |
+|---|---|---|---|
+| PM-070 | „in der Mitte ist eine **Deckenrosette**, die muss mit gestrichen werden" | `Stuckrosette abkleben` 12,00 €/St · `Deckenrosette montieren` 55,00 €/St | nichts |
+| PM-071 | „die Decke hat **Sichtbalken**, acht Stück, die werden lasiert" | `Holzdecke / Paneele lasieren` 14,00 €/m² · `Holzbalken anschleifen` 8,00 €/lfdm | nichts |
+| PM-075 | „in der Dusche kommt eine **Wandnische** rein, die wird mit gefliest" | `Nische / Wandnische fliesen` **95,00 €/St** | nichts |
+
+Bei PM-075 ist die Kontrolle besonders deutlich: Mit und ohne Nischensatz
+stehen **dieselben sieben Positionen** da, Zeile für Zeile identisch.
+
+### PM-076 — hier ist der Code unschuldig
+
+„Die **Rollladenkästen** werden mit gestrichen" erzeugt nichts — aber der
+Katalog hat für das Streichen eines Rollladenkastens **keine Zeile**. Er kennt
+nur Einbau, Motorisierung und Reparatur (`Fenster – Rollladen &
+Sonnenschutz`). Der Fund gehört damit in den Katalog, nicht in die
+Code-Restliste. Steht in `vokabular-abgleich.md` U.
+
+### PM-078 — Nachtrag: DC-107 ist gebaut, zwei Sätze bleiben stehen
+
+Der Designer hat `rechenweg-kundentext.ts` gebaut und in `pdf.tsx` eingehängt,
+während dieser Batch entstand: Die Herkunftsnotiz fällt auf dem Kundenpapier
+weg. Nachgesehen, die Begründung stimmt — „aus Aufnahme" heißt in
+`maler-lackieren.ts` und `aufnahme-hinweise.ts` heute Gegenteiliges.
+
+Was der Filter nicht sieht, weil kein „Transkript" darin vorkommt:
+**„Erkannt, aber Menge nicht sicher berechenbar — bitte manuell ergänzen"**
+(wörtlich in `chips-vervollstaendigung.ts` und `mengen/mehrgewerk.ts`, beide
+als `berechnungsweg`) geht unverändert aufs Kundendokument. Dazu der
+Schätzweg `Umfang ≈ 4 × √20 m² = 18 lfdm`. Ausführlich mit meiner Antwort zu
+DC-107 in `pruefmeister-notizen-fuer-designer.md` **PD-015**.
+
+### PM-073 — die Kontrolle, und sie hält
+
+Fassade zwölf mal acht, sechs Fenster, Gerüst: **96,00 m²** Fassadenfläche,
+die Fenster mit je 1,68 m² zu Recht **nicht** abgezogen (unter 2,5 m²,
+DIN 18363 / VOB C), `Gerüst stellen und abbauen` als eigene Position mit
+450,00 €. Steht als Kontrolle, damit ein späterer Umbau am Öffnungsabzug die
+Fassade nicht unbemerkt mitnimmt.
+
+### Was dieser Batch ausdrücklich nicht behauptet
+
+Gemessen ist je Fall **ein** Betrag, nicht seine Häufigkeit. Keiner dieser
+Beträge steht damit nachgewiesen auf einem verschickten Angebot. Was der
+KI-Schritt vor der Pipeline aus den Sätzen macht, ist ebenfalls nicht
+Gegenstand — geprüft ist ab `verarbeiteExtraktion`.
+
+### Stand der Ersatzumgebung nach diesem Lauf
+
+Shell-Zugang zum Ordner weiterhin blockiert (Windows-Update vom 08.09.).
+Umgebung neu aufgebaut: Quellen gestagt, `vitest 4.1.9` im Container.
+**Neu und für den nächsten Lauf wichtig:** `npm install vitest` bricht hier
+mit `Cannot read properties of null (reading 'edgesOut')` ab (npm 10.9.7 an
+den Peer-Angaben von vitest 4). **`--legacy-peer-deps` löst es.** Kein Befund
+am Projekt, eine Eigenheit der Ersatzumgebung.
+
+Der Batch PM-064 bis PM-068 wurde vor dem neuen Batch noch einmal gefahren und
+kommt unverändert heraus: 4 grün, 15 Sperrklinken.
+
+---
+
 ## Offen
 
 ### Braucht die laufende App (Spur 6)
@@ -603,10 +731,18 @@ widersprechen dem nicht.
     Freischaltung, nicht danach. Mit PM-068 ist klar, worauf zu achten ist:
     nicht auf die Vorlage allein, sondern auf das Paar aus Engine-Titel und
     Katalogzeile.
-11. **Fallbasis Richtung 100** — Stand **68 von 100** (63 + PM-064 bis PM-068).
-    Nächste Themen aus dem Speicher: mehrere Aufnahmen zu einem Angebot (E),
-    Estrich (F), Fassade mit Gerüst vollständig (F), Möbel komplett ausräumen
-    (B), Deckenrosette und Sichtbalken (A).
+11. **Fallbasis Richtung 100** — Stand **78 von 100** (68 + PM-069 bis
+    PM-078). Nächste Themen aus dem Speicher, alle ohne App prüfbar: Erker
+    und Wandnische außerhalb des Bades (A), Bodenluke / Revisionsklappe (A),
+    elektrische Heizmatte und feuchter Untergrund (C), runder Raum und Podest
+    (D), Kleinauftrag mit Anfahrt und Mindestmenge (G), Kunde stellt Material
+    selbst (G). **Mehrere Aufnahmen zu einem Angebot (E) bleibt draußen** —
+    das Zusammenführen passiert oberhalb der Pipeline, ein Test von hier aus
+    würde etwas anderes prüfen als das, was er behauptet. Gehört in den
+    Live-Lauf.
+12. **PM-077 vor CoS-E-059.** Solange eine diktierte Arbeit
+    `automatisch_ergaenzt: true` trägt, nimmt ihr der geplante Umbau nach
+    Regel H Satz 3 den Preis weg. Die Marke muss vorher stimmen.
 
 ### Erledigt und damit von der Liste
 
@@ -623,6 +759,6 @@ Gehört in den Live-Lauf.
 
 ---
 
-*Prüfmeister · 15.09.2026 spät abends · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
+*Prüfmeister · 15.09.2026 nachts · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

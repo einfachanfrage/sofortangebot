@@ -2068,4 +2068,46 @@ ist er **vor** der Freischaltung, nicht danach.
 
 *Prüfmeister · 15.09.2026 abends*
 
+## U. Die Gegenrichtung: Katalogzeilen, nach denen keine Engine je fragt (Prüfmeister, 15.09.2026, nachts)
+
+Alles bisher in dieser Datei misst **eine** Richtung: Engine-Titel, die keinen
+Katalogpreis finden. Der Batch PM-069 bis PM-077 hat die andere Richtung
+aufgemacht, und sie kostet genauso Geld: **Katalogzeilen, die es gibt, die
+aber kein Engine-Titel je anspricht.** Ein Preis, den niemand abruft, ist so
+gut wie keiner.
+
+Fünf davon in diesem Batch gemessen, jeweils mit einem Satz, in dem die Arbeit
+ausdrücklich beauftragt ist:
+
+| Gesagter Satz | Katalogzeile, die da wäre | Preis | Entsteht heute |
+|---|---|---|---|
+| „die Möbel komplett ausräumen und wieder reinstellen" | `Möbel rücken / ausräumen` · `Möbel zurückrücken` | je 55,00 €/Std | nur `Möbel abdecken mit Folie` |
+| „in der Mitte ist eine Deckenrosette" | `Stuckrosette abkleben` · `Deckenrosette montieren` | 12,00 € · 55,00 €/St | nichts |
+| „die Decke hat Sichtbalken, die werden lasiert" | `Holzdecke / Paneele lasieren` · `Holzbalken anschleifen` | 14,00 €/m² · 8,00 €/lfdm | nichts |
+| „Zementestrich schwimmend einbauen, sechzig Millimeter" | `Zementestrich schwimmend (CT-C25-F4, 60mm)` | 28,00 €/m² | `Bodenbelag verlegen`, ohne Preis |
+| „in der Dusche kommt eine Wandnische rein, die wird mit gefliest" | `Nische / Wandnische fliesen` | 95,00 €/St | nichts |
+
+**Was das für den Abgleich heißt:** Der Zähler „Engine-Titel ohne Preis" kann
+auf 0 stehen und der Katalog trotzdem zur Hälfte ungenutzt sein. Die Lücke
+sitzt dann nicht zwischen zwei Wörtern, sondern davor — es gibt gar kein Wort
+auf der Engine-Seite. **Das Skript kann diese Richtung nicht messen**, weil es
+von den Engine-Titeln ausgeht; es braucht einen Satz, der die Arbeit
+beauftragt, also einen Testfall. Genau so sind die fünf oben entstanden.
+
+### Und eine echte Lücke im Katalog selbst
+
+**Rollladenkasten streichen gibt es nicht.** Der Katalog kennt unter
+`Fenster – Rollladen & Sonnenschutz` nur Einbau (380,00 € / 580,00 €),
+Motorisierung, Smart-Home-Zuschlag und Reparatur — keine Zeile fürs Streichen
+oder Lackieren. Beim Renovierungsanstrich einer Altbauwohnung mit
+Aufsatzkästen ist das eine Arbeit, die anfällt und die jeder Maler abrechnet.
+Hier hilft keine Engine: **die Zeile fehlt und muss angelegt werden.**
+
+Der Prüfstand dafür steht als Katalogprüfung, nicht als Textbehauptung:
+`pruefmeister-batch-69-77.test.ts`, PM-076-A — sie zählt die Treffer und
+erwartet heute 0. Kommt die Zeile in den Katalog, wird sie rot und muss
+umgestellt werden.
+
+*Prüfmeister · 15.09.2026 nachts*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

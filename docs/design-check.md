@@ -8337,4 +8337,164 @@ von Sandy.
 *Chief of Staff · 2026-09-15*
 
 
+---
+
+## DC-107 ✅ — der Rechenweg nennt dem Kunden keine Herkunft mehr (15.09.2026)
+
+**Gebaut, noch nicht committet** (Shell auf dem Gerät weiter tot, Commit von
+Sandy). Die Frage kam mit drei Punkten. Zwei davon beantworte ich anders, als
+sie gestellt waren — beim Nachsehen im Quelltext hält die Voraussetzung nicht.
+
+### Punkt 1 — „aus Aufnahme" oder „aus Aufmaß"? Weder noch. Die Zeile fällt weg.
+
+Zwei Funde, jeder für sich reicht:
+
+**a) „Transkript" darf laut eigener Entscheidung gar nicht auf dem
+Kundenpapier stehen.** CoS-E-005/CoS-E-009 (Manfred, 11.09.) hat das komplette
+`annahmen`-Array vom PDF genommen. Die Begründung steht wörtlich im Quelltext
+von `pdf.tsx`: der Kunde las „Arbeitsanweisungen an den Betrieb und **das
+interne Wort ‚Transkript'** auf seinem Angebot". Es gibt sogar einen Test, der
+genau das festhält (`cos-e-batch1-kundenpapier.test.ts`:
+`expect(roh).not.toContain('Transkript')`).
+
+Der Rechenweg läuft über einen zweiten Weg (`rechenwegJeItem`) und ist bei der
+Aufräumaktion durchgerutscht. Nachgezählt: **„Transkript" steht in 32
+Rechenweg-Zeilen in acht Dateien**, dazu in drei weiteren über Variablen
+(`tuerQuelle`, `fensterQuelle`, der Heizkörper-`zusatz`). Nicht zwei Zeilen —
+fünfunddreißig, und alle auf dem Papier, das der Kunde bekommt. Die zwei aus
+CoS-E-058 sind die zwei, die jemandem aufgefallen sind.
+
+**b) Die Herkunftsnotiz ist inhaltlich unzuverlässig.** Dieselben zwei Wörter
+bedeuten heute im Quelltext das Gegenteil voneinander:
+
+| Datei | „aus Aufnahme" heißt dort |
+|---|---|
+| `vollstaendigkeit/maler-lackieren.ts` | im Satz stand **keine** Zahl, sie kommt aus dem Raumbestand (`raeume[].tueren`) |
+| `mengen/aufnahme-hinweise.ts` (6 Stellen) | es stand **ausdrücklich** eine Zahl da (`expliziteSockelMenge`, `stueckTreffer`) |
+
+Eine Angabe, die auf demselben Blatt zweierlei heißen kann, ist auf einem
+Dokument, dem der Kunde vertrauen soll, schlechter als keine. Ein neues Wort
+zu suchen, hätte den Widerspruch nur umbenannt.
+
+**Was der Kunde stattdessen braucht:** die Rechnung. Der Rechenweg ist laut
+CI-Handbuch (S. 19) sein Beweisstück, damit er nachrechnen kann — „46,64 m² ×
+12,50 €/m²". *Woher* die Engine die Zahl hat, ist eine Notiz an den Betrieb,
+keine Aussage an den Kunden. `4 Türen` sagt ihm alles, was `4 Türen aus
+Transkript` ihm sagt, und nichts weniger.
+
+### Punkt 2 — „angenommen" bleibt. Es ist keine Herkunft.
+
+„Angenommen" sagt nicht, woher die Zahl kommt, sondern **dass niemand sie
+genannt hat und die App sie gesetzt hat**. Das ist eine Einschränkung der
+Menge selbst, und die schuldet man dem Kunden. Sie bleibt stehen und bekommt
+eine Klammer, damit sie als Zusatz zur Menge gelesen wird und nicht als Teil
+der Rechnung: `1 Fenster (angenommen)`.
+
+Damit ist es auf dem Kundenpapier künftig **die einzige** Herkunftsangabe —
+und genau deshalb fällt sie auf. Vorher ging sie neben 35 nichtssagenden
+„aus Transkript" unter.
+
+### Punkt 3 — muss eine angenommene Menge stärker auffallen? 🔵 an den Prüfmeister
+
+Meine Position, kein Beschluss: **für den Moment reicht die Klammer**, weil
+sie jetzt allein dasteht. Zwei Dinge gehören aber dazugesagt, und beide sind
+fachlich, nicht gestalterisch:
+
+1. **Die stillen Geschwister.** Bei den Türen trägt nur die erste der fünf
+   Zeilen die Herkunft. „Türen grundieren", „Türen lackieren", „Türzarge
+   lackieren", „Türrahmen abkleben" stehen mit derselben angenommenen Menge
+   und **ohne jeden Hinweis** auf dem Papier — jede davon einzeln bepreist.
+   Der Hinweis auf Zeile 1 deckt sie nicht ab; der Kunde liest fünf Zeilen.
+2. **Türen kennen den Fall heute gar nicht.** `tuerQuelle` ist zweiwertig
+   (`aus Aufnahme` / `aus Transkript`) — sagt niemand eine Zahl, steht dort
+   `aus Transkript`, obwohl im Transkript nichts stand. Das ist dieselbe
+   Unwahrheit, die Engineering bei den Fenstern beseitigt hat; bei den Türen
+   ist sie geblieben. **Mit meiner Änderung fällt die falsche Zeile weg** —
+   aber „(angenommen)" erscheint dort auch nicht, weil die Engine den Fall
+   nicht unterscheidet. Das ist Engineering-Arbeit, nicht Wortlaut; siehe
+   „An Head of Product Engineering" unten.
+
+Solange beides offen ist, würde ich an der Darstellung nichts verstärken —
+sonst steht ein starkes Kennzeichen auf einer von fünf Zeilen und suggeriert,
+die anderen vier seien gemessen.
+
+### Gebaut
+
+**Neu: `src/lib/rechenweg-kundentext.ts`** mit `kundenRechenweg(text)`. Vier
+Regeln, in dieser Reihenfolge:
+
+| Eingang (echte Engine-Vorlage) | Kundenpapier |
+|---|---|
+| `4 Tür(en) aus Transkript` | `4 Tür(en)` |
+| `4 Tür(en) aus Aufnahme` | `4 Tür(en)` |
+| `8 m² aus Transkript (Schimmelbereich)` | `8 m² (Schimmelbereich)` |
+| `Altbau im Transkript erkannt` | `Altbau im Aufmaß erkannt` |
+| `1 Fenster angenommen` | `1 Fenster (angenommen)` |
+| `46,64 m² × 12,50 €/m² = 583,00 €` | unverändert |
+
+Bei den Fließtext-Formen („… im Transkript erkannt/erwähnt/stand …") trägt das
+Wort den Satz — dort wird es ersetzt statt gestrichen. **„Aufmaß"** ist dafür
+das richtige Wort: es steht schon heute auf dem Kunden-PDF („Aufmaß in
+Anlehnung an VOB/C", Übermessungs-Fußnote) und es ist das Wort, das auch der
+Handwerker in der App sieht („Aufmaß starten", „Fotos vom Aufmaß"). „Aufnahme"
+heißt in der App die **einzelne Sprachaufnahme** — davon kann es mehrere zu
+einem Aufmaß geben (`entwurf/page.tsx`: „Die Aufnahmen sind gespeichert").
+Engineering hatte das engere der beiden Wörter genommen.
+
+**Angewendet in `pdf.tsx` (beide Renderpfade) und `AngebotVorschau.tsx`** —
+dort, wo schon `mitDeutschenZahlen` sitzt, und in derselben Reihenfolge
+geschachtelt.
+
+**Warum an der Ausgabe und nicht in den Engines.** Wörtlich derselbe Grund wie
+bei DC-055 Teil 2: es wären ~35 Template-Strings in acht Rechen-Dateien, jede
+neue Engine müsste daran denken, und ich hätte Berechnungscode angefasst, um
+einen Darstellungsfehler zu beheben. An einer Stelle am Ausgang gilt es für
+alle Gewerke — auch für die, die es noch nicht gibt — und keine einzige
+Berechnung wird berührt. **Die Menge ändert sich an keiner Stelle.**
+Zusätzlich fasse ich damit `maler-lackieren.ts` nicht an, während CoS-E-058 /
+CoS-E-059 / CoS-E-062 dort noch laufen.
+
+**Die App bleibt, wie sie ist.** In `AngebotDetail.tsx` prüft der Betrieb
+seine eigene Kalkulation; dort ist die Herkunft nützlich. Dieselbe Trennlinie
+wie bei DC-055 Teil 1 (Monospace in der App, Dokumentschrift auf dem Papier):
+zwei Leser, zwei Anforderungen. `AngebotVorschau.tsx` ist die Vorschau AUF das
+PDF und wechselt mit — sonst ist sie keine.
+
+### An Head of Product Engineering — zwei Zeilen, kein Auftrag von mir
+
+1. **`maler-lackieren.ts` Z. 48:** `tuerQuelle` braucht denselben dritten Fall
+   wie `fensterQuelle` (Z. 92). Ohne ihn kann die Engine „angenommen" bei
+   Türen nie melden, und Punkt 3 oben bleibt unentscheidbar.
+2. **Das Vokabular selbst:** „aus Aufnahme" bedeutet in `maler-lackieren.ts`
+   und in `aufnahme-hinweise.ts` Gegenteiliges. Auf dem Kundenpapier ist das
+   ab jetzt egal, in der App nicht. Gehört meines Erachtens zu CoS-E-063 oder
+   in den Themenspeicher, nicht in DC-107.
+
+### Verifikation
+
+`tsc`/`vitest` ohne Shell nicht ausführbar (Windows-Update vom 08.09.).
+Geprüft:
+
+* **Syntax** aller vier Dateien über den TypeScript-Parser (5.6.3) — sauber.
+* **Die Funktion selbst ausgeführt**, gegen 20 Fälle, alle aus echten
+  Engine-Vorlagen gezogen: alle richtig, alle **idempotent** (zweimal
+  angewendet ändert sich nichts), `null`/`undefined`/`''` → `''` (damit greift
+  wie bisher der Fallback „Pauschale").
+* **Bestandstests gegengelesen**, die den Rechenweg rendern:
+  `pdf-rechenweg-render.test.ts` (`46,64 m² × 12,50 €/m² = 583,00 €`),
+  `dc050-rechenweg-pdf.test.ts` (`Umfang 18 lfm × 2,5 m = 45 m²`),
+  `cos-e-batch1-kundenpapier.test.ts` (`Umfang 20 lfm × 2.5 m = 50 m²`) —
+  **keiner** dieser Rechenwege wird von der Funktion verändert. Der Test
+  `not.toContain('Transkript')` in `cos-e-batch1` wird durch die Änderung
+  nicht gebrochen, sondern erstmals belastbar.
+* **Neu: `src/lib/__tests__/dc107-rechenweg-kundentext.test.ts`**, 18 Fälle
+  mit 20 Zusicherungen.
+* **Vollständiger Typcheck und Live-Test stehen aus.**
+
+Status DC-107: Punkt 1 + 2 ✅ entschieden und gebaut (🟡 bis Typcheck und
+Live-Test). Punkt 3 🔵 beim Prüfmeister, mit meiner Position oben.
+
+*Product Designer · 2026-09-15*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

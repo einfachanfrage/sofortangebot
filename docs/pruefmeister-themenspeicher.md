@@ -10,8 +10,9 @@ Fenstern und Türen — die Welt, die das Datenmodell ohnehin kann. Alles, was *
 einem Raum steht, kam nicht vor. Diese Liste ist die Gegenprobe: sie wird nicht
 aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
-**Zielgröße:** 100 Fälle. Stand 15.09.2026, spät abends: **68**
-(46 + PM-047 bis PM-056 + PM-057 bis PM-063 + PM-064 bis PM-068).
+**Zielgröße:** 100 Fälle. Stand 15.09.2026, nachts: **78**
+(46 + PM-047 bis PM-056 + PM-057 bis PM-063 + PM-064 bis PM-068
++ PM-069 bis PM-078).
 
 ---
 
@@ -25,15 +26,15 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Heizkörper bleibt ausdrücklich — darf keine Position werden | **PM-043** |
 | Heizungsrohre / Rohrleitungen lackieren | **PM-044** |
 | Stuckprofil umlaufend, Altbau | **PM-039** |
-| Deckenrosette | offen |
-| Sichtbalken / Balkendecke, Altbau | offen |
+| Deckenrosette | **PM-070** 🔴 — gesagt, keine Zeile; Katalog hätte zwei |
+| Sichtbalken / Balkendecke, Altbau | **PM-071** 🔴 — gesagt, keine Zeile |
 | Einbauküche bleibt stehen, wird abgeklebt | **PM-041** |
-| Einbauschrank vor der Wand | offen |
-| Kamin / Kaminsockel im Raum (Boden: Aussparung) | offen |
-| Wandnische im Bad, gefliest (eigene Katalogzeile, 95,00 €/Stück) | offen |
+| Einbauschrank vor der Wand | gemessen, ohne Fund: keine Zeile, keine Rückfrage, Wandfläche unverändert. Gehört zu PM-041 |
+| Kamin / Kaminsockel im Raum (Boden: Aussparung) | **PM-074** 🔴 — Nebensatzmaß baut eine Sockelleistenzeile |
+| Wandnische im Bad, gefliest (eigene Katalogzeile, 95,00 €/Stück) | **PM-075** 🔴 — Nischensatz ändert nichts |
 | Erker (Zusatzfläche über 2,5 m²) | offen |
 | Wandnische / Regalnische | offen |
-| Rollladenkästen | offen |
+| Rollladenkästen | **PM-076** 🔴 — **Katalog-Lücke**, nicht Code |
 | Bodenluke, Bodentank, Revisionsklappe | offen |
 
 ## B — Zustand der Baustelle *(bewohnt, belegt, dreckig)*
@@ -41,13 +42,13 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Thema | Stand |
 |---|---|
 | Bewohnte Wohnung, Möbel rücken und abdecken (Besondere Leistung, DIN 18363 4.2) | **PM-039** |
-| Möbel komplett ausräumen und zurückräumen | offen |
+| Möbel komplett ausräumen und zurückräumen | **PM-069** 🔴 — beide Katalogzeilen da, keine kommt |
 | Küche/Bad im Betrieb, nur abkleben | **PM-041** |
 | Bodenbelag bleibt und muss geschützt werden vs. Boden wird neu (dann **kein** Abdecken) | **PM-038** |
 | Fliesenspiegel wird ausgespart | **PM-041** |
 | Schimmelbefall, Behandlung vor Anstrich | **PM-043** |
 | Nikotin-/Rußbelastung, Sperrgrund nötig | **PM-046** (fünf Funde) + **PM-064** — Auslöser am Wortstamm |
-| Alte Tapete muss runter, Zustand unbekannt | offen |
+| Alte Tapete muss runter, Zustand unbekannt | **PM-077** — Zeile stimmt, trägt aber `automatisch_ergaenzt` |
 | Baustelle bewohnt → Staubschutzwand, Abendreinigung | offen |
 
 ## C — Haustechnik unter dem Belag
@@ -79,7 +80,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Selbstkorrektur mitten im Satz („nee warte, doch drei Meter") | teilweise PM-001, eigener Fall offen |
 | Zahlwörter, Dialekt, „zwo", „einskommafünf" — **bei den Maßen** | PM-034, PM-035 ✅ |
 | Zahlwörter bei **Stückzahlen** („vier Türen", „zwei Fenster") — anderer Codeweg, war nie geprüft | **PM-045-B** 🔴 |
-| Mehrere Aufnahmen zu einem Angebot | teilweise, eigener Fall offen |
+| Mehrere Aufnahmen zu einem Angebot | offen — **gehört in den Live-Lauf**: das Zusammenführen passiert oberhalb der Pipeline |
 | Kunde redet im Hintergrund dazwischen | offen |
 | Unterbrechung, Aufnahme bricht ab und wird fortgesetzt | offen |
 | Handwerker nennt Preise selbst („das mach ich für 12 den Meter") | offen |
@@ -96,8 +97,8 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Türen, Zargen, Fenster lackieren | **PM-045** — drei Funde, siehe Restliste |
 | Trockenbau: Wand stellen, Decke abhängen | **PM-068** 🔴 — ganzes Gewerk ohne Preis |
 | Abbruch und Entsorgung, Container | **PM-067** 🔴 — bestellter Container fehlt |
-| Estrich | offen |
-| Fassade mit Gerüst | teilweise PM-008, PM-031 |
+| Estrich | **PM-072** 🔴 — wird zur Belagszeile ohne Preis |
+| Fassade mit Gerüst | **PM-073** ✅ — Fläche, Öffnungsabzug und Gerüst stimmen |
 
 ## G — Kaufmännisches und Vertragliches
 
