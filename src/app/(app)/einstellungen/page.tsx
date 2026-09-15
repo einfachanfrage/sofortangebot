@@ -55,6 +55,12 @@ export default function EinstellungenPage() {
   const [erschwernis, setErschwernis] = useState<ErschwernisConfig>({})
   const [anfahrtBetrag, setAnfahrtBetrag] = useState(45)
   const [anfahrtBezeichnung, setAnfahrtBezeichnung] = useState('An- und Abfahrt')
+  // DC-100 (2026-09-15): Bleibt bewusst als State erhalten, obwohl es keinen
+  // Schalter mehr dafür gibt — der gespeicherte Wert wird weiter geladen und
+  // unverändert zurückgeschrieben. Wer die Einbettung früher bewusst
+  // ausgeschaltet hatte, findet seine Einstellung wieder vor, falls das
+  // Feature mit den Rechnungen zurückkommt. Ein stilles Überschreiben auf
+  // „an" wäre die schlechtere Antwort.
   const [eRechnungAktiv, setERechnungAktiv] = useState(true)
   const [abrechnungsModus, setAbrechnungsModus] = useState<'inapp' | 'extern'>('inapp')
   const [angebotStruktur, setAngebotStruktur] = useState<'raeume' | 'arbeitsablauf' | 'gewerk'>('raeume')
@@ -395,9 +401,17 @@ export default function EinstellungenPage() {
           <Card icon={<Receipt size={16} />} title="Steuer & Rechnungslegung">
             <Field label="Mehrwertsteuer">
               <div className="flex gap-2">
+                {/* DC-104 (2026-09-14, Manfred/TN-147, freigegeben vom Head of
+                    Legal, CoS-L-007): Die 7-%-Kachel ist raus. § 12 Abs. 2
+                    UStG verweist auf Anlage 2, und die Liste ist
+                    abschließend — Handwerkerleistungen stehen nirgends darin,
+                    also sind sie 19 %. Empirisch gestützt: alle acht Betriebe
+                    in der Produktion stehen auf 19 %, die Kachel wurde nie
+                    benutzt. Der Typ lässt 7 weiterhin zu, damit ein
+                    hypothetisch gespeicherter Wert nicht still auf 19 %
+                    umspringt — angeboten wird er nicht mehr. */}
                 {([
                   { value: 19, label: '19 %' },
-                  { value: 7,  label: '7 %'  },
                   { value: 0,  label: 'Kleinunternehmer' },
                 ] as { value: 19 | 7 | 0; label: string }[]).map(opt => (
                   <button key={opt.value} type="button" onClick={() => setVatRate(opt.value)}
@@ -506,32 +520,32 @@ export default function EinstellungenPage() {
           </Card>
 
           {/* E-Rechnung */}
-          <Card icon={<FileCheck2 size={16} />} title="E-Rechnung & Compliance">
-            {!taxNumber && !ustId && (
-              <div className="flex items-start gap-2 bg-yellow/15 border border-yellow/40 rounded-xl px-3 py-3 -mt-1">
-                <span className="text-sm mt-0.5">⚠️</span>
-                <p className="text-xs font-semibold text-anthracite/70 leading-relaxed">
-                  Für E-Rechnungen bitte <strong>Steuernummer</strong> oder <strong>USt-IdNr.</strong> im Betrieb-Bereich ergänzen.
-                </p>
-              </div>
-            )}
-            <Field label="E-Rechnungen automatisch erstellen">
-              <button type="button" onClick={() => setERechnungAktiv(v => !v)}
-                className={`relative inline-flex h-7 w-12 items-center rounded-full border-2 transition-colors ${
-                  eRechnungAktiv ? 'bg-yellow border-yellow' : 'bg-anthracite/10 border-transparent'
-                }`}>
-                <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                  eRechnungAktiv ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-              <p className="text-xs text-anthracite/40 font-semibold mt-1.5 leading-relaxed">
-                {vatRate === 0
-                  ? 'Als Kleinunternehmer (§ 19 UStG) bist du aktuell noch nicht verpflichtet. Ab 2027 gilt die Pflicht für alle.'
-                  : 'Bei aktivem Toggle: PDFs von Geschäftskunden enthalten automatisch eine eingebettete ZUGFeRD-XML (Factur-X EN 16931). Kompatibel mit DATEV, Lexoffice, sevDesk.'}
-              </p>
-            </Field>
-            <p className="text-xs text-anthracite/30 font-semibold leading-relaxed border-t border-anthracite/5 pt-3">
-              Sofortangebot unterstützt dich bei der technischen Erstellung von E-Rechnungen. Für steuerrechtliche Fragen wende dich bitte an deinen Steuerberater.
+          {/* DC-100 / DC-089 (2026-09-15): Hier stand ein Schalter
+              „E-Rechnungen automatisch erstellen". Er hat wirklich etwas
+              getan — er hängte an jedes Angebots-PDF eine XML, die sich als
+              Rechnung auswies (TypeCode 380, fx:DocumentType INVOICE) und
+              ging bei Geschäftskunden zusätzlich als eigene Datei mit der
+              Mail raus. Sandys Entscheidung nach Empfehlung des Head of Legal:
+              abgeschaltet. Umgesetzt ist das in src/lib/zugferd/einbettung.ts.
+
+              Die Karte bleibt trotzdem stehen, statt ersatzlos zu
+              verschwinden: Wer den Schalter einmal bewusst eingeschaltet hat,
+              würde sein kommentarloses Verschwinden als Verlust lesen. Sie
+              sagt jetzt, was stimmt — nicht „können wir nicht", sondern
+              „gehört nicht hierher, noch nicht". Der Satz stammt vom Head of
+              Product Engineering (`E_RECHNUNG_ABGESCHALTET`) und ist besser
+              als mein eigener Entwurf; er steht dort an einer Stelle und hier,
+              damit die Karte und die 410-Antwort der alten XRechnung-Route
+              dasselbe sagen.
+
+              Der Steuernummer-Hinweis ist mit raus: Er verlangte eine Angabe
+              für eine Funktion, die es nicht mehr gibt. Auf einem Angebot ist
+              die Steuernummer nicht vorgeschrieben (Head of Legal, CoS-L-007,
+              § 14 Abs. 4 UStG gilt für Rechnungen). */}
+          <Card icon={<FileCheck2 size={16} />} title="E-Rechnung">
+            <p className="text-xs text-anthracite/50 font-semibold leading-relaxed">
+              E-Rechnungen entstehen erst beim Abrechnen. Sofortangebot schreibt
+              Angebote — sobald daraus Rechnungen werden, kommt das hier wieder.
             </p>
           </Card>
 

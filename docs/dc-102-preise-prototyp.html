@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DC-102 — Prototyp: Tätigkeiten & Nick-Seite</title>
+<style>
+  :root{
+    --gelb:#D9A400; --gelb-hell:#FEF9C3; --gelb-text:#8B7000;
+    --anthrazit:#2C2C2C; --bg:#F7F6F3; --weiss:#fff;
+    --linie:rgba(44,44,44,.10); --grau:rgba(44,44,44,.45); --grau-hell:rgba(44,44,44,.30);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:#e9e7e2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--anthrazit)}
+  .rahmen{max-width:430px;margin:0 auto;background:var(--bg);min-height:100dvh;display:flex;flex-direction:column}
+  .hinweis{background:var(--anthrazit);color:#fff;font-size:12px;line-height:1.5;padding:10px 16px}
+  .hinweis b{color:var(--gelb)}
+  .inhalt{flex:1;padding:24px 20px 140px}
+  h1{font-size:26px;font-weight:800;line-height:1.2;margin:0 0 6px}
+  .unter{color:var(--grau);font-weight:600;font-size:15px;line-height:1.5;margin:0 0 24px}
+  .fuss{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 70%,transparent);padding:16px 20px 24px;display:flex;gap:10px}
+  .knopf{flex:1;border:0;border-radius:16px;padding:17px;font-size:17px;font-weight:800;background:var(--gelb);color:var(--anthrazit)}
+  .knopf.zweit{background:transparent;border:2px solid var(--linie);color:var(--grau);flex:0 0 38%;font-size:15px}
+  .knopf:active{transform:translateY(1px)}
+
+  /* Tätigkeiten */
+  .taet{background:var(--weiss);border:2px solid var(--linie);border-radius:16px;margin-bottom:10px;overflow:hidden}
+  .taet.an{border-color:var(--gelb)}
+  .hakenzeile{display:flex;align-items:center;gap:14px;padding:16px;width:100%;background:none;border:0;font:inherit;text-align:left;color:inherit}
+  .box{width:26px;height:26px;border-radius:8px;border:2px solid var(--linie);flex:0 0 26px;display:grid;place-items:center;font-size:15px;color:transparent}
+  .taet.an .box{background:var(--gelb);border-color:var(--gelb);color:var(--anthrazit)}
+  .hakenzeile span{font-weight:800;font-size:16px}
+  .matzeile{display:flex;align-items:center;gap:10px;padding:0 16px 16px 56px}
+  .matlabel{font-size:11px;font-weight:800;color:var(--grau-hell);text-transform:uppercase;letter-spacing:.08em;flex:0 0 62px}
+  .wahl{display:flex;gap:8px;flex:1}
+  .wahl button{flex:1;border:2px solid var(--linie);background:var(--bg);border-radius:12px;padding:11px 6px;font:inherit;font-size:13px;font-weight:800;color:var(--grau)}
+  .wahl button.an{border-color:var(--gelb);background:rgba(217,164,0,.12);color:var(--anthrazit)}
+  .schluss{color:var(--grau-hell);font-weight:600;font-size:13px;margin-top:18px;line-height:1.5}
+
+  /* Nick-Seite */
+  .gruppe{font-size:11px;font-weight:800;color:var(--grau-hell);text-transform:uppercase;letter-spacing:.1em;margin:22px 0 8px}
+  .zeile{background:var(--weiss);border:2px solid var(--linie);border-radius:14px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;width:100%;font:inherit;text-align:left;color:inherit}
+  .zeile.meins{border-color:var(--gelb)}
+  .ztext{flex:1;min-width:0}
+  .ztitel{font-weight:800;font-size:15px}
+  .zher{font-size:12px;font-weight:600;color:var(--grau-hell);margin-top:3px}
+  .zeile.meins .zher{color:var(--gelb-text)}
+  .zpreis{font-weight:800;font-size:15px;white-space:nowrap}
+  .stift{color:var(--grau-hell);font-size:14px}
+  .zaehler{background:var(--gelb-hell);color:var(--gelb-text);font-weight:800;font-size:13px;border-radius:12px;padding:12px 14px;margin-bottom:4px}
+
+  dialog{border:0;border-radius:20px 20px 0 0;padding:22px 20px 28px;width:100%;max-width:430px;margin:auto auto 0;background:var(--weiss)}
+  dialog::backdrop{background:rgba(0,0,0,.4)}
+  dialog h2{margin:0 0 4px;font-size:19px;font-weight:800}
+  dialog p{margin:0 0 18px;color:var(--grau);font-weight:600;font-size:13px}
+  .eingabe{display:flex;align-items:center;gap:10px;background:var(--bg);border:2px solid var(--gelb);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+  .eingabe input{flex:1;border:0;background:none;font:inherit;font-size:22px;font-weight:800;width:100%;outline:none}
+  .eingabe span{font-weight:800;color:var(--grau)}
+  .balken{background:var(--gelb-hell);color:var(--gelb-text);font-weight:700;font-size:13px;border-radius:12px;padding:12px 14px;margin:0 20px 12px;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="rahmen">
+  <div class="hinweis" id="hinweis"></div>
+  <div class="inhalt" id="inhalt"></div>
+  <div class="fuss" id="fuss"></div>
+</div>
+
+<dialog id="dlg">
+  <h2 id="dlgTitel"></h2>
+  <p id="dlgHer"></p>
+  <div class="eingabe"><input id="dlgWert" type="text" inputmode="decimal"><span id="dlgEinheit"></span></div>
+  <div style="display:flex;gap:10px">
+    <button class="knopf zweit" onclick="document.getElementById('dlg').close()">Abbrechen</button>
+    <button class="knopf" onclick="uebernehmen()">Übernehmen</button>
+  </div>
+</dialog>
+
+<script>
+const TAET = [
+  { id:'innen',      name:'Innen streichen', mat:'Farbe',   standard:'inkl' },
+  { id:'tapezieren', name:'Tapezieren',      mat:'Tapete',  standard:'inkl' },
+  { id:'lackieren',  name:'Lackieren',       mat:'Lack',    standard:'inkl' },
+  { id:'fassade',    name:'Fassade',         mat:'Farbe',   standard:'ohne' },
+  { id:'boden',      name:'Boden',           mat:'Belag',   standard:'ohne' },
+]
+const ANKER = { innen:11.0, fassade:14.5, boden:18.0, tapezieren:9.5, lackieren:65.0 }
+const ABGELEITET = {
+  innen:[['Wand streichen 1x',.63],['Wand grundieren',.40],['Decke streichen 2x',1.0],['Decke streichen 1x',.63],
+         ['Decke grundieren',.40],['Wand spachteln Q2',.72],['Wand schleifen',.34],['Nikotinsperre auftragen',.82],
+         ['Heizkörper abkleben',.28],['Boden abdecken',.16],['Sockelleisten abkleben',.20],['Steckdosen abklemmen',.22]],
+  fassade:[['Fassade streichen 1x',.63],['Fassade grundieren',.42],['Fassade reinigen',.30],['Risse verspachteln',.55],
+           ['Sockel streichen',.80],['Gerüstplane anbringen',.25]],
+  boden:[['Laminat verlegen',1.0],['Trittschall verlegen',.31],['Altbelag aufnehmen',.42],['Kleberreste entfernen',.55],
+         ['Untergrund spachteln',.61],['Sockelleisten montieren',.34],['Übergangsprofil setzen',.28],['Boden reinigen',.14]],
+  tapezieren:[['Vliestapete kleben',1.0],['Raufaser kleben',.84],['Tapete ablösen',.47],['Untergrund vorbereiten',.55]],
+  lackieren:[['Fenster lackieren',.72],['Zarge lackieren',.46],['Heizkörper lackieren',.60],['Geländer lackieren',.88]],
+}
+const EINHEIT = { lackieren:'€/Stück' }
+
+let seite = 1
+const gewaehlt = { innen:true, fassade:true, boden:true }
+const material = {}
+TAET.forEach(t => material[t.id] = t.standard)
+let preise = null
+let offen = null
+
+const eur = n => n.toFixed(2).replace('.', ',')
+
+function bauen() {
+  const h = document.getElementById('hinweis')
+  const i = document.getElementById('inhalt')
+  const f = document.getElementById('fuss')
+  if (seite === 1) {
+    h.innerHTML = '<b>Prototyp 1 von 2 — Tätigkeitsseite.</b> Zu prüfen: Setz die Haken schnell hintereinander. Fällt dir die Materialzeile auf, oder scrollst du dran vorbei?'
+    i.innerHTML = '<h1>Was machst du?</h1><p class="unter">Wähle alles, was du anbietest.</p>' +
+      TAET.map(t => {
+        const an = !!gewaehlt[t.id]
+        return `<div class="taet ${an?'an':''}">
+          <button class="hakenzeile" onclick="haken('${t.id}')">
+            <span class="box">✓</span><span>${t.name}</span>
+          </button>
+          ${an ? `<div class="matzeile">
+            <div class="matlabel">Material</div>
+            <div class="wahl">
+              <button class="${material[t.id]==='inkl'?'an':''}" onclick="mat('${t.id}','inkl')">inkl. ${t.mat}</button>
+              <button class="${material[t.id]==='ohne'?'an':''}" onclick="mat('${t.id}','ohne')">ohne ${t.mat}</button>
+            </div></div>` : ''}
+        </div>`
+      }).join('') +
+      '<p class="schluss">Du kannst das später an jeder einzelnen Position ändern.</p>'
+    f.innerHTML = '<button class="knopf" onclick="weiter()">Weiter →</button>'
+  } else {
+    if (!preise) preise = ableiten()
+    const geaendert = preise.filter(p => p.meins).length
+    h.innerHTML = '<b>Prototyp 2 von 2 — Nick-Seite.</b> Zu prüfen: Kannst du ' + preise.length + ' Zeilen überfliegen, oder erschlagen sie dich? Tippe eine an, die nicht passt.'
+    let html = '<h1>Das hat die App daraus gemacht</h1><p class="unter">' + preise.length +
+      ' Preise, abgeleitet aus deinen Zahlen. Schau drüber — was nicht passt, tippst du an.</p>'
+    if (geaendert) html += `<div class="zaehler">${geaendert} ${geaendert===1?'Preis ist':'Preise sind'} jetzt von dir.</div>`
+    let letzte = null
+    preise.forEach((p, idx) => {
+      if (p.gruppe !== letzte) { html += `<div class="gruppe">${p.gruppe}</div>`; letzte = p.gruppe }
+      html += `<button class="zeile ${p.meins?'meins':''}" onclick="bearbeiten(${idx})">
+        <div class="ztext"><div class="ztitel">${p.titel}</div>
+          <div class="zher">${p.meins ? 'von dir' : 'abgeleitet aus: ' + p.quelle}</div></div>
+        <div class="zpreis">${eur(p.preis)} ${p.einheit}</div><div class="stift">✎</div>
+      </button>`
+    })
+    i.innerHTML = html
+    f.innerHTML = '<button class="knopf zweit" onclick="spaeter()">Später</button><button class="knopf" onclick="passt()">Passt alles</button>'
+  }
+}
+
+function ableiten() {
+  const raus = []
+  TAET.forEach(t => {
+    if (!gewaehlt[t.id]) return
+    const anker = ANKER[t.id]
+    const einheit = EINHEIT[t.id] || '€/m²'
+    const ankerName = t.id === 'innen' ? 'Wand 2x' : t.id === 'fassade' ? 'Fassade 2x'
+      : t.id === 'boden' ? 'Laminat verlegen' : t.id === 'tapezieren' ? 'Vliestapete' : 'Tür lackieren'
+    ;(ABGELEITET[t.id] || []).forEach(([titel, faktor]) => {
+      raus.push({ gruppe:t.name, titel, preis: Math.round(anker*faktor*100)/100, quelle: ankerName, einheit, meins:false })
+    })
+  })
+  return raus
+}
+
+function haken(id){ gewaehlt[id] = !gewaehlt[id]; preise = null; bauen() }
+function mat(id,w){ material[id] = w; bauen() }
+function weiter(){ if(!Object.values(gewaehlt).some(Boolean)) return; seite = 2; window.scrollTo(0,0); bauen() }
+function bearbeiten(idx){
+  offen = idx
+  const p = preise[idx]
+  dlgTitel.textContent = p.titel
+  dlgHer.textContent = p.meins ? 'von dir' : 'abgeleitet aus: ' + p.quelle
+  dlgWert.value = eur(p.preis)
+  dlgEinheit.textContent = p.einheit
+  dlg.showModal()
+  setTimeout(()=>dlgWert.select(),50)
+}
+function uebernehmen(){
+  const z = parseFloat(String(dlgWert.value).replace(',','.'))
+  if (!isNaN(z) && z > 0) { preise[offen].preis = z; preise[offen].meins = true }
+  dlg.close(); bauen()
+}
+function passt(){
+  document.getElementById('hinweis').innerHTML = '<b>Ende des Prototyps.</b> „Passt alles" — ab hier gehört die Liste dem Betrieb. Kein Balken auf den Angeboten.'
+  document.getElementById('fuss').innerHTML = '<button class="knopf zweit" onclick="location.reload()">Nochmal</button>'
+}
+function spaeter(){
+  document.getElementById('hinweis').innerHTML = '<b>Ende des Prototyps.</b> „Später" — so sieht dann jedes Angebot oben aus, bis die Seite einmal durchlaufen ist.'
+  document.getElementById('inhalt').innerHTML =
+    '<div class="balken" style="margin:0 0 16px">Diese Preise sind Durchschnittswerte, keine eigenen. <u>Jetzt durchgehen</u></div>' +
+    '<h1>Angebot AG-2026-002</h1><p class="unter">Frau Krüger · Bochum</p>' +
+    '<p class="schluss">Bewusst kein roter Balken: Mit Durchschnittspreisen zu starten ist kein Fehler, sondern ein Zustand.</p>'
+  document.getElementById('fuss').innerHTML = '<button class="knopf zweit" onclick="location.reload()">Nochmal</button>'
+}
+bauen()
+</script>
+</body>
+</html>

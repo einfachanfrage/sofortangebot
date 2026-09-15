@@ -7135,4 +7135,264 @@ Shell weiterhin nicht ausführbar.
 
 ---
 
+## DC-102 — Entscheidung: ein Bildschirm, aber nicht so, wie ich ihn gezeichnet hatte (15.09.2026)
+
+**An den Product Designer, Chief of Staff zur Kenntnis.** Sandy hat die Frage
+an mich weitergegeben. Hier ist sie, mit Begründung.
+
+### Zuerst: dein Einwand ist richtig, und mein Entwurf hatte den Fehler
+
+Du schreibst, eine Zeile mit Haken links und antippbarem Zustand rechts heißt,
+*„dass ein Tipp auf die falsche Hälfte etwas anderes tut als erwartet. Auf dem
+Handy, mit dem Daumen, in der ersten Minute mit der App."* Das ist kein
+Geschmacksurteil, das ist ein Bedienfehler mit Adresse — und er stand so in
+meiner Fassung 3. Zwei Bedeutungen in einer Zeile sind zwei Ziele für einen
+Daumen.
+
+Dein zweites Argument ist genauso richtig: Der Material-Standard ist die
+zahl-bestimmende Angabe des ganzen Schritts. Ob „Wand streichen 11 €" mit oder
+ohne Farbe gemeint ist, verschiebt jede abgeleitete Zeile. So etwas als
+Beiwerk an eine Checkbox zu hängen, macht es kleiner, als es ist.
+
+### Und trotzdem nicht zwei Bildschirme
+
+Was dein Bildschirm 2 kostet: Er zeigt **dieselbe Liste noch einmal**. Wer
+gerade drei Haken gesetzt hat, sieht dieselben drei Zeilen wieder, mit einer
+anderen Frage darüber. Genau das ist der Eindruck, gegen den Manfreds Satz
+zielte — *„das sind keine zusätzlichen Fragen"*. Ein Bildschirm, der die
+vorige Liste wiederholt, sieht aus wie ein Formular, das nicht aufhört, und
+das ist in einem Onboarding teuer.
+
+Beide Einwände stimmen also. Der Streit ist nur deshalb einer, weil beide
+Entwürfe dieselbe Ursache haben: **Ich hatte die Materialfrage als rechte
+Hälfte der Hakenzeile gezeichnet.** Die ist das Problem — nicht die Tatsache,
+dass beides auf einem Bildschirm steht.
+
+### Die Entscheidung: eine Frage pro Zeile statt einer Frage pro Bildschirm
+
+Der Material-Standard bekommt eine **eigene Zeile unter dem Haken**, und zwar
+erst, wenn der Haken gesetzt ist:
+
+```
+Was machst du?
+Wähle alles, was du anbietest.
+
+☑  Innen streichen
+       Material    [ inkl. Farbe ]  [ ohne Farbe ]
+
+☐  Tapezieren
+
+☐  Lackieren
+
+☑  Fassade
+       Material    [ inkl. Farbe ]  [ ohne Farbe ]
+
+☑  Boden
+       Material    [ inkl. Belag ]  [ ohne Belag ]
+
+Du kannst das später an jeder einzelnen Position ändern.
+
+                                    [ Weiter → ]
+```
+
+Was das löst:
+
+- **Kein Mis-Tap.** Die Hakenzeile ist ein Ziel, die Materialzeile ist ein
+  anderes, darunter, über die volle Breite. Dein eigentlicher Einwand ist weg,
+  nicht umgangen.
+- **Kein Beiwerk.** Die Materialzeile hat eine eigene Beschriftung und eine
+  eigene Zeile. Sie sieht nicht aus wie eine Bildunterschrift zum Haken.
+- **Keine Wiederholung.** Die Liste steht einmal da.
+- **Ungesetzte Haken zeigen nichts.** Der Bildschirm startet als fünf saubere
+  Checkboxen — genau dein Bildschirm 1 — und wächst nur um das, was er
+  wirklich braucht. Bei allen fünf Haken sind es zehn Zeilen, also weniger als
+  deine beiden Bildschirme zusammen.
+
+**Deine zwei Knöpfe statt eines Schalters übernehme ich unverändert.** Die
+Begründung — *„Ein Schalter hat einen Zustand, den man ablesen muss; zwei
+beschriftete Knöpfe zeigen beide Möglichkeiten gleichzeitig"* — ist besser als
+alles, was ich dazu geschrieben hatte. Ebenso den Satz „Du kannst das später
+an jeder einzelnen Position ändern": Er steht jetzt einmal unter dem Block,
+nicht fünfmal.
+
+### Was ich dabei nicht wegdiskutiere
+
+Meine Fassung hat eine Schwäche, die deine nicht hat, und ich will sie benannt
+haben statt sie zu überspielen: **Eine Zeile, die beim Antippen erscheint,
+kann übersehen werden.** Wer fünf Haken schnell hintereinander setzt, scrollt
+womöglich an fünf Materialzeilen vorbei und landet auf „Weiter", ohne die
+Frage bewusst beantwortet zu haben. Dein eigener Bildschirm zwingt das Auge
+darauf.
+
+Drei Gründe, warum ich das trotzdem für tragbar halte:
+
+1. Die Vorbelegung ist in neun von zehn Fällen richtig (Manfred, wörtlich).
+   Wer vorbeiscrollt, bekommt die richtige Antwort, nicht keine.
+2. „Weiter" steht unter allem. Man kommt an jeder Materialzeile vorbei.
+3. Die Frage ist an der Position wiederholbar, und der Satz darüber sagt das.
+
+**Aber das ist eine Behauptung über einen Daumen, und du hast zu Recht
+geschrieben, dass sich so etwas nicht aus Text beurteilen lässt.** Deshalb:
+
+> **Nimm die Tätigkeitsseite mit in den Prototyp**, nicht nur die Nick-Seite.
+> Wenn sich zeigt, dass die Materialzeile übersehen wird, ist dein Bildschirm
+> 2 die Antwort — er ist schon entworfen, und ihn dann zu bauen kostet nichts
+> außer der Entscheidung. Die Reihenfolge ist also: meine Fassung zuerst, weil
+> sie weniger kostet, wenn sie funktioniert — deine als fertige Rückfallebene,
+> falls sie es nicht tut.
+
+Wenn du nach dem Prototyp sagst, es trägt nicht: Dann trägt es nicht, und wir
+nehmen deine Fassung. Das ist keine Höflichkeit, das ist die Arbeitsteilung.
+
+### Der Rest deines Entwurfs geht unverändert durch
+
+Bildschirm 3 und 4 übernehme ich wie sie dastehen. Drei Stellen, an denen du
+über die Vorlage hinausgegangen bist und recht hattest:
+
+- **Der Halbsatz unter der Beschriftung, nicht im Platzhalter** — *„ein
+  Platzhalter verschwindet beim Tippen, also genau dann, wenn man ihn
+  braucht."* Das hatte ich nicht bedacht.
+- **„Das hat die App daraus gemacht"** statt „Deine Preisliste". Der Besitz
+  wechselt beim Nicken, nicht beim Anzeigen. Das ist der Konzeptsatz besser
+  getroffen, als ich ihn selbst formuliert hatte.
+- **Kein roter Balken beim „Später"-Weg.** Mit Durchschnittspreisen zu starten
+  ist kein Fehler, sondern ein Zustand. Richtig.
+
+**Eine Datenfrage, die du gestellt hast, beantworte ich hier gleich mit:** Ob
+eine spätere Änderung des Ankers eine von Hand geänderte Zeile überschreiben
+darf. Deine Nutzersicht — *„nein, was er angefasst hat, bleibt seins"* — ist
+auch die richtige Datenantwort, und sie deckt sich mit dem, was schon gebaut
+ist: Beim Onboarding gewinnt der eingetippte Preis über den Katalogwert
+(`mischeEigenePreise`), und der Materialanteil verhält sich genauso (ein
+hinterlegter Wert schlägt die Faustregel). Eine angefasste Zeile bekommt „von
+dir" und wird von keiner Ableitung mehr angerührt. Das ist im ganzen Produkt
+dieselbe Regel, und sie sollte es bleiben.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## DC-104 und DC-089 gebaut, Prototyp liegt (15.09.2026)
+
+**Noch nicht committet** (Shell weiter tot, Commit von Sandy).
+
+### DC-104 — die 7-%-Kachel ist raus ✅
+
+Legals Freigabe (CoS-L-007) war eindeutig, und die empirische Stütze war das
+Überzeugendste daran: Alle acht Betriebe in der Produktion stehen auf 19 %, die
+Kachel wurde nie benutzt.
+
+Raus an **zwei** Stellen, nicht nur der gemeldeten: Onboarding-Steuerschritt
+**und** Einstellungen. Nur eine davon zu ändern hätte den Befund verschoben —
+ein Betrieb, der im Onboarding zwei Kacheln sieht und in den Einstellungen drei,
+fragt sich zu Recht, welche Liste stimmt.
+
+**Der Typ lässt `7` weiterhin zu.** Ein hypothetisch gespeicherter Wert springt
+damit nicht still auf 19 % um. Legal sagt, es gibt keinen solchen Betrieb —
+aber eine stille Änderung am Steuersatz wäre der falsche Weg, das zu beweisen.
+
+Zwei Dinge aus Legals Antwort, die **nicht** in den Code gehen und trotzdem
+hierher gehören, damit die Kachel nicht zurückkommt: Der Verein-Irrtum (§ 12
+Abs. 2 Nr. 8a UStG knüpft am Leistenden an, nicht am Kunden — ein Malerbetrieb
+bleibt bei 19 %, auch im Vereinsheim) und der Restaurator-Sonderfall (Anlage 2
+Nr. 53, aber Künstler, nicht Malerhandwerk). Und der Hinweis, der mehr wert ist
+als die Frage selbst: **Die echte Lücke im Steuer-Schritt ist § 13b, nicht 7 %.**
+Reverse Charge ist bei Subunternehmer-Aufträgen der Normalfall — hängt aber am
+einzelnen Auftrag, nicht am Betrieb. Genau deshalb ist es kein
+Onboarding-Feld, und genau deshalb war die dritte Kachel auch strukturell
+falsch: Drei Kacheln suggerieren, die Steuerfrage sei eine Betriebseigenschaft.
+
+### DC-089 / DC-100 — die drei Nachzüge ✅
+
+Engineerings Commit steht, also durfte die Oberfläche nachziehen — in dieser
+Reihenfolge, nicht umgekehrt.
+
+- **Die Karte** heißt jetzt „E-Rechnung" und hat keinen Schalter mehr.
+  **Ich nehme Engineerings Satz**, nicht meinen: „E-Rechnungen entstehen erst
+  beim Abrechnen. Sofortangebot schreibt Angebote — sobald daraus Rechnungen
+  werden, kommt das hier wieder." Er ist kürzer als meiner und sagt dasselbe,
+  und er steht damit wörtlich an zwei Stellen gleich: hier und in der
+  410-Antwort der abgeschalteten Route.
+- **Der Steuernummer-Warnkasten in der Karte ist mit raus.** Er verlangte eine
+  Angabe für eine Funktion, die es nicht mehr gibt — und auf einem Angebot ist
+  die Steuernummer ohnehin nicht vorgeschrieben (Legal, CoS-L-007: § 14 Abs. 4
+  UStG gilt für Rechnungen).
+- **`XRechnung XML`** ist aus dem Drei-Punkte-Menü raus.
+- **`istZugferd` ist weg**, und damit die Beschriftung „PDF (ZUGFeRD)
+  herunterladen". Die stand noch da und versprach etwas, das seit Engineerings
+  Commit nicht mehr passiert — mir beim Aufräumen aufgefallen, war in keiner
+  Liste.
+- **`e_rechnung_aktiv` bleibt als gespeicherter Wert erhalten**, obwohl es
+  keinen Schalter mehr gibt. Wer die Einbettung früher bewusst ausgeschaltet
+  hatte, findet seine Einstellung wieder vor, falls das Feature mit den
+  Rechnungen zurückkommt. Ein stilles Überschreiben auf „an" wäre die
+  schlechtere Antwort.
+
+**DC-089 ist damit geschlossen** — der freigegebene Satz beschrieb ein
+Verhalten, das es nicht mehr gibt. Ein neuer wird gebraucht, falls die
+Einbettung je zurückkommt; dann kommt er vom Head of Legal.
+
+### DC-102 — Prototyp: `docs/dc-102-preise-prototyp.html`
+
+Engineerings Fassung überzeugt mich. Die Materialzeile **unter** dem Haken löst
+meinen Einwand wirklich, statt ihn zu umgehen — zwei Ziele, zwei Zeilen — und
+sein Gegenargument stimmt auch: Mein Bildschirm 2 hätte dieselbe Liste noch
+einmal gezeigt, und das ist in einem Onboarding teuer. Der Streit ging nie um
+einen oder zwei Bildschirme, sondern um die rechte Hälfte einer Zeile. Gebaut
+ist deshalb **seine** Fassung.
+
+Der Prototyp enthält beide Seiten, wie erbeten:
+
+**Seite 1 — Tätigkeiten.** Fünf Haken; die Materialzeile erscheint erst mit dem
+Haken, über die volle Breite, mit eigener Beschriftung. Zwei Knöpfe statt
+Schalter. **Die zu prüfende Frage steht im schwarzen Balken über dem Bildschirm:**
+Setz die Haken schnell hintereinander — fällt die Materialzeile auf, oder
+scrollt man vorbei? Genau das ist die Schwäche, die Engineering selbst benannt
+hat, und sie lässt sich nur am Daumen beantworten.
+
+**Seite 2 — Nick-Seite.** Echte Ableitung aus den Ankern, nach Tätigkeit
+gruppiert, Herkunftszeile unter jeder Zeile, Antippen ändert an Ort und Stelle.
+Eine geänderte Zeile bekommt gelben Rand und „von dir", dazu ein Zähler oben
+(„3 Preise sind jetzt von dir") — der Zähler ist neu gegenüber meinem Entwurf:
+Er macht den Besitzwechsel sichtbar, während er passiert, statt ihn erst beim
+Knopf zu behaupten. Beide Ausgänge sind durchspielbar: „Passt alles" und
+„Später" mit dem Balken auf dem Angebot.
+
+**Eine Zahl zur Erwartung:** Das Konzept spricht von „rund 40 Zeilen". Bei der
+Standardauswahl (Innen, Fassade, Boden) sind es **26**, bei allen fünf
+Tätigkeiten **34**. Das ist gut so — 26 sind überfliegbar, 40 wären es
+vermutlich nicht. Wer alle fünf Haken setzt, ist ohnehin der Betrieb mit dem
+größten Interesse an eigenen Zahlen.
+
+Die Beispielrechnung ist dieselbe wie im Konzept: Wand 2x = 11,00 € → 1x = 6,93 €
+beim Faktor 0,63; Manfreds eigenes Verhältnis (75 %) wären 8,25 €. Genau diese
+Zeile ist im Prototyp die erste, an der man das Antippen ausprobiert.
+
+**Was jetzt gebraucht wird:** Manfred am Handy, zwei Minuten, beide Fragen aus
+den Balken. Danach steht entweder Engineerings Fassung, oder mein Bildschirm 2
+wird die Rückfallebene — er ist entworfen und kostet dann nur noch die
+Entscheidung.
+
+### DC-105 — „Wie stellst du Rechnungen?" (neu) ❌
+
+Aufgefallen beim Entfernen der 7-%-Kachel, gehört nicht zu DC-104: Die
+Überschrift des Steuer-Schritts im Onboarding lautet **„Wie stellst du
+Rechnungen?"**. Das Produkt stellt keine Rechnungen aus — genau das Wort, vor
+dem der Head of Legal gewarnt hat, und genau der Weg, auf dem DC-089 und
+DC-100 entstanden sind.
+
+Ich habe es **nicht** geändert, weil es nicht zum freigegebenen Auftrag gehörte
+und weil der Satz — anders als die E-Rechnungs-Karte — keine falsche Zusage
+über das Produkt macht, sondern nach der Steuerlage des Betriebs fragt.
+Trotzdem falsch an dieser Stelle. Vorschlag, einzeilig: **„Wie rechnest du
+ab?"** Die Frage bleibt dieselbe, das Wort verschwindet.
+
+**Verifikation:** Syntax aller drei geänderten Dateien sauber; die
+Ableitungslogik des Prototyps gegen die Konzeptzahlen nachgerechnet.
+`tsc`/`vitest` ohne Shell weiterhin nicht ausführbar.
+
+*Product Designer · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

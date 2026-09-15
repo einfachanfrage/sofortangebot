@@ -573,7 +573,15 @@ export default function OnboardingStep() {
             <div>
               <label className={labelCls}>Mehrwertsteuer</label>
               <div className="flex gap-2">
-                {([{ v: 19 as const, l: '19 %' }, { v: 7 as const, l: '7 %' }, { v: 0 as const, l: 'Kleinunternehmer' }]).map(opt => (
+                {/* DC-104 (2026-09-14, Manfred/TN-147, freigegeben vom Head
+                    of Legal, CoS-L-007): „Die 7 % braucht kein Maler und kein
+                    Bodenleger, das ist Lebensmittel und Bücher. Verwirrt
+                    eher." Bestätigt: § 12 Abs. 2 UStG verweist auf Anlage 2,
+                    die Liste ist abschließend, Handwerkerleistungen stehen
+                    nicht darin. Zwei Kacheln statt drei — und die Wahl fällt
+                    damit zwischen zwei Dingen, die sich wirklich
+                    unterscheiden. */}
+                {([{ v: 19 as const, l: '19 %' }, { v: 0 as const, l: 'Kleinunternehmer' }]).map(opt => (
                   <button
                     key={opt.v}
                     onClick={() => update({ vatRate: opt.v })}

@@ -1917,7 +1917,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     items: editItems,
   })
   const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
-  const istZugferd = company?.e_rechnung_aktiv !== false && kundeIstUnternehmen
+  // DC-100 (2026-09-15): `istZugferd` ist weg. Die Einbettung ist für Angebote
+  // abgeschaltet (Sandys Entscheidung, Head of Legal empfohlen, umgesetzt in
+  // src/lib/zugferd/einbettung.ts) — ein Knopf, der „PDF (ZUGFeRD)" verspricht,
+  // verspricht seit diesem Commit etwas, das nicht mehr passiert.
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -3197,13 +3200,17 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   zusätzlich Sprachaufnahme/Transkript/erkannte Positionen
                   zeigt, die der Tab nicht abbildet. */}
               <Zeile icon={<Mic size={17} strokeWidth={2.5} />} label="Aufmaß-Aufnahme ansehen" href={`/angebot/${quote.id}/entwurf`} />
-              <Zeile icon={<Download size={17} strokeWidth={2.5} />} label={istZugferd ? 'PDF (ZUGFeRD) herunterladen' : 'PDF herunterladen'} onClick={handlePdfDownloadClick} />
+              <Zeile icon={<Download size={17} strokeWidth={2.5} />} label="PDF herunterladen" onClick={handlePdfDownloadClick} />
               <Zeile icon={<Link2 size={17} strokeWidth={2.5} />} label="Link zum Angebot kopieren" onClick={copyLink} />
               <Zeile icon={<Copy size={17} strokeWidth={2.5} />} label="Angebot duplizieren" onClick={handleDuplicate} />
               <Zeile icon={<FileText size={17} strokeWidth={2.5} />} label="CSV Export" href={`/api/csv?id=${quote.id}`} />
-              {!!quote.customer?.leitweg_id && (
-                <Zeile icon={<Download size={17} strokeWidth={2.5} />} label="XRechnung XML" href={`/api/pdf/xrechnung?id=${quote.id}`} />
-              )}
+              {/* DC-100 (2026-09-15): Hier stand „XRechnung XML". Die Route
+                  erzeugte aus demselben Angebot dieselbe als Rechnung
+                  deklarierte XML wie die Einbettung, nur ohne PDF drumherum —
+                  sie fällt unter dieselbe Entscheidung und antwortet jetzt mit
+                  410 und einem Klartextsatz. Der Eintrag ist raus; ein
+                  gesetztes Lesezeichen landet weiter auf dem erklärenden
+                  Satz, nicht auf einer toten Seite. */}
 
               {/* 2026-09-11 (Sandy: "NATÜRLICH im Senden-Dialog!!"): der
                   Buchhaltungs-Export war hier — thematisch am falschen Ort
