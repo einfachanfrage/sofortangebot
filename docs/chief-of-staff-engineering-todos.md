@@ -4743,4 +4743,123 @@ git add src/lib/__tests__/cos-e-058-oeffnungen-aus-aufnahme.test.ts
 
 *Head of Product Engineering · 2026-09-15*
 
+---
+
+## ❌ CoS-E-062 — PM-064 bis PM-068: vier der fünf Funde treffen Maler und Boden, nicht die gesperrten Gewerke
+
+**Datum:** 2026-09-15, 18:45 MESZ · Chief of Staff
+**Quelle:** `pruefmeister-restliste.md`, Batch
+`src/lib/__tests__/pruefmeister-batch-64-68.test.ts` (liegt auf Sandys Rechner,
+**nicht im Repository** — gegen einen frischen Klon von `de1ae80` nachgesehen).
+**Stand des Prüfstands laut Prüfmeister:** 4 Prüfungen grün, 15 Sperrklinken.
+
+### Warum das hier eigenen Vorrang beansprucht
+
+Ich habe die fünf Fälle danach sortiert, **welches Gewerk sie treffen** — das
+ist die Linie, die Sandy heute gezogen hat (Geldweg zum Kunden zuerst):
+
+| Fall | Gewerk | heute freigeschaltet? | Betrag im gemessenen Fall |
+|---|---|---|---|
+| PM-064 | Maler | **ja** | 162,00 € **zuviel** |
+| PM-065 | Maler | **ja** | 396,00 € fehlen |
+| PM-066 | Boden | **ja** | rund **1.050,00 €** fehlen |
+| PM-067 | Boden | **ja** | 42,00 € zu wenig + fehlende Position |
+| PM-068 | Trockenbau | nein, gesperrt | 980,00 € — hinter der Freischaltung |
+
+**Vier von fünf liegen auf dem Geldweg von Betrieben, die heute Angebote
+verschicken.** Die Gewerke-Sperre aus CoS-E-061 fängt davon **keinen einzigen**
+ab — sie betrifft nur PM-068.
+
+### Die Fälle, so wie der Prüfmeister sie gemessen hat
+
+**PM-064 — der Wortstamm `sperr` löst einen Isoliergrund aus.**
+`maler-sonder.ts` Z. 42 prüft `lower.includes('sperr')`. Der Stamm steckt in
+Sperrmüll, absperren, Absperrband, Sperrholz, gesperrt — auf dem Bau
+gewöhnliche Wörter. Gemessen mit „Wände und Decke zweimal streichen" plus dem
+Nebensatz „… das ist Sperrmüll": Isoliergrund 108,00 € + Tiefengrund 54,00 €.
+**Und es ist nicht bloß additiv:** die ausdrücklich bestellte
+`Decke streichen`-Position wird verworfen und trägt danach
+`automatisch_ergaenzt`. Ein Wort im Nebensatz ändert den Hauptauftrag.
+
+**PM-065 — ein Treppenhaus streichen, keine einzige Treppenposition.**
+Der Malerkatalog kann `Treppenstufen streichen / versiegeln` (18,00 €/Stück)
+und `Treppengeländer lackieren` (18,00 €/lfdm) — im Angebot steht keine davon.
+Stattdessen entstehen Wand- und Deckenflächen für einen Raum 3,00 × 1,20.
+Dazu `Geländer abkleben` aus `maler-abkleben.ts` Z. 121, bedingungslos, auch
+wenn im Diktat wörtlich „das wird lackiert" steht — dieselbe Verwechslung wie
+beim Heizkörper in PM-052, hier ohne jede Bedingung. Setzstufe und Wange fehlen
+im Malerkatalog ganz, obwohl Fliesen- und Bodenkatalog die Setzstufe führen.
+
+**PM-066 — der teuerste Fund: gut 1.100 € werden zu rund 50 €.**
+Die Stückzahlen erkennt die App richtig (14 Tritt-, 14 Setzstufen). Die Titel
+heißen `Trittstufen belegen` / `Setzstufen belegen` (`boden-sonder.ts`
+Z. 208/216), der Katalog heißt `Vinyl auf Treppenstufen kleben` (55,00 €/St.)
+— kein Treffer, 0,00 €. **Zusätzlich** entsteht der Grundriss der Treppe
+einmal als Fläche (3,15 m² × 16,00 € = 50,40 €). Dieselbe Familie wie
+PM-060-A: Mengen richtig, Wortlaut trifft den Katalog nicht.
+
+**PM-067 — verklebter Teppich zum Preis des losen, Container fehlt ganz.**
+„Der alte Teppich muss raus, verklebt" ergibt `Teppichboden entfernen und
+entsorgen` zu 6,00 €/m² — die Zeile für den *losen* Teppich. Verklebt kostet
+9,00 €/m²; auf 14 m² sind das 42,00 € zu wenig. „Wir brauchen einen Container"
+steht wörtlich im Diktat und erzeugt **keine** Entsorgungsposition. Selbst wenn
+sie entstünde, hielte `preisKategoriePasstZuGewerk` sie vom
+Entrümpelungskatalog fern — **dieselbe Wand wie PM-060-B.**
+
+**PM-068 — Trockenbau ohne Preis, plus zwei Funde, die eine Katalogzeile nicht
+löst.** Mengen stimmen, der Preis fehlt bei jeder Zeile (980,00 € gegen
+0,00 €). Zusätzlich: `Ständerwerk CW-Profil` ist eine **Doppelberechnung** —
+die Unterkonstruktion steckt im m²-Preis der Trennwand; bekäme die Zeile einen
+Preis, stünde die Wand zweimal im Angebot. Und zwei Titel für dieselbe
+abgehängte Decke (`decken[]` gegen `raeume[].arbeiten`), dieselbe Familie wie
+PM-058. **Gesperrtes Gewerk — steht hinter der Freischaltung.**
+
+### Was ich von euch brauche
+
+1. **Einschätzung zu PM-064 bis PM-067** — Aufwand und Reihenfolge
+   untereinander. **Noch nicht bauen:** Sandy entscheidet zuerst, ob dieses
+   Ticket vor oder hinter die Gewerke-Sperre gehört (steht bei ihr).
+2. **PM-064 gehört vermutlich zu CoS-E-059** — derselbe Dateibereich
+   (`maler-sonder.ts`), in dem auch `pruefeWasserflecken` aus PM-046 liegt.
+   Wenn ihr es in einem Aufwasch erledigen könnt, sagt das; dann ziehe ich es
+   dorthin und dieses Ticket wird um einen Punkt kürzer.
+3. **PM-066 und PM-067 sind Titel-gegen-Katalog**, wie PM-060-A. Ob das einzeln
+   geflickt oder als Klasse gelöst wird, ist eure Einschätzung — **ich
+   entscheide das nicht.**
+4. **PM-068 nicht bauen.** Gesperrtes Gewerk. Die Doppelberechnung beim
+   Ständerwerk ist aber ein Befund, der eine Freischaltung überlebt —
+   festhalten, nicht umsetzen.
+
+**Was ich ausdrücklich nicht behaupte:** dass diese Beträge heute schon auf
+verschickten Angeboten stehen. Gemessen ist der Betrag je Fall, nicht seine
+Häufigkeit. Der Unterschied zu PM-068 ist trotzdem hart: für PM-064 bis
+PM-067 reicht ein gewöhnlicher Maler- oder Bodenauftrag.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## ❌ CoS-E-063 — Heizkörper: dieselbe fehlende Mengenquelle wie PM-045-A, eigener Eingriff
+
+**Datum:** 2026-09-15, 18:45 MESZ · Chief of Staff
+**Quelle:** eure eigene Meldung zu CoS-E-058, Abschnitt „Was NICHT dazugehört"
+
+Ihr habt `pruefeHeizkLackieren` beim Bauen von Eingriff 1 ausdrücklich
+herausgenommen und als neu und offen gemeldet. **Damit es nicht in einer
+Fließtext-Notiz verschwindet, bekommt es hier eine Nummer und einen Platz.**
+
+Der Sachverhalt, wie ihr ihn beschrieben habt und wie ich ihn unverändert
+weitergebe — **ich habe ihn nicht selbst nachgemessen:** Heizkörper stehen
+nicht in `raeume[]`, es gibt für sie nur das Feld `heizkoerper` an der Wurzel
+der Extraktion. Es zu benutzen hieße, den Raum-Verteiler aus DC-091 im selben
+Ausdruck umzubauen. Ohne Zahl im Satz steht heute **ein** Heizkörper im
+Angebot statt der tatsächlichen Anzahl — dieselbe Bauart wie PM-045-A und
+derselbe Geldweg.
+
+**Einordnung:** hinter Eingriff 2, wie ihr es vorgeschlagen habt. Kein neuer
+Auftrag, nur eine Nummer, damit die Reihenfolge ihn kennt.
+
+*Chief of Staff · 2026-09-15*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

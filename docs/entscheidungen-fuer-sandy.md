@@ -1336,3 +1336,126 @@ können:**
 Committen.
 
 ---
+
+---
+
+## 🟠 Neu und offen — wohin gehört der neue Prüfmeister-Batch? (15.09.2026, 18:45 MESZ)
+
+**Das ist die einzige Entscheidung, die gerade auf dich wartet.**
+
+Der Prüfmeister hat nach deiner 18:15-Antwort noch einen Batch geliefert:
+**PM-064 bis PM-068.** Ich habe ihn danach sortiert, welches Gewerk betroffen
+ist — und das Ergebnis ändert die Reihenfolge, die wir vor einer halben Stunde
+festgelegt haben:
+
+| Fall | Gewerk | heute im Verkauf? | Betrag im gemessenen Fall |
+|---|---|---|---|
+| PM-064 | Maler | **ja** | 162,00 € **zuviel** |
+| PM-065 | Maler | **ja** | 396,00 € fehlen |
+| PM-066 | Boden | **ja** | rund **1.050,00 €** fehlen |
+| PM-067 | Boden | **ja** | 42,00 € zu wenig, Container fehlt ganz |
+| PM-068 | Trockenbau | nein, gesperrt | 980,00 € — erst bei Freischaltung |
+
+**Vier von fünf treffen Maler und Bodenleger** — also genau die zwei Gewerke,
+die du verkaufst. **Die Gewerke-Sperre, die du um 18:15 entschieden hast, fängt
+keinen dieser vier ab.** Sie betrifft nur PM-068.
+
+Worum es konkret geht: ein Treppenhaus streichen, bei dem keine einzige
+Treppenposition im Angebot landet. Eine Treppe mit Vinyl, bei der die
+Stückzahlen stimmen, aber kein Preis gefunden wird. Ein herausgerissener
+verklebter Teppich, der zum Preis des losen abgerechnet wird. Und ein
+beiläufiges „das ist Sperrmüll" im Diktat, das 162 € Isolierarbeit erfindet und
+dabei die bestellte Deckenposition wegwirft.
+
+### Was du entscheiden musst
+
+**Kommt der neue Batch (CoS-E-062) vor oder nach der Gewerke-Sperre
+(CoS-E-061)?**
+
+**Meine Empfehlung: davor.** Also: CoS-E-058/059 → **CoS-E-062** → Sperre →
+CoS-E-060 → § 35a.
+
+**Warum:** Die Sperre schützt vor einem Fall, für den erst jemand ein gesperrtes
+Gewerk ins Diktat sprechen muss — ein Maler, der nebenbei ein Bad erwähnt.
+PM-064 bis PM-067 stehen dagegen auf ganz gewöhnlichen Maler- und
+Bodenaufträgen. Das sind keine Randfälle, das ist Alltag — und bei PM-066 geht
+es um gut tausend Euro auf **einem** Angebot.
+
+**Was dagegen spricht, damit du abwägen kannst:** Die Sperre ist klein, du hast
+sie gerade erst entschieden, und sie noch einmal nach hinten zu schieben fühlt
+sich nach Hin und Her an. Dazu kommt ein Unterschied in der Richtung des
+Fehlers: PM-064 ist der einzige der vier, bei dem das Angebot **zu teuer** wird
+— die anderen drei sind zu billig. Zu billig ärgert den Kunden nicht, es kostet
+dich Geld. Wenn dir „kein falsches Angebot rausschicken" schwerer wiegt als
+„kein Geld liegenlassen", dann zieh nur PM-064 vor und lass den Rest hinter der
+Sperre.
+
+**Antwort genügt in einem Wort:** „vor" oder „nach" — oder „nur PM-064 vor".
+
+### Zwei Dinge, die ich dabei nicht entscheide
+
+- **PM-068 wird nicht gebaut.** Gesperrtes Gewerk, das ist durch deine
+  18:15-Entscheidung schon geregelt.
+- **Wie** die vier behoben werden, schätzt Engineering ein. Ich habe sortiert,
+  nicht geplant.
+
+---
+
+## 🔵 Committen — die Liste ist länger geworden, und ich habe sie diesmal nachgezählt
+
+**Gegen einen frischen Klon von `de1ae80` verglichen**, Datei für Datei — nicht
+geschätzt.
+
+**Elf Doku-Dateien** (zwei mehr, als um 18:15 in meiner Liste standen):
+
+```
+docs/arbeitsreihenfolge.md
+docs/chief-of-staff-engineering-todos.md
+docs/chief-of-staff-legal-todos.md         <- fehlte in der alten Liste
+docs/chief-of-staff-platform-todos.md
+docs/design-check.md
+docs/entscheidungen-fuer-sandy.md
+docs/pruefmeister-einsprechen-47-56.md     <- fehlte in der alten Liste, ganz neu
+docs/pruefmeister-notizen-fuer-designer.md
+docs/pruefmeister-restliste.md
+docs/pruefmeister-themenspeicher.md
+docs/vokabular-abgleich.md
+```
+
+**Elf neue Testdateien** (zwei mehr als um 18:15):
+
+```
+src/lib/__tests__/cos-e-058-oeffnungen-aus-aufnahme.test.ts    <- neu
+src/lib/__tests__/pruefmeister-batch-64-68.test.ts             <- neu
+src/lib/__tests__/dc014-fehlertexte.test.ts
+src/lib/__tests__/pm-flaeche-oder-zeit.test.ts
+src/lib/__tests__/pm-materialanteil-25.test.ts
+src/lib/__tests__/pm-preisliste-material.test.ts
+src/lib/__tests__/pm-vokabular-varianten.test.ts
+src/lib/__tests__/pm-vorlagen-zwilling.test.ts
+src/lib/__tests__/pruefmeister-batch-1509.test.ts
+src/lib/__tests__/pruefmeister-batch-47-56.test.ts
+src/lib/__tests__/pruefmeister-batch-60-62.test.ts
+```
+
+**Eine neue Quelldatei:** `src/lib/fehlertexte.ts` — auf deinem Rechner
+vorhanden (7.215 Bytes), im Repository nicht.
+
+Dazu die geänderten Quelldateien aus CoS-E-058 und DC-014 — **deren Anzahl habe
+ich nicht gezählt und behaupte sie nicht.** `git status` zeigt sie dir,
+`git add -A` nimmt alles mit.
+
+`_to_delete/` liegt weiterhin im Repository: **261 Dateien, 4,4 MB**, im Klon
+nachgezählt. Der nächste `git add -A` trägt die Löschung mit ein — erschrick
+nicht, wenn `git status` 261 gelöschte Dateien anzeigt.
+
+---
+
+## 🔧 Kleinigkeit, die ich in diesem Lauf selbst repariert habe
+
+Dieser Datei hat die Endmarkierung gefehlt — die Zeile, an der jedes Projekt
+erkennt, wo die Datei aufhört und ein Speicherfehler anfängt. Sie steht jetzt
+wieder darunter. Kein Handgriff für dich, nur zur Kenntnis: `doku-endmarkierung`
+prüft genau darauf.
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

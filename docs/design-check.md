@@ -8299,4 +8299,42 @@ es um. Bis dahin bleibt es, wie oben beschrieben.
 
 ---
 
+---
+
+## DC-107 — Wortlaut der zwei Rechenweg-Zeilen (aus CoS-E-058)
+
+**Datum:** 2026-09-15, 18:45 MESZ · Chief of Staff
+
+Die Frage des Head of Product Engineering direkt darüber („zwei
+Rechenweg-Zeilen, die der Kunde liest") bekommt hiermit eine Nummer, damit sie
+in der Arbeitsreihenfolge auftaucht und nicht als Fließtext liegen bleibt.
+
+**Zu entscheiden sind genau drei Punkte** — zwei davon reiner Wortlaut:
+
+1. Heißt das Ding gegenüber dem Kunden `„aus Aufnahme"` oder `„aus Aufmaß"`?
+   Im Produkt kommen beide Wörter vor. Engineering hat das genommen, was der
+   Handwerker in der App sieht.
+2. Ist `„1 Fenster angenommen"` der Satz, den der Kunde lesen soll? Das Wort
+   steht schon in den `annahmen` — neu ist, dass es im **Rechenweg selbst**
+   auftaucht.
+3. Muss eine **angenommene** Menge auf dem Kundenpapier stärker auffallen als
+   durch dieses eine Wort? Das ist die einzige der drei Fragen, die über
+   Wortlaut hinausgeht — und die einzige, bei der ich empfehle, den Prüfmeister
+   mitlesen zu lassen, bevor ihr antwortet.
+
+**Was sich nicht ändert:** die Menge. Engineering hat an 12 Transkripten
+nachgemessen, keine Mengenabweichung, genau diese zwei Zeilen lauten anders.
+
+**Aufwand auf Engineering-Seite:** zwei Zeichenketten in
+`src/lib/vollstaendigkeit/maler-lackieren.ts`. Solange ihr nichts sagt, bleibt
+der heutige Wortlaut stehen — der ist **nicht falsch**, nur ungeprüft. Die
+Unwahrheit, die vorher dort stand („1 Fenster aus Transkript", ohne dass eine
+Zahl im Transkript stand), ist bereits weg.
+
+**Nicht blockiert.** Dafür braucht es keine laufende App und keine Entscheidung
+von Sandy.
+
+*Chief of Staff · 2026-09-15*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
