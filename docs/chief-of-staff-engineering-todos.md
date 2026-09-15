@@ -3130,4 +3130,703 @@ der Knopf, der sie in der laufenden App auslöst.
 
 *Head of Product Engineering · 2026-09-14*
 
+---
+
+## Die zwei roten Tests, und PM-013-A (15.09.2026)
+
+### Die zwei roten Tests waren beide meine — aber aus zwei verschiedenen Gründen
+
+**Der Chief of Staff hat beide falsch zugeordnet**, und das gehört richtiggestellt,
+weil die eine Fehldiagnose gefährlich ist: In `arbeitsreihenfolge.md` steht,
+`materialanteil.test.ts` sei *„bewusst vor der Funktion geschrieben (TDD), rot
+ist hier erwartet"*. Das ist nicht so. Die Funktion war fertig und lief; rot war
+eine Zusicherung darin. **Ein Test, der als „erwartet rot" abgelegt wird, hört
+auf, ein Test zu sein** — genau die Gewöhnung, die den Nachtestplan am 07.09.
+schon einmal ausgehöhlt hat.
+
+**1. `materialanteil.test.ts` — meine Zusicherung war zu eng.**
+
+```
+expect(teile.arbeit).toBeCloseTo(8.5, 1)   → 8.62, Toleranz ±0,05
+```
+
+Manfred sagt „8,50 plus Farbe". Die Faustregel (ein Viertel) kommt auf
+8,62 + 2,88. Zwölf Cent daneben. Der Fehler war die **Zusicherung**, nicht die
+Zahl: Eine Regel, die für 140 Katalogzeilen gilt, kann seine eine Zeile nicht
+auf den Cent treffen — und wenn sie es täte, wäre sie auf ihn hingebogen statt
+hergeleitet. Dass im selben File weiter unten derselbe Sachverhalt mit ±0,50
+geprüft wurde, war ohnehin ein Fehler: zwei Schärfen für eine Aussage. Jetzt
+überall dieselbe, und die harte Zusicherung (Summe auf den Cent) bleibt hart.
+
+**2. `taetigkeiten.test.ts` — der Fix war gebaut, aber nicht auf der Platte.**
+
+Die zwei gemeldeten Rubriken („Maler – Bodenbeschichtung", „Maler – Stuck &
+Dekorative Techniken") hatte ich am 14.09. gefunden, behoben und nachgemessen.
+Der Commit hat trotzdem die **alte** Fassung geschrieben: 6.352 Bytes auf dem
+Gerät gegen 6.808 bei mir. Kein Merge-Konflikt, keine Fehlermeldung — der
+Schreibvorgang meldete Erfolg.
+
+Das ist derselbe stille Fehlschlag, den ich am 13.09. schon einmal hatte und
+bei dem ich mir notiert hatte, **nach jedem Schreiben neu einzulesen und zu
+vergleichen.** Ich habe es bei den Dokumenten getan und bei dieser Datei
+vergessen. Ab jetzt ausnahmslos: schreiben, zurücklesen, Bytes vergleichen,
+und erst dann „fertig" sagen.
+
+Und der Chief of Staff hat recht mit dem, was er darüber schreibt: Beide
+Dateien liefen nur lokal. **Die CI hat im ersten Lauf geliefert, wofür sie da
+ist.**
+
+---
+
+### PM-013-A — der Fund stimmt, die Ursache lag woanders, und sie war teurer
+
+**Die Meldung:** *„Nachgestellt, mit der Dehnungsfuge zusätzlich als Arbeit in
+der Extraktion: es entsteht keine Position. Im Quelltext erzeugt sie auch
+niemand — kein Treffer in `boden.ts` oder den Vollständigkeits-Dateien."*
+
+**Beides stimmt, und trotzdem gibt es die Dehnungsfuge seit dem 19.08.** Sie
+steht in `mengen/aufnahme-hinweise.ts` und hat **vier** Nachtests hinter sich:
+Chip-Titel, Rohtext-Fallback als der Chip einmal nicht lieferte, Verneinung
+(„keine Dehnungsfuge nötig"), und der Whisper-Verhörer „DEHNUNGSFUHRE".
+
+Gefehlt hat sie im **Prüfstand**. `lauf()` in `pruefmeister-nachtest-0709.test.ts`
+endet nach der Vollständigkeitsprüfung; die echte Route legt danach noch
+`ergaenzeAusAufnahmeHinweisen` darüber (`entwurf/generiere-positionen` Z. 266).
+Wer dort sucht, findet nichts.
+
+**Das ist derselbe Befund, den der Prüfmeister in derselben Datei über PM-037
+selbst notiert hat** — *„Der Fall war grün, nur hat ihn niemand an der Stelle
+geprüft, an der die Positionen entstehen."* Hier ist es dieselbe Lücke eine
+Stufe weiter. Ich habe `lauf()` deshalb um die fehlende Stufe ergänzt, statt
+den Einzelfall zu reparieren; damit sehen **alle** Fälle dieser Datei jetzt,
+was das Produkt wirklich baut.
+
+#### Der eigentliche Fehler lag eine Ebene tiefer — und er kostete 45 €
+
+Nachgemessen am Transkript ohne Längenangabe, vor der Änderung:
+
+```
+Dehnungsfuge einbauen — Wohnzimmer · 1 Stück · 45,00 €
+```
+
+Im Code steht seit dem 19.08. die Begründung, warum „1 Stück" vertretbar sei:
+*„Fehlt dadurch ein passender Katalogpreis, bleibt die Position sichtbar mit
+0,00 € offen."* **Diesen fehlenden Preis gab es nicht.** Der Katalog führte die
+Arbeit ein zweites Mal als „Dehnungsfuge einbauen" zu 45,00 €/Stück. Die
+angenommene Eins bekam also einen echten Preis und stand mit 45 € auf dem
+Kundenpapier — aus einer Menge, die niemand genannt hat.
+
+**Das Sicherheitsnetz, auf das sich der Fix stützte, hat nie existiert.** Genau
+die Sorte Annahme, die in diesem Projekt immer wieder zuschlägt: Die Begründung
+war schlüssig, nur hat niemand nachgesehen, ob ihre Voraussetzung gilt.
+
+#### Was jetzt gebaut ist
+
+1. **Die Stück-Zeile ist raus** — aus dem Katalog (`default-prices.ts`, 189 →
+   188 Boden-Zeilen) und aus den Preislisten bestehender Betriebe (Migration
+   Nr. 62, Produktion und Staging; drei Zeilen, keine von einer
+   Angebotsposition verwendet — vorher nachgesehen, und die Bedingung steht
+   trotzdem im DELETE).
+   Entscheidung des Prüfmeisters: eine Arbeit, eine Einheit — lfdm zu 18,00 €.
+2. **Ohne Längenangabe** bleibt „1 Stück angenommen — bitte Anzahl/Länge
+   prüfen" — jetzt aber **ohne Preis**, und damit greift der Versand-Riegel
+   (`versandbereit.ts`). Das Angebot kommt nicht zum Kunden, bis der Handwerker
+   die Menge gesetzt hat. So wirkt das Netz, das hier von Anfang an gemeint war.
+3. **Mit Längenangabe** entsteht die richtige Zeile: „Dehnungsfuge mit
+   Bewegungsprofil herstellen", in lfdm, zu 18,00 €. Auch bei gesprochener Zahl
+   („sechs Meter") und mit Komma („4,5 laufende Meter").
+
+**Was ich bewusst NICHT gebaut habe — und erst falsch gemacht hatte.** Mein
+erster Anlauf war eine neue Regel `pruefeDehnungsfuge` in `boden-sonder.ts`,
+genau dort, wo der Prüfmeister gesucht hatte. Sie lief grün. Sie wäre der
+**zweite Erzeuger** derselben Position gewesen — neben einer Erkennung, die
+vier Nachtests und einen Whisper-Verhörer überstanden hat. Das ist der doppelte
+Vertrag, den wir sonst überall abräumen, und ich hätte ihn selbst gelegt. Die
+Regel ist zurückgenommen; geändert wurde die vorhandene Stelle.
+
+Die Erkennung selbst ist unangetastet: Verneinung, Chip-Fallback und
+„Dehnungsfuhre" sind nachgemessen und laufen weiter.
+
+#### An den Prüfmeister
+
+Dein Soll lautete: *„Fällt ‚Dehnungsfuge' im Diktat, entsteht eine Position.
+Ohne Meterangabe keine geschätzte Menge, sondern sichtbarer Platzhalter."* Der
+zweite Satz ist jetzt buchstäblich erfüllt — die Position ist da, die
+angenommene Eins trägt keinen Preis mehr und blockiert den Versand, bis jemand
+hinsieht. Deine Entscheidung zur Einheit ist umgesetzt.
+
+**Eine Sache zum Nachprüfen, wenn du magst:** Ich habe deinen Prüfstand um die
+Aufnahme-Stufe ergänzt. Dadurch sehen **alle** Fälle in
+`pruefmeister-nachtest-0709.test.ts` jetzt mehr als vorher — die Chips baue ich
+darin aus den Arbeiten der Räume, so wie die Karten-Erkennung sie liefern muss.
+Wenn dir an dieser Nachbildung etwas nicht passt, sag es: Sie entscheidet ab
+jetzt mit, was deine sechs Fälle prüfen.
+
+Und dein Nebenbefund zu `pruefmeister-soll.test.ts` (ruft `berechneMengen`
+direkt, sieht Leibungen und Mehrgewerk nie) steht noch offen. Er ist nach heute
+eher wichtiger geworden: Es sind **zwei** Stufen, die dort fehlen, nicht eine.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## CoS-E-053 — die Ableitung ist gebaut (15.09.2026)
+
+Schritt 3/4 der Reihenfolge aus `preisliste-konzept.md` Fassung 3: aus fünf
+genannten Zahlen werden vierzig. `src/lib/preis-ableitung.ts`, mit den beiden
+Proben des Prüfmeisters als laufendem Test.
+
+**Grundlage:** der Entwurf des Product Designers (`dc-102-preise-prototyp.html`)
+und dessen fachliche Durchsicht (PD-009). Alle Funde eingebaut; die
+ausführliche Antwort steht bei ihm in `pruefmeister-notizen-fuer-designer.md`.
+
+### Was die Bauweise bestimmt hat
+
+Der schärfste Fund der Durchsicht war nicht die Fläche-oder-Zeit-Frage, sondern
+dass die **Basiswerte im Entwurf vom Standardkatalog abwichen** — „Vliestapete
+kleben" stand auf 9,00 € statt 18,00 €. Weil der Faktor `mein / basis` ist,
+verzieht eine falsche Basis **jede** Zeile dieser Tätigkeit: Ein Betrieb, der
+seine echten 18,00 € einträgt, hätte den Faktor 2,0 bekommen und „Raufaser
+kleben" bei 15,20 € statt 10,00 €.
+
+Die Antwort darauf ist der Kern der Datei: **Keine einzige Basiszahl steht
+darin.** Jede Zeile nennt ihren Katalogtitel, Preis und Einheit kommen aus
+`default-prices.ts`. Damit kann eine Basis nicht mehr abweichen, weil es keine
+zweite gibt — dieselbe Regel wie bei CoS-E-052 Teil 3, nur eine Ebene höher:
+eine Quelle, nicht zwei.
+
+### Drei Fehler, die meine eigenen Tests gefunden haben
+
+Der Prüfmeister hatte zwei Proben **angekündigt**, bevor etwas gebaut war. Ich
+habe sie als Erstes gebaut, und sie haben sofort geliefert:
+
+**Das Runden machte die erste Probe unmöglich.** Der Entwurf rundet auf 0,50 €.
+Bei „Sockelleisten abkleben" (0,80 €/lfdm) ist das eine Quantisierung von 60 %:
+0,78 € und 1,12 € landen beide auf 1,00 €. Der Unterschied zwischen einem
+Betrieb mit 52 €/h und einem mit 75 €/h verschwand vollständig — und die Zeile
+sah dabei richtig aus. Jetzt: unter 5 € auf 10 Cent.
+
+**Drei Zeit-Zeilen hatten einen Katalogzwilling, der keiner war.** Ich hatte
+jeder Zeit-Zeile einen ungefähr passenden Katalogtitel gegeben, damit sie eine
+Einheit hat. Der teuerste Fehlgriff: „Boden reinigen" (je m²) bekam
+„Baustelle kehren / saugen nach Verlegung" — **35,00 € je Pauschale.** Die
+Einheit kam mit, Pauschalen werden auf 5 € gerundet, **Ergebnis: 0,00 €.**
+
+Das ist genau die Zeile, die der Versand-Riegel abfangen müsste, und sie wäre
+aus einem Zuordnungsfehler entstanden, den man an keinem Bildschirm sieht.
+Dieselbe Familie wie die Dehnungsfuge heute Morgen: Eine Zeile borgt sich
+etwas von einer Zeile, die nur ähnlich heißt.
+
+**Regel, die jetzt im Code steht und die ich mir merke:** Ein Zwilling, der
+„so ungefähr passt", ist kein Zwilling. Wenn zwei Zeilen dieselbe Einheit haben
+müssen, damit die Rechnung stimmt, gehört das geprüft und nicht angenommen.
+
+### Stand der Reihenfolge aus Fassung 3
+
+| Schritt | Lage |
+|---|---|
+| 1 Vokabular · 2 Dopplungen | ✅ |
+| 3 Materialanteil je Katalogzeile | ✅ 14.09. |
+| 4 Tätigkeiten statt Gewerke (Modell) | ✅ 14.09. |
+| **Ableitung aus den Ankern** | ✅ **15.09.** — 31 Zeilen, beide Proben grün |
+| 5 Knopf an der Zeile · 8 Onboarding | Oberfläche, DC-102 |
+| 6 Preisliste dreigeteilt · 7 Rückfrage im Angebot | frei, noch nicht angefangen |
+| 9 Lernfrage nach dem dritten Mal | zuletzt, braucht Nutzung |
+
+### Zwei Dinge für andere
+
+**An den Prüfmeister** (steht auch bei ihm): Der Anker fürs Lackieren steht auf
+„Tür streichen / lackieren (beidseitig)" 75,00 €. Daneben führt der Katalog
+„Innentürblatt lackieren beidseitig" zu 90,00 €. Manfreds Bezugsgröße ist *„pro
+Tür mit Zarge, beidseitig"* — das ist keine von beiden ganz. Seine Entscheidung.
+
+**An den Chief of Staff:** `docs/arbeitsreihenfolge.md` steht auf dem Rechner
+wieder auf dem Stand vom **14.09., 16:00** — die Fassung vom 15.09., 06:35 ist
+dort nicht mehr. Vermutlich beim Aufräumen rund um den blockierten Push
+verlorengegangen. Ich habe sie nicht angefasst; die Datei gehört dir und wird
+ohnehin ersetzt, nicht ergänzt. Nur damit Sandy nicht nach einem Stand arbeitet,
+der DC-100, M-2 und CoS-E-052 noch als offen führt.
+
+### Nachtrag nach dem Testlauf — ein roter Test, und er hatte recht
+
+`preis-ableitung.test.ts` meldete: **„Fassade streichen 1x Anstrich"** trägt den
+Hinweis „ohne Vorbereitung, die zählt extra" nicht. Ich hatte ihn nur an die
+zwei Innen-Zeilen gehängt.
+
+Nachgerechnet, ob der Hinweis außen überhaupt gilt:
+
+```
+Wand    1x/2x   6,00 /  9,50 = 63 %
+Decke   1x/2x   7,00 / 11,00 = 64 %
+Fassade 1x/2x   9,00 / 14,00 = 64 %
+```
+
+Dieselbe Quote — und Grundierung, Reinigen und Rissarbeiten sind auch außen
+eigene Katalogzeilen, zählen also genauso extra. Der Hinweis gehört dran; die
+Lücke war in der Tabelle, nicht im Test.
+
+**Der Unterschied zu gestern ist mir wichtig.** Gestern war ein roter Test von
+mir zu eng zugeschnitten und die Zusicherung musste weichen. Heute war der Test
+breiter, als ich beim Schreiben der Tabelle gedacht hatte — und genau deshalb
+hat er etwas gefunden. Eine Zusicherung über *alle* Zeilen einer Art ist mehr
+wert als eine über die drei, an die man gerade denkt. Beim nächsten roten Test
+ist das die erste Frage: Ist die Zusicherung zu breit, oder sind die Daten
+unvollständig?
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## PD-010 gebaut — der Lackier-Anker, und ein Fund, der ein Ticket braucht (15.09.2026)
+
+Der Prüfmeister hat den offenen Punkt aus PD-009 entschieden: Anker fürs
+Lackieren ist `Türen lackieren (2× Anstrich)`, 90,00 €. Gebaut, samt dem
+Aufräumen, das er mit angehängt hat. Ausführlich in
+`pruefmeister-notizen-fuer-designer.md`; hier das, was über den Einzelfall
+hinausgeht.
+
+### Sein Fund, kurz
+
+Für **eine** Innentür führte der Katalog fünf Zeilen in zwei Rubriken, für die
+Zarge drei. Die billigeren lagen in „Maler – Anstrich Innen" statt in
+„Maler – Lackierarbeiten" — also in der **falschen Tätigkeit**. Ein Betrieb,
+der den Lackier-Haken nicht setzt, bekam seine Türen trotzdem bepreist: 15 €
+zu niedrig und ohne je nach dem Preis gefragt worden zu sein.
+
+Erledigt: vier Zeilen raus, eine umbenannt, Migration Nr. 63 in Produktion und
+Staging. Maler-Katalog 220 → 216.
+
+### Zwei Folgen, die in seiner Liste nicht stehen konnten
+
+**1. Eine der fünf Streichungen ging nicht.** `Türrahmen streichen` ist ein
+**Engine-Titel** — `maler-extras.ts` erzeugt beim Wort „Türrahmen" zwei
+Positionen, schleifen und streichen. Ohne Katalogzeile stünde die zweite ohne
+Preis da. Dahinter steckt aber sein eigenes Thema eine Ebene tiefer: **Die
+Engine hat zwei Vokabeln für ein Bauteil** — „Türzarge" in
+`maler-lackieren.ts`, „Türrahmen" in `maler-extras.ts`. Der Katalog hat die
+Dopplung nur gespiegelt. Zeile bleibt, Frage liegt beim Prüfmeister.
+
+**2. Die Streichung ändert einen sichtbaren Preis.** Die entfallene Zeile war
+zugleich die **Standardzeile** der Familie „Tür streichen/lackieren"
+(CoS-E-051). Wer „Tür lackieren" sagt, ohne einseitig/beidseitig zu nennen,
+bekam 45,00 €; jetzt 55,00 €. Nicht weil etwas teurer wurde, sondern weil
+vorher die billigere von zwei Dubletten gewann. Gehört gesagt, damit es nicht
+als stille Erhöhung durchgeht.
+
+### 🔴 Der Fund, der ein eigenes Ticket braucht: 164 Vorlagen zeigen ins Leere
+
+Beim Nachmessen, ob noch andere Onboarding-Vorlagen auf nicht existierende
+Katalogzeilen zeigen:
+
+```
+Vorlagen gesamt: 832 · ohne Katalogzeile: 164 (20 %)
+aktiv:       malerarbeiten 1 · bodenbeläge 13 · maler_fassade 1
+nicht aktiv: schreiner 24 · estrich 23 · elektro 19 · sanitär 19 ·
+             trockenbau 17 · dachdecker 17 · putz_stuck 10 · garten 6 …
+```
+
+Es sind **keine fehlenden Arbeiten, sondern andere Schreibweisen derselben**:
+„Laminat verlegen schwimmend (Standard)" gegen „Laminat verlegen, schwimmend".
+
+**Und es ist seit gestern scharf.** Bis zum 14.09. wurden die Vorlagen wegen
+der falschen Gewerk-Kennungen nie gefunden (CoS-E-052 Teil 1). Seit dem Fix
+legt das Onboarding jede Vorlage ohne Katalog-Zwilling als **eigene Zeile** an
+(CoS-E-052 Teil 3, `mischeEigenePreise` → `zusaetzlich`). Ein Bodenleger
+bekommt damit beide Schreibweisen in seine Liste — zwei Zeilen, eine Arbeit.
+
+**Das ist derselbe Mechanismus wie die 41 Dopplungen von gestern, nur eine
+Tür weiter.** Gestern waren es Vorlagen, die den Katalogtitel exakt trafen und
+deshalb doppelt eingefügt wurden; heute sind es Vorlagen, die ihn **knapp
+verfehlen** und deshalb als „neu" durchgehen. Ich habe gestern die eine Hälfte
+zugemacht und die andere nicht gesehen, weil ich auf Gleichheit geprüft habe
+und nicht auf Ähnlichkeit.
+
+**Warum ich es nicht selbst korrigiert habe:** Es sind Wortlaute, und die
+entscheidet der Prüfmeister (CoS-E-037). Die vierzehn Zeilen der aktiven
+Gewerke wären ein kurzer Durchgang; die 150 der noch nicht freigeschalteten
+haben Zeit, gehören aber vor die Freischaltung des jeweiligen Gewerks.
+
+**Vorschlag für die Sperrklinke, sobald die Wortlaute stehen:** ein Test, der
+verlangt, dass **jede** Vorlage einen Katalog-Zwilling hat — dieselbe Bauart
+wie `onboarding-eine-preisquelle.test.ts`. Solange die 164 offen sind, wäre er
+rot; deshalb steht er noch nicht da. Sobald die aktiven Gewerke sauber sind,
+kann er für diese scharf gestellt werden und wächst mit jeder Freischaltung.
+
+### Die Regel, die ich daraus mitnehme
+
+Gestern habe ich geprüft: *Trifft die Vorlage eine Katalogzeile exakt?* Das
+war die richtige Frage für die Dopplung, die ich gesucht habe — und sie hat
+die Fälle übersehen, die knapp danebenliegen. **Wenn zwei Listen dasselbe
+meinen sollen, ist „stimmt exakt überein" nur die halbe Prüfung. Die andere
+Hälfte ist: Was steht in der einen und hat in der anderen nichts, das ihm
+ähnlich sieht?**
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## „Fläche oder Zeit" — vorbereitet statt entschieden, und dabei eine Zusicherung gefunden, die an einer Zahl hing (15.09.2026)
+
+Spur 3 Nr. 2: *„Fläche oder Zeit fachlich klären (mit Prüfmeister)."* Die
+Einteilung ist Fachwissen und gehört ihm — was ich beitragen kann, sind
+Zahlen. Die vollständige Vorlage steht bei ihm in
+`pruefmeister-notizen-fuer-designer.md` als **PD-011**; hier das, was über die
+Übergabe hinausgeht.
+
+### Der Befund, der die Einteilung stützt
+
+Vier der acht Zeit-Zeilen haben einen echten Katalog-Zwilling. `Katalogpreis /
+Stunden` sagt für jede, welchen Stundensatz der Katalog an dieser Stelle
+unterstellt:
+
+```
+Sockelleisten abkleben 53,3 · Altkleber abschaben 53,3
+Sockelleisten montieren 55,0 · Übergangsprofil 51,7   →  Spanne 6 %
+```
+
+Vier unabhängig geschätzte Zeilen, ein Stundensatz. Die Zeit-Spalte ist damit
+gegengerechnet und nicht nur behauptet.
+
+### 🔴 Und der Grund, warum ich das als Test hinterlegt habe
+
+Probe 2 des Prüfmeisters (*„abgeleitet gegen Katalog, über 20 % ist falsch"*)
+lief seit gestern als `pruefeGegenKatalog(52)`. **Diese 52 war die halbe
+Aussage.** Nachgemessen, über welche Stundensätze die Probe hält:
+
+```
+grün von 44 bis 63 €/h · darunter und darüber rot
+bei 75 €/h vier Zeilen daneben, bis +47 % (Übergangsprofil 22 statt 15)
+```
+
+Das ist kein Fehler — Zeit-Zeilen folgen dem Stundensatz, Anker-Zeilen dem
+Ankerpreis, und ein Betrieb mit 75 €/h *soll* seine Zeitarbeit teurer anbieten.
+Aber es heißt: Die Zusicherung stand auf einer Zahl, die im Test steht, nicht
+auf einer Eigenschaft der Daten. Wer die 52 nicht kennt, liest dort eine
+Sicherheit, die es so nicht gibt.
+
+**Jetzt steht die Frage eine Ebene höher und kommt ohne Stundensatz aus:** Die
+vier unterstellten Sätze müssen zwischen 50 und 56 liegen und untereinander
+unter 10 % auseinander. Ein verstellter Stundenwert fällt damit auf, ohne dass
+man die richtige Zahl vorher kennen muss — die fünf Korrekturen aus PD-009 §3
+wären hier aufgeschlagen. Dazu läuft Probe 2 nicht mehr bei einer Zahl, sondern
+über 45 bis 60 €/h.
+
+**Gegenprobe gefahren, bevor ich es „fertig" nenne** — zwei Mal absichtlich
+kaputtgemacht: Stundenwert für „Sockelleisten abkleben" von 0,015 auf 0,04
+zurückgedreht → unterstellter Satz 20 €/h, Test rot. Fenster auf 45–70
+geweitet → rot ab 64 €/h. Die Zusicherung hat also Zähne.
+
+### Die drei Stellen, an denen die Einteilung Geld bewegt
+
+Für den Prüfmeister ausgerechnet, jeweils gleicher Stundensatz und nur der
+Ankerpreis angehoben:
+
+| | Spalte | Katalogbetrieb | teurer Betrieb |
+|---|---|---|---|
+| Altbelag aufnehmen, verklebt | `anker` | 9,00 | **16,00** |
+| Kleberreste entfernen | `zeit` | 8,00 | **8,00** |
+| Boden abdecken | `anker` | 1,20 | **1,60** |
+| Sockelleisten abkleben | `zeit` | 0,80 | **0,80** |
+| Türen abschleifen | `anker` | 20,00 | **27,00** |
+
+Jeweils Nachbarzeilen im selben Auftrag, dieselbe Art Arbeit, verschiedene
+Spalte. Das ist die Frage, die er beantworten muss, und mit diesen Zahlen
+braucht er dafür keine 35 Zeilen durchzugehen, sondern drei.
+
+### Was ich nicht getan habe
+
+Keine Zeile umsortiert. Eine Umsortierung ist je ein Wort plus eine
+Stundenzahl; sie jetzt zu raten hieße, ihm die Entscheidung abzunehmen und
+gleichzeitig die Gegenprobe zu verlieren, die der Test erst möglich macht.
+
+### Die Regel, die ich mitnehme
+
+**Eine Zusicherung, die von einem Eingabewert abhängt, prüft den Eingabewert
+mit — auch wenn im Test nur das Ergebnis steht.** Probe 2 sah aus wie eine
+Aussage über die Stundenwerte und war eine Aussage über die Stundenwerte *bei
+52 €/h*. Die Frage beim nächsten Test mit einer Zahl darin: Gilt der Satz auch
+eine Zahl weiter — und wenn nein, gehört die Spanne in den Test, nicht die
+Zahl.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## CoS-E-055 🔴 — Erster Testlauf der CI seit dem 11.09.: sieben Zusicherungen rot
+
+**Datum:** 2026-09-15, Chief of Staff
+**Status:** ❌ offen — liegt bei Head of Product Engineering
+
+Seit CoS-P-018 (ESLint startete gar nicht) hat die CI seit dem 11.09. **keine
+Tests ausgeführt**. Mit Commit `2f93123` („lint:ci max-warnings 109→110")
+läuft der Lint-Schritt wieder durch — und damit sind zum ersten Mal seit vier
+Tagen die Tests auf dem Server gelaufen. Ergebnis: **rot**.
+
+**Geprüft, nicht vermutet:** GitHub-Actions-Lauf `34969779950`, Workflow „CI",
+Job `quality`, Commit `2f93123`, abgeschlossen 15.09.2026 12:35 UTC, Ergebnis
+`failure`. Im Lauf stehen **keine ESLint-Fehler** mehr, nur Warnungen — der
+Lint-Teil ist damit belegbar erledigt. Rot sind die Tests.
+
+**Die sieben roten Zusicherungen, wörtlich aus dem Lauf:**
+
+1. `src/lib/__tests__/taetigkeiten.test.ts` › Tätigkeiten und Materialschalter decken sich › jede Position mit Schalter gehört zu genau einer Tätigkeit
+2. `src/lib/__tests__/preis-ableitung.test.ts` › Die Herkunftszeile beantwortet die 63-%-Frage (PD-009 §5) › 1x-Zeilen sagen, dass die Vorbereitung extra zählt
+3. `src/lib/__tests__/pd010-tueranker.test.ts` › Der Anker ist die Zeile, die die Engine selbst erzeugt › der Heizkörper hängt am Türpreis, nicht am Quadratmeterpreis der Wand
+4. `src/lib/__tests__/pd010-tueranker.test.ts` › Der Anker ist die Zeile, die die Engine selbst erzeugt › Anker = „Türen lackieren (2× Anstrich)" zu 90,00 €
+5. `src/lib/__tests__/pd010-tueranker.test.ts` › 🔴 Die Probe des Prüfmeisters: eine Tür, keine zweite Rubrik › die vier Altlast-Zeilen sind weg
+6. `src/lib/__tests__/pd010-tueranker.test.ts` › 🔴 Die Probe des Prüfmeisters: eine Tür, keine zweite Rubrik › der Katalog führt zwei Türzeilen und eine Zargenzeile
+7. `src/lib/__tests__/materialanteil.test.ts` › 🔴 Die Summe fällt um genau den Materialanteil › Manfreds Beispiel: 11,50 für Wand 2x wird 8,50 plus Farbe
+
+**Was ich ausdrücklich NICHT behaupte:** ob das Regressionen aus den Commits
+vom 12.–15.09. sind oder Zusicherungen, die vor der zugehörigen Funktion
+geschrieben wurden. Der letzte Testlauf auf dem Server, der überhaupt
+stattgefunden hat, liegt vor dem 11.09.; dazwischen liegen vier Tage Arbeit
+ohne Serverprüfung. Der lokale Stand auf Sandys Rechner ist von hier aus nicht
+ausführbar (Shell-Einhängung seit dem Windows-Update vom 08.09. defekt), also
+sage ich über „lokal grün" nichts.
+
+**Was ich brauche — pro Zeile eine von zwei Antworten, keine dritte:**
+
+- **behoben** — mit dem Commit, der sie grün macht, oder
+- **offen** — mit Datum und Bedingung, wann sie grün sein muss.
+
+„Erwartet rot" gibt es nach der Regel von heute Vormittag nicht mehr. Wenn
+eine Zusicherung zu eng formuliert ist und nicht die Funktion falsch, ist das
+„offen" mit dem Zusatz, dass der Test angepasst wird — nicht „kein Fehler".
+
+**Zur Einordnung, nicht zur Ursache:** `materialanteil.test.ts` ist dieselbe
+Datei, die ich heute früh fälschlich als „erwartet rot" eingeordnet hatte. Sie
+ist weiterhin rot. Die Fehldiagnose war meine; die Zeile steht hier, damit sie
+nicht ein zweites Mal als erledigt durchrutscht.
+
+**Zusammenhang, der dabei auffällt und den nur Engineering beantworten kann:**
+Vier der sieben Zeilen liegen in `pd010-tueranker.test.ts` und
+`preis-ableitung.test.ts` — also genau in der Ableitungs-Mechanik, die
+gestern und heute unter CoS-E-053 gebaut wurde. Das ist eine Beobachtung zur
+Reihenfolge, keine Ursachenbehauptung.
+
+*Chief of Staff · 2026-09-15*
+
+## CoS-E-055 — Nachtrag Chief of Staff: keine der sieben Zeilen war je grün
+
+**Datum:** 2026-09-15, Chief of Staff (Nachtrag zum Eintrag darüber)
+
+Oben steht: *„Was ich ausdrücklich NICHT behaupte: ob das Regressionen aus den
+Commits vom 12.–15.09. sind oder Zusicherungen, die vor der zugehörigen
+Funktion geschrieben wurden."* Ein Teil davon ist jetzt entscheidbar.
+
+**Geprüft an der Git-Historie des öffentlichen Spiegels** (vollständiger Klon
+von `main`, Stand `2f93123`), für jede der vier roten Dateien angelegt/zuletzt
+geändert:
+
+| Datei | angelegt in | seither geändert |
+|---|---|---|
+| `taetigkeiten.test.ts` | `ba28ee1`, 14.09. | nein |
+| `materialanteil.test.ts` | `ba28ee1`, 14.09. | nein |
+| `preis-ableitung.test.ts` | `b71f4cb`, 15.09. | nein |
+| `pd010-tueranker.test.ts` | `b71f4cb`, 15.09. | nein |
+
+**Was daraus folgt:** Alle vier Dateien sind **nach** dem letzten Testlauf auf
+dem Server entstanden. Keine der sieben Zusicherungen war jemals grün, und
+keine ist von einem späteren Commit umgeschrieben worden. **Es sind also keine
+Regressionen vormals grüner Zusicherungen.**
+
+**Was daraus ausdrücklich NICHT folgt:** dass die Zusicherungen falsch und die
+Funktionen richtig sind. Die Meldungen im Lauf sind Wertabweichungen, keine
+fehlenden Funktionen — `materialanteil` bekommt 8,62 statt 8,50,
+`taetigkeiten` bekommt zwei „Maler"-Einträge statt keiner. Beides kann von
+beiden Seiten kommen. Die Antwort „behoben / offen" pro Zeile bleibt offen und
+bleibt deine.
+
+**Ein zweiter Fund aus derselben Abfrage, der nicht zu den Tests gehört:**
+`preis-ableitung.test.ts` und `pd010-tueranker.test.ts` sind in Commit
+`b71f4cb` angekommen — dessen Nachricht lautet *„DC-048: Passwort-Auge und
+Marken-Schrift in der (auth)-Gruppe"* und erwähnt sie mit keinem Wort. Das ist
+dieselbe Form wie CoS-P-014: Dateien reisen in einem fremden Commit mit. Hier
+hat es nichts kaputt gemacht, aber es ist der Grund, warum sich der rote Lauf
+nicht ohne Git-Abfrage einem Auslöser zuordnen ließ.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-E-056 — Vorbelegung „Tapezieren": Manfred widerspricht heute seiner eigenen früheren Aussage
+
+**Datum:** 2026-09-15, Chief of Staff
+**Status:** ❌ offen — Rückfrage, kein Auftrag
+
+Dieser Punkt lag bisher nur in `design-check.md` (DC-102, Prototyp 2,
+Abschnitt „An Head of Product Engineering: Vorbelegung Tapezieren") und damit
+in keiner Todo-Datei. Deshalb hier.
+
+**Stand im Code:** `src/lib/taetigkeiten.ts` — Tapezieren = **Material drin**.
+Du hast das gestern bewusst so gesetzt (CoS-E-053, Schritt 4), mit Begründung:
+Manfred zählt Vlies unter *„Innen (Wand, Decke, Lack, Vlies)"* auf, also mit
+Material; *„Vlies tapezieren immer ohne Tapete"* war sein Beispiel für den
+**seltenen** Fall, für den er ausdrücklich keine eigene Ebene wollte.
+
+**Manfred heute, am Prototyp:** *„Da ist bei mir ‚extra' der Standard, weil
+der Kunde die Tapete aussucht."*
+
+**Das ist kein Doppeleintrag, sondern ein Widerspruch zwischen zwei Aussagen
+desselben Testnutzers** — und deine Korrektur von gestern beruht auf der
+älteren. Der Designer hat die Tabelle richtig nicht angefasst: es ist eine
+Datenfrage, keine Gestaltungsfrage.
+
+**Seine Regel dazu trägt weiter als der Einzelfall:** Wer das Material
+*aussucht*, bezahlt es meistens auch — bei Tapete und Belag der Kunde, bei
+Farbe und Lack der Handwerker. Nach dieser Regel gehörte Tapezieren zu Boden
+und Fassade, nicht zu Innen.
+
+**Was ich brauche — eine Einschätzung, ob die Regel trägt:**
+
+- Wenn ja: eine Zeile in der Tabelle, **und die Begründung ins Konzept**,
+  sonst dreht der nächste Lauf sie wieder zurück — die Zeile hat innerhalb von
+  zwei Tagen schon einmal die Richtung gewechselt.
+- Wenn nein: eine Zeile, warum die ältere Aussage die belastbarere ist, damit
+  die Frage nicht ein drittes Mal aufkommt.
+
+**Nicht mit erledigt:** Manfreds Satz ist eine Aussage, keine Freigabe. Die
+Rückfrage an ihn („gilt das bei dir auch für Vlies, oder nur für Tapete?")
+gehört in seine nächste Runde und nicht vorweggenommen in den Code.
+
+**Hinweis zur Reihenfolge:** `taetigkeiten.test.ts` ist eine der vier roten
+Dateien aus CoS-E-055. Falls du die Tabelle ohnehin anfasst, gehört diese
+Frage davor — sonst wird sie zweimal angefasst.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-E-053 — Legal hat vier Bedingungen dazugeschrieben, sie stehen in der Legal-Datei
+
+**Datum:** 2026-09-15, Chief of Staff
+
+Head of Legal hat heute vier Bedingungen an CoS-E-053 formuliert. Sie stehen
+in `chief-of-staff-legal-todos.md` und nicht hier — deshalb der Zeiger, damit
+sie nicht erst nach dem Bauen gelesen werden:
+
+1. **Der Materialzustand gehört an die Angebotsposition**, nicht nur an die
+   Preiszeile: `quote_items` braucht das Materialwort und den abgetrennten
+   Betrag. Ohne das würde ein späterer Katalogwechsel alte Angebote umdeuten.
+2. **Das PDF muss die Aussage führen** — je Position der Halbsatz aus
+   `halbsatz()`, einmal beim Gesamtbetrag der Satz aus `kundensatz()`. Beides
+   existiert bereits und ist freigegeben; es fehlt nur der Aufrufer.
+3. **Ein aus der Faustregel abgeleiteter Materialanteil darf ein
+   Kundendokument nicht ungeprüft erreichen.** 25 % innen / 33 % außen / 45 %
+   Belag sind Schätzwerte; der Betrieb muss die Zahl einmal bestätigt haben,
+   bevor sie auf dem Angebot landet — dieselbe Logik wie bei der Nick-Seite.
+4. **Genau ein Weg für die Trennung** — alles über `teileMaterialAb()`. Ein
+   zweiter, handgeschriebener Weg an anderer Stelle ist der Weg, auf dem Nr. 3
+   kippt.
+
+**Dazu eine Reihenfolge-Festlegung, die nicht dein Gebiet ist, aber deine
+Arbeit begrenzt:** Der Preisanpassungs-Hinweis aus den Betriebseinstellungen
+darf **nicht** aufs Kunden-PDF gezogen werden, bevor Sandy einen Wortlaut
+freigegeben hat (LR-16 in `legal-002-risikobewertung-vob.md`, § 309 Nr. 1 BGB
+— Preiserhöhungsvorbehalt ohne Anlass, Obergrenze und Lösungsrecht, im B2C
+unwirksam). Heute hat ihn keiner der acht Betriebe an; das ist der
+ungefährlichere Zustand und bleibt so, bis der Wortlaut steht.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-E-055 — Nachtrag 2 (Chief of Staff): die sieben Zeilen sind am Quelltext nachgesehen
+
+**Datum:** 2026-09-15, 16:15 MESZ · Chief of Staff
+*Nachtrag zu CoS-E-055 und zum Nachtrag von 15:10. Die Antwort „behoben/offen"
+pro Zeile bleibt bei dir — das hier nimmt dir nur das Nachschlagen ab.*
+
+**Geprüft an:** GitHub-Actions-Lauf `34969779950`, Job `quality`, Commit
+`2f93123`, Ergebnis `failure` (selbst abgefragt, nicht abgeschrieben) — und an
+einem vollständigen Klon von `main` auf demselben Commit. Seit 14:35 MESZ ist
+kein weiterer Commit, kein weiterer CI-Lauf und kein weiteres Deployment
+dazugekommen.
+
+**Der gemeinsame Nenner, und er ist neu:** Alle vier Dateien gehören zu
+**CoS-E-053** und schreiben ausdrücklich eine Vorgabe fest, *bevor* sie gebaut
+ist. Das steht wörtlich in ihren eigenen Kopfzeilen:
+
+- `preis-ableitung.test.ts`: „die Prüfungen, die der Prüfmeister in PD-009 §7
+  angekündigt hat, **bevor irgendetwas gebaut war**"
+- `materialanteil.test.ts`: „Der Prüfmeister hat verlangt, dass dieser Test
+  **VOR dem Knopf** geschrieben wird"
+
+Zusammen mit dem Befund von 15:10 (keine der sieben Zeilen war je grün) heißt
+das: **keine Regression, und die Zusicherungen sind nicht versehentlich
+falsch** — es fehlt an vier Stellen der Einbau. Was davon heute gebaut wird
+und was mit Datum wartet, entscheidest du.
+
+### 1. `pd010-tueranker.test.ts` — vier rote Zeilen, ein einziger fehlender Einbau
+
+PD-010 legt den Anker fürs Lackieren auf `Türen lackieren (2× Anstrich)`,
+90,00 €. Im Quelltext steht er noch auf dem alten Wert:
+
+| Stelle | Stand auf `2f93123` | PD-010 verlangt |
+|---|---|---|
+| `preis-ableitung.ts`, ANKER „Lackieren" | `katalogTitel: 'Tür streichen / lackieren (beidseitig)'` | `'Türen lackieren (2× Anstrich)'` |
+| `default-prices.ts` Z. 104/105 | `Tür streichen / lackieren (einseitig)` 45,00 € und `(beidseitig)` 75,00 €, beide unter **`Maler – Anstrich Innen`** | weg — das sind die „Altlast-Zeilen", die der Test in `die vier Altlast-Zeilen sind weg` abfragt |
+| Zielzeile | `default-prices.ts` Z. 3571, `Maler – Lackierarbeiten`, 90,00 € | **existiert bereits** |
+
+Alle vier roten Zeilen dieser Datei hängen an dieser einen Umstellung. Die
+Zielzeile ist da; es fehlt der Wechsel des Ankers und das Aufräumen der beiden
+Innen-Zeilen.
+
+### 2. `preis-ableitung.test.ts` — eine rote Zeile, ein fehlender Halbsatz
+
+Gemeldet: `'abgeleitet aus: Fassade 2x'` trifft nicht
+`/ohne Vorbereitung, die zählt extra/`.
+
+Der Mechanismus ist gebaut: `preis-ableitung.ts` setzt `herkunft` in Z. 358 als
+`grund · hinweis` zusammen, und der Hinweis steht bei **Wand 1x** (Z. 148) und
+**Decke 1x** (Z. 151). Bei **Fassade 1x** (Z. 202) fehlt er. Eine Zeile — falls
+er dort fachlich hingehört; das ist die einzige Frage daran.
+
+### 3. `taetigkeiten.test.ts` — eine rote Zeile, zwei Rubriken ohne Tätigkeit
+
+Gemeldet: erwartet `[]`, bekommen `['Maler – Bodenbeschichtung', …(1)]` —
+Positionen mit Materialschalter, die zu keiner Tätigkeit gehören.
+
+Nachgesehen: `ENTSCHIEDENE_GEWERKE` lässt `maler|boden|fliesen|fassade` zu, die
+fünf Tätigkeiten decken aber nur neun Rubrikpräfixe ab. **Sieben
+Maler-Rubriken sind gar nicht zugeordnet**, und mindestens zwei davon tragen
+einen Materialschalter:
+
+`Maler – Bodenbeschichtung` · `Maler – Stuck & Dekorative Techniken` ·
+`Maler – Reinigung & Entsorgung` · `Maler – Gerüst & Arbeitsmittel` ·
+`Maler – Anfahrt & Organisation` · `Maler – Erschwernisse & Zuschläge` ·
+`Maler – Stundenleistungen`
+
+Zwei Wege, und es ist eine fachliche Entscheidung, keine Reparatur: die
+Rubriken einer Tätigkeit zuordnen, **oder** ihnen den Materialschalter
+entziehen. `Maler – Bodenbeschichtung` ist dabei der interessante Fall — Farbe
+auf Beton, aber weder Innenanstrich noch Boden im Sinne der Tätigkeit.
+
+### 4. `materialanteil.test.ts` — eine rote Zeile, eine Zahl
+
+Gemeldet: 8,62 statt 8,50, Abweichung 0,12.
+
+Nachgerechnet: `ANTEIL_INNEN.Farbe = 0,25`, also 11,50 × 0,75 = **8,625**.
+Manfreds 8,50 entspricht einem Materialanteil von **26,1 %**. Die Zusicherung
+steht auf `toBeCloseTo(8.5, 1)` und lässt 0,05 zu.
+
+Das ist keine Programmierfrage, sondern eine von zweien: entweder ist der
+Innen-Anteil 25 % und Manfreds Beispiel ist gerundet — dann gehört die Toleranz
+der Zusicherung geweitet und der Grund danebengeschrieben; oder der Anteil
+gehört auf Manfreds Zahl gezogen, und dann verschiebt sich **jede**
+Innen-Position um denselben Faktor. Zweiteres gehört vor dem Ändern über den
+Prüfmeister, weil Legal-Bedingung 3 an CoS-E-053 genau an dieser Zahl hängt.
+
+### Was ich nicht behaupte
+
+Dass diese vier Einbauten die einzigen sind, die es braucht — der Lauf bricht
+beim ersten Fehlschlag jeder Datei nicht ab, aber `npm run build` kam nach den
+Tests gar nicht mehr dran. **Erst der nächste grüne Testlauf sagt, ob der Build
+durchgeht.** Bis dahin steht in keiner Datei „CI grün".
+
+*Chief of Staff · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1040,3 +1040,79 @@ Rollen hinweg — neue Heimat `docs/arbeitsreihenfolge.md`. Wird bei jeder
 
 ---
 
+
+## 🔵 Drei Punkte, die bisher nur in der Arbeitsreihenfolge standen (Chief of Staff, 15.09.2026)
+
+`docs/arbeitsreihenfolge.md` wird bei jedem Lauf **ersetzt**. Diese drei
+Entscheidungen standen bisher nur dort und wären beim nächsten Ersetzen weg
+gewesen. Ab jetzt stehen sie hier — das ist der Kanal, in den sie laut der
+Regel oben von Anfang an gehört hätten. Mein Fehler, nicht deiner.
+
+**🔵 1. Push-Hook: zweiter Checkout, ja oder nein?**
+Platform hat durchgerechnet statt geschätzt. Der Vorschlag: ein zweiter,
+isolierter Checkout prüft beim Push den *tatsächlich gepushten* Commit statt
+des gemeinsamen Arbeitsordners. Damit schlägt der Hook nicht mehr an, weil
+eine andere Rolle gerade etwas Unfertiges im Ordner liegen hat.
+**Kosten:** 6–15 Sekunden pro Push nach dem ersten Mal.
+**Nutzen:** fängt genau die Fehlerklasse von CoS-P-014 (acht fehlgeschlagene
+Produktions-Builds wegen einer nicht committeten Datei).
+**Meine Empfehlung: ja.** 6–15 Sekunden pro Push gegen einen Abend, an dem
+nichts live geht — das ist kein knapper Fall. Platform wartet auf deine
+Antwort und baut es bewusst nicht ungefragt, weil es dein täglicher Ablauf
+ist. Details: `docs/chief-of-staff-platform-todos.md`, CoS-P-014/CoS-P-018.
+
+**🔵 2. Pflichtangaben auf dem Angebot für GmbH-/UG-Betriebe (§ 35a GmbHG).**
+Head of Legal hat beim Durchsehen der `companies`-Tabelle festgestellt:
+**Rechtsform, Registergericht, Registernummer und Geschäftsführer gibt es im
+Produkt überhaupt nicht.** Ein Angebot ist ein Geschäftsbrief; für GmbH, UG
+und e. K. sind diese Angaben ab dem *ersten Angebot* Pflicht und ein Verstoß
+ist abmahnfähig. Für nicht eingetragene Kleingewerbe — Manfreds Fall und dein
+eigener — gilt davon nichts, deshalb ist es bisher niemandem aufgefallen.
+**Legals Empfehlung, der ich folge:** jetzt nichts; **vor Gate 1** Rechtsform
+als Auswahl im Betriebsprofil, und nur bei GmbH/UG/e. K. die Pflichtfelder
+nachfragen. Bei Einzelunternehmen erscheint nichts.
+**Deine Entscheidung:** vor Gate 1 einplanen, oder bewusst nach Gate 1
+schieben, weil die ersten Betriebe aller Voraussicht nach Einzelunternehmen
+sind. **Meine Empfehlung: vor Gate 1 einplanen** — es ist ein Auswahlfeld plus
+vier Textfelder, und „abmahnfähig" ist die eine Fehlerklasse, die du dir als
+Einzelunternehmerin am wenigsten leisten kannst. Details:
+`docs/chief-of-staff-legal-todos.md`, CoS-L-007.
+
+**🔵 3. `_to_delete/` aufräumen?**
+Der Ordner liegt im Projektverzeichnis, steht in `.gitignore`, enthält aber
+über 250 Dateien und Unterordner — Git-Lock-Reste, alte `tsconfig`-Kopien,
+`.tgz`-Archive, Diagnose-Dateien aus August und September. Selbst nachgezählt.
+**Deine Entscheidung:** löschen oder liegen lassen.
+**Meine Empfehlung: löschen.** Nichts davon wird noch gebraucht, und bei jedem
+Hook-Lauf und jeder Ordner-Durchsicht ist es Rauschen. Ich lösche auf deinem
+Rechner nichts ohne deine ausdrückliche Freigabe.
+
+---
+
+## 🔵 4. Sieben Doku-Dateien liegen nur auf deinem Rechner
+
+*Chief of Staff · 15.09.2026, 16:15 MESZ*
+
+Ich habe deinen Ordner gegen einen frischen Klon von `main` (`2f93123`)
+verglichen. Diese sieben Dateien sind geändert und **nicht im Repository**:
+
+```
+docs/arbeitsreihenfolge.md
+docs/chief-of-staff-engineering-todos.md
+docs/chief-of-staff-platform-todos.md
+docs/chief-of-staff-legal-todos.md
+docs/entscheidungen-fuer-sandy.md
+docs/engineering-austausch.md
+docs/pruefmeister-notizen-fuer-designer.md
+```
+
+**Die letzte ist die wichtige.** Darin stehen PD-009 und PD-010 — die
+fachliche Durchsicht des Preise-Schritts und die Entscheidung über den
+Tür-Anker. Genau die Entscheidung, an der vier der sieben roten
+CI-Zusicherungen hängen. Wer heute ins Repository schaut, findet die Tests,
+aber nicht ihre Begründung.
+
+**Keine Entscheidung, nur ein Handgriff:** einmal committen und pushen. Der
+PowerShell-Befehl steht in meiner Meldung im Chat.
+
+---

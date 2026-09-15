@@ -456,3 +456,611 @@ Rolldown-Binding fürs Zielsystem) — bitte einmal gegenlaufen lassen. Details
 und Status in `docs/design-check.md`, DC-024.
 
 ---
+
+---
+
+## PD-009 — „Fläche oder Zeit" im Preise-Prototyp, fachlich durchgesehen
+
+*Prüfmeister · 15.09.2026 · Auftrag aus `arbeitsreihenfolge.md` (Engineering
+Nr. 2 / Prüfmeister Nr. 1). Grundlage: `dc-102-preise-prototyp.html`, die
+Tabelle `KATALOG`, und dein Satz dazu: „Meine Einteilung ist ein Vorschlag;
+sie gehört einmal fachlich durchgesehen."*
+
+Ist sie. Vorweg das Wichtigste, weil es die halbe Verwirrung erklärt.
+
+---
+
+### 1. Das Etikett stimmt nicht mit dem überein, was der Code tut
+
+`'flaeche'` heißt im Prototyp nicht „aus der Fläche". Es heißt **„skaliert mit
+dem Ankerpreis dieser Tätigkeit"** — `wert × (mein / basis)`. Beim Lackieren
+ist dieser Anker ein **Stückpreis** („Tür lackieren", €/Stück). Deshalb steht
+`Fenster lackieren` auf `'flaeche'` und hat mit Fläche nichts zu tun — und ist
+trotzdem **richtig eingeordnet**.
+
+Das fällt genau an der Stelle auf die Füße, an der du Manfred zitierst: Sein
+Satz *„Ein Heizkörper hat mit dem Quadratmeterpreis nichts zu tun, der kommt
+aus der Zeit"* steht als Kommentar über einer Tabelle, in der
+`Heizkörper lackieren` auf `'flaeche'` steht. Wer das liest, hält es für einen
+Fehler. Es ist keiner.
+
+**Vorschlag: die beiden Werte heißen `anker` und `zeit`.** Dann stimmt der
+Kommentar wieder mit der Tabelle überein, und die eigentliche Frage wird
+lesbar.
+
+**Die Prüffrage, mit der ich jede Zeile durchgegangen bin,** ist nämlich nicht
+„in welcher Einheit wird abgerechnet" — sonst müsste alles mit lfm und Stück
+zur Zeit. Sie lautet:
+
+> **Wenn der Betrieb seinen Ankerpreis um 20 % anhebt — muss diese Zeile
+> mitgehen? Dann `anker`. Hängt sie stattdessen daran, wie lange einer dafür
+> braucht? Dann `zeit`.**
+
+---
+
+### 2. Drei Zeilen stehen fachlich falsch
+
+| Zeile | steht auf | gehört auf | warum |
+|---|---|---|---|
+| **Sockelleisten montieren** (Boden, €/lfm) | `flaeche` | **`zeit`, ~0,10 h/lfm** | Du hast es selbst geahnt. Der Aufwand hängt an Metern, Ecken, Gehrungen und Türausschnitten — nicht am Quadratmeterpreis des Belags. Ein Betrieb, der Laminat für 25 €/m² verlegt, nimmt deshalb nicht 8,50 € für den laufenden Meter Leiste |
+| **Kleberreste entfernen** (Boden, €/m²) | `flaeche` | **`zeit`, ~0,15 h/m², mit Hinweis** | Die schwankendste Position im ganzen Bodenbau: zwischen 5 und 25 €/m², je nachdem, was da klebt. Eine abgeleitete Zahl täuscht hier eine Genauigkeit vor, die es nicht gibt. Gehört mit dem Zusatz „vor Ort prüfen" in die Liste |
+| **Steckdosen abklemmen** (innen, €/Stück) | `zeit` ✓ | `zeit`, aber **anders heißen** | Die Einordnung stimmt, der Name nicht: **Abklemmen ist Elektroarbeit.** Der Maler nimmt die Abdeckung ab und wieder dran. „Steckdosen ab- und anbauen" oder „Abdeckungen demontieren". So wie es dasteht, steht auf dem Kundenangebot eine Leistung, die der Betrieb gar nicht erbringen darf |
+
+**Und eine, die keine Fläche-oder-Zeit-Frage ist, aber in derselben Tabelle
+steht:** `Trittschall verlegen` ist als `'zubehoer'` markiert — Material immer
+drin, nicht wählbar. Das widerspricht dem Boden-Standard „ohne Belag". Wer
+sein Laminat selbst kauft, kauft die Dämmung fast immer mit; die liegt im
+Baumarkt direkt daneben. **Gehört auf `'wahl'`.**
+
+---
+
+### 3. Vier Zeitwerte sind zu hoch — einer deutlich
+
+Bei `'zeit'` ist der hinterlegte Wert eine **Stundenzahl**, und die wird mit
+dem Stundensatz multipliziert (im Prototyp 52,00 €). Nachgerechnet gegen den
+Standardkatalog:
+
+| Zeile | hinterlegt | ergibt bei 52 € | Katalog / fachlich | mein Wert |
+|---|---|---|---|---|
+| **Sockelleisten abkleben** | 0,04 h/lfm | **2,08 €/lfm** | **0,80 €/lfm** | **0,015 h** |
+| Boden reinigen | 0,05 h/m² | 2,60 €/m² | besenrein + feucht ≈ 0,60–1,00 € | **0,02 h** |
+| Steckdosen (s. o.) | 0,15 h/Stück | 7,80 €/Stück | Abdeckung ab und dran: 5 Minuten | **0,08 h** |
+| Gerüstplane anbringen | 0,06 h/m² | 3,12 €/m² | 100 m² Fassade = gut 3 Mannstunden | **0,03 h** |
+| Heizkörper abkleben | 0,30 h/Stück | 15,60 €/Stück | mein Richtwert vom 12.09.: **18,00 €** | **0,35 h** |
+| Übergangsprofil setzen | 0,35 h/Stück | 18,20 €/Stück | Katalog 15,00 € | 0,29 h |
+
+Die Sockelleiste ist der Ausreißer: **0,04 h sind 2,4 Minuten je Meter.** Ein
+18-Meter-Zimmer wäre damit eine Dreiviertelstunde nur Kreppband. Realistisch
+ist eine knappe Minute je Meter, und genau daher kommen die 0,80 € im Katalog.
+
+Der Heizkörper geht in die andere Richtung, und der Grund ist wichtiger als
+der Betrag: **Für jede Position, die es auch im Standardkatalog gibt, müssen
+beide Wege ungefähr dieselbe Zahl liefern.** Sonst bekommt ein Betrieb, der
+die Nick-Seite durchgeht, einen anderen Preis als einer, der sie wegklickt —
+für dieselbe Arbeit, in derselben App.
+
+---
+
+### 4. Der schärfste Fund steht nicht in der Fläche-oder-Zeit-Spalte
+
+Die `basis`-Werte der Anker weichen vom Standardkatalog ab. Das ist nicht
+egal, denn der Faktor ist **`mein / basis`** — eine falsche Basis verzieht
+*alle* abgeleiteten Zeilen dieser Tätigkeit:
+
+| Anker | `basis` im Prototyp | Standardkatalog | Folge |
+|---|---|---|---|
+| **Vliestapete kleben** | 9,00 € | **18,00 €** | Trägt er seine echten 18,00 € ein, wird der Faktor **2,0** — und jede Tapezier-Zeile verdoppelt sich. „Raufaser kleben" landet bei 15,20 € statt 10,00 € |
+| Laminat verlegen | 17,00 € | 14,00 € | Faktor rund 0,8 — alle Boden-Zeilen zu niedrig |
+| Wand streichen 2x | 10,00 € | 9,50 € | klein, aber dieselbe Mechanik |
+| Decke streichen 2x | 10,00 € | 11,00 € | siehe unten |
+
+**Das ist kein Prototyp-Schönheitsfehler, wenn die Tabelle so übernommen
+wird.** Die Basiswerte müssen beim Einbau aus `default-prices.ts` gezogen
+werden, nicht abgeschrieben. Sonst rechnet das Onboarding gegen eine
+Preisliste, die es so nicht gibt.
+
+**Und ein fachlicher Fehler steckt auch drin:** Decke 2x und Wand 2x stehen
+beide auf 10,00 €. **Über Kopf ist teurer** — Leiter, Nackenhaltung,
+schlechtere Sicht auf den Randanschluss. Der Katalog hat das richtig (9,50
+gegen 11,00). Im Prototyp ist die Decke billiger als die Wand, und das kippt
+bei jedem Deckenangebot in die falsche Richtung.
+
+---
+
+### 5. Zu den 63 % — die Stelle, an der Manfred und der Katalog auseinandergehen
+
+Deine Nick-Seite zeigt als Beispiel „Wand streichen 1x · 8,25 €", der Prototyp
+rechnet 6,93 €. Der Unterschied ist Manfreds Satz, 1x sei bei ihm **75 %** von
+2x, gegen die **63 %** aus dem Katalog (6,00 zu 9,50; bei der Decke 7,00 zu
+11,00 — dieselbe Quote).
+
+**Beide haben recht, und es hängt an genau einer Frage:** Steckt die
+Vorbereitung im Quadratmeterpreis?
+
+- Wenn Abkleben, Abdecken und Rüsten **extra** berechnet werden — so steht es
+  in deinem eigenen Halbsatz auf Bildschirm 3 — dann ist der m²-Preis fast
+  reine Streicharbeit. Der zweite Anstrich geht schneller als der erste, aber
+  nicht dramatisch. **1x ≈ 60 %, die 63 % stimmen.**
+- Steckt die Vorbereitung drin, verschiebt sich das Verhältnis nach oben, und
+  Manfreds 75 % sind richtig — **für seine Preise.**
+
+Das ist also nichts zum Entscheiden, sondern etwas zum **Anzeigen** — und
+damit genau der Beleg für deine Herkunftszeile. Mein Vorschlag: Bei allen
+1x-Zeilen steht dort nicht nur „abgeleitet aus: Wand 2x", sondern
+**„abgeleitet aus: Wand 2x · ohne Vorbereitung, die zählt extra"**. Dann
+findet Manfred die Stelle, an der er widersprechen will, ohne dass ihm jemand
+erklären muss, warum die Zahl so ist.
+
+---
+
+### 6. Was richtig steht, obwohl es falsch aussieht
+
+Damit es beim Umbauen nicht versehentlich „mitkorrigiert" wird:
+
+- **Fenster, Zarge, Heizkörper, Geländer lackieren** auf `anker` — richtig.
+  Der Anker ist ein Stückpreis, sie skalieren mit ihm.
+- **Wand spachteln Q2, Untergrund vorbereiten, Fassade grundieren** auf
+  `anker` — richtig, das sind flächige Arbeiten.
+- **Altbelag lose 5,20 € gegen verklebt 9,40 €** — sehr gut. Genau die
+  Unterscheidung, die im Angebot dreimal Geld gekostet hat, bevor sie eine
+  Regel wurde.
+- **Übergangsprofil und Gerüstplane auf `zeit`** — richtig eingeordnet, nur
+  die Werte müssen nachgezogen werden.
+
+---
+
+### 7. Was ich prüfe, sobald es gebaut ist
+
+Zwei Betriebe, sonst gleich: einer mit 52 €/h, einer mit 75 €/h. **Die
+Zeit-Zeilen müssen sich um genau diesen Faktor unterscheiden, die
+Anker-Zeilen um gar nichts.** Wenn sich eine Anker-Zeile mitbewegt, steht sie
+in der falschen Spalte — und das sieht man an keinem Bildschirm, nur am
+Vergleich.
+
+Dazu die Gegenprobe aus Punkt 3: für jede Position, die es auch im
+Standardkatalog gibt, der abgeleitete Preis gegen den Katalogpreis. Abweichung
+über 20 % heißt, einer von beiden ist falsch.
+
+---
+
+## PD-010 — Der Anker fürs Lackieren: welche Katalogzeile es wird
+
+*Prüfmeister · 15.09.2026 · offener Punkt aus PD-009 / `arbeitsreihenfolge.md`*
+
+### Die Entscheidung
+
+> **Anker: `Türen lackieren (2× Anstrich)` — 90,00 €/Stück**
+> Halbsatz: *„Ein Innentürblatt, beidseitig, zweimal lackiert. Die Zarge zählt
+> extra."*
+
+Drei Gründe, in dieser Reihenfolge:
+
+1. **Es ist die Zeile, die die Engine selbst erzeugt.** `maler-lackieren.ts`
+   schreibt wörtlich `Türen lackieren (2× Anstrich)`. Der Anker muss dieselbe
+   Zeile sein, die später im Angebot steht — sonst fragt das Onboarding nach
+   einem Preis, den nachher niemand benutzt. Das ist dieselbe Regel wie beim
+   Vokabular-Abgleich: Katalog folgt der Engine.
+2. **Es ist die Zahl, die jeder Maler im Kopf hat.** „Was nimmst du für eine
+   Tür?" beantwortet jeder ohne nachzudenken. Bei „Holzbauteil lackieren 2x,
+   18 €/m²" muss er erst rechnen, wie viel Quadratmeter eine Tür hat.
+3. **Sie liegt in der Mitte ihrer Welt.** Alles andere im Lackierbereich
+   verhält sich stabil dazu, quer über Betriebe (Verhältnisse unten).
+
+### Warum nicht „Tür lackieren, pro Tür mit Zarge" wie im Prototyp
+
+Im Prototyp steht der Anker als *„Tür lackieren · Pro Tür mit Zarge,
+beidseitig"* zu 60,00 €. **Das geht aus zwei Gründen nicht:**
+
+- **Die Zarge ist im Katalog eine eigene Zeile** (`Türzarge lackieren`,
+  45,00 €/Stück), und die Engine erzeugt sie auch getrennt. Ein Anker, der die
+  Zarge einschließt, bedeutet: Der Betrieb gibt einen Preis für Blatt + Zarge
+  an, und im Angebot stehen danach beide Zeilen. **Die Zarge wäre doppelt
+  drin.**
+- **Der Betrag ist zu niedrig.** Blatt beidseitig (90,00) plus Zarge (45,00)
+  sind im Standardkatalog 135,00 € — der Prototyp verankert bei 60,00. Trägt
+  ein Betrieb seinen echten Türpreis ein, wird der Faktor 1,5 und jede
+  abgeleitete Lackier-Zeile springt um die Hälfte nach oben. **Dieselbe
+  Mechanik wie bei der Vliestapete aus PD-009**, nur eine Tätigkeit weiter.
+
+### Die Verhältnisse, aus denen abgeleitet wird
+
+Gemessen am Anker (90,00 €). Diese Quoten halten über Betriebe hinweg — wer
+120 € für die Tür nimmt, nimmt rund 60 € für die Zarge:
+
+| Zeile | Katalog | Anteil am Anker |
+|---|---|---|
+| Türzarge lackieren | 45,00 €/Stück | 50 % |
+| Fenster lackieren (2× Anstrich) | 55,00 €/Stück | 61 % |
+| Stahlzarge lackieren | 55,00 €/Stück | 61 % |
+| Heizkörper streichen / lackieren | 40,00 €/Stück | 44 % |
+| Türen grundieren · Fenster grundieren | 25,00 €/Stück | 28 % |
+| Türen abschleifen · Fenster abschleifen | 20,00 €/Stück | 22 % |
+| Treppengeländer lackieren | 18,00 €/lfdm | 20 % *(andere Einheit, Quote trägt trotzdem)* |
+
+**Ein Ausreißer im Prototyp:** Dort steht „Geländer lackieren 53,00 €/lfm".
+Der Katalog hat 18,00 €/lfdm. 53 € je laufendem Meter wäre ein Geländer mit
+Abbeizen und Neuaufbau — für „lackieren" sind 18 € richtig, mit Anschleifen
+25–30 €. Bitte auf den Katalogwert ziehen.
+
+### Was mit der Entscheidung aufgeräumt werden muss
+
+**Für eine einzige Innentür führt der Katalog heute fünf Zeilen in zwei
+Rubriken** — das ist der eigentliche Grund, warum die Ankerfrage überhaupt
+schwierig war:
+
+| Zeile | Rubrik | Preis | |
+|---|---|---|---|
+| `Türen lackieren (2× Anstrich)` | Maler – Lackierarbeiten | 90,00 € | **bleibt, wird Anker** |
+| `Innentürblatt lackieren beidseitig` | Maler – Lackierarbeiten | 90,00 € | Dublette, geht im Anker auf |
+| `Tür streichen / lackieren (beidseitig)` | Maler – Anstrich Innen | 75,00 € | Altlast, **15 € billiger für dieselbe Arbeit** |
+| `Innentürblatt lackieren einseitig` | Maler – Lackierarbeiten | 55,00 € | bleibt als Ausnahme, Titel angleichen |
+| `Tür streichen / lackieren (einseitig)` | Maler – Anstrich Innen | 45,00 € | Altlast, Dublette der Zeile darüber |
+
+Dasselbe bei der Zarge: `Türzarge lackieren` 45,00 € (Lackierarbeiten) gegen
+`Türzarge streichen` 35,00 € und `Türrahmen streichen` 35,00 € (Anstrich
+Innen) — **drei Zeilen, ein Bauteil.**
+
+**Das ist nicht nur Kosmetik, sondern trifft die Tätigkeiten-Ebene:**
+`taetigkeiten.ts` ordnet „Maler – Lackierarbeiten" der Tätigkeit *Lackieren*
+zu und alles übrige „Maler …" der Tätigkeit *Innen streichen*. Die
+Altlast-Zeilen liegen also in der **falschen Tätigkeit** — und ausgerechnet
+die billigeren. Ein Betrieb, der den Lackier-Haken nicht setzt, bekommt seine
+Türen trotzdem bepreist, nur 15 € zu niedrig und ohne dass er je nach dem
+Preis gefragt wurde.
+
+**Mein Vorschlag, in einem Zug mit dem Anker:**
+
+- `Tür streichen / lackieren (beidseitig)` und `(einseitig)` entfallen; die
+  Arbeit steht in den Lackierarbeiten.
+- `Innentürblatt lackieren einseitig` heißt künftig
+  **`Türen lackieren einseitig (2× Anstrich)`** — dieselbe Wortfamilie wie der
+  Anker, damit beide im selben Atemzug gefunden werden. Preis bleibt 55,00 €.
+- `Innentürblatt lackieren beidseitig` entfällt (identisch zum Anker).
+- `Türzarge streichen` und `Türrahmen streichen` entfallen zugunsten von
+  `Türzarge lackieren` 45,00 €.
+
+Damit sind aus fünf Türzeilen zwei geworden (beidseitig 90, einseitig 55) und
+aus drei Zargenzeilen eine.
+
+### Die Probe, die das absichern muss
+
+Vor dem Einbau, im Test: **Ein Angebot mit einer Tür darf genau zwei Zeilen
+erzeugen** — Blatt und Zarge — und nie eine dritte aus der anderen Rubrik.
+Heute kann der Matcher je nach Titel in beiden Rubriken landen; nach dem
+Aufräumen gibt es die zweite Rubrik nicht mehr.
+
+---
+
+## PD-010 — gebaut. Und drei Dinge, die du von deiner Seite nicht sehen konntest
+
+*Head of Product Engineering · 15.09.2026*
+
+Der Anker ist `Türen lackieren (2× Anstrich)`, 90,00 €. Deine Begründung
+stimmt in allen drei Punkten, und der erste ist der tragende: **Es ist die
+Zeile, die die Engine selbst erzeugt** — nachgesehen, `maler-lackieren.ts`
+schreibt genau diesen Titel. Ein Anker, der anders heißt, fragt nach einem
+Preis, den nachher niemand benutzt.
+
+**Deine Quoten habe ich nicht eingebaut, sondern nachgerechnet** — und genau
+das war der Punkt: Sie stimmen alle sieben mit dem Katalog überein (Zarge
+50 %, Fenster 61 %, Stahlzarge 61 %, Heizkörper 44 %, grundieren 28 %,
+abschleifen 22 %, Geländer 20 %). Damit sind sie der **Beleg**, dass die
+Katalogwerte zueinander passen, und nicht die Quelle der Preise. Im Code steht
+keine einzige davon; alles kommt aus `default-prices.ts`.
+
+Das Geländer ist auf 18,00 €/lfdm gezogen, wie du geschrieben hast.
+
+**Und einen Fund von dir habe ich weitergetragen:** In PD-009 §6 stand
+*„Fenster, Zarge, Heizkörper, Geländer lackieren auf `anker` — der Anker ist
+ein Stückpreis."* Bei mir hing der Heizkörper an der **Wand**, also am
+Quadratmeterpreis — genau die Zuordnung, gegen die Manfreds Satz gerichtet
+war. Er hängt jetzt am Türpreis. Ein Test hält es fest.
+
+### 1. Eine deiner fünf Streichungen geht so nicht: `Türrahmen streichen`
+
+Die Zeile ist **ein Engine-Titel.** `maler-extras.ts` hat eine eigene Regel
+(`pruefeTuerrahmen`): Sagt der Handwerker „Türrahmen", entstehen **zwei**
+Positionen — `Türrahmen schleifen` und `Türrahmen streichen`. Fällt die
+Katalogzeile weg, steht die zweite ohne Preis da.
+
+Das ist kein Grund gegen dein Ziel, sondern ein Hinweis, dass es eine Ebene
+tiefer sitzt, als wir beide dachten: **Die Engine hat selbst zwei Vokabeln für
+dasselbe Bauteil.** `maler-lackieren.ts` sagt „Türzarge", `maler-extras.ts`
+sagt „Türrahmen". Der Katalog hat die Dopplung nur gespiegelt.
+
+Ich habe die Zeile deshalb **stehen gelassen** und die anderen vier
+gestrichen. Das ist eine Vokabelfrage, und die gehört dir, nicht mir — dieselbe
+Regel wie bei CoS-E-037. Wenn du sagst, die Engine soll „Türzarge" sagen, baue
+ich es; dann fällt die Katalogzeile im selben Zug.
+
+Nebenbei aus derselben Familie: **`Stahlzarge lackieren` (55,00 €) liegt in
+„Anstrich Innen"**, nicht in den Lackierarbeiten. Du hast sie in der
+Quotentabelle, aber nicht in der Aufräumliste. Gleicher Fehler, gleiche Rubrik
+— sag Bescheid, ob sie mit umzieht.
+
+### 2. Die Streichung ändert einen Preis, den der Handwerker sieht
+
+`Tür streichen / lackieren (einseitig)` war nicht nur eine Katalogzeile,
+sondern die **Standardzeile** der Familie „Tür streichen/lackieren"
+(`katalog-standard.ts`, CoS-E-051). Wer „Tür lackieren" sagt, ohne einseitig
+oder beidseitig zu nennen, bekommt sie.
+
+Ich habe den Standard auf `Türen lackieren einseitig (2× Anstrich)` gezogen —
+sonst hätte die Familie ins Leere gezeigt. **Damit steigt der angenommene Preis
+für eine einseitige Tür von 45,00 € auf 55,00 €.**
+
+Das ist die richtige Richtung und trotzdem eine Preisänderung, die jemand
+merkt: Nicht weil etwas teurer geworden wäre, sondern weil vorher die
+**billigere von zwei Zeilen gewann — und zwar die in der falschen Tätigkeit.**
+Dein Fund, nur an der Stelle, an der er auf dem Angebot ankommt. Ich nenne es,
+damit es nicht als stille Erhöhung durchgeht.
+
+Ebenfalls nachgezogen: die drei Onboarding-Vorlagen, die auf die entfallenen
+Zeilen zeigten. Sie zeigen jetzt auf die Lackierarbeiten.
+
+### 3. Beim Nachmessen ein größerer Fund — und er gehört dir
+
+Ich habe geprüft, ob noch andere Vorlagen ins Leere zeigen. Ergebnis:
+
+```
+Onboarding-Vorlagen gesamt: 832
+davon ohne passende Katalogzeile: 164  (20 %)
+
+aktive Gewerke:   malerarbeiten 1 · bodenbeläge 13 · maler_fassade 1
+noch nicht aktiv: schreiner 24 · estrich 23 · elektro 19 · sanitär 19 ·
+                  trockenbau 17 · dachdecker 17 · putz_stuck 10 · garten 6 …
+```
+
+Die dreizehn beim Boden sind **keine fehlenden Arbeiten, sondern andere
+Schreibweisen derselben**:
+
+```
+Vorlage: „Laminat verlegen schwimmend (Standard)"
+Katalog: „Laminat verlegen, schwimmend"
+
+Vorlage: „Teppichboden verlegen (gespannt / Nagelleiste)"
+Katalog: „Teppichboden verlegen (gespannt / Tackern auf Nagelleiste)"
+```
+
+**Warum das seit gestern Geld kostet und vorher nicht:** Bis zum 14.09. wurden
+die Vorlagen wegen der falschen Gewerk-Kennungen nie gefunden (CoS-E-052).
+Seit dem Fix legt das Onboarding jede Vorlage ohne Katalog-Zwilling als
+**eigene Zeile** an. Ein Bodenleger bekommt damit „Laminat verlegen,
+schwimmend" **und** „Laminat verlegen schwimmend (Standard)" in seine Liste —
+zwei Zeilen, eine Arbeit, und der Matcher nimmt eine davon.
+
+Das ist CoS-E-039 durch die Hintertür. Ich habe es **nicht** selbst korrigiert:
+Es sind Wortlaute, und die entscheidest du. Die vierzehn Zeilen der aktiven
+Gewerke wären ein kurzer Durchgang; die 150 der noch nicht freigeschalteten
+haben Zeit, sollten aber vor der Freischaltung des jeweiligen Gewerks dran sein.
+
+### Deine Probe
+
+*„Ein Angebot mit einer Tür darf genau zwei Zeilen erzeugen — Blatt und Zarge
+— und nie eine dritte aus der anderen Rubrik."*
+
+Steht als Test (`pd010-tueranker.test.ts`). Ich habe dein „genau zwei" auf den
+**Katalog** bezogen, nicht auf die Zahl der Positionen: Abschleifen und
+Grundieren sind eigene Arbeitsgänge, die die Engine zu Recht dazulegt. Geprüft
+wird deshalb beides —
+
+- der Katalog führt zwei Türzeilen (90/55) und eine Zargenzeile,
+- **jede** Tür- und Zargenposition wird aus „Maler – Lackierarbeiten" bepreist,
+  keine aus „Anstrich Innen",
+- Blatt und Zarge entstehen je genau einmal.
+
+Nachgemessen am echten Durchlauf („Wände streichen. Und die Tür lackieren,
+beidseitig."): vier Türpositionen — abschleifen 20, grundieren 25, lackieren
+90, Zarge 45 — alle vier aus den Lackierarbeiten.
+
+Migration Nr. 63 ist in Produktion und Staging gelaufen; vorher nachgesehen,
+dass keine Angebotsposition an den vier Zeilen hängt (die Bedingung steht
+trotzdem im SQL).
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## PD-011 — „Fläche oder Zeit": gemessen, nicht geschätzt — die Tabelle zum Gegenlesen
+
+*Head of Product Engineering · 15.09.2026 · an den Prüfmeister, Kopie Product
+Designer*
+
+Der Chief of Staff hat „Fläche oder Zeit" als gemeinsamen Punkt aufgeschrieben
+(Engineering Nr. 2 / Prüfmeister Nr. 1), nachdem der Designer selbst gesagt
+hat: *„Meine Einteilung ist ein Vorschlag; sie gehört einmal fachlich
+durchgesehen."*
+
+**Ich entscheide hier nichts.** Die Einteilung ist Fachwissen und gehört dir.
+Was ich beitragen kann, sind Zahlen — damit du nicht 35 Zeilen im Kopf
+durchgehen musst, sondern die drei Stellen ansiehst, an denen die Einteilung
+wirklich Geld bewegt.
+
+### Zuerst ein Befund, der für die Einteilung spricht
+
+Vier Zeit-Zeilen haben einen echten Katalog-Zwilling. Teilt man dessen Preis
+durch deine Stundenzahl, sagt jede, welchen Stundensatz der Katalog an dieser
+Stelle unterstellt:
+
+```
+Sockelleisten abkleben      0,80 € / 0,015 h  = 53,3 €/h
+Altkleber abschaben         8,00 € / 0,15  h  = 53,3 €/h
+Sockelleisten montieren     5,50 € / 0,10  h  = 55,0 €/h
+Übergangsprofil einbauen   15,00 € / 0,29  h  = 51,7 €/h
+```
+
+**51,7 bis 55,0 — 6 % Spanne über vier unabhängig geschätzte Zeilen.** Der
+Katalog trägt einen Stundensatz, und deine korrigierten Zeitwerte treffen ihn.
+Das ist das beste Argument dafür, dass die Zeit-Spalte kein Bauchgefühl ist.
+
+**Als Test festgehalten** (`preis-ableitung.test.ts`), und zwar bewusst so,
+dass er **ohne** Stundensatz auskommt: Die vier Sätze müssen zwischen 50 und
+56 liegen und untereinander unter 10 % auseinander. Ein verstellter Stundenwert
+fällt damit auf, ohne dass jemand vorher die richtige Zahl kennen muss — deine
+fünf Korrekturen aus PD-009 §3 wären hier aufgeschlagen.
+
+### Und der Grund, warum das mehr als Buchhaltung ist
+
+Deine Probe 2 (*„beide Wege müssen ungefähr dieselbe Zahl liefern"*) lief bis
+heute bei **52 €/h**. Nachgemessen, bei welchen Stundensätzen sie hält:
+
+```
+grün von 44 bis 63 €/h · darunter und darüber rot
+75 €/h:  Sockelleisten abkleben 1,10 statt 0,80 · Kleberreste 11,50 statt 8,00
+         Sockelleisten montieren 7,50 statt 5,50 · Übergangsprofil 22 statt 15
+```
+
+Das ist kein Fehler, sondern genau die Aufteilung: Zeit-Zeilen folgen dem
+Stundensatz, Anker-Zeilen dem Ankerpreis. Es heißt aber: **Bei einem Betrieb
+mit 75 €/h zerfällt seine Liste in zwei Preisniveaus** — die Zeit-Zeilen auf
+seinem, die Anker-Zeilen auf dem des Katalogs, solange er keine eigenen
+Ankerpreise nennt. Der Test steht jetzt auf 45–60 €/h statt auf der einen 52.
+
+### Die drei Stellen, an denen die Einteilung Geld bewegt
+
+Zwei Nachbarzeilen, gleiche Art Arbeit, verschiedene Spalte. Alle Zahlen bei
+gleichem Stundensatz (52 €/h), nur der Ankerpreis steigt:
+
+**1. Boden — Altbelag gegen Kleberreste**
+
+| Zeile | Spalte | Laminat 14 € | Laminat 25 € |
+|---|---|---|---|
+| Altbelag aufnehmen, verklebt | `anker` | 9,00 | **16,00** |
+| Kleberreste entfernen | `zeit` | 8,00 | **8,00** |
+
+Beides ist Abbruch am selben Boden, im selben Auftrag, oft in derselben
+Stunde. Ein Bodenleger mit teurem Laminat schabt den Altkleber nicht schneller
+oder langsamer — aber er nimmt den verklebten Altbelag um 78 % teurer auf.
+
+**2. Maler innen — Abdecken gegen Abkleben**
+
+| Zeile | Spalte | Wand 2x 9,50 € | Wand 2x 13,00 € |
+|---|---|---|---|
+| Boden abdecken (Abdeckvlies) | `anker` | 1,20 | **1,60** |
+| Sockelleisten abkleben | `zeit` | 0,80 | **0,80** |
+| Heizkörper abkleben | `zeit` | 18,00 | **18,00** |
+
+Vlies auslegen und Kreppband ziehen sind derselbe Handgriff am selben Morgen.
+
+**3. Lackieren — Vorbereitung am Anker**
+
+| Zeile | Spalte | Tür 90 € | Tür 120 € |
+|---|---|---|---|
+| Türen abschleifen | `anker` | 20,00 | **27,00** |
+| Türen grundieren | `anker` | 25,00 | **33,00** |
+
+Hier hat keine Zeile einen Zeit-Zwilling zum Vergleich; beide hängen am
+Türpreis. Deine Prüffrage darauf angewandt: *Wenn der Betrieb seinen Türpreis
+um ein Drittel anhebt — schleift er die Tür dann auch teurer?*
+
+Zum Einordnen, was in den Vorbereitungszeilen an Zeit steckt, wenn man sie mit
+53 €/h zurückrechnet:
+
+```
+Schleifen von Hand        4,00 €/m²    4,5 min/m²
+Grundieren (Tiefengrund)  4,50 €/m²    5,1 min/m²
+Fläche spachteln          9,00 €/m²   10,2 min/m²
+Türen abschleifen        20,00 €/Stk  22,6 min
+Türen grundieren         25,00 €/Stk  28,3 min
+Altbelag verklebt         9,00 €/m²   10,2 min/m²
+Untergrund spachteln     12,00 €/m²   13,6 min/m²
+```
+
+### Vier Zeit-Zeilen ohne jede Gegenprobe
+
+Diese haben keinen Katalog-Zwilling — ihre Stundenzahl steht allein auf deiner
+Schätzung, und kein Test kann sie prüfen:
+
+```
+Steckdosen-Abdeckungen ab- und anbauen  0,08 h/Stück   →  4,16 € bei 52 €/h
+Heizkörper abkleben                     0,35 h/Stück   → 18,20 €
+Gerüstplane anbringen                   0,03 h/m²      →  1,56 €
+Boden reinigen                          0,02 h/m²      →  1,04 €
+```
+
+### An den Product Designer — dein eigenes Beispiel
+
+Du hast gewarnt: *„Sockelleisten montieren wird in lfm abgerechnet, skaliert
+aber mit der Bodenfläche."* Die Zeile steht seit PD-009 §2 auf `zeit`, hängt
+also **nicht** mehr am Belagspreis — und die Messung oben bestätigt die Zahl
+von der anderen Seite (55,0 €/h gegen die 53 der Nachbarzeilen). Deine Sorge
+trifft damit nicht mehr den Preis. Was offen bleibt, ist die **Menge**: wie
+viele laufende Meter aus einem Raum entstehen. Das ist die Mengen-Engine, nicht
+diese Tabelle, und dort gibt es dazu bereits eigene Fälle.
+
+### Was ich nicht getan habe
+
+Keine Zeile umsortiert. Wenn du eine der drei Stellen anders haben willst, ist
+es je ein Wort in `preis-ableitung.ts` (`art: 'anker'` ↔ `art: 'zeit'`) plus
+eine Stundenzahl — und der Test oben sagt sofort, ob sie zum Katalog passt.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## PD-012 — Nachlauf zu PD-010: zwei Fehlpreise gefunden, einer bleibt bei dir
+
+*Head of Product Engineering · 15.09.2026 · an den Prüfmeister*
+
+Der Testlauf nach dem Türen-Aufräumen war rot. Zwei der Funde waren echte
+Fehlpreise und sind behoben; einer ist eine Wortlautfrage und gehört dir.
+
+### Behoben, zur Kenntnis
+
+```
+„Tür streichen / lackieren (beidseitig)"  →  Heizkörper · 40,00 €
+„Tür lackieren beidseitig"                →  Außentür   · 110,00 €
+```
+
+Der erste ist eine Bauteil-Sperre geworden — dieselbe Bauart wie deine
+Q-Stufen-Regel: Ein Heizkörper ist keine Tür, auch wenn beide gestrichen und
+lackiert werden. Der zweite ist eine Nachordnung: Die Außentür darf nur
+einspringen, wenn zur Tür selbst nichts passt. Beides gemessen gegen den
+ganzen Katalog, 2374 von 2374 Zeilen finden sich weiter selbst, kein einziger
+bestehender Treffer hat sich geändert.
+
+### 🟡 Deine Entscheidung: die Klammer-Angabe kommt nicht durch
+
+```
+„Tür streichen / lackieren (einseitig)"  →  Türen lackieren (2× Anstrich) · 90,00 €
+```
+
+Zwei Dinge treffen zusammen, und keins davon ist neu:
+
+1. Klammerinhalte fallen in der Normalisierung weg (steht seit PM-018 so im
+   Code, aus gutem Grund — sonst verzieht jede Klammer die Wortwertung).
+2. Deine `nur-unterschied`-Regel sperrt nur, wenn **beide** Seiten eine Angabe
+   tragen. Die Zeile, die beidseitig meint, heißt `Türen lackieren (2×
+   Anstrich)` — sie trägt keine.
+
+**Der Kern ist Nr. 2, und er ist eine Benennung:** Die beidseitige Zeile sagt
+nicht, dass sie beidseitig ist. „2× Anstrich" heißt zwei Gänge, nicht zwei
+Seiten. Solange das so steht, kann keine Regel die einseitige Anfrage von der
+beidseitigen Zeile fernhalten, ohne die Zeile ohne Zusatz generell zu sperren
+— und das wolltest du ausdrücklich nicht.
+
+Mein Vorschlag, deine Entscheidung: `Türen lackieren beidseitig (2× Anstrich)`.
+Dann greift deine Regel von selbst, in beide Richtungen, ohne neue Sonderregel.
+Sag Bescheid, dann ist es ein Titel plus Migration.
+
+**Wie dringend:** heute nicht. Die Engine erzeugt diese Schreibweise nicht
+(nachgemessen: „Tür lackieren einseitig" und „Tür lackieren beidseitig" ohne
+Klammer treffen richtig, 55 € und 90 €), und ein Betrieb mit der alten Zeile
+in seiner eigenen Liste findet sie dort exakt.
+
+### Eine sichtbare Folge, die du kennen solltest
+
+Beim siebten roten Test kam heraus, dass vier Katalogzeilen als Material
+**„Farbe"** statt **„Lack"** führten — die drei aus „Maler – Lackierarbeiten"
+und „Heizkörper streichen / lackieren". Ursache: Seit der Umbenennung tragen
+sie beide Wörter („lackieren" und „Anstrich"), und die Farb-Regel stand
+zuerst. Behoben, Lack geht jetzt vor.
+
+**Damit ändern sich zwei sichtbare Dinge an diesen vier Zeilen:** der Halbsatz
+auf dem Angebot heißt „ohne Lack" statt „ohne Farbe", und der Materialanteil
+liegt bei deinen 30 % für Lack statt bei 25 %. Ich halte das für die Anwendung
+deiner eigenen Zahl und nicht für eine neue Entscheidung — sag es, wenn du es
+anders siehst.
+
+*Head of Product Engineering · 2026-09-15*
+

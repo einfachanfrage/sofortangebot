@@ -2368,4 +2368,186 @@ Position, nie ein Aufschlag im Einheitspreis.
 
 ---
 
+## Spur 5 Nr. 1 — Materialangabe auf dem Kunden-PDF: bewertet (Head of Legal & Compliance, 2026-09-15)
+
+**Maßstab:** die drei Kriterien, die ich am 14.09. vorab festgelegt habe
+(Abschnitt „Vorab-Kriterien zur Materialangabe auf dem Kunden-PDF").
+**Bewertet wurde nicht das Konzept gegen das Konzept, sondern der Zustand des
+Produkts gegen die Kriterien** — Code im Repo und Produktionsdatenbank.
+
+### Ergebnis in einem Satz
+
+Auf dem Kunden-PDF steht zur Materialfrage **nichts**, und die einzige
+Betriebseinstellung, die dazu etwas verspricht, druckt nicht auf das
+Kundendokument, sondern nur in die Vorschau des Handwerkers.
+
+### Was ich geprüft habe, und woran
+
+| Quelle | Befund |
+|---|---|
+| `src/lib/pdf.tsx` (720 Zeilen, das tatsächlich versendete Angebots-PDF) | kein einziges Vorkommen von „Material", „Materialkosten", „inkl." / „ohne <Material>". Je Position werden gerendert: Titel, `item.description`, Übermessungs-Hinweis |
+| `src/app/angebot/[id]/unterschreiben/page.tsx` (die Seite, die der Endkunde öffnet) | rendert Titel + `description`, sonst nichts zum Material |
+| `src/components/AngebotVorschau.tsx`, Z. 354–359 | rendert einen Materialpreis-Hinweis — eingebunden **nur** in `VorschauUndVersand.tsx` (Z. 366), also im Bildschirm des Handwerkers vor dem Versand |
+| `src/app/(app)/einstellungen/page.tsx`, Z. 470–486 | Schalter „Materialpreis-Hinweis" mit der Beschriftung **„Hinweis auf Angeboten drucken"** |
+| `src/lib/materialanteil.ts` | `halbsatz()`, `kundensatz()`, `teileMaterialAb()` existieren und sind sauber. Einziger Aufrufer im gesamten Repo ist der eigene Test |
+| Produktionsdatenbank (`yqlledouhfovytifeekd`) | `companies`: 8 Zeilen, **0** mit `materialpreis_hinweis_aktiv` · `price_items`: 3.267 Zeilen, **0** mit `material_anteil` · `quote_items`: **keine Materialspalte**, 91 Positionen, 0 Beschreibungen mit Materialbezug · 124 Katalogtitel enthalten „inkl." — durchgesehen: alle betreffen Zarge, Element, Mörtel, Gewebe, Fahrer, nicht das Material, das der Kunde aussucht |
+
+### Die drei Kriterien, einzeln
+
+**Kriterium 1 — Erkennbarkeit für den Endkunden: ❌ nicht erfüllt.**
+Kein kundenseitiges Dokument und keine kundenseitige Seite sagt, ob Material im
+Preis steckt. Der Endkunde liest „Wand streichen 2x · Deckender Anstrich,
+zweilagig, Kanten sauber abgeschnitten · 11,50 €/m²" und kann daraus nicht
+entnehmen, ob die Farbe enthalten ist. Das ist derselbe Maßstab wie beim
+Übermessungs-Hinweis (LR-01): Eine Angabe, die das Kunden-PDF nicht erreicht,
+existiert für den Endkunden nicht.
+
+**Kriterium 2 — Der Gesamtpreis stimmt: ⚠️ heute erfüllt, im geplanten Zustand
+gefährdet.** Heute ist er erfüllt, weil es gar keine Materialtrennung gibt: Was
+im Angebot steht, ist der ganze Preis. Sobald `teileMaterialAb()` produktiv
+wird, fällt der Gesamtbetrag um den Materialanteil, und der Kunde zahlt das
+Material zusätzlich woanders. Der Gesamtbetrag ist dann nicht mehr das, was das
+Vorhaben kostet. `kundensatz()` („Die Farbe wird vom Kunden gestellt.") trägt
+diese Aussage — aber nur, wenn sie **auch dort steht, wo der Gesamtbetrag
+gelesen wird**, nicht nur klein unter einer einzelnen Position.
+
+**Kriterium 3 — Kein stiller Aufschlag: ✅ in der Rechenlogik erfüllt, in der
+Datenhaltung offen.** `teileMaterialAb()` bildet nur das Material gerundet und
+die Arbeit als Rest, die Zusicherung `arbeit + material = Ausgangspreis` gilt
+auf den Cent. Das ist genau die Probe des Prüfmeisters, und sie ist erfüllt.
+**Offen ist der Weg danach:** `material_anteil` steht auf `price_items`, nicht
+auf `quote_items`. Eine Angebotsposition trägt heute keine Information darüber,
+ob Material herausgenommen wurde. Wer die Trennung außerhalb dieser einen
+Funktion nachbaut — im Angebots-Generator, in der KI-Ergänzung, in einer
+manuellen Position —, bricht die Zusicherung, ohne dass es auffällt.
+
+### 🔴 Neuer Fund L-M-01 — der Schalter verspricht etwas, das er nicht tut
+
+In den Einstellungen steht ein Schalter mit der Beschriftung **„Hinweis auf
+Angeboten drucken"** und dem Erklärtext *„Fügt folgenden Text ein: ‚Preise
+basieren auf aktuellen Materialkosten und können bei Lieferantenpreisänderungen
+angepasst werden.'"*
+
+Zwei Abweichungen, beide im Code belegt:
+
+1. **Der Hinweis wird auf dem Angebot nicht gedruckt.** Er steht ausschließlich
+   in `AngebotVorschau.tsx`, und diese Komponente hängt nur am
+   Versand-Bildschirm des Handwerkers. Weder das PDF noch die
+   Unterschreiben-Seite kennen ihn. Der Betrieb schaltet ihn ein, sieht ihn in
+   seiner Vorschau und geht davon aus, dass sein Kunde ihn bekommt. Der Kunde
+   bekommt ihn nie.
+2. **Es sind zwei verschiedene Sätze.** Einstellungen: „Preise basieren auf
+   aktuellen Materialkosten und können bei Lieferantenpreisänderungen angepasst
+   werden." Vorschau: „Hinweis: Die angegebenen Preise basieren auf aktuellen
+   Materialkosten und können bei Preisänderungen der Lieferanten angepasst
+   werden." Welcher von beiden der vereinbarte wäre, ist nicht entscheidbar.
+
+**Und deshalb ist „auf das PDF nachziehen" die falsche Sofortmaßnahme.** Der
+Satz ist eine Preisanpassungsklausel. Gegenüber einem Verbraucher greift
+§ 309 Nr. 1 BGB, Wortlaut geprüft:
+
+> *„Auch soweit eine Abweichung von den gesetzlichen Vorschriften zulässig ist,
+> ist in Allgemeinen Geschäftsbedingungen unwirksam 1. (Kurzfristige
+> Preiserhöhungen) eine Bestimmung, welche die Erhöhung des Entgelts für Waren
+> oder Leistungen vorsieht, die innerhalb von vier Monaten nach Vertragsschluss
+> geliefert oder erbracht werden sollen; dies gilt nicht bei Waren oder
+> Leistungen, die im Rahmen von Dauerschuldverhältnissen geliefert oder erbracht
+> werden."*
+
+Ein Maler- oder Bodenauftrag wird typischerweise innerhalb von vier Monaten
+ausgeführt und ist kein Dauerschuldverhältnis. Der Satz nennt außerdem weder
+Anlass noch Obergrenze noch ein Lösungsrecht des Kunden. Würde er heute
+unverändert aufs Kunden-PDF gezogen, stünde auf jedem Verbraucherangebot eine
+Klausel, die im Streit nicht trägt — und sie stünde dort **im Namen des
+Handwerkers**, der sie nicht geschrieben hat. Das ist dieselbe Konstellation
+wie bei PM-021/PM-022 (Untertitel widerspricht Titel, § 305c BGB zulasten des
+Verwenders), nur teurer.
+
+**Richtige Reihenfolge:** erst der Wortlaut, dann der Einbau. Ein tragfähiger
+Hinweis muss (a) im B2C entweder als unverbindliche Schätzung mit klarer
+Kennzeichnung oder als benannte eigene Position auftreten statt als
+Erhöhungsvorbehalt, (b) im B2B anders lauten dürfen als im B2C, weil § 309 dort
+nur über § 307 mittelbar wirkt. **Der Wortlaut ist eine Freigabe von Sandy** —
+Governance-Regel oben. Bis dahin ist der heutige Zustand (0 von 8 Betrieben
+haben den Schalter an, kein Druck aufs PDF) der ungefährlichere; ich empfehle
+ausdrücklich **nicht**, ihn vorher scharf zu schalten.
+
+### Was CoS-E-053 mitbringen muss, damit die Kriterien erfüllt sind
+
+1. **Der Materialzustand gehört an die Angebotsposition, nicht nur an die
+   Preiszeile.** `quote_items` braucht das Materialwort und den abgetrennten
+   Betrag. Ohne das kann das PDF die Aussage nicht treffen, und ein späterer
+   Katalogwechsel würde alte Angebote umdeuten.
+2. **Das PDF muss die Aussage führen — je Position und einmal beim
+   Gesamtbetrag.** Je Position der Halbsatz aus `halbsatz()`, beim Gesamtbetrag
+   der Satz aus `kundensatz()`. Beides existiert bereits und ist freigegeben;
+   es fehlt nur der Aufrufer.
+3. **Ein aus der Faustregel abgeleiteter Materialanteil darf ein
+   Kundendokument nicht ungeprüft erreichen.** 25 % innen / 33 % außen / 45 %
+   Belag sind Schätzwerte. Wird daraus ein Arbeitspreis gebildet, ist der
+   genannte Preis eine geschätzte Zahl mit dem Anschein einer gerechneten. Der
+   Betrieb muss die Zahl einmal bestätigt haben, bevor sie auf dem Angebot
+   landet — dieselbe Logik wie bei der Nick-Seite.
+4. **Ein einziger Weg für die Trennung.** Jede Materialtrennung läuft über
+   `teileMaterialAb()`. Ein zweiter, handgeschriebener Weg an anderer Stelle ist
+   der Weg, auf dem Kriterium 3 kippt.
+
+*Head of Legal & Compliance · 2026-09-15 · Risikoeintrag dazu: LR-16 in
+`legal-002-risikobewertung-vob.md`*
+
+---
+
+## CoS-L-006 — Zwischenstand: die Prämisse stimmt so nicht (Head of Legal & Compliance, 2026-09-15)
+
+**Nicht abgeschlossen.** Ein Teil ist aber jetzt an der Quelle geklärt, und er
+verändert die Frage.
+
+**In der Produktionsdatenbank geprüft:** Es gibt **keine Rechnung**. Keine
+Rechnungstabelle; `quotes.dokument_typ` führt 18 `angebot` und 1
+`kostenvoranschlag`; `quote_items` hat 91 Zeilen. Das deckt sich mit dem Befund
+aus DC-089 vom 13.09. und ist seither unverändert.
+
+**Neu und der eigentliche Punkt:** In `nummernkreise` stehen **zwei Zeilen mit
+`typ = 'rechnung'`**, während `vergebene_nummern` ausschließlich `angebot`
+kennt. Das Produkt lässt einen Betrieb also einen **Rechnungsnummernkreis
+einrichten**, den es anschließend nie bedient. Genau daher kommt vermutlich
+Manfreds „Rechnung" in TN-089: Er hat eine Rechnungsnummer konfiguriert und
+deshalb ein Dokument als Rechnung gelesen, das keine ist.
+
+**Was daraus folgt:**
+
+- Der Soll-Zustand einer Rechnungsvorlage lässt sich nicht definieren, solange
+  es keine Rechnung gibt. Der Katalog der Pflichtangaben nach § 14 UStG
+  (einschließlich § 19-Besonderheiten und Kleinbetragsregelung) **bleibt offen**
+  — die Normtexte waren in diesem Lauf nicht abrufbar, und ich schreibe eine
+  Pflichtangabenliste nicht aus dem Gedächtnis auf. Ich hole das im nächsten
+  Lauf nach.
+- Unabhängig davon und sofort umsetzbar: **Der Rechnungsnummernkreis gehört
+  ausgeblendet**, solange das Produkt keine Rechnungen erzeugt. Eine
+  Einstellung, die eine Funktion suggeriert, die es nicht gibt, ist derselbe
+  Fehlertyp wie L-M-01 eine Seite weiter oben — und sie ist der Grund, warum das
+  Team intern „Rechnung" zum Angebot sagt, was DC-089 als Rechtsaussage fast in
+  die Oberfläche getragen hätte.
+- Die von Manfred vermissten Angaben (Leistungsdatum, Steuernummer/USt-ID) sind
+  damit **keine Rechnungsfrage**, sondern die Frage, was auf ein *Angebot*
+  gehört. Dazu steht die Antwort bereits unter CoS-L-007: auf dem Angebot ist
+  keine Steuernummer nötig.
+
+*Head of Legal & Compliance · 2026-09-15*
+
+---
+
+## Notiz zum Ablauf dieses Laufs (2026-09-15)
+
+`node scripts/docs-sichern.mjs pruefen` / `sichern` konnte nicht ausgeführt
+werden: Die Shell konnte den Projektordner nicht einhängen (bekannte Folge des
+Windows-Updates vom 08.09.). Gelesen und geschrieben wurde über
+Staging/Commit, jeweils mit `expectedMtimeMs` aus dem Staging, damit keine
+fremde Änderung überschrieben wird. Die Sicherung ist in diesem Lauf also
+**nicht** gelaufen.
+
+*Head of Legal & Compliance · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

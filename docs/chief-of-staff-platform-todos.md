@@ -2060,4 +2060,170 @@ zusätzlich sagen, wer eine Datei zuletzt angefasst hat — der hängt laut
 `arbeitsreihenfolge.md` an Sandys noch offener Hook-Entscheidung (Punkt 2 der
 Sandy-Tabelle dort) und ist kein eigenständiger Punkt.
 
+---
+
+## CoS-P-018 — Nachtrag Chief of Staff (2026-09-15): Lint-Teil bestätigt, CI trotzdem rot
+
+**Datum:** 2026-09-15, Chief of Staff
+
+**Gegengeprüft, nicht übernommen:** GitHub-Actions-Lauf `34969779950`
+(Workflow „CI", Job `quality`, Commit `2f93123`, 15.09.2026 12:35 UTC). Im
+Lauf stehen **keine ESLint-Fehler** mehr, nur noch Warnungen. Der Befund aus
+CoS-P-018 — ESLint startet nicht, deshalb laufen Tests und Build auf dem
+Server seit dem 11.09. überhaupt nicht — ist damit belegbar behoben. ✅ steht
+zu Recht da.
+
+**Offen bleibt trotzdem:** Der Lauf endet mit `failure`. Grund sind sieben
+rote Testzusicherungen, nicht der Lint-Schritt. Die liegen bei Head of Product
+Engineering und stehen als **CoS-E-055** in
+`docs/chief-of-staff-engineering-todos.md`. Für Platform folgt daraus nichts
+zu tun — der Nachtrag steht hier, damit „CoS-P-018 ✅" und „CI rot" nicht
+nebeneinander stehen, ohne dass jemand den Unterschied benennt.
+
+**Migrations-Abgleich angekommen und geprüft:** `package.json` auf Sandys
+Rechner enthält `"pruefe:migrationsliste": "node
+scripts/pruefe-migrationsliste.mjs"`, und die Warnungsgrenze steht dort auf
+`--max-warnings 110`. Beides selbst nachgelesen, nicht aus der Meldung
+übernommen.
+
+**Noch nicht geprüft und deshalb nicht behauptet:** ob
+`scripts/pruefe-migrationsliste.mjs` gegen den aktuellen `main` durchläuft —
+die Shell auf Sandys Rechner ist seit dem Windows-Update vom 08.09. nicht
+einhängbar, das Skript ist von hier aus nicht ausführbar.
+
+*Chief of Staff · 2026-09-15*
+
+## CoS-P-019 — Nachtrag Chief of Staff: der Migrations-Abgleich läuft gegen `main` durch
+
+**Datum:** 2026-09-15, Chief of Staff
+
+Im Nachtrag oben stand: *„Noch nicht geprüft und deshalb nicht behauptet: ob
+`scripts/pruefe-migrationsliste.mjs` gegen den aktuellen `main` durchläuft."*
+Das ist jetzt geprüft — nicht auf Sandys Rechner, sondern in einem
+vollständigen Klon des öffentlichen Spiegels (`main`, `2f93123`), in dem eine
+Shell verfügbar ist.
+
+**Ergebnis:** `node scripts/pruefe-migrationsliste.mjs` → **Exit 0**. Keine
+fehlende, keine ungetrackte Migration. Der Abgleich ist grün und blockiert
+nichts.
+
+**Eine Abweichung zu deinem Bericht, und sie ist harmlos:** Du hast 21 noch
+nicht in `check_migrationen.sql` gelistete Migrationen gemeldet, der Lauf
+meldet **22**. Dazugekommen ist `20260915140000_pd010_tuerzeilen` — aus der
+PD-010-Arbeit von heute, nach deinem Lauf. Der Rückstand wächst also im
+normalen Betrieb weiter; das ist genau das Verhalten, das dein Skript als
+„nur Info, kein Fehler" einsortiert, und die Einsortierung stimmt.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-P-020 — Übergabe vom Designer: der Fehlertext bei „Verbindung testen" zeigt ins Leere
+
+**Datum:** 2026-09-15, Chief of Staff (Übergabe aus DC-047)
+**Status:** ❌ offen — Mitnehmer, kein eigener Auftrag
+
+Der Product Designer hat heute die beiden Lexware-Karten in
+`einstellungen/integrationen/page.tsx` so umgeschrieben, dass der Unterschied
+**auf der Karte steht, auf der man wählt** — vorher stand die
+Unterscheidungshilfe nur auf der Alternative, also zu spät. Eine Stelle hat er
+bewusst liegen lassen, weil sie euch gehört (Rollen-Split CoS-009):
+
+**Was passiert, wenn jemand einen Legacy-Key auf der Karte „Lexware Office"
+einträgt und „Verbindung testen" drückt.** Der Test schlägt fehl, und die
+Fehlermeldung sagt weder, warum, noch dass zwei Zentimeter tiefer eine Karte
+genau für diesen Fall steht.
+
+**Zuständig:** `api/integrations/test`. Sein Wortlaut: *„Wenn ihr den
+Fehlertext dort mal anfasst, ist das der billigste Moment, es mitzunehmen; ich
+baue es nicht in eure Route."*
+
+Ihr hattet dieselbe Route heute ohnehin offen (CoS-P-019, zweiter Bug darin:
+Route liest `anbieter`, Onboarding schickt `software`). Falls sie so bleibt,
+bitte eine Zeile hier, dass es bewusst offen bleibt — dann steht es nicht als
+stiller Rest herum.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-P-021 — Legal-Fund: das Produkt legt für jeden Betrieb einen Rechnungsnummernkreis an, den nie jemand bedient
+
+**Datum:** 2026-09-15, Chief of Staff (Übergabe aus CoS-L-006)
+**Status:** ❌ offen — Einschätzung gefragt, keine Umsetzung
+
+Head of Legal hat heute **in der Produktionsdatenbank** nachgesehen. Befund,
+nicht Vermutung:
+
+- Es gibt **keine Rechnung**: keine Rechnungstabelle, `quotes.dokument_typ`
+  führt 18 × `angebot` und 1 × `kostenvoranschlag`, `vergebene_nummern` kennt
+  ausschließlich `angebot`.
+- In `nummernkreise` stehen **zwei Zeilen mit `typ = 'rechnung'`**.
+- `init_nummernkreise` (`20260613150138_add_nummernkreise.sql`) legt sie
+  weiterhin für **jeden** neuen Betrieb an.
+
+**Warum das mehr ist als ein toter Datensatz:** Daher kommt vermutlich Manfreds
+„Rechnung" in TN-089 — er hat eine Rechnungsnummer konfiguriert und deshalb ein
+Dokument als Rechnung gelesen, das keines ist. Der Reiter „Rechnungen" in den
+Nummern-Einstellungen ist seit CoS-E-008 raus, die Struktur dahinter nicht. Es
+ist derselbe Fehlertyp wie DC-100 und DC-105: eine Stelle, die eine Funktion
+suggeriert, die es nicht gibt.
+
+**Was ich brauche — eine Einschätzung, zwei Fragen:**
+
+1. Kann `init_nummernkreise` aufhören, `typ = 'rechnung'` anzulegen, ohne dass
+   `vergib_naechste_nummer` oder die RLS-Regeln darüber stolpern?
+2. Was kostet es, wenn eine Rechnung später doch kommt — Migration nachziehen
+   oder Struktur stehenlassen und nur nicht befüllen?
+
+**Ausdrücklich nicht:** die zwei vorhandenen Zeilen löschen. Produktionsdaten
+löschen ist Sandys Entscheidung, und solange sie niemanden stören, gibt es
+dafür heute keinen Anlass.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-P-022 — Die Doku-Sicherung läuft seit dem 08.09. in keinem Rollen-Lauf mehr
+
+**Datum:** 2026-09-15, Chief of Staff
+**Status:** ❌ offen — Vorschlag, Entscheidung bei euch
+
+`scripts/docs-sichern.mjs` ist der Schutz aus CoS-013 gegen den
+Speicherfehler: `pruefen` findet Beschädigungen sofort statt zufällig,
+`sichern` macht aus jeder Doku-Änderung einen echten Git-Commit, aus dem sich
+ein überschriebener Stand zurückholen lässt.
+
+**Seit dem Windows-Update vom 08.09. kann ihn keine Rolle mehr ausführen** —
+die Shell hängt den Projektordner nicht mehr ein. Head of Legal hat das heute
+am Ende seines Laufs vermerkt, bei mir ist es genauso. Gelesen und geschrieben
+wird über Staging/Commit mit `expectedMtimeMs`; das verhindert das
+Überschreiben fremder Änderungen, ersetzt aber weder die Prüfung noch die
+Sicherung.
+
+**Was das praktisch heißt:** Der Schutz vor dem Fehler, der achtmal aufgetreten
+ist, liegt seit einer Woche allein bei der Sorgfalt der einzelnen Rolle.
+
+**Selbst nachgeholt, damit hier keine Lücke behauptet wird, die gar keine
+ist:** Ich habe die Endmarkierungs-Prüfung heute von Hand über alle sieben
+Koordinationsdateien laufen lassen — `chief-of-staff-todos.md`, `-platform-`,
+`-marketing-`, `-finance-`, `-engineering-`, `-legal-todos.md` und
+`design-check.md`. **Alle sieben: Endmarkierung vorhanden, kein Zeichen
+danach.** Kein Speicherfehler im aktuellen Stand.
+
+**Vorschlag:** `pruefen` als Schritt in die CI (`ci.yml` läuft ohnehin bei
+jedem Push auf `main`, vor Lint). Dann prüft es genau dann, wenn die Dateien
+das Repository erreichen, und der Ausfall der lokalen Shell kostet nur noch die
+Sicherung, nicht mehr die Prüfung. Das Skript braucht dafür weder Git-Rechte
+noch Umgebungsvariablen — `pruefen` liest nur Dateien.
+
+**Gegen den Vorschlag spricht:** Es prüft dann erst nach dem Push, nicht vor
+dem Schreiben. Beschädigt eine Rolle eine Datei, fällt es erst beim nächsten
+Push auf. Besser als heute, aber nicht dasselbe wie der ursprüngliche Schutz —
+deshalb steht es hier als Vorschlag und nicht als erledigt.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
