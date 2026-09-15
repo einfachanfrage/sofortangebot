@@ -41,6 +41,7 @@ Wenn was nicht stimmt: nur die Nummer nennen und was stattdessen dastand.
 
 **Muss rauskommen:** eine eigene Zeile für die Ausbesserung, als Pauschale zwischen 15 und 25 €.
 **Darf nicht drinstehen:** Vollflächenspachtelung / Q2 / Q3. Das ist der teure Verwechsler.
+**Live geprüft:** Menge 3 kommt richtig an. Was nicht stimmt: unter der Zeile steht als Beschreibung „Wände für einen ebenen Untergrund vollflächig spachteln", und daneben hängt eine Nullzeile „Voranstrich / Grundierung 0 Stück × 25,00 €".
 **Bekannt offen:** heute steht da „Dübellöcher spachteln", Stück, 3,00 €. Für 9 € fährt kein Betrieb raus. Der Katalog wird auf eine Pauschale von 20,00 € umgestellt (bis 5 Stellen), ab der sechsten greift die Flächen- oder Zeitzeile.
 
 ---
@@ -60,7 +61,8 @@ Wenn was nicht stimmt: nur die Nummer nennen und was stattdessen dastand.
 
 **Muss rauskommen:** drei eigene Zeilen — abschleifen 20,00 €, grundieren 25,00 €, lackieren 40,00 €.
 **Darf nicht drinstehen:** Türen oder Fenster lackieren — die hat keiner bestellt. Und kein „Heizkörper abkleben": wer lackiert, klebt nicht ab. Die beiden Zeilen liegen im Katalog nebeneinander, das ist die naheliegendste Verwechslung.
-**Bekannt offen:** Menge steht wahrscheinlich auf 1 statt 2. Kostet 85,00 € pro Angebot.
+**Live geprüft:** Menge 2 kommt in allen drei Zeilen richtig an — der Punkt ist erledigt.
+**Bekannt offen:** unter „Heizkörper lackieren" steht als Beschreibung „schleifen, grundieren und lackieren", obwohl beides schon als eigene Zeile darüber steht.
 
 ---
 
@@ -71,7 +73,7 @@ Wenn was nicht stimmt: nur die Nummer nennen und was stattdessen dastand.
 **Muss rauskommen:** Fassadenfläche streichen 2x, 72,00 m². Fassadengrundierung 72,00 m² zu 6,00 €. Gerüst als eigene Zeile.
 **Darf nicht drinstehen:** Erschwerniszuschlag Raumhöhe. Der ist innen für Leiter oder Rollgerüst über 3 m. Außen ist das Gerüst die Erschwernis, und das steht schon mit 450,00 € drin.
 **Achtung:** die Grundierung muss den Fassadenpreis haben, nicht den Innenpreis.
-**Bekannt offen:** der Raumhöhen-Zuschlag kommt heute trotzdem — doppelt kassiert.
+**Live geprüft:** der Zuschlag kommt, aber mit 0,00 € — er hängt an einem leeren Zweitraum, den die Aufnahme zusätzlich anlegt. Deshalb kommen auch die Rückfragen zu einem „Raum", den es nicht gibt.
 
 ---
 
@@ -81,7 +83,7 @@ Wenn was nicht stimmt: nur die Nummer nennen und was stattdessen dastand.
 
 **Muss rauskommen:** Fassade und Grundierung je 72,00 m², wie bei 053.
 **Darf nicht drinstehen:** „Gerüst stellen". Der Kunde hat es schon stehen.
-**Bekannt offen:** das Wort „bauseits" wird heute überhaupt nicht gelesen — die 450,00 € stehen trotzdem im Angebot.
+**Live bestätigt:** die 450,00 € stehen trotzdem im Angebot. Das Wort „bauseits" wird nicht gelesen.
 
 ---
 
@@ -100,7 +102,7 @@ Wenn was nicht stimmt: nur die Nummer nennen und was stattdessen dastand.
 
 **Muss rauskommen:** im Titel muss „vollflächig verklebt" stehen, Preis 24,00 €/m², Menge **12,60 m²**.
 **Achtung:** steht da ein billigerer Korkpreis, hat er die Verlegeart überlesen.
-**Bekannt offen:** heute kommen 12,00 m² raus. Verschnitt gibt es bisher nur beim schwimmenden Belag — falsch, Kork ist Platte und hat eher mehr Verschnitt als Klick-Laminat. Entschieden: 5 % auf jeden Belag, 15 % bei Fischgrät und Diagonal.
+**Live bestätigt:** es kommen 12,00 m² raus — und der Untertitel verspricht „inklusive Zuschnitt und Verschnitt". Text und Zahl widersprechen sich. Verschnitt gibt es bisher nur beim schwimmenden Belag — falsch, Kork ist Platte und hat eher mehr Verschnitt als Klick-Laminat. Entschieden: 5 % auf jeden Belag, 15 % bei Fischgrät und Diagonal.
 
 ---
 
@@ -110,5 +112,6 @@ Wenn was nicht stimmt: nur die Nummer nennen und was stattdessen dastand.
 
 **Muss rauskommen:** Laminat 14,70 m² zu 14,00 €. Altbelag entfernen 14,00 m² (Rohfläche, kein Verschnitt). Und eine Entsorgungszeile — 14 m² verklebter Teppich sind rund ein Kubikmeter Sperrmüll, das ist die Kleinfuhre bis 1 m³ aus dem Onboarding, 110,00 €.
 **Darf drinstehen, ist kein Fehler:** „Klebstoffreste abfräsen" (14,00 €/m²). Nach verklebtem Teppich ist das die Regel.
+**Live bestätigt und schlimmer als gedacht:** es stehen ZWEI Entfernen-Zeilen im Angebot — „Laminat demontieren und entsorgen" 14 m² × 5,00 € und „Altbelag entfernen" 14 m² × 7,00 €. Zusammen 168,00 € für eine Arbeit, richtig wären 126,00 €.
 **Bekannt offen:** die Entsorgungszeile fehlt ganz. Die Zeile „Teppichboden verklebt entfernen" sagt selbst nichts von entsorgen — anders als die Zeile für losen Teppich. Wird der Katalog ergänzt.
 **Bekannt offen:** in der Entfernen-Zeile steht wahrscheinlich „Laminat demontieren" statt „Teppich", und „verklebt" fehlt. Verklebt 9,00 €/m², lose 6,00 € — auf 14 m² sind das 42,00 € Unterschied.

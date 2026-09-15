@@ -74,8 +74,11 @@ const QUELLEN = [
   'src/lib/mengen/gewerke/fliesen.ts',
   'src/lib/mengen/gewerke/sockelleisten.ts',
   'src/lib/mengen/gewerke/vob-uebermessung.ts',
+  'src/lib/mengen/gewerke/trockenbau.ts',
+  'src/lib/mengen/gewerke/elektro.ts',
+  'src/lib/mengen/gewerke/sanitaer.ts',
   ...readdirSync(path.join(ROOT, 'src/lib/vollstaendigkeit'))
-    .filter(f => /^(maler|boden|fliesen)/.test(f) && f.endsWith('.ts'))
+    .filter(f => /^(maler|boden|fliesen|trockenbau|elektro|sanitaer)/.test(f) && f.endsWith('.ts'))
     .map(f => 'src/lib/vollstaendigkeit/' + f),
 ]
 

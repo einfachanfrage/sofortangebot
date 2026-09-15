@@ -1977,4 +1977,95 @@ Durchreichen; das ist nachzusehen, bevor jemand eine Zahl daraus zitiert.
 
 *Prüfmeister · 15.09.2026*
 
+## T. Die drei übrigen Gewerke — und eine Korrektur an S (Prüfmeister, 15.09.2026, abends)
+
+**Zuerst die Korrektur an Abschnitt S.** Dort steht, `fliesen` stehe in
+`gewerke-config.ts` auf `aktiv: true` und ein Fliesenleger bekomme das Gewerk
+angeboten. Das stimmt so nicht: Das gefundene `aktiv: true` gehört zur
+Kleinmaterial-Pauschale; `fliesen`, `trockenbau`, `sanitaer_heizung` und
+`elektro` stehen alle vier in `INAKTIVE_GEWERKE_IDS`, und der Onboarding-Schritt
+rendert nur `maler` und `boden_parkett`.
+
+**Die Zahlen aus S bleiben, der Weg dorthin ist ein anderer — und der schärfere:**
+Das Gewerk kommt aus der Extraktion des **Diktats**, nicht aus dem
+Betriebsprofil. `normalisiereGewerk` kennt `fliesen`/`fliesenarbeiten`/
+`fliesenleger`, und `GEWERK_ENGINES` hält alle sechs Engines bereit, ohne zu
+fragen, ob das Gewerk freigeschaltet ist. Betroffen ist also nicht der
+Fliesenleger, den es nicht gibt, sondern der **Maler mit einem Bad im Diktat**.
+„Nicht aktiv" heißt hier nicht „nicht erreichbar" — es heißt nur, dass niemand
+das Gewerk bestellt hat, während die App es trotzdem rechnet.
+
+**Damit ist auch die offene Frage aus S beantwortet.** Sie lautete: Gehören
+Trockenbau, Sanitär/Heizung und Elektro in den Abgleich, oder sind ihre Engines
+bloßes Durchreichen? Nachgesehen, beides:
+
+| Engine | rechnet sie? | gehört in `QUELLEN`? |
+|---|---|---|
+| `trockenbau.ts` | **ja** — Fläche aus Länge × Höhe, Ständerwerk aus `ceil(Länge / 0,625) × Höhe`, mit einer eigenen Annahme („Achsmaß 62,5 cm") | ja |
+| `elektro.ts` | nein, reines Durchreichen (`daten[key]` → Stück) | **ja, trotzdem** |
+| `sanitaer.ts` | nein, reines Durchreichen | **ja, trotzdem** |
+
+Das „trotzdem" ist der Punkt. Der Abgleich prüft nicht, ob eine Engine rechnet,
+sondern ob ihre **Titel einen Katalogpreis finden**. Eine Durchreiche-Engine
+schreibt genauso feste Titel wie eine rechnende — und ein Titel ohne Treffer
+ergibt eine Zeile zu 0,00 €, ob dahinter eine Formel steht oder nicht. Genau das
+ist PM-060-A. Die Frage „rechnet sie?" war die falsche Frage; sie ist trotzdem
+beantwortet, weil sie in der Restliste stand.
+
+`trockenbau.ts`, `elektro.ts`, `sanitaer.ts` und `vollstaendigkeit/(trockenbau|
+elektro|sanitaer)*.ts` sind jetzt in `QUELLEN`.
+
+```
+                                   vorher    nachher
+Engine-Titel mit eigener Einheit     170        182
+davon ohne Preis                      22         32
+davon knapp (Score < 0,75)             3          3
+gute Treffer                         145        147
+Titel aus Variablen, nicht prüfbar     0          0
+```
+
+**Alle zehn neuen Lücken liegen in den drei neu gelesenen Gewerken:**
+
+```
+Trockenbau (6)                     Elektro (2)
+  Ständerwand errichten (GK)         Leitungen verlegen
+  Doppelbeplankung (2× GK)           Leitungen verlegen (Pauschale)
+  Dämmung Ständerwand einlegen
+  Ständerwerk CW-Profil            Sanitär (2)
+  Abgehängte Decke                   Rohrleitungen erneuern
+  Abgehängte Decke (GK)              Rohrleitungen erneuern (Pauschale)
+```
+
+Beim Trockenbau ist das nicht eine Zeile am Rand, sondern **das ganze Gewerk**:
+Eine Trennwand 4,00 × 2,50 m, doppelt beplankt, mit Dämmung — im Katalog
+`Trennwand 100mm, 2-lagig je Seite (GK), Rw ~50dB, Q2` zu 98,00 €/m², also
+980,00 € — kommt mit 0,00 € heraus. Die **Mengen stimmen** (10,00 m² Wand,
+6,00 m² Decke, nachgemessen); es fehlt nur der Preis. Dieselbe Trennung wie bei
+den Fliesen in S.
+
+Zwei Funde dazu, die kein Wortlaut-Problem sind und mit einer Katalogzeile nicht
+verschwinden:
+
+- **`Ständerwerk CW-Profil` ist eine Doppelberechnung.** 20,00 lfdm aus
+  `ceil(4 / 0,625) × 2,50`. Jeder Trockenbau-Katalog rechnet die
+  Unterkonstruktion im Quadratmeterpreis der Trennwand ab — die 58,00 € bzw.
+  98,00 € sind die fertige Wand samt Profilen. Bekäme die Zeile einen
+  marktüblichen Profilpreis, stünde die Wand zweimal im Angebot. **Die Zeile
+  gehört weg, nicht bepreist.**
+- **Zwei Titel für dieselbe abgehängte Decke.** `Abgehängte Decke (GK)` entsteht
+  aus `decken[]`, `Abgehängte Decke — <Raum>` aus `raeume[].arbeiten`. Eine
+  Arbeit, zwei Schreibweisen, zwei Chancen danebenzutreffen. Dieselbe Familie
+  wie PM-058 auf der Preislisten-Seite, hier auf der Engine-Seite.
+
+Als Fälle hinterlegt in `src/lib/__tests__/pruefmeister-batch-64-68.test.ts`,
+PM-068 A/B/C.
+
+**Was damit nicht behauptet wird:** Dass diese zehn Lücken heute Geld kosten.
+Solange kein Betrieb mit diesen Gewerken angemeldet ist, trifft es nur den, der
+Trockenbau, Elektro oder Sanitär in ein Diktat spricht — den Maler mit der
+Trennwand im Büro. Gemessen ist der Betrag, nicht seine Häufigkeit. Zu prüfen
+ist er **vor** der Freischaltung, nicht danach.
+
+*Prüfmeister · 15.09.2026 abends*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

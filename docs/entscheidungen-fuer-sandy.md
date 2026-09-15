@@ -1299,3 +1299,40 @@ Löschung mit ein und räumt ihn auch dort weg. Kein Handgriff nötig — nur da
 du nicht erschrickst, wenn `git status` 261 gelöschte Dateien anzeigt.
 
 ---
+
+---
+
+## ✅ Entschieden 15.09.2026, 18:15 MESZ — nicht freigeschaltete Gewerke werden gesperrt, vor Gate 1
+
+**Sandys Antwort: „sperren vor Gate 1."**
+
+Damit gilt: Ein Gewerk, das nicht in `AKTIVE_GEWERKE` steht (heute alles außer
+Maler und Bodenbeläge), wird **nicht mehr durchgerechnet**. Statt sieben
+preisloser Zeilen bekommt der Handwerker einen klaren Satz, dass die Mengen
+für diese Arbeit noch nicht ermittelt werden können.
+
+**Wohin es gegangen ist:** Engineering, `chief-of-staff-engineering-todos.md`,
+**CoS-E-061** — die Sperre als eigener, vorgezogener Punkt. Die vier
+Fliesen-Funde selbst (PM-060 bis PM-062) bleiben dahinter liegen; sie werden
+erst gebraucht, wenn du Fliesen freischaltest.
+
+**Reihenfolge bei Engineering danach:** CoS-E-058/059 (die Geldfehler) →
+**die Sperre aus CoS-E-061** → CoS-E-060 → CoS-E-057 (§ 35a) → Fliesen-Innenleben.
+Die Sperre steht vorn, weil sie klein ist und eine Fehlerklasse ganz schließt.
+
+**Zwei Punkte, die aus der Entscheidung folgen und noch zu dir zurückkommen
+können:**
+
+1. **Der Wortlaut.** Was genau der Handwerker liest, wenn er etwas diktiert,
+   das wir nicht können, ist eine Textfrage — die geht an den Designer, sobald
+   Engineering die Sperre gebaut hat. Wenn du dazu einen Satz im Kopf hast,
+   sag ihn; sonst schlägt der Designer einen vor.
+2. **Was mit der Aufnahme passiert.** Ob der Entwurf trotzdem angelegt wird
+   (mit den Positionen aus dem Diktat, ohne Mengen) oder gar nicht — das prüft
+   Engineering am bestehenden Zweig und meldet es zurück. Ich entscheide das
+   nicht still mit.
+
+**Damit wartet aktuell keine Entscheidung auf dich.** Offen ist nur noch das
+Committen.
+
+---

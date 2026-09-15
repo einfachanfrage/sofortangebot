@@ -4559,4 +4559,78 @@ Eingriff 3 gebaut wird — das ist so festgehalten und geht nicht unter.
 
 ---
 
+---
+
+## ✅ CoS-E-061 — Sandy hat das Tor entschieden: nicht freigeschaltete Gewerke sperren, vor Gate 1
+
+**Datum:** 2026-09-15, 18:15 MESZ · Chief of Staff
+
+**Sandys Antwort, wörtlich: „sperren vor Gate 1."** Auf die erste Frage aus
+CoS-E-061 — ob `berechneMengen` ein Gewerk rechnen soll, das nicht in
+`AKTIVE_GEWERKE` steht.
+
+### Was damit freigegeben ist
+
+Die **Sperre** — nicht die vier Fliesen-Funde. Die bleiben liegen, wo sie
+liegen, und werden erst gebraucht, wenn Sandy Fliesen freischaltet.
+
+Der Ausgangspunkt, so wie ich ihn im Stand `de1ae80` gelesen habe:
+
+- `src/app/api/entwurf/generiere-positionen/route.ts` übergibt
+  `gewerk: extData.extraktion?.gewerk` — das Gewerk kommt aus dem **Diktat**,
+  nicht aus dem Betriebsprofil.
+- `normalisiereGewerk` in `src/lib/mengen/extraktion-normalisierer.ts` bildet
+  `fliesen` / `fliesenarbeiten` / `fliesenleger` auf `fliesen` ab, und die
+  anderen gesperrten Gewerke entsprechend.
+- `GEWERK_ENGINES` in `src/lib/mengen/engine.ts` hält **alle sechs** Engines
+  bereit und fragt nicht, ob das Gewerk freigeschaltet ist.
+- `AKTIVE_GEWERKE` / `ALLE_GEWERKE_IDS` in `src/lib/gewerke-config.ts`
+  enthalten heute nur `maler` und `boden_parkett`; alles andere steht in
+  `INAKTIVE_GEWERKE_IDS`.
+- Der Zweig für „kein Engine vorhanden" existiert bereits in
+  `berechneMengen` (Positionen ohne Menge, `konfidenz: 'low'`, Warnung
+  „Mengenermittlung für … noch nicht verfügbar", `plausibel: false`).
+
+**Das ist eine Lesart, kein Bauplan.** Ob die Sperre an dieser Stelle sitzt
+oder eine Ebene höher (in `mehrgewerk.ts`, wo `primaer` und `sekundaer`
+bestimmt werden, oder schon in der Route), entscheidet ihr. Die eine
+Bedingung: Ein nicht freigeschaltetes Gewerk darf **keine bepreisten Zeilen**
+mehr erzeugen.
+
+### Drei Dinge, die ich ausdrücklich nicht entschieden habe
+
+1. **Auch das Sekundärgewerk?** `mehrgewerk.ts` ruft `berechneMengen` zweimal.
+   Ob die Sperre für beide gilt, hängt daran, ob ein gesperrtes Gewerk
+   überhaupt als Sekundärgewerk auftreten kann — nachsehen, nicht annehmen.
+2. **Was mit dem Entwurf passiert.** Der bestehende Zweig gibt `plausibel:
+   false` zurück. Ob der Entwurf dann trotzdem angelegt wird, ob die
+   Vollständigkeitsprüfung darauf noch läuft und was die Oberfläche daraus
+   macht — das prüft ihr am Code und meldet es. Sandy hat ausdrücklich gesagt,
+   sie will das wissen, bevor es still festgelegt wird.
+3. **Der Wortlaut für den Handwerker.** Das ist eine Textfrage und geht an den
+   Designer, sobald die Sperre steht. Die heutige Warnung
+   („Mengenermittlung für fliesen noch nicht verfügbar. Bitte Mengen prüfen.")
+   nennt den internen Gewerke-Schlüssel und fordert zu etwas auf, das gar
+   nicht geht — die ist als Endtext nicht brauchbar. **Baut die Sperre, nicht
+   den Text.**
+
+### Reihenfolge
+
+1. **CoS-E-058 / CoS-E-059** — unverändert vorn (Sandys „JA" von 17:45).
+2. **Diese Sperre.** Klein, schließt eine Fehlerklasse ganz.
+3. **CoS-E-060** (PM-057/058/059) — wartet ohnehin auf die Klärung, welche
+   Datei die Oberfläche speist.
+4. **CoS-E-057 (§ 35a)** — bleibt vor Gate 1, hinter allem oben.
+5. **PM-060-A / PM-061-A / PM-062-A** — Fliesen-Innenleben, erst vor einer
+   Freischaltung.
+
+**PM-060-B bleibt getrennt davon stehen.** `gewerkFuerPosition` entscheidet
+das Gewerk am Wortlaut des Titels statt an der Herkunft der Zeile; das trifft
+auch Maler und Boden und wird von der Sperre **nicht** miterledigt. Eure
+Einschätzung dazu steht weiter aus.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

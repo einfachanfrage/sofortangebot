@@ -10,6 +10,14 @@ interface Props {
 
 type Status = 'idle' | 'requesting' | 'granted' | 'denied'
 
+// DC-020 (docs/design-check.md): Das Sheet hatte eine feste Höhe von 50dvh,
+// der Inhalt aber keine. Auf kleineren Geräten lief er unten aus dem Sheet
+// heraus — und weil das Sheet am unteren Bildschirmrand klebt, landete das,
+// was hinausfiel, unterhalb des sichtbaren Bereichs. Als Erstes fiel dabei
+// "Vielleicht später" weg, also genau die Ablehnen-Möglichkeit. Deshalb
+// jetzt dasselbe Muster wie in PwaBottomSheet.tsx: Höhe folgt dem Inhalt,
+// gedeckelt bei 85dvh, und der Inhaltsbereich scrollt statt überzulaufen.
+
 export function PushBanner({ onClose, onGranted }: Props) {
   const [visible, setVisible] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
@@ -73,26 +81,27 @@ export function PushBanner({ onClose, onGranted }: Props) {
       />
 
       <div
-        className="relative w-full bg-white rounded-t-3xl transition-transform duration-300 ease-out"
+        className="relative w-full bg-white rounded-t-3xl flex flex-col transition-transform duration-300 ease-out"
         style={{
-          height: '50dvh',
+          maxHeight: '85dvh',
           transform: visible ? 'translateY(0)' : 'translateY(100%)',
         }}
       >
-        <div className="flex justify-center pt-3 pb-1">
+        <div className="flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 rounded-full bg-anthracite/20" />
         </div>
 
         <button
           onClick={close}
+          aria-label="Schließen"
           className="absolute top-4 right-4 p-2 rounded-full bg-bg text-anthracite/40"
         >
           <X size={18} />
         </button>
 
-        <div className="px-6 pt-4 pb-8 flex flex-col h-full">
+        <div className="px-6 pt-4 pb-8 overflow-y-auto min-h-0">
           {status === 'granted' ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <div className="py-10 flex flex-col items-center text-center">
               <div className="text-5xl mb-4">🔔</div>
               <h2 className="font-syne font-extrabold text-anthracite text-[24px] mb-2">
                 Super, du bekommst Bescheid!
@@ -130,27 +139,34 @@ export function PushBanner({ onClose, onGranted }: Props) {
               </div>
 
               {status === 'denied' ? (
-                <div className="text-center">
-                  <p className="text-anthracite/40 font-semibold text-[13px] mb-3">
+                <>
+                  <p className="text-anthracite/50 font-semibold text-[13px] text-center mb-3">
                     Benachrichtigungen blockiert. Du kannst sie in den Browser-Einstellungen aktivieren.
                   </p>
-                  <button onClick={close} className="text-anthracite font-extrabold text-[14px] underline underline-offset-2">
+                  <button
+                    onClick={close}
+                    className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                  >
                     Schließen
                   </button>
-                </div>
+                </>
               ) : (
-                <button
-                  onClick={requestPermission}
-                  disabled={status === 'requesting'}
-                  className="w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:translate-y-px transition-transform disabled:opacity-60 mt-auto"
-                >
-                  {status === 'requesting' ? 'Wird aktiviert...' : 'Benachrichtigungen erlauben →'}
-                </button>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={requestPermission}
+                    disabled={status === 'requesting'}
+                    className="w-full bg-anthracite text-white font-extrabold text-[15px] py-4 rounded-2xl active:translate-y-px transition-transform disabled:opacity-60"
+                  >
+                    {status === 'requesting' ? 'Wird aktiviert...' : 'Benachrichtigungen erlauben →'}
+                  </button>
+                  <button
+                    onClick={close}
+                    className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                  >
+                    Vielleicht später
+                  </button>
+                </div>
               )}
-
-              <button onClick={close} className="mt-3 text-center text-anthracite/30 font-semibold text-[13px] w-full">
-                Vielleicht später
-              </button>
             </>
           )}
         </div>

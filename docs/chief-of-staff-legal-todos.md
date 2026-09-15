@@ -2586,4 +2586,380 @@ sie.
 
 ---
 
+
+## CoS-L-008 — Die drei Zulieferungen an Engineering, abschließend (Head of Legal & Compliance, 2026-09-15)
+
+**Status: ✅ geliefert.** Engineering kann CoS-E-057 damit bauen; von mir ist
+dazu nichts mehr offen. Eine Freigabe von Sandy braucht nur der Wortlaut der
+beiden Oberflächentexte in Punkt 3 — und der blockiert das Bauen nicht.
+
+**Geprüft an der Quelle, nicht an unseren eigenen Dokumenten:** Normtexte
+(gesetze-im-internet.de war auch in diesem Lauf gesperrt, über lxgesetze.de und
+juraforum.de sind die Texte abrufbar — Fundstellen am Ende), die Spalten und
+der Bestand der Produktionsdatenbank `yqlledouhfovytifeekd`, sowie
+`src/lib/pdf.tsx` und die vier versendenden Routen im Repository.
+
+### Vorab: eine Korrektur an meiner eigenen Zitierung aus CoS-L-007
+
+Ich habe dort **§ 125a HGB** für OHG und KG genannt. Das ist seit dem MoPeG
+(01.01.2024) nicht mehr richtig: Die Vorschrift steht heute in **§ 125 HGB**,
+und § 177a HGB verweist entsprechend auf § 125, nicht auf § 125a. Wortlaut
+§ 177a HGB, geprüft:
+
+> *„§ 125 gilt auch für die Gesellschaft, bei der ein Kommanditist eine
+> natürliche Person ist. Der in § 125 Absatz 1 Satz 2 für die Gesellschafter
+> vorgeschriebenen Angaben bedarf es nur für die persönlich haftenden
+> Gesellschafter der Gesellschaft."*
+
+Wer nach § 125a HGB sucht, findet nichts. Deshalb hier ausdrücklich, bevor
+jemand die alte Fundstelle aus meinem eigenen Text übernimmt.
+
+### 1. Die Feldliste, wörtlich und abschließend
+
+| Rechtsform | Norm | Was auf jeden Geschäftsbrief muss |
+|---|---|---|
+| **Einzelunternehmen / Kleingewerbe** (nicht im Handelsregister) | keine — § 15b GewO, der genau das verlangte, ist seit dem 25.03.2009 durch das Dritte Mittelstandsentlastungsgesetz **aufgehoben** | handels- und gesellschaftsrechtlich: nichts. Aber DL-InfoV, siehe Punkt 4 |
+| **e. K. / e. Kfm. / e. Kfr.** | § 37a Abs. 1 HGB | Firma · Rechtsformzusatz nach § 19 Abs. 1 Nr. 1 HGB („eingetragener Kaufmann" / „e. K." o. ä.) · Ort der Handelsniederlassung · Registergericht · HRA-Nummer. **Kein** Inhabername, soweit er nicht Teil der Firma ist |
+| **GmbH** und **UG (haftungsbeschränkt)** | § 35a Abs. 1 GmbHG | Rechtsform · Sitz der Gesellschaft · Registergericht des Sitzes · HRB-Nummer · **alle** Geschäftsführer mit Familienname und mindestens einem **ausgeschriebenen** Vornamen · falls ein Aufsichtsrat besteht und einen Vorsitzenden hat: auch dieser |
+| **OHG / KG** mit mindestens einer natürlichen Person als persönlich haftendem Gesellschafter | § 125 Abs. 1 HGB | Firma · Sitz · Registergericht · HRA-Nummer. Die einzelnen Gesellschafter müssen **nicht** genannt werden |
+| **GmbH & Co. KG** (kein persönlich haftender Gesellschafter ist natürliche Person) | §§ 177a, 125 Abs. 1 S. 2 HGB | zur KG: Firma · Sitz · Registergericht · HRA-Nummer. **Zusätzlich zur Komplementär-GmbH:** Firma · Sitz · Registergericht · HRB-Nummer · alle Geschäftsführer mit Familienname und ausgeschriebenem Vornamen |
+
+**AG steht bewusst nicht in der Tabelle.** § 80 AktG habe ich in diesem Lauf
+nicht am Wortlaut nachgesehen, und eine AG kommt in Gate 1 nicht vor. **Meine
+Empfehlung an Engineering: die Auswahl bietet AG nicht an.** Wird sie später
+gebraucht, hole ich den Wortlaut nach — eine Auswahl, die eine Rechtsform
+anbietet und dann die falschen Felder abfragt, ist schlechter als eine, die sie
+weglässt.
+
+**Daraus die Felder im Datenmodell — mehr braucht es nicht:**
+
+| Feld | Typ | Pflicht bei |
+|---|---|---|
+| `rechtsform` | Auswahl: `einzelunternehmen`, `eingetragener_kaufmann`, `gmbh`, `ug`, `ohg`, `kg`, `gmbh_co_kg` | **immer** (siehe Punkt 3) |
+| `sitz_ort` | Text | e. K., GmbH, UG, OHG, KG, GmbH & Co. KG |
+| `registergericht` | Text | dieselben |
+| `registernummer` | Text, mit Präfix HRA/HRB wie eingetragen | dieselben |
+| `vertretungsberechtigte` | Text-Liste, je Eintrag Familienname + ausgeschriebener Vorname | GmbH, UG, GmbH & Co. KG |
+| `komplementaer_firma`, `komplementaer_registergericht`, `komplementaer_registernummer` | Text | nur GmbH & Co. KG |
+
+**Zwei Hinweise, die man sonst erst im Bauen merkt:**
+
+1. **Der Sitz ist heute nicht auslesbar.** `companies.address` ist ein
+   Freitextfeld; `pdf.tsx` nimmt für den Kopf schlicht `adresse.split('\n')[0]`.
+   Der Sitz im Sinne der Normen ist der **Ort**, nicht die ganze Adresse.
+   Entweder ein eigenes Feld `sitz_ort`, oder eine harte Zusicherung, welche
+   Zeile der Ort ist. Ich empfehle das eigene Feld — es ist billiger als jede
+   Heuristik.
+2. **Keine Kapitalangaben ins Produkt.** § 35a Abs. 1 Satz 2 GmbHG lautet:
+   *„Werden Angaben über das Kapital der Gesellschaft gemacht, so müssen in
+   jedem Fall das Stammkapital sowie, wenn nicht alle in Geld zu leistenden
+   Einlagen eingezahlt sind, der Gesamtbetrag der ausstehenden Einlagen
+   angegeben werden."* Die Pflicht entsteht also erst, wenn jemand freiwillig
+   etwas zum Kapital schreibt. Solange das Produkt kein Feld dafür hat, kann sie
+   niemand auslösen. **Also: kein Feld dafür anlegen.**
+
+### 2. Wo die Angaben erscheinen müssen — die Abgrenzung, die ich ziehen muss
+
+**Antwort: PDF und E-Mails, aus einer einzigen Quelle. Nicht gestaffelt.**
+
+**Die Norm lässt hier wenig Spielraum.** § 35a Abs. 1 GmbHG: *„Auf allen
+Geschäftsbriefen **gleichviel welcher Form**, die an einen bestimmten Empfänger
+gerichtet werden …"* — die E-Mail ist erfasst, das ist seit dem EHUG 2007
+unstreitig. Die Ausnahme in Absatz 2 greift bei uns nicht: Sie gilt für
+*„Mitteilungen oder Berichte, die im Rahmen einer bestehenden
+Geschäftsverbindung ergehen und für die üblicherweise Vordrucke verwendet
+werden, in denen lediglich die im Einzelfall erforderlichen besonderen Angaben
+eingefügt zu werden brauchen"*. Unsere Angebots-E-Mail ist in aller Regel der
+**Erstkontakt**, und sie trägt nicht bloß Einzelfallangaben, sondern das
+Angebot selbst.
+
+**Befund im Repository — vier E-Mails gehen im Namen des Betriebs an den
+Endkunden:**
+
+| Route | Absenderzeile im Code | Zweck |
+|---|---|---|
+| `src/app/api/email/route.ts` | `${company.name} <angebot@sofortangebot.app>` | Angebot versenden |
+| `src/app/api/quotes/[id]/send/route.ts`, Z. 161 | `${company.name} via Sofortangebot <noreply@sofortangebot.app>` | zweiter Versandweg |
+| `src/app/api/cron/reminder/route.ts`, Z. 137 | `${company.name} <angebot@sofortangebot.app>` | Erinnerung an den Kunden |
+| `src/app/api/notifications/unterschrift/route.ts`, Z. 84 | `${company.name} <angebot@sofortangebot.app>` | Auftragsbestätigung an den Kunden |
+
+Alle vier schließen mit *„Mit freundlichen Grüßen, <Firma>"* und tragen im Fuß
+nur die Zeile *„Versendet über sofortangebot.app im Auftrag von <Firma>"*.
+Rechtsform, Sitz, Register, Geschäftsführer: in keiner davon.
+
+Die fünfte Mail in derselben Datei (Z. 115, `sofortangebot
+<info@sofortangebot.app>` an den Betriebsinhaber) ist **kein** Geschäftsbrief
+des Betriebs — sie bleibt außen vor. Das ist die Trennlinie: **Absender ist der
+Betrieb, Empfänger ist dessen Kunde.**
+
+**Das Angebots-PDF** baut den Fuß in `src/lib/pdf.tsx` Z. 314–316 aus genau
+drei Bestandteilen: links `Firmenname · erste Adresszeile`, Mitte
+`USt-IdNr. / St.-Nr.`, rechts `IBAN`. Registerangaben kennt es nicht.
+
+**Meine Abgrenzung, und die Begründung dazu:** Ich ziehe die Linie **nicht**
+zwischen PDF und E-Mail, sondern zwischen „an den Kunden" und „an den Betrieb".
+Der Grund ist nicht juristischer Ehrgeiz, sondern der Fehler, den wir in diesem
+Projekt schon zweimal hatten: Bei LR-01 (Übermessungs-Hinweis) und bei LR-16
+(Materialpreis-Hinweis) stand eine Angabe an einer Stelle und fehlte an der
+anderen, und niemand hat es gemerkt. Eine Funktion — etwa
+`geschaeftsbriefZeile(company)` in `src/lib` —, die das PDF und alle vier
+Mail-Vorlagen aufrufen, ist derselbe Bauaufwand wie „nur das PDF" plus vier
+Einzeiler und schließt die Lücke dauerhaft.
+
+**Falls Engineering trotzdem staffeln muss**, dann in dieser Reihenfolge:
+PDF · `api/email` · `api/quotes/[id]/send` zusammen (dort liegt das Angebot),
+unmittelbar danach Erinnerung und Auftragsbestätigung — beide gehen an denselben
+Empfänger und sind ebenso Geschäftsbriefe. Eine Staffelung, die die letzten
+beiden dauerhaft auslässt, trage ich nicht mit.
+
+**Die Unterschreiben-Seite** (`src/app/angebot/[id]/unterschreiben/page.tsx`)
+ist kein Geschäftsbrief, sondern der Ort des Vertragsschlusses. Für sie gilt
+Punkt 4, nicht dieser.
+
+### 3. Was bei unvollständigem Profil passiert
+
+**Erst die Rechtsfolge, dann meine Empfehlung.**
+
+**Wen es trifft:** Die Pflicht trifft den **Betrieb**, nicht Sofortangebot.
+Sanktion bei GmbH und UG: Zwangsgeld des Registergerichts gegen die
+Geschäftsführer, § 79 Abs. 1 GmbHG — Wortlaut geprüft: *„Geschäftsführer oder
+Liquidatoren, die §§ 35a, 71 Abs. 5 nicht befolgen, sind hierzu vom
+Registergericht durch Festsetzung von Zwangsgeld anzuhalten; § 14 des
+Handelsgesetzbuchs bleibt unberührt. Das einzelne Zwangsgeld darf den Betrag
+von fünftausend Euro nicht übersteigen."* Für e. K., OHG und KG dasselbe über
+§ 37a Abs. 4 HGB bzw. § 125 Abs. 2 HGB. Dazu kommt die wettbewerbsrechtliche
+Abmahnung durch Mitbewerber; die Pflichtangaben werden als Marktverhaltensregel
+im Sinne des § 3a UWG behandelt.
+
+**Meine Empfehlung: den Versand hart unterbrechen, aber nichts dauerhaft
+sperren.** Konkret, in dieser Staffelung:
+
+1. **`rechtsform` ist im Onboarding Pflichtfeld ohne Überspringen.** Es ist die
+   einzige Angabe, die das Produkt nicht selbst herleiten kann, und ohne sie
+   läuft jede weitere Regel ins Leere.
+2. **Rechtsform = Einzelunternehmen → keine weiteren Felder, kein Hinweis.**
+   Unverändert so, wie Sandy entschieden hat.
+3. **Rechtsform eingetragen und ein Pflichtfeld leer → der Versand-Dialog
+   blockiert.** Kein „trotzdem senden", kein wegklickbarer Hinweis. Der Knopf
+   wird aktiv, sobald die Felder stehen.
+4. **Nicht blockiert werden:** das Erstellen und Bearbeiten von Angeboten, der
+   PDF-Download für den eigenen Gebrauch, und bereits versendete Angebote.
+   Nichts wird rückwirkend gesperrt.
+
+**Warum nicht nur warnen:** Ein Hinweis, den man wegklicken kann, erzeugt genau
+den Zustand aus LR-16 — der Betrieb hat etwas gesehen und hält die Sache
+für erledigt. **Warum nicht härter:** Ein Kontosperre wäre unverhältnismäßig.
+Die Pflicht ist die des Betriebs, Sofortangebot haftet nicht für ihre
+Verletzung, und die Kernfunktion darf nicht an einer fremden Pflicht hängen.
+
+**Was Sandy davon freigeben muss:** nur der **Wortlaut** der beiden
+Oberflächentexte. Meine Vorschläge, zur Freigabe:
+
+> **Im Betriebsprofil, unter der Rechtsform-Auswahl:**
+> „Diese Angaben müssen nach dem Handelsrecht auf jedem Angebot stehen, das du
+> verschickst. Sie stehen so auch in deinem Handelsregisterauszug."
+>
+> **Im Versand-Dialog, wenn Felder fehlen:**
+> „Bevor du dein erstes Angebot verschickst, fehlen noch Pflichtangaben zu
+> deinem Betrieb: <Liste der leeren Felder>. Ohne sie darf das Angebot nicht
+> raus."
+
+Beides ist ein Hinweis an den Betrieb, keine Aussage gegenüber dessen Kunden
+und keine Klausel — das Risiko ist gering, und der Bau hängt nicht daran.
+Ändert Sandy die Formulierung später, ist das eine Textänderung.
+**Die Entscheidung „blockieren statt nur warnen" ist eine Rechtsfolgen-Frage
+und liegt nach der Governance-Regel bei mir — Sandy muss sie nicht treffen,
+damit gebaut werden kann.**
+
+### 4. Ein Punkt, der in CoS-L-007 zu kurz kam: pflichtfrei ist auch der Einzelunternehmer nicht
+
+In CoS-L-007 steht: *„Für ein nicht eingetragenes Kleingewerbe gilt davon nichts
+— dort reichen Vor- und Nachname."* Der erste Halbsatz stimmt und ist jetzt auch
+belegt: § 15b GewO, der genau die Namensangabe auf Geschäftsbriefen verlangte,
+ist seit dem 25.03.2009 aufgehoben. **Der zweite Halbsatz ist unvollständig.**
+
+**§ 2 Abs. 1 DL-InfoV** verpflichtet jeden Dienstleistungserbringer —
+Handwerksbetriebe ausdrücklich eingeschlossen —, dem Empfänger **vor Abschluss
+eines schriftlichen Vertrags** unter anderem zur Verfügung zu stellen: Name
+bzw. Firma, **Rechtsform**, ladungsfähige Anschrift, Kontaktdaten, Registereintrag
+samt Nummer (soweit vorhanden), USt-IdNr. (soweit vorhanden), zuständige
+Kammer und Berufsbezeichnung, AGB, und Angaben zur Berufshaftpflicht, soweit
+eine besteht. Verstoß: Ordnungswidrigkeit nach § 6 DL-InfoV, Bußgeld bis
+1.000 €.
+
+**Warum das hierher gehört:** Der Vertragsschluss findet in unserem Produkt auf
+der Unterschreiben-Seite statt. Der Endkunde bekommt eine E-Mail und ein PDF —
+es gibt keinen Ladenraum, in dem etwas aushängen könnte.
+
+**Warum es trotzdem klein bleibt:** § 2 Abs. 2 DL-InfoV lässt vier Wege zu,
+darunter die leichte elektronische Zugänglichkeit über eine mitgeteilte
+Internetadresse. Eine Website des Betriebs mit Impressum, im PDF genannt,
+erfüllt die Pflicht. Das Feld `companies.website` existiert und wird im PDF-Kopf
+bereits gerendert (`pdf.tsx` Z. 391).
+
+**Der ganze Aufwand, der daraus folgt:** Für die eingetragenen Rechtsformen
+decken die Felder aus Punkt 1 die DL-InfoV mit ab. Für den Einzelunternehmer
+bleibt genau eine Angabe offen — **die Rechtsform selbst** —, und die steht nach
+Punkt 3 ohnehin im Profil. Es ist eine Zeile in derselben Fußzeilen-Funktion.
+**Ich führe das nicht als eigenes Risiko und nicht als eigenen Auftrag.**
+
+### 5. Der Befund an der Quelle, Stand heute
+
+- `companies` hat **keine** Spalte für Rechtsform, Sitz-Ort, Registergericht,
+  Registernummer oder Vertretungsberechtigte. Vorhanden und einschlägig sind
+  `name`, `address`, `tax_number`, `ust_id`, `phone`, `contact_email`,
+  `website`. (Spaltenliste aus `information_schema`, Produktionsprojekt.)
+- **8 Betriebe**, alle aktiv (`deleted_at` leer). `tax_number`: **0** gefüllt.
+  `ust_id`: **0** gefüllt.
+- **Ein Betrieb heißt „Holm GmbH"** und hat 4 Angebote angelegt, davon
+  **0 versendet** (`quotes.gesendet_am` leer). Es ist also bis heute kein
+  einziges Dokument hinausgegangen, dem die Pflichtangaben gefehlt hätten.
+
+Das ist der eigentliche Grund, warum der Punkt **vor** Gate 1 gehört und nicht
+danach: Solange nichts versendet wurde, ist nichts zu heilen. Ab dem ersten
+echten Versand eines eingetragenen Betriebs wäre jedes Angebot ein
+abmahnfähiger Geschäftsbrief, und alte Angebote lassen sich nicht nachbessern.
+
+### 6. Nebenbefund L-35a-01 — das PDF druckt die Steuernummer, entgegen meiner eigenen Empfehlung
+
+In CoS-L-007 habe ich geschrieben: USt-IdNr. bevorzugen, Steuernummer nur dort,
+wo es keine USt-IdNr. gibt, und nur auf Rechnungen. `src/lib/pdf.tsx` Z. 315
+baut die Fußzeile aber aus **beiden**, ohne Vorrang:
+
+```
+const footerMitte = [ustId && `USt-IdNr.: ${ustId}`, steuernummer && `St.-Nr.: ${steuernummer}`].filter(Boolean).join('  ·  ')
+```
+
+Füllt ein Betrieb beide Felder, steht auf jedem Angebot beides — und die
+Steuernummer geht an jeden Empfänger. Kein akuter Schaden: 0 von 8 Betrieben
+haben eines der Felder gefüllt, und es gibt keine echten Nutzer.
+
+**Zu ändern zusammen mit CoS-E-057**, weil dieselbe Fußzeile ohnehin angefasst
+wird: `steuernummer` nur ausgeben, wenn `ustId` leer ist. Zwei Zeilen. Kein
+Risikoeintrag (Severity 1) — ein Produktpunkt zum Mitnehmen.
+
+*Head of Legal & Compliance · 2026-09-15 · Geprüfte Normtexte: § 35a GmbHG,
+§ 79 GmbHG, § 37a HGB, § 125 HGB, § 177a HGB, § 14 HGB, § 2 und § 6 DL-InfoV,
+Aufhebung § 15b GewO. Risikoeintrag dazu: LR-17 in
+`legal-002-risikobewertung-vob.md`*
+
+---
+
+## CoS-L-006 — § 14 UStG: die Pflichtangabenliste, nachgeholt (Head of Legal & Compliance, 2026-09-15)
+
+Früher am selben Tag habe ich notiert, die Normtexte seien nicht abrufbar und
+ich schriebe die Liste nicht aus dem Gedächtnis auf. Über eine andere Quelle
+sind sie abrufbar (gesetze-im-internet.de bleibt gesperrt, lxgesetze.de und
+juraforum.de liefern den Wortlaut). Damit hole ich sie nach.
+
+**Was sich dadurch nicht ändert:** Es gibt im Produkt weiterhin **keine
+Rechnung** — kein Rechnungsdokument, keine Rechnungstabelle, `quotes.dokument_typ`
+kennt nur `angebot` und `kostenvoranschlag`. Die Liste ist deshalb **kein
+Bauauftrag**, sondern der Maßstab, an dem die erste Rechnungsvorlage zu messen
+sein wird. Sie steht hier, damit sie beim nächsten Mal nicht wieder aus dem
+Gedächtnis geschrieben wird.
+
+### A. Die zehn Pflichtangaben nach § 14 Abs. 4 UStG (Regelfall)
+
+1. vollständiger Name und vollständige Anschrift des leistenden Unternehmers
+   **und** des Leistungsempfängers
+2. Steuernummer **oder** USt-IdNr. des leistenden Unternehmers
+3. Ausstellungsdatum
+4. eine fortlaufende Nummer mit einer oder mehreren Zahlenreihen, die zur
+   Identifizierung der Rechnung vom Rechnungsaussteller **einmalig** vergeben
+   wird
+5. Menge und Art (handelsübliche Bezeichnung) der gelieferten Gegenstände bzw.
+   Umfang und Art der sonstigen Leistung
+6. **Zeitpunkt der Lieferung oder sonstigen Leistung** — auch dann anzugeben,
+   wenn er mit dem Rechnungsdatum zusammenfällt
+7. das nach Steuersätzen und einzelnen Steuerbefreiungen aufgeschlüsselte
+   Entgelt sowie jede im Voraus vereinbarte Minderung des Entgelts
+8. der anzuwendende Steuersatz und der Steuerbetrag — oder bei Steuerbefreiung
+   ein Hinweis auf die Befreiung
+9. **Hinweis auf die Aufbewahrungspflicht des Leistungsempfängers**, in den
+   Fällen des § 14b Abs. 1 S. 5 UStG
+10. die Angabe „Gutschrift", wenn der Leistungsempfänger abrechnet
+
+**Nummer 6 und Nummer 9 sind die beiden, die in der Praxis fehlen — und
+Nummer 9 trifft unsere Betriebe unmittelbar.** § 14b Abs. 1 S. 5 UStG erfasst
+Werklieferungen und sonstige Leistungen **im Zusammenhang mit einem Grundstück**
+an einen Empfänger, der Nichtunternehmer ist oder die Leistung für seinen
+nichtunternehmerischen Bereich bezieht. Der muss die Rechnung, einen
+Zahlungsbeleg oder eine andere beweiskräftige Unterlage **zwei Jahre**
+aufbewahren, gerechnet ab Schluss des Kalenderjahres der Rechnungsausstellung —
+und auf diese Pflicht muss die Rechnung ihn hinweisen. Malerarbeiten und
+Bodenbelagsarbeiten in einer Privatwohnung sind genau dieser Fall. Das ist
+Manfreds Geschäft, jeden Tag.
+
+### B. Kleinbetragsrechnung bis 250 € (§ 33 UStDV)
+
+Bei einem Gesamtbetrag bis **250 €** genügen: Name und Anschrift des
+**leistenden** Unternehmers · Ausstellungsdatum · Menge und Art bzw. Umfang und
+Art der Leistung · Entgelt und Steuerbetrag **in einer Summe** · anzuwendender
+Steuersatz oder Hinweis auf die Steuerbefreiung. **Nicht** nötig: Empfänger,
+Rechnungsnummer, Steuernummer, Leistungszeitpunkt.
+
+### C. Kleinunternehmer (§ 19 UStG, § 34a UStDV)
+
+Die Grenzen im geprüften Wortlaut: Gesamtumsatz im **vorangegangenen**
+Kalenderjahr höchstens **25.000 €** und im laufenden Kalenderjahr nicht mehr als
+**100.000 €**.
+
+**§ 34a UStDV führt für Rechnungen über § 19-Umsätze eine eigene, verkürzte
+Liste:** Name und Anschrift beider Seiten · Steuernummer oder USt-IdNr. ·
+Ausstellungsdatum · Menge und Art bzw. Umfang und Art der Leistung · das Entgelt
+**mit einem Hinweis auf die Steuerbefreiung für Kleinunternehmer** · ggf.
+„Gutschrift". Eine fortlaufende Rechnungsnummer verlangt § 34a UStDV nicht.
+
+**Der Hinweis auf die Steuerbefreiung ist dort Pflicht.** Für uns heißt das:
+Der Satz, den `src/lib/pdf.tsx` Z. 557 heute setzt — *„Kein Ausweis MwSt. gem.
+§ 19 UStG"* — ist auf dem **Angebot** unschädlich und sachlich richtig. Auf
+einer künftigen **Rechnung** ist zu prüfen, ob diese Formulierung den geforderten
+Befreiungshinweis trägt; „kein Ausweis" beschreibt das Ergebnis, nicht den
+Befreiungsgrund. Das ist eine Formulierungsfrage für den Tag, an dem es
+Rechnungen gibt, kein heutiger Mangel.
+
+### D. Was ich in diesem Lauf ausdrücklich NICHT geprüft habe
+
+Die **E-Rechnungspflicht** nach § 14 Abs. 2 UStG und ihre Übergangsfristen.
+Dass inländische B2B-Umsätze grundsätzlich als elektronische Rechnung
+abzurechnen sind, steht im Normtext; die Staffelung der Übergangsregelung habe
+ich nicht am Wortlaut nachgesehen und schreibe sie deshalb nicht auf. Für das
+Produkt ist sie heute folgenlos: Es gibt keine Rechnung, und Angebote dürfen
+seit DC-100 gar keine XML mehr tragen. **Nachzuholen vor der ersten echten
+Rechnung**, nicht vor Gate 1.
+
+### Status
+
+**Der rechtliche Teil von CoS-L-006 ist damit erledigt.** Die Liste liegt vor,
+an der Norm geprüft, mit den beiden Sonderfällen (Kleinbetrag, Kleinunternehmer)
+und der einen Angabe, die unsere Betriebe wirklich betrifft (Nr. 9).
+
+**Offen bleibt der Produktteil, und der liegt nicht bei mir:** Der
+Rechnungsnummernkreis, den das Produkt einrichten lässt, ohne je eine Rechnung
+zu erzeugen (zwei Zeilen in `nummernkreise` mit `typ = 'rechnung'`, während
+`vergebene_nummern` nur `angebot` kennt). Das ist der Punkt, der Manfreds
+„Rechnung" in TN-089 erzeugt hat, und er liegt bei Platform, CoS-P-021.
+
+*Head of Legal & Compliance · 2026-09-15 · Geprüfte Normtexte: § 14 Abs. 4
+UStG, § 14b Abs. 1 UStG, § 19 Abs. 1 UStG, § 33 UStDV, § 34a UStDV*
+
+---
+
+## Notiz zum Ablauf dieses Laufs, zweiter Eintrag (2026-09-15)
+
+`node scripts/docs-sichern.mjs pruefen` / `sichern` konnte auch in diesem Lauf
+nicht ausgeführt werden — die Shell hängt den Projektordner weiterhin nicht ein
+(Windows-Update vom 08.09.). Gelesen und geschrieben wurde über Staging und
+Commit, jeweils mit `expectedMtimeMs` aus dem Staging. **Die Sicherung ist
+nicht gelaufen.** Das ist inzwischen der achte Tag; CoS-P-022 wird dadurch nicht
+kleiner.
+
+Was sich in diesem Lauf geändert hat: Die Normtexte sind über eine andere Quelle
+abrufbar (lxgesetze.de, juraforum.de). gesetze-im-internet.de antwortet weiterhin
+nicht. Damit ist die Vorbedingung weggefallen, an der CoS-L-006 seit dem 07.09.
+hing.
+
+*Head of Legal & Compliance · 2026-09-15*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

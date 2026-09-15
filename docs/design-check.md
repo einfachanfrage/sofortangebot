@@ -70,7 +70,7 @@ gemeinsame Datei: `docs/marketing-design-austausch.md`. Details:
 | DC-017 | Drei verschiedene Icon-Sprachen im Produkt (Lucide / native Emoji / Sketch) | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-018 | Emoji-Auswahl je Onboarding-Schritt wirkt zufällig (u. a. britisches Pfund-Symbol) | ✅ behoben (Nebeneffekt von DC-017, 2026-09-02) | Product Designer (umgesetzt) |
 | DC-019 | Zwei sehr ähnlich benannte Buchhaltungs-Optionen ohne Erklärung des Unterschieds | ✅ behoben (Product Designer, 2026-09-02) | Product Designer (umgesetzt) |
-| DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | 🔵 Prüfen, ob nur Screenshot-Ausschnitt | — |
+| DC-020 | Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar | ✅ behoben (Product Designer, 2026-09-15) — es lag nicht am Bildausschnitt: das Sheet hatte eine feste Höhe (50dvh), der Inhalt nicht, und „Vielleicht später" fiel als Erstes unter den Bildschirmrand. Höhe folgt jetzt dem Inhalt (gedeckelt 85dvh, Inhalt scrollt) wie in `PwaBottomSheet.tsx`, und die Ablehnen-Option ist ein echter Zweit-Button im Muster von `ConfirmSheet.tsx` statt einer 30-%-Graustufe. Noch nicht am echten Gerät nachgesehen | Product Designer (umgesetzt) |
 | DC-021 | Bestätigungskarte vor Entwurf-Erstellung zeigt nicht zuverlässig, was am Ende berechnet wird (PD-001) | ✅ behoben + live bestätigt (Sandy, 2026-08-23) — CoS-002 komplett (alle 3 Schritte inkl. Mehrfach-Aufnahmen-Fall), Realtime-Bug gefunden+gefixt, Retest danach „passt" | Head of Product Engineering |
 | DC-022 | „X Positionen erkannt"-Zahl stimmt wiederholt nicht mit der tatsächlichen Anzahl überein (PD-004) | ✅ behoben + live bestätigt — strukturell mitgelöst mit DC-021/CoS-002, siehe dort | Head of Product Engineering |
 | DC-023 | Fassade: Aufnahmekarte zeigt Fenstermaße statt Fassadenmaße (PD-007) | 🟡 Extraktions-Fix von Head of Product Engineering lokal verifiziert (zeigt jetzt lieber nichts als Falsches) — noch nicht auf sofortangebot.app deployt | Head of Product Engineering |
@@ -1178,7 +1178,7 @@ hervorging. Scoped `tsc --noEmit` lief clean, Commit `5065355`.
 ## DC-020 — Push-Erlaubnis-Screen: Ablehnen-Möglichkeit nicht erkennbar
 
 **Datum:** 2026-08-17
-**Status:** 🔵 Prüfen, ob nur Screenshot-Ausschnitt
+**Status:** ✅ behoben (Product Designer, 2026-09-15) — Befund bestätigt, Ursache gefunden, Fix unten. Der Text darunter ist der ursprüngliche Befund vom 17.08.
 
 **Befund:** Auf dem Bottom-Sheet „Verpasse keine Angebots-Updates" (Push-
 Benachrichtigungen) ist im Screenshot nur der Button „Benachrichtigungen
@@ -8095,6 +8095,152 @@ und fängt an, fertige Arbeit noch einmal zu machen. Sie zeigen jetzt den Stand
 der Tabelle und sagen dazu, dass der Text darunter der ursprüngliche Befund
 ist. **Inhaltlich ist an keinem Befund etwas geändert**, nur an der
 Status-Zeile.
+
+*Product Designer · 2026-09-15*
+
+---
+
+## DC-020 erledigt — die Ablehnen-Möglichkeit war da, sie lag unter dem Bildschirmrand (15.09.2026)
+
+**Noch nicht committet** (Shell auf dem Gerät weiter tot, Commit von Sandy —
+PowerShell-Block steht in meiner Antwort).
+
+Der Punkt stand seit dem 17.08. auf 🔵 mit der Frage, ob im Screenshot nur der
+Ausschnitt fehlt. Er war der älteste offene, unblockierte Punkt in dieser
+Datei — Live-Prüfen ist mir heute nicht möglich (siehe unten), lesen ist es.
+Die Frage lässt sich am Code vollständig beantworten, und die Antwort ist
+interessanter als „ja" oder „nein".
+
+### Es gab eine Ablehnen-Option — und sie konnte gar nicht sichtbar sein
+
+`src/components/PushBanner.tsx` hatte in Zeile 151 ein „Vielleicht später".
+Trotzdem war Sandys Screenshot richtig, und zwar aus einem strukturellen
+Grund:
+
+```tsx
+<div style={{ height: '50dvh' }}>            // Sheet: feste Höhe
+  <div className="px-6 pt-4 pb-8 flex flex-col h-full">   // Inhalt: kein overflow
+```
+
+Das Sheet war auf **exakt** die halbe Bildschirmhöhe festgenagelt, der Inhalt
+darin auf gar nichts. Gerechnet ergibt der Inhalt rund 430 px (Kopfbereich,
+drei Aufzählungszeilen, Hauptknopf, Ablehnen-Zeile, Innenabstände). Auf einem
+iPhone SE (667 px) stehen 50dvh für **333 px**. Es fehlen also rund 100 px —
+und weil auf dem Inhaltsbereich weder `overflow-y-auto` noch `overflow-hidden`
+stand, ist der Überhang nicht gescrollt und nicht abgeschnitten worden,
+sondern **unten aus dem Sheet herausgelaufen**. Das Sheet klebt am unteren
+Bildschirmrand (`items-end`); alles, was darunter landet, liegt außerhalb des
+Bildschirms.
+
+Die Reihenfolge im Markup entscheidet damit, was verschwindet: Zuerst fällt
+„Vielleicht später", danach der Hauptknopf. Auf einem großen Gerät (iPhone 15
+Pro Max, 932 px → 466 px Sheet) passt alles, auf einem kleinen nicht. Deshalb
+ist der Befund auch nie reproduzierbar gewesen, je nachdem, wer nachgesehen
+hat.
+
+**Das ist die Umkehrung der ursprünglichen Vermutung.** Die Frage im Ticket
+war, ob der *Screenshot* zu kurz ist. Zu kurz war das *Sheet*.
+
+### Die Nachbarkomponente macht es seit jeher richtig
+
+`PwaBottomSheet.tsx` — dasselbe Muster, dieselbe Machart, zwei Dateien
+daneben — hat in Zeile 63 `overflow-y-auto h-full` auf dem Inhaltsbereich.
+Dort kann derselbe Fehler nicht passieren. `PushBanner.tsx` war der
+Ausreißer, nicht die Regel, und deshalb ist der Fix auch keine Erfindung,
+sondern eine Angleichung:
+
+```tsx
+<div className="... flex flex-col ..." style={{ maxHeight: '85dvh' }}>
+  ...
+  <div className="px-6 pt-4 pb-8 overflow-y-auto min-h-0">
+```
+
+`maxHeight` statt `height`: Die Höhe folgt dem Inhalt und wird erst bei 85dvh
+gedeckelt — auf großen Geräten wird das Sheet dadurch **kleiner** als vorher
+(kein halb leeres Sheet mehr), auf kleinen genau so groß, wie es sein muss.
+Läuft der Inhalt einmal doch über, scrollt er innerhalb des Sheets; `min-h-0`
+ist die Zeile, ohne die ein Flex-Kind sich nicht unter seine Inhaltshöhe
+verkleinern lässt und die Deckelung wirkungslos bliebe. `mt-auto` am
+Hauptknopf ist entfallen — es schob den Knopf in einer festen Höhe nach
+unten, die es nicht mehr gibt.
+
+### Und die Empfehlung aus dem Ticket, unverändert umgesetzt
+
+*„Zustimmung zu Benachrichtigungen sollte sich nie wie die einzige Option
+anfühlen."* Sichtbar war „Vielleicht später" bisher als
+`text-anthracite/30` — Anthrazit auf Weiß mit 30 % Deckkraft, 13 px, gegen
+einen vollflächig dunklen Knopf mit 15 px und `font-extrabold`. Selbst wo es
+im Bild stand, war es keine gleichwertige Antwort, sondern ein Hinweis, den
+man übersieht.
+
+Es ist jetzt ein echter Zweit-Knopf im **bestehenden** Haus-Muster für genau
+diesen Fall — `ConfirmSheet.tsx` Zeile 49–54, der Abbrechen-Knopf:
+`border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5
+font-extrabold text-[14px]`. Bewusst kein neuer Stil und bewusst nicht so
+laut wie der Hauptknopf: Gleichwertig heißt auffindbar, nicht gleich
+gewichtet.
+
+### Zwei Kleinigkeiten, die beim Lesen derselben Datei aufgefallen sind
+
+1. **Doppelter Ausgang im blockierten Zustand.** Sagt der Browser „nein",
+   erschien bisher *sowohl* ein unterstrichenes „Schließen" *als auch*
+   darunter „Vielleicht später" — zwei Knöpfe, ein Ziel, und der zweite
+   bietet etwas an, das es an der Stelle nicht mehr gibt. „Vielleicht später"
+   steht jetzt nur noch im Ausgangszustand; im blockierten Zustand bleibt ein
+   Ausgang, im selben Zweit-Knopf-Stil. Der Erklärsatz darüber steht
+   **wörtlich unverändert**, nur nicht mehr auf 40 % Deckkraft, sondern auf
+   den 50 %, die im Rest des Produkts die gedämpfte Stufe sind.
+2. **Der X-Knopf hatte keinen Namen.** Reiner Icon-Knopf ohne Text und ohne
+   `aria-label` — für eine Vorlesehilfe ein namenloser Knopf. Jetzt
+   `aria-label="Schließen"`. Eine Zeile.
+
+Nicht angefasst: Farbe und Beschriftung des Hauptknopfs (`bg-anthracite`,
+„Benachrichtigungen erlauben →"), die Aufzählung und die Texte. Die gehören
+zu DC-049 bzw. sind unstrittig — der Punkt hier ist die fehlende zweite
+Antwort, nicht die erste.
+
+### Verifikation
+
+`tsc`/`vitest` sind auf dem Gerät weiter nicht ausführbar (Shell seit dem
+08.09. tot, heute erneut bestätigt). Geprüft:
+
+- **Syntax** über den TypeScript-Parser (5.6.3) — sauber, 0 Diagnosen.
+- **Zurückgelesen:** Datei nach dem Schreiben neu gestaget, Bytegröße
+  (6.792) **und** MD5 gegen die geschriebene Fassung — identisch.
+- **Nachgerechnet** statt geschätzt: die Inhaltshöhe gegen 50dvh auf
+  iPhone SE (667), iPhone 12/13/14 (844) und iPhone 15 Pro Max (932). Nur
+  das größte Gerät hatte genug Platz — was erklärt, warum der Befund als
+  „vielleicht nur der Ausschnitt" liegen geblieben ist.
+
+**Was offen bleibt:** der Blick am echten Gerät. Das Sheet erscheint nur auf
+Mobilgeräten, drei Sekunden nach dem Dashboard, und nur solange
+`push-banner-dismissed` nicht im `localStorage` steht — wer es einmal
+weggetippt hat, sieht es nicht wieder. Zum Nachstellen den Schlüssel im
+Browser löschen und das Dashboard neu laden.
+
+*Product Designer · 2026-09-15*
+
+---
+
+## Warum heute kein Live-Test gelaufen ist (15.09.2026)
+
+Auf der Liste des Chief of Staff standen für mich vor DC-020 zwei Posten, die
+beide dasselbe brauchen: einen Blick in die laufende App (DC-105 nachsehen;
+DC-101/103/104/089 sowie DC-047/048 live prüfen). Der Browser dieses Laufs
+kommt an `sofortangebot.app` nicht heran — er verlangt dafür eine Freigabe von
+Sandy, und in einem Lauf ohne Sandy am Rechner gibt es niemanden, der sie
+erteilt. Ich habe es bei dem einen Versuch belassen, statt daran hängen zu
+bleiben.
+
+Die Posten bleiben damit offen, sind aber **nicht** blockiert im Sinne dieser
+Datei — sie brauchen keine fremde Entscheidung, nur eine laufende App. Sandy
+kann sie in zwei Minuten selbst abhaken, oder ich hole sie nach, sobald der
+Browser die Seite öffnen darf.
+
+Ebenfalls unverändert und weiterhin fremdblockiert: **DC-106** (wartet auf die
+eine Zeile Antwort des Head of Product Engineering zu `api/cron/reminder`),
+der **Nachzug in `AngebotDetail.tsx`** aus DC-014 (wartet auf Engineerings
+Commit) und der **Einbau von DC-102** (hängt an CoS-E-053 und der roten CI).
 
 *Product Designer · 2026-09-15*
 

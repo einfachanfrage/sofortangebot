@@ -871,4 +871,122 @@ sondern eine Anforderung an CoS-E-053 — ausformuliert in
 
 ---
 
+
+## Nachtrag 2026-09-15, zweiter Eintrag — LR-17 neu (Head of Legal & Compliance)
+
+## LR-17 🟠 — Eingetragene Betriebe versenden Geschäftsbriefe ohne die handelsrechtlichen Pflichtangaben
+
+### Risikobeschreibung
+
+Ein Angebot ist ein **Geschäftsbrief**. Für eingetragene Rechtsformen sind
+darauf Pflichtangaben vorgeschrieben — und zwar ab dem ersten Angebot, nicht
+erst ab der ersten Rechnung:
+
+- **GmbH und UG:** Rechtsform, Sitz, Registergericht, HRB-Nummer und **alle**
+  Geschäftsführer mit Familiennamen und mindestens einem ausgeschriebenen
+  Vornamen (§ 35a Abs. 1 GmbHG, Wortlaut geprüft).
+- **e. K.:** Firma, Rechtsformzusatz, Ort der Handelsniederlassung,
+  Registergericht, HRA-Nummer (§ 37a Abs. 1 HGB).
+- **OHG und KG:** Firma, Sitz, Registergericht, HRA-Nummer (§ 125 Abs. 1 HGB —
+  seit dem MoPeG dort, **nicht** mehr in § 125a HGB; § 177a HGB verweist
+  entsprechend).
+- **GmbH & Co. KG:** dasselbe, zusätzlich die vollständigen Angaben der
+  Komplementär-GmbH einschließlich ihrer Geschäftsführer (§§ 177a, 125 Abs. 1
+  S. 2 HGB).
+
+**Das Produkt kennt diese Felder nicht.** In der Produktionsdatenbank hat
+`companies` keine Spalte für Rechtsform, Sitz-Ort, Registergericht,
+Registernummer oder Vertretungsberechtigte (Spaltenliste aus
+`information_schema` am 15.09. geprüft). Der Fuß des Angebots-PDF besteht in
+`src/lib/pdf.tsx` Z. 314–316 aus genau drei Bestandteilen: Firmenname mit erster
+Adresszeile, USt-IdNr./St.-Nr., IBAN. Die vier E-Mails, die im Namen des
+Betriebs an dessen Kunden gehen (`api/email`, `api/quotes/[id]/send`,
+`api/cron/reminder`, `api/notifications/unterschrift`), tragen im Fuß nur
+*„Versendet über sofortangebot.app im Auftrag von <Firma>"*.
+
+**Ein eingetragener Betrieb kann mit Sofortangebot heute also kein
+pflichtgemäßes Angebot erzeugen — auf keinem Weg.**
+
+### Severity 3 — Moderate
+
+Die Pflicht trifft den **Betrieb**, nicht Sofortangebot. Sanktion: Zwangsgeld
+des Registergerichts gegen die Geschäftsführer, je Festsetzung höchstens
+5.000 € (§ 79 Abs. 1 GmbHG i. V. m. § 14 S. 2 HGB; für die Personengesellschaften
+über § 37a Abs. 4 bzw. § 125 Abs. 2 HGB), dazu die wettbewerbsrechtliche
+Abmahnung durch Mitbewerber — die Pflichtangaben werden als Marktverhaltensregel
+im Sinne des § 3a UWG behandelt.
+
+Für Sofortangebot ist der Schaden nicht die Sanktion, sondern die Art des
+Mangels: Das Produkt verspricht „fertiges Angebot, sofort versendbar" und
+liefert für eine ganze Klasse von Betrieben ein Dokument, das sie so nicht
+verschicken dürfen. **Und der Mangel ist nicht heilbar** — ein bereits
+versendetes Angebot lässt sich nicht nachbessern.
+
+Nicht höher als 3, weil kein Endkunde zu Schaden kommt und der Betrag pro
+Festsetzung begrenzt ist.
+
+### Likelihood 2 heute — 4, sobald ein eingetragener Betrieb in Gate 1 ist
+
+Heute: 8 Betriebe in der Produktionsdatenbank, davon **einer** mit „GmbH" im
+Namen („Holm GmbH", 4 Angebote angelegt, **0 versendet**). Es gibt keine echten
+Nutzer. Bis heute ist also kein einziges pflichtwidriges Dokument
+herausgegangen.
+
+Der Sprung nach oben ist anders als bei den übrigen Einträgen **nicht zufällig,
+sondern zwangsläufig**: Sobald ein eingetragener Betrieb ein Angebot versendet,
+fehlen die Angaben — es gibt keinen Pfad im Produkt, auf dem sie vorhanden wären.
+Die einzige offene Variable ist, ob ein Gate-1-Betrieb eingetragen ist. Das war
+die Annahme in CoS-L-007 („aller Voraussicht nach Einzelunternehmen"), und
+genau deshalb habe ich den Punkt damals **nicht** ins Register genommen.
+
+**Warum er jetzt doch hier steht:** Die Annahme ist eine Annahme geblieben,
+Sandy hat § 35a am 15.09. vor Gate 1 gezogen, und der erste Betrieb in der
+Datenbank ist eine GmbH. Ein Risiko, dessen Eintritt allein davon abhängt, wer
+sich als Nächstes anmeldet, gehört verfolgt und nicht auf eine Vermutung
+gestützt.
+
+### Mitigation
+
+1. **Gebaut wird CoS-E-057.** Feldliste, Geltungsbereich und die Regel für
+   unvollständige Profile liegen abschließend in
+   `chief-of-staff-legal-todos.md`, Abschnitt „CoS-L-008 — Die drei
+   Zulieferungen an Engineering" vom 15.09.
+2. **Eine Quelle für alle Ausgabewege.** PDF und alle vier Kunden-E-Mails
+   ziehen die Zeile aus derselben Funktion. Das ist die Lehre aus LR-01 und
+   LR-16: Eine Angabe, die an einer Stelle steht und an der anderen fehlt,
+   fällt niemandem auf.
+3. **Versand blockieren, nicht warnen**, wenn die Rechtsform eingetragen und
+   ein Pflichtfeld leer ist. Begründung in CoS-L-008 Punkt 3.
+4. **Keine Kapitalangaben ins Datenmodell.** § 35a Abs. 1 S. 2 GmbHG löst die
+   Pflicht zur Angabe von Stammkapital und ausstehenden Einlagen erst aus, wenn
+   überhaupt etwas zum Kapital geschrieben wird. Kein Feld — keine Pflicht.
+
+### Restrisiko nach 1–3: gering
+
+Es bleibt der Fall, dass ein Betrieb die Felder falsch ausfüllt (falsches
+Registergericht, abgekürzter Vorname eines Geschäftsführers). Das ist ein
+Eingabefehler des Betriebs und nicht mehr unserer; das Produkt kann ihn nicht
+prüfen und soll es auch nicht vortäuschen.
+
+### Angrenzend, nicht Teil von LR-17
+
+**Die Steuernummer im PDF-Fuß.** `pdf.tsx` Z. 315 gibt USt-IdNr. **und**
+Steuernummer aus, ohne Vorrang, obwohl die USt-IdNr. nach § 27a UStG gerade
+dafür existiert, die Steuernummer nicht herausgeben zu müssen. Heute ohne
+Wirkung (0 von 8 Betrieben haben eines der beiden Felder gefüllt). Severity 1,
+deshalb kein eigener Eintrag — aber zusammen mit CoS-E-057 zu erledigen, weil
+dieselbe Zeile angefasst wird. Geführt als L-35a-01 in
+`chief-of-staff-legal-todos.md`.
+
+**Die DL-InfoV.** § 2 Abs. 1 DL-InfoV verlangt von jedem Dienstleister —
+Handwerk eingeschlossen — vor Vertragsschluss unter anderem die Angabe der
+**Rechtsform**, auch beim nicht eingetragenen Einzelunternehmer, für den § 35a
+GmbHG und § 37a HGB nicht gelten (§ 15b GewO, der das früher regelte, ist seit
+25.03.2009 aufgehoben). Bußgeld bis 1.000 € (§ 6 DL-InfoV). **Kein eigener
+Risikoeintrag**, weil § 2 Abs. 2 DL-InfoV die elektronische Bereitstellung über
+eine mitgeteilte Internetadresse genügen lässt und die Rechtsform nach
+CoS-L-008 ohnehin ins Profil kommt. Es ist eine Zeile in derselben Fußzeile.
+
+*Head of Legal & Compliance · 2026-09-15*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

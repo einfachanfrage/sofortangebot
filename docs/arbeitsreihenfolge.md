@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 15.09.2026, 18:00 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 17:45 — diese Datei wird immer ersetzt, nie ergänzt.
+**Stand: 15.09.2026, 18:15 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 18:00 — diese Datei wird immer ersetzt, nie ergänzt.
 Die Fassungen davor trugen „16:45"/„16:50", waren aber um 17:39 bzw. 17:45
 geschrieben: eine Stunde zu früh gestempelt. Ab hier steht die echte Zeit.)*
 
@@ -12,7 +12,9 @@ geschrieben: eine Stunde zu früh gestempelt. Ab hier steht die echte Zeit.)*
 **Grün und unverändert.** CI **#187** auf `de1ae80`: `success`, an der
 Lauf-Seite nachgesehen (Lauf-ID 34982664337). Produktion `dpl_Ba3B8QBk`:
 `READY`, derselbe Commit. Seit dem letzten Lauf ist nichts deployt worden.
-**Sandys „JA" ist verteilt:** CoS-E-058/059 vor § 35a.
+**Zwei Entscheidungen von Sandy verteilt:** CoS-E-058/059 vor § 35a („JA", 17:45)
+und **nicht freigeschaltete Gewerke sperren, vor Gate 1** (18:15).
+**Es wartet damit keine Entscheidung mehr auf sie — nur noch das Committen.**
 **Engineering hat eingeschätzt:** drei Eingriffe, nicht sechs.
 **Der Prüfmeister hat nachgelegt:** PM-057 bis PM-062, Fallbasis **62 von
 100**. Verteilt als CoS-E-060 und CoS-E-061.
@@ -57,13 +59,12 @@ Entscheidung für Sandy. Festgehalten für den Prüfmeister in
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | **Neu: nicht freigeschaltetes Gewerk sperren?** Ein Maler, der ein Bad diktiert, bekommt sieben preislose Zeilen (1.935,94 €). Empfehlung: sperren, vor Gate 1. Steht in `entscheidungen-fuer-sandy.md` | eine Antwort |
-| 2 | **Committen.** Acht Doku-Dateien, neun neue Testdateien, `src/lib/fehlertexte.ts` und die Anzeigestellen dazu | ein Befehl |
-| 3 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert übernommen, in diesem Lauf nicht neu geprüft |
+| 1 | **Committen.** Acht Doku-Dateien, neun neue Testdateien, `src/lib/fehlertexte.ts` und die Anzeigestellen dazu | ein Befehl |
+| 2 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert übernommen, in diesem Lauf nicht neu geprüft |
 
-**Erledigt und damit von der Liste:** die Reihenfolge-Entscheidung
-(„JA", 17:45 MESZ) · `_to_delete/` auf dem Rechner · die sechs Doku-Dateien
-von 17:15.
+**Erledigt und damit von der Liste:** die Reihenfolge-Entscheidung („JA",
+17:45 MESZ) · **das Gewerke-Tor („sperren vor Gate 1", 18:15 MESZ)** ·
+`_to_delete/` auf dem Rechner · die sechs Doku-Dateien von 17:15.
 
 ### Nicht im Repository (gegen `de1ae80` verglichen, frischer Klon)
 
@@ -112,10 +113,16 @@ nächste `git add -A` trägt die Löschung mit ein.
    geklärt sein muss:** welche Datei speist die Oberfläche —
    `preis-ableitung.ts` oder `materialanteil.ts`? Der Prüfmeister beantwortet
    die fachliche Frage erst, wenn es *eine* Quelle gibt
-3. **CoS-E-061 einschätzen** (Fliesen). Zuerst das **Tor**: Soll
-   `berechneMengen` ein Gewerk rechnen, das nicht in `AKTIVE_GEWERKE` steht?
-   Dann PM-060-B (`gewerkFuerPosition` entscheidet am Wort, nicht an der
-   Herkunft der Zeile) — das trifft jede künftige Freischaltung
+3. **CoS-E-061 — das Tor ist entschieden: sperren, vor Gate 1.** Sandy,
+   18:15 MESZ. Ein Gewerk, das nicht in `AKTIVE_GEWERKE` steht, darf keine
+   bepreisten Zeilen mehr erzeugen. **Wo die Sperre sitzt, entscheidet ihr**;
+   drei Punkte sind ausdrücklich offen und stehen im Ticket (Sekundärgewerk,
+   was mit dem Entwurf passiert, und der Wortlaut — der gehört dem Designer).
+   Steht **hinter** CoS-E-058/059, **vor** CoS-E-060.
+   **PM-060-B bleibt davon getrennt** (`gewerkFuerPosition` entscheidet am
+   Wort, nicht an der Herkunft der Zeile) — das trifft auch Maler und Boden
+   und wird von der Sperre nicht miterledigt. Einschätzung steht aus.
+   Die vier Fliesen-Funde selbst warten auf eine Freischaltung
 4. **CoS-E-053 weiterbauen**, mit den vier Legal-Bedingungen. Der
    Preisanpassungs-Hinweis darf **nicht** aufs Kunden-PDF, bevor Sandy einen
    Wortlaut freigegeben hat — LR-16
@@ -161,22 +168,31 @@ nächste `git add -A` trägt die Löschung mit ein.
 
 ## Prüfmeister
 
-1. **K.1 beantworten — das blockiert Engineerings Eingriff 3.** Zwei Fragen in
-   `pruefmeister-themenspeicher.md` K: welche Fläche gilt bei bloßem
-   „Sperrgrund", und fällt der Tiefengrund ganz weg oder nur auf der
-   gesperrten Fläche
-2. **K.2 — die Batch-Tests.** `meta` gegen `textMitZahlen`: Engineering hält
-   die Sperrklinke PM-045-B/PM-050-A für auf einen Zustand gesetzt, den das
-   Produkt nicht hat. Vorschlag steht in K.2
-3. **K.3 lesen — Korrektur an „aktive Gewerke".** Der Befund bleibt, die
-   Begründung nicht. Für Restliste Nr. 2 und Nr. 10 heißt das: die vier
-   Gewerke sind nicht „aktiv", sie sind über das **Diktat erreichbar** — das
-   ist die schärfere Formulierung, nicht die weichere
-4. ✅ Erledigt in diesem Lauf: `VARIANTEN` (Zähler 0), `Übergangsprofil /
-   Schwelle` nachgemessen, Batch PM-057 bis PM-062
+1. ✅ **K.1 beantwortet — Eingriff 3 ist frei.** Die Fläche folgt der
+   **Ursache**: Wasserfleck → Decke · Nikotin/Ruß → **Wand und Decke** · eine
+   genannte Fläche schlägt alles · gar nichts davon → **keine bepreiste Zeile,
+   Rückfrage**. Der Tiefengrund fällt **nur auf der gesperrten Fläche** weg —
+   je Fläche, nie je Angebot. Ausführlich im Themenspeicher K.1, als Soll in
+   `pruefmeister-batch-1509.test.ts` (PM-046-A/-B/-D/-E)
+2. ✅ **K.2 erledigt — und zwei gemeldete Funde zurückgenommen.** Beide
+   Batch-Dateien normalisieren den Text jetzt am Eingang wie die Pipeline.
+   **PM-045-A („540,00 €, teuerster Fund des Batches") ist grün**, ebenso
+   PM-052-A: beides Messfehler meines Prüfstands, nicht des Produkts.
+   PM-045-B neu gefasst als Zusicherung über den Produktweg.
+   **Für Engineering: zwei Zeilen weniger auf CoS-E-059**
+3. ✅ **K.3 gelesen und übernommen** — Formulierung „über das Diktat
+   erreichbar" in Restliste und `vokabular-abgleich.md` T nachgezogen.
+   **Damit auch Restliste Nr. 10 beantwortet:** Trockenbau, Elektro und
+   Sanitär sind jetzt im Abgleich, **zehn neue Lücken**, sechs davon
+   Trockenbau — dort fehlt der Preis bei *jeder* Zeile des Gewerks
+4. ✅ **Neu: Batch PM-064 bis PM-068** (4 grün, 15 Sperrklinken). Der schwerste
+   Fund: **eine Treppe mit Belag kommt mit rund 50 € heraus statt gut 1.100 €**
+   (PM-066). Dazu PM-064 — „das ist Sperrmüll" im Nebensatz erzeugt einen
+   Isoliergrund über 162,00 €, weil der Auslöser am Wortstamm `sperr` hängt
 5. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
-6. **Fallbasis: 62 von 100.** Nächste Themen laut Speicher: Treppen komplett,
-   Abbruch und Entsorgung, mehrere Aufnahmen pro Angebot, Trockenbau
+6. **Fallbasis: 68 von 100.** Nächste Themen laut Speicher: mehrere Aufnahmen
+   zu einem Angebot, Estrich, Fassade mit Gerüst vollständig, Möbel komplett
+   ausräumen, Deckenrosette und Sichtbalken
 7. **Offen ohne App:** die 142 Vorlagen der gesperrten Gewerke, jeweils
    **vor** der Freischaltung
 
@@ -205,9 +221,11 @@ nächste `git add -A` trägt die Löschung mit ein.
 
 ## Was ich als Nächstes tue
 
-**Auf zwei Dinge warten:** Sandys Entscheidung zum Gewerke-Tor und die
-Antworten des Prüfmeisters auf K.1. Beides zusammen entsperrt, was Engineering
-als Nächstes baut.
+**Auf die Antworten des Prüfmeisters zu K.1 warten** — sie sind das Einzige,
+was Engineering noch blockiert, und zwar nur Eingriff 3. Eingriff 1, Eingriff 2
+und die Gewerke-Sperre sind freigegeben und können sofort gebaut werden.
+
+**Von Sandy wartet nichts mehr** außer dem Commit.
 
 **Gate 1 rechne ich weiterhin nicht neu** — ich warte auf Manfreds Session 3,
 sonst steht die Zahl wieder auf „ist deployt" statt auf „funktioniert".

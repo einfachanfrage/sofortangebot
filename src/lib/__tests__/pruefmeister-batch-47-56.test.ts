@@ -17,12 +17,24 @@
 //
 // Stand 15.09., nach Manfreds Durchsicht der Diktate überarbeitet:
 //   PM-050-B  Dübellöcher: Katalog auf Pauschale 20,00 € umstellen
-//   PM-052-A  Zahlwort „die zwei Heizkörper" ergibt Menge 1
 //   PM-053-A  Erschwerniszuschlag Raumhöhe feuert außen neben dem Gerüst
 //   PM-055-A  Verschnitt fehlt beim geklebten Belag
 //   PM-056-A  Altbelag-Titel nennt den neuen Belag (TN-127)
 //   PM-056-B  Entsorgungsfahrt fehlt
+//   PM-056-C  Altbelag zweimal abgerechnet: 168,00 € statt 126,00 €
 //   PM-063-A  „bauseits gestellt" erzeugt trotzdem 450 € Gerüst
+//
+// Nach dem Live-Lauf am 15.09. abends nachgezogen — zwei Korrekturen an
+// diesem Prüfstand, beide gegen mich:
+//   1. Die Spracherkennung liefert Zahlen als ZIFFERN („die 2 Heizkörper",
+//      „3 Dübellöcher"). Hier standen ausgeschriebene Zahlwörter, die es im
+//      echten Transkript gar nicht gibt. Damit fällt die ganze
+//      Zahlwort-Familie weg: PM-050-A und PM-052-A waren keine Produktfehler.
+//      Die Diktate sind auf die Schreibweise der Spracherkennung gebracht.
+//   2. `ergaenzeAusAufnahmeHinweisen` und
+//      `normalisiereBodenPositionenAusAufnahme` liefen hier nicht mit,
+//      obwohl die echte Route sie über die Vollständigkeit legt — derselbe
+//      Fehler wie bei PM-013-A. Jetzt drin; dadurch wird PM-056-C sichtbar.
 import { describe, expect, it } from 'vitest'
 import { berechneMengen } from '../mengen/engine'
 import { verarbeiteExtraktion } from '../mengen/extraktion-pipeline'
@@ -32,6 +44,8 @@ import { DEFAULT_PRICES } from '../default-prices'
 import { preisKategoriePasstZuGewerk } from '../default-price-selection'
 import { gewerkFuerPosition } from '@/lib/positions-gewerk'
 import { zaehleFenster, zaehleTueren } from '../extraktion-masse'
+import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '../mengen/aufnahme-hinweise'
+import { ersetzeZahlenWorte } from '../zahlen-parser'
 
 const KATALOG = DEFAULT_PRICES.map((p, i) => ({
   id: `p${i}`, title: p.title, category: p.category, unit: p.unit, unit_price: p.unit_price,
@@ -47,8 +61,16 @@ const raum = (name: string, extra: any = {}): any => ({
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function lauf(gewerk: 'maler' | 'boden_parkett', transkript: string, raeume: any[]) {
-  const vor = verarbeiteExtraktion(transkript, { result: { gewerk, raeume, transkript } } as never)
+function lauf(gewerk: 'maler' | 'boden_parkett', transkript: string, raeume: any[], extra: any = {}) {
+  const vor = verarbeiteExtraktion(transkript, { result: { gewerk, raeume, transkript, ...extra } } as never)
+  // K.2 (Engineering, 15.09.): Ab hier laeuft der Text so, wie die Pipeline ihn
+  // weiterreicht — einmal am Eingang durch `ersetzeZahlenWorte`
+  // (extraktion-pipeline.ts Z. 83), danach ueberall derselbe.
+  // `verarbeiteExtraktion` bekommt weiter den ROHEN Text, die normalisiert
+  // selbst. Seit der Live-Lauf gezeigt hat, dass die Spracherkennung Ziffern
+  // liefert, aendert das an diesen Diktaten nichts — es haelt den Prüfstand
+  // aber auf dem Weg, den das Produkt geht, statt auf einem daneben.
+  const text = ersetzeZahlenWorte(transkript)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const extraktion = vor.extraktion as any
   const eng = berechneMengen(gewerk, extraktion)
@@ -64,12 +86,23 @@ function lauf(gewerk: 'maler' | 'boden_parkett', transkript: string, raeume: any
     raeume: r2.map((r: any) => ({ name: r.name, arbeiten: r.arbeiten ?? [] })),
   }
   const meta = {
-    fensterAnzahl: zaehleFenster(transkript) || undefined,
-    tuerenAnzahl: zaehleTueren(transkript) || undefined,
+    fensterAnzahl: zaehleFenster(text) || undefined,
+    tuerenAnzahl: zaehleTueren(text) || undefined,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     raeume: r2.map((r: any) => ({ name: r.name, hoehe: r.hoehe ?? null })),
   }
-  return pruefeUndErgaenzeVollstaendigkeit(gewerk, eng.positionen, transkript, meta as never, signale as never).positionen
+  const ergebnis = pruefeUndErgaenzeVollstaendigkeit(gewerk, eng.positionen, text, meta as never, signale as never)
+  // Live-Nachtest 15.09.: diese beiden Stufen fehlten hier — derselbe Fehler
+  // wie bei PM-013-A. Die echte Route legt sie über die Vollständigkeit,
+  // und genau dort entsteht die doppelte Altbelag-Zeile aus PM-056-C.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const chips: string[] = r2.flatMap((r: any) =>
+    (r.arbeiten ?? []).map((a: string) => `${a}${r.name ? ` — ${r.name}` : ''}`),
+  )
+  return normalisiereBodenPositionenAusAufnahme(
+    ergaenzeAusAufnahmeHinweisen(ergebnis.positionen, chips, text),
+    text,
+  )
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const finde = (pos: any[], m: RegExp) => pos.find(p => m.test(p.beschreibung))
@@ -120,11 +153,12 @@ describe('PM-049 — Wand zweimal, Decke einmal im selben Raum', () => {
 })
 
 describe('PM-050 — Kleinreparatur: drei Dübellöcher, keine Vollflächenspachtelung', () => {
-  const T = 'Küche, vier mal drei, Höhe zwo fünfzig. Wände zweimal streichen. Drei Dübellöcher müssen noch gespachtelt werden, sonst nix Großes. Eine Tür, ein Fenster.'
+  const T = 'Küche, vier mal drei, Höhe zwo fünfzig. Wände zweimal streichen. 3 Dübellöcher müssen noch gespachtelt werden, sonst nix Großes. Eine Tür, ein Fenster.'
   const pos = () => lauf('maler', T, [raum('Küche', { laenge: 4, breite: 3, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen'] })])
-  it('eine eigene Zeile für die Ausbesserung — nicht als Fläche', () => {
+  it('eine eigene Zeile für die Ausbesserung, Menge 3 aus dem Satz', () => {
     const p = finde(pos(), /dübellöcher|kleine ausbesserungen/i)
     expect(p).toBeDefined()
+    expect(menge(pos(), /dübellöcher|kleine ausbesserungen/i)).toBe(3)
   })
   it('keine Vollflächenspachtelung daneben — das ist der teure Verwechsler', () => {
     expect(finde(pos(), /spachtelarbeiten q[234]|fläche spachteln|wände spachteln/i)).toBeUndefined()
@@ -157,7 +191,7 @@ describe('PM-051 — Q3 vollflächig, nicht Q2', () => {
 })
 
 describe('PM-052 — Heizkörper: drei Arbeitsgänge, drei Zeilen', () => {
-  const T = 'Wohnzimmer, fünf mal vier, Höhe zwo fünfzig. Wände zweimal streichen. Die zwei Heizkörper bitte mit lackieren.'
+  const T = 'Wohnzimmer, fünf mal vier, Höhe zwo fünfzig. Wände zweimal streichen. Die 2 Heizkörper bitte mit lackieren.'
   const pos = () => lauf('maler', T, [raum('Wohnzimmer', { laenge: 5, breite: 4, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen', 'heizkoerper lackieren'] })])
   it('abschleifen 20,00 € · grundieren 25,00 € · lackieren 40,00 €', () => {
     expect(preis(pos(), /heizkörper abschleifen/i, 'maler')).toBe(20)
@@ -173,12 +207,15 @@ describe('PM-052 — Heizkörper: drei Arbeitsgänge, drei Zeilen', () => {
   it('kein „Heizkörper abkleben" neben dem Lackieren', () => {
     expect(finde(pos(), /heizkörper abkleben/i)).toBeUndefined()
   })
-  // ── offen, gehört zu PM-045-A (stündlicher Lauf, 15.09.) ───────────────
-  // „Die ZWEI Heizkörper" — im Angebot steht Menge 1. Der Betrieb schleift,
-  // grundiert und lackiert zwei und bekommt einen bezahlt: 85,00 € weniger.
-  // Die Zahl steht im Satz, sie wird nur nicht gelesen.
-  it.fails('OFFEN: „die zwei Heizkörper" ergibt Menge 2', () => {
-    expect(menge(pos(), /heizkörper lackieren/i)).toBe(2)
+  // ── PM-052-A, ERLEDIGT durch den Live-Lauf am 15.09. ───────────────────
+  // Hier stand: „die zwei Heizkörper ergibt Menge 1, 85,00 € zu wenig."
+  // Das war ein Fehler in diesem Prüfstand, nicht im Produkt. Live steht in
+  // allen drei Zeilen Menge 2. Das Zahlwort liest der KI-Schritt, der hier
+  // übersprungen wird; die Anzahl reist als `sonder[].anzahl` an.
+  it('alle drei Zeilen tragen die Anzahl aus dem Satz: 2', () => {
+    expect(menge(pos(), /heizkörper abschleifen/i)).toBe(2)
+    expect(menge(pos(), /heizkörper grundieren/i)).toBe(2)
+    expect(menge(pos(), /heizkörper lackieren|heizkörper streichen/i)).toBe(2)
   })
 })
 
@@ -203,6 +240,13 @@ describe('PM-053 — Fassade zweimal streichen, Gerüst stellen wir', () => {
   // statt Stehen auf dem Boden. Außen IST das Gerüst die Erschwernis, und es
   // steht mit 450,00 € als eigene Zeile drin. Beides zusammen ist zweimal
   // Geld für dieselbe Sache — das fällt spätestens dem Bauleiter auf.
+  //
+  // Live am 15.09. nachgestellt: die Zeile steht im Angebot, aber mit
+  // 15 % × 0,00 € = 0,00 €, weil sie an einem leeren Zweitraum „Raum" hängt,
+  // den die Aufnahme zusätzlich angelegt hat. Kein doppeltes Geld, aber eine
+  // Zeile auf dem Kundenpapier, die 15 % Zuschlag ankündigt und nichts
+  // berechnet. Der Phantomraum selbst ist der schwerere Fund und steht in der
+  // Restliste; er entsteht vor dieser Stufe und ist hier nicht prüfbar.
   it.fails('OFFEN: außen kein Erschwerniszuschlag Raumhöhe neben dem Gerüst', () => {
     expect(finde(pos(), /erschwerniszuschlag raumhöhe/i)).toBeUndefined()
   })
@@ -293,6 +337,23 @@ describe('PM-056 — alter Teppich raus, Laminat rein', () => {
   // nicht selbst schon enthält.
   it.fails('OFFEN: Entsorgungsfahrt / Kleinfuhre steht im Angebot', () => {
     expect(finde(pos(), /kleinfuhre|entsorgungsfahrt/i)).toBeDefined()
+  })
+  // ── PM-056-C, offen — dieselbe Arbeit zweimal im Angebot ───────────────
+  // Live am 15.09. nachgestellt und hier reproduziert, seit dieser Prüfstand
+  // die Aufnahme-Hinweise mitlaufen lässt:
+  //   „Laminat demontieren und entsorgen"  14 m² × 5,00 € =  70,00 €
+  //   „Altbelag entfernen"                 14 m² × 7,00 € =  98,00 €
+  // Zusammen 168,00 € für einen Arbeitsgang; richtig wären 126,00 €
+  // (Teppichboden verklebt entfernen, 14 m² × 9,00 €).
+  // Ursache: `pruefeAltbelag` benennt die Engine-Zeile in „Laminat demontieren
+  // und entsorgen" um. Danach sucht `ergaenzeAusAufnahmeHinweisen` nach
+  // /altbelag entfernen|teppichboden entfernen/ — findet nichts mehr und legt
+  // die Zeile ein zweites Mal an. Die Umbenennung macht die vorhandene
+  // Position für die eigene Dopplungsbremse unsichtbar; gleicher Mechanismus
+  // wie bei der Zug-2b-Regression im September.
+  it.fails('OFFEN: nur eine Zeile fürs Entfernen des Altbelags', () => {
+    const treffer = pos().filter(p => /entfern|demontier/i.test(p.beschreibung))
+    expect(treffer).toHaveLength(1)
   })
   // Kein Fehler, wenn zusätzlich „Klebstoffreste / Altkleber abfräsen"
   // (14,00 €/m²) auftaucht — nach verklebtem Teppich ist das die Regel und
