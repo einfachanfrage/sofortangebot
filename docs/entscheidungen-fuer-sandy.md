@@ -1458,4 +1458,43 @@ erkennt, wo die Datei aufhört und ein Speicherfehler anfängt. Sie steht jetzt
 wieder darunter. Kein Handgriff für dich, nur zur Kenntnis: `doku-endmarkierung`
 prüft genau darauf.
 
+---
+
+## ✅ Entschieden 15.09.2026, 18:55 MESZ — CoS-E-062 kommt VOR die Gewerke-Sperre
+
+**Sandys Antwort: „vor."**
+
+Damit steht die Reihenfolge bei Engineering fest:
+
+1. **CoS-E-058 / CoS-E-059** — die Geldfehler aus PM-045/PM-046
+   (Eingriff 1 ist gebaut, Eingriff 2 und 3 stehen an)
+2. **CoS-E-062** — PM-064 bis PM-067, die vier Funde auf Maler und Boden
+3. **CoS-E-061** — die Sperre für nicht freigeschaltete Gewerke
+4. **CoS-E-060** — PM-057/058/059
+5. **CoS-E-057** — § 35a
+6. **CoS-E-063** — Heizkörper, hinter Eingriff 2 eingeschoben
+7. PM-060-A / PM-061-A / PM-062-A — Fliesen-Innenleben, erst vor einer
+   Freischaltung
+
+**Was das praktisch heißt:** Alles, was auf einem Maler- oder Bodenangebot
+falsche Beträge erzeugt, ist jetzt vorn. Die Sperre bleibt vor Gate 1 — sie
+rutscht nur um einen Platz nach hinten, nicht aus der Liste.
+
+**PM-068 wird weiterhin nicht gebaut** — gesperrtes Gewerk. Der Befund zur
+Doppelberechnung beim Ständerwerk bleibt festgehalten, für den Tag, an dem du
+Trockenbau freischaltest.
+
+**Zwei Fragen an Engineering laufen mit der Freigabe mit** und kommen
+gegebenenfalls zu dir zurück:
+
+- Gehört **PM-064** (der Wortstamm `sperr`) zu CoS-E-059, weil es dieselbe
+  Datei ist? Dann wird CoS-E-062 um einen Punkt kürzer.
+- Sind **PM-066/PM-067** einzeln zu flicken oder als Klasse (Titel gegen
+  Katalog, wie PM-060-A)? Das ist eine Aufwandsfrage, keine Entscheidung von
+  dir — aber wenn es eine Klasse wird, dauert es länger und ich sage dir das.
+
+**Damit wartet wieder keine Entscheidung auf dich.** Offen ist nur das
+Committen.
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

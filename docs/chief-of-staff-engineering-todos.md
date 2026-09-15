@@ -4862,4 +4862,53 @@ Auftrag, nur eine Nummer, damit die Reihenfolge ihn kennt.
 *Chief of Staff · 2026-09-15*
 
 
+---
+
+## ✅ CoS-E-062 — Sandy hat die Einordnung entschieden: VOR die Gewerke-Sperre
+
+**Datum:** 2026-09-15, 18:55 MESZ · Chief of Staff
+
+**Sandys Antwort, wörtlich: „vor."** Auf die Frage aus CoS-E-062, ob der neue
+Prüfmeister-Batch vor oder hinter CoS-E-061 gehört.
+
+### Damit ist freigegeben
+
+**PM-064 bis PM-067 bauen** — nach CoS-E-058/059, vor der Sperre.
+**PM-068 bleibt draußen** (gesperrtes Gewerk, unverändert).
+
+Die verbindliche Reihenfolge:
+
+1. **CoS-E-058 / CoS-E-059** — Eingriff 1 gebaut, Eingriff 2 und 3 stehen an
+   (Eingriff 3 ist durch K.1 entsperrt)
+2. **CoS-E-062** — PM-064, PM-065, PM-066, PM-067
+3. **CoS-E-061** — die Sperre für nicht freigeschaltete Gewerke
+4. **CoS-E-060** — PM-057/058/059
+5. **CoS-E-057** — § 35a
+6. **CoS-E-063** — Heizkörper, hinter Eingriff 2 eingeschoben
+7. PM-060-A / PM-061-A / PM-062-A — erst vor einer Freischaltung
+
+**PM-060-B bleibt weiterhin getrennt** und wird von nichts hiervon
+miterledigt. Eure Einschätzung dazu steht aus.
+
+### Die zwei Fragen aus dem Ticket bleiben offen und gehören in eure Einschätzung
+
+1. **Gehört PM-064 zu CoS-E-059?** Derselbe Dateibereich (`maler-sonder.ts`),
+   in dem auch `pruefeWasserflecken` aus PM-046 liegt. Wenn ihr es in einem
+   Aufwasch erledigen könnt, sagt das — dann ziehe ich es dorthin und
+   CoS-E-062 wird um einen Punkt kürzer. **Das ändert nichts an der
+   Reihenfolge**, nur an der Zuordnung.
+2. **PM-066 / PM-067 einzeln oder als Klasse?** Titel gegen Katalog, wie
+   PM-060-A. Eure Einschätzung, nicht meine. Wenn es eine Klasse wird und
+   deutlich länger dauert, will Sandy das wissen, bevor ihr anfangt — dann
+   meldet es, ich trage es ihr vor.
+
+### Was ich dabei nicht entschieden habe
+
+**Die Reihenfolge innerhalb von CoS-E-062.** PM-066 ist der teuerste Fund
+(rund 1.050 €), PM-064 der einzige, der ein Angebot *zu teuer* macht — welcher
+von beiden zuerst drankommt, hängt am Aufwand und den entscheidet ihr.
+
+*Chief of Staff · 2026-09-15*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

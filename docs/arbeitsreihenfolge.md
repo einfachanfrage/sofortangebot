@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 15.09.2026, 18:45 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 18:15 — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 15.09.2026, 18:55 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 18:45 — diese Datei wird immer ersetzt, nie ergänzt.)*
 
 ---
 
@@ -15,8 +15,9 @@ deployt worden.**
 Fenster aus der Aufnahme kommen an, 15 Zusicherungen grün.
 **Der Prüfmeister hat einen Batch nachgelegt:** PM-064 bis PM-068, Fallbasis
 **68 von 100**. Verteilt als **CoS-E-062**.
-**Eine Entscheidung wartet wieder auf Sandy** — sie ist neu und sie ist das
-Einzige, was auf sie wartet außer dem Commit.
+**Sandy hat entschieden (18:55): „vor"** — CoS-E-062 steht vor der
+Gewerke-Sperre. **Es wartet damit keine Entscheidung mehr auf sie, nur noch das
+Committen.**
 
 ---
 
@@ -47,9 +48,9 @@ betroffenen Gewerk sortiert, und das ändert die Reihenfolge:**
 
 **Vier von fünf treffen die zwei Gewerke, die heute verkauft werden.** Die
 Gewerke-Sperre aus CoS-E-061, die Sandy um 18:15 entschieden hat, fängt davon
-**keinen einzigen** ab — sie betrifft nur PM-068. Daraus folgt die eine offene
-Frage an Sandy: kommt CoS-E-062 vor oder hinter die Sperre? Meine Empfehlung
-steht in `entscheidungen-fuer-sandy.md`: **davor.**
+**keinen einzigen** ab — sie betrifft nur PM-068. Daraus folgte die Frage an
+Sandy, ob CoS-E-062 vor oder hinter die Sperre gehört. **Sie hat um 18:55 mit
+„vor" geantwortet** — die Reihenfolge unten ist entsprechend gesetzt.
 
 **Was ich ausdrücklich nicht behaupte:** dass diese Beträge heute schon auf
 verschickten Angeboten stehen. Gemessen ist der Betrag je Fall, nicht seine
@@ -61,13 +62,12 @@ Häufigkeit.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | **Eine Entscheidung: CoS-E-062 vor oder hinter die Gewerke-Sperre?** Empfehlung: davor. Steht ausführlich in `entscheidungen-fuer-sandy.md` | ein Wort |
-| 2 | **Committen.** Elf Doku-Dateien, elf neue Testdateien, `src/lib/fehlertexte.ts` und die geänderten Quelldateien | ein Befehl |
-| 3 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert übernommen, in diesem Lauf nicht neu geprüft |
+| 1 | **Committen.** Elf Doku-Dateien, elf neue Testdateien, `src/lib/fehlertexte.ts` und die geänderten Quelldateien | ein Befehl |
+| 2 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert übernommen, in diesem Lauf nicht neu geprüft |
 
 **Erledigt und damit von der Liste:** die Reihenfolge-Entscheidung („JA",
-17:45) · das Gewerke-Tor („sperren vor Gate 1", 18:15) · `_to_delete/` auf dem
-Rechner.
+17:45) · das Gewerke-Tor („sperren vor Gate 1", 18:15) · **die Einordnung von
+CoS-E-062 („vor", 18:55)** · `_to_delete/` auf dem Rechner.
 
 ### Nicht im Repository — diesmal Datei für Datei gegen einen frischen Klon von `de1ae80` verglichen
 
@@ -122,16 +122,19 @@ nachgezählt. Der nächste `git add -A` trägt die Löschung mit ein.
    Zeile, Rückfrage; Tiefengrund fällt nur auf der gesperrten Fläche weg).
    **Zwei Zeilen weniger als gemeldet:** PM-045-A und PM-052-A hat der
    Prüfmeister als eigene Messfehler zurückgenommen
-3. **CoS-E-062 — neu, PM-064 bis PM-068. Einschätzen, noch nicht bauen.**
-   Sandy entscheidet zuerst, ob es vor oder hinter die Sperre gehört.
-   **Zwei Fragen in eurer Einschätzung mitbeantworten:** gehört PM-064
-   (Wortstamm `sperr`) zu CoS-E-059, weil es dieselbe Datei ist? Und sind
-   PM-066/PM-067 einzeln zu flicken oder als Klasse (Titel gegen Katalog, wie
-   PM-060-A)? **PM-068 nicht bauen** — gesperrtes Gewerk
-4. **CoS-E-061 — die Sperre.** Entschieden („sperren vor Gate 1"), wo sie
-   sitzt entscheidet ihr. Drei Punkte ausdrücklich offen: Sekundärgewerk, was
-   mit dem Entwurf passiert, Wortlaut (gehört dem Designer).
-   **PM-060-B bleibt davon getrennt** — Einschätzung steht aus
+3. **CoS-E-062 — freigegeben, bauen. Sandys „vor" von 18:55.** PM-064 bis
+   PM-067, die vier Funde auf Maler und Boden. Steht **vor** der Sperre.
+   **Zwei Fragen in eure Einschätzung mitnehmen:** gehört PM-064 (Wortstamm
+   `sperr`) zu CoS-E-059, weil es dieselbe Datei ist? Und sind PM-066/PM-067
+   einzeln zu flicken oder als Klasse (Titel gegen Katalog, wie PM-060-A)?
+   Wird es eine Klasse und dauert spürbar länger, meldet es — das will Sandy
+   vorher wissen. **Die Reihenfolge innerhalb des Tickets entscheidet ihr.**
+   **PM-068 nicht bauen** — gesperrtes Gewerk
+4. **CoS-E-061 — die Sperre.** Entschieden („sperren vor Gate 1"), steht jetzt
+   **hinter** CoS-E-062. Wo sie sitzt, entscheidet ihr. Drei Punkte
+   ausdrücklich offen: Sekundärgewerk, was mit dem Entwurf passiert, Wortlaut
+   (gehört dem Designer). **PM-060-B bleibt davon getrennt** — Einschätzung
+   steht aus
 5. **CoS-E-063 — neu, Heizkörper.** Hinter Eingriff 2, wie ihr vorgeschlagen
    habt. Nur eine Nummer, kein neuer Auftrag
 6. **CoS-E-060** (PM-057/058/059). **Die Frage davor:** welche Datei speist die
@@ -187,7 +190,8 @@ nachgezählt. Der nächste `git add -A` trägt die Löschung mit ein.
 1. ✅ **K.1, K.2 und K.3 beantwortet.** Damit ist Eingriff 3 frei, zwei
    gemeldete Funde sind zurückgenommen, und die Formulierung „über das Diktat
    erreichbar" ist in Restliste und `vokabular-abgleich.md` T nachgezogen
-2. ✅ **Batch PM-064 bis PM-068 abgeliefert** — als CoS-E-062 bei Engineering
+2. ✅ **Batch PM-064 bis PM-068 abgeliefert** — als CoS-E-062 bei Engineering,
+   von Sandy um 18:55 **vor** die Gewerke-Sperre gesetzt und damit freigegeben
 3. **Fallbasis: 68 von 100.** Nächste Themen laut Speicher: mehrere Aufnahmen
    zu einem Angebot, Estrich, Fassade mit Gerüst vollständig, Möbel komplett
    ausräumen, Deckenrosette und Sichtbalken
@@ -224,9 +228,10 @@ nachgezählt. Der nächste `git add -A` trägt die Löschung mit ein.
 
 ## Was ich als Nächstes tue
 
-**Auf Sandys ein Wort zu CoS-E-062 warten.** Alles andere ist verteilt und
-kann ohne sie laufen: Engineering hat mit Eingriff 2 und 3 genug vor sich,
-Platform mit CoS-P-023, der Designer mit DC-107.
+**Auf Engineerings Einschätzung zu CoS-E-062 warten** — besonders auf die
+Frage, ob PM-066/PM-067 eine Klasse sind. Wenn ja, trage ich Sandy den Aufwand
+vor, bevor gebaut wird. Sonst ist alles verteilt und läuft ohne sie:
+Engineering an Eingriff 2 und 3, Platform an CoS-P-023, der Designer an DC-107.
 
 **Gate 1 rechne ich weiterhin nicht neu** — ich warte auf Manfreds Session 3,
 sonst steht die Zahl wieder auf „ist deployt" statt auf „funktioniert".
@@ -243,5 +248,10 @@ Vercel-API (`READY`, `de1ae80`).
 
 **Eine Kleinigkeit repariert:** `entscheidungen-fuer-sandy.md` hatte keine
 Endmarkierung mehr. Sie steht wieder darunter.
+
+**Nachtrag 18:55:** Sandy hat live geantwortet („vor"). Die Entscheidung ist in
+`entscheidungen-fuer-sandy.md` und in CoS-E-062 festgehalten; diese Datei ist
+darauf neu geschrieben. An CI und Produktion hat sich seit 18:45 nichts
+geändert — nicht erneut geprüft, weil in der Zwischenzeit nichts gepusht wurde.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
