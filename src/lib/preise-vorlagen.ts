@@ -43,9 +43,13 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Maler – Anstrich Innen', title: 'Wand streichen 3x Anstrich (Vollton / Dunkelfarbe)', unit: 'm²', hint: '11–15 €', defaultPrice: 13.00 },
     { category: 'Maler – Anstrich Innen', title: 'Decke streichen 1x Anstrich', unit: 'm²', hint: '5–9 €', defaultPrice: 7.00 },
     { category: 'Maler – Anstrich Innen', title: 'Decke streichen 2x Anstrich', unit: 'm²', hint: '9–13 €', defaultPrice: 11.00 },
-    { category: 'Maler – Anstrich Innen', title: 'Tür streichen / lackieren (einseitig)', unit: 'Stück', hint: '35–60 €', defaultPrice: 45.00 },
-    { category: 'Maler – Anstrich Innen', title: 'Tür streichen / lackieren (beidseitig)', unit: 'Stück', hint: '60–90 €', defaultPrice: 75.00 },
-    { category: 'Maler – Anstrich Innen', title: 'Türzarge streichen', unit: 'Stück', hint: '25–50 €', defaultPrice: 35.00 },
+    // PD-010 (Prüfmeister, 15.09.2026): Diese drei Vorlagen zeigten auf
+    // Katalogzeilen in der Rubrik „Anstrich Innen", die es nicht mehr gibt —
+    // Türblatt und Zarge stehen jetzt einmal, unter „Lackierarbeiten".
+    // Eine Vorlage, die auf nichts zeigt, ist dieselbe Falle wie CoS-E-052.
+    { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren (2× Anstrich)', unit: 'Stück', hint: '70–120 €', defaultPrice: 90.00 },
+    { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren einseitig (2× Anstrich)', unit: 'Stück', hint: '45–70 €', defaultPrice: 55.00 },
+    { category: 'Maler – Lackierarbeiten', title: 'Türzarge lackieren', unit: 'Stück', hint: '35–60 €', defaultPrice: 45.00 },
     { category: 'Maler – Anstrich Innen', title: 'Fenster streichen innen', unit: 'Stück', hint: '40–70 €', defaultPrice: 55.00 },
     { category: 'Maler – Anstrich Innen', title: 'Heizkörper streichen / lackieren', unit: 'Stück', hint: '30–55 €', defaultPrice: 40.00 },
     { category: 'Maler – Anstrich Innen', title: 'Sockelleisten / Fußleisten streichen', unit: 'lfdm', hint: '2,50–5 €', defaultPrice: 3.50 },

@@ -134,8 +134,20 @@ const REGELN: { wort: MaterialWort; nomen?: RegExp; arbeit: RegExp }[] = [
   { wort: 'Tapete',  arbeit: /tapezier/i },
   { wort: 'Belag',   nomen: BELAG_NOMEN, arbeit: /verleg/i },
   { wort: 'Fliesen', nomen: /\bfliesen\b|naturstein/i, arbeit: /verleg|verflies/i },
-  { wort: 'Farbe',   arbeit: /streichen|streicht|anstrich(?!s?fertig)|lasur/i },
+  // Lack VOR Farbe, und das ist keine Sortierfrage:
+  //
+  // Seit PD-010 heißen die Türzeilen „Türen lackieren (2× Anstrich)". Sie
+  // tragen damit beide Wörter — und `Farbe` griff zuerst, weil es oben stand.
+  // Die Folge stand nicht im Code, sondern auf dem Kundenangebot: „ohne
+  // Farbe" unter einer Lackierposition, dazu 25 % Materialanteil statt der
+  // 30 %, die der Prüfmeister für Lack genannt hat („beim Lack höher").
+  //
+  // „Anstrich" heißt Arbeitsgang, nicht Material. Sagt ein Titel „lackieren",
+  // ist das Material Lack — auch wenn daneben steht, wie viele Gänge es sind.
+  // Betroffen sind vier Zeilen: die drei aus „Maler – Lackierarbeiten" und
+  // „Heizkörper streichen / lackieren".
   { wort: 'Lack',    arbeit: /lackier/i },
+  { wort: 'Farbe',   arbeit: /streichen|streicht|anstrich(?!s?fertig)|lasur/i },
 ]
 
 /**

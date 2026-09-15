@@ -154,18 +154,71 @@ function ergaenzeAusAufnahmeHinweisenRoh(
   const dehnungsfugeMuster = /(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i
   const dehnungsfugeVerneint = /(?:kein[e]?|ohne)\s+(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i
   const dehnungsfugeImTranskript = dehnungsfugeMuster.test(textMitZahlen) && !dehnungsfugeVerneint.test(textMitZahlen)
+  // PM-013-A (Prüfmeister 14.09., gebaut 15.09.2026): Der Prüfmeister hat
+  // gemeldet, die Dehnungsfuge entstehe nirgends — *„kein Treffer in
+  // `boden.ts` oder den Vollständigkeits-Dateien."* Dort ist sie auch nicht;
+  // sie steht seit dem 19.08. hier. Sein Prüfstand ruft diese Stufe nicht
+  // auf (die echte Route tut es, `entwurf/generiere-positionen` Z. 266) —
+  // dieselbe Lücke, die er bei PM-037 selbst beschrieben hat.
+  //
+  // **Sein eigentlicher Fund stimmt trotzdem, nur eine Ebene tiefer.**
+  // Nachgemessen am Transkript ohne Längenangabe:
+  //
+  //     Dehnungsfuge einbauen — Wohnzimmer · 1 Stück · 45,00 €
+  //
+  // Der Kommentar oben nimmt an, eine Stück-Position bleibe mangels
+  // Katalogpreis „sichtbar mit 0,00 € offen". Das stimmte nicht: Der Katalog
+  // führte die Arbeit ein zweites Mal als „Dehnungsfuge einbauen" zu
+  // 45,00 €/Stück. Die angenommene Eins bekam damit einen echten Preis —
+  // **45 € auf dem Kundenpapier aus einer Menge, die niemand genannt hat.**
+  // Das Sicherheitsnetz, auf das sich der Fix stützte, gab es nie.
+  //
+  // Zwei Änderungen, beide nach der Entscheidung des Prüfmeisters
+  // („eine Arbeit, eine Einheit: lfdm zu 18,00 €"):
+  //
+  // 1. Die 45-€-Stück-Zeile ist aus dem Katalog raus. Die angenommene Eins
+  //    findet damit keinen Preis mehr und bleibt eine unbepreiste Position —
+  //    was der Versand-Riegel (`versandbereit.ts`) abfängt. So wirkt das
+  //    Netz, das hier von Anfang an gemeint war.
+  // 2. Nennt der Handwerker eine LÄNGE, entsteht die richtige Zeile in
+  //    Metern statt der angenommenen Eins. Eine Dehnungsfuge wird in Metern
+  //    gelegt.
+  //
+  // Bewusst NICHT geändert: die Erkennung. Sie hat vier Nachtests hinter
+  // sich (Chip-Titel, Rohtext-Fallback, Verneinung, Whisper-Verhörer
+  // „DEHNUNGSFUHRE") und ist die einzige Stelle im System, die das Wort in
+  // allen Formen kennt. Eine zweite Erkennung daneben wäre der doppelte
+  // Vertrag, den wir sonst überall abräumen.
   if ((dehnungsfugeMuster.test(hinweise) || dehnungsfugeImTranskript) && !hatPos(dehnungsfugeMuster)) {
-    const stueckTreffer = textMitZahlen.match(/(\d+)\s*(?:stück\s*)?(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i)
-      ?? textMitZahlen.match(/(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?[^.]{0,20}?(\d+)\s*stück/i)
-    const stueck = stueckTreffer ? parseInt(stueckTreffer[1], 10) : 1
-    ergebnis.push({
-      beschreibung: `Dehnungsfuge einbauen${raumSuffix(boden)}`,
-      menge: stueck,
-      einheit: 'Stück',
-      konfidenz: stueckTreffer ? 'high' : 'medium',
-      berechnungsweg: stueckTreffer ? `${stueck} Stück aus Aufnahme` : 'Dehnungsfuge erkannt, keine explizite Stückzahl im Transkript — 1 Stück angenommen',
-      annahmen: stueckTreffer ? [] : ['1 Stück angenommen — bitte Anzahl/Länge prüfen'],
-    })
+    const meterTreffer =
+      textMitZahlen.match(/(\d+(?:[.,]\d+)?)\s*(?:laufende\s+meter|lfdm|lfm|\blm\b|meter|\bm\b)\s*(?:\w+\s+){0,2}?(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i)
+      ?? textMitZahlen.match(/(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?[^.]{0,30}?(\d+(?:[.,]\d+)?)\s*(?:laufende\s+meter|lfdm|lfm|\blm\b|meter|\bm\b)/i)
+    const meter = meterTreffer ? parseFloat(meterTreffer[1].replace(',', '.')) : null
+
+    if (meter && meter > 0) {
+      // Der Titel ist die Katalogzeile Wort für Wort, sonst findet der
+      // Preis-Matcher sie nicht (18,00 €/lfdm).
+      ergebnis.push({
+        beschreibung: `Dehnungsfuge mit Bewegungsprofil herstellen${raumSuffix(boden)}`,
+        menge: meter,
+        einheit: 'lfdm',
+        konfidenz: 'high',
+        berechnungsweg: `${meter} lfdm aus Aufnahme`,
+        annahmen: [],
+      })
+    } else {
+      const stueckTreffer = textMitZahlen.match(/(\d+)\s*(?:stück\s*)?(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?/i)
+        ?? textMitZahlen.match(/(?:dehnungs?|dehn|bewegungs?)[-\s]?fu(?:g|hr)e?n?[^.]{0,20}?(\d+)\s*stück/i)
+      const stueck = stueckTreffer ? parseInt(stueckTreffer[1], 10) : 1
+      ergebnis.push({
+        beschreibung: `Dehnungsfuge einbauen${raumSuffix(boden)}`,
+        menge: stueck,
+        einheit: 'Stück',
+        konfidenz: stueckTreffer ? 'high' : 'medium',
+        berechnungsweg: stueckTreffer ? `${stueck} Stück aus Aufnahme` : 'Dehnungsfuge erkannt, keine explizite Stückzahl im Transkript — 1 Stück angenommen',
+        annahmen: stueckTreffer ? [] : ['1 Stück angenommen — bitte Anzahl/Länge prüfen'],
+      })
+    }
   }
 
   // PM-012, zweiter Nachtest (2026-08-19): der Fix vom 17.08. in der

@@ -101,9 +101,6 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Innen', title: 'Wand streichen 1x Anstrich', unit: 'm²', unit_price: 6.00 },
   { category: 'Maler – Anstrich Innen', title: 'Wand streichen 2x Anstrich', unit: 'm²', unit_price: 9.50 },
   { category: 'Maler – Anstrich Innen', title: 'Wand streichen 3x Anstrich (Vollton / Dunkelfarbe)', unit: 'm²', unit_price: 13.00 },
-  { category: 'Maler – Anstrich Innen', title: 'Tür streichen / lackieren (einseitig)', unit: 'Stück', unit_price: 45.00 },
-  { category: 'Maler – Anstrich Innen', title: 'Tür streichen / lackieren (beidseitig)', unit: 'Stück', unit_price: 75.00 },
-  { category: 'Maler – Anstrich Innen', title: 'Türzarge streichen', unit: 'Stück', unit_price: 35.00 },
   { category: 'Maler – Anstrich Innen', title: 'Fenster streichen innen', unit: 'Stück', unit_price: 55.00 },
   { category: 'Maler – Anstrich Innen', title: 'Heizkörper streichen / lackieren', unit: 'Stück', unit_price: 40.00 },
   { category: 'Maler – Anstrich Innen', title: 'Sockelleisten / Fußleisten streichen', unit: 'lfdm', unit_price: 3.50 },
@@ -175,8 +172,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Lackierarbeiten', title: 'Metallbauteil entrosten', unit: 'm²', unit_price: 12.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Metallbauteil Rostschutzgrundierung', unit: 'm²', unit_price: 10.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Metallbauteil lackieren 2x', unit: 'm²', unit_price: 20.00 },
-  { category: 'Maler – Lackierarbeiten', title: 'Innentürblatt lackieren einseitig', unit: 'Stück', unit_price: 55.00 },
-  { category: 'Maler – Lackierarbeiten', title: 'Innentürblatt lackieren beidseitig', unit: 'Stück', unit_price: 90.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren einseitig (2× Anstrich)', unit: 'Stück', unit_price: 55.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Türzarge lackieren', unit: 'Stück', unit_price: 45.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Fensterrahmen Holz lackieren innen und außen', unit: 'Stück', unit_price: 130.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Heizkörper Rippenradiator lackieren', unit: 'm² Heizfläche', unit_price: 18.00 },
@@ -3582,7 +3578,6 @@ export const DEFAULT_PRICES: Array<{
 
   // BODENBELÄGE & PARKETT — fehlende Standardpreise + Handwerker-Vollständigkeitsprüfung (2026-08-20)
   { category: 'Boden – Altbelag entfernen', title: 'Altbelag entfernen', unit: 'm²', unit_price: 7.00 },
-  { category: 'Boden – Abschlussarbeiten', title: 'Dehnungsfuge einbauen', unit: 'Stück', unit_price: 45.00 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Quarzsand absanden', unit: 'm²', unit_price: 4.00 },
   { category: 'Boden – Abschlussarbeiten', title: 'Übergangsschiene', unit: 'Stück', unit_price: 15.00 },
   { category: 'Boden – Abschlussarbeiten', title: 'Übergangsprofil', unit: 'Stück', unit_price: 15.00 },

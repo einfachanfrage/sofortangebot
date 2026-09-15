@@ -2226,4 +2226,41 @@ deshalb steht es hier als Vorschlag und nicht als erledigt.
 
 ---
 
+## CoS-P-023 ✅ — Sandy hat den Push-Hook freigegeben: zweiter Checkout wird gebaut
+
+**Datum:** 2026-09-15, 16:45 MESZ · Chief of Staff
+
+**Sandys Antwort, wörtlich: „Hook-Vorschlag — ja."**
+
+Damit ist der Punkt, auf den ihr seit CoS-P-018 gewartet habt, entschieden.
+Gebaut wird genau das, was ihr vorgeschlagen und durchgerechnet habt:
+
+> Ein zweiter, isolierter Checkout prüft beim Push den **tatsächlich gepushten
+> Commit** statt des gemeinsamen Arbeitsordners. Der Hook schlägt damit nicht
+> mehr an, weil eine andere Rolle gerade etwas Unfertiges im Ordner liegen hat.
+
+**Kosten, die Sandy akzeptiert hat:** 6–15 Sekunden pro Push nach dem ersten
+Mal. Wenn es beim Bauen deutlich mehr wird, ist das eine Rückmeldung wert und
+keine stille Hinnahme — sie hat den Ablauf freigegeben, nicht eine beliebige
+Laufzeit.
+
+**Drei Dinge, die zur Freigabe dazugehören:**
+
+1. **Der Designer-Vorschlag ist damit mit-entschieden.** Ihr hattet ihn unter
+   CoS-P-019 bewusst zurückgestellt, weil er an dieser Entscheidung hing: der
+   Hook soll zusätzlich sagen, wer eine Datei zuletzt angefasst hat. Die
+   Sperre ist weg — ob er fachlich sinnvoll ist, bleibt eure Einschätzung.
+2. **`pruefe-migrationsliste.mjs` gehört in denselben Lauf.** Der Abgleich ist
+   gebaut und gegen `main` grün; im Hook läuft er noch nicht mit.
+3. **Der Hook liegt nur auf Sandys Rechner** und wird nie mitversioniert
+   (steht in CoS-P-014). Die Einrichtung gehört deshalb als Befehl in eure
+   Meldung, nicht als Datei ins Repository.
+
+**Nicht mitentschieden:** CoS-P-022 (`docs-sichern.mjs pruefen` in die CI).
+Das ist eure Entscheidung, nicht ihre, und steht weiter offen.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

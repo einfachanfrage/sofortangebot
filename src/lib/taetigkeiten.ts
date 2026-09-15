@@ -66,7 +66,15 @@ export const TAETIGKEITEN: readonly Taetigkeit[] = [
     label: 'Innen streichen',
     materialStandard: 'drin',
     vorlagen: ['malerarbeiten'],
-    kategorien: ['maler – anstrich innen', 'maler – untergrundvorbereitung', 'maler – vorbereitung & schutz'],
+    // Auffangregel statt Aufzählung: ALLES aus dem Maler-Katalog gehört
+    // hierher, außer was weiter unten eine längere Rubrik beansprucht
+    // (Tapezieren, Lackierarbeiten, Anstrich Außen). Mein erster Entwurf
+    // zählte die Rubriken einzeln auf und übersah zwei —
+    // „Maler – Bodenbeschichtung" (Boden streichen) und
+    // „Maler – Stuck & Dekorative Techniken" (Stuckleisten streichen).
+    // Beide sind Anstrich innen. Eine Aufzählung veraltet mit der nächsten
+    // neuen Rubrik; eine Auffangregel nicht.
+    kategorien: ['maler'],
   },
   {
     id: 'tapezieren',

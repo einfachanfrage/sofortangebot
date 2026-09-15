@@ -7947,4 +7947,37 @@ gehört der Satz vor Gate 1 angesehen — dieselbe Kategorie wie DC-089.
 
 ---
 
+## DC-102 ✅ — Sandy hat den Prototyp freigegeben (15.09.2026, 16:45 MESZ)
+
+*Chief of Staff*
+
+**Sandys Antwort, wörtlich: „Prototyp anschauen — freigegeben."**
+
+Damit ist `docs/dc-102-preise-prototyp.html` in Fassung 3 von der Inhaberin
+abgenommen — zusätzlich zu Manfreds Abnahme der Seiten 1 und 2. Der Preise-
+Schritt hat keine offene Freigabe mehr.
+
+**Was das aufhebt und was nicht:**
+
+- **Aufgehoben:** die Zeile „Einbau blockiert durch fehlende Freigabe". Die
+  Freigabe ist da.
+- **Nicht aufgehoben:** der Einbau hängt weiter an CoS-E-053 und an der roten
+  CI. Vier der sieben roten Zusicherungen gehören zu genau diesem Schritt
+  (`pd010-tueranker.test.ts`) — der Einbau gegen einen roten Stand wäre der
+  Weg, auf dem hinterher niemand mehr sagen kann, was von beidem klemmt.
+- **Nicht freigegeben ist die Preistabelle im Prototyp.** Der Prüfmeister hat
+  sie in PD-009 durchgesehen: drei Zeilen stehen fachlich falsch, vier
+  Zeitwerte sind zu hoch, und die `basis`-Werte weichen vom Standardkatalog ab
+  — „Vliestapete kleben" steht auf 9,00 € statt 18,00 €, was **jede**
+  Tapezier-Zeile verdoppeln würde. Beim Einbau werden die Basiswerte aus
+  `default-prices.ts` gezogen, nicht aus dem Prototyp abgeschrieben.
+
+Sandys Freigabe betrifft **Ablauf und Darstellung**, nicht die Zahlen darin.
+Das ist keine Einschränkung ihrer Entscheidung, sondern die Arbeitsteilung:
+Die Zahlen prüft der Prüfmeister, und er hat es getan.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

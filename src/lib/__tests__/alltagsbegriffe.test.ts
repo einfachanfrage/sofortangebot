@@ -62,7 +62,12 @@ describe('Sammelzeile heißt oder, Bündel heißt und', () => {
   it('gibt „Tür streichen" die Zeile, die streichen UND lackieren anbietet', () => {
     // `Tür streichen / lackieren (einseitig)` — ein Schrägstrich, zwei Wörter
     // für dieselbe Arbeit, ein Preis. 45,00 €, nicht „kein Preis".
-    expect(preis('Maler', 'Stück', 'Tür streichen')?.position.unit_price).toBe(45)
+    // 55,00 € seit PD-010 (15.09.2026): Die Zeile mit 45 € lag in „Anstrich
+    // Innen" statt in „Lackierarbeiten" und war die billigere von zwei
+    // Dubletten. Der Punkt dieses Tests ist unverändert — „Tür streichen"
+    // findet die Zeile, die streichen UND lackieren anbietet, statt „Preis
+    // fehlt" zu zeigen.
+    expect(preis('Maler', 'Stück', 'Tür streichen')?.position.unit_price).toBe(55)
     expect(preis('Maler', 'Stück', 'Heizkörper lackieren')?.position.unit_price).toBe(40)
   })
 

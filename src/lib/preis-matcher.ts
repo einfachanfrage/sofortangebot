@@ -57,6 +57,15 @@ const SYNONYME: Array<[RegExp, string]> = [
   // Katalogeintrag „Dehnungsfuge mit Bewegungsprofil herstellen" nicht — im
   // Handwerkskatalog heißt dieselbe Leistung je nach Quelle einbauen,
   // herstellen oder anlegen. Für den Abgleich dasselbe Wort.
+  // PD-010, Nachlauf: „Türen lackieren (2× Anstrich)" (Katalog) und „Tür
+  // lackieren beidseitig" (wie der Betrieb es tippt) hatten nach der
+  // Normalisierung nur noch `lackieren` gemeinsam — `tur` gegen `turen`
+  // zählte als zwei verschiedene Wörter. Gewonnen hat dadurch die einzige
+  // Zeile, die „beidseitig" im Titel trägt: `Außentür lackieren beidseitig`,
+  // 110,00 € statt 90,00 €. Mehrzahl ist keine andere Arbeit.
+  // `Innentür` ebenso: Die Innentür IST die Tür des Malerkatalogs — sie
+  // deshalb an der Außentür landen zu lassen, ist der teuerste Weg.
+  [/\binnenturen\b|\binnentur\b|\bturen\b/g, 'tur'],
   [/\bherstellen\b|\banlegen\b|\bsetzen\b/g, 'einbauen'],
   [/bewegungsprofil|bewegungsfuge/g, 'dehnungsfuge'],
   [/glatten|glaetten/g, 'spachteln'],
@@ -133,6 +142,70 @@ export function anstrichzahlAusTitel(text: string): string | undefined {
   if (/\bzweifach\b|\b2fach\b/.test(roh)) return '2'
   if (/\bdreifach\b|\b3fach\b/.test(roh)) return '3'
   return undefined
+}
+
+/**
+ * Das BAUTEIL aus dem ROHTITEL — dieselbe Bauart wie die Q-Stufe und die
+ * Anstrichzahl darüber: ein Filter, kein Textmerkmal.
+ *
+ * ── PD-010, Nachlauf (15.09.2026) ─────────────────────────────────────────
+ * Beim Aufräumen der Türzeilen sind vier Katalogzeilen entfallen. Danach
+ * gemessen, was der Matcher aus den alten Formulierungen macht:
+ *
+ *   „Tür streichen / lackieren (beidseitig)"  →  Heizkörper streichen /
+ *                                                lackieren · 40,00 €
+ *
+ * Eine Tür zum Heizkörperpreis. Möglich war das, weil nach der Normalisierung
+ * beide „streichen lackieren" heißen und das Bauteil im Titel nur ein Wort
+ * unter vielen ist — fällt es aus der Token-Wertung, entscheidet der Rest.
+ *
+ * Das ist dieselbe Familie wie PM-018 (Q-Stufe) und CoS-E-038 (Anstrichzahl):
+ * Ein Merkmal, das die Arbeit **bestimmt**, darf nicht als Textmerkmal
+ * mitgewogen werden, sondern muss sperren. Ein Heizkörper ist keine Tür,
+ * auch wenn beide gestrichen oder lackiert werden.
+ *
+ * Die zweite Zeile ist die Spezialisierung: `Außentür lackieren beidseitig`
+ * (110,00 €) trug als einzige verbliebene Türzeile das Wort „beidseitig" und
+ * gewann damit gegen die Innentür-Zeile (90,00 €) — 20 € zu viel und die
+ * falsche Tätigkeit. Eine Außentür ist eine Tür, also wird hier nicht
+ * gesperrt, sondern **nachgeordnet**: genau wie bei den Anstrichzahlen darf
+ * eine Zeile mit Zusatz nur einspringen, wenn keine ohne Zusatz passt (Regel
+ * 2/3 unten).
+ */
+const BAUTEILE: Array<[RegExp, string]> = [
+  // Reihenfolge: das engste Wort zuerst, sonst schluckt „tür" die Außentür.
+  [/\b(aussent|außent|haust|nebeneingangst)(ü|ue)r/i, 'aussentuer'],
+  [/\b(t(ü|ue)rzarge|t(ü|ue)rrahmen|zarge)/i, 'zarge'],
+  [/\b(innent(ü|ue)r|t(ü|ue)r)/i, 'tuer'],
+  [/\bfenster/i, 'fenster'],
+  [/\b(heizk(ö|oe)rper|radiator)/i, 'heizkoerper'],
+]
+
+/**
+ * Nachordnen statt sperren — und nur in EINE Richtung.
+ *
+ * Wer „Tür" sagt, hat sich nicht festgelegt; die Außentür darf deshalb
+ * einspringen, wenn zur Tür selbst nichts passt. Umgekehrt nicht: Wer
+ * „Haustür" oder „Außentür" sagt, meint die Zeile für außen (110,00 €), und
+ * die Innentürzeile (90,00 €) wäre still 20 € zu billig — bei einer Tür, die
+ * Wetter abbekommt und eine andere Vorbereitung braucht.
+ *
+ * Gemessen: Ohne die Richtung bekam „Haustür lackieren" plötzlich 90,00 €,
+ * wo vorher sichtbar kein Preis stand. Das wäre der Tausch einer sichtbaren
+ * Lücke gegen einen stillen Fehler gewesen — genau anders herum als PM-018
+ * es verlangt.
+ */
+const DARF_EINSPRINGEN: Array<[string, string]> = [['tuer', 'aussentuer']]
+
+export function bauteilAusTitel(text: string): string | null {
+  const roh = text ?? ''
+  for (const [muster, name] of BAUTEILE) if (muster.test(roh)) return name
+  return null
+}
+
+function darfEinspringen(gesucht: string, kandidat: string): boolean {
+  return DARF_EINSPRINGEN.some(([allgemein, sonderfall]) =>
+    gesucht === allgemein && kandidat === sonderfall)
 }
 
 /** Flächen-Suffix, das die Engine an den Titel hängt („… Q3 Decke"). */
@@ -260,6 +333,7 @@ export function findePreisposition(
   // „Q3", der Split hat dort nie geschützt, nur verdeckt.
   const gesuchtAnstriche = anstrichzahlAusTitel(beschreibung)
   const gesuchteQ = qStufeAusTitel(beschreibung)
+  const gesuchtesBauteil = bauteilAusTitel(beschreibung)
 
   // Anstrich-Varianten (1x/2x/3x) — die Regeln, festgeklopft am 2026-08-24
   // (Sandys „klopf fest"), nachdem PM-007 gezeigt hat, wie teuer eine
@@ -334,6 +408,10 @@ export function findePreisposition(
   // aufzuräumen, nicht den Matcher raten zu lassen. Steht als eigener Punkt.
   let besteMitVariante: Zuordnung | null = null
   let besteOhneVariante: Zuordnung | null = null
+  // Dritte, schwächste Stufe: ein verwandtes Bauteil (Außentür für eine Tür).
+  // Sie kommt erst zum Zug, wenn zum gesuchten Bauteil selbst nichts passt —
+  // sonst gewinnt die Sonderzeile über ein Wort, das sie zufällig mitbringt.
+  let besteVerwandt: Zuordnung | null = null
 
   for (const position of kandidatenListe) {
     if (normalisiereEinheit(position.unit) !== einheitNorm) continue
@@ -351,6 +429,15 @@ export function findePreisposition(
     const kandidatQ = qStufeAusTitel(position.title)
     if (gesuchteQ && kandidatQ && gesuchteQ !== kandidatQ) continue
 
+    // Bauteil: ein anderes Bauteil ist eine andere Arbeit (siehe oben).
+    // Verwandte Bauteile werden nicht gesperrt, sondern nachgeordnet — das
+    // erledigt die Regel-2/3-Sammlung ein paar Zeilen weiter unten.
+    const kandidatBauteil = bauteilAusTitel(position.title)
+    const bauteilNachrang =
+      gesuchtesBauteil !== null && kandidatBauteil !== null &&
+      gesuchtesBauteil !== kandidatBauteil
+    if (bauteilNachrang && !darfEinspringen(gesuchtesBauteil!, kandidatBauteil!)) continue
+
     // Aufwandswörter (Prüfmeister F.1, 12.09.2026) — dieselbe Bauweise wie
     // die Q-Stufe darüber: ein Filter am Rohtitel, kein Textmerkmal. Sperrt
     // in BEIDE Richtungen, und die zweite ist die wichtigere: Ein
@@ -364,6 +451,11 @@ export function findePreisposition(
 
     // Regel 2/3: variantenlose Kandidaten getrennt sammeln — sie kommen nur
     // zum Zug, wenn keine passende Variante über die Schwelle kommt.
+    if (bauteilNachrang) {
+      if (!besteVerwandt || score > besteVerwandt.score) besteVerwandt = { position, score }
+      continue
+    }
+
     if (aufwand?.grad === 'nachrang' || (gesuchtAnstriche && !kandidatAnstriche) || (gesuchteQ && !kandidatQ)) {
       if (!besteOhneVariante || score > besteOhneVariante.score) besteOhneVariante = { position, score }
       continue
@@ -374,6 +466,7 @@ export function findePreisposition(
 
   if (besteMitVariante && besteMitVariante.score >= SCHWELLE) return besteMitVariante
   if (besteOhneVariante && besteOhneVariante.score >= SCHWELLE) return besteOhneVariante
+  if (besteVerwandt && besteVerwandt.score >= SCHWELLE) return besteVerwandt
 
   // PM-018, zweiter Teil des Fundes: „Spachtelarbeiten Q3 **Decke**" fand gar
   // keinen Treffer, „Spachtelarbeiten Q3" schon. Das Flächen-Suffix ist ein

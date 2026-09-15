@@ -119,6 +119,67 @@ describe('🔴 Probe 2 des Prüfmeisters: abgeleitet gegen Katalog', () => {
   })
 })
 
+describe('Probe 2 ist ein Test über den Stundensatz — welcher steckt im Katalog?', () => {
+  // Nachgemessen am 15.09., als „Fläche oder Zeit" fachlich durchgesehen
+  // werden sollte. Probe 2 darüber ruft `pruefeGegenKatalog(52)` — und
+  // **hängt an dieser 52**: Der Vergleich ist nur dort aussagekräftig, wo der
+  // Stundensatz des Betriebs zu dem passt, mit dem der Katalog gerechnet ist.
+  // Gemessen wird der Katalog grün von 44 bis 63 €/h, darüber und darunter
+  // rot. Das ist kein Fehler, sondern die Folge der Aufteilung: Zeit-Zeilen
+  // folgen dem Stundensatz, Anker-Zeilen dem Ankerpreis.
+  //
+  // Mit einer einzelnen Zahl im Test stünde da aber eine Zusicherung, die
+  // niemand mehr nachrechnet. Deshalb hier die Frage eine Ebene höher, und
+  // zwar so, dass sie vom Stundensatz UNABHÄNGIG ist: Jede Zeit-Zeile mit
+  // einem echten Zwilling sagt über `Katalogpreis / Stunden`, welchen
+  // Stundensatz der Katalog an dieser Stelle unterstellt. Die müssen
+  // zusammenpassen — der Katalog trägt EINEN Stundensatz, nicht vier.
+  //
+  // Genau das fängt einen falschen Stundenwert auch dann, wenn ihn niemand
+  // zufällig bei 52 €/h prüft: Die fünf Korrekturen aus PD-009 §3 wären hier
+  // aufgefallen, ohne dass man die richtige Zahl schon kennen muss.
+  const zwillinge = ANKER.flatMap(a =>
+    a.zeilen
+      .filter(z => z.art === 'zeit' && z.katalogTitel && z.stunden)
+      .map(z => ({
+        titel: z.katalogTitel!,
+        impliziert: katalogPreis(z.katalogTitel!)!.preis / z.stunden!,
+      })),
+  )
+
+  it('Gegenprobe: es gibt überhaupt Zeit-Zeilen mit Zwilling', () => {
+    // Ohne diese Zeile prüfte der Test bei einer leeren Liste fröhlich nichts.
+    expect(zwillinge.length).toBeGreaterThanOrEqual(3)
+  })
+
+  it('jede Zeit-Zeile unterstellt denselben Stundensatz wie der Katalog', () => {
+    const daneben = zwillinge
+      .filter(z => z.impliziert < 50 || z.impliziert > 56)
+      .map(z => `${z.titel}: ${z.impliziert.toFixed(1)} €/h`)
+    expect(daneben).toEqual([])
+  })
+
+  it('und sie liegen untereinander nicht mehr als 10 % auseinander', () => {
+    const saetze = zwillinge.map(z => z.impliziert)
+    const spanne = Math.max(...saetze) / Math.min(...saetze)
+    expect(spanne, `${Math.min(...saetze).toFixed(1)} bis ${Math.max(...saetze).toFixed(1)} €/h`)
+      .toBeLessThan(1.1)
+  })
+
+  it('Probe 2 bleibt grün über die üblichen Stundensätze, nicht nur bei 52', () => {
+    // 45 bis 60 €/h ist die Spanne, in der sich die Betriebe bewegen, die wir
+    // kennen. Wird eine Stundenzahl geändert, wandert das Fenster — und dann
+    // soll hier etwas rot werden und nicht erst bei einem Betrieb.
+    const rot: string[] = []
+    for (let satz = 45; satz <= 60; satz++) {
+      for (const a of pruefeGegenKatalog(satz)) {
+        rot.push(`${satz} €/h · ${a.titel}: ${a.abgeleitet} statt ${a.katalog}`)
+      }
+    }
+    expect(rot).toEqual([])
+  })
+})
+
 describe('Die drei Umsortierungen aus PD-009 §2', () => {
   const boden = leiteAb(['boden'], {}, 52)
   const innen = leiteAb(['maler_innen'], {}, 52)

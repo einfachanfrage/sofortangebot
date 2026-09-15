@@ -8,8 +8,17 @@ describe('Boden-Standardpreiskatalog', () => {
   // Preisdatenbank-Audit vom 20.08. (Commit e06b7f5) bewusst ergänzten
   // Boden-Positionen. Keine Dopplung, Dopplungs-Test unten war durchgehend
   // grün.
+  //
+  // PM-013-A (15.09.2026): 189 → 188. „Dehnungsfuge einbauen" 45,00 €/Stück
+  // ist raus. Dieselbe Arbeit stand zweimal im Katalog, mit zwei Einheiten —
+  // „Dehnungsfuge mit Bewegungsprofil herstellen" 18,00 €/lfdm bleibt.
+  // Entscheidung des Prüfmeisters: eine Dehnungsfuge wird in Metern gelegt,
+  // nicht in Stück. Der Dopplungs-Test darunter fand das nicht, weil er
+  // Bezeichnung UND Einheit vergleicht — zwei Einheiten für dieselbe Arbeit
+  // sind für ihn zwei verschiedene Zeilen. Genau diese Lücke ist die
+  // Katalog-Dopplung, die sich nicht zählen lässt.
   it('enthält den vollständigen kuratierten Boden-Katalog', () => {
-    expect(boden).toHaveLength(189)
+    expect(boden).toHaveLength(188)
   })
 
   it('enthält keine doppelten Kombinationen aus Bezeichnung und Einheit', () => {

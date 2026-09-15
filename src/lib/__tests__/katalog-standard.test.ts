@@ -41,8 +41,13 @@ describe('Jede Standardzeile gibt es auch wirklich', () => {
 
 describe('Unbestimmt → die Standardzeile, nicht der kürzeste Titel', () => {
   it.each([
-    ['Maler', 'Stück', 'Tür lackieren', 45, 'Tür streichen / lackieren (einseitig)'],
-    ['Maler', 'Stück', 'Tür streichen', 45, 'Tür streichen / lackieren (einseitig)'],
+    // PD-010: Die Standardzeile der Familie ist auf „Türen lackieren
+    // einseitig (2× Anstrich)" gewandert, weil die alte Zeile in der falschen
+    // Tätigkeit lag. Der angenommene Preis steigt damit von 45 auf 55 € —
+    // nicht weil etwas teurer wurde, sondern weil vorher die billigere von
+    // zwei Dubletten gewann.
+    ['Maler', 'Stück', 'Tür lackieren', 55, 'Türen lackieren einseitig (2× Anstrich)'],
+    ['Maler', 'Stück', 'Tür streichen', 55, 'Türen lackieren einseitig (2× Anstrich)'],
     ['Maler', 'Stück', 'Fenster lackieren', 55, 'Fenster streichen innen'],
     ['Maler', 'm²', 'Wand streichen', 9.5, 'Wand streichen 2x Anstrich'],
     ['Maler', 'm²', 'Wände streichen', 9.5, 'Wand streichen 2x Anstrich'],
@@ -71,7 +76,9 @@ describe('Festgelegt → der Standard hält sich raus', () => {
   it.each([
     // Die Ansage gewinnt immer. Ein Standard, der eine ausdrückliche Angabe
     // überstimmt, wäre schlimmer als gar keiner.
-    ['Maler', 'Stück', 'Tür streichen / lackieren (beidseitig)', 75],
+    // Die alte beidseitig-Zeile ist mit PD-010 entfallen; die Ansage gilt
+    // trotzdem weiter und landet jetzt auf der Zeile ohne Zusatz (90 €).
+    ['Maler', 'Stück', 'Tür lackieren beidseitig', 90],
     ['Maler', 'Stück', 'Türen lackieren (2× Anstrich)', 90],
     ['Maler', 'Stück', 'Fenster lackieren (2× Anstrich)', 55],
     ['Maler', 'm²', 'Wand streichen 1x Anstrich', 6],

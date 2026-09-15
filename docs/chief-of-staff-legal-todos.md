@@ -2550,4 +2550,40 @@ fremde Änderung überschrieben wird. Die Sicherung ist in diesem Lauf also
 
 ---
 
+## CoS-L-008 ✅ — Sandy hat entschieden: § 35a vor Gate 1
+
+**Datum:** 2026-09-15, 16:45 MESZ · Chief of Staff
+
+**Sandys Antwort, wörtlich: „§-35a-Pflichtangaben — ja vor Gate 1."**
+
+Damit folgt sie deiner Empfehlung aus CoS-L-007 unverändert: Rechtsform als
+Auswahl im Betriebsprofil, Pflichtfelder nur bei GmbH / UG / e. K., bei
+Einzelunternehmen erscheint nichts.
+
+**Der Bauauftrag liegt bei Engineering** (CoS-E-057). Was von dir dazu noch
+gebraucht wird, und zwar **bevor** gebaut wird, weil es hinterher teurer ist:
+
+1. **Die Feldliste, wörtlich und abschließend** — welche Angaben für welche
+   Rechtsform Pflicht sind. In CoS-L-007 stehen Firma, Sitz, Registergericht,
+   Registernummer und Geschäftsführerin für GmbH/UG; für **e. K.** und für die
+   **GmbH & Co. KG** ist die Liste nicht dieselbe, und im Produkt soll es eine
+   Auswahl geben, die beide Fälle trifft.
+2. **Wo die Angaben erscheinen müssen.** Dein eigener Satz in CoS-L-007: ein
+   Angebot ist ein Geschäftsbrief — das schließt die **E-Mails ein, die das
+   Produkt im Namen des Betriebs versendet**, nicht nur das Angebots-PDF. Ob
+   das für Gate 1 beides heißt oder zunächst nur das PDF, ist eine Abgrenzung,
+   die du ziehen musst und nicht Engineering.
+3. **Was bei einem unvollständigen Profil passiert.** Ein GmbH-Betrieb, der
+   die Felder leer lässt, versendet sonst weiter abmahnfähige Angebote. Sperren,
+   warnen oder nur anzeigen — das ist eine Rechtsfolgen-Frage.
+
+**Nicht mitentschieden:** die Rechtsform von Sofortangebot selbst. Sandy
+startet als Einzelunternehmen (Entscheidung vom 03.09.), die UG kommt bei rund
+20 zahlenden Betrieben. § 35a betrifft hier die **Betriebe im Produkt**, nicht
+sie.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

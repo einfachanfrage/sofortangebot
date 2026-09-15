@@ -105,8 +105,14 @@ describe('Wenn die Normalisierung das Produkt löscht', () => {
 
 describe('Ein- oder beidseitig — im eigenen Gewerk, jeden Tag', () => {
   it.each([
-    ['Tür streichen / lackieren (beidseitig)', 75],
-    ['Tür streichen / lackieren (einseitig)', 45],
+    // PD-010 (15.09.2026): Die beiden Zeilen, an denen diese Datei entstanden
+    // ist, gibt es nicht mehr — sie lagen in „Anstrich Innen" statt in
+    // „Lackierarbeiten" und waren dort 15 € zu billig. Die Staffel ist
+    // geblieben, sie heißt nur anders: einseitig 55 €, beidseitig (der Titel
+    // ohne Zusatz) 90 €. Der Zweck des Tests ist unverändert — die teurere
+    // Stufe darf nicht den billigen Preis bekommen.
+    ['Türen lackieren (2× Anstrich)', 90],
+    ['Türen lackieren einseitig (2× Anstrich)', 55],
   ])('%s → %i €', (titel, betrag) => {
     const { ok, bekommt } = findetSichSelbst(titel)
     expect(ok).toBe(true)

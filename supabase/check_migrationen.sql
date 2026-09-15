@@ -189,6 +189,22 @@ WITH checks(reihenfolge, migration, objekt, vorhanden) AS (VALUES
   (61, '20260914180000_add_material_anteil', 'price_items.material_anteil existiert', EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'price_items' AND column_name = 'material_anteil'
+  )),
+  -- PM-013-A: Datenmigration, kein Schema. Geprüft wird deshalb die ABWESENHEIT
+  -- der Zeile: „Dehnungsfuge einbauen" zu 45,00 €/Stück darf es nicht mehr
+  -- geben, sonst bekommt eine angenommene Menge wieder einen Preis.
+  (62, '20260915090000_dehnungsfuge_eine_einheit', 'keine Dehnungsfuge-Stück-Zeile mehr', NOT EXISTS (
+    SELECT 1 FROM public.price_items
+    WHERE title = 'Dehnungsfuge einbauen' AND unit = 'Stück'
+  )),
+  -- PD-010: ebenfalls eine Datenmigration. Geprüft wird die ABWESENHEIT der
+  -- vier Altlast-Türzeilen aus der Rubrik „Anstrich Innen" — solange es sie
+  -- gibt, bekommt ein Betrieb ohne Lackier-Haken seine Türen zu billig.
+  (63, '20260915140000_pd010_tuerzeilen', 'keine doppelten Türzeilen mehr', NOT EXISTS (
+    SELECT 1 FROM public.price_items
+    WHERE title IN ('Innentürblatt lackieren beidseitig', 'Innentürblatt lackieren einseitig',
+                    'Tür streichen / lackieren (beidseitig)', 'Tür streichen / lackieren (einseitig)',
+                    'Türzarge streichen')
   ))
 )
 SELECT

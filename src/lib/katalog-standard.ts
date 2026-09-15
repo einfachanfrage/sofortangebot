@@ -91,9 +91,17 @@ export const STANDARD_FAMILIEN: StandardFamilie[] = [
     name: 'Tür streichen/lackieren',
     begriff: /^\s*t(?:ü|ue)r(?:en)?\s+(?:streichen|lackieren)/iu,
     festgelegt: /einseitig|beidseitig|au(?:ß|ss)en|innen|zarge|rahmen|leibung|schleif|grundier|\d\s*[x×]|\d\s*[-\s]?fach/iu,
-    standard: 'Tür streichen / lackieren (einseitig)',
+    // PD-010 (15.09.2026): Die Standardzeile hieß „Tür streichen / lackieren
+    // (einseitig)" und lag mit 45,00 € in der Rubrik „Anstrich Innen". Es gab
+    // sie zweimal — dieselbe Arbeit stand unter „Lackierarbeiten" mit 55,00 €.
+    // Der Prüfmeister hat die Dopplung aufgelöst; geblieben ist die Zeile der
+    // Lackierarbeiten. **Für den Handwerker heißt das: Der angenommene Preis
+    // für eine einseitige Tür steigt von 45,00 € auf 55,00 €** — nicht weil
+    // etwas teurer geworden wäre, sondern weil vorher die billigere von zwei
+    // Zeilen gewann, und zwar die, die in der falschen Tätigkeit lag.
+    standard: 'Türen lackieren einseitig (2× Anstrich)',
     annahme: 'Einseitig angenommen — beidseitig kostet mehr',
-    quelle: 'Manfred, 12.09.2026',
+    quelle: 'Manfred, 12.09.2026 · Zeile nach PD-010 angeglichen',
   },
   {
     // Dieselbe Lage wie bei der Tür: innen 55,00 €, außen 70,00 €. Wer nur

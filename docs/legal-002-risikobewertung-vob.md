@@ -797,4 +797,78 @@ Head of Product Engineering (veraPDF/Mustang).
 
 ---
 
+## Nachtrag 2026-09-15 — LR-16 neu (Head of Legal & Compliance)
+
+## LR-16 🟠 — Der Materialpreis-Hinweis erreicht das Kunden-PDF nicht, und sein Wortlaut würde es nicht tragen
+
+**Ebene:** zuerst A (Handwerker gegenüber Endkunde), über den Produktweg B.
+
+**Befund, an der Quelle geprüft.** In den Einstellungen
+(`src/app/(app)/einstellungen/page.tsx`, Z. 470–486) steht ein Schalter
+„Materialpreis-Hinweis" mit der Beschriftung **„Hinweis auf Angeboten
+drucken"**. Gedruckt wird nichts: Der Hinweis existiert ausschließlich in
+`src/components/AngebotVorschau.tsx` (Z. 354–359), und diese Komponente ist nur
+in `VorschauUndVersand.tsx` (Z. 366) eingebunden — dem Bildschirm des
+Handwerkers. `src/lib/pdf.tsx` enthält den Text nicht, die Kundenseite
+`src/app/angebot/[id]/unterschreiben/page.tsx` ebenfalls nicht. Zusätzlich
+stehen in Einstellung und Vorschau **zwei unterschiedliche Fassungen** des
+Satzes.
+
+Das ist derselbe Mechanismus wie LR-01: Der Betrieb sieht eine Angabe in seiner
+Vorschau und schließt daraus, dass sein Kunde sie bekommt. Der Unterschied zu
+LR-01 ist, dass der Betrieb hier zusätzlich aktiv einen Schalter umlegt, dessen
+Beschriftung das Drucken ausdrücklich zusagt.
+
+**Der zweite, schwerere Teil.** Der Satz ist eine Preisanpassungsklausel:
+„Preise basieren auf aktuellen Materialkosten und können bei
+Lieferantenpreisänderungen angepasst werden." Gegenüber einem Verbraucher
+greift § 309 Nr. 1 BGB — unwirksam ist in AGB eine Bestimmung, „welche die
+Erhöhung des Entgelts für Waren oder Leistungen vorsieht, die innerhalb von vier
+Monaten nach Vertragsschluss geliefert oder erbracht werden sollen", außerhalb
+von Dauerschuldverhältnissen (Wortlaut geprüft). Maler- und Bodenaufträge werden
+typischerweise innerhalb von vier Monaten ausgeführt und sind keine
+Dauerschuldverhältnisse. Der Satz nennt zudem weder Anlass noch Obergrenze noch
+ein Lösungsrecht des Kunden (§ 307 Abs. 1 S. 2). **Der Fehler wäre also, den
+Hinweis jetzt „nur nachzuziehen":** Dann stünde auf jedem Verbraucherangebot
+eine Klausel, die im Streit nicht trägt — und sie stünde im Namen des
+Handwerkers, der sie nicht formuliert hat.
+
+**Severity 2 — Minor, mit Ausschlag nach oben.** Solange der Hinweis nicht
+gedruckt wird, entsteht kein Schaden beim Endkunden; der Schaden liegt beim
+Betrieb, der eine Absicherung annimmt, die er nicht hat, und im Streit über
+gestiegene Materialkosten ohne Grundlage dasteht. Wird der Hinweis mit dem
+heutigen Wortlaut aufs PDF gezogen, steigt der Eintrag auf 🟠 im Verhältnis zum
+Endkunden und berührt zusätzlich das Wettbewerbsrecht (Preisangabe unter
+stillem Vorbehalt).
+
+**Likelihood 2 — Unlikely, heute.** 0 von 8 Betrieben in der
+Produktionsdatenbank haben `materialpreis_hinweis_aktiv` gesetzt, und es gibt
+keine echten Nutzer. Die Eintrittswahrscheinlichkeit steigt in dem Moment, in
+dem jemand den Schalter findet — die Beschriftung lädt dazu ein.
+
+**Mitigation, in dieser Reihenfolge:**
+1. Wortlaut zuerst — Freigabe durch Sandy (Governance-Regel). B2C und B2B
+   brauchen möglicherweise zwei Fassungen.
+2. Erst danach in `pdf.tsx` und auf die Unterschreiben-Seite ziehen, aus **einer**
+   Quelle, damit die Vorschau nicht wieder etwas anderes zeigt als das Dokument.
+3. Bis dahin entweder die Beschriftung des Schalters ehrlich machen oder den
+   Schalter ausblenden. „Drucken" darf nicht dranstehen, solange nicht gedruckt
+   wird.
+
+**Restrisiko nach Schritt 1–2: gering.** Es bleibt die allgemeine Frage, ob ein
+Materialvorbehalt im B2C überhaupt der richtige Weg ist oder ob Material als
+sichtbare eigene Position gehört — derselbe Maßstab wie beim
+Mindestauftragswert (CoS-L-005) und beim Materialanteil (Spur 5 Nr. 1,
+Kriterium 3).
+
+**Angrenzend, nicht Teil von LR-16:** Die Materialangabe je Position erreicht
+das Kunden-PDF ebenfalls nicht — dort allerdings, weil sie noch nicht gebaut
+ist (`halbsatz()`/`kundensatz()` in `src/lib/materialanteil.ts` haben außer dem
+eigenen Test keinen Aufrufer; `quote_items` hat keine Materialspalte; 0 von
+3.267 `price_items` tragen einen `material_anteil`). Das ist kein Risikoeintrag,
+sondern eine Anforderung an CoS-E-053 — ausformuliert in
+`chief-of-staff-legal-todos.md`, Abschnitt „Spur 5 Nr. 1" vom 15.09.
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

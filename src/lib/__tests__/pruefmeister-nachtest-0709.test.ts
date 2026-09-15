@@ -22,6 +22,7 @@ import { describe, expect, it } from 'vitest'
 import { berechneMengen } from '../mengen/engine'
 import { verarbeiteExtraktion } from '../mengen/extraktion-pipeline'
 import { pruefeUndErgaenzeVollstaendigkeit } from '../vollstaendigkeit/index'
+import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '../mengen/aufnahme-hinweise'
 import { findePreisposition } from '../preis-matcher'
 import { DEFAULT_PRICES } from '../default-prices'
 import { preisKategoriePasstZuGewerk } from '../default-price-selection'
@@ -64,11 +65,40 @@ function lauf(gewerk: 'maler' | 'boden_parkett', transkript: string, raeume: any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     raeume: r2.map((r: any) => ({ name: r.name, hoehe: r.hoehe ?? null })),
   }
-  const { positionen } = pruefeUndErgaenzeVollstaendigkeit(
+  const ergebnis = pruefeUndErgaenzeVollstaendigkeit(
     gewerk, eng.positionen, transkript, meta as never, signale as never,
   )
-  return positionen
+
+  // PM-013-A (15.09.2026): Diese Stufe fehlte hier — und dadurch fehlte in
+  // diesem Prüfstand ein ganzer Teil des Produkts.
+  //
+  // Die echte Route (`api/entwurf/generiere-positionen`, Z. 266) legt nach
+  // der Vollständigkeitsprüfung noch `ergaenzeAusAufnahmeHinweisen` und
+  // `normalisiereBodenPositionenAusAufnahme` darüber. Dort entstehen die
+  // Positionen, die aus den Aufnahme-Chips kommen — unter anderem die
+  // Dehnungsfuge, die es seit dem 19.08. gibt. Wer sie hier suchte, fand
+  // nichts und schloss daraus, es gebe sie nirgends.
+  //
+  // Das ist exakt der Befund, den der Prüfmeister in dieser Datei über
+  // PM-037 selbst notiert hat, eine Stufe später: „Der Fall war grün, nur
+  // hat ihn niemand an der Stelle geprüft, an der die Positionen entstehen."
+  //
+  // Die Chips werden hier aus den Arbeiten der Räume gebaut — so, wie die
+  // Karten-Erkennung sie liefern muss. Der KI-Schritt davor bleibt
+  // ungeprüft, wie im Kopf dieser Datei beschrieben.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const chips: string[] = r2.flatMap((r: any) =>
+    (r.arbeiten ?? []).map((a: string) => `${a}${r.name ? ` — ${r.name}` : ''}`),
+  )
+  const positionen = normalisiereBodenPositionenAusAufnahme(
+    ergaenzeAusAufnahmeHinweisen(ergebnis.positionen, chips, transkript),
+    transkript,
+  )
+  return { fehlende: ergebnis.fehlende, positionen }
 }
+
+// Bequemlichkeit: die allermeisten Prüfungen wollen nur die Positionen.
+const nurPositionen = (...args: Parameters<typeof lauf>) => lauf(...args).positionen
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const finde = (pos: any[], muster: RegExp) => pos.find(p => muster.test(p.beschreibung))
@@ -84,7 +114,7 @@ function preis(pos: any[], muster: RegExp, gewerk: string) {
 
 describe('PM-013 — Parkett-Fischgrät, Aufpreis als eigene Zeile', () => {
   const T = 'Wohnzimmer, acht mal viereinhalb. Eichenparkett, Fischgrät verlegt, das braucht ja mehr Verschnitt. Ist schon ne große Fläche, da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte mit rein. Boden nur, an den Wänden machen wir nix.'
-  const pos = () => lauf('boden_parkett', T, [
+  const pos = () => nurPositionen('boden_parkett', T, [
     raum('Wohnzimmer', { laenge: 8, breite: 4.5, belag: 'parkett', verlegerichtung: 'fischgrät', arbeiten: ['parkett verlegen', 'dehnungsfuge einbauen'] }),
   ])
 
@@ -113,14 +143,62 @@ describe('PM-013 — Parkett-Fischgrät, Aufpreis als eigene Zeile', () => {
   // Dieser Test ist bewusst als `fails` markiert: Sobald jemand die Position
   // baut, wird er ROT und muss auf `it` zurückgestellt werden. Sperrklinke,
   // kein Schweigen.
-  it.fails('OFFEN: Dehnungsfuge erzeugt keine Position', () => {
-    expect(finde(pos(), /dehnungsfuge|dehnfuge/i)).toBeDefined()
+  // ── PM-013-A gebaut (Head of Product Engineering, 15.09.2026) ───────────
+  //
+  // Der Fund lautete: „die Dehnungsfuge entsteht nirgends — kein Treffer in
+  // `boden.ts` oder den Vollständigkeits-Dateien." Dort ist sie auch nicht.
+  // Sie steht seit dem 19.08. in `mengen/aufnahme-hinweise.ts` und hat vier
+  // Nachtests hinter sich (Chip-Titel, Rohtext-Fallback, Verneinung,
+  // Whisper-Verhörer „DEHNUNGSFUHRE"). Gefehlt hat sie in DIESEM Prüfstand,
+  // weil `lauf()` die letzte Stufe der echten Route nicht mitlief. Das ist
+  // jetzt behoben (siehe Kommentar oben bei `lauf`).
+  //
+  // **Der Fund war trotzdem richtig, nur eine Ebene tiefer.** Nachgemessen
+  // am Transkript ohne Längenangabe stand da:
+  //
+  //     Dehnungsfuge einbauen — Wohnzimmer · 1 Stück · 45,00 €
+  //
+  // Die angenommene Eins hatte einen echten Preis, weil der Katalog die
+  // Arbeit ein zweites Mal als „Dehnungsfuge einbauen" zu 45,00 €/Stück
+  // führte. 45 € auf dem Kundenpapier aus einer Menge, die niemand genannt
+  // hat. Die Stück-Zeile ist raus (Entscheidung des Prüfmeisters: eine
+  // Arbeit, eine Einheit — lfdm zu 18,00 €).
+  it('ohne Längenangabe: Position ja, aber ohne Preis — der Versand-Riegel fängt sie', () => {
+    const fuge = finde(pos(), /dehnungsfuge/i)
+    expect(fuge).toBeDefined()
+    expect(fuge.annahmen.join(' ')).toMatch(/bitte anzahl\/länge prüfen/i)
+    // Das Entscheidende: KEIN Preis. Eine angenommene Menge darf keinen
+    // bekommen — sonst geht sie still aufs Kundenpapier.
+    expect(preis(pos(), /dehnungsfuge/i, 'boden_parkett')).toBeNull()
+  })
+
+  it('mit Längenangabe: die richtige Zeile in Metern zu 18,00 €', () => {
+    const mitMetern = T.replace(
+      'da muss wahrscheinlich ne Dehnungsfuge rein, mach das bitte mit rein.',
+      'da kommen sechs Meter Dehnungsfuge rein.',
+    )
+    const positionen = nurPositionen('boden_parkett', mitMetern, [
+      raum('Wohnzimmer', { laenge: 8, breite: 4.5, belag: 'parkett', verlegerichtung: 'fischgrät', arbeiten: ['parkett verlegen'] }),
+    ])
+    const fuge = finde(positionen, /dehnungsfuge/i)
+    expect(fuge).toBeDefined()
+    expect(fuge.menge).toBe(6)
+    expect(fuge.einheit).toBe('lfdm')
+    expect(fuge.beschreibung).toMatch(/^Dehnungsfuge mit Bewegungsprofil herstellen/)
+    expect(preis(positionen, /dehnungsfuge/i, 'boden_parkett')).toBe(18)
+  })
+
+  it('die Stück-Zeile gibt es im Katalog nicht mehr', () => {
+    // Sperrklinke gegen das Wiederauftauchen: Solange es zwei Einheiten für
+    // dieselbe Arbeit gibt, bekommt eine angenommene Menge wieder einen Preis.
+    const stueck = DEFAULT_PRICES.filter(p => /^Dehnungsfuge einbauen$/.test(p.title))
+    expect(stueck).toEqual([])
   })
 })
 
 describe('PM-033 — Fischgrät nur in einem von drei Räumen', () => {
   const T = 'Wohnzimmer, sechs mal vier fünfzig, da kommt Eichenparkett rein, Fischgrät verlegt. Schlafzimmer, vier mal drei sechzig, da wollen die Teppich, Bahnenware. Flur, fünf mal eins fünfzig, da kommt Laminat, ganz normal gerade. An den beiden Türen zum Wohnzimmer und zum Schlafzimmer jeweils eine Übergangsschiene, weil ja unterschiedliche Beläge. Trittschall nur unterm Laminat im Flur. Sockelleisten bleiben überall, wie sie sind.'
-  const pos = () => lauf('boden_parkett', T, [
+  const pos = () => nurPositionen('boden_parkett', T, [
     raum('Wohnzimmer', { laenge: 6, breite: 4.5, belag: 'parkett', verlegerichtung: 'fischgrät', arbeiten: ['parkett verlegen'] }),
     raum('Schlafzimmer', { laenge: 4, breite: 3.6, belag: 'teppich', arbeiten: ['teppich verlegen'] }),
     raum('Flur', { laenge: 5, breite: 1.5, belag: 'laminat', verlegerichtung: 'standard', arbeiten: ['laminat verlegen'] }),
@@ -149,7 +227,7 @@ describe('PM-033 — Fischgrät nur in einem von drei Räumen', () => {
 describe('PM-032 — Klick-Vinyl durchgehend, drei Räume', () => {
   const T = 'Erdgeschosswohnung. Flur, sechs mal eins zwanzig. Wohnzimmer, fünf mal vier. Küche, drei mal zwo achtzig. Überall dasselbe Klick-Vinyl, gerade verlegt, durchgehend ohne Schwellen — das läuft von der Küche durch den Flur ins Wohnzimmer. Trittschalldämmung drunter. Nur zum Bad hin kommt eine Übergangsschiene, im Bad selbst machen wir nichts. Sockelleisten überall neu, weiße MDF. Jeder Raum hat eine normale Tür.'
   const belag = { belag: 'klick-vinyl', verlegerichtung: 'standard', sockelleisten: true, tueren: [TUER], arbeiten: ['vinyl verlegen', 'sockelleisten montieren'] }
-  const pos = () => lauf('boden_parkett', T, [
+  const pos = () => nurPositionen('boden_parkett', T, [
     raum('Flur', { laenge: 6, breite: 1.2, ...belag }),
     raum('Wohnzimmer', { laenge: 5, breite: 4, ...belag }),
     raum('Küche', { laenge: 3, breite: 2.8, ...belag }),
@@ -173,7 +251,7 @@ describe('PM-032 — Klick-Vinyl durchgehend, drei Räume', () => {
 
 describe('PM-011 — kein Zuschlag neben der Q2-Spachtelung', () => {
   const T = 'Ähm, Arbeitszimmer, vier mal drei zwanzig, Höhe zwo fünfzig. Ist n Altbau, die Wände sind ordentlich uneben — die müssen komplett gespachtelt werden, Qualitätsstufe Q2, nicht nur ne kleine Ausbesserung, wirklich die ganze Fläche. Danach zweimal streichen. Ein Fenster, Standardmaß, eine Tür, normal. Sockelleisten kleben wir ab, die bleiben wie sie sind.'
-  const pos = () => lauf('maler', T, [
+  const pos = () => nurPositionen('maler', T, [
     raum('Arbeitszimmer', { laenge: 4, breite: 3.2, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen', 'spachteln'] }),
   ])
 
@@ -192,7 +270,7 @@ describe('PM-011 — kein Zuschlag neben der Q2-Spachtelung', () => {
 
 describe('PM-037 — Leibungen und Fensterbänke', () => {
   const T = 'Wohnzimmer, fünf mal vier, Höhe zwo sechzig. Wände zweimal streichen. Zwei Fenster, jeweils eins zwanzig mal einen Meter, die Leibungen werden mitgestrichen, fünfundzwanzig Zentimeter tief. Die Fensterbänke werden auch gestrichen. Eine Tür, normal Maß.'
-  const pos = () => lauf('maler', T, [
+  const pos = () => nurPositionen('maler', T, [
     raum('Wohnzimmer', { laenge: 5, breite: 4, hoehe: 2.6, tueren: [TUER], fenster: [FENSTER(2)], arbeiten: ['waende_streichen'] }),
   ])
 

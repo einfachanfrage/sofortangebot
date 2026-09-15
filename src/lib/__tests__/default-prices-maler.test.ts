@@ -17,7 +17,13 @@ describe('Maler-Standardpreiskatalog', () => {
     // (Fenster innen, Türen, Fenster außen), je 45,00 €/m². Vorher fand die
     // Engine für „Fenster Innenleibungen streichen" keinen Preis und schrieb
     // auf jedes Angebot mit mitgestrichenen Leibungen eine 0,00-€-Zeile.
-    expect(maler).toHaveLength(220)
+    // PD-010 (15.09.2026): 220 → 216. Für EINE Innentür führte der Katalog
+    // fünf Zeilen in zwei Rubriken, für die Zarge drei. Vier sind entfallen,
+    // eine wurde umbenannt — Entscheidung des Prüfmeisters: eine Arbeit, eine
+    // Zeile, und sie steht in den Lackierarbeiten. Die entfallenen lagen in
+    // „Anstrich Innen" und waren die billigeren; ein Betrieb ohne
+    // Lackier-Haken bekam seine Türen dadurch 15 € zu günstig bepreist.
+    expect(maler).toHaveLength(216)
     expect(tapezieren).toHaveLength(22)
   })
 

@@ -171,7 +171,6 @@ export const ANKER: readonly Anker[] = [
       // des Prüfmeisters vom 12.09. ist 18,00 €; 0,35 h × 52 € = 18,20 €.
       { art: 'zeit', stunden: 0.35, material: 'zubehoer',
         titel: 'Heizkörper abkleben', einheit: 'Stück' },
-      { katalogTitel: 'Heizkörper streichen / lackieren', art: 'anker', material: 'wahl' },
     ],
   },
   {
@@ -185,13 +184,56 @@ export const ANKER: readonly Anker[] = [
     ],
   },
   {
+    // PD-010 (Prüfmeister, 15.09.2026) — der Anker fürs Lackieren.
+    //
+    // Drei Gründe, seine Reihenfolge:
+    //  1. Es ist die Zeile, die die ENGINE selbst erzeugt
+    //     (`maler-lackieren.ts` schreibt wörtlich diesen Titel). Der Anker
+    //     muss dieselbe Zeile sein, die später im Angebot steht — sonst fragt
+    //     das Onboarding nach einem Preis, den nachher niemand benutzt.
+    //  2. Es ist die Zahl, die jeder Maler im Kopf hat. „Was nimmst du für
+    //     eine Tür?" beantwortet jeder; bei „Holzbauteil lackieren, 18 €/m²"
+    //     muss er erst ausrechnen, wie viel Quadratmeter eine Tür hat.
+    //  3. Alles andere im Lackierbereich verhält sich stabil dazu.
+    //
+    // Nicht der Entwurf („Tür lackieren, pro Tür mit Zarge", 60,00 €), und
+    // das aus zwei Gründen, die beide Geld kosten:
+    //  - **Die Zarge wäre doppelt drin.** Sie ist eine eigene Katalogzeile,
+    //    und die Engine erzeugt sie getrennt. Ein Anker, der sie einschließt,
+    //    lässt den Betrieb einen Preis für Blatt + Zarge nennen — und danach
+    //    stehen beide Zeilen im Angebot.
+    //  - **60,00 € gegen 135,00 € echte Summe** (Blatt 90 + Zarge 45). Trägt
+    //    ein Betrieb seinen wahren Türpreis ein, wird der Faktor 1,5 und jede
+    //    Lackier-Zeile springt um die Hälfte hoch. Dieselbe Mechanik wie bei
+    //    der Vliestapete aus PD-009, nur eine Tätigkeit weiter.
+    //
+    // Die Quoten des Prüfmeisters, gemessen am Anker (90,00 €), stimmen mit
+    // dem Katalog überein — deshalb steht hier keine einzige davon als Zahl:
+    //   Zarge 50 % (45,00) · Fenster 61 % (55,00) · Heizkörper 44 % (40,00)
+    //   grundieren 28 % (25,00) · abschleifen 22 % (20,00) · Geländer 20 %
+    // Sie sind der Beleg, dass die Katalogwerte zueinander passen, nicht die
+    // Quelle der Preise.
     taetigkeit: 'lackieren',
-    katalogTitel: 'Tür streichen / lackieren (beidseitig)',
+    katalogTitel: 'Türen lackieren (2× Anstrich)',
     kurz: 'Tür beidseitig',
     zeilen: [
-      { katalogTitel: 'Fenster streichen innen', art: 'anker', material: 'wahl' },
-      { katalogTitel: 'Türzarge streichen', art: 'anker', material: 'wahl' },
-      { katalogTitel: 'Geländer / Handlauf streichen', art: 'anker', material: 'wahl' },
+      { katalogTitel: 'Türen lackieren einseitig (2× Anstrich)', art: 'anker', material: 'wahl' },
+      { katalogTitel: 'Türzarge lackieren', art: 'anker', material: 'wahl' },
+      { katalogTitel: 'Stahlzarge lackieren', art: 'anker', material: 'wahl' },
+      { katalogTitel: 'Fenster lackieren (2× Anstrich)', art: 'anker', material: 'wahl' },
+      // PD-009 §6, wörtlich: „Fenster, Zarge, Heizkörper, Geländer lackieren
+      // auf `anker` — richtig. Der Anker ist ein Stückpreis, sie skalieren mit
+      // ihm." Der Heizkörper stand bei mir unter „Innen streichen" und hing
+      // damit am Quadratmeterpreis der Wand. Genau die Zuordnung, gegen die
+      // Manfreds Satz gerichtet war: „Ein Heizkörper hat mit dem
+      // Quadratmeterpreis nichts zu tun."
+      { katalogTitel: 'Heizkörper streichen / lackieren', art: 'anker', material: 'wahl' },
+      { katalogTitel: 'Türen grundieren', art: 'anker', material: 'zubehoer' },
+      { katalogTitel: 'Türen abschleifen', art: 'anker', material: null },
+      // Der Entwurf hatte hier 53,00 €/lfm. Der Prüfmeister: „53 € je
+      // laufendem Meter wäre ein Geländer mit Abbeizen und Neuaufbau — für
+      // ‚lackieren' sind 18 € richtig."
+      { katalogTitel: 'Treppengeländer lackieren', art: 'anker', material: 'wahl' },
     ],
   },
   {
@@ -199,7 +241,14 @@ export const ANKER: readonly Anker[] = [
     katalogTitel: 'Fassade streichen 2x Anstrich',
     kurz: 'Fassade 2x',
     zeilen: [
-      { katalogTitel: 'Fassade streichen 1x Anstrich', art: 'anker', material: 'wahl' },
+      // Derselbe Hinweis wie innen, und aus demselben Grund. Nachgerechnet:
+      // Fassade 1x/2x steht bei 9,00/14,00 = 64 %, praktisch identisch mit
+      // Wand (63 %) und Decke (64 %) — und Grundierung, Reinigen und
+      // Rissarbeiten sind auch außen eigene Katalogzeilen, zählen also extra.
+      // Beim ersten Bauen hatte ich den Hinweis nur an die zwei Innen-Zeilen
+      // gehängt; der Test hat die Lücke gefunden, nicht ich.
+      { katalogTitel: 'Fassade streichen 1x Anstrich', art: 'anker', material: 'wahl',
+        hinweis: 'ohne Vorbereitung, die zählt extra' },
       { katalogTitel: 'Fassadengrundierung auftragen', art: 'anker', material: 'wahl' },
       { katalogTitel: 'Fassade reinigen / druckwaschen', art: 'anker', material: null },
       { katalogTitel: 'Fassadenrisse schließen', art: 'anker', material: 'zubehoer' },

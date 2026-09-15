@@ -33,8 +33,14 @@ const EMPTY: Keys = {
 const SOFTWARES = [
   {
     id: 'lexware',
+    // DC-047 (Product Designer, 2026-09-15): Der Unterschied zwischen den
+    // beiden Lexware-Karten stand bisher NUR auf der zweiten (CoS-P-010).
+    // Wer von oben nach unten liest und einen alten Zugang hat, trägt
+    // seinen Key hier ein und landet in einem fehlschlagenden „Verbindung
+    // testen", ohne je zu erfahren, dass es die zweite Karte gibt. Die
+    // Wahl fällt auf der ersten Karte — dort muss der Unterschied stehen.
     name: 'Lexware Office',
-    hinweis: '',
+    hinweis: 'Der normale Zugang. Nimm diesen, wenn du deinen API-Key heute neu erstellst.',
     color: '#003DA5',
     short: 'LW',
     fields: [{ key: 'lexware_api_key' as keyof Keys, label: 'API-Key', placeholder: 'Deinen Lexware Office API-Key hier einfügen' }],
@@ -52,7 +58,7 @@ const SOFTWARES = [
     name: 'Lexoffice (Legacy)',
     // CoS-P-010, TN-108: "ich weiß nicht, ob ich alt oder neu hab" — Klartext statt
     // des Fachworts "Legacy", das für Nutzer ohne IT-Hintergrund nichts bedeutet.
-    hinweis: 'Nur falls dein Zugang von vor 2025 stammt. Neuer Account? Dann oben „Lexware Office" nehmen.',
+    hinweis: 'Nur falls dein Zugang von vor 2025 stammt. Sonst die Karte darüber — „Lexware Office".',
     color: '#0066CC',
     short: 'LO',
     fields: [{ key: 'lexoffice_api_key' as keyof Keys, label: 'API-Key', placeholder: 'Deinen Lexoffice API-Key hier einfügen' }],
@@ -283,7 +289,7 @@ export default function IntegrationenPage() {
                     {connected ? '● Verbunden' : '○ Nicht verbunden'}
                   </div>
                   {sw.hinweis && (
-                    <div className="text-[11px] font-semibold text-anthracite/35 mt-0.5 leading-snug">{sw.hinweis}</div>
+                    <div className="text-xs font-semibold text-anthracite/55 mt-1 leading-snug">{sw.hinweis}</div>
                   )}
                 </div>
                 {open ? <ChevronUp size={18} color="var(--color-anthracite)" className="opacity-30" /> : <ChevronDown size={18} color="var(--color-anthracite)" className="opacity-30" />}

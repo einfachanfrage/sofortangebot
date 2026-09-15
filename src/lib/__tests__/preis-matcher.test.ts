@@ -172,3 +172,69 @@ describe('Anstrich-Varianten (1x/2x/3x)', () => {
     expect(zweifach?.position.title).toBe('Dachschrägen streichen')
   })
 })
+
+
+// ── Das Bauteil sperrt (PD-010, Nachlauf 15.09.2026) ────────────────────────
+//
+// Beim Aufräumen der Türzeilen sind vier Katalogzeilen entfallen. Erst danach
+// gemessen, was der Matcher aus den gewohnten Formulierungen macht — und das
+// war zweimal Geld:
+//
+//   „Tür streichen / lackieren (beidseitig)" → Heizkörper · 40,00 €
+//   „Tür lackieren beidseitig"               → Außentür   · 110,00 €
+//
+// Beide Male hat ein Wort im Titel entschieden, das die Arbeit gar nicht
+// benennt. Dieselbe Familie wie PM-018 (Q-Stufe) und CoS-E-038
+// (Anstrichzahl) — deshalb dieselbe Antwort: ein Filter am Rohtitel.
+describe('Ein Heizkörper ist keine Tür', () => {
+  const maler = preise.filter(p => p.category.startsWith('Maler'))
+
+  it('die alte Türzeile landet nicht auf dem Heizkörperpreis', () => {
+    const treffer = findePreisposition('Tür streichen / lackieren (beidseitig)', 'Stück', maler)
+    expect(treffer?.position.title ?? 'kein Treffer').not.toMatch(/heizk/i)
+  })
+
+  it('„Tür lackieren beidseitig" bleibt drinnen — 90 €, nicht 110 €', () => {
+    // Die Außentür ist eine Tür, wird also nicht gesperrt, sondern
+    // nachgeordnet: Sie darf nur einspringen, wenn zur Tür selbst nichts
+    // passt. Sonst gewinnt sie über das Wort „beidseitig", das sie als
+    // einzige Türzeile noch trägt.
+    const treffer = findePreisposition('Tür lackieren beidseitig', 'Stück', maler)
+    expect(treffer?.position.title).toBe('Türen lackieren (2× Anstrich)')
+    expect(treffer?.position.unit_price).toBe(90)
+  })
+
+  it('„Innentür" ist die Tür des Malerkatalogs, nicht die Außentür', () => {
+    const treffer = findePreisposition('Innentür lackieren beidseitig', 'Stück', maler)
+    expect(treffer?.position.unit_price).toBe(90)
+  })
+
+  it('Gegenprobe: wer Außentür sagt, bekommt die Außentür', () => {
+    // Ohne diese Zeile könnte man die Sperre einfach hart stellen und den
+    // Test oben grün bekommen, indem die Außentür nie mehr trifft.
+    const treffer = findePreisposition('Außentür lackieren beidseitig', 'Stück', maler)
+    expect(treffer?.position.title).toBe('Außentür lackieren beidseitig')
+    expect(treffer?.position.unit_price).toBe(110)
+  })
+
+  it('Gegenprobe: der Heizkörper findet weiter seinen eigenen Preis', () => {
+    const treffer = findePreisposition('Heizkörper streichen / lackieren', 'Stück', maler)
+    expect(treffer?.position.unit_price).toBe(40)
+  })
+
+  it('eine Haustür bekommt nicht still den Innentürpreis', () => {
+    // Die Nachordnung gilt nur in eine Richtung. „Haustür lackieren" fand
+    // vorher keinen Preis und soll auch weiter keinen finden: 90 € statt der
+    // 110 € der Außentürzeile wäre eine sichtbare Lücke gegen einen stillen
+    // Fehler getauscht.
+    const treffer = findePreisposition('Haustür lackieren', 'Stück', maler)
+    expect(treffer?.position.title ?? 'kein Treffer').not.toBe('Türen lackieren (2× Anstrich)')
+  })
+
+  it('Zarge und Türblatt bleiben zwei Zeilen', () => {
+    // PD-010: „Ein Angebot mit einer Tür darf genau zwei Zeilen erzeugen —
+    // Blatt und Zarge — und nie eine dritte aus der anderen Rubrik."
+    expect(findePreisposition('Türzarge lackieren', 'Stück', maler)?.position.title)
+      .toBe('Türzarge lackieren')
+  })
+})

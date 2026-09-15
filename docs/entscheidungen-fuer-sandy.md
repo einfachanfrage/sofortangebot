@@ -1048,7 +1048,7 @@ Entscheidungen standen bisher nur dort und wären beim nächsten Ersetzen weg
 gewesen. Ab jetzt stehen sie hier — das ist der Kanal, in den sie laut der
 Regel oben von Anfang an gehört hätten. Mein Fehler, nicht deiner.
 
-**🔵 1. Push-Hook: zweiter Checkout, ja oder nein?**
+**✅ 1. Push-Hook: zweiter Checkout** — *entschieden 15.09.2026: ja. Bei Platform, CoS-P-023.*
 Platform hat durchgerechnet statt geschätzt. Der Vorschlag: ein zweiter,
 isolierter Checkout prüft beim Push den *tatsächlich gepushten* Commit statt
 des gemeinsamen Arbeitsordners. Damit schlägt der Hook nicht mehr an, weil
@@ -1061,7 +1061,7 @@ nichts live geht — das ist kein knapper Fall. Platform wartet auf deine
 Antwort und baut es bewusst nicht ungefragt, weil es dein täglicher Ablauf
 ist. Details: `docs/chief-of-staff-platform-todos.md`, CoS-P-014/CoS-P-018.
 
-**🔵 2. Pflichtangaben auf dem Angebot für GmbH-/UG-Betriebe (§ 35a GmbHG).**
+**✅ 2. Pflichtangaben auf dem Angebot für GmbH-/UG-Betriebe (§ 35a GmbHG)** — *entschieden 15.09.2026: ja, vor Gate 1. Bei Legal (CoS-L-008) und Engineering (CoS-E-057).*
 Head of Legal hat beim Durchsehen der `companies`-Tabelle festgestellt:
 **Rechtsform, Registergericht, Registernummer und Geschäftsführer gibt es im
 Produkt überhaupt nicht.** Ein Angebot ist ein Geschäftsbrief; für GmbH, UG
@@ -1078,7 +1078,7 @@ vier Textfelder, und „abmahnfähig" ist die eine Fehlerklasse, die du dir als
 Einzelunternehmerin am wenigsten leisten kannst. Details:
 `docs/chief-of-staff-legal-todos.md`, CoS-L-007.
 
-**🔵 3. `_to_delete/` aufräumen?**
+**✅ 3. `_to_delete/` aufräumen** — *entschieden 15.09.2026: löschen. Befehl unten, Ausführung bei dir.*
 Der Ordner liegt im Projektverzeichnis, steht in `.gitignore`, enthält aber
 über 250 Dateien und Unterordner — Git-Lock-Reste, alte `tsconfig`-Kopien,
 `.tgz`-Archive, Diagnose-Dateien aus August und September. Selbst nachgezählt.
@@ -1116,3 +1116,34 @@ aber nicht ihre Begründung.
 PowerShell-Befehl steht in meiner Meldung im Chat.
 
 ---
+
+---
+
+# ✅ Entschieden am 15.09.2026, 16:45 MESZ
+
+Sandy hat vier Punkte auf einmal beantwortet. Sie sind damit **erledigt und
+verteilt** — die Punkte 1 bis 3 oben und der Prototyp aus
+`arbeitsreihenfolge.md`. Hier steht nur noch, wohin sie gegangen sind.
+
+| Punkt | Antwort | liegt jetzt bei |
+|---|---|---|
+| **Push-Hook, zweiter Checkout** | **ja** | Platform, `chief-of-staff-platform-todos.md`, CoS-P-023 |
+| **§-35a-Pflichtangaben** | **ja, vor Gate 1** | Legal (Feldliste) CoS-L-008 · Engineering (Einbau) CoS-E-057 |
+| **`_to_delete/` löschen** | **ja** | siehe unten — das musst du selbst ausführen |
+| **DC-102-Prototyp** | **freigegeben** | Designer, `design-check.md`, DC-102 ✅ |
+
+Keiner dieser vier Punkte wartet noch auf dich.
+
+## Das `_to_delete/`-Löschen kann ich nicht für dich ausführen
+
+Nicht, weil die Freigabe fehlt — die hast du gegeben —, sondern weil mir der
+Zugriff fehlt. Seit dem Windows-Update vom 08.09. hängt sich die Shell in
+deinem Arbeitsordner nicht mehr ein; ich kann Dateien lesen und schreiben,
+aber keine Befehle bei dir ausführen und nichts löschen. Das ist derselbe
+Grund, aus dem `docs-sichern.mjs` seit dem 08.09. in keinem Rollen-Lauf mehr
+läuft (CoS-P-022).
+
+Der Befehl steht in meiner Meldung im Chat. Er ist ein Einzeiler, und der
+Ordner steht in `.gitignore` — es geht nichts verloren, was das Repository
+kennt.
+

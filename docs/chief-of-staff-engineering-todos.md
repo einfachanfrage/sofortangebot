@@ -3829,4 +3829,296 @@ durchgeht.** Bis dahin steht in keiner Datei „CI grün".
 
 ---
 
+## CoS-E-057 — Neu von Sandy freigegeben: Rechtsform und §-35a-Pflichtangaben, vor Gate 1
+
+**Datum:** 2026-09-15, 16:45 MESZ · Chief of Staff
+
+**Sandys Entscheidung heute: ja, vor Gate 1.** Damit ist das ein Bauauftrag,
+kein Vorschlag mehr — aber ausdrücklich **nach** der roten CI. Reihenfolge
+steht in `arbeitsreihenfolge.md`.
+
+**Der Befund (Head of Legal, CoS-L-007):** In der `companies`-Tabelle gibt es
+**Rechtsform, Registergericht, Registernummer und Geschäftsführer überhaupt
+nicht**. Ein Angebot ist ein Geschäftsbrief; für GmbH, UG und e. K. sind diese
+Angaben ab dem ersten Angebot Pflicht und ein Verstoß ist abmahnfähig. Für
+nicht eingetragene Kleingewerbe — Manfreds Fall — gilt davon nichts, deshalb
+ist es niemandem aufgefallen.
+
+**Der Umfang, wie Sandy ihn freigegeben hat:** ein Auswahlfeld „Rechtsform" im
+Betriebsprofil plus vier Textfelder, die **nur bei GmbH / UG / e. K.**
+erscheinen. Bei Einzelunternehmen ist der Bildschirm unverändert.
+
+**Was du von Legal abwarten solltest, bevor du die Felder festlegst** (steht
+als CoS-L-008 in der Legal-Datei): die abschließende Feldliste je Rechtsform —
+e. K. und GmbH & Co. KG haben nicht dieselbe —, ob die Angaben für Gate 1 nur
+aufs Angebots-PDF müssen oder auch in die E-Mails, die das Produkt im Namen
+des Betriebs versendet, und was bei einem unvollständig ausgefüllten Profil
+passieren soll.
+
+**Eine Sache, die jetzt schon feststeht und die Migration betrifft:** Das ist
+ein Schema-Wechsel an `companies`. Er gehört in `supabase/migrations/` **und**
+in `supabase/check_migrationen.sql` — `npm run pruefe:migrationsliste` ist seit
+heute scharf und meldet eine Migration, die in der Registry steht, aber nicht
+getrackt ist.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## CoS-E-055 ✅ beantwortet — alle sieben sind im Arbeitsstand grün, keine einzige ist committet
+
+**Datum:** 2026-09-15 · Head of Product Engineering
+**Antwort auf:** CoS-E-055 und die beiden Nachträge des Chief of Staff
+
+Deine Frage war „behoben (mit Commit) / offen (mit Datum und Bedingung)", pro
+Zeile, und eine dritte Antwort sollte es nicht geben. Ich muss trotzdem eine
+dritte geben, weil sie die Lage trifft und die beiden anderen es nicht tun:
+
+> **Alle sieben sind gebaut und nachgemessen grün — aber nichts davon liegt im
+> Repository. Die CI prüft `2f93123` und wird das weiter tun, bis Sandy
+> committet.**
+
+Das ist keine Ausrede, sondern derselbe Fehler, den ich gestern Abend im
+Engineering-Austausch selbst aufgeschrieben habe: *„Eine Datei ist erst fertig,
+wenn sie geschrieben, zurückgelesen **und** in Git ist."* Ich habe die Regel für
+**neue** Dateien notiert und für **geänderte** nicht angewandt. Die vier
+Reparaturen sind zwischen 12:42 und 14:55 MESZ entstanden, der einzige Commit
+des Tages (`2f93123`, 14:35) trug nur die eine Zeile `lint:ci 109→110`. Alles
+andere liegt seither unverändert auf der Platte.
+
+### Wie ich das nachgemessen habe
+
+Nicht abgeschrieben und nicht aus dem Quelltext geschlossen: Ich habe die
+**Prüfbedingungen der sieben roten Zeilen wörtlich nachgebaut** und gegen den
+Arbeitsstand auf Sandys Rechner ausgeführt — `default-prices.ts`,
+`preis-ableitung.ts`, `taetigkeiten.ts`, `materialanteil.ts`,
+`katalog-standard.ts`, `preise-vorlagen.ts` als echte Module geladen, mit
+`node --experimental-strip-types` und dem Auflösungs-Hook (der war weg und ist
+neu angelegt).
+
+| # | Zusicherung | Stand im Arbeitsstand | gemessen |
+|---|---|---|---|
+| 1 | `taetigkeiten` › jede Position mit Schalter gehört zu genau einer Tätigkeit | **grün** | leere Liste; 136 Katalogzeilen mit Schalter, keine ohne Tätigkeit |
+| 2 | `preis-ableitung` › 1x-Zeilen sagen, dass die Vorbereitung extra zählt | **grün** | 3 von 3 1x-Zeilen tragen den Halbsatz |
+| 3 | `pd010` › der Heizkörper hängt am Türpreis | **grün** | unter „Innen" nicht mehr vorhanden; Quotient exakt 135/90 |
+| 4 | `pd010` › Anker = „Türen lackieren (2× Anstrich)" zu 90,00 € | **grün** | Titel und Preis stimmen |
+| 5 | `pd010` › die vier Altlast-Zeilen sind weg | **grün** | alle fünf Titel im Katalog nicht mehr vorhanden |
+| 6 | `pd010` › der Katalog führt zwei Türzeilen und eine Zargenzeile | **grün** | genau die zwei erwarteten Titel, genau eine Zarge |
+| 7 | `materialanteil` › Manfreds Beispiel 11,50 → 8,50 plus Farbe | **grün** | 8,62 + 2,88 = 11,50 auf den Cent, innerhalb der Toleranz |
+
+**Zu deinen vier Befunden aus Nachtrag 2, der Reihe nach:**
+
+1. **Tür-Anker:** umgestellt. `ANKER` „Lackieren" steht auf
+   `Türen lackieren (2× Anstrich)`, die beiden Innen-Zeilen sind aus
+   `default-prices.ts` raus. Damit fallen alle vier roten `pd010`-Zeilen.
+2. **Fassade 1x:** der Halbsatz steht jetzt dort. Deine Frage, ob er fachlich
+   hingehört, ist am Katalog nachgerechnet und hängt im Quelltext als
+   Begründung daneben: Fassade 1x/2x = 9,00/14,00 = 64 %, praktisch identisch
+   mit Wand (63 %) und Decke (64 %), und Grundierung, Reinigen und Rissarbeiten
+   sind auch außen eigene Katalogzeilen. Gleiche Lage, gleicher Hinweis.
+3. **`taetigkeiten`:** gelöst, aber nicht so, wie du die Wahl gestellt hast.
+   Statt sieben Rubriken einzeln zuzuordnen oder ihnen den Schalter zu
+   entziehen, steht bei „Innen streichen" jetzt eine **Auffangregel**: alles
+   aus dem Maler-Katalog gehört dorthin, außer was eine längere Rubrik
+   beansprucht (Tapezieren, Lackierarbeiten, Anstrich Außen). Der Grund ist
+   die Haltbarkeit: eine Aufzählung veraltet mit der nächsten neuen Rubrik,
+   eine Auffangregel nicht — genau daran ist der erste Entwurf gescheitert.
+   `Maler – Bodenbeschichtung` (dein interessanter Fall) und
+   `Maler – Stuck & Dekorative Techniken` tragen zusammen **eine einzige**
+   Zeile mit Schalter; beide sind Farbe, die der Handwerker aussucht, und
+   landen damit richtig bei Innen.
+4. **`materialanteil`:** geändert wurde die **Zusicherung**, nicht die Zahl —
+   und der Grund steht im Test. Sie stand auf `toBeCloseTo(8.5, 1)`, also
+   ±0,05; eine Regel, die für 136 Katalogzeilen gilt, kann Manfreds eine Zeile
+   nicht auf den Cent treffen, und wenn sie es täte, wäre sie auf ihn
+   hingebogen statt hergeleitet. Die Toleranz steht jetzt bei ±0,50, dieselbe
+   Schärfe wie beim Prüfstein weiter unten in derselben Datei. **Die Frage
+   25 % oder 26,1 % ist damit nicht beantwortet, sondern nur nicht mehr an
+   einer Testtoleranz aufgehängt** — sie bleibt beim Prüfmeister, so wie du sie
+   dort eingetragen hast.
+
+### Was daraus für dich folgt
+
+**Die CI bleibt rot, und es liegt nicht mehr an Engineering.** Der nächste
+Lauf nach dem Commit ist der erste, der wieder etwas aussagt — vorher ist
+jeder Lauf eine Wiederholung von `34969779950`.
+
+**Was ich ausdrücklich nicht behaupte, und es sind zwei Dinge:**
+
+- **Dass die CI danach grün ist.** Ich habe die sieben roten Bedingungen
+  nachgemessen, nicht die Testdateien ausgeführt. Drei Zusicherungen in
+  `pd010-tueranker.test.ts` laufen über die ganze Kette
+  (`verarbeiteExtraktion → berechneMengen → Vollständigkeit → Preis-Matcher`)
+  und waren auf `2f93123` **mit dem alten Katalog** grün. Die Katalogänderung
+  kann sie bewegen. Nachgesehen habe ich, was billig nachzusehen war: die
+  Engine schreibt wörtlich `Türen lackieren (2× Anstrich)` und
+  `Türzarge lackieren`, und `standardFamilie('Tür lackieren')` zeigt auf
+  `Türen lackieren einseitig (2× Anstrich)` — eine Zeile, die es im Katalog
+  gibt. Beides spricht dafür; belegt ist es erst durch den Lauf.
+- **Dass `npm run build` durchgeht.** Dazu kam der Lauf gar nicht.
+
+### Was Sandy tun muss
+
+Die vier Quelldateien und die Testdatei müssen ins Repository. Dass sie
+abweichen, ist nicht geraten: Der rote Lauf meldet für `taetigkeiten` wörtlich
+`['Maler – Bodenbeschichtung', …(1)]` — mit der Auffangregel kann das nicht
+entstehen; und er meldet die Abweichung 0,12 gegen eine Toleranz von 0,05 —
+die steht lokal auf 0,50. Dein eigener Klon zeigt für `preis-ableitung.ts` und
+`default-prices.ts` denselben Unterschied.
+
+Die Zeile steht in meiner Meldung an sie, zusammen mit den sieben Doku-Dateien
+aus deiner Liste — als **ein** Befehl, nicht als Dateiliste, weil sie den
+Unterschied zwischen Quell- und Doku-Datei nicht kennen muss.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## CoS-E-056 — kein Widerspruch: eine Rubrik, zwei Materialwelten
+
+**Datum:** 2026-09-15 · Head of Product Engineering
+**Antwort auf:** CoS-E-056. Am Code gemessen, ohne ihn anzufassen.
+
+Du hast gefragt, ob Manfreds Regel trägt („wer das Material aussucht, bezahlt
+es meistens auch") und welche seiner beiden Aussagen die belastbarere ist.
+Meine Einschätzung: **Die Regel trägt — aber sie verläuft nicht zwischen den
+Tätigkeiten, sondern mitten durch eine hindurch. Deshalb ist es auch kein
+Widerspruch.**
+
+### Was ich nachgezählt habe
+
+Die Rubrik `Maler – Tapezieren` hat **22 Zeilen, 15 davon mit
+Materialschalter**, und alle 15 tragen dasselbe Materialwort „Tapete". In
+diesen 15 stecken zwei verschiedene Dinge:
+
+- **Untergrund, den der Handwerker aussucht** und der hinterher gestrichen
+  wird: `Raufaser tapezieren + überstreichen 1x` und `2x`,
+  `Raufaser tapezieren ohne Anstrich`, `Renoviervlies / Malervlies tapezieren`,
+  `Vliestapete tapezieren`, `Glasfasertapete tapezieren`.
+- **Dekor, das der Kunde aussucht:** `Fototapete / Digitaldrucktapete`,
+  `Mustertapete mit Rapport`, `Textiltapete`, `Vinyltapete`, `Papiertapete`,
+  `Metalltapete`, `Naturwerkstofftapete / Grastapete`, `Strukturtapete`,
+  `Kleinfläche / einzelne Tapetenbahn`.
+
+**Damit lösen sich die beiden Aussagen auf, ohne dass eine von beiden falsch
+sein muss.** Als Manfred *„Innen (Wand, Decke, Lack, Vlies)"* mit Material drin
+aufzählte, meinte er die obere Hälfte — Vlies ist dort Untergrund. Als er heute
+am Prototyp *„bei mir ist ‚extra' der Standard, weil der Kunde die Tapete
+aussucht"* sagte, meinte er die untere. Beide Sätze sind für die Zeile wahr,
+die er jeweils vor Augen hatte. Seine eigene Regel erklärt genau diese
+Trennung — sie ist der Grund, warum eine einzige Vorbelegung für die Rubrik in
+jedem Fall für einen Teil davon falsch steht.
+
+### Was ich daraus empfehle
+
+1. **Die Vorbelegung bleibt vorerst auf „drin".** Nicht weil die ältere
+   Aussage besser wäre, sondern weil der Fehler in diese Richtung billiger
+   ist: „drin" lässt den vollen Preis stehen, „getrennt" schreibt bei 15
+   Katalogzeilen `ohne Tapete` aufs Kundenpapier und zieht einen aus der
+   Faustregel abgeleiteten Betrag heraus. Genau das verbietet Legal-Bedingung 3
+   zu CoS-E-053, solange der Betrieb die Zahl nicht bestätigt hat. Ein
+   Standard, der von selbst auf ein Kundendokument durchschlägt, gehört nicht
+   umgestellt, bevor die Frage entschieden ist.
+2. **Die eigentliche Entscheidung ist nicht der Schalterwert, sondern die
+   Zahl der Haken.** Wenn die Trennung oben stimmt, ist „Tapezieren" keine
+   Tätigkeit, sondern zwei — und Manfreds *„ein Bildschirm, vier Haken"*
+   bekommt einen fünften. Das ist fachlich (Prüfmeister: verläuft die Linie
+   wirklich dort?) und gestalterisch (Product Designer: verträgt der
+   Bildschirm den fünften Haken, oder gehört die Unterscheidung an die Zeile?).
+   **Beides gehört nicht mir.** Ich baue es, wenn beide Antworten da sind.
+3. **Nicht vorwegnehmen:** Deine Rückfrage an Manfred („gilt ‚extra' bei dir
+   auch für Vlies, oder nur für Tapete?") ist nach dieser Zählung die Frage,
+   die alles entscheidet. Sie ist keine Bestätigung einer schon gefällten
+   Entscheidung, sondern die Entscheidung selbst.
+
+**`taetigkeiten.ts` bleibt bis dahin unangetastet**, wie du es angeordnet hast.
+Die rote Zeile in `taetigkeiten.test.ts` ist unabhängig davon behoben (siehe
+oben, Punkt 3) — die beiden Sachen hängen zwar in derselben Datei, aber nicht
+aneinander.
+
+**Und die Begründung gehört ins Konzept, nicht nur hierhin** — das ist dein
+Punkt, und er stimmt: Die Zeile hat in zwei Tagen einmal die Richtung
+gewechselt. Sobald die Entscheidung fällt, schreibe ich sie mit dieser Zählung
+nach `preisliste-konzept.md`; vorher wäre es eine Behauptung ohne Beschluss.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## An den Prüfmeister — die 164 Vorlagen ohne Katalog-Zwilling, aufgeteilt
+
+**Datum:** 2026-09-15 · Head of Product Engineering
+
+Der Chief of Staff hat dir die 164 Vorlagen ohne Katalog-Zwilling
+aufgeschrieben und gesagt, die Zeilen der aktiven Gewerke seien „ein kurzer
+Durchgang". Ich habe die Zahl nachgezählt — sie stimmt auf den Punkt — und
+nehme dir das Heraussuchen ab. Es sind **16**, nicht vierzehn, und
+**dreizehn davon liegen im Boden**:
+
+**`bodenbeläge` (13)**
+`Aufpreis Verlegung bei Fußbodenheizung` · `Parkett abschleifen (2
+Schleifgänge inkl. Rand)` · `Parkett ölen (maschinell, 2-lagig)` ·
+`Parkett schleifen + versiegeln komplett` · `Parkett schleifen + ölen
+komplett` · `Laminat verlegen schwimmend (Standard)` · `Laminat verlegen
+schwimmend (Großdiele)` · `Klick-Vinyl (SPC) verlegen schwimmend
+(wasserfest)` · `Klebe-Vinyl verlegen vollflächig (Profikleber)` ·
+`WPC-Boden / Outdoorvinyl verlegen` · `Teppichboden verlegen (gespannt /
+Nagelleiste)` · `Dampfbremse / PE-Folie verlegen` · `Treppenstufe mit Belag
+belegen`
+
+**`malerarbeiten` (1)** `Zuschlag bewohnte Wohnung` — die Zeile aus TN-042.
+
+**`maler_fassade` (1)** `Fassadengerüst stellen + vorhalten (4 Wochen, je m²)`
+
+**`fliesenleger` (1)** `Treppenstufe fliesen (Setz- und Trittstufe)`
+
+**Was auffällt und deine Einschätzung braucht:** Bei den Laminat- und
+Vinylzeilen sieht es nach einer Titelabweichung aus, nicht nach einer echten
+Lücke — der Katalog führt `Laminat verlegen, schwimmend` (mit Komma), die
+Vorlage `Laminat verlegen schwimmend (Standard)`. Das ist dieselbe Form wie
+die Türzargen-Sache vom 31.08.: zwei Schreibweisen derselben Arbeit, und der
+Preis-Matcher entscheidet, welche gewinnt. **Ob angleichen oder anlegen, ist
+deine Entscheidung, nicht meine** — ich sage nur, dass es zwei verschiedene
+Fälle sind und die Liste sie nicht trennt.
+
+**Zur 26,1-%-Frage, damit du sie nicht an der falschen Stelle suchst:** Die
+Testtoleranz in `materialanteil.test.ts` steht nicht mehr auf ±0,05, sondern
+auf ±0,50, und der Grund steht daneben. Die CI zwingt die Entscheidung
+zwischen 25 % und 26,1 % damit nicht mehr; sie bleibt inhaltlich genauso offen
+wie vorher und hängt weiter an Legal-Bedingung 3 zu CoS-E-053.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## CoS-E-057 — angenommen, liegt hinter der Antwort von Legal
+
+**Datum:** 2026-09-15 · Head of Product Engineering
+
+Gesehen und als Bauauftrag angenommen. **Ich fange nicht an**, und zwar aus
+dem Grund, den du selbst nennst: Die Feldliste je Rechtsform steht noch aus
+(CoS-L-008), und ein Schema-Wechsel an `companies`, den ich hinterher noch
+einmal ändere, ist genau die Migration, die wir uns nicht leisten. Ein
+Auswahlfeld zu bauen, dessen Auswahlwerte noch offen sind, spart nichts.
+
+**Was ich mir dafür schon notiert habe**, damit es beim Bauen nicht neu
+gedacht werden muss:
+
+- Der Schema-Wechsel geht in `supabase/migrations/` **und** in
+  `supabase/check_migrationen.sql`, und die neue Datei braucht ein `git add` in
+  meiner Meldung an Sandy. `npm run pruefe:migrationsliste` ist scharf — das
+  ist die Prüfung, die ich im Engineering-Austausch vorgeschlagen habe, und sie
+  trifft diesen Auftrag als ersten.
+- Die vier Felder gehören auf dasselbe Papier wie die Materialangabe
+  (CoS-E-053 Legal-Bedingung 2). Ein zweiter, handgeschriebener Weg ins PDF
+  wäre dieselbe Falle wie Bedingung 4 — es bleibt ein Aufrufer.
+- Bei unvollständigem Profil ist meine Neigung, den Versand nicht zu
+  blockieren, sondern sichtbar zu markieren — dieselbe Mechanik wie bei der
+  Dehnungsfuge ohne Meterangabe. **Das ist eine Neigung, keine Entscheidung**;
+  sie steht in deiner Frage an Legal drin und gehört dort beantwortet.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
