@@ -4911,4 +4911,405 @@ von beiden zuerst drankommt, hängt am Aufwand und den entscheidet ihr.
 *Chief of Staff · 2026-09-15*
 
 
+## CoS-E-059 ✅ Eingriff 2 gebaut — eine gesagte Vorarbeit bleibt bei ihrem Bauteil (15.09.2026)
+
+**Datum:** 2026-09-15, 21:45 MESZ · Head of Product Engineering
+**Betrifft:** PM-045-C · **Eingriff 2** der drei aus der Einschätzung von 17:40
+**Status:** gebaut, gemessen, Sperrklinke gelöst. **Nicht committet** — das
+kann nur Sandy.
+
+### Was falsch war
+
+Der Fall des Prüfmeisters, wörtlich:
+
+```
+„Im Flur die vier Innentüren lackieren, die sind alt, die müssen vorher
+ angeschliffen und grundiert werden. Im Wohnzimmer die zwei Fenster von
+ innen streichen."
+
+vorher:  … + Fenster abschleifen (20,00 €) + Fenster grundieren (25,00 €)
+nachher: beide Zeilen entstehen nicht mehr
+```
+
+Die Ursache ist **nicht** die Stückzahl — das war Eingriff 1 — sondern die
+**Reichweite**. Jede Regel in `maler-lackieren.ts` bekommt `lower`, also das
+ganze Transkript. Ein Wort aus dem Türen-Satz löst damit eine bepreiste Zeile
+am Fenster aus. Das ist „Nichts erfinden", Satz 3.
+
+### Was gebaut ist
+
+| Datei | Änderung |
+|---|---|
+| `src/lib/vollstaendigkeit/helpers.ts` | neu: `vorarbeitGiltFuer()` — vier Stufen, siehe unten |
+| `src/lib/vollstaendigkeit/maler-lackieren.ts` | Abschleifen und Grundieren bei Türen, Fenstern **und** Heizkörpern hängen jetzt daran |
+| `src/lib/__tests__/cos-e-059-vorarbeit-am-bauteil.test.ts` | **neu**, 12 Zusicherungen |
+| `src/lib/__tests__/pruefmeister-batch-1509.test.ts` | PM-045-C von `it.fails` auf `it` — die Sperrklinke ist gelöst, ein Rückfall wäre ab jetzt rot |
+
+### Die Staffelung — und warum sie in dieser Reihenfolge steht
+
+1. **Vorarbeit im Diktat gar nicht genannt → unverändert.** Wer „die Türen
+   lackieren" sagt, bekommt Anschleifen und Grundieren weiter.
+2. **Im Satz MIT dem Bauteil genannt → gilt.**
+3. **Nur im Satz eines ANDEREN Bauteils → gilt hier nicht.** Das ist der Fund.
+4. **In einem Satz ohne jedes Bauteil → gilt wieder für alle.** „Alles vorher
+   anschleifen" ist eine allgemeine Ansage und darf keine Zeile verlieren.
+
+Stufe 1 und 4 sind der Grund, dass dieser Eingriff **nirgends Geld wegnimmt,
+wo heute zu Recht welches steht.** Hätte ich nur „nicht gesagt → keine Zeile"
+gebaut, wäre auf jedem Türen-Angebot ohne das Wort „anschleifen" eine
+bepreiste Vorarbeit verschwunden. Das war nicht gemessen und nicht bestellt.
+
+Getrennt wird am **Satz**, nicht am Teilsatz. „…, die sind alt, die müssen
+angeschliffen werden" hängt per Komma am Hauptsatz und meint dessen Bauteil.
+Auch dafür steht eine Zusicherung — wer hier auf Teilsätze umstellt, nimmt
+den Türen ihre ausdrücklich bestellte Vorarbeit weg.
+
+### Heizkörper mit dazu — aber nur diese eine Regel
+
+`pruefeHeizkLackieren` schob Abschleifen und Grundieren ebenfalls
+bedingungslos dazu. Dieselbe Fehlerklasse, dieselbe Datei, drei Zeilen. Der
+**Anstrich selbst bleibt immer** — er ist der Auftrag. Das ist **nicht**
+CoS-E-063: Die fehlende Mengenquelle für Heizkörper ist unberührt und steht
+weiter hinter Eingriff 2.
+
+### Gemessen
+
+- **Neu:** 12 Zusicherungen grün.
+- **Gesamtlauf:** 87 Dateien, **1.452 grün, 58 erwartete Sperrklinken, keine
+  rote.** Vorher: 1.439 grün, 59 Sperrklinken. Die Differenz ist restlos
+  erklärt — 12 neue Zusicherungen plus die eine gelöste Sperrklinke. **Keine
+  einzige bestehende Zeile hat sich bewegt.**
+- **A/B über 12 Transkripte**, alte gegen neue Fassung, Position für Position:
+  **ein Fall von zwölf verändert**, und zwar genau der gemessene — die zwei
+  erfundenen Fenster-Zeilen fallen weg. Elf Fälle Zeichen für Zeichen gleich,
+  darunter „Die Innentüren lackieren.", „Die Fenster lackieren." und
+  „Alles anschleifen. Türen und Fenster lackieren."
+
+**Zur Ersatzumgebung:** Die zwei roten Dateien der letzten Läufe
+(`entscheidungen-31-08.test.ts`, `pruefmeister-soll.test.ts`) sind **keine
+Umgebungsfrage mehr.** Sie brauchten `src/app/api/angebot-generieren/route.ts`
+und `supabase/functions/_shared/prompt-extraktion-v4.ts`; beide sind jetzt
+mitgeladen, die Next- und Supabase-Importe darin durch Platzhalter ersetzt.
+Der Prüfstand ist damit vollständig grün, und ein rotes Feld heißt ab jetzt
+wirklich „Befund".
+
+### Für Sandy
+
+Neue Datei, muss vor dem Push in Git:
+
+```
+git add src/lib/__tests__/cos-e-059-vorarbeit-am-bauteil.test.ts
+```
+
+### Eine Frage, die nicht mir gehört — an den Prüfmeister
+
+Stufe 1 oben lässt bewusst offen, was du eigentlich gefragt hast: **Darf eine
+Vorarbeit, die niemand gesagt hat, überhaupt bepreist auf dem Kundenpapier
+stehen?** Heute steht sie dort — „die Türen lackieren" erzeugt Anschleifen
+und Grundieren, weil das fachlich dazugehört.
+
+Zwei Wege, ich entscheide keinen:
+
+- **bleibt bepreist** — fachlicher Standard, wie heute;
+- **wandert in die Fehlt-Liste** („Türen abschleifen (bitte prüfen)"), so wie
+  es bei den Heizungsrohren aus F.2 #8 schon gebaut ist. Dann steht sie
+  sichtbar da, aber ohne Preis, und niemand erfindet Arbeit.
+
+Der Unterschied ist Geld in beide Richtungen: Weg 1 kann 45 € erfinden, Weg 2
+kann 45 € verlieren, wenn niemand tippt — genau die Sorge aus PM-046-C. Für
+Türen allein liegen 45,00 € je Angebot darauf. **Sag, welcher Weg richtig
+ist; gebaut ist er an einer Stelle.**
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## CoS-E-062 — Einschätzung: PM-064 gehört zu CoS-E-059. PM-066/PM-067 sind eine Klasse, aber eine kleine — und eine der vier Zeilen braucht den Prüfmeister.
+
+**Datum:** 2026-09-15, 21:55 MESZ · Head of Product Engineering
+**Antwort auf** die zwei Fragen aus CoS-E-062 · **nichts davon gebaut**,
+das ist eine Einschätzung
+**Alles darin am Quelltext und am Katalog nachgemessen**, nicht geschätzt.
+
+### 1. PM-064 gehört zu CoS-E-059 — und zwar enger als vermutet
+
+Der Chief of Staff fragt, ob es „derselbe Dateibereich" ist. Es ist **dieselbe
+Funktion und dieselben zwei Zeilen.**
+
+`pruefeWasserflecken` in `maler-sonder.ts` hat genau einen Auslöser:
+
+```ts
+const hatFlecken = !hatSchimmelFlag &&
+  (lower.includes('fleck') || lower.includes('wasserfleck')
+   || lower.includes('sperr') || lower.includes('sperranstrich'))
+```
+
+PM-064-A („Sperrmüll") und PM-064-B („absperren") hängen beide an dem einen
+`includes('sperr')` in dieser Zeile. Und **PM-064-C ist wörtlich PM-046-C**:
+Es ist derselbe `filtereArray`-Aufruf zwei Zeilen darunter, der die gesagte
+`Decke streichen`-Position wegwirft und neu anlegt. Nur der Auslöser ist ein
+anderer.
+
+**Damit fällt PM-064 in Eingriff 3, und CoS-E-062 wird um einen Punkt
+kürzer** — wie der Chief of Staff es angeboten hat. Der Zusatzaufwand in
+Eingriff 3 ist eine Wortgrenze statt eines Wortstamms; eine Zeile, plus
+Zusicherungen für Sperrmüll, absperren, Absperrband, Sperrholz und gesperrt.
+**Das verlängert Eingriff 3 nicht spürbar.**
+
+### 2. PM-066 und PM-067 — ja, eine Klasse. Aber nicht die, die man erwartet.
+
+Die Klasse ist **nicht** der Preis-Matcher. Sie ist der **Titel**:
+
+> Ein Merkmal, das im Diktat steht und die Katalogzeile bestimmt — der Belag
+> bei der Treppe, „verklebt" beim Altbelag — kommt nicht in den Titel.
+
+Am Katalog nachgemessen, Titel für Titel durch `findePreisposition`:
+
+| gesuchter Titel | Treffer | Preis |
+|---|---|---|
+| `Trittstufen belegen` (heute) | **keiner** | 0,00 € |
+| `Setzstufen belegen` (heute) | **keiner** | 0,00 € |
+| `Treppenstufen belegen` | **keiner** | 0,00 € |
+| `Vinyl auf Trittstufen kleben` | `Vinyl auf Treppenstufen kleben` | **55,00 €** |
+| `Teppichboden entfernen und entsorgen` (heute) | die Zeile für den **losen** Teppich | 6,00 € |
+| `Teppichboden verklebt entfernen` | genau diese Zeile | **9,00 €** |
+| `Teppichboden entfernen und entsorgen (verklebt)` | **keiner** | 0,00 € |
+
+Drei Dinge folgen daraus, und alle drei sind gemessen:
+
+- **Der Matcher braucht keine Änderung.** Sobald das Merkmal im Titel steht,
+  trifft er — teils auf 1,0, teils auf 0,67, immer über der Schwelle. Eine
+  Lockerung der Schwelle wäre der teure Weg und ist nicht nötig. Das ist die
+  wichtigste Zeile dieser Einschätzung: **die Klasse berührt kein anderes
+  Gewerk.**
+- **Der Katalogwortlaut ist die Schablone, nicht ein eigener Satz.** Die
+  letzte Tabellenzeile zeigt, was passiert, wenn man das Merkmal anhängt
+  statt einzusetzen: „… und entsorgen (verklebt)" findet **gar nichts** und
+  wäre schlechter als heute.
+- **Beide Stellen kennen das Merkmal schon.** `pruefeTreppenBoden` hat
+  `belagName` im Zugriff und benutzt es heute nur im Verkleiden-Zweig.
+  `pruefeAltbelag` hat `hatVerklebt` als Variable — der Umbenennungs-Block
+  in `boden-vorarbeiten.ts` Z. 57–62 fragt ihn nur nicht. Es fehlt keine
+  Information, sie kommt bloß nicht an. Dieselbe Bauart wie PM-045-A.
+
+**Aufwand: klein, zwei Stellen, ein Durchlauf.** Auf die ausdrückliche Frage
+des Chief of Staff — *„wenn es eine Klasse wird und deutlich länger dauert,
+will Sandy das wissen"* — lautet die Antwort: **es dauert nicht länger. Sandy
+muss deswegen nichts entscheiden.**
+
+### 3. Ein Geschenk: PM-066-C ist ein Wort
+
+Der Kantenprofil-Zweig in `pruefeTreppenBoden` feuert auf
+`kantenprofil|treppenkante|rutschhemmend`. **„Treppennase" steht nicht in
+der Liste** — obwohl der Katalog die Zeile wörtlich
+`Treppennase / Kantenprofil Treppe montieren` heißt und sie im Test auf 1,0
+trifft, 22,00 €. Ein Wort in einer Regex, mit Zusicherung. Gehört in
+denselben Durchlauf.
+
+### 4. 🔴 PM-066-B kann ich NICHT bauen — das ist eine fachliche Entscheidung
+
+Und das ist der Fund, der in dieser Einschätzung zählt.
+
+Der Bodenkatalog führt die Treppe **je Stufe**, nicht je Stufenteil:
+`Vinyl auf Treppenstufen kleben`, 55,00 €/Stück. Eine eigene Setzstufen-Zeile
+gibt es nur bei Fliesen und Naturstein — und die Fliesenzeile sagt
+ausdrücklich `Treppenstufe fliesen (inkl. Setz- und Trittstufe)`.
+
+Gemessen, und hier wird es unangenehm:
+
+```
+'Vinyl auf Trittstufen kleben'  → Vinyl auf Treppenstufen kleben | 55,00 €
+'Vinyl auf Setzstufen kleben'   → Vinyl auf Treppenstufen kleben | 55,00 €
+```
+
+**Beide Titel treffen dieselbe Katalogzeile.** Wer PM-066-A und PM-066-B in
+einem Aufwasch „repariert", schreibt 14 × 55 € **zweimal** ins Angebot:
+1.540,00 € statt der 770,00 €, die der Prüfmeister als Soll für PM-066-A
+nennt. Das ist genau die Doppelberechnung, die er selbst beim Ständerwerk in
+PM-068 gefunden hat — nur würde sie hier durch die Reparatur erst entstehen.
+
+Die Frage, die ich nicht entscheide: **Ist die Setzstufe beim Bodenbelag eine
+eigene bepreiste Zeile oder steckt sie im Stufenpreis?**
+
+- Steckt sie drin → PM-066-B ist **keine** fehlende Position, sondern eine zu
+  viel. Die zweite Zeile muss weg, nicht einen Preis bekommen.
+- Ist sie eigen → der Katalog braucht eine Zeile, die es heute nicht gibt.
+  Das ist dann kein Engineering-Punkt, sondern ein Katalog-Punkt.
+
+**PM-066-A baue ich nicht ohne diese Antwort**, weil die Antwort bestimmt, ob
+es eine oder zwei Positionen sind. Sie hängt aber nur an PM-066-B/A, nicht an
+PM-066-C und nicht an PM-067-A — die drei sind unabhängig und bauen sich.
+
+### 5. Was getrennt bleibt
+
+- **PM-066-D** (die Treppe bekommt zusätzlich ihren Grundriss als Fläche,
+  3,15 m² × 16,00 € = 50,40 €) ist **kein Titelproblem**. Da rechnet die
+  Boden-Engine eine Raumfläche für einen Raum, der keine hat. Eigener
+  Eingriff, eigene Datei, hinter dem Rest.
+- **PM-067-B** (der bestellte Container) bleibt bei **PM-060-B**, wie der
+  Chief of Staff geschrieben hat. Dieselbe Wand, dieselbe offene
+  Einschätzung. Wird von nichts hier miterledigt.
+
+### 6. Reihenfolge, die ich vorschlage — die Entscheidung liegt bei euch
+
+1. **PM-067-A** — ein `hatVerklebt` im Umbenennungs-Block, Katalogwortlaut.
+   Kleinster Eingriff, sichere Messung, 42,00 € je Fall.
+2. **PM-066-C** — das eine Wort „Treppennase". 22,00 € je Fall.
+3. **PM-066-A** — sobald der Prüfmeister die Setzstufe beantwortet hat.
+   770,00 € je Fall, der teuerste Punkt des Batches.
+4. **PM-066-D** — eigener Eingriff, danach.
+
+PM-064 taucht hier nicht mehr auf: es ist ab jetzt Teil von Eingriff 3.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+## An den Prüfmeister — eine Frage, die PM-066 blockiert, und eine, die Eingriff 2 offenlässt
+
+**Datum:** 2026-09-15, 21:55 MESZ · Head of Product Engineering
+
+**1. Setzstufe beim Bodenbelag: eigene bepreiste Zeile oder im Stufenpreis?**
+Gemessen: `Vinyl auf Trittstufen kleben` und `Vinyl auf Setzstufen kleben`
+treffen **dieselbe** Katalogzeile (`Vinyl auf Treppenstufen kleben`,
+55,00 €/Stück). Gäben wir beiden Positionen einen Preis, stünden 14 Stufen
+zweimal im Angebot — 1.540,00 € statt der 770,00 €, die du als Soll für
+PM-066-A nennst. Die Fliesenzeile sagt ausdrücklich
+`(inkl. Setz- und Trittstufe)`, der Bodenkatalog sagt nichts. **Solange das
+offen ist, baue ich PM-066-A/B nicht** — die Antwort entscheidet, ob es eine
+oder zwei Positionen sind. PM-066-C und PM-067-A hängen nicht daran und
+laufen weiter.
+
+**2. Ungenannte Vorarbeiten: bepreist oder in die Fehlt-Liste?**
+Steht ausführlich in CoS-E-059 / Eingriff 2 oben. Kurz: „die Türen lackieren"
+erzeugt heute Anschleifen und Grundieren, 45,00 € je Angebot, obwohl niemand
+sie genannt hat. Eingriff 2 hat das **bewusst nicht angetastet** und nur die
+falsche Zuordnung geschlossen. Beide Wege sind gebaut denkbar; welcher
+richtig ist, ist deine Frage, nicht meine.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
+
+---
+
+## ❌ CoS-E-064 — PM-069 bis PM-077: der Katalog hat die Zeile, das Angebot nicht
+
+**Datum:** 2026-09-15, 21:50 MESZ · Chief of Staff
+
+Der Prüfmeister hat nach CoS-E-062 noch einen Batch nachgelegt: **PM-069 bis
+PM-078, 17 grüne Prüfungen, 13 Sperrklinken**, Fallbasis damit **78 von 100**.
+Sperrklinken in `src/lib/__tests__/pruefmeister-batch-69-77.test.ts`,
+ausführlich in `pruefmeister-restliste.md`.
+
+**Dieses Ticket umfasst PM-069 bis PM-077.** PM-078 ist Darstellung und liegt
+beim Designer (DC-108). PM-073 ist eine grüne Kontrolle, kein Auftrag.
+
+### 🔴 PM-077 gehört VOR CoS-E-059, nicht dahinter
+
+Eine **diktierte** Arbeit trägt die Marke `automatisch_ergaenzt: true`:
+`Tapete entfernen`, 45,00 m², 4,00 €/m². Die Kontrolle daneben zeigt, dass die
+Zeile ohne den Satz nicht entsteht — sie ist gesagt, nicht geraten.
+
+Regel H Satz 3 (Sandys Entscheidung vom 12.09.) soll eine so markierte Position
+künftig ohne Menge und Preis ausliefern. Wird das gebaut, **bevor** die Marke
+stimmt, verliert eine ausdrücklich beauftragte Arbeit ihren Preis — 180,00 € in
+diesem Fall. Der Umbau wäre dann schlechter als der heutige Stand.
+
+**Bitte in CoS-E-059 mit hineinnehmen, als erste Zeile.**
+
+### Die Fälle, so wie der Prüfmeister sie gemessen hat
+
+| Fall | Gesagt | Heute im Angebot | Betrag |
+|---|---|---|---|
+| **PM-072** | „Zementestrich schwimmend einbauen, sechzig Millimeter" | `Bodenbelag verlegen inkl. 5% Verschnitt`, 21,00 m², **ohne Preis** | **560,00 €** |
+| **PM-069** | „Möbel komplett ausräumen und wieder reinstellen" | nur `Möbel abdecken mit Folie`, 30,00 € | **220,00 €** |
+| **PM-075** | „in der Dusche kommt eine Wandnische rein, die wird mit gefliest" | nichts | **95,00 €** |
+| **PM-070** | „in der Mitte ist eine Deckenrosette, die muss mit gestrichen werden" | nichts | Katalogzeile vorhanden |
+| **PM-071** | „die Decke hat Sichtbalken, acht Stück, die werden lasiert" | nichts | Katalogzeile vorhanden |
+| **PM-074** | „in der Ecke steht ein Kaminsockel, ein mal ein Meter, da muss ausgespart werden" | `Sockelleisten montieren`, **1,00 lfdm**, 5,50 € | kleines Geld, großer Mechanismus |
+
+**PM-072 ist der schwerste Fund und enthält zwei Fehler in einer Zeile:** der
+bestellte Estrich fehlt (`Zementestrich schwimmend (CT-C25-F4, 60mm)`,
+28,00 €/m², steht im Katalog), und der Bodenbelag, der stattdessen dasteht, ist
+nie genannt worden und trägt 0,00 €. Regel H Satz 1 und Satz 3 zugleich.
+
+**PM-069 hat eine Gegenrichtung, die dazugehört:** „Die Möbel räumt der Kunde
+selbst raus" erzeugt trotzdem `Möbel abdecken mit Folie` **und**
+`Erschwerniszuschlag bewohnt`. Das ist die TN-037-Klasse (Regel H Satz 2:
+ausdrücklich abbedungen → nie eine Position), an einem frischen Wortlaut
+bestätigt.
+
+**PM-074 ist der Mechanismus, nicht der Betrag.** Beide Kontrollen sitzen:
+derselbe Satz ohne die Maßangabe erzeugt keine Sockelleistenzeile, und wirklich
+bestellte Sockelleisten kommen mit dem Raumumfang (18,00 lfdm). Es ist also das
+Maß aus dem **Nebensatz**, das zur Menge einer fremden Position wird. Jede
+Maßangabe in einem Nebensatz kann so eine Zeile bauen. Die Aussparung selbst
+wird übrigens nicht abgezogen.
+
+### Nicht Code, sondern Katalog — PM-076
+
+„Die Rollladenkästen werden mit gestrichen" erzeugt nichts, **und das ist
+richtig**: der Katalog hat für das Streichen eines Rollladenkastens keine
+Zeile. Er kennt nur Einbau, Motorisierung und Reparatur. Der Fund gehört in den
+Standardkatalog (`katalog-standard.ts`), nicht in die Code-Restliste. Steht in
+`vokabular-abgleich.md` **U**. **Ein eigener, kleiner Zug — bitte nicht mit den
+Code-Funden vermischen.**
+
+### Was ich von euch brauche
+
+1. **Sind PM-070/071/072/075 eine Klasse oder vier Einzelflicken?** Alle vier
+   haben dasselbe Muster: der Handwerker sagt es, der Katalog führt es, die
+   Engine schreibt keine Zeile. Das ist dieselbe Frage, die in CoS-E-062 für
+   PM-066/PM-067 offen ist (Titel gegen Katalog, wie PM-060-A). Wenn es **eine**
+   Klasse ist, gehören beide Tickets zusammengezogen — dann sagt das bitte,
+   bevor ihr anfangt.
+2. **Ist PM-074 derselbe Mechanismus wie die Nebensatz-Menge aus CoS-E-058?**
+   Wenn ja, ist es kein neuer Eingriff, sondern eine fehlende Zusicherung.
+3. **Dauert es spürbar länger als CoS-E-062, sagt es.** Sandy will den Aufwand
+   vorher wissen, nicht hinterher.
+
+### Einordnung
+
+**Hinter CoS-E-062, vor der Gewerke-Sperre (CoS-E-061)** — mit der einen
+Ausnahme PM-077, die nach vorn in CoS-E-059 gehört. Alle sechs Fälle treffen
+Maler und Boden, also die zwei Gewerke, die heute verkauft werden; die Sperre
+fängt keinen davon ab. Das ist dieselbe Begründung, mit der Sandy um 18:55 für
+CoS-E-062 „vor" entschieden hat — **ich lege sie hier analog an und frage nicht
+erneut nach.** Widerspricht das eurer Einschätzung, meldet es.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+## ❌ CoS-E-065 — zwei Zeilen aus DC-107: `tuerQuelle` und das doppeldeutige „aus Aufnahme"
+
+**Datum:** 2026-09-15, 21:50 MESZ · Chief of Staff
+
+Beides hat der Product Designer beim Bau von DC-107 gefunden und ausdrücklich
+**nicht** selbst angefasst, weil `maler-lackieren.ts` gerade bei euch liegt
+(CoS-E-058 / 059 / 062). Ich gebe ihm eine Nummer, damit es nicht als Fließtext
+in `design-check.md` liegen bleibt.
+
+1. **`maler-lackieren.ts` Z. 48 — `tuerQuelle` braucht einen dritten Fall.**
+   Heute ist der Wert zweiwertig (`aus Aufnahme` / `aus Transkript`). Sagt
+   niemand eine Zahl, steht dort `aus Transkript`, obwohl im Transkript nichts
+   stand. Bei den Fenstern habt ihr genau das in CoS-E-058 beseitigt
+   (`fensterQuelle`, Z. 92) — bei den Türen ist es geblieben. **Solange der
+   dritte Fall fehlt, kann die Engine „angenommen" bei Türen nie melden**, und
+   DC-107 Punkt 3 bleibt unentscheidbar.
+2. **„aus Aufnahme" bedeutet an zwei Stellen Gegenteiliges.** In
+   `maler-lackieren.ts` steht es, wenn im Satz **keine** Zahl stand; in
+   `mengen/aufnahme-hinweise.ts` (6 Stellen) steht es, wenn ausdrücklich
+   **eine** dastand. Auf dem Kundenpapier ist das seit DC-107 egal — dort fällt
+   die Herkunft ganz weg. **In der App nicht.** Dort prüft der Betrieb seine
+   eigene Kalkulation und liest dasselbe Wort mit zwei Bedeutungen.
+
+**Einordnung:** klein, hinter CoS-E-064. Punkt 1 ist der eilige von beiden,
+weil ein Designer-Punkt daran hängt.
+
+*Chief of Staff · 2026-09-15*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

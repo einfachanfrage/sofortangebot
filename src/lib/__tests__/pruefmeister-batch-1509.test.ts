@@ -149,7 +149,15 @@ describe('PM-045 — Türen und Zargen lackieren', () => {
     expect(zaehleTueren('vier Türen lackieren')).toBe(0)
   })
 
-  it.fails('🔴 PM-045-C · was nur für die Türen gesagt wurde, gilt nicht für die Fenster', () => {
+  // ── Sperrklinke PM-045-C GELÖST am 15.09.2026 (CoS-E-059, Eingriff 2) ──
+  // Gebaut ist `vorarbeitGiltFuer` (helpers.ts): Eine im Diktat genannte
+  // Vorarbeit gilt nur für das Bauteil, bei dem sie genannt wurde. Wird sie
+  // gar nicht genannt, bleibt es beim fachlichen Standard — deshalb nimmt
+  // der Eingriff nirgends eine Zeile weg, wo heute Geld steht.
+  // Aus `it.fails` wird damit `it`; fällt die Zeile künftig, ist sie ein
+  // Rückfall und keine offene Sperrklinke.
+  // — Head of Product Engineering
+  it('PM-045-C · was nur für die Türen gesagt wurde, gilt nicht für die Fenster', () => {
     // Mit einem zweiten Raum („die zwei Fenster im Wohnzimmer von innen
     // streichen") entstehen zusätzlich `Fenster abschleifen` (20,00 €) und
     // `Fenster grundieren` (25,00 €) — beide mit Preis, beide automatisch

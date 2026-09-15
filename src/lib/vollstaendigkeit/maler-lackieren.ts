@@ -1,6 +1,18 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, anzahlAus, findeRaumImSatz, raumNamenAus, istWandStreichen, raumAusTitel } from './helpers'
+import { hat, anzahlAus, findeRaumImSatz, raumNamenAus, istWandStreichen, raumAusTitel, vorarbeitGiltFuer } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
+
+// ── CoS-E-059 / PM-045-C, Eingriff 2 (15.09.2026) ─────────────────────────
+//
+// Die Bauteile, die in diesem Modul um dieselben Vorarbeiten konkurrieren,
+// und die Wörter, mit denen ein Handwerker sie bestellt. Eine Vorarbeit, die
+// im Diktat bei EINEM dieser Bauteile steht, darf nicht bei den anderen
+// landen — siehe `vorarbeitGiltFuer` in `helpers.ts`.
+const TUER = /tür|tuer/i
+const FENSTER = /fenster/i
+const HEIZKOERPER = /heizkörper|heizkoerper|heizung/i
+const SCHLEIFEN = /schleif|schliff/i      // abschleifen, anschleifen, angeschliffen
+const GRUNDIEREN = /grundier/i            // grundieren, grundiert, Grundierung
 
 // Türen lackieren: Schleifen, Grundieren, 2× Lackieren, Zargen
 export function pruefeTuerenLackieren(
@@ -48,8 +60,16 @@ export function pruefeTuerenLackieren(
   const tuerQuelle = ausAufnahme ? 'aus Aufnahme' : 'aus Transkript'
   const tuerAnnahme = !ausAufnahme && anzTuerenExplizit === 0 && anzZimmerFuerTuer > 0 ? [`${anzZimmerFuerTuer} Zimmer → je 1 Tür angenommen`] : []
 
-  ergaenzt.push({ beschreibung: `Türen abschleifen${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) ${tuerQuelle}`, annahmen: tuerAnnahme })
-  ergaenzt.push({ beschreibung: `Türen grundieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+  // CoS-E-059 / PM-045-C: Anschleifen und Grundieren nur dann, wenn das
+  // Diktat sie nicht ausdrücklich einem ANDEREN Bauteil zugeordnet hat.
+  const tuerSchleifen = vorarbeitGiltFuer(TUER, SCHLEIFEN, lower, [FENSTER, HEIZKOERPER])
+  const tuerGrundieren = vorarbeitGiltFuer(TUER, GRUNDIEREN, lower, [FENSTER, HEIZKOERPER])
+  if (tuerSchleifen) {
+    ergaenzt.push({ beschreibung: `Türen abschleifen${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en) ${tuerQuelle}`, annahmen: tuerAnnahme })
+  }
+  if (tuerGrundieren) {
+    ergaenzt.push({ beschreibung: `Türen grundieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+  }
   ergaenzt.push({ beschreibung: `Türen lackieren (2× Anstrich)${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
   // Katalog-Deckungsaudit 2026-08-31: hieß hier „Türzargen lackieren" (Plural),
   // der Katalogeintrag heißt „Türzarge lackieren" — der Preis-Matcher kam über
@@ -99,8 +119,17 @@ export function pruefeFensterLackieren(
   const anzAnstrich = istZweiSeitig ? anzFenster * 2 : anzFenster
   const zweiSeitigHinweis = istZweiSeitig ? ' (2-seitig)' : ''
 
-  ergaenzt.push({ beschreibung: `Fenster abschleifen${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster ${fensterQuelle}`, annahmen: [] })
-  ergaenzt.push({ beschreibung: `Fenster grundieren${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
+  // CoS-E-059 / PM-045-C — das ist der gemessene Fall: „die Türen … müssen
+  // vorher angeschliffen und grundiert werden" stand im Türen-Satz, die
+  // beiden Zeilen entstanden trotzdem für die Fenster im Satz danach.
+  const fensterSchleifen = vorarbeitGiltFuer(FENSTER, SCHLEIFEN, lower, [TUER, HEIZKOERPER])
+  const fensterGrundieren = vorarbeitGiltFuer(FENSTER, GRUNDIEREN, lower, [TUER, HEIZKOERPER])
+  if (fensterSchleifen) {
+    ergaenzt.push({ beschreibung: `Fenster abschleifen${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster ${fensterQuelle}`, annahmen: [] })
+  }
+  if (fensterGrundieren) {
+    ergaenzt.push({ beschreibung: `Fenster grundieren${sfx}`, menge: anzFenster, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzFenster} Fenster`, annahmen: [] })
+  }
   // Katalog-Deckungsaudit 2026-08-31: hieß „Fenster Lack (2× Anstrich)" —
   // kein Katalogtreffer und holpriges Deutsch auf dem Angebot. Der Farbtyp
   // steht jetzt in der Klammer, wo er die Preiszuordnung nicht mehr stört.
@@ -165,11 +194,18 @@ export function pruefeHeizkLackieren(
     ? parseInt(jeHzkMatch[1])
     : (anzHzkExplizit === 0 && anzZimmerEff > 0 ? 1 : null)
 
-  const schritte: Array<[string, string]> = [
-    ['Heizkörper abschleifen', 'aus Transkript'],
-    ['Heizkörper grundieren', ''],
-    ['Heizkörper lackieren (2× Anstrich)', ''],
-  ]
+  // CoS-E-059 / PM-045-C: dieselbe Regel wie bei Türen und Fenstern. Steht
+  // das Anschleifen im Diktat nur beim Türen- oder Fenstersatz, entsteht es
+  // hier nicht. Der Anstrich selbst ist der Auftrag und bleibt immer.
+  const hzkSchleifen = vorarbeitGiltFuer(HEIZKOERPER, SCHLEIFEN, lower, [TUER, FENSTER])
+  const hzkGrundieren = vorarbeitGiltFuer(HEIZKOERPER, GRUNDIEREN, lower, [TUER, FENSTER])
+  const schritte: Array<[string, string]> = ([
+    ['Heizkörper abschleifen', 'aus Transkript', hzkSchleifen],
+    ['Heizkörper grundieren', '', hzkGrundieren],
+    ['Heizkörper lackieren (2× Anstrich)', '', true],
+  ] as Array<[string, string, boolean]>)
+    .filter(([, , gilt]) => gilt)
+    .map(([titel, zusatz]) => [titel, zusatz] as [string, string])
 
   if (jeRaum !== null && raeumeMitWand.length > 1) {
     for (const raumName of raeumeMitWand) {

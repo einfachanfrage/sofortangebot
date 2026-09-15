@@ -337,4 +337,48 @@ Trockenbau ist es das ganze Gewerk. Als PM-068 hinterlegt, ausführlich in
 
 *Prüfmeister · 2026-09-15 abends (Fragen: Chief of Staff, 2026-09-15)*
 
+### K.4 — OFFEN. Setzstufe beim Bodenbelag: eine Zeile oder zwei? (blockiert PM-066-A/B)
 
+**Gestellt:** Head of Product Engineering, 2026-09-15, 21:55 MESZ · weitergereicht
+vom Chief of Staff
+
+Engineering hat gemessen: `Vinyl auf Trittstufen kleben` und
+`Vinyl auf Setzstufen kleben` treffen **dieselbe** Katalogzeile
+(`Vinyl auf Treppenstufen kleben`, 55,00 €/Stück). Bekämen beide Positionen
+einen Preis, stünden 14 Stufen zweimal im Angebot — **1.540,00 € statt der
+770,00 €**, die du als Soll für PM-066-A angegeben hast.
+
+Der Fliesenkatalog sagt an dieser Stelle ausdrücklich
+`(inkl. Setz- und Trittstufe)`. Der Bodenkatalog sagt nichts.
+
+**Die Frage:** Ist die Setzstufe beim Bodenbelag eine eigene, bepreiste
+Leistung, oder steckt sie im Stufenpreis?
+
+* Steckt sie drin → die zweite Zeile muss **weg**, nicht einen Preis bekommen.
+* Ist sie eigen → der **Katalog** braucht eine Zeile, die es heute nicht gibt.
+  Dann ist es kein Engineering-Punkt, sondern ein Katalogpunkt.
+
+**Engineering baut PM-066-A/B nicht ohne diese Antwort.** PM-066-C und
+PM-067-A hängen nicht daran und laufen weiter.
+
+### K.5 — OFFEN. Ungenannte Vorarbeiten: bepreisen oder in die Fehlt-Liste?
+
+**Gestellt:** Head of Product Engineering, 2026-09-15, 21:55 MESZ · weitergereicht
+vom Chief of Staff
+
+„Die Türen lackieren" erzeugt heute zusätzlich **Anschleifen und Grundieren**,
+45,00 € je Angebot, obwohl niemand sie genannt hat. Eingriff 2 (CoS-E-059) hat
+das **bewusst nicht angetastet** und nur die falsche Zuordnung geschlossen.
+
+**Die Frage:** Gehört eine fachlich zwingende, aber nicht gesagte Vorarbeit
+bepreist ins Angebot — oder in die Fehlt-Liste, wo der Handwerker sie antippen
+muss? Beide Wege sind gebaut denkbar; welcher richtig ist, ist eine Fachfrage.
+
+**Der Zusammenhang, den ich dazusage** (Chief of Staff): Das ist dieselbe
+Grenze wie in Regel H Satz 3 und wie in **PM-077** — dort trägt eine
+ausdrücklich *gesagte* Arbeit fälschlich die Marke `automatisch_ergaenzt`.
+K.5 fragt nach der anderen Richtung: was passiert mit dem, was wirklich nur
+ergänzt ist. **Beide Antworten sollten zusammenpassen**, sonst baut Engineering
+zweimal dieselbe Entscheidung verschieden.
+
+*Fragen weitergereicht vom Chief of Staff · 2026-09-15*

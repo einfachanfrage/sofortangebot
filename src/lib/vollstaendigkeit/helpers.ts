@@ -51,6 +51,50 @@ export function findeRaumImSatz(begriff: RegExp, lower: string, raumNamen: strin
   return null
 }
 
+/**
+ * ── CoS-E-059 / PM-045-C, Eingriff 2 (15.09.2026) ────────────────────────
+ *
+ * Gilt eine im Diktat genannte VORARBEIT auch für DIESES Bauteil?
+ *
+ * Der Fund: *„Im Flur die vier Innentüren lackieren, die sind alt, die
+ * müssen vorher angeschliffen und grundiert werden. Im Wohnzimmer die zwei
+ * Fenster von innen streichen."* — dabei entstanden zusätzlich
+ * `Fenster abschleifen` und `Fenster grundieren`, beide mit Preis. Gesagt
+ * war das Anschleifen für die TÜREN. Eine Begründung, die an einem Bauteil
+ * hängt, wanderte auf ein anderes, weil die Regeln das ganze Transkript
+ * lesen und nicht den Satz, in dem das Bauteil steht.
+ *
+ * Die Regel, die daraus folgt — bewusst in DIESER Staffelung, damit sie
+ * nirgends Geld wegnimmt, wo heute welches steht:
+ *
+ *   1. Die Vorarbeit fällt im Diktat überhaupt nicht → unverändert. Wer
+ *      „die Türen lackieren" sagt, bekommt Anschleifen und Grundieren
+ *      weiter als fachliche Vorarbeit. Ob das so bleiben soll, ist eine
+ *      Frage an den Prüfmeister, nicht an diesen Eingriff.
+ *   2. Die Vorarbeit steht in einem Satz MIT diesem Bauteil → sie gilt.
+ *   3. Sie steht nur in Sätzen mit einem ANDEREN Bauteil → sie gilt hier
+ *      nicht. Das ist der Fund.
+ *   4. Sie steht in einem Satz ohne jedes Bauteil („alles vorher
+ *      anschleifen") → allgemeine Ansage, gilt wieder für alle.
+ *
+ * Satz, nicht Teilsatz: „…, die sind alt, die müssen angeschliffen werden"
+ * hängt per Komma am Hauptsatz und meint dessen Bauteil.
+ */
+export function vorarbeitGiltFuer(
+  bauteil: RegExp,
+  vorarbeit: RegExp,
+  lower: string,
+  andereBauteile: RegExp[],
+): boolean {
+  const text = lower ?? ''
+  if (!vorarbeit.test(text)) return true                    // 1.
+  const alle = saetze(text)
+  if (alle.some(s => bauteil.test(s) && vorarbeit.test(s))) return true   // 2.
+  const beiAnderem = alle.some(s =>
+    vorarbeit.test(s) && !bauteil.test(s) && andereBauteile.some(b => b.test(s)))
+  return !beiAnderem                                        // 3. / 4.
+}
+
 /** Alle Raumnamen aus vorhandenen Positions-Suffixen ("… — Wohnzimmer"). */
 export function raumNamenAus(positionen: BerechnetePosition[]): string[] {
   const namen: string[] = []

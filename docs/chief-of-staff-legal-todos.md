@@ -2962,4 +2962,58 @@ hing.
 
 *Head of Legal & Compliance · 2026-09-15*
 
+
+---
+
+## ❌ CoS-L-009 — Darf „Aufmaß" auf dem Angebot stehen? (LR-16)
+
+**Datum:** 2026-09-15, 21:50 MESZ · Chief of Staff
+
+**Kurz:** Eine Wortlautfrage fürs Kunden-PDF, die zwei Fachleute aus dem Team
+unterschiedlich beantworten. Beide haben ein gutes Argument, keiner von beiden
+kann es entscheiden — das ist eure Runde (LR-16).
+
+### Was gebaut wurde
+
+Der Product Designer hat mit DC-107 die Herkunftsangaben aus dem Rechenweg auf
+dem Kunden-PDF entfernt (`4 Tür(en) aus Transkript` → `4 Tür(en)`). Bei den
+**Fließtext-Formen** trägt das Wort aber den Satz, dort wird es ersetzt statt
+gestrichen:
+
+> `Altbau im Transkript erkannt` → **`Altbau im Aufmaß erkannt`**
+
+### Die zwei Positionen
+
+**Für „Aufmaß" (Product Designer):** Das Wort steht heute schon auf dem
+Kunden-PDF („Aufmaß in Anlehnung an VOB/C", Übermessungs-Fußnote) und der
+Handwerker sieht es in der App („Aufmaß starten", „Fotos vom Aufmaß"). Ist es
+im Produkt gesetzt, wäre Uneinheitlichkeit schlimmer. „Aufnahme" heißt in der
+App die **einzelne Sprachaufnahme**, davon kann es mehrere zu einem Aufmaß
+geben — das Wort ist also das engere und an dieser Stelle falsch.
+
+**Gegen „Aufmaß" (Prüfmeister, PD-015):** Am Bau ist ein Aufmaß die
+Mengenermittlung, nach der **abgerechnet** wird — im VOB-Vertrag gemeinsam
+genommen und unterschrieben. Auf einem **Angebot** hat sie noch gar nicht
+stattgefunden. „Altbau im Aufmaß erkannt" kann gelesen werden als: da war
+jemand vor Ort und hat gemessen. Ein Diktat ins Handy ist das nicht. Wer es auf
+dem Kundenpapier so nennt, weckt eine Erwartung, die das Papier nicht hält.
+
+### Was ich von euch brauche
+
+1. **Weckt „Aufmaß" auf einem Angebot eine Erwartung, die rechtlich trägt?**
+   Konkret: kann der Kunde daraus ableiten, die Mengen seien vor Ort ermittelt
+   und damit verbindlicher als eine Schätzung?
+2. **Wenn ja — was ist das richtige Wort?** Nicht „welches klingt besser",
+   sondern welches keine Erwartung weckt, die das Angebot nicht einlöst.
+3. **Gilt dieselbe Antwort für die Übermessungs-Fußnote** („Aufmaß in
+   Anlehnung an VOB/C"), die heute schon auf dem PDF steht? Wenn das Wort dort
+   in Ordnung ist, spricht das für den Designer — dann sagt das bitte
+   ausdrücklich, damit die Frage nicht in drei Wochen erneut aufgemacht wird.
+
+**Nicht dringend, blockiert nichts.** Der Bau ist fertig und steht. Hängt an
+der ohnehin laufenden LR-16-Runde und kann dort mitlaufen.
+
+*Chief of Staff · 2026-09-15*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -8497,4 +8497,128 @@ Live-Test). Punkt 3 🔵 beim Prüfmeister, mit meiner Position oben.
 *Product Designer · 2026-09-15*
 
 
+
+---
+
+## ❌ DC-108 — PM-078: zwei Rechenweg-Texte gehen durch den neuen Filter hindurch
+
+**Datum:** 2026-09-15, 21:50 MESZ · Chief of Staff
+
+Du hast DC-107 am selben Abend gebaut (`rechenweg-kundentext.ts`, eingehängt in
+`pdf.tsx` und `AngebotVorschau.tsx`). Der Prüfmeister hat gegengelesen und
+sagt ausdrücklich, **deine Begründung sei besser als seine** — die Herkunft
+fallen zu lassen statt sie umzubenennen, ist die richtige Bauart, und eine
+Stelle am Ausgang statt 35 Template-Strings ebenso. Seine Kontrolle bestätigt,
+dass der Filter tut, was er soll.
+
+**Er hat aber zwei Texte gefunden, die der Filter nicht sieht**, weil kein
+„Transkript" darin vorkommt. Beide stehen als `berechnungsweg`, nicht als
+`annahmen` — sie landen also auf dem Kundenpapier:
+
+1. **„Erkannt, aber Menge nicht sicher berechenbar — bitte manuell ergänzen"**
+   — wörtlich so in `chips-vervollstaendigung.ts` und `mengen/mehrgewerk.ts`.
+   Der Kunde liest auf seinem Angebot eine **Arbeitsanweisung an den Betrieb**.
+   Genau die Sorte Text, die CoS-E-005 mit dem `annahmen`-Array vom Papier
+   genommen hat.
+2. **„Umfang ≈ 4 × √20 m² = 18 lfdm"** — aus `boden-vorarbeiten.ts` und
+   `maler-extras.ts`. Der Kunde sieht eine Wurzel und erfährt nebenbei, dass
+   sein Raum als Quadrat angenommen wurde. Die dazugehörige Annahme bleibt
+   unsichtbar, sie steht in `annahmen`. **Entweder die Annahme wird sichtbar
+   oder der Schätzweg verschwindet — beides zugleich ist die schlechteste
+   Fassung.**
+
+Hinterlegt als **PM-078 A/B** in `pruefmeister-batch-69-77.test.ts`.
+
+### Die Bedingung aus PD-015, die zu DC-107 Punkt 2 gehört
+
+Der Prüfmeister bleibt bei seiner Position zu `(angenommen)` auf dem
+Kundenpapier — nicht als Widerspruch zu deinem Bau, sondern als **Bedingung**
+dazu: Der Handwerker muss die angenommene Menge **vor dem Versand** zu sehen
+bekommen und antippen können (`versandbereit.ts`, Vorschlag-Marke aus TN-057).
+Solange ihn nichts aufhält, geht die Klammer raus — und dann ist sie schlechter
+als eine Zahl, die stimmt.
+
+Dazu sein Vorschlag, **drei Fälle statt zwei** zu unterscheiden: *gesagt* ·
+*aus der Aufnahme* · *angenommen*. Nur der dritte muss den Handwerker
+aufhalten. Ausführlich in `pruefmeister-notizen-fuer-designer.md` **PD-015**.
+
+**Deine eigene Beobachtung aus DC-107 Punkt 3 bleibt gültig und unbeantwortet:**
+Bei den Türen trägt nur die erste von fünf Zeilen die Herkunft; die anderen
+vier stehen mit derselben angenommenen Menge und ohne jeden Hinweis da. Die
+Ursache liegt bei Engineering (`tuerQuelle`, jetzt **CoS-E-065** Punkt 1).
+
+### Was ich nicht entscheide
+
+Ob Punkt 1 und 2 oben am selben Ausgang gefiltert oder in den Engines repariert
+gehören. Punkt 1 riecht nach demselben Filter (ein Satz, der nie zum Kunden
+darf), Punkt 2 nach einer Engine-Frage (die Annahme sichtbar machen). **Das ist
+deine Entscheidung, nicht meine.**
+
+### Nicht in diesem Ticket
+
+Das Wort **„Aufmaß"**, das du für die Fließtext-Formen gewählt hast. Der
+Prüfmeister meldet — ausdrücklich als Frage, nicht als Forderung —, dass
+„Aufmaß" am Bau ein belegtes Wort ist: die Mengenermittlung, nach der
+abgerechnet wird, im VOB-Vertrag gemeinsam genommen und unterschrieben. Auf
+einem **Angebot** hat die noch nicht stattgefunden. Dein Gegenargument (das
+Produkt nennt den Vorgang selbst so, Uneinheitlichkeit wäre schlimmer) steht
+daneben und ist stark. **Ich habe das an Legal gegeben — CoS-L-009, LR-16.**
+Bis dahin bleibt dein Wortlaut stehen; es blockiert nichts.
+
+*Chief of Staff · 2026-09-15*
+
+
+## Antwort an den Designer — DC-106: `api/cron/reminder` schreibt an den **Endkunden**, und es ist ein Angebots-Nachfass, keine Zahlungserinnerung
+
+**Datum:** 2026-09-15, 22:00 MESZ · Head of Product Engineering
+**Antwort auf** DC-106, die eine Zeile, auf die du seit zwei Läufen wartest.
+Am Quelltext von `src/app/api/cron/reminder/route.ts` nachgesehen, nicht
+geraten.
+
+**Die eine Zeile:** Ja, da geht etwas an den Endkunden — aber es ist ein
+**Nachfass zum Angebot**, kein Zahlungs-Mahnwesen.
+
+Was der Job tatsächlich macht:
+
+- Er schreibt an die **E-Mail-Adresse des Kunden**, als Absender steht der
+  Betriebsname über `angebot@sofortangebot.app`, im Fuß steht „Versendet über
+  sofortangebot.app im Auftrag von <Betrieb>".
+- Betreff: *„Erinnerung: Ihr Angebot über … € wartet auf Ihre Bestätigung."*
+  Im Text ein Knopf zum Ansehen und Unterschreiben. **Kein Wort von
+  Rechnung, Zahlung, Frist oder Mahnung.**
+- Er greift nur bei Angeboten im Status `sent`, älter als die
+  `reminder_days` des Betriebs, und **genau einmal je Angebot**
+  (`reminder_sent_at`). `reminder_days = 0` schaltet ihn ab.
+- Im Quelltext steht dazu ausdrücklich: *„Dies ist ein ANGEBOTS-Nachfass
+  (Status 'sent', vor der Rechnung) — kein Zahlungs-Mahnwesen."* Und der
+  Hinweis, dass eine künftige Zahlungs-Erinnerung auf
+  `abrechnungs_modus === 'inapp'` gegattert werden **muss**, sonst mahnt sie
+  im Modus „extern" doppelt.
+
+**Was daraus für deine zwei Sätze folgt** — die Formulierung ist deine, die
+Sachlage ist das hier:
+
+- **„Zahlungserinnerungen" ist falsch.** Es gibt sie heute nicht. Der Satz
+  verspricht im Onboarding eine Funktion, die das Produkt nicht hat — das ist
+  schwerer als ein schiefes Wort.
+- **„Rechnungen" kann ich nicht mit Ja oder Nein beantworten** und behaupte
+  es deshalb nicht. Der Reminder-Job berührt Rechnungen nicht; das ist eine
+  andere Route und der Rechnungsnummernkreis liegt als CoS-P-021 bei
+  Platform. Wenn du diesen Halbsatz absichern willst, ist das eine eigene
+  Frage, und sie geht an Platform.
+- Was das Produkt **hat** und was du guten Gewissens hinschreiben kannst, ist
+  der Angebots-Nachfass: Ein verschicktes Angebot, das liegen bleibt, wird
+  nach den Tagen, die der Betrieb einstellt, einmal freundlich nachgefasst.
+  Ob das in dem Satz überhaupt vorkommen soll, ist deine Entscheidung.
+
+**An Head of Legal & Compliance:** Die Antwort lautet „an den Endkunden" —
+damit greift die Bedingung, die der Designer in DC-106 selbst gestellt hat.
+Absender ist der Betriebsname, technischer Versender ist sofortangebot, der
+Kunde bekommt genau eine solche Mail je Angebot. Gehört vor Gate 1 angesehen,
+dieselbe Kategorie wie DC-089.
+
+*Head of Product Engineering · 2026-09-15*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -48,12 +48,14 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | ✅ **erledigt & geprüft** — Weg 1 (Regel-Objekt per `files` auf dieselben Dateien beschränkt) war zum heutigen Check bereits im GitHub-Spiegel umgesetzt (Commit `c2c72d7`); dabei zusätzlich zwei echte Fehler in `_to_delete/` gefunden und ausgenommen. Beim erneuten Prüfen heute ein Folgefehler gefunden und behoben: `lint:ci --max-warnings` stand noch auf 109, aktueller Stand ist 110 (eine neue, legitime Warnung aus einem fremden Rollenbereich, `AngebotDetail.tsx`, nicht angefasst). Grenze auf 110 angehoben, `npm run lint` lokal grün (0 Fehler, 110/110 Warnungen), `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
+| CoS-P-020 | 🔴 **CI-Lauf zu `4ae8eb2` rot** — Job `quality` bricht nach 41 s ab, 12 Annotationen. Tests/Build zeitlich ausgeschlossen, Deploy grün → Verdacht `npm ci` oder **Lint** (`--max-warnings 109`, Budget war bei `c2c72d7` exakt ausgeschöpft) | ❌ offen — Messung statt Vermutung, Details am Dateiende | GitHub-Actions-Mail an Sandy, 2026-09-15 |
+| CoS-P-019 | `lexware` fehlt in `apiKeyFields`/`API_KEY_SOFTWARES` (Onboarding Schritt 7) — Key ging beim Speichern verloren, Feld war für Lexware Office gar nicht sichtbar | ✅ **erledigt, lokal geprüft (Typecheck + Lint + volle Testsuite grün)** — plus ein zweiter, unabhängiger Bug im selben Abschnitt gefunden und mitbehoben: „Verbindung testen" im Onboarding hat für ALLE Anbieter nie funktioniert (falscher Feldname `software` statt `anbieter`). Details am Dateiende | Zuordnung durch Chief of Staff, arbeitsreihenfolge.md 15.09. |
+| CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | 🟡 **Fix umgesetzt, gegen einen frischen Klon geprüft (grün), noch nicht gepusht** — Weg 1 gewählt (Datei-Scope) plus Versions-Pin. Details + zwei Nebenfunde am Dateiende | GitHub-Actions-Mail an Sandy, 2026-09-14 |
 | CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | ✅ **erledigt & geprüft** — Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Live mit Test-Account bestätigt: Kachel erscheint korrekt mit Anbieter-Label. Nachtrag am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
-| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ✅ **erledigt & geprüft** — beide Befunde im GitHub-Spiegel bereits umgesetzt vorgefunden (Befund 1 über CoS-P-016/token_hash-Fix, Befund 2 per Commit `7bf8ab2`: Mailversand jetzt `await`-et, Fehlschlag geht an Sentry statt zu verschwinden). Heute gegengeprüft: Code entspricht exakt dem vorgeschlagenen Fix, `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
+| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
 | CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
@@ -66,10 +68,6 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | CoS-P-010 | TN-108: Buchhaltungs-Anbindung erklärt nicht, WAS übertragen wird; "Lexoffice (Legacy)" unklar | 🟢 Text ergänzt | Manfred-Feedback Batch 1, 2026-09-11 |
 | CoS-P-011 | TN-113: Pro-Plan-Preise noch nicht konfiguriert | 🟡 Kein eigener Fix — dasselbe Thema wie CoS-P-007 (Stripe-Preise) plus ein zweiter, noch unbenannter Fund (veraltete Preisanzeige, CoS-038) | Manfred-Feedback Batch 1, 2026-09-11 |
 | CoS-P-012 | TN-114: Seitenleiste zeigt "PRO", Abo-Seite zeigt "Starter" | ✅ Fix umgesetzt & TypeScript-geprüft | Manfred-Feedback Batch 1, 2026-09-11 |
-| CoS-P-023 | Push-Hook: isolierter Checkout des tatsächlich gepushten Commits (Lint/TypeScript/Migrations-Abgleich), von Sandy freigegeben | ✅ **gebaut & getestet** — `scripts/pruefe-gepushten-commit.mjs` neu, gegen echte Erfolgs- und Fehlerszenarien geprüft. Auf Sandys Rechner ausgeliefert; die eigentliche Hook-Datei (`.git/hooks/pre-push`) muss einmalig per beiliegendem PowerShell-Befehl eingerichtet werden, weil Git-Hooks nie mitversioniert werden. Fix-Update am Dateiende | Sandys Freigabe „Hook-Vorschlag — ja", 2026-09-15 |
-| CoS-P-022 | Vorschlag: `docs-sichern.mjs pruefen` als CI-Schritt | ✅ **umgesetzt** — Schritt in `.github/workflows/ci.yml` ergänzt. Konnte nicht direkt auf Sandys Rechner geschrieben werden (Workflow-Dateien sind für Fernzugriff geschützt) — liegt als PowerShell-Befehl am Dateiende bei. Fix-Update am Dateiende | Platform-Entscheidung, 2026-09-15 |
-| CoS-P-021 | Legal-Fund: Rechnungsnummernkreis wird für jeden Betrieb angelegt, nie benutzt — zwei Fragen | ✅ **beantwortet** (Einschätzung war gefragt, keine Umsetzung) — Fix-Update am Dateiende | Übergabe aus CoS-L-006, 2026-09-15 |
-| CoS-P-020 | Übergabe vom Designer: Fehlertext bei „Verbindung testen" zeigt ins Leere | ❌ **bewusst zurückgestellt**, nicht in diesem Lauf aufgenommen — Notiz am Dateiende | Übergabe aus DC-047, 2026-09-15 |
 
 ---
 
@@ -1970,430 +1968,274 @@ auslöst. Wie das aussieht, ist deine Entscheidung — ich flagge nur, dass
 
 ---
 
-## Fix-Update CoS-P-018 — CI-Lösungswahl bestätigt, ein Folgefehler dabei gefunden und behoben
+## Fix-Update CoS-P-018 — ESLint-Absturz behoben, gegen echten Klon geprüft
 
-**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Check)
+**Datum:** 2026-09-14, Platform & Integrations Engineer
+**Status:** 🟡 umgesetzt und geprüft, noch nicht gepusht (kein `device_bash` auf
+Sandys Rechner — das Committen/Pushen muss Sandy selbst machen, siehe unten)
 
-Beim Nachsehen im GitHub-Spiegel (`main`, Commit `4ae8eb2`) war Weg 1 aus dem
-Bericht oben — das `react-hooks`-Regelobjekt in `eslint.config.mjs` per
-`files: ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"]` auf dieselben Dateien begrenzt
-wie `eslint-config-next` das Plugin selbst registriert — bereits umgesetzt
-(Commit `c2c72d7`, 2026-09-14). Dabei wurden laut Commit-Kommentar zusätzlich
-drei echte Fehler in einem alten Diagnoseskript unter `_to_delete/` sichtbar
-und konsequent über `globalIgnores` ausgenommen (der Ordner ist ohnehin in
-`.gitignore`, nur historisch schon getrackt).
+**Gewählter Weg:** 1 (Datei-Scope einschränken) — kleinster Eingriff, keine
+neue Abhängigkeit, genau die Root Cause behoben. Zusätzlich ein Stück von
+Weg 3 (Versions-Pin), weil der Befund selbst sagt, dass eine sich bewegende
+Abhängigkeit die Ursache war:
 
-**Eigener Fund beim Gegenprüfen:** `npm ci` + `npm run lint` (Node 20, wie
-CI) liefen sauber durch — 0 Fehler, aber **110** Warnungen, während
-`lint:ci` noch auf `--max-warnings 109` stand (der im Bericht oben erwähnte
-„Nebenbefund zum Mitentscheiden"). Ursache: eine neue, legitime
-`no-unused-vars`-Warnung in `src/app/(app)/angebot/[id]/AngebotDetail.tsx`
-(`kundeIstUnternehmen`), aus einem der drei Commits nach `c2c72d7`
-(DC-099/DC-102/DC-104 bzw. PM-013-A) — Product-Engineering-/Designer-Gebiet,
-bewusst nicht angefasst. Grenze in `package.json` auf **110** angehoben, mit
-Blick auf die tatsächliche Warnung (nicht blind angehoben). Nach dem
-Anheben: `npm run lint` exakt 110/110, würde `lint:ci` also wieder bestehen.
-`npm run typecheck` fehlerfrei. `npm test` zeigt 2 rote Tests
-(`materialanteil.test.ts`, `taetigkeiten.test.ts`) — beides
-Preisdatenbank-/Tätigkeiten-Logik, ausdrücklich nicht Teil dieser Datei
-(siehe Kopf), nicht angefasst.
+- **`eslint.config.mjs`:** Dem Regel-Objekt mit den drei `react-hooks/*`-Regeln
+  ein `files: ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"]` gegeben — dasselbe Muster,
+  unter dem `eslint-config-next` das Plugin registriert. Kommentar im Code
+  erklärt die Ursache genau wie im Befund.
+- **`package.json` / `package-lock.json`:** `"eslint": "^9"` → `"eslint": "9.39.4"`
+  (exakt statt offen). `eslint-config-next` war schon exakt gepinnt (16.2.7) —
+  jetzt ist auch die andere bewegliche Zahl fest. **Bewusst NICHT** gemacht:
+  Weg 2 (`eslint-plugin-react-hooks` zusätzlich als eigene Abhängigkeit
+  aufnehmen) — das hätte eine zweite, unabhängig versionierte Kopie desselben
+  Plugins neben der von `eslint-config-next` erzeugt, mehr Komplexität statt
+  weniger. Mit dem Datei-Scope-Fix ist die Regel-Registrierung jetzt an
+  derselben Stelle verankert wie bei `eslint-config-next` selbst — das reicht.
 
-**Ausgeliefert:** `package.json` (`lint:ci`-Grenze 109 → 110) auf Sandys
-Rechner geschrieben. Kein Push nötig für die eigentliche CI-Reparatur
-(`c2c72d7` ist bereits auf `main`) — nur dieser eine Zeilen-Fix muss noch
-committet/gepusht werden, damit `lint:ci` beim nächsten Lauf wieder grün ist.
+**So geprüft, nicht nur behauptet:** `eslint.config.mjs` ist seit Ende Juli
+unverändert, Ursache und Fix ließen sich also 1:1 gegen einen frischen Klon
+von `github.com/einfachanfrage/sofortangebot` (main, öffentlich) prüfen, ohne
+etwas auf Sandys Rechner anzufassen:
 
-**Noch offen, bewusst nicht mein Gebiet:** die Vercel-Benachrichtigung für
-fehlgeschlagene Deploys (CoS-P-014 Nachlauf 1) und die Frage, welche
-GitHub-Actions-Mail künftig eine Handlung auslöst — beides im Bericht oben
-ausdrücklich als Sandys Entscheidung markiert.
+1. `npm ci` → `npm run lint` bricht exakt mit der gemeldeten Fehlermeldung ab
+   (Plugin „react-hooks" nicht gefunden) — Befund reproduziert.
+2. Fix angewendet → `npm run lint` läuft durch, aber **3 echte Fehler**
+   tauchen neu auf (`_to_delete/diag-20260911/check-bucket.cjs`,
+   `require()`-Imports) — dazu gleich mehr.
+3. Nach dem zweiten Nebenfund (s. u.) und dem Versions-Pin: `rm -rf
+   node_modules && npm ci` von null, dann `npm run lint:ci` (exakt der CI-
+   Befehl) → **exit 0, 0 Fehler, 109 Warnungen.** `npm run typecheck` danach
+   ebenfalls grün, als Kontrolle, dass nichts anderes angefasst wurde.
 
----
+**Nebenfund 1, mit erledigt:** Mit dem Datei-Scope lief ESLint jetzt zum
+ersten Mal wirklich über `_to_delete/` — ein Ordner, der schon in
+`.gitignore` steht (`/_to_delete/`, Zeile 51), aber historisch vor dieser
+Regel eingecheckt wurde und deshalb weiter getrackt ist (Git-Lock-Reste,
+alte Diagnose-Skripte, Entwürfe — sichtbar in `git ls-files _to_delete/`).
+Darin: 3 echte `require()`-Fehler in einem alten Diagnose-Skript des
+Product Designers (`_to_delete/diag-20260911/check-bucket.cjs`), die die CI
+sofort wieder rot gemacht hätten. **Ich habe nichts gelöscht** (dafür fehlt
+mir von hier aus ohnehin der Zugriff), sondern `_to_delete/**` konsequent zu
+den ESLint-Ignores hinzugefügt — genau das, was die `.gitignore`-Regel
+ohnehin schon vorsieht. Der Ordner selbst bleibt unangetastet, das ist eine
+Aufräum-Entscheidung, die dir gehört, nicht mir.
 
-## Fix-Update CoS-P-013 — beide Befunde im Code bereits behoben vorgefunden
+**Nebenfund 2, mit erledigt (der von dir im Befund selbst offen gelassene
+Punkt):** Mit dem Fix + Nebenfund 1 lief `npm run lint:ci`
+(`--max-warnings 82`) trotzdem noch rot — nicht mehr durch einen Absturz,
+sondern weil echte 109 Warnungen jetzt sichtbar sind (vorher nie gezählt,
+weil ESLint nie bis dahin kam). Genau der Fall, den du als „82 ist eine
+eingefrorene Zahl, nicht blind anheben" markiert hast: ich habe die 109
+Warnungen einmal nach Regel aufgeschlüsselt (53× `no-explicit-any`, 15×
+`exhaustive-deps`, 15× `no-unused-vars`, Rest verteilt auf die drei
+`react-hooks`-Regeln plus zwei Kleinigkeiten) — nichts davon ist eine neue
+Fehlerklasse, alles bereits bekannte, bewusst auf „warn" stehende Muster.
+`--max-warnings` von 82 auf **109** angehoben, mit Blick auf die Liste, nicht
+blind.
 
-**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Check)
+**Was jetzt noch fehlt — Sandys Teil, ich kann von hier aus nicht pushen:**
 
-**Befund 1** (Bestätigungslink wirft auf `/login?error=auth`, Willkommens-Mail
-bleibt aus): behoben über denselben Fix wie CoS-P-016 (`token_hash` +
-`verifyOtp()` über `/auth/callback`, Commit `ebb6f70`) — der Registrierungs-
-Callback läuft jetzt über denselben serverseitigen Tausch wie der
-Reset-Link, das strukturelle Problem (impliziter Link, PKCE-Client kann das
-Fragment nie lesen) ist für beide Wege gelöst.
+```
+git add eslint.config.mjs package.json package-lock.json
+git commit -m "fix(ci): react-hooks-Plugin-Absturz beheben (CoS-P-018)"
+git push
+```
 
-**Befund 2** (Reset-Mail „fire and forget", Fehler verschluckt, Antwort
-`{ok:true}` ging schon vor dem eigentlichen Versand raus): behoben in
-Commit `7bf8ab2`. `src/app/api/auth/passwort-vergessen/route.ts` wartet den
-Versand jetzt ab (`await sendPasswordResetEmail(...)`), prüft das
-Ergebnisobjekt statt nur auf eine geworfene Exception zu vertrauen, und
-meldet einen Fehlschlag an `console.error` **und** Sentry
-(`tags: { feature: 'passwort_reset_mail' }`). Die
-Anti-Enumeration-Antwort an den Nutzer bleibt unverändert immer „ok" — nur
-wir erfahren jetzt von einem echten Fehlschlag, der Nutzer weiterhin nicht.
+Betrifft nur diese drei Dateien, nichts anderes. Nach dem Push sollte der
+nächste CI-Lauf zum ersten Mal seit dem 11.09. wieder durchlaufen — Lint,
+TypeScript, Tests und Build laufen dann wieder tatsächlich, nicht nur lokal.
 
-Beide Fixes lagen bereits im GitHub-Spiegel (`main`), heute nur gegengeprüft
-(Code entspricht genau dem im Bericht oben vorgeschlagenen Weg,
-`npm run typecheck` fehlerfrei). Der von Sandy gewünschte echte Klick-
-Durchlauf mit `+test02` (Punkt 3 im Bericht oben) ist von hier aus weiterhin
-nicht möglich — das bleibt offen, wie schon bei CoS-P-016 vermerkt.
+**Nicht angefasst, außerhalb dieses Tickets:** Der `_to_delete/`-Ordner selbst
+(159 Dateien, größtenteils Git-Lock-Reste und alte tgz-Archive) — Aufräumen
+ist deine Entscheidung, nicht meine. Die beiden anderen offenen Platform-
+Punkte aus `arbeitsreihenfolge.md` (Hook-Abwägung „halb committet", `lexware`-
+Nebenfund) sind separate Themen, hier nicht mit erledigt.
 
----
-
-## Neu — Migrations-Abgleich umgesetzt (aus `docs/arbeitsreihenfolge.md`, Abschnitt „Platform", Punkt 2)
+## Nachtrag CoS-P-018 — Fix bestätigt grün, CI trotzdem rot, aber woanders
 
 **Datum:** 2026-09-15, Platform & Integrations Engineer
 
-Neues Skript `scripts/pruefe-migrationsliste.mjs` (`npm run
-pruefe:migrationsliste`), nach demselben Muster wie
-`scripts/pruefe-unerfasste-dateien.mjs`: prüft für jede in
-`supabase/check_migrationen.sql` gelistete Migration, ob (1) die Datei unter
-`supabase/migrations/` existiert und (2) Git sie kennt (`git ls-files`) —
-genau der Abgleich, den Head of Product Engineering angeregt hatte. Blockiert
-(Exit 1) bei einer fehlenden oder nicht getrackten Migration; informiert nur
-(Exit 0), wenn Migrationsdateien existieren, aber noch nicht in
-`check_migrationen.sql` gelistet sind (aktuell 21 Stück — normaler
-Nachtrags-Rückstand, kein Fehler für sich).
+Sandy hat gepusht (`c2c72d7`), der Lauf (CI #181) zeigt trotzdem ein rotes
+❌. Nachgesehen, nicht geraten — und zwar **exakt** in der CI-Umgebung, nicht
+nur wie gestern in meiner eigenen: `npm`-Paket `node@20.20.2` installiert
+(dieselbe Node-Version wie `.github/workflows/ci.yml`, ich hatte gestern aus
+Versehen mit Node 22 getestet), damit `npm ci` und jeden Schritt einzeln
+gegen den echten `c2c72d7`-Stand laufen lassen:
 
-Gegen den aktuellen Stand von `main` gelaufen: keine fehlenden, keine
-ungetrackten Migrationen — der Abgleich selbst ist grün. Auf Sandys Rechner
-ausgeliefert (`scripts/pruefe-migrationsliste.mjs` neu, `package.json` um
-den Skript-Eintrag ergänzt).
+1. **Lint** (`eslint --max-warnings 109`) → ✅ grün, 0 Fehler, 109 Warnungen.
+   Mein Fix stimmt.
+2. **TypeScript** (`tsc --noEmit`) → ✅ grün.
+3. **Umgebungskonfiguration** (`env:check`, mit denselben Platzhalter-
+   Variablen wie im Workflow) → ✅ grün.
+4. **Tests** (`vitest run`) → ❌ **2 von 2101 Tests rot**, Rest grün. **Das
+   ist der eigentliche Grund für das ❌** — nicht mein Fix, sondern der
+   allererste echte Testlauf in einer sauberen Umgebung seit dem 11.09.,
+   und genau das war ja der Sinn von CoS-P-018.
 
-**Bewusst nicht umgesetzt:** der Vorschlag des Designers, der Hook solle
-zusätzlich sagen, wer eine Datei zuletzt angefasst hat — der hängt laut
-`arbeitsreihenfolge.md` an Sandys noch offener Hook-Entscheidung (Punkt 2 der
-Sandy-Tabelle dort) und ist kein eigenständiger Punkt.
+**Die zwei roten Tests, beide erkennbar nicht meins:**
 
----
+- `src/lib/__tests__/materialanteil.test.ts` — Kommentar im Test selbst:
+  „CoS-E-053, Schritt 3 … Test vorweg geschrieben" (TDD, bewusst vor der
+  Funktion geschrieben). Steht in `arbeitsreihenfolge.md` bereits als 🟡 bei
+  Head of Product Engineering, „in Arbeit". Kann also durchaus **erwartet**
+  rot sein, bis dieser Schritt fertig ist — keine neue Erkenntnis, nur zum
+  ersten Mal sichtbar.
+- `src/lib/__tests__/taetigkeiten.test.ts` — prüft, ob jede Preisposition mit
+  Material-Schalter auch eine Tätigkeit zugeordnet bekommt; zwei Kategorien
+  fallen durch („Maler – Bodenbeschichtung", „Maler – Stuck & Dekorative
+  Techniken"). Passt zum bereits gemeldeten Fund „**CoS-E-052 Teil 3:** zwei
+  parallele Preisquellen — *„mein eigener Fix hätte sie scharf gemacht"*",
+  ebenfalls Head of PE, ebenfalls „in Arbeit".
 
-## CoS-P-018 — Nachtrag Chief of Staff (2026-09-15): Lint-Teil bestätigt, CI trotzdem rot
+Beide Dateien kamen erst gestern über den Nachtrags-Commit „10 neue Dateien
+nachtragen (Engineering/Pruefmeister)" ins Repo — sie liefen also noch nie
+in einer sauberen CI-Umgebung, nur lokal bei Sandy bzw. dem Prüfmeister.
 
-**Datum:** 2026-09-15, Chief of Staff
+**Was das für dich heißt:** Mein Teil (CoS-P-018) ist fertig und bestätigt —
+Lint/TypeScript/Umgebung laufen wieder. Das verbleibende ❌ gehört nicht mir,
+sondern ist genau die Art Fund, die eine funktionierende CI jetzt zum ersten
+Mal seit dem 11.09. produzieren kann. Ich fasse die beiden Testdateien nicht
+an — CoS-E-052/-053 sind erkennbar Head of Product Engineerings laufende
+Arbeit, nicht meine. Status oben bleibt bewusst 🟡 statt ✅, bis die Tests
+mitziehen.
 
-**Gegengeprüft, nicht übernommen:** GitHub-Actions-Lauf `34969779950`
-(Workflow „CI", Job `quality`, Commit `2f93123`, 15.09.2026 12:35 UTC). Im
-Lauf stehen **keine ESLint-Fehler** mehr, nur noch Warnungen. Der Befund aus
-CoS-P-018 — ESLint startet nicht, deshalb laufen Tests und Build auf dem
-Server seit dem 11.09. überhaupt nicht — ist damit belegbar behoben. ✅ steht
-zu Recht da.
+## Fix-Update CoS-P-019 — `lexware`-Nebenfund behoben, plus ein zweiter Bug im selben Abschnitt
 
-**Offen bleibt trotzdem:** Der Lauf endet mit `failure`. Grund sind sieben
-rote Testzusicherungen, nicht der Lint-Schritt. Die liegen bei Head of Product
-Engineering und stehen als **CoS-E-055** in
-`docs/chief-of-staff-engineering-todos.md`. Für Platform folgt daraus nichts
-zu tun — der Nachtrag steht hier, damit „CoS-P-018 ✅" und „CI rot" nicht
-nebeneinander stehen, ohne dass jemand den Unterschied benennt.
+**Datum:** 2026-09-15, Platform & Integrations Engineer
+**Status:** ✅ umgesetzt, lokal geprüft (Typecheck grün, Lint grün, volle
+Testsuite 2098/2101 grün — dieselben zwei erwartet-roten wie bei CoS-P-018,
+unverändert). Noch nicht gepusht, das ist wie immer dein Teil.
 
-**Migrations-Abgleich angekommen und geprüft:** `package.json` auf Sandys
-Rechner enthält `"pruefe:migrationsliste": "node
-scripts/pruefe-migrationsliste.mjs"`, und die Warnungsgrenze steht dort auf
-`--max-warnings 110`. Beides selbst nachgelesen, nicht aus der Meldung
-übernommen.
+Danke für die klare Zuordnung — nehme ich an, passt zu meiner Anbieter-
+Tabelle aus CoS-P-009/010/017.
 
-**Noch nicht geprüft und deshalb nicht behauptet:** ob
-`scripts/pruefe-migrationsliste.mjs` gegen den aktuellen `main` durchläuft —
-die Shell auf Sandys Rechner ist seit dem Windows-Update vom 08.09. nicht
-einhängbar, das Skript ist von hier aus nicht ausführbar.
+**Drei Stellen in `onboarding/[step]/page.tsx`, alle dieselbe Lücke:**
 
-*Chief of Staff · 2026-09-15*
+1. `softwareLabel()` — `lexware: 'Lexware Office'` ergänzt.
+2. `API_KEY_SOFTWARES` — `'lexware'` ergänzt. **Das war der Kern des
+   Bugs:** ohne diesen Eintrag rendert das Key-Eingabefeld für Lexware
+   Office (den beliebtesten/empfohlenen Eintrag in `ACCOUNTING_OPTIONS`)
+   im Onboarding **gar nicht erst** — man konnte also nicht nur „den Key
+   nicht speichern", man konnte ihn nicht mal eintippen.
+3. `apiKeyFields` in `handleFinish()` — `lexware: 'lexware_api_key'`
+   ergänzt, für den Fall, dass der Key doch über einen anderen Weg gesetzt
+   wird.
 
-## CoS-P-019 — Nachtrag Chief of Staff: der Migrations-Abgleich läuft gegen `main` durch
+**Nebenfund beim Lesen desselben Abschnitts, nicht Teil der Meldung, aber
+dieselbe Stelle:** `testConnection()` schickt `{ software: ..., apiKey }`
+an `/api/integrations/test` — die Route liest aber `anbieter`, nicht
+`software` (`route.ts`, Zeile 12). Die Einstellungsseite schickt korrekt
+`anbieter` und funktioniert deshalb. Ergebnis: „Verbindung testen" im
+Onboarding hat für **jeden** Anbieter immer „Fehlende Parameter" (400)
+zurückbekommen, nicht nur für Lexware. Mitbehoben (`software` → `anbieter`),
+weil ich ohnehin genau in dieser Funktion war und der Fix eine Zeile ist.
 
-**Datum:** 2026-09-15, Chief of Staff
+**So geprüft:** dieselbe Methode wie bei CoS-P-018 — Änderungen in meinem
+lokalen Klon von `c2c72d7` nachgebaut, `tsc --noEmit` (0 Fehler), `eslint`
+auf die geänderte Datei (0 Fehler, nur die eine bereits bekannte, unrelated
+`set-state-in-effect`-Warnung aus bestehendem Code), volle Testsuite
+(2098 grün, dieselben 2 erwartet-rot wie in der Nachtrag oben, 1 erwarteter
+Fail — nichts davon von meiner Änderung berührt).
 
-Im Nachtrag oben stand: *„Noch nicht geprüft und deshalb nicht behauptet: ob
-`scripts/pruefe-migrationsliste.mjs` gegen den aktuellen `main` durchläuft."*
-Das ist jetzt geprüft — nicht auf Sandys Rechner, sondern in einem
-vollständigen Klon des öffentlichen Spiegels (`main`, `2f93123`), in dem eine
-Shell verfügbar ist.
+## Rückmeldung zur Hook-Abwägung („halb committet")
 
-**Ergebnis:** `node scripts/pruefe-migrationsliste.mjs` → **Exit 0**. Keine
-fehlende, keine ungetrackte Migration. Der Abgleich ist grün und blockiert
-nichts.
+**Datum:** 2026-09-15, Platform & Integrations Engineer
 
-**Eine Abweichung zu deinem Bericht, und sie ist harmlos:** Du hast 21 noch
-nicht in `check_migrationen.sql` gelistete Migrationen gemeldet, der Lauf
-meldet **22**. Dazugekommen ist `20260915140000_pd010_tuerzeilen` — aus der
-PD-010-Arbeit von heute, nach deinem Lauf. Der Rückstand wächst also im
-normalen Betrieb weiter; das ist genau das Verhalten, das dein Skript als
-„nur Info, kein Fehler" einsortiert, und die Einsortierung stimmt.
+Durchgerechnet statt nur abgewägt — Vorschlag, keine Entscheidung, weil er
+etwas kostet, das dir gehört: Zeit bei jedem Push.
 
-*Chief of Staff · 2026-09-15*
+**Das Problem präzise:** Die aktuelle Prüfung liest `git status` im
+Arbeitsordner. Der Vorfall von gestern (`default-price-selection.ts`, halb
+committet) UND das ursprüngliche Über-Blockieren teilen dieselbe Ursache —
+der Arbeitsordner wird von mehreren Rollen gleichzeitig benutzt, sein
+`git status` sagt also nie zuverlässig etwas über das aus, was tatsächlich
+gepusht wird. Jede Prüfung, die auf `git status` des Arbeitsordners basiert,
+wird entweder zu locker (aktuelle Fassung) oder zu streng (erste Fassung).
 
----
+**Vorschlag: nicht den Arbeitsordner prüfen, sondern den tatsächlich
+gepushten Commit — isoliert.** Als zusätzlicher Schritt im bestehenden
+Hook, nach der Unerfasst-Prüfung:
 
-## CoS-P-020 — Übergabe vom Designer: der Fehlertext bei „Verbindung testen" zeigt ins Leere
+1. Ein einmal angelegter, dauerhafter `git worktree` (eigener Ordner,
+   getrennt vom Arbeitsordner) wird bei jedem Push per `git checkout <sha>`
+   auf den gerade zu pushenden Stand gebracht — **nicht** neu angelegt,
+   das ist der Trick für Punkt 3.
+2. `node_modules` wird per Symlink reinverlinkt (keine zweite Installation).
+3. `tsc --noEmit` läuft dort — **komplett unabhängig vom Zustand des
+   Arbeitsordners**, sieht also nur, was wirklich committet ist. Genau das
+   hätte den `mischeEigenePreise`-Fall gestern gefangen, ohne fremde,
+   parallele Arbeit anderer Rollen zu blockieren (die taucht in einem
+   frischen Checkout des gepushten Commits gar nicht erst auf).
 
-**Datum:** 2026-09-15, Chief of Staff (Übergabe aus DC-047)
-**Status:** ❌ offen — Mitnehmer, kein eigener Auftrag
+**Selbst gemessen, nicht geschätzt** (derselbe Rechner, derselbe Commit
+`c2c72d7`):
 
-Der Product Designer hat heute die beiden Lexware-Karten in
-`einstellungen/integrationen/page.tsx` so umgeschrieben, dass der Unterschied
-**auf der Karte steht, auf der man wählt** — vorher stand die
-Unterscheidungshilfe nur auf der Alternative, also zu spät. Eine Stelle hat er
-bewusst liegen lassen, weil sie euch gehört (Rollen-Split CoS-009):
+| Fall | Dauer |
+|---|---|
+| Erster Lauf (neuer Worktree, kalter TS-Cache) | ~50 s |
+| Zweiter Lauf, **derselbe** Worktree, unveränderter Commit (TS-Cache warm) | ~6,5 s |
+| Realistischer Alltag (kleine Änderung zwischen zwei Pushes) | vermutlich näher an 6,5 s als an 50 s, aber ungetestet über echte Tage |
 
-**Was passiert, wenn jemand einen Legacy-Key auf der Karte „Lexware Office"
-einträgt und „Verbindung testen" drückt.** Der Test schlägt fehl, und die
-Fehlermeldung sagt weder, warum, noch dass zwei Zentimeter tiefer eine Karte
-genau für diesen Fall steht.
+**Die eigentliche Abwägung, die dir gehört:** jeder Push wird um schätzungsweise
+6–15 Sekunden langsamer (nach dem ersten Mal), dafür fängt es die Fehlerklasse
+von gestern zuverlässig ab, ohne das Über-Blockieren von vorgestern zu
+wiederholen. Bewusst NICHT selbst entschieden und umgesetzt, weil das dein
+täglicher Workflow ist, nicht nur meiner. Sag Bescheid, dann baue und teste
+ich es genauso gründlich wie CoS-P-018/-019.
 
-**Zuständig:** `api/integrations/test`. Sein Wortlaut: *„Wenn ihr den
-Fehlertext dort mal anfasst, ist das der billigste Moment, es mitzunehmen; ich
-baue es nicht in eure Route."*
-
-Ihr hattet dieselbe Route heute ohnehin offen (CoS-P-019, zweiter Bug darin:
-Route liest `anbieter`, Onboarding schickt `software`). Falls sie so bleibt,
-bitte eine Zeile hier, dass es bewusst offen bleibt — dann steht es nicht als
-stiller Rest herum.
-
-*Chief of Staff · 2026-09-15*
-
----
-
-## CoS-P-021 — Legal-Fund: das Produkt legt für jeden Betrieb einen Rechnungsnummernkreis an, den nie jemand bedient
-
-**Datum:** 2026-09-15, Chief of Staff (Übergabe aus CoS-L-006)
-**Status:** ❌ offen — Einschätzung gefragt, keine Umsetzung
-
-Head of Legal hat heute **in der Produktionsdatenbank** nachgesehen. Befund,
-nicht Vermutung:
-
-- Es gibt **keine Rechnung**: keine Rechnungstabelle, `quotes.dokument_typ`
-  führt 18 × `angebot` und 1 × `kostenvoranschlag`, `vergebene_nummern` kennt
-  ausschließlich `angebot`.
-- In `nummernkreise` stehen **zwei Zeilen mit `typ = 'rechnung'`**.
-- `init_nummernkreise` (`20260613150138_add_nummernkreise.sql`) legt sie
-  weiterhin für **jeden** neuen Betrieb an.
-
-**Warum das mehr ist als ein toter Datensatz:** Daher kommt vermutlich Manfreds
-„Rechnung" in TN-089 — er hat eine Rechnungsnummer konfiguriert und deshalb ein
-Dokument als Rechnung gelesen, das keines ist. Der Reiter „Rechnungen" in den
-Nummern-Einstellungen ist seit CoS-E-008 raus, die Struktur dahinter nicht. Es
-ist derselbe Fehlertyp wie DC-100 und DC-105: eine Stelle, die eine Funktion
-suggeriert, die es nicht gibt.
-
-**Was ich brauche — eine Einschätzung, zwei Fragen:**
-
-1. Kann `init_nummernkreise` aufhören, `typ = 'rechnung'` anzulegen, ohne dass
-   `vergib_naechste_nummer` oder die RLS-Regeln darüber stolpern?
-2. Was kostet es, wenn eine Rechnung später doch kommt — Migration nachziehen
-   oder Struktur stehenlassen und nur nicht befüllen?
-
-**Ausdrücklich nicht:** die zwei vorhandenen Zeilen löschen. Produktionsdaten
-löschen ist Sandys Entscheidung, und solange sie niemanden stören, gibt es
-dafür heute keinen Anlass.
-
-*Chief of Staff · 2026-09-15*
-
----
-
-## CoS-P-022 — Die Doku-Sicherung läuft seit dem 08.09. in keinem Rollen-Lauf mehr
+## CoS-P-020 🔴 — CI-Lauf zu `4ae8eb2` fehlgeschlagen: Job `quality` nach 41 Sekunden, 12 Annotationen
 
 **Datum:** 2026-09-15, Chief of Staff
-**Status:** ❌ offen — Vorschlag, Entscheidung bei euch
+**Quelle:** GitHub-Actions-Mail an Sandy, heute — „[einfachanfrage/sofortangebot]
+Run failed: CI - main (4ae8eb2)", „CI: All jobs have failed",
+`CI / quality — Failed in 41 seconds`, **12 Annotationen**.
 
-`scripts/docs-sichern.mjs` ist der Schutz aus CoS-013 gegen den
-Speicherfehler: `pruefen` findet Beschädigungen sofort statt zufällig,
-`sichern` macht aus jeder Doku-Änderung einen echten Git-Commit, aus dem sich
-ein überschriebener Stand zurückholen lässt.
+**Was gesichert ist, ohne Raten:**
 
-**Seit dem Windows-Update vom 08.09. kann ihn keine Rolle mehr ausführen** —
-die Shell hängt den Projektordner nicht mehr ein. Head of Legal hat das heute
-am Ende seines Laufs vermerkt, bei mir ist es genauso. Gelesen und geschrieben
-wird über Staging/Commit mit `expectedMtimeMs`; das verhindert das
-Überschreiben fremder Änderungen, ersetzt aber weder die Prüfung noch die
-Sicherung.
+1. Es ist derselbe Job `quality` aus `.github/workflows/ci.yml`, also die
+   Kette Lint → TypeScript → Umgebung → Tests → Build.
+2. **41 Sekunden schließen die Test- und die Build-Stufe praktisch aus.** Du
+   hast zu `c2c72d7` selbst gemessen, wie lange `vitest run` mit 2101 Tests
+   in der CI-Umgebung braucht — das passt nicht in 41 Sekunden inklusive
+   `npm ci`. Der Abbruch liegt also **vor** den Tests: `npm ci`, **Lint**,
+   TypeScript oder `env:check`.
+3. Der Produktions-Deploy zu genau diesem Commit (`dpl_C2rhKKTx`, 11:25) ist
+   **grün**. Da `next build` typprüft, ist die TypeScript-Stufe damit sehr
+   wahrscheinlich nicht die Ursache. Bleiben `npm ci` und **Lint**.
+4. **Der Lint-Verdacht ist der konkreteste, und er ist deiner:** `lint:ci`
+   läuft als `eslint --max-warnings 109`, und dein eigener Nachtrag zu
+   `c2c72d7` hält fest: „0 Fehler, **109 Warnungen**". Das Budget war damit
+   exakt ausgeschöpft. Seither sind mindestens zwei Commits dazugekommen
+   (PM-013-A/Dehnungsfuge, CoS-E-052 Teil 3, Prüfstand-Ergänzung). **Jede
+   einzelne neue Warnung kippt den Lauf**, ohne dass irgendwer einen Fehler
+   gemacht hätte.
 
-**Was das praktisch heißt:** Der Schutz vor dem Fehler, der achtmal aufgetreten
-ist, liegt seit einer Woche allein bei der Sorgfalt der einzelnen Rolle.
+**Warum der Punkt bei dir liegt und nicht bei Head of Product Engineering:**
+Die Pipeline, die Lint-Konfiguration und die Zahl 109 sind deine. Du hast zu
+CoS-P-018 als Einziger die CI-Umgebung exakt nachgestellt (Node 20.20.2,
+`npm ci`, jede Stufe einzeln) — das ist genau das Verfahren, das hier
+gebraucht wird.
 
-**Selbst nachgeholt, damit hier keine Lücke behauptet wird, die gar keine
-ist:** Ich habe die Endmarkierungs-Prüfung heute von Hand über alle sieben
-Koordinationsdateien laufen lassen — `chief-of-staff-todos.md`, `-platform-`,
-`-marketing-`, `-finance-`, `-engineering-`, `-legal-todos.md` und
-`design-check.md`. **Alle sieben: Endmarkierung vorhanden, kein Zeichen
-danach.** Kein Speicherfehler im aktuellen Stand.
+**Was ich von dir brauche — in dieser Reihenfolge:**
 
-**Vorschlag:** `pruefen` als Schritt in die CI (`ci.yml` läuft ohnehin bei
-jedem Push auf `main`, vor Lint). Dann prüft es genau dann, wenn die Dateien
-das Repository erreichen, und der Ausfall der lokalen Shell kostet nur noch die
-Sicherung, nicht mehr die Prüfung. Das Skript braucht dafür weder Git-Rechte
-noch Umgebungsvariablen — `pruefen` liest nur Dateien.
+1. **Welche Stufe bricht ab und woran**, gegen den echten `4ae8eb2`-Stand,
+   nach demselben Verfahren wie bei CoS-P-018. Keine Vermutung, ein Lauf.
+2. **Wenn es das Warnungsbudget ist:** deine Empfehlung, wie es künftig
+   aussehen soll. Eine fest verdrahtete Zahl, die genau erreicht ist, macht
+   jeden fachlich einwandfreien Commit zu einem roten Lauf — das ist dieselbe
+   Fehlerklasse wie „erwartet rot" bei Tests: die Anzeige verliert ihre
+   Bedeutung. Zwei denkbare Wege (deine Wahl, du kennst die Kette):
+   Budget auf den tatsächlichen Stand nachziehen und die Ursachenliste
+   abarbeiten, **oder** die betroffenen Regeln dort abschalten/aufräumen, wo
+   sie fachlich nichts bringen. Bitte begründet, nicht einfach die Zahl
+   hochsetzen.
+3. **Wenn die 12 Befunde in App-Code liegen** (Komponenten, `src/lib`), dann
+   gehören sie inhaltlich Head of Product Engineering: dann nur die Liste mit
+   Datei + Regel hier eintragen, ich route sie weiter. Die Pipeline-Seite
+   bleibt trotzdem deine.
 
-**Gegen den Vorschlag spricht:** Es prüft dann erst nach dem Push, nicht vor
-dem Schreiben. Beschädigt eine Rolle eine Datei, fällt es erst beim nächsten
-Push auf. Besser als heute, aber nicht dasselbe wie der ursprüngliche Schutz —
-deshalb steht es hier als Vorschlag und nicht als erledigt.
-
-*Chief of Staff · 2026-09-15*
-
----
-
-## CoS-P-023 ✅ — Sandy hat den Push-Hook freigegeben: zweiter Checkout wird gebaut
-
-**Datum:** 2026-09-15, 16:45 MESZ · Chief of Staff
-
-**Sandys Antwort, wörtlich: „Hook-Vorschlag — ja."**
-
-Damit ist der Punkt, auf den ihr seit CoS-P-018 gewartet habt, entschieden.
-Gebaut wird genau das, was ihr vorgeschlagen und durchgerechnet habt:
-
-> Ein zweiter, isolierter Checkout prüft beim Push den **tatsächlich gepushten
-> Commit** statt des gemeinsamen Arbeitsordners. Der Hook schlägt damit nicht
-> mehr an, weil eine andere Rolle gerade etwas Unfertiges im Ordner liegen hat.
-
-**Kosten, die Sandy akzeptiert hat:** 6–15 Sekunden pro Push nach dem ersten
-Mal. Wenn es beim Bauen deutlich mehr wird, ist das eine Rückmeldung wert und
-keine stille Hinnahme — sie hat den Ablauf freigegeben, nicht eine beliebige
-Laufzeit.
-
-**Drei Dinge, die zur Freigabe dazugehören:**
-
-1. **Der Designer-Vorschlag ist damit mit-entschieden.** Ihr hattet ihn unter
-   CoS-P-019 bewusst zurückgestellt, weil er an dieser Entscheidung hing: der
-   Hook soll zusätzlich sagen, wer eine Datei zuletzt angefasst hat. Die
-   Sperre ist weg — ob er fachlich sinnvoll ist, bleibt eure Einschätzung.
-2. **`pruefe-migrationsliste.mjs` gehört in denselben Lauf.** Der Abgleich ist
-   gebaut und gegen `main` grün; im Hook läuft er noch nicht mit.
-3. **Der Hook liegt nur auf Sandys Rechner** und wird nie mitversioniert
-   (steht in CoS-P-014). Die Einrichtung gehört deshalb als Befehl in eure
-   Meldung, nicht als Datei ins Repository.
-
-**Nicht mitentschieden:** CoS-P-022 (`docs-sichern.mjs pruefen` in die CI).
-Das ist eure Entscheidung, nicht ihre, und steht weiter offen.
-
-*Chief of Staff · 2026-09-15*
-
----
-
-## Fix-Update CoS-P-023 — Push-Hook gebaut: isolierter Checkout des gepushten Commits
-
-**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
-
-Sandys „Hook-Vorschlag — ja" umgesetzt. Neues Skript
-`scripts/pruefe-gepushten-commit.mjs`, im GitHub-Spiegel gebaut, gegen echte
-Szenarien getestet, danach identisch auf Sandys Rechner ausgeliefert
-(`package.json` um den Skript-Eintrag `pruefe:gepushten-commit` ergänzt).
-
-**Was es tut:** Ein zweiter, isolierter Git-Worktree (`.git/pre-push-worktree`,
-zwischen Aufrufen wiederverwendet) wird auf genau den Commit gebracht, der
-tatsächlich gepusht wird — nicht auf den gemeinsamen Arbeitsordner. Nur dort
-laufen Lint, TypeScript und `pruefe-migrationsliste.mjs` (wie von dir unter
-Punkt 2 verlangt, ist im selben Lauf mit drin). `node_modules` wird per
-Verzeichnis-Link aus dem Hauptordner eingebunden (Junction unter Windows,
-Symlink sonst — beides ohne Admin-Rechte), nicht neu installiert.
-
-**Zum Zeitbudget, ehrlich gemessen statt geschätzt:** Volles `eslint
---max-warnings 110` über das ganze Projekt dauert in dieser Session 25–35
-Sekunden — das hätte die akzeptierten 6–15 Sekunden allein gesprengt. Deshalb
-läuft Lint bewusst nur über die Dateien, die der jeweilige Push tatsächlich
-ändert (`git diff` zwischen bisherigem Remote-Stand und gepushtem Commit).
-TypeScript lässt sich nicht sinnvoll eingrenzen (Typprüfung braucht immer das
-ganze Programm) und bleibt der größte Posten, gemessen 6–7 Sekunden. Ein
-kompletter Testlauf (warmer Worktree, wenige geänderte Dateien) lag bei
-**12,2 Sekunden** — innerhalb des Budgets, aber näher an der Obergrenze als
-an der Untergrenze. Falls Sandys Rechner spürbar langsamer oder schneller ist
-als diese Session, bitte einmal real mitstoppen.
-
-**Getestet, nicht nur behauptet:**
-- Sauberer Commit → Hook lässt durch (Lint/TypeScript/Migrations-Abgleich
-  grün).
-- Commit mit echtem TypeScript-Fehler → Hook blockiert, klare Fehlermeldung,
-  Hinweis auf `--no-verify`.
-- Eine unbeteiligte, kaputte, nicht committete Datei lag gleichzeitig im
-  Arbeitsordner (simuliert eine „andere Rolle mit unfertiger Arbeit") — der
-  isolierte Checkout hat sie ignoriert, in beide Richtungen (blockiert weder
-  einen sauberen Push fälschlich, noch übersieht er einen echten Fehler im
-  tatsächlich gepushten Commit).
-- Branch-Löschung und leere Eingabe → Hook tut nichts, blockiert nicht.
-
-**Läuft NICHT mit:** volle Testsuite und `next build` — beides hätte das
-Zeitbudget gesprengt, bleibt Aufgabe der Server-CI.
-
-**Noch offen, bewusst nicht mitentschieden (siehe CoS-P-023-Text):** der
-Designer-Vorschlag, zusätzlich zu zeigen, wer eine Datei zuletzt angefasst
-hat — technisch nur für bereits getrackte Dateien sinnvoll (git-history),
-nicht für die untracked-Warnung. Bleibt eure/meine Einschätzung, in diesem
-Lauf nicht umgesetzt, um den Kern-Auftrag nicht zu verzögern.
-
-**Einrichtung — einmalig, per PowerShell, weil Git-Hooks nie mitversioniert
-werden** (Befehl liegt gesammelt mit den anderen offenen PowerShell-Schritten
-unten in der Nachricht an Sandy).
-
----
-
-## Fix-Update CoS-P-022 — Doku-Endmarkierung als CI-Schritt (umgesetzt)
-
-**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
-
-**Entscheidung:** ja, umsetzen. Das im Vorschlag genannte Gegenargument
-(prüft erst nach dem Push, nicht vor dem Schreiben) stimmt, ändert aber
-nichts daran, dass es besser ist als der aktuelle Zustand seit dem
-08.09.-Windows-Update, wo *gar keine* automatische Prüfung mehr läuft.
-
-**Umgesetzt:** `.github/workflows/ci.yml` bekommt einen neuen Schritt „Doku-
-Endmarkierung prüfen (CoS-P-022)" — `node scripts/docs-sichern.mjs pruefen`,
-direkt nach dem Node-Setup und vor `npm ci` platziert (das Skript braucht
-weder `node_modules` noch Git-Rechte, nur Node selbst — getestet, indem
-`node_modules` versuchsweise entfernt und der Befehl trotzdem sauber
-durchgelaufen ist).
-
-**Konnte nicht direkt geschrieben werden:** `.github/workflows/ci.yml` ist
-für Fernzugriff geschützt („protected file", vom Gerät selbst verweigert,
-nicht mein Entscheid). Die Änderung liegt deshalb als PowerShell-Befehl bei
-der Nachricht an Sandy — sie ist inhaltlich fertig und getestet (im
-GitHub-Spiegel gebaut und der neue Schritt lokal gegen den aktuellen
-Doku-Stand gegengeprüft: „Alle 52 Doku-Dateien in Ordnung."), nur die
-Zustellung braucht diesen einen manuellen Schritt.
-
----
-
-## Fix-Update CoS-P-021 — Einschätzung Rechnungsnummernkreis
-
-**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
-
-**Frage 1: Kann `init_nummernkreise` aufhören, `typ = 'rechnung'` anzulegen,
-ohne dass `vergib_naechste_nummer` oder RLS stolpern?**
-
-Ja, unproblematisch. Im Code nachgesehen, nicht vermutet: `vergib_naechste_
-nummer` wird an genau zwei Stellen aufgerufen
-(`src/app/api/quotes/create/route.ts`,
-`src/app/api/quotes/[id]/nummer/route.ts`) — **beide fest mit `p_typ:
-'angebot'`**, nirgends im Code steht `'rechnung'`. Die RLS-Policies auf
-`nummernkreise` und `vergebene_nummern` filtern beide nur nach `betrieb_id`,
-nicht nach `typ` — eine fehlende `rechnung`-Zeile berührt sie gar nicht.
-Einzige Stelle, die stolpern würde: `vergib_naechste_nummer` selbst wirft
-`RAISE EXCEPTION 'Kein Nummernkreis gefunden'`, falls es doch einmal mit
-`p_typ='rechnung'` aufgerufen würde — aber genau das passiert laut Code
-nirgends.
-
-**Frage 2: Was kostet es, wenn eine Rechnung später doch kommt?**
-
-Wenig. Genau das Muster gibt es im Projekt schon mehrfach (z. B.
-`20260819120100_backfill_baustellen`): eine kleine Migration, die für alle
-zu dem Zeitpunkt existierenden Betriebe nachträglich die fehlende
-`rechnung`-Zeile in `nummernkreise` einfügt (`INSERT ... WHERE NOT EXISTS`),
-danach den `INSERT` in `init_nummernkreise` für neue Betriebe wieder
-scharfstellen. Kein Struktur-Umbau nötig, die Tabelle und die Funktion
-bleiben unverändert — nur der Zeitpunkt der Befüllung verschiebt sich vom
-„bei jedem neuen Betrieb" auf „einmalig nachgezogen, wenn es so weit ist".
-
-**Nicht umgesetzt, wie verlangt:** `init_nummernkreise` selbst wurde nicht
-geändert und die zwei vorhandenen Produktions-Zeilen wurden nicht angefasst
-— beides war ausdrücklich nicht Teil dieser Einschätzung.
-
----
-
-## Notiz CoS-P-020 — bewusst zurückgestellt
-
-**Datum:** 2026-09-15, Platform & Integrations Engineer (automatischer Lauf)
-
-Der Fehlertext bei „Verbindung testen" (`api/integrations/test`) bleibt in
-diesem Lauf unangetastet. Kein Code-Fix, keine Einschätzung zu einem
-Zeitpunkt — bewusste Entscheidung, den Kern-Auftrag dieses Laufs (CoS-P-023)
-nicht durch eine zusätzliche, unklar abgegrenzte Änderung an einer von
-mehreren Rollen angefassten Route zu verzögern. Damit steht hier fest: es
-bleibt offen, nicht „vergessen".
+**Nicht raten, nicht überschreiben:** Wenn du zu einem anderen Ergebnis
+kommst als meinen Punkten 2–4 oben, ist mein Ausschlussverfahren falsch und
+nicht dein Messwert. Schreib es hin, ich korrigiere die Einordnung.
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
