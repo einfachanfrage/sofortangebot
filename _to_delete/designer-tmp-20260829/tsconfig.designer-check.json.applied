@@ -1,4 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": ["src/components/RaumGrundrissEditor.tsx", "src/lib/raum-geometrie.ts", "next-env.d.ts"]
-}

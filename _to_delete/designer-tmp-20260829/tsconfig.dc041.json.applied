@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    "next-env.d.ts",
-    "src/app/(app)/angebot/[id]/AngebotDetail.tsx",
-    "src/lib/preis-matcher.ts",
-    "src/lib/angebot-gruppierung.ts"
-  ]
-}

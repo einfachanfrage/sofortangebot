@@ -1,8 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "include": [
-    "src/app/(auth)/register/page.tsx",
-    "src/components/VorschauUndVersand.tsx",
-    "src/lib/pdf.tsx"
-  ]
-}

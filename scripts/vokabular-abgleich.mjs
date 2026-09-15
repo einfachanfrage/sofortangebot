@@ -23,8 +23,14 @@
  *    Hinweistexte für den Handwerker, keine bepreisten Positionen — wer sie
  *    mitzählt, erfindet Lücken.
  * 2. Titel, die die Engine vollständig aus Variablen baut, lassen sich hier
- *    nicht auflösen und fallen raus (`§VAR§`). Sie werden am Ende gezählt,
- *    damit die Lücke in der Methode sichtbar bleibt statt zu verschwinden.
+ *    nicht auflösen und fallen raus. Sie werden am Ende gezählt, damit die
+ *    Lücke in der Methode sichtbar bleibt statt zu verschwinden.
+ *    (15.09.2026) Der Zähler stand still auf 6 und wuchs mit jedem neuen
+ *    Ternär im Titel. Er ist jetzt 0: `literal()` liest verschachtelte
+ *    Template-Literale zu Ende, der Raum-Anhang als Ternär wird wie jeder
+ *    andere Raum-Anhang weggeworfen, und `${titel}` / `${zoneZusatz}` stehen
+ *    in VARIANTEN. Steigt der Zähler wieder, fehlt dort ein Eintrag — das ist
+ *    dann eine echte Lücke und keine Lesefehler mehr.
  * 3. (erledigt am 12.09.2026) `gewerkFuerPosition` lag hier als Kopie, weil
  *    sie im Next.js-Endpunkt neben `next/server` stand. Sie ist jetzt in
  *    `src/lib/positions-gewerk.ts` und wird importiert — eine Quelle, keine
@@ -55,13 +61,21 @@ const alsMarkdown = process.argv.includes('--md')
 // oben ist damit erledigt.
 const { gewerkFuerPosition } = await jiti.import(path.join(ROOT, 'src/lib/positions-gewerk.ts'))
 
+// (15.09.2026) `fliesen` ist dazugekommen. Es stand nicht drin, weil der erste
+// Abgleich von Maler und Boden handelte — aber das Gewerk ist in
+// `gewerke-config.ts` auf `aktiv: true` gesetzt, ein Fliesenleger bekommt es
+// also angeboten. Ein Abgleich, der „Engine ↔ Standardkatalog" heißt und zwei
+// von sechs aktiven Gewerken liest, prüft still weniger als er behauptet —
+// derselbe Fehler wie beim Zähler „nicht prüfbar", nur eine Etage höher.
+// Was dabei herauskam, steht als Fall PM-060.
 const QUELLEN = [
   'src/lib/mengen/gewerke/maler.ts',
   'src/lib/mengen/gewerke/boden.ts',
+  'src/lib/mengen/gewerke/fliesen.ts',
   'src/lib/mengen/gewerke/sockelleisten.ts',
   'src/lib/mengen/gewerke/vob-uebermessung.ts',
   ...readdirSync(path.join(ROOT, 'src/lib/vollstaendigkeit'))
-    .filter(f => /^(maler|boden)/.test(f) && f.endsWith('.ts'))
+    .filter(f => /^(maler|boden|fliesen)/.test(f) && f.endsWith('.ts'))
     .map(f => 'src/lib/vollstaendigkeit/' + f),
 ]
 
@@ -69,7 +83,16 @@ const QUELLEN = [
 // (im Angebot steht er hinter dem Gedankenstrich, in der Preisdatenbank nie),
 // die Anstrichzahl bekommt einen plausiblen Wert.
 const FUELLUNG = [
-  [/\$\{(?:name|raum|wName)\}/g, '§RAUM§'],
+  // ZUERST: Raum-Anhang als Ternär im Template — `${raum ? ` — ${raum}` : ''}`.
+  // Muss vor den Einzelplatzhaltern stehen, sonst ist das `${raum}` darin schon
+  // ersetzt und der Ternär nicht mehr erkennbar. Im Katalog steht der Raum nie,
+  // also weg damit. Lesbar ist die Stelle erst, seit literal() verschachtelte
+  // Template-Literale zu Ende liest (15.09.2026).
+  [/\$\{[\w$.]+\s*\?\s*`\s*[—–-]\s*\$\{[\w$.]+\}`\s*:\s*''\}/g, ''],
+  // `${ab.bereich ?? 'Bereich'}` — Raumname mit Ersatzwert. Derselbe Anhang,
+  // dritte Schreibweise; muss ebenfalls vor den Einzelplatzhaltern stehen.
+  [/\$\{[\w$.]+\s*\?\?\s*'[^']*'\}/g, '§RAUM§'],
+  [/\$\{(?:name|raum|raumName|wName)\}/g, '§RAUM§'],
   [/\$\{(?:zoneLabel|wandLabel)\}/g, 'Wand streichen 2x'],
   [/\$\{anstriche[A-Za-z]*\}/g, '2'],
   [/\$\{wAnstriche\}/g, '2'],
@@ -115,6 +138,19 @@ const VARIANTEN = {
   qLevel: ['Q2', 'Q3', 'Q4'],
   // src/lib/vollstaendigkeit/maler-lackieren.ts
   farbTyp: ['Ölfarbe', 'Lack'],
+  // src/lib/vollstaendigkeit/maler-lackieren.ts:136 → `schritte`. Der einzige
+  // Ort in den QUELLEN, an dem `${titel}` steht; die drei Werte sind von dort
+  // abgeschrieben. Kommt ein Schritt dazu, gehört er hier hin.
+  titel: ['Heizkörper abschleifen', 'Heizkörper grundieren',
+    'Heizkörper lackieren (2× Anstrich)'],
+  // src/lib/mengen/gewerke/maler.ts:421 → `zoneZusatz`. Zone und Farbe kommen
+  // als freier Text aus dem Diktat, es gibt also keine Liste zum Abschreiben.
+  // Nachgemessen (15.09.2026): Der Klammerzusatz bewegt den Treffer nicht —
+  // „Wand streichen 2x", „… (Zone oben)" und „… (Blau, Zone oben)" landen alle
+  // auf „Wand streichen 2x Anstrich", 9,50 €/m², Score 0,94. Deshalb hier zwei
+  // Vertreter statt einer erfundenen Vollliste; festgehalten als Test in
+  // `pm-vokabular-varianten.test.ts`.
+  zoneZusatz: [' (Zone oben)', ' (Blau, Zone oben)'],
   // mmStr gibt es nicht mehr: Die Ausgleichsmasse baut ihren Titel jetzt in
   // ausgleichsmasseTitel() zusammen und steht deshalb unten in HAND_TITEL —
   // wieder gefragt statt abgeschrieben.
@@ -186,14 +222,35 @@ function variantenAus(titel) {
   return fassungen.filter(moeglich)
 }
 
-/** Liest ab Position i ein '…', "…" oder `…`-Literal. */
+/**
+ * Liest ab Position i ein '…', "…" oder `…`-Literal.
+ *
+ * (15.09.2026) Bei einem Template-Literal werden `${ … }` mitgezählt: Steht im
+ * Ausdruck selbst ein Template — `${raum ? ` — ${raum}` : ''}` —, dann ist der
+ * Backtick davor KEIN Ende. Bis heute brach der Leser dort ab und lieferte
+ * einen Rest wie `Voranstrich / Grundierung${raum ?` zurück, der als „Titel aus
+ * Variablen, nicht prüfbar" gezählt wurde. Das war keine Grenze der Methode,
+ * sondern ein Lesefehler: Die Titel sind prüfbar, sie wurden nur nie geprüft.
+ */
 function literal(quelltext, i) {
   const anfuehrung = quelltext[i]
   if (!['\'', '"', '`'].includes(anfuehrung)) return null
   let text = ''
+  let tiefe = 0
   for (let j = i + 1; j < quelltext.length; j++) {
     const zeichen = quelltext[j]
     if (zeichen === '\\') { text += quelltext[j + 1]; j++; continue }
+    if (anfuehrung === '`') {
+      if (zeichen === '$' && quelltext[j + 1] === '{') { tiefe++; text += '${'; j++; continue }
+      if (zeichen === '}' && tiefe > 0) { tiefe--; text += '}'; continue }
+      if (zeichen === '`' && tiefe > 0) {
+        const innen = literal(quelltext, j)
+        if (!innen) return null
+        text += quelltext.slice(j, innen.ende + 1)
+        j = innen.ende
+        continue
+      }
+    }
     if (zeichen === anfuehrung) return { text, ende: j }
     text += zeichen
   }

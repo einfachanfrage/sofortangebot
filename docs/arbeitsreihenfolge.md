@@ -82,14 +82,10 @@ src/lib/__tests__/pm-flaeche-oder-zeit.test.ts
 src/lib/__tests__/pm-materialanteil-25.test.ts
 src/lib/__tests__/pm-vorlagen-zwilling.test.ts
 src/lib/__tests__/pruefmeister-batch-1509.test.ts
-src/lib/__tests__/pm-vokabular-varianten.test.ts
-src/lib/__tests__/pm-preisliste-material.test.ts
-src/lib/__tests__/pruefmeister-batch-60-62.test.ts
-scripts/vokabular-abgleich.mjs
 ```
 
-**Sieben davon sind neue Dateien** — der Push-Hook blockiert, bis sie `git add`
-gesehen haben. `scripts/vokabular-abgleich.mjs` ist geändert, nicht neu.
+**Vier davon sind neue Dateien** — der Push-Hook blockiert, bis sie `git add`
+gesehen haben.
 
 ---
 
@@ -139,48 +135,21 @@ gesehen haben. `scripts/vokabular-abgleich.mjs` ist geändert, nicht neu.
 
 ## Prüfmeister
 
-1. ✅ **25 % gegen 26,1 % — entschieden: 25 % bleibt.** `pm-materialanteil-25.test.ts`
+1. ✅ **25 % gegen 26,1 % — entschieden: 25 % bleibt.** Über Manfreds drei
+   eigene Zahlen gerechnet, nicht gegen sie. `pm-materialanteil-25.test.ts`
 2. ✅ **„Fläche oder Zeit" gegengeprüft und entschieden** (PD-013).
    `pm-flaeche-oder-zeit.test.ts`
 3. ✅ **Vorlagen ohne Katalog-Zwilling nachgemessen** — 4 von 134 finden sich
-   selbst nicht, 2 davon mit anderem Preis. `vokabular-abgleich.md` Q
-4. ✅ **`VARIANTEN` nachgezogen — war die falsche Diagnose.** Der Zähler
-   „nicht prüfbar" lag an einem Lesefehler im Skript selbst (`literal()` zählte
-   `${ … }` nicht mit und brach an verschachtelten Templates ab), nicht an einer
-   Liste. Behoben, **Zähler 0**; alle sechs Titel haben einen Preis, keiner ist
-   eine Lücke. `vokabular-abgleich.md` R, `pm-vokabular-varianten.test.ts`
-5. ✅ **`Übergangsprofil / Schwelle` nachgemessen.** Antwort auf die Frage aus
-   der Restliste: **die Stunden stimmen, das Material fehlt** — bewiesen am
-   Katalog selbst (Ausbau kostet 8,00 €; steckten 8–12 € Profil im Einbaupreis
-   von 15,00 €, bliebe für die Einbau-Arbeit weniger als für den Ausbau).
-   0,29 h unterstellen 51,7 €/h, im Band der übrigen Zeit-Zeilen
-6. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
-7. ⏸ **PM-002** braucht einen Live-Lauf
-8. **Fallbasis: 62 von 100** — neu PM-057 bis PM-062, zwei Batches:
-   - **Preisliste (PM-057/058/059)** — drei Funde, zwei mit Geldweg. Eine Zeile
-     mit `material: 'zubehoer'` trägt das Zubehör nicht im Preis ·
-     `Grundieren (Tiefengrund)` steht **zweimal** in einer Preisliste, 5,50 €
-     gegen 3,00 € bei Katalog 4,50 € · **fünf** Zeilen, bei denen
-     `preis-ableitung.ts` und `materialanteil.ts` dieselbe Materialfrage
-     verschieden beantworten. `pm-preisliste-material.test.ts`, PD-014
-   - **Bad/Fliesen (PM-060/061/062)** — erster Batch außerhalb Maler/Boden.
-     `pruefmeister-batch-60-62.test.ts`
-9. 🔴 **Der größte Fund des Laufs: `fliesen` ist ein aktives Gewerk und kann
-   ein Bad nicht bepreisen.** Sieben von neun Zeilen eines Bades (2,40 × 1,80 m)
-   finden keinen Preis — **1.935,94 €**, Versand gesperrt. Zwei Ursachen,
-   getrennt gemessen: Wortlaut (Engine `Verfugung Boden`, Katalog
-   `Verfugen Boden`) und **Gewerke-Zuordnung** — `gewerkFuerPosition` liest
-   „Wand" und entscheidet auf `maler`, für alle drei Wand-Zeilen. Allein daran
-   hängen 493,92 €, denn `Verbundabdichtung Wand` hätte im Fliesenkatalog mit
-   Score 0,94 getroffen. Dazu: „nur die Wandfliesen" erzeugt trotzdem drei
-   Bodenzeilen (324,50 €), und `Altfliesen abstemmen` nimmt immer den
-   Bodenpreis (72,00 € auf 18 m²). **Gehört zu Engineering, vor der nächsten
-   Gewerke-Freischaltung**
-10. **Offen ohne App:** die drei übrigen aktiven Gewerke (Trockenbau,
-    Sanitär/Heizung, Elektro) stehen weiterhin nicht im Abgleich — nachsehen,
-    bevor jemand eine Zahl daraus zitiert · `Untergrund spachteln` bleibt
-    `anker`, bis der Materialanteil gemessen ist · die 142 Vorlagen der
-    gesperrten Gewerke, jeweils **vor** der Freischaltung
+   selbst nicht, 2 davon mit anderem Preis. `vokabular-abgleich.md` Q,
+   `pm-vorlagen-zwilling.test.ts`
+4. ⏸ **Gegenprobe aus PD-009 §7** — wartet auf den gebauten Preise-Schritt
+5. ⏸ **PM-002** braucht einen Live-Lauf
+6. **Fallbasis: 46 von 100.** Nächste Themen laut Speicher: Bad/Fliesen,
+   Treppen komplett, Abbruch und Entsorgung, mehrere Aufnahmen pro Angebot,
+   Selbstkorrektur mitten im Diktat
+7. **Offen ohne App:** `Übergangsprofil / Schwelle` nachmessen · `VARIANTEN`
+   in `vokabular-abgleich.mjs` nachziehen (still von 3 auf 6 gestiegen) · die
+   142 Vorlagen der gesperrten Gewerke, jeweils **vor** der Freischaltung
 
 ## Legal
 

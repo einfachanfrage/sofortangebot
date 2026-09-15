@@ -43,6 +43,9 @@ jobs:
           cache: npm
 
       - name: Abhängigkeiten installieren
+      - name: Doku-Endmarkierung pruefen (CoS-P-022)
+        run: node scripts/docs-sichern.mjs pruefen
+
         run: npm ci
 
       - name: Lint
