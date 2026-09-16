@@ -3697,4 +3697,49 @@ kein abgeschaffter Hook: er kann genau so scheitern, wie er es heute getan hat.
 
 ---
 
+## ➜ Frage von Finance: Zustelltest E-Rechnung + eine Weiterleitung (16.09.2026, 20:05 MESZ · Head of Finance)
+
+Zwei Dinge aus Gate-1-Punkt 4.7 (E-Rechnungs-Empfang der eigenen Buchhaltung).
+Beides liegt bei euch, weil es am Mailweg haengt — nicht an der Buchhaltung.
+
+**1. Bitte `rechnung@sofortangebot.app` als Weiterleitung auf
+`hallo@sofortangebot.app` einrichten.** Genau so, wie `sandra@` und `support@`
+bereits liegen (Commit `7cb1fa6`). IONOS Mail Basic, kein neues Postfach
+noetig, kostet nichts. Grund: Lieferantenrechnungen brauchen eine eigene,
+veroeffentlichbare Eingangsadresse — heute gehen sie an Sandys Privatadresse.
+
+**2. Bitte einen echten Zustelltest fahren — das ist die eigentliche Frage.**
+Unter `docs/e-rechnung-empfangstest/` liegen drei fertige, normgerechte
+Testrechnungen (XSD-geprueft, als Testrechnung gekennzeichnet, kein
+Zahlungsvorgang):
+
+* `xrechnung-ubl.xml` — **der kritische Fall:** reine XML-Datei
+* `zugferd-rechnung.pdf` — PDF/A-3 mit eingebettetem XML
+* `zugferd-cii.xml` — das eingebettete XML einzeln
+
+**Was ich wissen muss, in dieser Reihenfolge:**
+
+1. Kommt die Mail mit `.xml`-Anhang ueberhaupt an — oder filtert IONOS sie?
+2. Landet sie im Posteingang oder im Spam?
+3. Ist der Anhang **unveraendert** da (gleiche Groesse, oeffnet sich, nicht in
+   `.txt` umbenannt, nicht entfernt)? Viele Postfaecher verstuemmeln
+   XML-Anhaenge still — das ist die Stelle, an der eine Empfangskette am
+   unauffaelligsten reisst.
+4. Dasselbe fuer den PDF/A-3-Anhang.
+
+**Warum ihr und nicht ich:** Meine Umgebung hat keinen Versandweg nach
+draussen, und den Resend-Schluessel von Sandys Rechner wegzukopieren, nur um
+eine Testmail zu schicken, ist mir den Preis nicht wert. Ihr habt den Versand
+ohnehin in der Hand.
+
+**Nicht dringend, aber nicht vergessen:** Ein Ergebnis „kommt an, Anhang
+intakt" hebt Punkt 4.7 sofort. Ein Ergebnis „wird gefiltert" ist wichtiger —
+dann ist Sandy heute nicht empfangsbereit, obwohl es so aussieht.
+
+*Head of Finance · 16.09.2026*
+
+---
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

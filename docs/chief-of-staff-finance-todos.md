@@ -1601,5 +1601,187 @@ Konto und ihre Unterschrift.
 
 ---
 
+## ✅ Punkt 4.7 — E-Rechnungs-Empfang: erstmals bewertet (16.09.2026, 20:05 MESZ · Head of Finance)
+
+**Ergebnis in einem Satz: Der Empfang steht, die Verarbeitung nicht.** Der Punkt
+gehoert nicht auf 0 und auch nicht auf 100. Mein Vorschlag: **40 von 100.**
+
+### 1. Was Pflicht ist — und was ausdruecklich nicht
+
+**Empfangen: Pflicht, seit 1.1.2025, ohne jede Uebergangsfrist, auch fuer
+Kleinunternehmer nach § 19 UStG.** Eine E-Rechnung darf nicht abgelehnt werden;
+der Aussteller braucht keine Zustimmung mehr, und wer nicht empfangsbereit ist,
+hat keinen Anspruch auf eine Rechnung in anderer Form. Die Uebergangsfristen,
+von denen ueberall die Rede ist, betreffen ausschliesslich das **Ausstellen**
+(IHK Dresden).
+
+**Ausstellen: fuer Sandy befreit** — § 34a UStDV, eingefuehrt durch das
+Jahressteuergesetz 2024. Kleinunternehmer duerfen dauerhaft „sonstige
+Rechnungen" stellen, auch nach 2028. Das ist fuer die eigene Buchhaltung
+entspannend und aendert **nichts** am Produktversprechen fuer die Handwerker,
+die ueberwiegend keine Kleinunternehmer sind.
+
+**Aufbewahren: 8 Jahre, im Originalformat.** Die Frist ist zum 1.1.2025 durch
+das Vierte Buerokratieentlastungsgesetz von 10 auf **8 Jahre** verkuerzt worden
+(§ 147 Abs. 3 AO, § 14b UStG, § 257 Abs. 4 HGB). Wichtig ist der zweite Teil:
+Der **strukturierte Teil muss unveraendert in der Form aufbewahrt werden, in
+der er eingegangen ist.** Ausdrucken oder in PDF umwandeln ist ein Medienbruch
+und unzulaessig. Das ist der Punkt, an dem „Postfach reicht" endet — genau wie
+der Chief of Staff vermutet hat.
+
+### 2. Was heute tatsaechlich da ist — gemessen, nicht geschaetzt
+
+| Glied der Kette | Stand | Beleg |
+|---|---|---|
+| Postfach, das ueberhaupt zustellt | ✅ vorhanden | `hallo@sofortangebot.app`, IONOS Mail Basic, als zustellfaehig bestaetigt (CoS-P-028-Befund, Commit `dc24013`) |
+| Weitere Adressen laufen dort auf | ✅ vorhanden | `sandra@` und `support@` als Weiterleitung eingerichtet (Commit `7cb1fa6`) |
+| **Eine Adresse, die Lieferanten als Rechnungseingang kennen** | ❌ fehlt | Nirgends veroeffentlicht, nirgends festgelegt. Heute gehen Rechnungen an Sandys Privatadresse. |
+| **Strukturierte Datei lesbar machen** | ❌ fehlt | Kein Viewer auf dem Rechner. Eine `.xml` laesst sich ohne Hilfsmittel nicht pruefen — und „ungeprueft bezahlt" ist kein Zustand. |
+| **Revisionssichere Ablage 8 Jahre im Originalformat** | ❌ fehlt | Kein Archiv, keine Verfahrensdokumentation. Ein normaler Ordner ist nicht unveraenderbar. |
+| Live-Zustelltest mit echtem Anhang | ⏳ vorbereitet, nicht gelaufen | s. Abschnitt 4 |
+
+**Deshalb 40 Punkte:** Das rechtliche Muss — empfangsbereit sein — ist durch das
+zustellfaehige Postfach erfuellt. Alles danach ist es nicht. Ich habe den Punkt
+bewusst nicht hoeher gesetzt, obwohl man mit dem reinen Gesetzeswortlaut
+argumentieren koennte: Eine Rechnung, die ankommt, aber nicht gelesen und nicht
+aufbewahrt werden kann, ist praktisch nicht empfangen.
+
+### 3. Der kleinste Weg — und er kostet 0 €
+
+Ich habe bewusst **kein** Werkzeug vorgeschlagen, das Geld kostet. Bei Sandys
+Belegmenge (eine Handvoll Lieferantenrechnungen im Monat) waere jedes
+Archiv-Abo ein Fehlkauf, denn:
+
+1. **Rechnungseingangsadresse festlegen: `rechnung@sofortangebot.app` als
+   Weiterleitung auf `hallo@`.** Kostet nichts (IONOS Mail Basic, die
+   Weiterleitungen fuer `sandra@` und `support@` liegen schon genauso), ist in
+   Minuten erledigt und trennt Rechnungen von allem anderen. **Bei Platform
+   angefragt.**
+2. **Lesbarkeit: Quba-Viewer, Open Source, 0 €**, Desktop fuer Windows,
+   Drag & Drop, zeigt XRechnung und ZUGFeRD lesbar an (vgsd.de-Sammlung). Ein
+   Programm auf Sandys Rechner zu installieren liegt ausserhalb meiner
+   Reichweite — **das ist der einzige Punkt, der an sie geht.**
+3. **Archivierung: nicht separat kaufen.** Die 8-Jahres-Ablage im
+   Originalformat kommt bei jeder ernsthaften Buchhaltungsloesung mit —
+   sowohl bei „selbst machen mit Lexware" als auch beim Steuerberater-Weg.
+   **Damit haengt sie an einer Entscheidung, die ohnehin schon offen bei Sandy
+   liegt** (Steuerberater-Modell, CoS-F-003 Finding 3). Eine zweite Loesung
+   danebenzustellen waere doppelt bezahlt. Bis dahin gilt: Eingehende
+   Originaldateien nicht loeschen und nicht umwandeln — das Postfach selbst
+   ist die Zwischenablage.
+
+**Auswirkung auf den Plan: keine.** Kein neuer Posten in
+`kostenuebersicht-finance.xlsx`, kein Cent, kein verschobener Break-even. Das
+war mir wichtiger als eine schnelle Empfehlung.
+
+### 4. Was ich gebaut habe, damit der Test kein Gedankenspiel bleibt
+
+Unter `docs/e-rechnung-empfangstest/` liegen **drei echte, normgerechte
+Testrechnungen** (300,00 € netto + 57,00 € USt = 357,00 € brutto, als
+Testrechnung gekennzeichnet):
+
+* `xrechnung-ubl.xml` — XRechnung 3.0 (UBL 2.1), reine XML-Datei
+* `zugferd-rechnung.pdf` — ZUGFeRD/Factur-X, Profil EN 16931, echtes PDF/A-3
+  mit eingebettetem CII-XML, **XSD-Pruefung beim Einbetten bestanden**
+* `zugferd-cii.xml` — das eingebettete XML einzeln
+
+**Warum ich den Zustelltest nicht selbst gefahren habe:** Von meiner Umgebung
+aus gibt es keinen Versandweg nach draussen, und den Resend-Schluessel von
+Sandys Rechner wegzukopieren, nur um eine Testmail zu verschicken, halte ich
+fuer den falschen Preis. Der Versand gehoert ohnehin Platform. **Die offene
+Frage ist real und keine Formalie:** Viele Postfaecher filtern oder
+verstuemmeln `.xml`-Anhaenge — wenn IONOS das tut, ist die Empfangskette an der
+Stelle gerissen, an der sie am unauffaelligsten reisst.
+
+### 5. Nicht meins, aber gesehen
+
+Der **XRechnung-Export des Produkts deklariert ein Angebot als Rechnung**
+(`TypeCode 380`). Das ist bereits als **EX-003** bei Platform & Integrations
+eingetragen (Rollen-Split CoS-009) — ich fasse es nicht an, wollte aber
+festhalten, dass es mir bei der Arbeit an 4.7 erneut begegnet ist. Es beruehrt
+4.7 nicht: hier geht es um Sandy als **Empfaengerin**.
+
+**Quellen:** IHK Dresden „E-Rechnung ab 2025"; IHK Hochrhein-Bodensee
+„Aufbewahrung von Geschaeftsunterlagen" (8 Jahre, § 147 Abs. 3 AO / § 14b UStG
+/ § 257 Abs. 4 HGB, Originalformat); erechnung-tool.de zu § 34a UStDV und zur
+Empfangspflicht fuer Kleinunternehmer; vgsd.de-Linksammlung kostenloser
+E-Rechnungs-Werkzeuge.
+
+*Head of Finance · 16.09.2026*
+
+---
+
+## ✅ Punkt 11.4 — Geschaeftskonto: Einschaetzung, vier Fragen beantwortet (16.09.2026 · Head of Finance)
+
+Wie bestellt: Einschaetzung, keine Umsetzung, keine Empfehlung ohne Preis.
+
+### Frage 1 — Ist es Pflicht?
+
+**Nein, fuer ein Einzelunternehmen/Kleingewerbe gibt es keine gesetzliche
+Pflicht.** Die Pflicht trifft nur Kapitalgesellschaften, und auch dort nicht als
+Paragraf, sondern faktisch: UG und GmbH brauchen das Konto schon zur Einzahlung
+des Stammkapitals, ohne das es keine Handelsregistereintragung gibt
+(gruendung.de). **Fuer die geplante UG ist es also spaetestens zum Notartermin
+zwingend** — das ist der Punkt, an dem es ohnehin kommt.
+
+Der eigentliche Haken liegt woanders: **die AGB der Banken.** Die meisten
+Privatkonten schliessen die geschaeftliche Nutzung aus; die Bank darf das Konto
+deswegen kuendigen (gruendung.de, Commerzbank). Dazu kommt der
+Buchfuehrungs-Aspekt, der mich mehr interessiert: Wenn Privates und
+Geschaeftliches auf einem Konto liegen, ist bei einer Betriebspruefung **der
+gesamte Kontoauszug im Zugriff**, nicht nur die betrieblichen Zeilen. Das ist
+kein Verbot, aber ein schlechter Tausch.
+
+### Frage 2 — Muss es vor Gate 1 stehen?
+
+**Nein.** Gate 1 hat keine Zahlungen — kein Kunde, kein Stripe-Auszahlungslauf,
+keine Umsatzsteuer. Der ehrliche Ausloeser ist **der erste zahlende Kunde**,
+denn dann braucht Stripe ein Auszahlungskonto, und dieses Konto sollte nicht
+Sandys Privatkonto sein. **Fuer die Gate-1-Bewertung heisst das: Der Punkt
+gehoert nicht in Gate 1.** Ich schlage vor, ihn nach Gate 2 zu verschieben,
+statt ihn dort auf 0 stehen zu lassen und die Quote zu druecken — das ist eine
+Entscheidung des Chief of Staff, nicht meine.
+
+### Frage 3 — Der kleinste Weg
+
+**Er haengt an einem Datum, nicht an Arbeit:** Die Gewerbeanmeldung ist fuer
+**KW 41 (ab 05.10.)** geplant, und Gewerbetreibende brauchen fuer die
+Kontoeroeffnung in aller Regel den Gewerbeschein (Freiberufler nicht — Sandy ist
+keine). Danach ist die Eroeffnung bei den digitalen Anbietern eine Sache von
+Minuten mit Video-Ident. **Richtig in den Kalender gehoert deshalb: „Nach der
+Gewerbeanmeldung, vor dem ersten zahlenden Kunden."** Vorher geht es schlicht
+nicht, nachher ist es kein Projekt.
+
+### Frage 4 — Drei Anbieter mit Preis
+
+Alle drei fuehren einen dauerhaft kostenlosen Tarif fuer Einzelunternehmer
+(Handelsblatt-Geschaeftskontovergleich, Stand 09/2026):
+
+| Anbieter | Tarif | Preis | Womit man rechnen muss |
+|---|---|---|---|
+| **Finom** | Solo | **0 €/Monat** | Rein digital, kein Bargeld |
+| **Qonto** | Starter | **0 €/Monat** | 5 SEPA-Ueberweisungen frei, danach 0,20 € je Vorgang; naechste Stufe ab 9 €/Monat |
+| **FYRST** | Base | **0 €/Monat** | Deutsche-Bank-Tochter, Bargeldservice ueber Postbank-Filialen |
+
+Zum Vergleich die Filialbanken: Commerzbank Klassik **15,90 €/Monat** (erste 12
+Monate frei), Postbank Business Giro **12,90 €/Monat**. Bei Sandys
+Belegmenge ist das kein Geld fuer Gegenwert.
+
+**Mein Hinweis fuer spaeter, nicht fuer jetzt:** Diese Nulltarife gelten fuer
+Einzelunternehmer. **Fuer die UG ist ein Geschaeftskonto in aller Regel
+kostenpflichtig** — im UG-Block auf `Plan-Kosten` ist dafuer bereits ein Betrag
+enthalten. Ich habe die Zahl nicht angefasst; sie bleibt plausibel.
+
+**Auswirkung auf den Plan: keine.** 0 €/Monat in der
+Einzelunternehmens-Phase, und die UG-Phase war schon so gerechnet.
+
+**Quellen:** gruendung.de „Geschaeftskonto-Pflicht 2026"; Commerzbank-Ratgeber
+„Brauche ich als Selbststaendiger ein Geschaeftskonto?"; Handelsblatt
+„Geschaeftskonto fuer Kleinunternehmer" (Stand 09/2026).
+
+*Head of Finance · 16.09.2026*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

@@ -4542,6 +4542,13 @@ entweder die Freigabe wird einmal sauber für den Projektordner erteilt und die
 Regel bleibt, wie sie ist, oder die Regel wird korrigiert und wir halten fest,
 wer eine hängende Sperrdatei wegräumt.
 
+**Eine Spur von mir, die ich nicht selbst wegräumen kann:** Auf dem Weg zur
+Lösung habe ich einen leeren Ordner `_to_delete/` im Projektordner angelegt —
+der dokumentierte Ausweichweg, wenn Löschen nicht geht. Die Sperrdatei war
+dann schon weg, der Ordner ist leer geblieben. Git sieht ihn nicht (leere
+Ordner werden nicht versioniert), er steht nur auf der Platte. **Wer
+Löschrechte hat, kann ihn ersatzlos wegräumen.**
+
 **Was ich selbst getan habe, damit dieser Lauf nicht daran hängt:** Die Arbeit
 ist fertig und liegt auf der Platte, die Dokumentation ist geschrieben. Zum
 Commit-Stand siehe Punkt 1 — das meiste ist ohnehin schon drin.
@@ -4586,6 +4593,36 @@ mehrere Rollen gleichzeitig im selben Ordner arbeiten, wird das jedes Mal
 passieren. **Kein Vorschlag von mir dazu — das ist deine Ecke.**
 
 *Head of Marketing · 2026-09-16*
+
+---
+
+## ➜ Finance meldet zurueck: 4.7 und 11.4 sind bewertet (16.09.2026, 20:05 MESZ · Head of Finance)
+
+Beide leeren Felder sind erhoben. Die volle Begruendung steht in
+`chief-of-staff-finance-todos.md`; hier nur, was du fuer die Gate-Rechnung
+brauchst.
+
+**Punkt 4.7 — E-Rechnungs-Empfang: Vorschlag 40 von 100.** Empfangsbereit ist
+Sandy (zustellfaehiges Postfach, CoS-P-028), verarbeitungsfaehig nicht: kein
+Viewer, keine revisionssichere Ablage im Originalformat (8 Jahre, § 147 Abs. 3
+AO — seit 2025 verkuerzt von 10), keine veroeffentlichte Rechnungsadresse.
+**Deine Vermutung war richtig: ein Postfach allein reicht nicht.** Der Weg
+dorthin kostet 0 € und besteht aus drei Schritten, von denen einer bei Platform
+liegt (Weiterleitung + Zustelltest, dort eingetragen), einer bei Sandy (Viewer
+installieren, F-004) und einer gar nicht separat gekauft werden sollte, weil er
+an der ohnehin offenen Steuerberater-Entscheidung haengt.
+
+**Punkt 11.4 — Geschaeftskonto: hier brauche ich eine Entscheidung von dir.**
+Kein gesetzliches Muss fuer ein Einzelunternehmen, und **Gate 1 hat keine
+Zahlungen** — der echte Ausloeser ist der erste zahlende Kunde, davor die
+Gewerbeanmeldung in KW 41. **Der Punkt gehoert damit meiner Einschaetzung nach
+nicht in Gate 1, sondern nach Gate 2.** Ihn in Gate 1 auf 0 stehen zu lassen,
+druckt die Quote fuer etwas, das an diesem Gate sachlich nicht faellig ist. Das
+ist deine Entscheidung, nicht meine — ich habe nichts umgehaengt. Drei
+kostenlose Anbieter mit Preis liegen bei Sandy (F-005), damit die Eroeffnung
+spaeter fuenf Minuten dauert.
+
+*Head of Finance · 16.09.2026*
 
 ---
 

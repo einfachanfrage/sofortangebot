@@ -1959,4 +1959,66 @@ wolltest.)*
 
 ---
 
+## 🔵 Zwei Punkte vom Head of Finance — beide klein, beide 0 € (16.09.2026, 20:05 MESZ)
+
+Aus den Gate-1-Punkten 4.7 und 11.4. Keiner davon ist eilig, und keiner kostet
+etwas — ich sage dir bei beiden ausdruecklich dazu, was du **nicht** kaufen
+musst.
+
+### 🔵 F-004 — E-Rechnungs-Viewer installieren (0 €, einmalig)
+
+**Woher:** Gate-1-Punkt 4.7, `chief-of-staff-finance-todos.md`.
+
+**Worum es geht:** Du musst seit 1.1.2025 E-Rechnungen empfangen koennen —
+ohne Uebergangsfrist, auch als Kleinunternehmerin. Dein Postfach kann das.
+Was fehlt, ist ein Programm, das eine solche Rechnung **lesbar** macht: eine
+`.xml`-Rechnung laesst sich sonst nicht pruefen, und ungeprueft bezahlen ist
+keine Option.
+
+**Was nur du tun kannst:** Den **Quba-Viewer** installieren — Open Source,
+**0 €**, Windows, Rechnung per Drag & Drop draufziehen. Ein Programm auf
+deinem Rechner zu installieren liegt ausserhalb meiner Reichweite, sonst
+haette ich es gemacht.
+
+**Nicht eilig.** Es gibt heute keine offene Lieferantenrechnung in dem Format.
+Vor dem ersten Einkauf bei einem groesseren Anbieter sollte es stehen.
+
+**Ausdruecklich nicht noetig:** irgendein kostenpflichtiges
+E-Rechnungs-Werkzeug. Die revisionssichere 8-Jahres-Ablage kommt mit der
+Buchhaltungsloesung mit, die ohnehin bei dir zur Entscheidung liegt
+(Steuerberater-Modell). Zwei Loesungen waeren doppelt bezahlt.
+
+### 🔵 F-005 — Geschaeftskonto: nicht jetzt, aber der Ausloeser steht fest
+
+**Woher:** Gate-1-Punkt 11.4, `chief-of-staff-finance-todos.md`.
+
+**Die Antwort auf deine Frage:** Pflicht ist es fuer dich **nicht** — ein
+Einzelunternehmen darf rechtlich das Privatkonto nutzen. Nur: die meisten
+Banken verbieten das in ihren AGB und duerfen kuendigen, und bei einer
+Betriebspruefung liegt dann dein **ganzer** Kontoauszug im Zugriff, nicht nur
+die geschaeftlichen Zeilen.
+
+**Wann:** Nicht vor Gate 1 — da gibt es keine Zahlungen. Der echte Ausloeser
+ist **der erste zahlende Kunde** (Stripe braucht ein Auszahlungskonto). Davor
+liegt die **Gewerbeanmeldung in KW 41** — ohne Gewerbeschein oeffnet dir kaum
+eine Bank ein Geschaeftskonto. Reihenfolge also: Gewerbeanmeldung → Konto →
+erster zahlender Kunde.
+
+**Damit du nicht recherchieren musst — drei kostenlose, Stand 09/2026:**
+
+| Anbieter | Tarif | Preis | Haken |
+|---|---|---|---|
+| Finom | Solo | **0 €/Monat** | rein digital, kein Bargeld |
+| Qonto | Starter | **0 €/Monat** | 5 Ueberweisungen frei, dann 0,20 € je Stueck |
+| FYRST | Base | **0 €/Monat** | Deutsche-Bank-Tochter, Bargeld ueber Postbank |
+
+Filialbank zum Vergleich: Commerzbank 15,90 €/Monat, Postbank 12,90 €/Monat.
+Fuer deine Belegmenge ist das Geld ohne Gegenwert.
+
+**Eroeffnen musst du selbst** — dein Konto, deine Unterschrift, deine
+Ident-Pruefung.
+
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
