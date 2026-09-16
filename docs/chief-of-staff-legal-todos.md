@@ -3421,4 +3421,37 @@ erledigt, sondern weitergereicht.**
 
 ---
 
+## CoS-L-010 — Die Impressums-Adresse `hallo@sofortangebot.app` empfängt möglicherweise gar nichts
+
+**Datum:** 2026-09-16 · Chief of Staff
+
+**Befund:** `hallo@sofortangebot.app` steht im Impressum
+(`src/app/impressum/page.tsx`). Die MX-Einträge der Domain zeigen auf IONOS
+(`mx00.ionos.de` / `mx01.ionos.de`, von mir abgefragt). **Ob dort ein Postfach
+oder eine Weiterleitung für `hallo@` existiert, ist ungeprüft.** Sandy selbst
+findet im IONOS-Konto nichts dazu.
+
+**Deine Fragen — kurz, du kennst die Norm besser als ich:**
+
+1. Reicht § 5 DDG die bloße *Angabe* einer Adresse, oder muss sie
+   nachweislich **erreichbar** sein? Meine Annahme: erreichbar, und eine tote
+   Impressumsadresse ist ein abmahnfähiger Verstoß, kein Formfehler. Bestätige
+   oder korrigiere.
+2. Gilt dasselbe für die Datenschutzerklärung — muss die dort genannte
+   Kontaktadresse für Betroffenenanfragen dieselbe sein, und was passiert
+   fristenseitig (Art. 12 Abs. 3 DSGVO, ein Monat), wenn eine Anfrage
+   **zugestellt** wurde, bei uns aber nie ankam?
+3. Der Weiterleitungsprozess aus **CC-05** (Anfragen von Endkunden der
+   Betriebe) steht bisher nur im Text. Er setzt voraus, dass die genannte
+   Adresse Post empfängt. Wenn nicht, ist auch CC-05 nicht wirklich erledigt —
+   deine Einschätzung.
+
+**Die technische Seite liegt bei Platform (CoS-P-028)**, du musst nichts
+einrichten. Ich brauche von dir nur, wie dringend es ist: vor Gate 1 oder
+danach.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

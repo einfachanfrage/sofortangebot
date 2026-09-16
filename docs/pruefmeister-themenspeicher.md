@@ -538,3 +538,44 @@ Die Reparatur ist klein und gehört uns (Wortliste mit Wortgrenzen in
 weil er PM-074 verallgemeinert.
 
 *Head of Product Engineering · 2026-09-16, nachts*
+
+---
+
+## L — Nachtrag 16.09.2026, nachmittags: abgeräumt und neu aufgemacht
+
+**Abgeräumt in diesem Lauf** (als Batch `pruefmeister-batch-101-103.test.ts`
+hinterlegt, Befunde in `pruefmeister-restliste.md`):
+
+* **PM-101** — die qualifizierte Verneinung („nicht tapezieren, nur
+  streichen"). Gehört zu E, ist aber schwerer als alles andere dort.
+* **PM-102** — Material als Bauteilnennung („Ein Holzfenster, eine Tür.").
+  Gehört zu A.
+* **PM-103** — das unaufgelöste Rückbezugswort („Und die Türen auch.").
+  Gehört zu E.
+
+**Neu aufgemacht — Themen, die aus diesen drei Fällen fallen und noch niemand
+gemessen hat:**
+
+1. **Die Verneinung als eigene Klasse, nicht als Einzelfall.** PM-099 (Bauteil
+   ausgeschlossen), PM-101 (Leistung abbestellt und zugleich eine andere
+   bestellt) und der Ausschlusssatz aus Fall 18 sind drei Stufen derselben
+   Sache. Offen und ungemessen ist die vierte: **die Verneinung mit Menge** —
+   „Die drei Fenster nicht, nur das große." Prüfbar ohne App.
+2. **Rückbezugswörter allgemein.** „auch", „ebenso", „das gleiche nochmal",
+   „dito", „genauso wie im Wohnzimmer". PM-103 misst nur „auch". Die anderen
+   sind ungemessen und derselbe Mechanismus. Prüfbar ohne App.
+3. **Material als Auslöser über `holzfenster` hinaus.** Der Katalog kennt
+   Holz, Alu, Kunststoff, Stahlzargen. Wenn `holzfenster` einen eigenen Zweig
+   hat, lohnt die Frage, welche anderen Materialwörter still eine Arbeit
+   auslösen. Prüfbar ohne App, am Ausdruck messbar.
+4. **Nullzeilen aus dem Lackier-Zweig.** `Abdecken Umgebung` hat keinen
+   Katalogpreis und entsteht in jedem Lackier-Fall mit. Das ist L-03 an einer
+   zweiten Stelle — die Zeile gehört entweder in den Katalog oder nicht ins
+   Angebot. Gehört zu H.
+5. **Fehlt-Einträge als Pflicht, nicht als Kür.** PM-101-G und PM-103-A
+   fordern beide dasselbe: Wenn die Pipeline einen Satz nicht auflösen kann,
+   muss etwas übrig bleiben. Heute ist `fehlende` in beiden Fällen leer. Das
+   ist eine Produktregel im Sinne von H, keine Einzelentscheidung — und die
+   Gegenrichtung zu K.5.
+
+*Prüfmeister · 2026-09-16*

@@ -95,6 +95,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-P-028 | 🔴 **Acht `@sofortangebot.app`-Absender, keiner nachweislich empfangsfähig** — MX zeigt auf IONOS (selbst geprüft), aber ob dort Postfächer existieren, weiß niemand. `hallo@` steht im Impressum, § 5 DDG. Dazu: Resend zeigt „No sent emails yet" trotz nachweislich versendeter Mails — vermutlich falsches Team | ❌ offen, vor Gate 1 | Sandys Frage, 2026-09-16 |
 | CoS-P-024 | 🔴 **Push-Hook ersatzlos abschaffen** — `.git/hooks/pre-push` als No-Op, beide Prüfungen raus aus dem Push-Weg. Sandys ausdrückliche Anweisung nach der zweiten Blockade. CoS-P-023 damit zurückgezogen. Stehende Regel: in Sandys Push-/Commit-Weg kommt nichts, das abbrechen kann | ❌ offen, vorrangig — Details am Dateiende | Sandy, 2026-09-15 |
 | CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | ✅ **erledigt & geprüft** — Weg 1 (Regel-Objekt per `files` auf dieselben Dateien beschränkt) war zum heutigen Check bereits im GitHub-Spiegel umgesetzt (Commit `c2c72d7`); dabei zusätzlich zwei echte Fehler in `_to_delete/` gefunden und ausgenommen. Beim erneuten Prüfen heute ein Folgefehler gefunden und behoben: `lint:ci --max-warnings` stand noch auf 109, aktueller Stand ist 110 (eine neue, legitime Warnung aus einem fremden Rollenbereich, `AngebotDetail.tsx`, nicht angefasst). Grenze auf 110 angehoben, `npm run lint` lokal grün (0 Fehler, 110/110 Warnungen), `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
 | CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
@@ -2983,6 +2984,89 @@ erledigt, sondern weitergereicht.**
 3. **Nie einen Befehl in eine Meldung an Sandy schreiben.** Wenn wirklich
    nichts geht, schreibt es mir — ich bündele, und ich entscheide, ob es sie
    überhaupt erreicht.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
+## CoS-P-028 🔴 — Acht Absenderadressen, und niemand weiß, ob eine davon Post empfängt
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Auslöser:** Sandys Frage, wo Mails an `sandra@sofortangebot.app` landen.
+
+### Was ich selbst nachgesehen habe (geprüft, nicht vermutet)
+
+**MX-Einträge von `sofortangebot.app`** (öffentliche DNS-Abfrage, 16.09.):
+
+```
+10 mx00.ionos.de.
+10 mx01.ionos.de.
+```
+
+Eingehende Post geht also an **IONOS**, nicht an Resend — Resend verschickt
+nur. Damit ist die Frage „wo landet sie" beantwortet: in einem IONOS-Postfach,
+**falls dort eines existiert**. Genau das weiß gerade niemand.
+
+**Im Code benutzte Absender unter `@sofortangebot.app`** (gezählt in `src/`):
+
+| Adresse | Fundstellen | Bemerkung |
+|---|---|---|
+| `hallo@` | 11 | **steht im Impressum** (`src/app/impressum/page.tsx`) |
+| `angebot@` | 3 | |
+| `support@` | 2 | |
+| `monitoring@` | 2 | |
+| `sandra@` | 1 | Absender der Auth-Mails, live bestätigt |
+| `noreply@` | 1 | |
+| `info@` | 1 | |
+| `alert@` | 1 | |
+
+### Warum das kein Schönheitsfehler ist
+
+1. **`hallo@` ist Pflicht.** § 5 DDG verlangt eine Adresse, über die man den
+   Anbieter **unmittelbar und elektronisch erreichen** kann. Steht sie im
+   Impressum und kommt dort nichts an, ist die Angabe nicht bloß unvollständig,
+   sondern falsch — und abmahnfähig. **Das ist der eine Punkt, der vor Gate 1
+   geklärt sein muss.**
+2. **Antworten auf Produkt-Mails verschwinden.** Ein Handwerker, der auf die
+   Willkommens- oder Angebots-Mail einfach antwortet, tut genau das, was
+   Menschen tun. Landet die Antwort nirgends, merkt es niemand — es gibt keine
+   Fehlermeldung, sie ist einfach weg.
+3. Es hängt an `LR-19 / L-MAIL-01` (kein `reply_to` in den Kundenmails), ist
+   aber **nicht dasselbe**: dort geht es um die Adresse des Betriebs, hier um
+   unsere eigene.
+
+### Dein Auftrag
+
+1. **Feststellen, welche der acht Adressen wirklich ein Postfach oder eine
+   Weiterleitung haben.** Zugang: IONOS-Kundenkonto → E-Mail. **Nicht raten** —
+   wenn du ohne Sandys Anmeldung nicht hineinkommst, sag mir das als Ergebnis,
+   dann hole ich genau diesen einen Schritt bei ihr ab.
+2. **Vorschlagen, wie es aussehen soll.** Meine Linie, du darfst widersprechen:
+   ein echtes Postfach für `hallo@`, alles andere als Weiterleitung dorthin,
+   `noreply@` bleibt bewusst tot. Ein Ein-Personen-Betrieb braucht nicht acht
+   Postfächer, aber er braucht einen Ort, an dem alles ankommt.
+3. **Danach einen echten Zustelltest je Adresse** — hinschicken, nachsehen, ob
+   sie ankommt. Erst dann gilt es als erledigt.
+
+### Nebenbefund, den Sandy selbst gemeldet hat: Resend zeigt „No sent emails yet"
+
+Im Resend-Konto **`einfachanfrage`** steht unter *Emails → Sending* „No sent
+emails yet", obwohl heute nachweislich Mails rausgingen (Registrierung,
+Passwort-Reset, beide von ihr im Postfach gesehen).
+
+**Das ist ein Widerspruch und gehört aufgeklärt, nicht weggewischt.** Die
+naheliegendste Erklärung: Der `RESEND_API_KEY` aus der Produktion gehört zu
+einem **anderen Resend-Team** als dem, das sie im Browser offen hatte — oben
+links im Resend-Menü steht ein Team-Umschalter. Das ist eine Vermutung von
+mir, kein Befund; prüfe es.
+
+**Warum es zählt:** Wenn niemand in das richtige Konto schaut, sieht auch
+niemand Zustellfehler, Bounces oder Sperrlisten. Das hängt direkt an **8.4
+Fehler-Monitoring** — der Punkt steht bei 15 %.
+
+**Ausdrücklich nicht:** API-Schlüssel irgendwohin kopieren, neu erzeugen oder
+in eine Datei schreiben. Feststellen, zu welchem Team der Schlüssel gehört,
+reicht.
 
 *Chief of Staff · 2026-09-16*
 

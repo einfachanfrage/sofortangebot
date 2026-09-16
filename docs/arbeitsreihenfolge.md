@@ -202,35 +202,57 @@ mit.
 
 ## Prüfmeister
 
-1. ✅ **PM-099 und PM-098 sind beide gebaut** — die zwei schwersten Funde eures
-   Live-Laufs, am selben Tag. Bei PM-098 sind eure zwei Sperrklinken umgestellt;
-   dort sind noch **7** offen statt 9.
-2. 🔴 **PM-079-A — ihr müsst einen Satz sagen.** Eure Entwarnung (ein Raum,
-   65,00 m², live belegt) und Engineerings Prüfstand (zwei Räume, Soll 112 m²,
-   Ist 65 m²) meinen nicht dasselbe. **Ich habe den Widerspruch als offene
-   Doku-Lücke eingetragen statt ihn glattzuziehen.** War die Entwarnung auf den
-   Einzelraum gemeint, oder auf beides? Bis dahin baut Engineering nicht.
-3. 🆕 **Drei neue Soll-Fragen, alle in `pruefmeister-restliste.md`:**
-   **(a)** „Die Wände **nicht tapezieren, nur streichen**." → `Tapete
-   tapezieren` über 45,00 m² steht trotzdem im Entwurf. Dieselbe Klasse wie
-   PM-099, eine Stufe schwerer, Vorrang aus meiner Sicht hoch ·
-   **(b)** „Ein **Holzfenster**, eine Tür." — Material schon Beauftragung, oder
-   wie „ein Fenster" nur Bestand? · **(c)** „Heizkörper lackieren. **Und die
-   Türen auch.**" — die Tür fällt jetzt weg; bewusster Preis der Regel, aber
-   euer Soll.
-4. 🔴 **Doku-Lücke in `einsprech-liste-alle-faelle.md`, weiterhin offen.**
-   Übersicht und Restliste stimmen überein — die Haken bei den Einzelfällen und
-   die zwei Live-Ergebnis-Blöcke sind je einen Fall verrutscht. **Kein
-   Zahlenfehler, nur die Zuordnung.**
-5. 🔴 **`docs/pruefmeister-einsprechen-47-56.md` vom 15.09. liegt weiter neben
-   der neuen Liste.** Parallelstand, den Sandys Datei-Regel ausschließt: bitte
-   durch einen Verweis ersetzen.
-6. **Nachzumessen, vorgemerkt von euch selbst:** 15 % **wovon**? Der Designer
-   baut PD-018 Punkt (c) nicht, bevor diese Zahl dasteht.
-7. **Fallbasis 98/100.** Die letzten zwei Fälle, ohne App prüfbar:
-   Selbstkorrektur mitten im Satz · Kunde redet im Hintergrund dazwischen ·
-   Aufnahme bricht ab und wird fortgesetzt.
-8. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung.
+*Stand vom Prüfmeister selbst nachgezogen, 16.09.2026 nachmittags — dieser
+Abschnitt ersetzt den vorherigen.*
+
+1. ✅ **Die vier Punkte des Chief of Staff sind alle beantwortet.** Ausführlich
+   in `pruefmeister-restliste.md`, hinterlegt als
+   `src/lib/__tests__/pruefmeister-batch-101-103.test.ts` (7 grün, 9
+   Sperrklinken).
+2. ✅ **PM-079-A — der Satz ist gesagt: Einzelraum.** Die Entwarnung galt Fall
+   09, und der spricht **einen** Raum ein. Engineerings Prüfstand (zwei Räume,
+   Soll 112 m², Ist 65 m²) misst etwas anderes und **hat recht** — am 16.09.
+   nachgemessen. **Die Sperrklinke bleibt stehen, PM-079-A/B ist ein offener
+   Bauauftrag aus CoS-E-059.** Kein Widerspruch mehr, es waren zwei Fälle mit
+   demselben Namen.
+3. 🔴 **PM-101 — die qualifizierte Verneinung, und sie ist schwerer als
+   gemeldet. Vorrang hoch.** „Die Wände nicht tapezieren, nur streichen."
+   erzeugt **1.305,00 € Tapezierarbeit, die der Satz abbestellt**, und lässt
+   die **427,50 € Malerarbeit weg, die er bestellt** — auf einem Auftrag von
+   465,90 €. Schwerster Sprachfund der Fallbasis, schwerer als PM-099 und
+   PM-098. Wortstellung egal, `fehlende` leer, `Tapete tapezieren` trifft mit
+   Score 0,90 auf `Vliestapete tapezieren` (18,00 €/m²) — echtes Geld.
+4. 🔴 **PM-102 — „Ein Holzfenster, eine Tür." ist Bestand, nicht
+   Beauftragung.** Soll gesagt, Engineering kann bauen: 100,00 € Lackierarbeit
+   plus eine Nullzeile (`Abdecken Umgebung`, ohne Katalogpreis) entstehen heute
+   aus der bloßen Nennung. Die Grenze nach oben bleibt: „Die Holzfenster machen
+   wir auch." behält ihr Geld — grün abgesichert.
+5. 🔴 **PM-103 — „Und die Türen auch.": Richtung richtig, Ausführung nicht.**
+   Keine erfundene Türposition ist richtig (grün abgesichert). Aber `fehlende`
+   ist **leer** — 720,00 € verschwinden lautlos. Soll: keine Position, **aber
+   ein Fehlt-Eintrag**. Nach K.5 erst recht, denn hier ist die Arbeit gesagt.
+6. ✅ **15 % wovon — nachgemessen, die Sperre für PD-018 (c) ist auf.** Es gibt
+   eine Bemessungsgrundlage, sie ist gerechnet und steht im Berechnungsweg: in
+   Fall 04 **„15 % auf 577,80 € (Leistungen Flur)"**. Regel: Raum im Titel →
+   nur dieser Raum · objektbezogen → nur dieses Gewerk · sonst das ganze
+   Angebot · nie sich selbst. **Die 0,00 € in Fall 16 sind deshalb richtig** —
+   der Fehler dort ist der Phantomraum, nicht der Zuschlag. Der Designer hat
+   die Einzelheiten in `pruefmeister-notizen-fuer-designer.md`.
+7. ✅ **Beide Doku-Lücken sind zu.** In `einsprech-liste-alle-faelle.md` waren
+   es **drei** verrutschte Blöcke, nicht zwei (Fall 09→10, 16→17, 17→18) —
+   Haken und Tabelle nachgezogen, Übersicht und Restliste stimmen jetzt mit den
+   Einzelfällen überein: 16 und 17 weichen ab, 18 ist sauber.
+   `pruefmeister-einsprechen-47-56.md` enthält nur noch einen Verweis; es gibt
+   wieder genau eine Einsprech-Liste.
+8. **Fallbasis: 103 Fälle.** Die Nummerierung hat mit PM-099/PM-100 aus dem
+   Live-Lauf die 100 erreicht, PM-101 bis PM-103 stehen darüber. Fünf neue
+   Themen im Speicher (Abschnitt L), alle ohne App prüfbar — darunter die
+   Verneinung mit Menge und die übrigen Rückbezugswörter.
+9. **Die 142 Vorlagen der gesperrten Gewerke** — unverändert, jeweils vor der
+   Freischaltung, nicht danach.
+10. **Ersatzumgebung:** 99 Prüfungen grün, 46 Sperrklinken.
+    `node scripts/vokabular-abgleich.mjs` kommt **unverändert** heraus (182 /
+    32 / 3 / 147 / 0) — kein Rückschritt, keine Drift.
 
 ## Legal · Marketing · Finance
 

@@ -301,16 +301,16 @@ Verraucht heißt Sperrgrund.
 | Wand streichen 2x — Wohnzimmer | 45 m² | 9,50 € | 427,50 € |
 | Boden schützen — Wohnzimmer | 20 m² | 1,20 € | 24,00 € |
 | Sockelleisten abkleben — Wohnzimmer | 18 lfm | 0,80 € | 14,40 € |
-| Isoliergrund gegen Nikotin / Ruß / Wasserflecken | 20 m² | 9,00 € | 180,00 € |
+| Isoliergrund gegen Nikotin / Ruß / Wasserflecken | 65 m² | 9,00 € | 585,00 € |
 | Grundieren (Tiefengrund) | 20 m² | 4,50 € | 90,00 € |
 | Decke streichen 2x | 20 m² | 11,00 € | 220,00 € |
-| **Summe netto** | | | **955,90 €** |
+| **Summe netto** | | | **1.360,90 €** |
 
-**⚠️ Das weiß ich schon — nicht wundern, nicht notieren:**
-
-- Der Sperrgrund liegt nur auf **20,00 m²** — das ist die Deckenfläche. Verraucht sind aber auch die Wände: richtig wären 65,00 m². Bekannter Fund (PM-079-A).
+- Der Sperrgrund liegt auf **65,00 m²** — Wand (45) plus Decke (20). Beides ist verraucht, beides bekommt Sperrgrund.
 
 **`[x] stimmt`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** Isoliergrund steht über **65,00 m² = 585,00 €** (Wand + Decke) statt über 20 m². Das ist richtig — mein Prüfstand war veraltet. **Für den Einzelraum ist PM-079-A damit erledigt**; bei ZWEI verrauchten Räumen fehlt der zweite weiterhin (PM-079-A/B, nachgemessen am 16.09., 65 m² statt 112 m²).
 
 ---
 
@@ -343,8 +343,6 @@ Drei Räume aus einem Satz, jeder für sich gerechnet.
 - Flur: Wand 36,00 m² bei 14,40 m Umfang — die drei Türen kürzen den Umfang **nicht**.
 
 **`[x] stimmt`**  ·  *eingesprochen 16.09.*
-
-**Live-Ergebnis 16.09.:** Isoliergrund steht über **65,00 m² = 585,00 €** (Wand + Decke) statt über 20 m². Das ist richtig — mein Prüfstand war veraltet. PM-079-A ist damit erledigt.
 
 ---
 
@@ -508,7 +506,9 @@ Fassade, Gerüst stellen wir selbst.
 
 - Der **Erschwerniszuschlag Raumhöhe** gehört bei einer Fassade mit Gerüst nicht ins Angebot — das Gerüst ist die Erschwernis. Live steht er mit 0,00 € drin und hängt an einem leeren Zweitraum, nach dem die App zusätzlich Maße fragt.
 
-**`[x] stimmt`**  ·  *eingesprochen 16.09.*
+**`[x] weicht ab`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** Phantomraum bestätigt, dazu Nullzeile und der 0,00-€-Zuschlag. Aufteilung im Entwurf sieht kaputt aus: richtige Fassade 1.440,00 €, darunter ein leerer Raum mit 0,00 €. **Vorrang hochgestuft.** (L-02 / PM-053-A)
 
 ---
 
@@ -543,7 +543,7 @@ Vier Türen mit Zargen, drei Arbeitsgänge.
 
 **`[x] weicht ab`**  ·  *eingesprochen 16.09.*
 
-**Live-Ergebnis 16.09.:** Phantomraum bestätigt, dazu Nullzeile und der 0,00-€-Zuschlag. Aufteilung im Entwurf sieht kaputt aus: richtige Fassade 1.440,00 €, darunter ein leerer Raum mit 0,00 €. **Vorrang hochgestuft.**
+**Live-Ergebnis 16.09.:** `Türrahmen abkleben` ist **nicht** drin — richtig so, mein Fehler in der Tabelle. **Dafür ein schwerer Fund:** obwohl „An den Wänden machen wir nichts" gesagt wurde, stehen Wand streichen 2x (27,50 m²), Boden schützen und Sockelleisten abkleben im Angebot — **277,25 €**. Neuer Fund PM-099. **Inzwischen gebaut** (16.09., Engineering).
 
 ---
 
@@ -568,10 +568,7 @@ Ausschluss mitten im Satz. Der härteste Fall der Liste.
 
 - **Decke streichen**, in keiner Form. Das ist der ganze Zweck dieses Falls.
 
-**`[x] weicht ab`**  ·  *eingesprochen 16.09.*
-
-**Live-Ergebnis 16.09.:** `Türrahmen abkleben` ist **nicht** drin — richtig so, mein Fehler in der Tabelle. **Dafür ein schwerer Fund:** obwohl „An den Wänden machen wir nichts" gesagt wurde, stehen Wand streichen 2x (27,50 m²), Boden schützen und Sockelleisten abkleben im Angebot — **277,25 €**. Neuer Fund PM-099.
-
+**`[x] stimmt`**  ·  *eingesprochen 16.09. — der härteste Fall der Liste ist sauber durchgelaufen, die Decke bleibt draußen.*
 
 ---
 
@@ -609,35 +606,29 @@ Schick mir die Nummern, bei denen was abwich, mit einem Halbsatz dazu. Fertig.
 *Prüfmeister · 2026-09-16 · Jede Zahl in dieser Datei ist durch die Rechenkette
 gelaufen, keine ist geschätzt.*
 
-## ⚠️ Chief of Staff — offene Doku-Lücke in dieser Datei (16.09.2026)
+## ✅ Doku-Lücke geschlossen (Prüfmeister, 16.09.2026)
 
-Nicht geraten und nicht stillschweigend nachgezogen: **die Haken bei den
-Einzelfällen und die Live-Ergebnis-Blöcke widersprechen der Übersicht oben und
-der Restliste.** Es ist eure Datei, ihr zieht das gerade.
+Der Chief of Staff hatte gemeldet, dass die Haken bei den Einzelfällen und die
+Live-Ergebnis-Blöcke der Übersicht oben und der Restliste widersprechen. Das
+stimmte. **Nachgesehen statt geraten — es waren drei verrutschte Blöcke, nicht
+zwei:**
 
-| Stelle | Was dort steht |
-|---|---|
-| Übersicht oben | weicht ab: **16** (Phantomraum) · **17** (Ausschlusssatz) |
-| `pruefmeister-restliste.md` | Phantomraum = **Fall 16** · PM-099 = **Fall 17** · „Fall 18 hat funktioniert“ |
-| Fall 16 in dieser Datei | `[x] stimmt` — ohne Live-Ergebnis |
-| Fall 17 in dieser Datei | `[x] weicht ab`, Live-Ergebnis beschreibt die **Fassade** (1.440,00 €, Phantomraum) |
-| Fall 18 in dieser Datei | `[x] weicht ab`, Live-Ergebnis beschreibt **Türrahmen abkleben** und „An den Wänden machen wir nichts“ |
+| Stelle | war | ist jetzt |
+|---|---|---|
+| Fall 09 (Sperrgrund) | Haken ohne Live-Ergebnis, Tabelle mit 20 m² | Live-Ergebnis steht hier, Tabelle auf **65,00 m² / 585,00 €** nachgezogen |
+| Fall 10 (drei Räume) | trug das Sperrgrund-Ergebnis von Fall 09 | Block entfernt |
+| Fall 16 (Fassade) | `[x] stimmt`, kein Live-Ergebnis | **`[x] weicht ab`** + Phantomraum-Ergebnis |
+| Fall 17 (Türen) | Live-Ergebnis beschrieb die Fassade | Live-Ergebnis zu **PM-099** (277,25 €) |
+| Fall 18 (Decke NICHT) | `[x] weicht ab` + PM-099-Ergebnis | **`[x] stimmt`** — sauber |
 
-**Übersicht und Restliste stimmen überein**, also gilt nach der Heimat-Datei:
-Fall 16 weicht ab, Fall 17 weicht ab, **Fall 18 ist sauber**. Die beiden
-Live-Ergebnis-Blöcke sind je einen Fall zu weit unten gelandet, und zwei Haken
-stehen falsch.
+Übersicht oben, Restliste und Einzelfälle sagen jetzt dasselbe: **16 und 17
+weichen ab, 18 ist sauber.** An den Befunden ändert sich nichts — es war die
+Zuordnung in der Anzeige, kein Zahlenfehler.
 
-**An der Sache ändert das nichts.** PM-099 und PM-100 stehen inhaltlich
-unstrittig in der Restliste und sind an Engineering verteilt — das hier ist eine
-Zuordnung in der Anzeige, kein zweiter Befund und kein Zahlenfehler.
+Die zweite Frage ist auch erledigt: `docs/pruefmeister-einsprechen-47-56.md`
+enthält nur noch einen Verweis auf diese Datei. Es gibt wieder genau eine
+Einsprech-Liste.
 
-**Dazu die Frage von heute Mittag, unverändert offen:**
-`docs/pruefmeister-einsprechen-47-56.md` vom 15.09. liegt weiter neben dieser
-Datei. Nach Sandys Datei-Regel darf es keine zwei Einsprech-Listen geben — bitte
-durch einen Verweis auf diese hier ersetzen.
-
-*Chief of Staff · 2026-09-16*
-
+*Prüfmeister · 2026-09-16*
 
 <!-- ENDE DER DATEI — 18 Aufnahmen plus 2 Klick-Prüfungen. -->
