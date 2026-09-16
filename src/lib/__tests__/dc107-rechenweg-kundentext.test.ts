@@ -91,3 +91,99 @@ describe('DC-107 — alles andere bleibt unangetastet', () => {
     expect(kundenRechenweg('')).toBe('')
   })
 })
+
+// ══════════════════════════════════════════════════════════════════════════
+// DC-108 (aus PM-078) — zwei Sätze ohne „Transkript", die trotzdem nicht aufs
+// Kundenpapier gehören. Gebaut an derselben Stelle wie DC-107, aus demselben
+// Grund: die Sätze sind für den Betrieb richtig, nur nicht für den Kunden.
+// ══════════════════════════════════════════════════════════════════════════
+
+describe('DC-108 A — Arbeitsanweisung an den Betrieb', () => {
+  const ANWEISUNG = 'Erkannt, aber Menge nicht sicher berechenbar — bitte manuell ergänzen'
+
+  it('fällt ganz weg (pdf.tsx schreibt dann „Pauschale")', () => {
+    expect(kundenRechenweg(ANWEISUNG)).toBe('')
+  })
+
+  it('auch ohne Gedankenstrich davor', () => {
+    expect(kundenRechenweg('Menge unklar, bitte manuell ergänzen')).toBe('')
+  })
+
+  it('eine echte Rechnung verliert nur die Anweisung, nicht die Rechnung', () => {
+    expect(kundenRechenweg('46,64 m² × 12,50 €/m² = 583,00 € — Menge bitte prüfen'))
+      .toBe('46,64 m² × 12,50 €/m² = 583,00 €')
+  })
+
+  it('ohne „bitte" bleibt alles, wie es war', () => {
+    expect(kundenRechenweg('3 Zimmer × 2 Anstriche')).toBe('3 Zimmer × 2 Anstriche')
+  })
+})
+
+describe('DC-108 B — Schätzweg über die Wurzel', () => {
+  it('Herleitung raus, Ergebnis bleibt', () => {
+    expect(kundenRechenweg('Umfang ≈ 4 × √20 m² = 18 lfdm')).toBe('Umfang ≈ 18 lfdm')
+  })
+
+  it('mit Zusatz in Klammern (maler-extras.ts)', () => {
+    expect(kundenRechenweg('Umfang ≈ 4 × √20 m² = 18 lfdm (voller Umfang, kein Türabzug)'))
+      .toBe('Umfang ≈ 18 lfdm (voller Umfang, kein Türabzug)')
+  })
+
+  it('kleine Fläche (boden-vorarbeiten.ts)', () => {
+    expect(kundenRechenweg('Umfang ≈ 4 × √6 m² = 10 lfdm')).toBe('Umfang ≈ 10 lfdm')
+  })
+
+  it('eine Wurzel in unbekannter Schreibweise kommt gar nicht durch', () => {
+    expect(kundenRechenweg('Seitenlänge √49 m')).toBe('')
+  })
+
+  it('ist idempotent', () => {
+    const einmal = kundenRechenweg('Umfang ≈ 4 × √20 m² = 18 lfdm')
+    expect(kundenRechenweg(einmal)).toBe(einmal)
+  })
+})
+
+// ══════════════════════════════════════════════════════════════════════════
+// DC-110 (aus CoS-E-065 Punkt 2) — der neue Wortlaut der Herkunft. Die
+// Engines schreiben ihn noch nicht; der Filter kennt ihn trotzdem schon,
+// damit zwischen Umbenennung und Filter keine Lücke entsteht, in der die
+// neuen Wörter aufs Kundenpapier laufen.
+// ══════════════════════════════════════════════════════════════════════════
+
+describe('DC-110 — die neuen Herkunftswörter fallen genauso weg', () => {
+  it('streicht „so gesagt" (Türen, Zahl stand im Satz)', () => {
+    expect(kundenRechenweg('4 Tür(en) so gesagt')).toBe('4 Tür(en)')
+  })
+
+  it('streicht „so gesagt" auch bei Metern (aufnahme-hinweise)', () => {
+    expect(kundenRechenweg('12 lfdm so gesagt')).toBe('12 lfdm')
+  })
+
+  it('streicht „aus den Raumangaben" (Türen aus dem Raumbestand)', () => {
+    expect(kundenRechenweg('4 Tür(en) aus den Raumangaben')).toBe('4 Tür(en)')
+  })
+
+  it('lässt den Klammerzusatz stehen', () => {
+    expect(kundenRechenweg('3 Fenster aus den Raumangaben (Nordseite)'))
+      .toBe('3 Fenster (Nordseite)')
+  })
+
+  it('der dritte Türen-Fall, den Engineering ergänzt: „angenommen" bleibt', () => {
+    expect(kundenRechenweg('1 Tür(en) angenommen')).toBe('1 Tür(en) (angenommen)')
+  })
+
+  it('ein einzelnes „gesagt" im Satz bleibt unangetastet', () => {
+    expect(kundenRechenweg('Dehnungsfuge erkannt, keine Stückzahl gesagt — 1 Stück angenommen'))
+      .toBe('Dehnungsfuge erkannt, keine Stückzahl gesagt — 1 Stück (angenommen)')
+  })
+
+  it('ist idempotent', () => {
+    const einmal = kundenRechenweg('4 Tür(en) aus den Raumangaben')
+    expect(kundenRechenweg(einmal)).toBe(einmal)
+  })
+
+  it('eine echte Rechnung im selben Feld bleibt vollständig', () => {
+    expect(kundenRechenweg('46,64 m² × 12,50 €/m² = 583,00 €'))
+      .toBe('46,64 m² × 12,50 €/m² = 583,00 €')
+  })
+})
