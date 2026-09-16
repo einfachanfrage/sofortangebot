@@ -1,6 +1,7 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { baueVerstaendnis, type ExtraktionSignale } from '../auftrags-verstaendnis'
 import { filtereErschwernis, type ErschwernisConfig } from '../erschwernis'
+import { entferneAusgeschlosseneBauteile } from '../bauteil-ausschluss'
 import { pruefeMaler } from './maler'
 import { pruefeFliesen } from './fliesen'
 import { pruefeSanitaer } from './sanitaer'
@@ -93,5 +94,20 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   //
   // Ohne Einstellung (NULL) ändert sich nichts — ein Update darf niemandem
   // still einen Zuschlag wegnehmen, den er bisher bekommen hat.
-  return { fehlende, positionen: filtereErschwernis(markiert, meta?.erschwernis) }
+  const nachErschwernis = filtereErschwernis(markiert, meta?.erschwernis)
+
+  // PM-099 / CoS-E-071: die zweite Bremse. Ein Ausschlusssatz im Diktat
+  // („An den Wänden machen wir nichts") entfernt die zugehörigen Positionen
+  // HIER — nach der Mengenberechnung, unabhängig davon, was die KI in
+  // `raeume[].arbeiten` geschrieben hat. Aus demselben Grund am Ausgang wie
+  // die beiden Filter darüber: Die Wandpositionen entstehen an vier Stellen
+  // in drei Dateien, und die nächste entsteht an einer fünften.
+  return {
+    fehlende,
+    positionen: entferneAusgeschlosseneBauteile(
+      nachErschwernis,
+      transkript,
+      (meta?.raeume ?? []).map(r => r?.name ?? '').filter(Boolean),
+    ),
+  }
 }

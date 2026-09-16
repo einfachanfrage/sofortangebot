@@ -399,3 +399,68 @@ describe('PM-098 — die Nennung einer Öffnung ist keine Beauftragung', () => {
     expect(menge(mit(), /heizkörper lackieren|heizkörper streichen/i)).toBe(2)
   })
 })
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PM-099 — der Ausschlusssatz hat keine Wirkung mehr, sobald die Arbeit
+// einmal in den Raumdaten steht
+//
+// Sandy, Live-Lauf 16.09., Fall 17 der Einsprech-Liste. Diktat:
+// „Die 4 Innentüren mit Zargen abschleifen, grundieren und weiß lackieren.
+//  An den Wänden machen wir nichts."
+// Im Angebot standen trotzdem Wand streichen 2x (27,50 m²), Boden schützen
+// und Sockelleisten abkleben — zusammen 277,25 €, die niemand bestellt hat.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('PM-099 — „An den Wänden machen wir nichts"', () => {
+  const RAUM = (arb: string[]) => [raum('Flur', { laenge: 4, breite: 1.5, hoehe: 2.5, tueren: [{ anzahl: 4, breite: 0.9, hoehe: 2.1, annahme: false }], fenster: [], arbeiten: arb })]
+  const TUEREN = 'Flur, 4 mal 1,50, Höhe 2,50. Die 4 Innentüren mit Zargen abschleifen, grundieren und weiß lackieren.'
+  const MIT_AUSSCHLUSS = TUEREN + ' An den Wänden machen wir nichts.'
+  const ARB = ['tueren lackieren', 'waende_streichen']
+
+  it('die Türarbeiten stehen richtig da — je 4 Stück', () => {
+    const p = lauf('maler', MIT_AUSSCHLUSS, RAUM(ARB))
+    expect(menge(p, /türen abschleifen/i)).toBe(4)
+    expect(menge(p, /türen grundieren/i)).toBe(4)
+    expect(menge(p, /türen lackieren/i)).toBe(4)
+    expect(menge(p, /türzarge lackieren/i)).toBe(4)
+  })
+
+  // ── PM-099-A, offen ────────────────────────────────────────────────────
+  // Steht `waende_streichen` erst einmal in den Raumdaten, erzeugt die
+  // Pipeline die Wandpositionen — der Ausschlusssatz im Diktat wird an
+  // dieser Stelle nirgends mehr gelesen. Nachgemessen: das Ergebnis ist
+  // Zeichen für Zeichen dasselbe, ob der Satz dasteht oder nicht, und auch
+  // bei der Variante „Die Wände bleiben wie sie sind."
+  //
+  // Der Auslöser sitzt davor: die KI schreibt die Wandarbeit trotz des
+  // Ausschlusses in die Raumdaten. Aber die Pipeline hat keine zweite
+  // Bremse — und genau dafür gibt es PM-034.
+  it('keine Wandposition, wenn der Satz sie ausschließt', () => {
+    const p = lauf('maler', MIT_AUSSCHLUSS, RAUM(ARB))
+    expect(finde(p, /wand streichen/i)).toBeUndefined()
+  })
+  it('auch kein Boden schützen und kein Sockelleisten abkleben', () => {
+    const p = lauf('maler', MIT_AUSSCHLUSS, RAUM(ARB))
+    expect(finde(p, /boden schützen/i)).toBeUndefined()
+    expect(finde(p, /sockelleisten abkleben/i)).toBeUndefined()
+  })
+  it('derselbe Befund bei „Die Wände bleiben wie sie sind."', () => {
+    const p = lauf('maler', TUEREN + ' Die Wände bleiben wie sie sind.', RAUM(ARB))
+    expect(finde(p, /wand streichen/i)).toBeUndefined()
+  })
+
+  // Der Beleg-Test, umgestellt (Engineering, 16.09.2026).
+  //
+  // Bis zum 16.09. hielt er fest, dass mit und ohne Ausschlusssatz dieselbe
+  // Liste entsteht — der Beweis, dass der Satz gar nicht gelesen wird. Seit
+  // die zweite Bremse steht (`src/lib/bauteil-ausschluss.ts`), ist genau das
+  // der Fehlerfall: Wären die beiden Listen wieder gleich, wäre die Bremse
+  // still ausgefallen. Der Test ist damit die Sperrklinke gegen den Rückfall.
+  it('Beleg: mit und ohne Ausschlusssatz entstehen jetzt VERSCHIEDENE Listen', () => {
+    const mit = lauf('maler', MIT_AUSSCHLUSS, RAUM(ARB)).map(p => p.beschreibung).sort()
+    const ohne = lauf('maler', TUEREN, RAUM(ARB)).map(p => p.beschreibung).sort()
+    expect(mit).not.toEqual(ohne)
+    // Was der Ausschluss wegnimmt, benannt statt nur gezählt: die
+    // Wandleistung, ihre Vorarbeit und die zwei Schutzpositionen.
+    expect(ohne.length - mit.length).toBe(4)
+  })
+})

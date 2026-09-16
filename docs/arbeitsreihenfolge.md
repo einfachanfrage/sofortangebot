@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 16.09.2026, 13:45 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 13:30 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 16.09.2026, 13:55 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 13:45 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
 
 ---
 
@@ -15,9 +15,11 @@ mehr uncommittet auf ihrer Platte.**
 Jobs: **#192, #193, #194 alle erfolgreich**. Damit ist auch der
 Produktions-Build durch, der seit dem 15.09. der letzte unbewertete Schritt war.
 
-**Sonst ist seit 13:30 MESZ nichts passiert.** Keine Datei in `docs/` ist nach
-13:26 MESZ geschrieben worden, kein neuer Fund, keine neue Rückfrage. Die
-Arbeitsaufträge unten sind unverändert — die Rollen arbeiten sie gerade ab.
+**PM-099 ist gebaut.** Engineering hat um 13:46 MESZ abgelegt: neue Datei
+`src/lib/bauteil-ausschluss.ts`, 13 Zusicherungen, Gegenprobe über alle 121
+Prüfstände — Unterschied ausschließlich in den sieben Zusicherungen, um die es
+geht. Der schwerste Fund aus Sandys Live-Lauf ist damit **am selben Tag zu**.
+Der Code liegt uncommittet auf Sandys Platte.
 
 ---
 
@@ -30,6 +32,7 @@ Arbeitsaufträge unten sind unverändert — die Rollen arbeiten sie gerade ab.
 | CoS | **CI-Läufe #192 / #193 / #194 nachgemessen — alle drei grün** | ✅ erledigt |
 | CoS | **Der offene Rest aus CoS-P-026 ist zu** — der Produktions-Build ist jetzt belegt (Nachtrag 2) | verteilt |
 | CoS | **Blindstelle „GitHub-API gesperrt" aufgeklärt** — sie war es nie, die Abfrage war falsch (Nachtrag 2 bei Platform) | verteilt |
+| Engineering | **PM-099 gebaut** (13:46 MESZ) — `bauteil-ausschluss.ts`, Sperrklinken umgestellt, Beleg-Test umgedreht | ✅ erledigt, **uncommittet** |
 
 ---
 
@@ -61,7 +64,7 @@ Arbeitsaufträge unten sind unverändert — die Rollen arbeiten sie gerade ab.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | ✅ **Erledigt: der Commit-Block von 13:30.** `7ac44c3` ist durch, Produktion steht, CI grün. | — |
+| 1 | 🔴 **Neuer Block im Chat** — committet den PM-099-Fix (Code + Tests) und zwei Doku-Dateien | ein Block |
 | 2 | 🟡 **Einmal „Passwort vergessen" durchklicken** (CoS-P-013), dann ist der Punkt zu | zwei Minuten |
 | 3 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
 
@@ -70,9 +73,17 @@ Arbeitsaufträge unten sind unverändert — die Rollen arbeiten sie gerade ab.
 ### Nicht im Repository
 
 ```
-docs/arbeitsreihenfolge.md                 <- in diesem Lauf ersetzt
-docs/chief-of-staff-platform-todos.md      <- CoS-P-026 Nachtrag 2 angehängt
+src/lib/bauteil-ausschluss.ts                        <- NEU, PM-099
+src/lib/__tests__/pm099-bauteil-ausschluss.test.ts   <- NEU, 13 Zusicherungen
+src/lib/vollstaendigkeit/index.ts                    <- Bremse angeschlossen
+src/lib/__tests__/pruefmeister-batch-47-56.test.ts   <- Sperrklinken umgestellt
+docs/chief-of-staff-engineering-todos.md             <- PM-099-Bericht
+docs/arbeitsreihenfolge.md                           <- in diesem Lauf ersetzt
+docs/chief-of-staff-platform-todos.md                <- CoS-P-026 Nachtrag 2
 ```
+
+Der Block committet den ganzen Ordner, offene Reste von anderen Rollen nimmt er
+mit.
 
 ---
 
@@ -81,16 +92,16 @@ docs/chief-of-staff-platform-todos.md      <- CoS-P-026 Nachtrag 2 angehängt
 *Unverändert gegenüber 13:30 MESZ — bitte weiterarbeiten, nichts davon ist
 zurückgezogen.*
 
-1. 🔴 **Zug 3, Reihenfolge: PM-099 → PM-098 → PM-072 → PM-074 → PM-079.**
-   Begründung in **CoS-E-071**: der Auftrag zu PM-098 verweist auf die Mechanik
-   von **PM-034**, und PM-099 ist die Messung, dass genau diese Mechanik die
-   Pipeline nicht erreicht. Erst die Bremse, dann das, was darauf aufsetzt.
-2. **Beim Bauen messen, ob PM-098 mitläuft.** Eine Bremse, die nach der
-   Mengenberechnung greift, *könnte* einen Teil von PM-098 miterledigen. Messen,
-   nicht annehmen.
-3. **Der Beleg-Test des Prüfmeisters ist zum Umstellen gedacht** — er hält fest,
-   dass heute mit und ohne Ausschlusssatz dasselbe herauskommt. Wird er rot, hat
-   die Bremse gewirkt.
+1. ✅ **PM-099 ist gebaut, CoS-E-071 ist damit zu.** Angekommen, gegengelesen:
+   die Bremse sitzt am Ausgang, die drei Grenzen sind als Test belegt, die
+   Sperrklinken sind umgestellt, der Beleg-Test ist umgedreht.
+2. 🔴 **Zug 3 läuft weiter mit PM-098** → PM-072 → PM-074 → PM-079.
+   **Offen und ausdrücklich zu messen:** ob die neue Bremse einen Teil von
+   PM-098 schon miterledigt. Messen, nicht annehmen — der Befund über den
+   Befund hinaus (vier Zeilen statt drei, `Voranstrich / Grundierung` trägt die
+   Wandfläche ohne die Wand im Titel) spricht dafür, dass sich beide berühren.
+3. **Der Vier-Zeilen-Fund gehört zurück an den Prüfmeister.** Der Schaden je
+   Fall ist höher als die gemeldeten 277,25 € — ich habe es ihm unten notiert.
 4. ✅ **PM-079-A: nichts zu bauen.** Der Isoliergrund über 65,00 m² stimmt, der
    Prüfstand war veraltet. Nur die Sperrklinke umstellen.
 5. **CoS-E-069** — Batch PM-089…097. **PM-094** in Zug 3; **PM-089, 090, 091,
@@ -172,23 +183,31 @@ zurückgezogen.*
 
 *Unverändert gegenüber 13:30 MESZ.*
 
-1. ✅ **Die Auswertung ist abgeholt und verteilt.** PM-099 und PM-100 liegen bei
-   Engineering, die drei Bildschirm-Punkte beim Designer.
-2. 🔴 **Doku-Lücke in `einsprech-liste-alle-faelle.md`, bitte geradeziehen.**
+1. ✅ **PM-099 ist gebaut** — noch am selben Tag. Euer Beleg-Test ist umgedreht
+   worden, so wie ihr ihn gemeint habt: er verlangt jetzt **verschiedene**
+   Listen mit und ohne Ausschlusssatz und hält die Zahl der wegfallenden Zeilen
+   fest (4).
+2. 🆕 **Nachtrag zu eurem PM-099-Befund: es sind vier Zeilen, nicht drei.**
+   `Voranstrich / Grundierung — Flur` trägt die Wandfläche (27,50 m²), nennt die
+   Wand im Titel aber nicht — sie fehlt in eurer Aufstellung der 277,25 €. Der
+   Schaden je Fall ist entsprechend höher. Bitte in der Restliste nachziehen.
+3. ✅ **PM-100 und die drei Bildschirm-Punkte sind verteilt** (Engineering bzw.
+   Designer).
+4. 🔴 **Doku-Lücke in `einsprech-liste-alle-faelle.md`, bitte geradeziehen.**
    Übersicht und Restliste stimmen überein (16 weicht ab, 17 weicht ab, 18
    sauber) — die Haken bei den Einzelfällen und die zwei Live-Ergebnis-Blöcke
    sind je einen Fall verrutscht. **Kein Zahlenfehler, nur die Zuordnung.**
-3. 🔴 **`docs/pruefmeister-einsprechen-47-56.md` vom 15.09. liegt weiter neben
+5. 🔴 **`docs/pruefmeister-einsprechen-47-56.md` vom 15.09. liegt weiter neben
    der neuen Liste.** Zwei Einsprech-Listen nebeneinander sind der Parallelstand,
    den Sandys Datei-Regel ausschließt: bitte durch einen Verweis ersetzen.
-4. **Nachzumessen, vorgemerkt von euch selbst:** 15 % **wovon**? Der Designer
+6. **Nachzumessen, vorgemerkt von euch selbst:** 15 % **wovon**? Der Designer
    baut Punkt (c) nicht, bevor diese Zahl dasteht.
-5. **Fallbasis 98/100.** Die Sperrklinke für PM-098 in
+7. **Fallbasis 98/100.** Die Sperrklinke für PM-098 in
    `pruefmeister-batch-47-56.test.ts` fehlt noch.
-6. **Die letzten zwei Fälle bis 100, ohne App prüfbar:** Selbstkorrektur mitten
+8. **Die letzten zwei Fälle bis 100, ohne App prüfbar:** Selbstkorrektur mitten
    im Satz · Kunde redet im Hintergrund dazwischen · Aufnahme bricht ab und wird
    fortgesetzt.
-7. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung.
+9. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung.
 
 ## Legal · Marketing · Finance
 

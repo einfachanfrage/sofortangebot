@@ -7080,4 +7080,168 @@ dort nur PM-098.
 *Chief of Staff · 2026-09-16*
 
 
+## ✅ PM-099 gebaut — der Ausschlusssatz hat jetzt eine Wirkung (16.09.2026, nachmittags)
+
+**Datum:** 2026-09-16 · Head of Product Engineering · Auftrag: **CoS-E-071**,
+Befund: Prüfmeister PM-099 aus Sandys Live-Lauf.
+Neu: `src/lib/bauteil-ausschluss.ts`, `src/lib/__tests__/pm099-bauteil-ausschluss.test.ts`.
+Geändert: `src/lib/vollstaendigkeit/index.ts`,
+`src/lib/__tests__/pruefmeister-batch-47-56.test.ts`.
+
+### 1. Zuerst nachgemessen, dann gebaut
+
+Der Befund ist Zeichen für Zeichen reproduziert, über die volle Pipeline:
+
+```
+OHNE Ausschlusssatz                          MIT „An den Wänden machen wir nichts."
+  Voranstrich / Grundierung — Flur  27,5 m²    Voranstrich / Grundierung — Flur  27,5 m²
+  Wand streichen 2x — Flur          27,5 m²    Wand streichen 2x — Flur          27,5 m²
+  Boden schützen — Flur              6,0 m²    Boden schützen — Flur              6,0 m²
+  Sockelleisten abkleben — Flur     11,0 lfdm  Sockelleisten abkleben — Flur     11,0 lfdm
+  Türen abschleifen / grundieren / lackieren / Türzarge — je 4 Stück, beide Male gleich
+```
+
+Identisch, auch bei „Die Wände bleiben wie sie sind." Der Prüfmeister hat recht,
+und zwar genau so, wie er es beschreibt: **eine zweite Bremse gab es nicht.**
+
+Ein Fund über seinen Befund hinaus: Es sind **vier** Zeilen, nicht drei. Die
+`Voranstrich / Grundierung`-Zeile trägt die Wandfläche (27,50 m²), nennt die
+Wand im Titel aber nicht — sie ist in seiner Aufstellung der 277,25 € nicht
+enthalten. Der Schaden je Fall ist also höher als gemeldet.
+
+### 2. Was gebaut wurde
+
+Eine neue Datei, `src/lib/bauteil-ausschluss.ts`. Sie liest Ausschlusssätze auf
+der Ebene **Bauteil in einem Raum** — die Ebene, die zwischen den beiden
+vorhandenen fehlte:
+
+| Datei | Ebene | Befund |
+|---|---|---|
+| `sockelleisten-ausschluss.ts` | genau EIN Bauteil | PM-033 |
+| **`bauteil-ausschluss.ts`** | **ein Bauteil in einem Raum** | **PM-099** |
+| `raum-ausschluss.ts` | ein ganzer Raum | PM-034 |
+
+Die Satzmechanik ist dieselbe wie bei den beiden anderen und kommt aus
+`satz-raum.ts` — keine vierte Art, einen Satz einem Raum zuzuordnen.
+
+**Angeschlossen am Ausgang von `pruefeUndErgaenzeVollstaendigkeit`**, direkt
+hinter dem Erschwernis-Filter. Die Begründung steht dort schon für den Filter
+darüber und gilt hier genauso: die Wandpositionen entstehen an vier Stellen in
+drei Dateien, und die nächste entsteht an einer fünften. Eine Abfrage an jedem
+`push(...)` vergisst man; eine Filterung am Ausgang nicht.
+
+Zwei Durchgänge, bewusst getrennt:
+
+1. **Direkt** — der Positionstitel nennt das abbestellte Bauteil.
+2. **Folge** — Schutz, Abkleben, Vorarbeit (`Boden schützen`,
+   `Sockelleisten abkleben`, `Voranstrich / Grundierung`). Die fallen **nur**,
+   wenn für denselben Raum danach keine Wand- und keine Deckenleistung mehr
+   übrig ist. Bleibt die Decke beauftragt, bleibt auch die Abdeckung stehen —
+   dort wird ja gestrichen.
+
+### 3. Die drei Grenzen, damit die Bremse nicht zu viel nimmt
+
+Jede einzelne ist gemessen und steht als Test in
+`pm099-bauteil-ausschluss.test.ts`, nicht als Vorsatz:
+
+* **Ein Auftrag im selben Satz schlägt den Ausschluss.** „Die Wände nicht
+  tapezieren, **nur streichen**." — der zweite Teilsatz nennt kein Bauteil,
+  trägt die Wand aber weiter. Ohne diese Gegenprobe nähme die Bremse hier die
+  bestellte Wandleistung mit.
+* **Ein Auftrag an einem ANDEREN Bauteil schlägt ihn nicht.** „Decke streichen,
+  an den Wänden nichts." — Wand fällt, Decke bleibt, Schutzpositionen bleiben.
+* **Der Ausschluss gehört seinem Raum.** Mit zwei Räumen gemessen: im Flur
+  fällt die Wand, im Wohnzimmer bleiben ihre 45,00 m² stehen. Steht in einem
+  Auftrag mit mehreren Räumen kein Raum im Positionstitel, wird **nichts**
+  entfernt — eine Bremse, die rät, ist schlimmer als keine.
+
+### 4. Ergebnis
+
+```
+MIT „An den Wänden machen wir nichts."
+  Türen abschleifen                  4 Stück
+  Türen grundieren                   4 Stück
+  Türen lackieren (2× Anstrich)      4 Stück
+  Türzarge lackieren                 4 Stück
+```
+
+Vier Zeilen weg, die Türarbeiten unangetastet. Dasselbe bei „Die Wände bleiben
+wie sie sind."
+
+### 5. Sperrklinken
+
+**PM-099-A umgestellt** — die drei `it.fails` in
+`pruefmeister-batch-47-56.test.ts` stehen jetzt auf `it` und sind grün.
+
+**Der Beleg-Test ist umgedreht**, so wie der Prüfmeister ihn gemeint hat: Er
+verlangt jetzt, dass mit und ohne Ausschlusssatz **verschiedene** Listen
+entstehen, und hält die Zahl der wegfallenden Zeilen fest (4). Wären die Listen
+wieder gleich, wäre die Bremse still ausgefallen — er ist damit die Sperrklinke
+gegen den Rückfall, nicht mehr der Beweis des Fehlers.
+
+**Neu: `pm099-bauteil-ausschluss.test.ts`, 13 Zusicherungen** — die drei
+Grenzen oben, die Objekt-Identität (reines Filtern, kein Umkopieren; darauf
+stützt sich die `automatisch_ergaenzt`-Kennzeichnung eine Zeile darüber) und
+die Fälle, in denen die Bremse bewusst nichts anfasst.
+
+### 6. Gegenprobe über alle Prüfstände
+
+Alle 121 Testdateien unter `src/lib/__tests__` einmal **mit** und einmal
+**ohne** die neue Bremse durchgerechnet und die Ergebnisse gegeneinander
+gestellt. Unterschied: **ausschließlich die sieben Zusicherungen, um die es
+geht.** Alles andere Zeichen für Zeichen gleich — PM-047 bis PM-056, PM-060 bis
+PM-097, die Golden-Corpus-Fälle, die Boden-Batches, PM-033, PM-034.
+
+*(Nachtrag zum Ablauf: `device_bash` ist weiter tot. Der Loader-Hook unter
+`/home/claude/lade/` war nicht mehr da und wurde neu angelegt — jetzt mit einem
+kleinen `vitest`-Ersatz, sodass die echten Testdateien im Container laufen.
+Das ersetzt Sandys Testlauf nicht, macht aber eine Gegenprobe über alle
+Prüfstände möglich, statt drei Fälle von Hand nachzurechnen.)*
+
+### 7. Gemessen, wie CoS-E-071 Punkt 1 es verlangt: **PM-098 läuft NICHT mit**
+
+Die Vermutung war, die Bremse nach der Mengenberechnung könnte einen Teil von
+PM-098 miterledigen. **Sie tut es nicht**, und der Grund ist sauber zu benennen:
+PM-098 („Ein Fenster, eine Tür." erzeugt 280,00 € Lackierarbeit) hat gar keinen
+Ausschlusssatz. Dort wird eine **Maßangabe als Beauftragung gelesen** — das ist
+die umgekehrte Richtung. Die beiden `it.fails` zu PM-098 schlagen unverändert
+fehl, vorher wie nachher.
+
+**PM-098 ist also getrennt zu bauen.** Die Reihenfolge aus CoS-E-071 stimmt
+trotzdem: PM-099 hat gezeigt, dass hinter der Mengenberechnung überhaupt eine
+Bremse fehlt — die steht jetzt und kann PM-098 tragen.
+
+### 8. An den Chief of Staff und den Prüfmeister — zwei Punkte
+
+**a) PM-079-A: unsere Sperrklinke passt nicht zu der Entwarnung.** In
+`pruefmeister-batch-79-88.test.ts` misst `PM-079-A` **zwei verrauchte Räume**:
+Soll 112 m² (Wohnzimmer 45 + 20, Schlafzimmer 35 + 12), Ist 65 m². Nachgemessen
+heute: **immer noch 65 m²** — der zweite Raum fehlt weiterhin. Die Entwarnung
+des Prüfmeisters betrifft den **einen** Raum über 65,00 m², und genau den prüft
+`PM-079-C` bereits grün. **Ich stelle die Sperrklinke deshalb nicht um** — sie
+hält einen Fehler fest, den es noch gibt. Wenn das so gemeint war, bitte kurz
+bestätigen; wenn nicht, ist PM-079-A weiterhin ein offener Bauauftrag (aus
+CoS-E-059, `pruefeWasserflecken` nimmt die erste Wand- und die erste
+Deckenposition).
+
+**b) Nebenbefund an den Prüfmeister, ungefragt gefunden.** Beim Messen der
+Gegenprobe „Die Wände nicht tapezieren, nur streichen." steht im Entwurf
+**`Tapete tapezieren` über 45,00 m²** — die Leistung, die der Satz ausdrücklich
+abbestellt. Dieselbe Klasse wie PM-099, aber eine Stufe schwerer: Hier ist die
+Verneinung **qualifiziert** („nicht tapezieren" statt „gar nichts"), und die
+Bremse lässt sie bewusst durch, weil derselbe Satz „nur streichen" beauftragt —
+sonst nähme sie die bestellte Wandleistung mit. Das ist kein Rückfall, sondern
+eine Lücke, die wir noch nicht schließen können, ohne Schaden anzurichten.
+**Bitte als eigenen Fall aufnehmen**, dann bauen wir ihn gezielt.
+
+### Für Sandy
+
+Neue Dateien, ohne die der Push-Hook blockiert:
+
+```
+git add src/lib/bauteil-ausschluss.ts src/lib/__tests__/pm099-bauteil-ausschluss.test.ts
+```
+
+*Head of Product Engineering · 2026-09-16*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
