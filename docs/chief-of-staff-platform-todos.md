@@ -2968,7 +2968,7 @@ erledigt, sondern weitergereicht.**
 
 | Weg | Stand 16.09. | Was das heißt |
 |---|---|---|
-| **Shell auf ihrem Rechner** (`device_bash`) | ❌ **weiterhin defekt** — `no Plan9 drive shares mounted` | Kein `git`, kein `npm`, kein Skript. Ursache ist ein **Windows-Update vom 08.09.**; Microsoft hat am **14.09. den Fix veröffentlicht**, er muss auf ihrem Rechner installiert werden. Sandy ist informiert. Statusseite: Vorfall „Degraded functionality for Claude Cowork on Windows" — **Resolved** |
+| **Shell auf ihrem Rechner** (`device_bash`) | ✅ **WIEDER DA, 16.09. selbst getestet** | `git`, `npm`, Skripte laufen wieder. `git commit` funktioniert. **`git push` NICHT** — in dieser Shell liegen keine GitHub-Zugangsdaten. Löschrechte für den Repo-Ordner sind erteilt, also räumt die Git-Sperrdateien selbst auf: `rm -f .git/*.lock; find .git/objects -name "tmp_obj_*" -delete` nach jedem Commit |
 | **Dateien lesen/schreiben** (Staging/Commit) | ✅ funktioniert | Jede Datei im Projektordner kann gelesen und geschrieben werden, mit `expectedMtimeMs` gegen Überschreiben |
 | **Claude in Chrome** | ✅ **verbunden** (Browser 1, Windows) | **Neu und wichtig:** Live-Tests in der laufenden App sind ab sofort **eure** Aufgabe, nicht Sandys. Wer bisher „Live-Test nur mit Sandy am Rechner" notiert hat, streicht das |
 | **Vercel / Supabase / Sentry** | ✅ per Anbindung | Deploys, Datenbank, Fehlerbilder direkt abfragbar |
