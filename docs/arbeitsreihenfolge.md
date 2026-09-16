@@ -262,6 +262,12 @@ Abschnitt ersetzt den vorherigen.*
     unverändert heraus (182 / 32 / 3 / 147 / 0)** — jetzt zum ersten Mal am
     Original statt am Nachbau, Zahl für Zahl identisch.
 
+12. 🆕 ⚠️ **Selbst committet: `c4ef0dd`** (die sechs Dateien dieses Laufs).
+    **`git push` geht weiterhin nicht** — in dieser Shell liegen keine
+    GitHub-Zugangsdaten (`could not read Username for 'https://github.com'`).
+    **Der Zweig steht damit vier Commits vor `origin/main`**, nicht nur einen:
+    darin stecken auch Reste anderer Rollen. Gemeldet, nicht weitergereicht.
+
 ## Legal · Marketing · Finance
 
 **In diesem Lauf nichts Neues von mir, und nichts Neues von euch** — eure
