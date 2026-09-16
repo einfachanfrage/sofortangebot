@@ -379,8 +379,8 @@ describe('PM-098 — die Nennung einer Öffnung ist keine Beauftragung', () => {
     expect(finde(ohne(), /fenster (abschleifen|grundieren|lackieren)/i)).toBeUndefined()
   })
 
-  // ── PM-098-A, offen ────────────────────────────────────────────────────
-  // Derselbe Auftrag, ein Satz mehr — und im Angebot stehen sieben Zeilen,
+  // ── PM-098-A, gebaut am 16.09.2026 (CoS-E-069 Nachtrag) ────────────────
+  // Derselbe Auftrag, ein Satz mehr — und im Angebot standen sieben Zeilen,
   // die niemand bestellt hat: Türen abschleifen 20,00 € · Türen grundieren
   // 25,00 € · Türen lackieren 90,00 € · Türzarge lackieren 45,00 € · Fenster
   // abschleifen 20,00 € · Fenster grundieren 25,00 € · Fenster lackieren
@@ -389,10 +389,14 @@ describe('PM-098 — die Nennung einer Öffnung ist keine Beauftragung', () => {
   // „Ein Fenster, eine Tür" ist eine Maßangabe — die App fordert sie selbst
   // ein, um die Wandfläche zu rechnen. Sie darf nicht als Beauftragung gelesen
   // werden. Gleiche Unterscheidung wie PM-033 (Sockelleisten) und PM-034.
-  it.fails('OFFEN: die genannte Tür wird nicht mitlackiert', () => {
+  //
+  // Beide Sperrklinken stehen seit dem Bau auf `it`: schlagen sie wieder an,
+  // ist der Auslöser zurückgefallen und das Lackieren liest erneut das ganze
+  // Transkript statt den Satz, in dem das Bauteil steht.
+  it('die genannte Tür wird nicht mitlackiert', () => {
     expect(finde(mit(), /türen (abschleifen|grundieren|lackieren)|türzarge/i)).toBeUndefined()
   })
-  it.fails('OFFEN: das genannte Fenster wird nicht mitlackiert', () => {
+  it('das genannte Fenster wird nicht mitlackiert', () => {
     expect(finde(mit(), /fenster (abschleifen|grundieren|lackieren)/i)).toBeUndefined()
   })
   it('die Heizkörper bleiben in beiden Fassungen gleich — der Auftrag ist derselbe', () => {

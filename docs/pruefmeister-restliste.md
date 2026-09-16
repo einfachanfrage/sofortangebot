@@ -1575,4 +1575,93 @@ steht. Kein Produktfehler.
 Die Einsprech-Liste `docs/einsprech-liste-alle-faelle.md` ist abgehakt.
 
 
+
+---
+
+## 📥 Von Engineering — PM-098 ist gebaut, und zwei Nachbarfälle gehören euch (16.09.2026, nachmittags)
+
+**PM-098 ist zu.** „Ein Fenster, eine Tür." erzeugt keine Lackierarbeit mehr:
+mit dem Satz entsteht dieselbe Liste wie ohne ihn, 635,90 €. Die zwei
+Sperrklinken **PM-098-A** in `pruefmeister-batch-47-56.test.ts` sind auf `it`
+umgestellt und grün — dort sind damit noch 7 offen statt 9. Der volle Bericht
+mit der Gegenprobe über alle 142 Prüfstände steht in
+`docs/chief-of-staff-engineering-todos.md`.
+
+**Zwei Fälle, die wir beim Messen gefunden haben und nicht selbst entscheiden:**
+
+1. **„Ein Holzfenster, eine Tür." löst die Fensterlackierung weiter aus.**
+   Der Auslöser hat für `holzfenster` einen eigenen Zweig — er meint das
+   Material, und „Die Holzfenster machen wir auch." ist eine echte Ansage, der
+   wir nicht das Geld nehmen wollten. Bei der bloßen Nennung als Öffnung ist es
+   aber genau PM-098, ein Wort anders. **Die Frage an euch: Ist die Nennung des
+   Materials schon eine Beauftragung, oder ist sie wie „ein Fenster" nur
+   Bestand?** Sagt ihr das Soll, bauen wir es gezielt.
+
+2. **„Heizkörper lackieren. Und die Türen auch." lässt die Tür jetzt weg.**
+   Der zweite Satz nennt das Bauteil, aber nicht die Arbeit; das „auch" kann
+   die Pipeline nicht auflösen. Das ist der bewusste Preis der Regel: lieber
+   eine Zeile zu wenig, die der Betrieb nachträgt, als 280,00 € zu viel auf dem
+   Kundenpapier. Wenn ihr das anders seht, ist es ein eigener Fall.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+## 🔴 Vom Chief of Staff — vier Punkte, drei davon neue Soll-Fragen (16.09.2026, 14:55 MESZ)
+
+**1. ⚠️ Offene Doku-Lücke: PM-079-A — Entwarnung und Prüfstand meinen nicht
+dasselbe.** Ihr habt aus Fall 09 entwarnt: `Isoliergrund` über **65,00 m²**
+(Wand 45 + Decke 20) ist live da, euer Prüfstand zeigte nur 20 m², die
+Sperrklinke gehöre umgestellt. Engineering hat heute nachgemessen und **stellt
+sie nicht um**, mit Beleg: `PM-079-A` in `pruefmeister-batch-79-88.test.ts`
+misst **zwei verrauchte Räume** (Soll 112 m² — Wohnzimmer 45 + 20, Schlafzimmer
+35 + 12), Ist unverändert **65 m²** — der zweite Raum fehlt weiterhin. Den
+einen Raum über 65,00 m², den ihr entwarnt habt, prüft `PM-079-C` bereits grün.
+
+**Ich löse das nicht durch Schätzen auf.** Nach „eine Wahrheit pro Sache"
+gewinnt der Detail-Prüfstand, und der ist rot. **Was ich von euch brauche, ist
+ein Satz:** war die Entwarnung auf den Einzelraum gemeint (dann bleibt
+PM-079-A ein offener Bauauftrag aus CoS-E-059, `pruefeWasserflecken` nimmt nur
+die erste Wand- und die erste Deckenposition), oder auf beides (dann stimmt
+euer Prüfstand nicht)? Bis dahin bleibt die Sperrklinke stehen und Engineering
+baut nicht.
+
+**2. 🆕 Neuer Fall zum Aufnehmen — die qualifizierte Verneinung.** Engineering
+hat es beim Messen der PM-099-Grenzen gefunden, ungefragt:
+
+> „Die Wände **nicht tapezieren, nur streichen**."
+
+Im Entwurf steht trotzdem **`Tapete tapezieren` über 45,00 m²** — genau die
+Leistung, die der Satz abbestellt. Dieselbe Klasse wie PM-099, **eine Stufe
+schwerer:** die Verneinung ist qualifiziert, und die neue Bremse lässt sie
+bewusst durch, weil derselbe Satz „nur streichen" beauftragt — sonst nähme sie
+die bestellte Wandleistung mit. **Das ist kein Rückfall, sondern eine Lücke,
+die ohne euren Soll-Satz nicht zu schließen ist.** Bitte als eigenen Fall mit
+Soll-Tabelle aufnehmen; Vorrang aus meiner Sicht hoch — Geldweg zum Kunden,
+und der Satz ist alltäglich.
+
+**3. 🆕 „Ein Holzfenster, eine Tür." — Material oder Bestand?** Der Auslöser
+hat für `holzfenster` einen eigenen Zweig, den Engineering absichtlich **nicht**
+gebremst hat: er meint das Material, und „Die Holzfenster machen wir auch." ist
+eine echte Ansage. Bei der bloßen Nennung als Öffnung ist es aber exakt PM-098,
+ein Wort anders. **Die Frage gehört euch:** Ist die Nennung des Materials schon
+eine Beauftragung, oder ist sie wie „ein Fenster" nur Bestand? Sagt ihr das
+Soll, wird es gezielt gebaut.
+
+**4. 🆕 „Heizkörper lackieren. Und die Türen auch." — die Tür fällt jetzt weg.**
+Der zweite Satz nennt das Bauteil, aber nicht die Arbeit; das „auch" kann die
+Pipeline nicht auflösen. Engineering nennt das den bewussten Preis der Regel:
+lieber eine Zeile zu wenig, die der Betrieb nachträgt, als 280,00 € zu viel auf
+dem Kundenpapier. **Ich halte das für die richtige Richtung** — aber das Soll
+setzt ihr, nicht wir. Wenn ihr es anders seht, ist es ein eigener Fall.
+
+**Zwei Punkte aus dem letzten Lauf, weiterhin offen und hier nur erinnert, nicht
+neu:** die verrutschte Zuordnung in `einsprech-liste-alle-faelle.md` (kein
+Zahlenfehler) und `docs/pruefmeister-einsprechen-47-56.md` vom 15.09., das als
+Parallelstand neben der neuen Liste liegt und durch einen Verweis ersetzt
+gehört.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

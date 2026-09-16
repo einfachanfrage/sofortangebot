@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, anzahlAus, findeRaumImSatz, raumNamenAus, istWandStreichen, raumAusTitel, vorarbeitGiltFuer } from './helpers'
+import { hat, anzahlAus, findeRaumImSatz, raumNamenAus, istWandStreichen, raumAusTitel, vorarbeitGiltFuer, auftragGiltFuer } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
 // ── CoS-E-059 / PM-045-C, Eingriff 2 (15.09.2026) ─────────────────────────
@@ -14,6 +14,28 @@ const HEIZKOERPER = /heizkörper|heizkoerper|heizung/i
 const SCHLEIFEN = /schleif|schliff/i      // abschleifen, anschleifen, angeschliffen
 const GRUNDIEREN = /grundier/i            // grundieren, grundiert, Grundierung
 
+// ── PM-098 / CoS-E-069 Nachtrag (16.09.2026) ──────────────────────────────
+//
+// Der Lackier-Auftrag selbst — die Wortform, auf die die beiden Auslöser
+// unten anspringen. Deckungsgleich mit dem, was `hatTuerenLackieren` und
+// `hatFensterLackieren` als Auftrag lesen: die `lackieren`-Kategorie des
+// Normalisierers PLUS das „neu streichen", das dort als zweiter Zweig steht.
+// Steht im Rohtext keins von beidem, greift die Bremse nicht (Staffelung 1 in
+// `auftragGiltFuer`) — dann kommt der Auslöser aus den KI-Signalen.
+const LACKIERAUFTRAG = /lackier\w*|lackierung|\black(?:e|en)?\b|lasier\w*|lasur|neu\s+streich\w*/i
+
+// Alle Bauteile, um die es in einem Maler-Diktat beim Lackieren geht. Nennt
+// ein Satz das Lackieren zusammen mit EINEM davon, ist es dessen Auftrag —
+// nicht der aller anderen, die irgendwo sonst im Diktat vorkommen.
+//
+// Wand und Decke stehen bewusst mit drin: „Die Wände neu streichen." ist der
+// zweite Weg in denselben Fehler, weil `neu streich` derselbe Auslöser ist.
+const SOCKELLEISTE = /sockelleiste|fußleiste|fussleiste|scheuerleiste/i
+const WAND_DECKE = /wand|wände|waende|decke/i
+const TREPPE = /treppe|geländer|gelaender|handlauf/i
+const BAUTEILE_AUSSER_TUER = [FENSTER, HEIZKOERPER, SOCKELLEISTE, WAND_DECKE, TREPPE]
+const BAUTEILE_AUSSER_FENSTER = [TUER, HEIZKOERPER, SOCKELLEISTE, WAND_DECKE, TREPPE]
+
 // Türen lackieren: Schleifen, Grundieren, 2× Lackieren, Zargen
 export function pruefeTuerenLackieren(
   ergaenzt: BerechnetePosition[],
@@ -25,8 +47,12 @@ export function pruefeTuerenLackieren(
   // damit die Position im Raum landet und nicht unter Allgemein
   const raum = findeRaumImSatz(/tür/i, lower, raumNamenAus(ergaenzt))
   const sfx = raum ? ` — ${raum}` : ''
+  // PM-098: Der Auftrag muss der TÜR gelten, nicht irgendeinem Bauteil im
+  // selben Diktat. „Die 2 Heizkörper bitte mit lackieren. Ein Fenster, eine
+  // Tür." bestellt keine Türlackierung — die Tür ist dort eine Maßangabe.
   const hatTuerenLackieren = /tür|türe|türen/i.test(lower) &&
-    (v.hatArbeit('lackieren') || lower.includes('neu streich'))
+    (v.hatArbeit('lackieren') || lower.includes('neu streich')) &&
+    auftragGiltFuer(TUER, LACKIERAUFTRAG, lower, BAUTEILE_AUSSER_TUER)
   if (!hatTuerenLackieren || hat(ergaenzt, 'türen abschleifen', 'tür abschleifen')) return
 
   const anzTuerenExplizit = anzahlAus(lower, 'tür', anzahlAus(lower, 'türen', 0))
@@ -116,10 +142,18 @@ export function pruefeFensterLackieren(
   v: AuftragsVerstaendnis,
   meta?: { fensterAnzahl?: number; fensterAusAufnahme?: number },
 ): void {
+  // PM-098: wie bei den Türen — aber nur der BREITE Auslöser bekommt die
+  // Bremse. Die drei Zweige darunter nennen das Fenster bereits im selben
+  // Atemzug wie die Arbeit („Fenster streichen", „Holzfenster") und sind
+  // damit schon die Beauftragung, die PM-098 verlangt. Über sie zu bremsen
+  // hieße, „Heizkörper lackieren. Fenster streichen." das Fenster zu nehmen.
+  const fensterSelbstGenannt = lower.includes('holzfenster') ||
+    /fenster\s+(?:streich|anstrich)/i.test(lower) ||
+    (lower.includes('außen') && v.hatArbeit('streichen'))
   const hatFensterLackieren = lower.includes('fenster') &&
-    (v.hatArbeit('lackieren') || lower.includes('holzfenster') ||
-     /fenster\s+(?:streich|anstrich)/i.test(lower) ||
-     (lower.includes('außen') && v.hatArbeit('streichen') && lower.includes('fenster'))) &&
+    (fensterSelbstGenannt ||
+     (v.hatArbeit('lackieren') &&
+      auftragGiltFuer(FENSTER, LACKIERAUFTRAG, lower, BAUTEILE_AUSSER_FENSTER))) &&
     !lower.includes('fenster ab')
   if (!hatFensterLackieren || hat(ergaenzt, 'fenster abschleifen')) return
 

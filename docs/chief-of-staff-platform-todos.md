@@ -2866,4 +2866,73 @@ Passwort klappt.
 *Chief of Staff · 2026-09-16*
 
 
+
+---
+
+## 🟢 CoS-P-027 Nachtrag 1 — Sandy hat entschieden: **C**, geteilte Absender (16.09.2026, 14:25 MESZ · Chief of Staff)
+
+**Sandys Antwort, wörtlich: „absendername: C".** Das ist die Variante, die ich
+ihr empfohlen hatte: persönlich dort, wo es Vertrauen schafft, Marke dort, wo
+der Nutzer sie erwartet. **Ihr könnt bauen.**
+
+### Die Zuordnung — alle acht Versandwege, keiner offen
+
+Aus `FROM` werden zwei Konstanten. Ich habe jede Funktion in
+`src/lib/email.ts` einzeln zugeordnet, damit ihr das nicht ableiten müsst:
+
+| Zeile | Funktion | Betreff | Absender |
+|---|---|---|---|
+| 23 | `sendWelcomeEmail` | Willkommen bei Sofortangebot 🎙 | **persönlich** |
+| 45 | `sendVerificationEmail` | Bitte bestätige deine E-Mail-Adresse | **Marke** |
+| 63 | `sendPasswordResetEmail` | Passwort zurücksetzen | **Marke** |
+| 80 | `sendQuoteSentConfirmation` | Angebot #… an … versendet | **Marke** |
+| 108 | `sendPaymentFailedEmail` | Zahlung fehlgeschlagen — bitte prüfen | **Marke** |
+| 126 | `sendCancellationEmail` | Dein Sofortangebot-Abo wird beendet | **persönlich** |
+| 150 | `sendAccountDeletedEmail` | Dein Account ist deaktiviert | **Marke** |
+| 168 | `sendDataExportEmail` | Dein Daten-Export ist fertig | **Marke** |
+
+```ts
+const FROM_PERSOENLICH = 'Sandra von Sofortangebot <sandra@sofortangebot.app>'
+const FROM_MARKE       = 'Sofortangebot <hallo@sofortangebot.app>'
+```
+
+**Die zwei Zuordnungen, die eine Begründung brauchen:**
+
+* **`sendVerificationEmail` auf Marke.** Sie geht an jemanden, der die Marke
+  gerade erst kennengelernt hat und mit „Sandra" nichts verbindet — genau der
+  Fall, wegen dem Sandy entschieden hat. Sie kommt zeitlich **vor** der
+  Willkommensmail; der persönliche Ton beginnt danach.
+* **`sendCancellationEmail` auf persönlich.** Kündigung ist kein
+  Sicherheitsvorgang, sondern der Moment, in dem ein Mensch antworten können
+  soll. Die Mail schließt mit *„Falls du es dir anders überlegst"* — das trägt
+  nur mit einem Absender, der antwortet.
+
+`sendAccountDeletedEmail` steht bewusst auf Marke: die Mail nennt eine Frist,
+nach der Daten unwiderruflich gelöscht werden. Das ist eine Systemaussage.
+
+### Zwei Sachen, die nicht übersehen werden dürfen
+
+1. **`hallo@sofortangebot.app` muss existieren und zustellbar sein**, bevor der
+   erste Versand darüber läuft — sonst laufen Antworten der Nutzer ins Leere.
+   Prüft das bei Resend und in der Domain-Konfiguration. **Falls die Adresse
+   nicht eingerichtet ist, sagt mir Bescheid, statt sie stillschweigend durch
+   `sandra@` zu ersetzen** — dann ist die Entscheidung nicht umgesetzt, sondern
+   nur verschoben.
+2. **Die Signaturen im Text ziehen mit.** In den Marken-Mails steht heute im
+   Fließtext `Sandra` als Schlusszeile (Zeilen 50, 68, 113, 156, 179, 183).
+   Wenn der Absender „Sofortangebot" heißt und die Mail mit „Sandra"
+   unterschreibt, ist der Widerspruch im selben Bild. **Bitte in denselben Zug
+   mitnehmen** — in den Marken-Mails ersatzlos streichen oder durch
+   `Dein Sofortangebot-Team` ersetzen; in den persönlichen Mails bleibt `Sandra`
+   stehen.
+
+### Was NICHT dazugehört
+
+`LR-19 / L-MAIL-01` (kein `reply_to` in den Mails an den **Endkunden des
+Handwerkers**) bleibt getrennt und liegt bei Engineering an `CoS-E-057`. Diese
+Entscheidung betrifft ausschließlich Mails an den Handwerker selbst.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

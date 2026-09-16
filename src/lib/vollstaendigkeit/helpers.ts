@@ -86,12 +86,64 @@ export function vorarbeitGiltFuer(
   lower: string,
   andereBauteile: RegExp[],
 ): boolean {
+  return giltFuerBauteil(bauteil, vorarbeit, lower, andereBauteile)
+}
+
+/**
+ * ── PM-098 / CoS-E-069 Nachtrag (16.09.2026) ─────────────────────────────
+ *
+ * Gilt ein im Diktat genannter AUFTRAG auch für DIESES Bauteil?
+ *
+ * Der Fund: *„Wohnzimmer, 5 mal 4, Höhe 2,50. Wände zweimal streichen. Die 2
+ * Heizkörper bitte mit lackieren. Ein Fenster, eine Tür."* — daraus entstanden
+ * sieben Positionen für 280,00 €: Tür und Fenster wurden abgeschliffen,
+ * grundiert und lackiert. Gesagt war das Lackieren für die HEIZKÖRPER.
+ *
+ * `Ein Fenster, eine Tür` ist eine MASSANGABE, keine Beauftragung — die App
+ * fordert sie selbst ein, um die Wandfläche zu rechnen. Die Auslöser oben
+ * lasen aber das ganze Transkript: Bauteil irgendwo, Lackieren irgendwo,
+ * fertig. Das trifft fast jedes Maler-Diktat mit Lackierarbeiten.
+ *
+ * Dieselbe Mechanik und dieselbe Staffelung wie bei `vorarbeitGiltFuer` —
+ * bewusst keine zweite Art, einen Auftrag einem Bauteil zuzuordnen:
+ *
+ *   1. Die Arbeit steht im Rohtext überhaupt nicht → unverändert. Dann
+ *      stammt der Auslöser allein aus den KI-Signalen (`raeume[].arbeiten`),
+ *      und über die kann dieser Satz-Test nichts sagen. Nichts wegnehmen,
+ *      wo wir nichts wissen.
+ *   2. Die Arbeit steht in einem Satz MIT diesem Bauteil → sie gilt.
+ *   3. Sie steht nur in Sätzen mit einem ANDEREN Bauteil → sie gilt hier
+ *      nicht. Das ist der Fund.
+ *   4. Sie steht in einem Satz ohne jedes Bauteil („alles lackieren", „die
+ *      müssen abgeschliffen und lackiert werden") → allgemeine Ansage, gilt
+ *      wieder für alle.
+ *
+ * Der Unterschied zu `vorarbeitGiltFuer` ist nicht die Mechanik, sondern was
+ * am Ergebnis hängt: dort eine Vorarbeit an einer bestellten Leistung, hier
+ * die Bestellung selbst.
+ */
+export function auftragGiltFuer(
+  bauteil: RegExp,
+  auftrag: RegExp,
+  lower: string,
+  andereBauteile: RegExp[],
+): boolean {
+  return giltFuerBauteil(bauteil, auftrag, lower, andereBauteile)
+}
+
+/** Der gemeinsame Kern von `vorarbeitGiltFuer` und `auftragGiltFuer`. */
+function giltFuerBauteil(
+  bauteil: RegExp,
+  arbeit: RegExp,
+  lower: string,
+  andereBauteile: RegExp[],
+): boolean {
   const text = lower ?? ''
-  if (!vorarbeit.test(text)) return true                    // 1.
+  if (!arbeit.test(text)) return true                       // 1.
   const alle = saetze(text)
-  if (alle.some(s => bauteil.test(s) && vorarbeit.test(s))) return true   // 2.
+  if (alle.some(s => bauteil.test(s) && arbeit.test(s))) return true      // 2.
   const beiAnderem = alle.some(s =>
-    vorarbeit.test(s) && !bauteil.test(s) && andereBauteile.some(b => b.test(s)))
+    arbeit.test(s) && !bauteil.test(s) && andereBauteile.some(b => b.test(s)))
   return !beiAnderem                                        // 3. / 4.
 }
 

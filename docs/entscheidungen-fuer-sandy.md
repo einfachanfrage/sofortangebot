@@ -1879,4 +1879,27 @@ Aufwand ist eine Zeile Code mehr, keine Domain- oder DNS-Änderung.
 *Chief of Staff · 2026-09-16*
 
 
+
+## ✅ Absendername — entschieden: C (16.09.2026, 14:25 MESZ)
+
+**Deine Antwort: C.** Geteilte Absender, ist verteilt, Platform kann bauen.
+
+**Was das konkret heißt:**
+
+| Kommt von **Sandra von Sofortangebot** | Kommt von **Sofortangebot** |
+|---|---|
+| Willkommen | E-Mail bestätigen |
+| Kündigung („falls du es dir anders überlegst") | Passwort zurücksetzen |
+| | Angebot versendet · Zahlung fehlgeschlagen · Account deaktiviert · Daten-Export |
+
+**Eine Sache musst du vielleicht noch tun:** die Marken-Mails brauchen eine
+Absenderadresse, die es gibt — vorgesehen ist `hallo@sofortangebot.app`. **Falls
+die bei Resend noch nicht eingerichtet ist, sagt Platform mir Bescheid und ich
+melde es dir.** Wenn du weißt, dass es sie schon gibt, ist nichts zu tun.
+
+**Die Entscheidung ist damit zu.** Nichts wartet hier mehr auf dich.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
