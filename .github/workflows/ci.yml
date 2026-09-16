@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -42,7 +42,7 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Abhängigkeiten installieren
+      - name: AbhÃ¤ngigkeiten installieren
       - name: Doku-Endmarkierung pruefen (CoS-P-022)
         run: node scripts/docs-sichern.mjs pruefen
 
