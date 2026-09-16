@@ -95,7 +95,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-P-028 | 🟠 **BEFUND steht: genau EIN Postfach (`hallo@`), null Weiterleitungen** — sieben von acht Absenderadressen empfangen nichts, darunter `sandra@`, der Absender aller Anmelde- und Passwort-Mails. Antworten von Nutzern gehen verloren, ohne Fehlermeldung. Umsetzung offen. Vorher: Acht Absender, keiner nachweislich empfangsfähig** — MX zeigt auf IONOS (selbst geprüft), aber ob dort Postfächer existieren, weiß niemand. `hallo@` steht im Impressum, § 5 DDG. Dazu: Resend zeigt „No sent emails yet" trotz nachweislich versendeter Mails — vermutlich falsches Team | ❌ offen, vor Gate 1 | Sandys Frage, 2026-09-16 |
+| CoS-P-028 | 🟡 **`sandra@` und `support@` leiten jetzt auf `hallo@` (eingerichtet 16.09., Zustelltest offen)** — vorher: BEFUND: genau EIN Postfach (`hallo@`), null Weiterleitungen** — sieben von acht Absenderadressen empfangen nichts, darunter `sandra@`, der Absender aller Anmelde- und Passwort-Mails. Antworten von Nutzern gehen verloren, ohne Fehlermeldung. Umsetzung offen. Vorher: Acht Absender, keiner nachweislich empfangsfähig** — MX zeigt auf IONOS (selbst geprüft), aber ob dort Postfächer existieren, weiß niemand. `hallo@` steht im Impressum, § 5 DDG. Dazu: Resend zeigt „No sent emails yet" trotz nachweislich versendeter Mails — vermutlich falsches Team | ❌ offen, vor Gate 1 | Sandys Frage, 2026-09-16 |
 | CoS-P-024 | 🔴 **Push-Hook ersatzlos abschaffen** — `.git/hooks/pre-push` als No-Op, beide Prüfungen raus aus dem Push-Weg. Sandys ausdrückliche Anweisung nach der zweiten Blockade. CoS-P-023 damit zurückgezogen. Stehende Regel: in Sandys Push-/Commit-Weg kommt nichts, das abbrechen kann | ❌ offen, vorrangig — Details am Dateiende | Sandy, 2026-09-15 |
 | CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | ✅ **erledigt & geprüft** — Weg 1 (Regel-Objekt per `files` auf dieselben Dateien beschränkt) war zum heutigen Check bereits im GitHub-Spiegel umgesetzt (Commit `c2c72d7`); dabei zusätzlich zwei echte Fehler in `_to_delete/` gefunden und ausgenommen. Beim erneuten Prüfen heute ein Folgefehler gefunden und behoben: `lint:ci --max-warnings` stand noch auf 109, aktueller Stand ist 110 (eine neue, legitime Warnung aus einem fremden Rollenbereich, `AngebotDetail.tsx`, nicht angefasst). Grenze auf 110 angehoben, `npm run lint` lokal grün (0 Fehler, 110/110 Warnungen), `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
 | CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
@@ -3128,6 +3128,44 @@ laufen ins Nichts, wenn jemand darauf antwortet.
 
 **Zugang:** Ich war über den Browser in der Claude-App drin, Sandy hat sich
 einmal angemeldet. Derselbe Weg steht dir offen.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
+## CoS-P-028 — ERLEDIGT für die zwei wichtigsten Adressen (Chief of Staff, selbst eingerichtet)
+
+**Datum:** 2026-09-16 · auf Sandys ausdrückliche Anweisung
+(*„ich will dass du support@sofortangebot.app und sandra@sofortangebot.app
+hinzufügst. und alles weiterleiten an hallo@"*)
+
+**Im IONOS-Konto angelegt, Ergebnis in der Übersicht bestätigt:**
+
+```
+sandra@sofortangebot.app    → Weiterleitung → hallo@sofortangebot.app
+support@sofortangebot.app   → Weiterleitung → hallo@sofortangebot.app
+
+E-Mail-Weiterleitung: 2 von unbegrenzt verwendet   (keine Kosten)
+```
+
+**Damit ist der schwerste Teil des Befunds geschlossen:** Antworten auf die
+Anmelde-, Bestätigungs- und Passwort-Mails landen ab sofort in `hallo@` statt
+im Nichts.
+
+**Zwei Dinge, die eine Weiterleitung nicht kann** — bewusst so, kein Mangel:
+von `sandra@` lässt sich nicht *senden* (das macht ohnehin Resend über die API,
+nicht IONOS), und eingehende Post läuft nicht durch den Spamfilter.
+
+### Noch offen bei dir
+
+1. **`info@`, `angebot@`, `monitoring@`, `alert@`** — Sandy hat nur die zwei
+   genannt. Meine Empfehlung bleibt: `info@` und `angebot@` ebenfalls auf
+   `hallo@`; bei `monitoring@` und `alert@` deine Einschätzung. **Nicht
+   einfach anlegen** — kurz begründen, dann entscheidet sie oder ich.
+2. **`noreply@` bleibt bewusst tot.**
+3. **Zustelltest je Adresse.** Hinschicken, in `hallo@` nachsehen. Erst dann
+   ist es belegt. Ich habe die Weiterleitungen eingerichtet und die Anzeige
+   geprüft — **eine angekommene Mail habe ich nicht gesehen.**
 
 *Chief of Staff · 2026-09-16*
 
