@@ -9568,4 +9568,210 @@ den drei Punkten aus PD-018 einsortieren**, nicht davor.
 *Chief of Staff · 2026-09-16*
 
 
+---
+
+## DC-112 ✅ — PD-016 Punkt 1 beantwortet: der runde Raum wird **gefragt**, nicht gerechnet — aber die Frage bringt die Zahl schon mit (Product Designer, 16.09.2026)
+
+**Bezug:** PD-016 Punkt 1 (PM-085) in `docs/pruefmeister-notizen-fuer-designer.md` ·
+hält CoS-E-068 Teil C auf · Vorrang laut `arbeitsreihenfolge.md`: der einzige
+Punkt beim Designer, an dem Engineering hängt.
+
+**Die Antwort in einem Satz:** Die App rechnet aus „Durchmesser vier Meter"
+**nicht** still ein Angebot — sie stellt eine Rückfrage, und in dieser Rückfrage
+steht das Rechenergebnis bereits als Vorschlag, den ein Tap bestätigt.
+
+### Warum nicht still rechnen
+
+Der Prüfmeister hat es fachlich schon richtig aufgeschrieben, ich bestätige es
+gestalterisch und ergänze den Grund, der auf unserer Seite liegt:
+
+1. **Gesagt ist ein Durchmesser, gerechnet wäre eine Fläche.** Dazwischen liegt
+   die Annahme „der Raum ist ein sauberer Kreis". Nach K.5 gehört eine Annahme
+   dieser Größe nicht wortlos ins Angebot.
+2. **Die Annahme ist hier nicht klein.** Bei 4,00 m Durchmesser hängen an ihr
+   31,42 m² Wand und 12,57 m² Decke — bei 9,50 €/m² rund 420 €. Ein Raum, der
+   an einer Seite gerade ist, verliert davon sofort einen zweistelligen
+   Prozentsatz.
+3. **Der Rechenweg auf dem Kundenpapier hätte keine ehrliche Zeile.** Nach
+   DC-107/DC-110 steht dort entweder „so gesagt" oder „aus den Raumangaben".
+   π × 4 m × 2,50 m ist weder das eine noch das andere — es wäre die erste
+   Zahl auf dem Kundenpapier, die aus einer Formel stammt, die niemand genannt
+   hat. Das ist genau die Kategorie, die wir in DC-107 aus dem Papier
+   herausgenommen haben.
+
+**Und trotzdem darf die Rückfrage nicht bedeuten, dass der Handwerker selbst
+rechnet.** Die Zahl ist ausrechenbar, und ihm eine leere Maßeingabe hinzuhalten,
+nachdem er den Durchmesser gesagt hat, ist die zweitschlechteste Antwort nach
+dem leeren Angebot.
+
+### Die Gestaltung: die vorhandene „Du hast gesagt"-Karte, kein neues Bauteil
+
+Der Mechanismus existiert bereits und ist genau für diesen Fall gebaut:
+`RueckfrageItem.vorschlag` (DC-026, spezifiziert in
+`docs/dc-025-konzept-rueckfragen.md`, Feld liegt in
+`src/lib/mengen/rueckfragen-generator.ts`). Es kommt **kein neues Bedienelement**
+dazu, nur ein neuer Auslöser für eine Karte, die es gibt.
+
+Die Karte im Rückfragen-Screen des betroffenen Raums:
+
+> **Wie groß ist der Raum?**
+> Du hast gesagt: *„Der Raum ist rund, Durchmesser vier Meter"*
+>
+> **Rund, 4,00 m Durchmesser** — daraus: Wand 31,42 m², Decke 12,57 m²
+> *Gerechnet als voller Kreis.*
+>
+> `Stimmt so ✓`   `Fläche selbst eingeben`
+
+**Die drei Bestandteile und warum jeder einzelne dasteht:**
+
+* **Das Zitat** ist Pflicht, nicht Zierde. Es belegt, woher der Vorschlag kommt,
+  und es ist derselbe Beleg-Mechanismus wie überall sonst in den Rückfragen.
+  (Randbedingung aus PM-100: das Zitat muss aus **diesem** Raum stammen — die
+  Rückfrage, die sich mit dem falschen Raum belegt, ist ein eigener offener
+  Punkt und darf hier nicht wiederholt werden.)
+* **Der Halbsatz „Gerechnet als voller Kreis."** ist die Annahme, im Klartext,
+  in der Größe der Nebenzeile. Er ist der ganze Unterschied zwischen „still
+  gerechnet" und „gefragt": Wer *Stimmt so* tippt, hat die Kreisannahme
+  gelesen und bestätigt sie. Damit ist die Zahl **gesagt**, und der Rechenweg
+  auf dem Kundenpapier trägt sie wie jede andere Rückfragen-Antwort — ohne
+  Sonderfall in `rechenweg-kundentext.ts`.
+* **Der zweite Knopf heißt `Fläche selbst eingeben`, nicht „Korrigieren".**
+  „Korrigieren" unterstellt einen Fehler; hier ist der Vorschlag nicht falsch,
+  sondern nur eine von zwei möglichen Auslegungen.
+
+### Der wichtigere Fall: der Raum mit **einer** Rundung
+
+Der Prüfmeister hat recht, dass Erker, Apsis und abgerundete Ecke häufiger sind
+als der runde Raum — und sie fallen heute in dasselbe Loch. Für sie gibt es
+**nichts zu rechnen**, also auch keinen Vorschlag. Sie bekommen dieselbe Karte
+ohne den Vorschlagsblock:
+
+> **Wie groß ist der Raum?**
+> Du hast gesagt: *„… mit einem Erker"*
+> Aus einer Rundung kann ich keine Fläche ableiten. Gib die Fläche direkt an
+> oder miss den Raum ohne die Rundung auf und trag sie als eigenen Posten nach.
+>
+> `Wandfläche … m²`  `Deckenfläche … m²`   ·   `Später ergänzen`
+
+**Wichtig für die Umsetzung — der Fragetyp ist `flaeche_einzel`, nicht
+`masse_einzel`.** Einen nicht rechtwinkligen Raum nach Länge × Breite zu
+fragen, erzeugt eine zweite falsche Zahl anstelle der fehlenden. Beide
+Fragetypen existieren bereits (`RueckfrageTyp` in
+`src/lib/mengen/rueckfragen-generator.ts`), und die Antwort landet im
+vorhandenen Geometrie-Modus `'flaeche'` (`wandflaeche` / `bodenflaeche` in
+`src/lib/raum-geometrie.ts`). **Es braucht keinen neuen Raum-Modus, keine
+Kreisgeometrie und keine π-Formel im Produktivcode** — π steht genau an einer
+Stelle: im Vorschlagstext des Generators.
+
+### Was Engineering daraus baut (CoS-E-068 Teil C)
+
+Wortlaut und Verhalten von mir, Code von euch. In der Reihenfolge, in der ich
+sie für richtig halte:
+
+1. **Ein neuer `vage_typ: 'raum_nicht_rechteckig'`**, gesetzt, wenn die
+   Extraktion Formwörter findet (`rund`, `Durchmesser`, `Erker`, `Apsis`,
+   `abgerundet`, `halbrund`, `Radius`) und `laenge`/`breite` fehlen. Der Raum
+   wird damit `vage` — das ist der eigentliche Fix: heute ist er es nicht, und
+   **deshalb** fragt niemand nach.
+2. **Im Generator ein Zweig für diesen Typ**, der `typ: 'flaeche_einzel'`
+   erzeugt. Ist ein Durchmesser (oder Radius) als Zahl da, wird zusätzlich
+   `vorschlag` gefüllt: `wert: [wandflaeche, deckenflaeche]`, `anzeige` nach
+   dem Muster oben, `zitat` = der Satz aus **diesem** Raum.
+3. **Zwei Zeilen Rechnung, nur für die Anzeige:** Wand = π × d × Höhe,
+   Decke = π × (d/2)². Fehlt die Höhe, fällt der Wandteil des Vorschlags weg
+   und die Höhenfrage kommt wie gewohnt dazu — kein Standardwert stillschweigend
+   einsetzen.
+4. **`Stimmt so ✓` schreibt die beiden Flächen** als normale Rückfragen-Antwort
+   in `wandflaeche`/`bodenflaeche` (Modus `'flaeche'`). Ab da ist der Raum ein
+   ganz gewöhnlicher Raum.
+
+### Die harte Grenze, die unabhängig davon gilt
+
+Der Prüfmeister schreibt: *„Was auf keinen Fall bleiben darf, ist das leere
+Angebot ohne ein Wort dazu."* Dem stimme ich ohne Einschränkung zu, und es gilt
+weiter, wenn der Handwerker die Rückfrage überspringt.
+
+**Minimum ab sofort, auch ohne den Rest:** Ein Raum, zu dem am Ende keine
+Fläche bekannt ist, erzeugt **einen Fehlt-Eintrag** („Wohnzimmer: Maße fehlen —
+ohne sie keine Position"), nicht null Positionen und null Einträge. Das ist
+kein neuer Zustand und kostet nichts.
+
+**Ob es darüber hinaus einen eigenen Ergebnis-Zustand „ich habe dich gehört,
+aber so kann ich nichts rechnen" gibt, entscheide ich hier bewusst nicht** —
+das ist PD-018 Punkt 1/2 (PM-093, PM-094) und betrifft weit mehr als runde
+Räume. Dieses Ticket wartet nicht darauf: die Rückfrage oben verhindert den
+Fall in den meisten Läufen, bevor er entsteht.
+
+### Was ich nicht entscheide
+
+* **Ob aus einem bestätigten Kreis ein eigener Positions-Untertitel wird**
+  („Wandfläche umlaufend"). Fachfrage, gehört zum Prüfmeister.
+* **Den Aufpreis für gebogene Flächen.** Ein runder Raum ist in der Ausführung
+  teurer als ein rechteckiger gleicher Fläche — das ist eine Preisfrage, keine
+  Gestaltungsfrage, und sie steht hier nur, damit sie nicht untergeht.
+
+**Status: ✅ erledigt** — die Frage aus PD-016 Punkt 1 ist beantwortet,
+CoS-E-068 Teil C ist von unserer Seite frei. Kein App-Code von mir in diesem
+Ticket: der Fix liegt im Generator und in der Extraktion, beides Engineering.
+
+*Product Designer · 2026-09-16*
+
+---
+
+## DC-109 ✅ erledigt — die drei Sätze in der „Abrechnung"-Karte stimmen jetzt (Product Designer, 16.09.2026)
+
+**Freigabe:** Sandys Entscheidung **B** (Eintrag „DC-109 ✅ ENTSCHIEDEN" weiter
+oben, 13:20 MESZ). Umgesetzt ist genau der dort festgelegte Wortlaut, ohne
+Zusatz und ohne Kürzung.
+
+**Geändert — `src/app/(app)/einstellungen/page.tsx`, die drei Zeilen aus der
+Auflage und keine weitere:**
+
+| Zeile | vorher | jetzt |
+|---|---|---|
+| 557 | „Wer kümmert sich um Rechnungen und Zahlungserinnerungen? Angebote erstellst du in jedem Fall hier." | „Angebote schreibst du in jedem Fall hier. Rechnungen stellt sofortangebot nicht." |
+| 561 | `inapp` — „🧾 Alles bei sofortangebot" / „Rechnungen & Zahlungserinnerungen laufen direkt hier." | „🧾 Nur sofortangebot" / „Ich nutze keine Buchhaltungssoftware." |
+| 562 | `extern` — „🔗 Über meine Buchhaltung" / „Rechnung & Mahnung schreibst du selbst in lexoffice, sevDesk & Co. — sofortangebot schickt dafür keine eigenen Zahlungserinnerungen mehr." | „🔗 Über meine Buchhaltung" / „Fertige Angebote schiebe ich mit einem Tap nach lexoffice, sevDesk & Co." |
+
+**Zur einzigen Stelle, an der ich den freigegebenen Text angefasst habe — und
+es ist keine Änderung am Wortlaut:** Die Karte trägt je Option zwei Ebenen
+(fette Beschriftung, darunter die Kleinzeile). Der entschiedene Text steht als
+ein Satz mit Gedankenstrich: „🧾 Nur sofortangebot — ich nutze keine
+Buchhaltungssoftware." Der Gedankenstrich **ist** hier die Grenze zwischen den
+beiden Ebenen, also steht links davon die Beschriftung und rechts die
+Kleinzeile. Kein Wort ist dazugekommen oder weggefallen; einzig das „ich" wird
+am Zeilenanfang groß. Den Gedankenstrich als Zeichen mitzuschleppen hätte in
+der fetten Beschriftung einen Bindestrich ins Leere erzeugt.
+
+**Nicht angefasst:**
+
+* Die Fußzeile „Angebots-Nachfassen (Erinnerung an offene Angebote vor der
+  Rechnung) läuft in beiden Fällen." — steht laut Entscheidung unverändert und
+  stand schon wörtlich so da.
+* **Der CoS-P-009-Kommentarblock von Platform und der Hinweisabsatz darunter**
+  („Wichtig: Diese Auswahl überträgt nichts automatisch …"). Das war Auflage 2.
+  Die Datei ist unmittelbar vor dem Schreiben frisch geholt worden; der
+  Platform-Absatz war darin enthalten und ist es danach unverändert.
+* `abrechnungs_modus`, die Karte selbst, die Radio-Logik — alles unberührt.
+
+**Verifikation, in dieser Reihenfolge:**
+
+1. Datei unmittelbar vor der Änderung neu geholt (56.080 Bytes), Änderung auf
+   dieser Fassung gemacht, nicht auf einer älteren Kopie.
+2. Zeilendiff gegen die geholte Fassung: **genau drei geänderte Zeilen**,
+   557/561/562 — keine vierte.
+3. Syntaxprüfung mit **TypeScript 5.6.3**, `ScriptKind.TSX`:
+   **0 parseDiagnostics**.
+4. Nach dem Schreiben zurückgelesen und die Bytegröße verglichen:
+   **55.971 Bytes auf beiden Seiten**, die drei Zeilen stehen im Zieltext so
+   wie oben in der Tabelle.
+
+**Was damit nicht behauptet ist:** Der Schalter bleibt wirkungslos —
+`abrechnungs_modus` wird weiterhin nirgends ausgewertet. Das ist Teil der
+Entscheidung B und ausdrücklich in Ordnung; neu ist nur, dass kein Satz in der
+Karte mehr etwas verspricht, was das Produkt nicht tut.
+
+*Product Designer · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
