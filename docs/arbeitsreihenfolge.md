@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 16.09.2026, 13:55 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 13:45 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 16.09.2026, 14:10 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 13:55 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
 
 ---
 
@@ -33,6 +33,10 @@ Der Code liegt uncommittet auf Sandys Platte.
 | CoS | **Der offene Rest aus CoS-P-026 ist zu** — der Produktions-Build ist jetzt belegt (Nachtrag 2) | verteilt |
 | CoS | **Blindstelle „GitHub-API gesperrt" aufgeklärt** — sie war es nie, die Abfrage war falsch (Nachtrag 2 bei Platform) | verteilt |
 | Engineering | **PM-099 gebaut** (13:46 MESZ) — `bauteil-ausschluss.ts`, Sperrklinken umgestellt, Beleg-Test umgedreht | ✅ erledigt, **uncommittet** |
+| Sandy | **Passwort-Durchlauf gemacht** — Anforderung, Mail, Formular belegt; letzter Klick nicht | teilweise belegt |
+| CoS | **DC-111** — beide Passwort-Seiten ohne Desktop-Breite, Stellen benannt | verteilt |
+| CoS | **CoS-P-027** — alle acht System-Mails kommen von „Sandra", auch die Sicherheitsmails | verteilt |
+| CoS | **Entscheidung für Sandy gestellt:** Absendername A/B/C | wartet auf sie |
 
 ---
 
@@ -65,10 +69,11 @@ Der Code liegt uncommittet auf Sandys Platte.
 | # | Was | Aufwand |
 |---|---|---|
 | 1 | 🔴 **Neuer Block im Chat** — committet den PM-099-Fix (Code + Tests) und zwei Doku-Dateien | ein Block |
-| 2 | 🟡 **Einmal „Passwort vergessen" durchklicken** (CoS-P-013), dann ist der Punkt zu | zwei Minuten |
-| 3 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
+| 2 | 🟡 **Absendername entscheiden: A, B oder C** (steht in `entscheidungen-fuer-sandy.md`) | ein Satz |
+| 3 | 🟡 **CoS-P-013: ein Satz fehlt** — ging „Passwort speichern" durch und konntest du dich neu anmelden? | ein Satz |
+| 4 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
 
-**Keine Entscheidung wartet auf sie.**
+**Eine Entscheidung wartet auf sie: der Absendername.**
 
 ### Nicht im Repository
 
@@ -79,7 +84,9 @@ src/lib/vollstaendigkeit/index.ts                    <- Bremse angeschlossen
 src/lib/__tests__/pruefmeister-batch-47-56.test.ts   <- Sperrklinken umgestellt
 docs/chief-of-staff-engineering-todos.md             <- PM-099-Bericht
 docs/arbeitsreihenfolge.md                           <- in diesem Lauf ersetzt
-docs/chief-of-staff-platform-todos.md                <- CoS-P-026 Nachtrag 2
+docs/chief-of-staff-platform-todos.md                <- CoS-P-026 Nachtrag 2, CoS-P-027, CoS-P-013
+docs/design-check.md                                 <- DC-111
+docs/entscheidungen-fuer-sandy.md                    <- Absendername
 ```
 
 Der Block committet den ganzen Ordner, offene Reste von anderen Rollen nimmt er
@@ -156,6 +163,11 @@ zurückgezogen.*
    UND PM-099 gebaut sind.**
 9. **Live-Test von DC-105 / DC-101 / DC-103 / DC-104 / DC-089 / DC-047 /
    DC-048** — braucht Sandy am Rechner.
+10. 🟠 **DC-111 — die beiden Passwort-Seiten haben kein Desktop-Layout.** Aus
+    Sandys echtem Durchlauf, nicht aus einem Testfall. Die fünf Stellen stehen
+    mit Zeilennummern in `design-check.md`. **Hinter PD-018 einsortieren**,
+    nicht davor. Zweiter Punkt derselben Datei: das Emoji 📬 als Bildmarke —
+    Frage an euch, keine Ansage.
 
 ## Platform
 
@@ -178,6 +190,13 @@ zurückgezogen.*
 8. **DC-109 ist entschieden (B)** — der Designer ändert drei Sätze in der
    „Abrechnung"-Karte, in der euer CoS-P-009-Kommentar sitzt. Wenn ihr dort
    gerade schreibt, sagt Bescheid.
+9. 🟠 **CoS-P-027 — `FROM` in `src/lib/email.ts` bedient alle acht Mails mit
+   „Sandra".** Kein Fehler, sondern Absicht — deshalb geht es an Sandy, nicht an
+   euch. **Nichts bauen, bis sie A/B/C beantwortet hat.**
+10. **CoS-P-013 bleibt offen**, aber nur noch am letzten Klick. Die ersten drei
+    Schritte sind über Sandys Bildschirmfotos belegt, inklusive: der
+    `CoS-P-003`-Fix greift — das Reset-Formular erscheint, statt nach vier
+    Sekunden in „Link ungültig" zu kippen.
 
 ## Prüfmeister
 

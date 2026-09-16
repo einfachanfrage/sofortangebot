@@ -9513,4 +9513,59 @@ schlimmer als gar keiner.
 *Chief of Staff · 2026-09-16*
 
 
+
+---
+
+## 🟠 DC-111 — Die beiden Passwort-Seiten haben keine Desktop-Breite (16.09.2026, 14:10 MESZ · Chief of Staff)
+
+**Quelle:** Sandys Klick-Durchlauf „Passwort vergessen" von heute Nachmittag,
+drei Bildschirmfotos. **Nicht aus einem Testfall, sondern aus der echten App.**
+
+### Was auf dem Bildschirm passiert
+
+Auf einem Desktop-Fenster (~1150 px breit) läuft auf `/passwort-vergessen` und
+`/passwort-reset` alles über die **volle Fensterbreite**: die Eingabefelder, der
+gelbe „Passwort speichern"-Knopf, die Überschrift, der Fließtext. Der Knopf ist
+über einen Meter Bildschirm breit. Auf `/passwort-vergessen` steht der Block
+zusätzlich vertikal in der Mitte, sodass oben rund ein Drittel der Seite leer
+bleibt und das Logo mitten im Nichts hängt.
+
+### Woran es liegt — nachgesehen, nicht vermutet
+
+Beide Dateien benutzen in **jedem** ihrer Zustände denselben Rahmen:
+
+```
+src/app/(auth)/passwort-vergessen/page.tsx   Zeilen 34, 54
+src/app/(auth)/passwort-reset/page.tsx       Zeilen 81, 101, 111
+
+className="min-h-dvh bg-bg flex flex-col justify-center px-5"
+```
+
+**Keine Maximalbreite, kein `mx-auto`, kein `items-center`.** Das ist ein reines
+Telefon-Layout: auf 390 px sieht es richtig aus, auf 1150 px zerläuft es.
+`justify-center` zentriert nur senkrecht — daher der leere Bereich oben.
+
+**Was ich nicht behaupte:** dass `login`, `register` und `bestaetigt` es besser
+machen. Die drei Dateien haben diese Klassen gar nicht, sie sind anders gebaut —
+ich habe sie nicht gegengeprüft. **Bitte beim Bauen mitnehmen:** entweder alle
+fünf Auth-Seiten teilen sich einen Rahmen, oder keine. Ein gemeinsames
+`(auth)/layout.tsx` gibt es heute nicht.
+
+### Zweiter Punkt in denselben Dateien
+
+`/passwort-vergessen` benutzt als Bestätigungs-Grafik das **Emoji 📬**
+(`<div className="text-5xl mb-5">📬</div>`, Zeile 38). Emoji als Bildmarke
+rendert auf jedem Betriebssystem anders und ist in keinem CI-Dokument gedeckt.
+**Das ist eine Frage an euch, keine Ansage** — wenn das Absicht war, sagt es und
+ich trage es als Entscheidung nach.
+
+### Vorrang
+
+**Mittel.** Es ist der erste Bildschirm, den ein Handwerker sieht, der sein
+Passwort vergisst — aber es ist kein Kundenpapier und blockiert nichts. **Hinter
+den drei Punkten aus PD-018 einsortieren**, nicht davor.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

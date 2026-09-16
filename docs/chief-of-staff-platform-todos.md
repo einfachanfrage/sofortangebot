@@ -2787,4 +2787,83 @@ Lint, TypeScript, Env und Tests sind auf dem Stand `1ebda34` nachweislich grün.
 
 *Chief of Staff · 2026-09-16*
 
+
+---
+
+## 🟠 CoS-P-027 — Alle acht System-Mails haben „Sandra" als Absender, auch die Sicherheitsmails (16.09.2026, 14:10 MESZ · Chief of Staff)
+
+**Quelle:** Sandys Klick-Durchlauf von heute Nachmittag. Die Reset-Mail kam an,
+im Postfach steht als Absender: **`Sandra <sandra@sofortangebot.app>`**.
+
+### Belegt, nicht vermutet
+
+`src/lib/email.ts`, Zeile 4:
+
+```ts
+const FROM = 'Sandra <sandra@sofortangebot.app>'
+```
+
+Diese eine Konstante bedient **acht** Versandwege — Willkommen, E-Mail
+bestätigen, Passwort zurücksetzen, Zahlung fehlgeschlagen, Kündigung bestätigt,
+Account deaktiviert, Datenexport und einen weiteren. Jede dieser Mails schließt
+im Text mit `Sandra`, die Willkommensmail zusätzlich mit *„Bei Fragen: einfach
+auf diese Mail antworten."*
+
+### Warum ich das nicht selbst entscheide
+
+Das ist **keine Fehlkonfiguration, sondern erkennbar Absicht** — die Tonalität
+ist durchgehend, bis in die Signaturen. Bei der Willkommensmail trägt sie auch:
+Solo-Gründerin, persönlich ansprechbar, das ist ein Vorteil gegenüber
+Wettbewerbern.
+
+Sie trägt nur dort nicht, wo der Nutzer die **Marke** erwartet: Ein Handwerker,
+der sich gerade registriert hat und „Sandra" nicht kennt, bekommt eine Mail von
+einer ihm unbekannten Privatperson mit einem **Passwort-Link** darin. Das ist
+genau die Form, vor der Phishing-Schulungen warnen — und der Grund, warum
+Transaktionsmails üblicherweise den Produktnamen im Absender führen.
+
+**Das ist eine Sandy-Entscheidung, nicht eure.** Ich habe sie ihr vorgelegt
+(`entscheidungen-fuer-sandy.md`). **Nichts bauen, bis sie geantwortet hat.**
+
+### Wenn sie sich für die Trennung entscheidet, ist es klein
+
+Aus der einen Konstante werden zwei — eine persönliche und eine Marken-Variante
+— und jeder Versandweg bekommt die passende. Kein Eingriff in die Zustellung,
+keine Domain-Änderung, DNS bleibt wie es ist.
+
+**Hängt daran, aber nicht dasselbe:** `LR-19 / L-MAIL-01` (kein `reply_to` in
+den Mails an den **Endkunden des Handwerkers**) betrifft einen anderen
+Versandweg. Nicht vermischen.
+
+---
+
+## CoS-P-013 — Stand nach Sandys Durchlauf: belegt bis zum Formular, nicht darüber hinaus
+
+**16.09.2026, 14:10 MESZ · Chief of Staff**
+
+Sandy hat den Durchlauf heute Nachmittag gemacht. **Drei von vier Schritten sind
+durch Bildschirmfotos belegt:**
+
+| Schritt | Beleg |
+|---|---|
+| Anforderung auf `/passwort-vergessen` | ✅ „E-Mail gesendet!", richtige Adresse |
+| Mail kommt an | ✅ 14:06 Uhr im Posteingang, Knopf „Neues Passwort festlegen" |
+| Link führt auf `/passwort-reset` | ✅ Formular „Neues Passwort" geladen, **beide Felder gefüllt** |
+| **Speichern und neu anmelden** | ⚪ **kein Beleg** |
+
+Dass das Formular überhaupt erscheint, ist der eigentliche Prüfpunkt: es setzt
+voraus, dass der `CoS-P-003`-Fix greift (Code serverseitig gegen eine Session
+getauscht, `getUser()` liefert einen Nutzer) — sonst hätte nach vier Sekunden
+der „Link ungültig"-Zustand angeschlagen. **Der Weg bis dorthin ist damit
+gemessen.**
+
+**Ich trage CoS-P-013 trotzdem nicht als zu ein.** Der letzte Klick ist nicht
+belegt, und die Lektion aus `sofortangebot_p013_postfach_test.md` war genau
+diese: nicht nachgetestete Schritte nicht als erledigt führen. Fehlt noch ein
+Satz von Sandy, ob das Speichern durchging und die Anmeldung mit dem neuen
+Passwort klappt.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

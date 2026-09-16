@@ -554,12 +554,12 @@ export default function EinstellungenPage() {
 
         <Card icon={<ArrowLeftRight size={16} />} title="Abrechnung">
           <p className="text-xs text-anthracite/40 font-semibold -mt-2 mb-3">
-            Wer kümmert sich um Rechnungen und Zahlungserinnerungen? Angebote erstellst du in jedem Fall hier.
+            Angebote schreibst du in jedem Fall hier. Rechnungen stellt sofortangebot nicht.
           </p>
           <div className="flex flex-col gap-2">
             {([
-              { value: 'inapp', label: '🧾 Alles bei sofortangebot', desc: 'Rechnungen & Zahlungserinnerungen laufen direkt hier.' },
-              { value: 'extern', label: '🔗 Über meine Buchhaltung', desc: 'Rechnung & Mahnung schreibst du selbst in lexoffice, sevDesk & Co. — sofortangebot schickt dafür keine eigenen Zahlungserinnerungen mehr.' },
+              { value: 'inapp', label: '🧾 Nur sofortangebot', desc: 'Ich nutze keine Buchhaltungssoftware.' },
+              { value: 'extern', label: '🔗 Über meine Buchhaltung', desc: 'Fertige Angebote schiebe ich mit einem Tap nach lexoffice, sevDesk & Co.' },
             ] as { value: 'inapp' | 'extern'; label: string; desc: string }[]).map(opt => (
               <button key={opt.value} type="button"
                 onClick={() => setAbrechnungsModus(opt.value)}

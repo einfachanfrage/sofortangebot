@@ -1845,4 +1845,38 @@ KW 41 (CoS-041).
 *Chief of Staff · 2026-09-16*
 
 
+
+## 🟡 Eine Entscheidung aus deinem Passwort-Durchlauf — wie soll der Absender heißen? (16.09.2026, 14:10 MESZ)
+
+**Dein Durchlauf hat funktioniert** — Mail kam in einer Minute, Link führte aufs
+Formular. Dabei ist mir eine Sache aufgefallen, die nur du entscheiden kannst.
+
+**Alle acht System-Mails kommen von `Sandra <sandra@sofortangebot.app>`.** Nicht
+nur die netten (Willkommen), sondern auch: Passwort zurücksetzen, Zahlung
+fehlgeschlagen, Kündigung, Account deaktiviert.
+
+**Warum das eine Frage ist:** Bei der Willkommensmail ist der persönliche
+Absender ein Vorteil — du bist erreichbar, das kann kein großer Anbieter. Bei
+der Passwort-Mail dreht es sich um: Ein Handwerker, der sich vor zwei Tagen
+registriert hat, kennt „Sandra" nicht. Er bekommt eine Mail von einer fremden
+Privatperson mit einem Link zum Passwort darin — das ist genau das Bild, vor dem
+in jeder Phishing-Schulung gewarnt wird.
+
+**Deine drei Möglichkeiten:**
+
+| | Absender | Wirkung |
+|---|---|---|
+| **A** | alles bleibt `Sandra` | persönlich durchgehend, Sicherheitsmails wirken bei Fremden unsicher |
+| **B** | alles auf `Sofortangebot` | erwartbar und sicher, die persönliche Note fällt weg |
+| **C** | **geteilt:** `Sandra von Sofortangebot` bei Willkommen/Support, `Sofortangebot` bei Passwort, Zahlung, Kündigung | beides, dafür zwei Absender |
+
+**Meine Empfehlung: C.** Du behältst die persönliche Ansprache genau dort, wo
+sie Vertrauen schafft, und nimmst sie dort raus, wo sie Vertrauen kostet — der
+Aufwand ist eine Zeile Code mehr, keine Domain- oder DNS-Änderung.
+
+**Ein Satz von dir reicht: A, B oder C.** Platform baut nichts, bis du geantwortet hast.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
