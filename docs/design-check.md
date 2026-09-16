@@ -9827,4 +9827,34 @@ erledigt, sondern weitergereicht.**
 
 ---
 
+## DC-112 — Das Logo im Angebotskopf ist sehr klein. Gewollt?
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Herkunft:** Sandys Live-Bestätigung von CoS-P-005 (Logo-Upload funktioniert)
+
+Der Upload läuft, das Logo steht im Angebot — beides belegt. **Beim Hinsehen
+fällt aber auf:** im Angebotskopf ist es etwa so hoch wie die Zeile
+„Holm GmbH" darunter, also sehr klein, während rechts daneben Nummer, Datum
+und Gültigkeit deutlich mehr Fläche bekommen.
+
+**Was ich vermute, ohne es geprüft zu haben:** Das Feld empfiehlt 400×200 px
+(2:1). Sandys Testlogo ist annähernd quadratisch. Wird auf eine feste Breite
+skaliert, läuft die Höhe mit — und ein quadratisches Logo wird dann klein
+statt hoch.
+
+**Deine Fragen:**
+
+1. Ist die aktuelle Größe so gewollt?
+2. Was passiert mit Logos, die nicht 2:1 sind — und was **soll** passieren?
+   Ein Handwerksbetrieb hat oft ein rundes oder quadratisches Logo, nicht das
+   empfohlene Breitformat.
+3. Reicht ein Hinweis am Uploadfeld, oder gehört die Darstellung angepasst?
+
+**Nicht dringend, nicht blockierend.** Es ist das erste Element, das ein Kunde
+auf dem Angebot sieht — deshalb überhaupt erwähnenswert.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

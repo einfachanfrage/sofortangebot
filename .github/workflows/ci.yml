@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -35,6 +35,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Node.js einrichten
         uses: actions/setup-node@v4
@@ -47,6 +49,9 @@ jobs:
 
       - name: Doku-Endmarkierung pruefen (CoS-P-022)
         run: node scripts/docs-sichern.mjs pruefen
+
+      - name: Schrumpf-Pruefung (CoS-P-025)
+        run: node scripts/docs-sichern.mjs schrumpfung
 
       - name: Lint
         run: npm run lint:ci

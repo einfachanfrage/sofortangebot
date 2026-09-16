@@ -1,7 +1,8 @@
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM = 'Sandra <sandra@sofortangebot.app>'
+const FROM_PERSOENLICH = 'Sandra von Sofortangebot <sandra@sofortangebot.app>'
+const FROM_MARKE = 'Sofortangebot <hallo@sofortangebot.app>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://sofortangebot.app'
 
 function btn(text: string, url: string) {
@@ -23,7 +24,7 @@ export interface SendResult { ok: boolean; error?: string }
 export async function sendWelcomeEmail(to: string, vorname?: string): Promise<SendResult> {
   const name = vorname ?? 'du'
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_PERSOENLICH,
     to: [to],
     subject: 'Willkommen bei Sofortangebot 🎙',
     text: `Hey ${name},\n\nschön dass du dabei bist.\nDein Account ist eingerichtet — du kannst sofort loslegen.\n\n${APP_URL}/dashboard\n\nBei Fragen: einfach auf diese Mail antworten.\n\nSandra`,
@@ -44,10 +45,10 @@ export async function sendWelcomeEmail(to: string, vorname?: string): Promise<Se
 // Willkommens-Mail, statt über Supabases eigenes (ungeprüftes) Mailsystem.
 export async function sendVerificationEmail(to: string, link: string): Promise<SendResult> {
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_MARKE,
     to: [to],
     subject: 'Bitte bestätige deine E-Mail-Adresse',
-    text: `Hey,\n\nbitte bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren:\n\n${link}\n\nDer Link ist eine Stunde gültig.\n\nSandra`,
+    text: `Hey,\n\nbitte bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren:\n\n${link}\n\nDer Link ist eine Stunde gültig.\n\nDein Sofortangebot-Team`,
     html: wrap(`
       <p style="font-size:18px;font-weight:900;margin-top:0;">Fast geschafft.</p>
       <p>Bitte bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren.</p>
@@ -62,10 +63,10 @@ export async function sendVerificationEmail(to: string, link: string): Promise<S
 // Ersetzt Supabases eingebaute Reset-Mail (CoS-P-004), gleicher Grund wie oben.
 export async function sendPasswordResetEmail(to: string, link: string): Promise<SendResult> {
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_MARKE,
     to: [to],
     subject: 'Passwort zurücksetzen',
-    text: `Hallo,\n\nhier ist dein Link zum Zurücksetzen deines Passworts:\n\n${link}\n\nDer Link ist eine Stunde gültig. Falls du das nicht angefordert hast, kannst du diese Mail ignorieren — es passiert nichts mit deinem Konto.\n\nSandra`,
+    text: `Hallo,\n\nhier ist dein Link zum Zurücksetzen deines Passworts:\n\n${link}\n\nDer Link ist eine Stunde gültig. Falls du das nicht angefordert hast, kannst du diese Mail ignorieren — es passiert nichts mit deinem Konto.\n\nDein Sofortangebot-Team`,
     html: wrap(`
       <p style="font-size:18px;font-weight:900;margin-top:0;">Passwort zurücksetzen</p>
       <p>Hier ist dein Link zum Zurücksetzen deines Passworts.</p>
@@ -87,7 +88,7 @@ export async function sendQuoteSentConfirmation(opts: {
 }): Promise<SendResult> {
   const { to, quoteNumber, kundenname, summe, gueltigBis, quoteId } = opts
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_MARKE,
     to: [to],
     subject: `Angebot #${quoteNumber} an ${kundenname} versendet`,
     text: `Dein Angebot wurde versendet.\n\nKunde: ${kundenname}\nGesamtbetrag: ${summe} €\nGültig bis: ${gueltigBis}\n\n${APP_URL}/angebot/${quoteId}`,
@@ -107,16 +108,16 @@ export async function sendQuoteSentConfirmation(opts: {
 // ── 3. Zahlung fehlgeschlagen ──────────────────────────────────────────────
 export async function sendPaymentFailedEmail(to: string): Promise<SendResult> {
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_MARKE,
     to: [to],
     subject: 'Zahlung fehlgeschlagen — bitte prüfen',
-    text: `Hallo,\n\ndeine letzte Zahlung konnte nicht verarbeitet werden.\n\nBitte aktualisiere deine Zahlungsmethode:\n${APP_URL}/einstellungen\n\nDein Zugang bleibt noch 7 Tage aktiv.\n\nSandra`,
+    text: `Hallo,\n\ndeine letzte Zahlung konnte nicht verarbeitet werden.\n\nBitte aktualisiere deine Zahlungsmethode:\n${APP_URL}/einstellungen\n\nDein Zugang bleibt noch 7 Tage aktiv.\n\nDein Sofortangebot-Team`,
     html: wrap(`
       <p style="font-size:16px;font-weight:900;margin-top:0;">Zahlung fehlgeschlagen</p>
       <p>Deine letzte Zahlung konnte nicht verarbeitet werden.</p>
       <p>Bitte aktualisiere deine Zahlungsmethode:</p>
       <p>${btn('Zahlungsmethode aktualisieren →', `${APP_URL}/einstellungen`)}</p>
-      <p style="margin-bottom:0;">Dein Zugang bleibt noch 7 Tage aktiv.<br><br>Sandra</p>
+      <p style="margin-bottom:0;">Dein Zugang bleibt noch 7 Tage aktiv.<br><br>Dein Sofortangebot-Team</p>
     `),
   })
   return error ? { ok: false, error: error.message } : { ok: true }
@@ -125,7 +126,7 @@ export async function sendPaymentFailedEmail(to: string): Promise<SendResult> {
 // ── 4. Kündigung bestätigt ─────────────────────────────────────────────────
 export async function sendCancellationEmail(to: string, ablaufdatum: string): Promise<SendResult> {
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_PERSOENLICH,
     to: [to],
     subject: 'Dein Sofortangebot-Abo wird beendet',
     text: `Hallo,\n\ndeine Kündigung ist eingegangen.\nDein Zugang läuft am ${ablaufdatum} aus. Bis dahin kannst du alles wie gewohnt nutzen.\n\nDeine Daten bleiben 30 Tage gespeichert und können exportiert werden.\n\nFalls du es dir anders überlegst:\n${APP_URL}/einstellungen\n\nSandra`,
@@ -150,15 +151,15 @@ export async function sendCancellationEmail(to: string, ablaufdatum: string): Pr
 export async function sendAccountDeletedEmail(to: string, loeschungAm: Date): Promise<SendResult> {
   const datum = loeschungAm.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_MARKE,
     to: [to],
     subject: 'Dein Account ist deaktiviert',
-    text: `Hallo,\n\ndein Account ist deaktiviert. Deine Daten halten wir noch bis zum ${datum} vor — bis dahin kannst du sie exportieren oder den Account wiederherstellen: einfach einloggen, der Hinweis dazu erscheint oben auf der Startseite.\n\nAm ${datum} werden alle Daten unwiderruflich gelöscht.\n\nDanke, dass du Sofortangebot genutzt hast.\n\nSandra`,
+    text: `Hallo,\n\ndein Account ist deaktiviert. Deine Daten halten wir noch bis zum ${datum} vor — bis dahin kannst du sie exportieren oder den Account wiederherstellen: einfach einloggen, der Hinweis dazu erscheint oben auf der Startseite.\n\nAm ${datum} werden alle Daten unwiderruflich gelöscht.\n\nDanke, dass du Sofortangebot genutzt hast.\n\nDein Sofortangebot-Team`,
     html: wrap(`
       <p style="font-size:16px;font-weight:900;margin-top:0;">Dein Account ist deaktiviert</p>
       <p>Deine Daten halten wir noch bis zum <strong>${datum}</strong> vor. Bis dahin kannst du sie exportieren oder den Account wiederherstellen — einfach einloggen, der Hinweis dazu erscheint oben auf der Startseite.</p>
       <p>Am ${datum} werden alle Daten unwiderruflich gelöscht.</p>
-      <p style="margin-bottom:0;color:#666;">Danke, dass du Sofortangebot genutzt hast.<br><br>Sandra</p>
+      <p style="margin-bottom:0;color:#666;">Danke, dass du Sofortangebot genutzt hast.<br><br>Dein Sofortangebot-Team</p>
     `),
   })
   return error ? { ok: false, error: error.message } : { ok: true }
@@ -173,14 +174,14 @@ export async function sendDataExportEmail(opts: {
 }): Promise<SendResult> {
   const { to, quotesCsv, customersCsv, datum } = opts
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: FROM_MARKE,
     to: [to],
     subject: 'Dein Daten-Export ist fertig',
-    text: `Hallo,\n\nim Anhang findest du deinen Daten-Export vom ${datum}.\n\nSandra`,
+    text: `Hallo,\n\nim Anhang findest du deinen Daten-Export vom ${datum}.\n\nDein Sofortangebot-Team`,
     html: wrap(`
       <p style="font-size:16px;font-weight:900;margin-top:0;">Dein Daten-Export ist fertig</p>
       <p>Im Anhang findest du deinen Daten-Export vom ${datum}.</p>
-      <p style="margin-bottom:0;color:#666;">Enthalten: Angebote (CSV) und Kundendaten (CSV).<br><br>Sandra</p>
+      <p style="margin-bottom:0;color:#666;">Enthalten: Angebote (CSV) und Kundendaten (CSV).<br><br>Dein Sofortangebot-Team</p>
     `),
     attachments: [
       { filename: `angebote-${datum}.csv`, content: Buffer.from(quotesCsv, 'utf-8') },

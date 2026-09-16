@@ -20,6 +20,53 @@ function round2(n: number): number {
 // beim losen "boden"-Substring-Bug ein zweites Mal auseinanderdriftet.
 export const BODEN_VERLEGEN_SIGNAL = /verleg|vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag|estrich/i
 
+// PM-072 (Zug 3, 16.09.2026): Estrich ist ein Unterboden, kein Belag.
+//
+// Gemessen vor dem Bauen, Fall PM-072: „Keller fünf mal vier. Zementestrich
+// schwimmend einbauen, sechzig Millimeter." erzeugte eine einzige Position —
+// `Bodenbelag verlegen inkl. 5% Verschnitt — Keller`, 21,00 m², 0,00 €.
+// Kein Belag ist genannt worden, `belag` war leer und `altbelag_entfernen`
+// false; ausgelöst hat es allein das Wort `estrich` in BODEN_VERLEGEN_SIGNAL
+// über die arbeiten[]-Liste des Raums. Das Angebot behauptete damit eine
+// Arbeit, die niemand bestellt hat.
+//
+// Der Estrich gehört in dieses Signal — ein Raum, in dem Estrich eingebaut
+// wird, IST ein Raum mit Bodenarbeit, und die vier anderen Stellen, die das
+// Signal lesen (kontext-analyzer, extraktion-pipeline, mehrgewerk,
+// vollstaendigkeit/boden), fragen genau danach. Deshalb bleibt die Konstante
+// unangetastet; gebremst wird nur die eine Stelle, die aus „Bodenarbeit" auf
+// „Belagsauftrag" schließt.
+//
+// Die Staffelung, bewusst eng:
+//   1. Ein Belag ist im Satz genannt (`vinyl`, `laminat`, …) → Belagsauftrag.
+//      „Alten Estrich raus, Vinyl verlegen" behält seine Zeile.
+//   2. Sonst Estrich genannt → KEIN Belagsauftrag. Das ist PM-072, und es
+//      trifft „einbauen" genauso wie „verlegen": das Verb sagt nicht, WAS
+//      verlegt wird, und in diesem Satz ist es der Estrich.
+//   3. Sonst unverändert. Ein unspezifisches „Boden verlegen" behält seine
+//      Zeile — dort wissen wir nichts Gegenteiliges, und wo wir nichts
+//      wissen, nehmen wir nichts weg.
+//
+// Was hier NICHT entsteht: eine bepreiste Estrich-Zeile. Der Katalog führt
+// den Estrich (`Zementestrich schwimmend (CT-C25-F4, 60mm)`, 28,00 €/m²),
+// aber seine Kategorie passt zu keinem aktiven Gewerk und `estrich` steht in
+// INAKTIVE_GEWERKE_IDS — eine Zeile käme mit 0,00 € ins Angebot. Die gesagte
+// Arbeit sichtbar zu machen ist Zug 2 (Fehlt-Eintrag), nicht dieser Zug.
+// Ausdrücklich so entschieden in CoS-E-064.
+/** Die Beläge, die der Katalog als Belag führt. `verleg` ist bewusst NICHT
+ *  dabei — das Verb nennt kein Bauteil. */
+const BELAG_WORT = /vinyl|laminat|parkett|dielen|kork|linoleum|teppich|nadelvlies|bodenbelag/i
+/** Trifft auch `Zementestrich`, `Fließestrich`, `Estrichs`. */
+const ESTRICH_WORT = /estrich/i
+
+/** Ist dieser Satz aus arbeiten[] ein Auftrag für einen BELAG — oder nur für
+ *  Bodenarbeit, die keinen Belag meint? Siehe die Staffelung oben. */
+export function istBelagsAuftrag(arbeit: string): boolean {
+  if (!BODEN_VERLEGEN_SIGNAL.test(arbeit)) return false
+  if (BELAG_WORT.test(arbeit)) return true
+  return !ESTRICH_WORT.test(arbeit)
+}
+
 // Label und Verschnitt schalten auf den TYPISIERTEN Belag (BelagTyp aus dem
 // Vertrag/erkenneBelag) statt auf eine engine-eigene includes()-Kette — Schluss
 // mit der dreifachen Belag-Erkennung. Die Label-Strings bleiben bewusst
@@ -269,7 +316,7 @@ export function bodenEngine(daten: any): MengenErgebnis {
     // den (KI-geprüften) arbeiten[] steht.
     const hatEchtenBelagAuftrag = (typeof belag === 'string' && belag.trim() !== '')
       || altbelag_entfernen
-      || (Array.isArray(arbeiten) && arbeiten.some((a: string) => BODEN_VERLEGEN_SIGNAL.test(a)))
+      || (Array.isArray(arbeiten) && arbeiten.some((a: string) => istBelagsAuftrag(a)))
 
     // PM-066-D (CoS-E-062, 16.09.2026): Eine Treppe hat keinen Boden zum
     // Verlegen.
