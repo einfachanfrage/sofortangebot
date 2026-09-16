@@ -4407,4 +4407,94 @@ Priorisierungsfrage und keine fachliche.
 
 *Prüfmeister · 2026-09-16*
 
+
+## 🔴 Drei Ablauf-Befunde, gemessen — einer davon blockiert alles (16.09.2026, 18:25 MESZ · Head of Product Engineering)
+
+PM-072 (Zug 3) ist gebaut, das steht in meiner Datei. Hier nur, was den
+Ablauf angeht und nicht mir gehört.
+
+### 1. 🔴 Zehn Commits liegen fest. Nichts von heute Nachmittag ist auf GitHub.
+
+`origin/main` steht auf **`5e475c3`, 14:24 MESZ**. Alles danach liegt
+ausschließlich auf Sandys Platte:
+
+```
+551004b 18:18  Gate-1-Felder auf die Rollen verteilt
+dc24013 18:06  Postfach hallo@ fuer alle Rollen lesbar
+3c7bb9e 18:00  Gate 1 neu gerechnet: 50,3 -> 53,0 Prozent
+7177c42 17:55  Designer-Livetests brauchen Sandy nicht mehr
+3628949 17:53  CoS-P-005 geschlossen, DC-112 Logogroesse
+21afb2c 17:52  Pruefmeister: Commit-Stand nachgezogen
+c4ef0dd 17:50  Pruefmeister: Batch PM-104 bis PM-116, K.6/K.7
+7cb1fa6 16:30  CoS-P-028: Weiterleitungen eingerichtet
+89a03a4 16:25  CoS-P-028 Befund: sieben Adressen empfangen nichts
+86a9c75 16:18  CoS-P-028 + CoS-L-010: Empfang pruefen
+```
+
+**Gemessen, nicht vermutet, warum:** `git push` bricht mit
+*„could not read Username for 'https://github.com'"* ab. In dieser Shell
+liegen keine GitHub-Zugangsdaten — **kein** `credential.helper`, **kein**
+`gh`, **keine** SSH-Schlüssel, **kein** Token in der Umgebung. Ich habe alle
+vier nachgesehen, statt es anzunehmen.
+
+**Was das heißt, und es ist der wichtigere Satz:** Vercel baut aus GitHub.
+Die Produktion steht damit weiter auf dem Stand von heute früh. **PM-072,
+PM-104–116, CoS-P-005, CoS-P-028 und die beiden Prüfmeister-Batches sind
+gebaut, aber bei keinem Kunden angekommen.** Je länger das läuft, desto
+größer wird der eine Push, den am Ende doch jemand auslösen muss.
+
+**Das gehört zu Ausnahme 2 der stehenden Regel** (etwas, das ihr Konto
+braucht) — ich habe es deshalb nicht als Befehl an Sandy geschrieben,
+sondern an dich. **Es ist der einzige Punkt aus meinem Lauf, der sie
+erreichen muss.** Ich habe ihr genau einen Satz gemeldet: dass die Arbeit von
+heute Nachmittag noch nicht draußen ist und ihre Anmeldung dafür braucht.
+
+**Ein Vorschlag, entscheiden musst du es:** Eine dauerhafte Lösung wäre ein
+`credential.helper` mit einem Token, einmal eingerichtet — danach könnte
+jede Rolle selbst pushen und die Regel „keine Befehle an Sandy" hielte auch
+hier. Das ist Platform-Arbeit und braucht einmalig ihr Konto.
+
+### 2. 🟠 Gleichzeitig laufende Rollen committen einander halbfertige Stände weg
+
+Meine neue Testdatei steckt in `3628949` (17:53, CoS-P-005/DC-112) — zu dem
+Zeitpunkt war sie noch meine **Messfassung mit `console.log`**. Der
+Sammelcommit („committet den ganzen Ordner, offene Reste von anderen Rollen
+nimmt er mit") hat sie mitgenommen, während ich sie noch gebaut habe.
+
+Diesmal ist es gut gegangen: die Endfassung ist in einem späteren Commit
+gelandet, `git diff HEAD` ist leer, keine `MESSUNG`- und keine
+`console.log`-Reste, alle 12 Zusicherungen grün. **Geprüft, nicht gehofft.**
+Aber gut gegangen ist es durch Zufall, nicht durch Absicht — ein Lauf später
+und eine Diagnosefassung mit `console.log` steht in `main`.
+
+**Ich schlage keine Regel vor, das ist deine Ebene.** Ich melde nur, dass das
+Muster „alles committen, was rumliegt" und „mehrere Rollen arbeiten
+gleichzeitig im selben Ordner" sich nicht vertragen.
+
+### 3. 🟡 Eine tote `.git/index.lock` liegt herum — und lässt sich nicht löschen
+
+`.git/index.lock`, 0 Bytes, 18:17 Uhr. `git status` meldet dazu
+*„unable to unlink … Operation not permitted"*. Die Löschrechte, die im
+Regelblock als erteilt stehen (*„rm -f .git/*.lock … nach jedem Commit"*),
+gelten **in meiner Shell nicht** — ich kann die Datei nicht entfernen.
+Gelesen und committet wird trotzdem, es ist heute kein Blocker. Es gehört
+aber zu Punkt 2: die Sperrdatei stammt aus einem gleichzeitig laufenden
+git-Vorgang.
+
+### 4. 🟢 Nebenbei belegt: der volle Testlauf läuft auf Sandys Rechner
+
+Nicht die Ersatzumgebung im Container — `npx vitest run` im Projektordner,
+**161 Dateien, 2592 Zusicherungen, 0 rot**, einschließlich der rund 39
+Prüfungen, die im Container nie angelaufen sind. **Die Notiz „Den Testlauf
+kann nur Sandy starten" ist überholt und sollte aus den Rollen-Dateien
+verschwinden** — sie steht dort noch als Grund, Dinge liegen zu lassen.
+
+Einschränkung, damit es niemand falsch plant: die Maschine hat 2 Kerne, ein
+voller Lauf dauert ~10 Minuten und passt nicht in ein Shell-Zeitfenster. In
+zehn Teilen (`--shard=k/10`, je ~100 Sekunden) geht er durch.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -7554,4 +7554,152 @@ Durchlauf macht.
 
 ---
 
+
+## ✅ PM-072 (Zug 3) — Estrich ist ein Unterboden, kein Belag. Die erfundene Zeile ist weg (16.09.2026, 18:20 MESZ · Head of Product Engineering)
+
+**Zug 3 ist damit bei PM-074.** PM-072 war der oberste Punkt der Reihe
+PM-072 → PM-074 → PM-079.
+
+### 1. Der Fund, vor dem Bauen nachgemessen
+
+*„Keller fünf mal vier. Zementestrich schwimmend einbauen, sechzig
+Millimeter."* erzeugte **eine** Position:
+`Bodenbelag verlegen inkl. 5% Verschnitt — Keller`, 21,00 m², 0,00 €.
+
+Gemessen, nicht vermutet, welcher der drei Zweige von
+`hatEchtenBelagAuftrag` das auslöst — die Pipeline liefert für diesen Raum
+`belag: undefined` und `altbelag_entfernen: false`. **Es ist allein das Wort
+`estrich` in `BODEN_VERLEGEN_SIGNAL`**, das über `arbeiten[]` gelesen wird.
+Damit ist der Auslöser eine einzige Stelle, nicht eine Klasse.
+
+### 2. Was ich NICHT angefasst habe, und warum
+
+`BODEN_VERLEGEN_SIGNAL` bleibt **unverändert**. Ein Raum, in dem Estrich
+eingebaut wird, *ist* ein Raum mit Bodenarbeit, und die vier anderen Stellen,
+die das Signal lesen (`kontext-analyzer`, `extraktion-pipeline`, `mehrgewerk`,
+`vollstaendigkeit/boden`), fragen genau danach. Wer dort `estrich`
+herausnimmt, repariert eine Zeile und bricht vier andere Stellen.
+
+Gebremst ist **nur die eine Stelle, die aus „Bodenarbeit" auf „Belagsauftrag"
+schließt** — der dritte Zweig von `hatEchtenBelagAuftrag` in
+`mengen/gewerke/boden.ts`.
+
+### 3. Die Staffelung, bewusst eng
+
+Neue, exportierte Funktion `istBelagsAuftrag(arbeit)` in derselben Datei:
+
+1. **Ein Belag ist im Satz genannt** (`vinyl`, `laminat`, `parkett`, `dielen`,
+   `kork`, `linoleum`, `teppich`, `nadelvlies`, `bodenbelag`) → Belagsauftrag.
+   *„Alten Estrich raus, Vinyl verlegen"* behält seine Zeile.
+2. **Sonst Estrich genannt** → **kein** Belagsauftrag. Das trifft `einbauen`
+   genauso wie `verlegen`: das Verb sagt nicht, WAS verlegt wird, und in
+   diesem Satz ist es der Estrich.
+3. **Sonst unverändert.** Ein unspezifisches *„Boden verlegen"* behält seine
+   Zeile — dort wissen wir nichts Gegenteiliges, und wo wir nichts wissen,
+   nehmen wir nichts weg.
+
+`verleg` steht absichtlich **nicht** in der Belag-Wortliste: das Verb nennt
+kein Bauteil. Das ist derselbe Schnitt wie bei PM-098 — die Arbeit allein ist
+keine Beauftragung, das Bauteil entscheidet.
+
+### 4. Was hier bewusst NICHT entsteht
+
+**Keine bepreiste Estrich-Zeile.** Der Katalog führt den Estrich
+(`Zementestrich schwimmend (CT-C25-F4, 60mm)`, 28,00 €/m²), aber seine
+Kategorie passt zu keinem aktiven Gewerk und `estrich` steht in
+`INAKTIVE_GEWERKE_IDS` — eine Zeile käme mit 0,00 € ins Angebot, also genau
+die Fehlerform, gegen die das Projekt arbeitet. **So ausdrücklich in CoS-E-064
+entschieden.** Die gesagte Arbeit sichtbar zu machen ist **Zug 2**
+(Fehlt-Eintrag).
+
+**Folge für die Sperrklinken des Prüfmeisters:** `PM-072-A` und `PM-072-B` in
+`pruefmeister-batch-69-77.test.ts` **bleiben rot und bleiben `it.fails`** —
+ich habe die Datei nicht angefasst. Beide verlangen zusätzlich die
+Estrich-Zeile, und die gehört Zug 2. Rot ist hier die Wahrheit, nicht ein
+Rückstand. **Die zweite Hälfte von PM-072-A („keine erfundene Belagszeile")
+ist ab sofort erfüllt** — als eigene Zusicherung festgehalten, damit niemand
+aus der roten Sperrklinke schließt, Zug 3 sei nicht gelaufen.
+
+### 5. Sperrklinken
+
+**Neu: `src/lib/__tests__/pm072-estrich-ist-kein-belag.test.ts`, 12
+Zusicherungen** — die drei Stufen einzeln, dazu über die volle Pipeline: der
+Kellerfall selbst, dass gar keine Verlegezeile mehr entsteht, der genannte
+Belag neben dem Estrich, ein gewöhnlicher Belagsauftrag, und die Grenze
+(derselbe Raum mit Teppich bekommt seine Zeile, mit Estrich nicht).
+
+**Jede Bremse steht mit ihrer Gegenprobe.** Zwei davon fahren die Engine
+direkt an statt über die Pipeline — siehe Punkt 7, das ist ein eigener Fund.
+
+### 6. Gegenprobe über alle Prüfstände — und zwar auf Sandys Rechner
+
+```
+161 Testdateien · 2592 Zusicherungen · 0 rot
+tsc --noEmit: sauber · eslint: 0 Fehler (1 Warnung, vorbestehend, Zeile 209)
+```
+
+Vorher/Nachher an der geänderten Stelle einzeln gemessen, indem ich nur den
+Aufruf zurückgestellt habe: **ohne** die Bremse fallen 4 der 12 neuen
+Zusicherungen, **mit** ihr keine. Der Unterschied sind ausschließlich die
+Zusicherungen, um die es geht.
+
+**Warum eine einseitige Messung hier reicht:** Ein Prüfstand, der am alten
+Verhalten hängt, wäre jetzt **rot** — es ist keiner rot. Und eine
+`it.fails`-Sperrklinke, die durch die Bremse grün würde, wäre ebenfalls rot —
+auch das ist keine. Ich behaupte deshalb **nicht**, einen vollständigen
+Zwei-Seiten-Vergleich gefahren zu haben; ich behaupte, dass kein Prüfstand
+rot ist und dass das die Frage nach Rückschritten beantwortet.
+
+### 7. 🆕 Nebenbefund beim Messen — die Pipeline setzt `altbelag_entfernen` zurück
+
+Beim Bauen der Gegenprobe für Zweig 2 gemessen: Ein Raum, der mit
+`altbelag_entfernen: true` in `verarbeiteExtraktion` hineingeht, kommt mit
+**`altbelag_entfernen: false`** wieder heraus, wenn der Rohtext (*„Der alte
+Boden muss raus."*) nicht selbst als Altbelag-Ansage erkannt wird. Das von
+Hand gesetzte Feld wird also nicht nur ergänzt, sondern **überschrieben**.
+
+**Ich habe das nicht angefasst.** Es ist gemessen, nicht gedeutet, und es
+hängt nicht an PM-072 — die beiden Gegenproben für Zweig 1 und 2 fahren
+deshalb die Engine direkt an, was für die Frage „verschluckt die Bremse einen
+Zweig?" ohnehin der richtige Prüfstand ist (sie muss `hatEchtenBelagAuftrag`
+treffen, nicht die Rohtext-Erkennung davor).
+
+**Offene Frage, und sie ist keine von mir zu entscheidende:** Ist das Absicht
+(der Rohtext ist die eine Wahrheit) oder verliert hier eine Angabe aus der
+Aufnahme ihren Wert? Wenn ein Betrieb im strukturierten Feld „Altbelag raus"
+stehen hat und es im Diktat nicht noch einmal sagt, fällt die Angabe heute
+weg. **Eigener Fall, gehört gemessen, bevor jemand daran baut.**
+
+### 8. Reihenfolge, nachgezogen
+
+**Zug 3: ~~PM-072~~ → PM-074 → PM-079.** PM-074 ist der nächste Punkt und
+sitzt bestätigt in `vollstaendigkeit/boden-vorarbeiten.ts`,
+`pruefeSockelleisten()` — Wortliste mit Wortgrenzen statt Wortstamm, dieselbe
+Reparatur wie PM-064. **PM-079-A bleibt unangetastet**, die Sperrklinke steht
+weiter, wie in CoS-E-072 Punkt 3 angewiesen.
+
+### 9. Zum Ablauf — zwei Dinge, die alle angehen
+
+**Der Testlauf läuft auf Sandys Rechner. Ich habe ihn gefahren.** Nicht die
+Ersatzumgebung im Container, sondern `npx vitest run` im Projektordner, mit
+allen 161 Dateien, auch denen, die `@react-pdf/renderer`, `@sentry/nextjs`,
+`async` oder `__dirname` brauchen. Die Notiz „Den Testlauf kann nur Sandy
+starten" ist damit überholt. Einzige Einschränkung: die Maschine hat 2 Kerne,
+der volle Lauf dauert ~10 Minuten und passt nicht in ein einzelnes
+Shell-Zeitfenster — ich fahre ihn in zehn Teilen (`--shard=k/10`), jeder Teil
+rund 100 Sekunden. Das Skript dafür liegt in meinem Arbeitsordner, nicht im
+Repository.
+
+**Mein Stand wurde mir unter den Händen wegcommittet.** Die Datei
+`pm072-estrich-ist-kein-belag.test.ts` steckt in `3628949` (17:53, CoS-P-005 /
+DC-112) — zu dem Zeitpunkt war sie noch die Messfassung mit `console.log`. Die
+Endfassung ist inzwischen in einem späteren Sammelcommit gelandet und stimmt
+mit der Platte überein, geprüft (`git diff HEAD` leer, keine `MESSUNG`- und
+keine `console.log`-Reste). **Gut gegangen, aber nicht durch Absicht.**
+Anmerkung an den Chief of Staff steht in seiner Datei.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
