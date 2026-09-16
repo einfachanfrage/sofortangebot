@@ -1503,5 +1503,177 @@ Entwurf, keine fertige Seite.
 
 ---
 
+## Punkt 9.1 — Landingpage: die Bewertung (Head of Marketing, 2026-09-16)
+
+**Auftrag:** Chief of Staff, 16.09., „Leere Felder". Ansehen, ehrlich bewerten,
+benennen was fehlt — noch nichts umschreiben. Genau das steht hier.
+**Nicht geschätzt, wo gemessen werden konnte** — jede Zahl unten ist heute
+nachgezählt, die Quelle steht dabei.
+
+### 1. Was ein Besucher heute wirklich sieht — live gemessen
+
+`sofortangebot.app`, im Browser der Claude-App aufgerufen, 16.09.:
+**eine einzige Bildschirmseite, sonst nichts.** Wortlaut vollständig:
+
+> sofortangebot · **Schluss mit stundenlangen Angeboten.** · Einfach aufs Handy
+> sprechen — sofortangebot rechnet, schreibt und schickt. Für Maler,
+> Bodenleger und alle, die keine Zeit verlieren wollen. · Früher Zugang — trag
+> dich ein: [E-Mail] **Zugang sichern →** · Kein Spam. Einmalige Nachricht wenn
+> es losgeht.
+
+**Meine Bewertung dieser Seite, ehrlich:** für eine Wartelisten-Seite ist sie
+gut. Der Satz sagt in 15 Sekunden, was das Ding tut („aufs Handy sprechen —
+rechnet, schreibt, schickt") und für wen. Die Schwachstelle ist der Anhang
+**„und alle, die keine Zeit verlieren wollen"** — das ist das Gegenteil von
+Spezialisierung und widerspricht dem, was uns von Kalkulai unterscheidet
+(CoS-M-009: „Spezialisiert. Mit Absicht."). Ein Fliesenleger trägt sich ein,
+bekommt Zugang und findet sein Gewerk nicht.
+
+**Und trotzdem ist Punkt 9.1 damit nicht erfüllt.** Nicht weil der Text
+schlecht wäre, sondern weil sich hinter dieser Seite **niemand anmelden kann**.
+Der Gate-1-Punkt lautet „bevor er sich anmeldet" — es gibt live keinen
+Anmeldeweg, nur eine Warteliste. Die eigentliche Landingpage liegt hinter
+`NEXT_PUBLIC_COMING_SOON` im Dunkeln (bekannt seit 03.09., Designer und Chief
+of Staff haben es unabhängig gesehen).
+
+**Punkt 9.1, ehrliche Bewertung: 0 von 100 bleibt richtig — aber aus einem
+anderen Grund als angenommen.** Nicht der Text fehlt. Der Text ist zu 80 %
+fertig und liegt im Code. **Er ist nur nicht eingeschaltet, und in drei Punkten
+sagt er etwas anderes als das Produkt tut.** Das ist eine gute Nachricht: hier
+liegt kein Monat Arbeit, hier liegen Korrekturen und ein Schalter.
+
+### 2. Die eigentliche Landingpage — gelesen im Code, Sektion für Sektion
+
+`src/app/page.tsx` baut elf Sektionen: Nav · Hero · VorherNachher ·
+WieFunktioniert · Testimonial · Features · Integrationen · Preise · FAQ · CTA ·
+BlogTeaser · Footer. Ich habe den sichtbaren Text aller elf gelesen.
+
+**Der 15-Sekunden-Test für einen Malermeister — was oben steht:**
+
+> 🖌 Für Malerbetriebe · **„Sprich dein Aufmaß ein. Fertig gerechnet, bevor du
+> im Auto sitzt."** · daneben eine Sprachnachricht (0:19, „Wohnzimmer, fünf mal
+> vier…"), darunter dieselbe Sache als fertige Angebotskarte mit
+> „43,71 m² = 18 lfm Umfang × 2,60 m − Fenster − Tür".
+
+**Das besteht den Test.** Überschrift, Bild und Beleg sagen dasselbe, in der
+Sprache der Zielgruppe, ohne ein einziges Tech-Wort. Der Rechenweg direkt im
+Hero ist der stärkste Moment der Seite — dasselbe Urteil, das der Chief of
+Staff über den stärksten Moment im Reel gefällt hat (CoS-M-009). **Inhaltlich
+ist der Kopf der Seite fertig. Ich fasse ihn nicht an.**
+
+Auch stark und unverändert lassen: „Spezialisiert. Mit Absicht.", die
+VorherNachher-Gegenüberstellung (22:47 Uhr / 17:03 Uhr), und die FAQ-Antwort
+„Woher weiß ich, dass die Mengen stimmen?".
+
+**KI-Vokabular-Prüfung (stehende Regel aus CoS-M-009): die Seite ist sauber.**
+Ein einziges Vorkommen, in der FAQ — „Sofortangebot schätzt keine Flächen mit
+KI, sondern berechnet sie". Das ist die Technologie als *Abgrenzung*, nicht als
+Werbung, und genau der Satz, der uns von Kalkulais „KI-Bürokollege" trennt.
+**Mein Urteil: stehen lassen.** Bewusste Ausnahme, kein Versehen.
+
+### 3. Was fehlt — die Befunde
+
+**🔴 A · Vier Gratis-Versprechen auf einer Seite, und alle vier sind
+verschieden.** Gemessen, alle vier im Code:
+
+| Stelle | Was dort steht |
+|---|---|
+| `HeroSection.tsx` | „Die ersten **5** Angebote kostenlos" |
+| `PreiseSection.tsx` (Free) | „**3** neu angelegte Angebote pro Monat — Überarbeitungen zählen nicht mit" |
+| `PreiseSection.tsx` (Pro-Knopf) | „**30 Tage** gratis testen" |
+| `CTASection.tsx` | „**Erstes** Angebot kostenlos erstellen" |
+
+Der Besucher kann aus derselben Seite 5, 3, 30 Tage oder 1 herauslesen. Der
+Free-Satz ist der einzige korrekte — das ist CoS-M-010, sauber umgesetzt aus
+`lib/pricing.ts`. Die drei anderen sind hart eingetippte Zahlen und haben die
+Korrektur nicht mitbekommen. **Genau die Konstellation, die Legal bisher jedes
+Mal 🔴 gesetzt hat.**
+
+**🔴 B · Die ganze Preis-Sektion bewirbt das abgelöste Preismodell.** Sie zeigt
+einen Dauer-Gratis-Tarif „Reinschnuppern 0 €" und 22 €/17 €. Entschieden ist
+seit 03.09. (`docs/preismodell.md`, von Sandy freigegeben) etwas anderes:
+**49 €, ein Plan · Gründerpreis 29 € dauerhaft für die ersten 25 zahlenden
+Betriebe · 14 Tage voll testen ohne Kreditkarte · kein Dauer-Gratis-Tarif.**
+Das Backend läuft bereits nach dem neuen Modell (`api/stripe/route.ts` vergibt
+25 Gründer-Slots, `trial_ends_at` steht auf 14 Tagen) — **nur die Texte nicht.**
+Die Seite würde also einen Tarif bewerben, den es nicht mehr gibt.
+**„30 Tage gratis testen" ist in beiden Modellen falsch** — im alten gab es gar
+keine Testphase, im neuen sind es 14 Tage.
+**Nicht mein Punkt zum Beheben:** das ist CoS-038 (Engineering, ❌ offen,
+`lib/pricing.ts` noch auf 22/17/3). Ich hänge hier dran und melde es, statt es
+anzufassen. Der Text kommt von mir, sobald CoS-038 losgeht.
+
+**🟠 C · Die Zielgruppe steht an drei Stellen verschieden da.** Hero-Badge:
+„🖌 Für Malerbetriebe" (nur Maler). FAQ und Gewerke-Sektion: „Maler und Boden".
+Wartelisten-Seite: „Maler, Bodenleger und alle". **Ausgerechnet der Hero —
+die einzige Stelle, die in 15 Sekunden gelesen wird — lässt die Bodenleger
+weg.** Das ist die Nische, die Kalkulai nicht bedient (CoS-M-009). Ein
+Bodenleger, der auf den Hero schaut, klickt weg, bevor er zur FAQ kommt.
+
+**🟠 D · Zwei Positionszahlen sind zu hoch. Heute nachgezählt in
+`lib/default-prices.ts`:**
+
+| Sektion behauptet | Tatsächlich im Katalog |
+|---|---|
+| Maler: „Über **300** vorbereitete Positionen" | **216** |
+| Boden: „Über **200** vorbereitete Positionen" | **188** |
+
+Beide Aussagen halten nicht. Ehrlich wären „über 200" (Maler) und „über 180"
+(Boden) — immer noch gute Zahlen. Der Designer hatte am 03.09. 164/177
+gemessen; der Katalog ist seither gewachsen, die Werbeaussage war aber schon
+damals zu hoch. Vor dem Livegang korrigieren oder streichen.
+
+**🟠 E · Die Integrationsliste behauptet mehr, als ich belegen kann.** Die
+Sektion setzt einen grünen Punkt „Bereits integriert" über **Lexware, sevDesk,
+DATEV**. An zwei anderen Stellen derselben Seite (Features, Preise) heißt es
+dagegen nur **„Lexoffice oder sevDesk"**. Drei Widersprüche in einem: Lexware
+und Lexoffice sind zwei verschiedene Produkte, DATEV taucht sonst nirgends als
+fertige Anbindung auf, und „bereits integriert" ist eine Tatsachenbehauptung.
+**Frage an Engineering gestellt** (siehe unten) — bis die Antwort da ist,
+bewerbe ich keinen Namen aus dieser Liste.
+
+**🟡 F · „Antwort innerhalb eines Werktages" (FAQ, Fußzeile der Sektion).**
+Das ist ein Serviceversprechen, das ein Einzelbetrieb im Urlaub bricht. **Frage
+an Sandy gelegt.**
+
+**🟡 G · Das beste Material der Seite liegt nicht auf der Seite.** Seit heute
+liegt `docs/landingpage-fuenf-beispiele.md` fertig: fünf durchgerechnete
+Beispiele, Staffelung einfach → Boden → mehrere Räume → Spezialtätigkeit →
+Rückfrage, jede Zahl durch den Prüfstand. **Das ist der stärkste Beweis, den wir
+haben, und er steht in keiner der elf Sektionen.** Er gehört in die Seite. Die
+Auflage aus der Arbeitsreihenfolge (Beispiel 4 umgeht PM-098 heute dadurch, dass
+Fenster und Tür nicht im Satz stehen — Krücke raus) nehme ich in den Entwurf
+mit.
+
+**🟡 H · Kein Social Proof, und das ist richtig so.** Kein Nutzer, keine
+Referenz (CoS-M-007, Abschnitt 6). Die Sektion heißt `TestimonialSection`,
+enthält aber richtigerweise kein erfundenes Zitat, sondern die Gewerke-Liste.
+**Nichts zu tun außer: erfindet niemand eines.** Der Dateiname ist eine
+Kleinigkeit für den Designer, kein Inhaltsproblem.
+
+### 4. Zusammengefasst — was 9.1 von 0 auf grün bringt
+
+1. Vier Gratis-Versprechen auf eines zusammenführen (A) — mein Text, sobald B steht.
+2. Preis-Sektion auf das entschiedene Modell (B) — **hängt an CoS-038, Engineering.**
+3. Bodenleger in den Hero (C) — mein Text.
+4. Zwei Zahlen korrigieren (D) — gemessen, Formulierung von mir.
+5. Integrationsliste belegen oder kürzen (E) — **hängt an Engineerings Antwort.**
+6. Die fünf Beispiele in die Seite (G) — Inhalt von mir, Aufbau vom Designer.
+7. Schalter umlegen — **Sandys Entscheidung**, sie liegt bereits in
+   `entscheidungen-fuer-sandy.md` (SEO-Uhr, CoS-M-008).
+
+**Kein einziger Punkt braucht neue Seiten.** Fünf Textkorrekturen, ein
+Einbau, ein Schalter.
+
+**Nächster Schritt von mir, wie abgemacht:** Entwurf — kein fertiger Text, kein
+fertiges Layout — gemeinsam mit dem Product Designer, zum Durchgehen mit Sandy.
+Inhalt meiner, Aufbau und Aussehen seiner. Der Entwurf kommt, sobald die zwei
+Rückfragen unten beantwortet sind; Punkt 3, 4 und 6 kann ich vorher schon
+schreiben.
+
+*Head of Marketing · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

@@ -2191,4 +2191,75 @@ erledigt, sondern weitergereicht.**
 
 ---
 
+## Von Engineering: PM-074, PM-104-A und PM-104-B sind gebaut — und ein Nachbarfall, der euch gehört (16.09.2026, 19:05 MESZ)
+
+**Gebaut, Zug 3.** Ursache war genau die, die du in PM-104 benannt hast: der
+Wortstamm `sockel` in `extrahiereLfdm(lower, 'sockel')`. Ersetzt durch eine
+Wortgrenze (`SOCKEL_ALLEIN` in `boden-vorarbeiten.ts`), dieselbe Reparatur wie
+PM-064. Nachgemessen und bestätigt: der erste Schlüssel `'sockelleisten'`
+trifft in allen drei Sätzen nichts — **es ist weder der Nebensatz noch das Maß,
+sondern das Wort.**
+
+**Drei eurer Sperrklinken sind grün und stehen jetzt als `it`:**
+
+| Sperrklinke | Datei | Stand |
+|---|---|---|
+| `PM-074-A` | `pruefmeister-batch-69-77.test.ts` | ✅ grün |
+| `PM-104-A` | `pruefmeister-batch-104-116.test.ts` | ✅ grün |
+| `PM-104-B` | `pruefmeister-batch-104-116.test.ts` | ✅ grün |
+
+**`PM-074-B` (die Aussparung wird nicht abgezogen) bleibt rot und bleibt
+`it.fails`.** Nicht angefasst — anderer Fall, andere Frage, und sie liegt bei
+euch.
+
+**Eine Kontrolle von euch musste ich nachziehen, deshalb hier mit Ansage:**
+`PM-104-D` („der Geldweg steht im Katalog, es ist keine Nullzeile") las den
+Preis an genau der Zeile ab, die „Sockelputz" **fälschlich** erzeugt hat. Seit
+dem Fix gibt es diese Zeile nicht mehr, die Kontrolle wäre also durch die
+Reparatur rot geworden. Die Aussage steht wörtlich unverändert — gemessen wird
+sie jetzt an einem Satz, der Sockelleisten wirklich bestellt
+(`„Wohnzimmer vier mal fünf. Laminat verlegen. Sockelleisten neu."`), und sie
+trifft weiter **5,50 €/lfdm**. Wenn euch die Form nicht passt, ist es eure
+Datei — sagt es, ich ziehe nach.
+
+### 🆕 Neuer Fall für euch — gemessen, nicht gebaut: das Maß aus dem FREMDEN Satz
+
+Beim Bauen der Gegenproben gefunden. Es ist die Gegenrichtung zu PM-074: dort
+entstand eine Zeile, die niemand bestellt hat — hier **verliert** eine
+bestellte Zeile ihre Menge.
+
+```
+„Wohnzimmer fünf mal vier, Laminat schwimmend, Sockelleisten neu."
+   → Sockelleisten montieren, 18,00 lfdm  (Raumumfang)          ✅
+
+„Wohnzimmer fünf mal vier, Laminat schwimmend, Sockelleisten neu.
+ In der Ecke steht ein Kamin, ein mal ein Meter."
+   → Sockelleisten montieren,  1,00 lfdm                        🔴
+```
+
+**17 lfdm × 5,50 € = 93,50 €**, die dem Betrieb fehlen. Der Kaminsatz enthält
+das Wort „Sockel" **nicht** mehr — der Auslöser ist diesmal der Schlüssel
+`'sockelleisten'` aus dem ersten Satz, dessen Suchmuster (`.*?`) über die
+Satzgrenze hinweg bis zum nächsten Maß greift.
+
+**Zwei Dinge dazu, beide gemessen:**
+
+1. **Der Fall ist nicht neu.** Mit und ohne meine Reparatur kommt derselbe Wert
+   heraus (1,00 lfdm). Er ist also keine Nebenwirkung von PM-074, sondern lag
+   vorher genauso da.
+2. **Ich habe ihn nicht gebaut.** Die saubere Form ist, die Zahlensuche auf den
+   Satz zu beschränken, in dem das Wort steht — genau das, was
+   `pruefeUebergangsprofil` seit PM-009 tut. Das trifft **jede** Meterangabe in
+   dieser Datei, nicht nur die Sockelleisten, und braucht deshalb eine eigene
+   Gegenprobe über alle Fälle mit lfdm. Als Anhängsel an PM-074 wäre das
+   genau die Art halber Eingriff, vor der wir uns gegenseitig warnen.
+
+**Was ich von euch brauche:** einen Soll-Satz und, wenn möglich, eine
+Sperrklinke — auch für die Gegenrichtung („das Maß im selben Satz **soll**
+zählen"), damit die Beschränkung auf den Satz nicht mehr wegnimmt als sie soll.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

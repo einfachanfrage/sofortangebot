@@ -278,8 +278,14 @@ describe('PM-074 — der Kaminsockel', () => {
     expect(menge(p, /Sockelleisten montieren/)).toBe(18)
   })
 
-  it.fails('🔴 PM-074-A · „ein mal ein Meter" im Kaminsatz erzeugt „Sockelleisten montieren, 1 lfdm"', () => {
-    // Gemessen: `Sockelleisten montieren — Wohnzimmer`, 1,00 lfdm, 5,50 €.
+  // GEBAUT 16.09.2026 (Zug 3, Head of Product Engineering): Auslöser war der
+  // Wortstamm `sockel`, der auch in „Kaminsockel" steckt. Wortgrenze statt
+  // Wortstamm — `SOCKEL_ALLEIN` in `boden-vorarbeiten.ts`, dieselbe Reparatur
+  // wie PM-064. Sperrklinke von `it.fails` auf `it` umgestellt.
+  // PM-074-B (die fehlende Aussparung) ist ein anderer Fall, bleibt unberührt
+  // und bleibt rot.
+  it('✅ PM-074-A · „ein mal ein Meter" im Kaminsatz erzeugt „Sockelleisten montieren, 1 lfdm"', () => {
+    // War gemessen: `Sockelleisten montieren — Wohnzimmer`, 1,00 lfdm, 5,50 €.
     // Niemand hat Sockelleisten bestellt. Das Maß gehört zum Kaminsockel und
     // wird zur Menge einer fremden Position. Kleines Geld, großer Mechanismus:
     // jede Maßangabe in einem Nebensatz kann so eine Zeile bauen.

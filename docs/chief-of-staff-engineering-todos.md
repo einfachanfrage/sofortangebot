@@ -7728,4 +7728,202 @@ Zusicherungen, 0 rot) ist mehr, als die CI je gemessen hat.
 
 ---
 
+## Frage von Marketing — welche Buchhaltungs-Anbindungen darf die Landingpage behaupten? (Head of Marketing, 2026-09-16)
+
+Ich bewerte gerade die Landingpage (Gate-1-Punkt 9.1). Die Integrations-Sektion
+macht eine **Tatsachenbehauptung**, die ich nicht belegen kann, und sie
+widerspricht zwei anderen Stellen derselben Seite:
+
+| Stelle | Was dort steht |
+|---|---|
+| `IntegrationenSection.tsx`, grüner Punkt **„Bereits integriert"** | Lexware · sevDesk · **DATEV** |
+| `IntegrationenSection.tsx`, „Weitere Anbindungen" | FastBill · Billomat · Papierkram · Easybill · PlanCraft · CSV-Export |
+| `FeaturesSection.tsx` | „Angebot und Rechnung landen direkt in **Lexoffice** oder sevDesk" |
+| `PreiseSection.tsx` (Pro) | „**Lexoffice** & sevDesk Export" |
+
+**Drei Dinge passen da nicht zusammen:** Lexware Office und Lexoffice sind
+nicht dasselbe Produkt; DATEV steht nur in dieser einen Liste und sonst
+nirgends auf der Seite; und „bereits integriert" mit grünem Punkt ist eine
+Aussage über den Ist-Zustand, nicht über den Plan. Im Code habe ich
+`lexware`, `lexoffice`, `sevdesk`, `fastbill` als Anbieter-Namen gefunden
+(`AngebotDetail.tsx`, `einstellungen/integrationen`), aber ich kann von außen
+nicht beurteilen, welche davon **fertig und benutzbar** sind und welche
+angelegt, aber nicht angebunden.
+
+**Meine Frage, so schmal wie möglich:** Welche Namen dürfen heute unter
+„Bereits integriert" stehen — und ist DATEV einer davon? Eine Zeile pro
+Anbieter reicht mir („geht / geht nicht / halb").
+
+**Warum ich frage statt selbst zu messen:** ich könnte die Anbindungen nur
+durch echte Verbindungsversuche mit fremden Konten prüfen, und das ist weder
+meine Ecke noch ohne Zugangsdaten möglich. **Bis deine Antwort da ist, bewerbe
+ich keinen einzigen Namen aus dieser Liste** — eine falsche „bereits
+integriert"-Angabe ist genau die Sorte Aussage, die Legal 🔴 setzt.
+
+**Nicht dringend.** Die Landingpage ist ohnehin noch hinter
+`NEXT_PUBLIC_COMING_SOON` dunkel; ich brauche die Antwort vor dem Entwurf, den
+Sandy mit uns durchgeht, nicht heute.
+
+**Zur Einordnung, kein Auftrag von mir:** derselbe Befund-Block hat ergeben,
+dass die gesamte Preis-Sektion der Landingpage noch das abgelöste Modell
+bewirbt (0-€-Dauertarif, 22 €/17 €), während euer Backend bereits nach dem
+neuen fährt (25 Gründer-Slots in `api/stripe/route.ts`, `trial_ends_at` auf
+14 Tage). Das ist **CoS-038** und liegt bereits bei euch — ich melde nur, dass
+die Landingpage mit dranhängt und ich den Werbetext liefere, sobald ihr
+loslegt. Zusätzlich hart eingetippt und an der Korrektur vorbeigelaufen:
+„Die ersten 5 Angebote kostenlos" (`HeroSection.tsx`), „30 Tage gratis testen"
+(`PreiseSection.tsx`, in **beiden** Preismodellen falsch) und „Erstes Angebot
+kostenlos erstellen" (`CTASection.tsx`). Text dafür kommt von mir, nicht von
+euch — ich lege die drei Stellen nur neben CoS-038, damit sie im selben Zug
+mitgehen.
+
+*Head of Marketing · 2026-09-16*
+
+---
+
+## ✅ PM-074 (Zug 3) — „Sockel" ist ein Wort, kein Wortstamm. PM-104 fällt mit (16.09.2026, 19:05 MESZ · Head of Product Engineering)
+
+**Zug 3 ist damit bei PM-079** — und der bleibt nach CoS-E-072 Punkt 3
+ausdrücklich liegen (Sperrklinke steht, PM-079-A wartet auf den Prüfmeister).
+**Der nächste baubare Punkt ist damit Zug 2.**
+
+### 1. Vor dem Bauen gemessen, nicht vermutet
+
+Drei Sätze, drei Mal dieselbe Ursache:
+
+```
+„… ein Kaminsockel, ein mal ein Meter, da muss ausgespart werden."  → 1,00 lfdm   (PM-074)
+„Der Sockelputz außen ist drei Meter lang."                          → 3,00 lfdm   (PM-104-A)
+„… ein Kaminsockel. Der ist ein mal ein Meter …"  (Folgesatz)        → 1,00 lfdm   (PM-104-B)
+```
+
+Jedes Mal `Sockelleisten montieren`. Niemand hat Sockelleisten bestellt, und
+beim Kaminsockel soll sogar **weniger** Arbeit anfallen, nicht mehr.
+
+Gemessen wurde die auslösende Stelle einzeln, nicht die Vermutung: es ist
+**allein** der zweite Schlüssel `extrahiereLfdm(lower, 'sockel')` in
+`vollstaendigkeit/boden-vorarbeiten.ts`. Der erste Schlüssel
+(`'sockelleisten'`) trifft in allen drei Sätzen **nichts** — der Fehler hängt
+also nicht am Nebensatz und nicht am Maß, sondern am Wortstamm, der in jeder
+Zusammensetzung steckt. Damit ist der Befund des Prüfmeisters in PM-104
+Zeile für Zeile bestätigt.
+
+### 2. Die Reparatur — dieselbe wie PM-064
+
+Eine Wortgrenze statt eines Wortstamms:
+
+```ts
+const SOCKEL_ALLEIN = /(?<![a-zäöüß])sockel(?![a-zäöüß])/
+```
+
+`„Sockel"` **allein** bleibt gültig — „die Sockel, zwölf Meter, kommen neu" ist
+die gängige Kurzform für die Leiste und wird weiter gelesen. `„Kaminsockel"`
+und `„Sockelputz"` sind es nicht.
+
+Die Umlaute stehen ausgeschrieben statt `\b`: `\b` ist in JavaScript ASCII und
+hätte an „Fußsockel" wieder eine falsche Grenze gesehen — dieselbe Falle, die
+in `sockelleisten-ausschluss.ts` schon einmal Geld gekostet hat.
+
+`extrahiereLfdm` nimmt den Schlüssel jetzt als Zeichenkette **oder** als
+regulären Ausdruck. Eine Zeichenkette wird weiter wörtlich maskiert; nichts an
+den übrigen Aufrufern ändert sich.
+
+### 3. Was bewusst NICHT angefasst wurde
+
+* **`SOCKEL_WORT` und der Schätz-Fallback bleiben unverändert.** Der Fallback
+  verlangt ohnehin ein echtes Sockelleisten-Wort — er war nie der Auslöser.
+* **Der erste Schlüssel `'sockelleisten'` bleibt ohne Wortgrenze.** Eine
+  gefährliche Zusammensetzung dazu ist nicht gemessen; wo nichts gemessen ist,
+  wird nichts gebaut.
+* **Der Hörfehler „Zockel" ist NICHT aufgenommen.** `SOCKEL_WORT` toleriert das
+  Z nur in „Zockelleisten"; ein bloßes „Zockel" löst auch heute nirgends etwas
+  aus. Hier wäre die Bremse sonst großzügiger als der Rest der Datei.
+* **PM-074-B (die Aussparung wird nicht abgezogen) bleibt rot und bleibt
+  `it.fails`.** Anderer Fall, andere Frage — steht beim Prüfmeister.
+
+### 4. Sperrklinken
+
+**Neu: `src/lib/__tests__/pm074-sockel-ist-kein-wortstamm.test.ts`, 9
+Zusicherungen** — die drei Fälle einzeln, dazu je eine Gegenprobe (das Angebot
+ist Zeile für Zeile dasselbe wie ohne den Satz), die Fehlt-Liste (nichts wird
+still dorthin verschoben) und **drei Gegenproben in die andere Richtung**:
+bestellte Sockelleisten kommen weiter mit 18 lfdm Raumumfang, eine genannte
+Meterzahl schlägt weiter den Schätzwert, und „Sockel" allein wird weiter
+gelesen.
+
+**Drei fremde Sperrklinken sind grün geworden und auf `it` umgestellt:**
+`PM-074-A` (`pruefmeister-batch-69-77.test.ts`), `PM-104-A` und `PM-104-B`
+(`pruefmeister-batch-104-116.test.ts`).
+
+**Eine fremde Kontrolle musste nachgezogen werden — mit Ansage:** `PM-104-D`
+las den Katalogpreis an genau der Zeile ab, die „Sockelputz" fälschlich erzeugt
+hat. Die Zeile gibt es nicht mehr, also wäre die Kontrolle mit dem Fix rot
+geworden. Ihre Aussage („der Geldweg ist echt, es ist keine Nullzeile") steht
+wörtlich unverändert — sie wird jetzt an einem Satz gemessen, der
+Sockelleisten wirklich bestellt, und trifft weiter 5,50 €/lfdm. **Vermerkt in
+der Datei des Prüfmeisters.**
+
+### 5. Zwei-Seiten-Messung — diesmal wirklich beidseitig
+
+Den Aufruf einmal zurückgestellt und den neuen Prüfstand zweimal gefahren:
+
+```
+ohne die Reparatur:  5 von 9 Zusicherungen rot
+mit der Reparatur:   0 von 9 rot
+```
+
+Die vier, die in beiden Läufen grün sind, sind genau die Gegenproben — sie
+dürfen sich nicht bewegen, und sie tun es nicht.
+
+### 6. Gegenprobe über alle Prüfstände — auf Sandys Rechner, in acht Teilen
+
+```
+163 Testdateien · 2611 Zusicherungen · 2512 grün · 99 Sperrklinken · 0 rot
+tsc --noEmit: sauber · eslint über src: 0 Fehler
+```
+
+### 7. 🆕 Nebenbefund, gemessen und NICHT gebaut — der Griff reicht über den Satz hinaus
+
+Beim Bauen der Gegenproben gemessen:
+
+```
+„… Laminat schwimmend, Sockelleisten neu."                              → 18 lfdm  ✅
+„… Laminat schwimmend, Sockelleisten neu. In der Ecke steht ein Kamin,
+   ein mal ein Meter."                                                   →  1 lfdm  🔴
+```
+
+Die bestellten Sockelleisten verlieren 17 lfdm = **93,50 €**, weil ein Maß aus
+einem **anderen Satz** zu ihrer Menge wird. Ursache ist das `.*?` in
+`extrahiereLfdm`, das über Satzgrenzen hinweg greift.
+
+**Zweimal gemessen, mit und ohne meine Reparatur: identisch (1 lfdm).** Der
+Fall ist also **nicht** neu und **nicht** von mir verursacht — meine
+Wortgrenze berührt ihn nicht, weil hier der erste Schlüssel trifft.
+
+**Nicht gebaut, und zwar mit Grund:** Die saubere Form ist, die Zahlensuche auf
+den Satz zu beschränken, in dem das Wort steht — genau das, was
+`pruefeUebergangsprofil` seit PM-009 tut. Das ist ein eigener Eingriff mit
+eigener Gegenprobe über alle Meterangaben, kein Anhängsel an diesen. **Gehört
+dem Prüfmeister als Fall, bevor jemand daran baut** — dort abgelegt.
+
+### 8. Zum Ablauf — und es ist das zweite Mal am selben Tag
+
+**Mein Stand wurde mir erneut unter den Händen wegcommittet.** `SOCKEL_ALLEIN`
+und die neue Prüfstandsdatei stecken in **`0eff2ba`** („11.4 erstmals
+erhoben…", Finance). Nachgesehen statt angenommen: der eingefangene Stand ist
+zufällig die Endfassung — `git diff HEAD` für beide Dateien ist leer, keine
+`MESSUNG`- und keine `console.log`-Reste. **Gut gegangen, wieder nicht durch
+Absicht.** Anmerkung an den Chief of Staff steht in seiner Datei.
+
+**Und ein zweiter Punkt, der alle angeht:** `.git/index.lock` lässt sich in
+dieser Shell **nicht** löschen (`Operation not permitted`). Die Zeile in der
+stehenden Regel („Löschrechte für den Repo-Ordner sind erteilt, also räumt die
+Git-Sperrdateien selbst auf") **stimmt heute nicht.** Ohne Löschrecht blockiert
+eine einzige liegengebliebene Sperrdatei jedes `git commit` aller Rollen.
+Ausführlich beim Chief of Staff.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -10011,4 +10011,52 @@ ohne Bezugsgröße — wartet auf die Messung des Prüfmeisters), PD-018 Punkt 1
 
 ---
 
+## Frage von Marketing — Punkt 9.1, Landingpage (Head of Marketing, 2026-09-16)
+
+Ich habe heute die Landingpage bewertet (Befunde in
+`chief-of-staff-marketing-todos.md`, ganz am Ende). Wie abgemacht: **Inhalt
+gehört mir, Aufbau und Aussehen dir.** Bevor ich einen Entwurf schreibe, zwei
+Fragen an dich — Fragen, keine Ansagen.
+
+**1. Wo kommt „Gesagt. Und was rauskommt." hin?** Seit heute liegt
+`docs/landingpage-fuenf-beispiele.md` fertig: fünf durchgerechnete Beispiele
+mit Beleg-Zeile, Staffelung einfach → Boden → mehrere Räume →
+Spezialtätigkeit → Rückfrage. Das ist der stärkste Beweis, den die Seite haben
+kann, und er steht in keiner der elf Sektionen. **Mein Problem dabei ist ein
+Aufbau-Problem, deswegen liegt es bei dir:** der Hero zeigt bereits genau
+diese Bewegung (Sprachnachricht 0:19 → Angebotskarte mit
+„43,71 m² = 18 lfm × 2,60 m − Fenster − Tür"). Wenn die Beispiel-Sektion
+direkt darunter dasselbe nochmal macht, entwertet eins das andere. Drei
+Möglichkeiten, die ich sehe — deine Entscheidung, gern auch eine vierte:
+
+* Hero behält die eine Karte, die Sektion kommt weiter unten als Beweis-Block
+  mit Tabs (`Maler · Wohnzimmer` usw.).
+* Der Hero *ist* die Sektion — die Karte wird durchklickbar, unten steht dafür
+  nichts mehr.
+* Die Sektion ersetzt `VorherNachherSection` (22:47 Uhr / 17:03 Uhr) an deren
+  Stelle.
+
+**2. Trägt der Hero zwei Gewerke?** Der Badge sagt heute „🖌 Für Malerbetriebe",
+die FAQ und die Gewerke-Sektion sagen „Maler und Boden", die Wartelisten-Seite
+sagt „Maler, Bodenleger und alle". Inhaltlich ist für mich klar, dass die
+Bodenleger in den Hero gehören — das ist die Nische, die der Wettbewerber
+Kalkulai nicht bedient. **Die Frage ist, ob der Badge zwei Gewerke optisch
+aushält** oder ob du dafür eine andere Form brauchst. Wenn zwei Gewerke den
+Kopf unruhig machen, sag es — dann löse ich es über die Überschrift statt über
+den Badge.
+
+**Was ich dir nicht schicke:** fertigen Text. Sandy will die Landingpage
+inhaltlich mitgestalten, also gibt es von mir einen Entwurf, keine Seite. Deine
+Antwort auf 1 und 2 brauche ich davor, sonst schreibe ich auf einen Aufbau hin,
+den du vielleicht ganz anders willst.
+
+**Eine Kleinigkeit nebenbei, kein Auftrag:** die Sektion heißt im Code
+`TestimonialSection.tsx`, enthält aber keine Testimonials (wir haben keine, und
+erfinden werden wir keine) — sie zeigt die Gewerke-Liste „Spezialisiert. Mit
+Absicht.". Inhaltlich richtig so. Ob der Dateiname stört, ist deine Ecke.
+
+*Head of Marketing · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1902,4 +1902,61 @@ melde es dir.** Wenn du weißt, dass es sie schon gibt, ist nichts zu tun.
 *Chief of Staff · 2026-09-16*
 
 
+## 🟡 Zwei Sätze auf der Website, die nur du entscheiden kannst (Head of Marketing, 16.09.2026)
+
+Ich habe heute die Landingpage durchgesehen (Gate-1-Punkt 9.1). Das meiste ist
+meine Arbeit oder die vom Designer und kommt gar nicht erst zu dir. **Zwei
+Sätze sind es doch, weil es Versprechen sind, die am Ende du hältst — nicht
+die App.**
+
+### 1. „Antwort innerhalb eines Werktages"
+
+Steht heute unter der FAQ, neben `support@sofortangebot.app`. Solange es ein
+Betrieb ist und du die Mails liest, ist das ein starkes Versprechen — es
+unterscheidet uns von jedem Anbieter mit Ticketsystem.
+
+**Aber es gilt auch im Urlaub, am Brückentag und in der Woche, in der ein
+Kunde fünfmal schreibt.** Gebrochen wirkt es schlechter, als wenn es nie
+dagestanden hätte.
+
+**Du hast drei Möglichkeiten:**
+
+* **A — so lassen.** Du traust dir das zu. Ehrlichste Wirkung, größte Bindung.
+* **B — weicher:** „Wir antworten normalerweise am selben oder am nächsten
+  Werktag." Kein Versprechen mehr, sondern eine Erfahrung. Verliert wenig.
+* **C — Satz raus,** nur die Adresse stehen lassen.
+
+**Meine Empfehlung: B.** Nicht weil ich dir A nicht zutraue, sondern weil du
+gerade allein bist und A dich an einem Urlaubstag zur Lügnerin macht, ohne dass
+du etwas falsch gemacht hättest. **Sag einfach A, B oder C.**
+
+### 2. Der Satz, der heute live auf `sofortangebot.app` steht
+
+Auf der Wartelisten-Seite steht: „Einfach aufs Handy sprechen — sofortangebot
+rechnet, schreibt und schickt. **Für Maler, Bodenleger und alle, die keine Zeit
+verlieren wollen.**"
+
+Die erste Hälfte ist gut. Der Nachsatz **„und alle, die keine Zeit verlieren
+wollen"** arbeitet gegen uns: er lädt Fliesenleger, Elektriker und Zimmerer
+ein, sich einzutragen — und die finden ihr Gewerk dann nicht. Wir gewinnen ein
+paar E-Mail-Adressen und verlieren dieselben Leute beim ersten Login. Er
+widerspricht außerdem genau dem, womit wir uns vom neuen Wettbewerber Kalkulai
+abgrenzen: **spezialisiert, mit Absicht.**
+
+**Mein Vorschlag, eine Zeile:** „Für Maler und Bodenleger."
+Nichts anderes ändert sich auf der Seite.
+
+**Warum ich frage, statt es einfach zu machen:** Website- und Markentext fasse
+ich laut unserer eigenen Regel nicht ohne dich an. **Ein „mach" reicht mir.**
+
+*(Alles Übrige zu Punkt 9.1 — vier verschiedene Gratis-Versprechen auf einer
+Seite, die veraltete Preis-Sektion, zwei zu hoch gegriffene Zahlen — habe ich
+selbst aufgenommen und an Engineering und den Designer verteilt. Davon kommt
+nichts zu dir. Den fertigen Textentwurf gehen wir zusammen durch, wie du es
+wolltest.)*
+
+*Head of Marketing · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

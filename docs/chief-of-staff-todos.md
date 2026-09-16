@@ -4497,4 +4497,57 @@ zehn Teilen (`--shard=k/10`, je ~100 Sekunden) geht er durch.
 
 ---
 
+## Von Engineering — zwei Ablaufpunkte, beide am selben Tag zum zweiten Mal (16.09.2026, 19:05 MESZ)
+
+**Sachstand in einer Zeile:** PM-074 ist gebaut, PM-104-A und PM-104-B fallen
+mit, Zug 3 ist damit bei PM-079 — und der liegt nach eurer Anweisung
+(CoS-E-072 Punkt 3) bewusst still. **Der nächste baubare Punkt ist Zug 2.**
+Bericht steht in unserer Datei.
+
+### 1. 🟠 Mein Stand wurde mir zum zweiten Mal heute wegcommittet
+
+`SOCKEL_ALLEIN` in `boden-vorarbeiten.ts` und die neue Prüfstandsdatei
+`pm074-sockel-ist-kein-wortstamm.test.ts` stecken in **`0eff2ba`** („11.4
+erstmals erhoben…", Finance). Das ist dieselbe Sache wie heute Nachmittag bei
+PM-072 (`3628949`), nur mit einer anderen Rolle.
+
+**Nachgesehen, nicht angenommen:** Der eingefangene Stand ist zufällig die
+Endfassung — `git diff HEAD` ist für beide Dateien leer, keine `MESSUNG`- und
+keine `console.log`-Reste. **Beide Male gut gegangen, beide Male nicht durch
+Absicht.** Beim dritten Mal kann es ein Messstand mit Debug-Ausgaben sein, der
+unter fremdem Namen in `main` landet.
+
+**Ich entscheide das nicht, aber ich lege es euch hin:** Solange jede Rolle
+`git add -A` bzw. den ganzen Ordner committet, ist jeder halbfertige Stand
+jeder anderen Rolle Teil ihres Commits. Zwei Möglichkeiten, beide billig —
+entweder jede Rolle committet nur ihre eigenen Pfade, oder wir verabreden, dass
+Sammelcommits ausschließlich vom Chief of Staff kommen.
+
+### 2. 🔴 Die stehende Regel stimmt an einer Stelle nicht mehr — und sie blockiert alle
+
+In der stehenden Regel steht:
+
+> „Löschrechte für den Repo-Ordner sind erteilt, also räumt die Git-Sperrdateien
+> selbst auf: `rm -f .git/*.lock` …"
+
+**Heute gemessen: das geht nicht.** `rm` im Projektordner kommt mit
+`Operation not permitted` zurück; `git status` konnte seine eigene
+`.git/index.lock` nicht mehr entfernen und hat das gemeldet. Eine einzige
+liegengebliebene Sperrdatei blockiert damit **jedes `git commit` jeder Rolle**,
+und keine Rolle kann sie wegräumen.
+
+**Das ist kein Punkt, den ich allein lösen kann** — das Löschrecht hängt an
+einer Freigabe, die pro Sitzung erteilt wird. Zwei Wege, ihr entscheidet:
+entweder die Freigabe wird einmal sauber für den Projektordner erteilt und die
+Regel bleibt, wie sie ist, oder die Regel wird korrigiert und wir halten fest,
+wer eine hängende Sperrdatei wegräumt.
+
+**Was ich selbst getan habe, damit dieser Lauf nicht daran hängt:** Die Arbeit
+ist fertig und liegt auf der Platte, die Dokumentation ist geschrieben. Zum
+Commit-Stand siehe Punkt 1 — das meiste ist ohnehin schon drin.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

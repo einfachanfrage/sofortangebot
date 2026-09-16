@@ -127,18 +127,28 @@ describe('PM-104 · der Wortstamm „sockel"', () => {
     expect(titel(lauf('boden_parkett', T_KAMIN, WZ_BODEN()))).toEqual(titel(lauf('boden_parkett', T_NACKT, WZ_BODEN())))
   })
 
+  // 16.09.2026, Engineering: Diese Kontrolle hing am FEHLER — sie las den Preis
+  // an genau der Zeile ab, die „Sockelputz" fälschlich erzeugt hat. Seit
+  // PM-104-A gebaut ist, gibt es diese Zeile nicht mehr. Die Aussage der
+  // Kontrolle („der Geldweg ist echt, es ist keine Nullzeile") bleibt wörtlich
+  // stehen — sie wird nur an einem Satz gemessen, der Sockelleisten wirklich
+  // bestellt.
   it('PM-104-D · Kontrolle: der Geldweg steht im Katalog, es ist keine Nullzeile', () => {
-    expect(preis(lauf('boden_parkett', T_PUTZ, WZ_BODEN()), /Sockelleisten montieren/i, 'boden_parkett')).toBe(5.5)
+    const T_BESTELLT = 'Wohnzimmer vier mal fünf. Laminat verlegen. Sockelleisten neu.'
+    expect(preis(lauf('boden_parkett', T_BESTELLT, WZ_BODEN()), /Sockelleisten montieren/i, 'boden_parkett')).toBe(5.5)
   })
 
-  it.fails('PM-104-A · „Sockelputz außen" erzeugt keine Innen-Sockelleiste', () => {
-    // Ist: `Sockelleisten montieren — Wohnzimmer`, 3,00 lfdm, 16,50 €.
+  // GEBAUT 16.09.2026 (Zug 3, Head of Product Engineering) — zusammen mit
+  // PM-074: Wortgrenze statt Wortstamm (`SOCKEL_ALLEIN` in
+  // `boden-vorarbeiten.ts`). Beide Sperrklinken hier auf `it` umgestellt.
+  it('✅ PM-104-A · „Sockelputz außen" erzeugt keine Innen-Sockelleiste', () => {
+    // War: `Sockelleisten montieren — Wohnzimmer`, 3,00 lfdm, 16,50 €.
     // Ein Bauteil an der Außenwand baut eine Innenposition.
     expect(finde(lauf('boden_parkett', T_PUTZ, WZ_BODEN()), /Sockelleisten montieren/i)).toBeUndefined()
   })
 
-  it.fails('PM-104-B · „Kaminsockel … aussparen" erzeugt keine Sockelleiste', () => {
-    // Ist: 1,00 lfdm, 5,50 €. Das Maß steht im FOLGESATZ — der Auslöser ist
+  it('✅ PM-104-B · „Kaminsockel … aussparen" erzeugt keine Sockelleiste', () => {
+    // War: 1,00 lfdm, 5,50 €. Das Maß steht im FOLGESATZ — der Auslöser ist
     // also nicht der Nebensatz, sondern das Wort.
     expect(finde(lauf('boden_parkett', T_KAMINSOCKEL, WZ_BODEN()), /Sockelleisten montieren/i)).toBeUndefined()
   })
