@@ -171,7 +171,11 @@ mit.
    einsortieren.** Zweiter Punkt derselben Datei: das Emoji 📬 als Bildmarke —
    Frage an euch, keine Ansage.
 10. **Live-Test von DC-105 / DC-101 / DC-103 / DC-104 / DC-089 / DC-047 /
-    DC-048** — braucht Sandy am Rechner.
+    DC-048** — **das braucht Sandy NICHT mehr.** Der Browser in der Claude-App
+    funktioniert (16.09. selbst benutzt, IONOS-Konto darüber bedient). Ihr
+    öffnet `sofortangebot.app` darin und testet selbst. Nur wo eine
+    Bestätigungs-Mail gelesen werden muss, fehlt noch der Zugang zu `hallo@` —
+    das ist eine einzige Anmeldung, die ich bei Sandy hole.
 
 ## Platform
 
