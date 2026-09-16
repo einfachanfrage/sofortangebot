@@ -2021,4 +2021,55 @@ Ident-Pruefung.
 
 ---
 
+## 🔴 F-006 — Der Preis auf der Landingpage passt nicht zu deinem Steuerstatus (16.09.2026, 20:40 MESZ · Head of Finance)
+
+**Woher:** Du hast mich direkt auf den Landingpage-Entwurf gesetzt. Volle
+Befundliste in `chief-of-staff-marketing-todos.md`, hier nur, was du
+entscheiden musst.
+
+Auf der Seite steht **„29 € /Monat · zzgl. MwSt. — 34,51 € brutto"**. Als
+**Kleinunternehmerin nach § 19 UStG** darfst du keine Umsatzsteuer ausweisen.
+Tust du es doch, **schuldest du sie trotzdem dem Finanzamt (§ 14c Abs. 2
+UStG)** — behalten darfst du sie nicht, und dein Kunde kann sie sich nicht als
+Vorsteuer holen. Bei 25 Gruenderbetrieben sind das **137,75 € im Monat**, die
+abfliessen, ohne dass dir etwas dafuer zusteht.
+
+**Deine Entscheidung, zwei Wege:**
+
+**A — Bei § 19 bleiben (mein Vorschlag fuer den Start).** Auf der Seite steht
+dann **29 €, ohne Bruttozeile**, dazu der Kleinunternehmer-Hinweis. Fuer deine
+Kunden aendert sich der zu zahlende Betrag von 34,51 € auf 29 € — sie zahlen
+**weniger**, dein Netto bleibt gleich. Mein Plan rechnet ohnehin mit 29 €
+netto, also aendert sich nichts an Break-even oder Runway.
+
+**B — Freiwillig zur Regelbesteuerung.** Dann stimmen 34,51 €, und du kannst
+Vorsteuer aus deinen Kosten ziehen (OpenAI, Supabase, Vercel und so weiter).
+Dafuer hast du Voranmeldungen am Hals und bist **fuenf Jahre gebunden**.
+Ob sich das rechnet, haengt an Zahlen, die noch gelb sind — das ist eine
+**Frage fuer den Steuerberater-Termin**, nicht fuer heute Abend.
+
+**Kein Zeitdruck, aber vor dem Livegang.** Die Seite ist Entwurf.
+
+**Zwei weitere Dinge, die nur du beantworten kannst:**
+
+1. **„Gruenderplaetze: 18 von 25 frei."** Du hast null Kunden — die Seite
+   behauptet damit sieben Buchungen, die es nicht gibt. Das ist eine
+   irrefuehrende Angabe (§ 5 UWG) und abmahnfaehig. Ich habe die Zeile bei
+   Marketing als Stopper markiert. **Willst du echt zaehlen lassen oder die
+   Zeile streichen?** Das Versprechen „die ersten 25 zahlen dauerhaft 29 €"
+   traegt auch ohne Countdown.
+2. **„Echte Aufnahmen, echte Angebote."** Stammen die vier Beispieldiktate aus
+   deinen eigenen Einsprech-Laeufen? Dann bleibt der Satz stehen und ich ziehe
+   meinen Einwand zurueck. Wenn sie erfunden sind, muss er weg.
+
+**Gute Nachricht zum Schluss, damit es nicht nur nach Bremse klingt:** Ich habe
+alle vier Beispielangebote nachgerechnet — **33 Positionen, kein einziger
+Rechenfehler**, alle Summen stimmen auf den Cent. Und dein
+Gruenderpreis-Versprechen deckt sich **exakt** mit meinem Finanzplan
+(25 × 29 € + 12 × 49 € = die 1.313 €, die dort bei 37 Betrieben stehen). Die
+Seite kostet dich nichts, was nicht schon eingeplant waere.
+
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

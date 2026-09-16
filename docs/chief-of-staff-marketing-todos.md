@@ -1675,5 +1675,129 @@ schreiben.
 
 ---
 
+## ➜ Finance hat den Landingpage-Entwurf gegengerechnet — 4 Stopper, 5 Korrekturen (16.09.2026, 20:40 MESZ · Head of Finance)
+
+Sandy hat mich direkt draufgesetzt. **9.1 bleibt eure Baustelle** — das hier
+sind nur Befunde, kein Eingriff in euren Text. Geprueft habe ich, was ich
+pruefen kann: Zahlen, Preise, Versprechen gegen den Code.
+
+### Zuerst das Gute, und es ist nicht wenig
+
+**Alle vier Beispielangebote rechnen sich auf — Position fuer Position, Cent
+genau.** Ich habe alle 33 Zeilen nachgerechnet:
+
+* Maler Wohnzimmer: 18 lfm × 2,60 m = 46,80 m², Summe **728,00 €** ✓
+* Bodenleger Kinderzimmer: 14,00 m² + 5 % = 14,70 m², Summe **401,30 €** ✓
+* Maler drei Raeume: 685,90 + 539,05 + 441,36 + 25,00 = **1.691,31 €** ✓,
+  Bodenflaeche 20,00 + 14,00 + 7,20 = **41,20 m²** ✓
+* Maler Buero Q3: Summe **1.543,80 €** ✓
+* Hero-Handy: 24,00 + 14,40 + 187,20 + 210,60 + 220,00 + 444,60 =
+  **1.100,80 €** ✓
+
+Kein einziger Rechenfehler. Wer die Seite nachrechnet — und Handwerker tun
+das — findet nichts. Das ist die halbe Miete auf einer Seite, die
+„gerechnet, nicht geschaetzt" verspricht.
+
+**Und der Gruenderpreis deckt sich exakt mit meinem Plan.** 25 × 29 € = 725 €,
+plus 12 × 49 € = 588 € ergibt die **1.313 €** bei 37 Betrieben, die in
+`kostenuebersicht-finance.xlsx` als Ausstiegsstufe B1 stehen. Bei 107 Betrieben:
+725 + 82 × 49 = **4.743 €** — ebenfalls auf den Euro. Das dauerhafte
+29-€-Versprechen ist also **schon eingepreist**, es reisst kein Loch. Wer immer
+die Preisstufen gesetzt hat, hat mit demselben Modell gearbeitet.
+
+### 🔴 Vier Stopper — so darf die Seite nicht live gehen
+
+**1. „zzgl. MwSt. — 34,51 € brutto" widerspricht Sandys Steuerstatus.**
+Sandy startet als **Kleinunternehmerin nach § 19 UStG**. Sie darf keine
+Umsatzsteuer ausweisen — und weist sie doch eine aus, **schuldet sie sie
+trotzdem dem Finanzamt (§ 14c Abs. 2 UStG)**, ohne sie behalten zu duerfen.
+Rechnerisch: 5,51 € je Betrieb und Monat, bei 25 Gruendern **137,75 € im
+Monat**, die abfliessen, ohne dass ihnen etwas gegenuebersteht. Der Kunde
+bekommt dafuer keinen Vorsteuerabzug, weil die Rechnung ihn nicht traegt.
+**Solange § 19 gilt, muss dort 29 € stehen — ohne Bruttozeile, mit dem
+Kleinunternehmer-Hinweis.** Ironischerweise kann das Produkt genau das: „§ 19
+— Hinweis statt MwSt" steht zwei Abschnitte darueber als Feature.
+
+**2. „Gruenderplaetze: 18 von 25 frei" bei null Kunden.** Die Seite behauptet,
+sieben Betriebe haetten bereits gebucht. Gate 1 hat **keine Zahlungen** — es
+gibt sie nicht. Im Fuss des Entwurfs steht ausserdem ein Umschalter
+„Vorschau: 18 frei · 3 frei · voll", die Zahl ist also gesetzt, nicht gezaehlt.
+Eine erfundene Verknappung ist eine irrefuehrende geschaeftliche Handlung
+(§ 5 UWG) und genau die Sorte Angabe, die abgemahnt wird. **Entweder echt
+zaehlen oder die Zeile streichen.** „Die ersten 25 Betriebe zahlen dauerhaft
+29 €" traegt auch ohne Countdown.
+
+**3. „Echte Aufnahmen, echte Angebote."** Bei null Kunden gibt es keine echten
+Aufnahmen. Die Beispiele sind gut und richtig gerechnet — aber sie sind
+konstruiert. **„Echte Rechenwege, nachvollziehbar" o. ae. sagt dasselbe und
+stimmt.** Wenn die Diktate tatsaechlich aus Sandys Einsprech-Laeufen stammen,
+zieht ihr den Einwand mit einem Satz Beleg zurueck, dann lasse ich ihn fallen.
+
+**4. „E-Rechnung — ZUGFeRD, GoBD, fortlaufende Nummern. Laeuft mit."** Drei
+Behauptungen, und alle drei wackeln:
+* Der **ZUGFeRD-Export deklariert ein Angebot als Rechnung** (`TypeCode 380`)
+  — als **EX-003** bei Platform eingetragen, ungeloest.
+* Der Nummernkreis „Rechnungen" existiert in den Einstellungen, **aber niemand
+  zieht daraus** (Befund Engineering). Das Produkt stellt keine Rechnungen.
+* **„GoBD" ist eine Aussage ueber revisionssichere Archivierung** ueber acht
+  Jahre — die macht nicht das Angebotswerkzeug, sondern das Buchhaltungssystem
+  dahinter. So wie es dasteht, verspricht die Seite Rechtssicherheit, die sie
+  nicht liefern kann. Das ist das Feld, das am ehesten zu einer
+  Kundenbeschwerde fuehrt, weil es erst beim Finanzamt auffliegt.
+
+### 🟠 Fuenf Korrekturen — kein Stopper, aber falsch
+
+**5. „Lexware, sevDesk und DATEV direkt, andere ueber Export."** Lexware und
+sevDesk haben echte Anbindungen im Code (`api/integrations/…`). **DATEV nicht:**
+in `src/lib/accounting-options.ts` steht DATEV ausdruecklich unter „CSV /
+DATEV-Export … kein Key noetig". Die Aufzaehlung stellt DATEV auf dieselbe
+Stufe wie die beiden anderen. **DATEV gehoert hinter das „andere ueber
+Export".** Zusatzhinweis: Punkt 11.5 (Buchhaltungsanbindung) steht in
+`launch-readiness.md` noch auf **0 % — nicht erhoben**. Bevor die Seite die
+Anbindung verspricht, sollte jemand sie einmal live durchklicken.
+
+**6. Die Hero-Fussnote ist fachlich unschaerfer als die Beispiele.** Im Hero
+steht „Fenster und Tuer **nach VOB nicht abgezogen**", im Beispieltab dagegen
+korrekt „Fenster und Tuer **unter 2,5 m²** nach VOB nicht abgezogen". Ohne die
+Schwelle ist der Satz schlicht falsch — ueber 2,5 m² wird abgezogen. Der Hero
+ist die Stelle, die jeder sieht. **Gleiche Formulierung an beiden Stellen.**
+
+**7. Flur, drei Tueren, „Sockelleisten abkleben 14,40 lfm".** Bei den *Waenden*
+ist „drei Tueren kuerzen den Umfang nicht" nach VOB richtig. Bei den
+*Sockelleisten* bin ich mir nicht sicher: In einer Tueroeffnung gibt es keine
+Sockelleiste zum Abkleben, das waeren rund 2,70 lfm weniger. **Das ist eine
+Fachfrage, keine Finanzfrage — bitte vom Pruefmeister gegenlesen lassen**,
+bevor ein Maler es als ersten Fehler findet.
+
+**8. Der durchgestrichene 49-€-Ankerpreis steht direkt vor „34,51 € brutto".**
+Selbst wenn Punkt 1 geloest ist: Die Brutto-Zeile bezieht sich auf die 29 €,
+steht aber hinter der 49. Beim Ueberfliegen liest sich das, als seien 34,51 €
+der Bruttopreis von 49 €. **Zeilen tauschen oder die Bezugsgroesse nennen.**
+
+**9. Die Stripe-Preis-IDs passen nicht zusammen — das faellt in eure Naehe,
+gehoert aber Platform.** `src/app/api/stripe/route.ts` liest
+`STRIPE_PRICE_STANDARD` und `STRIPE_PRICE_FOUNDER`; in der `.env.local` auf
+Sandys Rechner stehen `STRIPE_PRICE_STARTER` und `STRIPE_PRICE_PRO`. Beide
+gesuchten Variablen fallen damit auf `''` zurueck. **Wenn in Vercel dieselben
+Namen stehen wie lokal, kann niemand den Gruenderpreis buchen** — die Seite
+bewirbt einen Tarif, der an der Kasse ins Leere laeuft. Ich habe es nicht
+angefasst und nichts in Vercel nachgesehen; **Platform sollte die
+Produktionsvariablen einmal gegenlesen.** Ich trage es dort nicht selbst ein,
+damit es nicht doppelt liegt — sagt Bescheid, wenn ihr es nicht uebernehmt,
+dann mache ich es.
+
+### Was ich ausdruecklich nicht bewertet habe
+
+Ton, Aufbau, Bildsprache, die Reihenfolge der Abschnitte — das ist eure
+Kompetenz, nicht meine. Ebenso „Antwort innerhalb eines Werktages" und der
+Datenschutzsatz („verschluesselt auf Servern in Deutschland, kein Tracking"):
+Ersteres liegt schon als Entscheidung bei Sandy, Letzteres gehoert Legal —
+Sprachaufnahmen laufen ueber einen KI-Anbieter, und ob dessen Verarbeitung zu
+„Server in Deutschland" passt, ist Punkt 7.13, nicht meiner.
+
+*Head of Finance · 16.09.2026*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
