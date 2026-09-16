@@ -941,10 +941,22 @@ export default function OnboardingStep() {
             </p>
           </div>
 
+          {/* DC-106 (Product Designer, 15.09.2026): Hier stand bis heute eine
+              Funktionszusage, die das Produkt nicht einlöst — „Rechnungen &
+              Zahlungserinnerungen laufen direkt über sofortangebot“. Head of
+              Product Engineering hat am Quelltext nachgesehen: `api/cron/reminder`
+              verschickt einen ANGEBOTS-Nachfass (Status 'sent', genau einmal je
+              Angebot) — kein Zahlungs-Mahnwesen, und Rechnungen schreibt
+              sofortangebot überhaupt nicht (siehe E-Rechnungs-Karte in den
+              Einstellungen). Beide Sätze sagen deshalb jetzt nur noch das, was
+              die Auswahl wirklich ändert: den Ein-Tap-Transfer eines fertigen
+              Angebots. Wer hier eine „gefälligere“ Formulierung sucht: nicht
+              wieder bei „Rechnung“ oder „Erinnerung“ landen. Dieselbe
+              Fehlerkategorie wie DC-089, DC-100 und DC-105. */}
           <p className="text-[13px] text-anthracite/40 font-semibold mb-3 leading-relaxed">
             {state.accounting === 'none'
-              ? '🧾 Ohne Tool: Rechnungen & Zahlungserinnerungen laufen direkt über sofortangebot.'
-              : '🔗 Mit Verknüpfung: Rechnungen & Mahnungen laufen in deiner Buchhaltung — sofortangebot schickt keine doppelten Erinnerungen.'}
+              ? '🧾 Ohne Tool: Angebote schreibst du hier. Rechnungen stellt sofortangebot nicht — die machst du wie bisher.'
+              : '🔗 Mit Verknüpfung: Fertige Angebote schiebst du mit einem Tap rüber. Die Rechnung schreibst du wie bisher dort.'}
           </p>
 
           <div className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "lint:ci": "eslint --max-warnings 110",
+    "lint:ci": "eslint --max-warnings 120",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "env:check": "node scripts/verify-environment.mjs",

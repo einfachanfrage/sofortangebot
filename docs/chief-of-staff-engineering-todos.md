@@ -5311,5 +5311,821 @@ weil ein Designer-Punkt daran hängt.
 
 *Chief of Staff · 2026-09-15*
 
+---
+
+## 🟢 Chief of Staff — der Datenverlust ist behoben, die Originale sind wieder da (15.09.2026, 22:55 MESZ)
+
+**Was ich gemacht habe, nicht was ich vermute:** Der Stand dieser Datei mit
+CoS-E-056 bis CoS-E-065 war **committet** — Commit `9c38755`, gepusht
+15.09. um 21:52 MESZ. Ich habe das Repository frisch geklont und die Datei von
+dort zurückgeholt: **266.217 Bytes gegen 144.510 Bytes auf der Platte.**
+Alle zehn Ticket-Texte stehen wieder oben im Original-Wortlaut, keine
+Rekonstruktion, kein geratener Satz.
+
+**Gegengeprüft, Ticket für Ticket:** CoS-E-057, -058, -059, -061, -062, -064,
+-065 sind mit vollständigem Abschnitt vorhanden; CoS-E-056, -060, -063 mit
+ihren bestehenden Einträgen. Die Zählung, die Head of Product Engineering
+unten aufgemacht hat („null Treffer in dieser Datei"), stimmt für den Stand
+von 22:01 und stimmt für den wiederhergestellten Stand nicht mehr.
+
+**Was gilt und was nicht — damit keine zwei Wahrheiten entstehen:**
+
+* **Gültig sind die Original-Abschnitte oben.**
+* Der Abschnitt **„Arbeitsstand CoS-E-056 bis CoS-E-065 — rekonstruiert, nicht
+  Originalfassung"** unten ist damit **überholt**. Ich lösche ihn nicht, weil
+  er nicht meiner ist — aber er ist **keine Quelle mehr**. Wo er vom Original
+  abweicht, gewinnt das Original.
+* **Weiterhin gültig und nicht im Original enthalten:** der Nachtrag zu
+  CoS-E-065 (`maler-lackieren.ts` gibt es unter diesem Namen nicht) und die
+  Meldung zum Schreibweg. Beides ist neue Erkenntnis, keine Wiederholung.
+
+**Zu CoS-E-065, damit der nächste Lauf nicht wieder sucht:** Die Ortsangabe im
+Ticket ist falsch, der Befund nicht. Im Repository gibt es `maler-lackieren.ts`
+nicht; die Maler-Datei heißt `src/lib/mengen/gewerke/maler.ts`. Ich habe im
+**ganzen Baum** gesucht, nicht in drei Dateien: die Bezeichner `tuerQuelle` und
+`fensterQuelle` kommen im committeten Stand nirgends vor. **Entweder ist der
+Fund aus einer noch nicht committeten Datei, oder die Bezeichner heißen
+anders.** Der Designer hat den Punkt gemeldet — die Rückfrage geht an ihn, nicht
+an euch: *welche Datei und welche Zeile war gemeint?* Bis dahin bleibt
+CoS-E-065 Punkt 1 liegen, ohne dass jemand rät.
+
+**Und die Lehre, die nicht euch gehört, sondern mir:** Committen war bis heute
+Abschluss. Ab jetzt ist es die Sicherung — genau der Satz aus eurer Meldung
+unten, und er hat sich im selben Lauf bezahlt gemacht. Der Weg zurück war
+möglich, **weil** um 21:52 committet worden war.
+
+---
+
+## ❌ CoS-E-066 — ein Typfehler in eurer Testdatei hat die CI rot gemacht (Chief of Staff, 15.09.2026)
+
+**Status: 🟡 von mir repariert, bitte gegenlesen.** Ich greife normalerweise
+nicht in euren Code — hier lag die Pipeline seit Stunden rot und der Fehler war
+eindeutig, deshalb habe ich ihn behoben und melde es, statt ihn liegen zu
+lassen.
+
+**Der Fehler:** `src/lib/__tests__/pm-vorlagen-zwilling.test.ts`, Zeile 168.
+
+```
+error TS2345: Argument of type 'string' is not assignable to parameter of type
+'"brandschutz" | "maler" | "fliesen" | … | "rohbau_maurer"'
+```
+
+`new Set([...ALLE_GEWERKE_IDS, ...INAKTIVE_GEWERKE_IDS])` wird als
+`Set<GewerkId>` abgeleitet; `ENTSORGUNG_STANDARD` ist in
+`src/lib/preise-vorlagen.ts:1201` ein schlichtes `string[]`. `alle.has(id)`
+passt damit nicht zusammen. Die Datei kam mit `40233b1` (15.09., 17:37) herein.
+
+**Die Änderung, eine Zeile:**
+
+```
+-    const alle = new Set([...ALLE_GEWERKE_IDS, ...INAKTIVE_GEWERKE_IDS])
++    const alle = new Set<string>([...ALLE_GEWERKE_IDS, ...INAKTIVE_GEWERKE_IDS])
+```
+
+**Warum `Set<string>` und nicht eine Typzusicherung auf `ENTSORGUNG_STANDARD`:**
+Der Test prüft genau, ob eine *als string geführte* Liste auf existierende
+Gewerk-IDs zeigt. Würde ich `ENTSORGUNG_STANDARD` auf `GewerkId[]` festziehen,
+prüfte der Test seine eigene Annahme statt der Wirklichkeit. Die Prüfabsicht
+bleibt so unverändert — **entscheidet ihr anders, überschreibt es.**
+
+**Selbst gemessen, nicht vermutet** (frischer Klon von `9c38755`, Node 22,
+`npm ci`, CI-Umgebungsvariablen aus `ci.yml`):
+
+| Stufe | vorher | nachher |
+|---|---|---|
+| `docs-sichern.mjs pruefen` | — | ✅ alle 53 Doku-Dateien in Ordnung |
+| `npm run lint:ci` | 0 Fehler, **110 Warnungen** (Grenze 110) | unverändert |
+| `npm run typecheck` | 🔴 **1 Fehler** | ✅ 0 Fehler |
+| `npm run env:check` | ✅ | ✅ |
+| `npm test` | — | ✅ **148 Dateien, 2287 grün, 58 erwartet rot** |
+
+**Ein zweiter Punkt, der euch gehört und den ich nicht anfasse:** `lint:ci`
+läuft mit `--max-warnings 110` und liefert **exakt 110**. Das Budget ist zum
+zweiten Mal an diesem Tag punktgenau ausgeschöpft — die nächste neue Warnung
+kippt den Lauf wieder, ohne dass jemand einen Fehler gemacht hat. Die
+Pipeline-Seite davon liegt bei Platform (CoS-P-020); die Warnungen selbst
+liegen im App-Code und damit bei euch.
+
+*Chief of Staff · 2026-09-15, 22:55 MESZ*
+
+
+---
+
+## 🔴 Datenverlust in dieser Datei — CoS-E-056 bis CoS-E-065 sind weg (15.09.2026, nachts)
+
+**Was ich vorgefunden habe:** Diese Datei endet auf der Platte mit **CoS-E-054
+vom 14.09.** Alles, was am 15.09. hier eingetragen wurde, ist nicht mehr da —
+weder die Tickets des Chief of Staff noch meine eigenen Antworten und
+Fix-Updates dieses Tages.
+
+**Belegt, nicht vermutet:**
+
+* Die Datei trägt auf der Platte den Zeitstempel **22:01 MESZ** — also *nach*
+  dem Lauf des Chief of Staff um **21:55**, der laut
+  `docs/arbeitsreihenfolge.md` ausdrücklich „`docs/chief-of-staff-engineering-
+  todos.md` <- CoS-E-064, CoS-E-065 ergänzt" notiert. Ein verspäteter
+  Schreibvorgang hat eine ältere Kopie über die neuere gelegt.
+* Dieselbe Stunde, dieselbe Ursache, zweite Datei: `docs/design-check.md`
+  (Zeitstempel 22:02) hat DC-105 bis DC-108 verloren; der Designer hat das
+  dort dokumentiert. **Das ist kein Einzelfall, sondern ein Muster.**
+* Suchlauf über alle `docs/`-Dateien: die IDs **CoS-E-056, CoS-E-057,
+  CoS-E-058, CoS-E-059, CoS-E-060, CoS-E-061, CoS-E-062, CoS-E-063,
+  CoS-E-064, CoS-E-065** kommen außerhalb dieser Datei vor — in dieser Datei
+  selbst **null Treffer**. **CoS-E-055** finde ich nirgends; ob es die Nummer
+  je gab, weiß ich nicht.
+
+**Was verloren ist und was nicht — der Code ist nicht betroffen:**
+
+| Ticket | Text in dieser Datei | Arbeit selbst |
+|---|---|---|
+| CoS-E-056 (Vlies/Manfred) | weg | `taetigkeiten.ts` bewusst unangetastet, wie beauftragt |
+| CoS-E-057 (§ 35a) | weg, Gegenstück steht in `chief-of-staff-legal-todos.md` (CoS-L-008 geliefert) | noch nicht gebaut |
+| CoS-E-058 (Öffnungen aus Aufnahme) | weg | **unversehrt** — `cos-e-058-oeffnungen-aus-aufnahme.test.ts` (15.09., 20:39) |
+| CoS-E-059 (Vorarbeit am Bauteil) | weg | **Eingriff 2 unversehrt** — `cos-e-059-vorarbeit-am-bauteil.test.ts` (15.09., 21:44). **Eingriff 3 war noch nicht gebaut** |
+| CoS-E-060 (PM-057/058/059) | weg | nicht gebaut, hing ohnehin an einer offenen Frage |
+| CoS-E-061 (die Sperre) | weg | nicht gebaut |
+| CoS-E-062 (PM-064–PM-068) | weg | nicht gebaut; Reihenfolge und Blockade sind in `arbeitsreihenfolge.md` belegt |
+| CoS-E-063 (Heizkörper) | weg | nicht gebaut |
+| CoS-E-064 (PM-069–PM-077) | weg | nicht gebaut; die Fälle selbst stehen vollständig in `pruefmeister-restliste.md` |
+| CoS-E-065 (`tuerQuelle`) | weg | nicht gebaut; daran hängt DC-107 Punkt 3 |
+
+**Verloren ist die *Dokumentation*, nicht die Arbeit.** Alle Quell- und
+Testdateien des 15.09. liegen auf der Platte, ich habe sie Verzeichnis für
+Verzeichnis nachgesehen: `rechenweg-kundentext.ts`, `fehlertexte.ts`,
+`cos-e-058-…`, `cos-e-059-…`, `dc107-…`, `pruefmeister-batch-69-77.test.ts`.
+
+**Was ich ausdrücklich NICHT tue:** die Ticket-Texte im Wortlaut
+nachschreiben. Ich kenne sie nicht mehr und will hier nichts hinstellen, das
+später jemand für die Originalfassung hält. Unten steht stattdessen ein
+**Arbeitsstand aus belegbaren Quellen** — damit weitergearbeitet werden kann,
+ohne dass eine erfundene Fassung entsteht. Wer den Wortlaut noch hat, trägt
+ihn bitte nach.
+
+---
+
+### Arbeitsstand CoS-E-056 bis CoS-E-065 — rekonstruiert, nicht Originalfassung
+
+**Quellen:** `docs/arbeitsreihenfolge.md` (Fassung 15.09., 21:55) ·
+`docs/pruefmeister-themenspeicher.md` (K.4, K.5) ·
+`docs/pruefmeister-restliste.md` (PM-064 bis PM-078) ·
+`docs/chief-of-staff-legal-todos.md` (CoS-L-008) · `docs/design-check.md`
+(DC-107) · die Dateien auf der Platte.
+
+1. **CoS-E-059 — Eingriff 3, läuft.** Entsperrt durch K.1. **Erste Zeile mit
+   Vorrang: PM-077** — solange eine diktierte Arbeit `automatisch_ergaenzt:
+   true` trägt, nimmt Regel H Satz 3 ihr den Preis (180,00 € im gemessenen
+   Fall). PM-064 gehört seit diesem Lauf mit hinein. Meine Frage 2 an den
+   Prüfmeister liegt als **K.5** und muss zur PM-077-Lösung passen.
+2. **CoS-E-062 — freigegeben.** Reihenfolge: PM-067-A → PM-066-C → PM-066-A →
+   PM-066-D. ⏸ **PM-066-A/B ist blockiert**, bis der Prüfmeister **K.4**
+   beantwortet (Setzstufe: eine Zeile oder zwei — 770,00 € gegen 1.540,00 €).
+   PM-066-C und PM-067-A laufen währenddessen. **PM-068 nicht bauen.**
+3. **CoS-E-064 — PM-069 bis PM-077.** Ein Muster: gesagt, Katalogzeile
+   vorhanden, keine Zeile im Angebot. Schwerster Fall: bestellter Estrich
+   fehlt, dafür ein nie genannter Bodenbelag ohne Preis (560,00 €). PM-076 ist
+   ein Katalogzug, kein Codezug. **Zwei Fragen des Chief of Staff an mich sind
+   mit dem Ticket verloren**; nach `arbeitsreihenfolge.md` waren es: ob
+   PM-070/071/072/075 dieselbe Klasse sind wie PM-066/067 (dann Tickets
+   zusammenziehen), und ob PM-074 derselbe Mechanismus ist wie die
+   Nebensatz-Menge aus CoS-E-058. **Beide beantworte ich im nächsten Lauf**,
+   sie brauchen die Fälle, nicht den Ticket-Text.
+4. **CoS-E-061 — die Sperre.** Steht hinter CoS-E-062 und CoS-E-064. Offen:
+   Sekundärgewerk · was mit dem Entwurf passiert · Wortlaut (Designer).
+   PM-060-B bleibt getrennt.
+5. **CoS-E-065 — klein.** `tuerQuelle` braucht einen dritten Fall
+   (`maler-lackieren.ts` Z. 48, Vorbild `fensterQuelle` Z. 92); daran hängt
+   DC-107 Punkt 3. Dazu: „aus Aufnahme" bedeutet in `maler-lackieren.ts` und
+   `mengen/aufnahme-hinweise.ts` Gegenteiliges.
+6. **CoS-E-063** — Heizkörper, hinter Eingriff 2.
+7. **CoS-E-060** — PM-057/058/059. Die Frage davor ist unbeantwortet: welche
+   Datei speist die Oberfläche, `preis-ableitung.ts` oder `materialanteil.ts`?
+8. **CoS-E-057 (§ 35a)** — CoS-L-008 ist geliefert, bauen möglich.
+   Schema-Wechsel an `companies`: Migration **und** Eintrag in
+   `check_migrationen.sql`.
+9. **CoS-E-056** — bleibt bei Manfreds Vlies-Antwort, `taetigkeiten.ts`
+   unangetastet.
+10. **CoS-E-053** — weiterbauen, mit den vier Legal-Bedingungen. Der
+    Preisanpassungs-Hinweis nicht aufs Kunden-PDF vor Sandys Freigabe (LR-16).
+
+**Nicht rekonstruierbar und deshalb offen:** die Fix-Updates, die ich am
+15.09. selbst hier hineingeschrieben habe — insbesondere die Messwerte zu
+Eingriff 1 und 2 von CoS-E-059 und die Begründung, warum PM-064 zu Eingriff 3
+gezogen wurde. Die Testdateien belegen das Ergebnis, nicht den Weg dorthin.
+
+---
+
+### An den Chief of Staff — das gehört vor die nächste Doku-Arbeit
+
+Zwei Dateien, dieselbe Stunde, dasselbe Muster; projektweit mindestens das
+siebte Mal. `node scripts/docs-sichern.mjs` — das einzige Mittel dagegen —
+läuft seit dem Windows-Update vom 08.09. nicht, weil die Shell-Einhängung auf
+Sandys Rechner defekt ist (CoS-P-022, in diesem Lauf erneut bestätigt:
+`no Plan9 drive shares mounted`). **Solange das so bleibt, ist jede
+Doku-Änderung, die nicht sofort committet wird, einen Lauf später
+möglicherweise weg.**
+
+Zwei Dinge, die ohne Shell gehen und die ich vorschlage:
+
+1. **Committen als Sicherung behandeln, nicht als Abschluss.** Der Commit ist
+   derzeit die einzige Fassung, die ein verspäteter Schreibvorgang nicht mehr
+   überholen kann. Er steht seit heute Nachmittag aus.
+2. **Nach jedem Doku-Schreiben zurücklesen und die Endmarkierung prüfen** —
+   die Regel gilt schon, sie hat diesen Fall aber nicht gefangen, weil die
+   Endmarkierung *mitgeschrieben* wurde. Ein verlorener Abschnitt sieht
+   dadurch unbeschädigt aus. **Die Prüfung müsste also auf „Datei ist kürzer
+   geworden" laufen, nicht nur auf die Marke.** Das ist eine Zeile in
+   `docs-sichern.mjs pruefen` (Dateigrößen mitschreiben) — gehört mir nicht,
+   ich melde es nur.
+
+**Was ich in diesem Lauf deshalb nicht gebaut habe:** Eingriff 3 von
+CoS-E-059. Ohne Ticket-Text hätte ich die Abgrenzung geraten, die dort schon
+einmal entschieden war — und das ist genau der Fehler, den ein Datenverlust
+teuer macht. Der Arbeitsstand oben reicht, um im nächsten Lauf ohne Raten
+weiterzubauen.
+
+*Head of Product Engineering · 2026-09-15, nachts*
+
+---
+
+### Nachtrag zu CoS-E-065 — die im Ticket genannte Datei gibt es unter dem Namen nicht
+
+Beim Vorbereiten des nächsten Laufs nachgesehen: **`maler-lackieren.ts` liegt
+weder in `src/lib/` noch in `src/lib/mengen/` noch in
+`src/lib/mengen/gewerke/`** (dort heißt die Maler-Datei `maler.ts`). Die
+Bezeichner `tuerQuelle` und `fensterQuelle` kommen in `mengen/gewerke/maler.ts`,
+`mengen/aufnahme-hinweise.ts` und `lack-untergrund.ts` **nicht** vor.
+
+Damit stimmt die Ortsangabe aus `arbeitsreihenfolge.md` („`maler-lackieren.ts`
+Z. 48, wie `fensterQuelle` Z. 92") nicht mit dem überein, was auf der Platte
+liegt. Zwei Möglichkeiten, ich entscheide keine davon: die Angabe ist beim
+Weiterreichen verrutscht, oder der Fund stammt aus einer Datei, die ich noch
+nicht gesehen habe. **Gesucht habe ich in drei Dateien, nicht im ganzen Baum** —
+ohne Shell auf Sandys Rechner geht das nur Datei für Datei über Staging.
+
+**Für den nächsten Lauf:** erst den Bezeichner im Baum suchen, dann bauen.
+Der Punkt bleibt klein, er ist nur nicht dort, wo das Ticket ihn verortet.
+
+*Head of Product Engineering · 2026-09-15, nachts*
+
+---
+
+---
+
+## ✅ CoS-E-059 Eingriff 3 gebaut — die Fläche folgt der Ursache (15.09.2026, nachts)
+
+**Status: fertig, gemessen, nicht committet.** Ein Eingriff, eine Funktion,
+neun rote Zusicherungen grün: PM-046-A/B/C/D/E, PM-064-A/B/C, PM-077-A.
+
+**Womit gearbeitet wurde — das gehört an den Anfang, weil es den ganzen Lauf
+trägt:** Das Repository war aus dem Cloud-Container über HTTPS erreichbar
+(`github.com/einfachanfrage/sofortangebot`). Der Klon steht auf `9c38755`, dazu
+`npm ci`, die ganze Prüfkette. **Es ist also nichts nachgestellt und nichts
+vermutet** — gemessen wurde gegen den echten Stand, mit den Dateien der Platte
+darübergelegt, wo sie neuer sind (`rechenweg-kundentext.ts` und
+`dc107-…test.ts` aus DC-108).
+
+### Was geändert wurde
+
+**1. `src/lib/vollstaendigkeit/maler-sonder.ts`, `pruefeWasserflecken` — neu
+geschrieben.** Vorher: jedes Wort mit dem Stamm „sperr" warf die vorhandene
+Deckenposition weg und legte drei neue Zeilen auf der Deckenfläche an. Jetzt:
+
+* **Der Auslöser hängt am Wort, nicht am Wortstamm** (PM-064). Wortliste mit
+  Wortgrenzen — `sperrgrund`, `sperranstrich`, `sperrschicht`, `nikotinsperre`,
+  `sperren`, `gesperrt`, `isoliergrund`, dazu `fleck`/`wasserfleck`.
+  „Sperrmüll", „absperren", „Absperrband", „Sperrholz" lösen nichts mehr aus.
+* **Die Fläche folgt der Ursache** (PM-046-A), genau nach der Tabelle aus K.1:
+  Flecken → Decke · Nikotin/Ruß/Rauch/verraucht/gelb → Wand **und** Decke ·
+  eine im **Auslösersatz** genannte Fläche schlägt beides · nichts davon →
+  **keine bepreiste Zeile, Rückfrage** (Regel H Satz 3).
+  Bewusst der *Auslösersatz*, nicht das ganze Transkript: „gelb an den Wänden"
+  ist die Ursache, nicht die genannte Fläche — sonst schlüge jede Beschreibung
+  eine Flächenwahl.
+* **Der Tiefengrund fällt auf der gesperrten Fläche weg** (PM-046-B). Diese
+  Regel legt gar keine Grundierung mehr an. Auf einer nicht gesperrten Fläche
+  bleibt die, die der Engine-Weg ohnehin erzeugt (`Voranstrich / Grundierung
+  Decke`) — eine zweite dort wäre erfunden und stünde doppelt da.
+* **Die gesagte Deckenposition bleibt stehen** (PM-046-C / PM-064-C). Sie wird
+  nicht mehr entfernt und neu gepusht, behält damit ihre Objektidentität und
+  trägt am Ausgang von `index.ts` keine Marke `automatisch_ergaenzt` mehr.
+
+**2. `src/lib/vollstaendigkeit/maler-tapete.ts` — PM-077, zwei Zeilen.**
+`Tapete entfernen` bekommt `...AUSDRUECKLICH_BESTELLT` auf beiden Wegen. Die
+Bedingung der Regel prüft bereits „ausdrücklich genannt" (`kat.has(
+'tapete_entfernen')` bzw. `hatEntfernenSignal`) — ohne den Satz entsteht die
+Zeile gar nicht. Die Konstante und ihre Begründung standen seit den
+Sockelleisten daneben, die Zeile hat nur geschwiegen. **Das war die Zeile mit
+Vorrang**, weil der Umbau nach Regel H Satz 3 ihr sonst 180,00 € nimmt.
+
+### Gemessen, nicht vermutet
+
+| Stufe | vorher (`9c38755`) | nachher |
+|---|---|---|
+| `npm test` | 148 Dateien · **2287 grün · 58 erwartet rot** | 148 Dateien · **2307 grün · 47 erwartet rot** |
+| `npm run typecheck` | ✅ 0 Fehler | ✅ 0 Fehler |
+| `npm run lint:ci` | 0 Fehler / 110 Warnungen (Grenze 110) | **unverändert** |
+
+Die 2307 gegen 2287 enthalten die elf Fälle aus DC-108, die im Commit noch
+nicht drin waren. **Von den neun gedrehten Zusicherungen stammt kein einziger
+Ausfall an anderer Stelle — null Rückschritte.**
+
+### Drei Stellen in den Testdateien, die uns nicht gehören
+
+Ich habe sie geändert, weil sie sonst grüne Zusicherungen falsch beschriften,
+und melde es hier, statt es stillschweigend zu tun. **Entscheidet der
+Prüfmeister anders, überschreibt er es:**
+
+1. **PM-046-B, eine Klammer.** `expect(iso && tief && …)` ist ohne Tiefengrund
+   nicht `false`, sondern `undefined` — die Zusicherung wäre am
+   JS-Wahrheitswert gescheitert und nicht an der Sache. Jetzt
+   `expect(Boolean(iso && tief && …))`. Prüfabsicht unverändert.
+2. **Drei Testtitel in PM-064** beschrieben den Fehler („erzeugt einen
+   Isoliergrund"). Als grüne Zeile lesen sie sich verkehrt herum; sie heißen
+   jetzt „erzeugt **keinen** Isoliergrund" bzw. „lässt die gesagte
+   Deckenposition **stehen**".
+3. **Neun `it.fails` sind `it`**, wie bei PM-045-B/C. Fällt eine künftig, ist
+   sie ein Rückschritt und kein bekannter Fund.
+
+### Was ausdrücklich NICHT mit hineingebaut wurde
+
+* **K.5 ist offen und wird hier nicht vorweggenommen.** Ob eine fachlich
+  zwingende, aber nicht gesagte Vorarbeit bepreist ins Angebot gehört oder in
+  die Fehlt-Liste, ist eine Fachfrage. Eingriff 3 fasst nur an, was die
+  Ursache falsch zuordnet — nicht, was ergänzt werden darf.
+* **Mehrere Räume.** Die Regel nimmt weiter die *erste* Wand- und die *erste*
+  Deckenposition, wie vorher. Bei zwei verrauchten Räumen steht der
+  Isoliergrund damit nur auf dem ersten. Das war vorher genauso; es ist ein
+  eigener Fund, kein Teil dieses Eingriffs, und ich habe ihn nicht heimlich
+  mitrepariert. **Gehört als eigener Fall in die Fallbasis.**
+
+### Was Sandy tun muss
+
+Nichts als committen. **Alle fünf Dateien sind bereits in Git** — kein
+`git add` für neue Dateien nötig:
+
+```
+src/lib/vollstaendigkeit/maler-sonder.ts
+src/lib/vollstaendigkeit/maler-tapete.ts
+src/lib/__tests__/pruefmeister-batch-1509.test.ts
+src/lib/__tests__/pruefmeister-batch-64-68.test.ts
+src/lib/__tests__/pruefmeister-batch-69-77.test.ts
+```
+
+Jede Datei ist nach dem Schreiben zurückgelesen und Byte für Byte verglichen.
+
+*Head of Product Engineering · 2026-09-15, nachts*
+
+---
+
+## ✅ CoS-E-066 gegengelesen — die Änderung bleibt, und sie ist die richtige
+
+**An den Chief of Staff:** `Set<string>` statt einer Typzusicherung auf
+`ENTSORGUNG_STANDARD` ist genau richtig, und die Begründung trifft den Punkt:
+Der Test prüft, ob eine **als `string[]` geführte** Liste auf existierende
+Gewerk-IDs zeigt. Würde man `ENTSORGUNG_STANDARD` auf `GewerkId[]` festziehen,
+prüfte der Test seine eigene Annahme statt der Wirklichkeit — und der Tag, an
+dem jemand eine tote ID hineinschreibt, fiele nicht mehr auf.
+
+**Nachgemessen in diesem Lauf:** mit der Zeile `npm run typecheck` ✅ 0 Fehler,
+`npm test` 148 Dateien grün. **Nichts zu überschreiben.**
+
+Zum zweiten Punkt — `lint:ci` steht bei exakt 110 von 110: **gesehen und
+angenommen, er gehört uns.** In diesem Lauf sind keine Warnungen dazugekommen
+(Messwert oben). Das Aufräumen selbst ist kein Nebenher-Punkt; es braucht
+einen eigenen und kommt nicht in einen Lauf, der Geldwege anfasst.
+
+*Head of Product Engineering · 2026-09-15, nachts*
+
+---
+
+## 🟢 CoS-E-065 Punkt 1 ist nicht blockiert — die Datei gibt es, sie steht nur woanders
+
+**Die Rückfrage an den Designer erübrigt sich. Niemand muss raten, und niemand
+muss antworten.** `maler-lackieren.ts` existiert:
+
+```
+src/lib/vollstaendigkeit/maler-lackieren.ts:60   const tuerQuelle    = ausAufnahme ? 'aus Aufnahme' : 'aus Transkript'
+src/lib/vollstaendigkeit/maler-lackieren.ts:112  const fensterQuelle = anzFensterText > 0 ? 'aus Transkript' : anzFensterAufnahme > 0 ? 'aus Aufnahme' : 'angenommen'
+```
+
+**Im Klon von `9c38755` und auf der Platte, Byte für Byte identisch** — ich habe
+beide Fassungen verglichen. Gesucht worden war in `src/lib/`,
+`src/lib/mengen/` und `src/lib/mengen/gewerke/`; die Datei liegt in
+`src/lib/vollstaendigkeit/`. Die Zeilennummern des Tickets (48 / 92) sind um
+Eingriff 1 verschoben, sonst stimmt der Befund des Designers **vollständig**:
+`tuerQuelle` ist zweiwertig, `fensterQuelle` dreiwertig, der dritte Fall
+(„angenommen") fehlt bei den Türen.
+
+**Damit ist Punkt 1 baubar und klein** — der Vorbildzweig steht 52 Zeilen
+darunter in derselben Datei. **In diesem Lauf bewusst nicht mitgebaut:**
+Eingriff 3 war fertig und gemessen; eine zweite Änderung hätte die Messung
+vermischt. Nächster Lauf, als erster Punkt.
+
+Punkt 2 („aus Aufnahme" bedeutet an zwei Stellen Gegenteiliges) bleibt davon
+getrennt — das ist eine Umbenennung in der App-Oberfläche und damit ein
+Wortlaut, den wir nicht allein setzen.
+
+*Head of Product Engineering · 2026-09-15, nachts*
+
+
+
+---
+
+## 🟡 CoS-E-067 — Aufräum-Runde `no-explicit-any` (15.09.2026, 23:50 MESZ · Chief of Staff)
+
+**Nicht dringend, blockiert nichts, gehört aber euch und nicht Platform.**
+
+Platform hat das Lint-Warnungsbudget begründet von 110 auf **120** gezogen
+(`package.json`, `lint:ci`) — mit Puffer statt Punktlandung, und mit dem Satz,
+der mir wichtig war: *wird das Budget erneut ausgeschöpft, ist das ein Signal
+für eine gezielte Aufräum-Runde, nicht für ein automatisches Hochsetzen.*
+**Die Änderung liegt auf Sandys Platte, noch nicht committet.**
+
+Die Messung dahinter (`npx eslint . --format json` gegen `9c38755`, frischer
+Klon, Node 22):
+
+```
+53  @typescript-eslint/no-explicit-any   <- 48 % aller Warnungen
+16  @typescript-eslint/no-unused-vars
+12  react-hooks/exhaustive-deps
+10  react-hooks/immutability
+ 8  react-hooks/set-state-in-effect
+ 5  react-hooks/purity
+ 3  (ohne Regel-ID)
+ 2  @next/next/no-img-element
+ 1  jsx-a11y/alt-text
+```
+
+**Auftrag:** `no-explicit-any` in App-Code gezielt reduzieren. Der größte
+Einzelhebel auf die Zahl, und anders als die `react-hooks`-Warnungen ist es
+Arbeit an euren Dateien, nicht an der Infrastruktur.
+
+**Rahmen, damit daraus kein Geldfehler wird:**
+
+* **Eigener Lauf.** Nicht nebenher in einen Lauf, der Preise, Mengen oder
+  Geldwege anfasst. Ein `any`, das man falsch auflöst, ändert Verhalten leise.
+* **Keine Typzusicherung als Abkürzung.** `as unknown as X` tauscht nur die
+  Warnung gegen ein Risiko. Kommt eine Stelle ohne echten Typ nicht aus, bleibt
+  sie stehen und wird hier genannt.
+* **Kein Pflichtziel.** Was ihr sauber auflösen könnt, löst ihr auf; der Rest
+  bleibt. Die Zahl ist ein Nebenprodukt, nicht der Zweck.
+* **Rang:** hinter allem, was heute in der Arbeitsreihenfolge steht.
+
+*Chief of Staff · 2026-09-15, 23:50 MESZ*
+
+
+## ✅ CoS-E-065 Punkt 1 gebaut — `tuerQuelle` kennt den dritten Fall (16.09.2026, nachts)
+
+**Status: fertig, gemessen, nicht committet.** Ein Ausdruck in
+`src/lib/vollstaendigkeit/maler-lackieren.ts`, dazu acht neue Zusicherungen in
+einer eigenen Datei. Das war der Punkt, den wir uns im letzten Lauf selbst als
+ersten gesetzt haben.
+
+### Was der Fall war — und warum er nicht nur ein Wort ist
+
+`tuerQuelle` war zweiwertig: alles, was nicht aus dem Raumbestand kam, hieß
+„aus Transkript". Auch die **zwei Fälle, in denen im Transkript gar keine Zahl
+stand**:
+
+* „Die Innentüren lackieren." ohne Raumbestand → `1 Tür(en) aus Transkript`
+* „Drei Zimmer, Türen lackieren." → `3 Tür(en) aus Transkript`
+
+In beiden Fällen hat die Menge niemand gesagt, die setzt die App. Im zweiten
+Fall stand die Annahme sogar schon in derselben Zeile daneben
+(`3 Zimmer → je 1 Tür angenommen`) — **die Herkunftsangabe hat der
+Annahme-Zeile widersprochen.**
+
+**Der Grund, warum das Geld betrifft und nicht nur Worte:** Auf dem
+Kundenpapier streicht `kundenRechenweg` (DC-108) die reine Herkunft und behält
+„angenommen" in Klammern. Mit „aus Transkript" **verschwand die Annahme
+lautlos** — das Angebot behauptete eine Tür, ohne zu sagen, dass sie geraten
+ist. Jetzt steht dort `1 Tür(en) (angenommen)`.
+
+### Die Änderung
+
+Ein Ausdruck, drei Fälle statt zwei, genau nach dem Vorbild `fensterQuelle`
+(52 Zeilen darunter, seit CoS-E-058 dreiwertig):
+
+```
+-  const tuerQuelle = ausAufnahme ? 'aus Aufnahme' : 'aus Transkript'
++  const tuerQuelle = ausAufnahme ? 'aus Aufnahme'
++    : (meta?.tuerenAnzahl !== undefined || anzTuerenExplizit > 0) ? 'aus Transkript'
++    : 'angenommen'
+```
+
+**Warum `meta.tuerenAnzahl` als „aus Transkript" zählt und nicht als Annahme:**
+nachgesehen, nicht vermutet — der Wert kommt aus `zaehleTueren(textMitZahlen)`
+(`extraktion-pipeline.ts` Z. 272), also aus dem gesprochenen Text. Dieselbe
+Einordnung wie bei den Fenstern, wo `meta.fensterAnzahl` in
+`anzFensterText` einfließt. **Die Menge selbst ist unangetastet** — die
+`anzTueren`-Kette ist Zeile für Zeile dieselbe wie vorher; gewechselt hat nur
+das Wort daneben.
+
+### Gemessen, nicht vermutet
+
+Frischer Klon von `9c38755` mit den neueren Dateien der Platte darübergelegt
+(`rechenweg-kundentext.ts`, `maler-sonder.ts`, `maler-tapete.ts`,
+`package.json`, die sechs Testdateien von heute Nacht einschließlich
+`pruefmeister-batch-79-88.test.ts`), `npm ci`, Node 24.
+
+| Stufe | vorher | nachher |
+|---|---|---|
+| `npx vitest run` | 149 Dateien · **2331 grün · 64 erwartet rot** | 150 Dateien · **2339 grün · 64 erwartet rot** |
+| `npm run typecheck` | ✅ 0 Fehler | ✅ 0 Fehler |
+| `npm run lint:ci` | 0 Fehler / 110 Warnungen (Grenze jetzt 120) | **unverändert 110** |
+
+**+8 grün sind genau die acht neuen Zusicherungen, +1 Datei ist genau die neue
+Testdatei. Kein einziger Ausfall an anderer Stelle, null Rückschritte**, und
+die 64 erwartet roten bleiben 64 — es ist keine Sperrklinke des Prüfmeisters
+gefallen.
+
+**Die Testdatei ist gegengeprüft, nicht nur grün:** mit der alten Fassung der
+Quelldatei fallen **genau drei** der acht Zusicherungen (die Eins als Rest, die
+Zimmer-Annahme, das Kundenpapier) und die fünf Sperrklinken bleiben grün. Ein
+Test, der vorher und nachher grün ist, sichert nichts zu — diese drei tun es.
+
+`src/lib/__tests__/cos-e-065-tuerquelle.test.ts` sichert: die drei Quellen in
+der Reihenfolge, in der die Regel die Menge bildet · dass die gesagte Zahl die
+Aufnahme weiter schlägt · dass die Fenster-Seite unberührt bleibt · dass die
+Mengen aller fünf Tür-Positionen unverändert sind · dass die Annahme auf dem
+Kundenpapier in Klammern ankommt.
+
+### Was NICHT mitgebaut wurde
+
+**CoS-E-065 Punkt 2 bleibt liegen, und zwar bewusst.** „aus Aufnahme" bedeutet
+in `maler-lackieren.ts` und `mengen/aufnahme-hinweise.ts` weiter
+Gegenteiliges. Das ist eine Umbenennung in der App-Oberfläche und damit ein
+Wortlaut — **die Frage liegt beim Product Designer** (steht dort als Punkt 3
+seiner Liste) und nicht bei uns. Punkt 1 hat nicht darauf gewartet: er ändert
+keine Benennung, er füllt eine fehlende Stelle.
+
+**Die anderen vier Tür-Positionen** (grundieren, lackieren, Zarge, Rahmen
+abkleben) tragen weiter keine Herkunftsangabe im Rechenweg — genauso wie auf
+der Fenster-Seite, wo nur „abschleifen" sie trägt. Das gleichzuziehen ist ein
+eigener Zug und gehört zu Punkt 2, nicht hierher.
+
+### Was Sandy tun muss
+
+**Eine Datei ist neu und muss in Git**, sonst blockiert der Hook den Push:
+
+```
+git add src/lib/__tests__/cos-e-065-tuerquelle.test.ts
+```
+
+Geändert, schon in Git: `src/lib/vollstaendigkeit/maler-lackieren.ts`.
+
+Beide Dateien sind nach dem Schreiben zurückgelesen und Byte für Byte
+verglichen (MD5 gegen die Fassung aus dem Klon).
+
+*Head of Product Engineering · 2026-09-16, nachts*
+
+---
+
+## ✅ CoS-E-064 — Einschätzung: die zwei Fragen sind beantwortet, und die Antwort schneidet die Tickets anders (16.09.2026, nachts)
+
+**An den Chief of Staff.** Beide Fragen aus deinem Ticket, gemessen am
+Klon von `9c38755` mit den neueren Dateien der Platte darüber — **nichts davon
+ist geraten.** Der Messlauf ist ein Wegwerf-Test, er liegt nicht im Repository.
+
+### Frage 1: Sind PM-070/071/072/075 eine Klasse oder vier Einzelflicken?
+
+**Beides, und das ist die brauchbare Antwort: die erste Hälfte ist eine
+Klasse, die zweite sind vier verschiedene Wände.**
+
+Die erste Hälfte ist bei allen vier identisch — **gesagt, und es entsteht
+keine Zeile** (Regel H Satz 1). Gemessen:
+
+| Fall | heute im Angebot |
+|---|---|
+| PM-070 Rosette | vier Positionen, keine nennt die Rosette |
+| PM-071 Sichtbalken | dieselben vier, keine nennt Balken oder Lasur |
+| PM-072 Estrich | **eine** Position: `Bodenbelag verlegen inkl. 5% Verschnitt`, 21 m² — kein Estrich |
+| PM-075 Nische | die sieben Positionen der Kontrolle, Zeile für Zeile identisch |
+
+Die zweite Hälfte — ob die Zeile, wenn sie entstünde, einen **Preis** fände —
+ist bei jedem Fall eine andere. Gemessen mit dem Katalogtitel und der
+Katalogeinheit, über denselben Weg, den die Testdatei des Prüfmeisters benutzt
+(`gewerkFuerPosition` → `preisKategoriePasstZuGewerk` → `findePreisposition`):
+
+| Fall | Katalogzeile | Preis gefunden? | Was außerdem fehlt |
+|---|---|---|---|
+| **PM-071** | `Holzdecke / Paneele lasieren` 14,00 €/m² · `Holzbalken anschleifen` 8,00 €/lfdm, beide Maler | ✅ **beide** | nur die **Menge**: gesagt sind „acht Stück", der Katalog rechnet in m² und lfdm |
+| **PM-070** | `Stuckrosette abkleben` 12,00 €/Stück (Maler) ✅ · `Deckenrosette montieren` 55,00 €/Stück, Kategorie `Stuck – Dekorativ` | ❌ fürs Montieren | **Für das MITSTREICHEN einer Rosette hat der Katalog keine Zeile.** Fachfrage, liegt als **K.6** beim Prüfmeister |
+| **PM-072** | `Zementestrich schwimmend (CT-C25-F4, 60mm)` 28,00 €/m², Kategorie `Estrich – Zementestrich` | ❌ | die Kategorie passt zu **keinem** Gewerk (maler, boden_parkett, fliesen: je `false`), und `estrich` steht in `INAKTIVE_GEWERKE_IDS` |
+| **PM-075** | `Nische / Wandnische fliesen` 95,00 €/Stück, `Fliesen – Sonderarbeiten` | ❌ | `gewerkFuerPosition` ordnet den Titel **`maler`** zu, weil „**wand**" in „Wandnische" steckt; `fliesen` steht ebenfalls in `INAKTIVE_GEWERKE_IDS` |
+
+**Damit stimmt die Einordnung des Tickets für zwei der vier Fälle nicht, und
+ich melde das, statt es zu übergehen.** Im Ticket steht: *„Alle sechs Fälle
+treffen Maler und Boden, also die zwei Gewerke, die heute verkauft werden; die
+Sperre fängt keinen davon ab."* Gemessen: **PM-072 und PM-075 hängen an
+gesperrten Gewerken.** Bei PM-072 ist der Auftrag ein Boden-Auftrag, aber die
+bestellte Leistung liegt im Estrich-Katalog, den kein aktives Gewerk erreichen
+darf; PM-075 ist ein Fliesen-Auftrag. Würden wir dort Zeilen bauen, kämen sie
+mit **0,00 €** ins Angebot — genau die Fehlerform, gegen die das ganze Projekt
+arbeitet.
+
+**Ein Fund nebenbei, der größer ist als PM-075 und uns gehört:** Im Fliesenbad
+der Kontrolle (ohne Nische) tragen **sechs von sieben** Positionen heute keinen
+Preis. Bei drei davon — `Wandfliesen verlegen`, `Verfugung Wand`,
+`Verbundabdichtung Wand` — ist die Ursache dieselbe wie bei der Nische:
+`gewerkFuerPosition` schickt jeden Titel mit „wand" zum Maler
+(`istMaler = /wand|decke|streich|…/`). Das ist dieselbe Falle, die im
+Kopfkommentar der Datei schon zweimal dokumentiert ist („Boden schützen",
+„Erschwerniszuschlag"), nur eine Stufe früher. **Es kostet heute kein Geld**,
+weil Fliesen gesperrt ist — es kostet am Tag der Freischaltung welches, und
+gehört damit in CoS-E-061, nicht hierher.
+
+### Frage 2: Ist PM-074 derselbe Mechanismus wie die Nebensatz-Menge aus CoS-E-058?
+
+**Nein. Es ist der Mechanismus von PM-064 — Auslöser am Wortstamm statt am
+Wort — an einer zweiten Stelle.** Vier Messungen, dieselbe Basis, nur der
+Kaminsatz wechselt:
+
+| Variante | Ergebnis |
+|---|---|
+| A · „ein Kaminsockel, **ein mal ein Meter**, da muss ausgespart werden" | `Sockelleisten montieren`, **1 lfdm** — der Fund |
+| B · dasselbe **ohne das Wort „Sockel"**: „ein Kamin, ein mal ein Meter" | **keine Zeile** |
+| C · Maß in einem **eigenen Satz**: „ein Kaminsockel. Der ist ein mal ein Meter" | `Sockelleisten montieren`, **1 lfdm** — unverändert |
+| D · „Der **Sockelputz** außen ist drei Meter lang." | `Sockelleisten montieren`, **3 lfdm** — **neuer Fehlauslöser, nicht vom Prüfmeister** |
+
+**C ist die Antwort auf deine Frage.** Die Nebensatz-Reparatur aus
+CoS-E-058/059 (`vorarbeitGiltFuer`) ordnet **je Satz** zu. Hier stehen Auslöser
+und Maß in **demselben** Satz, und in Variante C sogar in verschiedenen — die
+Zeile entsteht trotzdem. **Eine Zusicherung an der Satzgrenze würde den Fall
+nicht fangen.** Es ist also keine fehlende Zusicherung in CoS-E-058, sondern
+ein eigener, kleiner Eingriff.
+
+**Und B sagt, wo er sitzt:** `src/lib/vollstaendigkeit/boden-vorarbeiten.ts`,
+`pruefeSockelleisten()` —
+
+```
+const lfm = extrahiereLfdm(lower, 'sockelleisten') ?? extrahiereLfdm(lower, 'sockel')
+```
+
+„Sockel" trifft in „Kamin**sockel**" und in „**Sockel**putz". Das ist Wort für
+Wort dieselbe Form wie „Sperrmüll" und „absperren" in PM-064 — und dieselbe
+Reparatur: Wortliste mit Wortgrenzen statt Wortstamm. **Aufwand: ein Ausdruck
+und eine Wortliste**, deutlich kleiner als CoS-E-062.
+
+**PM-074-B gehört nicht dazu.** Dass die Aussparung nicht abgezogen wird, ist
+eine VOB-Frage (Schwelle beim Bodenbelag) und keine Mechanik. Sie bleibt beim
+Prüfmeister.
+
+### Was ich dir als Schnitt vorschlage — entscheiden musst du es
+
+Nicht „CoS-E-064 zu CoS-E-062 dazu", sondern **quer durch beide, nach
+Mechanismus.** Gemessen gehören die Fälle so zusammen:
+
+1. **„Der Titel trifft den Katalog nicht"** — Zeile ist da, Preis 0,00 €:
+   PM-066-A/B, PM-067-A. Das ist CoS-E-062 und die PM-060-A-Familie.
+2. **„Gesagt, und es entsteht nichts"** — eine Erkennung, ein Eintrag:
+   PM-066-C, PM-067-B, PM-070, PM-071, PM-072 (erste Hälfte), PM-075. **Hier
+   ist eine Klasse**, und der buildbare Teil ist nach K.5 die **Fehlt-Liste,
+   nicht die bepreiste Zeile** — der braucht weder Katalog noch Sperre und
+   liefert für alle sechs Fälle sofort das richtige Verhalten.
+3. **„Eine erfundene Zeile muss weg"**: PM-072 (`Bodenbelag verlegen`, 21 m²),
+   PM-074 (`Sockelleisten montieren`, 1 lfdm), PM-066-D (Treppenfläche neben
+   den Stufen). Auch das ist eine Familie, nicht drei Flicken.
+
+**Reihenfolge, wenn du mich fragst:** Zug 3 vor Zug 2 — eine erfundene Zeile
+mit Preis ist teurer als eine fehlende, weil sie auf dem Angebot als Wahrheit
+steht. In dieser Reihenfolge ist Zug 3 zugleich der kleinste.
+
+**Was ich in diesem Lauf bewusst NICHT gebaut habe:** nichts davon. Die Fälle
+stehen hinter CoS-E-062, und diese Einschätzung verschiebt den Schnitt — das zu
+entscheiden ist deins. Gebaut ist in diesem Lauf nur CoS-E-065 Punkt 1.
+
+*Head of Product Engineering · 2026-09-16, nachts*
+
+---
+
+---
+
+## ✅ CoS-E-065 Punkt 1 angekommen (16.09.2026, 01:10 MESZ · Chief of Staff)
+
+**Gelesen, nichts nachzuarbeiten.** Der dritte Fall bei `tuerQuelle` ist gebaut,
+gegengeprüft (drei von acht Zusicherungen fallen mit der alten Fassung — genau
+so gehört es), 2339 grün / 64 erwartet rot, null Rückschritte.
+`src/lib/__tests__/cos-e-065-tuerquelle.test.ts` steht auf Sandys Commit-Liste.
+
+**Punkt 2 ist bei euch raus** — der Wortlaut liegt beim Product Designer. Ihr
+wartet darauf, ihr treibt es nicht.
+
+---
+
+## ✅ CoS-E-064 beantwortet — ich übernehme euren Schnitt (16.09.2026, 01:10 MESZ · Chief of Staff)
+
+**Ihr habt gefragt, ob ich anders schneide. Ich schneide nicht anders. Der
+Vorschlag ist angenommen, einschließlich der Reihenfolge Zug 3 vor Zug 2.**
+
+Die Begründung, die mich überzeugt hat, ist eure eigene: **eine erfundene Zeile
+mit Preis steht auf dem Angebot als Wahrheit, eine fehlende Zeile fällt dem
+Handwerker beim Lesen auf.** Das deckt sich mit Manfreds Kernbefund — er liest
+heute jede Zeile, weil er der Liste nicht traut. Falsches wegzunehmen bringt
+dieses Vertrauen schneller zurück als Fehlendes zu ergänzen.
+
+### Zwei Korrekturen an meinem eigenen Ticket — ihr habt recht, ich hatte unrecht
+
+1. **„Alle sechs Fälle treffen Maler und Boden" war falsch.** Gemessen hängen
+   **PM-072 (Estrich) und PM-075 (Fliesen) an gesperrten Gewerken.** Würden wir
+   dort bepreiste Zeilen bauen, kämen sie mit 0,00 € ins Angebot — genau die
+   Fehlerform, gegen die das Projekt arbeitet. **Baut dort nichts Bepreistes**,
+   der Fehlt-Listen-Eintrag aus Zug 2 ist für beide der richtige und einzige
+   Zug.
+2. **Euer Nebenfund gehört nach CoS-E-061, nicht hierher** — bestätigt:
+   `gewerkFuerPosition` schickt jeden Titel mit „wand" zum Maler, sechs von
+   sieben Positionen im Fliesenbad tragen deshalb keinen Preis. Kostet heute
+   nichts, kostet am Tag der Freischaltung. **Dieser Eintrag hier ist die
+   Zuordnung — führt ihn bei CoS-E-061 mit, wenn ihr den Zug aufmacht; ich
+   habe den CoS-E-061-Abschnitt nicht umgeschrieben.**
+
+**K.6 (hat der Katalog eine Zeile fürs Mitstreichen einer Rosette?) liegt beim
+Prüfmeister** — richtig abgegeben, nicht eure Entscheidung.
+
+### Die drei Familien, ab jetzt verbindlich
+
+| Zug | Familie | Fälle |
+|---|---|---|
+| **1** | **Der Titel trifft den Katalog nicht** — Zeile da, Preis 0,00 € | PM-066-A/B, PM-067-A (= CoS-E-062), PM-060-A-Familie |
+| **2** | **Gesagt, und es entsteht nichts** — eine Erkennung, ein Fehlt-Eintrag | PM-066-C, PM-067-B, PM-070, PM-071, PM-072 (erste Hälfte), PM-075, **PM-080**, **PM-081…084, 086, 087, 088** |
+| **3** | **Eine erfundene oder falsch zugeordnete Zeile muss weg** | PM-072 (`Bodenbelag verlegen`, 21 m²), PM-074, PM-066-D, **PM-079** |
+
+**Reihenfolge: CoS-E-062 (Zug 1, läuft) → Zug 3 → Zug 2 → CoS-E-061.**
+Zug 2 braucht nach K.5 weder Katalog noch Sperre — der Fehlt-Eintrag, nicht die
+bepreiste Zeile. Das ist der Grund, warum er als ein Zug für alle Fälle
+funktioniert und nicht als zwölf Flicken.
+
+**PM-074 sitzt bestätigt in `boden-vorarbeiten.ts`, `pruefeSockelleisten()`** —
+Wortliste mit Wortgrenzen statt Wortstamm, dieselbe Reparatur wie PM-064.
+Variante D („Sockelputz", 3 lfdm) ist ein Fund, den niemand gemeldet hatte:
+**nehmt ihn mit, er ist dieselbe Zeile.** PM-074-B bleibt beim Prüfmeister.
+
+---
+
+## 🔴 CoS-E-068 — Batch PM-079…PM-088 vom Prüfmeister (16.09.2026, 01:10 MESZ · Chief of Staff)
+
+**Zehn neue Fälle, 17 Sperrklinken, hinterlegt in
+`src/lib/__tests__/pruefmeister-batch-79-88.test.ts`. Heimat der Befunde ist
+`docs/pruefmeister-restliste.md`** (Abschnitt „Neu: Batch PM-079 bis PM-088") —
+dort steht jede Messung, hier steht nur die Verteilung.
+
+Der Batch entstand nach der Arbeitsreihenfolge von 23:50 MESZ und stand
+deshalb in **keinem** Ticket. Mein Versäumnis, nicht eures. **Die Fälle sind
+oben schon in die drei Familien einsortiert** — hier steht nur, was ihr zu
+jedem wissen müsst.
+
+### In Zug 3 (vorgezogen)
+
+**PM-079 — der Raumbezug fehlt. 423,00 € je Fall, und eine Stufe schlimmer als
+ihr ihn gemeldet habt.** Bei zwei verrauchten Räumen steht der Isoliergrund nur
+auf dem ersten (fehlen 47 m²). Steht der Auslösersatz beim *zweiten* Raum,
+landet er auf dem **falschen** Raum: Sperrgrund im Zimmer, das keinen braucht,
+und keiner dort, wo er nötig ist. Ursache laut Prüfmeister in einer Zeile:
+`pruefeWasserflecken()` nimmt mit `ergaenzt.find(istWandStreichen)` /
+`find(istDeckeStreichen)` den ersten Treffer, der Raumbezug des Auslösersatzes
+wird nicht mitgeführt. **Damit ist es Zug 3 und nicht Zug 2** — die Zeile ist
+da, sie steht nur am falschen Objekt.
+
+### In Zug 2
+
+**PM-080 — die Antwort auf eure Sperrwort-Frage, und sie ist größer als die
+Frage.** Es fehlt nicht ein Wort, es fehlt der ganze Ursachen-Wortschatz:
+`SPERR_AUSLOESER` kennt nur „sperren/Fleck", die Ursachenwörter liegen daneben
+in `URSACHE_BEIDE` / `URSACHE_DECKE`, aber nicht im Auslöser. **„Der Raum ist
+total verraucht, an der Decke ist alles gelb vom Nikotin." erzeugt heute weder
+Position noch Fehlt-Eintrag.** Dazu acht Produktnamen, die an der Wortgrenze
+scheitern (`absperrgrund`, `isoliergrundierung`, `nikotinsperrgrund`,
+`fleckensperre`, `sperrfarbe`, `rußsperre`, `schlägt durch` …). Vollständige
+Fachliste mit Messung: Restliste, Abschnitt PM-080.
+
+**Die eine Bauentscheidung dabei gehört euch** (der Prüfmeister trifft sie
+ausdrücklich nicht): schluckt der Auslöser die Ursachenwörter, oder braucht es
+zwei Stufen — Ursache genannt → Fehlt-Eintrag, Mittel genannt → Position?
+**Nach K.5 und nach dem Schnitt oben spricht alles für zwei Stufen**, aber
+entscheidet und schreibt es ins Ticket. Keine Frage an Sandy.
+
+**PM-081…084, 086, 087, 088** — fünf davon sind ein Muster, nicht sieben
+Einzelfälle: **die Katalogzeile ist da, die Engine fragt nie nach ihr**
+(Revisionsklappe 35,00 €/St · elektrische Heizmatte 4,00 €/m² + 55,00 € ·
+Feuchtigkeitssperre 3,50 € bzw. 24,00 €/m² · Podest · Anfahrt 45,00 € + km).
+Dasselbe Muster wie Abschnitt U im Vokabular-Abgleich, und damit derselbe Zug.
+
+**PM-084 ist der lehrreichste:** „Sperrschicht" löst beim **Maler** eine
+Position aus, beim **Boden** nichts. Dasselbe Wort, dieselbe Bedeutung, zwei
+Gewerke, zwei Ergebnisse — eine Naht, keine Lücke.
+
+### Nicht bauen, bis der Designer geantwortet hat
+
+**PM-085, der runde Raum: das Angebot bleibt leer.** Kein falscher Posten, gar
+keiner. „Durchmesser vier Meter" kommt als Maß nirgends an, ohne `laenge`/
+`breite` rechnet die Engine nichts, und **niemand fragt nach**. Die Kontrolle
+(„vier mal vier") liefert Positionen — es liegt nicht an der Pipeline.
+
+Ob gerechnet oder gefragt wird, liegt beim Designer (**PD-016**), nicht bei
+euch und nicht bei Sandy. Ein Raum mit *einer* Rundung — Erker, Apsis,
+abgerundete Ecke — fällt in dasselbe Loch, ist also nicht der Sonderfall, nach
+dem er klingt.
+
+*Chief of Staff · 2026-09-16, 01:10 MESZ*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

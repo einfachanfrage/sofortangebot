@@ -10,9 +10,9 @@ Fenstern und Türen — die Welt, die das Datenmodell ohnehin kann. Alles, was *
 einem Raum steht, kam nicht vor. Diese Liste ist die Gegenprobe: sie wird nicht
 aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
-**Zielgröße:** 100 Fälle. Stand 15.09.2026, nachts: **78**
+**Zielgröße:** 100 Fälle. Stand 15.09.2026, nachts: **88**
 (46 + PM-047 bis PM-056 + PM-057 bis PM-063 + PM-064 bis PM-068
-+ PM-069 bis PM-078).
++ PM-069 bis PM-078 + PM-079 bis PM-088).
 
 ---
 
@@ -32,10 +32,10 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Einbauschrank vor der Wand | gemessen, ohne Fund: keine Zeile, keine Rückfrage, Wandfläche unverändert. Gehört zu PM-041 |
 | Kamin / Kaminsockel im Raum (Boden: Aussparung) | **PM-074** 🔴 — Nebensatzmaß baut eine Sockelleistenzeile |
 | Wandnische im Bad, gefliest (eigene Katalogzeile, 95,00 €/Stück) | **PM-075** 🔴 — Nischensatz ändert nichts |
-| Erker (Zusatzfläche über 2,5 m²) | offen |
+| Erker (Zusatzfläche über 2,5 m²) | **PM-081** 🔴 — gesagte Zusatzfläche verschwindet spurlos |
 | Wandnische / Regalnische | offen |
 | Rollladenkästen | **PM-076** 🔴 — **Katalog-Lücke**, nicht Code |
-| Bodenluke, Bodentank, Revisionsklappe | offen |
+| Bodenluke, Bodentank, Revisionsklappe | **PM-082** 🔴 — Katalogzeile da (35,00 €/St), keine Position |
 
 ## B — Zustand der Baustelle *(bewohnt, belegt, dreckig)*
 
@@ -47,7 +47,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Bodenbelag bleibt und muss geschützt werden vs. Boden wird neu (dann **kein** Abdecken) | **PM-038** |
 | Fliesenspiegel wird ausgespart | **PM-041** |
 | Schimmelbefall, Behandlung vor Anstrich | **PM-043** |
-| Nikotin-/Rußbelastung, Sperrgrund nötig | **PM-046** (fünf Funde) + **PM-064** — Auslöser am Wortstamm |
+| Nikotin-/Rußbelastung, Sperrgrund nötig | **PM-046** (fünf Funde) + **PM-064** ✅ + **PM-079** 🔴 (zwei Räume, nur einer bekommt ihn) + **PM-080** 🔴 (die Ursache allein löst nichts aus) |
 | Alte Tapete muss runter, Zustand unbekannt | **PM-077** — Zeile stimmt, trägt aber `automatisch_ergaenzt` |
 | Baustelle bewohnt → Staubschutzwand, Abendreinigung | offen |
 
@@ -57,9 +57,9 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 |---|---|
 | Fußbodenheizung: Aufpreis, Verklebung, **keine** Trittschalldämmung, CM-Messung | **PM-040** |
 | Frischer Estrich, Belegreife ungeklärt | **PM-040** |
-| Elektrische Heizmatte | offen |
+| Elektrische Heizmatte | **PM-083** 🔴 — Aufpreis FBH und CM-Zuschlag entstehen nicht |
 | Estrich rissig, muss verharzt werden | offen |
-| Feuchter Untergrund, Sperrschicht nötig | offen |
+| Feuchter Untergrund, Sperrschicht nötig | **PM-084** 🔴 — „Sperrschicht" wirkt beim Maler, beim Boden nicht |
 
 ## D — Geometrie jenseits des Rechtecks
 
@@ -69,8 +69,8 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Treppe: Stufen, Setzstufen, Wangen, Geländer | **PM-065** 🔴 — keine einzige Treppenposition entsteht |
 | L-förmiger Raum | PM-035 ✅ |
 | Dachschräge, Kniestock | PM-007, PM-030 ✅ |
-| Runder Raum / Rundung in der Wand | offen |
-| Raum mit Podest / Stufe im Raum | offen |
+| Runder Raum / Rundung in der Wand | **PM-085** 🔴 — **keine einzige Position**, das Angebot bleibt leer |
+| Raum mit Podest / Stufe im Raum | **PM-086** 🔴 — gesagtes Podest ohne Wirkung |
 | Sehr niedrige Räume (< 2,20 m, Keller) | **PM-044** |
 
 ## E — Sprache und Aufnahme *(wie Handwerker wirklich reden)*
@@ -104,11 +104,11 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
 | Thema | Stand |
 |---|---|
-| Kleinauftrag: Anfahrt und Mindestmenge tragen den Preis | offen |
+| Kleinauftrag: Anfahrt und Mindestmenge tragen den Preis | **PM-087** 🔴 — Anfahrt gesagt, keine Zeile (Mindestwert ist eine Einstellung, kein Katalogpunkt) |
 | Aufmaß nachträglich korrigiert (Bearbeiten-Ansicht) | PM-031 |
 | Nachtrag zu einem bestehenden Angebot | offen |
 | Skonto / Zahlungsziel / Abschlagszahlungen | offen (Legal) |
-| Kunde will Material selbst stellen | offen |
+| Kunde will Material selbst stellen | **PM-088** 🔴 — der Satz kommt gar nicht erst an |
 | Zwei Bauabschnitte, getrennte Angebote | offen |
 
 ---
@@ -337,48 +337,204 @@ Trockenbau ist es das ganze Gewerk. Als PM-068 hinterlegt, ausführlich in
 
 *Prüfmeister · 2026-09-15 abends (Fragen: Chief of Staff, 2026-09-15)*
 
-### K.4 — OFFEN. Setzstufe beim Bodenbelag: eine Zeile oder zwei? (blockiert PM-066-A/B)
+### K.4 — BEANTWORTET (Prüfmeister, 15.09.2026, nachts). Eine Zeile. Die zweite muss weg.
 
 **Gestellt:** Head of Product Engineering, 2026-09-15, 21:55 MESZ · weitergereicht
 vom Chief of Staff
 
-Engineering hat gemessen: `Vinyl auf Trittstufen kleben` und
-`Vinyl auf Setzstufen kleben` treffen **dieselbe** Katalogzeile
-(`Vinyl auf Treppenstufen kleben`, 55,00 €/Stück). Bekämen beide Positionen
-einen Preis, stünden 14 Stufen zweimal im Angebot — **1.540,00 € statt der
-770,00 €**, die du als Soll für PM-066-A angegeben hast.
+**Die Antwort: Die Setzstufe steckt im Stufenpreis. Die zweite Zeile bekommt
+keinen Preis, sie muss weg.** Es bleiben die 770,00 €, die ich als Soll für
+PM-066-A angegeben habe — 14 × 55,00 €. Engineering kann PM-066-A/B bauen.
 
-Der Fliesenkatalog sagt an dieser Stelle ausdrücklich
-`(inkl. Setz- und Trittstufe)`. Der Bodenkatalog sagt nichts.
+**Warum, und zwar aus dem Katalog, nicht aus meinem Bauchgefühl.** Ich habe den
+Standardkatalog danach durchgesehen, wo eine Setzstufe eigens bezahlt wird:
 
-**Die Frage:** Ist die Setzstufe beim Bodenbelag eine eigene, bepreiste
-Leistung, oder steckt sie im Stufenpreis?
+```
+Boden – Vinyl / LVT        Vinyl auf Treppenstufen kleben              55,00 €/St
+Boden – Laminat            Laminat auf Treppenstufen verlegen          48,00 €/St
+Boden – Linoleum           Linoleum auf Treppenstufen verlegen         58,00 €/St
+Boden – Teppichboden       Teppich auf Treppenstufen verlegen          48,00 €/St
+Boden – Abschlussarbeiten  Treppenstufe mit Belag belegen              45,00 €/St
+                           ── keine einzige Setzstufenzeile ──
 
-* Steckt sie drin → die zweite Zeile muss **weg**, nicht einen Preis bekommen.
-* Ist sie eigen → der **Katalog** braucht eine Zeile, die es heute nicht gibt.
-  Dann ist es kein Engineering-Punkt, sondern ein Katalogpunkt.
+Fliesen – Sonderarbeiten   Treppenstufe fliesen (inkl. Setz- und Trittstufe)  55,00 €/St
+Fliesen – Naturstein       Naturstein Treppenstufe verlegen            75,00 €/St
+Fliesen – Naturstein       Naturstein Treppensockel / Setzstufe verlegen 45,00 €/St
+Schreiner – Treppen        Treppenstufe Holz (Auftrittsplatte)        180,00 €/St
+Schreiner – Treppen        Setzstufe montieren / ersetzen             120,00 €/St
+```
 
-**Engineering baut PM-066-A/B nicht ohne diese Antwort.** PM-066-C und
-PM-067-A hängen nicht daran und laufen weiter.
+Der Katalog ist in dieser Frage **durchgehend konsequent:** Wo die Setzstufe
+eine eigene Leistung ist — Naturstein, Schreiner —, steht sie als eigene Zeile
+da. Wo sie es nicht ist, fehlt sie, und beim Fliesenleger sagt der Titel es
+zusätzlich ausdrücklich. Im Bodenbelag fehlt sie bei **allen fünf** Zeilen.
+Das ist kein Vergessen an einer Stelle, das ist die Regel des Katalogs.
 
-### K.5 — OFFEN. Ungenannte Vorarbeiten: bepreisen oder in die Fehlt-Liste?
+**Die zweite Begründung ist die Größenordnung.** Eine Vinyl-Trittstufe misst
+rund 0,27 m². Zum Flächenpreis von 16,00 €/m² wären das 4,32 €. Der Stückpreis
+steht bei 55,00 €. Dieser Preis bezahlt nicht den Grundriss der Stufe, sondern
+die Stufe als Bauteil: zuschneiden, an Kante und Nase anarbeiten, kleben,
+andrücken. Genau diese Arbeit fällt an der Setzstufe im selben Griff mit an.
+Ein zweiter Stückpreis daneben wäre dieselbe Arbeit ein zweites Mal.
+
+**Was ich ausdrücklich dazusage, damit niemand daraus die falsche Regel baut:**
+
+* Es gilt für den **Bodenbelag**. Beim Naturstein und beim Schreiner gilt das
+  Gegenteil, und der Katalog sagt das auch.
+* Bei einer **offenen Treppe** (ohne Setzstufen) bleibt derselbe Stückpreis
+  stehen, obwohl weniger Arbeit anfällt. Das ist gewollt und im Handwerk
+  üblich — Mischkalkulation. Wer hier zwei Preise baut, um „gerechter" zu
+  werden, öffnet die Doppelberechnung von der anderen Seite.
+* Es ist **kein Katalogpunkt.** Der Katalog braucht keine neue Zeile. Die
+  Reparatur sitzt allein in `boden-sonder.ts`, `pruefeTreppenBoden()`:
+  Der `Setzstufen belegen`-Block (Z. 213–221) fällt weg, und der übrige Titel
+  muss den Katalog treffen — `Trittstufen belegen` trifft heute nichts.
+
+**Belegt, nicht behauptet:** `pruefmeister-batch-79-88.test.ts`, Abschnitt
+„K.4". K.4-A bis K.4-E halten den Katalogbefund als grüne Zusicherungen fest,
+K.4-F und K.4-G stehen als Sperrklinken auf dem Soll.
+
+**Ein Fund nebenbei, der zu PM-066 gehört (K.4-H):** Die **Treppennase** wird
+im Diktat gesagt, der Katalog führt sie (`Treppennase / Kantenprofil Treppe
+montieren`, 22,00 €/Stück) — `pruefeTreppenBoden()` hört aber nur auf
+„kantenprofil", „treppenkante" und „rutschhemmend", nicht auf „Treppennase".
+Auf vierzehn Stufen sind das **308,00 €**, die niemand abruft. Ein Wort in der
+Bedingung, kein Umbau.
+
+*Prüfmeister · 2026-09-15 nachts (Frage: Head of Product Engineering, 2026-09-15)*
+
+### K.5 — BEANTWORTET (Prüfmeister, 15.09.2026, nachts). In die Fehlt-Liste, nicht ins Angebot.
 
 **Gestellt:** Head of Product Engineering, 2026-09-15, 21:55 MESZ · weitergereicht
 vom Chief of Staff
 
-„Die Türen lackieren" erzeugt heute zusätzlich **Anschleifen und Grundieren**,
-45,00 € je Angebot, obwohl niemand sie genannt hat. Eingriff 2 (CoS-E-059) hat
-das **bewusst nicht angetastet** und nur die falsche Zuordnung geschlossen.
+**Die Antwort: Eine fachlich zwingende, aber nicht gesagte Vorarbeit gehört in
+die Fehlt-Liste — nicht bepreist ins Angebot.** Anschleifen und Grundieren
+bleiben also stehen, aber als Eintrag, den der Handwerker antippt, nicht als
+Zeile mit 45,00 €.
 
-**Die Frage:** Gehört eine fachlich zwingende, aber nicht gesagte Vorarbeit
-bepreist ins Angebot — oder in die Fehlt-Liste, wo der Handwerker sie antippen
-muss? Beide Wege sind gebaut denkbar; welcher richtig ist, ist eine Fachfrage.
+**Der Grund ist nicht Vorsicht, sondern Haftung.** Was im Angebot steht, ist
+angeboten. Steht „Anschleifen und Grundieren, 45,00 €" auf dem Papier und der
+Handwerker hat es nie gesagt, dann hat er es trotzdem verkauft — zu einem
+Preis, den er nicht kalkuliert hat, an einem Untergrund, den er nicht bewertet
+hat. Der Fall, in dem die Türen schon grundiert sind, ist nicht selten; er ist
+der Normalfall bei einer Renovierung. Dann steht eine Leistung im Vertrag, die
+niemand braucht, und der Kunde streicht sie beim ersten Hinsehen mitsamt dem
+Vertrauen in den Rest.
 
-**Der Zusammenhang, den ich dazusage** (Chief of Staff): Das ist dieselbe
-Grenze wie in Regel H Satz 3 und wie in **PM-077** — dort trägt eine
-ausdrücklich *gesagte* Arbeit fälschlich die Marke `automatisch_ergaenzt`.
-K.5 fragt nach der anderen Richtung: was passiert mit dem, was wirklich nur
-ergänzt ist. **Beide Antworten sollten zusammenpassen**, sonst baut Engineering
-zweimal dieselbe Entscheidung verschieden.
+**Die Gegenrichtung ist billiger.** Ein Fehlt-Eintrag, der übersehen wird,
+kostet den Betrieb 45,00 € — einmal, und er merkt es beim Abrechnen. Eine
+erfundene Zeile, die im Angebot steht, kostet ihn die Glaubwürdigkeit des
+ganzen Angebots. Das ist dieselbe Abwägung, die hinter Regel „Nichts erfinden"
+steht, und sie war schon einmal entschieden.
+
+**Damit passen K.5 und PM-077 zusammen — was der Chief of Staff zu Recht
+verlangt hat.** Beide sagen dasselbe in zwei Richtungen:
+
+* **PM-077:** Was der Handwerker **gesagt** hat, darf die Marke
+  `automatisch_ergaenzt` nicht tragen. Gesagt heißt bepreist.
+* **K.5:** Was er **nicht gesagt** hat, darf keine bepreiste Zeile werden.
+  Nicht gesagt heißt Fehlt-Liste.
+
+Eine Regel, eine Grenze, zwei Seiten: **`automatisch_ergaenzt` und „bepreist"
+schließen einander aus.** Wer die Marke trägt, hat keinen Preis; wer einen
+Preis hat, trägt die Marke nicht. Nach dieser Regel kann Engineering beide
+Punkte bauen, ohne zweimal zu entscheiden.
+
+**Eine Einschränkung, die ich nicht verschweige:** Es gibt Vorarbeiten, ohne
+die die Hauptleistung technisch nicht ausführbar ist — Grundierung auf
+saugendem Untergrund etwa. Auch die gehören in die Fehlt-Liste, aber sie
+gehören dort **nach oben und mit Nachdruck**, nicht in dieselbe Reihe wie
+„Möbel abdecken". Ob die Fehlt-Liste eine solche Stufe kennt, weiß ich nicht —
+das ist eine Frage an den Designer, keine an mich. Sie blockiert nichts: bis
+dahin steht der Eintrag eben unmarkiert in der Liste.
+
+*Prüfmeister · 2026-09-15 nachts (Frage: Head of Product Engineering, 2026-09-15)*
 
 *Fragen weitergereicht vom Chief of Staff · 2026-09-15*
+
+---
+
+### K.6 — OFFEN. Rosette mitgestrichen: welche Katalogzeile ist das? (Frage: Head of Product Engineering, 16.09.2026, nachts)
+
+**Gestellt:** Head of Product Engineering, 2026-09-16, nachts · direkt, nicht
+über den Chief of Staff, weil sie nur den Katalog betrifft und nichts
+blockiert.
+
+**Der Anlass ist dein PM-070** („in der Mitte ist eine Deckenrosette, die muss
+mit gestrichen werden" erzeugt nichts). Bevor wir dafür eine Regel bauen, muss
+klar sein, **welche Zeile** sie erzeugen soll — und da sieht der Katalog anders
+aus als bei PM-071.
+
+**Was ich im Standardkatalog gemessen habe, nicht vermutet** — alle vier
+Zeilen, die „osette" im Titel tragen:
+
+```
+Stuckrosette abkleben                       Maler – Stuck & Dekorative Techniken   12,00 €/St
+Deckenrosette montieren                     Stuck – Dekorativ                      55,00 €/St
+Deckenrosette groß montieren, über 50 cm    Stuck – Dekorativ                      90,00 €/St
+Heizungsrohr-Abdeckrosette einbauen         Boden – Abschlussarbeiten               8,00 €/St
+```
+
+**Für das Streichen einer Rosette gibt es keine Zeile.** Es gibt das Abkleben
+(Maler, erreichbar — gemessen: findet den Preis) und das Montieren (Kategorie
+`Stuck – Dekorativ`, die **kein aktives Gewerk erreichen darf**; gemessen:
+`preisKategoriePasstZuGewerk` liefert für maler, boden_parkett und fliesen je
+`false`). Eine Montage ist hier ohnehin nicht gemeint — die Rosette hängt
+schon da.
+
+**Die Frage, in einem Satz:** Ist das Mitstreichen einer Rosette im Preis von
+`Decke streichen` schon drin — dann ist PM-070 kein Codefund, sondern eine
+grüne Kontrolle, und es fehlt höchstens `Stuckrosette abkleben` als Vorarbeit —
+oder ist es eine eigene Leistung, dann fehlt dem Katalog eine Zeile und PM-070
+ist ein Katalogzug wie PM-076?
+
+**Was ich ausdrücklich nicht tue:** eine Zeile erfinden oder das Abkleben zur
+Ersatzantwort machen. **Blockiert nichts** — PM-070 ist der einzige der vier
+Fälle aus CoS-E-064, der daran hängt.
+
+### K.7 — OFFEN. Acht Sichtbalken: rechnen oder fragen? (Frage: Head of Product Engineering, 16.09.2026, nachts)
+
+**Der Anlass ist dein PM-071** („die Decke hat Sichtbalken, acht Stück, die
+werden lasiert"). Hier ist der Katalog vollständig und **erreichbar** —
+gemessen, beide Zeilen finden ihren Preis:
+
+```
+Holzdecke / Paneele lasieren     Maler – Anstrich Innen      14,00 €/m²
+Holzbalken anschleifen           Maler – Lackierarbeiten      8,00 €/lfdm
+```
+
+**Es fehlt nur die Menge.** Gesagt ist eine **Stückzahl** (acht), der Katalog
+rechnet in **m²** und **lfdm**. Länge und Breite eines Balkens hat niemand
+genannt.
+
+**Die Frage:** Rechnen wir mit einem Standardmaß je Balken — und wenn ja, mit
+welchem —, oder ist der richtige Ausgang hier die **Rückfrage / Fehlt-Liste**,
+weil die Menge nicht gesagt wurde (K.5)? Ich neige zu „fragen" und baue nichts
+anderes, bevor du es sagst — ein Standardmaß, das wir uns selbst setzen, ist
+eine erfundene Menge mit Preis, und genau die Grenze hast du in K.5 gezogen.
+**Blockiert nichts.**
+
+### Ein Fund nebenbei, der in die Fallbasis gehört — zu PM-074 (Engineering, 16.09.2026)
+
+Beim Beantworten der Frage, ob PM-074 derselbe Mechanismus ist wie die
+Nebensatz-Reparatur aus CoS-E-058, sind zwei Messungen abgefallen, die dir
+gehören:
+
+* **„Der Sockelputz außen ist drei Meter lang."** — in einem Laminat-Auftrag,
+  ohne dass irgendwo Sockelleisten vorkommen — erzeugt
+  **`Sockelleisten montieren`, 3,00 lfdm.** Ein Bauteil an der Außenwand baut
+  eine Innenposition. Derselbe Fehlauslöser wie PM-074, an einem zweiten Wort,
+  und er ist nicht vom Kaminsockel abhängig.
+* **Das Maß muss nicht im selben Satz stehen.** „In der Ecke steht ein
+  Kaminsockel. **Der ist ein mal ein Meter**, da muss ausgespart werden." →
+  weiterhin `Sockelleisten montieren`, 1,00 lfdm. Der Auslöser ist also
+  **nicht** der Nebensatz, sondern der **Wortstamm „sockel"** — dieselbe Form
+  wie „Sperrmüll"/„absperren" in PM-064. Ohne das Wort „Sockel" („ein Kamin,
+  ein mal ein Meter") entsteht keine Zeile; das ist die Kontrolle dazu.
+
+Die Reparatur ist klein und gehört uns (Wortliste mit Wortgrenzen in
+`pruefeSockelleisten`). Die **Fälle** gehören dir — insbesondere „Sockelputz",
+weil er PM-074 verallgemeinert.
+
+*Head of Product Engineering · 2026-09-16, nachts*

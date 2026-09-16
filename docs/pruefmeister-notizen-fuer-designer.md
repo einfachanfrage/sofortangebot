@@ -1401,3 +1401,66 @@ Hinterlegt als **PM-078 A/B** in
 Kontrolle, die bestätigt, dass dein Filter tut, was er soll.
 
 *Prüfmeister · 2026-09-15, nachts*
+
+---
+
+## PD-016 — Zwei Fragen aus dem Batch PM-079…088, die nur du entscheiden kannst
+
+Beide kommen aus gemessenen Fällen, beide sind keine Programmierfragen. Keine
+von beiden blockiert etwas — sie werden nur teurer, je später sie kommen.
+
+### 1. Der runde Raum: annehmen oder nachfragen? (PM-085)
+
+Gemessen, nicht vermutet:
+
+```
+„Der Raum ist rund, Durchmesser vier Meter, Höhe zwo fünfzig,
+ Wände und Decke streichen."
+
+Positionen im Angebot: 0
+```
+
+Kein falscher Posten — **gar keiner.** Die Kontrolle daneben fährt denselben
+Satz als „vier mal vier" und bekommt vier Positionen. Es liegt also nicht an
+der Pipeline, sondern daran, dass „Durchmesser" als Maß nirgends ankommt.
+Ohne `laenge` und `breite` rechnet die Engine nichts, und niemand fragt nach.
+Der Handwerker sieht ein leeres Angebot und erfährt nicht, warum.
+
+**Die Frage an dich:** Soll die App aus „Durchmesser vier Meter" rechnen
+(Wand = π × 4 m × 2,50 m = 31,42 m², Decke = π × 2² = 12,57 m²) — oder soll
+sie fragen?
+
+**Wofür ich argumentieren würde, und warum ich es trotzdem nicht entscheide:**
+Nach K.5 spricht mehr für die Rückfrage. Gesagt ist ein *Durchmesser*,
+gerechnet würde eine *Fläche*; dazwischen liegt die Annahme, dass der Raum ein
+sauberer Kreis ist. Das ist er selten. Ein Raum mit **einer** Rundung — Erker,
+Apsis, abgerundete Ecke — ist viel häufiger als ein runder Raum, und er fällt
+heute in dasselbe Loch. Was aber auf keinen Fall bleiben darf, ist das leere
+Angebot ohne ein Wort dazu.
+
+### 2. Kennt die Fehlt-Liste eine Dringlichkeit? (aus K.5)
+
+Ich habe K.5 so beantwortet: **Eine fachlich zwingende, aber nicht gesagte
+Vorarbeit gehört in die Fehlt-Liste, nicht bepreist ins Angebot.** Was im
+Angebot steht, ist angeboten — auch das, was niemand gesagt hat.
+
+Dabei ist mir aufgefallen, dass die Fehlt-Liste damit zwei sehr verschiedene
+Dinge trägt:
+
+* **„Möbel abdecken"** — wird er wahrscheinlich machen, kostet 20 €, wenn er
+  es übersieht.
+* **„Grundierung auf saugendem Untergrund"** — ohne das hält der Anstrich
+  nicht. Übersieht er das, ist nicht der Preis falsch, sondern die Arbeit.
+
+**Die Frage an dich:** Kennt die Fehlt-Liste eine solche Stufe — eine
+Markierung für „ohne das geht es technisch nicht"? Wenn nicht, ist das kein
+Blocker; der Eintrag steht dann eben unmarkiert in der Reihe. Ich schreibe es
+auf, weil der Unterschied auf der Baustelle groß ist und in der Liste heute
+keiner.
+
+Hinterlegt: PM-085 A/B/C in
+`src/lib/__tests__/pruefmeister-batch-79-88.test.ts`. Für die zweite Frage
+gibt es keinen Test — sie ist eine Gestaltungsfrage, und ein Test dafür würde
+etwas anderes prüfen als das, was er behauptet.
+
+*Prüfmeister · 2026-09-15, tief in der Nacht*

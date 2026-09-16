@@ -239,3 +239,42 @@ geplant. Bis das Konzept gebaut ist, würd ich den Schritt ehrlich beschriften:
 **„Marktpreise laden (du kannst sie jederzeit anpassen)"** als einzige Option,
 und die fünf Zahlen als **„Grunddaten: Stundensatz und Anfahrt"**. Dann
 verspricht der Schritt nichts, was er nicht hält.
+
+---
+
+## TN-148 – Tapezieren sind bei mir zwei verschiedene Sachen (Antwort auf die Vlies-Frage, 15.09.2026)
+
+Beides stimmt, und es passt zusammen, weil das bei mir zwei verschiedene Sachen
+sind – ich hab's nur beide Male „Tapezieren" genannt.
+
+**Gruppe 1 ist bei mir keine Tapete, das ist Malerware.** Raufaser, Malervlies,
+Glasfaser – das kauf ich, das liegt bei mir im Lager, der Kunde sieht nie einen
+Katalog. Das ist im Quadratmeterpreis drin, genau wie die Farbe. Wenn ich
+„Vlies tapezieren 18 €" sag, ist das Vlies dabei. Immer.
+
+**Gruppe 2 ist Kundentapete.** Da sitzt Frau Krüger mit dem Musterbuch, sucht
+drei Wochen, und am Ende kostet die Rolle 12 oder 90 Euro. Das steht bei mir
+als eigene Zeile: „Tapezieren Mustertapete, Arbeit pro m²" und darunter „Tapete
+laut Kundenwahl, 8 Rollen à …" – oder „Tapete wird vom Kunden gestellt". Immer
+extra. Nie im m²-Preis.
+
+Also: ja, die zwei Gruppen verhalten sich bei mir unterschiedlich, ohne
+Ausnahme.
+
+**Zum fünften Haken: nein.** Der Unterschied liegt nicht in dem, was ich
+anbiete, sondern in der Tapete selbst – und die steht ja in der Position drin.
+Wenn die App „Raufaser" oder „Malervlies" hört, weiß sie: Malerware, inkl. Wenn
+sie „Fototapete" oder „Mustertapete" hört, weiß sie: Kundentapete, extra. Das
+muss kein Handwerker einstellen, das ist einfach so, bei jedem Maler in
+Deutschland. Ein Haken „Tapezieren" reicht, und die Materialzeile darunter gilt
+nur für Gruppe 1 – „Malerware inkl. / extra", Standard inkl. Gruppe 2 ist fest
+extra, ohne Schalter.
+
+Wenn ihr's unbedingt sichtbar machen wollt, dann nicht als zweiten Haken,
+sondern als einen Satz unter dem Tapezieren-Haken: „Kundentapeten (Muster,
+Foto, Textil) rechnen wir immer getrennt ab." Dann weiß der Chef, was passiert,
+und muss nichts tun.
+
+*(Chief of Staff: verteilt als CoS-E-056 ✅ entschieden, DC-108 an den Designer,
+Gegenprobe der Zeilenzuordnung an den Prüfmeister — Vliestapete und
+Strukturtapete hat Manfred nicht einzeln genannt.)*

@@ -1497,4 +1497,52 @@ gegebenenfalls zu dir zurück:
 Committen.
 
 
+
+---
+
+## 🟡 Neu am 15.09.2026, 23:50 MESZ — eine Entscheidung und eine Kleinigkeit
+
+### 1. ENTSCHEIDUNG: Die „Abrechnung"-Karte in den Einstellungen (DC-109)
+
+**Worum es geht.** In den Einstellungen steht eine Karte „Abrechnung" mit drei
+Sätzen, die **nicht stimmen**: sie versprechen Rechnungen und
+Zahlungserinnerungen. Beides gibt es im Produkt nicht — du hast den
+Angebot/Rechnung-Reiter am 11.09. selbst rausgeworfen. Der Designer hat es beim
+Aufräumen des Onboarding-Textes gefunden und belegt, dass das dahinterliegende
+Feld (`abrechnungs_modus`) **im ganzen Produktcode nirgends ausgewertet wird**.
+
+Der Nutzer wählt dort also etwas aus, das nichts tut, und liest dazu ein
+Versprechen, das wir nicht halten. Genau die Stelle, an der ein Betrieb nach dem
+Onboarding **nachliest**.
+
+**Deine zwei Möglichkeiten:**
+
+| | Was passiert | Folge |
+|---|---|---|
+| **A — Karte raus** | Die Auswahl verschwindet ganz aus den Einstellungen | Ehrlichste Lösung. Eine Frage weniger beim Einrichten. Wenn ihr später doch Buchhaltungs-Anbindung baut, kommt sie neu dazu |
+| **B — Karte bleibt, Text wird wahr** | Der Designer ersetzt die drei Sätze durch fertige, ehrliche (Wortlaut liegt vor) | Die Auswahl bleibt sichtbar, tut aber weiterhin nichts. Du hast die Information, welche Buchhaltung ein Betrieb nutzt |
+
+**Meine Empfehlung: B.** Nicht weil der Text wichtiger wäre, sondern weil die
+Auswahl eine Information ist, die du später brauchst — welche Buchhaltung deine
+Betriebe nutzen, entscheidet mit, welche Schnittstelle sich zuerst lohnt. Sie
+kostet den Nutzer einen Tap und der Text lügt danach nicht mehr. **A ist nicht
+falsch** — wenn dir „ein Schalter, der nichts tut" grundsätzlich gegen den
+Strich geht, ist A die sauberere Linie, und es ist dieselbe Entscheidung, die du
+am 11.09. schon einmal so getroffen hast.
+
+**Antworte einfach mit „A" oder „B".** Blockiert nichts, die Sätze stehen seit
+Monaten so da — neu ist nur, dass jetzt belegt ist, dass sie nicht stimmen.
+
+### 2. Eine Kleinigkeit für dich am Rechner (CoS-P-013)
+
+Einmal **„Passwort vergessen"** mit einer echten Test-Adresse durchklicken, bis
+zum neuen Passwort. Der Code dafür ist repariert und im Repository, aber noch
+nie jemand hat den Weg mit einer echten Mail gegangen. Danach ist CoS-P-013
+komplett zu. **Zwei Minuten.**
+
+---
+
+*Chief of Staff · 2026-09-15, 23:50 MESZ*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

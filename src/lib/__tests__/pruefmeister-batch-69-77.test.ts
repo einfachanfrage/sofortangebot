@@ -379,7 +379,9 @@ describe('PM-077 — `automatisch_ergaenzt` an einer diktierten Arbeit', () => {
     expect(preis(p, /Tapete entfernen/, 'maler')).toBe(4)
   })
 
-  it.fails('🔴 PM-077-A · sie ist trotzdem als automatisch ergänzt markiert', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-077-A · die diktierte Arbeit trägt die Marke nicht mehr', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const zeile = finde(lauf('maler', GESAGT, mitTapete()), /Tapete entfernen/) as any
     expect(zeile.automatisch_ergaenzt, 'diktiert, nicht ergänzt').not.toBe(true)
@@ -416,21 +418,39 @@ describe('PM-078 — Arbeitsanweisungen im Rechenweg des Kundenpapiers', () => {
     expect(ANWEISUNG).toContain('bitte manuell ergänzen')
   })
 
-  it.fails('🔴 PM-078-A · „bitte manuell ergänzen" geht unverändert aufs Kundendokument', () => {
+  it('✅ PM-078-A · „bitte manuell ergänzen" erreicht das Kundendokument nicht mehr', () => {
     // Der Kunde liest auf dem Angebot, dass der Betrieb die Menge nicht
     // berechnen konnte und sie noch von Hand nachtragen soll. Das ist kein
     // Rechenweg, sondern eine Notiz an den Handwerker — dieselbe Sorte Text,
     // die CoS-E-005 mit dem `annahmen`-Array vom Papier genommen hat.
+    //
+    // Behoben mit DC-108 (Product Designer, 15.09.2026): Bleibt nach dem
+    // Streichen der „bitte …"-Anweisung keine Zahl übrig, war der ganze Satz
+    // eine Anweisung — dann fällt er weg und `pdf.tsx` schreibt wie bei jeder
+    // Position ohne Rechenweg „Pauschale".
     expect(kundenRechenweg(ANWEISUNG)).not.toContain('bitte manuell ergänzen')
+    expect(kundenRechenweg(ANWEISUNG)).toBe('')
+    // Die Gegenprobe: eine echte Rechnung mit angehängter Anweisung verliert
+    // nur die Anweisung, nicht die Rechnung.
+    expect(kundenRechenweg('46,64 m² × 12,50 €/m² = 583,00 € — Menge bitte prüfen'))
+      .toBe('46,64 m² × 12,50 €/m² = 583,00 €')
   })
 
-  it.fails('🔴 PM-078-B · und der Schätzweg „Umfang ≈ 4 × √Fläche" ebenfalls', () => {
+  it('✅ PM-078-B · und der Schätzweg „Umfang ≈ 4 × √Fläche" ebenfalls nicht mehr', () => {
     // Aus `vollstaendigkeit/boden-vorarbeiten.ts` und
     // `vollstaendigkeit/maler-extras.ts`. Der Kunde sieht eine Wurzel und
     // erfährt damit, dass sein Raum als Quadrat angenommen wurde — die
     // Annahme selbst bleibt dabei unsichtbar, sie steht in `annahmen`.
     // Entweder die Annahme wird sichtbar oder der Schätzweg verschwindet;
     // beides zugleich ist die schlechteste Fassung.
+    //
+    // Behoben mit DC-108: Die Herleitung verschwindet, das Ergebnis bleibt.
+    // Sichtbar machen scheidet nach PD-015 aus — eine als Annahme
+    // gekennzeichnete Menge ist kein Angebot, sondern ein Vorbehalt. Das „≈"
+    // sagt weiterhin, dass geschätzt wurde.
     expect(kundenRechenweg('Umfang ≈ 4 × √20 m² = 18 lfdm')).not.toContain('√')
+    expect(kundenRechenweg('Umfang ≈ 4 × √20 m² = 18 lfdm')).toBe('Umfang ≈ 18 lfdm')
+    expect(kundenRechenweg('Umfang ≈ 4 × √20 m² = 18 lfdm (voller Umfang, kein Türabzug)'))
+      .toBe('Umfang ≈ 18 lfdm (voller Umfang, kein Türabzug)')
   })
 })

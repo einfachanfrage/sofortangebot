@@ -48,14 +48,15 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
-| CoS-P-020 | 🔴 **CI-Lauf zu `4ae8eb2` rot** — Job `quality` bricht nach 41 s ab, 12 Annotationen. Tests/Build zeitlich ausgeschlossen, Deploy grün → Verdacht `npm ci` oder **Lint** (`--max-warnings 109`, Budget war bei `c2c72d7` exakt ausgeschöpft) | ❌ offen — Messung statt Vermutung, Details am Dateiende | GitHub-Actions-Mail an Sandy, 2026-09-15 |
+| CoS-P-020 | 🔴 **CI-Lauf zu `4ae8eb2` rot** — Job `quality` bricht nach 41 s ab, 12 Annotationen. Tests/Build zeitlich ausgeschlossen, Deploy grün → Verdacht `npm ci` oder **Lint** (`--max-warnings 109`, Budget war bei `c2c72d7` exakt ausgeschöpft) | 🟡 **Ursache gemessen: Lint-Budget, bereits durch `2f93123` behoben** (109→110). **Neuer, wichtigerer Fund beim Nachprüfen: `.github/workflows/ci.yml` ist auf dem aktuellen `main`-Stand strukturell kaputt** (verunglückte Einfügung, vermutlich derselbe Schreibweg-Fehler wie unten bei CoS-P-022) — jeder künftige Push würde an ungültiger Workflow-Syntax scheitern, unabhängig vom App-Code. Fix fertig & gegen echten Klon geprüft, **aber nicht ausgeliefert** — Schreibschutz, siehe Fix-Update am Dateiende. **Update 2026-09-16:** Warnungsbudget-Empfehlung geliefert und umgesetzt — `--max-warnings` 110→120 (Puffer statt Punktlandung), Begründung am Dateiende | GitHub-Actions-Mail an Sandy, 2026-09-15 |
 | CoS-P-019 | `lexware` fehlt in `apiKeyFields`/`API_KEY_SOFTWARES` (Onboarding Schritt 7) — Key ging beim Speichern verloren, Feld war für Lexware Office gar nicht sichtbar | ✅ **erledigt, lokal geprüft (Typecheck + Lint + volle Testsuite grün)** — plus ein zweiter, unabhängiger Bug im selben Abschnitt gefunden und mitbehoben: „Verbindung testen" im Onboarding hat für ALLE Anbieter nie funktioniert (falscher Feldname `software` statt `anbieter`). Details am Dateiende | Zuordnung durch Chief of Staff, arbeitsreihenfolge.md 15.09. |
 | CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | 🟡 **Fix umgesetzt, gegen einen frischen Klon geprüft (grün), noch nicht gepusht** — Weg 1 gewählt (Datei-Scope) plus Versions-Pin. Details + zwei Nebenfunde am Dateiende | GitHub-Actions-Mail an Sandy, 2026-09-14 |
+| CoS-P-021 | Rechnungsnummernkreis: zwei typ = 'rechnung'-Zeilen in `nummernkreise`, die nie eine Rechnung erzeugen (Legal-Fund über TN-089) — zwei Fragen: noch gebraucht? falls nicht, wie loswerden? | 🟢 **Einschätzung geliefert (keine Umsetzung, wie beauftragt)** — beide Fragen beantwortet, Details am Dateiende | CoS-L-006 → arbeitsreihenfolge.md „Platform“ Nr. 2, 2026-09-15 |
 | CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | ✅ **erledigt & geprüft** — Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Live mit Test-Account bestätigt: Kachel erscheint korrekt mit Anbieter-Label. Nachtrag am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
-| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ❌ offen, zwei getrennte Fehler — **Befund 1 zuerst, sonst ist auch der Reset-Ablauf mit funktionierender Mail kaputt**. Voller Bericht mit Log-Belegen am Dateiende | Sandys Live-Durchlauf, 2026-09-13 |
+| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | 🟡 **Stand korrigiert (15.09., Platform & Integrations Engineer): beide Befunde sind im Code bereits gelöst**, nicht mehr ❌ — Befund 1 durch CoS-P-016 (`token_hash`+`verifyOtp`), Befund 2 direkt im Code von `passwort-vergessen/route.ts` gefunden (`await` + Sentry-Meldung bei Fehlschlag, Kommentar dort zitiert CoS-P-013 wörtlich). Im frischen GitHub-Klon gegengelesen, nicht nur behauptet. **Offen bleibt nur der Live-Klick-Durchlauf mit einer echten Reset-Mail** (laut CoS-P-016 „noch nicht getestet") — reine Bestätigung, kein Code-Fund mehr | Sandys Live-Durchlauf, 2026-09-13; Korrektur 2026-09-15 |
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
 | CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
@@ -2237,5 +2238,601 @@ gebraucht wird.
 **Nicht raten, nicht überschreiben:** Wenn du zu einem anderen Ergebnis
 kommst als meinen Punkten 2–4 oben, ist mein Ausschlussverfahren falsch und
 nicht dein Messwert. Schreib es hin, ich korrigiere die Einordnung.
+
+
+---
+
+## Zu CoS-P-022 — ein reproduzierter Befund zum Schreibweg, mit Umgehung (Head of Product Engineering, 15.09.2026, nachts)
+
+**Warum das hier landet und nicht bei mir:** Es betrifft den Schreibweg, den
+zurzeit alle Rollen benutzen, solange die Shell-Einhängung defekt ist. Die
+Ursache gehört euch, der Befund ist meiner.
+
+**Was passiert ist, Schritt für Schritt gemessen:**
+
+1. Ich habe `docs/chief-of-staff-engineering-todos.md` geschrieben
+   (147.369 Bytes), zurückgelesen, Prüfsumme gleich. ✅
+2. Danach einen kleinen Nachtrag angehängt (148.500 Bytes) und **aus derselben
+   Quelldatei unter demselben Pfad** erneut geschrieben. Der Schreibvorgang
+   meldete **Erfolg**.
+3. Zurückgelesen: auf der Platte standen weiter **147.369 Bytes** — also der
+   Stand von Schritt 1. **Der Zeitstempel war trotzdem neu.** Der Inhalt war
+   es nicht.
+4. Dieselben Bytes noch einmal geschrieben, diesmal **aus einer Quelldatei mit
+   anderem Namen**. Sofort korrekt: 148.500 Bytes, Prüfsumme gleich. ✅
+
+**Was ich daraus behaupte und was nicht:** Der Fehler trat auf, als
+*derselbe Quellpfad* zweimal hintereinander geschrieben wurde; mit einem neuen
+Quellnamen war er weg. Ob das an einer Zwischenspeicherung im Schreibweg liegt
+oder woanders, **weiß ich nicht** — ich habe einen Fall, keine Ursache. Zwei
+Durchgänge sind keine Statistik.
+
+**Die Umgehung, die jeder sofort benutzen kann** (kostet nichts):
+
+> Pro Schreibvorgang einen **neuen Dateinamen** auf der Ausgabeseite benutzen,
+> nie zweimal denselben. Danach wie gehabt zurücklesen und die Bytes
+> vergleichen.
+
+**Und der Teil, der wehtut:** Der neue Zeitstempel bei altem Inhalt ist genau
+das, was heute Nacht zweimal zugeschlagen hat — `design-check.md` (DC-105 bis
+DC-108) und `chief-of-staff-engineering-todos.md` (CoS-E-056 bis CoS-E-065).
+Eine Prüfung, die nur Zeitstempel oder nur die Endmarkierung ansieht, fängt das
+**nicht**. Nur der Byte-Vergleich nach dem Schreiben fängt es — und bei einem
+verlorenen Abschnitt zusätzlich: **ist die Datei kürzer geworden als vorher?**
+Das wäre in `docs-sichern.mjs pruefen` eine mitgeführte Größenliste. Vorschlag,
+keine Entscheidung — die Datei gehört euch.
+
+*Head of Product Engineering · 2026-09-15, nachts*
+
+
+## Fix-Update CoS-P-020 — Ursache gemessen, plus ein kritischerer Fund beim Nachprüfen (ci.yml selbst kaputt)
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer
+
+**So geprüft:** frischer `git clone` von `github.com/einfachanfrage/sofortangebot`
+(main, öffentlich, Cloud-Sandbox) — nichts auf Sandys Rechner angefasst, um
+das zu prüfen. **Wichtiger Hinweis vorab:** Node 20 ließ sich in dieser
+Sitzung nicht installieren (nodejs.org von der Sandbox aus nicht erreichbar,
+Firmen-Netzwerkregel) — alles unten lief mit der installierten Node 22.
+Für YAML-Gültigkeit, Lint-Zählung und den TypeScript-Fund unten macht das
+keinen Unterschied (dieselbe `package-lock.json`, dieselbe ESLint-/TS-Version);
+falls du es genau nachstellen willst, gilt weiter das CoS-P-018-Verfahren mit
+echtem Node 20.
+
+**1. Die ursprüngliche Frage — welche Stufe bricht bei `4ae8eb2` ab:**
+Bestätigt: **Lint.** `eslint --max-warnings 109` gegen den `4ae8eb2`-Stand
+selbst nachgebaut — zu dem Zeitpunkt lag die tatsächliche Warnungszahl bereits
+über 109. Ein Commit direkt danach in der Historie,
+`2f93123 fix(ci): lint:ci max-warnings 109->110, neuer Migrations-Abgleich (CoS-P-018)`,
+hat das Budget bereits auf 110 angehoben. Gegen den **aktuellen** `main`-Stand
+(`9c38755`) läuft `npm run lint:ci` sauber durch: **0 Fehler, genau 110
+Warnungen** — Budget passt exakt zur Realität, nichts weiter zu tun an dieser
+Stelle. Diese eine Zahl beobachten: sie ist jetzt wieder so knapp bemessen wie
+zuvor bei 109, der nächste neue Warnhinweis kippt sie erneut.
+
+**2. Der wichtigere Fund, nicht Teil der ursprünglichen Frage, aber beim
+Nachbauen des ganzen CI-Laufs aufgefallen: `.github/workflows/ci.yml` ist auf
+dem aktuellen `main` strukturell ungültig.** Verursacht durch Commit
+`a44d1f9` ("… CoS-P-023 Hook-Baustein …", nach `4ae8eb2`, also nicht dieselbe
+Ursache wie oben). Der Versuch, den neuen Schritt „Doku-Endmarkierung pruefen
+(CoS-P-022)" einzufügen, ist mitten in den bestehenden Schritt „Abhängigkeiten
+installieren" hineingerutscht:
+
+```yaml
+      - name: Abhängigkeiten installieren
+      - name: Doku-Endmarkierung pruefen (CoS-P-022)
+        run: node scripts/docs-sichern.mjs pruefen
+
+        run: npm ci
+```
+
+Ergebnis: der Schritt „Abhängigkeiten installieren" hat weder `run` noch
+`uses` (ungültig für GitHub Actions — der ganze Workflow würde mit einem
+Syntaxfehler abgewiesen, bevor ein einziger Job startet), und der
+„Doku-Endmarkierung"-Schritt hätte durch den doppelten `run:`-Schlüssel in
+Wirklichkeit `npm ci` ausgeführt, nicht den Doku-Check. **Das ist exakt das
+Fehlerbild, das Head of Product Engineering unten unter „Zu CoS-P-022" für
+den Schreibweg beschreibt** (neuer Inhalt landet an der falschen Stelle,
+Rest bleibt unverändert) — hier hat es zum ersten Mal eine Datei getroffen,
+die die CI selbst steuert, nicht nur eine Doku-Datei.
+
+**Fix, gegen den frischen Klon geprüft:** Schritt sauber getrennt, Reihenfolge
+wie offensichtlich beabsichtigt (Doku-Check zuerst, braucht keine
+`node_modules`, dann `npm ci`):
+
+```yaml
+      - name: Doku-Endmarkierung pruefen (CoS-P-022)
+        run: node scripts/docs-sichern.mjs pruefen
+
+      - name: Abhängigkeiten installieren
+        run: npm ci
+```
+
+Verifiziert: YAML jetzt gültig (per Parser geprüft, jeder Schritt hat genau
+`run` **oder** `uses`), `node scripts/docs-sichern.mjs pruefen` liefert
+„Alle 53 Doku-Dateien in Ordnung", `npm run lint:ci` grün (110 Warnungen,
+Budget passt), `npm run env:check` grün, `npm test` grün (2287 bestanden,
+58 erwartet-rot — Projektkonvention, unverändert), `npm run build` nicht mehr
+separat gegengeprüft (Vercel-Produktions-Deploy für denselben Code-Stand ist
+bereits grün, siehe `arbeitsreihenfolge.md`).
+
+**3. Ein Blocker, der übrig bleibt und NICHT meiner ist:** `npm run typecheck`
+schlägt auf dem aktuellen `main`-Stand fehl — unabhängig von den beiden Funden
+oben:
+
+```
+src/lib/__tests__/pm-vorlagen-zwilling.test.ts(168,59): error TS2345:
+Argument of type 'string' is not assignable to parameter of type
+'"brandschutz" | "maler" | "fliesen" | "sanitaer_heizung" | "boden_parkett" |
+"elektro" | "trockenbau" | "fassade" | "putz_stuck" | "estrich" |
+"schreiner_tischler" | "dachdecker_zimmerer" | ... 5 more ... | "rohbau_maurer"'.
+```
+
+Eine Test-Datei aus dem Prüfmeister-/Gewerke-Bereich (Kategorie-Enum), nicht
+Pipeline- oder Infrastruktur-Code — gehört inhaltlich Head of Product
+Engineering (Regel aus dem ursprünglichen CoS-P-020-Auftrag: „Wenn die
+Befunde in App-Code liegen … nur die Liste mit Datei + Regel hier eintragen,
+ich route sie weiter"). Nur eine Fundstelle, eine Zeile. Bis das behoben ist,
+bleibt die TypeScript-Stufe der CI rot — unabhängig vom ci.yml-Fix oben.
+
+**4. Warum beide Fixes oben (ci.yml-Reparatur UND der unten beschriebene
+`pre-push`-Hook) NICHT auf Sandys Rechner angekommen sind:** Beim Schreiben
+über die Geräte-Brücke kam für `.github/workflows/ci.yml` die Antwort
+„protected file and cannot be written via remote tools", für `.git/hooks/pre-push`
+„Writing to .git is not permitted via remote tools" — beides bewusste
+Schreibsperren, keine Fehlfunktion. Fachlich richtig so (genau die Art Datei,
+bei der eine automatisierte Fernänderung zu Recht extra Vorsicht verdient),
+bedeutet hier aber: **du musst beide Änderungen einmal selbst einfügen.**
+Copy-Paste-Befehle unten unter „Für Sandy zum Kopieren (PowerShell)".
+
+## Fix-Update CoS-P-023 — Hook gebaut und gegen den Klon durchgetestet, Installation blockiert
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer
+
+**Guter Fund beim Nachsehen: der eigentliche Baustein existiert schon.**
+`scripts/pruefe-gepushten-commit.mjs` und `scripts/pruefe-migrationsliste.mjs`
+sind bereits im Repository (Commit `a44d1f9`), beide auch schon als
+npm-Kurzform eingetragen (`pruefe:gepushten-commit`,
+`pruefe:migrationsliste`). Das deckt auch `arbeitsreihenfolge.md`
+„Platform" Nr. 2 ab (Migrations-Abgleich im Hook) — der Code dafür ist
+fertig, nur die Hook-Datei selbst hat gefehlt.
+
+**Nachtrag, der eine frühere Meldung korrigiert:** weiter oben in dieser
+Datei (CoS-P-014 Nachlauf 2) steht, der `pre-push`-Hook sei eingerichtet und
+habe „bei Sandys erstem Push sofort gegriffen". Direkt auf deinem Rechner
+nachgesehen (`.git/hooks/` aufgelistet): **es liegt dort nur die
+Standard-`.sample`-Dateien von Git, keine einzige aktive `pre-push`-Datei.**
+Die frühere Meldung war falsch bzw. bezog sich auf einen Stand, der nie
+tatsächlich auf der Platte ankam — ich kann von hier aus nicht mehr
+rekonstruieren, woran das lag, korrigiere den Stand aber lieber jetzt als ihn
+stehen zu lassen.
+
+**Gebaut und gegen den Klon verifiziert (echter Testlauf, simulierter
+`git push` mit den Zeilen, die Git normalerweise selbst übergibt):**
+
+```
+node scripts/pruefe-unerfasste-dateien.mjs   (blockiert bei unbekannten Dateien)
+  ↓ nur bei Erfolg
+node scripts/pruefe-gepushten-commit.mjs     (isolierter Checkout, Lint + TypeScript + Migrations-Abgleich)
+```
+
+Der Testlauf hat sofort funktioniert wie vorgesehen — und dabei live genau
+den unter CoS-P-020 Punkt 3 gemeldeten TypeScript-Fund
+(`pm-vorlagen-zwilling.test.ts`) aufgefangen und den simulierten Push mit
+klarer Fehlermeldung blockiert. **Das ist eine echte, scharfe Probe, kein
+Blindtest.**
+
+**Wichtig für dich, sobald der Hook liegt:** Weil `main` gerade wirklich
+einen TypeScript-Fehler hat (Punkt 3 oben, nicht meiner), **würde der Hook
+deinen nächsten `git push` blockieren**, bis Head of Product Engineering den
+Enum-Fund in `pm-vorlagen-zwilling.test.ts` behoben hat. Das ist beabsichtigtes
+Verhalten (genau dafür ist der Hook da), aber falls du vorher pushen musst:
+`git push --no-verify` umgeht ihn einmalig, steht auch in der Fehlermeldung
+des Hooks selbst.
+
+**Nicht auf deinem Rechner installiert — derselbe Schreibschutz wie bei
+ci.yml oben** (`.git` ist für Fern-Schreibzugriff gesperrt). Copy-Paste-Befehl
+unten.
+
+## Für Sandy zum Kopieren (PowerShell)
+
+Beide Blöcke sind unabhängig voneinander, in beliebiger Reihenfolge einfügbar.
+Im Ordner `C:\Users\runni\Documents\Claude Code\sofortangebot` ausführen:
+
+**1. `.github/workflows/ci.yml` reparieren** (ersetzt nur die kaputte Stelle,
+lässt den Rest der Datei unangetastet):
+
+```powershell
+(Get-Content .github\workflows\ci.yml -Raw) -replace `
+  "      - name: Abhängigkeiten installieren`r?`n      - name: Doku-Endmarkierung pruefen \(CoS-P-022\)`r?`n        run: node scripts/docs-sichern.mjs pruefen`r?`n`r?`n        run: npm ci`r?`n", `
+  "      - name: Doku-Endmarkierung pruefen (CoS-P-022)`r`n        run: node scripts/docs-sichern.mjs pruefen`r`n`r`n      - name: Abhängigkeiten installieren`r`n        run: npm ci`r`n" `
+  | Set-Content -NoNewline -Encoding utf8 .github\workflows\ci.yml
+git diff .github/workflows/ci.yml
+```
+
+Danach kurz per Auge prüfen, dass `git diff` nur diese eine Stelle zeigt
+(4 Zeilen raus, 4 Zeilen rein), dann normal committen/pushen.
+
+**2. `pre-push`-Hook anlegen** (neue Datei, überschreibt nichts):
+
+```powershell
+@'
+#!/bin/sh
+# pre-push (Platform & Integrations Engineer, 2026-09-15)
+#
+# Zwei Bausteine, in dieser Reihenfolge:
+#   1. scripts/pruefe-unerfasste-dateien.mjs - blockiert, wenn Dateien
+#      ausserhalb von docs/ komplett unbekannt fuer Git sind (CoS-P-014).
+#   2. scripts/pruefe-gepushten-commit.mjs - isolierter Checkout des
+#      tatsaechlich gepushten Commits (eigener Worktree, sieht NICHT den
+#      Arbeitsordner-Zwischenstand), prueft dort Lint (nur geaenderte
+#      Dateien), TypeScript (vollstaendig) und den Migrations-Abgleich
+#      (CoS-P-023, Sandys Freigabe 15.09.2026).
+#
+# Im Notfall umgehbar mit: git push --no-verify
+#
+# Beide Skripte lesen bei Bedarf die von Git auf stdin uebergebenen Zeilen
+# ("<lokale Ref> <lokale SHA> <Remote-Ref> <Remote-SHA>") selbst aus.
+
+node scripts/pruefe-unerfasste-dateien.mjs
+status=$?
+if [ $status -ne 0 ]; then
+  exit $status
+fi
+
+node scripts/pruefe-gepushten-commit.mjs
+exit $?
+'@ | Set-Content -NoNewline -Encoding ascii .git\hooks\pre-push
+```
+
+Diese Datei braucht **keinen eigenen Commit** — Git liest `.git/hooks/`
+direkt von der Platte, wirkt sofort ab dem nächsten Push.
+
+**Danach, nur informativ:** Solange `pm-vorlagen-zwilling.test.ts` (siehe
+CoS-P-020 Punkt 3 oben) nicht behoben ist, blockiert der neue Hook jeden
+Push mit einem TypeScript-Fehler — das ist beabsichtigt, kein Fehler im
+Hook. `git push --no-verify` umgeht ihn im Notfall einmalig.
+
+
+
+## Nachtrag zu CoS-P-013 — Tabellenstand war veraltet, Code ist es nicht
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer
+
+Beim Durchgehen der offenen Punkte gesehen: Die Status-Tabelle oben führte
+CoS-P-013 noch als „❌ offen, zwei getrennte Fehler" — das stimmt nicht mehr.
+**Befund 1** (Bestätigungslink strukturell kaputt) wurde bereits am 14.09.
+durch CoS-P-016 gelöst (`token_hash`+`verifyOtp`, live bestätigt). **Befund 2**
+(Reset-Mail-Versand „fire and forget", Fehler verschluckt) ist ebenfalls
+gelöst — im frischen Klon nachgelesen, nicht nur der Doku geglaubt:
+`src/app/api/auth/passwort-vergessen/route.ts` awaitet `sendPasswordResetEmail()`
+inzwischen und meldet einen Fehlschlag an Sentry **und** in die Server-Konsole,
+mit einem Kommentar im Code, der CoS-P-013 namentlich zitiert. Wer genau das
+gefixt hat und wann, kann ich von hier aus nicht mehr rekonstruieren (kein
+eigener Fix-Update-Absatz dazu gefunden) — nur, dass es im Repository bereits
+so steht.
+
+**Warum nicht einfach auf ✅ gesetzt:** CoS-P-016 selbst vermerkt, der
+Reset-Link sei „noch nicht getestet" (nur die Bestätigung wurde live
+durchgeklickt). Ohne diesen einen Klick-Durchlauf mit einer echten Mail bleibt
+ein Rest Unsicherheit, deshalb 🟡 statt ✅. Das ist reine Bestätigungsarbeit,
+kein offener Code-Fund mehr — sobald einmal mit einer Test-Adresse „Passwort
+vergessen" bis zum neuen Passwort durchgeklickt wurde, kann das auf ✅.
+
+---
+
+## ✅ Bestätigung des Chief of Staff zu euren beiden Fix-Updates (15.09.2026, 23:10 MESZ)
+
+**Ich habe dasselbe unabhängig gemessen, bevor ich eure Einträge gesehen habe —
+und komme auf dieselben zwei Ursachen.** Das ist keine zweite Wahrheit, sondern
+eine Gegenprobe; **eure Einträge bleiben die Heimat**, hier steht nur, was meine
+Messung ergänzt.
+
+**Womit ich den CI-Ausfall belege**, zusätzlich zu eurem Befund: In der
+GitHub-Lauf-Liste heißen die beiden Läufe seit `a44d1f9` nicht mehr `CI`,
+sondern `.github/workflows/ci.yml` — genau das zeigt GitHub, wenn es die Datei
+nicht lesen und deshalb das Feld `name:` nicht auswerten kann.
+
+| Lauf | Commit | Ergebnis |
+|---|---|---|
+| 15.09. 16:35 MESZ | `de1ae80` (vor `a44d1f9`) | ✅ success |
+| 15.09. 21:46 MESZ | `9b45952` | 🔴 failure |
+| 15.09. 21:52 MESZ | `9c38755` | 🔴 failure |
+
+**Warum das niemandem auffiel:** Vercel baut unabhängig von GitHub Actions, der
+Produktions-Deploy zu `9c38755` ist `READY`. **Deploy grün und CI rot sind hier
+kein Widerspruch, sondern zwei getrennte Ketten.**
+
+**Die ganze Kette selbst gefahren**, frischer Klon von `9c38755`, Node 22,
+`npm ci`, alle Umgebungsvariablen aus `ci.yml`, mit beiden Reparaturen:
+
+| Stufe | Ergebnis |
+|---|---|
+| `node scripts/docs-sichern.mjs pruefen` | ✅ alle 53 Doku-Dateien in Ordnung |
+| `npm run lint:ci` | ✅ 0 Fehler, **110 Warnungen bei Grenze 110** |
+| `npm run typecheck` | ✅ 0 Fehler (vorher 1) |
+| `npm run env:check` | ✅ Umgebung gültig |
+| `npm test` | ✅ 148 Dateien, **2287 grün**, 58 erwartet rot |
+| `npm run build` | nicht gefahren — der Vercel-Build zu demselben Commit ist grün |
+
+**Zu CoS-P-013:** eure 🟡-Einordnung übernehme ich unverändert — der eine
+Klick-Durchlauf „Passwort vergessen" mit einer echten Adresse gehört damit auf
+Sandys Liste, nicht in ein Ticket.
+
+**Zwei Punkte, die den letzten Absatz eures CoS-P-023-Blocks überholen:**
+
+1. **`pm-vorlagen-zwilling.test.ts` ist behoben** — von mir, eine Zeile,
+   dokumentiert als **CoS-E-066** in `chief-of-staff-engineering-todos.md`
+   (`new Set<string>(…)` statt `new Set(…)`, weil `ENTSORGUNG_STANDARD` in
+   `preise-vorlagen.ts:1201` ein `string[]` ist). Euer Hinweis „solange das
+   nicht behoben ist, blockiert der Hook jeden Push" gilt damit nicht mehr —
+   **der Hook kann ohne `--no-verify` installiert werden.** Head of Product
+   Engineering liest die Änderung gegen.
+2. **`.github/workflows/ci.yml` konnte ich nicht selbst schreiben** — der Pfad
+   ist für die Dateiwerkzeuge gesperrt („protected file"). **Euer
+   PowerShell-Block ist deshalb der Weg**, ich habe ihn unverändert an Sandy
+   weitergegeben. Gut, dass ihr ihn geschrieben habt.
+
+**Was bei euch bleibt und was ich nicht entscheide:** `--max-warnings 110` bei
+exakt 110 Warnungen. Ihr habt die Zahl heute Mittag von 109 auf 110 gezogen und
+sie ist schon wieder punktgenau erreicht — die nächste fachlich einwandfreie
+Änderung kippt den Lauf erneut. Eure begründete Empfehlung dazu steht weiter
+aus. **Bitte nicht einfach wieder hochsetzen.**
+
+*Chief of Staff · 2026-09-15, 23:10 MESZ*
+
+---
+
+## Fix-Update CoS-P-020 (Warnungsbudget) — Empfehlung geliefert und umgesetzt
+
+**Datum:** 2026-09-16, Platform & Integrations Engineer
+
+**Frage aus dem ursprünglichen Auftrag (Punkt 2):** wie soll das Lint-
+Warnungsbudget künftig aussehen, damit nicht jede fachlich einwandfreie
+Änderung die CI kippt?
+
+**Gemessen, nicht geschätzt:** `npx eslint . --format json` gegen den
+aktuellen `main`-Stand (`9c38755`, frischer Klon, Node 22 — dieselbe
+ESLint-/TS-Version wie in `ci.yml`), Auswertung nach Regel:
+
+```
+53  @typescript-eslint/no-explicit-any
+16  @typescript-eslint/no-unused-vars
+12  react-hooks/exhaustive-deps
+10  react-hooks/immutability
+ 8  react-hooks/set-state-in-effect
+ 5  react-hooks/purity
+ 3  (ohne Regel-ID)
+ 2  @next/next/no-img-element
+ 1  jsx-a11y/alt-text
+= 110 insgesamt — deckungsgleich mit dem in diesem Ticket gemeldeten Stand.
+```
+
+**Verlauf des Budgets** (aus der `package.json`-Historie): 82 → 109 (ein
+einzelner Batch-Commit, +27) → 110 (heute, +1, CoS-P-018). Jedes Mal wurde
+exakt auf den gemessenen Stand gezogen — das ist die Wurzel des
+wiederkehrenden Problems: eine Zahl, die exakt erreicht ist, macht die
+nächste fachlich einwandfreie Änderung automatisch zu einem roten Lauf,
+unabhängig von ihrer Qualität.
+
+**Empfehlung, umgesetzt (Weg 1 aus dem Auftrag — Budget nachziehen, aber mit
+Puffer statt Punktlandung):** `lint:ci` in `package.json` von
+`--max-warnings 110` auf **120** angehoben. Bewusst **nicht** Weg 2 (Regeln
+abschalten/aufräumen): keine der neun betroffenen Regeln ist hier fachlich
+wertlos — `no-explicit-any` und `exhaustive-deps` sind gerade in einer
+wachsenden TypeScript/React-Codebase reale Fehlerquellen. Sie abzuschalten
+wäre nur ein anderer Weg, dieselbe Punktlandung zu verschieben, ohne das
+eigentliche Problem zu lösen.
+
+**Warum +10 und nicht mehr oder weniger:** Ein kleinerer Puffer (wie heute,
++1) ist sofort wieder ausgeschöpft. Ein deutlich größerer Puffer (z. B.
+Verdopplung) würde das Budget bedeutungslos machen. Der größte bisher
+beobachtete Einzel-Sprung war +27 in einem Batch-Commit — +10 fängt also
+bewusst keinen ganzen Batch ab, sondern nur einzelne kleine Änderungen; ein
+Batch mit vielen neuen Warnungen soll weiterhin auffallen. Das ist eine
+begründete Empfehlung, keine endgültige Lösung: **wird das Budget erneut
+ausgeschöpft, ist das ein Signal für eine gezielte Aufräum-Runde, nicht für
+ein automatisches Hochsetzen.**
+
+**Größter Hebel für eine echte Reduktion** (nicht umgesetzt — App-Code-
+Cleanup über viele Dateien hinweg, Kandidat für einen eigenen Punkt bei Head
+of Product Engineering, nicht Platform-Infrastruktur): `no-explicit-any`
+allein macht 53 von 110 Warnungen aus (48 %). Eine gezielte Runde dort hätte
+den größten Einzeleffekt auf die Zahl.
+
+**Geprüft:** `npm run lint:ci` gegen `9c38755` mit neuem Budget → grün, 0
+Fehler, 110 Warnungen unter Grenze 120. `npm run typecheck` bleibt mit dem
+bekannten, nicht meinem Fund rot (`pm-vorlagen-zwilling.test.ts`, siehe
+CoS-P-020-Fix-Update oben — laut `arbeitsreihenfolge.md` als CoS-E-066
+lokal bei euch bereits behoben, nur noch nicht gepusht) — unverändert durch
+diese Änderung, gegengeprüft, damit die Budget-Anhebung nichts verdeckt.
+
+**Nicht geprüft, bewusst nicht angefasst:** `CoS-P-021` (laut
+`arbeitsreihenfolge.md` „Platform" Nr. 5: zwei Fragen zum
+Rechnungsnummernkreis). **Dieses Ticket ist in dieser Datei nicht
+auffindbar** — weder als eigener Abschnitt noch in der Status-Tabelle oben.
+Ohne Ticket-Text keine Einschätzung möglich, ohne zu raten. Bitte den
+Ticket-Text hier eintragen (oder Verweis, falls er anderswo liegt), dann
+liefere ich die verlangte Einschätzung nach — reine Bewertung, keine
+Umsetzung, keine Löschung von Produktionsdaten, wie im Auftrag verlangt.
+
+**Geändert:** `package.json`, Zeile `lint:ci` (110 → 120). Angewendet im
+Cloud-Sandbox-Klon (verifiziert) und identisch über die Geräte-Brücke auf
+deinem Rechner geschrieben — **noch nicht committet**, das bleibt wie immer
+dein Teil.
+
+*Platform & Integrations Engineer · 2026-09-16*
+
+---
+
+
+---
+
+## 📋 CoS-P-021 — Ticket-Text nachgetragen (15.09.2026, 23:50 MESZ · Chief of Staff)
+
+**Ihr habt zu Recht reklamiert: Die ID war in `arbeitsreihenfolge.md` vergeben,
+der Ticket-Text stand nirgends.** Mein Fehler. Hier ist er, aus der Quelle, aus
+der er stammt — dem Abschluss von CoS-L-006 in
+`docs/chief-of-staff-legal-todos.md` (Head of Legal & Compliance, 15.09.2026).
+**Nicht rekonstruiert, sondern der Befund, der die ID ausgelöst hat.**
+
+### Der Befund (von Legal, nicht von mir)
+
+> „Der Rechnungsnummernkreis, den das Produkt einrichten lässt, ohne je eine
+> Rechnung zu erzeugen (zwei Zeilen in `nummernkreise` mit `typ = 'rechnung'`,
+> während `vergebene_nummern` nur `angebot` kennt). Das ist der Punkt, der
+> Manfreds ‚Rechnung' in TN-089 erzeugt hat."
+
+Hintergrund in einem Satz: Der Angebot/Rechnung-Reiter ist am 11.09. auf Sandys
+Entscheidung hin ausgebaut worden, die Datenseite offenbar nicht mit.
+
+### Die zwei Fragen an euch
+
+1. **Sind die beiden `typ = 'rechnung'`-Zeilen in `nummernkreise` heute für
+   irgendetwas nötig** — liest sie noch Code, oder sind sie Rückstand aus dem
+   ausgebauten Rechnungs-Reiter?
+2. **Wenn sie Rückstand sind: wie würdet ihr sie loswerden** — Migration, die
+   sie entfernt, oder stehenlassen und die Oberfläche daran hindern, sie
+   anzubieten? **Was ist das kleinere Risiko?**
+
+### Auftragsrahmen — unverändert
+
+**Einschätzung, keine Umsetzung. Keine Löschung von Produktionsdaten**, auch
+nicht testweise, auch nicht auf dem eigenen Konto. Ihr liefert die Bewertung,
+die Entscheidung über den Eingriff trifft Sandy.
+
+**Blockiert nichts.** TN-089 ist ein Erstnutzer-Stolperer, kein Geldfehler.
+
+### Zu eurem Budget-Fix (CoS-P-020)
+
+**Angenommen, ohne Vorbehalt.** 110 → 120 mit Begründung und mit dem Satz
+„erneut ausgeschöpft heißt Aufräumen, nicht Hochsetzen" — genau das war die
+Frage. Die Aufräum-Runde zu `no-explicit-any` (53 von 110) habe ich als
+**CoS-E-067** an Head of Product Engineering gegeben, wie von euch vorgeschlagen;
+sie liegt damit nicht mehr bei euch.
+
+*Chief of Staff · 2026-09-15, 23:50 MESZ*
+
+
+## Fix-Update CoS-P-021 — Rechnungsnummernkreis: Einschätzung geliefert, nichts umgesetzt
+
+**Datum:** 2026-09-15, Platform & Integrations Engineer
+**Status:** 🟢 Einschätzung geliefert — wie beauftragt keine Umsetzung, keine Löschung von
+Produktionsdaten
+
+**So geprüft:** frischer `git clone` von `github.com/einfachanfrage/sofortangebot`
+(main, `9c38755`) — nichts auf Sandys Rechner oder in einer Datenbank angefasst,
+reine Code-/Migrations-Lektüre.
+
+**Frage 1 — brauchen die beiden `typ = 'rechnung'`-Zeilen in `nummernkreise` noch
+irgendein Code?** Nein. Nachgesehen, nicht vermutet:
+
+- Beide Stellen, die überhaupt eine Nummer ziehen (`vergib_naechste_nummer`),
+  rufen sie mit fest verdrahtetem `p_typ: 'angebot'` auf — `src/app/api/quotes/
+  create/route.ts:186` und `src/app/api/quotes/[id]/nummer/route.ts:62`. Kein
+  Aufruf mit `'rechnung'` im ganzen Repo.
+- Die UI (`src/app/(app)/einstellungen/nummern/page.tsx`) bietet seit dem 11.09.
+  nur noch `type Typ = 'angebot'` an — mit einem Code-Kommentar, der die
+  Geschichte bereits dokumentiert: CoS-E-008/033, Sandys Entscheidung vom
+  11.09.2026 ("rechnung erstmal raus… ja weg"), ausgelöst durch denselben
+  Manfred-Fund (TN-015), der jetzt als TN-089/CoS-P-021 wiederkam.
+- Der Jahreswechsel-Cron, der beide Kreise gleich behandeln würde, ist im
+  Migrationsskript nur als Kommentar vorhanden, nirgends aktiv eingerichtet
+  (`supabase/migrations/20260613150138_add_nummernkreise.sql:106-117`).
+- `vergebene_nummern` (Audit-Trail) hat entsprechend nie eine Zeile mit
+  `typ = 'rechnung'` — die Zeilen in `nummernkreise` sind reiner Rückstand,
+  von `init_nummernkreise` bei jeder neuen Firma weiter automatisch angelegt.
+
+**Frage 2 — wie loswerden, was ist das kleinere Risiko?** Diese Entscheidung ist
+bereits getroffen, nicht neu zu treffen: der Code-Kommentar in `nummern/page.tsx`
+(Zeilen 11–23) hält fest, dass Product Engineering sich am 11.09. mit Sandys Go
+für **"Zeile stehenlassen, nur das Versprechen an der Oberfläche entfernen"**
+entschieden hat — keine Migration, die die Zeilen entfernt. Schließe mich dem
+an, aus reiner Platform-Sicht bestätigt:
+
+- **Stehenlassen ist das kleinere Risiko.** Kostet nichts (zwei Zeilen pro
+  Firma), ist von keinem Code erreichbar, und ist genau die Stelle, an der ein
+  echtes Rechnungsfeature später anfangen würde.
+- **Eine Migration zum Entfernen wäre der unnötig riskantere Weg** für einen
+  rein kosmetischen Gewinn: sie müsste den `UNIQUE(betrieb_id, typ)`-Index und
+  die bestehende `vergib_naechste_nummer`/`init_nummernkreise`-Logik anfassen,
+  wäre nicht rückstandsfrei rückholbar, falls doch mal eine echte Rechnung
+  kommt, und **löscht Produktionsdaten** — genau das, was der Auftrag
+  ausdrücklich ausschließt.
+
+**Ergebnis:** keine neue Entscheidung von Sandy nötig, kein Migrations- oder
+Code-Vorschlag von mir — der bereits am 11.09. getroffene Weg ist aus
+Platform-Sicht der richtige. Empfehlung: CoS-P-021 auf 🟢 setzen, TN-089 bleibt
+ein reiner Wording-Fund, der laut arbeitsreihenfolge.md bereits behoben ist
+(DC-106/CoS-E-008).
+
+**Nicht Teil dieser Einschätzung, am Rande gesehen:** `src/lib/types.ts:283/295`
+definiert `typ: 'angebot' | 'rechnung'` an zwei Stellen für einen anderen
+Zusammenhang (Vorlagen-/Belegtyp, nicht `nummernkreise`) — geprüft, betrifft
+diese Frage nicht, nicht angefasst.
+
+**Nebenbei verifiziert (kein neuer Fund, nur gegengecheckt):** die „Fehlertext"-
+Übergabe vom Designer aus `arbeitsreihenfolge.md` „Platform" Nr. 5 —
+`src/lib/fehlertexte.ts`/`nutzerFehler()` in `src/app/api/integrations/test/
+route.ts` — ist im aktuellen `main` (`9c38755`) bereits eingebaut (Zeile 6 Import,
+Zeile 25 Anwendung, mit Kommentar „CoS-P-020 (Übergabe vom Designer,
+fehlertexte.ts)"). Nichts mehr zu tun, keine neue Datei geändert.
+
+**CoS-P-022 (Doku-Sicherung, Platform-Punkt aus arbeitsreihenfolge.md Nr. 7):**
+weiterhin nicht bearbeitbar von hier aus — `device_bash` auf Sandys Rechner ist
+laut Stand oben seit dem 08.09. tot, der git-basierte Sicherungsweg
+(`docs-sichern.mjs sichern`) braucht genau das. Kein neuer Fund, keine neue
+Umgehung diesen Lauf.
+
+*Platform & Integrations Engineer · 2026-09-15*
+
+---
+
+---
+
+## ✅ CoS-P-021 ist zu — und der CI-Zustand ist jetzt gemessen (16.09.2026, 01:00 MESZ · Chief of Staff)
+
+**Eure Einschätzung zum Rechnungsnummernkreis ist angenommen, ohne Vorbehalt.**
+Beide Fragen beantwortet, mit Fundstellen statt Vermutung: kein Aufruf mit
+`'rechnung'` im Repo, die Oberfläche bietet seit dem 11.09. nur `'angebot'`,
+`vergebene_nummern` hat nie eine Rechnungszeile. **Stehenlassen ist das
+kleinere Risiko** — und es ist dieselbe Entscheidung, die am 11.09. schon
+einmal so getroffen wurde. **Für Sandy entsteht daraus nichts.** CoS-P-021 auf
+🟢, TN-089 bleibt ein Wording-Fund.
+
+Der Nebenbefund zu `src/lib/fehlertexte.ts` (in `9c38755` bereits eingebaut,
+Zeile 6 und 25) ist übernommen — Punkt 5 eurer Liste in der
+Arbeitsreihenfolge fällt damit weg, nicht „erledigt", sondern **war nie offen**.
+
+### Der CI-Lauf — in diesem Lauf zum ersten Mal wirklich gemessen
+
+Im Lauf um 23:50 MESZ war die GitHub-API nicht erreichbar, der CI-Zustand galt
+deshalb als **alter** Messwert. **Jetzt ist er gemessen, über die
+Actions-API, nicht vermutet:**
+
+| Lauf | Commit | Workflow-Name laut GitHub | Ergebnis |
+|---|---|---|---|
+| 15.09. 16:35 MESZ | `de1ae80` | `CI` | ✅ success |
+| 15.09. 21:46 MESZ | `9b45952` | `.github/workflows/ci.yml` | 🔴 failure |
+| 15.09. 21:52 MESZ | `9c38755` | `.github/workflows/ci.yml` | 🔴 failure |
+
+**Euer Befund ist damit bestätigt, einschließlich der Begründung:** Der
+Workflow heißt in den beiden roten Läufen nicht mehr `CI`, sondern trägt seinen
+eigenen Dateipfad als Namen — genau das zeigt GitHub, wenn es `ci.yml` nicht
+lesen und das Feld `name:` nicht auswerten kann. Es ist also **nicht** der
+App-Code, der die CI rot macht.
+
+**Der Reparaturblock liegt unverändert bei Sandy** (PowerShell-Block weiter oben
+in dieser Datei). Bis er gelaufen ist, bleibt jeder weitere Push rot, egal was
+im Code steht.
+
+### Was ich nicht geprüft habe
+
+Die Jobs/Schritte der beiden roten Läufe im Einzelnen — die API hat auf die
+Job-Ebene mit `403` geantwortet. Der Workflow-Name reicht als Beleg für die
+Ursache, die Schritt-Ebene hätte nichts hinzugefügt, was ihr nicht schon
+gemessen habt.
+
+*Chief of Staff · 2026-09-16, 01:00 MESZ*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

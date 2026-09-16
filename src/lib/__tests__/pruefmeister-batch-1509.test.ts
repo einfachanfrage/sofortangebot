@@ -209,7 +209,9 @@ describe('PM-046 — Nikotin und Sperrgrund', () => {
     expect(finde(pos(), /Isoliergrund/)).toBeTruthy()
   })
 
-  it.fails('🔴 PM-046-A · der Sperrgrund liegt auf der gesperrten Fläche', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-046-A · der Sperrgrund liegt auf der gesperrten Fläche', () => {
     // Gemessen: 17,10 m² — das ist die Decken-/Bodenfläche. Der Grund dafür
     // ist nicht fachlich, sondern historisch: Die Regel stammt aus dem
     // Wasserflecken-Fall (Flecken an der Decke) und rechnet bis heute mit
@@ -244,7 +246,9 @@ describe('PM-046 — Nikotin und Sperrgrund', () => {
     expect(finde(p, /Isoliergrund/)!.menge).toBeCloseTo(wand.menge + decke.menge, 1)
   })
 
-  it.fails('🔴 PM-046-D · „sperren" ist kein Auslöser, die Ursache ist einer', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-046-D · „sperren" ist kein Auslöser, die Ursache ist einer', () => {
     // Zweite Hälfte derselben Antwort, und für sich ein eigener Fund:
     // Ausgelöst wird die ganze Regel von `lower.includes('sperr')`
     // (maler-sonder.ts Z. 42). Das Wort steckt in Sperrmüll, absperren,
@@ -258,7 +262,9 @@ describe('PM-046 — Nikotin und Sperrgrund', () => {
     expect(finde(p, /Isoliergrund/), 'Sperrmüll ist kein Sperrgrund').toBeUndefined()
   })
 
-  it.fails('🔴 PM-046-B · Isoliergrund und Tiefengrund stehen nicht beide auf derselben Fläche', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-046-B · Isoliergrund und Tiefengrund stehen nicht beide auf derselben Fläche', () => {
     // Gemessen: beide mit 17,10 m², beide automatisch ergänzt. Ein
     // Isoliergrund ERSETZT den Tiefengrund, er kommt nicht dazu — und
     // Tiefengrund über einer Sperrschicht hebt die Sperre auf. Das ist
@@ -285,11 +291,19 @@ describe('PM-046 — Nikotin und Sperrgrund', () => {
     const p = pos()
     const iso = finde(p, /Isoliergrund/)
     const tief = finde(p, /Grundieren \(Tiefengrund\)|Voranstrich/)
-    expect(iso && tief && Math.abs(iso.menge - tief.menge) < 0.5,
+    // Engineering, 15.09.2026 (CoS-E-059 Eingriff 3): `Boolean(...)` ergänzt.
+    // Ohne Tiefengrund ist `iso && tief && …` nicht `false`, sondern
+    // `undefined` — die Zusicherung wäre am JS-Wahrheitswert gescheitert und
+    // nicht an der Sache. Die Prüfabsicht ist unverändert: die beiden dürfen
+    // nicht auf derselben Fläche stehen. Entscheidet der Prüfmeister anders,
+    // überschreibt er es.
+    expect(Boolean(iso && tief && Math.abs(iso.menge - tief.menge) < 0.5),
       'Isoliergrund und Tiefengrund auf derselben Fläche').toBe(false)
   })
 
-  it.fails('🔴 PM-046-E · „Wände sperren, Decke normal grundieren" — zwei Flächen, zwei Grundierungen', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-046-E · „Wände sperren, Decke normal grundieren" — zwei Flächen, zwei Grundierungen', () => {
     // Der Fall, an dem sich Frage 2 entscheidet, gemessen:
     // Die Wände (35,00 m²) sind genannt und werden gesperrt — der
     // Isoliergrund liegt trotzdem auf der Decke (12,00 m²). Dazu bekommt
@@ -306,7 +320,9 @@ describe('PM-046 — Nikotin und Sperrgrund', () => {
     expect(finde(p, /Isoliergrund/)?.menge, 'Isoliergrund gehört auf die Wand').toBeCloseTo(wand.menge, 1)
   })
 
-  it.fails('🔴 PM-046-C · was ausdrücklich gesagt wurde, ist kein Vorschlag', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-046-C · was ausdrücklich gesagt wurde, ist kein Vorschlag', () => {
     // Gemessen: `Decke streichen 2x` trägt `automatisch_ergaenzt`, obwohl im
     // Diktat wörtlich „Wände und Decke zweimal streichen" steht. Die
     // Wand-Zeile trägt die Marke nicht, die Decken-Zeile schon.

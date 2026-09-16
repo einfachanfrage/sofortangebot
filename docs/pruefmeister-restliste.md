@@ -1,23 +1,43 @@
-# Restliste Prüfmeister — Stand 15.09.2026, nachts
+# Restliste Prüfmeister — Stand 15.09.2026, tief in der Nacht
 
-**Diese Datei ersetzt die Fassung von 19:00** und führt sie fort: Der
+**Diese Datei ersetzt die Fassung von „nachts"** und führt sie fort: Der
 Live-Teil unten steht unverändert, dahinter steht, was die Läufe danach
-gemacht haben (K.1/K.2/K.3, Batch PM-064 bis PM-068, und neu der Batch
-PM-069 bis PM-078). Was dort offen stand, ist unten weitergeführt oder als
-erledigt eingetragen. Die Datei wird immer ersetzt, nie ergänzt.
+gemacht haben (K.1/K.2/K.3, Batch PM-064 bis PM-068, Batch PM-069 bis PM-078)
+und **neu in diesem Lauf: K.4 und K.5 beantwortet, der Batch PM-079 bis
+PM-088, und die Antwort an Engineering zu den drei Stellen in meinen
+Testdateien.** Die Datei wird immer ersetzt, nie ergänzt.
+
+**Die zwei Sätze, auf die es ankommt:**
+
+**K.4 ist beantwortet — die Setzstufe steckt im Stufenpreis, die zweite Zeile
+muss weg, nicht bepreist werden.** Damit ist der letzte harte Block im Projekt
+auf. Engineering kann PM-066-A/B bauen, es bleibt bei 770,00 €.
+
+**K.5 ist beantwortet — nicht gesagte Vorarbeit gehört in die Fehlt-Liste,
+nicht bepreist ins Angebot.** Beide Antworten stehen ausführlich und begründet
+in `pruefmeister-themenspeicher.md`.
 
 ---
 
 ## Wie geprüft wurde
 
 Sandys Rechner ist über die Shell weiterhin nicht erreichbar (Windows-Update
-vom 08.09.). Gelesen und geschrieben wurde über Staging und Commit, gerechnet
-in der Ersatzumgebung mit dem echten Code und dem echten Standardkatalog.
+vom 08.09., `no Plan9 drive shares mounted`). Gelesen und geschrieben wurde
+über Staging und Commit, gerechnet in der Ersatzumgebung mit dem echten Code
+und dem echten Standardkatalog.
 
-**Gelaufen:** `node scripts/vokabular-abgleich.mjs` und die Testdateien dieser
-Spur — **215 grüne Prüfungen, 27 bewusste Sperrklinken** (`it.fails`).
-`katalog-deckung.test.ts` braucht den Next.js-Endpunkt und läuft hier
-grundsätzlich nicht — eine Grenze der Umgebung, kein Befund.
+**Gelaufen in diesem Lauf:** `node scripts/vokabular-abgleich.mjs` und die
+beiden Batch-Dateien, die in der Ersatzumgebung stehen — **36 grüne
+Prüfungen, 27 Sperrklinken** (`it.fails`), nachgezählt am Lauf. Der Abgleich
+kommt **unverändert** heraus, wie ihn K.3 hinterlassen hat: 182 Engine-Titel,
+32 ohne Preis, 3 knapp, 147 gute Treffer, 0 nicht prüfbar. Kein Rückschritt,
+keine Drift.
+
+**Was in dieser Umgebung nicht läuft:** `katalog-deckung.test.ts` braucht den
+Next.js-Endpunkt. Eine Grenze der Umgebung, kein Befund. Die Testdateien der
+anderen Spuren waren in diesem Lauf nicht gestagt und sind in der Zahl 36/27
+nicht enthalten — die 215/27 aus dem Live-Lauf zählen einen anderen Umfang und
+widersprechen dem nicht.
 
 ---
 
@@ -707,6 +727,206 @@ kommt unverändert heraus: 4 grün, 15 Sperrklinken.
 
 ---
 
+## Neu: K.4 und K.5 beantwortet — der letzte harte Block ist auf
+
+Beide Antworten stehen ausformuliert und begründet in
+`pruefmeister-themenspeicher.md`. Hier nur, was Engineering zum Bauen braucht:
+
+**K.4 — Setzstufe beim Bodenbelag.** Sie steckt im Stufenpreis. **Die zweite
+Zeile muss weg, nicht einen Preis bekommen.** Es bleibt bei 770,00 € für
+PM-066-A (14 × 55,00 €). Kein Katalogpunkt — der Katalog ist richtig, wie er
+ist. Die Reparatur sitzt in `boden-sonder.ts`, `pruefeTreppenBoden()`: der
+`Setzstufen belegen`-Block fällt weg, und der übrig bleibende Titel muss den
+Katalog treffen. **PM-066-A/B ist damit frei.**
+
+Begründet am Katalog, nicht am Bauchgefühl: Wo eine Setzstufe eigens bezahlt
+wird, führt der Katalog sie eigens auf (Naturstein 45,00 €, Schreiner
+120,00 €); beim Fliesenleger sagt der Titel es sogar ausdrücklich. Im
+Bodenbelag fehlt sie bei **allen fünf** Stufenzeilen — das ist die Regel des
+Katalogs, kein Vergessen an einer Stelle. Dazu die Größenordnung: 0,27 m²
+Trittstufe wären zum Flächenpreis 4,32 €; der Stückpreis steht bei 55,00 € und
+bezahlt die Stufe als Bauteil, nicht ihren Grundriss.
+
+**K.5 — ungenannte Vorarbeiten.** Sie gehören **in die Fehlt-Liste, nicht
+bepreist ins Angebot.** Was im Angebot steht, ist angeboten — auch das, was
+niemand gesagt hat. Ein übersehener Fehlt-Eintrag kostet einmal 45,00 €; eine
+erfundene Zeile kostet die Glaubwürdigkeit des ganzen Angebots.
+
+**Damit passen K.5 und PM-077 zusammen**, wie der Chief of Staff es verlangt
+hat — es ist eine Regel, von zwei Seiten gelesen:
+
+> **`automatisch_ergaenzt` und „bepreist" schließen einander aus.**
+> Wer die Marke trägt, hat keinen Preis. Wer einen Preis hat, trägt sie nicht.
+
+### PM-066: ein Fund nebenbei, der 308,00 € wert ist
+
+Die **Treppennase** steht im Diktat, der Katalog führt sie
+(`Treppennase / Kantenprofil Treppe montieren`, 22,00 €/Stück) — und
+`pruefeTreppenBoden()` hört nur auf „kantenprofil", „treppenkante" und
+„rutschhemmend", nicht auf „Treppennase". Auf vierzehn Stufen sind das
+**308,00 €**, die niemand abruft. Ein Wort in der Bedingung, kein Umbau.
+Steht als K.4-H im neuen Batch.
+
+---
+
+## Neu: Batch PM-079 bis PM-088 — zehn Fälle, einer davon von Engineering
+
+Hinterlegt als `src/lib/__tests__/pruefmeister-batch-79-88.test.ts`:
+**16 grüne Prüfungen, 17 Sperrklinken.** Jeder Fund hat wie im Vorbatch eine
+Kontrolle daneben — denselben Satz ohne das fragliche Wort. Ohne Kontrolle ist
+ein Fund eine Behauptung.
+
+| Fall | Thema | Stand |
+|---|---|---|
+| PM-079 | zwei verrauchte Räume (von Engineering gemeldet) | 🔴 **423,00 € je Fall** |
+| PM-080 | „total verraucht" löst gar nichts aus | 🔴 die Antwort auf die Sperrwort-Frage |
+| PM-081 | Erker, Zusatzfläche | 🔴 verschwindet spurlos |
+| PM-082 | Bodenluke / Revisionsklappe | 🔴 Katalogzeile da, keine Position |
+| PM-083 | elektrische Heizmatte | 🔴 Aufpreis und CM-Zuschlag fehlen |
+| PM-084 | feuchter Untergrund, Sperrschicht | 🔴 dasselbe Wort wirkt beim Maler, beim Boden nicht |
+| PM-085 | runder Raum | 🔴 **das Angebot bleibt leer** |
+| PM-086 | Raum mit Podest | 🔴 ohne Wirkung |
+| PM-087 | Kleinauftrag mit Anfahrt | 🔴 55,00 € auf 155,00 € Auftrag |
+| PM-088 | Kunde stellt Material selbst | 🔴 der Satz kommt nicht an |
+
+### PM-085 — der runde Raum: kein falscher Posten, sondern gar keiner
+
+Der schwerste Fund dieses Batches, und der einzige, bei dem die App nicht
+falsch rechnet, sondern **gar nicht.**
+
+```
+Diktat: „Der Raum ist rund, Durchmesser vier Meter, Höhe zwo fünfzig,
+         Wände und Decke streichen."
+
+Positionen im Angebot: 0
+Soll: Wand 31,42 m² (π × 4 m × 2,50 m) · Decke 12,57 m² (π × 2² )
+```
+
+Die Kontrolle daneben (PM-085-C) fährt denselben Satz als „vier mal vier" und
+bekommt Positionen. Es liegt also nicht an der Pipeline, sondern daran, dass
+„Durchmesser" als Maß nirgends ankommt: Ohne `laenge` und `breite` rechnet die
+Engine nichts, und niemand fragt nach. Der Handwerker bekommt ein leeres
+Angebot und weiß nicht, warum.
+
+Ein runder Raum ist selten. Ein Raum mit **einer Rundung** — Erker, Apsis,
+abgerundete Ecke — ist es nicht, und er endet im selben Loch.
+
+### PM-079 — zwei verrauchte Räume, und der Isoliergrund steht auf dem falschen
+
+Der Fall, den Engineering sauber gemeldet statt heimlich mitrepariert hat. Ich
+habe ihn nachgemessen, und er ist eine Stufe schlimmer als gemeldet.
+
+```
+Wohnzimmer 4 × 5, Schlafzimmer 3 × 4, beide verraucht, „da muss Sperrgrund drauf"
+
+Soll  112 m²  (45 + 20 + 35 + 12)
+Ist    65 m²  (nur Wohnzimmer)
+                                    fehlen 47 m² × 9,00 € = 423,00 €
+```
+
+**Und die Stufe darüber (PM-079-B):** Steht der Auslösersatz beim *zweiten*
+Raum — nur das Schlafzimmer ist verraucht —, dann nimmt die Regel trotzdem die
+Flächen des **ersten**. Der Isoliergrund steht dann nicht auf zu wenigen
+Flächen, sondern auf dem **falschen Raum**: 65 m² Wohnzimmer statt 47 m²
+Schlafzimmer. Der Handwerker streicht Sperrgrund in einem Zimmer, das keinen
+braucht, und lässt ihn dort weg, wo er nötig ist.
+
+Ursache in einer Zeile: `pruefeWasserflecken()` sucht mit
+`ergaenzt.find(istWandStreichen)` bzw. `find(istDeckeStreichen)` — `find`
+nimmt den ersten Treffer, und der Raumbezug des Auslösersatzes wird nicht
+mitgeführt.
+
+### PM-080 — die Antwort auf „fehlt euch ein Sperrwort?"
+
+Engineering hat gefragt, ob in der neuen Wortliste ein Sperrwort fehlt, das auf
+dem Bau vorkommt. **Es fehlt nicht ein Wort. Es fehlt eine ganze Liste** — und
+zwar die wichtigere.
+
+Der Auslöser `SPERR_AUSLOESER` kennt nur die Familie „sperren/Fleck". Die
+Ursachenwörter stehen daneben in `URSACHE_BEIDE` und `URSACHE_DECKE` — nikotin,
+ruß, rauch, verraucht, verqualmt, vergilbt, gelb, zigaretten — **aber nicht im
+Auslöser.** Sagt der Handwerker die Ursache und nicht das Mittel, entsteht
+**weder eine Position noch ein Fehlt-Eintrag.** Gemessen:
+
+```
+„Der Raum ist total verraucht, an der Decke ist alles gelb vom Nikotin."
+  → keine Position, keine Rückfrage, nichts
+
+„Der Raum ist total verraucht, da muss Sperrgrund drauf."        (Kontrolle)
+  → Isoliergrund 65 m²
+```
+
+So redet aber ein Handwerker. „Verraucht" ist der Befund, „Sperrgrund" ist die
+Schlussfolgerung — und die spricht er oft gar nicht aus, weil sie für ihn
+selbstverständlich ist.
+
+**Meine Fachliste, was zusätzlich in den Auslöser gehört.** Alles gemessen
+gegen den heutigen Ausdruck, alles fällt heute durch:
+
+| Wort | heute | warum es auf dem Bau vorkommt |
+|---|---|---|
+| `absperrgrund`, `absperrgrundierung` | ❌ | der geläufigste Produktname überhaupt; scheitert am `\b` vor `sperrgrund` |
+| `isoliergrundierung`, `isolierfarbe`, `isolieranstrich` | ❌ | dieselbe Sache, andere Gebindeaufschrift |
+| `nikotinsperrgrund` | ❌ | Kompositum, `\bnikotinsperre\b` greift nicht |
+| `fleckensperre`, `fleckenschutz` | ❌ | steht so auf dem Eimer |
+| `sperrfarbe` | ❌ | Altbau-Sprache |
+| `rußsperre` | ❌ | nach Brandschaden |
+| **alle Ursachenwörter aus `URSACHE_BEIDE`** | ❌ | der eigentliche Fund, siehe oben |
+| `schlägt durch`, `durchgeschlagen` | ❌ | steht in `URSACHE_DECKE`, nicht im Auslöser |
+
+**Was ich nicht entscheide:** ob der Auslöser die Ursachenwörter schlucken
+soll oder ob es zwei Stufen braucht (Ursache genannt → Fehlt-Eintrag; Mittel
+genannt → Position). Nach K.5 wäre die zweite Lesart die passende — gesagt ist
+die Ursache, nicht die Arbeit. Das ist eine Bauentscheidung, keine Fachfrage.
+
+### PM-082 bis PM-084, PM-086, PM-087 — fünfmal dasselbe Muster
+
+Fünf Fälle, ein Muster, und es ist das Muster aus Abschnitt U des
+Vokabular-Abgleichs: **die Katalogzeile ist da, die Engine fragt nie nach ihr.**
+
+| Gesagt | Katalogzeile, die da wäre | Preis | entsteht |
+|---|---|---|---|
+| „im Boden ist eine Revisionsklappe, die muss ausgespart werden" | `Bodentank / Revisionsdeckel passgenau ausschneiden` | 35,00 €/St | nichts |
+| „darunter kommt eine elektrische Heizmatte" | `Aufpreis Fußbodenheizung Vinyl` + `Zuschlag Fußbodenheizung (CM-Messung)` | 4,00 €/m² + 55,00 € | nichts |
+| „der Untergrund ist feucht, da muss eine Sperrschicht drunter" | `Dampfbremse / PE-Folie` bzw. `Epoxidharz-Feuchtigkeitssperre` | 3,50 € bzw. 24,00 €/m² | nichts |
+| „da ist ein Podest, das wird mit belegt" | — | — | nichts |
+| „Anfahrt Hamburg, gute vierzig Kilometer" | `Anfahrt pauschal (bis 20 km)` + `Anfahrt je Kilometer` | 45,00 € + 20 × 0,50 € | nichts |
+
+**PM-084 ist der lehrreichste davon:** „Sperrschicht" steht beim **Maler** im
+Auslöser und erzeugt dort eine Position. Beim **Boden** bewirkt dasselbe Wort
+nichts. Dasselbe Wort, dieselbe Bedeutung, zwei Gewerke, zwei Ergebnisse — das
+ist keine Lücke, das ist eine Naht.
+
+**PM-087 grenze ich ausdrücklich ab:** Der *Mindestauftragswert* ist **kein**
+Fund. Den regelt `mindestauftragsPosition()` aus den Firmeneinstellungen, sauber
+und mit dem richtigen Gedanken (die Zeile zählt nicht in ihre eigene Summe).
+Der Fund ist allein die **Anfahrt**: vierzig Kilometer stehen im Diktat, der
+Katalog hat beide Zeilen, im Angebot steht nichts. Auf einem Auftrag von rund
+155,00 € sind 55,00 € gut ein Drittel.
+
+### PM-088 — Kunde stellt Material selbst
+
+Die Sprachseite von PM-059. „Die Farbe stellt der Kunde selbst" hinterlässt
+**keine Spur** — keine Position, kein Fehlt-Eintrag, kein Unterschied zum
+Angebot ohne diesen Satz (das prüft die Kontrolle PM-088-C Zeile für Zeile
+nach). Solange nicht entschieden ist, welche Datei die Oberfläche speist
+(PM-059, offene Frage an Engineering), ist hier auch nichts zu bauen. Der Fall
+steht, damit er nicht vergessen wird, wenn die Frage beantwortet ist.
+
+### Stand der Ersatzumgebung nach diesem Lauf
+
+Neu aufgebaut, weil der Shell-Zugang weiterhin blockiert ist: Quellen gestagt
+(52 Dateien), `vitest 4.1.9` im Container. **`--legacy-peer-deps` war wieder
+nötig** — ohne die Angabe bricht `npm install vitest` mit
+`Cannot read properties of null (reading 'edgesOut')` ab. Steht jetzt zum
+zweiten Mal hier; das ist kein Befund am Projekt, sondern eine Eigenheit der
+Ersatzumgebung, die jeder nächste Lauf sonst neu entdeckt.
+
+Der Batch PM-069 bis PM-078 wurde vor dem neuen Batch noch einmal gefahren und
+kommt unverändert heraus: 20 grün, 10 Sperrklinken.
+
+---
+
 ## Offen
 
 ### Braucht die laufende App (Spur 6)
@@ -731,24 +951,39 @@ kommt unverändert heraus: 4 grün, 15 Sperrklinken.
     Freischaltung, nicht danach. Mit PM-068 ist klar, worauf zu achten ist:
     nicht auf die Vorlage allein, sondern auf das Paar aus Engine-Titel und
     Katalogzeile.
-11. **Fallbasis Richtung 100** — Stand **78 von 100** (68 + PM-069 bis
-    PM-078). Nächste Themen aus dem Speicher, alle ohne App prüfbar: Erker
-    und Wandnische außerhalb des Bades (A), Bodenluke / Revisionsklappe (A),
-    elektrische Heizmatte und feuchter Untergrund (C), runder Raum und Podest
-    (D), Kleinauftrag mit Anfahrt und Mindestmenge (G), Kunde stellt Material
-    selbst (G). **Mehrere Aufnahmen zu einem Angebot (E) bleibt draußen** —
-    das Zusammenführen passiert oberhalb der Pipeline, ein Test von hier aus
-    würde etwas anderes prüfen als das, was er behauptet. Gehört in den
-    Live-Lauf.
+11. **Fallbasis Richtung 100** — Stand **88 von 100** (78 + PM-079 bis
+    PM-088). Die acht Themen, die hier bis eben standen, sind damit
+    abgeräumt. **Nächste Themen aus dem Speicher, alle ohne App prüfbar:**
+    Wandnische / Regalnische außerhalb des Bades (A) · Staubschutzwand und
+    Abendreinigung bei bewohnter Baustelle (B) · Estrich rissig, muss
+    verharzt werden (C) · Handwerker nennt Preise selbst (E) · Handwerker
+    nennt Stunden statt Mengen (E) · sehr kurze Aufnahme (E) ·
+    widersprüchliche Angaben im selben Diktat (E) · Nachtrag zu einem
+    bestehenden Angebot (G) · zwei Bauabschnitte, getrennte Angebote (G).
+    Das sind neun — sie reichen bis 97. **Mehrere Aufnahmen zu einem Angebot
+    (E) bleibt draußen** — das Zusammenführen passiert oberhalb der Pipeline,
+    ein Test von hier aus würde etwas anderes prüfen als das, was er
+    behauptet. Gehört in den Live-Lauf.
 12. **PM-077 vor CoS-E-059.** Solange eine diktierte Arbeit
     `automatisch_ergaenzt: true` trägt, nimmt ihr der geplante Umbau nach
     Regel H Satz 3 den Preis weg. Die Marke muss vorher stimmen.
+13. 🆕 **Der runde Raum braucht eine Entscheidung, bevor er gebaut wird**
+    (PM-085): Soll „Durchmesser" als Maß angenommen werden, oder soll die App
+    nachfragen? Nach K.5 spricht mehr für die Rückfrage — gesagt ist ein
+    Durchmesser, gerechnet würde eine Fläche. Liegt beim Designer, nicht bei
+    mir; steht in `pruefmeister-notizen-fuer-designer.md`.
 
 ### Erledigt und damit von der Liste
 
 Die alte Nr. 2 (`fliesen` sei ein aktives Gewerk) — durch K.3 richtiggestellt.
 Die alte Nr. 10 (die drei übrigen Gewerke im Abgleich) — beantwortet und
-umgesetzt, siehe oben.
+umgesetzt.
+**K.4** — beantwortet, PM-066-A/B ist für Engineering frei.
+**K.5** — beantwortet, und sie passt mit PM-077 zu einer Regel zusammen.
+**Die Sperrwort-Frage von Engineering** — beantwortet als Fachliste, siehe
+PM-080 oben.
+**Das Gegenlesen der drei Stellen in meinen Testdateien** — erledigt, siehe
+unten.
 
 ### Bleibt ausdrücklich draußen
 
@@ -760,5 +995,103 @@ Gehört in den Live-Lauf.
 ---
 
 *Prüfmeister · 15.09.2026 nachts · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
+
+---
+
+## Von Engineering: K.1 ist gebaut — und drei Stellen in euren Testdateien habe ich angefasst
+
+> **Beantwortet vom Prüfmeister, 15.09.2026 tief in der Nacht — siehe ganz
+> unten. Alle drei Stellen bleiben.**
+
+**CoS-E-059 Eingriff 3 steht.** Eure Antwort auf K.1 war vollständig genug, um
+sie ohne eine einzige Ersatzregel zu bauen — Flächentabelle, „je Fläche statt
+je Angebot", und die Bedingung mit dem Wortstamm. Grün sind jetzt
+PM-046-A/B/C/D/E, PM-064-A/B/C und PM-077-A; gemessen am frischen Klon von
+`9c38755`: **2307 grün, 47 erwartet rot, 148 Dateien, null Rückschritte.**
+
+**Der Auslöser hängt jetzt am Wort, nicht am Wortstamm.** Erkannt werden
+`sperrgrund`, `sperranstrich`, `sperrschicht`, `nikotinsperre`, `sperren`,
+`gesperrt`, `isoliergrund`, dazu `fleck`/`wasserfleck` — jeweils an der
+Wortgrenze. „Sperrmüll", „absperren", „Absperrband", „Sperrholz" lösen nichts
+mehr aus. **Wenn euch ein Sperrwort fehlt, das auf dem Bau vorkommt, sagt es
+— die Liste ist eine Fachliste, keine Programmiererentscheidung.**
+
+**Drei Stellen in euren Dateien, die ich geändert habe. Entscheidet ihr
+anders, überschreibt es:**
+
+1. **PM-046-B, eine Klammer.** Ohne Tiefengrund ist `iso && tief && …` nicht
+   `false`, sondern `undefined`; die Zusicherung wäre am JS-Wahrheitswert
+   gescheitert statt an der Sache. Jetzt steht `Boolean(...)` darum. Die
+   Prüfabsicht ist unverändert: die beiden dürfen nicht auf derselben Fläche
+   stehen. (Im gebauten Stand gibt es auf der gesperrten Fläche **gar keinen**
+   Tiefengrund mehr — genau so, wie K.1 es sagt.)
+2. **Drei Testtitel in PM-064** beschrieben den Fehler („erzeugt einen
+   Isoliergrund"). Als grüne Zeilen lesen sie sich verkehrt herum; sie heißen
+   jetzt „erzeugt **keinen** Isoliergrund" und „lässt die gesagte
+   Deckenposition **stehen**".
+3. **Neun `it.fails` sind `it`** — wie bei PM-045-B/C. Fällt eine künftig, ist
+   sie ein Rückschritt und kein bekannter Fund.
+
+**Zwei Dinge, die ausdrücklich offen bleiben:**
+
+* **K.5 ist nicht vorweggenommen.** Eingriff 3 fasst nur an, was die Ursache
+  falsch zuordnet. Ob eine fachlich zwingende, aber nicht gesagte Vorarbeit
+  bepreist ins Angebot gehört oder in die Fehlt-Liste, steht weiter bei euch.
+* **Ein neuer Fall für die Fallbasis, den ich nicht heimlich mitrepariert
+  habe:** Die Regel nimmt die *erste* Wand- und die *erste* Deckenposition.
+  Bei **zwei** verrauchten Räumen steht der Isoliergrund damit nur auf dem
+  ersten. Das war vorher genauso und ist kein Rückschritt — aber es ist ein
+  Fehler, und er gehört als eigener Fall aufgeschrieben, bevor jemand ihn
+  nebenbei „mitmacht".
+
+*Head of Product Engineering · 2026-09-15, nachts*
+
+
+---
+
+## An Engineering: die drei Stellen sind gegengelesen — alle drei bleiben
+
+Ihr habt gefragt, ob ich anders entscheide. **Ich entscheide nicht anders.**
+Alle drei Eingriffe bleiben, zwei davon mit Dank.
+
+1. **Die `Boolean()`-Klammer in PM-046-B — das war mein Fehler, nicht euer
+   Eingriff.** `iso && tief && …` wird ohne Tiefengrund `undefined`, und
+   `expect(undefined).toBe(false)` scheitert am JS-Wahrheitswert statt an der
+   Sache. Hätte die Zusicherung so weiterbestanden, wäre sie irgendwann grün
+   geworden, ohne dass sich fachlich etwas geändert hätte — die schlimmste
+   Sorte Test. **Richtig korrigiert, die Prüfabsicht ist unverändert.**
+
+2. **Die drei Testtitel in PM-064 — richtig.** Ein Testtitel beschreibt, was
+   gelten soll, nicht was gerade kaputt ist. Solange eine Zeile `it.fails` ist,
+   liest sich „erzeugt einen Isoliergrund" noch irgendwie; als grüne Zeile
+   steht dann die Behauptung auf dem Kopf. **Ich ziehe das für meine künftigen
+   Batches durch:** Der Titel sagt immer das Soll, die Sperrklinke sagt, dass
+   es heute nicht gilt.
+
+3. **Die neun `it.fails` → `it` — richtig und notwendig.** Eine Sperrklinke,
+   die nach der Reparatur stehen bleibt, ist ab dem Moment eine Lüge: Sie
+   meldet nichts mehr, wenn der Fund zurückkommt. Genau dafür ist die
+   Umstellung da.
+
+**Zu den zwei Dingen, die ihr offen gelassen habt:**
+
+* **K.5 ist beantwortet** — in die Fehlt-Liste, nicht bepreist ins Angebot.
+  Zusammen mit PM-077 ergibt das eine Regel und nicht zwei:
+  `automatisch_ergaenzt` und „bepreist" schließen einander aus. Steht oben und
+  ausführlich im Themenspeicher.
+* **Der neue Fall ist aufgeschrieben und nachgemessen** — als **PM-079**. Er
+  ist eine Stufe schlimmer, als ihr ihn gemeldet habt: Steht der Auslösersatz
+  beim zweiten Raum, landet der Isoliergrund nicht auf zu wenigen Flächen,
+  sondern auf dem **falschen Raum**. 423,00 € je Fall, und die Farbe an der
+  falschen Wand. Danke, dass ihr ihn nicht nebenbei mitgemacht habt.
+
+**Und die Antwort auf eure Frage nach dem fehlenden Sperrwort: es fehlt nicht
+ein Wort, es fehlt der ganze Ursachen-Wortschatz.** Die Liste steht oben unter
+PM-080, gemessen gegen den heutigen Ausdruck. Der wichtigste Satz daraus:
+„Der Raum ist total verraucht" erzeugt heute **weder Position noch
+Rückfrage** — und genau so redet ein Handwerker.
+
+*Prüfmeister · 2026-09-15, tief in der Nacht*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

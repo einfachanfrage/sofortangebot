@@ -217,7 +217,22 @@ export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehle
   const wandPosTapRaus = ergaenzt.find(p => istWandStreichen(p.beschreibung))
   const tfmRaus = wandPosTapRaus?.menge ?? null
   if (tfmRaus !== null && tfmRaus > 0) {
-    if (!hat(ergaenzt, 'tapete entfern')) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfmRaus, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfmRaus} m²`, annahmen: [] })
+    // ── CoS-E-059 Eingriff 3 / PM-077 (15.09.2026) ─────────────────────
+    //
+    // Die Bedingung dieser Regel ist `kat.has('tapete_entfernen')` — die
+    // Arbeit steht also im Auftrag, sonst entsteht die Zeile gar nicht
+    // (Gegenprobe im Prüfmeister-Test: ohne den Satz keine Zeile). Trotzdem
+    // trug sie bis hier `automatisch_ergaenzt: true`, weil die zentrale
+    // Markierung in `index.ts` alles markiert, was die Regeln neu anlegen,
+    // solange die Regel nicht selbst widerspricht.
+    //
+    // Das ist heute nur eine Marke. Mit Regel H Satz 3 wird sie tragend:
+    // markierte Positionen sollen ohne Menge und Preis kommen und angetippt
+    // werden müssen. Dann verliert eine ausdrücklich diktierte Arbeit ihren
+    // Preis — 45,00 m² × 4,00 € = 180,00 € im gemessenen Fall. Deshalb
+    // gehört die Marke VOR den Umbau, nicht danach (PM-023-Weg, wie bei den
+    // Sockelleisten oben).
+    if (!hat(ergaenzt, 'tapete entfern')) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfmRaus, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfmRaus} m²`, annahmen: [], ...AUSDRUECKLICH_BESTELLT })
     if (v.hatArbeit('spachteln') && !hat(ergaenzt, 'spachtel', 'glätten')) ergaenzt.push({ beschreibung: 'Wände spachteln / glätten', menge: tfmRaus, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfmRaus} m²`, annahmen: [] })
   } else {
     if (!hat(ergaenzt, 'tapete entfern')) add(ergaenzt, fehlende, 'Tapete entfernen')
@@ -301,7 +316,9 @@ export function pruefeTapezieren(
       aufziehenPos.beschreibung = `${tapetenTyp} tapezieren`
     }
 
-    if (!hatEntfernen && hatEntfernenSignal) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [] })
+    // PM-077, zweiter Weg: `hatEntfernenSignal` ist ebenfalls eine Prüfung
+    // auf ein ausgesprochenes Wort — dieselbe Begründung wie oben.
+    if (!hatEntfernen && hatEntfernenSignal) ergaenzt.push({ beschreibung: 'Tapete entfernen', menge: tfm, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${tfm} m²`, annahmen: [], ...AUSDRUECKLICH_BESTELLT })
     // ── P.1 / N.2 (Prüfmeister, 12.09.2026): zwei Titel, ein Preis je ────────
     //
     // 1. **Raufaser tapezieren** traf `Raufaser tapezieren + überstreichen 1x`

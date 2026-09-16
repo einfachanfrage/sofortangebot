@@ -99,7 +99,9 @@ describe('PM-064 — der Sperrgrund feuert am Wortstamm', () => {
     expect(finde(lauf('maler', BASIS, zimmer()), /Isoliergrund/)).toBeUndefined()
   })
 
-  it.fails('🔴 PM-064-A · „das ist Sperrmüll" erzeugt einen Isoliergrund', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-064-A · „das ist Sperrmüll" erzeugt keinen Isoliergrund', () => {
     // Gemessen: `Isoliergrund … 12,00 m²` (9,00 €/m² = 108,00 €) plus
     // `Grundieren (Tiefengrund)` 12,00 m² (4,50 €/m² = 54,00 €).
     // **162,00 € für eine Arbeit, von der niemand gesprochen hat** — ausgelöst
@@ -112,7 +114,9 @@ describe('PM-064 — der Sperrgrund feuert am Wortstamm', () => {
     expect(finde(p, /Grundieren \(Tiefengrund\)/), 'Tiefengrund').toBeUndefined()
   })
 
-  it.fails('🔴 PM-064-B · „die Baustelle müssen wir absperren" erzeugt einen Isoliergrund', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-064-B · „die Baustelle müssen wir absperren" erzeugt keinen Isoliergrund', () => {
     // Zweiter Satz, dieselbe Ursache. Absperren, Absperrband, Sperrholz,
     // gesperrt — der Wortstamm steckt in allem. Auf dem Bau ist „absperren"
     // ein gewöhnliches Wort.
@@ -120,7 +124,9 @@ describe('PM-064 — der Sperrgrund feuert am Wortstamm', () => {
     expect(finde(p, /Isoliergrund/), 'absperren').toBeUndefined()
   })
 
-  it.fails('🔴 PM-064-C · der Nebensatz zerlegt die gesagte Deckenposition', () => {
+  // CoS-E-059 Eingriff 3 (Engineering, 15.09.2026): gebaut und gemessen — aus
+  // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
+  it('PM-064-C · der Nebensatz lässt die gesagte Deckenposition stehen', () => {
     // Die Regel entfernt `Decke streichen` und legt sie neu an — ohne die
     // Herkunft. Ergebnis: eine ausdrücklich bestellte Leistung trägt
     // `automatisch_ergaenzt`. Dieselbe Familie wie PM-046-C, hier aber von

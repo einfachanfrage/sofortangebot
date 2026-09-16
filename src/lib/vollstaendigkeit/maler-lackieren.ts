@@ -57,7 +57,29 @@ export function pruefeTuerenLackieren(
       : anzTuerenAufnahme > 0 ? anzTuerenAufnahme
       : anzZimmerFuerTuer > 0 ? anzZimmerFuerTuer : 1)
   const ausAufnahme = meta?.tuerenAnzahl === undefined && anzTuerenExplizit === 0 && anzTuerenAufnahme > 0
-  const tuerQuelle = ausAufnahme ? 'aus Aufnahme' : 'aus Transkript'
+  // ── CoS-E-065 Punkt 1 (16.09.2026) ──────────────────────────────────────
+  //
+  // Vorher zweiwertig: alles, was nicht aus der Aufnahme kam, hieß „aus
+  // Transkript" — auch die zwei Fälle, in denen im Transkript gar keine Zahl
+  // stand. „Die Innentüren lackieren." ohne Raumbestand ergab `1 Tür(en) aus
+  // Transkript`; die Eins hat aber niemand gesagt, die setzt die App. Bei den
+  // Fenstern steht der dritte Fall 52 Zeilen weiter unten seit CoS-E-058
+  // richtig (`fensterQuelle`) — bei den Türen ist er nie nachgezogen worden.
+  //
+  // Die drei Fälle, in der Reihenfolge, in der die Menge oben entsteht:
+  //   1. Zahl im Satz (`anzTuerenExplizit`) oder aus dem Text gezählt
+  //      (`meta.tuerenAnzahl` kommt aus `zaehleTueren`)      → aus Transkript
+  //   2. Raumbestand (`meta.tuerenAusAufnahme`)              → aus Aufnahme
+  //   3. Zimmerzahl → je 1 Tür, sonst die Eins als Rest      → angenommen
+  //
+  // Fall 3 ist genau der, den `tuerAnnahme` eine Zeile tiefer schon als
+  // Annahme ausweist — die Herkunftsangabe daneben hat ihm bis jetzt
+  // widersprochen. Auf dem Kundenpapier wird daraus „1 Tür(en) (angenommen)"
+  // (`rechenweg-kundentext.ts`, DC-108); „aus Transkript" wäre dort
+  // stillschweigend gestrichen worden und die Annahme unsichtbar geblieben.
+  const tuerQuelle = ausAufnahme ? 'aus Aufnahme'
+    : (meta?.tuerenAnzahl !== undefined || anzTuerenExplizit > 0) ? 'aus Transkript'
+    : 'angenommen'
   const tuerAnnahme = !ausAufnahme && anzTuerenExplizit === 0 && anzZimmerFuerTuer > 0 ? [`${anzZimmerFuerTuer} Zimmer → je 1 Tür angenommen`] : []
 
   // CoS-E-059 / PM-045-C: Anschleifen und Grundieren nur dann, wenn das

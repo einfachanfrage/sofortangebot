@@ -164,7 +164,7 @@ describe('🔒 Sperrklinke: CoS-E-052 in der Gegenrichtung', () => {
   })
 
   it('ENTSORGUNG_STANDARD zeigt auf Gewerke, die es gibt', () => {
-    const alle = new Set([...ALLE_GEWERKE_IDS, ...INAKTIVE_GEWERKE_IDS])
+    const alle = new Set<string>([...ALLE_GEWERKE_IDS, ...INAKTIVE_GEWERKE_IDS])
     for (const id of ENTSORGUNG_STANDARD) expect(alle.has(id), id).toBe(true)
   })
 })

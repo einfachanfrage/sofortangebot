@@ -2110,4 +2110,68 @@ umgestellt werden.
 
 *Prüfmeister · 15.09.2026 nachts*
 
+---
+
+## V. Der Abgleich steht still, die Gegenrichtung wächst weiter (Prüfmeister, 15.09.2026, tief in der Nacht)
+
+**Erst die Kontrollmessung.** `node scripts/vokabular-abgleich.mjs` kommt in
+diesem Lauf **unverändert** heraus, genau so, wie T ihn hinterlassen hat:
+
+```
+Engine-Titel mit eigener Einheit : 182
+davon ohne Preis                 :  32
+davon knapp (Score < 0,75)       :   3
+gute Treffer (Score >= 0,75)     : 147
+Titel aus Variablen, nicht prüfbar:  0
+```
+
+Kein Rückschritt, keine Drift — und das trotz der ungecommitteten Änderungen
+von Engineering an `maler-sonder.ts` und `maler-tapete.ts`. Der Umbau von
+Eingriff 3 hat keinen neuen Titel angelegt und keinen bestehenden verbogen.
+**Das ist eine Aussage über den Eingriff, keine über den Katalog.**
+
+### V.1 Fünf weitere Katalogzeilen, nach denen keine Engine je fragt
+
+Abschnitt U hat die Gegenrichtung aufgemacht: Zeilen, die es gibt, die aber
+kein Engine-Titel anspricht. Der Batch PM-079 bis PM-088 liefert fünf weitere,
+jede mit einem Satz, in dem die Arbeit ausdrücklich beauftragt ist:
+
+| Gesagter Satz | Katalogzeile, die da wäre | Preis | Entsteht heute |
+|---|---|---|---|
+| „im Boden ist eine Revisionsklappe, die muss ausgespart werden" | `Bodentank / Revisionsdeckel passgenau ausschneiden` | 35,00 €/St | nichts |
+| „darunter kommt eine elektrische Heizmatte" | `Aufpreis Fußbodenheizung Vinyl` | 4,00 €/m² | nichts |
+| dieselbe Aufnahme | `Zuschlag Fußbodenheizung (CM-Messung, erhöhte Sorgfalt)` | 55,00 € | nichts |
+| „der Untergrund ist feucht, da muss eine Sperrschicht drunter" | `Dampfbremse / PE-Folie verlegen` bzw. `Epoxidharz-Feuchtigkeitssperre zweilagig` | 3,50 € bzw. 24,00 €/m² | nichts |
+| „Anfahrt Hamburg, gute vierzig Kilometer" | `Anfahrt pauschal (bis 20 km)` + `Anfahrt je Kilometer (ab 20 km)` | 45,00 € + 0,50 €/km | nichts |
+
+Damit stehen in dieser Datei **zehn** solcher Zeilen — fünf aus U, fünf aus V.
+Der Zähler „Engine-Titel ohne Preis" hat keine davon gesehen und wird keine
+davon je sehen. **Er misst die eine Richtung vollständig und die andere gar
+nicht**, und die andere ist mittlerweile die größere.
+
+### V.2 Eine Naht, kein Loch: dasselbe Wort, zwei Gewerke, zwei Ergebnisse
+
+`Sperrschicht` steht beim **Maler** im Auslöser (`SPERR_AUSLOESER` in
+`maler-sonder.ts`) und erzeugt dort eine Position. Beim **Boden** bewirkt
+dasselbe Wort nichts — obwohl es dort dieselbe Sache meint und der Katalog
+zwei passende Zeilen führt.
+
+Das ist keine Lücke im Wortschatz, sondern eine **Naht zwischen zwei
+Gewerken**: Jedes Gewerk bringt seine eigene Wortliste mit, und was das eine
+kennt, weiß das andere nicht. Gemessen als PM-084. Ich zähle das hier auf,
+weil dieselbe Naht an jedem weiteren Gewerk erneut aufgeht — und weil ein
+Abgleich, der Titel gegen Katalog hält, sie nie finden kann.
+
+### V.3 Ein Wort, das 308,00 € kostet
+
+`pruefeTreppenBoden()` in `boden-sonder.ts` hört auf „kantenprofil",
+„treppenkante" und „rutschhemmend" — aber nicht auf **„Treppennase"**, obwohl
+der Katalog die Zeile genau so führt: `Treppennase / Kantenprofil Treppe
+montieren`, 22,00 €/Stück. Auf einer Treppe mit vierzehn Stufen sind das
+**308,00 €**. Der Prüfstand steht als K.4-H in
+`pruefmeister-batch-79-88.test.ts`.
+
+*Prüfmeister · 15.09.2026, tief in der Nacht*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

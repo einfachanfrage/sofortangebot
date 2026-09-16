@@ -1,5 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen } from './helpers'
+import { saetze } from '../satz-raum'
 import { mitTitelZusatz } from '../positions-titel'
 
 // Schimmel → Schimmelbehandlung + Sperranstrich (additiv)
@@ -37,47 +38,123 @@ export function pruefeSchimmel(ergaenzt: BerechnetePosition[], fehlende: string[
   return hatSchimmel
 }
 
-// Wasserflecken / Sperranstrich an Decke
+// ══════════════════════════════════════════════════════════════════════════
+// Sperrgrund / Isoliergrund — CoS-E-059, Eingriff 3 (15.09.2026)
+// ══════════════════════════════════════════════════════════════════════════
+//
+// Vorher: Jedes Wort mit dem Stamm „sperr" warf die vorhandene Decken-
+// position weg und baute drei neue Zeilen auf der Deckenfläche —
+// Isoliergrund, Tiefengrund und eine neu angelegte Decke. Eine Ursache,
+// vier Wirkungen (PM-046-A/B/C/D/E, PM-064-A/B/C).
+//
+// Die Fläche folgt jetzt der URSACHE, nicht dem Auslösewort. So hat der
+// Prüfmeister K.1 beantwortet, und genau so steht es hier:
+//
+//   Wasserfleck / Fleck / „schlägt von oben durch"  → Decke
+//   Nikotin / Ruß / Rauch / „verraucht" / „gelb"    → Wand UND Decke
+//   eine im Auslösersatz genannte Fläche            → die genannte,
+//                                                     schlägt alles
+//   nichts davon, bloß „Sperrgrund"                 → KEINE bepreiste
+//                                                     Zeile, Rückfrage
+//
+// Der Nikotin-Fall ist Wand und Decke, und das ist keine Vorsicht: Rauch
+// steigt, die Decke ist die am stärksten belastete Fläche im Raum. Wer nur
+// die Wände sperrt, hat nach ein paar Wochen gelbe Schatten an der Decke —
+// und steht in der Gewährleistung. Der letzte Fall ist Regel H Satz 3
+// (Sandy, 12.09.): nicht gesagt → keine bepreiste Zeile. Er ist ausdrücklich
+// NICHT „dann eben die Decke"; dass bisher still die Decke galt, war die
+// Herkunft der Regel aus ihrem ersten Fall (Wasserflecken an der Decke) und
+// kein Fachurteil.
+//
+// Drei Dinge, die dazugehören und ohne die die Antwort nur halb wäre:
+//
+// 1. **Der Auslöser hängt am Wort, nicht am Wortstamm** (PM-064). „Sperrmüll",
+//    „absperren", „Absperrband", „Sperrholz", „gesperrt" sind auf dem Bau
+//    gewöhnliche Wörter. Gemessen hat ein Satz über den alten Teppich
+//    162,00 € erzeugt, von denen niemand gesprochen hat.
+// 2. **Der Tiefengrund fällt auf der gesperrten Fläche weg** (PM-046-B). Der
+//    Isoliergrund IST dort die Grundierung; ein Tiefengrund darunter nimmt
+//    ihr den saugenden Untergrund und hebt die Sperre auf. Auf jeder anderen
+//    Fläche bleibt die Grundierung, wo sie hingehört — diese Regel fasst sie
+//    nicht mehr an, sie legt sie aber auch nicht neu an. Die Regel gilt je
+//    Fläche, nie je Angebot.
+// 3. **Die gesagte Deckenposition bleibt stehen** (PM-046-C / PM-064-C).
+//    Vorher wurde sie entfernt und als neues Objekt gepusht; `index.ts`
+//    markiert am Ausgang alles, was nicht objektidentisch aus der Eingabe
+//    stammt, als `automatisch_ergaenzt`. Eine ausdrücklich bestellte Decke
+//    verlor so ihre Herkunft. Mit Regel H Satz 3 würde sie damit ihren Preis
+//    verlieren — deshalb gehört das VOR den Umbau, nicht danach.
+//
+// Was diese Regel bewusst NICHT tut: eine Grundierung auf einer nicht
+// gesperrten Fläche erfinden. „Decke normal grundieren" erzeugt der
+// Engine-Weg (`Voranstrich / Grundierung Decke`); was hier zusätzlich
+// dazukäme, stünde zweimal da.
+
+/** Echte Sperr-/Fleckenwörter — an der Wortgrenze, nicht am Wortstamm. */
+const SPERR_AUSLOESER = /wasserfleck|\bflecken?\b|\bsperrgrund\b|\bsperrgrundierung\b|\bsperranstrich\b|\bsperrschicht\b|\bnikotinsperre\b|\bsperren\b|\bgesperrt\b|\bisoliergrund\b/
+
+/** Ursache „Decke": Flecken, die von oben durchschlagen. */
+const URSACHE_DECKE = /wasserfleck|\bflecken?\b|von oben durch|durchgeschlagen|\bwasserschaden\b/
+
+/** Ursache „Wand UND Decke": alles, was sich als Rauch im Raum verteilt. */
+const URSACHE_BEIDE = /nikotin|\bruß\b|\bruss\b|rauch|verraucht|verqualmt|vergilbt|\bgelb\b|zigaretten/
+
+const ISOLIERGRUND = 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken'
+
 export function pruefeWasserflecken(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, hatSchimmelFlag: boolean): void {
-  const hatFlecken = !hatSchimmelFlag && (lower.includes('fleck') || lower.includes('wasserfleck') || lower.includes('sperr') || lower.includes('sperranstrich'))
+  if (hatSchimmelFlag) return
   // Wächter kennt beide Schreibweisen — sonst legt er die Position nach der
   // Umbenennung ein zweites Mal an (derselbe tote Pfad wie bei `Parkett
   // schleifen`).
-  if (!hatFlecken || hat(ergaenzt, 'sperranstrich', 'flecken sperr', 'isoliergrund')) return
+  if (hat(ergaenzt, 'sperranstrich', 'flecken sperr', 'isoliergrund')) return
 
-  const deckenPos = ergaenzt.find(p => istDeckeStreichen(p.beschreibung))
-  if (deckenPos) {
-    const dm2 = deckenPos.menge
-    filtereArray(ergaenzt, p => !istDeckeStreichen(p.beschreibung))
-    // ── Zwei Funde aus Manfreds Testlauf, beide hier entstanden ──────────
-    //
-    // 1) „… — Decke": Das Bauteil hat im Positionsnamen nichts verloren.
-    //    Manfred: *„Decke ist die Zeile im Raum, nicht der Preis. Wenn die
-    //    Engine Bauteile in Titel schreibt, findet sie nie einen
-    //    Katalogpreis, egal wie sauber der Katalog ist."* Der Katalog führt
-    //    „Nikotinsperre auftragen", nicht „Sperranstrich — Decke". Der
-    //    `fehlende`-Zweig unten benutzte ohnehin schon den kurzen Namen —
-    //    die beiden Zweige waren schlicht uneinheitlich.
-    //
-    // 2) „Deckenfläche streichen — 2× Anstrich": **Das ist der Titel aus
-    //    TN-093.** Überall sonst schreibt die Engine
-    //    „<Leistung> <n>x — <Raum>"; der Gedankenstrich trennt den RAUM ab.
-    //    Hier stand dahinter die Anstrichzahl — und weil der Preis-Matcher
-    //    genau dort abschneidet, suchte er nach „Decke streichen" ohne
-    //    Variante und griff den 1x-Preis (7,00 € statt 11,00 €).
-    //    Der Matcher liest die Anstrichzahl inzwischen am ganzen Titel
-    //    (CoS-E-038), das hier ist die zweite Hälfte: den Titel gar nicht
-    //    erst falsch bauen.
-    // F.2 #3: Katalogtitel wörtlich — 0,00 € werden 9,00 €/m².
-    ergaenzt.push({ beschreibung: 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken', menge: dm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Deckenfläche ${dm2} m²`, annahmen: [] })
-    // F.6: fünf Schreibweisen, ein Preis. Tiefengrund ist Tiefengrund —
-    // an der Decke wie auf der Dachschräge. Das Bauteil steht im Rechenweg,
-    // nicht im Titel (Manfred: „Decke ist die Zeile im Raum, nicht der Preis").
-    ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)', menge: dm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Deckenfläche ${dm2} m²`, annahmen: [] })
-    ergaenzt.push({ beschreibung: 'Decke streichen 2x', menge: dm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Deckenfläche ${dm2} m²`, annahmen: [] })
-  } else {
-    add(ergaenzt, fehlende, 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken')
+  const text = lower ?? ''
+  // Der Satz mit dem Auslöser ist der Satz, in dem die Fläche stehen kann.
+  // „gelb an den Wänden" steht in einem anderen Satz als „da muss ein
+  // Sperrgrund drauf" — das ist die Ursache, nicht die genannte Fläche.
+  const ausloeserSatz = saetze(text).find(s => SPERR_AUSLOESER.test(s))
+  if (!ausloeserSatz) return
+
+  const genannt: Array<'wand' | 'decke'> = []
+  if (/\bwand|\bwänd/.test(ausloeserSatz)) genannt.push('wand')
+  if (/\bdecke/.test(ausloeserSatz)) genannt.push('decke')
+
+  const flaechen: Array<'wand' | 'decke'> =
+    genannt.length > 0 ? genannt
+      : URSACHE_BEIDE.test(text) ? ['wand', 'decke']
+        : URSACHE_DECKE.test(text) ? ['decke']
+          : []
+
+  if (flaechen.length === 0) {
+    // Regel H Satz 3: nicht gesagt → keine bepreiste Zeile. Der Handwerker
+    // bekommt die Rückfrage, die App rät nicht.
+    add(ergaenzt, fehlende, ISOLIERGRUND)
+    return
   }
+
+  const wandPos = ergaenzt.find(p => istWandStreichen(p.beschreibung))
+  const deckenPos = ergaenzt.find(p => istDeckeStreichen(p.beschreibung))
+  const teile: Array<{ name: string; menge: number }> = []
+  if (flaechen.includes('wand') && wandPos) teile.push({ name: 'Wandfläche', menge: wandPos.menge })
+  if (flaechen.includes('decke') && deckenPos) teile.push({ name: 'Deckenfläche', menge: deckenPos.menge })
+
+  if (teile.length === 0) {
+    add(ergaenzt, fehlende, ISOLIERGRUND)
+    return
+  }
+
+  const m2 = Math.round(teile.reduce((summe, t) => summe + t.menge, 0) * 100) / 100
+  // F.2 #3: Katalogtitel wörtlich — 0,00 € werden 9,00 €/m². Das Bauteil steht
+  // im Rechenweg, nicht im Titel (Manfred: „Decke ist die Zeile im Raum, nicht
+  // der Preis").
+  ergaenzt.push({
+    beschreibung: ISOLIERGRUND,
+    menge: m2,
+    einheit: 'm²',
+    konfidenz: 'high',
+    berechnungsweg: teile.map(t => `${t.name} ${t.menge} m²`).join(' + '),
+    annahmen: [],
+  })
 }
 
 // Feuchtraum: Wandposition umbenennen
