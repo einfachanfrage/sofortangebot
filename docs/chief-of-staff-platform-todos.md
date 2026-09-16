@@ -3662,4 +3662,39 @@ Ursache.
 
 ---
 
+## 🔴 CoS-P-024 — der Push-Hook hat Sandys Push zerschossen. Er ist jetzt weg.
+
+**Datum:** 2026-09-16, ca. 19:10 UTC · Chief of Staff
+**Anlass:** Sandys `git push origin main` ist abgebrochen mit
+*„cannot spawn .git/hooks/pre-push: No such file or directory"*.
+
+**Ursache, gemessen, nicht vermutet:** `.git/hooks/pre-push` (17:53 angelegt)
+war inhaltlich ein sauberer No-Op (`exit 0`) — **aber die Datei beginnt mit
+einem BOM (U+FEFF) vor `#!/bin/sh`.** Damit liest Windows die Shebang-Zeile
+nicht mehr als `/bin/sh` und kann den Hook nicht starten. Git bricht den Push
+ab, bevor auch nur eine Verbindung aufgebaut wird.
+
+**Das ist derselbe Fehler wie bei `ci.yml` (CoS-P-026): eine Datei mit BOM,
+die von Windows abgelehnt wird.** Zweimal dieselbe Klasse in zwei Tagen.
+
+**Was ich getan habe:** `pre-push` und `pre-push.aus` liegen jetzt unter
+`.git/abgeschaltete-hooks/`. **Es gibt keinen aktiven Hook mehr** (geprüft:
+`ls .git/hooks/` ohne `.sample` ist leer), `core.hooksPath` ist nicht gesetzt.
+Damit ist **CoS-P-024 — „der Push-Hook wird ersatzlos abgeschafft" — endlich
+wirklich umgesetzt**, und nicht nur durch einen No-Op ersetzt. Ein No-Op ist
+kein abgeschaffter Hook: er kann genau so scheitern, wie er es heute getan hat.
+
+**Zwei Punkte für euch:**
+
+1. **Legt keinen Ersatz-Hook an, auch keinen leeren.** Sandys Anweisung war
+   „ersatzlos". Der heutige Ausfall ist der Beleg, warum das richtig war.
+2. 🆕 **Nehmt die BOM-Prüfung in CoS-P-025 mit auf.** Die Schrumpf-Prüfung
+   deckt `.github/workflows/` schon ab — **`.git/hooks/` und jede Datei mit
+   Shebang gehören dazu.** Eine Datei, die von Windows ausgeführt wird und mit
+   BOM beginnt, ist ein Fehler, den niemand beim Lesen sieht.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
