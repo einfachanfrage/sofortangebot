@@ -96,7 +96,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
 | CoS-P-028 | 🟡 **`sandra@` und `support@` leiten jetzt auf `hallo@` (eingerichtet 16.09., Zustelltest offen)** — vorher: BEFUND: genau EIN Postfach (`hallo@`), null Weiterleitungen** — sieben von acht Absenderadressen empfangen nichts, darunter `sandra@`, der Absender aller Anmelde- und Passwort-Mails. Antworten von Nutzern gehen verloren, ohne Fehlermeldung. Umsetzung offen. Vorher: Acht Absender, keiner nachweislich empfangsfähig** — MX zeigt auf IONOS (selbst geprüft), aber ob dort Postfächer existieren, weiß niemand. `hallo@` steht im Impressum, § 5 DDG. Dazu: Resend zeigt „No sent emails yet" trotz nachweislich versendeter Mails — vermutlich falsches Team | ❌ offen, vor Gate 1 | Sandys Frage, 2026-09-16 |
-| CoS-P-024 | 🔴 **Push-Hook ersatzlos abschaffen** — `.git/hooks/pre-push` als No-Op, beide Prüfungen raus aus dem Push-Weg. Sandys ausdrückliche Anweisung nach der zweiten Blockade. CoS-P-023 damit zurückgezogen. Stehende Regel: in Sandys Push-/Commit-Weg kommt nichts, das abbrechen kann | 🟡 inhaltlich erledigt, Datei-Schreibvorgang offen — `.git/hooks/pre-push` ist aktuell inaktiv (zu `pre-push.aus` umbenannt vorgefunden, Git führt ihn dadurch schon jetzt nicht aus), aber nicht als expliziter No-Op-Datei hinterlegt. `.git/` ist für die Geräte-Dateiwerkzeuge dieser Session schreibgeschützt (“Writing to .git is not permitted via remote tools”) — fertiger No-Op-Inhalt liegt bereit, PowerShell-Befehl am Dateiende. Kein Punkt aus CoS-P-023 wandert nach CI: die einzige Prüfung mit echtem CI-Gegenstück (`pruefe-gepushten-commit.mjs`, Lint+TypeScript gegen den gepushten Commit) deckt sich bereits mit den bestehenden CI-Schritten „Lint“/„TypeScript“; die andere (`pruefe-unerfasste-dateien.mjs`) prüft den lokalen Arbeitsordner und hat in der CI keinen Gegenstand. Fix-Update am Dateiende | Sandy, 2026-09-15 |
+| CoS-P-024 | 🔴 **Push-Hook ersatzlos abschaffen** — `.git/hooks/pre-push` als No-Op, beide Prüfungen raus aus dem Push-Weg. Sandys ausdrückliche Anweisung nach der zweiten Blockade. CoS-P-023 damit zurückgezogen. Stehende Regel: in Sandys Push-/Commit-Weg kommt nichts, das abbrechen kann | ✅ **erledigt & geprüft, 16.09. abends** — `.git/hooks/pre-push` auf Sandys Rechner enthält jetzt Byte für Byte den geplanten No-Op-Inhalt (Kommentar + `exit 0`, 173 Byte, gegengelesen). Da Git-Hooks nie versioniert werden, ist damit nichts mehr offen — kein Commit nötig, kein Datei-Schreibvorgang blockiert mehr. Kein Punkt aus CoS-P-023 wandert nach CI: die einzige Prüfung mit echtem CI-Gegenstück (`pruefe-gepushten-commit.mjs`, Lint+TypeScript gegen den gepushten Commit) deckt sich bereits mit den bestehenden CI-Schritten „Lint“/„TypeScript“; die andere (`pruefe-unerfasste-dateien.mjs`) prüft den lokalen Arbeitsordner und hat in der CI keinen Gegenstand. Fix-Update am Dateiende | Sandy, 2026-09-15 |
 | CoS-P-025 | 🔴 **Schrumpf-Prüfung** — dritter Datenverlust in zwei Tagen, `docs-sichern.mjs pruefen` findet ihn nicht: eine Pflichtdatei wurde beim Zurückschreiben schlicht kürzer, Endmarkierung blieb intakt. Auch `.github/workflows/ci.yml` selbst war so betroffen, vier Tage unbemerkt | 🟡 Prüfung + Test grün (auf Sandys Rechner: `scripts/docs-sichern.mjs`, `docs-schrumpfung.test.ts`, 9/9 grün), **CI-Anbindung war entgegen dem vorherigen Stand NICHT im GitHub-Spiegel vorhanden** — direkt im Klon nachgesehen: weder `fetch-depth: 0` noch ein `schrumpfung`-Schritt standen in `ci.yml`, und ohne `fetch-depth: 0` ist `HEAD^` im Standard-Checkout gar nicht auflösbar (selbst nachgestellt: `fatal: invalid object name 'HEAD^'`) — die Prüfung hätte in der CI immer stillschweigend nichts gefunden. Fix jetzt im GitHub-Spiegel-Klon gebaut + geprüft (`fetch-depth: 0` + neuer Schritt "Schrumpf-Pruefung (CoS-P-025)"): `npm run typecheck` sauber, `npm run lint:ci` 0 Fehler/110 Warnungen, `npm test` 2442 grün/73 erwartete Fehlschläge, Schrumpf-Check selbst grün. `.github/workflows/ci.yml` bleibt für die Geräte-Dateiwerkzeuge dieser Session schreibgeschützt (erneut bestätigt) — PowerShell-Befehl am Dateiende. Sandy muss danach noch committen/pushen (inkl. `docs-sichern.mjs`/Testdatei, die laut GitHub-Spiegel dort noch fehlen) | Platform & Integrations Engineer, 2026-09-16 |
 | CoS-P-027 | 🟠 Alle acht System-Mails liefen unter „Sandra“ als Absender, auch Sicherheits-Mails wie der Passwort-Reset-Link — Phishing-Risiko für Nutzer, die die Marke noch nicht kennen | ✅ umgesetzt & geprüft — Sandys Entscheidung „C“ (geteilte Absender) gebaut: `FROM_PERSOENLICH`/`FROM_MARKE` in `src/lib/email.ts`, alle acht Versandwege exakt nach CoS-P-027-Nachtrag-1-Tabelle zugeordnet, „Sandra“-Signatur in den sechs Marken-Mails durch „Dein Sofortangebot-Team“ ersetzt, in den beiden persönlichen Mails (Willkommen, Kündigung) unverändert gelassen. `npm run typecheck`/`lint:ci` (110/110)/`npm test` (2442 grün) im GitHub-Spiegel grün, auf Sandys Rechner geschrieben. `hallo@sofortangebot.app` ist laut CoS-P-028-Befund ein echtes, zustellfähiges Postfach — die Auflage „vor erstem Versand zustellbar“ ist damit bereits erfüllt. Fix-Update am Dateiende | Sandy „absendername: C“, 2026-09-16 |
 | CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | ✅ **erledigt & geprüft** — Weg 1 (Regel-Objekt per `files` auf dieselben Dateien beschränkt) war zum heutigen Check bereits im GitHub-Spiegel umgesetzt (Commit `c2c72d7`); dabei zusätzlich zwei echte Fehler in `_to_delete/` gefunden und ausgenommen. Beim erneuten Prüfen heute ein Folgefehler gefunden und behoben: `lint:ci --max-warnings` stand noch auf 109, aktueller Stand ist 110 (eine neue, legitime Warnung aus einem fremden Rollenbereich, `AngebotDetail.tsx`, nicht angefasst). Grenze auf 110 angehoben, `npm run lint` lokal grün (0 Fehler, 110/110 Warnungen), `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
@@ -3532,6 +3532,131 @@ Supabase von sich aus mitbringt, dann sagen, was fehlt.
 bestaetigt (8.11). Was fehlt, ist der **Notausschalter**: Wie nimmt man das
 Produkt in zwei Minuten vom Netz, wenn am Tag X etwas Ernstes passiert? Ein
 Weg, aufgeschrieben, von dir einmal durchgespielt.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
+## Fix-Update — CoS-P-024 vollständig zu, CoS-P-025/CoS-P-022 gegengeprüft (Platform & Integrations Engineer, 2026-09-16)
+
+Nachgesehen, nicht angenommen: `.git/hooks/pre-push` auf Sandys Rechner
+enthält bereits genau den vorgeschlagenen No-Op-Inhalt (Byte für Byte
+identisch mit dem PowerShell-Block weiter oben — Kommentar mit Begründung,
+dann `exit 0`, 173 Byte). Da Git-Hooks nie versioniert werden, gibt es hier
+nichts mehr zu committen — **CoS-P-024 ist damit vollständig zu, nicht nur
+inhaltlich.** Status-Tabelle oben entsprechend geändert.
+
+**Zur Einordnung, damit nichts doppelt gebaut wird:** `.github/workflows/ci.yml`
+auf Sandys Rechner enthält ebenfalls schon exakt den CoS-P-025-Stand
+(`fetch-depth: 0` + Schrumpf-Schritt), byte-genau geprüft. **Im GitHub-Spiegel
+fehlt beides weiterhin** (frisch geklont, nachgesehen: `ci.yml` ohne
+`fetch-depth`/Schrumpf-Schritt, `docs-sichern.mjs` ohne `schrumpfung`-Befehl,
+keine `docs-schrumpfung.test.ts`) — **CoS-P-025 bleibt unverändert bei 🟡,
+wartet weiter auf Sandys Commit/Push, kein neuer Code nötig.** Gleiches bei
+CoS-P-027 (`FROM_PERSOENLICH`/`FROM_MARKE` liegt auf Sandys Rechner, fehlt im
+Spiegel) — Status dort ist bereits korrekt ✅, nur der Push steht aus.
+
+**CoS-P-022, neuer Anlass aus `arbeitsreihenfolge.md` (14:55 MESZ):** von
+dieser Sitzung aus erneut geprüft (`api.github.com/.../actions/runs`,
+gefiltert und ungefiltert) — dieselbe Antwort wie beim letzten Mal: *„GitHub
+access to this repository is not enabled for this session."* Sitzungsgebundene
+Werkzeug-Freigabe, kein Repo- oder Code-Problem — bestätigt die vorherige
+Diagnose erneut, kein neuer Befund, kein Code-Fix möglich.
+
+### Antworten auf „Deine vier Felder" (Gate 1)
+
+Gemessen, nicht geschätzt:
+
+**1. Punkt 4.1 — Kostenloser Start ohne Zahlungs-Blocker: ✅ im Code bestätigt.**
+Neue Betriebe bekommen beim Anlegen keinen `stripe_customer_id` (der wird
+erst über den Stripe-Webhook gesetzt, `src/app/api/stripe/webhook/route.ts`,
+also erst NACH einem Upgrade). `plan` steht ohne Stripe-Kontakt auf `starter`.
+Die einzige Schranke ist `pruefeAngebotsLimit` (`src/lib/plan-limit.ts`) — die
+sperrt erst das vierte neu angelegte Angebot im Kalendermonat, nichts davor,
+und begonnene Entwürfe bleiben immer fertig bearbeitbar. Kein Code-Pfad
+verlangt vor dem ersten Angebot eine Zahlungsmethode.
+
+**2. Punkt 2.7 — Session-Sicherheit: teilweise beantwortet.** Logout: alle
+vier Stellen im Code (`AvatarSheet.tsx`, `RestoreBanner.tsx`,
+`einstellungen/page.tsx`, `api/account/delete/route.ts`) rufen
+`supabase.auth.signOut()` ohne `scope`-Angabe auf — die Voreinstellung von
+`supabase-js` ist `scope: 'global'`, das widerruft den Refresh-Token
+serverseitig für alle Geräte, nicht nur das aktuelle. Logout wirkt also
+überall, sobald das Zugriffstoken des anderen Geräts abläuft. **Offen, weil
+nicht im Code einsehbar:** wie lange ein Zugriffstoken gültig ist (Supabase-
+Projekteinstellung, Standard 3600 s, hier nirgends überschrieben) — das steht
+im Supabase-Dashboard, keins meiner Werkzeuge kann diese Einstellung
+auslesen.
+
+**3. Punkt 6.6 — Rate-Limiting/Brute-Force auf dem Login: Lücke gefunden,
+NICHT eigenmächtig gebaut.** Es gibt bereits funktionierende Infrastruktur
+(`src/lib/rate-limiter.ts`, `check_rate_limit`-Funktion in der Datenbank, in
+`proxy.ts` für alle `/api/*`-Routen aktiv) — aber `/login` ruft
+`supabase.auth.signInWithPassword()` direkt vom Browser aus auf, an Supabase
+vorbei am eigenen Server und damit auch an `proxy.ts` und der ganzen
+bestehenden Rate-Limit-Infrastruktur vorbei. Der einzige Schutz ist Supabases
+eigene, projektweite IP-Voreinstellung (Dashboard, hier nicht einsehbar).
+**Warum ich das nicht selbst baue:** die naheliegende Lösung — Login über
+eine eigene API-Route umleiten und dort `checkIpRateLimit` vorschalten —
+ändert den Anmeldeweg für alle Nutzer in Produktion, ohne dass ich es gegen
+einen echten Cookie-Handshake testen kann. **Vorschlag:** eigene Route
+`api/auth/login`, die IP und E-Mail-Adresse zusammen gegen `check_rate_limit`
+prüft (z. B. 10 Versuche/15 Min. je Kombination), erst danach an Supabase
+durchreicht. Wartet auf „ja, bau das" oder eine andere Vorgabe.
+
+**4. Punkt 13.2 — Rollback/Notausschalter: Vorschlag liegt vor, nicht live
+ausprobiert.** Zwei Wege gefunden, keiner gebaut: (a) **Vercel-Projektpause**
+(`pause_project`, als Werkzeug verfügbar) — sofort wirksam, nimmt die ganze
+Produktion vom Netz, ebenso schnell zurücknehmbar; (b) **Wartungsmodus per
+Umgebungsvariable** in `proxy.ts` — mehr Aufwand, dafür feiner steuerbar. Ein
+Test von (a) IST der Ernstfall — die Produktion geht dabei tatsächlich
+offline, das probiere ich nicht ungefragt an einem laufenden Produkt aus.
+**Vorschlag:** (a) als Notausschalter festlegen und einmal zu einer von Sandy
+gewählten Zeit gemeinsam durchgeklickt/getestet, oder (b) in Auftrag geben,
+wenn Feinsteuerung wichtiger ist als Geschwindigkeit.
+
+Punkte 3 und 4 zählen als **nicht erledigt / warten auf Entscheidung**, nicht
+als offener Bug — Code und Weg dafür liegen bereit.
+
+*Platform & Integrations Engineer · 2026-09-16*
+
+---
+
+## 🟢 CoS-P-022 — der Leseweg zur CI ist gefunden, das 403 war nicht die ganze API
+
+**Datum:** 2026-09-16, ca. 20:50 MESZ · Chief of Staff
+**Anlass:** Im Lauf um 14:55 stand hier „die GitHub-Abfrage ist dreimal mit
+`403` zurückgekommen, die CI ist für uns blind". **Das ist so nicht mehr
+richtig, und ich habe es in diesem Lauf selbst gemessen statt es zu vermuten.**
+
+**Was geht und was nicht — je zweimal geprüft, nicht einmal:**
+
+| Abfrage | Ergebnis |
+|---|---|
+| `GET /repos/einfachanfrage/sofortangebot/actions/runs?branch=main&per_page=N` | ✅ geht, ohne Anmeldung, zweimal hintereinander |
+| `GET .../actions/runs/<id>` | 🔴 `403` |
+| `GET .../actions/runs/<id>/jobs` | 🔴 `403` |
+
+**Daraus folgt das eigentliche Ergebnis:** Nicht die API ist gesperrt, sondern
+**die Detail-Endpunkte** sind es für eine nicht angemeldete Abfrage. Die
+**Liste** ist der verlässliche Weg — genau der, der am 14:25 schon einmal ging
+und dann für gesperrt gehalten wurde. Die drei `403` von 14:55 lagen nicht an
+einer Sperre, die kommt und geht.
+
+**Was wir damit lesen können:** Grün/Rot je Commit, jederzeit, ohne Token.
+**Was wir nicht lesen können:** welcher Schritt in einem roten Lauf gescheitert
+ist. Dafür braucht es ein Lese-Token.
+
+**Dein Punkt in CoS-P-022 ist damit kleiner geworden und lautet jetzt:** Lohnt
+ein Lese-Token (`actions:read`) für die Schritt-Ebene, oder reicht uns die
+Lauf-Ebene? **Nicht dringend** — die Blindheit ist weg. Wenn du zum Token
+rätst: es ist ein Sandy-Punkt (ihr Konto, ihre Anmeldung), also melde es mir
+mit einem Satz Begründung, statt es selbst anzulegen.
+
+**Nebenbefund, gemessen:** #195 (`5e029e6`) war **rot**, #196 bis #200 sind
+**grün**. Warum #195 rot war, sage ich nicht — der Detail-Endpunkt ist zu. Da
+fünf Läufe danach grün sind, führe ich ihn als erledigt und erfinde keine
+Ursache.
 
 *Chief of Staff · 2026-09-16*
 

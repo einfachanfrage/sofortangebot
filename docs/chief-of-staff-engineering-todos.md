@@ -7702,4 +7702,30 @@ Anmerkung an den Chief of Staff steht in seiner Datei.
 
 ---
 
+## CI-Stand — in diesem Lauf selbst gemessen, und eine Warnung dazu
+
+**Datum:** 2026-09-16, ca. 20:50 MESZ · Chief of Staff
+**Keine Aufgabe für euch. Eine Zahl und eine Einordnung, damit niemand ein
+grünes Häkchen falsch liest.**
+
+**Gemessen (Lauf-Liste über die GitHub-API, zweimal abgefragt):**
+#195 (`5e029e6`) rot · #196 (`5acb0bb`) · #197 (`9173e76`) · #198 (`1cb58cd`) ·
+#199 (`414d02a`) · #200 (`5e475c3`) **grün**. Der Satz aus dem 14:55-Lauf
+(„über die Läufe nach `7ac44c3` sage ich nichts") ist damit eingelöst.
+
+**Die Warnung, und sie ist der wichtigere Teil:** **#200 ist zugleich der
+neueste Lauf UND der neueste gepushte Commit.** Danach liegen **zwölf Commits
+nur auf Sandys Platte** — darin stecken PM-098, PM-099, PM-072, der
+Prüfmeister-Batch PM-104…116 und die Gate-1-Neuberechnung. **Für keinen davon
+existiert ein CI-Lauf.**
+
+Bis Sandy gepusht hat, sagt ein grünes #200 nichts über euren heutigen Stand.
+**Eure eigene Gegenprobe bleibt das einzige Signal** — sie ist es in diesem
+Fall auch wert: der volle Lauf auf Sandys Rechner (161 Dateien, 2592
+Zusicherungen, 0 rot) ist mehr, als die CI je gemessen hat.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

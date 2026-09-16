@@ -1,39 +1,41 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 16.09.2026, 14:55 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 14:25 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 16.09.2026, 18:55 UTC · Chief of Staff**
+*(ersetzt die Fassung von 17:55 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+*Alle Uhrzeiten in dieser Fassung sind **UTC**, so wie ich sie gemessen habe.
+In den älteren Fassungen standen dieselben Messungen teils als „MESZ" —
+das war eine Ungenauigkeit, keine andere Messung.*
 
 ---
 
 ## Lage in drei Zeilen
 
-**PM-098 ist gebaut — der zweite schwere Fund aus Sandys Einsprech-Lauf, am
-selben Tag zu.** „Ein Fenster, eine Tür." erzeugt keine Lackierarbeit mehr:
-mit dem Satz entsteht dieselbe Liste wie ohne ihn. **Damit sind PM-099 und
-PM-098 beide erledigt** — die zwei teuersten Funde des Laufs.
+**Zwölf Commits liegen nur auf Sandys Platte.** Nichts davon ist gepusht,
+nichts deployt, nichts von der CI gemessen: PM-098, PM-099, PM-072, der
+Prüfmeister-Batch PM-104…116 und die Gate-1-Neuberechnung. **Das ist heute der
+einzige Punkt, an dem alles hängt** — und der einzige, den nur Sandy lösen kann.
 
-**Der Designer hat PD-016 Punkt 1 beantwortet (DC-112).** Der einzige Punkt,
-an dem Engineering beim Designer hing, ist frei. **PM-085 ist ab sofort
-baubar.**
+**Die CI ist wieder lesbar — die Blindheit aus dem 17:55-Lauf ist weg.**
+#200 grün auf `5e475c3`, und `5e475c3` ist zugleich der letzte gepushte Stand.
+Nicht die GitHub-API war gesperrt, sondern ihre Detail-Endpunkte.
 
-**Sandys Stand vom 14:38-Push ist drin** (`1cb58cd`, Vercel-Produktion
-`READY`). Danach ist neue Arbeit dazugekommen: **PM-098 liegt uncommittet.**
+**Keine Entscheidung wartet auf Sandy.** Offen ist ein Push, und eine Frage,
+die sie in einem Satz beantwortet.
 
 ---
 
-## Was seit 14:25 MESZ passiert ist
+## Was seit 17:55 UTC passiert ist
 
 | Rolle | Ergebnis | Status |
 |---|---|---|
-| Sandy | **`9173e76` und `1cb58cd` gepusht** — PM-099-Code, DC-111, CoS-P-027, DC-109, DC-112 sind im Repository | ✅ erledigt |
-| Sandy | Vercel-Produktion `1cb58cd`, **`READY`** (14:38 MESZ) — selbst über die Vercel-API gemessen | ✅ erledigt |
-| Engineering | **PM-098 gebaut** — `auftragGiltFuer` in `vollstaendigkeit/helpers.ts`, 11 neue Zusicherungen, Gegenprobe über alle 142 Prüfstände | ✅ erledigt, **uncommittet** |
-| Engineering | **CoS-E-071 Punkt 1 gemessen statt angenommen:** PM-098 lief **nicht** mit PM-099 mit — getrennt gebaut | ✅ erledigt |
-| Designer | **DC-112 — runder Raum: Rückfrage mit Vorschlag.** PD-016 Punkt 1 beantwortet | ✅ erledigt |
-| Designer | **DC-109 umgesetzt** — die drei Sätze der „Abrechnung"-Karte, Wortlaut B, genau drei Zeilen geändert | ✅ erledigt |
-| CoS | **CoS-E-072** — PM-098 abgenommen, DC-112 an Engineering übersetzt, Reihenfolge nachgezogen | verteilt |
-| CoS | **PM-079-A: Widerspruch offen gelegt statt glattgezogen** — Sperrklinke bleibt stehen | verteilt |
-| CoS | **Drei neue Soll-Fragen an den Prüfmeister** — „nicht tapezieren, nur streichen", „ein Holzfenster", „Und die Türen auch." | verteilt |
+| CoS | **Gate 1 neu gerechnet: 50,3 % → 53,0 %** (`3c7bb9e`) — aus Sandys zwei Live-Durchläufen, ohne neuen Code: 2.3 auf 98, 3.1 auf 70, 5.3 auf 35 | ✅ erledigt |
+| CoS | **Postfach `hallo@` ist für alle Rollen lesbar** (`dc24013`) — Manfreds Session 3 und die Zustelltests sind damit entsperrt | ✅ erledigt |
+| CoS | **Die 13 leeren Gate-1-Felder sind auf die Rollen verteilt** (`551004b`) — 1.300 der 2.207 fehlenden Punkte liegen in Feldern, die nie jemand angesehen hat | ✅ erledigt |
+| Engineering | **PM-072 gebaut** (`fb5dfb8`) — Estrich ist kein Belag, die erfundene Zeile ist weg. **Zug 3 rückt auf PM-074.** | ✅ erledigt |
+| Finance/CoS | **Punkt 11.4 erstmals erhoben** (`0eff2ba`) — kein getrenntes Geschäftskonto, hängt an der Gewerbeanmeldung KW 41 | ✅ erhoben |
+| CoS | **CI gemessen: #195 rot, #196 bis #200 grün** — der Satz „über die Läufe nach `7ac44c3` sage ich nichts" ist eingelöst | ✅ erledigt |
+| CoS | **CoS-P-022 eingegrenzt** — der verlässliche Leseweg ist gefunden, siehe Platform | ✅ erledigt |
+| Engineering | Voller Testlauf auf Sandys Rechner: **161 Dateien, 2592 Zusicherungen, 0 rot** | ✅ erledigt |
 
 ---
 
@@ -41,31 +43,35 @@ baubar.**
 
 **Selbst gemessen, nicht vermutet:**
 
-* **Alle Dateien in `docs/` und in `src/lib/` nach Änderungszeit.** Jüngste
-  Schreibzeit: **14:42 MESZ** (Engineering, PM-098). Daraus folgt der Stand
-  „uncommittet" unten — nicht aus einer Meldung, sondern aus dem Vergleich mit
-  Sandys Push-Zeit 14:38 MESZ.
-* **Vercel-API:** Produktion `1cb58cd`, `READY`, erstellt 14:38 MESZ. Davor
-  `9173e76` (14:21) und `5acb0bb` (14:09), beide `READY`.
-* **Die Berichte selbst gelesen**, nicht die Übersichten: PM-098 und PM-099 in
-  `chief-of-staff-engineering-todos.md`, der Live-Lauf in
-  `pruefmeister-restliste.md`, DC-109/DC-112 in `design-check.md`.
+* **Die CI-Lauf-Liste über die GitHub-API, zweimal abgefragt:** #195
+  (`5e029e6`) rot, #196/#197/#198/#199/#200 grün. Die **Lauf-Liste**
+  (`/actions/runs?branch=main`) antwortet ohne Anmeldung; die **Detail-
+  Endpunkte** (`/runs/<id>`, `/runs/<id>/jobs`) liefern `403`. Damit ist das
+  `403` vom 17:55-Lauf erklärt, ohne eine Sperre annehmen zu müssen.
+* **Vercel-API:** Produktion ist `5e475c3`, `READY`, 14:34 UTC. **Danach gibt
+  es keinen Deploy — weil es danach keinen Push gibt.** Nicht, weil etwas
+  fehlgeschlagen wäre.
+* **`git log origin/main..main`: zwölf Commits.** Von `86a9c75` (16:18) bis
+  `0eff2ba` (18:31).
+* **`git push --dry-run`:** scheitert unverändert mit *„could not read
+  Username for 'https://github.com'"*. In dieser Shell liegen keine
+  GitHub-Zugangsdaten, und ich nehme keine entgegen. **Pushen bleibt bei Sandy.**
+* **`docs/entscheidungen-fuer-sandy.md` frisch gelesen:** letzter Eintrag
+  12:22 UTC, Absendername entschieden (C). **Dort wartet nichts auf sie.**
+* **Alle Dateien in `docs/` nach Änderungszeit**, und die Schlussabschnitte der
+  fünf Rollen-Dateien selbst gelesen — nicht die Übersichten.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **🔴 Die CI. Ich habe in diesem Lauf keinen einzigen Lauf gemessen.** Die
-  gefilterte GitHub-Abfrage (`?branch=main`), die um 14:25 noch ging, hat
-  **dreimal `403`** geliefert; die ungefilterte Seite bricht unverändert bei
-  **#187** ab. **Über die Läufe nach `7ac44c3` sage ich nichts — weder grün
-  noch rot.** Letzte belegte Messung bleibt #192/#193/#194.
-  → **Das ist ein neuer Punkt für Platform, siehe CoS-P-022 unten.**
-* **Gate 1 rechne ich weiterhin nicht neu.** Unverändert: ein Posten liegt vor
-  (Sandys Einsprech-Lauf), **Manfreds Session 3 fehlt**. Gerechnet wird, wenn
-  beide da sind — nicht in Teilen.
+* **Warum #195 rot war.** Der Detail-Endpunkt ist zu. Fünf grüne Läufe danach
+  → ich führe ihn als erledigt und erfinde keine Ursache.
+* **Gate 1 rechne ich nicht neu.** Der 18:00-Lauf hat das gerade getan
+  (**53,0 %**). Unverändert gilt: **Manfreds Session 3 fehlt** — sie ist seit
+  18:06 technisch möglich, aber noch nicht gelaufen.
 * **Versicherung, Stripe, Gewerbeanmeldung, Vercel-Benachrichtigung** — in
   diesem Lauf nicht angefasst.
-* **Legal, Marketing, Finance** haben seit dem 15.09. bzw. 07.09. und 03.09.
-  nichts geschrieben. Keine neuen Ergebnisse, also melde ich keine.
+* **Der Zustand der zwölf lokalen Commits.** Kein CI-Lauf, kein Deploy. Das
+  einzige Signal dafür ist die Gegenprobe von Engineering und Prüfmeister.
 
 ---
 
@@ -73,209 +79,165 @@ baubar.**
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔴 **Neuer Block im Chat** — committet den PM-098-Fix (4 Dateien) und drei Doku-Dateien | ein Block |
+| 1 | 🔴 **Pushen.** Zwölf Commits liegen auf ihrer Platte. Alles ist committet — es fehlt nur der eine Befehl, den ich nicht habe. | ein Befehl |
 | 2 | 🟡 **CoS-P-013: ein Satz fehlt** — ging „Passwort speichern" durch und konntest du dich danach neu anmelden? | ein Satz |
 | 3 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
 
 **Keine Entscheidung wartet auf sie.**
 
-### Nicht im Repository
-
-```
-src/lib/vollstaendigkeit/helpers.ts                                <- auftragGiltFuer
-src/lib/vollstaendigkeit/maler-lackieren.ts                        <- Auslöser gebremst
-src/lib/__tests__/pruefmeister-batch-47-56.test.ts                 <- PM-098-A umgestellt
-src/lib/__tests__/pm098-oeffnung-ist-keine-beauftragung.test.ts    <- NEU, 11 Zusicherungen
-docs/chief-of-staff-engineering-todos.md                           <- PM-098-Bericht + CoS-E-072
-docs/pruefmeister-restliste.md                                     <- Engineering-Notiz + 4 CoS-Punkte
-docs/arbeitsreihenfolge.md                                         <- in diesem Lauf ersetzt
-```
-
-Der Block committet den ganzen Ordner, offene Reste von anderen Rollen nimmt er
-mit.
-
 ---
 
 ## Head of Product Engineering
 
-1. ✅ **PM-098 ist abgenommen — CoS-E-069 Nachtrag ist zu.** Die Staffelung in
-   vier Stufen ist die richtige Form, Stufe 1 („Lackier-Wort gar nicht im
-   Rohtext → unverändert") genau die richtige Vorsicht. Ausdrücklich
-   gutgeschrieben: ihr habt CoS-E-071 Punkt 1 **gemessen** statt angenommen —
-   und das Ergebnis war das unbequeme.
-2. 🟢 **PD-016 Punkt 1 ist beantwortet, CoS-E-068 Teil C ist frei.**
-   **PM-085 ist ab sofort baubar.** Die vollständige Übersetzung von DC-112
-   steht in **CoS-E-072** — Erkennung (`vage` bei Rundform-Wort ohne
+1. ✅ **PM-072 ist gebaut und committet.** Zug 3 rückt auf **PM-074 → PM-079**.
+   PM-074 sitzt bestätigt in `vollstaendigkeit/boden-vorarbeiten.ts`,
+   `pruefeSockelleisten()` — Wortliste mit Wortgrenzen statt Wortstamm,
+   dieselbe Reparatur wie PM-064.
+2. 🔴 **PM-079-A: Sperrklinke stehen lassen, nicht bauen.** Der Widerspruch
+   (euer Prüfstand zwei Räume 112 vs. 65 m², die Entwarnung des Prüfmeisters
+   ein Raum über 65 m²) liegt beim Prüfmeister als offene Doku-Lücke.
+   **Unverändert seit 14:55.**
+3. 🟢 **PM-085 ist baubar** — DC-112 ist übersetzt, die vollständige Fassung
+   steht in **CoS-E-072**: Erkennung (`vage` bei Rundform-Wort ohne
    `laenge`/`breite`), Rückfrage mit Vorschlag, π-Rechnung nur für die Anzeige,
    und die harte Grenze: ein Raum ohne Fläche erzeugt einen **Fehlt-Eintrag**,
    nie null Positionen und null Einträge.
-3. 🔴 **PM-079-A: Sperrklinke stehen lassen, nicht bauen.** Euer Prüfstand
-   (zwei Räume, 112 vs. 65 m²) und die Entwarnung des Prüfmeisters (ein Raum
-   über 65 m²) meinen nicht dasselbe. Der Widerspruch liegt beim Prüfmeister
-   als offene Doku-Lücke — bis dort ein Satz steht, bleibt er rot.
-4. 🔴 **Zug 3 läuft weiter mit PM-072 → PM-074 → PM-079.** PM-098 und PM-099
-   sind raus, beide gebaut.
-5. **Zug 2:** PM-089, 090, 091, 093, 096, 097 — **und jetzt PM-085 mit dazu**.
-   **Vor dem Bauen die drei Warnungen in CoS-E-069 lesen, besonders PM-090.**
-6. **Zahlen-Zug:** PM-092, PM-095, **CoS-E-070 Teil A** (eine Quelle für das
-   Fischgrät-Muster). Teil B (5 % oder 15 %) hängt an CoS-E-054, nicht hier.
+4. **Zug 2:** PM-089, 090, 091, 093, 096, 097 **und PM-085**. **Vor dem Bauen
+   die drei Warnungen in CoS-E-069 lesen, besonders PM-090.**
+5. 🆕 🔴 **Aus dem Prüfmeister-Batch kommen drei Fälle mit Vorrang hoch dazu:**
+   **PM-116** (ausgenommener zweiter Bauabschnitt, 305,40 € Arbeit, die der
+   Satz herausnimmt), **PM-105** (Verneinung mit Menge — löscht 100,00 €
+   *bestellte* Arbeit, dreht die Klasse also um), **PM-106** („ebenso", „das
+   gleiche nochmal", „dito", „genauso wie" — eine Klasse, kein Einzelfall,
+   720,00 € je Fall). **Warnung des Prüfmeisters mitnehmen:** die Maschine, die
+   eine Verneinung in Wirkung übersetzt, ist schon da und ist zu grob — wer
+   PM-101 baut, baut darauf auf, PM-105-D/E als Kontrollen mitlaufen lassen.
+6. **Zahlen-Zug:** PM-092, PM-095, **CoS-E-070 Teil A**. Teil B (5 % oder 15 %)
+   hängt an CoS-E-054, nicht hier.
 7. **Danach CoS-E-061.**
-8. **Die drei Fälle, die ihr beim Messen gefunden habt, liegen beim
-   Prüfmeister** — „ein Holzfenster", „Und die Türen auch.", und der
-   `Tapete tapezieren`-Fund. Alle drei sind Soll-Fragen. **Nichts davon hängt
-   bei euch.**
-9. **LR-19 / L-MAIL-01** — kein `reply_to` in den Mails an den Endkunden.
-   Bauauftrag von Legal, hängt an **CoS-E-057**. Keine Frage an euch.
-10. **CoS-E-057 (§ 35a)** — CoS-L-008 ist geliefert, bauen möglich. Migration
-    **und** Eintrag in `check_migrationen.sql`.
-11. **CoS-E-053** weiterbauen, mit den vier Legal-Bedingungen. Preisanpassungs-
-    Hinweis nicht aufs Kunden-PDF vor Sandys Freigabe (LR-16).
-12. **CoS-E-063** — Heizkörper. **CoS-E-060** — offen: welche Datei speist die
-    Oberfläche, `preis-ableitung.ts` oder `materialanteil.ts`?
-13. **CoS-E-067** — `no-explicit-any`-Aufräumrunde, eigener Lauf, ganz hinten.
-14. ⚠️ **Die CI ist in diesem Lauf nicht gemessen worden.** Der Satz von 14:25
-    („wieder ein verlässliches Signal") gilt weiter für #192–#194, aber die
-    Läufe danach kenne ich nicht. **Verlasst euch bis auf Weiteres auf eure
-    eigene Gegenprobe, nicht auf die CI-Anzeige.**
+8. **CoS-E-057 (§ 35a)** — CoS-L-008 ist geliefert, bauen möglich. Migration
+   **und** Eintrag in `check_migrationen.sql`. **CoS-E-053** weiterbauen mit den
+   vier Legal-Bedingungen; Preisanpassungs-Hinweis nicht aufs Kunden-PDF vor
+   Sandys Freigabe (LR-16). **LR-19 / L-MAIL-01** (kein `reply_to` in Mails an
+   den Endkunden) hängt an CoS-E-057.
+9. **CoS-E-063** Heizkörper · **CoS-E-060** offen: welche Datei speist die
+   Oberfläche, `preis-ableitung.ts` oder `materialanteil.ts`? · **CoS-E-067**
+   `no-explicit-any`-Aufräumrunde, eigener Lauf, ganz hinten.
+10. 🆕 **Euer Nebenbefund `altbelag_entfernen` ist angekommen und bleibt
+    liegen, wie ihr es vorgeschlagen habt.** Ein von Hand gesetztes Feld wird
+    von der Pipeline überschrieben, nicht nur ergänzt. **Eigener Fall, gehört
+    gemessen, bevor jemand daran baut** — nicht in PM-074 hineinziehen.
+11. ⚠️ **Zur CI: #200 ist grün, aber #200 ist der letzte GEPUSHTE Stand.** Für
+    eure zwölf lokalen Commits existiert kein Lauf. **Bis Sandy gepusht hat,
+    bleibt eure eigene Gegenprobe das einzige Signal** — sie ist hier auch mehr
+    wert: 161 Dateien / 2592 Zusicherungen / 0 rot auf dem echten Rechner.
+12. 🆕 **Zu eurer Meldung „mein Stand wurde mir wegcommittet":** aufgenommen,
+    Punkt liegt bei mir, nicht bei euch. Ihr habt richtig gehandelt (geprüft,
+    nicht gehofft). **Ihr müsst daraus nichts ableiten.**
 
 ## Product Designer
 
-1. ✅ **DC-112 ist angekommen und weitergereicht.** Die Entscheidung
-   „Rückfrage mit Vorschlag statt leerem Angebot" ist übersetzt und liegt bei
-   Engineering. **Ihr habt damit Engineerings einzigen Wartepunkt aufgelöst.**
-2. ✅ **DC-109 abgenommen.** Drei Zeilen, keine vierte, der CoS-P-009-Block von
-   Platform unberührt, vorher frisch geholt — genau die zwei Auflagen.
-3. 🔴 **Drei Punkte aus dem Live-Lauf, in dieser Reihenfolge** — Inhalt in
-   **PD-018** (zweiter Block), Abgrenzung in `design-check.md`:
-   **(a)** der Fassaden-Entwurf (leerer Raum mit 0,00 € unter der richtigen
-   Fassade — Vorrang hoch, erster Kundenscreen) · **(b)** Nullzeilen mit Menge 0
-   gehören nicht aufs Angebot · **(c)** der Prozentzuschlag ohne Bezugsgröße —
-   **noch nicht bauen**, der Prüfmeister misst die Bemessungsgrundlage nach.
-4. ⚠️ **Beim Fassaden-Entwurf:** der leere Raum selbst ist **nicht** euer
-   Fehler, der kommt aus dem Phantomraum (L-02 / PM-053-A) bei Engineering.
-   Eure Seite ist die Gruppierung. Nicht warten, aber auch nicht deren Aufgabe
-   übernehmen.
-5. **PD-018 erster Block, drei Fragen.** Punkt 2 liefert zugleich den Beleg für
+1. 🆕 🔴 **PD-019 vom Prüfmeister — drei Sätze, keine Rechenfrage:** das leere
+   Angebot (**PM-113, Vorrang hoch** — es ist derselbe Screen, den ihr für den
+   runden Raum in DC-112 schon entschieden habt), der Nachtrag ohne
+   Kennzeichnung (PM-115), die Formfrage bei zwei Bauabschnitten (PM-116 — der
+   Fehler dahinter gehört Engineering, nicht euch).
+2. 🔴 **Drei Punkte aus dem Live-Lauf, in dieser Reihenfolge** — Inhalt in
+   **PD-018** (zweiter Block): **(a)** Fassaden-Entwurf (leerer Raum mit 0,00 €
+   unter der richtigen Fassade, Vorrang hoch, erster Kundenscreen) · **(b)**
+   Nullzeilen mit Menge 0 gehören nicht aufs Angebot · **(c)** Prozentzuschlag
+   ohne Bezugsgröße — **noch nicht bauen**, der Prüfmeister misst die
+   Bemessungsgrundlage nach.
+3. ⚠️ **Beim Fassaden-Entwurf:** der leere Raum selbst ist **nicht** euer
+   Fehler (Phantomraum L-02 / PM-053-A bei Engineering). Eure Seite ist die
+   Gruppierung. Nicht warten, aber auch nicht deren Aufgabe übernehmen.
+4. **PD-018 erster Block, drei Fragen.** Punkt 2 liefert zugleich den Beleg für
    **PD-016 Punkt 2**. **Keiner der drei blockiert etwas.**
-6. **Nachzuziehen, jetzt möglich:** die eine Stelle in `AngebotDetail.tsx`,
+5. **Nachzuziehen, jetzt möglich:** die eine Stelle in `AngebotDetail.tsx`,
    bewusst ausgelassen.
-7. **DC-102** freigegeben — Ablauf und Darstellung, **nicht die Zahlen**.
+6. **DC-102** freigegeben — Ablauf und Darstellung, **nicht die Zahlen**.
    Einbau hängt an CoS-E-053.
-8. 🟢 **`docs/landingpage-fuenf-beispiele.md`: die Sperre ist gefallen.**
-   Bedingung war „nicht live, bevor PM-098 UND PM-099 gebaut sind" — beide sind
-   gebaut. **Eine Auflage bleibt:** Beispiel 4 umgeht PM-098 heute dadurch, dass
-   Fenster und Tür nicht im Satz stehen. Diese Krücke gehört raus, bevor die
-   Seite live geht — der Fehler dahinter ist weg.
-9. 🟠 **DC-111 — die beiden Passwort-Seiten haben kein Desktop-Layout.** Fünf
+7. 🟢 **`docs/landingpage-fuenf-beispiele.md`: die Sperre ist gefallen**
+   (PM-098 und PM-099 sind beide gebaut). **Eine Auflage bleibt:** Beispiel 4
+   umgeht PM-098 heute dadurch, dass Fenster und Tür nicht im Satz stehen —
+   diese Krücke gehört raus, bevor die Seite live geht.
+8. 🟠 **DC-111 — die beiden Passwort-Seiten haben kein Desktop-Layout.** Fünf
    Stellen mit Zeilennummern in `design-check.md`. **Hinter PD-018
    einsortieren.** Zweiter Punkt derselben Datei: das Emoji 📬 als Bildmarke —
    Frage an euch, keine Ansage.
-10. **Live-Test von DC-105 / DC-101 / DC-103 / DC-104 / DC-089 / DC-047 /
-    DC-048** — **das braucht Sandy NICHT mehr.** Der Browser in der Claude-App
-    funktioniert (16.09. selbst benutzt, IONOS-Konto darüber bedient). Ihr
-    öffnet `sofortangebot.app` darin und testet selbst. Nur wo eine
-    Bestätigungs-Mail gelesen werden muss, fehlt noch der Zugang zu `hallo@` —
-    das ist eine einzige Anmeldung, die ich bei Sandy hole.
+9. 🟢 **Live-Tests braucht Sandy nicht mehr** (DC-105 / DC-101 / DC-103 /
+   DC-104 / DC-089 / DC-047 / DC-048). Der Browser in der Claude-App läuft,
+   **und seit 18:06 ist auch `hallo@` für alle Rollen lesbar** — der letzte
+   Grund, auf sie zu warten, ist damit weg. Ihr testet selbst, Ende zu Ende.
+10. 🆕 **Marketing kommt auf euch zu (Punkt 9.1, Landingpage).** Abgemacht ist:
+    **Inhalt gehört Marketing, Aufbau und Aussehen euch.** Erst ein Entwurf,
+    keine fertige Seite — Sandy will den Text mitgestalten.
 
 ## Platform
 
-1. 🆕 🔴 **CoS-P-022 hat einen neuen, harten Anlass: die GitHub-Abfrage ist
-   heute dreimal mit `403` zurückgekommen** — dieselbe gefilterte Form
-   (`?branch=main`), die vor einer halben Stunde noch funktioniert hat. Ohne
-   sie ist die CI für uns **blind**: die ungefilterte Seite bricht bei #187 ab.
-   **Das ist jetzt der Kern von CoS-P-022** — wir brauchen einen Weg, den
-   CI-Stand verlässlich zu lesen, der nicht an einer ungezählten Abfrage hängt.
-2. ✅ **CoS-P-026 ist vollständig zu.** #192/#193/#194 grün gemessen,
-   inklusive Produktions-Build.
-3. 🔴 **CoS-P-025 — die Schrumpf-Prüfung, und sie deckt jetzt auch
-   `.github/workflows/` ab.**
+1. 🆕 🟢 **CoS-P-022 ist eingegrenzt — und deutlich kleiner geworden.** Nicht
+   die GitHub-API ist gesperrt, sondern ihre **Detail-Endpunkte**. Die
+   **Lauf-Liste** (`/actions/runs?branch=main&per_page=N`) antwortet ohne
+   Anmeldung, zweimal hintereinander geprüft. Volle Messung in eurer Datei.
+   **Eure Restfrage:** lohnt ein Lese-Token (`actions:read`) für die
+   Schritt-Ebene, oder reicht die Lauf-Ebene? **Nicht dringend.** Wenn ihr zum
+   Token ratet: das ist ein Sandy-Punkt (ihr Konto), also meldet es mir mit
+   einem Satz Begründung, statt es selbst anzulegen.
+2. 🔴 **Vier leere Gate-1-Felder liegen bei euch** (Datei, 18:18): **2.7**
+   Session-Sicherheit · **4.1** kostenloser Start ohne Zahlungs-Blocker ·
+   **6.6** Rate-Limiting/Brute-Force auf dem Login (hier erwarte ich echte
+   Arbeit, nicht nur eine Messung) · **13.2** Notausschalter. Der Weg dafür ist
+   jetzt komplett begehbar: Browser der Claude-App **plus** Postfach `hallo@`.
+3. 🔴 **CoS-P-025** — die Schrumpf-Prüfung, sie deckt jetzt auch
+   `.github/workflows/` ab.
 4. 🔴 **CoS-P-024 — der Push-Hook wird ersatzlos abgeschafft.** Sandys
-   Anweisung. **Noch nicht als umgesetzt eingetragen.**
-5. 🟢 **CoS-P-027 ist entschieden: C.** Zwei Absender. Die Zuordnung aller acht
-   Versandwege steht fertig in Nachtrag 1 — ihr müsst nichts ableiten. Zwei
-   Punkte nicht übersehen: `hallo@sofortangebot.app` muss zustellbar sein
-   (falls nicht: **melden**, nicht still auf `sandra@` zurückfallen), und die
-   `Sandra`-Signaturen im Fließtext der Marken-Mails ziehen im selben Zug mit.
-6. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code. Die
-   ersten drei Schritte sind über ihre Bildschirmfotos belegt.
-7. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload.
-8. ✅ **CoS-P-020 und CoS-P-021 sind zu.**
-9. **DC-109 ist gebaut.** Der Designer hat die Datei vor dem Schreiben frisch
-   geholt; euer CoS-P-009-Kommentarblock und der Hinweisabsatz darunter sind
-   unverändert drin — nachgelesen, nicht angenommen.
+   Anweisung. **Noch immer nicht als umgesetzt eingetragen.**
+5. 🟢 **CoS-P-027 ist entschieden: C.** Zwei Absender, Zuordnung aller acht
+   Versandwege steht fertig in Nachtrag 1. Zwei Punkte nicht übersehen:
+   `hallo@sofortangebot.app` muss zustellbar sein (falls nicht: **melden**,
+   nicht still auf `sandra@` zurückfallen), und die `Sandra`-Signaturen im
+   Fließtext der Marken-Mails ziehen im selben Zug mit.
+6. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code.
+7. ✅ **CoS-P-026, CoS-P-020, CoS-P-021, CoS-P-005 sind zu.**
+8. **Regel zum Postfach, unverändert:** Lesen ja, um Tests zu belegen. **Keine
+   Mails von dort verschicken, nichts löschen, nichts als gelesen markieren,
+   was Sandy noch nicht gesehen hat.**
 
 ## Prüfmeister
 
-*Stand vom Prüfmeister selbst nachgezogen, 16.09.2026 abends — dieser
-Abschnitt ersetzt den vorherigen.*
-
-1. 🆕 ✅ **Batch PM-104 bis PM-116 liegt — dreizehn neue Fälle, Fallbasis jetzt
-   116.** Hinterlegt als `src/lib/__tests__/pruefmeister-batch-104-116.test.ts`
-   (**29 grün, 20 Sperrklinken**), Befunde in `pruefmeister-restliste.md`.
-   Damit sind die neun Themen aus dem Speicher, die hier als „nächste"
-   standen, **und** die drei neuen Themen aus Abschnitt L abgeräumt.
-2. 🆕 🔴 **PM-116 — der ausgenommene zweite Bauabschnitt. Vorrang hoch.**
-   „Zweiter Bauabschnitt Küche … das kommt später und wird extra angeboten."
-   → die Küche steht vollständig im Angebot: **305,40 €** für Arbeit, die der
-   Satz herausnimmt. Dieselbe Klasse wie PM-099, nur auf einen ganzen Raum und
-   einen Zeitpunkt bezogen.
-3. 🆕 🔴 **PM-105 — die Verneinung mit Menge, und sie dreht die Klasse um.
-   Vorrang hoch.** „Die drei kleinen Fenster nicht, **nur das große**" löscht
-   auch das große: **100,00 € bestellte Arbeit fällt weg.** Isoliert gemessen —
-   mit „auch" statt „nicht" bleibt der Block stehen, „Die Heizkörper nicht."
-   lässt ihn unberührt. ⚠️ **Warnung an Engineering: Die Maschine, die eine
-   Verneinung in Wirkung übersetzt, ist schon da und ist zu grob. Wer PM-101
-   baut, baut darauf auf — PM-105-D/E als Kontrollen mitlaufen lassen.**
-4. 🆕 🔴 **PM-106 — „ebenso", „das gleiche nochmal", „dito", „genauso wie"
-   verhalten sich alle wie „auch".** PM-103 ist damit kein Einzelfall, sondern
-   eine Klasse; ein Bauauftrag deckt alle fünf Wörter ab. 720,00 € je Fall.
-5. 🆕 🟢 **PM-107 ist grün und trotzdem wichtig:** Alu, Kunststoff und
-   Stahlzarge verhalten sich richtig — der Fehler aus PM-102 sitzt an **genau
-   einem Wort**. `PM-107-A` ist die engste Fassung des Bauauftrags und wird
-   grün, sobald PM-102 gebaut ist.
-6. 🆕 🔴 **Acht weitere Fälle mit Soll-Satz:** PM-110 (Estrichriss — Zeile im
-   Katalog, erreichbar, entsteht nie) · PM-109 (Staubschutzwand und
-   Abendreinigung, beide Zeilen im Katalog, fürs Maler-Gewerk gesperrt) ·
-   PM-113 (leeres Angebot ohne Fehlt-Eintrag) · PM-104 (Wortstamm „sockel",
-   Engineerings Fund gegengemessen) · PM-111 · PM-112 · PM-114 · PM-115 · PM-108.
-   Alle mit Geldweg und Kontrolle in `pruefmeister-restliste.md`.
-7. 🆕 ✅ **K.6 und K.7 sind beantwortet — Engineering hängt an nichts mehr bei
-   mir.** K.6: Es fehlt **genau eine Katalogzeile**, die Stück-Entsprechung zu
-   `Stuckleisten streichen / weißen` (6,00 €/lfdm, für Maler erreichbar) —
-   PM-070 ist ein Katalogzug wie PM-076, kein Codefund; `Stuckrosette
-   abkleben` ist der Gegenfall, nicht der Ersatz. K.7: **fragen, nicht
-   rechnen** — ein Standardmaß je Balken schlägt achtfach durch (50 %
-   Unterschied zwischen 0,20 m und 0,30 m Breite); Soll ist die Rückfrage nach
-   Länge und Breite eines Balkens.
-8. 🆕 **PD-019 an den Designer** — drei Sätze, die keine Rechenfrage sind:
-   das leere Angebot (PM-113, Vorrang hoch — es ist derselbe Screen, den ihr
-   für den runden Raum in DC-112 schon entschieden habt), der Nachtrag ohne
-   Kennzeichnung (PM-115), und die Formfrage bei zwei Bauabschnitten (PM-116,
-   der Fehler dahinter gehört Engineering, nicht euch).
-9. ✅ **PM-079-A bleibt beantwortet: Einzelraum.** Sperrklinke steht,
-   PM-079-A/B ist offener Bauauftrag aus CoS-E-059. Unverändert.
-10. **Die 142 Vorlagen der gesperrten Gewerke** — unverändert, jeweils vor der
-    Freischaltung, nicht danach.
-11. 🆕 🟢 **Zur stehenden Regel, Punkt 1: die Shell ist bei mir wieder da.**
-    Der Satz aus dem Nachmittagslauf („bei mir nicht") gilt nicht mehr.
-    Gemessen wurde dieser Lauf **auf Sandys Rechner am echten Projekt** —
-    kein Staging, kein `--legacy-peer-deps`, keine Ersatzumgebung.
-    **`npx vitest run pruefmeister-`: 284 grün, 87 Sperrklinken** über alle elf
-    Batch-Dateien, kein unerwarteter Fehlschlag. `eslint` und `tsc` über die
-    neue Datei sauber. **`node scripts/vokabular-abgleich.mjs` kommt
-    unverändert heraus (182 / 32 / 3 / 147 / 0)** — jetzt zum ersten Mal am
-    Original statt am Nachbau, Zahl für Zahl identisch.
-
-12. 🆕 ⚠️ **Selbst committet: `c4ef0dd`** (die sechs Dateien dieses Laufs).
-    **`git push` geht weiterhin nicht** — in dieser Shell liegen keine
-    GitHub-Zugangsdaten (`could not read Username for 'https://github.com'`).
-    **Der Zweig steht damit vier Commits vor `origin/main`**, nicht nur einen:
-    darin stecken auch Reste anderer Rollen. Gemeldet, nicht weitergereicht.
+1. ✅ **Batch PM-104 bis PM-116 liegt — Fallbasis 116.** 29 grün, 20
+   Sperrklinken, Befunde in `pruefmeister-restliste.md`. **Committet
+   (`c4ef0dd`), aber wie alles von heute noch nicht gepusht.**
+2. 🔴 **Die drei schweren Funde sind an Engineering verteilt:** PM-116, PM-105,
+   PM-106 — alle drei mit Vorrang hoch, Einordnung dort.
+3. 🔴 **Offen bei euch: der Widerspruch PM-079-A.** Euer Prüfstand und eure
+   Entwarnung meinen nicht dasselbe. **Bis dort ein Satz steht, bleibt
+   Engineerings Sperrklinke stehen** — das blockiert real.
+4. 🔴 **Nachzumessen: die Bemessungsgrundlage beim Prozentzuschlag** (Designer
+   Punkt (c) wartet darauf, baut aber nicht).
+5. **Acht Fälle mit Soll-Satz** liegen fertig: PM-110, PM-109, PM-113, PM-104,
+   PM-111, PM-112, PM-114, PM-115, PM-108.
+6. ✅ **K.6 und K.7 sind beantwortet — Engineering hängt an nichts mehr bei euch.**
+7. **Die 142 Vorlagen der gesperrten Gewerke** — unverändert, jeweils vor der
+   Freischaltung, nicht danach.
+8. 🆕 **Manfreds Session 3 ist entsperrt** (Postfach `hallo@` seit 18:06 für
+   alle Rollen lesbar). Sie ist der zweite fehlende Posten für die nächste
+   Gate-1-Rechnung — der erste (Sandys Einsprech-Lauf) liegt bereits vor.
 
 ## Legal · Marketing · Finance
 
-**In diesem Lauf nichts Neues von mir, und nichts Neues von euch** — eure
-Dateien sind seit dem 15.09. (Legal), 07.09. (Marketing) und 03.09. (Finance)
-unverändert. Eure offenen Punkte stehen dort.
+**Neu seit 18:18: jede der drei Rollen hat jetzt ein zugewiesenes leeres
+Gate-1-Feld.** Das war der Grund für die Stille, nicht fehlende Arbeit.
+
+* **Legal — Punkt 7.13:** KI-Anbieter-Nutzungsbedingungen (OpenAI/Whisper).
+  Reine Lesearbeit mit Urteil. **Wenn alles passt, mit Fundstelle sagen** —
+  dann sind 100 Punkte ohne eine Zeile Code geholt. Daneben unverändert offen:
+  die Erreichbarkeit der Impressumsadresse (drei Fragen in eurer Datei).
+* **Marketing — Punkt 9.1:** Landingpage. Erst ansehen und ehrlich bewerten,
+  dann benennen, was fehlt, **dann** ein Entwurf gemeinsam mit dem Designer.
+  Keine fertige Seite — Sandy will den Text mitgestalten.
+* **Finance — Punkte 4.7 und 11.4:** E-Rechnungs-Empfang der eigenen
+  Buchhaltung, und das getrennte Geschäftskonto (Einschätzung, keine
+  Umsetzung; **keine Empfehlung ohne Preis**).
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
