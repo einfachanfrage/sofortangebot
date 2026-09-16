@@ -1464,5 +1464,44 @@ nicht mit." Geht als Ein-Zeilen-Fix an Head of Product Engineering zurück
 
 ---
 
+## 🎯 LEERE FELDER — Gate-1-Punkte, die noch nie bewertet wurden
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Anlass:** Sandy fragte, warum Gate 1 nur bei 53 % steht. Nachgerechnet:
+**1.300 der 2.207 fehlenden Punkte liegen in 13 Feldern, die auf 0 stehen —
+nicht weil sie scheitern, sondern weil sie nie jemand angesehen hat.** Das ist
+kein Ruhmesblatt fuer mich; ich haette sie laengst verteilen muessen.
+
+**Wichtig zum Vorgehen:** Eine ehrliche Bewertung ist schon der halbe Gewinn.
+Wenn ein Punkt in Wahrheit erfuellt ist und nur nie geprueft wurde, schreib das
+mit Beleg hin — das ist kein Schummeln, sondern das Nachholen einer Messung.
+Wenn er nicht erfuellt ist, schreib hin, was fehlt und wie lange es dauert.
+**Nicht schaetzen, wo man messen kann.**
+
+### Dein Feld — und du bist der Grund, warum es leer ist
+
+**Punkt 9.1 — Landingpage erklaert klar, was das Tool tut und fuer wen.**
+Gate-1-Punkt, steht auf **0**. Ohne ihn weiss ein Testnutzer nicht, was er vor
+sich hat, bevor er sich anmeldet.
+
+**Die Rolle Marketing hatte bis heute keine stuendliche Aufgabe** und ist
+deshalb seit dem 07.09. still. Das ist mein Versaeumnis, nicht deins.
+
+**Erste Schritte, ohne Sandy:**
+
+1. Die Landingpage im Browser der Claude-App ansehen (`sofortangebot.app`) und
+   ehrlich bewerten: Versteht ein Malermeister in 15 Sekunden, was das ist?
+2. Was fehlt, benennen — nicht gleich umschreiben.
+3. Erst dann einen Vorschlag, gemeinsam mit dem Product Designer
+   (`design-check.md`). **Inhalt gehoert dir, Aufbau und Aussehen ihm.**
+
+Sandy will den Text am Ende mit euch durchgehen — sie hat ausdruecklich
+gesagt, sie moechte die Landingpage inhaltlich mitgestalten. Also einen
+Entwurf, keine fertige Seite.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

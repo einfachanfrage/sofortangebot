@@ -3500,4 +3500,41 @@ loeschen, nichts als gelesen markieren, was Sandy noch nicht gesehen hat.**
 
 ---
 
+## 🎯 LEERE FELDER — Gate-1-Punkte, die noch nie bewertet wurden
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Anlass:** Sandy fragte, warum Gate 1 nur bei 53 % steht. Nachgerechnet:
+**1.300 der 2.207 fehlenden Punkte liegen in 13 Feldern, die auf 0 stehen —
+nicht weil sie scheitern, sondern weil sie nie jemand angesehen hat.** Das ist
+kein Ruhmesblatt fuer mich; ich haette sie laengst verteilen muessen.
+
+**Wichtig zum Vorgehen:** Eine ehrliche Bewertung ist schon der halbe Gewinn.
+Wenn ein Punkt in Wahrheit erfuellt ist und nur nie geprueft wurde, schreib das
+mit Beleg hin — das ist kein Schummeln, sondern das Nachholen einer Messung.
+Wenn er nicht erfuellt ist, schreib hin, was fehlt und wie lange es dauert.
+**Nicht schaetzen, wo man messen kann.**
+
+### Deine vier Felder
+
+**1. Punkt 2.7 — Session-Sicherheit.** Laeuft ein Token wirklich ab? Wirkt
+Logout ueberall, auch auf einem zweiten Geraet? Messen, nicht annehmen.
+
+**2. Punkt 4.1 — Kostenloser Start ohne Zahlungs-Blocker.** Kann ein neuer
+Betrieb bis zum ersten Angebot kommen, ohne je nach Zahlungsdaten gefragt zu
+werden? Ich vermute ja, aber vermutet zaehlt nicht. Der Weg ist jetzt komplett
+begehbar: Browser der Claude-App plus Postfach `hallo@`.
+
+**3. Punkt 6.6 — Rate-Limiting / Brute-Force-Schutz auf dem Login.** Hier
+erwarte ich echte Arbeit, nicht nur eine Messung. Erst feststellen, was
+Supabase von sich aus mitbringt, dann sagen, was fehlt.
+
+**4. Punkt 13.2 — Rollback / Notausschalter bereit.** Vercel-Rollback ist
+bestaetigt (8.11). Was fehlt, ist der **Notausschalter**: Wie nimmt man das
+Produkt in zwei Minuten vom Netz, wenn am Tag X etwas Ernstes passiert? Ein
+Weg, aufgeschrieben, von dir einmal durchgespielt.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

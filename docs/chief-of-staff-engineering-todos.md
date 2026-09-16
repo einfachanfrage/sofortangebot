@@ -7522,4 +7522,36 @@ erledigt, sondern weitergereicht.**
 
 ---
 
+## 🎯 LEERE FELDER — Gate-1-Punkte, die noch nie bewertet wurden
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Anlass:** Sandy fragte, warum Gate 1 nur bei 53 % steht. Nachgerechnet:
+**1.300 der 2.207 fehlenden Punkte liegen in 13 Feldern, die auf 0 stehen —
+nicht weil sie scheitern, sondern weil sie nie jemand angesehen hat.** Das ist
+kein Ruhmesblatt fuer mich; ich haette sie laengst verteilen muessen.
+
+**Wichtig zum Vorgehen:** Eine ehrliche Bewertung ist schon der halbe Gewinn.
+Wenn ein Punkt in Wahrheit erfuellt ist und nur nie geprueft wurde, schreib das
+mit Beleg hin — das ist kein Schummeln, sondern das Nachholen einer Messung.
+Wenn er nicht erfuellt ist, schreib hin, was fehlt und wie lange es dauert.
+**Nicht schaetzen, wo man messen kann.**
+
+### Deine zwei Felder
+
+**1. Punkt 11.5 — Buchhaltungssystem angebunden (Lexware/sevDesk).** Sandy hat
+den Punkt selbst von Gate 2 auf **Gate 1** hochgestuft, weil er zum
+Kernversprechen gehoert. Er steht auf 0 und ist echte Arbeit. **Ich brauche
+zuerst nur eine Einschaetzung: Was ist der kleinste Umfang, der das Versprechen
+haelt, und wie lange dauert der?** Nicht bauen, bevor Sandy die Groesse kennt.
+
+**2. Punkt 2.4 — kompletter erster Durchlauf (Anmeldung bis erstes Angebot).**
+Der haengt an Manfreds Session 3, und die ist **entsperrt**: Das Postfach
+`hallo@sofortangebot.app` ist im Browser der Claude-App angemeldet, der
+Bestaetigungslink also klickbar. Stimmt euch mit dem Pruefmeister ab, wer den
+Durchlauf macht.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

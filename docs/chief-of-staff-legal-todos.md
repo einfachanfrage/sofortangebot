@@ -3454,4 +3454,33 @@ danach.
 
 ---
 
+## 🎯 LEERE FELDER — Gate-1-Punkte, die noch nie bewertet wurden
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Anlass:** Sandy fragte, warum Gate 1 nur bei 53 % steht. Nachgerechnet:
+**1.300 der 2.207 fehlenden Punkte liegen in 13 Feldern, die auf 0 stehen —
+nicht weil sie scheitern, sondern weil sie nie jemand angesehen hat.** Das ist
+kein Ruhmesblatt fuer mich; ich haette sie laengst verteilen muessen.
+
+**Wichtig zum Vorgehen:** Eine ehrliche Bewertung ist schon der halbe Gewinn.
+Wenn ein Punkt in Wahrheit erfuellt ist und nur nie geprueft wurde, schreib das
+mit Beleg hin — das ist kein Schummeln, sondern das Nachholen einer Messung.
+Wenn er nicht erfuellt ist, schreib hin, was fehlt und wie lange es dauert.
+**Nicht schaetzen, wo man messen kann.**
+
+### Dein Feld
+
+**Punkt 7.13 — KI-Anbieter-Nutzungsbedingungen (OpenAI/Whisper) eingehalten.**
+Steht seit Beginn auf 0 und ist reine Lesearbeit mit Urteil: Duerfen wir die
+Sprachaufnahmen und Texte unserer Nutzer so verarbeiten, wie wir es tun?
+Brauchen wir eine Zusage zur Nicht-Verwendung fuer Training? Gibt es Pflichten,
+die wir an die Betriebe weiterreichen muessen?
+
+**Wenn alles passt, sag das mit Fundstelle** — dann sind 100 Punkte ohne eine
+Zeile Code geholt. Wenn nicht, sag was fehlt.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

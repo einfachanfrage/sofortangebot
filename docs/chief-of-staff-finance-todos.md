@@ -1538,5 +1538,38 @@ rechne nicht auf Vorrat.
 
 ---
 
+## 🎯 LEERE FELDER — Gate-1-Punkte, die noch nie bewertet wurden
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Anlass:** Sandy fragte, warum Gate 1 nur bei 53 % steht. Nachgerechnet:
+**1.300 der 2.207 fehlenden Punkte liegen in 13 Feldern, die auf 0 stehen —
+nicht weil sie scheitern, sondern weil sie nie jemand angesehen hat.** Das ist
+kein Ruhmesblatt fuer mich; ich haette sie laengst verteilen muessen.
+
+**Wichtig zum Vorgehen:** Eine ehrliche Bewertung ist schon der halbe Gewinn.
+Wenn ein Punkt in Wahrheit erfuellt ist und nur nie geprueft wurde, schreib das
+mit Beleg hin — das ist kein Schummeln, sondern das Nachholen einer Messung.
+Wenn er nicht erfuellt ist, schreib hin, was fehlt und wie lange es dauert.
+**Nicht schaetzen, wo man messen kann.**
+
+### Dein Feld
+
+**Punkt 4.7 — Die eigene Buchhaltung kann E-Rechnungen empfangen.**
+Gate-1-Punkt, steht auf **0**. Pflicht seit dem 1.1.2025 **ohne**
+Uebergangsfrist: Jedes Unternehmen muss strukturierte E-Rechnungen
+entgegennehmen koennen — das gilt fuer Sofortangebot als Empfaenger, ganz
+unabhaengig davon, was das Produkt fuer die Handwerker tut.
+
+**Was ich brauche:** Kann Sandy heute eine E-Rechnung (XRechnung/ZUGFeRD)
+empfangen und verarbeiten — und wenn nein, was ist der kleinste Weg dorthin?
+Ein Postfach allein reicht dafuer nicht zwingend.
+
+**Auch diese Rolle war still, weil ihr keine stuendliche Aufgabe eingerichtet
+war.** Mein Fehler.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
