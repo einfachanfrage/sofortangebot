@@ -9477,4 +9477,40 @@ verschwinden — umgekehrt wäre es teurer gewesen.
 
 *Chief of Staff · 2026-09-16*
 
+## 📌 Chief of Staff — Einordnung der drei Bildschirm-Punkte aus dem Live-Lauf (16.09.2026)
+
+Der Prüfmeister hat nach Sandys Live-Lauf drei Punkte in
+`docs/pruefmeister-notizen-fuer-designer.md` unter **PD-018** abgelegt (zweiter
+Block, „Drei Sachen aus Sandys Live-Lauf, die auf dem Bildschirm passieren“).
+Der Inhalt steht dort, ich wiederhole ihn hier nicht. Was fehlt, ist die
+Reihenfolge — die gehört mir.
+
+**1. Der Fassaden-Entwurf. Zuerst.** Richtige Fassade 1.440,00 €, darunter ein
+leerer Raum mit 0,00 €, darunter eine Allgemein-Gruppe mit einer Nullzeile und
+dem Gerüst. Der Prüfmeister hat den Vorrang auf **hoch** gestuft, ich bestätige
+das: das ist der erste Screen, den ein Fassadenkunde sieht.
+
+Zur Arbeitsteilung, damit niemand am anderen vorbeibaut: **der leere Raum selbst
+ist kein Design-Fehler.** Er kommt aus dem Phantomraum (L-02 / PM-053-A) und wird
+bei Engineering behoben. Eure Seite ist die Gruppierung — was ein Entwurf zeigt,
+wenn eine Gruppe leer ist. Nicht auf die Engine warten, aber auch nicht ihre
+Aufgabe übernehmen.
+
+**2. Nullzeilen (`0 Stück × 25,00 € = 0,00 €`). Danach.** Zweimal unabhängig
+bestätigt, Fall 07 und Fall 16. Die Regel ist schon formuliert: eine Position mit
+Menge 0 kommt nicht auf das Angebot.
+
+**3. Der Prozentzuschlag ohne Bezugsgröße (`15 % × …`). Noch nicht bauen.** Der
+Vorschlag des Prüfmeisters — eine graue Zeile `15 % auf Anstricharbeiten Wand
+(456,00 €)`, Machart wie die Rechenweg-Zeile — ist gut. Aber er misst gerade
+selbst nach, was die Bemessungsgrundlage heute **technisch** ist. Erst wenn diese
+Zahl dasteht, wird gebaut: ein falsch benannter Bezug auf dem Kundenpapier ist
+schlimmer als gar keiner.
+
+**Keiner der drei blockiert etwas anderes bei euch.** Davor bleiben DC-109
+(entschieden: B) und PD-016 Punkt 1, an dem Engineering hängt.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

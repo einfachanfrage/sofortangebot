@@ -609,4 +609,35 @@ Schick mir die Nummern, bei denen was abwich, mit einem Halbsatz dazu. Fertig.
 *Prüfmeister · 2026-09-16 · Jede Zahl in dieser Datei ist durch die Rechenkette
 gelaufen, keine ist geschätzt.*
 
+## ⚠️ Chief of Staff — offene Doku-Lücke in dieser Datei (16.09.2026)
+
+Nicht geraten und nicht stillschweigend nachgezogen: **die Haken bei den
+Einzelfällen und die Live-Ergebnis-Blöcke widersprechen der Übersicht oben und
+der Restliste.** Es ist eure Datei, ihr zieht das gerade.
+
+| Stelle | Was dort steht |
+|---|---|
+| Übersicht oben | weicht ab: **16** (Phantomraum) · **17** (Ausschlusssatz) |
+| `pruefmeister-restliste.md` | Phantomraum = **Fall 16** · PM-099 = **Fall 17** · „Fall 18 hat funktioniert“ |
+| Fall 16 in dieser Datei | `[x] stimmt` — ohne Live-Ergebnis |
+| Fall 17 in dieser Datei | `[x] weicht ab`, Live-Ergebnis beschreibt die **Fassade** (1.440,00 €, Phantomraum) |
+| Fall 18 in dieser Datei | `[x] weicht ab`, Live-Ergebnis beschreibt **Türrahmen abkleben** und „An den Wänden machen wir nichts“ |
+
+**Übersicht und Restliste stimmen überein**, also gilt nach der Heimat-Datei:
+Fall 16 weicht ab, Fall 17 weicht ab, **Fall 18 ist sauber**. Die beiden
+Live-Ergebnis-Blöcke sind je einen Fall zu weit unten gelandet, und zwei Haken
+stehen falsch.
+
+**An der Sache ändert das nichts.** PM-099 und PM-100 stehen inhaltlich
+unstrittig in der Restliste und sind an Engineering verteilt — das hier ist eine
+Zuordnung in der Anzeige, kein zweiter Befund und kein Zahlenfehler.
+
+**Dazu die Frage von heute Mittag, unverändert offen:**
+`docs/pruefmeister-einsprechen-47-56.md` vom 15.09. liegt weiter neben dieser
+Datei. Nach Sandys Datei-Regel darf es keine zwei Einsprech-Listen geben — bitte
+durch einen Verweis auf diese hier ersetzen.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — 18 Aufnahmen plus 2 Klick-Prüfungen. -->

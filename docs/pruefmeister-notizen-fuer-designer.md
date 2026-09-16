@@ -1686,4 +1686,95 @@ einfach ausbleibt. **Blockiert heute nichts.**
 *Prüfmeister · 2026-09-16 · alle Zahlen gegen `default-prices.ts` und den
 Prüfstand `pruefmeister-batch-89-97.test.ts` gemessen*
 
+---
+
+## PD-018 — Drei Sachen aus Sandys Live-Lauf, die auf dem Bildschirm passieren
+
+Sandy hat heute 20 Fälle eingesprochen und jeden gegen eine gerechnete
+Soll-Tabelle gehalten. Die Rechenfehler gehen an Engineering. Diese drei sind
+deine.
+
+### 1. Die Rückfrage belegt sich mit dem falschen Raum (PM-100)
+
+Ein Diktat, drei Räume. Gesagt wurde „**im Flur** gehen drei Türen ab".
+Gefragt wurde:
+
+> **Wie viele Türen hat „Wohnzimmer"?**
+> *Du hast gesagt* „… Wände und Decken 2x streichen, weiß, im Fl…" → **3 Türen**
+> `Stimmt ✓`  `Korrigieren`  `Später ergänzen`
+
+Nach den Flurtüren wurde nie gefragt — für den Flur kam nur die Fensterfrage.
+
+Der Beleg-Satz ist genau die Stelle, an der die App um Vertrauen bittet: *„Du
+hast das gesagt, ich hab's verstanden."* Wenn dieser Satz von einem anderen Raum
+handelt als die Frage, ist der Beleg keiner. Er ist schlimmer als kein Beleg,
+weil er zum Bestätigen einlädt.
+
+Sandy konnte es korrigieren — sie wusste noch, was sie gesagt hat. Der Betrieb
+mit einer drei Stunden alten Aufnahme drückt „Stimmt ✓".
+
+**Mein Vorschlag:** Nennt der Beleg-Satz einen anderen Raum als die Frage, gar
+keinen Vorschlag anbieten. Eine nackte Frage ohne Vorschlag ist ehrlicher als
+ein falscher Vorschlag mit Häkchen daneben. Und: wenn eine Angabe für einen Raum
+fehlt, muss sie für **diesen** Raum abgefragt werden.
+
+### 2. Der Fassaden-Entwurf sieht kaputt aus
+
+Sandys Worte: *„bescheuerte Rückfragen, sieht total verwirrend aus"* und
+*„völlig kack Aufteilung im Angebot-Entwurf"*. Sie hat recht. So sieht der Screen
+heute aus:
+
+```
+🏠 Fassade                                        1.440,00 €
+   Wandlänge 12 m · Wandhöhe 6 m · Türen 0 · Fenster 2
+   So gerechnet: 12,00 m × 6,00 m = 72,00 m² · 2 Fenster … (VOB)
+   Fassadenfläche streichen 2x     72 m² × 14,00 €   1.008,00 €
+   Grundierung                     72 m² ×  6,00 €     432,00 €
+
+🏠 Raum                                               0,00 €
+   Raummaße  ! × ! m
+   Erschwerniszuschlag Raumhöhe > 3m   15 % × 0,00 €    0,00 €
+
+📋 Allgemein
+   Voranstrich / Grundierung        0 Stück × 25,00 €   0,00 €
+   Gerüst stellen und abbauen       1 Pauschale        450,00 €
+   Kleinmaterial                    1 Pauschale         25,00 €
+```
+
+Der obere Block ist richtig und gut — die Rechenweg-Zeile mit der VOB-Übermessung
+ist das Beste, was der Screen hat. Darunter kommen zwei Blöcke, die nichts
+sagen: ein Raum ohne Maße mit 0,00 €, und eine Nullzeile.
+
+Davor musste Sandy **drei Rückfragen zu diesem Raum beantworten**, den es nicht
+gibt — Maße, Wandhöhe, Türanzahl. Zwei davon hat sie übersprungen, und das
+„Kurz geprüft?"-Fenster zeigt danach zweimal „⏭ Übersprungen".
+
+Die Ursache liegt bei Engineering (der leere Zweitraum entsteht in der
+Aufnahme). **Aber zwei Regeln gehören dir, unabhängig von der Ursache:**
+
+* **Ein Raum ohne jedes Maß und mit 0,00 € Summe wird nicht angezeigt** — und es
+  wird auch nicht nach ihm gefragt.
+* **Eine Position mit Menge 0 kommt nicht auf das Angebot.** Entweder die Menge
+  steht, oder die Zeile fällt weg. `0 Stück × 25,00 € = 0,00 €` liest sich wie
+  ein Fehler, und es ist einer.
+
+### 3. Ein Prozentzuschlag braucht eine sichtbare Bezugsgröße
+
+Im Fassadenfall steht `Erschwerniszuschlag Raumhöhe > 3m · 15 % × 0,00 € =
+0,00 €`. Im Innenfall (Flur, 3,20 m Raumhöhe) steht der Zuschlag mit 15 % — aber
+ohne dass auf dem Papier steht, **wovon**.
+
+15 % von der Wandfläche? Von den Anstricharbeiten? Von der Angebotssumme? Auf
+dem Kundenpapier muss das dastehen, sonst ist es der Posten, über den der Kunde
+anruft — und der Handwerker kann es selbst nicht beantworten.
+
+**Mein Vorschlag:** dieselbe Machart wie die Rechenweg-Zeile bei der Fassade.
+Eine graue Zeile darunter: `15 % auf Anstricharbeiten Wand (456,00 €)`. Dann ist
+es kein Zuschlag mehr, sondern eine Rechnung.
+
+Die Frage, was die Bemessungsgrundlage heute **technisch** ist, messe ich nach,
+bevor jemand daran baut — sie steht als offener Punkt in meiner Restliste.
+
+*Prüfmeister · 2026-09-16, nach Sandys Live-Lauf*
+
 <!-- ENDE DER DATEI — letzte Notiz ist PD-018. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

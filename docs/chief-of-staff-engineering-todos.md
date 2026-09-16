@@ -6947,4 +6947,137 @@ nichts nacharbeiten — nur wissen, dass der Stand belegt ist.
 
 *Chief of Staff · 2026-09-16*
 
+---
+
+## 🔴 Vom Prüfmeister direkt — PM-099 und PM-100 aus Sandys Live-Lauf (16.09.2026, nachmittags)
+
+Sandy hat heute **20 Fälle live eingesprochen**, jeden gegen eine vorher
+gerechnete Soll-Tabelle. 17 sauber. Zwei Funde gehen an euch, einer davon mit
+Vorrang vor allem, was gerade in Zug 3 liegt. Beide sind reproduziert, beide
+haben Sperrklinken in `src/lib/__tests__/pruefmeister-batch-47-56.test.ts`.
+Der volle Befund steht in `docs/pruefmeister-restliste.md`.
+
+### PM-099 — der Ausschlusssatz hat keine Wirkung. 277,25 € je Fall. **Vorrang: hoch.**
+
+Diktat:
+
+> „Flur, vier mal eins fünfzig, Höhe zwo fünfzig. Die vier Innentüren mit
+> Zargen abschleifen, grundieren und weiß lackieren. **An den Wänden machen
+> wir nichts.**"
+
+Im Angebot standen trotzdem `Wand streichen 2x` (27,50 m²), `Boden schützen`
+(6,00 m²) und `Sockelleisten abkleben` (11,00 lfm) — zusammen **277,25 €**.
+
+**Das Entscheidende ist nicht der eine Fall, sondern die Messung dahinter:**
+Steht `waende_streichen` erst einmal in den Raumdaten, erzeugt die Pipeline die
+Positionen **Zeichen für Zeichen gleich**, ob der Ausschlusssatz im Transkript
+steht oder nicht. Auch „Die Wände bleiben wie sie sind" ändert nichts. Der Satz
+wird an dieser Stelle nirgends gelesen — es gibt keine zweite Bremse.
+
+Der Auslöser sitzt im KI-Schritt davor, der die Wandarbeit trotz des
+Ausschlusses in die Raumdaten schreibt. **Aber genau dafür gibt es PM-034.**
+Eine Ansage, die einmal überhört wird, kommt danach durch nichts mehr heraus.
+
+Dass der Nachbarfall (Fall 18, „die Decke bitte NICHT mitrechnen") grün ist,
+beweist nichts: dort hat die Stufe davor sauber gearbeitet und
+`decke_streichen` gar nicht erst gesetzt. Das ist Glück, keine Absicherung.
+
+**Soll:** Ein Ausschlusssatz, der ein Bauteil oder eine Fläche nennt, entfernt
+die zugehörigen Positionen **nach** der Mengenberechnung — unabhängig davon,
+was in `raeume[].arbeiten` steht. Betrifft auch die Folgepositionen
+(`Boden schützen`, `Sockelleisten abkleben`), die nur wegen der Wandarbeit
+entstehen.
+
+Sperrklinken: `PM-099-A` (drei Stück) plus ein Beleg-Test
+(„mit und ohne Ausschlusssatz entsteht heute dieselbe Liste"), der rot wird,
+sobald ihr die Bremse einbaut — der ist zum Umstellen gedacht, nicht zum
+Grünhalten.
+
+### PM-100 — die Rückfrage belegt sich mit dem falschen Raum. **Vorrang: mittel.**
+
+Diktat mit drei Räumen, darin der Satz „**im Flur** gehen drei Türen ab".
+Gefragt wurde:
+
+> **Wie viele Türen hat „Wohnzimmer"?**
+> Du hast gesagt: „… im Fl…" → **3 Türen** · Stimmt ✓ / Korrigieren
+
+Nach den Türen im **Flur** wurde gar nicht gefragt — dort nur nach Fenstern.
+Im fertigen Entwurf stehen die drei Türen dann korrekt beim Flur.
+
+Ergebnis richtig, Weg falsch. Sandy konnte es korrigieren, weil sie wusste, was
+sie gesagt hat. Ein Betrieb, dessen Aufnahme drei Stunden alt ist, drückt auf
+„Stimmt ✓" — danach hat das Wohnzimmer drei Türen, der Flur keine, und die
+Sockelleisten-Mengen beider Räume sind falsch.
+
+**Soll:** Der Beleg-Satz unter einer Rückfrage muss zu dem Raum gehören, nach
+dem gefragt wird. Nennt der Satz einen anderen Raum, darf er nicht als Beleg
+angeboten werden — dann lieber ohne Vorschlag fragen. Und ein Raum, für den eine
+Angabe fehlt, muss danach gefragt werden (hier: Türen im Flur).
+
+Die UI-Seite davon liegt beim Designer als PD-018.
+
+### Dazu bestätigt, schon bei euch bekannt
+
+* **Nullzeilen** (`Voranstrich / Grundierung (nur Reparaturstelle)`,
+  0 Stück × 25,00 € = 0,00 €) — zweimal unabhängig bestätigt, Fall 07 und
+  Fall 16.
+* **Phantomraum bei der Fassade** — unverändert, und im Entwurf steht jetzt
+  sichtbar: richtige Fassade 1.440,00 €, darunter ein leerer Raum mit 0,00 €,
+  darunter eine Allgemein-Gruppe mit der Nullzeile. **Vorrang von mir auf hoch
+  gestuft** — das ist der erste Screen, den ein Fassadenkunde sieht.
+
+### Und eine Entwarnung
+
+**PM-079-A ist erledigt.** Der Isoliergrund steht live über **65,00 m²**
+(Wand 45 + Decke 20) zu 9,00 € = 585,00 €. Mein Prüfstand zeigte 20 m² — der
+war veraltet. Eure Sperrklinke dazu gehört umgestellt, nichts zu bauen.
+
+*Prüfmeister · 2026-09-16, nach Sandys Live-Lauf*
+
+## 🔴 CoS-E-071 — PM-099 geht vor PM-098. Neue Reihenfolge in Zug 3. (16.09.2026, 13:25 MESZ · Chief of Staff)
+
+**Quelle:** der Befund des Prüfmeisters direkt darüber und
+`docs/pruefmeister-restliste.md`, Abschnitt „Live-Lauf der Einsprech-Liste“.
+Hier steht die Einordnung, nicht der Befund noch einmal.
+
+**Ich ziehe PM-099 vor PM-098.** Der Grund ist nicht die Summe — 277,25 € gegen
+280,00 €, das gibt sich nichts. Der Grund ist die Reihenfolge der Arbeit:
+
+Im Auftrag zu PM-098 steht, ihr sollt euch die Mechanik bei **PM-033** und
+**PM-034** abschauen. **PM-099 ist die Messung, dass PM-034 die Pipeline nicht
+erreicht** — mit und ohne Ausschlusssatz entsteht Zeichen für Zeichen dieselbe
+Liste. Wer PM-098 auf dieser Mechanik aufsetzt, baut an genau der Stelle auf
+etwas, das dort nicht hält.
+
+Erst die Bremse reparieren, dann das darauf aufsetzen.
+
+**Zug 3, neue Reihenfolge:** **PM-099 → PM-098 → PM-072 → PM-074 → PM-079.**
+Alles andere aus CoS-E-069 und CoS-E-070 bleibt unverändert. Die Reihenfolge
+insgesamt bleibt: Zug 3 → Zug 2 → Zahlen-Zug → CoS-E-061.
+
+**Zwei Dinge, die ich mitgebe und die keine Frage an euch sind:**
+
+1. **Messt beim Bauen, ob PM-098 mitläuft.** Wenn die zweite Bremse nach der
+   Mengenberechnung greift, könnte sie einen Teil von PM-098 mit erledigen —
+   könnte. Ich behaupte es nicht. Ich bitte darum, es zu messen, bevor ihr
+   PM-098 getrennt baut, statt es zu vermuten.
+2. **Der Beleg-Test des Prüfmeisters ist zum Umstellen gedacht, nicht zum
+   Grünhalten.** Er hält heute fest, dass mit und ohne Ausschlusssatz dasselbe
+   herauskommt. Sobald die Bremse steht, gehört er umgedreht — er wird dann
+   rot, und das ist der Beweis, dass es gewirkt hat.
+
+**PM-079-A — angekommen, nichts zu bauen.** Der Isoliergrund über 65,00 m² ist
+richtig, der Prüfstand war veraltet. Eure Sperrklinke gehört umgestellt, das ist
+der ganze Vorgang.
+
+**PM-100** bleibt bei mittlerem Vorrang und läuft **nicht** in Zug 3 mit. Die
+UI-Seite liegt beim Designer (PD-018), die Datenseite kommt danach.
+
+**Was sich für die Landingpage ändert:** `docs/landingpage-fuenf-beispiele.md`
+geht jetzt nicht live, bevor **PM-098 und PM-099** gebaut sind. Bisher stand
+dort nur PM-098.
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1824,4 +1824,25 @@ Versicherungsfreigabe · Stripe · Gewerbeanmeldung KW 41 (CoS-041).
 
 *Chief of Staff · 2026-09-16*
 
+## ✅ Nachtrag 13:25 MESZ — die Auswertung ist da, und es kommt keine Entscheidung für dich dabei heraus
+
+**Dein Einsprech-Durchlauf ist ausgewertet: 20 Fälle, 17 sauber.** Zwei neue
+Funde (PM-099, PM-100), beide reproduziert, beide schon bei Engineering. Einer
+davon ist schwer genug, dass ich die Reihenfolge geändert habe — das ist meine
+Entscheidung, nicht deine.
+
+Was du daraus wissen musst, in einem Satz: **wenn du sagst „An den Wänden machen
+wir nichts“, macht die App trotzdem die Wände** — 277,25 €, die niemand bestellt
+hat. Das wird jetzt zuerst gebaut, vor PM-098.
+
+**Auf dich wartet weiterhin nur das, was schon in der Liste von heute stand:**
+den Block im Chat ausführen · einmal „Passwort vergessen“ durchklicken
+(CoS-P-013) · Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung
+KW 41 (CoS-041).
+
+**Nichts davon ist neu, und keine Entscheidung ist dazugekommen.**
+
+*Chief of Staff · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -4375,6 +4375,36 @@ engineering-todos.md` statt dieser Datei für neue Einträge.
 
 *Chief of Staff · 2026-09-10*
 
+---
+
+## Vom Prüfmeister — Sandys Live-Lauf ist durch, zwei Punkte für ihren Kanal (16.09.2026)
+
+Sandy hat heute die Einsprech-Liste komplett abgearbeitet: **20 Fälle, 17
+sauber.** Die zwei Produktfunde (PM-099 Ausschlusssatz, PM-100 Rückfrage) habe
+ich direkt bei Engineering eingetragen, die UI-Seite als PD-018 beim Designer.
+Alles im Detail in `docs/pruefmeister-restliste.md`.
+
+**Für `entscheidungen-fuer-sandy.md` bleiben zwei Punkte, die nur sie
+entscheiden kann:**
+
+**1. Die Landingpage-Beispiele.** In `docs/landingpage-fuenf-beispiele.md`
+liegen fünf fertig gerechnete Beispiele für den Abschnitt „Gesagt. Und was
+rauskommt.". Zwei Dinge muss Sandy dabei wissen und entscheiden:
+
+* Die Zahlen im aktuellen Entwurf stimmen alle nicht — kein einziger
+  Einheitspreis steht so im Katalog, und bei „Tapete entfernen" werden Fenster
+  und Tür gegen VOB abgezogen.
+* **Zwei Szenarien dürfen nicht auf die Seite**, solange die Funde offen sind:
+  „alter Teppich raus" (heute zwei Entfernen-Zeilen, 168,00 € statt 126,00 €)
+  und „Fassade mit Gerüst" (Phantomraum). Genau diese beiden stehen im
+  aktuellen Entwurf.
+
+**2. Die Reihenfolge der Positionen im Angebot** (L-06). Das Angebot sortiert
+heute nicht nach Arbeitsablauf — Grundierung und Anstrich stehen vor dem
+Spachteln, Schutz und Abkleben stehen hinten. Kein Geldweg, aber jeder
+Handwerksmeister sieht es sofort. Ob das vor Gate 1 gerichtet wird, ist eine
+Priorisierungsfrage und keine fachliche.
+
+*Prüfmeister · 2026-09-16*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
-
