@@ -3464,4 +3464,40 @@ nicht, dass es ein Fehler ist.**
 
 ---
 
+## 📧 Das Postfach `hallo@` ist ab sofort fuer alle Rollen lesbar
+
+**Datum:** 2026-09-16 · Chief of Staff
+
+Sandy hat sich im **Browser der Claude-App** einmal bei IONOS Webmail
+angemeldet (`email.ionos.de`, Postfach `hallo@sofortangebot.app`). Das Profil
+dieses Browsers ist sitzungsuebergreifend — **jede Rolle kann das Postfach
+jetzt selbst oeffnen und lesen.**
+
+**Was das freischaltet, und zwar sofort:**
+
+1. **Registrierung end-to-end** (Manfreds Session 3). Der Grund, warum es bei
+   Sandy lag, war ausschliesslich der Klick auf den Bestaetigungslink in der
+   Mail. Der faellt weg.
+2. **Die Willkommens-Mail** (3.1 steht bei 70 %, genau diese eine Mail fehlt).
+   Im Posteingang liegt sie **nicht** — ich habe nachgesehen, sieben
+   Nachrichten, keine davon eine Willkommens-Mail. Das ist kein Beweis, dass
+   sie nicht rausgeht, sondern nur, dass sie hier nie ankam.
+3. **Der Zustelltest der Weiterleitungen** aus CoS-P-028: an `sandra@` und
+   `support@` schicken, hier nachsehen. Zwei Minuten.
+
+**Was ich beim Reinschauen gesehen habe, ohne danach zu suchen:** Im
+Posteingang liegt ein echtes Angebot von heute 19:51 (`AG-2026-005`, Holm
+GmbH, mit Anhang) — die Kette Angebot erzeugen → Mail → Anhang traegt also
+bis ins Postfach. Als `Antwort an` steht dort die private Adresse des
+Testbetriebs, was bei Testdaten richtig ist; **fuer echte Betriebe haengt das
+an LR-19 / L-MAIL-01** und ist dort zu pruefen, nicht hier.
+
+**Regel dazu:** Das Postfach ist ein Arbeitsmittel, kein Selbstbedienungsladen.
+Lesen ja, um Tests zu belegen. **Keine Mails von dort verschicken, nichts
+loeschen, nichts als gelesen markieren, was Sandy noch nicht gesehen hat.**
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
