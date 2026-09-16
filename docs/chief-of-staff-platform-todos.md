@@ -24,7 +24,54 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 **Datei-Sicherheit (aktualisiert 20.08.2026):** Der Speicherfehler bei
 gleichzeitiger Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten
 (hier am 17.08., zuletzt in `chief-of-staff-todos.md`). Ganz am Ende dieser
-Datei steht jetzt eine feste Markierung (`<!-- ENDE DER DATEI -->`). Taucht
+Datei steht jetzt eine feste Markierung (`
+---
+
+## CoS-P-026 — Nachtrag 2: der Build-Schritt ist jetzt auch gemessen (auf GitHub, nicht bei mir)
+
+**16.09.2026, 13:45 MESZ · Chief of Staff**
+
+Nachtrag 1 endete mit einem offenen Rest: *„Der Build ist der einzige offene
+Rest"* — er war in meiner Umgebung nur an gesperrten Google-Fonts-Hosts
+gescheitert, also nicht bewertbar. **Dieser Rest ist zu.**
+
+Auf GitHub selbst gemessen, drei aufeinanderfolgende Läufe, alle mit Jobs:
+
+| Lauf | Commit | Ergebnis |
+|---|---|---|
+| #192 | `964ad73` (der `ci.yml`-Fix) | ✅ erfolgreich |
+| #193 | `b1a51fa` | ✅ erfolgreich |
+| #194 | `7ac44c3` (aktueller Produktionsstand) | ✅ erfolgreich |
+
+Damit ist der Produktions-Build dreimal durchgelaufen. Die Warnung aus dem
+Hauptteil (*„rechnet damit, dass der erste wieder laufende Lauf etwas findet"*)
+ist erledigt — sie hat sich nicht bestätigt.
+
+### Nebenbefund, der eine wiederkehrende Blindstelle schließt
+
+Im 13:30-Stand steht: *„Die Actions-Seite liefert in dieser Umgebung heute einen
+veralteten Stand (sie endet bei Lauf #187), die GitHub-API ist gesperrt."* Das
+stimmt so nicht mehr, und es lag an der Abfrage, nicht an einer Sperre.
+
+**Was funktioniert:** die REST-API mit Branch-Filter —
+`https://api.github.com/repos/einfachanfrage/sofortangebot/actions/runs?branch=main&per_page=6`
+liefert den aktuellen Stand inklusive `#194`.
+
+**Was nicht funktioniert:** dieselbe Abfrage **ohne** `branch=main` liefert eine
+veraltete, bei #189 abbrechende Liste — genau das Bild, das bisher als „Seite
+veraltet" gedeutet wurde. Ausserdem: die Commit-Detail-Endpunkte
+(`/commits/<sha>`) antworten mit 403, und ein Pfad mit doppeltem Schrägstrich
+(`/runs/?…`) mit 404.
+
+**Was daraus folgt:** CI-Läufe sind in dieser Umgebung prüfbar, auch ohne
+`device_bash`. Kein Grund mehr, einen Lauf als „nicht geprüft" stehen zu lassen.
+Für `CoS-P-022` ist das ein zusätzlicher Datenpunkt: nicht jede Sperre ist eine
+Sperre, manche ist eine falsche Abfrage — bitte vor „geht nicht" die
+Branch-gefilterte Form probieren.
+
+*Chief of Staff · 2026-09-16*
+
+<!-- ENDE DER DATEI -->`). Taucht
 beim Lesen noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
 Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt

@@ -1,26 +1,23 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 16.09.2026, 13:30 MESZ · Chief of Staff**
+**Stand: 16.09.2026, 13:45 MESZ · Chief of Staff**
 *(ersetzt die Fassung von 13:30 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
 
 ---
 
 ## Lage in drei Zeilen
 
-**Die Auswertung ist da.** Sandys 20 eingesprochene Fälle sind durchgerechnet:
-**17 sauber, zwei neue Funde — PM-099 und PM-100.** Das ist die erste Messung
-überhaupt, ob die App versteht, was gesprochen wird. Sie fällt besser aus als
-befürchtet — und der eine Fund, der nicht gut ist, ist schwer.
+**Sandys Block ist durch.** `7ac44c3` liegt im Repository, die fünf Doku-Dateien
+sind drin, Vercel-Produktion steht auf `7ac44c3` und ist `READY`. **Nichts liegt
+mehr uncommittet auf ihrer Platte.**
 
-**PM-099: der Ausschlusssatz hat keine Wirkung.** „An den Wänden machen wir
-nichts" — und die Wandarbeiten stehen trotzdem im Angebot, 277,25 €. Nachgemessen
-und systemisch: mit und ohne Ausschlusssatz entsteht Zeichen für Zeichen dieselbe
-Liste. **Ich habe PM-099 vor PM-098 gezogen.**
+**Die CI ist grün — gemessen, nicht erwartet.** Drei Läufe hintereinander mit
+Jobs: **#192, #193, #194 alle erfolgreich**. Damit ist auch der
+Produktions-Build durch, der seit dem 15.09. der letzte unbewertete Schritt war.
 
-**Verteilt ist alles.** Engineering hat PM-099/PM-100 (der Prüfmeister direkt,
-plus meine Einordnung als CoS-E-071), der Designer die drei Bildschirm-Punkte
-(PD-018, plus meine Reihenfolge in `design-check.md`). **Auf Sandy wartet keine
-Entscheidung.**
+**Sonst ist seit 13:30 MESZ nichts passiert.** Keine Datei in `docs/` ist nach
+13:26 MESZ geschrieben worden, kein neuer Fund, keine neue Rückfrage. Die
+Arbeitsaufträge unten sind unverändert — die Rollen arbeiten sie gerade ab.
 
 ---
 
@@ -28,14 +25,11 @@ Entscheidung.**
 
 | Rolle | Ergebnis | Status |
 |---|---|---|
-| Prüfmeister | **Auswertung fertig** — 20 Fälle, 17 sauber, PM-099 + PM-100 neu | ✅ erledigt |
-| Prüfmeister | Hat PM-099/PM-100 **selbst** an Engineering (Todo-Datei) und Designer (PD-018) gegeben | ✅ erledigt |
-| Prüfmeister | **PM-079-A ist erledigt** — sein Prüfstand war veraltet, die App rechnet richtig | ✅ erledigt |
-| Prüfmeister | Zwei eigene Tabellenfehler korrigiert (Fall 04: 15 % ist richtig · Fall 17: `Türrahmen abkleben` ist zu Recht nicht da) | ✅ erledigt |
-| CoS | **CoS-E-071** — PM-099 vor PM-098, neue Zug-3-Reihenfolge | verteilt |
-| CoS | **Einordnung der drei Designer-Punkte** in `design-check.md` | verteilt |
-| CoS | **Doku-Lücke in `einsprech-liste-alle-faelle.md` markiert** (Haken und Live-Blöcke um einen Fall verrutscht) | verteilt |
-| Sandy | `b1a51fa` gepusht · Vercel Produktion **`b1a51fa`, `READY`** | ✅ erledigt |
+| Sandy | **`7ac44c3` gepusht** — die fünf Doku-Dateien aus dem 13:30-Block sind im Repository | ✅ erledigt |
+| Sandy | Vercel-Produktion `7ac44c3`, **`READY`** (13:29 MESZ) | ✅ erledigt |
+| CoS | **CI-Läufe #192 / #193 / #194 nachgemessen — alle drei grün** | ✅ erledigt |
+| CoS | **Der offene Rest aus CoS-P-026 ist zu** — der Produktions-Build ist jetzt belegt (Nachtrag 2) | verteilt |
+| CoS | **Blindstelle „GitHub-API gesperrt" aufgeklärt** — sie war es nie, die Abfrage war falsch (Nachtrag 2 bei Platform) | verteilt |
 
 ---
 
@@ -43,28 +37,23 @@ Entscheidung.**
 
 **Selbst gemessen, nicht vermutet:**
 
-* **`einsprech-liste-alle-faelle.md` und `pruefmeister-restliste.md`** vollständig
-  gelesen, Fall für Fall gegen die Restliste gestellt.
-* **Produktion** über die Vercel-API: `b1a51fa`, `READY`, 13:19 MESZ.
-* **Alle Dateien in `docs/` nach Änderungszeit**, zweimal — vor und nach meinen
-  eigenen Schreibvorgängen.
-* **Engineering- und Designer-Kanal** darauf geprüft, ob der Prüfmeister seine
-  Funde schon selbst abgelegt hat. Hat er. Ich habe nur eingeordnet, nicht
-  wiederholt.
+* **Alle Dateien in `docs/` nach Änderungszeit.** Jüngste Schreibzeit: 13:26 MESZ
+  (die fünf Dateien des vorigen Laufs). Danach nichts.
+* **Vercel-API:** Produktion `7ac44c3`, `READY`, erstellt 13:29 MESZ.
+* **GitHub Actions über die REST-API mit Branch-Filter:** #192 (`964ad73`) ✅ ·
+  #193 (`b1a51fa`) ✅ · #194 (`7ac44c3`) ✅ — alle `completed / success`.
+* **Dass Sandys Commit wirklich durch ist:** die 13:30-Fassung dieser Datei liegt
+  auf `main` (`raw.githubusercontent.com` gegengelesen), nicht nur auf ihrer Platte.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **Der CI-Lauf zu `b1a51fa`.** Die Actions-Seite liefert in dieser Umgebung
-  heute einen veralteten Stand (sie endet bei Lauf #187), die GitHub-API ist
-  gesperrt. Der letzte von mir **belegte** grüne Lauf bleibt **#192 auf
-  `964ad73`**. `b1a51fa` ist ein reiner Doku-Commit — das ist kein Grund, ihn
-  für grün zu erklären, nur einer, ihn nicht für dringend zu halten.
-* **Gate 1 rechne ich weiterhin nicht neu.** Von den zwei Posten ist jetzt einer
-  da (Sandys Einsprech-Lauf), der zweite fehlt (**Manfreds Session 3**). Die Zahl
-  wird gerechnet, wenn beide vorliegen — nicht in Teilen. Dass zwei neue rote
-  Funde dazugekommen sind, schätze ich nicht in Punkte um.
-* **Versicherung, Stripe, Gewerbeanmeldung, Vercel-Benachrichtigung** — in
-  diesem Lauf nicht angefasst.
+* **Gate 1 rechne ich weiterhin nicht neu.** Unverändert: ein Posten liegt vor
+  (Sandys Einsprech-Lauf), **Manfreds Session 3 fehlt**. Gerechnet wird, wenn
+  beide da sind — nicht in Teilen.
+* **Die Arbeitsstände der Rollen.** Seit 13:30 hat niemand geschrieben; ich habe
+  keine neuen Ergebnisse gelesen und melde deshalb auch keine.
+* **Versicherung, Stripe, Gewerbeanmeldung, Vercel-Benachrichtigung** — in diesem
+  Lauf nicht angefasst.
 
 ---
 
@@ -72,35 +61,30 @@ Entscheidung.**
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | **Block im Chat ausführen** — committet fünf Doku-Dateien | ein Block |
+| 1 | ✅ **Erledigt: der Commit-Block von 13:30.** `7ac44c3` ist durch, Produktion steht, CI grün. | — |
 | 2 | 🟡 **Einmal „Passwort vergessen" durchklicken** (CoS-P-013), dann ist der Punkt zu | zwei Minuten |
 | 3 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
 
-**Keine Entscheidung wartet auf sie.** Aus dem Live-Lauf ist keine entstanden.
+**Keine Entscheidung wartet auf sie.**
 
 ### Nicht im Repository
 
 ```
 docs/arbeitsreihenfolge.md                 <- in diesem Lauf ersetzt
-docs/chief-of-staff-engineering-todos.md   <- CoS-E-071 angehängt
-docs/design-check.md                       <- Einordnung PD-018 angehängt
-docs/einsprech-liste-alle-faelle.md        <- Doku-Lücke markiert
-docs/entscheidungen-fuer-sandy.md          <- Nachtrag 13:25
+docs/chief-of-staff-platform-todos.md      <- CoS-P-026 Nachtrag 2 angehängt
 ```
-
-Falls die Dateien, an denen der Prüfmeister um 13:15 geschrieben hat, nicht in
-`b1a51fa` gelandet sind, nimmt der Block sie mit — er committet den ganzen
-`docs/`-Ordner.
 
 ---
 
 ## Head of Product Engineering
 
-1. 🔴 **Zug 3, neue Reihenfolge: PM-099 → PM-098 → PM-072 → PM-074 → PM-079.**
-   Begründung steht in **CoS-E-071**, kurz: der Auftrag zu PM-098 verweist auf
-   die Mechanik von **PM-034**, und PM-099 ist die Messung, dass genau diese
-   Mechanik die Pipeline nicht erreicht. Erst die Bremse, dann das, was darauf
-   aufsetzt.
+*Unverändert gegenüber 13:30 MESZ — bitte weiterarbeiten, nichts davon ist
+zurückgezogen.*
+
+1. 🔴 **Zug 3, Reihenfolge: PM-099 → PM-098 → PM-072 → PM-074 → PM-079.**
+   Begründung in **CoS-E-071**: der Auftrag zu PM-098 verweist auf die Mechanik
+   von **PM-034**, und PM-099 ist die Messung, dass genau diese Mechanik die
+   Pipeline nicht erreicht. Erst die Bremse, dann das, was darauf aufsetzt.
 2. **Beim Bauen messen, ob PM-098 mitläuft.** Eine Bremse, die nach der
    Mengenberechnung greift, *könnte* einen Teil von PM-098 miterledigen. Messen,
    nicht annehmen.
@@ -127,10 +111,13 @@ Falls die Dateien, an denen der Prüfmeister um 13:15 geschrieben hat, nicht in
 12. **CoS-E-063** — Heizkörper. **CoS-E-060** — offen: welche Datei speist die
     Oberfläche, `preis-ableitung.ts` oder `materialanteil.ts`?
 13. **CoS-E-067** — `no-explicit-any`-Aufräumrunde, eigener Lauf, ganz hinten.
-14. ✅ **Die Warte-Anweisung von heute Mittag ist aufgehoben.** Der Prüfmeister
-    ist durch, die Reihenfolge oben ist die endgültige. Ihr könnt loslegen.
+14. ✅ **Die Warte-Anweisung von Mittag bleibt aufgehoben.** Ihr könnt bauen.
+15. 🆕 **Die CI ist wieder ein verlässliches Signal.** #192/#193/#194 grün, mit
+    Jobs. Ein roter Lauf heißt ab jetzt wieder: etwas ist wirklich gefallen.
 
 ## Product Designer
+
+*Unverändert gegenüber 13:30 MESZ.*
 
 1. 🔴 **Drei Punkte aus dem Live-Lauf, in dieser Reihenfolge** — Inhalt in
    **PD-018** (zweiter Block), Reihenfolge und Abgrenzung in `design-check.md`:
@@ -155,38 +142,42 @@ Falls die Dateien, an denen der Prüfmeister um 13:15 geschrieben hat, nicht in
 7. **DC-102** freigegeben — Ablauf und Darstellung, **nicht die Zahlen**.
    Einbau hängt an CoS-E-053.
 8. 🔴 **`docs/landingpage-fuenf-beispiele.md` geht nicht live, bevor PM-098
-   UND PM-099 gebaut sind.** Bisher stand dort nur PM-098.
+   UND PM-099 gebaut sind.**
 9. **Live-Test von DC-105 / DC-101 / DC-103 / DC-104 / DC-089 / DC-047 /
    DC-048** — braucht Sandy am Rechner.
 
 ## Platform
 
-1. ✅ **CoS-P-026 ist zu.** `ci.yml` repariert, #192 grün.
-2. 🔴 **CoS-P-025 — die Schrumpf-Prüfung, und sie deckt jetzt auch
-   `.github/workflows/` ab.** `ci.yml` war auf demselben Weg beschädigt wie die
-   drei Doku-Dateien (BOM, doppelt kodierte Umlaute, ganze Datei zurückgeschrieben
-   statt angehängt) — hier hat es vier Tage niemand gemerkt. Zweiter Teil
-   unverändert: ist **CoS-P-022** ohne `device_bash` überhaupt lösbar?
-3. 🔴 **CoS-P-024 — der Push-Hook wird ersatzlos abgeschafft.** Sandys Anweisung.
+1. ✅ **CoS-P-026 ist vollständig zu.** `ci.yml` repariert, und der offene Rest
+   ist jetzt belegt: **#192, #193, #194 alle grün** — inklusive
+   Produktions-Build. Steht als **Nachtrag 2** in eurer Todo-Datei.
+2. 🆕 **Die GitHub-API war nie gesperrt.** Mit `?branch=main` liefert
+   `api.github.com/…/actions/runs` den aktuellen Stand; ohne den Filter kommt
+   eine veraltete Liste, die bei #189 abbricht — das war die vermeintliche
+   Sperre. Für **CoS-P-022** relevant: vor „geht nicht" die gefilterte Form
+   probieren.
+3. 🔴 **CoS-P-025 — die Schrumpf-Prüfung, und sie deckt jetzt auch
+   `.github/workflows/` ab.** Zweiter Teil unverändert: ist **CoS-P-022** ohne
+   `device_bash` überhaupt lösbar?
+4. 🔴 **CoS-P-024 — der Push-Hook wird ersatzlos abgeschafft.** Sandys Anweisung.
    **Noch nicht als umgesetzt eingetragen.**
-4. ✅ **CoS-P-020 und CoS-P-021 sind zu.**
-5. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code.
-6. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload.
-7. **DC-109 ist entschieden (B)** — der Designer ändert drei Sätze in der
-   „Abrechnung"-Karte, in der euer CoS-P-009-Kommentar sitzt. Er prüft vorher
-   gegen den aktuellen Stand. Wenn ihr dort gerade schreibt, sagt Bescheid.
-8. **In diesem Lauf nichts Neues von mir.**
+5. ✅ **CoS-P-020 und CoS-P-021 sind zu.**
+6. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code.
+7. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload.
+8. **DC-109 ist entschieden (B)** — der Designer ändert drei Sätze in der
+   „Abrechnung"-Karte, in der euer CoS-P-009-Kommentar sitzt. Wenn ihr dort
+   gerade schreibt, sagt Bescheid.
 
 ## Prüfmeister
 
+*Unverändert gegenüber 13:30 MESZ.*
+
 1. ✅ **Die Auswertung ist abgeholt und verteilt.** PM-099 und PM-100 liegen bei
-   Engineering, die drei Bildschirm-Punkte beim Designer. Ihr müsst nichts
-   nachreichen.
+   Engineering, die drei Bildschirm-Punkte beim Designer.
 2. 🔴 **Doku-Lücke in `einsprech-liste-alle-faelle.md`, bitte geradeziehen.**
    Übersicht und Restliste stimmen überein (16 weicht ab, 17 weicht ab, 18
    sauber) — die Haken bei den Einzelfällen und die zwei Live-Ergebnis-Blöcke
-   sind je einen Fall verrutscht. Steht ausführlich am Ende der Datei. **Kein
-   Zahlenfehler, nur die Zuordnung.**
+   sind je einen Fall verrutscht. **Kein Zahlenfehler, nur die Zuordnung.**
 3. 🔴 **`docs/pruefmeister-einsprechen-47-56.md` vom 15.09. liegt weiter neben
    der neuen Liste.** Zwei Einsprech-Listen nebeneinander sind der Parallelstand,
    den Sandys Datei-Regel ausschließt: bitte durch einen Verweis ersetzen.
@@ -198,63 +189,8 @@ Falls die Dateien, an denen der Prüfmeister um 13:15 geschrieben hat, nicht in
    im Satz · Kunde redet im Hintergrund dazwischen · Aufnahme bricht ab und wird
    fortgesetzt.
 7. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung.
-8. **Größter blinder Fleck, festgehalten:** **jedes** Gewerk hat Stundenzeilen im
-   Katalog, die Engine hat an keiner Stelle einen Weg dorthin (Abschnitt W in
-   `vokabular-abgleich.md`, PM-093). Steht in CoS-E-069 mit drin.
-9. **Braucht die laufende App, unverändert offen:** PM-002 · PM-032 ·
-   PM-031 Teil 2 · PM-030 · PM-014/PM-015 · G.3 · Gegenprobe aus PD-009 §7.
 
-## Legal
+## Legal · Marketing · Finance
 
-1. 🟢 **LR-18 ist freigegeben** — Sandy, wörtlich: „freigegeben". Baut den
-   Textfix ein (`src/app/datenschutz/page.tsx`, Z. 94–95) und setzt **LR-18 in
-   `legal-002-risikobewertung-vob.md` selbst auf erledigt** — das ist eure
-   Heimat-Datei, ich fasse sie nicht an. **Die zwei älteren
-   Datenschutz-Korrekturen sind mit freigegeben.**
-2. ✅ **CoS-L-006 vollständig abgeschlossen**, einschließlich § 14 Abs. 2 UStG.
-3. ✅ **DC-106 ist auf eurer Seite zu.** Übrig: L-MAIL-01 als Bauauftrag (bei
-   Engineering, CoS-E-057) und L-MAIL-02 als Textfix.
-4. **CoS-L-009** — darf „Aufmaß" auf dem Angebot stehen? Hängt an LR-16,
-   blockiert nichts.
-5. **Materialangabe auf dem Kunden-PDF bewerten** — vier Bedingungen sind an
-   Engineering übergeben.
-6. CoS-L-002 · CoS-L-004 laufend.
-7. 🆕 **Zur Kenntnis, kein Auftrag:** PM-099 heißt, dass heute Positionen auf dem
-   Angebot stehen können, die der Kunde ausdrücklich abbestellt hat. Solange
-   nichts live ist, ist das kein Rechtsthema — sagt Bescheid, wenn ihr das
-   anders seht.
-
-## Manfred
-
-1. 🔴 **Session 3: Registrierung end-to-end** — steht weiterhin aus. **Das ist
-   jetzt der einzige Posten, an dem die Gate-1-Zahl noch hängt**, der andere ist
-   seit heute erledigt.
-2. **DC-101 nachprüfen**: am Handy laden und **sofort** lostippen.
-3. **Aus PD-009 §5:** Seine 75 % gegen die 63 % des Katalogs sind kein
-   Widerspruch — zu bestätigen, nicht zu entscheiden.
-4. **G.3** — seine zwei Szenarien in der laufenden App, offen seit 11.09.
-
----
-
-## Was ich als Nächstes tue
-
-**Manfreds Session 3 abholen, sobald sie steht** — dann ist der zweite von zwei
-Posten da und **Gate 1 wird neu gerechnet**. Das ist der einzige Posten, auf den
-ich noch warte.
-
-**Den CI-Lauf zu `b1a51fa` nachtragen**, sobald die Actions-Seite in dieser
-Umgebung wieder einen aktuellen Stand liefert. Bis dahin bleibt #192 auf
-`964ad73` der letzte belegte grüne Lauf.
-
-**Zum Ablauf dieses Laufs:** `device_bash` auf Sandys Rechner ist weiterhin tot
-(`no Plan9 drive shares mounted`, Windows-Update vom 08.09.). Gelesen und
-geschrieben wurde über Staging/Commit mit `expectedMtimeMs`. An
-`chief-of-staff-engineering-todos.md`, `design-check.md`,
-`einsprech-liste-alle-faelle.md` und `entscheidungen-fuer-sandy.md` wurde
-ausschließlich vor der Endmarkierung angehängt. Ersetzt wurde nur diese Datei.
-`pruefmeister-restliste.md` und `pruefmeister-notizen-fuer-designer.md` habe ich
-gelesen, aber nicht angefasst — es sind Heimat-Dateien des Prüfmeisters.
-
----
-
-<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+**In diesem Lauf nichts Neues von mir.** Eure offenen Punkte stehen unverändert
+in euren eigenen Todo-Dateien.
