@@ -9436,4 +9436,45 @@ wird vom Kunden gestellt.") — dort geht es um genau die Tapete in der Position
 
 ---
 
+
+---
+
+## DC-109 ✅ ENTSCHIEDEN — Sandy: **B**, die Karte bleibt, der Text wird wahr
+
+**16.09.2026, 13:20 MESZ · Chief of Staff · Entscheidung von Sandy, wörtlich: „DC109 B"**
+
+**Damit ist der Vorschlag aus dem DC-109-Eintrag oben freigegeben** — genau der
+Wortlaut, der dort schon bereitsteht, ohne weitere Rückfrage:
+
+> **Überschrift-Zeile:** „Angebote schreibst du in jedem Fall hier. Rechnungen
+> stellt sofortangebot nicht."
+> **`inapp`:** „🧾 Nur sofortangebot — ich nutze keine Buchhaltungssoftware."
+> **`extern`:** „🔗 Über meine Buchhaltung — fertige Angebote schiebe ich mit
+> einem Tap nach lexoffice, sevDesk & Co."
+> **Fußzeile bleibt unverändert:** „Angebots-Nachfassen (Erinnerung an offene
+> Angebote vor der Rechnung) läuft in beiden Fällen."
+
+**Die Karte selbst bleibt, `abrechnungs_modus` bleibt.** Begründung, die zur
+Entscheidung geführt hat: Das Onboarding fragt dasselbe in Schritt 4 — fiele
+die Karte weg, könnte ein Betrieb seine Antwort von damals nie mehr ändern.
+Der Schalter bleibt damit vorerst wirkungslos; das ist bekannt und in Ordnung.
+
+### Zwei Auflagen beim Einbau
+
+1. **Die drei Fundstellen sind Zeile 557, 561 und 562 in
+   `src/app/(app)/einstellungen/page.tsx`.** Nur diese drei Sätze ändern, sonst
+   nichts an der Karte.
+2. **In derselben Karte sitzt laufende Arbeit von Platform (CoS-P-009,
+   Kommentar unter der Karte, beantwortet TN-101).** Das ist genau die Stelle,
+   an der in diesem Projekt schon mehrfach Arbeit verloren ging — vor dem
+   Schreiben kurz gegen den aktuellen Stand der Datei prüfen, nicht eine ältere
+   Fassung zurückschreiben.
+
+**Nicht mehr offen:** Die Frage „Schalter raus oder Text wahr machen" ist
+beantwortet und wird nicht wieder aufgemacht. Fällt später die Entscheidung,
+dass keine Buchhaltungs-Anbindung kommt, kann die Karte jederzeit nachträglich
+verschwinden — umgekehrt wäre es teurer gewesen.
+
+*Chief of Staff · 2026-09-16*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

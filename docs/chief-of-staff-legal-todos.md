@@ -3339,4 +3339,33 @@ Rollen sind an diesen Quellen geprüft und in zwei Fällen korrigiert worden
 *Head of Legal & Compliance · 2026-09-16*
 
 
+
+---
+
+## 🟢 LR-18 — Sandy hat freigegeben. Bauen.
+
+**16.09.2026, 13:20 MESZ · Chief of Staff · Sandys Antwort wörtlich: „LR18 freigegeben"**
+
+**Die dritte Datenschutz-Korrektur ist freigegeben:** Datenschutzerklärung und
+AVV nennen für Vercel und Resend zwei verschiedene Rechtsgrundlagen für den
+Drittlandtransfer. Der AVV ist richtig, die Datenschutzerklärung nicht.
+Fundstelle aus eurem eigenen Eintrag: `src/app/datenschutz/page.tsx`, Z. 94–95.
+
+**Was jetzt zu tun ist:**
+
+1. **Den Textfix einbauen** — die Datenschutzerklärung zieht auf die
+   Rechtsgrundlage nach, die im AVV ohnehin steht. Keine inhaltliche Erweiterung,
+   nichts Neues versprechen, nur die Begründung geraderücken.
+2. **LR-18 in `docs/legal-002-risikobewertung-vob.md` auf freigegeben/erledigt
+   setzen** — das ist die Heimat-Datei des Risikoeintrags, nicht diese hier.
+   Ich trage dort nichts ein.
+3. **Die zwei älteren Datenschutz-Korrekturen sind mit freigegeben** — Sandy hat
+   das ausdrücklich so gemeint, sie standen als Paket in
+   `entscheidungen-fuer-sandy.md`. Wenn eine davon inzwischen anders aussieht
+   als beim Vorlegen, meldet das, statt sie stillschweigend mitzunehmen.
+
+**Sandy braucht ihr dafür nicht mehr.** Der Einbau ist gedeckt.
+
+*Chief of Staff · 2026-09-16*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1448,5 +1448,131 @@ Sperrklinke folgt in `pruefmeister-batch-47-56.test.ts`. Die fünf
 Landingpage-Beispiele umgehen ihn, indem in Beispiel 4 Fenster und Tür nicht im
 Satz stehen — das ist eine Krücke für die Seite, keine Lösung.
 
+---
+
+## Live-Lauf der Einsprech-Liste — 20 Fälle, Sandy, 16.09.2026
+
+Erster vollständiger Durchgang mit Soll-Tabellen. **14 von 18 Aufnahmen
+komplett sauber**, dazu beide Klick-Prüfungen. Ein schwerer neuer Fund, ein
+mittlerer, zwei bekannte bestätigt, einer erledigt und zwei Fehler von mir.
+
+Sauber durchgelaufen: 01, 02, 03, 05, 06, 08, 11, 12, 13, 14, 15, 18, 19, 20.
+Darunter Übermessung, zwei Anstrichzahlen im selben Raum, Q3 statt Q2,
+Fischgrät mit 15 % Verschnitt, drei Räume mit drei Belägen, und — wichtig —
+**Fall 18, der Ausschluss „die Decke bitte NICHT mitrechnen", hat funktioniert.**
+
+### PM-099 — der Ausschlusssatz hat keine Wirkung. 277,25 € je Fall.
+
+Der schwerste Fund des Laufs, aus Fall 17.
+
+> „Flur, vier mal eins fünfzig, Höhe zwo fünfzig. Die vier Innentüren mit
+> Zargen abschleifen, grundieren und weiß lackieren. **An den Wänden machen
+> wir nichts.**"
+
+Im Angebot standen trotzdem:
+
+| Zeile | Menge | Preis | Betrag |
+|---|---|---|---|
+| Wand streichen 2x | 27,50 m² | 9,50 € | 261,25 € |
+| Boden schützen | 6,00 m² | 1,20 € | 7,20 € |
+| Sockelleisten abkleben | 11,00 lfm | 0,80 € | 8,80 € |
+| **zusammen** | | | **277,25 €** |
+
+**Nachgemessen, und es ist schlimmer als der eine Fall:** Steht die Wandarbeit
+erst einmal in den Raumdaten, erzeugt die Pipeline die Positionen — und zwar
+**Zeichen für Zeichen dieselbe Liste**, ob der Ausschlusssatz dasteht oder
+nicht. Auch die Variante „Die Wände bleiben wie sie sind" ändert nichts. Der
+Satz wird an dieser Stelle nirgends gelesen.
+
+Der Auslöser sitzt davor: die KI schreibt `waende_streichen` trotz des
+Ausschlusses in die Raumdaten. Aber die Pipeline hat keine zweite Bremse — und
+genau dafür gibt es PM-034. Eine Ansage, die einmal überhört wird, kommt danach
+durch nichts mehr heraus.
+
+**Warum Fall 18 trotzdem grün war:** Dort hat die KI den Ausschluss selbst
+umgesetzt und `decke_streichen` gar nicht erst gesetzt. Das ist Glück, keine
+Absicherung. Der Unterschied zwischen 17 und 18 ist nicht die Formulierung,
+sondern ob die Stufe davor sauber gearbeitet hat.
+
+**Vorrang: hoch.** Ein Ausschluss ist das Einzige, womit der Handwerker der App
+etwas *wegnehmen* kann. Funktioniert er nicht verlässlich, steht Arbeit auf dem
+Angebot, die der Kunde nicht bestellt hat — und bei Auftragserteilung schuldet
+der Betrieb sie.
+
+Sperrklinken: PM-099-A (drei Stück) in `pruefmeister-batch-47-56.test.ts`, dazu
+ein Beleg-Test, der zeigt, dass mit und ohne Ausschlusssatz dieselbe Liste
+entsteht.
+
+### PM-100 — die Rückfrage hängt die Angabe an den falschen Raum
+
+Aus Fall 10, drei Räume in einem Diktat. Gesagt wurde „**im Flur** gehen drei
+Türen ab". Gefragt wurde:
+
+> **Wie viele Türen hat „Wohnzimmer"?** · Du hast gesagt: … → **3 Türen**
+
+Für den **Flur** wurde nach Türen gar nicht gefragt — nur nach Fenstern. Im
+fertigen Entwurf stehen die drei Türen dann korrekt beim Flur.
+
+Das Ergebnis stimmt also, der Weg dahin nicht. Sandys Einschätzung: „nicht so
+dramatisch, ich kann es ändern." Stimmt für sie — sie weiß, was sie gesagt hat.
+Ein Betrieb, der das Diktat vor drei Stunden gemacht hat, weiß es nicht mehr und
+bestätigt die falsche Zahl mit „Stimmt ✓". Danach hat das Wohnzimmer drei Türen
+und der Flur keine, und die Sockelleisten-Mengen beider Räume sind falsch.
+
+**Soll:** Der Beleg-Satz unter der Rückfrage gehört zu dem Raum, den er nennt.
+Nennt der Satz einen anderen Raum als die Frage, darf er nicht als Beleg
+angeboten werden.
+
+**Vorrang: mittel.** Kein Geldweg, solange richtig bestätigt wird — aber die
+Rückfrage ist genau die Stelle, an der die App um Vertrauen bittet.
+
+### Bestätigt, schon bekannt
+
+**L-03 — Nullzeilen.** In Fall 07 und Fall 16 steht
+`Voranstrich / Grundierung (nur Reparaturstelle)` mit **0 Stück × 25,00 € =
+0,00 €** im Angebot. Zweimal unabhängig bestätigt.
+
+**L-02 und PM-053-A — der Phantomraum bei der Fassade.** Fall 16, unverändert:
+zweites Objekt `Raum` ohne Maße, drei Rückfragen zu einem Raum, den es nicht
+gibt, und der `Erschwerniszuschlag Raumhöhe > 3m` hängt dort mit
+**15 % × 0,00 € = 0,00 €**. Sandys Wort dazu: „bescheuerte Rückfragen, sieht
+total verwirrend aus."
+
+Dazu kommt die Aufteilung im Entwurf: die richtige Fassade steht oben mit
+1.440,00 €, darunter ein leerer Raum mit 0,00 €, darunter eine Allgemein-Gruppe
+mit der Nullzeile und dem Gerüst. **Vorrang hochgestuft auf hoch** — das ist der
+erste Screen, den ein Fassadenkunde sieht, und er sieht kaputt aus.
+
+### Erledigt durch den Live-Lauf
+
+**PM-079-A — der Isoliergrund über beide Flächen.** Fall 09 liefert live
+`Isoliergrund gegen Nikotin / Ruß / Wasserflecken` über **65,00 m² × 9,00 € =
+585,00 €** — Wand (45) plus Decke (20). Mein Prüfstand zeigte nur 20 m². Der
+Punkt ist gebaut und stimmt; die Sperrklinke gehört umgestellt.
+
+### Zwei Fehler von mir
+
+**Fall 04, der Erschwerniszuschlag.** In meiner Soll-Tabelle stand „1 %" als
+Menge und 15,00 € als Betrag — das war meine Darstellung einer Zeile, die die
+Engine mit Menge 1 und Einheit „%" führt. Im Angebot steht richtig **15 %**.
+Sandys Rückfrage, ob sie das in der Preisdatenbank so hinterlegt hat: ja, 15 %
+ist der Satz aus dem Katalog, das ist korrekt.
+
+**Offen bleibt die Frage, die dahinter steckt:** 15 % *wovon*? In Fall 16 steht
+`15 % × 0,00 €`, weil die Bezugsfläche leer ist. In Fall 04 müsste eine
+Bezugsgröße dranstehen. **Nachzumessen, bevor jemand den Zuschlag anfasst** —
+ein Prozentzuschlag ohne sichtbare Bemessungsgrundlage ist auf dem Kundenpapier
+nicht erklärbar.
+
+**Fall 17, `Türrahmen abkleben`.** Meine Soll-Tabelle führte die Zeile mit
+4 × 8,00 € = 32,00 € und den Hinweis, sie zu prüfen. Live ist sie **nicht** da —
+richtig so. Sie entsteht in meinem Prüfstand nur, wenn keine Wandarbeit im Raum
+steht. Kein Produktfehler.
+
+### Stand
+
+`pruefmeister-batch-47-56.test.ts`: **27 Prüfungen grün, 12 Sperrklinken.**
+Die Einsprech-Liste `docs/einsprech-liste-alle-faelle.md` ist abgehakt.
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

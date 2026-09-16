@@ -3,7 +3,16 @@
 **18 Aufnahmen. Bei jeder steht, was rauskommen muss — Position für Position,
 mit Menge, Einheitspreis und Summe.** Du vergleichst Zeile für Zeile und hakst ab.
 
-Schätz einen halben Tag, mit Pausen.
+**Durchgelaufen am 16.09.2026 — alle 20.**
+
+| | |
+|---|---|
+| sauber | 01–15, 18, 19, 20 |
+| weicht ab | **16** (Phantomraum, bekannt) · **17** (Ausschlusssatz ohne Wirkung, **neu**) |
+| nebenbei gefunden | **10** — Rückfrage hängt an den falschen Raum |
+
+Die Befunde stehen bei den Fällen und ausführlich in
+`docs/pruefmeister-restliste.md`.
 
 ---
 
@@ -101,7 +110,7 @@ Prüft, ob die App das Wort „nur" versteht.
 
 - **Keine Wandposition.** Keine Sockelleisten — es wird ja nichts an der Wand gemacht.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -129,7 +138,7 @@ Zwei verschiedene Anstrichzahlen im selben Raum.
 
 - Decke 2x — dann hat die App „reicht einmal" überhört.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -154,7 +163,7 @@ Raumhöhe über 3 m. Sockelleisten 15,00 lfdm = voller Umfang, Tür nicht abgezo
 
 - Der Erschwerniszuschlag steht als Prozentsatz. **Prüf, ob im Angebot ein Betrag steht oder 0,00 €** — bei 0,00 € notieren.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -181,7 +190,9 @@ Tapete runter. Fläche gleich der Wandfläche.
 
 - Nach dem Tapetenabriss fehlt der **Tiefengrund** (46,80 m² × 4,50 € = 210,60 €). Steht auf der Liste, ist entschieden, aber noch nicht gebaut.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** Der Zuschlag steht mit **15 %** da, nicht mit 1 % — das war ein Darstellungsfehler in meiner Tabelle. 15 % ist der richtige Katalogsatz.
 
 ---
 
@@ -210,7 +221,7 @@ Tapete runter. Fläche gleich der Wandfläche.
 
 - **Spachtelarbeiten Q2.** Das wäre die falsche, billigere Zeile: 9,00 € statt 14,00 €, also 234,00 € zu wenig.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -240,7 +251,7 @@ Kleinreparatur. Die Menge 3 muss aus dem Satz kommen.
 
 - 3,00 € je Loch = 9,00 € gesamt ist zu billig. Wird auf eine Pauschale von 20,00 € umgestellt.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -269,7 +280,9 @@ Drei Arbeitsgänge, drei Zeilen, je Menge 2.
 - **Heizkörper abkleben** — wer lackiert, klebt nicht ab.
 - **Türen oder Fenster lackieren** — die hat keiner bestellt.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** Zusätzlich drin: `Voranstrich / Grundierung (nur Reparaturstelle)` **0 Stück × 25,00 € = 0,00 €**. Nullzeile, bekannter Fund L-03.
 
 ---
 
@@ -297,7 +310,7 @@ Verraucht heißt Sperrgrund.
 
 - Der Sperrgrund liegt nur auf **20,00 m²** — das ist die Deckenfläche. Verraucht sind aber auch die Wände: richtig wären 65,00 m². Bekannter Fund (PM-079-A).
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -329,7 +342,9 @@ Drei Räume aus einem Satz, jeder für sich gerechnet.
 
 - Flur: Wand 36,00 m² bei 14,40 m Umfang — die drei Türen kürzen den Umfang **nicht**.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** Isoliergrund steht über **65,00 m² = 585,00 €** (Wand + Decke) statt über 20 m². Das ist richtig — mein Prüfstand war veraltet. PM-079-A ist damit erledigt.
 
 ---
 
@@ -353,7 +368,9 @@ Der Standard-Bodenfall.
 
 - Verschnitt **nur** auf den Belag (14,70), **nicht** auf die Dämmung (14,00). Das ist der Punkt.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** Positionen alle richtig. **Aber:** die Rückfrage „Wie viele Türen hat Wohnzimmer?" belegt sich mit dem Satz über den Flur und schlägt 3 vor; nach den Flurtüren wird gar nicht gefragt. Im Entwurf stehen sie dann korrekt beim Flur. Neuer Fund PM-100.
 
 ---
 
@@ -379,7 +396,7 @@ Fischgrät: 15 % Verschnitt statt 5 %, plus Aufpreiszeile.
 
 - **Wandpositionen.** „An den Wänden machen wir nichts."
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -406,7 +423,7 @@ Die Verlegeart muss im Titel stehen und den teureren Preis treffen.
 
 - 12,00 m² ohne Verschnitt. Richtig wären **12,60 m²** — Verschnitt gilt ab der Umstellung für jeden Belag, nicht nur für schwimmenden.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -433,7 +450,7 @@ Altbelag raus und neu rein.
 - Die **Entsorgungsfahrt** fehlt ganz (Kleinfuhre bis 1 m³, 110,00 €).
 - Keine der beiden Zeilen nennt Teppich oder verklebt.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -463,7 +480,7 @@ Drei Räume, drei verschiedene Beläge, Trittschall nur an einer Stelle.
 
 - **Sockelleisten** in irgendeinem Raum — „bleiben überall wie sie sind."
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -491,7 +508,7 @@ Fassade, Gerüst stellen wir selbst.
 
 - Der **Erschwerniszuschlag Raumhöhe** gehört bei einer Fassade mit Gerüst nicht ins Angebot — das Gerüst ist die Erschwernis. Live steht er mit 0,00 € drin und hängt an einem leeren Zweitraum, nach dem die App zusätzlich Maße fragt.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ---
 
@@ -524,7 +541,9 @@ Vier Türen mit Zargen, drei Arbeitsgänge.
 
 - **Türrahmen abkleben** 4 × 8,00 € = 32,00 €: wer die Zarge lackiert, klebt den Rahmen nicht ab. Prüfen und notieren, wenn es dasteht.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] weicht ab`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** Phantomraum bestätigt, dazu Nullzeile und der 0,00-€-Zuschlag. Aufteilung im Entwurf sieht kaputt aus: richtige Fassade 1.440,00 €, darunter ein leerer Raum mit 0,00 €. **Vorrang hochgestuft.**
 
 ---
 
@@ -549,7 +568,9 @@ Ausschluss mitten im Satz. Der härteste Fall der Liste.
 
 - **Decke streichen**, in keiner Form. Das ist der ganze Zweck dieses Falls.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] weicht ab`**  ·  *eingesprochen 16.09.*
+
+**Live-Ergebnis 16.09.:** `Türrahmen abkleben` ist **nicht** drin — richtig so, mein Fehler in der Tabelle. **Dafür ein schwerer Fund:** obwohl „An den Wänden machen wir nichts" gesagt wurde, stehen Wand streichen 2x (27,50 m²), Boden schützen und Sockelleisten abkleben im Angebot — **277,25 €**. Neuer Fund PM-099.
 
 
 ---
@@ -565,7 +586,7 @@ erstellen" klicken.
 
 **Muss stimmen:** es entsteht **ein** Angebot, nicht zwei.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09.*
 
 ### 20 · Raummaß nachträglich ändern
 
@@ -575,7 +596,7 @@ Ein fertiges Angebot öffnen, in die Bearbeiten-Ansicht, **ein Raummaß ändern*
 **Muss stimmen:** Wandfläche, Deckenfläche, Sockelleisten und Summe rechnen sich
 alle neu. Bleibt eine Zahl stehen, ist das der Fund.
 
-`[ ] stimmt`  ·  `[ ] weicht ab:` _______________________________
+**`[x] stimmt`**  ·  *eingesprochen 16.09. — funktioniert*
 
 ---
 

@@ -1801,4 +1801,27 @@ ist bis auf diesen einen Schritt vom Tisch.
 
 *Chief of Staff · 2026-09-16*
 
+
+## ✅ Nachtrag 13:20 MESZ — Sandy hat alle drei Punkte beantwortet
+
+**Damit wartet aus der Liste von heute nichts mehr auf sie.**
+
+| Punkt | Sandys Antwort | Wo es jetzt liegt |
+|---|---|---|
+| **DC-109** — „Abrechnung"-Karte | **„B"** — Karte bleibt, Text wird wahr | Designer, Wortlaut steht fest in `design-check.md` |
+| **LR-18** — dritte Datenschutz-Korrektur | **„freigegeben"** (schließt die zwei älteren mit ein) | Legal, Einbau gedeckt, `chief-of-staff-legal-todos.md` |
+| **Einsprech-Liste** — wann | **erledigt, sie hat sie eben eingesprochen** | Prüfmeister wertet gerade aus |
+
+**Die Einsprech-Liste ist damit keine Termin-Entscheidung mehr**, sondern schon
+Material. Sandy hat sie vor Italien gemacht, also genau so, wie es empfohlen
+war — die Auswertung läuft, während sie weg ist.
+
+**Was noch auf Sandy wartet, unverändert und nicht neu geprüft:**
+einmal „Passwort vergessen" durchklicken (CoS-P-013) · Vercel-Benachrichtigung ·
+Versicherungsfreigabe · Stripe · Gewerbeanmeldung KW 41 (CoS-041).
+
+**Nichts davon ist neu dazugekommen.**
+
+*Chief of Staff · 2026-09-16*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1,39 +1,39 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 16.09.2026, 13:05 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 12:00 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 16.09.2026, 13:30 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 13:05 MESZ — diese Datei wird immer ersetzt, nie ergänzt.)*
 
 ---
 
 ## Lage in drei Zeilen
 
-**Seit 12:00 MESZ hat keine Rolle etwas Neues geliefert.** Geprüft: alle 79
-Einträge in `docs/`, alle 63 im Projektwurzelverzeichnis, `src/` vollständig.
-Einzige Änderung: der Prüfmeister hat `einsprech-liste-alle-faelle.md` um 12:23
-noch einmal nachgezogen.
+**Die CI ist grün.** Lauf **#192** auf `964ad73`: **Success, 2 min 16 s** — der
+erste Lauf seit dem 15.09., der überhaupt Jobs gestartet hat, und der erste
+grüne seit #187. Damit ist auch der **Produktions-Build gemessen**, der letzte
+Schritt, über den bis eben nichts bekannt war. Produktion ist `964ad73`, `READY`.
 
-**Sandy hat den Block aus dem letzten Lauf noch nicht ausgeführt** —
-`.github/workflows/ci.yml` liegt unverändert kaputt auf der Platte, es gibt
-keinen neuen Commit und keinen neuen CI-Lauf. Produktion ist weiter `1ebda34`,
-`READY`.
+**Sandy hat alle drei offenen Punkte beantwortet:** DC-109 = **B** ·
+LR-18 = **freigegeben** · Einsprech-Liste = **schon eingesprochen**, der
+Prüfmeister wertet gerade aus. Aus der heutigen Liste wartet nichts mehr auf sie.
 
-**Neu und der eigentliche Ertrag dieses Laufs: der CI-Lauf ist gemessen, ohne
-auf GitHub zu warten.** Ich habe `1ebda34` frisch geklont und die Schritte der
-CI selbst gefahren. **Lint, TypeScript, Env, Tests und die Doku-Prüfung sind
-grün.** Nur der Produktions-Build ist in meiner Umgebung nicht messbar.
+**Der Prüfmeister arbeitet in diesem Moment** — `einsprech-liste-alle-faelle.md`
+und `pruefmeister-restliste.md` sind seit 13:08 in Bewegung. Sein Ergebnis ist
+das erste echte Material zur Frage, ob die App **versteht, was gesprochen wird**.
 
 ---
 
-## Was seit 12:00 MESZ dazugekommen ist — und wo es jetzt liegt
+## Was seit 13:05 MESZ passiert ist
 
 | Rolle | Ergebnis | Status |
 |---|---|---|
-| Chief of Staff | **CI-Schritte auf `1ebda34` selbst gefahren** — Lint 110 Warnungen/0 Fehler, `tsc` sauber, **155 Testdateien / 2402 bestanden / 75 erwartet-rot**, `env:check` grün, Doku-Endmarkierung grün. Als **CoS-P-026 Nachtrag 1** bei Platform, als Nachtrag bei Engineering | ✅ erledigt |
-| Chief of Staff | **Produktions-Build: ehrlich offen.** Fällt hier mit genau drei Fehlern, alle drei „Google Fonts nicht erreichbar" — in meiner Umgebung gesperrt, kein Code-Fehler. Weitere Fehler gab es nicht | offen, **nicht messbar** |
-| Chief of Staff | **Doku-Endmarkierung mit den sechs uncommitteten Dateien geprüft** — „Alle 55 Doku-Dateien in Ordnung". Der neue CI-Schritt wird sie nicht rot machen | ✅ erledigt |
-| Chief of Staff | **`.github/` erneut versucht zu beschreiben** — wieder abgelehnt („protected file"). Der CI-Fix geht endgültig nur über Sandys Block | bestätigt |
-| Chief of Staff | **`ci.yml`-Fix auf reines ASCII umgestellt** (`Abhaengigkeiten installieren`), wie in CoS-P-026 angekündigt | fertig, **liegt nicht auf der Platte** |
-| Prüfmeister | **Einsprech-Liste nachgezogen** (12:23) — 18 Aufnahmen plus zwei Klick-Prüfungen (doppelter Klick auf „Angebot erstellen", Raummaß nachträglich ändern) | fertig, **nicht committet** |
+| Sandy | **`964ad73` gepusht** — CI-Fix plus sieben Dateien. `ci.yml` im Commit ist Byte für Byte der geprüfte Stand | ✅ erledigt |
+| — | **CI-Lauf #192: grün, 2 min 16 s.** Vier rote Läufe (#188–#191) sind damit abgeschlossen erledigt | ✅ erledigt |
+| — | **Produktions-Build gemessen** — er lief in #192 durch. Der einzige Schritt, den ich selbst nicht messen konnte, ist damit belegt | ✅ erledigt |
+| Vercel | **Produktion `964ad73`, `READY`** | ✅ erledigt |
+| Sandy | **DC-109 entschieden: B** — Karte bleibt, Text wird wahr. In `design-check.md` festgehalten | verteilt |
+| Sandy | **LR-18 freigegeben**, einschließlich der zwei älteren Datenschutz-Korrekturen. In `chief-of-staff-legal-todos.md` | verteilt |
+| Sandy | **Einsprech-Liste eingesprochen** — vor Italien, wie empfohlen. Keine Termin-Entscheidung mehr | ✅ erledigt |
+| Prüfmeister | **Wertet die Aufnahmen gerade aus** — zwei Dateien seit 13:08 in Bewegung | läuft |
 
 ---
 
@@ -41,31 +41,20 @@ grün.** Nur der Produktions-Build ist in meiner Umgebung nicht messbar.
 
 **Selbst gemessen, nicht vermutet:**
 
-* **`1ebda34` geklont, `npm ci`, dann die CI-Schritte einzeln** mit denselben
-  Env-Werten aus `ci.yml`:
-  * `node scripts/docs-sichern.mjs pruefen` → „Alle 55 Doku-Dateien in Ordnung"
-  * `npm run lint:ci` → 110 Warnungen, 0 Fehler, Rückgabewert 0 (Budget 120)
-  * `npm run typecheck` → Rückgabewert 0
-  * `npm run env:check` → „Umgebung gültig: ci / Supabase example"
-  * `npm test` → **155 Dateien, 2402 bestanden, 75 erwartet-rot**, 62 s
-  * `npm run build` → 3 Fehler, **alle drei `next/font` / Google Fonts**
-* **Dass die Fonts an der Umgebung liegen, nicht am Code:**
-  `fonts.googleapis.com` und `fonts.gstatic.com` antworten hier mit 403 auf den
-  CONNECT des Proxys. Auf GitHub sind beide erreichbar.
-* **Der Fix gegen einen YAML-Parser:** neun Schritte, jeder mit `run` oder
-  `uses`, keine doppelten Schlüssel, kein BOM, keine Nicht-ASCII-Zeichen.
-* **Alle Dateien in `docs/` und im Wurzelverzeichnis nach Änderungszeit** gegen
-  den Stand von 12:00 MESZ.
-* **Produktion über die Vercel-API:** `1ebda34`, `READY`, kein neuer Deploy.
-* **CI-Läufe #185–#191:** #187 grün, #188–#191 rot, kein neuer Lauf seit 10:24.
+* **CI-Lauf #192** über die Actions-Übersicht, zweimal unabhängig abgefragt:
+  **Success, 2 min 16 s**, Commit `964ad73`.
+* **`ci.yml` im gepushten Commit** gegen meinen geprüften Stand gestellt:
+  **identisch**, keine Abweichung.
+* **Produktion** über die Vercel-API: `964ad73`, `READY`, 13:07 MESZ.
+* **Alle Dateien in `docs/` nach Änderungszeit** gegen den Push-Zeitpunkt.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **Der Produktions-Build.** Er ist der einzige CI-Schritt, über den weiterhin
-  nichts bekannt ist. Ich sage nicht „wird grün".
-* **Die Testläufe der Rollen einzeln.** Unverändert nicht nachgefahren — die
-  2402 oben sind die gemeinsame Suite, nicht deren Eigenprüfungen.
-* **Gate 1 rechne ich weiterhin nicht neu** — ich warte auf Manfreds Session 3.
+* **Was der Prüfmeister aus Sandys Aufnahmen herausliest.** Er schreibt noch.
+  Ich sage nichts über sein Ergebnis, bevor es dasteht.
+* **Gate 1 rechne ich weiterhin nicht neu.** Zwei Posten sind jetzt in
+  Bewegung — Manfreds Session 3 und Sandys Einsprech-Durchlauf. Die Zahl wird
+  neu gerechnet, wenn beides ausgewertet ist, nicht vorher und nicht in Teilen.
 
 ---
 
@@ -73,39 +62,34 @@ grün.** Nur der Produktions-Build ist in meiner Umgebung nicht messbar.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | **Block im Chat ausführen** — schreibt den CI-Fix und committet sieben Dateien | ein Block |
-| 2 | 🟡 **DC-109 entscheiden** — „A" oder „B", Empfehlung in `entscheidungen-fuer-sandy.md` | eine Antwort |
-| 3 | 🟡 **LR-18 freigeben** — dritte Datenschutz-Korrektur, Textfix an zwei Zeilen | ein Wort |
-| 4 | 🟡 **Einsprech-Liste terminieren** — vor oder nach Italien; Empfehlung: vorher, notfalls nur Fall 01–10 | eine Antwort |
-| 5 | 🟡 **Einmal „Passwort vergessen" durchklicken** (CoS-P-013), dann ist der Punkt zu | zwei Minuten |
-| 6 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
+| 1 | **Block im Chat ausführen** — committet vier Doku-Dateien plus die zwei des Prüfmeisters | ein Block |
+| 2 | 🟡 **Einmal „Passwort vergessen" durchklicken** (CoS-P-013), dann ist der Punkt zu | zwei Minuten |
+| 3 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
 
-### Nicht im Repository — einzeln gegen `1ebda34` geprüft
+**Keine Entscheidung wartet mehr auf sie.** DC-109, LR-18 und die
+Einsprech-Liste sind beantwortet.
+
+### Nicht im Repository
 
 ```
-.github/workflows/ci.yml                   <- der CI-Fix; der Block schreibt die Datei
-docs/design-check.md                       <- DC-108 (Designer)
-docs/chief-of-staff-platform-todos.md      <- CoS-P-026 + Nachtrag 1
-docs/chief-of-staff-engineering-todos.md   <- CI-Messung + LR-19/CoS-L-006
-docs/entscheidungen-fuer-sandy.md          <- LR-18 + Commit-Liste
 docs/arbeitsreihenfolge.md                 <- in diesem Lauf ersetzt
-docs/einsprech-liste-alle-faelle.md        <- Prüfmeister, 12:23 nachgezogen
+docs/design-check.md                       <- DC-109 entschieden (B)
+docs/chief-of-staff-legal-todos.md         <- LR-18 freigegeben
+docs/entscheidungen-fuer-sandy.md          <- alle drei Antworten eingetragen
+docs/einsprech-liste-alle-faelle.md        <- Prüfmeister, schreibt noch
+docs/pruefmeister-restliste.md             <- Prüfmeister, schreibt noch
 ```
 
-**Alles andere ist committet** — `launch-readiness.md`,
-`chief-of-staff-legal-todos.md`, `legal-002-risikobewertung-vob.md`,
-`dc-102-*`, `pruefmeister-*`, `vokabular-abgleich.md`,
-`testnutzer-notizen-manfred.md`, `landingpage-fuenf-beispiele.md`,
-`package.json`: nicht suchen.
+Die zwei Prüfmeister-Dateien dürfen mit — er schreibt weiter, der nächste
+Commit nimmt den Rest mit. **Alles andere ist mit `964ad73` committet.**
 
 ---
 
 ## Head of Product Engineering
 
-1. ✅ **Neu: euer Stand ist gemessen.** Lint, TypeScript und die 2402 Tests auf
-   `1ebda34` sind grün. In den vier ungemessenen Läufen ist bei euch nichts
-   liegen geblieben. Die Warnung von heute früh gilt **nur noch für den
-   Build-Schritt**. Nichts anders bauen, nichts nacharbeiten.
+1. ✅ **Die CI ist grün** — #192 auf `964ad73`, alle neun Schritte inklusive
+   Produktions-Build. In den vier ungemessenen Läufen ist bei euch **nichts**
+   liegen geblieben. Die Warnung von heute früh ist vollständig erledigt.
 2. 🔴 **Zug 3 in dieser Reihenfolge: PM-098 → PM-072 → PM-074 → PM-079.**
    PM-098 (280,00 € erfundene Lackierarbeiten aus „Ein Fenster, eine Tür")
    steht an der Spitze, Vorrang vor Gate 1 bestätigt. Mechanik bei **PM-033**
@@ -130,21 +114,26 @@ docs/einsprech-liste-alle-faelle.md        <- Prüfmeister, 12:23 nachgezogen
 11. **CoS-E-063** — Heizkörper. **CoS-E-060** — offen: welche Datei speist die
     Oberfläche, `preis-ableitung.ts` oder `materialanteil.ts`?
 12. **CoS-E-067** — `no-explicit-any`-Aufräumrunde, eigener Lauf, ganz hinten.
-    Zur Größenordnung, frisch gezählt: von den 110 Lint-Warnungen ist der
-    größte Block `no-explicit-any` in `supabase/functions/`.
+    Größenordnung, frisch gezählt: von 110 Lint-Warnungen ist der größte Block
+    `no-explicit-any` in `supabase/functions/`.
+13. ⏳ **Auf den Prüfmeister warten, bevor ihr umplant.** Seine Auswertung von
+    Sandys Aufnahmen kann die Reihenfolge oben ändern. Jetzt nichts vorziehen.
 
 ## Product Designer
 
-1. ✅ **DC-108 ist gebaut** — Hinweissatz unter „Tapezieren", Schalter heißt
-   „Malerware". Prototyp und Spec, kein App-Code. **Nicht committet.**
-2. 🟡 **DC-109 wartet auf Sandy**, nicht auf euch. Sagt sie „B", baut ihr den
-   bereitliegenden Ersatztext ein; sagt sie „A", fliegt die Karte.
+1. 🟢 **DC-109 ist entschieden: B.** Karte bleibt, euer bereitstehender Text
+   wird eingebaut — Wortlaut steht fest in `design-check.md`, keine Rückfrage
+   mehr nötig. **Zwei Auflagen:** nur die Zeilen 557, 561, 562 in
+   `src/app/(app)/einstellungen/page.tsx` anfassen, und **vor dem Schreiben
+   gegen den aktuellen Stand der Datei prüfen** — in derselben Karte sitzt
+   laufende Arbeit von Platform (CoS-P-009).
+2. ✅ **DC-108 ist committet** (mit `964ad73`).
 3. 🔴 **PD-016 Punkt 1** (runder Raum, PM-085) ist der **einzige** Punkt bei
    euch, an dem Engineering hängt — CoS-E-068 Teil C.
 4. **PD-018, drei Fragen vom Prüfmeister.** Punkt 2 liefert zugleich den Beleg
    für **PD-016 Punkt 2**. **Keiner der drei blockiert etwas.**
 5. **Nachzuziehen, jetzt möglich:** die eine Stelle in `AngebotDetail.tsx`,
-   bewusst ausgelassen — Engineering hat committet.
+   bewusst ausgelassen.
 6. **DC-102** freigegeben — Ablauf und Darstellung, **nicht die Zahlen**.
    Einbau hängt an CoS-E-053.
 7. 🔴 **`docs/landingpage-fuenf-beispiele.md` geht nicht live, bevor PM-098
@@ -154,56 +143,63 @@ docs/einsprech-liste-alle-faelle.md        <- Prüfmeister, 12:23 nachgezogen
 
 ## Platform
 
-1. 🔴 **CoS-P-026 — `ci.yml` gegenlesen, nicht neu bauen.** Der korrigierte
-   Stand kommt mit Sandys nächstem Push. `npm ci` ist zurück in seinem Schritt,
-   euer Doku-Schritt steht unverändert als eigener Schritt dahinter, der
-   Schrittname ist jetzt **reines ASCII**. Wenn euch am Doku-Schritt etwas
-   fehlt, ändert ihn — lasst die Struktur.
-2. 🆕 **CoS-P-026 Nachtrag 1 — der Lauf ist gemessen.** Lint, TypeScript, Env,
-   Tests und die Doku-Prüfung auf `1ebda34` sind grün. Offen bleibt allein der
-   Produktions-Build. Zahlen im Ticket.
-3. 🔴 **CoS-P-025 — die Schrumpf-Prüfung, und sie deckt jetzt auch
+1. ✅ **CoS-P-026 ist zu.** `ci.yml` ist repariert, gepusht, und **#192 ist
+   grün** — neun Schritte, alle gelaufen. Gegenlesen dürft ihr weiter; wenn
+   euch am Doku-Schritt etwas fehlt, ändert ihn, aber lasst die Struktur.
+2. 🔴 **CoS-P-025 — die Schrumpf-Prüfung, und sie deckt jetzt auch
    `.github/workflows/` ab.** `ci.yml` ist auf demselben Weg beschädigt worden
    wie die drei Doku-Dateien (BOM, doppelt kodierte Umlaute, ganze Datei
    zurückgeschrieben statt angehängt) — nur hat es hier vier Tage niemand
    gemerkt. Zweiter Teil unverändert: ist **CoS-P-022** ohne `device_bash`
    überhaupt lösbar?
-4. 🔴 **CoS-P-024 — der Push-Hook wird ersatzlos abgeschafft.** Sandys
+3. 🔴 **CoS-P-024 — der Push-Hook wird ersatzlos abgeschafft.** Sandys
    Anweisung. **Noch nicht als umgesetzt eingetragen.**
-5. ✅ **CoS-P-020 und CoS-P-021 sind zu**, das Budget 120 ist committet.
-   **Es war nicht die Ursache der roten Läufe** — und, jetzt belegt: mit 110
-   Warnungen hätte auch das alte Budget gehalten.
-6. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code.
-7. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload.
+4. ✅ **CoS-P-020 und CoS-P-021 sind zu.** Das Budget 120 hat gehalten — mit
+   110 Warnungen hätte allerdings auch das alte gereicht.
+5. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code.
+6. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload.
+7. 🆕 **DC-109 ist entschieden (B)** — der Designer ändert drei Sätze in der
+   „Abrechnung"-Karte, in der euer CoS-P-009-Kommentar sitzt. Er ist angewiesen,
+   vorher gegen den aktuellen Stand zu prüfen. Wenn ihr dort gerade schreibt,
+   sagt kurz Bescheid.
 
 ## Prüfmeister
 
-1. ✅ **Einsprech-Liste geliefert und um 12:23 nachgezogen**
-   (`einsprech-liste-alle-faelle.md`, 18 Fälle + 2 Klick-Prüfungen).
-   Sie liegt als Termin-Entscheidung bei Sandy, nicht mehr bei euch.
-   **Die Frage von 12:00 steht weiter offen:** `docs/pruefmeister-einsprechen-47-56.md`
-   vom 15.09. liegt unverändert daneben. Ist sie durch die neue Liste abgelöst?
-   Wenn ja, ersetzt sie durch einen Verweis — zwei Einsprech-Listen nebeneinander
-   sind genau der Parallelstand, den Sandys Datei-Regel ausschließt.
-2. **Fallbasis 98/100.** Die Sperrklinke für PM-098 in
+1. 🟢 **Sandy hat die 18 Aufnahmen eingesprochen** — vor Italien, wie
+   empfohlen. Ihr wertet gerade aus. **Das ist ab jetzt der wichtigste Posten
+   im ganzen Projekt:** es ist die erste Messung, ob die App versteht, was
+   gesprochen wird — die 139 automatischen Tests prüfen nur, ob sie richtig
+   rechnet.
+2. **Wenn ihr durch seid:** die Funde nach Rollen sortiert an mich, ich
+   verteile. Keine Sammel-Datei anlegen, die Befunde gehören in die
+   bestehenden Kanäle.
+3. **Die Frage von heute Mittag steht weiter offen:**
+   `docs/pruefmeister-einsprechen-47-56.md` vom 15.09. liegt unverändert neben
+   der neuen Liste. Ist sie abgelöst? Wenn ja, durch einen Verweis ersetzen —
+   zwei Einsprech-Listen nebeneinander sind der Parallelstand, den Sandys
+   Datei-Regel ausschließt.
+4. **Fallbasis 98/100.** Die Sperrklinke für PM-098 in
    `pruefmeister-batch-47-56.test.ts` fehlt noch.
-3. **Die letzten zwei Fälle bis 100, ohne App prüfbar:** Selbstkorrektur mitten
+5. **Die letzten zwei Fälle bis 100, ohne App prüfbar:** Selbstkorrektur mitten
    im Satz · Kunde redet im Hintergrund dazwischen · Aufnahme bricht ab und
    wird fortgesetzt.
-4. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung.
-5. **Größter blinder Fleck, festgehalten:** **jedes** Gewerk hat Stundenzeilen
+6. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung.
+7. **Größter blinder Fleck, festgehalten:** **jedes** Gewerk hat Stundenzeilen
    im Katalog, die Engine hat an keiner Stelle einen Weg dorthin (Abschnitt W
    in `vokabular-abgleich.md`, PM-093). Steht in CoS-E-069 mit drin.
-6. **Braucht die laufende App, unverändert offen:** PM-002 · PM-032 ·
+8. **Braucht die laufende App, unverändert offen:** PM-002 · PM-032 ·
    PM-031 Teil 2 · PM-030 · PM-014/PM-015 · G.3 · Gegenprobe aus PD-009 §7.
 
 ## Legal
 
-1. ✅ **CoS-L-006 vollständig abgeschlossen**, einschließlich § 14 Abs. 2 UStG.
-2. ✅ **DC-106 ist auf eurer Seite zu.** Übrig: L-MAIL-01 als Bauauftrag (bei
+1. 🟢 **LR-18 ist freigegeben** — Sandy, wörtlich: „freigegeben". Baut den
+   Textfix ein (`src/app/datenschutz/page.tsx`, Z. 94–95) und setzt **LR-18 in
+   `legal-002-risikobewertung-vob.md` selbst auf erledigt** — das ist eure
+   Heimat-Datei, ich fasse sie nicht an. **Die zwei älteren
+   Datenschutz-Korrekturen sind mit freigegeben.**
+2. ✅ **CoS-L-006 vollständig abgeschlossen**, einschließlich § 14 Abs. 2 UStG.
+3. ✅ **DC-106 ist auf eurer Seite zu.** Übrig: L-MAIL-01 als Bauauftrag (bei
    Engineering, CoS-E-057) und L-MAIL-02 als Textfix.
-3. 🟡 **LR-18 wartet auf Sandys Freigabe** — steht mit Empfehlung in
-   `entscheidungen-fuer-sandy.md`. Nicht selbst einbauen, bis sie antwortet.
 4. **CoS-L-009** — darf „Aufmaß" auf dem Angebot stehen? Hängt an LR-16,
    blockiert nichts.
 5. **Materialangabe auf dem Kunden-PDF bewerten** — vier Bedingungen sind an
@@ -212,8 +208,9 @@ docs/einsprech-liste-alle-faelle.md        <- Prüfmeister, 12:23 nachgezogen
 
 ## Manfred
 
-1. **Session 3: Registrierung end-to-end** — steht weiterhin aus. **Das ist der
-   Posten, an dem die Gate-1-Zahl hängt.**
+1. **Session 3: Registrierung end-to-end** — steht weiterhin aus. Zusammen mit
+   Sandys Einsprech-Durchlauf ist das der zweite Posten, an dem die
+   Gate-1-Zahl hängt.
 2. **DC-101 nachprüfen**: am Handy laden und **sofort** lostippen.
 3. **Aus PD-009 §5:** Seine 75 % gegen die 63 % des Katalogs sind kein
    Widerspruch — zu bestätigen, nicht zu entscheiden.
@@ -223,26 +220,22 @@ docs/einsprech-liste-alle-faelle.md        <- Prüfmeister, 12:23 nachgezogen
 
 ## Was ich als Nächstes tue
 
-**Den Produktions-Build nachmessen, sobald er messbar ist** — entweder über den
-ersten wieder laufenden CI-Lauf nach Sandys Push, oder gar nicht. Er ist der
-einzige Schritt, über den ich nichts sagen kann.
+**Die Auswertung des Prüfmeisters abholen, sobald sie steht** — und die Funde
+am selben Tag an die Rollen verteilen, der sie gehören. Das ist der einzige
+Posten, auf den ich gerade warte.
 
-**Die Lehre aus diesem Lauf:** Auf einen fremden Lauf zu warten war unnötig.
-Die CI-Schritte sind gewöhnliche Befehle — ich kann sie selbst fahren, und
-damit steht das Ergebnis Stunden früher fest als der nächste Push. Das gilt ab
-jetzt als Standard, wenn ein Lauf rot ist oder lange keiner gelaufen ist.
-
-**DC-109, LR-18 und den Termin für die Einsprech-Liste nachhalten** — die drei
-Antworten, die auf Sandy warten.
+**Gate 1 neu rechnen, wenn Einsprech-Auswertung und Manfreds Session 3 beide
+vorliegen** — nicht früher und nicht in Teilen.
 
 **Zum Ablauf dieses Laufs:** `device_bash` auf Sandys Rechner ist weiterhin tot
 (`no Plan9 drive shares mounted`, Windows-Update vom 08.09.). Gelesen und
 geschrieben wurde über Staging/Commit mit `expectedMtimeMs`; die GitHub-API ist
-in dieser Umgebung gesperrt (403), der Lauf-Status kam über die Actions-Seite.
-An `chief-of-staff-platform-todos.md` und `chief-of-staff-engineering-todos.md`
-wurde ausschließlich vor der Endmarkierung angehängt. Ersetzt wurde nur diese
-Datei. `.github/workflows/ci.yml` konnte ich erneut nicht schreiben —
-schreibgeschützt für die Dateiwerkzeuge dieser Umgebung.
+in dieser Umgebung gesperrt (403), der Lauf-Status kam über die Actions-Seite,
+zweimal unabhängig abgefragt. An `design-check.md`,
+`chief-of-staff-legal-todos.md` und `entscheidungen-fuer-sandy.md` wurde
+ausschließlich vor der Endmarkierung angehängt. Ersetzt wurde nur diese Datei.
+Die beiden Dateien, an denen der Prüfmeister gerade schreibt, habe ich nicht
+angefasst.
 
 ---
 
