@@ -9857,4 +9857,158 @@ auf dem Angebot sieht — deshalb überhaupt erwähnenswert.
 
 ---
 
+## DC-113 ✅ — Der Fassaden-Entwurf: der leere Raum und die Nullzeilen sind weg (Product Designer, 16.09.2026)
+
+**Bezug:** PD-018, zweiter Block, Punkt 2 (`docs/pruefmeister-notizen-fuer-designer.md`) ·
+Reihenfolge laut `arbeitsreihenfolge.md`, Product Designer Punkt 3: **(a) zuerst,
+(b) danach**. Beide sind hier zusammen erledigt, weil es derselbe Griff ist.
+**(c) Prozentzuschlag ohne Bezugsgröße ist bewusst NICHT gebaut** — der
+Prüfmeister misst die Bemessungsgrundlage noch nach.
+
+### Was Sandy gesehen hat
+
+```
+🏠 Fassade                                        1.440,00 €   ← richtig
+🏠 Raum                                               0,00 €   ← sagt nichts
+   Raummaße  ! × ! m
+   Erschwerniszuschlag Raumhöhe > 3m   15 % × 0,00 €   0,00 €
+📋 Allgemein
+   Voranstrich / Grundierung        0 Stück × 25,00 €   0,00 €  ← sagt nichts
+   Gerüst stellen und abbauen       1 Pauschale        450,00 €
+```
+
+### Die Regel, und warum sie so eng ist
+
+Neu in `src/lib/angebot-gruppierung.ts`:
+
+```ts
+istNullzeile(item)  →  total_price ≈ 0 UND (quantity === 0 ODER unit === '%')
+ohneNullzeilen(items)
+```
+
+Genau **zwei** Fälle, und beide sind belegbar leer:
+
+1. **Menge 0 bei vorhandenem Einzelpreis** (`0 Stück × 25,00 €`). Es ist nichts
+   zu tun. Die Position ist nicht „unbepreist", sie ist leer.
+2. **Prozent-Zuschlag mit Gesamtpreis 0,00 €** (`15 % × 0,00 €`). Nach
+   `wendeProzentZuschlaegeAn()` ist `unit_price` der Euro-Betrag je
+   Prozentpunkt — 0,00 € heißt, die Bemessungsgrundlage war 0. Ein Zuschlag auf
+   nichts ist nichts. Ohne Katalogtreffer bleibt die Zeile unangetastet (dann
+   ist `unit_price` der Prozentsatz und der Gesamtpreis nicht 0), der
+   „Preis fehlt"-Weg greift also weiterhin.
+
+**Die Enge ist kein Geiz, sondern die Grenze zu einer Regel, die das Gegenteil
+verlangt.** In `src/lib/versandbereit.ts` steht seit Manfreds Testlauf schwarz
+auf weiß: *„Was hier bewusst NICHT passiert: die unbepreiste Position
+stillschweigend weglassen. Dann verschwände die Arbeit aus dem Angebot und der
+Handwerker führte sie aus, ohne sie berechnet zu haben."* Eine echte Position
+ohne Preis (`12 m² × 0,00 €`) hat eine Menge und ist kein Prozentsatz — sie
+fällt unter keinen der beiden Fälle und bleibt stehen. Dafür gibt es einen
+eigenen Test, der direkt gegen `unbepreistePositionen()` gegenprüft.
+
+**Geld bewegt sich nie.** Entfernt wird ausschließlich, was 0,00 € beiträgt;
+Angebotssumme, Zwischensummen, Steuer und Bruttobetrag bleiben Cent für Cent
+gleich. Das ist per Test festgenagelt, nicht behauptet.
+
+### Der leere Raum fällt als Folge weg — ohne eigene Sonderregel
+
+Der `🏠 Raum · 0,00 €`-Block bestand aus genau einer Zeile, und die ist nach
+obiger Regel eine Nullzeile. Wird gefiltert, **bevor** gruppiert wird, entsteht
+die Raum-Gruppe gar nicht erst. Kein zweiter Mechanismus, keine Liste von
+Ausnahmen, nichts, was mit der Gruppierung auseinanderlaufen kann.
+
+**Die Ursache bleibt bei Engineering** (Phantomraum L-02 / PM-053-A), wie der
+Chief of Staff abgegrenzt hat. Was hier passiert, ist ausschließlich: *was ein
+Entwurf zeigt, wenn eine Gruppe nichts enthält.* Sobald der Phantomraum weg ist,
+ändert diese Regel an demselben Angebot nichts mehr — sie ist dann wirkungslos,
+nicht falsch.
+
+### Wo gefiltert wird, und wo bewusst nicht
+
+| Weg | Datei | Nullzeilen |
+|---|---|---|
+| Kunden-PDF | `src/lib/pdf.tsx` | raus |
+| Vorschau („so sieht es der Kunde") | `src/components/AngebotVorschau.tsx` | raus |
+| Angebot ansehen | `AngebotDetail.tsx`, Ansicht-Zweig | raus |
+| Angebot **bearbeiten** | `AngebotDetail.tsx`, Edit-Zweig | **bleibt sichtbar** |
+
+**Warum der Editor die Zeile behält:** Eine Zeile unsichtbar in der Datenbank
+liegen zu lassen wäre die schlechtere Hälfte der Regel — sie wäre weg vom Papier
+und gleichzeitig unerreichbar für den, der sie löschen will. Im Editor trägt sie
+jetzt ein graues Fähnchen **„Nicht im Angebot"**, in derselben Machart wie der
+„Vorschlag"-Badge aus DC-027 (dezent, kein Alarm-Rot: es ist kein Fehler des
+Handwerkers). Damit ist beides wahr — er sieht sie, und der Kunde sieht sie
+nicht. Auch die Raummaße des leeren Raums bleiben dort sichtbar und änderbar.
+
+Im PDF und in der Vorschau steht der Filter **nach** dem Kleinbetrags-Bündeln
+(DC-056) und **vor** der Gruppierung — dann erben ihn beide Renderpfade (flach
+und gruppiert) und jede der drei Gliederungen, ohne dass eine Stelle davon
+wissen muss.
+
+### Geprüft, in dieser Reihenfolge
+
+1. **Neue Tests** `src/lib/__tests__/pd018-nullzeilen.test.ts`: 10 Zusicherungen
+   — die zwei Positivfälle, vier Gegenproben (unbepreiste Position, bewusste
+   0-€-Kulanzleistung mit Katalogbezug, Zuschlag mit echtem Betrag, negative
+   Zeile), der komplette Fassaden-Entwurf aus Sandys Live-Lauf als Ganzes, die
+   Summengleichheit und das Verschwinden der Raum-Gruppe.
+2. **Bestandstests der betroffenen Ecken:** Gruppierung/Struktur/Raum-Zuordnung
+   109 grün · Kundenpapier/Versand/Zuschläge/Kleinbeträge/Rechenweg 126 grün ·
+   PDF-Render/Übermessung/Karte-gegen-Entwurf 31 grün. **266 Zusicherungen, kein
+   Fehlschlag.**
+3. **`npx tsc --noEmit -p tsconfig.json` über das ganze Projekt: sauber.**
+4. **`npx eslint` über alle fünf berührten Dateien: 0 Fehler** (13 Warnungen,
+   alle vorbestehend und an unberührten Zeilen).
+
+Alles auf Sandys Rechner am echten Projekt gemessen — `device_bash` ist in
+diesem Lauf wieder erreichbar (stehende Regel, Punkt 1: hiermit vermerkt).
+
+### Zwei Dinge, die mir dabei aufgefallen sind — nicht gebaut, nur gemeldet
+
+* **Die „Pos"-Spalte auf dem Kunden-PDF ist keine laufende Nummer.** Sie druckt
+  `gi.position` aus der Datenbank, die Gruppierung ordnet die Zeilen aber nach
+  Räumen um. Auf einem Angebot mit zwei Räumen steht dort heute schon eine
+  Reihenfolge wie 1, 3, 2, 4 — und mit DC-056 (Kleinbeträge bündeln) entstehen
+  zusätzlich Lücken. **Das ist älter als dieser Punkt und nicht durch ihn
+  entstanden**, wird durch ihn aber häufiger sichtbar. Fachlich ist eine
+  lückenhafte Positionsnummer auf einem verbindlichen Angebot ein Problem (der
+  Kunde vermutet eine fehlende Seite). Vorschlag: im Dokument durchnummerieren,
+  statt die Datenbank-Reihenfolge zu drucken. Braucht eine Entscheidung, weil
+  die Nummer bei Nachträgen und Rückfragen zitiert wird — ich baue das nicht
+  nebenbei.
+* **Die ID DC-112 ist doppelt vergeben.** Einmal für „PD-016 Punkt 1, runder
+  Raum" (erledigt) und einmal für „Das Logo im Angebotskopf ist sehr klein"
+  (offen, Chief of Staff, 16.09.). Die Logo-Frage braucht eine eigene Nummer,
+  sonst zeigt jeder Verweis auf DC-112 auf zwei Sachen. Ich habe sie **nicht**
+  selbst umbenannt — Umnummerieren gehört dem Chief of Staff, sonst laufen die
+  Verweise in `arbeitsreihenfolge.md` auseinander.
+
+### Stand
+
+**Status: ✅ erledigt.** Geändert: `src/lib/angebot-gruppierung.ts`,
+`src/lib/pdf.tsx`, `src/components/AngebotVorschau.tsx`,
+`src/app/(app)/angebot/[id]/AngebotDetail.tsx`, neu
+`src/lib/__tests__/pd018-nullzeilen.test.ts`.
+
+**Zum Commit, damit es niemanden verwirrt:** Die fünf Quelldateien liegen in
+**`0eff2ba`** — einem Commit mit der Meldung „11.4 erstmals erhoben: kein
+getrenntes Geschäftskonto…". Ein gleichzeitig laufender Finance-Lauf hat mit
+`git add -A` committet und meine Dateien mitgenommen, während ich noch
+dokumentiert habe. **Inhaltlich fehlt nichts**, die Zuordnung stimmt nur nicht
+— gemessen mit `git show --stat 0eff2ba`. Das ist derselbe Mechanismus, der in
+diesem Projekt schon dreimal Arbeit gekostet hat (CoS-P-025): **`git add -A`
+committet fremde, halbfertige Arbeit mit.** Bitte pfadgenau adden.
+Dieser Dokumentations-Eintrag ist getrennt committet.
+**`git push` geht aus dieser Shell weiterhin nicht** (keine GitHub-Zugangsdaten
+darin) — beide Commits liegen lokal auf `main` und brauchen einen Push.
+
+**Nicht erledigt und bewusst liegen gelassen:** PD-018 Punkt 3 (Prozentzuschlag
+ohne Bezugsgröße — wartet auf die Messung des Prüfmeisters), PD-018 Punkt 1
+(PM-100, Beleg-Satz aus dem falschen Raum), PD-018 erster Block, PD-019, DC-111
+(Desktop-Breite der Passwort-Seiten, laut Reihenfolge hinter PD-018).
+
+*Product Designer · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
