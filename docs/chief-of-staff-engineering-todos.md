@@ -6877,4 +6877,74 @@ Verhalten, das das Produkt nicht hat.
 
 ---
 
+## 🟢 Korrektur an euch — die rote CI ist gefunden, und sie war weder euer Code noch das Lint-Budget
+
+**Datum:** 2026-09-16, 11:50 MESZ · Chief of Staff
+
+Ich habe euch heute früh geschrieben, der wahrscheinliche Grund für die roten
+Läufe sei das Lint-Warnungsbudget. **Das war falsch.** Lauf **#191**
+(`1ebda34`) ist rot, obwohl das Budget 110 → 120 in genau diesem Commit steckt.
+
+Der belegte Grund: **`.github/workflows/ci.yml` ist seit `9b45952` strukturell
+kaputt** — ein Schritt wurde mitten in den `npm ci`-Schritt hineingeschrieben.
+GitHub lehnt die Datei ab, **es startet kein einziger Job**. Deshalb ist seit
+#188 über euren Code nichts gemessen worden — weder Lint noch TypeScript noch
+Tests noch Build. Voller Befund: `chief-of-staff-platform-todos.md`,
+**CoS-P-026**. Der korrigierte Stand geht mit Sandys nächstem Push ins
+Repository.
+
+**Was das für euch heißt:** Die Aussage „euer Code ist nicht der Grund" gilt
+weiter und ist jetzt belegt statt vermutet. **Aber:** Vier Läufe lang hat
+niemand euren Stand geprüft. Rechnet damit, dass der erste wieder laufende Lauf
+etwas findet, das seit dem 15.09. liegen geblieben ist. **Kein Grund, jetzt
+etwas anders zu bauen** — eure eigenen Testläufe sind grün, und ich melde euch
+das Ergebnis des nächsten Laufs.
+
+## 📌 Aus dem Legal-Lauf von heute — zwei Punkte, die bei euch landen
+
+**Beides von Legal bereits an CoS-E-057 gehängt, hier nur zur Sichtbarkeit:**
+
+1. **LR-19 / L-MAIL-01 — der Endkunde kann auf keine unserer vier Mails
+   antworten.** `src/app/api/cron/reminder/route.ts` setzt kein `reply_to`; die
+   Absenderzeile trägt den Firmennamen, die Antwort landet bei uns. § 5 Abs. 1
+   Nr. 2 DDG verlangt die unmittelbare Erreichbarkeit. Das PDF hat die Zeile
+   (`pdf.tsx` Z. 292–295), die Mail-Vorlagen kennen sie nicht. **Bauauftrag,
+   keine Frage an euch.**
+2. **CoS-L-006 ist vollständig abgeschlossen** — auch der offene Rest
+   (§ 14 Abs. 2 UStG). Ergebnis für euch in einem Satz: **E-Rechnung ist für
+   unsere Betriebe erst ab 01.01.2028 Pflicht und nur gegenüber Geschäftskunden.**
+   ZUGFeRD bleibt Komfort, die Abschaltung aus DC-100 ist damit auch am Normtext
+   gedeckt. Kein Gate-1-Punkt.
+
+*Chief of Staff · 2026-09-16*
+
+
+---
+
+## 📊 Nachtrag zur roten CI — jetzt gemessen statt erwartet
+
+**16.09.2026, 13:05 MESZ · Chief of Staff**
+
+Oben steht: *„Rechnet damit, dass der erste wieder laufende Lauf etwas findet."*
+Ich habe nicht auf GitHub gewartet, sondern `1ebda34` frisch geklont und die
+CI-Schritte selbst gefahren, in derselben Reihenfolge und mit denselben
+Env-Werten.
+
+**Ergebnis für euren Stand:**
+
+* **Lint** — 110 Warnungen, **0 Fehler**, Budget 120. Grün.
+* **TypeScript** — `tsc --noEmit` sauber. Grün.
+* **Tests** — **155 Dateien, 2402 bestanden, 75 erwartet-rot.** Grün.
+* **Umgebungskonfiguration** — grün.
+* **Doku-Endmarkierung** — grün, auch mit den noch nicht committeten Dateien.
+* **Produktions-Build** — in meiner Umgebung nicht messbar, weil Google Fonts
+  dort gesperrt ist (drei `next/font`-Fehler, sonst keine). Auf GitHub läuft das.
+
+**Was daraus folgt:** In den vier ungemessenen Läufen ist bei euch **nichts**
+liegen geblieben, außer möglicherweise im Build-Schritt. Die Warnung von heute
+früh ist damit auf diesen einen Schritt eingeschränkt. Nichts anders bauen,
+nichts nacharbeiten — nur wissen, dass der Stand belegt ist.
+
+*Chief of Staff · 2026-09-16*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -9393,4 +9393,47 @@ Designer, an dem Engineering hängt.
 
 ---
 
+## DC-108 — ✅ erledigt (Product Designer, 16.09.2026)
+
+Manfreds Auftrag umgesetzt, beides im Prototyp `docs/dc-102-preise-prototyp.html`
+und in der Spec `docs/dc-102-konzept-preise-schritt.md` (Fassung 2, neuer
+Abschnitt „DC-108"):
+
+1. **Hinweissatz statt zweitem Haken** unter „Tapezieren", nur bei gesetztem
+   Haken, über der Materialzeile: *„Kundentapeten (Muster, Foto, Textil) rechnet
+   die App immer getrennt ab."* — kein Bedienelement, kein Schalter.
+2. **Der Materialschalter darunter heißt jetzt „Malerware"** (`Malerware inkl.`
+   / `Malerware extra`) statt „Tapete" — Manfreds Wort, trennt die beiden Welten
+   in der Beschriftung.
+
+**Zu seiner dritten Frage — trägt der Satz oder kippt er den Bildschirm?** Er
+trägt, mit einer Einschränkung, die ich am gerenderten Prototyp (390 px)
+gemessen und gleich behoben habe: „Malerware" ist zu lang für die alte
+Materialzeile und brach im Knopf auf zwei Zeilen um (56 px statt 41 px) — zwei
+Zeilen Knopftext sehen aus wie zwei Knöpfe. Regel jetzt: Materialwörter über
+sechs Zeichen bekommen die volle Breite (Beschriftung eigene Zeile, Knöpfe je
+133 px einzeilig); kurze Wörter bleiben einzeilig neben der Beschriftung. Die
+Tapezieren-Karte wird durch den zweizeiligen Satz knapp doppelt so hoch wie die
+anderen — vertretbar, **weil der Haken nicht vorgesetzt ist**: Wer nicht
+tapeziert, sieht nie diesen Satz, der Bildschirm startet unverändert als fünf
+saubere Haken.
+
+**Eine bewusste Abweichung von Manfreds Wortlaut:** Er sagt *„rechnen wir immer
+getrennt ab"*. Auf einem Bildschirm, der den Chef fragt, was **er** macht, und
+dessen ganzer Punkt ist, dass er hier nichts tut, sagt der Satz stattdessen,
+was die **App** tut — *„rechnet die App immer getrennt ab"*. Die Erklärung „was
+ist Malerware" (Raufaser/Vlies/Glasfaser) habe ich gestrichen: dreizeilig kippte
+die Karte in einen Textblock, und das Wort erklärt sich für einen Maler selbst.
+
+**Nur Prototyp/Spec, kein App-Code** — der Preise-Schritt selbst ist noch nicht
+gebaut (DC-102 hängt an CoS-E-053). Zwei-Ebenen-Hinweis für Engineering steht in
+der Spec: „Malerware" ist ein Anzeigewort auf **Haken**-Ebene und gehört zur
+Tätigkeit, nicht in `MATERIAL_WORTE`. Auf **Positions**- und **Kunden**-Ebene
+bleibt „Tapete" (`halbsatz()` → `inkl. Tapete`, `kundensatz()` → „Die Tapete
+wird vom Kunden gestellt.") — dort geht es um genau die Tapete in der Position.
+
+*Product Designer · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

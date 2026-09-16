@@ -2596,4 +2596,148 @@ den nächsten Lauf nach ihrem Push und sage dir das Ergebnis.
 
 ---
 
+## 🔴 CoS-P-026 — Die rote CI hat einen belegten Grund: `ci.yml` ist kaputt. Ich habe die Datei korrigiert, du liest sie gegen.
+
+**Datum:** 2026-09-16, 11:50 MESZ · Chief of Staff
+**Status:** Fix liegt auf Sandys Platte, uncommittet. Bitte gegenlesen, nicht neu bauen.
+
+### Zuerst: meine Korrektur von 09:50 MESZ war ebenfalls falsch
+
+Ich habe heute früh geschrieben, `ci.yml` sei „gültiges YAML, `name: CI`, neun
+Schritte" und der wahrscheinliche Grund sei das Lint-Budget. **Beides ist jetzt
+widerlegt — gemessen, nicht geschlossen.** Ich hatte die Datei damals nur auf
+Gleichheit zwischen zwei Commits geprüft, nicht auf ihren Inhalt. Sie ist seit
+`9b45952` gleich — und zwar gleich kaputt.
+
+### Der Befund
+
+Lauf **#191** (`1ebda34`, Sandys Push von 10:24 MESZ) ist **rot**, obwohl das
+Lint-Budget 110 → 120 in diesem Commit enthalten ist. Damit ist das Budget als
+Ursache raus. Die Fehlermeldung des Laufs:
+
+```
+Line 45, Column 9: There's not enough info to determine what you meant.
+                   Add one of these properties: cancel, run, shell, uses, ...
+Line 49, Column 9: 'run' is already defined
+```
+
+**Es startet kein einziger Job.** GitHub lehnt die Workflow-Datei vor dem ersten
+Schritt ab. Deshalb gibt es auch keine Schritt-Ebene, die ich hätte lesen können.
+
+Die Datei selbst, aus `1ebda34` geholt (`raw.githubusercontent.com`), Zeilen 45–49:
+
+```yaml
+      - name: Abhängigkeiten installieren        <- kein run:
+      - name: Doku-Endmarkierung pruefen (CoS-P-022)
+        run: node scripts/docs-sichern.mjs pruefen
+
+        run: npm ci                              <- zweites run: im selben Schritt
+```
+
+Dein neuer Schritt ist **mitten in den `npm ci`-Schritt hineingeschrieben**
+worden. „Abhängigkeiten installieren" hat dadurch keinen Befehl mehr, und
+`npm ci` ist als zweites `run:` im Doku-Schritt gelandet.
+
+**Wann es passiert ist, einzeln geprüft:**
+`de1ae80` (#187, letzter grüner Lauf) → sauber.
+`9b45952` (#188, erster roter Lauf) → bereits kaputt.
+Seither unverändert durchgereicht: #188, #189, #190, #191.
+**Vier rote Läufe, ein Einfügefehler, kein Code-Problem.**
+
+Nebenbefund: Die Datei hat seit demselben Commit eine **BOM** in Zeile 1 und
+ihre Umlaute sind doppelt kodiert (`AbhÃ¤ngigkeiten`). Das ist dieselbe
+Schreib-Signatur wie bei den drei Doku-Datenverlusten aus CoS-P-025 — eine
+Datei wurde gelesen, falsch dekodiert und ganz zurückgeschrieben, statt
+angehängt zu werden.
+
+### Was ich getan habe — und warum die Datei trotzdem nicht auf der Platte liegt
+
+**`.github/` ist für die Dateiwerkzeuge dieser Umgebung schreibgeschützt**
+(*„is a protected file and cannot be written via remote tools"*). Ich kann die
+Datei lesen, aber nicht zurückschreiben. **Der korrigierte Inhalt geht deshalb
+über Sandys PowerShell-Block direkt ins Repository** — sie schreibt die Datei,
+ich habe sie gebaut und geprüft. Für dich ändert das nichts am Ergebnis, aber
+du siehst den Fix erst nach ihrem Push im Repository, nicht vorher auf ihrer
+Platte.
+
+Der korrigierte Stand:
+
+* „Abhängigkeiten installieren" bekommt sein `run: npm ci` zurück,
+* dein Doku-Schritt steht als **eigener** Schritt direkt dahinter — inhaltlich
+  unverändert, gleicher Name, gleicher Befehl,
+* Reihenfolge danach unverändert: Lint → TypeScript → Umgebung → Tests → Build,
+* neun Schritte, gegen einen YAML-Parser geprüft,
+* ohne BOM, reines ASCII in den Schrittnamen (`Abhaengigkeiten`), damit der
+  nächste falsch dekodierende Schreibvorgang nichts mehr kaputt machen kann.
+
+**Ich habe die Datei nicht sonst angefasst** — keine Schritte entfernt, keine
+Versionen angehoben, keine Env-Variable geändert.
+
+### Was ich nicht behaupte
+
+Ob der Lauf nach diesem Fix **grün** wird. Vier Läufe lang ist nichts
+ausgeführt worden, also ist auch nichts über Lint, Tests und Build bekannt. Es
+kann gut sein, dass danach ein echter Schritt fällt. Ich messe den nächsten
+Lauf nach Sandys Push und sage es dir.
+
+### Was daraus für dich folgt
+
+1. **Gegenlesen, nicht neu bauen.** Wenn dir an dem Doku-Schritt etwas fehlt,
+   ändere ihn — aber lass die Struktur, wie sie jetzt ist.
+2. **CoS-P-025 Punkt 1 wird dadurch wichtiger, nicht kleiner.** Die Schrumpf-
+   Prüfung sollte auch `.github/workflows/` abdecken: Diese Datei ist auf
+   demselben Weg beschädigt worden wie die beiden Doku-Dateien, nur hat es hier
+   vier Tage lang niemand gemerkt, weil ein roter Lauf inzwischen normal aussieht.
+3. **Ein roter Lauf, der nie einen Job startet, sieht in der Liste aus wie ein
+   roter Lauf mit gefallenem Test.** Wenn dein CI-Umbau eine Stelle bekommen
+   kann, die „Workflow-Datei ungültig" von „Schritt gefallen" unterscheidet,
+   nimm sie mit.
+
+*Chief of Staff · 2026-09-16*
+
+
+---
+
+## CoS-P-026 — Nachtrag 1: der Lauf ist jetzt gemessen, nicht erwartet
+
+**16.09.2026, 13:05 MESZ · Chief of Staff**
+
+Im Hauptteil steht: *„Was ich nicht behaupte — ob der Lauf nach diesem Fix grün
+wird."* Das ist jetzt beantwortet, ohne auf GitHub zu warten.
+
+**Wie:** `1ebda34` frisch geklont, `npm ci`, und die Schritte der CI einzeln in
+derselben Reihenfolge und mit denselben Env-Werten aus `ci.yml` gefahren.
+
+| CI-Schritt | Ergebnis | Beleg |
+|---|---|---|
+| Doku-Endmarkierung (CoS-P-022) | ✅ | „Alle 55 Doku-Dateien in Ordnung" — mit den sechs noch nicht committeten Dateien |
+| Lint (`lint:ci`) | ✅ | 110 Warnungen, 0 Fehler, Budget 120, Rückgabewert 0 |
+| TypeScript (`typecheck`) | ✅ | `tsc --noEmit`, Rückgabewert 0 |
+| Umgebungskonfiguration (`env:check`) | ✅ | „Umgebung gültig: ci / Supabase example" |
+| Tests (`npm test`) | ✅ | **155 Dateien, 2402 bestanden, 75 erwartet-rot**, 62 s |
+| Produktions-Build | ⚪ **hier nicht messbar** | siehe unten |
+
+**Der Build ist der einzige offene Rest.** Er fällt in meiner Umgebung mit genau
+drei Fehlern, und alle drei sind dieselbe Sache: `next/font` kann Bricolage
+Grotesque, IBM Plex Mono und Inter nicht von Google Fonts holen —
+`fonts.googleapis.com` und `fonts.gstatic.com` sind in meiner Umgebung gesperrt
+(Proxy lehnt CONNECT mit 403 ab). **Kein Code-Fehler.** Auf GitHub sind die
+beiden Hosts erreichbar. Weitere Fehler gab es im Build-Log nicht — die drei
+Schriftarten brechen ihn ab, bevor etwas anderes geprüft wird.
+
+**Was das für die Warnung aus dem Hauptteil heißt:** „Rechnet damit, dass der
+erste wieder laufende Lauf etwas findet" gilt **nur noch für den Build-Schritt**.
+Lint, TypeScript, Env und Tests sind auf dem Stand `1ebda34` nachweislich grün.
+
+### Zwei Sachen zur Datei selbst
+
+1. **`.github/` bleibt für meine Werkzeuge gesperrt** — heute erneut versucht,
+   Antwort: *„is a protected file and cannot be written via remote tools"*. Der
+   Inhalt geht weiter über Sandys Block, daran ändert sich nichts.
+2. **Der Schrittname ist jetzt reines ASCII** (`Abhaengigkeiten installieren`),
+   wie oben angekündigt — damit kann der nächste falsch dekodierende
+   Schreibvorgang an dieser Zeile nichts mehr kaputt machen.
+
+*Chief of Staff · 2026-09-16*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
