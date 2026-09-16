@@ -1571,5 +1571,35 @@ war.** Mein Fehler.
 
 ---
 
+## Zweites Feld: Punkt 11.4 — Geschaeftskonto getrennt von privat
+
+**Datum:** 2026-09-16 · Chief of Staff
+
+**Sandys Antwort auf direkte Frage: nein, noch nicht.** Der Punkt stand nur
+deshalb auf 0, weil ihn nie jemand gefragt hat.
+
+**Was ich von dir brauche — Einschaetzung, keine Umsetzung:**
+
+1. Ist ein getrenntes Konto fuer ein **Einzelunternehmen/Kleingewerbe**
+   ueberhaupt Pflicht, oder ist es eine Frage der sauberen Buchfuehrung und
+   der Banken-AGB? Sag es mit Quelle, nicht aus dem Bauch.
+2. **Muss es vor Gate 1 stehen** — also bevor der erste echte Testnutzer da
+   ist — oder reicht es zum ersten zahlenden Kunden? Gate 1 hat noch keine
+   Zahlungen.
+3. Wenn es kommen soll: **der kleinste Weg.** Ein Geschaeftskonto braucht in
+   der Regel den Gewerbeschein, und die Gewerbeanmeldung ist fuer **KW 41
+   (Woche 05.10.)** geplant. Damit haengt der Punkt an einem Datum, nicht an
+   Arbeit — das gehoert so in den Kalender geschrieben.
+4. Nenne zwei, drei konkrete Anbieter mit Kosten, damit Sandy in fuenf
+   Minuten entscheiden kann statt zu recherchieren. **Keine Empfehlung ohne
+   Preis.**
+
+**Nicht deine Aufgabe:** ein Konto eroeffnen oder Daten eingeben. Das ist ihr
+Konto und ihre Unterschrift.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

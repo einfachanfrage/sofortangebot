@@ -1,3 +1,5 @@
+import { istProzentZuschlag } from './zuschlag-basis'
+
 const DASH = /\s+[-–—]\s+/
 
 // ── Was ist ein Raum? (CoS-E-022 / TN-053, 13.09.2026) ────────────────────
@@ -268,4 +270,68 @@ export function gruppiereNachRaum<T extends {
     hatMehrereRaeume: raeume.length > 1,
     gesamtsumme,
   }
+}
+
+// ── PD-018 Punkt 2 (Prüfmeister, 16.09.2026, aus Sandys Live-Lauf) ─────────
+//
+// Auf dem Fassaden-Entwurf standen zwei Zeilen, die nichts sagen:
+//
+//   Voranstrich / Grundierung      0 Stück × 25,00 €   0,00 €
+//   Erschwerniszuschlag Raumhöhe   15 %    ×  0,00 €   0,00 €
+//
+// Beide lesen sich wie ein Fehler, und beide sind einer. Der Prüfmeister:
+// „Eine Position mit Menge 0 kommt nicht auf das Angebot."
+//
+// Die Regel ist bewusst eng gefasst, weil direkt daneben eine Regel liegt,
+// die das Gegenteil verlangt (`src/lib/versandbereit.ts`): eine Position
+// OHNE Preis darf nie stillschweigend verschwinden — sonst führt der
+// Handwerker eine Arbeit aus, die er nicht berechnet hat. Erfasst sind
+// deshalb nur die zwei Fälle, in denen nachweislich keine Arbeit hinter der
+// Zeile steht:
+//
+//   1. Menge 0. Kein Stück, kein Meter, kein Quadratmeter — es ist nichts
+//      zu tun. Der Einzelpreis steht ja da (25,00 €); die Position ist also
+//      nicht „unbepreist", sie ist leer.
+//   2. Prozent-Zuschlag auf 0,00 €. Nach `wendeProzentZuschlaegeAn()` ist
+//      `unit_price` der Euro-Betrag je Prozentpunkt — 0,00 € heißt, die
+//      Bemessungsgrundlage war 0. Ein Zuschlag auf nichts ist nichts. Ohne
+//      Katalogtreffer bleibt die Zeile unangetastet (dann ist `unit_price`
+//      der Prozentsatz und der Gesamtpreis nicht 0), der „Preis fehlt"-Weg
+//      greift also weiterhin.
+//
+// Eine unbepreiste echte Position (12 m² × 0,00 €) fällt unter keinen der
+// beiden Fälle und bleibt sichtbar. Das ist die Grenze der Regel und der
+// Grund für ihre Enge.
+//
+// Geld bewegt sich dabei nie: entfernt wird ausschließlich, was 0,00 €
+// beiträgt. Angebotssumme, Zwischensummen und Steuer bleiben gleich.
+//
+// Angewendet wird die Regel auf den ANZEIGE-Wegen (Ansicht, Vorschau, PDF),
+// nicht im Bearbeiten-Modus: dort muss die Zeile sichtbar und löschbar
+// bleiben, sonst liegt sie unsichtbar in der Datenbank. Der Editor markiert
+// sie stattdessen mit „Nicht im Angebot".
+//
+// Nebenwirkung auf die Gruppierung, und sie ist beabsichtigt: Ein Raum, in
+// dem nach dieser Regel keine Zeile übrig bleibt, erzeugt gar keine
+// Raum-Gruppe mehr — genau der „🏠 Raum · 0,00 €"-Block ohne Maße, den
+// Sandys Live-Lauf gezeigt hat. Die Maße dieses Raums bleiben im
+// Bearbeiten-Modus sichtbar und änderbar.
+
+export interface NullzeilenPruefung {
+  quantity: number
+  unit: string
+  total_price: number
+}
+
+/** Trägt diese Zeile nachweislich keine Arbeit und kein Geld? */
+export function istNullzeile(item: NullzeilenPruefung): boolean {
+  // Cent-genau statt === 0: Gesamtpreise entstehen aus Multiplikationen.
+  if (Math.abs(item.total_price) >= 0.005) return false
+  if (item.quantity === 0) return true
+  return istProzentZuschlag(item.unit)
+}
+
+/** Dieselbe Liste ohne die Zeilen, die nichts sagen. */
+export function ohneNullzeilen<T extends NullzeilenPruefung>(items: T[]): T[] {
+  return items.filter(i => !istNullzeile(i))
 }

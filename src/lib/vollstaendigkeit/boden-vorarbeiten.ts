@@ -6,8 +6,34 @@ import { hat, add, addMitMenge } from './helpers'
 import { bodenNettoflaecheAusPositionen, extrahiereFlaeche, extrahiereFlaecheAusAbmessungen } from './boden-basis'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 
-function extrahiereLfdm(lower: string, schluessel: string): number | null {
-  const esc = schluessel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+// ── PM-074 / PM-104 (Zug 3) ─ der Auslöser hängt am WORT, nicht am Wortstamm ──
+//
+// Gemessen (Prüfmeister, PM-074 / PM-104-A / PM-104-B):
+//   „In der Ecke steht ein Kaminsockel, ein mal ein Meter“   → Sockelleisten
+//                                                montieren, 1,00 lfdm, 5,50 €
+//   „Der Sockelputz außen ist drei Meter lang.“              → 3,00 lfdm, 16,50 €
+//
+// Beides sind Bauteile, die KEINE Sockelleiste bestellen ─ der Kaminsockel
+// soll sogar ausgespart werden, also weniger Arbeit, nicht mehr. Auslöser ist
+// allein der Wortstamm `sockel`, der in jeder Zusammensetzung steckt.
+// Dieselbe Form wie „Sperrmüll“/„absperren“ in PM-064, und dieselbe
+// Reparatur: eine Wortgrenze statt eines Wortstamms.
+//
+// ACHTUNG, im Projekt teuer gelernt: `\b` ist in JavaScript ASCII ─ vor „äöüß“
+// zählt es den Umlaut als Grenze und `\bsockel\b` liefe an „Fußsockel“ wieder
+// vorbei. Deshalb die Umlaute ausgeschrieben, wie in `sockelleisten-
+// ausschluss.ts` und `boden-vorarbeiten.ts` (Übergangsprofil) auch.
+const SOCKEL_ALLEIN = /(?<![a-zäöüß])sockel(?![a-zäöüß])/
+
+/**
+ * `schluessel` als Zeichenkette wird wörtlich gesucht (und dafür maskiert);
+ * als regulärer Ausdruck wird er unverändert eingesetzt ─ so kann eine
+ * Wortgrenze mitgegeben werden, ohne dass jeder Aufrufer sie selbst baut.
+ */
+function extrahiereLfdm(lower: string, schluessel: string | RegExp): number | null {
+  const esc = typeof schluessel === 'string'
+    ? schluessel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    : schluessel.source
   const m =
     lower.match(new RegExp(`(\\d+)\\s*(?:laufende meter|lfm|lfdm|lm)\\s*${esc}`, 'i')) ??
     lower.match(new RegExp(`${esc}.*?(\\d+)\\s*(?:laufende meter|lfm|lfdm|lm|meter)`, 'i')) ??
@@ -146,7 +172,10 @@ export function pruefeSockelleisten(
     return
   }
 
-  const lfm = extrahiereLfdm(lower, 'sockelleisten') ?? extrahiereLfdm(lower, 'sockel')
+  // PM-074 / PM-104: zweiter Schlüssel mit Wortgrenze. „Sockel“ allein ist
+  // eine geläufige Kurzform für die Leiste („die Sockel kommen neu“) und
+  // bleibt deshalb ─ „Kaminsockel“ und „Sockelputz“ sind es nicht.
+  const lfm = extrahiereLfdm(lower, 'sockelleisten') ?? extrahiereLfdm(lower, SOCKEL_ALLEIN)
   const alteSockelEntfernen = /(?:alte[nr]?\s+)?sockelleisten?.{0,35}(?:entfern|demontier|abnehm)|(?:entfern|demontier|abnehm).{0,35}sockelleisten?/i.test(lower)
   if (alteSockelEntfernen && !hat(ergaenzt, 'sockelleisten entfernen')) {
     const menge = lfm ?? vorhandeneMontage?.menge

@@ -3,7 +3,7 @@ import path from 'node:path'
 import type { AngebotsFoto } from '@/lib/angebot-fotos'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
-import { raeumeAusQuote, istAllgemeinPosition } from './angebot-gruppierung'
+import { raeumeAusQuote, istAllgemeinPosition, ohneNullzeilen } from './angebot-gruppierung'
 import {
   widerrufsbelehrungText, musterWiderrufsformular,
   WERTERSATZ_UEBERSCHRIFT, WERTERSATZ_ERKLAERUNG, WERTERSATZ_HINWEIS,
@@ -303,9 +303,13 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   // es für beide Renderpfade (flach und nach Räumen) und für jede Gliederung,
   // ohne dass eine der Stellen es selbst wissen muss. Ist der Schalter aus,
   // kommt die unveränderte Liste zurück.
-  const positionen = fasseKleinbetraegeZusammen(
+  // PD-018 Punkt 2: Zeilen ohne Arbeit und ohne Geld (Menge 0, Prozent-
+  // Zuschlag auf 0,00 €) gehören nicht auf das Kundenpapier. Nach dem
+  // Bündeln, damit beide Regeln auf derselben Liste arbeiten, und vor der
+  // Gruppierung, damit auch der flache Renderpfad unten sie erbt.
+  const positionen = ohneNullzeilen(fasseKleinbetraegeZusammen(
     quote.items, opt.kleinbetraegeZusammenfassen, istAllgemeinPosition,
-  )
+  ))
   const dokTitel = DOKUMENT_TYP_LABEL[opt.dokumentTyp]
   const zahlungsTage = opt.zahlungszielTage
   // CoS-E-013/031/042: siehe gueltigBis() in angebot-optionen.ts.

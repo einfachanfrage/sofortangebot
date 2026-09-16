@@ -26,6 +26,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
+import { istNullzeile, ohneNullzeilen } from '@/lib/angebot-gruppierung'
 import type { EmpfehlungDefault } from '@/lib/empfehlungen-defaults'
 import { ermittleHandaenderungen } from '@/lib/manuelle-positionen'
 import { normalisierePreistext, findePreisposition } from '@/lib/preis-matcher'
@@ -602,6 +603,16 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
               {item.automatisch_ergaenzt && (
                 <span className="text-[10px] font-bold bg-anthracite/5 text-anthracite/40 rounded-full px-2 py-0.5 shrink-0">
                   Vorschlag
+                </span>
+              )}
+              {/* PD-018 Punkt 2: Diese Zeile wird auf Angebot, Vorschau und
+                  PDF nicht gedruckt (Menge 0 oder Zuschlag auf 0,00 €).
+                  Hier bleibt sie stehen — unsichtbar in der Datenbank liegen
+                  zu lassen wäre die schlechtere Hälfte der Regel. Der Hinweis
+                  sagt, warum sie gleich verschwindet. */}
+              {istNullzeile({ quantity: item.quantity, unit: item.unit, total_price: item.quantity * item.unit_price }) && (
+                <span className="text-[10px] font-bold bg-anthracite/5 text-anthracite/40 rounded-full px-2 py-0.5 shrink-0">
+                  Nicht im Angebot
                 </span>
               )}
               {/* Nachtrag 11.09. (Sandy: "so wie es vorher war... mit einem
@@ -2554,7 +2565,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   </DndContext>
                 )
               })() : (() => {
-                const gruppen = gruppiereNachStruktur(displayItems, (optStruktur || company?.angebot_struktur || 'raeume'), Object.keys(raumDetails))
+                // PD-018 Punkt 2: In der Ansicht steht, was auf dem Angebot
+                // steht — also ohne Zeilen mit Menge 0 und ohne Prozent-
+                // Zuschläge auf 0,00 €. Bleibt danach in einem Raum nichts
+                // übrig, verschwindet auch sein Block (der leere „Raum ·
+                // 0,00 €" aus Sandys Live-Lauf). Im Bearbeiten-Modus darüber
+                // bleiben beide sichtbar und löschbar.
+                const sichtbareItems = ohneNullzeilen(displayItems)
+                const gruppen = gruppiereNachStruktur(sichtbareItems, (optStruktur || company?.angebot_struktur || 'raeume'), Object.keys(raumDetails))
 
                 const renderItem = (title: string, item: EditItem) => (
                   <div key={item.id} className="border-t border-anthracite/5 px-4 py-3">
@@ -2605,7 +2623,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 )
 
                 if (!gruppen) {
-                  return displayItems.map(item => renderItem(item.title, item))
+                  return sichtbareItems.map(item => renderItem(item.title, item))
                 }
 
                 const { raeume, allgemein, hatMehrereRaeume } = gruppen

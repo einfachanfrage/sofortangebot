@@ -5,7 +5,7 @@ import { mitDeutschenZahlen } from '@/lib/zahlen-text'
 import { kundenRechenweg } from '@/lib/rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from '@/lib/kleinbetraege'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
-import { raeumeAusQuote, istAllgemeinPosition } from '@/lib/angebot-gruppierung'
+import { raeumeAusQuote, istAllgemeinPosition, ohneNullzeilen } from '@/lib/angebot-gruppierung'
 import { effektiveOptionen, gueltigBis } from '@/lib/angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from '@/lib/mengen/gewerke/vob-uebermessung'
 
@@ -148,9 +148,13 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
   const gueltigBisDatum = gueltigBis(quote, opt.gueltigTage)
   // DC-056 (Manfred/TN-010): identisch zum PDF — gebündelt wird vor der
   // Gruppierung, damit Vorschau und Dokument dieselbe Zeilenliste zeigen.
-  const positionen = fasseKleinbetraegeZusammen(
+  // PD-018 Punkt 2: Zeilen ohne Arbeit und ohne Geld (Menge 0, Prozent-
+  // Zuschlag auf 0,00 €) gehören nicht auf das Kundenpapier. Nach dem
+  // Bündeln, damit beide Regeln auf derselben Liste arbeiten, und vor der
+  // Gruppierung, damit auch der flache Renderpfad unten sie erbt.
+  const positionen = ohneNullzeilen(fasseKleinbetraegeZusammen(
     quote.items, opt.kleinbetraegeZusammenfassen, istAllgemeinPosition,
-  )
+  ))
   const gruppen = gruppiereNachStruktur(positionen, opt.struktur, raeumeAusQuote(quote))
 
   return (
