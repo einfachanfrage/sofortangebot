@@ -1,23 +1,31 @@
-# Restliste Prüfmeister — Stand 16.09.2026, nachmittags
+# Restliste Prüfmeister — Stand 16.09.2026, abends
 
-**Diese Datei ersetzt die Fassung vom 15.09.** und führt sie fort: Die älteren
-Teile stehen unverändert, dahinter steht, was die Läufe danach gemacht haben.
-**Neu in diesem Lauf:** die vier Punkte des Chief of Staff vom 16.09., 14:55
-MESZ, sind beantwortet — PM-079-A mit einem Satz, die drei Soll-Fragen als
-Batch PM-101 bis PM-103 —, dazu die Bemessungsgrundlage des Prozentzuschlags
-nachgemessen und die beiden Doku-Lücken geschlossen. Die Datei wird immer
-ersetzt, nie ergänzt.
+**Diese Datei ersetzt die Fassung vom 16.09. nachmittags** und führt sie fort:
+Die älteren Teile stehen unverändert, dahinter steht, was der Lauf danach
+gemacht hat. **Neu in diesem Lauf:** dreizehn neue Fälle aus dem
+Themenspeicher als Batch **PM-104 bis PM-116** (Fallbasis jetzt **116**), die
+beiden offenen Fragen des Head of Product Engineering **K.6 und K.7
+beantwortet**, und — zum ersten Mal — **auf Sandys Rechner selbst gemessen**
+statt in der Ersatzumgebung. Die Datei wird immer ersetzt, nie ergänzt.
 
-**Die zwei Sätze, auf die es ankommt:**
+**Die drei Sätze, auf die es ankommt:**
 
-**PM-101 ist der schwerste Sprachfund der Fallbasis.** „Die Wände nicht
-tapezieren, nur streichen." erzeugt 1.305,00 € Tapezierarbeit, die der Satz
-abbestellt, und lässt die 427,50 € Malerarbeit weg, die er bestellt — auf
-einem Auftrag von 465,90 €.
+**PM-116 ist der schwerste Fund des neuen Batches.** „Zweiter Bauabschnitt
+Küche … das kommt später und wird extra angeboten." — die Küche steht
+vollständig im selben Angebot: **305,40 € für einen Bauabschnitt, den der
+Satz ausdrücklich herausnimmt.**
 
-**Die Antwort auf PM-079-A lautet: Einzelraum.** Die Entwarnung aus Fall 09
-galt dem einen Raum, nicht beiden. Engineerings Prüfstand stimmt, die
-Sperrklinke bleibt stehen, der Bauauftrag aus CoS-E-059 ist offen.
+**PM-105 dreht die Verneinungsklasse um.** Bei PM-099 und PM-101 bleibt die
+Verneinung wirkungslos; hier wirkt sie — und nimmt die im selben Satz
+BESTELLTE Arbeit mit: „Die drei kleinen Fenster nicht, **nur das große**"
+löscht auch das große Fenster, **100,00 € bestellte Arbeit fällt weg.**
+⚠️ Das ist zugleich eine Warnung: Wer PM-101 baut, baut auf genau dieser zu
+groben Maschine auf.
+
+**PM-113 ist der unangenehmste.** „Wohnzimmer streichen." erzeugt **null
+Positionen UND null Fehlt-Einträge** — ein leeres Angebot, das nicht sagt,
+warum es leer ist. Genau die Kombination, die DC-112 für den runden Raum
+ausdrücklich ausschließt.
 
 ---
 
@@ -1856,24 +1864,279 @@ dritten Mal hier.
 
 ---
 
-## Offen — nachgezogener Stand (16.09.2026)
+## ✅ K.6 beantwortet — die Rosette: eine Kataloglücke von genau einer Zeile
 
-**Neu offen und an Engineering:** PM-101 (Vorrang hoch), PM-102, PM-103 —
-jeweils mit Soll-Satz oben. **PM-079-A/B ist beantwortet und bleibt offen als
-Bauauftrag** aus CoS-E-059.
+**Frage:** Head of Product Engineering, 16.09. nachts. Ist das Mitstreichen
+einer Deckenrosette im Preis von `Decke streichen` schon drin, oder fehlt dem
+Katalog eine Zeile?
 
-**Erledigt und damit von der Liste:** die verrutschte Zuordnung in
-`einsprech-liste-alle-faelle.md` · der Parallelstand
-`pruefmeister-einsprechen-47-56.md` · die Frage „15 % wovon" · der
-Widerspruch um PM-079-A.
+**Antwort: Es fehlt eine Zeile — und zwar nur eine.**
+
+Ihr habt die vier Zeilen mit „osette" gemessen. Die Zeile, auf die es
+ankommt, trägt das Wort nicht im Titel. Sie steht direkt daneben und ist
+für Maler **erreichbar** — selbst nachgemessen:
+
+```
+Stuckleisten streichen / weißen   Maler – Stuck & Dekorative Techniken   6,00 €/lfdm   erreichbar: ja
+Stuckrosette abkleben             Maler – Stuck & Dekorative Techniken  12,00 €/St     erreichbar: ja
+Deckenspiegel streichen           Maler – Anstrich Innen                11,00 €/m²     erreichbar: ja
+Deckenrosette montieren           Stuck – Dekorativ                     55,00 €/St     erreichbar: nein
+```
+
+Daraus folgt dreierlei:
+
+1. **Im `Decke streichen`-Preis ist es nicht drin.** Der Katalog preist das
+   Streichen von Stuck ausdrücklich **gesondert** aus (6,00 €/lfdm für
+   Leisten, 11,00 €/m² für den Deckenspiegel). Wäre profilierter Stuck im
+   m²-Preis der glatten Decke enthalten, wären diese beiden Zeilen
+   überflüssig. Eine Rosette ist Mehrarbeit auf derselben Grundfläche.
+2. **`Stuckrosette abkleben` ist nicht die Ersatzantwort, sondern der
+   Gegenfall.** Abgeklebt wird, was **nicht** mitgestrichen wird. Die Zeile
+   für den umgekehrten Satz („die Rosette bleibt weiß") ist damit da — für
+   PM-070 ist sie es nicht.
+3. **Was fehlt, ist die Stück-Entsprechung zu `Stuckleisten streichen /
+   weißen`.** Eine Rosette wird nicht in lfdm abgerechnet.
+
+**PM-070 ist also ein Katalogzug wie PM-076, kein Codefund** — und bis die
+Zeile da ist, gilt K.5: **Fehlt-Eintrag, keine erfundene Menge.** Gemessen,
+16.09.: der Satz erzeugt heute weder Position noch Fehlt-Eintrag. Die
+Kataloglücke ist eine Entscheidung (Preis und Einheit); die fehlende Spur ist
+euer Bauauftrag und hängt nicht daran.
+
+## ✅ K.7 beantwortet — acht Sichtbalken: **fragen**, nicht rechnen
+
+**Deine Neigung war richtig, und ich mache sie zur Ansage.**
+
+Der Katalog ist vollständig und erreichbar — nachgemessen:
+`Holzdecke / Paneele lasieren` 14,00 €/m² und `Holzbalken anschleifen`
+8,00 €/lfdm, beide für Maler erreichbar. **Es fehlt nur die Menge**, und die
+ist nicht gesagt: „acht Stück" ist eine Anzahl, gerechnet wird in m² und lfdm.
+
+Ein Standardmaß je Balken wäre **eine erfundene Menge mit Preis** — genau die
+Grenze aus K.5, und in dieser Stärke: Bei 8 Balken schlägt jeder Zentimeter
+Schätzung achtfach durch. Ein Balken 4,00 m × 0,20 m ergibt 6,40 m² Lasur
+(89,60 €); mit 0,30 m Breite sind es 9,60 m² (134,40 €). **50 % Unterschied
+aus einer Zahl, die niemand gesagt hat.**
+
+**Soll:** Fehlt-Eintrag mit der Rückfrage nach **Länge und Breite eines
+Balkens** — nicht nach der Fläche, denn der Handwerker misst den Balken, nicht
+die Decke. Keine Position, kein Standardmaß. Gemessen, 16.09.: heute entsteht
+weder das eine noch das andere.
+
+## Neu: Batch PM-104 bis PM-116 — dreizehn Fälle aus dem Themenspeicher (16.09.2026, abends)
+
+Hinterlegt als `src/lib/__tests__/pruefmeister-batch-104-116.test.ts` —
+**29 Prüfungen grün, 20 Sperrklinken.** Abgeräumt sind damit die neun Themen
+aus A, B, C, E und G, die hier als „nächste" standen, die drei neuen Themen
+aus L (Verneinung mit Menge, Rückbezugswörter, Materialwörter) und der Fund,
+den Engineering mir überlassen hat.
+
+### PM-116 — der ausgenommene zweite Bauabschnitt · der schwerste Fund
+
+> „Erster Bauabschnitt Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände
+> streichen. Zweiter Bauabschnitt Küche drei mal drei, **das kommt später und
+> wird extra angeboten.**"
+
+```
+Wand streichen 2x — Küche        30,00 m²  × 9,50 = 285,00 €
+Boden schützen — Küche            9,00 m²  × 1,20 =  10,80 €
+Sockelleisten abkleben — Küche   12,00 lfdm × 0,80 =   9,60 €
+                                            Summe   305,40 €
+```
+
+Dieselbe Klasse wie PM-099 (Ausschlusssatz ohne Wirkung), nur nicht auf ein
+Bauteil bezogen, sondern auf einen **ganzen Raum und einen Zeitpunkt**. Der
+Kunde bekommt ein Angebot über Arbeit, die er ausdrücklich später wollte.
+
+### PM-105 — die Verneinung mit Menge: sie wirkt, und sie wirkt zu breit
+
+> „Die Fenster lackieren. **Die drei kleinen Fenster nicht, nur das große.**"
+
+Soll (= Kontrolle „Nur das große Fenster lackieren."): 1 Fenster,
+20,00 + 25,00 + 55,00 = **100,00 €**. Ist: **keine einzige Fensterzeile**,
+`fehlende` leer.
+
+Isoliert gemessen, der Auslöser ist eindeutig:
+
+```
+„Die drei kleinen Fenster auch."   → Block bleibt stehen   ✅
+„Die Heizkörper nicht."            → Block bleibt stehen   ✅
+„Die drei kleinen Fenster nicht."  → Block verschwindet    ❌
+```
+
+Es ist also das Paar aus Bauteilwort und „nicht" — nicht die Zahl, nicht die
+Verneinung an sich. **Damit ist die vierte Stufe der Verneinungsklasse (L.1)
+gemessen, und sie fällt in die Gegenrichtung von PM-099 und PM-101.**
+
+⚠️ **Warnung an Engineering:** Die Maschine, die eine Verneinung in Wirkung
+übersetzt, ist an dieser Stelle **schon da** — und zu grob. Wer PM-101 baut,
+baut darauf auf. Bitte PM-105-D und PM-105-E als Kontrollen mitlaufen lassen.
+
+### PM-106 — Rückbezugswörter: PM-103 ist kein Einzelfall, sondern eine Klasse
+
+Vier Fassungen, alle vier gleich und gleich falsch — keine Türposition
+(richtig, nichts erfunden) **und** `fehlende` leer (falsch, 720,00 €
+verschwinden lautlos):
+
+`„Die Türen ebenso."` · `„Bei den Türen das gleiche nochmal."` ·
+`„Türen dito."` · `„Die Türen genauso wie die Heizkörper."`
+
+Der Bauauftrag ist derselbe wie PM-103-A: **ein Fehlt-Eintrag, keine
+Position.** Wer ihn baut, deckt alle fünf Wörter mit ab.
+
+### PM-107 — Materialwörter: nur `holzfenster` hat einen eigenen Zweig · **grün**
+
+```
+„Ein Alufenster, eine Tür."         → keine Lackierarbeit   ✅
+„Ein Kunststofffenster, eine Tür."  → keine Lackierarbeit   ✅
+„Eine Stahlzarge, ein Fenster."     → keine Lackierarbeit   ✅
+„Ein Holzfenster, eine Tür."        → 100,00 € + Nullzeile  ❌ (PM-102)
+```
+
+Gute Nachricht und enger Bauauftrag zugleich: Der Fehler aus PM-102 sitzt
+**nicht** in einer allgemeinen Materialregel, sondern an genau einem Wort.
+`PM-107-A` vergleicht Holz gegen Alu und wird grün, sobald PM-102 gebaut ist —
+die engste Fassung des Auftrags, die ich formulieren kann.
+
+### PM-110 — der reinste Fall der ganzen Fallbasis
+
+> „Der Estrich ist rissig, der muss verharzt werden."
+
+```
+Estrichriss kraftschlüssig verharzen und verklammern
+Boden – Untergrundvorbereitung · 18,00 €/lfdm · für boden_parkett erreichbar: JA
+```
+
+Arbeit gesagt · Katalogzeile vorhanden · Gewerk richtig · erreichbar — und
+trotzdem **weder Position noch Fehlt-Eintrag**. Hier ist weder der Katalog
+schuld noch die Gewerkesperre. Ein Riss von 4,00 m sind 72,00 €, die der
+Betrieb arbeitet und nicht abrechnet. Die Länge ist nicht gesagt, also nach
+K.5: **Fehlt-Eintrag**, keine erfundene Länge.
+
+### PM-109 — bewohnte Baustelle: die Hälfte stimmt
+
+Erkannt und richtig: `Möbel abdecken mit Folie` und der
+`Erschwerniszuschlag bewohnter Bereich` (10 %) entstehen. Nicht erkannt sind
+die zwei **ausdrücklich gesagten** Leistungen — und beide **stehen im
+Katalog**, nur im falschen Gewerk:
+
+```
+Staubschutzwand / Trennwand …   Abbruch – Baustelleneinrichtung  14,00 €/m²      maler: nein
+Baustelle besenrein räumen …    Abbruch – Nacharbeiten          180,00 € Pausch.  maler: nein
+```
+
+Der Mechanismus aus PM-068, hier an zwei Zeilen, die in **jeder bewohnten
+Wohnung** anfallen. Es entsteht nicht einmal ein Fehlt-Eintrag.
+
+### PM-113 — die sehr kurze Aufnahme
+
+> „Wohnzimmer streichen."  →  **null Positionen, `fehlende` leer.**
+
+Die erste Hälfte ist richtig und von Regel H so gewollt: ohne Maß keine
+erfundene Menge. Falsch ist die zweite: Der Betrieb bekommt ein leeres
+Angebot **ohne einen Satz darüber, warum es leer ist.** Derselbe Befund wie
+der leere Raum mit 0,00 € im Fassaden-Entwurf (L-02 / PD-018 a) — dort fällt
+er auf, weil ein Raum danebensteht; hier fällt er nicht einmal auf. Und es ist
+genau die Kombination, die DC-112 für den runden Raum ausschließt.
+
+### PM-104 — der Wortstamm „sockel" (Fund von Engineering, gegengemessen)
+
+Beide Hälften bestätigt:
+
+```
+„Der Sockelputz außen ist drei Meter lang."          → Sockelleisten montieren 3,00 lfdm = 16,50 €
+„… ein Kaminsockel. Der ist ein mal ein Meter,
+   da muss ausgespart werden."                       → Sockelleisten montieren 1,00 lfdm =  5,50 €
+„… ein Kamin. Der ist ein mal ein Meter …"           → nichts                              ✅
+```
+
+Zwei Sätze, die **keine** Sockelleiste bestellen — der erste nennt ein Bauteil
+an der **Außenwand**, der zweite will um einen Kaminsockel herum **aussparen**,
+also weniger Arbeit, nicht mehr. Auslöser ist weder der Nebensatz noch das Maß
+im selben Satz, sondern der Wortstamm (`extrahiereLfdm(lower, 'sockel')` in
+`boden-vorarbeiten.ts`) — dieselbe Form wie „Sperrmüll"/„absperren" in PM-064.
+**Damit verallgemeinert PM-104 den Fund PM-074.** Die Reparatur gehört euch,
+die Fälle stehen jetzt hier.
+
+### PM-111, PM-112, PM-114, PM-115, PM-108 — fünfmal dasselbe Muster: gesagt, gehört, spurlos
+
+| Fall | Satz | gemessen | Soll |
+|---|---|---|---|
+| **PM-111** | „Das machen wir für fünfhundert Euro pauschal." | Angebot rechnet stumm 465,90 € weiter | Fehlt-Eintrag, keine stille Übernahme |
+| **PM-112** | „Da sind wir zwei Tage dran, zwei Mann." | spurlos; `Regiearbeit Geselle` 65,00 €/h wäre erreichbar | Rückfrage nach Stunden — **kein** unterstellter Achtstundentag |
+| **PM-114** | „zwanzig Quadratmeter" **und** „vier mal sechs" | still auf 4×6 entschieden, 53,90 € Unterschied | den Widerspruch erfragen |
+| **PM-115** | „Nachtrag zum Angebot von letzter Woche." | vollständiges Erstangebot ohne Hinweis | Produktfrage (H), aber nicht spurlos |
+| **PM-108** | „Regalnische, ein mal zwei Meter, wird mitgestrichen" | nichts; Katalog kennt den Aufpreis nur fürs **Tapezieren** (6,00 €/lfdm) | Kataloglücke + Fehlt-Eintrag |
+
+**PM-111 ist heikler als er aussieht:** Der Geldweg geht in beide Richtungen.
+Sagt der Betrieb 500,00 € und das Papier sagt 465,90 €, verliert er 34,10 €.
+Sagt er 400,00 €, steht auf dem Kundenpapier **mehr**, als er dem Kunden
+mündlich genannt hat — das ist kein Rechenfehler mehr, sondern ein Streit.
+
+**PM-112 hat die richtige Seite schon:** Es wird **nicht** still ein
+Achtstundentag unterstellt (`PM-112-B`, grün). Es fehlt nur die Spur.
+
+### Stand der Prüfumgebung nach diesem Lauf — **auf Sandys Rechner, nicht in der Ersatzumgebung**
+
+**Zur stehenden Regel, Punkt 1 — `device_bash` getestet, und diesmal ist die
+Antwort eine andere:** Die Shell ist **da**. `ls $HOME/mnt/sofortangebot`
+listet den Projektordner, `node` (v22.23.2) und `npx vitest` (4.1.9) laufen
+gegen das echte `node_modules` des Projekts. **Kein Staging, kein
+`--legacy-peer-deps`, keine Ersatzumgebung.** Der Satz aus dem
+Nachmittagslauf („bei mir ist sie nicht wieder da") gilt für diesen Lauf
+**nicht mehr** — ich schreibe das hier hin, damit die anderen Rollen es
+wissen, statt es erneut einzeln zu prüfen.
+
+* **`npx vitest run pruefmeister-` über alle elf Batch-Dateien: 284 Prüfungen
+  grün, 87 Sperrklinken.** Kein unerwarteter Fehlschlag.
+* **Der neue Batch allein: 29 grün, 20 Sperrklinken.**
+* **`node scripts/vokabular-abgleich.mjs` kommt unverändert heraus:** 182
+  Engine-Titel, 32 ohne Preis, 3 knapp, 147 gute Treffer, 0 nicht prüfbar.
+  Kein Rückschritt, keine Drift — jetzt zum ersten Mal am echten Projekt
+  gemessen statt an gestagten Quellen.
+* `eslint` über die neue Datei: sauber. `tsc` über die neue Datei: sauber.
+* `katalog-deckung.test.ts` braucht weiterhin den Next.js-Endpunkt und lief
+  nicht mit. Grenze der Umgebung, kein Befund.
+
+---
+
+## Offen — nachgezogener Stand (16.09.2026, abends)
+
+**Neu offen und an Engineering, nach Geldweg sortiert:**
+
+| Fall | Satz | Geldweg | Vorrang |
+|---|---|---|---|
+| **PM-116** | zweiter Bauabschnitt ausdrücklich ausgenommen | **305,40 € zu viel** | hoch |
+| **PM-105** | „Die drei kleinen Fenster nicht, nur das große." | **100,00 € zu wenig** | hoch |
+| **PM-106** | „ebenso" · „das gleiche nochmal" · „dito" · „genauso wie" | 720,00 € lautlos | mittel |
+| **PM-110** | „Der Estrich ist rissig, der muss verharzt werden." | 18,00 €/lfdm, nicht abgerechnet | mittel |
+| **PM-109** | Staubschutzwand · Abendreinigung | 14,00 €/m² + 180,00 €, gesperrt | mittel |
+| **PM-113** | „Wohnzimmer streichen." | leeres Angebot ohne Spur | mittel |
+| **PM-104** | Wortstamm „sockel" | 16,50 € bzw. 5,50 € erfunden | niedrig |
+| **PM-111** | „für fünfhundert Euro pauschal" | 34,10 € Abweichung, stumm | niedrig |
+| **PM-112** | „zwei Tage, zwei Mann" | 65,00 €/h, keine Brücke | niedrig |
+| **PM-114** | 20 m² **und** vier mal sechs | 53,90 € still entschieden | niedrig |
+| **PM-108** | mitgestrichene Wandnische | Kataloglücke, eine Zeile | niedrig |
+| **PM-115** | „Nachtrag zum Angebot von letzter Woche" | Produktfrage (H) | niedrig |
+
+**PM-107 ist grün** und gehört trotzdem hierher: Alu, Kunststoff und
+Stahlzarge verhalten sich richtig — der Fehler aus PM-102 sitzt an **genau
+einem Wort**. Das ist die engste Fassung des Bauauftrags und zugleich die
+Kontrolle dagegen, dass beim Bauen zu viel weggenommen wird.
+
+**Erledigt und damit von der Liste:** K.6 und K.7 (beide beantwortet, siehe
+oben) · die neun Themen aus dem Speicher, die hier bis eben als „nächste"
+standen · der Engineering-Fund „Sockelputz" (jetzt PM-104).
+
+**PM-101, PM-102, PM-103** bleiben offen als Bauauftrag, ebenso
+**PM-079-A/B** aus CoS-E-059.
 
 **Unverändert offen:** alles unter „Braucht die laufende App (Spur 6)" ·
 PM-013-A · `Untergrund spachteln / ausgleichen (bis 5mm)` · **die 142
 Vorlagen der gesperrten Gewerke** (jeweils vor der Freischaltung, nicht
-danach) · PM-077 vor CoS-E-059 · die Entscheidung zum runden Raum liegt
-seit DC-112 beim Designer und ist beantwortet.
+danach) · PM-077 vor CoS-E-059.
 
-*Prüfmeister · 2026-09-16 · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
+*Prüfmeister · 2026-09-16 abends · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
 
 ## 📌 STEHENDE REGEL ab 16.09.2026 — Sandy bekommt keine Befehle mehr. Von niemandem.
 

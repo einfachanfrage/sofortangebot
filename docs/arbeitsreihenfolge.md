@@ -202,57 +202,65 @@ mit.
 
 ## Prüfmeister
 
-*Stand vom Prüfmeister selbst nachgezogen, 16.09.2026 nachmittags — dieser
+*Stand vom Prüfmeister selbst nachgezogen, 16.09.2026 abends — dieser
 Abschnitt ersetzt den vorherigen.*
 
-1. ✅ **Die vier Punkte des Chief of Staff sind alle beantwortet.** Ausführlich
-   in `pruefmeister-restliste.md`, hinterlegt als
-   `src/lib/__tests__/pruefmeister-batch-101-103.test.ts` (7 grün, 9
-   Sperrklinken).
-2. ✅ **PM-079-A — der Satz ist gesagt: Einzelraum.** Die Entwarnung galt Fall
-   09, und der spricht **einen** Raum ein. Engineerings Prüfstand (zwei Räume,
-   Soll 112 m², Ist 65 m²) misst etwas anderes und **hat recht** — am 16.09.
-   nachgemessen. **Die Sperrklinke bleibt stehen, PM-079-A/B ist ein offener
-   Bauauftrag aus CoS-E-059.** Kein Widerspruch mehr, es waren zwei Fälle mit
-   demselben Namen.
-3. 🔴 **PM-101 — die qualifizierte Verneinung, und sie ist schwerer als
-   gemeldet. Vorrang hoch.** „Die Wände nicht tapezieren, nur streichen."
-   erzeugt **1.305,00 € Tapezierarbeit, die der Satz abbestellt**, und lässt
-   die **427,50 € Malerarbeit weg, die er bestellt** — auf einem Auftrag von
-   465,90 €. Schwerster Sprachfund der Fallbasis, schwerer als PM-099 und
-   PM-098. Wortstellung egal, `fehlende` leer, `Tapete tapezieren` trifft mit
-   Score 0,90 auf `Vliestapete tapezieren` (18,00 €/m²) — echtes Geld.
-4. 🔴 **PM-102 — „Ein Holzfenster, eine Tür." ist Bestand, nicht
-   Beauftragung.** Soll gesagt, Engineering kann bauen: 100,00 € Lackierarbeit
-   plus eine Nullzeile (`Abdecken Umgebung`, ohne Katalogpreis) entstehen heute
-   aus der bloßen Nennung. Die Grenze nach oben bleibt: „Die Holzfenster machen
-   wir auch." behält ihr Geld — grün abgesichert.
-5. 🔴 **PM-103 — „Und die Türen auch.": Richtung richtig, Ausführung nicht.**
-   Keine erfundene Türposition ist richtig (grün abgesichert). Aber `fehlende`
-   ist **leer** — 720,00 € verschwinden lautlos. Soll: keine Position, **aber
-   ein Fehlt-Eintrag**. Nach K.5 erst recht, denn hier ist die Arbeit gesagt.
-6. ✅ **15 % wovon — nachgemessen, die Sperre für PD-018 (c) ist auf.** Es gibt
-   eine Bemessungsgrundlage, sie ist gerechnet und steht im Berechnungsweg: in
-   Fall 04 **„15 % auf 577,80 € (Leistungen Flur)"**. Regel: Raum im Titel →
-   nur dieser Raum · objektbezogen → nur dieses Gewerk · sonst das ganze
-   Angebot · nie sich selbst. **Die 0,00 € in Fall 16 sind deshalb richtig** —
-   der Fehler dort ist der Phantomraum, nicht der Zuschlag. Der Designer hat
-   die Einzelheiten in `pruefmeister-notizen-fuer-designer.md`.
-7. ✅ **Beide Doku-Lücken sind zu.** In `einsprech-liste-alle-faelle.md` waren
-   es **drei** verrutschte Blöcke, nicht zwei (Fall 09→10, 16→17, 17→18) —
-   Haken und Tabelle nachgezogen, Übersicht und Restliste stimmen jetzt mit den
-   Einzelfällen überein: 16 und 17 weichen ab, 18 ist sauber.
-   `pruefmeister-einsprechen-47-56.md` enthält nur noch einen Verweis; es gibt
-   wieder genau eine Einsprech-Liste.
-8. **Fallbasis: 103 Fälle.** Die Nummerierung hat mit PM-099/PM-100 aus dem
-   Live-Lauf die 100 erreicht, PM-101 bis PM-103 stehen darüber. Fünf neue
-   Themen im Speicher (Abschnitt L), alle ohne App prüfbar — darunter die
-   Verneinung mit Menge und die übrigen Rückbezugswörter.
-9. **Die 142 Vorlagen der gesperrten Gewerke** — unverändert, jeweils vor der
-   Freischaltung, nicht danach.
-10. **Ersatzumgebung:** 99 Prüfungen grün, 46 Sperrklinken.
-    `node scripts/vokabular-abgleich.mjs` kommt **unverändert** heraus (182 /
-    32 / 3 / 147 / 0) — kein Rückschritt, keine Drift.
+1. 🆕 ✅ **Batch PM-104 bis PM-116 liegt — dreizehn neue Fälle, Fallbasis jetzt
+   116.** Hinterlegt als `src/lib/__tests__/pruefmeister-batch-104-116.test.ts`
+   (**29 grün, 20 Sperrklinken**), Befunde in `pruefmeister-restliste.md`.
+   Damit sind die neun Themen aus dem Speicher, die hier als „nächste"
+   standen, **und** die drei neuen Themen aus Abschnitt L abgeräumt.
+2. 🆕 🔴 **PM-116 — der ausgenommene zweite Bauabschnitt. Vorrang hoch.**
+   „Zweiter Bauabschnitt Küche … das kommt später und wird extra angeboten."
+   → die Küche steht vollständig im Angebot: **305,40 €** für Arbeit, die der
+   Satz herausnimmt. Dieselbe Klasse wie PM-099, nur auf einen ganzen Raum und
+   einen Zeitpunkt bezogen.
+3. 🆕 🔴 **PM-105 — die Verneinung mit Menge, und sie dreht die Klasse um.
+   Vorrang hoch.** „Die drei kleinen Fenster nicht, **nur das große**" löscht
+   auch das große: **100,00 € bestellte Arbeit fällt weg.** Isoliert gemessen —
+   mit „auch" statt „nicht" bleibt der Block stehen, „Die Heizkörper nicht."
+   lässt ihn unberührt. ⚠️ **Warnung an Engineering: Die Maschine, die eine
+   Verneinung in Wirkung übersetzt, ist schon da und ist zu grob. Wer PM-101
+   baut, baut darauf auf — PM-105-D/E als Kontrollen mitlaufen lassen.**
+4. 🆕 🔴 **PM-106 — „ebenso", „das gleiche nochmal", „dito", „genauso wie"
+   verhalten sich alle wie „auch".** PM-103 ist damit kein Einzelfall, sondern
+   eine Klasse; ein Bauauftrag deckt alle fünf Wörter ab. 720,00 € je Fall.
+5. 🆕 🟢 **PM-107 ist grün und trotzdem wichtig:** Alu, Kunststoff und
+   Stahlzarge verhalten sich richtig — der Fehler aus PM-102 sitzt an **genau
+   einem Wort**. `PM-107-A` ist die engste Fassung des Bauauftrags und wird
+   grün, sobald PM-102 gebaut ist.
+6. 🆕 🔴 **Acht weitere Fälle mit Soll-Satz:** PM-110 (Estrichriss — Zeile im
+   Katalog, erreichbar, entsteht nie) · PM-109 (Staubschutzwand und
+   Abendreinigung, beide Zeilen im Katalog, fürs Maler-Gewerk gesperrt) ·
+   PM-113 (leeres Angebot ohne Fehlt-Eintrag) · PM-104 (Wortstamm „sockel",
+   Engineerings Fund gegengemessen) · PM-111 · PM-112 · PM-114 · PM-115 · PM-108.
+   Alle mit Geldweg und Kontrolle in `pruefmeister-restliste.md`.
+7. 🆕 ✅ **K.6 und K.7 sind beantwortet — Engineering hängt an nichts mehr bei
+   mir.** K.6: Es fehlt **genau eine Katalogzeile**, die Stück-Entsprechung zu
+   `Stuckleisten streichen / weißen` (6,00 €/lfdm, für Maler erreichbar) —
+   PM-070 ist ein Katalogzug wie PM-076, kein Codefund; `Stuckrosette
+   abkleben` ist der Gegenfall, nicht der Ersatz. K.7: **fragen, nicht
+   rechnen** — ein Standardmaß je Balken schlägt achtfach durch (50 %
+   Unterschied zwischen 0,20 m und 0,30 m Breite); Soll ist die Rückfrage nach
+   Länge und Breite eines Balkens.
+8. 🆕 **PD-019 an den Designer** — drei Sätze, die keine Rechenfrage sind:
+   das leere Angebot (PM-113, Vorrang hoch — es ist derselbe Screen, den ihr
+   für den runden Raum in DC-112 schon entschieden habt), der Nachtrag ohne
+   Kennzeichnung (PM-115), und die Formfrage bei zwei Bauabschnitten (PM-116,
+   der Fehler dahinter gehört Engineering, nicht euch).
+9. ✅ **PM-079-A bleibt beantwortet: Einzelraum.** Sperrklinke steht,
+   PM-079-A/B ist offener Bauauftrag aus CoS-E-059. Unverändert.
+10. **Die 142 Vorlagen der gesperrten Gewerke** — unverändert, jeweils vor der
+    Freischaltung, nicht danach.
+11. 🆕 🟢 **Zur stehenden Regel, Punkt 1: die Shell ist bei mir wieder da.**
+    Der Satz aus dem Nachmittagslauf („bei mir nicht") gilt nicht mehr.
+    Gemessen wurde dieser Lauf **auf Sandys Rechner am echten Projekt** —
+    kein Staging, kein `--legacy-peer-deps`, keine Ersatzumgebung.
+    **`npx vitest run pruefmeister-`: 284 grün, 87 Sperrklinken** über alle elf
+    Batch-Dateien, kein unerwarteter Fehlschlag. `eslint` und `tsc` über die
+    neue Datei sauber. **`node scripts/vokabular-abgleich.mjs` kommt
+    unverändert heraus (182 / 32 / 3 / 147 / 0)** — jetzt zum ersten Mal am
+    Original statt am Nachbau, Zahl für Zahl identisch.
 
 ## Legal · Marketing · Finance
 

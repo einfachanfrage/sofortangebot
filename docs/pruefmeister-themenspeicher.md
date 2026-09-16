@@ -455,7 +455,19 @@ dahin steht der Eintrag eben unmarkiert in der Liste.
 
 ---
 
-### K.6 — OFFEN. Rosette mitgestrichen: welche Katalogzeile ist das? (Frage: Head of Product Engineering, 16.09.2026, nachts)
+### K.6 — BEANTWORTET (Prüfmeister, 16.09.2026, abends). Es fehlt genau eine Katalogzeile.
+
+> **Antwort in drei Sätzen:** Im `Decke streichen`-Preis ist es nicht drin —
+> der Katalog preist Stuck-Streichen ausdrücklich gesondert aus
+> (`Stuckleisten streichen / weißen`, 6,00 €/lfdm, für Maler **erreichbar**;
+> `Deckenspiegel streichen`, 11,00 €/m²). `Stuckrosette abkleben` ist nicht
+> die Ersatzantwort, sondern der **Gegenfall** — abgeklebt wird, was nicht
+> mitgestrichen wird. Was fehlt, ist die **Stück-Entsprechung** zu
+> `Stuckleisten streichen / weißen`; PM-070 ist damit ein **Katalogzug wie
+> PM-076**, und bis die Zeile da ist gilt K.5: Fehlt-Eintrag, keine erfundene
+> Menge. Ausführlich in `pruefmeister-restliste.md`.
+
+*(ursprüngliche Frage:)*
 
 **Gestellt:** Head of Product Engineering, 2026-09-16, nachts · direkt, nicht
 über den Chief of Staff, weil sie nur den Katalog betrifft und nichts
@@ -493,7 +505,17 @@ ist ein Katalogzug wie PM-076?
 Ersatzantwort machen. **Blockiert nichts** — PM-070 ist der einzige der vier
 Fälle aus CoS-E-064, der daran hängt.
 
-### K.7 — OFFEN. Acht Sichtbalken: rechnen oder fragen? (Frage: Head of Product Engineering, 16.09.2026, nachts)
+### K.7 — BEANTWORTET (Prüfmeister, 16.09.2026, abends). **Fragen.**
+
+> **Antwort:** Deine Neigung war richtig, ich mache sie zur Ansage. Ein
+> Standardmaß je Balken ist eine erfundene Menge mit Preis — und hier in
+> achtfacher Stärke: 4,00 m × 0,20 m ergibt 6,40 m² Lasur (89,60 €), mit
+> 0,30 m Breite 9,60 m² (134,40 €). **50 % Unterschied aus einer Zahl, die
+> niemand gesagt hat.** Soll: Fehlt-Eintrag mit der Rückfrage nach **Länge
+> und Breite eines Balkens** — der Handwerker misst den Balken, nicht die
+> Decke. Keine Position, kein Standardmaß.
+
+*(ursprüngliche Frage:)*
 
 **Der Anlass ist dein PM-071** („die Decke hat Sichtbalken, acht Stück, die
 werden lasiert"). Hier ist der Katalog vollständig und **erreichbar** —
@@ -515,7 +537,14 @@ anderes, bevor du es sagst — ein Standardmaß, das wir uns selbst setzen, ist
 eine erfundene Menge mit Preis, und genau die Grenze hast du in K.5 gezogen.
 **Blockiert nichts.**
 
-### Ein Fund nebenbei, der in die Fallbasis gehört — zu PM-074 (Engineering, 16.09.2026)
+### ✅ ÜBERNOMMEN als PM-104 (Prüfmeister, 16.09.2026, abends)
+
+> **Beide Hälften gegengemessen, beide stimmen:** der Sockelputz erzeugt
+> `Sockelleisten montieren` 3,00 lfdm (16,50 €), der Kaminsockel mit Maß im
+> Folgesatz 1,00 lfdm (5,50 €), derselbe Satz ohne das Wort erzeugt nichts.
+> Liegt als **PM-104** in `pruefmeister-batch-104-116.test.ts`.
+
+*(ursprünglicher Fund, Engineering, 16.09.2026:)*
 
 Beim Beantworten der Frage, ob PM-074 derselbe Mechanismus ist wie die
 Nebensatz-Reparatur aus CoS-E-058, sind zwei Messungen abgefallen, die dir
@@ -579,3 +608,57 @@ gemessen hat:**
    Gegenrichtung zu K.5.
 
 *Prüfmeister · 2026-09-16*
+
+---
+
+## M — Nachtrag 16.09.2026, abends: abgeräumt und neu aufgemacht
+
+**Abgeräumt in diesem Lauf** (als Batch `pruefmeister-batch-104-116.test.ts`
+hinterlegt, 29 grün / 20 Sperrklinken, Befunde in
+`pruefmeister-restliste.md`):
+
+* **A** — Wandnische / Regalnische außerhalb des Bades → **PM-108**
+* **B** — Staubschutzwand und Abendreinigung bei bewohnter Baustelle → **PM-109**
+* **C** — Estrich rissig, muss verharzt werden → **PM-110**
+* **E** — Handwerker nennt Preise selbst → **PM-111**
+* **E** — Handwerker nennt Stunden statt Mengen → **PM-112**
+* **E** — sehr kurze Aufnahme → **PM-113**
+* **E** — widersprüchliche Angaben im selben Diktat → **PM-114**
+* **G** — Nachtrag zu einem bestehenden Angebot → **PM-115**
+* **G** — zwei Bauabschnitte, getrennte Angebote → **PM-116**
+* **L.1** — die Verneinung mit Menge → **PM-105**
+* **L.2** — Rückbezugswörter allgemein → **PM-106**
+* **L.3** — Material als Auslöser über `holzfenster` hinaus → **PM-107** (grün)
+* Engineering-Fund Sockelputz → **PM-104**
+* **K.6** und **K.7** — beide beantwortet, siehe oben.
+
+Damit ist **Abschnitt L vollständig abgearbeitet**, und von den neun Themen,
+die in der Restliste als nächste standen, ist keines mehr offen.
+**Fallbasis: 116 Fälle.**
+
+**Neu aufgemacht — Themen, die aus diesen dreizehn Fällen fallen und noch
+niemand gemessen hat:**
+
+1. **Der Ausschluss auf ZEIT, nicht auf Sache.** PM-116 wirkt über „das kommt
+   später". Ungemessen: „das machen wir nächstes Jahr", „erstmal nur das
+   Erdgeschoss", „Rest nach Absprache". Dieselbe Klasse wie PM-099/PM-116,
+   aber mit einem Zeitwort statt einem Bauteilwort. Prüfbar ohne App.
+2. **Die Verneinung, die zu breit wirkt — wo noch?** PM-105 zeigt das Muster
+   an Fenstern. Ungemessen: Türen, Heizkörper, Sockelleisten, ganze Räume.
+   Wenn das Muster durchgeht, ist es kein Einzelfall, sondern der Zustand der
+   Verneinungsmaschine. **Vor PM-101 messen, nicht danach.** Prüfbar ohne App.
+3. **Das leere Angebot als Produktregel (H).** PM-113 und der Fassaden-Entwurf
+   (L-02 / PD-018 a) verlangen dasselbe: Ein Angebot ohne Positionen muss
+   sagen, warum. Das ist keine Einzelentscheidung, sondern die dritte
+   Ausprägung derselben Regel wie L.5 und DC-112. Gehört zu H.
+4. **Zwei Sprechweisen für denselben Preis.** PM-111 nimmt den genannten
+   Pauschalpreis nicht. Ungemessen ist der genannte **Einheitspreis** („den
+   Quadratmeter machen wir für zwölf Euro") — der ist auflösbar, wo die
+   Pauschale es nicht ist, und wäre der leichtere Einstieg. Prüfbar ohne App.
+5. **Erreichbare Katalogzeile, die trotzdem nie entsteht.** PM-110 ist der
+   reinste Fall, PM-070/071/075 sind die älteren. Offen ist die Zählung: Wie
+   viele der 147 guten Treffer im Vokabular-Abgleich entstehen aus einem
+   klaren Satz überhaupt nie? Eine Messung am Ausdruck, kein Einzelfall — und
+   die ehrlichste Zahl, die wir über die Vollständigkeit haben könnten.
+
+*Prüfmeister · 2026-09-16 abends*

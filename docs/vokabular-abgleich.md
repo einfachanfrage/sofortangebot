@@ -2257,4 +2257,55 @@ aus). **Kein neuer Fund, aber die Erklärung, warum diese eine Zeile in der
 *Prüfmeister · 16.09.2026*
 
 
+---
+
+## X — Lauf vom 16.09.2026, abends: unverändert, und zum ersten Mal am echten Projekt
+
+`node scripts/vokabular-abgleich.mjs` — **nicht in der Ersatzumgebung, sondern
+auf Sandys Rechner gegen das echte `node_modules`** (die Shell ist wieder da,
+node v22.23.2):
+
+```
+Engine-Titel mit eigener Einheit : 182
+davon ohne Preis                 :  32
+davon knapp (Score < 0,75)       :   3
+gute Treffer (Score >= 0,75)     : 147
+Titel aus Variablen, nicht prüfbar:   0
+```
+
+**Zahl für Zahl identisch mit dem Stand aus K.3.** Kein Rückschritt, keine
+Drift — und diesmal ist es kein Nachbau, der dasselbe sagt, sondern das
+Original. Damit ist auch die stille Sorge erledigt, die Ersatzumgebung könnte
+etwas anderes messen als der Rechner: Sie hat es nicht.
+
+### X.1 Zwei Zeilen aus dem neuen Batch, die der Abgleich nicht sieht
+
+Der Abgleich prüft, ob ein **Engine-Titel** einen Katalogpreis findet. Zwei
+Funde aus PM-104 bis PM-116 liegen davor und sind deshalb in keiner der fünf
+Zahlen enthalten:
+
+* **PM-110** — `Estrichriss kraftschlüssig verharzen und verklammern`
+  (18,00 €/lfdm) ist im Katalog, ist für `boden_parkett` erreichbar, und die
+  Engine erzeugt den Titel **nie**. Ein guter Treffer, der nie stattfindet.
+* **PM-109** — `Staubschutzwand / Trennwand …` (14,00 €/m²) und
+  `Baustelle besenrein räumen …` (180,00 € Pauschale) sind im Katalog, aber in
+  `Abbruch – …`; für Maler liefert `preisKategoriePasstZuGewerk` **false**.
+  Dieselbe Sperre wie PM-068, an zwei Zeilen, die in jeder bewohnten Wohnung
+  anfallen.
+
+**Was daraus folgt, ist eine Messung, die noch niemand gemacht hat:** Wie
+viele der **147 guten Treffer** entstehen aus einem klaren Satz überhaupt nie?
+Der Abgleich beantwortet „findet der Titel einen Preis", nicht „entsteht der
+Titel". Steht als Thema M.5 im Speicher.
+
+### X.2 Und eine Lücke, die eine Entscheidung ist, kein Fehler (K.6)
+
+Für das **Streichen einer Rosette** gibt es keine Zeile. Der Katalog kennt
+`Stuckleisten streichen / weißen` (6,00 €/lfdm) und `Deckenspiegel streichen`
+(11,00 €/m²), beide für Maler erreichbar — aber nichts je Stück. Das ist der
+einzige Zug, den PM-070 braucht; Einheit und Preis sind eine Entscheidung,
+keine Messung. Ausführlich in `pruefmeister-restliste.md`, K.6.
+
+*Prüfmeister · 16.09.2026, abends*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

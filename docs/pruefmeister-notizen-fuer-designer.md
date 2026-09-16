@@ -1777,4 +1777,55 @@ bevor jemand daran baut — sie steht als offener Punkt in meiner Restliste.
 
 *Prüfmeister · 2026-09-16, nach Sandys Live-Lauf*
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-018. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+---
+
+## PD-019 — Drei Sätze, die der Handwerker sagt und das Angebot nicht zeigt (2026-09-16, abends)
+
+Aus dem Batch PM-104 bis PM-116. Alle drei sind **keine Rechenfragen** — die
+Zahlen stimmen jeweils. Es sind Fragen danach, was das Papier **zeigt**.
+
+### 1. Das leere Angebot sagt nicht, warum es leer ist (PM-113) — **Vorrang hoch**
+
+„Wohnzimmer streichen." erzeugt **null Positionen und null Hinweise.** Der
+Handwerker spricht einen Satz ein und bekommt ein leeres Blatt zurück, ohne zu
+erfahren, dass das Maß fehlt.
+
+Das ist derselbe Befund wie der leere Raum mit 0,00 € im Fassaden-Entwurf
+(PD-018 a), nur ohne den Nachbarn, an dem er auffällt. Und es ist genau die
+Kombination, die ihr für den runden Raum in **DC-112 ausgeschlossen habt** —
+„nie null Positionen und null Einträge".
+
+**Meine Bitte:** Was ihr für den runden Raum entschieden habt, gilt hier
+wörtlich genauso. Der leere Fall braucht denselben Screen wie der unklare:
+eine Rückfrage, keine leere Liste. Ich vermute, es ist **dieselbe** Ansicht —
+dann kostet es euch nichts außer der Entscheidung, dass sie auch hier greift.
+
+### 2. Ein Nachtrag sieht aus wie ein Erstangebot (PM-115)
+
+„Nachtrag zum Angebot von letzter Woche." erzeugt ein vollständiges,
+eigenständiges Angebot — richtig gerechnet, aber ohne ein Wort darüber, dass
+es ein Nachtrag ist.
+
+Beim Kunden landet damit ein zweites Angebot, das aussieht wie das erste. Das
+wird entweder zweimal gelesen und einmal zu viel bezahlt, oder es wird
+zurückgewiesen. **Das ist ein Vertrauensthema, kein Rechenthema** — und
+deshalb eure Seite: Braucht ein Angebot eine Kennzeichnung „Nachtrag zu …",
+und wenn ja, woher kommt der Bezug?
+
+Ich baue nichts und schlage nichts vor, bevor ihr das entschieden habt.
+
+### 3. Ein ausgenommener Bauabschnitt steht trotzdem drauf (PM-116)
+
+„Zweiter Bauabschnitt Küche … das kommt später und wird extra angeboten." —
+die Küche steht mit **305,40 €** im selben Angebot.
+
+Der Fehler dahinter gehört Engineering (der Ausschlusssatz wirkt nicht, wie
+bei PM-099), **nicht euch.** Eure Seite ist die Frage danach: Wenn ein Diktat
+zwei Bauabschnitte kennt, ist ein Angebot mit allem drin überhaupt die
+richtige Form — oder gehören zwei Abschnitte auf zwei Blätter? Das entscheidet
+mit, wie die Reparatur aussieht. **Nicht warten, aber auch nicht deren Aufgabe
+übernehmen.**
+
+*Prüfmeister · 2026-09-16, abends*
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-019. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
