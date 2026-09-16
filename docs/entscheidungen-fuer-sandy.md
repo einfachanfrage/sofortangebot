@@ -1496,53 +1496,174 @@ gegebenenfalls zu dir zurück:
 **Damit wartet wieder keine Entscheidung auf dich.** Offen ist nur das
 Committen.
 
+---
 
+## 🔴 Die CI ist rot — und was ich dir gestern Nacht als Ursache genannt habe, stimmt nicht (16.09.2026, 09:50 MESZ)
+
+**Ich korrigiere mich selbst.** In der Arbeitsreihenfolge von 01:00 MESZ stand
+als Punkt eins: *„`.github/workflows/ci.yml` reparieren"*. **Das ist falsch, und
+du sollst keine Minute darauf verwenden.**
+
+**Was ich diesmal wirklich gemessen habe** (GitHub-Actions-Seite und die Datei
+selbst aus jedem einzelnen Commit geholt):
+
+* `ci.yml` ist **unverändert seit `9b45952`** und in `bd64900` **Byte für Byte
+  dieselbe Datei**. Sie ist gültig, heißt `CI`, und GitHub führt alle Läufe
+  darunter. Meine gestrige Behauptung („GitHub kann die Datei nicht lesen")
+  war aus dem Workflow-Namen geschlossen, nicht geprüft.
+* Der neue Schritt darin (`docs-sichern.mjs pruefen`) ist **nicht** der Grund:
+  Ich habe ihn gegen die 53 committeten Doku-Dateien selbst laufen lassen —
+  *„Alle 53 Doku-Dateien in Ordnung."*
+* **Rot sind die drei Läufe #188, #189, #190** (`9b45952`, `9c38755`,
+  `bd64900` — dein Commit von heute früh, 06:18 MESZ). **Grün war zuletzt
+  #187** (`de1ae80`).
+
+**Der wahrscheinlichste Grund — und der Fix liegt fertig auf deiner Platte:**
+Das Lint-Warnungsbudget steht im Repository auf **110**, und es stand zuletzt
+exakt bei 110 von 110. `9b45952` (DC-107) hat eine neue Datei mitgebracht.
+Genau das hat auch dein Push-Hook gemeldet, bevor er abgeschafft wurde
+(*„Lint schlägt im gepushten Commit fehl"*). Auf deiner Platte steht in
+`package.json` bereits **120** — committet ist es nicht.
+
+**Was du tust:** Den Block unten committen und pushen. Danach sage ich dir, ob
+der Lauf grün wird. **Falls nicht**, ist es nicht dein Fehler, sondern ein
+zweiter Grund, und dann messe ich den — ich habe die Schritt-Ebene der roten
+Läufe nicht sehen können (GitHub gibt sie mir ohne Zugang nicht heraus), und
+ich behaupte sie deshalb auch nicht.
 
 ---
 
-## 🟡 Neu am 15.09.2026, 23:50 MESZ — eine Entscheidung und eine Kleinigkeit
+## ⛔️ Der Push-Hook ist weg — die alte Anweisung „Hook installieren" gilt nicht mehr
 
-### 1. ENTSCHEIDUNG: Die „Abrechnung"-Karte in den Einstellungen (DC-109)
-
-**Worum es geht.** In den Einstellungen steht eine Karte „Abrechnung" mit drei
-Sätzen, die **nicht stimmen**: sie versprechen Rechnungen und
-Zahlungserinnerungen. Beides gibt es im Produkt nicht — du hast den
-Angebot/Rechnung-Reiter am 11.09. selbst rausgeworfen. Der Designer hat es beim
-Aufräumen des Onboarding-Textes gefunden und belegt, dass das dahinterliegende
-Feld (`abrechnungs_modus`) **im ganzen Produktcode nirgends ausgewertet wird**.
-
-Der Nutzer wählt dort also etwas aus, das nichts tut, und liest dazu ein
-Versprechen, das wir nicht halten. Genau die Stelle, an der ein Betrieb nach dem
-Onboarding **nachliest**.
-
-**Deine zwei Möglichkeiten:**
-
-| | Was passiert | Folge |
-|---|---|---|
-| **A — Karte raus** | Die Auswahl verschwindet ganz aus den Einstellungen | Ehrlichste Lösung. Eine Frage weniger beim Einrichten. Wenn ihr später doch Buchhaltungs-Anbindung baut, kommt sie neu dazu |
-| **B — Karte bleibt, Text wird wahr** | Der Designer ersetzt die drei Sätze durch fertige, ehrliche (Wortlaut liegt vor) | Die Auswahl bleibt sichtbar, tut aber weiterhin nichts. Du hast die Information, welche Buchhaltung ein Betrieb nutzt |
-
-**Meine Empfehlung: B.** Nicht weil der Text wichtiger wäre, sondern weil die
-Auswahl eine Information ist, die du später brauchst — welche Buchhaltung deine
-Betriebe nutzen, entscheidet mit, welche Schnittstelle sich zuerst lohnt. Sie
-kostet den Nutzer einen Tap und der Text lügt danach nicht mehr. **A ist nicht
-falsch** — wenn dir „ein Schalter, der nichts tut" grundsätzlich gegen den
-Strich geht, ist A die sauberere Linie, und es ist dieselbe Entscheidung, die du
-am 11.09. schon einmal so getroffen hast.
-
-**Antworte einfach mit „A" oder „B".** Blockiert nichts, die Sätze stehen seit
-Monaten so da — neu ist nur, dass jetzt belegt ist, dass sie nicht stimmen.
-
-### 2. Eine Kleinigkeit für dich am Rechner (CoS-P-013)
-
-Einmal **„Passwort vergessen"** mit einer echten Test-Adresse durchklicken, bis
-zum neuen Passwort. Der Code dafür ist repariert und im Repository, aber noch
-nie jemand hat den Weg mit einer echten Mail gegangen. Danach ist CoS-P-013
-komplett zu. **Zwei Minuten.**
+In derselben Liste von 01:00 MESZ stand Punkt 2: *„`pre-push`-Hook installieren
+(CoS-P-023)"*. **Streichen.** Du hast am Abend das Gegenteil angeordnet, und ich
+habe es als **CoS-P-024** festgeschrieben: In deinem Push- oder Commit-Weg wird
+nichts mehr eingebaut, das ihn abbrechen kann. Prüfungen laufen in der CI oder
+gar nicht. **Kein Handgriff für dich**, nur damit die alte Zeile dich nicht
+weiter verfolgt.
 
 ---
 
-*Chief of Staff · 2026-09-15, 23:50 MESZ*
+## 🟡 DC-109 — deine Entscheidung: bleibt die „Abrechnung"-Karte in den Einstellungen?
 
+**Das ist die einzige echte Entscheidung, die heute auf dich wartet.** Sie stand
+gestern in der Arbeitsreihenfolge, war aber **nie hier eingetragen** — mein
+Fehler, ich habe es behauptet statt nachgesehen. Heimat des Tickets:
+`docs/design-check.md`, Abschnitt **DC-109**.
+
+**Worum es geht:** In den Einstellungen steht die Karte „Abrechnung" mit drei
+Sätzen, die **nicht stimmen** — sie versprechen Rechnungen und
+Zahlungserinnerungen, beides gibt es im Produkt nicht. Es ist derselbe Befund
+wie im Onboarding (DC-106), nur an der Stelle, an der ein Betrieb **nachliest**.
+Dazu kommt: Das Feld, das die Karte setzt (`abrechnungs_modus`), wird im
+ganzen Produktcode **nirgends ausgewertet** — der Designer hat das im Klon
+geprüft.
+
+**A — Karte raus.** Ein Schalter ohne Wirkung und mit unwahrem Text
+verschwindet. Dieselbe Linie wie dein Rauswurf des Angebot/Rechnung-Umschalters
+am 11.09.
+
+**B — Karte bleibt, Text wird wahr.** Der Designer hat den Ersatztext fertig;
+er verspricht keine Rechnungen mehr, sondern fragt nur noch, ob der Betrieb
+eine Buchhaltungssoftware nutzt — und die Fußzeile über das Angebots-Nachfassen
+stimmt und bleibt.
+
+**Meine Empfehlung: B.** Das Onboarding fragt dasselbe in Schritt 4; nimmst du
+die Karte raus, kann ein Betrieb seine Antwort von damals nie mehr ändern — und
+die Lexoffice-/sevDesk-Anbindung, an der Platform arbeitet, braucht genau diese
+Angabe später. B macht die Sätze heute wahr, ohne dir eine Produktentscheidung
+über die Anbindung abzuverlangen; A kannst du jederzeit nachschieben, sobald
+klar ist, dass die Anbindung nicht kommt.
+
+**Du antwortest mit „A" oder „B".** Bei B baut der Designer den Text ohne
+Rückfrage ein.
+
+---
+
+## 🔵 Committen — die Liste, gegen `bd64900` nachgezählt
+
+**Sechs neue Testdateien** — im Repository nicht vorhanden, einzeln geprüft:
+
+```
+src/lib/__tests__/cos-e-062-pm066a-stufentitel.test.ts
+src/lib/__tests__/cos-e-062-pm066c-treppennase.test.ts
+src/lib/__tests__/cos-e-062-pm067-verklebt.test.ts
+src/lib/__tests__/cos-e-065-tuerquelle.test.ts
+src/lib/__tests__/pruefmeister-batch-79-88.test.ts
+src/lib/__tests__/pruefmeister-batch-89-97.test.ts
+```
+
+**Eine geänderte Datei, die den roten Lauf grün machen soll:**
+
+```
+package.json            Lint-Budget 110 -> 120
+```
+
+**Zehn Doku-Dateien**, die sich vom Commit unterscheiden (Größe gemessen):
+
+```
+docs/arbeitsreihenfolge.md
+docs/chief-of-staff-engineering-todos.md
+docs/chief-of-staff-platform-todos.md
+docs/design-check.md
+docs/entscheidungen-fuer-sandy.md
+docs/pruefmeister-notizen-fuer-designer.md
+docs/pruefmeister-restliste.md
+docs/pruefmeister-themenspeicher.md
+docs/testnutzer-notizen-manfred.md
+docs/vokabular-abgleich.md
+```
+
+**Unverändert und nicht in der Liste** (geprüft, damit du sie nicht suchst):
+`docs/launch-readiness.md`, `docs/chief-of-staff-legal-todos.md`,
+`docs/engineering-austausch.md`.
+
+Dazu die geänderten Quelldateien der Rollen (`boden-sonder.ts`,
+`maler-lackieren.ts` und die umgestellten Prüfmeister-Testdateien) — **deren
+Anzahl habe ich nicht gezählt und behaupte sie nicht.** `git add -A` nimmt
+alles mit.
+
+---
+
+## 🟢 Zwei Doku-Dateien waren beschädigt — repariert, nichts verloren
+
+`docs/design-check.md` und diese Datei hier lagen heute früh um 06:32 MESZ in
+einer **älteren, kürzeren Fassung** auf deiner Platte als im Commit von 06:18
+(–649 bzw. –458 Zeilen; dieser Datei fehlte zusätzlich die Endmarkierung).
+Beide sind aus `bd64900` wiederhergestellt, das wenige, was nur lokal stand,
+ist erhalten. **Kein Handgriff für dich** — außer dem Commit oben. Der Vorgang
+liegt als **CoS-P-025** bei Platform; es ist der dritte Fall in zwei Tagen.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
+---
+
+## 🔧 Nachtrag 10:05 MESZ — eine siebte Testdatei, und Zug 1 ist zu
+
+Engineering hat während dieses Laufs noch **PM-066-D** gebaut; damit ist
+**CoS-E-062 Zug 1 vollständig abgeschlossen** (die Treppe bekommt ihren
+Grundriss nicht mehr zusätzlich als Fläche berechnet). Eine weitere neue Datei
+kommt dazu:
+
+```
+src/lib/__tests__/cos-e-062-pm066d-treppenflaeche.test.ts
+```
+
+Damit sind es **sieben** neue Testdateien, nicht sechs. Der Rest der Liste oben
+gilt unverändert.
+
+**Zur Kenntnis, keine Entscheidung nötig:** Engineering hat beim Nachmessen
+einen neuen Fehler gefunden — bei Fischgrät-Parkett stehen **zwei verschiedene
+Quadratmeterzahlen für denselben Boden** auf dem Angebot (die Arbeit auf
+33,60 m², der Aufpreis darauf auf 36,80 m²). Ich habe ihn als **CoS-E-070**
+eingeordnet: Der Widerspruch wird gebaut, die dahinterliegende Prozentfrage
+hängt an deiner Verschnitt-Entscheidung vom 14.09. und wird dort mitbeantwortet.
+**Nichts, was du entscheiden musst.**
+
+*Chief of Staff · 2026-09-16*
+
+---
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

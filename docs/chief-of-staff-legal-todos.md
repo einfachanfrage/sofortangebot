@@ -3016,4 +3016,327 @@ der ohnehin laufenden LR-16-Runde und kann dort mitlaufen.
 *Chief of Staff · 2026-09-15*
 
 
+---
+
+## ✅ CoS-L-009 — Antwort: Darf „Aufmaß" auf dem Angebot stehen? (Head of Legal & Compliance, 2026-09-16)
+
+**Kurz:** Der Prüfmeister hat in der Sache recht, der Designer in der
+Anforderung. Beides geht zusammen — aber nicht über das Wort „Aufmaß", und die
+Fußnote bleibt, wie sie ist.
+
+### Vorab: der rechtliche Hebel liegt nicht dort, wo die Frage ihn vermutet
+
+Die Frage lautete, ob der Kunde aus „Aufmaß" ableiten kann, die Mengen seien
+**verbindlicher als eine Schätzung**. Das kann er nicht — die Verbindlichkeit
+einer Menge kommt aus der Vertragsart (Pauschalpreis gegen Einheitspreis), nicht
+aus einem Wort auf dem Papier. Insoweit ist die Sorge unbegründet.
+
+**Der Schaden entsteht eine Stufe später, bei der Abrechnung.** § 649 Abs. 1
+BGB, Wortlaut geprüft:
+
+> „Ist dem Vertrag ein Kostenanschlag zugrunde gelegt worden, **ohne dass der
+> Unternehmer die Gewähr für die Richtigkeit des Anschlags übernommen hat**, und
+> ergibt sich, dass das Werk nicht ohne eine wesentliche Überschreitung des
+> Anschlags ausführbar ist, so steht dem Unternehmer, wenn der Besteller den
+> Vertrag aus diesem Grund kündigt, nur der im § 645 Abs. 1 bestimmte Anspruch
+> zu."
+
+Die gesamte Entlastung des Betriebs hängt an diesem eingeschobenen Halbsatz. Ob
+er die Gewähr übernommen hat, entscheidet sich nach dem Empfängerhorizont — und
+zwar an dem, was auf dem Kundenpapier steht. Ein Papier, das seine Mengen als
+**Aufmaß** bezeichnet, behauptet, sie seien am Objekt ermittelt worden. Wer das
+behauptet, verteidigt sich schlecht mit „das war nur überschlägig". Dasselbe
+Wort verschlechtert also nicht die Position des Kunden, sondern die des Betriebs
+— und das ist der Grund, warum ich hier überhaupt etwas sage.
+
+Dazu, schwächer, aber vorhanden: § 5 Abs. 1, Abs. 2 Nr. 1 UWG. „Im Aufmaß
+erkannt" ist eine Tatsachenbehauptung über den Entstehungsweg der Zahl, nicht
+eine Wertung. Trifft sie nicht zu, ist sie irreführend über ein wesentliches
+Merkmal der Dienstleistung. Abmahnfähig durch Mitbewerber, praktisch
+unwahrscheinlich, aber es ist der zweite Grund, weshalb ich nicht „egal" sage.
+
+### Antwort 1 — Ja, aber nicht die Erwartung, um die gestritten wurde
+
+Geweckt wird nicht „die Menge ist verbindlich", sondern **„jemand war vor Ort
+und hat gemessen"**. Rechtlich trägt diese Erwartung dort, wo es den Betrieb
+Geld kostet: bei § 649 BGB und bei der Anzeigepflicht aus § 649 Abs. 2 BGB.
+Ein Diktat ins Handy ist kein Aufmaß, und wir sollten es auf dem Kundenpapier
+nicht so nennen.
+
+### Antwort 2 — Das richtige Wort ist keines
+
+Der Streit dreht sich um den Ersatz für **eine Quellenangabe**, und DC-107 hat
+für alle anderen Stellen bereits entschieden, dass die Quelle auf dem
+Kundenpapier nichts zu suchen hat (`4 Tür(en) aus Transkript` → `4 Tür(en)`).
+Die Fließtext-Form ist kein Sonderfall, sie ist nur schwerer zu kürzen.
+
+**Mein Vorschlag:** `Altbau im Aufmaß erkannt` → **`Als Altbau berücksichtigt`**
+
+Das nennt, was mit der Rechnung passiert ist, und behauptet keinen Weg, auf dem
+die Angabe entstanden ist. Falls eine Quelle unbedingt genannt werden soll, ist
+die einzige zutreffende **„nach Angabe des Betriebs"** — denn genau das ist es.
+Nicht „Aufnahme": da hat der Designer recht, das Wort ist in der App für die
+einzelne Sprachaufnahme belegt und wäre an dieser Stelle falsch.
+
+**Freigabevorbehalt:** Der Wortlaut geht auf das Kunden-PDF, damit gilt die
+Governance-Regel dieser Datei — die Formulierung liegt am Ende bei Sandy. Der
+Befund und die Empfehlung liegen hiermit vor; sie können in der LR-16-Runde
+mitlaufen.
+
+### Antwort 3 — Die Übermessungs-Fußnote bleibt, und das sage ich ausdrücklich
+
+**„Aufmaß in Anlehnung an VOB/C (DIN 18363)" ist in Ordnung und muss nicht
+angefasst werden.** Dort bezeichnet „Aufmaß" nicht einen Vorgang am Objekt,
+sondern das **Regelwerk der Mengenermittlung** — die Aufmaßregeln der ATV, nach
+denen gerechnet wurde. Das ist die stehende Bedeutung des Wortes in der Norm
+selbst, und die Aussage ist wahr: So wurde gerechnet.
+
+Daraus die Linie, damit die Frage nicht in drei Wochen erneut aufgemacht wird:
+
+| „Aufmaß" als … | Beispiel | Bewertung |
+|---|---|---|
+| Name einer **Rechenregel** | „Aufmaß in Anlehnung an VOB/C" | unbedenklich, bleibt |
+| Ort einer **Wahrnehmung** | „im Aufmaß erkannt" | behauptet eine Ortsbegehung, ersetzen |
+| **Bedienschritt in der App** | „Aufmaß starten", „Fotos vom Aufmaß" | unbedenklich, Adressat ist der Betrieb |
+
+Damit löst sich auch das Einheitlichkeits-Argument des Designers auf: Einheitlich
+sein muss die Sprache **innerhalb eines Adressatenkreises**. Was der Handwerker
+in seiner App liest, bindet das Kundenpapier nicht — die Trennlinie ist dieselbe,
+die ich in CoS-L-008 Punkt 2 für die Geschäftsbriefe gezogen habe („Absender ist
+der Betrieb, Empfänger ist dessen Kunde").
+
+**Damit ist CoS-L-009 auf meiner Seite abgeschlossen.** Offen bleibt allein die
+Wortlaut-Freigabe durch Sandy.
+
+*Head of Legal & Compliance · 2026-09-16 · Geprüfte Normtexte: § 649 Abs. 1 und 2
+BGB, § 5 Abs. 1 und Abs. 2 Nr. 1 UWG · Quelle: lxgesetze.de*
+
+---
+
+## DC-106 Nachlauf — die Erinnerungsmail selbst, geprüft (Head of Legal & Compliance, 2026-09-16)
+
+Der Designer hat es zutreffend eingegrenzt: Sein Onboarding-Satz ist nicht mehr
+betroffen, zu prüfen war die **Mail**. Das ist hiermit geschehen — an
+`src/app/api/cron/reminder/route.ts` (vollständig gelesen, 7.308 Bytes) und an
+der Produktionsdatenbank, nicht an den Erledigungsmeldungen der anderen Rollen.
+
+### Was der Stand tatsächlich ist
+
+| Frage | Befund (Produktion, 16.09.) |
+|---|---|
+| Betriebe insgesamt | 8 |
+| davon mit aktiviertem Reminder (`reminder_days > 0`) | **8 von 8** |
+| Angebote im Status `sent` | 4 |
+| **Erinnerungen tatsächlich verschickt** (`reminder_sent_at` gesetzt) | **2** |
+| Empfänger dieser zwei | beide 03.09.2026, 08:01 UTC, derselbe Betrieb, Kundenadressen auf `…-test.de` |
+
+Zwei Korrekturen an Aussagen, die in dieser Datei stehen: Der Befund vom 02.09.
+(„Dieser Job hat seit Bestehen keine einzige Erinnerung verschickt") ist
+**überholt** — er versendet seit dem 03.09. Und Sandys Klarstellung vom 02.09.
+(„es gibt keine echten Nutzer") **trägt auch hier**: Es ist bis heute keine
+Erinnerung an einen echten Endkunden gegangen. Das begrenzt alles Folgende auf
+ein Risiko für die Zukunft, nicht auf einen eingetretenen Vorfall.
+
+### 1. § 7 UWG — unbedenklich, und das ist keine Nachlässigkeit
+
+Der Werbebegriff ist weit, und eine Nachfass-Mail fällt reflexhaft erst einmal
+darunter. Sie tut es hier trotzdem nicht: Die Mail bewirbt keine weitere
+Leistung, sondern erinnert an **das eine Angebot, das der Kunde selbst
+angefragt hat**. Das ist Kommunikation innerhalb der laufenden
+Vertragsanbahnung, nicht Absatzwerbung für etwas Zusätzliches. Dazu die
+Begrenzung, die im Code steht und nicht bloß behauptet wird: `reminder_sent_at`
+lässt **genau eine** Mail je Angebot zu, `reminder_days = 0` schaltet ab.
+Einwilligung nach § 7 Abs. 2 Nr. 2 UWG ist dafür nicht erforderlich.
+
+**Keine Änderung nötig.** Ich halte es fest, damit der Punkt nicht bei jedem
+Durchgang neu aufgemacht wird.
+
+### 2. 🔴 Neuer Fund L-MAIL-01 — der Kunde kann auf diese Mail nicht antworten
+
+**Befund.** Absenderzeile Z. 137: `` `${company.name} <angebot@sofortangebot.app>` ``.
+Ein `reply_to` setzt die Route **nicht** — in der ganzen Datei kommt das Feld
+nicht vor. Im Fuß steht nur „Versendet über sofortangebot.app im Auftrag von
+<Firma>". Weder E-Mail noch Telefon noch Anschrift des Betriebs.
+
+Der Kunde sieht den Namen seines Handwerkers als Absender, drückt „Antworten" —
+und schreibt an uns.
+
+**Warum das mehr ist als unschön:**
+
+- **§ 5 Abs. 1 Nr. 2 DDG** verlangt Angaben, „die eine schnelle elektronische
+  Kontaktaufnahme und unmittelbare Kommunikation ermöglichen". Eine
+  Absenderadresse, die zum Dienstleister und nicht zum Absender führt, leistet
+  das nicht.
+- **§ 6 Abs. 1 Nr. 2 DDG:** Bei kommerzieller Kommunikation muss die Person,
+  in deren Auftrag sie erfolgt, klar identifizierbar sein. Der Name steht da,
+  die Erreichbarkeit fehlt.
+
+**Was das Produkt schon hat und was fehlt.** `companies` führt `contact_email`,
+`phone` und `website` (Spaltenliste aus `information_schema`, 16.09. geprüft),
+und das Angebots-PDF gibt sie bereits aus — `src/lib/pdf.tsx` Z. 292–295 und
+Z. 392, Absenderzeile aus `Adresse · Telefon · E-Mail · Website`. **Die
+Erinnerungsmail hat für dieselbe Zeile gar keinen Platz vorgesehen**, und die
+Route lädt die Spalten nicht einmal (`select` in Z. 50: nur `id, name,
+reminder_days`).
+
+**Und der Grund, warum es heute trotzdem niemandem auffällt:** Von den acht
+Betrieben hat **keiner** `contact_email` oder `phone` gefüllt (0 von 8). Die
+Zeile im PDF ist damit heute leer — der Endkunde hat aus **keinem** unserer
+Ausgabewege einen Rückweg zu seinem Handwerker.
+
+**Empfehlung, und sie kostet nichts Eigenes:** `contact_email` wird zusammen
+mit `rechtsform` Pflichtfeld im Onboarding (CoS-L-008 Punkt 3, Staffelung dort),
+die vier Kunden-Mails bekommen `reply_to: company.contact_email`, und die
+Kontaktzeile kommt in dieselbe Funktion, die nach CoS-L-008 Punkt 2 ohnehin
+gebaut wird (`geschaeftsbriefZeile(company)`). Das ist derselbe Griff, nicht
+ein zweiter. **Zuordnung: an CoS-E-057 anhängen**, weil dort dieselbe Fußzeile
+angefasst wird.
+
+### 3. § 35a-Pflichtangaben — kein neuer Punkt
+
+Die Erinnerungsmail ist einer der vier Geschäftsbriefe aus CoS-L-008 Punkt 2 und
+steckt in **LR-17**. Die Bedingung, die der Designer in DC-106 gestellt hatte,
+ist eingetreten (Empfänger ist der Endkunde) — das ändert an der Einordnung
+nichts, sie stand dort bereits. Hier nur die Bestätigung an der Quelle:
+Absender ist der Betriebsname, Abschluss „Mit freundlichen Grüßen, <Firma>",
+Rechtsform/Sitz/Register/Vertretung: keines davon.
+
+### 4. 🟠 Neuer Fund L-MAIL-02 — AVV und Datenschutzerklärung nennen für denselben Dienstleister zwei verschiedene Rechtsgrundlagen
+
+Aufgefallen beim Nachsehen, wer die Mail technisch versendet (Resend), nicht
+gesucht.
+
+| Dienstleister | AVV, `src/app/avv/page.tsx` § 4 | Datenschutzerklärung, `src/app/datenschutz/page.tsx` § 7 | Beim Anbieter selbst nachgesehen |
+|---|---|---|---|
+| **Vercel Inc.** | Standardvertragsklauseln (Z. 70) | DPF-zertifiziert, Übermittlung auf **Art. 45 DSGVO** (Z. 95) | Vercel-DPA, Schedule 3: **nur** die SCC 2021 (Beschluss 2021/914); DPF wird nicht erwähnt |
+| **Resend Inc.** | Standardvertragsklauseln (Z. 71) | DPF-zertifiziert, Übermittlung auf **Art. 45 DSGVO** (Z. 95) | Resend-DPA § 6.2: SCC als **primärer** Mechanismus; § 11.1 zusätzlich DPF |
+| Sentry | DPF-zertifiziert (Z. 73) | DPF (Z. 95) | stimmig, kein Handlungsbedarf |
+
+**Bewertung.** Bei **Vercel** ist die Datenschutzerklärung **falsch** und der
+AVV richtig: Der Anbieter selbst stützt sich auf Art. 46 Abs. 2 lit. c DSGVO,
+nicht auf den Angemessenheitsbeschluss. Bei **Resend** ist sie unvollständig,
+nicht falsch — beide Mechanismen greifen, der AVV nennt den tragenden.
+
+Das ist kein großer Fehler, aber es ist einer der Sorte, die wehtut, wenn
+jemand nachfragt: Zwei von uns veröffentlichte Dokumente behaupten über
+denselben Vorgang Unterschiedliches, und der AVV ist ein **Vertrag** mit jedem
+Betrieb (Art. 28 Abs. 3 DSGVO). Fällt der Angemessenheitsbeschluss — er steht
+seit seinem Erlass unter Beobachtung —, steht in der Datenschutzerklärung eine
+Grundlage, die es nicht mehr gibt, während der AVV weiter trägt.
+
+**Empfehlung:** Datenschutzerklärung an den AVV angleichen, nicht umgekehrt.
+Für Vercel „Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO)", für Resend
+„Standardvertragsklauseln; zusätzlich DPF-zertifiziert". Reiner Textfix in
+`src/app/datenschutz/page.tsx`, Z. 94–95. **Risikoeintrag: LR-18 in
+`legal-002-risikobewertung-vob.md`.**
+
+### Nicht beanstandet
+
+- **Datenschutzhinweis gegenüber dem Endkunden:** Die Mail selbst enthält
+  keinen, die verlinkte Unterschreiben-Seite schon
+  (`src/app/angebot/[id]/unterschreiben/page.tsx` Z. 343–344, mit Nennung des
+  Betriebs als Verantwortlichem). Für eine Mail, deren einziger Inhalt ein Link
+  auf genau diese Seite ist, reicht das.
+- **Betreff und Text:** kein Wort von Rechnung, Zahlung, Frist oder Mahnung —
+  an der Quelle bestätigt, nicht aus der Engineering-Meldung übernommen.
+- **Der Bruttobetrag** im Betreff ist der Gesamtpreis einschließlich
+  Umsatzsteuer (`total_gross`). Gegenüber Verbrauchern ist das die richtige
+  Angabe.
+
+**Damit ist der Legal-Anteil von DC-106 abgeschlossen.** Übrig bleibt
+L-MAIL-01 als Bauauftrag (an CoS-E-057) und L-MAIL-02 als Textfix.
+
+*Head of Legal & Compliance · 2026-09-16 · Geprüfte Normtexte: § 7 Abs. 2 Nr. 2
+UWG, § 5 Abs. 1 Nr. 2 DDG, § 6 Abs. 1 Nr. 2 DDG, Art. 28 Abs. 3, Art. 45,
+Art. 46 Abs. 2 lit. c DSGVO · Quellen am Anbieter: vercel.com/legal/dpa,
+resend.com/legal/dpa*
+
+---
+
+## E-Rechnungspflicht § 14 Abs. 2 UStG — nachgeholt (Head of Legal & Compliance, 2026-09-16)
+
+Das war der ausdrücklich offene Rest aus CoS-L-006, Abschnitt D („Was ich in
+diesem Lauf ausdrücklich NICHT geprüft habe"). Jetzt geprüft, am Normtext.
+
+### Der Wortlaut, auf den es ankommt
+
+**§ 14 Abs. 2 S. 2 UStG:** Die Rechnung ist als elektronische Rechnung
+auszustellen, **„wenn der leistende Unternehmer und der Leistungsempfänger im
+Inland … ansässig sind"**.
+
+**§ 14 Abs. 1 S. 3 UStG:** Eine elektronische Rechnung liegt nur vor, wenn sie
+„in einem strukturierten elektronischen Format ausgestellt, übermittelt und
+empfangen wird und eine elektronische Verarbeitung ermöglicht" — und dem Format
+nach der Norm zur Richtlinie 2014/55/EU entspricht (§ 14 Abs. 1 S. 6).
+
+### Die zwei Sätze, die für uns zählen
+
+**1. Die Pflicht greift nur zwischen Unternehmern.** Der typische Kunde unserer
+Betriebe ist ein Verbraucher. Für ihn gilt die E-Rechnungspflicht **nicht** —
+weder heute noch 2028. Ein PDF genügt, und dessen elektronische Übermittlung
+braucht nach § 14 Abs. 1 S. 2 weiterhin seine Zustimmung.
+
+**2. Wo sie doch greift — Betrieb rechnet gegenüber einem anderen Unternehmer
+ab (Hausverwaltung, Bauträger, Gewerbekunde, Kollegenbetrieb) —, gilt die
+Staffel aus § 27 Abs. 38 UStG:**
+
+| Zeitraum | Was zulässig ist |
+|---|---|
+| bis 31.12.2026 | Papier oder beliebiges elektronisches Format (mit Zustimmung des Empfängers) |
+| bis 31.12.2027 | dasselbe, **aber nur für Unternehmer mit ≤ 800.000 € Vorjahresumsatz** |
+| bis 31.12.2027 | EDI nach Empfehlung 94/820/EG weiterhin zulässig |
+| ab 01.01.2028 | keine Übergangsregel mehr — strukturiertes Format ist Pflicht |
+
+**Die praktische Antwort für unsere Betriebe:** Sie liegen praktisch alle unter
+der 800.000-€-Grenze. Für sie ist der **01.01.2028** das Datum, ab dem eine
+Rechnung an einen Geschäftskunden strukturiert sein muss. **Nicht 2025, nicht
+2026, nicht 2027.**
+
+### Was das für das Produkt heißt
+
+- **Der ZUGFeRD-Schalter bleibt Komfort, nicht Compliance.** Die Einordnung aus
+  DC-089 vom 13.09. ist damit am Normtext bestätigt und nicht nur plausibel.
+  Ich nehme nichts zurück.
+- **Die Empfangsseite ist der Teil, der schon gilt.** Seit dem 01.01.2025 muss
+  **jeder** inländische Unternehmer E-Rechnungen **empfangen** können — davon
+  gibt es keine Übergangsregel, § 27 Abs. 38 betrifft nur die Ausstellung. Das
+  trifft unsere Betriebe als Empfänger ihrer eigenen Lieferantenrechnungen. Es
+  ist **kein Produktthema** (wir stellen keine Eingangsrechnungen zu), aber es
+  gehört in einen Hilfetext, falls wir je einen zum Thema schreiben.
+- **Kein Gate-1-Punkt, und auch kein Punkt vor der ersten echten Rechnung.**
+  Der Termin ist 2028. Der Punkt, der vor der ersten echten Rechnung steht, ist
+  ein anderer und liegt bereits bei Platform: der Rechnungsnummernkreis
+  (CoS-P-021).
+
+**Damit ist CoS-L-006 vollständig abgeschlossen**, einschließlich des in
+Abschnitt D offengelassenen Teils.
+
+*Head of Legal & Compliance · 2026-09-16 · Geprüfte Normtexte: § 14 Abs. 1 und
+Abs. 2 UStG, § 27 Abs. 38 UStG · Quelle: lxgesetze.de*
+
+---
+
+## Notiz zum Ablauf dieses Laufs (2026-09-16)
+
+`node scripts/docs-sichern.mjs pruefen` / `sichern` konnte auch in diesem Lauf
+nicht ausgeführt werden — die Shell auf Sandys Rechner hängt den Projektordner
+weiterhin nicht ein (`no Plan9 drive shares mounted`, Folge des Windows-Updates
+vom 08.09.). **Die Sicherung ist nicht gelaufen.** Neunter Tag; CoS-P-022.
+
+Gelesen und geschrieben wurde über Staging und Commit, jeweils mit
+`expectedMtimeMs` aus dem Staging. Angehängt wurde in beiden Dateien
+unmittelbar vor der Endmarkierung; in bestehende Abschnitte wurde nicht
+geschrieben. `docs/arbeitsreihenfolge.md` wurde nur gelesen.
+
+Quellen in diesem Lauf: Repository-Dateien einzeln gestaget und gelesen
+(`api/cron/reminder/route.ts`, `avv/page.tsx`, `datenschutz/page.tsx`,
+`lib/pdf.tsx`, `angebot/[id]/unterschreiben/page.tsx`), Produktionsdatenbank
+über das Supabase-Tool (Projekt `sofortangebot`), Normtexte über lxgesetze.de,
+Anbieter-DPA über vercel.com und resend.com. Erledigungsmeldungen anderer
+Rollen sind an diesen Quellen geprüft und in zwei Fällen korrigiert worden
+(siehe DC-106-Abschnitt).
+
+*Head of Legal & Compliance · 2026-09-16*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

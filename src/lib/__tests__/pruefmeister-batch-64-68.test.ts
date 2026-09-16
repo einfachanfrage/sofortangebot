@@ -209,10 +209,13 @@ describe('PM-066 — Treppe, Bodenbelag', () => {
   ])
 
   it('die Stufen werden überhaupt als Stückzahl erkannt — das kann die App', () => {
-    expect(menge(pos(), /trittstufen belegen/i)).toBe(14)
+    // Suchmuster nachgezogen (CoS-E-062, Zug 1, 16.09.2026): Der Titel heißt
+    // seit PM-066-A `Vinyl auf Treppenstufen kleben` — Katalogwortlaut statt
+    // `Trittstufen belegen`. Die ZUSICHERUNG ist unverändert: vierzehn.
+    expect(menge(pos(), /treppenstufen kleben|trittstufen belegen/i)).toBe(14)
   })
 
-  it.fails('🔴 PM-066-A · `Trittstufen belegen` findet keinen Preis', () => {
+  it('✅ PM-066-A · die vierzehn Stufen finden ihren Preis — 770,00 €', () => {
     // Gemessen: 14 Stück, 0,00 €. Der Titel kommt aus
     // `vollstaendigkeit/boden-sonder.ts` Z. 208, der Katalog führt
     // `Vinyl auf Treppenstufen kleben`. Kein Treffer über der Schwelle.
@@ -222,24 +225,52 @@ describe('PM-066 — Treppe, Bodenbelag', () => {
     //
     // Dieselbe Familie wie PM-060-A: Die Mengen stimmen, der Wortlaut trifft
     // den Katalog nicht. Das ist der teuerste Fund dieses Batches.
-    expect(preis(pos(), /trittstufen belegen/i, 'boden_parkett')).toBe(55)
+    //
+    // Gebaut am 16.09.2026 (CoS-E-062, Zug 1) in `boden-sonder.ts`: Der Titel
+    // ist jetzt der Katalogwortlaut, je Belag aus einer gemessenen Tabelle.
+    // Sperrklinke → Zusicherung.
+    const p = pos()
+    expect(preis(p, /auf Treppenstufen kleben/i, 'boden_parkett')).toBe(55)
+    // Und der Betrag, um den es geht — ohne ihn ließe die Zeile oben auch
+    // eine Position mit Stückzahl 1 durch.
+    expect(menge(p, /auf Treppenstufen kleben/i)).toBe(14)
   })
 
-  it.fails('🔴 PM-066-B · `Setzstufen belegen` findet keinen Preis', () => {
-    expect(preis(pos(), /setzstufen belegen/i, 'boden_parkett')).toBeGreaterThan(0)
+  it('✅ PM-066-B · und es bleibt bei EINER Stufenzeile — keine zweite für die Setzstufe', () => {
+    // Umgestellt am 16.09.2026 (CoS-E-062, Zug 1) nach der K.4-Antwort des
+    // Prüfmeisters: Die Setzstufe steckt im Stückpreis. Die Sperrklinke stand
+    // auf „die zweite Zeile braucht einen Preis“ — das wäre die Doppel-
+    // berechnung gewesen, 1.540,00 € statt 770,00 €. Das Soll ist jetzt:
+    // die zweite Zeile ist WEG.
+    //
+    // **Prüfmeister: bitte gegenlesen** — die Zusicherung ist gedreht, nicht
+    // gestrichen.
+    expect(finde(pos(), /setzstufe/i)).toBeUndefined()
   })
 
-  it.fails('🔴 PM-066-C · die Treppennase ist gesagt und steht nicht im Angebot', () => {
+  it('✅ PM-066-C · die Treppennase ist gesagt und steht jetzt im Angebot', () => {
     // Regel H Satz 1: gesagt → Position. „Treppennase brauchen wir auch"
     // steht wörtlich im Diktat, der Katalog führt die Zeile mit 22,00 €.
+    //
+    // Gebaut am 16.09.2026 (CoS-E-062, Zug 1) in `boden-sonder.ts`: Das Wort
+    // steht jetzt im Auslöser, und der Titel ist der Katalogwortlaut — sonst
+    // wäre die Zeile mit 0,00 € entstanden. Sperrklinke → Zusicherung.
     expect(finde(pos(), /treppennase|kantenprofil/i)).toBeTruthy()
+    expect(preis(pos(), /treppennase|kantenprofil/i, 'boden_parkett')).toBe(22)
   })
 
-  it.fails('🔴 PM-066-D · eine Treppe hat keine Bodenfläche zum Verlegen', () => {
-    // Gemessen: `Vinyl-Boden verlegen inkl. 5% Verschnitt — Treppe`,
+  it('✅ PM-066-D · eine Treppe hat keine Bodenfläche zum Verlegen', () => {
+    // Gemessen war: `Vinyl-Boden verlegen inkl. 5% Verschnitt — Treppe`,
     // 3,15 m² zu 16,00 € = 50,40 €. Das ist der Grundriss der Treppe,
     // einmal als Fläche berechnet — zusätzlich zu den 14 Stufen.
     // Auf der Treppe wird die Stufe belegt, nicht der Grundriss.
+    //
+    // Gebaut am 16.09.2026 (CoS-E-062, Zug 1 Abschluss) in
+    // `mengen/gewerke/boden.ts`: Nennt der Text eine Stufenzahl UND ist der
+    // Raum die Treppe, trägt die Stufenposition die Arbeit — die Fläche
+    // entsteht dann nicht. Es ist derselbe Doppelbetrag wie bei der
+    // Setzstufe (K.4-E), nur in der anderen Einheit.
+    // Sperrklinke → Zusicherung.
     expect(finde(pos(), /vinyl-boden verlegen|boden verlegen/i), 'Fläche neben den Stufen').toBeUndefined()
   })
 })
@@ -262,10 +293,17 @@ describe('PM-067 — Altbelag raus, Container bestellt', () => {
   ])
 
   it('der Altbelag wird auf der Rohfläche entfernt, 14,00 m²', () => {
-    expect(menge(pos(), /teppichboden entfernen/i)).toBe(14)
+    // Titel seit CoS-E-062 Zug 1: `Teppichboden verklebt entfernen`. Die
+    // Menge ist davon unberührt — das Suchmuster ist nachgezogen, die
+    // Zusicherung nicht.
+    expect(menge(pos(), /teppichboden.*entfernen/i)).toBe(14)
   })
 
-  it.fails('🔴 PM-067-A · „verklebt" steht im Diktat und nicht im Titel', () => {
+  it('✅ PM-067-A · „verklebt" steht im Diktat und jetzt auch im Titel', () => {
+    // Gebaut am 16.09.2026 (CoS-E-062, Zug 1) in `boden-vorarbeiten.ts`:
+    // Der Umbenennungs-Block fragt jetzt `hatVerklebt` und setzt den
+    // Katalogwortlaut `Teppichboden verklebt entfernen`, 9,00 €/m².
+    // Die Sperrklinke ist damit zur Zusicherung geworden.
     // Gemessen: `Teppichboden entfernen und entsorgen` zu 6,00 €/m² — das ist
     // die Zeile für den LOSEN Teppich. Verklebt kostet 9,00 €/m².
     // Auf 14 m² sind das 42,00 € zu wenig, und auf dem Kundenpapier steht

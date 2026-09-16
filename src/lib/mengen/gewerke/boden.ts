@@ -7,6 +7,8 @@ import { erkenneSockelleistenAusschluss, SOCKEL_WORT } from '../../sockelleisten
 import { KLICK_VINYL_WORT } from '../../hoerfehler'
 import { verlegeartZusatz } from '../../verlegeart'
 import { saetzeJeRaum } from '../../satz-raum'
+import { ersetzeZahlenWorte } from '../../zahlen-parser'
+import { TREPPEN_WORT, stufenAnzahlAusText } from '../../vollstaendigkeit/boden-sonder'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -269,10 +271,40 @@ export function bodenEngine(daten: any): MengenErgebnis {
       || altbelag_entfernen
       || (Array.isArray(arbeiten) && arbeiten.some((a: string) => BODEN_VERLEGEN_SIGNAL.test(a)))
 
+    // PM-066-D (CoS-E-062, 16.09.2026): Eine Treppe hat keinen Boden zum
+    // Verlegen.
+    //
+    // Gemessen vor dem Bauen, Fall PM-066: Vierzehn Stufen, Vinyl geklebt —
+    // die App legte NEBEN den vierzehn Stufen (14 × 55,00 = 770,00 €) den
+    // Grundriss der Treppe als Fläche an: `Vinyl-Boden verlegen inkl. 5%
+    // Verschnitt — Treppe`, 3,15 m² × 16,00 € = 50,40 €. Auf der Treppe wird
+    // die Stufe belegt, nicht ihr Grundriss; die Fläche hat nie jemand
+    // genannt, sie entsteht aus Länge × Breite des Treppenlaufs.
+    //
+    // Es ist derselbe Doppelbetrag wie bei der Setzstufe (K.4), nur in der
+    // anderen Einheit — und der Prüfmeister hat die Begründung in K.4-E
+    // selbst geschrieben: *„Der Stückpreis bezahlt die Stufe als Bauteil,
+    // nicht ihren Grundriss."* Wer das Bauteil bezahlt, bezahlt den
+    // Grundriss nicht ein zweites Mal.
+    //
+    // Der Schnitt ist bewusst eng: Es reicht NICHT, dass der Raum Treppe
+    // heißt. Verlangt sind beide Hälften —
+    //   1. der Raum ist die Treppe (Name oder seine eigenen Sätze), und
+    //   2. im Text steht eine Stufenzahl.
+    // Erst dann entsteht in `vollstaendigkeit/boden-sonder.ts` die
+    // Stufenposition, die die Arbeit trägt. Ohne Stufenzahl entsteht dort
+    // keine, und ein Treppenhaus mit echter Bodenfläche („Treppenhaus 12 m²,
+    // Laminat verlegen") behält seine Fläche — dort ist nichts doppelt.
+    // Wortmuster und Stufenzahl kommen aus derselben Quelle wie dort, sonst
+    // driften die beiden Stellen auseinander und der Doppelbetrag ist zurück.
+    const istTreppenRaum = TREPPEN_WORT.test(name) || TREPPEN_WORT.test(eigenerText)
+    const stufenTragenDenBelag = istTreppenRaum
+      && stufenAnzahlAusText(ersetzeZahlenWorte(eigenerText || gesamtText).toLowerCase()) > 0
+
     // Verlegen NUR wenn kein reines Abschleif-/Refinish-Auftrag (man legt keinen
     // neuen Boden, wenn der bestehende nur abgeschliffen + versiegelt wird) UND
     // nur wenn überhaupt ein echter Belag-Auftrag vorliegt.
-    if (!parkett_schleifen && hatEchtenBelagAuftrag) {
+    if (!parkett_schleifen && hatEchtenBelagAuftrag && !stufenTragenDenBelag) {
       // PM-025-A: Fischgrät wirkt jetzt auch auf die Leistung, nicht nur auf
       // den Verschnitt. Der Belag entscheidet, welche Form der Katalog kennt.
       const muster = typeof verlegerichtung !== 'string' ? null

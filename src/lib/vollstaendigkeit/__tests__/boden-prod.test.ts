@@ -61,7 +61,12 @@ describe('Boden Phase 3 — Entfernen und Entsorgen bleibt sichtbar', () => {
     const result = pruefeUndErgaenzeVollstaendigkeit('boden_parkett', eng.positionen, t).positionen
     const namen = result.map(position => position.beschreibung.toLowerCase())
 
-    expect(namen.some(name => name.includes('teppichboden entfernen und entsorgen'))).toBe(true)
+    // Nachgezogen am 16.09.2026 (CoS-E-062, Zug 1, PM-067-A): Der Teppich ist
+    // im Diktat ausdrücklich „vollflächig verklebt". Der Katalog führt dafür
+    // eine eigene Zeile, `Teppichboden verklebt entfernen`, 9,00 €/m² — die
+    // alte Erwartung zeigte auf die Zeile für den LOSEN Teppich (6,00 €/m²)
+    // und war damit 3,00 €/m² zu billig, hier 96,00 € auf 32 m².
+    expect(namen.some(name => name.includes('teppichboden verklebt entfernen'))).toBe(true)
     expect(namen.some(name => name.includes('untergrund schleifen') && name.includes('kleberreste'))).toBe(true)
     expect(namen.some(name => name.includes('fertigparkett verlegen vollflächig verklebt'))).toBe(true)
     expect(namen.some(name => name.includes('aufpreis fischgrät-verlegemuster'))).toBe(true)

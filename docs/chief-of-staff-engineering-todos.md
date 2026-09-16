@@ -6128,4 +6128,753 @@ dem er klingt.
 
 *Chief of Staff · 2026-09-16, 01:10 MESZ*
 
+## ✅ CoS-E-062 Zug 1 — PM-067-A gebaut: der verklebte Teppich trifft seine eigene Katalogzeile (16.09.2026, vormittags)
+
+**Datum:** 2026-09-16 · Head of Product Engineering
+**Reihenfolge:** CoS-E-062 (Zug 1) ist der oberste Punkt der Arbeitsreihenfolge
+von 01:00 MESZ und war ohne fremde Entscheidung machbar. Von den vier Fällen
+des Zuges ist **PM-067-A** der erste — kleinster Eingriff, sichere Messung.
+
+### Was falsch war
+
+`pruefeAltbelag` in `src/lib/vollstaendigkeit/boden-vorarbeiten.ts` kennt das
+Merkmal „verklebt" seit jeher als `hatVerklebt`. Der Umbenennungs-Block
+darunter — der aus „Altbelag entfernen" den belagsgenauen Titel macht, sobald
+die Entsorgung beauftragt ist — hat es **nicht gefragt**. Ergebnis: Der
+verklebte Teppich bekam den Titel des **losen** Teppichs.
+
+**Es fehlte keine Information, sie kam nur nicht an.** Dieselbe Bauart wie
+PM-045-A, und genau die Klasse, die in der Einschätzung vom 15.09. beschrieben
+ist: nicht der Preis-Matcher, sondern der Titel.
+
+### Die Änderung, eine Verzweigung
+
+```
+-    else if (/teppich/i.test(lower)) vorhandeneEntfernung.beschreibung = `Teppichboden entfernen und entsorgen${suffix}`
++    else if (/teppich/i.test(lower)) vorhandeneEntfernung.beschreibung = hatVerklebt
++      ? `Teppichboden verklebt entfernen${suffix}`
++      : `Teppichboden entfernen und entsorgen${suffix}`
+```
+
+Der Raumbezug (`suffix`) bleibt in beiden Zweigen erhalten.
+
+### Selbst gemessen, nicht vermutet
+
+Ersatzumgebung: gestagter Baum von Sandys Platte, `node 22`, `vitest`,
+Alias `@/` auf `src/`. Der Weg ist derselbe wie im Test des Prüfmeisters
+(Pipeline → Engine → Vollständigkeit → `findePreisposition` gegen
+`DEFAULT_PRICES`, gefiltert über `preisKategoriePasstZuGewerk`).
+
+**Der Fall des Prüfmeisters, Diktat wörtlich aus PM-067:**
+
+| | Titel | Preis |
+|---|---|---|
+| vorher | `Teppichboden entfernen und entsorgen — Wohnzimmer` | **6,00 €/m²** |
+| nachher | `Teppichboden verklebt entfernen — Wohnzimmer` | **9,00 €/m²** |
+
+14,00 m² × 3,00 € = **42,00 €**, die dem Betrieb je Fall gefehlt haben. Die
+Menge ist unverändert 14,00 m².
+
+**Der Titel als Schablone — gemessen, warum es genau dieser Wortlaut ist:**
+
+| gesuchter Titel | Treffer | Preis | Trefferwert |
+|---|---|---|---|
+| `Teppichboden entfernen und entsorgen` | die Zeile für den **losen** Teppich | 6,00 € | 1,00 |
+| `Teppichboden verklebt entfernen` | genau diese Zeile | **9,00 €** | **1,00** |
+| `Teppichboden entfernen und entsorgen (verklebt)` | **keiner** | 0,00 € | — |
+| `Teppichboden verklebt entfernen und entsorgen` | **keiner** | 0,00 € | — |
+
+Das Merkmal **angehängt** statt **eingesetzt** wäre schlechter als der Zustand
+vorher. Beide Zeilen stehen im Katalog unter derselben Kategorie
+`Boden – Altbelag entfernen`; der Gewerke-Filter ändert daran nichts.
+
+**Testlauf in der Ersatzumgebung, vorher gegen nachher** (83 gestagte
+Testdateien; 13 davon laden in der Ersatzumgebung nicht, weil ihnen
+Next.js-/Supabase-Module fehlen — **vorher wie nachher dieselben 13**):
+
+| | grün | Sperrklinken | rot |
+|---|---|---|---|
+| vorher | 1283 | 54 | 0 |
+| nachher | **1293** | **53** | **0** |
+
+**+10 grün, −1 Sperrklinke, null Rückschritte.** Die zehn sind: neun neue
+Zusicherungen und PM-067-A selbst.
+
+**Gegenprobe gefahren:** Die neue Testdatei gegen die *alte* Fassung von
+`boden-vorarbeiten.ts` — **genau die zwei Zusicherungen fallen, die den
+Eingriff beschreiben**, die sieben Kontrollen halten in beiden Fassungen. Eine
+Zusicherung, die auch ohne die Änderung grün ist, prüft nichts.
+
+`npx tsc --noEmit` über `vollstaendigkeit/` und `mengen/` im Strict-Modus:
+**0 Fehler.**
+
+### Was ich am Test des Prüfmeisters geändert habe — und warum
+
+Zwei Stellen in `src/lib/__tests__/pruefmeister-batch-64-68.test.ts`,
+beide Buchhaltung, keine neue Behauptung:
+
+1. **Die Sperrklinke PM-067-A ist zur Zusicherung geworden** (`it.fails` → `it`).
+   Der geforderte Wert (9,00 €) steht unverändert da.
+2. **Die Mengen-Kontrolle sucht jetzt `/teppichboden.*entfernen/i`** statt
+   `/teppichboden entfernen/i`. Der neue Titel trägt ein Wort dazwischen; die
+   Zusicherung selbst (14,00 m²) ist unberührt.
+
+**Prüfmeister: das ist eure Datei — lest es gegen, überschreibt es, wenn ihr es
+anders wollt.** Eine Notiz dazu liegt in `pruefmeister-restliste.md`.
+
+### Ein Nebenbefund, den ich gemessen und NICHT angefasst habe
+
+Der zweite Weg durch `pruefeAltbelag` — wenn noch **keine** Entfernen-Position
+existiert — legt `Alten Teppichboden entfernen (verklebt)` an. Gemessen trifft
+dieser Titel die richtige Zeile (9,00 €), aber nur mit **Trefferwert 0,67** bei
+einer Schwelle von 0,62. Er ist heute richtig und steht dicht an der Kante.
+
+**Ich habe ihn bewusst stehen lassen:** PM-067-A beschreibt ihn nicht, er
+liefert heute den richtigen Preis, und eine Titeländerung ohne gemeldeten Fund
+ist genau die Sorte Eingriff, die anderswo etwas umwirft. Wer den Zug 3 oder
+einen späteren Altbelag-Punkt aufmacht, findet ihn hier wieder.
+
+### Was als Nächstes dran ist
+
+**PM-066-C** — das eine Wort „Treppennase" in der Kantenprofil-Regex,
+22,00 € je Fall. Danach **PM-066-A** (durch K.4 entsperrt, es bleibt bei
+770,00 €) und **PM-066-D**. Dann Zug 3.
+
+### Für Sandy
+
+**Eine neue Datei**, die in Git muss, sonst blockiert der Hook den Push:
+
+```
+git add src/lib/__tests__/cos-e-062-pm067-verklebt.test.ts
+```
+
+Geändert (schon in Git, `git add -A` nimmt sie mit):
+`src/lib/vollstaendigkeit/boden-vorarbeiten.ts`,
+`src/lib/__tests__/pruefmeister-batch-64-68.test.ts`.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+## ✅ CoS-E-062 Zug 1 — PM-066-C gebaut: die Treppennase entsteht, und sie trägt einen Preis (16.09.2026, vormittags)
+
+**Datum:** 2026-09-16 · Head of Product Engineering
+**Zweiter Punkt des Zuges**, direkt nach PM-067-A. Datei:
+`src/lib/vollstaendigkeit/boden-sonder.ts`, `pruefeTreppenBoden()`.
+
+### Der Fund war größer als gemeldet — und das ist gemessen
+
+Die Einschätzung vom 15.09. hat PM-066-C „ein Wort in einer Regex" genannt.
+**Das stimmte nur zur Hälfte.** Der Auslöser hörte auf `kantenprofil`,
+`treppenkante`, `rutschhemmend` — „Treppennase" fehlte, richtig. Aber:
+
+| Titel, den die Datei gesetzt hätte | Treffer im Katalog | Preis |
+|---|---|---|
+| `Treppenkantenprofil` | **keiner** | **0,00 €** |
+| `Treppenkantenprofil Alu rutschhemmend` | **keiner** | **0,00 €** |
+| `Treppennase / Kantenprofil Treppe montieren` | genau diese Zeile | **22,00 €**, Trefferwert 1,00 |
+
+**Hätten wir nur das Wort in den Auslöser geschrieben, wäre die Zeile mit
+0,00 € im Angebot gelandet** — genau die Fehlerform, gegen die Zug 1 arbeitet.
+Die zweite Hälfte hatte niemand gemeldet; sie steckt in denselben vier Zeilen
+und ist deshalb mitgegangen (wie PM-074 Variante D bei Zug 3).
+
+### Die Änderung
+
+1. `treppennase` steht im Auslöser — und in der Doppel-Prüfung, damit bei
+   „Treppennase … also ein Kantenprofil" **keine zweite Zeile** entsteht
+   (als Zusicherung festgehalten).
+2. Der Titel ist der Katalogwortlaut
+   `Treppennase / Kantenprofil Treppe montieren`.
+3. **Die Alu-Angabe geht nicht verloren**, sie wandert hinter den
+   Gedankenstrich: `… montieren — Alu, rutschhemmend`.
+   `normalisierePreistext` schneidet dort ab — **gemessen Trefferwert 1,00,
+   22,00 €**. Dieselbe Bauart, mit der heute schon der Raumbezug mitgeführt
+   wird. Auf dem Kundenpapier steht damit weiter, was montiert wird.
+
+### Selbst gemessen
+
+Ersatzumgebung wie bei PM-067-A (gestagter Baum, `node 22`, `vitest`,
+Pipeline → Engine → Vollständigkeit → `findePreisposition`).
+
+**Testlauf über 84 Dateien, Stand vor diesem Lauf gegen jetzt:**
+
+| | grün | Sperrklinken | rot |
+|---|---|---|---|
+| Stand 01:00 MESZ (vor PM-067-A) | 1283 | 54 | 0 |
+| nach PM-067-A | 1293 | 53 | 0 |
+| **nach PM-066-C** | **1304** | **51** | **0** |
+
+Über beide Punkte: **+21 grün, −3 Sperrklinken, null Rückschritte.** Dieselben
+13 Dateien laden in der Ersatzumgebung vorher wie nachher nicht (fehlende
+Next.js-/Supabase-Module) — das ist die Umgebung, nicht der Code.
+
+**Gegenprobe:** die neue Testdatei gegen die alte Fassung von
+`boden-sonder.ts` — **fünf der neun Zusicherungen fallen**, die vier
+Kontrollen halten in beiden Fassungen.
+
+`npx tsc --noEmit` über `vollstaendigkeit/` und `mengen/` im Strict-Modus:
+**0 Fehler.**
+
+### Zwei Sperrklinken des Prüfmeisters sind umgestellt
+
+Beide Buchhaltung, keine neue Behauptung — **Prüfmeister, lest es gegen:**
+
+* `pruefmeister-batch-64-68.test.ts` — PM-066-C: `it.fails` → `it`.
+  **Dazu eine Zeile mehr, als ihr gefordert habt:** ihr habt auf die Existenz
+  der Position geprüft, ich sichere zusätzlich die **22,00 €** ab. Ohne die
+  zweite Zeile hätte der Test auch eine Position mit 0,00 € durchgelassen.
+* `pruefmeister-batch-79-88.test.ts` — K.4-H: `it.fails` → `it`.
+
+### Was als Nächstes dran ist
+
+**PM-066-A** — 770,00 € je Fall, durch K.4 entsperrt (Setzstufe steckt im
+Stufenpreis, die zweite Zeile muss weg). Danach **PM-066-D**, dann ist Zug 1
+zu und Zug 3 dran.
+
+### Für Sandy
+
+**Noch eine neue Datei für Git:**
+
+```
+git add src/lib/__tests__/cos-e-062-pm066c-treppennase.test.ts
+```
+
+Geändert (schon in Git): `src/lib/vollstaendigkeit/boden-sonder.ts`,
+`src/lib/__tests__/pruefmeister-batch-64-68.test.ts`,
+`src/lib/__tests__/pruefmeister-batch-79-88.test.ts`.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+## ✅ CoS-E-062 Zug 1 — PM-066-A/B gebaut: die vierzehn Stufen finden ihren Preis, die zweite Zeile ist weg (16.09.2026, vormittags)
+
+**Datum:** 2026-09-16 · Head of Product Engineering
+**Dritter Punkt des Zuges**, nach PM-067-A und PM-066-C. Dateien:
+`src/lib/vollstaendigkeit/boden-sonder.ts`, `pruefeTreppenBoden()`.
+**Der teuerste Punkt des Batches — 770,00 € je Fall.**
+
+### Was der Fall war
+
+Vierzehn Stufen, Vinyl geklebt. Die App erkannte die Stückzahl richtig und
+schrieb `Trittstufen belegen` — ein Titel, den der Katalog nicht kennt.
+Gemessen: **KEIN TREFFER, 0,00 €.** Darunter legte sie eine zweite Zeile
+`Setzstufen belegen` an, die auf **dieselbe** Katalogzeile getroffen hätte.
+
+Beide Hälften sind jetzt zu, und die zweite ist die Antwort des Prüfmeisters
+auf K.4: **Die Setzstufe steckt im Stückpreis, die zweite Zeile muss weg.**
+Hätten beide einen Preis bekommen, stünden die vierzehn Stufen zweimal im
+Angebot — 1.540,00 € statt 770,00 €.
+
+### Die Änderung, zwei Handgriffe
+
+1. **Der Stufentitel kommt aus einer je Belag gemessenen Tabelle**
+   (`stufenTitelFuerBelag`), nicht aus zusammengesetztem Text.
+2. **Der `Setzstufen`-Block ist ersatzlos entfernt**, mit der K.4-Begründung
+   als Kommentar an der Stelle, wo er stand.
+
+### Der Fund, der die Bauart bestimmt hat — und der war nicht gemeldet
+
+Der naheliegende Weg wäre `${belagName} auf Treppenstufen verlegen` gewesen.
+**Der wäre still falsch geworden.** Gegen `DEFAULT_PRICES` gemessen:
+
+| Titel, den die naheliegende Bauart gesetzt hätte | Treffer | Preis |
+|---|---|---|
+| `Teppichboden auf Treppenstufen verlegen` | **Laminat**-Zeile, 0,67 | 48,00 € ❌ |
+| `Klick-Vinyl auf Treppenstufen kleben` | **keiner** | 0,00 € ❌ |
+| `Parkett auf Treppenstufen verlegen` | **Laminat**-Zeile, 0,67 | 48,00 € ❌ |
+| `Kork auf Treppenstufen verlegen` | **Laminat**-Zeile, 0,67 | 48,00 € ❌ |
+
+Der Katalog benutzt je Belag ein **anderes Verb** (Vinyl „kleben", Laminat
+und Linoleum und Teppich „verlegen"), und `erkenneBelagName` liefert
+`Teppichboden`, `Klick-Vinyl`, `Fertigparkett` — Namen, die den Matcher
+danebenschicken. Teppich, Parkett und Kork hätten den **Laminat-Preis**
+bekommen: falscher Preis unter richtig klingendem Titel, dieselbe leise
+Fehlerform wie bei der Ausgleichsmasse. Deshalb eine Tabelle mit
+Katalogwortlaut, kein zusammengesetzter Satz.
+
+### Selbst gemessen, nicht vermutet
+
+Ersatzumgebung wie bei PM-067-A und PM-066-C (gestagter Baum, `node 22`,
+`vitest`, Pipeline → Engine → Vollständigkeit → `findePreisposition`), in
+diesem Lauf über **100 Testdateien** statt 84.
+
+Was jetzt entsteht, Position für Position aus dem Lauf:
+
+```
+Vinyl      Vinyl auf Treppenstufen kleben                 14 Stück   55,00 €  = 770,00 €
+Laminat    Laminat auf Treppenstufen verlegen             14 Stück   48,00 €
+Linoleum   Linoleum auf Treppenstufen verlegen            14 Stück   58,00 €
+Teppich    Teppich auf Treppenstufen verlegen             14 Stück   48,00 €
+Parkett    Treppenstufe mit Belag belegen (schwimmend …)  14 Stück   45,00 €
+           ── keine Setzstufen-Zeile mehr, in keinem der fünf Fälle ──
+```
+
+**Testlauf, Stand vor diesem Lauf gegen jetzt (86 ladende Dateien):**
+
+| | grün | Sperrklinken | rot |
+|---|---|---|---|
+| nach PM-066-C | 1521 | 61 | 0 |
+| **nach PM-066-A/B** | **1536** | **59** | **0** |
+
+**+15 grün, −2 Sperrklinken, null Rückschritte** — der Vorher-Nachher-Vergleich
+ist Test für Test gemacht, nicht nur über die Summe: **keine einzige vorher
+grüne Zusicherung ist gefallen.** Die eine rote Zeile in beiden Läufen
+(`mindestauftragswert`, sucht `src/app`) ist die Ersatzumgebung, nicht der
+Code; 15 Dateien laden dort wie zuvor nicht (fehlende Next.js-/Supabase-Module).
+
+**Gegenprobe:** die neue Testdatei gegen die alte Fassung von
+`boden-sonder.ts` — **acht der elf Zusicherungen fallen**, die drei
+Katalog-Kontrollen halten in beiden Fassungen.
+
+`tsc --noEmit` im Strict-Modus über `vollstaendigkeit/`, `mengen/` und die
+drei Testdateien: **0 Fehler.**
+
+### Drei Sperrklinken des Prüfmeisters sind umgestellt — bitte gegenlesen
+
+Zwei sind reine Buchhaltung, **eine ist gedreht**:
+
+* `pruefmeister-batch-64-68.test.ts` — **PM-066-A**: `it.fails` → `it`.
+  Dazu eine Zeile mehr, als gefordert war: neben den 55,00 € sichere ich die
+  **Stückzahl 14** ab, sonst ließe die Zusicherung auch eine Position mit
+  einer einzigen Stufe durch. Das Suchmuster ist auf den neuen Titel
+  nachgezogen, die Menge-Zusicherung darüber ebenfalls.
+* `pruefmeister-batch-79-88.test.ts` — **K.4-F** und **K.4-G**: `it.fails` → `it`.
+* `pruefmeister-batch-64-68.test.ts` — **PM-066-B ist GEDREHT, nicht
+  gestrichen.** Die Sperrklinke stand auf „die zweite Zeile braucht einen
+  Preis". Nach K.4 ist das Soll das Gegenteil: die zweite Zeile ist weg. Die
+  Zusicherung prüft das jetzt. **Das ist die eine Stelle, an der ich eure
+  Formulierung inhaltlich umgedreht habe — bitte darüberschauen.**
+
+### Was ausdrücklich NICHT mitgebaut wurde
+
+* **PM-066-D** — die Treppe bekommt weiterhin zusätzlich ihren Grundriss als
+  Fläche (3,15 m² × 16,00 € = 50,40 €). Eigener Eingriff, eigene Datei, direkt
+  als Nächstes. Als Sperrklinke in der neuen Testdatei festgehalten, damit
+  niemand glaubt, dieser Lauf hätte es nebenbei erledigt.
+* **Die verkleidete Treppe.** `Trittstufen Vinyl-Boden verkleiden` trifft im
+  Katalog nichts — der Bodenkatalog kennt für die Treppe nur „kleben" und
+  „verlegen". Der Zweig ist **unverändert** geblieben; ob Verkleiden dieselbe
+  Leistung ist, ist eine Katalogfrage. **Als Frage in
+  `pruefmeister-restliste.md` eingetragen**, als Sperrklinke festgehalten.
+* Keine Änderung am Preis-Matcher, keine an der Schwelle, keine am Katalog.
+
+### Eine Zuordnung, die ich getroffen habe und die euch gehört
+
+Parkett und Kork haben im Bodenkatalog **keine eigene Stufenzeile**. Sie
+bekommen die belagsoffene Zeile `Treppenstufe mit Belag belegen (schwimmend /
+geklebt)`, 45,00 € — eine Zeile, die es gibt und die der Prüfmeister in
+seiner K.4-Aufstellung selbst als fünfte Bodenzeile führt. Die Alternative
+wäre 0,00 € gewesen oder der Laminat-Preis; beides ist schlechter. **Steht
+als Frage in der Prüfmeister-Restliste**, blockiert aber nichts — die vier
+übrigen Beläge sind Katalogwortlaut, da ist nichts zu wählen.
+
+### Was als Nächstes dran ist
+
+**PM-066-D**, dann ist Zug 1 zu und **Zug 3** dran (PM-072, PM-074, PM-066-D,
+PM-079).
+
+### Für Sandy
+
+**Eine neue Datei für Git:**
+
+```
+git add src/lib/__tests__/cos-e-062-pm066a-stufentitel.test.ts
+```
+
+Geändert (schon in Git): `src/lib/vollstaendigkeit/boden-sonder.ts`,
+`src/lib/__tests__/pruefmeister-batch-64-68.test.ts`,
+`src/lib/__tests__/pruefmeister-batch-79-88.test.ts`.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+## ✅ CoS-E-062 Zug 1 ist zu — PM-066-D gebaut, und vier veraltete Zusicherungen nachgezogen (16.09.2026, mittags)
+
+**Datum:** 2026-09-16 · Head of Product Engineering
+Dateien: `src/lib/mengen/gewerke/boden.ts`, `src/lib/vollstaendigkeit/boden-sonder.ts`.
+**Zug 1 (CoS-E-062) ist damit abgeschlossen. Als Nächstes Zug 3.**
+
+### 1. PM-066-D — eine Treppe hat keinen Boden zum Verlegen
+
+**Der Fall.** Vierzehn Stufen, Vinyl geklebt. Die App legte die Stufen richtig
+an (14 × 55,00 € = 770,00 €) — und daneben den **Grundriss der Treppe als
+Fläche**:
+
+```
+Vinyl-Boden verlegen inkl. 5% Verschnitt — Treppe   3,15 m²   16,00 €  = 50,40 €
+```
+
+Die 3,15 m² sind Länge × Breite des Treppenlaufs plus Verschnitt. Gesagt hat
+sie niemand. Es ist **derselbe Doppelbetrag wie bei der Setzstufe (K.4), nur
+in der anderen Einheit** — und die Begründung hat der Prüfmeister in K.4-E
+selbst geschrieben: *„Der Stückpreis bezahlt die Stufe als Bauteil, nicht
+ihren Grundriss."* Wer das Bauteil bezahlt, bezahlt den Grundriss nicht ein
+zweites Mal.
+
+**Die Änderung.** Die Fläche entsteht nicht mehr, wenn die Stufe den Belag
+trägt. Der Schnitt verlangt **beide** Hälften:
+
+1. der Raum ist die Treppe (Name oder seine eigenen Sätze), **und**
+2. im Text steht eine Stufenzahl.
+
+Erst dann entsteht in `boden-sonder.ts` die Stufenposition, die die Arbeit
+trägt. Fehlt die Stufenzahl, entsteht dort keine — dann wäre die Fläche das
+Einzige, was die Arbeit trägt, und sie bleibt. **Es geht nichts still
+verloren:** Ohne Stufenzahl schreibt `pruefeTreppenBoden` ohnehin einen
+Fehlt-Eintrag („Anzahl prüfen").
+
+**Der Fund dabei, der die Bauart bestimmt hat.** Der Raumname allein taugt
+nicht als Signal: Der Prüfmeister nennt in K.4-F/G/H denselben Treppenlauf
+**„Treppenhaus"** (3,50 × 0,90 m), die PM-066-Fälle nennen ihn „Treppe". Ein
+Schnitt am Namen hätte die K.4-Fälle stehen gelassen und ein Treppenhaus mit
+echter Bodenfläche fälschlich leergeräumt. Deshalb hängt er an der
+**Stufenzahl**, nicht am Namen.
+
+**Wortmuster und Stufenzahl stehen jetzt an EINER Stelle**
+(`TREPPEN_WORT`, `stufenAnzahlAusText`, beide aus `boden-sonder.ts`, von der
+Engine mitbenutzt). Zwei Kopien wären der Weg zurück zum Doppelbetrag: Die
+eine Stelle legt die Stufen an, die andere rechnet zusätzlich die Fläche.
+`pruefeTreppenBoden` benutzt dieselben zwei Helfer — es ist derselbe Code,
+nicht dieselbe Regel zweimal geschrieben.
+
+### 2. Vier Zusicherungen standen auf dem ALTEN Soll — sie waren rot
+
+**Gemessen, nicht vermutet, und das ist der wichtigere Teil dieses Laufs.**
+Der Lauf von heute Vormittag hat gegen **86 ladende Testdateien** gemessen.
+In diesem Lauf sind es **125** — und darin standen **vier Zusicherungen aus
+älteren Dateien auf dem Soll von VOR PM-066-A/B und PM-067-A**. Sie waren
+schon vor meiner heutigen Änderung rot:
+
+| Datei | Zusicherung | Warum rot |
+|---|---|---|
+| `vollstaendigkeit/__tests__/boden.test.ts` | „Treppe → Trittstufen + Setzstufen separat" | Titel ist seit PM-066-A Katalogwortlaut; die Setzstufen-Zeile ist nach K.4 weg |
+| `vollstaendigkeit/__tests__/boden.test.ts` | „Treppe mit Anzahl → Menge korrekt" | suchte nach `trittstufen` |
+| `vollstaendigkeit/__tests__/boden-erweitert.test.ts` | Test 7, `setzstufen` **und** `treppenkantenprofil` | K.4 bzw. PM-066-C (Katalogwortlaut `Treppennase / Kantenprofil`) |
+| `vollstaendigkeit/__tests__/boden-prod.test.ts` | `teppichboden entfernen und entsorgen` | PM-067-A: der verklebte Teppich heißt jetzt `Teppichboden verklebt entfernen` |
+
+Alle vier sind auf das **neue, vom Prüfmeister gegengezeichnete Soll**
+nachgezogen — keine Entscheidung, nur Buchhaltung: K.4 (Setzstufe im
+Stückpreis), PM-066-A (Stufentitel), PM-066-C (Treppennase), PM-067-A
+(verklebt). Der Grund steht in jeder Datei an der Stelle.
+
+**Für den Chief of Staff, zur Kenntnis:** Die Aussage „null Rückschritte" der
+beiden Vormittagsläufe war für die damals geladenen Dateien richtig, für den
+ganzen Baum aber zu eng gemessen. **Hätte Sandy heute gepusht, wäre die CI an
+diesen vier Zeilen rot geworden — zusätzlich zur kaputten `ci.yml`.** Ich habe
+die Ersatzumgebung deshalb auf den vollen Testbaum umgestellt und messe ab
+jetzt so.
+
+### 3. Selbst gemessen
+
+Ersatzumgebung: gestagter Baum, `node 22`, `vitest`, Pipeline → Engine →
+Vollständigkeit → `findePreisposition`. **153 Testdateien, 125 laden** (28
+laden wie zuvor nicht: sie lesen `src/app` / `src/data`, die es dort nicht
+gibt).
+
+| | grün | rot |
+|---|---|---|
+| Stand vor diesem Lauf | 2099 | 7 |
+| **nach diesem Lauf** | **2109** | **3** |
+
+Die drei verbliebenen roten sind **die Ersatzumgebung, nicht der Code** — alle
+drei lesen `src/app` bzw. `src/data` von der Platte
+(`entscheidungen-31-08` ×2, `mindestauftragswert`). Die vier roten von oben
+sind zu. **Keine einzige vorher grüne Zusicherung ist gefallen**, Test für
+Test verglichen, nicht nur über die Summe.
+
+Was jetzt für den PM-066-Fall entsteht, Position für Position aus dem Lauf:
+
+```
+Vinyl auf Treppenstufen kleben                  14 Stück   55,00 €  = 770,00 €
+Treppennase / Kantenprofil Treppe montieren     14 Stück   22,00 €
+── keine Flächenzeile mehr, in keiner Variante ──
+```
+
+**Gegenprobe:** die neue Testdatei gegen die alte Fassung von
+`mengen/gewerke/boden.ts` — **drei der sechs Zusicherungen fallen**. Die drei,
+die in beiden Fassungen halten, sind genau die, die unverändertes Verhalten
+festhalten (die zwei Gegenproben und die geteilte Quelle). Das ist der
+Beleg, dass der Schnitt eng ist und nicht breiter wirkt als beschrieben.
+
+**Die zwei Gegenproben, ausdrücklich als Test festgehalten:**
+
+* *Treppenhaus ohne Stufenzahl* („Treppenhaus, zwölf Quadratmeter, Laminat
+  verlegen") — **behält seine Fläche.**
+* *Das Wohnzimmer neben der Treppe* — behält seine 14,70 m², während die
+  Treppe im selben Auftrag keine Fläche bekommt. Die Regel fragt den
+  einzelnen Raum, nicht den Auftrag.
+
+`tsc --noEmit` im Strict-Modus über `vollstaendigkeit/` und `mengen/`:
+**0 Fehler.**
+
+### 4. Was ausdrücklich NICHT mitgebaut wurde
+
+* **`Altbelag entfernen` auf der Treppe** bleibt unverändert flächenbasiert.
+  Das ist dieselbe Frage in Grün, aber eine eigene: Ob der alte Belag von der
+  Treppe nach m² oder nach Stufe abgerechnet wird, steht im Katalog nicht so
+  eindeutig wie K.4-E es für das Belegen sagt. **Nicht angefasst, keine
+  Zusicherung darüber behauptet.**
+* **Die verkleidete Treppe** — unverändert, Sperrklinke steht (Katalogfrage,
+  liegt beim Prüfmeister).
+
+### 5. 🔴 Neuer Fund beim Nachmessen — zwei Flächen für denselben Boden
+
+Aufgefallen beim Nachziehen von `boden-prod.test.ts`, **gemessen, nicht
+vermutet.** Fall: „32 m², Eichen-Fertigparkett **im Fischgrätmuster**
+vollflächig verklebt", Fischgrät steht nur im **Text**, das Feld
+`verlegerichtung` ist leer (so, wie GPT es in diesem Fall liefert).
+
+```
+Fertigparkett verlegen vollflächig verklebt   33,60 m²   (= 32 × 1,05)
+Aufpreis Fischgrät-Verlegemuster              36,80 m²   (= 32 × 1,15)
+```
+
+Zwei Dinge auf einmal:
+
+1. **Auf dem Kundenpapier stehen zwei verschiedene Quadratmeterzahlen für
+   denselben Boden.** Der Aufpreis steht auf einer größeren Fläche als die
+   Arbeit, auf die er sich bezahlt.
+2. **Der Fischgrät-Verschnitt fehlt auf der Arbeitszeile.** Die Engine liest
+   das Muster aus dem Feld `verlegerichtung` (→ 15 %), die Vollständigkeit
+   liest es aus dem Text. Steht es nur im Text, bleibt die Arbeitszeile bei
+   den 5 % Standardverschnitt — **3,20 m² Material, die Fischgrät wirklich
+   kostet, kommen nicht ins Angebot.**
+
+Gegenprobe gemessen: Ist `verlegerichtung` gesetzt, stehen **beide** Zeilen
+auf 36,80 m². Der Fehler tritt also genau dann auf, wenn das Muster nur
+gesprochen und nicht als Feld extrahiert wurde.
+
+**Das ist dieselbe Fehlerform wie CoS-E-052: ein Signal, zwei Quellen.**
+Ich habe es **nicht gebaut** — es ist kein Punkt aus Zug 1, und welche der
+beiden Zahlen die richtige ist, ist eine Preisfrage. **Chief of Staff: bitte
+einordnen** (Zug 2 oder eigenes Ticket). Der bestehende Test blesst den
+Zustand heute, ohne ihn zu benennen.
+
+### Was als Nächstes dran ist
+
+**Zug 1 ist zu.** Nach der Reihenfolge des Chief of Staff folgt **Zug 3** —
+die erfundene oder falsch zugeordnete Zeile muss weg: **PM-072, PM-074,
+PM-079.** (PM-066-D war der vierte Posten von Zug 3 und ist mit diesem Lauf
+erledigt.)
+
+### Für Sandy
+
+**Eine neue Datei für Git** (die zweite Zeile schadet nicht, falls die Datei
+schon drin ist):
+
+```
+git add src/lib/__tests__/cos-e-062-pm066d-treppenflaeche.test.ts
+git add src/lib/__tests__/cos-e-062-pm066a-stufentitel.test.ts
+```
+
+Geändert (schon in Git): `src/lib/mengen/gewerke/boden.ts`,
+`src/lib/vollstaendigkeit/boden-sonder.ts`,
+`src/lib/__tests__/pruefmeister-batch-64-68.test.ts`,
+`src/lib/vollstaendigkeit/__tests__/boden.test.ts`,
+`src/lib/vollstaendigkeit/__tests__/boden-erweitert.test.ts`,
+`src/lib/vollstaendigkeit/__tests__/boden-prod.test.ts`.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+---
+
+## 🔴 CoS-E-069 — Batch PM-089…PM-097 vom Prüfmeister (16.09.2026, 09:50 MESZ · Chief of Staff)
+
+**Warum dieses Ticket entsteht:** Der Prüfmeister hat heute früh neun Fälle
+nachgelegt (`src/lib/__tests__/pruefmeister-batch-89-97.test.ts`, Fallbasis
+**97/100**, 17 grün / 16 Sperrklinken). Ich habe im ganzen
+Engineering-Todo gesucht: **PM-089 bis PM-097 kommen in keinem Ticket vor** —
+null Treffer, genau wie bei CoS-E-068 vor acht Stunden. Damit lägen sie
+wieder nur in der Prüfmeister-Datei. Das ist dieselbe Lücke, und sie ist
+zweimal hintereinander aufgetreten; ich nehme das als meinen Fehler und
+sortiere ab jetzt jeden Batch am selben Tag ein.
+
+**Heimat der Fälle bleibt `docs/pruefmeister-restliste.md`**, Abschnitt
+„Batch PM-089 bis PM-097". Hier steht nur die Einsortierung, kein zweiter
+Status.
+
+### Einsortierung in die drei Familien — nach Mechanismus, wie am 01:10 MESZ vereinbart
+
+| Zug | Fälle aus diesem Batch |
+|---|---|
+| **Zug 3** (erfundene/falsche Zeile muss weg) | **PM-094** — das Angebot besteht aus **einer** Zeile, und die hat niemand gesagt („Boden schützen, 20 m²", `automatisch_ergaenzt` **und** bepreist mit 24,00 €). Verletzt „Nichts erfinden" **und** K.4/K.5+PM-077 gleichzeitig |
+| **Zug 2** (gesagt, es entsteht nichts → Fehlt-Eintrag) | **PM-089, PM-090-A/B, PM-091, PM-093, PM-096, PM-097** |
+| **eigener kleiner Zug, vor oder nach Zug 2** | **PM-092, PM-095** — zwei Zahlen aufs Kundenpapier, die so nie gesagt wurden |
+
+### Drei Dinge, die ihr vor dem Bauen wissen müsst — alle vom Prüfmeister gemessen
+
+1. **PM-090 ist eine Falle.** `gewerkFuerPosition('Staubschutzwand stellen',
+   'maler')` liefert `maler`, die Katalogzeile liegt aber im **Abbruch** und
+   ist vom Maler aus nicht erreichbar. Wer hier eine Position baut statt eines
+   Fehlt-Eintrags, bekommt **0,00 € aufs Kundenpapier** — das PM-066-Muster.
+   **Erst Fehlt-Eintrag, dann Katalog.** PM-090-B dagegen (`Endreinigung`,
+   45,00 €/Stunde) liegt im **aktiven** Maler-Katalog.
+2. **PM-089 ist als einziger eine Katalog-Lücke, kein Code-Fehler.** Der
+   Malerkatalog kennt die Wandnische nur beim Tapezieren. Solange die Zeile
+   fehlt: Fehlt-Eintrag, **keine** erfundene bepreiste Position (K.5).
+   Dieselbe Sorte wie PM-076.
+3. **PM-093 ist der Fall, der mich am meisten stört** — „ungefähr sechs
+   Stunden für den Gesellen" liefert `positionen = []` **und**
+   `fehlende = []`. Die App sagt nicht einmal, dass sie nichts verstanden hat.
+   Der Prüfmeister hält fest, dass Handwerker bei Kleinaufträgen fast immer so
+   reden, und dass **jedes** Gewerk Stundenzeilen im Katalog führt, zu denen
+   die Engine keinen Weg hat (`Regiearbeit Geselle`, 65,00 €/Stunde =
+   390,00 €). Das ist kein Einzelfall, sondern ein fehlender Weg.
+
+### Was ich NICHT entscheide
+
+**PM-096 und PM-097** (Nachtrag zum Vorangebot, zweiter Bauabschnitt) passieren
+oberhalb der Pipeline. Geschuldet ist hier nur, dass die Pipeline den Satz
+**bemerkt und nach oben weiterreicht** — das Zusammenführen bzw. Auftrennen
+selbst ist Produkt, nicht Engine, und gehört in den Live-Lauf. Baut nur den
+ersten Teil.
+
+### Reihenfolge — unverändert
+
+**CoS-E-062 (PM-066-D, dann ist Zug 1 zu) → Zug 3 → Zug 2 → CoS-E-061.**
+PM-094 hängt sich hinten an Zug 3 an, PM-092/PM-095 nehmt ihr als kleinen
+eigenen Zug, wann es euch passt — beide sind Geld auf dem Kundenpapier
+(84,00 € zu viel, 142,50 € zu wenig), also nicht ganz nach hinten.
+
+**Nicht bauen, bis PD-016 Punkt 1 beantwortet ist:** PM-085 (runder Raum),
+unverändert.
+
+### Zwei Antworten des Prüfmeisters, die ihr schon gebrauchen könnt
+
+* **Frage 1 aus PM-066-A/B beantwortet: Kork ja, Parkett nein.** Kork bleibt
+  auf der belagsoffenen Zeile (45,00 €). Für Parkett ist sie falsch — der
+  teuerste Belag läge als einziger unter dem billigsten. Dort **Fehlt-Eintrag
+  statt 45,00 €**, bis der Bodenkatalog eine eigene Zeile führt. Die Zeile
+  anzulegen ist eine Katalogentscheidung, keine von euch und keine von ihm.
+* **Frage 2: verkleiden ist nicht belegen.** Der Bodenkatalog kennt das Wort
+  nicht (null Treffer, gemessen); die Leistung liegt beim **Schreiner**
+  (gesperrt, 220,00 €/Stück). **Ihr habt den Zweig richtig unverändert
+  gelassen.**
+* **Eure drei umgestellten Sperrklinken sind gegengelesen — alle drei bleiben**,
+  einschließlich der gedrehten PM-066-B. Die zwei Zusicherungen, die ihr über
+  das Geforderte hinaus ergänzt habt (Stückzahl 14, die 22,00 € der
+  Treppennase), hat er ausdrücklich als besser als seine eigenen übernommen.
+
+### Für Sandy — nichts Neues aus diesem Ticket
+
+Die sechs noch nicht committeten Testdateien (darunter eure drei aus heute
+früh und `pruefmeister-batch-89-97.test.ts`) stehen gesammelt in
+`entscheidungen-fuer-sandy.md`. **Und eine Korrektur, die euch betrifft:** Die
+CI ist rot, aber **nicht** wegen `ci.yml` — das war meine Fehldiagnose von
+01:00 MESZ. Der wahrscheinliche Grund ist das Lint-Warnungsbudget (110 im
+Repository, exakt am Anschlag; auf der Platte steht schon 120, uncommittet).
+**Euer Code ist nach allem, was ich messen konnte, nicht der Grund.**
+
+*Chief of Staff · 2026-09-16*
+
+---
+
+## 🟠 CoS-E-070 — eingeordnet: zwei Quadratmeterzahlen für denselben Boden (Fischgrät). Der Widerspruch wird gebaut, die Prozentfrage nicht.
+
+**Datum:** 2026-09-16, 10:05 MESZ · Chief of Staff
+**Quelle:** euer Fund am Ende von „Zug 1 ist zu" — ihr habt ausdrücklich um
+Einordnung gebeten. Hier ist sie.
+
+**Ihr habt zwei Dinge in einem Fund gemeldet. Sie gehören getrennt.**
+
+**Teil A — der Widerspruch. Das ist ein Fehler, und er ist eurer.**
+Auf dem Kundenpapier stehen `33,60 m²` für die Arbeit und `36,80 m²` für den
+Aufpreis auf dieselbe Arbeit. Welcher Prozentsatz richtig ist, spielt dafür
+keine Rolle: **Ein Aufpreis, der auf einer größeren Fläche steht als die
+Leistung, auf die er sich bezieht, ist in jeder Lesart falsch**, und er ist
+genau die Sorte Zahl, bei der ein Kunde nachrechnet. Ursache ist keine
+Preisfrage, sondern die alte: **ein Signal, zwei Quellen** — die Engine liest
+das Muster aus `verlegerichtung`, die Vollständigkeit aus dem Text. Das ist
+CoS-E-052 in Grün, und ihr habt es selbst so benannt.
+
+**Was ihr baut:** eine Quelle. Das Muster wird an **einer** Stelle bestimmt und
+von beiden Seiten von dort gelesen. Danach stehen beide Zeilen zwangsläufig auf
+derselben Zahl — welche es ist, ergibt sich aus Teil B und ist dann nur noch
+ein Wert, kein zweiter Weg.
+
+**Teil B — 5 % oder 15 % auf der Arbeitszeile. Das entscheidet ihr nicht, und
+ich auch nicht.** Ob der Fischgrät-Verschnitt in die Arbeitszeile gehört, hängt
+an derselben Mechanik wie alle anderen Verschnittfragen: **Der Verschnitt folgt
+dem, der das Material bezahlt** (Sandys Entscheidung vom 14.09., VOB-001/002/014
+mit **CoS-E-054** zusammengelegt). Die Frage ist damit **keine neue** — sie
+wird mit CoS-E-054 beantwortet. Hängt sie dort an, nicht hier.
+
+**Einordnung:** eigenes Ticket, **nicht** Zug 2. Es fehlt keine Position — es
+stehen zwei Zahlen da, wo eine stehen darf. Damit gehört Teil A in denselben
+kleinen Zug wie **PM-092 und PM-095** aus CoS-E-069: *eine Zahl auf dem
+Kundenpapier, die so nicht stimmt.* Drei Fälle, eine Familie, ein Lauf.
+
+**Reihenfolge, damit es unmissverständlich ist:**
+**Zug 3 (PM-072, PM-074, PM-079) → Zug 2 → der kleine Zahlen-Zug
+(PM-092, PM-095, CoS-E-070 Teil A) → CoS-E-061.**
+Zieht den Zahlen-Zug vor, wenn Zug 2 länger wird als ein Lauf — beides ist
+Geld auf dem Papier, und der Zahlen-Zug ist der kleinere.
+
+**Was ihr richtig gemacht habt:** Ihr habt es nicht nebenbei gebaut. Genau so.
+Und: `Altbelag entfernen` auf der Treppe unangetastet zu lassen und die
+Sperrklinke dafür stehenzulassen, ist die richtige Entscheidung — die
+Katalogfrage liegt beim Prüfmeister, nicht bei euch.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
+---
+
+## 🔴 CoS-E-069 Nachtrag — PM-098 kommt dazu, und er geht an die SPITZE von Zug 3
+
+**Datum:** 2026-09-16, 10:10 MESZ · Chief of Staff
+**Quelle:** `docs/pruefmeister-restliste.md`, Abschnitt „Neu: PM-098" (dort die
+volle Messung, hier nur Einordnung und Vorrang).
+
+**Der Fall in zwei Zeilen:** Dasselbe Diktat, einmal mit und einmal ohne den
+Satz „Ein Fenster, eine Tür." Mit dem Satz entstehen **sieben zusätzliche
+Positionen für 280,00 €** (Türen und Fenster abschleifen, grundieren,
+lackieren, Zarge) — **915,90 € statt 635,90 €.** Niemand hat gesagt, dass
+Fenster oder Türen lackiert werden sollen; gesagt wurde „die 2 Heizkörper bitte
+mit lackieren".
+
+**Warum das vor alles andere in Zug 3 gehört:**
+
+1. **Es ist kein Randfall, sondern der Normalfall.** Fenster und Türen zu
+   nennen ist Pflicht für die Flächenberechnung — das Onboarding fordert die
+   Angabe sogar ein. Wer irgendwo im selben Diktat „lackieren" sagt, löst den
+   Fehler aus. Das sind fast alle Maler-Diktate mit Lackierarbeiten.
+2. **Es trifft das Startgewerk.** Maler ist eines der zwei freigeschalteten
+   Gewerke. PM-072, PM-074 und PM-079 sind dagegen Einzellagen.
+3. **Der Schaden geht in beide Richtungen** — entweder der Kunde streicht die
+   Posten und der Betrieb steht als jemand da, der etwas unterschiebt, oder er
+   streicht sie nicht und der Betrieb schuldet 280,00 € Arbeit, die er nicht
+   eingeplant hat.
+
+**Das Soll steht schon fest und ist keine Frage an euch:** Fenster und Türen
+werden nur lackiert, wenn sie im Satz **selbst** Gegenstand des Lackierens
+sind. Die bloße Nennung als Öffnung ist eine **Maßangabe, keine Beauftragung** —
+dieselbe Unterscheidung, die ihr bei **PM-033** (Sockelleisten) und **PM-034**
+(Ausschlusssatz) schon gebaut habt. Schaut dort zuerst hin; die Mechanik gibt
+es im Haus.
+
+**Neue Reihenfolge in Zug 3:** **PM-098 → PM-072 → PM-074 → PM-079.**
+(PM-066-D ist erledigt.) Der Rest von CoS-E-069 und CoS-E-070 bleibt
+unverändert.
+
+**Vorrang „vor Gate 1" bestätige ich.** Das ist Geld auf dem Kundenpapier in
+der häufigsten Diktatform des Startgewerks — dieselbe Kategorie wie PM-045/046,
+die Sandy am 15.09. vor § 35a gezogen hat.
+
+**Was der Prüfmeister dazu selbst anmerkt und was ich unterschreibe:** Die fünf
+Landingpage-Beispiele umgehen den Fehler, indem in Beispiel 4 Fenster und Tür
+nicht im Satz stehen. Das ist eine Krücke für die Seite. **Die Beispiele gehen
+nicht live, bevor PM-098 gebaut ist** — sonst zeigt die Landingpage ein
+Verhalten, das das Produkt nicht hat.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

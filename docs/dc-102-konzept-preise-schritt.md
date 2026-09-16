@@ -1,6 +1,6 @@
 # DC-102 — Entwurf: der neue Preise-Schritt im Onboarding
 
-*Product Designer · 14.09.2026 · **Entwurf, nicht zum Einbau.**
+*Product Designer · 14.09.2026, Fassung 2 vom 16.09.2026 (DC-108) · **Entwurf, nicht zum Einbau.**
 Grundlage: `docs/preisliste-konzept.md` (Fassung 2) und die Datenseite von Head
 of Product Engineering (`src/lib/taetigkeiten.ts`, `halbsatz()`,
 `kundensatz()`). Sandys Entscheidung: die vollständige Lösung, keine
@@ -21,23 +21,23 @@ Konzepts, 🔴), der regionale Preisfaktor (CoS-E-043) und das Vokabular
 
 ---
 
-## Der rote Faden: vier Bildschirme, eine Frage pro Bildschirm
+## Der rote Faden: drei Bildschirme, eine Frage pro Bildschirm
+
+*(Fassung 2 dieses Dokuments, 16.09.2026. Fassung 1 hatte vier Bildschirme und
+Material auf einem eigenen. Head of Product Engineering hat am 15.09. anders
+entschieden — mein Einwand war richtig, seine Lösung ist besser als meine.
+Die alte Fassung steht nicht mehr hier; nachlesbar ist der Verlauf in
+`docs/design-check.md`, Abschnitt „DC-102 — Entscheidung".)*
 
 Heute ist der Preise-Schritt **ein** Bildschirm mit fünf Feldern, die nichts
-miteinander zu tun haben. Neu sind es vier, und jeder beantwortet genau eine
+miteinander zu tun haben. Neu sind es drei, und jeder beantwortet genau eine
 Frage:
 
 | | Bildschirm | Die eine Frage |
 |---|---|---|
-| 1 | Tätigkeiten | Was machst du? |
-| 2 | Material | Sind in deinen Preisen die Materialkosten drin? |
-| 3 | Zahlen | Was kostet das bei dir? |
-| 4 | Nick-Seite | Stimmt der Rest? |
-
-**Abweichung von der Vorlage, bewusst:** Das Konzept legt Tätigkeit und
-Material-Standard auf **einen** Bildschirm (Haken plus antippbarer Halbsatz).
-Ich trenne sie. Begründung unten — das ist die wichtigste Entwurfsentscheidung
-in diesem Dokument und die einzige, bei der ich widerspreche.
+| 1 | Tätigkeiten + Material | Was machst du — und steckt das Material im Preis? |
+| 2 | Zahlen | Was kostet das bei dir? |
+| 3 | Nick-Seite | Stimmt der Rest? |
 
 ---
 
@@ -46,72 +46,115 @@ in diesem Dokument und die einzige, bei der ich widerspreche.
 ```
 Was machst du?
 Wähle alles, was du anbietest.
+Du kannst das später an jeder einzelnen Position ändern.
 
 ☑  Innen streichen
-☐  Tapezieren
+       MATERIAL     [ Farbe inkl. ]  [ Farbe extra ]
+
+☑  Tapezieren
+       Kundentapeten (Muster, Foto, Textil) rechnet die App
+       immer getrennt ab.
+       MATERIAL
+       [ Malerware inkl. ]  [ Malerware extra ]
+
 ☐  Lackieren
+
 ☑  Fassade
+       MATERIAL     [ Farbe inkl. ]  [ Farbe extra ]
+
 ☑  Boden
+       MATERIAL     [ Belag inkl. ]  [ Belag extra ]
 
                                     [ Weiter → ]
 ```
 
-Fünf Haken, sonst nichts. Keine Halbsätze, keine Umschalter, keine Vorschau.
+**Eine Frage pro Zeile statt einer Frage pro Bildschirm.** Mein ursprünglicher
+Einwand galt der Hakenzeile mit zwei Bedeutungen — Haken links, antippbarer
+Zustand rechts. Zwei Bedeutungen in einer Zeile sind zwei Ziele für einen
+Daumen. Der Einwand ist damit erledigt, nicht umgangen: Die Materialzeile
+steht **unter** dem Haken, über die volle Breite, mit eigener Beschriftung.
+Ein zweiter Bildschirm, der dieselbe Liste noch einmal zeigt, hätte dagegen
+genau den Eindruck erzeugt, gegen den Manfreds Satz zielt.
 
-**Warum ohne den Material-Halbsatz.** Manfreds Satz *„Das sind keine
-zusätzlichen Fragen, das ist dieselbe Frage mit mehr Antworten"* stimmt für den
-**Haken**. Für den Material-Umschalter daneben stimmt er nicht: Das ist eine
-zweite Frage, und zwar eine, die der Handwerker beim ersten Hinsehen für eine
-Beschriftung hält. Fünf Zeilen mit je zwei Bedeutungen — ein Haken links, ein
-antippbarer Zustand rechts — heißt, dass ein Tipp auf die falsche Hälfte etwas
-anderes tut als erwartet. Auf dem Handy, mit dem Daumen, in der ersten Minute
-mit der App.
-
-Der Material-Standard ist außerdem die Zahl-bestimmende Angabe des ganzen
-Schritts: Ob „Wand streichen 11 €" mit oder ohne Farbe gemeint ist, verschiebt
-jede abgeleitete Zeile. So etwas gehört nicht als Beiwerk an eine Checkbox.
-Es bekommt seinen eigenen Bildschirm — den nächsten.
-
-**Was bleibt wie im Konzept:** Fassade ist ein eigener Haken und ab hier eine
-eigene Preiswelt, nie aus Innen abgeleitet.
-
----
-
-## Bildschirm 2 — Material
-
-Erscheint nur für die gewählten Tätigkeiten. Bei drei Haken drei Zeilen.
-
-```
-Sind in deinen Preisen die Materialkosten drin?
-Wenn du unsicher bist: So steht es später auf dem Angebot.
-Du kannst es an jeder einzelnen Position ändern.
-
-Innen streichen        [ inkl. Farbe ] [ ohne Farbe ]
-Fassade                [ inkl. Farbe ] [ ohne Farbe ]
-Boden                  [ inkl. Belag ] [ ohne Belag ]
-
-                                    [ Weiter → ]
-```
-
+- **Ungesetzte Haken zeigen nichts.** Der Bildschirm startet als fünf saubere
+  Checkboxen und wächst nur um das, was er wirklich braucht.
 - **Kein Schalter, sondern zwei Knöpfe nebeneinander.** Ein Schalter hat einen
   Zustand, den man ablesen muss („ist das jetzt an oder aus?"). Zwei
-  beschriftete Knöpfe zeigen beide Möglichkeiten gleichzeitig; man erkennt die
-  Antwort, ohne sie zu interpretieren.
-- **Das Material heißt beim Namen** — `inkl. Farbe`, `inkl. Lack`,
-  `inkl. Tapete`, `inkl. Belag`, `inkl. Fliesen`, jeweils auch mit `ohne`.
-  Genau die zehn Fassungen, die `halbsatz()` liefert. Der Prüfmeister hat
-  recht: „ohne Material" wäre selbst schon falsch, weil bei Tapete der
-  Kleister drinbliebe.
+  beschriftete Knöpfe zeigen beide Möglichkeiten gleichzeitig.
+- **Das Material heißt beim Namen** — nie „ohne Material". Der Prüfmeister hat
+  recht: Bei „Vliestapete tapezieren ohne Material" bliebe der Kleister drin,
+  und man streitet später über zwanzig Euro.
 - **Die Vorbelegung kommt aus `taetigkeiten.ts`** (innen/tapezieren/lackieren
   drin, Fassade/Boden getrennt) und ist nur das — eine Vorbelegung.
-- **Der zweite Satz ist kein Beiwerk.** „Du kannst es an jeder einzelnen
-  Position ändern" nimmt der Frage die Endgültigkeit. Ohne ihn ist das die
-  Stelle, an der jemand hängenbleibt, weil er es bei Raufaser anders hält als
-  bei Vliestapete.
+- **Fassade ist ein eigener Haken** und ab hier eine eigene Preiswelt, nie aus
+  Innen abgeleitet.
+
+### DC-108 — der Satz unter „Tapezieren", und warum der Schalter dort anders heißt
+
+Unter „Tapezieren" liegen zwei Welten. **Malerware** (Raufaser, Malervlies,
+Glasfaser) kauft der Betrieb selbst, sie steckt im m²-Preis wie die Farbe.
+**Kundentapete** (Foto, Muster, Textil) sucht der Kunde aus und kostet mal 12,
+mal 90 € die Rolle — sie wird **immer** getrennt abgerechnet.
+
+Manfred will dafür ausdrücklich **keinen zweiten Haken**: *„Der Unterschied
+liegt nicht in dem, was ich anbiete, sondern in der Tapete selbst — und die
+steht ja in der Position drin."* Ein Betrieb kann daran nichts einstellen,
+also soll er auch nichts einstellen müssen. Das ist richtig, und es ist
+dieselbe Regel wie beim Zubehör: **Ein Schalter, der nichts bewegt, ist eine
+Einladung zum Missverständnis.**
+
+Umgesetzt sind daher zwei Dinge, beide im Prototyp
+(`docs/dc-102-preise-prototyp.html`):
+
+1. **Ein Hinweissatz, kein Bedienelement.** Wortlaut:
+   > **Kundentapeten** (Muster, Foto, Textil) rechnet die App immer getrennt ab.
+
+   Das ist Manfreds Satz mit einer Änderung: Er sagt *„rechnen wir immer
+   getrennt ab"*. Der Satz steht aber auf einem Bildschirm, der den Chef
+   fragt, was **er** macht — und der ganze Punkt ist, dass er hier nichts tut.
+   Deshalb sagt der Satz, was die **App** tut, nicht was er tun soll. Er
+   erscheint **nur bei gesetztem Haken** und **über** der Materialzeile: Er ist
+   der Grund, warum die darunter „Malerware" heißt.
+2. **Der Schalter heißt nach dem, wofür er wirklich gilt** — `Malerware inkl.`
+   / `Malerware extra` statt `Tapete inkl.` / `Tapete extra`. Manfreds Wort,
+   und es trennt die beiden Welten schon in der Beschriftung.
+
+**Trägt der Satz an dieser Stelle, oder kippt er den Bildschirm?** Er trägt —
+mit einer gemessenen Einschränkung, die eine Änderung nötig gemacht hat. Im
+Prototyp bei 390 px Breite gerendert:
+
+- Der Satz ist **zweizeilig (48 px)**. Die Tapezieren-Karte wird dadurch knapp
+  doppelt so hoch wie die anderen vier. Das ist vertretbar, **weil der Haken
+  nicht vorgesetzt ist**: Wer nicht tapeziert, sieht eine gewöhnliche
+  Checkbox-Zeile und nie diesen Satz. Der Bildschirm startet unverändert als
+  fünf saubere Haken.
+- **„Malerware" ist zu lang für die alte Materialzeile.** Mit dem festen
+  62-px-Label daneben bleiben je Knopf 107 px — „Malerware inkl." brach dort
+  auf **zwei Zeilen Knopftext** um (56 px statt 41 px). Zwei Zeilen Text auf
+  einem Knopf sehen aus wie zwei Knöpfe. Regel jetzt: **Materialwörter über
+  sechs Zeichen bekommen die volle Breite** — Beschriftung auf eigener Zeile,
+  darunter die beiden Knöpfe nebeneinander (je 133 px, einzeilig). Kurze
+  Wörter („Farbe", „Belag", „Lack") stehen unverändert einzeilig neben der
+  Beschriftung.
+- **Ein längerer Satz trägt nicht.** Meine erste Fassung erklärte zusätzlich,
+  was Malerware ist („Raufaser, Vlies, Glasfaser") — 85 px, dreizeilig, und
+  die Karte kippte optisch in Richtung Textblock. Das Wort erklärt sich für
+  einen Maler selbst; es ist seine eigene Vokabel. Die Erklärung ist
+  gestrichen.
+
+**Für Engineering, wenn der Bildschirm gebaut wird:** Das Materialwort auf
+**Haken-Ebene** ist eine Anzeigeentscheidung und gehört zur Tätigkeit
+(`tapezieren` → „Malerware"), nicht zu `MATERIAL_WORTE` in
+`materialanteil.ts`. Auf **Positions-Ebene** bleibt alles, wie es ist:
+`halbsatz()` liefert weiter `inkl. Tapete` an der Katalogzeile, und
+`kundensatz()` weiter *„Die Tapete wird vom Kunden gestellt."* — auf dem
+Kundenpapier ist „Malerware" das falsche Wort, dort geht es um genau die
+Tapete, die in der Position steht. Zwei Ebenen, zwei Wörter, und das ist kein
+Widerspruch, sondern der Inhalt von DC-108.
 
 ---
 
-## Bildschirm 3 — Die Zahlen
+## Bildschirm 2 — Die Zahlen
 
 Nur die Felder der gewählten Tätigkeiten, plus der Stundensatz.
 
@@ -141,7 +184,7 @@ Dein Stundensatz                               [   ____ ] €/Std
   keine Zahl."* Der Halbsatz steht **unter** der Beschriftung und **nicht** im
   Platzhalter des Feldes — ein Platzhalter verschwindet beim Tippen, also genau
   dann, wenn man ihn braucht.
-- **Der Halbsatz nennt auch das Material**, passend zu Bildschirm 2. Wer dort
+- **Der Halbsatz nennt auch das Material**, passend zu Bildschirm 1. Wer dort
   „ohne Farbe" gewählt hat, liest hier „Fertige Wand, **ohne** Farbe".
 - **Leere Felder sind erlaubt.** Wer nur zwei Zahlen weiß, kommt weiter; der
   Rest wird abgeleitet. Ein Pflichtfeld auf diesem Bildschirm wäre der
@@ -155,7 +198,7 @@ Dein Stundensatz                               [   ____ ] €/Std
 
 ---
 
-## Bildschirm 4 — Die Nick-Seite
+## Bildschirm 3 — Die Nick-Seite
 
 Das Konzept nennt sie den Kern und nicht die Kür. Entsprechend ist sie hier
 kein Abschluss-Haken, sondern ein eigener Bildschirm mit eigenem Ton.
@@ -214,7 +257,7 @@ dieselbe Tonlage wie der „fehlende Preise"-Balken, den Manfred bereits als
 
 ## Die drei Stellen, an denen es kippen kann
 
-1. **Bildschirm 3 wirkt wie eine Prüfung.** Fünf leere Zahlenfelder direkt
+1. **Bildschirm 2 wirkt wie eine Prüfung.** Fünf leere Zahlenfelder direkt
    hintereinander sind der Moment, in dem jemand „überspringen" sucht. Gegenmittel
    im Entwurf: „Grob reicht", leere Felder erlaubt, Halbsätze, die die Frage
    beantworten statt sie zu stellen. Das ist der Bildschirm, den ein Prototyp
@@ -223,8 +266,8 @@ dieselbe Tonlage wie der „fehlende Preise"-Balken, den Manfred bereits als
    heißen „hier muss ich nichts tun". Deshalb steht „Passt alles" **neben**
    „Später" und nicht darüber, und deshalb heißt die Überschrift, was sie
    heißt.
-3. **Material wird zweimal gefragt.** Wenn Bildschirm 2 und die Halbsätze auf
-   Bildschirm 3 nicht exakt dieselben Worte benutzen, entsteht der Eindruck,
+3. **Material wird zweimal gefragt.** Wenn die Materialzeilen auf Bildschirm 1
+   und die Halbsätze auf Bildschirm 2 nicht exakt dieselben Worte benutzen, entsteht der Eindruck,
    es seien zwei verschiedene Fragen. Beide ziehen deshalb aus `halbsatz()`,
    keine handgeschriebene zweite Fassung.
 
@@ -237,7 +280,7 @@ davor sitzen (Vokabular-Angleich, CoS-E-052), und Sandys Go zum Entwurf steht
 noch aus.
 
 **Als Nächstes von mir, sobald der Entwurf abgenickt ist:** ein Prototyp der
-**Nick-Seite**. Nur dieser eine Bildschirm — die anderen drei sind Formulare,
+**Nick-Seite**. Nur dieser eine Bildschirm — die anderen beiden sind Formulare,
 die sich aus Text beurteilen lassen. Die Nick-Seite nicht: Ob 40 Zeilen mit
 Herkunftsangabe überfliegbar sind oder erschlagen, ob das Antippen sich
 richtig anfühlt, und ob „Passt alles" nach Zustimmung oder nach Wegklicken

@@ -155,7 +155,15 @@ describe('Boden – 10 Integrationstests', () => {
     expect(profil?.einheit).toBe('Stück')
   })
 
-  it('Test 7: Treppe 14 Stufen → Trittstufen + Setzstufen verkleiden + Treppenkantenprofil Alu', () => {
+  // Nachgezogen am 16.09.2026 (CoS-E-062, Zug 1). Zwei Erwartungen standen
+  // auf dem alten Soll und waren gemessen rot:
+  //   * die zweite Zeile für die Setzstufe — nach K.4 steckt sie im
+  //     Stückpreis und darf NICHT entstehen (sonst 14 Stufen doppelt);
+  //   * `Treppenkantenprofil` — der Titel ist seit PM-066-C Katalogwortlaut
+  //     (`Treppennase / Kantenprofil Treppe montieren`, 22,00 €/Stück); der
+  //     alte Wortlaut fand keinen Preis.
+  // Menge, Einheit und die Alu-Angabe sind unverändert geprüft.
+  it('Test 7: Treppe 14 Stufen → EINE Stufenzeile verkleiden + Treppennase Alu', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [],
       'Holztreppe mit dem gleichen Laminat verkleiden wie der Flur. Genau 14 gerade Stufen. Trittstufen und Setzstufen sauber verkleiden, an jeder Vorderkante rutschhemmendes Treppenkantenprofil aus Alu anbringen.'
     )
@@ -166,12 +174,10 @@ describe('Boden – 10 Integrationstests', () => {
     expect(tritt?.einheit).toBe('Stück')
     expect(tritt?.beschreibung.toLowerCase()).toContain('verkleid')
 
-    const setz = find(positionen, 'setzstufen')
-    expect(setz).toBeDefined()
-    expect(setz?.menge).toBe(14)
-    expect(setz?.einheit).toBe('Stück')
+    // K.4 (Prüfmeister, 15.09.2026): keine zweite Zeile für die Setzstufe.
+    expect(find(positionen, 'setzstufen')).toBeUndefined()
 
-    const kante = find(positionen, 'treppenkantenprofil')
+    const kante = find(positionen, 'kantenprofil')
     expect(kante).toBeDefined()
     expect(kante?.menge).toBe(14)
     expect(kante?.einheit).toBe('Stück')

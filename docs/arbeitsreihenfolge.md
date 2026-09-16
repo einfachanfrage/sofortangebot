@@ -1,38 +1,47 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 16.09.2026, 01:00 MESZ · Chief of Staff**
-*(ersetzt die Fassung von 23:50 MESZ samt Prüfmeister-Nachtrag — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 16.09.2026, 10:10 MESZ · Chief of Staff**
+*(ersetzt die Fassung von 01:00 MESZ samt Prüfmeister-Nachtrag — diese Datei wird immer ersetzt, nie ergänzt.)*
 
 ---
 
 ## Lage in drei Zeilen
 
-**Sandy hat seit 21:52 MESZ nicht mehr committet.** `main` steht unverändert
-auf `9c38755`, Produktion ist derselbe Commit und `READY`. Alles, was seither
-gebaut wurde, liegt nur auf der Platte.
+**Sandy hat um 06:18 MESZ committet** (`bd64900`, DC-110). Produktion ist
+dieser Commit und `READY`. Alles, was seither gebaut wurde — drei
+Engineering-Punkte und zwei Prüfmeister-Batches —, liegt wieder nur auf der
+Platte.
 
-**Die CI ist rot, und das ist jetzt gemessen statt vermutet.** Die beiden
-Läufe zu `9b45952` und `9c38755` sind `failure`, der letzte grüne war
-`de1ae80`. Ursache ist **nicht** der App-Code, sondern `.github/workflows/ci.yml`
-selbst — Sandys PowerShell-Block, unverändert Punkt eins.
+**Die CI ist rot, aber aus einem anderen Grund als gestern behauptet.** Läufe
+#188/#189/#190 sind rot, #187 (`de1ae80`) war der letzte grüne. `ci.yml` ist
+**nicht** kaputt — das war meine Fehldiagnose, sie ist zurückgenommen. Der
+wahrscheinliche Grund ist das Lint-Budget, und der Fix liegt uncommittet auf
+der Platte.
 
-**Es wartet genau eine Entscheidung auf Sandy: DC-109.** Alles andere auf ihrer
-Liste sind Handgriffe, keine Fragen.
+**Zwei Doku-Dateien waren zum dritten Mal in zwei Tagen überschrieben.** Beide
+sind aus dem Commit repariert, nichts ist verloren. Als **CoS-P-025** bei
+Platform.
 
 ---
 
-## Was seit 23:50 MESZ dazugekommen ist — und wo es jetzt liegt
+## Was seit 01:00 MESZ dazugekommen ist — und wo es jetzt liegt
 
 | Rolle | Ergebnis | Status |
 |---|---|---|
-| Engineering | **CoS-E-065 Punkt 1 gebaut** — `tuerQuelle` kennt den dritten Fall („angenommen"). Die geratene Tür sagt jetzt auf dem Kundenpapier, dass sie geraten ist. **2339 grün · 64 erwartet rot · null Rückschritte**, Testdatei gegengeprüft | fertig, **nicht committet** |
-| Platform | **CoS-P-021 beantwortet** — beide Fragen zum Rechnungsnummernkreis mit Fundstellen. Stehenlassen ist das kleinere Risiko, dieselbe Entscheidung wie am 11.09. **Keine Frage an Sandy daraus** | ✅ zu |
-| Platform | **Nebenbefund:** `src/lib/fehlertexte.ts` ist in `9c38755` bereits eingebaut | war nie offen |
-| Engineering | **CoS-E-064 beantwortet** — PM-070…075 gemessen, zwei Fälle hängen an gesperrten Gewerken, PM-074 sitzt in `pruefeSockelleisten()`. Vorschlag: nach Mechanismus schneiden statt nach Ticket | ✅ beantwortet |
-| Chief of Staff | **Schnitt entschieden** — euer Vorschlag übernommen, drei Familien, **Zug 3 vor Zug 2** | entschieden |
-| Chief of Staff | **CoS-E-068 angelegt** — der Batch PM-079…PM-088 des Prüfmeisters stand in keinem Ticket, jetzt in die drei Familien einsortiert | verteilt |
-| Chief of Staff | **CI-Zustand gemessen** (GitHub-Actions-API) — der Befund von Platform ist bestätigt, einschließlich Begründung | erledigt |
-| Chief of Staff | **PM-085 / PD-016 in `design-check.md` verwiesen** | verteilt |
+| Sandy | **`bd64900` gepusht** (DC-110), Produktion `READY` | erledigt |
+| Engineering | **CoS-E-062 Zug 1 ist ZU** — PM-067-A, PM-066-C, PM-066-A/B und PM-066-D gebaut. Größter Einzelposten 770,00 €/Fall; die doppelte Setzstufen-Zeile ist weg, die Treppe bekommt ihren Grundriss nicht mehr zusätzlich als Fläche | fertig, **nicht committet** |
+| Engineering | **Neuer Fund, von mir eingeordnet als CoS-E-070** — zwei verschiedene Quadratmeterzahlen für denselben Boden (Fischgrät): Arbeit auf 33,60 m², Aufpreis darauf auf 36,80 m² | verteilt |
+| Prüfmeister | **Batch PM-089…PM-097 gerechnet** — Fallbasis **97/100**. 17 grün, 16 Sperrklinken | fertig, **nicht committet** |
+| Prüfmeister | **Engineerings drei umgestellte Sperrklinken gegengelesen — alle drei bleiben**, inkl. der gedrehten PM-066-B | ✅ zu |
+| Prüfmeister | **Beide offenen Fragen aus PM-066-A/B beantwortet** — Kork ja / Parkett nein; verkleiden ≠ belegen | ✅ beantwortet |
+| Prüfmeister | **PD-018** an den Designer, drei Fragen | verteilt |
+| Chief of Staff | **Datenverlust in `design-check.md` und `entscheidungen-fuer-sandy.md` gefunden und repariert** (–649 / –458 Zeilen gegen `bd64900`) | erledigt |
+| Prüfmeister | **PM-098 gefunden** — „Ein Fenster, eine Tür" plus „lackieren" erfindet **280,00 €** in fast jedem Maler-Diktat mit Lackierarbeiten. Fallbasis **98/100** | verteilt |
+| Designer/Marketing | **`docs/landingpage-fuenf-beispiele.md` neu** — fünf durchgerechnete Beispiele für die Landingpage | neu, **nicht committet** |
+| Chief of Staff | **CoS-E-069 angelegt** — PM-089…098 stand in keinem Ticket, jetzt in die drei Familien einsortiert; **PM-098 an die Spitze von Zug 3** | verteilt |
+| Chief of Staff | **CoS-P-025 angelegt** — Schrumpf-Prüfung statt Endmarkierungs-Prüfung | verteilt |
+| Chief of Staff | **DC-109 endlich in `entscheidungen-fuer-sandy.md` eingetragen** — es stand dort nie, obwohl ich es behauptet hatte | korrigiert |
+| Chief of Staff | **CI-Diagnose zurückgenommen und neu gemessen** | korrigiert |
 
 ---
 
@@ -40,31 +49,35 @@ Liste sind Handgriffe, keine Fragen.
 
 **Selbst gemessen, nicht vermutet:**
 
-* **Produktion** über die Vercel-API: `9c38755`, `READY`, 21:52 MESZ. Die
-  letzten neun Produktions-Deploys sind `READY` — die Kette von CoS-P-014 ist
-  nicht wieder aufgerissen.
-* **Die GitHub-Actions-Läufe** (im Lauf um 23:50 war die API nicht erreichbar):
-  `de1ae80` ✅, `9b45952` 🔴, `9c38755` 🔴. Der Workflow heißt in beiden roten
-  Läufen `.github/workflows/ci.yml` statt `CI` — genau das zeigt GitHub, wenn
-  es die Datei nicht lesen kann.
-* **Alle Dateien, die sich seit 23:50 geändert haben**, frisch gelesen:
-  `chief-of-staff-engineering-todos.md`, `chief-of-staff-platform-todos.md`.
-* **Dass PM-079 / PM-080 / PM-085 in keinem Engineering-Ticket standen** — im
-  ganzen Engineering-Todo gesucht, null Treffer. Deshalb CoS-E-068.
-* **Dass Engineering die Datei nach meinem ersten Lesen erneut beschrieben
-  hat** — vor dem Schreiben neu geholt, statt die ältere Fassung
-  zurückzuschreiben. Die CoS-E-064-Antwort wäre sonst verloren gewesen.
+* **Produktion** über die Vercel-API: `bd64900`, `READY`, 06:18 MESZ.
+* **Die CI-Läufe** über die GitHub-Actions-Seite: #190 `bd64900` 🔴,
+  #189 `9c38755` 🔴, #188 `9b45952` 🔴, **#187 `de1ae80` ✅**.
+* **`ci.yml` aus vier Commits einzeln geholt und verglichen:** seit `9b45952`
+  unverändert, gültiges YAML, `name: CI`, neun Schritte. **Meine gestrige
+  Behauptung „GitHub kann die Datei nicht lesen" ist damit widerlegt — von mir
+  selbst.**
+* **Den neuen CI-Schritt nachgefahren:** `docs-sichern.mjs pruefen` gegen alle
+  53 committeten Doku-Dateien — *„Alle 53 Doku-Dateien in Ordnung."* Er ist
+  nicht der Grund.
+* **Lint-Budget:** im Repository `--max-warnings 110`, auf der Platte `120`.
+* **Jede Doku-Datei gegen `bd64900` gestellt** (Größe und Zeilen) — daraus die
+  beiden beschädigten Dateien und die Commit-Liste unten.
+* **Jede von den Rollen genannte Quell- und Testdatei einzeln gegen das
+  Repository geprüft** — daraus die Liste „Nicht im Repository".
+* **Dass PM-089…PM-097 in keinem Engineering-Ticket standen** — im ganzen
+  Engineering-Todo gesucht, null Treffer. Deshalb CoS-E-069.
+* **Dass DC-109 in `entscheidungen-fuer-sandy.md` fehlte** — gesucht, null
+  Treffer, obwohl die alte Arbeitsreihenfolge es behauptet hat.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **Die Jobs und Schritte der beiden roten CI-Läufe.** Die API antwortet auf
-  der Job-Ebene mit `403`. Der Workflow-Name belegt die Ursache; die
-  Schritt-Ebene hätte nichts hinzugefügt.
-* **Die Testläufe von Engineering** (2339/64) und die Lint-Messung von Platform.
-  Beide Rollen haben gegen einen frischen Klon gemessen und es aufgeschrieben;
-  ich habe es nicht nachgefahren.
-* **Gate 1 rechne ich weiterhin nicht neu** — ich warte auf Manfreds Session 3,
-  sonst steht die Zahl wieder auf „ist deployt" statt auf „funktioniert".
+* **Welcher Schritt in den drei roten Läufen genau fällt.** Die Schritt-Ebene
+  gibt GitHub mir ohne Zugang nicht heraus. Das Lint-Budget ist der
+  wahrscheinlichste Grund, **nicht der belegte**.
+* **Die Testläufe von Engineering** (1536/59) und des Prüfmeisters (17/16).
+  Beide haben gegen einen frischen Baum gemessen und es aufgeschrieben; ich
+  habe es nicht nachgefahren.
+* **Gate 1 rechne ich weiterhin nicht neu** — ich warte auf Manfreds Session 3.
 
 ---
 
@@ -72,155 +85,189 @@ Liste sind Handgriffe, keine Fragen.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | **`.github/workflows/ci.yml` reparieren, dann committen.** Unverändert Punkt eins — bis dahin bleibt jeder Push rot, egal was im Code steht | zwei Blöcke, stehen im Chat |
-| 2 | **`pre-push`-Hook installieren** (CoS-P-023) — neue Datei, kein Commit nötig | ein Block |
-| 3 | 🟡 **DC-109 entscheiden** — „A" oder „B", steht mit Empfehlung in `entscheidungen-fuer-sandy.md` | eine Antwort |
-| 4 | 🟡 **Einmal „Passwort vergessen" durchklicken** (CoS-P-013), dann ist der Punkt zu | zwei Minuten |
-| 5 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
+| 1 | **Committen und pushen** — sieben neue Testdateien, `package.json` (Lint-Budget 110 → 120) und elf Doku-Dateien. Der Block steht im Chat | ein Block |
+| 2 | 🟡 **DC-109 entscheiden** — „A" oder „B", jetzt wirklich mit Empfehlung in `entscheidungen-fuer-sandy.md` | eine Antwort |
+| 3 | 🟡 **Einmal „Passwort vergessen" durchklicken** (CoS-P-013), dann ist der Punkt zu | zwei Minuten |
+| 4 | Vercel-Benachrichtigung · Datenschutz-Freigabe · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
 
-### Nicht im Repository
+**Gestrichen gegenüber der letzten Fassung:**
+„`ci.yml` reparieren" (Fehldiagnose) und „`pre-push`-Hook installieren"
+(**CoS-P-024**: Sandy hat den Hook ersatzlos abgeschafft).
+
+### Nicht im Repository — einzeln gegen `bd64900` geprüft
 
 ```
-.github/workflows/ci.yml                             <- MUSS Sandy selbst reparieren, Block in chief-of-staff-platform-todos.md
-package.json                                         <- Warnungsbudget 110 -> 120 (CoS-P-020)
-src/lib/vollstaendigkeit/maler-sonder.ts             <- CoS-E-059 Eingriff 3
-src/lib/vollstaendigkeit/maler-tapete.ts             <- CoS-E-059 / PM-077
-src/lib/vollstaendigkeit/maler-lackieren.ts          <- CoS-E-065 Punkt 1 (geaendert, schon in Git)
-src/lib/__tests__/cos-e-065-tuerquelle.test.ts       <- NEU
-src/lib/__tests__/pm-vorlagen-zwilling.test.ts       <- CoS-E-066
-src/lib/__tests__/pruefmeister-batch-1509.test.ts
-src/lib/__tests__/pruefmeister-batch-64-68.test.ts
-src/lib/__tests__/pruefmeister-batch-69-77.test.ts
-src/lib/__tests__/pruefmeister-batch-79-88.test.ts   <- NEU
-docs/arbeitsreihenfolge.md                           <- in diesem Lauf ersetzt
-docs/chief-of-staff-engineering-todos.md             <- CoS-E-067, CoS-E-068, CoS-E-065 Punkt 1
-docs/chief-of-staff-platform-todos.md                <- CoS-P-021 Ticket + Antwort + CI-Messung
-docs/entscheidungen-fuer-sandy.md                    <- DC-109, CoS-P-013
-docs/design-check.md                                 <- DC-106, DC-109, PM-085/PD-016
-docs/pruefmeister-restliste.md                       <- PM-069…088, K.4/K.5
-docs/pruefmeister-themenspeicher.md                  <- K.4 und K.5 beantwortet
-docs/vokabular-abgleich.md                           <- Abschnitt V
-docs/pruefmeister-notizen-fuer-designer.md           <- PD-016
+src/lib/__tests__/cos-e-062-pm066a-stufentitel.test.ts   <- NEU
+src/lib/__tests__/cos-e-062-pm066d-treppenflaeche.test.ts <- NEU
+src/lib/__tests__/cos-e-062-pm066c-treppennase.test.ts   <- NEU
+src/lib/__tests__/cos-e-062-pm067-verklebt.test.ts       <- NEU
+src/lib/__tests__/cos-e-065-tuerquelle.test.ts           <- NEU
+src/lib/__tests__/pruefmeister-batch-79-88.test.ts       <- NEU
+src/lib/__tests__/pruefmeister-batch-89-97.test.ts       <- NEU
+package.json                                             <- Lint-Budget 110 -> 120 (CoS-P-020)
+docs/arbeitsreihenfolge.md                               <- in diesem Lauf ersetzt
+docs/chief-of-staff-engineering-todos.md                 <- CoS-E-069 + drei Zug-1-Punkte
+docs/chief-of-staff-platform-todos.md                    <- CoS-P-024, CoS-P-025
+docs/design-check.md                                     <- repariert + PD-018
+docs/entscheidungen-fuer-sandy.md                        <- repariert + DC-109 + CI-Korrektur
+docs/pruefmeister-notizen-fuer-designer.md               <- PD-016, PD-017, PD-018
+docs/landingpage-fuenf-beispiele.md                      <- NEU
+docs/pruefmeister-restliste.md                           <- PM-079…098, K.4/K.5
+docs/pruefmeister-themenspeicher.md
+docs/testnutzer-notizen-manfred.md                       <- TN-148
+docs/vokabular-abgleich.md                               <- Abschnitte V und W
 ```
 
-Dazu, was Designer und Engineering sonst noch angefasst haben (DC-106 in der
-Onboarding-Seite, `rechenweg-kundentext.ts` aus DC-108) — **deren Anzahl habe
-ich nicht gezählt und behaupte sie nicht.** `git add -A` nimmt alles mit.
+**Unverändert, nicht suchen:** `docs/launch-readiness.md`,
+`docs/chief-of-staff-legal-todos.md`, `docs/engineering-austausch.md` —
+gegen den Commit geprüft, Byte für Byte gleich.
+
+Dazu die geänderten Quelldateien der Rollen (`boden-sonder.ts`,
+`maler-lackieren.ts`, die umgestellten Prüfmeister-Testdateien) — **deren
+Anzahl habe ich nicht gezählt und behaupte sie nicht.** `git add -A` nimmt
+alles mit.
+
+**Nicht mehr auf der Liste** (stand gestern drauf, liegt inzwischen im
+Repository — geprüft): `maler-sonder.ts`, `maler-tapete.ts`,
+`pm-vorlagen-zwilling.test.ts`, `pruefmeister-batch-1509.test.ts`,
+`pruefmeister-batch-64-68.test.ts`, `pruefmeister-batch-69-77.test.ts`,
+`fehlertexte.ts`, `rechenweg-kundentext.ts`.
 
 ---
 
 ## Head of Product Engineering
 
-1. ✅ **Eingriff 3 und CoS-E-065 Punkt 1 stehen.** Nichts nachzuarbeiten, nur
-   committen zu lassen. **CoS-E-065 Punkt 2** (Wortlaut „aus Aufnahme") liegt
-   beim Designer — ihr wartet darauf, ihr treibt es nicht.
-2. ✅ **CoS-E-064 ist beantwortet, und der Schnitt ist neu — ich habe euren
-   Vorschlag übernommen.** Ab jetzt wird nach Mechanismus geschnitten, nicht
-   nach Ticketnummer:
-
-   | Zug | Familie | Fälle |
-   |---|---|---|
-   | **1** | Titel trifft den Katalog nicht — Zeile da, Preis 0,00 € | PM-066-A/B, PM-067-A (CoS-E-062), PM-060-A-Familie |
-   | **3** | Erfundene oder falsch zugeordnete Zeile muss weg | PM-072, PM-074, PM-066-D, **PM-079** |
-   | **2** | Gesagt, und es entsteht nichts → Fehlt-Eintrag | PM-066-C, PM-067-B, PM-070…072, PM-075, **PM-080…084, 086…088** |
-
-   **Reihenfolge: CoS-E-062 → Zug 3 → Zug 2 → CoS-E-061.** Zug 3 vorgezogen,
-   weil eine erfundene Zeile mit Preis auf dem Angebot als Wahrheit steht.
-3. **CoS-E-062 läuft weiter** — PM-067-A → PM-066-C → PM-066-A → PM-066-D.
-   PM-066-A/B ist durch K.4 entsperrt (Setzstufe im Stufenpreis, zweite Zeile
-   muss weg, es bleibt bei 770,00 €). **PM-068 nicht bauen.**
-4. 🆕 **CoS-E-068 — der Batch PM-079…PM-088 des Prüfmeisters**, bis eben in
-   keinem Ticket. PM-079 (Raumbezug fehlt, 423,00 € je Fall) in Zug 3,
-   PM-080 (es fehlt der ganze Ursachen-Wortschatz, nicht ein Wort) und
-   PM-081…088 in Zug 2. **PM-085 nicht bauen, bis PD-016 beantwortet ist.**
-5. **Zwei Korrekturen an meinem CoS-E-064-Ticket, die ihr gemessen habt:**
-   PM-072 und PM-075 hängen an **gesperrten** Gewerken — dort nichts
-   Bepreistes bauen. Der Fliesenbad-Fund (`gewerkFuerPosition` schickt jeden
-   Titel mit „wand" zum Maler) gehört zu CoS-E-061.
-6. **CoS-E-061** — die Sperre, nach Zug 2.
-7. **CoS-E-063** — Heizkörper. **CoS-E-060** — die Frage davor ist weiter offen:
-   welche Datei speist die Oberfläche, `preis-ableitung.ts` oder
+1. ✅ **Zug 1 ist ZU.** PM-067-A, PM-066-C, PM-066-A/B und PM-066-D stehen.
+   **Als Nächstes Zug 3: PM-072, PM-074, PM-079** — PM-066-D war der vierte
+   Posten von Zug 3 und ist mit diesem Lauf schon erledigt.
+2. ✅ **Eure zwei Fragen aus PM-066-A/B sind beantwortet** (Prüfmeister):
+   **Kork ja, Parkett nein** — für Parkett Fehlt-Eintrag statt 45,00 €, bis
+   der Bodenkatalog eine eigene Zeile führt. **Verkleiden ist nicht belegen** —
+   der Zweig bleibt unverändert, ihr habt richtig gehandelt.
+3. ✅ **Eure drei umgestellten Sperrklinken sind gegengelesen, alle drei
+   bleiben** — auch die gedrehte PM-066-B. Eure zwei zusätzlichen
+   Zusicherungen hat der Prüfmeister als besser als seine eigenen übernommen.
+4. 🔴 **PM-098 ist ab jetzt der erste Punkt von Zug 3** (CoS-E-069 Nachtrag).
+   „Ein Fenster, eine Tür" plus irgendwo „lackieren" erzeugt sieben Positionen
+   für **280,00 €**, die niemand bestellt hat — 915,90 € statt 635,90 €. Kein
+   Randfall: Fenster und Türen zu nennen ist Pflicht für die Fläche. Das Soll
+   steht fest (Nennung als Öffnung = Maßangabe, keine Beauftragung), die
+   Mechanik gibt es bei **PM-033** und **PM-034** schon.
+5. 🆕 **CoS-E-069 — Batch PM-089…PM-097**, bis eben in keinem Ticket.
+   **PM-094** (Angebot aus einer einzigen erfundenen, bepreisten Zeile) in
+   Zug 3. **PM-089, PM-090, PM-091, PM-093, PM-096, PM-097** in Zug 2.
+   **PM-092 / PM-095** als kleiner eigener Zug — beides Geld auf dem
+   Kundenpapier (84,00 € zu viel, 142,50 € zu wenig).
+   **Vor dem Bauen die drei Warnungen im Ticket lesen**, besonders die zu
+   PM-090 (`gewerkFuerPosition` schickt die Staubschutzwand zum Maler, die
+   Katalogzeile liegt im gesperrten Abbruch → 0,00 € aufs Kundenpapier).
+6. **CoS-E-068** — der Batch PM-079…PM-088, unverändert.
+   **PM-085 nicht bauen, bis PD-016 Punkt 1 beantwortet ist.**
+7. 🆕 **CoS-E-070 — euer Fischgrät-Fund, eingeordnet.** Teil A (zwei
+   Quadratmeterzahlen für denselben Boden) ist ein Fehler und wird gebaut:
+   **eine Quelle für das Muster**, nicht zwei. Teil B (5 % oder 15 % auf der
+   Arbeitszeile) ist **keine neue Frage** — sie hängt an CoS-E-054, Sandys
+   Verschnitt-Regel vom 14.09. Dort beantworten, nicht hier.
+8. **Reihenfolge ab jetzt:** **Zug 3 (PM-098 → PM-072 → PM-074 → PM-079) →
+   Zug 2 → der kleine Zahlen-Zug (PM-092, PM-095, CoS-E-070 Teil A) →
+   CoS-E-061** (die Sperre).
+9. **CoS-E-063** — Heizkörper. **CoS-E-060** — die Frage davor ist weiter
+   offen: welche Datei speist die Oberfläche, `preis-ableitung.ts` oder
    `materialanteil.ts`?
-8. **CoS-E-057 (§ 35a)** — CoS-L-008 ist geliefert, bauen möglich. Migration
+10. **CoS-E-057 (§ 35a)** — CoS-L-008 ist geliefert, bauen möglich. Migration
    **und** Eintrag in `check_migrationen.sql`.
-9. **CoS-E-053** weiterbauen, mit den vier Legal-Bedingungen. Preisanpassungs-
+11. **CoS-E-053** weiterbauen, mit den vier Legal-Bedingungen. Preisanpassungs-
    Hinweis nicht aufs Kunden-PDF vor Sandys Freigabe (LR-16).
-10. **CoS-E-067** — `no-explicit-any`-Aufräumrunde, eigener Lauf, ganz hinten.
+12. **CoS-E-067** — `no-explicit-any`-Aufräumrunde, eigener Lauf, ganz hinten.
+13. **Die rote CI ist nach allem, was ich messen konnte, nicht euer Code.**
+    Lasst euch davon nicht aufhalten.
 
 ## Product Designer
 
-1. ✅ **DC-106 gebaut.** 🟡 **DC-109 wartet auf Sandy**, nicht auf euch. Sagt sie
-   „B", baut ihr den bereitliegenden Ersatztext ein, sagt sie „A", fliegt die
-   Karte.
-2. **Ein Wortlaut, den Engineering von euch braucht** (CoS-E-065 Punkt 2):
-   „aus Aufnahme" bedeutet in `maler-lackieren.ts` und `aufnahme-hinweise.ts`
-   Gegenteiliges. **Wie sollen die beiden Fälle in der App heißen?**
-3. 🆕 **PD-016, zwei Fragen vom Prüfmeister** — ob beim runden Raum (PM-085)
-   gerechnet oder gefragt werden soll, und ob die Fehlt-Liste eine Stufe für
-   „ohne das geht es technisch nicht" kennt. **Punkt 1 hält Engineering auf**
-   (CoS-E-068 Teil C), Punkt 2 blockiert nichts.
-4. **Nachzuziehen, sobald Engineering committet hat:** die eine Stelle in
+1. 🟡 **DC-109 wartet auf Sandy**, nicht auf euch — und es steht jetzt
+   endlich in `entscheidungen-fuer-sandy.md`. Sagt sie „B", baut ihr den
+   bereitliegenden Ersatztext ein; sagt sie „A", fliegt die Karte.
+2. ✅ **DC-110 ist gebaut und committet** (`bd64900`). **CoS-E-065 Punkt 2 ist
+   damit beantwortet** — Engineering wartet nicht mehr auf euch.
+3. 🆕 **PD-018, drei Fragen vom Prüfmeister.** Punkt 2 (eigener Zustand „so
+   kann ich nichts rechnen") liefert zugleich den Beleg, auf den **PD-016
+   Punkt 2** gewartet hat. **Keiner der drei blockiert etwas.**
+4. 🔴 **PD-016 Punkt 1** (runder Raum, PM-085) ist der **einzige** Punkt bei
+   euch, an dem Engineering hängt — CoS-E-068 Teil C.
+5. **DC-108** — der Satz unter dem Haken „Tapezieren", Manfreds Wortlaut.
+   Nicht blockiert.
+6. **Nachzuziehen, sobald Engineering committet hat:** die eine Stelle in
    `AngebotDetail.tsx`, bewusst ausgelassen.
-5. **DC-102** freigegeben — Ablauf und Darstellung, **nicht die Zahlen**.
+7. **DC-102** freigegeben — Ablauf und Darstellung, **nicht die Zahlen**.
    Einbau hängt an CoS-E-053.
-6. **Live-Test von DC-105 / DC-101 / DC-103 / DC-104 / DC-089 / DC-047 /
+8. 🔴 **`docs/landingpage-fuenf-beispiele.md` geht nicht live, bevor PM-098
+   gebaut ist.** Beispiel 4 umgeht den Fehler, indem Fenster und Tür nicht im
+   Satz stehen — sonst zeigte die Seite ein Verhalten, das das Produkt nicht
+   hat. Die Beispiele selbst sind durchgerechnet und in Ordnung.
+9. **Live-Test von DC-105 / DC-101 / DC-103 / DC-104 / DC-089 / DC-047 /
    DC-048** — braucht Sandy am Rechner.
 
 ## Platform
 
-1. ✅ **CoS-P-020 und CoS-P-021 sind zu.** Budget 120 mit Begründung; der
-   Rechnungsnummernkreis bleibt stehen. Aus beidem entsteht für Sandy nichts.
-2. ✅ **CoS-P-023** — der Hook ist gebaut, die Installation liegt bei Sandy.
-3. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code.
-4. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload.
-5. **CoS-P-022** — achter Tag ohne laufende Doku-Sicherung. Wird nicht kleiner,
-   und `device_bash` bleibt der Grund.
-6. Der frühere Punkt „Fehlertext" ist erledigt, **war aber nie offen** —
-   `fehlertexte.ts` steht bereits in `9c38755`.
+1. 🆕 **CoS-P-025 — eine Prüfung, die Schrumpfen bemerkt.** Die
+   Endmarkierungs-Prüfung hat beim dritten Datenverlust nichts gemeldet, und
+   zwar zu Recht: Die Fehlerform ist „Datei wird still 649 Zeilen kürzer",
+   nicht „Text nach der Endmarkierung". **In der CI, nicht als Hook.**
+   Zweiter Teil: sag mir, ob **CoS-P-022** ohne `device_bash` überhaupt lösbar
+   ist — oder ob ich den Commit-Block dauerhaft selbst an Sandy schicke.
+2. 🔴 **CoS-P-024 — der Push-Hook wird ersatzlos abgeschafft.** Sandys
+   Anweisung. Beide Prüfungen raus aus dem Push-Weg, CoS-P-023 zurückgezogen.
+   **Noch nicht als umgesetzt eingetragen.**
+3. ✅ **CoS-P-020 und CoS-P-021 sind zu.** Das Budget 120 ist gebaut —
+   **es ist nur nicht committet, und es ist vermutlich genau das, was die CI
+   grün macht.**
+4. **CoS-P-013** — der letzte Rest ist Sandys Klick-Durchlauf, kein Code.
+5. **CoS-P-005** — die fehlende RLS-Policy für den Logo-Upload.
+6. **CoS-P-022** — neunter Tag ohne laufende Doku-Sicherung. Siehe Punkt 1.
 
 ## Prüfmeister
 
-1. ✅ **K.4 und K.5 sind beantwortet** — der letzte harte Block im Projekt ist
-   auf. Setzstufe im Stufenpreis (PM-066-A bleibt bei 770,00 €); ungenannte
-   Vorarbeit gehört in die Fehlt-Liste, nicht bepreist ins Angebot. Mit PM-077
-   ergibt das **eine** Regel: `automatisch_ergaenzt` und „bepreist" schließen
-   einander aus.
-2. ✅ **Fallbasis 88/100.** PM-079…PM-088 in
-   `src/lib/__tests__/pruefmeister-batch-79-88.test.ts` — 16 grün, 17
-   Sperrklinken, jeder Fund mit Kontrolle. **Der Batch liegt jetzt als
-   CoS-E-068 bei Engineering**, das fehlte bis eben.
-3. ✅ **Die drei Stellen in euren Testdateien sind gegengelesen — alle drei
-   bleiben.** Niemand muss etwas rückgängig machen.
-4. **Als Nächstes ohne App prüfbar, Richtung 100:** Wandnische außerhalb des
-   Bades · Staubschutzwand bei bewohnter Baustelle · rissiger Estrich ·
-   Handwerker nennt Preise oder Stunden selbst · sehr kurze Aufnahme ·
-   widersprüchliche Angaben im Diktat · Nachtrag zu einem Angebot · zwei
-   Bauabschnitte. Das sind neun und reicht bis 97.
-5. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der Freischaltung,
-   nicht danach.
+1. ✅ **Fallbasis 98/100.** **PM-098 habe ich an die Spitze von Zug 3
+   gesetzt**, euren Vorrang „vor Gate 1" bestätige ich; die Sperrklinke in
+   `pruefmeister-batch-47-56.test.ts` fehlt noch.
+   Batch PM-089…097 liegt als
+   `src/lib/__tests__/pruefmeister-batch-89-97.test.ts` (17 grün, 16
+   Sperrklinken). **Er ist jetzt als CoS-E-069 bei Engineering einsortiert** —
+   ihr müsst ihn nicht nachtragen.
+2. ✅ **K.4 und K.5 beantwortet**, Engineerings Sperrklinken gegengelesen,
+   beide Rückfragen aus PM-066-A/B beantwortet. **Nichts davon ist offen.**
+3. **Die letzten drei Fälle bis 100, ohne App prüfbar:** Selbstkorrektur
+   mitten im Satz · Kunde redet im Hintergrund dazwischen · Aufnahme bricht ab
+   und wird fortgesetzt.
+4. **Die 142 Vorlagen der gesperrten Gewerke** — jeweils vor der
+   Freischaltung, nicht danach.
+5. **Größter blinder Fleck, festgehalten:** **jedes** Gewerk hat Stundenzeilen
+   im Katalog, die Engine hat an keiner Stelle einen Weg dorthin (Abschnitt W
+   in `vokabular-abgleich.md`, und PM-093). Das ist mehr als ein Einzelfall —
+   es steht in CoS-E-069 mit drin.
 6. **Braucht die laufende App, unverändert offen:** PM-002 · PM-032 ·
    PM-031 Teil 2 · PM-030 · PM-014/PM-015 · G.3 · Gegenprobe aus PD-009 §7.
 
 ## Legal
 
-1. ✅ **CoS-L-006 rechtlich erledigt** — der Produktteil daraus (CoS-P-021) ist
-   bei Platform beantwortet und zu.
-2. ✅ **CoS-L-008 geliefert** — Engineering kann CoS-E-057 bauen.
-3. **CoS-L-009** — darf „Aufmaß" auf dem Angebot stehen? Hängt an LR-16,
+1. ✅ **CoS-L-006 und CoS-L-008 sind geliefert.** Engineering kann CoS-E-057
+   bauen.
+2. **CoS-L-009** — darf „Aufmaß" auf dem Angebot stehen? Hängt an LR-16,
    blockiert nichts.
-4. **Materialangabe auf dem Kunden-PDF bewerten** — vier Bedingungen sind an
+3. **Materialangabe auf dem Kunden-PDF bewerten** — vier Bedingungen sind an
    Engineering übergeben.
-5. **DC-106 Nachlauf:** der Reminder geht an den Endkunden. **Die Mail selbst**
+4. **DC-106 Nachlauf:** der Reminder geht an den Endkunden. **Die Mail selbst**
    ist zu prüfen, nicht mehr der Onboarding-Satz.
-6. CoS-L-002 · CoS-L-004 laufend. **E-Rechnungspflicht § 14 Abs. 2 UStG**
+5. CoS-L-002 · CoS-L-004 laufend. **E-Rechnungspflicht § 14 Abs. 2 UStG**
    nachholen — vor der ersten echten Rechnung, nicht vor Gate 1.
 
 ## Manfred
 
 1. **Session 3: Registrierung end-to-end** — steht weiterhin aus. **Das ist der
    Posten, an dem die Gate-1-Zahl hängt.**
-2. **DC-101 nachprüfen**: am Handy laden und **sofort** lostippen.
-3. **Rückfrage aus CoS-E-056:** Gilt „Tapete extra" bei ihm auch für Vlies?
+2. ✅ **TN-148 ist da** — die Vlies-Frage aus CoS-E-056 ist beantwortet, sie
+   steckt in DC-108.
+3. **DC-101 nachprüfen**: am Handy laden und **sofort** lostippen.
 4. **Aus PD-009 §5:** Seine 75 % gegen die 63 % des Katalogs sind kein
    Widerspruch — zu bestätigen, nicht zu entscheiden.
 5. **G.3** — seine zwei Szenarien in der laufenden App, offen seit 11.09.
@@ -229,21 +276,26 @@ ich nicht gezählt und behaupte sie nicht.** `git add -A` nimmt alles mit.
 
 ## Was ich als Nächstes tue
 
-**DC-109 nachhalten** — die einzige offene Frage an Sandy, die von einer Rolle
-kommt und nicht von außen.
+**Den nächsten CI-Lauf messen, sobald Sandy gepusht hat.** Wird er grün, war
+es das Lint-Budget und die Sache ist erledigt. Wird er nicht grün, suche ich
+weiter — und sage es ihr, statt eine zweite Vermutung als Befund zu
+verkaufen.
 
-**Den CI-Lauf nach Sandys `ci.yml`-Reparatur erneut messen.** Erst dann ist
-belegt, dass nur die Workflow-Datei kaputt war und nicht zusätzlich etwas im
-Code.
+**DC-109 nachhalten** — die einzige echte Entscheidung, die auf sie wartet.
 
-**Im ganzen Projekt wartet kein harter Block mehr auf eine Rolle.** Offen sind
-Sandys eigene Punkte, PD-016 (hält CoS-E-068 Teil C auf, sonst nichts) und
-Manfreds Session 3.
+**Jeden neuen Prüfmeister-Batch am selben Tag einsortieren.** Zweimal
+hintereinander (CoS-E-068, CoS-E-069) lag ein fertiger Batch in keinem
+Ticket; das war beide Male mein Versäumnis.
 
 **Zum Ablauf dieses Laufs:** `device_bash` auf Sandys Rechner ist weiterhin tot
 (`no Plan9 drive shares mounted`, Windows-Update vom 08.09.). Gelesen und
-geschrieben wurde über Staging/Commit; an alle drei Koordinationsdateien wurde
-vor der Endmarkierung angehängt, nichts überschrieben.
+geschrieben wurde über Staging/Commit; verglichen wurde gegen
+`raw.githubusercontent.com`, weil die GitHub-API in diesem Lauf keinen Zugang
+hatte. An `chief-of-staff-engineering-todos.md`, `chief-of-staff-platform-todos.md`
+und `design-check.md` wurde vor der Endmarkierung angehängt.
+`design-check.md` und `entscheidungen-fuer-sandy.md` wurden **wiederhergestellt**
+— das ist der einzige Fall in diesem Lauf, in dem ich eine Datei nicht nur
+ergänzt habe, und er ist oben begründet.
 
 ---
 

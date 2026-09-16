@@ -359,3 +359,43 @@ describe('PM-056 — alter Teppich raus, Laminat rein', () => {
   // (14,00 €/m²) auftaucht — nach verklebtem Teppich ist das die Regel und
   // nicht die Ausnahme. Deshalb steht hier bewusst keine Verbotsprüfung.
 })
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PM-098 — „Ein Fenster, eine Tür" plus „lackieren" erfindet 280,00 €
+//
+// Gefunden am 16.09. beim Durchrechnen der Landingpage-Beispiele.
+// Zwei Diktate, die sich um genau einen Satz unterscheiden.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('PM-098 — die Nennung einer Öffnung ist keine Beauftragung', () => {
+  const OHNE = 'Wohnzimmer, 5 mal 4, Höhe 2,50. Wände zweimal streichen. Die 2 Heizkörper bitte mit lackieren.'
+  const MIT = OHNE + ' Ein Fenster, eine Tür.'
+  const bau = (t: string) => () => lauf('maler', t, [raum('Wohnzimmer', { laenge: 5, breite: 4, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen', 'heizkoerper lackieren'] })])
+  const ohne = bau(OHNE)
+  const mit = bau(MIT)
+
+  it('ohne den Satz ist das Angebot richtig: nur die Heizkörper werden lackiert', () => {
+    expect(menge(ohne(), /heizkörper lackieren|heizkörper streichen/i)).toBe(2)
+    expect(finde(ohne(), /türen (abschleifen|grundieren|lackieren)|türzarge/i)).toBeUndefined()
+    expect(finde(ohne(), /fenster (abschleifen|grundieren|lackieren)/i)).toBeUndefined()
+  })
+
+  // ── PM-098-A, offen ────────────────────────────────────────────────────
+  // Derselbe Auftrag, ein Satz mehr — und im Angebot stehen sieben Zeilen,
+  // die niemand bestellt hat: Türen abschleifen 20,00 € · Türen grundieren
+  // 25,00 € · Türen lackieren 90,00 € · Türzarge lackieren 45,00 € · Fenster
+  // abschleifen 20,00 € · Fenster grundieren 25,00 € · Fenster lackieren
+  // 55,00 €. Zusammen 280,00 €.
+  //
+  // „Ein Fenster, eine Tür" ist eine Maßangabe — die App fordert sie selbst
+  // ein, um die Wandfläche zu rechnen. Sie darf nicht als Beauftragung gelesen
+  // werden. Gleiche Unterscheidung wie PM-033 (Sockelleisten) und PM-034.
+  it.fails('OFFEN: die genannte Tür wird nicht mitlackiert', () => {
+    expect(finde(mit(), /türen (abschleifen|grundieren|lackieren)|türzarge/i)).toBeUndefined()
+  })
+  it.fails('OFFEN: das genannte Fenster wird nicht mitlackiert', () => {
+    expect(finde(mit(), /fenster (abschleifen|grundieren|lackieren)/i)).toBeUndefined()
+  })
+  it('die Heizkörper bleiben in beiden Fassungen gleich — der Auftrag ist derselbe', () => {
+    expect(menge(mit(), /heizkörper lackieren|heizkörper streichen/i)).toBe(2)
+  })
+})

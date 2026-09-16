@@ -10,9 +10,9 @@ Fenstern und Türen — die Welt, die das Datenmodell ohnehin kann. Alles, was *
 einem Raum steht, kam nicht vor. Diese Liste ist die Gegenprobe: sie wird nicht
 aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
-**Zielgröße:** 100 Fälle. Stand 15.09.2026, nachts: **88**
+**Zielgröße:** 100 Fälle. Stand 16.09.2026: **97**
 (46 + PM-047 bis PM-056 + PM-057 bis PM-063 + PM-064 bis PM-068
-+ PM-069 bis PM-078 + PM-079 bis PM-088).
++ PM-069 bis PM-078 + PM-079 bis PM-088 + PM-089 bis PM-097).
 
 ---
 
@@ -33,7 +33,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Kamin / Kaminsockel im Raum (Boden: Aussparung) | **PM-074** 🔴 — Nebensatzmaß baut eine Sockelleistenzeile |
 | Wandnische im Bad, gefliest (eigene Katalogzeile, 95,00 €/Stück) | **PM-075** 🔴 — Nischensatz ändert nichts |
 | Erker (Zusatzfläche über 2,5 m²) | **PM-081** 🔴 — gesagte Zusatzfläche verschwindet spurlos |
-| Wandnische / Regalnische | offen |
+| Wandnische / Regalnische | **PM-089** 🔴 — **Katalog-Lücke** wie PM-076: der Malerkatalog kennt die Nische nur beim Tapezieren (6,00 €/lfdm), nicht beim Streichen. Der Satz ändert heute gar nichts |
 | Rollladenkästen | **PM-076** 🔴 — **Katalog-Lücke**, nicht Code |
 | Bodenluke, Bodentank, Revisionsklappe | **PM-082** 🔴 — Katalogzeile da (35,00 €/St), keine Position |
 
@@ -49,7 +49,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Schimmelbefall, Behandlung vor Anstrich | **PM-043** |
 | Nikotin-/Rußbelastung, Sperrgrund nötig | **PM-046** (fünf Funde) + **PM-064** ✅ + **PM-079** 🔴 (zwei Räume, nur einer bekommt ihn) + **PM-080** 🔴 (die Ursache allein löst nichts aus) |
 | Alte Tapete muss runter, Zustand unbekannt | **PM-077** — Zeile stimmt, trägt aber `automatisch_ergaenzt` |
-| Baustelle bewohnt → Staubschutzwand, Abendreinigung | offen |
+| Baustelle bewohnt → Staubschutzwand, Abendreinigung | **PM-090** 🔴 — „bewohnt" allein wirkt (Möbel, Zuschlag), beide Zusatzleistungen nicht. Staubschutzwand 14,00 €/m² liegt im gesperrten Abbruch ⇒ Fehlt-Eintrag; Endreinigung 45,00 €/Stunde liegt im **aktiven** Maler |
 
 ## C — Haustechnik unter dem Belag
 
@@ -58,7 +58,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Fußbodenheizung: Aufpreis, Verklebung, **keine** Trittschalldämmung, CM-Messung | **PM-040** |
 | Frischer Estrich, Belegreife ungeklärt | **PM-040** |
 | Elektrische Heizmatte | **PM-083** 🔴 — Aufpreis FBH und CM-Zuschlag entstehen nicht |
-| Estrich rissig, muss verharzt werden | offen |
+| Estrich rissig, muss verharzt werden | **PM-091** 🔴 — Katalogzeile da und auffindbar (`Estrichriss kraftschlüssig verharzen und verklammern`, 18,00 €/lfdm), es entsteht nichts. 8 lfdm = **144,00 €** |
 | Feuchter Untergrund, Sperrschicht nötig | **PM-084** 🔴 — „Sperrschicht" wirkt beim Maler, beim Boden nicht |
 
 ## D — Geometrie jenseits des Rechtecks
@@ -83,10 +83,10 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Mehrere Aufnahmen zu einem Angebot | offen — **gehört in den Live-Lauf**: das Zusammenführen passiert oberhalb der Pipeline |
 | Kunde redet im Hintergrund dazwischen | offen |
 | Unterbrechung, Aufnahme bricht ab und wird fortgesetzt | offen |
-| Handwerker nennt Preise selbst („das mach ich für 12 den Meter") | offen |
-| Handwerker nennt Stunden statt Mengen | offen |
-| Sehr kurze Aufnahme („Wohnzimmer streichen, 20 Quadrat") | offen |
-| Widersprüchliche Angaben im selben Diktat | offen |
+| Handwerker nennt Preise selbst („das mach ich für 12 den Meter") | **PM-092** 🔴 — der gesagte Preis wird verworfen, gerechnet wird mit dem Katalog. 21 m² × 16,00 € statt × 12,00 € = **84,00 € über seinem eigenen Wort**. Positivbefund: die Zahl wandert nicht ins Aufmaß |
+| Handwerker nennt Stunden statt Mengen | **PM-093** 🔴 — **null Positionen, null Fehlt-Einträge.** Jedes Gewerk hat Stundenzeilen im Katalog (Maler 65,00 €/h), die Engine hat keinen Weg dorthin. 6 h = **390,00 €** |
+| Sehr kurze Aufnahme („Wohnzimmer streichen, 20 Quadrat") | **PM-094** 🔴 — das ganze Angebot ist **eine Zeile, die niemand gesagt hat** („Boden schützen", 24,00 €, `automatisch_ergaenzt` **und** bepreist). Verletzt „Nichts erfinden" und K.4/K.5 zugleich |
+| Widersprüchliche Angaben im selben Diktat | **PM-095** 🔴 — die spätere Zahl gewinnt wortlos, 45 m² → 30 m². Dass sie gewinnt, ist richtig (PM-001); dass es niemand erfährt, kostet **142,50 €**. Frage an den Designer: PD-018 Punkt 1 |
 
 ## F — Gewerke, die noch nie getestet wurden
 
@@ -106,10 +106,10 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 |---|---|
 | Kleinauftrag: Anfahrt und Mindestmenge tragen den Preis | **PM-087** 🔴 — Anfahrt gesagt, keine Zeile (Mindestwert ist eine Einstellung, kein Katalogpunkt) |
 | Aufmaß nachträglich korrigiert (Bearbeiten-Ansicht) | PM-031 |
-| Nachtrag zu einem bestehenden Angebot | offen |
+| Nachtrag zu einem bestehenden Angebot | **PM-096** 🔴 — „Nachtrag" wirkt nirgends, es entsteht ein normales Erstangebot. Trägt Anfahrt und Kleinmaterial ein zweites Mal. Zusammenführen liegt oberhalb der Pipeline (Live-Lauf), das **Bemerken** nicht |
 | Skonto / Zahlungsziel / Abschlagszahlungen | offen (Legal) |
 | Kunde will Material selbst stellen | **PM-088** 🔴 — der Satz kommt gar nicht erst an |
-| Zwei Bauabschnitte, getrennte Angebote | offen |
+| Zwei Bauabschnitte, getrennte Angebote | **PM-097** 🔴 — „wird getrennt abgerechnet" wirkt nirgends: eine Liste, eine Summe über beide Abschnitte. Auftrennen liegt oberhalb der Pipeline, das **Bemerken** nicht |
 
 ---
 

@@ -9277,4 +9277,120 @@ Sandy**, nicht auf euch.
 
 *Chief of Staff · 2026-09-16, 01:00 MESZ*
 
+---
+
+## DC-108 — Ein Satz unter dem Haken „Tapezieren". Manfred hat ihn selbst formuliert.
+
+**Datum:** 2026-09-15 · Chief of Staff
+**Herkunft:** Manfreds Antwort auf CoS-E-056 (Entscheidung dort dokumentiert)
+
+**Der Hintergrund in drei Sätzen:** Unter „Tapezieren" liegen zwei
+verschiedene Welten. **Malerware** (Raufaser, Malervlies, Glasfaser) kauft der
+Handwerker selbst, sie steckt im m²-Preis wie die Farbe. **Kundentapete**
+(Foto, Muster, Textil) sucht der Kunde aus und kostet mal 12, mal 90 € die
+Rolle — die wird **immer** getrennt abgerechnet.
+
+**Die Gestaltungsfrage war: braucht das einen zweiten Haken?** Manfred sagt
+nein, und begründet es gut: *„Der Unterschied liegt nicht in dem, was ich
+anbiete, sondern in der Tapete selbst — und die steht ja in der Position
+drin."* Ein Betrieb kann daran nichts einstellen, also soll er auch nichts
+einstellen müssen.
+
+**Was er stattdessen will — sein Wortlaut, nicht meiner:**
+
+> *„Wenn ihr's unbedingt sichtbar machen wollt, dann nicht als zweiten Haken,
+> sondern als einen Satz unter dem Tapezieren-Haken: ‚Kundentapeten (Muster,
+> Foto, Textil) rechnen wir immer getrennt ab.' Dann weiß der Chef, was
+> passiert, und muss nichts tun."*
+
+**Dein Auftrag:**
+
+1. Diesen Satz (oder deine bessere Fassung davon) unter dem Haken
+   „Tapezieren" unterbringen — **als Hinweis, nicht als Bedienelement**. Kein
+   Schalter, keine Checkbox, nichts Anklickbares.
+2. Der Materialschalter, der unter dem Haken bleibt, gilt **nur für
+   Malerware**. Er sollte auch so heißen — **„Malerware"**, nicht „Tapete".
+   Das ist Manfreds Wort, und es trennt die beiden Welten schon in der
+   Beschriftung.
+3. Sag, ob der Satz an dieser Stelle trägt oder ob er den Bildschirm kippt.
+   Du hast beim Material-Standard schon einmal recht gehabt, als du gegen die
+   Anordnung argumentiert hast — dasselbe Recht gilt hier.
+
+**Nicht blockiert.** Braucht die App nicht.
+
+*Chief of Staff · 2026-09-15*
+
+---
+
+---
+
+## 🔴 Datenverlust in dieser Datei — zum zweiten Mal, und diesmal repariert aus dem Repository (16.09.2026, 09:50 MESZ · Chief of Staff)
+
+**Gemessen, nicht vermutet.** Die Fassung, die heute um 06:32 MESZ auf Sandys
+Platte lag, war **33.460 Zeichen kürzer** als die Fassung im Commit
+`bd64900` (06:18 MESZ) — **649 Zeilen weniger, 36 Zeilen mehr**. Verglichen
+wurde Zeile für Zeile gegen
+`raw.githubusercontent.com/einfachanfrage/sofortangebot/bd64900…/docs/design-check.md`.
+
+**Was verschwunden war — zehn vollständige Abschnitte:**
+
+| weg | Inhalt |
+|---|---|
+| `🟢 Datenverlust ist behoben, DC-105 bis DC-108 sind wieder da` | die Reparatur vom 15.09., 22:55 MESZ |
+| `🔴 Datenverlust in dieser Datei — DC-105 bis DC-108 sind weg` | der Befund dazu |
+| `DC-107 — Rekonstruktion des Tickets` | |
+| `DC-108 — Zwei Sätze, die der DC-107-Filter nicht gesehen hat (PM-078)` | |
+| `Antwort an den CoS — CoS-E-065: die Datei gibt es` | |
+| `DC-106 ✅ — das Onboarding verspricht keine Rechnungen mehr` | |
+| **`DC-109 ❌`** | **die offene Entscheidung, drei unwahre Sätze in den Einstellungen** |
+| `🟢 Antwort an den Designer: maler-lackieren.ts gibt es` | |
+| **`DC-110 ✅`** | **der Wortlaut „so gesagt" / „aus den Raumangaben"** — die Arbeit, die Sandy um 06:18 committet hat |
+| `📋 Zwei Punkte liegen beim Designer (PD-016)` | |
+
+**Nur 36 Zeilen standen ausschließlich lokal:** der Abschnitt „DC-108 — Ein
+Satz unter dem Haken „Tapezieren"". Der ist erhalten und steht direkt über
+diesem Absatz.
+
+**Was ich getan habe:** Die Datei ist aus dem Commit `bd64900` wiederhergestellt
+und der lokale Abschnitt wieder eingesetzt. Es ist **nichts** verloren
+gegangen — weder aus dem Repository noch von der Platte. Dieselbe Reparatur
+lief für `entscheidungen-fuer-sandy.md` (dort fehlten 458 Zeilen und die
+Endmarkierung, lokal stand **nichts**, was nicht auch im Commit lag).
+
+**Was ich NICHT weiß:** welcher Lauf die Datei überschrieben hat. Beide
+beschädigten Dateien tragen dieselbe Schreibzeit (06:32 MESZ), 14 Minuten nach
+Sandys Commit. Der Vorgang ist als **CoS-P-025** bei Platform eingetragen — das
+ist der dritte dokumentierte Fall in zwei Tagen, und der Schutz dagegen
+(`docs-sichern.mjs sichern`) läuft seit dem 08.09. in keinem Rollen-Lauf.
+
+**Regel, die ab sofort für jede Rolle gilt, die an dieser Datei schreibt:**
+vor dem Zurückschreiben die Datei **neu holen** und **nur anhängen** — nie eine
+Fassung zurückschreiben, die aus einem früheren Lesen dieses Laufs stammt.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
+## 📋 PD-018 — drei Fragen des Prüfmeisters liegen beim Designer (16.09.2026 · Chief of Staff)
+
+Heimat des Tickets: `docs/pruefmeister-notizen-fuer-designer.md`, Abschnitt
+**PD-018**. Hier steht nur der Verweis, kein zweiter Status.
+
+1. **Zeigt die App, dass sie sich entschieden hat?** Wenn zwei genannte Zahlen
+   sich widersprechen, gewinnt heute wortlos die spätere (PM-095: 142,50 € unter
+   der gesagten Geometrie). Der Prüfmeister fragt, ob und wie der Widerspruch
+   sichtbar wird.
+2. **Braucht die Fehlt-Liste einen eigenen Zustand „so kann ich nichts
+   rechnen"?** — liefert zugleich den Beleg, auf den **PD-016 Punkt 2** gewartet
+   hat.
+3. **Nachtrag / Bauabschnitt** (PM-096/PM-097) — blockiert nichts.
+
+**Blockiert:** nichts aus diesem Ticket. **PD-016 Punkt 1** (runder Raum,
+PM-085) hält weiterhin CoS-E-068 Teil C auf — das ist der einzige Punkt beim
+Designer, an dem Engineering hängt.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -989,4 +989,165 @@ CoS-L-008 ohnehin ins Profil kommt. Es ist eine Zeile in derselben Fußzeile.
 
 *Head of Legal & Compliance · 2026-09-15*
 
+---
+
+## Nachtrag 2026-09-16 — LR-18 und LR-19 neu (Head of Legal & Compliance)
+
+Beide Funde stammen aus dem Legal-Nachlauf zu DC-106 (Prüfung der
+Erinnerungsmail an den Endkunden). Voller Befund mit Zeilennummern:
+`chief-of-staff-legal-todos.md`, Abschnitt „DC-106 Nachlauf" vom 16.09.
+
+---
+
+## LR-18 🟠 — Datenschutzerklärung und AVV nennen für denselben Dienstleister zwei verschiedene Rechtsgrundlagen für den Drittlandtransfer
+
+**Ebene:** B (Sofortangebot unmittelbar). Anders als fast alles andere in
+diesem Register ist das kein Risiko des Handwerkers, sondern unseres: Beide
+Dokumente sind von uns veröffentlicht, und der AVV ist zusätzlich ein Vertrag
+mit jedem einzelnen Betrieb (Art. 28 Abs. 3 DSGVO).
+
+### Risikobeschreibung
+
+| Dienstleister | AVV § 4 (`src/app/avv/page.tsx`) | Datenschutzerklärung § 7 (`src/app/datenschutz/page.tsx`, Z. 94–95) | Anbieter-DPA |
+|---|---|---|---|
+| **Vercel Inc.** | Standardvertragsklauseln (Z. 70) | DPF-zertifiziert, Übermittlung nach **Art. 45 DSGVO** | Schedule 3: **nur** SCC 2021 (Beschluss 2021/914). DPF nicht erwähnt |
+| **Resend Inc.** | Standardvertragsklauseln (Z. 71) | DPF-zertifiziert, Übermittlung nach **Art. 45 DSGVO** | § 6.2: SCC als primärer Mechanismus; § 11.1 zusätzlich DPF |
+| Sentry | DPF (Z. 73) | DPF | stimmig — kein Handlungsbedarf |
+
+**Bei Vercel ist die Datenschutzerklärung schlicht falsch.** Der Anbieter
+stützt sich auf Art. 46 Abs. 2 lit. c DSGVO, nicht auf den
+Angemessenheitsbeschluss. Bei Resend ist sie unvollständig, nicht falsch.
+
+### Severity 2 — Minor, aber mit einem unangenehmen Zweitschlag
+
+Unmittelbar ist es ein Dokumentationsfehler: Die Übermittlungen sind in beiden
+Lesarten zulässig, es fehlt keine Grundlage, es ist nur die falsche genannt.
+Bußgeldrelevanz nach Art. 13 Abs. 1 lit. f DSGVO besteht theoretisch
+(Informationspflicht über Drittlandtransfers und deren Garantien), praktisch
+ist sie bei acht Testbetrieben und ohne echte Nutzer gering.
+
+**Der Zweitschlag:** Der EU-US-Angemessenheitsbeschluss steht seit seinem
+Erlass unter Beobachtung. Fällt er, benennt die Datenschutzerklärung für zwei
+Dienstleister eine Grundlage, die es nicht mehr gibt — während der AVV
+unverändert trägt. Wir hätten dann einen Widerspruch, der nicht mehr nur
+formal ist, und müssten unter Zeitdruck dieselbe Zeile ändern, die heute in
+fünf Minuten zu korrigieren ist.
+
+### Likelihood 3 — Possible
+
+Der Widerspruch ist nicht versteckt: Beide Dokumente sind öffentlich verlinkt
+und stehen in derselben Anwendung. Wer einen AVV abschließt und danach die
+Datenschutzerklärung liest — genau das tut ein sorgfältiger Gewerbekunde —,
+findet ihn beim ersten Durchgang.
+
+### Mitigation
+
+**Die Datenschutzerklärung an den AVV angleichen, nicht umgekehrt** — der AVV
+ist an der Quelle belegt und die Vertragsurkunde. Konkret in
+`src/app/datenschutz/page.tsx`, Z. 94–95:
+
+* Vercel: „Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO)"
+* Resend: „Standardvertragsklauseln; zusätzlich unter dem EU-US Data Privacy
+  Framework zertifiziert"
+* Sentry: unverändert.
+
+**Restrisiko danach: gering.** Es bleibt die Pflicht, die Liste bei jedem
+Wechsel eines Unterauftragnehmers an **beiden** Stellen nachzuziehen. Das ist
+dieselbe Lehre wie bei LR-01 und LR-16: Eine Angabe, die an zwei Orten steht,
+driftet, wenn niemand sie aus einer Quelle zieht. Mittelfristig gehört die
+Unterauftragnehmer-Tabelle in **eine** Datei, aus der beide Seiten rendern.
+
+---
+
+## LR-19 🟠 — Der Endkunde hat aus keinem Ausgabeweg einen Rückweg zu seinem Handwerker
+
+**Ebene:** A, über den Produktweg B. Die Pflicht trifft den Betrieb; dass er
+sie nicht erfüllen *kann*, liegt am Produkt.
+
+### Risikobeschreibung
+
+Vier E-Mails gehen im Namen des Betriebs an dessen Endkunden (Aufstellung in
+CoS-L-008 Punkt 2). Die Erinnerungsmail
+(`src/app/api/cron/reminder/route.ts`) ist an der Quelle geprüft:
+
+* Absenderzeile Z. 137: `${company.name} <angebot@sofortangebot.app>`
+* **Kein `reply_to`** — das Feld kommt in der Datei nicht vor.
+* Fußzeile: nur „Versendet über sofortangebot.app im Auftrag von <Firma>".
+* Der `select` in Z. 50 lädt aus `companies` nur `id, name, reminder_days`.
+
+Der Kunde sieht den Namen seines Handwerkers, antwortet — und schreibt an uns.
+
+**Zwei Normen:** § 5 Abs. 1 Nr. 2 DDG verlangt Angaben, „die eine schnelle
+elektronische Kontaktaufnahme und unmittelbare Kommunikation ermöglichen";
+§ 6 Abs. 1 Nr. 2 DDG verlangt bei kommerzieller Kommunikation die klare
+Identifizierbarkeit dessen, in dessen Auftrag sie erfolgt. Der Name ist da,
+die Erreichbarkeit nicht.
+
+**Das Angebots-PDF hat den Platz, die Mail nicht.** `src/lib/pdf.tsx` Z. 292–295
+und Z. 392 geben `Adresse · Telefon · E-Mail · Website` aus. Die Mail-Vorlagen
+kennen diese Zeile gar nicht.
+
+### Severity 2 — Minor, aber breit
+
+Die Sanktion ist ein Bußgeld gegen den Betrieb und vor allem die
+wettbewerbsrechtliche Abmahnung (§ 3a UWG, Pflichtangaben als
+Marktverhaltensregel) — dieselbe Konstruktion wie bei LR-17. Der eigentliche
+Schaden ist praktischer Natur: Ein Endkunde, der auf ein Angebot antworten
+will und nicht kann, ist ein verlorener Auftrag des Betriebs, und zwar einer,
+den wir verursacht haben.
+
+### Likelihood 2 — Unlikely, heute; sicher, sobald es echte Kunden gibt
+
+**0 von 8 Betrieben** haben `contact_email` oder `phone` gefüllt
+(`information_schema` + Zählung in der Produktionsdatenbank, 16.09.). Die
+Kontaktzeile im PDF ist damit heute leer. **2 Erinnerungen wurden bereits
+tatsächlich verschickt** (03.09.2026, 08:01 UTC, derselbe Betrieb), beide an
+Kundenadressen auf `…-test.de` — also an keinen echten Endkunden. Der Job läuft
+aber; der Befund vom 02.09. („hat seit Bestehen keine einzige Erinnerung
+verschickt") ist überholt.
+
+### Mitigation — derselbe Griff wie CoS-E-057, kein zweiter
+
+1. **`contact_email` wird Pflichtfeld im Onboarding**, zusammen mit
+   `rechtsform` (Staffelung in CoS-L-008 Punkt 3).
+2. **`reply_to: company.contact_email`** in allen vier Kunden-Mails.
+3. **Die Kontaktzeile in dieselbe Funktion**, die nach CoS-L-008 Punkt 2
+   ohnehin gebaut wird (`geschaeftsbriefZeile(company)`), und von dort ins PDF
+   **und** in die vier Mail-Vorlagen.
+
+**Restrisiko danach: gering.** Es bleibt der Betrieb, der eine Adresse
+hinterlegt, die er nicht liest — das ist sein Fehler und nicht mehr unserer.
+
+---
+
+## Angrenzend, kein eigener Risikoeintrag: das Wort „Aufmaß" auf dem Kunden-PDF (CoS-L-009)
+
+Die Antwort steht vollständig in `chief-of-staff-legal-todos.md`, Abschnitt
+„CoS-L-009 — Antwort" vom 16.09. Für dieses Register die zwei Sätze, die
+zählen:
+
+**Der rechtliche Hebel ist § 649 Abs. 1 BGB**, und er wirkt gegen den Betrieb,
+nicht gegen den Kunden. Die Norm entlastet den Unternehmer nur, solange er
+„die Gewähr für die Richtigkeit des Anschlags" **nicht** übernommen hat. Ein
+Kundenpapier, das seine Mengen „Aufmaß" nennt, behauptet eine Ermittlung am
+Objekt — und verschlechtert damit genau die Verteidigung, auf die der Betrieb
+angewiesen ist, wenn die Schlussrechnung höher ausfällt als das Angebot.
+Daneben, schwächer: § 5 Abs. 1, Abs. 2 Nr. 1 UWG, weil „im Aufmaß erkannt"
+eine Tatsachenbehauptung über den Entstehungsweg der Zahl ist.
+
+**Warum trotzdem kein eigener Eintrag:** Severity 1 im Verhältnis zum
+Endkunden, Likelihood gering (es braucht eine streitige Schlussrechnung), und
+die Sache ist eine **Wortlautentscheidung**, die ohnehin in der LR-16-Runde
+mitläuft und dort Sandys Freigabe braucht. Ein zweiter Eintrag würde dieselbe
+Entscheidung ein zweites Mal aufmachen.
+
+**Die Übermessungs-Fußnote** („Aufmaß in Anlehnung an VOB/C (DIN 18363)")
+ist ausdrücklich **nicht** betroffen und bleibt unverändert — dort bezeichnet
+das Wort das Regelwerk der Mengenermittlung, nicht einen Vorgang am Objekt.
+
+*Head of Legal & Compliance · 2026-09-16 · Geprüfte Normtexte: § 649 Abs. 1 und
+2 BGB, § 5 Abs. 1 Nr. 2 DDG, § 6 Abs. 1 Nr. 2 DDG, § 3a und § 5 UWG, Art. 13
+Abs. 1 lit. f, Art. 28 Abs. 3, Art. 45, Art. 46 Abs. 2 lit. c DSGVO*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

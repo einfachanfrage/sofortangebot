@@ -143,17 +143,28 @@ describe('boden – sonder', () => {
     expect(vers2?.menge).toBe(40)
   })
 
-  it('Treppe → Trittstufen + Setzstufen separat', () => {
+  // Nachgezogen am 16.09.2026 (CoS-E-062, Zug 1). Beide Zeilen standen auf
+  // dem ALTEN Soll und waren seit PM-066-A/B rot — gemessen, nicht vermutet:
+  //
+  //   `Trittstufen belegen`  -> trifft im Katalog nichts, 0,00 €
+  //   `Setzstufen belegen`   -> trifft DIESELBE Zeile wie die Trittstufe
+  //
+  // Der Prüfmeister hat beides entschieden (K.4, 15.09.2026): Der Titel ist
+  // Katalogwortlaut, und die Setzstufe steckt im Stückpreis — sie bekommt
+  // KEINE zweite Zeile, sonst stünden vierzehn Stufen zweimal im Angebot.
+  // Parkett hat im Bodenkatalog keine eigene Stufenzeile und bekommt die
+  // belagsoffene `Treppenstufe mit Belag belegen (schwimmend / geklebt)`.
+  it('Treppe → eine Stufenzeile in Katalogwortlaut, keine zweite für die Setzstufe', () => {
     const { fehlende, positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett verlegen, Treppe mit 14 Stufen auch belegen')
     // Mit Anzahl → positionen; ohne Anzahl → fehlende
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)].join(' ')
-    expect(alle.toLowerCase()).toContain('trittstufen')
-    expect(alle.toLowerCase()).toContain('setzstufen')
+    expect(alle.toLowerCase()).toContain('treppenstufe mit belag belegen')
+    expect(alle.toLowerCase()).not.toContain('setzstufen')
   })
 
   it('Treppe mit Anzahl → Menge korrekt', () => {
     const { positionen } = pruefeUndErgaenzeVollstaendigkeit('boden', [], 'Parkett verlegen, 14 Treppenstufen belegen')
-    const trittPos = positionen.find(p => p.beschreibung.toLowerCase().includes('trittstufen'))
+    const trittPos = positionen.find(p => /treppenstufe|trittstufen/i.test(p.beschreibung))
     expect(trittPos?.menge).toBe(14)
     expect(trittPos?.einheit).toBe('Stück')
   })

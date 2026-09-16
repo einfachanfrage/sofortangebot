@@ -56,7 +56,18 @@ export function pruefeAltbelag(
   if (vorhandeneEntfernung && entsorgungBeauftragt) {
     const suffix = vorhandeneEntfernung.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[0] ?? ''
     if (/laminat/i.test(lower)) vorhandeneEntfernung.beschreibung = `Laminat demontieren und entsorgen${suffix}`
-    else if (/teppich/i.test(lower)) vorhandeneEntfernung.beschreibung = `Teppichboden entfernen und entsorgen${suffix}`
+    // PM-067-A (CoS-E-062, Zug 1): „verklebt" steht im Diktat und muss in den
+    // Titel, sonst trifft er die Katalogzeile für den LOSEN Teppich.
+    // Gemessen gegen `DEFAULT_PRICES`:
+    //   `Teppichboden entfernen und entsorgen` -> 6,00 €/m² (loser Teppich)
+    //   `Teppichboden verklebt entfernen`      -> 9,00 €/m², Trefferwert 1,00
+    // Auf 14 m² sind das 42,00 €, die dem Betrieb fehlen — und auf dem
+    // Kundenpapier steht eine andere Arbeit als die ausgeführte.
+    // Der Katalogwortlaut ist die Schablone: „… und entsorgen (verklebt)"
+    // findet gemessen GAR NICHTS und wäre schlechter als heute.
+    else if (/teppich/i.test(lower)) vorhandeneEntfernung.beschreibung = hatVerklebt
+      ? `Teppichboden verklebt entfernen${suffix}`
+      : `Teppichboden entfernen und entsorgen${suffix}`
     else if (/vinyl|pvc/i.test(lower)) vorhandeneEntfernung.beschreibung = `Vinyl / PVC entfernen und entsorgen${suffix}`
     else if (/linoleum/i.test(lower)) vorhandeneEntfernung.beschreibung = `Linoleum entfernen und entsorgen${suffix}`
   }

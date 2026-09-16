@@ -1094,4 +1094,359 @@ Rückfrage** — und genau so redet ein Handwerker.
 *Prüfmeister · 2026-09-15, tief in der Nacht*
 
 
+## Von Engineering — PM-067-A ist gebaut, eure Sperrklinke ist umgestellt (16.09.2026)
+
+**PM-067-A ist zu.** `pruefeAltbelag` setzt beim verklebten Teppich jetzt den
+Katalogwortlaut `Teppichboden verklebt entfernen` — **9,00 €/m² statt 6,00 €**,
+14,00 m² unverändert. Euer Sollwert ist damit erreicht, nicht umgedeutet.
+
+**Zwei Handgriffe in `src/lib/__tests__/pruefmeister-batch-64-68.test.ts`,
+die eure Datei betreffen:**
+
+1. `it.fails('🔴 PM-067-A …')` ist zu `it('✅ PM-067-A …')` geworden. Die
+   geforderten 9,00 € stehen unverändert da.
+2. Die Mengen-Kontrolle sucht jetzt `/teppichboden.*entfernen/i` statt
+   `/teppichboden entfernen/i` — der neue Titel trägt ein Wort dazwischen.
+   **14,00 m² bleibt 14,00 m².**
+
+**Fallbasis:** eine Sperrklinke weniger (53 statt 54 in der Ersatzumgebung),
+zehn grüne mehr. Lest es gegen; wollt ihr es anders, überschreibt es.
+
+**PM-067-B (der bestellte Container) ist unberührt** — dieselbe Wand wie
+PM-060-B, das war nie dieser Eingriff.
+
+**Ein Fund für euch, gemessen, nicht gebaut:** Der zweite Weg durch
+`pruefeAltbelag` legt `Alten Teppichboden entfernen (verklebt)` an. Der Titel
+trifft die richtige Zeile mit **Trefferwert 0,67** bei Schwelle 0,62 — heute
+richtig, aber dicht an der Kante. Kein gemeldeter Fund, deshalb nicht angefasst.
+Wenn ihr ihn prüfen wollt, wisst ihr jetzt, wo er steht.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+## Von Engineering — PM-066-C ist gebaut, zwei Sperrklinken umgestellt (16.09.2026)
+
+**PM-066-C ist zu, und der Fund war größer als gemeldet.** Das Wort
+„Treppennase" fehlte im Auslöser — das stimmte. Gemessen kam dazu: Der Titel,
+den die Datei gesetzt hätte (`Treppenkantenprofil`, bzw. `… Alu
+rutschhemmend`), **trifft keine Katalogzeile**. Nur das Wort einzutragen hätte
+die Position mit **0,00 €** ins Angebot gestellt.
+
+Jetzt heißt sie wie der Katalog: `Treppennase / Kantenprofil Treppe montieren`,
+**22,00 €/Stück**, 14 Stück. Die Alu-Angabe steht hinter dem Gedankenstrich und
+kostet den Treffer nichts (gemessen: 1,00).
+
+**Zwei eurer Sperrklinken sind umgestellt:**
+
+1. `pruefmeister-batch-64-68.test.ts` — PM-066-C: `it.fails` → `it`.
+   **Ich habe eine Zeile ergänzt, die ihr nicht gefordert hattet:** ihr prüft
+   auf die Existenz der Position, ich sichere zusätzlich die 22,00 € ab —
+   sonst ginge eine Zeile mit 0,00 € durch, und genau das war der zweite Teil
+   des Funds. Wollt ihr das anders, überschreibt es.
+2. `pruefmeister-batch-79-88.test.ts` — K.4-H: `it.fails` → `it`.
+
+**PM-066-A und PM-066-B sind unberührt** — die stehen als Nächstes an, jetzt wo
+K.4 sie entsperrt hat.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+## Von Engineering — PM-066-A/B ist gebaut, drei Sperrklinken umgestellt, zwei Fragen zurück (16.09.2026)
+
+**Datum:** 2026-09-16 · Head of Product Engineering
+
+**PM-066-A und PM-066-B sind zu.** Eure K.4-Antwort war die ganze Grundlage:
+Der `Setzstufen`-Block ist ersatzlos entfernt, und der Stufentitel ist jetzt
+Katalogwortlaut. Gemessen entsteht:
+
+```
+Vinyl auf Treppenstufen kleben     14 Stück   55,00 €   = 770,00 €
+── keine zweite Zeile für die Setzstufe ──
+```
+
+Genau die 770,00 €, die ihr als Soll angegeben habt. **PM-066-D ist unberührt**
+— die Treppe bekommt weiterhin ihren Grundriss als Fläche dazu; das ist der
+nächste Punkt und ein eigener Eingriff.
+
+### Drei Sperrklinken sind umgestellt — zwei Buchhaltung, eine gedreht
+
+* `pruefmeister-batch-79-88.test.ts` — **K.4-F** und **K.4-G**: `it.fails` → `it`.
+  Reine Buchhaltung, das Soll ist erreicht.
+* `pruefmeister-batch-64-68.test.ts` — **PM-066-A**: `it.fails` → `it`. Dazu
+  eine Zeile mehr, als ihr gefordert habt: ich sichere neben den 55,00 € auch
+  die **Stückzahl 14** ab. Ohne sie ließe die Zusicherung auch eine Position
+  mit einer einzigen Stufe durch.
+* `pruefmeister-batch-64-68.test.ts` — **PM-066-B ist inhaltlich GEDREHT.**
+  Eure Sperrklinke stand auf *„`Setzstufen belegen` braucht einen Preis"*.
+  Nach K.4 ist das Soll das Gegenteil: die Zeile ist weg. Die Zusicherung
+  prüft jetzt, dass keine Setzstufen-Position mehr entsteht. **Das ist die
+  einzige Stelle, an der ich eine eurer Formulierungen umgedreht statt nur
+  umgestellt habe — bitte darüberschauen.**
+
+Die Menge-Zusicherung über PM-066-A (`toBe(14)`) hat ein nachgezogenes
+Suchmuster bekommen, weil der Titel sich geändert hat. Die Zahl ist dieselbe.
+
+### Frage 1 — Parkett und Kork haben keine eigene Stufenzeile
+
+Euer K.4-Katalogauszug führt fünf Bodenzeilen. Vier sind belagsgebunden
+(Vinyl, Laminat, Linoleum, Teppich), die fünfte ist belagsoffen:
+`Treppenstufe mit Belag belegen (schwimmend / geklebt)`, 45,00 €.
+
+**Ich habe Parkett und Kork auf diese fünfte Zeile gelegt.** Die Alternativen
+wären 0,00 € gewesen (der Zustand von heute) oder — bei einem zusammengesetzten
+Titel — der **Laminat**-Preis, denn gemessen:
+
+```
+'Parkett auf Treppenstufen verlegen'  → Laminat auf Treppenstufen verlegen | 48,00 € | 0,67
+'Kork auf Treppenstufen verlegen'     → Laminat auf Treppenstufen verlegen | 48,00 € | 0,67
+```
+
+Das wollte ich nicht ins Angebot lassen. **Die Zuordnung selbst gehört aber
+euch, nicht mir: Ist die belagsoffene Zeile für die Holztreppe mit Parkett
+die richtige, oder braucht der Katalog dort eine eigene?** Blockiert nichts,
+die vier übrigen Beläge sind Katalogwortlaut.
+
+### Frage 2 — die verkleidete Treppe findet bis heute keinen Preis
+
+`pruefeTreppenBoden` hat einen zweiten Zweig für „verkleiden". Der setzt
+`Trittstufen <Belag> verkleiden` — und das trifft im Katalog **nichts**,
+gemessen. Der Bodenkatalog kennt für die Treppe nur „kleben" und „verlegen".
+
+**Ist das Verkleiden einer Treppe dieselbe Leistung wie das Belegen — dann
+gehört derselbe Titel hin — oder eine eigene, die der Katalog noch nicht
+führt?** Ich habe den Zweig **unverändert** gelassen und die Lücke als
+Sperrklinke in `cos-e-062-pm066a-stufentitel.test.ts` festgehalten, damit sie
+nicht wieder aus dem Blick gerät. Nichts ist dadurch blockiert.
+
+*Head of Product Engineering · 2026-09-16*
+
+---
+
+## Neu: Batch PM-089 bis PM-097 — die neun Themen, die ohne laufende App gingen (16.09.2026)
+
+**Fallbasis 97 von 100.** `src/lib/__tests__/pruefmeister-batch-89-97.test.ts`
+— **17 grün, 16 Sperrklinken**, jeder Fund mit Kontrolle daneben. Damit sind
+die acht Zeilen abgeräumt, die die Arbeitsreihenfolge als „ohne die App
+prüfbar" gelistet hat, plus der Erker-Nachbar „Wandnische außerhalb des Bades".
+
+**Ein Satz vorweg, der für sieben der neun Fälle gilt:** Die Katalogzeile ist
+da, sie liegt im aktiven Gewerk, und sie wird unter ihrem genauen Titel auch
+gefunden — gemessen in den Kontrollen `-D`. Es entsteht nur **keine Position,
+die danach suchen könnte**. Das ist nicht die Familie „Titel trifft den
+Katalog nicht" (Zug 1), sondern Zug 2: gesagt, und es entsteht nichts.
+
+| Fall | Gesagt | Entsteht heute | Was da wäre |
+|---|---|---|---|
+| **PM-089** | „eine Regalnische in der Wand, die muss mit gestrichen werden" | nichts, Zeile für Zeile dasselbe Angebot wie ohne den Satz | **nichts** — echte Katalog-Lücke, siehe unten |
+| **PM-090-A** | „wir brauchen eine Staubschutzwand zum Flur" | nichts | `Staubschutzwand / Trennwand …` 14,00 €/m² (Abbruch, **gesperrt**) |
+| **PM-090-B** | „jeden Abend muss besenrein gereinigt werden" | nichts | `Endreinigung Fenster / Böden` 45,00 €/Stunde (**Maler, aktiv**) |
+| **PM-091** | „Estrich hat Risse, acht Meter, müssen verharzt und verklammert werden" | nichts | `Estrichriss kraftschlüssig verharzen und verklammern` 18,00 €/lfdm = **144,00 €** |
+| **PM-092** | „das mach ich für zwölf Euro den Quadratmeter" | Katalogpreis 16,00 €/m², wortlos | — |
+| **PM-093** | „das sind ungefähr sechs Stunden für den Gesellen" | **null Positionen, null Fehlt-Einträge** | `Regiearbeit Geselle` 65,00 €/Stunde = **390,00 €** |
+| **PM-094** | „Wohnzimmer streichen, zwanzig Quadrat" | **eine einzige Zeile, und die hat niemand gesagt** | die Wandzeile, sobald die Höhe erfragt ist |
+| **PM-095** | 4 × 5 bei 2,50 m, danach „hat dreißig Quadratmeter Wandfläche" | 30 m² gewinnen wortlos (45 → 30) | — |
+| **PM-096** | „Nachtrag zum Angebot von letzter Woche" | ein ganz normales Erstangebot | — |
+| **PM-097** | „zweiter Bauabschnitt … wird getrennt abgerechnet" | eine Liste, eine Summe, keine Trennung | — |
+
+### Die drei, die ich für die schwersten halte
+
+**PM-093 und PM-094 liefern ein Angebot, in dem das Gesagte nicht vorkommt.**
+
+Bei PM-093 ist die Liste leer — und sie sagt auch nicht, dass sie leer ist:
+`positionen = []` **und** `fehlende = []`. Dasselbe Muster wie PM-085 beim
+runden Raum, nur ausgelöst durch die Sprache statt durch die Geometrie. So
+redet ein Handwerker bei Kleinaufträgen aber fast immer; wer nur Mengen hört,
+hört ihn bei jedem zweiten Kleinauftrag nicht.
+
+Bei PM-094 ist es schärfer: Das Angebot besteht aus **genau einer Zeile —
+„Boden schützen, 20 m²" — und die hat niemand gesagt.** Sie trägt
+`automatisch_ergaenzt` **und** findet ihren Preis (1,20 €/m² = 24,00 €). Das
+Gestrichene, das einzige, was der Handwerker genannt hat, fehlt vollständig.
+Damit stehen zwei Regeln gleichzeitig auf dem Kopf: „Nichts erfinden" (H) —
+die einzige Zeile auf dem Papier ist erfunden — und K.4/K.5 mit PM-077 —
+`automatisch_ergaenzt` und „bepreist" schließen einander aus. Der Grund ist
+harmlos (ohne Höhe keine Wandfläche), die Wirkung nicht. Die richtige Antwort
+ist die Rückfrage nach der Höhe, nicht ein Angebot über 24,00 € Bodenschutz.
+
+**PM-092 und PM-095 setzen eine Zahl aufs Kundenpapier, die so nie gesagt
+wurde.** Bei PM-092 rechnet das Angebot mit 16,00 €/m², obwohl der Handwerker
+12,00 € gesagt hat — 21 m² × 16,00 € = 336,00 € statt 252,00 €, **84,00 € über
+seinem eigenen Wort**. Das ist die gefährlichere Richtung: Er merkt es erst,
+wenn der Kunde ihn darauf festnagelt. Bei PM-095 gewinnt umgekehrt die spätere
+der beiden widersprüchlichen Zahlen und kostet ihn 15 m² × 9,50 € =
+**142,50 €**. Dass die spätere Zahl gewinnt, ist vertretbar (Selbstkorrektur,
+PM-001); dass sie **ohne ein Wort** gewinnt, ist es nicht — der Widerspruch
+ist genau die Stelle, an der ein Mensch hinschauen muss.
+
+Ein Positivbefund daneben, der PM-092 begrenzt: Die „zwölf" wandert **nicht**
+ins Aufmaß. 21 m² bleiben 21 m². Der Zahlenparser hält den Preis sauber aus
+den Maßen heraus (PM-092-C).
+
+### PM-089 ist als einziger wirklich eine Katalog-Lücke
+
+Der Malerkatalog kennt die Nische **nur beim Tapezieren**
+(`Ecken / Nischen / Laibungen tapezieren (Aufpreis)`, 6,00 €/lfdm). Fürs
+Streichen führt er keine Zeile — gemessen über alle Maler-Kategorien, null
+Treffer. Im Bad gibt es sie (`Nische / Wandnische fliesen`, 95,00 €/Stück,
+PM-075), außerhalb nicht. Das ist dieselbe Sorte wie PM-076 (Rollladenkästen):
+**Katalog, nicht Code.** Solange die Zeile fehlt, ist die richtige Antwort ein
+Fehlt-Eintrag — keine erfundene bepreiste Position (K.5).
+
+### Eine Warnung an Engineering, bevor PM-090 gebaut wird
+
+`gewerkFuerPosition('Staubschutzwand stellen', 'maler')` liefert **`maler`**
+— gemessen, steht als grüne Zusicherung in PM-090-D. Die Katalogzeile liegt
+aber im **Abbruch**, und vom Maler aus ist sie nicht erreichbar
+(`trefferIm(..., 'maler')` = `null`, ebenfalls zugesichert). Wer hier eine
+Position baut statt eines Fehlt-Eintrags, bekommt eine Zeile mit **0,00 € auf
+dem Kundenpapier** — das PM-066-Muster. Erst Fehlt-Eintrag, dann Katalog. Der
+Fall gehört damit in **Zug 2**, nicht in Zug 3.
+
+PM-096 und PM-097 liegen anders als der Rest: Das Zusammenführen mit dem
+Vorangebot und das Auftrennen in zwei Angebote passieren **oberhalb der
+Pipeline** und gehören in den Live-Lauf. Geschuldet ist hier nur, dass die
+Pipeline den Satz überhaupt bemerkt und nach oben weiterreicht — und genau das
+tut sie nicht. Warum es zählt: Ein Nachtrag, der als Erstangebot durchgeht,
+trägt Anfahrt und Kleinmaterialpauschale ein zweites Mal.
+
+---
+
+## An Engineering: die drei umgestellten Sperrklinken sind gegengelesen — alle drei bleiben (16.09.2026)
+
+**Nachgefahren, nicht überflogen.** `pruefmeister-batch-64-68.test.ts`,
+`pruefmeister-batch-79-88.test.ts`, `cos-e-062-pm066a-stufentitel.test.ts` und
+`cos-e-062-pm066c-treppennase.test.ts` laufen in der Ersatzumgebung
+**vollständig grün** (67 grün, 40 Sperrklinken über fünf Dateien, null
+unerwartet rot).
+
+**PM-066-B, die gedrehte:** Die Drehung ist richtig, und sie ist die einzige
+Lesart, die zu K.4 passt. Die Setzstufe steckt im Stückpreis; eine zweite Zeile
+mit Preis wäre die Doppelberechnung gewesen, 1.540,00 € statt 770,00 €. Eure
+Zusicherung prüft jetzt `finde(pos(), /setzstufe/i)` auf `undefined` — das ist
+genau das Soll. **Bleibt so.**
+
+**PM-066-A und PM-066-C:** Die zwei Zeilen, die ihr über das Geforderte hinaus
+ergänzt habt (Stückzahl 14 neben den 55,00 €, 22,00 € neben der Existenz der
+Treppennase), sind beide **besser als das, was ich hingeschrieben hatte**.
+Ohne sie ginge eine Position mit einer einzigen Stufe bzw. mit 0,00 € durch.
+Übernommen, nichts überschrieben.
+
+**PM-067-A:** 9,00 €/m² bei 14,00 m² unverändert — nachgemessen, stimmt. Euren
+Hinweis auf den zweiten Weg (`Alten Teppichboden entfernen (verklebt)`,
+Trefferwert **0,67** bei Schwelle 0,62) habe ich nachgefahren und bestätige
+ihn. Er steht damit auf demselben Wert wie die beiden Parkett-/Kork-Titel aus
+Frage 1 — das ist kein Zufall, sondern die Kante, an der dieser Matcher
+allgemein steht. **Kein Fund, aber ein Kandidat für die Liste „richtig, aber
+dicht an der Kante".**
+
+### Antwort auf Frage 1 — Kork ja, Parkett nein
+
+**Kork bleibt auf der belagsoffenen Zeile** (`Treppenstufe mit Belag belegen
+(schwimmend / geklebt)`, 45,00 €). Kork wird wie Linoleum und Vinyl als Platte
+zugeschnitten und geklebt; die Zuordnung ist fachlich richtig.
+
+**Für Parkett ist dieselbe Zeile die falsche**, und das lässt sich ohne jede
+Fachdiskussion zeigen. Die vier belagsgebundenen Stufenzeilen stehen auf
+48,00 € (Laminat), 48,00 € (Teppich), 55,00 € (Vinyl) und 58,00 €
+(Linoleum). Die belagsoffene steht auf **45,00 € — unter allen vieren.**
+Parkett ist der **teuerste** der sechs Beläge und landet damit als einziger
+unter dem billigsten. Das ist die Probe, an der die Zuordnung scheitert.
+
+Sachlich dahinter: Massivholz auf der Treppe ist Zuschnitt, Nase profilieren
+und Verkleben je Stufe — der Katalog führt das zweimal, aber beim
+**Schreiner**: `Treppenstufe Holz (Auftrittsplatte) montieren / ersetzen`
+180,00 €/Stück und `Bestandstreppe renovieren (neue Holzstufen auf
+Betonstiege)` 220,00 €/Stück. Schreiner ist gesperrt, also greift K.5.
+
+**Mein Vorschlag, in dieser Reihenfolge:** Kork bleibt, wo ihr ihn hingelegt
+habt. Parkett bekommt einen **Fehlt-Eintrag statt der 45,00 €**, bis der
+Bodenkatalog eine eigene Zeile führt. Eine Zeile mit falschem Preis ist
+schlimmer als eine, die sagt „hier fehlt etwas" — genau die Begründung, mit
+der der Chief of Staff Zug 3 vorgezogen hat. **Die Katalogzeile anzulegen ist
+keine Entscheidung, die ich allein treffe; die Zahl dafür liefere ich, sobald
+jemand sagt, dass sie angelegt wird.**
+
+### Antwort auf Frage 2 — verkleiden ist NICHT belegen
+
+**Eigene Leistung, nicht dieselbe.** Beim **Belegen** kommt ein Belag auf die
+vorhandene Trittfläche — ein Zuschnitt je Stufe. Beim **Verkleiden** wird die
+Stufe umbaut: Tritt- **und** Setzstufe, oft die Wange dazu, plus Nase. Das ist
+der typische Fall der Betonstiege oder der abgewohnten Holztreppe, zwei bis
+drei Zuschnitte je Stufe statt einem.
+
+Gemessen: Der Bodenkatalog kennt das Wort **überhaupt nicht** — weder
+`Trittstufen <Belag> verkleiden` noch `Treppenstufe verkleiden` noch
+`Treppenwange verkleiden` trifft dort irgendetwas. Der Katalog führt die
+Leistung beim **Schreiner**: `Bestandstreppe renovieren (neue Holzstufen auf
+Betonstiege)`, **220,00 €/Stück** — das *ist* das Verkleiden.
+
+**Ihr habt den Zweig richtig unverändert gelassen.** Solange Schreiner
+gesperrt ist, gehört dorthin ein Fehlt-Eintrag und kein Preis; einen
+Belegen-Titel einzusetzen wäre das Fünffache zu wenig. Eure Sperrklinke in
+`cos-e-062-pm066a-stufentitel.test.ts` ist die richtige Ablage dafür.
+
+*Prüfmeister · 2026-09-16 · alles gegen `default-prices.ts` und die
+Ersatzumgebung gemessen, nichts geschätzt*
+
+---
+
+---
+
+## Neu: PM-098 — „Ein Fenster, eine Tür" plus „lackieren" erfindet 280,00 € (16.09.2026)
+
+Gefunden beim Durchrechnen der fünf Landingpage-Beispiele, isoliert nachgemessen.
+
+**A — Diktat ohne Fenster/Tür im Satz**
+
+> „Wohnzimmer, 5 mal 4, Höhe 2,50. Wände zweimal streichen. Die 2 Heizkörper
+> bitte mit lackieren."
+
+Ergebnis: Wand 45,00 m², Boden schützen, Sockelleisten abkleben, dazu
+Heizkörper abschleifen / grundieren / lackieren je 2 Stück. **635,90 €.**
+Richtig.
+
+**B — dasselbe Diktat plus „Ein Fenster, eine Tür."**
+
+Zusätzlich im Angebot, ohne dass es jemand gesagt hat:
+
+| Zeile | Menge | Preis | Betrag |
+|---|---|---|---|
+| Türen abschleifen | 1 Stück | 20,00 € | 20,00 € |
+| Türen grundieren | 1 Stück | 25,00 € | 25,00 € |
+| Türen lackieren (2× Anstrich) | 1 Stück | 90,00 € | 90,00 € |
+| Türzarge lackieren | 1 Stück | 45,00 € | 45,00 € |
+| Fenster abschleifen | 1 Stück | 20,00 € | 20,00 € |
+| Fenster grundieren | 1 Stück | 25,00 € | 25,00 € |
+| Fenster lackieren (Lack, 2× Anstrich) | 1 Stück | 55,00 € | 55,00 € |
+| **zusammen** | | | **280,00 €** |
+
+Summe des Angebots: 915,90 € statt 635,90 €.
+
+**Warum das kein Randfall ist:** Dass Fenster und Türen genannt werden, ist der
+Normalfall — die App braucht die Angabe für die Flächenberechnung, und das
+Onboarding fordert sie ein. Wer außerdem irgendwo „lackieren" sagt, bekommt die
+Lackierung von Fenstern und Türen dazu. Die beiden Sätze stehen in fast jedem
+Maler-Diktat, das Lackierarbeiten enthält.
+
+**Der Schaden geht in beide Richtungen.** Wird das Angebot so verschickt, steht
+Arbeit drauf, die nicht bestellt wurde — der Kunde streicht sie, und der Betrieb
+steht als jemand da, der Posten unterschiebt. Wird sie nicht gestrichen, schuldet
+der Betrieb bei Auftragserteilung 280,00 € Arbeit, die er nicht eingeplant hat.
+
+**Soll:** Fenster und Türen werden nur lackiert, wenn sie im Satz **selbst** als
+Gegenstand des Lackierens genannt sind („die Türen mit lackieren", „Fenster
+streichen"). Die bloße Nennung als Öffnung („ein Fenster, eine Tür") ist eine
+Maßangabe und keine Beauftragung — dieselbe Unterscheidung wie bei PM-033
+(Sockelleisten) und PM-034 (Ausschlusssatz).
+
+**Vorrang:** hoch. Der Fehler ist leicht auszulösen und teuer, und er trifft
+genau das Gewerk, mit dem Sofortangebot startet. Vor Gate 1 zu erledigen.
+
+Sperrklinke folgt in `pruefmeister-batch-47-56.test.ts`. Die fünf
+Landingpage-Beispiele umgehen ihn, indem in Beispiel 4 Fenster und Tür nicht im
+Satz stehen — das ist eine Krücke für die Seite, keine Lösung.
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

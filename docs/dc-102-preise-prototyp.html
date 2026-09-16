@@ -29,7 +29,14 @@
   .box{width:26px;height:26px;border-radius:8px;border:2px solid var(--linie);flex:0 0 26px;display:grid;place-items:center;font-size:15px;color:transparent}
   .taet.an .box{background:var(--gelb);border-color:var(--gelb);color:var(--anthrazit)}
   .hakenzeile span{font-weight:800;font-size:16px}
+  .taethinweis{padding:0 16px 12px 56px;font-size:12.5px;font-weight:600;line-height:1.45;color:var(--grau)}
+  .taethinweis b{font-weight:800;color:var(--anthrazit)}
   .matzeile{display:flex;align-items:center;gap:10px;padding:0 16px 16px 56px}
+  /* DC-108: "Malerware" ist laenger als "Farbe" und bricht im Knopf um.
+     Lange Woerter bekommen deshalb die volle Breite statt zwei Zeilen Knopftext. */
+  .matzeile.hoch{flex-wrap:wrap;gap:7px}
+  .matzeile.hoch .matlabel{flex:1 1 100%}
+  .matzeile.hoch .wahl{flex:1 1 100%}
   .matlabel{font-size:11px;font-weight:800;color:var(--grau-hell);text-transform:uppercase;letter-spacing:.08em;flex:0 0 62px}
   .wahl{display:flex;gap:8px;flex:1}
   .wahl button{flex:1;border:2px solid var(--linie);background:var(--bg);border-radius:12px;padding:11px 6px;font:inherit;font-size:13px;font-weight:800;color:var(--grau)}
@@ -93,7 +100,14 @@ const STUNDENSATZ = 52.00
 
 const TAET = [
   { id:'innen',      name:'Innen streichen', mat:'Farbe',  standard:'inkl',  anker:'Wand streichen 2x',    kurz:'Wand 2x',   basis:10.00, mein:11.00, einheit:'€/m²' },
-  { id:'tapezieren', name:'Tapezieren',      mat:'Tapete', standard:'inkl',  anker:'Vliestapete kleben',   kurz:'Vliestapete', basis:9.00, mein:9.50, einheit:'€/m²' },
+  // DC-108: Unter "Tapezieren" liegen zwei Welten. Malerware (Raufaser, Vlies,
+  // Glasfaser) kauft der Betrieb selbst, sie steckt im m2-Preis. Kundentapete
+  // (Muster, Foto, Textil) sucht der Kunde aus und wird IMMER getrennt
+  // abgerechnet - daran kann ein Betrieb nichts einstellen. Deshalb kein
+  // zweiter Haken, sondern ein Satz; und der Schalter heisst nach dem, wofuer
+  // er wirklich gilt.
+  { id:'tapezieren', name:'Tapezieren',      mat:'Malerware', standard:'inkl',  anker:'Vliestapete kleben',   kurz:'Vliestapete', basis:9.00, mein:9.50, einheit:'€/m²',
+    hinweis:'<b>Kundentapeten</b> (Muster, Foto, Textil) rechnet die App immer getrennt ab.' },
   { id:'lackieren',  name:'Lackieren',       mat:'Lack',   standard:'inkl',  anker:'Tür lackieren',        kurz:'Tür',       basis:60.00, mein:65.00, einheit:'€/Stück' },
   { id:'fassade',    name:'Fassade',         mat:'Farbe',  standard:'extra', anker:'Fassade streichen 2x', kurz:'Fassade 2x', basis:13.00, mein:14.50, einheit:'€/m²' },
   { id:'boden',      name:'Boden',           mat:'Belag',  standard:'extra', anker:'Laminat verlegen',     kurz:'Laminat',   basis:17.00, mein:18.00, einheit:'€/m²' },
@@ -159,7 +173,7 @@ function runden(wert, einheit){
 }
 
 let seite = 1
-const gewaehlt = { innen:true, fassade:true, boden:true }
+const gewaehlt = { innen:true, tapezieren:true, fassade:true, boden:true }
 const material = {}
 TAET.forEach(t => material[t.id] = t.standard)
 let stundensatz = STUNDENSATZ
@@ -178,14 +192,15 @@ function matSatz(t, art){
 function bauen(){
   const h = hinweis, i = inhalt, f = fuss
   if (seite === 1){
-    h.innerHTML = '<b>Prototyp 3 · Seite 1.</b> Unverändert — von dir bestätigt. Nur zum Durchklicken auf Seite 2.'
+    h.innerHTML = '<b>Prototyp 3 · Seite 1.</b> Neu (DC-108): Hinweissatz unter „Tapezieren", Schalter heißt dort „Malerware". Haken antippen zum Sehen.'
     i.innerHTML = '<h1>Was machst du?</h1><p class="unter">Wähle alles, was du anbietest.</p>' +
       '<p class="merk">Du kannst das später an jeder einzelnen Position ändern.</p>' +
       TAET.map(t => {
         const an = !!gewaehlt[t.id]
         return `<div class="taet ${an?'an':''}">
           <button class="hakenzeile" onclick="haken('${t.id}')"><span class="box">✓</span><span>${t.name}</span></button>
-          ${an ? `<div class="matzeile"><div class="matlabel">Material</div><div class="wahl">
+          ${an && t.hinweis ? `<p class="taethinweis">${t.hinweis}</p>` : ''}
+          ${an ? `<div class="matzeile${t.mat.length > 6 ? ' hoch' : ''}"><div class="matlabel">Material</div><div class="wahl">
               <button class="${material[t.id]==='inkl'?'an':''}" onclick="mat('${t.id}','inkl')">${t.mat} inkl.</button>
               <button class="${material[t.id]==='extra'?'an':''}" onclick="mat('${t.id}','extra')">${t.mat} extra</button>
             </div></div>` : ''}

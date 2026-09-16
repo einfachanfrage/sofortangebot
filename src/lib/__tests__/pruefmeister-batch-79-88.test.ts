@@ -403,7 +403,9 @@ describe('K.4 · Setzstufe beim Bodenbelag steckt im Stufenpreis', () => {
     expect(katalog('Klick-Vinyl (LVT) verlegen schwimmend, Standard')).toBe(16.0)
   })
 
-  it.fails('K.4-F · PM-066: vierzehn Stufen ergeben EINE Stufenposition, nicht zwei', () => {
+  it('✅ K.4-F · PM-066: vierzehn Stufen ergeben EINE Stufenposition, nicht zwei', () => {
+    // Gebaut am 16.09.2026 (CoS-E-062, Zug 1) in `boden-sonder.ts`: Der
+    // `Setzstufen`-Block ist ersatzlos entfernt. Sperrklinke → Zusicherung.
     const p = lauf('boden_parkett',
       'Treppenhaus, vierzehn Stufen, Vinyl geklebt.',
       [raum('Treppenhaus', { laenge: 3.5, breite: 0.9, belag: 'Vinyl' })])
@@ -411,17 +413,22 @@ describe('K.4 · Setzstufe beim Bodenbelag steckt im Stufenpreis', () => {
     expect(stufen).toHaveLength(1)
   })
 
-  it.fails('K.4-G · PM-066: und diese eine Position findet ihren Preis', () => {
+  it('✅ K.4-G · PM-066: und diese eine Position findet ihren Preis', () => {
+    // Gebaut am 16.09.2026 (CoS-E-062, Zug 1): der Titel ist Katalogwortlaut.
+    // Sperrklinke → Zusicherung.
     const p = lauf('boden_parkett',
       'Treppenhaus, vierzehn Stufen, Vinyl geklebt.',
       [raum('Treppenhaus', { laenge: 3.5, breite: 0.9, belag: 'Vinyl' })])
     expect(preis(p, /Trittstufen belegen|Treppenstufe/, 'boden_parkett')).toBe(katalog('Vinyl auf Treppenstufen kleben'))
   })
 
-  it.fails('K.4-H · PM-066: die gesagte Treppennase entsteht (22,00 €/Stück im Katalog)', () => {
-    // `pruefeTreppenBoden` hört auf „kantenprofil", „treppenkante",
+  it('✅ K.4-H · PM-066: die gesagte Treppennase entsteht (22,00 €/Stück im Katalog)', () => {
+    // `pruefeTreppenBoden` hörte auf „kantenprofil", „treppenkante",
     // „rutschhemmend" — aber nicht auf „Treppennase", obwohl der Katalog die
     // Zeile genau so führt.
+    //
+    // Gebaut am 16.09.2026 (CoS-E-062, Zug 1) in `boden-sonder.ts`:
+    // Sperrklinke → Zusicherung. Der Wortlaut ist jetzt der des Katalogs.
     expect(katalog('Treppennase / Kantenprofil Treppe montieren')).toBe(22.0)
     const p = lauf('boden_parkett',
       'Treppenhaus, vierzehn Stufen, Vinyl geklebt, Treppennase soll auch gemacht werden.',

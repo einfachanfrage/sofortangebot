@@ -182,38 +182,94 @@ export function pruefeParkettSchleifen(
   }
 }
 
+// ── Der Stufentitel muss den Katalog treffen ────────────────────────
+//
+// PM-066-A (CoS-E-062, Zug 1): Vierzehn Stufen, Vinyl geklebt — die App
+// erkannte die Stückzahl richtig und fand für keine davon einen Preis.
+// `Trittstufen belegen` trifft im Katalog nichts, gemessen: KEIN TREFFER,
+// 0,00 €. Soll sind 14 × 55,00 = 770,00 €. Dieselbe Familie wie PM-060-A:
+// Die Mengen stimmen, der Wortlaut trifft den Katalog nicht.
+//
+// Warum eine Tabelle und nicht `${belagName} auf Treppenstufen verlegen`:
+// Der Katalog benutzt je Belag ein ANDERES Verb, und `erkenneBelagName`
+// liefert Namen, die der Matcher nicht auf die richtige Zeile bringt.
+// Gegen `DEFAULT_PRICES` gemessen, und darum steht hier der Wortlaut:
+//
+//   `Teppichboden auf Treppenstufen verlegen`  -> Laminat ... | 48,00 € | 0,67  ❌
+//   `Klick-Vinyl auf Treppenstufen kleben`     -> KEIN TREFFER            ❌
+//   `Parkett auf Treppenstufen verlegen`       -> Laminat ... | 48,00 € | 0,67  ❌
+//   `Kork auf Treppenstufen verlegen`          -> Laminat ... | 48,00 € | 0,67  ❌
+//
+// Ein zusammengesetzter Titel hätte den Teppich, das Parkett und den Kork
+// still zum LAMINAT-Preis abgerechnet — falscher Preis unter richtig
+// klingendem Titel, die Fehlerform, die der Prüfmeister die leiseste nennt.
+//
+// Parkett und Kork haben im Bodenkatalog keine eigene Stufenzeile. Sie
+// bekommen deshalb die belagsoffene Zeile `Treppenstufe mit Belag belegen
+// (schwimmend / geklebt)`, 45,00 € — eine Zeile, die es im Katalog gibt und
+// die der Prüfmeister in seiner K.4-Aufstellung selbst als die fünfte
+// Bodenzeile führt. **Prüfmeister: genau diese eine Zuordnung bitte
+// gegenlesen** (die vier übrigen sind Katalogwortlaut, da ist nichts zu
+// wählen).
+const STUFEN_TITEL: Record<string, string> = {
+  vinyl: 'Vinyl auf Treppenstufen kleben',
+  laminat: 'Laminat auf Treppenstufen verlegen',
+  linoleum: 'Linoleum auf Treppenstufen verlegen',
+  teppich: 'Teppich auf Treppenstufen verlegen',
+}
+
+const STUFEN_TITEL_OFFEN = 'Treppenstufe mit Belag belegen (schwimmend / geklebt)'
+
+export function stufenTitelFuerBelag(belag: string | null | undefined): string {
+  return (belag && STUFEN_TITEL[belag]) || STUFEN_TITEL_OFFEN
+}
+
+/**
+ * Die Treppenwörter — EINE Stelle.
+ *
+ * PM-066-D (CoS-E-062, 16.09.2026): Seit die Boden-Engine dieselbe Frage
+ * stellen muss („trägt die Stufe den Belag, oder der Grundriss?"), darf das
+ * Wortmuster nicht zweimal dastehen. Zwei Kopien driften auseinander, und
+ * dann legt die eine Stelle die Stufenposition an, während die andere
+ * zusätzlich die Fläche berechnet — genau der Doppelbetrag, den PM-066-D
+ * meldet. `treppenhaus` braucht keinen eigenen Eintrag, es enthält `treppe`.
+ */
+export const TREPPEN_WORT = /treppe|trittstufe/i
+
+/**
+ * Die Stufenzahl aus dem gesprochenen Text — EINE Stelle, dieselben Muster
+ * wie bisher in `pruefeTreppenBoden`. Erwartet den Text KLEIN und mit
+ * ausgeschriebenen Zahlen bereits ersetzt (`ersetzeZahlenWorte`); „vierzehn
+ * Stufen" liefert sonst 0.
+ */
+export function stufenAnzahlAusText(lower: string): number {
+  const m =
+    lower.match(/(\d+)\s*(?:treppenstufen|trittstufen|stufen)/i) ??
+    lower.match(/treppe\s+mit\s+(\d+)/i) ??
+    lower.match(/(\d+)\s*(?:gerade\s+)?stufen?/i) ??
+    lower.match(/(\d+)\s*(?:stufe|tritt)/i)
+  return m ? parseInt(m[1]) : 0
+}
+
 export function pruefeTreppenBoden(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
   v: AuftragsVerstaendnis,
 ): void {
-  const hatTreppe =
-    lower.includes('treppe') || lower.includes('treppenhaus') || lower.includes('trittstufe')
-  if (!hatTreppe) return
+  if (!TREPPEN_WORT.test(lower)) return
 
-  const m =
-    lower.match(/(\d+)\s*(?:treppenstufen|trittstufen|stufen)/i) ??
-    lower.match(/treppe\s+mit\s+(\d+)/i) ??
-    lower.match(/(\d+)\s*(?:gerade\s+)?stufen?/i) ??
-    lower.match(/(\d+)\s*(?:stufe|tritt)/i)
-  const anzahl = m ? parseInt(m[1]) : 0
+  const anzahl = stufenAnzahlAusText(lower)
 
   const mk = { konfidenz: 'high' as const, annahmen: [] as string[] }
   const belag = v.belag
   const belagName = belag ? erkenneBelagName(lower, belag) : 'Belag'
   const istVerkleiden = lower.includes('verkleid')
 
-  if (!hat(ergaenzt, 'trittstufe')) {
-    const label = istVerkleiden ? `Trittstufen ${belagName} verkleiden` : 'Trittstufen belegen'
-    if (anzahl > 0) {
-      ergaenzt.push({ beschreibung: label, menge: anzahl, einheit: 'Stück', berechnungsweg: `${anzahl} Stück aus Transkript`, ...mk })
-    } else {
-      fehlende.push(label + ' (Anzahl prüfen)')
-    }
-  }
-  if (!hat(ergaenzt, 'setzstufe')) {
-    const label = istVerkleiden ? `Setzstufen ${belagName} verkleiden` : 'Setzstufen belegen'
+  if (!hat(ergaenzt, 'trittstufe', 'treppenstufe')) {
+    const label = istVerkleiden
+      ? `Trittstufen ${belagName} verkleiden`
+      : stufenTitelFuerBelag(belag)
     if (anzahl > 0) {
       ergaenzt.push({ beschreibung: label, menge: anzahl, einheit: 'Stück', berechnungsweg: `${anzahl} Stück aus Transkript`, ...mk })
     } else {
@@ -221,10 +277,47 @@ export function pruefeTreppenBoden(
     }
   }
 
+  // Die Setzstufe bekommt KEINE eigene Zeile — K.4, Prüfmeister, 15.09.2026.
+  //
+  // Bis hierher stand direkt darunter ein zweiter Block, der `Setzstufen
+  // belegen` als eigene Position anlegte. Er ist ersatzlos entfernt, und das
+  // ist die halbe Antwort auf PM-066:
+  //
+  //   `Vinyl auf Trittstufen kleben`  -> Vinyl auf Treppenstufen kleben | 55,00 €
+  //   `Vinyl auf Setzstufen kleben`   -> Vinyl auf Treppenstufen kleben | 55,00 €
+  //
+  // Beide Titel treffen DIESELBE Katalogzeile. Hätten beide Positionen einen
+  // Preis bekommen, stünden vierzehn Stufen zweimal im Angebot — 1.540,00 €
+  // statt 770,00 €. Der Prüfmeister hat den Katalog danach durchgesehen:
+  // Wo die Setzstufe eine eigene Leistung ist (Naturstein, Schreiner), führt
+  // der Katalog sie eigens auf; im Bodenbelag fehlt sie bei ALLEN fünf
+  // Zeilen. Der Stückpreis bezahlt die Stufe als Bauteil, nicht ihren
+  // Grundriss — die Setzstufe fällt im selben Griff mit an.
+  //
+  // Belegt in `pruefmeister-batch-79-88.test.ts`, Abschnitt K.4 (A–E).
+
   // Treppenkantenprofil
-  if (lower.includes('kantenprofil') || lower.includes('treppenkante') || lower.includes('rutschhemmend')) {
-    if (!hat(ergaenzt, 'kantenprofil', 'treppenkante')) {
-      const beschreibung = lower.includes('alu') ? 'Treppenkantenprofil Alu rutschhemmend' : 'Treppenkantenprofil'
+  //
+  // PM-066-C (CoS-E-062, Zug 1): „Treppennase brauchen wir auch." stand
+  // wörtlich im Diktat und erzeugte nichts — das Wort fehlte im Auslöser,
+  // obwohl der Katalog die Zeile wörtlich `Treppennase / Kantenprofil Treppe
+  // montieren` führt (22,00 €/Stück).
+  //
+  // Zweiter, ungemeldeter Teil desselben Funds — gemessen gegen
+  // `DEFAULT_PRICES`: Der bisherige Titel hätte auch dann keinen Preis
+  // gefunden. `Treppenkantenprofil` und `Treppenkantenprofil Alu
+  // rutschhemmend` treffen KEINE Katalogzeile, die Position wäre mit 0,00 €
+  // im Angebot gelandet. Der Katalogwortlaut trifft auf 1,00.
+  //
+  // Die Alu-Angabe bleibt erhalten, sie wandert hinter den Gedankenstrich:
+  // `normalisierePreistext` schneidet dort ab, der Treffer bleibt bei 1,00
+  // (gemessen), und auf dem Kundenpapier steht weiter, was montiert wird.
+  if (lower.includes('kantenprofil') || lower.includes('treppenkante')
+      || lower.includes('treppennase') || lower.includes('rutschhemmend')) {
+    if (!hat(ergaenzt, 'kantenprofil', 'treppenkante', 'treppennase')) {
+      const beschreibung = lower.includes('alu')
+        ? 'Treppennase / Kantenprofil Treppe montieren — Alu, rutschhemmend'
+        : 'Treppennase / Kantenprofil Treppe montieren'
       if (anzahl > 0) {
         ergaenzt.push({ beschreibung, menge: anzahl, einheit: 'Stück', berechnungsweg: `${anzahl} Stück (je Stufe 1)`, ...mk })
       } else {

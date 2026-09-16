@@ -2174,4 +2174,87 @@ montieren`, 22,00 €/Stück. Auf einer Treppe mit vierzehn Stufen sind das
 *Prüfmeister · 15.09.2026, tief in der Nacht*
 
 
+## W. Der Abgleich steht weiter still — und die Gegenrichtung hat vier neue Zeilen (Prüfmeister, 16.09.2026)
+
+**Erst die Kontrollmessung.** `node scripts/vokabular-abgleich.mjs` kommt in
+diesem Lauf **unverändert** heraus, Zahl für Zahl wie in V und T:
+
+```
+Engine-Titel mit eigener Einheit : 182
+davon ohne Preis                 :  32
+davon knapp (Score < 0,75)       :   3
+gute Treffer (Score >= 0,75)     : 147
+Titel aus Variablen, nicht prüfbar:  0
+```
+
+Und das **trotz** der Eingriffe von Engineering an `boden-sonder.ts` aus
+CoS-E-062 Zug 1 (PM-066-A, PM-066-C, PM-067-A). Drei Titel sind dort durch
+Katalogwortlaut ersetzt worden — die Zahl „ohne Preis" bleibt bei 32, weil die
+drei alten Titel nie in dieser Liste standen: Sie **trafen** etwas, nur das
+Falsche oder nichts über der Schwelle. **Das ist eine Aussage über den
+Eingriff, keine über den Katalog** — und zugleich die dritte Messung in Folge,
+die zeigt, dass dieser Zähler die teuren Fehler nicht sieht.
+
+### W.1 Vier weitere Katalogzeilen, nach denen keine Engine je fragt
+
+U hat die Gegenrichtung aufgemacht, V hat sie auf zehn Zeilen gebracht. Der
+Batch PM-089 bis PM-097 liefert vier weitere — jede mit einem Satz, in dem die
+Arbeit ausdrücklich beauftragt ist:
+
+| Gesagter Satz | Katalogzeile, die da wäre | Preis | Entsteht heute |
+|---|---|---|---|
+| „der Estrich hat Risse, acht Meter, die müssen verharzt und verklammert werden" | `Estrichriss kraftschlüssig verharzen und verklammern` | 18,00 €/lfdm | nichts |
+| „das sind ungefähr sechs Stunden für den Gesellen" | `Regiearbeit Geselle` | 65,00 €/Stunde | nichts |
+| „jeden Abend muss besenrein gereinigt werden" | `Endreinigung Fenster / Böden` | 45,00 €/Stunde | nichts |
+| „wir brauchen eine Staubschutzwand zum Flur" | `Staubschutzwand / Trennwand zu angrenzenden Bereichen` | 14,00 €/m² | nichts |
+
+Damit stehen **vierzehn** solcher Zeilen in dieser Datei — fünf aus U, fünf aus
+V, vier aus W. Die ersten drei der vier liegen in **aktiven** Gewerken
+(Boden, Maler, Maler); nur die Staubschutzwand liegt im gesperrten Abbruch.
+Der Zähler „Engine-Titel ohne Preis" hat keine davon gesehen und wird keine
+davon je sehen.
+
+**Zu jeder der vier ist nachgemessen, dass der Katalog nicht das Problem ist:**
+Unter ihrem genauen Titel werden alle vier gefunden — die drei aus den aktiven
+Gewerken sogar aus dem jeweiligen Gewerkfilter heraus. Die Zusicherungen dazu
+stehen als `-D`-Kontrollen in `pruefmeister-batch-89-97.test.ts`.
+
+### W.2 Die Stundenzeile ist der größte blinde Fleck dieser Richtung
+
+Von den vierzehn Zeilen sticht `Regiearbeit Geselle` heraus, und zwar nicht
+wegen des Preises. **Jedes** Gewerk im Katalog führt Stundenleistungen — Maler
+65,00 €, Boden 58,00 €, Fliesen 62,00 €, Trockenbau 65,00 €, SHK 78,00 €,
+Elektro 72,00 €, dazu `Allgemein | Stundenlohn Geselle` 58,00 €. Der Katalog
+ist also durchgehend darauf vorbereitet, dass jemand in Stunden abrechnet.
+
+**Die Engine ist es an keiner Stelle.** Sie kennt Mengen. Sagt der Handwerker
+Stunden statt Quadratmetern — bei Kleinaufträgen der Normalfall —, entsteht
+kein Titel, der diese Zeilen je aufrufen könnte. Gemessen als PM-093: null
+Positionen, null Fehlt-Einträge.
+
+Das ist keine Wortschatzlücke wie V.3 („Treppennase") und keine Naht zwischen
+zwei Gewerken wie V.2 („Sperrschicht"), sondern eine **fehlende Einheit**: Der
+Weg von „sechs Stunden" zu einer Position existiert nicht. Ich führe es hier
+und nicht nur in der Restliste, weil ein Abgleich, der Titel gegen Katalog
+hält, diese Sorte Lücke prinzipiell nicht finden kann — er sieht nur Titel,
+die es schon gibt.
+
+### W.3 Eine Zeile, die in beide Richtungen zeigt
+
+`Boden abdecken (Abdeckvlies)` steht seit Langem in der Liste „ohne Preis" —
+allerdings in der Variante mit der Einheit **Pauschale**
+(`vollstaendigkeit/maler-abkleben.ts`). Die Variante mit **m²** findet
+sehr wohl ihren Preis, 1,20 €/m²; gemessen in PM-094.
+
+Dieselbe Arbeit, zwei Einheiten, zwei Ergebnisse — und die bepreiste Variante
+ist ausgerechnet die, die in PM-094 als **einzige Zeile eines ganzen Angebots**
+dasteht, obwohl niemand sie gesagt hat. Der Abgleich zählt hier also eine
+Lücke, die keine ist, und übersieht daneben, dass die Gegenvariante eine Regel
+verletzt (K.4/K.5: `automatisch_ergaenzt` und „bepreist" schließen einander
+aus). **Kein neuer Fund, aber die Erklärung, warum diese eine Zeile in der
+32er-Liste steht, ohne dass je ein Angebot 0,00 € dafür zeigt.**
+
+*Prüfmeister · 16.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

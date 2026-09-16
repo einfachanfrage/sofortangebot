@@ -1464,3 +1464,226 @@ gibt es keinen Test — sie ist eine Gestaltungsfrage, und ein Test dafür würd
 etwas anderes prüfen als das, was er behauptet.
 
 *Prüfmeister · 2026-09-15, tief in der Nacht*
+
+
+---
+
+## PD-017 — Hero-Animation der neuen Landingpage: gegengerechnet
+
+Sandy hat die beiden Frames geschickt (Aufnahme läuft · Entwurf prüfen) mit der
+Frage, ob Diktat und Positionen zusammenpassen. Ich habe dasselbe Diktat durch
+den Prüfstand geschickt und Zeile für Zeile verglichen.
+
+**Das Diktat:** „Wohnzimmer, vier mal fünf, zwei sechzig hoch. Wände zweimal
+weiß, Decke auch. Ein Fenster, eine Tür. Alte Tapete muss runter."
+
+### Die Mengen stimmen — alle bis auf eine
+
+| Zeile | Animation | Nachgerechnet | |
+|---|---|---|---|
+| Tapete entfernen | 46,80 m² | 18,00 m Umfang × 2,60 m | ✓ |
+| Wände zweimal streichen | 46,80 m² | dieselbe Fläche | ✓ |
+| Decke zweimal streichen | 20,00 m² | 4 × 5 m | ✓ |
+| Boden schützen | 20,00 m² | Bodenfläche | ✓ |
+| Sockelleisten abkleben | **17,10 lfm** | **18,00 lfm** | ✗ |
+
+Die Sockelleisten sind der einzige Mengenfehler, und er widerspricht dem Satz,
+der zwei Zeilen darüber steht. Unter der Wandposition steht „Fenster und Tür
+nach VOB nicht abgezogen" — bei den Sockelleisten ist die Türbreite (0,90 m)
+dann aber doch abgezogen. Nach VOB-012 werden Öffnungen bis 1,00 m nicht
+abgezogen, die App rechnet auch 18,00 lfm. Ein Handwerksmeister, der den
+VOB-Satz liest und danach 17,10 sieht, hat den ersten Widerspruch gefunden,
+bevor er auf „Angebot erstellen" geklickt hat. **Auf 18,00 lfm ändern.**
+
+Die Ableitungen selbst sind gut: „Decke auch" → zweimal, nicht einmal. „Alte
+Tapete muss runter" → eigene Position über die Wandfläche. Das ist genau das,
+was die Animation zeigen soll.
+
+### Die Preise stimmen alle nicht
+
+Keiner der fünf Einheitspreise steht so im Katalog. Das fällt niemandem beim
+Ansehen auf — aber wer die Zahlen aus der Animation als Erwartung mitnimmt und
+später im Tool andere sieht, hält das Tool für kaputt.
+
+| Zeile | Animation | Katalog | Differenz |
+|---|---|---|---|
+| Tapete entfernen | 6,00 €/m² → 280,80 € | **4,00 €/m²** → 187,20 € | −93,60 € |
+| Wände zweimal streichen | 9,20 €/m² → 430,56 € | **9,50 €/m²** → 444,60 € | +14,04 € |
+| Decke zweimal streichen | 10,40 €/m² → 208,00 € | **11,00 €/m²** → 220,00 € | +12,00 € |
+| Boden schützen | 2,20 €/m² → 44,00 € | **1,20 €/m²** → 24,00 € | −20,00 € |
+| Sockelleisten abkleben | 1,20 €/lfm → 20,52 € | **0,80 €/lfm** → 14,40 € | −6,12 € |
+| **Summe netto** | **983,88 €** | **890,20 €** | **−93,68 €** |
+
+Die Summe in der Animation ist in sich richtig gerechnet — sie addiert die fünf
+Zeilen korrekt. Nur die Einheitspreise sind frei gewählt. **Auf die
+Katalogpreise umstellen, Summe 890,20 €.**
+
+### Was fachlich fehlt: der Tiefengrund
+
+Nach „alte Tapete muss runter" kommt kein Voranstrich. Das ist kein
+Animationsfehler — die App legt ihn heute auch nicht an. Aber jeder Maler, der
+die Animation zwei Sekunden ansieht, sieht die Lücke: frisch abgelöste Tapete
+heißt saugender, kleisterverschmierter Untergrund, und darauf wird nicht
+gestrichen, sondern zuerst grundiert. Wer das übergeht, bekommt Fleckenbildung
+und ungleichmäßigen Glanz, und der Kunde ruft in vier Wochen an.
+
+Die Zielgruppe dieser Landingpage ist genau der Mann, der das sofort sieht.
+**Mein Vorschlag: `Grundieren (Tiefengrund)` 46,80 m² × 4,50 € = 210,60 €
+ergänzen — in der App und in der Animation.** Damit wird die Animation stärker,
+nicht schwächer: sie zeigt dann eine Position, an die der Handwerker beim
+schnellen Diktat selbst nicht gedacht hat. Das ist das Verkaufsargument.
+Neue Summe: **1.100,80 €.**
+
+Wer den Aufwand jetzt nicht will: dann das Wort Tapete aus dem Diktat nehmen.
+Ein Diktat ohne Tapetenabriss hat die Lücke nicht. Das ist die billige Lösung,
+aber sie verschenkt den besten Moment der Animation.
+
+### Die Reihenfolge ist rückwärts
+
+Animation: Tapete → Wände → Decke → Boden schützen → Sockelleisten abkleben.
+Gearbeitet wird andersherum: erst schützen und abkleben, dann abreißen, dann
+grundieren, dann von oben nach unten streichen.
+
+**Soll:**
+
+1. Boden schützen · 20,00 m²
+2. Sockelleisten abkleben · 18,00 lfm
+3. Tapete entfernen · 46,80 m²
+4. Grundieren (Tiefengrund) · 46,80 m²
+5. Decke zweimal streichen · 20,00 m²
+6. Wände zweimal streichen · 46,80 m²
+
+Für eine Hero-Animation sind sechs Zeilen viel. Wenn gekürzt werden muss:
+Boden schützen und Sockelleisten abkleben zusammen einblenden und danach
+abdunkeln, damit die drei Zeilen mit Geld (Tapete, Decke, Wände) stehen
+bleiben. Aber nicht die Reihenfolge opfern — das ist der Unterschied zwischen
+„eine App hat was aufgeschrieben" und „da hat einer mitgedacht".
+
+Der Befund gilt auch fürs Produkt und steht als L-06 in der Restliste: das Tool
+sortiert heute ebenfalls nicht nach Ablauf.
+
+### Zu Sandys zwei Ideen
+
+**1. Raummaße oben anzeigen — ja, unbedingt.** Eine Zeile über den Positionen:
+`Wohnzimmer · 4 × 5 m · 2,60 m hoch · 1 Tür · 1 Fenster`.
+
+Zwei Gründe. Erstens macht sie die 46,80 m² nachvollziehbar — sonst muss der
+Betrachter die Zahl glauben. Zweitens, und wichtiger: sie beweist, dass die App
+das Gesprochene **verstanden** hat, nicht nur gehört. Das ist der eigentliche
+Zaubertrick, und er ist im aktuellen Entwurf unsichtbar. Der Sprung von
+gesprochenem Text zu fertigen Positionen ist so groß, dass er unglaubwürdig
+wirkt. Die Maßzeile ist die Brücke dazwischen.
+
+Das Tool zeigt die Zeile ohnehin — die Animation soll aussehen wie das Produkt,
+sonst ist der erste echte Screen eine Enttäuschung.
+
+**2. Bearbeitbarkeit zeigen — ja, aber nicht mit Stiften an jeder Zeile.**
+Fünf Stift-Icons sind Dekoration und sagen nichts.
+
+Stärker ist ein einziger Moment am Ende der Animation: eine Zeile wird
+angetippt, der Preis wird zum Eingabefeld, eine Zahl ändert sich, die Summe
+zählt sichtbar mit. Drei Sekunden, und die wichtigste Frage der Zielgruppe ist
+beantwortet — „rechnet mir da eine Maschine meine Preise kaputt?" Nein: die
+Maschine schlägt vor, der Meister entscheidet.
+
+Die `Vorschlag`-Badges, die schon dran sind, arbeiten in dieselbe Richtung und
+sollten bleiben. Sie sagen ehrlich, welche Zeilen die App dazugelegt hat.
+
+### Was auf keinen Fall wegdarf
+
+Der Satz unter der Wandposition: **„= 18 lfm × 2,60 m · Fenster und Tür nach VOB
+nicht abgezogen."** Das ist die stärkste Zeile im ganzen Entwurf. Sie sagt in
+einem Halbsatz, dass hier jemand nach Norm rechnet und nicht schätzt — und sie
+ist der Grund, warum ein Meister das Tool ernst nimmt. Wenn Platz knapp wird,
+fliegt vorher alles andere.
+
+Nur muss sie dann eben auch für die Sockelleisten gelten.
+
+---
+
+*Prüfmeister · 2026-09-16 · Zahlen gegen `default-prices.ts` und den Prüfstand
+gerechnet, nicht geschätzt*
+
+---
+
+## PD-018 — drei Fragen aus dem Batch PM-089…097 (Prüfmeister, 16.09.2026)
+
+Aus den neun neuen Fällen kommen drei Stellen, an denen nicht Engineering
+entscheiden kann, was richtig ist, sondern ihr. Punkt 1 und 2 betreffen
+Zustände, die die App heute **stillschweigend** durchlaufen — und still ist
+hier die schlechteste aller Antworten.
+
+### Punkt 1 — Zwei Zahlen widersprechen sich. Welche gewinnt, und sagt die App es?
+
+Gemessen (PM-095): Der Handwerker sagt „Wohnzimmer vier mal fünf, Höhe zwo
+fünfzig" — das sind 45 m² Wandfläche — und ein paar Sekunden später „das
+Wohnzimmer hat dreißig Quadratmeter Wandfläche". Das Angebot steht danach auf
+**30 m². Ohne ein Wort.** Keine Rückfrage, kein Hinweis, kein Fehlt-Eintrag.
+
+Für ihn sind das 15 m² × 9,50 € = **142,50 €**, die verschwinden, ohne dass er
+je erfährt, dass es zwei Zahlen gab.
+
+**Dass die spätere Zahl gewinnt, halte ich fachlich für richtig** — so
+funktioniert Selbstkorrektur, und genau darauf beruht PM-001. Die Frage ist
+nicht, welche gewinnt, sondern:
+
+> **Zeigt die App, dass sie sich zwischen zwei Zahlen entschieden hat — und
+> wo?** Eine Rückfrage im Fluss? Ein Hinweis an der Maßzeile („gesagt: 45 m²
+> aus 4 × 5 × 2,50 m · übernommen: 30 m²")? Oder gar nichts, weil es den Fluss
+> stört?
+
+Ich habe keine Präferenz für die Form, aber eine harte Grenze: Der Widerspruch
+ist die Stelle, an der ein Mensch hinschauen muss. Wenn die App ihn nicht
+zeigt, gibt es keine zweite Gelegenheit.
+
+### Punkt 2 — Was zeigt die App, wenn aus einer Aufnahme nichts entsteht?
+
+Zwei gemessene Fälle, beide aus dem normalen Baustellenalltag:
+
+**PM-093** — „Wohnzimmer streichen, das sind ungefähr sechs Stunden für den
+Gesellen." Ergebnis: **null Positionen und null Fehlt-Einträge.** Ein leeres
+Angebot, das nicht sagt, dass es leer ist.
+
+**PM-094** — „Wohnzimmer streichen, zwanzig Quadrat." Ergebnis: **genau eine
+Zeile, und die hat niemand gesagt** — „Boden schützen, 20 m²", 24,00 €,
+automatisch ergänzt. Das Streichen, das Einzige, was er genannt hat, fehlt.
+(Der Grund ist harmlos: ohne Höhe keine Wandfläche.)
+
+Das ist der Beleg, den **PD-016 Punkt 2** gebraucht hat. Dort habe ich gefragt,
+ob die Fehlt-Liste eine Stufe für „ohne das geht es technisch nicht" kennt.
+PM-094 ist genau diese Stufe: Die Höhe ist keine Verbesserung des Angebots,
+ohne sie **gibt es** kein Angebot. Und PM-093 zeigt, dass es auch den Fall
+gibt, in dem gar nichts da ist, woran sich eine Fehlt-Liste aufhängen könnte.
+
+> **Braucht das Ergebnis einen eigenen Zustand — „ich habe dich gehört, aber
+> so kann ich nichts rechnen: mir fehlt die Höhe" —, getrennt von „hier ist
+> dein Angebot, es hat nur Lücken"?**
+
+Wenn ja, ist es derselbe Zustand für beide Fälle, und PD-016 Punkt 2 ist damit
+beantwortet statt nur belegt.
+
+### Punkt 3 — Kennt das Produkt „Nachtrag" und „Bauabschnitt"? (blockiert nichts)
+
+Gemessen (PM-096, PM-097): „Nachtrag zum Angebot von letzter Woche" erzeugt ein
+ganz normales Erstangebot, nicht unterscheidbar von einem ersten. „Zweiter
+Bauabschnitt … wird getrennt abgerechnet" erzeugt **eine** Liste mit **einer**
+Summe über beide Abschnitte.
+
+Das Zusammenführen und das Auftrennen passieren oberhalb der Pipeline; das ist
+kein Engineering-Fund, sondern eine Produktfrage. Sie zählt trotzdem: Ein
+Nachtrag, der als Erstangebot durchgeht, trägt Anfahrt und
+Kleinmaterialpauschale **ein zweites Mal** — und der Kunde bekommt zwei
+Papiere, die sich beide „Angebot" nennen.
+
+> **Sind das zwei Begriffe, die das Produkt kennen soll — oder zwei Dinge, die
+> der Handwerker von Hand löst, indem er zweimal aufnimmt?**
+
+Beides ist vertretbar. Ich frage nur, damit es entschieden ist und nicht
+einfach ausbleibt. **Blockiert heute nichts.**
+
+---
+
+*Prüfmeister · 2026-09-16 · alle Zahlen gegen `default-prices.ts` und den
+Prüfstand `pruefmeister-batch-89-97.test.ts` gemessen*
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-018. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
