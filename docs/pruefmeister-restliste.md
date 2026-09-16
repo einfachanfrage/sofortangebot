@@ -1664,4 +1664,57 @@ gehört.
 *Chief of Staff · 2026-09-16*
 
 
+## 📌 STEHENDE REGEL ab 16.09.2026 — Sandy bekommt keine Befehle mehr. Von niemandem.
+
+**Datum:** 2026-09-16 · Chief of Staff
+**Anlass:** Sandy, wörtlich: *„Ich habe ab jetzt keinen Bock mehr drauf … Bitte gewöhnt euch jetzt nicht an, mir immer alles zuzuschieben. Es ist eure Aufgabe … Ich kopiere da immer irgendwas und füge dann da was ein. Ich weiß gar nicht, was ich da überhaupt mache."*
+
+Sie hat zugleich **allen Rollen ausdrücklich den Zugriff erteilt** — Shell,
+Editor, Projektordner, GitHub. Diese Freigabe ist damit erteilt und muss nicht
+erneut eingeholt werden.
+
+### Die Regel
+
+> **Kein Befehl, kein Codeblock und kein „mach mal eben" geht an Sandy.**
+> Wenn eine Rolle etwas auf ihrem Rechner braucht — committen, pushen, ein
+> Skript laufen lassen, eine Datei anlegen — **macht die Rolle das selbst.**
+> Eine Aufgabe gilt erst als erledigt, wenn sie **ohne** Sandys Tastatur
+> erledigt ist.
+
+**Die drei einzigen Ausnahmen**, und nur diese:
+
+1. **Entscheidungen.** Was gebaut wird, was es kosten darf, was rechtlich
+   verantwortet wird, was nach außen geht.
+2. **Etwas, das ihr Konto braucht.** Stripe-Dashboard, Vercel-Einstellungen,
+   Gewerbeanmeldung, Versicherung — Dinge, bei denen sie die Person ist.
+3. **Ein Urteil, das nur sie fällen kann.** „Fühlt sich das richtig an?"
+
+Alles andere — jede Zeile Terminal, jeder Dateipfad, jedes `git`-Kommando —
+gehört uns. **Wer eine Anleitung an Sandy schreibt, hat die Aufgabe nicht
+erledigt, sondern weitergereicht.**
+
+### Stand des Zugriffs, heute geprüft (nicht behauptet)
+
+| Weg | Stand 16.09. | Was das heißt |
+|---|---|---|
+| **Shell auf ihrem Rechner** (`device_bash`) | ❌ **weiterhin defekt** — `no Plan9 drive shares mounted` | Kein `git`, kein `npm`, kein Skript. Ursache ist ein **Windows-Update vom 08.09.**; Microsoft hat am **14.09. den Fix veröffentlicht**, er muss auf ihrem Rechner installiert werden. Sandy ist informiert. Statusseite: Vorfall „Degraded functionality for Claude Cowork on Windows" — **Resolved** |
+| **Dateien lesen/schreiben** (Staging/Commit) | ✅ funktioniert | Jede Datei im Projektordner kann gelesen und geschrieben werden, mit `expectedMtimeMs` gegen Überschreiben |
+| **Claude in Chrome** | ✅ **verbunden** (Browser 1, Windows) | **Neu und wichtig:** Live-Tests in der laufenden App sind ab sofort **eure** Aufgabe, nicht Sandys. Wer bisher „Live-Test nur mit Sandy am Rechner" notiert hat, streicht das |
+| **Vercel / Supabase / Sentry** | ✅ per Anbindung | Deploys, Datenbank, Fehlerbilder direkt abfragbar |
+
+### Was jede Rolle bei jedem Lauf tut
+
+1. **Einmal `device_bash` testen** (z. B. `ls $HOME/mnt/`). Geht es wieder,
+   **sofort selbst committen und pushen** statt Sandy zu fragen — und es hier
+   vermerken, damit es die anderen wissen.
+2. Geht es nicht: die Arbeit trotzdem fertig machen. Dateien schreiben geht.
+   **Nicht auf die Shell warten und nicht Sandy bitten.**
+3. **Nie einen Befehl in eine Meldung an Sandy schreiben.** Wenn wirklich
+   nichts geht, schreibt es mir — ich bündele, und ich entscheide, ob es sie
+   überhaupt erreicht.
+
+*Chief of Staff · 2026-09-16*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
