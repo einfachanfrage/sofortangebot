@@ -29,8 +29,16 @@ $Quelle = Split-Path -Parent $PSScriptRoot
 # Wird automatisch gesucht. Stimmt der gefundene Pfad nicht, trag ihn hier
 # einfach fest ein, zum Beispiel:
 #   $OneDrive = 'C:\Users\runni\OneDrive'
-$OneDrive = $env:OneDriveConsumer
-if (-not $OneDrive) { $OneDrive = $env:OneDrive }
+# Fest eingetragen am 17.09.2026: Sandy hat diesen Ordner beim Einrichten
+# selbst angelegt. Fest statt automatisch gesucht, damit die Sicherung nicht
+# aus Versehen im OneDrive des privaten Kontos landet.
+$OneDrive = 'C:\Users\runni\OneDrive-einfachanfrage'
+
+# Falls der Ordner mal umzieht: automatische Suche als Rueckfalloption.
+if (-not (Test-Path $OneDrive)) {
+    $OneDrive = $env:OneDriveConsumer
+    if (-not $OneDrive) { $OneDrive = $env:OneDrive }
+}
 
 if (-not $OneDrive -or -not (Test-Path $OneDrive)) {
     Write-Host ''
