@@ -9364,4 +9364,56 @@ so, wie du sie geändert hast**. Kein Rückbau.
 
 ---
 
+## 🔴 Nachtrag zu CoS-E-078 — die Produktion war 45 Minuten kaputt, weil dein Bau halb committet war (17.09.2026, 11:55 UTC · Chief of Staff)
+
+**Zwei Korrekturen an meinem eigenen Eintrag von 11:30, beide gemessen.**
+
+### 1. Zug 2 war schon fertig, als ich „nicht die Tapezier-Nische" schrieb
+
+Du hast sie um **11:10** gebaut, mein Eintrag entstand um **11:30**. Die
+Reihenfolgeaussage stimmt weiter (**PM-117 + PM-060-A zuerst**), aber die
+Nische steht nicht mehr dahinter — sie ist fertig, von mir nachgemessen und
+committet (`4eb06f1`).
+
+**Deinen Fund dabei halte ich fest, weil er eine Regel korrigiert, die ich
+selbst zu früh verallgemeinert hätte:** Bei PM-075 musste der Titel gekürzt
+werden, hier trifft die **volle Katalog-Schreibweise** mit 1,00 und die
+Einzahl findet gar nichts. **„Miss den Titel", nicht „kürze den Titel".**
+
+### 2. 🔴 Die Produktion stand seit 11:10 auf ERROR
+
+```
+980c271  11:04  READY
+4f06c75  11:10  ERROR
+deea290  11:40  ERROR
+```
+
+Bauprotokoll, wörtlich:
+
+```
+Failed to type check.
+./src/lib/zeit-ausschluss.ts:54:24
+Type error: Module './satz-raum' has no exported member 'raumDerPosition'
+```
+
+**Kein Produktfehler.** `zeit-ausschluss.ts` und sein Prüfstand sind committet
+worden, `satz-raum.ts` mit der Funktion, die es importiert, blieb ungebunden
+im Baum liegen — CoS-E-074 war **halb** in Git. Auf Sandys Rechner lief alles
+grün, weil dort beide Dateien lagen; Vercel baut nur, was committet ist.
+
+**Behoben:** die fehlende Hälfte steckt in `4eb06f1`, `tsc --noEmit` ist
+fehlerfrei — genau die Prüfung, an der Vercel gescheitert ist. Ein Push von
+Sandy repariert die Produktion.
+
+**Die Lehre gehört mir, nicht dir:** Punkt 7 deines CoS-E-074-Eintrags sagt
+ausdrücklich, dass `raumDerPosition()` nach `satz-raum.ts` gewandert ist. Es
+stand da, und wer committet hat, hat es nicht gelesen. **Ab jetzt prüfe ich
+nach jedem Commit, ob der Arbeitsbaum sauber ist** — eine halb committete
+Änderung ist auf dem eigenen Rechner unsichtbar und fällt erst in der
+Produktion auf.
+
+*Chief of Staff · 2026-09-17, 11:55 UTC*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 11:50 UTC · Chief of Staff**
-*(ersetzt die Fassung von 11:40 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 11:55 UTC · Chief of Staff**
+*(ersetzt die Fassung von 11:50 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**.*
 
 ---
@@ -22,8 +22,12 @@ Rechnungen selbst hineingezogen**, während wir darüber schrieben. **Offen
 bleibt die Sicherung** — und dazu habe ich ihr zweimal Falsches geschrieben,
 beides unten richtiggestellt.
 
-**Vierzehn Commits liegen ungepusht.** Alles Gepushte ist unverändert grün,
-Produktion läuft auf `da7db10`.
+**🔴 DIE PRODUKTION IST SEIT 11:10 UTC KAPUTT — und der Fix liegt fertig da.**
+Die letzten **zwei** Vercel-Deploys stehen auf **ERROR**. Ursache gemessen:
+`zeit-ausschluss.ts` wurde committet, `satz-raum.ts` mit der Funktion, die es
+importiert, blieb ungebunden im Baum liegen — halb committet, deshalb rot.
+**Ich habe die fehlende Hälfte committet; ein Push repariert es.** Produktion
+läuft bis dahin auf `980c271` (11:04 UTC, grün).
 
 ---
 
@@ -61,10 +65,25 @@ Produktion läuft auf `da7db10`.
 * **`npx tsc --noEmit -p tsconfig.json`: sauber** — nach meinem eigenen
   `exclude`-Fix. Vorher meldete es 33 Fehler, alle aus `_to_delete/`.
 * **`eslint` über die 11 geänderten Dateien: 0 Fehler**, 14 Warnungen (Bestand).
-* **Vercel-Deploy-Liste:** Produktion **READY** auf `da7db10`, 07:35.
-  **Kein neuer Deploy seit dem letzten Durchlauf.**
-* **`git log origin/main..main`: vierzehn** Commits ungepusht, `origin/main`
-  steht unverändert auf `da7db10`.
+* **🔴 Vercel-Deploy-Liste, um 11:52 neu abgefragt:** letzter **READY** ist
+  `980c271` (11:04). Danach **zwei ERROR**: `4f06c75` (11:10) und `deea290`
+  (11:40). **Die Produktion hängt seit 45 Minuten auf einem alten Stand, und
+  niemand hatte es gemeldet** — in der Fassung von 11:50 stand hier noch
+  „Produktion läuft auf `da7db10`". Das war überholt.
+* **Das Bauprotokoll selbst gelesen, nicht geraten:**
+  `Type error: Module './satz-raum' has no exported member 'raumDerPosition'`,
+  `./src/lib/zeit-ausschluss.ts:54`. **Kein Produktfehler — eine halb
+  committete Änderung.**
+* **Den Fix committet und gemessen:** `satz-raum.ts` und der Rest von
+  CoS-E-074 sind jetzt in `4eb06f1`, Arbeitsbaum sauber,
+  `npx tsc --noEmit -p tsconfig.json` **fehlerfrei** — genau die Prüfung, an
+  der Vercel gescheitert ist.
+* **Die 95 Prüfstände, die `vollstaendigkeit`, `maler`, `mehrgewerk`,
+  `satz-raum` oder `bauteil-ausschluss` einlesen**, in sieben Teilen auf dem
+  Stand **nach** dem Commit: **1600 grün · 94 Sperrklinken · 0 rot.**
+* **`git log origin/main..main`: zwei** Commits ungepusht (`da4d9a3`,
+  `4eb06f1`), `origin/main` steht auf `deea290`. Sandy hat zwischendurch
+  zweimal gepusht.
 * **ENDE-Markierungen über alle `docs/*.md` gezählt:** keine Datei mit mehr als
   einer, 33 mit genau einer.
 * **`node scripts/docs-sichern.mjs pruefen`:** „Alle 57 Doku-Dateien in Ordnung."
@@ -132,7 +151,7 @@ Produktion läuft auf `da7db10`.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🟡 **Pushen.** **Vierzehn Commits** liegen bereit. | ein Befehl |
+| 1 | 🔴 **Pushen — und diesmal repariert es die Produktion.** Zwei Commits, einer davon ist der Fix für die beiden roten Deploys. | ein Befehl |
 | 2 | 🔴 **Preis bei § 19 (A/B), F-006** — tendiert zu **B** (Regelbesteuerung). **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
 | 3 | 🔴 **Sicherung einschalten.** OneDrive mit `einfachanfrage@outlook.com` anmelden, dann `scripts\sicherung-onedrive.ps1` einmal starten und als tägliche Aufgabe einrichten. Anleitung liegt bereit | einmal 10 Minuten |
 | 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
@@ -155,7 +174,7 @@ aber der neue wiegt schwerer als die fünf, die gegangen sind.
 
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
-| **Engineering** | **🔴 PM-117 + PM-060-A, zusammen** (1.961,38 € auf jedem Bad). Danach **PM-119/L-06** (Soll liegt vor), danach Zug 2 mit der **Tapezier-Nische**. **Die Reihenfolge von 09:50 ist damit zurückgezogen.** | niemanden |
+| **Engineering** | **🔴 PM-117 + PM-060-A, zusammen** (1.961,38 € auf jedem Bad). Danach **PM-119/L-06** (Soll liegt vor). **Zug 2, die Tapezier-Nische, ist um 11:10 fertig geworden** — von mir nachgemessen und committet, sie steht nicht mehr in der Reihenfolge. Dazu eine Regel aus dem eigenen Lauf: **die Lehre aus PM-075 ist „miss den Titel", nicht „kürze den Titel"** — hier traf die Katalog-Schreibweise mit 1,00, die Einzahl gar nicht. | niemanden |
 | **Designer** | **DC-122** ohne den Fußzeilenteil (Schrift, Akzentfarbe), dann die Fußzeile nach Legals Antwort, dann **DC-124**. Dazu neu und ohne Zeitdruck: **DC-125** (Anzeige der Nullzeile) und **PD-021** (die Gliederung „Nach Arbeitsablauf"). | Legal (nur der Fußzeilenteil von DC-122) |
 | **Prüfmeister** | **Spur leer.** Alles aus dem Mittagslauf ist beantwortet, beide ENDE-Meldungen sind zu. Nächstes: wartet auf neue Bitten, sonst Fallbasis weiter (120 Fälle). | niemanden |
 | **Legal** | **Zuerst: L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Danach **CoS-L-011** — dürfen freie Fußzeilen die Pflichtangaben auf dem Angebot ersetzen (A/B/C)? | niemanden |
