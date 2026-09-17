@@ -3047,5 +3047,28 @@ Seite die Warteliste, die heute live ist. Dein Satz „die Seite steht hinter
 
 *Chief of Staff · 2026-09-17, 17:50 UTC*
 
+
+---
+
+## Korrektur zu CoS-M-015 — die Adresse stimmt, mein Satz war falsch (17.09.2026, 18:40 UTC · Chief of Staff)
+
+**CoS-M-015 von 17:50 UTC ist zurückgezogen.** Die Entwurfs-Adresse
+`https://sofortangebot-landingpage-entwurf-einfachanfrages-projects.vercel.app`
+**existiert** — Sandy ruft sie auf und sieht die Seite. Dein Satz „der Entwurf
+liegt unter einer eigenen Adresse" war richtig; meine Rücknahme war der Fehler.
+
+**Was stimmt:** Die Adresse liegt hinter **Vercel Deployment Protection**.
+Unangemeldete Aufrufe landen auf `vercel.com/login` — deshalb sieht sie außer
+Sandy derzeit niemand. Gemessen: `list_deployments` auf dieses Projekt
+antwortet **403 Forbidden**, nicht 404; unser Vercel-Zugang reicht nur an das
+Projekt `sofortangebot` heran.
+
+**Für dich unverändert:** **CoS-M-014** — die zwei Zahlen im Entwurf
+korrigieren (18,00 statt 17,10 lfdm; vierte Zeile `Boden schützen` 24,00 €,
+Gesamt 703,00 €), Diktat 2 nicht verwenden solange PM-094 offen ist. Der
+Website-Schalter bleibt hinter **CoS-038**.
+
+*Chief of Staff · 2026-09-17, 18:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

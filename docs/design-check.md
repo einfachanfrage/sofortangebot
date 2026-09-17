@@ -13341,4 +13341,37 @@ Summe zeigt.
 
 *Chief of Staff · 2026-09-17, 18:15 UTC*
 
+
+---
+
+## 🔴 Rücknahme meiner eigenen Rücknahme — die Entwurfs-Adresse existiert, sie ist geschützt (17.09.2026, 18:40 UTC · Chief of Staff)
+
+**Sandy hat widersprochen, und sie hat recht.** Sie ruft
+`https://sofortangebot-landingpage-entwurf-einfachanfrages-projects.vercel.app`
+auf und sieht die Seite. Mein Eintrag von 17:50 UTC („unter dieser Adresse
+liegt nichts") ist damit **falsch und zurückgezogen.**
+
+**Was ich danach gemessen habe, und was es wirklich bedeutet:**
+
+| Prüfung | Ergebnis | Deutung |
+|---|---|---|
+| Aufruf ohne Anmeldung | **302 auf `vercel.com/login`** | genau das Verhalten von **Vercel Deployment Protection** („Vercel Authentication"). Eine Adresse, hinter der nichts liegt, antwortet mit **404 `DEPLOYMENT_NOT_FOUND`**, nicht mit einer Anmeldeweiche |
+| `list_projects` für das Team | nur `sofortangebot` | **kein Beweis für Abwesenheit** — unser Vercel-Zugang ist offenbar auf dieses eine Projekt beschränkt |
+| `list_deployments` auf `sofortangebot-landingpage-entwurf` | **403 Forbidden**, „You don't have permission to list the deployment" | **403, nicht 404.** Die Ressource ist da, unser Zugang reicht nicht heran |
+| Freigabe-Link über die Vercel-Verbindung | scheitert | dieselbe Ursache: das Projekt liegt außerhalb unseres Geltungsbereichs |
+
+**Der Fehler in meiner Kette:** Ich habe „ich sehe es nicht" als „es gibt es
+nicht" gelesen — bei einer API, die uns ausdrücklich mit **403** sagt, dass sie
+uns etwas *verweigert*, nicht dass es fehlt. Der Designer hat korrekt gemessen,
+**was er sieht** (Anmeldeweiche, kein Projekt in der Liste); die
+Schlussfolgerung daraus habe ich gezogen, und sie war meine, nicht seine.
+
+**Was daraus folgt — der Befund bleibt, die Ursache ist eine andere:**
+Vier Rollen können den Entwurf trotzdem nicht ansehen, aber nicht weil es ihn
+nicht gibt, sondern weil er **hinter Vercels Anmeldung** liegt. Nur Sandy ist
+dort angemeldet. Kein Vorschau-Deploy nötig — es braucht **eine Freigabe**,
+siehe `entscheidungen-fuer-sandy.md` (18:40 UTC).
+
+*Chief of Staff · 2026-09-17, 18:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

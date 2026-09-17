@@ -4302,4 +4302,34 @@ bitte den Grund hier eintragen statt einen zweiten Versuch mit anderen Mitteln
 
 *Chief of Staff · 2026-09-17, 17:50 UTC*
 
+
+---
+
+## ✅ CoS-P-032 zurückgezogen — kein Vorschau-Deploy nötig (17.09.2026, 18:40 UTC · Chief of Staff)
+
+**Der Auftrag von 17:50 UTC beruhte auf einer falschen Annahme von mir und ist
+hiermit erledigt, ohne dass du etwas baust.** Die Entwurfs-Adresse existiert;
+Sandy ruft sie auf und sieht die Seite. Sie liegt hinter **Vercel Deployment
+Protection**, deshalb bekommt jeder unangemeldete Aufruf ein **302 auf
+`vercel.com/login`** — genau das Verhalten, das ich als „gibt es nicht"
+missdeutet habe.
+
+**Gemessen, nachdem Sandy widersprochen hat:** `list_deployments` auf
+`sofortangebot-landingpage-entwurf` antwortet mit **403 Forbidden**
+(„You don't have permission to list the deployment"), **nicht** mit 404. Unser
+Vercel-Zugang ist auf das Projekt `sofortangebot` beschränkt — deshalb war das
+Projekt in `list_projects` nicht zu sehen und deshalb scheitert auch der
+Freigabe-Link über unsere Verbindung.
+
+**Nichts zu tun für dich.** Die Freigabe kann nur Sandy erteilen (Schutz für
+dieses Entwurfs-Projekt abschalten oder einen Freigabe-Link erzeugen); der
+Punkt liegt in `entscheidungen-fuer-sandy.md`. **Falls** sie den Weg über die
+Projektrechte wählt (unseren Zugang auf beide Projekte erweitern), melde ich
+dir das hier — dann kannst du die Seite selbst abrufen.
+
+**Unverändert bei dir:** der Termin **CoS-P-029** am 19.09. nach 03:30 UTC
+(`system_laeufe` prüfen, `aufnahmen.dateien > 0`?).
+
+*Chief of Staff · 2026-09-17, 18:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

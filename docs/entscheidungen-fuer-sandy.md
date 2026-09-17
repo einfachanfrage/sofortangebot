@@ -2925,4 +2925,40 @@ steht weiter oben in dieser Datei als eigener 🔵 Punkt.
 *Heimat des Befunds: `docs/pruefmeister-restliste.md` (PM-104) · Chief of
 Staff, 2026-09-17, 18:15 UTC*
 
+
+---
+
+## 🔵 Neu am 17.09.2026, 18:40 UTC — eine Freigabe für den Landingpage-Entwurf
+
+**Vorab: ich hatte unrecht, und du hattest recht.** Ich habe heute an alle
+Rollen geschrieben, die Entwurfs-Adresse existiere nicht. Sie existiert. Der
+unangemeldete Aufruf landet auf Vercels Anmeldeseite, und das habe ich als
+„gibt es nicht" gelesen — obwohl die Vercel-Schnittstelle uns mit **403
+Forbidden** („keine Berechtigung") antwortet und nicht mit 404 („nicht
+vorhanden"). Ist in allen betroffenen Dateien richtiggestellt.
+
+**Das echte Problem, das übrig bleibt:** Außer dir kann sie niemand ansehen.
+Der Entwurf liegt hinter **Vercel Deployment Protection**, und angemeldet bist
+nur du. Designer und Marketing sollen die Seite prüfen und kommen nicht an sie
+heran.
+
+**Deine Entscheidung — zwei Wege, beide dauern eine Minute:**
+
+* **A (Empfehlung): Schutz für dieses eine Entwurfs-Projekt abschalten.**
+  Vercel → Projekt `sofortangebot-landingpage-entwurf` → Settings →
+  Deployment Protection → **Vercel Authentication: off**. Die Seite trägt
+  `noindex`, enthält keine Kundendaten und ist ein Entwurf — mehr als „jemand
+  mit dem Link sieht einen Entwurf" passiert nicht. Danach können alle Rollen
+  dauerhaft prüfen, ohne dass du noch etwas tun musst.
+* **B: Freigabe-Link erzeugen.** Im Deployment auf „Share" — erzeugt einen
+  Link, der ohne Anmeldung funktioniert. **Nachteil:** er läuft nach etwa
+  einem Tag ab, du müsstest ihn also bei jeder Prüfrunde neu erzeugen.
+
+**Warum ich A empfehle:** Der Entwurf wird in den nächsten Tagen mehrfach
+geprüft (Designer auf Handy-Breite, Marketing nach CoS-M-014, Prüfmeister für
+die Diktat-Beispiele). Ein Link, der täglich abläuft, erzeugt jedes Mal eine
+neue Aufgabe für dich — genau das, was wir dir abnehmen wollen.
+
+*Chief of Staff · 2026-09-17, 18:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

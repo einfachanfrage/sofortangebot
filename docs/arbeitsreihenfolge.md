@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 18:15 UTC · Chief of Staff**
-*(ersetzt die Fassung von 18:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 18:40 UTC · Chief of Staff**
+*(ersetzt die Fassung von 18:15 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
 also 20:00 Uhr Ortszeit.*
 
@@ -22,11 +22,13 @@ PM-103 (20 % Zuschlag, ausgelöst vom Wort „Altbau" im Raumnamen), PM-104
 offen**, die Entwarnung von gestern war falsch. Alles zusammen als
 **CoS-E-083**, Reihenfolge steht.
 
-**🔴 Die Landingpage-Entwurfs-Adresse, die ich allen Rollen genannt habe,
-existiert nicht.** Der Designer hat es gemessen, ich habe es unabhängig
-nachgemessen: ein Team, **ein** Vercel-Projekt, die Adresse antwortet **302
-auf `vercel.com/login`**. Mein Fehler, zurückgezogen. **CoS-P-032** legt einen
-Vorschau-Deploy an.
+**🔴 Mein Fehler des Tages, von Sandy korrigiert: die Landingpage-Entwurfs-Adresse
+existiert doch.** Sie ruft sie auf und sieht die Seite. Der unangemeldete Aufruf
+landet auf `vercel.com/login`, weil die Seite hinter **Vercel Deployment
+Protection** liegt — und `list_deployments` antwortet **403 Forbidden**, nicht
+404. Ich habe „ich sehe es nicht" als „es gibt es nicht" gelesen. **CoS-P-032
+zurückgezogen**, es braucht keinen Vorschau-Deploy, sondern **eine Freigabe von
+Sandy**.
 
 ---
 
@@ -38,7 +40,7 @@ Vorschau-Deploy an.
 | **Prüfmeister** | **Sandys zweiten Live-Lauf ausgemessen:** sieben von zehn Fällen sauber, **vier neue Funde + eine Rücknahme** (PM-102…PM-107, PM-079-A), alle mit Sperrklinke. `pruefmeister-batch-47-56.test.ts`: 33 grün, 17 Sperrklinken | ✅ erledigt |
 | **Designer** | **DC-128 gebaut** (uncommittet) und **gemessen, dass die Entwurfs-Adresse nicht existiert** — mit Vercel-API und Browser belegt, nichts angefasst | ✅ erledigt |
 | **CoS** | **CoS-E-083 angelegt** — die sechs Funde als ein Auftrag mit Reihenfolge; dazu die Korrektur, dass CoS-E-081 entgegen der Meldung von 17:15 **doch im Arbeitsbaum läuft** (selbst nachgesehen: +69 Zeilen in `helpers.ts`) | ✅ verteilt |
-| **CoS** | **CoS-P-032** (Vorschau-Deploy) und **CoS-M-015** (Rücknahme meines falschen Satzes) angelegt, Antwort an den Designer eingetragen, **Punkt 9.1 in `launch-readiness.md` richtiggestellt** | ✅ verteilt |
+| **CoS** | **CoS-P-032 und CoS-M-015 wieder zurückgezogen** (18:40 UTC), nachdem Sandy widersprochen hat: die Adresse existiert, sie ist geschützt. Richtigstellung in `design-check.md`, Platform- und Marketing-Liste und in Punkt 9.1 von `launch-readiness.md` | ✅ erledigt |
 | **CoS** | **Verfahren entschieden statt weitergereicht:** der Baustein „geteilter Arbeitsbaum" steht jetzt in `AGENTS.md` — inklusive des dritten Schritts, ohne den „eigener Index" fremde Einträge löscht | ✅ erledigt |
 | **CoS** | **Eine Entscheidung für Sandy gestellt:** auf welche Grundlage ein Erschwerniszuschlag rechnet (PM-104), mit Empfehlung | ✅ verteilt |
 | **Sandy** | **Entschieden, 18:15 UTC — „ja so wie empfohlen":** ein Erschwerniszuschlag rechnet **nur auf die Positionen, die er betrifft**, nicht auf die Angebotssumme. Die Prozentsätze (15/20/30/10/10 %) bleiben als eigener Punkt offen. Freigabe an Engineering und Designer ist eingetragen | ✅ erledigt |
@@ -50,11 +52,15 @@ Vorschau-Deploy an.
 **Selbst gemessen, nicht vermutet:**
 
 * **Vercel-API, 17:42 UTC:** jüngster Produktions-Deploy `8fec90b`, **READY**.
-* **Vercel-API, 17:41 UTC:** **ein** Team (`einfachanfrages-projects`), **ein**
-  Projekt (`sofortangebot`). Ein Projekt `sofortangebot-landingpage-entwurf`
-  gibt es nicht.
+* **Vercel-API, 17:41 UTC:** **ein** Team (`einfachanfrages-projects`), in
+  `list_projects` **ein** Projekt (`sofortangebot`). **Das ist kein Beweis für
+  Abwesenheit** — unser Zugang ist offenbar auf dieses Projekt beschränkt.
 * **Aufruf der Entwurfs-Adresse, 17:42 UTC:** **302 auf
-  `https://vercel.com/login`** — kein Schutzschalter, es liegt nichts dahinter.
+  `https://vercel.com/login`** — das ist **Vercel Deployment Protection**, kein
+  fehlendes Ziel.
+* **`list_deployments` auf `sofortangebot-landingpage-entwurf`, 18:35 UTC:**
+  **403 Forbidden**, „You don't have permission to list the deployment" —
+  **403, nicht 404.** Die Adresse existiert, unser Zugang reicht nicht heran.
 * **`git fetch` + `git log`, 17:43 UTC:** `origin/main` = `8fec90b`, davor
   **3 ungepushte Commits** (`66955fa`, `f687d17`, `dbea3b5`) — `git diff
   --name-only` zeigt **ausschließlich `docs/`**, kein Code.
@@ -89,15 +95,16 @@ Vorschau-Deploy an.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Einmal pushen.** 5 Commits liegen hier, alle reine Doku und Regeln, kein Code. Block steht unten im Chat | ein Befehl |
-| 2 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
-| 3 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
-| 4 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
-| 5 | 🔵 Heute Abend nach 20:00 Uhr einmal auf `onedrive.live.com` schauen, ob der erste **automatische** Sicherungslauf angekommen ist | ein Blick |
+| 1 | 🔵 **Einmal pushen.** 2 Commits liegen hier, reine Doku, kein Code (die vier von vorhin sind schon draußen). Block steht unten im Chat | ein Befehl |
+| 2 | 🔵 **Freigabe für den Landingpage-Entwurf** — Empfehlung: Schutz für das Entwurfs-Projekt abschalten (Vercel → Settings → Deployment Protection → Vercel Authentication off). Sonst sieht die Seite außer dir niemand. Begründung in `entscheidungen-fuer-sandy.md` | eine Minute |
+| 3 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
+| 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
+| 5 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
+| 6 | 🔵 Heute Abend nach 20:00 Uhr einmal auf `onedrive.live.com` schauen, ob der erste **automatische** Sicherungslauf angekommen ist | ein Blick |
 
-**Nichts davon blockiert eine Rolle.** Die Entscheidung von 18:15 UTC hat den
-letzten gesperrten Punkt freigegeben — es wartet derzeit **keine Rolle auf
-Sandy**.
+**Eine Sache blockiert jetzt doch zwei Rollen:** Designer und Marketing können
+den Landingpage-Entwurf erst ansehen, wenn die Freigabe da ist (Punkt 2).
+Alles andere läuft.
 
 ---
 
@@ -106,10 +113,10 @@ Sandy**.
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
 | **Engineering** | **1. CoS-E-081 fertig** (läuft uncommittet in `helpers.ts` — wer ihn angefangen hat, beendet ihn, und committet `helpers.ts` **allein**). **2. Neu: CoS-E-083** in dieser Reihenfolge: **PM-102 + PM-103 zusammen** → **PM-079-A** (Regression, nicht neu bauen: über alle Räume summieren) → **PM-106 + PM-107 zusammen** → **PM-105**. Danach unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. **Neu freigegeben (18:15 UTC):** die Bemessungsgrundlage der fünf Erschwerniszuschläge wird auf die betroffenen Positionen eingeengt, Prozentsätze unverändert — gebaut wird sie mit PM-103/PM-104, nicht vorgezogen | niemanden |
-| **Designer** | **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern), dann **DC-128 zu Ende** und committen. **PD-023** liegt zum Lesen da, **PD-018 §3** (Zuschlagszeile lesbar machen) ist seiner und seit 18:15 UTC vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. **Keine Aussage zu 9.1 erwartet**, bis CoS-P-032 eine Adresse liefert; DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) · Platform (nur 9.1) |
+| **Designer** | **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern), dann **DC-128 zu Ende** und committen. **PD-023** liegt zum Lesen da, **PD-018 §3** (Zuschlagszeile lesbar machen) ist seiner und seit 18:15 UTC vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. **Keine Aussage zu 9.1 erwartet**, bis Sandy die Seite freigibt (kein Vorschau-Deploy nötig, die Adresse stimmt); DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) · Sandy (nur 9.1) |
 | **Prüfmeister** | **Spur leer, Fallbasis 133.** Vorschlag, seine Entscheidung: **Themenspeicher-Punkt 14** — alle Rechenwege gegen ihren Eingabetext messen („wie viele sagen *aus Transkript*, und bei wie vielen steht die Zahl wirklich im Transkript?"). **Punkt 17** erst, wenn Marketing CoS-M-014 eingearbeitet hat | niemanden |
-| **Platform** | **🆕 CoS-P-032** — Vorschau-Deploy mit `NEXT_PUBLIC_COMING_SOON=false`, **nur** im Geltungsbereich `preview`, Produktion und Live-Schalter unberührt, Adresse in `design-check.md` und die Marketing-Liste eintragen. Dazu der Termin **CoS-P-029:** am **19.09. nach 03:30 UTC** `system_laeufe` prüfen (`aufnahmen.dateien > 0`?) | niemanden |
-| **Marketing** | **CoS-M-014** (zwei Zahlen im Entwurfs-Code korrigieren — dafür braucht es keine Adresse) und **CoS-M-015 lesen** (mein falscher Satz ist zurückgezogen). Danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
+| **Platform** | **Nichts zu bauen — CoS-P-032 ist zurückgezogen.** Nur der Termin **CoS-P-029:** am **19.09. nach 03:30 UTC** `system_laeufe` prüfen (`aufnahmen.dateien > 0`?) | niemanden |
+| **Marketing** | **CoS-M-014** (zwei Zahlen im Entwurfs-Code korrigieren). **CoS-M-015 ist zurückgezogen** — deine Adresse war richtig, der Fehler war meiner. Danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
 | **Legal** | **Zuerst L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Dann **CoS-L-011** (dürfen freie Fußzeilen die Pflichtangaben ersetzen — A/B/C?), dann **CoS-L-012** | niemanden |
 | **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · Behördenliste für Sandy bis 26.09. · **26 unbearbeitete Belege** · drei Fragen von mir: reicht OneDrive als zweiter Ort für die 8 Jahre? · gehört die Sicherung mit **Kontrolle am Zielort** in die Verfahrensdokumentation? · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? | niemanden |
 
@@ -156,8 +163,9 @@ Sandy**.
   bei Engineering; vor dem Umbenennen `dc050-rechenweg-pdf.test.ts` und
   `dc119-wandflaechen-konflikt.test.ts` ansehen.
 * **`menge_unbekannt` ist bewusst nicht gebaut.** Offen, wer die Messung macht.
-* **Eine Adresse, die ich weitergebe, rufe ich vorher auf.** Heute haben vier
-  Rollen eine Seite prüfen sollen, die es nicht gibt — und der Designer hat
-  die Messung gemacht, die ich hätte machen müssen.
+* **403 ist nicht 404.** Heute habe ich aus „unser Zugang sieht das Projekt
+  nicht" geschlossen, die Seite existiere nicht — und das an vier Rollen
+  weitergegeben. Eine Schnittstelle, die „keine Berechtigung" sagt, sagt nicht
+  „nicht vorhanden". Korrigiert hat es Sandy, nicht ich.
 
-*Chief of Staff · 2026-09-17, 18:15 UTC*
+*Chief of Staff · 2026-09-17, 18:40 UTC*
