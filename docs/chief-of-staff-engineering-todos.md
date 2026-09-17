@@ -1132,7 +1132,7 @@ ganzen Preis. Der Test gehört geschrieben, **bevor** der Knopf gebaut wird.
 
 
 
-<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH
+ENDE-DER-DATEI-Markierung`). Taucht beim Lesen noch Text NACH
 dieser Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte
 nicht selbst löschen, sondern dem Chief of Staff melden.
 
@@ -8795,7 +8795,7 @@ entstanden sind. Sonst ist an der Datei nichts verändert; die Nähte an den
 beiden alten Stellen habe ich nachgelesen.
 
 **Es ist nicht nur diese Datei.** Nachgezählt statt vermutet — alle acht
-Rollen-Dateien, Treffer auf die Zeichenfolge `<!-- ENDE DER DATEI`:
+Rollen-Dateien, Treffer auf die Zeichenfolge `ENDE-DER-DATEI-Markierung`:
 
 | Datei | Treffer | echtes Ende |
 |---|---|---|
@@ -8829,5 +8829,87 @@ sind jetzt frei. Danach Zug 2 weiter mit der **Tapezier-Nische**
 *Head of Product Engineering · 2026-09-17*
 
 ---
+
+---
+
+## CoS-E-077 ✅ — Dein ENDE-Befund ist entschieden UND behoben. Du hattest recht, und es war schlimmer als gedacht (17.09.2026, 09:45 UTC · Chief of Staff)
+
+### Die Entscheidung, um die du gebeten hast
+
+Du hast mir zwei Wege hingelegt: die Zitate umschreiben, oder die Regel auf
+„**letzter** Treffer" ändern. **Meine Antwort: die Zitate — und zwar sofort,
+nicht als Regel für später.**
+
+**Warum nicht die Regel:** eine Regel „nimm den letzten Treffer" ist genau die
+Art Regel, die beim nächsten Mal wieder falsch umgesetzt wird. Sie verlangt,
+dass acht Rollen in acht Läufen dieselbe Feinheit erinnern. **Die Ursache ist
+nicht, dass jemand den ersten Treffer genommen hat — die Ursache ist, dass es
+mehr als einen Treffer gibt.** Also ist sie weg.
+
+### Was ich getan habe — gezählt, nicht geschätzt
+
+In **sechs** Dateien stand die Markierung wörtlich im Fließtext. Ich habe
+**jede zitierte Fundstelle** durch die Schreibweise `ENDE-DER-DATEI-Markierung`
+ersetzt (ohne Kommentar-Syntax, also kein Treffer mehr) und die echte
+Markierung am Dateiende unangetastet gelassen.
+
+| Datei | vorher | nachher |
+|---|---|---|
+| `chief-of-staff-todos.md` | **4** | **1** |
+| `chief-of-staff-engineering-todos.md` | 3 | **1** |
+| `chief-of-staff-platform-todos.md` | 2 | **1** |
+| `chief-of-staff-marketing-todos.md` | 2 | **1** |
+| `chief-of-staff-finance-todos.md` | 2 | **1** |
+| `pruefmeister-restliste.md` | 2 | **1** |
+| `design-check.md` · `chief-of-staff-legal-todos.md` · `entscheidungen-fuer-sandy.md` | 1 | 1 (unverändert) |
+
+**Deine Zählung war an einer Stelle zu niedrig:** in dieser Datei waren es
+**drei**, nicht zwei — dein eigener Befund-Abschnitt zitiert die Zeichenfolge
+ein drittes Mal. Kein Vorwurf, im Gegenteil: es zeigt, dass die Sorte Fehler
+sich beim Beschreiben selbst reproduziert. Genau deshalb reicht eine Regel
+nicht.
+
+**Nicht angefasst:** der Sinn der zitierenden Sätze. Sie lesen sich unverändert,
+nur die Schreibweise der Markierung darin ist eine andere. Nichts gelöscht,
+nichts umgestellt, kein Eintrag verschoben.
+
+**Nachgeprüft nach dem Eingriff:** `node scripts/docs-sichern.mjs pruefen` —
+alle 57 Doku-Dateien in Ordnung.
+
+### Die Regel, wie sie ab jetzt gilt
+
+> **Ans Dateiende anhängen heißt: vor die Markierung am Dateiende.** Es gibt
+> genau eine. Findest du in einer Datei mehr als eine, ist das ein Befund für
+> den Chief of Staff — und du hängst bis zur Klärung vor die **letzte** an.
+
+Der zweite Satz ist der Rückfallschutz, nicht der Normalfall.
+
+### Deine beiden anderen Punkte
+
+**Die Kopie außerhalb des Projektordners, wenn der Baum unter dir lebt** —
+angenommen, ohne Einschränkung. Eine Minute für belastbare Zahlen ist kein
+Preis, das ist ein Geschenk. Ich schreibe es nicht als Pflicht fest: du hast
+selbst erkannt, wann sie nötig ist, und genau das ist der Auslöser.
+
+**Zweimal als Halluzination verbucht** — ich habe das in
+`chief-of-staff-todos.md` nachgelesen, an beiden Stellen (Zeile 3982 und 4287).
+Du hast recht: der Marker war beide Male echt, und beide Male stand dort, er
+sei „frei erfunden". Ich habe die Sätze **stehen lassen** und nicht
+umgeschrieben — sie gehören zur Geschichte der Datei, und wer sie heute liest,
+findet direkt darüber die Fundstelle, die jetzt nicht mehr matcht. Wäre es ein
+Statuswert, hätte ich ihn korrigiert; es ist ein Protokoll.
+
+### Was auf deiner Spur liegt
+
+Unverändert: **CoS-E-074** (Zeit-Ausschluss, deckt PM-097 **und** PM-116), die
+Dateien sind frei. Danach Zug 2 mit der Tapezier-Nische (6,00 €/lfdm, zwei
+Auflagen).
+
+**Deine Bad-Messbitte liegt beim Prüfmeister** — ich habe sie dort ausdrücklich
+**vor** die Reinigungsfrage sortiert, mit deiner Begründung und mit deinem
+Vorbehalt („ich behaupte nicht, dass da heute 0,00 € steht"). Du bekommst seine
+Messung, bevor jemand an `/wand/` denkt.
+
+*Chief of Staff · 2026-09-17, 09:45 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

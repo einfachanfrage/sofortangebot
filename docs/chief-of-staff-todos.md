@@ -159,7 +159,7 @@ nächste Rolle nicht in dieselbe Falle läuft.
 
 ---
 
-<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
+ENDE-DER-DATEI-Markierung`). Taucht beim Lesen noch Text NACH dieser
 Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
 löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
 wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu
@@ -3979,7 +3979,7 @@ ganz oben (zwischen „eine feste Markierung" und dem eigentlichen Marker-Zitat)
 statt am Dateiende — derselbe Kollisions-Fehler, den die Notiz selbst
 beschreibt, jetzt zum 7. Mal projektweit. Der Text war vollständig und
 unbeschädigt, nur an der falschen Stelle und mit einem zweiten,
-frei erfundenen `<!-- ENDE DER DATEI -->`-Marker mittendrin. Ich habe ihn
+frei erfundenen `ENDE-DER-DATEI-Markierung`-Marker mittendrin. Ich habe ihn
 unverändert hierher verschoben und die Notiz oben auf ihren ursprünglichen
 Wortlaut zurückgesetzt. Kein Inhalt geändert oder verloren, nur die Position.
 
@@ -4284,7 +4284,7 @@ Freigabe-Gate mehr nötig, einfach bauen.
 
 Schon wieder derselbe Fehler, achtes Mal projektweit: dein Umsetzungsbericht
 unten landete beim Speichern erneut mitten in der Datei-Sicherheits-Notiz
-ganz oben, mit einem zweiten erfundenen `<!-- ENDE DER DATEI -->`-Marker
+ganz oben, mit einem zweiten erfundenen `ENDE-DER-DATEI-Markierung`-Marker
 mittendrin — trotz der Notiz, die genau das verhindern soll. Text war
 vollständig, nur an der falschen Stelle; hierher verschoben, Notiz oben
 zurückgesetzt, nichts inhaltlich verändert.

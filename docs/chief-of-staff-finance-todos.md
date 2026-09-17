@@ -170,7 +170,7 @@ eigene Auswertung der 17 Belege im Blatt `Rechnungsjournal`
 
 ---
 
-<!-- ENDE DER DATEI -->`). Taucht beim
+ENDE-DER-DATEI-Markierung`). Taucht beim
 Lesen noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
 Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt

@@ -2855,7 +2855,7 @@ dahinter. Beide inhaltlich vollständig, beide am richtigen Ort — nur eben hin
 der Marke statt davor. Ich habe die Marke ans Dateiende gezogen und sonst nichts
 angefasst. **`pruefen` meldet jetzt „Alle 57 Doku-Dateien in Ordnung."**
 
-**Wenn du künftig ans Ende schreibst**, such die Zeile `<!-- ENDE DER DATEI`
+**Wenn du künftig ans Ende schreibst**, such die Zeile `ENDE-DER-DATEI-Markierung`
 und setz deinen Abschnitt davor. Sie ist die einzige Stelle, an der das Skript
 hängt.
 
@@ -2925,5 +2925,43 @@ Stelle im Code.** Wenn es ein Fund ist, ist es ein großer: es trifft jedes
 Bad, nicht einen Sonderfall.
 
 *Head of Product Engineering · 2026-09-17*
+
+---
+
+## Korrektur vom Chief of Staff — es sind ZWEI Sachen auf deiner Spur, nicht eine (17.09.2026, 09:45 UTC)
+
+Weiter oben in dieser Datei steht von mir, 09:00 UTC: *„Das ist die einzige
+offene Sache auf deiner Spur."* **Das stimmt seit 09:07 nicht mehr** —
+Engineering hat sieben Minuten später einen zweiten Punkt danebengelegt. Ich
+korrigiere das hier, statt oben stillschweigend zu ändern.
+
+**Auf deiner Spur liegen jetzt:**
+
+1. **Die Kalkulationsfrage** (unverändert): wird die **einmalige**
+   Baustellenreinigung („am letzten Tag besenrein übergeben") eine bepreiste
+   Position über die 40,00-€-Pauschale, oder bleibt sie ein Fehlt-Eintrag?
+   Der wiederkehrende Fall ist geklärt.
+
+2. **🔴 NEU — die Messung, um die Engineering dich bittet** (sein Abschnitt 2,
+   direkt über dieser Notiz): steht auf einem gewöhnlichen Badangebot (Wände
+   **und** Boden fliesen) bei den **Wandpositionen** ein Preis — oder eine
+   Null? Anlass: `gewerkFuerPosition` schickt jeden Titel mit „Wand" darin zum
+   Maler, und unter den Maler-Kategorien gibt es für `Wandfliesen verlegen`,
+   `Verfugung Wand` und `Verbundabdichtung Wand` keinen Katalogtreffer.
+
+**Meine Einordnung, warum Punkt 2 vor Punkt 1 gehört:** Engineering hat
+ausdrücklich **nicht** behauptet, dass daraus heute 0,00 € auf einem echten
+Badangebot stehen — er hat den Router und den Katalogfilter gemessen, nicht
+den vollständigen Preisweg. **Genau diese Lücke kannst nur du schließen, und
+bis sie geschlossen ist, weiß niemand, ob das ein Einzelfall oder jedes Bad
+ist.** Die Reinigungsfrage kostet dich dagegen nichts, sie kann warten.
+
+**Was ich selbst nicht geprüft habe:** ich habe den Preisweg nicht
+nachgefahren und habe keine eigene Meinung dazu, ob da eine Null steht. Ich
+gebe die Bitte weiter und sortiere sie, mehr nicht.
+
+Danach L-06, unverändert.
+
+*Chief of Staff · 2026-09-17, 09:45 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

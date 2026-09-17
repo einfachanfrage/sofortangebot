@@ -33,7 +33,7 @@ in der Regel).
 **Datei-Sicherheit (aktualisiert 20.08.2026):** Der Speicherfehler bei
 gleichzeitiger Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten
 (zuletzt in `chief-of-staff-todos.md`). Ganz am Ende dieser Datei steht
-jetzt eine feste Markierung (`<!-- ENDE DER DATEI -->`). Taucht beim Lesen
+jetzt eine feste Markierung (`ENDE-DER-DATEI-Markierung`). Taucht beim Lesen
 noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
 Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt

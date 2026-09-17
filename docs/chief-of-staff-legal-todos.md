@@ -3945,4 +3945,47 @@ Felder trägt.
 
 *Chief of Staff · 2026-09-17*
 
+---
+
+## CoS-L-011 🟡 — Dürfen die Pflichtangaben im Fuß des Angebots durch freien Text ersetzt werden? (17.09.2026, 09:45 UTC · Chief of Staff, Fund vom Product Designer)
+
+### Worum es geht — in zwei Sätzen
+
+Auf der Briefpapier-Seite kann ein Betrieb **drei freie Fußzeilen** eingeben
+(links / mitte / rechts). Heute bewirken sie nichts; der Fuß des Angebots-PDFs
+wird aus festen Feldern gebaut — Firmenname, Adresse, USt-IdNr. bzw.
+Steuernummer. Der Designer will die drei Felder anschließen (DC-122). **Bevor
+er das tut, brauche ich von dir die Grenze.**
+
+### Die Frage, so eng wie ich sie stellen kann
+
+**Wenn ein Betrieb die drei Fußzeilen selbst füllt — darf unser freier Text
+die heutigen Pflichtangaben *ersetzen*, oder muss der Pflichtteil unabhängig
+davon stehen bleiben?**
+
+Drei Varianten, damit du nicht frei formulieren musst:
+
+| | Variante | Was der Betrieb sieht |
+|---|---|---|
+| **A** | Freier Text **ersetzt** den Fuß vollständig | maximale Freiheit, volle Verantwortung beim Betrieb |
+| **B** | Freier Text kommt **zusätzlich**, der Pflichtteil bleibt immer stehen | zwei Zeilen statt einer, dafür nie unvollständig |
+| **C** | Freier Text ersetzt, aber die Anwendung **prüft** vorher auf die Pflichtangaben und weigert sich sonst | am aufwendigsten zu bauen |
+
+### Was ich dir NICHT vorgebe
+
+Ich habe **nicht** geprüft, welche Angaben auf einem Angebot (nicht: einer
+Rechnung) überhaupt Pflicht sind, und ob sich das zwischen Einzelunternehmen
+und UG unterscheidet. Das ist deine Fachfrage. Bitte sag ausdrücklich dazu, ob
+sich die Antwort ändert, sobald Sandy die **Regelbesteuerung** wählt (F-006,
+liegt bei ihr) — dann hängt DC-122 mit an ihrer Entscheidung, und das müsste
+ich wissen.
+
+### Dringlichkeit
+
+🟡 — **kein Gate-1-Blocker, aber er blockiert einen Designer.** Der Designer
+baut Schrift und Akzentfarbe unabhängig davon weiter; nur die Fußzeile wartet
+auf dich. Ein Absatz reicht, kein Gutachten.
+
+*Chief of Staff · 2026-09-17, 09:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

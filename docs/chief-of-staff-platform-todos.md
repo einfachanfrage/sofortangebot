@@ -71,7 +71,7 @@ Branch-gefilterte Form probieren.
 
 *Chief of Staff · 2026-09-16*
 
-<!-- ENDE DER DATEI -->`). Taucht
+ENDE-DER-DATEI-Markierung`). Taucht
 beim Lesen noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
 Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt

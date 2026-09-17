@@ -1,41 +1,38 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 09:00 UTC · Chief of Staff**
-*(ersetzt die Fassung von 08:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 09:50 UTC · Chief of Staff**
+*(ersetzt die Fassung von 09:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**.*
 
 ---
 
 ## Lage in drei Zeilen
 
-**Alles Gepushte ist grün, und es hat sich seit 08:00 nichts daran geändert.**
+**Alles Gepushte ist grün, und es hat sich seit 09:00 nichts daran geändert.**
 CI-Lauf **#206 grün** auf `da7db10`, Produktion läuft auf demselben Stand
-(Vercel **READY**, 07:35). **Sieben Commits liegen ungepusht** — sechs von
-vorher, einer aus diesem Lauf.
+(Vercel **READY**, 07:35). **Neun Commits liegen ungepusht** — acht von vorher,
+einer aus diesem Lauf.
 
-**Der Designer hat drei Punkte gebaut** (DC-111, DC-119, DC-120) — die Arbeit
-lag unversandt auf der Platte, ich habe sie nachgemessen und committet.
+**Der Designer hat wieder gebaut, wieder unversandt** (DC-121, Logo im
+Angebotskopf) — nachgemessen und committet.
 
-**Eine beschädigte Doku-Datei hat heute morgen das Sicherungsskript für alle
-blockiert.** Ursache gefunden, repariert, nichts verloren.
+**Die Ursache, warum Einträge mitten in Dateien landen, ist gefunden und
+behoben.** Engineerings Fund. Die Markierung am Dateiende kam in sechs von
+neun Dateien mehrfach vor — jetzt in jeder genau einmal.
 
 ---
 
-## Was seit 08:00 UTC passiert ist
+## Was seit 09:00 UTC passiert ist
 
 | Rolle | Ergebnis | Status |
 |---|---|---|
-| Designer | **DC-111 gebaut** — alle **fünf** Anmelde-Seiten teilen sich jetzt einen Rahmen (`(auth)/layout.tsx`, neu), Emoji-Bildmarken raus | ✅ gebaut, war unversandt, von mir committet |
-| Designer | **DC-119 gebaut** — die App entscheidet sich bei Wandflächen-Konflikt weiter für die spätere Zahl, aber nicht mehr wortlos | ✅ dito |
-| Designer | **DC-120 gebaut** — PD-018 P2 und PD-016 P2 beantwortet: die Stufe heißt „ohne das gibt es diese Position nicht" | ✅ dito |
-| Legal | **Gate-1-Punkt 7.13 bewertet: 100/100** (OpenAI-Bedingungen), **L-KI-01** gefunden — ein Halbsatz der Datenschutzerklärung stimmt nicht | ✅ erledigt |
-| Legal | **Nebenbefund:** die 30-Tage-Löschzusage ist bisher **nie** eingelöst worden, weil noch keine Aufnahme alt genug war | ✅ gemeldet |
-| Engineering | **Zwei Ablaufbefunde** gemeldet (`git add -A` · Löschrecht) und **eine Fachfrage** an den Prüfmeister gestellt | ✅ erledigt |
-| Marketing | **Lexware-Frage selbst beantwortet** (aus dem Code), Nebenfund: die Seite bewirbt 3 Anbindungen, es sind **7** | ✅ erledigt |
-| CoS | **`pruefmeister-restliste.md` repariert** — Endmarkierung stand in der Mitte, das Sicherungsskript verweigerte deshalb **allen** Rollen das Sichern | ✅ erledigt |
-| CoS | **Stehende Regel zum Löschrecht in 5 Dateien korrigiert** — sie behauptete das Gegenteil der Wirklichkeit | ✅ erledigt |
-| CoS | **`git add -A` abgeschafft** — Dateien werden ab sofort einzeln benannt. Engineerings Vorschlag, angenommen | ✅ entschieden |
-| CoS | **CoS-E-076** (zwei Ablaufbefunde beantwortet), **CoS-P-029** (Termin 19.09.), L-KI-01 an Sandy verteilt | ✅ erledigt |
+| Designer | **DC-121 gebaut** — das Logo im Angebotskopf richtet sich ab jetzt über die **Höhe** aus, nicht über die Breite. Die Schalter „Größe" und „Position" im Briefpapier wirken zum ersten Mal | ✅ gebaut, war unversandt, von mir nachgemessen und committet (`5603d53`) |
+| Engineering | **PM-075 gebaut** (Duschnische, 1 Stück, 95,00 €) und ein **🔴 Befund beim Messen**: drei Bad-Wandpositionen laufen über den Maler und finden dort keinen Katalogtreffer | ✅ erledigt, Messbitte liegt beim Prüfmeister |
+| Engineering | **🔴 Ursache gefunden, warum Einträge mitten in Dateien landen:** die Markierung am Dateiende steht in mehreren Dateien auch im Fließtext | ✅ gemeldet |
+| CoS | **Diesen Befund entschieden und behoben** — jede zitierte Fundstelle umgeschrieben, sechs Dateien, **CoS-E-077** | ✅ erledigt |
+| CoS | **DC-121 abgenommen**, die drei offenen Punkte des Designers bekommen Nummern: **DC-122 / DC-123 / DC-124** | ✅ erledigt |
+| CoS | **CoS-L-011** an Legal — die Rechtsfrage aus DC-122 abgetrennt (dürfen freie Fußzeilen die Pflichtangaben ersetzen?) | ✅ erledigt |
+| CoS | **Korrektur beim Prüfmeister** — meine eigene Zeile von 09:00 („die einzige offene Sache") stimmte seit 09:07 nicht mehr | ✅ erledigt |
 
 ---
 
@@ -44,33 +41,37 @@ blockiert.** Ursache gefunden, repariert, nichts verloren.
 **Selbst gemessen, nicht vermutet:**
 
 * **CI-Lauf-Liste über die GitHub-API (`branch=main`):** **#206 grün**
-  (`da7db10`, 07:35), #205, #204, #203, #202 grün, #201 rot (16.09.).
-  **Kein neuer Lauf seit 07:37** — es wurde nichts gepusht.
+  (`da7db10`, 07:35), der zweite Arbeitsablauf **#59 grün** (07:37), davor
+  #205/#204/#203/#202 grün. **Kein neuer Lauf seit 07:37** — es wurde nichts
+  gepusht.
 * **Vercel-Deploy-Liste:** Produktion **READY** auf `da7db10`, 07:35.
   **Kein neuer Deploy seit dem letzten Durchlauf.**
-* **`git log origin/main..main`:** **sieben Commits** ungepusht.
+* **`git log origin/main..main`:** **neun** Commits ungepusht.
 * **Die Arbeit des Designers vollständig selbst nachgemessen**, bevor ich sie
-  committe: `npx tsc --noEmit` **fehlerfrei** · `dc111-auth-rahmen` **11 grün**
-  · `dc119-wandflaechen-konflikt` **22 grün** · `src/lib/mengen/__tests__`
-  (23 Dateien) **256 grün** · die 7 Dateien in `src/lib/__tests__`, die die
-  geänderten Module einlesen, **122 grün** · die 6 Prüfmeister-Batches
-  **112 grün, 59 Sperrklinken, 0 unerwartet rot**.
-* **`node scripts/docs-sichern.mjs pruefen`** vor und nach der Reparatur:
-  vorher „18.365 Zeichen NACH der Endmarkierung", jetzt **„Alle 57 Doku-Dateien
-  in Ordnung."**
-* **`entscheidungen-fuer-sandy.md`, `chief-of-staff-legal-todos.md`,
-  `pruefmeister-restliste.md` und `chief-of-staff-todos.md` frisch gelesen**,
-  bevor ich unten „offen" schreibe.
+  committe: `npx tsc --noEmit -p tsconfig.json` **fehlerfrei** · die **6**
+  Testdateien, die `lib/pdf` oder `AngebotVorschau` einlesen, **49 grün**,
+  davon **9 neu** aus `dc121-logo-kopf.test.ts` · `eslint` über die fünf
+  geänderten Dateien **0 Fehler, 4 Warnungen** (Bestand).
+* **Die ENDE-Markierungen in allen neun Doku-Dateien gezählt**, vor und nach
+  dem Eingriff: vorher 4/3/2/2/2/2/1/1/1, jetzt **überall genau 1**.
+* **`node scripts/docs-sichern.mjs pruefen`** nach jedem Eingriff: **„Alle 57
+  Doku-Dateien in Ordnung."**
+* **`entscheidungen-fuer-sandy.md` frisch gelesen**, bevor ich unten „offen"
+  schreibe — der letzte Eintrag ist meiner von 08:55, nichts ist beantwortet
+  worden.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **Gate 1 rechne ich nicht neu.** Stand bleibt **53,0 %**. Legals 7.13 mit
-  100/100 und die drei DC-Punkte sind noch nicht eingerechnet — das gehört in
-  einen Lauf, in dem ich `launch-readiness.md` ganz durchgehe, nicht nebenbei.
-* **Die restlichen ~96 Dateien in `src/lib/__tests__`** habe ich nicht
-  gefahren, nur die, die die geänderten Module einlesen.
-* **Ein Prüfstand sieht keine Breite.** Dass die fünf Anmelde-Seiten auf einem
-  echten Desktop-Fenster richtig aussehen, ist weiter ungeprüft.
+* **Gate 1 rechne ich nicht neu.** Stand bleibt **53,0 %**. Legals 7.13 und
+  inzwischen vier DC-Punkte sind noch nicht eingerechnet — das gehört in einen
+  Lauf, in dem ich `launch-readiness.md` ganz durchgehe, nicht nebenbei.
+* **Den Preisweg eines Badangebots habe ich NICHT nachgefahren.** Ob bei den
+  Wandpositionen eine Null steht, weiß niemand — auch Engineering behauptet es
+  ausdrücklich nicht. Das misst der Prüfmeister.
+* **Wie die drei Logo-Stufen mit einem echten Logo auf Papier wirken**, ist
+  ungeprüft. Ein Prüfstand misst, dass ein PDF entsteht, nicht wie es aussieht.
+* **Die restlichen ~160 Testdateien** habe ich in diesem Lauf nicht gefahren,
+  nur die sechs betroffenen.
 * **Die Landingpage selbst habe ich nicht aufgerufen.**
 * **Warum Lauf #201 rot war**, bleibt unbekannt — der Detail-Endpunkt der
   GitHub-API antwortet weiter `403`, es braucht ein Token aus Sandys Konto.
@@ -83,16 +84,19 @@ blockiert.** Ursache gefunden, repariert, nichts verloren.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🟡 **Pushen.** **Sieben Commits** liegen bereit. | ein Befehl |
+| 1 | 🟡 **Pushen.** **Neun Commits** liegen bereit. | ein Befehl |
 | 2 | 🔴 **Preis bei § 19 (A/B), F-006** — tendiert zu **B** (Regelbesteuerung). **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
-| 3 | 🟢 **NEU: Datenschutz-Halbsatz freigeben (L-KI-01).** „unwiderruflich entfernt" stimmt nicht, solange OpenAI 30 Tage vorhalten darf. Wortlaut liegt fertig vor. Empfehlung: ja. | ein Wort |
+| 3 | 🟢 **Datenschutz-Halbsatz freigeben (L-KI-01).** „unwiderruflich entfernt" stimmt nicht, solange OpenAI 30 Tage vorhalten darf. Wortlaut liegt fertig vor. Empfehlung: ja. | ein Wort |
 | 4 | 🟡 **F-007:** Gibt es eine laufende Sicherung deines Rechners, und liegt der Projektordner mit drin? | ein Satz |
 | 5 | 🟡 **IONOS-Weiterleitung `rechnung@`** — selbst machen oder ich? Empfehlung: selbst. | ein Satz |
-| 6 | 🟡 **CoS-P-013** — ging „Passwort speichern" durch und konntest du dich danach neu anmelden? **Wenn du das ohnehin durchklickst: schau dir dabei die Anmelde-Seiten am großen Bildschirm an** — der Designer hat sie heute umgebaut. | ein Wort |
+| 6 | 🟡 **CoS-P-013** — ging „Passwort speichern" durch und konntest du dich danach neu anmelden? **Wenn du das ohnehin durchklickst: schau dir dabei die Anmelde-Seiten am großen Bildschirm an.** | ein Wort |
 | 7 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
 | 8 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht geprüft |
 
 **Erledigt und weg von ihrer Liste:** nichts.
+
+**Beiläufig, kostet sie nichts:** wenn sie das nächste Mal ohnehin ein Angebot
+als PDF öffnet, sieht sie das neue Kopflogo. Eine eigene Aufgabe ist es nicht.
 
 ---
 
@@ -100,43 +104,45 @@ blockiert.** Ursache gefunden, repariert, nichts verloren.
 
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
-| **Engineering** | **Der Engpass, unverändert.** **CoS-E-074** (deckt PM-097 **und** PM-116 — einmal bauen statt zweimal), danach **Zug 2** mit **PM-075** (bepreiste Position, Stück, 95,00 €) und der **Tapezier-Nische** (6,00 €/lfdm, zwei Auflagen). Alles beantwortet. | niemanden |
-| **Prüfmeister** | **Eine Frage von Engineering:** wird die **einmalige** Baustellenreinigung eine bepreiste Position (40,00 € Pauschale) oder bleibt sie ein Fehlt-Eintrag? Kalkulationsfrage, keine Messung. Danach L-06. | niemanden |
-| **Designer** | **Spur leer.** DC-111, DC-119, DC-120 sind zu. Die Hinweis-Karte zu DC-116 wird erst sinnvoll, wenn Engineering den Erkenner hat. | Engineering (nur die DC-116-Karte) |
-| **Marketing** | **Textseitig fertig, wartet bewusst.** Neu einzuarbeiten: es sind **sieben** Buchhaltungs-Anbindungen, nicht drei. Offen bleibt die Entscheidung über die Positionstitel. | Sandys A/B zu § 19 · Sandys Buchhaltungs-Testlauf |
+| **Prüfmeister** | **Neu oben auf seiner Spur: die Bad-Messung.** Steht auf einem gewöhnlichen Badangebot bei den **Wandpositionen** ein Preis oder eine Null? Danach die Kalkulationsfrage zur einmaligen Baustellenreinigung (40,00 € Pauschale oder Fehlt-Eintrag), danach L-06. | niemanden |
+| **Engineering** | **Der Engpass, unverändert. CoS-E-074** (deckt PM-097 **und** PM-116 — einmal bauen statt zweimal), die Dateien sind jetzt frei. Danach Zug 2 mit der **Tapezier-Nische** (6,00 €/lfdm, zwei Auflagen). | niemanden |
+| **Designer** | **Spur wieder voll, aus eigener Hand: DC-123** (Live-Vorschau kennt kein Briefpapier — klein, macht die Vorschau ehrlich), dann **DC-122** ohne den Fußzeilenteil, dann die Fußzeile nach Legals Antwort, dann **DC-124**. | Legal (nur der Fußzeilenteil von DC-122) |
+| **Legal** | **CoS-L-011** — ein Absatz: dürfen freie Fußzeilen die Pflichtangaben auf dem Angebot ersetzen (A/B/C), und ändert sich die Antwort bei Regelbesteuerung? | niemanden |
+| **Marketing** | **Textseitig fertig, wartet bewusst.** Einzuarbeiten: es sind **sieben** Buchhaltungs-Anbindungen, nicht drei. Offen bleibt die Entscheidung über die Positionstitel. | Sandys A/B zu § 19 · Sandys Buchhaltungs-Testlauf |
 | **Platform** | **CoS-P-029 — ein Termin, kein Auftrag:** am **19.09. nach 03:30 UTC** einmal `system_laeufe` prüfen (`aufnahmen.dateien > 0`?). | niemanden |
 | **Finance** | F-007 gestellt, Belegablage steht, Reverse-Charge geklärt | Sandys Satz zur Sicherung · Sandys A/B zu § 19 |
-| **Legal** | **Spur leer.** 7.13 bewertet, L-KI-01 liegt bei Sandy, der 30-Tage-Termin bei Platform. | Sandys Freigabe zu L-KI-01 |
 
 ---
 
 ## Was gerade niemanden blockiert, aber nicht untergehen darf
 
+* **🔴 Drei Bad-Wandpositionen laufen über den Maler und finden dort keinen
+  Katalogtreffer.** `gewerkFuerPosition` prüft `/wand/` vor allem anderen.
+  Engineering ist bei PM-075 ausgewichen (die Zeile heißt „Nische fliesen"
+  statt „Wandnische fliesen"). **Ob daraus auf einem echten Badangebot eine
+  Null wird, ist ungemessen** — und wenn ja, trifft es jedes Bad, nicht einen
+  Sonderfall. Die `/wand/`-Regel ist absichtlich nicht angefasst worden.
+* **Die Mini-Vorschau auf der Briefpapier-Seite zeigt eine Wirkung, die es
+  nicht gibt** (Schrift, Akzentfarbe, drei Fußzeilen). DC-122.
+* **Zwei Stellen laden ein Logo hoch**, das Briefpapier gewinnt stillschweigend.
+  Wer das Logo unter Einstellungen wechselt und sich wundert, hat recht. DC-124.
 * **Die 30-Tage-Löschzusage ist bis heute nie eingelöst worden.** Nicht weil
   etwas kaputt ist, sondern weil keine Aufnahme alt genug war. Der erste Lauf,
   der wirklich löschen muss, ist der vom **19.09., 03:30 UTC**. Löscht er
   nichts, sind zwei veröffentlichte Rechtstexte unrichtig. **CoS-P-029.**
-* **`git add -A` ist abgeschafft.** Dreimal hintereinander hat es fremde
-  Arbeit mitgenommen und ist gutgegangen; einmal stand dabei für zwei Minuten
-  ein abgeschalteter Aufruf in `maler.ts`. Das wäre grün durchgegangen. Ab
-  jetzt werden Dateien einzeln benannt.
+* **Die ENDE-Markierung steht ab jetzt in jeder Datei genau einmal.** Wer mehr
+  als eine findet, meldet das — und hängt bis zur Klärung vor die **letzte** an.
+* **`git add -A` ist abgeschafft.** Dateien werden einzeln benannt.
 * **Löschen geht in dieser Shell nicht**, und die Anforderung des Löschrechts
   wird in einem geplanten Lauf abgelehnt — niemand ist da, der den Dialog
-  beantwortet. `mv` nach `_to_delete/git-reste-JJJJ-MM-TT/` ist ab sofort die
-  Vorgehensweise, nicht der Notbehelf. Die falsche Zeile ist aus fünf
-  Rollen-Dateien raus.
-* **Die Endmarkierung ist die einzige Stelle, an der das Sicherungsskript
-  hängt.** Eine Datei mit Text dahinter blockiert das Sichern **aller**
-  Doku-Dateien, auch der unbeschädigten. Heute hat es Legal aufgehalten.
-* **PM-097 und PM-116 haben dasselbe Soll.** Spart Engineering einen zweiten
-  Bau — kippt, sobald der Prüfmeister einen Fall misst, in dem zwei Abschnitte
-  wirklich zusammen auf ein Blatt sollen.
+  beantwortet. `mv` nach `_to_delete/git-reste-JJJJ-MM-TT/` ist die
+  Vorgehensweise, nicht der Notbehelf.
 * **Die Landingpage bewirbt drei Buchhaltungs-Anbindungen. Es sind sieben.**
 * **Dieselbe Anbindung heißt an zwei Stellen verschieden** („Lexoffice" vs.
-  „Lexoffice (Legacy)"). Genau die Unklarheit, die Manfred gemeldet hat
-  (TN-108). Ein Wort in `integrations.ts`. Kein Auftrag, eine Meldung.
+  „Lexoffice (Legacy)"). Ein Wort in `integrations.ts`. Kein Auftrag, eine
+  Meldung.
 * **`menge_unbekannt` ist bewusst nicht gebaut.** Offen, wer die Messung macht.
 * **Das GitHub-403 auf Schritt-Ebene bleibt.** Ohne Token sehe ich nur, **ob**
   ein Lauf grün war, nie **warum** er rot war.
 
-*Chief of Staff · 2026-09-17, 09:00 UTC*
+*Chief of Staff · 2026-09-17, 09:50 UTC*
