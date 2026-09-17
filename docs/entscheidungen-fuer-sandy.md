@@ -2451,4 +2451,84 @@ dadurch über die 40/100 steigt.
 
 *Chief of Staff · 2026-09-17, 10:25 UTC*
 
+---
+
+## ✅ Datenschutz-Halbsatz freigegeben (17.09.2026, 10:45 UTC · Sandys Antwort)
+
+**Sandy:** *„ja darf rein!"*
+
+An Legal weitergegeben, mit dem Wortlaut, den sie gesehen hat — unverändert.
+**Ich trage L-KI-01 erst als zu ein, wenn Legal meldet, dass der Satz wirklich
+drin ist**, nicht schon auf die Freigabe hin. Nichts weiter zu tun für sie.
+
+Legal prüft beim selben Durchgang, ob dieselbe Zusage noch an anderer Stelle
+steht (AGB, KI-Kennzeichnung, Hilfetexte). Das ist ungeprüft, nicht
+ausgeschlossen.
+
+*Chief of Staff · 2026-09-17, 10:45 UTC*
+
+---
+
+## 🔴 F-007 beantwortet — und dabei ist etwas Größeres aufgefallen: deine Rechnungen liegen woanders, als Finance denkt (17.09.2026, 10:45 UTC · Chief of Staff)
+
+### Deine Antwort
+
+*„nein es läuft nichts, würde gerne regelmäßiges back up auf onedrive machen
+oderso"* — plus dein Hinweis, wo die Rechnungen wirklich liegen:
+`C:\Users\runni\Documents\sofortangebot\Rechnungen`, und die Frage, ob Finance
+darauf Zugriff hat.
+
+### Die Antwort auf deine Frage: **nein, hat er nicht**
+
+**Selbst nachgesehen, nicht vermutet:**
+
+* Finance hat seinen Ablageordner **im Projektordner** angelegt:
+  `Claude Code\sofortangebot\belege\eingangsrechnungen\`.
+* Dort liegt **genau eine Datei** — das leere Eingangsbuch. **Keine einzige
+  Rechnung.**
+* Dein Ordner `Documents\sofortangebot\Rechnungen` **existiert**, ist diesem
+  Projekt aber nicht angeschlossen. Ich sehe, dass es ihn gibt — nicht, was
+  drin ist.
+
+**Zwei Ordner mit fast demselben Namen, an zwei verschiedenen Stellen.** Deine
+Vermutung war also richtig gedacht und im Ergebnis falsch — gut, dass du
+gefragt hast, statt es anzunehmen.
+
+### Was das für die Sicherung bedeutet — die gute Nachricht zuerst
+
+**Der Projektordner braucht keine Sicherung.** Er ist 2,9 GB groß, und fast
+alles darin liegt ohnehin auf GitHub oder ist jederzeit neu herstellbar. Ihn
+nach OneDrive zu spiegeln wäre viel Aufwand für nichts.
+
+**Was wirklich ungesichert ist, sind genau deine Rechnungen.** Und die liegen
+bewusst **nicht** auf GitHub — Finance hat sie dort ausgeschlossen, weil das
+Repository **öffentlich** ist. Das war richtig. Es heißt aber: für diese
+Dateien gibt es heute **keine zweite Kopie**, nirgends.
+
+### Mein Vorschlag — ein Ordner, der beides löst
+
+> **`C:\Users\runni\OneDrive\Sofortangebot-Belege\`**
+
+Du legst deine Rechnungen dort ab statt in `Documents\sofortangebot\Rechnungen`.
+Dann passiert die Sicherung von selbst, jedes Mal, ohne dass du daran denken
+musst — dein OneDrive-Konto steht ja schon.
+
+**Was du dafür tun müsstest (dreimal etwas, dann nie wieder):**
+
+1. Den Ordner in OneDrive anlegen.
+2. Die Rechnungen aus `Documents\sofortangebot\Rechnungen` dorthin verschieben.
+3. Den OneDrive-Ordner diesem Projekt als **zweiten Ordner anschließen**
+   („Ordner hinzufügen"). Dann sieht Finance die echten Belege.
+
+**Was ich NICHT entscheide:** ob das Verfahren so aussehen darf. Finance hat
+eine Verfahrensdokumentation geschrieben, die ein Prüfer lesen können muss, und
+darin steht heute der andere Pfad. **Ich habe ihm die Frage gestellt** — ob er
+den Pfad ändert oder einen anderen Weg will. Mach die Schritte also bitte
+**noch nicht**, bis er geantwortet hat. Es dauert einen Lauf.
+
+**Nicht eilig, aber nicht vergessen:** Solange nichts läuft, hängen deine
+Belege an einer einzigen Festplatte.
+
+*Chief of Staff · 2026-09-17, 10:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

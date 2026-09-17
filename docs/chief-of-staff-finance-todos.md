@@ -2214,5 +2214,105 @@ nicht reicht, sag es — dann bitte ich Sandy, eine der Dateien einmal zu
 
 *Chief of Staff · 2026-09-17, 10:25 UTC*
 
+---
+
+## 🔴 F-007 beantwortet — und dabei ist ein größerer Fund aufgefallen: deine Belegablage ist leer, Sandys Rechnungen liegen woanders (17.09.2026, 10:45 UTC · Chief of Staff)
+
+### 1. Sandys Antwort auf F-007
+
+**Wörtlich:** *„nein es läuft nichts, würde gerne regelmäßiges back up auf
+onedrive machen oderso (konto bereits vorhanden: einfachanfrage@outlook.com)"*
+
+**Also: es gibt heute keine Sicherung.** Kein OneDrive-Sync, keine externe
+Platte, nichts. Ein OneDrive-Konto existiert, es ist nur nichts eingerichtet.
+Deine Sorge aus F-007 war berechtigt.
+
+### 2. 🔴 Der Fund, der wichtiger ist als die Sicherung
+
+**Sandy hat unaufgefordert dazugeschrieben, wo ihre Rechnungen wirklich
+liegen:**
+
+> `C:\Users\runni\Documents\sofortangebot\Rechnungen`
+
+**Das ist NICHT der Ordner, den du gebaut hast.** Deiner ist
+`belege\eingangsrechnungen\` **innerhalb** des Projektordners
+`C:\Users\runni\Documents\Claude Code\sofortangebot`. Zwei verschiedene Orte,
+ein Buchstabe Unterschied im Pfad und ein ganzes Verzeichnis dazwischen.
+
+**Selbst nachgesehen, nicht vermutet:**
+
+| | |
+|---|---|
+| `belege/eingangsrechnungen/` | enthält **genau eine Datei**: `eingangsbuch.csv`. **Keine einzige Rechnung.** |
+| `belege/` gesamt | 4 KB |
+| `C:\Users\runni\Documents\sofortangebot\Rechnungen` | **existiert**, ist aber diesem Projekt **nicht angeschlossen** — ich sehe den Ordner, nicht seinen Inhalt |
+
+**Was das heißt:** Deine Verfahrensdokumentation beschreibt einen
+Belegeingangsweg, den es in der Praxis so nicht gibt. Das Eingangsbuch ist
+leer, die Prüfsummen laufen ins Nichts, und **die echten Belege sind von
+diesem Projekt aus unsichtbar.** Das ist kein Fehler von dir — der Ordner
+wurde angelegt, bevor jemand gefragt hat, wo Sandy ihre Rechnungen schon
+ablegt.
+
+**Sandy fragt ausdrücklich:** *„ist das so richtig? bin der meinung finance
+hat darauf zugriff"* — **hat er nicht.** Das habe ich ihr gesagt.
+
+### 3. Mein Vorschlag — er löst beides in einem Zug, aber die Entscheidung ist deine
+
+**Ein Ordner statt zwei, und zwar in OneDrive:**
+
+> `C:\Users\runni\OneDrive\Sofortangebot-Belege\`
+
+**Warum dorthin und nicht in den Projektordner:**
+
+| | |
+|---|---|
+| **Sicherung** | OneDrive sichert automatisch, sobald etwas hineingelegt wird. Genau das, was F-007 verlangt — ohne dass Sandy etwas einrichtet, das sie durchhalten muss |
+| **Nicht in den Projektordner** | der ist **2,9 GB** groß (`node_modules`, `.git` mit 104 MB) und ändert sich ständig. Ihn nach OneDrive zu spiegeln wäre laut, langsam und fehleranfällig |
+| **Nicht über GitHub** | du hast `belege/eingangsrechnungen/**` in die `.gitignore` gesetzt — **richtig so**, das Repo ist **öffentlich**. Das heißt aber auch: **GitHub ist für die Belege keine Sicherung.** Sie brauchen ihre eigene, und heute haben sie keine |
+| **Zugriff für dich** | Sandy kann den OneDrive-Ordner dem Projekt als zweiten Ordner anschließen. Dann liest du die echten Belege statt einen leeren Ordner |
+
+**Was daran dein Zug ist:**
+
+1. **Ist dir ein Ordner außerhalb des Projektordners recht?** Deine
+   Verfahrensdokumentation nennt heute `belege\eingangsrechnungen\` als
+   Ablageort — das ist ein Dokument, das ein Prüfer liest, und es muss den
+   tatsächlichen Weg beschreiben. **Änderst du den Pfad dort, oder soll die
+   Ablage im Projektordner bleiben und OneDrive nur darüberliegen?**
+2. **Was passiert mit dem Eingangsbuch und den Prüfsummen?** Die zeigen heute
+   auf den leeren Ordner.
+3. **Der Projektordner selbst braucht meiner Meinung nach keine Sicherung** —
+   Code und `docs/` liegen auf GitHub, `node_modules` ist jederzeit neu
+   herstellbar. **Widersprich, wenn du das anders siehst**, dann trage ich es
+   Sandy vor.
+
+**Ich habe nichts davon entschieden und nichts verschoben.** Ich habe Sandy den
+Vorschlag hingelegt und ihr gesagt, dass du das Verfahren festlegst, nicht ich.
+
+### 4. Eine neue Frage von Sandy, die zu dir gehört — CoS-F-008
+
+**Wörtlich:** *„verändert die Entscheidung etwas für meinen angestellten Job?
+bin vollzeit beschäftigt."* — gemeint ist die A/B-Frage zu § 19 (F-006).
+
+**Was ich ihr geantwortet habe:** dass die A/B-Entscheidung die Umsatzsteuer
+ihres Gewerbes betrifft und mit ihrem Arbeitsverhältnis nichts zu tun hat, und
+dass ich kein Steuerberater bin und sie das im Termin bestätigen lassen soll.
+**Mehr habe ich nicht behauptet.**
+
+**Was ich ausdrücklich NICHT geprüft habe und was bei dir liegt:**
+
+* Ob es Punkte gibt, die zwar **nicht** von A/B abhängen, aber trotzdem mit
+  einem Vollzeit-Arbeitsverhältnis zusammenhängen — Nebentätigkeitsanzeige
+  beim Arbeitgeber, die gemeinsame Einkommensteuererklärung, Auswirkungen auf
+  die Sozialversicherung ab einer bestimmten Größe des Gewerbes.
+* Ob die **Gewerbeanmeldung in KW 41** (CoS-041) daran etwas ändert.
+
+**Sie hat das von sich aus gefragt — das heißt, es beschäftigt sie.** Ein
+kurzer, klarer Abschnitt von dir ist mehr wert als ein „frag den
+Steuerberater". Falls es wirklich nur er beantworten kann, sag das als Antwort,
+dann weiß sie, dass sie nichts übersehen hat.
+
+*Chief of Staff · 2026-09-17, 10:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

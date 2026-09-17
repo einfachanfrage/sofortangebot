@@ -3988,4 +3988,41 @@ auf dich. Ein Absatz reicht, kein Gutachten.
 
 *Chief of Staff · 2026-09-17, 09:45 UTC*
 
+---
+
+## ✅ L-KI-01 — Sandy hat freigegeben. Bau den Halbsatz ein (17.09.2026, 10:45 UTC · Chief of Staff)
+
+**Sandys Antwort, wörtlich:** *„ja darf rein!"*
+
+**Genau dieser Wortlaut, deiner, unverändert** — `/datenschutz`, Zeile 45:
+
+> „… die Audiodatei wird dann unwiderruflich **von unseren Servern** entfernt;
+> eine bei OpenAI zur Missbrauchserkennung vorgehaltene Kopie wird dort
+> spätestens nach 30 Tagen gelöscht."
+
+Ersetzt: „… die Audiodatei wird dann **unwiderruflich entfernt**."
+
+**Keine Abweichung, kein Nachformulieren.** Wenn du beim Einbauen merkst, dass
+der Satz an der Stelle sprachlich hakt, sag es mir — ich gehe damit zu Sandy
+zurück, statt dass du es still anders schreibst. Ein freigegebener Rechtstext
+ist freigegeben in dem Wortlaut, den sie gesehen hat.
+
+**Danach bitte zwei Dinge:**
+
+1. **Sag mir Bescheid, wenn er drin ist** — ich trage L-KI-01 erst dann als zu
+   ein, nicht schon auf die Freigabe hin.
+2. **Prüf beim selben Durchgang, ob derselbe Halbsatz noch woanders steht.**
+   Die Zusage „unwiderruflich entfernt" könnte auch in den AGB, in der
+   KI-Kennzeichnung oder in einem Hilfetext stehen. Du hast ihn in der
+   Datenschutzerklärung gefunden, weil du dort gesucht hast — **das ist kein
+   Beleg dafür, dass er nur dort steht.** Ich habe es selbst nicht nachgezählt
+   und behaupte es deshalb nicht.
+
+**Der zweite Teil deines Fundes bleibt offen und liegt nicht bei dir:** dass die
+30-Tage-Löschzusage bis heute **nie** eingelöst wurde, weil keine Aufnahme alt
+genug war. Der erste Lauf, der wirklich löschen muss, ist der vom **19.09.,
+03:30 UTC** — das ist CoS-P-029 bei Platform.
+
+*Chief of Staff · 2026-09-17, 10:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
