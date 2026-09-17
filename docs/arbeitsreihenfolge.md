@@ -1,16 +1,17 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 15:50 UTC · Chief of Staff**
-*(ersetzt die Fassung von 13:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 16:00 UTC · Chief of Staff**
+*(ersetzt die Fassung von 15:50 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**. In Deutschland ist es gerade
-**MESZ = UTC + 2**, also 17:50 Uhr Ortszeit.*
+**MESZ = UTC + 2**, also 18:00 Uhr Ortszeit.*
 
 ---
 
 ## Lage in drei Zeilen
 
-**🟢 Die Produktion ist grün.** Neuester Deploy `af32b14`, **READY**, angelegt
-13:03:49 UTC. Das ist genau der Stand, auf dem `origin/main` steht.
+**🟢 Die Produktion ist grün, und sie ist auf dem neuesten Stand.** Sandy hat
+um 15:50 UTC gepusht; Deploy `8d07102` ist seit **15:51:33 UTC READY**.
+`origin/main` = `HEAD` = `8d07102`, **nichts liegt mehr ungepusht hier.**
 
 **🔴 Die teuerste Zahl des Projekts bleibt die einzige, die zählt:** auf einem
 gewöhnlichen Badangebot stehen **543,84 €, wo 2.980,44 € hingehören** (PM-117).
@@ -39,11 +40,12 @@ sind fertig, alle drei mit eigener Verifikation. Neu für ihn: **DC-127**.
 
 **Selbst gemessen, nicht vermutet:**
 
-* **Vercel-API, 15:45 UTC:** `af32b14` **READY** (angelegt 13:03:49 UTC) ·
-  `a813d77` READY (12:54:24) · `4d53e65` READY (12:19:26). Die beiden roten
-  Deploys des Vormittags (`4f06c75`, `deea290`) liegen davor.
-* **`git fetch` vor der Zählung:** `origin/main` steht auf **`af32b14`**,
-  örtlich liegen **5 Commits** darüber, die noch nicht gepusht sind.
+* **Vercel-API, 15:58 UTC:** `8d07102` **READY**, gebaut 15:50:30, fertig
+  **15:51:33 UTC**, ausgeliefert auf `sofortangebot.app`. Die beiden roten
+  Deploys des Vormittags (`4f06c75`, `deea290`) liegen weit davor.
+* **`git fetch`, 15:57 UTC:** `origin/main` steht auf **`8d07102`**,
+  **0 ungepushte Commits**. Davor gemessen: `af32b14` READY (13:03:49 UTC) ·
+  `a813d77` READY (12:54:24) · `4d53e65` READY (12:19:26).
 * **Produktionsdatenbank (Supabase `yqlledouhfovytifeekd`), 15:47/15:48 UTC:**
   `briefpapiere` = 4, davon mit eigenem `logo_url` = **0**, betroffene
   Betriebe = **0** · `storage.objects`: `entwurf-audio` 46 · `public-pdfs` 4 ·
@@ -81,7 +83,7 @@ sind fertig, alle drei mit eigener Verifikation. Neu für ihn: **DC-127**.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Pushen, wenn du ohnehin am Rechner bist.** Es liegen Doku-Commits hier. **Nichts Dringendes** — die Produktion ist grün, es hängt kein Fix daran | ein Befehl, nicht eilig |
+| 1 | ✅ **Erledigt — du hast um 15:50 UTC gepusht.** Alles ist bei GitHub und bei Vercel durch. **Hier liegt nichts mehr** | — |
 | 2 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
 | 3 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
 | 4 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
@@ -114,11 +116,17 @@ gehört hätten, sind in der Datenbank beantwortet worden.
 * **🟡 Die CI ist seit 12:44 UTC nicht mehr gemessen worden** — zweimal `403`.
   Wer „die CI ist grün" sagt, meint den Lauf **#210 auf `4d53e65`** und sollte
   das dazusagen. Vercel ist auf `af32b14` grün, gemessen.
-* **Fertige Arbeit liegt uncommittet im Baum.** DC-124 des Designers ist
-  verifiziert, aber sein Code ist noch nicht committet — er gibt Sandy dafür
-  seinen eigenen Block mit sieben Pfaden. Engineerings CoS-E-078 ist
-  **unfertig** und darf nicht mit hineinrutschen. **`git add -A` bleibt
-  abgeschafft**, Dateien werden einzeln benannt.
+* **DC-124 ist committet und ausgeliefert** (`8d07102`). Uncommittet liegt
+  nur noch Engineerings **unfertiges** CoS-E-078 (`preis-matcher.ts`,
+  `vollstaendigkeit/fliesen-basis.ts`, `vollstaendigkeit/index.ts`,
+  `cos-e-078-bad-wandpositionen.test.ts`, neu `src/lib/fliesen-richtung.ts`).
+  **Das darf niemand mitnehmen.** `git add -A` bleibt abgeschafft.
+* **Mein eigener Datenpunkt von heute:** meine neun Doku-Dateien lagen
+  vorbereitet im gemeinsamen Index, als Sandys Commit lief — sie sind
+  deshalb unter der Nachricht *„DC-124: Ein Betrieb hat ein Logo"*
+  mitgegangen. Inhaltlich richtig, nur unter fremdem Titel. **Der Index ist
+  bei fünf Rollen an einem Arbeitsbaum geteilt**: zwischen `git add` und
+  `git commit` gehört nichts als eine Sekunde.
 * **Die Vollständigkeitsprüfung warnt beim Commit** (`pre-commit`, `exit 0`,
   blockiert nichts). Wer „ist committet" meldet, ohne die
   `[pre-commit]`-Zeilen gelesen zu haben, meldet einen Stand, der bei Vercel
@@ -151,4 +159,4 @@ gehört hätten, sind in der Datenbank beantwortet worden.
   Ort, sondern ihr Inhalt. **Und eine Zahl, mit der ich ein Risiko begründe,
   wird vorher gezählt.** Heute hat das zweite eine Rückfrage an Sandy erspart.
 
-*Chief of Staff · 2026-09-17, 15:50 UTC*
+*Chief of Staff · 2026-09-17, 16:00 UTC*
