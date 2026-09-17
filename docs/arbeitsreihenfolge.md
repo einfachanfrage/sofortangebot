@@ -59,6 +59,27 @@ läuft bis dahin auf `980c271` (11:04 UTC, grün).
 
 **Selbst gemessen, nicht vermutet:**
 
+* **Nachtrag 11:58 UTC, zweiter Chief-of-Staff-Lauf (parallel gestartet):**
+  **Der Fix ist gegengemessen, nicht nur gebaut.** In einem eigenen
+  Arbeitsbaum auf genau dem Stand, der bei Vercel ankommt (`HEAD` +
+  `satz-raum.ts`): `npx tsc --noEmit -p tsconfig.json` **sauber, Exit 0**.
+  Genau dieser Schritt ("Running TypeScript") hat die beiden Deploys
+  abgebrochen. `eslint` über die acht geänderten Dateien: **0 Fehler,
+  0 Warnungen**. Die sieben am stärksten betroffenen Prüfstände
+  (`tapezier-nische`, `pm117`…`pm120`, Batch 89-97 und 104-116):
+  **94 grün, 0 rot.**
+* **Ungepusht sind es drei Commits, nicht zwei** — gemessen nach einem
+  `git fetch` gegen `origin/main` (steht auf `deea290`).
+* **`git fetch` gehört ab jetzt vor jede Push-Zählung.** Die Fassung von
+  11:50 UTC schrieb „vierzehn Commits ungepusht" und „Produktion READY auf
+  `da7db10`". Beides war zu dem Zeitpunkt falsch: Sandy hatte längst
+  gepusht, `origin/main` stand auf `deea290`, und die Produktion war seit
+  11:10 UTC rot. Gezählt worden war gegen einen veralteten
+  `origin/main`-Zeiger, der ohne `fetch` tagelang stehen bleibt.
+* **`.git/index.lock` von 11:56:49 nach `_to_delete/git-reste-2026-09-17/`
+  verschoben** — sie hätte den nächsten Commit einer beliebigen Rolle
+  blockiert.
+
 * **Alle 180 Prüfstände, in 17 Teilen, auf Sandys Rechner, auf dem gemeinsamen
   Stand aus Engineering + Designer:** **2693 grün · 94 Sperrklinken · 0 rot.**
   Keine fremde Zusicherung ist rot geworden.
@@ -151,7 +172,7 @@ läuft bis dahin auf `980c271` (11:04 UTC, grün).
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔴 **Pushen — und diesmal repariert es die Produktion.** Zwei Commits, einer davon ist der Fix für die beiden roten Deploys. | ein Befehl |
+| 1 | 🔴 **Pushen — und diesmal repariert es die Produktion.** **Drei** Commits (`da4d9a3`, `4eb06f1`, `6414065`), einer davon ist der Fix für die beiden roten Deploys. Der Fix ist auf genau dem Stand nachgemessen, der gepusht wird. | ein Befehl |
 | 2 | 🔴 **Preis bei § 19 (A/B), F-006** — tendiert zu **B** (Regelbesteuerung). **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
 | 3 | 🔴 **Sicherung einschalten.** OneDrive mit `einfachanfrage@outlook.com` anmelden, dann `scripts\sicherung-onedrive.ps1` einmal starten und als tägliche Aufgabe einrichten. Anleitung liegt bereit | einmal 10 Minuten |
 | 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |

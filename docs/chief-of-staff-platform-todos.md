@@ -3970,4 +3970,62 @@ Login in ein Konto von Sandy braucht, geht an Sandy, nie an mich.
 
 *Chief of Staff · 2026-09-17, 10:10 UTC*
 
+---
+
+## 📌 CoS-P-030 — Die Vercel-Benachrichtigung hat jetzt einen gemessenen Fall (17.09.2026, 12:00 UTC · Chief of Staff)
+
+**Kein Auftrag an dich, und keine neue Frage.** Der Punkt steht seit dem
+14.09. offen (CoS-P-014 Nachlauf 1, oben im Text: „für **Vercel** stimmt das
+weiterhin — dort ist der Haken noch nicht gesetzt"). Was ihm bis heute
+gefehlt hat, war ein Fall. Der liegt jetzt vor, mit Uhrzeiten.
+
+### Was passiert ist
+
+| Zeit (UTC) | Deploy | Commit | Zustand |
+|---|---|---|---|
+| 11:04 | `dpl_8KXeA6zT…` | `980c271` | READY |
+| **11:10** | `dpl_EfzUisLu…` | `4f06c75` | **ERROR** |
+| **11:40** | `dpl_DvVvRESs…` | `deea290` | **ERROR** |
+
+Beide Fehlschläge brechen an derselben Stelle ab („Running TypeScript",
+`zeit-ausschluss.ts:54`, fehlender Export aus `satz-raum.ts` — Ursache und
+Fix stehen in `chief-of-staff-engineering-todos.md`, Commits `4eb06f1` und
+`6414065`).
+
+### Der Punkt, auf den es hier ankommt
+
+**Von 11:10 bis 11:56 UTC lief die Produktion auf einem 46 Minuten alten
+Stand, und niemand im Projekt wusste es.** Gefunden wurde es nicht durch eine
+Meldung, sondern weil ein Chief-of-Staff-Lauf die Deploy-Liste von sich aus
+abgefragt hat. Ohne diesen Lauf wäre der rote Stand bis zum nächsten
+Zufallsblick stehen geblieben.
+
+**Das ist nicht dasselbe wie der GitHub-Fall von damals.** Dort kam die Mail
+an und löste keine Handlung aus — „mehr Alarm" war zu Recht die falsche
+Antwort. Hier kommt gar nichts an. Der Unterschied ist wichtig, damit die
+beiden Punkte nicht zu einem verschmelzen und gemeinsam liegen bleiben.
+
+### Was ich selbst gemessen habe
+
+* Die Deploy-Liste über die Vercel-API (Projekt `prj_9UMdATwwixayoDfNTCD08AkcFZx2`),
+  beide `ERROR`-Zustände und beide Build-Protokolle gelesen.
+* `npx tsc --noEmit -p tsconfig.json` in einem eigenen Arbeitsbaum auf genau
+  dem Stand, der bei Vercel ankommt: **sauber, Exit 0**. Der Fix trägt.
+* `eslint` über die acht geänderten Dateien: **0 Fehler, 0 Warnungen**.
+
+### Was ich NICHT gemessen habe
+
+* **Ob die Produktion jetzt wieder grün ist.** Kann sie nicht sein: die drei
+  Commits sind noch nicht gepusht. Grün wird sie erst mit Sandys Push, und
+  erst der nächste Deploy beweist es. Ich behaupte nicht vorab, dass er
+  durchläuft — gemessen ist nur, dass der Schritt sauber ist, an dem die
+  beiden vorigen gescheitert sind.
+* **Den Haken bei Vercel selbst.** Der sitzt in Sandys Konto und gehört
+  nicht mir.
+* **Die GitHub-Actions-Laufliste.** Die API hat in diesem Lauf wieder mit
+  `403` geantwortet. Ohne Token aus Sandys Konto ist der CI-Stand zeitweise
+  nicht messbar — unverändert zum Vormittag.
+
+*Chief of Staff · 2026-09-17, 12:00 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
