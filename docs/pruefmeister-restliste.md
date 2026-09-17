@@ -2262,4 +2262,62 @@ zählen"), damit die Beschränkung auf den Satz nicht mehr wegnimmt als sie soll
 
 ---
 
+## Frage von Marketing — zwei Beispiele auf der Landingpage sind so nie durchgelaufen (Head of Marketing, 2026-09-17)
+
+Ich habe den Landingpage-Entwurf geprüft. Die vier Beispiel-Angebote darauf
+stammen aus deiner Einsprech-Liste vom 16.09. — **aber drei von vier zeigen
+mehr, als bei dir herausgekommen ist.** Rechnerisch stimmt alles (Finance hat
+jede Zeile nachgerechnet, kein Fehler). Die Frage ist, ob das Produkt es so
+ausgibt.
+
+| Tab auf der Seite | Dein Lauf 16.09. | Entwurf | Differenz |
+|---|---|---|---|
+| Bodenleger · Laminat | Fall 11: **366,30 €** | 401,30 € | + „Kleinmaterial" 35,00 € (Vorschlag) |
+| Maler · ganze Wohnung | Fall 10: **1.666,31 €** | 1.691,31 € | + „Kleinmaterial" 25,00 € (Vorschlag) |
+| Maler · Wohnzimmer | kein deckungsgleicher Fall (01 ist 2,50 m hoch, hier 2,60 m) | 728,00 € | + „Kleinmaterial" 25,00 € (Vorschlag) |
+| **Maler · Büro mit Q3** | **Fall 06: 1.348,80 €** | **1.543,80 €** | **+ 3 Heizkörper-Zeilen (170,00 €) + Kleinmaterial 25,00 €** |
+
+**Zwei Fragen, beide schmal:**
+
+**1. Kleinmaterial — kommt das von allein, wenn der Betrieb die Pauschale
+gesetzt hat?** Meine Vermutung: ja, und in deinem Testkonto ist sie einfach
+nicht hinterlegt, deshalb fehlt es in allen deinen Läufen. Wenn das stimmt,
+ist der Entwurf richtig und ich lasse es stehen. **Ein Satz reicht mir.**
+
+**2. Das Büro ist der Fall, bei dem ich unruhig werde.** Im Entwurf wurde dein
+eingesprochener Satz **verändert** — neu dazu: *„Die zwei Heizkörper bitte mit
+lackieren."* Daraus entstehen drei Zeilen (abschleifen 40,00 · grundieren
+50,00 · lackieren 80,00). Diese Variante ist bei dir nie gelaufen.
+
+**Und sie sitzt genau auf PM-098.** Der Fund war „Ein Fenster, eine Tür" **plus
+„lackieren"** erfindet 280,00 €. Im Büro-Satz steht jetzt „lackieren" — Fenster
+und Tür fehlen noch, und **genau die müssen laut Arbeitsreihenfolge rein**
+(*„diese Krücke gehört raus, bevor die Seite live geht"*). Setzt man beides
+zusammen, ist es die PM-098-Konstellation, ein Wort anders.
+
+**Mein Anliegen: lauf das Büro einmal in der Fassung, die auf die Seite soll** —
+also mit Fenster und Tür **und** mit den zwei Heizkörpern — und sag mir, was
+rauskommt. PM-098 gilt als gebaut und mit Sperrklinken abgesichert; wenn das
+trägt, ist es ein sauberer Beleg und die Auflage aus der Arbeitsreihenfolge ist
+in einem Zug mit erledigt. Wenn nicht, hast du den Fund vor dem ersten Kunden
+statt danach.
+
+**Was ich nicht von dir will:** eine Bewertung des Textes oder der Zahlen an
+sich. Nur: **kommt das so aus dem Produkt, ja oder nein.**
+
+**Nicht dringend im Sinne von heute** — die Seite steht ohnehin noch hinter dem
+Schalter. Aber sie ist der letzte offene Beleg, bevor ich den Textentwurf mit
+Sandy durchgehe.
+
+**Eine Sache, die ich dir zurückgeben kann, statt zu fragen:** Finance hatte
+gefragt, ob die Sockelleisten im Flur bei drei Türen wirklich 14,40 lfm sind.
+**Ja.** `src/lib/mengen/gewerke/sockelleisten.ts` zieht eine Öffnung erst ab
+1,00 m Breite ab (Standardtür 0,90 m), Kommentar in `raum-geometrie.ts` nennt
+VOB-012. Der Entwurf hat recht, der Einwand ist erledigt — falls du das
+fachlich anders siehst, ist das dein Wort, nicht meines.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

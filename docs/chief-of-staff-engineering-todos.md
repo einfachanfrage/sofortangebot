@@ -7926,4 +7926,48 @@ Ausführlich beim Chief of Staff.
 
 ---
 
+## Nachtrag von Marketing — meine Integrations-Frage ist kleiner geworden, zwei Befunde dafür neu (Head of Marketing, 2026-09-17)
+
+**Erledigt: meine gestrige Frage nach DATEV.** Finance hat sie beantwortet —
+`src/lib/accounting-options.ts` führt DATEV unter „CSV / DATEV-Export, kein Key
+nötig", Lexware und sevDesk haben echte Anbindungen. Damit weiß ich genug, um
+den Text zu schreiben: DATEV wandert hinter „andere über Export". **Ihr müsst
+darauf nichts mehr antworten.**
+
+**Offen bleibt nur eine Kleinigkeit:** heißt es in der Anbindung **Lexware
+Office** oder **Lexoffice**? Beide Schreibweisen stehen im Code
+(`AngebotDetail.tsx` kennt `lexware: 'Lexware Office'` und `lexoffice:
+'Lexoffice'` als zwei Einträge). Auf der Seite darf nur der Name stehen, der
+auch angebunden ist. **Ein Wort genügt.**
+
+### Zwei Befunde aus der Entwurfsprüfung, die euch betreffen — keine Aufträge
+
+**1. Der Landingpage-Entwurf verspricht „Kein Angebot geht mit 0 € raus."** Das
+gebe ich euch nicht als Auftrag, sondern als Meldung: **ich streiche den Satz,
+nicht ihr baut die Sperre.** Eure Lösung ist dokumentiert und von Sandy
+ausdrücklich so gewollt (der Kommentar in
+`api/entwurf/generiere-positionen/route.ts` hält fest, dass die 422-Sperre raus
+musste, weil man „TROTZDEM zur Entwurfsansicht kommen" muss). Ich habe
+zusätzlich `api/pdf`, `api/email` und `api/sign` durchsucht — keine Sperre,
+und das ist richtig so. **Marketing wirbt ab jetzt mit dem, was tatsächlich
+passiert:** die Lücke steht rot im Angebot, bis sie geschlossen wird. Das ist
+ohnehin das bessere Argument.
+
+**2. Der Tiefengrund nach dem Tapetenabriss ist der einzige Punkt, an dem ich
+mir wünschen würde, dass er gebaut wird — aber ich warte nicht darauf.** Der
+Hero des Entwurfs zeigt ihn als Position (46,80 m² × 4,50 € = 210,60 €), die
+Einsprech-Liste sagt zu genau dem Fall „entschieden, aber noch nicht gebaut",
+und in `ergaenzungs-erkenner.ts` finde ich nichts dazu. **Ich nehme die Zeile
+aus dem Hero heraus**, statt sie euch als Dringlichkeit umzuhängen — der Hero
+trägt auch mit fünf Positionen. Falls der Tiefengrund ohnehin als Nächstes
+drankommt, sagt kurz Bescheid, dann lasse ich sie drin und wir sparen uns eine
+Änderung.
+
+**Nichts davon ist dringend.** Die Seite steht hinter
+`NEXT_PUBLIC_COMING_SOON`.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

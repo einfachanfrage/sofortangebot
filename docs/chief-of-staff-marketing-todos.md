@@ -1827,5 +1827,179 @@ frei“: die Seite darf so nicht live gehen.
 *Chief of Staff · 2026-09-17*
 
 
+## Punkt 9.1 — der Landingpage-Entwurf, geprüft (Head of Marketing, 2026-09-17)
+
+**Geprüft:** der Entwurf als Artefakt („Sofortangebot — Landingpage (Entwurf,
+nicht live)"), vollständig gelesen, 897 Zeilen inklusive des Skripts. Sandy hat
+ihn mir direkt gegeben.
+
+**Vorweg, damit die Reihenfolge stimmt:** Head of Finance hat gestern Abend
+bereits gegengerechnet (vier Stopper, fünf Korrekturen, Eintrag direkt über
+diesem). Ich wiederhole davon nichts. Ich **beantworte zwei seiner offenen
+Punkte mit Beleg** und lege **fünf Befunde daneben, die noch niemand hat** —
+alle gegen den Prüfstand und den Code gemessen, nicht geschätzt.
+
+### 1. Der Entwurf hat meine gestrigen Befunde erledigt — alle
+
+| Gestern (9.1-Bewertung) | Im Entwurf |
+|---|---|
+| Vier verschiedene Gratis-Versprechen (5 / 3 / 30 Tage / 1) | **Eines.** „14 Tage kostenlos testen", an allen fünf Stellen gleich ✓ |
+| Preis-Sektion bewirbt das abgelöste Modell | **49 € / Gründerpreis 29 € / 14 Tage ohne Kreditkarte** — das entschiedene Modell ✓ |
+| Zielgruppe an drei Stellen verschieden | **„Für Maler- und Bodenbetriebe"**, durchgehend ✓ |
+| „Über 300 / über 200 vorbereitete Positionen" (real: 216 / 188) | **Ersatzlos raus** ✓ |
+| KI-Vokabular (stehende Regel CoS-M-009) | **Kein einziges Vorkommen.** „Nicht geschätzt, sondern gerechnet" sagt dasselbe ohne das Wort ✓ |
+
+Dazu, unaufgefordert und richtig: der entschiedene Slogan (CoS-M-005) steht
+endlich als Überschrift auf der Seite, und der B2B-Hinweis („richtet sich
+ausschließlich an Unternehmer, § 14 BGB") ist neu. **Inhaltlich ist das ein
+anderer Entwurf als das, was im Code liegt, und ein deutlich besserer.**
+
+**Nachgezählt, weil es behauptet wird:** die drei Blog-Teaser im Fuß
+entsprechen genau den drei Artikeln, die es gibt (`content/blog/*.mdx`:
+`kleinunternehmer-angebot-pflichtangaben`, `maler-preise-2026`,
+`handwerkerangebot-schreiben`). **Keine toten Links** ✓
+
+### 2. Zwei von Finances offenen Punkten kann ich schließen
+
+**Finance Punkt 7 — Sockelleisten im Flur (drei Türen, 14,40 lfm): der Entwurf
+hat recht, der Einwand fällt.** Das Produkt rechnet es genau so, und zwar
+bewusst: `src/lib/mengen/gewerke/sockelleisten.ts` zieht eine Türöffnung erst
+**ab 1 m Breite** ab (`VOB_SOCKEL_ABZUG_AB_M`), Standardtür 0,90 m. Der
+Kommentar in `raum-geometrie.ts` nennt die Regel beim Namen: **VOB-012,
+Unterbrechungen bis 1 m Einzellänge werden nicht abgezogen.** Drei
+Standardtüren kürzen die Sockelleiste also nicht — 14,40 lfm ist richtig,
+14,40 − 2,70 wäre falsch. Gilt genauso für die 18,00 lfm im Hero.
+*(Die alte Landingpage im Code zeigt an derselben Stelle 17,10 lfm. Die ist
+falsch, nicht der Entwurf.)*
+
+**Finance Punkt 3 — „Echte Aufnahmen, echte Angebote": halb richtig, und ich
+löse es als Textfrage.** Die vier Diktate sind **nicht erfunden** — sie stehen
+fast wortgleich in `docs/einsprech-liste-alle-faelle.md` (Fall 05, 06, 10, 11)
+und sind laut dieser Datei am **16.09. tatsächlich eingesprochen und
+abgehakt** worden. Es sind also echte Aufnahmen, aber von uns, nicht von
+Kunden — und genau das liest der Besucher hinein. **Mein Vorschlag:
+„Echt eingesprochen. Echt gerechnet."** Stimmt ohne Wenn und Aber, behauptet
+keine Kundschaft, und es ist der stärkere Satz. Kein Fall für Sandy, das ist
+Textarbeit.
+
+### 3. Fünf Befunde, die noch niemand hat
+
+Ich habe die vier Beispiele **gegen die Prüfstands-Läufe vom 16.09.** gehalten
+— nicht nachgerechnet (das hat Finance schon, fehlerfrei), sondern verglichen,
+**ob das, was auf der Seite steht, das ist, was aus dem Produkt herauskam.**
+
+**🔴 M-1 · Der Hero zeigt eine Position, die das Produkt heute nicht erzeugt.**
+Der eingesprochene Satz im Hero-Handy ist wortgleich **Fall 05** der
+Einsprech-Liste. Was das Produkt am 16.09. daraus gemacht hat:
+
+| | Positionen | Summe |
+|---|---|---|
+| **Fall 05, gemessen** | 5 | **890,20 €** |
+| **Hero im Entwurf** | 6 | **1.100,80 €** |
+
+Die sechste ist **„Grundieren (Tiefengrund)" 46,80 m² × 4,50 € = 210,60 €** —
+und zu genau der steht in der Einsprech-Liste der Satz: *„Nach dem
+Tapetenabriss fehlt der Tiefengrund. Steht auf der Liste, ist entschieden,
+**aber noch nicht gebaut**."* Ich habe nachgesehen: in
+`src/lib/ergaenzungs-erkenner.ts` gibt es keine Grundierungs-Ergänzung, und der
+`kontext-analyzer` fragt nur nach der Tapete selbst, nicht nach dem Grund
+danach. **Die Position kommt heute nicht.**
+
+Das ist die erste Sache, die jeder Besucher sieht, und sie ist eine Vorführung
+von Verhalten, das es nicht gibt. Finance ist es nicht aufgefallen, weil es
+**sauber aufgeht** — 890,20 + 210,60 = 1.100,80. Der Fehler ist nicht
+rechnerisch, er ist inhaltlich.
+**Zwei Wege:** Hero auf das echte Ergebnis (890,20 €, fünf Positionen) —
+sofort machbar, kostet nichts außer der Zeile. Oder warten, bis der Tiefengrund
+gebaut ist. **Meine Empfehlung: nicht warten.** Der Hero verliert durch die
+fünfte Zeile nichts; das Argument ist der Rechenweg, nicht die Summe.
+*Derselbe Befund trifft einen zweiten Satz:* „Denkt an das, was man vergisst —
+**Grundierung nach dem Tapetenabriss** — Sofortangebot fragt nach, bevor du
+umsonst arbeitest." Das ist dasselbe ungebaute Verhalten, als Versprechen
+formuliert. **Beispiel tauschen** (Boden abdecken und Sockelleisten kommen
+nachweislich von allein), Satz behalten.
+
+**🔴 M-2 · „Kein Angebot geht mit 0 € raus." — das stimmt nicht.**
+Steht im fünften Beispiel-Tab unter der 0,00-€-Zeile. Im Code ist es
+ausdrücklich andersherum gelöst, mit Begründung:
+`api/entwurf/generiere-positionen/route.ts` hält fest, dass die frühere
+422-Sperre **entfernt** wurde — *„fehlende Preise blockieren nicht mehr,
+sondern kommen mit 0,00 € sichtbar in die Positionen"*. Ich habe zusätzlich
+`api/pdf`, `api/email` und `api/sign` durchsucht: **keine Sperre, an keiner
+Stelle.** Wer den Preis nicht anlegt, verschickt das Angebot mit 0,00 € drin.
+
+Das Bittere daran: die Wahrheit ist fast so gut. Das Produkt **zeigt** die
+Lücke rot und unübersehbar, statt sie zu verstecken — das ist der eigentliche
+Verkaufspunkt. **Vorschlag: „Die Lücke steht rot im Angebot, bis du sie
+schließt."** Dasselbe Vertrauen, nachprüfbar wahr.
+
+**🔴 M-3 · Drei von vier Beispiel-Tabs zeigen nicht das, was der Prüfstand
+ausgegeben hat.** Die Datei `landingpage-fuenf-beispiele.md` verspricht im
+Kopf: *„Alle Mengen und Preise sind durch den Prüfstand gelaufen — nicht
+geschätzt."* Für die Seite in dieser Form gilt das nicht mehr:
+
+| Tab | Prüfstand 16.09. | Entwurf | Differenz |
+|---|---|---|---|
+| Bodenleger · Laminat | Fall 11: **366,30 €** | 401,30 € | + Kleinmaterial 35,00 € |
+| Maler · ganze Wohnung | Fall 10: **1.666,31 €** | 1.691,31 € | + Kleinmaterial 25,00 € |
+| Maler · Büro mit Q3 | Fall 06: **1.348,80 €** | 1.543,80 € | + 3 Heizkörper-Zeilen 170,00 € + Kleinmaterial 25,00 € |
+| Maler · Wohnzimmer | kein deckungsgleicher Fall (01 ist 2,50 m hoch) | 728,00 € | + Kleinmaterial 25,00 € |
+
+**Kleinmaterial ist wahrscheinlich harmlos** — es ist als Pauschale des
+Betriebs angelegt und im Testkonto offenbar nicht gesetzt, deshalb fehlte es im
+Lauf. Das lässt sich in einem Satz klären, nicht raten.
+**Das Büro ist der ernste Fall:** dort wurde der eingesprochene Satz
+**verändert** („Die zwei Heizkörper bitte mit lackieren" ist neu) und damit
+eine Variante gezeigt, die so nie durchgelaufen ist. Fachfrage an den
+Prüfmeister, unten gestellt. Bis dahin steht auf der Seite eine Zahl, für die
+niemand geradesteht.
+
+**🟠 M-4 · Das Büro-Beispiel trägt immer noch die Krücke, die laut
+Arbeitsreihenfolge raus muss.** Dort steht seit dem 16.09. wörtlich: *„Beispiel 4
+umgeht PM-098 heute dadurch, dass Fenster und Tür nicht im Satz stehen — diese
+Krücke gehört raus, bevor die Seite live geht."* Im Entwurf steht im Büro-Satz
+weiterhin kein Fenster und keine Tür. **Und die Lage hat sich verschärft:**
+PM-098 war „Fenster und Tür" **plus „lackieren"**, und „lackieren" ist mit den
+Heizkörpern jetzt neu im Satz. PM-098 gilt als gebaut und mit Sperrklinken
+abgesichert — dann kostet es einen Lauf, das zu belegen. **Das ist meine
+Auflage, ich habe sie gestern zugesagt und trage sie hiermit weiter.**
+
+**🟠 M-5 · „Ob du allein losziehst oder zu fünft" — das Produkt kennt nur einen
+Zugang pro Betrieb.** Die FAQ-Antwort auf „Zahle ich mehr, wenn mein Geselle es
+auch nutzt?" ist **preislich richtig** (es gibt keine Staffelung nach Köpfen,
+so steht es in `preismodell.md`). Der Nachsatz verspricht aber Nutzung durch
+mehrere. Gemessen: ein Betrieb hängt über `companies.user_id` an **genau einem**
+Konto (`.eq('user_id', user.id).single()`, überall gleich), und Wörter wie
+Mitarbeiter, Einladung oder Team kommen in `src/app` und `src/lib` **nicht
+vor**. Der Geselle müsste sich Sandys Zugang teilen — was nebenbei gegen den
+Sicherheitspunkt 2.7 arbeitet.
+**Vorschlag:** die Antwort auf das kürzen, was stimmt — *„Nein. Der Preis gilt
+für den Betrieb, nicht pro Kopf."* Punkt. Der Rest kann wieder rein, wenn es
+Mitarbeiterzugänge gibt.
+
+### 4. Mein Urteil zu 9.1
+
+**Der Entwurf ist inhaltlich die Seite, die wir brauchen.** Aufbau, Ton und
+Reihenfolge sitzen; die drei Dinge, die eine Landingpage leisten muss — was ist
+das, für wen, was kostet es — beantwortet er in fünfzehn Sekunden. Das ist
+gegenüber dem Stand im Code ein Sprung.
+
+**Live gehen darf er so nicht.** Zusammen mit Finance stehen jetzt **sechs
+Stopper**: MwSt./§ 19 · erfundene Gründerplätze (heute gemessen: **0 von 25
+vergeben**, die Seite behauptet 7) · ZUGFeRD/GoBD · und meine drei — der
+Tiefengrund im Hero, die 0-€-Zusage, die abweichenden Beispiele. **Kein
+einziger davon ist ein Design- oder Textproblem.** Es sind sechsmal dieselbe
+Sorte Fehler: die Seite ist dem Produkt voraus. Das ist bei einem Entwurf
+normal und in einem Monat vergessen — aber nicht, wenn er live geht.
+
+**Was ich als Nächstes tue, ohne auf jemanden zu warten:** die Textfassungen
+für M-1, M-2, M-5 und „Echt eingesprochen" ausformulieren, in einem Stück, zum
+Durchgehen mit Sandy. **Was ich nicht tue:** den Entwurf selbst anfassen —
+Aufbau und Aussehen gehören dem Designer, und Sandy will den Text mitgestalten.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
