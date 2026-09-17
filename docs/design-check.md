@@ -10248,4 +10248,301 @@ die Messung des Prüfmeisters.
 
 ---
 
+## DC-115 ✅ — PD-019 Punkt 2 (PM-115): Ja, der Nachtrag wird gekennzeichnet — und der Bezug kommt aus der Baustelle, nicht aus dem Satz (Product Designer, 17.09.2026)
+
+**Bezug:** PD-019 Punkt 2 (PM-115) in `docs/pruefmeister-notizen-fuer-designer.md`,
+dieselbe Frage schon einmal gestellt als PD-018 erster Block Punkt 3 (PM-096) ·
+Reihenfolge laut `arbeitsreihenfolge.md` (17.09., 05:50 UTC), Designer-Zeile:
+„PD-019 Punkt 2" — **wartet auf niemanden**, deshalb jetzt.
+
+**Die Antwort in einem Satz:** Ja — ein Nachtrag bekommt eine Kennzeichnung, und
+sie erfindet nichts Neues: der Bezug ist **das vorige Angebot auf derselben
+Baustelle**, vom Betrieb bestätigt, nie aus dem gesprochenen Satz geraten.
+
+---
+
+### Was heute passiert — nachgesehen, nicht vermutet
+
+| Stelle | Stand heute |
+|---|---|
+| Diktat „Nachtrag zum Angebot von letzter Woche." | Das Wort wirkt nirgends. Gemessen im Prüfstand `pruefmeister-batch-104-116.test.ts`, PM-115-A (`it.fails`): keine Spur in `fehlende` |
+| `quotes` | Kennt eine Angebotsserie bereits — `revision` + `original_id` (Selbstverweis auf das erste Angebot der Serie), gesetzt in `api/quotes/[id]/revise` |
+| Nummernkreis | Kennt bereits ein Suffix: `AG-2026-004` → `AG-2026-004-R2` (`revise/route.ts`, Zeile 37 f.) |
+| Bildschirm | Kennt bereits ein Abzeichen neben der Nummer: `Rev. 2` (`AngebotDetail.tsx`, Zeile 2068 ff.) |
+| Kundenpapier | Kennt bereits eine Dokumentzeile: `Angebot · Revision 2` (`pdf.tsx`, Zeile 403) |
+| Baustelle | Sammelt seit DC-029 mehrere Angebote desselben Kunden über die Zeit (`baustellen`, `quotes.baustelle_id`) — genau der Clemens-Fall „erst Entrümpelung, dann Ausbau" |
+
+**Das ist der eigentliche Fund:** Für „ein Papier, das sich auf ein anderes
+bezieht" ist im Produkt alles vorhanden — Datenfeld-Muster, Nummern-Suffix,
+Abzeichen, Papier-Zeile. Es fehlt kein Bauteil. Es fehlt **ein zweiter Grund**,
+aus dem ein Angebot auf ein anderes zeigt: heute gibt es nur „ist eine neuere
+Fassung davon" (Revision), nicht „kommt zusätzlich dazu" (Nachtrag).
+
+### Warum der Bezug nicht aus dem Diktat kommen darf
+
+Drei Gründe, jeder für sich ausreichend:
+
+1. **Der Satz nennt kein Angebot.** „Von letzter Woche" ist relativ zum
+   Sprechzeitpunkt, nicht zum Auswertungszeitpunkt, und trifft bei einem
+   Betrieb mit zwei laufenden Angeboten beim selben Kunden nicht eindeutig.
+2. **Zum Aufnahmezeitpunkt gibt es den Bezug noch gar nicht.** `baustelle_id`
+   wird erst gesetzt, wenn das Angebot seinen Kunden bekommt
+   (`getOrCreateErstbaustelle()`, DC-029 Antwort 1) — vorher gibt es nichts,
+   worauf gezeigt werden könnte.
+3. **Es wäre Raten an der teuersten Stelle.** Ein falscher Bezug auf dem
+   Kundenpapier ist schlimmer als gar keiner — dieselbe Klasse wie der
+   Beleg-Satz aus dem falschen Raum (PD-018, PM-100): er lädt zum Bestätigen
+   ein. Die stehende Regel des Produkts gilt hier wörtlich: **geraten wird
+   nichts** (Regel H, DC-112, DC-114).
+
+### Die Regel — drei Fälle, keine Zwischentöne
+
+Der Auslöser ist das Wort im Diktat. Die **Auswahl** trifft der Betrieb, und
+die Kandidatenliste ist die einzige, die sicher trägt: die Angebote auf
+derselben Baustelle, die den Entwurfsstand verlassen haben (also mindestens
+„Bereit"), neueste zuerst.
+
+| Fall | Was passiert |
+|---|---|
+| **Genau ein vorheriges Angebot auf der Baustelle** | Es wird **vorgeschlagen und angezeigt**, mit Nummer, Datum, Summe — und einmal bestätigt. Vorausgewählt ja, still gesetzt nein |
+| **Mehrere** | Auswahlliste, neueste zuerst, jede Zeile mit Nummer, Datum, Summe. Keine Vorauswahl |
+| **Keins** | **Keine Kennzeichnung** — und keine erfundene. Stattdessen eine Zeile in der Hinweisliste: `⚠ Als Nachtrag gesprochen — auf dieser Baustelle gibt es noch kein Angebot, auf das er sich beziehen kann.` |
+
+Der dritte Fall ist der, den der Prüfstand heute misst. **Wichtig für
+Engineering, damit PM-115-A nicht falsch festgeschrieben wird:** die Spur in
+`fehlende_angaben` ist die Lösung **nur für den dritten Fall**. In den ersten
+beiden ist die Spur stärker als ein Hinweis — sie steht als Kennzeichnung auf
+dem Papier. Ein Test, der `fehlende` in allen drei Fällen verlangt, würde die
+richtige Lösung für falsch erklären.
+
+### Wann gefragt wird
+
+Nicht während der Aufnahme (siehe Grund 2 oben), sondern an der Stelle, an der
+der Bezug erstmals auflösbar ist: **im Entwurf, sobald das Angebot einen Kunden
+hat** — als Zeile über der Positionsliste, in der Machart der DC-114-Karte
+(weiß, nicht rot; es ist kein Fehler des Handwerkers).
+
+> **Ist das ein Nachtrag?**
+> Du hast „Nachtrag" gesagt. Auf dieser Baustelle gibt es ein Angebot:
+>
+> → *AG-2026-004 · 09.09.2026 · 1.740,00 €*
+>
+> `Ja, Nachtrag dazu`   `Nein, eigenständiges Angebot`
+
+Beantwortet wird die Frage genau einmal; die Antwort steht danach am Angebot
+und nicht in einem Zwischenspeicher.
+
+### Was danach dasteht
+
+* **Neben der Nummer** (dort, wo heute `Rev. 2` steht, `AngebotDetail.tsx`
+  Zeile 2068): `Nachtrag zu AG-2026-004` — als Abzeichen, das den Weg zum
+  Ursprungsangebot öffnet.
+* **Auf dem Kundenpapier** (dort, wo heute `Angebot · Revision 2` steht,
+  `pdf.tsx` Zeile 403): `Nachtrag zu Angebot AG-2026-004 vom 09.09.2026`.
+  Damit liegen beim Kunden nicht mehr zwei Papiere, die beide „Angebot"
+  heißen — genau der Schaden, den der Prüfmeister beschreibt.
+* **In der Nummer:** `AG-2026-004-N1`, nach demselben Muster wie `-R2`. Das
+  Suffix ist nicht Kosmetik: es ist die Stelle, an der ein Betrieb den
+  Zusammenhang auch dann noch sieht, wenn er nur die Nummer vor sich hat
+  (Buchhaltung, Telefon, Mahnung).
+
+### Die zweite Anfahrt — der Teil mit dem Geld
+
+Der Prüfmeister nennt sie zu Recht: ein Nachtrag, der als Erstangebot
+durchgeht, trägt **Anfahrt und Kleinmaterial ein zweites Mal**. Beide entstehen
+automatisch in `api/entwurf/generiere-positionen/route.ts` (Zeilen 815 ff.,
+`kleinmaterialPosition()` / `anfahrtPosition()`), ohne jeden Blick auf
+Nachbar-Angebote.
+
+**Nicht stillschweigend streichen.** Eine zweite Anfahrt ist oft eine echte
+zweite Fahrt — der Maler fährt wirklich noch einmal raus. Still zu entfernen,
+was der Betrieb berechtigt berechnet, wäre derselbe Fehler wie still zu
+verdoppeln, nur in die andere Richtung.
+
+**Die Regel ist deshalb:** Auf einem Nachtrag bleiben die Pauschalen stehen,
+bekommen aber eine sichtbare Zeile darunter, mit einer Tippfläche zum
+Entfernen:
+
+> `An- und Abfahrt   1 Pauschale   45,00 €`
+> *Steht schon auf AG-2026-004. Zweite Fahrt?* · `Entfernen`
+
+Damit ist es eine Entscheidung des Betriebs statt einer Nebenwirkung — und der
+Fall „zweimal gelesen, einmal zu viel bezahlt" tritt nicht mehr unbemerkt ein.
+
+### Wer baut was
+
+| Teil | Wer | Umfang |
+|---|---|---|
+| Migration: `quotes.nachtrag_zu_id UUID REFERENCES quotes(id)`, nullable, Index — 1:1 am `original_id`-Muster | **Engineering** | eine Migration, keine Datenänderung an Bestehendem |
+| Nummern-Suffix `-N1` in der Nummernvergabe, nach dem Muster der `-R{n}`-Zeile in `revise/route.ts` | **Engineering** | klein |
+| Das Wort „Nachtrag" im Diktat erkennen und als Merkmal an den Entwurf durchreichen (nicht auflösen, nur melden) | **Engineering** | die eigentliche Pipeline-Arbeit |
+| Hinweiszeile für den dritten Fall in `fehlende_angaben` | **Engineering** | eine Zeile |
+| Entwurfs-Karte „Ist das ein Nachtrag?" inkl. Auswahlliste | **Product Designer** | baue ich, sobald das Feld steht |
+| Abzeichen neben der Nummer, Dokumentzeile im PDF, Pauschalen-Hinweiszeile | **Product Designer** | baue ich im selben Zug |
+
+**Reihenfolge:** Ohne `nachtrag_zu_id` hat meine Oberfläche nichts, worauf sie
+schreiben kann — ich fange deshalb bewusst nicht vorher an. Das ist dieselbe
+Lehre wie DC-037 (eine reine Client-Oberfläche hätte die gezeichnete Form beim
+nächsten Lauf still verloren).
+
+### Was ich ausdrücklich nicht entscheide
+
+* **Ob ein Nachtrag die Summe des Ursprungsangebots mitführt** („Angebot
+  1.740,00 € + Nachtrag 240,00 € = 1.980,00 €"). Kaufmännisch vertretbar,
+  aber es ist eine Frage an Legal/Sandy, ob damit das erste Angebot als
+  geändert gilt. Nicht Teil dieses Tickets.
+* **Ob der Nachtrag den Status des Ursprungsangebots berührt.** Heute: nein,
+  und dabei bleibt es, bis jemand einen gemessenen Fall dagegen hat.
+
+**Status: ✅ erledigt** (entschieden und spezifiziert; die Umsetzung hängt an
+der Migration und ist oben zugeordnet).
+
+*Product Designer · 2026-09-17*
+
+---
+
+## DC-116 ✅ — PD-019 Punkt 3 (PM-116): Ein Bauabschnitt wird kein neues Objekt — der ausgenommene Abschnitt kommt raus und wird sichtbar, nicht auf ein zweites Blatt (Product Designer, 17.09.2026)
+
+**Bezug:** PD-019 Punkt 3 (PM-116) in `docs/pruefmeister-notizen-fuer-designer.md`,
+zuvor schon PD-018 erster Block Punkt 3 (PM-097) · Reihenfolge laut
+`arbeitsreihenfolge.md` (17.09., 05:50 UTC) · Der Rechenfehler dahinter gehört
+Engineering, die Frage nach der **Form** ist unsere — genau so gestellt.
+
+**Die Antwort in einem Satz:** Nein, zwei Abschnitte gehören nicht automatisch
+auf zwei Blätter — der ausdrücklich ausgenommene Abschnitt gehört **gar nicht
+in dieses Angebot**, sondern sichtbar daneben, mit einem Weg, aus ihm später
+ein eigenes Angebot auf derselben Baustelle zu machen.
+
+---
+
+### Die beiden gemessenen Fälle sagen dasselbe
+
+| Fall | Gesagt | Ergebnis heute |
+|---|---|---|
+| **PM-116** | „Zweiter Bauabschnitt Küche drei mal drei, **das kommt später und wird extra angeboten**." | Küche steht vollständig drin: 305,40 € |
+| **PM-097** | „Zweiter Bauabschnitt Obergeschoss, **das kommt später und wird getrennt abgerechnet**." | Eine Liste, eine Summe über beide Abschnitte |
+
+**Beide Sätze sind Ausschlüsse, keine Gliederungen.** „Extra angeboten" und
+„getrennt abgerechnet" heißen beide: *nicht auf dieses Papier.* Es gibt in
+beiden Batches **keinen** gemessenen Fall, in dem zwei Bauabschnitte zusammen
+auf einem Blatt angeboten werden sollen.
+
+Das ist der ganze Grund, warum die Antwort unten so schmal ausfällt: Die Frage
+„ein Blatt oder zwei?" stellt sich in den echten Fällen gar nicht. Sie stellt
+sich nur, wenn man dem Diktat eine Gliederungsebene unterstellt, die niemand
+verlangt hat.
+
+### Warum nicht automatisch zwei Blätter
+
+1. **Ein zweites Papier, das der Betrieb nicht bestellt hat, ist genau der
+   Schaden aus DC-115.** Zwei Blätter beim Kunden, beide „Angebot" — nur
+   diesmal von uns erzeugt statt von ihm.
+2. **Es verdoppelt Anfahrt und Kleinmaterial**, an derselben Stelle wie dort
+   (`generiere-positionen/route.ts`, Zeilen 815 ff.) — nur unbemerkt, weil
+   niemand das zweite Blatt bewusst angelegt hat.
+3. **Zum Aufnahmezeitpunkt gibt es weder Kunde noch Baustelle.** Das zweite
+   Angebot hätte keinen Ort, an den es gehört (`baustelle_id` entsteht erst
+   mit `customer_id`, DC-029).
+
+### Der Behälter für „später, getrennt" existiert schon
+
+Er heißt **Baustelle**. Genau dafür ist er 2026-08-19 gebaut worden (DC-029,
+Clemens-Fall: „erst Entrümpelung, dann Ausbau") — mehrere Angebote desselben
+Kunden am selben Objekt über die Zeit, mit dem fertigen Weg
+„**+ Neues Angebot für diese Baustelle**" auf der Kundenseite
+(`src/app/(app)/kunden/[id]/page.tsx`, Zeile 156).
+
+> **Zwei Bauabschnitte = zwei Angebote auf einer Baustelle.** Angelegt, wenn
+> der Betrieb es will, nicht wenn ein Satz fällt. Und wenn der zweite Abschnitt
+> später kommt, ist er über DC-115 mit dem ersten verbunden — dieselbe Klammer,
+> nur andersherum gelesen.
+
+Damit braucht „Bauabschnitt" **kein eigenes Feld, keine eigene Tabelle und
+keinen eigenen Bildschirm**. Das Produkt kennt den Begriff nicht — es kennt den
+Vorgang.
+
+### Ausdrücklich gegen den Prüfstand entschieden: kein zweites Gruppierungs-Level
+
+`PM-097-B` erwartet heute, dass Positionen ein Feld `bauabschnitt` oder
+`gruppe` tragen und zwei unterscheidbare Abschnitte entstehen. **Das baue ich
+nicht, und zwar bewusst.**
+
+Die Anzeige gruppiert seit DC-028/DC-040 nach **Raum**
+(`angebot-gruppierung.ts`, Raum-Suffix im Titel). Eine zweite Ebene darüber
+wäre Struktur ohne einen einzigen gemessenen Fall, der sie braucht — und sie
+würde an jeder Stelle mitgeschleppt, die heute Räume kennt: Anzeige, PDF,
+Rückfragen, Gruppierung, Tests. Der Preis ist hoch, der Beleg ist null.
+
+**Das ist eine Entscheidung, kein Versäumnis.** Wenn der Prüfmeister einen Fall
+misst, in dem zwei Abschnitte wirklich zusammen auf ein Blatt sollen und sich
+dort unterscheiden müssen, kippt sie sofort — dann ist `PM-097-B` richtig und
+ich baue die Ebene. Bis dahin sollte der Prüfstand die Erwartung umformulieren,
+damit eine rote Zeile nicht auf etwas zeigt, das absichtlich fehlt.
+
+### Was stattdessen auf dem Bildschirm steht
+
+Der ausgenommene Abschnitt wird **nicht gerechnet und nicht gedruckt** — und
+das Weglassen wird gezeigt. Beides zusammen, nie nur eines:
+
+> ⚠ **„Küche" steht nicht in diesem Angebot**
+> Gesagt: *„Zweiter Bauabschnitt Küche … das kommt später und wird extra
+> angeboten."*
+> `Doch mit aufnehmen`   `Als eigenes Angebot anlegen`
+
+* **Weglassen ohne Hinweis wäre der schlimmere Fehler von beiden** — dann
+  fehlen 305,40 € Arbeit, und niemand erfährt es. Der Hinweis ist der Pflichtteil.
+* **`Doch mit aufnehmen`** ist die Umkehr mit einem Tipp. Ein Betrieb, der sich
+  verspricht, verliert nichts.
+* **`Als eigenes Angebot anlegen`** führt auf den vorhandenen DC-029-Weg und
+  setzt zugleich die DC-115-Klammer. Voraussetzung dafür: die Maße des
+  ausgenommenen Abschnitts dürfen beim Herausnehmen **nicht verworfen werden**
+  (Engineering-Anforderung, unten).
+* **Heimat der Zeile** ist die vorhandene Hinweisliste `fehlende_angaben`
+  (`KalkulationsBewertungCard.tsx`) — kein neues Bauteil.
+
+**Das Entfernen selbst ist im Produkt kein Sonderweg:** `bauteil-ausschluss.ts`
+(`entferneAusgeschlosseneBauteile()`) nimmt auf einen ausdrücklichen Satz hin
+schon heute Zeilen aus dem Angebot. PM-116 ist derselbe Vorgang eine Ebene höher.
+
+### Warum die vorhandene Raum-Ausschluss-Regel hier nicht greift — nachgesehen
+
+`src/lib/raum-ausschluss.ts` gibt es, und sie ist richtig gebaut. Sie greift
+bei der Küche aus zwei Gründen nicht:
+
+1. `ausgeschlosseneRaeume()` steigt in Zeile 80 mit
+   `if (!hatKeinerleiArbeit(raum)) continue` aus. Die Küche **hat** eine
+   Arbeit (`arbeiten: ['wände streichen']`) — die Regel verlangt bewusst
+   *beides*: keine Arbeit **und** abbestellt (im Kopf der Datei begründet:
+   ein Raum ohne Arbeiten kann auch nur eine Extraktionslücke sein).
+2. Das Muster `AUSSCHLUSS` kennt „ausgenommen", aber **weder „kommt später"
+   noch „extra angeboten" noch „getrennt abgerechnet"**.
+
+**Der Unterschied ist inhaltlich, nicht technisch:** PM-034 ist ein Ausschluss
+im *Umfang* („wird gar nicht gemacht"), PM-116/PM-097 ist ein Ausschluss in der
+*Zeit* („jetzt nicht, und nicht auf diesem Papier"). Der zweite darf die
+Arbeiten nicht zur Bedingung machen — er trifft gerade Räume, die welche haben.
+Eine dritte Bedingung ist dafür nötig: der Zeit-/Trennungssatz muss demselben
+Raum zugeordnet sein (`saetzeJeRaum()` kann das bereits).
+
+### Wer baut was
+
+| Teil | Wer |
+|---|---|
+| Zeit-Ausschluss erkennen („kommt später", „wird extra angeboten", „wird getrennt abgerechnet", „im zweiten Bauabschnitt") und dem Raum zuordnen — **ohne** die `hatKeinerleiArbeit`-Bedingung | **Engineering** |
+| Den betroffenen Raum aus den Positionen halten und seine Maße dabei erhalten (Voraussetzung für „Als eigenes Angebot anlegen") | **Engineering** |
+| Hinweiszeile in `fehlende_angaben` mit Raumname **und** Beleg-Satz | **Engineering** |
+| Die Hinweis-Karte mit den zwei Tippflächen, und der Weg auf „+ Neues Angebot für diese Baustelle" | **Product Designer** |
+| `PM-097-B` umformulieren oder als bewusst offen markieren | **Prüfmeister** (Bitte, keine Anweisung) |
+
+**Blockiert nichts bei uns** — die Karte ist erst sinnvoll, wenn der Ausschluss
+erkannt wird, und der Erkenner ist Engineerings Seite. Die Entscheidung, die
+der Prüfmeister erbeten hat, steht damit; es bleibt nichts offen, das jemand
+erraten müsste.
+
+**Status: ✅ erledigt** (entschieden und spezifiziert).
+
+*Product Designer · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
