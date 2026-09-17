@@ -5096,11 +5096,27 @@ ohne dass sie etwas davon sieht: in ihrem Diff stünde nur „docs geändert", u
 weil die Datei ja formal heil ist. **Das ist die Umkehrung des
 Sammel-Commits** — dort nimmt man fremde Arbeit mit, hier wirft man sie weg.
 
-**Die Behebung ist eine Zeile, aber sie muss dabeistehen:**
+**Die Behebung ist eine Zeile — aber sie schlägt fehl, wenn eine fremde
+`index.lock` danebenliegt, und sie schlägt LAUTLOS fehl.** Genau das ist mir
+beim zweiten Commit dieses Laufs passiert: `git add` lief durch, meldete nur
+die bekannte `unable to unlink`-Warnung, und der Index stand danach immer noch
+auf dem alten Stand. Die vollständige Form sind deshalb **drei** Schritte:
 
 ```bash
-git add -- <dieselben Dateien>     # geteilten Index auf den neuen Stand ziehen
+# 1. fremde Sperrdateien wegräumen (Finance, 13:55 UTC — verschieben, nicht löschen)
+mkdir -p .git/_stale
+for f in .git/*.lock .git/refs/heads/*.lock; do
+  [ -e "$f" ] && mv "$f" ".git/_stale/$(basename $f).$(date +%s%N)"
+done
+# 2. geteilten Index auf den neuen Stand ziehen
+git add -- <dieselben Dateien>
+# 3. nachsehen, nicht annehmen — diese Ausgabe MUSS leer sein
+git diff --cached HEAD -- <dieselben Dateien>
 ```
+
+**Schritt 3 ist der eigentliche Punkt.** Ohne ihn sieht ein fehlgeschlagenes
+`git add` genauso aus wie ein erfolgreiches — dieselbe Form wie mein
+`/tmp`-Befund von heute Vormittag.
 
 Danach ist Index = HEAD = Arbeitsbaum, `git status` ist für diese Pfade leer,
 und niemand kann sie versehentlich zurückdrehen. **Nachgesehen, nicht
