@@ -201,4 +201,99 @@ ihr Produktionsfenster ist der Oktober.
 
 ---
 
+
+## 17.09.2026, nachmittags — drei Meldungen, kein Eingriff
+
+### 1. 🔴 Der Finance-Commit von 13:14 UTC hat den ganzen Arbeitsbaum mitgenommen
+
+**`205ee9f` „Finance: Punkt 4.7 — erste echte E-Rechnung geprueft" enthält 28
+Dateien. Etwa ein Drittel davon gehört Finance.** Der Rest ist die laufende
+Arbeit von drei anderen Rollen und eine Wegwerfdatei von mir:
+
+| gehört | Dateien |
+|---|---|
+| **Finance** | `finance-001-*` (2) · `kostenuebersicht-finance.xlsx` · `scripts/belege-pruefen.mjs` · die CoS-Todo-Dateien · `entscheidungen-fuer-sandy.md` |
+| **Engineering** (CoS-E-078) | `katalog-standard.ts` · `positions-gewerk.ts` · `preis-matcher.ts` · `cos-e-078-bad-wandpositionen.test.ts` · `pm075-duschnische.test.ts` · `pm117-bad-wandpositionen.test.ts` · `pruefmeister-batch-60-62.test.ts` |
+| **Designer** (DC-125) | `AngebotDetail.tsx` · `AngebotVorschau.tsx` · `pdf.tsx` · `versandbereit.ts` · `dc125-preis-fehlt.test.tsx` |
+| **Marketing** | fünf Dateien unter `src/components/landing/` |
+| **mir** | `src/lib/__tests__/pm-messung-tmp.test.ts` — 54 Zeilen Messgerüst, das ich zehn Minuten vorher angelegt hatte |
+
+**Das ist genau die Form, gegen die Regel 3 in `AGENTS.md` geschrieben ist**
+(„Fremde Dateien nicht mitcommitten und nicht anfassen") und gegen die „`git
+add -A` ist abgeschafft" steht. Der Head of Marketing hat in `4879f1f`
+offenbar dieselbe Beobachtung gemacht („ein Datenpunkt zu git add -A"); ich
+melde sie unabhängig davon, weil ich den einen Teil davon messen kann, den
+sonst niemand sieht.
+
+**Zwei Folgen, die ich für berichtenswert halte:**
+
+* **Die Arbeitsreihenfolge von 13:00 UTC sagt zu CoS-E-078 und DC-125
+  „läuft, nicht abgenommen".** Beides liegt seit 13:14 UTC **committet** im
+  Repository, ohne dass die bauende Rolle es gemeldet hätte. Wer den Stand
+  aus der Arbeitsreihenfolge liest, liest ihn falsch — nicht weil die Datei
+  schlecht gepflegt wäre, sondern weil ein fremder Commit den Stand geändert
+  hat.
+* **Eine Wegwerfdatei steht jetzt in der Geschichte.** Meine
+  `pm-messung-tmp.test.ts` war ein Messgerüst mit `console.log`, das nie in
+  ein Repository gehört hat. Ich habe sie inzwischen aus dem Arbeitsbaum
+  nach `_to_delete/pruefmeister-messung-2026-09-17/` verschoben und die
+  Löschung in meinen eigenen Commit genommen. Aus der Geschichte bekomme ich
+  sie nicht heraus, und ich fasse dafür nichts an.
+
+**Mein eigener Anteil, damit er dasteht:** Die Datei lag im Projektbaum, weil
+ich sie dort gebraucht habe — `vitest` löst die `@/`-Aliase nur innerhalb des
+Projekts auf, `jiti` von außen nicht. Dass sie dort lag, ist meine
+Entscheidung gewesen; dass sie committet wurde, nicht. **Ich lege Messgerüste
+ab jetzt gleich unter `_to_delete/` an und zeige `vitest` von dort darauf,
+statt sie hinterher wegzuräumen.**
+
+Es ist eine Meldung, kein Auftrag. Ich schlage nichts vor — die Frage, ob
+daraus eine Regel wird, gehört dir.
+
+### 2. 🟡 Ein Git-Arbeitsbaum-Rest von mir, den ich nicht wegbekomme
+
+Für den Abgleich der Vokabular-Zahlen habe ich vier ältere Stände des
+Repositories gemessen (`git worktree add` nach `$HOME/alt`, außerhalb des
+Ordners, den Sandy sieht). Der Ordner selbst ist weg. **Die Verwaltungsdatei
+`.git/worktrees/alt` bleibt liegen** — `git worktree remove -f -f` und
+`git worktree prune` scheitern beide mit `Operation not permitted`, weil in
+einem geplanten Lauf nicht gelöscht werden darf.
+
+Sie steht innerhalb von `.git/` und kann nicht ins Repository geraten. Es ist
+derselbe Vorgang wie bei den 265 Sperrresten, nur einer statt 265, und er ist
+meiner. `git worktree prune` räumt ihn weg, sobald jemand mit Löschrecht an
+der Konsole sitzt. **Ich melde ihn, damit er beim nächsten Zählen nicht als
+fremder Fund auftaucht.**
+
+Nebenbefund derselben Sache: Ein `git checkout` von mir ist an
+`index.lock: File exists` gescheitert, während eine andere Rolle gerade
+committet hat. Ich habe gewartet und es wiederholt, nichts entfernt. Das ist
+kein Fehler, sondern der normale Betrieb bei fünf Rollen an einem
+Arbeitsbaum — aber es erklärt, wie Sperrreste entstehen, wenn ein Lauf
+stattdessen abbricht.
+
+### 3. Der Stand meiner Spur
+
+Engineerings drei Punkte sind beantwortet, die zwei Auflagen liegen, acht
+neue Fälle stehen als Test. **Fallbasis 128.** Ausführlich in
+`pruefmeister-restliste.md`, Lauf vom 17.09. nachmittags.
+
+Zwei Korrekturen betreffen Zahlen, die ich selbst in Umlauf gebracht habe,
+und ich nenne sie hier, weil sie zitiert worden sein könnten:
+
+* **„`Entsorgung Fliesenmaterial` — keine Katalogzeile" (PM-117) ist
+  falsch.** Es gibt eine, `Fliesenschutt entsorgen (Container / Absackung)`,
+  8,00 €/m². Alle sieben Fliesen-Lücken waren damit Wortlaut-Sachen.
+* **„182 → 183 Engine-Titel" im Vokabular-Abgleich ist falsch.** Der Zähler
+  stand an vier gemessenen Ständen des Vormittags durchgehend auf **184**.
+  Ich hatte die Zahl fortgeschrieben statt die Ausgabe des Skripts gelesen.
+  Keine Drift im Produkt, eine Buchhaltung ohne Nachsehen.
+
+Beide Male dieselbe Form wie dein eigener Fund von heute früh: über etwas
+berichtet, das ich nicht zu Ende gelesen hatte.
+
+*Prüfmeister · 2026-09-17, nachmittags*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

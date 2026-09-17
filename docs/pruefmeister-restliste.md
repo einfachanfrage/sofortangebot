@@ -3842,4 +3842,306 @@ angehängt und ihm den Befund gemeldet. Ich fasse den Text nicht an.
 
 ---
 
+
+## Lauf vom 17.09.2026, nachmittags — Engineerings drei Punkte sind beantwortet, acht neue Fälle
+
+**Gemessen auf Sandys Rechner.** Die Shell erreicht den Ordner seit diesem
+Lauf wieder — der Umweg über Staging und Ersatzumgebung war nicht nötig.
+Gelaufen sind `node scripts/vokabular-abgleich.mjs`, der neue Batch und der
+volle Prüfstand.
+
+Alles Neue liegt als Test, nicht als Prosa:
+`src/lib/__tests__/pruefmeister-batch-121-128.test.ts` — **42 Zusicherungen,
+27 grün, 15 Sperrklinken.**
+
+---
+
+### 1. ✅ Frage 1 beantwortet: `Entsorgung Fliesenmaterial` IST `Fliesenschutt entsorgen`
+
+**Dieselbe Arbeit. PM-060-A hatte recht, PM-117 war falsch — und der Fehler
+war meiner.**
+
+In PM-117 habe ich aufgeschrieben, was der Preis-Matcher findet, und daraus
+einen Satz über den Katalog gemacht. „Der Matcher findet nichts" und „es gibt
+keine Katalogzeile" sind zwei verschiedene Sätze. Der erste stimmte, der
+zweite nicht. Das ist dieselbe Form wie der Fund des Chief of Staff heute
+früh: über etwas berichtet, das ich nicht zu Ende gelesen hatte.
+
+Fachlich ist es eine Arbeit, aus drei Gründen — und alle drei sind gemessen:
+
+1. **Die Menge.** Die Engine schreibt die Zeile mit der Begründung „Gleiche
+   Fläche wie Demontage". Sie hängt an der abgestemmten Fläche, nicht an der
+   neu verlegten. Das ist Abbruchschutt.
+2. **Die Einheit.** `Fliesenschutt entsorgen (Container / Absackung)` rechnet
+   in m², 8,00 €/m² — dieselbe Bezugsgröße.
+3. **Die Gegenkandidaten scheiden aus.** `Fliesenreste / Bruch entsorgen`
+   (Pauschale, 35,00 €) ist der Verschnitt der NEUEN Fliesen.
+   `Altbelag-Schutt entsorgen (Container)` rechnet in m³ — ein Maß, das die
+   Engine nicht liefert. Es bleibt genau ein Kandidat mit gleicher Einheit.
+
+**Entscheidung: eine Zeile Synonym, 8,00 €/m². Der Wortlaut der
+Angebotszeile bleibt** — „Entsorgung Fliesenmaterial" sagt dem Kunden, was
+weggefahren wird; „Fliesenschutt" ist Katalogsprache.
+
+**Geld, an drei Bädern nachgerechnet:** 128,00 € (PM-060, 16 m²) ·
+144,00 € (PM-061, 18 m²) · **176,00 € (PM-117, 22 m²)** — Engineerings Zahl,
+nachgerechnet, sie stimmt. Jedes Bad mit Altbelag.
+
+**PM-121**, Sperrklinke `PM-121-A` schlägt an, sobald das Synonym steht.
+Damit trägt danach keine Zeile dieses Bades mehr 0,00 € (`PM-121-B`).
+
+---
+
+### 2. ✅ Frage 2 beantwortet: der Titel der Duschnische bleibt, wie er ist
+
+**`Nische fliesen — Bad` bleibt. Nicht zurück auf die Katalogschreibweise.**
+
+Engineerings Messung stimmt und ist nachgemessen: beide Schreibweisen finden
+heute dieselben 95,00 €, die alte Ursache (`/wand/` → Maler) ist weg. Es gibt
+also keinen Preisgrund mehr für den kurzen Titel — aber es gibt einen
+besseren Grund als den alten.
+
+`Nische / Wandnische fliesen` ist ein **Nachschlagewort mit zwei Namen für
+dieselbe Sache.** Auf einem Angebot liest sich der Schrägstrich als offene
+Alternative: bekommt der Kunde eine Nische oder eine Wandnische? Ein Angebot
+nennt eine Arbeit und einen Ort, nicht zwei Wörter zur Auswahl.
+
+**Die Regel dahinter, und sie ist größer als der Einzelfall: der
+Katalogtitel ist der Schlüssel zum Preis, nicht der Text, der gedruckt
+wird.** Dieselbe Richtung wie PM-062-B — der Titel wird zum Kunden hin
+schärfer, nicht zum Katalog hin.
+
+**PM-122.** Zusicherung 7 in `pm075-duschnische.test.ts` braucht keinen
+Nachtrag; die Frage darin ist beantwortet.
+
+**Ein Messfehler auf meiner Seite, damit ihn niemand wiederholt:** Die Zeile
+rechnet in **Stück**, nicht in m². Wer m² einsetzt, misst an beiden
+Schreibweisen „kein Treffer" und hält Engineerings Aussage für widerlegt. Ich
+hatte das zuerst genau so gemessen und wäre damit falsch gelegen.
+
+---
+
+### 3. 🔴 PM-061-A: die Auflage liegt, und sie ist größer als PM-061-A
+
+Engineering hat ausdrücklich gefragt, ob eine Auflage nötig ist, bevor
+gebaut wird. **Sie ist es — aus demselben Grund wie bei PM-117: ein halber
+Fix sieht behoben aus und ist es nicht.**
+
+Das Bad „nur die Wandfliesen", heute gemessen, Zeile für Zeile:
+
+```
+Bodenfliesen verlegen        4,75 m²  × 38,00 =   180,50 €   nicht bestellt
+Verfugung Boden              4,32 m²  × 10,00 =    43,20 €   nicht bestellt
+Fliesensockel / Abschluss    8,40 lfdm× 12,00 =   100,80 €   nicht bestellt
+Wandfliesen verlegen        18,52 m²  × 42,00 =   777,84 €   richtig
+Verfugung Wand              17,64 m²  × 12,00 =   211,68 €   richtig
+Altfliesen abstemmen        18,00 m²  × 18,00 =   324,00 €   Bodenpreis auf
+                                                             Wandabbruch
+Entsorgung Fliesenmaterial  18,00 m²  ×  0,00 =     0,00 €   PM-121
+────────────────────────────────────────────────────────────
+Summe heute                                    1.638,02 €
+Summe richtig                                  1.529,52 €
+```
+
+**Drei Fehler in einem Angebot, und sie zeigen in verschiedene Richtungen:**
+324,50 € zu viel (PM-061-A), 72,00 € zu wenig (PM-062-A), 144,00 € zu wenig
+(PM-121). Wer nur PM-061-A baut, meldet „behoben" und lässt **216,00 €**
+falsch stehen — diesmal zu Lasten des Betriebs.
+
+**Die Auflage, vier Punkte (PM-123):**
+
+1. **Alle DREI Bodenzeilen fallen weg, nicht zwei.** Der Fliesensockel
+   rechnet in lfdm und hängt am Umfang, nicht an der Bodenfläche. Er ist die
+   Zeile, die beim Aufräumen übersehen wird.
+2. **Die Wandzeilen bleiben unberührt.** Sie stehen auf denselben Raummaßen
+   wie die Bodenzeilen. Ein Fix, der die Maße wegwirft, statt die Bodenarbeit
+   auszunehmen, nimmt sie mit — das ist die Lehre aus PM-105.
+3. **Kein stiller Rückbau.** Ausgenommen ist nicht vergessen, ein
+   Fehlt-Eintrag ist hier nicht nötig. Aber Zeilen dürfen nicht lautlos
+   verschwinden, wenn die Ausnahme NICHT im Satz steht — das wäre PM-113 an
+   einer neuen Stelle.
+4. **Die Gegenprobe gehört in denselben Zug:** das Bad ohne „nur" (PM-060)
+   behält alle Bodenzeilen. Ein Auslöser, der auf das Wort „nur" zielt,
+   bricht sie.
+
+`PM-123-C` ist die Zusicherung gegen den halben Fix: sie schlägt erst an,
+wenn PM-061-A, PM-062-A und PM-121 **zusammen** gebaut sind.
+
+---
+
+### 4. 🔴 PM-124 — und eine zweite Auflage, auf PM-062-A
+
+PM-062-A fordert bei Wandfliesen den Wandpreis. Das ist richtig. **Wer aber
+nur den Preis dieser einen Zeile umstellt, baut den nächsten Fehler ein.**
+
+Im gewöhnlichen Bad (PM-060) kommen Boden UND Wand herunter, und die Engine
+schreibt dafür EINE Zeile mit EINER Menge: `Altfliesen abstemmen — Bad`,
+16,00 m². Diese 16 m² sind die Summe aus beidem. **Es gibt keinen Preis, der
+für diese Zeile richtig ist:** mit 18,00 € ist der Wandanteil zu billig, mit
+22,00 € der Bodenanteil zu teuer. Die Spanne, in der die Wahrheit liegt:
+288,00 € bis 352,00 €.
+
+**Die Auflage: PM-062-A wird nicht durch einen Preiswechsel erfüllt, sondern
+durch eine Trennung der Zeile.** Wo eine Richtung fällt, steht eine Zeile mit
+dem Bauteil im Titel (PM-062-B); wo beide fallen, stehen zwei. Liegen die
+Mengen nicht getrennt vor, ist die ehrliche Form ein Fehlt-Eintrag nach der
+Aufteilung — keine geratene Quote.
+
+Dieselbe Familie wie TN-127 / PM-056-A: der Titel nimmt nicht, was im Raum
+liegt.
+
+---
+
+### 5. 🔴 PM-125 — die Verneinungsmaschine ist kein Einzelfall, sie ist der Zustand
+
+Der Themenspeicher (M.2) verlangt diese Messung ausdrücklich **vor** PM-101,
+weil PM-101 auf derselben Maschine aufbaut. Sie ist jetzt da, an drei
+Bauteilen, dreimal dasselbe:
+
+```
+„Die drei schmalen Türen nicht, nur die breite."    → kein Türblock
+„Die zwei alten Heizkörper nicht, nur den neuen."   → kein Heizkörperblock
+„Die alten Sockelleisten nicht, nur die neuen."     → kein Sockelblock
+```
+
+**Die Maschine streicht den Block, in dem das verneinte Wort vorkommt, und
+nimmt die im selben Satz BESTELLTE Arbeit mit.** In allen drei Fällen bleibt
+`fehlende` leer — keine Spur. Die Kontrolle mit „auch" statt „nicht" lässt
+den Block stehen, die Wandarbeit bleibt in allen drei Fällen unberührt: die
+Verneinung wirkt nicht wahllos, sie wirkt zu breit.
+
+Geld am Flur: Türblock 180,00 € (20 + 25 + 90 + 45), Heizkörperblock
+85,00 € (20 + 25 + 40). Bestellt war je eins davon.
+
+**Damit ist PM-105 keine Einzelmessung mehr.** Wer PM-101 baut, baut auf
+dieser Maschine auf — das war die Warnung vom 16.09., und sie ist jetzt
+belegt statt vermutet.
+
+---
+
+### 6. 🔴 PM-128 — „Wohnzimmer vier mal fünf" wird als VIER ZIMMER gelesen
+
+**Der teuerste Fund dieses Laufs, und er fiel nebenbei an.**
+
+`maler-lackieren.ts` Zeile 59 zählt die Zimmer mit
+`anzahlAus(lower, 'zimmer', …)` und findet in „wohnzimmer 4 mal 5" die
+**4**. Daraus macht die Kette vier Türen — je eine pro Zimmer, sauber als
+Annahme ausgewiesen. Auf dem Kundenpapier steht dann, über EINEN Raum:
+
+```
+Türen abschleifen · 4 Stück · „4 Zimmer → je 1 Tür angenommen"
+```
+
+Fünf Fassungen gemessen, der Auslöser ist genau benannt:
+
+```
+„Wohnzimmer vier mal fünf …"    → 4 Türen   die erste Raumzahl
+„Schlafzimmer drei mal vier …"  → 3 Türen   dieselbe Mechanik
+„Flur vier mal eins fünfzig …"  → 1 Tür     kein „zimmer" im Namen
+„Bad zwo vierzig mal …"         → 1 Tür     kein „zimmer" im Namen
+„Im Wohnzimmer die Wände …"     → 1 Tür     „zimmer", aber keine Zahl
+```
+
+**Ein Raumname auf „…zimmer", gefolgt von seinem ersten Maß.** Nicht der
+Name allein, nicht die Zahl allein — beide zusammen.
+
+**Geld: 3 × 180,00 € = 540,00 €** auf einem Angebot, das eine Tür nennt. Und
+es trifft den häufigsten Satz, mit dem eine Aufnahme überhaupt anfängt.
+
+Zwei Dinge, die dazugehören:
+
+* **Es verfälscht Messungen.** `WZ_MALER` in
+  `pruefmeister-batch-104-116.test.ts` steht auf „Wohnzimmer vier mal fünf".
+  Dort geht es um Fenster, die Türzahl fällt nicht auf. Ich habe PM-125
+  deshalb am **Flur** gemessen, nicht am Wohnzimmer.
+* **Die Herkunftsangabe ist richtig, die Zahl ist falsch.** „angenommen"
+  steht korrekt da (CoS-E-065). **Eine sauber gekennzeichnete Annahme
+  schützt nicht vor einer falschen.**
+
+---
+
+### 7. PM-126 und PM-127 — zwei Themen aus dem Speicher, abgeräumt
+
+**PM-126 — die Reihenfolge INNERHALB der Hauptarbeit.** PM-119 schließt sie
+ausdrücklich aus; hier ist sie. Das Komplettbad, in der Reihenfolge, in der
+die Zeilen entstehen: Bodenfliesen verlegen · **Verbundabdichtung Boden** ·
+Verfugung Boden · Wandfliesen verlegen · **Verfugung Wand** ·
+Verbundabdichtung Wand · Sockel · **Altfliesen abstemmen** · Entsorgung.
+
+Abgedichtet wird VOR dem Verlegen und verfugt danach. Auf dem Papier steht
+es zweimal falsch, **und an der Wand schlimmer als am Boden**: dort steht die
+Abdichtung sogar hinter der Verfugung. Wer das liest, liest, dass hinter die
+fertig verfugte Wand noch Flüssigfolie gestrichen wird. Der Abbruch an
+vorletzter Stelle ist dazu **L-06 im Gewerk Fliesen** — ein vierter Fall zu
+den drei in PM-119 gemessenen.
+
+**PM-127 — der genannte Einheitspreis.** Der Themenspeicher (M.4) nennt ihn
+den leichteren Fall gegenüber PM-111, weil die Menge danebensteht. Gemessen:
+**genauso spurlos.** „Den Quadratmeter machen wir für zwölf Euro." erzeugt
+nichts, ändert nichts, hinterlässt keinen Fehlt-Eintrag; das Angebot ist
+Zeichen für Zeichen dasselbe wie ohne den Satz.
+
+Das Geld läuft diesmal **gegen den Betrieb**: `Wand streichen 2x` steht mit
+9,50 €/m² im Katalog, gesagt hat er 12,00 €. Auf 27,50 m² sind das
+**68,75 €**, die er selbst genannt und nicht bekommen hat. Eine Position darf
+daraus nicht werden — ein genannter Preis ist kein gemessener (PM-023) —,
+aber lautlos verschwinden darf er auch nicht.
+
+---
+
+### 8. Der Vokabular-Abgleich: sechs Lücken weg, und eine Zahl von mir war falsch
+
+```
+                                   17.09. mittags   17.09. nachmittags
+Engine-Titel mit eigener Einheit        183*              184
+davon ohne Preis                         32                26
+davon knapp (Score < 0,75)                3                 3
+gute Treffer                            148*              155
+Titel aus Variablen, nicht prüfbar        0                 0
+```
+
+**Die sechs, die weggefallen sind, sind namentlich genau die sechs Badzeilen
+aus CoS-E-078** — nachgezählt, nicht vermutet: Bodenfliesen verlegen ·
+Verfugung Boden · Wandfliesen verlegen · Verfugung Wand ·
+Verbundabdichtung Wand · Fliesensockel / Abschlussleiste. **Keine neue Lücke
+ist dazugekommen.** Übrig von den Fliesen-Lücken ist einzig
+`Entsorgung Fliesenmaterial` — also PM-121.
+
+**\*Die 183 und die 148 waren falsch, und zwar meine.** Ich habe sie im
+Mittagslauf aus der vorigen Fassung fortgeschrieben (182 + der eine neue
+Titel aus PM-075), statt die Ausgabe des Skripts zu lesen. Nachgemessen an
+vier Ständen des Repositories — 11:58, 12:20, 12:50, 13:01 UTC — steht dort
+**jedes Mal 184 / 32 / 3 / 149.** Es ist keine Drift im Produkt, es ist eine
+Buchhaltung, die ich nicht nachgesehen habe. Ausführlich in
+`vokabular-abgleich.md`, Abschnitt Z.
+
+---
+
+### 9. Was ich in diesem Lauf selbst gemessen habe
+
+```
+node scripts/vokabular-abgleich.mjs   184 · 26 ohne Preis · 3 knapp · 155 gut · 0 unprüfbar
+neuer Batch 121–128                   42 Zusicherungen · 27 grün · 15 Sperrklinken
+tsc --noEmit -p tsconfig.json         sauber
+eslint, neue Datei                    0 Fehler, 0 Warnungen
+docs-sichern pruefen                  alle 57 Doku-Dateien in Ordnung
+```
+
+**Nicht gemessen, also behaupte ich es nicht:**
+
+* **Die laufende Arbeit des Designers** (`dc125-preis-fehlt.test.tsx`,
+  `design-check.md` stehen geändert im Arbeitsbaum). Nicht angefasst.
+* **Ob die App das alles genauso tut.** Gemessen ist die Kette
+  Engine → Vollständigkeitsprüfung → Preis-Matcher, so wie der Endpunkt sie
+  fährt. `katalog-deckung.test.ts` braucht den Next.js-Endpunkt und lief
+  nicht.
+* **Warum PM-128 so rechnet.** Ich habe die Zeile gefunden und den Auslöser
+  eingegrenzt; ob `anzahlAus` anderswo dieselbe Form hat, ist ungemessen.
+
+**Fallbasis: 128 Fälle.**
+
+*Prüfmeister · 2026-09-17, nachmittags*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

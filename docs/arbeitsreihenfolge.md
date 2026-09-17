@@ -1,73 +1,37 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 13:00 UTC · Chief of Staff**
-*(ersetzt die Fassung von 12:45 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 15:50 UTC · Chief of Staff**
+*(ersetzt die Fassung von 13:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**. In Deutschland ist es gerade
-**MESZ = UTC + 2**, also 15:00 Uhr Ortszeit.*
+**MESZ = UTC + 2**, also 17:50 Uhr Ortszeit.*
 
 ---
 
 ## Lage in drei Zeilen
 
-**🟢 Die Produktion ist grün.** Deploy `4d53e65` READY seit 12:19:26 UTC,
-CI-Lauf **#210** success. Rot war sie 68 Minuten (11:10–12:19 UTC).
+**🟢 Die Produktion ist grün.** Neuester Deploy `af32b14`, **READY**, angelegt
+13:03:49 UTC. Das ist genau der Stand, auf dem `origin/main` steht.
 
 **🔴 Die teuerste Zahl des Projekts bleibt die einzige, die zählt:** auf einem
 gewöhnlichen Badangebot stehen **543,84 €, wo 2.980,44 € hingehören** (PM-117).
-Sechs von neun Zeilen ohne Preis, jedes Bad, jeder Betrieb. Engineering baut
-daran gerade — CoS-E-078.
+Engineering baut daran — CoS-E-078, Stand 15:44 UTC unfertig im Arbeitsbaum.
 
-**✅ CoS-P-031 ist entschieden und gebaut.** Sandy: „ja, einbauen". Die
-Vollständigkeitsprüfung sitzt jetzt **beim Commit**, nicht beim Push — sie
-warnt und blockiert nichts. **Sandys Push kann daran nicht mehr
-hängenbleiben.**
+**✅ Der Designer hat seine Spur leergeräumt:** **DC-125, DC-126 und DC-124**
+sind fertig, alle drei mit eigener Verifikation. Neu für ihn: **DC-127**.
 
 ---
 
-## Was seit 12:20 UTC passiert ist
+## Was seit 13:50 UTC passiert ist
 
 | Rolle | Ergebnis | Status |
 |---|---|---|
-| **Sandy** | **Gepusht** — `4d53e65` ist bei GitHub, Vercel und CI durch | ✅ Produktion repariert |
-| **Vercel** | Deploy `4d53e65` **READY** um 12:19:26 UTC | ✅ gemessen |
-| **CI** | Lauf **#210** auf `4d53e65`: **success**, 12:19:25 UTC | ✅ gemessen |
-| **CoS** | **Der CI-Widerspruch vom Vormittag ist aufgelöst** — die GitHub-Abfrage lief ohne `403` durch. #206 auf `da7db10` war **grün** | ✅ erledigt |
-| **Sandy** | **CoS-P-031 entschieden: „ja, einbauen"** | ✅ beantwortet |
-| **CoS** | **CoS-P-031 gebaut** — `.git/hooks/pre-commit`, warnt, blockiert nichts (`exit 0`). Nachvollziehbare Fassung unter `scripts/hooks/`, Regel 5 in `AGENTS.md` | ✅ erledigt |
-| **CoS** | **Eine eigene Fehlleistung richtiggestellt:** ich habe Sandy die Frage gestellt, ohne ihre eigene Anweisung vom 15.09. zu kennen — siehe unten | ✅ korrigiert |
-| **CoS** | **Beide Nebenbefunde des Designers beantwortet** (Push-Wächter · 265 Git-Sperrreste); der dunkle Tabellenkopf bleibt bewusst aus DC-122 draußen | ✅ erledigt |
-| **Engineering** | **CoS-E-078 / PM-117 in Arbeit** — `preis-matcher.ts`, `positions-gewerk.ts`, `katalog-standard.ts`, neuer Prüfstand `cos-e-078-bad-wandpositionen.test.ts` | 🔄 **läuft, nicht abgenommen** |
-| **Designer** | **DC-125 in Arbeit** — `AngebotDetail.tsx`, `AngebotVorschau.tsx`, `pdf.tsx`, `versandbereit.ts`, `dc125-preis-fehlt.test.tsx` | 🔄 **läuft, nicht abgenommen** |
-
----
-
-## 🔴 Was ich falsch gemacht habe — und wie es aufgelöst ist
-
-**Ich habe Sandy eine Entscheidung vorgelegt, die sie vor zwei Tagen schon
-einmal getroffen hatte — andersherum.** In der abgeschalteten Hook-Datei steht,
-von mir am 15.09. selbst hineingeschrieben:
-
-> `# 15.09.2026, Chief of Staff, auf Sandys ausdrueckliche Anweisung:`
-> `# Ein Push darf NIE mehr blockiert werden. [...] Nicht wieder scharfschalten.`
-
-Ich habe die Datei **nach** ihrer Antwort gelesen, nicht vorher, und ihr die
-Ursache deshalb halb erklärt (BOM statt: BOM **und** ihre Anweisung).
-**Die Lehre ist dieselbe wie bei den Heimat-Dateien: auch eine Datei, über die
-ich berichte, wird vorher gelesen — nicht nur ihr Ort, sondern ihr Inhalt.**
-
-**Beide Anweisungen gelten jetzt gleichzeitig,** weil die Prüfung an eine
-andere Stelle gewandert ist:
-
-| Anweisung | Bleibt gültig | Wie |
-|---|---|---|
-| 15.09.: „Ein Push darf NIE mehr blockiert werden" | **ja** | Es gibt keinen `pre-push` und wird keinen geben |
-| 17.09.: „ja, einbauen" | **ja** | Die Prüfung läuft beim Commit, wo der Fehler entsteht |
-
-**Zweiter Fund dabei:** die Zusage vom 15.09., die Prüfungen gehörten „in die
-CI", ist nie eingelöst worden — und **kann für dieses Skript gar nicht
-eingelöst werden.** Es sieht im örtlichen Arbeitsbaum nach, welche Dateien git
-unbekannt sind; die CI checkt das Repository aus, dort gibt es per Definition
-keine. Seit 15.09. hat die Prüfung also **nirgends** stattgefunden.
+| **Designer** | **DC-124 fertig** — ein Betrieb hat ein Logo, und es wird an genau einer Stelle hochgeladen. `tsc` fehlerfrei, 9 neue Tests grün, 99 grün über alle 10 betroffenen Testdateien, eslint 0 Fehler | ✅ erledigt |
+| **Designer** | **DC-126 fertig** — die Positionstitel im Landingpage-Entwurf heißen jetzt wie das Produkt | ✅ erledigt |
+| **Designer** | **DC-125 fertig** — eine Position ohne Preis zeigt keinen Betrag, und eine Summe, in der sie steckt, ist kein Gesamtbetrag | ✅ erledigt |
+| **CoS** | **Beide offenen Punkte aus DC-124 in der Produktionsdatenbank nachgemessen — beide lösen sich auf** (siehe unten). Keine Weitergabe an Platform, keine Rückfrage an Sandy | ✅ erledigt |
+| **CoS** | **CoS-E-080 angelegt** (leere Altlast-Spalte), ganz hinten in Engineerings Spur | ✅ verteilt |
+| **CoS** | **DC-127 angelegt** — der dunkle Tabellenkopf, den der Designer zweimal richtig liegen gelassen hat, ist jetzt ein eigenes Ticket bei ihm | ✅ verteilt |
+| **Engineering** | **CoS-E-078 läuft weiter** — `preis-matcher.ts`, `vollstaendigkeit/fliesen-basis.ts`, `vollstaendigkeit/index.ts`, neu `src/lib/fliesen-richtung.ts` | 🔄 **läuft, nicht abgenommen** |
 
 ---
 
@@ -75,52 +39,41 @@ keine. Seit 15.09. hat die Prüfung also **nirgends** stattgefunden.
 
 **Selbst gemessen, nicht vermutet:**
 
-* **Vercel-API, 12:44 UTC:** `980c271` 11:04:49 READY · `4f06c75` 11:10:49
-  **ERROR** · `deea290` 11:40:29 **ERROR** · **`4d53e65` 12:19:26 READY**.
-* **GitHub-Actions, ohne `403` durchgekommen:** #210 `4d53e65` success ·
-  #209 `deea290` failure · #208 `4f06c75` failure · #207 `980c271` success ·
-  **#206 `da7db10` success**. Die `403` sind **zeitweise, nicht dauerhaft**.
-* **`git fetch` vor der Zählung:** `origin/main` steht auf `4d53e65`.
-* **`.git/hooks/` durchgesehen**, `core.hooksPath` nicht gesetzt, kein `.husky/`.
-* **Der neue Hook, Stück für Stück:** `sh -n` sauber · `file` meldet
-  *POSIX shell script, ASCII text executable* · erste vier Bytes `23 21 2f 62`
-  (`#!/b`, **kein BOM**) · **kein CR** · **0 Nicht-ASCII-Zeichen** ·
-  **Probelauf Exit-Code 0**, 20 Hinweiszeilen, beide unerfassten Dateien
-  korrekt erkannt.
-* **`grep` über `.github/workflows/` und `package.json`:**
-  `pruefe-unerfasste-dateien.mjs` kommt in der CI **nicht** vor.
-* **🟡 `ci.yml` beginnt mit einem BOM** (`ef bb bf`). Die Commit-Nachricht zu
-  CoS-P-026 sagt „ohne BOM" — das stimmt nicht. **Kein Problem gerade:**
-  #210 ist grün, GitHub nimmt die Datei an. **Nicht angefasst** — eine Datei zu
-  reparieren, die grün läuft, ist das größere Risiko. Nur: „ci.yml hat kein
-  BOM" darf niemand mehr zitieren.
-* **`.gitignore` nachgelesen:** `/_to_delete/` Zeile 51, `/Claude outputs/`
-  Zeile 52. Die 265 Sperrreste können nicht mitcommittet werden.
-* **`node scripts/docs-sichern.mjs pruefen`:** „Alle 57 Doku-Dateien in Ordnung",
-  nach jedem Anhängen erneut.
-* **`entscheidungen-fuer-sandy.md` frisch gelesen.** Die 🟡-Frage von 07:00 UTC
-  (IONOS-Weiterleitung · Zustelltest) ist durch die Einträge von 10:10 und
-  10:25 UTC erledigt und steht nicht mehr auf ihrer Liste.
+* **Vercel-API, 15:45 UTC:** `af32b14` **READY** (angelegt 13:03:49 UTC) ·
+  `a813d77` READY (12:54:24) · `4d53e65` READY (12:19:26). Die beiden roten
+  Deploys des Vormittags (`4f06c75`, `deea290`) liegen davor.
+* **`git fetch` vor der Zählung:** `origin/main` steht auf **`af32b14`**,
+  örtlich liegen **5 Commits** darüber, die noch nicht gepusht sind.
+* **Produktionsdatenbank (Supabase `yqlledouhfovytifeekd`), 15:47/15:48 UTC:**
+  `briefpapiere` = 4, davon mit eigenem `logo_url` = **0**, betroffene
+  Betriebe = **0** · `storage.objects`: `entwurf-audio` 46 · `public-pdfs` 4 ·
+  `company-logos` 1 · `tts-cache` 1, **kein einziges Objekt mit `briefpapiere`
+  im Pfad**.
+* **Arbeitsbaum, 15:44 UTC:** `src/lib/__tests__/zz-messung-tmp.test.ts`, die
+  der Designer um 15:29 als fremde Datei gemeldet hat, ist **nicht mehr da**.
+* **`node scripts/docs-sichern.mjs pruefen`:** „Alle 57 Doku-Dateien in
+  Ordnung", nach jedem Anhängen erneut.
+* **`design-check.md` und `chief-of-staff-engineering-todos.md` frisch
+  gelesen**, bevor ich über sie berichtet habe.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **Ob der Hook unter Git for Windows wirklich anspringt.** Diese Shell ist
-  Linux. **Der Unterschied zu CoS-P-024 ist, dass es nichts kostet, wenn nicht:**
-  `exit 0` und ein Hook, der gar nicht startet, haben dieselbe Wirkung — keine.
-  Der Beweis kommt beim nächsten Commit einer Rolle.
-* **Die laufende Arbeit von Engineering und Designer** — nicht angefasst, nicht
-  gemessen, nicht committet. In einen fremden Bau hineinzumessen erzeugt nur
-  falsche Zahlen.
-* **Keine Prüfstände in diesem Lauf.** Letzter vollständiger Stand bleibt der
-  von 11:58 UTC: **2693 grün · 94 Sperrklinken · 0 rot**.
-* **Die Badrechnung des Prüfmeisters** ist weiter seine Zahl. Nicht nachgerechnet.
-* **Gate 1 rechne ich weiter nicht neu.** Stand bleibt **53,0 %**. Legals 7.13
-  und sechs DC-Punkte sind nicht eingerechnet.
-* **Ob `pruefe-gepushten-commit.mjs` irgendwo läuft.** Nicht nachgesehen.
-* **Ob die Sicherung heute um 20:00 Uhr Ortszeit anspringt.** Der erste Lauf
-  lief von Hand; der erste automatische kommt heute Abend.
+* **🟡 Die CI ist in diesem Lauf nicht messbar.** Die GitHub-Actions-Abfrage
+  ist **zweimal mit `403`** abgebrochen. Der letzte belegte Stand bleibt
+  **#210 auf `4d53e65`: success** (gemessen 12:44 UTC). Über die Läufe zu
+  `a813d77` und `af32b14` sage ich nichts — sie sind ungemessen, nicht rot.
+  Vercel ist auf `af32b14` grün, das ist der Produktions-Build.
+* **Die laufende Arbeit von Engineering** — nicht angefasst, nicht gemessen,
+  nicht committet.
+* **Keine Prüfstände in diesem Lauf.** Letzter vollständiger eigener Stand
+  bleibt der von 11:58 UTC: **2693 grün · 94 Sperrklinken · 0 rot.** Die 99
+  grünen Tests zu DC-124 sind die Messung des Designers, nicht meine.
+* **Ob außerhalb von `briefpapier-logo.ts`, `pdf.tsx` und
+  `AngebotVorschau.tsx` noch etwas `briefpapiere.logo_url` liest.** Nicht
+  selbst über das Repository gesucht.
+* **Gate 1 rechne ich weiter nicht neu.** Stand bleibt **53,0 %**.
 * **Versicherung, Stripe, Gewerbeanmeldung, Vercel-Benachrichtigung,
-  Landingpage** — in diesem Lauf nicht angefasst.
+  Landingpage, Sicherungslauf um 20:00 Uhr** — in diesem Lauf nicht angefasst.
 
 ---
 
@@ -128,13 +81,15 @@ keine. Seit 15.09. hat die Prüfung also **nirgends** stattgefunden.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Pushen, wenn du ohnehin am Rechner bist.** Vier Doku-Commits liegen hier. **Nichts Dringendes** — die Produktion ist grün, es hängt kein Fix daran | ein Befehl, nicht eilig |
+| 1 | 🔵 **Pushen, wenn du ohnehin am Rechner bist.** Es liegen Doku-Commits hier. **Nichts Dringendes** — die Produktion ist grün, es hängt kein Fix daran | ein Befehl, nicht eilig |
 | 2 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
 | 3 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
 | 4 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
 | 5 | 🔵 Heute Abend nach 20:00 Uhr einmal auf `onedrive.live.com` schauen, ob der erste **automatische** Sicherungslauf angekommen ist | ein Blick |
 
-**Nichts davon ist rot, und nichts blockiert eine Rolle.**
+**Nichts davon ist rot, und nichts blockiert eine Rolle. Es ist in diesem Lauf
+kein einziger Punkt für sie dazugekommen** — die zwei Fragen, die dazu
+gehört hätten, sind in der Datenbank beantwortet worden.
 
 ---
 
@@ -142,12 +97,12 @@ keine. Seit 15.09. hat die Prüfung also **nirgends** stattgefunden.
 
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
-| **Engineering** | **🔴 PM-117 + PM-060-A, zusammen** (1.961,38 € auf jedem Bad) — **läuft gerade**. Die Auflage steht: `/wand/` im Router trägt nur 652,96 €, die beiden anderen Wandzeilen scheitern zusätzlich am Wortlaut. **Ein halber Fix sieht behoben aus und ist es nicht.** Danach **PM-119/L-06** | niemanden |
-| **Designer** | **DC-125** läuft gerade. Danach **DC-124**, dazu **PD-021**. Der Fußzeilenteil von **DC-122** bleibt liegen, bis Legal antwortet | Legal (nur Fußzeile DC-122) |
-| **Prüfmeister** | **Spur leer.** Fallbasis 120. Wartet auf neue Bitten, sonst Fallbasis weiter | niemanden |
+| **Engineering** | **🔴 PM-117 + PM-060-A, zusammen** (1.961,38 € auf jedem Bad) — **läuft gerade**. Die Auflage steht: `/wand/` im Router trägt nur 652,96 €, die beiden anderen Wandzeilen scheitern zusätzlich am Wortlaut. **Ein halber Fix sieht behoben aus und ist es nicht.** Danach **PM-061-A → PM-062-A → CoS-038 → PM-119/L-06 → CoS-E-080** | niemanden |
+| **Designer** | **🆕 DC-127** — der dunkle Tabellenkopf (beide Vorschauen dunkel, das PDF grau über dünner Linie). **Seine Entscheidung, nicht Sandys.** Auflage: nur eine der beiden Seiten ändern. Danach **PD-021** (erst nach PM-119 sinnvoll); der Fußzeilenteil von **DC-122** bleibt liegen, bis Legal antwortet | Legal (nur Fußzeile DC-122) |
+| **Prüfmeister** | **Spur leer.** Fallbasis **128**. Engineerings drei Punkte sind beantwortet (PM-121 · PM-122 · PM-123/PM-124). Zuletzt neu: **PM-128 — „Wohnzimmer vier mal fünf" wird als vier Zimmer gelesen, 540,00 € auf einem Einraum-Angebot.** Wartet auf neue Bitten, sonst Fallbasis weiter | niemanden |
 | **Legal** | **Zuerst L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Dann **CoS-L-011** (dürfen freie Fußzeilen die Pflichtangaben ersetzen — A/B/C?), dann **CoS-L-012** | niemanden |
-| **Platform** | **CoS-P-031 ist zu** — nichts mehr zu bauen, nur der Termin **CoS-P-029:** am **19.09. nach 03:30 UTC** einmal `system_laeufe` prüfen (`aufnahmen.dateien > 0`?) | niemanden |
-| **Marketing** | **Kein Stopper mehr.** Offen nur: drei statt sieben Buchhaltungs-Anbindungen auf der Seite | Sandys Buchhaltungs-Testlauf (nicht eilig) |
+| **Platform** | **Nichts zu bauen.** Nur der Termin **CoS-P-029:** am **19.09. nach 03:30 UTC** einmal `system_laeufe` prüfen (`aufnahmen.dateien > 0`?). Das Bucket-Aufräumen aus DC-124 entfällt — es gibt die Dateien nicht | niemanden |
+| **Marketing** | **Kein Stopper mehr.** Offen nur: drei statt sieben Buchhaltungs-Anbindungen auf der Seite. Der Website-Schalter darf erst nach **CoS-038** umgelegt werden | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
 | **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · Behördenliste für Sandy bis 26.09. · **26 unbearbeitete Belege** prüfen, ins Eingangsbuch, Prüfsummen · drei Fragen von mir: reicht OneDrive als zweiter Ort für die 8 Jahre? · gehört die Sicherung in die Verfahrensdokumentation (mit **Kontrolle am Zielort**)? · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? | niemanden |
 
 ---
@@ -156,43 +111,44 @@ keine. Seit 15.09. hat die Prüfung also **nirgends** stattgefunden.
 
 * **🔴 PM-117 — 543,84 € statt 2.980,44 € auf einem gewöhnlichen Bad.**
   Sechs von neun Zeilen ohne Preis. CoS-E-078, in Arbeit.
-* **Die Vollständigkeitsprüfung warnt ab jetzt beim Commit.** Wer „ist
-  committet" meldet, ohne die `[pre-commit]`-Zeilen gelesen zu haben, meldet
-  einen Stand, der bei Vercel rot werden kann. Regel 5 in `AGENTS.md`.
-  **`exit 0` im Hook bleibt** — daraus eine Sperre zu machen hebelt Sandys
-  Anweisung vom 15.09. aus.
+* **🟡 Die CI ist seit 12:44 UTC nicht mehr gemessen worden** — zweimal `403`.
+  Wer „die CI ist grün" sagt, meint den Lauf **#210 auf `4d53e65`** und sollte
+  das dazusagen. Vercel ist auf `af32b14` grün, gemessen.
+* **Fertige Arbeit liegt uncommittet im Baum.** DC-124 des Designers ist
+  verifiziert, aber sein Code ist noch nicht committet — er gibt Sandy dafür
+  seinen eigenen Block mit sieben Pfaden. Engineerings CoS-E-078 ist
+  **unfertig** und darf nicht mit hineinrutschen. **`git add -A` bleibt
+  abgeschafft**, Dateien werden einzeln benannt.
+* **Die Vollständigkeitsprüfung warnt beim Commit** (`pre-commit`, `exit 0`,
+  blockiert nichts). Wer „ist committet" meldet, ohne die
+  `[pre-commit]`-Zeilen gelesen zu haben, meldet einen Stand, der bei Vercel
+  rot werden kann. Regel 5 in `AGENTS.md`.
 * **🟡 `ci.yml` hat ein BOM, und die CI läuft trotzdem grün.** Nicht angefasst.
   Die Aussage „ci.yml hat kein BOM" ist falsch und sollte nicht zitiert werden.
-* **DC-125 — eine Zeile ohne Betrag darf ein Kundenangebot nicht verlassen.**
-  Produktregel, nicht Einzelfall. Vierte Ausprägung derselben Frage
-  (H, L.5, DC-112, PM-117).
-* **Die Briefpapier-Auswahl am einzelnen Angebot war nie sichtbar** — seit
-  Monaten, weil eine Abfrage ins Leere lief. Behoben in DC-123. **Es sah nie
-  kaputt aus** — die Fehlerform, die keine Prüfliste findet.
-* **Die Mini-Vorschau auf der Briefpapier-Seite zeigt eine Wirkung, die es
-  nicht gibt** (Fußzeilen). Rest von DC-122, wartet auf Legal.
+* **Es gibt keine echten Betriebe — nur Sandys Testkonto.** Heute hat diese
+  Zahl zwei offene Punkte aufgelöst, die als Bestandsschutz-Risiken
+  dastanden. Wer über „betroffene Betriebe" schreibt, zählt sie vorher.
+* **`briefpapiere.logo_url` ist ab heute eine leere Altlast**, keine
+  Einstellung. CoS-E-080, ganz hinten.
 * **Dunkler Tabellenkopf in beiden Vorschauen, graue Spaltentitel im PDF.**
-  Gehört in die DC-049-Linie, **nicht** in DC-122.
-* **Zwei Stellen laden ein Logo hoch**, das Briefpapier gewinnt stillschweigend.
-  DC-124.
+  Jetzt **DC-127**, nicht mehr Randnotiz in DC-122.
 * **Die 30-Tage-Löschzusage ist bis heute nie eingelöst worden.** Der erste
   Lauf, der wirklich löschen muss, ist der vom **19.09., 03:30 UTC**. Löscht er
   nichts, sind zwei veröffentlichte Rechtstexte unrichtig. **CoS-P-029.**
-* **Die Sicherung läuft, der erste automatische Lauf steht noch aus.** Die
-  Empfehlung an Finance bleibt: **Kontrolle am Zielort** ins Verfahren
+* **Die Sicherung läuft, der erste automatische Lauf steht heute Abend an.**
+  Die Empfehlung an Finance bleibt: **Kontrolle am Zielort** ins Verfahren
   aufnehmen — ein Skript-Abbruch ersetzt sie nicht.
-* **265 Git-Sperrreste von heute** in `_to_delete/git-reste-2026-09-17/`.
-  Für git harmlos (`.gitignore` Zeile 51). **Löschrecht anfordern geht in einem
-  geplanten Lauf nicht** — der Dialog braucht einen Menschen. `mv` bleibt die
-  Vorgehensweise.
+* **Git-Sperrreste und ein Worktree-Rest** (`.git/worktrees/alt`, vom
+  Prüfmeister) liegen weiter da. Für git harmlos, `/_to_delete/` steht in
+  `.gitignore`. **Löschrecht anfordern geht in einem geplanten Lauf nicht** —
+  der Dialog braucht einen Menschen. `mv` bleibt die Vorgehensweise.
 * **Die Landingpage bewirbt drei Buchhaltungs-Anbindungen. Es sind sieben.**
 * **Dieselbe Anbindung heißt an zwei Stellen verschieden** („Lexoffice" vs.
   „Lexoffice (Legacy)"). Ein Wort in `integrations.ts`. Kein Auftrag, eine
   Meldung.
 * **`menge_unbekannt` ist bewusst nicht gebaut.** Offen, wer die Messung macht.
-* **`git add -A` ist abgeschafft.** Dateien werden einzeln benannt.
 * **Eine Datei, über die ich berichte, wird vorher gelesen** — nicht nur ihr
-  Ort, sondern ihr Inhalt. Heute hat mich das eine Frage an Sandy gekostet, die
-  sie schon beantwortet hatte.
+  Ort, sondern ihr Inhalt. **Und eine Zahl, mit der ich ein Risiko begründe,
+  wird vorher gezählt.** Heute hat das zweite eine Rückfrage an Sandy erspart.
 
-*Chief of Staff · 2026-09-17, 13:00 UTC*
+*Chief of Staff · 2026-09-17, 15:50 UTC*

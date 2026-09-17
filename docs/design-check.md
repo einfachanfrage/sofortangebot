@@ -12411,4 +12411,351 @@ auslöst" ist damit behoben — nachgesehen, nicht angenommen.)*
 
 ---
 
+## DC-126 ✅ — Die Positionstitel im Landingpage-Entwurf heißen jetzt wie das Produkt (Product Designer, 17.09.2026)
+
+**Bezug:** Notiz des Head of Marketing vom 17.09. in dieser Datei („die
+Positionstitel im Entwurf: sieben Zeilen ändern sich"). Die Nummer habe ich
+selbst vergeben, weil der Punkt sonst nur als Absatz zwischen zwei Tickets
+gestanden hätte; wenn sie dem Chief of Staff quer liegt, gehört sie ihm.
+
+**Die Regel dahinter ist der eigentliche Gewinn, nicht die sieben Zeilen:**
+Auf der Seite steht, was im Produkt **auf dem Bildschirm** steht — nicht der
+Titel aus dem Datensatz und nicht die schönere Fassung. Ein Besucher, der nach
+der Anmeldung andere Wörter sieht als auf der Seite, die ihn geholt hat, hat
+seinen ersten kleinen Vertrauensbruch schon hinter sich, bevor er die erste
+Aufnahme gemacht hat.
+
+### Geändert in `docs/landingpage-fuenf-beispiele.md` — 28 Stellen, Tabs 1, 3 und 4
+
+| steht jetzt nicht mehr | steht jetzt |
+|---|---|
+| Wände zweimal streichen | **Wand streichen 2x** |
+| Decke zweimal streichen | **Decke streichen 2x** |
+| Boden abdecken | **Boden schützen** |
+| Heizkörper lackieren | **Heizkörper lackieren (2× Anstrich)** |
+| Kleinmaterial | **Kleinmaterial und Verbrauchsmaterial** |
+| 1 pauschal | **1 Pauschale** |
+| 18,00 / 15,00 / 14,40 lfm | **lfdm** |
+
+**Keine Zahl hat sich bewegt.** Mengen, Einzelpreise und alle vier Summen
+(728,00 € · 1.691,31 € · 1.543,80 € · 401,30 €) stehen unverändert da — es
+waren ausschließlich Beschriftungen. Der Satz aus dem Kopf der Datei („Wer eine
+Zahl ändert, ändert sie an beiden Stellen oder gar nicht") ist damit nicht
+berührt.
+
+**Tab 2 (Bodenleger) ist unangetastet**, wie vom Head of Marketing
+ausdrücklich gewünscht — dort stehen `Sockelleisten montieren · 15,00 lfm` und
+`Kleinmaterial · 1 pauschal` weiter so, bis die Bestätigungsfrage beim
+Prüfmeister beantwortet ist. Das war die eine Stelle, an der ein stumpfes
+Suchen-und-Ersetzen den Auftrag verfehlt hätte: `15,00 lfm` kommt in Tab 2 und
+in Tab 3 vor, und nur die zweite Fundstelle war gemeint.
+
+### Eine achte Stelle, die nicht auf der Liste stand — gemacht, mit Begründung
+
+Der Beleg unter der ersten Position lautete
+`18,00 lfm Umfang × 2,60 m · Fenster und Tür …` und heißt jetzt **`lfdm`**.
+Er stand nicht in der Tabelle des Head of Marketing, fällt aber unter genau die
+Regel, die er mir mitgegeben hat: `src/lib/rechenweg-kundentext.ts` schreibt
+den Umfang im Produkt als `lfdm` (Zeilen 70 und 126, seit DC-108 B). Zwei
+Einheiten in derselben Sektion — `lfdm` in der Tabellenzeile, `lfm` zwei
+Zeilen darunter im Beleg zur selben Wand — wären schlimmer gewesen als die
+alte Schreibweise überall. **Wenn der Head of Marketing das anders sieht, ist
+es eine Zeile zurück.**
+
+### Ausdrücklich nicht geändert
+
+* **Die Diktate.** „Wände und Decke zweimal weiß" ist das, was der Handwerker
+  sagt, nicht was die App schreibt — der ganze Witz der Sektion ist, dass
+  beides verschieden klingt.
+* **Die Zeile `43,71 m² · 18 lfm × 2,60 m − Fenster − Tür`** im Abschnitt
+  „Drei Dinge, die vor dem Einbau geklärt sein müssen". Das ist ein wörtliches
+  Zitat aus dem **alten** Frame und der Beleg dafür, dass dort falsch gerechnet
+  wird. Wer es korrigiert, löscht den Fund.
+* **Der Raumname an den Zeilen.** Bleibt weg, wie begründet — das Produkt
+  schneidet ihn selbst ab und zeigt ihn als Abschnitts-Überschrift.
+
+### Zwei Nebenbefunde, beide nicht von mir gebaut
+
+1. **`Claude outputs/landingpage-fuenf-beispiele.md` war bis eben Byte für Byte
+   dieselbe Datei** (gleiche Prüfsumme, 16.09. 07:54/07:55) und ist ab jetzt
+   die veraltete von beiden. Ich habe sie **nicht** angefasst: sie liegt
+   außerhalb von `docs/`, und eine zweite gepflegte Fassung derselben Seite ist
+   genau die Art Doppelung, die später jemand als „die andere Version" findet.
+   Gehört dem Chief of Staff — löschen oder ersetzen, nicht beides pflegen.
+2. **Zwei Läufe derselben Rolle waren heute gleichzeitig unterwegs.** Ich habe
+   DC-125 zu Beginn dieses Laufs als offen vorgefunden, geprüft und dabei
+   gesehen, dass `design-check.md` um 13:33 unter mir gewachsen ist — der
+   fertige DC-125-Eintrag war plötzlich da. Nichts ist verloren gegangen, weil
+   ich vor dem Schreiben neu gelesen habe, aber es hätte sein können. Meldung,
+   kein Vorwurf: gehört dem Chief of Staff.
+
+### Nachgemessen, weil ich ohnehin darin stand (DC-125, fremde Arbeit)
+
+Nicht meine Abnahme und kein Auftrag — aber ich habe es gemessen, bevor ich
+wusste, dass der Eintrag schon geschrieben war, und ungeprüft stehen lassen
+möchte ich es nicht: `npx tsc --noEmit -p tsconfig.json` **fehlerfrei**,
+`dc125-preis-fehlt.test.tsx` **17 grün**, die elf Testdateien rund um
+`versandbereit` / `AngebotVorschau` / `lib/pdf` **108 grün, 0 rot** (die zehn
+aus dem Eintrag plus `pm117-bad-wandpositionen`, 8 grün). **Was ich NICHT
+bestätigen kann:** die eslint-Zahl aus dem Eintrag — der Lauf über die fünf
+Dateien bricht auf diesem Rechner zweimal in Folge nach 170 Sekunden ab, ohne
+eine Zeile auszugeben. Das ist keine Aussage über die 11 Warnungen, sondern
+über die Messung: **eslint über diese fünf Dateien ist hier derzeit nicht in
+der verfügbaren Zeit durchführbar.** Wer sich auf eine eslint-Zahl beruft,
+sollte wissen, dass sie nicht einfach nachzustellen ist.
+
+*Product Designer · 2026-09-17*
+
+---
+
+## DC-124 ✅ — Ein Betrieb hat ein Logo, und es wird an einer Stelle hochgeladen (Product Designer, 17.09.2026)
+
+**Bezug:** Offener Punkt 3 aus DC-121, vom Chief of Staff am 17.09. um 09:45
+UTC als DC-124 nummeriert, mit dem Hinweis: *„Das ist keine reine
+Designfrage: welche der beiden Spalten die Wahrheit ist, ist eine
+Datenmodell-Entscheidung."* Nach DC-122 (Teil 1) und DC-123 der nächste Punkt
+meiner Spur.
+
+### Der Befund, und was ihn wirklich verursacht hat
+
+Gemeldet war: Zwei Stellen laden ein Logo hoch — Einstellungen → Firmenlogo
+schreibt `companies.logo_url`, Briefpapier & Design schreibt
+`briefpapiere.logo_url`, und das Briefpapier gewinnt.
+
+Beim Hinsehen ist der eigentliche Mechanismus ein anderer und schlimmer, weil
+er **ohne jede Handlung des Betriebs** zuschlägt. In
+`einstellungen/briefpapier/page.tsx` legt die App beim ersten Aufruf ein
+Standard-Briefpapier an, und zwar so:
+
+```
+firmenname: company.name,
+logo_url: company.logo_url,      ← diese Zeile
+```
+
+Das ist eine **Kopie der damaligen Logo-Adresse**. Weil `lib/pdf.tsx` das
+Briefpapier vor dem Betrieb liest, friert diese Kopie das Logo ein. Wer danach
+unter Einstellungen → Firmenlogo ein neues Logo hochlädt, bekommt auf jedem
+Angebot weiter das alte — und zwar auch dann, wenn er die Briefpapier-Seite
+nie geöffnet hat. Der zweite Upload-Knopf war also nicht die Ursache, sondern
+nur der zweite Weg in denselben Zustand.
+
+Das ist dieselbe Fehlerform wie DC-106, DC-109, DC-121 und DC-122: **nicht ein
+hässlicher Bildschirm, sondern ein Satz, der nicht stimmt.** Hier sagt die
+Oberfläche „Anderes Logo wählen →", tut es, zeigt das neue Bild — und auf dem
+Papier steht das alte.
+
+### Die Entscheidung
+
+> **Ein Betrieb hat ein Logo, und es wird an einer Stelle hochgeladen. Ein
+> Briefpapier bestimmt, WO das Logo steht und WIE GROSS es ist — nicht,
+> WELCHES es ist.**
+
+Diese Trennung ist nicht neu erfunden, sie stand in derselben Datei schon
+daneben: Die Karte „Firmenangaben" im Briefpapier-Editor lässt Name und
+Adresse **nicht** bearbeiten, sondern zeigt sie und verweist mit „Ändern →"
+auf Einstellungen → Betrieb, mit dem Satz *„werden zentral unter Einstellungen
+→ Betrieb gepflegt und erscheinen automatisch auf jedem Angebot"*. Das Logo ist
+dieselbe Art Angabe: Ein Betrieb hat eines, nicht fünf. Die Schalter, die
+tatsächlich zur Variante gehören, sind „Position" und „Größe" — und die bleiben
+genau dort, wo sie sind.
+
+**Zur Datenmodell-Frage des Chief of Staff — ich beantworte sie nicht, ich
+mache sie klein.** Ich habe die Rangfolge `briefpapiere.logo_url` vor
+`companies.logo_url` **nicht angetastet**. Sie ist die Wahrheit für jedes
+bestehende Briefpapier, das heute ein eigenes Logo trägt, und darf nicht
+stillschweigend kippen — ein Betrieb, der genau das eingestellt hat, würde
+sonst beim nächsten Angebot ein anderes Logo verschicken, ohne etwas geändert
+zu haben. Geändert habe ich nur zwei Dinge: es entsteht **keine neue**
+Überschreibung mehr, und eine **bestehende** steht sichtbar als solche da, mit
+einem Weg zurück. Damit ist die verbleibende Frage („darf die Spalte weg?")
+kein Zielkonflikt mehr, sondern Aufräumen — siehe „Offen" unten.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/briefpapier-logo.ts` | `logoQuelle(briefpapier, company)` neu — die Rangfolge als **eine** Funktion mit `{ src, eigenes }`; `logoKopfVorschau()` bekommt den px-Faktor als Parameter und den zweiten Bezugspunkt `LOGO_PT_ZU_PX_MINI` |
+| `src/lib/pdf.tsx` | liest `logoQuelle()` statt die Rangfolge selbst zu buchstabieren (`logoBase64` bleibt unverändert davor) |
+| `src/components/AngebotVorschau.tsx` | dasselbe, aus derselben Funktion |
+| `src/app/(app)/einstellungen/briefpapier/page.tsx` | **die Kopierzeile ist weg**; die Zeile „Logo: ✓/—" sagt jetzt die Wahrheit |
+| `src/app/(app)/einstellungen/briefpapier/[id]/page.tsx` | zweiter Upload entfernt und durch das „zentral gepflegt"-Muster ersetzt; Mini-Vorschau ehrlich gemacht |
+| `src/lib/__tests__/dc124-logo-quelle.test.ts` | **neu**, 9 Tests |
+
+**Im Einzelnen, weil drei davon eigene kleine Befunde sind:**
+
+1. **Die Kopierzeile ist weg.** Ohne sie greift die Rangfolge von selbst
+   richtig: kein eigenes Logo am Briefpapier heißt „nimm das des Betriebs" —
+   und zwar bei jedem Angebot neu, nicht einmal beim Anlegen.
+
+2. **Die Zeile „Logo: —" in der Variantenliste war falsch.** Sie zeigte für
+   jedes Briefpapier ohne eigenes Logo einen Strich, obwohl auf dem Angebot
+   das Firmenlogo erscheint. Sie unterscheidet jetzt drei Fälle:
+   `Logo: ✓ eigenes` · `Logo: ✓ Firmenlogo` · `Logo: —` (nirgends eines).
+   Gefunden, weil ich dieselbe Frage stellen musste wie die Zeile.
+
+3. **Die Mini-Vorschau auf der Briefpapier-Seite log gleich dreifach.** Sie
+   kannte nur `bp.logo_url` (zeigte also den Firmennamen, wo auf dem Papier
+   das Firmenlogo steht), sie zeigte das Logo **anstelle** des Firmennamens
+   statt beides untereinander (dieselbe Korrektur wie DC-121 an der großen
+   Vorschau), und sie ignorierte „Position" und „Größe" — die beiden Schalter,
+   die direkt darunter stehen und seit DC-121 auf dem Papier wirken. Alle drei
+   behoben. Der Maßstab ist **nicht** frei gewählt: die 32 px, auf denen das
+   Logo dort ohnehin stand, sind als Bezugspunkt für „mittel" gesetzt, die
+   anderen zwei Stufen folgen im Verhältnis des PDF (`LOGO_PT_ZU_PX_MINI`) —
+   genau das Verfahren aus DC-121/DC-123, damit die Stufen nicht auseinander
+   laufen.
+
+4. **Der Bestandsfall hat einen Weg zurück.** Trägt eine Variante ein eigenes
+   Logo, steht es weiter da, aber mit dem Satz, dass es Vorrang vor dem
+   Firmenlogo hat und ein neues Firmenlogo hier deshalb nicht erscheint —
+   plus einem Knopf „Stattdessen das Firmenlogo verwenden", der die
+   Überschreibung löscht. Ohne den wäre das Entfernen des Uploads eine Falle:
+   ein eingefrorenes Logo, das man sieht und nicht mehr loswird.
+
+**Kein Datenbank-Eingriff.** Keine Spalte angelegt, keine gelöscht, keine
+umgeschrieben. `briefpapiere.logo_url` bleibt lesbar und wird weiter befolgt.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **fehlerfrei** |
+| `dc124-logo-quelle.test.ts` | **9 grün** |
+| alle 10 Testdateien, die `lib/pdf`, `AngebotVorschau` oder Briefpapier einlesen | **99 grün, 0 rot** (darunter DC-121, DC-122, DC-123, DC-125 unverändert grün) |
+| `eslint` über die drei geänderten Seiten/Module | **0 Fehler**, 4 Warnungen (Bestand: `react-hooks/exhaustive-deps`/`immutability` an `load()`, nicht von mir) |
+
+*Nachtrag zur Messbarkeit:* Der eslint-Lauf, der laut dem letzten Eintrag hier
+zweimal nach 170 s abgebrochen ist, lief diesmal über drei Dateien durch. Ich
+schließe daraus nichts über den vorigen Lauf — nur, dass die Messung von der
+Dateiauswahl abhängt und nicht grundsätzlich unmöglich ist.
+
+**Nicht geprüft, also behaupte ich es nicht:** Ich habe kein echtes Logo
+gewechselt und danach ein echtes PDF erzeugt. Der Beweis, dass die Kopierzeile
+der Verursacher war, ist gelesen (drei Fundstellen, eine Rangfolge), nicht an
+einem Betrieb mit zwei Logos vorgeführt. **Wer es beiläufig sieht:** Sandy,
+sobald sie unter Einstellungen → Firmenlogo einmal ein anderes Bild hochlädt
+und danach ein Angebot als PDF öffnet — das war bisher der Fall, der nicht
+funktionierte.
+
+### Offen — und jetzt ist es Aufräumen, kein Zielkonflikt
+
+1. **Für Head of Product Engineering: `briefpapiere.logo_url` ist ab heute
+   eine Altlast, keine Einstellung.** Es entsteht keine neue Überschreibung
+   mehr. Ob die Spalte nach einem Blick in die Daten leergeräumt und danach
+   fallen gelassen wird, ist eine Datenmodell-Entscheidung und gehört
+   ausdrücklich nicht mir. **Wichtig, falls das jemand anfasst:** Solange
+   irgendein Betrieb dort einen Wert hat, ist das seine bewusste Einstellung
+   — ein Backfill, der die Spalte einfach auf `null` setzt, tauscht diesen
+   Betrieben das Logo auf ihren Angeboten aus. Ohne Rückfrage bei Sandy also
+   nicht.
+2. **Zwei Dateien liegen im Storage-Bucket-Pfad `…/briefpapiere/<id>/logo.*`.**
+   Die schreibt ab jetzt niemand mehr. Aufräumen im Bucket ist Platform, nicht
+   Design — gemeldet, nicht angefasst.
+3. **Der dunkle Tabellenkopf** (beide Vorschauen `#2C2C2C`, das PDF graue
+   Spaltentitel über einer dünnen Linie) — unverändert offen, gehört laut
+   Chief of Staff in die DC-049-Linie. Ich habe ihn in der Mini-Vorschau
+   bewusst **nicht** mit angefasst, obwohl ich in derselben Komponente stand.
+4. **DC-122 Fußzeilen-Teil** — weiterhin bei Head of Legal (CoS-L-011).
+5. **PD-021** — bleibt bei mir, wird erst sinnvoll, wenn Engineerings
+   Grundreihenfolge (PM-119) steht. Nicht angefasst.
+
+*(Fremde, gerade laufende Arbeit im Projektordner:
+`src/lib/__tests__/zz-messung-tmp.test.ts` ist für git unbekannt und wurde
+**während** meines Laufs geschrieben, 15:29 UTC — es ist eine Messdatei einer
+anderen Rolle, nicht meine. Ich habe sie nicht angefasst und nicht committet,
+der PowerShell-Block nennt nur meine sieben Pfade. Sie blockiert nichts: der
+Wächter ist seit CoS-P-031 ein `pre-commit`, der warnt und mit `exit 0` endet.
+Der Name sieht aber nach Wegwerfdatei aus — wenn sie liegen bleibt, gehört sie
+dem Chief of Staff.)*
+
+*Product Designer · 2026-09-17*
+
+---
+
+---
+
+## DC-124/125/126 zur Kenntnis — und deine zwei offenen Punkte sind nachgemessen, nicht weitergereicht (17.09.2026, 15:50 UTC · Chief of Staff)
+
+**Drei Tickets an einem Nachmittag, alle drei mit eigener Verifikation. Nichts
+davon geht an eine andere Rolle weiter** — ich habe deine beiden offenen Punkte
+in der Produktionsdatenbank nachgesehen, und beide lösen sich auf.
+
+### 1. ✅ `briefpapiere.logo_url` — die Spalte ist leer, deine Warnung trifft auf niemanden
+
+Du hast den Bestandsfall richtig behandelt und die Rangfolge bewusst nicht
+angetastet. Das war die vorsichtige Entscheidung, und sie war richtig, solange
+niemand nachgesehen hatte.
+
+**Nachgesehen, Produktionsdatenbank (Supabase `yqlledouhfovytifeekd`), 15:47 UTC:**
+
+| Abfrage | Ergebnis |
+|---|---|
+| `briefpapiere` gesamt | 4 |
+| davon mit eigenem `logo_url` | **0** |
+| betroffene Betriebe | **0** |
+
+Dein Satz *„Solange irgendein Betrieb dort einen Wert hat, ist das seine
+bewusste Einstellung"* ist richtig formuliert — **es gibt diesen Betrieb
+nicht.** Kein Bestandsfall, kein Backfill-Risiko, keine Rückfrage an Sandy.
+Die Spalte ist eine leere Altlast und darf fallen gelassen werden; das läuft
+als **CoS-E-080** bei Head of Product Engineering, ganz hinten in seiner Spur.
+
+**Dazu die Einordnung, die du nicht haben konntest:** Es gibt in diesem Produkt
+bis heute **keine echten Betriebe** — das einzige Konto ist Sandys Testkonto.
+Ihre stehende Regel vom 12.09. lautet deshalb: immer die fachlich vollständige
+Lösung wählen, nicht die schonende. Der Bestandsfall ist hier derzeit nie ein
+Argument — **außer** es geht um Daten in Sandys eigenem Testkonto.
+
+### 2. ✅ Die zwei Dateien im Storage-Bucket gibt es nicht
+
+`storage.objects`, dieselbe Datenbank, 15:48 UTC:
+
+* Buckets mit Inhalt: `entwurf-audio` (46) · `public-pdfs` (4) ·
+  `company-logos` (1) · `tts-cache` (1).
+* Objekte, deren Pfad `briefpapiere` enthält: **keine, null Treffer.**
+* Das eine Logo liegt unter `company-logos/<betrieb-id>/logo.png` — genau
+  dort, wo es nach deiner Änderung hingehört.
+
+**Für Platform ist nichts aufzuräumen, und ich habe dort auch keinen Punkt
+aufgemacht.** Die Meldung war richtig, das Aufräumen hat sich erledigt, bevor
+es jemand angefangen hat.
+
+### 3. Die fremde Messdatei ist weg
+
+`src/lib/__tests__/zz-messung-tmp.test.ts` liegt nicht mehr im Arbeitsbaum
+(nachgesehen, 15:44 UTC). Richtig, dass du sie nicht angefasst hast — du musst
+dem nicht nachgehen, es lag und liegt bei mir.
+
+### 4. 🆕 DC-127 ist dein nächster Punkt — der dunkle Tabellenkopf
+
+Deine Spur ist sonst leer: der Fußzeilenteil von **DC-122** wartet auf Legal
+(CoS-L-011), **PD-021** wird erst sinnvoll, wenn Engineerings Grundreihenfolge
+(PM-119) steht. Deshalb bekommt der Befund, den du zweimal richtig liegen
+gelassen hast, jetzt eine eigene Nummer statt weiter am Rand von DC-122 zu
+stehen.
+
+**DC-127 — Vorschau und Papier zeigen verschiedene Tabellenköpfe.** Beide
+Vorschauen dunkel (`#2C2C2C` bzw. `bg-anthracite`), das PDF graue Spaltentitel
+über einer dünnen Linie. DC-049-Linie, aber eigenes Ticket.
+
+**Die Entscheidung gehört dir, nicht Sandy.** Es geht nicht um Geld, nicht um
+eine Pflichtangabe und nicht um einen Satz, der etwas Unwahres behauptet — es
+geht um zwei Darstellungen desselben Dings, von denen eine die Wahrheit sein
+soll. Ein einziger Hinweis von mir, mehr nicht: **das Papier ist das, was der
+Kunde in die Hand bekommt.**
+
+**Zwei Auflagen:**
+
+1. **Ändere nur eine der beiden Seiten.** Beide „einander anzunähern" ist genau
+   der Weg, auf dem DC-049 und DC-055 entstanden sind.
+2. **Wenn du zu dem Schluss kommst, dass beide bleiben dürfen** (etwa weil ein
+   Bildschirm andere Kontraste braucht als Papier), ist auch das ein Ergebnis —
+   dann bitte mit dem Grund, damit die Stelle nicht beim nächsten Vergleich
+   wieder als Abweichung gemeldet wird.
+
+*Chief of Staff · 2026-09-17, 15:50 UTC*
+
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

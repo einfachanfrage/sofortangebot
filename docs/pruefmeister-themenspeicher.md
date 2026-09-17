@@ -718,4 +718,79 @@ die Themen weiterlaufen, nicht um eine Zahl zu erreichen.
 
 ---
 
+
+## Nachtrag 17.09.2026, nachmittags — abgeräumt und neu aufgemacht
+
+**Fallbasis: 128 Fälle.** Hinterlegt als
+`src/lib/__tests__/pruefmeister-batch-121-128.test.ts` (42 Zusicherungen,
+27 grün, 15 Sperrklinken), Befunde in `pruefmeister-restliste.md`.
+
+**Abgeräumt in diesem Lauf:**
+
+* **M.2 — „die Verneinung, die zu breit wirkt: wo noch?"** → **PM-125**.
+  Gemessen an Türen, Heizkörpern und Sockelleisten: dreimal dasselbe, dreimal
+  ohne Spur in `fehlende`. **Die Auflage des Themenspeichers ist damit
+  erfüllt — es ist vor PM-101 gemessen.** Ergebnis: PM-105 ist kein
+  Einzelfall, sondern der Zustand der Verneinungsmaschine.
+* **M.4 — der genannte Einheitspreis** → **PM-127**. Er sollte der leichtere
+  Fall gegenüber PM-111 sein, weil die Menge danebensteht. Er ist genauso
+  spurlos. 68,75 € gegen den Betrieb, auf einem Flur.
+* **Nachtrag-Punkt 6 — die Reihenfolge INNERHALB der Hauptarbeit** →
+  **PM-126**. Zweimal falsch, an der Wand schlimmer als am Boden (die
+  Abdichtung steht dort hinter der Verfugung). Dazu L-06 im Gewerk Fliesen,
+  ein vierter Fall zu den drei in PM-119 gemessenen.
+* **Die zwei Fragen des Head of Product Engineering** → **PM-121**
+  (`Entsorgung Fliesenmaterial` ist `Fliesenschutt entsorgen`, 8,00 €/m²) und
+  **PM-122** (der Titel der Duschnische bleibt kurz).
+* **Die Auflagen, um die Engineering gebeten hat** → **PM-123** (PM-061-A,
+  vier Punkte) und **PM-124** (PM-062-A wird nicht durch einen Preiswechsel
+  erfüllt, sondern durch eine Trennung der Zeile).
+
+Von den fünf Themen des Abschnitts M sind damit **M.2 und M.4 zu**; offen
+bleiben M.1 (teilweise, PM-116/PM-120), M.3 und M.5. Aus dem Nachtrag vom
+Mittag ist **Punkt 6 zu**, Punkt 8 ist als DC-125 beim Designer, Punkt 7
+steht unverändert.
+
+---
+
+**Neu aufgemacht — was aus diesen acht Fällen fällt und noch niemand
+gemessen hat:**
+
+9. **Die Raumzahl aus dem Raumnamen — wo noch?** PM-128 zeigt, dass
+   `anzahlAus(lower, 'zimmer', …)` in „wohnzimmer 4 mal 5" vier Zimmer liest
+   und daraus vier Türen macht (540,00 € auf einem Einraum-Angebot).
+   Ungemessen ist die Form, nicht der Einzelfall: **`anzahlAus` sucht eine
+   Zahl neben einem Wort — wo sonst steht diese Zahl aus einem ganz anderen
+   Grund da?** Kandidaten: „fenster", „tür", „raum", „meter". Eine Messung am
+   Ausdruck, kein Einzelfall, und die Familie ist größer als PM-128. Prüfbar
+   ohne App.
+10. **Die gekennzeichnete Annahme als falsche Sicherheit.** PM-128 weist
+    seine Annahme sauber aus („4 Zimmer → je 1 Tür angenommen"), und genau
+    das macht sie auf dem Kundenpapier glaubwürdig. **Die Kennzeichnung einer
+    Annahme ist keine Prüfung ihrer Höhe.** Ungemessen: welche der heute
+    ausgewiesenen Annahmen überhaupt eine Obergrenze haben. Gehört zu H und
+    ist die Gegenrichtung zu PM-023.
+11. **Die Verneinungsmaschine hat einen Umfang, und den kennt niemand.**
+    PM-125 misst drei Bauteile, PM-105 eines. Ungemessen ist, **welchen Text
+    die Maschine eigentlich als „Block" ansieht** — Satz, Absatz, Raum oder
+    Bauteilgruppe. Ohne diese Antwort ist jeder Fix an PM-101/PM-105/PM-125
+    geraten. **Vor allen dreien zu messen.** Prüfbar ohne App, am Ausdruck.
+12. **Zwei Preise für dieselbe Arbeit auf EINER Zeile.** PM-124 ist der erste
+    Fall: `Altfliesen abstemmen` trägt Boden- und Wandfläche in einer Menge,
+    der Katalog trennt sie mit 4,00 €/m² Unterschied. Ungemessen: wo sonst
+    eine Engine-Zeile zwei Katalogzeilen mit verschiedenen Preisen abdeckt.
+    Das ist die Gegenrichtung zu Nachtrag-Punkt 7 (mehrere Katalogwörter für
+    eine Arbeit) — hier ist es ein Wort für zwei Arbeiten. **Eine Messung am
+    Katalog gegen den Ausdruck.**
+13. **Der Katalogtitel als gedruckter Titel.** PM-122 entscheidet den
+    Einzelfall (kein Schrägstrich auf dem Kundenpapier) und macht damit eine
+    Klasse auf: **wie viele Engine-Titel tragen heute Katalogsprache?**
+    Klammerzusätze („(2× Anstrich)", „(einlagig)", „(Container / Absackung)"),
+    Schrägstriche, Q-Stufen. Eine Messung an den 184 Engine-Titeln, klein und
+    ganz ohne App — und sie gehört dem Designer so gut wie mir.
+
+*Prüfmeister · 2026-09-17, nachmittags*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -2403,4 +2403,96 @@ Prüfung.
 
 *Prüfmeister · 17.09.2026, mittags*
 
+
+## Z — Lauf vom 17.09.2026, nachmittags: sechs Lücken sind weg, und eine Zahl von mir war falsch
+
+**Gemessen auf Sandys Rechner, mit dem Skript, nicht fortgeschrieben.**
+
+```
+                                   17.09. mittags   17.09. nachmittags
+Engine-Titel mit eigener Einheit        183*              184
+davon ohne Preis                         32                26
+davon knapp (Score < 0,75)                3                 3
+gute Treffer                            148*              155
+Titel aus Variablen, nicht prüfbar        0                 0
+```
+
+### Z.1 Die sechs, die weggefallen sind — namentlich
+
+Nicht „ungefähr die Fliesen", sondern die Liste von vorher gegen die Liste
+von jetzt gestellt:
+
+```
+Bodenfliesen verlegen
+Verfugung Boden
+Wandfliesen verlegen
+Verfugung Wand
+Verbundabdichtung Wand
+Fliesensockel / Abschlussleiste
+```
+
+**Genau die sechs Badzeilen aus CoS-E-078, und keine andere.** Keine neue
+Lücke ist dazugekommen — die Gegenrichtung ist mitgeprüft, nicht nur die
+Summe. Von den sieben Fliesen-Lücken aus Abschnitt S ist damit **eine
+übrig**: `Entsorgung Fliesenmaterial`.
+
+### Z.2 Korrektur an Y.1: `Entsorgung Fliesenmaterial` ist KEINE Kataloglücke
+
+In der Tabelle von Y.1 steht in der letzten Zeile „**keine Katalogzeile**,
+echte Lücke". **Das ist falsch, und der Fehler ist meiner.** Ich habe dort
+aufgeschrieben, was der Preis-Matcher findet, und daraus einen Satz über den
+Katalog gemacht. Der Katalog führt die Arbeit sehr wohl:
+
+```
+Fliesenschutt entsorgen (Container / Absackung)   8,00 €/m²
+```
+
+Dieselbe Einheit, dieselbe Bezugsgröße (die Engine schreibt die Zeile mit
+„Gleiche Fläche wie Demontage", also auf die Abbruchfläche). Die beiden
+Gegenkandidaten scheiden aus: `Fliesenreste / Bruch entsorgen` ist eine
+Pauschale auf den Verschnitt der NEUEN Fliesen,
+`Altbelag-Schutt entsorgen (Container)` rechnet in m³.
+
+**Die Zeile gehört also in dieselbe Spalte wie die anderen sechs: eine
+Wortlaut-Sache, kein Loch im Katalog.** Damit sind **alle sieben**
+Fliesen-Lücken Wortlaut gewesen und keine einzige eine echte Kataloglücke.
+Entscheidung und Geldweg stehen als **PM-121** in
+`pruefmeister-restliste.md`, hinterlegt in
+`src/lib/__tests__/pruefmeister-batch-121-128.test.ts`.
+
+**Der Satz, den diese Datei aus dem Vorfall mitnimmt:** Dieser Abgleich misst
+den Matcher. Wo er nichts findet, ist die nächste Frage „gibt es die Arbeit im
+Katalog unter einem anderen Wort?" — und diese Frage beantwortet das Skript
+nicht, sondern ein Mensch, der beide Listen liest. Y.1 hat die Frage
+übersprungen.
+
+### Z.3 Und die Zahlen 183/148 waren falsch — auch das meine
+
+In Y steht `182 → 183` mit der Begründung, der eine neue Titel sei
+`Nische fliesen — Bad`. **Die Zahl ist fortgeschrieben, nicht gemessen.**
+
+Nachgemessen an vier Ständen des Repositories, jedes Mal mit dem Skript:
+
+```
+4a57606  11:58 UTC   184 / 32 / 3 / 149
+2d0fd45  12:20 UTC   184 / 32 / 3 / 149
+a813d77  12:50 UTC   184 / 32 / 3 / 149
+af32b14  13:01 UTC   184 / 32 / 3 / 149
+```
+
+Zum Zeitpunkt des Mittagslaufs stand der Zähler also bereits auf **184**,
+nicht auf 183. **Es ist keine Drift im Produkt** — der Stand war über den
+ganzen Vormittag stabil —, sondern eine Buchhaltung, die ich nicht
+nachgesehen habe. Die Aussage „Kein Rückschritt, keine Drift" in Y bleibt
+richtig; die Zahl daneben war es nicht.
+
+**Für diese Datei heißt das:** Die Kopfzahlen werden ab jetzt aus der Ausgabe
+des Skripts übernommen und nicht aus der vorigen Fassung plus dem, was man
+gerade weiß. Eine fortgeschriebene Zahl sieht aus wie eine gemessene und ist
+keine.
+
+*Prüfmeister · 2026-09-17, nachmittags*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

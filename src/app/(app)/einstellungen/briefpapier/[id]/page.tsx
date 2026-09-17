@@ -5,9 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { Briefpapier, Company } from '@/lib/types'
-import { Upload } from 'lucide-react'
 import { Input } from '@/components/Input'
 import { akzentLinieAusFarbe, wirdAbgedunkelt } from '@/lib/briefpapier-farbe'
+import { logoKopfVorschau, logoQuelle, LOGO_PT_ZU_PX_MINI } from '@/lib/briefpapier-logo'
 
 const FARB_CHIPS = ['#D9A400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
 // DC-122 (17.09.2026): Hier stand eine Auswahl aus drei Schriften (Inter,
@@ -33,6 +33,20 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
   // wieder etwas anderes als das Papier, und genau das war der Befund.
   const akzent = akzentLinieAusFarbe(bp.akzentfarbe)
   const adresse = company?.address || ''
+  // DC-124: Diese Vorschau kannte nur `bp.logo_url` und zeigte das Logo
+  // ANSTELLE des Firmennamens. Beides war falsch: das Dokument fällt auf das
+  // Firmenlogo zurück (`logoQuelle`) und zeigt Logo UND Namen untereinander
+  // — dieselbe Korrektur wie in DC-121 an der großen Vorschau. Größe und
+  // Position kommen aus denselben zwei Schaltern, die direkt darunter stehen;
+  // bisher hat die Vorschau beide ignoriert, obwohl das Papier sie seit
+  // DC-121 befolgt.
+  const logoSrc = logoQuelle(bp, company).src
+  const logo = logoKopfVorschau(bp as Briefpapier, LOGO_PT_ZU_PX_MINI)
+  const logoBild = logoSrc ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={logoSrc} alt="" className="object-contain mb-1"
+      style={{ height: logo.hoehePx, maxWidth: logo.maxBreitePx }} />
+  ) : null
 
   const dummyItems = [
     { pos: 1, title: 'Malerarbeiten Innen', qty: 45, unit: 'm²', price: 18, total: 810 },
@@ -46,22 +60,26 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden text-[7px] leading-tight">
       <div className="px-5 py-4">
-        {/* Header */}
+        {/* Header — DC-124: dreispaltig wie im PDF, Logo an der gewählten
+            Position. „mitte" ist wie dort eine eigene Zeile ÜBER dem Kopf,
+            nicht ein zentriertes Bild in der linken Spalte. */}
+        {logo.position === 'mitte' && logoBild && (
+          <div className="flex justify-center mb-2">{logoBild}</div>
+        )}
         <div className="flex justify-between items-start mb-4">
           <div>
-            {bp.logo_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={bp.logo_url} alt="" className="max-h-8 max-w-[80px] object-contain mb-1" />
-            ) : (
-              <div className="font-black text-[10px] text-anthracite">{firmenname}</div>
-            )}
+            {logo.position === 'links' && logoBild}
+            <div className="font-black text-[10px] text-anthracite">{firmenname}</div>
             {adresse && <div className="text-[6px] text-gray-400 whitespace-pre-line">{adresse}</div>}
           </div>
           {/* DC-122: Das war eine farbige Fläche mit „ANGEBOT" darin. Auf dem
               Dokument steht dort eine kleine graue Zeile, keine Fläche — und
               bei einer dunklen Akzentfarbe (die Chip-Liste enthält #1C1C1C)
               stand hier dunkler Text auf dunklem Grund. */}
-          <span className="text-[7px] font-bold tracking-widest text-gray-400">ANGEBOT</span>
+          <div className="flex flex-col items-end">
+            {logo.position === 'rechts' && logoBild}
+            <span className="text-[7px] font-bold tracking-widest text-gray-400">ANGEBOT</span>
+          </div>
         </div>
 
         {/* DC-122: erste der zwei Akzentlinien, genau wie auf dem Dokument */}
@@ -130,9 +148,6 @@ function BriefpapierEditorInner() {
   })
   const [company, setCompany] = useState<Company | null>(null)
   const [saving, setSaving] = useState(false)
-  const [logoUploading, setLogoUploading] = useState(false)
-  const [logoFehler, setLogoFehler] = useState<string | null>(null)
-  const logoRef = useRef<HTMLInputElement>(null)
   const searchParams = useSearchParams()
   // DC-031: kommt von "+ Neue Variante erstellen" (siehe briefpapier/page.tsx),
   // die Zeile existiert also schon in der DB, aber der Nutzer hat noch nichts
@@ -170,37 +185,24 @@ function BriefpapierEditorInner() {
     setBp(prev => ({ ...prev, [field]: value }))
   }
 
-  async function uploadLogo(file: File) {
-    if (!bp.betrieb_id) return
-    setLogoUploading(true)
-    const ext = file.name.split('.').pop()
-    // 2026-09-02: Der Pfad begann bisher mit der BETRIEBS-ID. Die
-    // Zugriffsregel auf dem Bucket verlangt aber im ersten Ordner die
-    // NUTZER-ID (`storage.foldername(name)[1] = auth.uid()`), so wie es
-    // `api/upload-logo` macht. Ergebnis: Jeder Upload eines
-    // Briefpapier-Logos wurde abgelehnt — seit es die Funktion gibt, ohne
-    // dass es jemandem auffiel (der Fehler setzte nur still keine URL).
-    // Nachgezählt: null Dateien im gesamten Bucket.
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setLogoUploading(false); return }
-    const path = `${user.id}/briefpapiere/${id}/logo.${ext}`
-
-    // Alte Datei löschen
-    await supabase.storage.from('company-logos').remove([path])
-
-    const { error } = await supabase.storage.from('company-logos').upload(path, file, { upsert: true })
-    if (error) {
-      // Nicht mehr stillschweigend nichts tun: Wer ein Logo hochlädt und
-      // danach kein Logo sieht, sucht den Fehler bei sich.
-      console.error('[briefpapier] Logo-Upload fehlgeschlagen')
-      setLogoFehler('Das Logo konnte nicht hochgeladen werden. Bitte noch einmal versuchen.')
-    } else {
-      setLogoFehler(null)
-      const { data } = supabase.storage.from('company-logos').getPublicUrl(path)
-      setField('logo_url', data.publicUrl)
-    }
-    setLogoUploading(false)
-  }
+  // DC-124 (17.09.2026): Hier stand `uploadLogo()` — die zweite von zwei
+  // Stellen, an denen ein Logo hochgeladen werden konnte. Sie schrieb
+  // `briefpapiere.logo_url`, und weil das Dokument diese Spalte vor
+  // `companies.logo_url` liest, gewann sie stillschweigend: Wer sein Logo
+  // unter Einstellungen → Firmenlogo wechselte, sah auf jedem Angebot weiter
+  // das alte und hatte keinen Hinweis darauf, warum.
+  //
+  // Die Entscheidung dazu steht in `lib/briefpapier-logo.ts` und in
+  // `docs/design-check.md` unter DC-124: Ein Betrieb hat EIN Logo, und es
+  // wird an EINER Stelle hochgeladen. Ein Briefpapier bestimmt, wo es steht
+  // und wie groß es ist — nicht, welches es ist. Die Karte darunter macht es
+  // deshalb genauso wie die Karte „Firmenangaben" gleich darüber: sie zeigt,
+  // was auf dem Angebot landet, und verweist zum Ändern auf die eine Stelle.
+  //
+  // Die Spalte bleibt unangetastet, und die Rangfolge auch — ein bestehendes
+  // Briefpapier mit eigenem Logo druckt weiter sein eigenes. Neu ist nur,
+  // dass keine neue Überschreibung mehr entsteht und dass eine bestehende
+  // sichtbar als solche dasteht, mit einem Weg zurück.
 
   async function save() {
     setSaving(true)
@@ -259,27 +261,52 @@ function BriefpapierEditorInner() {
           {/* Logo */}
           <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 space-y-3">
             <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider">Logo</div>
+
             {bp.logo_url ? (
-              <div className="flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={bp.logo_url} alt="Logo" className="h-14 max-w-[140px] object-contain rounded-lg border border-anthracite/10" />
-                <button onClick={() => setField('logo_url', null)} className="text-xs text-red-500 font-semibold">Entfernen</button>
+              /* Bestandsfall: Dieses Briefpapier trägt ein eigenes Logo — aus
+                 der Zeit, als man hier eines hochladen konnte, oder als Kopie
+                 vom Anlegen des Standard-Briefpapiers. Es gewinnt weiter, und
+                 das steht jetzt dabei, statt es zu verschweigen. */
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={bp.logo_url} alt="Logo dieser Variante" className="h-14 max-w-[140px] object-contain rounded-lg border border-anthracite/10" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-black text-anthracite">Eigenes Logo</div>
+                    <p className="text-[11px] text-anthracite/40 font-semibold leading-relaxed mt-0.5">
+                      Diese Variante benutzt ein eigenes Logo. Es hat Vorrang vor dem Firmenlogo — ein neues Firmenlogo erscheint auf Angeboten mit diesem Briefpapier also nicht.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setField('logo_url', null)}
+                  className="w-full bg-bg rounded-xl py-2.5 text-xs font-black text-anthracite"
+                >
+                  Stattdessen das Firmenlogo verwenden
+                </button>
               </div>
             ) : (
-              <button
-                onClick={() => logoRef.current?.click()}
-                disabled={logoUploading}
-                className="w-full border-2 border-dashed border-anthracite/15 rounded-xl py-5 flex flex-col items-center gap-2 text-anthracite/30 hover:border-yellow/50 transition-colors"
-              >
-                <Upload size={20} strokeWidth={1.5} />
-                <span className="text-xs font-semibold">{logoUploading ? 'Lädt…' : 'Logo hochladen'}</span>
-                <span className="text-[10px]">PNG, JPG, SVG · max. 5 MB</span>
-              </button>
-            )}
-            <input ref={logoRef} type="file" accept="image/*" className="hidden"
-              onChange={e => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
-            {logoFehler && (
-              <p className="text-xs font-semibold text-red-500 mt-2">{logoFehler}</p>
+              <Link href="/einstellungen" className="block bg-bg rounded-xl px-4 py-3 hover:bg-[#FFF9E6] transition-colors">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {company?.logo_url ? (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={company.logo_url} alt="Firmenlogo" className="h-12 max-w-[120px] object-contain shrink-0" />
+                        <div className="text-xs font-bold text-anthracite">Firmenlogo</div>
+                      </>
+                    ) : (
+                      <div className="text-xs font-bold text-anthracite/40">Noch kein Logo hinterlegt</div>
+                    )}
+                  </div>
+                  <span className="text-xs font-black text-yellow shrink-0">
+                    {company?.logo_url ? 'Ändern →' : 'Hochladen →'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-anthracite/30 font-semibold mt-2 leading-relaxed">
+                  Das Logo wird zentral unter Einstellungen → Firmenlogo gepflegt und erscheint automatisch auf jedem Angebot. Hier wird nur bestimmt, wo es steht und wie groß es ist.
+                </p>
+              </Link>
             )}
 
             <div>

@@ -14,7 +14,7 @@ import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './meng
 import { mitDeutschenZahlen } from './zahlen-text'
 import { kundenRechenweg } from './rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from './kleinbetraege'
-import { logoKopf, LOGO_MAX_BREITE_PT } from './briefpapier-logo'
+import { logoKopf, logoQuelle, LOGO_MAX_BREITE_PT } from './briefpapier-logo'
 import { akzentLinie } from './briefpapier-farbe'
 
 // ── Marken-Schriften (CI-Handbuch, DC-049 "PDF-Schritt", 2026-09-10) ────────
@@ -75,7 +75,7 @@ function fmtDatum(d: string) {
 // diese Datei nicht importieren (`@react-pdf/renderer` gehört nicht ins
 // Browser-Bündel). Re-Export, damit bestehende Importe aus `@/lib/pdf`
 // (u. a. `dc121-logo-kopf.test.ts`) unverändert weiterlaufen.
-export { LOGO_HOEHE_PT, LOGO_MAX_BREITE_PT, logoKopf } from './briefpapier-logo'
+export { LOGO_HOEHE_PT, LOGO_MAX_BREITE_PT, logoKopf, logoQuelle } from './briefpapier-logo'
 
 // ── DC-122: Akzentfarbe ───────────────────────────────────────────────────
 // Aus demselben Grund in einer eigenen Datei wie das Logo oben: Die
@@ -359,7 +359,12 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   const zahlungsTage = opt.zahlungszielTage
   // CoS-E-013/031/042: siehe gueltigBis() in angebot-optionen.ts.
   const gueltigBisDatum = gueltigBis(quote, opt.gueltigTage)
-  const logoSrc      = logoBase64 || briefpapier?.logo_url || (company as Company & { logo_url?: string }).logo_url
+  // DC-124: Die Rangfolge (Briefpapier vor Betrieb) steht jetzt in
+  // `lib/briefpapier-logo.ts` und wird von allen drei Ansichten aus derselben
+  // Funktion gelesen, statt an jeder Stelle abgeschrieben zu werden. Hier
+  // unverändert davor: `logoBase64`, das eingebettete Bild für den
+  // Server-Render — das ist kein zweites Logo, sondern dasselbe als Datei.
+  const logoSrc      = logoBase64 || logoQuelle(briefpapier, company as Company & { logo_url?: string | null }).src
   // DC-121: Hoehe und Position kommen aus dem Briefpapier (Vorgabe: mittel /
   // links). Bis heute waren beide Schalter wirkungslos.
   const logo = logoKopf(briefpapier)

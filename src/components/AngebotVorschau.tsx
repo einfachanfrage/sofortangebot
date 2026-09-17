@@ -8,7 +8,7 @@ import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import { raeumeAusQuote, istAllgemeinPosition, ohneNullzeilen } from '@/lib/angebot-gruppierung'
 import { effektiveOptionen, gueltigBis } from '@/lib/angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from '@/lib/mengen/gewerke/vob-uebermessung'
-import { logoKopfVorschau } from '@/lib/briefpapier-logo'
+import { logoKopfVorschau, logoQuelle } from '@/lib/briefpapier-logo'
 import { akzentLinie } from '@/lib/briefpapier-farbe'
 import { idsOhnePreis, PREIS_FEHLT_KURZ, fehlendePreiseSatz } from '@/lib/versandbereit'
 
@@ -164,12 +164,12 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
   //    dann auf `companies.logo_url` zurück. Diese Vorschau kannte nur die
   //    zweite Spalte — wer sein Logo im Briefpapier gewechselt hatte, sah
   //    hier weiter das alte und auf dem Papier das neue.
-  //    (Dass es diese zwei Spalten überhaupt gibt, ist der offene Punkt
-  //    DC-124. Hier wird nichts entschieden, nur dieselbe Rangfolge gezeigt,
-  //    nach der das Dokument heute schon druckt.)
+  //    (DC-124 hat die Rangfolge aus allen drei Ansichten in
+  //    `lib/briefpapier-logo.ts` zusammengezogen — `logoQuelle()`. Sie ist
+  //    unverändert, sie steht nur nicht mehr dreimal im Code.)
   // 2. WIE GROSS und WO: aus den Briefpapier-Schaltern „Größe" und
   //    „Position", in Pixeln — siehe `lib/briefpapier-logo.ts`.
-  const logoSrc = briefpapier?.logo_url || company.logo_url
+  const logoSrc = logoQuelle(briefpapier, company).src
   const logo = logoKopfVorschau(briefpapier)
   // DC-122: Die Akzentfarbe aus demselben Briefpapier. Sie zieht auf dem
   // Papier genau zwei Linien — die unter dem Briefkopf und die über der

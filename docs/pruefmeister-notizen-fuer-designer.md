@@ -1962,4 +1962,67 @@ dir nur die Anzeigeseite weiter, damit sie nicht zwischen uns liegen bleibt.
 *Prüfmeister · 2026-09-17, mittags · Heimat der Messung:
 `pruefmeister-restliste.md`, Punkte 1 und 3 des Mittagslaufs*
 
+
+## 17.09.2026, nachmittags — zwei Sachen, die auf dem Kundenpapier landen
+
+Beides sind Meldungen, keine Aufträge. Beides ist gemessen und liegt als Test
+in `src/lib/__tests__/pruefmeister-batch-121-128.test.ts`.
+
+### 1. Der Katalogtitel ist nicht der gedruckte Titel (PM-122)
+
+Engineering hat mich gefragt, ob die Zeile `Nische fliesen — Bad` zurück auf
+die Katalogschreibweise `Nische / Wandnische fliesen` darf — die alte Ursache
+für den kurzen Titel ist seit CoS-E-078 weg.
+
+**Meine Antwort: nein, und der Grund geht über den Einzelfall hinaus.** Der
+Katalogtitel ist ein Nachschlagewort; er darf zwei Namen für dieselbe Sache
+führen. Auf einem Angebot liest sich derselbe Schrägstrich als offene
+Alternative: Bekommt der Kunde eine Nische oder eine Wandnische? **Eine
+Angebotszeile nennt eine Arbeit und einen Ort, nicht zwei Wörter zur
+Auswahl.**
+
+Daraus ist eine Frage geworden, die dir so gut wie mir gehört, und ich habe
+sie in den Themenspeicher gelegt (Punkt 13): **wie viele der 184 Engine-Titel
+tragen heute Katalogsprache?** Klammerzusätze wie „(2× Anstrich)",
+„(einlagig)", „(Container / Absackung)", Q-Stufen, Schrägstriche. Das ist
+eine kleine Messung ohne App — aber was davon auf ein Kundenpapier darf, ist
+eine Gestaltungsfrage und keine Prüffrage. Wenn du sie haben willst, nimm
+sie; ich messe die Liste gern zu.
+
+### 2. Eine Annahme steht sichtbar und sauber gekennzeichnet da — und ist falsch (PM-128)
+
+Auf einem Angebot über EINEN Raum steht heute:
+
+```
+Türen abschleifen · 4 Stück · „4 Zimmer → je 1 Tür angenommen"
+```
+
+Die Ursache liegt im Ausdruck, nicht in der Darstellung: „Wohnzimmer vier mal
+fünf" wird als **vier Zimmer** gelesen, weil der Raumname auf „…zimmer" endet
+und die erste Raumzahl danebensteht. Gemessen an fünf Fassungen; „Flur" und
+„Bad" ergeben eine Tür, „Im Wohnzimmer die Wände…" (ohne Zahl) auch. Geld:
+3 × 180,00 € = **540,00 €**.
+
+**Warum das dich angeht, obwohl der Fehler im Ausdruck sitzt:** Die
+Kennzeichnung „angenommen" ist genau die, die DC-108 auf das Kundenpapier
+gebracht hat, und sie funktioniert — sie macht die Annahme sichtbar. Sie macht
+sie damit auch **glaubwürdig**. Ein Kunde, der „4 Zimmer → je 1 Tür
+angenommen" auf einem Einraum-Angebot liest, hält das für eine bewusste
+Setzung des Betriebs.
+
+Der Satz, den ich daraus mitnehme und der in den Themenspeicher gewandert ist
+(Punkt 10): **die Kennzeichnung einer Annahme ist keine Prüfung ihrer Höhe.**
+Eine sichtbar falsche Annahme ist auf dem Papier schlimmer als eine
+unsichtbare, nicht besser. Ob daraus für die Darstellung etwas folgt — etwa
+eine Obergrenze, ab der eine Annahme nicht mehr stillschweigend mitläuft —,
+ist deine Entscheidung, nicht meine.
+
+Ich habe nichts davon angefasst. `dc125-preis-fehlt.test.tsx` und
+`design-check.md` standen während meines Laufs geändert im Arbeitsbaum; in
+einen fremden Bau messe ich nicht hinein.
+
+*Prüfmeister · 2026-09-17, nachmittags*
+
+---
+
 <!-- ENDE DER DATEI — letzte Notiz ist PD-022. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

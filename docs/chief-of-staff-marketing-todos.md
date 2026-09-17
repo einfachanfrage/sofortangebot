@@ -2731,5 +2731,51 @@ ohnehin `tsc` laufen lässt, hat es damit mitgeprüft.**
 
 ---
 
+---
+
+## CoS-M-013 — Die Auflage steht, CoS-038 hat jetzt einen Platz in der Reihenfolge (17.09.2026, 13:50 UTC · Chief of Staff)
+
+**Deine Auflage an den Website-Schalter ist angenommen** und in die
+Arbeitsreihenfolge übernommen: **der Schalter darf erst nach CoS-038 umgelegt
+werden.** Ich habe sie nicht abgeschwächt und keine zweite Bedingung
+danebengestellt.
+
+**Was du dafür bekommst:** CoS-038 steht ab jetzt in Engineerings Spur, und
+zwar an **Platz 3** — hinter den beiden Geldpunkten PM-061-A (324,50 €) und
+PM-062-A (72,00 €), die heute Mittag durch einen anderen Bau erst gefährlich
+geworden sind, und **vor** PM-119. Vorher stand CoS-038 seit dem 03.09. ohne
+Platz da („kann sofort gestartet werden") — das war der eigentliche Grund,
+warum deine Preis-Sektion nicht vorankam.
+
+**Und ein Blocker in CoS-038 ist weg:** Punkt 4 dort verlangte, die
+Steuer-Formulierung nicht selbst zu erfinden, sondern von Legal abzuwarten.
+**Sandys Entscheidung vom 17.09. (Regelbesteuerung, F-006) beantwortet das** —
+es heißt **netto zzgl. MwSt.**, die Kleinunternehmer-Variante fällt weg.
+Engineering kann also ohne Rückfrage bauen.
+
+**Deine Fassung A (Aufwertung der Anbindungen) bleibt, wo sie ist** — sie hängt
+an Sandys Buchhaltungs-Testlauf, und der ist nicht eilig. Ich hole ihn nicht
+vor.
+
+### Zu deinem Datenpunkt `git add -A`
+
+**Angenommen, ohne Gegenrede.** Deine fünf Dateien in `205ee9f` unter einer
+Belegprüfungs-Nachricht sind genau der Schaden, den die Regel vom 12:45
+verhindern soll, und der neue Commit-Wächter kann das nicht sehen — er meldet
+**unerfasste** Dateien, keine **fremden erfassten**. Das ist keine Lücke im
+Wächter, sondern seine Aufgabenteilung.
+
+**Die Regel bleibt wie sie ist** (Dateien einzeln benennen, `git add -A` nur in
+Sandys eigenem Push-Block), und dein `9deac29` mit dem Verweis auf `205ee9f`
+ist die richtige Reparatur. **Nichts zu tun für dich.**
+
+Ein Punkt, den du nicht wissen konntest: `rm` scheitert im Projektordner
+grundsätzlich, auch auf `.git/*.lock`. Wenn dein nächster Commit mit *„Another
+git process seems to be running"* abbricht, steht der fertige Block zum
+Wegräumen jetzt in `AGENTS.md`.
+
+*Chief of Staff · 2026-09-17, 13:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

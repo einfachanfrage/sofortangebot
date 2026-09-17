@@ -12,6 +12,10 @@ export default function BriefpapierUebersicht() {
   const router = useRouter()
   const [briefpapiere, setBriefpapiere] = useState<Briefpapier[]>([])
   const [companyId, setCompanyId] = useState<string | null>(null)
+  // DC-124: Ob der Betrieb überhaupt ein Logo hat. Ohne das kann die Zeile
+  // unten nicht sagen, ob auf dem Angebot eines erscheint — und genau das hat
+  // sie bis heute falsch behauptet.
+  const [firmenLogo, setFirmenLogo] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [dbError, setDbError] = useState(false)
 
@@ -23,6 +27,7 @@ export default function BriefpapierUebersicht() {
     const { data: company } = await supabase.from('companies').select('id, name, address, logo_url').eq('user_id', user.id).single()
     if (!company) return
     setCompanyId(company.id)
+    setFirmenLogo(company.logo_url ?? null)
 
     const { data, error } = await supabase
       .from('briefpapiere')
@@ -35,12 +40,21 @@ export default function BriefpapierUebersicht() {
 
     if (!data || data.length === 0) {
       // Standard-Briefpapier aus Firmenprofil anlegen
+      // DC-124 (17.09.2026): Hier stand `logo_url: company.logo_url`. Das
+      // sah harmlos aus, war aber der eigentliche Mechanismus hinter dem
+      // Befund: Das Standard-Briefpapier bekam beim Anlegen eine KOPIE der
+      // damaligen Logo-Adresse. Weil das Dokument das Briefpapier zuerst
+      // liest, fror diese Kopie das Logo ein — wer später unter
+      // Einstellungen → Firmenlogo ein neues hochlud, bekam auf jedem
+      // Angebot weiter das alte, ohne einen Hinweis darauf, woran es liegt.
+      // Ohne die Kopie greift die Rangfolge in `lib/briefpapier-logo.ts` von
+      // selbst richtig: kein eigenes Logo am Briefpapier heißt „nimm das des
+      // Betriebs", und zwar jedes Mal neu.
       const { data: neu, error: insertErr } = await supabase.from('briefpapiere').insert({
         betrieb_id: company.id,
         name: 'Standard',
         ist_standard: true,
         firmenname: company.name,
-        logo_url: company.logo_url,
       }).select().single()
       if (insertErr) { setDbError(true); setLoading(false); return }
       setBriefpapiere(neu ? [neu] : [])
@@ -140,7 +154,14 @@ export default function BriefpapierUebersicht() {
                       <span className="font-black text-anthracite text-sm">{bp.name}</span>
                     </div>
                     <div className="flex gap-3 mt-1.5 text-[10px] text-anthracite/30">
-                      <span>Logo: {bp.logo_url ? '✓' : '—'}</span>
+                      {/* DC-124: Diese Zeile behauptete „Logo: —" für jede
+                          Variante ohne eigenes Logo — obwohl auf dem Angebot
+                          das Firmenlogo erscheint. Sie sagt jetzt, was auf dem
+                          Papier landet, und nur bei einer echten
+                          Überschreibung, dass es ein eigenes ist. */}
+                      <span>
+                        {bp.logo_url ? 'Logo: ✓ eigenes' : firmenLogo ? 'Logo: ✓ Firmenlogo' : 'Logo: —'}
+                      </span>
                       <span>Fußzeile: {(bp.fusszeile_links || bp.fusszeile_mitte || bp.fusszeile_rechts) ? '✓' : '—'}</span>
                       <span style={{ color: bp.akzentfarbe }}>■ {bp.akzentfarbe}</span>
                     </div>

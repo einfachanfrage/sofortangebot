@@ -47,15 +47,65 @@ export function logoKopf(briefpapier?: Briefpapier | null) {
 //   groß   60 pt → 69 px
 export const LOGO_PT_ZU_PX = 48 / 42
 
+// DC-124: Dieselbe Rechnung noch einmal, für die Mini-Vorschau auf der
+// Briefpapier-Seite. Sie ist kleiner als die große Vorschau (Fließtext 7 px
+// statt 11 px), und auch hier gibt es keinen „richtigen" Faktor, sondern nur
+// einen gesetzten Bezugspunkt: Das Logo stand dort bisher auf `max-h-8` =
+// 32 px, und das war die Vorgabestufe „mittel". Genau dieser eine Wert bleibt,
+// die anderen beiden Stufen folgen daraus im Verhältnis des PDF.
+//
+//   klein  28 pt → 21 px
+//   mittel 42 pt → 32 px   (der gesetzte Bezugspunkt, wie bisher)
+//   groß   60 pt → 46 px
+export const LOGO_PT_ZU_PX_MINI = 32 / 42
+
 /**
- * Dasselbe wie `logoKopf()`, nur in Pixeln für die Live-Vorschau.
+ * Dasselbe wie `logoKopf()`, nur in Pixeln für eine der beiden Vorschauen.
  * Position kommt unverändert durch — sie ist eine Anordnung, kein Maß.
+ *
+ * Der Faktor ist absichtlich ein Parameter und keine zweite Funktion: beide
+ * Vorschauen sollen dieselben drei Stufen im selben Verhältnis zeigen und sich
+ * nur in ihrem Maßstab unterscheiden. Wer eine Stufe ändert, ändert sie für
+ * beide.
  */
-export function logoKopfVorschau(briefpapier?: Briefpapier | null) {
+export function logoKopfVorschau(briefpapier?: Briefpapier | null, faktor: number = LOGO_PT_ZU_PX) {
   const kopf = logoKopf(briefpapier)
   return {
-    hoehePx: Math.round(kopf.hoehe * LOGO_PT_ZU_PX),
-    maxBreitePx: Math.round(LOGO_MAX_BREITE_PT * LOGO_PT_ZU_PX),
+    hoehePx: Math.round(kopf.hoehe * faktor),
+    maxBreitePx: Math.round(LOGO_MAX_BREITE_PT * faktor),
     position: kopf.position,
   }
+}
+
+// ── DC-124: WELCHES Bild im Kopf steht ─────────────────────────────────────
+//
+// Es gibt zwei Spalten, die ein Logo halten: `companies.logo_url` (Einstellungen
+// → Firmenlogo) und `briefpapiere.logo_url` (Briefpapier & Design). Das
+// Dokument liest seit jeher das Briefpapier zuerst und fällt nur dann auf den
+// Betrieb zurück. Wer sein Logo unter „Firmenlogo" wechselt und danach ein
+// Angebot öffnet, sieht deshalb das alte — ohne einen Hinweis darauf, dass es
+// eine zweite Stelle gibt, die gewinnt.
+//
+// Die Gestaltungsentscheidung dazu (DC-124, 17.09.2026): **Ein Betrieb hat ein
+// Logo, und es wird an einer Stelle hochgeladen.** Ein Briefpapier bestimmt,
+// WO das Logo steht und WIE GROSS es ist — nicht, WELCHES es ist. Genau so
+// hält es die Karte „Firmenangaben" im Briefpapier-Editor schon immer mit Name
+// und Adresse: sie zeigt sie und verweist zum Pflegen auf Einstellungen →
+// Betrieb.
+//
+// Die Rangfolge selbst bleibt unverändert — sie ist die Wahrheit für jedes
+// bestehende Briefpapier, das heute ein eigenes Logo trägt, und darf nicht
+// stillschweigend kippen. Neu ist nur, dass es keine Stelle mehr gibt, die
+// diese Überschreibung ANLEGT, und dass jede Ansicht dieselbe Rangfolge liest
+// statt sie abzuschreiben (dieselbe Begründung wie bei `logoKopf` in DC-123).
+//
+// `eigenes` sagt, ob die Überschreibung greift. Nur daran hängt der Hinweis in
+// der Oberfläche; die Anzeige selbst braucht die Unterscheidung nicht.
+export function logoQuelle(
+  briefpapier?: { logo_url?: string | null } | null,
+  company?: { logo_url?: string | null } | null,
+): { src: string | null; eigenes: boolean } {
+  const eigen = briefpapier?.logo_url ?? null
+  if (eigen) return { src: eigen, eigenes: true }
+  return { src: company?.logo_url ?? null, eigenes: false }
 }
