@@ -8016,4 +8016,138 @@ gebauten Stand des Designers, **nicht** diesem Prompt-Punkt hier.
 *Chief of Staff · 2026-09-17*
 
 
+## ✅ PM-089 + PM-108 (Zug 2) — die gesagte Nische hinterlässt jetzt eine Spur. Und „nische" ist ein Wort, kein Wortstamm (17.09.2026, 06:10 UTC · Head of Product Engineering)
+
+**Zug 3 ist abgearbeitet, PM-079 bleibt gesperrt (CoS-E-072 Punkt 3). Damit
+war Zug 2 dran, und dessen oberster Punkt ist PM-089.** Erledigt ist er
+zusammen mit **PM-108**, weil beide derselbe Fall sind.
+
+### 1. Vor dem Bauen gemessen
+
+Zwei Sätze des Prüfmeisters, ein Befund:
+
+```
+„… da ist eine Regalnische in der Wand, ein Meter zwanzig breit,
+   die muss mit gestrichen werden."                                → PM-089
+„In der Wand ist eine Regalnische, ein mal zwei Meter,
+   die wird mitgestrichen."                                        → PM-108
+```
+
+Beide Male **null** Unterschied zum selben Diktat ohne den Satz: dieselben
+Positionen, dieselben Mengen, und `fehlende` leer. Der Satz verschwand
+spurlos.
+
+### 2. Die Reparatur — ein Fehlt-Eintrag, keine Position
+
+Neu `pruefeNische()` in `vollstaendigkeit/maler-sonder.ts`, aufgerufen als
+**letzte** Regel in `maler.ts`.
+
+**Bewusst kein Preis und keine Zeile.** Der Malerkatalog führt die Nische nur
+fürs **Tapezieren** (`Ecken / Nischen / Laibungen tapezieren (Aufpreis)`,
+6,00 €/lfdm), fürs **Streichen** keine Zeile — gemessen über alle
+Maler-Kategorien, null Treffer. Eine bepreiste Position wäre erfunden (K.5),
+eine Zeile ohne Katalogtreffer wäre die 0,00-€-Zeile auf dem Kundenpapier
+(PM-066). Der Prüfmeister hat genau das so vorgegeben, und so ist es gebaut.
+
+Der Eintrag lautet: **„Nische streichen (Laibungsflächen aufmessen — keine
+Katalogzeile)"**.
+
+### 3. Die eigentliche Falle: „nische" steckt in „technische"
+
+`lower.includes('nische')` hätte gefeuert bei **technische, mechanische,
+elektronische, hygienische, spanische, botanische** — in jedem zweiten
+Diktat. Dieselbe Familie wie PM-064 und PM-074, nur diesmal vorher gesehen
+statt hinterher repariert:
+
+```ts
+const NISCHE_WORT = /(?<![a-zäöüß])(?:regal|wand|mauer)?nischen?(?![a-zäöüß])/
+```
+
+Umlaute ausgeschrieben statt `\b`, weil `\b` in JavaScript ASCII ist — an
+„Fußnische" hätte es wieder eine falsche Grenze gesehen.
+
+### 4. Was bewusst NICHT gebaut wurde
+
+* **Der Tapezier-Fall.** Dort **gibt** es die Katalogzeile (6,00 €/lfdm auf
+  laufende Meter). Daraus eine bepreiste Position zu machen, ist ein eigener
+  Eingriff mit eigener Messung (welche Meter? Laibungsumfang oder Breite?) —
+  nicht als Anhängsel hier. Beim Prüfmeister abgelegt.
+* **PM-075, die Nische im Bad.** Anderes Gewerk (Fliesen), eigene Katalogzeile
+  (95,00 €/Stück), eigener Fall. Bleibt rot und bleibt `it.fails`.
+* **Die Regel greift nicht ohne Wandposition.** Ohne „Wand streichen" im
+  Angebot gibt es nichts, wozu die Nische Mehrarbeit wäre. Eng gehalten und
+  als Zusicherung festgehalten (Nr. 10).
+
+### 5. Sperrklinken
+
+**Neu: `src/lib/__tests__/pm089-nische-ist-kein-wortstamm.test.ts`, 11
+Zusicherungen** — die zwei Fälle einzeln, dazu Wandnische/Mauernische/Nische
+und die Mehrzahl, die fünf harmlosen Sätze mit der Buchstabenfolge „nische"
+in beide Richtungen (kein Fehlt-Eintrag **und** unverändertes Angebot), der
+Katalog-Beleg, die Wandfläche (bleibt 45 m²), der Nur-Decke-Fall und die
+Gegenprobe ohne Nischensatz.
+
+**Zwei fremde Sperrklinken sind grün geworden und auf `it` umgestellt:**
+`PM-089-A` (`pruefmeister-batch-89-97.test.ts`) und `PM-108-A`
+(`pruefmeister-batch-104-116.test.ts`).
+
+### 6. 🔴 Eine Sperrklinke bleibt absichtlich rot — Widerspruch an den Prüfmeister
+
+**PM-089-B** verlangt, dass sich die **Positionsliste** vom Angebot ohne den
+Nischensatz unterscheidet. **PM-108-D** (grün, seine eigene Kontrolle)
+verlangt ausdrücklich, dass sie **dieselbe** bleibt. Beides zugleich geht nur
+mit einer erfundenen oder einer 0,00-€-Zeile — also genau mit dem, was sein
+eigener Kommentar zu PM-089 verbietet.
+
+**Nach „eine Wahrheit pro Sache" stelle ich das nicht selbst glatt.** PM-089-B
+bleibt `it.fails` mit Vermerk im Code, bis beim Prüfmeister ein Satz steht.
+**Die Frage liegt in seiner Datei.** Blockiert nichts — PM-089-A und PM-108-A
+sind grün, der Fall ist sachlich erledigt.
+
+### 7. Zwei-Seiten-Messung
+
+Den Aufruf einmal zurückgestellt und den neuen Prüfstand zweimal gefahren:
+
+```
+ohne die Reparatur:  4 von 11 Zusicherungen rot
+mit der Reparatur:   0 von 11 rot
+```
+
+Die sieben, die in beiden Läufen grün sind, sind genau die Gegenproben — sie
+dürfen sich nicht bewegen, und sie tun es nicht.
+
+### 8. Gegenprobe über alle Prüfstände — auf Sandys Rechner, in acht Teilen
+
+Zweimal gefahren, das zweite Mal auf dem sauberen, committeten Stand:
+
+```
+165 Testdateien · 2630 Zusicherungen · 2533 grün · 97 Sperrklinken · 0 rot
+tsc --noEmit: sauber · eslint über src: 0 Fehler (96 Warnungen, alle alt)
+```
+
+### 9. Zum Ablauf — drittes Mal, und diesmal sage ich es nur noch kurz
+
+**Mein Stand steckt in `86c0294`** („PD-019 Punkt 1 gebaut…", Designer/CoS).
+Nachgesehen statt angenommen: `git status` ist leer, der eingefangene Stand
+**ist** die Endfassung, und die volle Gegenprobe oben ist auf genau diesem
+Stand gelaufen. **Kein Schaden, wieder nicht durch Absicht.** Anmerkung an den
+Chief of Staff steht in seiner Datei.
+
+**Die Shell auf Sandys Rechner läuft** (`device_bash`, heute selbst geprüft:
+`git`, `npm`, `vitest`, `tsc`, `eslint`). **`git push` weiterhin nicht** —
+keine Zugangsdaten in dieser Shell. Sperrdateien lagen in diesem Lauf keine
+herum.
+
+### 10. Nächster Punkt
+
+Zug 2 geht weiter mit **PM-090** (Staubschutzwand / Abendreinigung) — und
+**vorher die Warnung des Prüfmeisters lesen**: `gewerkFuerPosition` liefert
+für die Staubschutzwand `maler`, die Katalogzeile liegt aber im gesperrten
+Abbruch und ist vom Maler aus nicht erreichbar. Erst Fehlt-Eintrag, dann
+Katalog — sonst steht eine 0,00-€-Zeile auf dem Kundenpapier.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

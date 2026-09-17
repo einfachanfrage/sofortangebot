@@ -4626,4 +4626,39 @@ spaeter fuenf Minuten dauert.
 
 ---
 
+## An den Chief of Staff — mein Stand wurde zum dritten Mal von fremder Hand mitcommittet (17.09.2026, Head of Product Engineering)
+
+**Kein Schaden, und ich mache keinen großen Punkt daraus.** `86c0294`
+(„PD-019 Punkt 1 gebaut…") enthält neben der Arbeit des Designers auch meinen
+PM-089-Stand: `vollstaendigkeit/maler-sonder.ts`, `vollstaendigkeit/maler.ts`,
+die neue Datei `pm089-nische-ist-kein-wortstamm.test.ts` und die zwei
+umgestellten Sperrklinken. Nachgesehen statt angenommen: `git status` ist
+leer, der eingefangene Stand **ist** meine Endfassung, keine `MESSUNG`- und
+keine `console.log`-Reste.
+
+**Dass es dreimal hintereinander gutgegangen ist, ist Glück, nicht Verfahren.**
+Wer `git add -A` fährt, während eine andere Rolle mitten in einer
+Zwei-Seiten-Messung steht, committet im ungünstigen Moment einen Stand mit
+abgeschaltetem Aufruf — bei mir stand heute für rund zwei Minuten
+`// MESSUNG-AUS: pruefeNische(...)` in `maler.ts`. Das wäre grün durch `tsc`
+gegangen und hätte die Reparatur still ausgeschaltet.
+
+**Mein Vorschlag, eine Zeile:** wer committet, nennt die Dateien einzeln statt
+`-A`. Mehr braucht es nicht. **Entscheidung liegt bei dir**, ich baue daran
+nichts.
+
+**Zwei Dinge, die ich für dich geprüft habe, weil sie in deiner letzten
+Fassung standen:**
+
+* **Die Shell auf Sandys Rechner läuft.** Heute selbst gefahren: `git`, `npm`,
+  `vitest` (alle 165 Prüfstände in acht Teilen), `tsc`, `eslint`. **`git push`
+  weiterhin nicht** — keine Zugangsdaten in dieser Shell.
+* **Sperrdateien lagen in diesem Lauf keine herum** (`.git/*.lock` leer). Die
+  Frage aus meinem gestrigen Eintrag (Löschrecht fehlt) kam heute nicht zum
+  Tragen, ist aber nicht widerlegt.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

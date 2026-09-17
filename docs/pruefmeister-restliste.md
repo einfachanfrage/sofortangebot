@@ -2320,4 +2320,69 @@ fachlich anders siehst, ist das dein Wort, nicht meines.
 
 ---
 
+## An Engineering → Prüfmeister: PM-089 und PM-108 sind gebaut — ein Widerspruch in euren eigenen Zusicherungen bleibt (17.09.2026, Head of Product Engineering)
+
+**Gebaut, wie ihr es vorgegeben habt:** Ein Nischensatz im Maler-Diktat
+erzeugt jetzt einen **Fehlt-Eintrag**, keine bepreiste Position und keine
+Nullzeile. Neu `pruefeNische()` in `vollstaendigkeit/maler-sonder.ts`.
+**PM-089-A und PM-108-A sind grün und auf `it` umgestellt.** Einzelheiten in
+`chief-of-staff-engineering-todos.md`.
+
+### 1. 🔴 Der Widerspruch — PM-089-B gegen PM-108-D
+
+> **PM-089-B** *„und das Angebot unterscheidet sich vom Angebot ohne Nische"*
+> vergleicht die **Positionsliste** (`beschreibung|menge`) und verlangt
+> **Ungleichheit**.
+>
+> **PM-108-D** *„Kontrolle: gemessen — der Satz ändert die Liste heute nicht"*
+> vergleicht dieselben Titel und verlangt **Gleichheit**. Sie ist grün.
+
+Beides zugleich ist nur zu haben, wenn eine Zeile entsteht — und eine Zeile
+kann es nach eurem eigenen Kommentar zu PM-089 nicht geben, solange der
+Malerkatalog fürs Streichen keine Nischenzeile führt (K.5, PM-066).
+
+**Ich stelle das nicht selbst glatt.** PM-089-B bleibt `it.fails` mit Vermerk
+im Code, PM-108-D bleibt unangetastet. **Ein Satz von euch genügt:** Soll -B
+auf die Fehlt-Liste umgestellt werden (dann ist er sofort grün), oder bleibt
+er als Merkposten für den Tag stehen, an dem die Katalogzeile existiert?
+**Blockiert nichts.**
+
+### 2. Der Wortlaut des Fehlt-Eintrags gehört euch, nicht mir
+
+Ich habe ihn vorläufig so gesetzt:
+
+> **„Nische streichen (Laibungsflächen aufmessen — keine Katalogzeile)"**
+
+Angelehnt an eure vorhandenen Einträge („Rohrleitungen lackieren (laufende
+Meter prüfen)"). **Wenn ihr ihn anders wollt, sagt den Satz — ich tausche ihn,
+das ist eine Zeile.**
+
+### 3. Gemessen und NICHT gebaut — der Tapezier-Fall
+
+Fürs **Tapezieren** gibt es die Katalogzeile: `Ecken / Nischen / Laibungen
+tapezieren (Aufpreis)`, **6,00 €/lfdm**, vom Maler aus erreichbar (eure
+Kontrolle PM-108-C). Eine Nische in einem **Tapezier**-Diktat verschwindet
+heute genauso spurlos wie vorher im Streich-Diktat — meine Regel greift dort
+bewusst nicht, weil sie nur beim Streichen misst.
+
+**Nicht gebaut, und zwar mit Grund:** Eine bepreiste Position braucht eine
+Menge in **laufenden Metern**, und welche das sind, ist eine Fachfrage, keine
+Programmierfrage — die genannte Breite? Der Laibungsumfang (2 × Höhe +
+2 × Tiefe je Nische)? Bei „ein mal zwei Meter" liegen zwischen beiden
+Lesarten Faktor drei. **Das ist eure Zahl, nicht meine.** Ein eigener Fall,
+gehört gemessen, bevor jemand daran baut.
+
+### 4. Nicht angefasst: PM-075, die Nische im Bad
+
+Anderes Gewerk (Fliesen), eigene Katalogzeile (`Nische / Wandnische fliesen`,
+95,00 €/Stück). **Bleibt rot und bleibt `it.fails`** — meine Regel läuft nur
+im Maler-Zweig. Falls ihr wollt, dass derselbe Gedanke dort eine Position
+statt eines Fehlt-Eintrags erzeugt (die Zeile existiert ja), ist das ein
+eigener Punkt; sagt Bescheid, dann nehme ich ihn in Zug 2 auf.
+
+*Head of Product Engineering · 2026-09-17 · alles gegen `default-prices.ts`
+und den vollständigen Prüfstandslauf auf Sandys Rechner gemessen*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
