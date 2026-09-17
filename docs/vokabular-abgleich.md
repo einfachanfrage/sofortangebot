@@ -2308,4 +2308,99 @@ keine Messung. Ausführlich in `pruefmeister-restliste.md`, K.6.
 
 *Prüfmeister · 16.09.2026, abends*
 
+
+---
+
+## Y — Lauf vom 17.09.2026, mittags: der Abgleich steht still, aber das Bad ist gemessen
+
+**Der Abgleich selbst ist unverändert**, bis auf einen Titel, den Engineering
+gebaut hat:
+
+```
+                                   16.09. abends   17.09. mittags
+Engine-Titel mit eigener Einheit        182            183
+davon ohne Preis                         32             32
+davon knapp (Score < 0,75)                3              3
+gute Treffer                            147            148
+Titel aus Variablen, nicht prüfbar        0              0
+```
+
+Der eine neue Titel ist `Nische fliesen — Bad` aus PM-075. **Kein Rückschritt,
+keine Drift.**
+
+---
+
+### Y.1 🔴 Sieben der 32 Lücken sind Fliesen — und jetzt ist der Geldweg gemessen
+
+Seit S wissen wir, dass alle sieben neuen Lücken Fliesen sind und die
+tragenden Zeilen eines Bades treffen. **Was fehlte, war die Antwort, ob daraus
+auf einem echten Badangebot eine Null wird. Sie wird es.** Gemessen über die
+volle Kette des Endpunkts, Bad 3,20 × 2,10 m:
+
+```
+543,84 € stehen da, wo 2.980,44 € hingehören — sechs von neun Zeilen ohne Preis.
+```
+
+Ausführlich in `pruefmeister-restliste.md`, Punkt 1 des Mittagslaufs
+(**PM-117**). Für diese Datei zählt die Trennung der Ursachen, weil sie der
+Grund ist, warum das Vokabular hier nicht die ganze Geschichte erzählt:
+
+| Zeile | Betrag | Wortlaut-Lücke? | Gewerke-Router? |
+|---|---|---|---|
+| Wandfliesen verlegen | 1.028,58 € | **ja** (`Wandfliesen Standard (20×40 bis 30×60cm), gerade`) | ja |
+| Verfugung Wand | 279,84 € | **ja** (`Verfugen Wand`) | ja |
+| Verbundabdichtung Wand | 652,96 € | **nein** — Score 0,94 | **nur der Router** |
+| Bodenfliesen verlegen | 280,82 € | **ja** (`Bodenfliesen Standard …, gerade, Q2`) | nein |
+| Verfugung Boden | 67,20 € | **ja** (`Verfugen Boden`) | nein |
+| Fliesensockel / Abschlussleiste | 127,20 € | **ja** (`Sockelleiste / Fliesensockel verlegen`) | nein |
+| Entsorgung Fliesenmaterial | — | **keine Katalogzeile**, echte Lücke | nein |
+
+**Für diese Liste heißt das:** sechs der sieben Fliesen-Lücken sind
+Wortlaut-Sachen und gehören hierher; nur `Entsorgung Fliesenmaterial` ist eine
+echte Kataloglücke. **Und eine Zeile, die hier gar nicht auffällt, kostet
+trotzdem 652,96 €** — `Verbundabdichtung Wand` findet ihren Treffer mit 0,94,
+sie wird nur nie danach gefragt, weil der Router sie zum Maler schickt.
+
+Das ist die Grenze dieses Abgleichs, sauber benannt: **er misst, ob ein Titel
+seinen Katalogpreis FINDEN würde — nicht, ob er danach gefragt wird.**
+
+---
+
+### Y.2 Neu auf der Liste: vier Wörter für einen Übergang
+
+Anlass war eine Frage des Head of Marketing zum Bodenleger-Beispiel der
+Landingpage; der Verdacht selbst hat sich nicht bestätigt (die Seite stimmt),
+aber dabei ist das hier aufgefallen. In derselben Kategorie
+`Boden – Abschlussarbeiten`:
+
+```
+Übergangsschiene                       15,00 €/Stück
+Übergangsprofil                        15,00 €/Stück
+Übergangsprofil / Schwelle einbauen    15,00 €/Stück
+Alu-Übergangsprofil                    18,00 €/Stück
+Alu-Übergangsprofil Silber             18,00 €/Stück
+```
+
+Fünf Zeilen, eine Arbeit. Welche gewinnt, entscheidet der Matcher am Wortlaut
+des Diktats. **Das PM-058-Muster (Grundieren steht zweimal mit zwei Preisen),
+aber ohne Geldweg:** drei davon kosten dasselbe, die beiden Alu-Zeilen sind
+untereinander gleich. Es verschiebt heute **nichts**.
+
+**Warum es trotzdem hier steht:** Genau so fängt PM-058 an. Sobald ein Betrieb
+eine dieser Zeilen anfasst und eine andere nicht, hat er zwei Preise für eine
+Arbeit, und welcher gilt, hängt davon ab, welches Wort der Kunde benutzt.
+Zudem ist `Alu-Übergangsprofil Silber` eine Farbvariante als eigene
+Katalogzeile — die Bauweise, vor der Manfreds Warnung ganz oben steht.
+
+**Fachlich (Prüfmeister):** eine Zeile, `Übergangsprofil / Schwelle einbauen`,
+und die Schreibweisen als Synonyme im Matcher statt als eigene Zeilen. Die
+Alu-Ausführung ist ein Materialaufpreis, keine zweite Arbeit.
+**Das ist kein Auftrag** — es hängt an derselben Entscheidung wie PM-057/PM-059
+(welche Datei speist die Oberfläche), und die steht weiter aus.
+
+Hinterlegt in `src/lib/__tests__/pm-landingpage-bodenleger.test.ts`, letzte
+Prüfung.
+
+*Prüfmeister · 17.09.2026, mittags*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

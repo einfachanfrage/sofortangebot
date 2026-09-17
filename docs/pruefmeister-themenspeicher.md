@@ -662,3 +662,60 @@ niemand gemessen hat:**
    die ehrlichste Zahl, die wir über die Vollständigkeit haben könnten.
 
 *Prüfmeister · 2026-09-16 abends*
+
+---
+
+## Nachtrag 17.09.2026, mittags — vier neue Fälle, drei neue Themen
+
+**Fallbasis: 120 Fälle** (PM-117 Bad-Preisweg · PM-118 besenreine Übergabe ·
+PM-119 Ausführungsreihenfolge · PM-120 zwei Bauabschnitte ohne Trennung).
+Die Zielgröße von 100 ist damit überschritten; die Liste läuft weiter, weil
+die Themen weiterlaufen, nicht um eine Zahl zu erreichen.
+
+**Stände nachgezogen:**
+
+* **Bad / Fliesen (Abschnitt F, PM-060 bis PM-062):** der Geldweg ist jetzt
+  gemessen. **PM-117** — auf einem gewöhnlichen Bad stehen 543,84 €, wo
+  2.980,44 € hingehören. Der `/wand/`-Router allein trägt 652,96 € davon, der
+  Rest ist Wortlaut (PM-060-A). **Beides gehört zusammen gebaut.**
+* **Baustellenreinigung (Abschnitt B, PM-090 / PM-109):** entschieden.
+  **PM-118** — die einmalige besenreine Übergabe wird keine bepreiste
+  Position (Nebenleistung nach DIN 18299 4.1.1). Der wiederkehrende Fall
+  bleibt Fehlt-Eintrag wegen fehlender Menge. Damit ist an dieser Stelle
+  nichts mehr offen.
+* **Bauabschnitte (Nachtrag-Thema 1, „Ausschluss auf ZEIT"):** die
+  Gegenrichtung ist jetzt abgedeckt. **PM-120** — zwei Bauabschnitte, keiner
+  ausgenommen, beide müssen stehen bleiben. Heute grün; sie ist die Kontrolle
+  gegen einen Auslöser, der auf die Wendung „Bauabschnitt" zielt statt auf den
+  Trennungssatz. Fund von Engineering, die Lücke war meine.
+
+**Neu aufgemacht:**
+
+6. **Die Reihenfolge INNERHALB der Hauptarbeit.** PM-119 legt sieben
+   Ausführungsstufen fest und beantwortet damit L-06 — aber nicht, wie die
+   Zeilen innerhalb einer Stufe stehen. Bei den Fliesen schreibt die Engine
+   `Bodenfliesen verlegen · Verbundabdichtung Boden · Verfugung Boden`.
+   **Abgedichtet wird VOR dem Verlegen und verfugt danach** — die Zeile, die
+   im Angebot zuerst steht, ist die, die auf der Baustelle in der Mitte
+   liegt. Ungemessen: ob das bei Maler und Boden auch vorkommt. Prüfbar ohne
+   App, klein, gehört hinter L-06.
+7. **Eine Arbeit, mehrere Katalogwörter — ohne Geldweg.** In
+   `Boden – Abschlussarbeiten` stehen fünf Zeilen für einen Übergang
+   (`Übergangsschiene`, `Übergangsprofil`, `Übergangsprofil / Schwelle
+   einbauen`, zweimal Alu). Drei davon kosten dasselbe, es verschiebt heute
+   nichts — aber es ist der Zustand, aus dem PM-058 entsteht, sobald ein
+   Betrieb eine der Zeilen anfasst und die andere nicht. Ungemessen: wie oft
+   dieses Muster im Katalog sonst noch steht. **Eine Messung am Katalog, kein
+   Einzelfall** — die Gegenrichtung zu Abschnitt U.
+8. **Die Nullzeile als Produktregel.** PM-117 legt sechs Zeilen mit 0,00 € auf
+   ein Kundenpapier, L-03 legt Positionen mit Menge 0 dorthin. Zweimal
+   dieselbe Frage, zweimal an einer anderen Stelle gefunden: **darf eine Zeile
+   ohne Betrag überhaupt auf ein Angebot?** Das ist keine Einzelentscheidung
+   mehr, sondern die vierte Ausprägung derselben Regel wie H, L.5 und DC-112.
+   Gehört zu H.
+
+*Prüfmeister · 2026-09-17, mittags*
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1828,7 +1828,7 @@ mit, wie die Reparatur aussieht. **Nicht warten, aber auch nicht deren Aufgabe
 
 *Prüfmeister · 2026-09-16, abends*
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-019. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+
 
 ---
 
@@ -1885,3 +1885,81 @@ ist. Bis dahin ist es keine Zusicherung, sondern eine Absicht.
 
 *Prüfmeister · 2026-09-17 · Heimat der Messung: `pruefmeister-restliste.md`,
 Abschnitt 7 des Laufs vom 17.09.*
+
+---
+
+## PD-021 — „Nach Arbeitsablauf" sortiert nicht nach Arbeitsablauf (Prüfmeister, 17.09.2026, mittags)
+
+**Das ist deine Gliederung, deshalb bekommst du es zuerst.** Ich habe heute
+L-06 nachgemessen (Positionen stehen nicht in der Reihenfolge der Ausführung)
+und dabei festgestellt, dass die vorhandene Gliederung ihn nicht löst — auch
+nicht für den Betrieb, der sie einschaltet.
+
+**Gemessen, drei Fälle, alle drei falsch:**
+
+```
+Büro (Q3)      Grundierung · Anstrich · Bodenschutz · Abkleben · Spachteln Q3
+Flur (Raufaser) Grundierung · Bodenschutz · Abkleben · Spachteln Q2 ·
+                Tapete entfernen · tapezieren · überstreichen
+Wohnzimmer      Laminat verlegen · Altbelag entfernen · Sockelleisten montieren
+```
+
+Der Flur ist der, den ich dir zeigen will: **`Tapete entfernen` steht an
+fünfter Stelle**, hinter der Grundierung und hinter der Spachtelung derselben
+Wand. Und beim Boden wird der neue Belag verlegt, bevor der alte herauskommt.
+
+**Warum `angebot-struktur.ts` das nicht abfängt:** `phaseFuer` wirft
+`entfern`, `spachtel` und `grundier` gemeinsam in `vor` — genau die drei
+Schritte, deren Reihenfolge untereinander der ganze Fund ist. Und innerhalb
+einer Phase wird die vorhandene Reihenfolge behalten, nicht sortiert. Sortiert
+man das Büro damit, steht die Grundierung weiter vor der Spachtelung.
+
+**Was ich als Soll hinterlegt habe** (`pm119-l06-ausfuehrungsreihenfolge.test.ts`,
+vier Sperrklinken): sieben Stufen statt drei Phasen —
+SCHUTZ · ABBRUCH · UNTERGRUND · GRUNDIERUNG · HAUPTARBEIT · ABSCHLUSS ·
+ZUSCHLAG, innerhalb der Stufe stabil.
+
+**Was das für dich heißt, und was ausdrücklich nicht:**
+
+* Die Stufen sind eine **Sortierung**, keine Überschriftenstruktur. Ob aus
+  sieben Stufen sieben Abschnitte auf dem Papier werden, ist deine
+  Entscheidung — ich vermute nein, sieben Überschriften auf einem Angebot mit
+  fünf Zeilen wären lächerlich. Meine Messung verlangt nur die Reihenfolge.
+* **Die Gliederung heißt heute nach etwas, das sie nicht tut.** Ob du sie
+  reparierst, umbenennst oder abschaffst, sobald die Grundreihenfolge stimmt,
+  gehört dir. Mit einer richtig sortierten Grundansicht könnte die Wahl
+  „Nach Arbeitsablauf" überflüssig werden — das ist eine Vermutung von mir,
+  kein Messwert.
+* **Für die Hero-Animation ändert sich nichts.** Deine Reihenfolge dort
+  (Bodenschutz · Abkleben · Tapete · Grundierung · Decke · Wände) ist genau
+  die richtige und war immer die richtige. Das Produkt zieht nach, nicht du.
+
+---
+
+## PD-022 — sechs Zeilen mit 0,00 € auf einem Kundenangebot (Prüfmeister, 17.09.2026, mittags)
+
+**Keine Designfrage von dir, aber eine Anzeigefrage, und die ist deine.**
+
+Ich habe heute den Preisweg eines gewöhnlichen Badangebots nachgefahren
+(PM-117). Ergebnis: von neun Positionen finden **sechs keinen Preis** und
+stehen mit 0,00 € da. Das Angebot summiert sich auf 543,84 €, wo 2.980,44 €
+hingehören.
+
+**Das ist derselbe Befund wie L-03**, nur eine Größenordnung darüber: dort war
+es eine Nullzeile neben richtigen Zeilen, hier sind es zwei Drittel des
+Angebots. Und es trifft **jedes** Bad, nicht einen Sonderfall.
+
+**Die Frage, die daraus für dich fällt:** Was zeigt der Entwurf, wenn die
+Mehrheit der Zeilen keinen Preis hat? Eine Liste mit sechs Nullen und einer
+Summe, die offensichtlich falsch ist, ist schlimmer als gar keine Summe. Ich
+habe **nicht** gemessen, was die Oberfläche daraus macht — mein Prüfstand
+endet beim `unit_price`, und `hat_fehlende_preise` steht auf true. Mehr kann
+ich von hier nicht sagen.
+
+**Kein Auftrag, eine Meldung.** Der Fund selbst gehört Engineering; ich gebe
+dir nur die Anzeigeseite weiter, damit sie nicht zwischen uns liegen bleibt.
+
+*Prüfmeister · 2026-09-17, mittags · Heimat der Messung:
+`pruefmeister-restliste.md`, Punkte 1 und 3 des Mittagslaufs*
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-022. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

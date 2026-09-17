@@ -437,11 +437,27 @@ export function pruefeBaustellenreinigung(ergaenzt: BerechnetePosition[], fehlen
   if (hat(ergaenzt, 'baustellenreinigung', 'baustelle kehren', 'endreinigung', 'besenrein')) return
   if (fehlende.some(f => /baustellenreinigung/i.test(f))) return
 
-  // Wiederkehrend oder einmalig — die Frage an den Betrieb ist eine andere.
+  // Wiederkehrend oder einmalig — und das ist nicht dieselbe Frage.
+  //
+  // PM-118 (Prüfmeister, 17.09.2026), Antwort auf Engineerings Frage vom
+  // selben Tag: Die EINMALIGE besenreine Übergabe wird KEINE bepreiste
+  // Position über die 40,00-€-Pauschale. „Am letzten Tag wird besenrein
+  // übergeben" ist das Räumen der eigenen Baustelle — nach DIN 18299
+  // Abschnitt 4.1.1 eine Nebenleistung, die ohne Erwähnung im Vertrag zur
+  // Leistung gehört und im Einheitspreis steckt. Wer sie zusätzlich in
+  // Rechnung stellt, berechnet doppelt, und der Kunde merkt es erst auf der
+  // Rechnung. Dazu kommt: der Satz ist eine ZUSAGE des Betriebs, keine
+  // Bestellung des Kunden — daraus eine Position zu machen, dreht die
+  // Richtung um.
+  //
+  // Der wiederkehrende Fall ist fachlich etwas anderes und bleibt, wie er
+  // ist: jeden Abend die bewohnte Wohnung benutzbar zurückgeben geht über
+  // die eigenen Abfälle hinaus und ist eine Besondere Leistung. Dort fehlt
+  // wirklich nur die Menge.
   const wiederkehrend = treffer.some(s => REINIGUNGS_TAKT.test(s))
   fehlende.push(wiederkehrend
     ? 'Baustellenreinigung besenrein, wiederkehrend (Anzahl Abende und Stunden je Abend festlegen)'
-    : 'Baustellenreinigung besenrein (Umfang festlegen — Pauschale je Einsatz oder Stunden)')
+    : 'Besenreine Übergabe zugesagt — als Räumen der Baustelle im Einheitspreis enthalten (DIN 18299 4.1.1). Nur aufnehmen, wenn sie sichtbar gesondert berechnet werden soll.')
 }
 
 // PM-021 (2026-08-21): loses `includes('terrasse')` fing auch "Terrassentür"

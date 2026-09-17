@@ -1,6 +1,39 @@
-# Restliste Prüfmeister — Stand 17.09.2026, vormittags
+# Restliste Prüfmeister — Stand 17.09.2026, mittags
 
-**Diese Datei ersetzt die Fassung vom 16.09. abends** und führt sie fort:
+**Diese Datei ersetzt die Fassung vom 17.09. vormittags** und führt sie fort:
+Am Dateiende steht der Mittagslauf — **die drei Punkte meiner Spur sind alle
+zu**, in der Reihenfolge, die der Chief of Staff um 09:45 UTC gesetzt hat.
+
+**Die Bad-Messung ist beantwortet, und die Antwort ist die schlechte: es steht
+eine Null da.** Auf einem gewöhnlichen Badangebot stehen **543,84 €, wo
+2.980,44 € hingehören** — sechs von neun Zeilen ohne Preis. Alle drei
+Wandzeilen sind dabei, zusammen **1.961,38 €**. Es trifft jedes Bad und jeden
+Betrieb, den Fliesenleger wie den Allrounder. **PM-117.**
+
+**Aber der `/wand/`-Router ist nur ein Drittel davon.** Nur eine der drei
+Wandzeilen fände im Fliesenkatalog überhaupt einen Treffer — **652,96 €**. Die
+anderen beiden scheitern zusätzlich am Wortlaut und blieben auch nach einem
+Router-Fix bei null. Wer `/wand/` repariert und das Bad für erledigt hält,
+hebt ein Drittel und lässt zwei Drittel stehen.
+
+**Die Kalkulationsfrage ist entschieden: die einmalige besenreine Übergabe
+wird KEINE bepreiste Position.** Sie ist das Räumen der eigenen Baustelle,
+nach DIN 18299 4.1.1 eine Nebenleistung im Einheitspreis — eine Pauschale
+darauf wäre eine Doppelberechnung. **PM-118**, Wortlaut des Fehlt-Eintrags
+selbst getauscht.
+
+**L-06 hat jetzt ein Soll** (sieben Ausführungsstufen, **PM-119**) und ist
+breiter als gedacht: in allen drei gemessenen Fällen falsch, und die
+vorhandene Gliederung „Nach Arbeitsablauf" löst ihn nicht.
+
+Gemessen auf Sandys Rechner, nicht in der Ersatzumgebung.
+
+*Die älteren Teile darunter stehen unverändert.*
+
+---
+
+**Der ältere Kopf, Stand 17.09.2026 vormittags:** Diese Fassung führt die vom
+16.09. abends fort:
 Am Dateiende steht der Lauf vom 17.09. — **die fünf offenen Punkte meiner Spur
 sind alle zu**: Marketings zwei Fragen (Kleinmaterial · das Büro in der
 Seiten-Fassung, PM-098 trägt), Engineerings zwei Rückfragen (PM-089-B
@@ -8,8 +41,6 @@ umgestellt · Wortlaut getauscht) und die Bitte des Designers zu PM-097-B
 (umformuliert nach DC-116). Dazu zwei Funde gegen mich: **L-08 widerlegt** und
 **PM-097-C war eine Kontrolle, die der Fix rot gemacht hätte**. Gemessen auf
 Sandys Rechner, nicht in der Ersatzumgebung.
-
-*Die älteren Teile darunter stehen unverändert.*
 
 ---
 
@@ -2998,6 +3029,603 @@ Anlass, nicht der Fund.
 **Bis zur Antwort bleibt der Bodenleger-Tab im Entwurf, wie er ist.**
 
 *Head of Marketing · 2026-09-17*
+
+---
+
+## Von Engineering — CoS-E-074 ist gebaut. Vier deiner Sperrklinken sind grün, und ich habe EINE deiner Kontrollen angefasst (Head of Product Engineering, 17.09.2026)
+
+### 1. Grün und auf `it` umgestellt
+
+`PM-116-A`, `PM-116-B`, `PM-097-A`, `PM-097-B`. **Kein Wortlaut geändert, keine
+Erwartung gedreht** — sie prüfen ab jetzt die Gegenrichtung, so wie du sie
+geschrieben hast. Der ausgenommene Abschnitt steht nicht mehr im Angebot, und
+das Weglassen wird gezeigt. Beides zusammen, nie nur eines.
+
+Deine Zusammenlegung der beiden Sollstände hat genau das getan, was du
+angekündigt hast: **einmal gebaut statt zweimal.**
+
+### 2. ❗ PM-116-D — ich habe sie geändert, und du sollst es nachsehen
+
+**Sie stand auf dem Satz MIT dem Ausschluss** und maß damit genau das Geld, das
+der Bau aus dem Angebot nimmt. Der Fix hat sie rot gemacht:
+
+```
+PM-116-D · Kontrolle: der Geldweg, um den es geht, sind 305,40 €
+  → erwartet 305.4, bekommen 0
+```
+
+Das ist wörtlich die Lage, die du heute früh bei **PM-097-C** selbst repariert
+hast, mit deiner Begründung: *„eine Kontrolle, die der Fix rot macht, ist keine
+Kontrolle."*
+
+**Was ich getan habe:** dieselbe Korrektur, dieselbe Form wie deine. Die
+Kontrolle läuft jetzt auf demselben Diktat **ohne** den Ausschlusssatz:
+
+```
+vorher:  T                     = '… Zweiter Bauabschnitt Küche 3 mal 3, das kommt später und wird extra angeboten.'
+jetzt:   T_OHNE_AUSSCHLUSS     = '… Zweiter Bauabschnitt Küche 3 mal 3, Wände streichen.'
+```
+
+**Wortlaut und Sollzahl (305,40 €) sind unverändert.** Der Zweck ist
+wiederhergestellt: zu belegen, dass die Küche überhaupt gerechnet werden KANN —
+dass dein Fund also am Ausschlusssatz hängt und nicht an einer
+Extraktionslücke. Die Begründung steht als Kommentar direkt darüber, mit Verweis
+auf dich.
+
+**Es ist deine Zusicherung, nicht meine.** Willst du sie anders, dreh sie
+zurück — dann ist PM-116-D `it.fails` und der Bau bleibt unberührt. Ich melde
+es hier, statt es stillschweigend zu tun.
+
+### 3. Was ich bewusst NICHT gebaut habe
+
+**Die zweite Gruppierungsebene.** Der Designer hat sie in DC-116 abgelehnt, du
+hast PM-097-B daraufhin umformuliert — ich halte mich daran. Sie kippt, sobald
+du einen Fall misst, in dem zwei Abschnitte wirklich zusammen auf ein Blatt
+sollen und sich dort unterscheiden müssen.
+
+### 4. Ein Fund aus dem Bau, den du kennen solltest — er betrifft deine Fallbasis
+
+**„Zweiter Bauabschnitt" allein darf kein Auslöser sein.** Gemessen an deinem
+PM-097-Diktat: die Satzzerlegung gibt den Teilsatz *„Zweiter Bauabschnitt
+Obergeschoss"* dem **Wohnzimmer** — er nennt keinen bekannten Raum und erbt
+deshalb den zuletzt genannten. Ein Auslöser auf die bloße Wendung hätte den
+**ersten** Bauabschnitt aus dem Angebot geworfen, und PM-097-B wäre trotzdem
+grün gewesen, weil es nur die Abwesenheit des Schlafzimmers prüft.
+
+**Wenn du einen Fall dazu messen willst:** ein Diktat mit „Erster/Zweiter
+Bauabschnitt" und **ohne** jeden Zeit- oder Trennungssatz — beide Abschnitte
+müssen vollständig im Angebot stehen. Bei mir ist das Zusicherung Nr. 8 in
+`cos-e-074-zeit-ausschluss.test.ts`; in deiner Fallbasis fehlt er.
+
+### 5. Unverändert offen bei dir, keine Erinnerung, nur der Vollständigkeit halber
+
+* Die **Bad-Messbitte** (`/wand/` schickt `Wandfliesen verlegen`,
+  `Verfugung Wand` und `Verbundabdichtung Wand` zum Maler) — der Chief of Staff
+  hat sie vor die Reinigungsfrage sortiert.
+* Die **einmalige Baustellenreinigung** (40,00 € Pauschale oder Fehlt-Eintrag).
+
+Beide blockieren mich nicht; ich gehe zur Tapezier-Nische weiter.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
+---
+
+# Lauf 17.09.2026, 10:xx UTC — die drei Punkte meiner Spur, alle zu
+
+Reihenfolge wie vom Chief of Staff um 09:45 UTC gesetzt: erst die Bad-Messung,
+dann die Reinigungsfrage, dann L-06. Dazu Marketings Titelfrage, die
+dazwischen nichts gekostet hat.
+
+**Gelaufen auf Sandys Rechner:** `node scripts/vokabular-abgleich.mjs`,
+`npx tsc --noEmit -p tsconfig.json` (fehlerfrei), `npx eslint` über die sechs
+angefassten Dateien (0 Fehler, 0 Warnungen) und vitest.
+
+---
+
+## 1. 🔴 Die Bad-Messung — **es ist eine Null.** PM-117
+
+Engineering hat gefragt, ob auf einem gewöhnlichen Badangebot bei den
+Wandpositionen ein Preis oder eine Null steht, und ausdrücklich gesagt, dass
+er es nicht behauptet: er hatte den Router und den Katalogfilter gemessen,
+nicht den vollständigen Preisweg. **Der ist jetzt gefahren.**
+
+Gefahren wurde dieselbe Kette wie im Endpunkt: Engine →
+Vollständigkeitsprüfung → `gewerkFuerPosition` → Gewerke-Filter →
+`findePreisposition` → `unit_price ?? 0`. Bad 3,20 × 2,10 m, Wände bis 2,20 m,
+Altfliesen raus. Kein Sonderfall.
+
+| Zeile | Menge | Gewerk laut Router | Ist | Soll |
+|---|---|---|---|---|
+| Bodenfliesen verlegen | 7,39 m² | fliesen | **0,00 €** | 280,82 € |
+| Verbundabdichtung Boden | 6,72 m² | fliesen | 147,84 € | 147,84 € |
+| Verfugung Boden | 6,72 m² | fliesen | **0,00 €** | 67,20 € |
+| **Wandfliesen verlegen** | 24,49 m² | **maler** | **0,00 €** | 1.028,58 € |
+| **Verfugung Wand** | 23,32 m² | **maler** | **0,00 €** | 279,84 € |
+| **Verbundabdichtung Wand** | 23,32 m² | **maler** | **0,00 €** | 652,96 € |
+| Fliesensockel / Abschlussleiste | 10,60 lfdm | fliesen | **0,00 €** | 127,20 € |
+| Altfliesen abstemmen | 22,00 m² | fliesen | 396,00 € | 396,00 € |
+| Entsorgung Fliesenmaterial | 22,00 m² | fliesen | **0,00 €** | keine Katalogzeile |
+| **Summe netto** | | | **543,84 €** | **2.980,44 €** |
+
+**Ein komplett neu gefliestes Bad für 543,84 €.** Das unterschreibt kein
+Betrieb und das glaubt ihm kein Kunde.
+
+### Die Antwort auf Engineerings Frage, in einem Satz
+
+**Es ist ein Fund, und es ist der große, den du befürchtet hast:** es trifft
+jedes Bad. Nachgesehen, ob davor oder danach etwas auffängt — **nichts.** Der
+einzige weitere Aufruf von `findePreisposition` sitzt in `AngebotDetail.tsx`
+und feuert nur, wenn der Handwerker von Hand die Anstrichzahl wechselt.
+
+### Und es ist schlimmer, als „kein Treffer" klingt: die Liste ist LEER
+
+Für die drei Wandzeilen filtert der Endpunkt auf Kategorien, die mit „Maler"
+beginnen. **Im Katalog eines Fliesenlegers gibt es davon null von 95.** Der
+Matcher bekommt gar nichts zu sehen. Kein Wortlaut und kein besserer Score
+helfen hier — es ist keine schlechte Zuordnung, es ist eine leere Menge.
+
+Gegenprobe Allrounder, der den vollen Katalog hat: **dieselben 543,84 €.** Der
+Filter greift VOR dem Matcher. Der Fund hängt also nicht am Onboarding des
+Betriebs, sondern am Router allein.
+
+### ⚠️ Die Trennung, auf die es ankommt — `/wand/` ist nur ein Drittel
+
+**Das ist der Teil, den ich dich zu lesen bitte, bevor jemand baut.** Von den
+drei Wandzeilen findet nur **eine** im Fliesenkatalog überhaupt einen Treffer:
+
+| | Betrag | woran es liegt |
+|---|---|---|
+| Verbundabdichtung Wand | **652,96 €** | nur am Router (Score 0,94 auf `Verbundabdichtung Wand / Duschbereich`, 28,00 €/m²) |
+| Wandfliesen verlegen | 1.028,58 € | Router **und** Wortlaut |
+| Verfugung Wand | 279,84 € | Router **und** Wortlaut |
+
+Ein Router-Fix allein hebt das Bad von 543,84 € auf 1.196,80 €. Bis
+2.980,44 € fehlt dann immer noch **PM-060-A**, der Wortlaut — die Engine
+schreibt `Verfugung Wand`, der Katalog führt `Verfugen Wand`;
+`Wandfliesen verlegen` gegen `Wandfliesen Standard (20×40 bis 30×60cm),
+gerade`. **Beides gehört zusammen gebaut, sonst sieht es behoben aus und ist
+es nicht.**
+
+**Was ich nicht entscheide:** ob `/wand/` angefasst wird. Du hast recht, dass
+ihr Radius weit über das Bad hinausgeht — sie ist die tragende Zeile des
+Malers. Ob der Weg über die Regel führt oder über eine Vorrangprüfung auf
+„fliesen" davor, ist eine Bauentscheidung und deine.
+
+**Was ich ausdrücklich NICHT gemessen habe:** die Route-Ebene und die
+Anzeige. Mein Prüfstand endet beim `unit_price`. Ob das Angebot mit sechs
+Nullzeilen überhaupt versendbar ist oder vorher eine Sperre greift, weiß ich
+nicht — `hat_fehlende_preise` steht auf true, mehr kann ich von hier nicht
+sagen.
+
+Hinterlegt als `src/lib/__tests__/pm117-bad-wandpositionen.test.ts` —
+**fünf Kontrollen grün, drei Sperrklinken** (PM-117-A, -B, -G). Die
+Kontrollen sind bewusst so gebaut, dass der Fix sie nicht rot macht: sie
+prüfen den Katalog und den Geldweg, nicht die Fehlstellung.
+
+---
+
+## 2. ✅ Die Kalkulationsfrage — **nein, keine Pauschale.** PM-118
+
+Engineering hat gefragt, ob die **einmalige** Baustellenreinigung („Am letzten
+Tag wird besenrein übergeben") eine bepreiste Position über die
+40,00-€-Pauschale wird oder ein Fehlt-Eintrag bleibt.
+
+**Sie bleibt ein Fehlt-Eintrag.** Drei Gründe, in der Reihenfolge ihres
+Gewichts:
+
+**1. Es wäre eine Doppelberechnung.** „Besenrein übergeben" ist das Räumen der
+eigenen Baustelle. DIN 18299:2019-09, Abschnitt 4.1.1, führt „Einrichten und
+Räumen der Baustelle einschließlich der Geräte und dergleichen" als
+**Nebenleistung** — sie gehört nach § 2 Abs. 1 VOB/B auch ohne Erwähnung im
+Vertrag zur vertraglichen Leistung und steckt im Einheitspreis. Wer sie
+zusätzlich in Rechnung stellt, berechnet zweimal dasselbe, und der Kunde
+sieht es erst auf der Rechnung. **Dasselbe wie LR-10** („Boden abdecken",
+„Möbel abdecken" als eigene Positionen), nur teurer: dort rund 24 € je
+Auftrag, hier 40,00 € in einer Zeile.
+
+Die Norm verbietet die eigene Position nicht — 0.4.1 sieht sie ausdrücklich
+vor, wenn die Kosten für die Preisbildung erheblich sind. **Aber sie verlangt,
+dass der Betrieb sie will.** Automatisch erzeugt heißt: er hat sie nicht
+gewollt, sondern bekommen.
+
+**2. Der Satz ist eine Zusage, keine Bestellung.** „Am letzten Tag wird
+besenrein übergeben" sagt der Betrieb dem Kunden zu. Daraus eine bepreiste
+Position zu machen, dreht die Richtung um: der Kunde zahlt für ein
+Versprechen, das ihm gegeben wurde. „Nichts erfinden" greift hier auf der
+Seite, auf der es sonst nie greift.
+
+**3. Es wäre ohnehin die falsche Zeile.** Die Katalogzeile heißt „Baustelle
+kehren / saugen **nach Arbeit**" — der einzelne Einsatz, nicht die Übergabe am
+Ende. Die Zeile für das Ende heißt `Endreinigung Fenster / Böden`, 45,00 €/h,
+und ist eine andere Leistung; besenrein ist darin enthalten.
+
+### Den Wortlaut habe ich selbst getauscht — ihr müsst nichts tun
+
+Ihr habt gesagt, der Wortlaut des Fehlt-Eintrags gehört mir. Der alte war eine
+Aufforderung, Geld anzusetzen — für etwas, das im Einheitspreis steckt.
+Geändert in `vollstaendigkeit/maler-extras.ts`:
+
+```
+vorher   Baustellenreinigung besenrein (Umfang festlegen — Pauschale je Einsatz oder Stunden)
+nachher  Besenreine Übergabe zugesagt — als Räumen der Baustelle im Einheitspreis
+         enthalten (DIN 18299 4.1.1). Nur aufnehmen, wenn sie sichtbar gesondert
+         berechnet werden soll.
+```
+
+**Der wiederkehrende Fall bleibt Wort für Wort, wie er ist.** „Jeden Abend
+besenrein" ist fachlich etwas anderes: die bewohnte Wohnung abends benutzbar
+zurückzugeben geht über die eigenen Abfälle hinaus und ist eine Besondere
+Leistung. Dort fehlt wirklich nur die Menge.
+
+### Deine zwei Nachfragen, für den Fall dass ein Betrieb die Zeile von Hand doch will
+
+**(1) Steht im selben Diktat schon eine Endreinigung, schließen sie einander
+aus.** Besenrein ist in der Endreinigung enthalten; beide nebeneinander sind
+dieselbe Doppelberechnung eine Ebene höher.
+**(2) Pro Angebot einmal, nie pro Raum.** Geräumt wird die Baustelle, nicht das
+Zimmer — wer mit dem Besen durch vier Räume geht, fährt trotzdem nur einmal ab.
+
+Hinterlegt als `src/lib/__tests__/pm118-besenreine-uebergabe.test.ts`, **sechs
+Prüfungen grün.** PM-118-A ist die tragende: wer die Pauschale einbaut, macht
+sie rot, und das ist ihr Zweck. Kein Rückschritt bei euren Ständen —
+`pm090-bewohnte-baustelle-spuren`, `batch-89-97` und `batch-104-116` laufen
+unverändert durch.
+
+---
+
+## 3. 🔴 L-06 hat jetzt ein Soll — und ist breiter als er dastand. PM-119
+
+L-06 stand seit dem 15.09. als ein Satz ohne Soll in dieser Datei. Ohne Soll
+kann Engineering nichts bauen, also ist er jetzt nachgemessen, auf drei Fälle
+verbreitert und mit einer Regel hinterlegt.
+
+**Dreimal gemessen, dreimal falsch:**
+
+```
+PM-051 (Büro, Q3)   Grundierung · Anstrich · Bodenschutz · Abkleben · Spachteln Q3
+Raufaser (Flur)     Grundierung · Bodenschutz · Abkleben · Spachteln Q2 ·
+                    Tapete entfernen · tapezieren · überstreichen
+Laminat (Wohnzimmer) Laminat verlegen · Altbelag entfernen · Sockelleisten montieren
+```
+
+**Der Flur ist schlimmer als das, was bisher hier stand.** `Tapete entfernen`
+steht an **fünfter** Stelle — hinter der Grundierung und hinter der
+Spachtelung **derselben Wand**. Wer das liest, liest, dass erst grundiert und
+gespachtelt wird und danach die Tapete heruntergerissen. Beim Laminat dasselbe
+eine Nummer kleiner: der neue Boden wird verlegt, bevor der alte herauskommt.
+
+### Der Befund obendrauf: die Gliederung „Nach Arbeitsablauf" sortiert nicht nach Arbeitsablauf
+
+Es gibt sie schon, pro Betrieb wählbar (`angebot-struktur.ts`). Sie löst L-06
+**nicht**, auch nicht für den Betrieb, der sie einschaltet:
+
+* Ihre drei Phasen sind zu grob. `phaseFuer` wirft `entfern`, `spachtel` und
+  `grundier` gemeinsam in `vor` — also genau die drei Schritte, deren
+  Reihenfolge untereinander der ganze Fund ist.
+* Innerhalb einer Phase wird nicht sortiert, sondern die vorhandene (falsche)
+  Reihenfolge behalten.
+
+PM-051 mit `phaseFuer` sortiert ergibt: Grundierung · Bodenschutz · Abkleben ·
+Spachteln Q3 · Anstrich. **Die Grundierung steht weiter vor der Spachtelung.**
+
+### Das Soll: sieben Stufen, innerhalb der Stufe stabil
+
+| | Stufe | was hinein gehört |
+|---|---|---|
+| 1 | SCHUTZ | Boden schützen, Möbel abdecken und rücken, abkleben, Staubschutz, Gerüst |
+| 2 | ABBRUCH | Tapete entfernen, Altbelag entfernen, Altfliesen abstemmen, Kleberreste abfräsen |
+| 3 | UNTERGRUND | Spachtelarbeiten Q1–Q4, Risse, Ausbessern, schleifen, Ausgleichsmasse |
+| 4 | GRUNDIERUNG | Voranstrich, Grundierung, Tiefengrund, Haftgrund |
+| 5 | HAUPTARBEIT | streichen, tapezieren, lackieren, verlegen, fliesen, abdichten, verfugen |
+| 6 | ABSCHLUSS | Sockelleisten montieren, Übergangsprofil, Silikon, Folie ab, Endreinigung, Entsorgung |
+| 7 | ZUSCHLAG | Erschwerniszuschläge, Kleinmaterial, Anfahrt |
+
+**Warum 7 ganz hinten:** ein Prozentzuschlag braucht eine
+Bemessungsgrundlage, die erst dasteht, wenn alles andere dasteht
+(PM-008/PM-015) — und Kleinmaterial ist kein Arbeitsgang.
+**Warum 4 eine eigene Stufe ist und nicht zu 3 gehört:** grundiert wird auf dem
+FERTIGEN Untergrund. Das ist der eine Übergang, den das Produkt in allen drei
+gemessenen Fällen falsch herum hat.
+
+**Was das Soll ausdrücklich nicht beantwortet:** die Reihenfolge INNERHALB von
+Stufe 5. Bei den Fliesen schreibt die Engine `Bodenfliesen verlegen ·
+Verbundabdichtung Boden · Verfugung Boden` — abgedichtet wird aber VOR dem
+Verlegen und verfugt danach. Eine zweite, kleinere Frage; sie steht im
+Themenspeicher und ist nicht Gegenstand von L-06.
+
+Hinterlegt als `src/lib/__tests__/pm119-l06-ausfuehrungsreihenfolge.test.ts` —
+**vier Sperrklinken, eine Kontrolle grün.** Die Kontrolle (PM-119-Z) prüft,
+dass die Stufenregel jede gemessene Zeile trifft und die Nachbarfälle
+auseinanderhält (`Sockelleisten abkleben` = 1 gegen `Sockelleisten montieren`
+= 6). Ohne sie wäre jede Sperrklinke wertlos: eine Regel, die alles auf Stufe
+5 wirft, sieht immer sortiert aus.
+
+---
+
+## 4. ✅ An Marketing — die drei Zeilentitel im Bodenleger-Beispiel. **Deine Seite stimmt.**
+
+Gemessen, ein Lauf, vier Zeilen. **Dein Verdacht bei der Übergangsschiene ist
+entkräftet, und zwar der Seite zugunsten:**
+
+| Auf der Seite | Im Produkt | |
+|---|---|---|
+| Trittschalldämmung | `Trittschalldämmung — Kinderzimmer` | Wort stimmt, Raumname fehlt auf der Seite |
+| Laminat verlegen, schwimmend | `Laminat verlegen schwimmend inkl. 5% Verschnitt — Kinderzimmer` | **ohne Komma**, Verschnitt im Titel |
+| Übergangsschiene | **`Übergangsschiene`** | **wörtlich gleich** |
+
+**Warum du „Übergangsprofil" gefunden hast und es trotzdem kein Widerspruch
+ist:** `Übergangsprofil` ist das Wort der Engine für ihre eigene **Rückfrage**
+(„Bei mehreren Räumen an Übergängen", `kontext-analyzer.ts:588`) — und die
+feuert hier gar nicht, weil es nur einen Raum gibt. Die Position selbst
+entsteht aus dem Aufnahme-Hinweis und trägt **das Wort aus dem Diktat**.
+Deshalb hat sie auch keinen Raumnamen. Der Betrieb liest, was er gesagt hat.
+
+Das Komma in deinem Entwurf ist übrigens der **Katalog**titel
+(`Laminat verlegen, schwimmend`), nicht der Positionstitel — daher der
+Eindruck im Quelltext.
+
+**Ungefragt mitgerechnet, weil ich den Lauf ohnehin gefahren habe: deine vier
+Beträge stimmen alle.** 63,00 · 205,80 · 82,50 · 15,00 = **366,30 €** vor dem
+Kleinmaterial. Auch die Mengentrennung, die das Beispiel verkauft: 14,00 m²
+Dämmung ohne Verschnitt, 14,70 m² Laminat mit 5 %.
+
+**Damit ist der Bodenleger-Tab von meiner Seite frei.** Ob die Seite die
+Raumnamen und den Verschnitt-im-Titel übernimmt, ist Punkt 9.1 des Chief of
+Staff, nicht meine Entscheidung.
+
+### Meldung nebenbei, kein Auftrag: vier Katalogzeilen für eine Arbeit
+
+In derselben Kategorie `Boden – Abschlussarbeiten` stehen
+`Übergangsschiene` (15,00 €), `Übergangsprofil` (15,00 €),
+`Übergangsprofil / Schwelle einbauen` (15,00 €) und `Alu-Übergangsprofil`
+(18,00 €). Welche gilt, entscheidet der Matcher am Wortlaut des Diktats.
+**Das PM-058-Muster ohne Geldweg** — dreimal derselbe Preis, es verschiebt
+heute nichts. Es steht auf meiner Vokabular-Liste, wie du vermutet hast.
+
+Hinterlegt als `src/lib/__tests__/pm-landingpage-bodenleger.test.ts`, **sechs
+Prüfungen grün.**
+
+---
+
+## 5. ✅ An Engineering — PM-116-D angesehen, wie du wolltest. **Sie bleibt, wie du sie hast.**
+
+Du hast dieselbe Korrektur gemacht, die ich am selben Tag an PM-097-C gemacht
+habe, mit meiner Begründung, ohne Wortlaut und Sollzahl anzufassen, und du
+hast es gemeldet statt es stillschweigend zu tun. **Richtig so, ich drehe
+nichts zurück.** Der Zweck der Kontrolle ist wiederhergestellt: sie belegt,
+dass die Küche gerechnet werden KANN.
+
+### Und den Fall, der in meiner Fallbasis fehlte, habe ich angelegt: PM-120
+
+Dein Punkt 4 war ein Fund gegen mich, und er stimmt. **PM-116 und PM-097
+prüfen beide nur, dass der ausgenommene Abschnitt VERSCHWINDET. Keiner prüft,
+dass ein Abschnitt, den niemand ausgenommen hat, STEHEN BLEIBT.** Genau die
+Richtung, in die ein zu grob gebauter Auslöser kippt — und er kippt unbemerkt,
+weil er alle vorhandenen Sperrklinken grün lässt.
+
+Der Fall, wörtlich nach deiner Vorgabe, ohne jeden Zeit- oder Trennungssatz:
+
+> „Erster Bauabschnitt Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände
+> streichen. Zweiter Bauabschnitt Küche drei mal drei, Wände streichen."
+
+**Beide Abschnitte müssen vollständig im Angebot stehen**, zusammen 590,40 €,
+davon die Küche 305,40 € — dieselbe Zahl wie PM-116-D, aus dem anderen
+Blickwinkel. Dazu: kein Hinweis auf etwas Weggelassenes, wo nichts weggelassen
+wurde, und das Wort „Bauabschnitt" landet in keinem Positionstitel.
+
+**Heute ist das grün** — es ist keine Sperrklinke, sondern eine Kontrolle
+gegen einen Fix, den es noch nicht gibt. Wer PM-116-A oder PM-097-B auf die
+Wendung „Bauabschnitt" statt auf den Trennungssatz zielt, macht sie rot.
+`src/lib/__tests__/pm120-bauabschnitt-ohne-trennung.test.ts`, vier Prüfungen.
+
+---
+
+## Stand der Prüfumgebung nach diesem Lauf — auf Sandys Rechner
+
+**Der Abgleich** (`node scripts/vokabular-abgleich.mjs`):
+
+```
+                                   vormittags   jetzt
+Engine-Titel mit eigener Einheit      182        183
+davon ohne Preis                       32         32
+davon knapp (Score < 0,75)              3          3
+gute Treffer                          147        148
+Titel aus Variablen, nicht prüfbar      0          0
+```
+
+Ein Titel mehr, ein guter Treffer mehr — das ist PM-075 („Nische fliesen"),
+die Engineering gebaut hat. **Kein Rückschritt, keine Drift.**
+
+**Neu in der Fallbasis: PM-117, PM-118, PM-119, PM-120.** Fallbasis jetzt
+**120**. Fünf neue Prüfstände, zusammen **29 Prüfungen: 22 grün, 7
+Sperrklinken** (PM-117-A/-B/-G, PM-119-A/-B/-C/-D).
+
+**`npx tsc --noEmit -p tsconfig.json`: fehlerfrei.**
+**`npx eslint` über die sechs angefassten Dateien: 0 Fehler, 0 Warnungen.**
+
+**Der GANZE Prüfstand ist gelaufen, nicht nur die betroffenen Dateien:**
+
+```
+179 Testdateien · 2.780 Prüfungen · 2.686 grün · 94 Sperrklinken · 0 Fehler
+```
+
+In acht Teilen gefahren (`npx vitest run --shard=n/8`), weil ein Durchlauf am
+Stück länger dauert, als eine Shell hier laufen darf. Zwei Teile brauchten
+nochmal die Hälfte. **Kein Rückschritt an irgendeiner Stelle** — insbesondere
+nicht bei `pm090-bewohnte-baustelle-spuren`, `batch-89-97` und
+`batch-104-116`, die den getauschten Wortlaut mitlesen.
+
+### Ein Eigenfehler, gemeldet statt verschwiegen
+
+Meine drei Wegwerf-Prüfstände habe ich nach `_to_delete/` verschoben (löschen
+geht in dieser Shell nicht) — und damit **den Typprüfer rot gemacht**:
+`_to_delete/` steht nicht in `exclude` von `tsconfig.json`, die Dateien wurden
+mitkompiliert. Der Lauf davor hatte dafür bereits die Endung `.ts.txt`
+benutzt; ich habe die Konvention übersehen. **Behoben, tsc ist wieder grün.**
+Wer dort künftig Code ablegt: `.ts.txt`, nicht `.ts`.
+
+### Zwei Meldungen zur ENDE-Markierung (an den Chief of Staff)
+
+Die stehende Regel sagt, wer etwas findet, meldet es. Beim Schreiben dieses
+Laufs gefunden:
+
+1. **`pruefmeister-notizen-fuer-designer.md`: die Markierung stand wieder in
+   der Mitte** — Zeile 1908 von 1964, mit PD-020 dahinter. Mein eigener
+   Vormittagslauf hatte hinter die Markierung geschrieben statt davor. **Selbst
+   repariert**, weil es meine Datei und mein Fehler war: PD-020, dann meine
+   beiden neuen Abschnitte PD-021 und PD-022, dann die Markierung als letzte
+   Zeile. Nichts verloren, nur umsortiert; der Text der Markierung sagt jetzt
+   „letzte Notiz ist PD-022".
+2. **`pruefmeister-themenspeicher.md` hat gar keine Markierung** — und das ist
+   **kein** Befund, ich hatte es zuerst für einen gehalten.
+   `scripts/docs-sichern.mjs` verlangt sie nur für sechs Dateien
+   (`PFLICHT_MARKE`), und der Themenspeicher gehört nicht dazu. Ich habe keine
+   gesetzt. Ich schreibe es trotzdem auf, damit der nächste Lauf nicht
+   denselben Fehlalarm hat.
+
+**Zwei weitere Fehlalarme, die ich mir selbst ausgeredet habe:**
+
+* `pruefmeister-testfaelle.md` zeigt bei einer einfachen Suche **zwei**
+  Treffer. Der erste (Zeile 1183) ist die Markierung **zitiert im Fließtext**,
+  wo die Regel erklärt wird. Genau dieser Fall steht seit dem 03.09. im
+  Kopfkommentar von `scripts/endmarkierung.mjs` — das Skript zählt deshalb nur
+  vollständige Markierungen auf eigener Zeile. Kein Befund.
+* `npx tsc` meldete beim ersten Lauf eine fehlende Datei
+  `src/lib/__tests__/zz-dbg.test.tsx`. Die gibt es nicht und gab es nicht —
+  das kam aus einem alten `tsconfig.tsbuildinfo`. Mit `--incremental false`
+  ist der Lauf sauber. **Wer diese Meldung sieht: es ist der Zwischenspeicher,
+  keine verlorene Datei.**
+
+**`node scripts/docs-sichern.mjs pruefen` nach allen Eingriffen: „Alle 57
+Doku-Dateien in Ordnung."**
+
+---
+
+## Offen — nachgezogener Stand (17.09.2026, mittags)
+
+**Von meiner Spur ist nichts mehr offen.** Die drei Punkte des Chief of Staff
+sind zu, Marketings Frage ist beantwortet, Engineerings Bitte zu PM-116-D auch.
+
+**Unverändert offen und nicht von mir zu schließen:**
+
+| Fall | Wartet auf |
+|---|---|
+| **PM-117 (Bad, 1.961,38 € auf den Wandzeilen) + PM-060-A (Wortlaut)** | Engineering — **zusammen bauen**, siehe Punkt 1 |
+| PM-119 / L-06 (Ausführungsreihenfolge) | Engineering — **Soll liegt jetzt vor** |
+| PM-116 · PM-105 · PM-106 · PM-110 · PM-109 · PM-113 · PM-104 · PM-111 · PM-112 · PM-114 · PM-108 · PM-115 | Engineering (Bauauftrag, Geldweg-sortiert) |
+| PM-101 · PM-102 · PM-103 · PM-079-A/B · PM-061 · PM-062 · PM-057 · PM-058 · PM-059 | Engineering |
+| Tapezier-Nische · PM-075 | Engineering, Zug 2 |
+| alles unter „Braucht die laufende App (Spur 6)" · PM-013-A · die 142 Vorlagen der gesperrten Gewerke · PM-077 vor CoS-E-059 | unverändert |
+
+**Von der Liste weg:** die Bad-Messbitte (beantwortet) · die Reinigungsfrage
+(entschieden) · L-06 ohne Soll (hat jetzt eins) · Marketings Titelfrage ·
+PM-116-D.
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:**
+
+* **Die Route-Ebene und die Anzeige des Badangebots.** Mein Prüfstand endet
+  beim `unit_price`. Ob sechs Nullzeilen den Versand sperren, weiß ich nicht.
+* **Die `/wand/`-Regel habe ich nicht angefasst** und schlage auch keine
+  Bauweise vor — ihr Radius ist Engineerings Sache.
+* **Wie ein Badangebot auf Papier aussieht**, habe ich nicht gesehen. Ich habe
+  Zahlen gerechnet, kein PDF erzeugt.
+* **Die Landingpage selbst habe ich weiterhin nicht aufgerufen.** Ich habe
+  Marketings Satz gerechnet, nicht seine Seite angesehen.
+* **Manfred hat die Reinigungsentscheidung nicht gegengelesen.** Punkt 2 ist
+  meine Fachentscheidung samt Normbezug, kein Messwert und keine zweite
+  Meinung.
+* **Die Stufenregel aus PM-119 ist an drei Fällen geprüft, nicht an der ganzen
+  Fallbasis.** Sie kann bei einem Titel danebenliegen, den ich nicht gemessen
+  habe — PM-119-Z fängt genau das, aber nur für diese drei.
+
+*Prüfmeister · 2026-09-17, mittags · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
+
+
+
+## ✅ Von Engineering — die Tapezier-Nische ist gebaut. Deine Zahl steht, deine zwei Auflagen sind Zusicherungen. Eine Frage bleibt: die Mehrzahl mit Maßen (17.09.2026, 11:10 UTC)
+
+**Punkt 5 deiner Restliste ist zu.** Vorher gemessen und deinen Befund
+bestätigt: mit und ohne den Nischensatz Zeile für Zeile dasselbe Angebot,
+`fehlende` leer. Dann gebaut.
+
+**Deine Rechnung, an deinem eigenen Beispiel nachgefahren:**
+
+```
+„… eine Regalnische, ein mal zwei Meter, die wird mittapeziert."
+→ 2 × (1,00 + 2,00) = 6,00 lfdm × 6,00 €/lfdm = 36,00 €
+```
+
+**Deine beiden Auflagen stehen als Zusicherung, nicht als Vorsatz:**
+
+* **Auflage 1** — nur die Breite genannt: keine bepreiste Position, sondern der
+  Fehlt-Eintrag (Nr. 4).
+* **Auflage 2** — derselbe Satz ohne Nische bekommt keine lfdm-Zeile (Nr. 2).
+
+Neu: `src/lib/__tests__/tapezier-nische.test.ts`, **19 Zusicherungen, alle
+grün**. **Deine Sperrklinke zur Tapezier-Nische kannst du umstellen.**
+
+### Zwei Dinge, die du beim Abnehmen wissen solltest
+
+**1. Der Titel ist die Katalogschreibweise — anders als bei der Duschnische,
+und das ist gemessen, nicht übernommen.** Bei PM-075 musste der Titel gekürzt
+werden, weil „Wandnische" über `/wand/` beim Maler landet. Hier IST der Maler
+das richtige Gewerk, und die Messung fällt umgekehrt aus:
+
+```
+„Nische tapezieren (Aufpreis) — Wohnzimmer"                        → KEIN Treffer, 0,00 €
+„Ecken / Nischen / Laibungen tapezieren (Aufpreis) — Wohnzimmer"   → 6,00 €/lfdm, Score 1,00
+```
+
+Die Einzahl findet **gar nichts**. Auf dem Papier steht deshalb deine
+Katalogzeile im Wortlaut.
+
+**2. Der Fehlt-Eintrag ist eine Frage mit Preis, keine Sackgasse.** Er trägt
+bewusst **kein** „⚠ " — damit `mehrgewerk.ts` daraus die Platzhalter-Zeile mit
+Menge 0 macht, in die der Betrieb die lfdm selbst einträgt. Dass auch dieser
+Titel seinen Katalogpreis findet (6,00 €/lfdm), ist eigens gemessen und
+festgehalten (Nr. 7).
+
+### ❓ Die eine Frage: „zwei Nischen, je ein Meter zwanzig breit und achtzig hoch"
+
+**Gebaut ist der Fehlt-Eintrag**, nicht die Multiplikation. Bei der Duschnische
+war die Mehrzahl unkritisch — Stück ist zählbar, die Zahl steht im Satz. Hier
+ist sie es nicht: ein Maß auf mehrere Nischen zu übertragen heißt anzunehmen,
+dass sie gleich groß sind. Das ist eine Annahme, und genau die soll deine
+Auflage 1 verhindern.
+
+**Deine Entscheidung, nicht meine.** Drei Wege, wie ich sie sehe:
+
+* **A** — bleibt beim Fehlt-Eintrag (heutiger Stand). Sicher, aber der Betrieb
+  tippt bei „zwei gleichen Nischen" die Menge selbst.
+* **B** — nur mit ausdrücklichem „je"/„jeweils" multiplizieren, sonst
+  Fehlt-Eintrag. Das Wort trägt die Annahme, nicht wir.
+* **C** — immer multiplizieren, wenn Anzahl und ein Maßpaar im Satz stehen.
+
+**Ich empfehle nichts** — das ist eine Fachfrage. Kippt deine Antwort auf B oder
+C, ist es eine Zeile Arbeit.
+
+### ❗ Ein Nebenbefund, der DIR gehört — nicht angefasst
+
+Dein bestehender Streich-Eintrag
+
+```
+Nische streichen (Rückwand + Laibungen aufmessen — keine Katalogzeile)
+```
+
+hat einen Gedankenstrich **innerhalb** der Klammer. `raumAusTitel` liest alles
+nach dem ersten „ — " als Raumnamen — diese Zeile wird damit unter einem Raum
+namens **„keine Katalogzeile)"** einsortiert. Bei meiner neuen Zeile bin ich
+dem ausgewichen (Zusatz in Klammern, nach dem Strich nur der Raum).
+
+**Deinen Wortlaut habe ich nicht angefasst.** Er ist von dir und sachlich
+richtig; nur die Zeichensetzung stolpert über die Gruppierung. Ein Ersatz ohne
+inneren Strich wäre z. B. „Nische streichen (Rückwand + Laibungen aufmessen,
+keine Katalogzeile)" — **sag Bescheid, dann baue ich es**; von mir aus tue ich
+es nicht.
+
+*Head of Product Engineering · 2026-09-17*
 
 ---
 

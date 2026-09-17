@@ -1180,7 +1180,8 @@ das liegt bei Sandy. Ich habe es unverändert weitergegeben.
 
 ---
 
-<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser Markierung auf,
+**Hinweis zur Dateiführung (Chief of Staff, 17.09.2026 nachgezogen):** Am Dateiende steht eine
+HTML-Kommentarzeile als Endmarkierung. Taucht beim Lesen noch Text NACH dieser Markierung auf,
 ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte
 zu schreiben. Voller Hintergrund: CoS-013 in `chief-of-staff-todos.md`.
@@ -8080,6 +8081,138 @@ Falsches, nicht nur zu wenig. Dann PM-038 und PM-039, die tragen die meisten
 neuen Positionsarten. Der Rest in beliebiger Folge.
 
 *Prüfmeister · 2026-09-10*
+
+
+---
+
+# Batch PM-117 bis PM-120 (Prüfmeister, 2026-09-17, mittags)
+
+**Alle vier sind ohne Mikrofon gemessen** — über dieselbe Kette, die der
+Endpunkt fährt, auf Sandys Rechner. Die ausführliche Fassung mit Begründungen
+steht in `pruefmeister-restliste.md`, Lauf vom 17.09. mittags.
+
+**Fallbasis: 120.**
+
+---
+
+### PM-117 — Bad, Wände und Boden fliesen: der Preisweg ❌ **Bug offen**
+
+**Deckt ab:** Gewerke-Router `/wand/` · Katalogfilter vor dem Matcher ·
+Nullzeilen auf dem Kundenpapier
+
+> Badezimmer drei Meter zwanzig mal zwei Meter zehn, alles neu fliesen, Wände bis zwo Meter zwanzig hoch, Boden auch. Die alten Fliesen kommen raus.
+
+**Ist (gemessen 17.09.):**
+
+| Position | Menge | Ist | Soll |
+|---|---|---|---|
+| Bodenfliesen verlegen | 7,39 m² | **0,00 €** | 280,82 € |
+| Verbundabdichtung Boden | 6,72 m² | 147,84 € | 147,84 € ✅ |
+| Verfugung Boden | 6,72 m² | **0,00 €** | 67,20 € |
+| Wandfliesen verlegen | 24,49 m² | **0,00 €** | 1.028,58 € |
+| Verfugung Wand | 23,32 m² | **0,00 €** | 279,84 € |
+| Verbundabdichtung Wand | 23,32 m² | **0,00 €** | 652,96 € |
+| Fliesensockel / Abschlussleiste | 10,60 lfdm | **0,00 €** | 127,20 € |
+| Altfliesen abstemmen | 22,00 m² | 396,00 € | 396,00 € ✅ |
+| Entsorgung Fliesenmaterial | 22,00 m² | **0,00 €** | keine Katalogzeile |
+| **Summe netto** | | **543,84 €** | **2.980,44 €** |
+
+- **Die Mengen stimmen alle.** Verschnitt 10 % Boden, 5 % Wand, Verfugung und
+  Abdichtung auf netto. Es fehlt ausschließlich der Preis.
+- **Es trifft jedes Bad und jeden Betrieb.** Beim Fliesenleger ist die
+  Kandidatenliste der drei Wandzeilen **leer** (0 von 95 Kategorien beginnen
+  mit „Maler"); ein Allrounder mit vollem Katalog bekommt dieselbe Summe, weil
+  der Filter vor dem Matcher greift.
+- **Zwei Ursachen, getrennt:** `Verbundabdichtung Wand` (652,96 €) scheitert
+  **nur** am Router — sie fände ihren Treffer mit Score 0,94. Die beiden
+  anderen Wandzeilen scheitern zusätzlich am Wortlaut (PM-060-A) und bleiben
+  nach einem Router-Fix bei null. **Zusammen bauen.**
+- Prüfstand: `src/lib/__tests__/pm117-bad-wandpositionen.test.ts` —
+  5 Kontrollen grün, 3 Sperrklinken (A, B, G).
+
+---
+
+### PM-118 — „Am letzten Tag wird besenrein übergeben" ✅ **entschieden, kein Bug**
+
+**Deckt ab:** Nebenleistung vs. Besondere Leistung · Fehlt-Eintrag statt
+erfundener Pauschale
+
+> Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände und Decke streichen. Am letzten Tag wird besenrein übergeben.
+
+**Soll (= Ist):** **keine** bepreiste Reinigungsposition, **ein**
+Fehlt-Eintrag.
+
+- Besenrein übergeben ist das Räumen der eigenen Baustelle — nach DIN 18299
+  Abschnitt 4.1.1 eine **Nebenleistung**, im Einheitspreis enthalten. Eine
+  40,00-€-Pauschale wäre eine Doppelberechnung, die der Kunde erst auf der
+  Rechnung sieht.
+- Der Satz ist außerdem eine **Zusage des Betriebs**, keine Bestellung des
+  Kunden.
+- **Wortlaut des Fehlt-Eintrags am 17.09. getauscht** (er gehört dem
+  Prüfmeister): sagt jetzt, dass die Leistung enthalten ist, statt zum
+  Bepreisen aufzufordern.
+- **Der wiederkehrende Fall ist unverändert** („jeden Abend besenrein"): dort
+  fehlt wirklich nur die Menge, und er ist eine Besondere Leistung. Stehen
+  beide Sätze im Diktat, gewinnt der wiederkehrende — ein Eintrag, nicht zwei.
+- Prüfstand: `src/lib/__tests__/pm118-besenreine-uebergabe.test.ts` — 6 grün.
+
+---
+
+### PM-119 / L-06 — die Positionen stehen nicht in der Reihenfolge der Ausführung ❌ **Bug offen**
+
+**Deckt ab:** Sortierung der Positionen · Gliederung „Nach Arbeitsablauf"
+
+Drei Fälle, drei Ist-Reihenfolgen:
+
+```
+Büro (Q3)       Grundierung · Anstrich · Bodenschutz · Abkleben · Spachteln Q3
+Flur (Raufaser) Grundierung · Bodenschutz · Abkleben · Spachteln Q2 ·
+                Tapete entfernen · tapezieren · überstreichen
+Wohnzimmer      Laminat verlegen · Altbelag entfernen · Sockelleisten montieren
+```
+
+**Soll: sieben Stufen, innerhalb der Stufe stabil**
+— SCHUTZ · ABBRUCH · UNTERGRUND · GRUNDIERUNG · HAUPTARBEIT · ABSCHLUSS ·
+ZUSCHLAG.
+
+- **Der Flur ist der schwerste:** `Tapete entfernen` steht an fünfter Stelle,
+  hinter Grundierung und Spachtelung **derselben Wand**.
+- Beim Boden wird der neue Belag verlegt, bevor der alte herauskommt.
+- **Die vorhandene Gliederung „Nach Arbeitsablauf" löst es nicht:**
+  `phaseFuer` wirft `entfern`, `spachtel` und `grundier` gemeinsam in `vor`,
+  und innerhalb einer Phase wird nicht sortiert.
+- Prüfstand: `src/lib/__tests__/pm119-l06-ausfuehrungsreihenfolge.test.ts` —
+  1 Kontrolle grün, 4 Sperrklinken.
+
+---
+
+### PM-120 — zwei Bauabschnitte, keiner ausgenommen ✅ **grün, Kontrolle für später**
+
+**Deckt ab:** die Gegenrichtung zu PM-097 und PM-116
+
+> Erster Bauabschnitt Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände streichen. Zweiter Bauabschnitt Küche drei mal drei, Wände streichen.
+
+**Soll (= Ist):** **beide** Abschnitte vollständig im Angebot, zusammen
+590,40 € (Küche davon 305,40 €). Kein Hinweis auf etwas Weggelassenes. Das
+Wort „Bauabschnitt" in keinem Positionstitel.
+
+- **Fund von Engineering, die Lücke war meine:** PM-097 und PM-116 prüfen
+  beide nur, dass der *ausgenommene* Abschnitt verschwindet — keiner prüft,
+  dass ein *nicht* ausgenommener stehen bleibt. Genau dorthin kippt ein
+  Auslöser, der auf die Wendung „Bauabschnitt" zielt statt auf den
+  Trennungssatz, und er kippt unbemerkt, weil er alle vorhandenen
+  Sperrklinken grün lässt.
+- Prüfstand: `src/lib/__tests__/pm120-bauabschnitt-ohne-trennung.test.ts` —
+  4 grün.
+
+---
+
+**Gesamtlauf nach diesem Batch, auf Sandys Rechner in acht Teilen gefahren:**
+**179 Testdateien, 2.780 Prüfungen — 2.686 grün, 94 Sperrklinken, 0 Fehler.**
+`npx tsc --noEmit` fehlerfrei, `npx eslint` über die angefassten Dateien
+0 Fehler / 0 Warnungen.
+
+*Prüfmeister · 2026-09-17, mittags*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
