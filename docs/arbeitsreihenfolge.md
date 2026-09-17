@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 05:50 UTC · Chief of Staff**
-*(ersetzt die Fassung von 05:10 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 06:20 UTC · Chief of Staff**
+*(ersetzt die Fassung von 05:50 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**.*
 
 ---
@@ -70,13 +70,16 @@ selbst beantwortet. Von den drei Landingpage-Fragen bleiben **zwei**.
 | # | Was | Aufwand |
 |---|---|---|
 | 1 | 🟡 **Pushen.** Ein Commit von mir (Designer-Arbeit + Doku). | ein Befehl |
-| 2 | 🔴 **Zwei Fragen zur Landingpage** — Preis bei § 19 (**A/B**) und die Zählzeile „18 von 25 frei". **Die Seite darf vorher nicht live gehen.** | zwei Sätze |
+| 2 | 🔴 **Eine Frage zur Landingpage** — Preis bei § 19 (**A/B**). Sandy tendiert zu **B** (Regelbesteuerung), hat aber noch nicht bestätigt. **Die Seite darf vorher nicht live gehen.** | ein Satz |
 | 3 | 🟡 **CoS-P-013: ein Satz fehlt** — ging „Passwort speichern" durch und konntest du dich danach neu anmelden? | ein Satz |
 | 4 | 🔵 **E-Rechnungs-Viewer installieren** (Quba, 0 €) — F-004, nicht eilig | einmalig |
 | 5 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht neu geprüft |
 
 **Erledigt und weg von ihrer Liste:** die dritte Finance-Frage („Echte
 Aufnahmen") — Marketing hat sie selbst beantwortet und formuliert den Satz um.
+Und **die Zählzeile „18 von 25 frei" — Sandy hat entschieden: streichen.** Das
+Versprechen „die ersten 25 zahlen dauerhaft 29 €" bleibt, nur der Countdown
+geht weg. Marketing ist verständigt, einer der sechs Stopper ist damit zu.
 
 ---
 
@@ -86,7 +89,7 @@ Aufnahmen") — Marketing hat sie selbst beantwortet und formuliert den Satz um.
 |---|---|---|
 | **Engineering** | **CoS-E-073** — allgemeine `vage`-Regel in den Extraktions-Prompt, plus die Architekturfrage zu den drei übrigen `vage_typ`-Werten. Dazu die Ein-Wort-Antwort an Marketing: **Lexware Office oder Lexoffice?** | niemanden |
 | **Prüfmeister** | Marketings zwei Fragen in `pruefmeister-restliste.md` — Kleinmaterial-Pauschale, und **das Büro einmal in der Fassung laufen lassen, die auf die Seite soll** (Fenster + Tür + zwei Heizkörper, sitzt auf PM-098) | niemanden |
-| **Marketing** | Textfassungen für M-1, M-2, M-5 und „Echt eingesprochen" ausformulieren, in einem Stück | Sandys zwei Antworten für den Rest |
+| **Marketing** | Textfassungen für M-1, M-2, M-5 und „Echt eingesprochen" ausformulieren — **plus die Zählzeile streichen** (entschieden) | Sandys A/B zu § 19 |
 | **Designer** | PD-019 Punkt 2 (Nachtrag ohne Kennzeichnung, PM-115) und Punkt 3 (zwei Bauabschnitte, PM-116) · PD-018 Punkt 3 wartet auf die Messung des Prüfmeisters | Prüfmeister (nur PD-018 P3) |
 | **Platform** | unverändert: Lese-Token `actions:read` (nicht dringend), BOM in `ci.yml` nach eigenem Ermessen | niemanden |
 | **Finance** | unverändert | Sandys A/B zu § 19 |
@@ -105,4 +108,4 @@ Aufnahmen") — Marketing hat sie selbst beantwortet und formuliert den Satz um.
 * **Ein Betrieb hängt an genau einem Konto.** Mitarbeiterzugänge gibt es
   nicht; die FAQ wird entsprechend gekürzt (M-5).
 
-*Chief of Staff · 2026-09-17, 05:50 UTC*
+*Chief of Staff · 2026-09-17, 06:20 UTC*

@@ -2175,5 +2175,28 @@ Vorlage, kein Eingriff.
 
 ---
 
+---
+
+## Sandy-Entscheidung — die Zählzeile ist gestrichen (Chief of Staff, 2026-09-17)
+
+**Zu eurem Stopper „erfundene Gründerplätze":** Sandy hat entschieden —
+**die Zeile „Gründerplätze: 18 von 25 frei" wird gestrichen**, nicht echt
+gezählt. Ihr braucht dafür keinen Zähler zu bauen und niemanden zu fragen.
+
+**Das Versprechen bleibt:** „die ersten 25 Betriebe zahlen dauerhaft 29 €"
+steht unverändert in `preismodell.md` und darf auf der Seite bleiben. Weg ist
+nur der Countdown.
+
+**Damit ist einer eurer sechs Stopper zu.** Die Zeile ist in keiner Code-Datei
+und in keiner Doku-Datei im Repo zu finden (gesucht in `src/` und `docs/`) —
+sie existiert nur in eurem Entwurf. Das Streichen liegt also bei euch, in der
+Textfassung, die ihr ohnehin gerade ausformuliert.
+
+**Noch offen bei Sandy:** die MwSt.-Frage (F-006, A/B). Die Seite geht bis
+dahin nicht live.
+
+*Chief of Staff · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

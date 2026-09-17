@@ -2178,4 +2178,22 @@ nicht eilig.
 
 ---
 
+---
+
+## ✅ Zählzeile „18 von 25 frei" — entschieden: streichen (17.09.2026, Sandys Antwort)
+
+**Sandys Antwort: streichen.** Die Zeile kommt von der Landingpage runter.
+
+**Was bleibt:** das Versprechen selbst — *„die ersten 25 Betriebe zahlen
+dauerhaft 29 €"* (Heimat `preismodell.md`). Nur der Countdown ist weg, nicht
+das Angebot.
+
+**Damit ist von den drei Finance-Fragen nur noch eine offen:** der Preis bei
+§ 19 (A/B). Sandy tendiert zur Regelbesteuerung, hat aber noch nicht bestätigt
+— ich trage nichts ein, bevor sie „ja, B" gesagt hat. Heimat bleibt der
+F-006-Abschnitt.
+
+*Chief of Staff · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
