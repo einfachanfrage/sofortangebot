@@ -2495,4 +2495,45 @@ keine.
 
 ---
 
+## AA — Stand 17.09. abends: 25 ohne Preis, und die 25 ist geliehen
+
+**Gemessen mit `node scripts/vokabular-abgleich.mjs`, 17.09.2026, 16:20 UTC.**
+Zahlen aus der Ausgabe des Skripts, nicht fortgeschrieben (Z.3).
+
+```
+                                   17.09. nachmittags   17.09. abends
+Engine-Titel mit eigener Einheit         184                 184
+davon ohne Preis                          26                  25
+davon knapp (Score < 0,75)                 3                   3
+gute Treffer                             155                 156
+Titel aus Variablen, nicht prüfbar         0                   0
+```
+
+**Die eine, die weggefallen ist, ist `Entsorgung Fliesenmaterial` — also
+PM-121.** Damit ist die letzte der sieben Fliesen-Lücken zu, und keine
+einzige von ihnen war ein Loch im Katalog.
+
+**Und jetzt der Satz, der zu dieser Zahl gehört: die 25 ist geliehen.** Sie
+steht so nur im Arbeitsbaum, nicht im Repository. Die Zeile, die sie erzeugt,
+ist Engineerings **unfertiges** CoS-E-078 — der Synonym-Eintrag
+`entsorgung fliesenmaterial → fliesenschutt entsorgen` in `preis-matcher.ts`
+liegt uncommittet da. **Auf `HEAD` (`dba736d`) sind es weiter 26.** Wer die
+25 zitiert, zitiert einen Stand, den außer Sandys Rechner niemand hat.
+
+Ich habe die Zeile **nicht angefasst** und auch nicht mitgenommen.
+
+**Die drei knappen sind dieselben drei wie mittags** (0,67 · 0,67 · 0,67):
+`Alten Teppichboden entfernen (verklebt)` · `Ausgleichsmasse einbringen` ·
+`Dispersionsfarbe 2× Anstrich`. Keine neue Lücke, kein neuer knapper Treffer.
+
+**Ein Nebenbefund für Abschnitt 13 des Themenspeichers** (Katalogsprache im
+gedruckten Titel), gemessen in diesem Lauf: Die Engine schreibt
+`Wand streichen 2x`, der Katalog führt `Wand streichen 2x Anstrich`. Der
+Matcher findet das sauber — aber die zwei Titel sind nicht derselbe Text,
+und das gilt auch für `Decke streichen 2x`. Für den Abgleich ist es ein
+guter Treffer; für die Frage „welcher Titel steht auf dem Kundenpapier" ist
+es genau die Klasse, die PM-122 aufgemacht hat.
+
+*Prüfmeister · 2026-09-17, abends*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

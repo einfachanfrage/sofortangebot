@@ -793,4 +793,73 @@ gemessen hat:**
 
 ---
 
+## Nachtrag 17.09.2026, abends — Punkt 9 ist zu, und er war größer als gedacht
+
+**Abgeräumt:**
+
+* **Punkt 9 — die Zahl neben dem Wort, ganz** → **PM-131 · PM-132 · PM-133**.
+  Die Frage war richtig gestellt („eine Messung am Ausdruck, kein
+  Einzelfall"), und die Familie ist größer und teurer als PM-128:
+  * **PM-131:** PM-128 hängt an **einem Komma**. „Wohnzimmer, fünf mal
+    vier" → 1 Tür, ohne Komma → 5 Türen. 720,00 € an einem Satzzeichen, das
+    niemand spricht.
+  * **PM-132:** der dritte Zweig `(\d+)\s*stück` kennt das gesuchte Wort
+    **nicht**. „Wir liefern 50 Stück Fliesen dazu." → **50 Türen**,
+    457,25 € → 9.277,25 €. Rechenweg: „50 Tür(en) **aus Transkript**".
+  * **PM-133:** die Ordnungszahl am Bauteil wird Stückzahl („Fenster 3 ist
+    kaputt" → 3 Fenster) — **und** der gemeinte Fall wird verpasst („3 alte
+    Türen lackieren" → 1 Tür, 360,00 € gegen den Betrieb).
+  Von den Kandidaten des Punkts haben „fenster", „tür" und „meter"
+  getroffen; „raum" ist am Komma gescheitert wie „zimmer".
+* **Marketings Bitte** (Restliste, 17.09.) → **PM-129** (Hero: zwei von drei
+  Zahlen stimmen, 17,10 lfdm gibt es nicht, eine vierte Zeile fehlt auf der
+  Seite) und **PM-130** (Diktat 2 erzeugt keine fünf Türen, ist aber PM-094:
+  ein Angebot aus einer einzigen erfundenen Zeile).
+
+Offen bleiben aus den älteren Abschnitten: **M.1** (teilweise, PM-116/PM-120),
+**M.3**, **M.5**, Mittags-Punkt 7, und aus dem Nachmittag die **Punkte 10,
+11, 12 und 13** — Punkt 11 (der Umfang der Verneinungsmaschine) bleibt der
+mit dem größten Hebel, weil drei Fälle daran hängen.
+
+---
+
+**Neu aufgemacht — was aus diesen fünf Fällen fällt und noch niemand
+gemessen hat:**
+
+14. **Die behauptete Herkunft.** PM-132 druckt „50 Tür(en) **aus
+    Transkript**" für eine Zahl, die im Transkript nicht als Türzahl steht.
+    Punkt 10 fragt, ob eine gekennzeichnete Annahme geprüft ist; **hier ist
+    die Kennzeichnung selbst unwahr.** Ungemessen: **wie viele
+    Berechnungswege sagen „aus Transkript", und bei wie vielen steht die
+    Zahl wirklich im Transkript?** Eine Messung an allen Rechenwegen gegen
+    ihren Eingabetext — prüfbar ohne App und größer als ein Fall, weil
+    „aus Transkript" die Zeile ist, die einen Menschen vom Nachschauen
+    abhält.
+15. **Die Zeichensetzung als Preisfaktor.** PM-131 zeigt, dass ein Komma
+    720,00 € entscheidet, und das Komma kommt aus der Spracherkennung, nicht
+    vom Sprecher. Ungemessen: **welche anderen Messungen hängen an der
+    Zeichensetzung des Transkripts?** Und, praktischer: **schreibt unsere
+    Spracherkennung dieses Komma zuverlässig?** Der zweite Teil ist die
+    einzige offene Frage dieses Themenspeichers, die **nicht** ohne App
+    prüfbar ist — sie braucht einen echten Aufnahmelauf.
+16. **Jede eigene Messung hängt an derselben Zeichensetzung.** PM-128 wurde
+    mit Komma nachgemessen und sah behoben aus. **Wer einen „…zimmer"-Fall
+    nachmisst und das Komma tippt, sieht den Fehler nicht.** Gehört zu H:
+    eine Regel für die Fallbasis selbst, keine über das Produkt — jeder
+    Raumsatz in der Fallbasis wird künftig in beiden Fassungen gemessen.
+17. **Was auf der Landingpage steht, ist eine Zusicherung.** PM-130 hat den
+    Satz auf unserer eigenen Seite als **PM-094** erkannt — ein bekannter
+    Fund, veröffentlicht als Beispiel. Ungemessen: **die übrigen Diktate und
+    Beispielzahlen der Seite gegen das Produkt**, Stück für Stück. Zwei sind
+    jetzt gemessen (PM-129/PM-130), das Büro war es schon
+    (`pm-landingpage-buero.test.ts`). Es gehört Marketing und mir zusammen,
+    und es ist die billigste Absicherung, die Gate-1-Punkt 9.1 bekommen kann.
+18. **Die Rückfrage nach der Höhe ist bis heute nicht gebaut.** PM-094 nennt
+    sie seit dem 16.09. als richtige Antwort, PM-130 zeigt sie auf der
+    Landingpage. Ungemessen ist nichts mehr daran — **es ist ein Bauauftrag,
+    der nirgends in einer Spur steht.** Gehört in Engineerings Liste, nicht
+    in meine.
+
+*Prüfmeister · 2026-09-17, abends*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

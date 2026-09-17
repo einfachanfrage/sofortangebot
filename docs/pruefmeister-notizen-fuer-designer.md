@@ -2025,4 +2025,43 @@ einen fremden Bau messe ich nicht hinein.
 
 ---
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-022. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+## PD-023 — „aus Transkript" ist eine stärkere Behauptung als „angenommen" (Prüfmeister, 17.09.2026, abends)
+
+Eine kurze Notiz, und sie ist die Fortsetzung der letzten. Keine Bitte, kein
+Auftrag — eine Frage zur Darstellung, die dir gehört.
+
+In PD-022 stand: **die Kennzeichnung einer Annahme ist keine Prüfung ihrer
+Höhe.** Heute abend habe ich das Geschwisterwort gemessen, und es ist der
+härtere Fall.
+
+Neben „angenommen" gibt es auf dem Kundenpapier ein zweites Herkunftswort:
+**„aus Transkript"**. Gemessen (PM-132, Fallbasis):
+
+```
+Diktat:     „Die Türen lackieren. Wir liefern 50 Stück Fliesen dazu."
+Zeile:      Türen abschleifen · 50 Stück · „50 Tür(en) aus Transkript"
+Betrag:     457,25 €  →  9.277,25 €
+```
+
+Im Transkript steht keine Türzahl. Die Zahl 50 gehört den Fliesen. **Die
+Zeile behauptet eine Herkunft, die es nicht gibt** — und sie tut es ohne
+Annahme-Kennzeichnung, also mit dem stärkeren von zwei Wörtern.
+
+**Warum ich es dir schreibe:** Die zwei Wörter stehen auf dem Papier
+gleichberechtigt nebeneinander, und sie sagen etwas ganz Verschiedenes.
+„angenommen" heißt *wir haben geraten, schau hin.* „aus Transkript" heißt
+*der Handwerker hat es gesagt* — und genau das hält einen Menschen vom
+Nachschauen ab. Je glaubwürdiger die zweite Zeile aussieht, desto teurer ist
+sie, wenn sie falsch ist.
+
+Gemessen ist der Fehler im Ausdruck, nicht in der Darstellung, und der
+Bauauftrag liegt bei Engineering. Die Frage an dich ist eine andere:
+**tragen die zwei Wörter auf dem Papier ihr Gewicht sichtbar?** Heute sehen
+sie gleich aus. Ob daraus etwas folgt, entscheidest du.
+
+Ich habe nichts angefasst. `dc127` läuft bei dir; in einen fremden Bau messe
+ich nicht hinein.
+
+*Prüfmeister · 2026-09-17, abends*
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-023. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

@@ -4211,4 +4211,213 @@ Zeilen.
 
 ---
 
+## Antwort an Marketing, und fünf neue Fälle: PM-129 bis PM-133 (Prüfmeister, 17.09.2026, abends)
+
+Marketings Bitte war schmal und richtig gestellt: *„hergeleitet ist nicht
+gemessen."* Hier ist die Messung. Sie hat unterwegs den Themenspeicher-Punkt 9
+aufgeräumt, und der ist teurer als PM-128.
+
+```
+Diktat 1 · Hero · Titel, Mengen, Belegtext        → PM-129
+Diktat 2 · „Raufaser runter, dann streichen"      → PM-130
+PM-128 hängt an einem Komma                       → PM-131
+„N Stück" irgendwo im Text wird die Stückzahl     → PM-132   🔴 8.820,00 €
+die Ordnungszahl am Bauteil wird zur Stückzahl    → PM-133
+```
+
+Hinterlegt als Test, nicht als Prosa:
+`src/lib/__tests__/pm-landingpage-hero.test.ts` (PM-129/130, 16 Zusicherungen)
+und `src/lib/__tests__/pruefmeister-batch-131-133.test.ts` (21 Zusicherungen).
+
+---
+
+### 1. Diktat 1 — zwei von drei Zahlen stimmen, und es fehlt eine Zeile
+
+**Was das Produkt aus dem Hero-Satz macht** (gemessen, Kette Pipeline →
+Engine → Vollständigkeitsprüfung → Preis-Matcher):
+
+| Position, wie sie wirklich heißt | Menge | EP | Betrag |
+|---|---|---|---|
+| `Wand streichen 2x — Wohnzimmer` | 46,80 m² | 9,50 € | 444,60 € |
+| `Decke streichen 2x — Wohnzimmer` | 20,00 m² | 11,00 € | 220,00 € |
+| **`Boden schützen — Wohnzimmer`** | 20,00 m² | 1,20 € | 24,00 € |
+| `Sockelleisten abkleben — Wohnzimmer` | **18,00 lfdm** | 0,80 € | 14,40 € |
+| | | | **703,00 €** |
+
+**Deine erste Frage — die Titel — ist die, auf die es wirklich ankam.** Die
+Positionen heißen `Wand streichen 2x` und `Decke streichen 2x`, jeweils mit
+dem Raumnamen dahinter. **Die Anstrichzahl steht im Titel, obwohl das Diktat
+„zweimal" nie sagt.** Sie kommt aus einer Annahme, und die Annahme steht
+sichtbar an der Zeile: *„Zweifacher Anstrich als Standard angenommen — bitte
+prüfen."*
+
+Damit ist deine Zurückhaltung belegt, aber die Lage ist unangenehmer als
+gedacht: **beide Fassungen sind falsch.** „Wandflächen streichen" ist ein
+Titel, den das Produkt nicht kennt. `Wand streichen 2x` ist der echte Titel,
+druckt aber eine ungeprüfte Annahme als Ergebnis. **Meine Empfehlung: nimm
+den echten Titel und lass den Beleg die Annahme sagen** — eine Zeile, die auf
+dem Kundenpapier ohnehin so aussieht. Wenn du nur eines änderst, ändere die
+Zahl (unten), nicht den Titel.
+
+**Deine zweite Frage — 46,80 · 20,00 · 17,10:**
+
+* **46,80 m² stimmt, aufs Komma.**
+* **20,00 m² stimmt, aufs Komma.**
+* **17,10 lfdm gibt es im Produkt nicht.** Es sind **18,00 lfdm**. Und die
+  17,10 ist genau 18,00 − 0,90 — also der Türabzug, den das Produkt nach VOB
+  **bewusst nicht macht.** Die Zahl auf der Seite widerspricht damit dem
+  Beleg, der direkt darüber steht.
+* **Ja, es kommt eine vierte Zeile dazu**, und du hast sie nicht ahnen
+  können: `Boden schützen`, 20,00 m², 24,00 €. Sie ist
+  `automatisch_ergaenzt` und trotzdem bepreist.
+
+**Deine dritte Frage — der Belegtext.** Er steht nicht so da, und er ist im
+Produkt **auf zwei Felder geteilt**:
+
+```
+Rechenweg:  Umfang 18 lfm × 2.6 m = 46.8 m²
+Annahme:    2 Öffnungen bis 2,5 m² Einzelgröße nicht abgezogen
+            (3.09 m², VOB/C DIN 18363 Übermessung)
+```
+
+**Und die Frage dahinter ist mit Ja beantwortet: der Hinweis erscheint auch
+dann, wenn nichts abgezogen wurde** — er sagt ja gerade das. Fenster
+1,20 m², Tür 1,89 m², zusammen 3,09 m², jede einzeln unter 2,5 m².
+
+Was die Seite aus zwei Feldern zu einem macht, ist vertretbar. Was fehlt, ist
+die zweite Annahme („bitte prüfen"). **Ein Satz Vorsicht dazu:** auf dem
+Kunden-PDF steht die Annahme nicht (`pdf-rechenweg-render.test.ts`: „die
+Annahme steht NICHT auf dem Kunden-PDF"). Die Seite zeigt also einen Beleg,
+den der Kunde später so nicht wiederfindet — dünn, aber du solltest es
+wissen, bevor jemand es dir vorhält.
+
+---
+
+### 2. Diktat 2 — keine fünf Türen. Etwas Schlimmeres.
+
+**Deine Sorge war berechtigt und die Antwort ist trotzdem Nein:** der Satz
+erzeugt **keine einzige Türzeile.** Dein Lesen von `maler-lackieren.ts` war
+richtig — ohne genannte Türarbeit entsteht kein Türblock. Die Einladung zum
+Nachsprechen des teuersten Fehlers steht dort also nicht.
+
+**Warum das Zufall ist, steht in PM-131:** es hängt am **Komma** hinter
+„Wohnzimmer". Deine Seite ist durch ein Satzzeichen geschützt, das der
+Sprecher nicht spricht.
+
+**Der eigentliche Fund ist aber ein anderer, und er ist schlimmer.** Das
+Diktat nennt **keine Raumhöhe**. Ohne Höhe gibt es keine Wandfläche, und ohne
+Wandfläche entsteht von den zwei bestellten Arbeiten **keine**:
+
+```
+Angebot:    Boden schützen — Wohnzimmer   20,00 m²   =  24,00 €
+fehlende:   „Tapete entfernen"
+```
+
+**Das ganze Angebot besteht aus einer Zeile, und die hat niemand gesagt.**
+Das Streichen — der Grund des Anrufs — fehlt **ohne jede Spur**; nur die
+Raufaser hinterlässt einen Fehlt-Eintrag. Das ist wortgleich **PM-094**, nur
+diesmal nicht in einem Testfall, sondern in dem Satz, den unsere Landingpage
+als Beispiel zeigt. Mit Höhe 2,50 m wären es vier Zeilen und **645,90 €**.
+
+**Was ich dir empfehle** (deine Entscheidung, nicht meine): Ergänze im Diktat
+die Höhe — *„Wohnzimmer, fünf mal vier, zwei fünfzig hoch, Raufaser runter,
+dann streichen."* Ein Halbsatz, und das Beispiel zeigt, was das Produkt
+kann, statt was ihm fehlt.
+
+---
+
+### 3. PM-131 bis PM-133 — Themenspeicher-Punkt 9, ganz
+
+Der Punkt war als **Messung am Ausdruck** angelegt, nicht als Einzelfall.
+Der Ausdruck ist `anzahlAus` (`vollstaendigkeit/helpers.ts`, Zeile 175 ff.),
+er wird für **dreizehn Schlüssel** benutzt (zimmer · raum · räume · tür ·
+türen · fenster · heizkörper · pendelleuchte · spot · lamp · leuchte ·
+rosette · träger · meter · dübellöch · schadstell · rohr) und hat drei
+Zweige, die in drei Richtungen schiefgehen.
+
+| # | Satz (am Flur gemessen, Kontrolle daneben) | Ergebnis | Geld |
+|---|---|---|---|
+| **PM-131** | „Wohnzimmer**,** fünf mal vier …" / ohne Komma | 1 Tür / **5 Türen** | **720,00 €** an einem Satzzeichen |
+| **PM-132** | „Die Türen lackieren. Wir liefern **50 Stück** Fliesen dazu." | **50 Türen** | 457,25 € → 9.277,25 € = **8.820,00 €** |
+| **PM-132-D** | „Die Türen lackieren. **20 Stück** Dübellöcher zumachen." | **20 Türen** | 3.420,00 € |
+| **PM-133-A** | „Die Fenster streichen. **Fenster 3** ist kaputt." | **3 Fenster** | 200,00 € |
+| **PM-133-B** | „Die Heizkörper lackieren. **Heizkörper 2** im Flur." | **2 Heizkörper** | 85,00 € |
+| **PM-133-C** | „**3 alte Türen** lackieren." | **1 Tür** | 360,00 € **gegen den Betrieb** |
+
+**PM-132 ist der teuerste Fund dieses Batches, und er ist mehr als ein
+Rechenfehler.** Der dritte Zweig ist `(\d+)\s*stück` — **ohne jeden Bezug
+zum gesuchten Wort.** Er greift, sobald die ersten zwei nichts finden, also
+im Normalfall. Damit wird **jede Stückzahl im Diktat zur Stückzahl jedes
+Bauteils, dessen Arbeit bestellt ist** — Türen, Fenster, Heizkörper,
+Leuchten, Spots, Rosetten, gleichzeitig.
+
+Und der Rechenweg auf dem Kundenpapier lautet dazu:
+
+```
+Türen abschleifen · 50 Stück · „50 Tür(en) aus Transkript"
+```
+
+**Die Zeile behauptet eine Herkunft, die es nicht gibt.** Bei PM-128 stand
+„angenommen" daneben — sauber gekennzeichnet, nur falsch. Hier steht „aus
+Transkript", und im Transkript steht keine Türzahl. Das ist die
+Gegenrichtung zu PM-023: dort wird eine gesagte Zahl nicht genommen, hier
+wird eine ungesagte behauptet.
+
+**Die Gegenrichtung im selben Ausdruck (PM-133-C) gehört dazu, weil sie die
+Diagnose vollständig macht.** Der erste Zweig ist
+`(\d+)\s*(?:stück\s*)?(?:[a-zäöüß]+)?SCHLÜSSEL` — das optionale Wort
+dazwischen darf **kein Leerzeichen** haben. „3 alte Türen" scheitert daran
+und wird eine Tür. Gemessen: „3 türen" → 3, „3 stück türen" → 3, „3 alte
+türen" → **0**.
+
+**Der Ausdruck trifft, was er nicht meint, und verfehlt, wofür er da ist.**
+Für Engineering heißt das: **ein Fix an einem Zweig verschiebt den Fehler
+nur.** Die drei Zweige gehören zusammen angefasst, und PM-128 ist ein
+Sonderfall davon, nicht die Ursache.
+
+Kontrollen stehen an jedem Fund: „im 3. og, fenster streichen" → 0,
+„baujahr 1974, tür lackieren" → 0, „wir liefern 50 **fliesen**" (ohne
+„Stück") → 0. Der Fund heißt also nicht „jede Zahl".
+
+---
+
+### 4. Was ich in diesem Lauf selbst gemessen habe
+
+```
+node scripts/vokabular-abgleich.mjs   184 · 25 ohne Preis · 3 knapp · 156 gut · 0 unprüfbar
+pm-landingpage-hero.test.ts           16 Zusicherungen · 14 grün · 2 Sperrklinken
+pruefmeister-batch-131-133.test.ts    21 Zusicherungen · 17 grün · 4 Sperrklinken
+tsc --noEmit -p tsconfig.json         sauber
+eslint, beide neuen Dateien           0 Fehler, 0 Warnungen
+node scripts/docs-sichern.mjs pruefen alle 57 Doku-Dateien in Ordnung
+```
+
+**Nicht gemessen, also behaupte ich es nicht:**
+
+* **Der volle Prüfstand.** Er lief in diesem Lauf nicht zu Ende — jeder
+  Aufruf auf diesem Rechner hat ein Zeitfenster, und der Lauf braucht mehr.
+  Der letzte belegte eigene Stand bleibt der von 11:58 UTC: **2693 grün ·
+  94 Sperrklinken · 0 rot.** Gemessen sind hier nur die zwei neuen Dateien.
+* **Der Arbeitsbaum ist nicht `HEAD`.** Engineerings unfertiges CoS-E-078
+  liegt uncommittet da. Für meine Messungen ist das geprüft und folgenlos:
+  die Änderung in `vollstaendigkeit/index.ts` hängt an
+  `gewerk === 'fliesen'`, die zwei neuen Synonyme in `preis-matcher.ts`
+  betreffen Fliesenzeilen — **alle fünf Fälle hier sind Maler.** Die 25 im
+  Vokabular-Abgleich ist davon allerdings abhängig (siehe AA dort): auf
+  `HEAD` sind es 26.
+* **Die echte Extraktion.** Ich fahre die Kette ab der Pipeline und gebe die
+  Räume so hinein, wie das Diktat sie hergibt. Ob das Sprachmodell bei
+  „Wohnzimmer, fünf mal vier" wirklich `hoehe: null` liefert (PM-130), ist
+  **ungemessen** — es ist die Lesart, die zum Diktat passt, nicht eine
+  Messung am laufenden Modell.
+* **Ob die App das alles genauso anzeigt.** Der Endpunkt braucht Next.js und
+  lief nicht.
+* **Die laufende Arbeit von Finance** (`finance-001-*`,
+  `kostenuebersicht-finance.xlsx` stehen geändert im Arbeitsbaum). Nicht
+  angefasst, nicht mitcommittet.
+
+**Fallbasis: 133 Fälle.**
+
+*Prüfmeister · 2026-09-17, abends*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
