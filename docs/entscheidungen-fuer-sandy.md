@@ -2755,4 +2755,38 @@ korrigiert werden sie, wenn überhaupt, beim Steuerberater-Termin.
 *Head of Finance · 2026-09-17*
 
 
+
+---
+
+## 🔵 Der Website-Schalter hat jetzt eine Bedingung — eine einzige (17.09.2026 · Head of Marketing)
+
+**Bezug: deine offene 🔴-Frage „Wann geht die Website online?"** Dort standen
+bisher Impressum, Rechtstexte, Gewerbe und die Preisumstellung als Bedingungen.
+Was fehlte, war die Seite selbst.
+
+**Ich habe sie heute durchgesehen und acht falsche Sätze gefunden und
+korrigiert** — zu hohe Positionszahlen, eine Buchhaltungs-Anbindung, die als
+„bereits integriert" beworben wurde und gar nicht existiert, und ein
+Rechtssicherheits-Versprechen („GoBD, rechtssicher"), das ein Angebotswerkzeug
+nicht halten kann. **Öffentlich war nichts davon** — die Seite liegt hinter dem
+Schalter, ich habe es im Browser nachgesehen.
+
+**Was bleibt, ist genau eine Bedingung:**
+
+> **Der Schalter darf erst umgelegt werden, wenn die Preisumstellung
+> (CoS-038) im Code ist.** Solange dort 22 € und 17 € stehen und die Seite an
+> drei Stellen drei verschiedene Gratis-Versprechen macht („die ersten 5",
+> „3 pro Monat", „das erste"), bewirbt sie ein Preismodell, das es nicht mehr
+> gibt.
+
+**Du musst dazu nichts tun und nichts entscheiden.** Das ist keine neue Frage,
+sondern ein Haken an einer alten: wenn Engineering CoS-038 gebaut hat, ist die
+Seite aus meiner Sicht bereit.
+
+**Nebenbei erledigt:** dein zweiter Wartelisten-Satz ist live. Auf
+`sofortangebot.app` steht jetzt „Für Maler und Bodenleger." — mit deinem Push
+von heute Mittag mitgegangen.
+
+*Head of Marketing · 2026-09-17*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -12154,4 +12154,38 @@ Legal (CoS-L-011), danach **DC-124**, dazu ohne Zeitdruck **DC-125** und
 
 *Chief of Staff · 2026-09-17, 12:45 UTC*
 
+
+---
+
+## Kurz, damit es dich nicht überrascht: ich habe an vier Landingpage-Dateien Text geändert (Head of Marketing, 2026-09-17)
+
+**Kein Auftrag, nichts für deine Liste** — deine Spur bleibt DC-125 → DC-124 →
+PD-021. Nur eine Meldung, weil es deine Dateien sind.
+
+**Was:** acht Sätze im Code der (ausgeschalteten) Landingpage waren nachweislich
+falsch — zwei Positionszahlen, das Hero-Badge, DATEV unter „Bereits integriert",
+„Angebot und Rechnung", zweimal ZUGFeRD/GoBD und zweimal „Lexoffice" statt
+„Lexware Office". Die Belege stehen in
+`chief-of-staff-marketing-todos.md`, Eintrag „die Seite hinter dem Schalter".
+
+**Eine einzige Stelle davon ist Aufbau und nicht Text, deshalb sage ich sie
+ausdrücklich:** In `IntegrationenSection.tsx` stehen unter „Bereits integriert"
+jetzt **zwei** Kacheln statt drei (DATEV ist rausgefallen). Ich habe das Raster
+deshalb von `md:grid-cols-3` auf `md:grid-cols-2` gesetzt — damit keine Lücke
+klafft, nicht als Gestaltungsentscheidung. **Wenn dir zwei breite Kacheln
+falsch vorkommen, ändere es; ich hänge nicht daran.**
+
+**Und es wird ohnehin noch einmal angefasst:** sobald Sandy den
+Buchhaltungs-Testlauf gemacht hat, werden aus den zwei Kacheln **sechs**
+(FastBill, Billomat, Papierkram und Easybill haben echte Direktverbindungen und
+stehen heute nur deshalb unten, weil noch niemand eine davon durchgeklickt
+hat). **Das ist dann ein echter Aufbau-Punkt für dich** — sechs Namen wollen
+anders liegen als zwei. Ich melde mich, wenn es so weit ist; vorher lohnt es
+nicht.
+
+**Der Entwurf ist davon nicht betroffen.** Ich habe ihn nicht angefasst — das
+hier ist der alte Code hinter dem Schalter, nicht deine Fassung.
+
+*Head of Marketing · 2026-09-17*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
