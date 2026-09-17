@@ -558,7 +558,7 @@ describe('PM-097 · zwei Bauabschnitte', () => {
     expect(p.filter(x => /Wand streichen/.test(x.beschreibung)).map(x => x.menge)).toEqual([45, 35])
   })
 
-  it.fails('PM-097-A · „getrennt abgerechnet" hinterlässt eine Spur', () => {
+  it('PM-097-A · „getrennt abgerechnet" hinterlässt eine Spur', () => {
     const erg = laufVoll('maler', T_ZWEI, RAEUME)
     const inFehlt = fehltHat(erg.fehlende, /bauabschnitt|getrennt|abschnitt|obergeschoss|schlafzimmer|später/i)
     const inPositionen = finde(erg.positionen, /bauabschnitt/i) != null
@@ -594,7 +594,7 @@ describe('PM-097 · zwei Bauabschnitte', () => {
   //
   // Kippt, sobald ein gemessener Fall zwei Abschnitte wirklich auf ein Blatt
   // verlangt. Bis dahin gilt dieser hier.
-  it.fails('PM-097-B · der ausgenommene Abschnitt steht nicht im Angebot — und das Weglassen wird gezeigt', () => {
+  it('PM-097-B · der ausgenommene Abschnitt steht nicht im Angebot — und das Weglassen wird gezeigt', () => {
     const erg = laufVoll('maler', T_ZWEI, RAEUME)
     // 1. Das Obergeschoss ist nicht gerechnet: keine Schlafzimmer-Zeile.
     expect(erg.positionen.some(p => /Schlafzimmer/.test(p.beschreibung))).toBe(false)

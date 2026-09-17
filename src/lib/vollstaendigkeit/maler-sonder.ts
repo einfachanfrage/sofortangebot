@@ -1,6 +1,7 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, NISCHE_WORT } from './helpers'
+import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, NISCHE_WORT, raumNamenAus, findeRaumImSatz } from './helpers'
 import { saetze } from '../satz-raum'
+import { ersetzeZahlenWorte } from '../zahlen-parser'
 import { mitTitelZusatz } from '../positions-titel'
 
 // Schimmel → Schimmelbehandlung + Sperranstrich (additiv)
@@ -337,6 +338,177 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
 // braucht dieselbe (dort als bepreiste Position, hier als Fehlt-Eintrag).
 // Zwei Kopien wären zwei Wahrheiten; die Begründung zur Wortgrenze steht
 // jetzt dort.
+
+/**
+ * ── Zug 2 · die Tapezier-Nische (Prüfmeister, 17.09.2026, Punkt 5) ─────────
+ *
+ *   „Wohnzimmer vier mal fünf, Höhe zwo fünfzig. Die Wände mit Raufaser
+ *    tapezieren. In der Wand ist eine Regalnische, ein mal zwei Meter, die
+ *    wird mittapeziert."
+ *
+ * Gemessen vor dem Bau: mit und ohne den Nischensatz Zeile für Zeile
+ * dasselbe Angebot, `fehlende` leer. Der Satz verschwand spurlos — genau der
+ * Befund, den der Prüfmeister bestätigt hat.
+ *
+ * **Der Unterschied zu `pruefeNische` darunter ist der Katalog, nicht die
+ * Nische.** Fürs STREICHEN führt der Malerkatalog keine Zeile (PM-089 /
+ * PM-108), also bleibt es dort beim Fehlt-Eintrag. Fürs TAPEZIEREN gibt es
+ * `Ecken / Nischen / Laibungen tapezieren (Aufpreis)`, 6,00 €/lfdm — also
+ * eine bepreiste Position, sobald die Menge messbar ist.
+ *
+ * **Die Menge, Fachentscheidung des Prüfmeisters:** `2 × (Breite + Höhe)` der
+ * Nischenöffnung, in lfdm. Vier Seiten, weil eine Nische — anders als die
+ * Fensterlaibung aus PM-037 / VOB-013 — keine Fensterbank hat, die getrennt
+ * abgerechnet wird. Die TIEFE geht nicht ein: die Katalogzeile steht in
+ * `lfdm`, der Aufpreis gilt der Kante und nicht der Fläche; die Tiefe steckt
+ * im Einheitspreis. (Die m²-Lesart gibt es im Katalog auch — beim Putzer,
+ * `Laibung verputzen (>30cm Tiefe)`. Wer beim Tapezieren in m² rechnet, hat
+ * die falsche Zeile erwischt.)
+ *
+ * **Die Formel ist symmetrisch, und das erspart eine Rate-Entscheidung:**
+ * `2 × (B + H)` ist gegen Vertauschen unempfindlich. Bei „ein mal zwei
+ * Meter" muss deshalb niemand entscheiden, welche der beiden Zahlen die
+ * Breite ist — es gibt nichts zu raten.
+ *
+ * **Auflage 1 des Prüfmeisters — ohne BEIDE Maße keine Menge.** Die Diktate
+ * nennen fast immer nur die Breite („ein Meter zwanzig breit"). Dann
+ * entsteht der Fehlt-Eintrag, nicht die bepreiste Position; sonst wäre die
+ * Zahl geraten. Das ist der häufigere Fall, nicht der Randfall. Der
+ * Fehlt-Eintrag ist bewusst OHNE das „⚠ " aus CoS-E-074: er ist keine
+ * Anmerkung, sondern eine Leistung mit offener Menge — `mehrgewerk.ts` macht
+ * daraus seit PM-010 eine Platzhalter-Zeile, in die der Betrieb die lfdm
+ * selbst einträgt, und dann greift der Katalogpreis.
+ *
+ * **Warum die Katalogschreibweise als Titel — und warum hier anders als bei
+ * der Duschnische.** Gemessen, nicht übernommen: beim Fliesen musste der
+ * Titel gekürzt werden, weil „Wandnische" über `gewerkFuerPosition`
+ * (`/wand/` zuerst) beim MALER landet und der Katalogfilter die Fliesenzeile
+ * dann gar nicht mehr anbietet. Hier IST der Maler das richtige Gewerk, und
+ * die Katalogschreibweise trifft ihre Zeile mit Score 1,00 — die gekürzte
+ * Form „Nischen tapezieren (Aufpreis)" nur mit 0,67. Ein Preis, eine
+ * Schreibweise (F.6).
+ *
+ * **Der Zusatz steht in Klammern, nicht hinter einem Gedankenstrich.**
+ * `raumAusTitel` liest alles nach dem ersten „ — " als Raumnamen; ein
+ * erklärender Nachsatz dort würde die Position unter einem erfundenen Raum
+ * einsortieren (die Falle aus dem Dachschrägen-Audit). Nach dem Strich steht
+ * nur der Raum.
+ *
+ * **Nicht gebaut — die Mehrzahl mit Maßen.** „Zwei Nischen, je ein Meter
+ * zwanzig breit und achtzig hoch" hieße, ein Maß auf mehrere Nischen zu
+ * übertragen, also anzunehmen, dass sie gleich groß sind. Das ist eine
+ * Annahme, keine Messung; die Mehrzahl bekommt deshalb den Fehlt-Eintrag.
+ * Frage an den Prüfmeister liegt in seiner Datei.
+ */
+export function pruefeTapezierNische(
+  ergaenzt: BerechnetePosition[],
+  fehlende: string[],
+  lower: string,
+): void {
+  if (!NISCHE_WORT.test(lower)) return
+  // Dopplungsschutz von Hand, nicht über `add`: dessen Kennung sind die
+  // ersten ZWEI Wörter des Titels, hier „ecken" und „/" — und „/" steckt
+  // auch in „Boden schützen / Abdeckfolie". Dieselbe Falle wie in
+  // `fliesen-sonder.ts`; der Eintrag wäre stillschweigend unterdrückt worden.
+  if (hat(ergaenzt, 'nische', 'laibung', 'leibung')) return
+  // Nur wo im Angebot wirklich tapeziert wird. Der Aufpreis ist Mehrarbeit an
+  // einer Tapezierleistung — ohne sie gibt es nichts, wozu er Aufpreis wäre.
+  // „Tapete entfernen" zählt bewusst nicht mit: Abreißen ist kein Tapezieren.
+  if (!hat(ergaenzt, 'tapezier', 'aufzieh')) return
+
+  // Zahlwörter hier noch einmal ersetzt, wie in `fliesen-sonder.ts`: die
+  // Regel muss auch dort greifen, wo der Text nicht schon am Eingang
+  // normalisiert wurde (K.2 gilt für die Pipeline, nicht für jeden Aufrufer).
+  const text = ersetzeZahlenWorte(lower)
+  const satz = saetze(text).find(s => NISCHE_WORT.test(s))
+  if (!satz) return
+  // Der Satz muss die Nische ans Tapezieren binden — dieselbe Bremse wie
+  // `/flies|kachel/` beim Fliesenleger. „Die Nische bleibt, wie sie ist"
+  // darf auch in einem Tapezierauftrag keine Zeile erzeugen.
+  if (!/tapez|raufaser|vlies|tapete/.test(satz)) return
+
+  const namen = raumNamenAus(ergaenzt)
+  const raum = namen.length === 1 ? namen[0] : findeRaumImSatz(NISCHE_WORT, text, namen)
+  const suffix = raum ? ` — ${raum}` : ''
+
+  const mehrzahl = /(?<![a-zäöüß])(?:regal|wand|mauer)?nischen(?![a-zäöüß])/.test(satz)
+  const masse = mehrzahl ? null : nischenMasse(satz)
+  if (masse === null) {
+    fehlende.push(`Ecken / Nischen / Laibungen tapezieren (Aufpreis, Maße bitte angeben)${suffix}`)
+    return
+  }
+
+  const lfdm = Math.round(2 * (masse.a + masse.b) * 100) / 100
+  ergaenzt.push({
+    beschreibung: `Ecken / Nischen / Laibungen tapezieren (Aufpreis)${suffix}`,
+    menge: lfdm,
+    einheit: 'lfdm',
+    konfidenz: 'high',
+    berechnungsweg: `Nischenöffnung ${komma(masse.a)} m × ${komma(masse.b)} m, Umfang 2 × (${komma(masse.a)} + ${komma(masse.b)}) = ${komma(lfdm)} lfdm`,
+    annahmen: [],
+    // Diktiert, nicht ergänzt (PM-023 / PM-077, Regel H Satz 3): Wer die
+    // Nische ausdrücklich nennt, darf ihren Preis nicht dadurch verlieren,
+    // dass die Zeile aus der Vollständigkeitsprüfung stammt.
+    automatisch_ergaenzt: false,
+  })
+}
+
+/** Deutsche Schreibweise im Rechenweg — 1.2 → „1,20". */
+function komma(v: number): string {
+  return v.toFixed(2).replace('.', ',')
+}
+
+/**
+ * Die beiden Öffnungsmaße einer Nische aus ihrem Satz, in Metern.
+ * `null`, sobald eines von beiden fehlt — dann wird nicht gerechnet
+ * (Auflage 1). Welches der beiden die Breite ist, spielt keine Rolle:
+ * `2 × (a + b)` ist symmetrisch.
+ */
+function nischenMasse(satz: string): { a: number; b: number } | null {
+  const breit = nischenMass(satz, '(?:breit|breite)')
+  const hoch = nischenMass(satz, '(?:hoch|höhe|hoehe)')
+  if (breit !== null && hoch !== null) return { a: breit, b: hoch }
+  // „eine Regalnische, ein mal zwei Meter" — die Sprechweise aus PM-108 und
+  // das Beispiel des Prüfmeisters. Nur NACH dem Nischenwort gesucht, damit
+  // die Raummaße im selben Satz („vier mal fünf") nicht eingesammelt werden;
+  // die Plausibilitätsgrenze unten hält sie zusätzlich heraus.
+  const nische = NISCHE_WORT.exec(satz)
+  if (!nische) return null
+  const rest = satz.slice(nische.index + nische[0].length)
+  const mal = /(\d+(?:[.,]\d+)?)\s*(?:m|meter)?\s*(?:mal|×|x)\s*(\d+(?:[.,]\d+)?)\s*(?:m|meter)?/.exec(rest)
+  if (!mal) return null
+  const a = plausiblesNischenmass(parseFloat(mal[1].replace(',', '.')))
+  const b = plausiblesNischenmass(parseFloat(mal[2].replace(',', '.')))
+  return a !== null && b !== null ? { a, b } : null
+}
+
+/** Ein einzelnes Maß („1 meter 20 breit", „80 cm hoch", „1,20 breit", „80 hoch"). */
+function nischenMass(satz: string, wort: string): number | null {
+  // „1 meter 20 breit" → 1,20 m. Dieselbe Sprechweise, die
+  // `extrahiereRaumhoehe` seit PM-024 für die Raumhöhe kennt.
+  const komp = new RegExp(`(\\d+)\\s*(?:m|meter)\\s+(\\d{1,2})\\s*(?:m\\s*)?${wort}`).exec(satz)
+  if (komp) return plausiblesNischenmass(parseInt(komp[1], 10) + parseInt(komp[2], 10) / 100)
+  const cm = new RegExp(`(\\d+(?:[.,]\\d+)?)\\s*(?:cm|zentimeter)\\s*${wort}`).exec(satz)
+  if (cm) return plausiblesNischenmass(parseFloat(cm[1].replace(',', '.')) / 100)
+  const m = new RegExp(`(\\d+(?:[.,]\\d+)?)\\s*(m|meter)?\\s*${wort}`).exec(satz)
+  if (!m) return null
+  const roh = parseFloat(m[1].replace(',', '.'))
+  // Blanke Zahl ohne Einheit: „achtzig hoch" heißt 0,80 m, nicht 80 m. Das
+  // ist keine Annahme, sondern die einzige Lesart, die die Plausibilität
+  // überlebt — eine Nische von 80 Metern gibt es nicht. Ab 5 aufwärts, damit
+  // „2 hoch" Meter bleibt.
+  const inMetern = !!m[2] || /[.,]/.test(m[1])
+  return plausiblesNischenmass(inMetern || roh < 5 ? roh : roh / 100)
+}
+
+/**
+ * Nischenöffnungen liegen zwischen einer Handbreite und Raumhöhe. Alles
+ * darüber ist ein Fehl-Parse (typisch: die Raummaße aus demselben Satz), und
+ * ein Fehl-Parse darf keine Menge erzeugen — er wird zum Fehlt-Eintrag.
+ */
+function plausiblesNischenmass(v: number): number | null {
+  return v >= 0.05 && v <= 3 ? v : null
+}
 
 export function pruefeNische(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
   if (!NISCHE_WORT.test(lower)) return

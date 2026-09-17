@@ -215,7 +215,14 @@ export function berechneUndPruefeAlleGewerke(
   for (const g of sekundaer ? [primaer, sekundaer] : [primaer]) {
     const res = pruefeUndErgaenzeVollstaendigkeit(g, positionen, textMitZahlen, meta, signale)
     positionen = res.positionen
-    fehlende.push(...res.fehlende)
+    // CoS-E-074: Hinweise („⚠ …") gelten fuer den Auftrag, nicht fuer das
+    // Gewerk — bei Maler UND Boden liefe dieselbe Zeile sonst zweimal
+    // heraus. Leistungen werden hier bewusst NICHT entdoppelt; das erledigt
+    // weiter unten die Umwandlung in Positionen.
+    for (const f of res.fehlende) {
+      if (f.startsWith('⚠ ') && fehlende.includes(f)) continue
+      fehlende.push(f)
+    }
   }
 
   // 3) "Boden schützen" (Maler) ist überflüssig, wenn im selben Raum ein neuer
@@ -255,8 +262,21 @@ export function berechneUndPruefeAlleGewerke(
   // erscheint die Platzhalter-Position darum nur einmal, nicht pro Raum — das
   // ist immer noch strikt besser als das bisherige komplette Verschwinden,
   // aber kein Ersatz für eine spätere, pro Raum aufgelöste Lösung.
+  //
+  // CoS-E-074 (17.09.2026): EINE Ausnahme von dieser Umwandlung, und sie ist
+  // die erste seit PM-010. Ein `fehlende`-Eintrag, der mit „⚠ " beginnt, ist
+  // ein HINWEIS und keine Leistung — er beschreibt etwas, das bewusst NICHT
+  // im Angebot steht (DC-116: „„Küche" steht nicht in diesem Angebot").
+  // Daraus eine 0,00-€-Zeile zu machen, hieße den Satz auf das Kundenpapier
+  // zu stellen. Die Hinweise nehmen stattdessen den Weg über `warnungen` →
+  // `berechneBewertung` → `bewertung.fehlende_angaben` → die Hinweisliste in
+  // `KalkulationsBewertungCard.tsx`, also genau die Heimat, die der Designer
+  // in DC-116 benannt hat. Das Zeichen ist dort schon die Kennzeichnung für
+  // „Hinweis" (`bewertung.ts` setzt es vor jede übernommene Warnung).
+  const hinweise = [...new Set(fehlende)].filter(f => f.startsWith('⚠ '))
   const bekannteBeschreibungen = new Set(positionen.map(p => p.beschreibung.toLowerCase().trim()))
   for (const beschreibung of [...new Set(fehlende)]) {
+    if (beschreibung.startsWith('⚠ ')) continue
     if (bekannteBeschreibungen.has(beschreibung.toLowerCase().trim())) continue
     positionen.push({
       beschreibung,
@@ -271,7 +291,14 @@ export function berechneUndPruefeAlleGewerke(
     })
   }
 
-  return { positionen, fehlende, mengenRoh: { ...mengenPrimaer, positionen: rohPositionen } }
+  // Das „⚠ " wird beim Übergeben abgestreift: `berechneBewertung` setzt es
+  // selbst vor jede Warnung, sonst stünde es zweimal da.
+  const warnungen = [
+    ...(mengenPrimaer.warnungen ?? []),
+    ...hinweise.map(h => h.replace(/^⚠\s*/, '')),
+  ]
+
+  return { positionen, fehlende, mengenRoh: { ...mengenPrimaer, positionen: rohPositionen, warnungen } }
 }
 
 /** Entfernt exakte Duplikate (gleicher Titel + gleiche Menge), erste Position bleibt. */

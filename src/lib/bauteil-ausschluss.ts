@@ -23,7 +23,11 @@
 // fehlte die Ebene „ein Bauteil in einem Raum". Die Satzmechanik ist
 // dieselbe und kommt aus `satz-raum.ts`.
 
-import { saetzeMitRaum, teilsaetze, saetze } from './satz-raum'
+// `raumDerPosition` stand bis CoS-E-074 hier. Seit der Zeit-Ausschluss (DC-116)
+// dieselbe Zuordnung braucht, steht sie in `satz-raum.ts` — zwei Kopien waeren
+// zwei Wahrheiten, und sie waeren genau an der Stelle auseinandergedriftet,
+// an der die Raumnamen im Positionstitel stehen.
+import { saetzeMitRaum, teilsaetze, saetze, raumDerPosition } from './satz-raum'
 
 export type Bauteil = 'wand' | 'decke' | 'boden' | 'tuer' | 'fenster' | 'heizkoerper'
 
@@ -153,24 +157,6 @@ export function erkenneBauteilAusschluss(
 
 export interface PositionFuerAusschluss {
   beschreibung: string
-}
-
-/**
- * Zu welchem Raum gehört diese Position? Die Titel tragen den Raum als
- * Zusatz („Wand streichen 2x — Flur"). Steht kein Raum drin, ist die
- * Position nicht zuzuordnen — dann entscheidet der Aufrufer.
- */
-function raumDerPosition(beschreibung: string, raumNamen: string[]): string | null {
-  const lower = beschreibung.toLocaleLowerCase('de-DE')
-  let treffer: string | null = null
-  for (const n of raumNamen) {
-    const name = (n ?? '').trim()
-    if (name.length < 3) continue
-    if (lower.includes(name.toLocaleLowerCase('de-DE'))) {
-      if (treffer === null || name.length > treffer.length) treffer = name
-    }
-  }
-  return treffer
 }
 
 /**

@@ -616,19 +616,30 @@ describe('PM-116 · der ausgenommene zweite Bauabschnitt', () => {
   const R1 = () => [raum('Wohnzimmer', { laenge: 4, breite: 5, hoehe: 2.5, arbeiten: ['wände streichen'] })]
   const T = 'Erster Bauabschnitt Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände streichen. Zweiter Bauabschnitt Küche drei mal drei, das kommt später und wird extra angeboten.'
   const T_SOLL = 'Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände streichen.'
+  // 17.09.2026, Engineering (CoS-E-074) — dieselbe Korrektur, die der
+  // Prüfmeister am selben Tag an PM-097-C vorgenommen hat, mit seiner
+  // Begründung: „eine Kontrolle, die der Fix rot macht, ist keine
+  // Kontrolle." PM-116-D stand auf T, also auf dem Satz MIT dem Ausschluss —
+  // und maß damit genau das Geld, das der Fix aus dem Angebot nimmt. Der
+  // Zweck der Kontrolle ist ein anderer: zu belegen, dass die Küche
+  // überhaupt gerechnet werden KANN, der Fund also am Ausschlusssatz hängt
+  // und nicht an einer Extraktionslücke. Dafür gehört sie auf den Satz OHNE
+  // den Ausschluss. Wortlaut und Sollzahl des Prüfmeisters unverändert;
+  // gemeldet in `pruefmeister-restliste.md`.
+  const T_OHNE_AUSSCHLUSS = 'Erster Bauabschnitt Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände streichen. Zweiter Bauabschnitt Küche drei mal drei, Wände streichen.'
 
   it('PM-116-C · Kontrolle: allein ergibt der erste Bauabschnitt genau drei Zeilen', () => {
     expect(titel(lauf('maler', T_SOLL, R1()))).toHaveLength(3)
   })
 
   it('PM-116-D · Kontrolle: der Geldweg, um den es geht, sind 305,40 €', () => {
-    const p = lauf('maler', T, R())
+    const p = lauf('maler', T_OHNE_AUSSCHLUSS, R())
     const kueche = p.filter(x => /Küche/.test(x.beschreibung))
     const summe = kueche.reduce((s, x) => s + (preis(p, new RegExp(`^${x.beschreibung.split(' — ')[0]}`), 'maler') ?? 0) * (x.menge as number), 0)
     expect(Number(summe.toFixed(2))).toBe(305.4)
   })
 
-  it.fails('PM-116-A · der ausgenommene Bauabschnitt steht nicht im Angebot', () => {
+  it('PM-116-A · der ausgenommene Bauabschnitt steht nicht im Angebot', () => {
     // Ist: die Küche steht vollständig drin, 305,40 €.
     expect(titel(lauf('maler', T, R())).some(t => /Küche/.test(t))).toBe(false)
   })
@@ -638,7 +649,7 @@ describe('PM-116 · der ausgenommene zweite Bauabschnitt', () => {
   // Alternativen, sondern zwei Hälften desselben Solls. Das Weglassen OHNE
   // Hinweis ist der schlimmere der beiden Fehler — dann fehlen 305,40 €
   // Arbeit und niemand erfährt es. Wortgleich mit PM-097-B.
-  it.fails('PM-116-B · und das Weglassen wird gezeigt, nicht stumm ausgeführt', () => {
+  it('PM-116-B · und das Weglassen wird gezeigt, nicht stumm ausgeführt', () => {
     expect(fehltHat(laufVoll('maler', T, R()).fehlende, /bauabschnitt|küche|später/i)).toBe(true)
   })
 })

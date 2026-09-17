@@ -198,3 +198,7 @@ Fall, den ein Versicherer später gegen uns verwenden könnte.
 Keine Eile bei der Antwort auf 1 und 2 — Sandy ist 18.–25.09. in Italien, und
 ihr Produktionsfenster ist der Oktober.
 
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

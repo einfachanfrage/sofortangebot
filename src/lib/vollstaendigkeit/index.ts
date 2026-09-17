@@ -2,6 +2,11 @@ import type { BerechnetePosition } from '../mengen/types'
 import { baueVerstaendnis, type ExtraktionSignale } from '../auftrags-verstaendnis'
 import { filtereErschwernis, type ErschwernisConfig } from '../erschwernis'
 import { entferneAusgeschlosseneBauteile } from '../bauteil-ausschluss'
+import {
+  entferneZeitlichAusgenommene,
+  zeitAusschlussHinweis,
+  zeitlichAusgenommeneRaeume,
+} from '../zeit-ausschluss'
 import { pruefeMaler } from './maler'
 import { pruefeFliesen } from './fliesen'
 import { pruefeSanitaer } from './sanitaer'
@@ -102,12 +107,32 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   // `raeume[].arbeiten` geschrieben hat. Aus demselben Grund am Ausgang wie
   // die beiden Filter darüber: Die Wandpositionen entstehen an vier Stellen
   // in drei Dateien, und die nächste entsteht an einer fünften.
+  const raumNamen = (meta?.raeume ?? []).map(r => r?.name ?? '').filter(Boolean)
+  const nachBauteil = entferneAusgeschlosseneBauteile(nachErschwernis, transkript, raumNamen)
+
+  // CoS-E-074 / DC-116 / PM-116 + PM-097: die dritte Bremse, eine Ebene über
+  // der zweiten. `entferneAusgeschlosseneBauteile` nimmt EIN Bauteil aus
+  // einem Raum; hier fällt ein ganzer Raum, weil der Handwerker ihn auf ein
+  // späteres, eigenes Angebot geschoben hat („das kommt später und wird
+  // extra angeboten").
+  //
+  // BEIDE Hälften, nie nur eine (DC-116, wörtlich): Der Raum wird nicht
+  // gerechnet UND das Weglassen wird gezeigt. Weglassen ohne Hinweis wäre
+  // der schlimmere der beiden Fehler — dann fehlen in PM-116 305,40 € Arbeit
+  // und niemand erfährt es.
+  //
+  // Am Ausgang, aus demselben Grund wie die drei Filter darüber: Positionen
+  // mit Raum-Suffix entstehen in jeder Gewerke-Engine und in den
+  // Vollständigkeitsregeln. Eine Abfrage an jeder Entstehungsstelle vergisst
+  // man; eine Filterung am Ausgang nicht.
+  const zeitlichRaus = zeitlichAusgenommeneRaeume(transkript, raumNamen)
+  for (const [raum, satz] of zeitlichRaus) {
+    const zeile = zeitAusschlussHinweis(raum, satz)
+    if (!fehlende.includes(zeile)) fehlende.push(zeile)
+  }
+
   return {
     fehlende,
-    positionen: entferneAusgeschlosseneBauteile(
-      nachErschwernis,
-      transkript,
-      (meta?.raeume ?? []).map(r => r?.name ?? '').filter(Boolean),
-    ),
+    positionen: entferneZeitlichAusgenommene(nachBauteil, zeitlichRaus, raumNamen),
   }
 }

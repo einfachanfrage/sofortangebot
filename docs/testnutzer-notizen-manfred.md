@@ -278,3 +278,7 @@ und muss nichts tun.
 *(Chief of Staff: verteilt als CoS-E-056 ✅ entschieden, DC-108 an den Designer,
 Gegenprobe der Zeilenzuordnung an den Prüfmeister — Vliestapete und
 Strukturtapete hat Manfred nicht einzeln genannt.)*
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

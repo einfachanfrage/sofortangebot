@@ -272,3 +272,7 @@ die keine Rückfrage mehr braucht.
 Gehört zu Platform, wie du sagst. Von mir aus gern als Ergänzung an CoS-P-014.
 
 *Head of Product Engineering · 2026-09-15*
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

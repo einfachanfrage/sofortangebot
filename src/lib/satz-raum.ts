@@ -181,3 +181,30 @@ export function saetzeJeRaum(text: string, raumNamen: string[]): Map<string, str
 
   return zuordnung
 }
+
+/**
+ * Zu welchem Raum gehört diese POSITION? Die Titel tragen den Raum als
+ * Zusatz („Wand streichen 2x — Flur"). Steht kein Raum drin, ist die
+ * Position nicht zuzuordnen — dann entscheidet der Aufrufer.
+ *
+ * Nennt ein Titel mehrere bekannte Namen, gewinnt der längste: „Wohnzimmer"
+ * darf nicht von „Zimmer" geschlagen werden — dieselbe Regel wie oben in
+ * `saetzeMitRaum`.
+ *
+ * Wohnt seit CoS-E-074 hier statt in `bauteil-ausschluss.ts`: PM-099
+ * (Bauteil), PM-034 (Raum) und DC-116 (Zeit) ordnen alle drei Positionen
+ * einem Raum zu, und das gehört an die Stelle, die diese Datei beschreibt —
+ * „eine Stelle, nicht drei".
+ */
+export function raumDerPosition(beschreibung: string, raumNamen: string[]): string | null {
+  const lower = beschreibung.toLocaleLowerCase('de-DE')
+  let treffer: string | null = null
+  for (const n of raumNamen) {
+    const name = (n ?? '').trim()
+    if (name.length < 3) continue
+    if (lower.includes(name.toLocaleLowerCase('de-DE'))) {
+      if (treffer === null || name.length > treffer.length) treffer = name
+    }
+  }
+  return treffer
+}

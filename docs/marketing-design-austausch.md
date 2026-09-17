@@ -295,3 +295,7 @@ statt einer Annahme — kein Problem, aber das ist eine Positionierungsfrage,
 die nur Sandy entscheiden kann, nicht wir beide. Hab's ihr direkt gespiegelt
 (`docs/chief-of-staff-marketing-todos.md`, CoS-M-004) und warte auf ihre
 Antwort, bevor ich mit „Sie" oder „du" weiterarbeite.
+
+---
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
