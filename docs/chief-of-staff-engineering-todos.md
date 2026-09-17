@@ -10188,4 +10188,97 @@ sag rechtzeitig, was dafuer noetig ist.
 
 ---
 
+
+---
+
+## ✅ Prüfstand zu CoS-E-082 — 190 Testdateien, 2.954 Prüfungen, 0 rot. Und die neuen Dateien liegen längst in Git (17.09.2026, 17:15 UTC · Head of Product Engineering)
+
+**Dieser Lauf hat nichts gebaut, sondern gemessen.** Beim Start um 16:25 UTC
+lag der Bau zu CoS-E-082 (`fliesen-richtung.ts`, `preis-matcher.ts`,
+`fliesen-basis.ts`, `vollstaendigkeit/index.ts`) **fertig, aber ungemessen und
+uncommittet** im Arbeitsbaum. Ein Bau, der die zentrale Preis- und
+Vollständigkeitsstrecke anfasst und für den kein Prüfstand gefahren ist, ist
+kein fertiger Bau — der Chief of Staff hat um 16:00 UTC ausdrücklich vermerkt,
+dass in diesem Zeitraum **kein einziger vollständiger Prüfstand** gefahren
+wurde und der letzte eigene Stand vom Vormittag (11:58 UTC) galt.
+
+### 1. Was gemessen ist — und wie
+
+| Messung | Ergebnis | Zeit |
+|---|---|---|
+| `npx tsc --noEmit`, ganzes Projekt | **0 Fehler** | 16:27 UTC |
+| `npx eslint` auf die sechs berührten Dateien | **0 Fehler, 0 Warnungen** | 16:31 UTC |
+| **Prüfstand über alle 190 Testdateien** | **2.850 grün · 104 Sperrklinken · 0 rot** (2.954 Prüfungen) | 16:40–17:00 UTC |
+| Nachlauf auf die fünf betroffenen Dateien, auf dem Stand von `8fec90b` | **85 grün · 15 Sperrklinken · 0 rot** | 17:05 UTC |
+
+**Wie der Prüfstand gefahren ist, damit niemand die Zahl für mehr hält, als sie
+ist:** in **acht Gruppen** à 12–24 Dateien, weil ein Lauf über alles die
+Zeitgrenze der Konsole (180 s) reißt und **ein Hintergrundlauf den Aufruf nicht
+überlebt** — `nohup`, `setsid` und `disown` ändern daran nichts, der Prozess ist
+nach dem Rückkehren des Aufrufs tot und das Protokoll bleibt beim Kopf stehen.
+Wer hier „ich lasse das im Hintergrund laufen und schaue gleich nach" plant,
+verliert zwanzig Minuten. **Gruppenlauf ist auf diesem Rechner die einzige
+Form, in der ein voller Stand entsteht.**
+
+**Was die Zahl nicht ist:** keine Momentaufnahme. Während der zwanzig Minuten
+sind **drei fremde Commits** gelandet (`f345447`, `11ebdb4`, `8fec90b`). Ihr
+Inhalt lag beim Messen bereits im Arbeitsbaum — gegenüber dem heutigen `HEAD`
+unterscheidet sich der gemessene Stand nur noch in **Kommentaren und einem
+Dateinamen** (die Umstellung CoS-E-080 → CoS-E-082). Deshalb der Nachlauf auf
+die fünf betroffenen Dateien um 17:05: **der ist auf dem gepushten Stand
+gefahren, nicht auf einem Zwischenstand.**
+
+### 2. Punkt 9 von CoS-E-082 ist gegenstandslos — beides ist erledigt
+
+Dort steht: *„Code geändert — der Testlauf steht aus"* und ein `git add` für
+zwei neue Dateien. **Nachgesehen, nicht angenommen:**
+
+* **Der Testlauf ist gefahren** — siehe Tabelle oben.
+* **Die Dateien sind in Git und bei GitHub.** `fliesen-richtung.ts` und
+  `cos-e-082-nur-wandfliesen.test.ts` sind in `8fec90b` mitgegangen,
+  `git rev-list --count origin/main..HEAD` liefert **0**, `git fetch` bestätigt
+  `main` = `origin/main` = `8fec90b`. **Sandy muss nichts nachtragen und
+  nichts pushen.**
+
+### 3. 🟡 Befund: ein einziger Commit hat die Arbeit von fünf Rollen mitgenommen
+
+`8fec90b` trägt den Titel *„Alle Rollen ueber die neue Landingpage informiert"*
+und enthält **19 Dateien**: meinen kompletten Bau zu CoS-E-082, die
+Oberflächenarbeit des Designers (`AngebotVorschau.tsx`,
+`briefpapier/[id]/page.tsx`, `dc127-tabellenkopf.test.tsx`), zwei Testreihen
+des Prüfmeisters und die Doku-Dateien von Marketing und CoS.
+
+**Das ist genau die Form, die der Chief of Staff um 16:00 UTC als abgeschafft
+notiert hat** (`git add -A`, geteilter Index bei fünf Rollen an einem
+Arbeitsbaum). Diesmal ist es gutgegangen — mein Bau ist **vollständig**
+mitgegangen, es gibt keinen halben Commit, und die Produktion ist konsistent.
+**Gutgegangen ist aber kein Verfahren.** Am 17.09. um 11:10 hat dieselbe Form
+die Produktion 45 Minuten gekippt; der Unterschied zwischen damals und heute
+ist, welche Dateien zufällig gleichzeitig im Index lagen.
+
+Die Meldung liegt beim Chief of Staff in seiner Datei. **Ich entscheide das
+Verfahren nicht** — mir gehört nur der Befund und die Messung, dass es diesmal
+vollständig war.
+
+### 4. Warum dieser Lauf CoS-E-081 nicht angefangen hat
+
+**Weil ein zweiter Lauf derselben Rolle parallel an diesem Baum gearbeitet
+hat.** Um 16:13–16:18 sind seine Dateien entstanden, um 16:50 sein Eintrag, um
+16:52 seine Umbenennung — mitten in meinem Prüfstand. Er nennt CoS-E-081
+(`anzahlAus`, 8.820,00 €) selbst als seinen nächsten Punkt.
+
+**Zwei Läufe, die gleichzeitig dieselbe Stelle bauen, erzeugen zwei Wahrheiten
+in einer Datei** — dieselbe Familie wie die Nummernkollision in seinem Punkt 10,
+nur teurer. Der teuerste offene Punkt bekommt einen ganzen Lauf, nicht einen
+halben neben einem fremden. **CoS-E-081 bleibt deshalb der nächste Punkt,
+unangetastet**, dahinter **CoS-038 → PM-119/L-06 → CoS-E-080**.
+
+### 5. Für Sandy
+
+**Nichts zu tun.** Kein `git add`, kein Push, kein Testlauf — alles drei ist in
+diesem Lauf gemessen bzw. nachgesehen worden.
+
+*Head of Product Engineering · 2026-09-17, 17:15 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
