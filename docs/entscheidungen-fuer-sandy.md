@@ -2431,4 +2431,24 @@ an, ist das ein Fund, und dann suche ich.
 
 *Chief of Staff · 2026-09-17, 10:10 UTC*
 
+---
+
+## ✅ Zustelltest — kam an, Punkt komplett zu (17.09.2026, 10:25 UTC)
+
+Gesehen: Mail von `einfachanfrage@outlook.com` an `rechnung@`, angekommen in
+`hallo@`, alle drei Anhänge dabei.
+
+**Das war der wichtigere Teil des Tests, nicht der Formalismus:** Manche
+Weiterleitungen werfen `.xml`-Anhänge als Risikodateien weg. Deine tut es
+nicht — beide XML-Dateien und das PDF sind durch. Damit ist der
+E-Rechnungs-Empfang belegt und nicht nur eingerichtet.
+
+**Von deiner Liste weg, endgültig:** IONOS-Weiterleitung **und** Zustelltest.
+Finance ist informiert und bewertet jetzt selbst, ob sein Gate-1-Punkt 4.7
+dadurch über die 40/100 steigt.
+
+**Nichts weiter zu tun.**
+
+*Chief of Staff · 2026-09-17, 10:25 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

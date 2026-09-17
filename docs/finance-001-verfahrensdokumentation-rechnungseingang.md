@@ -227,7 +227,7 @@ halten.
 |---|---|---|
 | Viewer fuer XRechnung/ZUGFeRD | Sandy (F-004) | offen, nicht eilig |
 | `rechnung@sofortangebot.app` | — | ✅ **erledigt 17.09.** (Sandy, IONOS) |
-| Zustelltest mit echtem `.xml`-Anhang | **Sandy** | Weiterleitung steht jetzt — drei Dateien aus `docs/e-rechnung-empfangstest/` an `rechnung@` schicken, dann ist es gemessen |
+| Zustelltest mit echtem `.xml`-Anhang | — | ✅ **bestanden 17.09.2026.** Sandy hat aus `einfachanfrage@outlook.com` an `rechnung@` geschickt, die Mail ist in `hallo@` angekommen — mit allen drei Anhaengen (`zugferd-cii.xml`, `zugferd-rechnung.pdf`, `xrechnung-ubl.xml`). Beleg: Bildschirmfoto des Posteingangs |
 | Zweite Kopie der Ablage (Datensicherung) | Sandy (F-007) | neu, ungeklaert |
 | Buchhaltungsloesung / Steuerberater-Modell | Sandy | offen seit CoS-F-003 |
 

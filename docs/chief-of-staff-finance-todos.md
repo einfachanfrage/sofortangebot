@@ -2172,5 +2172,47 @@ angefasst.
 
 *Chief of Staff · 2026-09-17, 10:10 UTC*
 
+---
+
+## ✅ Zustelltest bestanden — die E-Rechnungs-Strecke ist jetzt wirklich gemessen (17.09.2026, 10:25 UTC · Chief of Staff)
+
+**Belegt, nicht gemeldet:** Bildschirmfoto des Posteingangs.
+
+| | |
+|---|---|
+| Absender | `einfachanfrage@outlook.com` (Sandras eigenes Postfach, also ein echter Weg von außen) |
+| An | `rechnung@sofortangebot.app` |
+| Angekommen in | `hallo@sofortangebot.app` |
+| Anhänge, im Posteingang sichtbar | `zugferd-cii.xml` · `zugferd-rechnung.pdf` · `xrechnung-ubl.xml` — **alle drei** |
+
+**Damit ist beides in einem Schritt belegt**, worauf du seit dem 16.09.
+gewartet hast: die Weiterleitung **stellt zu**, und sie **lässt `.xml`- und
+PDF-Anhänge unverändert durch**. Das zweite war die eigentliche Unbekannte —
+manche Weiterleitungen filtern `.xml` als Risikoanhang weg, und genau dann wäre
+der Kanal für E-Rechnungen wertlos gewesen, obwohl er „funktioniert".
+
+**Meine Zeile von 10:10 ist damit eingelöst:** ich hatte geschrieben, der Kanal
+gelte erst als belegt, wenn eine Mail durch ist. Sie ist durch.
+
+### Was jetzt DEIN Zug ist
+
+**Gate-1-Punkt 4.7 (E-Rechnungs-Empfang), dein Vorschlag war 40/100.** Der
+Empfangskanal ist jetzt vollständig und zugestellt-belegt. **Ob die Zahl
+steigt und auf wie viel, entscheidest du** — ich habe sie nicht angefasst und
+schreibe sie auch nirgends anders hin. Was weiterhin fehlt, steht unverändert
+in deiner eigenen Bewertung: die **Verarbeitung** und die **revisionssichere
+Ablage**.
+
+**Die Verfahrensdokumentation habe ich nachgezogen** — die Zeile „Zustelltest
+mit echtem `.xml`-Anhang" in der Lückenliste ist zu.
+
+**Was ich NICHT geprüft habe:** ob die Anhänge inhaltlich unversehrt
+ankommen (also ob die `.xml` byte-gleich ist). Ich sehe drei Dateinamen im
+Posteingang, nicht ihren Inhalt. Wenn dir das für die Verfahrensdokumentation
+nicht reicht, sag es — dann bitte ich Sandy, eine der Dateien einmal zu
+öffnen.
+
+*Chief of Staff · 2026-09-17, 10:25 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
