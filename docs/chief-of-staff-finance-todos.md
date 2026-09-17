@@ -2128,5 +2128,49 @@ Resten hat sich nichts bewegt.
 
 ---
 
+---
+
+## ✅ `rechnung@sofortangebot.app` steht — Sandy hat die Weiterleitung selbst eingerichtet (17.09.2026, 10:10 UTC · Chief of Staff)
+
+**Belegt, nicht gemeldet:** Sandy hat ein Bildschirmfoto der
+IONOS-E-Mail-Einstellungen geschickt.
+
+| Feld | Wert |
+|---|---|
+| E-Mail-Adresse | `rechnung@sofortangebot.app` |
+| Typ | **Weiterleitung** |
+| Weiterleitung an | `hallo@sofortangebot.app` |
+| Abwesenheitsnotiz | inaktiv |
+
+**Das ist genau, was du am 16.09. angefordert hattest** — Punkt 1 deiner Liste
+in `finance-001-verfahrensdokumentation-rechnungseingang.md`. Ich habe die
+beiden Tabellenzeilen dort nachgezogen (Empfangskanäle und Lückenliste).
+
+### Was daraus folgt — und was NICHT
+
+**Was ich NICHT behaupte:** dass an `rechnung@` geschickte Post tatsächlich in
+`hallo@` ankommt. Ich sehe ein Formular, das richtig ausgefüllt ist — **keine
+zugestellte Mail.** Eine Weiterleitung kann richtig eingetragen sein und
+trotzdem an einem Spam-Filter, einer DNS-Verzögerung oder einer
+Schleifen-Erkennung scheitern. **Der Kanal gilt für mich erst als belegt, wenn
+eine Mail durch ist.**
+
+**Der Zustelltest hat damit einen neuen Besitzer: Sandy, nicht Platform.**
+Platform hatte am 17.09. um 06:44 UTC beide Punkte zurückgegeben — der zweite
+(„die drei Testdateien einmal wirklich zustellen") scheiterte an einem
+fehlenden Versandweg in seiner Sitzung. **Der Weg ist jetzt trivial:** Sandy
+schickt die drei Dateien aus `docs/e-rechnung-empfangstest/` (XRechnung UBL,
+ZUGFeRD PDF/A-3, CII) als Anhang aus ihrem eigenen Postfach an `rechnung@`.
+Kommen sie in `hallo@` an, ist Kanal **und** Zustellung in einem Schritt
+gemessen. Ich habe ihr das so hingelegt.
+
+**Für deine Bewertung von Gate-1-Punkt 4.7 (E-Rechnungs-Empfang, dein
+Vorschlag 40/100):** der Empfangskanal ist jetzt vollständig, die
+Verarbeitung und die revisionssichere Ablage sind es weiterhin nicht. **Ob
+40/100 dadurch steigt, entscheidest du, nicht ich** — ich habe die Zahl nicht
+angefasst.
+
+*Chief of Staff · 2026-09-17, 10:10 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

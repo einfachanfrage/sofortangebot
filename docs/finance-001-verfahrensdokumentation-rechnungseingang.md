@@ -56,7 +56,7 @@ Auswertbarkeit. Genau das leisten die Schritte in Teil 2 und 4.
 | Kanal | Status |
 |---|---|
 | `hallo@sofortangebot.app` (IONOS) | aktiv, empfaengt |
-| `rechnung@sofortangebot.app` als Weiterleitung auf `hallo@` | **beantragt bei Platform**, noch nicht eingerichtet |
+| `rechnung@sofortangebot.app` als Weiterleitung auf `hallo@` | **aktiv seit 17.09.2026** — von Sandy selbst im IONOS-Dashboard eingerichtet, Typ Weiterleitung, Ziel `hallo@sofortangebot.app`, Abwesenheitsnotiz inaktiv. Beleg: Bildschirmfoto der IONOS-E-Mail-Einstellungen |
 | Selbstabholung im Kundenkonto (OpenAI, Vercel, Supabase, IONOS, Resend) | aktiv — diese Rechnungen holt Sandy im Portal ab |
 | Papier an die Privatadresse | kommt vor, wird wie jede andere behandelt (eingescannt) |
 
@@ -226,8 +226,8 @@ halten.
 | Luecke | Bei wem | Status |
 |---|---|---|
 | Viewer fuer XRechnung/ZUGFeRD | Sandy (F-004) | offen, nicht eilig |
-| `rechnung@sofortangebot.app` | Platform | angefragt 16.09. |
-| Zustelltest mit echtem `.xml`-Anhang | Platform | Testdateien liegen bereit |
+| `rechnung@sofortangebot.app` | — | ✅ **erledigt 17.09.** (Sandy, IONOS) |
+| Zustelltest mit echtem `.xml`-Anhang | **Sandy** | Weiterleitung steht jetzt — drei Dateien aus `docs/e-rechnung-empfangstest/` an `rechnung@` schicken, dann ist es gemessen |
 | Zweite Kopie der Ablage (Datensicherung) | Sandy (F-007) | neu, ungeklaert |
 | Buchhaltungsloesung / Steuerberater-Modell | Sandy | offen seit CoS-F-003 |
 

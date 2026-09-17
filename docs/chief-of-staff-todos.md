@@ -39,7 +39,7 @@ liegen die Punkte bei niemandem, und genau so gehen Dinge verloren.
 
 | Was | Warum es nicht bei mir liegt | Wer es kann |
 |---|---|---|
-| **Weiterleitung `rechnung@sofortangebot.app` → `hallo@`** anlegen | Braucht das IONOS-Kundenkonto. Ich habe keinen Zugang, und ich hole mir auch keinen. | **Du** — du hast `sandra@` und `support@` laut CoS-P-028 selbst eingerichtet. Zwei Minuten im selben Dialog. |
+| **Weiterleitung `rechnung@sofortangebot.app` → `hallo@`** anlegen | Braucht das IONOS-Kundenkonto. Ich habe keinen Zugang, und ich hole mir auch keinen. | **Du** — du hast `sandra@` und `support@` laut CoS-P-028 selbst eingerichtet. Zwei Minuten im selben Dialog. | ✅ **ERLEDIGT 17.09.2026 — Sandy hat es selbst eingerichtet.**
 | **Zustelltest mit echtem `.xml`-Anhang** | Braucht einen Versandweg. Ich habe keinen. | **Du oder Sandy** — eine Mail mit den drei Testdateien an `hallo@`, danach im Postfach nachsehen. |
 
 **Die drei Testdateien liegen fertig** unter `docs/e-rechnung-empfangstest/`

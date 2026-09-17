@@ -2398,4 +2398,37 @@ CoS-P-004 und kommt zurück, sobald deine Liste kürzer ist.
 
 *Chief of Staff · 2026-09-17, 10:00 UTC*
 
+---
+
+## ✅ IONOS-Weiterleitung `rechnung@` — erledigt, danke (17.09.2026, 10:10 UTC)
+
+Gesehen: `rechnung@sofortangebot.app` → `hallo@sofortangebot.app`, Typ
+Weiterleitung, aktiv. **Punkt 1 von den zwei Platform-Rückgaben ist damit weg.**
+Ich habe es Finance und Platform gesagt und die Verfahrensdokumentation
+nachgezogen.
+
+### Punkt 2 fällt NICHT von allein weg — aber er ist jetzt eine Mail
+
+Ich hatte dir heute früh geschrieben, der Zustelltest „erledigt sich mit
+derselben Mail". Das war zu schnell formuliert: **er erledigt sich mit einer
+Mail, die noch niemand geschickt hat.** Solange keine durch ist, weiß niemand,
+ob die Weiterleitung wirklich zustellt — ein richtig ausgefülltes Formular ist
+kein Beleg, Spam-Filter und Schleifen-Erkennung sitzen dahinter.
+
+**Was du tun kannst, wenn du ohnehin am Rechner bist — zwei Minuten:**
+
+> Neue Mail aus deinem eigenen Postfach an **`rechnung@sofortangebot.app`**.
+> Hänge die drei Dateien aus dem Projektordner an, aus
+> `docs\e-rechnung-empfangstest\`:
+> `xrechnung-ubl.xml`, `zugferd-cii.xml`, `zugferd-rechnung.pdf`.
+> Betreff egal. Dann schau in `hallo@`, ob sie ankommt — **mit** den Anhängen.
+
+**Sag mir einfach „kam an" oder „kam nicht an".** Kommt sie an, ist der
+E-Rechnungs-Empfang belegt und ich gebe es an Finance weiter. Kommt sie nicht
+an, ist das ein Fund, und dann suche ich.
+
+**Nicht eilig.** Es blockiert weder Gate 1 noch die Landingpage.
+
+*Chief of Staff · 2026-09-17, 10:10 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 10:00 UTC · Chief of Staff**
-*(ersetzt die Fassung von 09:50 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 10:10 UTC · Chief of Staff**
+*(ersetzt die Fassung von 10:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**.*
 
 ---
@@ -20,8 +20,8 @@ Angebotskopf) — nachgemessen und committet.
 behoben.** Engineerings Fund. Die Markierung am Dateiende kam in sechs von
 neun Dateien mehrfach vor — jetzt in jeder genau einmal.
 
-**Sandy hat geantwortet: CoS-P-013 ist zu.** Der Passwort-Reset ist zum ersten
-Mal komplett von Hand durchgelaufen.
+**Sandy hat zweimal geantwortet: CoS-P-013 ist zu**, und die
+**IONOS-Weiterleitung `rechnung@` steht**. Zwei Punkte weg von ihrer Liste.
 
 ---
 
@@ -37,6 +37,7 @@ Mal komplett von Hand durchgelaufen.
 | CoS | **CoS-L-011** an Legal — die Rechtsfrage aus DC-122 abgetrennt (dürfen freie Fußzeilen die Pflichtangaben ersetzen?) | ✅ erledigt |
 | CoS | **Korrektur beim Prüfmeister** — meine eigene Zeile von 09:00 („die einzige offene Sache") stimmte seit 09:07 nicht mehr | ✅ erledigt |
 | Sandy | **CoS-P-013 beantwortet** („JA klappt!") — der letzte, seit dem 16.09. unbelegte Klick der Passwort-Reset-Strecke | ✅ **Punkt zu**, Abschlusseintrag in `chief-of-staff-platform-todos.md` |
+| Sandy | **IONOS-Weiterleitung `rechnung@` → `hallo@` selbst eingerichtet**, Bildschirmfoto als Beleg | ✅ **erledigt**, an Finance und Platform gemeldet, Verfahrensdokumentation nachgezogen |
 
 ---
 
@@ -60,9 +61,12 @@ Mal komplett von Hand durchgelaufen.
   dem Eingriff: vorher 4/3/2/2/2/2/1/1/1, jetzt **überall genau 1**.
 * **`node scripts/docs-sichern.mjs pruefen`** nach jedem Eingriff: **„Alle 57
   Doku-Dateien in Ordnung."**
-* **`entscheidungen-fuer-sandy.md` und `chief-of-staff-platform-todos.md`
-  frisch gelesen**, bevor ich unten „offen" bzw. „zu" schreibe. Von Sandys
-  Liste ist genau ein Punkt beantwortet worden: CoS-P-013.
+* **`entscheidungen-fuer-sandy.md`, `chief-of-staff-platform-todos.md` und
+  `finance-001-verfahrensdokumentation-rechnungseingang.md` frisch gelesen**,
+  bevor ich unten „offen" bzw. „zu" schreibe. Von Sandys Liste sind zwei
+  Punkte weg: CoS-P-013 und die IONOS-Weiterleitung.
+* **Das IONOS-Bildschirmfoto selbst angesehen:** `rechnung@sofortangebot.app`,
+  Typ Weiterleitung, Ziel `hallo@sofortangebot.app`, Abwesenheitsnotiz inaktiv.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
@@ -77,6 +81,10 @@ Mal komplett von Hand durchgelaufen.
   > einem gewöhnlichen Bad. Siehe den Punkt unten und **PM-117**. Dein Satz
   > stimmte, als du ihn geschrieben hast; ich korrigiere ihn hier, statt ihn
   > stillschweigend zu ändern.
+* **Dass an `rechnung@` geschickte Post wirklich in `hallo@` ankommt**, ist
+  NICHT belegt. Ich habe ein richtig ausgefülltes Formular gesehen, keine
+  zugestellte Mail. Der Zustelltest liegt jetzt bei Sandy (eine Mail mit den
+  drei Dateien aus `docs/e-rechnung-empfangstest/`).
 * **Wie die drei Logo-Stufen mit einem echten Logo auf Papier wirken**, ist
   ungeprüft. Ein Prüfstand misst, dass ein PDF entsteht, nicht wie es aussieht.
 * **Die restlichen ~160 Testdateien** habe ich in diesem Lauf nicht gefahren,
@@ -97,11 +105,14 @@ Mal komplett von Hand durchgelaufen.
 | 2 | 🔴 **Preis bei § 19 (A/B), F-006** — tendiert zu **B** (Regelbesteuerung). **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
 | 3 | 🟢 **Datenschutz-Halbsatz freigeben (L-KI-01).** „unwiderruflich entfernt" stimmt nicht, solange OpenAI 30 Tage vorhalten darf. Wortlaut liegt fertig vor. Empfehlung: ja. | ein Wort |
 | 4 | 🟡 **F-007:** Gibt es eine laufende Sicherung deines Rechners, und liegt der Projektordner mit drin? | ein Satz |
-| 5 | 🟡 **IONOS-Weiterleitung `rechnung@`** — selbst machen oder ich? Empfehlung: selbst. | ein Satz |
+| 5 | 🔵 **NEU, klein: E-Rechnungs-Zustelltest.** Eine Mail aus deinem Postfach an `rechnung@` mit den drei Dateien aus `docs\e-rechnung-empfangstest\`. Kommt sie in `hallo@` an? | zwei Minuten |
 | 6 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
 | 7 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht geprüft |
 
-**Erledigt und weg von ihrer Liste:** **CoS-P-013** — beantwortet, Punkt zu.
+**Erledigt und weg von ihrer Liste:** **CoS-P-013** (beantwortet, Punkt zu)
+und die **IONOS-Weiterleitung `rechnung@`** (selbst eingerichtet). Dafür ist
+der **Zustelltest** neu dazugekommen — er ist der Rest desselben Punktes und
+fällt entgegen meiner Zeile von heute früh nicht von allein weg.
 
 **Beiläufig, kostet sie nichts:** wenn sie das nächste Mal ohnehin ein Angebot
 als PDF öffnet, sieht sie das neue Kopflogo; und wenn sie ohnehin auf einer
@@ -126,7 +137,7 @@ als sie schrumpft.
 | **Legal** | **CoS-L-011** — ein Absatz: dürfen freie Fußzeilen die Pflichtangaben auf dem Angebot ersetzen (A/B/C), und ändert sich die Antwort bei Regelbesteuerung? | niemanden |
 | **Marketing** | **Textseitig fertig, wartet bewusst.** Einzuarbeiten: es sind **sieben** Buchhaltungs-Anbindungen, nicht drei. Offen bleibt die Entscheidung über die Positionstitel. | Sandys A/B zu § 19 · Sandys Buchhaltungs-Testlauf |
 | **Platform** | **CoS-P-029 — ein Termin, kein Auftrag:** am **19.09. nach 03:30 UTC** einmal `system_laeufe` prüfen (`aufnahmen.dateien > 0`?). CoS-P-013 ist zu; CoS-P-004 braucht eine Handlung von Sandy, nicht von ihm. | niemanden |
-| **Finance** | F-007 gestellt, Belegablage steht, Reverse-Charge geklärt | Sandys Satz zur Sicherung · Sandys A/B zu § 19 |
+| **Finance** | F-007 gestellt, Belegablage steht, Reverse-Charge geklärt. **Neu: der Empfangskanal `rechnung@` ist vollständig** — ob Gate-1-Punkt 4.7 dadurch über 40/100 steigt, entscheidet er, nicht ich | Sandys Satz zur Sicherung · Sandys A/B zu § 19 · Sandys Zustelltest |
 
 ---
 
@@ -169,4 +180,4 @@ als sie schrumpft.
 * **Das GitHub-403 auf Schritt-Ebene bleibt.** Ohne Token sehe ich nur, **ob**
   ein Lauf grün war, nie **warum** er rot war.
 
-*Chief of Staff · 2026-09-17, 10:00 UTC*
+*Chief of Staff · 2026-09-17, 10:10 UTC*

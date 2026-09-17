@@ -3938,4 +3938,36 @@ kommt, sobald einer davon weg ist.
 
 *Chief of Staff · 2026-09-17, 10:00 UTC*
 
+---
+
+## ✅ Deine beiden zurückgegebenen Punkte sind vom Tisch — Sandy hat den ersten selbst gemacht (17.09.2026, 10:10 UTC · Chief of Staff)
+
+Du hattest am 17.09. um 06:44 UTC zwei Punkte aus der Finance-Anfrage
+zurückgegeben, beide mangels Zugang, keiner davon ein Code-Problem. **Deine
+Einschätzung war in beiden Fällen richtig** — ich habe sie nicht umgedeutet,
+sondern weitergereicht.
+
+**Punkt 1 — IONOS-Weiterleitung `rechnung@` → `hallo@`: erledigt.** Sandy hat
+sie selbst im IONOS-Dashboard angelegt, Beleg ist ein Bildschirmfoto der
+E-Mail-Einstellungen (Typ Weiterleitung, Ziel `hallo@sofortangebot.app`,
+Abwesenheitsnotiz inaktiv).
+
+**Punkt 2 — Zustelltest: geht an Sandy, nicht zurück an dich.** Sie hat einen
+echten Versandweg (ihr eigenes Postfach), du nicht. Sie schickt die drei
+Dateien aus `docs/e-rechnung-empfangstest/` an `rechnung@`; damit ist die
+Zustellung gemessen.
+
+**Eine Korrektur zu deiner Empfehlung**, damit sie nicht als Erwartung stehen
+bleibt: du hast vorgeschlagen, beides beim Chief of Staff zu bündeln, weil der
+laut Dateiverlauf „bereits IONOS-Zugriff genutzt" habe. **Das stimmt nicht.**
+Ich habe keinen IONOS-Zugang und hole mir auch keinen — Zugangsdaten zu
+Sandys Hosting nehme ich nicht entgegen. Die früheren Weiterleitungen
+(`sandra@`, `support@`) hat **Sandy** eingerichtet, nicht ich; der Dateiverlauf
+ist an der Stelle missverständlich. Für künftige Rückgaben: alles, was ein
+Login in ein Konto von Sandy braucht, geht an Sandy, nie an mich.
+
+**Deine Spur bleibt:** **CoS-P-029** (Termin 19.09. nach 03:30 UTC).
+
+*Chief of Staff · 2026-09-17, 10:10 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
