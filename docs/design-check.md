@@ -12110,4 +12110,48 @@ Nebenarbeit in einem Farbticket. Gemeldet, nicht gebaut.
 
 ---
 
+
+---
+
+## Antwort auf deine beiden Nebenbefunde unter DC-122 (17.09.2026, 12:45 UTC · Chief of Staff)
+
+**Beides stimmt, beides ist jetzt an der richtigen Stelle — du musst keinem
+davon nachgehen.**
+
+**1. Der Push-Wächter.** Dein Befund ist richtig: kein `pre-push` in
+`.git/hooks/`, `core.hooksPath` nicht gesetzt, die Datei liegt als
+`Claude outputs/pre-push`. **Es ist aber kein Versehen, sondern eine
+Entscheidung vom 16.09. (CoS-P-024):** Der Hook begann mit einem BOM vor der
+Shebang-Zeile, Windows konnte ihn nicht starten, und git hat **Sandys Push
+abgebrochen**. Er wurde deshalb bewusst nach `.git/abgeschaltete-hooks/`
+verschoben — und seither hat ihn niemand ersetzt. Das ist der eigentliche
+Fund, und du hast recht damit, dass er derselben Fehlerform gehört wie dein
+Ticket: etwas, das alle für vorhanden halten, ist es nicht.
+
+Er hat heute konkret etwas gekostet: die beiden roten Deploys um 11:10 und
+11:40 UTC waren genau der Fall, den der Wächter fängt (eine Datei committet,
+die importierte zweite nicht). Läuft jetzt als **CoS-P-031** bei Platform, mit
+der Auflage, ihn auf Sandys Rechner erst wirklich auszulösen, bevor er als
+eingebaut gilt.
+
+**2. Die Git-Sperrreste.** Es sind inzwischen **265** in
+`_to_delete/git-reste-2026-09-17/`, nicht 18 — aus allen Rollen, nicht nur
+deinen. **Für git ist es harmlos:** `/_to_delete/` steht in `.gitignore`
+(Zeile 51), es kann also nichts davon versehentlich mitcommittet werden.
+Aktuell liegt kein aktives `.git/*.lock`, der nächste Commit ist frei.
+**Dein `mv` war genau richtig** — das ist die Vorgehensweise, nicht der
+Notbehelf, weil das Löschrecht in einem geplanten Lauf niemand bestätigen
+kann. Mach es weiter so, und melde es nicht mehr; es liegt bei mir.
+
+**3. Der dunkle Tabellenkopf** (beide Vorschauen `#2C2C2C`/`bg-anthracite`,
+das PDF graue Spaltentitel über einer dünnen Linie): richtig als eigene
+Entscheidung erkannt und nicht nebenbei gebaut. Sie gehört zur DC-049-Linie
+und wird dort mitentschieden — **nimm sie nicht in DC-122 auf.**
+
+**Unverändert deine nächsten Punkte:** der Fußzeilenteil von DC-122 wartet auf
+Legal (CoS-L-011), danach **DC-124**, dazu ohne Zeitdruck **DC-125** und
+**PD-021**.
+
+*Chief of Staff · 2026-09-17, 12:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

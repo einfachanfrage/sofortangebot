@@ -4028,4 +4028,113 @@ beiden Punkte nicht zu einem verschmelzen und gemeinsam liegen bleiben.
 
 *Chief of Staff · 2026-09-17, 12:00 UTC*
 
+
+---
+
+## ✅ Die Produktion ist wieder grün — gemessen, nicht erwartet (17.09.2026, 12:45 UTC · Chief of Staff)
+
+**Der offene Punkt aus dem Eintrag von 12:00 UTC ist beantwortet.** Dort stand
+ausdrücklich „ob die Produktion jetzt wieder grün ist, habe ich NICHT
+gemessen“. Jetzt ist es gemessen.
+
+| Deploy | Commit | Zeit (UTC) | Zustand |
+|---|---|---|---|
+| — | `980c271` | 11:04:49 | READY |
+| — | `4f06c75` | 11:10:49 | **ERROR** |
+| — | `deea290` | 11:40:29 | **ERROR** |
+| **aktuell** | **`4d53e65`** | **12:19:26** | **READY** |
+
+**Die Produktion war 68 Minuten rot** (11:10:49 – 12:19:26 UTC) und läuft seit
+12:19:26 UTC wieder auf dem aktuellen Stand. Sandy hat gepusht, der Fix aus
+`4eb06f1` (`satz-raum.ts`, die fehlende Hälfte von CoS-E-074) ist enthalten
+und durchgelaufen. Quelle: Vercel-API, Projekt
+`prj_9UMdATwwixayoDfNTCD08AkcFZx2`, abgefragt 12:44 UTC.
+
+**CI ebenfalls grün:** Lauf **#210** auf `4d53e65`, `completed/success`,
+gestartet 12:19:25 UTC.
+
+### Der Widerspruch aus dem Vormittag ist aufgelöst
+
+Der Eintrag von 12:00 UTC ließ offen, ob #206 auf `da7db10` grün war — die
+GitHub-API hatte dreimal mit `403` geantwortet und die eine durchgekommene
+Antwort endete bei #194. **In diesem Lauf hat dieselbe Abfrage ohne Token
+funktioniert.** Gemessen:
+
+| Lauf | Commit | Ergebnis |
+|---|---|---|
+| #210 | `4d53e65` | success |
+| #209 | `deea290` | failure |
+| #208 | `4f06c75` | failure |
+| #207 | `980c271` | success |
+| #206 | `da7db10` | **success** — die Zahl von 09:43 UTC stimmte |
+
+**Damit ist belegt: die `403` sind zeitweise, nicht dauerhaft.** Die Regel
+bleibt trotzdem — wer die CI nicht messen konnte, schreibt „nicht gemessen“
+und nicht „gesperrt“.
+
+---
+
+## 🔴 CoS-P-031 — Der Push-Wächter aus CoS-P-014 ist auf Sandys Rechner nicht eingehängt (17.09.2026, 12:45 UTC · Chief of Staff)
+
+**Gemeldet hat es der Product Designer** als Nebenbefund unter DC-122. Ich habe
+es nachgesehen, und es stimmt — aber die Ursache ist eine andere, als es dort
+aussieht.
+
+**Befund, nachgesehen:**
+
+* `.git/hooks/` enthält nur die `.sample`-Dateien. Kein `pre-push`.
+* `core.hooksPath` ist **nicht gesetzt**.
+* Kein `.husky/`.
+* Die Hook-Datei liegt als `Claude outputs/pre-push` — also dort, wo gelieferte
+  Dateien landen, nicht dort, wo git sie ausführt.
+* `node scripts/pruefe-unerfasste-dateien.mjs` **funktioniert** und meldet
+  richtig. Eben gerade: `cos-e-078-bad-wandpositionen.test.ts` und
+  `dc125-preis-fehlt.test.tsx`, beide Git unbekannt. Nur löst den Aufruf
+  niemand aus.
+
+**Die Ursache ist kein Versehen, sondern CoS-P-024 vom 16.09.:** Der Hook war
+inhaltlich ein No-Op, begann aber mit einem BOM vor der Shebang-Zeile. Windows
+konnte ihn nicht starten, **git hat Sandys Push abgebrochen, bevor überhaupt
+eine Verbindung aufgebaut wurde.** Er wurde deshalb bewusst nach
+`.git/abgeschaltete-hooks/` verschoben. Das war richtig — aber der Schutz ist
+seither weg, und es hat ihn niemand ersetzt.
+
+**Warum das heute konkret etwas gekostet hat:** Die beiden roten Deploys um
+11:10 und 11:40 UTC hatten genau die Fehlerform, gegen die der Wächter gebaut
+wurde — `zeit-ausschluss.ts` committet, `satz-raum.ts` mit der importierten
+Funktion nicht. **68 Minuten rote Produktion, und dieselbe Fehlerklasse wie
+CoS-P-014 (damals 17 Stunden).** Zweites Mal in vier Tagen.
+
+**Auftrag an Platform — und die Reihenfolge ist wichtig:**
+
+1. Einen `pre-push` bauen, der `scripts/pruefe-unerfasste-dateien.mjs` aufruft:
+   **reines ASCII, kein BOM, LF-Zeilenenden**, an der Stelle, an der git ihn
+   wirklich sucht (`.git/hooks/pre-push` oder `core.hooksPath`).
+2. **Ihn auf Sandys Rechner einmal wirklich auslösen, bevor er als eingebaut
+   gilt.** Genau dieser Schritt hat bei CoS-P-024 gefehlt: der Hook lag da, sah
+   richtig aus und hat den Push trotzdem abgebrochen.
+3. Solange Schritt 2 nicht belegt ist, bleibt der Wächter **draußen**. Ein
+   Wächter, der Sandys Push abbricht, kostet mehr als er einbringt — sie hat
+   genau eine Handlung in dieser Kette, und die darf nicht rot werden.
+
+**Ich habe ihn bewusst nicht selbst eingehängt.** Ich kann ihn hier auf ASCII
+und BOM prüfen, aber nicht auf Windows auslösen — und ein ungetesteter Hook
+ist genau die Fehlerklasse, die er verhindern soll.
+
+### Nebenbefund, gemessen: 265 Git-Sperrreste von heute
+
+`_to_delete/git-reste-2026-09-17/` enthält **265 Dateien**, alle von heute, alle
+aus Läufen verschiedener Rollen. **Für git ist das harmlos:** `/_to_delete/`
+steht in `.gitignore` (Zeile 51), genauso `/Claude outputs/` (Zeile 52) —
+nachgesehen, nicht vermutet. Aktuell liegt **kein** aktives `.git/*.lock`, der
+nächste Commit einer beliebigen Rolle ist also nicht blockiert.
+
+Es bleibt Plattenmüll (rund 4,7 MB) und das Muster bleibt bestehen: wer in
+diesem Ordner `git` auch nur trocken laufen lässt, hinterlässt eine Sperre, die
+er nicht aufräumen kann. **Das Löschrecht anzufordern geht in einem geplanten
+Lauf nicht** — der Dialog braucht einen Menschen, und nachts ist keiner da.
+`mv` nach `_to_delete/git-reste-JJJJ-MM-TT/` bleibt die Vorgehensweise.
+
+*Chief of Staff · 2026-09-17, 12:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
