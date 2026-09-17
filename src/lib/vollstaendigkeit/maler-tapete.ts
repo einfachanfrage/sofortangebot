@@ -2,6 +2,7 @@ import type { BerechnetePosition } from '../mengen/types'
 import { nichtStreichbarerWerkstoff, nichtStreichbarHinweis, brauchtVorlack, VORLACK_HINWEIS, farbtonWieWand, FARBTON_HINWEIS, sockelIstMineralisch, MINERALISCH_HINWEIS } from '../lack-untergrund'
 import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen } from './helpers'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
+import { erkenneArbeiten } from '../arbeiten-normalisierer'
 
 // Sockelleisten lackieren: Schleifen + 2× Lackieren
 export function pruefeSockelleistenLackieren(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
@@ -207,11 +208,42 @@ export function pruefeSockelleistenStreichen(ergaenzt: BerechnetePosition[], feh
 }
 
 // Tapete entfernen + dann streichen (kein neues Tapezieren)
-export function pruefeTapeteWegDannStreich(ergaenzt: BerechnetePosition[], fehlende: string[], v: AuftragsVerstaendnis): boolean {
+export function pruefeTapeteWegDannStreich(
+  ergaenzt: BerechnetePosition[],
+  fehlende: string[],
+  v: AuftragsVerstaendnis,
+  lower: string,
+): boolean {
   // Normalisierte Kategorien aus dem Vertrag statt Wort-Fetzen: deckt "gestrichen",
   // "abgemacht", "muss runter" etc. zentral ab.
   const kat = v.arbeiten
-  const hatTapeteWegDannStreich = kat.has('tapete_entfernen') && kat.has('streichen') && !kat.has('tapezieren')
+  // ── PM-102, zweiter Teil (Prüfmeister 17.09.2026) ────────────────────────
+  //
+  // Live stand auf Sandys Angebot „Tapete tapezieren · 65,96 m² × 26,00 € =
+  // 1.714,96 €" — auf ein Diktat, das lautet: *„Alte Tapete muss runter.
+  // Danach Wände und Decke zweimal weiß."* Niemand hat tapezieren gesagt; es
+  // ist das Gegenteil der Ansage.
+  //
+  // Nachgemessen, nicht vermutet: Die Kategorie `tapezieren` kam nicht aus dem
+  // Diktat, sondern aus der arbeiten[]-Liste der Extraktion („tapete
+  // aufziehen"). `v.arbeiten` ist die VEREINIGUNG aus Diktat und
+  // arbeiten[] — der alte Ausschluss `!kat.has('tapezieren')` ließ damit eine
+  // erfundene Arbeit die ausgesprochene überstimmen. Folge doppelt: die
+  // Tapezierzeile entstand, und `pruefeTapezieren` löschte dafür den
+  // Wandanstrich (626,62 €).
+  //
+  // Soll des Prüfmeisters, wörtlich: *Tapete entfernen + streichen schließt
+  // Tapezieren aus.* Deshalb zählt hier nur noch, was im DIKTAT steht:
+  // „Tapete runter, dann neue Raufaser drauf" bleibt Tapezieren, „Tapete
+  // runter, danach weiß" wird es nicht mehr durch eine Zeile in arbeiten[].
+  //
+  // Der Preis dieser Richtung, offen benannt: Erkennt der Normalisierer eine
+  // echte Tapezier-Ansage im Diktat nicht, fällt die Tapezierzeile weg,
+  // obwohl sie bestellt war. Das ist die billigere der beiden Richtungen —
+  // eine fehlende Zeile sieht der Handwerker beim Durchsehen, eine erfundene
+  // 1.714,96-€-Zeile zahlt der Kunde.
+  const tapezierenImDiktat = erkenneArbeiten(lower).has('tapezieren')
+  const hatTapeteWegDannStreich = kat.has('tapete_entfernen') && kat.has('streichen') && !tapezierenImDiktat
   if (!hatTapeteWegDannStreich) return false
 
   const wandPosTapRaus = ergaenzt.find(p => istWandStreichen(p.beschreibung))

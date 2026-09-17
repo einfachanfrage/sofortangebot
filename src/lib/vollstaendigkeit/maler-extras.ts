@@ -124,8 +124,67 @@ export function pruefeGraffiti(ergaenzt: BerechnetePosition[], fehlende: string[
   }
 }
 
-export function pruefeAltbau(ergaenzt: BerechnetePosition[], lower: string): void {
-  const hatAltbau = lower.includes('altbau') || lower.includes('altgebäude') || lower.includes('altbestand')
+// ── PM-103 (Prüfmeister, Sandys zweiter Live-Lauf 17.09.2026) ──────────────
+//
+// Auf einem Angebot über 2.301,14 € stand `Erschwerniszuschlag Altbau · 20 %
+// · 460,20 €`. Ausgelöst hat ihn ein einziges Wort — und zwar der RAUMNAME:
+// derselbe Text mit „Wohnzimmer" statt „Altbauwohnzimmer" erzeugt den
+// Zuschlag nicht (vom Prüfmeister gemessen, nicht vermutet).
+//
+// Fachlich ist ein Altbau-Zuschlag richtig, wenn der Untergrund ihn hergibt:
+// krumme Wände, alter Kalkputz, Stuck, keine gerade Kante im Raum. Aber nicht,
+// weil jemand seinen Raum so nennt. „Altbauwohnzimmer" sagt der Kunde,
+// „Altbau, Kalkputz, alles krumm" sagt der Handwerker — und das ist der
+// Zuschlag. Soll des Prüfmeisters: *Der Zuschlag entsteht nur aus einer
+// Aussage über den Zustand, nie aus einem Raumnamen.*
+//
+// Zwei Schranken setzen das um:
+//
+// 1. WORTGRENZE. `includes('altbau')` traf mitten in jedem zusammengesetzten
+//    Wort — „Altbauwohnzimmer", „Altbaufenster", „Altbautür". Als Aussage
+//    zählt das Wort nur noch, wenn es für sich steht („Altbau", „im Altbau",
+//    „Altbauten"). Dieselbe Falle wie „ab-DECKE-n" in PM-017, nur andersherum:
+//    dort steckte das Wort im Wort, hier klebt das Wort am Wort.
+// 2. RAUMNAMEN RAUS. Heißt ein Raum in der Aufnahme wirklich „Altbau", ist das
+//    ein Name und keine Aussage — der Name wird aus dem Text genommen, bevor
+//    geprüft wird.
+//
+// BEWUSST MIT ENGE ERKAUFT: „Altbauwohnung" löst jetzt ebenfalls nichts mehr
+// aus. Das ist eine Beschreibung des Objekts, keine des Zustands, und liegt
+// damit auf der Namens-Seite der Grenze. Ob das so bleiben soll, ist eine
+// Frage an den Prüfmeister — sie steht in seiner Datei. Für einen Betrieb,
+// der den Zuschlag will, bleibt der Weg offen: er sagt ihn, oder er trägt ihn
+// nach.
+/**
+ * Der Text ohne die Raumnamen aus der Aufnahme.
+ *
+ * GEMESSEN, NICHT GERATEN: Die erste Fassung schnitt die Namen mit
+ * `split(name).join(' ')` heraus — ohne Wortgrenze. Bei einem Raum namens „W"
+ * (so heißen sie in den Prüfmeister-Fällen) wurde damit JEDES „w" im Text
+ * gelöscht: aus „Altbauwohnzimmer" wurde „altbau ohnzimmer" — und der
+ * Zuschlag feuerte erst recht, weil das Wort danach allein stand. Ein Filter,
+ * der genau den Fall herstellt, gegen den er gebaut ist.
+ *
+ * Deshalb: ganze Wörter, und Namen unter drei Zeichen bleiben stehen (die
+ * sind Kürzel, keine Wörter, und treffen sonst den halben Text).
+ */
+function ohneRaumnamen(lower: string, raeume: Array<{ name?: string }>): string {
+  return raeume.reduce((text, r) => {
+    const name = r?.name?.trim().toLocaleLowerCase('de-DE')
+    if (!name || name.length < 3) return text
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    return text.replace(new RegExp(`(^|[^\\p{L}])${escaped}(?![\\p{L}])`, 'giu'), '$1 ')
+  }, lower)
+}
+
+const ALTBAU_AUSSAGE = /\baltbau(?:s|es|ten|e)?\b|\baltgeb[äa]ude[sn]?\b|\baltbestand(?:e?s)?\b/i
+
+export function pruefeAltbau(
+  ergaenzt: BerechnetePosition[],
+  lower: string,
+  raeume: Array<{ name?: string }> = [],
+): void {
+  const hatAltbau = ALTBAU_AUSSAGE.test(ohneRaumnamen(lower, raeume))
   if (hatAltbau && !hat(ergaenzt, 'erschwerniszuschlag altbau', 'altbau pauschale')) {
     ergaenzt.push({ beschreibung: 'Erschwerniszuschlag Altbau', menge: 1, einheit: ZUSCHLAG_EINHEIT, konfidenz: 'high', berechnungsweg: 'Altbau im Transkript erkannt', annahmen: [] })
   }

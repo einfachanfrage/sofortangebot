@@ -54,7 +54,7 @@ export function pruefeMaler(
   pruefeDachschraege(ergaenzt, fehlende, lower)
   pruefeStuckleisten(ergaenzt, fehlende, lower, verstaendnis)
   pruefeGraffiti(ergaenzt, fehlende, lower)
-  pruefeAltbau(ergaenzt, lower)
+  pruefeAltbau(ergaenzt, lower, meta?.raeume ?? [])
   pruefeSpachteln(ergaenzt, fehlende, lower, verstaendnis)
   pruefeDenkmalschutz(ergaenzt, lower)
   pruefeStuck(ergaenzt, lower)
@@ -86,7 +86,7 @@ export function pruefeMaler(
   pruefeErschwerniszuschlagUntergrund(ergaenzt, lower)
   pruefeTuerrahmen(ergaenzt, lower)
   pruefeSockelleistenStreichen(ergaenzt, fehlende, lower, verstaendnis)
-  const hatTapeteWegFlag = pruefeTapeteWegDannStreich(ergaenzt, fehlende, verstaendnis)
+  const hatTapeteWegFlag = pruefeTapeteWegDannStreich(ergaenzt, fehlende, verstaendnis, lower)
   pruefeTapezieren(ergaenzt, fehlende, lower, transkript, positionen, hatTapeteWegFlag)
   pruefeFassade(ergaenzt, lower, transkript, verstaendnis)
   // Zug 2 / Tapezier-Nische: MUSS hinter `pruefeTapezieren` stehen — die
