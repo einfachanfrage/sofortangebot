@@ -89,12 +89,25 @@ Nicht bezahlen, was nicht geprueft ist. Pruefliste:
 | 10 | Sachlich richtig: Leistung wurde bezogen, Preis entspricht der Vereinbarung | — |
 | 11 | Rechnerisch richtig: Summen stimmen | — |
 
-**Hinweis zu Punkt 9, der Sandy konkret betrifft:** Bei OpenAI, Vercel,
-Supabase und Resend geht die Steuerschuld auf die Leistungsempfaengerin ueber.
-**Das gilt auch fuer Kleinunternehmer** — die § 19-Regelung befreit nicht vom
-Reverse-Charge-Verfahren. Ob daraus eine Anmeldepflicht folgt, gehoert auf den
-Steuerberater-Termin; hier steht es, damit die Rechnungen mit dem richtigen
-Blick geprueft werden.
+**Hinweis zu Punkt 9, der Sandy konkret betrifft** (korrigiert am
+17.09.2026 — die erste Fassung nannte hier zusaetzlich OpenAI, Vercel und
+Resend; das war falsch, siehe Belegpruefung in
+`chief-of-staff-finance-todos.md`):
+
+**Genau ein Anbieter faellt heute unter das Reverse-Charge-Verfahren:
+Supabase Pte. Ltd. (Singapur).** Die Rechnung weist keine Umsatzsteuer aus;
+die Steuerschuld geht nach § 13b Abs. 2 Nr. 1 i. V. m. Abs. 5 UStG auf Sandy
+ueber. **Das gilt auch fuer Kleinunternehmer** — § 19 schuetzt die eigenen
+Verkaeufe, nicht die Einkaeufe, und der Vorsteuerabzug ist nach § 19 Abs. 1
+i. V. m. § 15 UStG ausgeschlossen. Die 19 % sind damit echte Kosten. Daraus
+folgt eine Voranmeldung fuer die betroffenen Zeitraeume (§ 18 Abs. 4a UStG),
+gemeldet in der Zeile fuer Drittlandsleistungen.
+
+**Vercel, OpenAI, Anthropic, Apple und IONOS weisen die 19 % dagegen selbst
+aus** (EU-OSS bzw. deutsche USt) — dort ist nichts zu melden, aber als
+Kleinunternehmerin gibt es auch nichts zurueck. Beim Pruefen heisst das:
+**Eine auslaendische Rechnung ohne ausgewiesene USt ist kein Fehler, sondern
+ein Reverse-Charge-Fall und gehoert gesondert vermerkt.**
 
 **Lesbarkeit einer `.xml`-Rechnung:** ohne Viewer nicht moeglich. Empfehlung
 steht (Quba-Viewer, Open Source, 0 €), Installation liegt bei Sandy — F-004.

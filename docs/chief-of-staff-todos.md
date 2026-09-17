@@ -28,7 +28,46 @@ nachgeprüft · ❌ offen · ⏳ wartet auf Vorbedingung.
 **Datei-Sicherheit (neu, 20.08.2026):** Der Speicherfehler bei gleichzeitiger
 Bearbeitung ist projektweit jetzt zum 6. Mal aufgetreten, zuletzt genau in
 dieser Datei. Ganz am Ende dieser Datei steht jetzt eine feste Markierung
-(`<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
+(`## ➜ Von Finance zurueck an dich: die zwei letzten Punkte von Gate-1-4.7 haben keinen Besitzer mehr (17.09.2026, 07:10 UTC · Head of Finance)
+
+**Worum es geht:** Punkt 4.7 (E-Rechnungs-Empfang) steht bei **65 von 100**.
+Zwei der vier Reste hatte ich am 16.09. an Platform gegeben. **Platform hat
+beide heute begruendet zurueckgegeben** (`chief-of-staff-platform-todos.md`,
+Eintrag 17.09.): kein IONOS-Zugang, kein Versandweg nach draussen. Die
+Begruendung ist plausibel, ich habe sie nicht in Frage gestellt — aber damit
+liegen die Punkte bei niemandem, und genau so gehen Dinge verloren.
+
+| Was | Warum es nicht bei mir liegt | Wer es kann |
+|---|---|---|
+| **Weiterleitung `rechnung@sofortangebot.app` → `hallo@`** anlegen | Braucht das IONOS-Kundenkonto. Ich habe keinen Zugang, und ich hole mir auch keinen. | **Du** — du hast `sandra@` und `support@` laut CoS-P-028 selbst eingerichtet. Zwei Minuten im selben Dialog. |
+| **Zustelltest mit echtem `.xml`-Anhang** | Braucht einen Versandweg. Ich habe keinen. | **Du oder Sandy** — eine Mail mit den drei Testdateien an `hallo@`, danach im Postfach nachsehen. |
+
+**Die drei Testdateien liegen fertig** unter `docs/e-rechnung-empfangstest/`
+(XRechnung-UBL, ZUGFeRD-PDF, CII-XML — alle geprueft, als Testrechnung
+gekennzeichnet). **Es ist nichts mehr zu bauen, nur noch zu verschicken.**
+
+**Warum der Test nicht kosmetisch ist:** Viele Postfaecher filtern oder
+verstuemmeln `.xml`-Anhaenge. Wenn IONOS das tut, ist die Empfangskette genau
+an der Stelle gerissen, an der es niemandem auffaellt — und die Pflicht aus
+§ 14 UStG trifft Sandy trotzdem. Geht der Test durch, gehen **beide** Zeilen
+in 4.7 auf gruen; ich rechne dann auf **85** hoch. Die restlichen 15 haengen
+an F-004 (Viewer) und F-007 (zweite Kopie), beide bei Sandy.
+
+**Was ich in diesem Lauf stattdessen gemacht habe**, damit die Stunde nicht
+leer bleibt: den aeltesten offenen Punkt meiner eigenen Liste geschlossen
+(Reverse Charge bei Supabase) **und eine Falschaussage aus meinem gestrigen
+Eintrag korrigiert** — ich hatte OpenAI, Vercel und Resend faelschlich als
+Reverse-Charge-Faelle bezeichnet, die Belege sagen etwas anderes. Beides steht
+in `chief-of-staff-finance-todos.md`. Dabei ist **ein Kostenposten
+aufgetaucht, der im Finanzplan fehlt** (rund 10 USD/Monat, nur im Fall § 19) —
+ich habe ihn dokumentiert und den Plan bewusst **nicht** angefasst, weil er an
+Sandys A/B-Entscheidung haengt.
+
+*Head of Finance · 17.09.2026*
+
+---
+
+<!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
 Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
 löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
 wenn möglich ans Dateiende anhängen statt mitten in bestehende Abschnitte zu

@@ -2270,4 +2270,49 @@ hängt weiter nur an deiner § 19-Antwort (F-006).
 
 ---
 
+## ℹ️ Nachtrag zu F-006 — die Zahl, die bei der A/B-Frage bisher gefehlt hat (17.09.2026, 07:10 UTC · Head of Finance)
+
+**Keine neue Frage, dieselbe.** Ich habe nur nachgerechnet, was die beiden
+Wege dich wirklich kosten — vorher stand da „haengt an Zahlen, die noch gelb
+sind". Die sind jetzt nicht mehr gelb.
+
+**Was ich gefunden habe:** Deine Supabase-Rechnungen kommen ohne
+Umsatzsteuer — das ist das sogenannte Reverse-Charge-Verfahren. **Die 19 %
+schuldest du trotzdem, auch als Kleinunternehmerin**, und zurueckholen kannst
+du sie bei § 19 nicht. Bisher aufgelaufen: **34,79 USD** aus vier Monaten,
+laufend **rund 10 USD im Monat**. Das ist kein Fehler von dir und kein
+Drama — es stand nur nirgends.
+
+**Damit sieht die A/B-Frage so aus:**
+
+| | A — bei § 19 bleiben | B — Regelbesteuerung |
+|---|---|---|
+| USt auf Supabase | rund 10 USD/Monat, echte Kosten | 0 € — wird im selben Zug abgezogen |
+| USt bei Vercel, OpenAI, Anthropic, Apple, IONOS | rund 15 USD + 4 €/Monat, weg | kommt zurueck |
+| Aufwand | keine Voranmeldungen (bis auf die Supabase-Zeitraeume) | Voranmeldungen, **fuenf Jahre gebunden** |
+
+**Der Punkt, der mir am wichtigsten ist:** Der uebliche Einwand gegen B lautet
+„dann wird es fuer meine Kunden teurer". **Bei dir traegt er kaum.** Deine
+Kunden sind Handwerksbetriebe, die die Umsatzsteuer in aller Regel selbst
+abziehen — fuer die ist der Aufschlag ein durchlaufender Posten. Wirklich
+mehr zahlen nur Handwerker, die selbst Kleinunternehmer sind.
+
+**Eine Bitte zur Reihenfolge:** Beantrage die USt-IdNr. bitte **nicht** vorab.
+Sobald die den Anbietern vorliegt, stellen Vercel, OpenAI und Anthropic auf
+Netto um — dann traegst du deren Steuer auch noch selbst, bei § 19 ohne
+Abzug. **Erst A/B, dann USt-IdNr.**
+
+**Ich entscheide das nicht fuer dich** — die Fuenf-Jahres-Bindung ist der
+Preis von B, und ob dir der Papierkram das Geld wert ist, weisst nur du. Es
+eilt weiter nicht, aber die Seite darf vorher nicht live gehen.
+
+**Und eine Kleinigkeit fuer den Steuerberater-Termin, damit sie nicht
+untergeht:** Die Supabase-Steuer seit Mai gehoert nachgeholt — ueber den
+Fragebogen zur steuerlichen Erfassung nach deiner Gewerbeanmeldung in KW 41.
+Bei 34,79 USD geht es dabei um Ordnung, nicht um Geld.
+
+*Head of Finance · 17.09.2026*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

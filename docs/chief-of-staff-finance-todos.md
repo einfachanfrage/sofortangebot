@@ -31,7 +31,146 @@ Sandy.
 **Datei-Sicherheit (neu, 20.08.2026):** In anderen Koordinationsdateien
 dieses Projekts ist wiederholt (6. Mal) ein Speicherfehler bei
 gleichzeitiger Bearbeitung aufgetreten. Ganz am Ende dieser Datei steht
-deshalb jetzt eine feste Markierung (`<!-- ENDE DER DATEI -->`). Taucht beim
+deshalb jetzt eine feste Markierung (`## ✅ Reverse Charge (Supabase) — der aelteste offene Punkt aus CoS-F-001 ist beantwortet, und eine eigene Falschaussage korrigiert (17.09.2026, 07:10 UTC · Head of Finance)
+
+**Warum dieser Punkt und nicht 4.7:** Von 4.7 liegt alles, was in meiner
+Reichweite war, fertig da. Die Reste haengen an einem IONOS-Zugang, an Sandys
+Rechner und an einem Postfach — **Platform hat beide Auftraege heute
+ausdruecklich zurueckgegeben** (`chief-of-staff-platform-todos.md`, Eintrag
+17.09.: kein IONOS-Zugang, kein Versandweg). Ich habe sie an den Chief of
+Staff weitergereicht, statt sie hier liegen zu lassen. Offen und **nicht**
+blockiert war dagegen der aelteste Punkt meiner eigenen Liste: Zeile 40 im
+Blatt „Legende & offene Punkte" — **wie die Supabase-Reverse-Charge-Rechnungen
+fuer eine Kleinunternehmerin zu behandeln sind.** Der stand seit dem 02.09.
+mit „mit Steuerberater klaeren". Das war zu bequem: Der rechtliche Teil ist
+belegbar, nur die Bewertung des Einzelfalls gehoert dem Steuerberater.
+
+### 1. Zuerst die Korrektur — ich habe gestern etwas Falsches geschrieben
+
+In meinem Eintrag von gestern, 06:20 UTC, steht: *„Bei OpenAI, Vercel,
+Supabase und Resend geht die Steuerschuld auf sie ueber."* **Das stimmt
+nicht**, und die Belege sagen es seit Wochen deutlich. Nachgesehen im
+Rechnungsjournal, 17 Belege:
+
+| Anbieter | Was auf der Rechnung steht | Reverse Charge? |
+|---|---|---|
+| **Supabase Pte. Ltd.** (Singapur) | keine USt ausgewiesen, Vermerk Reverse Charge | **ja** |
+| Vercel Inc. | 19 % USt ausgewiesen, EU VAT EU056329113 | nein |
+| OpenAI OpCo LLC | 19 % USt ausgewiesen, EU OSS VAT EU372041333 | nein |
+| Anthropic PBC | 19 % USt ausgewiesen, EU VAT IE4276970QH | nein |
+| Apple (Claude Pro) | 19 % USt ausgewiesen | nein |
+| IONOS SE | 19 % USt ausgewiesen | nein |
+| Resend | **kein Beleg vorhanden** — meine Aussage war reine Vermutung | unbekannt |
+
+**Genau ein Dienst faellt heute unter § 13b: Supabase.** Die uebrigen
+versteuern ueber das EU-OSS-Verfahren an Sandy als Nichtunternehmerin — was
+sie tun, weil ihnen keine USt-IdNr. vorliegt (dazu Abschnitt 4). Der Satz in
+der Verfahrensdokumentation ist korrigiert; die Falschaussage steht nicht mehr
+im Umlauf. Hier lasse ich sie bewusst sichtbar stehen, statt sie
+stillschweigend zu ueberschreiben.
+
+### 2. Die Antwort auf die offene Frage
+
+**Ja, Sandy schuldet die deutsche Umsatzsteuer auf die Supabase-Rechnungen —
+auch als Kleinunternehmerin, und ohne sie abziehen zu koennen.**
+
+* § 13b UStG kennt keine Ausnahme fuer Kleinunternehmer. Leistungsort ist nach
+  § 3a Abs. 2 UStG Deutschland, Steuerschuldnerin ist die Empfaengerin
+  (§ 13b Abs. 2 Nr. 1 i. V. m. Abs. 5 UStG).
+* **§ 19 schuetzt die eigenen Verkaeufe, nicht die Einkaeufe.**
+* Der Vorsteuerabzug ist nach § 19 Abs. 1 i. V. m. § 15 UStG ausgeschlossen.
+  Die 19 % sind damit **echte Kosten**, kein durchlaufender Posten.
+* Daraus folgt eine **Voranmeldungspflicht fuer genau die Zeitraeume, in denen
+  die Steuer entsteht** (§ 18 Abs. 4a UStG), dazu die Jahreserklaerung.
+  Gemeldet wird in der Zeile fuer Drittlandsleistungen (Kennzahl 52).
+
+### 3. Was das in Zahlen heisst
+
+| Supabase-Beleg | Netto (USD) | 19 % USt (USD) |
+|---|---|---|
+| 2026-003 · 23.05. | 25,00 | 4,75 |
+| 2026-006 · 23.06. | 49,97 | 9,49 |
+| 2026-008 · 23.07. | 54,30 | 10,32 |
+| 2026-016 · 23.08. | 53,83 | 10,23 |
+| **Summe bisher** | **183,10** | **34,79** |
+
+**Laufend rund 10 USD im Monat**, steigend mit der Supabase-Nutzung. Die
+EUR-Umrechnung lasse ich offen — sie gehoert nach den monatlichen
+BMF-Umrechnungskursen gemacht und ist bereits als offener Punkt im Blatt
+vermerkt. **Ich erfinde dafuer keinen Kurs.**
+
+**Auswirkung auf den Plan — diesmal gibt es eine, zum ersten Mal seit drei
+Eintraegen:** Die Fixkosten von 135,10 €/Monat rechnen die Supabase-Rechnung
+mit ihrem Rechnungsbetrag. **Bleibt Sandy bei § 19, fehlen dort rund 10 USD
+im Monat.** Ich habe den Finanzplan **nicht** umgerechnet, aus einem Grund:
+Bei Regelbesteuerung ist der Betrag null. Der Posten haengt an genau der
+A/B-Entscheidung, die ohnehin offen ist — ihn jetzt einzurechnen hiesse, ihre
+Antwort vorwegzunehmen. Er ist als offener Punkt im Blatt hinterlegt und wird
+**in dem Lauf nachgezogen, in dem die Entscheidung faellt.**
+
+### 4. Was das fuer die offene A/B-Frage (F-006) bedeutet
+
+Kein Nebenbefund, sondern das fehlende Stueck dieser Rechnung. Sandy hat es
+als kurzen Nachtrag zu F-006 bekommen — mit Zahlen, ohne Entscheidung an ihrer
+Stelle. Kurzfassung fuer diese Datei:
+
+* **Bei § 19** zahlt sie die 19 % auf Supabase selbst und bekommt auf keine
+  einzige Eingangsrechnung Vorsteuer zurueck. Nach den zuletzt vorliegenden
+  Belegen sind das **rund 15 USD + 4 € im Monat**, die als USt abfliessen
+  (Vercel 3,80 · Anthropic 8,55 · OpenAI 2,85 USD; Apple 3,51 · IONOS 0,40 €)
+  — der Anthropic-Posten ist dabei als moeglicherweise einmalig markiert —
+  **plus** die rund 10 USD aus § 13b.
+* **Bei Regelbesteuerung** wird beides zu null: Die § 13b-Steuer ist im selben
+  Atemzug abziehbar, die USt der uebrigen Anbieter ebenfalls.
+* Der uebliche Einwand — *„dann wird es fuer die Kunden teurer"* — **traegt
+  hier nur begrenzt**: Sandys Kunden sind Handwerksbetriebe und damit in aller
+  Regel vorsteuerabzugsberechtigt; fuer sie ist der Aufschlag ein
+  durchlaufender Posten. **Nur** Handwerker, die selbst Kleinunternehmer sind,
+  zahlen wirklich mehr.
+* Dagegen stehen Voranmeldungen und die **Bindung von fuenf Kalenderjahren**
+  (§ 19 Abs. 3 UStG). Das ist der Preis, und er ist nicht klein.
+
+**Wichtig ist die Reihenfolge:** Die USt-IdNr. sollte **nicht** vorher
+beantragt werden. Liegt sie vor, stellen Vercel, OpenAI und Anthropic auf
+Netto um — dann traegt Sandy die Steuer auch dort selbst, bei § 19 ohne Abzug.
+Unter § 19 ist eine USt-IdNr. also ein Nachteil, unter Regelbesteuerung eine
+Voraussetzung. **Erst A/B entscheiden, dann USt-IdNr.** — nicht umgekehrt.
+
+### 5. Wie gross ist das Versaeumnis bis heute?
+
+**Klein, und das ist die gute Nachricht.** Es geht um 34,79 USD aus vier
+Monaten. Sandy hat noch keine Steuernummer fuer Umsatzsteuerzwecke und kann
+heute gar nichts anmelden. Der saubere Weg fuehrt ueber den **Fragebogen zur
+steuerlichen Erfassung nach der Gewerbeanmeldung in KW 41** — dort wird der
+Zeitraum ab Beginn der unternehmerischen Taetigkeit erfasst, und die
+Supabase-Betraege gehoeren mit hinein. Ob die Unternehmereigenschaft bereits
+im Mai mit den Vorbereitungshandlungen begann, ist die einzige Bewertung, die
+ich nicht selbst treffe. **Sie kostet bei diesen Betraegen keine nennenswerte
+Summe, aber sie gehoert benannt statt uebersehen** — als konkrete Frage fuer
+den Steuerberater-Termin hinterlegt.
+
+### 6. Was ich geaendert habe
+
+| Datei | Aenderung |
+|---|---|
+| `docs/finance-001-verfahrensdokumentation-rechnungseingang.md` | Hinweis zu Pruefpunkt 9 korrigiert: nur Supabase ist Reverse Charge, mit Rechtsfolge und Meldeweg |
+| `docs/kostenuebersicht-finance.xlsx`, Blatt „Legende & offene Punkte" | Frage von Zeile 40 beantwortet, Ergebnis und Betrag eingetragen; neuer offener Punkt fuer die Plan-Anpassung nach der A/B-Entscheidung |
+| `docs/entscheidungen-fuer-sandy.md` | Nachtrag zu F-006 mit den Zahlen — **keine neue Frage**, dieselbe |
+| `docs/chief-of-staff-todos.md` | die zwei von Platform zurueckgegebenen 4.7-Punkte weitergereicht |
+
+**Die Bewertung von Punkt 4.7 bleibt bei 65.** An den Resten hat sich nichts
+bewegt, und ich schreibe keine Punkte gut, die nicht verdient sind.
+
+**Quellen:** [onlinebilanz.de — Reverse Charge fuer Kleinunternehmer: Wann § 19 UStG nicht schuetzt](https://onlinebilanz.de/reverse-charge-kleinunternehmer/) ·
+[betriebsbuddy.de — Reverse Charge fuer Kleinunternehmer 2026: § 13b einfach erklaert](https://betriebsbuddy.de/blog/reverse-charge-kleinunternehmer) ·
+[Handelskammer Hamburg — Umsatzsteuerschuldnerschaft des Leistungsempfaengers (Reverse Charge)](https://www.handelskammer-hamburg.de/recht-steuern/steuerrecht/umsatzsteuer-mehrwertsteuer/umsatzsteuer-mehrwertsteuer-international/umsatzsteuersteuerschuldnerschaft-reverse-charge-6682954) ·
+eigene Auswertung der 17 Belege im Blatt `Rechnungsjournal`
+
+*Head of Finance · 17.09.2026*
+
+---
+
+<!-- ENDE DER DATEI -->`). Taucht beim
 Lesen noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
 Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt
