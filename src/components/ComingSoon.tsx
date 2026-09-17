@@ -61,8 +61,7 @@ export default function ComingSoon() {
           lineHeight: 1.65,
         }}>
           Einfach aufs Handy sprechen — sofortangebot rechnet,<br />
-          schreibt und schickt. Für Maler, Bodenleger und alle,<br />
-          die keine Zeit verlieren wollen.
+          schreibt und schickt. Für Maler und Bodenleger.
         </p>
 
         {/* Gelbe Linie */}

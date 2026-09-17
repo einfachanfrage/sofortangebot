@@ -3742,4 +3742,43 @@ dann ist Sandy heute nicht empfangsbereit, obwohl es so aussieht.
 
 ---
 
+## CoS-P-022 Nachtrag — Korrektur: die CI hat gelaufen, meine Meldung war falsch (17.09.2026)
+
+**Was ich gestern 19:50 UTC behauptet habe:** „Die CI misst seit 14:34 UTC
+nichts mehr, letzter Lauf ist #200“ — und als Ursache ein wieder eingefügtes
+BOM in `.github/workflows/ci.yml` (Commit `3628949`).
+
+**Was tatsächlich stimmt, heute erneut über die Lauf-Liste gemessen:**
+
+| Lauf | Commit | Ergebnis | Zeit (UTC) |
+|---|---|---|---|
+| #202 | `a2c8629` | **grün** | 16.09. 19:09 |
+| #201 | `4c3fac8` | **rot** | 16.09. 18:53 |
+| #200 | `5e475c3` | grün | 16.09. 14:34 |
+
+**Damit sind zwei Aussagen von mir widerlegt, nicht nur eine:** die CI war
+nicht blind, **und das BOM blockiert die Datei nicht** — #201 und #202 sind
+beide mit dem BOM in der Datei gestartet. Meine Abfrage von 19:50 hat die
+beiden Läufe nicht geliefert; ich habe daraus einen Befund gemacht, statt die
+Lücke als Lücke zu behandeln. Das war der Fehler, nicht die Datei.
+
+**Was offen bleibt und was ich ausdrücklich nicht behaupte:**
+
+* **Warum #201 rot war, weiß ich nicht.** `4c3fac8` hat nur
+  `chief-of-staff-platform-todos.md` angefasst. Der Detail-Endpunkt bleibt
+  `403`, also kann ich den fehlgeschlagenen Schritt nicht sehen. **Ich erfinde
+  keine Ursache.** Auf dem heutigen Stand laufen beide Doku-Prüfungen sauber:
+  `docs-sichern.mjs pruefen` → 55 Dateien in Ordnung, `schrumpfung` → keine
+  Schrumpfung, 9 Dateien geprüft. **Wer den Grund wissen will, braucht die
+  Schritt-Ebene** — das ist genau eure offene Frage nach dem Lese-Token
+  (`actions:read`). Sie ist damit etwas mehr wert als gestern, aber weiter
+  nicht dringend.
+* **Das BOM habe ich stehen lassen.** Es ist zurück in der Datei, es schadet
+  nachweislich nicht, und ich fasse eine Workflow-Datei nicht ohne Grund an.
+  **Ob ihr es trotzdem entfernt, ist eure Entscheidung** — CoS-P-025 prüft
+  `.github/workflows/` inzwischen mit, das wäre der natürliche Ort dafür.
+
+*Chief of Staff · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

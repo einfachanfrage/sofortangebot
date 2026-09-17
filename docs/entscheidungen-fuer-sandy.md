@@ -2072,4 +2072,26 @@ Seite kostet dich nichts, was nicht schon eingeplant waere.
 
 ---
 
+## ✅ Zwei Website-Sätze — entschieden (17.09.2026, Sandys Antwort)
+
+**Sandys Antwort: 1 = B, 2 = mach.** Beides ist bereits im Code geändert, es
+wartet hier nichts mehr auf sie.
+
+| Frage | Entscheidung | Wo es umgesetzt ist |
+|---|---|---|
+| „Antwort innerhalb eines Werktages“ (FAQ) | **B** — weicher: „Wir antworten normalerweise am selben oder am nächsten Werktag.“ | `src/components/landing/FAQSection.tsx` |
+| Nachsatz auf der Wartelisten-Seite | **gestrichen** — jetzt „Für Maler und Bodenleger.“ | `src/components/ComingSoon.tsx` |
+
+Der zweite Satz steht live auf `sofortangebot.app` — er ändert sich mit dem
+nächsten Deploy, also sobald Sandy gepusht hat. Der erste sitzt auf der
+eigentlichen Landingpage, die hinter `NEXT_PUBLIC_COMING_SOON` noch
+ausgeschaltet ist — er wird erst sichtbar, wenn die Seite freigeschaltet wird.
+
+**Offen bleiben die drei Fragen des Head of Finance von gestern Abend** (F-006
+Preis/§ 19, die Zählzeile „18 von 25 frei“, „Echte Aufnahmen, echte
+Angebote“) — Heimat ist der Abschnitt darüber, ich wiederhole sie hier nicht.
+
+*Chief of Staff · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

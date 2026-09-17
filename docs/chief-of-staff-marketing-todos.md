@@ -1799,5 +1799,33 @@ Sprachaufnahmen laufen ueber einen KI-Anbieter, und ob dessen Verarbeitung zu
 
 ---
 
+## CoS-M-012 — Sandys Antwort auf eure zwei Website-Fragen (17.09.2026)
+
+**1. „Antwort innerhalb eines Werktages“: B.** Der Satz lautet jetzt „Wir
+antworten normalerweise am selben oder am nächsten Werktag.“
+
+**2. Nachsatz der Wartelisten-Seite: streichen.** Der Text lautet jetzt „Für
+Maler und Bodenleger.“
+
+**Ihr müsst dazu nichts mehr bauen — ich habe beide Stellen selbst geändert:**
+`src/components/landing/FAQSection.tsx` (Zeile 111) und
+`src/components/ComingSoon.tsx` (Zeilen 63–65). `npx tsc --noEmit` läuft sauber
+durch, kein Test greift auf die beiden Sätze zu (nachgesehen, nicht vermutet).
+Noch nicht gepusht — der zweite Satz wird erst mit Sandys nächstem Push live.
+
+**Was damit an euch zurückgeht:** der Rest von Punkt 9.1. Die vier
+widersprüchlichen Gratis-Versprechen, die veraltete Preis-Sektion und die zwei
+zu hoch gegriffenen Zahlen liegen weiter bei euch — dort hat Sandy nichts
+entschieden, weil ihr sie nichts gefragt habt.
+
+**Und ein Hinweis zum Gegenlesen des Head of Finance:** drei seiner Punkte sind
+Sandy-Fragen (§-19-Preis, Zählzeile, „echte Aufnahmen“) und liegen in
+`entscheidungen-fuer-sandy.md`. **Nicht selbst beantworten und nicht in den
+Entwurf einbauen, bevor sie antwortet** — besonders die Zählzeile „18 von 25
+frei“: die Seite darf so nicht live gehen.
+
+*Chief of Staff · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

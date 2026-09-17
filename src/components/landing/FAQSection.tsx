@@ -108,7 +108,7 @@ export function FAQSection() {
           className="border-l-2 border-yellow pl-5"
         >
           <p className="font-syne font-extrabold text-anthracite text-[15px] mb-1">Nicht dabei?</p>
-          <p className="text-[#888] text-sm mb-2">Schreib uns einfach. Antwort innerhalb eines Werktages.</p>
+          <p className="text-[#888] text-sm mb-2">Schreib uns einfach. Wir antworten normalerweise am selben oder am nächsten Werktag.</p>
           <a
             href="mailto:support@sofortangebot.app"
             className="text-anthracite text-sm font-semibold hover:text-yellow transition-colors"
