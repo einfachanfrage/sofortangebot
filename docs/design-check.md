@@ -9855,6 +9855,13 @@ auf dem Angebot sieht — deshalb überhaupt erwähnenswert.
 
 *Chief of Staff · 2026-09-16*
 
+> **→ Beantwortet und gebaut unter DC-121 (Product Designer, 17.09.2026),
+> ganz unten in dieser Datei.** Eigene Nummer, weil die ID DC-112 doppelt
+> vergeben ist; umnummeriert habe ich nichts. Kurz: nein, so gewollt war es
+> nicht — die Box war 72 × 36 pt fest, ein quadratisches Logo landete darin
+> auf halber Breite. Das Maß gibt jetzt die Höhe vor, und die beiden Schalter
+> „Größe" und „Position" im Briefpapier wirken zum ersten Mal.
+
 ---
 
 ## DC-113 ✅ — Der Fassaden-Entwurf: der leere Raum und die Nullzeilen sind weg (Product Designer, 16.09.2026)
@@ -11241,5 +11248,205 @@ Formulierung widerlegt statt sie zu übernehmen. Richtig so — der Eintrag ist
 korrigiert, indem eure Messung danebensteht.
 
 *Chief of Staff · 2026-09-17*
+
+---
+
+## DC-121 ✅ — Das Logo im Angebotskopf wird ab jetzt über die HÖHE ausgerichtet — und die zwei Schalter im Briefpapier tun endlich etwas (Product Designer, 17.09.2026)
+
+**Bezug:** Die Logo-Frage des Chief of Staff vom 16.09. („Das Logo im
+Angebotskopf ist sehr klein. Gewollt?"), abgelegt unter der bereits doppelt
+vergebenen ID DC-112.
+
+**Eigene ID, weil DC-112 zweimal vergeben ist** (runder Raum + Logo). Ich habe
+den alten Eintrag stehen lassen und nur einen Verweis daruntergesetzt —
+Umnummerieren gehört dem Chief of Staff, sonst laufen die Verweise in
+`arbeitsreihenfolge.md` auseinander.
+
+---
+
+### Die Vermutung war nah dran, aber die Ursache ist die andere Achse
+
+Der Chief of Staff vermutete: *„Wird auf eine feste Breite skaliert, läuft die
+Höhe mit."* **Nachgesehen, nicht vermutet** — in `src/lib/pdf.tsx` stand:
+
+```
+logoImg: { width: 72, height: 36, objectFit: 'contain', marginBottom: 8 }
+```
+
+Es war **beides** fest, Breite *und* Höhe, also eine starre 2:1-Box von
+72 × 36 pt (25 × 13 mm). `objectFit: 'contain'` legt das Bild darin ab, ohne es
+zu verzerren — und genau das ist der Grund für den Befund:
+
+| Logo-Form | tatsächliche Darstellung im Kopf | genutzte Fläche |
+|---|---|---|
+| 2:1 (das empfohlene Format) | 72 × 36 pt | volle Box |
+| quadratisch (Sandys Testlogo) | **36 × 36 pt** | halbe Breite |
+| hochkant 1:2 | **18 × 36 pt** | ein Viertel |
+| rund | wie quadratisch: **36 × 36 pt** | halbe Breite |
+
+Die Höhe war also nie das Problem — sie war für alle gleich. Es war die
+**Breite**, die bei jeder nicht-breiten Form zusammenfiel, während rechts
+daneben Nr./Datum/Gültig bis unverändert viel Fläche behielten. Genau der
+Eindruck, den der Chief of Staff beschrieben hat.
+
+Das trifft nicht nur Sandy. Ein Handwerksbetrieb hat selten ein Breitformat —
+er hat einen runden Stempel, ein quadratisches Schild oder ein Wappen. Unser
+Kopf hat bisher genau die Form belohnt, die dort am seltensten vorkommt.
+
+---
+
+### Deine drei Fragen, beantwortet
+
+**1. Ist die aktuelle Größe so gewollt?** Nein. Die 2:1-Box ist eine
+Layout-Bequemlichkeit, keine Gestaltungsentscheidung — sie hat nirgends eine
+Begründung, weder im CI-Handbuch (das regelt unsere eigene Marke, nicht die
+des Betriebs) noch in einem Ticket.
+
+**2. Was passiert mit Logos, die nicht 2:1 sind — und was soll passieren?**
+Bisher: sie werden systematisch kleiner, siehe Tabelle oben. Ab jetzt gilt die
+Regel, nach der Briefköpfe seit jeher gebaut werden:
+
+> **Ein Logo wird über seine Höhe ausgerichtet, nie über seine Breite.**
+
+Zwei Marken wirken nur dann gleich gewichtet, wenn sie gleich **hoch** sind;
+die Breite ergibt sich aus dem Bild. Damit bekommt das runde Logo dieselbe
+optische Präsenz wie das breite. Gedeckelt wird nur noch die Breite
+(`LOGO_MAX_BREITE_PT = 200 pt`), und das ausschließlich als Notbremse gegen ein
+sehr breites Banner: der Block rechts braucht rund 150 pt, der A4-Satzspiegel
+hat 491 pt — die Textspalte darf nicht zusammenfallen.
+
+**3. Reicht ein Hinweis am Uploadfeld, oder gehört die Darstellung angepasst?**
+Die Darstellung. Ein Hinweis hätte den Betrieb aufgefordert, sein Logo an
+unseren PDF-Kopf anzupassen — das ist die falsche Richtung. Der Hinweistext
+ändert sich trotzdem, aber inhaltlich umgekehrt: aus „empfohlen 400 × 200 px"
+wird „jede Form — rund, quadratisch oder breit; am besten mindestens 200 px
+hoch". Das Einzige, was wir wirklich brauchen, ist genug Auflösung.
+
+---
+
+### Der größere Fund, beim Hinsehen entstanden: „Briefpapier & Design" ist zu neun Zehnteln folgenlos
+
+`AngebotPDF` bekommt das komplette `briefpapier`-Objekt übergeben — und liest
+daraus **genau ein Feld**: `logo_url`. Nachgezählt in `src/lib/pdf.tsx`, drei
+Fundstellen für `briefpapier`, eine davon die Prop-Deklaration.
+
+| Schalter unter Einstellungen → Briefpapier & Design | Wirkung auf das Kunden-PDF (vorher) | jetzt |
+|---|---|---|
+| Logo hochladen | ✅ wirkt | ✅ |
+| **Position** (links / mitte / rechts) | ❌ ohne jede Wirkung | ✅ **gebaut** |
+| **Größe** (Klein / Mittel / Groß) | ❌ ohne jede Wirkung | ✅ **gebaut** |
+| Fußzeile links / mitte / rechts | ❌ ohne Wirkung — die PDF-Fußzeile wird aus `company` gebaut (Firmenname, Adresse, USt-IdNr., IBAN) | ❌ unverändert offen |
+| Akzentfarbe | ❌ ohne Wirkung | ❌ unverändert offen |
+| Schrift (Inter / Roboto / Open Sans) | ❌ ohne Wirkung — `S.page` steht fest auf Inter | ❌ unverändert offen |
+
+**Erschwerend:** Die Mini-Vorschau **auf der Briefpapier-Seite selbst**
+berücksichtigt `schrift`, `akzentfarbe` und die drei Fußzeilen — sie zeigt also
+ein Ergebnis, das das echte Dokument nie annimmt. Das ist dieselbe Fehlerform
+wie DC-109 und DC-106: nicht ein hässlicher Bildschirm, sondern ein Satz, der
+nicht stimmt. Ein Schalter, der nichts tut, ist eine Behauptung.
+
+**Nicht mitgebaut, bewusst.** Schrift heißt `Font.register` für zwei weitere
+Familien und betrifft jede Zeile des Dokuments; Akzentfarbe betrifft jede
+Linie und jede Überschrift; die Fußzeile kollidiert mit den Pflichtangaben,
+die dort heute aus dem Betrieb stehen (USt-IdNr., IBAN — die dürfen nicht
+durch einen freien Text ersetzt werden können). Das sind drei eigene
+Entscheidungen, keine Nebenarbeit in einem Logo-Ticket. **Sie stehen unten als
+offener Punkt, nicht als erledigt.**
+
+---
+
+### Was ab jetzt im Kopf steht
+
+Drei Stufen, genau die, die der Schalter schon immer anbot:
+
+| Stufe | Höhe | in mm | Verhältnis zur Zeile „Holm GmbH" (16 pt) |
+|---|---|---|---|
+| Klein | 28 pt | ≈ 9,9 mm | knapp zwei Zeilen |
+| **Mittel (Vorgabe)** | **42 pt** | ≈ 14,8 mm | gut zweieinhalb Zeilen |
+| Groß | 60 pt | ≈ 21,2 mm | knapp vier Zeilen |
+
+Die Breite folgt dem Bild. Ein quadratisches Logo ist bei „Mittel" also
+42 × 42 pt statt bisher 36 × 36 — und vor allem wächst es mit, wenn der Betrieb
+„Groß" wählt, statt wie bisher auf 36 pt festzuhängen.
+
+**Position:**
+
+* **links** (Vorgabe, wie bisher): über dem Firmennamen, linke Spalte.
+* **rechts**: in der rechten Spalte über „ANGEBOT" — Nummer und Datum rutschen
+  darunter, der Kopf bleibt zweispaltig.
+* **mitte**: als eigene, mittige Zeile **über** dem Kopf. Bewusst nicht
+  innerhalb der linken Spalte zentriert (das sähe nach Versehen aus, nicht nach
+  Absicht). Die Zeile ist wie der Kopf `fixed`, läuft also auf Folgeseiten mit.
+
+---
+
+### Zweiter Teil: die Live-Vorschau zeigte etwas anderes als das PDF
+
+Beim Nachsehen in `AngebotVorschau.tsx` (die Ansicht, die behauptet „so sieht
+dein Angebot für den Kunden aus", DC-049-Linie) zwei Abweichungen gefunden,
+beide behoben:
+
+1. Sie zeigte das Logo **anstelle** des Firmennamens (`? :`), das PDF zeigt
+   beides untereinander. Wer ein Logo hochlädt, verlor in der Vorschau seinen
+   Firmennamen — auf dem echten Papier nie.
+2. Die Höhe war mit `max-h-16` größer als im PDF. Sie folgt jetzt der
+   Vorgabestufe „mittel".
+
+**Bewusst nicht nachgebaut:** Diese Vorschau bekommt gar kein Briefpapier
+übergeben, sie kann Stufe und Position deshalb nicht kennen und zeigt immer
+links/mittel. Wer eine andere Stufe wählt, sieht den Unterschied erst im PDF.
+Das ist eine Prop-Änderung an allen Aufrufern und gehört nicht in dieses
+Ticket — siehe „Offen" unten.
+
+---
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/pdf.tsx` | `LOGO_HOEHE_PT`, `LOGO_MAX_BREITE_PT`, `logoKopf()` neu; `logoImg` ohne feste Breite/Höhe; Logo an drei Positionen einhängbar |
+| `src/components/AngebotVorschau.tsx` | Logo **und** Firmenname statt entweder/oder, Höhe an die Vorgabestufe angeglichen |
+| `src/app/(app)/einstellungen/page.tsx` | Hinweistext am Uploadfeld |
+| `src/app/(app)/onboarding/[step]/page.tsx` | derselbe Hinweistext (zweite Fundstelle) |
+| `src/lib/__tests__/dc121-logo-kopf.test.ts` | **neu**, 9 Tests |
+
+Kein Datenbank-Eingriff: `logo_position` und `logo_groesse` existieren in
+`Briefpapier` seit jeher, sie wurden nur nie gelesen. Ein Betrieb **ohne**
+Briefpapier-Datensatz bekommt exakt das, was er vorher hatte — links, mittel;
+das ist der erste Test.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **fehlerfrei** |
+| `dc121-logo-kopf.test.ts` | **9 grün** — darunter je ein echtes `renderToBuffer` für links, mitte und rechts |
+| `pdf-rechenweg-render`, `pdf-uebermessung-render`, `dc050-rechenweg-pdf`, `cos-e-batch1-kundenpapier`, `wertersatz-g6`, `pd018-nullzeilen` | **50 grün** (alle Tests, die ein Kunden-PDF erzeugen oder den Kopf lesen) |
+
+**Nicht geprüft, also behaupte ich es nicht:** Wie die drei Stufen mit einem
+**echten** Logo auf Papier wirken. Ein Prüfstand misst, dass das Dokument
+entsteht, nicht wie es aussieht. Die Zahlen 28/42/60 sind aus dem Satzspiegel
+abgeleitet, nicht an Sandys Logo abgelesen. **Wenn Sandy das nächste Mal ohnehin
+ein Angebot als PDF öffnet, sieht sie es** — eine eigene Aufgabe daraus zu
+machen wäre es mir nicht wert.
+
+---
+
+### Offen — gehört ausdrücklich nicht zu diesem Ticket
+
+1. **Schrift, Akzentfarbe und die drei Fußzeilen des Briefpapiers wirken
+   weiterhin nicht** (Tabelle oben). Drei eigene Entscheidungen, eine davon
+   mit einer Rechtsfrage (dürfen die Pflichtangaben im Fuß durch freien Text
+   ersetzt werden? — das wäre eine Frage an Head of Legal, nicht an mich).
+   Solange sie nicht wirken, **behauptet die Mini-Vorschau auf der
+   Briefpapier-Seite etwas Falsches.**
+2. **Die Live-Vorschau kennt kein Briefpapier.** Stufe und Position sind dort
+   deshalb blind. Prop-Änderung an allen Aufrufern von `AngebotVorschau`.
+3. **Zwei Stellen laden ein Logo hoch** — Einstellungen → Firmenlogo schreibt
+   `companies.logo_url`, Briefpapier schreibt `briefpapiere.logo_url`, und das
+   Briefpapier gewinnt. Wer das Logo an der ersten Stelle wechselt und sich
+   wundert, dass sich nichts ändert, hat recht. Gemeldet, nicht gebaut.
+
+*Product Designer · 2026-09-17*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

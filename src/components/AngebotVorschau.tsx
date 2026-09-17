@@ -171,12 +171,23 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
         {/* HEADER */}
         <div className="flex justify-between items-start mb-10">
           <div className="max-w-[55%]">
-            {company.logo_url ? (
+            {/* DC-121 (2026-09-17): Zwei Abweichungen zum echten PDF, beide hier
+                behoben. (1) Diese Vorschau zeigte das Logo ANSTELLE des
+                Firmennamens — lib/pdf.tsx zeigt beides untereinander, und wer
+                ein Logo hochlädt, verliert auf dem Kundenpapier seinen Namen
+                nicht. (2) Die Höhe war mit `max-h-16` größer als der Kopf im
+                PDF. Sie folgt jetzt der Vorgabestufe „mittel" (42 pt ≈ 48 px
+                bei der Textgröße dieser Vorschau, siehe LOGO_HOEHE_PT).
+                Bewusst NICHT nachgebaut: die drei Stufen und die Position aus
+                dem Briefpapier — diese Vorschau bekommt kein Briefpapier
+                übergeben, sie zeigt deshalb immer die Vorgabe (mittel/links).
+                Wer eine andere Stufe wählt, sieht den Unterschied erst im
+                PDF. Steht als offener Punkt im DC-121-Ticket. */}
+            {company.logo_url && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={company.logo_url} alt={company.name} className="max-h-16 max-w-[200px] object-contain mb-2" />
-            ) : (
-              <div className="font-syne text-[20px] font-black text-anthracite leading-tight mb-1">{company.name}</div>
+              <img src={company.logo_url} alt={company.name} className="max-h-12 max-w-[200px] object-contain mb-2" />
             )}
+            <div className="font-syne text-[20px] font-black text-anthracite leading-tight mb-1">{company.name}</div>
             <div className="text-[#666] text-[9px] leading-relaxed whitespace-pre-line">{company.address}</div>
             {co.ust_id && <div className="text-[#666] text-[9px] mt-1">USt-IdNr.: {co.ust_id}</div>}
             {!co.ust_id && company.tax_number && <div className="text-[#666] text-[9px] mt-1">Steuernummer: {company.tax_number}</div>}

@@ -897,7 +897,7 @@ export default function OnboardingStep() {
               </div>
             )}
             <p className="text-[13px] text-anthracite/25 font-semibold text-center">
-              PNG, JPG, WebP oder SVG · max. 5 MB · empfohlen 400×200 px
+              PNG, JPG, WebP oder SVG · max. 5 MB · jede Form — rund, quadratisch oder breit; am besten mindestens 200 px hoch
             </p>
           </div>
 

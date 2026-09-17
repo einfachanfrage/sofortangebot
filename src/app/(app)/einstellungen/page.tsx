@@ -307,7 +307,7 @@ export default function EinstellungenPage() {
           {/* Logo */}
           <Card icon={<ImageIcon size={16} />} title="Firmenlogo">
             <p className="text-xs text-anthracite/40 font-semibold -mt-2 mb-3">
-              PNG, JPG, WebP oder SVG · max. 5 MB · empfohlen 400×200 px
+              PNG, JPG, WebP oder SVG · max. 5 MB · jede Form — rund, quadratisch oder breit; am besten mindestens 200 px hoch
             </p>
             <input
               ref={logoInputRef}

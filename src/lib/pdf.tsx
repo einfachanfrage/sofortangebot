@@ -66,6 +66,32 @@ function fmtDatum(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
+// ── DC-121: Logo im Angebotskopf ───────────────────────────────────────────
+//
+// Die Regel: **Ein Logo wird über seine Höhe ausgerichtet, nie über seine
+// Breite.** So machen es Briefköpfe seit es Briefköpfe gibt — nebeneinander
+// gestellte Marken wirken nur dann gleich gewichtet, wenn sie gleich hoch
+// sind. Die Breite ergibt sich aus dem Bild. Ein Betrieb hat das Logo, das er
+// hat: rund, quadratisch oder breit. Keine dieser Formen darf dadurch
+// benachteiligt sein, dass unser Kopf ein bestimmtes Seitenverhältnis erwartet.
+//
+// Die drei Stufen sind die, die unter Einstellungen → Briefpapier & Design
+// bereits als „Klein / Mittel / Groß" angeboten werden. Sie hingen bis heute
+// an nichts — der Schalter stand da und bewirkte nichts.
+export const LOGO_HOEHE_PT = { klein: 28, mittel: 42, gross: 60 } as const
+
+// Notbremse gegen ein sehr breites Banner-Logo: der Block rechts (Nr., Datum,
+// Gültig bis) braucht rund 150 pt, die Textspalte darf nicht zusammenfallen.
+export const LOGO_MAX_BREITE_PT = 200
+
+/** Höhe + Position des Kopflogos aus dem Briefpapier, mit den Vorgabewerten. */
+export function logoKopf(briefpapier?: Briefpapier | null) {
+  return {
+    hoehe: LOGO_HOEHE_PT[briefpapier?.logo_groesse ?? 'mittel'] ?? LOGO_HOEHE_PT.mittel,
+    position: briefpapier?.logo_position ?? 'links',
+  }
+}
+
 // ── Styles ─────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
   page: {
@@ -87,7 +113,15 @@ const S = StyleSheet.create({
   },
   headerLeft: { flex: 1 },
   headerRight: { alignItems: 'flex-end' },
-  logoImg: { width: 72, height: 36, objectFit: 'contain', marginBottom: 8 },
+  // DC-121 (Logo im Angebotskopf): Hier stand eine feste Box 72×36 pt. Sie
+  // hat jede Bildmarke in ein 2:1-Querformat gezwungen — ein rundes oder
+  // quadratisches Handwerker-Logo wurde darin auf 36×36 pt geschrumpft und
+  // damit halb so breit wie ein Breitformat. Jetzt gibt nur noch die HÖHE das
+  // Maß vor (siehe LOGO_HOEHE_PT), die Breite folgt dem Seitenverhältnis des
+  // Bildes; `maxWidth` fängt nur den Extremfall eines sehr breiten Banners ab,
+  // damit es nicht in den Nummern-Block rechts läuft.
+  logoImg: { maxWidth: LOGO_MAX_BREITE_PT, objectFit: 'contain', marginBottom: 8 },
+  logoZeileMitte: { alignItems: 'center', marginBottom: 12 },
   firmennameH: {
     fontFamily: 'Bricolage Grotesque',
     fontWeight: 700,
@@ -315,6 +349,12 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   // CoS-E-013/031/042: siehe gueltigBis() in angebot-optionen.ts.
   const gueltigBisDatum = gueltigBis(quote, opt.gueltigTage)
   const logoSrc      = logoBase64 || briefpapier?.logo_url || (company as Company & { logo_url?: string }).logo_url
+  // DC-121: Hoehe und Position kommen aus dem Briefpapier (Vorgabe: mittel /
+  // links). Bis heute waren beide Schalter wirkungslos.
+  const logo = logoKopf(briefpapier)
+  // react-pdf's Image does not support the DOM alt attribute.
+  // eslint-disable-next-line jsx-a11y/alt-text
+  const logoBild = logoSrc ? <Image src={logoSrc} style={[S.logoImg, { height: logo.hoehe }]} /> : null
 
   const footerLinks  = [firmenname, adresse?.split('\n')[0]].filter(Boolean).join(' · ')
   const footerMitte  = [ustId && `USt-IdNr.: ${ustId}`, steuernummer && `St.-Nr.: ${steuernummer}`].filter(Boolean).join('  ·  ')
@@ -384,12 +424,17 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
       <Page size="A4" style={S.page} wrap>
 
         {/* ── HEADER ─────────────────────────────────────────────────────── */}
+        {/* DC-121: Bei Position „mitte“ steht das Logo über dem Kopf, mittig —
+            als eigene, ebenfalls mitlaufende Zeile. Links/rechts bleibt es im
+            Kopf selbst, damit Firmenname und Nummernblock auf einer Höhe
+            beginnen. */}
+        {logoBild && logo.position === 'mitte' && (
+          <View style={S.logoZeileMitte} fixed>{logoBild}</View>
+        )}
         <View style={S.headerRow} fixed>
           {/* Links: Logo + Firmenname + Adresse */}
           <View style={S.headerLeft}>
-            {/* react-pdf's Image does not support the DOM alt attribute. */}
-            {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            {logoSrc && <Image src={logoSrc} style={S.logoImg} />}
+            {logo.position === 'links' && logoBild}
             <Text style={S.firmennameH}>{firmenname}</Text>
             {adresse && (
               <Text style={S.headerAdresse}>
@@ -400,6 +445,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
           {/* Rechts: Dokumentinfos */}
           <View style={S.headerRight}>
+            {logo.position === 'rechts' && logoBild}
             <Text style={S.angebotLabel}>{revision && revision > 1 ? `${dokTitel} · Revision ${revision}` : dokTitel}</Text>
             <View style={S.metaGrid}>
               <View style={S.metaZeile}>
