@@ -79,10 +79,67 @@ interface Suchraum {
   roh: string
 }
 
+interface Raumabschnitt {
+  raum: string
+  norm: string
+  roh: string
+}
+
+/**
+ * PM-100 / PD-018: Ein Abschnitt gehört dem Raum, dessen Name ihn eröffnet.
+ *
+ * Warum das über die Satzgrenze hinaus nötig ist: Ein Diktat kommt häufig
+ * ganz ohne Punkt an — „Wohnung komplett streichen, Wohnzimmer vier mal
+ * fünf, …, im Flur gehen drei Türen ab“ ist EIN Satz. Er nennt den
+ * gefragten Raum irgendwo, also galt bisher jede Zahl daraus als seine: Die
+ * Frage „Wie viele Türen hat Wohnzimmer?“ hat sich mit dem Satz über den
+ * Flur belegt und 3 vorgeschlagen (gemessen, Fall 10 des Live-Laufs).
+ *
+ * Getrennt wird deshalb zusätzlich an jeder Raumnennung. Text vor der ersten
+ * Nennung gehört keinem Raum und fällt weg.
+ *
+ * `null` heisst: die beiden Fassungen (normalisiert/roh) nennen die Räume
+ * nicht deckungsgleich, die Zuordnung Satz↔Zitat trägt also nicht. Dann
+ * greift die Satzgrenze als Rückfallebene.
+ */
+function maskiere(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function raumAbschnitte(normalisiert: string, roh: string, namen: string[]): Raumabschnitt[] | null {
+  if (namen.length === 0) return null
+  // Längere Namen zuerst, sonst gewinnt „Zimmer“ gegen „Kinderzimmer“.
+  const sortiert = [...namen].sort((a, b) => b.length - a.length)
+  const muster = new RegExp(`(${sortiert.map(maskiere).join('|')})`, 'gi')
+
+  const teile = (text: string): Array<{ raum: string; text: string }> => {
+    const stuecke: Array<{ raum: string; text: string }> = []
+    let offen: { raum: string; start: number } | null = null
+    muster.lastIndex = 0
+    let treffer: RegExpExecArray | null
+    while ((treffer = muster.exec(text)) !== null) {
+      if (offen) stuecke.push({ raum: offen.raum, text: text.slice(offen.start, treffer.index) })
+      offen = { raum: treffer[1].toLocaleLowerCase('de-DE'), start: treffer.index }
+    }
+    if (offen) stuecke.push({ raum: offen.raum, text: text.slice(offen.start) })
+    return stuecke
+  }
+
+  const ausNorm = teile(normalisiert)
+  const ausRoh = teile(roh)
+  if (ausNorm.length === 0 || ausNorm.length !== ausRoh.length) return null
+  if (ausNorm.some((stueck, i) => stueck.raum !== ausRoh[i].raum)) return null
+  return ausNorm.map((stueck, i) => ({
+    raum: stueck.raum,
+    norm: stueck.text.trim(),
+    roh: ausRoh[i].text.trim(),
+  }))
+}
+
 /**
  * Der Textbereich, in dem gesucht werden darf. Bei mehreren Räumen im
- * Transkript nur der Satz, der DIESEN Raum nennt — lieber kein Vorschlag als
- * ein Wert aus dem falschen Zimmer.
+ * Transkript nur der Abschnitt, der DIESEM Raum gehört — lieber kein
+ * Vorschlag als ein Wert aus dem falschen Zimmer.
  */
 function suchAbschnitt(
   transkript: string,
@@ -107,10 +164,28 @@ function suchAbschnitt(
   if (genannteRaeume.size > 1) {
     const name = (raumName ?? '').trim().toLocaleLowerCase('de-DE')
     if (!name) return null // mehrdeutig und kein Raumbezug
-    // ALLE Sätze nehmen, die diesen Raum nennen — nicht nur den ersten.
-    // Handwerker kommen im Sprechen auf einen Raum zurück („Im Wohnzimmer und
-    // in der Küche streichen. … Im Wohnzimmer sind drei Fenster drin.").
-    const passende = satzpaare(normalisiert, roh).filter(p => p.norm.toLocaleLowerCase('de-DE').includes(name))
+    // Zuerst an den Raumnennungen trennen (PM-100). ALLE Abschnitte dieses
+    // Raums nehmen, nicht nur den ersten: Handwerker kommen im Sprechen auf
+    // einen Raum zurück („Im Wohnzimmer und in der Küche streichen. … Im
+    // Wohnzimmer sind drei Fenster drin.").
+    const abschnitte = raumAbschnitte(normalisiert, roh, [...genannteRaeume])
+    if (abschnitte) {
+      const eigene = abschnitte.filter(a => a.raum === name)
+      if (eigene.length === 0) return null
+      return {
+        normalisiert: eigene.map(a => a.norm).join('. '),
+        roh: eigene.map(a => a.roh).join('. '),
+      }
+    }
+
+    // Rückfallebene, wenn die Raumnennungen in beiden Fassungen nicht
+    // deckungsgleich sind: die Satzgrenze — aber nur Sätze, die KEINEN
+    // anderen Raum nennen. Ein Satz über zwei Räume belegt keinen von beiden.
+    const passende = satzpaare(normalisiert, roh).filter(p => {
+      const satz = p.norm.toLocaleLowerCase('de-DE')
+      if (!satz.includes(name)) return false
+      return ![...genannteRaeume].some(anderer => anderer !== name && satz.includes(anderer))
+    })
     if (passende.length === 0) return null
     return {
       normalisiert: passende.map(p => p.norm).join('. '),

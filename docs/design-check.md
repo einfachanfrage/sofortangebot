@@ -10571,4 +10571,163 @@ Livegang hängt ohnehin noch an Sandys § 19.
 
 ---
 
+## DC-117 ✅ — PD-018 Punkt 1 (PM-100): Der Beleg-Satz gehört jetzt dem Raum, nach dem gefragt wird (Product Designer, 17.09.2026)
+
+**Bezug:** PD-018, zweiter Block, Punkt 1 in `docs/pruefmeister-notizen-fuer-designer.md`
+(PM-100, gemessen in Fall 10 des Live-Laufs vom 16.09.) · Vorrang laut
+Prüfmeister **mittel**, aber der höchste **unblockierte** Punkt bei uns:
+PD-018 Punkt 3 wartet auf die Messung des Prüfmeisters, die DC-116-Karte auf
+Engineerings Erkenner, DC-111 steht laut Chief of Staff ausdrücklich dahinter.
+**Eigene ID**, weil DC-112 schon doppelt vergeben ist; umnummeriert habe ich
+nichts.
+
+**Die Antwort in einem Satz:** Die Regel „lieber kein Vorschlag als einer aus
+dem falschen Zimmer“ stand schon im Code — sie hat nur an der Satzgrenze
+gehangen, und ein Diktat hat keine Satzgrenzen.
+
+---
+
+### Warum die vorhandene Sperre nicht gegriffen hat — nachgesehen, nicht vermutet
+
+`src/lib/mengen/gesagte-werte.ts` trägt den Vorsatz seit DC-026 im Kopf:
+„Bei mehreren Räumen im Transkript wird nur ein Wert aus dem Satz
+vorgeschlagen, der DIESEN Raum nennt.“ Umgesetzt war das mit `SATZ_TRENNER`
+(`[.!?;\n]`) — es wurde in Sätze zerlegt und nur der Satz behalten, der den
+Raumnamen enthält.
+
+Der gemessene Fall aus der Einsprech-Liste lautet:
+
+```
+Wohnung komplett streichen, Wohnzimmer vier mal fünf, Schlafzimmer drei
+fünfzig mal vier, Flur eins zwanzig mal sechs, überall zwo fünfzig hoch,
+Wände und Decken zweimal weiß, im Flur gehen drei Türen ab
+```
+
+**Das ist für den Trenner EIN Satz.** Kein Punkt, nur Kommas — so liefert die
+Spracherkennung ein durchgesprochenes Aufmaß. Dieser eine Satz nennt
+„Wohnzimmer“, also galt er als Beleg für das Wohnzimmer, und `zaehleTueren`
+fand darin die drei Türen des **Flurs**. Genau das Zitat, das Sandy gesehen
+hat (`… Wände und Decken 2x streichen, weiß, im Fl…`), ist der bei 140 Zeichen
+abgeschnittene Gesamtsatz.
+
+Die Sperre war also nicht falsch gedacht, sie lag nur an der falschen Kante.
+
+### Die Regel, die ab jetzt gilt
+
+**Ein Abschnitt gehört dem Raum, dessen Name ihn eröffnet.** Getrennt wird
+zusätzlich zur Satzgrenze an **jeder Raumnennung**; Text vor der ersten
+Nennung gehört keinem Raum und fällt weg.
+
+Damit gilt für den gemessenen Fall:
+
+| Frage | Abschnitt, der gilt | Ergebnis |
+|---|---|---|
+| „Wie viele Türen hat Wohnzimmer?“ | „Wohnzimmer vier mal fünf,“ | **kein Vorschlag** — nackte Frage |
+| „Wie viele Türen hat Schlafzimmer?“ | „Schlafzimmer drei fünfzig mal vier,“ | **kein Vorschlag** |
+| „Wie viele Türen hat Flur?“ | „… im Flur gehen drei Türen ab“ | **3 Türen**, Zitat nennt den Flur |
+
+Das ist wortgleich der Vorschlag des Prüfmeisters: *nennt der Beleg-Satz einen
+anderen Raum als die Frage, gar keinen Vorschlag anbieten.* Eine nackte Frage
+ist ehrlicher als ein falscher Vorschlag mit Häkchen daneben.
+
+**Der Rückbezug bleibt erhalten.** Handwerker kommen im Sprechen auf einen
+Raum zurück („Im Wohnzimmer und in der Küche streichen. … Im Wohnzimmer sind
+drei Fenster drin.“). Alle Abschnitte desselben Raums werden weiterhin
+zusammengenommen — der Vorschlag „3 Fenster“ bleibt. Er verschwindet nur für
+die Küche, und das ist der Punkt.
+
+### Gebaut
+
+* **`src/lib/mengen/gesagte-werte.ts`** — neue Hilfe `raumAbschnitte()`
+  (plus `Raumabschnitt`, `maskiere()`), aufgerufen in `suchAbschnitt()` vor der
+  bisherigen Satzlogik. Getrennt wird an den **tatsächlich genannten**
+  Raumnamen, längere Namen zuerst (sonst gewinnt „Zimmer“ gegen
+  „Kinderzimmer“). Normalisierte und rohe Fassung werden getrennt zerlegt und
+  gegeneinander geprüft; stimmen Zahl und Reihenfolge der Nennungen nicht
+  überein, gibt es **keine** Trennung, sondern die Rückfallebene.
+* **Rückfallebene verschärft:** die alte Satzlogik nimmt jetzt nur noch Sätze,
+  die **keinen anderen** Raum nennen. Ein Satz über zwei Räume belegt keinen
+  von beiden.
+* **`src/lib/mengen/__tests__/pd018-beleg-raum.test.ts`** (neu) — sechs
+  Sperrklinken: das Diktat ohne Satzpunkte (Wohnzimmer und Schlafzimmer ohne
+  Vorschlag, Flur mit), dasselbe mit Punkten, der Rückbezug, und die Gegenprobe
+  für die Küche.
+
+**Nichts an der Oberfläche geändert.** `RueckfragenScreen.tsx` zeigt die
+`VorschlagKarte` schon immer nur, wenn `vorschlag` gesetzt ist — fällt der
+Vorschlag weg, steht die normale Frage da. Genau das ist gewollt.
+
+### Verifikation — auf Sandys Rechner am echten Projekt
+
+* `node_modules/.bin/vitest run src/lib/mengen/__tests__` —
+  **23 Dateien, 256 Tests, alle grün** (vorher 250; die sechs neuen dazu).
+* `src/lib/__tests__/cos-e-058-oeffnungen-aus-aufnahme.test.ts` — **15 grün**
+  (die einzige weitere Datei außerhalb von `mengen/__tests__`, die
+  `gesagte-werte` oder `bereiteRueckfragenVor` einliest).
+* `node_modules/.bin/tsc --noEmit -p tsconfig.json` — **fehlerfrei**.
+
+### Was hier ausdrücklich NICHT erledigt ist — und Engineering gehört
+
+Der Prüfmeister hat zwei Soll-Sätze geschrieben. Der erste (Beleg-Satz) ist
+oben erledigt. Der zweite lautet: **„Ein Raum, für den eine Angabe fehlt, muss
+danach gefragt werden“** — im gemessenen Fall wurde nach den Türen im Flur
+überhaupt nicht gefragt, nur nach Fenstern. Das entsteht im
+Rückfragen-Generator, nicht in der Anzeige, und ist damit die Datenseite von
+PM-100. Sie liegt weiter bei Engineering (Chief of Staff, 16.09.: „die UI-Seite
+liegt beim Designer, die Datenseite kommt danach“).
+
+**Das ist wichtig für die Einordnung:** Ab jetzt sieht der Betrieb bei dieser
+Aufnahme **weniger** Vorschläge als vorher — richtige statt falsche. Die
+fehlende Flur-Frage wird dadurch sichtbarer, nicht schlimmer. Ich habe nichts
+daran verändert.
+
+*Product Designer · 2026-09-17*
+
+---
+
+## DC-118 ✅ — Der Vorschau-Umschalter im Landingpage-Entwurf ist raus, der Ersatzsatz aus M-6 steht (Product Designer, 17.09.2026)
+
+**Bezug:** Notiz des Head of Marketing in dieser Datei vom 17.09. · Textfassung
+in `chief-of-staff-marketing-todos.md` unter „M-6“ · blockiert nichts.
+
+**Wo der Entwurf liegt:** nicht im Repo (der Chief of Staff hat das am 17.09.
+gemessen: die Zeile steht in keiner Datei unter `src/` oder `docs/`). Er ist das
+Artefakt **„Sofortangebot Landingpage — Entwurf“**; geändert wurde dort, jetzt
+Version 13. Am Repo also **keine Datei angefasst** — für diesen Punkt gibt es
+nichts zu committen.
+
+### Drei Eingriffe, alle im Preis-Abschnitt und im Fuß
+
+1. **Die Zählzeile ist weg.** `Gründerplätze · 18 von 25 frei` samt
+   Fortschrittsbalken (`freiZahl`, `freiBalken`) ersatzlos gestrichen — Sandys
+   Entscheidung.
+2. **Der Ersatzsatz steht an ihrer Stelle**, im selben dunklen Kasten, damit die
+   Stelle nicht einfällt: *„Die ersten **25 Betriebe, die buchen**, zahlen
+   dauerhaft 29 € — auch wenn der Preis danach auf 49 € steigt.“* Wortlaut
+   unverändert aus M-6, gelb hervorgehoben ist nur der Teil, der die Bedingung
+   trägt („die buchen“) — genau die Unterscheidung, auf die Marketing Wert legt.
+3. **Der Umschalter im Fuß ist weg**, und mit ihm das Skript dahinter
+   (`window.setGruenderFrei` und der Aufruf `setGruenderFrei(18)`). Er war das
+   Beweisstück dafür, dass die Zahl gesetzt und nicht gezählt war; ein Knopf
+   ohne Funktion stehen zu lassen wäre das schlechtere von beiden gewesen.
+
+Das Gründerpreis-Abzeichen, die 29 €, die durchgestrichenen 49 € und die
+Brutto-Zeile stehen unverändert — sie standen schon statisch im Markup, das
+Skript hat sie nur gespiegelt.
+
+### Bewusst NICHT eingebaut
+
+Der **zweite, optionale Satz** aus M-6 („Dafür erwarten wir eine Gegenleistung:
+dass du uns sagst, was nicht funktioniert.“). Marketing schreibt selbst, er sei
+ein **neues Versprechen** und gehöre in Sandys Durchgang. Ein neues Versprechen
+setze ich nicht von mir aus auf die Seite. Sobald Sandy ihn freigibt, ist es
+eine Zeile im selben Kasten.
+
+Ebenfalls nicht angefasst: die Brutto-/MwSt.-Zeile. Die hängt an Sandys
+§-19-Entscheidung (A/B) und gehört zu einem anderen Stopper.
+
+*Product Designer · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
