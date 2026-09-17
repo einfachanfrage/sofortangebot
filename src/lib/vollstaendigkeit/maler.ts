@@ -11,6 +11,7 @@ import {
   pruefeErschwerniszuschlagHoehe, pruefeErschwerniszuschlagUntergrund, pruefeGraffiti, pruefeAltbau, pruefeDenkmalschutz,
   pruefeSpachteln, pruefeSpachtelarbeiten, pruefeEstrich, pruefeGaragenboden,
   pruefeGeruest, pruefeBewohnt, pruefeBalkon, pruefeHolzOelen, pruefeBrandschutzfarbe,
+  pruefeStaubschutzwand, pruefeBaustellenreinigung,
   pruefeStuckleisten, pruefeStuck, pruefeTuerrahmen,
 } from './maler-extras'
 import {
@@ -62,6 +63,11 @@ export function pruefeMaler(
   pruefeGeruest(ergaenzt, lower)
   pruefeHeizkAbkleben(ergaenzt, lower, verstaendnis, hatHeizkLackierenFlag)
   pruefeBewohnt(ergaenzt, fehlende, lower)
+  // PM-090 / PM-109: gehören zur bewohnten Baustelle und stehen deshalb
+  // direkt hinter ihr. Beide legen NUR Fehlt-Einträge an, keine Positionen —
+  // die Reihenfolge ist damit für das Ergebnis gleichgültig.
+  pruefeStaubschutzwand(ergaenzt, fehlende, lower)
+  pruefeBaustellenreinigung(ergaenzt, fehlende, lower)
   pruefeBalkon(ergaenzt, fehlende, lower)
   pruefeHolzOelen(ergaenzt, fehlende, lower)
   pruefeTreppenhausGelaender(ergaenzt, lower, verstaendnis)

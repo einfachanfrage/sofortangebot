@@ -3,6 +3,7 @@ import { hat, add, anzahlAus, filtereArray, istWandStreichen, istDeckeStreichen 
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import { extrahiereRaumhoehe } from '../extraktion-masse'
 import { ZUSCHLAG_EINHEIT } from '../zuschlag-basis'
+import { saetze } from '../satz-raum'
 
 export function pruefeErschwerniszuschlagHoehe(
   ergaenzt: BerechnetePosition[],
@@ -359,6 +360,88 @@ export function pruefeBewohnt(ergaenzt: BerechnetePosition[], fehlende: string[]
   if (!hat(ergaenzt, 'erschwerniszuschlag bewohnt')) {
     ergaenzt.push({ beschreibung: 'Erschwerniszuschlag bewohnt', menge: 1, einheit: ZUSCHLAG_EINHEIT, konfidenz: 'high', berechnungsweg: 'Bewohnter Zustand im Transkript erkannt', annahmen: [] })
   }
+}
+
+// ── PM-090 / PM-109 (Prüfmeister, 16.09.2026) ───────────────────────────────
+//
+// „Bewohnt" allein wirkt oben schon — Möbel abdecken und Erschwerniszuschlag
+// entstehen. Die zwei Leistungen, die eine bewohnte Baustelle darüber hinaus
+// teuer machen, verschwanden spurlos: weder Position noch Fehlt-Eintrag.
+//
+//   PM-090  „… wir brauchen eine Staubschutzwand zum Flur, und jeden Abend
+//            muss besenrein gereinigt werden."
+//   PM-109  „… wir brauchen eine Staubschutzwand und räumen jeden Abend auf."
+//
+// BEIDE WERDEN EIN FEHLT-EINTRAG, KEINE POSITION — aber aus zwei
+// verschiedenen Gründen, und die Unterscheidung ist der Kern dieses
+// Eingriffs:
+//
+// 1. Die STAUBSCHUTZWAND hat ihre Katalogzeile im Abbruch-Gewerk
+//    (`Staubschutzwand / Trennwand zu angrenzenden Bereichen`, 14,00 €/m²),
+//    und Abbruch ist für den Maler gesperrt. Der Prüfmeister hat ausdrücklich
+//    davor gewarnt, hier eine Position zu bauen: `gewerkFuerPosition(
+//    'Staubschutzwand stellen', 'maler')` liefert `maler`, der Preis-Matcher
+//    findet von dort aus nichts, und auf dem Kundenpapier stünde eine Zeile
+//    mit 0,00 € — das PM-066-Muster. Erst Fehlt-Eintrag, dann Katalog.
+//
+// 2. Die REINIGUNG hat ihre Zeilen im AKTIVEN Malerkatalog
+//    (`Baustelle kehren / saugen nach Arbeit`, 40,00 € Pauschale;
+//    `Endreinigung Fenster / Böden`, 45,00 €/Stunde). Hier fehlt nicht der
+//    Preis, sondern die MENGE: Wie viele Abende dauert die Baustelle, wie
+//    viele Stunden kostet ein Abend? Beides steht in keinem der beiden
+//    Diktate. Eine Pauschale mal 1 wäre eine erfundene Zahl mit dem Aussehen
+//    eines Messwerts (Regel H Satz 3, wie bei `pruefeSchimmel` ohne m²).
+//    Ob der Prüfmeister für den EINMALIGEN Fall („besenrein übergeben", ohne
+//    Takt) lieber die Pauschale sähe, ist seine Frage — in seiner Datei
+//    gestellt, hier bewusst nicht vorweggenommen.
+
+/**
+ * Staubschutz an der Wortgrenze — dieselbe Falle wie PM-064/074/089.
+ *
+ * Bewusst NICHT dabei: das blosse Wort „Trennwand". Auf einer Malerbaustelle
+ * ist eine Trennwand meistens eine Wand, die gestrichen wird („die Trennwand
+ * zum Flur wird mitgestrichen"), kein Baustellenschutz. Der Auslöser hängt
+ * deshalb am Staub, nicht an der Wand.
+ */
+const STAUBSCHUTZ_WORT = /(?<![a-zäöüß])staubschutz|(?<![a-zäöüß])staubwand/
+
+export function pruefeStaubschutzwand(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
+  if (!STAUBSCHUTZ_WORT.test(lower)) return
+  if (hat(ergaenzt, 'staubschutz', 'staubwand')) return
+  // Nicht über `add`: dessen Dopplungsschutz nimmt die ersten ZWEI Wörter des
+  // Titels, hier also „staubschutzwand" und „/" — und „/" steckt in „Boden
+  // schützen / Abdeckfolie". Der Eintrag wäre stillschweigend unterdrückt
+  // worden (derselbe Grund wie bei `pruefeNische`).
+  if (fehlende.some(f => /staubschutz/i.test(f))) return
+  fehlende.push('Staubschutzwand / Trennwand zum angrenzenden Bereich (Fläche aufmessen und Preis selbst setzen — keine Zeile im Malerkatalog)')
+}
+
+/** Eindeutig die Baustellenreinigung, ohne dass ein Takt dabeistehen muss. */
+const BESENREIN = /besenrein/
+/** „jeden Abend", „täglich" — der Takt, der aus Aufräumen eine Leistung macht. */
+const REINIGUNGS_TAKT = /jeden\s+abend|jeden\s+tag|jeden\s+feierabend|t[äa]glich|allabendlich|\babends\b|nach\s+feierabend|arbeitst[äa]glich/
+/** Die Arbeit selbst. `räumen … auf` steht getrennt (PM-109). */
+const REINIGUNGS_ARBEIT = /reinig|kehr|saugen|saugt|sauber\s?mach|aufr[äa]um|aufger[äa]umt/
+const RAEUMEN_AUF = /r[äa]um\w*\b[^.!?]{0,40}\bauf\b/
+
+export function pruefeBaustellenreinigung(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
+  // Der Auslöser hängt am TAKT plus Arbeit oder am Wort „besenrein" — NICHT
+  // an jedem Wort mit „reinig". „Die Fassade muss vorher gereinigt werden"
+  // ist Fassadenreinigung und hat ihre eigene Regel (`pruefeFassade`), „die
+  // Fliesen reinigen" ist ein anderes Gewerk, „die Pinsel reinigen" ist gar
+  // keine Leistung. Ein loses `includes('reinig')` hätte alle drei getroffen.
+  const treffer = saetze(lower ?? '').filter(s =>
+    BESENREIN.test(s)
+    || (REINIGUNGS_TAKT.test(s) && (REINIGUNGS_ARBEIT.test(s) || RAEUMEN_AUF.test(s))))
+  if (treffer.length === 0) return
+  if (hat(ergaenzt, 'baustellenreinigung', 'baustelle kehren', 'endreinigung', 'besenrein')) return
+  if (fehlende.some(f => /baustellenreinigung/i.test(f))) return
+
+  // Wiederkehrend oder einmalig — die Frage an den Betrieb ist eine andere.
+  const wiederkehrend = treffer.some(s => REINIGUNGS_TAKT.test(s))
+  fehlende.push(wiederkehrend
+    ? 'Baustellenreinigung besenrein, wiederkehrend (Anzahl Abende und Stunden je Abend festlegen)'
+    : 'Baustellenreinigung besenrein (Umfang festlegen — Pauschale je Einsatz oder Stunden)')
 }
 
 // PM-021 (2026-08-21): loses `includes('terrasse')` fing auch "Terrassentür"
