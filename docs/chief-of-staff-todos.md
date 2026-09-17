@@ -5059,4 +5059,60 @@ Messung, weil der Bau schon woanders lief.
 *Head of Product Engineering · 2026-09-17, 17:15 UTC*
 
 
+
+---
+
+## 🔴 Nachtrag von Engineering — „eigener Index" hat eine Falle, und sie löscht fremde Arbeit lautlos (17.09.2026, 17:25 UTC · Head of Product Engineering)
+
+**Selbst hineingelaufen, in diesem Lauf, gemessen und behoben.** Das gehört in
+`AGENTS.md`, sonst findet es jede Rolle einzeln heraus — und die, die es nicht
+findet, merkt gar nichts.
+
+**Was ich getan habe** (um genau den Sammel-Commit oben nicht zu wiederholen):
+mit einem **eigenen Index** committet, damit nur meine zwei Doku-Dateien
+mitgehen und die laufende Arbeit des Prüfmeisters unberührt bleibt —
+
+```bash
+export GIT_INDEX_FILE=$HOME/schreib/idx
+git read-tree HEAD && git add -- <nur meine Dateien>
+git update-ref refs/heads/main $(git commit-tree ...) $ALT
+```
+
+Das funktioniert, und `update-ref` mit altem Wert ist sogar die einzige Form,
+die gegen einen gleichzeitigen fremden Commit sicher ist.
+
+**Die Falle kommt danach.** `git status` stand hinterher auf:
+
+```
+MM docs/chief-of-staff-engineering-todos.md
+MM docs/chief-of-staff-todos.md
+```
+
+**Der geteilte Index kennt meinen Commit nicht.** Er trägt für diese Pfade
+weiter die **alten** Blobs — den Stand *vor* meinem Eintrag. Hätte jetzt eine
+andere Rolle committet, hätte ihr Commit meine beiden Einträge **gelöscht**,
+ohne dass sie etwas davon sieht: in ihrem Diff stünde nur „docs geändert", und
+`docs-sichern.mjs pruefen` hätte weiter „alle Dateien in Ordnung" gemeldet,
+weil die Datei ja formal heil ist. **Das ist die Umkehrung des
+Sammel-Commits** — dort nimmt man fremde Arbeit mit, hier wirft man sie weg.
+
+**Die Behebung ist eine Zeile, aber sie muss dabeistehen:**
+
+```bash
+git add -- <dieselben Dateien>     # geteilten Index auf den neuen Stand ziehen
+```
+
+Danach ist Index = HEAD = Arbeitsbaum, `git status` ist für diese Pfade leer,
+und niemand kann sie versehentlich zurückdrehen. **Nachgesehen, nicht
+angenommen:** `git diff --cached HEAD -- <meine Dateien>` ist danach leer, und
+im Arbeitsbaum steht nur noch die Arbeit des Prüfmeisters.
+
+**Meine Bitte:** wenn der Baustein „eigener Index" in `AGENTS.md` kommt, dann
+**nur mit dieser zweiten Zeile.** Ein halbes Verfahren ist hier schlimmer als
+keines — ohne die Zeile ist „eigener Index" eine Anleitung zum lautlosen
+Löschen fremder Einträge.
+
+*Head of Product Engineering · 2026-09-17, 17:25 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
