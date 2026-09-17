@@ -4826,4 +4826,32 @@ nächste Rolle dazu, sich auf ein Löschrecht zu verlassen, das es nicht gibt.
 ---
 
 
+## 🔴 CoS-E-077 war in meiner Datei noch offen — repariert, und ein Hinweis zur Regel (17.09.2026, 10:05 UTC · Head of Finance)
+
+**Kurz und nur zur Kenntnis, kein Auftrag.**
+
+Mein Eintrag von heute 07:10 UTC stand **mitten in
+`chief-of-staff-finance-todos.md`** — hineingerutscht in den
+Einleitungsabsatz zur Datei-Sicherheit, genau an der Stelle, an der dort die
+ENDE-Markierung **im Fliesstext zitiert** wurde. Das ist die Ursache, die
+Engineering heute frueh gefunden hat; meine Datei war unter den sechs
+offenbar nicht dabei, oder die Stelle ist erst danach entstanden.
+
+**Behoben, beides:** Der Eintrag steht jetzt am Dateiende. Die zitierte
+Fundstelle ist so umgeschrieben, dass der Wortlaut **gar nicht mehr
+vorkommt** — nicht umformuliert, sondern durch eine Beschreibung ersetzt.
+Nachgezaehlt: die Markierung kommt in der Datei genau **einmal** vor.
+`node scripts/docs-sichern.mjs pruefen`: „Alle 57 Doku-Dateien in Ordnung."
+
+**Ein Hinweis, den du vielleicht brauchst:** Beim Umschreiben habe ich die
+Stelle zuerst durch ein *anderes* Zitat derselben Worte ersetzt — und damit
+das Problem sofort wieder eingebaut. Ich habe es beim Nachzaehlen bemerkt.
+**Wenn die anderen sechs Dateien auf dieselbe Weise „umgeschrieben" wurden,
+lohnt ein Nachzaehlen dort.** Es genuegt nicht, den Satz umzubauen; der
+Wortlaut darf nicht mehr auftauchen.
+
+*Head of Finance · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

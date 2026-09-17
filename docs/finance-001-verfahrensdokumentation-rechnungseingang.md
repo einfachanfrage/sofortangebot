@@ -1,6 +1,6 @@
 # Verfahrensdokumentation Rechnungseingang (GoBD)
 
-**Fassung 1 · 17.09.2026 · erstellt vom Head of Finance**
+**Fassung 2 · 17.09.2026 · erstellt und fortgeschrieben vom Head of Finance**
 **Betrieb:** Sandra Holm, Einzelunternehmen (Gewerbeanmeldung geplant KW 41/2026)
 **Geltungsbereich:** Alle Rechnungen, die der Betrieb **empfaengt** — Papier,
 PDF, XRechnung, ZUGFeRD. Ausgangsrechnungen sind hier **nicht** geregelt; es
@@ -113,6 +113,40 @@ ein Reverse-Charge-Fall und gehoert gesondert vermerkt.**
 steht (Quba-Viewer, Open Source, 0 €), Installation liegt bei Sandy — F-004.
 **Bis dahin gilt: keine reine XML-Rechnung bezahlen.**
 
+### Schritt 2a — Fremdwaehrung umrechnen
+
+**Betrifft heute Supabase, Vercel, OpenAI und Anthropic — alle vier rechnen in
+US-Dollar.**
+
+**Regel, und sie ist nicht waehlbar:** Umgerechnet wird mit dem
+**Durchschnittskurs des Monats, den das Bundesfinanzministerium nach
+§ 16 Abs. 6 UStG monatlich bekanntgibt.** Massgeblich ist der **Monat des
+Rechnungsdatums**; bei den monatlich nachlaufend abgerechneten
+Dauerleistungen (Supabase) ist das zugleich der Monat, in dem die Leistung
+endet und die Steuer nach § 13b UStG entsteht. Ein selbst gewaehlter Kurs —
+Tageskurs der Bank, Kurs der Kreditkartenabrechnung, Jahresdurchschnitt — ist
+hier **nicht zulaessig**.
+
+**Reihenfolge:** erst das **Netto**-Entgelt umrechnen, dann die 19 % darauf
+rechnen. Nicht umgekehrt, sonst entstehen Rundungsdifferenzen gegen die
+Voranmeldung.
+
+**Wo die Kurse stehen:** `docs/kostenuebersicht-finance.xlsx`, Blatt
+`Rechnungsjournal`, Kurstabelle unterhalb der Journaltabelle. Ein neuer Monat
+wird **dort** eingetragen — die Spalte „Betrag EUR" rechnet dann von selbst.
+Die Kurse kommen aus der monatlich fortgeschriebenen Uebersicht des BMF
+(zuletzt Schreiben vom 01.09.2026, Gz. III C 3 - S 7329/00014/008/112).
+
+**Fuer die Einnahmenueberschussrechnung wird derselbe Kurs verwendet.** Das
+Einkommensteuerrecht schreibt ihn nicht vor, aber zwei Methoden im selben
+Betrieb sind eine Fehlerquelle ohne Gegenwert — und die Wahl einer Methode
+gehoert genau hierher dokumentiert.
+
+**Nicht verwechseln:** Im Finanzplan (Blatt `Plan-Annahmen`) steht ein
+**Planungs**kurs fuer kuenftige Monate. Der ist eine Schaetzung und darf
+abweichen; der amtliche Monatskurs gilt fuer Belege, die bereits vorliegen.
+Die beiden Werte werden **nicht** aneinander angeglichen.
+
 ### Schritt 3 — Eingangsbuch und Fingerabdruck
 
 Der Head of Finance traegt jede neue Datei in
@@ -207,6 +241,7 @@ ohnehin im Plan steht.
 | Fassung | Datum | Was geaendert | Von |
 |---|---|---|---|
 | 1 | 17.09.2026 | Erstfassung im Rahmen von Gate-1-Punkt 4.7 | Head of Finance |
+| 2 | 17.09.2026 | Hinweis zu Pruefpunkt 9 korrigiert (nur Supabase ist Reverse Charge); **Schritt 2a Fremdwaehrungsumrechnung neu** (§ 16 Abs. 6 UStG, amtliche BMF-Monatskurse) | Head of Finance |
 
 *Diese Dokumentation ist fortzuschreiben, sobald eine Buchhaltungsloesung
 eingefuehrt wird oder sich der Eingangsweg aendert. Alte Fassungen bleiben in

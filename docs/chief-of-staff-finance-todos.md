@@ -31,146 +31,10 @@ Sandy.
 **Datei-Sicherheit (neu, 20.08.2026):** In anderen Koordinationsdateien
 dieses Projekts ist wiederholt (6. Mal) ein Speicherfehler bei
 gleichzeitiger Bearbeitung aufgetreten. Ganz am Ende dieser Datei steht
-deshalb jetzt eine feste Markierung (`## ✅ Reverse Charge (Supabase) — der aelteste offene Punkt aus CoS-F-001 ist beantwortet, und eine eigene Falschaussage korrigiert (17.09.2026, 07:10 UTC · Head of Finance)
-
-**Warum dieser Punkt und nicht 4.7:** Von 4.7 liegt alles, was in meiner
-Reichweite war, fertig da. Die Reste haengen an einem IONOS-Zugang, an Sandys
-Rechner und an einem Postfach — **Platform hat beide Auftraege heute
-ausdruecklich zurueckgegeben** (`chief-of-staff-platform-todos.md`, Eintrag
-17.09.: kein IONOS-Zugang, kein Versandweg). Ich habe sie an den Chief of
-Staff weitergereicht, statt sie hier liegen zu lassen. Offen und **nicht**
-blockiert war dagegen der aelteste Punkt meiner eigenen Liste: Zeile 40 im
-Blatt „Legende & offene Punkte" — **wie die Supabase-Reverse-Charge-Rechnungen
-fuer eine Kleinunternehmerin zu behandeln sind.** Der stand seit dem 02.09.
-mit „mit Steuerberater klaeren". Das war zu bequem: Der rechtliche Teil ist
-belegbar, nur die Bewertung des Einzelfalls gehoert dem Steuerberater.
-
-### 1. Zuerst die Korrektur — ich habe gestern etwas Falsches geschrieben
-
-In meinem Eintrag von gestern, 06:20 UTC, steht: *„Bei OpenAI, Vercel,
-Supabase und Resend geht die Steuerschuld auf sie ueber."* **Das stimmt
-nicht**, und die Belege sagen es seit Wochen deutlich. Nachgesehen im
-Rechnungsjournal, 17 Belege:
-
-| Anbieter | Was auf der Rechnung steht | Reverse Charge? |
-|---|---|---|
-| **Supabase Pte. Ltd.** (Singapur) | keine USt ausgewiesen, Vermerk Reverse Charge | **ja** |
-| Vercel Inc. | 19 % USt ausgewiesen, EU VAT EU056329113 | nein |
-| OpenAI OpCo LLC | 19 % USt ausgewiesen, EU OSS VAT EU372041333 | nein |
-| Anthropic PBC | 19 % USt ausgewiesen, EU VAT IE4276970QH | nein |
-| Apple (Claude Pro) | 19 % USt ausgewiesen | nein |
-| IONOS SE | 19 % USt ausgewiesen | nein |
-| Resend | **kein Beleg vorhanden** — meine Aussage war reine Vermutung | unbekannt |
-
-**Genau ein Dienst faellt heute unter § 13b: Supabase.** Die uebrigen
-versteuern ueber das EU-OSS-Verfahren an Sandy als Nichtunternehmerin — was
-sie tun, weil ihnen keine USt-IdNr. vorliegt (dazu Abschnitt 4). Der Satz in
-der Verfahrensdokumentation ist korrigiert; die Falschaussage steht nicht mehr
-im Umlauf. Hier lasse ich sie bewusst sichtbar stehen, statt sie
-stillschweigend zu ueberschreiben.
-
-### 2. Die Antwort auf die offene Frage
-
-**Ja, Sandy schuldet die deutsche Umsatzsteuer auf die Supabase-Rechnungen —
-auch als Kleinunternehmerin, und ohne sie abziehen zu koennen.**
-
-* § 13b UStG kennt keine Ausnahme fuer Kleinunternehmer. Leistungsort ist nach
-  § 3a Abs. 2 UStG Deutschland, Steuerschuldnerin ist die Empfaengerin
-  (§ 13b Abs. 2 Nr. 1 i. V. m. Abs. 5 UStG).
-* **§ 19 schuetzt die eigenen Verkaeufe, nicht die Einkaeufe.**
-* Der Vorsteuerabzug ist nach § 19 Abs. 1 i. V. m. § 15 UStG ausgeschlossen.
-  Die 19 % sind damit **echte Kosten**, kein durchlaufender Posten.
-* Daraus folgt eine **Voranmeldungspflicht fuer genau die Zeitraeume, in denen
-  die Steuer entsteht** (§ 18 Abs. 4a UStG), dazu die Jahreserklaerung.
-  Gemeldet wird in der Zeile fuer Drittlandsleistungen (Kennzahl 52).
-
-### 3. Was das in Zahlen heisst
-
-| Supabase-Beleg | Netto (USD) | 19 % USt (USD) |
-|---|---|---|
-| 2026-003 · 23.05. | 25,00 | 4,75 |
-| 2026-006 · 23.06. | 49,97 | 9,49 |
-| 2026-008 · 23.07. | 54,30 | 10,32 |
-| 2026-016 · 23.08. | 53,83 | 10,23 |
-| **Summe bisher** | **183,10** | **34,79** |
-
-**Laufend rund 10 USD im Monat**, steigend mit der Supabase-Nutzung. Die
-EUR-Umrechnung lasse ich offen — sie gehoert nach den monatlichen
-BMF-Umrechnungskursen gemacht und ist bereits als offener Punkt im Blatt
-vermerkt. **Ich erfinde dafuer keinen Kurs.**
-
-**Auswirkung auf den Plan — diesmal gibt es eine, zum ersten Mal seit drei
-Eintraegen:** Die Fixkosten von 135,10 €/Monat rechnen die Supabase-Rechnung
-mit ihrem Rechnungsbetrag. **Bleibt Sandy bei § 19, fehlen dort rund 10 USD
-im Monat.** Ich habe den Finanzplan **nicht** umgerechnet, aus einem Grund:
-Bei Regelbesteuerung ist der Betrag null. Der Posten haengt an genau der
-A/B-Entscheidung, die ohnehin offen ist — ihn jetzt einzurechnen hiesse, ihre
-Antwort vorwegzunehmen. Er ist als offener Punkt im Blatt hinterlegt und wird
-**in dem Lauf nachgezogen, in dem die Entscheidung faellt.**
-
-### 4. Was das fuer die offene A/B-Frage (F-006) bedeutet
-
-Kein Nebenbefund, sondern das fehlende Stueck dieser Rechnung. Sandy hat es
-als kurzen Nachtrag zu F-006 bekommen — mit Zahlen, ohne Entscheidung an ihrer
-Stelle. Kurzfassung fuer diese Datei:
-
-* **Bei § 19** zahlt sie die 19 % auf Supabase selbst und bekommt auf keine
-  einzige Eingangsrechnung Vorsteuer zurueck. Nach den zuletzt vorliegenden
-  Belegen sind das **rund 15 USD + 4 € im Monat**, die als USt abfliessen
-  (Vercel 3,80 · Anthropic 8,55 · OpenAI 2,85 USD; Apple 3,51 · IONOS 0,40 €)
-  — der Anthropic-Posten ist dabei als moeglicherweise einmalig markiert —
-  **plus** die rund 10 USD aus § 13b.
-* **Bei Regelbesteuerung** wird beides zu null: Die § 13b-Steuer ist im selben
-  Atemzug abziehbar, die USt der uebrigen Anbieter ebenfalls.
-* Der uebliche Einwand — *„dann wird es fuer die Kunden teurer"* — **traegt
-  hier nur begrenzt**: Sandys Kunden sind Handwerksbetriebe und damit in aller
-  Regel vorsteuerabzugsberechtigt; fuer sie ist der Aufschlag ein
-  durchlaufender Posten. **Nur** Handwerker, die selbst Kleinunternehmer sind,
-  zahlen wirklich mehr.
-* Dagegen stehen Voranmeldungen und die **Bindung von fuenf Kalenderjahren**
-  (§ 19 Abs. 3 UStG). Das ist der Preis, und er ist nicht klein.
-
-**Wichtig ist die Reihenfolge:** Die USt-IdNr. sollte **nicht** vorher
-beantragt werden. Liegt sie vor, stellen Vercel, OpenAI und Anthropic auf
-Netto um — dann traegt Sandy die Steuer auch dort selbst, bei § 19 ohne Abzug.
-Unter § 19 ist eine USt-IdNr. also ein Nachteil, unter Regelbesteuerung eine
-Voraussetzung. **Erst A/B entscheiden, dann USt-IdNr.** — nicht umgekehrt.
-
-### 5. Wie gross ist das Versaeumnis bis heute?
-
-**Klein, und das ist die gute Nachricht.** Es geht um 34,79 USD aus vier
-Monaten. Sandy hat noch keine Steuernummer fuer Umsatzsteuerzwecke und kann
-heute gar nichts anmelden. Der saubere Weg fuehrt ueber den **Fragebogen zur
-steuerlichen Erfassung nach der Gewerbeanmeldung in KW 41** — dort wird der
-Zeitraum ab Beginn der unternehmerischen Taetigkeit erfasst, und die
-Supabase-Betraege gehoeren mit hinein. Ob die Unternehmereigenschaft bereits
-im Mai mit den Vorbereitungshandlungen begann, ist die einzige Bewertung, die
-ich nicht selbst treffe. **Sie kostet bei diesen Betraegen keine nennenswerte
-Summe, aber sie gehoert benannt statt uebersehen** — als konkrete Frage fuer
-den Steuerberater-Termin hinterlegt.
-
-### 6. Was ich geaendert habe
-
-| Datei | Aenderung |
-|---|---|
-| `docs/finance-001-verfahrensdokumentation-rechnungseingang.md` | Hinweis zu Pruefpunkt 9 korrigiert: nur Supabase ist Reverse Charge, mit Rechtsfolge und Meldeweg |
-| `docs/kostenuebersicht-finance.xlsx`, Blatt „Legende & offene Punkte" | Frage von Zeile 40 beantwortet, Ergebnis und Betrag eingetragen; neuer offener Punkt fuer die Plan-Anpassung nach der A/B-Entscheidung |
-| `docs/entscheidungen-fuer-sandy.md` | Nachtrag zu F-006 mit den Zahlen — **keine neue Frage**, dieselbe |
-| `docs/chief-of-staff-todos.md` | die zwei von Platform zurueckgegebenen 4.7-Punkte weitergereicht |
-
-**Die Bewertung von Punkt 4.7 bleibt bei 65.** An den Resten hat sich nichts
-bewegt, und ich schreibe keine Punkte gut, die nicht verdient sind.
-
-**Quellen:** [onlinebilanz.de — Reverse Charge fuer Kleinunternehmer: Wann § 19 UStG nicht schuetzt](https://onlinebilanz.de/reverse-charge-kleinunternehmer/) ·
-[betriebsbuddy.de — Reverse Charge fuer Kleinunternehmer 2026: § 13b einfach erklaert](https://betriebsbuddy.de/blog/reverse-charge-kleinunternehmer) ·
-[Handelskammer Hamburg — Umsatzsteuerschuldnerschaft des Leistungsempfaengers (Reverse Charge)](https://www.handelskammer-hamburg.de/recht-steuern/steuerrecht/umsatzsteuer-mehrwertsteuer/umsatzsteuer-mehrwertsteuer-international/umsatzsteuersteuerschuldnerschaft-reverse-charge-6682954) ·
-eigene Auswertung der 17 Belege im Blatt `Rechnungsjournal`
-
-*Head of Finance · 17.09.2026*
-
----
-
-ENDE-DER-DATEI-Markierung`). Taucht beim
+deshalb jetzt eine feste Markierung: eine Kommentarzeile ganz unten, die auf
+das Dateiende hinweist. Der Wortlaut wird hier bewusst nicht zitiert — genau
+das hat am 17.09. dazu gefuehrt, dass ein Eintrag mitten in dieser Datei
+landete. Taucht beim
 Lesen noch Text NACH dieser Markierung auf, ist das zweifelsfrei ein
 Speicherfehler — bitte nicht selbst löschen, sondern kurz dem Chief of Staff
 melden. Zusätzlich: neue Einträge wenn möglich ans Dateiende anhängen statt
@@ -1997,6 +1861,268 @@ zweite Empfehlung in Folge, die nichts kostet, und das ist so gewollt.
 **Quellen:** [BMF, FAQ zur Einfuehrung der obligatorischen E-Rechnung](https://www.bundesfinanzministerium.de/Content/DE/FAQ/e-rechnung.html) ·
 [Ebner Stolz, „E-Rechnungen: Aufbewahrungserleichterungen fuer Kleinunternehmer"](https://www.ebnerstolz.de/de/unser-angebot/leistungen/steuerberatung/umsatzsteuer/e-rechnungen-aufbewahrungserleichterungen-fuer-kleinunternehmer-86668.html) ·
 [Verfahrensdokumentation nach GoBD — Pflichtinhalte und Geltung fuer Selbststaendige](https://kostenlose-erechnung.de/ratgeber/verfahrensdokumentation-gobd-vorlage-muster/)
+
+*Head of Finance · 17.09.2026*
+
+---
+
+## ✅ Reverse Charge (Supabase) — der aelteste offene Punkt aus CoS-F-001 ist beantwortet, und eine eigene Falschaussage korrigiert (17.09.2026, 07:10 UTC · Head of Finance)
+
+**Warum dieser Punkt und nicht 4.7:** Von 4.7 liegt alles, was in meiner
+Reichweite war, fertig da. Die Reste haengen an einem IONOS-Zugang, an Sandys
+Rechner und an einem Postfach — **Platform hat beide Auftraege heute
+ausdruecklich zurueckgegeben** (`chief-of-staff-platform-todos.md`, Eintrag
+17.09.: kein IONOS-Zugang, kein Versandweg). Ich habe sie an den Chief of
+Staff weitergereicht, statt sie hier liegen zu lassen. Offen und **nicht**
+blockiert war dagegen der aelteste Punkt meiner eigenen Liste: Zeile 40 im
+Blatt „Legende & offene Punkte" — **wie die Supabase-Reverse-Charge-Rechnungen
+fuer eine Kleinunternehmerin zu behandeln sind.** Der stand seit dem 02.09.
+mit „mit Steuerberater klaeren". Das war zu bequem: Der rechtliche Teil ist
+belegbar, nur die Bewertung des Einzelfalls gehoert dem Steuerberater.
+
+### 1. Zuerst die Korrektur — ich habe gestern etwas Falsches geschrieben
+
+In meinem Eintrag von gestern, 06:20 UTC, steht: *„Bei OpenAI, Vercel,
+Supabase und Resend geht die Steuerschuld auf sie ueber."* **Das stimmt
+nicht**, und die Belege sagen es seit Wochen deutlich. Nachgesehen im
+Rechnungsjournal, 17 Belege:
+
+| Anbieter | Was auf der Rechnung steht | Reverse Charge? |
+|---|---|---|
+| **Supabase Pte. Ltd.** (Singapur) | keine USt ausgewiesen, Vermerk Reverse Charge | **ja** |
+| Vercel Inc. | 19 % USt ausgewiesen, EU VAT EU056329113 | nein |
+| OpenAI OpCo LLC | 19 % USt ausgewiesen, EU OSS VAT EU372041333 | nein |
+| Anthropic PBC | 19 % USt ausgewiesen, EU VAT IE4276970QH | nein |
+| Apple (Claude Pro) | 19 % USt ausgewiesen | nein |
+| IONOS SE | 19 % USt ausgewiesen | nein |
+| Resend | **kein Beleg vorhanden** — meine Aussage war reine Vermutung | unbekannt |
+
+**Genau ein Dienst faellt heute unter § 13b: Supabase.** Die uebrigen
+versteuern ueber das EU-OSS-Verfahren an Sandy als Nichtunternehmerin — was
+sie tun, weil ihnen keine USt-IdNr. vorliegt (dazu Abschnitt 4). Der Satz in
+der Verfahrensdokumentation ist korrigiert; die Falschaussage steht nicht mehr
+im Umlauf. Hier lasse ich sie bewusst sichtbar stehen, statt sie
+stillschweigend zu ueberschreiben.
+
+### 2. Die Antwort auf die offene Frage
+
+**Ja, Sandy schuldet die deutsche Umsatzsteuer auf die Supabase-Rechnungen —
+auch als Kleinunternehmerin, und ohne sie abziehen zu koennen.**
+
+* § 13b UStG kennt keine Ausnahme fuer Kleinunternehmer. Leistungsort ist nach
+  § 3a Abs. 2 UStG Deutschland, Steuerschuldnerin ist die Empfaengerin
+  (§ 13b Abs. 2 Nr. 1 i. V. m. Abs. 5 UStG).
+* **§ 19 schuetzt die eigenen Verkaeufe, nicht die Einkaeufe.**
+* Der Vorsteuerabzug ist nach § 19 Abs. 1 i. V. m. § 15 UStG ausgeschlossen.
+  Die 19 % sind damit **echte Kosten**, kein durchlaufender Posten.
+* Daraus folgt eine **Voranmeldungspflicht fuer genau die Zeitraeume, in denen
+  die Steuer entsteht** (§ 18 Abs. 4a UStG), dazu die Jahreserklaerung.
+  Gemeldet wird in der Zeile fuer Drittlandsleistungen (Kennzahl 52).
+
+### 3. Was das in Zahlen heisst
+
+| Supabase-Beleg | Netto (USD) | 19 % USt (USD) |
+|---|---|---|
+| 2026-003 · 23.05. | 25,00 | 4,75 |
+| 2026-006 · 23.06. | 49,97 | 9,49 |
+| 2026-008 · 23.07. | 54,30 | 10,32 |
+| 2026-016 · 23.08. | 53,83 | 10,23 |
+| **Summe bisher** | **183,10** | **34,79** |
+
+**Laufend rund 10 USD im Monat**, steigend mit der Supabase-Nutzung. Die
+EUR-Umrechnung lasse ich offen — sie gehoert nach den monatlichen
+BMF-Umrechnungskursen gemacht und ist bereits als offener Punkt im Blatt
+vermerkt. **Ich erfinde dafuer keinen Kurs.**
+
+**Auswirkung auf den Plan — diesmal gibt es eine, zum ersten Mal seit drei
+Eintraegen:** Die Fixkosten von 135,10 €/Monat rechnen die Supabase-Rechnung
+mit ihrem Rechnungsbetrag. **Bleibt Sandy bei § 19, fehlen dort rund 10 USD
+im Monat.** Ich habe den Finanzplan **nicht** umgerechnet, aus einem Grund:
+Bei Regelbesteuerung ist der Betrag null. Der Posten haengt an genau der
+A/B-Entscheidung, die ohnehin offen ist — ihn jetzt einzurechnen hiesse, ihre
+Antwort vorwegzunehmen. Er ist als offener Punkt im Blatt hinterlegt und wird
+**in dem Lauf nachgezogen, in dem die Entscheidung faellt.**
+
+### 4. Was das fuer die offene A/B-Frage (F-006) bedeutet
+
+Kein Nebenbefund, sondern das fehlende Stueck dieser Rechnung. Sandy hat es
+als kurzen Nachtrag zu F-006 bekommen — mit Zahlen, ohne Entscheidung an ihrer
+Stelle. Kurzfassung fuer diese Datei:
+
+* **Bei § 19** zahlt sie die 19 % auf Supabase selbst und bekommt auf keine
+  einzige Eingangsrechnung Vorsteuer zurueck. Nach den zuletzt vorliegenden
+  Belegen sind das **rund 15 USD + 4 € im Monat**, die als USt abfliessen
+  (Vercel 3,80 · Anthropic 8,55 · OpenAI 2,85 USD; Apple 3,51 · IONOS 0,40 €)
+  — der Anthropic-Posten ist dabei als moeglicherweise einmalig markiert —
+  **plus** die rund 10 USD aus § 13b.
+* **Bei Regelbesteuerung** wird beides zu null: Die § 13b-Steuer ist im selben
+  Atemzug abziehbar, die USt der uebrigen Anbieter ebenfalls.
+* Der uebliche Einwand — *„dann wird es fuer die Kunden teurer"* — **traegt
+  hier nur begrenzt**: Sandys Kunden sind Handwerksbetriebe und damit in aller
+  Regel vorsteuerabzugsberechtigt; fuer sie ist der Aufschlag ein
+  durchlaufender Posten. **Nur** Handwerker, die selbst Kleinunternehmer sind,
+  zahlen wirklich mehr.
+* Dagegen stehen Voranmeldungen und die **Bindung von fuenf Kalenderjahren**
+  (§ 19 Abs. 3 UStG). Das ist der Preis, und er ist nicht klein.
+
+**Wichtig ist die Reihenfolge:** Die USt-IdNr. sollte **nicht** vorher
+beantragt werden. Liegt sie vor, stellen Vercel, OpenAI und Anthropic auf
+Netto um — dann traegt Sandy die Steuer auch dort selbst, bei § 19 ohne Abzug.
+Unter § 19 ist eine USt-IdNr. also ein Nachteil, unter Regelbesteuerung eine
+Voraussetzung. **Erst A/B entscheiden, dann USt-IdNr.** — nicht umgekehrt.
+
+### 5. Wie gross ist das Versaeumnis bis heute?
+
+**Klein, und das ist die gute Nachricht.** Es geht um 34,79 USD aus vier
+Monaten. Sandy hat noch keine Steuernummer fuer Umsatzsteuerzwecke und kann
+heute gar nichts anmelden. Der saubere Weg fuehrt ueber den **Fragebogen zur
+steuerlichen Erfassung nach der Gewerbeanmeldung in KW 41** — dort wird der
+Zeitraum ab Beginn der unternehmerischen Taetigkeit erfasst, und die
+Supabase-Betraege gehoeren mit hinein. Ob die Unternehmereigenschaft bereits
+im Mai mit den Vorbereitungshandlungen begann, ist die einzige Bewertung, die
+ich nicht selbst treffe. **Sie kostet bei diesen Betraegen keine nennenswerte
+Summe, aber sie gehoert benannt statt uebersehen** — als konkrete Frage fuer
+den Steuerberater-Termin hinterlegt.
+
+### 6. Was ich geaendert habe
+
+| Datei | Aenderung |
+|---|---|
+| `docs/finance-001-verfahrensdokumentation-rechnungseingang.md` | Hinweis zu Pruefpunkt 9 korrigiert: nur Supabase ist Reverse Charge, mit Rechtsfolge und Meldeweg |
+| `docs/kostenuebersicht-finance.xlsx`, Blatt „Legende & offene Punkte" | Frage von Zeile 40 beantwortet, Ergebnis und Betrag eingetragen; neuer offener Punkt fuer die Plan-Anpassung nach der A/B-Entscheidung |
+| `docs/entscheidungen-fuer-sandy.md` | Nachtrag zu F-006 mit den Zahlen — **keine neue Frage**, dieselbe |
+| `docs/chief-of-staff-todos.md` | die zwei von Platform zurueckgegebenen 4.7-Punkte weitergereicht |
+
+**Die Bewertung von Punkt 4.7 bleibt bei 65.** An den Resten hat sich nichts
+bewegt, und ich schreibe keine Punkte gut, die nicht verdient sind.
+
+**Quellen:** [onlinebilanz.de — Reverse Charge fuer Kleinunternehmer: Wann § 19 UStG nicht schuetzt](https://onlinebilanz.de/reverse-charge-kleinunternehmer/) ·
+[betriebsbuddy.de — Reverse Charge fuer Kleinunternehmer 2026: § 13b einfach erklaert](https://betriebsbuddy.de/blog/reverse-charge-kleinunternehmer) ·
+[Handelskammer Hamburg — Umsatzsteuerschuldnerschaft des Leistungsempfaengers (Reverse Charge)](https://www.handelskammer-hamburg.de/recht-steuern/steuerrecht/umsatzsteuer-mehrwertsteuer/umsatzsteuer-mehrwertsteuer-international/umsatzsteuersteuerschuldnerschaft-reverse-charge-6682954) ·
+eigene Auswertung der 17 Belege im Blatt `Rechnungsjournal`
+
+*Head of Finance · 17.09.2026*
+
+---
+
+---
+
+## ✅ EUR-Umrechnung der USD-Rechnungen — der zweitaelteste offene Punkt ist zu, und der Planungskurs ist nachgeprueft (17.09.2026, 10:05 UTC · Head of Finance)
+
+**Warum dieser Punkt:** Von 4.7 haengt nichts mehr an mir — die drei Reste
+liegen bei Platform, bei Sandys Rechner und bei einer Festplatte, und Platform
+hat die beiden Auftraege heute zurueckgegeben. Offen und **nicht** blockiert
+war der naechstaelteste Eintrag im Blatt „Legende & offene Punkte": die
+**EUR-Umrechnung der USD-Rechnungen**, seit dem 02.09. mit dem Vermerk
+*„welchen Umrechnungskurs soll ich verwenden, sobald ein Steuerberater
+feststeht?"*. **Dieselbe Bequemlichkeit wie bei Zeile 40** — der Kurs ist
+keine Entscheidung, sondern Gesetz.
+
+### 1. Es gibt keine Wahl, und das ist die gute Nachricht
+
+**§ 16 Abs. 6 UStG schreibt die vom Bundesfinanzministerium monatlich
+veroeffentlichten Durchschnittskurse zwingend vor.** Kein Tageskurs der Bank,
+kein Kurs der Kreditkartenabrechnung, kein Jahresdurchschnitt. Ein
+Steuerberater haette hier nichts zu entscheiden gehabt; er haette dieselbe
+Tabelle aufgeschlagen. **Massgeblich ist der Monat des Rechnungsdatums** — bei
+Supabase zugleich der Monat, in dem die nachlaufend abgerechnete Dauerleistung
+endet und die Steuer nach § 13b UStG entsteht. Beides faellt hier auf
+denselben Monat, was die Sache einfach haelt.
+
+**Amtliche Kurse 2026** (USD je 1 EUR), aus der monatlich fortgeschriebenen
+Uebersicht des BMF, Schreiben vom **01.09.2026**, Gz. III C 3 -
+S 7329/00014/008/112 — an zwei unabhaengigen Stellen gegengelesen, beide
+identisch:
+
+| Monat 2026 | Mai | Juni | Juli | August |
+|---|---|---|---|---|
+| Kurs | 1,1673 | 1,1518 | 1,1417 | 1,1593 |
+
+### 2. Gerechnet, nicht geschaetzt
+
+Die Spalte „Betrag EUR (Brutto, ca.)" im `Rechnungsjournal` stand seit dem
+02.09. bei **zehn von siebzehn Belegen leer und gelb**. Sie ist jetzt gefuellt
+— nicht mit abgetippten Zahlen, sondern per Formel gegen eine **Kurstabelle
+unterhalb der Journaltabelle**. Ein neuer Monat wird dort in **eine** Zelle
+eingetragen, nicht in jede Zeile.
+
+| Beleg | Anbieter | Brutto USD | Kurs | EUR |
+|---|---|---|---|---|
+| 2026-002 | Vercel | 23,80 | Mai | 20,39 |
+| 2026-003 | Supabase | 25,00 | Mai | 21,42 |
+| 2026-004 | OpenAI | 17,85 | Juni | 15,50 |
+| 2026-005 | Vercel | 23,80 | Juni | 20,66 |
+| 2026-006 | Supabase | 49,97 | Juni | 43,38 |
+| 2026-007 | Vercel | 23,80 | Juli | 20,85 |
+| 2026-008 | Supabase | 54,30 | Juli | 47,56 |
+| 2026-010 | Anthropic | 53,55 | August | 46,19 |
+| 2026-015 | Vercel | 23,80 | August | 20,53 |
+| 2026-016 | Supabase | 53,83 | August | 46,43 |
+
+**Damit gibt es zum ersten Mal eine Gesamtzahl in einer Waehrung:
+401,37 € brutto** ueber alle 17 Belege seit April. Und in der
+`Kostenuebersicht` steht neu eine Zeile **„Summe gesamt in EUR" = 153,05 €**
+fuer den laufenden Monat (149,03 USD zum Augustkurs + 24,50 €). **Zur
+Vorsicht dazugesagt:** darin stecken die 53,55 USD der Anthropic-Rechnung, bei
+der bis heute offen ist, ob sie wiederkehrend ist. Ohne sie waeren es
+**106,86 €**. Die Zeile daneben, die beide Waehrungen weiter getrennt summiert,
+bleibt stehen.
+
+**Der Reverse-Charge-Betrag aus dem Eintrag von 07:10 hat jetzt eine
+Euro-Zahl:** 34,79 USD sind **30,17 € Umsatzsteuer auf 158,79 € Netto**,
+laufend rund **8,80 € im Monat**. Gerechnet wie vorgeschrieben — erst das
+Netto umrechnen, dann die 19 % darauf, nicht umgekehrt.
+
+### 3. Der Planungskurs im Finanzplan — nachgeprueft, er stimmt
+
+Im Blatt `Plan-Annahmen` steht seit dem 03.09. ein USD/EUR-Kurs von **0,86**,
+aus einer Wechselkursseite. Ich haette ihn beinahe ungeprueft stehen lassen.
+**Der amtliche Augustkurs von 1,1593 entspricht 0,8626 € je USD** — die
+Abweichung betraegt **0,3 %, rund 0,33 € im Monat.** Der Plan ist damit
+bestaetigt und wird **nicht** angefasst.
+
+**Wichtig fuer alle, die spaeter darueber stolpern:** Es stehen jetzt bewusst
+**zwei** Kurse in der Datei, mit zwei verschiedenen Aufgaben — ein
+Planungskurs fuer kuenftige Monate und der amtliche Monatskurs fuer Belege,
+die schon da sind. Das steht als Warnung an beiden Stellen. **Bitte nicht
+angleichen.**
+
+### 4. Was ich geaendert habe
+
+| Datei | Aenderung |
+|---|---|
+| `docs/kostenuebersicht-finance.xlsx`, `Rechnungsjournal` | Spalte „Betrag EUR" fuer 10 USD-Belege gefuellt (Formel), gelbe Markierung weg; Kurstabelle mit Quelle unter der Journaltabelle ergaenzt |
+| dieselbe Datei, `Kostenuebersicht` | neue Zeile „Summe gesamt in EUR"; Hinweistext darunter angepasst |
+| dieselbe Datei, `Plan-Annahmen` | Kurs 0,86 als nachgeprueft vermerkt, mit der Warnung, ihn nicht mit dem amtlichen Kurs zu vermischen |
+| dieselbe Datei, `Legende & offene Punkte` | offener Punkt zur EUR-Umrechnung auf **ERLEDIGT**; Reverse-Charge-Zeile um die Euro-Betraege ergaenzt; Farblegende bereinigt |
+| `docs/finance-001-verfahrensdokumentation-rechnungseingang.md` | **Schritt 2a neu** — Fremdwaehrungsumrechnung, Fassung 2. Die Luecke war echt: eine Verfahrensdokumentation muss sagen, nach welcher Methode umgerechnet wird |
+
+**Nachgeprueft, nicht behauptet:** Die Datei wurde nach dem Eingriff mit
+LibreOffice neu durchgerechnet. Alle 17 Zeilen liefern einen Wert, die
+Summe stimmt auf den Cent, und das Blatt `Monatsverlauf` zeigt danach
+**dieselben** Zahlen wie vorher — die Kurstabelle liegt bewusst **unterhalb**
+der Bereiche, die dessen Formeln einlesen. `node scripts/docs-sichern.mjs
+pruefen`: „Alle 57 Doku-Dateien in Ordnung."
+
+### 5. Nebenher repariert, und es gehoert gemeldet
+
+**Mein eigener Eintrag von 07:10 stand mitten in dieser Datei** — er war in
+den Einleitungsabsatz zur Datei-Sicherheit hineingerutscht, genau an der
+Stelle, an der dort die ENDE-Markierung **im Fliesstext zitiert** wird. Das
+ist die Ursache, die Engineering heute frueh gefunden hat (CoS-E-077); in
+dieser Datei war die Fundstelle noch offen. Beides ist behoben: Der Eintrag
+steht jetzt am Dateiende, und der zitierte Wortlaut ist so umgeschrieben, dass
+er nicht mehr als Markierung durchgeht. **Die Markierung kommt in dieser Datei
+genau einmal vor** — nachgezaehlt. Kurze Meldung dazu liegt beim Chief of
+Staff.
+
+**Auswirkung auf den Plan: keine.** Kein neuer Kostenposten, 0 €, Break-even
+unveraendert. **Die Bewertung von Punkt 4.7 bleibt bei 65** — an den drei
+Resten hat sich nichts bewegt.
+
+**Quellen:** [BMF — Umsatzsteuer-Umrechnungskurse, monatlich fortgeschriebene Uebersicht 2026 (Schreiben vom 01.09.2026)](https://www.bundesfinanzministerium.de/Web/DE/Themen/Steuern/Steuerarten/Umsatzsteuer/Umsatzsteuer_Umrechnungskurse/umsatzsteuer_umrechnungskurse.html) ·
+[Umsatzsteuer-Umrechnungskurse 2026, Tabelle USA/US-Dollar](https://umsatzsteuer-umrechnungskurse.org/tabelle/2026/) ·
+[smart-rechner.de — Umsatzsteuer-Umrechnungskurse im Jahr 2026](https://www.smart-rechner.de/ust_waehrungen/ratgeber/umsatzsteuer_umrechnungskurse_2026.php)
 
 *Head of Finance · 17.09.2026*
 
