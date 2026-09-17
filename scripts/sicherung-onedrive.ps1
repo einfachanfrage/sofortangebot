@@ -73,10 +73,28 @@ $Code = $LASTEXITCODE
 
 Write-Host ''
 if ($Code -lt 8) {
-    $Groesse = (Get-ChildItem $Ziel -Recurse -File -ErrorAction SilentlyContinue |
-                Measure-Object -Property Length -Sum).Sum / 1MB
-    Write-Host ("FERTIG. In der Sicherung liegen jetzt {0:N0} MB." -f $Groesse) -ForegroundColor Green
+    # -Force ist hier NICHT optional: ohne ihn ueberspringt Get-ChildItem
+    # versteckte Ordner - allen voran '.git', und das ist der groesste Teil
+    # der Sicherung. Am 17.09.2026 hat genau das "34 MB" gemeldet, obwohl
+    # robocopy 1 GB kopiert hatte.
+    $Dateien = Get-ChildItem $Ziel -Recurse -File -Force -ErrorAction SilentlyContinue
+    $Groesse = ($Dateien | Measure-Object -Property Length -Sum).Sum / 1MB
+    Write-Host ("FERTIG. In der Sicherung liegen jetzt {0:N0} Dateien / {1:N0} MB." -f $Dateien.Count, $Groesse) -ForegroundColor Green
     Write-Host "Zeitpunkt: $(Get-Date -Format 'dd.MM.yyyy HH:mm')"
+
+    # Uebersprungene Dateien sichtbar machen, statt sie im Protokoll zu
+    # begraben. Meist sind es Dateien, die beim Kopieren gerade in Benutzung
+    # waren - harmlos, aber man will es wissen.
+    $Fehlzeilen = Select-String -Path $Protokoll -Pattern '^\s*\d{4}-\d{2}-\d{2}|FEHLER|ERROR' -ErrorAction SilentlyContinue |
+                  Where-Object { $_.Line -match 'FEHLER|ERROR' }
+    if ($Fehlzeilen) {
+        Write-Host ''
+        Write-Host ("Hinweis: {0} Datei(en) konnten nicht kopiert werden - meist, weil sie" -f $Fehlzeilen.Count) -ForegroundColor Yellow
+        Write-Host 'gerade in Benutzung waren. Alles Uebrige ist gesichert. Einzelheiten:' -ForegroundColor Yellow
+        Write-Host "  $Protokoll"
+    }
+
+    Write-Host ''
     Write-Host 'OneDrive laedt das im Hintergrund hoch. Das gruene Haekchen am'
     Write-Host 'Ordner bedeutet: wirklich oben angekommen.'
     exit 0
